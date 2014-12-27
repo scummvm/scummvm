@@ -60,12 +60,14 @@ LabEngine::~LabEngine() {
 }
 
 Common::Error LabEngine::run() {
-	// Initialize graphics using following:
-	initGraphics(640, 480, true);
+	if (getFeatures() & GF_LOWRES)
+		initGraphics(320, 200, false);
+	else
+		initGraphics(640, 480, true);
 
 	g_music = new Music();
 
-	inner_main();
+	go();
 
 	return Common::kNoError;
 }

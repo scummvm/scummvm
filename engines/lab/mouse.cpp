@@ -133,10 +133,10 @@ void attachGadgetList(Gadget *GadList) {
 
 static void drawMouse(void) {
 	if (BackImage.ImageData) {
-		if (backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
+		if (backx <= VGAScreenWidth - BackImage.Width && backy <= VGAScreenHeight - BackImage.Height)
 			drawMaskImage(&MouseImage, backx, backy);
 	} else {
-		if (CurMouseX <= 640 - MouseImage.Width && CurMouseY <= 480 - MouseImage.Height)
+		if (CurMouseX <= VGAScreenWidth - MouseImage.Width && CurMouseY <= VGAScreenHeight - MouseImage.Height)
 			drawMaskImage(&MouseImage, CurMouseX, CurMouseY);
 	}
 }
@@ -151,13 +151,13 @@ static void getBackMouse(void) {
 	backx = CurMouseX;
 	backy = CurMouseY;
 
-	if (backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
+	if (backx <= VGAScreenWidth - BackImage.Width && backy <= VGAScreenHeight - BackImage.Height)
 		readScreenImage(&BackImage, backx, backy);
 }
 
 static void restoreBackMouse(void) {
 	if (BackImage.ImageData) {
-		if (backx <= 640 - BackImage.Width && backy <= 480 - BackImage.Height)
+		if (backx <= VGAScreenWidth - BackImage.Width && backy <= VGAScreenHeight - BackImage.Height)
 			drawImage(&BackImage, backx, backy);
 
 		BackImage.ImageData = NULL;

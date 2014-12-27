@@ -75,10 +75,16 @@ void setMode(char mode) {
 bool createScreen(bool HiRes) {
 	//VGABASEADDRESS  = (unsigned long)malloc(640 * 480);
 	VGABASEADDRESS  = 0;
-	VGAScreenWidth  = 640;
-	VGAScreenHeight = 480;
+
+	if (HiRes) {
+		VGAScreenWidth  = 640;
+		VGAScreenHeight = 480;
+	} else {
+		VGAScreenWidth  = 320;
+		VGAScreenHeight = 200;
+	}
 	VGAPages        = 1;
-	VGABytesPerPage = 640 * 480;
+	VGABytesPerPage = VGAScreenWidth * VGAScreenHeight;
 
 	g_DisplayBuffer = (byte *)malloc(VGABytesPerPage);
 	g_Pixels = (byte *)calloc(VGABytesPerPage, 4);
@@ -156,8 +162,8 @@ void WSDL_ProcessInput(bool can_delay) {
 					g_MouseX = 0;
 					g_MouseAtEdge = true;
 				}
-				if (g_MouseX > 639) {
-					g_MouseX = 640;
+				if (g_MouseX > VGAScreenWidth - 1) {
+					g_MouseX = VGAScreenWidth;
 					g_MouseAtEdge = true;
 				}
 
@@ -166,8 +172,8 @@ void WSDL_ProcessInput(bool can_delay) {
 					g_MouseY = 0;
 					g_MouseAtEdge = true;
 				}
-				if (g_MouseY > 479) {
-					g_MouseY = 480;
+				if (g_MouseY > VGAScreenHeight - 1) {
+					g_MouseY = VGAScreenHeight;
 					g_MouseAtEdge = true;
 				}
 

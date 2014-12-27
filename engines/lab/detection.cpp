@@ -127,6 +127,10 @@ Common::Platform LabEngine::getPlatform() const {
 	return _gameDescription->platform;
 }
 
+uint32 LabEngine::getFeatures() const {
+	return _gameDescription->flags;
+}
+
 } // End of namespace Lab
 
 class LabMetaEngine : public AdvancedMetaEngine {
@@ -136,6 +140,7 @@ public:
 
 		_maxScanDepth = 4;
 		_directoryGlobs = directoryGlobs;
+		_flags = kADFlagUseExtraAsHint;
 	}
 
 	virtual const char *getName() const {

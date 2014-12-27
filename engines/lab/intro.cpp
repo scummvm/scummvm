@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/timing.h"
@@ -272,15 +273,16 @@ void introSequence(void) {
 
 	DoBlack = true;
 
-#if defined(DOSCODE)
-	readPict("p:Intro/EA0", true);
-	readPict("p:Intro/EA1", true);
-	readPict("p:Intro/EA2", true);
-	readPict("p:Intro/EA3", true);
-#elif defined(ALL_LOGOS) || defined(NDEBUG)
-	readPict("p:Intro/WYRMKEEP", true);
-	microDelay(4, 0, NULL);
-#endif
+	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+		readPict("p:Intro/EA0", true);
+		readPict("p:Intro/EA1", true);
+		readPict("p:Intro/EA2", true);
+		readPict("p:Intro/EA3", true);
+	} else {
+		readPict("p:Intro/WYRMKEEP", true);
+		microDelay(4, 0);
+	}
+
 	blackAllScreen();
 
 	g_music->initMusic();
@@ -292,7 +294,6 @@ void introSequence(void) {
 	noscreenchange = false;
 
 	FadePalette = Palette;
-#if defined(ALL_LOGOS) || defined(NDEBUG)
 
 	for (counter = 0; counter < 16; counter++) {
 		Palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
@@ -300,11 +301,11 @@ void introSequence(void) {
 		                   (diffcmap[counter * 3 + 2] >> 2);
 	}
 
-	newCheckMusic();
+	g_music->newCheckMusic();
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
-		newCheckMusic();
+		g_music->newCheckMusic();
 		uint16 temp = Palette[2];
 
 		for (counter = 2; counter < 15; counter++)
@@ -318,7 +319,7 @@ void introSequence(void) {
 
 	fade(false, 0);
 	blackAllScreen();
-#endif
+
 	g_music->newCheckMusic();
 
 	readPict("p:Intro/Title.A", true);
@@ -327,15 +328,17 @@ void introSequence(void) {
 	readPict("p:Intro/BA", true);
 	readPict("p:Intro/AC", true);
 	musicDelay();
-#if !defined(DOSCODE)
-	musicDelay(); // more credits on this page now
-#endif
+
+	if (g_lab->getPlatform() == Common::kPlatformWindows)
+		musicDelay(); // more credits on this page now
+
 	readPict("p:Intro/CA", true);
 	readPict("p:Intro/AD", true);
 	musicDelay();
-#if !defined(DOSCODE)
-	musicDelay(); // more credits on this page now
-#endif
+
+	if (g_lab->getPlatform() == Common::kPlatformWindows)
+		musicDelay(); // more credits on this page now
+
 	readPict("p:Intro/DA", true);
 	musicDelay();
 

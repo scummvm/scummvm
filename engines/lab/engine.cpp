@@ -56,7 +56,6 @@ extern InventoryData *Inventory;
 extern uint16 NumInv, RoomNum, ManyRooms, HighestCondition, Direction;
 CloseDataPtr CPtr;
 
-#if !defined(DOSCODE)
 CrumbData BreadCrumbs[MAX_CRUMBS];
 uint16 NumCrumbs;
 bool DroppingCrumbs;
@@ -69,7 +68,6 @@ bool IsCrumbWaiting;
 int     followCrumbs();
 void    mayShowCrumbIndicator();
 void    mayShowCrumbIndicatorOff();
-#endif
 
 bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false, DoNotReset = false;
 
@@ -131,12 +129,7 @@ static uint32 BUFFERSIZE = BIGBUFFERSIZE;
 
 static byte *MovePanelBuffer, *InvPanelBuffer;
 static uint32 MovePanelBufferSize, InvPanelBufferSize;
-static Image *MoveImages[20],
-#if defined(DOSCODE)
-		*InvImages[6];
-#else
-		*InvImages[10];
-#endif
+static Image *MoveImages[20], *InvImages[10];
 static Gadget *MoveGadgetList, *InvGadgetList;
 
 
@@ -173,14 +166,14 @@ void drawPanel(void) {
 		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(319)); /* The horizontal lines under the black one */
 		drawGadgetList(MoveGadgetList);
 	} else {
-#if defined(DOSCODE)
-		drawVLine(VGAScaleX(124), VGAScaleY(170) + 1, VGAScaleY(199)); /* Vertical Black lines */
-		drawVLine(VGAScaleX(194), VGAScaleY(170) + 1, VGAScaleY(199));
-#else
-		drawVLine(VGAScaleX(90), VGAScaleY(170) + 1, VGAScaleY(199));  /* Vertical Black lines */
-		drawVLine(VGAScaleX(160), VGAScaleY(170) + 1, VGAScaleY(199));
-		drawVLine(VGAScaleX(230), VGAScaleY(170) + 1, VGAScaleY(199));
-#endif
+		if (g_lab->getPlatform() != Common::kPlatformWindows) {
+			drawVLine(VGAScaleX(124), VGAScaleY(170) + 1, VGAScaleY(199)); /* Vertical Black lines */
+			drawVLine(VGAScaleX(194), VGAScaleY(170) + 1, VGAScaleY(199));
+		} else {
+			drawVLine(VGAScaleX(90), VGAScaleY(170) + 1, VGAScaleY(199));  /* Vertical Black lines */
+			drawVLine(VGAScaleX(160), VGAScaleY(170) + 1, VGAScaleY(199));
+			drawVLine(VGAScaleX(230), VGAScaleY(170) + 1, VGAScaleY(199));
+		}
 
 		setAPen(4);
 		drawHLine(0, VGAScaleY(170) + 1, VGAScaleX(122));   /* The horizontal lines under the black one */
@@ -188,14 +181,14 @@ void drawPanel(void) {
 		drawHLine(VGAScaleX(196), VGAScaleY(170) + 1, VGAScaleX(319));
 
 		drawVLine(VGAScaleX(1), VGAScaleY(170) + 2, VGAScaleY(198)); /* The vertical high light lines */
-#if defined(DOSCODE)
-		drawVLine(VGAScaleX(126), VGAScaleY(170) + 2, VGAScaleY(198));
-		drawVLine(VGAScaleX(196), VGAScaleY(170) + 2, VGAScaleY(198));
-#else
-		drawVLine(VGAScaleX(92), VGAScaleY(170) + 2, VGAScaleY(198));
-		drawVLine(VGAScaleX(162), VGAScaleY(170) + 2, VGAScaleY(198));
-		drawVLine(VGAScaleX(232), VGAScaleY(170) + 2, VGAScaleY(198));
-#endif
+		if (g_lab->getPlatform() != Common::kPlatformWindows) {
+			drawVLine(VGAScaleX(126), VGAScaleY(170) + 2, VGAScaleY(198));
+			drawVLine(VGAScaleX(196), VGAScaleY(170) + 2, VGAScaleY(198));
+		} else {
+			drawVLine(VGAScaleX(92), VGAScaleY(170) + 2, VGAScaleY(198));
+			drawVLine(VGAScaleX(162), VGAScaleY(170) + 2, VGAScaleY(198));
+			drawVLine(VGAScaleX(232), VGAScaleY(170) + 2, VGAScaleY(198));
+		}
 
 		drawGadgetList(InvGadgetList);
 	}
@@ -281,47 +274,48 @@ bool setUpScreens(void) {
 
 	/* Creates the gadgets for the movement control panel */
 	y = VGAScaleY(173) - SVGACord(2);
-#if !defined(DOSCODE)
-	MoveGadgetList = createButton(VGAScaleX(1), y, 0, 't', MoveImages[0], MoveImages[1]);
-	curgad = MoveGadgetList;
-	curgad->NextGadget = createButton(VGAScaleX(33), y, 1, 'm', MoveImages[2], MoveImages[3]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(65), y, 2, 'o', MoveImages[4], MoveImages[5]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(97), y, 3, 'c', MoveImages[6], MoveImages[7]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(129), y, 4, 'l', MoveImages[8], MoveImages[9]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(161), y, 5, 'i', MoveImages[12], MoveImages[13]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(193), y, 6, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(225), y, 7, VKEY_UPARROW, MoveImages[16], MoveImages[17]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(257), y, 8, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(289), y, 9, 'p', MoveImages[10], MoveImages[11]);
-#else
-	MoveGadgetList = createButton(VGAScaleX(1), y, 0, MoveImages[0], MoveImages[1]);
-	curgad = MoveGadgetList;
-	curgad->NextGadget = createButton(VGAScaleX(33), y, 1, MoveImages[2], MoveImages[3]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(65), y, 2, MoveImages[4], MoveImages[5]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(97), y, 3, MoveImages[6], MoveImages[7]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(129), y, 4, MoveImages[8], MoveImages[9]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(161), y, 5, MoveImages[12], MoveImages[13]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(193), y, 6, MoveImages[14], MoveImages[15]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(225), y, 7, MoveImages[16], MoveImages[17]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(257), y, 8, MoveImages[18], MoveImages[19]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(289), y, 9, MoveImages[10], MoveImages[11]);
-#endif
+
+	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+		MoveGadgetList = createButton(VGAScaleX(1), y, 0, 't', MoveImages[0], MoveImages[1]);
+		curgad = MoveGadgetList;
+		curgad->NextGadget = createButton(VGAScaleX(33), y, 1, 'm', MoveImages[2], MoveImages[3]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(65), y, 2, 'o', MoveImages[4], MoveImages[5]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(97), y, 3, 'c', MoveImages[6], MoveImages[7]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(129), y, 4, 'l', MoveImages[8], MoveImages[9]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(161), y, 5, 'i', MoveImages[12], MoveImages[13]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(193), y, 6, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(225), y, 7, VKEY_UPARROW, MoveImages[16], MoveImages[17]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(257), y, 8, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(289), y, 9, 'p', MoveImages[10], MoveImages[11]);
+	} else {
+		MoveGadgetList = createButton(VGAScaleX(1), y, 0, 0, MoveImages[0], MoveImages[1]);
+		curgad = MoveGadgetList;
+		curgad->NextGadget = createButton(VGAScaleX(33), y, 1, 0, MoveImages[2], MoveImages[3]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(65), y, 2, 0, MoveImages[4], MoveImages[5]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(97), y, 3, 0, MoveImages[6], MoveImages[7]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(129), y, 4, 0, MoveImages[8], MoveImages[9]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(161), y, 5, 0, MoveImages[12], MoveImages[13]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(193), y, 6, 0, MoveImages[14], MoveImages[15]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(225), y, 7, 0, MoveImages[16], MoveImages[17]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(257), y, 8, 0, MoveImages[18], MoveImages[19]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(289), y, 9, 0, MoveImages[10], MoveImages[11]);
+	}
 
 	InvPanelBufferSize = sizeOfFile("P:Inv");
 
@@ -340,45 +334,44 @@ bool setUpScreens(void) {
 	file->close();
 
 	*buffer = InvPanelBuffer;
-#if !defined(DOSCODE)
 
-	for (counter = 0; counter < 10; counter++)
-		readImage(buffer, &(InvImages[counter]));
+	if (g_lab->getPlatform() == Common::kPlatformWindows) {
+		for (counter = 0; counter < 10; counter++)
+			readImage(buffer, &(InvImages[counter]));
 
-	InvGadgetList = createButton(VGAScaleX(24), y, 0, 'm', InvImages[0], InvImages[1]);
-	curgad = InvGadgetList;
-	curgad->NextGadget = createButton(VGAScaleX(56), y, 1, 'g', InvImages[2], InvImages[3]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(94), y, 2, 'u', InvImages[4], InvImages[5]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(126), y, 3, 'l', MoveImages[8], MoveImages[9]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(164), y, 4, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(196), y, 5, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(234), y, 6, 'b', InvImages[6], InvImages[7]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(266), y, 7, 'f', InvImages[8], InvImages[9]);
-	curgad = curgad->NextGadget;
-#else
+		InvGadgetList = createButton(VGAScaleX(24), y, 0, 'm', InvImages[0], InvImages[1]);
+		curgad = InvGadgetList;
+		curgad->NextGadget = createButton(VGAScaleX(56), y, 1, 'g', InvImages[2], InvImages[3]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(94), y, 2, 'u', InvImages[4], InvImages[5]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(126), y, 3, 'l', MoveImages[8], MoveImages[9]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(164), y, 4, VKEY_LTARROW, MoveImages[14], MoveImages[15]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(196), y, 5, VKEY_RTARROW, MoveImages[18], MoveImages[19]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(234), y, 6, 'b', InvImages[6], InvImages[7]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(266), y, 7, 'f', InvImages[8], InvImages[9]);
+		curgad = curgad->NextGadget;
+	} else {
+		for (counter = 0; counter < 6; counter++)
+			readImage(buffer, &(InvImages[counter]));
 
-	for (counter = 0; counter < 6; counter++)
-		readImage(buffer, &(InvImages[counter]));
-
-	InvGadgetList = createButton(VGAScaleX(58), y, 0, InvImages[0], InvImages[1]);
-	curgad = InvGadgetList;
-	curgad->NextGadget = createButton(VGAScaleX(90), y, 1, InvImages[2], InvImages[3]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(128), y, 2, InvImages[4], InvImages[5]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(160), y, 3, MoveImages[8], MoveImages[9]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(198), y, 4, MoveImages[14], MoveImages[15]);
-	curgad = curgad->NextGadget;
-	curgad->NextGadget = createButton(VGAScaleX(230), y, 5, MoveImages[18], MoveImages[19]);
-	curgad = curgad->NextGadget;
-#endif
+		InvGadgetList = createButton(VGAScaleX(58), y, 0, 0, InvImages[0], InvImages[1]);
+		curgad = InvGadgetList;
+		curgad->NextGadget = createButton(VGAScaleX(90), y, 1, 0, InvImages[2], InvImages[3]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(128), y, 2, 0, InvImages[4], InvImages[5]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(160), y, 3, 0, MoveImages[8], MoveImages[9]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(198), y, 4, 0, MoveImages[14], MoveImages[15]);
+		curgad = curgad->NextGadget;
+		curgad->NextGadget = createButton(VGAScaleX(230), y, 5, 0, MoveImages[18], MoveImages[19]);
+		curgad = curgad->NextGadget;
+	}
 
 	return true;
 }
@@ -462,19 +455,6 @@ static void checkRoomMusic(void) {
 }
 
 
-
-#if defined(DOSCODE)
-#define MONLTMARGIN     0
-#define MONRTMARGIN     319
-#define MONTOPMARGIN    0
-#define LUTERTMARGIN    124
-#else
-#define MONLTMARGIN     2
-#define MONRTMARGIN     317
-#define MONTOPMARGIN    2
-#define LUTERTMARGIN    128
-#endif
-
 /******************************************************************************/
 /* Checks whether the close up is one of the special case closeups.           */
 /******************************************************************************/
@@ -482,23 +462,37 @@ static bool doCloseUp(CloseDataPtr cptr) {
 	if (cptr == NULL)
 		return false;
 
+	int monltmargin, monrtmargin, montopmargin, lutertmargin;
+
+	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+		monltmargin = 0;
+		monrtmargin = 319;
+		montopmargin = 0;
+		lutertmargin = 124;
+	} else {
+		monltmargin = 2;
+		monrtmargin = 317;
+		montopmargin = 2;
+		lutertmargin = 128;
+	}
+
 	if ((cptr->CloseUpType == MUSEUMMONITOR) || (cptr->CloseUpType == LIBRARYMONITOR) ||
 	        (cptr->CloseUpType == WINDOWMONITOR))
-		doMonitor(cptr->GraphicName, cptr->Message, false, MONLTMARGIN, MONTOPMARGIN, MONRTMARGIN, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, monrtmargin, 165);
 	else if (cptr->CloseUpType == GRAMAPHONEMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, false, MONLTMARGIN, MONTOPMARGIN, 171, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 171, 165);
 	else if (cptr->CloseUpType == UNICYCLEMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, false, 100, MONTOPMARGIN, MONRTMARGIN, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, 100, montopmargin, monrtmargin, 165);
 	else if (cptr->CloseUpType == STATUEMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, false, 117, MONTOPMARGIN, MONRTMARGIN, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, 117, montopmargin, monrtmargin, 165);
 	else if (cptr->CloseUpType == TALISMANMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, false, MONLTMARGIN, MONTOPMARGIN, 184, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 184, 165);
 	else if (cptr->CloseUpType == LUTEMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, false, MONLTMARGIN, MONTOPMARGIN, LUTERTMARGIN, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, lutertmargin, 165);
 	else if (cptr->CloseUpType == CLOCKMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, false, MONLTMARGIN, MONTOPMARGIN, 206, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, false, monltmargin, montopmargin, 206, 165);
 	else if (cptr->CloseUpType == TERMINALMONITOR)
-		doMonitor(cptr->GraphicName, cptr->Message, true, MONLTMARGIN, MONTOPMARGIN, MONRTMARGIN, 165);
+		doMonitor(cptr->GraphicName, cptr->Message, true, monltmargin, montopmargin, monrtmargin, 165);
 	else
 		return false;
 
@@ -710,12 +704,8 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 }
 
 
-#if defined(DOSCODE)
 static bool nosvgamem = false;
 static bool didintro = false;
-#else
-int didintro = false; // change to int do labw.c can access
-#endif
 static bool novesa = false, noaudio = false;
 
 /******************************************************************************/
@@ -725,19 +715,14 @@ static void process(void) {
 	IntuiMessage *Msg;
 	uint32 Class;
 
-	uint16 Code, Qualifier, MouseX, MouseY, ActionMode = 4, CurInv = MAPNUM, /* Lab: Labyrinth specific initialization */
-	                                        LastInv = MAPNUM,     /* Lab: Labyrinth specific initialization */
-	                                        Old;
+	uint16 Code, Qualifier, MouseX, MouseY, ActionMode = 4;
+	uint16 CurInv = MAPNUM, LastInv = MAPNUM, Old;
 
-	bool ForceDraw   = false, doit, GotMessage  = true;
+	bool ForceDraw = false, doit, GotMessage = true;
 
-	uint16 OldRoomNum,
-#if !defined(DOSCODE)
-	       OldDirection,
-#endif
-	       GadID, NewDir;
+	uint16 OldRoomNum, OldDirection, GadID, NewDir;
 
-	CloseDataPtr OldCPtr, TempCPtr, HCPtr    = NULL;
+	CloseDataPtr OldCPtr, TempCPtr, HCPtr = NULL;
 	ViewDataPtr VPtr;
 
 	VGASetPal(initcolors, 8);
@@ -778,10 +763,9 @@ static void process(void) {
 			/* Sees what kind of close up we're in and does the appropriate stuff, if any. */
 			if (doCloseUp(CPtr)) {
 				CPtr = NULL;
-#if !defined(DOSCODE)
+
 				mayShowCrumbIndicator();
 				WSDL_UpdateScreen();
-#endif
 			}
 
 			/* Sets the current picture properly on the screen */
@@ -816,24 +800,17 @@ static void process(void) {
 				drawRoomMessage(CurInv, CPtr);
 				ForceDraw = false;
 
-#if !defined(DOSCODE)
 				mayShowCrumbIndicator();
 				WSDL_UpdateScreen();
 
 				if (!FollowingCrumbs)
 					eatMessages();
-
-#else
-				eatMessages();
-#endif
 			}
 
 			if (ForceDraw) {
 				drawRoomMessage(CurInv, CPtr);
 				ForceDraw = false;
-#if !defined(DOSCODE)
 				WSDL_UpdateScreen();
-#endif
 			}
 		}
 
@@ -846,7 +823,6 @@ static void process(void) {
 			checkRoomMusic();
 			g_music->newCheckMusic();
 			diffNextFrame();
-#if !defined(DOSCODE)
 
 			if (FollowingCrumbs) {
 				int result = followCrumbs();
@@ -878,7 +854,6 @@ static void process(void) {
 
 			mayShowCrumbIndicator();
 			WSDL_UpdateScreen();
-#endif
 		} else {
 			GotMessage = true;
 
@@ -891,11 +866,9 @@ static void process(void) {
 
 			replyMsg((void *) Msg);
 
-#if !defined(DOSCODE)
 			FollowingCrumbs = false;
 
 from_crumbs:
-#endif
 			DoBlack = false;
 
 			if ((Class == RAWKEY) && (!LongWinInFront)) {
@@ -903,18 +876,14 @@ from_crumbs:
 					Class     = MOUSEBUTTONS;
 					Qualifier = IEQUALIFIER_LEFTBUTTON;
 					mouseXY(&MouseX, &MouseY);
-				}
-
-#if !defined(DOSCODE)
-				else if (Code == 'b' || Code == 'B') {  /* Start bread crumbs */
+				} else if (g_lab->getPlatform() == Common::kPlatformWindows && 
+						(Code == 'b' || Code == 'B')) {  /* Start bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
 					NumCrumbs = 0;
 					DroppingCrumbs = true;
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
-				}
-
-				else if (Code == 'f' || Code == 'F' ||
+				} else if (Code == 'f' || Code == 'F' ||
 				         Code == 'r' || Code == 'R') {  /* Follow bread crumbs */
 					if (DroppingCrumbs) {
 						if (NumCrumbs > 0) {
@@ -945,11 +914,7 @@ from_crumbs:
 							WSDL_UpdateScreen();
 						}
 					}
-				}
-
-#endif
-
-				else if ((Code == 315) || (Code == 'x') || (Code == 'X')
+				} else if ((Code == 315) || (Code == 'x') || (Code == 'X')
 				         || (Code == 'q') || (Code == 'Q')) {  /* Quit? */
 					DoNotDrawMessage = false;
 					drawMessage("Do you want to quit? (Y/N)");
@@ -968,13 +933,7 @@ from_crumbs:
 							replyMsg((void *) Msg);    /* Can't do this in non-IBM versions */
 
 							if (Msg->Class == RAWKEY) {
-#if defined(DOSCODE)
-
-								if ((Msg->Code == 'Y') || (Msg->Code == 'y'))
-#else
-								if ((Msg->Code == 'Y') || (Msg->Code == 'y') || (Msg->Code == 'Q') || (Msg->Code == 'q'))
-#endif
-								{
+								if ((Msg->Code == 'Y') || (Msg->Code == 'y') || (Msg->Code == 'Q') || (Msg->Code == 'q')) {
 									doit = true;
 									break;
 								} else if (Msg->Code < 128) {
@@ -993,58 +952,9 @@ from_crumbs:
 						ForceDraw = true;
 						interfaceOn();
 					}
-				}
-
-#ifdef undef
-				else if (Code == 324) {
-					if (BUFFERSIZE >= BIGBUFFERSIZE) { /* F10 key to switch resolutions */
-						blackAllScreen();
-						setMode((char) OldMode);
-
-						Alternate = false;
-						MainDisplay = true;
-						attachGadgetList(NULL);
-						fillUpMusic(true);
-						g_system->delayMillis(750);
-
-						IsHiRes = !IsHiRes;
-
-						free(MovePanelBuffer);
-						free(InvPanelBuffer);
-						freeButtonList(MoveGadgetList);
-						freeButtonList(InvGadgetList);
-						MoveGadgetList = NULL;
-						InvGadgetList = NULL;
-
-						if (!setUpScreens()) {
-							IsHiRes = false;
-							setUpScreens();
-						}
-
-						blackAllScreen();
-						resetBuffer();
-						CPtr = NULL;
-						DoBlack = true;
-						CurFileName = " ";
-						closeFont(MsgFont);
-						openFont("P:AvanteG.12", &MsgFont);
-						/*
-						            mouseReset();
-						 */
-						initMouse();
-						drawPanel();
-						perFlipGadget(ActionMode);
-					} else
-						drawMessage("Not enough memory to change resolutions.");
-				}
-
-#endif
-
-				else if (Code == 9) { /* TAB key */
+				} else if (Code == 9) { /* TAB key */
 					Class = DELTAMOVE;
-				}
-
-				else if (Code == 27) { /* ESC key */
+				} else if (Code == 27) { /* ESC key */
 					CPtr = NULL;
 				}
 
@@ -1060,13 +970,9 @@ from_crumbs:
 					DoNotDrawMessage = false;
 					drawPanel();
 					drawRoomMessage(CurInv, CPtr);
-#if !defined(DOSCODE)
 					WSDL_UpdateScreen();
-#endif
 				}
-			}
-
-			else if ((Class == GADGETUP) && !Alternate) {
+			} else if ((Class == GADGETUP) && !Alternate) {
 				if (GadID <= 5) {
 					if ((ActionMode == 4) && (GadID == 4) && (CPtr != NULL)) {
 						doMainView(&CPtr);
@@ -1074,13 +980,9 @@ from_crumbs:
 						DoBlack = true;
 						HCPtr = NULL;
 						CPtr = NULL;
-#if !defined(DOSCODE)
 						mayShowCrumbIndicator();
 						WSDL_UpdateScreen();
-#endif
-					}
-
-					else if (GadID == 5) {
+					} else if (GadID == 5) {
 						eatMessages();
 
 						Alternate = true;
@@ -1098,10 +1000,9 @@ from_crumbs:
 
 						drawPanel();
 						drawRoomMessage(CurInv, CPtr);
-#if !defined(DOSCODE)
+
 						mayShowCrumbIndicator();
 						WSDL_UpdateScreen();
-#endif
 					} else {
 						Old        = ActionMode;
 						ActionMode = GadID;
@@ -1122,21 +1023,14 @@ from_crumbs:
 						else if (GadID == 4)
 							drawMessage(LOOKWHAT);
 
-#if !defined(DOSCODE)
 						WSDL_UpdateScreen();
-#endif
 					}
-				}
-
-				else if (GadID == 9) {
+				} else if (GadID == 9) {
 					doUse(MAPNUM);
-#if !defined(DOSCODE)
+
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
-#endif
-				}
-
-				else if (GadID >= 6) { /* Arrow Gadgets */
+				} else if (GadID >= 6) { /* Arrow Gadgets */
 					CPtr = NULL;
 					HCPtr = NULL;
 
@@ -1147,19 +1041,18 @@ from_crumbs:
 							drawMessage(TURNRIGHT);
 
 						CurFileName = " ";
-#if !defined(DOSCODE)
+
 						OldDirection = Direction;
-#endif
+
 						NewDir = Direction;
 						processArrow(&NewDir, GadID - 6);
 						doTurn(Direction, NewDir, &CPtr);
 						DoBlack = true;
 						Direction = NewDir;
 						ForceDraw = true;
-#if !defined(DOSCODE)
+
 						mayShowCrumbIndicator();
 						WSDL_UpdateScreen();
-#endif
 					} else if (GadID == 7) {
 						OldRoomNum = RoomNum;
 
@@ -1180,15 +1073,6 @@ from_crumbs:
 								drawMessage(NOPATH);
 							}
 						}
-
-#if defined(DEMODATA)
-						{
-							void writeDemoData();
-							writeDemoData();
-						}
-#endif
-
-#if !defined(DOSCODE)
 
 						if (FollowingCrumbs) {
 							if (IsCrumbTurning) {
@@ -1235,12 +1119,9 @@ from_crumbs:
 
 						mayShowCrumbIndicator();
 						WSDL_UpdateScreen();
-#endif
 					}
 				}
-			}
-
-			else if ((Class == GADGETUP) && Alternate) {
+			} else if ((Class == GADGETUP) && Alternate) {
 				DoBlack = true;
 
 				if (GadID == 0) {
@@ -1253,9 +1134,8 @@ from_crumbs:
 					interfaceOn(); /* Sets the correct gadget list */
 					drawPanel();
 					drawRoomMessage(CurInv, CPtr);
-#if !defined(DOSCODE)
+
 					WSDL_UpdateScreen();
-#endif
 				}
 
 				GadID--;
@@ -1280,21 +1160,14 @@ from_crumbs:
 					if (doit) {
 						drawMessage("Disk operation failed.");
 						VGASetPal(initcolors, 8);
-#if !defined(DOSCODE)
+
 						WSDL_UpdateScreen();
-#endif
+
 						g_system->delayMillis(1000);
-					}
-
-#if !defined(DOSCODE)
-					else {
+					} else {
 						WSDL_UpdateScreen();
 					}
-
-#endif
-				}
-
-				else if (GadID == 1) {
+				} else if (GadID == 1) {
 					if (!doUse(CurInv)) {
 						Old        = ActionMode;
 						ActionMode = 5;  /* Use button */
@@ -1304,13 +1177,10 @@ from_crumbs:
 
 						drawMessage(USEONWHAT);
 						MainDisplay = true;
-#if !defined(DOSCODE)
-						WSDL_UpdateScreen();
-#endif
-					}
-				}
 
-				else if (GadID == 2) {
+						WSDL_UpdateScreen();
+					}
+				} else if (GadID == 2) {
 					MainDisplay = !MainDisplay;
 
 					if ((CurInv == 0) || (CurInv > NumInv)) {
@@ -1324,41 +1194,28 @@ from_crumbs:
 					        Inventory[CurInv].BInvName)
 						Test = getInvName(CurInv);
 
-#if !defined(DOSCODE)
 					WSDL_UpdateScreen();
-#endif
-				}
-
-				else if (GadID == 3) { /* Left gadget */
+				} else if (GadID == 3) { /* Left gadget */
 					decIncInv(&CurInv, true);
 					LastInv = CurInv;
 					DoNotDrawMessage = false;
 					drawRoomMessage(CurInv, CPtr);
-#if !defined(DOSCODE)
-					WSDL_UpdateScreen();
-#endif
-				}
 
-				else if (GadID == 4) { /* Right gadget */
+					WSDL_UpdateScreen();
+				} else if (GadID == 4) { /* Right gadget */
 					decIncInv(&CurInv, false);
 					LastInv = CurInv;
 					DoNotDrawMessage = false;
 					drawRoomMessage(CurInv, CPtr);
-#if !defined(DOSCODE)
-					WSDL_UpdateScreen();
-#endif
-				}
 
-#if !defined(DOSCODE)
-				else if (GadID == 5) { /* bread crumbs */
+					WSDL_UpdateScreen();
+				} else if (GadID == 5) { /* bread crumbs */
 					BreadCrumbs[0].RoomNum = 0;
 					NumCrumbs = 0;
 					DroppingCrumbs = true;
 					mayShowCrumbIndicator();
 					WSDL_UpdateScreen();
-				}
-
-				else if (GadID == 6) { /* follow crumbs */
+				} else if (GadID == 6) { /* follow crumbs */
 					if (DroppingCrumbs) {
 						if (NumCrumbs > 0) {
 							FollowingCrumbs = true;
@@ -1387,11 +1244,7 @@ from_crumbs:
 						}
 					}
 				}
-			}
-
-#endif
-
-			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && MainDisplay) {
+			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_LEFTBUTTON & Qualifier) && MainDisplay) {
 				interfaceOff();
 				MainDisplay = true;
 
@@ -1423,9 +1276,7 @@ from_crumbs:
 							CurFileName = NewFileName;
 						else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
 							drawMessage(NOTHING);
-					}
-
-					else if ((ActionMode == 1) /* Manipulate an object */  ||
+					} else if ((ActionMode == 1) /* Manipulate an object */  ||
 					         (ActionMode == 2) /* Open up a "door" */      ||
 					         (ActionMode == 3)) { /* Close a "door" */
 						if (doActionRule(MouseX, MouseY, ActionMode, RoomNum, &CPtr))
@@ -1434,9 +1285,7 @@ from_crumbs:
 							if (MouseY < (VGAScaleY(149) + SVGACord(2)))
 								drawMessage(NOTHING);
 						}
-					}
-
-					else if (ActionMode == 4) { /* Look at closeups */
+					} else if (ActionMode == 4) { /* Look at closeups */
 						TempCPtr = CPtr;
 						setCurClose(MouseX, MouseY, &TempCPtr);
 
@@ -1451,9 +1300,7 @@ from_crumbs:
 								drawMessage(NOTHING);
 						} else if (MouseY < (VGAScaleY(149) + SVGACord(2)))
 							drawMessage(NOTHING);
-					}
-
-					else if ((ActionMode == 5)  &&
+					} else if ((ActionMode == 5)  &&
 					         g_lab->_conditions->in(CurInv)) { /* Use an item on something else */
 						if (doOperateRule(MouseX, MouseY, CurInv, &CPtr)) {
 							CurFileName = NewFileName;
@@ -1465,13 +1312,9 @@ from_crumbs:
 					}
 				}
 
-#if !defined(DOSCODE)
 				mayShowCrumbIndicator();
 				WSDL_UpdateScreen();
-#endif
-			}
-
-			else if (Class == DELTAMOVE) {
+			} else if (Class == DELTAMOVE) {
 				VPtr = getViewData(RoomNum, Direction);
 				OldCPtr = VPtr->closeUps;
 
@@ -1499,9 +1342,7 @@ from_crumbs:
 
 				if (HCPtr)
 					mouseMove(scaleX((HCPtr->x1 + HCPtr->x2) / 2), scaleY((HCPtr->y1 + HCPtr->y2) / 2));
-			}
-
-			else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
+			} else if ((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) {
 				eatMessages();
 				Alternate = !Alternate;
 				DoBlack = true;
@@ -1518,10 +1359,9 @@ from_crumbs:
 
 				drawPanel();
 				drawRoomMessage(CurInv, CPtr);
-#if !defined(DOSCODE)
+
 				mayShowCrumbIndicator();
 				WSDL_UpdateScreen();
-#endif
 			}
 		}
 	}
@@ -1546,35 +1386,22 @@ from_crumbs:
 }
 
 
-/*
-   void mySignalHandler(int sig)
-   {
-   signal(sig, mySignalHandler);
-   }
- */
-
-
-
-#if defined(DOSCODE)
-void (__interrupt __far *oldctrlc)(), (__interrupt __far *oldctrlcb)();
-
-uint16 iretdummy;
-void __interrupt __far myiret() {
-	iretdummy++;
-}
-#endif
-
-
-void inner_main() {
+void LabEngine::go() {
 	bool mem, dointro = false;
 	uint16 counter;
 
 	getMode(&OldMode);
 
-	IsHiRes = true;
 	DoMusic = true;
 	g_music->_turnMusicOn = true;
 	dointro = true;
+
+	IsHiRes = ((getFeatures() & GF_LOWRES) == 0);
+
+	if (IsHiRes)
+		warning("Running in HiRes mode");
+	else
+		warning("Running in LowRes mode");
 
 #if 0
 	for (counter = 1; counter < argc; counter++) {
@@ -1613,16 +1440,8 @@ void inner_main() {
 	if (initBuffer(BUFFERSIZE, true)) {
 		mem = true;
 	} else {
-#if defined(DOSCODE)
-		BUFFERSIZE = SMALLBUFFERSIZE;
-		mem = initBuffer(BUFFERSIZE, true);
-		IsHiRes = false;
-		nosvgamem = true;
-#else
-		// unacceptable !!!!
 		warning("initBuffer() failed");
 		return;
-#endif
 	}
 
 	if (!initAudio()) {
@@ -1641,11 +1460,7 @@ void inner_main() {
 
 	if (!initMouse()) {
 		setMode((char) OldMode);
-#if defined(DOSCODE)
-		_dos_setvect(0x23, oldctrlc);
-		_dos_setvect(0x1B, oldctrlcb);
-#endif
-		debug("\n\nMouse or mouse driver not installed!\n\n");
+
 		return;
 	}
 
@@ -1660,13 +1475,9 @@ void inner_main() {
 	openFont("P:AvanteG.12", &MsgFont);
 
 	if (dointro && mem) {
-#if defined(DOSCODE)
 		didintro = true;
-#endif
 		introSequence();
-#if !defined(DOSCODE)
 		didintro = true;
-#endif
 	} else
 		DoBlack = true;
 
@@ -1688,27 +1499,12 @@ void inner_main() {
 		readPict("P:End/L2In.9", true);
 		readPict("P:End/Lost", true);
 
-#if defined(DOSCODE)
-		counter = 600;
-
-		while (counter) {
-			newCheckMusic();
-			diffNextFrame();
-			waitTOF();
-			counter--;
-		}
-
-#else
-
 		warning("STUB: waitForPress");
 		while (!1) { // 1 means ignore SDL_ProcessInput calls
 			g_music->newCheckMusic();
 			diffNextFrame();
 			waitTOF();
 		}
-
-		// If we weren't exiting, a call to a mythical SDL_StopWaitForPress() would be in order.
-#endif
 	}
 
 	closeFont(MsgFont);
@@ -1721,25 +1517,19 @@ void inner_main() {
 	freeAudio();
 
 	mouseReset();
-	setMode((char) OldMode);
-
-#if defined(DOSCODE)
-	_dos_setvect(0x23, oldctrlc);
-	_dos_setvect(0x1B, oldctrlcb);
-#endif
+	setMode((char)OldMode);
 }
 
-#if !defined(DOSCODE)
 /*****************************************************************************/
 /* New code to allow quick(er) return navigation in game.                    */
 /*****************************************************************************/
 int followCrumbs() {
 	// NORTH, SOUTH, EAST, WEST
 	static int movement[4][4] = {
-		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW }, { VKEY_RTARROW, VKEY_UPARROW, VKEY_LTARROW, VKEY_RTARROW }, { VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW, VKEY_RTARROW }, { VKEY_RTARROW, VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW }
-#if 0
-		{ -1, EAST, EAST, WEST }, { WEST, -1, EAST, WEST }, { NORTH, SOUTH, -1, SOUTH }, { NORTH, SOUTH, NORTH, -1 }
-#endif
+		{ VKEY_UPARROW, VKEY_RTARROW, VKEY_RTARROW, VKEY_LTARROW },
+		{ VKEY_RTARROW, VKEY_UPARROW, VKEY_LTARROW, VKEY_RTARROW },
+		{ VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW, VKEY_RTARROW },
+		{ VKEY_RTARROW, VKEY_LTARROW, VKEY_RTARROW, VKEY_UPARROW }
 	};
 
 	int ExitDir;
@@ -1805,6 +1595,9 @@ Image DropCrumbsImage = { 24, 24, dropCrumbs };
 Image DropCrumbsOffImage = { 24, 24, dropCrumbsOff };
 
 void mayShowCrumbIndicator() {
+	if (g_lab->getPlatform() != Common::kPlatformWindows)
+		return;
+
 	if (DroppingCrumbs && MainDisplay) {
 		mouseHide();
 		drawMaskImage(&DropCrumbsImage, 612, 4);
@@ -1813,12 +1606,14 @@ void mayShowCrumbIndicator() {
 }
 
 void mayShowCrumbIndicatorOff() {
+	if (g_lab->getPlatform() != Common::kPlatformWindows)
+		return;
+
 	if (MainDisplay) {
 		mouseHide();
 		drawMaskImage(&DropCrumbsOffImage, 612, 4);
 		mouseShow();
 	}
 }
-#endif
 
 } // End of namespace Lab

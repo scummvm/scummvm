@@ -124,23 +124,12 @@ uint16 makeGadgetKeyEquiv(uint16 key) {
 /* of gadgets.                                                               */
 /*****************************************************************************/
 static Gadget *checkNumGadgetHit(Gadget *gadlist, uint16 key) {
-#if !defined(DOSCODE)
 	uint16 gkey = key - '0';
-#else
-	key = key - '0';
-#endif
 
 	while (gadlist != NULL) {
-#if !defined(DOSCODE)
-
 		if ((gkey - 1 == gadlist->GadgetID || (gkey == 0 && gadlist->GadgetID == 9) ||
 		        (gadlist->KeyEquiv != 0 && makeGadgetKeyEquiv(key) == gadlist->KeyEquiv))
-		        && !(GADGETOFF & gadlist->GadgetFlags))
-#else
-		if ((((key - 1) == gadlist->GadgetID) || ((key == 0) && (gadlist->GadgetID == 9))) &&
-		        !(GADGETOFF & gadlist->GadgetFlags))
-#endif
-		{
+		        && !(GADGETOFF & gadlist->GadgetFlags)) {
 			mouseHide();
 			drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
 			mouseShow();

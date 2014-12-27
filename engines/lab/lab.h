@@ -50,11 +50,13 @@ public:
 	~LabEngine();
 
 	virtual Common::Error run();
+	void go();
 
 	bool hasFeature(EngineFeature f) const;
 
 	const ADGameDescription *_gameDescription;
 	Common::Platform getPlatform() const;
+	uint32 getFeatures() const;
 
 	LargeSet *_conditions, *_roomsFound;
 };

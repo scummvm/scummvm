@@ -187,9 +187,7 @@ static void changeCombination(uint16 number) {
 		} else
 			waitTOF();
 
-#if !defined(DOSCODE)
 		display.ImageData = getVGABaseAddr();
-#endif
 
 		scrollDisplayY(2, VGAScaleX(combx[number]), VGAScaleY(65), VGAScaleX(combx[number]) + (Images[combnum])->Width - 1, VGAScaleY(65) + (Images[combnum])->Height);
 
@@ -204,9 +202,7 @@ static void changeCombination(uint16 number) {
 	else
 		g_lab->_conditions->exclElement(COMBINATIONUNLOCKED);
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 }
 
 
@@ -247,9 +243,6 @@ void mouseCombination(uint16 x, uint16 y) {
 /*----------------------------------------------------------------------------*/
 /*----------------------------- Tile Puzzle Rules ----------------------------*/
 /*----------------------------------------------------------------------------*/
-
-
-
 
 Image *Tiles[16];
 int16 CurTile[4] [4] = {
@@ -703,14 +696,12 @@ static bool loadJournalData() {
 
 	BackG.Im = JLeft;
 	BackG.ImAlt = JLeftAlt;
-#if !defined(DOSCODE)
 	BackG.KeyEquiv = VKEY_LTARROW;
-#endif
+
 	ForwardG.Im = JRight;
 	ForwardG.ImAlt = JRightAlt;
-#if !defined(DOSCODE)
 	ForwardG.KeyEquiv = VKEY_RTARROW;
-#endif
+
 	CancelG.Im = JCancel;
 	CancelG.ImAlt = JCancelAlt;
 
@@ -785,18 +776,14 @@ static void turnPage(bool FromLeft) {
 		for (counter = 0; counter < VGAScreenWidth; counter += 8) {
 			g_music->updateMusic();
 			waitTOF();
-#if !defined(DOSCODE)
 			ScreenImage.ImageData = getVGABaseAddr();
-#endif
 			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, VGAScreenHeight);
 		}
 	} else {
 		for (counter = (VGAScreenWidth - 8); counter > 0; counter -= 8) {
 			g_music->updateMusic();
 			waitTOF();
-#if !defined(DOSCODE)
 			ScreenImage.ImageData = getVGABaseAddr();
-#endif
 			bltBitMap(&JBackImage, counter, 0, &ScreenImage, counter, 0, 8, VGAScreenHeight);
 		}
 	}
@@ -819,9 +806,7 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 
 	drawJournalText();
 
-#if !defined(DOSCODE)
 	ScreenImage.ImageData = getVGABaseAddr();
-#endif
 
 	if (wipenum == 0)
 		bltBitMap(&JBackImage, 0, 0, &ScreenImage, 0, 0, VGAScreenWidth, VGAScreenHeight);
@@ -838,9 +823,7 @@ static void drawJournal(uint16 wipenum, bool needFade) {
 	else
 		unGhoastGadget(&ForwardG);
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 
 
 	if (needFade)
@@ -948,9 +931,7 @@ void doJournal() {
 	fade(false, 0);
 	mouseHide();
 
-#if !defined(DOSCODE)
 	ScreenImage.ImageData = getVGABaseAddr();
-#endif
 
 	setAPen(0);
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
@@ -958,9 +939,7 @@ void doJournal() {
 
 	journalCleanUp();
 
-#if !defined(DOSCODE)
 	ungetVGABaseAddr();
-#endif
 }
 
 
@@ -996,64 +975,6 @@ static char DriveName[5] [MAXDEVNAMES];
 /* and returned the number of drives that it found.                          */
 /*****************************************************************************/
 uint16 doDisks(void) {
-#if defined(DOSCODE)
-	uint16 many = 0, counter = 2;
-	union REGS regs;
-	char str[5];
-
-	if (manydisks)
-		return manydisks;
-
-	while ((counter < 7) && (many < MAXDEVNAMES)) {
-		memset(&regs, 0, sizeof(regs));
-		/*
-		    regs.h.ah = 0x32;
-		    regs.h.dl = counter+1;
-		    int386(0x21, &regs, &regs);
-		    if (regs.h.al == 0)
-		    {
-		 */
-		regs.h.ah = 0x36;
-		regs.h.dl = counter + 1;
-		int386(0x21, &regs, &regs);
-
-		if (regs.w.ax != 0xFFFF) {
-			str[0] = counter + 'A';
-			str[1] = ':';
-			str[2] = '\\';
-			str[3] = 0;
-			strcpy(DriveName[many], str);
-			many++;
-		}
-
-		counter++;
-	}
-
-	return many;
-#elif defined(WIN32)
-	extern void winGetDriveLetters(char cdLetters[], int size);
-	char letters[28];
-	char str[5];
-	uint16 many = 0, counter = 2;
-
-	if (manydisks)
-		return manydisks;
-
-	winGetDriveLetters(letters, 28);
-
-	while ((counter < 7) && (many < MAXDEVNAMES) && letters[many] != 0) {
-		str[0] = letters[many];
-		str[1] = ':';
-		str[2] = '\\';
-		str[3] = 0;
-		strcpy(DriveName[many], str);
-		many++;
-		counter++;
-	}
-
-	return many;
-#else
-	// !!!!goofy test code
 	char str[5];
 	str[0] = 'C';
 	str[1] = ':';
@@ -1061,12 +982,7 @@ uint16 doDisks(void) {
 	str[3] = 0;
 	strcpy(DriveName[0], str);
 	return 1;
-#endif
 }
-
-
-
-
 
 /*****************************************************************************/
 /* Does the user interface to save or restore a game position                */
@@ -1222,8 +1138,8 @@ static void drawSaveLoad() {
 			thumbnail.Width = 128;
 			thumbnail.Height = 72;
 			thumbnail.ImageData = g_SaveGameInfo[j].SaveGameImage;
-			screen.Width = 640;
-			screen.Height = 480;
+			screen.Width = VGAScreenWidth;
+			screen.Height = VGAScreenHeight;
 			screen.ImageData = getVGABaseAddr();
 			bltBitMap(&thumbnail, 0, 0, &screen, 72, 67 + i * 75, 128, 72);
 			ungetVGABaseAddr();

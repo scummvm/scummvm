@@ -28,6 +28,7 @@
  *
  */
 
+#include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/diff.h"
 #include "lab/parsetypes.h"
@@ -675,23 +676,29 @@ static void doScrollWipe(char *filename) {
 /* Does the scroll bounce.  Assumes bitmap already in memory.                */
 /*****************************************************************************/
 static void doScrollBounce(void) {
-	byte *mem;
-	uint16 width, height, startline, counter,
-#if defined(DOSCODE)
-	       newby[5] = {5, 4, 3, 2, 1}, newby1[8] = {3, 3, 2, 2, 2, 1, 1, 1};
-#else
-	       newby[5] = {10, 8, 6, 4, 2}, newby1[8] = {6, 6, 4, 4, 4, 2, 2, 2};
-#endif
+	const uint16 *newby, *newby1;
+
+	const uint16 newbyd[5] = {5, 4, 3, 2, 1}, newby1d[8] = {3, 3, 2, 2, 2, 1, 1, 1};
+	const uint16 newbyw[5] = {10, 8, 6, 4, 2}, newby1w[8] = {6, 6, 4, 4, 4, 2, 2, 2};
+
+	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+		newby = newbyd;
+		newby1 = newby1d;
+	} else {
+		newby = newbyw;
+		newby1 = newby1w;
+	}
+
 
 	mouseHide();
-	width = VGAScaleX(320);
-	height = VGAScaleY(149) + SVGACord(2);
-	mem = RawDiffBM.Planes[0];
+	int width = VGAScaleX(320);
+	int height = VGAScaleY(149) + SVGACord(2);
+	byte *mem = RawDiffBM.Planes[0];
 
 	g_music->fillUpMusic(true);
-	startline = headerdata.y - height - 1;
+	int startline = headerdata.y - height - 1;
 
-	for (counter = 0; counter < 5; counter++) {
+	for (int counter = 0; counter < 5; counter++) {
 		g_music->newCheckMusic();
 		startline -= newby[counter];
 		copyPage(width, height, 0, startline, mem);
@@ -700,7 +707,7 @@ static void doScrollBounce(void) {
 		waitTOF();
 	}
 
-	for (counter = 8; counter > 0; counter--) {
+	for (int counter = 8; counter > 0; counter--) {
 		g_music->newCheckMusic();
 		startline += newby1[counter - 1];
 		copyPage(width, height, 0, startline, mem);
