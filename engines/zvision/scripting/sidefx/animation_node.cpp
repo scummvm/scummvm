@@ -40,19 +40,18 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	  _animation(NULL) {
 
 	_animation = engine->loadAnimation(fileName);
+	_animation->start();
 
-	if (fileName.hasSuffix(".rlf"))
-		_frmDelay = _animation->getTimeToNextFrame();
-	else
-		_frmDelay = Common::Rational(1000, _animation->getDuration().framerate()).toInt();
+	if (frate > 0) {
+		_frmDelayOverride = (int32)(1000.0 / frate);
 
-	if (frate > 0)
-		_frmDelay = 1000.0 / frate;
-
-	// WORKAROUND: We do not allow the engine to delay more than 66 msec
-	// per frame (15fps max)
-	if (_frmDelay > 66)
-		_frmDelay = 66;
+		// WORKAROUND: We do not allow the engine to delay more than 66 msec
+		// per frame (15fps max)
+		if (_frmDelayOverride > 66)
+			_frmDelayOverride = 66;
+	} else {
+		_frmDelayOverride = 0;
+	}
 }
 
 AnimationNode::~AnimationNode() {
@@ -90,44 +89,52 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 	if (it != _playList.end()) {
 		playnode *nod = &(*it);
 
-		nod->_delay -= deltaTimeInMillis;
-		if (nod->_delay <= 0) {
-			nod->_delay += _frmDelay;
+		if (nod->_curFrame == -1) {
+			// The node is just beginning playback
+			nod->_curFrame = nod->start;
 
-			const Graphics::Surface *frame = NULL;
+			_animation->seekToFrame(nod->start);
+			_animation->setEndFrame(nod->stop);
 
-			if (nod->_curFrame == -1) { // Start of new playlist node
-				nod->_curFrame = nod->start;
+			nod->_delay = deltaTimeInMillis; // Force the frame to draw
+			if (nod->slot)
+				scriptManager->setStateValue(nod->slot, 1);
+		} else if (_animation->endOfVideo()) {
+			// The node has reached the end; check if we need to loop
+			nod->loop--;
 
-				_animation->seekToFrame(nod->_curFrame);
-				frame = _animation->decodeNextFrame();
-
-				nod->_delay = _frmDelay;
-				if (nod->slot)
-					scriptManager->setStateValue(nod->slot, 1);
-			} else {
-				nod->_curFrame++;
-
-				if (nod->_curFrame > nod->stop) {
-					nod->loop--;
-
-					if (nod->loop == 0) {
-						if (nod->slot >= 0)
-							scriptManager->setStateValue(nod->slot, 2);
-						if (nod->_scaled) {
-							nod->_scaled->free();
-							delete nod->_scaled;
-						}
-						_playList.erase(it);
-						return _DisposeAfterUse;
-					}
-
-					nod->_curFrame = nod->start;
-					_animation->seekToFrame(nod->_curFrame);
+			if (nod->loop == 0) {
+				if (nod->slot >= 0)
+					scriptManager->setStateValue(nod->slot, 2);
+				if (nod->_scaled) {
+					nod->_scaled->free();
+					delete nod->_scaled;
 				}
-
-				frame = _animation->decodeNextFrame();
+				_playList.erase(it);
+				return _DisposeAfterUse;
 			}
+
+			nod->_curFrame = nod->start;
+			_animation->seekToFrame(nod->start);
+		}
+
+		// Check if we need to draw a frame
+		bool needsUpdate = false;
+		if (_frmDelayOverride == 0) {
+			// If not overridden, use the VideoDecoder's check
+			needsUpdate = _animation->needsUpdate();
+		} else {
+			// Otherwise, implement our own timing
+			nod->_delay -= deltaTimeInMillis;
+
+			if (nod->_delay <= 0) {
+				nod->_delay += _frmDelayOverride;
+				needsUpdate = true;
+			}
+		}
+
+		if (needsUpdate) {
+			const Graphics::Surface *frame = _animation->decodeNextFrame();
 
 			if (frame) {
 				uint32 dstw;

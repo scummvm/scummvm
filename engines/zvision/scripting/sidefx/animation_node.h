@@ -64,7 +64,7 @@ private:
 	bool _DisposeAfterUse;
 
 	Video::VideoDecoder *_animation;
-	int32 _frmDelay;
+	int32 _frmDelayOverride;
 
 public:
 	bool process(uint32 deltaTimeInMillis);
