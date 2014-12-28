@@ -41,7 +41,7 @@ extern const byte *const ROOM_TABLE[];
 extern const char *const ROOM_DESCR[];
 extern const int ROOM_NUMB;
 
-extern const byte *const CHAR_TABLE[];
+extern const byte *const CHARTBL_MM[];
 
 extern const int COMBO_TABLE[54][4];
 

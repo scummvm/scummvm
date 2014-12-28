@@ -79,6 +79,12 @@ CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 				_charTable.push_back(CharEntry(Amazon::CHARTBL[i]));
 		}
 		break;
+
+	case GType_MartianMemorandum:
+		for (int i = 0; i < 27; ++i)
+			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i]));
+		break;
+
 	default:
 		error("Unknown game");
 	}
