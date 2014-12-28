@@ -2073,6 +2073,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	glDisable(GL_MULTISAMPLE);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
@@ -2081,12 +2082,12 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 
 	glBegin(GL_LINES);
 	glVertex2f(x1, y1);
-	glVertex2f(x2, y2);
+	glVertex2f(x2 + 1, y2 + 1);
 	glEnd();
 
 	glBegin(GL_LINES);
-	glVertex2f(x3, y3);
-	glVertex2f(x4, y4);
+	glVertex2f(x3, y3 + 1);
+	glVertex2f(x4 + 1, y4);
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -2094,6 +2095,7 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+	glEnable(GL_MULTISAMPLE);
 }
 
 void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
