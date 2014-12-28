@@ -2073,7 +2073,9 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+#if !defined(__amigaos4__)
 	glDisable(GL_MULTISAMPLE);
+#endif
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
@@ -2095,7 +2097,9 @@ void GfxOpenGL::drawPolygon(const PrimitiveObject *primitive) {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+#if !defined(__amigaos4__)
 	glEnable(GL_MULTISAMPLE);
+#endif
 }
 
 void GfxOpenGL::readPixels(int x, int y, int width, int height, uint8 *buffer) {
