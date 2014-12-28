@@ -134,7 +134,7 @@ void SoundManager::playSound(Resource *res, int priority) {
 			return;
 		}
 
-		Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(resourceData + 32, sampleSize, sampleRate, 0);
+		Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(resourceData + 32, sampleSize, sampleRate, 0, DisposeAfterUse::NO);
 		_queue.push_back(audioStream);
 
 	} else
@@ -143,7 +143,7 @@ void SoundManager::playSound(Resource *res, int priority) {
 	if (!_mixer->isSoundHandleActive(_effectsHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
 						_queue[0], -1, _mixer->kMaxChannelVolume, 0,
-						DisposeAfterUse::NO);
+						DisposeAfterUse::YES);
 }
 
 void SoundManager::checkSoundQueue() {
