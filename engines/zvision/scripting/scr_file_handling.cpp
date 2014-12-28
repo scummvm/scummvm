@@ -368,7 +368,7 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		// Only used in Zork Nemesis, handles movies where the player needs to click on something (mj7g, vw3g)
 		return new HotMovControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("fist")) {
-		// Only used in Zork Nemesis, handles the door lock puzzle with the skeletal fingers (td60, td90, td9e)
+		// Only used in Zork Nemesis, handles the door lock puzzle with the skeletal fingers (td9e)
 		return new FistControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("paint")) {
 		// Only used in Zork Nemesis, handles the painting puzzle screen in Lucien's room in Irondune (ch4g)
