@@ -28,10 +28,10 @@
 #include "common/util.h"
 
 #include "engines/stark/archive.h"
+#include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
-class Resource;
 class Level;
 class Location;
 
@@ -56,7 +56,8 @@ public:
 	Common::ReadStream *getFile(const Common::String &fileName, const Common::String &archiveName);
 
 	/** Get the resource tree root for an archive, and increment the archive use count */
-	Resource *useRoot(const Common::String &archiveName);
+	template <class T>
+	T *useRoot(const Common::String &archiveName);
 
 	/** Decrement the root's archive use count */
 	void returnRoot(const Common::String &archiveName);
@@ -94,6 +95,24 @@ private:
 
 	LoadedArchiveList _archives;
 };
+
+template <class T>
+T *ArchiveLoader::useRoot(const Common::String &archiveName) {
+	LoadedArchive *archive = findArchive(archiveName);
+	archive->incUsage();
+
+	Resource *root = archive->getRoot();
+
+	if (root->getType() != T::TYPE) {
+		error("Wrong root type for archive '%s' found '%s', expected '%s'",
+				archiveName.c_str(), root->getType().getName(), ResourceType(T::TYPE).getName());
+	}
+
+	return (T *)root;
+}
+
+template <>
+Resource *ArchiveLoader::useRoot<Resource>(const Common::String &archiveName);
 
 } // End of namespace Stark
 

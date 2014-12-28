@@ -183,10 +183,17 @@ public:
 	 */
 	virtual void onPreDestroy();
 
-	Resource *findChild(ResourceType type, int subType = -1, bool mustBeUnique = true);
-	Resource *findChildWithIndex(ResourceType type, int subType, uint16 index);
+	template<class T>
+	T *findChild(bool mustBeUnique = true);
 
-	Common::Array<Resource *> listChildren(ResourceType type, int subType = -1);
+	template<class T>
+	T *findChildWithSubtype(int subType, bool mustBeUnique = true);
+
+	template<class T>
+	T *findChildWithIndex(uint16 index, int subType = -1);
+
+	template<class T>
+	Common::Array<T *> listChildren(int subType = -1);
 
 	void addChild(Resource *child);
 
@@ -218,6 +225,55 @@ protected:
 	uint32 _dataLength;
 	byte *_data;
 };
+
+template <class T>
+Common::Array<T *> Resource::listChildren(int subType) {
+	Common::Array<T *> list;
+
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == T::TYPE
+				&& (_children[i]->getSubType() == subType || subType == -1)) {
+			// Found a matching child
+			list.push_back((T *)_children[i]);
+		}
+	}
+
+	return list;
+}
+
+template<class T>
+T *Resource::findChild(bool mustBeUnique) {
+	return findChildWithSubtype<T>(-1, mustBeUnique);
+}
+
+template <class T>
+T *Resource::findChildWithSubtype(int subType, bool mustBeUnique) {
+	Common::Array<T *> list = listChildren<T>(subType);
+
+	if (list.empty()) {
+		return nullptr;
+	}
+
+	if (list.size() > 1 && mustBeUnique) {
+		error("Several children resources matching criteria type = %s, subtype = %d", ResourceType(T::TYPE).getName(), subType);
+	}
+
+	return list.front();
+}
+
+template <class T>
+T *Resource::findChildWithIndex(uint16 index, int subType) {
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == T::TYPE
+				&& (_children[i]->getSubType() == subType || subType == -1)
+				&& _children[i]->getIndex() == index) {
+			// Found a matching child
+			return (T *)_children[i];
+		}
+	}
+
+	return nullptr;
+}
 
 } // End of namespace Stark
 

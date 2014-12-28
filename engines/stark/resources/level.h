@@ -33,6 +33,8 @@ class XRCReadStream;
 
 class Level : public Resource {
 public:
+	static const ResourceType::Type TYPE = ResourceType::kLevel;
+
 	Level(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Level();
 

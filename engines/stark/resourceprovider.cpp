@@ -40,18 +40,18 @@ void ResourceProvider::initGlobal() {
 	_archiveLoader->load("x.xarc");
 
 	// Set the root tree
-	Root *root = static_cast<Root *>(_archiveLoader->useRoot("x.xarc"));
+	Root *root = _archiveLoader->useRoot<Root>("x.xarc");
 	_global->setRoot(root);
 
 	// Find the global level node
-	Level *global = static_cast<Level *>(root->findChild(ResourceType::kLevel, 1));
+	Level *global = root->findChildWithSubtype<Level>(1);
 
 	// Load the global archive
 	Common::String globalArchiveName = _archiveLoader->buildArchiveName(global);
 	_archiveLoader->load(globalArchiveName);
 
 	// Set the global tree
-	global = static_cast<Level *>(_archiveLoader->useRoot(globalArchiveName));
+	global = _archiveLoader->useRoot<Level>(globalArchiveName);
 	_global->setLevel(global);
 
 	//TODO: Retrieve the inventory and April from the global tree
@@ -83,21 +83,21 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 
 	// Retrieve the level archive name
 	Root *root = _global->getRoot();
-	Level *rootLevelResource = (Level *) root->findChildWithIndex(ResourceType::kLevel, -1, level);
+	Level *rootLevelResource = root->findChildWithIndex<Level>(level);
 	Common::String levelArchive = _archiveLoader->buildArchiveName(rootLevelResource);
 
 	// Load the archive, and get the resource sub-tree root
 	_archiveLoader->load(levelArchive);
-	currentLocation->setLevel(static_cast<Level *>(_archiveLoader->useRoot(levelArchive)));
+	currentLocation->setLevel(_archiveLoader->useRoot<Level>(levelArchive));
 
 	// Retrieve the location archive name
 	Level *levelResource = currentLocation->getLevel();
-	Location *levelLocationResource = (Location *) levelResource->findChildWithIndex(ResourceType::kLocation, -1, location);
+	Location *levelLocationResource = levelResource->findChildWithIndex<Location>(location);
 	Common::String locationArchive = _archiveLoader->buildArchiveName(levelResource, levelLocationResource);
 
 	// Load the archive, and get the resource sub-tree root
 	_archiveLoader->load(locationArchive);
-	currentLocation->setLocation(static_cast<Location *>(_archiveLoader->useRoot(locationArchive)));
+	currentLocation->setLocation(_archiveLoader->useRoot<Location>(locationArchive));
 
 	_locations.push_back(currentLocation);
 

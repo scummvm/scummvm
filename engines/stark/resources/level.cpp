@@ -30,7 +30,7 @@ Level::~Level() {
 
 Level::Level(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name) {
-	_type = ResourceType::kLevel;
+	_type = TYPE;
 }
 
 void Level::printData() {

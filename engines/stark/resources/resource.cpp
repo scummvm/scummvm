@@ -186,51 +186,6 @@ void Resource::addChild(Resource *child) {
 	_children.push_back(child);
 }
 
-Resource *Resource::findChild(ResourceType type, int subType, bool mustBeUnique) {
-	Resource *child = nullptr;
-
-	for (uint i = 0; i < _children.size(); i++) {
-		if (_children[i]->getType() == type
-				&& (_children[i]->getSubType() == subType || subType == -1)) {
-			// Found a matching child
-			if (!child) {
-				child = _children[i];
-			} else if (mustBeUnique) {
-				error("Several children resources matching criteria type = %s, subtype = %d", type.getName(), subType);
-			}
-		}
-	}
-
-	return child;
-}
-
-Resource *Resource::findChildWithIndex(ResourceType type, int subType, uint16 index) {
-	for (uint i = 0; i < _children.size(); i++) {
-		if (_children[i]->getType() == type
-				&& (_children[i]->getSubType() == subType || subType == -1)
-				&& _children[i]->getIndex() == index) {
-			// Found a matching child
-			return _children[i];
-		}
-	}
-
-	return nullptr;
-}
-
-Common::Array<Resource *> Resource::listChildren(ResourceType type, int subType) {
-	Common::Array<Resource *> list;
-
-	for (uint i = 0; i < _children.size(); i++) {
-		if (_children[i]->getType() == type
-				&& (_children[i]->getSubType() == subType || subType == -1)) {
-			// Found a matching child
-			list.push_back(_children[i]);
-		}
-	}
-
-	return list;
-}
-
 UnimplementedResource::UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
 		_dataLength(0),

@@ -33,6 +33,8 @@ class XRCReadStream;
 
 class Location : public Resource {
 public:
+	static const ResourceType::Type TYPE = ResourceType::kLocation;
+
 	Location(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Location();
 

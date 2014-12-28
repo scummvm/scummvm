@@ -30,7 +30,7 @@ Root::~Root() {
 
 Root::Root(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name) {
-	_type = ResourceType::kRoot;
+	_type = TYPE;
 }
 
 void Root::printData() {

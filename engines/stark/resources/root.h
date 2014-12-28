@@ -33,6 +33,8 @@ class XRCReadStream;
 
 class Root : public Resource {
 public:
+	static const ResourceType::Type TYPE = ResourceType::kRoot;
+
 	Root(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Root();
 

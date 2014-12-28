@@ -23,6 +23,9 @@
 #include "engines/stark/console.h"
 #include "engines/stark/archive.h"
 #include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/location.h"
+#include "engines/stark/resources/root.h"
 #include "engines/stark/archiveloader.h"
 
 #include "common/file.h"
@@ -94,7 +97,7 @@ bool Console::Cmd_DumpResources(int argc, const char **argv) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();
 	archiveLoader->load(argv[1]);
 
-	Resource *resource = archiveLoader->useRoot(argv[1]);
+	Resource *resource = archiveLoader->useRoot<Resource>(argv[1]);
 	if (resource == nullptr) {
 		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
 		return true;
@@ -111,29 +114,29 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();
 
 	archiveLoader->load("x.xarc");
-	Resource *root = archiveLoader->useRoot("x.xarc");
+	Root *root = archiveLoader->useRoot<Root>("x.xarc");
 
 	// Find all the levels
-	Common::Array<Resource *> levels = root->listChildren(ResourceType::kLevel);
+	Common::Array<Level *> levels = root->listChildren<Level>();
 
 	// Loop over the levels
 	for (uint i = 0; i < levels.size(); i++) {
-		Resource *level = levels[i];
+		Level *level = levels[i];
 
-		Common::String levelArchive = archiveLoader->buildArchiveName((Level *) level);
+		Common::String levelArchive = archiveLoader->buildArchiveName(level);
 		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
 
 		// Load the detailed level archive
 		archiveLoader->load(levelArchive);
-		level = archiveLoader->useRoot(levelArchive);
+		level = archiveLoader->useRoot<Level>(levelArchive);
 
-		Common::Array<Resource *> locations = level->listChildren(ResourceType::kLocation);
+		Common::Array<Location *> locations = level->listChildren<Location>();
 
 		// Loop over the locations
 		for (uint j = 0; j < locations.size(); j++) {
-			Resource *location = locations[j];
+			Location *location = locations[j];
 
-			Common::String roomArchive = archiveLoader->buildArchiveName((Level *) level, (Location *) location);
+			Common::String roomArchive = archiveLoader->buildArchiveName(level, location);
 			debugPrintf("%s - %s\n", roomArchive.c_str(), location->getName().c_str());
 		}
 
