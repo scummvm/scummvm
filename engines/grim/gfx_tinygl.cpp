@@ -627,6 +627,7 @@ void GfxTinyGL::drawShadowPlanes() {
 	}
 	tglSetShadowMaskBuf(nullptr);
 	tglDisable(TGL_SHADOW_MASK_MODE);
+	tglDepthMask(TGL_TRUE);
 
 	tglPopMatrix();
 }
