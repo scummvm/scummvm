@@ -69,10 +69,6 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 						   0, 0, 0, 0, 0, 0, 1, 1, 0, 0};
 
 
-static Image MouseImage, BackImage;
-static byte BackImageBuffer[256];
-static uint16 backx, backy;
-
 static bool drawmouse = false, gadhit    = false;
 static Gadget *hitgad = NULL;
 
@@ -128,43 +124,6 @@ void attachGadgetList(Gadget *GadList) {
 	ScreenGadgetList = GadList;
 }
 
-
-
-
-static void drawMouse(void) {
-	if (BackImage.ImageData) {
-		if (backx <= VGAScreenWidth - BackImage.Width && backy <= VGAScreenHeight - BackImage.Height)
-			drawMaskImage(&MouseImage, backx, backy);
-	} else {
-		if (CurMouseX <= VGAScreenWidth - MouseImage.Width && CurMouseY <= VGAScreenHeight - MouseImage.Height)
-			drawMaskImage(&MouseImage, CurMouseX, CurMouseY);
-	}
-}
-
-
-
-static void getBackMouse(void) {
-	BackImage.Width = MouseImage.Width;
-	BackImage.Height = MouseImage.Height;
-	BackImage.ImageData = BackImageBuffer;
-
-	backx = CurMouseX;
-	backy = CurMouseY;
-
-	if (backx <= VGAScreenWidth - BackImage.Width && backy <= VGAScreenHeight - BackImage.Height)
-		readScreenImage(&BackImage, backx, backy);
-}
-
-static void restoreBackMouse(void) {
-	if (BackImage.ImageData) {
-		if (backx <= VGAScreenWidth - BackImage.Width && backy <= VGAScreenHeight - BackImage.Height)
-			drawImage(&BackImage, backx, backy);
-
-		BackImage.ImageData = NULL;
-	}
-}
-
-
 static Gadget *TempGad;
 
 
@@ -179,12 +138,6 @@ void mouse_handler(int32 max, int32 mcx, int32 mdx) {
 
 			if (IsHiRes && !QuitMouseHandler) {
 				drawmouse = true;
-			} else if (!MouseHidden && !QuitMouseHandler) {
-				VGAStorePage();
-				restoreBackMouse();
-				getBackMouse();
-				drawMouse();
-				VGARestorePage();
 			}
 		}
 	}
@@ -221,9 +174,6 @@ void updateMouse(void) {
 	if (drawmouse && !MouseHidden) {
 		QuitMouseHandler = true;
 		drawmouse = false;
-		restoreBackMouse();
-		getBackMouse();
-		drawMouse();
 		QuitMouseHandler = false;
 		doUpdateDisplay = true;
 	}
@@ -256,10 +206,8 @@ void updateMouse(void) {
 /* Initializes the mouse.                                                    */
 /*****************************************************************************/
 bool initMouse(void) {
-	BackImage.ImageData = NULL;
-	MouseImage.ImageData = MouseData;
-	MouseImage.Width = MouseImageWidth;
-	MouseImage.Height = MouseImageHeight;
+	g_system->setMouseCursor(MouseData, MouseImageWidth, MouseImageHeight, 0, 0, 0);
+	g_system->showMouse(false);
 
 	mouseMove(0, 0);
 
@@ -281,11 +229,7 @@ bool mouseReset(void) {
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
 void mouseShow(void) {
-	QuitMouseHandler = true;
-	VGAStorePage();
-	mouseShowXY(CurMouseX, CurMouseY);
-	VGARestorePage();
-	QuitMouseHandler = false;
+	g_system->showMouse(true);
 }
 
 
@@ -304,9 +248,6 @@ void mouseShowXY(uint16 MouseX, uint16 MouseY) {
 	if ((NumHidden == 0) && MouseHidden) {
 		CurMouseX = MouseX;
 		CurMouseY = MouseY;
-		getBackMouse();
-		drawMouse();
-		WSDL_UpdateScreen();
 		MouseHidden = false;
 	}
 
@@ -325,9 +266,8 @@ void mouseHide(void) {
 
 	if (NumHidden && !MouseHidden) {
 		MouseHidden = true;
-		VGAStorePage();
-		restoreBackMouse();
-		VGARestorePage();
+
+		g_system->showMouse(false);
 	}
 
 	QuitMouseHandler = false;
@@ -346,7 +286,8 @@ void mouseHideXY(void) {
 
 	if (NumHidden && !MouseHidden) {
 		MouseHidden = true;
-		restoreBackMouse();
+
+		g_system->showMouse(false);
 	}
 
 	QuitMouseHandler = false;
@@ -354,18 +295,16 @@ void mouseHideXY(void) {
 
 
 
-
+extern int g_MouseX;
+extern int g_MouseY;
 
 /*****************************************************************************/
 /* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */
 /* from virtual to screen co-ordinates automatically.                        */
 /*****************************************************************************/
 void mouseXY(uint16 *x, uint16 *y) {
-	int xx = 0, yy = 0;
-	//SDL_GetMousePos(&xx, &yy);
-	warning("STUB: mouseXY");
-	*x = (uint16)xx;
-	*y = (uint16)yy;
+	*x = (uint16)g_MouseX;
+	*y = (uint16)g_MouseY;
 
 	if (!IsHiRes)
 		(*x) /= 2;
@@ -386,12 +325,6 @@ void mouseMove(uint16 x, uint16 y) {
 	if (!MouseHidden) {
 		QuitMouseHandler = true;
 		mouseXY(&CurMouseX, &CurMouseY);
-		VGAStorePage();
-		restoreBackMouse();
-		getBackMouse();
-		drawMouse();
-		VGARestorePage();
-		WSDL_UpdateScreen();
 		QuitMouseHandler = false;
 	}
 }
