@@ -45,9 +45,9 @@ static const ADGameDescription labDescriptions[] = {
 		"lab",
 		"",
 		{
-			{ "doors",       0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
-			{ "notes11",     0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
-			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 },
+			{ "doors",       0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
+			{ "notes11",     0, "63e873f659f8f46f9809d16a2bf653c7", 3562 }, // fonts/notes11
+			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
 			{ NULL, 0, NULL, 0 }
 		},
 		Common::EN_ANY,
@@ -59,9 +59,9 @@ static const ADGameDescription labDescriptions[] = {
 		"lab",
 		"Lowres",
 		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
-			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
-			{ "64b",     0, "3a84d41bcc6a782f22e8e954bce09721", 39916 },
+			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
+			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 }, // fonts/notes11
+			{ "64b",     0, "3a84d41bcc6a782f22e8e954bce09721", 39916 }, // game/pict/h2/64b
 			{ NULL, 0, NULL, 0 }
 		},
 		Common::EN_ANY,
@@ -73,10 +73,10 @@ static const ADGameDescription labDescriptions[] = {
 		"lab",
 		"Rerelease",
 		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
-			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
-			{ "inv",     0, "0a5377f0673454b1743322471892ad43", 39120 },
-			{ "48",      0, "fb2d990c5fb5dd36a618e5ca8136b740", 892 },
+			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 }, // game/doors
+			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 }, // fonts/notes11
+			{ "noteold.fon", 0, "6c1d90ad55149556e79d3f7bfddb4bd7", 9252 }, // game/spict/noteold.fon
+			{ "wyrmkeep",0, "97c7064c54c28b952d37c4ebff6efa50", 52286 }, // game/spict/intro
 			{ NULL, 0, NULL, 0 }
 		},
 		Common::EN_ANY,
@@ -86,23 +86,8 @@ static const ADGameDescription labDescriptions[] = {
 	},
 	{
 		"lab",
-		"Trial",
-		{
-			{ "doors",   0, "d77536010e7e5ae17ee066323ceb9585", 2537 },
-			{ "notes11", 0, "63e873f659f8f46f9809d16a2bf653c7", 3562 },
-			{ "inv",     0, "0a5377f0673454b1743322471892ad43", 39120 },
-			{ "48",      0, "a319ba9bab20b24200257e826b5494e1", 892 },
-			{ NULL, 0, NULL, 0 }
-		},
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_DEMO,
-		GUIO0()
-	},
-	{
-		"lab",
 		"",
-		AD_ENTRY1s("doors", "7bf458df6ec30cc8ef4665e4d7c77f59", 2537),
+		AD_ENTRY1s("doors", "7bf458df6ec30cc8ef4665e4d7c77f59", 2537), // game/doors
 		Common::EN_ANY,
 		Common::kPlatformAmiga,
 		ADGF_NO_FLAGS,
@@ -118,6 +103,7 @@ static const char *const directoryGlobs[] = {
 		"spict",
 		"rooms",
 		"h2",
+		"intro",
         0
 };
 
