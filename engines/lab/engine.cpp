@@ -275,7 +275,7 @@ bool setUpScreens(void) {
 	/* Creates the gadgets for the movement control panel */
 	y = VGAScaleY(173) - SVGACord(2);
 
-	if (g_lab->getPlatform() != Common::kPlatformWindows) {
+	if (g_lab->getPlatform() == Common::kPlatformWindows) {
 		MoveGadgetList = createButton(VGAScaleX(1), y, 0, 't', MoveImages[0], MoveImages[1]);
 		curgad = MoveGadgetList;
 		curgad->NextGadget = createButton(VGAScaleX(33), y, 1, 'm', MoveImages[2], MoveImages[3]);

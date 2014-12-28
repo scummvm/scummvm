@@ -48,11 +48,6 @@ static uint32 buffersize, realbuffersize;
 uint32 ReadSoFar;
 bool ReadIsError, ReadIsDone;
 
-
-#if defined(WIN32)
-#define stat _stat
-#endif
-
 /*****************************************************************************/
 /* Returns the size of a file.                                               */
 /*****************************************************************************/
