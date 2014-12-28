@@ -53,6 +53,10 @@ private:
 	 */
 	void setupGame();
 
+	void initObjects();
+	void configSelect();
+	void initVariables();
+
 protected:
 	/**
 	 * Play the game

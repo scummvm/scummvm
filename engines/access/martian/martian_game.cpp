@@ -37,25 +37,77 @@ MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDes
 MartianEngine::~MartianEngine() {
 }
 
+void MartianEngine::initObjects() {
+	_room = new MartianRoom(this);
+	_scripts = new MartianScripts(this);
+}
+
+void MartianEngine::configSelect() {
+	// No implementation required in MM
+}
+
+void MartianEngine::initVariables() {
+	warning("TODO: initVariables");
+
+	// Set player room and position
+	_player->_roomNumber = 7;
+
+	_inventory->_startInvItem = 0;
+	_inventory->_startInvBox = 0;
+	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
+	_player->_playerOff = false;
+
+	// Setup timers
+	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
+	for (int i = 0; i < 32; ++i) {
+		TimerEntry te;
+		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
+		te._flag = 1;
+
+		_timers.push_back(te);
+	}
+
+	_player->_playerX = _player->_rawPlayer.x = TRAVEL_POS[_player->_roomNumber][0];
+	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
+	_room->_selectCommand = -1;
+	_events->setNormalCursor(CURSOR_CROSSHAIRS);
+	_mouseMode = 0;
+	_numAnimTimers = 0;
+}
+
 void MartianEngine::playGame() {
-	// Do introduction
-	doIntroduction();
-	if (shouldQuit())
-		return;
+	// Initialize Amazon game-specific objects
+	initObjects();
 
 	// Setup the game
 	setupGame();
+	configSelect();
 
-	_screen->clearScreen();
-	_screen->setPanel(0);
-	_screen->forceFadeOut();
+	if (_loadSaveSlot == -1) {
+		// Do introduction
+		doIntroduction();
+		if (shouldQuit())
+			return;
+	}
 
-	_events->showCursor();
+	do {
+		_restartFl = false;
+		_screen->clearScreen();
+		_screen->setPanel(0);
+		_screen->forceFadeOut();
+		_events->showCursor();
 
-	// Setup and execute the room
-	_room = new MartianRoom(this);
-	_scripts = new MartianScripts(this);
-	_room->doRoom();
+		initVariables();
+
+		// If there's a pending savegame to load, load it
+		if (_loadSaveSlot != -1) {
+			loadGameState(_loadSaveSlot);
+			_loadSaveSlot = -1;
+		}
+
+		// Execute the room
+		_room->doRoom();
+	} while (_restartFl);
 }
 
 void MartianEngine::doIntroduction() {
