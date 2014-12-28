@@ -28,6 +28,7 @@
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
+#include "engines/stark/stateprovider.h"
 #include "engines/stark/gfx/driver.h"
 
 #include "common/config-manager.h"
@@ -45,6 +46,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_console(nullptr),
 		_global(nullptr),
 		_archiveLoader(nullptr),
+		_stateProvider(nullptr),
 		_resourceProvider(nullptr) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -64,6 +66,7 @@ StarkEngine::~StarkEngine() {
 	delete _gfx;
 	delete _resourceProvider;
 	delete _global;
+	delete _stateProvider;
 	delete _archiveLoader;
 }
 
@@ -75,8 +78,9 @@ Common::Error StarkEngine::run() {
 	_gfx->setupScreen(640, 480, ConfMan.getBool("fullscreen"));
 
 	_archiveLoader = new ArchiveLoader();
+	_stateProvider = new StateProvider();
 	_global = new Global();
-	_resourceProvider = new ResourceProvider(_archiveLoader, _global);
+	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
 
 	// Load global resources
 	_resourceProvider->initGlobal();

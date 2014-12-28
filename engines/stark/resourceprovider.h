@@ -33,6 +33,7 @@ class Level;
 class Location;
 
 class ArchiveLoader;
+class StateProvider;
 
 /**
  * Current level / location holder object
@@ -103,7 +104,7 @@ private:
  */
 class ResourceProvider {
 public:
-	ResourceProvider(ArchiveLoader *archiveLoader, Global *global);
+	ResourceProvider(ArchiveLoader *archiveLoader, StateProvider *stateProvider, Global *global);
 
 	/** Load the global archives and fill the global object */
 	void initGlobal();
@@ -135,6 +136,7 @@ private:
 
 	Global *_global;
 	ArchiveLoader *_archiveLoader;
+	StateProvider *_stateProvider;
 
 	bool _locationChangeRequest;
 	CurrentList _locations;

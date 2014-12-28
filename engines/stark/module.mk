@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	skeleton_anim.o \
 	sound.o \
 	stark.o \
+	stateprovider.o \
 	texture.o \
 	xmg.o \
 	xrcreader.o

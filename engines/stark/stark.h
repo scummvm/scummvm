@@ -44,6 +44,7 @@ class GfxDriver;
 class Scene;
 class Global;
 class ArchiveLoader;
+class StateProvider;
 class ResourceProvider;
 
 class StarkEngine : public Engine {
@@ -65,6 +66,7 @@ private:
 
 	Global *_global;
 	ArchiveLoader *_archiveLoader;
+	StateProvider *_stateProvider;
 	ResourceProvider *_resourceProvider;
 
 	const ADGameDescription *_gameDescription;

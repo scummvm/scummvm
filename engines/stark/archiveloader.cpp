@@ -75,14 +75,16 @@ ArchiveLoader::~ArchiveLoader() {
 	}
 }
 
-void ArchiveLoader::load(const Common::String &archiveName) {
+bool ArchiveLoader::load(const Common::String &archiveName) {
 	if (hasArchive(archiveName)) {
 		// Already loaded
-		return;
+		return false;
 	}
 
 	LoadedArchive *archive = new LoadedArchive(archiveName);
 	_archives.push_back(archive);
+
+	return true;
 }
 
 void ArchiveLoader::unloadUnused() {
@@ -107,9 +109,11 @@ Resource *ArchiveLoader::useRoot<Resource>(const Common::String &archiveName) {
 	return archive->getRoot();
 }
 
-void ArchiveLoader::returnRoot(const Common::String &archiveName) {
+bool ArchiveLoader::returnRoot(const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	archive->decUsage();
+
+	return !archive->isInUse();
 }
 
 bool ArchiveLoader::hasArchive(const Common::String &archiveName) {

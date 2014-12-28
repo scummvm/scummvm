@@ -26,11 +26,13 @@
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/stateprovider.h"
 
 namespace Stark {
 
-ResourceProvider::ResourceProvider(ArchiveLoader *archiveLoader, Global *global) :
+ResourceProvider::ResourceProvider(ArchiveLoader *archiveLoader, StateProvider *stateProvider, Global *global) :
 		_archiveLoader(archiveLoader),
+		_stateProvider(stateProvider),
 		_global(global),
 		_locationChangeRequest(false) {
 }
@@ -52,6 +54,7 @@ void ResourceProvider::initGlobal() {
 
 	// Set the global tree
 	global = _archiveLoader->useRoot<Level>(globalArchiveName);
+	_stateProvider->restoreLevelState(global);
 	_global->setLevel(global);
 
 	//TODO: Retrieve the inventory and April from the global tree
@@ -87,8 +90,13 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	Common::String levelArchive = _archiveLoader->buildArchiveName(rootLevelResource);
 
 	// Load the archive, and get the resource sub-tree root
-	_archiveLoader->load(levelArchive);
+	bool newlyLoaded = _archiveLoader->load(levelArchive);
 	currentLocation->setLevel(_archiveLoader->useRoot<Level>(levelArchive));
+
+	// If we just loaded a resource tree, restore its state
+	if (newlyLoaded) {
+		_stateProvider->restoreLevelState(currentLocation->getLevel());
+	}
 
 	// Retrieve the location archive name
 	Level *levelResource = currentLocation->getLevel();
@@ -96,8 +104,13 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	Common::String locationArchive = _archiveLoader->buildArchiveName(levelResource, levelLocationResource);
 
 	// Load the archive, and get the resource sub-tree root
-	_archiveLoader->load(locationArchive);
+	newlyLoaded = _archiveLoader->load(locationArchive);
 	currentLocation->setLocation(_archiveLoader->useRoot<Location>(locationArchive));
+
+	// If we just loaded a resource tree, restore its state
+	if (newlyLoaded) {
+		_stateProvider->restoreLocationState(currentLocation->getLevel(), currentLocation->getLocation());
+	}
 
 	_locations.push_back(currentLocation);
 
@@ -133,6 +146,9 @@ void ResourceProvider::purgeOldLocations() {
 	while (_locations.size() >= 2) {
 		Current *location = _locations.front();
 
+		_stateProvider->saveLocationState(location->getLevel(), location->getLocation());
+		_stateProvider->saveLevelState(location->getLevel());
+
 		_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(location->getLevel(), location->getLocation()));
 		_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(location->getLevel()));
 
@@ -149,6 +165,9 @@ void ResourceProvider::shutdown() {
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		Current *location = *it;
 
+		_stateProvider->saveLocationState(location->getLevel(), location->getLocation());
+		_stateProvider->saveLevelState(location->getLevel());
+
 		_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(location->getLevel(), location->getLocation()));
 		_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(location->getLevel()));
 
@@ -157,6 +176,8 @@ void ResourceProvider::shutdown() {
 	_locations.clear();
 
 	// Return the global resources
+	_stateProvider->saveLevelState(_global->getLevel());
+
 	_archiveLoader->returnRoot(_archiveLoader->buildArchiveName(_global->getLevel()));
 	_archiveLoader->returnRoot("x.xarc");
 

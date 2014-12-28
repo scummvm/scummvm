@@ -29,6 +29,7 @@
 namespace Stark {
 
 class XRCReadStream;
+class ResourceSerializer;
 
 class ResourceType {
 public:
@@ -150,6 +151,18 @@ public:
 	virtual void readData(XRCReadStream *stream);
 
 	/**
+	 * Persist / restore the resource state
+	 */
+	virtual void saveLoad(ResourceSerializer *serializer);
+
+	/**
+	 * Persist / restore the resource state
+	 *
+	 * Called only for active locations
+	 */
+	virtual void saveLoadCurrent(ResourceSerializer *serializer);
+
+	/**
 	 * Called when the node's initialization is complete.
 	 *
 	 * Allows to load additional data from file.
@@ -240,6 +253,9 @@ Common::Array<T *> Resource::listChildren(int subType) {
 
 	return list;
 }
+
+template<>
+Common::Array<Resource *> Resource::listChildren<Resource>(int subType);
 
 template<class T>
 T *Resource::findChild(bool mustBeUnique) {

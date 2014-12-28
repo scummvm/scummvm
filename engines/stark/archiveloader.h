@@ -47,7 +47,7 @@ public:
 	~ArchiveLoader();
 
 	/** Load a Xarc archive, and add it to the managed archives list */
-	void load(const Common::String &archiveName);
+	bool load(const Common::String &archiveName);
 
 	/** Unload all the unused Xarc archives */
 	void unloadUnused();
@@ -60,7 +60,7 @@ public:
 	T *useRoot(const Common::String &archiveName);
 
 	/** Decrement the root's archive use count */
-	void returnRoot(const Common::String &archiveName);
+	bool returnRoot(const Common::String &archiveName);
 
 	/** Build the archive filename for a level or a location */
 	Common::String buildArchiveName(Level *level, Location *location = nullptr);

@@ -113,6 +113,12 @@ Resource::~Resource() {
 void Resource::readData(XRCReadStream *stream) {
 }
 
+void Resource::saveLoad(ResourceSerializer *serializer) {
+}
+
+void Resource::saveLoadCurrent(ResourceSerializer *serializer) {
+}
+
 void Resource::onPostRead() {
 }
 
@@ -180,6 +186,19 @@ void Resource::print(uint depth) {
 	for (uint i = 0; i < _children.size(); i++) {
 		_children[i]->print(depth + 1);
 	}
+}
+
+template<>
+Common::Array<Resource *> Resource::listChildren<Resource>(int subType) {
+	assert(subType == -1);
+
+	Common::Array<Resource *> list;
+
+	for (uint i = 0; i < _children.size(); i++) {
+		list.push_back(_children[i]);
+	}
+
+	return list;
 }
 
 void Resource::addChild(Resource *child) {
