@@ -84,7 +84,6 @@ public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
 	// Fields in original Player structure
-	byte *_monData;
 	int _walkOffRight[PLAYER_DATA_COUNT];
 	int _walkOffLeft[PLAYER_DATA_COUNT];
 	int _walkOffUp[PLAYER_DATA_COUNT];

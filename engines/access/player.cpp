@@ -48,7 +48,6 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
 	_frameNumber = 0;
-	_monData = nullptr;
 	_rawTempL = 0;
 	_rawXTemp = 0;
 	_rawYTempL = 0;
