@@ -23,14 +23,17 @@
 #ifndef STARK_ARCHIVE_LOADER_H
 #define STARK_ARCHIVE_LOADER_H
 
-#include "common/array.h"
+#include "common/list.h"
 #include "common/str.h"
+#include "common/util.h"
 
 #include "engines/stark/archive.h"
 
 namespace Stark {
 
 class Resource;
+class Level;
+class Location;
 
 /**
  * XARC Archive loader.
@@ -46,14 +49,20 @@ public:
 	/** Load a Xarc archive, and add it to the managed archives list */
 	void load(const Common::String &archiveName);
 
-	/** Unload a Xarc archive, and add it to the managed archives list */
-	void unload(const Common::String &archiveName);
+	/** Unload all the unused Xarc archives */
+	void unloadUnused();
 
 	/** Retrieve a file from a specified archive */
 	Common::ReadStream *getFile(const Common::String &fileName, const Common::String &archiveName);
 
-	/** Get the resource tree root for an archive */
-	Resource *getRoot(const Common::String &archiveName);
+	/** Get the resource tree root for an archive, and increment the archive use count */
+	Resource *useRoot(const Common::String &archiveName);
+
+	/** Decrement the root's archive use count */
+	void returnRoot(const Common::String &archiveName);
+
+	/** Build the archive filename for a level or a location */
+	Common::String buildArchiveName(Level *level, Location *location = nullptr);
 
 private:
 	class LoadedArchive {
@@ -65,18 +74,25 @@ private:
 		XARCArchive &getXArc() { return _xarc; }
 		Resource *getRoot() { return _root; }
 
+		bool isInUse() { return _useCount > 0; }
+		void incUsage() { _useCount++; }
+		void decUsage() { _useCount = MAX<int>(_useCount - 1, 0); }
+
 	private:
 		Resource *importResources();
 
+		uint _useCount;
 		Common::String _filename;
 		XARCArchive _xarc;
 		Resource *_root;
 	};
 
+	typedef Common::List<LoadedArchive *> LoadedArchiveList;
+
 	bool hasArchive(const Common::String &archiveName);
 	LoadedArchive *findArchive(const Common::String &archiveName);
 
-	Common::Array<LoadedArchive *> _archives;
+	LoadedArchiveList _archives;
 };
 
 } // End of namespace Stark

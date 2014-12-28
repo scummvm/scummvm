@@ -25,6 +25,8 @@
 #include "engines/stark/console.h"
 #include "engines/stark/debug.h"
 #include "engines/stark/resourceprovider.h"
+#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/gfx/driver.h"
 
@@ -76,7 +78,11 @@ Common::Error StarkEngine::run() {
 	_global = new Global();
 	_resourceProvider = new ResourceProvider(_archiveLoader, _global);
 
+	// Load global resources
 	_resourceProvider->initGlobal();
+
+	// Start us up at the house of all worlds
+	_resourceProvider->requestLocationChange(0x45, 0x00);
 
 	// Start running
 	mainLoop();
@@ -91,6 +97,10 @@ void StarkEngine::mainLoop() {
 	_scene = new Scene(_gfx);
 
 	while (!shouldQuit()) {
+		if (_resourceProvider->hasLocationChangeRequest()) {
+			_resourceProvider->performLocationChange();
+		}
+
 		// Process events
 		Common::Event e;
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -132,6 +142,11 @@ void StarkEngine::updateDisplayScene() {
 
 	// Clear the screen
 	_gfx->clearScreen();
+
+	// Update the game resources
+	_global->getLevel()->onGameLoop(delta);
+	_global->getCurrent()->getLevel()->onGameLoop(delta);
+	_global->getCurrent()->getLocation()->onGameLoop(delta);
 
 	// Render the current scene
 	_scene->render(delta);

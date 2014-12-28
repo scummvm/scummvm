@@ -42,10 +42,8 @@ private:
 	StarkEngine *_vm;
 
 	bool Cmd_DumpArchive(int argc, const char **argv);
-	bool Cmd_DumpScript(int argc, const char **argv);
-	bool Cmd_ListRooms(int argc, const char** argv);
-
-	Resource *loadXARCScripts(Common::String archive);
+	bool Cmd_DumpResources(int argc, const char **argv);
+	bool Cmd_ListLocations(int argc, const char** argv);
 };
 
 } // End of namespace Stark

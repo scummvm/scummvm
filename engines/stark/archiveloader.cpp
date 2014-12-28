@@ -23,6 +23,8 @@
 #include "engines/stark/archiveloader.h"
 
 #include "engines/stark/xrcreader.h"
+#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/location.h"
 
 namespace Stark {
 
@@ -68,8 +70,8 @@ Resource *ArchiveLoader::LoadedArchive::importResources() {
 }
 
 ArchiveLoader::~ArchiveLoader() {
-	for (uint i = 0; i < _archives.size(); i++) {
-		delete _archives[i];
+	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
+		delete *it;
 	}
 }
 
@@ -83,15 +85,13 @@ void ArchiveLoader::load(const Common::String &archiveName) {
 	_archives.push_back(archive);
 }
 
-void ArchiveLoader::unload(const Common::String &archiveName) {
-	for (uint i = 0; i < _archives.size(); i++) {
-		if (_archives[i]->getFilename() == archiveName) {
-			_archives.remove_at(i);
-			return;
+void ArchiveLoader::unloadUnused() {
+	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
+		if (!(*it)->isInUse()) {
+			delete *it;
+			_archives.erase(it);
 		}
 	}
-
-	error("The archive with name '%s' is not loaded.", archiveName.c_str());
 }
 
 Common::ReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
@@ -100,14 +100,20 @@ Common::ReadStream *ArchiveLoader::getFile(const Common::String &fileName, const
 	return xarc.createReadStreamForMember(fileName);
 }
 
-Resource *ArchiveLoader::getRoot(const Common::String &archiveName) {
+Resource *ArchiveLoader::useRoot(const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
+	archive->incUsage();
 	return archive->getRoot();
 }
 
+void ArchiveLoader::returnRoot(const Common::String &archiveName) {
+	LoadedArchive *archive = findArchive(archiveName);
+	archive->decUsage();
+}
+
 bool ArchiveLoader::hasArchive(const Common::String &archiveName) {
-	for (uint i = 0; i < _archives.size(); i++) {
-		if (_archives[i]->getFilename() == archiveName) {
+	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
+		if ((*it)->getFilename() == archiveName) {
 			return true;
 		}
 	}
@@ -116,13 +122,34 @@ bool ArchiveLoader::hasArchive(const Common::String &archiveName) {
 }
 
 ArchiveLoader::LoadedArchive *ArchiveLoader::findArchive(const Common::String &archiveName) {
-	for (uint i = 0; i < _archives.size(); i++) {
-		if (_archives[i]->getFilename() == archiveName) {
-			return _archives[i];
+	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
+		if ((*it)->getFilename() == archiveName) {
+			return *it;
 		}
 	}
 
 	error("The archive with name '%s' is not loaded.", archiveName.c_str());
+}
+
+Common::String ArchiveLoader::buildArchiveName(Level *level, Location *location) {
+	Common::String archive;
+
+	if (!location) {
+		switch (level->getSubType()) {
+		case 1:
+			archive = Common::String::format("%s/%s.xarc", level->getName().c_str(), level->getName().c_str());
+			break;
+		case 2:
+			archive = Common::String::format("%02x/%02x.xarc", level->getIndex(), level->getIndex());
+			break;
+		default:
+			error("Unknown level archive type %d", level->getSubType());
+		}
+	} else {
+		archive = Common::String::format("%02x/%02x/%02x.xarc", level->getIndex(), location->getIndex(), location->getIndex());
+	}
+
+	return archive;
 }
 
 } // End of namespace Stark

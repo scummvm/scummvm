@@ -168,15 +168,24 @@ public:
 	virtual void onAllLoaded();
 
 	/**
+	 * Called when entering a location
+	 */
+	virtual void onEnterLocation();
+
+	/**
+	 * Called once per game loop
+	 */
+	virtual void onGameLoop(uint msecs);
+
+	/**
+	 * Called when exiting a location
+	 */
+	virtual void onExitLocation();
+
+	/**
 	 * Called before a resource sub-tree is unloaded.
 	 */
 	virtual void onPreDestroy();
-
-	/**
-	 * Get the archive file name containing the data for this resource.
-	 * Only Levels and Locations have archives.
-	 */
-	Common::String getArchive();
 
 	Resource *findChild(ResourceType type, int subType, bool mustBeUnique = true);
 	Resource *findChildWithIndex(ResourceType type, int subType, uint16 index);

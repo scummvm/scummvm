@@ -23,7 +23,7 @@
 #include "engines/stark/console.h"
 #include "engines/stark/archive.h"
 #include "engines/stark/resources/resource.h"
-#include "engines/stark/xrcreader.h"
+#include "engines/stark/archiveloader.h"
 
 #include "common/file.h"
 
@@ -31,8 +31,8 @@ namespace Stark {
 
 Console::Console(StarkEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
-	registerCmd("dumpScript",			WRAP_METHOD(Console, Cmd_DumpScript));
-	registerCmd("listRooms",			WRAP_METHOD(Console, Cmd_ListRooms));
+	registerCmd("dumpResources",		WRAP_METHOD(Console, Cmd_DumpResources));
+	registerCmd("listLocations",		WRAP_METHOD(Console, Cmd_ListLocations));
 }
 
 Console::~Console() {
@@ -83,7 +83,7 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_DumpScript(int argc, const char **argv) {
+bool Console::Cmd_DumpResources(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Print the scripts from an archive.\n");
 		debugPrintf("Usage :\n");
@@ -91,50 +91,27 @@ bool Console::Cmd_DumpScript(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *resource = loadXARCScripts(argv[1]);
+	ArchiveLoader *archiveLoader = new ArchiveLoader();
+	archiveLoader->load(argv[1]);
+
+	Resource *resource = archiveLoader->useRoot(argv[1]);
 	if (resource == nullptr) {
 		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
 		return true;
 	}
 
 	resource->print();
-	delete resource;
+
+	delete archiveLoader;
 
 	return true;
 }
 
-Resource *Console::loadXARCScripts(Common::String archive) {
-	XARCArchive xarc;
-	if (!xarc.open(archive)) {
-		return nullptr;
-	}
+bool Console::Cmd_ListLocations(int argc, const char **argv) {
+	ArchiveLoader *archiveLoader = new ArchiveLoader();
 
-	Common::ArchiveMemberList members;
-	xarc.listMatchingMembers(members, "*.xrc");
-
-	if (members.size() == 0) {
-		error("No scripts in archive '%s'", archive.c_str());
-	}
-
-	if (members.size() > 1) {
-		error("Too many scripts in archive '%s'", archive.c_str());
-	}
-
-	Common::SeekableReadStream *stream = xarc.createReadStreamForMember(members.front()->getName());
-
-	Resource *root = XRCReader::importTree(stream);
-
-	delete stream;
-
-	return root;
-}
-
-bool Console::Cmd_ListRooms(int argc, const char **argv) {
-	Resource *root = loadXARCScripts("x.xarc");
-	if (root == nullptr) {
-		debugPrintf("Can't open archive 'x.xarc'\n");
-		return true;
-	}
+	archiveLoader->load("x.xarc");
+	Resource *root = archiveLoader->useRoot("x.xarc");
 
 	// Loop over the levels
 	for (uint i = 0; i < root->getChildren().size(); i++) {
@@ -143,30 +120,32 @@ bool Console::Cmd_ListRooms(int argc, const char **argv) {
 		// Only consider levels
 		if (level->getType() != ResourceType::kLevel) continue;
 
-		Common::String levelArchive = level->getArchive();
+		Common::String levelArchive = archiveLoader->buildArchiveName((Level *) level);
 		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
 
 		// Load the detailed level archive
-		level = loadXARCScripts(levelArchive);
+		archiveLoader->load(levelArchive);
+		level = archiveLoader->useRoot(levelArchive);
 
 		if (!level)
 			error("Unable to load archive '%s'", levelArchive.c_str());
 
-		// Loop over the rooms
+		// Loop over the locations
 		for (uint j = 0; j < level->getChildren().size(); j++) {
-			Resource *room = level->getChildren()[j];
+			Resource *location = level->getChildren()[j];
 
-			// Only consider rooms
-			if (room->getType() != ResourceType::kLocation) continue;
+			// Only consider locations
+			if (location->getType() != ResourceType::kLocation) continue;
 
-			Common::String roomArchive = room->getArchive();
-			debugPrintf("%s - %s\n", roomArchive.c_str(), room->getName().c_str());
+			Common::String roomArchive = archiveLoader->buildArchiveName((Level *) level, (Location *) location);
+			debugPrintf("%s - %s\n", roomArchive.c_str(), location->getName().c_str());
 		}
 
-		delete level;
+		archiveLoader->returnRoot(levelArchive);
+		archiveLoader->unloadUnused();
 	}
 
-	delete root;
+	delete archiveLoader;
 
 	return true;
 }

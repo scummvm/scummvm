@@ -23,7 +23,7 @@
 #ifndef STARK_RESOURCE_PROVIDER_H
 #define STARK_RESOURCE_PROVIDER_H
 
-#include "common/array.h"
+#include "common/list.h"
 
 namespace Stark {
 
@@ -105,12 +105,39 @@ class ResourceProvider {
 public:
 	ResourceProvider(ArchiveLoader *archiveLoader, Global *global);
 
+	/** Load the global archives and fill the global object */
 	void initGlobal();
+
+	/** Load the resources for the specified location */
+	void requestLocationChange(uint16 level, uint16 location);
+
+	/** Is a location change pending? */
+	bool hasLocationChangeRequest() { return _locationChangeRequest; }
+
+	/**
+	 * Apply a location change request.
+	 *
+	 * Update the global object with the new location.
+	 * Perform the necessary resource lifecycle updates
+	 */
+	void performLocationChange();
+
+	/** Release the global and current resources */
 	void shutdown();
 
 private:
+	typedef Common::List<Current *> CurrentList;
+
+	Current *findLevel(uint16 level);
+	Current *findLocation(uint16 level, uint16 location);
+
+	void purgeOldLocations();
+
 	Global *_global;
 	ArchiveLoader *_archiveLoader;
+
+	bool _locationChangeRequest;
+	CurrentList _locations;
 };
 
 } // End of namespace Stark

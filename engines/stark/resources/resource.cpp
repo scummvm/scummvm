@@ -124,6 +124,30 @@ void Resource::onAllLoaded() {
 	}
 }
 
+void Resource::onEnterLocation() {
+	Common::Array<Resource *>::iterator i = _children.begin();
+	while (i != _children.end()) {
+		(*i)->onEnterLocation();
+		i++;
+	}
+}
+
+void Resource::onGameLoop(uint msecs) {
+	Common::Array<Resource *>::iterator i = _children.begin();
+	while (i != _children.end()) {
+		(*i)->onGameLoop(msecs);
+		i++;
+	}
+}
+
+void Resource::onExitLocation() {
+	Common::Array<Resource *>::iterator i = _children.begin();
+	while (i != _children.end()) {
+		(*i)->onExitLocation();
+		i++;
+	}
+}
+
 void Resource::onPreDestroy() {
 	Common::Array<Resource *>::iterator i = _children.begin();
 	while (i != _children.end()) {
@@ -160,33 +184,6 @@ void Resource::print(uint depth) {
 
 void Resource::addChild(Resource *child) {
 	_children.push_back(child);
-}
-
-Common::String Resource::getArchive() {
-	Common::String archive;
-
-	switch (getType().get()) {
-	case ResourceType::kLevel:
-		switch (_subType) {
-		case 1:
-			archive = Common::String::format("%s/%s.xarc", _name.c_str(), _name.c_str());
-			break;
-		case 2:
-			archive = Common::String::format("%02x/%02x.xarc", _index, _index);
-			break;
-		default:
-			error("Unknown level archive type %d", _subType);
-		}
-		break;
-	case ResourceType::kLocation:
-		assert(_parent);
-		archive = Common::String::format("%02x/%02x/%02x.xarc", _parent->_index, _index, _index);
-		break;
-	default:
-		error("This type of resource cannot load children %s", _type.getName());
-	}
-
-	return archive;
 }
 
 Resource *Resource::findChild(ResourceType type, int subType, bool mustBeUnique) {
