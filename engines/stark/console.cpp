@@ -113,12 +113,12 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	archiveLoader->load("x.xarc");
 	Resource *root = archiveLoader->useRoot("x.xarc");
 
-	// Loop over the levels
-	for (uint i = 0; i < root->getChildren().size(); i++) {
-		Resource *level = root->getChildren()[i];
+	// Find all the levels
+	Common::Array<Resource *> levels = root->listChildren(ResourceType::kLevel);
 
-		// Only consider levels
-		if (level->getType() != ResourceType::kLevel) continue;
+	// Loop over the levels
+	for (uint i = 0; i < levels.size(); i++) {
+		Resource *level = levels[i];
 
 		Common::String levelArchive = archiveLoader->buildArchiveName((Level *) level);
 		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
@@ -127,15 +127,11 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 		archiveLoader->load(levelArchive);
 		level = archiveLoader->useRoot(levelArchive);
 
-		if (!level)
-			error("Unable to load archive '%s'", levelArchive.c_str());
+		Common::Array<Resource *> locations = level->listChildren(ResourceType::kLocation);
 
 		// Loop over the locations
-		for (uint j = 0; j < level->getChildren().size(); j++) {
-			Resource *location = level->getChildren()[j];
-
-			// Only consider locations
-			if (location->getType() != ResourceType::kLocation) continue;
+		for (uint j = 0; j < locations.size(); j++) {
+			Resource *location = locations[j];
 
 			Common::String roomArchive = archiveLoader->buildArchiveName((Level *) level, (Location *) location);
 			debugPrintf("%s - %s\n", roomArchive.c_str(), location->getName().c_str());

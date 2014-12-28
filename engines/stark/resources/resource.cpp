@@ -217,6 +217,20 @@ Resource *Resource::findChildWithIndex(ResourceType type, int subType, uint16 in
 	return nullptr;
 }
 
+Common::Array<Resource *> Resource::listChildren(ResourceType type, int subType) {
+	Common::Array<Resource *> list;
+
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == type
+				&& (_children[i]->getSubType() == subType || subType == -1)) {
+			// Found a matching child
+			list.push_back(_children[i]);
+		}
+	}
+
+	return list;
+}
+
 UnimplementedResource::UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
 		_dataLength(0),

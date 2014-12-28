@@ -144,10 +144,6 @@ public:
 	uint16 getIndex() const { return _index; }
 	Common::String getName() const { return _name; }
 
-	Common::Array<Resource *> getChildren() const { return _children; }
-	void addChild(Resource *child);
-
-
 	/**
 	 * Deserialize the resource static data and initial state.
 	 */
@@ -187,8 +183,12 @@ public:
 	 */
 	virtual void onPreDestroy();
 
-	Resource *findChild(ResourceType type, int subType, bool mustBeUnique = true);
+	Resource *findChild(ResourceType type, int subType = -1, bool mustBeUnique = true);
 	Resource *findChildWithIndex(ResourceType type, int subType, uint16 index);
+
+	Common::Array<Resource *> listChildren(ResourceType type, int subType = -1);
+
+	void addChild(Resource *child);
 
 	void print(uint depth = 0);
 
