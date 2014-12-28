@@ -34,7 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
-// Only used in Zork Nemesis, it handles the door lock puzzle with the skeletal fingers (td60, td90, td9e)
+// Only used in Zork Nemesis, handles the door lock puzzle with the skeletal fingers (td60, td90, td9e)
 class FistControl : public Control {
 public:
 	FistControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);

@@ -32,7 +32,7 @@
 
 namespace ZVision {
 
-// Only used in Zork Nemesis, it's the painting puzzle screen in Lucien's room in Irondune (ch4g)
+// Only used in Zork Nemesis, handles the painting puzzle screen in Lucien's room in Irondune (ch4g)
 class PaintControl : public Control {
 public:
 	PaintControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);

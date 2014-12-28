@@ -349,29 +349,32 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 		Control::parsePanoramaControl(_engine, stream);
 		return NULL;
 	} else if (controlType.equalsIgnoreCase("tilt")) {
+		// Only used in Zork Nemesis, handles tilt controls (ZGI doesn't have a tilt view)
 		Control::parseTiltControl(_engine, stream);
 		return NULL;
-	} else if (controlType.equalsIgnoreCase("lever")) {
-		return new LeverControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("slot")) {
 		return new SlotControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("input")) {
 		return new InputControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("save")) {
 		return new SaveControl(_engine, key, stream);
+	} else if (controlType.equalsIgnoreCase("lever")) {
+		// Only used in Zork Nemesis, handles draggable levers (te2e, tm7e, tp2e, tt2e, tz2e)
+		return new LeverControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("safe")) {
+		// Only used in Zork Nemesis, handles the safe in the Asylum (ac4g)
 		return new SafeControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("hotmovie")) {
-		// Only used in Zork Nemesis, it handles movies where the player needs to click on something (mj7g, vw3g)
+		// Only used in Zork Nemesis, handles movies where the player needs to click on something (mj7g, vw3g)
 		return new HotMovControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("fist")) {
-		// Only used in Zork Nemesis, it handles the door lock puzzle with the skeletal fingers (td60, td90, td9e)
+		// Only used in Zork Nemesis, handles the door lock puzzle with the skeletal fingers (td60, td90, td9e)
 		return new FistControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("paint")) {
-		// Only used in Zork Nemesis, it's the painting puzzle screen in Lucien's room in Irondune (ch4g)
+		// Only used in Zork Nemesis, handles the painting puzzle screen in Lucien's room in Irondune (ch4g)
 		return new PaintControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("titler")) {
-		// Only used in Zork Nemesis - it's the death screen with the Restore/Exit buttons (cjde)
+		// Only used in Zork Nemesis, handles the death screen with the Restore/Exit buttons (cjde)
 		return new TitlerControl(_engine, key, stream);
 	}
 	return NULL;

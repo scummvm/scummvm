@@ -34,6 +34,7 @@ namespace Video {
 
 namespace ZVision {
 
+// Only used in Zork Nemesis, handles the safe in the Asylum (ac4g)
 class SafeControl : public Control {
 public:
 	SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);

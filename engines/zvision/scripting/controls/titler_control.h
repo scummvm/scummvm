@@ -32,7 +32,7 @@
 
 namespace ZVision {
 
-// Only used in Zork Nemesis - it's the death screen with the Restore/Exit buttons
+// Only used in Zork Nemesis, handles the death screen with the Restore/Exit buttons
 class TitlerControl : public Control {
 public:
 	TitlerControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
