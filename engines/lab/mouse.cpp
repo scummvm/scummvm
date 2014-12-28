@@ -229,6 +229,8 @@ bool mouseReset(void) {
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
 void mouseShow(void) {
+	mouseShowXY(CurMouseX, CurMouseY);
+
 	g_system->showMouse(true);
 }
 
@@ -248,6 +250,7 @@ void mouseShowXY(uint16 MouseX, uint16 MouseY) {
 	if ((NumHidden == 0) && MouseHidden) {
 		CurMouseX = MouseX;
 		CurMouseY = MouseY;
+		WSDL_ProcessInput(0);
 		MouseHidden = false;
 	}
 
@@ -325,6 +328,7 @@ void mouseMove(uint16 x, uint16 y) {
 	if (!MouseHidden) {
 		QuitMouseHandler = true;
 		mouseXY(&CurMouseX, &CurMouseY);
+		WSDL_ProcessInput(0);
 		QuitMouseHandler = false;
 	}
 }
