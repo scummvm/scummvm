@@ -41,10 +41,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 	: Control(engine, key, CONTROL_HOTMOV) {
 	_animation = NULL;
 	_cycle = 0;
-	_curFrame = -1;
-	_lastRenderedFrame = -1;
 	_frames.clear();
-	_frameTime = 0;
 	_cyclesCount = 0;
 	_framesCount = 0;
 
@@ -78,6 +75,7 @@ HotMovControl::HotMovControl(ZVision *engine, uint32 key, Common::SeekableReadSt
 			sscanf(values.c_str(), "%s", filename);
 			values = Common::String(filename);
 			_animation = _engine->loadAnimation(values);
+			_animation->start();
 		} else if (param.matchString("venus_id", true)) {
 			_venusId = atoi(values.c_str());
 		}
@@ -95,41 +93,26 @@ HotMovControl::~HotMovControl() {
 	_frames.clear();
 }
 
-void HotMovControl::renderFrame(uint frameNumber) {
-	if ((int)frameNumber == _lastRenderedFrame)
-		return;
-
-	_lastRenderedFrame = frameNumber;
-
-	const Graphics::Surface *frameData;
-
-	if (_animation) {
-		_animation->seekToFrame(frameNumber);
-		frameData = _animation->decodeNextFrame();
-		if (frameData)
-			_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _rectangle);
-	}
-}
-
 bool HotMovControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
 	if (_cycle < _cyclesCount) {
-		_frameTime -= deltaTimeInMillis;
+		if (_animation && _animation->endOfVideo()) {
+			_cycle++;
 
-		if (_frameTime <= 0) {
-			_curFrame++;
-			if (_curFrame >= _framesCount) {
-				_curFrame = 0;
-				_cycle++;
-			}
-			if (_cycle != _cyclesCount)
-				renderFrame(_curFrame);
-			else
+			if (_cycle == _cyclesCount) {
 				_engine->getScriptManager()->setStateValue(_key, 2);
+				return false;
+			}
 
-			_frameTime = 1000.0 / _animation->getDuration().framerate();
+			_animation->rewind();
+		}
+
+		if (_animation && _animation->needsUpdate()) {
+			const Graphics::Surface *frameData = _animation->decodeNextFrame();
+			if (frameData)
+				_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _rectangle);
 		}
 	}
 
@@ -140,8 +123,11 @@ bool HotMovControl::onMouseMove(const Common::Point &screenSpacePos, const Commo
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
+	if (!_animation)
+		return false;
+
 	if (_cycle < _cyclesCount) {
-		if (_frames[_curFrame].contains(backgroundImageSpacePos)) {
+		if (_frames[_animation->getCurFrame()].contains(backgroundImageSpacePos)) {
 			_engine->getCursorManager()->changeCursor(CursorIndex_Active);
 			return true;
 		}
@@ -154,8 +140,11 @@ bool HotMovControl::onMouseUp(const Common::Point &screenSpacePos, const Common:
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
+	if (!_animation)
+		return false;
+
 	if (_cycle < _cyclesCount) {
-		if (_frames[_curFrame].contains(backgroundImageSpacePos)) {
+		if (_frames[_animation->getCurFrame()].contains(backgroundImageSpacePos)) {
 			setVenus();
 			_engine->getScriptManager()->setStateValue(_key, 1);
 			return true;

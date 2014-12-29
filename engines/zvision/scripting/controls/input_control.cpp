@@ -46,9 +46,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 	  _enterPressed(false),
 	  _readOnly(false),
 	  _txtWidth(0),
-	  _animation(NULL),
-	  _frameDelay(0),
-	  _frame(-1) {
+	  _animation(NULL) {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
@@ -99,8 +97,7 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 			sscanf(values.c_str(), "%24s %*u", fileName);
 
 			_animation = _engine->loadAnimation(fileName);
-			_frame = -1;
-			_frameDelay = 0;
+			_animation->start();
 		} else if (param.matchString("focus", true)) {
 			_focused = true;
 			_engine->getScriptManager()->setFocusControlKey(_key);
@@ -212,16 +209,10 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 	}
 
 	if (_animation && !_readOnly && _focused) {
-		bool needDraw = true;// = _textChanged;
-		_frameDelay -= deltaTimeInMillis;
-		if (_frameDelay <= 0) {
-			_frame = (_frame + 1) % _animation->getFrameCount();
-			_frameDelay = 1000.0 / _animation->getDuration().framerate();
-			needDraw = true;
-		}
+		if (_animation->endOfVideo())
+			_animation->rewind();
 
-		if (needDraw) {
-			_animation->seekToFrame(_frame);
+		if (_animation->needsUpdate()) {
 			const Graphics::Surface *srf = _animation->decodeNextFrame();
 			int16 xx = _textRectangle.left + _txtWidth;
 			if (xx >= _textRectangle.left + (_textRectangle.width() - (int16)_animation->getWidth()))

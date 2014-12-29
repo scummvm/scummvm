@@ -49,10 +49,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 	_outerRadiusSqr = 0;
 	_zeroPointer = 0;
 	_startPointer = 0;
-	_curFrame = -1;
 	_targetFrame = 0;
-	_frameTime = 0;
-	_lastRenderedFrame = -1;
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
@@ -64,6 +61,7 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 	while (!stream.eos() && !line.contains('}')) {
 		if (param.matchString("animation", true)) {
 			_animation = _engine->loadAnimation(values);
+			_animation->start();
 		} else if (param.matchString("rectangle", true)) {
 			int x;
 			int y;
@@ -104,7 +102,9 @@ SafeControl::SafeControl(ZVision *engine, uint32 key, Common::SeekableReadStream
 		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
-	renderFrame(_curState);
+
+	if (_animation)
+		_animation->seekToFrame(_curState);
 }
 
 SafeControl::~SafeControl() {
@@ -113,44 +113,20 @@ SafeControl::~SafeControl() {
 
 }
 
-void SafeControl::renderFrame(uint frameNumber) {
-	if (frameNumber == 0) {
-		_lastRenderedFrame = frameNumber;
-	} else if ((int16)frameNumber < _lastRenderedFrame) {
-		_lastRenderedFrame = frameNumber;
-		frameNumber = (_statesCount * 2) - frameNumber;
-	} else {
-		_lastRenderedFrame = frameNumber;
-	}
-
-	const Graphics::Surface *frameData;
-	int x = _rectangle.left;
-	int y = _rectangle.top;
-
-	_animation->seekToFrame(frameNumber);
-	frameData = _animation->decodeNextFrame();
-	if (frameData)
-		_engine->getRenderManager()->blitSurfaceToBkg(*frameData, x, y);
-}
-
 bool SafeControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
-	if (_curFrame != _targetFrame) {
-		_frameTime -= deltaTimeInMillis;
+	if (_animation && _animation->getCurFrame() != _targetFrame && _animation->needsUpdate()) {
+		// If we're past the target frame, move back one
+		if (_animation->getCurFrame() > _targetFrame)
+			_animation->seekToFrame(_animation->getCurFrame() - 1);
 
-		if (_frameTime <= 0) {
-			if (_curFrame < _targetFrame) {
-				_curFrame++;
-				renderFrame(_curFrame);
-			} else if (_curFrame > _targetFrame) {
-				_curFrame--;
-				renderFrame(_curFrame);
-			}
-			_frameTime = 1000.0 / _animation->getDuration().framerate();
-		}
+		const Graphics::Surface *frameData = _animation->decodeNextFrame();
+		if (frameData)
+			_engine->getRenderManager()->blitSurfaceToBkg(*frameData, _rectangle.left, _rectangle.top);
 	}
+
 	return false;
 }
 
@@ -187,7 +163,8 @@ bool SafeControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 			int16 tmp2 = (m_state + _curState - _zeroPointer + _statesCount - 1) % _statesCount;
 
-			_curFrame = (_curState + _statesCount - _startPointer) % _statesCount;
+			if (_animation)
+				_animation->seekToFrame((_curState + _statesCount - _startPointer) % _statesCount);
 
 			_curState = (_statesCount * 2 + tmp2) % _statesCount;
 
