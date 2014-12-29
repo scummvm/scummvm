@@ -741,7 +741,7 @@ void RenderManager::processSubs(uint16 deltatime) {
 		}
 	}
 
-	if (redraw && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1) {
+	if (redraw) {
 		_subtitleSurface.fillRect(Common::Rect(_subtitleSurface.w, _subtitleSurface.h), 0);
 
 		for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {

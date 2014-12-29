@@ -76,7 +76,7 @@ bool SyncSoundNode::process(uint32 deltaTimeInMillis) {
 		if (_engine->getScriptManager()->getSideFX(_syncto) == NULL)
 			return stop();
 
-		if (_sub)
+		if (_sub && _engine->getScriptManager()->getStateValue(StateKey_Subtitles) == 1)
 			_sub->process(_engine->_mixer->getSoundElapsedTime(_handle) / 100);
 	}
 	return false;

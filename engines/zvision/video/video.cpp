@@ -29,6 +29,7 @@
 #include "zvision/zvision.h"
 #include "zvision/core/clock.h"
 #include "zvision/graphics/render_manager.h"
+#include "zvision/scripting//script_manager.h"
 #include "zvision/text/subtitles.h"
 #include "zvision/video/rlf_decoder.h"
 #include "zvision/video/zork_avi_decoder.h"
@@ -75,6 +76,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 	uint16 y = _workingWindow.top + dst.top;
 	uint16 finalWidth = dst.width() < _workingWindow.width() ? dst.width() : _workingWindow.width();
 	uint16 finalHeight = dst.height() < _workingWindow.height() ? dst.height() : _workingWindow.height();
+	bool showSubs = (_scriptManager->getStateValue(StateKey_Subtitles) == 1);
 
 	_clock.stop();
 	vid.start();
@@ -106,7 +108,7 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 
 		if (vid.needsUpdate()) {
 			const Graphics::Surface *frame = vid.decodeNextFrame();
-			if (sub)
+			if (sub && showSubs)
 				sub->process(vid.getCurFrame());
 
 			if (frame) {
