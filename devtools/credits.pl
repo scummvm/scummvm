@@ -792,7 +792,7 @@ begin_credits("Credits");
 			begin_section("ZVision");
 				add_person("Adrian Astley", "RichieSams", "");
 				add_person("Filippos Karapetis", "[md5]", "");
-				add_person("Anton Yarcev", "Marisa-Chan", "");
+				add_person("Anton Yarcev", "Zidane", "");
 			end_section();
 
 		end_section();
