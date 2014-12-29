@@ -63,6 +63,12 @@ public:
 	void saveCurrentLocationState(Level *level, Location *location);
 	void saveGlobalState(Level *level);
 
+	/** Replace the current states by those read from the stream */
+	void readStateFromStream(Common::SeekableReadStream *stream);
+
+	/** Write the states in the store to a stream */
+	void writeStateToStream(Common::WriteStream *stream);
+
 private:
 	class ResourceTreeState {
 	public:
@@ -84,6 +90,10 @@ private:
 
 	void readResourceTree(Resource *resource, Common::SeekableReadStream *stream, bool current);
 	void writeResourceTree(Resource *resource, Common::WriteStream *stream, bool current);
+
+	void clear();
+
+	Common::String readString(Common::ReadStream *stream);
 
 	ResourceTreeStateMap _stateStore;
 };

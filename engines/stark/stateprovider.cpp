@@ -45,9 +45,14 @@ StateProvider::ResourceTreeState::~ResourceTreeState() {
 }
 
 StateProvider::~StateProvider() {
+	clear();
+}
+
+void StateProvider::clear() {
 	for (ResourceTreeStateMap::iterator it = _stateStore.begin(); it != _stateStore.end(); it++) {
 		delete it->_value;
 	}
+	_stateStore.clear();
 }
 
 void StateProvider::restoreLevelState(Level *level) {
@@ -89,14 +94,16 @@ void StateProvider::readResourceTree(Resource *resource, Common::SeekableReadStr
 	/* byte subType = */ stream->readByte();
 	uint32 size = stream->readUint32LE();
 
-	Common::SeekableReadStream *resourceStream = stream->readStream(size);
-	ResourceSerializer *serializer = new ResourceSerializer(resourceStream, nullptr);
+	if (size > 0) {
+		Common::SeekableReadStream *resourceStream = stream->readStream(size);
+		ResourceSerializer *serializer = new ResourceSerializer(resourceStream, nullptr);
 
-	// Deserialize the resource state from stream
-	if (current) {
-		resource->saveLoadCurrent(serializer);
-	} else {
-		resource->saveLoad(serializer);
+		// Deserialize the resource state from stream
+		if (current) {
+			resource->saveLoadCurrent(serializer);
+		} else {
+			resource->saveLoad(serializer);
+		}
 	}
 
 	// Deserialize the resource children
@@ -169,6 +176,49 @@ void StateProvider::writeResourceTree(Resource *resource, Common::WriteStream *s
 	Common::Array<Resource *> children = resource->listChildren<Resource>();
 	for (uint i = 0; i < children.size(); i++) {
 		writeResourceTree(children[i], stream, current);
+	}
+}
+
+Common::String StateProvider::readString(Common::ReadStream *stream) {
+	// Read the string length
+	uint16 length = stream->readUint32LE();
+
+	// Read the string
+	char *data = new char[length];
+	stream->read(data, length);
+	Common::String string(data, length);
+	delete[] data;
+
+	return string;
+}
+
+void StateProvider::readStateFromStream(Common::SeekableReadStream *stream) {
+	clear();
+
+	uint32 treeCount = stream->readUint32LE();
+	for (uint i = 0; i < treeCount; i++) {
+		// Read the store key
+		Common::String key = readString(stream);
+
+		// Read the data size
+		uint32 dataSize = stream->readUint32LE();
+
+		// Read the data
+		byte *data = (byte *) malloc(dataSize);
+		stream->read(data, dataSize);
+
+		_stateStore[key] = new ResourceTreeState(dataSize, data);
+	}
+}
+
+void StateProvider::writeStateToStream(Common::WriteStream *stream) {
+	stream->writeUint32LE(_stateStore.size());
+
+	for (ResourceTreeStateMap::iterator it = _stateStore.begin(); it != _stateStore.end(); it++) {
+		stream->writeUint32LE(it->_key.size());
+		stream->writeString(it->_key);
+		stream->writeUint32LE(it->_value->getSize());
+		stream->write(it->_value->getData(), it->_value->getSize());
 	}
 }
 

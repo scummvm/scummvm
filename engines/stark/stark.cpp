@@ -33,6 +33,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "audio/mixer.h"
 
@@ -101,10 +102,6 @@ void StarkEngine::mainLoop() {
 	_scene = new Scene(_gfx);
 
 	while (!shouldQuit()) {
-		if (_resourceProvider->hasLocationChangeRequest()) {
-			_resourceProvider->performLocationChange();
-		}
-
 		// Process events
 		Common::Event e;
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -133,6 +130,10 @@ void StarkEngine::mainLoop() {
 				_refreshDrawNeeded = true;*/
 		}
 
+		if (_resourceProvider->hasLocationChangeRequest()) {
+			_resourceProvider->performLocationChange();
+		}
+
 		updateDisplayScene();
 		g_system->delayMillis(50);
 	}
@@ -157,6 +158,68 @@ void StarkEngine::updateDisplayScene() {
 
 	// Swap buffers
 	_gfx->flipBuffer();
+}
+
+bool StarkEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+bool StarkEngine::canLoadGameStateCurrently() {
+	return true;
+}
+
+Common::Error StarkEngine::loadGameState(int slot) {
+	// Open the save file
+	Common::String filename = Common::String::format("Save%02d.tlj", slot);
+	Common::InSaveFile *save = getSaveFileManager()->openForLoading(filename);
+
+	// Read the header
+	//TODO
+
+	// Read the resource trees state
+	_stateProvider->readStateFromStream(save);
+
+	//TODO: Read the rest of the state
+
+	delete save;
+
+	_resourceProvider->shutdown();
+	_resourceProvider->initGlobal();
+
+	//TODO: Restore to the correct location
+	_resourceProvider->requestLocationChange(0x45, 0x00);
+
+	//TODO: Error checking
+	return Common::kNoError;
+}
+
+bool StarkEngine::canSaveGameStateCurrently() {
+	return true;
+}
+
+Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
+	// Ensure the state store is up to date
+	_resourceProvider->commitActiveLocationsState();
+
+	// Open the save file
+	Common::String filename = Common::String::format("Save%02d.tlj", slot);
+	Common::OutSaveFile *save = getSaveFileManager()->openForSaving(filename);
+
+	// Write the header
+	//TODO
+
+	// Write the resource trees state
+	_stateProvider->writeStateToStream(save);
+
+	//TODO: Write the rest of the state
+	//TODO: Write a screenshot
+
+	delete save;
+
+	//TODO: Error checking
+	return Common::kNoError;
 }
 
 } // End of namespace Stark

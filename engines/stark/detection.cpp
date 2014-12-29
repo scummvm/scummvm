@@ -23,6 +23,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/stark/stark.h"
 
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace Stark {
 
@@ -209,6 +211,27 @@ public:
 
 	virtual const char *getOriginalCopyright() const {
 		return "(C) Funcom";
+	}
+
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return
+			(f == kSupportsListSaves);
+	}
+
+	virtual SaveStateList listSaves(const char *target) const {
+		SaveStateList saveList;
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save??.tlj");
+
+		char slot[3];
+		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+			slot[0] = filename->c_str()[5];
+			slot[1] = filename->c_str()[6];
+			slot[2] = '\0';
+
+			saveList.push_back(SaveStateDescriptor(atoi(slot), *filename));
+		}
+
+		return saveList;
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;

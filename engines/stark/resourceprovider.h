@@ -115,6 +115,8 @@ public:
 	/** Is a location change pending? */
 	bool hasLocationChangeRequest() { return _locationChangeRequest; }
 
+	void setShouldRestoreCurrentState() { _restoreCurrentState = true; }
+
 	/**
 	 * Apply a location change request.
 	 *
@@ -122,6 +124,9 @@ public:
 	 * Perform the necessary resource lifecycle updates
 	 */
 	void performLocationChange();
+
+	/** Save the current location state to the state store. */
+	void commitActiveLocationsState();
 
 	/** Release the global and current resources */
 	void shutdown();
@@ -139,6 +144,8 @@ private:
 	StateProvider *_stateProvider;
 
 	bool _locationChangeRequest;
+	bool _restoreCurrentState;
+
 	CurrentList _locations;
 };
 

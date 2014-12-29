@@ -56,6 +56,11 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual GUI::Debugger *getDebugger() { return (GUI::Debugger *)_console; }
+	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc);
 
 private:
 	void mainLoop();

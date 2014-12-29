@@ -34,7 +34,8 @@ ResourceProvider::ResourceProvider(ArchiveLoader *archiveLoader, StateProvider *
 		_archiveLoader(archiveLoader),
 		_stateProvider(stateProvider),
 		_global(global),
-		_locationChangeRequest(false) {
+		_locationChangeRequest(false),
+		_restoreCurrentState(false) {
 }
 
 void ResourceProvider::initGlobal() {
@@ -132,10 +133,17 @@ void ResourceProvider::performLocationChange() {
 	Current *current = _locations.back();
 	_global->setCurrent(current);
 
+	if (_restoreCurrentState) {
+		_stateProvider->restoreGlobalState(_global->getLevel());
+		_stateProvider->restoreCurrentLevelState(current->getLevel());
+		_stateProvider->restoreCurrentLocationState(current->getLevel(), current->getLocation());
+		_restoreCurrentState = false;
+	}
+
 	// Resource lifecycle update
-	_global->getLevel()->onExitLocation();
-	current->getLevel()->onExitLocation();
-	current->getLocation()->onExitLocation();
+	_global->getLevel()->onEnterLocation();
+	current->getLevel()->onEnterLocation();
+	current->getLocation()->onEnterLocation();
 
 	purgeOldLocations();
 
@@ -158,6 +166,23 @@ void ResourceProvider::purgeOldLocations() {
 	}
 
 	_archiveLoader->unloadUnused();
+}
+
+void ResourceProvider::commitActiveLocationsState() {
+	// Save active location states
+	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
+		_stateProvider->saveLocationState((*it)->getLevel(), (*it)->getLocation());
+		_stateProvider->saveLevelState((*it)->getLevel());
+	}
+
+	_stateProvider->saveLevelState(_global->getLevel());
+
+	// Save the current location "extended" state, to be able to restore them to the exact same state.
+	Current *location = _global->getCurrent();
+	_stateProvider->saveCurrentLocationState(location->getLevel(), location->getLocation());
+	_stateProvider->saveCurrentLevelState(location->getLevel());
+
+	_stateProvider->saveGlobalState(_global->getLevel());
 }
 
 void ResourceProvider::shutdown() {
@@ -183,6 +208,7 @@ void ResourceProvider::shutdown() {
 
 	_global->setLevel(nullptr);
 	_global->setRoot(nullptr);
+	_global->setCurrent(nullptr);
 
 	_archiveLoader->unloadUnused();
 }
