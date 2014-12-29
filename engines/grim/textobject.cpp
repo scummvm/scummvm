@@ -300,9 +300,22 @@ int TextObject::getLineX(int line) const {
 int TextObject::getLineY(int line) const {
 	int y = _y;
 
-	// special case for Grim for menu text draw, issue #1083
-	if (g_grim->getGameType() == GType_GRIM && _blastDraw)
-		y = _y + 5;
+	if (g_grim->getGameType() == GType_GRIM) {
+		if (_blastDraw) { // special case for Grim for menu text draw, issue #1083
+			y = _y + 5;
+		} else {
+/*			if (_font->getKernedHeight() == 21) // talk_font,verb_font
+				y = _y - 6;
+			else if (_font->getKernedHeight() == 26) // special_font
+				y = _y - 12;
+			else */if (_font->getKernedHeight() == 13) // computer_font
+				y = _y - 6;/*
+			else if (_font->getKernedHeight() == 19) // pt_font
+				y = _y - 9;*/
+			else
+				y = _y;
+		}
+	}
 
 	if (y < 0)
 		y = 0;
