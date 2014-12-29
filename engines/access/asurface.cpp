@@ -58,7 +58,7 @@ SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, i
 	if (vm->getGameID() == GType_MartianMemorandum) {
 		int size = stream->readUint16LE();
 		if (size != frameSize)
-			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, unknown);
+			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);
 	}
 	create(xSize, ySize);
 
