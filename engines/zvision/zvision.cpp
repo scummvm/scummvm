@@ -255,7 +255,7 @@ Common::Error ZVision::run() {
 		_saveManager->loadGame(ConfMan.getInt("save_slot"));
 
 	// Before starting, make absolutely sure that the user has copied the needed fonts
-	if (!Common::File::exists("arial.ttf") && !Common::File::exists("FreeSans.ttf")) {
+	if (!Common::File::exists("arial.ttf") && !Common::File::exists("FreeSans.ttf") && !_searchManager->hasFile("arial.ttf")  && !_searchManager->hasFile("FreeSans.ttf") ) {
 		GUI::MessageDialog dialog(
 				"Before playing this game, you'll need to copy the required "
 				"fonts into ScummVM's extras directory, or into the game directory. "
