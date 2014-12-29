@@ -53,8 +53,6 @@ void MartianPlayer::load() {
 	_upWalkMax = 14;
 	_downWalkMin = 15;
 	_downWalkMax = 23;
-
-	warning("TODO: Copy texPal into manPal");
 }
 
 } // End of namespace Martian

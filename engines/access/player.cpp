@@ -146,10 +146,27 @@ void Player::load() {
 	}
 }
 
+void Player::loadTexPalette() {
+	Resource *_texPal = _vm->_files->loadFile("TEXPAL.COL");
+	int size = _texPal->_size;
+	_manPal1 = new byte[size];
+	memcpy(_manPal1, _texPal->data(), size);	
+}
+
 void Player::loadSprites(const Common::String &name) {
 	freeSprites();
 
 	Resource *data = _vm->_files->loadFile(name);
+
+#if 0
+	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::String outName = name + ".dump";
+	outFile->open(outName);
+	outFile->write(data->data(), data->_size);
+	outFile->finalize();
+	outFile->close();
+#endif
+
 	_playerSprites1 = new SpriteResource(_vm, data);
 	delete data;
 }

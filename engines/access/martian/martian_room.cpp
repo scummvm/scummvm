@@ -43,13 +43,12 @@ void MartianRoom::loadRoom(int roomNumber) {
 }
 
 void MartianRoom::reloadRoom() {
-	warning("TODO: Load TEXPAL.COL");
 //	_vm->_currentMan = _roomFlag;
 //	_vm->_currentManOld = _roomFlag;
 //	_vm->_manScaleOff = 0;
 
+	_vm->_player->loadTexPalette();
 	_vm->_player->loadSprites("TEX.LZ");
-	warning("TODO: Load TEXPAL.COL");
 
 	loadRoom(_vm->_player->_roomNumber);
 

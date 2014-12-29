@@ -124,6 +124,8 @@ public:
 
 	virtual void load();
 
+	void loadTexPalette();
+
 	void loadSprites(const Common::String &name);
 
 	void freeSprites();
