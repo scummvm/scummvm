@@ -54,6 +54,12 @@ SpriteResource::~SpriteResource() {
 SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
+
+	if (vm->getGameID() == GType_MartianMemorandum) {
+		int size = stream->readUint16LE();
+		if (size != frameSize)
+			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, unknown);
+	}
 	create(xSize, ySize);
 
 	// Empty surface
