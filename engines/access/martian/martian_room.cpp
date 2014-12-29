@@ -43,72 +43,52 @@ void MartianRoom::loadRoom(int roomNumber) {
 }
 
 void MartianRoom::reloadRoom() {
+	warning("TODO: Load TEXPAL.COL");
+//	_vm->_currentMan = _roomFlag;
+//	_vm->_currentManOld = _roomFlag;
+//	_vm->_manScaleOff = 0;
+
+	_vm->_player->loadSprites("TEX.LZ");
+	warning("TODO: Load TEXPAL.COL");
+
 	loadRoom(_vm->_player->_roomNumber);
-
-	if (_roomFlag != 1) {
-		_vm->_currentMan = _roomFlag;
-		_vm->_currentManOld = _roomFlag;
-		_vm->_manScaleOff = 0;
-
-		switch (_vm->_currentMan) {
-		case 0:
-			_vm->_player->loadSprites("MAN.LZ");
-			break;
-
-		case 2:
-			_vm->_player->loadSprites("JMAN.LZ");
-			break;
-
-		case 3:
-			_vm->_player->loadSprites("OVERHEAD.LZ");
-			_vm->_manScaleOff = 1;
-			break;
-
-		default:
-			break;
-		}
-	}
 
 	reloadRoom1();
 }
 
 void MartianRoom::reloadRoom1() {
-	if (_vm->_player->_roomNumber == 29 || _vm->_player->_roomNumber == 31
-			|| _vm->_player->_roomNumber == 42 || _vm->_player->_roomNumber == 44) {
-		//Resource *spriteData = _vm->_files->loadFile("MAYA.LZ");
-		//_vm->_inactive._spritesPtr = new SpriteResource(_vm, spriteData);
-		//delete spriteData;
-		_vm->_currentCharFlag = false;
-	}
-
 	_selectCommand = -1;
-	_vm->_events->setNormalCursor(CURSOR_CROSSHAIRS);
-	_vm->_mouseMode = 0;
-	_vm->_boxSelect = true;
+
+// CHECKME: Useful?
+//	_vm->_events->setNormalCursor(CURSOR_CROSSHAIRS);
+//	_vm->_mouseMode = 0;
+//	_vm->_boxSelect = true;
+
 	_vm->_player->_playerOff = false;
 
-	_vm->_screen->fadeOut();
+	_vm->_screen->forceFadeOut();
+	_vm->_events->hideCursor();
 	_vm->_screen->clearScreen();
+	_vm->_events->showCursor();
 	roomSet();
+	_vm->_player->load();
 
-	// TODO: Refactor
+	if (_vm->_player->_roomNumber != 47)
+		_vm->_player->calcManScale();
 
+	_vm->_events->hideCursor();
+	roomMenu();
 	_vm->_screen->setBufferScan();
 	setupRoom();
 	setWallCodes();
 	buildScreen();
-
-	if (!_vm->_screen->_vesaMode) {
-		_vm->copyBF2Vid();
-	} else if (_vm->_player->_roomNumber != 20 && _vm->_player->_roomNumber != 24
-			&& _vm->_player->_roomNumber != 33) {
-		_vm->_screen->setPalette();
-		_vm->copyBF2Vid();
-	}
-
+	_vm->copyBF2Vid();
+	warning("TODO: setManPalette");
+	_vm->_events->showCursor();
 	_vm->_player->_frame = 0;
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
+	_vm->_events->clearEvents();
 }
 
 void MartianRoom::roomSet() {

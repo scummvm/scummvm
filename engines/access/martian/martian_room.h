@@ -52,8 +52,6 @@ public:
 
 	virtual ~MartianRoom();
 
-	virtual void loadRoomData(const byte *roomData) { warning("TODO - loadRoomData"); }
-
 	virtual void init4Quads() { }
 
 	virtual void roomMenu();

@@ -719,6 +719,11 @@ const int COMBO_TABLE[54][4] = {
 	{ -1, -1, -1, -1 }
 };
 
+const int SIDEOFFR[] = {  4, 0, 7, 10,  3, 1, 2, 13, 0, 0, 0, 0 };
+const int SIDEOFFL[] = { 11, 6, 1,  4, 10, 6, 1,  4, 0, 0, 0, 0 };
+const int SIDEOFFU[] = {  1, 2, 0,  2,  2, 1, 1,  0, 0, 0, 0, 0 };
+const int SIDEOFFD[] = {  2, 0, 1,  1,  0, 1, 1,  1, 2, 0, 0, 0 };
+
 } // End of namespace Martian
 
 } // End of namespace Access

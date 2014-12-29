@@ -31,8 +31,6 @@
 
 namespace Access {
 
-#define PLAYER_DATA_COUNT 8
-
 enum Direction {
 	NONE = 0,
 	UP = 1,
@@ -85,14 +83,14 @@ public:
 	SpriteResource *_playerSprites;
 	// Fields in original Player structure
 	byte *_monData;
-	int _walkOffRight[PLAYER_DATA_COUNT];
-	int _walkOffLeft[PLAYER_DATA_COUNT];
-	int _walkOffUp[PLAYER_DATA_COUNT];
-	int _walkOffDown[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDR[PLAYER_DATA_COUNT];
-	Common::Point _walkOffUL[PLAYER_DATA_COUNT];
-	Common::Point _walkOffDL[PLAYER_DATA_COUNT];
+	int *_walkOffRight;
+	int *_walkOffLeft;
+	int *_walkOffUp;
+	int *_walkOffDown;
+	Common::Point *_walkOffUR;
+	Common::Point *_walkOffDR;
+	Common::Point *_walkOffUL;
+	Common::Point *_walkOffDL;
 	byte _rawTempL;
 	int _rawXTemp;
 	byte _rawYTempL;

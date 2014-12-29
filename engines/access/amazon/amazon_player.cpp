@@ -48,7 +48,7 @@ void AmazonPlayer::load() {
 		_downDelta = -2;
 		_scrollConst = 2;
 
-		for (int i = 0; i < PLAYER_DATA_COUNT; ++i) {
+		for (int i = 0; i < _vm->_playerDataCount; ++i) {
 			_walkOffRight[i] = OVEROFFR[i];
 			_walkOffLeft[i] = OVEROFFL[i];
 			_walkOffUp[i] = OVEROFFU[i];

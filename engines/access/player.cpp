@@ -26,24 +26,25 @@
 #include "access/access.h"
 #include "access/resources.h"
 #include "access/amazon/amazon_player.h"
+#include "access/martian/martian_player.h"
 
 namespace Access {
 
 Player *Player::init(AccessEngine *vm) {
 	switch (vm->getGameID()) {
 	case GType_Amazon:
+		vm->_playerDataCount = 8;
 		return new Amazon::AmazonPlayer(vm);
+	case GType_MartianMemorandum:
+		vm->_playerDataCount = 10;
+		return new Martian::MartianPlayer(vm);
 	default:
+		vm->_playerDataCount = 8;
 		return new Player(vm);
 	}
 }
 
 Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
-	Common::fill(&_walkOffRight[0], &_walkOffRight[PLAYER_DATA_COUNT], 0);
-	Common::fill(&_walkOffLeft[0], &_walkOffLeft[PLAYER_DATA_COUNT], 0);
-	Common::fill(&_walkOffUp[0], &_walkOffUp[PLAYER_DATA_COUNT], 0);
-	Common::fill(&_walkOffDown[0], &_walkOffDown[PLAYER_DATA_COUNT], 0);
-
 	_playerSprites = nullptr;
 	_playerSprites1 = nullptr;
 	_manPal1 = nullptr;
@@ -73,14 +74,36 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerDirection = NONE;
 	_xFlag = _yFlag = 0;
 	_inactiveYOff = 0;
+	_walkOffRight = _walkOffLeft = nullptr;
+	_walkOffUp = _walkOffDown = nullptr;
+	_walkOffUR = _walkOffDR = nullptr;
+	_walkOffUL = _walkOffDL = nullptr;
 }
 
 Player::~Player() {
 	delete _playerSprites;
 	delete[] _manPal1;
+	delete[] _walkOffRight;
+	delete[] _walkOffLeft;
+	delete[] _walkOffUp;
+	delete[] _walkOffDown;
+	delete[] _walkOffUR;
+	delete[] _walkOffDR;
+	delete[] _walkOffUL;
+	delete[] _walkOffDL;
 }
 
 void Player::load() {
+	int dataCount = _vm->_playerDataCount;
+	_walkOffRight = new int[dataCount];
+	_walkOffLeft = new int[dataCount];
+	_walkOffUp = new int[dataCount];
+	_walkOffDown = new int[dataCount];
+	_walkOffUR = new Common::Point[dataCount];
+	_walkOffDR = new Common::Point[dataCount];
+	_walkOffUL = new Common::Point[dataCount];
+	_walkOffDL = new Common::Point[dataCount];
+
 	_playerOffset.x = _vm->_screen->_scaleTable1[25];
 	_playerOffset.y = _vm->_screen->_scaleTable1[67];
 	_leftDelta = -3;
@@ -89,7 +112,7 @@ void Player::load() {
 	_downDelta = -10;
 	_scrollConst = 5;
 
-	for (int i = 0; i < PLAYER_DATA_COUNT; ++i) {
+	for (int i = 0; i < dataCount; ++i) {
 		_walkOffRight[i] = SIDEOFFR[i];
 		_walkOffLeft[i] = SIDEOFFL[i];
 		_walkOffUp[i] = SIDEOFFU[i];

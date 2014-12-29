@@ -173,6 +173,7 @@ public:
 	ImageEntryList _images;
 	int _mouseMode;
 
+	int _playerDataCount;
 	int _currentManOld;
 	int _converseMode;
 	int _startAboutBox;
