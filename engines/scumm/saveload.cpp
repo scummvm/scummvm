@@ -149,7 +149,7 @@ void ScummEngine::requestSave(int slot, const Common::String &name) {
 
 void ScummEngine::requestLoad(int slot) {
 	_saveLoadSlot = slot;
-	_saveTemporaryState = false;
+	_saveTemporaryState = (slot == 100);
 	_saveLoadFlag = 2;		// 2 for load
 }
 

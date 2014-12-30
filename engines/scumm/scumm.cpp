@@ -2597,9 +2597,47 @@ void ScummEngine_v90he::runBootscript() {
 }
 #endif
 
-void ScummEngine::startManiac() {
-	debug(0, "stub startManiac()");
-	displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But ScummVM doesn't do that yet. To play it, go to 'Add Game' in the ScummVM start menu and select the 'Maniac' directory inside the Tentacle game directory."));
+bool ScummEngine::startManiac() {
+	Common::String currentPath = ConfMan.get("path");
+	Common::String maniacTarget;
+
+	// Look for a game with a game path pointing to a 'Maniac' directory
+	// as a subdirectory to the current game.
+	Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+	for (; iter != ConfMan.endGameDomains(); ++iter) {
+		Common::ConfigManager::Domain &dom = iter->_value;
+		Common::String path = dom.getVal("path");
+
+		if (path.hasPrefix(currentPath)) {
+			path.erase(0, currentPath.size() + 1);
+			if (path.equalsIgnoreCase("maniac")) {
+				maniacTarget = dom.getVal("gameid");
+				break;
+			}
+		}
+	}
+
+	if (!maniacTarget.empty()) {
+		// Request a temporary save game to be made.
+		_saveLoadFlag = 1;
+		_saveLoadSlot = 100;
+		_saveTemporaryState = true;
+
+		// Set up the chanined games to Maniac Mansion, and then back
+		// to the current game again with that save slot.
+		ConfMan.set("chained_games", maniacTarget + "," + ConfMan.getActiveDomainName() + ":100", Common::ConfigManager::kTransientDomain);
+
+		// Force a return to the launcher. This will start the first
+		// chained game.
+		Common::EventManager *eventMan = g_system->getEventManager();
+		Common::Event event;
+		event.type = Common::EVENT_RTL;
+		eventMan->pushEvent(event);
+		return true;
+	} else {
+		displayMessage(0, "%s", _("Usually, Maniac Mansion would start now. But for that to work, the game files for Maniac Mansion have to be in the 'Maniac' directory inside the Tentacle game directory, and the game has to be added to ScummVM."));
+		return false;
+	}
 }
 
 #pragma mark -
