@@ -33,14 +33,13 @@
 
 namespace ZVision {
 
-AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse)
+AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse)
 	: SideFX(engine, controlKey, SIDEFX_ANIM),
-	  _DisposeAfterUse(DisposeAfterUse),
+	  _disposeAfterUse(disposeAfterUse),
 	  _mask(mask),
 	  _animation(NULL) {
 
 	_animation = engine->loadAnimation(fileName);
-	_animation->start();
 
 	if (frate > 0) {
 		_frmDelayOverride = (int32)(1000.0 / frate);
@@ -89,12 +88,10 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 	if (it != _playList.end()) {
 		playnode *nod = &(*it);
 
-		if (nod->_curFrame == -1) {
+		if (!_animation->isPlaying()) {
 			// The node is just beginning playback
-			nod->_curFrame = nod->start;
-
+			_animation->start();
 			_animation->seekToFrame(nod->start);
-			_animation->setEndFrame(nod->stop);
 
 			nod->_delay = deltaTimeInMillis; // Force the frame to draw
 			if (nod->slot)
@@ -111,10 +108,9 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 					delete nod->_scaled;
 				}
 				_playList.erase(it);
-				return _DisposeAfterUse;
+				return _disposeAfterUse;
 			}
 
-			nod->_curFrame = nod->start;
 			_animation->seekToFrame(nod->start);
 		}
 
@@ -190,13 +186,9 @@ void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int st
 	nod.loop = loops;
 	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
 	nod.start = startFrame;
-	nod.stop = endFrame;
-
-	if (nod.stop >= (int)_animation->getFrameCount())
-		nod.stop = _animation->getFrameCount() - 1;
+	_animation->setEndFrame(CLIP<int>(endFrame, 0,_animation->getFrameCount() - 1));
 
 	nod.slot = slot;
-	nod._curFrame = -1;
 	nod._delay = 0;
 	nod._scaled = NULL;
 	_playList.push_back(nod);

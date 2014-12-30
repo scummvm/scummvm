@@ -41,16 +41,14 @@ class ZVision;
 
 class AnimationNode : public SideFX {
 public:
-	AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool DisposeAfterUse = true);
+	AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse = true);
 	~AnimationNode();
 
 	struct playnode {
 		Common::Rect pos;
 		int32 slot;
 		int32 start;
-		int32 stop;
 		int32 loop;
-		int32 _curFrame;
 		int32 _delay;
 		Graphics::Surface *_scaled;
 	};
@@ -61,7 +59,7 @@ private:
 	PlayNodes _playList;
 
 	int32 _mask;
-	bool _DisposeAfterUse;
+	bool _disposeAfterUse;
 
 	Video::VideoDecoder *_animation;
 	int32 _frmDelayOverride;
