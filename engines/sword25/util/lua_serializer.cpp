@@ -42,7 +42,7 @@ struct SerializationInfo {
 	uint counter;
 };
 
-static void serializeObject(SerializationInfo *info);
+static void serialize(SerializationInfo *info);
 
 static void serializeBoolean(SerializationInfo *info);
 static void serializeNumber(SerializationInfo *info);
@@ -103,14 +103,14 @@ void serializeLua(lua_State *luaState, Common::WriteStream *writeStream) {
 	// >>>>> permTbl indexTbl rootObj
 
 	// Serialize the root recursively
-	serializeObject(&info);
+	serialize(&info);
 
 	// Return the stack back to the original state
 	lua_remove(luaState, 2);
 	// >>>>> permTbl rootObj
 }
 
-static void serializeObject(SerializationInfo *info) {
+static void serialize(SerializationInfo *info) {
 	// The stack can potentially have many things on it
 	// The object we want to serialize is the item on the top of the stack
 	// >>>>> permTbl indexTbl rootObj ...... obj
@@ -188,7 +188,7 @@ static void serializeObject(SerializationInfo *info) {
 		info->writeStream->writeSint32LE(PERMANENT_TYPE);
 
 		// Serialize the key
-		serializeObject(info);
+		serialize(info);
 
 		// Pop the key off the stack
 		lua_pop(info->luaState, 1);
@@ -368,7 +368,7 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 	info->writeStream->writeSint32LE(1);
 
 	// Serialize the function
-	serializeObject(info);
+	serialize(info);
 
 	lua_pop(info->luaState, 2);
 	// >>>>> permTbl indexTbl ...... obj
@@ -395,7 +395,7 @@ static void serializeTable(SerializationInfo *info) {
 	}
 
 	// >>>>> permTbl indexTbl ...... tbl metaTbl/nil */
-	serializeObject(info);
+	serialize(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... tbl
@@ -412,13 +412,13 @@ static void serializeTable(SerializationInfo *info) {
 		// >>>>> permTbl indexTbl ...... tbl k v k */
 
 		// Serialize the key
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... tbl k v */
 
 		// Serialize the value
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... tbl k */
@@ -430,7 +430,7 @@ static void serializeTable(SerializationInfo *info) {
 	lua_pushnil(info->luaState);
 	// >>>>> permTbl indexTbl ...... tbl
 
-	serializeObject(info);
+	serialize(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... tbl
@@ -457,7 +457,7 @@ static void serializeFunction(SerializationInfo *info) {
 		pushProto(info->luaState, cl->l.p);
 		// >>>>> permTbl indexTbl ...... func proto */
 
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... func
@@ -468,7 +468,7 @@ static void serializeFunction(SerializationInfo *info) {
 			pushUpValue(info->luaState, cl->l.upvals[i]);
 			// >>>>> permTbl indexTbl ...... func upval
 
-			serializeObject(info);
+			serialize(info);
 
 			lua_pop(info->luaState, 1);
 			// >>>>> permTbl indexTbl ...... func
@@ -492,21 +492,11 @@ static void serializeFunction(SerializationInfo *info) {
 		}
 
 		// >>>>> permTbl indexTbl ...... func fenv/nil
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... func
 	}
-}
-
-/* Appends one stack to another stack, but the stack is reversed in the process */
-static size_t appendStackToStack_rev(lua_State *from, lua_State *to) {
-	for (StkId id = from->top - 1; id >= from->stack; --id) {
-		setobj2s(to, to->top, id);
-		to->top++;
-	}
-
-	return from->top - from->stack;
 }
 
 static void serializeThread(SerializationInfo *info) {
@@ -525,12 +515,12 @@ static void serializeThread(SerializationInfo *info) {
 	// Persist the stack
 
 	// We *could* have truncation here, but if we have more than 4 billion items on a stack, we have bigger problems
-	uint32 stackSize = static_cast<uint32>(appendStackToStack_rev(threadState, info->luaState));
+	uint32 stackSize = static_cast<uint32>(appendStackToStack_reverse(threadState, info->luaState));
 	info->writeStream->writeUint32LE(stackSize);
 
 	// >>>>> permTbl indexTbl ...... thread (reversed contents of thread stack) */
 	for (; stackSize > 0; --stackSize) {
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 	}
@@ -592,7 +582,7 @@ static void serializeThread(SerializationInfo *info) {
 		pushUpValue(info->luaState, upVal);
 		// >>>>> permTbl indexTbl ...... thread upVal
 
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... thread
@@ -607,7 +597,7 @@ static void serializeThread(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... thread nil
 
 	// Use nil as a terminator
-	serializeObject(info);
+	serialize(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... thread
@@ -627,7 +617,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushObject(info->luaState, &proto->k[i]);
 		// >>>>> permTbl indexTbl ...... proto const
 
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -643,7 +633,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushProto(info->luaState, proto->p[i]);
 		// >>>>> permTbl indexTbl ...... proto subProto */
 
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -666,7 +656,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushString(info->luaState, proto->upvalues[i]);
 		// >>>>> permTbl indexTbl ...... proto str
 
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -680,7 +670,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushString(info->luaState, proto->locvars[i].varname);
 		// >>>>> permTbl indexTbl ...... proto str
 
-		serializeObject(info);
+		serialize(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -694,7 +684,7 @@ static void serializeProto(SerializationInfo *info) {
 	pushString(info->luaState, proto->source);
 	// >>>>> permTbl indexTbl ...... proto sourceStr
 
-	serializeObject(info);
+	serialize(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... proto
@@ -757,7 +747,7 @@ static void serializeUpValue(SerializationInfo *info) {
 	pushObject(info->luaState, upValue->v);
 	// >>>>> permTbl indexTbl ...... obj
 
-	serializeObject(info);
+	serialize(info);
 	// >>>>> permTbl indexTbl ...... obj
 }
 
@@ -787,7 +777,7 @@ static void serializeUserData(SerializationInfo *info) {
 	}
 
 	// >>>>> permTbl rootObj ...... udata metaTbl/nil
-	serializeObject(info);
+	serialize(info);
 
 	lua_pop(info->luaState, 1);
 	/* perms reftbl ... udata */

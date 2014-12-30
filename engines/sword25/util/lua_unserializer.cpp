@@ -40,7 +40,7 @@ struct UnSerializationInfo {
 	Common::ReadStream *readStream;
 };
 
-static void unserializeObject(UnSerializationInfo *info);
+static void unserialize(UnSerializationInfo *info);
 
 static void unserializeBoolean(UnSerializationInfo *info);
 static void unserializeNumber(UnSerializationInfo *info);
@@ -74,7 +74,7 @@ void unserializeLua(lua_State *luaState, Common::ReadStream *readStream) {
 	lua_gc(luaState, LUA_GCSTOP, 0);
 
 	// Unserialize the root object
-	unserializeObject(&info);
+	unserialize(&info);
 	// >>>>> permTbl indexTbl rootObj
 
 	// Re-start garbage collection
@@ -85,7 +85,7 @@ void unserializeLua(lua_State *luaState, Common::ReadStream *readStream) {
 	// >>>>> permTbl rootObj
 }
 
-/* The object is left on the stack. This is primarily used by unpersist, but
+/* The object is left on the stack. This is primarily used by unserialize, but
  * may be used by GCed objects that may incur cycles in order to preregister
  * the object. */
 static void registerObjectInIndexTable(UnSerializationInfo *info, int index) {
@@ -105,7 +105,7 @@ static void registerObjectInIndexTable(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... obj
 }
 
-static void unserializeObject(UnSerializationInfo *info) {
+static void unserialize(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -241,7 +241,7 @@ static void unserializeSpecialTable(UnSerializationInfo *info, int index) {
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 1);
 
-	unserializeObject(info);
+	unserialize(info);
 
 	// >>>>> permTbl indexTbl ...... spfunc
 	lua_call(info->luaState, 0, 1);
@@ -262,7 +262,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... tbl
 
 	// Unserialize metatable
-	unserializeObject(info);
+	unserialize(info);
 	// >>>>> permTbl indexTbl ...... tbl ?metaTbl/nil?
 
 	if (lua_istable(info->luaState, -1)) {
@@ -279,7 +279,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 
 	while (1) {
 		// >>>>> permTbl indexTbl ...... tbl
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... tbl key/nil
 
 		// The table serialization is nil terminated
@@ -292,7 +292,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 		}
 
 		// >>>>> permTbl indexTbl ...... tbl key
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... tbl value
 
 		lua_rawset(info->luaState, -3);
@@ -317,142 +317,6 @@ void unserializeTable(UnSerializationInfo *info, int index) {
 	}
 }
 
-
-
-void *lua_realloc(lua_State *luaState, void *block, size_t osize, size_t nsize) {
-	global_State *globalState = G(luaState);
-
-	block = (*globalState->frealloc)(globalState->ud, block, osize, nsize);
-	globalState->totalbytes = (globalState->totalbytes - osize) + nsize;
-
-	return block;
-}
-
-#define lua_malloc(luaState, nsize) lua_realloc(luaState, nullptr, 0, nsize)
-#define lua_reallocv(luaState, block, on, n, e) lua_realloc(luaState, block, (on) * (e), (n) * (e))
-#define lua_reallocvector(luaState, vec, oldn, n, T) ((vec) = (T *)(lua_reallocv(luaState, vec, oldn, n, sizeof(T))))
-#define lua_newVector(luaState, num, T) ((T *)lua_reallocv(luaState, nullptr, 0, num, sizeof(T)))
-#define lua_new(luaState,T) (T *)lua_malloc(luaState, sizeof(T))
-
-void lua_linkObjToGC(lua_State *luaState, GCObject *obj, lu_byte type) {
-	global_State *globalState = G(luaState);
-
-	obj->gch.next = globalState->rootgc;
-	globalState->rootgc = obj;
-	obj->gch.marked = luaC_white(globalState);
-	obj->gch.tt = type;
-}
-
-#define sizeLclosure(n) ((sizeof(LClosure)) + sizeof(TValue *) * ((n) - 1))
-
-Closure *newLClosure(lua_State *luaState, byte numUpValues, Table *env) {
-	Closure *newClosure = (Closure *)lua_malloc(luaState, sizeLclosure(numUpValues));
-
-	lua_linkObjToGC(luaState, obj2gco(newClosure), LUA_TFUNCTION);
-
-	newClosure->l.isC = 0;
-	newClosure->l.env = env;
-	newClosure->l.nupvalues = numUpValues;
-
-	while (numUpValues--) {
-		newClosure->l.upvals[numUpValues] = NULL;
-	}
-
-	return newClosure;
-}
-
-static void pushClosure(lua_State *luaState, Closure *closure) {
-	TValue obj;
-	setclvalue(luaState, &obj, closure);
-	pushObject(luaState, &obj);
-}
-
-Proto *createProto(lua_State *luaState) {
-	Proto *newProto = (Proto *)lua_malloc(luaState, sizeof(Proto));
-	lua_linkObjToGC(luaState, obj2gco(newProto), LUA_TPROTO);
-
-	newProto->k = NULL;
-	newProto->sizek = 0;
-	newProto->p = NULL;
-	newProto->sizep = 0;
-	newProto->code = NULL;
-	newProto->sizecode = 0;
-	newProto->sizelineinfo = 0;
-	newProto->sizeupvalues = 0;
-	newProto->nups = 0;
-	newProto->upvalues = NULL;
-	newProto->numparams = 0;
-	newProto->is_vararg = 0;
-	newProto->maxstacksize = 0;
-	newProto->lineinfo = NULL;
-	newProto->sizelocvars = 0;
-	newProto->locvars = NULL;
-	newProto->linedefined = 0;
-	newProto->lastlinedefined = 0;
-	newProto->source = NULL;
-
-	return newProto;
-}
-
-TString *createString(lua_State *luaState, const char *str, size_t len) {
-	TString *res;
-	lua_pushlstring(luaState, str, len);
-
-	res = rawtsvalue(luaState->top - 1);
-	lua_pop(luaState, 1);
-
-	return res;
-}
-
-static Proto *makeFakeProto(lua_State *L, lu_byte nups) {
-	Proto *p = createProto(L);
-
-	p->sizelineinfo = 1;
-	p->lineinfo = lua_newVector(L, 1, int);
-	p->lineinfo[0] = 1;
-	p->sizecode = 1;
-	p->code = lua_newVector(L, 1, Instruction);
-	p->code[0] = CREATE_ABC(OP_RETURN, 0, 1, 0);
-	p->source = createString(L, "", 0);
-	p->maxstacksize = 2;
-	p->nups = nups;
-	p->sizek = 0;
-	p->sizep = 0;
-
-	return p;
-}
-
-static UpVal *createUpValue(lua_State *luaState, int stackpos) {
-	UpVal *upValue = (UpVal *)lua_malloc(luaState, sizeof(UpVal));
-	lua_linkObjToGC(luaState, (GCObject *)upValue, LUA_TUPVAL);
-	upValue->tt = LUA_TUPVAL;
-	upValue->v = &upValue->u.value;
-	upValue->u.l.prev = NULL;
-	upValue->u.l.next = NULL;
-
-	const TValue *o2 = (TValue *)getObject(luaState, stackpos);
-	upValue->v->value = o2->value;
-	upValue->v->tt = o2->tt;
-	checkliveness(G(L), upValue->v);
-
-	return upValue;
-}
-
-static void unboxUpValue(lua_State *luaState) {
-	// >>>>> ...... func
-	LClosure *lcl;
-	UpVal *uv;
-
-	lcl = (LClosure *)clvalue(getObject(luaState, -1));
-	uv = lcl->upvals[0];
-
-	lua_pop(luaState, 1);
-	// >>>>> ......
-
-	pushUpValue(luaState, uv);
-	// >>>>> ...... upValue
-}
-
 void unserializeFunction(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
@@ -461,7 +325,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 
 	byte numUpValues = info->readStream->readByte();
 
-	LClosure *lclosure = (LClosure *)newLClosure(info->luaState, numUpValues, hvalue(&info->luaState->l_gt));
+	LClosure *lclosure = (LClosure *)lua_newLclosure(info->luaState, numUpValues, hvalue(&info->luaState->l_gt));
 	pushClosure(info->luaState, (Closure *)lclosure);
 	// >>>>> permTbl indexTbl ...... func
 
@@ -484,7 +348,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 	registerObjectInIndexTable(info, index);
 
 	// Now that it's safe, we can get the real proto
-	unserializeObject(info);
+	unserialize(info);
 	// >>>>> permTbl indexTbl ...... func proto
 
 	lclosure->p = gco2p(getObject(info->luaState, -1)->value.gc);
@@ -494,7 +358,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 
 	for (byte i = 0; i < numUpValues; ++i) {
 		// >>>>> permTbl indexTbl ...... func
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... func func2
 
 		unboxUpValue(info->luaState);
@@ -506,7 +370,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 	}
 
 	// Finally, the fenv
-	unserializeObject(info);
+	unserialize(info);
 
 	// >>>>> permTbl indexTbl ...... func ?fenv/nil?
 	if (!lua_isnil(info->luaState, -1)) {
@@ -520,81 +384,6 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 	}
 
 	// >>>>> permTbl indexTbl ...... func
-}
-
-static void correctStack(lua_State *L, TValue *oldstack) {
-	CallInfo *ci;
-	GCObject *up;
-	L->top = (L->top - oldstack) + L->stack;
-	for (up = L->openupval; up != NULL; up = up->gch.next)
-		gco2uv(up)->v = (gco2uv(up)->v - oldstack) + L->stack;
-	for (ci = L->base_ci; ci <= L->ci; ci++) {
-		ci->top = (ci->top - oldstack) + L->stack;
-		ci->base = (ci->base - oldstack) + L->stack;
-		ci->func = (ci->func - oldstack) + L->stack;
-	}
-	L->base = (L->base - oldstack) + L->stack;
-}
-
-void lua_reallocstack(lua_State *L, int newsize) {
-	TValue *oldstack = L->stack;
-	int realsize = newsize + 1 + EXTRA_STACK;
-
-	lua_reallocvector(L, L->stack, L->stacksize, realsize, TValue);
-	L->stacksize = realsize;
-	L->stack_last = L->stack + newsize;
-	correctStack(L, oldstack);
-}
-
-void lua_growstack(lua_State *L, int n) {
-	// Double size is enough?
-	if (n <= L->stacksize) {
-		lua_reallocstack(L, 2 * L->stacksize);
-	} else {
-		lua_reallocstack(L, L->stacksize + n);
-	}
-}
-
-void lua_reallocCallInfo(lua_State *lauState, int newsize) {
-	CallInfo *oldci = lauState->base_ci;
-	lua_reallocvector(lauState, lauState->base_ci, lauState->size_ci, newsize, CallInfo);
-
-	lauState->size_ci = newsize;
-	lauState->ci = (lauState->ci - oldci) + lauState->base_ci;
-	lauState->end_ci = lauState->base_ci + lauState->size_ci - 1;
-}
-
-void unboxUpVal(lua_State *luaState) {
-	// >>>>> ... func
-	LClosure *lcl;
-	UpVal *uv;
-
-	lcl = (LClosure *)(&getObject(luaState, -1)->value.gc->cl);
-	uv = lcl->upvals[0];
-	lua_pop(luaState, 1);
-	// >>>>> ...
-	pushUpValue(luaState, uv);
-	// >>>>> ... upVal
-}
-
-/* Does basically the opposite of luaC_link().
- * Right now this function is rather inefficient; it requires traversing the
- * entire root GC set in order to find one object. If the GC list were doubly
- * linked this would be much easier, but there's no reason for Lua to have
- * that. */
-static void GCUnlink(lua_State *luaState, GCObject *gco) {
-	GCObject *prevslot;
-	if (G(luaState)->rootgc == gco) {
-		G(luaState)->rootgc = G(luaState)->rootgc->gch.next;
-		return;
-	}
-
-	prevslot = G(luaState)->rootgc;
-	while (prevslot->gch.next != gco) {
-		prevslot = prevslot->gch.next;
-	}
-
-	prevslot->gch.next = prevslot->gch.next->gch.next;
 }
 
 void unserializeThread(UnSerializationInfo *info, int index) {
@@ -619,7 +408,7 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 	// very bottom of the stack
 	L2->top--;
 	for (uint32 i = 0; i < stackSize; ++i) {
-		unserializeObject(info);
+		unserialize(info);
 		// L1: permTbl indexTbl ...... thread obj*
 	}
 
@@ -679,7 +468,7 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 	global_State *g = G(L2);
 
 	while (true) {
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... thread upVal/nil
 
 		// The list is terminated by a nil
@@ -691,7 +480,7 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 		}
 
 		// >>>>> permTbl indexTbl ...... thread boxedUpVal
-		unboxUpVal(info->luaState);
+		unboxUpValue(info->luaState);
 		// >>>>> permTbl indexTbl ...... thread boxedUpVal
 
 		uv = &(getObject(info->luaState, -1)->value.gc->uv);
@@ -720,48 +509,6 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 	for (StkId o = L2->top; o <= L2->top + stacklimit; ++o) {
 		setnilvalue(o);
 	}
-}
-
-TString *lua_newlstr(lua_State *luaState, const char *str, size_t len) {
-	lua_pushlstring(luaState, str, len);
-	TString *luaStr = &(luaState->top - 1)->value.gc->ts;
-
-	lua_pop(luaState, 1);
-
-	return luaStr;
-}
-
-void lua_link(lua_State *luaState, GCObject *o, lu_byte tt) {
-	global_State *g = G(luaState);
-	o->gch.next = g->rootgc;
-	g->rootgc = o;
-	o->gch.marked = luaC_white(g);
-	o->gch.tt = tt;
-}
-
-Proto *lua_newproto(lua_State *luaState) {
-	Proto *f = (Proto *)lua_malloc(luaState, sizeof(Proto));
-	lua_link(luaState, obj2gco(f), LUA_TPROTO);
-	f->k = NULL;
-	f->sizek = 0;
-	f->p = NULL;
-	f->sizep = 0;
-	f->code = NULL;
-	f->sizecode = 0;
-	f->sizelineinfo = 0;
-	f->sizeupvalues = 0;
-	f->nups = 0;
-	f->upvalues = NULL;
-	f->numparams = 0;
-	f->is_vararg = 0;
-	f->maxstacksize = 0;
-	f->lineinfo = NULL;
-	f->sizelocvars = 0;
-	f->locvars = NULL;
-	f->linedefined = 0;
-	f->lastlinedefined = 0;
-	f->source = NULL;
-	return f;
 }
 
 void unserializeProto(UnSerializationInfo *info, int index) {
@@ -793,7 +540,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	lua_reallocvector(info->luaState, p->k, 0, sizek, TValue);
 	for (int i = 0; i < sizek; ++i) {
 		// >>>>> permTbl indexTbl ...... proto
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... proto  k
 
 		setobj2s(info->luaState, &p->k[i], getObject(info->luaState, -1));
@@ -810,7 +557,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	lua_reallocvector(info->luaState, p->p, 0, sizep, Proto *);
 	for (int i = 0; i < sizep; ++i) {
 		// >>>>> permTbl indexTbl ...... proto
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... proto  subproto
 
 		p->p[i] = (Proto *)getObject(info->luaState, -1)->value.gc;
@@ -834,7 +581,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 		lua_reallocvector(info->luaState, p->upvalues, 0, p->sizeupvalues, TString *);
 		for (int i = 0; i < p->sizeupvalues; ++i) {
 			// >>>>> permTbl indexTbl ...... proto
-			unserializeObject(info);
+			unserialize(info);
 			// >>>>> permTbl indexTbl ...... proto str
 
 			p->upvalues[i] = lua_newlstr(info->luaState, lua_tostring(info->luaState, -1), strlen(lua_tostring(info->luaState, -1)));
@@ -850,7 +597,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 		lua_reallocvector(info->luaState, p->locvars, 0, p->sizelocvars, LocVar);
 		for (int i = 0; i < p->sizelocvars; ++i) {
 			// >>>>> permTbl indexTbl ...... proto
-			unserializeObject(info);
+			unserialize(info);
 			// >>>>> permTbl indexTbl ...... proto str
 
 			p->locvars[i].varname = lua_newlstr(info->luaState, lua_tostring(info->luaState, -1), strlen(lua_tostring(info->luaState, -1)));
@@ -864,7 +611,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... proto
 
 	// Read in source string
-	unserializeObject(info);
+	unserialize(info);
 	// >>>>> permTbl indexTbl ...... proto sourceStr
 
 	p->source = lua_newlstr(info->luaState, lua_tostring(info->luaState, -1), strlen(lua_tostring(info->luaState, -1)));
@@ -890,75 +637,18 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	p->maxstacksize = info->readStream->readByte();
 }
 
-Closure *lua_newLclosure(lua_State *luaState, int numElements, Table *elementTable) {
-	Closure *c = (Closure *)lua_malloc(luaState, sizeLclosure(numElements));
-	lua_link(luaState, obj2gco(c), LUA_TFUNCTION);
-	c->l.isC = 0;
-	c->l.env = elementTable;
-	c->l.nupvalues = cast_byte(numElements);
-
-	while (numElements--) {
-		c->l.upvals[numElements] = NULL;
-	}
-
-	return c;
-}
-
-static UpVal *makeUpVal(lua_State *luaState, int stackPos) {
-	UpVal *uv = lua_new(luaState, UpVal);
-	lua_link(luaState, (GCObject *)uv, LUA_TUPVAL);
-	uv->tt = LUA_TUPVAL;
-	uv->v = &uv->u.value;
-	uv->u.l.prev = NULL;
-	uv->u.l.next = NULL;
-
-	setobj(luaState, uv->v, getObject(luaState, stackPos));
-
-	return uv;
-}
-
-/**
- * The GC is not fond of finding upvalues in tables. We get around this
- * during persistence using a weakly keyed table, so that the GC doesn't
- * bother to mark them. This won't work in unpersisting, however, since
- * if we make the values weak they'll be collected (since nothing else
- * references them). Our solution, during unpersisting, is to represent
- * upvalues as dummy functions, each with one upvalue.
- */
-static void boxupval_start(lua_State *luaState) {
-	LClosure *closure;
-	closure = (LClosure *)lua_newLclosure(luaState, 1, hvalue(&luaState->l_gt));
-	pushClosure(luaState, (Closure *)closure);
-	// >>>>> ...... func
-	closure->p = makeFakeProto(luaState, 1);
-
-	// Temporarily initialize the upvalue to nil
-	lua_pushnil(luaState);
-	closure->upvals[0] = makeUpVal(luaState, -1);
-	lua_pop(luaState, 1);
-}
-
-static void boxupval_finish(lua_State *luaState) {
-	// >>>>> ...... func obj
-	LClosure *lcl = (LClosure *)clvalue(getObject(luaState, -2));
-
-	lcl->upvals[0]->u.value = *getObject(luaState, -1);
-	lua_pop(luaState, 1);
-	// >>>>> ...... func
-}
-
 void unserializeUpValue(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
-	lua_checkstack(upi->L, 2);
+	lua_checkstack(info->luaState, 2);
 
-	boxupval_start(upi->L);
+	boxUpValue_start(info->luaState);
 	// >>>>> permTbl indexTbl ...... func
 	registerObjectInIndexTable(info, index);
 
-	unserializeObject(info);
+	unserialize(info);
 	// >>>>> permTbl indexTbl ...... func obj
 
-	boxupval_finish(upi->L);
+	boxUpValue_finish(info->luaState);
 	// >>>>> permTbl indexTbl ...... func
 }
 
@@ -970,7 +660,7 @@ void unserializeUserData(UnSerializationInfo *info, int index) {
 
 	int isspecial = info->readStream->readSint32LE();
 	if (isspecial) {
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... specialFunc
 
 		lua_call(info->luaState, 0, 1);
@@ -981,12 +671,12 @@ void unserializeUserData(UnSerializationInfo *info, int index) {
 		// >>>>> permTbl indexTbl ...... udata
 		registerObjectInIndexTable(info, index);
 
-		info->readStream->read(lua_touserdata(upi->L, -1), length);
+		info->readStream->read(lua_touserdata(info->luaState, -1), length);
 
-		unserializeObject(info);
+		unserialize(info);
 		// >>>>> permTbl indexTbl ...... udata metaTable/nil
 
-		lua_setmetatable(upi->L, -2);
+		lua_setmetatable(info->luaState, -2);
 		// >>>>> permTbl indexTbl ...... udata
 	}
 	// >>>>> permTbl indexTbl ...... udata
@@ -998,7 +688,7 @@ void unserializePermanent(UnSerializationInfo *info, int index) {
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 2);
 
-	unserializeObject(info);
+	unserialize(info);
 	// >>>>> permTbl indexTbl ...... permKey
 
 	lua_gettable(info->luaState, 1);
