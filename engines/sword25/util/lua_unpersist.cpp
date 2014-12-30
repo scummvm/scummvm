@@ -20,10 +20,10 @@
  *
  */
 
-#include "sword25/util/lua_serialization.h"
+#include "sword25/util/lua_persistence.h"
 
 #include "sword25/util/double_serializer.h"
-#include "sword25/util/lua_serialization_util.h"
+#include "sword25/util/lua_persistence_util.h"
 
 #include "common/stream.h"
 
@@ -54,7 +54,7 @@ static void unserializeUserData(UnSerializationInfo *info, int index);
 static void unserializePermanent(UnSerializationInfo *info, int index);
 
 
-void unserializeLua(lua_State *luaState, Common::ReadStream *readStream) {
+void unpersistLua(lua_State *luaState, Common::ReadStream *readStream) {
 	UnSerializationInfo info;
 	info.luaState = luaState;
 	info.readStream = readStream;

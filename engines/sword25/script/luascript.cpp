@@ -43,7 +43,7 @@
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lualib.h"
 #include "sword25/util/lua/lauxlib.h"
-#include "sword25/util/lua_serialization.h"
+#include "sword25/util/lua_persistence.h"
 
 namespace Sword25 {
 
@@ -396,7 +396,7 @@ bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 
 	// Lua persists and stores the data in a WriteStream
 	Common::MemoryWriteStreamDynamic writeStream;
-	Lua::serializeLua(_state, &writeStream);
+	Lua::persistLua(_state, &writeStream);
 
 	// Persistenzdaten in den Writer schreiben.
 	writer.write(writeStream.getData(), writeStream.size());
@@ -482,7 +482,7 @@ bool LuaScriptEngine::unpersist(InputPersistenceBlock &reader) {
 	reader.readByteArray(chunkData);
 	Common::MemoryReadStream readStream(&chunkData[0], chunkData.size(), DisposeAfterUse::NO);
 
-	Lua::unserializeLua(_state, &readStream);
+	Lua::unpersistLua(_state, &readStream);
 
 	// Permanents-Table is removed from stack
 	lua_remove(_state, -2);

@@ -20,7 +20,7 @@
  *
  */
 
-#include "sword25/util/lua_serialization_util.h"
+#include "sword25/util/lua_persistence_util.h"
 
 #include "common/scummsys.h"
 
