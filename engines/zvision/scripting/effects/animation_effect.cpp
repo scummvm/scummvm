@@ -88,10 +88,13 @@ bool AnimationEffect::process(uint32 deltaTimeInMillis) {
 	if (it != _playList.end()) {
 		playnode *nod = &(*it);
 
-		if (!_animation->isPlaying()) {
+		if (nod->_curFrame == -1) {
 			// The node is just beginning playback
+			nod->_curFrame = nod->start;
+
 			_animation->start();
 			_animation->seekToFrame(nod->start);
+			_animation->setEndFrame(nod->stop);
 
 			nod->_delay = deltaTimeInMillis; // Force the frame to draw
 			if (nod->slot)
@@ -111,6 +114,7 @@ bool AnimationEffect::process(uint32 deltaTimeInMillis) {
 				return _disposeAfterUse;
 			}
 
+			nod->_curFrame = nod->start;
 			_animation->seekToFrame(nod->start);
 		}
 
@@ -186,9 +190,9 @@ void AnimationEffect::addPlayNode(int32 slot, int x, int y, int x2, int y2, int 
 	nod.loop = loops;
 	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
 	nod.start = startFrame;
-	_animation->setEndFrame(CLIP<int>(endFrame, 0, _animation->getFrameCount() - 1));
-
+	nod.stop = CLIP<int>(endFrame, 0, _animation->getFrameCount() - 1);
 	nod.slot = slot;
+	nod._curFrame = -1;
 	nod._delay = 0;
 	nod._scaled = NULL;
 	_playList.push_back(nod);
