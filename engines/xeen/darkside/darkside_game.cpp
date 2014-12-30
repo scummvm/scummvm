@@ -31,10 +31,10 @@ DarkSideEngine::DarkSideEngine(OSystem *syst, const XeenGameDescription *gameDes
 }
 
 void DarkSideEngine::playGame() {
-	playGame();
+	// TODO
 }
 
-bool DarkSideEngine::pause(int amount) {
+bool DarkSideEngine::pause(uint amount) {
 	while (!shouldQuit() && _events->timeElapsed() < amount) {
 		_events->pollEventsAndWait();
 		if (_events->isKeyMousePressed())
@@ -45,6 +45,7 @@ bool DarkSideEngine::pause(int amount) {
 }
 
 void DarkSideEngine::darkSideIntro() {
+	/*
 	showTitle1();
 	if (shouldQuit())
 		return;
@@ -52,7 +53,7 @@ void DarkSideEngine::darkSideIntro() {
 	showTitle2();
 	if (shouldQuit())
 		return;
-
+		*/
 	// TODO: Only show startup if not seen before
 	showStartSequence();
 }
@@ -78,7 +79,7 @@ void DarkSideEngine::showTitle1() {
 	// Draw the screen and fade it in
 	_screen->horizMerge(0);
 	_screen->draw();
-	_screen->fade(4);
+	_screen->fadeIn(4);
 
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
@@ -150,7 +151,7 @@ void DarkSideEngine::showTitle2() {
 
 	_screen->loadBackground("jvc.raw");
 	_screen->draw();
-	_screen->fade(4);
+	_screen->fadeIn(4);
 	
 	_events->updateGameCounter();
 	pause(60);
@@ -162,7 +163,7 @@ void DarkSideEngine::showStartSequence() {
 	_screen->loadPage(0);
 	_screen->loadPage(1);
 	_screen->loadBackground("pyramid3.raw");
-	_screen->saveScreen(1);
+	_screen->saveBackground(1);
 
 	SpriteResource sprites[3] = {
 		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
@@ -211,7 +212,7 @@ void DarkSideEngine::showStartSequence() {
 	}
 
 	_screen->vertMerge(SCREEN_HEIGHT);
-	_screen->saveScreen(1);
+	_screen->saveBackground(1);
 	_screen->draw();
 	_screen->freePages();
 

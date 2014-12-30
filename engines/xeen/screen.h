@@ -38,6 +38,17 @@ namespace Xeen {
 
 class XeenEngine;
 
+class Window {
+private:
+	Common::Rect _bounds;
+	int _a;
+	int _border;
+	int _xLo, _xHi;
+	int _ycL, _ycH;
+public:
+	Window(const Common::Rect &bounds, int a, int border, int xLo, int ycL, int xHi, int ycH);
+};
+
 class Screen: public XSurface {
 private:
 	XeenEngine *_vm;
@@ -80,13 +91,13 @@ public:
 
 	void draw(void *data = nullptr);
 
-	void fade(int step);
+	void fadeIn(int step);
 
 	void fadeOut(int step);
 
-	void saveScreen(int slot);
+	void saveBackground(int slot);
 
-	void restoreScreen(int slot);
+	void restoreBackground(int slot);
 };
 
 } // End of namespace Xeen

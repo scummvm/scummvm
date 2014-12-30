@@ -30,7 +30,7 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 }
 
 void WorldOfXeenEngine::playGame () {
-	darkSideIntro();
+	//darkSideIntro();
 }
 
 } // End of namespace Xeen

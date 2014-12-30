@@ -29,7 +29,7 @@ namespace Xeen {
 
 class DarkSideEngine : virtual public XeenEngine {
 private:
-	bool pause(int amount);
+	bool pause(uint amount);
 
 	void showTitle1();
 
