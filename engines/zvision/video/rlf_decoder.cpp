@@ -56,7 +56,7 @@ RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
 	  _height(0),
 	  _frameTime(0),
 	  _frames(0),
-	  _curFrame(0),
+	  _curFrame(-1),
 	  _frameBufferByteSize(0) {
 
 	if (!readHeader()) {
