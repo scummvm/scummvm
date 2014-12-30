@@ -22,6 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/stark/stark.h"
+#include "engines/stark/stateprovider.h"
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -218,17 +219,31 @@ public:
 			(f == kSupportsListSaves);
 	}
 
+	int getMaximumSaveSlot() const {
+		return 99;
+	}
+
 	virtual SaveStateList listSaves(const char *target) const {
 		SaveStateList saveList;
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("Save??.tlj");
 
 		char slot[3];
 		for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
+			// Extract the slot nomber from the filename
 			slot[0] = filename->c_str()[5];
 			slot[1] = filename->c_str()[6];
 			slot[2] = '\0';
 
-			saveList.push_back(SaveStateDescriptor(atoi(slot), *filename));
+			// Read the description from the save
+			Common::String description;
+			Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(*filename);
+			if (save) {
+				StateReadStream *stream = new StateReadStream(save);
+				description = stream->readString();
+				delete stream;
+			}
+
+			saveList.push_back(SaveStateDescriptor(atoi(slot), description));
 		}
 
 		return saveList;
