@@ -64,7 +64,7 @@ bool Lab::open(const Common::String &filename, bool keepStream) {
 	}
 	if (result && keepStream) {
 		file->seek(0, SEEK_SET);
-		byte *data = new byte[file->size()];
+		byte *data = static_cast<byte*>(malloc(sizeof(byte) * file->size()));
 		file->read(data, file->size());
 		_stream = new Common::MemoryReadStream(data, file->size(), DisposeAfterUse::YES);
 	}
@@ -185,7 +185,7 @@ Common::SeekableReadStream *Lab::createReadStreamForMember(const Common::String 
 		file->open(_labFileName);
 		return new Common::SeekableSubReadStream(file, i->_offset, i->_offset + i->_len, DisposeAfterUse::YES);
 	} else {
-		byte *data = new byte[i->_len];
+		byte *data = static_cast<byte*>(malloc(sizeof(byte) * i->_len));
 		_stream->seek(i->_offset, SEEK_SET);
 		_stream->read(data, i->_len);
 		return new Common::MemoryReadStream(data, i->_len, DisposeAfterUse::YES);
