@@ -37,27 +37,35 @@ namespace Xeen {
 #define PALETTE_SIZE (256 * 3)
 
 class XeenEngine;
+class Screen;
 
 class Window {
 private:
+	Screen *_screen;
 	Common::Rect _bounds;
 	int _a;
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
 public:
-	Window(const Common::Rect &bounds, int a, int border, int xLo, int ycL, int xHi, int ycH);
+	Window();
+
+	Window(Screen *screen, const Common::Rect &bounds, int a, int border, 
+		int xLo, int ycL, int xHi, int ycH);
 };
 
 class Screen: public XSurface {
 private:
 	XeenEngine *_vm;
+	Common::Array<Window> _windows;
 	Common::List<Common::Rect> _dirtyRects;
 	byte _mainPalette[PALETTE_SIZE];
 	byte _tempPaltte[PALETTE_SIZE];
 	XSurface _pages[2];
 	XSurface _savedScreens[10];
 	bool _fadeIn;
+
+	void setupWindows();
 
 	void mergeDirtyRects();
 
