@@ -186,7 +186,7 @@ void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int st
 	nod.loop = loops;
 	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
 	nod.start = startFrame;
-	_animation->setEndFrame(CLIP<int>(endFrame, 0,_animation->getFrameCount() - 1));
+	_animation->setEndFrame(CLIP<int>(endFrame, 0, _animation->getFrameCount() - 1));
 
 	nod.slot = slot;
 	nod._delay = 0;
