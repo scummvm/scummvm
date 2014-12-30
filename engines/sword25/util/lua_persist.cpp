@@ -59,7 +59,7 @@ void persistLua(lua_State *luaState, Common::WriteStream *writeStream) {
 	SerializationInfo info;
 	info.luaState = luaState;
 	info.writeStream = writeStream;
-	info.counter = 0u;
+	info.counter = 1u;
 
 	// The process starts with the lua stack as follows:
 	// >>>>> permTbl rootObj
@@ -145,18 +145,21 @@ static void serialize(SerializationInfo *info) {
 		return;
 	}
 
-	// Pop the nil off the stack
+	// Pop the index/nil off the stack
 	lua_pop(info->luaState, 1);
 
-	// Write out a flag that indicates that this is a real object
-	info->writeStream->writeByte(1);
-
-	// If the object itself is nil, then write out a zero as a placeholder
+	// If the obj itself is nil, we represent it as an index of 0
 	if (lua_isnil(info->luaState, -1)) {
+		// Write out a flag that indicates that it's an index
 		info->writeStream->writeByte(0);
+		// Write out the index
+		info->writeStream->writeUint32LE(0);
 
 		return;
 	}
+
+	// Write out a flag that indicates that this is a real object
+	info->writeStream->writeByte(1);
 
 	// Add the object to the indexTbl
 
