@@ -33,6 +33,7 @@
 
 TARGET          scummvm_zvision.lib
 TARGETTYPE      lib
+USERINCLUDE     ..\..\..\..\engines\zvision\graphics
 #include "config.mmh"
 
 //START_AUTO_MACROS_SLAVE//
