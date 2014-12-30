@@ -22,7 +22,7 @@
 
 #include "sword25/util/lua_persistence.h"
 
-#include "sword25/util/double_serializer.h"
+#include "sword25/util/double_serialization.h"
 #include "sword25/util/lua_persistence_util.h"
 
 #include "common/stream.h"

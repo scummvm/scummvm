@@ -82,7 +82,7 @@ MODULE_OBJS := \
 	util/lua/lvm.o \
 	util/lua/lzio.o \
 	util/lua/scummvm_file.o \
-	util/double_serializer.o \
+	util/double_serialization.o \
 	util/lua_persistence_util.o \
 	util/lua_persist.o \
 	util/lua_unpersist.o
