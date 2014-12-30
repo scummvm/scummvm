@@ -277,8 +277,7 @@ public:
 	void prepareBackground();
 
 	/**
-	 * Reads an image file pixel data into a Surface buffer. In the process
-	 * it converts the pixel data from RGB 555 to RGB 565. Also, if the image
+	 * Reads an image file pixel data into a Surface buffer. Also, if the image
 	 * is transposed, it will un-transpose the pixel data. The function will
 	 * call destination::create() if the dimensions of destination do not match
 	 * up with the dimensions of the image.
@@ -289,8 +288,7 @@ public:
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination);
 
 	/**
-	 * Reads an image file pixel data into a Surface buffer. In the process
-	 * it converts the pixel data from RGB 555 to RGB 565. Also, if the image
+	 * Reads an image file pixel data into a Surface buffer. Also, if the image
 	 * is transposed, it will un-transpose the pixel data. The function will
 	 * call destination::create() if the dimensions of destination do not match
 	 * up with the dimensions of the image.
