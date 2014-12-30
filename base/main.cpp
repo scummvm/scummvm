@@ -529,43 +529,21 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// at. At the time of writing, this is used for the Maniac Mansion
 			// easter egg in Day of the Tentacle.
 
-			Common::String chainedGames, nextGame, saveSlot;
+			Common::String chainedGame;
+			int saveSlot = -1;
 
-			if (ConfMan.hasKey("chained_games", Common::ConfigManager::kTransientDomain)) {
-				chainedGames = ConfMan.get("chained_games", Common::ConfigManager::kTransientDomain);
-			}
+			ChainedGamesMan.pop(chainedGame, saveSlot);
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.
 			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
 
-			if (!chainedGames.empty()) {
-				if (chainedGames.contains(',')) {
-					for (uint i = 0; i < chainedGames.size(); i++) {
-						if (chainedGames[i] == ',') {
-							chainedGames.erase(0, i + 1);
-							break;
-						}
-						nextGame += chainedGames[i];
-					}
-					ConfMan.set("chained_games", chainedGames, Common::ConfigManager::kTransientDomain);
-				} else {
-					nextGame = chainedGames;
-					chainedGames.clear();
-					ConfMan.removeKey("chained_games", Common::ConfigManager::kTransientDomain);
+			if (!chainedGame.empty()) {
+				if (saveSlot != -1) {
+					ConfMan.setInt("save_slot", saveSlot, Common::ConfigManager::kTransientDomain);
 				}
-				if (nextGame.contains(':')) {
-					for (int i = nextGame.size() - 1; i >= 0; i--) {
-						if (nextGame[i] == ':') {
-							nextGame.erase(i);
-							break;
-						}
-						saveSlot = nextGame[i] + saveSlot;
-					}
-					ConfMan.setInt("save_slot", atoi(saveSlot.c_str()), Common::ConfigManager::kTransientDomain);
-				}
-				// Start the next game
-				ConfMan.setActiveDomain(nextGame);
+				// Start the chained game
+				ConfMan.setActiveDomain(chainedGame);
 			} else {
 				// Clear the active config domain
 				ConfMan.setActiveDomain("");

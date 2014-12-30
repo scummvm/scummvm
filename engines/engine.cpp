@@ -45,6 +45,7 @@
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/singleton.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -101,6 +102,36 @@ static void defaultErrorHandler(const char *msg) {
 	}
 }
 
+// Chained games manager
+
+ChainedGamesManager::ChainedGamesManager() {
+	clear();
+}
+
+void ChainedGamesManager::clear() {
+	_chainedGames.clear();
+}
+
+void ChainedGamesManager::push(const Common::String target, const int slot) {
+	Game game;
+	game.target = target;
+	game.slot = slot;
+	_chainedGames.push(game);
+}
+
+bool ChainedGamesManager::pop(Common::String &target, int &slot) {
+	if (_chainedGames.empty()) {
+		return false;
+	}
+	Game game = _chainedGames.pop();
+	target = game.target;
+	slot = game.slot;
+	return true;
+}
+
+namespace Common {
+DECLARE_SINGLETON(ChainedGamesManager);
+}
 
 Engine::Engine(OSystem *syst)
 	: _system(syst),

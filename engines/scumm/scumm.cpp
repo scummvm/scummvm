@@ -2625,7 +2625,8 @@ bool ScummEngine::startManiac() {
 
 		// Set up the chanined games to Maniac Mansion, and then back
 		// to the current game again with that save slot.
-		ConfMan.set("chained_games", maniacTarget + "," + ConfMan.getActiveDomainName() + ":100", Common::ConfigManager::kTransientDomain);
+		ChainedGamesMan.push(maniacTarget);
+		ChainedGamesMan.push(ConfMan.getActiveDomainName(), 100);
 
 		// Force a return to the launcher. This will start the first
 		// chained game.
