@@ -20,56 +20,35 @@
  *
  */
 
-#ifndef ZVISION_ANIMATION_NODE_H
-#define ZVISION_ANIMATION_NODE_H
+#ifndef ZVISION_SYNCSOUND_NODE_H
+#define ZVISION_SYNCSOUND_NODE_H
 
-#include "zvision/scripting/sidefx.h"
-#include "common/rect.h"
-#include "common/list.h"
+#include "audio/mixer.h"
+#include "zvision/scripting/scripting_effect.h"
+#include "zvision/text/subtitles.h"
 
-namespace Graphics {
-struct Surface;
-}
-
-namespace Video {
-	class VideoDecoder;
+namespace Common {
+class String;
 }
 
 namespace ZVision {
-
-class ZVision;
-
-class AnimationNode : public SideFX {
+class SyncSoundNode : public ScriptingEffect {
 public:
-	AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse = true);
-	~AnimationNode();
+	SyncSoundNode(ZVision *engine, uint32 key, Common::String &file, int32 syncto);
+	~SyncSoundNode();
 
-	struct playnode {
-		Common::Rect pos;
-		int32 slot;
-		int32 start;
-		int32 loop;
-		int32 _delay;
-		Graphics::Surface *_scaled;
-	};
-
-private:
-	typedef Common::List<playnode> PlayNodes;
-
-	PlayNodes _playList;
-
-	int32 _mask;
-	bool _disposeAfterUse;
-
-	Video::VideoDecoder *_animation;
-	int32 _frmDelayOverride;
-
-public:
+	/**
+	 * Decrement the timer by the delta time. If the timer is finished, set the status
+	 * in _globalState and let this node be deleted
+	 *
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
+	 */
 	bool process(uint32 deltaTimeInMillis);
-
-	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops = 1);
-
-	bool stop();
+private:
+	int32 _syncto;
+	Audio::SoundHandle _handle;
+	Subtitle *_sub;
 };
 
 } // End of namespace ZVision

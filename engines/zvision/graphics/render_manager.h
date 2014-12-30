@@ -31,7 +31,7 @@
 
 #include "graphics/surface.h"
 
-#include "effect.h"
+#include "graphics_effect.h"
 
 class OSystem;
 
@@ -61,7 +61,7 @@ private:
 	};
 
 	typedef Common::HashMap<uint16, OneSubtitle> SubtitleMap;
-	typedef Common::List<Effect *> EffectsList;
+	typedef Common::List<GraphicsEffect *> EffectsList;
 
 private:
 	ZVision *_engine;
@@ -302,7 +302,7 @@ public:
 	void readImageToSurface(const Common::String &fileName, Graphics::Surface &destination, bool transposed);
 
 	// Add visual effect to effects list
-	void addEffect(Effect *_effect);
+	void addEffect(GraphicsEffect *_effect);
 
 	// Delete effect(s) by ID (ID equal to slot of action:region that create this effect)
 	void deleteEffect(uint32 ID);

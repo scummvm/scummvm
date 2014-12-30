@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SIDEFX_H_INCLUDED
-#define SIDEFX_H_INCLUDED
+#ifndef SCRIPTING_EFFECT_H_INCLUDED
+#define SCRIPTING_EFFECT_H_INCLUDED
 
 namespace Common {
 class SeekableReadStream;
@@ -33,29 +33,39 @@ namespace ZVision {
 
 class ZVision;
 
-class SideFX {
+/**
+  * The base class that represents effects created from Actions.
+  * This class is virtual.
+  *
+  * Detailed Description: 
+  *     A scene has Controls. By interacting with the controls, the user
+  *     causes Actions to execute. Certain Actions create 'effects', for
+  *     example, a sound or an animation. This is the base class for
+  *     those effects.
+  */
+class ScriptingEffect {
 public:
 
-	enum SideFXType {
-		SIDEFX_ANIM  = 1,
-		SIDEFX_AUDIO = 2,
-		SIDEFX_DISTORT = 4,
-		SIDEFX_PANTRACK = 8,
-		SIDEFX_REGION = 16,
-		SIDEFX_TIMER = 32,
-		SIDEFX_TTYTXT = 64,
-		SIDEFX_UNK = 128,
-		SIDEFX_ALL = 255
+	enum ScriptingEffectType {
+		SCRIPTING_EFFECT_ANIM  = 1,
+		SCRIPTING_EFFECT_AUDIO = 2,
+		SCRIPTING_EFFECT_DISTORT = 4,
+		SCRIPTING_EFFECT_PANTRACK = 8,
+		SCRIPTING_EFFECT_REGION = 16,
+		SCRIPTING_EFFECT_TIMER = 32,
+		SCRIPTING_EFFECT_TTYTXT = 64,
+		SCRIPTING_EFFECT_UNKNOWN = 128,
+		SCRIPTING_EFFECT_ALL = 255
 	};
 
-	SideFX() : _engine(0), _key(0), _type(SIDEFX_UNK) {}
-	SideFX(ZVision *engine, uint32 key, SideFXType type) : _engine(engine), _key(key), _type(type) {}
-	virtual ~SideFX() {}
+	ScriptingEffect() : _engine(0), _key(0), _type(SCRIPTING_EFFECT_UNKNOWN) {}
+	ScriptingEffect(ZVision *engine, uint32 key, ScriptingEffectType type) : _engine(engine), _key(key), _type(type) {}
+	virtual ~ScriptingEffect() {}
 
 	uint32 getKey() {
 		return _key;
 	}
-	SideFXType getType() {
+	ScriptingEffectType getType() {
 		return _type;
 	}
 
@@ -103,7 +113,7 @@ public:
 protected:
 	ZVision *_engine;
 	uint32 _key;
-	SideFXType _type;
+	ScriptingEffectType _type;
 
 // Static member functions
 public:
@@ -111,4 +121,4 @@ public:
 };
 } // End of namespace ZVision
 
-#endif // SIDEFX_H_INCLUDED
+#endif // SCRIPTING_EFFECT_H_INCLUDED

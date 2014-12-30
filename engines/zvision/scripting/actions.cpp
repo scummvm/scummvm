@@ -31,16 +31,16 @@
 #include "zvision/video/zork_avi_decoder.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/menu.h"
-#include "zvision/scripting/sidefx/timer_node.h"
-#include "zvision/scripting/sidefx/music_node.h"
-#include "zvision/scripting/sidefx/syncsound_node.h"
-#include "zvision/scripting/sidefx/animation_node.h"
-#include "zvision/scripting/sidefx/distort_node.h"
-#include "zvision/scripting/sidefx/ttytext_node.h"
-#include "zvision/scripting/sidefx/region_node.h"
+#include "zvision/scripting/effects/timer_effect.h"
+#include "zvision/scripting/effects/music_effect.h"
+#include "zvision/scripting/effects/syncsound_effect.h"
+#include "zvision/scripting/effects/animation_effect.h"
+#include "zvision/scripting/effects/distort_effect.h"
+#include "zvision/scripting/effects/ttytext_effect.h"
+#include "zvision/scripting/effects/region_effect.h"
 #include "zvision/scripting/controls/titler_control.h"
 #include "zvision/graphics/render_table.h"
-#include "zvision/graphics/effect.h"
+#include "zvision/graphics/graphics_effect.h"
 #include "zvision/graphics/effects/fog.h"
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
@@ -106,8 +106,8 @@ ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotkey, const Common::S
 }
 
 bool ActionAttenuate::execute() {
-	SideFX *fx = _engine->getScriptManager()->getSideFX(_key);
-	if (fx && fx->getType() == SideFX::SIDEFX_AUDIO) {
+	ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_key);
+	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNode *mus = (MusicNode *)fx;
 		mus->setVolume(255 - (abs(_attenuation) >> 7));
 	}
@@ -157,8 +157,8 @@ ActionCrossfade::ActionCrossfade(ZVision *engine, int32 slotkey, const Common::S
 
 bool ActionCrossfade::execute() {
 	if (_keyOne) {
-		SideFX *fx = _engine->getScriptManager()->getSideFX(_keyOne);
-		if (fx && fx->getType() == SideFX::SIDEFX_AUDIO) {
+		ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_keyOne);
+		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNode *mus = (MusicNode *)fx;
 			if (_oneStartVolume >= 0)
 				mus->setVolume((_oneStartVolume * 255) / 100);
@@ -168,8 +168,8 @@ bool ActionCrossfade::execute() {
 	}
 
 	if (_keyTwo) {
-		SideFX *fx = _engine->getScriptManager()->getSideFX(_keyTwo);
-		if (fx && fx->getType() == SideFX::SIDEFX_AUDIO) {
+		ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_keyTwo);
+		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 			MusicNode *mus = (MusicNode *)fx;
 			if (_twoStartVolume >= 0)
 				mus->setVolume((_twoStartVolume * 255) / 100);
@@ -401,28 +401,28 @@ ActionKill::ActionKill(ZVision *engine, int32 slotkey, const Common::String &lin
 	sscanf(line.c_str(), "%24s", keytype);
 	if (keytype[0] == '"') {
 		if (!scumm_stricmp(keytype, "\"ANIM\""))
-			_type = SideFX::SIDEFX_ANIM;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_ANIM;
 		else if (!scumm_stricmp(keytype, "\"AUDIO\""))
-			_type = SideFX::SIDEFX_AUDIO;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_AUDIO;
 		else if (!scumm_stricmp(keytype, "\"DISTORT\""))
-			_type = SideFX::SIDEFX_DISTORT;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_DISTORT;
 		else if (!scumm_stricmp(keytype, "\"PANTRACK\""))
-			_type = SideFX::SIDEFX_PANTRACK;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_PANTRACK;
 		else if (!scumm_stricmp(keytype, "\"REGION\""))
-			_type = SideFX::SIDEFX_REGION;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_REGION;
 		else if (!scumm_stricmp(keytype, "\"TIMER\""))
-			_type = SideFX::SIDEFX_TIMER;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_TIMER;
 		else if (!scumm_stricmp(keytype, "\"TTYTEXT\""))
-			_type = SideFX::SIDEFX_TTYTXT;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_TTYTXT;
 		else if (!scumm_stricmp(keytype, "\"ALL\""))
-			_type = SideFX::SIDEFX_ALL;
+			_type = ScriptingEffect::SCRIPTING_EFFECT_ALL;
 	} else
 		_key = atoi(keytype);
 }
 
 bool ActionKill::execute() {
 	if (_type)
-		_engine->getScriptManager()->killSideFxType((SideFX::SideFXType)_type);
+		_engine->getScriptManager()->killSideFxType((ScriptingEffect::ScriptingEffectType)_type);
 	else
 		_engine->getScriptManager()->killSideFx(_key);
 	return true;
@@ -580,10 +580,10 @@ ActionPreloadAnimation::~ActionPreloadAnimation() {
 }
 
 bool ActionPreloadAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotKey);
+	AnimationEffect *nod = (AnimationEffect *)_engine->getScriptManager()->getSideFX(_slotKey);
 
 	if (!nod) {
-		nod = new AnimationNode(_engine, _slotKey, _fileName, _mask, _framerate, false);
+		nod = new AnimationEffect(_engine, _slotKey, _fileName, _mask, _framerate, false);
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
@@ -603,9 +603,9 @@ ActionUnloadAnimation::ActionUnloadAnimation(ZVision *engine, int32 slotkey, con
 }
 
 bool ActionUnloadAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_key);
+	AnimationEffect *nod = (AnimationEffect *)_engine->getScriptManager()->getSideFX(_key);
 
-	if (nod && nod->getType() == SideFX::SIDEFX_ANIM)
+	if (nod && nod->getType() == ScriptingEffect::SCRIPTING_EFFECT_ANIM)
 		_engine->getScriptManager()->deleteSideFx(_key);
 
 	return true;
@@ -648,10 +648,10 @@ ActionPlayAnimation::~ActionPlayAnimation() {
 }
 
 bool ActionPlayAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_slotKey);
+	AnimationEffect *nod = (AnimationEffect *)_engine->getScriptManager()->getSideFX(_slotKey);
 
 	if (!nod) {
-		nod = new AnimationNode(_engine, _slotKey, _fileName, _mask, _framerate);
+		nod = new AnimationEffect(_engine, _slotKey, _fileName, _mask, _framerate);
 		_engine->getScriptManager()->addSideFX(nod);
 	} else
 		nod->stop();
@@ -683,7 +683,7 @@ ActionPlayPreloadAnimation::ActionPlayPreloadAnimation(ZVision *engine, int32 sl
 }
 
 bool ActionPlayPreloadAnimation::execute() {
-	AnimationNode *nod = (AnimationNode *)_engine->getScriptManager()->getSideFX(_controlKey);
+	AnimationEffect *nod = (AnimationEffect *)_engine->getScriptManager()->getSideFX(_controlKey);
 
 	if (nod)
 		nod->addPlayNode(_slotKey, _x1, _y1, _x2, _y2, _startFrame, _endFrame, _loopCount);
@@ -731,7 +731,7 @@ bool ActionRegion::execute() {
 	if (_engine->getScriptManager()->getSideFX(_slotKey))
 		return true;
 
-	Effect *effect = NULL;
+	GraphicsEffect *effect = NULL;
 	switch (_type) {
 	case 0: {
 		uint16 centerX, centerY, frames;
@@ -982,11 +982,11 @@ ActionSyncSound::ActionSyncSound(ZVision *engine, int32 slotkey, const Common::S
 }
 
 bool ActionSyncSound::execute() {
-	SideFX *fx = _engine->getScriptManager()->getSideFX(_syncto);
+	ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_syncto);
 	if (!fx)
 		return true;
 
-	if (!(fx->getType() & SideFX::SIDEFX_ANIM))
+	if (!(fx->getType() & ScriptingEffect::SCRIPTING_EFFECT_ANIM))
 		return true;
 
 	_engine->getScriptManager()->addSideFX(new SyncSoundNode(_engine, _slotKey, _fileName, _syncto));

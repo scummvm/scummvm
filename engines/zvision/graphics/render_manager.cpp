@@ -772,7 +772,7 @@ Common::Point RenderManager::getBkgSize() {
 	return Common::Point(_backgroundWidth, _backgroundHeight);
 }
 
-void RenderManager::addEffect(Effect *_effect) {
+void RenderManager::addEffect(GraphicsEffect *_effect) {
 	_effects.push_back(_effect);
 }
 

@@ -20,38 +20,56 @@
  *
  */
 
-#ifndef ZVISION_TIMER_NODE_H
-#define ZVISION_TIMER_NODE_H
+#ifndef ZVISION_ANIMATION_NODE_H
+#define ZVISION_ANIMATION_NODE_H
 
-#include "zvision/scripting/sidefx.h"
+#include "zvision/scripting/scripting_effect.h"
+#include "common/rect.h"
+#include "common/list.h"
+
+namespace Graphics {
+struct Surface;
+}
+
+namespace Video {
+	class VideoDecoder;
+}
 
 namespace ZVision {
 
 class ZVision;
 
-class TimerNode : public SideFX {
+class AnimationEffect : public ScriptingEffect {
 public:
-	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
-	~TimerNode();
+	AnimationEffect(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse = true);
+	~AnimationEffect();
 
-	/**
-	 * Decrement the timer by the delta time. If the timer is finished, set the status
-	 * in _globalState and let this node be deleted
-	 *
-	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
-	 * @return                     If true, the node can be deleted after process() finishes
-	 */
-	bool process(uint32 deltaTimeInMillis);
-	void serialize(Common::WriteStream *stream);
-	void deserialize(Common::SeekableReadStream *stream);
-	inline bool needsSerialization() {
-		return true;
-	}
-
-	bool stop();
+	struct playnode {
+		Common::Rect pos;
+		int32 slot;
+		int32 start;
+		int32 loop;
+		int32 _delay;
+		Graphics::Surface *_scaled;
+	};
 
 private:
-	int32 _timeLeft;
+	typedef Common::List<playnode> PlayNodes;
+
+	PlayNodes _playList;
+
+	int32 _mask;
+	bool _disposeAfterUse;
+
+	Video::VideoDecoder *_animation;
+	int32 _frmDelayOverride;
+
+public:
+	bool process(uint32 deltaTimeInMillis);
+
+	void addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops = 1);
+
+	bool stop();
 };
 
 } // End of namespace ZVision

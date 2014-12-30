@@ -30,7 +30,7 @@
 namespace ZVision {
 
 LightFx::LightFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, int8 delta, int8 minD, int8 maxD):
-	Effect(engine, key, region, ported) {
+	GraphicsEffect(engine, key, region, ported) {
 	_map = Map;
 	_delta = delta;
 	_up = true;

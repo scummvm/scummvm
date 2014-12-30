@@ -36,6 +36,11 @@ namespace ZVision {
 
 class ZVision;
 
+/**
+ * The base class for all Controls.
+ *
+ * Controls are the things that the user interacts with. Ex: A lever on the door
+ */
 class Control {
 public:
 

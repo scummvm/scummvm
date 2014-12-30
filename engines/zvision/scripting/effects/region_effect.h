@@ -20,64 +20,38 @@
  *
  */
 
-#ifndef EFFECT_H_INCLUDED
-#define EFFECT_H_INCLUDED
+#ifndef ZVISION_REGION_NODE_H
+#define ZVISION_REGION_NODE_H
 
-#include "common/rect.h"
-#include "common/list.h"
 #include "graphics/surface.h"
 
-#include "zvision/zvision.h"
+#include "zvision/scripting/scripting_effect.h"
+#include "zvision/graphics/graphics_effect.h"
 
 namespace ZVision {
 
 class ZVision;
 
-class Effect {
+class RegionNode : public ScriptingEffect {
 public:
+	RegionNode(ZVision *engine, uint32 key, GraphicsEffect *effect, uint32 delay);
+	~RegionNode();
 
-	Effect(ZVision *engine, uint32 key, Common::Rect region, bool ported) : _engine(engine), _key(key), _region(region), _ported(ported) {
-		_surface.create(_region.width(), _region.height(), _engine->_resourcePixelFormat);
-	}
-	virtual ~Effect() {}
+	/**
+	 * Decrement the timer by the delta time. If the timer is finished, set the status
+	 * in _globalState and let this node be deleted
+	 *
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
+	 */
+	bool process(uint32 deltaTimeInMillis);
 
-	uint32 getKey() {
-		return _key;
-	}
-
-	Common::Rect getRegion() {
-		return _region;
-	}
-
-	bool isPort() {
-		return _ported;
-	}
-
-	virtual const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) {
-		return &_surface;
-	}
-
-	virtual void update() {}
-
-protected:
-	ZVision *_engine;
-	uint32 _key;
-	Common::Rect _region;
-	bool _ported;
-	Graphics::Surface _surface;
-
-// Static member functions
-public:
-
+private:
+	int32 _timeLeft;
+	uint32 _delay;
+	GraphicsEffect *_effect;
 };
-
-struct EffectMapUnit {
-	uint32 count;
-	bool inEffect;
-};
-
-typedef Common::List<EffectMapUnit> EffectMap;
 
 } // End of namespace ZVision
 
-#endif // EFFECT_H_INCLUDED
+#endif

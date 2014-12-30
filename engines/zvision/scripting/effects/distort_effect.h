@@ -20,36 +20,42 @@
  *
  */
 
-#ifndef ZVISION_REGION_NODE_H
-#define ZVISION_REGION_NODE_H
+#ifndef ZVISION_DISTORT_NODE_H
+#define ZVISION_DISTORT_NODE_H
 
-#include "graphics/surface.h"
-
-#include "zvision/scripting/sidefx.h"
-#include "zvision/graphics/effect.h"
+#include "zvision/scripting/scripting_effect.h"
 
 namespace ZVision {
 
 class ZVision;
 
-class RegionNode : public SideFX {
+class DistortNode : public ScriptingEffect {
 public:
-	RegionNode(ZVision *engine, uint32 key, Effect *effect, uint32 delay);
-	~RegionNode();
+	DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale);
+	~DistortNode();
 
-	/**
-	 * Decrement the timer by the delta time. If the timer is finished, set the status
-	 * in _globalState and let this node be deleted
-	 *
-	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
-	 * @return                     If true, the node can be deleted after process() finishes
-	 */
 	bool process(uint32 deltaTimeInMillis);
 
 private:
-	int32 _timeLeft;
-	uint32 _delay;
-	Effect *_effect;
+	int16 _speed;
+	float _startAngle;
+	float _endAngle;
+	float _startLineScale;
+	float _endLineScale;
+
+	float _frmSpeed;
+	float _diffAngle;
+	float _diffLinScale;
+	bool _incr;
+	int16 _frames;
+
+	float _curFrame;
+
+	float _angle;
+	float _linScale;
+
+private:
+	void setParams(float angl, float linScale);
 };
 
 } // End of namespace ZVision

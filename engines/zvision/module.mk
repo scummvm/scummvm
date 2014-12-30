@@ -32,13 +32,13 @@ MODULE_OBJS := \
 	scripting/menu.o \
 	scripting/scr_file_handling.o \
 	scripting/script_manager.o \
-	scripting/sidefx/animation_node.o \
-	scripting/sidefx/distort_node.o \
-	scripting/sidefx/music_node.o \
-	scripting/sidefx/region_node.o \
-	scripting/sidefx/syncsound_node.o \
-	scripting/sidefx/timer_node.o \
-	scripting/sidefx/ttytext_node.o \
+	scripting/effects/animation_effect.o \
+	scripting/effects/distort_effect.o \
+	scripting/effects/music_effect.o \
+	scripting/effects/region_effect.o \
+	scripting/effects/syncsound_effect.o \
+	scripting/effects/timer_effect.o \
+	scripting/effects/ttytext_effect.o \
 	sound/midi.o \
 	sound/zork_raw.o \
 	text/string_manager.o \

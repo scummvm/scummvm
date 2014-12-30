@@ -20,25 +20,19 @@
  *
  */
 
-#ifndef ZVISION_TTYTEXT_NODE_H
-#define ZVISION_TTYTEXT_NODE_H
+#ifndef ZVISION_TIMER_NODE_H
+#define ZVISION_TIMER_NODE_H
 
-#include "common/rect.h"
-#include "graphics/surface.h"
-
-#include "zvision/scripting/sidefx.h"
-#include "zvision/text/text.h"
-#include "zvision/text/truetype_font.h"
-
-namespace Common {
-class String;
-}
+#include "zvision/scripting/scripting_effect.h"
 
 namespace ZVision {
-class ttyTextNode : public SideFX {
+
+class ZVision;
+
+class TimerNode : public ScriptingEffect {
 public:
-	ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay);
-	~ttyTextNode();
+	TimerNode(ZVision *engine, uint32 key, uint timeInSeconds);
+	~TimerNode();
 
 	/**
 	 * Decrement the timer by the delta time. If the timer is finished, set the status
@@ -48,24 +42,16 @@ public:
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
 	bool process(uint32 deltaTimeInMillis);
+	void serialize(Common::WriteStream *stream);
+	void deserialize(Common::SeekableReadStream *stream);
+	inline bool needsSerialization() {
+		return true;
+	}
+
+	bool stop();
+
 private:
-	Common::Rect _r;
-
-	cTxtStyle _style;
-	StyledTTFont _fnt;
-	Common::String _txtbuf;
-	uint32 _txtpos;
-
-	int32 _delay;
-	int32 _nexttime;
-	Graphics::Surface _img;
-	int16 _dx;
-	int16 _dy;
-private:
-
-	void newline();
-	void scroll();
-	void outchar(uint16 chr);
+	int32 _timeLeft;
 };
 
 } // End of namespace ZVision

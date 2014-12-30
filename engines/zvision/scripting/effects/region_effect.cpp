@@ -20,37 +20,37 @@
  *
  */
 
-#ifndef ZVISION_SYNCSOUND_NODE_H
-#define ZVISION_SYNCSOUND_NODE_H
+#include "common/scummsys.h"
 
-#include "audio/mixer.h"
-#include "zvision/scripting/sidefx.h"
-#include "zvision/text/subtitles.h"
+#include "zvision/scripting/effects/region_effect.h"
 
-namespace Common {
-class String;
-}
+#include "zvision/zvision.h"
+#include "zvision/scripting/script_manager.h"
+#include "zvision/graphics/render_manager.h"
 
 namespace ZVision {
-class SyncSoundNode : public SideFX {
-public:
-	SyncSoundNode(ZVision *engine, uint32 key, Common::String &file, int32 syncto);
-	~SyncSoundNode();
 
-	/**
-	 * Decrement the timer by the delta time. If the timer is finished, set the status
-	 * in _globalState and let this node be deleted
-	 *
-	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
-	 * @return                     If true, the node can be deleted after process() finishes
-	 */
-	bool process(uint32 deltaTimeInMillis);
-private:
-	int32 _syncto;
-	Audio::SoundHandle _handle;
-	Subtitle *_sub;
-};
+RegionNode::RegionNode(ZVision *engine, uint32 key, GraphicsEffect *effect, uint32 delay)
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_REGION) {
+	_effect = effect;
+	_delay = delay;
+	_timeLeft = 0;
+}
+
+RegionNode::~RegionNode() {
+	_engine->getRenderManager()->deleteEffect(_key);
+}
+
+bool RegionNode::process(uint32 deltaTimeInMillis) {
+	_timeLeft -= deltaTimeInMillis;
+
+	if (_timeLeft <= 0) {
+		_timeLeft = _delay;
+		if (_effect)
+			_effect->update();
+	}
+
+	return false;
+}
 
 } // End of namespace ZVision
-
-#endif

@@ -25,7 +25,7 @@
 
 #include "zvision/scripting/puzzle.h"
 #include "zvision/scripting/control.h"
-#include "zvision/scripting/sidefx.h"
+#include "zvision/scripting/scripting_effect.h"
 
 #include "common/hashmap.h"
 #include "common/queue.h"
@@ -116,7 +116,7 @@ typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;
 typedef Common::HashMap<uint32, int32> StateMap;
-typedef Common::List<SideFX *> SideFXList;
+typedef Common::List<ScriptingEffect *> SideFXList;
 typedef Common::List<Common::Event> EventList;
 
 class ScriptManager {
@@ -196,12 +196,12 @@ public:
 	// Only change focus control without call focus/unfocus.
 	void setFocusControlKey(uint32 key);
 
-	void addSideFX(SideFX *fx);
-	SideFX *getSideFX(uint32 key);
+	void addSideFX(ScriptingEffect *fx);
+	ScriptingEffect *getSideFX(uint32 key);
 	void deleteSideFx(uint32 key);
 	void stopSideFx(uint32 key);
 	void killSideFx(uint32 key);
-	void killSideFxType(SideFX::SideFXType type);
+	void killSideFxType(ScriptingEffect::ScriptingEffectType type);
 
 	void addEvent(Common::Event);
 	void flushEvent(Common::EventType type);

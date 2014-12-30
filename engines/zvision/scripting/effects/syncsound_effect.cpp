@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/sidefx/syncsound_node.h"
+#include "zvision/scripting/effects/syncsound_effect.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -36,7 +36,7 @@
 namespace ZVision {
 
 SyncSoundNode::SyncSoundNode(ZVision *engine, uint32 key, Common::String &filename, int32 syncto)
-	: SideFX(engine, key, SIDEFX_AUDIO) {
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_syncto = syncto;
 	_sub = NULL;
 

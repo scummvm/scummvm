@@ -31,7 +31,7 @@
 namespace ZVision {
 
 FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, EffectMap *Map, const Common::String &clouds):
-	Effect(engine, key, region, ported) {
+	GraphicsEffect(engine, key, region, ported) {
 
 	_map = Map;
 

@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/sidefx/animation_node.h"
+#include "zvision/scripting/effects/animation_effect.h"
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
@@ -33,8 +33,8 @@
 
 namespace ZVision {
 
-AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse)
-	: SideFX(engine, controlKey, SIDEFX_ANIM),
+AnimationEffect::AnimationEffect(ZVision *engine, uint32 controlKey, const Common::String &fileName, int32 mask, int32 frate, bool disposeAfterUse)
+	: ScriptingEffect(engine, controlKey, SCRIPTING_EFFECT_ANIM),
 	  _disposeAfterUse(disposeAfterUse),
 	  _mask(mask),
 	  _animation(NULL) {
@@ -53,7 +53,7 @@ AnimationNode::AnimationNode(ZVision *engine, uint32 controlKey, const Common::S
 	}
 }
 
-AnimationNode::~AnimationNode() {
+AnimationEffect::~AnimationEffect() {
 	if (_animation)
 		delete _animation;
 
@@ -72,7 +72,7 @@ AnimationNode::~AnimationNode() {
 	_playList.clear();
 }
 
-bool AnimationNode::process(uint32 deltaTimeInMillis) {
+bool AnimationEffect::process(uint32 deltaTimeInMillis) {
 	ScriptManager *scriptManager = _engine->getScriptManager();
 	RenderManager *renderManager = _engine->getRenderManager();
 	RenderTable::RenderState renderState = renderManager->getRenderTable()->getRenderState();
@@ -181,7 +181,7 @@ bool AnimationNode::process(uint32 deltaTimeInMillis) {
 	return false;
 }
 
-void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops) {
+void AnimationEffect::addPlayNode(int32 slot, int x, int y, int x2, int y2, int startFrame, int endFrame, int loops) {
 	playnode nod;
 	nod.loop = loops;
 	nod.pos = Common::Rect(x, y, x2 + 1, y2 + 1);
@@ -194,7 +194,7 @@ void AnimationNode::addPlayNode(int32 slot, int x, int y, int x2, int y2, int st
 	_playList.push_back(nod);
 }
 
-bool AnimationNode::stop() {
+bool AnimationEffect::stop() {
 	PlayNodes::iterator it = _playList.begin();
 	if (it != _playList.end()) {
 		_engine->getScriptManager()->setStateValue((*it).slot, 2);

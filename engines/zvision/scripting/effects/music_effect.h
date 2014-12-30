@@ -24,7 +24,7 @@
 #define ZVISION_MUSIC_NODE_H
 
 #include "audio/mixer.h"
-#include "zvision/scripting/sidefx.h"
+#include "zvision/scripting/scripting_effect.h"
 #include "zvision/text/subtitles.h"
 
 namespace Common {
@@ -33,9 +33,9 @@ class String;
 
 namespace ZVision {
 
-class MusicNodeBASE : public SideFX {
+class MusicNodeBASE : public ScriptingEffect {
 public:
-	MusicNodeBASE(ZVision *engine, uint32 key, SideFXType type) : SideFX(engine, key, type) {}
+	MusicNodeBASE(ZVision *engine, uint32 key, ScriptingEffectType type) : ScriptingEffect(engine, key, type) {}
 	~MusicNodeBASE() {}
 
 	/**
@@ -121,7 +121,7 @@ private:
 	int8 _prog;
 };
 
-class PanTrackNode : public SideFX {
+class PanTrackNode : public ScriptingEffect {
 public:
 	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
 	~PanTrackNode();

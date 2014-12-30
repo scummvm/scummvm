@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/sidefx/music_node.h"
+#include "zvision/scripting/effects/music_effect.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -37,7 +37,7 @@
 namespace ZVision {
 
 MusicNode::MusicNode(ZVision *engine, uint32 key, Common::String &filename, bool loop, int8 volume)
-	: MusicNodeBASE(engine, key, SIDEFX_AUDIO) {
+	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_loop = loop;
 	_volume = volume;
 	_crossfade = false;
@@ -179,26 +179,26 @@ void MusicNode::setVolume(uint8 newVolume) {
 }
 
 PanTrackNode::PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos)
-	: SideFX(engine, key, SIDEFX_PANTRACK) {
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_PANTRACK) {
 	_slot = slot;
 
-	SideFX *fx = _engine->getScriptManager()->getSideFX(slot);
-	if (fx && fx->getType() == SIDEFX_AUDIO) {
+	ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(slot);
+	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		mus->setPanTrack(pos);
 	}
 }
 
 PanTrackNode::~PanTrackNode() {
-	SideFX *fx = _engine->getScriptManager()->getSideFX(_slot);
-	if (fx && fx->getType() == SIDEFX_AUDIO) {
+	ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_slot);
+	if (fx && fx->getType() == SCRIPTING_EFFECT_AUDIO) {
 		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		mus->unsetPanTrack();
 	}
 }
 
 MusicMidiNode::MusicMidiNode(ZVision *engine, uint32 key, int8 program, int8 note, int8 volume)
-	: MusicNodeBASE(engine, key, SIDEFX_AUDIO) {
+	: MusicNodeBASE(engine, key, SCRIPTING_EFFECT_AUDIO) {
 	_volume = volume;
 	_prog = program;
 	_noteNumber = note;

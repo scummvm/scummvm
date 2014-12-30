@@ -30,7 +30,7 @@
 namespace ZVision {
 
 WaveFx::WaveFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, int16 frames, int16 centerX, int16 centerY, float ampl, float waveln, float spd):
-	Effect(engine, key, region, ported) {
+	GraphicsEffect(engine, key, region, ported) {
 
 	_frame = 0;
 	_frameCount = frames;

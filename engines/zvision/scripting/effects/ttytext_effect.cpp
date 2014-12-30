@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/sidefx/ttytext_node.h"
+#include "zvision/scripting/effects/ttytext_effect.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -35,7 +35,7 @@
 namespace ZVision {
 
 ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay) :
-	SideFX(engine, key, SIDEFX_TTYTXT),
+	ScriptingEffect(engine, key, SCRIPTING_EFFECT_TTYTXT),
 	_fnt(engine) {
 	_delay = delay;
 	_r = r;

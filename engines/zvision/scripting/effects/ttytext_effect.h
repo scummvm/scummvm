@@ -20,42 +20,52 @@
  *
  */
 
-#ifndef ZVISION_DISTORT_NODE_H
-#define ZVISION_DISTORT_NODE_H
+#ifndef ZVISION_TTYTEXT_NODE_H
+#define ZVISION_TTYTEXT_NODE_H
 
-#include "zvision/scripting/sidefx.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
+
+#include "zvision/scripting/scripting_effect.h"
+#include "zvision/text/text.h"
+#include "zvision/text/truetype_font.h"
+
+namespace Common {
+class String;
+}
 
 namespace ZVision {
-
-class ZVision;
-
-class DistortNode : public SideFX {
+class ttyTextNode : public ScriptingEffect {
 public:
-	DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale);
-	~DistortNode();
+	ttyTextNode(ZVision *engine, uint32 key, const Common::String &file, const Common::Rect &r, int32 delay);
+	~ttyTextNode();
 
+	/**
+	 * Decrement the timer by the delta time. If the timer is finished, set the status
+	 * in _globalState and let this node be deleted
+	 *
+	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
+	 * @return                     If true, the node can be deleted after process() finishes
+	 */
 	bool process(uint32 deltaTimeInMillis);
-
 private:
-	int16 _speed;
-	float _startAngle;
-	float _endAngle;
-	float _startLineScale;
-	float _endLineScale;
+	Common::Rect _r;
 
-	float _frmSpeed;
-	float _diffAngle;
-	float _diffLinScale;
-	bool _incr;
-	int16 _frames;
+	cTxtStyle _style;
+	StyledTTFont _fnt;
+	Common::String _txtbuf;
+	uint32 _txtpos;
 
-	float _curFrame;
-
-	float _angle;
-	float _linScale;
-
+	int32 _delay;
+	int32 _nexttime;
+	Graphics::Surface _img;
+	int16 _dx;
+	int16 _dy;
 private:
-	void setParams(float angl, float linScale);
+
+	void newline();
+	void scroll();
+	void outchar(uint16 chr);
 };
 
 } // End of namespace ZVision

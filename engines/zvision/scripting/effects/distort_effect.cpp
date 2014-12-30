@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/sidefx/distort_node.h"
+#include "zvision/scripting/effects/distort_effect.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -34,7 +34,7 @@
 namespace ZVision {
 
 DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float startAngle, float endAngle, float startLineScale, float endLineScale)
-	: SideFX(engine, key, SIDEFX_DISTORT) {
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_DISTORT) {
 
 	_angle = _engine->getRenderManager()->getRenderTable()->getAngle();
 	_linScale = _engine->getRenderManager()->getRenderTable()->getLinscale();

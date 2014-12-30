@@ -20,37 +20,64 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef GRAPHICS_EFFECT_H_INCLUDED
+#define GRAPHICS_EFFECT_H_INCLUDED
 
-#include "zvision/scripting/sidefx/region_node.h"
+#include "common/rect.h"
+#include "common/list.h"
+#include "graphics/surface.h"
 
 #include "zvision/zvision.h"
-#include "zvision/scripting/script_manager.h"
-#include "zvision/graphics/render_manager.h"
 
 namespace ZVision {
 
-RegionNode::RegionNode(ZVision *engine, uint32 key, Effect *effect, uint32 delay)
-	: SideFX(engine, key, SIDEFX_REGION) {
-	_effect = effect;
-	_delay = delay;
-	_timeLeft = 0;
-}
+class ZVision;
 
-RegionNode::~RegionNode() {
-	_engine->getRenderManager()->deleteEffect(_key);
-}
+class GraphicsEffect {
+public:
 
-bool RegionNode::process(uint32 deltaTimeInMillis) {
-	_timeLeft -= deltaTimeInMillis;
+	GraphicsEffect(ZVision *engine, uint32 key, Common::Rect region, bool ported) : _engine(engine), _key(key), _region(region), _ported(ported) {
+		_surface.create(_region.width(), _region.height(), _engine->_resourcePixelFormat);
+	}
+	virtual ~GraphicsEffect() {}
 
-	if (_timeLeft <= 0) {
-		_timeLeft = _delay;
-		if (_effect)
-			_effect->update();
+	uint32 getKey() {
+		return _key;
 	}
 
-	return false;
-}
+	Common::Rect getRegion() {
+		return _region;
+	}
+
+	bool isPort() {
+		return _ported;
+	}
+
+	virtual const Graphics::Surface *draw(const Graphics::Surface &srcSubRect) {
+		return &_surface;
+	}
+
+	virtual void update() {}
+
+protected:
+	ZVision *_engine;
+	uint32 _key;
+	Common::Rect _region;
+	bool _ported;
+	Graphics::Surface _surface;
+
+// Static member functions
+public:
+
+};
+
+struct EffectMapUnit {
+	uint32 count;
+	bool inEffect;
+};
+
+typedef Common::List<EffectMapUnit> EffectMap;
 
 } // End of namespace ZVision
+
+#endif // GRAPHICS_EFFECT_H_INCLUDED

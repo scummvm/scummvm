@@ -30,7 +30,7 @@
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/menu.h"
-#include "zvision/scripting/sidefx/timer_node.h"
+#include "zvision/scripting/effects/timer_effect.h"
 
 #include "common/algorithm.h"
 #include "common/hashmap.h"
@@ -382,11 +382,11 @@ void ScriptManager::setFocusControlKey(uint32 key) {
 	_currentlyFocusedControl = key;
 }
 
-void ScriptManager::addSideFX(SideFX *fx) {
+void ScriptManager::addSideFX(ScriptingEffect *fx) {
 	_activeSideFx.push_back(fx);
 }
 
-SideFX *ScriptManager::getSideFX(uint32 key) {
+ScriptingEffect *ScriptManager::getSideFX(uint32 key) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); ++iter) {
 		if ((*iter)->getKey() == key) {
 			return (*iter);
@@ -430,7 +430,7 @@ void ScriptManager::killSideFx(uint32 key) {
 	}
 }
 
-void ScriptManager::killSideFxType(SideFX::SideFXType type) {
+void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end();) {
 		if ((*iter)->getType() & type) {
 			(*iter)->kill();

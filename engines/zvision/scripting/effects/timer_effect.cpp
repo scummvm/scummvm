@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-#include "zvision/scripting/sidefx/timer_node.h"
+#include "zvision/scripting/effects/timer_effect.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
@@ -32,7 +32,7 @@
 namespace ZVision {
 
 TimerNode::TimerNode(ZVision *engine, uint32 key, uint timeInSeconds)
-	: SideFX(engine, key, SIDEFX_TIMER) {
+	: ScriptingEffect(engine, key, SCRIPTING_EFFECT_TIMER) {
 	_timeLeft = 0;
 
 	if (_engine->getGameId() == GID_NEMESIS)
