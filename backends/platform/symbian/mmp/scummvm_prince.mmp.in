@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
  * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
  * Copyright (C) 2005-2013 The ScummVM project
- * Copyright (C) 2013 Strizniou Fedor - Epoc project file
+ * Copyright (C) 2014 Strizniou Fedor
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -31,9 +31,8 @@
 
 // *** Definitions
 
-TARGET          scummvm_zvision.lib
+TARGET          scummvm_prince.lib
 TARGETTYPE      lib
-USERINCLUDE     ..\..\..\..\engines\zvision\graphics
 #include "config.mmh"
 
 //START_AUTO_MACROS_SLAVE//
@@ -44,11 +43,10 @@ USERINCLUDE     ..\..\..\..\engines\zvision\graphics
 
 // *** SOURCE files
 
-SOURCEPATH ..\..\..\..\engines\zvision
+SOURCEPATH ..\..\..\..\engines\prince
 
-//START_AUTO_OBJECTS_ZVISION_//
+//START_AUTO_OBJECTS_PRINCE_//
 
 	// empty base file, will be updated by Perl build scripts
 
-//STOP_AUTO_OBJECTS_ZVISION_//
-
+//STOP_AUTO_OBJECTS_PRINCE_//
