@@ -56,7 +56,7 @@ RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
 	  _height(0),
 	  _frameTime(0),
 	  _frames(0),
-	  _curFrame(-1),
+	  _displayedFrame(-1),
 	  _frameBufferByteSize(0) {
 
 	if (!readHeader()) {
@@ -161,11 +161,11 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 	uint frame = getFrameAtTime(time);
 	assert(frame < (int)_frameCount);
 
-	if ((uint)_curFrame == frame)
+	if ((uint)_displayedFrame == frame)
 		return true;
 
-	int closestFrame = _curFrame;
-	int distance = (int)frame - _curFrame;
+	int closestFrame = _displayedFrame;
+	int distance = (int)frame - closestFrame;
 
 	if (distance < 0) {
 		for (uint i = 0; i < _completeFrames.size(); ++i) {
@@ -189,18 +189,18 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 		applyFrameToCurrent(i);
 	}
 
-	_curFrame = frame;
+	_displayedFrame = frame - 1;
 
 	return true;
 }
 
 const Graphics::Surface *RLFDecoder::RLFVideoTrack::decodeNextFrame() {
-	if (_curFrame == (int)_frameCount)
+	if (_displayedFrame >= (int)_frameCount)
 		return NULL;
 	
-	applyFrameToCurrent(_curFrame);
+	_displayedFrame++;
+	applyFrameToCurrent(_displayedFrame);
 
-	_curFrame++;
 	return &_currentFrameBuffer;
 }
 

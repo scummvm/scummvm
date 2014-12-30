@@ -46,7 +46,7 @@ private:
 		uint16 getWidth() const { return _width; }
 		uint16 getHeight() const { return _height; }
 		Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); /* RGB 555 */ }
-		int getCurFrame() const { return _curFrame; }
+		int getCurFrame() const { return _displayedFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame();
 		bool isSeekable() const { return true; }
@@ -121,7 +121,7 @@ private:
 		Frame *_frames;
 		Common::Array<uint> _completeFrames;
 
-		int _curFrame;
+		int _displayedFrame;
 		Graphics::Surface _currentFrameBuffer;
 		uint32 _frameBufferByteSize;
 
