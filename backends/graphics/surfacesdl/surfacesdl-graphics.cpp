@@ -269,7 +269,7 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		sdlflags = SDL_SWSURFACE;
 	}
 
-	if (_fullscreen && !accel3d) {
+	if (_fullscreen && !accel3d && _lockAspectRatio) {
 		screenW = _desktopW;
 		screenH = _desktopH;
 		_gameRect = Math::Rect2d(
