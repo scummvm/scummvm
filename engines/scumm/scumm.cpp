@@ -2601,20 +2601,24 @@ bool ScummEngine::startManiac() {
 	Common::String currentPath = ConfMan.get("path");
 	Common::String maniacTarget;
 
-	// Look for a game with a game path pointing to a 'Maniac' directory
-	// as a subdirectory to the current game.
-	Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
-	for (; iter != ConfMan.endGameDomains(); ++iter) {
-		Common::ConfigManager::Domain &dom = iter->_value;
-		Common::String path = dom.getVal("path");
+	if (!ConfMan.hasKey("easter_egg")) {
+		// Look for a game with a game path pointing to a 'Maniac' directory
+		// as a subdirectory to the current game.
+		Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+		for (; iter != ConfMan.endGameDomains(); ++iter) {
+			Common::ConfigManager::Domain &dom = iter->_value;
+			Common::String path = dom.getVal("path");
 
-		if (path.hasPrefix(currentPath)) {
-			path.erase(0, currentPath.size() + 1);
-			if (path.equalsIgnoreCase("maniac")) {
-				maniacTarget = dom.getVal("gameid");
-				break;
+			if (path.hasPrefix(currentPath)) {
+				path.erase(0, currentPath.size() + 1);
+				if (path.equalsIgnoreCase("maniac")) {
+					maniacTarget = dom.getVal("gameid");
+					break;
+				}
 			}
 		}
+	} else {
+		maniacTarget = ConfMan.get("easter_egg");
 	}
 
 	if (!maniacTarget.empty()) {
