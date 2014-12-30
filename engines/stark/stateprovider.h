@@ -27,12 +27,21 @@
 #include "common/serializer.h"
 #include "common/hash-str.h"
 #include "common/stream.h"
+#include "common/substream.h"
 
 namespace Stark {
 
 class Resource;
 class Level;
 class Location;
+
+class StateReadStream : public Common::SeekableSubReadStream {
+public:
+	StateReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
+	virtual ~StateReadStream();
+
+	Common::String readString();
+};
 
 class ResourceSerializer : public Common::Serializer {
 public:
@@ -64,7 +73,7 @@ public:
 	void saveGlobalState(Level *level);
 
 	/** Replace the current states by those read from the stream */
-	void readStateFromStream(Common::SeekableReadStream *stream);
+	void readStateFromStream(StateReadStream*stream);
 
 	/** Write the states in the store to a stream */
 	void writeStateToStream(Common::WriteStream *stream);
@@ -92,8 +101,6 @@ private:
 	void writeResourceTree(Resource *resource, Common::WriteStream *stream, bool current);
 
 	void clear();
-
-	Common::String readString(Common::ReadStream *stream);
 
 	ResourceTreeStateMap _stateStore;
 };

@@ -173,25 +173,42 @@ bool StarkEngine::canLoadGameStateCurrently() {
 Common::Error StarkEngine::loadGameState(int slot) {
 	// Open the save file
 	Common::String filename = Common::String::format("Save%02d.tlj", slot);
-	Common::InSaveFile *save = getSaveFileManager()->openForLoading(filename);
+	Common::InSaveFile *save = _saveFileMan->openForLoading(filename);
+	if (!save) {
+		return _saveFileMan->getError();
+	}
 
-	// Read the header
-	//TODO
+	StateReadStream *stream = new StateReadStream(save);
 
-	// Read the resource trees state
-	_stateProvider->readStateFromStream(save);
+	// 1. Read the header
+	// Save description
+	Common::String desc = stream->readString();
+
+	// Level
+	Common::String level = stream->readString();
+	uint levelIndex = strtol(level.c_str(), nullptr, 16);
+
+	// Location
+	Common::String location = stream->readString();
+	uint locationIndex = strtol(location.c_str(), nullptr, 16);
+
+	// Version
+	Common::String version = stream->readString();
+	//TODO: Check the version
+
+	// 2. Read the resource trees state
+	_stateProvider->readStateFromStream(stream);
 
 	//TODO: Read the rest of the state
 
-	delete save;
+	delete stream;
 
 	_resourceProvider->shutdown();
 	_resourceProvider->initGlobal();
 
 	//TODO: Restore to the correct location
-	_resourceProvider->requestLocationChange(0x45, 0x00);
+	_resourceProvider->requestLocationChange(levelIndex, locationIndex);
 
-	//TODO: Error checking
 	return Common::kNoError;
 }
 
@@ -205,12 +222,32 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	// Open the save file
 	Common::String filename = Common::String::format("Save%02d.tlj", slot);
-	Common::OutSaveFile *save = getSaveFileManager()->openForSaving(filename);
+	Common::OutSaveFile *save = _saveFileMan->openForSaving(filename);
+	if (!save) {
+		return _saveFileMan->getError();
+	}
 
-	// Write the header
-	//TODO
+	// 1. Write the header
+	// Save description
+	save->writeUint32LE(desc.size());
+	save->writeString(desc);
 
-	// Write the resource trees state
+	// Level
+	Common::String level = _global->getCurrent()->getLevel()->getIndexAsString();
+	save->writeUint32LE(level.size());
+	save->writeString(level);
+
+	// Location
+	Common::String location = _global->getCurrent()->getLocation()->getIndexAsString();
+	save->writeUint32LE(location.size());
+	save->writeString(location);
+
+	// Version
+	Common::String version = "Version:\t06";
+	save->writeUint32LE(version.size());
+	save->writeString(version);
+
+	// 2. Write the resource trees state
 	_stateProvider->writeStateToStream(save);
 
 	//TODO: Write the rest of the state
@@ -218,7 +255,6 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	delete save;
 
-	//TODO: Error checking
 	return Common::kNoError;
 }
 

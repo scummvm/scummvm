@@ -30,6 +30,26 @@
 
 namespace Stark {
 
+StateReadStream::StateReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
+				SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream) {
+}
+
+StateReadStream::~StateReadStream() {
+}
+
+Common::String StateReadStream::readString() {
+	// Read the string length
+	uint16 length = readUint32LE();
+
+	// Read the string
+	char *data = new char[length];
+	read(data, length);
+	Common::String string(data, length);
+	delete[] data;
+
+	return string;
+}
+
 StateProvider::ResourceTreeState::ResourceTreeState() :
 	_size(0),
 	_data(nullptr) {
@@ -179,26 +199,13 @@ void StateProvider::writeResourceTree(Resource *resource, Common::WriteStream *s
 	}
 }
 
-Common::String StateProvider::readString(Common::ReadStream *stream) {
-	// Read the string length
-	uint16 length = stream->readUint32LE();
-
-	// Read the string
-	char *data = new char[length];
-	stream->read(data, length);
-	Common::String string(data, length);
-	delete[] data;
-
-	return string;
-}
-
-void StateProvider::readStateFromStream(Common::SeekableReadStream *stream) {
+void StateProvider::readStateFromStream(StateReadStream *stream) {
 	clear();
 
 	uint32 treeCount = stream->readUint32LE();
 	for (uint i = 0; i < treeCount; i++) {
 		// Read the store key
-		Common::String key = readString(stream);
+		Common::String key = stream->readString();
 
 		// Read the data size
 		uint32 dataSize = stream->readUint32LE();

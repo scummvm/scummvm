@@ -143,6 +143,7 @@ public:
 	ResourceType getType() const { return _type; }
 	byte getSubType() const { return _subType; }
 	uint16 getIndex() const { return _index; }
+	Common::String getIndexAsString() const { return Common::String::format("%02x", _index); }
 	Common::String getName() const { return _name; }
 
 	/**
