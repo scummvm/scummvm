@@ -55,11 +55,11 @@ void XeenEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	// Create sub-objects of the engine
+	Resources::init(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this);
-	Resources::init(this);
 
 	// Set graphics mode
 	initGraphics(320, 200, false);

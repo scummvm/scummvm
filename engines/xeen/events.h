@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
@@ -41,6 +42,7 @@ private:
 	uint32 _priorGameCounterTime;
 	Common::KeyCode _keyCode;
 	bool _leftButton, _rightButton;
+	FramesResource _sprites;
 
 	void nextFrame();
 public:
@@ -49,6 +51,8 @@ public:
 	~EventsManager();
 
 	uint32 getFrameCounter() { return _frameCounter; }
+
+	void setCursor(int cursorId);
 
 	void showCursor();
 

@@ -28,13 +28,13 @@
 
 namespace Xeen {
 
-Window::Window() : _screen(nullptr), _a(0), _border(0),
+Window::Window() : _screen(nullptr), _enabled(false), _a(0), _border(0),
 	_xLo(0), _xHi(0), _ycL(0), _ycH(0) {
 }
 
 Window::Window(Screen *screen, const Common::Rect &bounds, int a, int border, 
 		int xLo, int ycL, int xHi, int ycH): 
-	_screen(screen), _bounds(bounds), _a(a), _border(border), 
+	_screen(screen), _enabled(false), _bounds(bounds), _a(a), _border(border), 
 	_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 }
 
@@ -50,7 +50,7 @@ Screen::Screen(XeenEngine *vm) : _vm(vm) {
 }
 
 void Screen::setupWindows() {
-	Window windows[48] = {
+	Window windows[40] = {
 		Window(this, Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
 		Window(this, Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
 		Window(this, Common::Rect(225, 1, 319, 73), 1, 8, 225, 1, 319, 73),
@@ -89,18 +89,10 @@ void Screen::setupWindows() {
 		Window(this, Common::Rect(226, 26, 319, 146), 30, 8, 0, 0, 0, 0),
 		Window(this, Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
 		Window(this, Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(), 0, 8, 0, 0, 0, 0)
+		Window(this, Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0)
 	};
 
-	_windows = Common::Array<Window>(windows, 48);
+	_windows = Common::Array<Window>(windows, 40);
 }
 
 void Screen::update() {

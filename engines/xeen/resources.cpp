@@ -216,18 +216,9 @@ void File::openFile(const Common::String &filename) {
 
 /*------------------------------------------------------------------------*/
 
-SpriteResource::SpriteResource(const Common::String &filename) {
+GraphicResource::GraphicResource(const Common::String &filename) {
 	// Open the resource
 	File f(filename);
-
-	// Read in the index
-	int count = f.readUint16LE();
-	_index.resize(count);
-
-	for (int i = 0; i < count; ++i) {
-		_index[i]._offset1 = f.readUint16LE();
-		_index[i]._offset2 = f.readUint16LE();
-	}
 
 	// Read in a copy of the file
 	_filesize = f.size();
@@ -236,26 +227,15 @@ SpriteResource::SpriteResource(const Common::String &filename) {
 	f.read(_data, _filesize);
 }
 
-SpriteResource::~SpriteResource() {
+GraphicResource::~GraphicResource() {
 	delete[] _data;
 }
 
-int SpriteResource::size() const {
-	return _index.size();
+int GraphicResource::size() const {
+	return READ_LE_UINT16(_data);
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos) const {
-	drawOffset(dest, _index[frame]._offset1, destPos);
-	if (_index[frame]._offset2)
-		drawOffset(dest, _index[frame]._offset2, destPos);
-}
-
-void SpriteResource::draw(XSurface &dest, int frame) const {
-	draw(dest, frame, Common::Point());
-}
-
-
-void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
+void GraphicResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
 	f.seek(offset);
@@ -263,6 +243,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	int width = f.readUint16LE();
 	int yOffset = f.readUint16LE();
 	int height = f.readUint16LE();
+
+	if (dest.w < (xOffset + width) || dest.h < (yOffset + height))
+		dest.create(xOffset + width, yOffset + height);
 
 	// The pattern steps used in the pattern command
 	const int patternSteps[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
@@ -353,6 +336,53 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 	dest.addDirtyRect(Common::Rect(destPos.x + xOffset, destPos.y + yOffset,
 		destPos.x + xOffset + width, destPos.y + yOffset + height));
+}
+
+/*------------------------------------------------------------------------*/
+
+FramesResource::FramesResource(const Common::String &filename) :
+		GraphicResource(filename) {
+	// Read in the index
+	Common::MemoryReadStream f(_data, _filesize);
+	int count = f.readUint16LE();
+	_index.resize(count);
+
+	for (int i = 0; i < count; ++i) {
+		_index[i] = f.readUint32LE();
+	}
+}
+
+void FramesResource::draw(XSurface &dest, int frame, const Common::Point &destPos) const {
+	drawOffset(dest, _index[frame], destPos);
+}
+
+void FramesResource::draw(XSurface &dest, int frame) const {
+	draw(dest, frame, Common::Point());
+}
+
+/*------------------------------------------------------------------------*/
+
+SpriteResource::SpriteResource(const Common::String &filename) : 
+		GraphicResource(filename) {
+	// Read in the index
+	Common::MemoryReadStream f(_data, _filesize);
+	int count = f.readUint16LE();
+	_index.resize(count);
+
+	for (int i = 0; i < count; ++i) {
+		_index[i]._offset1 = f.readUint16LE();
+		_index[i]._offset2 = f.readUint16LE();
+	}
+}
+
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos) const {
+	drawOffset(dest, _index[frame]._offset1, destPos);
+	if (_index[frame]._offset2)
+		drawOffset(dest, _index[frame]._offset2, destPos);
+}
+
+void SpriteResource::draw(XSurface &dest, int frame) const {
+	draw(dest, frame, Common::Point());
 }
 
 } // End of namespace Xeen

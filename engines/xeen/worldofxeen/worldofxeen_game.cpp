@@ -30,7 +30,15 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 }
 
 void WorldOfXeenEngine::playGame () {
+	_screen->loadPalette("mm4.pal");
+	_screen->fadeIn(4);
+
 	//darkSideIntro();
+	_events->setCursor(0);
+	_events->showCursor();
+	while (!shouldQuit()) {
+		_events->pollEventsAndWait();
+	}
 }
 
 } // End of namespace Xeen

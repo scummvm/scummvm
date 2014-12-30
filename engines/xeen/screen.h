@@ -47,6 +47,7 @@ private:
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
+	bool _enabled;
 public:
 	Window();
 

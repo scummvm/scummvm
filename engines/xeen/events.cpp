@@ -34,19 +34,27 @@ namespace Xeen {
 /**
  * Constructor
  */
-EventsManager::EventsManager(XeenEngine *vm) : _vm(vm) {
-	_frameCounter = 0;
-	_priorFrameCounterTime = 0;
-	_gameCounter = 0;
-	_priorGameCounterTime = 0;
-	_keyCode = Common::KEYCODE_INVALID;
-	_leftButton = _rightButton = false;
+EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
+		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
+		_priorGameCounterTime(0), _keyCode(Common::KEYCODE_INVALID),
+		_leftButton(false), _rightButton(false),
+		_sprites("mouse.icn") {
 }
 
 /**
  * Destructor
  */
 EventsManager::~EventsManager() {
+}
+
+/*
+ * Set the cursor
+ */
+void EventsManager::setCursor(int cursorId) {
+	XSurface cursor;
+	_sprites.draw(cursor, cursorId);
+
+	CursorMan.replaceCursor(cursor.getPixels(), cursor.w, cursor.h, 0, 0, 0);
 }
 
 /**
