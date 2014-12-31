@@ -38,6 +38,11 @@ Window::Window(Screen *screen, const Common::Rect &bounds, int a, int border,
 	_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 }
 
+void Window::update() {
+	// Window updates are not specifically necessary since all drawing 
+	// automatically gets added to the screen's dirty rect list
+}
+
 /*------------------------------------------------------------------------*/
 
 /**

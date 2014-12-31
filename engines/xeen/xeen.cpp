@@ -214,6 +214,8 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 }
 
 void XeenEngine::playGame() {
+	//showIntro();
+	
 }
 
 } // End of namespace Xeen

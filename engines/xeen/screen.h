@@ -53,12 +53,15 @@ public:
 
 	Window(Screen *screen, const Common::Rect &bounds, int a, int border, 
 		int xLo, int ycL, int xHi, int ycH);
+
+	void setBounds(const Common::Rect &r) { _bounds = r; }
+
+	void update();
 };
 
 class Screen: public XSurface {
 private:
 	XeenEngine *_vm;
-	Common::Array<Window> _windows;
 	Common::List<Common::Rect> _dirtyRects;
 	byte _mainPalette[PALETTE_SIZE];
 	byte _tempPaltte[PALETTE_SIZE];
@@ -82,6 +85,8 @@ private:
 public:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
+	Common::Array<Window> _windows;
+public:
 	Screen(XeenEngine *vm);
 
 	void update();
@@ -104,9 +109,9 @@ public:
 
 	void fadeOut(int step);
 
-	void saveBackground(int slot);
+	void saveBackground(int slot = 0);
 
-	void restoreBackground(int slot);
+	void restoreBackground(int slot = 0);
 };
 
 } // End of namespace Xeen

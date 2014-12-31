@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	events.o \
+	menus.o \
 	resources.o \
 	screen.o \
 	sound.o \
