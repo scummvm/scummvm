@@ -480,7 +480,6 @@ void Lua_V2::ThumbnailFromFile() {
 	const char *filename = lua_getstring(filenameObj);
 
 	int width = 256, height = 128;
-	Bitmap *screenshot;
 
 	SaveGame *savedState = SaveGame::openForLoading(filename);
 	if (!savedState || !savedState->isCompatible()) {
@@ -501,10 +500,11 @@ void Lua_V2::ThumbnailFromFile() {
 		data[l] = savedState->readLEUint16();
 	}
 	Graphics::PixelBuffer buf(Graphics::createPixelFormat<565>(), (byte *)data);
-	screenshot = new Bitmap(buf, width, height, "screenshot");
+	Bitmap *screenshot = new Bitmap(buf, width, height, "screenshot");
 	if (!screenshot) {
 		lua_pushnil();
 		warning("Lua_V2::ThumbnailFromFile: Could not restore screenshot from file %s", filename);
+		delete screenshot;
 		delete[] data;
 		delete savedState;
 		return;
@@ -512,6 +512,7 @@ void Lua_V2::ThumbnailFromFile() {
 
 	screenshot->_data->convertToColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 	g_driver->createSpecialtyTexture(index, screenshot->getData(0).getRawBuffer(), width, height);
+	delete screenshot;
 	delete[] data;
 	savedState->endSection();
 	delete savedState;
