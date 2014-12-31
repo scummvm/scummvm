@@ -87,7 +87,28 @@ enum EventType {
 	,
 	EVENT_VIRTUAL_KEYBOARD = 20
 #endif
+/* START of ResidualVM-specific code */
+	,
+	EVENT_JOYAXIS_MOTION = 23,
+	EVENT_JOYBUTTON_DOWN = 24,
+	EVENT_JOYBUTTON_UP = 25
 };
+
+const int16 JOYAXIS_MIN = -32768;
+const int16 JOYAXIS_MAX = 32767;
+
+/**
+ * Data structure for joystick events
+ */
+struct JoystickState {
+	/** The axis for EVENT_JOYAXIS_MOTION events */
+	byte axis;
+	/** The new axis position for EVENT_JOYAXIS_MOTION events */
+	int16 position;
+	/** The button index for EVENT_JOYBUTTON_DOWN/UP events */
+	byte button;
+};
+/* END of ResidualVM-specific code */
 
 typedef uint32 CustomEventType;
 /**
@@ -126,6 +147,14 @@ struct Event {
 	 * This field is ResidualVM specific
 	 */
 	Common::Point relMouse;
+
+	/**
+	 * Joystick data; only valid for joystick events (EVENT_JOYAXIS_MOTION,
+	 * EVENT_JOYBUTTON_DOWN and EVENT_JOYBUTTON_UP).
+	 *
+	 * This field is ResidualVM specific
+	 */
+	JoystickState joystick;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {
 #ifdef ENABLE_KEYMAPPER
