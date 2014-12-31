@@ -79,6 +79,11 @@ public:
 	uint32 timeElapsed();
 };
 
+class GameEvent {
+public:
+	GameEvent();
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_EVENTS_H */

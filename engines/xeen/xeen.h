@@ -64,6 +64,11 @@ enum XeenDebugChannels {
 	kDebugSound     = 1 << 3
 };
 
+enum Mode {
+	MODE_0 = 0,
+	MODE_9 = 9
+};
+
 struct XeenGameDescription;
 
 #define XEEN_SAVEGAME_VERSION 1
@@ -110,6 +115,9 @@ public:
 	EventsManager *_events;
 	Screen *_screen;
 	SoundManager *_sound;
+	Mode _mode;
+	GameEvent _gameEvent;
+	Common::SeekableReadStream *_eventData;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

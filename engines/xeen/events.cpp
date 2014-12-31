@@ -176,4 +176,9 @@ void EventsManager::nextFrame() {
 	_vm->_screen->update();
 }
 
+/*------------------------------------------------------------------------*/
+
+GameEvent::GameEvent() {
+}
+
 } // End of namespace Xeen

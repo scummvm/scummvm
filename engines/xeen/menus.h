@@ -33,8 +33,14 @@ namespace Xeen {
 class DialogButton {
 public:
 	Common::Rect _bounds;
-	int _d;
-	int _i;
+	SpriteResource *_sprites;
+	char _c;
+	bool _d;
+
+	DialogButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d) :
+		_bounds(bounds), _c(c), _sprites(sprites), _d(d) {}
+
+	DialogButton() : _c('\0'), _sprites(nullptr), _d(false) {}
 };
 
 class Dialog {
@@ -53,6 +59,8 @@ public:
 	void clearButtons();
 
 	void restoreButtons();
+
+	void addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d);
 };
 
 class OptionsMenu: public Dialog {
@@ -68,6 +76,10 @@ protected:
 	virtual void showTitles1(const Common::String &title);
 
 	virtual void showTitles2();
+
+	virtual void setupButtons(SpriteResource *buttons);
+
+	virtual void openWindow() {}
 public:
 	static void show(XeenEngine *vm);
 };
@@ -97,6 +109,10 @@ protected:
 	virtual void setBackground();
 
 	virtual void showTitles2() {}
+
+	virtual void setupButtons(SpriteResource *buttons);
+
+	virtual void openWindow();
 public:
 	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm) {}
 };

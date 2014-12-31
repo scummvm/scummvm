@@ -38,6 +38,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_events = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
+	_eventData = nullptr;
 }
 
 XeenEngine::~XeenEngine() {
@@ -45,6 +46,7 @@ XeenEngine::~XeenEngine() {
 	delete _events;
 	delete _screen;
 	delete _sound;
+	delete _eventData;
 }
 
 void XeenEngine::initialize() {
@@ -60,6 +62,9 @@ void XeenEngine::initialize() {
 	_events = new EventsManager(this);
 	_screen = new Screen(this);
 	_sound = new SoundManager(this);
+
+	File f("029.obj");
+	_eventData = f.readStream(f.size());
 
 	// Set graphics mode
 	initGraphics(320, 200, false);

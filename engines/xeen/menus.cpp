@@ -43,6 +43,10 @@ void Dialog::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
+void Dialog::addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d) {
+	_buttons.push_back(DialogButton(bounds, c, sprites, d));
+}
+
 /*------------------------------------------------------------------------*/
 
 void OptionsMenu::show(XeenEngine *vm) {
@@ -77,8 +81,9 @@ void OptionsMenu::execute() {
 
 	screen._windows[28].setBounds(Common::Rect(72, 25, 248, 175));
 
-	Common::String title1, title2;
-	startup(title1, title2);
+	Common::String title1, buttonsName;
+	startup(title1, buttonsName);
+	SpriteResource buttonSprites(buttonsName);
 
 	bool firstTime = true;
 	while (!_vm->shouldQuit()) {
@@ -91,10 +96,17 @@ void OptionsMenu::execute() {
 		}
 
 		for (;;) {
-			clearButtons();
-
 			showTitles1(title1);
 			showTitles2();
+
+		reopen:
+			clearButtons();
+			setupButtons(&buttonSprites);
+			openWindow();
+
+			while (!_vm->shouldQuit()) {
+				
+			}
 		}
 	}
 }
@@ -108,9 +120,9 @@ void OptionsMenu::showTitles1(const Common::String &title) {
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed()) {
 		events.updateGameCounter();
 
-		frame = frame % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
+		frame = ++frame % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
 		screen.restoreBackground();
-		titleSprites.draw(screen, 0);
+		titleSprites.draw(screen, frame);
 
 		while (events.timeElapsed() == 0)
 			events.pollEventsAndWait();
@@ -151,6 +163,20 @@ void OptionsMenu::showTitles2() {
 
 	screen.restoreBackground();
 	screen._windows[0].update();
+}
+
+void OptionsMenu::setupButtons(SpriteResource *buttons) {
+	addButton(Common::Rect(124, 87, 124 + 53, 87 + 10), 'S', buttons, true);
+	addButton(Common::Rect(126, 98, 126 + 47, 98 + 10), 'L', buttons, true);
+	addButton(Common::Rect(91, 110, 91 + 118, 110 + 10), 'C', buttons, true);
+	addButton(Common::Rect(85, 121, 85 + 131, 121 + 10), 'O', buttons, true);
+}
+
+void WorldOptionsMenu::setupButtons(SpriteResource *buttons) {
+	addButton(Common::Rect(93, 53, 93 + 134, 53 + 20), 'S', buttons, false);
+	addButton(Common::Rect(93, 78, 93 + 134, 78 + 20), 'L', buttons, false);
+	addButton(Common::Rect(93, 103, 93 + 134, 103 + 20), 'C', buttons, false);
+	addButton(Common::Rect(93, 128, 93 + 134, 128 + 20), 'O', buttons, false);
 }
 
 /*------------------------------------------------------------------------*/
@@ -288,5 +314,10 @@ void WorldOptionsMenu::setBackground() {
 	screen.saveBackground();
 	screen.fadeIn(4);	
 }
+
+void WorldOptionsMenu::openWindow() {
+	_vm->_screen->_windows[28].open();
+}
+
 
 } // End of namespace Xeen

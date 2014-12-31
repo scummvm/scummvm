@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/array.h"
+#include "common/queue.h"
 #include "common/rect.h"
 #include "xeen/xsurface.h"
 
@@ -39,22 +40,30 @@ namespace Xeen {
 class XeenEngine;
 class Screen;
 
-class Window {
+class Window: public XSurface {
 private:
-	Screen *_screen;
+	XeenEngine *_vm;
 	Common::Rect _bounds;
+	Common::Rect _innerBounds;
 	int _a;
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
 	bool _enabled;
+	Common::Queue<Common::Rect> _dirtyRects;
+
+	void open2();
 public:
 	Window();
 
-	Window(Screen *screen, const Common::Rect &bounds, int a, int border, 
+	Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
 		int xLo, int ycL, int xHi, int ycH);
 
-	void setBounds(const Common::Rect &r) { _bounds = r; }
+	void setBounds(const Common::Rect &r);
+
+	void open();
+
+	void close();
 
 	void update();
 };
@@ -86,8 +95,12 @@ public:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Common::Array<Window> _windows;
+
+	Common::Array<Window *> _windowStack;
 public:
 	Screen(XeenEngine *vm);
+
+	void closeWindows();
 
 	void update();
 

@@ -22,25 +22,76 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 #include "xeen/screen.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-Window::Window() : _screen(nullptr), _enabled(false), _a(0), _border(0),
+Window::Window() : _vm(nullptr), _enabled(false), _a(0), _border(0),
 	_xLo(0), _xHi(0), _ycL(0), _ycH(0) {
 }
 
-Window::Window(Screen *screen, const Common::Rect &bounds, int a, int border, 
+Window::Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border, 
 		int xLo, int ycL, int xHi, int ycH): 
-	_screen(screen), _enabled(false), _bounds(bounds), _a(a), _border(border), 
-	_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
+		_vm(vm), _enabled(false), _a(a), _border(border), 
+		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
+	setBounds(bounds);
 }
 
+void Window::setBounds(const Common::Rect &r) {
+	_bounds = r;
+	_innerBounds = r;
+	_innerBounds.grow(-_border);
+}
+
+void Window::open() {
+	if (!_enabled) {
+		_vm->_screen->_windowStack.push_back(this);
+		open2();
+	}
+
+	if (_vm->_mode == MODE_9) {
+		warning("TODO: copyFileToMemory");
+	}
+}
+
+void Window::open2() {
+	create(_bounds.width(), _bounds.height());
+	copyRectToSurface(*_vm->_screen, 0, 0, _bounds);
+	_dirtyRects.push(_bounds);
+}
+
+void Window::close() {
+	if (_enabled) {
+		// Update any remaining pending changes to the screen and free
+		// the window's internal surface storage
+		update();
+		free();
+
+		// Remove the window from the stack and flag it as now disabled
+		for (uint i = 0; i < _vm->_screen->_windowStack.size(); ++i) {
+			if (_vm->_screen->_windowStack[i] == this)
+				_vm->_screen->_windowStack.remove_at(i);
+		}
+
+		_enabled = false;
+	}
+
+	if (_vm->_mode == MODE_9) {
+		warning("TODO: copyFileToMemory");
+	}
+}
+
+/**
+ * Pushes any pending changes for the window to the screen
+ */
 void Window::update() {
-	// Window updates are not specifically necessary since all drawing 
-	// automatically gets added to the screen's dirty rect list
+	while (!_dirtyRects.empty()) {
+		Common::Rect r = _dirtyRects.pop();
+		blitTo(*_vm->_screen, Common::Point(_bounds.left, _bounds.top));
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -56,48 +107,54 @@ Screen::Screen(XeenEngine *vm) : _vm(vm) {
 
 void Screen::setupWindows() {
 	Window windows[40] = {
-		Window(this, Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
-		Window(this, Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
-		Window(this, Common::Rect(225, 1, 319, 73), 1, 8, 225, 1, 319, 73),
-		Window(this, Common::Rect(0, 0, 230, 149), 0, 0, 9, 8, 216, 140),
-		Window(this, Common::Rect(235, 148, 309, 189), 2, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(70, 20, 250, 183), 3, 8, 80, 38, 240, 166),
-		Window(this, Common::Rect(52, 149, 268, 197), 4, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(108, 0, 200, 200), 5, 0, 0, 0, 0, 0),
-		Window(this, Common::Rect(232, 9, 312, 74), 0, 0, 0, 0, 0, 0),
-		Window(this, Common::Rect(103, 156, 217, 186), 6, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(226, 0, 319, 146), 7, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(8, 8, 224, 140), 8, 8, 8, 8, 224, 200),
-		Window(this, Common::Rect(0, 143, 320, 199), 9, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(50, 103, 266, 139), 10, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(0, 7, 320, 138), 11, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(50, 71, 182, 129), 12, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(228, 106, 319, 146), 13, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(20, 142, 290, 199), 14, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(0, 20, 320, 180), 15, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(231, 48, 317, 141), 16, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(72, 37, 248, 163), 17, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(99, 59, 237, 141), 18, 8, 99, 59, 237, 0),
-		Window(this, Common::Rect(65, 23, 250, 163), 19, 8, 75, 36, 245, 141),
-		Window(this, Common::Rect(80, 28, 256, 148), 20, 8, 80, 28, 256, 172),
-		Window(this, Common::Rect(0, 0, 320, 146), 21, 8, 0, 0, 320, 148),
-		Window(this, Common::Rect(27, 6, 207, 142), 22, 8, 0, 0, 0, 146),
-		Window(this, Common::Rect(15, 15, 161, 91), 23, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(90, 45, 220, 157), 24, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(0, 0, 320, 200), 25, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(0, 101, 320, 146), 26, 8, 0, 101, 320, 0),
-		Window(this, Common::Rect(0, 0, 320, 108), 27, 8, 0, 0, 0, 45),
-		Window(this, Common::Rect(50, 112, 266, 148), 28, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(12, 11, 164, 94), 0, 0, 0, 0, 52, 0),
-		Window(this, Common::Rect(8, 147, 224, 192), 0, 8, 0, 0, 0, 94),
-		Window(this, Common::Rect(232, 74, 312, 138), 29, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(226, 26, 319, 146), 30, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
-		Window(this, Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0)
+		Window(_vm, Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
+		Window(_vm, Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
+		Window(_vm, Common::Rect(225, 1, 319, 73), 1, 8, 225, 1, 319, 73),
+		Window(_vm, Common::Rect(0, 0, 230, 149), 0, 0, 9, 8, 216, 140),
+		Window(_vm, Common::Rect(235, 148, 309, 189), 2, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(70, 20, 250, 183), 3, 8, 80, 38, 240, 166),
+		Window(_vm, Common::Rect(52, 149, 268, 197), 4, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(108, 0, 200, 200), 5, 0, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(232, 9, 312, 74), 0, 0, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(103, 156, 217, 186), 6, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(226, 0, 319, 146), 7, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(8, 8, 224, 140), 8, 8, 8, 8, 224, 200),
+		Window(_vm, Common::Rect(0, 143, 320, 199), 9, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(50, 103, 266, 139), 10, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(0, 7, 320, 138), 11, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(50, 71, 182, 129), 12, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(228, 106, 319, 146), 13, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(20, 142, 290, 199), 14, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(0, 20, 320, 180), 15, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(231, 48, 317, 141), 16, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(72, 37, 248, 163), 17, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(99, 59, 237, 141), 18, 8, 99, 59, 237, 0),
+		Window(_vm, Common::Rect(65, 23, 250, 163), 19, 8, 75, 36, 245, 141),
+		Window(_vm, Common::Rect(80, 28, 256, 148), 20, 8, 80, 28, 256, 172),
+		Window(_vm, Common::Rect(0, 0, 320, 146), 21, 8, 0, 0, 320, 148),
+		Window(_vm, Common::Rect(27, 6, 207, 142), 22, 8, 0, 0, 0, 146),
+		Window(_vm, Common::Rect(15, 15, 161, 91), 23, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(90, 45, 220, 157), 24, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(0, 0, 320, 200), 25, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(0, 101, 320, 146), 26, 8, 0, 101, 320, 0),
+		Window(_vm, Common::Rect(0, 0, 320, 108), 27, 8, 0, 0, 0, 45),
+		Window(_vm, Common::Rect(50, 112, 266, 148), 28, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(12, 11, 164, 94), 0, 0, 0, 0, 52, 0),
+		Window(_vm, Common::Rect(8, 147, 224, 192), 0, 8, 0, 0, 0, 94),
+		Window(_vm, Common::Rect(232, 74, 312, 138), 29, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(226, 26, 319, 146), 30, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
+		Window(_vm, Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0)
 	};
 
 	_windows = Common::Array<Window>(windows, 40);
+}
+
+void Screen::closeWindows() {
+	for (int i = (int)_windowStack.size() - 1; i >= 0; --i)
+		_windowStack[i]->close();
+	assert(_windowStack.size() == 0);
 }
 
 void Screen::update() {
