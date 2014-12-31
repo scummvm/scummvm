@@ -42,16 +42,6 @@ private:
 	bool showCredits();
 
 	/**
-	 * Do title sequence
-	 */
-	void doTitle();
-
-	/**
-	 * Do opening sequence
-	 */
-	void doOpening();
-
-	/**
 	 * Setup variables for the game
 	 */
 	void setupGame();
