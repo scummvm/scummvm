@@ -110,33 +110,78 @@ void MartianEngine::playGame() {
 	} while (_restartFl);
 }
 
-void MartianEngine::doIntroduction() {
-	_screen->setInitialPalettte();
-	_events->setCursor(CURSOR_ARROW);
-	_events->showCursor();
-	_screen->setPanel(0);
+bool MartianEngine::showCredits() {
+	_events->hideCursor();
+	_screen->clearBuffer();
+	_destIn = _screen;
 
-	// TODO: Worry about implementing full intro sequence later
-	return;
+	int val1 = _demoStream->readSint16LE();
+	int val2 = 0;
+	int val3 = 0;
 
-	doTitle();
-	if (shouldQuit())
-		return;
+	while(val1 != -1) {
+		val2 = _demoStream->readSint16LE();
+		val3 = _demoStream->readSint16LE();
+		_screen->plotImage(_introObjects, val3, Common::Point(val1, val2));
 
-	if (!_skipStart) {
-		_screen->setPanel(3);
-		doOpening();
-		if (shouldQuit())
-			return;
-
-		if (!_skipStart) {
-			//doTent();
-			if (shouldQuit())
-				return;
-		}
+		val1 = _demoStream->readSint16LE();
 	}
 
-	doTitle();
+	val2 = _demoStream->readSint16LE();
+	if (val2 == -1) {
+		_events->showCursor();
+		_screen->forceFadeOut();
+		return true;
+	}
+
+	_screen->forceFadeIn();
+	_timers[6]._timer = val2;
+	_timers[6]._initTm = val2;
+
+	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[6]._timer) {
+		_events->pollEventsAndWait();
+	}
+
+	_events->showCursor();
+	_screen->forceFadeOut();
+
+	if (_events->_rightButton)
+		return true;
+	else
+		return false;
+}
+
+void MartianEngine::doIntroduction() {
+	_midi->loadMusic(47, 3);
+	_midi->midiPlay();
+	_screen->setDisplayScan();
+	_events->hideCursor();
+	_screen->forceFadeOut();
+	Resource *data = _files->loadFile(41, 1);
+	_introObjects = new SpriteResource(this, data);
+	delete data;
+
+	_files->loadScreen(41, 0);
+	_buffer2.copyFrom(*_screen);
+	_buffer1.copyFrom(*_screen);
+	_events->showCursor();
+	_demoStream = new Common::MemoryReadStream(DEMO_DATA, 180);
+
+	if (!showCredits()) {
+		_screen->copyFrom(_buffer2);
+		_screen->forceFadeIn();
+
+		_events->_vbCount = 550;
+		while (!shouldQuit() && !_events->isKeyMousePressed() && _events->_vbCount > 0)
+			_events->pollEventsAndWait();
+
+		_screen->forceFadeOut();
+		while (!shouldQuit() && !_events->isKeyMousePressed()&& !showCredits())
+			_events->pollEventsAndWait();
+
+		warning("TODO: Free word_21E2B");
+		_midi->freeMusic();
+	}
 }
 
 void MartianEngine::doTitle() {

@@ -32,11 +32,14 @@ namespace Martian {
 class MartianEngine : public AccessEngine {
 private:
 	bool _skipStart;
-
+	SpriteResource *_introObjects;
+	Common::MemoryReadStream *_demoStream;
 	/**
 	 * Do the game introduction
 	 */
 	void doIntroduction();
+
+	bool showCredits();
 
 	/**
 	 * Do title sequence
@@ -56,7 +59,6 @@ private:
 	void initObjects();
 	void configSelect();
 	void initVariables();
-
 protected:
 	/**
 	 * Play the game
