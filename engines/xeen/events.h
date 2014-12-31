@@ -41,10 +41,12 @@ private:
 	uint32 _gameCounter;
 	uint32 _priorGameCounterTime;
 	Common::KeyCode _keyCode;
-	bool _leftButton, _rightButton;
 	FramesResource _sprites;
 
 	void nextFrame();
+public:
+	bool _leftButton, _rightButton;
+	Common::Point _mousePos;
 public:
 	EventsManager(XeenEngine *vm);
 
@@ -77,6 +79,8 @@ public:
 	void updateGameCounter();
 
 	uint32 timeElapsed();
+
+	bool wait(uint numFrames, bool interruptable = false);
 };
 
 class GameEvent {

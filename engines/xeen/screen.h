@@ -54,6 +54,8 @@ private:
 
 	void open2();
 public:
+	virtual void addDirtyRect(const Common::Rect &r);
+public:
 	Window();
 
 	Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
@@ -66,6 +68,8 @@ public:
 	void close();
 
 	void update();
+
+	void frame();
 };
 
 class Screen: public XSurface {

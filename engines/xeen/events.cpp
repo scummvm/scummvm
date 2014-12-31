@@ -94,6 +94,9 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_KEYDOWN:
 			_keyCode = event.kbd.keycode;
 			break;
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = event.mouse;
+			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_leftButton = true;
 			return;
@@ -166,6 +169,16 @@ void EventsManager::updateGameCounter() {
  */
 uint32 EventsManager::timeElapsed() {
 	return _frameCounter - _gameCounter;
+}
+
+bool EventsManager::wait(uint numFrames, bool interruptable) {
+	while (!_vm->shouldQuit() && timeElapsed() < numFrames) {
+		pollEventsAndWait();
+		if (interruptable && (_leftButton || _rightButton || isKeyPending()))
+			return true;
+	}
+
+	return false;
 }
 
 /**

@@ -20,48 +20,16 @@
  *
  */
 
-#ifndef XEEN_XSURFACE_H
-#define XEEN_XSURFACE_H
+#ifndef XEEN_RESDATA_H
+#define XEEN_RESDATA_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
+#include "gui/debugger.h"
 
 namespace Xeen {
 
-#define SYMBOL_WIDTH 8
-#define SYMBOL_HEIGHT 8
-
-class XSurface: public Graphics::Surface {
-public:
-	Common::Point _writePos;
-public:
-	virtual void addDirtyRect(const Common::Rect &r) {}
-public:
-	XSurface();
-	XSurface(int w, int h);
-	~XSurface();
-
-	void create(uint16 w, uint16 h);
-
-	void transBlitTo(XSurface &dest) const;
-
-	void transBlitTo(XSurface &dest, const Common::Point &destPos) const;
-
-	void blitTo(XSurface &dest, const Common::Point &destPos) const;
-
-	void blitTo(XSurface &dest) const;
-
-	bool empty() const { return getPixels() == nullptr; }
-
-	void writeSymbol(int symbolId);
-
-	void writeString(const Common::String &s);
-
-	void writeChar(char c);
-};
+extern const byte SYMBOLS[20][64];
 
 } // End of namespace Xeen
 
-#endif /* XEEN_XSURFACE_H */
+#endif	/* XEEN_RESDATA_H */

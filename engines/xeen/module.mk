@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	detection.o \
 	events.o \
 	menus.o \
+	resdata.o \
 	resources.o \
 	screen.o \
 	sound.o \

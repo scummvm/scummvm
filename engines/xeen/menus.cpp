@@ -47,6 +47,39 @@ void Dialog::addButton(const Common::Rect &bounds, char c, SpriteResource *sprit
 	_buttons.push_back(DialogButton(bounds, c, sprites, d));
 }
 
+void Dialog::checkEvents() {
+	EventsManager &events = *_vm->_events;
+	events.pollEventsAndWait();
+
+	if (events._leftButton) {
+		// Check whether any button is selected
+		events.debounceMouse();
+		Common::Point pt = events._mousePos;
+
+		for (uint i = 0; i < _buttons.size(); ++i) {
+			if (_buttons[i]._bounds.contains(pt)) {
+				_key = _buttons[i]._c;
+				return;
+			}
+		}
+	} else if (events.isKeyPending()) {
+		Common::KeyState keyState;
+		events.getKey(keyState);
+		if (keyState.ascii >= 32 && keyState.ascii <= 127) {
+			_key = keyState.ascii;
+			return;
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
+	while (!_vm->shouldQuit() && _key == Common::KEYCODE_INVALID) {
+		checkEvents();
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 void OptionsMenu::show(XeenEngine *vm) {
@@ -81,9 +114,9 @@ void OptionsMenu::execute() {
 
 	screen._windows[28].setBounds(Common::Rect(72, 25, 248, 175));
 
-	Common::String title1, buttonsName;
-	startup(title1, buttonsName);
-	SpriteResource buttonSprites(buttonsName);
+	Common::String title1, title2;
+	startup(title1, title2);
+	SpriteResource title1Sprites(title1), title2Sprites(title2);
 
 	bool firstTime = true;
 	while (!_vm->shouldQuit()) {
@@ -96,33 +129,33 @@ void OptionsMenu::execute() {
 		}
 
 		for (;;) {
-			showTitles1(title1);
+			showTitles1(title1Sprites);
 			showTitles2();
 
 		reopen:
 			clearButtons();
-			setupButtons(&buttonSprites);
+			setupButtons(&title2Sprites);
 			openWindow();
 
 			while (!_vm->shouldQuit()) {
+				showContents(title1Sprites, true);
 				
 			}
 		}
 	}
 }
 
-void OptionsMenu::showTitles1(const Common::String &title) {
-	SpriteResource titleSprites(title);
+void OptionsMenu::showTitles1(SpriteResource &sprites) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 
-	int frame = 0;
+	int frameNum = 0;
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed()) {
 		events.updateGameCounter();
 
-		frame = ++frame % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
+		frameNum = ++frameNum % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
 		screen.restoreBackground();
-		titleSprites.draw(screen, frame);
+		sprites.draw(screen, frameNum);
 
 		while (events.timeElapsed() == 0)
 			events.pollEventsAndWait();
@@ -319,5 +352,32 @@ void WorldOptionsMenu::openWindow() {
 	_vm->_screen->_windows[28].open();
 }
 
+void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	
+	events.updateGameCounter();
+	_bgFrame = ++_bgFrame % 5;
+	title1.draw(screen._windows[0], 0);
+	screen._windows[28].frame();
+
+	screen._windows[28].writeString("\r\x01\x03c\fdMight and Magic Options\n"
+		"World of Xeen\x02\n"
+		"117Copyright (c) 1993 NWC, Inc.\n"
+		"All Rights Reserved\x01");
+
+	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
+		DialogButton &btn = _buttons[btnIndex];
+		if (btn._d) {
+			btn._sprites->draw(screen._windows[0], btnIndex * 2,
+				Common::Point(btn._bounds.left, btn._bounds.top));
+		}
+	}
+
+	if (waitFlag) {
+		screen._windows[0].update();
+		SettingsBaseDialog::showContents(title1, true);
+	}
+}
 
 } // End of namespace Xeen

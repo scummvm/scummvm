@@ -61,6 +61,62 @@ void Window::open2() {
 	create(_bounds.width(), _bounds.height());
 	copyRectToSurface(*_vm->_screen, 0, 0, _bounds);
 	_dirtyRects.push(_bounds);
+	frame();
+}
+
+void Window::frame() {
+	Screen &screen = *_vm->_screen;
+	int xCount = (_bounds.width() - 9) / SYMBOL_WIDTH;
+	int yCount = (_bounds.height() - 9) / SYMBOL_HEIGHT;
+
+	// Write the top line
+	screen._writePos = Common::Point(_bounds.left, _bounds.top);
+	screen.writeSymbol(0);
+
+	if (xCount > 0) {
+		int symbolId = 1;
+		for (int i = 0; i < xCount; ++i) {
+			screen.writeSymbol(symbolId);
+			if (++symbolId == 5)
+				symbolId = 1;
+		}
+	}
+
+	screen._writePos.x = _bounds.right - SYMBOL_WIDTH;
+	screen.writeSymbol(5);
+
+	// Write the vertical edges
+	if (yCount > 0) {
+		int symbolId = 6;
+		for (int i = 0; i < yCount; ++i) {
+			screen._writePos.y += 8;
+
+			screen._writePos.x = _bounds.left;
+			screen.writeSymbol(symbolId);
+
+			screen._writePos.x = _bounds.right - SYMBOL_WIDTH;
+			screen.writeSymbol(symbolId + 4);
+
+			if (++symbolId == 10)
+				symbolId = 6;
+		}
+	}
+
+	// Write the bottom line
+	screen._writePos = Common::Point(_bounds.left, _bounds.bottom - SYMBOL_HEIGHT);
+	screen.writeSymbol(14);
+
+	if (xCount > 0) {
+		int symbolId = 15;
+		for (int i = 0; i < xCount; ++i) {
+			screen.writeSymbol(symbolId);
+			if (++symbolId == 19)
+				symbolId = 15;
+		}
+	}
+
+	screen._writePos.x = _bounds.right - SYMBOL_WIDTH;
+	screen.writeSymbol(19);
 }
 
 void Window::close() {
@@ -92,6 +148,10 @@ void Window::update() {
 		Common::Rect r = _dirtyRects.pop();
 		blitTo(*_vm->_screen, Common::Point(_bounds.left, _bounds.top));
 	}
+}
+
+void Window::addDirtyRect(const Common::Rect &r) {
+	_dirtyRects.push(r);
 }
 
 /*------------------------------------------------------------------------*/

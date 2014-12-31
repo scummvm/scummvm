@@ -45,14 +45,17 @@ public:
 
 class Dialog {
 private:
-	Common::Array<DialogButton> _buttons;
 	Common::Stack< Common::Array<DialogButton> > _savedButtons;
 protected:
 	XeenEngine *_vm;
+	Common::Array<DialogButton> _buttons;
+	char _key;
 
 	virtual void doScroll(bool drawFlag, bool doFade) = 0;
+
+	void checkEvents();
 public:
-	Dialog(XeenEngine *vm): _vm(vm) {}
+	Dialog(XeenEngine *vm): _vm(vm), _key('\0') {}
 
 	void saveButtons();
 
@@ -63,17 +66,23 @@ public:
 	void addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d);
 };
 
-class OptionsMenu: public Dialog {
+class SettingsBaseDialog : public Dialog {
+protected:
+	virtual void showContents(SpriteResource &title1, bool mode);
+public:
+	SettingsBaseDialog(XeenEngine *vm) : Dialog(vm) {}
+};
+class OptionsMenu : public SettingsBaseDialog {
 private:
 	void execute();
 protected:
-	OptionsMenu(XeenEngine *vm) : Dialog(vm) {}
+	OptionsMenu(XeenEngine *vm) : SettingsBaseDialog(vm) {}
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 
 	virtual void setBackground() {}
 
-	virtual void showTitles1(const Common::String &title);
+	virtual void showTitles1(SpriteResource &sprites);
 
 	virtual void showTitles2();
 
@@ -103,6 +112,8 @@ public:
 };
 
 class WorldOptionsMenu : public DarkSideOptionsMenu {
+private:
+	int _bgFrame;
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 
@@ -113,8 +124,10 @@ protected:
 	virtual void setupButtons(SpriteResource *buttons);
 
 	virtual void openWindow();
+
+	virtual void showContents(SpriteResource &title1, bool mode);
 public:
-	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm) {}
+	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm), _bgFrame(0) {}
 };
 
 } // End of namespace Xeen

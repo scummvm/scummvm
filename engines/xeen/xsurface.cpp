@@ -22,6 +22,7 @@
 
 #include "common/algorithm.h"
 #include "xeen/xsurface.h"
+#include "xeen/resdata.h"
 
 namespace Xeen {
 
@@ -78,5 +79,40 @@ void XSurface::blitTo(XSurface &dest, const Common::Point &destPos) const {
 
 	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + w, destPos.y));
 }
+
+/**
+ * Draws a symbol to the surface.
+ * @param symbolId	Symbol number from 0 to 19
+ */
+void XSurface::writeSymbol(int symbolId) {
+	const byte *srcP = &SYMBOLS[symbolId][0];
+
+	for (int yp = 0; yp < SYMBOL_HEIGHT; ++yp) {
+		byte *destP = (byte *)getBasePtr(_writePos.x, _writePos.y + yp);
+
+		for (int xp = 0; xp < SYMBOL_WIDTH; ++xp, ++destP) {
+			byte b = *srcP++;
+			if (b)
+				*destP = b;
+		}
+	}
+
+	_writePos.x += 8;
+}
+
+/**
+ * Write a string to the surface
+ */
+void XSurface::writeString(const Common::String &s) {
+	error("TODO");
+}
+
+/**
+ * Wrie a character to the surface
+ */
+void XSurface::writeChar(char c) {
+	error("TODO");
+}
+
 
 } // End of namespace Xeen
