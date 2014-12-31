@@ -66,17 +66,17 @@ struct SerializationInfo {
 	uint counter;
 };
 
-static void serialize(SerializationInfo *info);
+static void persist(SerializationInfo *info);
 
-static void serializeBoolean(SerializationInfo *info);
-static void serializeNumber(SerializationInfo *info);
-static void serializeString(SerializationInfo *info);
-static void serializeTable(SerializationInfo *info);
-static void serializeFunction(SerializationInfo *info);
-static void serializeThread(SerializationInfo *info);
-static void serializeProto(SerializationInfo *info);
-static void serializeUpValue(SerializationInfo *info);
-static void serializeUserData(SerializationInfo *info);
+static void persistBoolean(SerializationInfo *info);
+static void persistNumber(SerializationInfo *info);
+static void persistString(SerializationInfo *info);
+static void persistTable(SerializationInfo *info);
+static void persistFunction(SerializationInfo *info);
+static void persistThread(SerializationInfo *info);
+static void persistProto(SerializationInfo *info);
+static void persistUpValue(SerializationInfo *info);
+static void persistUserData(SerializationInfo *info);
 
 
 void persistLua(lua_State *luaState, Common::WriteStream *writeStream) {
@@ -127,14 +127,14 @@ void persistLua(lua_State *luaState, Common::WriteStream *writeStream) {
 	// >>>>> permTbl indexTbl rootObj
 
 	// Serialize the root recursively
-	serialize(&info);
+	persist(&info);
 
 	// Return the stack back to the original state
 	lua_remove(luaState, 2);
 	// >>>>> permTbl rootObj
 }
 
-static void serialize(SerializationInfo *info) {
+static void persist(SerializationInfo *info) {
 	// The stack can potentially have many things on it
 	// The object we want to serialize is the item on the top of the stack
 	// >>>>> permTbl indexTbl rootObj ...... obj
@@ -215,7 +215,7 @@ static void serialize(SerializationInfo *info) {
 		info->writeStream->writeSint32LE(PERMANENT_TYPE);
 
 		// Serialize the key
-		serialize(info);
+		persist(info);
 
 		// Pop the key off the stack
 		lua_pop(info->luaState, 1);
@@ -236,7 +236,7 @@ static void serialize(SerializationInfo *info) {
 
 	switch (objType) {
 	case LUA_TBOOLEAN:
-		serializeBoolean(info);
+		persistBoolean(info);
 		break;
 	case LUA_TLIGHTUSERDATA:
 		// You can't serialize a pointer
@@ -244,41 +244,41 @@ static void serialize(SerializationInfo *info) {
 		assert(0);
 		break;
 	case LUA_TNUMBER:
-		serializeNumber(info);
+		persistNumber(info);
 		break;
 	case LUA_TSTRING:
-		serializeString(info);
+		persistString(info);
 		break;
 	case LUA_TTABLE:
-		serializeTable(info);
+		persistTable(info);
 		break;
 	case LUA_TFUNCTION:
-		serializeFunction(info);
+		persistFunction(info);
 		break;
 	case LUA_TTHREAD:
-		serializeThread(info);
+		persistThread(info);
 		break;
 	case LUA_TPROTO:
-		serializeProto(info);
+		persistProto(info);
 		break;
 	case LUA_TUPVAL:
-		serializeUpValue(info);
+		persistUpValue(info);
 		break;
 	case LUA_TUSERDATA:
-		serializeUserData(info);
+		persistUserData(info);
 		break;
 	default:
 		assert(0);
 	}
 }
 
-static void serializeBoolean(SerializationInfo *info) {
+static void persistBoolean(SerializationInfo *info) {
 	int value = lua_toboolean(info->luaState, -1);
 
 	info->writeStream->writeSint32LE(value);
 }
 
-static void serializeNumber(SerializationInfo *info) {
+static void persistNumber(SerializationInfo *info) {
 	lua_Number value = lua_tonumber(info->luaState, -1);
 
 	#if 1
@@ -298,7 +298,7 @@ static void serializeNumber(SerializationInfo *info) {
 
 }
 
-static void serializeString(SerializationInfo *info) {
+static void persistString(SerializationInfo *info) {
 	// Hard cast to a uint32 to force size_t to an explicit size
 	// *Theoretically* this could truncate, but if we have a 4gb string, we have bigger problems
 	uint32 length = static_cast<uint32>(lua_strlen(info->luaState, -1));
@@ -395,7 +395,7 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 	info->writeStream->writeSint32LE(1);
 
 	// Serialize the function
-	serialize(info);
+	persist(info);
 
 	lua_pop(info->luaState, 2);
 	// >>>>> permTbl indexTbl ...... obj
@@ -403,7 +403,7 @@ static bool serializeSpecialObject(SerializationInfo *info, bool defaction) {
 	return true;
 }
 
-static void serializeTable(SerializationInfo *info) {
+static void persistTable(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... tbl
 
 	// Make sure there is enough room on the stack
@@ -422,7 +422,7 @@ static void serializeTable(SerializationInfo *info) {
 	}
 
 	// >>>>> permTbl indexTbl ...... tbl metaTbl/nil */
-	serialize(info);
+	persist(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... tbl
@@ -439,13 +439,13 @@ static void serializeTable(SerializationInfo *info) {
 		// >>>>> permTbl indexTbl ...... tbl k v k */
 
 		// Serialize the key
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... tbl k v */
 
 		// Serialize the value
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... tbl k */
@@ -457,13 +457,13 @@ static void serializeTable(SerializationInfo *info) {
 	lua_pushnil(info->luaState);
 	// >>>>> permTbl indexTbl ...... tbl
 
-	serialize(info);
+	persist(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... tbl
 }
 
-static void serializeFunction(SerializationInfo *info) {
+static void persistFunction(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... func
 	Closure *cl = clvalue(getObject(info->luaState, -1));
 	lua_checkstack(info->luaState, 2);
@@ -484,7 +484,7 @@ static void serializeFunction(SerializationInfo *info) {
 		pushProto(info->luaState, cl->l.p);
 		// >>>>> permTbl indexTbl ...... func proto */
 
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... func
@@ -495,7 +495,7 @@ static void serializeFunction(SerializationInfo *info) {
 			pushUpValue(info->luaState, cl->l.upvals[i]);
 			// >>>>> permTbl indexTbl ...... func upval
 
-			serialize(info);
+			persist(info);
 
 			lua_pop(info->luaState, 1);
 			// >>>>> permTbl indexTbl ...... func
@@ -519,14 +519,14 @@ static void serializeFunction(SerializationInfo *info) {
 		}
 
 		// >>>>> permTbl indexTbl ...... func fenv/nil
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... func
 	}
 }
 
-static void serializeThread(SerializationInfo *info) {
+static void persistThread(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... thread
 	lua_State *threadState = lua_tothread(info->luaState, -1);
 
@@ -547,7 +547,7 @@ static void serializeThread(SerializationInfo *info) {
 
 	// >>>>> permTbl indexTbl ...... thread (reversed contents of thread stack) */
 	for (; stackSize > 0; --stackSize) {
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 	}
@@ -609,7 +609,7 @@ static void serializeThread(SerializationInfo *info) {
 		pushUpValue(info->luaState, upVal);
 		// >>>>> permTbl indexTbl ...... thread upVal
 
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... thread
@@ -624,13 +624,13 @@ static void serializeThread(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... thread nil
 
 	// Use nil as a terminator
-	serialize(info);
+	persist(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... thread
 }
 
-static void serializeProto(SerializationInfo *info) {
+static void persistProto(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... proto
 	Proto *proto = gco2p(getObject(info->luaState, -1)->value.gc);
 
@@ -644,7 +644,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushObject(info->luaState, &proto->k[i]);
 		// >>>>> permTbl indexTbl ...... proto const
 
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -660,7 +660,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushProto(info->luaState, proto->p[i]);
 		// >>>>> permTbl indexTbl ...... proto subProto */
 
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -683,7 +683,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushString(info->luaState, proto->upvalues[i]);
 		// >>>>> permTbl indexTbl ...... proto str
 
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -697,7 +697,7 @@ static void serializeProto(SerializationInfo *info) {
 		pushString(info->luaState, proto->locvars[i].varname);
 		// >>>>> permTbl indexTbl ...... proto str
 
-		serialize(info);
+		persist(info);
 
 		lua_pop(info->luaState, 1);
 		// >>>>> permTbl indexTbl ...... proto
@@ -711,7 +711,7 @@ static void serializeProto(SerializationInfo *info) {
 	pushString(info->luaState, proto->source);
 	// >>>>> permTbl indexTbl ...... proto sourceStr
 
-	serialize(info);
+	persist(info);
 
 	lua_pop(info->luaState, 1);
 	// >>>>> permTbl indexTbl ...... proto
@@ -757,7 +757,7 @@ static void serializeProto(SerializationInfo *info) {
  * (d) When unserializing, "reopen" each of these upvalues as the thread is
  *     unserialized
  */
-static void serializeUpValue(SerializationInfo *info) {
+static void persistUpValue(SerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... upval
 	assert(ttype(getObject(info->luaState, -1)) == LUA_TUPVAL);
 	UpVal *upValue = gco2uv(getObject(info->luaState, -1)->value.gc);
@@ -774,11 +774,11 @@ static void serializeUpValue(SerializationInfo *info) {
 	pushObject(info->luaState, upValue->v);
 	// >>>>> permTbl indexTbl ...... obj
 
-	serialize(info);
+	persist(info);
 	// >>>>> permTbl indexTbl ...... obj
 }
 
-static void serializeUserData(SerializationInfo *info) {
+static void persistUserData(SerializationInfo *info) {
 	// >>>>> permTbl rootObj ...... udata
 
 	// Make sure there is enough room on the stack
@@ -804,7 +804,7 @@ static void serializeUserData(SerializationInfo *info) {
 	}
 
 	// >>>>> permTbl rootObj ...... udata metaTbl/nil
-	serialize(info);
+	persist(info);
 
 	lua_pop(info->luaState, 1);
 	/* perms reftbl ... udata */

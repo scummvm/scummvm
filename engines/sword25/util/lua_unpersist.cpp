@@ -64,18 +64,18 @@ struct UnSerializationInfo {
 	Common::ReadStream *readStream;
 };
 
-static void unserialize(UnSerializationInfo *info);
+static void unpersist(UnSerializationInfo *info);
 
-static void unserializeBoolean(UnSerializationInfo *info);
-static void unserializeNumber(UnSerializationInfo *info);
-static void unserializeString(UnSerializationInfo *info);
-static void unserializeTable(UnSerializationInfo *info, int index);
-static void unserializeFunction(UnSerializationInfo *info, int index);
-static void unserializeThread(UnSerializationInfo *info, int index);
-static void unserializeProto(UnSerializationInfo *info, int index);
-static void unserializeUpValue(UnSerializationInfo *info, int index);
-static void unserializeUserData(UnSerializationInfo *info, int index);
-static void unserializePermanent(UnSerializationInfo *info, int index);
+static void unpersistBoolean(UnSerializationInfo *info);
+static void unpersistNumber(UnSerializationInfo *info);
+static void unpersistString(UnSerializationInfo *info);
+static void unpersistTable(UnSerializationInfo *info, int index);
+static void unpersistFunction(UnSerializationInfo *info, int index);
+static void unpersistThread(UnSerializationInfo *info, int index);
+static void unpersistProto(UnSerializationInfo *info, int index);
+static void unpersistUpValue(UnSerializationInfo *info, int index);
+static void unpersistUserData(UnSerializationInfo *info, int index);
+static void unpersistPermanent(UnSerializationInfo *info, int index);
 
 
 void unpersistLua(lua_State *luaState, Common::ReadStream *readStream) {
@@ -98,7 +98,7 @@ void unpersistLua(lua_State *luaState, Common::ReadStream *readStream) {
 	lua_gc(luaState, LUA_GCSTOP, 0);
 
 	// Unserialize the root object
-	unserialize(&info);
+	unpersist(&info);
 	// >>>>> permTbl indexTbl rootObj
 
 	// Re-start garbage collection
@@ -129,7 +129,7 @@ static void registerObjectInIndexTable(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... obj
 }
 
-static void unserialize(UnSerializationInfo *info) {
+static void unpersist(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -142,7 +142,7 @@ static void unserialize(UnSerializationInfo *info) {
 
 		switch (type) {
 		case LUA_TBOOLEAN:
-			unserializeBoolean(info);
+			unpersistBoolean(info);
 			break;
 		case LUA_TLIGHTUSERDATA:
 			// You can't serialize a pointer
@@ -150,31 +150,31 @@ static void unserialize(UnSerializationInfo *info) {
 			assert(0);
 			break;
 		case LUA_TNUMBER:
-			unserializeNumber(info);
+			unpersistNumber(info);
 			break;
 		case LUA_TSTRING:
-			unserializeString(info);
+			unpersistString(info);
 			break;
 		case LUA_TTABLE:
-			unserializeTable(info, index);
+			unpersistTable(info, index);
 			break;
 		case LUA_TFUNCTION:
-			unserializeFunction(info, index);
+			unpersistFunction(info, index);
 			break;
 		case LUA_TTHREAD:
-			unserializeThread(info, index);
+			unpersistThread(info, index);
 			break;
 		case LUA_TPROTO:
-			unserializeProto(info, index);
+			unpersistProto(info, index);
 			break;
 		case LUA_TUPVAL:
-			unserializeUpValue(info, index);
+			unpersistUpValue(info, index);
 			break;
 		case LUA_TUSERDATA:
-			unserializeUserData(info, index);
+			unpersistUserData(info, index);
 			break;
 		case PERMANENT_TYPE:
-			unserializePermanent(info, index);
+			unpersistPermanent(info, index);
 			break;
 		default:
 			assert(0);
@@ -212,7 +212,7 @@ static void unserialize(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... obj/nil
 }
 
-static void unserializeBoolean(UnSerializationInfo *info) {
+static void unpersistBoolean(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -224,7 +224,7 @@ static void unserializeBoolean(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... bool
 }
 
-static void unserializeNumber(UnSerializationInfo *info) {
+static void unpersistNumber(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -242,7 +242,7 @@ static void unserializeNumber(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ...... num
 }
 
-static void unserializeString(UnSerializationInfo *info) {
+static void unpersistString(UnSerializationInfo *info) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -265,7 +265,7 @@ static void unserializeSpecialTable(UnSerializationInfo *info, int index) {
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 1);
 
-	unserialize(info);
+	unpersist(info);
 
 	// >>>>> permTbl indexTbl ...... spfunc
 	lua_call(info->luaState, 0, 1);
@@ -286,7 +286,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... tbl
 
 	// Unserialize metatable
-	unserialize(info);
+	unpersist(info);
 	// >>>>> permTbl indexTbl ...... tbl ?metaTbl/nil?
 
 	if (lua_istable(info->luaState, -1)) {
@@ -303,7 +303,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 
 	while (1) {
 		// >>>>> permTbl indexTbl ...... tbl
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... tbl key/nil
 
 		// The table serialization is nil terminated
@@ -316,7 +316,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 		}
 
 		// >>>>> permTbl indexTbl ...... tbl key
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... tbl value
 
 		lua_rawset(info->luaState, -3);
@@ -324,7 +324,7 @@ static void unserializeLiteralTable(UnSerializationInfo *info, int index) {
 	}
 }
 
-void unserializeTable(UnSerializationInfo *info, int index) {
+void unpersistTable(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -341,7 +341,7 @@ void unserializeTable(UnSerializationInfo *info, int index) {
 	}
 }
 
-void unserializeFunction(UnSerializationInfo *info, int index) {
+void unpersistFunction(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -372,7 +372,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 	registerObjectInIndexTable(info, index);
 
 	// Now that it's safe, we can get the real proto
-	unserialize(info);
+	unpersist(info);
 	// >>>>> permTbl indexTbl ...... func proto
 
 	lclosure->p = gco2p(getObject(info->luaState, -1)->value.gc);
@@ -382,7 +382,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 
 	for (byte i = 0; i < numUpValues; ++i) {
 		// >>>>> permTbl indexTbl ...... func
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... func func2
 
 		unboxUpValue(info->luaState);
@@ -394,7 +394,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 	}
 
 	// Finally, the fenv
-	unserialize(info);
+	unpersist(info);
 
 	// >>>>> permTbl indexTbl ...... func ?fenv/nil?
 	if (!lua_isnil(info->luaState, -1)) {
@@ -410,7 +410,7 @@ void unserializeFunction(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... func
 }
 
-void unserializeThread(UnSerializationInfo *info, int index) {
+void unpersistThread(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
 	lua_State *L2;
@@ -432,7 +432,7 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 	// very bottom of the stack
 	L2->top--;
 	for (uint32 i = 0; i < stackSize; ++i) {
-		unserialize(info);
+		unpersist(info);
 		// L1: permTbl indexTbl ...... thread obj*
 	}
 
@@ -492,7 +492,7 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 	global_State *g = G(L2);
 
 	while (true) {
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... thread upVal/nil
 
 		// The list is terminated by a nil
@@ -535,7 +535,7 @@ void unserializeThread(UnSerializationInfo *info, int index) {
 	}
 }
 
-void unserializeProto(UnSerializationInfo *info, int index) {
+void unpersistProto(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
 	// We have to be careful. The GC expects a lot out of protos. In particular, we need
@@ -564,7 +564,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	lua_reallocvector(info->luaState, p->k, 0, sizek, TValue);
 	for (int i = 0; i < sizek; ++i) {
 		// >>>>> permTbl indexTbl ...... proto
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... proto  k
 
 		setobj2s(info->luaState, &p->k[i], getObject(info->luaState, -1));
@@ -581,7 +581,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	lua_reallocvector(info->luaState, p->p, 0, sizep, Proto *);
 	for (int i = 0; i < sizep; ++i) {
 		// >>>>> permTbl indexTbl ...... proto
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... proto  subproto
 
 		p->p[i] = (Proto *)getObject(info->luaState, -1)->value.gc;
@@ -605,7 +605,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 		lua_reallocvector(info->luaState, p->upvalues, 0, p->sizeupvalues, TString *);
 		for (int i = 0; i < p->sizeupvalues; ++i) {
 			// >>>>> permTbl indexTbl ...... proto
-			unserialize(info);
+			unpersist(info);
 			// >>>>> permTbl indexTbl ...... proto str
 
 			p->upvalues[i] = lua_newlstr(info->luaState, lua_tostring(info->luaState, -1), strlen(lua_tostring(info->luaState, -1)));
@@ -621,7 +621,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 		lua_reallocvector(info->luaState, p->locvars, 0, p->sizelocvars, LocVar);
 		for (int i = 0; i < p->sizelocvars; ++i) {
 			// >>>>> permTbl indexTbl ...... proto
-			unserialize(info);
+			unpersist(info);
 			// >>>>> permTbl indexTbl ...... proto str
 
 			p->locvars[i].varname = lua_newlstr(info->luaState, lua_tostring(info->luaState, -1), strlen(lua_tostring(info->luaState, -1)));
@@ -635,7 +635,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... proto
 
 	// Read in source string
-	unserialize(info);
+	unpersist(info);
 	// >>>>> permTbl indexTbl ...... proto sourceStr
 
 	p->source = lua_newlstr(info->luaState, lua_tostring(info->luaState, -1), strlen(lua_tostring(info->luaState, -1)));
@@ -661,7 +661,7 @@ void unserializeProto(UnSerializationInfo *info, int index) {
 	p->maxstacksize = info->readStream->readByte();
 }
 
-void unserializeUpValue(UnSerializationInfo *info, int index) {
+void unpersistUpValue(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 	lua_checkstack(info->luaState, 2);
 
@@ -669,14 +669,14 @@ void unserializeUpValue(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... func
 	registerObjectInIndexTable(info, index);
 
-	unserialize(info);
+	unpersist(info);
 	// >>>>> permTbl indexTbl ...... func obj
 
 	boxUpValue_finish(info->luaState);
 	// >>>>> permTbl indexTbl ...... func
 }
 
-void unserializeUserData(UnSerializationInfo *info, int index) {
+void unpersistUserData(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
@@ -684,7 +684,7 @@ void unserializeUserData(UnSerializationInfo *info, int index) {
 
 	int isspecial = info->readStream->readSint32LE();
 	if (isspecial) {
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... specialFunc
 
 		lua_call(info->luaState, 0, 1);
@@ -697,7 +697,7 @@ void unserializeUserData(UnSerializationInfo *info, int index) {
 
 		info->readStream->read(lua_touserdata(info->luaState, -1), length);
 
-		unserialize(info);
+		unpersist(info);
 		// >>>>> permTbl indexTbl ...... udata metaTable/nil
 
 		lua_setmetatable(info->luaState, -2);
@@ -706,13 +706,13 @@ void unserializeUserData(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ...... udata
 }
 
-void unserializePermanent(UnSerializationInfo *info, int index) {
+void unpersistPermanent(UnSerializationInfo *info, int index) {
 	// >>>>> permTbl indexTbl ......
 
 	// Make sure there is enough room on the stack
 	lua_checkstack(info->luaState, 2);
 
-	unserialize(info);
+	unpersist(info);
 	// >>>>> permTbl indexTbl ...... permKey
 
 	lua_gettable(info->luaState, 1);
