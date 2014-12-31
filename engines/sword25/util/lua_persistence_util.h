@@ -20,6 +20,30 @@
  *
  */
 
+/**
+ * This code is heavily based on the Pluto code base. Copyright below
+ */
+
+/* Tamed Pluto - Heavy-duty persistence for Lua
+ * Copyright (C) 2004 by Ben Sunshine-Hill, and released into the public
+ * domain. People making use of this software as part of an application
+ * are politely requested to email the author at sneftel@gmail.com
+ * with a brief description of the application, primarily to satisfy his
+ * curiosity.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Instrumented by Stefan Reich (info@luaos.net)
+ * for Mobile Lua (http://luaos.net/pages/mobile-lua.php)
+ */
+
+
 #ifndef LUA_PERISTENCE_UTIL_H
 #define LUA_PERISTENCE_UTIL_H
 
