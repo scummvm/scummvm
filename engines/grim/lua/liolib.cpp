@@ -169,7 +169,7 @@ static int32 addfile(LuaFile *f) {
 static void io_readfrom() {
 	lua_Object f = lua_getparam(FIRSTARG);
 	if (f == LUA_NOOBJECT) {
-		if (getfile(FOUTPUT) != getfile(1)) {
+		if (getfile(FINPUT) != getfile(1)) {
 			closefile(FINPUT);
 			setreturn(1, FINPUT);
 		}
