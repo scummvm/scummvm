@@ -172,7 +172,7 @@ void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int 
 	_specialtyTextures[id]._height = height;
 	_specialtyTextures[id]._bpp = 4;
 	_specialtyTextures[id]._colorFormat = BM_RGBA;
-	g_driver->createTexture(&_specialtyTextures[id], data, nullptr, true);
+	createTexture(&_specialtyTextures[id], data, nullptr, true);
 }
 
 Bitmap *GfxBase::createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation) {
