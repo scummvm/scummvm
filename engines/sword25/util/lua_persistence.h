@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef LUA_SERIALIZATION_H
-#define LUA_SERIALIZATION_H
+#ifndef LUA_PERSISTENCE_H
+#define LUA_PERSISTENCE_H
 
 #include "sword25/util/lua/lua.h"
 

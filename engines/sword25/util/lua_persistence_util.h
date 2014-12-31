@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef LUA_SERIALIZATION_UTIL_H
-#define LUA_SERIALIZATION_UTIL_H
+#ifndef LUA_PERISTENCE_UTIL_H
+#define LUA_PERISTENCE_UTIL_H
 
 
 struct lua_State;
