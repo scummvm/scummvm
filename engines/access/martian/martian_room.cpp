@@ -82,7 +82,12 @@ void MartianRoom::reloadRoom1() {
 	setWallCodes();
 	buildScreen();
 	_vm->copyBF2Vid();
+
+	//
 	warning("TODO: setManPalette");
+	Common::copy(_vm->_player->_manPal1 + 0x2A0, _vm->_player->_manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
+	//
+
 	_vm->_events->showCursor();
 	_vm->_player->_frame = 0;
 	_vm->_oldRects.clear();

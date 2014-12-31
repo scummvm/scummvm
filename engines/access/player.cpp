@@ -140,7 +140,8 @@ void Player::load() {
 
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
-		Common::copy(_manPal1 + 0x270, _manPal1 + 0x270 + 0x60, _vm->_screen->_manPal);
+		// Those values are from MM as Amazon doesn't use it
+		Common::copy(_manPal1 + 0x2A0, _manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
 	} else {
 		Common::fill(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x60, 0);
 	}
@@ -149,6 +150,7 @@ void Player::load() {
 void Player::loadTexPalette() {
 	Resource *_texPal = _vm->_files->loadFile("TEXPAL.COL");
 	int size = _texPal->_size;
+	assert(size == 768);
 	_manPal1 = new byte[size];
 	memcpy(_manPal1, _texPal->data(), size);	
 }

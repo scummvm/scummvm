@@ -56,7 +56,6 @@ protected:
 	int _diagUpWalkMin, _diagUpWalkMax;
 	int _diagDownWalkMin, _diagDownWalkMax;
 	SpriteResource *_playerSprites1;
-	byte *_manPal1;
 	int _scrollEnd;
 	int _inactiveYOff;
 
@@ -82,6 +81,7 @@ public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
 	// Fields in original Player structure
+	byte *_manPal1;
 	byte *_monData;
 	int *_walkOffRight;
 	int *_walkOffLeft;
