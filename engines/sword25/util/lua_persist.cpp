@@ -281,21 +281,11 @@ static void persistBoolean(SerializationInfo *info) {
 static void persistNumber(SerializationInfo *info) {
 	lua_Number value = lua_tonumber(info->luaState, -1);
 
-	#if 1
-		Util::SerializedDouble serializedValue(Util::encodeDouble(value));
+	Util::SerializedDouble serializedValue(Util::encodeDouble(value));
 
-		info->writeStream->writeUint32LE(serializedValue.significandOne);
-		info->writeStream->writeUint32LE(serializedValue.signAndSignificandTwo);
-		info->writeStream->writeSint16LE(serializedValue.exponent);
-	#else
-		// NOTE: We need to store a double. Unfortunately, we have to accommodate endianness.
-		// Also, I don't know if we can assume all compilers use IEEE double
-		// Therefore, I have chosen to store the double as a string.
-		Common::String buffer = Common::String::format("%f", value);
-
-		info->writeStream->write(buffer.c_str(), buffer.size());
-	#endif
-
+	info->writeStream->writeUint32LE(serializedValue.significandOne);
+	info->writeStream->writeUint32LE(serializedValue.signAndSignificandTwo);
+	info->writeStream->writeSint16LE(serializedValue.exponent);
 }
 
 static void persistString(SerializationInfo *info) {
