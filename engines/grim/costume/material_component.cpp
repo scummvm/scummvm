@@ -50,7 +50,6 @@ void MaterialComponent::init() {
 			for (int i = 0; i < model->_numMaterials; ++i) {
 				if (_name.compareToIgnoreCase(model->_materials[i]->getFilename()) == 0) {
 					_mat = model->_materials[i];
-					_mat->reference();
 					return;
 				}
 			}

@@ -90,7 +90,7 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 Model::~Model() {
 	for (int i = 0; i < _numMaterials; ++i) {
 		if (!_materialsShared[i]) {
-			_materials[i]->dereference();
+			delete _materials[i];
 		}
 	}
 	delete[] _materials;
@@ -247,7 +247,6 @@ void Model::loadMaterial(int index, CMap *cmap) {
 			_materials[index] = mat;
 		} else {
 			_materials[index] = g_resourceloader->loadMaterial(_materialNames[index], cmap, false);
-			_materials[index]->reference();
 		}
 		_materialsShared[index] = false;
 	}
