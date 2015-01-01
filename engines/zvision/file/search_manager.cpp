@@ -169,8 +169,13 @@ void SearchManager::loadZix(const Common::String &name) {
 		line.trim();
 		if (line.matchString("----------*", true))
 			break;
-		else if (line.matchString("DIR:*", true)) {
+		else if (line.matchString("DIR:*", true) || line.matchString("CD0:*", true) || line.matchString("CD1:*", true)) {
 			Common::String path(line.c_str() + 5);
+			// Check if INQUIS.ZIX refers to the ZGI folder, and check the game
+			// root folder instead
+			if (path.hasPrefix("zgi\\"))
+				path = Common::String(path.c_str() + 4);
+
 			Common::Archive *arc;
 			char tempPath[128];
 			strcpy(tempPath, path.c_str());
