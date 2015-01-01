@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	gfx/tinygl.o \
 	resources/anim.o \
 	resources/animhierarchy.o \
+	resources/animscript.o \
 	resources/camera.o \
 	resources/command.o \
 	resources/floor.o \
