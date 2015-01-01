@@ -798,15 +798,22 @@ void GrimEngine::mainLoop() {
 
 				handleControls(type, event.kbd);
 
-				// Allow lua to react to the event.
-				// Without this lua_update switching the entries in the menu is slow because
-				// if the button is not kept pressed the KEYUP will arrive just after the KEYDOWN
-				// and it will break the lua scripts that checks for the state of the button
-				// with GetControlState()
+				if (getGameType() != GType_MONKEY4) {
+					// Allow lua to react to the event.
+					// Without this lua_update switching the entries in the menu is slow because
+					// if the button is not kept pressed the KEYUP will arrive just after the KEYDOWN
+					// and it will break the lua scripts that checks for the state of the button
+					// with GetControlState()
+					//
+					// This call seems to be only necessary to handle Grim's menu correctly.
+					// In EMI it would have the side-effect that luaUpdate() is sometimes called
+					// in the same millisecond which causes getPerSecond() to return 0 for
+					// any given rate which is not compatible with e.g. actor walking.
 
-				// We do not want the scripts to update while a movie is playing in the PS2-version.
-				if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
-					luaUpdate();
+					// We do not want the scripts to update while a movie is playing in the PS2-version.
+					if (!(getGamePlatform() == Common::kPlatformPS2 && _mode == SmushMode)) {
+						luaUpdate();
+					}
 				}
 			}
 		}
