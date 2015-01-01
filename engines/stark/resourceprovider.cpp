@@ -46,6 +46,9 @@ void ResourceProvider::initGlobal() {
 	Root *root = _archiveLoader->useRoot<Root>("x.xarc");
 	_global->setRoot(root);
 
+	// Resource lifecycle update
+	root->onAllLoaded();
+
 	// Find the global level node
 	Level *global = root->findChildWithSubtype<Level>(1);
 
@@ -57,6 +60,9 @@ void ResourceProvider::initGlobal() {
 	global = _archiveLoader->useRoot<Level>(globalArchiveName);
 	_stateProvider->restoreLevelState(global);
 	_global->setLevel(global);
+
+	// Resource lifecycle update
+	global->onAllLoaded();
 
 	//TODO: Retrieve the inventory and April from the global tree
 }
@@ -82,8 +88,29 @@ Current *ResourceProvider::findLocation(uint16 level, uint16 location) {
 	return nullptr;
 }
 
+Level *ResourceProvider::getLevel(uint16 level) {
+	Current *current = findLevel(level);
+
+	if (current) {
+		return current->getLevel();
+	}
+
+	return nullptr;
+}
+
+Location *ResourceProvider::getLocation(uint16 level, uint16 location) {
+	Current *current = findLocation(level, location);
+
+	if (current) {
+		return current->getLocation();
+	}
+
+	return nullptr;
+}
+
 void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	Current *currentLocation = new Current();
+	_locations.push_back(currentLocation);
 
 	// Retrieve the level archive name
 	Root *root = _global->getRoot();
@@ -97,6 +124,7 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	// If we just loaded a resource tree, restore its state
 	if (newlyLoaded) {
 		_stateProvider->restoreLevelState(currentLocation->getLevel());
+		currentLocation->getLevel()->onAllLoaded();
 	}
 
 	// Retrieve the location archive name
@@ -111,9 +139,8 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	// If we just loaded a resource tree, restore its state
 	if (newlyLoaded) {
 		_stateProvider->restoreLocationState(currentLocation->getLevel(), currentLocation->getLocation());
+		currentLocation->getLocation()->onAllLoaded();
 	}
-
-	_locations.push_back(currentLocation);
 
 	_locationChangeRequest = true;
 }

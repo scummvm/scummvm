@@ -188,6 +188,19 @@ void Resource::print(uint depth) {
 	}
 }
 
+Resource *Resource::findChildWithIndex(ResourceType type, uint16 index, int subType) {
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == type
+				&& (_children[i]->getSubType() == subType || subType == -1)
+				&& _children[i]->getIndex() == index) {
+			// Found a matching child
+			return _children[i];
+		}
+	}
+
+	return nullptr;
+}
+
 template<>
 Common::Array<Resource *> Resource::listChildren<Resource>(int subType) {
 	assert(subType == -1);

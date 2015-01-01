@@ -47,6 +47,22 @@ class ArchiveLoader;
 class StateProvider;
 class ResourceProvider;
 
+/**
+ * Public services available as a singleton
+ */
+class StarkServices : public Common::Singleton<StarkServices> {
+public:
+	StarkServices() {
+		global = nullptr;
+		archiveLoader = nullptr;
+		resourceProvider = nullptr;
+	}
+
+	Global *global;
+	ArchiveLoader *archiveLoader;
+	ResourceProvider *resourceProvider;
+};
+
 class StarkEngine : public Engine {
 public:
 	StarkEngine(OSystem *syst, const ADGameDescription *gameDesc);

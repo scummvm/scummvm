@@ -44,12 +44,28 @@ public:
 	Common::String describe();
 
 	void addPathElement(ResourceType type, uint16 index);
+	Resource *resolve();
+
+	template <class T>
+	T* resolve() {
+		Resource *resource = resolve();
+
+		if (resource && resource->getType() != T::TYPE) {
+			error("Unexpected resource type when resolving reference %s instad of %s",
+					resource->getType().getName(), ResourceType(T::TYPE).getName());
+		}
+
+		return (T *) resource;
+	}
 
 private:
 	class PathElement {
 	public:
 		PathElement(ResourceType type, uint16 index);
 		Common::String describe();
+
+		ResourceType getType() const { return _type; }
+		uint16 getIndex() const { return _index; }
 
 	private:
 		ResourceType _type;

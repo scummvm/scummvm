@@ -131,6 +131,12 @@ public:
 	/** Release the global and current resources */
 	void shutdown();
 
+	/** Obtain the root resource for a loaded level */
+	Level *getLevel(uint16 level);
+
+	/** Obtain the root resource for a loaded location */
+	Location *getLocation(uint16 level, uint16 location);
+
 private:
 	typedef Common::List<Current *> CurrentList;
 

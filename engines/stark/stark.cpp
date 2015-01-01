@@ -37,6 +37,10 @@
 #include "common/system.h"
 #include "audio/mixer.h"
 
+namespace Common {
+DECLARE_SINGLETON(Stark::StarkServices);
+}
+
 namespace Stark {
 
 StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
@@ -69,6 +73,8 @@ StarkEngine::~StarkEngine() {
 	delete _global;
 	delete _stateProvider;
 	delete _archiveLoader;
+
+	StarkServices::destroy();
 }
 
 Common::Error StarkEngine::run() {
@@ -82,6 +88,12 @@ Common::Error StarkEngine::run() {
 	_stateProvider = new StateProvider();
 	_global = new Global();
 	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
+
+	// Setup the public services
+	StarkServices &services = StarkServices::instance();
+	services.archiveLoader = _archiveLoader;
+	services.resourceProvider = _resourceProvider;
+	services.global = _global;
 
 	// Load global resources
 	_resourceProvider->initGlobal();

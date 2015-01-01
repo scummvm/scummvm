@@ -197,6 +197,8 @@ public:
 	 */
 	virtual void onPreDestroy();
 
+	Resource *findChildWithIndex(ResourceType type, uint16 index, int subType = -1);
+
 	template<class T>
 	T *findChild(bool mustBeUnique = true);
 
@@ -280,16 +282,7 @@ T *Resource::findChildWithSubtype(int subType, bool mustBeUnique) {
 
 template <class T>
 T *Resource::findChildWithIndex(uint16 index, int subType) {
-	for (uint i = 0; i < _children.size(); i++) {
-		if (_children[i]->getType() == T::TYPE
-				&& (_children[i]->getSubType() == subType || subType == -1)
-				&& _children[i]->getIndex() == index) {
-			// Found a matching child
-			return (T *)_children[i];
-		}
-	}
-
-	return nullptr;
+	return (T *)findChildWithIndex(T::TYPE, index, subType);
 }
 
 } // End of namespace Stark

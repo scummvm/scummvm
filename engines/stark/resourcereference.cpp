@@ -21,7 +21,12 @@
  */
 
 #include "engines/stark/resourcereference.h"
+
 #include "engines/stark/debug.h"
+#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/location.h"
+#include "engines/stark/resourceprovider.h"
+#include "engines/stark/stark.h"
 
 namespace Stark {
 
@@ -39,6 +44,34 @@ ResourceReference::ResourceReference() {
 
 void ResourceReference::addPathElement(ResourceType type, uint16 index) {
 	_path.push_back(PathElement(type, index));
+}
+
+Resource *ResourceReference::resolve() {
+	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
+	Global *global = StarkServices::instance().global;
+
+	Resource *resource = nullptr;
+	for (uint i = 0; i < _path.size(); i++) {
+		PathElement element = _path[i];
+
+		switch (element.getType().get()) {
+		case ResourceType::kLevel:
+			if (element.getIndex()) {
+				resource = resourceProvider->getLevel(element.getIndex());
+			} else {
+				resource = global->getLevel();
+			}
+			break;
+		case ResourceType::kLocation:
+			resource = resourceProvider->getLocation(resource->getIndex(), element.getIndex());
+			break;
+		default:
+			resource = resource->findChildWithIndex(element.getType(), element.getIndex());
+			break;
+		}
+	}
+
+	return resource;
 }
 
 Common::String ResourceReference::describe() {

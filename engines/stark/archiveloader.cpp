@@ -35,9 +35,6 @@ ArchiveLoader::LoadedArchive::LoadedArchive(const Common::String& archiveName) :
 	}
 
 	_root = importResources();
-
-	// Resource lifecycle update
-	_root->onAllLoaded();
 }
 
 ArchiveLoader::LoadedArchive::~LoadedArchive() {
