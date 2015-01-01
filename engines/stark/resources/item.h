@@ -20,71 +20,96 @@
  *
  */
 
-#ifndef STARK_RESOURCES_LAYER_H
-#define STARK_RESOURCES_LAYER_H
+#ifndef STARK_RESOURCES_ITEM_H
+#define STARK_RESOURCES_ITEM_H
 
-#include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
+#include "engines/stark/resourcereference.h"
 
 namespace Stark {
 
 class XRCReadStream;
 
-class Layer : public Resource {
+class Item : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kLayer;
+	static const ResourceType::Type TYPE = ResourceType::kItem;
 
 	enum SubType {
-		kLayer2D = 1,
-		kLayer3D = 2
+		kItemSub1 = 1,
+		kItemSub2 = 2,
+		kItemSub3 = 3,
+		kItemSub5 = 5,
+		kItemSub6 = 6,
+		kItemSub7 = 7,
+		kItemSub8 = 8,
+		kItemSub10 = 10
 	};
 
-	/** Layer factory */
+	/** Item factory */
 	static Resource *construct(Resource *parent, byte subType, uint16 index, const Common::String &name);
 
-	Layer(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Layer();
+	Item(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Item();
 
 	virtual void readData(XRCReadStream *stream) override;
 
 protected:
 	void printData() override;
 
-	float _field_44;
-	uint _field_50;
+	bool _field_34;
+	int32 _field_38;
 };
 
-class Layer2D : public Layer {
+class ItemVisual : public Item {
 public:
-	Layer2D(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Layer2D();
+	ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemVisual();
 
 	virtual void readData(XRCReadStream *stream) override;
 
 protected:
 	void printData() override;
 
-	Common::Array<uint32> _itemIndices;
+	uint32 _field_44;
 };
 
-class Layer3D : public Layer {
+class ItemSub5610 : public ItemVisual {
 public:
-	Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Layer3D();
+	ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub5610();
+};
+
+class ItemSub56 : public ItemSub5610 {
+public:
+	ItemSub56(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub56();
 
 	virtual void readData(XRCReadStream *stream) override;
 
 protected:
 	void printData() override;
 
-	uint32 _field_54;
-	uint32 _field_58;
-	float _nearClipPlane;
-	float _farClipPlane;
+	int32 _field_6C;
+	Common::Point _position;
+};
+
+class ItemSub78 : public ItemVisual {
+public:
+	ItemSub78(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub78();
+
+	virtual void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	ResourceReference _reference;
+	Common::Point _position;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_LAYER_H
+#endif // STARK_RESOURCES_ITEM_H

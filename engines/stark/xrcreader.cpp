@@ -24,6 +24,7 @@
 
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/command.h"
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
 #include "engines/stark/resources/layer.h"
@@ -87,10 +88,22 @@ Math::Vector4d XRCReadStream::readVector4() {
 	return v;
 }
 
+Common::Point XRCReadStream::readPoint() {
+	uint32 x = readUint32LE();
+	uint32 y = readUint32LE();
+
+	return Common::Point(x, y);
+}
+
 float XRCReadStream::readFloat() {
 	float f;
 	read(&f, sizeof(float));
 	return f;
+}
+
+bool XRCReadStream::readBool() {
+	uint32 b = readUint32LE();
+	return b != 0;
 }
 
 bool XRCReadStream::isDataLeft() {
@@ -145,6 +158,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kFloorFace:
 		resource = new FloorFace(parent, subType, index, name);
+		break;
+	case ResourceType::kItem:
+		resource = Item::construct(parent, subType, index, name);
 		break;
 	case ResourceType::kCommand:
 		resource = new Command(parent, subType, index, name);

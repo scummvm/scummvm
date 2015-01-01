@@ -29,9 +29,9 @@ namespace Stark {
 
 Resource *Layer::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
-	case 1:
+	case kLayer2D:
 		return new Layer2D(parent, subType, index, name);
-	case 2:
+	case kLayer3D:
 		return new Layer3D(parent, subType, index, name);
 	default:
 		error("Unknown layer subtype %d", subType);

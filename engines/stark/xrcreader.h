@@ -24,6 +24,7 @@
 #define STARK_XRC_READER_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/types.h"
@@ -49,7 +50,9 @@ public:
 	ResourceReference readResourceReference();
 	Math::Vector3d readVector3();
 	Math::Vector4d readVector4();
+	Common::Point readPoint();
 	float readFloat();
+	bool readBool();
 	bool isDataLeft();
 };
 
