@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/endian.h"
 #include "xeen/font.h"
 #include "xeen/resdata.h"
 
@@ -307,7 +308,29 @@ void FontSurface::setTextColor(int idx) {
  * Wrie a character to the surface
  */
 void FontSurface::writeChar(char c) {
-	error("TODO");
+	// Get y position, handling kerning
+	int y = _writePos.y;
+	if (c == 'g' || c == 'p' || c == 'q' || c == 'y')
+		++y;
+
+	// Get pointers into font data and surface to write pixels to
+	int charIndex = (int)c + (_fontReduced ? 0x80 : 0);
+	const byte *srcP = &_fontData[charIndex * 16];
+
+	for (int yp = 0; yp < FONT_HEIGHT; ++yp, ++y) {
+		uint16 lineData = READ_LE_UINT16(srcP); srcP += 2;
+		byte *destP = (byte *)getBasePtr(_writePos.x, y);
+
+		for (int xp = 0; xp < FONT_WIDTH; ++xp, ++destP) {
+			int colIndex = lineData & 3;
+			lineData >>= 2;
+
+			if (colIndex)
+				*destP = _textColors[colIndex];
+		}
+	}
+
+	_writePos.x += _fontData[0x1000 + charIndex];
 }
 
 } // End of namespace Xeen
