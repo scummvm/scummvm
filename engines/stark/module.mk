@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	resources/direction.o \
 	resources/floor.o \
 	resources/floorface.o \
+	resources/image.o \
 	resources/item.o \
 	resources/layer.o \
 	resources/level.o \
