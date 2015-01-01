@@ -27,6 +27,7 @@
 #include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/command.h"
+#include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
@@ -170,6 +171,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kAnim:
 		resource = Anim::construct(parent, subType, index, name);
+		break;
+	case ResourceType::kDirection:
+		resource = new Direction(parent, subType, index, name);
 		break;
 	case ResourceType::kAnimScript:
 		resource = new AnimScript(parent, subType, index, name);

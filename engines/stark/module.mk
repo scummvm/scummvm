@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	resources/animscript.o \
 	resources/camera.o \
 	resources/command.o \
+	resources/direction.o \
 	resources/floor.o \
 	resources/floorface.o \
 	resources/item.o \
