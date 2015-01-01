@@ -37,7 +37,7 @@ private:
 	/**
 	 * Do the game introduction
 	 */
-	void doIntroduction();
+	void doCredits();
 
 	bool showCredits();
 
@@ -56,11 +56,15 @@ protected:
 	virtual void playGame();
 
 	virtual void dead(int deathId) {}
+
+	void sub13E1F();
+	void sub13E4C(const Common::String &msg);
 public:
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 
 	virtual ~MartianEngine();
 
+	void doSpecial5(int param1);
 	void drawHelp();
 	virtual void establish(int esatabIndex, int sub) {};
 };

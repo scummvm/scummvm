@@ -35,9 +35,13 @@ class MartianEngine;
 class MartianScripts : public Scripts {
 private:
 	MartianEngine *_game;
+
+	void cmdSpecial5(int param1);
+
 protected:
 	virtual void executeSpecial(int commandIndex, int param1, int param2);
 	virtual void executeCommand(int commandIndex);
+
 public:
 	MartianScripts(AccessEngine *vm);
 };

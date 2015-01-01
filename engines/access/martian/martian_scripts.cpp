@@ -34,7 +34,36 @@ MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
 }
 
+void MartianScripts::cmdSpecial5(int param1) {
+	_game->doSpecial5(param1);
+}
+
 void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
+	switch (commandIndex) {
+	case 0:
+		warning("TODO: cmdSpecial0");
+		break;
+	case 1:
+		warning("TODO: cmdSpecial1");
+		break;
+	case 2:
+		warning("TODO: cmdSpecial2");
+		break;
+	case 3:
+		warning("TODO: cmdSpecial3");
+		break;
+	case 4:
+		warning("TODO: cmdSpecial4");
+		break;
+	case 5:
+		cmdSpecial5(param1);
+		break;
+	case 6:
+		warning("TODO: cmdSpecial6");
+		break;
+	default:
+		warning("Unexpected Special code %d - Skipped", commandIndex);
+	}
 }
 
 typedef void(MartianScripts::*MartianScriptMethodPtr)();

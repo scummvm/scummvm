@@ -75,6 +75,88 @@ void MartianEngine::initVariables() {
 	_numAnimTimers = 0;
 }
 
+void MartianEngine::sub13E1F() {
+	_events->hideCursor();
+
+	_screen->_orgX1 = 58;
+	_screen->_orgY1 = 124;
+	_screen->_orgX2 = 297;
+	_screen->_orgY2 = 199;
+	_screen->drawRect();
+
+	_events->showCursor();
+}
+
+void MartianEngine::sub13E4C(const Common::String &msg) {
+	_fonts._charSet._lo = 1;
+	_fonts._charSet._hi = 8;
+	_fonts._charFor._lo = 0;
+	_fonts._charFor._hi = 255;
+
+	_screen->_maxChars = 40;
+	_screen->_printOrg = _screen->_printStart = Common::Point(59, 124);
+	
+	sub13E1F();
+
+	Common::String lines = msg;
+	Common::String line;
+	int width = 0;
+	bool lastLine = false;
+	do {
+		lastLine = _fonts._font2.getLine(lines, _screen->_maxChars * 6, line, width);
+
+		// Set font colors
+		_fonts._font2._fontColors[0] = 0;
+		_fonts._font2._fontColors[1] = 27;
+		_fonts._font2._fontColors[2] = 28;
+		_fonts._font2._fontColors[3] = 29;
+
+		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
+
+		if (_screen->_printOrg.y == 196) {
+			_events->waitKeyMouse();
+			sub13E1F();
+			_screen->_printOrg = _screen->_printStart;
+		}
+	} while (!lastLine);
+	_events->waitKeyMouse();
+}
+
+void MartianEngine::doSpecial5(int param1) {
+	warning("TODO: Push midi song");
+	_midi->stopSong();
+	_midi->_byte1F781 = false;
+	_midi->loadMusic(47, 4);
+	_midi->midiPlay();
+	_screen->setDisplayScan();
+	_events->clearEvents();
+	_screen->forceFadeOut();
+	_events->hideCursor();
+	_files->loadScreen("DATA.SC");
+	_events->showCursor();
+	_screen->setIconPalette();
+	_screen->forceFadeIn();
+	warning("TODO: LoadCells");
+	_timers[20]._timer = _timers[20]._initTm = 30;
+	Resource *_word20060 = _files->loadFile("NOTES.DAT");
+	_word20060->_stream->skip(param1 * 2);
+	int pos = _word20060->_stream->readUint16LE();
+	_word20060->_stream->seek(pos);
+	Common::String msg = "";
+	byte c;
+	while ((c = (char)_word20060->_stream->readByte()) != '\0')
+		msg += c;
+
+	sub13E4C(msg);
+	
+	_midi->stopSong();
+	_midi->freeMusic();
+
+	warning("TODO: Pop Midi");
+	// _midi->_byte1F781 = true;
+}
+
 void MartianEngine::playGame() {
 	// Initialize Amazon game-specific objects
 	initObjects();
@@ -85,9 +167,14 @@ void MartianEngine::playGame() {
 
 	if (_loadSaveSlot == -1) {
 		// Do introduction
-		doIntroduction();
+//		doCredits();
 		if (shouldQuit())
 			return;
+		
+		doSpecial5(4);
+		if (shouldQuit())
+			return;
+		_screen->forceFadeOut();
 	}
 
 	do {
@@ -135,10 +222,9 @@ bool MartianEngine::showCredits() {
 	}
 
 	_screen->forceFadeIn();
-	_timers[6]._timer = val2;
-	_timers[6]._initTm = val2;
+	_timers[3]._timer = _timers[3]._initTm = val2;
 
-	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[6]._timer) {
+	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[3]._timer) {
 		_events->pollEventsAndWait();
 	}
 
@@ -151,7 +237,8 @@ bool MartianEngine::showCredits() {
 		return false;
 }
 
-void MartianEngine::doIntroduction() {
+void MartianEngine::doCredits() {
+	_midi->_byte1F781 = false;
 	_midi->loadMusic(47, 3);
 	_midi->midiPlay();
 	_screen->setDisplayScan();

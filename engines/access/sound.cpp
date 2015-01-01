@@ -178,6 +178,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	_music = nullptr;
 	_tempMusic = nullptr;
 	_isLooping = false;
+	_byte1F781 = false;
 
 	MidiPlayer::createDriver();
 	MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
@@ -217,6 +218,12 @@ void MusicManager::midiPlay() {
 
 	if (READ_BE_UINT32(_music->data()) != MKTAG('F', 'O', 'R', 'M')) {
 		warning("midiPlay() Unexpected signature");
+		Common::DumpFile *outFile = new Common::DumpFile();
+		Common::String outName = "music.dump";
+		outFile->open(outName);
+		outFile->write(_music->data(), _music->_size);
+		outFile->finalize();
+		outFile->close();
 		_isPlaying = false;
 	} else {
 		_parser = MidiParser::createParser_XMIDI();
