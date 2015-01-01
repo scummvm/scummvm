@@ -6,9 +6,10 @@ MODULE_OBJS := \
 	worldofxeen\worldofxeen_game.o \
 	debugger.o \
 	detection.o \
+	dialogs.o \
+	dialogs_options.o \
 	events.o \
 	font.o \
-	menus.o \
 	resdata.o \
 	resources.o \
 	screen.o \

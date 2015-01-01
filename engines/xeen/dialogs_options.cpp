@@ -21,64 +21,9 @@
  */
 
 #include "common/scummsys.h"
-#include "xeen/menus.h"
+#include "xeen/dialogs_options.h"
 
 namespace Xeen {
-
-/**
- * Saves the current list of buttons
- */
-void Dialog::saveButtons() {
-	_savedButtons.push(_buttons);
-}
-
-/*
- * Clears the current list of defined buttons
- */
-void Dialog::clearButtons() {
-	_buttons.clear();
-}
-
-void Dialog::restoreButtons() {
-	_buttons = _savedButtons.pop();
-}
-
-void Dialog::addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw = true) {
-	_buttons.push_back(DialogButton(bounds, c, sprites, draw));
-}
-
-void Dialog::checkEvents() {
-	EventsManager &events = *_vm->_events;
-	events.pollEventsAndWait();
-
-	if (events._leftButton) {
-		// Check whether any button is selected
-		events.debounceMouse();
-		Common::Point pt = events._mousePos;
-
-		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._bounds.contains(pt)) {
-				_key = _buttons[i]._c;
-				return;
-			}
-		}
-	} else if (events.isKeyPending()) {
-		Common::KeyState keyState;
-		events.getKey(keyState);
-		if (keyState.ascii >= 32 && keyState.ascii <= 127) {
-			_key = keyState.ascii;
-			return;
-		}
-	}
-}
-
-/*------------------------------------------------------------------------*/
-
-void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
-	checkEvents();
-}
-
-/*------------------------------------------------------------------------*/
 
 void OptionsMenu::show(XeenEngine *vm) {
 	OptionsMenu *menu;
@@ -126,22 +71,30 @@ void OptionsMenu::execute() {
 			warning("TODO: Read existing save file");
 		}
 
+		showTitles1(title1Sprites);
+		showTitles2();
+
+		clearButtons();
+		setupButtons(&title2Sprites);
+		openWindow();
+
 		while (!_vm->shouldQuit()) {
-			showTitles1(title1Sprites);
-			showTitles2();
+			// Show the dialog with a continually animating background
+			while (!_vm->shouldQuit() && _key == '\0')
+				showContents(title1Sprites, true);
+			if (_vm->shouldQuit())
+				return;
 
-		reopen:
-			clearButtons();
-			setupButtons(&title2Sprites);
-			openWindow();
-
-			while (!_vm->shouldQuit()) {
-				// Show the dialog with a continually animating background
-				while (!_vm->shouldQuit() && _key == Common::KEYCODE_INVALID)
-					showContents(title1Sprites, true);
-				if (_vm->shouldQuit())
-					return;
+			// Handle keypress
+			switch (toupper(_key)) {
+			case 'C':
+			case 'V':
+				// Show credits
+				break;
+			default:
+				break;
 			}
+			_key = '\0';
 		}
 	}
 }

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XEEN_MENUS_H
-#define XEEN_MENUS_H
+#ifndef XEEN_DIALOGS_H
+#define XEEN_DIALOGS_H
 
 #include "common/array.h"
 #include "common/stack.h"
@@ -72,62 +72,7 @@ protected:
 public:
 	SettingsBaseDialog(XeenEngine *vm) : Dialog(vm) {}
 };
-class OptionsMenu : public SettingsBaseDialog {
-private:
-	void execute();
-protected:
-	OptionsMenu(XeenEngine *vm) : SettingsBaseDialog(vm) {}
-protected:
-	virtual void startup(Common::String &title1, Common::String &title2) = 0;
-
-	virtual void setBackground(bool doFade) {}
-
-	virtual void showTitles1(SpriteResource &sprites);
-
-	virtual void showTitles2();
-
-	virtual void setupButtons(SpriteResource *buttons);
-
-	virtual void openWindow() {}
-public:
-	static void show(XeenEngine *vm);
-};
-
-class CloudsOptionsMenu : public OptionsMenu {
-protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
-public:
-	CloudsOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
-};
-
-class DarkSideOptionsMenu : public OptionsMenu {
-protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
-
-	virtual void doScroll(bool drawFlag, bool doFade);
-public:
-	DarkSideOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
-};
-
-class WorldOptionsMenu : public DarkSideOptionsMenu {
-private:
-	int _bgFrame;
-protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
-
-	virtual void setBackground(bool doFade);
-
-	virtual void showTitles2() {}
-
-	virtual void setupButtons(SpriteResource *buttons);
-
-	virtual void openWindow();
-
-	virtual void showContents(SpriteResource &title1, bool mode);
-public:
-	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm), _bgFrame(0) {}
-};
 
 } // End of namespace Xeen
 
-#endif /* XEEN_MENUS_H */
+#endif /* XEEN_DIALOGS_H */

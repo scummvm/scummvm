@@ -28,7 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "xeen/xeen.h"
-#include "xeen/menus.h"
+#include "xeen/dialogs_options.h"
 #include "xeen/resources.h"
 
 namespace Xeen {
