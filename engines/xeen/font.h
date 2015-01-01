@@ -20,37 +20,52 @@
  *
  */
 
-#ifndef XEEN_XSURFACE_H
-#define XEEN_XSURFACE_H
+#ifndef XEEN_FONT_H
+#define XEEN_FONT_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/rect.h"
-#include "graphics/surface.h"
+#include "xeen/xsurface.h"
 
 namespace Xeen {
 
-class XSurface: public Graphics::Surface {
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 8
+#define DEFAULT_BG_COLOR 0x99
+
+enum Justify { JUSTIFY_NONE = 0, JUSTIFY_CENTER = 1, JUSTIFY_RIGHT = 2 };
+
+class FontSurface: public XSurface {
+private:
+	const char *_displayString;
+	bool _msgWraps;
+
+	char getNextChar();
+
+	bool getNextCharWidth(int &total);
+
+	bool newLine(const Common::Rect &bounds);
+
+	int fontAtoi(int len = 3);
+
+	void setTextColor(int idx);
+
+	void writeChar(char c);
 public:
-	virtual void addDirtyRect(const Common::Rect &r) {}
+	const byte *_fontData;
+	Common::Point _writePos;
+	byte _textColors[4];
+	byte _bgColor;
+	bool _fontReduced;
+	Justify _fontJustify;
 public:
-	XSurface();
-	XSurface(int w, int h);
-	virtual ~XSurface();
+	FontSurface();
+	FontSurface(int w, int h);
+	virtual ~FontSurface() {}
 
-	void create(uint16 w, uint16 h);
+	void writeSymbol(int symbolId);
 
-	void transBlitTo(XSurface &dest) const;
-
-	void transBlitTo(XSurface &dest, const Common::Point &destPos) const;
-
-	void blitTo(XSurface &dest, const Common::Point &destPos) const;
-
-	void blitTo(XSurface &dest) const;
-
-	bool empty() const { return getPixels() == nullptr; }
+	Common::String writeString(const Common::String &s, const Common::Rect &bounds);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_XSURFACE_H */
+#endif /* XEEN_FONT_H */

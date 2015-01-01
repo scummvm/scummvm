@@ -158,7 +158,7 @@ void Window::addDirtyRect(const Common::Rect &r) {
  * Fill the content area of a window with the current background color 
  */
 void Window::fill() {
-	fillRect(_innerBounds, _bgColor);
+	fillRect(_innerBounds, _vm->_screen->_bgColor);
 }
 
 void Window::writeString(const Common::String &s) {

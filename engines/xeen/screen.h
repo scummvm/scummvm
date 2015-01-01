@@ -28,6 +28,7 @@
 #include "common/array.h"
 #include "common/queue.h"
 #include "common/rect.h"
+#include "xeen/font.h"
 #include "xeen/xsurface.h"
 
 namespace Xeen {
@@ -75,7 +76,7 @@ public:
 
 	void writeString(const Common::String &s);};
 
-class Screen: public XSurface {
+class Screen: public FontSurface {
 private:
 	XeenEngine *_vm;
 	Common::List<Common::Rect> _dirtyRects;
