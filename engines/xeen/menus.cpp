@@ -75,9 +75,7 @@ void Dialog::checkEvents() {
 /*------------------------------------------------------------------------*/
 
 void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
-	while (!_vm->shouldQuit() && _key == Common::KEYCODE_INVALID) {
-		checkEvents();
-	}
+	checkEvents();
 }
 
 /*------------------------------------------------------------------------*/
@@ -138,8 +136,11 @@ void OptionsMenu::execute() {
 			openWindow();
 
 			while (!_vm->shouldQuit()) {
-				showContents(title1Sprites, true);
-				
+				// Show the dialog with a continually animating background
+				while (!_vm->shouldQuit() && _key == Common::KEYCODE_INVALID)
+					showContents(title1Sprites, true);
+				if (_vm->shouldQuit())
+					return;
 			}
 		}
 	}
@@ -157,7 +158,7 @@ void OptionsMenu::showTitles1(SpriteResource &sprites) {
 		screen.restoreBackground();
 		sprites.draw(screen, frameNum);
 
-		while (events.timeElapsed() == 0)
+		while (events.timeElapsed() < 4)
 			events.pollEventsAndWait();
 	}
 }
@@ -356,12 +357,14 @@ void WorldOptionsMenu::openWindow() {
 void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
-	
 	events.updateGameCounter();
+	
+	// Draw the background frame in a continous cycle
 	_bgFrame = ++_bgFrame % 5;
-	title1.draw(screen._windows[0], 0);
-	screen._windows[28].frame();
+	title1.draw(screen._windows[0], _bgFrame);
 
+	// Draw the basic frame for the optitons menu and title text
+	screen._windows[28].frame();
 	screen._windows[28].writeString("\x0D\x01\003c\014dMight and Magic Options\n"
 		"World of Xeen\x02\n"
 		"\v117Copyright (c) 1993 NWC, Inc.\n"
@@ -377,7 +380,11 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 
 	if (waitFlag) {
 		screen._windows[0].update();
-		SettingsBaseDialog::showContents(title1, true);
+
+		while (!_vm->shouldQuit() && _key == Common::KEYCODE_INVALID &&
+				events.timeElapsed() < 3) {
+			checkEvents();
+		}
 	}
 }
 
