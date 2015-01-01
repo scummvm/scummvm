@@ -259,7 +259,8 @@ void Screen::update() {
 }
 
 void Screen::addDirtyRect(const Common::Rect &r) {
-	assert(r.isValidRect() && r.width() > 0 && r.height() > 0);
+	assert(r.isValidRect() && r.width() > 0 && r.height() > 0
+		&& r.right <= SCREEN_WIDTH && r.bottom <= SCREEN_HEIGHT);
 	_dirtyRects.push_back(r);
 }
 

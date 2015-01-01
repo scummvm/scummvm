@@ -362,9 +362,9 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	title1.draw(screen._windows[0], 0);
 	screen._windows[28].frame();
 
-	screen._windows[28].writeString("\r\x01\x03c\fdMight and Magic Options\n"
+	screen._windows[28].writeString("\x0D\x01\003c\014dMight and Magic Options\n"
 		"World of Xeen\x02\n"
-		"117Copyright (c) 1993 NWC, Inc.\n"
+		"\v117Copyright (c) 1993 NWC, Inc.\n"
 		"All Rights Reserved\x01");
 
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {

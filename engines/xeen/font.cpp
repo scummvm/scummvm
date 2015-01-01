@@ -76,22 +76,24 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 	assert(_fontData);
 
 	for (;;) {
+		const char *msgStartP = _displayString;
 		_msgWraps = false;
 		
-		// Get the size of the string that can be displayed on the likne
-		int xp = _fontJustify ? bounds.left : _writePos.x;
+		// Get the size of the string that can be displayed on the line
+		int xp = _fontJustify == JUSTIFY_CENTER ? bounds.left : _writePos.x;
 		while (!getNextCharWidth(xp)) {
 			if (xp >= bounds.right) {
 				--_displayString;
 				_msgWraps = true;
+				break;
 			}
 		}
 
 		// Get the end point of the text that can be displayed
 		const char *displayEnd = _displayString;
-		_displayString = s.c_str();
+		_displayString = msgStartP;
 
-		if (*displayEnd && _fontJustify != JUSTIFY_RIGHT && xp >= bounds.right) {
+		if (_msgWraps && _fontJustify != JUSTIFY_RIGHT && xp >= bounds.right) {
 			// Need to handle justification of text
 			// First, move backwards to find the end of the previous word
 			// for a convenient point to break the line at
@@ -114,6 +116,34 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				while (displayEnd > _displayString && (*displayEnd & 0x7f) == ' ')
 					--displayEnd;
 			}
+		}
+
+		// Justification adjustment
+		if (_fontJustify != JUSTIFY_NONE) {
+			// Figure out the width of the selected portion of the string
+			int totalWidth = 0;
+			while (!getNextCharWidth(totalWidth)) {
+				if (_displayString > displayEnd && *displayEnd == ' ') {
+					// Don't include any ending space as part of the total
+					totalWidth -= _fontReduced ? 4 : 5;
+				}
+			}
+
+			// Reset starting position back to the start of the string portion
+			_displayString = msgStartP;
+
+			if (_fontJustify == JUSTIFY_RIGHT) {
+				// Right aligned
+				if (_writePos.x == bounds.left)
+					_writePos.x = bounds.right;
+				_writePos.x -= totalWidth + 1;
+			} else {
+				// Center aligned
+				if (_writePos.x == bounds.left)
+					_writePos.x = (bounds.left + bounds.right + 1 - totalWidth) / 2;
+				else
+					_writePos.x = (_writePos.x * 2 - totalWidth) / 2;
+ 			}
 		}
 
 		// Main character display loop
@@ -195,18 +225,18 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				if (newLine(bounds))
 					break;
 			} else if (c == 11) {
-				// Skip y position
+				// Set y position
 				int yp = fontAtoi();
 				_writePos.y = MIN(bounds.top + yp, (int)bounds.bottom);
 			} else if (c == 12) {
 				// Set text colors
-				int idx = fontAtoi();
+				int idx = fontAtoi(2);
 				if (idx < 0)
 					idx = 0;
 				setTextColor(idx);
 			} else if (c < ' ') {
-				// Invalid command
-				displayEnd = nullptr;
+				// End of string or invalid command
+				_displayString = nullptr;
 				break;
 			} else {
 				// Standard character - write it out
@@ -214,7 +244,9 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 			}
 		}
 
-		if (_displayString > displayEnd && _fontJustify != JUSTIFY_RIGHT && _msgWraps
+		if (!_displayString)
+			break;
+		if ( _displayString > displayEnd && _fontJustify != JUSTIFY_RIGHT && _msgWraps
 				&& newLine(bounds))
 			break;
 	}
