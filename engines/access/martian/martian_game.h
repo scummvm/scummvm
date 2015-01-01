@@ -57,8 +57,8 @@ protected:
 
 	virtual void dead(int deathId) {}
 
-	void sub13E1F();
-	void sub13E4C(const Common::String &msg);
+	void setNoteParams();
+	void displayNote(const Common::String &msg);
 public:
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 

@@ -75,7 +75,7 @@ void MartianEngine::initVariables() {
 	_numAnimTimers = 0;
 }
 
-void MartianEngine::sub13E1F() {
+void MartianEngine::setNoteParams() {
 	_events->hideCursor();
 
 	_screen->_orgX1 = 58;
@@ -88,7 +88,7 @@ void MartianEngine::sub13E1F() {
 	_events->showCursor();
 }
 
-void MartianEngine::sub13E4C(const Common::String &msg) {
+void MartianEngine::displayNote(const Common::String &msg) {
 	_fonts._charSet._lo = 1;
 	_fonts._charSet._hi = 8;
 	_fonts._charFor._lo = 0;
@@ -97,7 +97,7 @@ void MartianEngine::sub13E4C(const Common::String &msg) {
 	_screen->_maxChars = 40;
 	_screen->_printOrg = _screen->_printStart = Common::Point(59, 124);
 	
-	sub13E1F();
+	setNoteParams();
 
 	Common::String lines = msg;
 	Common::String line;
@@ -110,7 +110,7 @@ void MartianEngine::sub13E4C(const Common::String &msg) {
 
 		if (_screen->_printOrg.y == 196) {
 			_events->waitKeyMouse();
-			sub13E1F();
+			setNoteParams();
 			_screen->_printOrg = _screen->_printStart;
 		}
 	} while (!lastLine);
@@ -142,7 +142,7 @@ void MartianEngine::doSpecial5(int param1) {
 	while ((c = (char)_word20060->_stream->readByte()) != '\0')
 		msg += c;
 
-	sub13E4C(msg);
+	displayNote(msg);
 	
 	_midi->stopSong();
 	_midi->freeMusic();
