@@ -20,9 +20,10 @@
  *
  */
 
-#ifndef STARK_RESOURCES_LOCATION_H
-#define STARK_RESOURCES_LOCATION_H
+#ifndef STARK_RESOURCES_LAYER_H
+#define STARK_RESOURCES_LAYER_H
 
+#include "common/array.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
@@ -30,24 +31,55 @@
 namespace Stark {
 
 class XRCReadStream;
-class Layer;
 
-class Location : public Resource {
+class Layer : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kLocation;
+	static const ResourceType::Type TYPE = ResourceType::kLayer;
 
-	Location(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Location();
+	/** Layer factory */
+	static Resource *construct(Resource *parent, byte subType, uint16 index, const Common::String &name);
 
-	void onAllLoaded() override;
+	Layer(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Layer();
+
+	virtual void readData(XRCReadStream *stream) override;
 
 protected:
 	void printData() override;
 
-private:
-	Common::Array<Layer *> _layers;
+	float _field_44;
+	uint _field_50;
+};
+
+class Layer2D : public Layer {
+public:
+	Layer2D(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Layer2D();
+
+	virtual void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	Common::Array<uint32> _itemIndices;
+};
+
+class Layer3D : public Layer {
+public:
+	Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Layer3D();
+
+	virtual void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	uint32 _field_54;
+	uint32 _field_58;
+	float _nearClipPlane;
+	float _farClipPlane;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_LOCATION_H
+#endif // STARK_RESOURCES_LAYER_H

@@ -26,6 +26,7 @@
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/resource.h"
@@ -132,6 +133,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kLocation:
 		resource = new Location(parent, subType, index, name);
+		break;
+	case ResourceType::kLayer:
+		resource = Layer::construct(parent, subType, index, name);
 		break;
 	case ResourceType::kCamera:
 		resource = new Camera(parent, subType, index, name);

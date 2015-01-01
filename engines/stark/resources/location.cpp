@@ -21,6 +21,8 @@
  */
 
 #include "engines/stark/resources/location.h"
+
+#include "engines/stark/resources/layer.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -31,6 +33,10 @@ Location::~Location() {
 Location::Location(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name) {
 	_type = TYPE;
+}
+
+void Location::onAllLoaded() {
+	_layers = listChildren<Layer>();
 }
 
 void Location::printData() {
