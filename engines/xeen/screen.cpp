@@ -66,8 +66,8 @@ void Window::open2() {
 
 void Window::frame() {
 	Screen &screen = *_vm->_screen;
-	int xCount = (_bounds.width() - 9) / SYMBOL_WIDTH;
-	int yCount = (_bounds.height() - 9) / SYMBOL_HEIGHT;
+	int xCount = (_bounds.width() - 9) / FONT_WIDTH;
+	int yCount = (_bounds.height() - 9) / FONT_HEIGHT;
 
 	// Write the top line
 	screen._writePos = Common::Point(_bounds.left, _bounds.top);
@@ -82,7 +82,7 @@ void Window::frame() {
 		}
 	}
 
-	screen._writePos.x = _bounds.right - SYMBOL_WIDTH;
+	screen._writePos.x = _bounds.right - FONT_WIDTH;
 	screen.writeSymbol(5);
 
 	// Write the vertical edges
@@ -94,7 +94,7 @@ void Window::frame() {
 			screen._writePos.x = _bounds.left;
 			screen.writeSymbol(symbolId);
 
-			screen._writePos.x = _bounds.right - SYMBOL_WIDTH;
+			screen._writePos.x = _bounds.right - FONT_WIDTH;
 			screen.writeSymbol(symbolId + 4);
 
 			if (++symbolId == 10)
@@ -103,7 +103,7 @@ void Window::frame() {
 	}
 
 	// Write the bottom line
-	screen._writePos = Common::Point(_bounds.left, _bounds.bottom - SYMBOL_HEIGHT);
+	screen._writePos = Common::Point(_bounds.left, _bounds.bottom - FONT_HEIGHT);
 	screen.writeSymbol(14);
 
 	if (xCount > 0) {
@@ -115,7 +115,7 @@ void Window::frame() {
 		}
 	}
 
-	screen._writePos.x = _bounds.right - SYMBOL_WIDTH;
+	screen._writePos.x = _bounds.right - FONT_WIDTH;
 	screen.writeSymbol(19);
 }
 
@@ -154,6 +154,17 @@ void Window::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push(r);
 }
 
+/**
+ * Fill the content area of a window with the current background color 
+ */
+void Window::fill() {
+	fillRect(_innerBounds, _bgColor);
+}
+
+void Window::writeString(const Common::String &s) {
+	_vm->_screen->writeString(s, _innerBounds);
+}
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -163,6 +174,16 @@ Screen::Screen(XeenEngine *vm) : _vm(vm) {
 	_fadeIn = false;
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	setupWindows();
+
+	// Load font data for the screen
+	File f("fnt");
+	byte *data = new byte[f.size()];
+	f.read(data, f.size());
+	_fontData = data;
+}
+
+Screen::~Screen() {
+	delete[] _fontData;
 }
 
 void Screen::setupWindows() {

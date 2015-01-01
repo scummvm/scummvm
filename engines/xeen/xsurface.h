@@ -30,18 +30,39 @@
 
 namespace Xeen {
 
-#define SYMBOL_WIDTH 8
-#define SYMBOL_HEIGHT 8
+#define FONT_WIDTH 8
+#define FONT_HEIGHT 8
+#define DEFAULT_BG_COLOR 0x99
+
+enum Justify { JUSTIFY_NONE = 0, JUSTIFY_CENTER = 1, JUSTIFY_RIGHT = 2 };
 
 class XSurface: public Graphics::Surface {
+private:
+	const char *_displayString;
+	bool _msgWraps;
+
+	char getNextChar();
+
+	bool getNextCharWidth(int &total);
+
+	bool newLine(const Common::Rect &bounds);
+
+	int fontAtoi(int len = 3);
+
+	void setTextColor(int idx);
 public:
+	static const byte *_fontData;
 	Common::Point _writePos;
+	byte _textColors[4];
+	byte _bgColor;
+	bool _fontReduced;
+	Justify _fontJustify;
 public:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
 	XSurface();
 	XSurface(int w, int h);
-	~XSurface();
+	virtual ~XSurface();
 
 	void create(uint16 w, uint16 h);
 
@@ -57,7 +78,7 @@ public:
 
 	void writeSymbol(int symbolId);
 
-	void writeString(const Common::String &s);
+	Common::String writeString(const Common::String &s, const Common::Rect &bounds);
 
 	void writeChar(char c);
 };

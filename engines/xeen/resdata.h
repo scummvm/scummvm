@@ -30,6 +30,8 @@ namespace Xeen {
 
 extern const byte SYMBOLS[20][64];
 
+extern const byte TEXT_COLORS[40][4];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESDATA_H */

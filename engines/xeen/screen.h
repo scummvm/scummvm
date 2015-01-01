@@ -70,7 +70,10 @@ public:
 	void update();
 
 	void frame();
-};
+
+	void fill();
+
+	void writeString(const Common::String &s);};
 
 class Screen: public XSurface {
 private:
@@ -103,6 +106,8 @@ public:
 	Common::Array<Window *> _windowStack;
 public:
 	Screen(XeenEngine *vm);
+
+	virtual ~Screen();
 
 	void closeWindows();
 
