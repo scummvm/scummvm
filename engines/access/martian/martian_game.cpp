@@ -82,6 +82,7 @@ void MartianEngine::sub13E1F() {
 	_screen->_orgY1 = 124;
 	_screen->_orgX2 = 297;
 	_screen->_orgY2 = 199;
+	_screen->_lColor = 51;
 	_screen->drawRect();
 
 	_events->showCursor();
@@ -103,15 +104,8 @@ void MartianEngine::sub13E4C(const Common::String &msg) {
 	int width = 0;
 	bool lastLine = false;
 	do {
-		lastLine = _fonts._font2.getLine(lines, _screen->_maxChars * 6, line, width);
-
-		// Set font colors
-		_fonts._font2._fontColors[0] = 0;
-		_fonts._font2._fontColors[1] = 27;
-		_fonts._font2._fontColors[2] = 28;
-		_fonts._font2._fontColors[3] = 29;
-
-		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+		lastLine = _fonts._font1.getLine(lines, _screen->_maxChars * 6, line, width);
+		_fonts._font1.drawString(_screen, line, _screen->_printOrg);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
 
 		if (_screen->_printOrg.y == 196) {
