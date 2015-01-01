@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/tinygl.o \
+	resources/anim.o \
 	resources/animhierarchy.o \
 	resources/camera.o \
 	resources/command.o \

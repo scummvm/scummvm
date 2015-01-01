@@ -22,6 +22,7 @@
 
 #include "engines/stark/xrcreader.h"
 
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/command.h"
@@ -165,6 +166,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kAnimHierarchy:
 		resource = new AnimHierarchy(parent, subType, index, name);
+		break;
+	case ResourceType::kAnim:
+		resource = Anim::construct(parent, subType, index, name);
 		break;
 	case ResourceType::kCommand:
 		resource = new Command(parent, subType, index, name);
