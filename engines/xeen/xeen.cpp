@@ -28,6 +28,7 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "xeen/xeen.h"
+#include "xeen/menus.h"
 #include "xeen/resources.h"
 
 namespace Xeen {
@@ -219,8 +220,7 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 }
 
 void XeenEngine::playGame() {
-	//showIntro();
-	
+	OptionsMenu::show(this);
 }
 
 } // End of namespace Xeen

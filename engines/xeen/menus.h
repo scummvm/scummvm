@@ -51,7 +51,7 @@ protected:
 	Common::Array<DialogButton> _buttons;
 	char _key;
 
-	virtual void doScroll(bool drawFlag, bool doFade) = 0;
+	virtual void doScroll(bool drawFlag, bool doFade);
 
 	void checkEvents();
 public:
@@ -78,7 +78,7 @@ private:
 protected:
 	OptionsMenu(XeenEngine *vm) : SettingsBaseDialog(vm) {}
 protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
+	virtual void startup(Common::String &title1, Common::String &title2) = 0;
 
 	virtual void setBackground() {}
 
@@ -96,8 +96,6 @@ public:
 class CloudsOptionsMenu : public OptionsMenu {
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
-
-	virtual void doScroll(bool drawFlag, bool doFade);
 public:
 	CloudsOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
 };
