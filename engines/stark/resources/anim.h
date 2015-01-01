@@ -29,6 +29,7 @@
 
 namespace Stark {
 
+class Item;
 class XRCReadStream;
 
 class Anim : public Resource {
@@ -48,14 +49,20 @@ public:
 	Anim(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Anim();
 
+	// Resource API
 	void readData(XRCReadStream *stream) override;
+
+	// Refcounting, used to know if the anim script needs to run
+	virtual void reference(Item *item);
+	virtual void dereference(Item *item);
+	bool isReferenced();
 
 protected:
 	void printData() override;
 
 	uint32 _field_30;
 	uint32 _numFrames;
-
+	int32 _refCount;
 };
 
 class AnimSub1 : public Anim {

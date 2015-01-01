@@ -48,13 +48,24 @@ Anim::~Anim() {
 Anim::Anim(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name),
 				_field_30(0),
-				_numFrames(0) {
+				_numFrames(0),
+				_refCount(0) {
 	_type = TYPE;
 }
 
 void Anim::readData(XRCReadStream *stream) {
 	_field_30 = stream->readUint32LE();
 	_numFrames = stream->readUint32LE();
+}
+
+void Anim::reference(Item *item) {
+	_refCount++;
+}
+void Anim::dereference(Item *item) {
+	_refCount--;
+}
+bool Anim::isReferenced() {
+	return _refCount > 0;
 }
 
 void Anim::printData() {

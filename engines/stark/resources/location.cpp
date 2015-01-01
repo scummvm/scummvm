@@ -36,6 +36,8 @@ Location::Location(Resource *parent, byte subType, uint16 index, const Common::S
 }
 
 void Location::onAllLoaded() {
+	Resource::onAllLoaded();
+
 	_layers = listChildren<Layer>();
 }
 

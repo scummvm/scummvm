@@ -86,6 +86,8 @@ void ItemVisual::readData(XRCReadStream *stream) {
 }
 
 void ItemVisual::onAllLoaded() {
+	Item::onAllLoaded();
+
 	_animHierarchy = findChild<AnimHierarchy>();
 
 	if (_subType != kItemSub10) {

@@ -41,7 +41,9 @@ public:
 	AnimHierarchy(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimHierarchy();
 
+	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onAllLoaded() override;
 
 	void setItemAnim(ItemVisual *item, int32 index);
 	void unselectItemAnim(ItemVisual *item);
@@ -51,7 +53,11 @@ protected:
 	void printData() override;
 
 	Common::Array<ResourceReference> _animationReferences;
+	Common::Array<Anim *> _animations;
+
 	ResourceReference _animHierarchyReference;
+	AnimHierarchy * _animHierarchy;
+
 	float _field_5C;
 	int32 _animIndex;
 	Anim *_currentAnim;
