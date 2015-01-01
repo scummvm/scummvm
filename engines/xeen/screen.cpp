@@ -60,7 +60,7 @@ void Window::open() {
 }
 
 void Window::open2() {
-	_dirtyRects.push(_bounds);
+	addDirtyRect(_bounds);
 	frame();
 	fill();
 }
@@ -125,7 +125,6 @@ void Window::close() {
 		// Update any remaining pending changes to the screen and free
 		// the window's internal surface storage
 		update();
-		free();
 
 		// Remove the window from the stack and flag it as now disabled
 		for (uint i = 0; i < _vm->_screen->_windowStack.size(); ++i) {
@@ -142,17 +141,18 @@ void Window::close() {
 }
 
 /**
- * Pushes any pending changes for the window to the screen
+ * Update the window
  */
 void Window::update() {
-	while (!_dirtyRects.empty()) {
-		Common::Rect r = _dirtyRects.pop();
-		blitTo(*_vm->_screen, Common::Point(_bounds.left, _bounds.top));
-	}
+	// Since all window drawing is done on the screen surface anyway,
+	// there's nothing that needs to be updated here
 }
 
+/**
+ * Adds an area that requires redrawing on the next frame update
+ */
 void Window::addDirtyRect(const Common::Rect &r) {
-	_dirtyRects.push(r);
+	_vm->_screen->addDirtyRect(r);
 }
 
 /**
@@ -319,6 +319,7 @@ void Screen::loadBackground(const Common::String &name) {
 
 	assert(f.size() == (SCREEN_WIDTH * SCREEN_HEIGHT));
 	f.read((byte *)getPixels(), SCREEN_WIDTH * SCREEN_HEIGHT);
+	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
 }
 
 /**

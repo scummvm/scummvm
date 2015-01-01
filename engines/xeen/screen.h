@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/array.h"
-#include "common/queue.h"
 #include "common/rect.h"
 #include "xeen/font.h"
 #include "xeen/xsurface.h"
@@ -51,7 +50,6 @@ private:
 	int _xLo, _xHi;
 	int _ycL, _ycH;
 	bool _enabled;
-	Common::Queue<Common::Rect> _dirtyRects;
 
 	void open2();
 public:

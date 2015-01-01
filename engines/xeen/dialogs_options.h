@@ -59,8 +59,6 @@ public:
 class DarkSideOptionsMenu : public OptionsMenu {
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
-
-	virtual void doScroll(bool drawFlag, bool doFade);
 public:
 	DarkSideOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
 };

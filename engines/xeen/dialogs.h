@@ -51,7 +51,7 @@ protected:
 	Common::Array<DialogButton> _buttons;
 	char _key;
 
-	virtual void doScroll(bool drawFlag, bool doFade);
+	void doScroll(bool drawFlag, bool doFade);
 
 	void checkEvents();
 public:
