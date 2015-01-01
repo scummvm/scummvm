@@ -44,7 +44,7 @@ public:
 		kFloorFace              = 7,
 		kItem                   = 8,
 		kScript                 = 9,
-		kAnimHier               = 10,
+		kAnimHierarchy          = 10,
 		kAnim                   = 11,
 		kDirection              = 12,
 		kImage                  = 13,

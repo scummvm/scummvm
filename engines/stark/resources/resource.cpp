@@ -53,7 +53,7 @@ const char *ResourceType::getName() {
 			{ ResourceType::kFloorFace,              "FloorFace"              },
 			{ ResourceType::kItem,                   "Item"                   },
 			{ ResourceType::kScript,                 "Script"                 },
-			{ ResourceType::kAnimHier,               "AnimHier"               },
+			{ ResourceType::kAnimHierarchy,          "AnimHierarchy"          },
 			{ ResourceType::kAnim,                   "Anim"                   },
 			{ ResourceType::kDirection,              "Direction"              },
 			{ ResourceType::kImage,                  "Image"                  },
