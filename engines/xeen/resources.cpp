@@ -195,13 +195,10 @@ bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEn
 void Resources::init(XeenEngine *vm) {
 	Common::File f;
 
-	const char *ARCHIVES[3] = { "xeen", "dark", "intro" };
-	for (int i = 0; i < 3; ++i) {
-		Common::String filename = Common::String::format("%s.cc", ARCHIVES[i]);
-		if (f.exists(filename)) {
-			SearchMan.add(ARCHIVES[i], new CCArchive(filename));
-		}
-	}
+	if (vm->getGameID() != GType_Clouds)
+		SearchMan.add("dark", new CCArchive("dark.cc"));
+	SearchMan.add("xeen", new CCArchive("xeen.cc"));
+	SearchMan.add("intro", new CCArchive("intro.cc"));
 }
 
 /*------------------------------------------------------------------------*/
