@@ -43,8 +43,8 @@ void Dialog::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
-void Dialog::addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d) {
-	_buttons.push_back(DialogButton(bounds, c, sprites, d));
+void Dialog::addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw = true) {
+	_buttons.push_back(DialogButton(bounds, c, sprites, draw));
 }
 
 void Dialog::checkEvents() {
@@ -118,9 +118,9 @@ void OptionsMenu::execute() {
 	startup(title1, title2);
 	SpriteResource title1Sprites(title1), title2Sprites(title2);
 
-	bool firstTime = true;
+	bool firstTime = true, doFade = true;
 	while (!_vm->shouldQuit()) {
-		setBackground();
+		setBackground(doFade);
 		events.setCursor(0);
 
 		if (firstTime) {
@@ -128,7 +128,7 @@ void OptionsMenu::execute() {
 			warning("TODO: Read existing save file");
 		}
 
-		for (;;) {
+		while (!_vm->shouldQuit()) {
 			showTitles1(title1Sprites);
 			showTitles2();
 
@@ -199,17 +199,17 @@ void OptionsMenu::showTitles2() {
 }
 
 void OptionsMenu::setupButtons(SpriteResource *buttons) {
-	addButton(Common::Rect(124, 87, 124 + 53, 87 + 10), 'S', buttons, true);
-	addButton(Common::Rect(126, 98, 126 + 47, 98 + 10), 'L', buttons, true);
-	addButton(Common::Rect(91, 110, 91 + 118, 110 + 10), 'C', buttons, true);
-	addButton(Common::Rect(85, 121, 85 + 131, 121 + 10), 'O', buttons, true);
+	addButton(Common::Rect(124, 87, 124 + 53, 87 + 10), 'S', buttons, false);
+	addButton(Common::Rect(126, 98, 126 + 47, 98 + 10), 'L', buttons, false);
+	addButton(Common::Rect(91, 110, 91 + 118, 110 + 10), 'C', buttons, false);
+	addButton(Common::Rect(85, 121, 85 + 131, 121 + 10), 'O', buttons, false);
 }
 
 void WorldOptionsMenu::setupButtons(SpriteResource *buttons) {
-	addButton(Common::Rect(93, 53, 93 + 134, 53 + 20), 'S', buttons, false);
-	addButton(Common::Rect(93, 78, 93 + 134, 78 + 20), 'L', buttons, false);
-	addButton(Common::Rect(93, 103, 93 + 134, 103 + 20), 'C', buttons, false);
-	addButton(Common::Rect(93, 128, 93 + 134, 128 + 20), 'O', buttons, false);
+	addButton(Common::Rect(93, 53, 93 + 134, 53 + 20), 'S', buttons, true);
+	addButton(Common::Rect(93, 78, 93 + 134, 78 + 20), 'L', buttons, true);
+	addButton(Common::Rect(93, 103, 93 + 134, 103 + 20), 'C', buttons, true);
+	addButton(Common::Rect(93, 128, 93 + 134, 128 + 20), 'O', buttons, true);
 }
 
 /*------------------------------------------------------------------------*/
@@ -337,15 +337,16 @@ void WorldOptionsMenu::startup(Common::String &title1, Common::String &title2) {
 	Screen &screen = *_vm->_screen;
 	screen.fadeOut(4);
 	screen.loadPalette("dark.pal");
-	screen.fadeIn(0x81);
 	_vm->_events->clearEvents();
 }
 
-void WorldOptionsMenu::setBackground() {
+void WorldOptionsMenu::setBackground(bool doFade) {
 	Screen &screen = *_vm->_screen;
 	screen.loadBackground("world.raw");
 	screen.saveBackground();
-	screen.fadeIn(4);	
+
+	if (doFade)
+		screen.fadeIn(4);	
 }
 
 void WorldOptionsMenu::openWindow() {
@@ -368,7 +369,7 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 		DialogButton &btn = _buttons[btnIndex];
-		if (btn._d) {
+		if (btn._draw) {
 			btn._sprites->draw(screen._windows[0], btnIndex * 2,
 				Common::Point(btn._bounds.left, btn._bounds.top));
 		}

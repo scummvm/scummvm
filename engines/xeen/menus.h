@@ -35,12 +35,12 @@ public:
 	Common::Rect _bounds;
 	SpriteResource *_sprites;
 	char _c;
-	bool _d;
+	bool _draw;
 
-	DialogButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d) :
-		_bounds(bounds), _c(c), _sprites(sprites), _d(d) {}
+	DialogButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw) :
+		_bounds(bounds), _c(c), _sprites(sprites), _draw(draw) {}
 
-	DialogButton() : _c('\0'), _sprites(nullptr), _d(false) {}
+	DialogButton() : _c('\0'), _sprites(nullptr), _draw(false) {}
 };
 
 class Dialog {
@@ -63,7 +63,7 @@ public:
 
 	void restoreButtons();
 
-	void addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool d);
+	void addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw);
 };
 
 class SettingsBaseDialog : public Dialog {
@@ -80,7 +80,7 @@ protected:
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2) = 0;
 
-	virtual void setBackground() {}
+	virtual void setBackground(bool doFade) {}
 
 	virtual void showTitles1(SpriteResource &sprites);
 
@@ -115,7 +115,7 @@ private:
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 
-	virtual void setBackground();
+	virtual void setBackground(bool doFade);
 
 	virtual void showTitles2() {}
 

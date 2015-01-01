@@ -29,7 +29,7 @@
 
 namespace Xeen {
 
-Window::Window() : _vm(nullptr), _enabled(false), _a(0), _border(0),
+Window::Window() : _vm(nullptr),  _enabled(false), _a(0), _border(0),
 	_xLo(0), _xHi(0), _ycL(0), _ycH(0) {
 }
 
@@ -38,6 +38,7 @@ Window::Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
 		_vm(vm), _enabled(false), _a(a), _border(border), 
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
+	create(_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 void Window::setBounds(const Common::Rect &r) {
@@ -48,6 +49,7 @@ void Window::setBounds(const Common::Rect &r) {
 
 void Window::open() {
 	if (!_enabled) {
+		_enabled = true;
 		_vm->_screen->_windowStack.push_back(this);
 		open2();
 	}
@@ -58,10 +60,9 @@ void Window::open() {
 }
 
 void Window::open2() {
-	create(_bounds.width(), _bounds.height());
-	copyRectToSurface(*_vm->_screen, 0, 0, _bounds);
 	_dirtyRects.push(_bounds);
 	frame();
+	fill();
 }
 
 void Window::frame() {
@@ -173,7 +174,8 @@ void Window::writeString(const Common::String &s) {
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
 	_fadeIn = false;
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
-	setupWindows();
+	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
+	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
 
 	// Load font data for the screen
 	File f("fnt");
@@ -257,6 +259,7 @@ void Screen::update() {
 }
 
 void Screen::addDirtyRect(const Common::Rect &r) {
+	assert(r.isValidRect() && r.width() > 0 && r.height() > 0);
 	_dirtyRects.push_back(r);
 }
 
@@ -304,7 +307,7 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
 void Screen::loadPalette(const Common::String &name) {
 	File f(name);
 	for (int i = 0; i < PALETTE_SIZE; ++i)
-		_tempPaltte[i] = f.readByte() << 2;
+		_tempPalette[i] = f.readByte() << 2;
 }
 
 /**
@@ -411,7 +414,7 @@ void Screen::fadeInner(int step) {
 		} else {
 			// Create a scaled palette from the temporary one
 			for (int i = 0; i < PALETTE_SIZE; ++i) {
-				_mainPalette[i] = (_tempPaltte[i] * val * 2) >> 8;
+				_mainPalette[i] = (_tempPalette[i] * val * 2) >> 8;
 			}
 
 			updatePalette();
@@ -438,7 +441,6 @@ void Screen::restoreBackground(int slot) {
 	assert(slot > 0 && slot < 10);
 
 	_savedScreens[slot - 1].blitTo(*this);
-	_savedScreens[slot - 1].free();
 }
 
 

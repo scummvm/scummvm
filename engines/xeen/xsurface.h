@@ -31,6 +31,8 @@
 namespace Xeen {
 
 class XSurface: public Graphics::Surface {
+private:
+	bool _freeFlag;
 public:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
@@ -39,6 +41,8 @@ public:
 	virtual ~XSurface();
 
 	void create(uint16 w, uint16 h);
+
+	void create(XSurface *s, const Common::Rect &bounds);
 
 	void transBlitTo(XSurface &dest) const;
 

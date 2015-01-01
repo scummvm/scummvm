@@ -62,6 +62,7 @@ void XeenEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_screen = new Screen(this);
+	_screen->setupWindows();
 	_sound = new SoundManager(this);
 
 	File f("029.obj");

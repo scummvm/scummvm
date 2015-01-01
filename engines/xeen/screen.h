@@ -81,12 +81,10 @@ private:
 	XeenEngine *_vm;
 	Common::List<Common::Rect> _dirtyRects;
 	byte _mainPalette[PALETTE_SIZE];
-	byte _tempPaltte[PALETTE_SIZE];
+	byte _tempPalette[PALETTE_SIZE];
 	XSurface _pages[2];
 	XSurface _savedScreens[10];
 	bool _fadeIn;
-
-	void setupWindows();
 
 	void mergeDirtyRects();
 
@@ -110,6 +108,8 @@ public:
 
 	virtual ~Screen();
 
+	void setupWindows();
+
 	void closeWindows();
 
 	void update();
@@ -132,9 +132,9 @@ public:
 
 	void fadeOut(int step);
 
-	void saveBackground(int slot = 0);
+	void saveBackground(int slot = 1);
 
-	void restoreBackground(int slot = 0);
+	void restoreBackground(int slot = 1);
 };
 
 } // End of namespace Xeen

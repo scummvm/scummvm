@@ -55,6 +55,7 @@ void EventsManager::setCursor(int cursorId) {
 	_sprites.draw(cursor, cursorId);
 
 	CursorMan.replaceCursor(cursor.getPixels(), cursor.w, cursor.h, 0, 0, 0);
+	showCursor();
 }
 
 /**

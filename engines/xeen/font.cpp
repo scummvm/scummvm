@@ -124,6 +124,7 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				_writePos.x += _fontReduced ? 3 : 4;
 			} else if (c == '\r') {
 				fillRect(bounds, _bgColor);
+				addDirtyRect(bounds);
 				_writePos = Common::Point(bounds.left, bounds.top);
 			} else if (c == 1) {
 				// Turn off reduced font mode
@@ -146,8 +147,9 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				Common::Point pt = _writePos;
 				if (_fontJustify == JUSTIFY_RIGHT)
 					pt.x -= w;
-				fillRect(Common::Rect(pt.x, pt.y, pt.x + w, pt.y + (_fontReduced ? 9 : 10)),
-					_bgColor);
+
+				Common::Rect r(pt.x, pt.y, pt.x + w, pt.y + (_fontReduced ? 9 : 10));
+				fillRect(r, _bgColor);
 			} else if (c == 5) {
 				continue;
 			} else if (c == 6) {
@@ -194,7 +196,7 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 					break;
 			} else if (c == 11) {
 				// Skip y position
-				int yp = fontAtoi(	);
+				int yp = fontAtoi();
 				_writePos.y = MIN(bounds.top + yp, (int)bounds.bottom);
 			} else if (c == 12) {
 				// Set text colors
@@ -330,6 +332,8 @@ void FontSurface::writeChar(char c) {
 		}
 	}
 
+	addDirtyRect(Common::Rect(_writePos.x, _writePos.y, _writePos.x + FONT_WIDTH,
+		_writePos.y + FONT_HEIGHT));
 	_writePos.x += _fontData[0x1000 + charIndex];
 }
 

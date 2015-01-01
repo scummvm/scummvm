@@ -27,20 +27,33 @@
 
 namespace Xeen {
 
-XSurface::XSurface() : Graphics::Surface() {
+XSurface::XSurface() : Graphics::Surface(), _freeFlag(false) {
 }
 
-XSurface::XSurface(int w, int h) : Graphics::Surface() {
+XSurface::XSurface(int w, int h) : Graphics::Surface(), _freeFlag(false) {
 	create(w, h);
 }
 
 XSurface::~XSurface() {
-	free();
+	if (_freeFlag)
+		free();
 }
 
 void XSurface::create(uint16 w, uint16 h) {
 	Graphics::Surface::create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	_freeFlag = true;
 }
+
+void XSurface::create(XSurface *s, const Common::Rect &bounds) {
+	pixels = (byte *)s->getBasePtr(bounds.left, bounds.top);
+	format = Graphics::PixelFormat::createFormatCLUT8();
+	pitch = s->pitch;
+	w = bounds.width();
+	h = bounds.height();
+
+	_freeFlag = false;
+}
+
 
 void XSurface::transBlitTo(XSurface &dest) const {
 	transBlitTo(dest, Common::Point());
@@ -78,7 +91,7 @@ void XSurface::blitTo(XSurface &dest, const Common::Point &destPos) const {
 		Common::copy(srcP, srcP + w, destP);
 	}
 
-	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + w, destPos.y));
+	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + w, destPos.y + h));
 }
 
 } // End of namespace Xeen
