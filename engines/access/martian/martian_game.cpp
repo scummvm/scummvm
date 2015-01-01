@@ -133,13 +133,13 @@ void MartianEngine::doSpecial5(int param1) {
 	_screen->forceFadeIn();
 	warning("TODO: LoadCells");
 	_timers[20]._timer = _timers[20]._initTm = 30;
-	Resource *_word20060 = _files->loadFile("NOTES.DAT");
-	_word20060->_stream->skip(param1 * 2);
-	int pos = _word20060->_stream->readUint16LE();
-	_word20060->_stream->seek(pos);
+	Resource *_notesRes = _files->loadFile("NOTES.DAT");
+	_notesRes->_stream->skip(param1 * 2);
+	int pos = _notesRes->_stream->readUint16LE();
+	_notesRes->_stream->seek(pos);
 	Common::String msg = "";
 	byte c;
-	while ((c = (char)_word20060->_stream->readByte()) != '\0')
+	while ((c = (char)_notesRes->_stream->readByte()) != '\0')
 		msg += c;
 
 	displayNote(msg);
@@ -161,10 +161,11 @@ void MartianEngine::playGame() {
 
 	if (_loadSaveSlot == -1) {
 		// Do introduction
-//		doCredits();
+		doCredits();
 		if (shouldQuit())
 			return;
-		
+
+		// Display Notes screen
 		doSpecial5(4);
 		if (shouldQuit())
 			return;
@@ -196,19 +197,19 @@ bool MartianEngine::showCredits() {
 	_screen->clearScreen();
 	_destIn = _screen;
 
-	int val1 = _demoStream->readSint16LE();
+	int val1 = _creditsStream->readSint16LE();
 	int val2 = 0;
 	int val3 = 0;
 
 	while(val1 != -1) {
-		val2 = _demoStream->readSint16LE();
-		val3 = _demoStream->readSint16LE();
+		val2 = _creditsStream->readSint16LE();
+		val3 = _creditsStream->readSint16LE();
 		_screen->plotImage(_introObjects, val3, Common::Point(val1, val2));
 
-		val1 = _demoStream->readSint16LE();
+		val1 = _creditsStream->readSint16LE();
 	}
 
-	val2 = _demoStream->readSint16LE();
+	val2 = _creditsStream->readSint16LE();
 	if (val2 == -1) {
 		_events->showCursor();
 		_screen->forceFadeOut();
@@ -246,7 +247,7 @@ void MartianEngine::doCredits() {
 	_buffer2.copyFrom(*_screen);
 	_buffer1.copyFrom(*_screen);
 	_events->showCursor();
-	_demoStream = new Common::MemoryReadStream(DEMO_DATA, 180);
+	_creditsStream = new Common::MemoryReadStream(DEMO_DATA, 180);
 
 	if (!showCredits()) {
 		_screen->copyFrom(_buffer2);

@@ -33,7 +33,7 @@ class MartianEngine : public AccessEngine {
 private:
 	bool _skipStart;
 	SpriteResource *_introObjects;
-	Common::MemoryReadStream *_demoStream;
+	Common::MemoryReadStream *_creditsStream;
 	/**
 	 * Do the game introduction
 	 */
