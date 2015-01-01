@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -73,6 +74,8 @@ ItemVisual::~ItemVisual() {
 
 ItemVisual::ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Item(parent, subType, index, name),
+				_animHierarchy(nullptr),
+				_currentAnimIndex(-1),
 				_field_44(1) {
 }
 
@@ -80,6 +83,23 @@ void ItemVisual::readData(XRCReadStream *stream) {
 	Item::readData(stream);
 
 	_field_44 = stream->readUint32LE();
+}
+
+void ItemVisual::onAllLoaded() {
+	_animHierarchy = findChild<AnimHierarchy>();
+
+	if (_subType != kItemSub10) {
+		setAnim(1);
+	}
+}
+
+void ItemVisual::setAnim(int32 index) {
+	bool animNeedsUpdate = index != _currentAnimIndex;
+
+	_currentAnimIndex = index;
+	if (animNeedsUpdate && _animHierarchy) {
+		_animHierarchy->setItemAnim(this, index);
+	}
 }
 
 void ItemVisual::printData() {

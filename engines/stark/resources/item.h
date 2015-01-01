@@ -32,6 +32,7 @@
 namespace Stark {
 
 class XRCReadStream;
+class AnimHierarchy;
 
 class Item : public Resource {
 public:
@@ -69,10 +70,15 @@ public:
 	virtual ~ItemVisual();
 
 	virtual void readData(XRCReadStream *stream) override;
+	virtual void onAllLoaded() override;
+
+	void setAnim(int32 index);
 
 protected:
 	void printData() override;
 
+	AnimHierarchy *_animHierarchy;
+	int32 _currentAnimIndex;
 	uint32 _field_44;
 };
 

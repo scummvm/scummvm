@@ -32,6 +32,8 @@ AnimHierarchy::~AnimHierarchy() {
 
 AnimHierarchy::AnimHierarchy(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name),
+				_animIndex(0),
+				_currentAnim(nullptr),
 				_field_5C(0) {
 	_type = TYPE;
 }
@@ -46,6 +48,20 @@ void AnimHierarchy::readData(XRCReadStream *stream) {
 
 	_animHierarchyReference = stream->readResourceReference();
 	_field_5C = stream->readFloat();
+}
+
+void AnimHierarchy::setItemAnim(ItemVisual *item, int32 index) {
+	unselectItemAnim(item);
+	_animIndex = index;
+	selectItemAnim(item);
+}
+
+void AnimHierarchy::unselectItemAnim(ItemVisual *item) {
+	//TODO
+}
+
+void AnimHierarchy::selectItemAnim(ItemVisual *item) {
+	//TODO
 }
 
 void AnimHierarchy::printData() {
