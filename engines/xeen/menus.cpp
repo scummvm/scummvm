@@ -158,8 +158,7 @@ void OptionsMenu::showTitles1(SpriteResource &sprites) {
 		screen.restoreBackground();
 		sprites.draw(screen, frameNum);
 
-		while (events.timeElapsed() < 4)
-			events.pollEventsAndWait();
+		events.wait(4, true);
 	}
 }
 
