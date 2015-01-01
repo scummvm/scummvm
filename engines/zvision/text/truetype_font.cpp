@@ -62,15 +62,15 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
 	};
 
 	const FontStyle systemFonts[] = {
-		{ "*times new roman*",    "times",   "FreeSerif", "Italic"  },
-		{ "*times*",              "times",   "FreeSerif", "Italic"  },
+		{ "*times new roman*",	  "times",   "FreeSerif", "Italic"  },
+		{ "*times*",		  "times",   "FreeSerif", "Italic"  },
 		{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic"  },
-		{ "*garamond*",           "gara",    "FreeSerif", "Italic"  },
-		{ "*courier new*",        "cour",    "FreeMono",  "Oblique" },
-		{ "*courier*",            "cour",    "FreeMono",  "Oblique" },
-		{ "*ZorkDeath*",          "cour",    "FreeMono",  "Oblique" },
-		{ "*arial*",              "arial",   "FreeSans",  "Oblique" },
-		{ "*ZorkNormal*",         "arial",   "FreeSans",  "Oblique" },
+		{ "*garamond*", 	  "gara",    "FreeSerif", "Italic"  },
+		{ "*courier new*",	  "cour",    "FreeMono",  "Oblique" },
+		{ "*courier*",		  "cour",    "FreeMono",  "Oblique" },
+		{ "*ZorkDeath*",	  "cour",    "FreeMono",  "Oblique" },
+		{ "*arial*",		  "arial",   "FreeSans",  "Oblique" },
+		{ "*ZorkNormal*",	  "arial",   "FreeSans",  "Oblique" },
 	};
 
 	Common::String newFontName;
