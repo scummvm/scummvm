@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
+#include "xeen/resdata.h"
 
 namespace Xeen {
 
@@ -79,5 +80,34 @@ void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
 }
 
 /*------------------------------------------------------------------------*/
+
+void CreditsScreen::show(XeenEngine *vm) {
+	CreditsScreen *dlg = new CreditsScreen(vm);
+	dlg->execute();
+	delete dlg;
+}
+
+void CreditsScreen::execute() {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	
+	// Handle drawing the credits screen
+	doScroll(true, false);
+	screen._windows[28].close();
+
+	screen.loadBackground("marb.raw");
+	screen._windows[0].writeString(CREDITS);
+	doScroll(false, false);
+	
+	events.setCursor(0);
+	screen._windows[0].update();
+	clearButtons();
+
+	// Wait for keypress
+	while (!events.isKeyMousePressed())
+		events.pollEventsAndWait();
+
+	doScroll(true, false);
+}
 
 } // End of namespace Xeen

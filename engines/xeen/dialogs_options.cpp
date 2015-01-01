@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs_options.h"
+#include "xeen/resdata.h"
 
 namespace Xeen {
 
@@ -86,14 +87,13 @@ void OptionsMenu::execute() {
 				return;
 
 			// Handle keypress
-			switch (toupper(_key)) {
-			case 'C':
-			case 'V':
+			char key = toupper(_key);
+			if (key == 'C' || key == 'V') {
 				// Show credits
-				break;
-			default:
+				CreditsScreen::show(_vm);
 				break;
 			}
+			
 			_key = '\0';
 		}
 	}
@@ -188,7 +188,7 @@ void Dialog::doScroll(bool drawFlag, bool doFade) {
 	// Load hand vga files
 	SpriteResource *hand[16];
 	for (int i = 0; i < 16; ++i) {
-		Common::String name = Common::String::format("hand%02u.vga");
+		Common::String name = Common::String::format("hand%02u.vga", i);
 		hand[i] = new SpriteResource(name);
 	}
 
@@ -317,10 +317,7 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 
 	// Draw the basic frame for the optitons menu and title text
 	screen._windows[28].frame();
-	screen._windows[28].writeString("\x0D\x01\003c\014dMight and Magic Options\n"
-		"World of Xeen\x02\n"
-		"\v117Copyright (c) 1993 NWC, Inc.\n"
-		"All Rights Reserved\x01");
+	screen._windows[28].writeString(OPTIONS_TITLE);
 
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 		DialogButton &btn = _buttons[btnIndex];

@@ -25,6 +25,47 @@
 
 namespace Xeen {
 
+const char *const CREDITS =
+	"\013012\010000\003c\01435Designed and Directed By:\n"
+	"\01417Jon Van Caneghem\003l\n"
+	"\n"
+	"\t025\01435Programming:\n"
+	"\t035\01417Mark Caldwell\n"
+	"\t035Dave Hathaway\n"
+	"\n"
+	"\t025\01435Sound System & FX:\n"
+	"\t035\01417Mike Heilemann\n"
+	"\n"
+	"\t025\01435Music & Speech:\n"
+	"\t035\01417Tim Tully\n"
+	"\n"
+	"\t025\01435Writing:\n"
+	"\t035\01417Paul Rattner\n"
+	"\t035Debbie Van Caneghem\n"
+	"\t035Jon Van Caneghem\013012\n"
+	"\n"
+	"\n"
+	"\t180\01435Graphics:\n"
+	"\t190\01417Jonathan P. Gwyn\n"
+	"\t190Bonita Long-Hemsath\n"
+	"\t190Julia Ulano\n"
+	"\t190Ricardo Barrera\n"
+	"\n"
+	"\t180\01435Testing:\n"
+	"\t190\01417Benjamin Bent\n"
+	"\t190Christian Dailey\n"
+	"\t190Mario Escamilla\n"
+	"\t190Marco Hunter\n"
+	"\t190Robert J. Lupo\n"
+	"\t190Clayton Retzer\n"
+	"\t190David Vela\003c";
+
+const char *const OPTIONS_TITLE = 
+	"\x0D\x01\003c\014dMight and Magic Options\n"
+	"World of Xeen\x02\n"
+	"\v117Copyright (c) 1993 NWC, Inc.\n"
+	"All Rights Reserved\x01";
+
 const byte SYMBOLS[20][64] = {
 	{ // 0
 		0x00, 0x00, 0xA8, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x00, 0xA8, 0x9E, 0x9C, 0x9C, 0x9E, 0x9E, 0x9E,

@@ -28,6 +28,10 @@
 
 namespace Xeen {
 
+extern const char *const CREDITS;
+
+extern const char *const OPTIONS_TITLE;
+
 extern const byte SYMBOLS[20][64];
 
 extern const byte TEXT_COLORS[40][4];

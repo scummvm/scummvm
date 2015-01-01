@@ -73,6 +73,15 @@ public:
 	SettingsBaseDialog(XeenEngine *vm) : Dialog(vm) {}
 };
 
+class CreditsScreen: public Dialog {
+private:
+	CreditsScreen(XeenEngine *vm) : Dialog(vm) {}
+
+	void execute();
+public:
+	static void show(XeenEngine *vm);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_H */
