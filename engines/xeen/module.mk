@@ -9,11 +9,13 @@ MODULE_OBJS := \
 	dialogs.o \
 	dialogs_options.o \
 	events.o \
+	files.o \
 	font.o \
 	resdata.o \
 	resources.o \
 	screen.o \
 	sound.o \
+	sprites.o \
 	xeen.o \
 	xsurface.o
 

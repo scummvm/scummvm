@@ -22,7 +22,7 @@
 
 #include "common/endian.h"
 #include "xeen/font.h"
-#include "xeen/resdata.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 

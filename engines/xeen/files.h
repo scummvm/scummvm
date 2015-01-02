@@ -8,34 +8,51 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef XEEN_RESDATA_H
-#define XEEN_RESDATA_H
+#ifndef XEEN_FILES_H
+#define XEEN_FILES_H
 
 #include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "common/array.h"
+#include "common/file.h"
+#include "graphics/surface.h"
+#include "xeen/xsurface.h"
 
 namespace Xeen {
 
-extern const char *const CREDITS;
+class XeenEngine;
 
-extern const char *const OPTIONS_TITLE;
+class FileManager {
+public:
+	/**
+	 * Instantiates the resource manager
+	 */
+	static void init(XeenEngine *vm);
+};
 
-extern const byte SYMBOLS[20][64];
+/**
+ * Derived file class
+ */
+class File : public Common::File {
+public:
+	File() : Common::File() {}
+	File(const Common::String &filename) { openFile(filename); }
+	virtual ~File() {}
 
-extern const byte TEXT_COLORS[40][4];
+	void openFile(const Common::String &filename);
+};
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_RESDATA_H */
+#endif /* XEEN_FILES_H */

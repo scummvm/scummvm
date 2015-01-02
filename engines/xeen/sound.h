@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "xeen/resources.h"
+#include "xeen/files.h"
 
 namespace Xeen {
 

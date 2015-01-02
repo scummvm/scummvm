@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
-#include "xeen/resources.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
 

@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs_options.h"
-#include "xeen/resdata.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
@@ -93,6 +93,9 @@ void OptionsMenu::execute() {
 			if (key == 'C' || key == 'V') {
 				// Show credits
 				CreditsScreen::show(_vm);
+				break;
+			} else if (key == 27) {
+				// Hide the options menu
 				break;
 			}
 		}

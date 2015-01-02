@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
-#include "xeen/resdata.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 

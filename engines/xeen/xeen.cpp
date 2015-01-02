@@ -29,7 +29,7 @@
 #include "graphics/thumbnail.h"
 #include "xeen/xeen.h"
 #include "xeen/dialogs_options.h"
-#include "xeen/resources.h"
+#include "xeen/files.h"
 
 namespace Xeen {
 
@@ -58,7 +58,7 @@ void XeenEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	// Create sub-objects of the engine
-	Resources::init(this);
+	FileManager::init(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_screen = new Screen(this);

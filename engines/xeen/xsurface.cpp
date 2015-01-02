@@ -23,7 +23,7 @@
 #include "common/algorithm.h"
 #include "common/util.h"
 #include "xeen/xsurface.h"
-#include "xeen/resdata.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 

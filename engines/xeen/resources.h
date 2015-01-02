@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,84 +24,18 @@
 #define XEEN_RESOURCES_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
-#include "common/file.h"
-#include "graphics/surface.h"
-#include "xeen/xsurface.h"
+#include "gui/debugger.h"
 
 namespace Xeen {
 
-class XeenEngine;
+extern const char *const CREDITS;
 
-class Resources {
-public:
-	/**
-	 * Instantiates the resource manager
-	 */
-	static void init(XeenEngine *vm);
-};
+extern const char *const OPTIONS_TITLE;
 
-/**
- * Derived file class
- */
-class File : public Common::File {
-public:
-	File() : Common::File() {}
-	File(const Common::String &filename) { openFile(filename); }
-	virtual ~File() {}
+extern const byte SYMBOLS[20][64];
 
-	void openFile(const Common::String &filename);
-};
-
-class GraphicResource {
-protected:
-	int32 _filesize;
-	byte *_data;
-
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const;
-public:
-	GraphicResource(const Common::String &filename);
-
-	virtual ~GraphicResource();
-
-	int size() const;
-};
-
-/**
- * Defines a resource that Contains a list of singular sprite frames 
- */
-class FramesResource : public GraphicResource {
-private:
-	Common::Array<uint32> _index;
-public:
-	FramesResource(const Common::String &filename);
-	virtual ~FramesResource() {}
-
-	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
-
-	void draw(XSurface &dest, int frame) const;
-};
-
-/**
- * Defines a resource that contains sets of two layered sprites per frame
- */
-class SpriteResource : public GraphicResource {
-private:
-	struct IndexEntry {
-		uint16 _offset1, _offset2;
-	};
-	Common::Array<IndexEntry> _index;
-
-public:
-	SpriteResource(const Common::String &filename);
-
-	virtual ~SpriteResource() {}
-
-	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
-
-	void draw(XSurface &dest, int frame) const;
-};
+extern const byte TEXT_COLORS[40][4];
 
 } // End of namespace Xeen
 
-#endif /* MADS_RESOURCES_H */
+#endif	/* XEEN_RESOURCES_H */
