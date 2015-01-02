@@ -22,6 +22,7 @@
 
 #include "engines/stark/xrcreader.h"
 
+#include "engines/stark/archive.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/animscript.h"
@@ -41,8 +42,10 @@
 
 namespace Stark {
 
-XRCReadStream::XRCReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
-		SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream) {
+XRCReadStream::XRCReadStream(const Common::String &archiveName,
+		Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
+		SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream),
+		_archiveName(archiveName) {
 }
 
 XRCReadStream::~XRCReadStream() {
@@ -115,9 +118,31 @@ bool XRCReadStream::isDataLeft() {
 	return pos() < size();
 }
 
-Resource *XRCReader::importTree(Common::SeekableReadStream *stream) {
-	XRCReadStream *xrcStream = new XRCReadStream(stream);
-	return importResource(xrcStream, nullptr);
+Common::String XRCReadStream::getArchiveName() const {
+	return _archiveName;
+}
+
+Resource *XRCReader::importTree(XARCArchive *archive) {
+	// Find the XRC file
+	Common::ArchiveMemberList members;
+	archive->listMatchingMembers(members, "*.xrc");
+	if (members.size() == 0) {
+		error("No resource tree in archive '%s'", archive->getFilename().c_str());
+	}
+	if (members.size() > 1) {
+		error("Too many resource scripts in archive '%s'", archive->getFilename().c_str());
+	}
+
+	// Open the XRC file
+	Common::SeekableReadStream *stream = archive->createReadStreamForMember(members.front()->getName());
+	XRCReadStream *xrcStream = new XRCReadStream(archive->getFilename(), stream);
+
+	// Import the resource tree
+	Resource *root = importResource(xrcStream, nullptr);
+
+	delete xrcStream;
+
+	return root;
 }
 
 Resource *XRCReader::importResource(XRCReadStream *stream, Resource *parent) {
@@ -202,7 +227,7 @@ void XRCReader::importResourceData(XRCReadStream *stream, Resource *resource) {
 
 	// Read the resource type specific data using a memory stream
 	if (dataLength > 0) {
-		XRCReadStream *xrcDataStream = new XRCReadStream(stream->readStream(dataLength));
+		XRCReadStream *xrcDataStream = new XRCReadStream(stream->getArchiveName(), stream->readStream(dataLength));
 
 		resource->readData(xrcDataStream);
 

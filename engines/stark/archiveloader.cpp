@@ -45,25 +45,8 @@ ArchiveLoader::LoadedArchive::~LoadedArchive() {
 }
 
 Resource *ArchiveLoader::LoadedArchive::importResources() {
-	// Find the XRC file
-	Common::ArchiveMemberList members;
-	_xarc.listMatchingMembers(members, "*.xrc");
-	if (members.size() == 0) {
-		error("No resource tree in archive '%s'", _filename.c_str());
-	}
-	if (members.size() > 1) {
-		error("Too many resource scripts in archive '%s'", _filename.c_str());
-	}
-
-	// Open the XRC file
-	Common::SeekableReadStream *stream = _xarc.createReadStreamForMember(members.front()->getName());
-
 	// Import the resource tree
-	Resource *root = XRCReader::importTree(stream);
-
-	delete stream;
-
-	return root;
+	return XRCReader::importTree(&_xarc);
 }
 
 ArchiveLoader::~ArchiveLoader() {

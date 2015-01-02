@@ -127,6 +127,10 @@ bool XARCArchive::open(const Common::String &filename) {
 	return true;
 }
 
+Common::String XARCArchive::getFilename() const {
+	return _filename;
+}
+
 bool XARCArchive::hasFile(const Common::String &name) const {
 	for (Common::ArchiveMemberList::const_iterator it = _members.begin(); it != _members.end(); ++it) {
 		if ((*it)->getName() == name) {

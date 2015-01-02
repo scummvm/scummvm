@@ -33,6 +33,7 @@ class XARCMember;
 class XARCArchive : public Common::Archive {
 public:
 	bool open(const Common::String &filename);
+	Common::String getFilename() const;
 
 	// Archive API
 	bool hasFile(const Common::String &name) const;

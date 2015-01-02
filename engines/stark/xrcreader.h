@@ -37,13 +37,18 @@
 
 namespace Stark {
 
+class XARCArchive;
+
 /**
  * A read stream with helper functions to read usual XRC data types
  */
 class XRCReadStream : public Common::SeekableSubReadStream {
 public:
-	XRCReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
+	XRCReadStream(const Common::String &archiveName, Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
 	virtual ~XRCReadStream();
+
+	/** Obtain the file name of the archive containing the XRC tree */
+	Common::String getArchiveName() const;
 
 	Common::String readString();
 	ResourceType readResourceType();
@@ -54,6 +59,9 @@ public:
 	float readFloat();
 	bool readBool();
 	bool isDataLeft();
+
+private:
+	Common::String _archiveName;
 };
 
 /**
@@ -64,7 +72,7 @@ public:
 	/**
 	 * Build a resource tree from a stream
 	 */
-	static Resource *importTree(Common::SeekableReadStream *stream);
+	static Resource *importTree(XARCArchive *archive);
 
 protected:
 	static Resource *importResource(XRCReadStream *stream, Resource *parent);
