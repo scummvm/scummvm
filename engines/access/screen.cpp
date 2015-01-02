@@ -113,7 +113,13 @@ void Screen::setInitialPalettte() {
 }
 
 void Screen::setManPalette() {
-	Common::copy(_vm->_player->_manPal1 + 0x2A0, _vm->_player->_manPal1 + 0x2A0 + 0x42, _rawPalette + 672);
+	Common::copy(_vm->_screen->_manPal, _vm->_screen->_manPal + 0x42, _rawPalette + 672);
+}
+
+void Screen::setIconPalette() {
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		Common::copy(Martian::ICON_DATA, Martian::ICON_DATA + 0x1B, _rawPalette + 741);
+	}
 }
 
 void Screen::loadPalette(int fileNum, int subfile) {

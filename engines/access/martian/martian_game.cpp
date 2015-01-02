@@ -247,7 +247,7 @@ void MartianEngine::doCredits() {
 	_buffer2.copyFrom(*_screen);
 	_buffer1.copyFrom(*_screen);
 	_events->showCursor();
-	_creditsStream = new Common::MemoryReadStream(DEMO_DATA, 180);
+	_creditsStream = new Common::MemoryReadStream(CREDIT_DATA, 180);
 
 	if (!showCredits()) {
 		_screen->copyFrom(_buffer2);

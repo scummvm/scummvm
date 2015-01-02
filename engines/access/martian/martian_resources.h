@@ -50,7 +50,8 @@ extern const int SIDEOFFL[];
 extern const int SIDEOFFU[];
 extern const int SIDEOFFD[];
 
-extern const byte DEMO_DATA[];
+extern const byte CREDIT_DATA[];
+extern const byte ICON_DATA[];
 } // End of namespace Martian
 
 } // End of namespace Access

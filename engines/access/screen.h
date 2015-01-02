@@ -137,7 +137,7 @@ public:
 	/**
 	 * Set icon palette
 	 */
-	void setIconPalette() {}
+	void setIconPalette();
 
 	/**
 	 * Set Tex palette (Martian Memorandum)
