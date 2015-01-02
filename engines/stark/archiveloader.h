@@ -75,13 +75,13 @@ private:
 		XARCArchive &getXArc() { return _xarc; }
 		Resource *getRoot() { return _root; }
 
+		void importResources();
+
 		bool isInUse() { return _useCount > 0; }
 		void incUsage() { _useCount++; }
 		void decUsage() { _useCount = MAX<int>(_useCount - 1, 0); }
 
 	private:
-		Resource *importResources();
-
 		uint _useCount;
 		Common::String _filename;
 		XARCArchive _xarc;

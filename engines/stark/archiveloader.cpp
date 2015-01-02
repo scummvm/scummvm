@@ -29,12 +29,12 @@
 namespace Stark {
 
 ArchiveLoader::LoadedArchive::LoadedArchive(const Common::String& archiveName) :
-		_filename(archiveName) {
+		_filename(archiveName),
+		_root(nullptr),
+		_useCount(0) {
 	if (!_xarc.open(archiveName)) {
 		error("Unable to open archive '%s'", archiveName.c_str());
 	}
-
-	_root = importResources();
 }
 
 ArchiveLoader::LoadedArchive::~LoadedArchive() {
@@ -44,9 +44,9 @@ ArchiveLoader::LoadedArchive::~LoadedArchive() {
 	delete _root;
 }
 
-Resource *ArchiveLoader::LoadedArchive::importResources() {
+void ArchiveLoader::LoadedArchive::importResources() {
 	// Import the resource tree
-	return XRCReader::importTree(&_xarc);
+	_root = XRCReader::importTree(&_xarc);
 }
 
 ArchiveLoader::~ArchiveLoader() {
@@ -63,6 +63,8 @@ bool ArchiveLoader::load(const Common::String &archiveName) {
 
 	LoadedArchive *archive = new LoadedArchive(archiveName);
 	_archives.push_back(archive);
+
+	archive->importResources();
 
 	return true;
 }
