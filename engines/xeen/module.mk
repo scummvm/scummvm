@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	files.o \
 	font.o \
 	items.o \
+	party.o \
 	resdata.o \
 	resources.o \
 	saves.o \

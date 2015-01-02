@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "xeen/debugger.h"
 #include "xeen/events.h"
+#include "xeen/party.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
 #include "xeen/sound.h"
@@ -126,6 +127,7 @@ public:
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
+	PlayerStruct *_activeRoster[MAX_ACTIVE_PARTY];
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

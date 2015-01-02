@@ -41,6 +41,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_screen = nullptr;
 	_sound = nullptr;
 	_eventData = nullptr;
+	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
 }
 
 XeenEngine::~XeenEngine() {
@@ -241,12 +242,21 @@ void XeenEngine::showMainMenu() {
 
 void XeenEngine::playGame() {
 	_saves->reset();
-//	drawUI();
+	drawUI();
 }
 
+/*
+ * Lots of stuff in this method.
+ * TODO: Consider renaming method when better understood
+ */
 void XeenEngine::drawUI() {
 	SpriteResource sprites1("global.icn"), borderSprites("border.icn");
 
+	// Get mappings to the active characters in the party
+	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
+	for (int i = 0; i < _saves->_party._partyCount; ++i) {
+		_activeRoster[i] = &_saves->_roster[_saves->_party._partyMembers[i]];
+	}
 }
 
 } // End of namespace Xeen
