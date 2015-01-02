@@ -139,6 +139,11 @@ public:
 	 */
 	void setIconPalette() {}
 
+	/**
+	 * Set Tex palette (Martian Memorandum)
+	 */
+	void setManPalette();
+
 	void loadPalette(int fileNum, int subfile);
 
 	void setPalette();

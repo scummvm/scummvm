@@ -112,6 +112,10 @@ void Screen::setInitialPalettte() {
 	g_system->getPaletteManager()->setPalette(INITIAL_PALETTE, 0, 18);
 }
 
+void Screen::setManPalette() {
+	Common::copy(_vm->_player->_manPal1 + 0x2A0, _vm->_player->_manPal1 + 0x2A0 + 0x42, _rawPalette + 672);
+}
+
 void Screen::loadPalette(int fileNum, int subfile) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
 	byte *palette = res->data();

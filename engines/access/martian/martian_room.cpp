@@ -57,12 +57,7 @@ void MartianRoom::reloadRoom() {
 
 void MartianRoom::reloadRoom1() {
 	_selectCommand = -1;
-
-// CHECKME: Useful?
-//	_vm->_events->setNormalCursor(CURSOR_CROSSHAIRS);
-//	_vm->_mouseMode = 0;
-//	_vm->_boxSelect = true;
-
+	warning("TODO: _word1F968 = -1;");
 	_vm->_player->_playerOff = false;
 
 	_vm->_screen->forceFadeOut();
@@ -83,11 +78,7 @@ void MartianRoom::reloadRoom1() {
 	buildScreen();
 	_vm->copyBF2Vid();
 
-	//
-	warning("TODO: setManPalette");
-	Common::copy(_vm->_player->_manPal1 + 0x2A0, _vm->_player->_manPal1 + 0x2A0 + 0x42, _vm->_screen->_manPal);
-	//
-
+	_vm->_screen->setManPalette();
 	_vm->_events->showCursor();
 	_vm->_player->_frame = 0;
 	_vm->_oldRects.clear();
