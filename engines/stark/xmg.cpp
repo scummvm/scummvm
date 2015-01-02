@@ -73,6 +73,9 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	// Read the image size
 	uint32 width = stream->readUint32LE();
 	uint32 height = stream->readUint32LE();
+	if (width % 2) {
+		width++;
+	}
 	debugC(10, kDebugXMG, "Stark::XMG: Version=%d, TransparencyColor=0x%08x, size=%dx%d", version, _transColor, width, height);
 
 	// Read the scan length
@@ -93,9 +96,7 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	Graphics::Surface *surface = new Graphics::Surface();
 	if (!surface)
 		return NULL;
-	// Placeholder pixelformat
-	Graphics::PixelFormat pixFormat(4, 8, 8, 8, 8, 24, 16, 8 ,0);
-	surface->create(width, height, pixFormat);
+	surface->create(width, height, Graphics::PixelFormat(4,8,8,8,8,24,16,8,0));
 
 	_pixels = (uint32 *)surface->getPixels();
 	uint32 currX = 0, currY = 0;
@@ -117,7 +118,7 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 			count = op & 0x3F;
 		} else {
 			count = ((op & 0xF) << 8) + stream->readByte();
-			op <<= 4;
+			op <<= 2;
 		}
 		op &= 0xC0;
 
@@ -219,7 +220,9 @@ void XMGDecoder::processRGB() {
 
 // SCENE ELEMENT XMG
 
-SceneElementXMG::SceneElementXMG() : _surface(NULL) {
+SceneElementXMG::SceneElementXMG() :
+		SceneElement2D(),
+		_surface(NULL) {
 }
 
 SceneElementXMG::~SceneElementXMG() {
@@ -229,29 +232,19 @@ SceneElementXMG::~SceneElementXMG() {
 	delete _surface;
 }
 
-SceneElementXMG *SceneElementXMG::load(const Common::Archive *archive, const Common::String &name, uint16 x, uint16 y) {
-	// Open the resource
-	Common::SeekableReadStream *res = archive->createReadStreamForMember(name);
-	if (!res)
-		return NULL;
-
+SceneElementXMG *SceneElementXMG::load(Common::ReadStream *stream) {
 	// Create the element to return
 	SceneElementXMG *element = new SceneElementXMG();
 
 	// Decode the XMG
-	element->_surface = XMGDecoder::decode(res);
-	delete res;
-
-	// Save the rendering coordinates
-	element->_x = x;
-	element->_y = y;
+	element->_surface = XMGDecoder::decode(stream);
 
 	return element;
 }
 
 void SceneElementXMG::render(GfxDriver *gfx) {
 	// Draw the current element
-	gfx->drawSurface(_surface, Common::Point(_x, _y));
+	gfx->drawSurface(_surface, _position);
 }
 
 } // End of namespace Stark

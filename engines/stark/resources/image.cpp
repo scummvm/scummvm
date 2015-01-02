@@ -20,9 +20,13 @@
  *
  */
 
+#include "engines/stark/resources/image.h"
+
 #include "common/debug.h"
 
-#include "engines/stark/resources/image.h"
+#include "engines/stark/archiveloader.h"
+#include "engines/stark/stark.h"
+#include "engines/stark/xmg.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -47,7 +51,8 @@ Image::Image(Resource *parent, byte subType, uint16 index, const Common::String 
 				_transparent(false),
 				_transparency(0),
 				_field_44_ADF(0),
-				_field_48_ADF(30) {
+				_field_48_ADF(30),
+				_visual(nullptr) {
 	_type = TYPE;
 }
 
@@ -68,6 +73,12 @@ void Image::readData(XRCReadStream *stream) {
 
 		_polygons.push_back(polygon);
 	}
+
+	_archiveName = stream->getArchiveName();
+}
+
+SceneElement *Image::getVisual() {
+	return nullptr;
 }
 
 void Image::printData() {
@@ -91,7 +102,8 @@ ImageSub23::~ImageSub23() {
 }
 
 ImageSub23::ImageSub23(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Image(parent, subType, index, name) {
+				Image(parent, subType, index, name),
+				_noName(false) {
 }
 
 void ImageSub23::readData(XRCReadStream *stream) {
@@ -105,6 +117,36 @@ void ImageSub23::readData(XRCReadStream *stream) {
 	if (stream->isDataLeft()) {
 		_field_48_ADF = stream->readUint32LE();
 	}
+
+	_noName = _filename == "noname" || _filename == "noname.xmg";
+}
+
+void ImageSub23::onPostRead() {
+	initVisual();
+}
+
+SceneElement *ImageSub23::getVisual() {
+	initVisual();
+	return _visual;
+}
+
+void ImageSub23::initVisual() {
+	if (_visual) {
+		return; // The visual is already there
+	}
+
+	if (_noName) {
+		return; // No file to load
+	}
+
+	// Get the archive loader service
+	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+
+	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
+
+	_visual = SceneElementXMG::load(stream);
+
+	delete stream;
 }
 
 void ImageSub23::printData() {

@@ -23,6 +23,7 @@
 #ifndef STARK_SCENEELEMENT_H
 #define STARK_SCENEELEMENT_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace Stark {
@@ -34,6 +35,18 @@ public:
 	virtual ~SceneElement() {}
 	virtual void update(uint32 delta) {}
 	virtual void render(GfxDriver *gfx) = 0;
+};
+
+class SceneElement2D : public SceneElement {
+public:
+	virtual ~SceneElement2D() {};
+
+	void setPosition(const Common::Point &position) {
+		_position = position;
+	}
+
+protected:
+	Common::Point _position;
 };
 
 } // End of namespace Stark

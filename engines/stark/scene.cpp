@@ -34,15 +34,15 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 	if (!xarc.open("45/00/00.xarc"))
 		warning("couldn't open archive");
 
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_layercenter.xmg", 0, 0));
-	//_elements.push_back(SceneElementXMG::load(&xarc, "vista-scapehaze-more-fog3-final.xmg", 0, 0));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop01_pillow.xmg", 384, 267));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop02_pillow.xmg", 324, 299));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop03_pillow.xmg", 141, 312));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop4_armrest.xmg", 171, 184));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop5_chair.xmg", 170, 164));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop6_wall.xmg", 0, 0));
-	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop8_pillar.xmg", 534, 0));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_layercenter.xmg", 0, 0));
+//	//_elements.push_back(SceneElementXMG::load(&xarc, "vista-scapehaze-more-fog3-final.xmg", 0, 0));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop01_pillow.xmg", 384, 267));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop02_pillow.xmg", 324, 299));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop03_pillow.xmg", 141, 312));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop4_armrest.xmg", 171, 184));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop5_chair.xmg", 170, 164));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop6_wall.xmg", 0, 0));
+//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop8_pillar.xmg", 534, 0));
 
 	SceneElementActor *actor = SceneElementActor::load(&xarc, "oldapril.cir");
 	actor->setAnim(&xarc, "oldapril_idle.ani");

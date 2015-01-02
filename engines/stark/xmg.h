@@ -25,7 +25,7 @@
 
 #include "engines/stark/sceneelement.h"
 
-#include "common/archive.h"
+#include "common/stream.h"
 
 namespace Graphics {
 struct Surface;
@@ -36,19 +36,18 @@ namespace Stark {
 /**
  * XMG (still image) decoder and renderer
  */
-class SceneElementXMG : public SceneElement {
+class SceneElementXMG : public SceneElement2D {
 private:
 	SceneElementXMG();
 
 public:
 	~SceneElementXMG();
-	static SceneElementXMG *load(const Common::Archive *archive, const Common::String &name, uint16 x, uint16 y);
+	static SceneElementXMG *load(Common::ReadStream *stream);
 
-	void render(GfxDriver *gfx);
+	void render(GfxDriver *gfx) override;
 
 private:
 	Graphics::Surface *_surface;
-	uint16 _x, _y;
 };
 
 } // End of namespace Stark

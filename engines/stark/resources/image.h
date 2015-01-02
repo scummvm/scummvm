@@ -30,6 +30,7 @@
 
 namespace Stark {
 
+class SceneElement;
 class XRCReadStream;
 
 class Image : public Resource {
@@ -50,18 +51,25 @@ public:
 	Image(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Image();
 
+	// Resource API
 	void readData(XRCReadStream *stream) override;
+
+	virtual SceneElement *getVisual();
 
 protected:
 	void printData() override;
 
 	Common::String _filename;
-	Common::Point _hotspot;
+	Common::String _archiveName;
+
+	SceneElement *_visual;
+
 	bool _transparent;
 	uint32 _transparency;
 	uint32 _field_44_ADF;
 	uint32 _field_48_ADF;
 
+	Common::Point _hotspot;
 	Common::Array<Polygon> _polygons;
 };
 
@@ -70,10 +78,19 @@ public:
 	ImageSub23(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ImageSub23();
 
-	virtual void readData(XRCReadStream *stream) override;
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+	void onPostRead() override;
+
+	// Image API
+	SceneElement *getVisual() override;
 
 protected:
 	void printData() override;
+
+	void initVisual();
+
+	bool _noName;
 };
 
 } // End of namespace Stark

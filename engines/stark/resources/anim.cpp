@@ -23,6 +23,8 @@
 #include "common/debug.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/direction.h"
+#include "engines/stark/resources/image.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -62,6 +64,10 @@ void Anim::readData(XRCReadStream *stream) {
 void Anim::selectFrame(uint32 frameIndex) {
 }
 
+SceneElement *Anim::getVisual() {
+	return nullptr;
+}
+
 void Anim::reference(Item *item) {
 	_refCount++;
 }
@@ -82,7 +88,9 @@ AnimSub1::~AnimSub1() {
 
 AnimSub1::AnimSub1(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
-				_field_3C(0) {
+				_field_3C(0),
+				_currentDirection(0),
+				_currentFrameImage(nullptr) {
 }
 
 void AnimSub1::readData(XRCReadStream *stream) {
@@ -91,12 +99,24 @@ void AnimSub1::readData(XRCReadStream *stream) {
 	_field_3C = stream->readFloat();
 }
 
+void AnimSub1::onAllLoaded() {
+	Anim::onAllLoaded();
+
+	_directions = listChildren<Direction>();
+}
+
 void AnimSub1::selectFrame(uint32 frameIndex) {
 	if (frameIndex > _numFrames) {
 		error("Error setting frame %d for anim '%s'", frameIndex, getName().c_str());
 	}
 
 	_currentFrame = frameIndex;
+}
+
+SceneElement *AnimSub1::getVisual() {
+	Direction *direction = _directions[_currentDirection];
+	_currentFrameImage = direction->findChildWithIndex<Image>(_currentFrame);
+	return _currentFrameImage->getVisual();
 }
 
 void AnimSub1::printData() {
