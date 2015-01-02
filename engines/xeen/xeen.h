@@ -88,6 +88,12 @@ private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
+
+	void showIntro();
+
+	void showMainMenu();
+
+	void drawUI();
 protected:
 	/**
 	* Play the game

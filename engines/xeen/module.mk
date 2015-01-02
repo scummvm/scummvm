@@ -11,8 +11,10 @@ MODULE_OBJS := \
 	events.o \
 	files.o \
 	font.o \
+	items.o \
 	resdata.o \
 	resources.o \
+	saves.o \
 	screen.o \
 	sound.o \
 	sprites.o \

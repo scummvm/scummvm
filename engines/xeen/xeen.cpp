@@ -82,6 +82,14 @@ void XeenEngine::initialize() {
 Common::Error XeenEngine::run() {
 	initialize();
 
+	showIntro();
+	if (shouldQuit())
+		return Common::kNoError;
+
+	showMainMenu();
+	if (shouldQuit())
+		return Common::kNoError;
+
 	playGame();
 
 	return Common::kNoError;
@@ -220,8 +228,21 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 //	out->writeUint32LE(_events->getFrameCounter());
 }
 
+void XeenEngine::showIntro() {
+
+}
+
+void XeenEngine::showMainMenu() {
+	//OptionsMenu::show(this);
+}
+
 void XeenEngine::playGame() {
-	OptionsMenu::show(this);
+
+}
+
+void XeenEngine::drawUI() {
+	SpriteResource sprites1("global.icn"), borderSprites("border.icn");
+
 }
 
 } // End of namespace Xeen
