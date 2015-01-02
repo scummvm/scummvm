@@ -53,6 +53,7 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("location", WRAP_METHOD(Console, cmdLocation));
 	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 	registerCmd("dumpfiles", WRAP_METHOD(Console, cmdDumpFiles));
+	registerCmd("dumpimage", WRAP_METHOD(Console, cmdDumpImage));
 }
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
@@ -265,6 +266,64 @@ bool Console::cmdDumpFiles(int argc, const char **argv) {
 		dumpFile(in, fileName.c_str());
 		delete in;
 	}
+
+	return true;
+}
+
+bool Console::cmdDumpImage(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Use %s <TGA/TGZ name> to dump a ZVision TGA/TGZ image into a regular BMP image\n", argv[0]);
+		return true;
+	}
+
+	Common::String fileName = argv[1];
+	if (!fileName.hasSuffix(".tga")) {
+		debugPrintf("%s is not an image file", argv[1]);
+	}
+
+	Common::File f;
+	if (!_engine->getSearchManager()->openFile(f, argv[1])) {
+		warning("File not found: %s", argv[1]);
+		return true;
+	}
+
+	Graphics::Surface surface;
+	_engine->getRenderManager()->readImageToSurface(argv[1], surface, false);
+
+	// Open file
+	Common::DumpFile out;
+
+	fileName.setChar('b', fileName.size() - 3);
+	fileName.setChar('m', fileName.size() - 2);
+	fileName.setChar('p', fileName.size() - 1);
+
+	out.open(fileName);
+
+	// Write BMP header
+	out.writeByte('B');
+	out.writeByte('M');
+	out.writeUint32LE(surface.h * surface.pitch + 54);
+	out.writeUint32LE(0);
+	out.writeUint32LE(54);
+	out.writeUint32LE(40);
+	out.writeUint32LE(surface.w);
+	out.writeUint32LE(surface.h);
+	out.writeUint16LE(1);
+	out.writeUint16LE(16);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+
+	// Write pixel data to BMP
+	out.write(surface.getPixels(), surface.pitch * surface.h);
+
+	out.flush();
+	out.close();
+
+	surface.free();
 
 	return true;
 }

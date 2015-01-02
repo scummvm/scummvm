@@ -47,6 +47,7 @@ private:
 	bool cmdLocation(int argc, const char **argv);
 	bool cmdDumpFile(int argc, const char **argv);
 	bool cmdDumpFiles(int argc, const char **argv);
+	bool cmdDumpImage(int argc, const char **argv);
 };
 
 } // End of namespace ZVision
