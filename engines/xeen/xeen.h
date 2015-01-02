@@ -31,7 +31,6 @@
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "graphics/surface.h"
 #include "xeen/debugger.h"
 #include "xeen/events.h"
 #include "xeen/party.h"
@@ -76,20 +75,12 @@ struct XeenGameDescription;
 #define XEEN_SAVEGAME_VERSION 1
 #define GAME_FRAME_TIME 50
 
-struct XeenSavegameHeader {
-	uint8 _version;
-	Common::String _saveName;
-	Graphics::Surface *_thumbnail;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-};
-
 class XeenEngine : public Engine {
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
+	bool _isEarlyGame;
 
 	void showIntro();
 
@@ -127,6 +118,8 @@ public:
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
+	Roster _roster;
+	Party _party;
 	PlayerStruct *_activeRoster[MAX_ACTIVE_PARTY];
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);

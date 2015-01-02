@@ -25,21 +25,29 @@
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
+#include "graphics/surface.h"
 #include "xeen/party.h"
 
 namespace Xeen {
 
+struct XeenSavegameHeader {
+	uint8 _version;
+	Common::String _saveName;
+	Graphics::Surface *_thumbnail;
+	int _year, _month, _day;
+	int _hour, _minute;
+	int _totalFrames;
+};
+
 class SavesManager {
 private:
 	XeenEngine *_vm;
-public:
-	Party _party;
-	Roster _roster;
+	Party &_party;
+	Roster &_roster;
 public:
 	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
 public:
-	SavesManager(XeenEngine *vm) : _vm(vm) {}
-
+	SavesManager(XeenEngine *vm, Party &party, Roster &roster);
 	void reset();
 };
 

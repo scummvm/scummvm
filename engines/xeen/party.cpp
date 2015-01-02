@@ -25,6 +25,7 @@
 #include "xeen/party.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
+#include "xeen/saves.h"
 
 namespace Xeen {
 

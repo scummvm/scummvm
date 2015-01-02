@@ -42,6 +42,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_sound = nullptr;
 	_eventData = nullptr;
 	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
+	_isEarlyGame = false;
 }
 
 XeenEngine::~XeenEngine() {
@@ -64,7 +65,7 @@ void XeenEngine::initialize() {
 	FileManager::init(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
-	_saves = new SavesManager(this);
+	_saves = new SavesManager(this, _party, _roster);
 	_screen = new Screen(this);
 	_screen->setupWindows();
 	_sound = new SoundManager(this);
@@ -254,9 +255,11 @@ void XeenEngine::drawUI() {
 
 	// Get mappings to the active characters in the party
 	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
-	for (int i = 0; i < _saves->_party._partyCount; ++i) {
-		_activeRoster[i] = &_saves->_roster[_saves->_party._partyMembers[i]];
+	for (int i = 0; i < _party._partyCount; ++i) {
+		_activeRoster[i] = &_roster[_party._partyMembers[i]];
 	}
+
+	_isEarlyGame = _party._minutes >= 300;
 }
 
 } // End of namespace Xeen
