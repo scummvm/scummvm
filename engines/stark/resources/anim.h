@@ -23,6 +23,7 @@
 #ifndef STARK_RESOURCES_ANIM_H
 #define STARK_RESOURCES_ANIM_H
 
+#include "common/rect.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
@@ -53,7 +54,7 @@ public:
 	virtual ~Anim();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	virtual void readData(XRCReadStream *stream) override;
 
 	virtual void selectFrame(uint32 frameIndex);
 	virtual Visual *getVisual();
@@ -64,7 +65,7 @@ public:
 	bool isReferenced();
 
 protected:
-	void printData() override;
+	virtual void printData() override;
 
 	uint32 _field_30;
 	uint32 _currentFrame;
@@ -106,6 +107,26 @@ class AnimSub3 : public Anim {
 public:
 	AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimSub3();
+
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+protected:
+	typedef Common::Array<Common::Point> PointArray;
+	typedef Common::Array<Common::Rect> RectArray;
+
+	void printData() override;
+
+	Common::String _smackerFile;
+	uint32 _width;
+	uint32 _height;
+
+	PointArray _positions;
+	RectArray _sizes;
+
+	int32 _field_4C;
+	uint32 _field_50;
+	uint32 _field_7C;
 };
 
 class AnimSub4 : public Anim {

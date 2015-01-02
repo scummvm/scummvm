@@ -136,7 +136,59 @@ AnimSub3::~AnimSub3() {
 }
 
 AnimSub3::AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name) {
+				Anim(parent, subType, index, name),
+				_width(0),
+				_height(0),
+				_field_4C(-1),
+				_field_50(0),
+				_field_7C(0) {
+}
+
+void AnimSub3::readData(XRCReadStream *stream) {
+	Anim::readData(stream);
+	_smackerFile = stream->readString();
+	_width = stream->readUint32LE();
+	_height = stream->readUint32LE();
+
+	_positions.clear();
+	_sizes.clear();
+
+	uint32 size = stream->readUint32LE();
+	for (uint i = 0; i < size; i++) {
+		_positions.push_back(stream->readPoint());
+		_sizes.push_back(stream->readRect());
+	}
+
+	_field_7C = stream->readUint32LE();
+	_field_4C = stream->readSint32LE();
+
+	if (stream->isDataLeft()) {
+		_field_50 = stream->readUint32LE();
+	}
+}
+
+void AnimSub3::printData() {
+	Anim::printData();
+
+	debug("smackerFile: %s", _smackerFile.c_str());
+	debug("size: x %d, y %d", _width, _height);
+
+	Common::String description;
+	for (uint32 i = 0; i < _positions.size(); i++) {
+		description += Common::String::format("(x %d, y %d) ", _positions[i].x, _positions[i].y);
+	}
+	debug("positions: %s", description.c_str());
+
+	description.clear();
+	for (uint32 i = 0; i < _sizes.size(); i++) {
+		description += Common::String::format("(l %d, t %d, r %d, b %d) ",
+				_sizes[i].left, _sizes[i].top, _sizes[i].right, _sizes[i].bottom);
+	}
+	debug("sizes: %s", description.c_str());
+
+	debug("field_4C: %d", _field_4C);
+	debug("field_50: %d", _field_50);
+	debug("field_7C: %d", _field_7C);
 }
 
 AnimSub4::~AnimSub4() {
