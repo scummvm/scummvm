@@ -686,7 +686,7 @@ void ScriptManager::serialize(Common::WriteStream *stream) {
 		stream->writeSint16LE(getStateValue(i));
 }
 
-void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
+void ScriptManager::reset() {
 	// Clear out the current table values
 	_globalState.clear();
 	_globalStateFlags.clear();
@@ -706,6 +706,10 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	_activeSideFx.clear();
 
 	_referenceTable.clear();
+}
+
+void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
+	reset();
 
 	if (stream->readUint32BE() != MKTAG('Z', 'N', 'S', 'G') || stream->readUint32LE() != 4) {
 		changeLocation('g', 'a', 'r', 'y', 0);

@@ -247,6 +247,7 @@ public:
 
 	void serialize(Common::WriteStream *stream);
 	void deserialize(Common::SeekableReadStream *stream);
+	void reset();
 
 	Location getCurrentLocation() const;
 	Location getLastLocation();

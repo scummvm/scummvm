@@ -270,7 +270,9 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					// Only used by Zork: Nemesis
 					actionList.push_back(new ActionRegion(_engine, slot, args));
 				} else if (act.matchString("restore_game", true)) {
-					actionList.push_back(new ActionRestoreGame(_engine, slot, args));
+					// Only used by ZGI to load the restart game slot, r.svr.
+					_engine->getScriptManager()->reset();
+					_engine->getScriptManager()->changeLocation('g', 'a', 'r', 'y', 0);
 				} else if (act.matchString("rotate_to", true)) {
 					actionList.push_back(new ActionRotateTo(_engine, slot, args));
 				} else if (act.matchString("save_game", true)) {
