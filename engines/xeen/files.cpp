@@ -29,45 +29,8 @@
 
 namespace Xeen {
 
-/**
- * Xeen CC file implementation
- */
-class CCArchive : public Common::Archive {
-private:
-	/**
-	 * Details of a single entry in a CC file index
-	 */
-	struct CCEntry {
-		uint16 _id;
-		uint32 _offset;
-		uint16 _size;
-
-		CCEntry() : _id(0), _offset(0), _size(0) {}
-		CCEntry(uint16 id, uint32 offset, uint32 size)
-			: _id(id), _offset(offset), _size(size) {
-		}
-	};
-
-	Common::Array<CCEntry> _index;
-	Common::String _filename;
-
-	uint16 convertNameToId(const Common::String &resourceName) const;
-
-	void loadIndex(Common::SeekableReadStream *stream);
-
-	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
-public:
-	CCArchive(const Common::String &filename);
-	virtual ~CCArchive();
-
-	// Archive implementation
-	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-};
-
-CCArchive::CCArchive(const Common::String &filename): _filename(filename) {
+CCArchive::CCArchive(const Common::String &filename, bool encoded): 
+		_filename(filename), _encoded(encoded) {
 	File f(filename);
 	loadIndex(&f);
 }
@@ -107,9 +70,11 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 		byte *data = new byte[ccEntry._size];
 		f.read(data, ccEntry._size);
 
-		// Decrypt the data
-		for (int i = 0; i < ccEntry._size; ++i)
-			data[i] ^= 0x35;
+		if (_encoded) {
+			// Decrypt the data
+			for (int i = 0; i < ccEntry._size; ++i)
+				data[i] ^= 0x35;
+		}
 
 		// Return the data as a stream
 		return new Common::MemoryReadStream(data, ccEntry._size, DisposeAfterUse::YES);
@@ -192,6 +157,9 @@ bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEn
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Instantiates the resource manager
+ */
 void FileManager::init(XeenEngine *vm) {
 	Common::File f;
 

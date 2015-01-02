@@ -55,8 +55,11 @@ enum Condition { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 };
 
 #define ITEMS_COUNT 36
+#define TOTAL_CHARACTERS 30
 
-class Roster {
+class XeenEngine;
+
+class Party {
 public:
 	int _partyCount;
 	int _realPartyCount;
@@ -102,7 +105,7 @@ public:
 	int _bankGems;
 	int _totalTime;
 	bool _rested;
-	bool _gameFlags[256];
+	bool _gameFlags[512];
 	bool _autoNotes[128];
 	bool _quests[64];
 	int _questItems[85];
@@ -112,7 +115,7 @@ public:
 	XeenItem _blacksmithMisc2[ITEMS_COUNT];
 	bool _characterFlags[30][24];
 public:
-	Roster();
+	Party();
 
 	void synchronize(Common::Serializer &s);
 };
@@ -145,8 +148,8 @@ public:
 	int _dbDay;
 	int _tempAge;
 	int _skills[18];
-	bool _awards[64];
-	bool _spells[40];
+	bool _awards[512];
+	bool _spells[312];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;
@@ -177,12 +180,25 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-class SavesManager {
+class Roster: public Common::Array<PlayerStruct> {
 public:
+	Roster() {}
+
+	void synchronize(Common::Serializer &s);
+};
+
+class SavesManager {
+private:
+	XeenEngine *_vm;
+public:
+	Party _party;
 	Roster _roster;
-	Common::Array<PlayerStruct> _conditions;
 public:
 	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
+public:
+	SavesManager(XeenEngine *vm) : _vm(vm) {}
+
+	void reset();
 };
 
 } // End of namespace Xeen

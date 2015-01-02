@@ -23,6 +23,8 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "xeen/saves.h"
+#include "xeen/files.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -37,7 +39,7 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Roster::Roster() {
+Party::Party() {
 	_partyCount = 0;
 	_realPartyCount = 0;
 	Common::fill(&_partyMembers[0], &_partyMembers[8], 0);
@@ -76,14 +78,17 @@ Roster::Roster() {
 	_bankGems = 0;
 	_totalTime = 0;
 	_rested = false;
-	Common::fill(&_gameFlags[0], &_gameFlags[256], false);
+
+	Common::fill(&_gameFlags[0], &_gameFlags[512], false);
 	Common::fill(&_autoNotes[0], &_autoNotes[128], false);
 	Common::fill(&_quests[0], &_quests[64], false);
-	Common::fill(&_questItems[0], &_questItems[65], 0);
-	Common::fill(&_characterFlags[0][0], &_characterFlags[30][24], false);
+	Common::fill(&_questItems[0], &_questItems[85], 0);
+
+	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
+		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
 }
 
-void Roster::synchronize(Common::Serializer &s) {
+void Party::synchronize(Common::Serializer &s) {
 	byte dummy[30];
 	Common::fill(&dummy[0], &dummy[30], 0);
 
@@ -111,13 +116,13 @@ void Roster::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_heroismActive);
 	s.syncAsByte(_difficulty);
 
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithWeapons[i].synchronize(s);
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithArmor[i].synchronize(s);
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithAccessories[i].synchronize(s);
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithMisc[i].synchronize(s);
 
 	s.syncAsUint16LE(_cloudsEnd);
@@ -150,16 +155,17 @@ void Roster::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < 85; ++i)
 		s.syncAsByte(_questItems[i]);
 
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithWeapons2[i].synchronize(s);
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithArmor2[i].synchronize(s);
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithAccessories2[i].synchronize(s);
-	for (int i = 0; ITEMS_COUNT; ++i)
+	for (int i = 0; i < ITEMS_COUNT; ++i)
 		_blacksmithMisc2[i].synchronize(s);
 	
-	SavesManager::syncBitFlags(s, &_characterFlags[0][0], &_characterFlags[30][24]);
+	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
+		SavesManager::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
 	s.syncBytes(&dummy[0], 30);
 }
 
@@ -174,8 +180,8 @@ PlayerStruct::PlayerStruct() {
 	_dbDay = 0;
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
-	Common::fill(&_awards[0], &_awards[64], false);
-	Common::fill(&_spells[9], &_spells[40], false);
+	Common::fill(&_awards[0], &_awards[512], false);
+	Common::fill(&_spells[9], &_spells[312], false);
 	_lloydMap = 0;
 	_hasSpells = false;
 	_currentSpell = 0;
@@ -220,8 +226,8 @@ void PlayerStruct::synchronize(Common::Serializer &s) {
 	
 	for (int i = 0; i < 18; ++i)
 		s.syncAsByte(_skills[i]);
-	SavesManager::syncBitFlags(s, &_awards[0], &_awards[64]);
-	SavesManager::syncBitFlags(s, &_spells[0], &_spells[40]);
+	SavesManager::syncBitFlags(s, &_awards[0], &_awards[512]);
+	SavesManager::syncBitFlags(s, &_spells[0], &_spells[312]);
 	
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);
@@ -262,6 +268,16 @@ void PlayerStruct::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+void Roster::synchronize(Common::Serializer &s) {
+	if (s.isLoading())
+		resize(30);
+
+	for (uint i = 0; i < 30; ++i)
+		(*this)[i].synchronize(s);
+}
+
+/*------------------------------------------------------------------------*/
+
 /**
  * Synchronizes a boolean array as a bitfield set
  */
@@ -269,9 +285,10 @@ void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP)
 	byte data = 0;
 
 	int bitCounter = 0;
-	for (bool *p = startP; p <= endP; ++p, ++bitCounter) {
-		if (bitCounter != 0 && (bitCounter % 8) == 0) {
-			s.syncAsByte(data);
+	for (bool *p = startP; p <= endP; ++p, bitCounter = (bitCounter + 1) % 8) {
+		if (p == endP || bitCounter == 0) {
+			if (p != endP || s.isSaving())
+				s.syncAsByte(data);
 			if (p == endP)
 				break;
 
@@ -286,7 +303,22 @@ void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP)
 	}
 }
 
-/*------------------------------------------------------------------------*/
+/**
+ * Sets up the dynamic data for the game for a new game
+ */
+void SavesManager::reset() {
+	Common::String name(_vm->getGameID() == GType_Clouds ? "xeen.cur" : "dark.cur");
+	CCArchive cur(name, false);
+	
+	Common::SeekableReadStream *chr = cur.createReadStreamForMember("maze.chr");
+	Common::Serializer sChr(chr, nullptr);
+	_roster.synchronize(sChr);
+	delete chr;
 
+	Common::SeekableReadStream *pty = cur.createReadStreamForMember("maze.pty");
+	Common::Serializer sPty(pty, nullptr);
+	_party.synchronize(sPty);
+	delete pty;
+}
 
 } // End of namespace Xeen

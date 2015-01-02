@@ -34,6 +34,7 @@
 #include "graphics/surface.h"
 #include "xeen/debugger.h"
 #include "xeen/events.h"
+#include "xeen/saves.h"
 #include "xeen/screen.h"
 #include "xeen/sound.h"
 
@@ -119,6 +120,7 @@ private:
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
+	SavesManager *_saves;
 	Screen *_screen;
 	SoundManager *_sound;
 	Mode _mode;

@@ -37,6 +37,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: _gameDescription(gameDesc), Engine(syst), _randomSource("Xeen") {
 	_debugger = nullptr;
 	_events = nullptr;
+	_saves = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
 	_eventData = nullptr;
@@ -45,6 +46,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 XeenEngine::~XeenEngine() {
 	delete _debugger;
 	delete _events;
+	delete _saves;
 	delete _screen;
 	delete _sound;
 	delete _eventData;
@@ -61,6 +63,7 @@ void XeenEngine::initialize() {
 	FileManager::init(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
+	_saves = new SavesManager(this);
 	_screen = new Screen(this);
 	_screen->setupWindows();
 	_sound = new SoundManager(this);
@@ -237,7 +240,8 @@ void XeenEngine::showMainMenu() {
 }
 
 void XeenEngine::playGame() {
-
+	_saves->reset();
+//	drawUI();
 }
 
 void XeenEngine::drawUI() {
