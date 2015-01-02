@@ -41,6 +41,17 @@ void Location::onAllLoaded() {
 	_layers = listChildren<Layer>();
 }
 
+RenderEntryArray Location::listRenderEntries() {
+	RenderEntryArray renderEntries;
+
+	for (uint i = 0; i < _layers.size(); i++) {
+		Layer *layer = _layers[i];
+		renderEntries.push_back(layer->listRenderEntries());
+	}
+
+	return renderEntries;
+}
+
 void Location::printData() {
 }
 

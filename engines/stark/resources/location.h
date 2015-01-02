@@ -25,12 +25,13 @@
 
 #include "common/str.h"
 
+#include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
-class XRCReadStream;
 class Layer;
+class XRCReadStream;
 
 class Location : public Resource {
 public:
@@ -39,7 +40,10 @@ public:
 	Location(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Location();
 
+	// Resource API
 	void onAllLoaded() override;
+
+	RenderEntryArray listRenderEntries();
 
 protected:
 	void printData() override;

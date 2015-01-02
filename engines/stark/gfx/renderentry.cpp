@@ -28,7 +28,18 @@
 
 namespace Stark {
 
+RenderEntry::RenderEntry(Resource *owner, const Common::String &name) :
+	_visual(nullptr),
+	_name(name),
+	_owner(owner) {
+}
+
 void RenderEntry::update(uint32 delta) {
+	if (!_visual) {
+		// warning("No visual for render entry '%s'", _name.c_str());
+		return;
+	}
+
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
 		actor->update(delta);
@@ -36,6 +47,11 @@ void RenderEntry::update(uint32 delta) {
 }
 
 void RenderEntry::render(GfxDriver *gfx) {
+	if (!_visual) {
+		// warning("No visual for render entry '%s'", _name.c_str());
+		return;
+	}
+
 	VisualImageXMG *imageXMG = _visual->get<VisualImageXMG>();
 	if (imageXMG) {
 		imageXMG->render(gfx, _position);

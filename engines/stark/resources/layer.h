@@ -26,10 +26,12 @@
 #include "common/array.h"
 #include "common/str.h"
 
+#include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
+class Item;
 class XRCReadStream;
 
 class Layer : public Resource {
@@ -47,7 +49,10 @@ public:
 	Layer(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Layer();
 
+	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
+
+	virtual RenderEntryArray listRenderEntries() = 0;
 
 protected:
 	void printData() override;
@@ -61,7 +66,11 @@ public:
 	Layer2D(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Layer2D();
 
-	virtual void readData(XRCReadStream *stream) override;
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+	// Layer API
+	RenderEntryArray listRenderEntries() override;
 
 protected:
 	void printData() override;
@@ -74,7 +83,12 @@ public:
 	Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Layer3D();
 
-	virtual void readData(XRCReadStream *stream) override;
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+	void onAllLoaded() override;
+
+	// Layer API
+	RenderEntryArray listRenderEntries() override;
 
 protected:
 	void printData() override;
@@ -83,6 +97,8 @@ protected:
 	uint32 _field_58;
 	float _nearClipPlane;
 	float _farClipPlane;
+
+	Common::Array<Item *> _items;
 };
 
 } // End of namespace Stark

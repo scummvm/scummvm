@@ -25,6 +25,8 @@
 
 #include "common/array.h"
 
+#include "engines/stark/gfx/renderentry.h"
+
 namespace Stark {
 
 class GfxDriver;
@@ -43,11 +45,11 @@ public:
 	 *
 	 * @param delta Time offset (in ms) since last frame render
 	 */
-	void render(uint32 delta);
+	void render(RenderEntryArray renderEntries, uint32 delta);
 
 private:
 	GfxDriver *_gfx;
-	Common::Array<RenderEntry *> _elements;
+	RenderEntryArray _elements;
 };
 
 } // End of namespace Stark

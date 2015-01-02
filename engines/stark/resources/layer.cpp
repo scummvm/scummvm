@@ -21,6 +21,8 @@
  */
 
 #include "engines/stark/resources/layer.h"
+
+#include "engines/stark/resources/item.h"
 #include "engines/stark/xrcreader.h"
 
 #include "common/debug.h"
@@ -78,6 +80,11 @@ void Layer2D::readData(XRCReadStream *stream) {
 	_field_50 = stream->readUint32LE();
 }
 
+RenderEntryArray Layer2D::listRenderEntries() {
+	// TODO
+	return RenderEntryArray();
+}
+
 void Layer2D::printData() {
 	Layer::printData();
 }
@@ -102,6 +109,33 @@ void Layer3D::readData(XRCReadStream *stream) {
 	if (stream->isDataLeft()) {
 		_field_58 = stream->readUint32LE();
 	}
+}
+
+void Layer3D::onAllLoaded() {
+	Layer::onAllLoaded();
+
+	_items = listChildren<Item>();
+}
+
+RenderEntryArray Layer3D::listRenderEntries() {
+	RenderEntryArray renderEntries;
+
+	for (uint i = 0; i < _items.size(); i++) {
+		Item *item = _items[i];
+
+		if (item->getSubType() != Item::kItemSub8) {
+			RenderEntry *renderEntry = item->getRenderEntry();
+
+			if (!renderEntry) {
+				// warning("No render entry for item '%s'", item->getName().c_str());
+				continue;
+			}
+
+			renderEntries.push_back(renderEntry);
+		}
+	}
+
+	return renderEntries;
 }
 
 void Layer3D::printData() {

@@ -31,8 +31,11 @@
 
 namespace Stark {
 
-class XRCReadStream;
+class Anim;
 class AnimHierarchy;
+class RenderEntry;
+class Visual;
+class XRCReadStream;
 
 class Item : public Resource {
 public:
@@ -55,7 +58,10 @@ public:
 	Item(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Item();
 
+	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
+
+	virtual RenderEntry *getRenderEntry();
 
 protected:
 	void printData() override;
@@ -69,13 +75,20 @@ public:
 	ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemVisual();
 
+	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 	virtual void onAllLoaded() override;
 
 	void setAnim(int32 index);
 
 protected:
+	// Resource API
 	void printData() override;
+
+	Anim *getAnim();
+	Visual *getVisual();
+
+	RenderEntry *_renderEntry;
 
 	AnimHierarchy *_animHierarchy;
 	int32 _currentAnimIndex;
@@ -93,7 +106,11 @@ public:
 	ItemSub56(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub56();
 
+	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
+
+	// Item API
+	virtual RenderEntry *getRenderEntry() override;
 
 protected:
 	void printData() override;

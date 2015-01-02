@@ -20,9 +20,12 @@
  *
  */
 
+#include "engines/stark/resources/item.h"
+
 #include "common/debug.h"
 
-#include "engines/stark/resources/item.h"
+#include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/xrcreader.h"
 
@@ -31,11 +34,11 @@ namespace Stark {
 Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
 	case kItemSub1:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new Item(parent, subType, index, name); // TODO
 	case kItemSub2:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new Item(parent, subType, index, name); // TODO
 	case kItemSub3:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new Item(parent, subType, index, name); // TODO
 	case kItemSub5:
 	case kItemSub6:
 		return new ItemSub56(parent, subType, index, name);
@@ -43,7 +46,7 @@ Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Co
 	case kItemSub8:
 		return new ItemSub78(parent, subType, index, name);
 	case kItemSub10:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new Item(parent, subType, index, name); // TODO
 	default:
 		error("Unknown item subtype %d", subType);
 	}
@@ -64,19 +67,26 @@ void Item::readData(XRCReadStream *stream) {
 	_field_38 = stream->readSint32LE();
 }
 
+RenderEntry *Item::getRenderEntry() {
+	return nullptr;
+}
+
 void Item::printData() {
 	debug("field_34: %d", _field_34);
 	debug("field_38: %d", _field_38);
 }
 
 ItemVisual::~ItemVisual() {
+	delete _renderEntry;
 }
 
 ItemVisual::ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Item(parent, subType, index, name),
+				_renderEntry(nullptr),
 				_animHierarchy(nullptr),
 				_currentAnimIndex(-1),
 				_field_44(1) {
+	_renderEntry = new RenderEntry(this, getName());
 }
 
 void ItemVisual::readData(XRCReadStream *stream) {
@@ -110,6 +120,20 @@ void ItemVisual::printData() {
 	debug("field_44: %d", _field_44);
 }
 
+Anim *ItemVisual::getAnim() {
+	return _animHierarchy->getCurrentAnim();
+}
+
+Visual *ItemVisual::getVisual() {
+	Anim *anim = getAnim();
+
+	if (!anim) {
+		return nullptr;
+	}
+
+	return anim->getVisual();
+}
+
 ItemSub5610::~ItemSub5610() {
 }
 
@@ -130,6 +154,15 @@ void ItemSub56::readData(XRCReadStream *stream) {
 
 	_field_6C = stream->readSint32LE();
 	_position = stream->readPoint();
+}
+
+RenderEntry *ItemSub56::getRenderEntry() {
+	Visual *visual = getVisual();
+
+	_renderEntry->setVisual(visual);
+	_renderEntry->setPosition(_position);
+
+	return _renderEntry;
 }
 
 void ItemSub56::printData() {

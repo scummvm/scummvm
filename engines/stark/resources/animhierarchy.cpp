@@ -110,6 +110,10 @@ void AnimHierarchy::selectItemAnim(ItemVisual *item) {
 	}
 }
 
+Anim *AnimHierarchy::getCurrentAnim() {
+	return _currentAnim;
+}
+
 void AnimHierarchy::printData() {
 	for (uint i = 0; i < _animationReferences.size(); i++) {
 		debug("anim %d: %s", i, _animationReferences[i].describe().c_str());

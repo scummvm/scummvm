@@ -49,6 +49,8 @@ public:
 	void unselectItemAnim(ItemVisual *item);
 	void selectItemAnim(ItemVisual *item);
 
+	Anim *getCurrentAnim();
+
 protected:
 	void printData() override;
 

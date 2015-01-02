@@ -21,6 +21,7 @@
  */
 
 #include "engines/stark/stark.h"
+
 #include "engines/stark/archiveloader.h"
 #include "engines/stark/console.h"
 #include "engines/stark/debug.h"
@@ -30,6 +31,7 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/stateprovider.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/renderentry.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -171,7 +173,8 @@ void StarkEngine::updateDisplayScene() {
 	_global->getCurrent()->getLocation()->onGameLoop(delta);
 
 	// Render the current scene
-	_scene->render(delta);
+	RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
+	_scene->render(renderEntries, delta);
 
 	// Swap buffers
 	_gfx->flipBuffer();

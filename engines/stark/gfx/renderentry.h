@@ -23,15 +23,19 @@
 #ifndef STARK_GFX_RENDER_ENTRY_H
 #define STARK_GFX_RENDER_ENTRY_H
 
+#include "common/array.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Stark {
 
-class Visual;
 class GfxDriver;
+class Resource;
+class Visual;
 
 class RenderEntry {
 public:
+	RenderEntry(Resource *owner, const Common::String &name);
 	virtual ~RenderEntry() {};
 
 	void update(uint32 delta); // TODO: Remove
@@ -41,9 +45,14 @@ public:
 	void setPosition(const Common::Point &position);
 
 protected:
+	Common::String _name;
+	Resource *_owner;
+
 	Visual *_visual;
 	Common::Point _position;
 };
+
+typedef Common::Array<RenderEntry *> RenderEntryArray;
 
 } // End of namespace Stark
 

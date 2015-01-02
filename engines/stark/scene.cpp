@@ -49,7 +49,7 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 	actor->setAnim(&xarc, "oldapril_idle.ani");
 	actor->setTexture(&xarc, "oldapril.tm");
 
-	RenderEntry *oldApril = new RenderEntry();
+	RenderEntry *oldApril = new RenderEntry(nullptr, "Old April");
 	oldApril->setVisual(actor);
 
 	_elements.push_back(oldApril);
@@ -58,7 +58,11 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 Scene::~Scene() {
 }
 
-void Scene::render(uint32 delta) {
+void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
+	RenderEntryArray allElements;
+	allElements.push_back(renderEntries);
+	allElements.push_back(_elements);
+
 	// setup cam
 
 	// Draw bg
@@ -66,8 +70,8 @@ void Scene::render(uint32 delta) {
 	// Draw other things
 
 	// Render all the scene elements
-	Common::Array<RenderEntry *>::iterator element = _elements.begin();
-	while (element != _elements.end()) {
+	RenderEntryArray::iterator element = allElements.begin();
+	while (element != allElements.end()) {
 		// Draw the current element
 		(*element)->update(delta);
 		(*element)->render(_gfx);
