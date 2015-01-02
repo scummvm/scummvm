@@ -54,7 +54,7 @@ public:
 	ResourceType readResourceType();
 	ResourceReference readResourceReference();
 	Math::Vector3d readVector3();
-	Math::Vector4d readVector4();
+	Common::Rect readRect();
 	Common::Point readPoint();
 	float readFloat();
 	bool readBool();

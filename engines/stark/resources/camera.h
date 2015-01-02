@@ -24,6 +24,7 @@
 #define STARK_RESOURCES_CAMERA_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 #include "math/vector3d.h"
@@ -48,7 +49,7 @@ protected:
 	Math::Vector3d _lookAt;
 	float _fov;
 	float _f2;
-	Math::Vector4d _v3;
+	Common::Rect _viewport;
 	Math::Vector3d _v4;
 };
 

@@ -90,10 +90,13 @@ Math::Vector3d XRCReadStream::readVector3() {
 	return v;
 }
 
-Math::Vector4d XRCReadStream::readVector4() {
-	Math::Vector4d v;
-	v.readFromStream(this);
-	return v;
+Common::Rect XRCReadStream::readRect() {
+	Common::Rect r;
+	r.left = readSint32LE();
+	r.top = readSint32LE();
+	r.right = readSint32LE();
+	r.bottom = readSint32LE();
+	return r;
 }
 
 Common::Point XRCReadStream::readPoint() {

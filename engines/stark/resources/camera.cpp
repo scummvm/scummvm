@@ -41,7 +41,7 @@ void Camera::readData(XRCReadStream *stream) {
 	_lookAt = stream->readVector3();
 	_fov = stream->readFloat();
 	_f2 = stream->readFloat();
-	_v3 = stream->readVector4();
+	_viewport = stream->readRect();
 	_v4 = stream->readVector3();
 }
 
@@ -51,7 +51,7 @@ void Camera::printData() {
 	debug << "lookAt: " << _lookAt << "\n";
 	debug << "fov: " << _fov << "\n";
 	debug << "f1: " << _f2 << "\n";
-	debug << "v3: " << _v3 << "\n";
+	_viewport.debugPrint(0, "viewport:");
 	debug << "v4: " << _v4 << "\n";
 }
 
