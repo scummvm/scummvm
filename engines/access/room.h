@@ -72,6 +72,8 @@ private:
 	int calcLR(int yp);
 	int calcUD(int xp);
 
+	void takePicture();
+
 	/**
 	 * Cycles forwards or backwards through the list of commands
 	 */

@@ -91,6 +91,12 @@ void MartianRoom::roomSet() {
 	_vm->_scripts->_sequence = 1000;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
+
+	for (int i = 0; i < 30; i++)
+		_byte26CD2[i] = 0;
+
+	for (int i = 0; i < 10; i++)
+		_byte26CBC[i] = 0;
 }
 
 void MartianRoom::roomMenu() {

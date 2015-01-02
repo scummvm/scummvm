@@ -55,6 +55,10 @@ void Room::freeTileData() {
 	_tile = nullptr;
 }
 
+void Room::takePicture() {
+	warning("TODO: takePicture");
+}
+
 void Room::doRoom() {
 	bool reloadFlag = false;
 
@@ -84,9 +88,13 @@ void Room::doRoom() {
 			_vm->_events->pollEventsAndWait();
 			_vm->_canSaveLoad = false;
 
-			_vm->_player->walk();
-			_vm->_midi->midiRepeat();
-			_vm->_player->checkScroll();
+			if ((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
+				takePicture();
+			} else {
+				_vm->_player->walk();
+				_vm->_midi->midiRepeat();
+				_vm->_player->checkScroll();
+			}
 
 			doCommands();
 			if (_vm->shouldQuitOrRestart())
@@ -136,7 +144,8 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 
-					if (_vm->_events->_mousePos.y < 177)
+					if (((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
+						((_vm->getGameID() == GType_Amazon) && (_vm->_events->_mousePos.y < 177)))
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
 					else
 						_vm->_events->setCursor(CURSOR_ARROW);
