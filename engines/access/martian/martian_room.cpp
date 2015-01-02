@@ -107,8 +107,8 @@ void MartianRoom::roomMenu() {
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
 	_vm->_destIn = _vm->_screen;	// TODO: Redundant
-	_vm->_screen->plotImage(spr, 0, Common::Point(0, 177));
-	_vm->_screen->plotImage(spr, 1, Common::Point(143, 177));
+	_vm->_screen->plotImage(spr, 0, Common::Point(5, 184));
+	_vm->_screen->plotImage(spr, 1, Common::Point(155, 184));
 
 	_vm->_screen->restoreScreen();
 	delete spr;
