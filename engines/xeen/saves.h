@@ -49,7 +49,7 @@ enum Skill { THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
 	SPOT_DOORS = 16, DANGER_SENSE = 17
 };
 
-enum Condition { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
+enum ConditionType { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 	DISEASED = 4, INSANE = 5, IN_LOVE = 6, DRUNK = 7, SLEEP = 8, 
 	DEPRESSED = 9, CONFUSED = 10, PARALYZED = 11
 };
@@ -129,6 +129,29 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
+class Conditions {
+	byte _cursed;
+	byte _heartBroken;
+	byte _weak;
+	byte _poisoned;
+	byte _diseased;
+	byte _insane;
+	byte _inLove;
+	byte _drunk;
+	byte _asleep;
+	byte _depressed;
+	byte _confused;
+	byte _paralyzed;
+	byte _unconscious;
+	byte _dead;
+	byte _stoned;
+	byte _eradicated;
+public:
+	Conditions();
+	
+	void synchronize(Common::Serializer &s);
+};
+
 class PlayerStruct {
 public:
 	Common::String _name;
@@ -166,7 +189,7 @@ public:
 	AttributePair _poisonResistence;
 	AttributePair _energyResistence;
 	AttributePair _magicResistence;
-	int _conditions[16];
+	Conditions _conditions;
 	int _townUnknown;
 	int _unknown2;
 	int _currentHp;

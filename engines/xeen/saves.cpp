@@ -171,6 +171,46 @@ void Party::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+Conditions::Conditions() {
+	_cursed = 0;
+	_heartBroken = 0;
+	_weak = 0;
+	_poisoned = 0;
+	_diseased = 0;
+	_insane = 0;
+	_inLove = 0;
+	_drunk = 0;
+	_asleep = 0;
+	_depressed = 0;
+	_confused = 0;
+	_paralyzed = 0;
+	_unconscious = 0;
+	_dead = 0;
+	_stoned = 0;
+	_eradicated = 0;
+}
+
+void Conditions::synchronize(Common::Serializer &s) {
+	s.syncAsByte(_cursed);
+	s.syncAsByte(_heartBroken);
+	s.syncAsByte(_weak);
+	s.syncAsByte(_poisoned);
+	s.syncAsByte(_diseased);
+	s.syncAsByte(_insane);
+	s.syncAsByte(_inLove);
+	s.syncAsByte(_drunk);
+	s.syncAsByte(_asleep);
+	s.syncAsByte(_depressed);
+	s.syncAsByte(_confused);
+	s.syncAsByte(_paralyzed);
+	s.syncAsByte(_unconscious);
+	s.syncAsByte(_dead);
+	s.syncAsByte(_stoned);
+	s.syncAsByte(_eradicated);
+}
+
+/*------------------------------------------------------------------------*/
+
 PlayerStruct::PlayerStruct() {
 	_sex = MALE;
 	_race = HUMAN;
@@ -187,7 +227,6 @@ PlayerStruct::PlayerStruct() {
 	_currentSpell = 0;
 	_quickOption = 0;
 	_lloydSide = 0;
-	Common::fill(&_conditions[0], &_conditions[16], 0);
 	_townUnknown = 0;
 	_unknown2 = 0;
 	_currentHp = 0;
@@ -253,8 +292,7 @@ void PlayerStruct::synchronize(Common::Serializer &s) {
 	_energyResistence.synchronize(s);
 	_magicResistence.synchronize(s);
 	
-	for (int i = 0; i < 16; ++i)
-		s.syncAsByte(_conditions[i]);
+	_conditions.synchronize(s);
 
 	s.syncAsUint16LE(_townUnknown);
 	s.syncAsByte(_unknown2);
