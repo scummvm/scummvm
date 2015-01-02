@@ -99,13 +99,6 @@ Common::ReadStream *ArchiveLoader::getFile(const Common::String &fileName, const
 	return xarc.createReadStreamForMember(fileName);
 }
 
-template <>
-Resource *ArchiveLoader::useRoot<Resource>(const Common::String &archiveName) {
-	LoadedArchive *archive = findArchive(archiveName);
-	archive->incUsage();
-	return archive->getRoot();
-}
-
 bool ArchiveLoader::returnRoot(const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	archive->decUsage();

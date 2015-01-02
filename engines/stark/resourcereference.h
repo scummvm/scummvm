@@ -44,21 +44,14 @@ public:
 	Common::String describe();
 
 	void addPathElement(ResourceType type, uint16 index);
-	Resource *resolve();
 
+	/** Resolve the reference to the actual resource */
 	template <class T>
-	T* resolve() {
-		Resource *resource = resolve();
-
-		if (resource && resource->getType() != T::TYPE) {
-			error("Unexpected resource type when resolving reference %s instad of %s",
-					resource->getType().getName(), ResourceType(T::TYPE).getName());
-		}
-
-		return (T *) resource;
-	}
+	T* resolve();
 
 private:
+	Resource *resolve();
+
 	class PathElement {
 	public:
 		PathElement(ResourceType type, uint16 index);
@@ -74,6 +67,11 @@ private:
 
 	Common::Array<PathElement> _path;
 };
+
+template<class T>
+T* ResourceReference::resolve() {
+	return Resource::cast<T>(resolve());
+}
 
 } // End of namespace Stark
 

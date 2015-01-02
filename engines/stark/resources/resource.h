@@ -197,6 +197,12 @@ public:
 	 */
 	virtual void onPreDestroy();
 
+	/**
+	 * Cast a resource, performing a type check
+	 */
+	template<class T>
+	static T *cast(Resource *resource);
+
 	Resource *findChildWithIndex(ResourceType type, uint16 index, int subType = -1);
 
 	template<class T>
@@ -218,7 +224,7 @@ public:
 protected:
 	Resource(Resource *parent, byte subType, uint16 index, const Common::String &name);
 
-	virtual void printData() = 0;
+	virtual void printData();
 
 	ResourceType _type;
 	byte _subType;
@@ -243,6 +249,19 @@ protected:
 };
 
 template <class T>
+T* Resource::cast(Resource *resource) {
+	if (resource && resource->_type != T::TYPE) {
+		error("Unexpected resource type when casting resource %s instead of %s",
+				resource->_type.getName(), ResourceType(T::TYPE).getName());
+	}
+
+	return (T *) resource;
+}
+
+template<>
+Resource *Resource::cast<Resource>(Resource *resource);
+
+template <class T>
 Common::Array<T *> Resource::listChildren(int subType) {
 	Common::Array<T *> list;
 
@@ -250,7 +269,7 @@ Common::Array<T *> Resource::listChildren(int subType) {
 		if (_children[i]->getType() == T::TYPE
 				&& (_children[i]->getSubType() == subType || subType == -1)) {
 			// Found a matching child
-			list.push_back((T *)_children[i]);
+			list.push_back(Resource::cast<T>(_children[i]));
 		}
 	}
 
@@ -282,7 +301,7 @@ T *Resource::findChildWithSubtype(int subType, bool mustBeUnique) {
 
 template <class T>
 T *Resource::findChildWithIndex(uint16 index, int subType) {
-	return (T *)findChildWithIndex(T::TYPE, index, subType);
+	return Resource::cast<T>(findChildWithIndex(T::TYPE, index, subType));
 }
 
 } // End of namespace Stark

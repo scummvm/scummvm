@@ -113,6 +113,9 @@ Resource::~Resource() {
 void Resource::readData(XRCReadStream *stream) {
 }
 
+void Resource::printData() {
+}
+
 void Resource::saveLoad(ResourceSerializer *serializer) {
 }
 
@@ -199,6 +202,12 @@ Resource *Resource::findChildWithIndex(ResourceType type, uint16 index, int subT
 	}
 
 	return nullptr;
+}
+
+template<>
+Resource *Resource::cast<Resource>(Resource *resource) {
+	// No type check when asking for the abstract resource
+	return resource;
 }
 
 template<>

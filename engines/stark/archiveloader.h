@@ -100,19 +100,8 @@ template <class T>
 T *ArchiveLoader::useRoot(const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	archive->incUsage();
-
-	Resource *root = archive->getRoot();
-
-	if (root->getType() != T::TYPE) {
-		error("Wrong root type for archive '%s' found '%s', expected '%s'",
-				archiveName.c_str(), root->getType().getName(), ResourceType(T::TYPE).getName());
-	}
-
-	return (T *)root;
+	return Resource::cast<T>(archive->getRoot());
 }
-
-template <>
-Resource *ArchiveLoader::useRoot<Resource>(const Common::String &archiveName);
 
 } // End of namespace Stark
 
