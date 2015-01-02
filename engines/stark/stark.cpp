@@ -33,6 +33,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "audio/mixer.h"
@@ -52,7 +53,8 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_global(nullptr),
 		_archiveLoader(nullptr),
 		_stateProvider(nullptr),
-		_resourceProvider(nullptr) {
+		_resourceProvider(nullptr),
+		_randomSource(nullptr) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -66,6 +68,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 StarkEngine::~StarkEngine() {
+	delete _randomSource;
 	delete _scene;
 	delete _console;
 	delete _gfx;
@@ -88,12 +91,14 @@ Common::Error StarkEngine::run() {
 	_stateProvider = new StateProvider();
 	_global = new Global();
 	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
+	_randomSource = new Common::RandomSource("stark");
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
 	services.archiveLoader = _archiveLoader;
 	services.resourceProvider = _resourceProvider;
 	services.global = _global;
+	services.randomSource = _randomSource;
 
 	// Load global resources
 	_resourceProvider->initGlobal();

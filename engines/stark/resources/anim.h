@@ -52,6 +52,8 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	void selectFrame(uint32 frameIndex);
+
 	// Refcounting, used to know if the anim script needs to run
 	virtual void reference(Item *item);
 	virtual void dereference(Item *item);

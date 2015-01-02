@@ -20,9 +20,13 @@
  *
  */
 
-#include "common/debug.h"
-
 #include "engines/stark/resources/animscript.h"
+
+#include "common/debug.h"
+#include "common/random.h"
+
+#include "engines/stark/resources/anim.h"
+#include "engines/stark/stark.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -31,11 +35,81 @@ AnimScript::~AnimScript() {
 }
 
 AnimScript::AnimScript(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name) {
+				Resource(parent, subType, index, name),
+				_anim(nullptr),
+				_msecsToNextUpdate(0),
+				_nextItemIndex(-1) {
 	_type = TYPE;
 }
 
-void AnimScript::printData() {
+void AnimScript::onAllLoaded() {
+	Resource::onAllLoaded();
+
+	_anim = Resource::cast<Anim>(_parent);
+	_items = listChildren<AnimScriptItem>();
+
+	if (!_items.empty()) {
+		// Setup the next item to the first
+		_nextItemIndex = 0;
+	}
+}
+
+void AnimScript::onGameLoop(uint msecs) {
+	Resource::onGameLoop(msecs);
+
+	if (!_anim || !_anim->isReferenced() || _nextItemIndex == -1) {
+		// The script is disabled, do nothing
+		return;
+	}
+
+	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
+
+	while (_msecsToNextUpdate <= (int32)msecs) {
+		AnimScriptItem *item = _items[_nextItemIndex];
+		_msecsToNextUpdate += item->getDuration();
+
+		switch (item->getOpcode()) {
+		case AnimScriptItem::kDisplayFrame:
+			_anim->selectFrame(item->getOperand());
+			goToNextItem();
+			break;
+		case AnimScriptItem::kPlayAnimSound:
+			// TODO
+			goToNextItem();
+			break;
+		case AnimScriptItem::kGoToItem:
+			_nextItemIndex = item->getOperand();
+			break;
+		case AnimScriptItem::kDisplayRandomFrame: {
+			uint32 startFrame = item->getOperand() >> 16;
+			uint32 endFrame = item->getOperand() & 0xFFFF;
+
+			uint32 frame = randomSource->getRandomNumberRng(startFrame, endFrame);
+			_anim->selectFrame(frame);
+			goToNextItem();
+			break;
+		}
+		case AnimScriptItem::kSleepRandomDuration: {
+			uint duration = randomSource->getRandomNumber(item->getOperand());
+			_msecsToNextUpdate += duration;
+			goToNextItem();
+			break;
+		}
+		case AnimScriptItem::kPlayStockSound:
+			// TODO
+			goToNextItem();
+			break;
+		default:
+			error("Unknown anim script type %d", item->getOpcode());
+		}
+	}
+
+	_msecsToNextUpdate -= msecs;
+}
+
+void AnimScript::goToNextItem() {
+	_nextItemIndex += 1;
+	_nextItemIndex %= _items.size();
 }
 
 AnimScriptItem::~AnimScriptItem() {

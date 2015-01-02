@@ -58,6 +58,10 @@ void Anim::readData(XRCReadStream *stream) {
 	_numFrames = stream->readUint32LE();
 }
 
+void Anim::selectFrame(uint32 frameIndex) {
+	//TODO
+}
+
 void Anim::reference(Item *item) {
 	_refCount++;
 }

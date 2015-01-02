@@ -29,6 +29,8 @@
 
 namespace Stark {
 
+class Anim;
+class AnimScriptItem;
 class XRCReadStream;
 
 class AnimScript : public Resource {
@@ -38,25 +40,49 @@ public:
 	AnimScript(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimScript();
 
+	// Resource API
+	void onAllLoaded() override;
+	void onGameLoop(uint msecs) override;
+
 protected:
-	void printData() override;
+	void goToNextItem();
+
+	Anim *_anim;
+	Common::Array<AnimScriptItem *> _items;
+
+	int32 _nextItemIndex;
+	int32 _msecsToNextUpdate;
 };
 
 class AnimScriptItem : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kAnimScriptItem;
 
+	enum Opcodes {
+		kDisplayFrame = 0,
+		kPlayAnimSound = 1,
+		kGoToItem = 2,
+		kDisplayRandomFrame = 3,
+		kSleepRandomDuration = 4,
+		kPlayStockSound = 5
+	};
+
 	AnimScriptItem(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimScriptItem();
 
+	// Resource API
 	void readData(XRCReadStream *stream) override;
+
+	uint32 getOpcode() const { return _opcode; }
+	uint32 getOperand() const { return _operand; }
+	uint32 getDuration() const { return _duration; }
+
+protected:
+	void printData() override;
 
 	uint32 _opcode;
 	uint32 _operand;
 	uint32 _duration;
-
-protected:
-	void printData() override;
 };
 
 } // End of namespace Stark

@@ -26,6 +26,10 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
+namespace Common {
+class RandomSource;
+}
+
 namespace Stark {
 
 /*
@@ -56,11 +60,13 @@ public:
 		global = nullptr;
 		archiveLoader = nullptr;
 		resourceProvider = nullptr;
+		randomSource = nullptr;
 	}
 
 	Global *global;
 	ArchiveLoader *archiveLoader;
 	ResourceProvider *resourceProvider;
+	Common::RandomSource *randomSource;
 };
 
 class StarkEngine : public Engine {
@@ -89,6 +95,7 @@ private:
 	ArchiveLoader *_archiveLoader;
 	StateProvider *_stateProvider;
 	ResourceProvider *_resourceProvider;
+	Common::RandomSource *_randomSource;
 
 	const ADGameDescription *_gameDescription;
 
