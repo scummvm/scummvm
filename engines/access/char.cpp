@@ -158,8 +158,14 @@ void CharManager::charMenu() {
 	screen.saveScreen();
 	screen.setDisplayScan();
 
-	screen.plotImage(spr, 17, Common::Point(0, 176));
-	screen.plotImage(spr, 18, Common::Point(155, 176));
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		screen.plotImage(spr, 17, Common::Point(0, 184));
+		screen.plotImage(spr, 18, Common::Point(193, 184));
+	} else if (_vm->getGameID() == GType_Amazon) {
+		screen.plotImage(spr, 17, Common::Point(0, 176));
+		screen.plotImage(spr, 18, Common::Point(155, 176));
+	} else
+		error("Game not supported");
 
 	screen.restoreScreen();
 	delete spr;
