@@ -81,12 +81,17 @@ private:
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
 	bool _isEarlyGame;
+	SpriteResource _charFaces[TOTAL_CHARACTERS];
+	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
+	SpriteResource _dseFace;
 
 	void showIntro();
 
 	void showMainMenu();
 
-	void drawUI();
+	void drawUI(bool soundPlayed);
+
+	void loadCharIcons(int numChars);
 protected:
 	/**
 	* Play the game

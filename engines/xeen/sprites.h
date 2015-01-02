@@ -33,53 +33,29 @@ namespace Xeen {
 
 class XeenEngine;
 
-class GraphicResource {
-protected:
-	int32 _filesize;
-	byte *_data;
-
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const;
-public:
-	GraphicResource(const Common::String &filename);
-
-	virtual ~GraphicResource();
-
-	int size() const;
-};
-
-/**
- * Defines a resource that Contains a list of singular sprite frames 
- */
-class FramesResource : public GraphicResource {
-private:
-	Common::Array<uint32> _index;
-public:
-	FramesResource(const Common::String &filename);
-	virtual ~FramesResource() {}
-
-	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
-
-	void draw(XSurface &dest, int frame) const;
-};
-
-/**
- * Defines a resource that contains sets of two layered sprites per frame
- */
-class SpriteResource : public GraphicResource {
+class SpriteResource {
 private:
 	struct IndexEntry {
 		uint16 _offset1, _offset2;
 	};
 	Common::Array<IndexEntry> _index;
+	int32 _filesize;
+	byte *_data;
 
+	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const;
 public:
+	SpriteResource();
 	SpriteResource(const Common::String &filename);
 
-	virtual ~SpriteResource() {}
+	virtual ~SpriteResource();
+
+	void load(const Common::String &filename);
 
 	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
 
 	void draw(XSurface &dest, int frame) const;
+
+	int size() const;
 };
 
 } // End of namespace Xeen

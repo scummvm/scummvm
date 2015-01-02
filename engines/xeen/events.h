@@ -41,7 +41,7 @@ private:
 	uint32 _gameCounter;
 	uint32 _priorGameCounterTime;
 	Common::KeyCode _keyCode;
-	FramesResource _sprites;
+	SpriteResource _sprites;
 
 	void nextFrame();
 public:

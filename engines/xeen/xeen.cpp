@@ -42,7 +42,10 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_sound = nullptr;
 	_eventData = nullptr;
 	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
+	Common::fill(&_partyFaces[0], &_partyFaces[MAX_ACTIVE_PARTY], nullptr);
+
 	_isEarlyGame = false;
+
 }
 
 XeenEngine::~XeenEngine() {
@@ -243,14 +246,14 @@ void XeenEngine::showMainMenu() {
 
 void XeenEngine::playGame() {
 	_saves->reset();
-	drawUI();
+	drawUI(true);
 }
 
 /*
  * Lots of stuff in this method.
  * TODO: Consider renaming method when better understood
  */
-void XeenEngine::drawUI() {
+void XeenEngine::drawUI(bool soundPlayed) {
 	SpriteResource sprites1("global.icn"), borderSprites("border.icn");
 
 	// Get mappings to the active characters in the party
@@ -260,6 +263,30 @@ void XeenEngine::drawUI() {
 	}
 
 	_isEarlyGame = _party._minutes >= 300;
+	
+	if (_party._mazeId == 0) {
+		if (!soundPlayed) {
+			warning("TODO: loadSound?");
+		}
+
+		if (!_partyFaces[0]) {
+			// Xeen only uses 24 of possible 30 character slots
+			loadCharIcons(24);
+
+			for (int i = 0; i < _party._partyCount; ++i)
+				_partyFaces[i] = &_charFaces[_party._partyMembers[i]];
+		}
+	}
+}
+
+void XeenEngine::loadCharIcons(int numChars) {
+	for (int i = 0; i < numChars; ++i) {
+		// Load new character resource
+		Common::String name = Common::String::format("char%02d.fac", i);
+		_charFaces[i].load(name);
+	}
+
+	_dseFace.load("dse.fac");
 }
 
 } // End of namespace Xeen
