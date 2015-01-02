@@ -25,7 +25,7 @@
 #include "xeen/debugger.h"
 
 namespace Xeen {
-
+/*
 static int strToInt(const char *s) {
 	if (!*s)
 		// No string at all
@@ -41,6 +41,7 @@ static int strToInt(const char *s) {
 		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
 }
+*/
 
 /*------------------------------------------------------------------------*/
 

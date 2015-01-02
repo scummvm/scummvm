@@ -181,7 +181,7 @@ void DarkSideEngine::showStartSequence() {
 	int idx1 = 0;
 	bool skipElapsed = false;
 	uint32 timeExpired = 0;
-	bool fadeFlag = true;
+//	bool fadeFlag = true;
 
 	for (int idx = 200; idx > 0; ) {
 		_events->updateGameCounter();
@@ -218,6 +218,10 @@ void DarkSideEngine::showStartSequence() {
 
 	_events->updateGameCounter();
 	pause(30);
+
+	// TODO: More
+	_sound->playMusic(voc[0]);
+	_sound->playMusic(voc[1]);
 }
 
 } // End of namespace Xeen
