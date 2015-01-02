@@ -207,8 +207,8 @@ void XRCReader::importResourceData(XRCReadStream *stream, Resource *resource) {
 		resource->readData(xrcDataStream);
 
 		if (xrcDataStream->isDataLeft()) {
-			warning("Not all XRC data was read. Type %s, name %s",
-					resource->getType().getName(), resource->getName().c_str());
+			warning("Not all XRC data was read. Type %s, subtype %d, name %s",
+					resource->getType().getName(), resource->getSubType(), resource->getName().c_str());
 		}
 
 		delete xrcDataStream;

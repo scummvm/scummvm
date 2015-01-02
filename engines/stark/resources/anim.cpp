@@ -32,11 +32,11 @@ Resource *Anim::construct(Resource *parent, byte subType, uint16 index, const Co
 	case kAnimSub1:
 		return new AnimSub1(parent, subType, index, name);
 	case kAnimSub2:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new AnimSub2(parent, subType, index, name);
 	case kAnimSub3:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new AnimSub3(parent, subType, index, name);
 	case kAnimSub4:
-		return new UnimplementedResource(parent, TYPE, subType, index, name);
+		return new AnimSub4(parent, subType, index, name);
 	default:
 		error("Unknown anim subtype %d", subType);
 	}
@@ -48,6 +48,7 @@ Anim::~Anim() {
 Anim::Anim(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name),
 				_field_30(0),
+				_currentFrame(0),
 				_numFrames(0),
 				_refCount(0) {
 	_type = TYPE;
@@ -59,7 +60,6 @@ void Anim::readData(XRCReadStream *stream) {
 }
 
 void Anim::selectFrame(uint32 frameIndex) {
-	//TODO
 }
 
 void Anim::reference(Item *item) {
@@ -91,10 +91,39 @@ void AnimSub1::readData(XRCReadStream *stream) {
 	_field_3C = stream->readFloat();
 }
 
+void AnimSub1::selectFrame(uint32 frameIndex) {
+	if (frameIndex > _numFrames) {
+		error("Error setting frame %d for anim '%s'", frameIndex, getName().c_str());
+	}
+
+	_currentFrame = frameIndex;
+}
+
 void AnimSub1::printData() {
 	Anim::printData();
 
 	debug("field_3C: %f", _field_3C);
+}
+
+AnimSub2::~AnimSub2() {
+}
+
+AnimSub2::AnimSub2(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+				Anim(parent, subType, index, name) {
+}
+
+AnimSub3::~AnimSub3() {
+}
+
+AnimSub3::AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+				Anim(parent, subType, index, name) {
+}
+
+AnimSub4::~AnimSub4() {
+}
+
+AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+				Anim(parent, subType, index, name) {
 }
 
 } // End of namespace Stark

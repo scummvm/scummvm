@@ -52,7 +52,7 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
-	void selectFrame(uint32 frameIndex);
+	virtual void selectFrame(uint32 frameIndex);
 
 	// Refcounting, used to know if the anim script needs to run
 	virtual void reference(Item *item);
@@ -63,6 +63,7 @@ protected:
 	void printData() override;
 
 	uint32 _field_30;
+	uint32 _currentFrame;
 	uint32 _numFrames;
 	int32 _refCount;
 };
@@ -72,12 +73,34 @@ public:
 	AnimSub1(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimSub1();
 
-	virtual void readData(XRCReadStream *stream) override;
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+	// Anim API
+	void selectFrame(uint32 frameIndex) override;
 
 protected:
 	void printData() override;
 
 	float _field_3C;
+};
+
+class AnimSub2 : public Anim {
+public:
+	AnimSub2(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimSub2();
+};
+
+class AnimSub3 : public Anim {
+public:
+	AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimSub3();
+};
+
+class AnimSub4 : public Anim {
+public:
+	AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimSub4();
 };
 
 } // End of namespace Stark
