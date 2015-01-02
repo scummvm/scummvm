@@ -175,6 +175,8 @@ void SearchManager::loadZix(const Common::String &name) {
 			// root folder instead
 			if (path.hasPrefix("zgi\\"))
 				path = Common::String(path.c_str() + 4);
+			if (path.hasPrefix("zgi_e\\"))
+				path = Common::String(path.c_str() + 6);
 
 			Common::Archive *arc;
 			char tempPath[128];
