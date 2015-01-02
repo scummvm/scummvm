@@ -753,6 +753,10 @@ const byte ICON_DATA[] = {
 	0x00, 0x2D, 0x3A 
 };
 
-} // End of namespace Martian
+const int RMOUSE[10][2] = {
+	{ 7, 36 },    { 38, 68 },   { 70, 99 },   { 102, 125 }, { 128, 152 },
+	{ 155, 185 }, { 188, 216 }, { 219, 260 }, { 263, 293 }, { 295, 214 }
+};
 
+} // End of namespace Martian
 } // End of namespace Access

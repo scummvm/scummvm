@@ -129,6 +129,7 @@ public:
 	int _tileSize;
 	int _selectCommand;
 	bool _conFlag;
+	int _rMouse[10][2];
 public:
 	Room(AccessEngine *vm);
 

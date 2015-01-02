@@ -1591,7 +1591,7 @@ void River::moveCanoe() {
 		moveCanoe2();
 	} else {
 		if (events._leftButton && pt.y >= 140) {
-			if (pt.x < RMOUSE[8][0]) {
+			if (pt.x < _vm->_room->_rMouse[8][0]) {
 				// Disk icon wasn't clicked
 				_vm->_scripts->printString(BAR_MESSAGE);
 			} else {

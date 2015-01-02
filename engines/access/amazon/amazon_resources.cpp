@@ -2406,6 +2406,11 @@ const int CAST_END_OBJ1[4][4] = {
 	{ 3, 103, 1300, 10 }
 };
 
-} // End of namespace Amazon
+const int RMOUSE[10][2] = {
+	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
+	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
+};
 
+
+} // End of namespace Amazon
 } // End of namespace Access

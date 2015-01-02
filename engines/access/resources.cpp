@@ -59,11 +59,6 @@ const int DIAGOFFULY[] = { 3, 3, 1, 2, 2, 1, 1, 1, 0 };
 const int DIAGOFFDLX[] = { 4, 5, 3, 3, 5, 4, 6, 1, 0 };
 const int DIAGOFFDLY[] = { 2, 2, 1, 2, 3, 1, 2, 1, 0 };
 
-const int RMOUSE[10][2] = {
-	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
-	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
-};
-
 const char *const LOOK_MESSAGE = "LOOKING THERE REVEALS NOTHING OF INTEREST.";
 const char *const GET_MESSAGE  = "YOU CAN'T TAKE THAT.";
 const char *const OPEN_MESSAGE = "THAT DOESN'T OPEN.";

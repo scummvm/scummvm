@@ -138,11 +138,11 @@ extern const int HELP1COORDS[2][4];
 extern const int RIVER1OBJ[23][4];
 
 extern const int CAST_END_OBJ[26][4];
-
 extern const int CAST_END_OBJ1[4][4];
 
-} // End of namespace Amazon
+extern const int RMOUSE[10][2];
 
+} // End of namespace Amazon
 } // End of namespace Access
 
 #endif /* ACCESS_AMAZON_RESOURCES_H */

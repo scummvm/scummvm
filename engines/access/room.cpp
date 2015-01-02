@@ -38,6 +38,23 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_selectCommand = 0;
 	_conFlag = false;
 	_selectCommand = -1;
+
+	switch (vm->getGameID()) {
+	case GType_Amazon:
+		for (int i = 0; i < 10; i++) {
+			_rMouse[i][0] = Amazon::RMOUSE[i][0];
+			_rMouse[i][1] = Amazon::RMOUSE[i][1];
+		}
+		break;
+	case GType_MartianMemorandum:
+		for (int i = 0; i < 10; i++) {
+			_rMouse[i][0] = Martian::RMOUSE[i][0];
+			_rMouse[i][1] = Martian::RMOUSE[i][1];
+		}
+		break;
+	default:
+		error("Game not supported");
+	}
 }
 
 Room::~Room() {
@@ -464,8 +481,8 @@ void Room::doCommands() {
 		if (_vm->_events->_mouseRow >= 22) {
 			// Mouse in user interface area
 			for (commandId = 0; commandId < 10; ++commandId) {
-				if (_vm->_events->_mousePos.x >= RMOUSE[commandId][0] &&
-					_vm->_events->_mousePos.x < RMOUSE[commandId][1])
+				if (_vm->_events->_mousePos.x >= _rMouse[commandId][0] &&
+					_vm->_events->_mousePos.x < _rMouse[commandId][1])
 					break;
 			}
 			if (commandId < 10)
@@ -564,7 +581,7 @@ void Room::executeCommand(int commandId) {
 
 	// Draw the button as selected
 	_vm->_screen->plotImage(spr, _selectCommand + 2,
-		Common::Point(RMOUSE[_selectCommand][0], 176));
+		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;

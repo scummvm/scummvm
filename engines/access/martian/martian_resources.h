@@ -52,8 +52,11 @@ extern const int SIDEOFFD[];
 
 extern const byte CREDIT_DATA[];
 extern const byte ICON_DATA[];
-} // End of namespace Martian
 
+
+extern const int RMOUSE[10][2];
+
+} // End of namespace Martian
 } // End of namespace Access
 
 #endif /* ACCESS_MARTIAN_RESOURCES_H */
