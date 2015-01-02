@@ -28,7 +28,7 @@
 namespace Stark {
 
 class GfxDriver;
-class SceneElement;
+class RenderEntry;
 
 /** 
  * Manager for the current game scene
@@ -47,7 +47,7 @@ public:
 
 private:
 	GfxDriver *_gfx;
-	Common::Array<SceneElement *> _elements;
+	Common::Array<RenderEntry *> _elements;
 };
 
 } // End of namespace Stark

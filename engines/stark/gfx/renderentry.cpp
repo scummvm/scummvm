@@ -20,37 +20,39 @@
  *
  */
 
-#ifndef STARK_XMG_H
-#define STARK_XMG_H
+#include "engines/stark/gfx/renderentry.h"
 
 #include "engines/stark/visual.h"
-
-#include "common/stream.h"
-
-namespace Graphics {
-struct Surface;
-}
+#include "engines/stark/actor.h"
+#include "engines/stark/xmg.h"
 
 namespace Stark {
 
-/**
- * XMG (still image) decoder and renderer
- */
-class VisualImageXMG : public Visual {
-private:
-	VisualImageXMG();
+void RenderEntry::update(uint32 delta) {
+	VisualActor *actor = _visual->get<VisualActor>();
+	if (actor) {
+		actor->update(delta);
+	}
+}
 
-public:
-	static const VisualType TYPE = Visual::kImageXMG;
+void RenderEntry::render(GfxDriver *gfx) {
+	VisualImageXMG *imageXMG = _visual->get<VisualImageXMG>();
+	if (imageXMG) {
+		imageXMG->render(gfx, _position);
+	}
 
-	~VisualImageXMG();
-	static VisualImageXMG *load(Common::ReadStream *stream);
-	void render(GfxDriver *gfx, const Common::Point &position);
+	VisualActor *actor = _visual->get<VisualActor>();
+	if (actor) {
+		actor->render(gfx);
+	}
+}
 
-private:
-	Graphics::Surface *_surface;
-};
+void RenderEntry::setVisual(Visual *visual) {
+	_visual = visual;
+}
+
+void RenderEntry::setPosition(const Common::Point &position) {
+	_position = position;
+}
 
 } // End of namespace Stark
-
-#endif // STARK_XMG_H

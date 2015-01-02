@@ -23,7 +23,7 @@
 #ifndef STARK_ACTOR_H
 #define STARK_ACTOR_H
 
-#include "engines/stark/sceneelement.h"
+#include "engines/stark/visual.h"
 
 #include "math/vector3d.h"
 #include "common/str.h"
@@ -139,14 +139,16 @@ private:
 };
 
 
-class SceneElementActor : public SceneElement {
+class VisualActor : public Visual {
 private:
-	SceneElementActor();
+	VisualActor();
 
 public:
-	~SceneElementActor();
+	static const VisualType TYPE = Visual::kActor;
 
-	static SceneElementActor *load(const Common::Archive *archive, const Common::String &name);
+	~VisualActor();
+
+	static VisualActor *load(const Common::Archive *archive, const Common::String &name);
 	bool setAnim(const Common::Archive *archive, const Common::String &name);
 	bool setTexture(const Common::Archive *archive, const Common::String &name);
 

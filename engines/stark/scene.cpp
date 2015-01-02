@@ -25,6 +25,7 @@
 #include "engines/stark/xmg.h"
 
 #include "engines/stark/actor.h"
+#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 
@@ -44,19 +45,17 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 //	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop6_wall.xmg", 0, 0));
 //	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop8_pillar.xmg", 534, 0));
 
-	SceneElementActor *actor = SceneElementActor::load(&xarc, "oldapril.cir");
+	VisualActor *actor = VisualActor::load(&xarc, "oldapril.cir");
 	actor->setAnim(&xarc, "oldapril_idle.ani");
 	actor->setTexture(&xarc, "oldapril.tm");
-	_elements.push_back(actor);
+
+	RenderEntry *oldApril = new RenderEntry();
+	oldApril->setVisual(actor);
+
+	_elements.push_back(oldApril);
 }
 
 Scene::~Scene() {
-	// Delete all the elements
-	Common::Array<SceneElement *>::iterator element = _elements.begin();
-	while (element != _elements.end()) {
-		delete *element;
-		element++;
-	}
 }
 
 void Scene::render(uint32 delta) {
@@ -67,7 +66,7 @@ void Scene::render(uint32 delta) {
 	// Draw other things
 
 	// Render all the scene elements
-	Common::Array<SceneElement *>::iterator element = _elements.begin();
+	Common::Array<RenderEntry *>::iterator element = _elements.begin();
 	while (element != _elements.end()) {
 		// Draw the current element
 		(*element)->update(delta);

@@ -32,7 +32,7 @@ namespace Stark {
 class Direction;
 class Image;
 class Item;
-class SceneElement;
+class Visual;
 class XRCReadStream;
 
 class Anim : public Resource {
@@ -56,7 +56,7 @@ public:
 	void readData(XRCReadStream *stream) override;
 
 	virtual void selectFrame(uint32 frameIndex);
-	virtual SceneElement *getVisual();
+	virtual Visual *getVisual();
 
 	// Refcounting, used to know if the anim script needs to run
 	virtual void reference(Item *item);
@@ -83,7 +83,7 @@ public:
 
 	// Anim API
 	void selectFrame(uint32 frameIndex) override;
-	SceneElement *getVisual() override;
+	Visual *getVisual() override;
 
 protected:
 	void printData() override;

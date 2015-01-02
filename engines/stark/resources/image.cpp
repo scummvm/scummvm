@@ -77,7 +77,7 @@ void Image::readData(XRCReadStream *stream) {
 	_archiveName = stream->getArchiveName();
 }
 
-SceneElement *Image::getVisual() {
+Visual *Image::getVisual() {
 	return nullptr;
 }
 
@@ -125,7 +125,7 @@ void ImageSub23::onPostRead() {
 	initVisual();
 }
 
-SceneElement *ImageSub23::getVisual() {
+Visual *ImageSub23::getVisual() {
 	initVisual();
 	return _visual;
 }
@@ -144,7 +144,7 @@ void ImageSub23::initVisual() {
 
 	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
 
-	_visual = SceneElementXMG::load(stream);
+	_visual = VisualImageXMG::load(stream);
 
 	delete stream;
 }

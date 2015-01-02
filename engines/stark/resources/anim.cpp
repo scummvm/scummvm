@@ -64,7 +64,7 @@ void Anim::readData(XRCReadStream *stream) {
 void Anim::selectFrame(uint32 frameIndex) {
 }
 
-SceneElement *Anim::getVisual() {
+Visual *Anim::getVisual() {
 	return nullptr;
 }
 
@@ -113,7 +113,7 @@ void AnimSub1::selectFrame(uint32 frameIndex) {
 	_currentFrame = frameIndex;
 }
 
-SceneElement *AnimSub1::getVisual() {
+Visual *AnimSub1::getVisual() {
 	Direction *direction = _directions[_currentDirection];
 	_currentFrameImage = direction->findChildWithIndex<Image>(_currentFrame);
 	return _currentFrameImage->getVisual();

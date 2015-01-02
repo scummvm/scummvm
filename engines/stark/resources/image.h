@@ -30,7 +30,7 @@
 
 namespace Stark {
 
-class SceneElement;
+class Visual;
 class XRCReadStream;
 
 class Image : public Resource {
@@ -54,7 +54,7 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
-	virtual SceneElement *getVisual();
+	virtual Visual *getVisual();
 
 protected:
 	void printData() override;
@@ -62,7 +62,7 @@ protected:
 	Common::String _filename;
 	Common::String _archiveName;
 
-	SceneElement *_visual;
+	Visual *_visual;
 
 	bool _transparent;
 	uint32 _transparency;
@@ -83,7 +83,7 @@ public:
 	void onPostRead() override;
 
 	// Image API
-	SceneElement *getVisual() override;
+	Visual *getVisual() override;
 
 protected:
 	void printData() override;

@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	gfx/coordinate.o \
 	gfx/driver.o \
 	gfx/opengl.o \
+	gfx/renderentry.o \
 	gfx/tinygl.o \
 	resources/anim.o \
 	resources/animhierarchy.o \

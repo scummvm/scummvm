@@ -166,28 +166,30 @@ bool Actor::setTexture(Common::ReadStream *stream)
 	_texture = new Texture();
 	return _texture->createFromStream(stream);
 }
-SceneElementActor *SceneElementActor::load(const Common::Archive *archive, const Common::String &name) {
+VisualActor *VisualActor::load(const Common::Archive *archive, const Common::String &name) {
 	Common::ReadStream *stream = archive->createReadStreamForMember(name);
 	if (!stream)
 		return NULL;
 
-	SceneElementActor *cir = new SceneElementActor();
+	VisualActor *cir = new VisualActor();
 	cir->_actor = new Actor();
 
 	cir->_actor->readFromStream(stream);
 	return cir;
 }
 
-SceneElementActor::SceneElementActor() : _actor(NULL) {
+VisualActor::VisualActor() :
+		Visual(TYPE),
+		_actor(nullptr) {
 
 }
 
-SceneElementActor::~SceneElementActor() {
+VisualActor::~VisualActor() {
 	if (_actor)
 		delete _actor;
 }
 
-bool SceneElementActor::setAnim(const Common::Archive *archive, const Common::String &name) {
+bool VisualActor::setAnim(const Common::Archive *archive, const Common::String &name) {
 	Common::ReadStream *stream = archive->createReadStreamForMember(name);
 	if (!stream)
 		return false;
@@ -195,7 +197,7 @@ bool SceneElementActor::setAnim(const Common::Archive *archive, const Common::St
 	return _actor->setAnim(stream);
 }
 
-bool SceneElementActor::setTexture(const Common::Archive *archive, const Common::String &name) {
+bool VisualActor::setTexture(const Common::Archive *archive, const Common::String &name) {
 	Common::ReadStream *stream = archive->createReadStreamForMember(name);
 	if (!stream)
 		return false;
@@ -203,11 +205,11 @@ bool SceneElementActor::setTexture(const Common::Archive *archive, const Common:
 	return _actor->setTexture(stream);
 }
 
-void SceneElementActor::update(uint32 delta) {
+void VisualActor::update(uint32 delta) {
 	_actor->getSkeleton()->animate(delta);
 }
 
-void SceneElementActor::render(Stark::GfxDriver *gfx) {
+void VisualActor::render(Stark::GfxDriver *gfx) {
 	// Prepare vertex list and push to gfx driver
 	// HACK: Purely because I just want to see something for now
 static double ctr = 0;

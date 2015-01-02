@@ -220,21 +220,21 @@ void XMGDecoder::processRGB() {
 
 // SCENE ELEMENT XMG
 
-SceneElementXMG::SceneElementXMG() :
-		SceneElement2D(),
+VisualImageXMG::VisualImageXMG() :
+		Visual(TYPE),
 		_surface(NULL) {
 }
 
-SceneElementXMG::~SceneElementXMG() {
+VisualImageXMG::~VisualImageXMG() {
 	// Free the surface
 	if (_surface)
 		_surface->free();
 	delete _surface;
 }
 
-SceneElementXMG *SceneElementXMG::load(Common::ReadStream *stream) {
+VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
 	// Create the element to return
-	SceneElementXMG *element = new SceneElementXMG();
+	VisualImageXMG *element = new VisualImageXMG();
 
 	// Decode the XMG
 	element->_surface = XMGDecoder::decode(stream);
@@ -242,9 +242,9 @@ SceneElementXMG *SceneElementXMG::load(Common::ReadStream *stream) {
 	return element;
 }
 
-void SceneElementXMG::render(GfxDriver *gfx) {
+void VisualImageXMG::render(GfxDriver *gfx, const Common::Point &position) {
 	// Draw the current element
-	gfx->drawSurface(_surface, _position);
+	gfx->drawSurface(_surface, position);
 }
 
 } // End of namespace Stark

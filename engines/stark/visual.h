@@ -30,24 +30,42 @@ namespace Stark {
 
 class GfxDriver;
 
-class SceneElement {
+class Visual {
 public:
-	virtual ~SceneElement() {}
-	virtual void update(uint32 delta) {}
-	virtual void render(GfxDriver *gfx) = 0;
+	enum VisualType {
+		kImageXMG      = 2,
+		kRendered      = 3,
+		kImageText     = 4,
+		kSmackStream   = 5,
+		kActor         = 6,
+		kSmackFMV      = 7,
+		kEffectFish    = 8,
+		kEffectBubbles = 9,
+		kEffectFirefly = 10,
+		kEffectSmoke   = 11
+	};
+
+	Visual(VisualType type) : _type(type) {}
+	virtual ~Visual() {}
+
+	/**
+	 * Returns the visual if it has the same type as the template argument
+	 */
+	template <class T>
+	T *get();
+
+private:
+	VisualType _type;
 };
 
-class SceneElement2D : public SceneElement {
-public:
-	virtual ~SceneElement2D() {};
-
-	void setPosition(const Common::Point &position) {
-		_position = position;
+template<class T>
+T *Visual::get() {
+	if (_type != T::TYPE) {
+		return nullptr;
 	}
 
-protected:
-	Common::Point _position;
-};
+	return (T *) this;
+}
 
 } // End of namespace Stark
 
