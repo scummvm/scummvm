@@ -155,13 +155,14 @@ void MGM::rebuildTables(int objId) {
 	if (!obj)
 		return;
 
-	for (uint i = 0; i < obj->_staticsList.size(); i++)
+	for (uint i = 0; i < obj->_staticsList.size(); i++) {
 		_items[idx]->statics.push_back((Statics *)obj->_staticsList[i]);
+
+		_items[idx]->subItems.push_back(new MGMSubItem);
+	}
 
 	for (uint i = 0; i < obj->_movements.size(); i++)
 		_items[idx]->movements1.push_back((Movement *)obj->_movements[i]);
-
-	_items[idx]->subItems.clear();
 }
 
 int MGM::getItemIndexById(int objId) {
