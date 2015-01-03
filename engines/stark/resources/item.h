@@ -61,12 +61,13 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 
+	virtual void setEnabled(bool enabled);
 	virtual RenderEntry *getRenderEntry();
 
 protected:
 	void printData() override;
 
-	bool _field_34;
+	bool _enabled;
 	int32 _field_38;
 };
 
@@ -78,6 +79,9 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 	virtual void onAllLoaded() override;
+
+	// Item API
+	void setEnabled(bool enabled) override;
 
 	void setAnim(int32 index);
 

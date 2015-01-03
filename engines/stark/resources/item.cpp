@@ -57,14 +57,18 @@ Item::~Item() {
 
 Item::Item(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name),
-				_field_34(true),
+				_enabled(true),
 				_field_38(0) {
 	_type = TYPE;
 }
 
 void Item::readData(XRCReadStream *stream) {
-	_field_34 = stream->readBool();
+	_enabled = stream->readBool();
 	_field_38 = stream->readSint32LE();
+}
+
+void Item::setEnabled(bool enabled) {
+	_enabled = enabled;
 }
 
 RenderEntry *Item::getRenderEntry() {
@@ -72,7 +76,7 @@ RenderEntry *Item::getRenderEntry() {
 }
 
 void Item::printData() {
-	debug("field_34: %d", _field_34);
+	debug("enabled: %d", _enabled);
 	debug("field_38: %d", _field_38);
 }
 
@@ -102,6 +106,20 @@ void ItemVisual::onAllLoaded() {
 
 	if (_subType != kItemSub10) {
 		setAnim(1);
+	}
+
+	if (!_enabled) {
+		setEnabled(false);
+	}
+}
+
+void ItemVisual::setEnabled(bool enabled) {
+	Item::setEnabled(enabled);
+
+	if (enabled) {
+		_animHierarchy->selectItemAnim(this);
+	} else {
+		_animHierarchy->unselectItemAnim(this);
 	}
 }
 
@@ -157,10 +175,14 @@ void ItemSub56::readData(XRCReadStream *stream) {
 }
 
 RenderEntry *ItemSub56::getRenderEntry() {
-	Visual *visual = getVisual();
+	if (_enabled) {
+		Visual *visual = getVisual();
 
-	_renderEntry->setVisual(visual);
-	_renderEntry->setPosition(_position);
+		_renderEntry->setVisual(visual);
+		_renderEntry->setPosition(_position);
+	} else {
+		_renderEntry->setVisual(nullptr);
+	}
 
 	return _renderEntry;
 }
@@ -187,10 +209,14 @@ void ItemSub78::readData(XRCReadStream *stream) {
 }
 
 RenderEntry *ItemSub78::getRenderEntry() {
-	Visual *visual = getVisual();
+	if (_enabled) {
+		Visual *visual = getVisual();
 
-	_renderEntry->setVisual(visual);
-	_renderEntry->setPosition(_position);
+		_renderEntry->setVisual(visual);
+		_renderEntry->setPosition(_position);
+	} else {
+		_renderEntry->setVisual(nullptr);
+	}
 
 	return _renderEntry;
 }
