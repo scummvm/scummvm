@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	events.o \
 	files.o \
 	font.o \
+	interface.o \
 	items.o \
 	party.o \
 	resdata.o \

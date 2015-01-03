@@ -34,6 +34,7 @@
 #include "xeen/debugger.h"
 #include "xeen/dialogs.h"
 #include "xeen/events.h"
+#include "xeen/interface.h"
 #include "xeen/party.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
@@ -77,48 +78,15 @@ struct XeenGameDescription;
 #define XEEN_SAVEGAME_VERSION 1
 #define GAME_FRAME_TIME 50
 
-class XeenEngine : public Engine, public ButtonContainer {
+class XeenEngine : public Engine {
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
-	bool _isEarlyGame;
-	int _loadDarkSide;
-	SpriteResource _charFaces[TOTAL_CHARACTERS];
-	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
-	SpriteResource _dseFace;
-	SpriteResource _globalSprites;
-	SpriteResource _borderSprites;
-	SpriteResource _spellFxSprites;
-	SpriteResource _fecpSprites;
-	SpriteResource _blessSprites;
-	bool _buttonsLoaded;
-	int _batUIFrame;
-	int _spotDoorsUIFrame;
-	bool _spotDoorsAllowed;
-	int _dangerSenseUIFrame;
-	bool _dangerSenseAllowed;
-	int _face1UIFrame;
-	bool _face1State;
-	int _face2UIFrame;
-	bool _face2State;
-	int _blessedUIFrame;
-	int _powerShieldUIFrame;
-	int _holyBonusUIFrame;
-	int _heroismUIFrame;
-	bool _noDirectionSense;
 
 	void showIntro();
 
 	void showMainMenu();
-
-	void setupUI(bool soundPlayed);
-
-	void loadCharIcons(int numChars);
-
-	void setupGameBackground();
-
-	void assembleGameBorder();
 protected:
 	/**
 	* Play the game
@@ -144,6 +112,7 @@ private:
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
+	Interface *_interface;
 	SavesManager *_saves;
 	Screen *_screen;
 	SoundManager *_sound;
@@ -152,6 +121,12 @@ public:
 	Common::SeekableReadStream *_eventData;
 	Roster _roster;
 	Party _party;
+	int _loadDarkSide;
+	bool _spotDoorsAllowed;
+	bool _dangerSenseAllowed;
+	int _face1State;
+	int _face2State;
+	bool _noDirectionSense;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();
