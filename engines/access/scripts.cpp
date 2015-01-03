@@ -614,14 +614,18 @@ void Scripts::cmdCharSpeak() {
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
-	_vm->_screen->_maxChars = 20;
+	_vm->_screen->_maxChars = (_vm->getGameID() == GType_MartianMemorandum) ? 23 : 20;
 
 	byte v;
 	Common::String tmpStr = "";
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
-	_vm->_bubbleBox->_bubbleDisplStr = Common::String("JASON");
+	if (_vm->getGameID() == GType_MartianMemorandum)
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String("TEX");
+	else
+		_vm->_bubbleBox->_bubbleDisplStr = Common::String("JASON");
+
 	_vm->_bubbleBox->placeBubble1(tmpStr);
 	findNull();
 }
