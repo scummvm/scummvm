@@ -32,6 +32,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "xeen/debugger.h"
+#include "xeen/dialogs.h"
 #include "xeen/events.h"
 #include "xeen/party.h"
 #include "xeen/saves.h"
@@ -67,6 +68,7 @@ enum XeenDebugChannels {
 
 enum Mode {
 	MODE_0 = 0,
+	MODE_1 = 1,
 	MODE_9 = 9
 };
 
@@ -75,23 +77,27 @@ struct XeenGameDescription;
 #define XEEN_SAVEGAME_VERSION 1
 #define GAME_FRAME_TIME 50
 
-class XeenEngine : public Engine {
+class XeenEngine : public Engine, public ButtonContainer {
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
 	bool _isEarlyGame;
+	int _loadDarkSide;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	SpriteResource _dseFace;
+	bool _buttonsLoaded;
 
 	void showIntro();
 
 	void showMainMenu();
 
-	void drawUI(bool soundPlayed);
+	void setupUI(bool soundPlayed);
 
 	void loadCharIcons(int numChars);
+
+	void setupGameBackground();
 protected:
 	/**
 	* Play the game

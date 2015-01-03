@@ -81,14 +81,14 @@ void OptionsMenu::execute() {
 
 		while (!_vm->shouldQuit()) {
 			// Show the dialog with a continually animating background
-			while (!_vm->shouldQuit() && _key == '\0')
+			while (!_vm->shouldQuit() && !_buttonValue)
 				showContents(title1Sprites, true);
 			if (_vm->shouldQuit())
 				return;
 
 			// Handle keypress
-			char key = toupper(_key);
-			_key = '\0';
+			int key = toupper(_buttonValue);
+			_buttonValue = 0;
 
 			if (key == 'C' || key == 'V') {
 				// Show credits
@@ -218,20 +218,13 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	screen._windows[28].frame();
 	screen._windows[28].writeString(OPTIONS_TITLE);
 
-	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
-		DialogButton &btn = _buttons[btnIndex];
-		if (btn._draw) {
-			btn._sprites->draw(screen._windows[0], btnIndex * 2,
-				Common::Point(btn._bounds.left, btn._bounds.top));
-		}
-	}
+	drawButtons(&screen._windows[0]);
 
 	if (waitFlag) {
 		screen._windows[0].update();
 
-		while (!_vm->shouldQuit() && _key == Common::KEYCODE_INVALID &&
-				events.timeElapsed() < 3) {
-			checkEvents();
+		while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() < 3) {
+			checkEvents(_vm);
 		}
 	}
 }

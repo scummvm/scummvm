@@ -34,7 +34,7 @@
 namespace Xeen {
 
 XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: _gameDescription(gameDesc), Engine(syst), _randomSource("Xeen") {
+		: Engine(syst), ButtonContainer(), _gameDescription(gameDesc), _randomSource("Xeen") {
 	_debugger = nullptr;
 	_events = nullptr;
 	_saves = nullptr;
@@ -43,9 +43,9 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_eventData = nullptr;
 	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
 	Common::fill(&_partyFaces[0], &_partyFaces[MAX_ACTIVE_PARTY], nullptr);
-
 	_isEarlyGame = false;
-
+	_loadDarkSide = 1;
+	_buttonsLoaded = false;
 }
 
 XeenEngine::~XeenEngine() {
@@ -246,15 +246,16 @@ void XeenEngine::showMainMenu() {
 
 void XeenEngine::playGame() {
 	_saves->reset();
-	drawUI(true);
+	setupUI(true);
 }
 
 /*
  * Lots of stuff in this method.
  * TODO: Consider renaming method when better understood
  */
-void XeenEngine::drawUI(bool soundPlayed) {
-	SpriteResource sprites1("global.icn"), borderSprites("border.icn");
+void XeenEngine::setupUI(bool soundPlayed) {
+	SpriteResource sprites1("global.icn"), borderSprites("border.icn"),
+		uiSprites("inn.icn");
 
 	// Get mappings to the active characters in the party
 	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
@@ -271,11 +272,39 @@ void XeenEngine::drawUI(bool soundPlayed) {
 
 		if (!_partyFaces[0]) {
 			// Xeen only uses 24 of possible 30 character slots
-			loadCharIcons(24);
+			loadCharIcons(XEEN_TOTAL_CHARACTERS);
 
 			for (int i = 0; i < _party._partyCount; ++i)
 				_partyFaces[i] = &_charFaces[_party._partyMembers[i]];
 		}
+
+		_mode = MODE_1;
+		Common::Array<int> xeenSideChars;
+
+		// Build up a list of characters on the same Xeen side being loaded
+		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
+			PlayerStruct &player = _roster[i];
+			if (player._name.empty() || player._xeenSide != _loadDarkSide)
+				continue;
+
+			xeenSideChars.push_back(i);
+		}
+
+		// Add in buttons for the UI
+		_buttonsLoaded = true;
+		addButton(Common::Rect(16, 100, 40, 120), 242, &uiSprites, true);
+		addButton(Common::Rect(52, 100, 76, 120), 243, &uiSprites, true);
+		addButton(Common::Rect(87, 100, 111, 120), 68, &uiSprites, true);
+		addButton(Common::Rect(122, 100, 146, 120), 82, &uiSprites, true);
+		addButton(Common::Rect(157, 100, 181, 120), 67, &uiSprites, true);
+		addButton(Common::Rect(192, 100, 216, 120), 88, &uiSprites, true);
+		addButton(Common::Rect(), 27, &uiSprites, false);
+		addButton(Common::Rect(16, 16, 48, 48), 49, &uiSprites, false);
+		addButton(Common::Rect(117, 16, 139, 48), 50, &uiSprites, false);
+		addButton(Common::Rect(16, 59, 48, 81), 51, &uiSprites, false);
+		addButton(Common::Rect(117, 59, 149, 81), 52, &uiSprites, false);
+
+		setupGameBackground();
 	}
 }
 
@@ -287,6 +316,10 @@ void XeenEngine::loadCharIcons(int numChars) {
 	}
 
 	_dseFace.load("dse.fac");
+}
+
+void XeenEngine::setupGameBackground() {
+	
 }
 
 } // End of namespace Xeen

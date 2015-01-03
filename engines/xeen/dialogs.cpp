@@ -22,34 +22,36 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
+#include "xeen/events.h"
 #include "xeen/resources.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
 /**
  * Saves the current list of buttons
  */
-void Dialog::saveButtons() {
+void ButtonContainer::saveButtons() {
 	_savedButtons.push(_buttons);
 }
 
 /*
  * Clears the current list of defined buttons
  */
-void Dialog::clearButtons() {
+void ButtonContainer::clearButtons() {
 	_buttons.clear();
 }
 
-void Dialog::restoreButtons() {
+void ButtonContainer::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
-void Dialog::addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw = true) {
-	_buttons.push_back(DialogButton(bounds, c, sprites, draw));
+void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw = true) {
+	_buttons.push_back(UIButton(bounds, val, sprites, draw));
 }
 
-void Dialog::checkEvents() {
-	EventsManager &events = *_vm->_events;
+void ButtonContainer::checkEvents(XeenEngine *vm) {
+	EventsManager &events = *vm->_events;
 	events.pollEventsAndWait();
 
 	if (events._leftButton) {
@@ -59,7 +61,7 @@ void Dialog::checkEvents() {
 
 		for (uint i = 0; i < _buttons.size(); ++i) {
 			if (_buttons[i]._bounds.contains(pt)) {
-				_key = _buttons[i]._c;
+				_buttonValue = _buttons[i]._value;
 				return;
 			}
 		}
@@ -67,7 +69,7 @@ void Dialog::checkEvents() {
 		Common::KeyState keyState;
 		events.getKey(keyState);
 		if (keyState.ascii >= 32 && keyState.ascii <= 127) {
-			_key = keyState.ascii;
+			_buttonValue = keyState.ascii;
 			return;
 		}
 	}
@@ -77,13 +79,13 @@ void Dialog::checkEvents() {
 /**
 * Draws the scroll in the background
 */
-void Dialog::doScroll(bool drawFlag, bool doFade) {
-	Screen &screen = *_vm->_screen;
-	EventsManager &events = *_vm->_events;
+void ButtonContainer::doScroll(XeenEngine *vm, bool drawFlag, bool doFade) {
+	Screen &screen = *vm->_screen;
+	EventsManager &events = *vm->_events;
 
-	if (_vm->getGameID() != GType_Clouds) {
+	if (vm->getGameID() != GType_Clouds) {
 		if (doFade) {
-			_vm->_screen->fadeIn(2);
+			screen.fadeIn(2);
 		}
 		return;
 	}
@@ -127,8 +129,8 @@ void Dialog::doScroll(bool drawFlag, bool doFade) {
 				marb[i / 5]->draw(screen, i % 5);
 			}
 
-			while (!_vm->shouldQuit() && _vm->_events->timeElapsed() == 0)
-				_vm->_events->pollEventsAndWait();
+			while (!vm->shouldQuit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
 
 			screen._windows[0].update();
 			if (i == 0 && doFade)
@@ -151,8 +153,8 @@ void Dialog::doScroll(bool drawFlag, bool doFade) {
 				marb[i / 5]->draw(screen, i % 5);
 			}
 
-			while (!_vm->shouldQuit() && _vm->_events->timeElapsed() == 0)
-				_vm->_events->pollEventsAndWait();
+			while (!vm->shouldQuit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
 
 			screen._windows[0].update();
 			if (i == 0 && doFade)
@@ -178,10 +180,24 @@ void Dialog::doScroll(bool drawFlag, bool doFade) {
 		delete hand[i];
 }
 
+/**
+ * Draws the buttons onto the passed surface
+ */
+void ButtonContainer::drawButtons(XSurface *surface) {
+	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
+		UIButton &btn = _buttons[btnIndex];
+		if (btn._draw) {
+			btn._sprites->draw(*surface, btnIndex * 2,
+				Common::Point(btn._bounds.left, btn._bounds.top));
+		}
+	}
+}
+
+
 /*------------------------------------------------------------------------*/
 
 void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
-	checkEvents();
+	checkEvents(_vm);
 }
 
 /*------------------------------------------------------------------------*/
@@ -197,12 +213,12 @@ void CreditsScreen::execute() {
 	EventsManager &events = *_vm->_events;
 	
 	// Handle drawing the credits screen
-	doScroll(true, false);
+	doScroll(_vm, true, false);
 	screen._windows[28].close();
 
 	screen.loadBackground("marb.raw");
 	screen._windows[0].writeString(CREDITS);
-	doScroll(false, false);
+	doScroll(_vm, false, false);
 	
 	events.setCursor(0);
 	screen._windows[0].update();
@@ -212,7 +228,7 @@ void CreditsScreen::execute() {
 	while (!events.isKeyMousePressed())
 		events.pollEventsAndWait();
 
-	doScroll(true, false);
+	doScroll(_vm, true, false);
 }
 
 } // End of namespace Xeen

@@ -57,6 +57,7 @@ enum ConditionType { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 
 #define ITEMS_COUNT 36
 #define TOTAL_CHARACTERS 30
+#define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
 
 class XeenEngine;

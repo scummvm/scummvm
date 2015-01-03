@@ -26,36 +26,39 @@
 #include "common/array.h"
 #include "common/stack.h"
 #include "common/rect.h"
-#include "xeen/xeen.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
 
-class DialogButton {
+class XeenEngine;
+
+class UIButton {
 public:
 	Common::Rect _bounds;
 	SpriteResource *_sprites;
-	char _c;
+	int _value;
 	bool _draw;
 
-	DialogButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw) :
-		_bounds(bounds), _c(c), _sprites(sprites), _draw(draw) {}
+	UIButton(const Common::Rect &bounds, int value, SpriteResource *sprites, bool draw) :
+		_bounds(bounds), _value(value), _sprites(sprites), _draw(draw) {}
 
-	DialogButton() : _c('\0'), _sprites(nullptr), _draw(false) {}
+	UIButton() : _value(0), _sprites(nullptr), _draw(false) {}
 };
 
-class Dialog {
+class ButtonContainer {
 private:
-	Common::Stack< Common::Array<DialogButton> > _savedButtons;
+	Common::Stack< Common::Array<UIButton> > _savedButtons;
 protected:
-	XeenEngine *_vm;
-	Common::Array<DialogButton> _buttons;
-	char _key;
+	Common::Array<UIButton> _buttons;
+	int _buttonValue;
 
-	void doScroll(bool drawFlag, bool doFade);
+	void doScroll(XeenEngine *vm, bool drawFlag, bool doFade);
 
-	void checkEvents();
+	void checkEvents(XeenEngine *vm);
+
+	void drawButtons(XSurface *surface);
 public:
-	Dialog(XeenEngine *vm): _vm(vm), _key('\0') {}
+	ButtonContainer() : _buttonValue(0) {}
 
 	void saveButtons();
 
@@ -63,19 +66,23 @@ public:
 
 	void restoreButtons();
 
-	void addButton(const Common::Rect &bounds, char c, SpriteResource *sprites, bool draw);
+	void addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw);
 };
 
-class SettingsBaseDialog : public Dialog {
+class SettingsBaseDialog : public ButtonContainer {
 protected:
+	XeenEngine *_vm;
+
 	virtual void showContents(SpriteResource &title1, bool mode);
 public:
-	SettingsBaseDialog(XeenEngine *vm) : Dialog(vm) {}
+	SettingsBaseDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 };
 
-class CreditsScreen: public Dialog {
+class CreditsScreen: public ButtonContainer {
 private:
-	CreditsScreen(XeenEngine *vm) : Dialog(vm) {}
+	XeenEngine *_vm;
+
+	CreditsScreen(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
 	void execute();
 public:
