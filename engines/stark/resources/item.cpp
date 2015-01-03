@@ -46,7 +46,7 @@ Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Co
 	case kItemSub8:
 		return new ItemSub78(parent, subType, index, name);
 	case kItemSub10:
-		return new Item(parent, subType, index, name); // TODO
+		return new ItemSub10(parent, subType, index, name);
 	default:
 		error("Unknown item subtype %d", subType);
 	}
@@ -226,6 +226,25 @@ void ItemSub78::printData() {
 
 	debug("reference: %s", _reference.describe().c_str());
 	debug("position: x %d, y %d", _position.x, _position.y);
+}
+
+ItemSub10::~ItemSub10() {
+}
+
+ItemSub10::ItemSub10(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+		ItemSub5610(parent, subType, index, name) {
+}
+
+void ItemSub10::readData(XRCReadStream *stream) {
+	ItemSub5610::readData(stream);
+
+	_reference = stream->readResourceReference();
+}
+
+void ItemSub10::printData() {
+	ItemSub5610::printData();
+
+	debug("reference: %s", _reference.describe().c_str());
 }
 
 } // End of namespace Stark

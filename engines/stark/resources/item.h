@@ -123,6 +123,20 @@ protected:
 	Common::Point _position;
 };
 
+class ItemSub10 : public ItemSub5610 {
+public:
+	ItemSub10(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub10();
+
+	// Resource API
+	virtual void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	ResourceReference _reference;
+};
+
 class ItemSub78 : public ItemVisual {
 public:
 	ItemSub78(Resource *parent, byte subType, uint16 index, const Common::String &name);
