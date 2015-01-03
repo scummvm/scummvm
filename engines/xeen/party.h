@@ -50,7 +50,7 @@ enum Skill { THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
 	SPOT_DOORS = 16, DANGER_SENSE = 17
 };
 
-enum ConditionType { CURSED = 0, HEARTBROKEN = 1, WEAK = 2, POISONED = 3,
+enum ConditionType { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 	DISEASED = 4, INSANE = 5, IN_LOVE = 6, DRUNK = 7, SLEEP = 8, 
 	DEPRESSED = 9, CONFUSED = 10, PARALYZED = 11
 };
@@ -61,67 +61,6 @@ enum ConditionType { CURSED = 0, HEARTBROKEN = 1, WEAK = 2, POISONED = 3,
 #define MAX_ACTIVE_PARTY 6
 
 class XeenEngine;
-
-class Party {
-public:
-	int _partyCount;
-	int _realPartyCount;
-	int _partyMembers[8];
-	Direction _mazeDirection;
-	Common::Point _mazePosition;
-	int _mazeId;
-	int _priorMazeId;
-	bool _levitateActive;
-	bool _automapOn;
-	bool _wizardEyeActive;
-	bool _clairvoyanceActive;
-	bool _walkOnWaterActive;
-	bool _blessedActive;
-	bool _powerShieldActive;
-	bool _holyBonusActive;
-	bool _heroismActive;
-	Difficulty _difficulty;
-	XeenItem _blacksmithWeapons[ITEMS_COUNT];
-	XeenItem _blacksmithArmor[ITEMS_COUNT];
-	XeenItem _blacksmithAccessories[ITEMS_COUNT];
-	XeenItem _blacksmithMisc[ITEMS_COUNT];
-	bool _cloudsEnd;
-	bool _darkSideEnd;
-	bool _worldEnd;
-	int hour_maybe;
-	int _day;
-	int _year;
-	int _minutes;
-	int _food;
-	int _lightCount;
-	int _torchCount;
-	int _fireResistence;
-	int _electricityResistence;
-	int _coldResistence;
-	int _poisonResistence;
-	int _deathCount;
-	int _winCount;
-	int _lossCount;
-	int _gold;
-	int _gems;
-	int _bankGold;
-	int _bankGems;
-	int _totalTime;
-	bool _rested;
-	bool _gameFlags[512];
-	bool _autoNotes[128];
-	bool _quests[64];
-	int _questItems[85];
-	XeenItem _blacksmithWeapons2[ITEMS_COUNT];
-	XeenItem _blacksmithArmor2[ITEMS_COUNT];
-	XeenItem _blacksmithAccessories2[ITEMS_COUNT];
-	XeenItem _blacksmithMisc2[ITEMS_COUNT];
-	bool _characterFlags[30][24];
-public:
-	Party();
-
-	void synchronize(Common::Serializer &s);
-};
 
 class AttributePair {
 public:	
@@ -211,6 +150,71 @@ public:
 	Roster() {}
 
 	void synchronize(Common::Serializer &s);
+};
+
+class Party {
+public:
+	int _partyCount;
+	int _realPartyCount;
+	int _partyMembers[8];
+	Direction _mazeDirection;
+	Common::Point _mazePosition;
+	int _mazeId;
+	int _priorMazeId;
+	bool _levitateActive;
+	bool _automapOn;
+	bool _wizardEyeActive;
+	bool _clairvoyanceActive;
+	bool _walkOnWaterActive;
+	bool _blessedActive;
+	bool _powerShieldActive;
+	bool _holyBonusActive;
+	bool _heroismActive;
+	Difficulty _difficulty;
+	XeenItem _blacksmithWeapons[ITEMS_COUNT];
+	XeenItem _blacksmithArmor[ITEMS_COUNT];
+	XeenItem _blacksmithAccessories[ITEMS_COUNT];
+	XeenItem _blacksmithMisc[ITEMS_COUNT];
+	bool _cloudsEnd;
+	bool _darkSideEnd;
+	bool _worldEnd;
+	int hour_maybe;
+	int _day;
+	int _year;
+	int _minutes;
+	int _food;
+	int _lightCount;
+	int _torchCount;
+	int _fireResistence;
+	int _electricityResistence;
+	int _coldResistence;
+	int _poisonResistence;
+	int _deathCount;
+	int _winCount;
+	int _lossCount;
+	int _gold;
+	int _gems;
+	int _bankGold;
+	int _bankGems;
+	int _totalTime;
+	bool _rested;
+	bool _gameFlags[512];
+	bool _autoNotes[128];
+	bool _quests[64];
+	int _questItems[85];
+	XeenItem _blacksmithWeapons2[ITEMS_COUNT];
+	XeenItem _blacksmithArmor2[ITEMS_COUNT];
+	XeenItem _blacksmithAccessories2[ITEMS_COUNT];
+	XeenItem _blacksmithMisc2[ITEMS_COUNT];
+	bool _characterFlags[30][24];
+public:
+	Common::Array<PlayerStruct *> _activeParty;
+public:
+	Party();
+
+	void synchronize(Common::Serializer &s);
+
+	bool checkSkill(Skill skillId);
 };
 
 } // End of namespace Xeen

@@ -40,138 +40,6 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Party::Party() {
-	_partyCount = 0;
-	_realPartyCount = 0;
-	Common::fill(&_partyMembers[0], &_partyMembers[8], 0);
-	_mazeDirection = DIR_NORTH;
-	_mazeId = _priorMazeId = 0;
-	_levitateActive = false;
-	_automapOn = false;
-	_wizardEyeActive = false;
-	_clairvoyanceActive = false;
-	_walkOnWaterActive = false;
-	_blessedActive = false;
-	_powerShieldActive = false;
-	_holyBonusActive = false;
-	_heroismActive = false;
-	_difficulty = ADVENTURER;
-	_cloudsEnd = false;
-	_darkSideEnd = false;
-	_worldEnd = false;
-	hour_maybe = 0;
-	_day = 0;
-	_year = 0;
-	_minutes = 0;
-	_food = 0;
-	_lightCount = 0;
-	_torchCount = 0;
-	_fireResistence = 0;
-	_electricityResistence = 0;
-	_coldResistence = 0;
-	_poisonResistence = 0;
-	_deathCount = 0;
-	_winCount = 0;
-	_lossCount = 0;
-	_gold = 0;
-	_gems = 0;
-	_bankGold = 0;
-	_bankGems = 0;
-	_totalTime = 0;
-	_rested = false;
-
-	Common::fill(&_gameFlags[0], &_gameFlags[512], false);
-	Common::fill(&_autoNotes[0], &_autoNotes[128], false);
-	Common::fill(&_quests[0], &_quests[64], false);
-	Common::fill(&_questItems[0], &_questItems[85], 0);
-
-	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
-}
-
-void Party::synchronize(Common::Serializer &s) {
-	byte dummy[30];
-	Common::fill(&dummy[0], &dummy[30], 0);
-
-	s.syncAsByte(_partyCount);
-	s.syncAsByte(_realPartyCount);
-	for (int i = 0; i < 8; ++i)
-		s.syncAsByte(_partyMembers[i]);
-	s.syncAsByte(_mazeDirection);
-	s.syncAsByte(_mazePosition.x);
-	s.syncAsByte(_mazePosition.y);
-	s.syncAsByte(_mazeId);
-	
-	// Game configuration flags not used in this implementation
-	s.syncBytes(dummy, 3);
-
-	s.syncAsByte(_priorMazeId);
-	s.syncAsByte(_levitateActive);
-	s.syncAsByte(_automapOn);
-	s.syncAsByte(_wizardEyeActive);
-	s.syncAsByte(_clairvoyanceActive);
-	s.syncAsByte(_walkOnWaterActive);
-	s.syncAsByte(_blessedActive);
-	s.syncAsByte(_powerShieldActive);
-	s.syncAsByte(_holyBonusActive);
-	s.syncAsByte(_heroismActive);
-	s.syncAsByte(_difficulty);
-
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithWeapons[i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithArmor[i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithAccessories[i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithMisc[i].synchronize(s);
-
-	s.syncAsUint16LE(_cloudsEnd);
-	s.syncAsUint16LE(_darkSideEnd);
-	s.syncAsUint16LE(_worldEnd);
-	s.syncAsUint16LE(hour_maybe);
-	s.syncAsUint16LE(_day);
-	s.syncAsUint16LE(_year);
-	s.syncAsUint16LE(_minutes);
-	s.syncAsUint16LE(_food);
-	s.syncAsUint16LE(_lightCount);
-	s.syncAsUint16LE(_torchCount);
-	s.syncAsUint16LE(_fireResistence);
-	s.syncAsUint16LE(_electricityResistence);
-	s.syncAsUint16LE(_coldResistence);
-	s.syncAsUint16LE(_poisonResistence);
-	s.syncAsUint16LE(_deathCount);
-	s.syncAsUint16LE(_winCount);
-	s.syncAsUint16LE(_lossCount);
-	s.syncAsUint32LE(_gold);
-	s.syncAsUint32LE(_gems);
-	s.syncAsUint32LE(_bankGold);
-	s.syncAsUint32LE(_bankGems);
-	s.syncAsUint32LE(_totalTime);
-	s.syncAsByte(_rested);
-	SavesManager::syncBitFlags(s, &_gameFlags[0], &_gameFlags[512]);
-	SavesManager::syncBitFlags(s, &_autoNotes[0], &_autoNotes[128]);
-	SavesManager::syncBitFlags(s, &_quests[0], &_quests[64]);
-	
-	for (int i = 0; i < 85; ++i)
-		s.syncAsByte(_questItems[i]);
-
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithWeapons2[i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithArmor2[i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithAccessories2[i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithMisc2[i].synchronize(s);
-	
-	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		SavesManager::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
-	s.syncBytes(&dummy[0], 30);
-}
-
-/*------------------------------------------------------------------------*/
-
 Conditions::Conditions() {
 	_cursed = 0;
 	_heartBroken = 0;
@@ -313,6 +181,165 @@ void Roster::synchronize(Common::Serializer &s) {
 
 	for (uint i = 0; i < 30; ++i)
 		(*this)[i].synchronize(s);
+}
+
+/*------------------------------------------------------------------------*/
+
+Party::Party() {
+	_partyCount = 0;
+	_realPartyCount = 0;
+	Common::fill(&_partyMembers[0], &_partyMembers[8], 0);
+	_mazeDirection = DIR_NORTH;
+	_mazeId = _priorMazeId = 0;
+	_levitateActive = false;
+	_automapOn = false;
+	_wizardEyeActive = false;
+	_clairvoyanceActive = false;
+	_walkOnWaterActive = false;
+	_blessedActive = false;
+	_powerShieldActive = false;
+	_holyBonusActive = false;
+	_heroismActive = false;
+	_difficulty = ADVENTURER;
+	_cloudsEnd = false;
+	_darkSideEnd = false;
+	_worldEnd = false;
+	hour_maybe = 0;
+	_day = 0;
+	_year = 0;
+	_minutes = 0;
+	_food = 0;
+	_lightCount = 0;
+	_torchCount = 0;
+	_fireResistence = 0;
+	_electricityResistence = 0;
+	_coldResistence = 0;
+	_poisonResistence = 0;
+	_deathCount = 0;
+	_winCount = 0;
+	_lossCount = 0;
+	_gold = 0;
+	_gems = 0;
+	_bankGold = 0;
+	_bankGems = 0;
+	_totalTime = 0;
+	_rested = false;
+
+	Common::fill(&_gameFlags[0], &_gameFlags[512], false);
+	Common::fill(&_autoNotes[0], &_autoNotes[128], false);
+	Common::fill(&_quests[0], &_quests[64], false);
+	Common::fill(&_questItems[0], &_questItems[85], 0);
+
+	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
+		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
+}
+
+void Party::synchronize(Common::Serializer &s) {
+	byte dummy[30];
+	Common::fill(&dummy[0], &dummy[30], 0);
+
+	s.syncAsByte(_partyCount);
+	s.syncAsByte(_realPartyCount);
+	for (int i = 0; i < 8; ++i)
+		s.syncAsByte(_partyMembers[i]);
+	s.syncAsByte(_mazeDirection);
+	s.syncAsByte(_mazePosition.x);
+	s.syncAsByte(_mazePosition.y);
+	s.syncAsByte(_mazeId);
+
+	// Game configuration flags not used in this implementation
+	s.syncBytes(dummy, 3);
+
+	s.syncAsByte(_priorMazeId);
+	s.syncAsByte(_levitateActive);
+	s.syncAsByte(_automapOn);
+	s.syncAsByte(_wizardEyeActive);
+	s.syncAsByte(_clairvoyanceActive);
+	s.syncAsByte(_walkOnWaterActive);
+	s.syncAsByte(_blessedActive);
+	s.syncAsByte(_powerShieldActive);
+	s.syncAsByte(_holyBonusActive);
+	s.syncAsByte(_heroismActive);
+	s.syncAsByte(_difficulty);
+
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithWeapons[i].synchronize(s);
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithArmor[i].synchronize(s);
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithAccessories[i].synchronize(s);
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithMisc[i].synchronize(s);
+
+	s.syncAsUint16LE(_cloudsEnd);
+	s.syncAsUint16LE(_darkSideEnd);
+	s.syncAsUint16LE(_worldEnd);
+	s.syncAsUint16LE(hour_maybe);
+	s.syncAsUint16LE(_day);
+	s.syncAsUint16LE(_year);
+	s.syncAsUint16LE(_minutes);
+	s.syncAsUint16LE(_food);
+	s.syncAsUint16LE(_lightCount);
+	s.syncAsUint16LE(_torchCount);
+	s.syncAsUint16LE(_fireResistence);
+	s.syncAsUint16LE(_electricityResistence);
+	s.syncAsUint16LE(_coldResistence);
+	s.syncAsUint16LE(_poisonResistence);
+	s.syncAsUint16LE(_deathCount);
+	s.syncAsUint16LE(_winCount);
+	s.syncAsUint16LE(_lossCount);
+	s.syncAsUint32LE(_gold);
+	s.syncAsUint32LE(_gems);
+	s.syncAsUint32LE(_bankGold);
+	s.syncAsUint32LE(_bankGems);
+	s.syncAsUint32LE(_totalTime);
+	s.syncAsByte(_rested);
+	SavesManager::syncBitFlags(s, &_gameFlags[0], &_gameFlags[512]);
+	SavesManager::syncBitFlags(s, &_autoNotes[0], &_autoNotes[128]);
+	SavesManager::syncBitFlags(s, &_quests[0], &_quests[64]);
+
+	for (int i = 0; i < 85; ++i)
+		s.syncAsByte(_questItems[i]);
+
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithWeapons2[i].synchronize(s);
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithArmor2[i].synchronize(s);
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithAccessories2[i].synchronize(s);
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+		_blacksmithMisc2[i].synchronize(s);
+
+	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
+		SavesManager::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
+	s.syncBytes(&dummy[0], 30);
+}
+
+bool Party::checkSkill(Skill skillId) {
+	uint total = 0;
+	for (uint i = 0; i < _activeParty.size(); ++i) {
+		if (_activeParty[i]->_skills[skillId]) {
+			++total;
+
+			switch (skillId) {
+			case MOUNTAINEER:
+			case PATHFINDER:
+				// At least two characters need skill for check to return true
+				if (total == 2)
+					return true;
+				break;
+			case CRUSADER:
+			case SWIMMING:
+				// Entire party must have skill for check to return true
+				if (total == _activeParty.size())
+					return true;
+				break;
+			default:
+				// All other skills only need to have a single player having it
+				return true;
+			}
+		}
+	}
 }
 
 } // End of namespace Xeen

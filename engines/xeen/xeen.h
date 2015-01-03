@@ -108,8 +108,6 @@ private:
 	void setupGameBackground();
 
 	void assembleBorder();
-
-	bool checkSkill(Skill skillId);
 protected:
 	/**
 	* Play the game
@@ -143,7 +141,6 @@ public:
 	Common::SeekableReadStream *_eventData;
 	Roster _roster;
 	Party _party;
-	PlayerStruct *_activeRoster[MAX_ACTIVE_PARTY];
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

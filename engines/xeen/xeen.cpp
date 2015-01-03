@@ -41,7 +41,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_screen = nullptr;
 	_sound = nullptr;
 	_eventData = nullptr;
-	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
 	Common::fill(&_partyFaces[0], &_partyFaces[MAX_ACTIVE_PARTY], nullptr);
 	_isEarlyGame = false;
 	_loadDarkSide = 1;
@@ -265,9 +264,9 @@ void XeenEngine::setupUI(bool soundPlayed) {
 	_spellFxSprites.load("spellfx.icn");
 
 	// Get mappings to the active characters in the party
-	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
+	_party._activeParty.resize(_party._partyCount);
 	for (int i = 0; i < _party._partyCount; ++i) {
-		_activeRoster[i] = &_roster[_party._partyMembers[i]];
+		_party._activeParty[i] = &_roster[_party._partyMembers[i]];
 	}
 
 	_isEarlyGame = _party._minutes >= 300;
@@ -342,45 +341,18 @@ void XeenEngine::assembleBorder() {
 
 	// Draw UI element to indicate whether can spot hidden doors
 	_borderSprites.draw(*_screen,
-		(_spotDoorsAllowed && checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
+		(_spotDoorsAllowed && _party.checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
 		Common::Point(194, 91));
 	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can sense danger
 	_borderSprites.draw(*_screen,
-		(_dangerSenseAllowed && checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
+		(_dangerSenseAllowed && _party.checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
 		Common::Point(107, 9));
 	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
 
 
 	// TODO
-}
-
-bool XeenEngine::checkSkill(Skill skillId) {
-	int total = 0;
-	for (int i = 0; i < _party._partyCount; ++i) {
-		if (_activeRoster[i]->_skills[skillId]) {
-			++total;
-
-			switch (skillId) {
-			case MOUNTAINEER:
-			case PATHFINDER:
-				// At least two characters need skill for check to return true
-				if (total == 2)
-					return true;
-				break;
-			case CRUSADER:
-			case SWIMMING:
-				// Entire party must have skill for check to return true
-				if (total == _party._partyCount)
-					return true;
-				break;
-			default:
-				// All other skills only need to have a single player having it
-				return true;
-			}
-		}
-	}
 }
 
 } // End of namespace Xeen
