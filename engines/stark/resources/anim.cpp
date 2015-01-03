@@ -226,7 +226,51 @@ AnimSub4::~AnimSub4() {
 }
 
 AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Anim(parent, subType, index, name) {
+				Anim(parent, subType, index, name),
+				_castsShadow(true),
+				_field_48(0),
+				_field_4C(100),
+				_field_6C(1) {
+}
+
+void AnimSub4::readData(XRCReadStream *stream) {
+	Anim::readData(stream);
+
+	_animFilename = stream->readString();
+	stream->readString(); // Skipped in the original
+	stream->readString(); // Skipped in the original
+	stream->readString(); // Skipped in the original
+
+	_field_48 = stream->readUint32LE();
+	_field_4C = stream->readUint32LE();
+
+	  if (_field_4C < 1) {
+		_field_4C = 100;
+	}
+
+	if (stream->isDataLeft()) {
+		_castsShadow = stream->readBool();
+	} else {
+		_castsShadow = true;
+	}
+
+	if (stream->isDataLeft()) {
+		_field_6C = stream->readUint32LE();
+	} else {
+		_field_6C = 1;
+	}
+
+	_archiveName = stream->getArchiveName();
+}
+
+void AnimSub4::printData() {
+	Anim::printData();
+
+	debug("filename: %s", _animFilename.c_str());
+	debug("field_3C: %d", _castsShadow);
+	debug("field_48: %d", _field_48);
+	debug("field_4C: %d", _field_4C);
+	debug("field_6C: %d", _field_6C);
 }
 
 } // End of namespace Stark

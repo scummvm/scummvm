@@ -143,6 +143,19 @@ class AnimSub4 : public Anim {
 public:
 	AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimSub4();
+
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	bool _castsShadow;
+	Common::String _archiveName;
+	Common::String _animFilename;
+	uint32 _field_48;
+	uint32 _field_4C;
+	uint32 _field_6C;
 };
 
 } // End of namespace Stark
