@@ -44,6 +44,7 @@ private:
 	bool Cmd_DumpArchive(int argc, const char **argv);
 	bool Cmd_DumpResources(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);
+	bool Cmd_ChangeLocation(int argc, const char **argv);
 };
 
 } // End of namespace Stark

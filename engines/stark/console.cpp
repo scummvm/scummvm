@@ -21,12 +21,14 @@
  */
 
 #include "engines/stark/console.h"
+
 #include "engines/stark/archive.h"
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/resources/resource.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"
-#include "engines/stark/archiveloader.h"
+#include "engines/stark/resourceprovider.h"
 
 #include "common/file.h"
 
@@ -36,6 +38,7 @@ Console::Console(StarkEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
 	registerCmd("dumpResources",		WRAP_METHOD(Console, Cmd_DumpResources));
 	registerCmd("listLocations",		WRAP_METHOD(Console, Cmd_ListLocations));
+	registerCmd("changeLocation",		WRAP_METHOD(Console, Cmd_ChangeLocation));
 }
 
 Console::~Console() {
@@ -147,6 +150,23 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	delete archiveLoader;
 
 	return true;
+}
+
+bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Change the current location.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("changeLocation [level] [location]\n");
+		return true;
+	}
+
+	uint levelIndex = strtol(argv[1] , nullptr, 16);
+	uint locationIndex = strtol(argv[2] , nullptr, 16);
+
+	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
+	resourceProvider->requestLocationChange(levelIndex, locationIndex);
+
+	return false;
 }
 
 } // End of namespace Stark
