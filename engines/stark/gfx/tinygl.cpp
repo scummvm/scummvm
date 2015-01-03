@@ -32,6 +32,9 @@
 //#include "engines/stark/font.h"
 #include "engines/stark/gfx/tinygl.h"
 
+#include "math/glmath.h"
+#include "math/matrix4.h"
+
 namespace Stark {
 
 TinyGLGfxDriver::TinyGLGfxDriver() {
@@ -75,6 +78,23 @@ void TinyGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	return buffer;
 	*/
+}
+
+void TinyGLGfxDriver::setupPerspective(float fov, float nearClipPlane, float farClipPlane) {
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+
+	Math::Matrix4 m = Math::makePerspectiveMatrix(fov, _screenWidth / _screenHeight, nearClipPlane, farClipPlane);
+	tglMultMatrixf(m.getData());
+}
+
+void TinyGLGfxDriver::setupCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt) {
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(position, lookAt, Math::Vector3d(0.0, 0.0, 1.0));
+	tglMultMatrixf(lookMatrix.getData());
+	tglTranslatef(-position.x(), -position.y(), -position.z());
 }
 
 void TinyGLGfxDriver::clearScreen() {

@@ -29,7 +29,7 @@
 //#include "engines/stark/color.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
-//#include "math/vector3d.h"
+#include "math/vector3d.h"
 
 namespace Stark {
 
@@ -42,6 +42,9 @@ public:
 	virtual const char *getVideoDeviceName() = 0;
 
 	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
+
+	virtual void setupPerspective(float fov, float nearClipPlane, float farClipPlane) = 0;
+	virtual void setupCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt) = 0;
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;

@@ -97,7 +97,7 @@ protected:
 	void printData() override;
 
 	uint32 _field_54;
-	uint32 _field_58;
+	uint32 _maxShadowLength;
 	float _nearClipPlane;
 	float _farClipPlane;
 

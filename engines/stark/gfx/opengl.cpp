@@ -26,7 +26,11 @@
 #include "engines/stark/gfx/opengl.h"
 
 #include "common/system.h"
+
 #include "graphics/pixelbuffer.h"
+
+#include "math/glmath.h"
+#include "math/matrix4.h"
 
 #ifdef USE_OPENGL
 
@@ -67,6 +71,23 @@ void OpenGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 	*/
 }
 
+void OpenGLGfxDriver::setupPerspective(float fov, float nearClipPlane, float farClipPlane) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	Math::Matrix4 m = Math::makePerspectiveMatrix(fov, _screenWidth / _screenHeight, nearClipPlane, farClipPlane);
+	glMultMatrixf(m.getData());
+}
+
+void OpenGLGfxDriver::setupCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt) {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(position, lookAt, Math::Vector3d(0.0, 0.0, 1.0));
+	glMultMatrixf(lookMatrix.getData());
+	glTranslatef(-position.x(), -position.y(), -position.z());
+}
+
 void OpenGLGfxDriver::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -79,6 +100,8 @@ void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 	// Draw the whole surface by default
 	if (rect.isEmpty())
 		rect = Common::Rect(surface->w, surface->h);
+
+	dest.y += 36; // 36px is the height of the top black border
 
 	start2DMode();
 

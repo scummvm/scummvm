@@ -38,8 +38,15 @@ class XRCReadStream;
 
 class Camera : public Resource {
 public:
+	static const ResourceType::Type TYPE = ResourceType::kCamera;
+
 	Camera(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Camera();
+
+	// Resource API
+	void onEnterLocation() override;
+
+	void setClipPlanes(float near, float far);
 
 protected:
 	void readData(XRCReadStream *stream) override;
@@ -51,6 +58,9 @@ protected:
 	float _fov;
 	Common::Rect _viewport;
 	Math::Vector3d _v4;
+
+	float _nearClipPlane;
+	float _farClipPlane;
 };
 
 } // End of namespace Stark

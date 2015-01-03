@@ -94,6 +94,7 @@ Common::Error StarkEngine::run() {
 	_global = new Global();
 	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
 	_randomSource = new Common::RandomSource("stark");
+	_scene = new Scene(_gfx);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -101,6 +102,7 @@ Common::Error StarkEngine::run() {
 	services.resourceProvider = _resourceProvider;
 	services.global = _global;
 	services.randomSource = _randomSource;
+	services.scene = _scene;
 
 	// Load global resources
 	_resourceProvider->initGlobal();
@@ -117,9 +119,6 @@ Common::Error StarkEngine::run() {
 }
 
 void StarkEngine::mainLoop() {
-	// Load the initial scene
-	_scene = new Scene(_gfx);
-
 	while (!shouldQuit()) {
 		// Process events
 		Common::Event e;

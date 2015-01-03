@@ -22,6 +22,7 @@
 
 #include "engines/stark/resources/layer.h"
 
+#include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/xrcreader.h"
 
@@ -100,7 +101,7 @@ Layer3D::~Layer3D() {
 Layer3D::Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Layer(parent, subType, index, name),
 		_field_54(1),
-		_field_58(75),
+		_maxShadowLength(75),
 		_nearClipPlane(100.0),
 		_farClipPlane(64000.0),
 		_backgroundItem(nullptr) {
@@ -113,7 +114,7 @@ void Layer3D::readData(XRCReadStream *stream) {
 	_nearClipPlane = stream->readFloat();
 	_farClipPlane = stream->readFloat();
 	if (stream->isDataLeft()) {
-		_field_58 = stream->readUint32LE();
+		_maxShadowLength = stream->readUint32LE();
 	}
 }
 
@@ -122,6 +123,9 @@ void Layer3D::onAllLoaded() {
 
 	_items = listChildren<Item>();
 	_backgroundItem = findChildWithSubtype<Item>(Item::kItemSub8);
+
+	Camera *camera = findChild<Camera>();
+	camera->setClipPlanes(_nearClipPlane, _farClipPlane);
 }
 
 RenderEntry *Layer3D::getBackgroundRenderEntry() {
@@ -164,7 +168,7 @@ void Layer3D::printData() {
 	Layer::printData();
 
 	debug("field_54: %d", _field_54);
-	debug("field_58: %d", _field_58);
+	debug("maxShadowLength: %d", _maxShadowLength);
 	debug("nearClipPlane: %f", _nearClipPlane);
 	debug("farClipPlane: %f", _farClipPlane);
 }

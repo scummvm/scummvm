@@ -21,29 +21,24 @@
  */
 
 #include "engines/stark/scene.h"
-#include "engines/stark/archive.h"
-#include "engines/stark/xmg.h"
 
-#include "engines/stark/visual/actor.h"
+#include "engines/stark/archive.h"
+#include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/visual/actor.h"
+#include "engines/stark/xmg.h"
 
 namespace Stark {
 
-Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
+Scene::Scene(GfxDriver *gfx) :
+		_gfx(gfx),
+		_fov(45.0),
+		_nearClipPlane(100.0),
+		_farClipPlane(64000.0) {
 	// Open the scene archive
 	XARCArchive xarc;
 	if (!xarc.open("45/00/00.xarc"))
 		warning("couldn't open archive");
-
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_layercenter.xmg", 0, 0));
-//	//_elements.push_back(SceneElementXMG::load(&xarc, "vista-scapehaze-more-fog3-final.xmg", 0, 0));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop01_pillow.xmg", 384, 267));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop02_pillow.xmg", 324, 299));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop03_pillow.xmg", 141, 312));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop4_armrest.xmg", 171, 184));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop5_chair.xmg", 170, 164));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop6_wall.xmg", 0, 0));
-//	_elements.push_back(SceneElementXMG::load(&xarc, "house_prop8_pillar.xmg", 534, 0));
 
 	VisualActor *actor = VisualActor::load(&xarc, "oldapril.cir");
 	actor->setAnim(&xarc, "oldapril_idle.ani");
@@ -58,12 +53,24 @@ Scene::Scene(GfxDriver *gfx) : _gfx(gfx) {
 Scene::~Scene() {
 }
 
+void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
+		float fov, Common::Rect viewport, float nearClipPlane, float farClipPlane) {
+	_cameraPosition = position;
+	_cameraLookAt = lookAt;
+	_fov = fov;
+	_viewport = viewport;
+	_nearClipPlane = nearClipPlane;
+	_farClipPlane = farClipPlane;
+}
+
 void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
 	RenderEntryArray allElements;
 	allElements.push_back(renderEntries);
 	allElements.push_back(_elements);
 
 	// setup cam
+	_gfx->setupPerspective(_fov, _nearClipPlane, _farClipPlane);
+	_gfx->setupCamera(_cameraPosition, _cameraPosition + _cameraLookAt);
 
 	// Draw bg
 

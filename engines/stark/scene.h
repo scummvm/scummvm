@@ -24,7 +24,11 @@
 #define STARK_SCENE_H
 
 #include "common/array.h"
+#include "common/rect.h"
 
+#include "math/vector3d.h"
+
+#include "engines/stark/actor.h"
 #include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
@@ -47,9 +51,20 @@ public:
 	 */
 	void render(RenderEntryArray renderEntries, uint32 delta);
 
+	void initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
+			float fov, Common::Rect viewport, float nearClipPlane, float farClipPlane);
+
 private:
 	GfxDriver *_gfx;
 	RenderEntryArray _elements;
+
+	Math::Vector3d _cameraPosition;
+	Math::Vector3d _cameraLookAt;
+	float _fov;
+	Common::Rect _viewport;
+	float _nearClipPlane;
+	float _farClipPlane;
+
 };
 
 } // End of namespace Stark

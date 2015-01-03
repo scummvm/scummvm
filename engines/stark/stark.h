@@ -61,12 +61,14 @@ public:
 		archiveLoader = nullptr;
 		resourceProvider = nullptr;
 		randomSource = nullptr;
+		scene = nullptr;
 	}
 
 	Global *global;
 	ArchiveLoader *archiveLoader;
 	ResourceProvider *resourceProvider;
 	Common::RandomSource *randomSource;
+	Scene *scene;
 };
 
 class StarkEngine : public Engine {

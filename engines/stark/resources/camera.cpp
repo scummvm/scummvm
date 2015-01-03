@@ -21,8 +21,11 @@
  */
 
 #include "engines/stark/resources/camera.h"
-#include "engines/stark/xrcreader.h"
+
 #include "engines/stark/debug.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/stark.h"
+#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 
@@ -32,8 +35,15 @@ Camera::~Camera() {
 Camera::Camera(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
 		_f1(0),
-		_fov(0) {
+		_fov(45),
+		_nearClipPlane(100.0),
+		_farClipPlane(64000.0) {
 	_type = ResourceType::kCamera;
+}
+
+void Camera::setClipPlanes(float near, float far) {
+	_nearClipPlane = near;
+	_farClipPlane = far;
 }
 
 void Camera::readData(XRCReadStream *stream) {
@@ -43,6 +53,13 @@ void Camera::readData(XRCReadStream *stream) {
 	_fov = stream->readFloat();
 	_viewport = stream->readRect();
 	_v4 = stream->readVector3();
+}
+
+void Camera::onEnterLocation() {
+	Resource::onEnterLocation();
+
+	Scene *scene = StarkServices::instance().scene;
+	scene->initCamera(_position, _lookAt, _fov, _viewport, _nearClipPlane, _farClipPlane);
 }
 
 void Camera::printData() {
