@@ -186,6 +186,15 @@ void ItemSub78::readData(XRCReadStream *stream) {
 	_position = stream->readPoint();
 }
 
+RenderEntry *ItemSub78::getRenderEntry() {
+	Visual *visual = getVisual();
+
+	_renderEntry->setVisual(visual);
+	_renderEntry->setPosition(_position);
+
+	return _renderEntry;
+}
+
 void ItemSub78::printData() {
 	ItemVisual::printData();
 

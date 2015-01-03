@@ -110,6 +110,8 @@ void OpenGLGfxDriver::start2DMode() {
 	//glBlendEquation(GL_FUNC_ADD); // It's the default
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	glDepthMask(GL_FALSE);
+
 	// Flip the Y component
 	glPixelZoom(1.0f, -1.0f);
 
@@ -120,6 +122,8 @@ void OpenGLGfxDriver::start2DMode() {
 void OpenGLGfxDriver::end2DMode() {
 	// Disable alpha blending
 	glDisable(GL_BLEND);
+
+	glDepthMask(GL_TRUE);
 
 	// Pop the identity Projection matrix
 	glMatrixMode(GL_PROJECTION);

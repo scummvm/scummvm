@@ -52,6 +52,7 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 
+	virtual RenderEntry *getBackgroundRenderEntry() = 0;
 	virtual RenderEntryArray listRenderEntries() = 0;
 
 protected:
@@ -70,6 +71,7 @@ public:
 	void readData(XRCReadStream *stream) override;
 
 	// Layer API
+	RenderEntry *getBackgroundRenderEntry() override;
 	RenderEntryArray listRenderEntries() override;
 
 protected:
@@ -88,6 +90,7 @@ public:
 	void onAllLoaded() override;
 
 	// Layer API
+	RenderEntry *getBackgroundRenderEntry() override;
 	RenderEntryArray listRenderEntries() override;
 
 protected:
@@ -98,6 +101,7 @@ protected:
 	float _nearClipPlane;
 	float _farClipPlane;
 
+	Item *_backgroundItem;
 	Common::Array<Item *> _items;
 };
 

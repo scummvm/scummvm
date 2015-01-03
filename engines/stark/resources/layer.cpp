@@ -80,6 +80,11 @@ void Layer2D::readData(XRCReadStream *stream) {
 	_field_50 = stream->readUint32LE();
 }
 
+RenderEntry *Layer2D::getBackgroundRenderEntry() {
+	// TODO
+	return nullptr;
+}
+
 RenderEntryArray Layer2D::listRenderEntries() {
 	// TODO
 	return RenderEntryArray();
@@ -97,7 +102,8 @@ Layer3D::Layer3D(Resource *parent, byte subType, uint16 index, const Common::Str
 		_field_54(1),
 		_field_58(75),
 		_nearClipPlane(100.0),
-		_farClipPlane(64000.0) {
+		_farClipPlane(64000.0),
+		_backgroundItem(nullptr) {
 }
 
 void Layer3D::readData(XRCReadStream *stream) {
@@ -115,11 +121,27 @@ void Layer3D::onAllLoaded() {
 	Layer::onAllLoaded();
 
 	_items = listChildren<Item>();
+	_backgroundItem = findChildWithSubtype<Item>(Item::kItemSub8);
+}
+
+RenderEntry *Layer3D::getBackgroundRenderEntry() {
+	if (!_backgroundItem) {
+		return nullptr;
+	}
+
+	return _backgroundItem->getRenderEntry();
 }
 
 RenderEntryArray Layer3D::listRenderEntries() {
 	RenderEntryArray renderEntries;
 
+	// Add the background render entry to the list first
+	RenderEntry *backgroundRenderEntry = getBackgroundRenderEntry();
+	if (backgroundRenderEntry) {
+		renderEntries.push_back(backgroundRenderEntry);
+	}
+
+	// Add the other items
 	for (uint i = 0; i < _items.size(); i++) {
 		Item *item = _items[i];
 

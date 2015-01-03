@@ -110,7 +110,7 @@ public:
 	virtual void readData(XRCReadStream *stream) override;
 
 	// Item API
-	virtual RenderEntry *getRenderEntry() override;
+	RenderEntry *getRenderEntry() override;
 
 protected:
 	void printData() override;
@@ -124,7 +124,11 @@ public:
 	ItemSub78(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub78();
 
+	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
+
+	// Item API
+	RenderEntry *getRenderEntry() override;
 
 protected:
 	void printData() override;
