@@ -232,4 +232,6 @@ const byte TEXT_COLORS[40][4] = {
 	{ 0x00, 0xDB, 0xDB, 0xDB },
 };
 
+const char *DIRECTION_TEXT[4] = { "NORTH", "EAST", "SOUTH", "WEST" };
+
 } // End of namespace Xeen

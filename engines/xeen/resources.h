@@ -36,6 +36,8 @@ extern const byte SYMBOLS[20][64];
 
 extern const byte TEXT_COLORS[40][4];
 
+extern const char *DIRECTION_TEXT[4];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

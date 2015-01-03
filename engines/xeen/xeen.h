@@ -90,12 +90,23 @@ private:
 	SpriteResource _globalSprites;
 	SpriteResource _borderSprites;
 	SpriteResource _spellFxSprites;
+	SpriteResource _fecpSprites;
+	SpriteResource _blessSprites;
 	bool _buttonsLoaded;
 	int _batUIFrame;
 	int _spotDoorsUIFrame;
 	bool _spotDoorsAllowed;
 	int _dangerSenseUIFrame;
 	bool _dangerSenseAllowed;
+	int _face1UIFrame;
+	bool _face1State;
+	int _face2UIFrame;
+	bool _face2State;
+	int _blessedUIFrame;
+	int _powerShieldUIFrame;
+	int _holyBonusUIFrame;
+	int _heroismUIFrame;
+	bool _noDirectionSense;
 
 	void showIntro();
 
@@ -107,7 +118,7 @@ private:
 
 	void setupGameBackground();
 
-	void assembleBorder();
+	void assembleGameBorder();
 protected:
 	/**
 	* Play the game

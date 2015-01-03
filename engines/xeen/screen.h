@@ -50,9 +50,10 @@ private:
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
-	bool _enabled;
 
 	void open2();
+public:
+	bool _enabled;
 public:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:

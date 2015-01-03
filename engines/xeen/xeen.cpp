@@ -30,6 +30,7 @@
 #include "xeen/xeen.h"
 #include "xeen/dialogs_options.h"
 #include "xeen/files.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
@@ -50,6 +51,15 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_spotDoorsAllowed = false;
 	_dangerSenseUIFrame = 0;
 	_dangerSenseAllowed = false;
+	_face1UIFrame = 0;
+	_face1State = 0;
+	_face2UIFrame = 0;
+	_face2State = 0;
+	_blessedUIFrame = 0;
+	_powerShieldUIFrame = 0;
+	_holyBonusUIFrame = 0;
+	_heroismUIFrame = 0;
+	_noDirectionSense = false;
 }
 
 XeenEngine::~XeenEngine() {
@@ -262,6 +272,8 @@ void XeenEngine::setupUI(bool soundPlayed) {
 	_globalSprites.load("global.icn");
 	_borderSprites.load("border.icn");
 	_spellFxSprites.load("spellfx.icn");
+	_fecpSprites.load("fecp.brd");
+	_blessSprites.load("bless.icn");
 
 	// Get mappings to the active characters in the party
 	_party._activeParty.resize(_party._partyCount);
@@ -326,10 +338,10 @@ void XeenEngine::loadCharIcons(int numChars) {
 
 void XeenEngine::setupGameBackground() {
 	_screen->loadBackground("back.raw");
-	assembleBorder();
+	assembleGameBorder();
 }
 
-void XeenEngine::assembleBorder() {
+void XeenEngine::assembleGameBorder() {
 	Window &gameWindow = _screen->_windows[28];
 
 	// Draw the outer frame
@@ -351,8 +363,89 @@ void XeenEngine::assembleBorder() {
 		Common::Point(107, 9));
 	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
 
+	// Handle the face UI elements for indicating clairvoyance status
+	_face1UIFrame = (_face1UIFrame + 1) % 4;
+	if (_face1State == 0)
+		_face1UIFrame += 4;
+	else if (_face1State == 2)
+		_face1UIFrame = 0;
 
-	// TODO
+	_face2UIFrame = (_face2UIFrame + 1) % 4 + 12;
+	if (_face2State == 0)
+		_face2UIFrame += 252;
+	else if (_face2State == 2)
+		_face2UIFrame = 0;
+
+	if (!_party._clairvoyanceActive) {
+		_face1UIFrame = 0;
+		_face2UIFrame = 8;
+	}
+
+	_borderSprites.draw(*_screen, _face1UIFrame, Common::Point(0, 32));
+	_borderSprites.draw(*_screen,
+		_screen->_windows[10]._enabled || _screen->_windows[2]._enabled ?
+		52 : _face2UIFrame,
+		Common::Point(215, 32));
+
+	// Draw resistence indicators
+	if (!_screen->_windows[10]._enabled && !_screen->_windows[2]._enabled
+			&& _screen->_windows[38]._enabled) {
+		_fecpSprites.draw(*_screen, _party._fireResistence ? 1 : 0,
+			Common::Point(2, 2));
+		_fecpSprites.draw(*_screen, _party._electricityResistence ? 3 : 2,
+			Common::Point(219, 2));
+		_fecpSprites.draw(*_screen, _party._coldResistence ? 5 : 4,
+			Common::Point(2, 134));
+		_fecpSprites.draw(*_screen, _party._poisonResistence ? 7 : 6,
+			Common::Point(219, 134));
+	} else {
+		_fecpSprites.draw(*_screen, _party._fireResistence ? 9 : 8,
+			Common::Point(8, 8));
+		_fecpSprites.draw(*_screen, _party._electricityResistence ? 10 : 11,
+			Common::Point(219, 8));
+		_fecpSprites.draw(*_screen, _party._coldResistence ? 12 : 13,
+			Common::Point(8, 134));
+		_fecpSprites.draw(*_screen, _party._poisonResistence ? 14 : 15,
+			Common::Point(219, 134));
+	}
+
+	// Draw UI element for blessed
+	_blessSprites.draw(*_screen, 16, Common::Point(33, 137));
+	if (_party._blessedActive) {
+		_blessedUIFrame = (_blessedUIFrame + 1) % 4;
+		_blessSprites.draw(*_screen, _blessedUIFrame, Common::Point(33, 137));
+	}
+
+	// Draw UI element for power shield
+	if (_party._powerShieldActive) {
+		_powerShieldUIFrame = (_powerShieldUIFrame + 1) % 4;
+		_blessSprites.draw(*_screen, _powerShieldUIFrame + 4,
+			Common::Point(55, 137));
+	}
+
+	// Draw UI element for holy bonus
+	if (_party._holyBonusActive) {
+		_holyBonusUIFrame = (_holyBonusUIFrame + 1) % 4;
+		_blessSprites.draw(*_screen, _holyBonusUIFrame + 8, Common::Point(160, 137));
+	}
+
+	// Draw UI element for heroism
+	if (_party._heroismActive) {
+		_heroismUIFrame = (_heroismUIFrame + 1) % 4;
+		_blessSprites.draw(*_screen, _heroismUIFrame + 12, Common::Point(182, 137));
+	}
+
+	// Draw direction character if direction sense is active
+	if (_party.checkSkill(DIRECTION_SENSE) && !_noDirectionSense) {
+		const char *dirText = DIRECTION_TEXT[_party._mazeDirection];
+		Common::String msg = Common::String::format(
+			"\002""08\003""c\013""139\011""116%c\014""d\001", *dirText);
+		_screen->_windows[0].writeString(msg);
+	}
+
+	// Draw view frame
+	if (_screen->_windows[12]._enabled)
+		_screen->_windows[12].frame();
 }
 
 } // End of namespace Xeen
