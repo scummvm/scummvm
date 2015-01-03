@@ -55,7 +55,9 @@ public:
 
 	void draw(XSurface &dest, int frame) const;
 
-	int size() const;
+	int size() const { return _index.size(); }
+
+	bool empty() const { return _index.size() == 0; }
 };
 
 } // End of namespace Xeen

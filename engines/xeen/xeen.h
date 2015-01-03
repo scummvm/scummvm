@@ -87,7 +87,15 @@ private:
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	SpriteResource _dseFace;
+	SpriteResource _globalSprites;
+	SpriteResource _borderSprites;
+	SpriteResource _spellFxSprites;
 	bool _buttonsLoaded;
+	int _batUIFrame;
+	int _spotDoorsUIFrame;
+	bool _spotDoorsAllowed;
+	int _dangerSenseUIFrame;
+	bool _dangerSenseAllowed;
 
 	void showIntro();
 
@@ -98,6 +106,10 @@ private:
 	void loadCharIcons(int numChars);
 
 	void setupGameBackground();
+
+	void assembleBorder();
+
+	bool checkSkill(Skill skillId);
 protected:
 	/**
 	* Play the game

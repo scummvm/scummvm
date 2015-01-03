@@ -64,10 +64,6 @@ SpriteResource::~SpriteResource() {
 	delete[] _data;
 }
 
-int SpriteResource::size() const {
-	return _index.size();
-}
-
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);

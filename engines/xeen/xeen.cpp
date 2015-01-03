@@ -46,6 +46,11 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_isEarlyGame = false;
 	_loadDarkSide = 1;
 	_buttonsLoaded = false;
+	_batUIFrame = 0;
+	_spotDoorsUIFrame = 0;
+	_spotDoorsAllowed = false;
+	_dangerSenseUIFrame = 0;
+	_dangerSenseAllowed = false;
 }
 
 XeenEngine::~XeenEngine() {
@@ -254,8 +259,10 @@ void XeenEngine::playGame() {
  * TODO: Consider renaming method when better understood
  */
 void XeenEngine::setupUI(bool soundPlayed) {
-	SpriteResource sprites1("global.icn"), borderSprites("border.icn"),
-		uiSprites("inn.icn");
+	SpriteResource uiSprites("inn.icn");
+	_globalSprites.load("global.icn");
+	_borderSprites.load("border.icn");
+	_spellFxSprites.load("spellfx.icn");
 
 	// Get mappings to the active characters in the party
 	Common::fill(&_activeRoster[0], &_activeRoster[MAX_ACTIVE_PARTY], nullptr);
@@ -319,7 +326,61 @@ void XeenEngine::loadCharIcons(int numChars) {
 }
 
 void XeenEngine::setupGameBackground() {
+	_screen->loadBackground("back.raw");
+	assembleBorder();
+}
+
+void XeenEngine::assembleBorder() {
+	Window &gameWindow = _screen->_windows[28];
+
+	// Draw the outer frame
+	_globalSprites.draw(gameWindow, 0);
 	
+	// Draw the animating bat character used to show when levitate is active
+	_borderSprites.draw(*_screen, _party._levitateActive ? _batUIFrame + 16 : 16);
+	_batUIFrame = (_batUIFrame + 1) % 12;
+
+	// Draw UI element to indicate whether can spot hidden doors
+	_borderSprites.draw(*_screen,
+		(_spotDoorsAllowed && checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
+		Common::Point(194, 91));
+	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
+
+	// Draw UI element to indicate whether can sense danger
+	_borderSprites.draw(*_screen,
+		(_dangerSenseAllowed && checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
+		Common::Point(107, 9));
+	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
+
+
+	// TODO
+}
+
+bool XeenEngine::checkSkill(Skill skillId) {
+	int total = 0;
+	for (int i = 0; i < _party._partyCount; ++i) {
+		if (_activeRoster[i]->_skills[skillId]) {
+			++total;
+
+			switch (skillId) {
+			case MOUNTAINEER:
+			case PATHFINDER:
+				// At least two characters need skill for check to return true
+				if (total == 2)
+					return true;
+				break;
+			case CRUSADER:
+			case SWIMMING:
+				// Entire party must have skill for check to return true
+				if (total == _party._partyCount)
+					return true;
+				break;
+			default:
+				// All other skills only need to have a single player having it
+				return true;
+			}
+		}
+	}
 }
 
 } // End of namespace Xeen

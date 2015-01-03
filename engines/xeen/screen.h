@@ -36,6 +36,7 @@ namespace Xeen {
 #define SCREEN_HEIGHT 200
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
+#define GAME_WINDOW 28
 
 class XeenEngine;
 class Screen;

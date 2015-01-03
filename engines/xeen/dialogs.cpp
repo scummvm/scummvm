@@ -214,7 +214,7 @@ void CreditsScreen::execute() {
 	
 	// Handle drawing the credits screen
 	doScroll(_vm, true, false);
-	screen._windows[28].close();
+	screen._windows[GAME_WINDOW].close();
 
 	screen.loadBackground("marb.raw");
 	screen._windows[0].writeString(CREDITS);

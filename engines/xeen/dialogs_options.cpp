@@ -56,7 +56,7 @@ void OptionsMenu::execute() {
 	File newBright("newbrigh.m");
 	_vm->_sound->playMusic(newBright);
 
-	screen._windows[28].setBounds(Common::Rect(72, 25, 248, 175));
+	screen._windows[GAME_WINDOW].setBounds(Common::Rect(72, 25, 248, 175));
 
 	Common::String title1, title2;
 	startup(title1, title2);
@@ -202,7 +202,7 @@ void WorldOptionsMenu::setBackground(bool doFade) {
 }
 
 void WorldOptionsMenu::openWindow() {
-	_vm->_screen->_windows[28].open();
+	_vm->_screen->_windows[GAME_WINDOW].open();
 }
 
 void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
@@ -215,8 +215,8 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	title1.draw(screen._windows[0], _bgFrame);
 
 	// Draw the basic frame for the optitons menu and title text
-	screen._windows[28].frame();
-	screen._windows[28].writeString(OPTIONS_TITLE);
+	screen._windows[GAME_WINDOW].frame();
+	screen._windows[GAME_WINDOW].writeString(OPTIONS_TITLE);
 
 	drawButtons(&screen._windows[0]);
 
