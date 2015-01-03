@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	texture.o \
 	visual/actor.o \
 	visual/image.o \
+	visual/smacker.o \
 	xmg.o \
 	xrcreader.o
 

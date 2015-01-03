@@ -65,6 +65,9 @@ public:
 	/** Build the archive filename for a level or a location */
 	Common::String buildArchiveName(Level *level, Location *location = nullptr);
 
+	/** Retrieve a file relative to a specified archive */
+	Common::SeekableReadStream *getExternalFile(const Common::String &fileName, const Common::String &archiveName);
+
 private:
 	class LoadedArchive {
 	public:

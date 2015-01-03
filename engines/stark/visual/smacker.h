@@ -20,37 +20,42 @@
  *
  */
 
-#ifndef STARK_VISUAL_IMAGE_H
-#define STARK_VISUAL_IMAGE_H
+#ifndef STARK_VISUAL_SMACKER_H
+#define STARK_VISUAL_SMACKER_H
 
-#include "common/stream.h"
 #include "engines/stark/visual/visual.h"
 
-namespace Graphics {
-struct Surface;
+#include "common/stream.h"
+
+namespace Video {
+	class SmackerDecoder;
 }
+
+namespace Graphics {
+	class Surface;
+}
+
 
 namespace Stark {
 
-/**
- * XMG (still image) renderer
- */
-class VisualImageXMG : public Visual {
-private:
-	VisualImageXMG();
-
+class VisualSmacker : public Visual {
 public:
-	static const VisualType TYPE = Visual::kImageXMG;
+	static const VisualType TYPE = Visual::kSmackerStream;
 
-	virtual ~VisualImageXMG();
+	virtual ~VisualSmacker();
 
-	static VisualImageXMG *load(Common::ReadStream *stream);
+	static VisualSmacker *load(Common::SeekableReadStream *stream);
+	void update(uint32 delta);
 	void render(GfxDriver *gfx, const Common::Point &position);
+	bool isDone();
 
 private:
+	VisualSmacker(Common::SeekableReadStream *stream);
+
+	Video::SmackerDecoder *_smacker;
 	Graphics::Surface *_surface;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_VISUAL_IMAGE_H
+#endif // STARK_VISUAL_SMACKER_H

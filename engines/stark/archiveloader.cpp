@@ -123,13 +123,27 @@ Common::String ArchiveLoader::buildArchiveName(Level *level, Location *location)
 			archive = Common::String::format("%02x/%02x.xarc", level->getIndex(), level->getIndex());
 			break;
 		default:
-			error("Unknown level archive type %d", level->getSubType());
+			error("Unknown level type %d", level->getSubType());
 		}
 	} else {
 		archive = Common::String::format("%02x/%02x/%02x.xarc", level->getIndex(), location->getIndex(), location->getIndex());
 	}
 
 	return archive;
+}
+
+Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String &fileName, const Common::String &archiveName) {
+	static const char separator = '/';
+
+	// Build a path of the type 45/00/
+	Common::String filePath = archiveName;
+	while (filePath.lastChar() != separator && !filePath.empty()) {
+		filePath.deleteLastChar();
+	}
+	filePath += "xarc/" + fileName;
+
+	// Open the file
+	return SearchMan.createReadStreamForMember(filePath);
 }
 
 } // End of namespace Stark

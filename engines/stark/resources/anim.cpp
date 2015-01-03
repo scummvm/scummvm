@@ -22,9 +22,12 @@
 
 #include "common/debug.h"
 
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
+#include "engines/stark/stark.h"
+#include "engines/stark/visual/smacker.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -133,12 +136,14 @@ AnimSub2::AnimSub2(Resource *parent, byte subType, uint16 index, const Common::S
 }
 
 AnimSub3::~AnimSub3() {
+	delete _smacker;
 }
 
 AnimSub3::AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_width(0),
 				_height(0),
+				_smacker(nullptr),
 				_field_4C(-1),
 				_field_50(0),
 				_field_7C(0) {
@@ -165,6 +170,32 @@ void AnimSub3::readData(XRCReadStream *stream) {
 	if (stream->isDataLeft()) {
 		_field_50 = stream->readUint32LE();
 	}
+
+	_archiveName = stream->getArchiveName();
+}
+
+void AnimSub3::onAllLoaded() {
+	if (!_smacker) {
+		ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+		Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_smackerFile, _archiveName);
+		_smacker = VisualSmacker::load(stream);
+	}
+}
+
+void AnimSub3::onGameLoop(uint msecs) {
+	if (!isReferenced()) {
+		return; // Animation not in use, no need to update the movie
+	}
+
+	if (!_smacker) {
+		return;
+	}
+
+	_smacker->update(msecs);
+}
+
+Visual *AnimSub3::getVisual() {
+	return _smacker;
 }
 
 void AnimSub3::printData() {

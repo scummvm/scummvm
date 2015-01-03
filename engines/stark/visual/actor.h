@@ -42,7 +42,7 @@ private:
 public:
 	static const VisualType TYPE = Visual::kActor;
 
-	~VisualActor();
+	virtual ~VisualActor();
 
 	static VisualActor *load(const Common::Archive *archive, const Common::String &name);
 	bool setAnim(const Common::Archive *archive, const Common::String &name);

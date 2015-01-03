@@ -24,6 +24,7 @@
 
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/image.h"
+#include "engines/stark/visual/smacker.h"
 #include "engines/stark/visual/visual.h"
 
 namespace Stark {
@@ -60,6 +61,11 @@ void RenderEntry::render(GfxDriver *gfx) {
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
 		actor->render(gfx);
+	}
+
+	VisualSmacker *smacker = _visual->get<VisualSmacker>();
+	if (smacker) {
+		smacker->render(gfx, _position);
 	}
 }
 

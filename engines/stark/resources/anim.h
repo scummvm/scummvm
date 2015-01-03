@@ -33,6 +33,7 @@ namespace Stark {
 class Direction;
 class Image;
 class Item;
+class VisualSmacker;
 class Visual;
 class XRCReadStream;
 
@@ -110,6 +111,11 @@ public:
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onAllLoaded() override;
+	void onGameLoop(uint msecs) override;
+
+	// Anim API
+	Visual *getVisual() override;
 
 protected:
 	typedef Common::Array<Common::Point> PointArray;
@@ -118,6 +124,10 @@ protected:
 	void printData() override;
 
 	Common::String _smackerFile;
+	Common::String _archiveName;
+
+	VisualSmacker *_smacker;
+
 	uint32 _width;
 	uint32 _height;
 
