@@ -20,39 +20,27 @@
  *
  */
 
-#include "engines/stark/resources/camera.h"
+#include "engines/stark/resources/bookmark.h"
+
 #include "engines/stark/xrcreader.h"
-#include "engines/stark/debug.h"
 
 namespace Stark {
 
-Camera::~Camera() {
+Bookmark::~Bookmark() {
 }
 
-Camera::Camera(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
-		_f1(0),
-		_fov(0) {
-	_type = ResourceType::kCamera;
+Bookmark::Bookmark(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+				Resource(parent, subType, index, name) {
+	_type = TYPE;
 }
 
-void Camera::readData(XRCReadStream *stream) {
+void Bookmark::readData(XRCReadStream *stream) {
 	_position = stream->readVector3();
-	_lookAt = stream->readVector3();
-	_f1 = stream->readFloat();
-	_fov = stream->readFloat();
-	_viewport = stream->readRect();
-	_v4 = stream->readVector3();
 }
 
-void Camera::printData() {
+void Bookmark::printData() {
 	Common::Debug debug = streamDbg();
 	debug << "position: " << _position << "\n";
-	debug << "lookAt: " << _lookAt << "\n";
-	debug << "f1: " << _f1 << "\n";
-	debug << "fov: " << _fov << "\n";
-	_viewport.debugPrint(0, "viewport:");
-	debug << "v4: " << _v4 << "\n";
 }
 
 } // End of namespace Stark

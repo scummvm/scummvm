@@ -47,8 +47,8 @@ protected:
 
 	Math::Vector3d _position;
 	Math::Vector3d _lookAt;
+	float _f1;
 	float _fov;
-	float _f2;
 	Common::Rect _viewport;
 	Math::Vector3d _v4;
 };

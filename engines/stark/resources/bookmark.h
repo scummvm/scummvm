@@ -20,39 +20,34 @@
  *
  */
 
-#include "engines/stark/resources/camera.h"
-#include "engines/stark/xrcreader.h"
-#include "engines/stark/debug.h"
+#ifndef STARK_RESOURCES_BOOKMARK_H
+#define STARK_RESOURCES_BOOKMARK_H
+
+#include "common/str.h"
+#include "math/vector3d.h"
+
+#include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
-Camera::~Camera() {
-}
+class XRCReadStream;
 
-Camera::Camera(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
-		_f1(0),
-		_fov(0) {
-	_type = ResourceType::kCamera;
-}
+class Bookmark : public Resource {
+public:
+	static const ResourceType::Type TYPE = ResourceType::kBookmark;
 
-void Camera::readData(XRCReadStream *stream) {
-	_position = stream->readVector3();
-	_lookAt = stream->readVector3();
-	_f1 = stream->readFloat();
-	_fov = stream->readFloat();
-	_viewport = stream->readRect();
-	_v4 = stream->readVector3();
-}
+	Bookmark(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Bookmark();
 
-void Camera::printData() {
-	Common::Debug debug = streamDbg();
-	debug << "position: " << _position << "\n";
-	debug << "lookAt: " << _lookAt << "\n";
-	debug << "f1: " << _f1 << "\n";
-	debug << "fov: " << _fov << "\n";
-	_viewport.debugPrint(0, "viewport:");
-	debug << "v4: " << _v4 << "\n";
-}
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	Math::Vector3d _position;
+};
 
 } // End of namespace Stark
+
+#endif // STARK_RESOURCES_BOOKMARK_H
