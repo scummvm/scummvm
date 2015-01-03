@@ -23,8 +23,6 @@
 #ifndef STARK_ACTOR_H
 #define STARK_ACTOR_H
 
-#include "engines/stark/visual.h"
-
 #include "math/vector3d.h"
 #include "common/str.h"
 #include "common/array.h"
@@ -136,27 +134,6 @@ private:
 	Common::Array<MeshNode *> _meshes;
 	Skeleton *_skeleton;
 	Texture *_texture;
-};
-
-
-class VisualActor : public Visual {
-private:
-	VisualActor();
-
-public:
-	static const VisualType TYPE = Visual::kActor;
-
-	~VisualActor();
-
-	static VisualActor *load(const Common::Archive *archive, const Common::String &name);
-	bool setAnim(const Common::Archive *archive, const Common::String &name);
-	bool setTexture(const Common::Archive *archive, const Common::String &name);
-
-	void update(uint32 delta);
-	void render(GfxDriver *gfx);
-
-private:
-	Actor *_actor;
 };
 
 } // End of namespace Stark

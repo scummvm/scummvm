@@ -26,7 +26,7 @@
 
 #include "engines/stark/archiveloader.h"
 #include "engines/stark/stark.h"
-#include "engines/stark/xmg.h"
+#include "engines/stark/visual/image.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {

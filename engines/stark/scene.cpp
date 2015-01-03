@@ -24,7 +24,7 @@
 #include "engines/stark/archive.h"
 #include "engines/stark/xmg.h"
 
-#include "engines/stark/actor.h"
+#include "engines/stark/visual/actor.h"
 #include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {

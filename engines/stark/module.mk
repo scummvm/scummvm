@@ -36,6 +36,8 @@ MODULE_OBJS := \
 	stark.o \
 	stateprovider.o \
 	texture.o \
+	visual/actor.o \
+	visual/image.o \
 	xmg.o \
 	xrcreader.o
 

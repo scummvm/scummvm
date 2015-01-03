@@ -20,53 +20,36 @@
  *
  */
 
-#ifndef STARK_SCENEELEMENT_H
-#define STARK_SCENEELEMENT_H
+#ifndef STARK_VISUAL_IMAGE_H
+#define STARK_VISUAL_IMAGE_H
 
-#include "common/rect.h"
-#include "common/scummsys.h"
+#include "common/stream.h"
+#include "engines/stark/visual/visual.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Stark {
 
-class GfxDriver;
+/**
+ * XMG (still image) renderer
+ */
+class VisualImageXMG : public Visual {
+private:
+	VisualImageXMG();
 
-class Visual {
 public:
-	enum VisualType {
-		kImageXMG      = 2,
-		kRendered      = 3,
-		kImageText     = 4,
-		kSmackStream   = 5,
-		kActor         = 6,
-		kSmackFMV      = 7,
-		kEffectFish    = 8,
-		kEffectBubbles = 9,
-		kEffectFirefly = 10,
-		kEffectSmoke   = 11
-	};
+	static const VisualType TYPE = Visual::kImageXMG;
 
-	Visual(VisualType type) : _type(type) {}
-	virtual ~Visual() {}
-
-	/**
-	 * Returns the visual if it has the same type as the template argument
-	 */
-	template <class T>
-	T *get();
+	~VisualImageXMG();
+	static VisualImageXMG *load(Common::ReadStream *stream);
+	void render(GfxDriver *gfx, const Common::Point &position);
 
 private:
-	VisualType _type;
+	Graphics::Surface *_surface;
 };
-
-template<class T>
-T *Visual::get() {
-	if (_type != T::TYPE) {
-		return nullptr;
-	}
-
-	return (T *) this;
-}
 
 } // End of namespace Stark
 
-#endif // STARK_SCENEELEMENT_H
+#endif // STARK_VISUAL_IMAGE_H

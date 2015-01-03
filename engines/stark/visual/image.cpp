@@ -20,40 +20,42 @@
  *
  */
 
-#ifndef STARK_XMG_H
-#define STARK_XMG_H
+#include "engines/stark/debug.h"
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/visual/image.h"
+#include "engines/stark/xmg.h"
 
+#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "common/stream.h"
-
-namespace Graphics {
-struct Surface;
-}
 
 namespace Stark {
 
-/**
- * XMG (still image) decoder
- */
-class XMGDecoder {
-public:
-	static Graphics::Surface *decode(Common::ReadStream *stream);
+VisualImageXMG::VisualImageXMG() :
+		Visual(TYPE),
+		_surface(NULL) {
+}
 
-private:
-	XMGDecoder() {}
+VisualImageXMG::~VisualImageXMG() {
+	// Free the surface
+	if (_surface)
+		_surface->free();
+	delete _surface;
+}
 
-	Graphics::Surface *decodeImage(Common::ReadStream *stream);
+VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
+	// Create the element to return
+	VisualImageXMG *element = new VisualImageXMG();
 
-	void processYCrCb();
-	void processTrans();
-	void processRGB();
+	// Decode the XMG
+	element->_surface = XMGDecoder::decode(stream);
 
-	uint32 *_pixels;
-	Common::ReadStream *_stream;
+	return element;
+}
 
-	uint32 _transColor;
-	uint32 _scanLen;
-};
+void VisualImageXMG::render(GfxDriver *gfx, const Common::Point &position) {
+	// Draw the current element
+	gfx->drawSurface(_surface, position);
+}
 
 } // End of namespace Stark
-
-#endif // STARK_XMG_H

@@ -20,40 +20,53 @@
  *
  */
 
-#ifndef STARK_XMG_H
-#define STARK_XMG_H
+#ifndef STARK_VISUAL_VISUAL_H
+#define STARK_VISUAL_VISUAL_H
 
-#include "common/stream.h"
-
-namespace Graphics {
-struct Surface;
-}
+#include "common/rect.h"
+#include "common/scummsys.h"
 
 namespace Stark {
 
-/**
- * XMG (still image) decoder
- */
-class XMGDecoder {
+class GfxDriver;
+
+class Visual {
 public:
-	static Graphics::Surface *decode(Common::ReadStream *stream);
+	enum VisualType {
+		kImageXMG      = 2,
+		kRendered      = 3,
+		kImageText     = 4,
+		kSmackStream   = 5,
+		kActor         = 6,
+		kSmackFMV      = 7,
+		kEffectFish    = 8,
+		kEffectBubbles = 9,
+		kEffectFirefly = 10,
+		kEffectSmoke   = 11
+	};
+
+	Visual(VisualType type) : _type(type) {}
+	virtual ~Visual() {}
+
+	/**
+	 * Returns the visual if it has the same type as the template argument
+	 */
+	template <class T>
+	T *get();
 
 private:
-	XMGDecoder() {}
-
-	Graphics::Surface *decodeImage(Common::ReadStream *stream);
-
-	void processYCrCb();
-	void processTrans();
-	void processRGB();
-
-	uint32 *_pixels;
-	Common::ReadStream *_stream;
-
-	uint32 _transColor;
-	uint32 _scanLen;
+	VisualType _type;
 };
+
+template<class T>
+T *Visual::get() {
+	if (_type != T::TYPE) {
+		return nullptr;
+	}
+
+	return (T *) this;
+}
 
 } // End of namespace Stark
 
-#endif // STARK_XMG_H
+#endif // STARK_VISUAL_VISUAL_H

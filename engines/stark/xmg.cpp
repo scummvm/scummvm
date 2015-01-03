@@ -30,28 +30,6 @@
 
 namespace Stark {
 
-// XMG DECODER
-
-class XMGDecoder {
-public:
-	static Graphics::Surface *decode(Common::ReadStream *stream);
-
-private:
-	XMGDecoder() {}
-
-	Graphics::Surface *decodeImage(Common::ReadStream *stream);
-
-	void processYCrCb();
-	void processTrans();
-	void processRGB();
-
-	uint32 *_pixels;
-	Common::ReadStream *_stream;
-
-	uint32 _transColor;
-	uint32 _scanLen;
-};
-
 Graphics::Surface *XMGDecoder::decode(Common::ReadStream *stream) {
 	XMGDecoder dec;
 	return dec.decodeImage(stream);
@@ -215,36 +193,6 @@ void XMGDecoder::processRGB() {
 	if (color != _transColor)
 		color += 255 << 24;
 	_pixels[_scanLen + 1] = color;
-}
-
-
-// SCENE ELEMENT XMG
-
-VisualImageXMG::VisualImageXMG() :
-		Visual(TYPE),
-		_surface(NULL) {
-}
-
-VisualImageXMG::~VisualImageXMG() {
-	// Free the surface
-	if (_surface)
-		_surface->free();
-	delete _surface;
-}
-
-VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
-	// Create the element to return
-	VisualImageXMG *element = new VisualImageXMG();
-
-	// Decode the XMG
-	element->_surface = XMGDecoder::decode(stream);
-
-	return element;
-}
-
-void VisualImageXMG::render(GfxDriver *gfx, const Common::Point &position) {
-	// Draw the current element
-	gfx->drawSurface(_surface, position);
 }
 
 } // End of namespace Stark

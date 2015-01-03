@@ -22,9 +22,9 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
-#include "engines/stark/visual.h"
-#include "engines/stark/actor.h"
-#include "engines/stark/xmg.h"
+#include "engines/stark/visual/actor.h"
+#include "engines/stark/visual/image.h"
+#include "engines/stark/visual/visual.h"
 
 namespace Stark {
 

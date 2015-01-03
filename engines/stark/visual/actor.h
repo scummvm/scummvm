@@ -20,40 +20,41 @@
  *
  */
 
-#ifndef STARK_XMG_H
-#define STARK_XMG_H
+#ifndef STARK_VISUAL_ACTOR_H
+#define STARK_VISUAL_ACTOR_H
 
-#include "common/stream.h"
+#include "common/str.h"
 
-namespace Graphics {
-struct Surface;
+#include "engines/stark/visual/visual.h"
+
+namespace Common {
+	class Archive;
 }
 
 namespace Stark {
 
-/**
- * XMG (still image) decoder
- */
-class XMGDecoder {
+class Actor;
+
+class VisualActor : public Visual {
+private:
+	VisualActor();
+
 public:
-	static Graphics::Surface *decode(Common::ReadStream *stream);
+	static const VisualType TYPE = Visual::kActor;
+
+	~VisualActor();
+
+	static VisualActor *load(const Common::Archive *archive, const Common::String &name);
+	bool setAnim(const Common::Archive *archive, const Common::String &name);
+	bool setTexture(const Common::Archive *archive, const Common::String &name);
+
+	void update(uint32 delta);
+	void render(GfxDriver *gfx);
 
 private:
-	XMGDecoder() {}
-
-	Graphics::Surface *decodeImage(Common::ReadStream *stream);
-
-	void processYCrCb();
-	void processTrans();
-	void processRGB();
-
-	uint32 *_pixels;
-	Common::ReadStream *_stream;
-
-	uint32 _transColor;
-	uint32 _scanLen;
+	Actor *_actor;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_XMG_H
+#endif // STARK_VISUAL_ACTOR_H
