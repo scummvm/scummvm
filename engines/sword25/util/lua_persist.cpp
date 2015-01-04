@@ -645,8 +645,7 @@ static void persistProto(SerializationInfo *info) {
 	// Serialize inner Proto refs
 	info->writeStream->writeSint32LE(proto->sizep);
 
-	for (int i = 0; i < proto->sizep; ++i)
-	{
+	for (int i = 0; i < proto->sizep; ++i) {
 		pushProto(info->luaState, proto->p[i]);
 		// >>>>> permTbl indexTbl ...... proto subProto */
 
@@ -668,8 +667,7 @@ static void persistProto(SerializationInfo *info) {
 	// Serialize upvalue names
 	info->writeStream->writeSint32LE(proto->sizeupvalues);
 
-	for (int i = 0; i < proto->sizeupvalues; ++i)
-	{
+	for (int i = 0; i < proto->sizeupvalues; ++i) {
 		pushString(info->luaState, proto->upvalues[i]);
 		// >>>>> permTbl indexTbl ...... proto str
 
@@ -710,7 +708,7 @@ static void persistProto(SerializationInfo *info) {
 	info->writeStream->writeSint32LE(proto->sizelineinfo);
 
 	if (proto->sizelineinfo) {
-		uint32 len = static_cast<uint32>(sizeof(int) * proto->sizelineinfo);
+		len = static_cast<uint32>(sizeof(int) * proto->sizelineinfo);
 		info->writeStream->write(proto->lineinfo, len);
 	}
 
