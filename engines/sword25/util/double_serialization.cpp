@@ -77,13 +77,13 @@ uint64 encodeDouble_64(double value) {
 	uint64 uintsignificand = (uint64)shiftedsignificand;
 	return ((uint64)(value < 0 ? 1 : 0) << 63) |        // Sign
 	       ((uint64)(exponent + 1023) << 52) |          // Exponent stored as an offset to 1023
-	       (uintsignificand & 0x000FFFFFFFFFFFFF);      // significand with MSB inferred
+	       (uintsignificand & 0x000FFFFFFFFFFFFFLL);      // significand with MSB inferred
 }
 
 double decodeDouble_64(uint64 value) {
 	// Expand the exponent and significand
 	int exponent = (int)((value >> 52) & 0x7FF) - 1023;
-	double expandedsignificand = (double)(0x10000000000000 /* Inferred MSB */ | (value & 0x000FFFFFFFFFFFFF));
+	double expandedsignificand = (double)(0x10000000000000LL /* Inferred MSB */ | (value & 0x000FFFFFFFFFFFFFLL));
 
 	// Deflate the significand
 	int temp;
@@ -93,7 +93,7 @@ double decodeDouble_64(uint64 value) {
 	double returnValue = ldexp(significand, exponent);
 
 	// Check the sign bit and return
-	return ((value & 0x8000000000000000) == 0x8000000000000000) ? -returnValue : returnValue;
+	return ((value & 0x8000000000000000LL) == 0x8000000000000000LL) ? -returnValue : returnValue;
 }
 
 CompactSerializedDouble encodeDouble_Compact(double value) {
