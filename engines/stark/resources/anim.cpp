@@ -26,6 +26,7 @@
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
+#include "engines/stark/skeleton_anim.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/visual/smacker.h"
 #include "engines/stark/xrcreader.h"
@@ -223,6 +224,7 @@ void AnimSub3::printData() {
 }
 
 AnimSub4::~AnimSub4() {
+	delete _seletonAnim;
 }
 
 AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name) :
@@ -230,7 +232,8 @@ AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::S
 				_castsShadow(true),
 				_field_48(0),
 				_field_4C(100),
-				_field_6C(1) {
+				_field_6C(1),
+				_seletonAnim(nullptr) {
 }
 
 void AnimSub4::readData(XRCReadStream *stream) {
@@ -261,6 +264,18 @@ void AnimSub4::readData(XRCReadStream *stream) {
 	}
 
 	_archiveName = stream->getArchiveName();
+}
+
+void AnimSub4::onPostRead() {
+	// Get the archive loader service
+	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+
+	Common::ReadStream *stream = archiveLoader->getFile(_animFilename, _archiveName);
+
+	_seletonAnim = new SkeletonAnim();
+	_seletonAnim->createFromStream(stream);
+
+	delete stream;
 }
 
 void AnimSub4::printData() {

@@ -26,6 +26,8 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/visual/actor.h"
+#include "engines/stark/skeleton_anim.h"
+#include "engines/stark/texture.h"
 #include "engines/stark/xmg.h"
 
 namespace Stark {
@@ -40,11 +42,24 @@ Scene::Scene(GfxDriver *gfx) :
 	if (!xarc.open("45/00/00.xarc"))
 		warning("couldn't open archive");
 
-	VisualActor *actor = VisualActor::load(&xarc, "oldapril.cir");
-	actor->setAnim(&xarc, "oldapril_idle.ani");
-	actor->setTexture(&xarc, "oldapril.tm");
+	Common::ReadStream *texStream = xarc.createReadStreamForMember("oldapril.tm"); // Leak
+	Texture *texture = new Texture(); // Leak
+	texture->createFromStream(texStream);
 
-	RenderEntry *oldApril = new RenderEntry(nullptr, "Old April");
+	Common::ReadStream *animStream = xarc.createReadStreamForMember("oldapril_idle.ani"); // Leak
+	SkeletonAnim *anim = new SkeletonAnim(); // Leak
+	anim->createFromStream(animStream);
+
+	Common::ReadStream *meshStream = xarc.createReadStreamForMember("oldapril.cir"); // Leak
+	Actor *mesh = new Actor(); // Leak
+	mesh->readFromStream(meshStream);
+
+	VisualActor *actor = new VisualActor();  // Leak
+	actor->setMesh(mesh);
+	actor->setAnim(anim);
+	actor->setTexture(texture);
+
+	RenderEntry *oldApril = new RenderEntry(nullptr, "Old April");  // Leak
 	oldApril->setVisual(actor);
 
 	_elements.push_back(oldApril);

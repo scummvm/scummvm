@@ -64,12 +64,12 @@ public:
 	/**
 	 * Start reading animation data from the specified stream
 	 */
-	bool setAnim(Common::ReadStream *stream);
+	void setAnim(SkeletonAnim *anim);
 
 	/**
 	 * Create skeleton object from the specified stream
 	 */
-	bool readFromStream(Common::ReadStream *stream);
+	void readFromStream(Common::ReadStream *stream);
 
 	const Common::Array<BoneNode *> &getBones() const { return _bones; }
 

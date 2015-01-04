@@ -34,19 +34,19 @@ namespace Common {
 namespace Stark {
 
 class Actor;
+class SkeletonAnim;
+class Texture;
 
 class VisualActor : public Visual {
-private:
-	VisualActor();
-
 public:
 	static const VisualType TYPE = Visual::kActor;
 
+	VisualActor();
 	virtual ~VisualActor();
 
-	static VisualActor *load(const Common::Archive *archive, const Common::String &name);
-	bool setAnim(const Common::Archive *archive, const Common::String &name);
-	bool setTexture(const Common::Archive *archive, const Common::String &name);
+	void setMesh(Actor *mesh);
+	void setAnim(SkeletonAnim *anim);
+	void setTexture(Texture *texture);
 
 	void update(uint32 delta);
 	void render(GfxDriver *gfx);

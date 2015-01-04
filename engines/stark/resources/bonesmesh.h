@@ -29,6 +29,7 @@
 
 namespace Stark {
 
+class Actor;
 class XRCReadStream;
 
 class BonesMesh : public Resource {
@@ -39,13 +40,16 @@ public:
 	virtual ~BonesMesh();
 
 	// Resource API
-	void readData(XRCReadStream *stream);
+	void readData(XRCReadStream *stream) override;
+	void onPostRead() override;
 
 protected:
 	void printData() override;
 
 	Common::String _filename;
 	Common::String _archiveName;
+
+	Actor *_actor;
 };
 
 } // End of namespace Stark

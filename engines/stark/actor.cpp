@@ -42,18 +42,16 @@ Actor::~Actor() {
 
 	if (_skeleton)
 		delete _skeleton;
-
-	if (_texture)
-		delete _texture;
 }
 
-bool Actor::readFromStream(Common::ReadStream *stream) {
+void Actor::readFromStream(Common::ReadStream *stream) {
 	_id = stream->readUint32LE();
 	uint32 format = stream->readUint32LE();
 	uint32 u1 = stream->readUint32LE();
 	uint32 id2 = stream->readUint32LE();
-	if (id2 != 0xDEADBABE)
-		return false;
+	if (id2 != 0xDEADBABE) {
+		error("Wrong magic while reading actor");
+	}
 
 	uint32 u2 = stream->readUint32LE();
 
@@ -143,22 +141,15 @@ bool Actor::readFromStream(Common::ReadStream *stream) {
 
 		_meshes.push_back(node);
 	}
-
-	return true;
 }
 
-bool Actor::setAnim(Common::ReadStream *stream)
+void Actor::setAnim(SkeletonAnim *anim)
 {
-	return _skeleton->setAnim(stream);
+	_skeleton->setAnim(anim);
 }
 
-bool Actor::setTexture(Common::ReadStream *stream)
-{
-	if (_texture)
-		delete _texture;
-
-	_texture = new Texture();
-	return _texture->createFromStream(stream);
+void Actor::setTexture(Texture *texture) {
+	_texture = texture;
 }
 
 } // End of namespace Stark

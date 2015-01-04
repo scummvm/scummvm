@@ -35,6 +35,7 @@ namespace Common {
 namespace Stark {
 
 class Skeleton;
+class SkeletonAnim;
 class Texture;
 
 class VertNode {
@@ -110,7 +111,7 @@ public:
 	/**
 	 * Try and initialise object from the specified stream
 	 */
-	bool readFromStream(Common::ReadStream *stream);
+	void readFromStream(Common::ReadStream *stream);
 
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
@@ -120,12 +121,12 @@ public:
 	/**
 	 * Load animation data from the specified stream
 	 */
-	bool setAnim(Common::ReadStream *stream);
+	void setAnim(SkeletonAnim *anim);
 
 	/**
 	 * Load texture data from the specified stream
 	 */
-	bool setTexture(Common::ReadStream *stream);
+	void setTexture(Texture *texture);
 
 private:
 	uint32 _id;

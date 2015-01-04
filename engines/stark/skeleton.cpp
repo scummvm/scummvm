@@ -39,7 +39,7 @@ Skeleton::~Skeleton() {
 		delete *it;
 }
 
-bool Skeleton::readFromStream(Common::ReadStream *stream) {
+void Skeleton::readFromStream(Common::ReadStream *stream) {
 	uint32 numBones = stream->readUint32LE();
 	for (uint32 i = 0; i < numBones; ++i) {
 		BoneNode *node = new BoneNode();
@@ -65,21 +65,10 @@ bool Skeleton::readFromStream(Common::ReadStream *stream) {
 			_bones[node->_children[j]]->_parent = i;
 		}
 	}
-
-	return true;
 }
 
-bool Skeleton::setAnim(Common::ReadStream *stream) {
-	SkeletonAnim *_oldAnim = _anim;
-	_anim = new SkeletonAnim();
-	if (_anim->createFromStream(stream)) {
-		_maxTime = _anim->getLength();
-		delete _oldAnim;
-	} else {
-		_anim = _oldAnim;
-		return false;
-	}
-	return true;
+void Skeleton::setAnim(SkeletonAnim *anim) {
+	_anim = anim;
 }
 
 void Skeleton::setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoord) {

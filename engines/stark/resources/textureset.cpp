@@ -20,22 +20,43 @@
  *
  */
 
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/resources/textureset.h"
+#include "engines/stark/stark.h"
+#include "engines/stark/texture.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
 
 TextureSet::~TextureSet() {
+	delete _texture;
 }
 
 TextureSet::TextureSet(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name) {
+				Resource(parent, subType, index, name),
+				_texture(nullptr) {
 	_type = TYPE;
+}
+
+Texture *TextureSet::getTexture() {
+	return _texture;
 }
 
 void TextureSet::readData(XRCReadStream *stream) {
 	_filename = stream->readString();
 	_archiveName = stream->getArchiveName();
+}
+
+void TextureSet::onPostRead() {
+	// Get the archive loader service
+	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+
+	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
+
+	_texture = new Texture();
+	_texture->createFromStream(stream);
+
+	delete stream;
 }
 
 void TextureSet::printData() {

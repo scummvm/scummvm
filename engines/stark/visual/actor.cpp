@@ -34,43 +34,24 @@
 
 namespace Stark {
 
-VisualActor *VisualActor::load(const Common::Archive *archive, const Common::String &name) {
-	Common::ReadStream *stream = archive->createReadStreamForMember(name);
-	if (!stream)
-		return NULL;
-
-	VisualActor *cir = new VisualActor();
-	cir->_actor = new Actor();
-
-	cir->_actor->readFromStream(stream);
-	return cir;
-}
-
 VisualActor::VisualActor() :
 		Visual(TYPE),
 		_actor(nullptr) {
-
 }
 
 VisualActor::~VisualActor() {
-	if (_actor)
-		delete _actor;
 }
 
-bool VisualActor::setAnim(const Common::Archive *archive, const Common::String &name) {
-	Common::ReadStream *stream = archive->createReadStreamForMember(name);
-	if (!stream)
-		return false;
-
-	return _actor->setAnim(stream);
+void VisualActor::setMesh(Actor *mesh) {
+	_actor = mesh;
 }
 
-bool VisualActor::setTexture(const Common::Archive *archive, const Common::String &name) {
-	Common::ReadStream *stream = archive->createReadStreamForMember(name);
-	if (!stream)
-		return false;
+void VisualActor::setAnim(SkeletonAnim *anim) {
+	_actor->setAnim(anim);
+}
 
-	return _actor->setTexture(stream);
+void VisualActor::setTexture(Texture *texture) {
+	_actor->setTexture(texture);
 }
 
 void VisualActor::update(uint32 delta) {

@@ -42,7 +42,7 @@ Texture::~Texture() {
 		glDeleteTextures(1, &it->_value);
 }
 
-bool Texture::createFromStream(Common::ReadStream *stream) {
+void Texture::createFromStream(Common::ReadStream *stream) {
 	uint32 id = stream->readUint32LE();
 	uint32 format = stream->readUint32LE();
 	uint32 u1 = stream->readUint32LE();
@@ -50,17 +50,15 @@ bool Texture::createFromStream(Common::ReadStream *stream) {
 
 	uint32 len = stream->readUint32LE();
 	for (uint32 i = 0; i < len; ++i) {
-		if (!readChunk(stream, format))
-			return false;
-
+		readChunk(stream, format);
 	}
-	return true;
 }
 
-bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
+void Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 	uint32 marker = stream->readUint32LE();
-	if (marker != 0xf0f0f0f0)
-		return false;
+	if (marker != 0xf0f0f0f0) {
+		error("Wrong magic while reading texture");
+	}
 
 	uint32 type = stream->readUint32LE();
 	uint32 u3 = stream->readUint32LE();
@@ -132,15 +130,14 @@ bool Texture::readChunk(Common::ReadStream *stream, uint32 format) {
 	}
 
 	marker = stream->readUint32LE();
-	if (marker != 0x0f0f0f0f)
-		return false;
+	if (marker != 0x0f0f0f0f) {
+		error("Wrong magic while reading texture");
+	}
 
 	uint32 len = stream->readUint32LE();
-	for (uint32 i = 0; i < len; ++i)
-		if (!readChunk(stream, format))
-			return false;
-
-	return true;
+	for (uint32 i = 0; i < len; ++i) {
+		readChunk(stream, format);
+	}
 }
 
 uint32 Texture::getTexture(Common::String name) const {

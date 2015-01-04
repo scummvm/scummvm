@@ -33,6 +33,7 @@ namespace Stark {
 class Direction;
 class Image;
 class Item;
+class SkeletonAnim;
 class VisualSmacker;
 class Visual;
 class XRCReadStream;
@@ -146,6 +147,7 @@ public:
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onPostRead() override;
 
 protected:
 	void printData() override;
@@ -156,6 +158,8 @@ protected:
 	uint32 _field_48;
 	uint32 _field_4C;
 	uint32 _field_6C;
+
+	SkeletonAnim *_seletonAnim;
 };
 
 } // End of namespace Stark

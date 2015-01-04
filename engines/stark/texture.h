@@ -39,12 +39,12 @@ public:
 	Texture();
 	~Texture();
 
-	bool createFromStream(Common::ReadStream *stream);
+	void createFromStream(Common::ReadStream *stream);
 
 	uint32 getTexture(Common::String name) const;
 
 private:
-	bool readChunk(Common::ReadStream *stream, uint32 format);
+	void readChunk(Common::ReadStream *stream, uint32 format);
 
 	uint32 *_palette;
 

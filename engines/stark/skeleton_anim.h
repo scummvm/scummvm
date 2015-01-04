@@ -61,7 +61,7 @@ public:
 	SkeletonAnim();
 	~SkeletonAnim();
 
-	bool createFromStream(Common::ReadStream *stream);
+	void createFromStream(Common::ReadStream *stream);
 
 	/**
 	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp

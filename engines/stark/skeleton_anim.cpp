@@ -38,7 +38,7 @@ SkeletonAnim::~SkeletonAnim() {
 		delete *it;
 }
 
-bool SkeletonAnim::createFromStream(Common::ReadStream *stream) {
+void SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 	_id = stream->readUint32LE();
 	_ver = stream->readUint32LE();
 	if (_ver == 3) {
@@ -50,8 +50,9 @@ bool SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 		_u2 = stream->readUint32LE();
 		_time = stream->readUint32LE();
 	}
-	if (_u2 != 0xdeadbabe)
-		return false;
+	if (_u2 != 0xdeadbabe) {
+		error("Wrong magic while reading animation");
+	}
 
 	uint32 num = stream->readUint32LE();
 	_anims.resize(num);
@@ -73,8 +74,6 @@ bool SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 
 		_anims[node->_bone] = node;
 	}
-
-	return true;
 }
 
 Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {

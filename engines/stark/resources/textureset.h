@@ -29,6 +29,7 @@
 
 namespace Stark {
 
+class Texture;
 class XRCReadStream;
 
 class TextureSet : public Resource {
@@ -39,13 +40,18 @@ public:
 	virtual ~TextureSet();
 
 	// Resource API
-	void readData(XRCReadStream *stream);
+	void readData(XRCReadStream *stream) override;
+	void onPostRead() override;
+
+	Texture *getTexture();
 
 protected:
 	void printData() override;
 
 	Common::String _filename;
 	Common::String _archiveName;
+
+	Texture *_texture;
 };
 
 } // End of namespace Stark
