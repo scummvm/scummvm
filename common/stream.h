@@ -125,10 +125,12 @@ public:
 		write(&value, 4);
 	}
 
+#ifdef HAVE_INT64
 	void writeUint64LE(uint64 value) {
 		value = TO_LE_64(value);
 		write(&value, 8);
 	}
+#endif
 
 	void writeUint16BE(uint16 value) {
 		value = TO_BE_16(value);
@@ -140,10 +142,12 @@ public:
 		write(&value, 4);
 	}
 
+#ifdef HAVE_INT64
 	void writeUint64BE(uint64 value) {
 		value = TO_BE_64(value);
 		write(&value, 8);
 	}
+#endif
 
 	FORCEINLINE void writeSint16LE(int16 value) {
 		writeUint16LE((uint16)value);
@@ -153,9 +157,11 @@ public:
 		writeUint32LE((uint32)value);
 	}
 
+#ifdef HAVE_INT64
 	FORCEINLINE void writeSint64LE(int64 value) {
 		writeUint64LE((uint64)value);
 	}
+#endif
 
 	FORCEINLINE void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
@@ -165,9 +171,11 @@ public:
 		writeUint32BE((uint32)value);
 	}
 
+#ifdef HAVE_INT64
 	FORCEINLINE void writeSint64BE(int64 value) {
 		writeUint64BE((uint64)value);
 	}
+#endif
 
 	/**
 	 * Write the given string to the stream.
@@ -259,6 +267,7 @@ public:
 		return FROM_LE_32(val);
 	}
 
+#ifdef HAVE_INT64
 	/**
 	 * Read an unsigned 64-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
@@ -271,6 +280,7 @@ public:
 		read(&val, 8);
 		return FROM_LE_64(val);
 	}
+#endif
 
 	/**
 	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
@@ -298,6 +308,7 @@ public:
 		return FROM_BE_32(val);
 	}
 
+#ifdef HAVE_INT64
 	/**
 	 * Read an unsigned 64-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
@@ -310,6 +321,7 @@ public:
 		read(&val, 8);
 		return FROM_BE_64(val);
 	}
+#endif
 
 	/**
 	 * Read a signed 16-bit word stored in little endian (LSB first) order
@@ -333,6 +345,7 @@ public:
 		return (int32)readUint32LE();
 	}
 
+#ifdef HAVE_INT64
 	/**
 	 * Read a signed 64-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
@@ -343,6 +356,7 @@ public:
 	FORCEINLINE int64 readSint64LE() {
 		return (int64)readUint64LE();
 	}
+#endif
 
 	/**
 	 * Read a signed 16-bit word stored in big endian (MSB first) order
@@ -366,6 +380,7 @@ public:
 		return (int32)readUint32BE();
 	}
 
+#ifdef HAVE_INT64
 	/**
 	 * Read a signed 64-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
@@ -376,6 +391,7 @@ public:
 	FORCEINLINE int64 readSint64BE() {
 		return (int64)readUint64BE();
 	}
+#endif
 
 	/**
 	 * Read the specified amount of data into a malloc'ed buffer
