@@ -71,6 +71,85 @@
 	((uint16)((((a) >>  8) & 0x00FF) | \
 	          (((a) <<  8) & 0xFF00) ))
 
+
+
+/**
+ * Swap the bytes in a 16 bit word in order to convert LE encoded data to BE
+ * and vice versa.
+ */
+
+// compilerspecific variants come first, fallback last
+
+// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
+#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
+
+	FORCEINLINE uint16 SWAP_BYTES_16(const uint16 a) {
+		if (__builtin_constant_p(a)) {
+			return SWAP_CONSTANT_16(a);
+		} else {
+			uint16 result;
+			__asm__ ("wsbh %0,%1" : "=r" (result) : "r" (a));
+			return result;
+		}
+	}
+#else
+
+	inline uint16 SWAP_BYTES_16(const uint16 a) {
+		return (a >> 8) | (a << 8);
+	}
+#endif
+
+
+
+/**
+ * Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
+ * and vice versa.
+ */
+
+// machine/compiler-specific variants come first, fallback last
+
+// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
+#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
+
+	FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
+		if (__builtin_constant_p(a)) {
+			return SWAP_CONSTANT_32(a);
+		} else {
+			uint32 result;
+#	if defined(__psp__)
+			// use special allegrex instruction
+			__asm__ ("wsbw %0,%1" : "=r" (result) : "r" (a));
+#	else
+			__asm__ ("wsbh %0,%1\n"
+			         "rotr %0,%0,16" : "=r" (result) : "r" (a));
+#	endif
+			return result;
+		}
+	}
+
+// Test for GCC >= 4.3.0 as this version added the bswap builtin
+#elif GCC_ATLEAST(4, 3)
+
+	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
+		return __builtin_bswap32(a);
+	}
+
+#elif defined(_MSC_VER)
+
+	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
+		return _byteswap_ulong(a);
+	}
+
+// generic fallback
+#else
+
+	inline uint32 SWAP_BYTES_32(uint32 a) {
+		const uint16 low = (uint16)a, high = (uint16)(a >> 16);
+		return ((uint32)(uint16)((low >> 8) | (low << 8)) << 16)
+			   | (uint16)((high >> 8) | (high << 8));
+	}
+#endif
+
 #ifdef HAVE_INT64
 /**
  * Swap the bytes in a 64 bit word in order to convert LE encoded data to BE
@@ -129,80 +208,6 @@
 #endif
 
 #endif // HAVE_INT64
-/**
- * Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
- * and vice versa.
- */
-
-// machine/compiler-specific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_32(a);
-		} else {
-			uint32 result;
-#	if defined(__psp__)
-			// use special allegrex instruction
-			__asm__ ("wsbw %0,%1" : "=r" (result) : "r" (a));
-#	else
-			__asm__ ("wsbh %0,%1\n"
-			         "rotr %0,%0,16" : "=r" (result) : "r" (a));
-#	endif
-			return result;
-		}
-	}
-
-// Test for GCC >= 4.3.0 as this version added the bswap builtin
-#elif GCC_ATLEAST(4, 3)
-
-	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
-		return __builtin_bswap32(a);
-	}
-
-#elif defined(_MSC_VER)
-
-	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
-		return _byteswap_ulong(a);
-	}
-
-// generic fallback
-#else
-
-	inline uint32 SWAP_BYTES_32(uint32 a) {
-		const uint16 low = (uint16)a, high = (uint16)(a >> 16);
-		return ((uint32)(uint16)((low >> 8) | (low << 8)) << 16)
-			   | (uint16)((high >> 8) | (high << 8));
-	}
-#endif
-
-/**
- * Swap the bytes in a 16 bit word in order to convert LE encoded data to BE
- * and vice versa.
- */
-
-// compilerspecific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint16 SWAP_BYTES_16(const uint16 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_16(a);
-		} else {
-			uint16 result;
-			__asm__ ("wsbh %0,%1" : "=r" (result) : "r" (a));
-			return result;
-		}
-	}
-#else
-
-	inline uint16 SWAP_BYTES_16(const uint16 a) {
-		return (a >> 8) | (a << 8);
-	}
-#endif
 
 
 /**
