@@ -125,6 +125,11 @@ public:
 		write(&value, 4);
 	}
 
+	void writeUint64LE(uint64 value) {
+		value = TO_LE_64(value);
+		write(&value, 8);
+	}
+
 	void writeUint16BE(uint16 value) {
 		value = TO_BE_16(value);
 		write(&value, 2);
@@ -135,6 +140,11 @@ public:
 		write(&value, 4);
 	}
 
+	void writeUint64BE(uint64 value) {
+		value = TO_BE_64(value);
+		write(&value, 8);
+	}
+
 	FORCEINLINE void writeSint16LE(int16 value) {
 		writeUint16LE((uint16)value);
 	}
@@ -143,12 +153,20 @@ public:
 		writeUint32LE((uint32)value);
 	}
 
+	FORCEINLINE void writeSint64LE(int64 value) {
+		writeUint64LE((uint64)value);
+	}
+
 	FORCEINLINE void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
 	}
 
 	FORCEINLINE void writeSint32BE(int32 value) {
 		writeUint32BE((uint32)value);
+	}
+
+	FORCEINLINE void writeSint64BE(int64 value) {
+		writeUint64BE((uint64)value);
 	}
 
 	/**
@@ -242,6 +260,19 @@ public:
 	}
 
 	/**
+	 * Read an unsigned 64-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	uint64 readUint64LE() {
+		uint64 val;
+		read(&val, 8);
+		return FROM_LE_64(val);
+	}
+
+	/**
 	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
@@ -268,6 +299,19 @@ public:
 	}
 
 	/**
+	 * Read an unsigned 64-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	uint64 readUint64BE() {
+		uint64 val;
+		read(&val, 8);
+		return FROM_BE_64(val);
+	}
+
+	/**
 	 * Read a signed 16-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
@@ -290,6 +334,17 @@ public:
 	}
 
 	/**
+	 * Read a signed 64-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE int64 readSint64LE() {
+		return (int64)readUint64LE();
+	}
+
+	/**
 	 * Read a signed 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
@@ -309,6 +364,17 @@ public:
 	 */
 	FORCEINLINE int32 readSint32BE() {
 		return (int32)readUint32BE();
+	}
+
+	/**
+	 * Read a signed 64-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE int64 readSint64BE() {
+		return (int64)readUint64BE();
 	}
 
 	/**
