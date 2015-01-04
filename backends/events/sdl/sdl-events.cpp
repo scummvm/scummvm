@@ -55,16 +55,18 @@ SdlEventSource::SdlEventSource()
 	memset(&_km, 0, sizeof(_km));
 
 	int joystick_num = ConfMan.getInt("joystick_num");
-	if (joystick_num > -1) {
+	if (joystick_num >= 0) {
 		// Initialize SDL joystick subsystem
 		if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
 
 		// Enable joystick
-		if (SDL_NumJoysticks() > 0) {
-			debug("Using joystick: %s", SDL_JoystickName(0));
+		if (SDL_NumJoysticks() > joystick_num) {
+			debug("Using joystick: %s", SDL_JoystickName(joystick_num));
 			_joystick = SDL_JoystickOpen(joystick_num);
+		} else {
+			warning("Invalid joystick: %d", joystick_num);
 		}
 	}
 }
