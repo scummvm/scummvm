@@ -517,6 +517,14 @@ public:
 		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
 	}
 
+#ifdef HAVE_INT64
+	uint64 readUint64() {
+		uint64 val;
+		read(&val, 8);
+		return (_bigEndian) ? TO_BE_64(val) : TO_LE_64(val);
+	}
+#endif
+
 	FORCEINLINE int16 readSint16() {
 		return (int16)readUint16();
 	}
@@ -524,6 +532,12 @@ public:
 	FORCEINLINE int32 readSint32() {
 		return (int32)readUint32();
 	}
+
+#ifdef HAVE_INT64
+	FORCEINLINE int64 readSint64() {
+		return (int64)readUint64();
+	}
+#endif
 };
 
 /**
