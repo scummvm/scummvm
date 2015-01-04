@@ -1597,6 +1597,12 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 		newSize = src->_dynamicPhases.size();
 	}
 
+	if (!newSize) {
+		warning("Movement::Movement: newSize = 0");
+
+		return;
+	}
+
 	_framePosOffsets = (Common::Point **)calloc(newSize, sizeof(Common::Point *));
 
 	for (int i = 0; i < newSize; i++)
