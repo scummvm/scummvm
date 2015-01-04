@@ -446,7 +446,7 @@
 #ifdef HAVE_INT64
 		inline uint64 READ_BE_UINT64(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
-			return (b[0] << 56) | b[1] << 48) | b[2] << 40) | b[3] << 32) | b[4] << 24) | (b[5] << 16) | (b[6] << 8) | (b[7]);
+			return (b[0] << 56) | (b[1] << 48) | (b[2] << 40) | (b[3] << 32) | (b[4] << 24) | (b[5] << 16) | (b[6] << 8) | (b[7]);
 		}
 		inline void WRITE_BE_UINT64(void *ptr, uint64 value) {
 			uint8 *b = (uint8 *)ptr;
