@@ -36,18 +36,6 @@ RenderEntry::RenderEntry(Resource *owner, const Common::String &name) :
 	_direction3D(0.0) {
 }
 
-void RenderEntry::update(uint32 delta) {
-	if (!_visual) {
-		// warning("No visual for render entry '%s'", _name.c_str());
-		return;
-	}
-
-	VisualActor *actor = _visual->get<VisualActor>();
-	if (actor) {
-		actor->update(delta);
-	}
-}
-
 void RenderEntry::render(GfxDriver *gfx) {
 	if (!_visual) {
 		// warning("No visual for render entry '%s'", _name.c_str());

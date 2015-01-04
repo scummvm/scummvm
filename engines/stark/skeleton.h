@@ -59,7 +59,7 @@ public:
 	/**
 	 * Increment the skeleton timestamp, and apply bone animations if required
 	 */
-	bool animate(uint32 delta = 0);
+	void animate(uint32 time);
 
 	/**
 	 * Start reading animation data from the specified stream
@@ -79,7 +79,7 @@ private:
 	Common::Array<BoneNode *> _bones;
 	SkeletonAnim *_anim;
 
-	uint32 _lastTime, _maxTime;
+	uint32 _lastTime;
 };
 
 } // End of namespace Stark

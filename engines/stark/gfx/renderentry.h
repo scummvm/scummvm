@@ -40,7 +40,6 @@ public:
 	RenderEntry(Resource *owner, const Common::String &name);
 	virtual ~RenderEntry() {};
 
-	void update(uint32 delta); // TODO: Remove
 	void render(GfxDriver *gfx);
 
 	void setVisual(Visual *visual);

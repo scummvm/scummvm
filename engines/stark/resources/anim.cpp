@@ -239,7 +239,9 @@ AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::S
 				_field_48(0),
 				_field_4C(100),
 				_field_6C(1),
-				_seletonAnim(nullptr) {
+				_seletonAnim(nullptr),
+				_currentTime(0),
+				_totalTime(0) {
 	_visual = new VisualActor();
 }
 
@@ -304,6 +306,22 @@ void AnimSub4::onPostRead() {
 	_seletonAnim->createFromStream(stream);
 
 	delete stream;
+}
+
+void AnimSub4::onAllLoaded() {
+	Anim::onAllLoaded();
+
+	_totalTime = _seletonAnim->getLength();
+	_currentTime = 0;
+}
+
+void AnimSub4::onGameLoop(uint32 msecs) {
+	Anim::onGameLoop(msecs);
+
+	if (isReferenced() && _totalTime) {
+		_currentTime = (_currentTime + msecs) % _totalTime;
+		_visual->setTime(_currentTime);
+	}
 }
 
 void AnimSub4::printData() {

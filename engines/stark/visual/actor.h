@@ -47,12 +47,13 @@ public:
 	void setMesh(Actor *mesh);
 	void setAnim(SkeletonAnim *anim);
 	void setTexture(Texture *texture);
+	void setTime(uint32 time);
 
-	void update(uint32 delta);
 	void render(GfxDriver *gfx);
 
 private:
 	Actor *_actor;
+	uint32 _time;
 };
 
 } // End of namespace Stark

@@ -149,6 +149,8 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 	void onPostRead() override;
+	void onAllLoaded() override;
+	void onGameLoop(uint32 msecs) override;
 
 	// Anim API
 	void reference(Item *item) override;
@@ -164,6 +166,9 @@ protected:
 	uint32 _field_48;
 	uint32 _field_4C;
 	uint32 _field_6C;
+
+	uint32 _totalTime;
+	uint32 _currentTime;
 
 	SkeletonAnim *_seletonAnim;
 	VisualActor *_visual;

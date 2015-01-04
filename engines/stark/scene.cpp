@@ -65,7 +65,6 @@ void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
 	RenderEntryArray::iterator element = renderEntries.begin();
 	while (element != renderEntries.end()) {
 		// Draw the current element
-		(*element)->update(delta);
 		(*element)->render(_gfx);
 
 		// Go for the next one

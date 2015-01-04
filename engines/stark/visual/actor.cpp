@@ -36,7 +36,8 @@ namespace Stark {
 
 VisualActor::VisualActor() :
 		Visual(TYPE),
-		_actor(nullptr) {
+		_actor(nullptr),
+		_time(0) {
 }
 
 VisualActor::~VisualActor() {
@@ -54,11 +55,13 @@ void VisualActor::setTexture(Texture *texture) {
 	_actor->setTexture(texture);
 }
 
-void VisualActor::update(uint32 delta) {
-	_actor->getSkeleton()->animate(delta);
+void VisualActor::setTime(uint32 time) {
+	_time = time;
 }
 
 void VisualActor::render(Stark::GfxDriver *gfx) {
+	_actor->getSkeleton()->animate(_time);
+
 	// Prepare vertex list and push to gfx driver
 	// HACK: Purely because I just want to see something for now
 	gfx->set3DMode();
