@@ -81,12 +81,10 @@ void VisualActor::render(Stark::GfxDriver *gfx) {
 	// Prepare vertex list and push to gfx driver
 	// HACK: Purely because I just want to see something for now
 	gfx->set3DMode();
-//	glPushMatrix();
-//	glLoadIdentity();
-//	glScalef(0.005f, .005f, -.005f);
-//	glTranslatef(0, -20.f, 100.f);
-//	glRotatef(20, .3f, 1.f, 0.f);
-//	glScalef(0.005f, .005f, -.005f);
+	glPushMatrix();
+	glTranslatef(-20.5764, -181.446, -14.f);
+	glRotatef(90, 1.f, 0.f, 0.f);
+	glRotatef(-120, 0.f, 1.f, 0.f);
 
 	glEnable(GL_TEXTURE_2D);
 
@@ -144,7 +142,7 @@ void VisualActor::render(Stark::GfxDriver *gfx) {
 		}
 	}
 
-//	glPopMatrix();
+	glPopMatrix();
 }
 
 } // End of namespace Stark

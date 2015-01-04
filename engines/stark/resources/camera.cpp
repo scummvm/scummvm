@@ -38,7 +38,7 @@ Camera::Camera(Resource *parent, byte subType, uint16 index, const Common::Strin
 		_fov(45),
 		_nearClipPlane(100.0),
 		_farClipPlane(64000.0) {
-	_type = ResourceType::kCamera;
+	_type = TYPE;
 }
 
 void Camera::setClipPlanes(float near, float far) {
@@ -48,7 +48,7 @@ void Camera::setClipPlanes(float near, float far) {
 
 void Camera::readData(XRCReadStream *stream) {
 	_position = stream->readVector3();
-	_lookAt = stream->readVector3();
+	_lookDirection = stream->readVector3();
 	_f1 = stream->readFloat();
 	_fov = stream->readFloat();
 	_viewport = stream->readRect();
@@ -59,13 +59,13 @@ void Camera::onEnterLocation() {
 	Resource::onEnterLocation();
 
 	Scene *scene = StarkServices::instance().scene;
-	scene->initCamera(_position, _lookAt, _fov, _viewport, _nearClipPlane, _farClipPlane);
+	scene->initCamera(_position, _lookDirection, _fov, _viewport, _nearClipPlane, _farClipPlane);
 }
 
 void Camera::printData() {
 	Common::Debug debug = streamDbg();
 	debug << "position: " << _position << "\n";
-	debug << "lookAt: " << _lookAt << "\n";
+	debug << "lookDirection: " << _lookDirection << "\n";
 	debug << "f1: " << _f1 << "\n";
 	debug << "fov: " << _fov << "\n";
 	_viewport.debugPrint(0, "viewport:");

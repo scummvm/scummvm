@@ -53,7 +53,7 @@ protected:
 	void printData() override;
 
 	Math::Vector3d _position;
-	Math::Vector3d _lookAt;
+	Math::Vector3d _lookDirection;
 	float _f1;
 	float _fov;
 	Common::Rect _viewport;

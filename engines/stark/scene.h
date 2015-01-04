@@ -59,7 +59,7 @@ private:
 	RenderEntryArray _elements;
 
 	Math::Vector3d _cameraPosition;
-	Math::Vector3d _cameraLookAt;
+	Math::Vector3d _cameraLookDirection;
 	float _fov;
 	Common::Rect _viewport;
 	float _nearClipPlane;

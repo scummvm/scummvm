@@ -267,7 +267,7 @@ void AnimSub4::printData() {
 	Anim::printData();
 
 	debug("filename: %s", _animFilename.c_str());
-	debug("field_3C: %d", _castsShadow);
+	debug("castsShadow: %d", _castsShadow);
 	debug("field_48: %d", _field_48);
 	debug("field_4C: %d", _field_4C);
 	debug("field_6C: %d", _field_6C);

@@ -53,10 +53,10 @@ Scene::Scene(GfxDriver *gfx) :
 Scene::~Scene() {
 }
 
-void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
+void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &lookDirection,
 		float fov, Common::Rect viewport, float nearClipPlane, float farClipPlane) {
 	_cameraPosition = position;
-	_cameraLookAt = lookAt;
+	_cameraLookDirection = lookDirection;
 	_fov = fov;
 	_viewport = viewport;
 	_nearClipPlane = nearClipPlane;
@@ -70,7 +70,7 @@ void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
 
 	// setup cam
 	_gfx->setupPerspective(_fov, _nearClipPlane, _farClipPlane);
-	_gfx->setupCamera(_cameraPosition, _cameraPosition + _cameraLookAt);
+	_gfx->setupCamera(_cameraPosition, _cameraPosition + _cameraLookDirection);
 
 	// Draw bg
 
