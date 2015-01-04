@@ -65,6 +65,10 @@ double decodeDouble(SerializedDouble value) {
 	return ((value.signAndSignificandTwo & 0x80000000) == 0x80000000) ? -returnValue : returnValue;
 }
 
+#if 0
+
+// Why these are needed?
+
 uint64 encodeDouble_64(double value) {
 	// Split the value into its significand and exponent
 	int exponent;
@@ -134,5 +138,7 @@ double decodeDouble_Compact(CompactSerializedDouble value) {
 	// Check the sign bit and return
 	return ((value.signAndSignificandOne & 0x80000000) == 0x80000000) ? -returnValue : returnValue;
 }
+
+#endif
 
 } // End of namespace Sword25

@@ -56,6 +56,7 @@ SerializedDouble encodeDouble(double value);
  */
 double decodeDouble(SerializedDouble value);
 
+#if 0
 /**
  * Encodes a double as a uint64
  *
@@ -89,6 +90,8 @@ CompactSerializedDouble encodeDouble_Compact(double value);
  * @return         The decoded value
  */
 double decodeDouble_Compact(CompactSerializedDouble value);
+
+#endif
 
 } // End of namespace Sword25
 
