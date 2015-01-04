@@ -4504,6 +4504,7 @@ $_def_64bit_type_unsigned
 #else
 $_def_64bit_type_unsigned
 #endif
+#define HAVE_INT64
 EOF
 fi
 
