@@ -166,6 +166,22 @@ void Window::writeString(const Common::String &s) {
 	_vm->_screen->writeString(s, _innerBounds);
 }
 
+void Window::drawList(DrawStruct *items) {
+	Screen &screen = *_vm->_screen;
+
+	for (; items->_sprites != nullptr; ++items) {
+		if (items->_frame == -1 || items->_scale == -1)
+			continue;
+
+		Common::Rect bounds = _innerBounds;
+		bounds.translate(items->_x, items->_y);
+
+		// TODO: There are two sprite calls in this method. Figure out why
+		items->_sprites->draw(screen, items->_frame,
+			Common::Point(items->_x, items->_y));
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 /**

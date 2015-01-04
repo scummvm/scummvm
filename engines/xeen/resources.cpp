@@ -232,6 +232,51 @@ const byte TEXT_COLORS[40][4] = {
 	{ 0x00, 0xDB, 0xDB, 0xDB },
 };
 
-const char *DIRECTION_TEXT[4] = { "NORTH", "EAST", "SOUTH", "WEST" };
+const char *const DIRECTION_TEXT[4] = { "NORTH", "EAST", "SOUTH", "WEST" };
+
+const char *const RACE_NAMES[5] = { "Human", "Elf", "Dwarf", "Gnome", "H-Orc" };
+
+const char *const ALIGNMENT_NAMES[3] = { "Good", "Neutral", "Evil" };
+
+const char *const SEX_NAMES[2] = { "Male", "Female" };
+
+const char *const CLASS_NAMES[11] = {
+	"Knight", "Paladin", "Archer", "Cleric", "Sorcerer", "Robber", 
+	"Ninja", "Barbarian", "Druid", "Ranger", nullptr
+};
+
+const char *const CONDITION_NAMES[18] = {
+	nullptr, "Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased", 
+	"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused", 
+	"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
+};
+
+const char *const IN_PARTY = "\014""15In Party\014""d";
+
+const char *const PARTY_DETAILS = "\015\003l\002\014""00"
+	"\013""001""\011""035%s" 
+	"\013""009""\011""035%s" 
+	"\013""017""\011""035%s" 
+	"\013""025""\011""035%s" 
+	"\013""001""\011""136%s" 
+	"\013""009""\011""136%s" 
+	"\013""017""\011""136%s" 
+	"\013""025""\011""136%s" 
+	"\013""044""\011""035%s" 
+	"\013""052""\011""035%s" 
+	"\013""060""\011""035%s" 
+	"\013""068""\011""035%s" 
+	"\013""044""\011""136%s" 
+	"\013""052""\011""136%s" 
+	"\013""060""\011""136%s" 
+	"\013""068""\011""136%s";
+
+const int FACE_CONDITION_FRAMES[17] = { 
+	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0 
+};
+
+const int CHAR_FACES_X[6] = { 10, 45, 81, 117, 153, 189 };
+
+const int HP_BARS_X[6] = { 13, 50, 86, 122, 158, 194 };
 
 } // End of namespace Xeen

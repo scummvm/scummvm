@@ -70,6 +70,13 @@ enum XeenDebugChannels {
 enum Mode {
 	MODE_0 = 0,
 	MODE_1 = 1,
+	MODE_2 = 2,
+	MODE_3 = 3,
+	MODE_4 = 4,
+	MODE_5 = 5,
+	MODE_6 = 6,
+	MODE_7 = 7,
+	MODE_8 = 8,
 	MODE_9 = 9
 };
 

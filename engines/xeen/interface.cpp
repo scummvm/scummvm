@@ -39,6 +39,13 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_heroismUIFrame = 0;
 	_isEarlyGame = false;
 	_buttonsLoaded = false;
+	_hiliteChar = -1;
+	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
+
+	_faceDrawStructs[0] = DrawStruct(nullptr, 0, 0, 0);
+	_faceDrawStructs[1] = DrawStruct(nullptr, 0, 101, 0);
+	_faceDrawStructs[2] = DrawStruct(nullptr, 0, 0, 43);
+	_faceDrawStructs[3] = DrawStruct(nullptr, 0, 101, 43);
 
 	loadSprites();
 }
@@ -49,9 +56,12 @@ void Interface::loadSprites() {
 	_spellFxSprites.load("spellfx.icn");
 	_fecpSprites.load("fecp.brd");
 	_blessSprites.load("bless.icn");
+	_restoreSprites.load("restorex.icn");
+	_hpSprites.load("hpbars.icn");
 }
 
 void Interface::setup(bool soundPlayed) {
+	Screen &screen = *_vm->_screen;
 	SpriteResource uiSprites("inn.icn");
 
 	// Get mappings to the active characters in the party
@@ -88,6 +98,7 @@ void Interface::setup(bool soundPlayed) {
 		}
 
 		// Add in buttons for the UI
+		_interfaceText = "";
 		_buttonsLoaded = true;
 		addButton(Common::Rect(16, 100, 40, 120), 242, &uiSprites, true);
 		addButton(Common::Rect(52, 100, 76, 120), 243, &uiSprites, true);
@@ -102,6 +113,11 @@ void Interface::setup(bool soundPlayed) {
 		addButton(Common::Rect(117, 59, 149, 81), 52, &uiSprites, false);
 
 		setupBackground();
+		screen._windows[11].open();
+		setupFaces(0, xeenSideChars, 0);
+		screen._windows[11].writeString(_interfaceText);
+
+		// TODO
 	}
 }
 
@@ -226,6 +242,105 @@ void Interface::assembleBorder() {
 	// Draw view frame
 	if (screen._windows[12]._enabled)
 		screen._windows[12].frame();
+}
+
+void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, int v3) {
+	Common::String playerNames[4];
+	Common::String playerRaces[4];
+	Common::String playerSex[4];
+	Common::String playerClass[4];
+	int posIndex;
+	int charId;
+
+	for (posIndex = 0; posIndex < 4; ++posIndex) {
+		int charId = xeenSideChars[charIndex];
+		bool isInParty = _vm->_party.isInParty(charId);
+
+		if (charId == 0xff) {
+			while ((int)_buttons.size() > (7 + posIndex))
+				_buttons.remove_at(_buttons.size() - 1);
+			break;
+		}
+
+		Common::Rect &b = _buttons[7 + posIndex]._bounds;
+		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
+		PlayerStruct &ps = _vm->_roster[xeenSideChars[charIndex + posIndex]];
+		playerNames[posIndex] = isInParty ? IN_PARTY : ps._name;
+		playerRaces[posIndex] = RACE_NAMES[ps._race];
+		playerSex[posIndex] = SEX_NAMES[ps._sex];
+		playerClass[posIndex] = CLASS_NAMES[ps._class];
+	}
+
+	charIconsPrint(v3);
+
+	// Set up the sprite set to use for each face
+	charId = xeenSideChars[charIndex];
+	_faceDrawStructs[0]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
+	charId = xeenSideChars[charIndex + 1];
+	_faceDrawStructs[1]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
+	charId = xeenSideChars[charIndex + 2];
+	_faceDrawStructs[2]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
+	charId = xeenSideChars[charIndex + 3];
+	_faceDrawStructs[3]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
+
+	_interfaceText = Common::String::format(PARTY_DETAILS,
+		playerNames[0].c_str(), playerRaces[0].c_str(), playerSex[0].c_str(), playerClass[0].c_str(),
+		playerNames[1].c_str(), playerRaces[1].c_str(), playerSex[1].c_str(), playerClass[1].c_str(),
+		playerNames[2].c_str(), playerRaces[2].c_str(), playerSex[2].c_str(), playerClass[2].c_str(),
+		playerNames[3].c_str(), playerRaces[3].c_str(), playerSex[3].c_str(), playerClass[3].c_str()
+	);
+}
+
+void Interface::charIconsPrint(bool updateFlag) {
+	Screen &screen = *_vm->_screen;
+	bool stateFlag = _vm->_mode == MODE_2;
+	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
+
+	// Handle drawing the party faces
+	for (int idx = 0; idx < (stateFlag ? _vm->_party._combatPartyCount : 
+			_vm->_party._partyCount); ++idx) {
+		int charIndex = stateFlag ? _combatCharIds[idx] : idx;
+		PlayerStruct &ps = *_vm->_party._activeParty[charIndex];
+		Condition charCondition = ps.findCondition();
+		int charFrame = FACE_CONDITION_FRAMES[charCondition];
+		
+		SpriteResource *sprites = (charFrame > 4 && !_charFaces[0].empty()) ?
+			&_dseFace : _partyFaces[charIndex];
+		if (charFrame > 4)
+			charFrame -= 5;
+
+		sprites->draw(screen, charFrame, Common::Point(CHAR_FACES_X[idx], 150));
+	}
+
+	if (!_hpSprites.empty()) {
+		for (int idx = 0; idx < (stateFlag ? _vm->_party._combatPartyCount :
+			_vm->_party._partyCount); ++idx) {
+			int charIndex = stateFlag ? _combatCharIds[idx] : idx;
+			PlayerStruct &ps = *_vm->_party._activeParty[charIndex];
+
+			// Draw the Hp bar
+			int maxHp = ps.getMaxHp();
+			int frame;
+			if (ps._currentHp < 1)
+				frame = 4;
+			else if (ps._currentHp > maxHp)
+				frame = 3;
+			else if (ps._currentHp == maxHp)
+				frame = 0;
+			else if (ps._currentHp < (maxHp / 4))
+				frame = 2;
+			else
+				frame = 1;
+
+			_hpSprites.draw(screen, frame, Common::Point(HP_BARS_X[idx], 182));
+		}
+	}
+
+	if (_hiliteChar != -1)
+		_globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+
+	if (updateFlag)
+		screen._windows[33].update();
 }
 
 } // End of namespace Xeen

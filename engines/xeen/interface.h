@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
 #include "xeen/party.h"
+#include "xeen/screen.h"
 
 namespace Xeen {
 
@@ -40,8 +41,12 @@ private:
 	SpriteResource _spellFxSprites;
 	SpriteResource _fecpSprites;
 	SpriteResource _blessSprites;
+	SpriteResource _restoreSprites;
+	SpriteResource _hpSprites;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
+	DrawStruct _faceDrawStructs[4];
+	int _combatCharIds[8];
 
 	int _batUIFrame;
 	int _spotDoorsUIFrame;
@@ -54,6 +59,8 @@ private:
 	int _heroismUIFrame;
 	bool _isEarlyGame;
 	bool _buttonsLoaded;
+	Common::String _interfaceText;
+	int _hiliteChar;
 
 	void loadSprites();
 
@@ -62,6 +69,10 @@ private:
 	void assembleBorder();
 
 	void setupBackground();
+
+	void setupFaces(int charIndex, Common::Array<int> xeenSideChars, int v3);
+
+	void charIconsPrint(bool updateFlag);
 public:
 	Interface(XeenEngine *vm);
 

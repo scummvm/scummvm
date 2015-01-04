@@ -28,6 +28,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "xeen/font.h"
+#include "xeen/sprites.h"
 #include "xeen/xsurface.h"
 
 namespace Xeen {
@@ -40,6 +41,19 @@ namespace Xeen {
 
 class XeenEngine;
 class Screen;
+
+struct DrawStruct {
+	SpriteResource *_sprites;
+	int _frame;
+	int _x;
+	int _y;
+	int _scale;
+	int _flags;
+
+	DrawStruct(SpriteResource *sprites, int frame, int x, int y, int scale = 0, int flags = 0) :
+		_sprites(sprites), _frame(frame), _x(x), _y(y), _scale(scale), _flags(flags) {}
+	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
+};
 
 class Window: public XSurface {
 private:
@@ -74,7 +88,10 @@ public:
 
 	void fill();
 
-	void writeString(const Common::String &s);};
+	void writeString(const Common::String &s);
+
+	void drawList(DrawStruct *items);
+};
 
 class Screen: public FontSurface {
 private:

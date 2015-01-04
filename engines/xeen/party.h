@@ -50,9 +50,11 @@ enum Skill { THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
 	SPOT_DOORS = 16, DANGER_SENSE = 17
 };
 
-enum ConditionType { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
+enum Condition { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 	DISEASED = 4, INSANE = 5, IN_LOVE = 6, DRUNK = 7, SLEEP = 8, 
-	DEPRESSED = 9, CONFUSED = 10, PARALYZED = 11
+	DEPRESSED = 9, CONFUSED = 10, PARALYZED = 11, UNCONSCIOUS = 12,
+	DEAD = 13, STONED = 14, ERADICATED = 15,
+	NO_CONDITION = 16
 };
 
 #define ITEMS_COUNT 36
@@ -68,29 +70,6 @@ public:
 	int _temporary;
 public:
 	AttributePair();
-	void synchronize(Common::Serializer &s);
-};
-
-class Conditions {
-	byte _cursed;
-	byte _heartBroken;
-	byte _weak;
-	byte _poisoned;
-	byte _diseased;
-	byte _insane;
-	byte _inLove;
-	byte _drunk;
-	byte _asleep;
-	byte _depressed;
-	byte _confused;
-	byte _paralyzed;
-	byte _unconscious;
-	byte _dead;
-	byte _stoned;
-	byte _eradicated;
-public:
-	Conditions();
-	
 	void synchronize(Common::Serializer &s);
 };
 
@@ -131,7 +110,7 @@ public:
 	AttributePair _poisonResistence;
 	AttributePair _energyResistence;
 	AttributePair _magicResistence;
-	Conditions _conditions;
+	int _conditions[16];
 	int _townUnknown;
 	int _unknown2;
 	int _currentHp;
@@ -143,6 +122,12 @@ public:
 public:
 	PlayerStruct();
 	void synchronize(Common::Serializer &s);
+
+	Condition findCondition() const;
+
+	int getYear(int partyYear, bool ignoreTemp);
+
+	int getMaxHp();
 };
 
 class Roster: public Common::Array<PlayerStruct> {
@@ -154,6 +139,7 @@ public:
 
 class Party {
 public:
+	// Dynamic data that's saved
 	int _partyCount;
 	int _realPartyCount;
 	int _partyMembers[8];
@@ -208,13 +194,17 @@ public:
 	XeenItem _blacksmithMisc2[ITEMS_COUNT];
 	bool _characterFlags[30][24];
 public:
+	// Other party related runtime data
 	Common::Array<PlayerStruct *> _activeParty;
+	int _combatPartyCount;
 public:
 	Party();
 
 	void synchronize(Common::Serializer &s);
 
 	bool checkSkill(Skill skillId);
+
+	bool isInParty(int charId);
 };
 
 } // End of namespace Xeen
