@@ -160,22 +160,17 @@
 
 // Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
 //
-// TODO: Fix this #if statement. It isn't changed from 32 bit. Is there a 64 bit swap instruction?
 #if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
 
-	FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
+	FORCEINLINE uint64 SWAP_BYTES_64(const uint64 a) {
 		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_32(a);
+			return SWAP_CONSTANT_64(a);
 		} else {
-			uint32 result;
-#	if defined(__psp__)
-			// use special allegrex instruction
-			__asm__ ("wsbw %0,%1" : "=r" (result) : "r" (a));
-#	else
-			__asm__ ("wsbh %0,%1\n"
-			         "rotr %0,%0,16" : "=r" (result) : "r" (a));
-#	endif
-			return result;
+			uint32 low = (uint32)a, high = (uint32)(a >> 32);
+			low = SWAP_BYTES_32(low);
+			high = SWAP_BYTES_32(high);
+
+			return (((uint64)low) << 32) | high;
 		}
 	}
 
