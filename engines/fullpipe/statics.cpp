@@ -1048,8 +1048,11 @@ MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
 		if (_flags & 1)
 			_messageQueueId = mq->_id;
 	} else {
-		if (!queueMessageQueue(mq))
+		if (!queueMessageQueue(mq)) {
+			delete mq;
+
 			return 0;
+		}
 
 		g_fp->_globalMessageQueueList->addMessageQueue(mq);
 	}
