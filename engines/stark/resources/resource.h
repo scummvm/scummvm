@@ -62,7 +62,7 @@ public:
 		kSpeech                 = 29,
 		kLight                  = 30,
 		kCursor                 = 31, // Not sure about this one
-		kBoneMesh               = 32,
+		kBonesMesh              = 32,
 		kScroll                 = 33,
 		kFMV                    = 34,
 		kLipSynch               = 35,

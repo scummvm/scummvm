@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	resources/anim.o \
 	resources/animhierarchy.o \
 	resources/animscript.o \
+	resources/bonesmesh.o \
 	resources/bookmark.o \
 	resources/camera.o \
 	resources/command.o \

@@ -71,7 +71,7 @@ const char *ResourceType::getName() {
 			{ ResourceType::kSpeech,                 "Speech"                 },
 			{ ResourceType::kLight,                  "Light"                  },
 			{ ResourceType::kCursor,                 "Cursor"                 },
-			{ ResourceType::kBoneMesh,               "BoneMesh"               },
+			{ ResourceType::kBonesMesh,              "BonesMesh"              },
 			{ ResourceType::kScroll,                 "Scroll"                 },
 			{ ResourceType::kFMV,                    "FMV"                    },
 			{ ResourceType::kLipSynch,               "LipSynch"               },
