@@ -82,7 +82,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(ms.pos(), 2);
 		TS_ASSERT_EQUALS(ms.readUint32BE(), 0x03040506UL);
 		TS_ASSERT_EQUALS(ms.pos(), 6);
-		TS_ASSERT_EQUALS(ms.readUint64LE(), 0x0708090A0B0C0D0EULL);
+		TS_ASSERT_EQUALS(ms.readUint64BE(), 0x0708090A0B0C0D0EULL);
 		TS_ASSERT_EQUALS(ms.pos(), 14);
 		TS_ASSERT_EQUALS(ms.readByte(), 0x0F);
 		TS_ASSERT_EQUALS(ms.pos(), 15);
@@ -97,7 +97,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(ms.pos(), 2);
 		TS_ASSERT_EQUALS(ms.readUint32(), 0x06050403UL);
 		TS_ASSERT_EQUALS(ms.pos(), 6);
-		TS_ASSERT_EQUALS(ms.readUint64LE(), 0x0E0D0C0B0A090807ULL);
+		TS_ASSERT_EQUALS(ms.readUint64(), 0x0E0D0C0B0A090807ULL);
 		TS_ASSERT_EQUALS(ms.pos(), 14);
 		TS_ASSERT_EQUALS(ms.readByte(), 0x0F);
 		TS_ASSERT_EQUALS(ms.pos(), 15);
@@ -112,7 +112,7 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(ms.pos(), 2);
 		TS_ASSERT_EQUALS(ms.readUint32(), 0x03040506UL);
 		TS_ASSERT_EQUALS(ms.pos(), 6);
-		TS_ASSERT_EQUALS(ms.readUint64LE(), 0x0708090A0B0C0D0EULL);
+		TS_ASSERT_EQUALS(ms.readUint64(), 0x0708090A0B0C0D0EULL);
 		TS_ASSERT_EQUALS(ms.pos(), 14);
 		TS_ASSERT_EQUALS(ms.readByte(), 0x0F);
 		TS_ASSERT_EQUALS(ms.pos(), 15);
