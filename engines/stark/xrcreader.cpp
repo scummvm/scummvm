@@ -40,6 +40,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/resource.h"
 #include "engines/stark/resources/root.h"
+#include "engines/stark/resources/textureset.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -223,6 +224,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kBonesMesh:
 		resource = new BonesMesh(parent, subType, index, name);
+		break;
+	case ResourceType::kTextureSet:
+		resource = new TextureSet(parent, subType, index, name);
 		break;
 	default:
 		resource = new UnimplementedResource(parent, type, subType, index, name);

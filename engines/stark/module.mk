@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	resources/location.o \
 	resources/resource.o \
 	resources/root.o \
+	resources/textureset.o \
 	resourceprovider.o \
 	resourcereference.o \
 	scene.o \
