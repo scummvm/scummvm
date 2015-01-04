@@ -476,7 +476,7 @@
 			WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 		}
 #ifdef HAVE_INT64
-		inline uint32 READ_BE_UINT64(const void *ptr) {
+		inline uint64 READ_BE_UINT64(const void *ptr) {
 			return SWAP_BYTES_64(READ_UINT64(ptr));
 		}
 		inline void WRITE_BE_UINT64(void *ptr, uint64 value) {
