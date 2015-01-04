@@ -43,6 +43,8 @@ public:
 	void readData(XRCReadStream *stream) override;
 	void onPostRead() override;
 
+	Actor *getActor();
+
 protected:
 	void printData() override;
 

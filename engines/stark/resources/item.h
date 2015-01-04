@@ -23,17 +23,21 @@
 #ifndef STARK_RESOURCES_ITEM_H
 #define STARK_RESOURCES_ITEM_H
 
+#include "engines/stark/resources/resource.h"
+#include "engines/stark/resourcereference.h"
+
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
-#include "engines/stark/resourcereference.h"
+#include "math/vector3d.h"
 
 namespace Stark {
 
 class Anim;
 class AnimHierarchy;
+class BonesMesh;
 class RenderEntry;
+class TextureSet;
 class Visual;
 class XRCReadStream;
 
@@ -103,6 +107,10 @@ class ItemSub5610 : public ItemVisual {
 public:
 	ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub5610();
+
+protected:
+	Math::Vector3d _position3D;
+	float _direction3D;
 };
 
 class ItemSub56 : public ItemSub5610 {
@@ -129,10 +137,21 @@ public:
 	virtual ~ItemSub10();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	void readData(XRCReadStream *stream) override;
+	void onAllLoaded() override;
+
+	// Item API
+	RenderEntry *getRenderEntry();
+
+	BonesMesh *findBonesMesh();
+	TextureSet *findTextureSet(uint32 textureType);
 
 protected:
 	void printData() override;
+
+	int32 _meshIndex;
+	int32 _textureNormalIndex;
+	int32 _textureFaceIndex;
 
 	ResourceReference _reference;
 };

@@ -27,6 +27,8 @@
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
+#include "engines/stark/resources/bonesmesh.h"
+#include "engines/stark/resources/textureset.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -156,7 +158,8 @@ ItemSub5610::~ItemSub5610() {
 }
 
 ItemSub5610::ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemVisual(parent, subType, index, name) {
+		ItemVisual(parent, subType, index, name),
+		_direction3D(0.0) {
 }
 
 ItemSub56::~ItemSub56() {
@@ -232,13 +235,95 @@ ItemSub10::~ItemSub10() {
 }
 
 ItemSub10::ItemSub10(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemSub5610(parent, subType, index, name) {
+		ItemSub5610(parent, subType, index, name),
+		_meshIndex(-1),
+		_textureNormalIndex(-1),
+		_textureFaceIndex(-1) {
 }
 
 void ItemSub10::readData(XRCReadStream *stream) {
 	ItemSub5610::readData(stream);
 
 	_reference = stream->readResourceReference();
+}
+
+void ItemSub10::onAllLoaded() {
+	ItemSub5610::onAllLoaded();
+
+	BonesMesh *bonesMesh = findChild<BonesMesh>();
+	if (bonesMesh) {
+		_meshIndex = bonesMesh->getIndex();
+	}
+
+	TextureSet *textureNormal = findChildWithSubtype<TextureSet>(TextureSet::kTextureNormal);
+	if (textureNormal) {
+		_textureNormalIndex = textureNormal->getIndex();
+	}
+
+	TextureSet *textureFace = findChildWithSubtype<TextureSet>(TextureSet::kTextureFace);
+	if (textureFace) {
+		_textureFaceIndex = textureFace->getIndex();
+	}
+}
+
+BonesMesh *ItemSub10::findBonesMesh() {
+	// Prefer retrieving the mesh from the anim hierarchy
+	BonesMesh *bonesMesh = _animHierarchy->findBonesMesh();
+
+	// Otherwise, use a children mesh, or a referenced mesh
+	if (!bonesMesh) {
+		if (_meshIndex == -1) {
+			//TODO: Load from referenced item
+		} else {
+			bonesMesh = findChildWithIndex<BonesMesh>(_meshIndex);
+		}
+	}
+
+	return bonesMesh;
+}
+
+TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
+	// Prefer retrieving the mesh from the anim hierarchy
+	TextureSet *textureSet = _animHierarchy->findTextureSet(textureType);
+
+	// Otherwise, use a children mesh, or a referenced mesh
+	if (!textureSet) {
+		if (textureType == TextureSet::kTextureNormal) {
+			if (_textureNormalIndex == -1) {
+				//TODO: Load from referenced item
+			} else {
+				textureSet = findChildWithIndex<TextureSet>(_textureNormalIndex);
+			}
+		} else if (textureType == TextureSet::kTextureNormal) {
+			if (_textureFaceIndex == -1) {
+				//TODO: Load from referenced item
+			} else {
+				textureSet = findChildWithIndex<TextureSet>(_textureFaceIndex);
+			}
+		} else {
+			error("Unknown texture type %d", textureType);
+		}
+	}
+
+	return textureSet;
+}
+
+RenderEntry *ItemSub10::getRenderEntry() {
+	if (_enabled) {
+		Visual *visual = getVisual();
+
+		if (!visual) {
+			_animHierarchy->selectItemAnim(this);
+			visual = getVisual();
+		}
+
+		_renderEntry->setVisual(visual);
+		_renderEntry->setPosition3D(_position3D, _direction3D);
+	} else {
+		_renderEntry->setVisual(nullptr);
+	}
+
+	return _renderEntry;
 }
 
 void ItemSub10::printData() {

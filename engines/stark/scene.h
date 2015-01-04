@@ -56,7 +56,6 @@ public:
 
 private:
 	GfxDriver *_gfx;
-	RenderEntryArray _elements;
 
 	Math::Vector3d _cameraPosition;
 	Math::Vector3d _cameraLookDirection;

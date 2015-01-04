@@ -36,6 +36,11 @@ class TextureSet : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kTextureSet;
 
+	enum SubType {
+		kTextureNormal = 1,
+		kTextureFace = 2
+	};
+
 	TextureSet(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~TextureSet();
 

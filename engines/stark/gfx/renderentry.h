@@ -27,6 +27,8 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+#include "math/vector3d.h"
+
 namespace Stark {
 
 class GfxDriver;
@@ -43,6 +45,7 @@ public:
 
 	void setVisual(Visual *visual);
 	void setPosition(const Common::Point &position);
+	void setPosition3D(const Math::Vector3d &position, float direction);
 
 protected:
 	Common::String _name;
@@ -50,6 +53,8 @@ protected:
 
 	Visual *_visual;
 	Common::Point _position;
+	Math::Vector3d _position3D;
+	float _direction3D;
 };
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;

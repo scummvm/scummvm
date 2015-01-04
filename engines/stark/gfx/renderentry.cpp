@@ -32,7 +32,8 @@ namespace Stark {
 RenderEntry::RenderEntry(Resource *owner, const Common::String &name) :
 	_visual(nullptr),
 	_name(name),
-	_owner(owner) {
+	_owner(owner),
+	_direction3D(0.0) {
 }
 
 void RenderEntry::update(uint32 delta) {
@@ -75,6 +76,11 @@ void RenderEntry::setVisual(Visual *visual) {
 
 void RenderEntry::setPosition(const Common::Point &position) {
 	_position = position;
+}
+
+void RenderEntry::setPosition3D(const Math::Vector3d &position, float direction) {
+	_position3D = position;
+	_direction3D = direction;
 }
 
 } // End of namespace Stark

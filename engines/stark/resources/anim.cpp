@@ -24,10 +24,14 @@
 
 #include "engines/stark/archiveloader.h"
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
+#include "engines/stark/resources/item.h"
+#include "engines/stark/resources/textureset.h"
 #include "engines/stark/skeleton_anim.h"
 #include "engines/stark/stark.h"
+#include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/smacker.h"
 #include "engines/stark/xrcreader.h"
 
@@ -78,6 +82,7 @@ void Anim::reference(Item *item) {
 void Anim::dereference(Item *item) {
 	_refCount--;
 }
+
 bool Anim::isReferenced() {
 	return _refCount > 0;
 }
@@ -224,6 +229,7 @@ void AnimSub3::printData() {
 }
 
 AnimSub4::~AnimSub4() {
+	delete _visual;
 	delete _seletonAnim;
 }
 
@@ -234,6 +240,28 @@ AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::S
 				_field_4C(100),
 				_field_6C(1),
 				_seletonAnim(nullptr) {
+	_visual = new VisualActor();
+}
+
+void AnimSub4::reference(Item *item) {
+	Anim::reference(item);
+
+	ItemSub10 *actor = Resource::cast<ItemSub10>(item);
+
+	BonesMesh *mesh = actor->findBonesMesh();
+	TextureSet *texture = actor->findTextureSet(TextureSet::kTextureNormal);
+
+	_visual->setMesh(mesh->getActor());
+	_visual->setTexture(texture->getTexture());
+	_visual->setAnim(_seletonAnim);
+}
+
+void AnimSub4::dereference(Item *item) {
+	Anim::dereference(item);
+}
+
+Visual *AnimSub4::getVisual() {
+	return _visual;
 }
 
 void AnimSub4::readData(XRCReadStream *stream) {

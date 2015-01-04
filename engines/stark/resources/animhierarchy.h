@@ -31,7 +31,9 @@
 namespace Stark {
 
 class Anim;
+class BonesMesh;
 class ItemVisual;
+class TextureSet;
 class XRCReadStream;
 
 class AnimHierarchy : public Resource {
@@ -50,6 +52,8 @@ public:
 	void selectItemAnim(ItemVisual *item);
 
 	Anim *getCurrentAnim();
+	BonesMesh *findBonesMesh();
+	TextureSet *findTextureSet(uint32 textureType);
 
 protected:
 	void printData() override;

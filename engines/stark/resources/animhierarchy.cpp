@@ -25,7 +25,9 @@
 #include "engines/stark/resources/animhierarchy.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/textureset.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -112,6 +114,14 @@ void AnimHierarchy::selectItemAnim(ItemVisual *item) {
 
 Anim *AnimHierarchy::getCurrentAnim() {
 	return _currentAnim;
+}
+
+BonesMesh *AnimHierarchy::findBonesMesh() {
+	return findChild<BonesMesh>();
+}
+
+TextureSet *AnimHierarchy::findTextureSet(uint32 textureType) {
+	return findChildWithSubtype<TextureSet>(textureType);
 }
 
 void AnimHierarchy::printData() {

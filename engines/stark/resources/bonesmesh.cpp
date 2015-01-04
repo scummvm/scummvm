@@ -55,6 +55,10 @@ void BonesMesh::onPostRead() {
 	delete stream;
 }
 
+Actor *BonesMesh::getActor() {
+	return _actor;
+}
+
 void BonesMesh::printData() {
 	debug("filename: %s", _filename.c_str());
 }

@@ -37,32 +37,6 @@ Scene::Scene(GfxDriver *gfx) :
 		_fov(45.0),
 		_nearClipPlane(100.0),
 		_farClipPlane(64000.0) {
-	// Open the scene archive
-	XARCArchive xarc;
-	if (!xarc.open("45/00/00.xarc"))
-		warning("couldn't open archive");
-
-	Common::ReadStream *texStream = xarc.createReadStreamForMember("oldapril.tm"); // Leak
-	Texture *texture = new Texture(); // Leak
-	texture->createFromStream(texStream);
-
-	Common::ReadStream *animStream = xarc.createReadStreamForMember("oldapril_idle.ani"); // Leak
-	SkeletonAnim *anim = new SkeletonAnim(); // Leak
-	anim->createFromStream(animStream);
-
-	Common::ReadStream *meshStream = xarc.createReadStreamForMember("oldapril.cir"); // Leak
-	Actor *mesh = new Actor(); // Leak
-	mesh->readFromStream(meshStream);
-
-	VisualActor *actor = new VisualActor();  // Leak
-	actor->setMesh(mesh);
-	actor->setAnim(anim);
-	actor->setTexture(texture);
-
-	RenderEntry *oldApril = new RenderEntry(nullptr, "Old April");  // Leak
-	oldApril->setVisual(actor);
-
-	_elements.push_back(oldApril);
 }
 
 Scene::~Scene() {
@@ -79,10 +53,6 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 }
 
 void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
-	RenderEntryArray allElements;
-	allElements.push_back(renderEntries);
-	allElements.push_back(_elements);
-
 	// setup cam
 	_gfx->setupPerspective(_fov, _nearClipPlane, _farClipPlane);
 	_gfx->setupCamera(_cameraPosition, _cameraPosition + _cameraLookDirection);
@@ -92,8 +62,8 @@ void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
 	// Draw other things
 
 	// Render all the scene elements
-	RenderEntryArray::iterator element = allElements.begin();
-	while (element != allElements.end()) {
+	RenderEntryArray::iterator element = renderEntries.begin();
+	while (element != renderEntries.end()) {
 		// Draw the current element
 		(*element)->update(delta);
 		(*element)->render(_gfx);
