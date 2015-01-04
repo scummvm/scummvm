@@ -27,10 +27,12 @@
 
 namespace Stark {
 
-class Resource;
-class Root;
+class Camera;
+class Floor;
 class Level;
 class Location;
+class Resource;
+class Root;
 
 class ArchiveLoader;
 class StateProvider;
@@ -42,19 +44,27 @@ class Current {
 public:
 	Current() :
 		_level(nullptr),
-		_location(nullptr) {
+		_location(nullptr),
+		_floor(nullptr),
+		_camera(nullptr) {
 	}
 
 	Level *getLevel() const { return _level; }
 	Location *getLocation() const { return _location; }
+	Floor *getFloor() const { return _floor; }
+	Camera *getCamera() const { return _camera; }
 
 	void setLevel(Level *level) { _level = level; }
 	void setLocation(Location *location) { _location = location; }
+	void setFloor(Floor *floor) { _floor = floor; }
+	void setCamera(Camera *camera) { _camera = camera; }
 
 private:
 	Level *_level;
 	Location *_location;
 	/* Item *_interactive; */
+	Floor *_floor;
+	Camera *_camera;
 };
 
 /**

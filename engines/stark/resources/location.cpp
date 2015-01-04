@@ -41,6 +41,10 @@ void Location::onAllLoaded() {
 	_layers = listChildren<Layer>();
 }
 
+bool Location::has3DLayer() {
+	return findChildWithSubtype<Layer>(Layer::kLayer3D) != nullptr;
+}
+
 RenderEntryArray Location::listRenderEntries() {
 	RenderEntryArray renderEntries;
 

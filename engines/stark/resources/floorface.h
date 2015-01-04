@@ -36,6 +36,8 @@ class XRCReadStream;
 
 class FloorFace : public Resource {
 public:
+	static const ResourceType::Type TYPE = ResourceType::kFloorFace;
+
 	FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FloorFace();
 

@@ -23,9 +23,12 @@
 #include "engines/stark/resourceprovider.h"
 
 #include "engines/stark/archiveloader.h"
-#include "engines/stark/resources/root.h"
+#include "engines/stark/resources/camera.h"
+#include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/root.h"
 #include "engines/stark/stateprovider.h"
 
 namespace Stark {
@@ -135,6 +138,15 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	// Load the archive, and get the resource sub-tree root
 	newlyLoaded = _archiveLoader->load(locationArchive);
 	currentLocation->setLocation(_archiveLoader->useRoot<Location>(locationArchive));
+
+	if (currentLocation->getLocation()->has3DLayer()) {
+		Layer3D *layer = currentLocation->getLocation()->findChildWithSubtype<Layer3D>(Layer::kLayer3D);
+		currentLocation->setFloor(layer->findChild<Floor>());
+		currentLocation->setCamera(layer->findChild<Camera>());
+	} else {
+		currentLocation->setFloor(nullptr);
+		currentLocation->setCamera(nullptr);
+	}
 
 	// If we just loaded a resource tree, restore its state
 	if (newlyLoaded) {

@@ -43,6 +43,7 @@ public:
 	// Resource API
 	void onAllLoaded() override;
 
+	bool has3DLayer();
 	RenderEntryArray listRenderEntries();
 
 protected:

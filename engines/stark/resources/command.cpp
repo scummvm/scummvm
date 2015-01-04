@@ -32,7 +32,7 @@ Command::~Command() {
 
 Command::Command(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name) {
-	_type = ResourceType::kCommand;
+	_type = TYPE;
 }
 
 void Command::readData(XRCReadStream *stream) {

@@ -30,7 +30,7 @@ FloorFace::FloorFace(Resource *parent, byte subType, uint16 index, const Common:
 		Resource(parent, subType, index, name),
 		_unk1(0),
 		_unk2(0) {
-	_type = ResourceType::kFloorFace;
+	_type = TYPE;
 
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = 0;

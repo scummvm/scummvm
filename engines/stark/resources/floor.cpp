@@ -29,7 +29,7 @@ namespace Stark {
 Floor::Floor(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
 		_facesCount(0) {
-	_type = ResourceType::kFloor;
+	_type = TYPE;
 }
 
 Floor::~Floor() {
