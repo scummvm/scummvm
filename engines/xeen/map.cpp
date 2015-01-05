@@ -475,7 +475,7 @@ void MonsterData::load(const Common::String &name) {
 void MonsterData::synchronize(Common::SeekableReadStream &s) {
 	clear();
 
-	MonsterData spr;
+	MonsterStruct spr;
 	while (!s.eos()) {
 		spr.synchronize(s);
 		push_back(spr);
@@ -710,6 +710,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideObj = 0;
 	_sideMon = 0;
 	_isOutdoors = false;
+	_stepped = false;
 }
 
 void Map::load(int mapId) {
@@ -721,6 +722,11 @@ void Map::load(int mapId) {
 	} else {
 		PleaseWait::show(_vm);
 	}
+
+	_stepped = true;
+	_vm->_party._mazeId = mapId;
+	_vm->_events->clearEvents();
+
 
 	if (mapId >= 113 && mapId <= 127) {
 		_townPortalSide = 0;
@@ -856,7 +862,13 @@ void Map::load(int mapId) {
 	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
 	mobFile.close();
 
-	// TODO: Loop loading moer data
+	// TODO: Loop loading moer data / other / cbr? data
+
+	if (_isOutdoors) {
+
+	} else {
+
+	}
 }
 
 } // End of namespace Xeen

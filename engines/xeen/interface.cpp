@@ -44,10 +44,31 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	_intrIndex1 = 0;
 
-	_faceDrawStructs[0] = DrawStruct(nullptr, 0, 0, 0);
-	_faceDrawStructs[1] = DrawStruct(nullptr, 0, 101, 0);
-	_faceDrawStructs[2] = DrawStruct(nullptr, 0, 0, 43);
-	_faceDrawStructs[3] = DrawStruct(nullptr, 0, 101, 43);
+	initDrawStructs();
+}
+
+void Interface::initDrawStructs() {
+	_faceDrawStructs[0] = DrawStruct(0, 0, 0);
+	_faceDrawStructs[1] = DrawStruct(0, 101, 0);
+	_faceDrawStructs[2] = DrawStruct(0, 0, 43);
+	_faceDrawStructs[3] = DrawStruct(0, 101, 43);
+
+	_mainList[0] = DrawStruct(7, 232, 74);
+	_mainList[1] = DrawStruct(0, 235, 75);
+	_mainList[2] = DrawStruct(2, 260, 75);
+	_mainList[3] = DrawStruct(4, 286, 75);
+	_mainList[4] = DrawStruct(6, 235, 96);
+	_mainList[5] = DrawStruct(8, 260, 96);
+	_mainList[6] = DrawStruct(10, 286, 96);
+	_mainList[7] = DrawStruct(12, 235, 117);
+	_mainList[8] = DrawStruct(14, 260, 117);
+	_mainList[9] = DrawStruct(16, 286, 117);
+	_mainList[10] = DrawStruct(20, 235, 148);
+	_mainList[11] = DrawStruct(22, 260, 148);
+	_mainList[12] = DrawStruct(24, 286, 148);
+	_mainList[13] = DrawStruct(26, 235, 169);
+	_mainList[14] = DrawStruct(28, 260, 169);
+	_mainList[15] = DrawStruct(30, 286, 169);
 }
 
 void Interface::manageCharacters(bool soundPlayed) {
@@ -82,7 +103,7 @@ start:
 
 		if (!_partyFaces[0]) {
 			// Xeen only uses 24 of possible 30 character slots
-			loadCharIcons(XEEN_TOTAL_CHARACTERS);
+			loadCharIcons();
 
 			for (int i = 0; i < _vm->_party._partyCount; ++i)
 				_partyFaces[i] = &_charFaces[_vm->_party._partyMembers[i]];
@@ -255,14 +276,19 @@ start:
 	_uiSprites.clear();
 }
 
-void Interface::loadCharIcons(int numChars) {
-	for (int i = 0; i < numChars; ++i) {
+void Interface::loadCharIcons() {
+	for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
 		// Load new character resource
 		Common::String name = Common::String::format("char%02d.fac", i);
 		_charFaces[i].load(name);
 	}
 
 	_dseFace.load("dse.fac");
+}
+
+void Interface::loadPartyIcons() {
+	for (int i = 0; i < _vm->_party._partyCount; ++i)
+		_partyFaces[i] = &_charFaces[_vm->_party._partyMembers[i]];
 }
 
 void Interface::setupBackground() {
@@ -506,6 +532,56 @@ void Interface::draw3d(bool flag) {
 		return;
 
 	warning("TODO");
+}
+
+void Interface::animate3d() {
+
+}
+
+void Interface::setMonsters() {
+
+}
+
+void Interface::setObjects() {
+
+}
+
+void Interface::setOutdoorsMonsters() {
+
+}
+
+void Interface::setOutdoorsObjects() {
+
+}
+
+void Interface::startup() {
+	Screen &screen = *_vm->_screen;
+	_iconSprites.load("main.icn");
+
+	animate3d();
+	if (_vm->_map->_isOutdoors) {
+		setMonsters();
+		setObjects();
+	} else {
+		setOutdoorsMonsters();
+		setOutdoorsObjects();
+	}
+	draw3d(false);
+
+	_globalSprites.draw(screen._windows[1], 5, Common::Point(232, 9));
+	charIconsPrint(false);
+
+	_mainList[0]._sprites = &_globalSprites;
+	for (int i = 1; i < 16; ++i)
+		_mainList[i]._sprites = &_iconSprites;
+}
+
+void Interface::mainIconsPrint() {
+	Screen &screen = *_vm->_screen;
+	screen._windows[38].close();
+	screen._windows[12].close();
+	screen._windows[0].drawList(_mainList, 16);
+	screen._windows[34].update();
 }
 
 } // End of namespace Xeen

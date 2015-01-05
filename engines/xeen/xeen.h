@@ -93,7 +93,8 @@ private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
-	SpriteResource _iconsSprites;
+	bool _moveMonsters;
+	bool _tillMove;
 
 	void showIntro();
 

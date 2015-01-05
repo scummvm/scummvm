@@ -258,6 +258,8 @@ private:
 	int _townPortalSide;
 	int _sideObj;
 	int _sideMon;
+	bool _stepped;
+public:
 	bool _isOutdoors;
 public:
 	Map(XeenEngine *vm);

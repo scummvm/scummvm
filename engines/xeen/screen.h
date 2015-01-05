@@ -50,8 +50,8 @@ struct DrawStruct {
 	int _scale;
 	int _flags;
 
-	DrawStruct(SpriteResource *sprites, int frame, int x, int y, int scale = 0, int flags = 0) :
-		_sprites(sprites), _frame(frame), _x(x), _y(y), _scale(scale), _flags(flags) {}
+	DrawStruct(int frame, int x, int y, int scale = 0, int flags = 0) :
+		_sprites(nullptr), _frame(frame), _x(x), _y(y), _scale(scale), _flags(flags) {}
 	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
 };
 

@@ -52,6 +52,8 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_face2State = 0;
 	_noDirectionSense = false;
 	_falling = false;
+	_tillMove = false;
+	_moveMonsters = false;
 }
 
 XeenEngine::~XeenEngine() {
@@ -271,8 +273,7 @@ void XeenEngine::play() {
 
 	_screen->loadBackground("back.raw");
 	_screen->loadPalette("mm4.pal");
-	_interface->loadCharIcons(_party._partyCount);
-	_iconsSprites.load("main.icn");
+	_interface->loadPartyIcons();
 
 	if (getGameID() != GType_WorldOfXeen && !_loadDarkSide) {
 		_loadDarkSide = true;
@@ -283,6 +284,28 @@ void XeenEngine::play() {
 	}
 
 	_map->load(_party._mazeId);
+
+	_interface->startup();
+	if (_mode == MODE_0) {
+		_screen->fadeOut(4);
+	}
+
+	_screen->_windows[0].update();
+	_interface->mainIconsPrint();
+	_screen->_windows[0].update();
+	_events->setCursor(0);
+
+	_moveMonsters = true;
+	_tillMove = false;
+	if (_mode == MODE_0) {
+		_mode = MODE_1;
+		_screen->fadeIn(4);
+	}
+
+	// Main game loop
+	while (!shouldQuit()) {
+		_events->pollEventsAndWait();
+	}
 }
 
 } // End of namespace Xeen

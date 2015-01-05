@@ -44,9 +44,11 @@ private:
 	SpriteResource _restoreSprites;
 	SpriteResource _hpSprites;
 	SpriteResource _uiSprites;
+	SpriteResource _iconSprites;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
+	DrawStruct _mainList[16];
 	int _combatCharIds[8];
 
 	int _batUIFrame;
@@ -64,6 +66,8 @@ private:
 	int _hiliteChar;
 	int _intrIndex1;
 
+	void initDrawStructs();
+
 	void assembleBorder();
 
 	void setupBackground();
@@ -75,14 +79,30 @@ private:
 	void drawViewBackground(int bgType);
 
 	void addCharacterToRoster();
+
+	void animate3d();
+
+	void setMonsters();
+
+	void setObjects();
+
+	void setOutdoorsMonsters();
+
+	void setOutdoorsObjects();
 public:
 	Interface(XeenEngine *vm);
 
 	void manageCharacters(bool soundPlayed);
 
-	void loadCharIcons(int numChars);
+	void loadCharIcons();
+
+	void loadPartyIcons();
 
 	void draw3d(bool flag);
+
+	void startup();
+
+	void mainIconsPrint();
 };
 
 } // End of namespace Xeen
