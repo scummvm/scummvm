@@ -61,7 +61,6 @@ protected:
 	void displayNote(const Common::String &msg);
 public:
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
-
 	virtual ~MartianEngine();
 
 	void doSpecial5(int param1);

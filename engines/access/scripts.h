@@ -35,6 +35,8 @@ class Scripts;
 #define SCRIPT_START_BYTE 0xE0
 #define ROOM_SCRIPT 2000
 
+typedef void(Scripts::*ScriptMethodPtr)();
+
 class Scripts : public Manager {
 private:
 	Resource *_resource;
@@ -43,6 +45,7 @@ private:
 	void charLoop();
 protected:
 	Common::SeekableReadStream *_data;
+	ScriptMethodPtr COMMAND_LIST[100];
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
@@ -142,6 +145,9 @@ public:
 	Scripts(AccessEngine *vm);
 
 	virtual ~Scripts();
+
+	void setOpcodes();
+	void setOpcodes_v2();
 
 	void setScript(Resource *data, bool restartFlag = false);
 

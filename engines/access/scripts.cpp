@@ -37,10 +37,92 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_choiceStart = 0;
 	_charsOrg = Common::Point(0, 0);
 	_texsOrg = Common::Point(0, 0);
+	setOpcodes();
 }
 
 Scripts::~Scripts() {
 	freeScriptData();
+}
+
+void Scripts::setOpcodes() {
+	COMMAND_LIST[0] = &Scripts::cmdObject;
+	COMMAND_LIST[1] = &Scripts::cmdEndObject;
+	COMMAND_LIST[2] = &Scripts::cmdJumpLook;
+	COMMAND_LIST[3] = &Scripts::cmdJumpHelp;
+	COMMAND_LIST[4] = &Scripts::cmdJumpGet;
+	COMMAND_LIST[5] = &Scripts::cmdJumpMove;
+	COMMAND_LIST[6] = &Scripts::cmdJumpUse;
+	COMMAND_LIST[7] = &Scripts::cmdJumpTalk;
+	COMMAND_LIST[8] = &Scripts::cmdNull;
+	COMMAND_LIST[9] = &Scripts::cmdPrint;
+	COMMAND_LIST[10] = &Scripts::cmdRetPos;
+	COMMAND_LIST[11] = &Scripts::cmdAnim;
+	COMMAND_LIST[12] = &Scripts::cmdSetFlag;
+	COMMAND_LIST[13] = &Scripts::cmdCheckFlag;
+	COMMAND_LIST[14] = &Scripts::cmdGoto;
+	COMMAND_LIST[15] = &Scripts::cmdAddScore;
+	COMMAND_LIST[16] = &Scripts::cmdSetInventory;
+	COMMAND_LIST[17] = &Scripts::cmdCheckInventory;
+	COMMAND_LIST[18] = &Scripts::cmdSetTex;
+	COMMAND_LIST[19] = &Scripts::cmdNewRoom;
+	COMMAND_LIST[20] = &Scripts::cmdConverse;
+	COMMAND_LIST[21] = &Scripts::cmdCheckFrame;
+	COMMAND_LIST[22] = &Scripts::cmdCheckAnim;
+	COMMAND_LIST[23] = &Scripts::cmdSnd;
+	COMMAND_LIST[24] = &Scripts::cmdRetNeg;
+	COMMAND_LIST[25] = &Scripts::cmdRetPos;
+	COMMAND_LIST[26] = &Scripts::cmdCheckLoc;
+	COMMAND_LIST[27] = &Scripts::cmdSetAnim;
+	COMMAND_LIST[28] = &Scripts::cmdDispInv;
+	COMMAND_LIST[29] = &Scripts::cmdSetAbout;
+	COMMAND_LIST[30] = &Scripts::cmdSetTimer;
+	COMMAND_LIST[31] = &Scripts::cmdCheckTimer;
+	COMMAND_LIST[32] = &Scripts::cmdSetTravel;
+	COMMAND_LIST[33] = &Scripts::cmdJumpGoto;
+	COMMAND_LIST[34] = &Scripts::cmdSetVideo;
+	COMMAND_LIST[35] = &Scripts::cmdPlayVideo;
+	COMMAND_LIST[36] = &Scripts::cmdPlotImage;
+	COMMAND_LIST[37] = &Scripts::cmdSetDisplay;
+	COMMAND_LIST[38] = &Scripts::cmdSetBuffer;
+	COMMAND_LIST[39] = &Scripts::cmdSetScroll;
+	COMMAND_LIST[40] = &Scripts::cmdSaveRect;
+	COMMAND_LIST[41] = &Scripts::cmdVideoEnded;
+	COMMAND_LIST[42] = &Scripts::cmdSetBufVid;
+	COMMAND_LIST[43] = &Scripts::cmdPlayBufVid;
+	COMMAND_LIST[44] = &Scripts::cmdRemoveLast;
+	COMMAND_LIST[45] = &Scripts::cmdDoTravel;
+	COMMAND_LIST[46] = &Scripts::cmdCheckAbout;
+	COMMAND_LIST[47] = &Scripts::cmdSpecial;
+	COMMAND_LIST[48] = &Scripts::cmdSetCycle;
+	COMMAND_LIST[49] = &Scripts::cmdCycle;
+	COMMAND_LIST[50] = &Scripts::cmdCharSpeak;
+	COMMAND_LIST[51] = &Scripts::cmdTexSpeak;
+	COMMAND_LIST[52] = &Scripts::cmdTexChoice;
+	COMMAND_LIST[53] = &Scripts::cmdWait;
+	COMMAND_LIST[54] = &Scripts::cmdSetConPos;
+	COMMAND_LIST[55] = &Scripts::cmdCheckVFrame;
+	COMMAND_LIST[56] = &Scripts::cmdJumpChoice;
+	COMMAND_LIST[57] = &Scripts::cmdReturnChoice;
+	COMMAND_LIST[58] = &Scripts::cmdClearBlock;
+	COMMAND_LIST[59] = &Scripts::cmdLoadSound;
+	COMMAND_LIST[60] = &Scripts::cmdFreeSound;
+	COMMAND_LIST[61] = &Scripts::cmdSetVideoSound;
+	COMMAND_LIST[62] = &Scripts::cmdPlayVideoSound;
+	COMMAND_LIST[63] = &Scripts::cmdPrintWatch;
+	COMMAND_LIST[64] = &Scripts::cmdDispAbout;
+	COMMAND_LIST[65] = &Scripts::cmdPushLocation;
+	COMMAND_LIST[66] = &Scripts::cmdCheckTravel;
+	COMMAND_LIST[67] = &Scripts::cmdBlock;
+	COMMAND_LIST[68] = &Scripts::cmdPlayerOff;
+	COMMAND_LIST[69] = &Scripts::cmdPlayerOn;
+	COMMAND_LIST[70] = &Scripts::cmdDead;
+	COMMAND_LIST[71] = &Scripts::cmdFadeOut;
+	COMMAND_LIST[72] = &Scripts::cmdEndVideo;
+}
+
+void Scripts::setOpcodes_v2() {
+	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
+	COMMAND_LIST[29] = &Scripts::cmdSetTimer();
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
@@ -107,37 +189,7 @@ int Scripts::executeScript() {
 	return _returnCode;
 }
 
-typedef void(Scripts::*ScriptMethodPtr)();
-
 void Scripts::executeCommand(int commandIndex) {
-	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::cmdObject, &Scripts::cmdEndObject, &Scripts::cmdJumpLook,
-		&Scripts::cmdJumpHelp, &Scripts::cmdJumpGet, &Scripts::cmdJumpMove,
-		&Scripts::cmdJumpUse, &Scripts::cmdJumpTalk, &Scripts::cmdNull,
-		&Scripts::cmdPrint, &Scripts::cmdRetPos, &Scripts::cmdAnim,
-		&Scripts::cmdSetFlag, &Scripts::cmdCheckFlag, &Scripts::cmdGoto,
-		&Scripts::cmdAddScore, &Scripts::cmdSetInventory, &Scripts::cmdCheckInventory,
-		&Scripts::cmdSetTex, &Scripts::cmdNewRoom, &Scripts::cmdConverse,
-		&Scripts::cmdCheckFrame, &Scripts::cmdCheckAnim, &Scripts::cmdSnd,
-		&Scripts::cmdRetNeg, &Scripts::cmdRetPos, &Scripts::cmdCheckLoc,
-		&Scripts::cmdSetAnim, &Scripts::cmdDispInv, &Scripts::cmdSetAbout,
-		&Scripts::cmdSetTimer, &Scripts::cmdCheckTimer, &Scripts::cmdSetTravel,
-		&Scripts::cmdJumpGoto, &Scripts::cmdSetVideo, &Scripts::cmdPlayVideo,
-		&Scripts::cmdPlotImage, &Scripts::cmdSetDisplay, &Scripts::cmdSetBuffer,
-		&Scripts::cmdSetScroll, &Scripts::cmdSaveRect, &Scripts::cmdVideoEnded,
-		&Scripts::cmdSetBufVid, &Scripts::cmdPlayBufVid, &Scripts::cmdRemoveLast,
-		&Scripts::cmdDoTravel, &Scripts::cmdCheckAbout, &Scripts::cmdSpecial,
-		&Scripts::cmdSetCycle, &Scripts::cmdCycle, &Scripts::cmdCharSpeak,
-		&Scripts::cmdTexSpeak, &Scripts::cmdTexChoice, &Scripts::cmdWait,
-		&Scripts::cmdSetConPos, &Scripts::cmdCheckVFrame, &Scripts::cmdJumpChoice,
-		&Scripts::cmdReturnChoice, &Scripts::cmdClearBlock, &Scripts::cmdLoadSound,
-		&Scripts::cmdFreeSound, &Scripts::cmdSetVideoSound, &Scripts::cmdPlayVideoSound,
-		&Scripts::cmdPrintWatch, &Scripts::cmdDispAbout, &Scripts::cmdPushLocation,
-		&Scripts::cmdCheckTravel, &Scripts::cmdBlock, &Scripts::cmdPlayerOff,
-		&Scripts::cmdPlayerOn, &Scripts::cmdDead, &Scripts::cmdFadeOut,
-		&Scripts::cmdEndVideo
-	};
-
 	(this->*COMMAND_LIST[commandIndex])();
 }
 
@@ -266,11 +318,6 @@ void Scripts::cmdGoto() {
 }
 
 void Scripts::cmdAddScore() {
-	if (!_vm->isDemo()) {
-		cmdSetInventory();
-		return;
-	}
-
 	_data->skip(1);
 }
 
@@ -412,11 +459,6 @@ void Scripts::cmdDispInv() {
 }
 
 void Scripts::cmdSetAbout() {
-	if (!_vm->isDemo()) {
-		cmdSetTimer();
-		return;
-	}
-
 	error("TODO: DEMO - cmdSetAbout");
 }
 
@@ -459,11 +501,14 @@ void Scripts::cmdCheckTimer() {
 }
 
 void Scripts::cmdSetTravel() {
-	if (!_vm->isDemo()) {
+	if ((_vm->getGameID() == GType_Amazon) && !_vm->isDemo()) {
 		cmdJumpGoto();
-		return;
+	} else {
+		int idx = _data->readByte();
+		int dest = _data->readByte();
+		_vm->TRAVEL[idx] = dest;
+		_vm->STARTTRAVELITEM = _vm->STARTTRAVELBOX = 0;
 	}
-	error("TODO: DEMO - cmdSetTravel");
 }
 
 void Scripts::cmdJumpGoto() {

@@ -206,6 +206,10 @@ public:
 	uint32 _newDate;
 	int _flags[256];
 
+	int TRAVEL[7];
+	int STARTTRAVELITEM;
+	int STARTTRAVELBOX;
+
 	bool _clearSummaryFlag;
 	bool _cheatFl;
 	bool _restartFl;

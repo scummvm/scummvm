@@ -33,6 +33,8 @@ namespace Amazon {
 
 AmazonScripts::AmazonScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (AmazonEngine *)_vm;
+
+	setOpcodes_v2();
 }
 
 void AmazonScripts::cLoop() {
