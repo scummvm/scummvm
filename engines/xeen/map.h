@@ -126,6 +126,8 @@ public:
 	SurroundingMazes();
 
 	void synchronize(Common::SeekableReadStream &s);
+
+	int &operator[](int idx);
 };
 
 class MazeDifficulties {
@@ -155,6 +157,7 @@ enum MazeFlags2 { FLAG_IS_OUTDOORS = 0x8000, FLAG_IS_DARK = 0x4000 };
 
 class MazeData {
 public:
+	// Resource fields
 	int _wallData[MAP_HEIGHT][MAP_WIDTH];
 	int _cellFlag[MAP_HEIGHT][MAP_WIDTH];
 	int _mazeNumber;
@@ -171,6 +174,9 @@ public:
 	int _tavernTips;
 	bool _seenTiles[MAP_HEIGHT][MAP_WIDTH];
 	bool _steppedOnTiles[MAP_HEIGHT][MAP_WIDTH];
+
+	// Misc fields
+	int _mazeId;
 public:
 	MazeData();
 
@@ -242,7 +248,7 @@ public:
 class Map {
 private:
 	XeenEngine *_vm;
-	MazeData _mazeData;
+	MazeData _mazeData[9];
 	Common::String _mazeName;
 	MonsterObjectData _mobData;
 	HeadData _headData;

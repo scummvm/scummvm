@@ -29,6 +29,14 @@
 
 namespace Xeen {
 
+const int MAP_GRID_PRIOR_INDEX[] = { 0, 0, 0, 0, 1, 2, 3, 4, 0 };
+
+const int MAP_GRID_PRIOR_DIRECTION[] = { 0, 1, 2, 3, 1, 2, 3, 0, 0 };
+
+const int MAP_GRID_PRIOR_INDEX2[] = { 0, 0, 0, 0, 2, 3, 4, 1, 0 };
+
+const int MAP_GRID_PRIOR_DIRECTION2[] = { 0, 1, 2, 3, 0, 1, 2, 3, 0 };
+
 MonsterStruct::MonsterStruct() {
 	_experience = 0;
 	_hp = 0;
@@ -490,6 +498,19 @@ void SurroundingMazes::synchronize(Common::SeekableReadStream &s) {
 	_west = s.readUint16LE();
 }
 
+int &SurroundingMazes::operator[](int idx) {
+	switch (idx) {
+	case DIR_NORTH:
+		return _north;
+	case DIR_EAST:
+		return _east;
+	case DIR_SOUTH:
+		return _south;
+	default:
+		return _west;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 MazeDifficulties::MazeDifficulties() {
@@ -752,29 +773,30 @@ void Map::load(int mapId) {
 	}
 
 	bool isDarkCc = _vm->getGameID() == GType_DarkSide;
-	uint16 mapGrid[9];
-	uint16 *gridPtr = &mapGrid[0];
+	MazeData *mazeData = &_mazeData[0];
 	bool textLoaded = false;
 
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
-	for (int idx = 0; idx < 9; ++idx, ++gridPtr) {
+	for (int idx = 0; idx < 9; ++idx, ++mazeData) {
+		mazeData->_mazeId = mapId;
+
 		if (mapId != 0) {
 			// Load in the maze's data file
 			Common::String datName = Common::String::format("maze%c%03u.dat",
 				(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
 			File datFile(datName);
-			_mazeData.synchronize(datFile);
+			mazeData->synchronize(datFile);
 			datFile.close();
 
 			if (isDarkCc && mapId == 50)
-				_mazeData.setAllTilesStepped();
+				mazeData->setAllTilesStepped();
 			if (!isDarkCc && _vm->_party._gameFlags[25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
-				_mazeData.clearCellBits();
+				mazeData->clearCellBits();
 			}
 
-			_isOutdoors = (_mazeData._mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
+			_isOutdoors = (mazeData->_mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
 
 			// Handle loading text data
 			if (!textLoaded) {
@@ -815,10 +837,26 @@ void Map::load(int mapId) {
 			}
 		}
 
-		// TODO: Move to next surrounding maze
+		// Move to next surrounding maze
+		MazeData *baseMaze = &_mazeData[MAP_GRID_PRIOR_INDEX[idx]];
+		mapId = baseMaze->_surroundingMazes[MAP_GRID_PRIOR_DIRECTION[idx]];
+		if (mapId) {
+			baseMaze = &_mazeData[MAP_GRID_PRIOR_INDEX2[idx]];
+			mapId = baseMaze->_surroundingMazes[MAP_GRID_PRIOR_DIRECTION2[idx]];
+		}
 	}
 
-	// TODO
+	// TODO: Switch setting flags that don't seem to ever be used
+
+	// Reload object data, since prior loop iterations replaced the data
+	// for the main map with all the surrounding mazes
+	Common::String mobName = Common::String::format("maze%c%03u.mob",
+		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
+	File mobFile(mobName);
+	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
+	mobFile.close();
+
+	// TODO: Loop loading moer data
 }
 
 } // End of namespace Xeen
