@@ -568,10 +568,11 @@ void Scripts::cmdSetScroll() {
 }
 
 void Scripts::cmdSaveRect() {
-	if (_vm->_vidEnd)
-		cmdGoto();
-	else
-		_data->skip(2);
+	int x = _vm->_screen->_lastBoundsX;
+	int y = _vm->_screen->_lastBoundsY;
+	int w = _vm->_screen->_lastBoundsW;
+	int h = _vm->_screen->_lastBoundsH;
+	_vm->_newRects.push_back(Common::Rect(x, y, x + w, x + h));
 }
 
 void Scripts::cmdVideoEnded() {
@@ -892,7 +893,13 @@ void Scripts::cmdPushLocation() {
 }
 
 void Scripts::cmdCheckTravel() {
-	error("TODO: DEMO - cmdCheckTravel");
+	int idx = _data->readSint16LE();
+	int val = _data->readUint16LE();
+
+	if (_vm->TRAVEL[idx] == val)
+		cmdGoto();
+	else
+		_data->skip(2);
 }
 
 void Scripts::cmdBlock() {
