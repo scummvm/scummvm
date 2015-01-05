@@ -160,10 +160,11 @@ bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEn
 /**
  * Instantiates the resource manager
  */
-void FileManager::init(XeenEngine *vm) {
+FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
 
-	if (vm->getGameID() != GType_Clouds)
+	_isDarkCc = vm->getGameID() != GType_Clouds;
+	if (_isDarkCc)
 		SearchMan.add("dark", new CCArchive("dark.cc"));
 	SearchMan.add("xeen", new CCArchive("xeen.cc"));
 	SearchMan.add("intro", new CCArchive("intro.cc"));

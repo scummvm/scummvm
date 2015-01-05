@@ -39,8 +39,11 @@ enum Sex { MALE = 0, FEMALE = 1, YES_PLEASE = 2 };
 
 enum Race { HUMAN = 0, ELF = 1, DWARF = 2, GNOME = 3, HALF_ORC = 4 };
 
-enum CharacterClass { KNIGHT = 0, PALADIN = 1, ARCHER = 2, CLERIC = 3,
-	SORCERER = 4, ROBBER = 5, NINJA = 6, BARBARIAN = 7, DRUID = 8, RANGER = 9
+enum CharacterClass {
+	CLASS_KNIGHT = 0, CLASS_PALADIN = 1, CLASS_ARCHER = 2, CLASS_CLERIC = 3,
+	CLASS_SORCERER = 4, CLASS_ROBBER = 5, CLASS_NINJA = 6, CLASS_BARBARIAN = 7, 
+	CLASS_DRUID = 8, CLASS_RANGER = 9, 
+	CLASS_12 = 12, CLASS_15 = 15, CLASS_16 = 16
 };
 
 enum Skill { THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
@@ -195,7 +198,7 @@ public:
 	bool _characterFlags[30][24];
 public:
 	// Other party related runtime data
-	Common::Array<PlayerStruct *> _activeParty;
+	Common::Array<PlayerStruct> _activeParty;
 	int _combatPartyCount;
 public:
 	Party();
@@ -205,6 +208,8 @@ public:
 	bool checkSkill(Skill skillId);
 
 	bool isInParty(int charId);
+
+	void copyPartyToRoster(Roster &r);
 };
 
 } // End of namespace Xeen

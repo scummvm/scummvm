@@ -50,19 +50,19 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResou
 	_buttons.push_back(UIButton(bounds, val, sprites, draw));
 }
 
-void ButtonContainer::checkEvents(XeenEngine *vm) {
+bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
-	events.pollEventsAndWait();
 
 	if (events._leftButton) {
 		// Check whether any button is selected
-		events.debounceMouse();
 		Common::Point pt = events._mousePos;
 
 		for (uint i = 0; i < _buttons.size(); ++i) {
 			if (_buttons[i]._bounds.contains(pt)) {
+				events.debounceMouse();
+
 				_buttonValue = _buttons[i]._value;
-				return;
+				return true;
 			}
 		}
 	} else if (events.isKeyPending()) {
@@ -70,9 +70,11 @@ void ButtonContainer::checkEvents(XeenEngine *vm) {
 		events.getKey(keyState);
 		if (keyState.ascii >= 32 && keyState.ascii <= 127) {
 			_buttonValue = keyState.ascii;
-			return;
+			return true;
 		}
 	}
+
+	return false;
 }
 
 
@@ -193,10 +195,10 @@ void ButtonContainer::drawButtons(XSurface *surface) {
 	}
 }
 
-
 /*------------------------------------------------------------------------*/
 
 void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
+	_vm->_events->pollEventsAndWait();
 	checkEvents(_vm);
 }
 
@@ -229,6 +231,17 @@ void CreditsScreen::execute() {
 		events.pollEventsAndWait();
 
 	doScroll(_vm, true, false);
+}
+
+/*------------------------------------------------------------------------*/
+
+void PleaseWait::show(XeenEngine *vm) {
+	if (vm->_mode != MODE_0) {
+		Window &w = vm->_screen->_windows[9];
+		w.open();
+		w.writeString(PLEASE_WAIT);
+		w.update();
+	}
 }
 
 } // End of namespace Xeen

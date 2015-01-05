@@ -39,6 +39,7 @@ EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
 		_priorGameCounterTime(0), _keyCode(Common::KEYCODE_INVALID),
 		_leftButton(false), _rightButton(false),
 		_sprites("mouse.icn") {
+	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
 
 /**
@@ -155,21 +156,6 @@ bool EventsManager::isKeyMousePressed() {
 	clearEvents();
 
 	return result;
-}
-
-/**
- * Updates the game counter to match the current frame counter
- */
-void EventsManager::updateGameCounter() {
-	_gameCounter = _frameCounter;
-}
-
-/**
- * Returns the number of frames elapsed since the last call to
- * updateGameCounter()
- */
-uint32 EventsManager::timeElapsed() {
-	return _frameCounter - _gameCounter;
 }
 
 bool EventsManager::wait(uint numFrames, bool interruptable) {

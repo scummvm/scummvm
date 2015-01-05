@@ -20,41 +20,31 @@
  *
  */
 
-#ifndef XEEN_SAVES_H
-#define XEEN_SAVES_H
+#ifndef XEEN_DIALOGS_ERROR_H
+#define XEEN_DIALOGS_ERROR_H
 
-#include "common/scummsys.h"
-#include "common/savefile.h"
-#include "graphics/surface.h"
-#include "xeen/party.h"
+#include "common/array.h"
+#include "common/stack.h"
+#include "common/rect.h"
+#include "xeen/dialogs.h"
 
 namespace Xeen {
 
-struct XeenSavegameHeader {
-	uint8 _version;
-	Common::String _saveName;
-	Graphics::Surface *_thumbnail;
-	int _year, _month, _day;
-	int _hour, _minute;
-	int _totalFrames;
-};
+enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1, 
+	WT_2 = 2, WT_3 = 3};
 
-class SavesManager {
+class ErrorScroll: public ButtonContainer {
 private:
 	XeenEngine *_vm;
-	Party &_party;
-	Roster &_roster;
-public:
-	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
-public:
-	SavesManager(XeenEngine *vm, Party &party, Roster &roster);
-	void reset();
 
-	void readCharFile();
+	ErrorScroll(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	void writeCharFile();
+	void execute(const Common::String &msg, ErrorWaitType waitType);
+public:
+	static void show(XeenEngine *vm, const Common::String &msg, 
+		ErrorWaitType waitType = WT_FREEZE_WAIT);
 };
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_SAVES_H */
+#endif /* XEEN_DIALOGS_ERROR_H */

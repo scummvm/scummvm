@@ -7,12 +7,14 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	dialogs.o \
+	dialogs_error.o \
 	dialogs_options.o \
 	events.o \
 	files.o \
 	font.o \
 	interface.o \
 	items.o \
+	map.o \
 	party.o \
 	resdata.o \
 	resources.o \

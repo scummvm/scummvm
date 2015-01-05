@@ -39,6 +39,7 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameCounterTime;
 	uint32 _gameCounter;
+	uint32 _gameCounters[6];
 	uint32 _priorGameCounterTime;
 	Common::KeyCode _keyCode;
 	SpriteResource _sprites;
@@ -51,8 +52,6 @@ public:
 	EventsManager(XeenEngine *vm);
 
 	~EventsManager();
-
-	uint32 getFrameCounter() { return _frameCounter; }
 
 	void setCursor(int cursorId);
 
@@ -76,9 +75,19 @@ public:
 
 	bool isKeyMousePressed();
 
-	void updateGameCounter();
+	void updateGameCounter() { _gameCounter = _frameCounter; }
+	void timeMark1() { _gameCounters[1] = _frameCounter; }
+	void timeMark2() { _gameCounters[2] = _frameCounter; }
+	void timeMark3() { _gameCounters[3] = _frameCounter; }
+	void timeMark4() { _gameCounters[4] = _frameCounter; }
+	void timeMark5() { _gameCounters[5] = _frameCounter; }
 
-	uint32 timeElapsed();
+	uint32 timeElapsed() const { return _frameCounter - _gameCounter; }
+	uint32 timeElapsed1() const { return _frameCounter - _gameCounters[1]; }
+	uint32 timeElapsed2() const { return _frameCounter - _gameCounters[2]; }
+	uint32 timeElapsed3() const { return _frameCounter - _gameCounters[3]; }
+	uint32 timeElapsed4() const { return _frameCounter - _gameCounters[4]; }
+	uint32 timeElapsed5() const { return _frameCounter - _gameCounters[5]; }
 
 	bool wait(uint numFrames, bool interruptable = false);
 };

@@ -21,6 +21,7 @@
  */
 
 #include "xeen/interface.h"
+#include "xeen/dialogs_error.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -41,16 +42,18 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_buttonsLoaded = false;
 	_hiliteChar = -1;
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
+	_intrIndex1 = 0;
 
 	_faceDrawStructs[0] = DrawStruct(nullptr, 0, 0, 0);
 	_faceDrawStructs[1] = DrawStruct(nullptr, 0, 101, 0);
 	_faceDrawStructs[2] = DrawStruct(nullptr, 0, 0, 43);
 	_faceDrawStructs[3] = DrawStruct(nullptr, 0, 101, 43);
-
-	loadSprites();
 }
 
-void Interface::loadSprites() {
+void Interface::manageCharacters(bool soundPlayed) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	bool flag = false;
 	_globalSprites.load("global.icn");
 	_borderSprites.load("border.icn");
 	_spellFxSprites.load("spellfx.icn");
@@ -58,21 +61,21 @@ void Interface::loadSprites() {
 	_blessSprites.load("bless.icn");
 	_restoreSprites.load("restorex.icn");
 	_hpSprites.load("hpbars.icn");
-}
+	_uiSprites.load("inn.icn");
 
-void Interface::setup(bool soundPlayed) {
-	Screen &screen = *_vm->_screen;
-	SpriteResource uiSprites("inn.icn");
-
+start:
 	// Get mappings to the active characters in the party
 	_vm->_party._activeParty.resize(_vm->_party._partyCount);
 	for (int i = 0; i < _vm->_party._partyCount; ++i) {
-		_vm->_party._activeParty[i] = &_vm->_roster[_vm->_party._partyMembers[i]];
+		_vm->_party._activeParty[i] = _vm->_roster[_vm->_party._partyMembers[i]];
 	}
 
 	_isEarlyGame = _vm->_party._minutes >= 300;
 
-	if (_vm->_party._mazeId == 0) {
+	if (_vm->_party._mazeId != 0) {
+		_vm->_mode = MODE_0;
+		_buttonsLoaded = true;
+	} else {
 		if (!soundPlayed) {
 			warning("TODO: loadSound?");
 		}
@@ -100,25 +103,156 @@ void Interface::setup(bool soundPlayed) {
 		// Add in buttons for the UI
 		_interfaceText = "";
 		_buttonsLoaded = true;
-		addButton(Common::Rect(16, 100, 40, 120), 242, &uiSprites, true);
-		addButton(Common::Rect(52, 100, 76, 120), 243, &uiSprites, true);
-		addButton(Common::Rect(87, 100, 111, 120), 68, &uiSprites, true);
-		addButton(Common::Rect(122, 100, 146, 120), 82, &uiSprites, true);
-		addButton(Common::Rect(157, 100, 181, 120), 67, &uiSprites, true);
-		addButton(Common::Rect(192, 100, 216, 120), 88, &uiSprites, true);
-		addButton(Common::Rect(), 27, &uiSprites, false);
-		addButton(Common::Rect(16, 16, 48, 48), 49, &uiSprites, false);
-		addButton(Common::Rect(117, 16, 139, 48), 50, &uiSprites, false);
-		addButton(Common::Rect(16, 59, 48, 81), 51, &uiSprites, false);
-		addButton(Common::Rect(117, 59, 149, 81), 52, &uiSprites, false);
+		addButton(Common::Rect(16, 100, 40, 120), 242, &_uiSprites, true);
+		addButton(Common::Rect(52, 100, 76, 120), 243, &_uiSprites, true);
+		addButton(Common::Rect(87, 100, 111, 120), 68, &_uiSprites, true);
+		addButton(Common::Rect(122, 100, 146, 120), 82, &_uiSprites, true);
+		addButton(Common::Rect(157, 100, 181, 120), 67, &_uiSprites, true);
+		addButton(Common::Rect(192, 100, 216, 120), 88, &_uiSprites, true);
+		addButton(Common::Rect(), 27, &_uiSprites, false);
+		addButton(Common::Rect(16, 16, 48, 48), 49, &_uiSprites, false);
+		addButton(Common::Rect(117, 16, 139, 48), 50, &_uiSprites, false);
+		addButton(Common::Rect(16, 59, 48, 81), 51, &_uiSprites, false);
+		addButton(Common::Rect(117, 59, 149, 81), 52, &_uiSprites, false);
 
 		setupBackground();
-		screen._windows[11].open();
-		setupFaces(0, xeenSideChars, 0);
-		screen._windows[11].writeString(_interfaceText);
+		Window &w = screen._windows[11];
+		w.open();
+		setupFaces(0, xeenSideChars, false);
+		w.writeString(_interfaceText);
+		w.drawList(&_faceDrawStructs[0], 4);
+
+		_uiSprites.draw(w, 0, Common::Point(16, 100));
+		_uiSprites.draw(w, 2, Common::Point(52, 100));
+		_uiSprites.draw(w, 4, Common::Point(87, 100));
+		_uiSprites.draw(w, 6, Common::Point(122, 100));
+		_uiSprites.draw(w, 8, Common::Point(157, 100));
+		_uiSprites.draw(w, 10, Common::Point(192, 100));
+
+		screen.loadPalette("mm4.pal");
+
+		if (flag) {
+			screen._windows[0].update();
+			events.setCursor(0);
+			screen.fadeIn(4);
+		} else {
+			if (_vm->getGameID() == GType_DarkSide) {
+				screen.fadeOut(4);
+				screen._windows[0].update();
+			}
+
+			doScroll(_vm, false, false);
+			events.setCursor(0);
+
+			if (_vm->getGameID() == GType_DarkSide) {
+				screen.fadeIn(4);
+			}
+		}
 
 		// TODO
+		bool breakFlag = false;
+		while (!_vm->shouldQuit() && !breakFlag) {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+
+			switch (_buttonValue) {
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_SPACE:
+			case Common::KEYCODE_e:
+			case Common::KEYCODE_x:
+				if (_vm->_party._partyCount == 0) {
+					ErrorScroll::show(_vm, NO_ONE_TO_ADVENTURE_WITH);
+				} else {
+					if (_vm->_mode != MODE_0) {
+						for (_intrIndex1 = 4; _intrIndex1 >= 0; --_intrIndex1) {
+							events.updateGameCounter();
+							drawViewBackground(_intrIndex1);
+							w.update();
+
+							while (events.timeElapsed() < 1)
+								events.pollEventsAndWait();
+						}
+					}
+
+					w.close();
+					_vm->_party._realPartyCount = _vm->_party._partyCount;
+					_vm->_party._mazeId = _vm->_party._priorMazeId;
+
+					_vm->_party.copyPartyToRoster(_vm->_roster);
+					_vm->_saves->writeCharFile();
+					breakFlag = true;
+					break;
+				}
+				break;
+			case Common::KEYCODE_1:
+				break;
+			case Common::KEYCODE_2:
+				break;
+			case Common::KEYCODE_3:
+				break;
+			case Common::KEYCODE_4:
+				break;
+			case Common::KEYCODE_c:
+				if (xeenSideChars.size() == 24) {
+					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
+				} else {
+					screen.fadeOut(4);
+					w.close();
+					addCharacterToRoster();
+					_vm->_saves->writeCharFile();
+					screen.fadeOut(4);
+					flag = true;
+					_buttonsLoaded = true;
+					goto start;
+				}
+				break;
+			case Common::KEYCODE_d:
+				break;
+			case Common::KEYCODE_r:
+				if (_vm->_party._partyCount > 0) {
+					// TODO
+				}
+				break;
+			case 201:
+				// TODO
+				break;
+			case 202:
+				// TODO
+				break;
+			case 203:
+				// TODO
+				break;
+			case 204:
+				// TODO
+				break;
+			case 205:
+				// TODO
+				break;
+			case 206:
+				// TODO
+				break;
+			case 242:
+				// TODO
+				break;
+			case 243:
+				// TODO
+				break;
+			default:
+				break;
+			}
+		}
 	}
+
+	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
+		_charFaces[i].clear();
+	_globalSprites.clear();
+	_borderSprites.clear();
+	_spellFxSprites.clear();
+	_fecpSprites.clear();
+	_blessSprites.clear();
+	_restoreSprites.clear();
+	_hpSprites.clear();
+	_uiSprites.clear();
 }
 
 void Interface::loadCharIcons(int numChars) {
@@ -244,7 +378,7 @@ void Interface::assembleBorder() {
 		screen._windows[12].frame();
 }
 
-void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, int v3) {
+void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag) {
 	Common::String playerNames[4];
 	Common::String playerRaces[4];
 	Common::String playerSex[4];
@@ -271,7 +405,7 @@ void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, int 
 		playerClass[posIndex] = CLASS_NAMES[ps._class];
 	}
 
-	charIconsPrint(v3);
+	charIconsPrint(updateFlag);
 
 	// Set up the sprite set to use for each face
 	charId = xeenSideChars[charIndex];
@@ -300,7 +434,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 	for (int idx = 0; idx < (stateFlag ? _vm->_party._combatPartyCount : 
 			_vm->_party._partyCount); ++idx) {
 		int charIndex = stateFlag ? _combatCharIds[idx] : idx;
-		PlayerStruct &ps = *_vm->_party._activeParty[charIndex];
+		PlayerStruct &ps = _vm->_party._activeParty[charIndex];
 		Condition charCondition = ps.findCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 		
@@ -316,7 +450,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 		for (int idx = 0; idx < (stateFlag ? _vm->_party._combatPartyCount :
 			_vm->_party._partyCount); ++idx) {
 			int charIndex = stateFlag ? _combatCharIds[idx] : idx;
-			PlayerStruct &ps = *_vm->_party._activeParty[charIndex];
+			PlayerStruct &ps = _vm->_party._activeParty[charIndex];
 
 			// Draw the Hp bar
 			int maxHp = ps.getMaxHp();
@@ -341,6 +475,37 @@ void Interface::charIconsPrint(bool updateFlag) {
 
 	if (updateFlag)
 		screen._windows[33].update();
+}
+
+void Interface::drawViewBackground(int bgType) {
+	if (bgType >= 4)
+		return;
+
+	if (bgType == 0) {
+		// Totally black background
+		_vm->_screen->fillRect(Common::Rect(8, 8, 224, 140), 0);
+	} else {
+		const byte *lookup = BACKGROUND_XLAT + bgType;
+		for (int yp = 8; yp < 140; ++yp) {
+			byte *destP = (byte *)_vm->_screen->getBasePtr(8, yp);
+			for (int xp = 8; xp < 224; ++xp, ++destP)
+				*destP = lookup[*destP];
+		}
+	}
+}
+
+void Interface::addCharacterToRoster() {
+	error("TODO");
+}
+
+void Interface::draw3d(bool flag) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+
+	if (!screen._windows[11]._enabled)
+		return;
+
+	warning("TODO");
 }
 
 } // End of namespace Xeen

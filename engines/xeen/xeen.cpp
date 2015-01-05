@@ -38,7 +38,9 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: Engine(syst), _gameDescription(gameDesc), _randomSource("Xeen") {
 	_debugger = nullptr;
 	_events = nullptr;
+	_files = nullptr;
 	_interface = nullptr;
+	_map = nullptr;
 	_saves = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
@@ -49,16 +51,19 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_face1State = 0;
 	_face2State = 0;
 	_noDirectionSense = false;
+	_falling = false;
 }
 
 XeenEngine::~XeenEngine() {
 	delete _debugger;
 	delete _events;
 	delete _interface;
+	delete _map;
 	delete _saves;
 	delete _screen;
 	delete _sound;
 	delete _eventData;
+	delete _files;
 }
 
 void XeenEngine::initialize() {
@@ -69,10 +74,11 @@ void XeenEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	// Create sub-objects of the engine
-	FileManager::init(this);
+	_files = new FileManager(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_interface = new Interface(this);
+	_map = new Map(this);
 	_saves = new SavesManager(this, _party, _roster);
 	_screen = new Screen(this);
 	_screen->setupWindows();
@@ -249,9 +255,34 @@ void XeenEngine::showMainMenu() {
 	//OptionsMenu::show(this);
 }
 
+/**
+ * Main method for playing the game
+ */
 void XeenEngine::playGame() {
 	_saves->reset();
-	_interface->setup(true);
+	play();
+}
+
+/*
+ * Secondary method for handling the actual gameplay
+ */
+void XeenEngine::play() {
+	// TODO: Init variables
+
+	_screen->loadBackground("back.raw");
+	_screen->loadPalette("mm4.pal");
+	_interface->loadCharIcons(_party._partyCount);
+	_iconsSprites.load("main.icn");
+
+	if (getGameID() != GType_WorldOfXeen && !_loadDarkSide) {
+		_loadDarkSide = true;
+		_party._mazeId = 29;
+		_party._mazeDirection = DIR_NORTH;
+		_party._mazePosition.x = 25;
+		_party._mazePosition.y = 21;
+	}
+
+	_map->load(_party._mazeId);
 }
 
 } // End of namespace Xeen

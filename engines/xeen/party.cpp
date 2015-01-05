@@ -44,7 +44,7 @@ PlayerStruct::PlayerStruct() {
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;
-	_class = KNIGHT;
+	_class = CLASS_KNIGHT;
 	_ACTemp = 0;
 	_dbDay = 0;
 	_tempAge = 0;
@@ -302,7 +302,7 @@ void Party::synchronize(Common::Serializer &s) {
 bool Party::checkSkill(Skill skillId) {
 	uint total = 0;
 	for (uint i = 0; i < _activeParty.size(); ++i) {
-		if (_activeParty[i]->_skills[skillId]) {
+		if (_activeParty[i]._skills[skillId]) {
 			++total;
 
 			switch (skillId) {
@@ -324,6 +324,8 @@ bool Party::checkSkill(Skill skillId) {
 			}
 		}
 	}
+
+	return false;
 }
 
 bool Party::isInParty(int charId) {
@@ -333,6 +335,12 @@ bool Party::isInParty(int charId) {
 	}
 
 	return false;
+}
+
+void Party::copyPartyToRoster(Roster &r) {
+	for (int i = 0; i < _partyCount; ++i) {
+		r[_partyMembers[i]] = _activeParty[i];
+	}
 }
 
 } // End of namespace Xeen

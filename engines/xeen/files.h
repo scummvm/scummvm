@@ -38,7 +38,11 @@ class XeenEngine;
  */
 class FileManager {
 public:
-	static void init(XeenEngine *vm);
+	bool _isDarkCc;
+public:
+	FileManager(XeenEngine *vm);
+
+	void setGameCc(bool isDarkCc) { _isDarkCc = isDarkCc; }
 };
 
 /**

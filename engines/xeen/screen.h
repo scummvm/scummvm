@@ -90,7 +90,7 @@ public:
 
 	void writeString(const Common::String &s);
 
-	void drawList(DrawStruct *items);
+	void drawList(DrawStruct *items, int count);
 };
 
 class Screen: public FontSurface {

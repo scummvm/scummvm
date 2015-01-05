@@ -166,10 +166,10 @@ void Window::writeString(const Common::String &s) {
 	_vm->_screen->writeString(s, _innerBounds);
 }
 
-void Window::drawList(DrawStruct *items) {
+void Window::drawList(DrawStruct *items, int count) {
 	Screen &screen = *_vm->_screen;
 
-	for (; items->_sprites != nullptr; ++items) {
+	for (int i = 0; i < count; ++i, ++items) {
 		if (items->_frame == -1 || items->_scale == -1)
 			continue;
 

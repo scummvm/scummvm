@@ -34,7 +34,9 @@
 #include "xeen/debugger.h"
 #include "xeen/dialogs.h"
 #include "xeen/events.h"
+#include "xeen/files.h"
 #include "xeen/interface.h"
+#include "xeen/map.h"
 #include "xeen/party.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
@@ -77,7 +79,8 @@ enum Mode {
 	MODE_6 = 6,
 	MODE_7 = 7,
 	MODE_8 = 8,
-	MODE_9 = 9
+	MODE_9 = 9,
+	MODE_17 = 17
 };
 
 struct XeenGameDescription;
@@ -90,10 +93,15 @@ private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
+	SpriteResource _iconsSprites;
 
 	void showIntro();
 
 	void showMainMenu();
+
+	void play();
+
+	void pleaseWait();
 protected:
 	/**
 	* Play the game
@@ -119,7 +127,9 @@ private:
 public:
 	Debugger *_debugger;
 	EventsManager *_events;
+	FileManager *_files;
 	Interface *_interface;
+	Map *_map;
 	SavesManager *_saves;
 	Screen *_screen;
 	SoundManager *_sound;
@@ -134,6 +144,7 @@ public:
 	int _face1State;
 	int _face2State;
 	bool _noDirectionSense;
+	bool _falling;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

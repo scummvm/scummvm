@@ -75,4 +75,12 @@ void SavesManager::reset() {
 	delete pty;
 }
 
+void SavesManager::readCharFile() {
+	warning("TODO: readCharFile");
+}
+
+void SavesManager::writeCharFile() {
+	warning("TODO: writeCharFile");
+}
+
 } // End of namespace Xeen

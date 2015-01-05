@@ -54,7 +54,7 @@ protected:
 
 	void doScroll(XeenEngine *vm, bool drawFlag, bool doFade);
 
-	void checkEvents(XeenEngine *vm);
+	bool checkEvents(XeenEngine *vm);
 
 	void drawButtons(XSurface *surface);
 public:
@@ -85,6 +85,11 @@ private:
 	CreditsScreen(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
 	void execute();
+public:
+	static void show(XeenEngine *vm);
+};
+
+class PleaseWait {
 public:
 	static void show(XeenEngine *vm);
 };

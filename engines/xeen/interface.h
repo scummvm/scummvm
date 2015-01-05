@@ -43,6 +43,7 @@ private:
 	SpriteResource _blessSprites;
 	SpriteResource _restoreSprites;
 	SpriteResource _hpSprites;
+	SpriteResource _uiSprites;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
@@ -61,22 +62,27 @@ private:
 	bool _buttonsLoaded;
 	Common::String _interfaceText;
 	int _hiliteChar;
-
-	void loadSprites();
-
-	void loadCharIcons(int numChars);
+	int _intrIndex1;
 
 	void assembleBorder();
 
 	void setupBackground();
 
-	void setupFaces(int charIndex, Common::Array<int> xeenSideChars, int v3);
+	void setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag);
 
 	void charIconsPrint(bool updateFlag);
+
+	void drawViewBackground(int bgType);
+
+	void addCharacterToRoster();
 public:
 	Interface(XeenEngine *vm);
 
-	void setup(bool soundPlayed);
+	void manageCharacters(bool soundPlayed);
+
+	void loadCharIcons(int numChars);
+
+	void draw3d(bool flag);
 };
 
 } // End of namespace Xeen

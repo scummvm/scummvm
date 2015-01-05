@@ -58,6 +58,16 @@ extern const int CHAR_FACES_X[6];
 
 extern const int HP_BARS_X[6];
 
+extern const char *const NO_ONE_TO_ADVENTURE_WITH;
+
+extern const byte BACKGROUND_XLAT[];
+
+extern const char *const YOUR_ROSTER_IS_FULL;
+
+extern const char *const PLEASE_WAIT;
+
+extern const char *const OOPS;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

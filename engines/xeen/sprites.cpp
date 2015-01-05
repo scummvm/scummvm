@@ -39,6 +39,10 @@ SpriteResource::SpriteResource(const Common::String &filename) {
 	load(filename);
 }
 
+SpriteResource::~SpriteResource() {
+	clear();
+}
+
 void SpriteResource::load(const Common::String &filename) {
 	// Open the resource
 	File f(filename);
@@ -60,8 +64,10 @@ void SpriteResource::load(const Common::String &filename) {
 	}
 }
 
-SpriteResource::~SpriteResource() {
+void SpriteResource::clear() {
 	delete[] _data;
+	_data = nullptr;
+	_filesize = 0;
 }
 
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
