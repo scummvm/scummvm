@@ -43,6 +43,7 @@ private:
 	int _specialFunction;
 
 	void charLoop();
+	void printWatch();
 protected:
 	Common::SeekableReadStream *_data;
 	ScriptMethodPtr COMMAND_LIST[100];

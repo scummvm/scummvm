@@ -97,6 +97,10 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	for (int i = 0; i < 7; i++)
 		TRAVEL[i] = 0;
 	STARTTRAVELITEM = STARTTRAVELBOX = 0;
+	for (int i = 0; i < 16; i++)
+		ASK[i];
+	_startAboutItem = 0;
+	_vidEnd = false;
 }
 
 AccessEngine::~AccessEngine() {

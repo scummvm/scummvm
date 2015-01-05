@@ -209,7 +209,9 @@ public:
 	int TRAVEL[7];
 	int STARTTRAVELITEM;
 	int STARTTRAVELBOX;
-
+	int ASK[16];
+	int _startAboutItem;
+	bool _vidEnd;
 	bool _clearSummaryFlag;
 	bool _cheatFl;
 	bool _restartFl;

@@ -170,6 +170,10 @@ void Scripts::charLoop() {
 	_endFlag = endFlag;
 }
 
+void Scripts::printWatch() {
+	warning("TODO: printWatch");
+}
+
 void Scripts::findNull() {
 	// No implementation required in ScummVM, the strings in the script files are already skipped by the use of readByte()
 }
@@ -463,7 +467,11 @@ void Scripts::cmdDispInv() {
 }
 
 void Scripts::cmdSetAbout() {
-	error("TODO: DEMO - cmdSetAbout");
+	int idx = _data->readByte();
+	int val = _data->readByte();
+	_vm->ASK[idx] = val;
+	_vm->_startAboutBox = 0;
+	_vm->_startAboutItem = 0;
 }
 
 void Scripts::cmdSetTimer() {
@@ -560,7 +568,10 @@ void Scripts::cmdSetScroll() {
 }
 
 void Scripts::cmdSaveRect() {
-	error("TODO: DEMO - cmdSaveRect");
+	if (_vm->_vidEnd)
+		cmdGoto();
+	else
+		_data->skip(2);
 }
 
 void Scripts::cmdVideoEnded() {
@@ -596,7 +607,13 @@ void Scripts::cmdDoTravel() {
 }
 
 void Scripts::cmdCheckAbout() {
-	error("TODO: DEMO - cmdCheckAbout");
+	int idx = _data->readSint16LE();
+	int val = _data->readSint16LE();
+
+	if (_vm->ASK[idx] == val)
+		cmdGoto();
+	else
+		_data->skip(2);
 }
 
 void Scripts::cmdSpecial() {
@@ -862,7 +879,8 @@ void Scripts::cmdPlayVideoSound() {
 }
 
 void Scripts::cmdPrintWatch() {
-	error("TODO: DEMO - cmdPrintWatch");
+	printWatch();
+	findNull();
 }
 
 void Scripts::cmdDispAbout() {
