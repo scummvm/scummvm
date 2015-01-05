@@ -159,15 +159,15 @@ ItemSub5610::~ItemSub5610() {
 
 ItemSub5610::ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name),
-		_direction3D(0.0) {
+		_direction3D(0.0),
+		_field_6C(-1) {
 }
 
 ItemSub56::~ItemSub56() {
 }
 
 ItemSub56::ItemSub56(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemSub5610(parent, subType, index, name),
-		_field_6C(0) {
+		ItemSub5610(parent, subType, index, name) {
 }
 
 void ItemSub56::readData(XRCReadStream *stream) {

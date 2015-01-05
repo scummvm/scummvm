@@ -42,7 +42,9 @@ private:
 	StarkEngine *_vm;
 
 	bool Cmd_DumpArchive(int argc, const char **argv);
-	bool Cmd_DumpResources(int argc, const char **argv);
+	bool Cmd_DumpGlobal(int argc, const char **argv);
+	bool Cmd_DumpLevel(int argc, const char **argv);
+	bool Cmd_DumpLocation(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);
 	bool Cmd_ChangeLocation(int argc, const char **argv);
 };

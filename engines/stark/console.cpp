@@ -36,7 +36,9 @@ namespace Stark {
 
 Console::Console(StarkEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
-	registerCmd("dumpResources",		WRAP_METHOD(Console, Cmd_DumpResources));
+	registerCmd("dumpGlobal",			WRAP_METHOD(Console, Cmd_DumpGlobal));
+	registerCmd("dumpLevel",			WRAP_METHOD(Console, Cmd_DumpLevel));
+	registerCmd("dumpLocation",			WRAP_METHOD(Console, Cmd_DumpLocation));
 	registerCmd("listLocations",		WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("changeLocation",		WRAP_METHOD(Console, Cmd_ChangeLocation));
 }
@@ -89,26 +91,26 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_DumpResources(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Print the scripts from an archive.\n");
-		debugPrintf("Usage :\n");
-		debugPrintf("dumpScript [archive name]\n");
-		return true;
-	}
+bool Console::Cmd_DumpGlobal(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
 
-	ArchiveLoader *archiveLoader = new ArchiveLoader();
-	archiveLoader->load(argv[1]);
+	global->getLevel()->print();
 
-	Resource *resource = archiveLoader->useRoot<Resource>(argv[1]);
-	if (resource == nullptr) {
-		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
-		return true;
-	}
+	return true;
+}
 
-	resource->print();
+bool Console::Cmd_DumpLevel(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
 
-	delete archiveLoader;
+	global->getCurrent()->getLevel()->print();
+
+	return true;
+}
+
+bool Console::Cmd_DumpLocation(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
+
+	global->getCurrent()->getLocation()->print();
 
 	return true;
 }

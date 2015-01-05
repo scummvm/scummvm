@@ -109,6 +109,7 @@ public:
 	virtual ~ItemSub5610();
 
 protected:
+	int32 _field_6C;
 	Math::Vector3d _position3D;
 	float _direction3D;
 };
@@ -127,7 +128,6 @@ public:
 protected:
 	void printData() override;
 
-	int32 _field_6C;
 	Common::Point _position;
 };
 
