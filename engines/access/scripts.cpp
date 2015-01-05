@@ -122,7 +122,11 @@ void Scripts::setOpcodes() {
 
 void Scripts::setOpcodes_v2() {
 	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
-	COMMAND_LIST[29] = &Scripts::cmdSetTimer();
+	COMMAND_LIST[29] = &Scripts::cmdSetTimer;
+	COMMAND_LIST[32] = &Scripts::cmdJumpGoto;
+	COMMAND_LIST[40] = &Scripts::cmdVideoEnded;
+	COMMAND_LIST[45] = COMMAND_LIST[46] = &Scripts::cmdSpecial;
+	COMMAND_LIST[63] = COMMAND_LIST[64] = COMMAND_LIST[66] = COMMAND_LIST[67] = &Scripts::cmdPushLocation;
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
@@ -501,14 +505,10 @@ void Scripts::cmdCheckTimer() {
 }
 
 void Scripts::cmdSetTravel() {
-	if ((_vm->getGameID() == GType_Amazon) && !_vm->isDemo()) {
-		cmdJumpGoto();
-	} else {
-		int idx = _data->readByte();
-		int dest = _data->readByte();
-		_vm->TRAVEL[idx] = dest;
-		_vm->STARTTRAVELITEM = _vm->STARTTRAVELBOX = 0;
-	}
+	int idx = _data->readByte();
+	int dest = _data->readByte();
+	_vm->TRAVEL[idx] = dest;
+	_vm->STARTTRAVELITEM = _vm->STARTTRAVELBOX = 0;
 }
 
 void Scripts::cmdJumpGoto() {
@@ -560,10 +560,6 @@ void Scripts::cmdSetScroll() {
 }
 
 void Scripts::cmdSaveRect() {
-	if (!_vm->isDemo()) {
-		cmdVideoEnded();
-		return;
-	}
 	error("TODO: DEMO - cmdSaveRect");
 }
 
@@ -596,18 +592,10 @@ void Scripts::cmdRemoveLast() {
 }
 
 void Scripts::cmdDoTravel() {
-	if (!_vm->isDemo()) {
-		cmdSpecial();
-		return;
-	}
 	error("TODO: DEMO - cmdDoTravel");
 }
 
 void Scripts::cmdCheckAbout() {
-	if (!_vm->isDemo()) {
-		cmdSpecial();
-		return;
-	}
 	error("TODO: DEMO - cmdCheckAbout");
 }
 
@@ -874,18 +862,10 @@ void Scripts::cmdPlayVideoSound() {
 }
 
 void Scripts::cmdPrintWatch() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
 	error("TODO: DEMO - cmdPrintWatch");
 }
 
 void Scripts::cmdDispAbout() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
 	error("TODO: DEMO - cmdDispAbout");
 }
 
@@ -894,18 +874,10 @@ void Scripts::cmdPushLocation() {
 }
 
 void Scripts::cmdCheckTravel() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
 	error("TODO: DEMO - cmdCheckTravel");
 }
 
 void Scripts::cmdBlock() {
-	if (!_vm->isDemo()) {
-		cmdPushLocation();
-		return;
-	}
 	error("TODO: DEMO - cmdBlock");
 }
 
