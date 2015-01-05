@@ -94,7 +94,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_cheatFl = false;
 	_restartFl = false;
 
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 60; i++)
 		TRAVEL[i] = 0;
 	STARTTRAVELITEM = STARTTRAVELBOX = 0;
 	for (int i = 0; i < 16; i++)

@@ -206,11 +206,12 @@ public:
 	uint32 _newDate;
 	int _flags[256];
 
-	int TRAVEL[7];
+	int TRAVEL[60];
 	int STARTTRAVELITEM;
 	int STARTTRAVELBOX;
 	int ASK[16];
 	int _startAboutItem;
+
 	bool _vidEnd;
 	bool _clearSummaryFlag;
 	bool _cheatFl;
