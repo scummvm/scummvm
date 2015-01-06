@@ -115,8 +115,23 @@ void MartianRoom::roomMenu() {
 }
 
 void MartianRoom::mainAreaClick() {
+	Common::Point &mousePos = _vm->_events->_mousePos;
+	Common::Point pt = _vm->_events->calcRawMouse();
+	Screen &screen = *_vm->_screen;
+	Player &player = *_vm->_player;
+
+	if (_selectCommand == -1) {
+		player._moveTo = pt;
+		player._playerMove = true;
+	} else if (mousePos.x >= screen._windowXAdd &&
+		mousePos.x <= (screen._windowXAdd + screen._vWindowBytesWide) &&
+		mousePos.y >= screen._windowYAdd &&
+		mousePos.y <= (screen._windowYAdd + screen._vWindowLinesTall)) {
+			if (checkBoxes1(pt) >= 0) {
+				checkBoxes3();
+			}
+	}
 }
 
 } // End of namespace Martian
-
 } // End of namespace Access
