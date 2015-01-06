@@ -57,7 +57,7 @@ void MartianRoom::reloadRoom() {
 
 void MartianRoom::reloadRoom1() {
 	_selectCommand = -1;
-	warning("TODO: _word1F968 = -1;");
+	_vm->_boxSelect = false; //-1
 	_vm->_player->_playerOff = false;
 
 	_vm->_screen->forceFadeOut();

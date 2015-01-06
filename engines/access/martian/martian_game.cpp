@@ -73,6 +73,7 @@ void MartianEngine::initVariables() {
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
 	_numAnimTimers = 0;
+	TRAVEL[7] = 1;
 }
 
 void MartianEngine::setNoteParams() {
