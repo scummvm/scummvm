@@ -73,7 +73,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[25] = &Scripts::cmdRetPos;
 	COMMAND_LIST[26] = &Scripts::cmdCheckLoc;
 	COMMAND_LIST[27] = &Scripts::cmdSetAnim;
-	COMMAND_LIST[28] = &Scripts::cmdDispInv;
+	COMMAND_LIST[28] = &Scripts::cmdDispInv_v1;
 	COMMAND_LIST[29] = &Scripts::cmdSetAbout;
 	COMMAND_LIST[30] = &Scripts::cmdSetTimer;
 	COMMAND_LIST[31] = &Scripts::cmdCheckTimer;
@@ -122,6 +122,7 @@ void Scripts::setOpcodes() {
 
 void Scripts::setOpcodes_v2() {
 	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
+	COMMAND_LIST[28] = &Scripts::cmdDispInv_v2;
 	COMMAND_LIST[29] = &Scripts::cmdSetTimer;
 	COMMAND_LIST[32] = &Scripts::cmdJumpGoto;
 	COMMAND_LIST[40] = &Scripts::cmdVideoEnded;
@@ -171,7 +172,7 @@ void Scripts::charLoop() {
 }
 
 void Scripts::printWatch() {
-	warning("TODO: printWatch");
+	error("TODO: printWatch");
 }
 
 void Scripts::findNull() {
@@ -462,7 +463,11 @@ void Scripts::cmdSetAnim() {
 		_vm->_animation->setAnimTimer(anim);
 }
 
-void Scripts::cmdDispInv() {
+void Scripts::cmdDispInv_v1() {
+	error("TODO: cmdDisplInv_v1");
+}
+
+void Scripts::cmdDispInv_v2() {
 	_vm->_inventory->newDisplayInv();
 }
 

@@ -87,7 +87,8 @@ protected:
 	void cmdRetNeg();
 	void cmdCheckLoc();
 	void cmdSetAnim();
-	void cmdDispInv();
+	void cmdDispInv_v1();
+	void cmdDispInv_v2();
 	void cmdSetAbout();
 	void cmdSetTimer();
 	void cmdCheckTimer();
