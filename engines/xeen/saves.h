@@ -27,6 +27,7 @@
 #include "common/savefile.h"
 #include "graphics/surface.h"
 #include "xeen/party.h"
+#include "xeen/files.h"
 
 namespace Xeen {
 
@@ -39,20 +40,29 @@ struct XeenSavegameHeader {
 	int _totalFrames;
 };
 
-class SavesManager {
+class SavesManager: public BaseCCArchive {
 private:
 	XeenEngine *_vm;
 	Party &_party;
 	Roster &_roster;
+	byte *_data;
+
+	void load(Common::SeekableReadStream *stream);
 public:
 	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
 public:
 	SavesManager(XeenEngine *vm, Party &party, Roster &roster);
+
+	~SavesManager();
+
 	void reset();
 
 	void readCharFile();
 
 	void writeCharFile();
+
+	// Archive implementation
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 };
 
 } // End of namespace Xeen

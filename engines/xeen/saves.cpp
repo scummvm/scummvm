@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"
+#include "common/memstream.h"
 #include "xeen/saves.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
@@ -29,7 +30,13 @@
 namespace Xeen {
 
 SavesManager::SavesManager(XeenEngine *vm, Party &party, Roster &roster) : 
-		_vm(vm), _party(party), _roster(roster) {
+		BaseCCArchive(), _vm(vm), _party(party), _roster(roster) {
+	SearchMan.add("saves", this, 0, false);
+	_data = nullptr;
+}
+
+SavesManager::~SavesManager() {
+	delete[] _data;
 }
 
 /**
@@ -57,22 +64,45 @@ void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP)
 	}
 }
 
+Common::SeekableReadStream *SavesManager::createReadStreamForMember(const Common::String &name) const {
+	CCEntry ccEntry;
+
+	if (getHeaderEntry(name, ccEntry)) {
+		// Open the correct CC entry
+		return new Common::MemoryReadStream(_data + ccEntry._offset, ccEntry._size);
+	}
+
+	return nullptr;
+}
+
+void SavesManager::load(Common::SeekableReadStream *stream) {
+	loadIndex(stream);
+
+	delete[] _data;
+	_data = new byte[stream->size()];
+	stream->seek(0);
+	stream->read(_data, stream->size());
+
+	// Load in the character stats and active party
+	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
+	Common::Serializer sChr(chr, nullptr);
+	_roster.synchronize(sChr);
+	delete chr;
+
+	Common::SeekableReadStream *pty = createReadStreamForMember("maze.pty");
+	Common::Serializer sPty(pty, nullptr);
+	_party.synchronize(sPty);
+	delete pty;
+}
+
 /**
  * Sets up the dynamic data for the game for a new game
  */
 void SavesManager::reset() {
 	Common::String name(_vm->getGameID() == GType_Clouds ? "xeen.cur" : "dark.cur");
-	CCArchive cur(name, false);
-	
-	Common::SeekableReadStream *chr = cur.createReadStreamForMember("maze.chr");
-	Common::Serializer sChr(chr, nullptr);
-	_roster.synchronize(sChr);
-	delete chr;
+	File f(name);
 
-	Common::SeekableReadStream *pty = cur.createReadStreamForMember("maze.pty");
-	Common::Serializer sPty(pty, nullptr);
-	_party.synchronize(sPty);
-	delete pty;
+	load(&f);
 }
 
 void SavesManager::readCharFile() {

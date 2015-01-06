@@ -71,10 +71,7 @@ void Interface::initDrawStructs() {
 	_mainList[15] = DrawStruct(30, 286, 169);
 }
 
-void Interface::manageCharacters(bool soundPlayed) {
-	Screen &screen = *_vm->_screen;
-	EventsManager &events = *_vm->_events;
-	bool flag = false;
+void Interface::setup() {
 	_globalSprites.load("global.icn");
 	_borderSprites.load("border.icn");
 	_spellFxSprites.load("spellfx.icn");
@@ -84,7 +81,6 @@ void Interface::manageCharacters(bool soundPlayed) {
 	_hpSprites.load("hpbars.icn");
 	_uiSprites.load("inn.icn");
 
-start:
 	// Get mappings to the active characters in the party
 	_vm->_party._activeParty.resize(_vm->_party._partyCount);
 	for (int i = 0; i < _vm->_party._partyCount; ++i) {
@@ -92,7 +88,14 @@ start:
 	}
 
 	_isEarlyGame = _vm->_party._minutes >= 300;
+}
 
+void Interface::manageCharacters(bool soundPlayed) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	bool flag = false;
+
+start:
 	if (_vm->_party._mazeId != 0) {
 		_vm->_mode = MODE_0;
 		_buttonsLoaded = true;
@@ -279,7 +282,7 @@ start:
 void Interface::loadCharIcons() {
 	for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
 		// Load new character resource
-		Common::String name = Common::String::format("char%02d.fac", i);
+		Common::String name = Common::String::format("char%02d.fac", i + 1);
 		_charFaces[i].load(name);
 	}
 
@@ -556,6 +559,7 @@ void Interface::setOutdoorsObjects() {
 
 void Interface::startup() {
 	Screen &screen = *_vm->_screen;
+	loadCharIcons();
 	_iconSprites.load("main.icn");
 
 	animate3d();

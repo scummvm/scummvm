@@ -669,6 +669,7 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 	}
 
 	// merge up monsters
+	_monsters.resize(monData.size());
 	for (uint i = 0; i < monData.size(); ++i) {
 		MazeMonster &dest = _monsters[i];
 		dest._position = monData[i]._pos;
@@ -808,7 +809,7 @@ void Map::load(int mapId) {
 			if (!textLoaded) {
 				textLoaded = true;
 				Common::String txtName = Common::String::format("%s%c%03u.txt",
-					isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0');
+					isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
 				File fText(txtName);
 				char mazeName[33];
 				fText.read(mazeName, 33);
@@ -819,13 +820,13 @@ void Map::load(int mapId) {
 
 				// Load the monster data
 				Common::String mobName = Common::String::format("maze%c%03u.mob",
-					(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
+					(mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
 				_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
 				mobFile.close();
 
 				Common::String headName = Common::String::format("aaze%c%03u.hed",
-					(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
+					(mapId >= 100) ? 'x' : '0', mapId);
 				File headFile(headName);
 				_headData.synchronize(headFile);
 				headFile.close();
@@ -846,7 +847,7 @@ void Map::load(int mapId) {
 		// Move to next surrounding maze
 		MazeData *baseMaze = &_mazeData[MAP_GRID_PRIOR_INDEX[idx]];
 		mapId = baseMaze->_surroundingMazes[MAP_GRID_PRIOR_DIRECTION[idx]];
-		if (mapId) {
+		if (!mapId) {
 			baseMaze = &_mazeData[MAP_GRID_PRIOR_INDEX2[idx]];
 			mapId = baseMaze->_surroundingMazes[MAP_GRID_PRIOR_DIRECTION2[idx]];
 		}

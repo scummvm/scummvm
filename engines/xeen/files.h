@@ -58,41 +58,52 @@ public:
 };
 
 /**
-* Xeen CC file implementation
+* Details of a single entry in a CC file index
 */
-class CCArchive : public Common::Archive {
+struct CCEntry {
+	uint16 _id;
+	uint32 _offset;
+	uint16 _size;
+
+	CCEntry() : _id(0), _offset(0), _size(0) {}
+	CCEntry(uint16 id, uint32 offset, uint32 size)
+		: _id(id), _offset(offset), _size(size) {
+	}
+};
+
+/**
+* Base Xeen CC file implementation
+*/
+class BaseCCArchive : public Common::Archive {
 private:
-	/**
-	* Details of a single entry in a CC file index
-	*/
-	struct CCEntry {
-		uint16 _id;
-		uint32 _offset;
-		uint16 _size;
-
-		CCEntry() : _id(0), _offset(0), _size(0) {}
-		CCEntry(uint16 id, uint32 offset, uint32 size)
-			: _id(id), _offset(offset), _size(size) {
-		}
-	};
-
-	Common::Array<CCEntry> _index;
-	Common::String _filename;
-	bool _encoded;
-
 	uint16 convertNameToId(const Common::String &resourceName) const;
+protected:
+	Common::Array<CCEntry> _index;
 
 	void loadIndex(Common::SeekableReadStream *stream);
 
 	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
 public:
-	CCArchive(const Common::String &filename, bool encoded = true);
-	virtual ~CCArchive();
+	BaseCCArchive() {}
 
 	// Archive implementation
 	virtual bool hasFile(const Common::String &name) const;
 	virtual int listMembers(Common::ArchiveMemberList &list) const;
 	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+};
+
+/**
+* Xeen CC file implementation
+*/
+class CCArchive : public BaseCCArchive {
+private:
+	Common::String _filename;
+	bool _encoded;
+public:
+	CCArchive(const Common::String &filename, bool encoded = true);
+	virtual ~CCArchive();
+
+	// Archive implementation
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 };
 

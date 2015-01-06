@@ -29,64 +29,10 @@
 
 namespace Xeen {
 
-CCArchive::CCArchive(const Common::String &filename, bool encoded): 
-		_filename(filename), _encoded(encoded) {
-	File f(filename);
-	loadIndex(&f);
-}
-
-CCArchive::~CCArchive() {
-}
-
-// Archive implementation
-bool CCArchive::hasFile(const Common::String &name) const {
-	CCEntry ccEntry;
-	return getHeaderEntry(name, ccEntry);
-}
-
-int CCArchive::listMembers(Common::ArchiveMemberList &list) const {
-	// CC files don't maintain the original filenames, so we can't list it
-	return 0;
-}
-
-const Common::ArchiveMemberPtr CCArchive::getMember(const Common::String &name) const {
-	if (!hasFile(name))
-		return Common::ArchiveMemberPtr();
-
-	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
-}
-
-Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::String &name) const {
-	CCEntry ccEntry;
-
-	if (getHeaderEntry(name, ccEntry)) {
-		// Open the correct CC file
-		Common::File f;
-		if (!f.open(_filename))
-			error("Could not open CC file");
-
-		// Read in the data for the specific resource
-		f.seek(ccEntry._offset);
-		byte *data = new byte[ccEntry._size];
-		f.read(data, ccEntry._size);
-
-		if (_encoded) {
-			// Decrypt the data
-			for (int i = 0; i < ccEntry._size; ++i)
-				data[i] ^= 0x35;
-		}
-
-		// Return the data as a stream
-		return new Common::MemoryReadStream(data, ccEntry._size, DisposeAfterUse::YES);
-	}
-
-	return nullptr;
-}
-
 /**
- * Hash a given filename to produce the Id that represents it
- */
-uint16 CCArchive::convertNameToId(const Common::String &resourceName) const {
+* Hash a given filename to produce the Id that represents it
+*/
+uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) const {
 	if (resourceName.empty())
 		return 0xffff;
 
@@ -104,9 +50,9 @@ uint16 CCArchive::convertNameToId(const Common::String &resourceName) const {
 }
 
 /**
- * Load the index of a given CC file
- */
-void CCArchive::loadIndex(Common::SeekableReadStream *stream) {
+* Load the index of a given CC file
+*/
+void BaseCCArchive::loadIndex(Common::SeekableReadStream *stream) {
 	int count = stream->readUint16LE();
 
 	// Read in the data for the archive's index
@@ -136,11 +82,16 @@ void CCArchive::loadIndex(Common::SeekableReadStream *stream) {
 	delete[] rawIndex;
 }
 
+bool BaseCCArchive::hasFile(const Common::String &name) const {
+	CCEntry ccEntry;
+	return getHeaderEntry(name, ccEntry);
+}
+
 /**
 * Given a resource name, returns whether an entry exists, and returns
 * the header index data for that entry
 */
-bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const {
+bool BaseCCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const {
 	uint16 id = convertNameToId(resourceName);
 
 	// Loop through the index
@@ -153,6 +104,56 @@ bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEn
 
 	// Could not find an entry
 	return false;
+}
+
+const Common::ArchiveMemberPtr BaseCCArchive::getMember(const Common::String &name) const {
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
+	// CC files don't maintain the original filenames, so we can't list it
+	return 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+CCArchive::CCArchive(const Common::String &filename, bool encoded): 
+		_filename(filename), _encoded(encoded) {
+	File f(filename);
+	loadIndex(&f);
+}
+
+CCArchive::~CCArchive() {
+}
+
+Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::String &name) const {
+	CCEntry ccEntry;
+
+	if (getHeaderEntry(name, ccEntry)) {
+		// Open the correct CC file
+		Common::File f;
+		if (!f.open(_filename))
+			error("Could not open CC file");
+
+		// Read in the data for the specific resource
+		f.seek(ccEntry._offset);
+		byte *data = new byte[ccEntry._size];
+		f.read(data, ccEntry._size);
+
+		if (_encoded) {
+			// Decrypt the data
+			for (int i = 0; i < ccEntry._size; ++i)
+				data[i] ^= 0x35;
+		}
+
+		// Return the data as a stream
+		return new Common::MemoryReadStream(data, ccEntry._size, DisposeAfterUse::YES);
+	}
+
+	return nullptr;
 }
 
 /*------------------------------------------------------------------------*/

@@ -54,6 +54,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_falling = false;
 	_tillMove = false;
 	_moveMonsters = false;
+	_mode = MODE_0;
 }
 
 XeenEngine::~XeenEngine() {
@@ -271,6 +272,7 @@ void XeenEngine::playGame() {
 void XeenEngine::play() {
 	// TODO: Init variables
 
+	_interface->setup();
 	_screen->loadBackground("back.raw");
 	_screen->loadPalette("mm4.pal");
 	_interface->loadPartyIcons();

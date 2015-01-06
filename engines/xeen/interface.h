@@ -66,6 +66,8 @@ private:
 	int _hiliteChar;
 	int _intrIndex1;
 
+	void loadSprites();
+
 	void initDrawStructs();
 
 	void assembleBorder();
@@ -91,6 +93,8 @@ private:
 	void setOutdoorsObjects();
 public:
 	Interface(XeenEngine *vm);
+
+	void setup();
 
 	void manageCharacters(bool soundPlayed);
 
