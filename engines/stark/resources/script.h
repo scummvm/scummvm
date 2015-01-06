@@ -20,56 +20,78 @@
  *
  */
 
-#ifndef STARK_RESOURCES_COMMAND_H
-#define STARK_RESOURCES_COMMAND_H
+#ifndef STARK_RESOURCES_SCRIPT_H
+#define STARK_RESOURCES_SCRIPT_H
 
-#include "common/array.h"
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
-#include "engines/stark/resourcereference.h"
 
 namespace Stark {
 
-class Script;
-class ResourceReference;
+class Command;
 class XRCReadStream;
 
-class Command : public Resource {
+class Script : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kCommand;
-
-	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Command();
+	static const ResourceType::Type TYPE = ResourceType::kScript;
 
 	enum SubType {
-		kCommandBegin = 0,
-		kCommandEnd = 1
+		kSubTypeGameEvent = 4,
+		kSubTypePlayerAction = 5,
+		kSubTypeDialog = 6
 	};
 
-	struct Argument {
-		enum Type {
-			kTypeInteger1 = 1,
-			kTypeInteger2 = 2,
-			kTypeResourceReference = 3,
-			kTypeString = 4
-		};
-
-		uint32 type;
-		uint32 intValue;
-		Common::String stringValue;
-		ResourceReference referenceValue;
+	enum ScriptType {
+		kScriptTypeOnGameEvent = 0,
+		kScriptTypePassiveDialog = 1,
+		kScriptTypeOnPlayerAction = 2,
+		kScriptType3 = 3,
+		kScriptType4 = 4
 	};
 
-	Command *execute(uint32 callMode, Script *script);
+	enum GameEvent {
+		kGameEventOnGameLoop = 0,
+		kGameEventOnEnterLocation = 1,
+		kGameEventOnExitLocation = 2
+	};
+
+	enum CallMode {
+		kCallModeGameLoop = 1,
+		kCallModeExitLocation = 2,
+		kCallModeEnterLocation = 3,
+		kCallModePlayerAction = 4,
+		kCallModeDialogCreateSelections = 5,
+		kCallModeDialogAnswer = 6
+	};
+
+	Script(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Script();
+
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+	void onAllLoaded();
+
+	void reset();
+	bool isEnabled();
+	bool isOnBegin();
+	void execute(uint32 callMode);
 
 protected:
-	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
-	Common::Array<Argument> _arguments;
+	bool shouldExecute(uint32 callMode);
+
+	uint32 _scriptType;
+	uint32 _runEvent;
+	uint32 _minChapter;
+	uint32 _maxChapter;
+	bool _shouldResetGameSpeed;
+
+	bool _enabled;
+	Command *_nextCommand;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_COMMAND_H
+#endif // STARK_RESOURCES_SCRIPT_H

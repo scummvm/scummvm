@@ -65,6 +65,7 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 
+	bool isEnabled() const;
 	virtual void setEnabled(bool enabled);
 	virtual RenderEntry *getRenderEntry();
 

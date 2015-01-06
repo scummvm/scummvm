@@ -35,6 +35,10 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 	_type = TYPE;
 }
 
+Command *Command::execute(uint32 callMode, Script *script) {
+	return nullptr;
+}
+
 void Command::readData(XRCReadStream *stream) {
 	uint32 count = stream->readUint32LE();
 	for (uint i = 0; i < count; i++) {

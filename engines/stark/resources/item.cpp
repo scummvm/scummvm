@@ -69,6 +69,10 @@ void Item::readData(XRCReadStream *stream) {
 	_field_38 = stream->readSint32LE();
 }
 
+bool Item::isEnabled() const {
+	return _enabled;
+}
+
 void Item::setEnabled(bool enabled) {
 	_enabled = enabled;
 }

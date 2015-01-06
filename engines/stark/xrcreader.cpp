@@ -40,6 +40,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/resource.h"
 #include "engines/stark/resources/root.h"
+#include "engines/stark/resources/script.h"
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/resourcereference.h"
 
@@ -197,6 +198,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kItem:
 		resource = Item::construct(parent, subType, index, name);
+		break;
+	case ResourceType::kScript:
+		resource = new Script(parent, subType, index, name);
 		break;
 	case ResourceType::kAnimHierarchy:
 		resource = new AnimHierarchy(parent, subType, index, name);

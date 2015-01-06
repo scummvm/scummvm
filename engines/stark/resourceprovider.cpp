@@ -29,6 +29,7 @@
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"
+#include "engines/stark/resources/script.h"
 #include "engines/stark/stateprovider.h"
 
 namespace Stark {
@@ -162,6 +163,10 @@ void ResourceProvider::performLocationChange() {
 		// Exit the previous location
 		Current *previous = _global->getCurrent();
 
+		// Trigger location change scripts
+		runLocationChangeScripts(previous->getLevel(), Script::kCallModeExitLocation);
+		runLocationChangeScripts(previous->getLocation(), Script::kCallModeExitLocation);
+
 		// Resource lifecycle update
 		previous->getLocation()->onExitLocation();
 		previous->getLevel()->onExitLocation();
@@ -184,9 +189,27 @@ void ResourceProvider::performLocationChange() {
 	current->getLevel()->onEnterLocation();
 	current->getLocation()->onEnterLocation();
 
+	// Trigger location change scripts
+	runLocationChangeScripts(current->getLevel(), Script::kCallModeEnterLocation);
+	runLocationChangeScripts(current->getLocation(), Script::kCallModeEnterLocation);
+
 	purgeOldLocations();
 
 	_locationChangeRequest = false;
+}
+
+void ResourceProvider::runLocationChangeScripts(Resource *resource, uint32 scriptCallMode) {
+	Common::Array<Script *> script = resource->listChildrenRecursive<Script>();
+
+	if (scriptCallMode == Script::kCallModeEnterLocation) {
+		for (uint i = 0; i < script.size(); i++) {
+			script[i]->reset();
+		}
+	}
+
+	for (uint i = 0; i < script.size(); i++) {
+		script[i]->execute(scriptCallMode);
+	}
 }
 
 void ResourceProvider::purgeOldLocations() {

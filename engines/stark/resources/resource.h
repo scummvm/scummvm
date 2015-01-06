@@ -203,6 +203,10 @@ public:
 	template<class T>
 	static T *cast(Resource *resource);
 
+	/** Find the first parent resource with the specified type */
+	template<class T>
+	T *findParent();
+
 	Resource *findChildWithIndex(ResourceType type, uint16 index, int subType = -1);
 
 	template<class T>
@@ -216,6 +220,9 @@ public:
 
 	template<class T>
 	Common::Array<T *> listChildren(int subType = -1);
+
+	template<class T>
+	Common::Array<T *> listChildrenRecursive(int subType = -1);
 
 	void addChild(Resource *child);
 
@@ -261,6 +268,17 @@ T* Resource::cast(Resource *resource) {
 template<>
 Resource *Resource::cast<Resource>(Resource *resource);
 
+template<class T>
+T *Resource::findParent() {
+	if (getType() == T::TYPE) {
+		return cast<T>(this);
+	} else if (!_parent) {
+		return nullptr;
+	} else {
+		return _parent->findParent<T>();
+	}
+}
+
 template <class T>
 Common::Array<T *> Resource::listChildren(int subType) {
 	Common::Array<T *> list;
@@ -271,6 +289,24 @@ Common::Array<T *> Resource::listChildren(int subType) {
 			// Found a matching child
 			list.push_back(Resource::cast<T>(_children[i]));
 		}
+	}
+
+	return list;
+}
+
+template<class T>
+Common::Array<T *> Resource::listChildrenRecursive(int subType) {
+	Common::Array<T *> list;
+
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i]->getType() == T::TYPE
+				&& (_children[i]->getSubType() == subType || subType == -1)) {
+			// Found a matching child
+			list.push_back(Resource::cast<T>(_children[i]));
+		}
+
+		// Look for matching resources in the child's children
+		list.push_back(_children[i]->listChildrenRecursive<T>(subType));
 	}
 
 	return list;

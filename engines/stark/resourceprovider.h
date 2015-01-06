@@ -155,6 +155,8 @@ private:
 
 	void purgeOldLocations();
 
+	void runLocationChangeScripts(Resource *resource, uint32 scriptCallMode);
+
 	Global *_global;
 	ArchiveLoader *_archiveLoader;
 	StateProvider *_stateProvider;
