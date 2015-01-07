@@ -55,6 +55,11 @@ CursorManager::CursorManager(ZVision *engine, const Graphics::PixelFormat pixelF
 	for (int i = 0; i < NUM_CURSORS; i++) {
 		if (_engine->getGameId() == GID_NEMESIS) {
 			Common::String name;
+			if (i == 1) {
+				// Cursors "arrowa.zcr" and "arrowb.zcr" are missing
+				_cursors[i][0] = _cursors[i][1] = ZorkCursor();
+				continue;
+			}
 			name = Common::String::format("%sa.zcr", _zNemCursorFileNames[i]);
 			_cursors[i][0] = ZorkCursor(_engine, name); // Up cursor
 			name = Common::String::format("%sb.zcr", _zNemCursorFileNames[i]);
