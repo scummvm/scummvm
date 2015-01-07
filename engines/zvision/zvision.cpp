@@ -105,15 +105,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 
 	debug(1, "ZVision::ZVision");
 
-	uint16 workingWindowWidth  = (gameDesc->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH  : ZGI_WORKING_WINDOW_WIDTH;
-	uint16 workingWindowHeight = (gameDesc->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
-	_workingWindow = Common::Rect(
-						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
-						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
-						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
-						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
-					 );
-
 	memset(_cheatBuffer, 0, sizeof(_cheatBuffer));
 }
 
@@ -211,7 +202,7 @@ void ZVision::initialize() {
 	} else if (_gameDescription->gameId == GID_NEMESIS)
 		_searchManager->loadZix("NEMESIS.ZIX");
 
-	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_screenPixelFormat);
+	initScreen();
 
 	// Register random source
 	_rnd = new Common::RandomSource("zvision");
@@ -356,6 +347,19 @@ void ZVision::fpsTimerCallback(void *refCon) {
 void ZVision::fpsTimer() {
 	_fps = _renderedFrameCount;
 	_renderedFrameCount = 0;
+}
+
+void ZVision::initScreen() {
+	uint16 workingWindowWidth  = (_gameDescription->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH  : ZGI_WORKING_WINDOW_WIDTH;
+	uint16 workingWindowHeight = (_gameDescription->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
+	_workingWindow = Common::Rect(
+						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
+						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
+						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
+						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
+					 );
+
+	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_screenPixelFormat);
 }
 
 } // End of namespace ZVision
