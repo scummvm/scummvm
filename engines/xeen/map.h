@@ -208,7 +208,7 @@ public:
 	Direction _direction;
 	bool _flipped;
 	Common::Array<byte> _objBj;
-public:
+
 	MazeObject();
 };
 
@@ -222,6 +222,19 @@ struct MazeMonster {
 	int _effect3;
 	SpriteResource _sprites;
 	SpriteResource _attackSprites;
+
+	MazeMonster();
+};
+
+class MazeWallItem {
+public:
+	Common::Point _position;
+	int _id;
+	int _refId;
+	Direction _direction;
+	SpriteResource _sprites;
+public:
+	MazeWallItem();
 };
 
 class MonsterObjectData {
@@ -230,8 +243,7 @@ private:
 public:
 	Common::Array<MazeObject> _objects;
 	Common::Array<MazeMonster> _monsters;
-	Common::Array<int> _wallPicIds;
-	Common::Array<MobStruct> _wallImages;
+	Common::Array<MazeWallItem> _wallItems;
 public:
 	MonsterObjectData(XeenEngine *vm);
 

@@ -629,6 +629,24 @@ MazeObject::MazeObject() {
 
 /*------------------------------------------------------------------------*/
 
+MazeMonster::MazeMonster() {
+	_frame = 0;
+	_id = 0;
+	_refId = 0;
+	_hp = 0;
+	_effect1 = _effect2 = 0;
+	_effect3 = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+MazeWallItem::MazeWallItem() {
+	_id = 0;
+	_direction = DIR_NORTH;
+}
+
+/*------------------------------------------------------------------------*/
+
 MonsterObjectData::MonsterObjectData(XeenEngine *vm): _vm(vm) {
 }
 
@@ -636,12 +654,13 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 		bool isOutdoors, MonsterData monsterData) {
 	_objects.clear();
 	_monsters.clear();
-	_wallPicIds.clear();
-	_wallImages.clear();
+	_wallItems.clear();
 	Common::Array<int> objectSprites;
 	Common::Array<int> monsterIds;
+	Common::Array<int> wallPicIds;
 	Common::Array<MobStruct> objData;
 	Common::Array<MobStruct> monData;
+	Common::Array<MobStruct> wallItemData;
 	byte b;
 
 	for (int i = 0; i < 16; ++i) {
@@ -654,7 +673,7 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 	}
 	for (int i = 0; i < 16; ++i) {
 		if ((b = s.readByte()) != 0xff)
-			_wallPicIds.push_back(b);
+			wallPicIds.push_back(b);
 	}
 
 	MobStruct mobStruct;
@@ -664,7 +683,7 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 		monData.push_back(mobStruct);
 	if (!isOutdoors) {
 		while (mobStruct.synchronize(s))
-			_wallImages.push_back(mobStruct);
+			wallItemData.push_back(mobStruct);
 	}
 
 	// Merge up objects
@@ -692,6 +711,16 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 		dest._effect1 = dest._effect2 = mon._animationEffect;
 		if (mon._animationEffect)
 			dest._effect3 = _vm->getRandomNumber(7);
+	}
+
+	// Merge up wall items
+	_wallItems.clear();
+	for (uint i = 0; i < wallItemData.size(); ++i) {
+		MazeWallItem &dest = _wallItems[i];
+		dest._position = wallItemData[i]._pos;
+		dest._id = wallItemData[i]._id;
+		dest._refId = wallPicIds[dest._id];
+		dest._direction = wallItemData[i]._direction;
 	}
 }
 
@@ -915,10 +944,9 @@ void Map::load(int mapId) {
 	}
 
 	// Load wall picture sprite resources
-	for (uint i = 0; i < _mobData._wallImages.size(); ++i) {
-		filename = Common::String::format("%03u.pic", _mobData._wallImages[i]._id);
-		// TODO: Form WallImages struct like _monsters and _objects has
-		//_mobData._wallImages[i]._sprites.load(filename);
+	for (uint i = 0; i < _mobData._wallItems.size(); ++i) {
+		filename = Common::String::format("%03u.pic", _mobData._wallItems[i]._refId);
+		_mobData._wallItems[i]._sprites.load(filename);
 	}
 }
 
