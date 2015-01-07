@@ -49,7 +49,7 @@ void RenderEntry::render(GfxDriver *gfx) {
 
 	VisualActor *actor = _visual->get<VisualActor>();
 	if (actor) {
-		actor->render(gfx);
+		actor->render(gfx, _position3D, _direction3D);
 	}
 
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();

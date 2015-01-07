@@ -25,6 +25,8 @@
 
 #include "common/str.h"
 
+#include "math/vector3d.h"
+
 #include "engines/stark/visual/visual.h"
 
 namespace Common {
@@ -49,7 +51,7 @@ public:
 	void setTexture(Texture *texture);
 	void setTime(uint32 time);
 
-	void render(GfxDriver *gfx);
+	void render(GfxDriver *gfx, const Math::Vector3d position, float direction);
 
 private:
 	Actor *_actor;

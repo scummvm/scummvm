@@ -59,16 +59,16 @@ void VisualActor::setTime(uint32 time) {
 	_time = time;
 }
 
-void VisualActor::render(Stark::GfxDriver *gfx) {
+void VisualActor::render(Stark::GfxDriver *gfx, const Math::Vector3d position, float direction) {
 	_actor->getSkeleton()->animate(_time);
 
 	// Prepare vertex list and push to gfx driver
 	// HACK: Purely because I just want to see something for now
 	gfx->set3DMode();
 	glPushMatrix();
-	glTranslatef(-20.5764, -181.446, -14.f);
+	glTranslatef(position.x(), position.y(), position.z());
 	glRotatef(90, 1.f, 0.f, 0.f);
-	glRotatef(-120, 0.f, 1.f, 0.f);
+	glRotatef(direction + 90, 0.f, 1.f, 0.f);
 
 	glEnable(GL_TEXTURE_2D);
 
