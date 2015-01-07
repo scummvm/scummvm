@@ -53,9 +53,10 @@ extern const int SIDEOFFD[];
 extern const byte CREDIT_DATA[];
 extern const byte ICON_DATA[];
 
-
 extern const int RMOUSE[10][2];
 
+extern const char *const TRAVDATA[];
+extern const char *const ASKTBL[];
 } // End of namespace Martian
 } // End of namespace Access
 
