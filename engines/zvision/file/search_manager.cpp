@@ -62,19 +62,6 @@ SearchManager::~SearchManager() {
 	_archList.clear();
 }
 
-void SearchManager::addPatch(const Common::String &src, const Common::String &dst) {
-	Common::String lowerCaseName = dst;
-	lowerCaseName.toLowercase();
-
-	SearchManager::MatchList::iterator it = _files.find(lowerCaseName);
-
-	if (it != _files.end()) {
-		lowerCaseName = src;
-		lowerCaseName.toLowercase();
-		_files[lowerCaseName] = it->_value;
-	}
-}
-
 void SearchManager::addFile(const Common::String &name, Common::Archive *arch) {
 	bool addArch = true;
 	Common::List<Common::Archive *>::iterator it = _archList.begin();

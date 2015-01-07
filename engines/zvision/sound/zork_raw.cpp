@@ -242,11 +242,27 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, ZVision *engine) {
 	Common::File *file = new Common::File();
-	if (!engine->getSearchManager()->openFile(*file, filePath))
-		error("File not found: %s", filePath.c_str());
+	Common::String actualName = filePath;
+	bool found = engine->getSearchManager()->openFile(*file, actualName);
+	bool isRaw = actualName.hasSuffix(".raw");
+
+	if ((!found && isRaw) || (found && isRaw && file->size() < 10)) {
+		if (found)
+			file->close();
+
+		// Check for an audio patch (.src)
+		actualName.setChar('s', actualName.size() - 3);
+		actualName.setChar('r', actualName.size() - 2);
+		actualName.setChar('c', actualName.size() - 1);
+
+		if (!engine->getSearchManager()->openFile(*file, actualName))
+			error("File not found: %s", actualName.c_str());
+	} else if (!found && !isRaw) {
+		error("File not found: %s", actualName.c_str());
+	}
 
 	// Get the file name
-	Common::StringTokenizer tokenizer(filePath, "/\\");
+	Common::StringTokenizer tokenizer(actualName, "/\\");
 	Common::String fileName;
 	while (!tokenizer.empty()) {
 		fileName = tokenizer.nextToken();
