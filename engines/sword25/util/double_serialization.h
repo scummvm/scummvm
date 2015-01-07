@@ -56,43 +56,6 @@ SerializedDouble encodeDouble(double value);
  */
 double decodeDouble(SerializedDouble value);
 
-#if 0
-/**
- * Encodes a double as a uint64
- *
- * Does NOT support denormalized numbers. Does NOT support NaN, or Inf
- *
- * @param value    The value to encode
- * @return         The encoded value
- */
-uint64 encodeDouble_64(double value);
-/**
- * Decodes a previously encoded double
- *
- * @param value    The value to decode
- * @return         The decoded value
- */
-double decodeDouble_64(uint64 value);
-
-/**
- * Encodes a double as two uint32
- *
- * Does NOT support denormalized numbers. Does NOT support NaN, or Inf
- *
- * @param value    The value to encode
- * @return         The encoded value
- */
-CompactSerializedDouble encodeDouble_Compact(double value);
-/**
- * Decodes a previously encoded double
- *
- * @param value    The value to decode
- * @return         The decoded value
- */
-double decodeDouble_Compact(CompactSerializedDouble value);
-
-#endif
-
 } // End of namespace Sword25
 
 #endif
