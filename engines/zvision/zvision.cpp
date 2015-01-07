@@ -185,9 +185,15 @@ void ZVision::initialize() {
 	_searchManager->addDir("addon");
 
 	if (_gameDescription->gameId == GID_GRANDINQUISITOR) {
-		_searchManager->loadZix("INQUIS.ZIX");
-	} else if (_gameDescription->gameId == GID_NEMESIS)
-		_searchManager->loadZix("NEMESIS.ZIX");
+		if (!_searchManager->loadZix("INQUIS.ZIX"))
+			error("Unable to load the game ZIX file");
+	} else if (_gameDescription->gameId == GID_NEMESIS) {
+		if (!_searchManager->loadZix("NEMESIS.ZIX")) {
+			// The game might not be installed, try MEDIUM.ZIX instead
+			if (!_searchManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
+				error("Unable to load the game ZIX file");
+		}
+	}
 
 	initScreen();
 
