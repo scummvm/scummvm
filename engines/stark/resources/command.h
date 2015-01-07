@@ -46,9 +46,11 @@ public:
 		kCommandBegin = 0,
 		kCommandEnd = 1,
 
-		k3DPlaceOn = 81,
+		kItem3DPlaceOn = 81,
 
-		kPlaceDirection = 133
+		kItemEnable = 87,
+
+		kItemPlaceDirection = 133
 	};
 
 	struct Argument {
@@ -82,6 +84,7 @@ protected:
 
 
 	void op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
+	void opItemEnable(const ResourceReference &itemRef, int32 enable);
 	void opPlaceDirection(const ResourceReference &itemRef, int32 direction);
 
 	Common::Array<Argument> _arguments;

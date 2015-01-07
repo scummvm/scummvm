@@ -40,10 +40,13 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 
 Command *Command::execute(uint32 callMode, Script *script) {
 	switch (_subType) {
-	case k3DPlaceOn:
+	case kItem3DPlaceOn:
 		op3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 		return nextCommand();
-	case kPlaceDirection:
+	case kItemEnable:
+		opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+		return nextCommand();
+	case kItemPlaceDirection:
 		opPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 		return nextCommand();
 	default:
@@ -64,6 +67,26 @@ void Command::op3DPlaceOn(const ResourceReference &itemRef, const ResourceRefere
 		break;
 	default:
 		warning("Unimplemented op3DPlaceOn target type %s", target->getType().getName());
+	}
+}
+
+void Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
+	Item *item = itemRef.resolve<Item>();
+
+	bool previousState = item->isEnabled();
+
+	switch (enable) {
+	case 0:
+		item->setEnabled(false);
+		break;
+	case 1:
+		if (!previousState) {
+			item->setEnabled(true);
+		}
+		break;
+	case 2:
+		item->setEnabled(!previousState);
+		break;
 	}
 }
 
