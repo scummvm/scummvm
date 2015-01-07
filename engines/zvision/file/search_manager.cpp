@@ -134,9 +134,10 @@ bool SearchManager::hasFile(const Common::String &name) {
 	return false;
 }
 
-void SearchManager::loadZix(const Common::String &name) {
+bool SearchManager::loadZix(const Common::String &name) {
 	Common::File file;
-	file.open(name);
+	if (!file.open(name))
+		return false;
 
 	Common::String line;
 
@@ -147,7 +148,7 @@ void SearchManager::loadZix(const Common::String &name) {
 	}
 
 	if (file.eos())
-		return;
+		error("Corrupt ZIX file: %s", name.c_str());
 
 	Common::Array<Common::Archive *> archives;
 
@@ -189,7 +190,7 @@ void SearchManager::loadZix(const Common::String &name) {
 	}
 
 	if (file.eos())
-		return;
+		error("Corrupt ZIX file: %s", name.c_str());
 
 	while (!file.eos()) {
 		line = file.readLine();
@@ -202,6 +203,8 @@ void SearchManager::loadZix(const Common::String &name) {
 			}
 		}
 	}
+
+	return true;
 }
 
 void SearchManager::addDir(const Common::String &name) {

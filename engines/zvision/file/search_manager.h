@@ -44,7 +44,7 @@ public:
 	bool openFile(Common::File &file, const Common::String &name);
 	bool hasFile(const Common::String &name);
 
-	void loadZix(const Common::String &name);
+	bool loadZix(const Common::String &name);
 
 	struct Node {
 		Common::String name;
