@@ -60,11 +60,16 @@ private:
 	int _powerShieldUIFrame;
 	int _holyBonusUIFrame;
 	int _heroismUIFrame;
+	int _flipUIFrame;
 	bool _isEarlyGame;
 	bool _buttonsLoaded;
 	Common::String _interfaceText;
 	int _hiliteChar;
 	int _intrIndex1;
+	bool _flipWtr;
+	bool _flag1;
+	bool _flag2;
+	byte _tillMove;
 
 	void loadSprites();
 
@@ -91,6 +96,10 @@ private:
 	void setOutdoorsMonsters();
 
 	void setOutdoorsObjects();
+
+	void moveMonsters();
+
+	void setIconButtons();
 public:
 	Interface(XeenEngine *vm);
 

@@ -38,11 +38,16 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_powerShieldUIFrame = 0;
 	_holyBonusUIFrame = 0;
 	_heroismUIFrame = 0;
+	_flipUIFrame = 0;
 	_isEarlyGame = false;
 	_buttonsLoaded = false;
 	_hiliteChar = -1;
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	_intrIndex1 = 0;
+	_flipWtr = false;
+	_flag1 = false;
+	_flag2 = false;
+	_tillMove = 0;
 
 	initDrawStructs();
 }
@@ -534,6 +539,17 @@ void Interface::draw3d(bool flag) {
 	if (!screen._windows[11]._enabled)
 		return;
 
+	_flipUIFrame = (_flipUIFrame + 1) % 4;
+	if (_flipUIFrame == 0)
+		_flipWtr = !_flipWtr;
+	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_2) &&
+			!_flag1 && _vm->_moveMonsters) {
+		if (--_tillMove == 0)
+			moveMonsters();
+	}
+
+	// TODO: more
+
 	warning("TODO");
 }
 
@@ -578,6 +594,10 @@ void Interface::startup() {
 	_mainList[0]._sprites = &_globalSprites;
 	for (int i = 1; i < 16; ++i)
 		_mainList[i]._sprites = &_iconSprites;
+
+	setIconButtons();
+
+	_tillMove = false;
 }
 
 void Interface::mainIconsPrint() {
@@ -586,6 +606,35 @@ void Interface::mainIconsPrint() {
 	screen._windows[12].close();
 	screen._windows[0].drawList(_mainList, 16);
 	screen._windows[34].update();
+}
+
+void Interface::moveMonsters() {
+
+}
+
+void Interface::setIconButtons() {
+	clearButtons();
+
+	addButton(Common::Rect(235,  75, 259,  95),  83, &_iconSprites);
+	addButton(Common::Rect(260,  75, 284,  95),  67, &_iconSprites);
+	addButton(Common::Rect(286,  75, 310,  95),  82, &_iconSprites);
+	addButton(Common::Rect(235,  96, 259, 116),  66, &_iconSprites);
+	addButton(Common::Rect(260,  96, 284, 116),  68, &_iconSprites);
+	addButton(Common::Rect(286,  96, 310, 116),  86, &_iconSprites);
+	addButton(Common::Rect(235, 117, 259, 137),  77, &_iconSprites);
+	addButton(Common::Rect(260, 117, 284, 137),  73, &_iconSprites);
+	addButton(Common::Rect(286, 117, 310, 137),  81, &_iconSprites);
+	addButton(Common::Rect(109, 137, 122, 147),   9, &_iconSprites);
+	addButton(Common::Rect(235, 148, 259, 168), 240, &_iconSprites);
+	addButton(Common::Rect(260, 148, 284, 168), 242, &_iconSprites);
+	addButton(Common::Rect(286, 148, 310, 168), 241, &_iconSprites);
+	addButton(Common::Rect(235, 169, 259, 189), 176, &_iconSprites);
+	addButton(Common::Rect(260, 169, 284, 189), 243, &_iconSprites);
+	addButton(Common::Rect(286, 169, 310, 189), 177, &_iconSprites);
+	addButton(Common::Rect(236,  11, 308,  69),  61, &_iconSprites, false);
+	addButton(Common::Rect(239,  27, 312,  37),  49, &_iconSprites, false);
+	addButton(Common::Rect(239,  37, 312,  47),  50, &_iconSprites, false);
+	addButton(Common::Rect(239,  47, 312,  57),  51, &_iconSprites, false);
 }
 
 } // End of namespace Xeen

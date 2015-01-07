@@ -46,7 +46,7 @@ void ButtonContainer::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
-void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw = true) {
+void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw) {
 	_buttons.push_back(UIButton(bounds, val, sprites, draw));
 }
 

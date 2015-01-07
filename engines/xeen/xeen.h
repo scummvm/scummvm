@@ -93,8 +93,6 @@ private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
-	bool _moveMonsters;
-	bool _tillMove;
 
 	void showIntro();
 
@@ -146,6 +144,7 @@ public:
 	int _face2State;
 	bool _noDirectionSense;
 	bool _falling;
+	bool _moveMonsters;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

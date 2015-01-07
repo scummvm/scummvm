@@ -52,7 +52,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_face2State = 0;
 	_noDirectionSense = false;
 	_falling = false;
-	_tillMove = false;
 	_moveMonsters = false;
 	_mode = MODE_0;
 }
@@ -298,11 +297,12 @@ void XeenEngine::play() {
 	_events->setCursor(0);
 
 	_moveMonsters = true;
-	_tillMove = false;
 	if (_mode == MODE_0) {
 		_mode = MODE_1;
 		_screen->fadeIn(4);
 	}
+
+	_moveMonsters = true;
 
 	// Main game loop
 	while (!shouldQuit()) {

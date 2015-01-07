@@ -66,7 +66,7 @@ public:
 
 	void restoreButtons();
 
-	void addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw);
+	void addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw = true);
 };
 
 class SettingsBaseDialog : public ButtonContainer {
