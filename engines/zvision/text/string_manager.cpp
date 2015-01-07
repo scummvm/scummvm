@@ -51,9 +51,8 @@ void StringManager::initialize(ZVisionGameId gameId) {
 
 void StringManager::loadStrFile(const Common::String &fileName) {
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName))
 		error("%s does not exist. String parsing failed", fileName.c_str());
-	}
 
 	uint lineNumber = 0;
 	while (!file.eos()) {
