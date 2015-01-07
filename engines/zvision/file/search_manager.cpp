@@ -165,6 +165,11 @@ bool SearchManager::loadZix(const Common::String &name) {
 				if (path[i] == '\\')
 					path.setChar('/', i);
 
+			// Check if NEMESIS.ZIX/MEDIUM.ZIX refers to the znemesis folder, and
+			// check the game root folder instead
+			if (path.hasPrefix("znemesis/"))
+				path = Common::String(path.c_str() + 9);
+
 			// Check if INQUIS.ZIX refers to the ZGI folder, and check the game
 			// root folder instead
 			if (path.hasPrefix("zgi/"))
