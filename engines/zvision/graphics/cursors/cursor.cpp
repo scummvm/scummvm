@@ -43,7 +43,7 @@ ZorkCursor::ZorkCursor(ZVision *engine, const Common::String &fileName)
 	  _hotspotY(0) {
 	Common::File file;
 	if (!engine->getSearchManager()->openFile(file, fileName))
-		return;
+		error("Cursor file %s does not exist", fileName.c_str());
 
 	uint32 magic = file.readUint32BE();
 	if (magic != MKTAG('Z', 'C', 'R', '1')) {
