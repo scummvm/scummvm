@@ -169,44 +169,32 @@ void SearchManager::loadZix(const Common::String &name) {
 		line.trim();
 		if (line.matchString("----------*", true))
 			break;
-		else if (line.matchString("DIR:*", true) || line.matchString("CD0:*", true) || line.matchString("CD1:*", true)) {
+		else if (line.matchString("DIR:*", true) || line.matchString("CD0:*", true) || line.matchString("CD1:*", true) || line.matchString("CD2:*", true)) {
+			Common::Archive *arc;
+
 			Common::String path(line.c_str() + 5);
+			for (uint i = 0; i < path.size(); i++)
+				if (path[i] == '\\')
+					path.setChar('/', i);
+
 			// Check if INQUIS.ZIX refers to the ZGI folder, and check the game
 			// root folder instead
-			if (path.hasPrefix("zgi\\"))
+			if (path.hasPrefix("zgi/"))
 				path = Common::String(path.c_str() + 4);
-			if (path.hasPrefix("zgi_e\\"))
+			if (path.hasPrefix("zgi_e/"))
 				path = Common::String(path.c_str() + 6);
 
-			Common::Archive *arc;
-			char tempPath[128];
-			strcpy(tempPath, path.c_str());
-			for (uint i = 0; i < path.size(); i++)
-				if (tempPath[i] == '\\')
-					tempPath[i] = '/';
-
-			path = Common::String(tempPath);
 			if (path.size() && path[0] == '.')
 				path.deleteChar(0);
 			if (path.size() && path[0] == '/')
 				path.deleteChar(0);
+			if (path.size() && path.hasSuffix("/"))
+				path.deleteLastChar();
 
-			if (path.matchString("*.zfs", true))
+			if (path.matchString("*.zfs", true)) {
 				arc = new ZfsArchive(path);
-			else {
-				if (path.size()) {
-					if (path[path.size() - 1] == '\\' || path[path.size() - 1] == '/')
-						path.deleteLastChar();
-					if (path.size())
-						for (Common::List<Common::String>::iterator it = _dirList.begin(); it != _dirList.end(); ++it)
-							if (path.equalsIgnoreCase(*it)) {
-								path = *it;
-								break;
-							}
-				}
-
+			} else {
 				path = Common::String::format("%s/%s", _root.c_str(), path.c_str());
-
 				arc = new Common::FSDirectory(path);
 			}
 			archives.push_back(arc);
