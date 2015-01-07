@@ -78,6 +78,20 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Zork Nemesis French version
+		{
+			"znemesis",
+			0,
+			AD_ENTRY1s("CSCR.ZFS", "f04113357b4748c13efcb58b4629887c", 2577873),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
+		},
+		GID_NEMESIS
+	},
+
+	{
 		// Zork Nemesis English demo version
 		{
 			"znemesis",
