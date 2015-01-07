@@ -33,6 +33,8 @@ namespace Xeen {
 
 class XeenEngine;
 
+enum SpriteFlags { SPRFLAG_HORIZ_FLIPPED = 0x8000 };
+
 class SpriteResource {
 private:
 	struct IndexEntry {
@@ -49,11 +51,13 @@ public:
 
 	virtual ~SpriteResource();
 
+	SpriteResource &operator=(const SpriteResource &src);
+
 	void load(const Common::String &filename);
 
 	void clear();
 
-	void draw(XSurface &dest, int frame, const Common::Point &destPos) const;
+	void draw(XSurface &dest, int frame, const Common::Point &destPos, int flags = 0) const;
 
 	void draw(XSurface &dest, int frame) const;
 

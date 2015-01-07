@@ -24,6 +24,7 @@
 #define XEEN_MAP_H
 
 #include "common/stream.h"
+#include "common/array.h"
 #include "common/rect.h"
 #include "xeen/party.h"
 #include "xeen/sprites.h"
@@ -199,12 +200,16 @@ public:
 };
 
 struct MazeObject {
+public:
 	Common::Point _position;
 	int _number;
 	int _frame;
 	int _id;
 	Direction _direction;
 	bool _flipped;
+	Common::Array<byte> _objBj;
+public:
+	MazeObject();
 };
 
 struct MazeMonster {
@@ -215,6 +220,8 @@ struct MazeMonster {
 	int _hp;
 	int _effect1, _effect2;
 	int _effect3;
+	SpriteResource _sprites;
+	SpriteResource _attackSprites;
 };
 
 class MonsterObjectData {

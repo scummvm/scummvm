@@ -43,6 +43,21 @@ SpriteResource::~SpriteResource() {
 	clear();
 }
 
+SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
+	delete[] _data;
+	_index.clear();
+	
+	_filesize = src._filesize;
+	_data = new byte[_filesize];
+	Common::copy(src._data, src._data + _filesize, _data);
+
+	_index.resize(src._index.size());
+	for (uint i = 0; i < src._index.size(); ++i)
+		_index[i] = src._index[i];
+
+	return *this;
+}
+
 void SpriteResource::load(const Common::String &filename) {
 	// Open the resource
 	File f(filename);
@@ -173,7 +188,10 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		destPos.x + xOffset + width, destPos.y + yOffset + height));
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos) const {
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, int flags) const {
+	// TODO: Support the different flags
+	assert(!flags);
+
 	drawOffset(dest, _index[frame]._offset1, destPos);
 	if (_index[frame]._offset2)
 		drawOffset(dest, _index[frame]._offset2, destPos);

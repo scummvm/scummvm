@@ -619,6 +619,16 @@ bool MobStruct::synchronize(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
+MazeObject::MazeObject() {
+	_number = 0;
+	_frame = 0;
+	_id = 0;
+	_direction = DIR_NORTH;
+	_flipped = false;
+}	
+
+/*------------------------------------------------------------------------*/
+
 MonsterObjectData::MonsterObjectData(XeenEngine *vm): _vm(vm) {
 }
 
@@ -855,20 +865,60 @@ void Map::load(int mapId) {
 
 	// TODO: Switch setting flags that don't seem to ever be used
 
-	// Reload object data, since prior loop iterations replaced the data
-	// for the main map with all the surrounding mazes
-	Common::String mobName = Common::String::format("maze%c%03u.mob",
-		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
-	File mobFile(mobName);
-	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
-	mobFile.close();
 
-	// TODO: Loop loading moer data / other / cbr? data
+	// Load secondary bj file for the objects
+	Common::String filename;
+	for (uint i = 0; i < _mobData._objects.size(); ++i) {
+		if (_vm->_party._cloudsEnd && _mobData._objects[i]._id == 85 &&
+				_vm->_party._mazeId == 27 && isDarkCc) {
+			// TODO: Flags set that don't seem to be used
+		} else if (_vm->_party._mazeId == 12 && _vm->_party._gameFlags[43] &&
+				_mobData._objects[i]._id == 118 && !isDarkCc) {
+			filename = "085.obj";
+			_mobData._objects[0]._id = 85;
+		} else {
+			filename = Common::String::format("%03u.%cbj", _mobData._objects[i]._id,
+				_mobData._objects[i]._id >= 100 ? 'o' : '0');
+		}
 
-	if (_isOutdoors) {
+		// Read in the secondary object data
+		File f(filename);
+		Common::Array<byte> &b = _mobData._objects[i]._objBj;
+		b.resize(f.size());
+		f.read(&b[0], f.size());
+	}
 
-	} else {
+	// Load sprite resources for monster standard and attack animations
+	int monsterNum = 1;
+	int monsterImgNums[95];
+	Common::fill(&monsterImgNums[0], &monsterImgNums[95], 0);
+	for (uint i = 0; i < _mobData._monsters.size(); ++i, ++monsterNum) {
+		MonsterStruct &monsterStruct = _monsterData[i];
+		int monsterImgNum = monsterStruct._imageNumber;
+		filename = Common::String::format("%03u.mon", monsterImgNum);
 
+		if (!monsterImgNums[monsterImgNum]) {
+			_mobData._monsters[i]._sprites.load(filename);
+		} else {
+			_mobData._monsters[i]._sprites = _mobData._monsters[
+				monsterImgNums[monsterImgNum] - 1]._sprites;
+		}
+
+		filename = Common::String::format("%03u.att", monsterImgNum);
+		if (!monsterImgNums[monsterImgNum]) {
+			_mobData._monsters[i]._attackSprites.load(filename);
+			monsterImgNums[monsterImgNum] = monsterNum;
+		} else {
+			_mobData._monsters[i]._attackSprites = _mobData._monsters[
+				monsterImgNums[monsterImgNum] - 1]._attackSprites;;
+		}
+	}
+
+	// Load wall picture sprite resources
+	for (uint i = 0; i < _mobData._wallImages.size(); ++i) {
+		filename = Common::String::format("%03u.pic", _mobData._wallImages[i]._id);
+		// TODO: Form WallImages struct like _monsters and _objects has
+		//_mobData._wallImages[i]._sprites.load(filename);
 	}
 }
 
