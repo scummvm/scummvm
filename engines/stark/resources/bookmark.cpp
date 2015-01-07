@@ -34,6 +34,10 @@ Bookmark::Bookmark(Resource *parent, byte subType, uint16 index, const Common::S
 	_type = TYPE;
 }
 
+Math::Vector3d Bookmark::getPosition() const {
+	return _position;
+}
+
 void Bookmark::readData(XRCReadStream *stream) {
 	_position = stream->readVector3();
 }

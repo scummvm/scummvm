@@ -47,10 +47,10 @@ public:
 
 	/** Resolve the reference to the actual resource */
 	template <class T>
-	T* resolve();
+	T* resolve() const;
 
 private:
-	Resource *resolve();
+	Resource *resolve() const;
 
 	class PathElement {
 	public:
@@ -69,7 +69,7 @@ private:
 };
 
 template<class T>
-T* ResourceReference::resolve() {
+T* ResourceReference::resolve() const {
 	return Resource::cast<T>(resolve());
 }
 

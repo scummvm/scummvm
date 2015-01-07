@@ -36,6 +36,7 @@ namespace Stark {
 class Anim;
 class AnimHierarchy;
 class BonesMesh;
+class Bookmark;
 class RenderEntry;
 class TextureSet;
 class Visual;
@@ -108,6 +109,9 @@ class ItemSub5610 : public ItemVisual {
 public:
 	ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub5610();
+
+	void placeOnBookmark(Bookmark *target);
+	void setDirection(uint direction);
 
 protected:
 	int32 _field_6C;

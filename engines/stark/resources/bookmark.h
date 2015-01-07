@@ -42,6 +42,8 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	Math::Vector3d getPosition() const;
+
 protected:
 	void printData() override;
 

@@ -28,6 +28,7 @@
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/bonesmesh.h"
+#include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/xrcreader.h"
 
@@ -165,6 +166,15 @@ ItemSub5610::ItemSub5610(Resource *parent, byte subType, uint16 index, const Com
 		ItemVisual(parent, subType, index, name),
 		_direction3D(0.0),
 		_field_6C(-1) {
+}
+
+void ItemSub5610::placeOnBookmark(Bookmark *target) {
+	// TODO: valorize the z coordinate using the floor height at that position
+	_position3D = target->getPosition();
+}
+
+void ItemSub5610::setDirection(uint direction) {
+	_direction3D = direction;
 }
 
 ItemSub56::~ItemSub56() {

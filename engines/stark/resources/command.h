@@ -44,7 +44,11 @@ public:
 
 	enum SubType {
 		kCommandBegin = 0,
-		kCommandEnd = 1
+		kCommandEnd = 1,
+
+		k3DPlaceOn = 81,
+
+		kPlaceDirection = 133
 	};
 
 	struct Argument {
@@ -61,11 +65,24 @@ public:
 		ResourceReference referenceValue;
 	};
 
+	/** Execute the command */
 	Command *execute(uint32 callMode, Script *script);
+
+	/** Obtain the next command to be executed */
+	Command *nextCommand();
+
+	/** Obtain the next command to be executed, depending on a predicate */
+	Command *nextCommandIf(bool predicate);
 
 protected:
 	void readData(XRCReadStream *stream) override;
 	void printData() override;
+
+	Command *resolveArgumentSiblingReference(const Argument &argument);
+
+
+	void op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
+	void opPlaceDirection(const ResourceReference &itemRef, int32 direction);
 
 	Common::Array<Argument> _arguments;
 };

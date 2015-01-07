@@ -21,7 +21,10 @@
  */
 
 #include "engines/stark/resources/command.h"
+
 #include "engines/stark/debug.h"
+#include "engines/stark/resources/bookmark.h"
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/xrcreader.h"
 
@@ -36,7 +39,58 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 }
 
 Command *Command::execute(uint32 callMode, Script *script) {
-	return nullptr;
+	switch (_subType) {
+	case k3DPlaceOn:
+		op3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
+		return nextCommand();
+	case kPlaceDirection:
+		opPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
+		return nextCommand();
+	default:
+		// warning("Unimplemented opcode %d", _subType);
+		break;
+	}
+
+	return nextCommand();
+}
+
+void Command::op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
+	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
+	Resource *target = targetRef.resolve<Resource>();
+
+	switch (target->getType().get()) {
+	case ResourceType::kBookmark:
+		item->placeOnBookmark(Resource::cast<Bookmark>(target));
+		break;
+	default:
+		warning("Unimplemented op3DPlaceOn target type %s", target->getType().getName());
+	}
+}
+
+void Command::opPlaceDirection(const ResourceReference &itemRef, int32 direction) {
+	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
+
+	item->setDirection(abs(direction) % 360);
+}
+
+Command *Command::nextCommand() {
+	assert(!_arguments.empty());
+
+	return resolveArgumentSiblingReference(_arguments[0]);
+}
+
+Command *Command::nextCommandIf(bool predicate) {
+	assert(!_arguments.size() >= 2);
+
+	if (predicate) {
+		return resolveArgumentSiblingReference(_arguments[1]);
+	} else {
+		return resolveArgumentSiblingReference(_arguments[0]);
+	}
+}
+
+Command *Command::resolveArgumentSiblingReference(const Argument &argument) {
+	return _parent->findChildWithIndex<Command>(argument.intValue);
 }
 
 void Command::readData(XRCReadStream *stream) {
