@@ -87,6 +87,7 @@ enum StateKey {
 	StateKey_JapanFonts = 75,
 	StateKey_ExecScopeStyle = 76,
 	StateKey_Brightness = 77,
+	StateKey_MPEGMovies = 78,
 	StateKey_EF9_R = 91,
 	StateKey_EF9_G = 92,
 	StateKey_EF9_B = 93,

@@ -23,6 +23,11 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "video/video_decoder.h"
+// TODO: Enable once VOB + AC3 support is implemented
+#if 0
+//#ifdef USE_MPEG2
+#include "video/mpegps_decoder.h"
+#endif
 #include "engines/util.h"
 #include "graphics/surface.h"
 
@@ -45,6 +50,12 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 		animation = new RLFDecoder();
 	else if (tmpFileName.hasSuffix(".avi"))
 		animation = new ZorkAVIDecoder();
+// TODO: Enable once VOB + AC3 support is implemented
+#if 0
+//#ifdef USE_MPEG2
+	else if (tmpFileName.hasSuffix(".vob"))
+		animation = new Video::MPEGPSDecoder();
+#endif
 	else
 		error("Unknown suffix for animation %s", fileName.c_str());
 

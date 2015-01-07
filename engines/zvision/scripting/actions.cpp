@@ -913,6 +913,19 @@ bool ActionStreamVideo::execute() {
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
 
+#ifdef USE_MPEG2
+	Common::String hiresFileName = _fileName;
+	hiresFileName.setChar('d', hiresFileName.size() - 8);
+	hiresFileName.setChar('v', hiresFileName.size() - 3);
+	hiresFileName.setChar('o', hiresFileName.size() - 2);
+	hiresFileName.setChar('b', hiresFileName.size() - 1);
+
+	if (_engine->getScriptManager()->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresFileName))
+		// TODO: Enable once VOB + AC3 support is implemented
+		//_fileName = hiresFileName;
+		warning("The hires videos of the DVD version of ZGI aren't supported yet, using lowres");
+#endif
+
 	Common::String subname = _fileName;
 	subname.setChar('s', subname.size() - 3);
 	subname.setChar('u', subname.size() - 2);

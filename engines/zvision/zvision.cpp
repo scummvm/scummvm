@@ -52,7 +52,7 @@
 
 namespace ZVision {
 
-#define ZVISION_SETTINGS_KEYS_COUNT 11
+#define ZVISION_SETTINGS_KEYS_COUNT 12
 
 struct zvisionIniSettings {
 	const char *name;
@@ -73,7 +73,8 @@ struct zvisionIniSettings {
 	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
 	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
 	{"venusenabled", StateKey_VenusEnable, -1, true, true},
-	{"subtitles", StateKey_Subtitles, -1, true, true}
+	{"subtitles", StateKey_Subtitles, -1, true, true},
+	{"mpegmovies", StateKey_MPEGMovies, -1, true, true}		// Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
 };
 
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
@@ -229,6 +230,11 @@ void ZVision::initialize() {
 	registerDefaultSettings();
 
 	loadSettings();
+
+#ifndef USE_MPEG2
+	// libmpeg2 not loaded, disable the MPEG2 movies option
+	_scriptManager->setStateValue(StateKey_MPEGMovies, 2);
+#endif
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
