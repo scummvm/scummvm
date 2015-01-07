@@ -928,8 +928,8 @@ void OpenGLGraphicsManager::adjustMousePosition(int16 &x, int16 &y) {
 		const int16 width  = _gameScreen->getWidth();
 		const int16 height = _gameScreen->getHeight();
 
-		x = (x * width)  / _displayWidth;
-		y = (y * height) / _displayHeight;
+		x = (x * width)  / (int)_displayWidth;
+		y = (y * height) / (int)_displayHeight;
 
 		// Make sure we only supply valid coordinates.
 		x = CLIP<int16>(x, 0, width - 1);
