@@ -21,12 +21,11 @@
  */
 
 #include "common/scummsys.h"
+#include "video/video_decoder.h"
 
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/sound/zork_raw.h"
-#include "zvision/video/zork_avi_decoder.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/scripting/actions.h"
 #include "zvision/scripting/menu.h"
@@ -44,10 +43,6 @@
 #include "zvision/graphics/effects/light.h"
 #include "zvision/graphics/effects/wave.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
-
-#include "common/file.h"
-
-#include "audio/decoders/wave.h"
 
 namespace ZVision {
 
@@ -915,35 +910,33 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Commo
 }
 
 bool ActionStreamVideo::execute() {
-	ZorkAVIDecoder decoder;
-	Common::File *_file = _engine->getSearchManager()->openFile(_fileName);
+	Video::VideoDecoder *decoder;
+	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
 
-	if (_file) {
-		if (!decoder.loadStream(_file)) {
-			return true;
-		}
+	Common::String subname = _fileName;
+	subname.setChar('s', subname.size() - 3);
+	subname.setChar('u', subname.size() - 2);
+	subname.setChar('b', subname.size() - 1);
 
-		_engine->getCursorManager()->showMouse(false);
+	if (!_engine->getSearchManager()->hasFile(_fileName))
+		return true;
 
-		Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
+	decoder = _engine->loadAnimation(_fileName);
 
-		Common::String subname = _fileName;
-		subname.setChar('s', subname.size() - 3);
-		subname.setChar('u', subname.size() - 2);
-		subname.setChar('b', subname.size() - 1);
+	_engine->getCursorManager()->showMouse(false);
 
-		Subtitle *sub = NULL;
+	Subtitle *sub = NULL;
 
-		if (_engine->getSearchManager()->hasFile(subname))
-			sub = new Subtitle(_engine, subname);
+	if (_engine->getSearchManager()->hasFile(subname))
+		sub = new Subtitle(_engine, subname);
 
-		_engine->playVideo(decoder, destRect, _skippable, sub);
+	_engine->playVideo(*decoder, destRect, _skippable, sub);
+	delete decoder;
 
-		_engine->getCursorManager()->showMouse(true);
+	_engine->getCursorManager()->showMouse(true);
 
-		if (sub)
-			delete sub;
-	}
+	if (sub)
+		delete sub;
 
 	return true;
 }
