@@ -162,33 +162,6 @@ Common::Error SaveManager::loadGame(uint slot) {
 	return Common::kNoError;
 }
 
-Common::Error SaveManager::loadGame(const Common::String &saveName) {
-	Common::File *saveFile = _engine->getSearchManager()->openFile(saveName);
-	if (saveFile == NULL) {
-		saveFile = new Common::File;
-		if (!saveFile->open(saveName)) {
-			delete saveFile;
-			return Common::kPathDoesNotExist;
-		}
-	}
-
-	// Read the header
-	SaveGameHeader header;
-	if (!readSaveGameHeader(saveFile, header)) {
-		return Common::kUnknownError;
-	}
-
-	ScriptManager *scriptManager = _engine->getScriptManager();
-	// Update the state table values
-	scriptManager->deserialize(saveFile);
-
-	delete saveFile;
-	if (header.thumbnail)
-		delete header.thumbnail;
-
-	return Common::kNoError;
-}
-
 bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	uint32 tag = in->readUint32BE();
 	// Check if it's original savegame than fill header structure
