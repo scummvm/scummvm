@@ -131,7 +131,7 @@ public:
 	void setTexture(Texture *texture);
 
 private:
-	uint32 _id;
+	uint32 _u1;
 	float _u2;
 
 	Common::Array<MaterialNode *> _materials;

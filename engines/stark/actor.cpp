@@ -33,7 +33,7 @@ namespace Stark {
 Actor::Actor() :
 		_skeleton(nullptr),
 		_texture(nullptr),
-		_id(0),
+		_u1(0),
 		_u2(0.0) {
 
 }
@@ -50,16 +50,24 @@ Actor::~Actor() {
 }
 
 void Actor::readFromStream(ArchiveReadStream *stream) {
-	_id = stream->readUint32LE();
+	uint32 id = stream->readUint32LE();
+	if (id != 4) {
+		error("Wrong magic 1 while reading actor '%d'", id);
+	}
+
 	uint32 format = stream->readUint32LE();
-	uint32 u1 = stream->readUint32LE();
+	if (format != 256) {
+		error("Wrong format while reading actor '%d'", format);
+	}
+
+	_u1 = stream->readUint32LE();
+
 	uint32 id2 = stream->readUint32LE();
 	if (id2 != 0xDEADBABE) {
-		error("Wrong magic while reading actor");
+		error("Wrong magic 2 while reading actor '%d'", id2);
 	}
 
 	_u2 = stream->readFloat();
-
 
 	uint32 numMaterials = stream->readUint32LE();
 

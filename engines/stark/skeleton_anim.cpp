@@ -21,10 +21,10 @@
  */
 
 #include "engines/stark/skeleton_anim.h"
+
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/skeleton.h"
 #include "engines/stark/stark.h"
-
-#include "common/stream.h"
 
 namespace Stark {
 
@@ -38,7 +38,7 @@ SkeletonAnim::~SkeletonAnim() {
 		delete *it;
 }
 
-void SkeletonAnim::createFromStream(Common::ReadStream *stream) {
+void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
 	_id = stream->readUint32LE();
 	_ver = stream->readUint32LE();
 	if (_ver == 3) {
@@ -64,11 +64,9 @@ void SkeletonAnim::createFromStream(Common::ReadStream *stream) {
 		for (uint32 j = 0; j < numKeys; ++j) {
 			AnimKey *key = new AnimKey();
 			key->_time = stream->readUint32LE();
-			char *ptr = new char[7 * 4];
-			stream->read(ptr, 7 * 4);
-			key->_rot = Math::Vector3d(get_float(ptr), get_float(ptr + 4), get_float(ptr + 8));
-			key->_rotW = get_float(ptr + 12);
-			key->_pos = Math::Vector3d(get_float(ptr + 16), get_float(ptr + 20), get_float(ptr + 24));
+			key->_rot = stream->readVector3();
+			key->_rotW = stream->readFloat();
+			key->_pos = stream->readVector3();
 			node->_keys.push_back(key);
 		}
 

@@ -300,7 +300,7 @@ void AnimSub4::onPostRead() {
 	// Get the archive loader service
 	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
 
-	Common::ReadStream *stream = archiveLoader->getFile(_animFilename, _archiveName);
+	ArchiveReadStream *stream = archiveLoader->getFile(_animFilename, _archiveName);
 
 	_seletonAnim = new SkeletonAnim();
 	_seletonAnim->createFromStream(stream);

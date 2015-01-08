@@ -28,11 +28,9 @@
 #include "math/vector3d.h"
 #include "common/array.h"
 
-namespace Common {
-	class ReadStream;
-}
-
 namespace Stark {
+
+class ArchiveReadStream;
 
 class AnimKey {
 public:
@@ -61,7 +59,7 @@ public:
 	SkeletonAnim();
 	~SkeletonAnim();
 
-	void createFromStream(Common::ReadStream *stream);
+	void createFromStream(ArchiveReadStream *stream);
 
 	/**
 	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp
