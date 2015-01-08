@@ -48,7 +48,7 @@ struct SaveGameHeader {
 
 class SaveManager {
 public:
-	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL), _lastSaveTime(0) {}
+	SaveManager(ZVision *engine) : _engine(engine), _tempSave(NULL), _tempThumbnail(NULL), _lastSaveTime(0) {}
 	~SaveManager() {
 		flushSaveBuffer();
 	}
@@ -67,6 +67,7 @@ private:
 		SAVE_VERSION = 1
 	};
 
+	Common::MemoryWriteStreamDynamic *_tempThumbnail;
 	Common::MemoryWriteStreamDynamic *_tempSave;
 
 public:
@@ -83,9 +84,7 @@ public:
 	 * @param slot        The save slot this save pertains to. Must be [1, 20]
 	 * @param saveName    The internal name for this save. This is NOT the name of the actual save file.
 	 */
-	void saveGame(uint slot, const Common::String &saveName);
-	void saveGame(uint slot, const Common::String &saveName, Common::MemoryWriteStreamDynamic *stream);
-	void saveGameBuffered(uint slot, const Common::String &saveName);
+	void saveGame(uint slot, const Common::String &saveName, bool useSaveBuffer);
 	/**
 	 * Loads the state data from the save file that slot references. Uses
 	 * ZVision::generateSaveFileName(slot) to get the save file name.
@@ -101,7 +100,7 @@ public:
 	void flushSaveBuffer();
 	bool scummVMSaveLoadDialog(bool isSave);
 private:
-	void writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName);
+	void writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName, bool useSaveBuffer);
 };
 
 } // End of namespace ZVision

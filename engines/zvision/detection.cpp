@@ -261,7 +261,7 @@ Common::Error ZVision::ZVision::loadGameState(int slot) {
 }
 
 Common::Error ZVision::ZVision::saveGameState(int slot, const Common::String &desc) {
-	_saveManager->saveGame(slot, desc);
+	_saveManager->saveGame(slot, desc, false);
 	return Common::kNoError;
 }
 

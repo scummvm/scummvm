@@ -69,7 +69,7 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 		return false;
 
 	if (isSave) {
-		saveGame(slot, desc);
+		saveGame(slot, desc, false);
 		return true;
 	} else {
 		Common::ErrorCode result = loadGame(slot).getCode();
@@ -77,46 +77,34 @@ bool SaveManager::scummVMSaveLoadDialog(bool isSave) {
 	}
 }
 
-void SaveManager::saveGame(uint slot, const Common::String &saveName) {
+void SaveManager::saveGame(uint slot, const Common::String &saveName, bool useSaveBuffer) {
+	if (!_tempSave && useSaveBuffer)
+		return;
+
 	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->generateSaveFileName(slot));
 
-	writeSaveGameHeader(file, saveName);
+	writeSaveGameHeader(file, saveName, useSaveBuffer);
 
-	_engine->getScriptManager()->serialize(file);
+	if (useSaveBuffer)
+		file->write(_tempSave->getData(), _tempSave->size());
+	else
+		_engine->getScriptManager()->serialize(file);
 
 	file->finalize();
 	delete file;
 
-	_lastSaveTime = g_system->getMillis();
-}
-
-void SaveManager::saveGame(uint slot, const Common::String &saveName, Common::MemoryWriteStreamDynamic *stream) {
-	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
-	Common::OutSaveFile *file = saveFileManager->openForSaving(_engine->generateSaveFileName(slot));
-
-	writeSaveGameHeader(file, saveName);
-
-	file->write(stream->getData(), stream->size());
-
-	file->finalize();
-	delete file;
-
-	_lastSaveTime = g_system->getMillis();
-}
-
-void SaveManager::saveGameBuffered(uint slot, const Common::String &saveName) {
-	if (_tempSave) {
-		saveGame(slot, saveName, _tempSave);
+	if (useSaveBuffer)
 		flushSaveBuffer();
-	}
+
+	_lastSaveTime = g_system->getMillis();
 }
 
 void SaveManager::autoSave() {
-	saveGame(0, "Auto save");
+	saveGame(0, "Auto save", false);
 }
 
-void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName) {
+void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::String &saveName, bool useSaveBuffer) {
 	file->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
@@ -126,8 +114,11 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 	file->writeString(saveName);
 	file->writeByte(0);
 
-	// Create a thumbnail and save it
-	Graphics::saveThumbnail(*file);
+	// Save the game thumbnail
+	if (useSaveBuffer)
+		file->write(_tempThumbnail->getData(), _tempThumbnail->size());
+	else
+		Graphics::saveThumbnail(*file);
 
 	// Write out the save date/time
 	TimeDate td;
@@ -245,18 +236,20 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 }
 
 void SaveManager::prepareSaveBuffer() {
-	if (_tempSave)
-		delete _tempSave;
+	delete _tempThumbnail;
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	Graphics::saveThumbnail(*_tempThumbnail);
 
+	delete _tempSave;
 	_tempSave = new Common::MemoryWriteStreamDynamic;
-
 	_engine->getScriptManager()->serialize(_tempSave);
 }
 
 void SaveManager::flushSaveBuffer() {
-	if (_tempSave)
-		delete _tempSave;
+	delete _tempThumbnail;
+	_tempThumbnail = NULL;
 
+	delete _tempSave;
 	_tempSave = NULL;
 }
 

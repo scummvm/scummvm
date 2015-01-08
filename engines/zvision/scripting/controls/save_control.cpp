@@ -102,9 +102,7 @@ bool SaveControl::process(uint32 deltaTimeInMillis) {
 								toSave = false;
 
 						if (toSave) {
-							// FIXME: At this point, the screen shows the save control, so the save game thumbnails will always
-							// show the save control
-							_engine->getSaveManager()->saveGameBuffered(iter->saveId, inp->getText());
+							_engine->getSaveManager()->saveGame(iter->saveId, inp->getText(), true);
 							_engine->getRenderManager()->delayedMessage(_engine->getStringManager()->getTextLine(StringManager::ZVISION_STR_SAVED), 2000);
 							_engine->getScriptManager()->changeLocation(_engine->getScriptManager()->getLastMenuLocation());
 						}
