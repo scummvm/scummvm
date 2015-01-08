@@ -105,6 +105,39 @@ protected:
 	uint32 _field_44;
 };
 
+class ItemSub13 : public Item {
+public:
+	ItemSub13(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub13();
+
+protected:
+	int32 _meshIndex;
+	int32 _textureNormalIndex;
+	int32 _textureFaceIndex;
+};
+
+class ItemSub1 : public ItemSub13 {
+public:
+	ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub1();
+
+protected:
+};
+
+class ItemSub3 : public ItemSub13 {
+public:
+	ItemSub3(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemSub3();
+
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	ResourceReference _reference;
+};
+
 class ItemSub5610 : public ItemVisual {
 public:
 	ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name);

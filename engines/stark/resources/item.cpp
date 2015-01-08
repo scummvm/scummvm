@@ -37,11 +37,11 @@ namespace Stark {
 Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
 	case kItemSub1:
-		return new Item(parent, subType, index, name); // TODO
+		return new ItemSub1(parent, subType, index, name);
 	case kItemSub2:
 		return new Item(parent, subType, index, name); // TODO
 	case kItemSub3:
-		return new Item(parent, subType, index, name); // TODO
+		return new ItemSub3(parent, subType, index, name);
 	case kItemSub5:
 	case kItemSub6:
 		return new ItemSub56(parent, subType, index, name);
@@ -109,7 +109,7 @@ void ItemVisual::readData(XRCReadStream *stream) {
 void ItemVisual::onAllLoaded() {
 	Item::onAllLoaded();
 
-	_animHierarchy = findChild<AnimHierarchy>();
+	_animHierarchy = findChild<AnimHierarchy>(false);
 
 	if (_subType != kItemSub10) {
 		setAnim(1);
@@ -157,6 +157,43 @@ Visual *ItemVisual::getVisual() {
 	}
 
 	return anim->getVisual();
+}
+
+ItemSub13::~ItemSub13() {
+}
+
+ItemSub13::ItemSub13(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+		Item(parent, subType, index, name),
+		_meshIndex(-1),
+		_textureNormalIndex(-1),
+		_textureFaceIndex(-1) {
+}
+
+ItemSub1::~ItemSub1() {
+}
+
+ItemSub1::ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+		ItemSub13(parent, subType, index, name) {
+}
+
+
+ItemSub3::~ItemSub3() {
+}
+
+ItemSub3::ItemSub3(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+		ItemSub13(parent, subType, index, name) {
+}
+
+void ItemSub3::readData(XRCReadStream *stream) {
+	ItemSub13::readData(stream);
+
+	_reference = stream->readResourceReference();
+}
+
+void ItemSub3::printData() {
+	ItemSub13::printData();
+
+	debug("reference: %s", _reference.describe().c_str());
 }
 
 ItemSub5610::~ItemSub5610() {
