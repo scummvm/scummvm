@@ -22,6 +22,7 @@
 
 #include "engines/stark/actor.h"
 
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/skeleton.h"
 #include "engines/stark/texture.h"
 
@@ -29,7 +30,11 @@
 
 namespace Stark {
 
-Actor::Actor() : _skeleton(NULL), _texture(NULL) {
+Actor::Actor() :
+		_skeleton(nullptr),
+		_texture(nullptr),
+		_id(0),
+		_u2(0.0) {
 
 }
 
@@ -44,7 +49,7 @@ Actor::~Actor() {
 		delete _skeleton;
 }
 
-void Actor::readFromStream(Common::ReadStream *stream) {
+void Actor::readFromStream(ArchiveReadStream *stream) {
 	_id = stream->readUint32LE();
 	uint32 format = stream->readUint32LE();
 	uint32 u1 = stream->readUint32LE();
@@ -53,29 +58,19 @@ void Actor::readFromStream(Common::ReadStream *stream) {
 		error("Wrong magic while reading actor");
 	}
 
-	uint32 u2 = stream->readUint32LE();
+	_u2 = stream->readFloat();
 
 
 	uint32 numMaterials = stream->readUint32LE();
 
 	for (uint i = 0; i < numMaterials; ++i) {
 		MaterialNode *node = new MaterialNode();
-		uint32 len = stream->readUint32LE();
-		char *ptr = new char[len];
-		stream->read(ptr, len);
-		node->_name = Common::String(ptr, len);
+		node->_name = stream->readString();
 		uint32 u3 = stream->readUint32LE();
-		delete[] ptr;
-		len = stream->readUint32LE();
-		ptr = new char[len];
-		stream->read(ptr, len);
-		node->_texName = Common::String(ptr, len);
-		delete[] ptr;
-		ptr = new char[12];
-		stream->read(ptr, 12);
-		node->_r = get_float(ptr);
-		node->_g = get_float(ptr + 4);
-		node->_b = get_float(ptr + 8);
+		node->_texName = stream->readString();
+		node->_r = stream->readFloat();
+		node->_g = stream->readFloat();
+		node->_b = stream->readFloat();
 		_materials.push_back(node);
 	}
 
@@ -83,12 +78,10 @@ void Actor::readFromStream(Common::ReadStream *stream) {
 
 	for (uint32 i = 0; i < numUnknowns; ++i) {
 		UnknownNode *node = new UnknownNode();
-		char *ptr = new char[16];
-		stream->read(ptr, 16);
-		node->_u1 = get_float(ptr);
-		node->_u2 = get_float(ptr + 4);
-		node->_u3 = get_float(ptr + 8);
-		node->_u4 = get_float(ptr + 12);
+		node->_u1 = stream->readFloat();
+		node->_u2 = stream->readFloat();
+		node->_u3 = stream->readFloat();
+		node->_u4 = stream->readFloat();
 	}
 
 	_skeleton = new Skeleton();
@@ -99,13 +92,9 @@ void Actor::readFromStream(Common::ReadStream *stream) {
 	for (uint32 i = 0; i < numMeshes; ++i) {
 		MeshNode *node = new MeshNode();
 
-		uint32 len = stream->readUint32LE();
-		char *ptr = new char[len];
-		stream->read(ptr, len);
+		node->_name = stream->readString();
 
-		node->_name = Common::String(ptr, len);
-		delete[] ptr;
-		len = stream->readUint32LE();
+		uint32 len = stream->readUint32LE();
 		for (uint32 j = 0; j < len; ++j) {
 			FaceNode *face = new FaceNode();
 			face->_matIdx = stream->readUint32LE();
@@ -113,17 +102,14 @@ void Actor::readFromStream(Common::ReadStream *stream) {
 			uint32 childCount = stream->readUint32LE();
 			for (uint32 k = 0; k < childCount; ++k) {
 				VertNode *vert = new VertNode();
-				ptr = new char[14 * 4];
-				stream->read(ptr, 14 * 4);
-				vert->_pos1 = Math::Vector3d(get_float(ptr), get_float(ptr + 4), get_float(ptr + 8));
-				vert->_pos2 = Math::Vector3d(get_float(ptr + 12), get_float(ptr + 16), get_float(ptr + 20));
-				vert->_normal = Math::Vector3d(get_float(ptr + 24), get_float(ptr + 28), get_float(ptr + 32));
-				vert->_texS = get_float(ptr + 36);
-				vert->_texT = get_float(ptr + 40);
-				vert->_bone1 = READ_LE_UINT32(ptr + 44);
-				vert->_bone2 = READ_LE_UINT32(ptr + 48);
-				vert->_boneWeight = get_float(ptr + 52);
-				delete[] ptr;
+				vert->_pos1 = stream->readVector3();
+				vert->_pos2 = stream->readVector3();
+				vert->_normal = stream->readVector3();
+				vert->_texS = stream->readFloat();
+				vert->_texT = stream->readFloat();
+				vert->_bone1 = stream->readUint32LE();
+				vert->_bone2 = stream->readUint32LE();
+				vert->_boneWeight = stream->readFloat();
 				face->_verts.push_back(vert);
 			}
 

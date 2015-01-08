@@ -25,7 +25,10 @@
 
 #include "common/list.h"
 #include "common/str.h"
+#include "common/substream.h"
 #include "common/util.h"
+
+#include "math/vector3d.h"
 
 #include "engines/stark/archive.h"
 #include "engines/stark/resources/resource.h"
@@ -34,6 +37,19 @@ namespace Stark {
 
 class Level;
 class Location;
+
+/**
+ * A read stream with helper functions to read usual data types
+ */
+class ArchiveReadStream : public Common::SeekableSubReadStream {
+public:
+	ArchiveReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
+	virtual ~ArchiveReadStream();
+
+	Common::String readString();
+	Math::Vector3d readVector3();
+	float readFloat();
+};
 
 /**
  * XARC Archive loader.
@@ -53,7 +69,7 @@ public:
 	void unloadUnused();
 
 	/** Retrieve a file from a specified archive */
-	Common::ReadStream *getFile(const Common::String &fileName, const Common::String &archiveName);
+	ArchiveReadStream *getFile(const Common::String &fileName, const Common::String &archiveName);
 
 	/** Get the resource tree root for an archive, and increment the archive use count */
 	template <class T>

@@ -78,10 +78,10 @@ void ArchiveLoader::unloadUnused() {
 	}
 }
 
-Common::ReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
+ArchiveReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	XARCArchive &xarc = archive->getXArc();
-	return xarc.createReadStreamForMember(fileName);
+	return new ArchiveReadStream(xarc.createReadStreamForMember(fileName));
 }
 
 bool ArchiveLoader::returnRoot(const Common::String &archiveName) {
@@ -144,6 +144,39 @@ Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String 
 
 	// Open the file
 	return SearchMan.createReadStreamForMember(filePath);
+}
+
+ArchiveReadStream::ArchiveReadStream(
+		Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
+		SeekableSubReadStream(parentStream, 0, parentStream->size(), disposeParentStream) {
+}
+
+ArchiveReadStream::~ArchiveReadStream() {
+}
+
+Common::String ArchiveReadStream::readString() {
+	// Read the string length
+	uint16 length = readUint32LE();
+
+	// Read the string
+	char *data = new char[length];
+	read(data, length);
+	Common::String string(data, length);
+	delete[] data;
+
+	return string;
+}
+
+Math::Vector3d ArchiveReadStream::readVector3() {
+	Math::Vector3d v;
+	v.readFromStream(this);
+	return v;
+}
+
+float ArchiveReadStream::readFloat() {
+	float f;
+	read(&f, sizeof(float));
+	return f;
 }
 
 } // End of namespace Stark

@@ -47,7 +47,7 @@ void BonesMesh::onPostRead() {
 	// Get the archive loader service
 	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
 
-	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
+	ArchiveReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
 
 	_actor = new Actor();
 	_actor->readFromStream(stream);

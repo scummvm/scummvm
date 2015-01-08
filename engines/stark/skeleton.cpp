@@ -21,9 +21,11 @@
  */
 
 #include "engines/stark/skeleton.h"
-#include "engines/stark/skeleton_anim.h"
+
+#include "engines/stark/archiveloader.h"
 #include "engines/stark/gfx/coordinate.h"
 #include "engines/stark/scene.h"
+#include "engines/stark/skeleton_anim.h"
 #include "engines/stark/stark.h"
 
 #include "common/stream.h"
@@ -41,19 +43,14 @@ Skeleton::~Skeleton() {
 		delete *it;
 }
 
-void Skeleton::readFromStream(Common::ReadStream *stream) {
+void Skeleton::readFromStream(ArchiveReadStream *stream) {
 	uint32 numBones = stream->readUint32LE();
 	for (uint32 i = 0; i < numBones; ++i) {
 		BoneNode *node = new BoneNode();
+		node->_name = stream->readString();
+		node->_u1 = stream->readFloat();
 
 		uint32 len = stream->readUint32LE();
-		char *ptr = new char[len + 4];
-		stream->read(ptr, len + 4);
-		node->_name = Common::String(ptr, len);
-		node->_u1 = get_float(ptr + len);
-		delete[] ptr;
-
-		len = stream->readUint32LE();
 		for (uint32 j = 0; j < len; ++j)
 			node->_children.push_back(stream->readUint32LE());
 

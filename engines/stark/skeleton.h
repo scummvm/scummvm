@@ -33,6 +33,7 @@ namespace Common {
 
 namespace Stark {
 
+class ArchiveReadStream;
 class SkeletonAnim;
 
 class BoneNode {
@@ -69,7 +70,7 @@ public:
 	/**
 	 * Create skeleton object from the specified stream
 	 */
-	void readFromStream(Common::ReadStream *stream);
+	void readFromStream(ArchiveReadStream *stream);
 
 	const Common::Array<BoneNode *> &getBones() const { return _bones; }
 

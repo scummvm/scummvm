@@ -23,9 +23,10 @@
 #ifndef STARK_ACTOR_H
 #define STARK_ACTOR_H
 
-#include "math/vector3d.h"
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
+
+#include "math/vector3d.h"
 
 namespace Common {
 	class ReadStream;
@@ -34,6 +35,7 @@ namespace Common {
 
 namespace Stark {
 
+class ArchiveReadStream;
 class Skeleton;
 class SkeletonAnim;
 class Texture;
@@ -111,7 +113,7 @@ public:
 	/**
 	 * Try and initialise object from the specified stream
 	 */
-	void readFromStream(Common::ReadStream *stream);
+	void readFromStream(ArchiveReadStream *stream);
 
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
@@ -130,6 +132,7 @@ public:
 
 private:
 	uint32 _id;
+	float _u2;
 
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
