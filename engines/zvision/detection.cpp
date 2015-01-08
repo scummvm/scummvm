@@ -175,7 +175,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_DOUBLE_FPS,
 		{
 			_s("Double FPS"),
-			_s("Halve the update delay"),
+			_s("Increase game FPS from 30 to 60"),
 			"doublefps",
 			false
 		}
