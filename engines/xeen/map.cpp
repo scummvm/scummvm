@@ -714,7 +714,7 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 	}
 
 	// Merge up wall items
-	_wallItems.clear();
+	_wallItems.resize(1);
 	for (uint i = 0; i < wallItemData.size(); ++i) {
 		MazeWallItem &dest = _wallItems[i];
 		dest._position = wallItemData[i]._pos;
@@ -897,7 +897,7 @@ void Map::load(int mapId) {
 	// Reload the monster data for the main maze that we're loading
 	Common::String filename = Common::String::format("maze%c%03u.mob",
 		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
-	File mobFile(filename);
+	File mobFile(filename, *_vm->_saves);
 	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
 	mobFile.close();
 

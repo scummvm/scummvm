@@ -99,10 +99,39 @@ void SavesManager::load(Common::SeekableReadStream *stream) {
  * Sets up the dynamic data for the game for a new game
  */
 void SavesManager::reset() {
-	Common::String name(_vm->getGameID() == GType_Clouds ? "xeen.cur" : "dark.cur");
-	File f(name);
+	Common::String prefix = _vm->getGameID() == GType_Clouds ? "xeen|" : "dark|";
+	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
+	Common::File fIn;
 
+	for (int i = 0; i <= 5; ++i) {
+		Common::String filename = prefix + Common::String::format("2A%dC", i);
+		if (fIn.exists(filename)) {
+			// Read in the next resource
+			fIn.open(filename);
+			byte *data = new byte[fIn.size()];
+			fIn.read(data, fIn.size());
+
+			// Copy it to the combined savefile resource
+			saveFile.write(data, fIn.size());
+			delete[] data;
+			fIn.close();
+		}
+	}
+
+	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
 	load(&f);
+
+	// Set up the party and characters from dark.cur
+	CCArchive gameCur("xeen.cur", false);
+	File fParty("maze.pty", gameCur);
+	Common::Serializer sParty(&fParty, nullptr);
+	_party.synchronize(sParty);
+	fParty.close();
+
+	File fChar("maze.chr", gameCur);
+	Common::Serializer sChar(&fChar, nullptr);
+	_roster.synchronize(sChar);
+	fChar.close();
 }
 
 void SavesManager::readCharFile() {

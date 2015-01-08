@@ -52,9 +52,13 @@ class File : public Common::File {
 public:
 	File() : Common::File() {}
 	File(const Common::String &filename) { openFile(filename); }
+	File(const Common::String &filename, Common::Archive &archive) {
+		openFile(filename, archive);
+	}
 	virtual ~File() {}
 
 	void openFile(const Common::String &filename);
+	void openFile(const Common::String &filename, Common::Archive &archive);
 };
 
 /**
@@ -82,7 +86,7 @@ protected:
 
 	void loadIndex(Common::SeekableReadStream *stream);
 
-	bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
+	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
 public:
 	BaseCCArchive() {}
 
@@ -98,9 +102,13 @@ public:
 class CCArchive : public BaseCCArchive {
 private:
 	Common::String _filename;
+	Common::String _prefix;
 	bool _encoded;
+protected:
+	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
 public:
-	CCArchive(const Common::String &filename, bool encoded = true);
+	CCArchive(const Common::String &filename, bool encoded);
+	CCArchive(const Common::String &filename, const Common::String &prefix, bool encoded);
 	virtual ~CCArchive();
 
 	// Archive implementation

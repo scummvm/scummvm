@@ -39,6 +39,14 @@ uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) const 
 	Common::String name = resourceName;
 	name.toUppercase();
 
+	// Check if a resource number is being directly specified
+	if (name.size() == 4) {
+		char *endPtr;
+		uint16 num = (uint16)strtol(name.c_str(), &endPtr, 16);
+		if (!*endPtr)
+			return num;
+	}
+
 	const byte *msgP = (const byte *)name.c_str();
 	int total = *msgP++;
 	for (; *msgP; total += *msgP++) {
@@ -121,12 +129,39 @@ int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
 /*------------------------------------------------------------------------*/
 
 CCArchive::CCArchive(const Common::String &filename, bool encoded): 
-		_filename(filename), _encoded(encoded) {
+		BaseCCArchive(), _filename(filename), _encoded(encoded) {
+	File f(filename);
+	loadIndex(&f);
+}
+
+CCArchive::CCArchive(const Common::String &filename, const Common::String &prefix, 
+		bool encoded): BaseCCArchive(), _filename(filename), 
+		_prefix(prefix), _encoded(encoded) {
+	_prefix.toLowercase();
 	File f(filename);
 	loadIndex(&f);
 }
 
 CCArchive::~CCArchive() {
+}
+
+bool CCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const {
+	Common::String resName = resourceName;
+
+	if (!_prefix.empty() && resName.contains('|')) {
+		resName.toLowercase();
+		Common::String prefix = _prefix + "|";
+
+		if (!strncmp(resName.c_str(), prefix.c_str(), prefix.size()))
+			// Matching CC prefix, so strip it off and allow processing to
+			// continue onto the base getHeaderEntry method
+			resName = Common::String(resName.c_str() + prefix.size());
+		else
+			// Not matching prefix, so don't allow a match
+			return false;
+	}
+
+	return BaseCCArchive::getHeaderEntry(resName, ccEntry);
 }
 
 Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::String &name) const {
@@ -166,9 +201,9 @@ FileManager::FileManager(XeenEngine *vm) {
 
 	_isDarkCc = vm->getGameID() != GType_Clouds;
 	if (_isDarkCc)
-		SearchMan.add("dark", new CCArchive("dark.cc"));
-	SearchMan.add("xeen", new CCArchive("xeen.cc"));
-	SearchMan.add("intro", new CCArchive("intro.cc"));
+		SearchMan.add("dark", new CCArchive("dark.cc", "dark", true));
+	SearchMan.add("xeen", new CCArchive("xeen.cc", "xeen", true));
+	SearchMan.add("intro", new CCArchive("intro.cc", "intro", true));
 }
 
 /*------------------------------------------------------------------------*/
@@ -178,6 +213,11 @@ FileManager::FileManager(XeenEngine *vm) {
  */
 void File::openFile(const Common::String &filename) {
 	if (!Common::File::open(filename))
+		error("Could not open file - %s", filename.c_str());
+}
+
+void File::openFile(const Common::String &filename, Common::Archive &archive) {
+	if (!Common::File::open(filename, archive))
 		error("Could not open file - %s", filename.c_str());
 }
 
