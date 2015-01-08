@@ -103,8 +103,9 @@ void SavesManager::reset() {
 	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
 	Common::File fIn;
 
-	for (int i = 0; i <= 5; ++i) {
-		Common::String filename = prefix + Common::String::format("2A%dC", i);
+	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
+	for (int i = 0; i < 6; ++i) {
+		Common::String filename = prefix + Common::String::format("%.4x", RESOURCES[i]);
 		if (fIn.exists(filename)) {
 			// Read in the next resource
 			fIn.open(filename);

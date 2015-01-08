@@ -829,7 +829,7 @@ void Map::load(int mapId) {
 
 		if (mapId != 0) {
 			// Load in the maze's data file
-			Common::String datName = Common::String::format("maze%c%03u.dat",
+			Common::String datName = Common::String::format("maze%c%03d.dat",
 				(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
 			File datFile(datName);
 			mazeData->synchronize(datFile);
@@ -847,7 +847,7 @@ void Map::load(int mapId) {
 			// Handle loading text data
 			if (!textLoaded) {
 				textLoaded = true;
-				Common::String txtName = Common::String::format("%s%c%03u.txt",
+				Common::String txtName = Common::String::format("%s%c%03d.txt",
 					isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
 				File fText(txtName);
 				char mazeName[33];
@@ -858,13 +858,13 @@ void Map::load(int mapId) {
 				fText.close();
 
 				// Load the monster/object data
-				Common::String mobName = Common::String::format("maze%c%03u.mob",
+				Common::String mobName = Common::String::format("maze%c%03d.mob",
 					(mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
 				_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
 				mobFile.close();
 
-				Common::String headName = Common::String::format("aaze%c%03u.hed",
+				Common::String headName = Common::String::format("aaze%c%03d.hed",
 					(mapId >= 100) ? 'x' : '0', mapId);
 				File headFile(headName);
 				_headData.synchronize(headFile);
@@ -895,7 +895,7 @@ void Map::load(int mapId) {
 	// TODO: Switch setting flags that don't seem to ever be used
 
 	// Reload the monster data for the main maze that we're loading
-	Common::String filename = Common::String::format("maze%c%03u.mob",
+	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
 	File mobFile(filename, *_vm->_saves);
 	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
@@ -926,7 +926,7 @@ void Map::load(int mapId) {
 	for (uint i = 0; i < _mobData._monsters.size(); ++i, ++monsterNum) {
 		MonsterStruct &monsterStruct = _monsterData[i];
 		int monsterImgNum = monsterStruct._imageNumber;
-		filename = Common::String::format("%03u.mon", monsterImgNum);
+		filename = Common::String::format("%03d.mon", monsterImgNum);
 
 		if (!monsterImgNums[monsterImgNum]) {
 			_mobData._monsters[i]._sprites.load(filename);
@@ -935,7 +935,7 @@ void Map::load(int mapId) {
 				monsterImgNums[monsterImgNum] - 1]._sprites;
 		}
 
-		filename = Common::String::format("%03u.att", monsterImgNum);
+		filename = Common::String::format("%03d.att", monsterImgNum);
 		if (!monsterImgNums[monsterImgNum]) {
 			_mobData._monsters[i]._attackSprites.load(filename);
 			monsterImgNums[monsterImgNum] = monsterNum;
@@ -947,7 +947,7 @@ void Map::load(int mapId) {
 
 	// Load wall picture sprite resources
 	for (uint i = 0; i < _mobData._wallItems.size(); ++i) {
-		filename = Common::String::format("%03u.pic", _mobData._wallItems[i]._refId);
+		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._refId);
 		_mobData._wallItems[i]._sprites.load(filename);
 	}
 }
