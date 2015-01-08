@@ -620,9 +620,9 @@ bool MobStruct::synchronize(Common::SeekableReadStream &s) {
 /*------------------------------------------------------------------------*/
 
 MazeObject::MazeObject() {
-	_number = 0;
-	_frame = 0;
 	_id = 0;
+	_frame = 0;
+	_refId = 0;
 	_direction = DIR_NORTH;
 	_flipped = false;
 }	
@@ -691,8 +691,8 @@ void MonsterObjectData::synchronize(Common::SeekableReadStream &s,
 	for (uint i = 0; i < objData.size(); ++i) {
 		MazeObject &dest = _objects[i];
 		dest._position = objData[i]._pos;
-		dest._number = objData[i]._id;
-		dest._id = objectSprites[dest._number];
+		dest._id = objData[i]._id;
+		dest._refId = objectSprites[dest._id];
 		dest._direction = objData[i]._direction;
 		dest._frame = 100;
 	}
@@ -857,7 +857,7 @@ void Map::load(int mapId) {
 				_mazeName = Common::String(mazeName);
 				fText.close();
 
-				// Load the monster data
+				// Load the monster/object data
 				Common::String mobName = Common::String::format("maze%c%03u.mob",
 					(mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
@@ -894,27 +894,29 @@ void Map::load(int mapId) {
 
 	// TODO: Switch setting flags that don't seem to ever be used
 
+	// Reload the monster data for the main maze that we're loading
+	Common::String filename = Common::String::format("maze%c%03u.mob",
+		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
+	File mobFile(filename);
+	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
+	mobFile.close();
 
-	// Load secondary bj file for the objects
-	Common::String filename;
+	// Load sprites for the objects
 	for (uint i = 0; i < _mobData._objects.size(); ++i) {
-		if (_vm->_party._cloudsEnd && _mobData._objects[i]._id == 85 &&
+		if (_vm->_party._cloudsEnd && _mobData._objects[i]._refId == 85 &&
 				_vm->_party._mazeId == 27 && isDarkCc) {
 			// TODO: Flags set that don't seem to be used
 		} else if (_vm->_party._mazeId == 12 && _vm->_party._gameFlags[43] &&
-				_mobData._objects[i]._id == 118 && !isDarkCc) {
+				_mobData._objects[i]._refId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objects[0]._id = 85;
 		} else {
-			filename = Common::String::format("%03u.%cbj", _mobData._objects[i]._id,
-				_mobData._objects[i]._id >= 100 ? 'o' : '0');
+			filename = Common::String::format("%03d.%cbj", _mobData._objects[i]._refId,
+				_mobData._objects[i]._refId >= 100 ? 'o' : '0');
 		}
 
-		// Read in the secondary object data
-		File f(filename);
-		Common::Array<byte> &b = _mobData._objects[i]._objBj;
-		b.resize(f.size());
-		f.read(&b[0], f.size());
+		// Read in the object sprites
+		_mobData._objects[i]._sprites.load(filename);
 	}
 
 	// Load sprite resources for monster standard and attack animations

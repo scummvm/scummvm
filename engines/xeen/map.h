@@ -202,12 +202,12 @@ public:
 struct MazeObject {
 public:
 	Common::Point _position;
-	int _number;
-	int _frame;
 	int _id;
+	int _frame;
+	int _refId;
 	Direction _direction;
 	bool _flipped;
-	Common::Array<byte> _objBj;
+	SpriteResource _sprites;
 
 	MazeObject();
 };
