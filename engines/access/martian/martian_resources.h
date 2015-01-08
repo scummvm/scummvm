@@ -57,6 +57,10 @@ extern const int RMOUSE[10][2];
 
 extern const char *const TRAVDATA[];
 extern const char *const ASKTBL[];
+
+extern const byte DEATH_SCREENS[];
+extern const char *const DEATHMESSAGE[];
+
 } // End of namespace Martian
 } // End of namespace Access
 
