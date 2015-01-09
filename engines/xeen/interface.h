@@ -32,6 +32,29 @@ namespace Xeen {
 
 class XeenEngine;
 
+class OutdoorDrawList {
+public:
+	DrawStruct _data[132];
+	DrawStruct &_skySprite;
+	DrawStruct &_groundSprite;
+public:
+	OutdoorDrawList();
+
+	DrawStruct &operator[](int idx) { return _data[idx]; }
+};
+
+class IndoorDrawList {
+public:
+	DrawStruct _data[170];
+	DrawStruct &_skySprite;
+	DrawStruct &_groundSprite;
+public:
+	IndoorDrawList();
+
+	DrawStruct &operator[](int idx) { return _data[idx]; }
+};
+
+
 class Interface: public ButtonContainer {
 private:
 	XeenEngine *_vm;
@@ -49,6 +72,8 @@ private:
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
 	DrawStruct _mainList[16];
+	OutdoorDrawList _outdoorList;
+	IndoorDrawList _indoorList;
 	int _combatCharIds[8];
 
 	int _batUIFrame;

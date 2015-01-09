@@ -33,7 +33,8 @@ namespace Xeen {
 
 class XeenEngine;
 
-enum SpriteFlags { SPRFLAG_HORIZ_FLIPPED = 0x8000 };
+enum SpriteFlags { SPRFLAG_2000 = 0x2000, SPRFLAG_4000 = 0x4000, 
+	SPRFLAG_HORIZ_FLIPPED = 0x8000 };
 
 class SpriteResource {
 private:
