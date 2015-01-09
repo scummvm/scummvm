@@ -99,7 +99,7 @@ void SavesManager::load(Common::SeekableReadStream *stream) {
  * Sets up the dynamic data for the game for a new game
  */
 void SavesManager::reset() {
-	Common::String prefix = _vm->getGameID() == GType_Clouds ? "xeen|" : "dark|";
+	Common::String prefix = _vm->getGameID() != GType_DarkSide ? "xeen|" : "dark|";
 	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
 	Common::File fIn;
 
