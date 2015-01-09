@@ -106,7 +106,6 @@ private:
 
 	// A buffer for subtitles
 	Graphics::Surface _subtitleSurface;
-	Common::Rect _subtitleSurfaceDirtyRect;
 
 	// Rectangle for subtitles area
 	Common::Rect _subtitleArea;
