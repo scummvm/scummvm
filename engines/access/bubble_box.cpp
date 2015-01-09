@@ -26,14 +26,14 @@
 
 namespace Access {
 
-BubbleBox::BubbleBox(AccessEngine *vm) : Manager(vm) {
-	_type = TYPE_2;
-	_bounds = Common::Rect(64, 32, 64 + 130, 32 + 122);
-	_bubbleDisplStr = "";
-	_fieldD = 0;
-	_fieldE = 0;
-	_fieldF = 0;
-	_field10 = 0;
+	BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title) : Manager(vm) {
+	_type = type;
+	_bounds = Common::Rect(x, y, x + w, y + h);
+	_bubbleDisplStr = title;
+	_fieldD = val1;
+	_fieldE = val2;
+	_fieldF = val3;
+	_field10 = val4;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {

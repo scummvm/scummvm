@@ -137,6 +137,10 @@ protected:
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;
+	BubbleBox *_helpBox;
+	BubbleBox *_travelBox;
+	BubbleBox *_invBox;
+	BubbleBox *_aboutBox;
 	CharManager *_char;
 	Debugger *_debugger;
 	EventsManager *_events;

@@ -36,7 +36,7 @@ namespace Access {
 
 class AccessEngine;
 
-enum BoxType { TYPE_2 = 2, TYPE_4 = 4 };
+enum BoxType { TYPE_1 = 1, TYPE_2 = 2, TYPE_4 = 4 };
 
 class BubbleBox : public Manager {
 private:
@@ -56,7 +56,7 @@ public:
 
 	Common::Array<Common::Rect> _bubbles;
 public:
-	BubbleBox(AccessEngine *vm);
+	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title);
 
 	void load(Common::SeekableReadStream *stream);
 
