@@ -622,9 +622,10 @@ bool MobStruct::synchronize(Common::SeekableReadStream &s) {
 MazeObject::MazeObject() {
 	_id = 0;
 	_frame = 0;
-	_refId = 0;
+	_spriteId = 0;
 	_direction = DIR_NORTH;
 	_flipped = false;
+	_sprites = nullptr;
 }	
 
 /*------------------------------------------------------------------------*/
@@ -632,17 +633,21 @@ MazeObject::MazeObject() {
 MazeMonster::MazeMonster() {
 	_frame = 0;
 	_id = 0;
-	_refId = 0;
+	_spriteId = 0;
 	_hp = 0;
 	_effect1 = _effect2 = 0;
 	_effect3 = 0;
+	_sprites = nullptr;
+	_attackSprites = nullptr;
 }
 
 /*------------------------------------------------------------------------*/
 
 MazeWallItem::MazeWallItem() {
 	_id = 0;
+	_spriteId = 0;
 	_direction = DIR_NORTH;
+	_sprites = nullptr;
 }
 
 /*------------------------------------------------------------------------*/
@@ -652,76 +657,83 @@ MonsterObjectData::MonsterObjectData(XeenEngine *vm): _vm(vm) {
 
 void MonsterObjectData::synchronize(Common::SeekableReadStream &s, 
 		bool isOutdoors, MonsterData monsterData) {
+	_objectSprites.clear();
+	_monsterSprites.clear();
+	_monsterAttackSprites.clear();
+	_wallItemSprites.clear();
 	_objects.clear();
 	_monsters.clear();
 	_wallItems.clear();
-	Common::Array<int> objectSprites;
-	Common::Array<int> monsterIds;
-	Common::Array<int> wallPicIds;
-	Common::Array<MobStruct> objData;
-	Common::Array<MobStruct> monData;
-	Common::Array<MobStruct> wallItemData;
+
+	Common::Array<MobStruct> mobStructs;
 	byte b;
 
 	for (int i = 0; i < 16; ++i) {
 		if ((b = s.readByte()) != 0xff)
-			objectSprites.push_back(b);
+			_objectSprites.push_back(SpriteResourceEntry(b));
 	}
 	for (int i = 0; i < 16; ++i) {
 		if ((b = s.readByte()) != 0xff)
-			monsterIds.push_back(b);
+			_monsterSprites.push_back(SpriteResourceEntry(b));
 	}
 	for (int i = 0; i < 16; ++i) {
 		if ((b = s.readByte()) != 0xff)
-			wallPicIds.push_back(b);
+			_wallItemSprites.push_back(SpriteResourceEntry(b));
 	}
 
+	// Merge together object data
 	MobStruct mobStruct;
-	while (mobStruct.synchronize(s))
-		objData.push_back(mobStruct);
-	while (mobStruct.synchronize(s))
-		monData.push_back(mobStruct);
-	if (!isOutdoors) {
-		while (mobStruct.synchronize(s))
-			wallItemData.push_back(mobStruct);
-	}
+	mobStruct.synchronize(s);
+	do {
+		MazeObject obj;
+		obj._position = mobStruct._pos;
+		obj._id = mobStruct._id;
+		obj._direction = mobStruct._direction;
+		obj._frame = 100;
+		obj._spriteId = _objectSprites[obj._id]._spriteId;
+		obj._sprites = &_objectSprites[obj._id]._sprites;
 
-	// Merge up objects
-	_objects.resize(objData.size());
-	for (uint i = 0; i < objData.size(); ++i) {
-		MazeObject &dest = _objects[i];
-		dest._position = objData[i]._pos;
-		dest._id = objData[i]._id;
-		dest._refId = objectSprites[dest._id];
-		dest._direction = objData[i]._direction;
-		dest._frame = 100;
-	}
+		_objects.push_back(obj);
+		mobStruct.synchronize(s);
+	} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
 
-	// merge up monsters
-	_monsters.resize(monData.size());
-	for (uint i = 0; i < monData.size(); ++i) {
-		MazeMonster &dest = _monsters[i];
-		dest._position = monData[i]._pos;
-		dest._id = monData[i]._id;
-		dest._refId = monsterIds[dest._id];
-		
-		MonsterStruct &mon = monsterData[dest._refId];
-		dest._hp = mon._hp;
-		dest._frame = _vm->getRandomNumber(7);
-		dest._effect1 = dest._effect2 = mon._animationEffect;
-		if (mon._animationEffect)
-			dest._effect3 = _vm->getRandomNumber(7);
-	}
+	// Merge together monster data
+	mobStruct.synchronize(s);
+	do {
+		MazeMonster mon;
+		mon._position = mobStruct._pos;
+		mon._id = mobStruct._id;
+		mon._spriteId = _monsterSprites[mon._id]._spriteId;
+		mon._sprites = &_monsterSprites[mon._id]._sprites;
+		mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
 
-	// Merge up wall items
-	_wallItems.resize(1);
-	for (uint i = 0; i < wallItemData.size(); ++i) {
-		MazeWallItem &dest = _wallItems[i];
-		dest._position = wallItemData[i]._pos;
-		dest._id = wallItemData[i]._id;
-		dest._refId = wallPicIds[dest._id];
-		dest._direction = wallItemData[i]._direction;
-	}
+		MonsterStruct &md = monsterData[mon._spriteId];
+		mon._hp = md._hp;
+		mon._frame = _vm->getRandomNumber(7);
+		mon._effect1 = mon._effect2 = md._animationEffect;
+		if (md._animationEffect)
+			mon._effect3 = _vm->getRandomNumber(7);
+
+		_monsters.push_back(mon);
+		mobStruct.synchronize(s);
+	} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+
+	// Merge together wall item data
+	mobStruct.synchronize(s);
+	do {
+		if (mobStruct._id < (int)_wallItemSprites.size()) {
+			MazeWallItem wi;
+			wi._position = mobStruct._pos;
+			wi._id = mobStruct._id;
+			wi._direction = mobStruct._direction;
+			wi._spriteId = _wallItemSprites[wi._id]._spriteId;
+			wi._sprites = &_wallItemSprites[wi._id]._sprites;
+
+			_wallItems.push_back(wi);
+		}
+
+		mobStruct.synchronize(s);
+	} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
 }
 
 /*------------------------------------------------------------------------*/
@@ -893,7 +905,7 @@ void Map::load(int mapId) {
 	}
 
 	// TODO: Switch setting flags that don't seem to ever be used
-
+ 
 	// Reload the monster data for the main maze that we're loading
 	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
@@ -902,53 +914,37 @@ void Map::load(int mapId) {
 	mobFile.close();
 
 	// Load sprites for the objects
-	for (uint i = 0; i < _mobData._objects.size(); ++i) {
-		if (_vm->_party._cloudsEnd && _mobData._objects[i]._refId == 85 &&
+	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
+		if (_vm->_party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
 				_vm->_party._mazeId == 27 && isDarkCc) {
 			// TODO: Flags set that don't seem to be used
 		} else if (_vm->_party._mazeId == 12 && _vm->_party._gameFlags[43] &&
-				_mobData._objects[i]._refId == 118 && !isDarkCc) {
+			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
-			_mobData._objects[0]._id = 85;
+			_mobData._objectSprites[0]._spriteId = 85;
 		} else {
-			filename = Common::String::format("%03d.%cbj", _mobData._objects[i]._refId,
-				_mobData._objects[i]._refId >= 100 ? 'o' : '0');
+			filename = Common::String::format("%03d.%cbj", 
+				_mobData._objectSprites[i]._spriteId,
+				_mobData._objectSprites[i]._spriteId >= 100 ? '0' : 'o');
 		}
 
 		// Read in the object sprites
-		_mobData._objects[i]._sprites.load(filename);
+		_mobData._objectSprites[i]._sprites.load(filename);
 	}
 
-	// Load sprite resources for monster standard and attack animations
-	int monsterNum = 1;
-	int monsterImgNums[95];
-	Common::fill(&monsterImgNums[0], &monsterImgNums[95], 0);
-	for (uint i = 0; i < _mobData._monsters.size(); ++i, ++monsterNum) {
-		MonsterStruct &monsterStruct = _monsterData[i];
-		int monsterImgNum = monsterStruct._imageNumber;
-		filename = Common::String::format("%03d.mon", monsterImgNum);
+	// Load sprites for the monsters
+	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
+		filename = Common::String::format("%03d.mon", _mobData._objectSprites[i]._spriteId);
+		_mobData._monsterSprites[i]._sprites.load(filename);
 
-		if (!monsterImgNums[monsterImgNum]) {
-			_mobData._monsters[i]._sprites.load(filename);
-		} else {
-			_mobData._monsters[i]._sprites = _mobData._monsters[
-				monsterImgNums[monsterImgNum] - 1]._sprites;
-		}
-
-		filename = Common::String::format("%03d.att", monsterImgNum);
-		if (!monsterImgNums[monsterImgNum]) {
-			_mobData._monsters[i]._attackSprites.load(filename);
-			monsterImgNums[monsterImgNum] = monsterNum;
-		} else {
-			_mobData._monsters[i]._attackSprites = _mobData._monsters[
-				monsterImgNums[monsterImgNum] - 1]._attackSprites;;
-		}
+		filename = Common::String::format("%03d.att", _mobData._objectSprites[i]._spriteId);
+		_mobData._monsterSprites[i]._attackSprites.load(filename);
 	}
 
 	// Load wall picture sprite resources
-	for (uint i = 0; i < _mobData._wallItems.size(); ++i) {
-		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._refId);
-		_mobData._wallItems[i]._sprites.load(filename);
+	for (uint i = 0; i < _mobData._wallItemSprites.size(); ++i) {
+		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
+		_mobData._wallItemSprites[i]._sprites.load(filename);
 	}
 }
 

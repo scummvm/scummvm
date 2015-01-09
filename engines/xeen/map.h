@@ -204,10 +204,10 @@ public:
 	Common::Point _position;
 	int _id;
 	int _frame;
-	int _refId;
+	int _spriteId;
 	Direction _direction;
 	bool _flipped;
-	SpriteResource _sprites;
+	SpriteResource *_sprites;
 
 	MazeObject();
 };
@@ -216,12 +216,12 @@ struct MazeMonster {
 	Common::Point _position;
 	int _frame;
 	int _id;
-	int _refId;
+	int _spriteId;
 	int _hp;
 	int _effect1, _effect2;
 	int _effect3;
-	SpriteResource _sprites;
-	SpriteResource _attackSprites;
+	SpriteResource *_sprites;
+	SpriteResource *_attackSprites;
 
 	MazeMonster();
 };
@@ -230,16 +230,32 @@ class MazeWallItem {
 public:
 	Common::Point _position;
 	int _id;
-	int _refId;
+	int _spriteId;
 	Direction _direction;
-	SpriteResource _sprites;
+	SpriteResource *_sprites;
 public:
 	MazeWallItem();
 };
 
+class Map;
+
 class MonsterObjectData {
+	friend class Map;
+public:
+	struct SpriteResourceEntry {
+		int _spriteId;
+		SpriteResource _sprites;
+		SpriteResource _attackSprites;
+
+		SpriteResourceEntry() { _spriteId = -1; }
+		SpriteResourceEntry(int spriteId): _spriteId(spriteId) { }
+	};
 private:
 	XeenEngine *_vm;
+	Common::Array<SpriteResourceEntry> _objectSprites;
+	Common::Array<SpriteResourceEntry> _monsterSprites;
+	Common::Array<SpriteResourceEntry> _monsterAttackSprites;
+	Common::Array<SpriteResourceEntry> _wallItemSprites;
 public:
 	Common::Array<MazeObject> _objects;
 	Common::Array<MazeMonster> _monsters;
