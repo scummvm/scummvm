@@ -263,7 +263,8 @@ bool Console::cmdDumpFiles(int argc, const char **argv) {
 		debugPrintf("Dumping %s\n", fileName.c_str());
 
 		in = iter->_value.arch->createReadStreamForMember(iter->_value.name);
-		dumpFile(in, fileName.c_str());
+		if (in)
+			dumpFile(in, fileName.c_str());
 		delete in;
 	}
 
