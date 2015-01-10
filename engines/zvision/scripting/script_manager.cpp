@@ -500,7 +500,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	_nextLocation.node = _node;
 	_nextLocation.view = _view;
 	_nextLocation.offset = offset;
-	// If next location 0000 - it's indicate to go to previous location.
+	// If next location is 0000, return to the previous location.
 	if (_nextLocation.world == '0' && _nextLocation.room == '0' && _nextLocation.node == '0' && _nextLocation.view == '0') {
 		if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
 			_nextLocation.world = getStateValue(StateKey_LastWorld);
