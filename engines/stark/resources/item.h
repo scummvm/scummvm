@@ -110,16 +110,31 @@ public:
 	ItemSub13(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub13();
 
+	// Resource API
+	void onAllLoaded() override;
+
+	virtual	BonesMesh *findBonesMesh() = 0;
+	virtual TextureSet *findTextureSet(uint32 textureType) = 0;
+	virtual AnimHierarchy *findStockAnimHierarchy() = 0;
+
 protected:
 	int32 _meshIndex;
 	int32 _textureNormalIndex;
 	int32 _textureFaceIndex;
+	int32 _animHierarchyIndex;
+
+	ItemSub13 *_referencedItem;
 };
 
 class ItemSub1 : public ItemSub13 {
 public:
 	ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub1();
+
+	// ItemSub13 API
+	BonesMesh *findBonesMesh() override;
+	TextureSet *findTextureSet(uint32 textureType) override;
+	AnimHierarchy *findStockAnimHierarchy() override;
 
 protected:
 };
@@ -131,6 +146,12 @@ public:
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onAllLoaded() override;
+
+	// ItemSub13 API
+	BonesMesh *findBonesMesh() override;
+	TextureSet *findTextureSet(uint32 textureType) override;
+	AnimHierarchy *findStockAnimHierarchy() override;
 
 protected:
 	void printData() override;
@@ -177,6 +198,7 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 	void onAllLoaded() override;
+	void onEnterLocation() override;
 
 	// Item API
 	RenderEntry *getRenderEntry();
@@ -192,6 +214,7 @@ protected:
 	int32 _textureFaceIndex;
 
 	ResourceReference _reference;
+	ItemSub13 *_referenceItem;
 };
 
 class ItemSub78 : public ItemVisual {

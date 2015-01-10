@@ -166,7 +166,28 @@ ItemSub13::ItemSub13(Resource *parent, byte subType, uint16 index, const Common:
 		Item(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
-		_textureFaceIndex(-1) {
+		_textureFaceIndex(-1),
+		_animHierarchyIndex(-1),
+		_referencedItem(nullptr) {
+}
+
+void ItemSub13::onAllLoaded() {
+	Item::onAllLoaded();
+
+	BonesMesh *bonesMesh = findChild<BonesMesh>(false);
+	if (bonesMesh) {
+		_meshIndex = bonesMesh->getIndex();
+	}
+
+	TextureSet *textureNormal = findChildWithSubtype<TextureSet>(TextureSet::kTextureNormal, false);
+	if (textureNormal) {
+		_textureNormalIndex = textureNormal->getIndex();
+	}
+
+	TextureSet *textureFace = findChildWithSubtype<TextureSet>(TextureSet::kTextureFace, false);
+	if (textureFace) {
+		_textureFaceIndex = textureFace->getIndex();
+	}
 }
 
 ItemSub1::~ItemSub1() {
@@ -174,8 +195,42 @@ ItemSub1::~ItemSub1() {
 
 ItemSub1::ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemSub13(parent, subType, index, name) {
+	_animHierarchyIndex = 0;
 }
 
+BonesMesh *ItemSub1::findBonesMesh() {
+	if (_meshIndex == -1) {
+		return nullptr;
+	} else {
+		return findChildWithIndex<BonesMesh>(_meshIndex);
+	}
+}
+
+TextureSet *ItemSub1::findTextureSet(uint32 textureType) {
+	if (textureType == TextureSet::kTextureNormal) {
+		if (_textureNormalIndex == -1) {
+			return nullptr;
+		} else {
+			return findChildWithIndex<TextureSet>(_textureNormalIndex);
+		}
+	} else if (textureType == TextureSet::kTextureNormal) {
+		if (_textureFaceIndex == -1) {
+			return nullptr;
+		} else {
+			return findChildWithIndex<TextureSet>(_textureFaceIndex);
+		}
+	} else {
+		error("Unknown texture type %d", textureType);
+	}
+}
+
+AnimHierarchy *ItemSub1::findStockAnimHierarchy() {
+	if (_animHierarchyIndex == -1) {
+		return nullptr;
+	} else {
+		return findChildWithIndex<AnimHierarchy>(_animHierarchyIndex);
+	}
+}
 
 ItemSub3::~ItemSub3() {
 }
@@ -188,6 +243,50 @@ void ItemSub3::readData(XRCReadStream *stream) {
 	ItemSub13::readData(stream);
 
 	_reference = stream->readResourceReference();
+}
+
+void ItemSub3::onAllLoaded() {
+	ItemSub13::onAllLoaded();
+
+	_referencedItem = _reference.resolve<ItemSub13>();
+}
+
+BonesMesh *ItemSub3::findBonesMesh() {
+	if (_meshIndex == -1) {
+		return _referencedItem->findBonesMesh();
+	} else {
+		return findChildWithIndex<BonesMesh>(_meshIndex);
+	}
+}
+
+TextureSet *ItemSub3::findTextureSet(uint32 textureType) {
+	if (textureType == TextureSet::kTextureNormal) {
+		if (_textureNormalIndex == -1) {
+			return _referencedItem->findTextureSet(textureType);
+		} else {
+			return findChildWithIndex<TextureSet>(_textureNormalIndex);
+		}
+	} else if (textureType == TextureSet::kTextureNormal) {
+		if (_textureFaceIndex == -1) {
+			return _referencedItem->findTextureSet(textureType);
+		} else {
+			return findChildWithIndex<TextureSet>(_textureFaceIndex);
+		}
+	} else {
+		error("Unknown texture type %d", textureType);
+	}
+}
+
+AnimHierarchy *ItemSub3::findStockAnimHierarchy() {
+	if (_animHierarchyIndex == -1 && !_referencedItem) {
+		_animHierarchyIndex = 0; // Prefer referenced anim to local
+	}
+
+	if (_animHierarchyIndex == -1) {
+		return _referencedItem->findStockAnimHierarchy();
+	} else {
+		return findChildWithIndex<AnimHierarchy>(_animHierarchyIndex);
+	}
 }
 
 void ItemSub3::printData() {
@@ -289,7 +388,8 @@ ItemSub10::ItemSub10(Resource *parent, byte subType, uint16 index, const Common:
 		ItemSub5610(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
-		_textureFaceIndex(-1) {
+		_textureFaceIndex(-1),
+		_referenceItem(nullptr) {
 }
 
 void ItemSub10::readData(XRCReadStream *stream) {
@@ -315,6 +415,18 @@ void ItemSub10::onAllLoaded() {
 	if (textureFace) {
 		_textureFaceIndex = textureFace->getIndex();
 	}
+
+	_referenceItem = _reference.resolve<ItemSub13>();
+}
+
+void ItemSub10::onEnterLocation() {
+	ItemSub5610::onEnterLocation();
+
+	if (_referenceItem) {
+		_animHierarchy = _referenceItem->findStockAnimHierarchy();
+	}
+
+	setAnim(1);
 }
 
 BonesMesh *ItemSub10::findBonesMesh() {
@@ -324,7 +436,7 @@ BonesMesh *ItemSub10::findBonesMesh() {
 	// Otherwise, use a children mesh, or a referenced mesh
 	if (!bonesMesh) {
 		if (_meshIndex == -1) {
-			//TODO: Load from referenced item
+			bonesMesh = _referenceItem->findBonesMesh();
 		} else {
 			bonesMesh = findChildWithIndex<BonesMesh>(_meshIndex);
 		}
@@ -341,13 +453,13 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	if (!textureSet) {
 		if (textureType == TextureSet::kTextureNormal) {
 			if (_textureNormalIndex == -1) {
-				//TODO: Load from referenced item
+				textureSet = _referenceItem->findTextureSet(textureType);
 			} else {
 				textureSet = findChildWithIndex<TextureSet>(_textureNormalIndex);
 			}
 		} else if (textureType == TextureSet::kTextureNormal) {
 			if (_textureFaceIndex == -1) {
-				//TODO: Load from referenced item
+				textureSet = _referenceItem->findTextureSet(textureType);
 			} else {
 				textureSet = findChildWithIndex<TextureSet>(_textureFaceIndex);
 			}

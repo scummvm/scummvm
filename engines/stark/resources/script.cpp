@@ -131,7 +131,7 @@ bool Script::shouldExecute(uint32 callMode) {
 		return false; // Wrong script type
 	}
 
-	uint32 currentChapter = 0; // TODO: Implement
+	uint32 currentChapter = 11; // TODO: Implement
 	if (currentChapter < _minChapter || currentChapter > _maxChapter) {
 		return false; // Wrong chapter
 	}
