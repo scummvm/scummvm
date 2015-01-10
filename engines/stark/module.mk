@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	resources/floorface.o \
 	resources/image.o \
 	resources/item.o \
+	resources/knowledge.o \
 	resources/layer.o \
 	resources/level.o \
 	resources/location.o \
