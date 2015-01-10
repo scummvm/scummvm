@@ -239,6 +239,9 @@ GfxOpenGLS::GfxOpenGLS() {
 }
 
 GfxOpenGLS::~GfxOpenGLS() {
+	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
+		destroyTexture(&_specialtyTextures[i]);
+	}
 	delete[] _lights;
 
 	delete _backgroundProgram;

@@ -235,6 +235,7 @@ ResourceLoader::~ResourceLoader() {
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
 	clearList(_lipsyncs);
+	delete _localArchive;
 	MD5Check::clear();
 }
 

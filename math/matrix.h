@@ -206,6 +206,9 @@ Matrix<r, c> operator-(const Matrix<r, c> &m);
 template <int r, int c>
 bool operator==(const Matrix<r, c> &m1, const Matrix<r, c> &m2);
 
+template <int r, int c>
+bool operator!=(const Matrix<r, c> &m1, const Matrix<r, c> &m2);
+
 
 // Constructors
 template<int rows, int cols>
@@ -457,9 +460,13 @@ bool operator==(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
 			}
 		}
 	}
-	return false;
+	return true;
 }
 
+template <int r, int c>
+bool operator!=(const Matrix<r, c> &m1, const Matrix<r, c> &m2) {
+	return !(m1 == m2);
+}
 
 template<int r, int c>
 Common::Debug &operator<<(Common::Debug dbg, const Math::Matrix<r, c> &m) {

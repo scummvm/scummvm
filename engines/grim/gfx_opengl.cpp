@@ -124,6 +124,9 @@ GfxOpenGL::~GfxOpenGL() {
 	if (_useDimShader)
 		glDeleteProgramsARB(1, &_dimFragProgram);
 #endif
+	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
+		destroyTexture(&_specialtyTextures[i]);
+	}
 }
 
 byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {

@@ -36,10 +36,6 @@ namespace Grim {
 #define FINPUT		"_INPUT"
 #define FOUTPUT		"_OUTPUT"
 
-LuaFile *g_fin;
-LuaFile *g_fout;
-LuaFile *g_stdin;
-LuaFile *g_stdout;
 LuaFile *g_stderr;
 
 static int32 s_id = 0;
@@ -150,7 +146,6 @@ static void closefile(const char *name) {
 	f->close();
 	lua_pushobject(lua_getglobal(name));
 	lua_settag(gettag(CLOSEDTAG));
-	delete f;
 }
 
 static void setfile(int32 id, const char *name, int32 tag) {
@@ -174,7 +169,7 @@ static int32 addfile(LuaFile *f) {
 static void io_readfrom() {
 	lua_Object f = lua_getparam(FIRSTARG);
 	if (f == LUA_NOOBJECT) {
-		if (getfile(FOUTPUT) != getfile(1)) {
+		if (getfile(FINPUT) != getfile(1)) {
 			closefile(FINPUT);
 			setreturn(1, FINPUT);
 		}
@@ -429,21 +424,22 @@ static void openwithtags() {
 		lua_setglobal(iolibtag[i].name);
 	}
 
-	g_fin = new LuaFile();
-	g_fin->_stdin = true;
-	setfile(addfile(g_fin), FINPUT, iotag);
+	LuaFile* f;
+	f = new LuaFile();
+	f->_stdin = true;
+	setfile(addfile(f), FINPUT, iotag);
 
-	g_fout = new LuaFile();
-	g_fout->_stdout = true;
-	setfile(addfile(g_fout), FOUTPUT, iotag);
+	f = new LuaFile();
+	f->_stdout = true;
+	setfile(addfile(f), FOUTPUT, iotag);
 
-	g_stdin = new LuaFile();
-	g_stdin->_stdin = true;
-	setfile(addfile(g_stdin), "_STDIN", iotag);
+	f = new LuaFile();
+	f->_stdin = true;
+	setfile(addfile(f), "_STDIN", iotag);
 
-	g_stdout = new LuaFile();
-	g_stdout->_stdout = true;
-	setfile(addfile(g_stdout), "_STDOUT", iotag);
+	f = new LuaFile();
+	f->_stdout = true;
+	setfile(addfile(f), "_STDOUT", iotag);
 
 	g_stderr = new LuaFile();
 	g_stderr->_stderr = true;
@@ -461,12 +457,9 @@ void lua_iolibopen() {
 }
 
 void lua_iolibclose() {
-	delete g_fin;
-	delete g_fout;
-	delete g_stdin;
-	delete g_stdout;
-	delete g_stderr;
-
+	for (Common::HashMap<int32, LuaFile *>::iterator it = g_files->begin(); it != g_files->end(); ++it) {
+		delete it->_value;
+	}
 	delete g_files;
 }
 
