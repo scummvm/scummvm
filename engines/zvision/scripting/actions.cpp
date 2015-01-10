@@ -23,11 +23,12 @@
 #include "common/scummsys.h"
 #include "video/video_decoder.h"
 
+#include "zvision/scripting/actions.h"
+
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/file/save_manager.h"
-#include "zvision/scripting/actions.h"
 #include "zvision/scripting/menu.h"
 #include "zvision/scripting/effects/timer_effect.h"
 #include "zvision/scripting/effects/music_effect.h"
@@ -795,6 +796,22 @@ bool ActionRandom::execute() {
 	uint randNumber = _engine->getRandomSource()->getRandomNumber(_max->getValue());
 	_engine->getScriptManager()->setStateValue(_slotKey, randNumber);
 	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// ActionRestoreGame
+//////////////////////////////////////////////////////////////////////////////
+
+ActionRestoreGame::ActionRestoreGame(ZVision *engine, int32 slotkey, const Common::String &line) :
+	ResultAction(engine, slotkey) {
+	char buf[128];
+	sscanf(line.c_str(), "%s", buf);
+	_fileName = Common::String(buf);
+}
+
+bool ActionRestoreGame::execute() {
+	_engine->getSaveManager()->loadGame(-1);
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

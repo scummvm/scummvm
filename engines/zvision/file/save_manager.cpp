@@ -130,11 +130,24 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 	file->writeSint16LE(td.tm_min);
 }
 
-Common::Error SaveManager::loadGame(uint slot) {
-	Common::SeekableReadStream *saveFile = getSlotFile(slot);
-	if (saveFile == 0) {
-		return Common::kPathDoesNotExist;
+Common::Error SaveManager::loadGame(int slot) {
+	Common::SeekableReadStream *saveFile = NULL;
+	
+	if (slot >= 0) {
+		saveFile = getSlotFile(slot);
+	} else {
+		Common::File *saveFile = _engine->getSearchManager()->openFile("r.svr");
+		if (!saveFile) {
+			saveFile = new Common::File;
+			if (!saveFile->open("r.svr")) {
+				delete saveFile;
+				return Common::kPathDoesNotExist;
+			}
+		}
 	}
+
+	if (!saveFile)
+		return Common::kPathDoesNotExist;
 
 	// Read the header
 	SaveGameHeader header;

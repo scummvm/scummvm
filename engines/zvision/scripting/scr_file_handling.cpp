@@ -271,8 +271,8 @@ void ScriptManager::parseResults(Common::SeekableReadStream &stream, Common::Lis
 					actionList.push_back(new ActionRegion(_engine, slot, args));
 				} else if (act.matchString("restore_game", true)) {
 					// Only used by ZGI to load the restart game slot, r.svr.
-					_engine->getScriptManager()->reset();
-					_engine->getScriptManager()->changeLocation('g', 'a', 'r', 'y', 0);
+					// Used by the credits screen.
+					actionList.push_back(new ActionRestoreGame(_engine, slot, args));
 				} else if (act.matchString("rotate_to", true)) {
 					actionList.push_back(new ActionRotateTo(_engine, slot, args));
 				} else if (act.matchString("save_game", true)) {

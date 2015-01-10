@@ -340,6 +340,15 @@ private:
 	ValueSlot *_max;
 };
 
+class ActionRestoreGame : public ResultAction {
+public:
+	ActionRestoreGame(ZVision *engine, int32 slotkey, const Common::String &line);
+	bool execute();
+
+private:
+	Common::String _fileName;
+};
+
 class ActionRotateTo : public ResultAction {
 public:
 	ActionRotateTo(ZVision *engine, int32 slotkey, const Common::String &line);
