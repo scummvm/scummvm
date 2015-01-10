@@ -30,6 +30,7 @@
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/command.h"
+#include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
@@ -229,6 +230,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kCommand:
 		resource = new Command(parent, subType, index, name);
+		break;
+	case ResourceType::kDialog:
+		resource = new Dialog(parent, subType, index, name);
 		break;
 	case ResourceType::kBonesMesh:
 		resource = new BonesMesh(parent, subType, index, name);

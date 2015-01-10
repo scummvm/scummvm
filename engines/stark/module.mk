@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	resources/bookmark.o \
 	resources/camera.o \
 	resources/command.o \
+	resources/dialog.o \
 	resources/direction.o \
 	resources/floor.o \
 	resources/floorface.o \
