@@ -51,6 +51,9 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
 #endif
+#ifdef USE_GLES_CUSTOM
+#include "backends/graphics/gles-custom/gles-custom.h"
+#endif
 
 #include "icons/scummvm.xpm"
 
@@ -202,6 +205,10 @@ void OSystem_SDL::initBackend() {
 				}
 			}
 		}
+#endif
+
+#ifdef USE_GLES_CUSTOM
+		_graphicsManager = new OpenGLCustomGraphicsManager(_eventSource);
 #endif
 
 		if (_graphicsManager == 0) {

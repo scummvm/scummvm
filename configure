@@ -124,6 +124,7 @@ _faad=auto
 _fluidsynth=auto
 _opengl=auto
 _opengles=auto
+_gles_kms=no
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -943,6 +944,7 @@ Optional Libraries:
 
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
+  --enable-gles-kms	   enable OpenGL (ES) on DRM with no X server
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
@@ -1048,6 +1050,8 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-gles-kms)	  _gles_kms=yes   ;;
+	--disable-gles-kms)	  _gles_kms=no    ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -1510,6 +1514,34 @@ if test "$_release_build" = yes; then
 	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
+#
+# Detetect if we're running on GNU/Linux on ARM SOC (Raspberry Pi, Allwinner) or we're told to use X-less GLES
+#
+if grep -q BCM2708 /proc/cpuinfo; then
+	echo "Raspberry Pi detected."
+	_build_scalers=no
+	_build_hq_scalers=no
+	_use_gles_custom=yes
+	_use_gles_rpi=yes
+	_optimization_level=-O3
+fi
+
+if grep -q sun7i /proc/cpuinfo; then
+	echo "Cubieboard/Cubieboard2/Cubietruck detected."
+	_build_scalers=no
+	_build_hq_scalers=no
+	_use_gles_custom=yes
+	_use_gles_fbdev=yes
+	_optimization_level=-O3
+fi
+
+if test "$_gles_kms" = yes; then
+	_build_scalers=no
+	_build_hq_scalers=no
+	_use_gles_custom=yes
+	_use_gles_kms=yes
+	_optimization_level=-O3
+fi
 
 #
 # Determine extension used for executables
@@ -4049,6 +4081,37 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
+if test "$_use_gles_custom" = yes ; then
+	_opengles=yes
+	add_line_to_config_mk "USE_GLES = 1"
+	add_line_to_config_h "#define USE_GLES"	
+	add_line_to_config_mk "USE_GLES_CUSTOM = 1"
+	add_line_to_config_h "#define USE_GLES_CUSTOM"
+	if test "$_use_gles_rpi" = yes ; then
+		echo "\nActivating custom-context GLES RPI..."
+		# Yes, the Raspberry toolchain uses hardcoded paths. See Broadcom examples in /opt/vc/src.
+		CXXFLAGS="$CXXFLAGS -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads"
+		LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm -lbcm_host -lvcos -lvchiq_arm"
+		add_line_to_config_mk "USE_GLES_RPI = 1"
+		add_line_to_config_h "#define USE_GLES_RPI"
+	fi
+	
+	if test "$_use_gles_fbdev" = yes ; then
+		echo "\nActivating custom-context GLES FBDEV (Cubieboard/Cubie2/Cubietruck)..."
+		CXXFLAGS="$CXXFLAGS -marm -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon"
+		LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm"
+		add_line_to_config_mk "USE_GLES_FBDEV = 1"
+		add_line_to_config_h "#define USE_GLES_FBDEV"
+	fi
+	
+	if test "$_use_gles_kms" = yes ; then
+		echo "\nActivating custom-context GLES KMS (OpenGL(ES) without X)"
+		CXXFLAGS="$CXXFLAGS -I/usr/include/drm"
+		LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm -ldrm -lgbm"
+		add_line_to_config_mk "USE_GLES_KMS = 1"
+		add_line_to_config_h "#define USE_GLES_KMS"
+	fi
+fi
 
 #
 # Check for nasm

@@ -84,6 +84,15 @@ MODULE_OBJS += \
 endif
 endif
 
+ifdef USE_GLES_CUSTOM
+MODULE_OBJS += \
+	graphics/opengl/debug.o \
+	graphics/opengl/extensions.o \
+	graphics/opengl/opengl-graphics.o \
+	graphics/opengl/texture.o \
+	graphics/gles-custom/gles-custom.o
+endif
+
 ifdef POSIX
 MODULE_OBJS += \
 	fs/posix/posix-fs.o \
