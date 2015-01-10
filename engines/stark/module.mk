@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	resources/resource.o \
 	resources/root.o \
 	resources/script.o \
+	resources/speech.o \
 	resources/textureset.o \
 	resourceprovider.o \
 	resourcereference.o \

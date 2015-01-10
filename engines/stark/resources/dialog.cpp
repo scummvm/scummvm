@@ -30,7 +30,7 @@ Dialog::~Dialog() {
 
 Dialog::Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name),
-				_globalDialogIndex(0),
+				_character(0),
 				_hasAskAbout(0) {
 	_type = TYPE;
 }
@@ -39,7 +39,7 @@ void Dialog::readData(XRCReadStream *stream) {
 	Resource::readData(stream);
 
 	_hasAskAbout = stream->readUint32LE();
-	_globalDialogIndex = stream->readUint32LE();
+	_character = stream->readUint32LE();
 
 	uint32 numTopics = stream->readUint32LE();
 	for (uint32 i = 0; i < numTopics; i++) {
@@ -79,7 +79,7 @@ void Dialog::readData(XRCReadStream *stream) {
 void Dialog::printData() {
 	Resource::printData();
 
-	debug("globalDialogIndex: %d", _globalDialogIndex);
+	debug("character: %d", _character);
 	debug("hasAskAbout: %d", _hasAskAbout);
 
 	for (uint32 i = 0; i < _topics.size(); i++) {

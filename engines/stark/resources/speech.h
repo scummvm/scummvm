@@ -20,60 +20,34 @@
  *
  */
 
-#ifndef STARK_RESOURCES_DIALOG_H
-#define STARK_RESOURCES_DIALOG_H
+#ifndef STARK_RESOURCES_SPEECH_H
+#define STARK_RESOURCES_SPEECH_H
 
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
-#include "engines/stark/resourcereference.h"
 
 namespace Stark {
 
 class XRCReadStream;
 
-class Dialog : public Resource {
+class Speech : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kDialog;
+	static const ResourceType::Type TYPE = ResourceType::kSpeech;
 
-	Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Dialog();
+	Speech(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Speech();
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
 protected:
-	struct Line {
-		ResourceReference _field_0;
-		ResourceReference _field_30;
-	};
-
-	struct Reply {
-		Common::Array<Line> _lines;
-		uint32 _conditionType;
-		ResourceReference _conditionReference;
-		ResourceReference _conditionScriptReference;
-		uint32 _conditionReversed;
-		uint32 _field_88;
-		uint32 _minChapter;
-		uint32 _maxChapter;
-		uint32 _field_84;
-		uint32 _nextDialogIndex;
-		ResourceReference _nextScriptReference;
-	};
-
-	struct Topic {
-		Common::Array<Reply> _replies;
-		uint32 _field_14;
-	};
-
 	void printData() override;
 
-	Common::Array<Topic> _topics;
+	Common::String _phrase;
 	uint32 _character;
-	uint32 _hasAskAbout;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_DIALOG_H
+#endif // STARK_RESOURCES_SPEECH_H
