@@ -68,6 +68,16 @@ extern const char *const PLEASE_WAIT;
 
 extern const char *const OOPS;
 
+extern const int8 SCREEN_POSITIONING[384];
+
+extern const int INDOOR_OBJECT_X[2][12];
+
+extern const int INDOOR_OBJECT_Y[2][12];
+
+extern const int OUTDOOR_OBJECT_X[2][12];
+
+extern const int OUTDOOR_OBJECT_Y[2][12];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

@@ -48,6 +48,9 @@ public:
 	DrawStruct _data[170];
 	DrawStruct &_skySprite;
 	DrawStruct &_groundSprite;
+	DrawStruct &_objects0, _objects1, _objects2, _objects3;
+	DrawStruct &_objects4, _objects5, _objects6, _objects7;
+	DrawStruct &_objects8, _objects9, _objects10, _objects11;
 public:
 	IndoorDrawList();
 
@@ -95,6 +98,9 @@ private:
 	bool _flag1;
 	bool _flag2;
 	byte _tillMove;
+	int _objNumber;
+	bool _objectFlag2, _objectFlag3, _objectFlag4, _objectFlag5;
+	bool _objectFlag6, _objectFlag7, _objectFlag8;
 
 	void loadSprites();
 
@@ -114,9 +120,9 @@ private:
 
 	void animate3d();
 
-	void setMonsters();
+	void setIndoorsMonsters();
 
-	void setObjects();
+	void setIndoorObjects();
 
 	void setOutdoorsMonsters();
 

@@ -285,7 +285,6 @@ private:
 	XeenEngine *_vm;
 	MazeData _mazeData[9];
 	Common::String _mazeName;
-	MonsterObjectData _mobData;
 	HeadData _headData;
 	SpriteResource _objPicSprites;
 	MonsterData _monsterData;
@@ -296,6 +295,7 @@ private:
 	bool _stepped;
 public:
 	bool _isOutdoors;
+	MonsterObjectData _mobData;
 public:
 	Map(XeenEngine *vm);
 

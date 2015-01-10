@@ -164,7 +164,11 @@ OutdoorDrawList::OutdoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2
 
 /*------------------------------------------------------------------------*/
 
-IndoorDrawList::IndoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2]) {
+IndoorDrawList::IndoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2]),
+	_objects0(_data[149]), _objects1(_data[125]), _objects2(_data[126]),
+	_objects3(_data[127]), _objects4(_data[97]), _objects5(_data[98]),
+	_objects6(_data[99]), _objects7(_data[55]), _objects8(_data[56]),
+	_objects9(_data[58]), _objects10(_data[57]), _objects11(_data[59]) {
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
 	_data[2] = DrawStruct(0, 8, 67);
@@ -360,6 +364,9 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_flag1 = false;
 	_flag2 = false;
 	_tillMove = 0;
+	_objNumber = 0;
+	_objectFlag2 = _objectFlag3 = _objectFlag4 = _objectFlag5 = false;
+	_objectFlag6 = _objectFlag7 = _objectFlag8 = false;
 
 	initDrawStructs();
 }
@@ -846,7 +853,7 @@ void Interface::addCharacterToRoster() {
 
 void Interface::draw3d(bool flag) {
 	Screen &screen = *_vm->_screen;
-	EventsManager &events = *_vm->_events;
+//	EventsManager &events = *_vm->_events;
 
 	if (!screen._windows[11]._enabled)
 		return;
@@ -869,12 +876,73 @@ void Interface::animate3d() {
 
 }
 
-void Interface::setMonsters() {
+void Interface::setIndoorsMonsters() {
 
 }
 
-void Interface::setObjects() {
+void Interface::setIndoorObjects() {
+	Common::Point mazePos = _vm->_party._mazePosition;
+	_objNumber = 0;
+	int objIndx = 0;
+	const int8 *posOffset = &SCREEN_POSITIONING[_vm->_party._mazeDirection * 48];
+	Common::Point pt;
 
+	// TODO: Fields loading
+
+	Common::Array<MazeObject> &objects = _vm->_map->_mobData._objects;
+	for (uint idx = 0; idx < objects.size(); ++idx) {
+		MazeObject &mazeObject = objects[idx];
+
+		// Determine which half of the X/Y lists to use
+		int listOffset;
+		if (_vm->_files->_isDarkCc) {
+			listOffset = mazeObject._spriteId == 47 ? 1 : 0;
+		} else {
+			listOffset = mazeObject._spriteId == 113 ? 1 : 0;
+		}
+
+		// Position 1
+		pt = Common::Point(mazePos.x + posOffset[2], mazePos.y + posOffset[194]);
+		if (pt == mazeObject._position && _indoorList._objects0._frame == -1) {
+			_indoorList._objects0._x = INDOOR_OBJECT_X[listOffset][0];
+			_indoorList._objects0._y = INDOOR_OBJECT_Y[listOffset][0];
+			_indoorList._objects0._frame = mazeObject._frame;
+			_indoorList._objects0._sprites = mazeObject._sprites;
+			_indoorList._objects0._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects0._flags |= SPRFLAG_HORIZ_FLIPPED;
+			_objNumber = idx;
+		}
+
+		// Position 2
+		pt = Common::Point(mazePos.x + posOffset[7], mazePos.y + posOffset[199]);
+		if (pt == mazeObject._position && !_objectFlag2 && _indoorList._objects1._frame == -1) {
+			_indoorList._objects1._x = INDOOR_OBJECT_X[listOffset][1];
+			_indoorList._objects1._y = INDOOR_OBJECT_Y[listOffset][1];
+			_indoorList._objects1._frame = mazeObject._frame;
+			_indoorList._objects1._sprites = mazeObject._sprites;
+			_indoorList._objects1._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects1._flags |= SPRFLAG_HORIZ_FLIPPED;
+			_objNumber = idx;
+		}
+
+		// Position 3
+		pt = Common::Point(mazePos.x + posOffset[5], mazePos.y + posOffset[197]);
+		if (pt == mazeObject._position && !_objectFlag2 && _indoorList._objects2._frame == -1) {
+			_indoorList._objects2._x = INDOOR_OBJECT_X[listOffset][1];
+			_indoorList._objects2._y = INDOOR_OBJECT_Y[listOffset][1];
+			_indoorList._objects2._frame = mazeObject._frame;
+			_indoorList._objects2._sprites = mazeObject._sprites;
+			_indoorList._objects2._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects2._flags |= SPRFLAG_HORIZ_FLIPPED;
+			_objNumber = idx;
+		}
+
+		// Position 4 onwards
+		// TODO: Also resolve usage of _objectFlag* flags
+	}
 }
 
 void Interface::setOutdoorsMonsters() {
@@ -892,8 +960,8 @@ void Interface::startup() {
 
 	animate3d();
 	if (_vm->_map->_isOutdoors) {
-		setMonsters();
-		setObjects();
+		setIndoorsMonsters();
+		setIndoorObjects();
 	} else {
 		setOutdoorsMonsters();
 		setOutdoorsObjects();
