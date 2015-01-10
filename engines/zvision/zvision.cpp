@@ -360,4 +360,10 @@ void ZVision::initScreen() {
 	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_screenPixelFormat);
 }
 
+void ZVision::initHiresScreen() {
+	_renderManager->upscaleRect(_workingWindow);
+
+	initGraphics(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, true, &_screenPixelFormat);
+}
+
 } // End of namespace ZVision

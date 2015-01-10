@@ -73,12 +73,8 @@ private:
 	 * are given in this coordinate space. Also, all images are clipped to the
 	 * edges of this Rectangle
 	 */
-	const Common::Rect _workingWindow;
+	Common::Rect _workingWindow;
 
-	// Width of the working window. Saved to prevent extraneous calls to _workingWindow.width()
-	const int _workingWidth;
-	// Height of the working window. Saved to prevent extraneous calls to _workingWindow.height()
-	const int _workingHeight;
 	// Center of the screen in the x direction
 	const int _screenCenterX;
 	// Center of the screen in the y direction
@@ -241,6 +237,8 @@ public:
 
 	// Subtitles methods
 
+	void initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow);
+
 	// Create subtitle area and return ID
 	uint16 createSubArea(const Common::Rect &area);
 	uint16 createSubArea();
@@ -334,6 +332,8 @@ public:
 	void checkBorders();
 	void rotateTo(int16 to, int16 time);
 	void updateRotation();
+
+	void upscaleRect(Common::Rect &rect);
 };
 
 } // End of namespace ZVision

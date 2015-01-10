@@ -42,28 +42,25 @@ namespace ZVision {
 RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow, const Graphics::PixelFormat pixelFormat, bool doubleFPS)
 	: _engine(engine),
 	  _system(engine->_system),
-	  _workingWidth(workingWindow.width()),
-	  _workingHeight(workingWindow.height()),
-	  _screenCenterX(_workingWidth / 2),
-	  _screenCenterY(_workingHeight / 2),
+	  _screenCenterX(_workingWindow.width() / 2),
+	  _screenCenterY(_workingWindow.height() / 2),
 	  _workingWindow(workingWindow),
 	  _pixelFormat(pixelFormat),
 	  _backgroundWidth(0),
 	  _backgroundHeight(0),
 	  _backgroundOffset(0),
-	  _renderTable(_workingWidth, _workingHeight),
-	  _doubleFPS(doubleFPS) {
+	  _renderTable(_workingWindow.width(), _workingWindow.height()),
+	  _doubleFPS(doubleFPS),
+	  _subid(0) {
 
-	_backgroundSurface.create(_workingWidth, _workingHeight, _pixelFormat);
-	_effectSurface.create(_workingWidth, _workingHeight, _pixelFormat);
-	_warpedSceneSurface.create(_workingWidth, _workingHeight, _pixelFormat);
+	_backgroundSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
+	_effectSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
+	_warpedSceneSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
 	_menuSurface.create(windowWidth, workingWindow.top, _pixelFormat);
-	_subtitleSurface.create(windowWidth, windowHeight - workingWindow.bottom, _pixelFormat);
-
+	
 	_menuArea = Common::Rect(0, 0, windowWidth, workingWindow.top);
-	_subtitleArea = Common::Rect(0, workingWindow.bottom, windowWidth, windowHeight);
 
-	_subid = 0;
+	initSubArea(windowWidth, windowHeight, workingWindow);
 }
 
 RenderManager::~RenderManager() {
@@ -83,7 +80,7 @@ void RenderManager::renderSceneToScreen() {
 	// If we have graphical effects, we apply them using a temporary buffer
 	if (!_effects.empty()) {
 		bool copied = false;
-		Common::Rect windowRect(_workingWidth, _workingHeight);
+		Common::Rect windowRect(_workingWindow.width(), _workingWindow.height());
 
 		for (EffectsList::iterator it = _effects.begin(); it != _effects.end(); it++) {
 			Common::Rect rect = (*it)->getRegion();
@@ -121,7 +118,7 @@ void RenderManager::renderSceneToScreen() {
 		if (!_backgroundSurfaceDirtyRect.isEmpty()) {
 			_renderTable.mutateImage(&_warpedSceneSurface, in);
 			out = &_warpedSceneSurface;
-			outWndDirtyRect = Common::Rect(_workingWidth, _workingHeight);
+			outWndDirtyRect = Common::Rect(_workingWindow.width(), _workingWindow.height());
 		}
 	} else {
 		out = in;
@@ -590,7 +587,7 @@ void RenderManager::prepareBackground() {
 
 	if (state == RenderTable::PANORAMA) {
 		// Calculate the visible portion of the background
-		Common::Rect viewPort(_workingWidth, _workingHeight);
+		Common::Rect viewPort(_workingWindow.width(), _workingWindow.height());
 		viewPort.translate(-(_screenCenterX - _backgroundOffset), 0);
 		Common::Rect drawRect = _backgroundDirtyRect;
 		drawRect.clip(viewPort);
@@ -635,7 +632,7 @@ void RenderManager::prepareBackground() {
 		}
 	} else if (state == RenderTable::TILT) {
 		// Tilt doesn't allow wrapping, so we just do a simple clip
-		Common::Rect viewPort(_workingWidth, _workingHeight);
+		Common::Rect viewPort(_workingWindow.width(), _workingWindow.height());
 		viewPort.translate(0, -(_screenCenterY - _backgroundOffset));
 		Common::Rect drawRect = _backgroundDirtyRect;
 		drawRect.clip(viewPort);
@@ -655,7 +652,7 @@ void RenderManager::prepareBackground() {
 	// Clear the dirty rect since everything is clean now
 	_backgroundDirtyRect = Common::Rect();
 
-	_backgroundSurfaceDirtyRect.clip(_workingWidth, _workingHeight);
+	_backgroundSurfaceDirtyRect.clip(_workingWindow.width(), _workingWindow.height());
 }
 
 void RenderManager::clearMenuSurface() {
@@ -685,6 +682,15 @@ void RenderManager::renderMenuToScreen() {
 		}
 		_menuSurfaceDirtyRect = Common::Rect();
 	}
+}
+
+void RenderManager::initSubArea(uint32 windowWidth, uint32 windowHeight, const Common::Rect workingWindow) {
+	_workingWindow = workingWindow;
+
+	_subtitleSurface.free();
+
+	_subtitleSurface.create(windowWidth, windowHeight - workingWindow.bottom, _pixelFormat);
+	_subtitleArea = Common::Rect(0, workingWindow.bottom, windowWidth, windowHeight);
 }
 
 uint16 RenderManager::createSubArea(const Common::Rect &area) {
@@ -791,8 +797,8 @@ Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Comm
 
 	if (state == RenderTable::PANORAMA) {
 		if (_backgroundOffset < _screenCenterX) {
-			Common::Rect rScreen(_screenCenterX + _backgroundOffset, _workingHeight);
-			Common::Rect lScreen(_workingWidth - rScreen.width(), _workingHeight);
+			Common::Rect rScreen(_screenCenterX + _backgroundOffset, _workingWindow.height());
+			Common::Rect lScreen(_workingWindow.width() - rScreen.width(), _workingWindow.height());
 			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
 			lScreen.clip(src);
 			rScreen.clip(src);
@@ -802,8 +808,8 @@ Common::Rect RenderManager::transformBackgroundSpaceRectToScreenSpace(const Comm
 				tmp.translate(_screenCenterX - _backgroundOffset, 0);
 			}
 		} else if (_backgroundWidth - _backgroundOffset < _screenCenterX) {
-			Common::Rect rScreen(_screenCenterX - (_backgroundWidth - _backgroundOffset), _workingHeight);
-			Common::Rect lScreen(_workingWidth - rScreen.width(), _workingHeight);
+			Common::Rect rScreen(_screenCenterX - (_backgroundWidth - _backgroundOffset), _workingWindow.height());
+			Common::Rect lScreen(_workingWindow.width() - rScreen.width(), _workingWindow.height());
 			lScreen.translate(_backgroundWidth - lScreen.width(), 0);
 			lScreen.clip(src);
 			rScreen.clip(src);
@@ -1170,6 +1176,13 @@ void RenderManager::rotateTo(int16 _toPos, int16 _time) {
 	}
 
 	_engine->startClock();
+}
+
+void RenderManager::upscaleRect(Common::Rect &rect) {
+	rect.top = rect.top * HIRES_WINDOW_HEIGHT / WINDOW_HEIGHT;
+	rect.left = rect.left * HIRES_WINDOW_WIDTH / WINDOW_WIDTH;
+	rect.bottom = rect.bottom * HIRES_WINDOW_HEIGHT / WINDOW_HEIGHT;
+	rect.right = rect.right * HIRES_WINDOW_WIDTH / WINDOW_WIDTH;
 }
 
 } // End of namespace ZVision

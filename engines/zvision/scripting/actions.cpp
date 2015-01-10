@@ -912,7 +912,15 @@ ActionStreamVideo::ActionStreamVideo(ZVision *engine, int32 slotkey, const Commo
 bool ActionStreamVideo::execute() {
 	Video::VideoDecoder *decoder;
 	Common::Rect destRect = Common::Rect(_x1, _y1, _x2 + 1, _y2 + 1);
+	Common::String subname = _fileName;
+	subname.setChar('s', subname.size() - 3);
+	subname.setChar('u', subname.size() - 2);
+	subname.setChar('b', subname.size() - 1);
+	bool subtitleExists = _engine->getSearchManager()->hasFile(subname);
+	bool switchToHires = false;
 
+// NOTE: We only show the hires MPEG2 videos when libmpeg2 is compiled in,
+// otherwise we fall back to the lowres ones
 #ifdef USE_MPEG2
 	Common::String hiresFileName = _fileName;
 	hiresFileName.setChar('d', hiresFileName.size() - 8);
@@ -920,36 +928,44 @@ bool ActionStreamVideo::execute() {
 	hiresFileName.setChar('o', hiresFileName.size() - 2);
 	hiresFileName.setChar('b', hiresFileName.size() - 1);
 
-	if (_engine->getScriptManager()->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresFileName))
-		// TODO: Enable once VOB + AC3 support is implemented
-		//_fileName = hiresFileName;
+	if (_engine->getScriptManager()->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresFileName)) {
+		// TODO: Enable once AC3 support is implemented
+		if (!_engine->getSearchManager()->hasFile(_fileName))	// Check for the regular video
+			return true;
 		warning("The hires videos of the DVD version of ZGI aren't supported yet, using lowres");
-#endif
-
-	Common::String subname = _fileName;
-	subname.setChar('s', subname.size() - 3);
-	subname.setChar('u', subname.size() - 2);
-	subname.setChar('b', subname.size() - 1);
-
+		//_fileName = hiresFileName;
+		//switchToHires = true;
+	} else if (!_engine->getSearchManager()->hasFile(_fileName))
+		return true;
+#else
 	if (!_engine->getSearchManager()->hasFile(_fileName))
 		return true;
+#endif
 
 	decoder = _engine->loadAnimation(_fileName);
+	Subtitle *sub = (subtitleExists) ? new Subtitle(_engine, subname, switchToHires) : NULL;
 
 	_engine->getCursorManager()->showMouse(false);
 
-	Subtitle *sub = NULL;
-
-	if (_engine->getSearchManager()->hasFile(subname))
-		sub = new Subtitle(_engine, subname);
+	if (switchToHires) {
+		_engine->initHiresScreen();
+		destRect = Common::Rect(40, -40, 760, 440);
+		Common::Rect workingWindow = _engine->_workingWindow;
+		workingWindow.translate(0, -40);
+		_engine->getRenderManager()->initSubArea(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, workingWindow);
+	}
 
 	_engine->playVideo(*decoder, destRect, _skippable, sub);
-	delete decoder;
+
+	if (switchToHires) {
+		_engine->initScreen();
+		_engine->getRenderManager()->initSubArea(WINDOW_WIDTH, WINDOW_HEIGHT, _engine->_workingWindow);
+	}
 
 	_engine->getCursorManager()->showMouse(true);
 
-	if (sub)
-		delete sub;
+	delete decoder;
+	delete sub;
 
 	return true;
 }

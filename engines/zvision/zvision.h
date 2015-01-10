@@ -67,6 +67,27 @@ class TextRenderer;
 class Subtitle;
 class MidiManager;
 
+enum {
+	WINDOW_WIDTH = 640,
+	WINDOW_HEIGHT = 480,
+
+	HIRES_WINDOW_WIDTH = 800,
+	HIRES_WINDOW_HEIGHT = 600,
+
+	// Zork nemesis working window sizes
+	ZNM_WORKING_WINDOW_WIDTH  = 512,
+	ZNM_WORKING_WINDOW_HEIGHT = 320,
+
+	// ZGI working window sizes
+	ZGI_WORKING_WINDOW_WIDTH  = 640,
+	ZGI_WORKING_WINDOW_HEIGHT = 344,
+
+	ROTATION_SCREEN_EDGE_OFFSET = 60,
+	MAX_ROTATION_SPEED = 400, // Pixels per second
+
+	KEYBUF_SIZE = 20
+};
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -83,24 +104,6 @@ public:
 	const Graphics::PixelFormat _screenPixelFormat;
 
 private:
-	enum {
-		WINDOW_WIDTH = 640,
-		WINDOW_HEIGHT = 480,
-
-		// Zork nemesis working window sizes
-		ZNM_WORKING_WINDOW_WIDTH  = 512,
-		ZNM_WORKING_WINDOW_HEIGHT = 320,
-
-		// ZGI working window sizes
-		ZGI_WORKING_WINDOW_WIDTH  = 640,
-		ZGI_WORKING_WINDOW_HEIGHT = 344,
-
-		ROTATION_SCREEN_EDGE_OFFSET = 60,
-		MAX_ROTATION_SPEED = 400, // Pixels per second
-
-		KEYBUF_SIZE = 20
-	};
-
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
 
@@ -195,6 +198,7 @@ public:
 	}
 
 	void initScreen();
+	void initHiresScreen();
 
 	/**
 	 * Play a video until it is finished. This is a blocking call. It will call
