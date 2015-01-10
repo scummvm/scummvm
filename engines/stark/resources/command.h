@@ -46,6 +46,8 @@ public:
 		kCommandBegin = 0,
 		kCommandEnd = 1,
 
+		kPause = 9,
+
 		kItem3DPlaceOn = 81,
 
 		kItemEnable = 87,
@@ -84,6 +86,7 @@ protected:
 
 
 	void op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
+	void opPause(Script *script, const ResourceReference &durationRef);
 	void opItemEnable(const ResourceReference &itemRef, int32 enable);
 	void opPlaceDirection(const ResourceReference &itemRef, int32 direction);
 

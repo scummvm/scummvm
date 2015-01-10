@@ -24,6 +24,8 @@
 
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resourceprovider.h"
+#include "engines/stark/stark.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -39,7 +41,8 @@ Script::Script(Resource *parent, byte subType, uint16 index, const Common::Strin
 				_maxChapter(999),
 				_shouldResetGameSpeed(false),
 				_enabled(false),
-				_nextCommand(nullptr) {
+				_nextCommand(nullptr),
+				_pauseTimeLeft(-1) {
 	_type = TYPE;
 }
 
@@ -72,12 +75,21 @@ void Script::onAllLoaded() {
 	reset();
 }
 
+void Script::onGameLoop() {
+	Resource::onGameLoop();
+	execute(kCallModeGameLoop);
+}
+
 void Script::reset() {
 	_nextCommand = findChildWithSubtype<Command>(Command::kCommandBegin);
 }
 
 bool Script::isOnBegin() {
 	return _nextCommand && _nextCommand->getSubType() == Command::kCommandBegin;
+}
+
+bool Script::isOnEnd() {
+	return _nextCommand && _nextCommand->getSubType() == Command::kCommandEnd;
 }
 
 bool Script::isEnabled() {
@@ -131,7 +143,7 @@ bool Script::shouldExecute(uint32 callMode) {
 		return false; // Wrong script type
 	}
 
-	uint32 currentChapter = 11; // TODO: Implement
+	uint32 currentChapter = 0; // TODO: Implement
 	if (currentChapter < _minChapter || currentChapter > _maxChapter) {
 		return false; // Wrong chapter
 	}
@@ -139,13 +151,44 @@ bool Script::shouldExecute(uint32 callMode) {
 	return true;
 }
 
+bool Script::isSuspended() {
+	return _pauseTimeLeft >= 0;
+}
+
+void Script::updateSuspended() {
+	if (_pauseTimeLeft >= 0) {
+		// Decrease the remaining pause time
+		Global *global = StarkServices::instance().global;
+		_pauseTimeLeft -= global->getMillisecondsPerGameloop();
+	}
+
+	if (_pauseTimeLeft < 0) {
+		// Resume to the next command
+		_pauseTimeLeft = -1;
+		_nextCommand = _nextCommand->nextCommand();
+	}
+}
+
+void Script::pause(int32 msecs) {
+	_pauseTimeLeft = msecs;
+}
+
 void Script::execute(uint32 callMode) {
 	if (!shouldExecute(callMode)) {
 		return;
 	}
 
+	if (isSuspended()) {
+		// If the script is suspended, check if it can be resumed
+		updateSuspended();
+	}
+
 	uint32 executedCommands = 0;
 	while (1) {
+		if (isSuspended()) {
+			break;
+		}
+
 		_nextCommand = _nextCommand->execute(callMode, this);
 
 		executedCommands++;
@@ -154,13 +197,18 @@ void Script::execute(uint32 callMode) {
 			break; // No next command, stop here
 		}
 
-		if (_nextCommand->getSubType() == Command::kCommandEnd) {
+		if (isOnEnd()) {
 			break; // Reached the end of the script
 		}
 
 		if (executedCommands > 50) {
 			break; // Too many consecutive commands
 		}
+	}
+
+	if (isOnEnd()) {
+		// Reset ended scripts so they can be started again
+		reset();
 	}
 }
 

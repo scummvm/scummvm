@@ -141,10 +141,10 @@ void Resource::onEnterLocation() {
 	}
 }
 
-void Resource::onGameLoop(uint msecs) {
+void Resource::onGameLoop() {
 	Common::Array<Resource *>::iterator i = _children.begin();
 	while (i != _children.end()) {
-		(*i)->onGameLoop(msecs);
+		(*i)->onGameLoop();
 		i++;
 	}
 }

@@ -160,20 +160,20 @@ void StarkEngine::mainLoop() {
 void StarkEngine::updateDisplayScene() {
 	// Get frame delay
 	static uint32 lastFrame = g_system->getMillis();
-	uint32 delta = g_system->getMillis() - lastFrame;
-	lastFrame += delta;
+	_global->setMillisecondsPerGameloop(g_system->getMillis() - lastFrame);
+	lastFrame += _global->getMillisecondsPerGameloop();
 
 	// Clear the screen
 	_gfx->clearScreen();
 
 	// Update the game resources
-	_global->getLevel()->onGameLoop(delta);
-	_global->getCurrent()->getLevel()->onGameLoop(delta);
-	_global->getCurrent()->getLocation()->onGameLoop(delta);
+	_global->getLevel()->onGameLoop();
+	_global->getCurrent()->getLevel()->onGameLoop();
+	_global->getCurrent()->getLocation()->onGameLoop();
 
 	// Render the current scene
 	RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
-	_scene->render(renderEntries, delta);
+	_scene->render(renderEntries);
 
 	// Swap buffers
 	_gfx->flipBuffer();

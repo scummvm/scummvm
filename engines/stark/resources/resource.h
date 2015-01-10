@@ -185,7 +185,7 @@ public:
 	/**
 	 * Called once per game loop
 	 */
-	virtual void onGameLoop(uint msecs);
+	virtual void onGameLoop();
 
 	/**
 	 * Called when exiting a location

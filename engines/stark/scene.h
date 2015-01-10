@@ -46,10 +46,8 @@ public:
 
 	/**
 	 * Render the scene
-	 *
-	 * @param delta Time offset (in ms) since last frame render
 	 */
-	void render(RenderEntryArray renderEntries, uint32 delta);
+	void render(RenderEntryArray renderEntries);
 
 	void initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
 			float fov, Common::Rect viewport, float nearClipPlane, float farClipPlane);

@@ -114,7 +114,7 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 	void onAllLoaded() override;
-	void onGameLoop(uint msecs) override;
+	void onGameLoop() override;
 
 	// Anim API
 	Visual *getVisual() override;
@@ -150,7 +150,7 @@ public:
 	void readData(XRCReadStream *stream) override;
 	void onPostRead() override;
 	void onAllLoaded() override;
-	void onGameLoop(uint32 msecs) override;
+	void onGameLoop() override;
 
 	// Anim API
 	void reference(Item *item) override;

@@ -25,6 +25,8 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/knowledge.h"
+#include "engines/stark/resources/script.h"
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/xrcreader.h"
 
@@ -40,6 +42,9 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 
 Command *Command::execute(uint32 callMode, Script *script) {
 	switch (_subType) {
+	case kPause:
+		opPause(script, _arguments[1].referenceValue);
+		return this;
 	case kItem3DPlaceOn:
 		op3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 		return nextCommand();
@@ -55,6 +60,11 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	}
 
 	return nextCommand();
+}
+
+void Command::opPause(Script *script, const ResourceReference &durationRef) {
+	Knowledge *duration = durationRef.resolve<Knowledge>();
+	script->pause(duration->getIntegerValue());
 }
 
 void Command::op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {

@@ -29,6 +29,7 @@
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/textureset.h"
+#include "engines/stark/resourceprovider.h"
 #include "engines/stark/skeleton_anim.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/visual/actor.h"
@@ -188,7 +189,7 @@ void AnimSub3::onAllLoaded() {
 	}
 }
 
-void AnimSub3::onGameLoop(uint msecs) {
+void AnimSub3::onGameLoop() {
 	if (!isReferenced()) {
 		return; // Animation not in use, no need to update the movie
 	}
@@ -197,7 +198,8 @@ void AnimSub3::onGameLoop(uint msecs) {
 		return;
 	}
 
-	_smacker->update(msecs);
+	Global *global = StarkServices::instance().global;
+	_smacker->update(global->getMillisecondsPerGameloop());
 }
 
 Visual *AnimSub3::getVisual() {
@@ -315,11 +317,13 @@ void AnimSub4::onAllLoaded() {
 	_currentTime = 0;
 }
 
-void AnimSub4::onGameLoop(uint32 msecs) {
-	Anim::onGameLoop(msecs);
+void AnimSub4::onGameLoop() {
+	Anim::onGameLoop();
 
 	if (isReferenced() && _totalTime) {
-		_currentTime = (_currentTime + msecs) % _totalTime;
+		Global *global = StarkServices::instance().global;
+
+		_currentTime = (_currentTime + global->getMillisecondsPerGameloop()) % _totalTime;
 		_visual->setTime(_currentTime);
 	}
 }

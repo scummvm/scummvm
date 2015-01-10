@@ -26,6 +26,7 @@
 #include "common/random.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resourceprovider.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/xrcreader.h"
 
@@ -54,17 +55,18 @@ void AnimScript::onAllLoaded() {
 	}
 }
 
-void AnimScript::onGameLoop(uint msecs) {
-	Resource::onGameLoop(msecs);
+void AnimScript::onGameLoop() {
+	Resource::onGameLoop();
 
 	if (!_anim || !_anim->isReferenced() || _nextItemIndex == -1) {
 		// The script is disabled, do nothing
 		return;
 	}
 
+	Global *global = StarkServices::instance().global;
 	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
 
-	while (_msecsToNextUpdate <= (int32)msecs) {
+	while (_msecsToNextUpdate <= (int32)global->getMillisecondsPerGameloop()) {
 		AnimScriptItem *item = _items[_nextItemIndex];
 		_msecsToNextUpdate += item->getDuration();
 
@@ -104,7 +106,7 @@ void AnimScript::onGameLoop(uint msecs) {
 		}
 	}
 
-	_msecsToNextUpdate -= msecs;
+	_msecsToNextUpdate -= global->getMillisecondsPerGameloop();
 }
 
 void AnimScript::goToNextItem() {

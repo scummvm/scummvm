@@ -42,7 +42,7 @@ public:
 
 	// Resource API
 	void onAllLoaded() override;
-	void onGameLoop(uint msecs) override;
+	void onGameLoop() override;
 
 protected:
 	void goToNextItem();

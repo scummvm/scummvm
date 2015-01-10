@@ -71,16 +71,24 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 	void onAllLoaded();
+	void onGameLoop();
 
 	void reset();
 	bool isEnabled();
 	bool isOnBegin();
+	bool isOnEnd();
 	void execute(uint32 callMode);
+
+	/** Pause the script for the specified time */
+	void pause(int32 msecs);
 
 protected:
 	void printData() override;
 
 	bool shouldExecute(uint32 callMode);
+
+	bool isSuspended();
+	void updateSuspended();
 
 	uint32 _scriptType;
 	uint32 _runEvent;
@@ -90,6 +98,7 @@ protected:
 
 	bool _enabled;
 	Command *_nextCommand;
+	int32 _pauseTimeLeft;
 };
 
 } // End of namespace Stark

@@ -52,7 +52,7 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 	_farClipPlane = farClipPlane;
 }
 
-void Scene::render(RenderEntryArray renderEntries, uint32 delta) {
+void Scene::render(RenderEntryArray renderEntries) {
 	// setup cam
 	_gfx->setupPerspective(_fov, _nearClipPlane, _farClipPlane);
 	_gfx->setupCamera(_cameraPosition, _cameraPosition + _cameraLookDirection);
