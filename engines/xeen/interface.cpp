@@ -883,7 +883,6 @@ void Interface::setIndoorsMonsters() {
 void Interface::setIndoorObjects() {
 	Common::Point mazePos = _vm->_party._mazePosition;
 	_objNumber = 0;
-	int objIndx = 0;
 	const int8 *posOffset = &SCREEN_POSITIONING[_vm->_party._mazeDirection * 48];
 	Common::Point pt;
 

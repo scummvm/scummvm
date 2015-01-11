@@ -228,7 +228,7 @@ public:
 public:
 	MobStruct();
 
-	bool synchronize(Common::SeekableReadStream &s);
+	bool synchronize(XeenSerializer &s);
 };
 
 struct MazeObject {
@@ -295,8 +295,7 @@ public:
 public:
 	MonsterObjectData(XeenEngine *vm);
 
-	void synchronize(Common::SeekableReadStream &s, bool isOutdoors, 
-		MonsterData monsterData);
+	void synchronize(XeenSerializer &s, MonsterData monsterData);
 };
 
 class HeadData {

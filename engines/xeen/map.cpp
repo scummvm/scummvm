@@ -611,11 +611,11 @@ MobStruct::MobStruct() {
 	_direction = DIR_NORTH;
 }
 
-bool MobStruct::synchronize(Common::SeekableReadStream &s) {
-	_pos.x = (int8)s.readByte();
-	_pos.y = (int8)s.readByte();
-	_id = s.readByte();
-	_direction = (Direction)s.readByte();
+bool MobStruct::synchronize(XeenSerializer &s) {
+	s.syncAsSint8(_pos.x);
+	s.syncAsSint8(_pos.y);
+	s.syncAsByte(_id);
+	s.syncAsByte(_direction);
 
 	return _id != 0xff || _pos.x != -1 || _pos.y != -1;
 }
@@ -658,85 +658,134 @@ MazeWallItem::MazeWallItem() {
 MonsterObjectData::MonsterObjectData(XeenEngine *vm): _vm(vm) {
 }
 
-void MonsterObjectData::synchronize(Common::SeekableReadStream &s, 
-		bool isOutdoors, MonsterData monsterData) {
-	_objectSprites.clear();
-	_monsterSprites.clear();
-	_monsterAttackSprites.clear();
-	_wallItemSprites.clear();
-	_objects.clear();
-	_monsters.clear();
-	_wallItems.clear();
-
+void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData monsterData) {
 	Common::Array<MobStruct> mobStructs;
+	MobStruct mobStruct;
 	byte b;
 
-	for (int i = 0; i < 16; ++i) {
-		if ((b = s.readByte()) != 0xff)
+	if (s.isLoading()) {
+		_objectSprites.clear();
+		_monsterSprites.clear();
+		_monsterAttackSprites.clear();
+		_wallItemSprites.clear();
+		_objects.clear();
+		_monsters.clear();
+		_wallItems.clear();
+	}
+
+	for (uint i = 0; i < 16; ++i) {
+		b = (i >= _objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
+		s.syncAsByte(b);
+		if (b != 0xff)
 			_objectSprites.push_back(SpriteResourceEntry(b));
 	}
-	for (int i = 0; i < 16; ++i) {
-		if ((b = s.readByte()) != 0xff)
+	for (uint i = 0; i < 16; ++i) {
+		b = (i >= _monsterSprites.size()) ? 0xff : _monsterSprites[i]._spriteId;
+		s.syncAsByte(b);
+		if (b != 0xff)
 			_monsterSprites.push_back(SpriteResourceEntry(b));
 	}
-	for (int i = 0; i < 16; ++i) {
-		if ((b = s.readByte()) != 0xff)
+	for (uint i = 0; i < 16; ++i) {
+		b = (i >= _wallItemSprites.size()) ? 0xff : _wallItemSprites[i]._spriteId;
+		s.syncAsByte(b);
+		if (b != 0xff)
 			_wallItemSprites.push_back(SpriteResourceEntry(b));
 	}
 
-	// Merge together object data
-	MobStruct mobStruct;
-	mobStruct.synchronize(s);
-	do {
-		MazeObject obj;
-		obj._position = mobStruct._pos;
-		obj._id = mobStruct._id;
-		obj._direction = mobStruct._direction;
-		obj._frame = 100;
-		obj._spriteId = _objectSprites[obj._id]._spriteId;
-		obj._sprites = &_objectSprites[obj._id]._sprites;
-
-		_objects.push_back(obj);
-		mobStruct.synchronize(s);
-	} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
-
-	// Merge together monster data
-	mobStruct.synchronize(s);
-	do {
-		MazeMonster mon;
-		mon._position = mobStruct._pos;
-		mon._id = mobStruct._id;
-		mon._spriteId = _monsterSprites[mon._id]._spriteId;
-		mon._sprites = &_monsterSprites[mon._id]._sprites;
-		mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
-
-		MonsterStruct &md = monsterData[mon._spriteId];
-		mon._hp = md._hp;
-		mon._frame = _vm->getRandomNumber(7);
-		mon._effect1 = mon._effect2 = md._animationEffect;
-		if (md._animationEffect)
-			mon._effect3 = _vm->getRandomNumber(7);
-
-		_monsters.push_back(mon);
-		mobStruct.synchronize(s);
-	} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
-
-	// Merge together wall item data
-	mobStruct.synchronize(s);
-	do {
-		if (mobStruct._id < (int)_wallItemSprites.size()) {
-			MazeWallItem wi;
-			wi._position = mobStruct._pos;
-			wi._id = mobStruct._id;
-			wi._direction = mobStruct._direction;
-			wi._spriteId = _wallItemSprites[wi._id]._spriteId;
-			wi._sprites = &_wallItemSprites[wi._id]._sprites;
-
-			_wallItems.push_back(wi);
+	if (s.isSaving()) {
+		// Save objects
+		for (uint i = 0; i < _objects.size(); ++i) {
+			mobStruct._pos = _objects[i]._position;
+			mobStruct._id = _objects[i]._id;
+			mobStruct._direction = _objects[i]._direction;
+			mobStruct.synchronize(s);
 		}
-
+		mobStruct._pos.x = mobStruct._pos.y = -1;
+		mobStruct._id = 0xff;
 		mobStruct.synchronize(s);
-	} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+
+		// Save monsters
+		for (uint i = 0; i < _monsters.size(); ++i) {
+			mobStruct._pos = _monsters[i]._position;
+			mobStruct._id = _monsters[i]._id;
+			mobStruct._direction = DIR_NORTH;
+			mobStruct.synchronize(s);
+		}
+		mobStruct._pos.x = mobStruct._pos.y = -1;
+		mobStruct._id = 0xff;
+		mobStruct.synchronize(s);
+
+		// Save wall items
+		if (_wallItems.size() == 0) {
+			MobStruct nullStruct;
+			nullStruct.synchronize(s);
+		} else {
+			for (uint i = 0; i < _wallItems.size(); ++i) {
+				mobStruct._pos = _wallItems[i]._position;
+				mobStruct._id = _wallItems[i]._id;
+				mobStruct._direction = _wallItems[i]._direction;
+				mobStruct.synchronize(s);
+			}
+		}
+		mobStruct._pos.x = mobStruct._pos.y = -1;
+		mobStruct._id = 0xff;
+		mobStruct.synchronize(s);
+
+	} else {
+		// Load monster/obbject data and merge together with sprite Ids
+		// Merge together object data
+		mobStruct.synchronize(s);
+		do {
+			MazeObject obj;
+			obj._position = mobStruct._pos;
+			obj._id = mobStruct._id;
+			obj._direction = mobStruct._direction;
+			obj._frame = 100;
+			obj._spriteId = _objectSprites[obj._id]._spriteId;
+			obj._sprites = &_objectSprites[obj._id]._sprites;
+
+			_objects.push_back(obj);
+			mobStruct.synchronize(s);
+		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+
+		// Merge together monster data
+		mobStruct.synchronize(s);
+		do {
+			MazeMonster mon;
+			mon._position = mobStruct._pos;
+			mon._id = mobStruct._id;
+			mon._spriteId = _monsterSprites[mon._id]._spriteId;
+			mon._sprites = &_monsterSprites[mon._id]._sprites;
+			mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
+
+			MonsterStruct &md = monsterData[mon._spriteId];
+			mon._hp = md._hp;
+			mon._frame = _vm->getRandomNumber(7);
+			mon._effect1 = mon._effect2 = md._animationEffect;
+			if (md._animationEffect)
+				mon._effect3 = _vm->getRandomNumber(7);
+
+			_monsters.push_back(mon);
+			mobStruct.synchronize(s);
+		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+
+		// Merge together wall item data
+		mobStruct.synchronize(s);
+		do {
+			if (mobStruct._id < (int)_wallItemSprites.size()) {
+				MazeWallItem wi;
+				wi._position = mobStruct._pos;
+				wi._id = mobStruct._id;
+				wi._direction = mobStruct._direction;
+				wi._spriteId = _wallItemSprites[wi._id]._spriteId;
+				wi._sprites = &_wallItemSprites[wi._id]._sprites;
+
+				_wallItems.push_back(wi);
+			}
+
+			mobStruct.synchronize(s);
+		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -888,7 +937,8 @@ void Map::load(int mapId) {
 				Common::String mobName = Common::String::format("maze%c%03d.mob",
 					(mapId >= 100) ? 'x' : '0', mapId);
 				File mobFile(mobName);
-				_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
+				XeenSerializer sMob(&mobFile, nullptr);
+				_mobData.synchronize(sMob, _monsterData);
 				mobFile.close();
 
 				Common::String headName = Common::String::format("aaze%c%03d.hed",
@@ -925,7 +975,8 @@ void Map::load(int mapId) {
 	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
 	File mobFile(filename, *_vm->_saves);
-	_mobData.synchronize(mobFile, _isOutdoors, _monsterData);
+	XeenSerializer sMob(&mobFile, nullptr);
+	_mobData.synchronize(sMob, _monsterData);
 	mobFile.close();
 
 	// Load sprites for the objects
@@ -1067,6 +1118,14 @@ void Map::saveMaze() {
 	OutFile fEvents(_vm, filename);
 	XeenSerializer sEvents(nullptr, &fEvents);
 	_events.synchronize(sEvents);
+	fEvents.finalize();
+
+	// Save the maze MOB file
+	filename = Common::String::format("maze%c%03d.mob",
+		(mazeNum >= 100) ? 'x' : '0', mazeNum);
+	OutFile fMob(_vm, filename);
+	XeenSerializer sMob(nullptr, &fEvents);
+	_mobData.synchronize(sMob, _monsterData);
 	fEvents.finalize();
 }
 

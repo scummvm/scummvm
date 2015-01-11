@@ -34,6 +34,19 @@ namespace Xeen {
 
 class XeenEngine;
 
+#define SYNC_AS(SUFFIX,STREAM,TYPE,SIZE) \
+	template<typename T> \
+	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
+		if (_version < minVersion || _version > maxVersion) \
+			return;	\
+		if (_loadStream) \
+			val = static_cast<TYPE>(_loadStream->read ## STREAM()); \
+		else { \
+			TYPE tmp = (TYPE)val; \
+			_saveStream->write ## STREAM(tmp); \
+		} \
+		_bytesSynced += SIZE; \
+	}
 /*
  * Main resource manager
  */
@@ -68,6 +81,8 @@ private:
 public:
 	XeenSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
 		Common::Serializer(in, out), _in(in) {}
+
+	SYNC_AS(Sint8, Byte, int8, 1)
 
 	bool finished() const { return _in != nullptr && _in->pos() >= _in->size(); }
 };
