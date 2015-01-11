@@ -28,6 +28,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 
 #include "common/file.h"

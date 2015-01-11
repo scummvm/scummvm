@@ -26,7 +26,7 @@
 #include "common/random.h"
 
 #include "engines/stark/resources/anim.h"
-#include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/xrcreader.h"
 

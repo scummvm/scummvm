@@ -28,6 +28,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/gfx/driver.h"
