@@ -99,8 +99,8 @@ private:
 	bool _flag2;
 	byte _tillMove;
 	int _objNumber;
-	bool _objectFlag2, _objectFlag3, _objectFlag4, _objectFlag5;
-	bool _objectFlag6, _objectFlag7, _objectFlag8;
+	byte _wp[20];
+	byte _wo[308];
 
 	void loadSprites();
 

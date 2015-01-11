@@ -358,15 +358,16 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_newDay = false;
 	_buttonsLoaded = false;
 	_hiliteChar = -1;
-	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	_intrIndex1 = 0;
 	_flipWtr = false;
 	_flag1 = false;
 	_flag2 = false;
 	_tillMove = 0;
 	_objNumber = 0;
-	_objectFlag2 = _objectFlag3 = _objectFlag4 = _objectFlag5 = false;
-	_objectFlag6 = _objectFlag7 = _objectFlag8 = false;
+
+	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
+	Common::fill(&_wp[0], &_wp[20], 0);
+	Common::fill(&_wo[0], &_wo[308], 0);
 
 	initDrawStructs();
 }
@@ -886,8 +887,6 @@ void Interface::setIndoorObjects() {
 	const int8 *posOffset = &SCREEN_POSITIONING[_vm->_party._mazeDirection * 48];
 	Common::Point pt;
 
-	// TODO: Fields loading
-
 	Common::Array<MazeObject> &objects = _vm->_map->_mobData._objects;
 	for (uint idx = 0; idx < objects.size(); ++idx) {
 		MazeObject &mazeObject = objects[idx];
@@ -896,7 +895,8 @@ void Interface::setIndoorObjects() {
 		int listOffset;
 		if (_vm->_files->_isDarkCc) {
 			listOffset = mazeObject._spriteId == 47 ? 1 : 0;
-		} else {
+		}
+		else {
 			listOffset = mazeObject._spriteId == 113 ? 1 : 0;
 		}
 
@@ -915,7 +915,7 @@ void Interface::setIndoorObjects() {
 
 		// Position 2
 		pt = Common::Point(mazePos.x + posOffset[7], mazePos.y + posOffset[199]);
-		if (pt == mazeObject._position && !_objectFlag2 && _indoorList._objects1._frame == -1) {
+		if (pt == mazeObject._position && !_wo[27] && _indoorList._objects1._frame == -1) {
 			_indoorList._objects1._x = INDOOR_OBJECT_X[listOffset][1];
 			_indoorList._objects1._y = INDOOR_OBJECT_Y[listOffset][1];
 			_indoorList._objects1._frame = mazeObject._frame;
@@ -923,24 +923,139 @@ void Interface::setIndoorObjects() {
 			_indoorList._objects1._flags &= ~SPRFLAG_HORIZ_FLIPPED;
 			if (mazeObject._flipped)
 				_indoorList._objects1._flags |= SPRFLAG_HORIZ_FLIPPED;
-			_objNumber = idx;
 		}
 
 		// Position 3
 		pt = Common::Point(mazePos.x + posOffset[5], mazePos.y + posOffset[197]);
-		if (pt == mazeObject._position && !_objectFlag2 && _indoorList._objects2._frame == -1) {
-			_indoorList._objects2._x = INDOOR_OBJECT_X[listOffset][1];
-			_indoorList._objects2._y = INDOOR_OBJECT_Y[listOffset][1];
+		if (pt == mazeObject._position && (!_wo[27] || !_wo[25]) && (!_wo[27] || !_wo[28]) &&
+				(!_wo[23] || !_wo[25]) && (!_wo[23] || !_wo[28]) && 
+				_indoorList._objects2._frame == -1) {
+			_indoorList._objects2._x = INDOOR_OBJECT_X[listOffset][2];
+			_indoorList._objects2._y = INDOOR_OBJECT_Y[listOffset][2];
 			_indoorList._objects2._frame = mazeObject._frame;
 			_indoorList._objects2._sprites = mazeObject._sprites;
 			_indoorList._objects2._flags &= ~SPRFLAG_HORIZ_FLIPPED;
 			if (mazeObject._flipped)
 				_indoorList._objects2._flags |= SPRFLAG_HORIZ_FLIPPED;
-			_objNumber = idx;
 		}
 
-		// Position 4 onwards
-		// TODO: Also resolve usage of _objectFlag* flags
+		// Position 4
+		pt = Common::Point(mazePos.x + posOffset[9], mazePos.y + posOffset[201]);
+		if (pt == mazeObject._position && (!_wo[27] || !_wo[26]) && (!_wo[27] || !_wo[29]) &&
+				(!_wo[24] || !_wo[26]) && (!_wo[24] || !_wo[29]) && _indoorList._objects3._frame == -1) {
+			_indoorList._objects3._x = INDOOR_OBJECT_X[listOffset][3];
+			_indoorList._objects3._y = INDOOR_OBJECT_Y[listOffset][3];
+			_indoorList._objects3._frame = mazeObject._frame;
+			_indoorList._objects3._sprites = mazeObject._sprites;
+			_indoorList._objects3._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects3._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Position 5
+		pt = Common::Point(mazePos.x + posOffset[14], mazePos.y + posOffset[206]);
+		if (pt == mazeObject._position && !_wo[22] && !_wo[27] && _indoorList._objects4._frame == -1) {
+			_indoorList._objects4._x = INDOOR_OBJECT_X[listOffset][4];
+			_indoorList._objects4._y = INDOOR_OBJECT_Y[listOffset][4];
+			_indoorList._objects4._frame = mazeObject._frame;
+			_indoorList._objects4._sprites = mazeObject._sprites;
+			_indoorList._objects4._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects4._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Position 6
+		pt = Common::Point(mazePos.x + posOffset[12], mazePos.y + posOffset[204]);
+		if (pt == mazeObject._position && !_wo[27] && (!_wo[22] || !_wo[23]) && (!_wo[22] || !_wo[20]) &&
+				(!_wo[23] || !_wo[17]) && (!_wo[20] || !_wo[17]) && _indoorList._objects5._frame == -1) {
+			_indoorList._objects5._x = INDOOR_OBJECT_X[listOffset][5];
+			_indoorList._objects5._y = INDOOR_OBJECT_Y[listOffset][5];
+			_indoorList._objects5._frame = mazeObject._frame;
+			_indoorList._objects5._sprites = mazeObject._sprites;
+			_indoorList._objects5._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects5._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Position 7
+		pt = Common::Point(mazePos.x + posOffset[16], mazePos.y + posOffset[208]);
+		if (pt == mazeObject._position && !_wo[27] && (!_wo[22] || !_wo[24]) && (!_wo[22] || !_wo[21]) &&
+			(!_wo[24] || !_wo[19]) && (!_wo[21] || !_wo[19]) && _indoorList._objects6._frame == -1) {
+			_indoorList._objects6._x = INDOOR_OBJECT_X[listOffset][6];
+			_indoorList._objects6._y = INDOOR_OBJECT_Y[listOffset][6];
+			_indoorList._objects6._frame = mazeObject._frame;
+			_indoorList._objects6._sprites = mazeObject._sprites;
+			_indoorList._objects6._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects6._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Position 8
+		pt = Common::Point(mazePos.x + posOffset[27], mazePos.y + posOffset[219]);
+		if (pt == mazeObject._position && !_wo[27] && !_wo[22] && !_wo[15] &&  _indoorList._objects7._frame == -1) {
+			_indoorList._objects7._x = INDOOR_OBJECT_X[listOffset][7];
+			_indoorList._objects7._y = INDOOR_OBJECT_Y[listOffset][7];
+			_indoorList._objects7._frame = mazeObject._frame;
+			_indoorList._objects7._sprites = mazeObject._sprites;
+			_indoorList._objects7._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects7._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Position 9
+		pt = Common::Point(mazePos.x + posOffset[25], mazePos.y + posOffset[217]);
+		if (pt == mazeObject._position && !_wo[27] && (!_wo[15] || !_wo[17]) && (!_wo[15] || !_wo[12]) &&
+				(!_wo[12] || !_wo[7]) && (!_wo[17] || !_wo[7]) && _indoorList._objects5._frame == -1) {
+			_indoorList._objects8._x = INDOOR_OBJECT_X[listOffset][8];
+			_indoorList._objects8._y = INDOOR_OBJECT_Y[listOffset][8];
+			_indoorList._objects8._frame = mazeObject._frame;
+			_indoorList._objects8._sprites = mazeObject._sprites;
+			_indoorList._objects8._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects8._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Position 10
+		pt = Common::Point(mazePos.x + posOffset[23], mazePos.y + posOffset[215]);
+		if (pt == mazeObject._position && !_wo[27] && (!_wo[22] || !_wo[20]) && (!_wo[22] || !_wo[23]) &&
+				(!_wo[20] || !_wo[17]) && (!_wo[23] || !_wo[17]) && !_wo[12] && !_wo[8] &&			
+				_indoorList._objects9._frame == -1) {
+			_indoorList._objects9._x = INDOOR_OBJECT_X[listOffset][9];
+			_indoorList._objects9._y = INDOOR_OBJECT_Y[listOffset][9];
+			_indoorList._objects9._frame = mazeObject._frame;
+			_indoorList._objects9._sprites = mazeObject._sprites;
+			_indoorList._objects9._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects9._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Block 11
+		pt = Common::Point(mazePos.x + posOffset[29], mazePos.y + posOffset[221]);
+		if (pt == mazeObject._position && !_wo[27] && !_wo[22] && (!_wo[15] || !_wo[19]) && 
+				(!_wo[15] || !_wo[14]) && (!_wo[14] || !_wo[9]) && (!_wo[19] || !_wo[9]) && 
+				_indoorList._objects10._frame == -1) {
+			_indoorList._objects10._x = INDOOR_OBJECT_X[listOffset][10];
+			_indoorList._objects10._y = INDOOR_OBJECT_Y[listOffset][10];
+			_indoorList._objects10._frame = mazeObject._frame;
+			_indoorList._objects10._sprites = mazeObject._sprites;
+			_indoorList._objects10._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects10._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
+
+		// Block 12
+		pt = Common::Point(mazePos.x + posOffset[31], mazePos.y + posOffset[223]);
+		if (pt == mazeObject._position && !_wo[27] && (!_wo[22] || !_wo[21]) && (!_wo[22] || !_wo[24]) && 
+				(!_wo[21] || !_wo[19]) && (!_wo[24] || !_wo[19]) && !_wo[14] && !_wo[10] &&
+				_indoorList._objects11._frame == -1) {
+			_indoorList._objects11._x = INDOOR_OBJECT_X[listOffset][11];
+			_indoorList._objects11._y = INDOOR_OBJECT_Y[listOffset][11];
+			_indoorList._objects11._frame = mazeObject._frame;
+			_indoorList._objects11._sprites = mazeObject._sprites;
+			_indoorList._objects11._flags &= ~SPRFLAG_HORIZ_FLIPPED;
+			if (mazeObject._flipped)
+				_indoorList._objects11._flags |= SPRFLAG_HORIZ_FLIPPED;
+		}
 	}
 }
 
