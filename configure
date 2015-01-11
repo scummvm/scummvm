@@ -4533,6 +4533,8 @@ WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
 
+ABI := $ABI
+
 BACKEND := $_backend
 MODULES += $MODULES
 MODULE_DIRS += $MODULE_DIRS
