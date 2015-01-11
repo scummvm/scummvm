@@ -135,7 +135,7 @@ void PlayerStruct::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_currentCombatSpell);
 }
 
-Condition PlayerStruct::findCondition() const {
+Condition PlayerStruct::worstCondition() const {
 	for (int cond = ERADICATED; cond >= CURSED; --cond) {
 		if (_conditions[cond])
 			return (Condition)cond;
@@ -144,7 +144,7 @@ Condition PlayerStruct::findCondition() const {
 	return NO_CONDITION;
 }
 
-int PlayerStruct::getYear(int partyYear, bool ignoreTemp) {
+int PlayerStruct::getAge(int partyYear, bool ignoreTemp) {
 	int year = MIN(partyYear - _ybDay, 254);
 
 	return ignoreTemp ? year : year + _tempAge;

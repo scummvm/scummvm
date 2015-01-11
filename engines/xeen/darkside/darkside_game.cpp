@@ -220,8 +220,8 @@ void DarkSideEngine::showStartSequence() {
 	pause(30);
 
 	// TODO: More
-	_sound->playMusic(voc[0]);
-	_sound->playMusic(voc[1]);
+	_sound->playSong(voc[0]);
+	_sound->playSong(voc[1]);
 }
 
 } // End of namespace Xeen

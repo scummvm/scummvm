@@ -126,9 +126,9 @@ public:
 	PlayerStruct();
 	void synchronize(Common::Serializer &s);
 
-	Condition findCondition() const;
+	Condition worstCondition() const;
 
-	int getYear(int partyYear, bool ignoreTemp);
+	int getAge(int partyYear, bool ignoreTemp);
 
 	int getMaxHp();
 };

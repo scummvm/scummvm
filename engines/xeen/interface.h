@@ -89,7 +89,7 @@ private:
 	int _holyBonusUIFrame;
 	int _heroismUIFrame;
 	int _flipUIFrame;
-	bool _isEarlyGame;
+	bool _newDay;
 	bool _buttonsLoaded;
 	Common::String _interfaceText;
 	int _hiliteChar;
@@ -116,7 +116,7 @@ private:
 
 	void drawViewBackground(int bgType);
 
-	void addCharacterToRoster();
+	void moveCharacterToRoster();
 
 	void animate3d();
 
@@ -130,7 +130,7 @@ private:
 
 	void moveMonsters();
 
-	void setIconButtons();
+	void setMainButtons();
 public:
 	Interface(XeenEngine *vm);
 

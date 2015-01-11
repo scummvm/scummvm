@@ -355,7 +355,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_holyBonusUIFrame = 0;
 	_heroismUIFrame = 0;
 	_flipUIFrame = 0;
-	_isEarlyGame = false;
+	_newDay = false;
 	_buttonsLoaded = false;
 	_hiliteChar = -1;
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
@@ -411,7 +411,7 @@ void Interface::setup() {
 		_vm->_party._activeParty[i] = _vm->_roster[_vm->_party._partyMembers[i]];
 	}
 
-	_isEarlyGame = _vm->_party._minutes >= 300;
+	_newDay = _vm->_party._minutes >= 300;
 }
 
 void Interface::manageCharacters(bool soundPlayed) {
@@ -546,7 +546,7 @@ start:
 				} else {
 					screen.fadeOut(4);
 					w.close();
-					addCharacterToRoster();
+					moveCharacterToRoster();
 					_vm->_saves->writeCharFile();
 					screen.fadeOut(4);
 					flag = true;
@@ -636,7 +636,7 @@ void Interface::assembleBorder() {
 
 	// Draw UI element to indicate whether can spot hidden doors
 	_borderSprites.draw(screen,
-		(_vm->_spotDoorsAllowed && _vm->_party.checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
+		(_vm->_thinWall && _vm->_party.checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
 		Common::Point(194, 91));
 	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
 
@@ -788,7 +788,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 			_vm->_party._partyCount); ++idx) {
 		int charIndex = stateFlag ? _combatCharIds[idx] : idx;
 		PlayerStruct &ps = _vm->_party._activeParty[charIndex];
-		Condition charCondition = ps.findCondition();
+		Condition charCondition = ps.worstCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 		
 		SpriteResource *sprites = (charFrame > 4 && !_charFaces[0].empty()) ?
@@ -847,7 +847,7 @@ void Interface::drawViewBackground(int bgType) {
 	}
 }
 
-void Interface::addCharacterToRoster() {
+void Interface::moveCharacterToRoster() {
 	error("TODO");
 }
 
@@ -975,7 +975,7 @@ void Interface::startup() {
 	for (int i = 1; i < 16; ++i)
 		_mainList[i]._sprites = &_iconSprites;
 
-	setIconButtons();
+	setMainButtons();
 
 	_tillMove = false;
 }
@@ -992,7 +992,7 @@ void Interface::moveMonsters() {
 
 }
 
-void Interface::setIconButtons() {
+void Interface::setMainButtons() {
 	clearButtons();
 
 	addButton(Common::Rect(235,  75, 259,  95),  83, &_iconSprites);

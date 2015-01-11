@@ -39,7 +39,7 @@ public:
 
 	void startMusic(int v1);
 
-	void playMusic(const File &f) {}
+	void playSong(const File &f) {}
 
 	void playSample(const Common::SeekableReadStream *stream, int v2) {}
 };

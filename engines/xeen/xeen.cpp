@@ -46,7 +46,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_sound = nullptr;
 	_eventData = nullptr;
 	_loadDarkSide = 1;
-	_spotDoorsAllowed = false;
+	_thinWall = false;
 	_dangerSenseAllowed = false;
 	_face1State = 0;
 	_face2State = 0;

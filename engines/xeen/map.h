@@ -36,7 +36,7 @@ namespace Xeen {
 
 class XeenEngine;
 
-enum DamageType { 
+enum DamageType {
 	DT_PHYSICAL = 0, DT_1 = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,
 	DT_COLD = 4, DT_POISON = 5, DT_ENERGY = 6, DT_SLEEP = 7,
 	DT_FINGEROFDEATH = 8, DT_HOLYWORD = 9, DT_MASS_DISTORTION = 10,
@@ -156,11 +156,42 @@ enum MazeFlags {
 
 enum MazeFlags2 { FLAG_IS_OUTDOORS = 0x8000, FLAG_IS_DARK = 0x4000 };
 
+enum SurfaceType {
+	SURFTYPE_DEFAULT = 0, SURFTYPE_DIRT = 1, SURFTYPE_GRASS = 2,
+	SURFTYPE_SNOW = 3, SURFTYPE_SWAMP = 4, SURFTYPE_LAVA = 5,
+	SURFTYPE_DESERT = 6, SURFTYPE_ROAD = 7, SURFTYPE_WATER = 8,
+	SURFTYPE_TFLR = 9, SURFTYPE_SKY = 10, SURFTYPE_CROAD = 11,
+	SURFTYPE_SEWER = 12, SURFTYPE_CLOUD = 13, SURFTYPE_SCORCH = 14,
+	SURFTYPE_SPACE = 15
+};
+
+union MazeWallLayers {
+	struct MazeWallIndoors {
+		int _wallNorth : 4;
+		int _wallEast : 4;
+		int _wallSouth : 4;
+		int _wallWest : 4;
+	} _indoors;
+	struct MazeWallOutdoors {
+		SurfaceType _surfaceId : 4;
+		int _iMiddle : 4;
+		int _iTop : 4;
+		int _iOverlay : 4;
+	} _outdoors;
+	uint16 _data;
+};
+
+struct MazeCell {
+	int _flags;
+	int _surfaceId;
+	MazeCell() : _flags(0), _surfaceId(0) {}
+};
+
 class MazeData {
 public:
 	// Resource fields
-	int _wallData[MAP_HEIGHT][MAP_WIDTH];
-	int _cellFlag[MAP_HEIGHT][MAP_WIDTH];
+	MazeWallLayers _wallData[MAP_HEIGHT][MAP_WIDTH];
+	MazeCell _cells[MAP_HEIGHT][MAP_WIDTH];
 	int _mazeNumber;
 	SurroundingMazes _surroundingMazes;
 	int _mazeFlags;
@@ -185,7 +216,7 @@ public:
 
 	void setAllTilesStepped();
 
-	void clearCellBits();
+	void clearCellSurfaces();
 };
 
 class MobStruct {
@@ -293,13 +324,28 @@ private:
 	int _sideObj;
 	int _sideMon;
 	bool _stepped;
+	int _mazeDataIndex;
+	bool _currentSteppedOn;
+	int _currentSurfaceId;
+
+	void cellFlagLookup(const Common::Point &pt);
 public:
 	bool _isOutdoors;
 	MonsterObjectData _mobData;
+	bool _currentIsGrate;
+	bool _currentCantRest;
+	bool _currentIsDrain;
+	bool _currentIsEvent;
+	bool _currentIsObject;
+	int _currentMonsterFlags;
 public:
 	Map(XeenEngine *vm);
 
 	void load(int mapId);
+
+	int mazeLookup(const Common::Point &pt, int directionLayerIndex);
+
+	void setCellSurfaceFlags(const Common::Point &pt, int bits);
 };
 
 } // End of namespace Xeen

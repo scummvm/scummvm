@@ -536,8 +536,8 @@ void MazeDifficulties::synchronize(Common::SeekableReadStream &s) {
 
 MazeData::MazeData() {
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
-		Common::fill(&_wallData[y][0], &_wallData[y][MAP_WIDTH], 0);
-		Common::fill(&_cellFlag[y][0], &_cellFlag[y][MAP_WIDTH], 0);
+		for (int x = 0; x < MAP_WIDTH; ++x)
+			_wallData[y][x]._data = 0;
 		Common::fill(&_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH], 0);
 		Common::fill(&_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH], 0);
 		_wallTypes[y] = 0;
@@ -554,11 +554,14 @@ MazeData::MazeData() {
 void MazeData::synchronize(Common::SeekableReadStream &s) {
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x)
-			_wallData[y][x] = s.readUint16LE();
+			_wallData[y][x]._data = s.readUint16LE();
 	}
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
-		for (int x = 0; x < MAP_WIDTH; ++x)
-			_cellFlag[y][x] = s.readByte();
+		for (int x = 0; x < MAP_WIDTH; ++x) {
+			byte b = s.readByte();
+			_cells[y][x]._surfaceId = b & 7;
+			_cells[y][x]._flags = b & 0xF8;
+		}
 	}
 
 	_mazeNumber = s.readUint16LE();
@@ -594,10 +597,10 @@ void MazeData::setAllTilesStepped() {
 		Common::fill(&_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH], true);
 }
 
-void MazeData::clearCellBits() {
+void MazeData::clearCellSurfaces() {
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x)
-			_cellFlag[y][x] &= 0xF8;
+			_cells[y][x]._surfaceId = 0;
 	}
 }
 
@@ -763,6 +766,15 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideMon = 0;
 	_isOutdoors = false;
 	_stepped = false;
+	_mazeDataIndex = 0;
+	_currentSteppedOn = false;
+	_currentSurfaceId = 0;
+	_currentIsGrate = false;
+	_currentCantRest = false;
+	_currentIsDrain = false;
+	_currentIsEvent = false;
+	_currentIsObject = false;
+	_currentMonsterFlags = 0;
 }
 
 void Map::load(int mapId) {
@@ -851,7 +863,7 @@ void Map::load(int mapId) {
 				mazeData->setAllTilesStepped();
 			if (!isDarkCc && _vm->_party._gameFlags[25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
-				mazeData->clearCellBits();
+				mazeData->clearCellSurfaces();
 			}
 
 			_isOutdoors = (mazeData->_mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
@@ -946,6 +958,130 @@ void Map::load(int mapId) {
 		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
 		_mobData._wallItemSprites[i]._sprites.load(filename);
 	}
+}
+
+int Map::mazeLookup(const Common::Point &pt, int directionLayerIndex) {
+	Common::Point pos = pt;
+	int mapId = _vm->_party._mazeId;
+
+	if (pt.x < -16 || pt.y < -16 || pt.x >= 32 || pt.y >= 32)
+		error("Invalid coordinate");
+
+	// Find the correct maze data out of the set to use
+	_mazeDataIndex = 0;
+	while (_mazeData[_mazeDataIndex]._mazeId != _vm->_party._mazeId)
+		++_mazeDataIndex;
+
+	// Handle map changing to the north or south as necessary
+	if (pos.y & 16) {
+		if (pos.y >= 0) {
+			pos.y -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._north;
+		} else {
+			pos.y += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._south;
+		}
+
+		if (mapId) {
+			// Move to the correct map to north/south
+			_mazeDataIndex = 0;
+			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+				++_mazeDataIndex;
+		} else {
+			// No map, so reached outside indoor area or outer space outdoors
+			_currentSteppedOn = true;
+			return _isOutdoors ? SURFTYPE_SPACE : 0x8888;
+		}
+	}
+
+	// Handle map changing to the east or west as necessary
+	if (pos.x & 16) {
+		if (pos.x >= 0) {
+			pos.x -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
+		} else {
+			pos.x += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
+		}
+
+		if (mapId) {
+			_mazeDataIndex = 0;
+			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+				++_mazeDataIndex;
+		}
+	}
+
+	if (mapId) {
+		if (_isOutdoors) {
+			_currentSurfaceId = _mazeData[_mazeDataIndex]._wallData[pos.y][pos.x]._outdoors._surfaceId;
+		} else {
+			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pos.y][pos.x]._surfaceId;
+		}
+
+		if (_currentSurfaceId == SURFTYPE_SPACE || _currentSurfaceId == SURFTYPE_SKY) {
+			_currentSteppedOn = true;
+		} else {
+			_currentSteppedOn = _mazeData[_mazeDataIndex]._steppedOnTiles[pos.y][pos.x];
+		}
+
+		return (_mazeData[_mazeDataIndex]._wallData[pos.y][pos.x]._data >> (directionLayerIndex * 4)) & 0xF;
+
+	} else {
+		_currentSteppedOn = _isOutdoors;
+		return _isOutdoors ? SURFTYPE_SPACE : 0x8888;
+	}
+}
+
+void Map::cellFlagLookup(const Common::Point &pt) {
+	Common::Point pos = pt;
+	int mapId = _vm->_party._mazeId;
+	_mazeDataIndex = 0;
+	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+		++_mazeDataIndex;
+
+	// Handle map changing to the north or south as necessary
+	if (pos.y & 16) {
+		if (pos.y >= 0) {
+			pos.y -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._north;
+		} else {
+			pos.y += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._south;
+		}
+
+		_mazeDataIndex = 0;
+		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+			++_mazeDataIndex;
+	}
+
+	// Handle map changing to the east or west as necessary
+	if (pos.x & 16) {
+		if (pos.x >= 0) {
+			pos.x -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
+		} else {
+			pos.x += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
+		}
+
+		_mazeDataIndex = 0;
+		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+			++_mazeDataIndex;
+	}
+
+	// Get the cell flags
+	const MazeCell &cell = _mazeData[_mazeDataIndex]._cells[pos.y][pos.x];
+	_currentIsGrate = cell._flags & OUTFLAG_GRATE;
+	_currentCantRest = cell._flags & FLAG_WATER;
+	_currentIsDrain = cell._flags & OUTFLAG_DRAIN;
+	_currentIsEvent = cell._flags & FLAG_AUTOEXECUTE_EVENT;
+	_currentIsObject = cell._flags & OUTFLAG_OBJECT_EXISTS;
+	_currentMonsterFlags = cell._flags & 7;
+}
+
+void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
+	mazeLookup(pt, 0);
+	_mazeData[0]._cells[pt.y][pt.x]._surfaceId |= bits;
 }
 
 } // End of namespace Xeen

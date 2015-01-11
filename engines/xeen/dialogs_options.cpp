@@ -54,7 +54,7 @@ void OptionsMenu::execute() {
 	EventsManager &events = *_vm->_events;
 	
 	File newBright("newbrigh.m");
-	_vm->_sound->playMusic(newBright);
+	_vm->_sound->playSong(newBright);
 
 	screen._windows[GAME_WINDOW].setBounds(Common::Rect(72, 25, 248, 175));
 
