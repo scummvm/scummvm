@@ -190,6 +190,8 @@ void StateProvider::writeResourceTree(Resource *resource, Common::WriteStream *s
 		stream->writeByte(resource->getSubType());
 		stream->writeUint32LE(resourceStream.size());
 		stream->write(resourceStream.getData(), resourceStream.size());
+
+		delete serializer;
 	}
 
 	// Serialize the resource children

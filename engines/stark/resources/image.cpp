@@ -44,6 +44,7 @@ Resource *Image::construct(Resource *parent, byte subType, uint16 index, const C
 }
 
 Image::~Image() {
+	delete _visual;
 }
 
 Image::Image(Resource *parent, byte subType, uint16 index, const Common::String &name) :

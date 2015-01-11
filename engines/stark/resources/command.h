@@ -46,6 +46,8 @@ public:
 		kCommandBegin = 0,
 		kCommandEnd = 1,
 
+		kGoTo = 5,
+
 		kPause = 9,
 
 		kItem3DPlaceOn = 81,

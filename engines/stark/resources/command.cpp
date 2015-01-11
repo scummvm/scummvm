@@ -42,6 +42,8 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 
 Command *Command::execute(uint32 callMode, Script *script) {
 	switch (_subType) {
+	case kGoTo:
+		return nullptr; // TODO, just end the script for now
 	case kPause:
 		opPause(script, _arguments[1].referenceValue);
 		return this;
@@ -108,6 +110,7 @@ void Command::opPlaceDirection(const ResourceReference &itemRef, int32 direction
 
 Command *Command::nextCommand() {
 	assert(!_arguments.empty());
+	assert(_arguments[0].type == Argument::kTypeInteger1);
 
 	return resolveArgumentSiblingReference(_arguments[0]);
 }

@@ -73,7 +73,8 @@ void ArchiveLoader::unloadUnused() {
 	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
 		if (!(*it)->isInUse()) {
 			delete *it;
-			_archives.erase(it);
+			it = _archives.erase(it);
+			it--;
 		}
 	}
 }
