@@ -31,7 +31,9 @@
 
 namespace Xeen {
 
-enum Direction { DIR_NORTH = 0, DIR_EAST = 1, DIR_SOUTH = 2, DIR_WEST = 3 };
+enum Direction { 
+	DIR_NORTH = 0, DIR_EAST = 1, DIR_SOUTH = 2, DIR_WEST = 3, DIR_ALL = 4
+};
 
 enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
 

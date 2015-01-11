@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "xeen/party.h"
+#include "xeen/scripts.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -328,10 +329,13 @@ private:
 	bool _currentSteppedOn;
 	int _currentSurfaceId;
 
+	void loadEvents(int mapId);
+
 	void cellFlagLookup(const Common::Point &pt);
 public:
 	bool _isOutdoors;
 	MonsterObjectData _mobData;
+	MazeEvents _events;
 	bool _currentIsGrate;
 	bool _currentCantRest;
 	bool _currentIsDrain;

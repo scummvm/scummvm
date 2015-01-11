@@ -842,12 +842,15 @@ void Map::load(int mapId) {
 		}
 	}
 
+	// Load any events for the new map
+	loadEvents(mapId);
+
+	// Iterate through loading the given maze as well as the two successive
+	// mazes in each of the four cardinal directions
 	bool isDarkCc = _vm->getGameID() == GType_DarkSide;
 	MazeData *mazeData = &_mazeData[0];
 	bool textLoaded = false;
 
-	// Iterate through loading the given maze as well as the two successive
-	// mazes in each of the four cardinal directions
 	for (int idx = 0; idx < 9; ++idx, ++mazeData) {
 		mazeData->_mazeId = mapId;
 
@@ -1030,6 +1033,28 @@ int Map::mazeLookup(const Common::Point &pt, int directionLayerIndex) {
 		_currentSteppedOn = _isOutdoors;
 		return _isOutdoors ? SURFTYPE_SPACE : 0x8888;
 	}
+}
+
+/**
+ * Load the events for a new map
+ */
+void Map::loadEvents(int mapId) {
+	// Load events
+	Common::String filename = Common::String::format("maze%c%03d.evt",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	File fEvents(filename);
+	_events.synchronize(fEvents);
+	fEvents.close();
+
+	// Load text data
+	filename = Common::String::format("aaze%c%03d.txt",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	File fText(filename);
+	_events._text.resize(fText.size());
+	fText.read(&_events._text[0], fText.size());
+	
+	_events.synchronize(fText);
+	fText.close();
 }
 
 void Map::cellFlagLookup(const Common::Point &pt) {

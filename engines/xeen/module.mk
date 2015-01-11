@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	resources.o \
 	saves.o \
 	screen.o \
+	scripts.o \
 	sound.o \
 	sprites.o \
 	xeen.o \
