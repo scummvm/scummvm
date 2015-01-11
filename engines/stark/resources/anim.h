@@ -39,15 +39,20 @@ class VisualSmacker;
 class Visual;
 class XRCReadStream;
 
+/**
+ * Animation base class
+ *
+ * Animations provide a time dependent visual state to Items
+ */
 class Anim : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kAnim;
 
 	enum SubType {
-		kAnimSub1 = 1,
-		kAnimSub2 = 2,
-		kAnimSub3 = 3,
-		kAnimSub4 = 4
+		kAnimImages   = 1,
+		kAnimSub2     = 2,
+		kAnimVideo    = 3,
+		kAnimSkeleton = 4
 	};
 
 	/** Anim factory */
@@ -59,13 +64,20 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 
+	/** Sets the animation frame to be displayed */
 	virtual void selectFrame(uint32 frameIndex);
+
+	/** Obtain the Visual to be used to render the animation */
 	virtual Visual *getVisual();
 
-	// Refcounting, used to know if the anim script needs to run
-	virtual void reference(Item *item);
-	virtual void dereference(Item *item);
-	bool isReferenced();
+	/** Associate the animation to an Item */
+	virtual void applyToItem(Item *item);
+
+	/** Deassociate the animation from an item */
+	virtual void removeFromItem(Item *item);
+
+	/** Check is the animation is being used by an item */
+	bool isInUse();
 
 protected:
 	virtual void printData() override;
@@ -76,10 +88,13 @@ protected:
 	int32 _refCount;
 };
 
-class AnimSub1 : public Anim {
+/**
+ * Displays still images controlled by an AnimScript
+ */
+class AnimImages : public Anim {
 public:
-	AnimSub1(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimSub1();
+	AnimImages(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimImages();
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
@@ -106,10 +121,13 @@ public:
 	virtual ~AnimSub2();
 };
 
-class AnimSub3 : public Anim {
+/**
+ * Displays a Smacker video
+ */
+class AnimVideo : public Anim {
 public:
-	AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimSub3();
+	AnimVideo(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimVideo();
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
@@ -141,10 +159,13 @@ protected:
 	uint32 _field_7C;
 };
 
-class AnimSub4 : public Anim {
+/**
+ * Animates a 3D mesh skeleton
+ */
+class AnimSkeleton : public Anim {
 public:
-	AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimSub4();
+	AnimSkeleton(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~AnimSkeleton();
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
@@ -153,8 +174,8 @@ public:
 	void onGameLoop() override;
 
 	// Anim API
-	void reference(Item *item) override;
-	void dereference(Item *item) override;
+	void applyToItem(Item *item) override;
+	void removeFromItem(Item *item) override;
 	Visual *getVisual() override;
 
 protected:

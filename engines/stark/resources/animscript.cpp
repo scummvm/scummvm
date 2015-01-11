@@ -58,7 +58,7 @@ void AnimScript::onAllLoaded() {
 void AnimScript::onGameLoop() {
 	Resource::onGameLoop();
 
-	if (!_anim || !_anim->isReferenced() || _nextItemIndex == -1) {
+	if (!_anim || !_anim->isInUse() || _nextItemIndex == -1) {
 		// The script is disabled, do nothing
 		return;
 	}

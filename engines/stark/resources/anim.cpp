@@ -40,14 +40,14 @@ namespace Stark {
 
 Resource *Anim::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
-	case kAnimSub1:
-		return new AnimSub1(parent, subType, index, name);
+	case kAnimImages:
+		return new AnimImages(parent, subType, index, name);
 	case kAnimSub2:
 		return new AnimSub2(parent, subType, index, name);
-	case kAnimSub3:
-		return new AnimSub3(parent, subType, index, name);
-	case kAnimSub4:
-		return new AnimSub4(parent, subType, index, name);
+	case kAnimVideo:
+		return new AnimVideo(parent, subType, index, name);
+	case kAnimSkeleton:
+		return new AnimSkeleton(parent, subType, index, name);
 	default:
 		error("Unknown anim subtype %d", subType);
 	}
@@ -77,14 +77,14 @@ Visual *Anim::getVisual() {
 	return nullptr;
 }
 
-void Anim::reference(Item *item) {
+void Anim::applyToItem(Item *item) {
 	_refCount++;
 }
-void Anim::dereference(Item *item) {
+void Anim::removeFromItem(Item *item) {
 	_refCount--;
 }
 
-bool Anim::isReferenced() {
+bool Anim::isInUse() {
 	return _refCount > 0;
 }
 
@@ -93,29 +93,29 @@ void Anim::printData() {
 	debug("numFrames: %d", _numFrames);
 }
 
-AnimSub1::~AnimSub1() {
+AnimImages::~AnimImages() {
 }
 
-AnimSub1::AnimSub1(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimImages::AnimImages(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_field_3C(0),
 				_currentDirection(0),
 				_currentFrameImage(nullptr) {
 }
 
-void AnimSub1::readData(XRCReadStream *stream) {
+void AnimImages::readData(XRCReadStream *stream) {
 	Anim::readData(stream);
 
 	_field_3C = stream->readFloat();
 }
 
-void AnimSub1::onAllLoaded() {
+void AnimImages::onAllLoaded() {
 	Anim::onAllLoaded();
 
 	_directions = listChildren<Direction>();
 }
 
-void AnimSub1::selectFrame(uint32 frameIndex) {
+void AnimImages::selectFrame(uint32 frameIndex) {
 	if (frameIndex > _numFrames) {
 		error("Error setting frame %d for anim '%s'", frameIndex, getName().c_str());
 	}
@@ -123,13 +123,13 @@ void AnimSub1::selectFrame(uint32 frameIndex) {
 	_currentFrame = frameIndex;
 }
 
-Visual *AnimSub1::getVisual() {
+Visual *AnimImages::getVisual() {
 	Direction *direction = _directions[_currentDirection];
 	_currentFrameImage = direction->findChildWithIndex<Image>(_currentFrame);
 	return _currentFrameImage->getVisual();
 }
 
-void AnimSub1::printData() {
+void AnimImages::printData() {
 	Anim::printData();
 
 	debug("field_3C: %f", _field_3C);
@@ -142,11 +142,11 @@ AnimSub2::AnimSub2(Resource *parent, byte subType, uint16 index, const Common::S
 				Anim(parent, subType, index, name) {
 }
 
-AnimSub3::~AnimSub3() {
+AnimVideo::~AnimVideo() {
 	delete _smacker;
 }
 
-AnimSub3::AnimSub3(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimVideo::AnimVideo(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_width(0),
 				_height(0),
@@ -156,7 +156,7 @@ AnimSub3::AnimSub3(Resource *parent, byte subType, uint16 index, const Common::S
 				_field_7C(0) {
 }
 
-void AnimSub3::readData(XRCReadStream *stream) {
+void AnimVideo::readData(XRCReadStream *stream) {
 	Anim::readData(stream);
 	_smackerFile = stream->readString();
 	_width = stream->readUint32LE();
@@ -181,7 +181,7 @@ void AnimSub3::readData(XRCReadStream *stream) {
 	_archiveName = stream->getArchiveName();
 }
 
-void AnimSub3::onAllLoaded() {
+void AnimVideo::onAllLoaded() {
 	if (!_smacker) {
 		ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
 		Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_smackerFile, _archiveName);
@@ -189,8 +189,8 @@ void AnimSub3::onAllLoaded() {
 	}
 }
 
-void AnimSub3::onGameLoop() {
-	if (!isReferenced()) {
+void AnimVideo::onGameLoop() {
+	if (!isInUse()) {
 		return; // Animation not in use, no need to update the movie
 	}
 
@@ -202,11 +202,11 @@ void AnimSub3::onGameLoop() {
 	_smacker->update(global->getMillisecondsPerGameloop());
 }
 
-Visual *AnimSub3::getVisual() {
+Visual *AnimVideo::getVisual() {
 	return _smacker;
 }
 
-void AnimSub3::printData() {
+void AnimVideo::printData() {
 	Anim::printData();
 
 	debug("smackerFile: %s", _smackerFile.c_str());
@@ -230,12 +230,12 @@ void AnimSub3::printData() {
 	debug("field_7C: %d", _field_7C);
 }
 
-AnimSub4::~AnimSub4() {
+AnimSkeleton::~AnimSkeleton() {
 	delete _visual;
 	delete _seletonAnim;
 }
 
-AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimSkeleton::AnimSkeleton(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_castsShadow(true),
 				_field_48(0),
@@ -247,8 +247,8 @@ AnimSub4::AnimSub4(Resource *parent, byte subType, uint16 index, const Common::S
 	_visual = new VisualActor();
 }
 
-void AnimSub4::reference(Item *item) {
-	Anim::reference(item);
+void AnimSkeleton::applyToItem(Item *item) {
+	Anim::applyToItem(item);
 
 	ItemSub10 *actor = Resource::cast<ItemSub10>(item);
 
@@ -260,15 +260,15 @@ void AnimSub4::reference(Item *item) {
 	_visual->setAnim(_seletonAnim);
 }
 
-void AnimSub4::dereference(Item *item) {
-	Anim::dereference(item);
+void AnimSkeleton::removeFromItem(Item *item) {
+	Anim::removeFromItem(item);
 }
 
-Visual *AnimSub4::getVisual() {
+Visual *AnimSkeleton::getVisual() {
 	return _visual;
 }
 
-void AnimSub4::readData(XRCReadStream *stream) {
+void AnimSkeleton::readData(XRCReadStream *stream) {
 	Anim::readData(stream);
 
 	_animFilename = stream->readString();
@@ -298,7 +298,7 @@ void AnimSub4::readData(XRCReadStream *stream) {
 	_archiveName = stream->getArchiveName();
 }
 
-void AnimSub4::onPostRead() {
+void AnimSkeleton::onPostRead() {
 	// Get the archive loader service
 	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
 
@@ -310,17 +310,17 @@ void AnimSub4::onPostRead() {
 	delete stream;
 }
 
-void AnimSub4::onAllLoaded() {
+void AnimSkeleton::onAllLoaded() {
 	Anim::onAllLoaded();
 
 	_totalTime = _seletonAnim->getLength();
 	_currentTime = 0;
 }
 
-void AnimSub4::onGameLoop() {
+void AnimSkeleton::onGameLoop() {
 	Anim::onGameLoop();
 
-	if (isReferenced() && _totalTime) {
+	if (isInUse() && _totalTime) {
 		Global *global = StarkServices::instance().global;
 
 		_currentTime = (_currentTime + global->getMillisecondsPerGameloop()) % _totalTime;
@@ -328,7 +328,7 @@ void AnimSub4::onGameLoop() {
 	}
 }
 
-void AnimSub4::printData() {
+void AnimSkeleton::printData() {
 	Anim::printData();
 
 	debug("filename: %s", _animFilename.c_str());

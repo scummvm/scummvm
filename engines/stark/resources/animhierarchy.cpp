@@ -82,8 +82,8 @@ void AnimHierarchy::setItemAnim(ItemVisual *item, int32 index) {
 }
 
 void AnimHierarchy::unselectItemAnim(ItemVisual *item) {
-	if (_currentAnim && _currentAnim->isReferenced()) {
-		_currentAnim->dereference(item);
+	if (_currentAnim && _currentAnim->isInUse()) {
+		_currentAnim->removeFromItem(item);
 	}
 
 	_currentAnim = nullptr;
@@ -107,8 +107,8 @@ void AnimHierarchy::selectItemAnim(ItemVisual *item) {
 		error("Failed to set an animation for item %s", item->getName().c_str());
 	}
 
-	if (!_currentAnim->isReferenced()) {
-		_currentAnim->reference(item);
+	if (!_currentAnim->isInUse()) {
+		_currentAnim->applyToItem(item);
 	}
 }
 
