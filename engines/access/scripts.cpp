@@ -38,6 +38,9 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_charsOrg = Common::Point(0, 0);
 	_texsOrg = Common::Point(0, 0);
 	setOpcodes();
+
+	for (int i = 0; i < 60; i++)
+		TMPLPTR[i] = 0;
 }
 
 Scripts::~Scripts() {
@@ -392,8 +395,8 @@ void Scripts::cmdNewRoom() {
 	cmdRetPos();
 }
 
-void Scripts::cmdConverse() {
-	_vm->_conversation = _data->readUint16LE();
+void Scripts::converse1(int val) {
+	_vm->_conversation = val;
 	_vm->_room->clearRoom();
 	_vm->freeChar();
 	_vm->_char->loadChar(_vm->_conversation);
@@ -407,6 +410,11 @@ void Scripts::cmdConverse() {
 	if (_vm->_screen->_vesaMode) {
 		_vm->_converseMode = 1;
 	}
+}
+
+void Scripts::cmdConverse() {
+	int val = _data->readUint16LE();
+	converse1(val);
 }
 
 void Scripts::cmdCheckFrame() {
@@ -475,8 +483,7 @@ void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
 	int val = _data->readByte();
 	_vm->ASK[idx] = val;
-	_vm->_startAboutBox = 0;
-	_vm->_startAboutItem = 0;
+	_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
 
 void Scripts::cmdSetTimer() {
@@ -609,7 +616,41 @@ void Scripts::cmdRemoveLast() {
 }
 
 void Scripts::cmdDoTravel() {
-	error("TODO: DEMO - cmdDoTravel");
+	while (true) {
+		_vm->_travelBox->getList();
+		int type = 0;
+		int boxX = _vm->_travelBox->doBox_v1(_vm->STARTTRAVELITEM, _vm->STARTTRAVELBOX, type);
+		_vm->STARTTRAVELITEM = _vm->BOXDATASTART;
+		_vm->STARTTRAVELBOX = _vm->BOXSELECTY;
+
+		if (boxX == -1)
+			type = 2;
+
+		if (type != 2) {
+			int idx = TMPLPTR[boxX];
+			warning("TODO: if (_byte1EEB5[idx] != _byte26CB5) {");
+			// _vm->_bubbleBox->_bubbleTitle = "TRAVEL";
+			// _vm->_scripts->printString("YOU CAN'T GET THERE FROM HERE.");
+			// continue;
+			// }
+			if (_vm->_player->_roomNumber != idx) {
+				if (Martian::TRAVEL_POS[idx][0] == -1) {
+					_vm->_player->_roomNumber = idx;
+					_vm->_room->_conFlag = true;
+					_vm->_scripts->converse1(Martian::TRAVEL_POS[idx][1]);
+					return;
+				}
+				_vm->_player->_rawPlayer = Common::Point(Martian::TRAVEL_POS[idx][0], Martian::TRAVEL_POS[idx][1]);
+				cmdRetPos();
+				return;
+			}
+		}
+
+		if (_vm->_player->_roomNumber == -1)
+			continue;
+
+		return;
+	}
 }
 
 void Scripts::cmdCheckAbout() {

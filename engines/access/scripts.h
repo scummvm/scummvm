@@ -44,6 +44,8 @@ private:
 
 	void charLoop();
 	void printWatch();
+	void converse1(int val);
+
 protected:
 	Common::SeekableReadStream *_data;
 	ScriptMethodPtr COMMAND_LIST[100];
@@ -143,6 +145,8 @@ public:
 	int _choice;
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
+
+	int TMPLPTR[60];
 public:
 	Scripts(AccessEngine *vm);
 

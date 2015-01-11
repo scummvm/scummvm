@@ -55,8 +55,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_currentMan = 0;
 	_currentManOld = -1;
 	_converseMode = 0;
-	_startAboutBox = 0;
-	_startTravelBox = 0;
 	_numAnimTimers = 0;
 	_startup = 0;
 	_currentCharFlag = false;
@@ -99,7 +97,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	STARTTRAVELITEM = STARTTRAVELBOX = 0;
 	for (int i = 0; i < 16; i++)
 		ASK[i];
-	_startAboutItem = 0;
+	_startAboutItem = _startAboutBox = 0;
 	_vidEnd = false;
 }
 

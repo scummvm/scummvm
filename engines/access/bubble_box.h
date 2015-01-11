@@ -82,6 +82,9 @@ public:
 	void drawBubble(int index);
 
 	void doBox(int item, int box);
+
+	int doBox_v1(int item, int box, int &type);
+	void getList() { warning("TODO: getList"); } // TODO: Check if implementation is useful
 };
 
 } // End of namespace Access

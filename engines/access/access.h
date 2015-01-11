@@ -180,8 +180,6 @@ public:
 	int _playerDataCount;
 	int _currentManOld;
 	int _converseMode;
-	int _startAboutBox;
-	int _startTravelBox;
 	bool _currentCharFlag;
 	bool _boxSelect;
 	int _scale;
@@ -210,11 +208,17 @@ public:
 	uint32 _newDate;
 	int _flags[256];
 
+	// Fields used by MM
+	// TODO: Refactor
 	int TRAVEL[60];
 	int STARTTRAVELITEM;
 	int STARTTRAVELBOX;
 	int ASK[16];
 	int _startAboutItem;
+	int _startAboutBox;
+	int BOXDATASTART;
+	int BOXSELECTY;
+	//
 
 	bool _vidEnd;
 	bool _clearSummaryFlag;
