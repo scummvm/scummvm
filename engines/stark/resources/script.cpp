@@ -110,6 +110,8 @@ bool Script::isEnabled() {
 }
 
 bool Script::shouldExecute(uint32 callMode) {
+	Global *global = StarkServices::instance().global;
+
 	if ((!isEnabled() && isOnBegin()) || !_nextCommand) {
 		return false; // Don't execute disabled scripts
 	}
@@ -145,7 +147,7 @@ bool Script::shouldExecute(uint32 callMode) {
 		return false; // Wrong script type
 	}
 
-	uint32 currentChapter = 0; // TODO: Implement
+	uint32 currentChapter = global->getCurrentChapter();
 	if (currentChapter < _minChapter || currentChapter > _maxChapter) {
 		return false; // Wrong chapter
 	}

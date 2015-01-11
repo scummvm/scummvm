@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	resources/image.o \
 	resources/item.o \
 	resources/knowledge.o \
+	resources/knowledgeset.o \
 	resources/layer.o \
 	resources/level.o \
 	resources/location.o \
@@ -37,6 +38,7 @@ MODULE_OBJS := \
 	scene.o \
 	services/archiveloader.o \
 	services/dialogplayer.o \
+	services/global.o \
 	services/resourceprovider.o \
 	services/services.o \
 	services/stateprovider.o \

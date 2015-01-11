@@ -23,6 +23,8 @@
 #ifndef STARK_SERVICES_GLOBAL_H
 #define STARK_SERVICES_GLOBAL_H
 
+#include "common/scummsys.h"
+
 namespace Stark {
 
 class Camera;
@@ -66,14 +68,7 @@ private:
  */
 class Global {
 public:
-	Global() :
-		_millisecondsPerGameloop(0),
-		_root(nullptr),
-		_level(nullptr),
-		_current(nullptr),
-		_debug(false),
-		_fastForward(false) {
-	}
+	Global();
 
 	Root *getRoot() const { return _root; }
 	Level *getLevel() const { return _level; }
@@ -89,6 +84,8 @@ public:
 	void setFastForward(bool fastForward) { _fastForward = fastForward; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
 
+	/** Retrieve the current chapter number from the global resource tree */
+	int32 getCurrentChapter();
 private:
     uint _millisecondsPerGameloop;
     Root *_root;
