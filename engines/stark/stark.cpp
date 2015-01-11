@@ -30,6 +30,7 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
@@ -40,10 +41,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "audio/mixer.h"
-
-namespace Common {
-DECLARE_SINGLETON(Stark::StarkServices);
-}
 
 namespace Stark {
 
@@ -84,7 +81,7 @@ StarkEngine::~StarkEngine() {
 }
 
 Common::Error StarkEngine::run() {
-	_console = new Console(this);
+	_console = new Console();
 	_gfx = GfxDriver::create();
 
 	// Get the screen prepared

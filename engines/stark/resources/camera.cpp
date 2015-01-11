@@ -24,7 +24,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/scene.h"
-#include "engines/stark/stark.h"
+#include "engines/stark/services/services.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {

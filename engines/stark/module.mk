@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	scene.o \
 	services/archiveloader.o \
 	services/resourceprovider.o \
+	services/services.o \
 	services/stateprovider.o \
 	skeleton.o \
 	skeleton_anim.o \

@@ -26,7 +26,6 @@
 #include "engines/stark/scene.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/skeleton_anim.h"
-#include "engines/stark/stark.h"
 
 #include "common/stream.h"
 

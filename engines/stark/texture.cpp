@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/texture.h"
-#include "engines/stark/stark.h"
 
 #include "common/stream.h"
 #include "common/str.h"

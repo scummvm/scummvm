@@ -20,47 +20,12 @@
  *
  */
 
-#include "engines/stark/actor.h"
-#include "engines/stark/resources/bonesmesh.h"
-#include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/xrcreader.h"
+
+namespace Common {
+DECLARE_SINGLETON(Stark::StarkServices);
+}
 
 namespace Stark {
-
-BonesMesh::~BonesMesh() {
-	delete _actor;
-}
-
-BonesMesh::BonesMesh(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
-				_actor(nullptr) {
-	_type = TYPE;
-}
-
-void BonesMesh::readData(XRCReadStream *stream) {
-	_filename = stream->readString();
-	_archiveName = stream->getArchiveName();
-}
-
-void BonesMesh::onPostRead() {
-	// Get the archive loader service
-	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-
-	ArchiveReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
-
-	_actor = new Actor();
-	_actor->readFromStream(stream);
-
-	delete stream;
-}
-
-Actor *BonesMesh::getActor() {
-	return _actor;
-}
-
-void BonesMesh::printData() {
-	debug("filename: %s", _filename.c_str());
-}
 
 } // End of namespace Stark

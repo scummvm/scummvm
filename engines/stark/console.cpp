@@ -30,12 +30,13 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/services.h"
 
 #include "common/file.h"
 
 namespace Stark {
 
-Console::Console(StarkEngine *vm) : GUI::Debugger(), _vm(vm) {
+Console::Console() : GUI::Debugger() {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
 	registerCmd("dumpGlobal",			WRAP_METHOD(Console, Cmd_DumpGlobal));
 	registerCmd("dumpLevel",			WRAP_METHOD(Console, Cmd_DumpLevel));

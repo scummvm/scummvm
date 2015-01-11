@@ -27,7 +27,7 @@
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/services/global.h"
-#include "engines/stark/stark.h"
+#include "engines/stark/services/services.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {

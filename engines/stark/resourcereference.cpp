@@ -27,7 +27,7 @@
 #include "engines/stark/resources/location.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
-#include "engines/stark/stark.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 

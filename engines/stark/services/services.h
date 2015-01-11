@@ -20,31 +20,42 @@
  *
  */
 
-#ifndef CONSOLE_H_
-#define CONSOLE_H_
+#ifndef STARK_SERVICES_SERVICES_H
+#define STARK_SERVICES_SERVICES_H
 
-#include "common/debug.h"
+#include "common/singleton.h"
 
-#include "gui/debugger.h"
+namespace Common {
+class RandomSource;
+}
 
 namespace Stark {
 
-class Resource;
+class Scene;
+class Global;
+class ArchiveLoader;
+class ResourceProvider;
 
-class Console : public GUI::Debugger {
+/**
+ * Public services available as a singleton
+ */
+class StarkServices : public Common::Singleton<StarkServices> {
 public:
-	Console();
-	virtual ~Console();
+	StarkServices() {
+		global = nullptr;
+		archiveLoader = nullptr;
+		resourceProvider = nullptr;
+		randomSource = nullptr;
+		scene = nullptr;
+	}
 
-private:
-	bool Cmd_DumpArchive(int argc, const char **argv);
-	bool Cmd_DumpGlobal(int argc, const char **argv);
-	bool Cmd_DumpLevel(int argc, const char **argv);
-	bool Cmd_DumpLocation(int argc, const char **argv);
-	bool Cmd_ListLocations(int argc, const char** argv);
-	bool Cmd_ChangeLocation(int argc, const char **argv);
+	Global *global;
+	ArchiveLoader *archiveLoader;
+	ResourceProvider *resourceProvider;
+	Common::RandomSource *randomSource;
+	Scene *scene;
 };
 
 } // End of namespace Stark
 
-#endif // CONSOLE_H_
+#endif // STARK_SERVICES_SERVICES_H

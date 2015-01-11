@@ -25,7 +25,7 @@
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/services/global.h"
-#include "engines/stark/stark.h"
+#include "engines/stark/services/services.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
