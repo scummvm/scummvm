@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	actor.o \
 	adpcm.o \
 	archive.o \
-	archiveloader.o \
 	console.o \
 	detection.o \
 	gfx/coordinate.o \
@@ -34,14 +33,15 @@ MODULE_OBJS := \
 	resources/script.o \
 	resources/speech.o \
 	resources/textureset.o \
-	resourceprovider.o \
 	resourcereference.o \
 	scene.o \
+	services/archiveloader.o \
+	services/resourceprovider.o \
+	services/stateprovider.o \
 	skeleton.o \
 	skeleton_anim.o \
 	sound.o \
 	stark.o \
-	stateprovider.o \
 	texture.o \
 	visual/actor.o \
 	visual/image.o \

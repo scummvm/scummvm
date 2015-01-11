@@ -22,7 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/stark/stark.h"
-#include "engines/stark/stateprovider.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "common/savefile.h"
 #include "common/system.h"

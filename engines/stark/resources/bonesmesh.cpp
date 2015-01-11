@@ -21,7 +21,7 @@
  */
 
 #include "engines/stark/actor.h"
-#include "engines/stark/archiveloader.h"
+#include "engines/stark/services/archiveloader.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/xrcreader.h"

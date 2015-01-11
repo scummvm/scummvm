@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/archiveloader.h"
+#include "engines/stark/services/archiveloader.h"
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/texture.h"

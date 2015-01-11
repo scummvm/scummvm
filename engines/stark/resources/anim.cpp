@@ -22,14 +22,14 @@
 
 #include "common/debug.h"
 
-#include "engines/stark/archiveloader.h"
+#include "engines/stark/services/archiveloader.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/textureset.h"
-#include "engines/stark/resourceprovider.h"
+#include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/skeleton_anim.h"
 #include "engines/stark/stark.h"
 #include "engines/stark/visual/actor.h"

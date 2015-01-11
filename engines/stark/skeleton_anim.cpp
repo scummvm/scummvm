@@ -22,7 +22,7 @@
 
 #include "engines/stark/skeleton_anim.h"
 
-#include "engines/stark/archiveloader.h"
+#include "engines/stark/services/archiveloader.h"
 #include "engines/stark/skeleton.h"
 #include "engines/stark/stark.h"
 

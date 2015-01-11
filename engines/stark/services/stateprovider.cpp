@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/stateprovider.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "common/memstream.h"
 

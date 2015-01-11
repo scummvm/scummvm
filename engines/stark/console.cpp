@@ -23,12 +23,12 @@
 #include "engines/stark/console.h"
 
 #include "engines/stark/archive.h"
-#include "engines/stark/archiveloader.h"
 #include "engines/stark/resources/resource.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"
-#include "engines/stark/resourceprovider.h"
+#include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/resourceprovider.h"
 
 #include "common/file.h"
 

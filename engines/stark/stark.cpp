@@ -22,14 +22,14 @@
 
 #include "engines/stark/stark.h"
 
-#include "engines/stark/archiveloader.h"
 #include "engines/stark/console.h"
 #include "engines/stark/debug.h"
-#include "engines/stark/resourceprovider.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
-#include "engines/stark/stateprovider.h"
+#include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/resourceprovider.h"
+#include "engines/stark/services/stateprovider.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
