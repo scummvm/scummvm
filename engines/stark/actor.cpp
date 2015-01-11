@@ -74,7 +74,7 @@ void Actor::readFromStream(ArchiveReadStream *stream) {
 	for (uint i = 0; i < numMaterials; ++i) {
 		MaterialNode *node = new MaterialNode();
 		node->_name = stream->readString();
-		uint32 u3 = stream->readUint32LE();
+		node->_unknown1 = stream->readUint32LE();
 		node->_texName = stream->readString();
 		node->_r = stream->readFloat();
 		node->_g = stream->readFloat();

@@ -40,7 +40,7 @@ enum StarkGameID {
 */
 
 enum StarkGameFeatures {
-	GF_DVD =  (1 << 31)
+	GF_DVD =  (1 << 1)
 };
 
 class Console;
