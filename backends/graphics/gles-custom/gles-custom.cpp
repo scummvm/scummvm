@@ -20,7 +20,7 @@
  *
  */
 
-/*Needed so we don't get errors when including the Raspberry Pi headers*/
+// Needed so we don't get errors when including the Raspberry Pi headers
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "backends/graphics/gles-custom/gles-custom.h"
 #include "common/textconsole.h"
@@ -41,7 +41,7 @@ static EGL_DISPMANX_WINDOW_T nativewindow;
 #endif
 
 #ifdef USE_GLES_FBDEV
-//Includes for framebuffer size retrieval
+// Includes for framebuffer size retrieval
 #include <sys/ioctl.h>
 #include <linux/fb.h>
 #include <linux/vt.h>
@@ -51,7 +51,7 @@ struct fbdev_window nativewindow;
 #endif
 
 #ifdef USE_GLES_KMS
-/*This hacky define is needed since someone called an struct member "virtual" in xf86drm.h*/
+// This hacky define is needed since there is an struct member called "virtual" in xf86drm.h
 #define virtual __virtual
 #include <xf86drm.h>
 #undef virtual
@@ -109,12 +109,12 @@ struct drm_fb * drm_fb_get_from_bo(struct gbm_bo *bob)
 	handle = gbm_bo_get_handle(bob).u32;
 
 	if (drmModeAddFB(drm.fd, width, height, 24, 32, stride, handle, &fbu->fb_id)) {
-		debug ("Could not add drm framebuffer\n");
+		debug("Could not add drm framebuffer\n");
 		free(fbu);
 		return NULL;
 	}
 
-	/*We used to pass the destroy callback function here. Now it's done manually in deinit_egl()*/
+	// We used to pass the destroy callback function here. Now it's done manually in deinit_egl()
 	gbm_bo_set_user_data(bob, fbu, NULL);
 	return fbu;
 }
@@ -126,11 +126,6 @@ void DRM_PageFlip(void){
 	next_bo = gbm_surface_lock_front_buffer(gbm.surface);
 	fb = drm_fb_get_from_bo(next_bo);
 
-	/*
-	 * Here you could also update drm plane layers if you want
-	 * hw composition
-	 */
-
 	if (drmModePageFlip(drm.fd, drm.crtc_id, fb->fb_id,
 			DRM_MODE_PAGE_FLIP_EVENT, &waiting_for_flip)){
 		debug ("Failed to queue pageflip\n");
@@ -138,16 +133,17 @@ void DRM_PageFlip(void){
 	}
 
 	while (waiting_for_flip) {
-		FD_ZERO (&fds);
+		FD_ZERO(&fds);
 		
-		FD_SET (0, &fds);
-		FD_SET (drm.fd, &fds);
+		FD_SET(0, &fds);
+		FD_SET(drm.fd, &fds);
 
-		select (drm.fd+1, &fds, NULL, NULL, NULL);
+		select(drm.fd+1, &fds, NULL, NULL, NULL);
 		
-		drmHandleEvent (drm.fd, &evctx);
+		drmHandleEvent(drm.fd, &evctx);
 	}
-	/* release last buffer to render on again: */
+	
+	// release last buffer to render on again
 	gbm_surface_release_buffer(gbm.surface, bo);
 	bo = next_bo;
 }
@@ -162,37 +158,37 @@ int init_drm(void)
 	drmModeEncoder *encoder = NULL;
 	unsigned i, area;
 
-	//In plain C, we can just init evctx at declare time, but it's now allowed in C++
+	// In plain C, we can just init evctx at declare time, but it's now allowed in C++
 	evctx.version = DRM_EVENT_CONTEXT_VERSION;
 	evctx.page_flip_handler = page_flip_handler;
 
 	for (i = 0; i < (sizeof(modules) / sizeof(modules[0])); i++) {
-		debug ("trying to load module %s...", modules[i]);
+		debug("trying to load module %s...", modules[i]);
 		drm.fd = drmOpen(modules[i], NULL);
 		if (drm.fd < 0) {
-			debug ("failed.");
+			debug("failed.");
 		} else {
-			debug ("success.");
+			debug("success.");
 			break;
 		}
 	}
 
 	if (drm.fd < 0) {
-		debug ("could not open drm device\n");
+		debug("could not open drm device\n");
 		return -1;
 	}
 
 	resources = drmModeGetResources(drm.fd);
 	if (!resources) {
-		debug ("drmModeGetResources failed\n");
+		debug("drmModeGetResources failed\n");
 		return -1;
 	}
 
-	/* find a connected connector: */
+	// find a connected connector
 	for (i = 0; i < (unsigned)resources->count_connectors; i++) {
 		connector = drmModeGetConnector(drm.fd, resources->connectors[i]);
 		if (connector->connection == DRM_MODE_CONNECTED) {
-			/* it's connected, let's use this! */
+			// it's connected, let's use this!
 			break;
 		}
 		drmModeFreeConnector(connector);
@@ -200,13 +196,12 @@ int init_drm(void)
 	}
 
 	if (!connector) {
-		/* we could be fancy and listen for hotplug events and wait for
-		 * a connector..
-		 */
-		debug ("no connected connector found\n");
+		// we could be fancy and listen for hotplug events and wait for
+		// a connector..
+		debug("no connected connector found\n");
 		return -1;
 	}
-	/* find highest resolution mode: */
+	// find highest resolution mode
 	for (i = 0, area = 0; i < (unsigned)connector->count_modes; i++) {
 		drmModeModeInfo *current_mode = &connector->modes[i];
 		unsigned current_area = current_mode->hdisplay * current_mode->vdisplay;
@@ -217,11 +212,11 @@ int init_drm(void)
 	}
 
 	if (!drm.mode) {
-		debug ("could not find mode\n");
+		debug("could not find mode\n");
 		return -1;
 	}
 
-	/* find encoder: */
+	// find encoder
 	for (i = 0; i < (unsigned)resources->count_encoders; i++) {
 		encoder = drmModeGetEncoder(drm.fd, resources->encoders[i]);
 		if (encoder->encoder_id == connector->encoder_id)
@@ -231,7 +226,7 @@ int init_drm(void)
 	}
 
 	if (!encoder) {
-		debug ("no encoder found\n");
+		debug("no encoder found\n");
 		return -1;
 	}
 
@@ -292,13 +287,13 @@ void OpenGLCustomGraphicsManager::init_egl(){
 	VC_RECT_T dst_rect;
 	VC_RECT_T src_rect;
 	
-	/* create a Dispmanx EGL window surface */
+	// create a Dispmanx EGL window surface
 	int32_t success = graphics_get_display_size(0, &eglInfo.width, &eglInfo.height);
 	assert(success >= 0);
 
-	vc_dispmanx_rect_set( &dst_rect, 0, 0, eglInfo.width, eglInfo.height);
+	vc_dispmanx_rect_set(&dst_rect, 0, 0, eglInfo.width, eglInfo.height);
     
-	vc_dispmanx_rect_set( &src_rect, 0, 0, eglInfo.width << 16, eglInfo.height << 16);
+	vc_dispmanx_rect_set(&src_rect, 0, 0, eglInfo.width << 16, eglInfo.height << 16);
     
 	dispman_display = vc_dispmanx_display_open(0);
 	dispman_update = vc_dispmanx_update_start(0);
@@ -316,9 +311,8 @@ void OpenGLCustomGraphicsManager::init_egl(){
 	#ifdef USE_GLES_FBDEV
 	struct fb_var_screeninfo vinfo;
 	int fb = open("/dev/fb0", O_RDWR, 0);
-	if (ioctl(fb, FBIOGET_VSCREENINFO, &vinfo) < 0)
-	{
-		debug ("Error obtainig framebuffer info\n");
+	if (ioctl(fb, FBIOGET_VSCREENINFO, &vinfo) < 0) {
+		debug("Error obtainig framebuffer info\n");
 		return;
 	}
 	close (fb);
@@ -329,17 +323,17 @@ void OpenGLCustomGraphicsManager::init_egl(){
 
 	#ifdef USE_GLES_KMS
 	if (init_drm()) {
-		debug ("failed to initialize DRM\n");
+		debug("failed to initialize DRM\n");
 		return;
 	}
 
 	if (init_gbm()) {
-		debug ("failed to initialize GBM\n");
+		debug("failed to initialize GBM\n");
 		return;
 	}
 	#endif	
 	
-	/* get an EGL display connection */
+	// get an EGL display connection
         #ifdef USE_GLES_KMS
 		eglInfo.display = eglGetDisplay((NativeDisplayType)gbm.dev);
 	#else
@@ -347,11 +341,11 @@ void OpenGLCustomGraphicsManager::init_egl(){
 	#endif
 	assert(eglInfo.display != EGL_NO_DISPLAY);
 
-	/* initialize the EGL display connection */
+	// initialize the EGL display connection
 	EGLBoolean result = eglInitialize(eglInfo.display, NULL, NULL);
 	assert(EGL_FALSE != result);
     
-	/* get an appropriate EGL frame buffer configuration */
+	// get an appropriate EGL frame buffer configuration
 	result = eglChooseConfig(eglInfo.display, attribute_list, &eglInfo.config, 1, &num_config);
 	assert(EGL_FALSE != result);
     
@@ -369,18 +363,18 @@ void OpenGLCustomGraphicsManager::init_egl(){
 	#endif
 	assert(eglInfo.surface != EGL_NO_SURFACE);
 
-	/* connect the context to the surface */
+	// connect the context to the surface
 	result = eglMakeCurrent(eglInfo.display, eglInfo.surface, eglInfo.surface, eglInfo.context);
 	assert(EGL_FALSE != result);
 
-	eglSwapInterval (eglInfo.display, 1);
+	eglSwapInterval(eglInfo.display, 1);
 	
 	#ifdef USE_GLES_KMS
 	eglSwapBuffers(eglInfo.display, eglInfo.surface);
 	bo = gbm_surface_lock_front_buffer(gbm.surface);
         fb = drm_fb_get_from_bo(bo);
 
-        /* set mode physical video mode*/
+        // set mode physical video mode
         if (drmModeSetCrtc(drm.fd, drm.crtc_id, fb->fb_id, 0, 0, &drm.connector_id, 1, drm.mode)) {
                 debug ("failed to set mode\n");
                 return;
@@ -393,27 +387,29 @@ void OpenGLCustomGraphicsManager::init_egl(){
 }
 
 void OpenGLCustomGraphicsManager::deinit_egl(){
-	/* Release context resources */
-	eglMakeCurrent( eglInfo.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
-	eglDestroySurface( eglInfo.display, eglInfo.surface );
-	eglDestroyContext( eglInfo.display, eglInfo.context );
-	eglTerminate( eglInfo.display );
+	// Release context resources
+	eglMakeCurrent(eglInfo.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
+	eglDestroySurface(eglInfo.display, eglInfo.surface );
+	eglDestroyContext(eglInfo.display, eglInfo.context );
+	eglTerminate(eglInfo.display );
 
 	#ifdef USE_GLES_RPI
 	dispman_update = vc_dispmanx_update_start( 0 );
-	vc_dispmanx_element_remove( dispman_update, dispman_element );
-	vc_dispmanx_update_submit_sync( dispman_update );
-	vc_dispmanx_display_close( dispman_display );
+	vc_dispmanx_element_remove(dispman_update, dispman_element );
+	vc_dispmanx_update_submit_sync(dispman_update );
+	vc_dispmanx_display_close(dispman_display );
 	#endif
 
 	#ifdef USE_GLES_FBDEV
-	/* Re-enable cursor blinking */
+	// Re-enable cursor blinking
     	system("setterm -cursor on");
 	#endif
 	
 	#ifdef USE_GLES_KMS
-	if (fb->fb_id)
+	if (fb->fb_id) {
 		drmModeRmFB(drm.fd, fb->fb_id);
+	}
+	
 	free(fb);
 	free(bo);
 	#endif
@@ -431,10 +427,10 @@ OpenGLCustomGraphicsManager::~OpenGLCustomGraphicsManager() {
 }
 
 void OpenGLCustomGraphicsManager::activateManager() {
-	//We activate SDL manager here
+	// We activate SDL manager here
 	SdlGraphicsManager::activateManager();
 
-	//Register the graphics manager as a event observer
+	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
@@ -574,7 +570,7 @@ bool OpenGLCustomGraphicsManager::loadVideoMode(uint requestedWidth, uint reques
 bool OpenGLCustomGraphicsManager::setupMode(uint width, uint height) {
 	if (_hwScreen) {
 		//If we have a GLES context already, we have what we need and there's no need go any further
-		return (true);
+		return(true);
 	}
 
 	//_hwScreen = SDL_SetVideoMode(eglInfo.width, eglInfo.height, 32, 0);
