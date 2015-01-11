@@ -4,6 +4,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 1.8.0 (????-??-??)
  New Games:
    - Added support for Sfinx.
+   - Added support for Zork Nemesis: The Forbidden Lands.
+   - Added support for Zork: Grand Inquisitor.
 
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
