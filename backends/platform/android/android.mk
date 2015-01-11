@@ -5,7 +5,7 @@ ANDROID_VERSIONCODE = 1000
 
 ANDROID_TARGET_VERSION = 15
 
-NDK_BUILD = $(ANDROID_NDK)/ndk-build
+NDK_BUILD = $(ANDROID_NDK)/ndk-build APP_ABI=$(ABI)
 SDK_ANDROID = $(ANDROID_SDK)/tools/android
 
 PATH_DIST = $(srcdir)/dists/android
@@ -35,7 +35,7 @@ DIST_BUILD_XML = $(PATH_DIST)/custom_rules.xml
 PATH_BUILD = ./build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
 PATH_BUILD_RES = $(PATH_BUILD)/res
-PATH_BUILD_LIBRESIDUALVM = $(PATH_BUILD)/libs/armeabi/libresidualvm.so
+PATH_BUILD_LIBRESIDUALVM = $(PATH_BUILD)/lib/$(ABI)/libresidualvm.so
 
 FILE_MANIFEST_SRC = $(srcdir)/dists/android/AndroidManifest.xml
 FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
