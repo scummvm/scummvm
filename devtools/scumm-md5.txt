@@ -493,7 +493,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
 	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
 	507bb360688dc4180fdf0d7597352a69	26402	se	Windows	HE 73	-	-	Sven Arvidsson
-	df047cc4792150f601290357566d36a6	-1	us	All	HE 90	Updated	-	khalek
+	df047cc4792150f601290357566d36a6	-1	en	All	HE 90	Updated	-	khalek
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
 	746e88c172a5b7a1ae89ac0ee3ee681a	-1	ru	Windows	HE 90	Updated	-	sev
 	a197a87ae77f3b3333f09a7a2c448fe2	-1	en	Windows	HE 99	Updated	-	Jonathan
@@ -522,9 +522,9 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
-	51305e929e330e24a75a0351c8f9975e	-1	us	All	HE 99	Updated	-	Kirben
+	51305e929e330e24a75a0351c8f9975e	-1	en	All	HE 99	Updated	-	Kirben
 	9c0ee9c252785e9fca0143e42ac4b256	-1	de	Windows	HE 99	Updated	-	George Kormendi
-	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
+	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	en	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
 	c20848f53c2d48bfacdc840993843765	-1	nl	All	HE 80	Demo	-	DarthBo
@@ -532,7 +532,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	d37c55388294b66e53e7ced3af88fa68	-1	en	All	HE 100	Updated Demo	-	khalek
 
 freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
-	8368f552b1e3eba559f8d559bcc4cadb	-1	All	All	-	-	-	Kirben, sev
+	8368f552b1e3eba559f8d559bcc4cadb	55959	All	All	-	-	-	Kirben, sev (US and ???)
 	0cccfa5223099a60e76cfcca57a1a141	-1	nl	All	-	-	-	adutchguy, daniel9
 	008e76ec3ae58d0add637ea7aa299a2c	-1	fr	Mac	-	-	-	ThierryFR
 	898ce8eb1234a955ef75e87141902bb3	-1	ru	Windows	-	-	-	sev
@@ -550,7 +550,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	d73c851b942af44deb9b6d5f416a0972	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
-	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
+	4f580a021eee026f3b4589e17d130d78	44190	All	All	-	-	-	Kirben, sev (US and ???)
 	14d48c95b43ddeb983254cf6c43851f1	-1	nl	All	-	-	-	adutchguy, daniel9
 	3b832f4a90740bf22e9b8ed42ca0128c	-1	gb	All	HE 99	-	-	Reckless
 	d74122362a77ec24525fdd50297dfd82	-1	fr	Mac	-	-	-	ThierryFR
@@ -580,7 +580,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	47e041521d35c7a801bb1c010d84da9d	-1	it	Windows	HE 99	Demo	-	Kirben
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
-	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
+	590e6546aacd0d374b7f3a4f53013ab1	41165	All	All	-	-	-	cyx (US and ???)
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9
 	8f345db2f3f5a25ed6305001957e6f72	41182	nl	All	HE 100	-	-	Ben Castricum
