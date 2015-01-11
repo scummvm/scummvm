@@ -350,6 +350,8 @@ public:
 	int mazeLookup(const Common::Point &pt, int directionLayerIndex);
 
 	void setCellSurfaceFlags(const Common::Point &pt, int bits);
+
+	void saveMaze();
 };
 
 } // End of namespace Xeen

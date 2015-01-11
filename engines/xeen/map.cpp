@@ -1042,8 +1042,9 @@ void Map::loadEvents(int mapId) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fEvents(filename);
-	_events.synchronize(fEvents);
+	File fEvents(filename, *_vm->_saves);
+	XeenSerializer sEvents(&fEvents, nullptr);
+	_events.synchronize(sEvents);
 	fEvents.close();
 
 	// Load text data
@@ -1052,9 +1053,21 @@ void Map::loadEvents(int mapId) {
 	File fText(filename);
 	_events._text.resize(fText.size());
 	fText.read(&_events._text[0], fText.size());
-	
-	_events.synchronize(fText);
 	fText.close();
+}
+
+void Map::saveMaze() {
+	int mazeNum = _mazeData[0]._mazeNumber;
+	if (!mazeNum || (mazeNum == 85 && !_vm->_files->_isDarkCc))
+		return;
+
+	// Save the event data
+	Common::String filename = Common::String::format("maze%c%03d.evt",
+		(mazeNum >= 100) ? 'x' : '0', mazeNum);
+	OutFile fEvents(_vm, filename);
+	XeenSerializer sEvents(nullptr, &fEvents);
+	_events.synchronize(sEvents);
+	fEvents.finalize();
 }
 
 void Map::cellFlagLookup(const Common::Point &pt) {

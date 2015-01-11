@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/serializer.h"
 #include "graphics/surface.h"
 #include "xeen/xsurface.h"
 
@@ -61,6 +62,16 @@ public:
 	void openFile(const Common::String &filename, Common::Archive &archive);
 };
 
+class XeenSerializer : public Common::Serializer {
+private:
+	Common::SeekableReadStream *_in;
+public:
+	XeenSerializer(Common::SeekableReadStream *in, Common::WriteStream *out) :
+		Common::Serializer(in, out), _in(in) {}
+
+	bool finished() const { return _in != nullptr && _in->pos() >= _in->size(); }
+};
+
 /**
 * Details of a single entry in a CC file index
 */
@@ -79,14 +90,14 @@ struct CCEntry {
 * Base Xeen CC file implementation
 */
 class BaseCCArchive : public Common::Archive {
-private:
-	uint16 convertNameToId(const Common::String &resourceName) const;
 protected:
 	Common::Array<CCEntry> _index;
 
 	void loadIndex(Common::SeekableReadStream *stream);
 
 	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
+public:
+	static uint16 convertNameToId(const Common::String &resourceName);
 public:
 	BaseCCArchive() {}
 

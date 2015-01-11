@@ -25,7 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/stream.h"
+#include "common/serializer.h"
+#include "xeen/files.h"
 #include "xeen/party.h"
 
 namespace Xeen {
@@ -104,14 +105,14 @@ public:
 public:
 	MazeEvent();
 
-	void synchronize(Common::SeekableReadStream &s);
+	void synchronize(Common::Serializer &s);
 };
 
 class MazeEvents : public Common::Array<MazeEvent> {
 public:
 	Common::Array<byte> _text;
 public:
-	void synchronize(Common::SeekableReadStream &s);
+	void synchronize(XeenSerializer &s);
 };
 
 } // End of namespace Xeen

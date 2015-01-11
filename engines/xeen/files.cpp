@@ -32,7 +32,7 @@ namespace Xeen {
 /**
 * Hash a given filename to produce the Id that represents it
 */
-uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) const {
+uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) {
 	if (resourceName.empty())
 		return 0xffff;
 

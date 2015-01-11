@@ -29,6 +29,22 @@
 
 namespace Xeen {
 
+OutFile::OutFile(XeenEngine *vm, const Common::String filename) :
+	_vm(vm), _filename(filename) {
+}
+
+void OutFile::finalize() {
+	uint16 id = BaseCCArchive::convertNameToId(_filename);
+
+	if (!_vm->_saves->_newData.contains(id))
+		_vm->_saves->_newData[id] = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+
+	Common::MemoryWriteStreamDynamic &out = _vm->_saves->_newData[id];
+	out.write(getData(), size());
+}
+
+/*------------------------------------------------------------------------*/
+
 SavesManager::SavesManager(XeenEngine *vm, Party &party, Roster &roster) : 
 		BaseCCArchive(), _vm(vm), _party(party), _roster(roster) {
 	SearchMan.add("saves", this, 0, false);
@@ -67,6 +83,15 @@ void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP)
 Common::SeekableReadStream *SavesManager::createReadStreamForMember(const Common::String &name) const {
 	CCEntry ccEntry;
 
+	// If the given resource has already been perviously "written" to the 
+	// save manager, then return that new resource
+	uint16 id = BaseCCArchive::convertNameToId(name);
+	if (_newData.contains(id)) {
+		Common::MemoryWriteStreamDynamic stream = _newData[id];
+		return new Common::MemoryReadStream(stream.getData(), stream.size());
+	}
+
+	// Retrieve the resource from the loaded savefile
 	if (getHeaderEntry(name, ccEntry)) {
 		// Open the correct CC entry
 		return new Common::MemoryReadStream(_data + ccEntry._offset, ccEntry._size);

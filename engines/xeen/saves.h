@@ -24,6 +24,7 @@
 #define XEEN_SAVES_H
 
 #include "common/scummsys.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "graphics/surface.h"
 #include "xeen/party.h"
@@ -40,12 +41,27 @@ struct XeenSavegameHeader {
 	int _totalFrames;
 };
 
+class XeenEngine;
+class SavesManager;
+
+class OutFile : public Common::MemoryWriteStreamDynamic {
+private:
+	XeenEngine *_vm;
+	Common::String _filename;
+public:
+	OutFile(XeenEngine *vm, const Common::String filename);
+
+	void finalize();
+};
+
 class SavesManager: public BaseCCArchive {
+	friend class OutFile;
 private:
 	XeenEngine *_vm;
 	Party &_party;
 	Roster &_roster;
 	byte *_data;
+	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic > _newData;
 
 	void load(Common::SeekableReadStream *stream);
 public:
