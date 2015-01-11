@@ -82,8 +82,28 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			AD_ENTRY1s("CSCR.ZFS", "f04113357b4748c13efcb58b4629887c", 2577873),
+			{{"CSCR.ZFS", 0, "f04113357b4748c13efcb58b4629887c", 2577873},
+			 {"NEMESIS.STR", 0, "333bcb17bbb7f57cae742fbbe44f56f3", 9219},
+			 AD_LISTEND
+			},
 			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
+		},
+		GID_NEMESIS
+	},
+
+	{
+		// Zork Nemesis German version
+		{
+			"znemesis",
+			0,
+			{{"CSCR.ZFS", 0, "f04113357b4748c13efcb58b4629887c", 2577873},
+			 {"NEMESIS.STR", 0, "3d1a12b907751653866cffc6d4dfb331", 9505},
+			 AD_LISTEND
+			},
+			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
