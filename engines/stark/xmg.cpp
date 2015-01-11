@@ -24,6 +24,7 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/gfx/driver.h"
 
+#include "graphics/conversion.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "common/stream.h"
@@ -127,12 +128,6 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 	return surface;
 }
 
-inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
-	r = CLIP<int>(y + ((1357 * (v - 128)) >> 10), 0, 255);
-	g = CLIP<int>(y - (( 691 * (v - 128)) >> 10) - ((333 * (u - 128)) >> 10), 0, 255);
-	b = CLIP<int>(y + ((1715 * (u - 128)) >> 10), 0, 255);
-}
-
 void XMGDecoder::processYCrCb() {
 	byte y0, y1, y2, y3;
 	byte cr, cb;
@@ -146,16 +141,16 @@ void XMGDecoder::processYCrCb() {
 
 	byte r, g, b;
 
-	YUV2RGB(y0, cb, cr, r, g, b);
+	Graphics::YUV2RGB(y0, cb, cr, r, g, b);
 	_pixels[0] = (255 << 24) + (b << 16) + (g << 8) + r;
 
-	YUV2RGB(y1, cb, cr, r, g, b);
+	Graphics::YUV2RGB(y1, cb, cr, r, g, b);
 	_pixels[1] = (255 << 24) + (b << 16) + (g << 8) + r;
 
-	YUV2RGB(y2, cb, cr, r, g, b);
+	Graphics::YUV2RGB(y2, cb, cr, r, g, b);
 	_pixels[_scanLen + 0] = (255 << 24) + (b << 16) + (g << 8) + r;
 
-	YUV2RGB(y3, cb, cr, r, g, b);
+	Graphics::YUV2RGB(y3, cb, cr, r, g, b);
 	_pixels[_scanLen + 1] = (255 << 24) + (b << 16) + (g << 8) + r;
 }
 
