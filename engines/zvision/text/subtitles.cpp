@@ -71,8 +71,8 @@ Subtitle::Subtitle(ZVision *engine, const Common::String &subname, bool upscaleT
 					if (sb <= (int32)_subs.size()) {
 						if (upscaleToHires) {
 							// Convert from 15FPS (AVI) to 29.97FPS (VOB)
-							st = st * 29.97 / 15;
-							en = en * 29.97 / 15;
+							st = st * 2997 / 1500;
+							en = en * 2997 / 1500;
 						}
 						_subs[sb].start = st;
 						_subs[sb].stop = en;
