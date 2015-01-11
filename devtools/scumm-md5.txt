@@ -869,40 +869,40 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	-1	us	All	-	-	-	Kirben
 
 spyfox	SPY Fox 1: Dry Cereal
-	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek
+	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek (US and ???)
 	100b4c8403ad6a83d4bf7dbf83e44dc4	-1	fr	Windows	-	-	-	gist974
 	9bda5fee51d2fda5253d02c642016bf4	-1	nl	All	HE 98.5	-	-	daniel9, joostp
-	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard
+	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard (GB or US?)
 	a28135a7ade38cc0208b04507c46efd1	-1	de	All	HE 99	-	-	nachbarnebenan
 	ee785fe2569bc9965526e774f7ab86f1	-1	fr	Mac	HE 99	-	-	ThierryFR
 	76b66b43e593ad4d2f1dfb5cc8f19700	-1	nl	Windows	HE 99	-	-	sugarcube
 	72ac6bc980d5101c2142189d746bd62f	-1	ru	Windows	HE 99	-	-	sev
 	3de99ef0523f8ca7958faa3afccd035a	-1	us	All	HE 100	Updated	-	Kirben
-	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan
-	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts
-	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727
+	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan (GB or US?)
+	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts (GB or US?)
+	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727 (GB or US?)
 
-	53e94115b55dd51d4b8ff0871aa1df1e	20103	en	All	-	Demo	-	khalek, sev
-	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	en	All	-	Demo	-	sev
+	53e94115b55dd51d4b8ff0871aa1df1e	20103	us	All	-	Demo	-	khalek, sev
+	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	us	All	-	Demo	-	sev
 	ba888e6831517597859e91aa173f945c	-1	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	-1	de	All	-	Demo	-	Joachim Eberhard
 	4edbf9d03550f7ba01e7f34d69b678dd	-1	nl	All	HE 98.5	Demo	-	Kirben
 	f2ec78e50bdc63b70044e9758be10914	-1	nl	Mac	HE 98.5	Demo	-	Ben Castricum
-	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	-1	en	All	HE 100	Demo	-	khalek
+	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	15943	us	All	HE 100	Demo	-	khalek
 
 spyfox2	SPY Fox 2: Some Assembly Required
-	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
+	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben (US and ???)
 	90e2f0af4f779629695c6394a65bb702	-1	fr	All	-	-	-	gist974, ThierryFR
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	3785fd25f7e02b5782bfc5072d8f77c8	-1	it	All	-	-	-	Saleck
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
-	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
+	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber (GB or US?)
 	71fe97c3108678cf604f14abe342341b	51286	nl	All	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
-	e62056ba675ad65d8854ab3c5ad4b3c0	14689	en	Windows	-	Mini Game	-	Trekky
+	e62056ba675ad65d8854ab3c5ad4b3c0	14689	gb	Windows	-	Mini Game	-	Trekky
 	22c7432dc97a821fcfccd480e93e3911	14689	nl	Windows	-	Mini Game	-	Ben Castricum
 	6b10c9977cad9de503642059359792b1	14689	fr	Windows	-	Mini Game	-	Ben Castricum
 	9684c161258d68e0d464d6cab7024b9c	14689	it	Windows	-	Mini Game	-	Ben Castricum
@@ -919,7 +919,7 @@ spyozon	SPY Fox 3: Operation Ozone
 	7015b059ab72cff3a0ef9fb4d5e9889d	-1	de	Windows	-	-	-	andy482
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
-	ebd0b2c8a387f18887282afe6cad894a	15317	en	All	-	Demo	-	Kirben
+	ebd0b2c8a387f18887282afe6cad894a	15317	us	All	-	Demo	-	Kirben
 	a99c39ba65b6086be28aef576da69595	-1	fr	Windows	-	Demo	-	Mevi
 	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Preview	-	sev
 
