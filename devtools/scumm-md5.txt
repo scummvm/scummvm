@@ -765,14 +765,14 @@ puttmoon	Putt-Putt Goes to the Moon
 
 puttcircus	Putt-Putt Joins the Circus
 	ecc4340c2b801f5af8da4e00c0e432d9	-1	nl	All	-	-	-	daniel9
-	ab0693e9324cfcf498fdcbb12acf8bb4	-1	en	All	-	-	-	sev
+	ab0693e9324cfcf498fdcbb12acf8bb4	36655	us	All	-	-	-	sev
 	7bad72e332a59f9fcc1d437f4edad32a	-1	ru	All	-	-	-	sev
 	db74136c20557eca6ed3411bff39f7a1	-1	gb	Windows	-	-	-	Reckless
 	d0ad929def3e9cfe39dea55bd12098d4	-1	fr	Windows	-	-	-	gist974
 	febf4a983ea5faea1c9dd6c710ebb09c	-1	de	Windows	-	-	-	andy482
 	c8253da0f4626d2236b5291b99e33408	-1	he	Windows	HE 99	-	-	Matan Bareket
 
-	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
+	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	us	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
 	3af61c5edf8e15b43dbafd285b2e9777	-1	he	Windows	-	Demo	-	Ori Avtalion
 
@@ -799,7 +799,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	9781422e4288dbc090720e4563168ba7	-1	fr	Windows	-	-	-	gist974
 	0f9d3317910ac7a9f449243118884ada	42070	de	Windows	-	-	-	George Kormendi
 	92e7727e67f5cd979d8a1070e4eb8cb3	-1	en	All	HE 98.5	Updated	-	cyx
-	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
+	3a3e592b074f595489f7f11e150c398d	-1	en	Windows	HE 99	Updated	-	Adrian
 	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	Updated	-	Lightkey
 	5c9cecbd2952ccec14c9ecebf5822a34	-1	en	iOS	HE 100	-	-	clone2727
 	7b4ee071eecadc2d8cd0c3509110825c	-1	en	Windows	HE 100	Remastered	-	Kirben
@@ -815,7 +815,7 @@ puttzoo	Putt-Putt Saves the Zoo
 
 PuttTime	Putt-Putt Travels Through Time
 	fcb78ebecab2757264c590890c319cc5	-1	nl	All	HE 85	-	-	adutchguy, daniel9
-	63fdcdc95cdeea00060883aed38e5504	-1	en	All	HE 85	-	-	iziku
+	63fdcdc95cdeea00060883aed38e5504	62582	us	All	HE 85	-	-	iziku
 	db21a6e338fe3b70c2723b6530865bf2	-1	fr	All	HE 85	-	-	gist974, ThierryFR
 	84e3c23a49ded8a6f9197735c8eb3de7	-1	de	Windows	HE 85	-	-	oncer
 	2108d83dcf09f8adb4bc524669c8cf51	-1	us	All	HE 99	Updated	-	Kirben
