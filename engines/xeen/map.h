@@ -311,13 +311,36 @@ public:
 	void synchronize(Common::SeekableReadStream &s);
 };
 
+struct AnimationFrame {
+	int _front, _left, _back, _right;
+
+	AnimationFrame(): _front(0), _left(0), _back(0), _right(0) {}
+
+	void synchronize(Common::SeekableReadStream &s);
+};
+
+struct AnimationEntry {
+	AnimationFrame _frame1;
+	AnimationFrame _flipped;
+	AnimationFrame _frame2;
+
+	void synchronize(Common::SeekableReadStream &s);
+};
+
+class AnimationInfo : public Common::Array<AnimationEntry> {
+public:
+	void synchronize(Common::SeekableReadStream &s);
+
+	void load(const Common::String &name);
+};
+
 class Map {
 private:
 	XeenEngine *_vm;
 	MazeData _mazeData[9];
 	Common::String _mazeName;
 	HeadData _headData;
-	SpriteResource _objPicSprites;
+	AnimationInfo _animationInfo;
 	MonsterData _monsterData;
 	SpriteResource _wallPicSprites;
 	int _townPortalSide;

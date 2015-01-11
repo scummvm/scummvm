@@ -868,6 +868,17 @@ void Interface::draw3d(bool flag) {
 			moveMonsters();
 	}
 
+	int e3 = 0xE302 + _objNumber * 8;
+	Direction dir = _vm->_party._mazeDirection;
+	bool flag2 = _flag2;
+	int objNum = _objNumber - 1;
+
+	for (uint i = 0; i < _vm->_map->_mobData._objects.size(); ++i) {
+		if (flag2) {
+
+		}
+	}
+
 	// TODO: more
 
 	warning("TODO");

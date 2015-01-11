@@ -809,6 +809,49 @@ void HeadData::synchronize(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Synchronize data for an entry within an animation entry
+ */
+void AnimationFrame::synchronize(Common::SeekableReadStream &s) {
+	_left = s.readByte();
+	_back = s.readByte();
+	_right = s.readByte();
+	_front = s.readByte();
+}
+
+/**
+ * Synchronize data for an animation entry
+ */
+void AnimationEntry::synchronize(Common::SeekableReadStream &s) {
+	_frame1.synchronize(s);
+	_flipped.synchronize(s);
+	_frame2.synchronize(s);
+}
+
+/**
+ * Synchronize data for object animations within the game
+ */
+void AnimationInfo::synchronize(Common::SeekableReadStream &s) {
+	AnimationEntry entry;
+
+	clear();
+	while (s.pos() < s.size()) {
+		entry.synchronize(s);
+		push_back(entry);
+	}
+}
+
+/**
+ * Load the animation info objects in the game
+ */
+void AnimationInfo::load(const Common::String &name) {
+	File f(name);
+	synchronize(f);
+	f.close();
+}
+
+/*------------------------------------------------------------------------*/
+
 Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_townPortalSide = 0;
 	_sideObj = 0;
@@ -849,7 +892,7 @@ void Map::load(int mapId) {
 
 	if (_vm->getGameID() == GType_WorldOfXeen) {
 		if (_vm->_loadDarkSide) {
-			_objPicSprites.load("clouds.dat");
+			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
 			_wallPicSprites.load("xeenpic.dat");
 		} else {
@@ -859,7 +902,7 @@ void Map::load(int mapId) {
 			case 115:
 			case 116:
 			case 128:
-				_objPicSprites.load("clouds.dat");
+				_animationInfo.load("clouds.dat");
 				_monsterData.load("dark.mon");
 				_wallPicSprites.load("darkpic.dat");
 				_sideObj = 0;
@@ -869,7 +912,7 @@ void Map::load(int mapId) {
 			case 119:
 			case 120:
 			case 124:
-				_objPicSprites.load("clouds.dat");
+				_animationInfo.load("clouds.dat");
 				_monsterData.load("xeen.mon");
 				_wallPicSprites.load("darkpic.dat");
 				_sideObj = 0;
@@ -878,12 +921,12 @@ void Map::load(int mapId) {
 			case 125:
 			case 126:
 			case 127:
-				_objPicSprites.load("clouds.dat");
+				_animationInfo.load("clouds.dat");
 				_monsterData.load("dark.mon");
 				_wallPicSprites.load("xeenpic.dat");
 				break;
 			default:
-				_objPicSprites.load("dark.dat");
+				_animationInfo.load("dark.dat");
 				_monsterData.load("ddark.mon");
 				_wallPicSprites.load("darkpic.dat");
 				break;
