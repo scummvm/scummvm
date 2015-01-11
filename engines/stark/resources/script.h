@@ -82,6 +82,9 @@ public:
 	/** Pause the script for the specified time */
 	void pause(int32 msecs);
 
+	/** Suspend the script while the specified resource is running */
+	void suspend(Resource *cause);
+
 protected:
 	void printData() override;
 
@@ -98,7 +101,9 @@ protected:
 
 	bool _enabled;
 	Command *_nextCommand;
+
 	int32 _pauseTimeLeft;
+	Resource *_suspendingResource;
 };
 
 } // End of namespace Stark

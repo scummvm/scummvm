@@ -24,10 +24,13 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/resources/bookmark.h"
+#include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resourcereference.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/xrcreader.h"
 
 namespace Stark {
@@ -42,19 +45,21 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 
 Command *Command::execute(uint32 callMode, Script *script) {
 	switch (_subType) {
-	case kGoTo:
+	case kDialogCall:
+		return opDialogCall(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kLocationGoTo:
 		return nullptr; // TODO, just end the script for now
-	case kPause:
-		opPause(script, _arguments[1].referenceValue);
-		return this;
+	case kScriptPause:
+		opScriptPause(script, _arguments[1].referenceValue);
+		return this; // Stay on this command while the script is suspended
 	case kItem3DPlaceOn:
-		op3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
+		opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 		return nextCommand();
 	case kItemEnable:
 		opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 		return nextCommand();
 	case kItemPlaceDirection:
-		opPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
+		opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 		return nextCommand();
 	default:
 		// warning("Unimplemented opcode %d", _subType);
@@ -64,12 +69,26 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	return nextCommand();
 }
 
-void Command::opPause(Script *script, const ResourceReference &durationRef) {
+Command *Command::opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend) {
+	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+
+	Dialog *dialog = dialogRef.resolve<Dialog>();
+	dialogPlayer->run(dialog);
+
+	if (suspend) {
+		script->suspend(dialog);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
+}
+
+void Command::opScriptPause(Script *script, const ResourceReference &durationRef) {
 	Knowledge *duration = durationRef.resolve<Knowledge>();
 	script->pause(duration->getIntegerValue());
 }
 
-void Command::op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
+void Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
 	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
 	Resource *target = targetRef.resolve<Resource>();
 
@@ -102,7 +121,7 @@ void Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	}
 }
 
-void Command::opPlaceDirection(const ResourceReference &itemRef, int32 direction) {
+void Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {
 	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
 
 	item->setDirection(abs(direction) % 360);

@@ -24,6 +24,7 @@
 
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/xrcreader.h"
@@ -42,7 +43,8 @@ Script::Script(Resource *parent, byte subType, uint16 index, const Common::Strin
 				_shouldResetGameSpeed(false),
 				_enabled(false),
 				_nextCommand(nullptr),
-				_pauseTimeLeft(-1) {
+				_pauseTimeLeft(-1),
+				_suspendingResource(nullptr) {
 	_type = TYPE;
 }
 
@@ -152,7 +154,7 @@ bool Script::shouldExecute(uint32 callMode) {
 }
 
 bool Script::isSuspended() {
-	return _pauseTimeLeft >= 0;
+	return _pauseTimeLeft >= 0 || _suspendingResource;
 }
 
 void Script::updateSuspended() {
@@ -160,17 +162,38 @@ void Script::updateSuspended() {
 		// Decrease the remaining pause time
 		Global *global = StarkServices::instance().global;
 		_pauseTimeLeft -= global->getMillisecondsPerGameloop();
+	} else {
+		_pauseTimeLeft = -1;
 	}
 
-	if (_pauseTimeLeft < 0) {
+	if (_suspendingResource) {
+		// Check if the suspending resource is still active
+		switch (_suspendingResource->getType().get()) {
+		case ResourceType::kDialog: {
+			DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+			if (!dialogPlayer->isRunning()) {
+				// Resume the script execution if the dialog is complete
+				_suspendingResource = nullptr;
+			}
+			break;
+		}
+		default:
+			error("Unhandled suspending resource type %s", _suspendingResource->getType().getName());
+		}
+	}
+
+	if (!isSuspended()) {
 		// Resume to the next command
-		_pauseTimeLeft = -1;
 		_nextCommand = _nextCommand->nextCommand();
 	}
 }
 
 void Script::pause(int32 msecs) {
 	_pauseTimeLeft = msecs;
+}
+
+void Script::suspend(Resource *cause) {
+	_suspendingResource = cause;
 }
 
 void Script::execute(uint32 callMode) {

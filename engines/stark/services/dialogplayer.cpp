@@ -20,45 +20,22 @@
  *
  */
 
-#ifndef STARK_SERVICES_SERVICES_H
-#define STARK_SERVICES_SERVICES_H
+#include "engines/stark/services/dialogplayer.h"
 
-#include "common/singleton.h"
-
-namespace Common {
-class RandomSource;
-}
+#include "engines/stark/resources/dialog.h"
 
 namespace Stark {
 
-class ArchiveLoader;
-class DialogPlayer;
-class Global;
-class ResourceProvider;
-class Scene;
+DialogPlayer::~DialogPlayer() {
 
-/**
- * Public services available as a singleton
- */
-class StarkServices : public Common::Singleton<StarkServices> {
-public:
-	StarkServices() {
-		archiveLoader = nullptr;
-		dialogPlayer = nullptr;
-		global = nullptr;
-		resourceProvider = nullptr;
-		randomSource = nullptr;
-		scene = nullptr;
-	}
+}
 
-	ArchiveLoader *archiveLoader;
-	DialogPlayer *dialogPlayer;
-	Global *global;
-	ResourceProvider *resourceProvider;
-	Common::RandomSource *randomSource;
-	Scene *scene;
-};
+void DialogPlayer::run(Dialog *dialog) {
+
+}
+
+bool DialogPlayer::isRunning() {
+	return false;
+}
 
 } // End of namespace Stark
-
-#endif // STARK_SERVICES_SERVICES_H

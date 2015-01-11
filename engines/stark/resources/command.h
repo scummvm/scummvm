@@ -46,9 +46,11 @@ public:
 		kCommandBegin = 0,
 		kCommandEnd = 1,
 
-		kGoTo = 5,
+		kDialogCall = 3,
 
-		kPause = 9,
+		kLocationGoTo = 5,
+
+		kScriptPause = 9,
 
 		kItem3DPlaceOn = 81,
 
@@ -87,10 +89,11 @@ protected:
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
 
-	void op3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
-	void opPause(Script *script, const ResourceReference &durationRef);
+	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
+	void opScriptPause(Script *script, const ResourceReference &durationRef);
+	void opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	void opItemEnable(const ResourceReference &itemRef, int32 enable);
-	void opPlaceDirection(const ResourceReference &itemRef, int32 direction);
+	void opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 
 	Common::Array<Argument> _arguments;
 };

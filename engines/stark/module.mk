@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	resourcereference.o \
 	scene.o \
 	services/archiveloader.o \
+	services/dialogplayer.o \
 	services/resourceprovider.o \
 	services/services.o \
 	services/stateprovider.o \

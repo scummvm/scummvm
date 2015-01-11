@@ -43,11 +43,12 @@ enum StarkGameFeatures {
 	GF_DVD =  (1 << 1)
 };
 
-class Console;
-class GfxDriver;
-class Scene;
-class Global;
 class ArchiveLoader;
+class Console;
+class DialogPlayer;
+class GfxDriver;
+class Global;
+class Scene;
 class StateProvider;
 class ResourceProvider;
 
@@ -73,8 +74,10 @@ private:
 	GfxDriver *_gfx;
 	Console *_console;
 
-	Global *_global;
+	// Services
 	ArchiveLoader *_archiveLoader;
+	DialogPlayer *_dialogPlayer;
+	Global *_global;
 	StateProvider *_stateProvider;
 	ResourceProvider *_resourceProvider;
 	Common::RandomSource *_randomSource;
