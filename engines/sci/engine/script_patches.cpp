@@ -562,12 +562,12 @@ static const uint16 gk1SignatureDay6PoliceSleep[] = {
 	0x34, SIG_UINT16(0x00dc),           // ldi 220
 	0x65, SIG_ADDTOOFFSET(+1),          // aTop cycles (1a for PC, 1c for Mac)
 	0x32,                               // jmp [end]
-	0
+	SIG_END
 };
 
 static const uint16 gk1PatchDay6PoliceSleep[] = {
 	PATCH_ADDTOOFFSET(+5),
-	0x34, SIG_UINT16(0x002a),           // ldi 42
+	0x34, PATCH_UINT16(0x002a),         // ldi 42
 	0x65, PATCH_GETORIGINALBYTEADJUST(+9, +2), // aTop seconds (1c for PC, 1e for Mac)
 	PATCH_END
 };
