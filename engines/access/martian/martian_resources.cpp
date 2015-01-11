@@ -859,5 +859,14 @@ const char *const DEATHMESSAGE[] = {
 	"ONCE DANGERFIELD GETS OUT OF HIS CHAMBER, HE PULLS OUT A WEAPON AND LETS YOU HAVE IT."
 };
 
+const byte _byte1EEB5[] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+	1
+};
+
 } // End of namespace Martian
 } // End of namespace Access

@@ -628,11 +628,11 @@ void Scripts::cmdDoTravel() {
 
 		if (type != 2) {
 			int idx = TMPLPTR[boxX];
-			warning("TODO: if (_byte1EEB5[idx] != _byte26CB5) {");
-			// _vm->_bubbleBox->_bubbleTitle = "TRAVEL";
-			// _vm->_scripts->printString("YOU CAN'T GET THERE FROM HERE.");
-			// continue;
-			// }
+			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
+				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
+				_vm->_scripts->printString("YOU CAN'T GET THERE FROM HERE.");
+				continue;
+			}
 			if (_vm->_player->_roomNumber != idx) {
 				if (Martian::TRAVEL_POS[idx][0] == -1) {
 					_vm->_player->_roomNumber = idx;

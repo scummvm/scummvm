@@ -61,6 +61,8 @@ extern const char *const ASKTBL[];
 extern const byte DEATH_SCREENS[];
 extern const char *const DEATHMESSAGE[];
 
+extern const byte _byte1EEB5[];
+
 } // End of namespace Martian
 } // End of namespace Access
 

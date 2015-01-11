@@ -218,6 +218,7 @@ public:
 	int _startAboutBox;
 	int BOXDATASTART;
 	int BOXSELECTY;
+	byte _byte26CB5;
 	//
 
 	bool _vidEnd;
