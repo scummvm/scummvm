@@ -1,5 +1,17 @@
-Known bugs in ResidualVM 0.3.0git:
-* Running fullscreen in widescreen monitors will stretch the image
-* Switching full-screen/windowed with alt-enter might crash ResidualVM
-* Characters might pop into place at times
-* Some animations will show their initial state at the end
+Known issues in ResidualVM 0.3.0git:
+
+Common
+------
+ * Switching full-screen/windowed with alt-enter might crash ResidualVM
+ * Running fullscreen in widescreen monitors might stretch the image
+   You can try solve issue by using config file option: "fullscreen_res".
+   See README.md file for more information.
+
+Grim
+----
+ * Characters might pop into place at times
+ * Some animations will show their initial state at the end
+
+MYST III
+--------
+ * Catherine's extra speech at start is distorted, see issue #1038
