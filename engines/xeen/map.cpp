@@ -810,22 +810,15 @@ void HeadData::synchronize(Common::SeekableReadStream &s) {
 /*------------------------------------------------------------------------*/
 
 /**
- * Synchronize data for an entry within an animation entry
- */
-void AnimationFrame::synchronize(Common::SeekableReadStream &s) {
-	_left = s.readByte();
-	_back = s.readByte();
-	_right = s.readByte();
-	_front = s.readByte();
-}
-
-/**
  * Synchronize data for an animation entry
  */
 void AnimationEntry::synchronize(Common::SeekableReadStream &s) {
-	_frame1.synchronize(s);
-	_flipped.synchronize(s);
-	_frame2.synchronize(s);
+	for (int i = 0; i < 4; ++i)
+		_frame1._frames[i] = s.readByte();
+	for (int i = 0; i < 4; ++i)
+		_flipped._flags[i] = s.readByte() != 0;
+	for (int i = 0; i < 4; ++i)
+		_frame2._frames[i] = s.readByte();
 }
 
 /**

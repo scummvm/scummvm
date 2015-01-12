@@ -350,4 +350,8 @@ const int OUTDOOR_OBJECT_Y[2][12] = {
 	{ 70, 71, 72, 73, 74, 75, 90, 91, 92, 93, 94, 112 }
 };
 
+const int DIRECTION_ANIM_POSITIONS[4][4] = {
+	{ 0, 1, 2, 3 }, { 3, 0, 1, 2 }, { 2, 3, 0, 1 }, { 1, 2, 3, 0 }
+};
+
 } // End of namespace Xeen

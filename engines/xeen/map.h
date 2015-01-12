@@ -311,18 +311,21 @@ public:
 	void synchronize(Common::SeekableReadStream &s);
 };
 
-struct AnimationFrame {
-	int _front, _left, _back, _right;
-
-	AnimationFrame(): _front(0), _left(0), _back(0), _right(0) {}
-
-	void synchronize(Common::SeekableReadStream &s);
-};
-
+struct AnimationFrame { int _front, _left, _back, _right; };
+struct AnimationFlipped { bool _front, _left, _back, _right; };
 struct AnimationEntry {
-	AnimationFrame _frame1;
-	AnimationFrame _flipped;
-	AnimationFrame _frame2;
+	union {
+		AnimationFrame _positions;
+		int _frames[4];
+	} _frame1;
+	union {
+		AnimationFlipped _positions;
+		bool _flags[4];
+	} _flipped;
+	union {
+		AnimationFrame _positions;
+		int _frames[4];
+	} _frame2;
 
 	void synchronize(Common::SeekableReadStream &s);
 };
@@ -339,8 +342,6 @@ private:
 	XeenEngine *_vm;
 	MazeData _mazeData[9];
 	Common::String _mazeName;
-	HeadData _headData;
-	AnimationInfo _animationInfo;
 	MonsterData _monsterData;
 	SpriteResource _wallPicSprites;
 	int _townPortalSide;
@@ -358,6 +359,8 @@ public:
 	bool _isOutdoors;
 	MonsterObjectData _mobData;
 	MazeEvents _events;
+	HeadData _headData;
+	AnimationInfo _animationInfo;
 	bool _currentIsGrate;
 	bool _currentCantRest;
 	bool _currentIsDrain;

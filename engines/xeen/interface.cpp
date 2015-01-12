@@ -361,7 +361,8 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_intrIndex1 = 0;
 	_flipWtr = false;
 	_flag1 = false;
-	_flag2 = false;
+	_animCounter = 0;
+	_isAnimReset = false;
 	_tillMove = 0;
 	_objNumber = 0;
 
@@ -868,15 +869,30 @@ void Interface::draw3d(bool flag) {
 			moveMonsters();
 	}
 
-	int e3 = 0xE302 + _objNumber * 8;
-	Direction dir = _vm->_party._mazeDirection;
-	bool flag2 = _flag2;
+	MazeObject &objObject = _vm->_map->_mobData._objects[_objNumber];
+	Direction partyDirection = _vm->_party._mazeDirection;
 	int objNum = _objNumber - 1;
 
 	for (uint i = 0; i < _vm->_map->_mobData._objects.size(); ++i) {
-		if (flag2) {
+		MazeObject &mazeObject = _vm->_map->_mobData._objects[i];
+		AnimationEntry &animEntry = _vm->_map->_animationInfo[mazeObject._spriteId];
+		int directionIndex = DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
 
+		if (_isAnimReset) {
+			mazeObject._frame = animEntry._frame1._frames[directionIndex];
+		} else {
+			++mazeObject._frame;
+			if (i == objNum && _animCounter > 0 && (
+					objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
+					objObject._spriteId == 58 || objObject._spriteId == 73)) {
+				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
+					mazeObject._frame = 1;
+			} else if (mazeObject._frame == animEntry._frame2._frames[directionIndex]) {
+				mazeObject._frame = animEntry._frame2._frames[directionIndex];
+			}
 		}
+
+		mazeObject._flipped = animEntry._flipped._flags[directionIndex];
 	}
 
 	// TODO: more

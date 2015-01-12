@@ -96,7 +96,8 @@ private:
 	int _intrIndex1;
 	bool _flipWtr;
 	bool _flag1;
-	bool _flag2;
+	int _animCounter;
+	bool _isAnimReset;
 	byte _tillMove;
 	int _objNumber;
 	byte _wp[20];
