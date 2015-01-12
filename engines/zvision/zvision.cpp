@@ -243,8 +243,36 @@ Common::Error ZVision::run() {
 	if (ConfMan.hasKey("save_slot"))
 		_saveManager->loadGame(ConfMan.getInt("save_slot"));
 
+	bool foundAllFonts = true;
+
 	// Before starting, make absolutely sure that the user has copied the needed fonts
-	if (!Common::File::exists("arial.ttf") && !Common::File::exists("FreeSans.ttf") && !_searchManager->hasFile("arial.ttf")  && !_searchManager->hasFile("FreeSans.ttf") ) {
+	for (int i = 0; i < ARRAYSIZE(systemFonts); i++) {
+		Common::String freeFontBoldItalic = Common::String("Bold") + systemFonts[i].freeFontItalicName;
+		
+		const char *fontSuffixes[4] = { "", "bd", "i", "bi" };
+		const char *freeFontSuffixes[4] = { "", "Bold", systemFonts[i].freeFontItalicName, freeFontBoldItalic.c_str() };
+
+		for (int j = 0; j < 4; j++) {
+			Common::String fontName = systemFonts[i].fontBase;
+			fontName += fontSuffixes[j];
+			fontName += ".ttf";
+
+			Common::String freeFontName = systemFonts[i].freeFontBase;
+			freeFontName += freeFontSuffixes[j];
+			freeFontName += ".ttf";
+
+			if (!Common::File::exists(fontName) && !Common::File::exists(freeFontName) &&
+				!_searchManager->hasFile(fontName) && !_searchManager->hasFile(freeFontName)) {
+				foundAllFonts = false;
+				break;
+			}
+		}
+
+		if (!foundAllFonts)
+			break;
+	}
+
+	if (!foundAllFonts) {
 		GUI::MessageDialog dialog(
 				"Before playing this game, you'll need to copy the required "
 				"fonts into ScummVM's extras directory, or into the game directory. "
