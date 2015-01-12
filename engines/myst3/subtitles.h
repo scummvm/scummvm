@@ -51,6 +51,9 @@ private:
 	bool loadSubtitles(int32 id);
 	void createTexture();
 
+	/** Return a codepage usable by iconv from a GDI Charset as provided to CreateFont */
+	const char *getCodePage(uint32 gdiCharset);
+
 	struct Phrase {
 		uint32 offset;
 		int32 frame;
@@ -77,7 +80,7 @@ private:
 	uint _line2Top;
 	uint _surfaceTop;
 	int32 _fontCharsetCode;
-	uint8 _charset[255 - 32];
+	uint8 *_charset;
 };
 
 } // End of namespace Myst3
