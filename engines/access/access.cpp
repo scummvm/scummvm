@@ -99,6 +99,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 		ASK[i];
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
+	BCNT = 0;
+
 	_vidEnd = false;
 }
 

@@ -92,6 +92,8 @@ public:
 
 	virtual void drawRect();
 
+	virtual void drawBox();
+
 	virtual void transCopyFrom(ASurface *src, const Common::Point &destPos);
 
 	virtual void transCopyFrom(ASurface *src, const Common::Rect &bounds);

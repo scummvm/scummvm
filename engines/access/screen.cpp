@@ -276,6 +276,11 @@ void Screen::drawRect() {
 	ASurface::drawRect();
 }
 
+void Screen::drawBox() {
+	addDirtyRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2));
+	ASurface::drawBox();
+}
+
 void Screen::transCopyFrom(ASurface *src, const Common::Point &destPos) {
 	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + src->w, destPos.y + src->h));
 	ASurface::transCopyFrom(src, destPos);

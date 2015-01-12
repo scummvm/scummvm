@@ -316,6 +316,17 @@ void ASurface::drawRect() {
 	Graphics::Surface::fillRect(Common::Rect(_orgX1, _orgY1, _orgX2, _orgY2), _lColor);
 }
 
+void ASurface::drawLine(int x1, int y1, int x2, int y2, int col) {
+	Graphics::Surface::drawLine(x1, y1, x2, y2, col);
+}
+
+void ASurface::drawBox() {
+	Graphics::Surface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
+	Graphics::Surface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
+	Graphics::Surface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
+	Graphics::Surface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
+}
+
 void ASurface::flipHorizontal(ASurface &dest) {
 	dest.create(this->w, this->h);
 	for (int y = 0; y < h; ++y) {

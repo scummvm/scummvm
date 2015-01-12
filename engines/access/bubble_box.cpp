@@ -34,6 +34,10 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_fieldE = val2;
 	_fieldF = val3;
 	_field10 = val4;
+	BOXSTARTX = BOXSTARTY = 0;
+	BICONSTARTX = 0;
+	BOXENDY = 0;
+	BOXPSTARTX = BOXPSTARTY = 0;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
@@ -280,7 +284,125 @@ void BubbleBox::doBox(int item, int box) {
 }
 
 int BubbleBox::doBox_v1(int item, int box, int &type) {
-	warning("TODO: dobox_v1");
+	FontManager &fonts = _vm->_fonts;
+
+	_startItem = item;
+	_startBox = box;
+
+	// Save state information
+	_vm->_screen->saveScreen();
+	_vm->_screen->setDisplayScan();
+
+	fonts._charFor._hi = 0xff;
+	fonts._charSet._lo = 1;
+	fonts._charSet._hi = 0;
+
+	_vm->_destIn = _vm->_screen;	// TODO: Redundant
+
+	if (_type != TYPE_2) {
+		Common::Rect r = _bounds;
+		r.left -= 2;
+		_vm->_screen->saveBlock(r);
+	}
+
+	// Set the up boundaries and color to use for the box background
+	_vm->_screen->_orgX1 = _bounds.left - 2;
+	_vm->_screen->_orgY1 = _bounds.top;
+	_vm->_screen->_orgX2 = _bounds.right - 2;
+	_vm->_screen->_orgY2 = _bounds.bottom;
+	_vm->_screen->_lColor = 0xFB;
+
+	// Draw a background for the entire area
+	_vm->_screen->drawRect();
+
+	// Draw the inner box;
+	++_vm->_screen->_orgX1;
+	++_vm->_screen->_orgY1;
+	--_vm->_screen->_orgX2;
+	--_vm->_screen->_orgY2;
+	_vm->_screen->_lColor = 0xF9;
+	
+	// Draw the inner border
+	_vm->_screen->drawBox();
+
+	// Get icons data
+	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
+	SpriteResource *icons = new SpriteResource(_vm, iconData);
+	delete iconData;
+
+	// Draw upper border
+	_vm->BCNT = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
+	int oldX = _vm->_screen->_orgX1;
+	for ( ;_vm->BCNT > 0; --_vm->BCNT) {
+		_vm->_screen->plotImage(icons, 16, Common::Point(_vm->_screen->_orgX1, _vm->_screen->_orgY1));
+		_vm->_screen->_orgX1 += 16;
+	}
+
+	_vm->_screen->_orgX1 = oldX;
+	int oldY = _vm->_screen->_orgY2;
+	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 8;
+	_vm->_screen->_lColor = 0xF9;
+
+	BOXSTARTY = _vm->_screen->_orgY2 + 1;
+	_vm->_screen->_orgY2 = oldY;
+
+	if (_type != TYPE_2) {
+		oldY = _vm->_screen->_orgY1;
+		--_vm->_screen->_orgY2;
+		_vm->_screen->_orgY2 -= 8;
+		if (_type == TYPE_3)
+			_vm->_screen->_orgY2 -= 8;
+		_vm->_screen->drawRect();
+
+		int tmpX = BICONSTARTX = _vm->_screen->_orgX1;
+		BOXSTARTX = tmpX + 1;
+		int tmpY = BOXENDY = _vm->_screen->_orgY1;
+
+		if (_type == TYPE_3)
+			BOXSTARTY = tmpY - 7;
+		else
+			BOXSTARTY = tmpY + 1;
+
+		if (_type == TYPE_3)
+			warning("TODO: Implement more of TYPE_3");
+
+		_vm->_screen->_orgY1 = oldY;
+	}
+
+	if ((_type == TYPE_0) || (_type == TYPE_3))
+		warning("TODO: Implement more of TYPE_0 or TYPE_3");
+
+	int len = _bubbleDisplStr.size();
+	int ax = _bounds.top >> 3;
+	ax -= len;
+	ax /= 2;
+	int cx = _bounds.left >> 3;
+	BOXPSTARTX = cx;
+	ax += cx << 16;
+
+	cx = _bounds.right >> 3;
+	int bp = _bounds.right - (cx << 3) + 1;
+	if (bp == 8) {
+		++cx;
+		bp = 0;
+	}
+
+	_rowOff = bp;
+	BOXPSTARTY = cx;
+	ax += cx;
+
+	_vm->_fonts._charFor._lo = -1;
+	_vm->_events->setCursor(CURSOR_ARROW);
+
+	_vm->_fonts._font1.drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
+
+	if (_type == TYPE_2) {
+		_vm->_events->showCursor();
+		warning("TODO: pop values");
+		_vm->_screen->restoreScreen();
+	}
+
+	warning("TODO: more dobox_v1");
 	return -1;
 }
 
