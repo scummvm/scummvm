@@ -946,9 +946,9 @@ Optional Libraries:
 
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
-  --enable-gles-kms	   enable OpenGL (ES) on DRM with no X server (optional)
-  --enable-gles-rpi	   enable OpenGL (ES) on Raspberry Pi (optional)
-  --enable-gles-fbdev	   enable OpenGL (ES) on framebuffer device (optional)
+  --enable-gles-kms        enable OpenGL (ES) on DRM with no X server (optional)
+  --enable-gles-rpi        enable OpenGL (ES) on Raspberry Pi (optional)
+  --enable-gles-fbdev      enable OpenGL (ES) on framebuffer device (optional)
 
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]

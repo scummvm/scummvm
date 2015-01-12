@@ -30,6 +30,34 @@
 #include "common/array.h"
 #include "common/events.h"
 
+#include <GLES/gl.h>
+#include <EGL/egl.h>
+
+#ifdef USE_GLES_KMS
+struct gbm_device;
+struct gbm_surface;
+struct gbm_bo;
+
+
+struct gbm_struct {
+	gbm_device *dev;
+	gbm_surface *surface;
+};
+
+struct _drmModeModeInfo;
+struct drm_struct {
+	int fd;
+	_drmModeModeInfo *mode;
+	uint crtc_id;
+	uint connector_id;
+};
+
+struct drm_fb {
+	gbm_bo *bo;
+	uint fb_id;
+};
+#endif
+
 class OpenGLCustomGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
 public:
 	OpenGLCustomGraphicsManager(SdlEventSource *eventSource);
@@ -114,6 +142,38 @@ private:
 	uint _desiredFullscreenHeight;
 
 	virtual bool isHotkey(const Common::Event &event);
+
+	struct {
+		EGLDisplay display;
+		EGLConfig config;
+		EGLContext context;
+		EGLSurface surface;
+		uint width, height, refresh;
+	} eglInfo;
+
+#ifdef USE_GLES_RPI
+	DISPMANX_ELEMENT_HANDLE_T dispman_element;
+	DISPMANX_DISPLAY_HANDLE_T dispman_display;
+	DISPMANX_UPDATE_HANDLE_T dispman_update;
+	EGL_DISPMANX_WINDOW_T nativewindow;
+#endif
+
+#ifdef USE_GLES_FBDEV
+	fbdev_window nativewindow;
+#endif
+
+#ifdef USE_GLES_KMS
+	gbm_struct gbm;
+	drm_struct drm;
+	gbm_bo *bo;
+	drm_fb *fb;
+	fd_set fds;
+	bool init_gbm ();
+	bool init_drm ();
+	void drmPageFlip();
+	drm_fb *drm_fb_get_from_bo(gbm_bo *bob);
+#endif
+
 };
 
 #endif
