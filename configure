@@ -4095,16 +4095,30 @@ if test "$_use_gles_custom" = yes ; then
 	add_line_to_config_mk "USE_GLES_CUSTOM = 1"
 	add_line_to_config_h "#define USE_GLES_CUSTOM"
 	if test "$_use_gles_rpi" = yes ; then
-		echo "Activating custom-context GLES RPI"
-		# Yes, the Raspberry toolchain uses hardcoded paths. See Broadcom examples in /opt/vc/src.
-		CXXFLAGS="$CXXFLAGS -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads"
-		LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm -lbcm_host -lvcos -lvchiq_arm"
-		add_line_to_config_mk "USE_GLES_RPI = 1"
-		add_line_to_config_h "#define USE_GLES_RPI"
+		GLES_RPI_CFLAGS="-mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads"
+		GLES_RPI_LIBS="-L/opt/vc/lib -lGLESv1_CM -lEGL -lm -lbcm_host -lvcos -lvchiq_arm"
+		_use_gles_rpi=no
+		cat > $TMPC << EOF
+#include <bcm_host.h>
+
+int main(int argc, char *argv[]) {
+	bcm_host_init();
+}
+EOF
+		cc_check $GLES_RPI_CFLAGS $GLES_RPI_LIBS && _use_gles_rpi=yes
+		if test "$_use_gles_rpi" = "yes"; then
+			echo "Activating custom GLES context for Raspberry Pi"
+			LIBS="$LIBS $GLES_RPI_LIBS"
+			INCLUDES="$INCLUDES $GLES_RPI_CFLAGS"
+			add_line_to_config_mk "USE_GLES_RPI = 1"
+			add_line_to_config_h "#define USE_GLES_RPI"
+		else 
+			echo "Missing Raspberry Pi headers. Can't activate Raspberry Pi GLES context."		
+		fi
 	fi
 	
 	if test "$_use_gles_fbdev" = yes ; then
-		echo "Activating custom-context GLES FBDEV (Cubieboard/Cubie2/Cubietruck)"
+		echo "Activating custom GLES context for FBDEV (Cubieboard/Cubie2/Cubietruck)"
 		CXXFLAGS="$CXXFLAGS -marm -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon"
 		LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm"
 		add_line_to_config_mk "USE_GLES_FBDEV = 1"
@@ -4112,7 +4126,7 @@ if test "$_use_gles_custom" = yes ; then
 	fi
 	
 	if test "$_use_gles_kms" = yes ; then
-		echo "Activating custom-context GLES KMS (OpenGL(ES) without X)"
+		echo "Activating custom GLES context for KMS (OpenGL(ES) without X)"
 		CXXFLAGS="$CXXFLAGS -I/usr/include/drm"
 		LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm -ldrm -lgbm"
 		add_line_to_config_mk "USE_GLES_KMS = 1"
