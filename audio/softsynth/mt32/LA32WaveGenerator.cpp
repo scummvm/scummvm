@@ -15,14 +15,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include <cmath>
-#include "mt32emu.h"
-#include "mmath.h"
-#include "LA32WaveGenerator.h"
-
 #if MT32EMU_USE_FLOAT_SAMPLES
 #include "LA32FloatWaveGenerator.cpp"
 #else
+
+//#include <cmath>
+#include "mt32emu.h"
+#include "mmath.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

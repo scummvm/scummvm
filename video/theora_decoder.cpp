@@ -360,7 +360,11 @@ static double rint(double v) {
 }
 
 bool TheoraDecoder::VorbisAudioTrack::decodeSamples() {
+#ifdef USE_TREMOR
+	ogg_int32_t **pcm;
+#else
 	float **pcm;
+#endif
 
 	// if there's pending, decoded audio, grab it
 	int ret = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);

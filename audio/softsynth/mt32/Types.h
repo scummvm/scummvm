@@ -15,44 +15,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MT32EMU_TABLES_H
-#define MT32EMU_TABLES_H
+#ifndef MT32EMU_TYPES_H
+#define MT32EMU_TYPES_H
 
 namespace MT32Emu {
 
-class Tables {
-private:
-	Tables();
-	Tables(Tables &);
-	~Tables() {}
+typedef unsigned int       Bit32u;
+typedef   signed int       Bit32s;
+typedef unsigned short int Bit16u;
+typedef   signed short int Bit16s;
+typedef unsigned char      Bit8u;
+typedef   signed char      Bit8s;
 
-public:
-	static const Tables &getInstance();
-
-	// Constant LUTs
-
-	// CONFIRMED: This is used to convert several parameters to amp-modifying values in the TVA envelope:
-	// - PatchTemp.outputLevel
-	// - RhythmTemp.outlevel
-	// - PartialParam.tva.level
-	// - expression
-	// It's used to determine how much to subtract from the amp envelope's target value
-	Bit8u levelToAmpSubtraction[101];
-
-	// CONFIRMED: ...
-	Bit8u envLogarithmicTime[256];
-
-	// CONFIRMED: ...
-	Bit8u masterVolToAmpSubtraction[101];
-
-	// CONFIRMED:
-	Bit8u pulseWidth100To255[101];
-
-	Bit16u exp9[512];
-	Bit16u logsin9[512];
-
-	const Bit8u *resAmpDecayFactor;
-};
+#if MT32EMU_USE_FLOAT_SAMPLES
+typedef float Sample;
+typedef float SampleEx;
+#else
+typedef Bit16s Sample;
+typedef Bit32s SampleEx;
+#endif
 
 }
 

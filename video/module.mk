@@ -5,11 +5,11 @@ MODULE_OBJS := \
 	coktel_decoder.o \
 	dxa_decoder.o \
 	flic_decoder.o \
+	mpegps_decoder.o \
 	psx_decoder.o \
 	qt_decoder.o \
 	smk_decoder.o \
-	video_decoder.o \
-	mpegps_decoder.o
+	video_decoder.o
 
 ifdef USE_BINK
 MODULE_OBJS += \

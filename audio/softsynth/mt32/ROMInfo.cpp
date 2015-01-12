@@ -21,8 +21,8 @@
 namespace MT32Emu {
 
 static const ROMInfo *getKnownROMInfoFromList(unsigned int index) {
-	static const ControlROMFeatureSet MT32_COMPATIBLE(true);
-	static const ControlROMFeatureSet CM32L_COMPATIBLE(false);
+	static const ControlROMFeatureSet MT32_COMPATIBLE(true, true);
+	static const ControlROMFeatureSet CM32L_COMPATIBLE(false, false);
 
 	// Known ROMs
 	static const ROMInfo CTRL_MT32_V1_04 = {65536, "5a5cb5a77d7d55ee69657c2f870416daed52dea7", ROMInfo::Control, "ctrl_mt32_1_04", "MT-32 Control v1.04", ROMInfo::Full, NULL, &MT32_COMPATIBLE};
@@ -106,7 +106,6 @@ void ROMImage::freeROMImage(const ROMImage *romImage) {
 	delete romImage;
 }
 
-
 Common::File* ROMImage::getFile() const {
 	return file;
 }
@@ -115,11 +114,17 @@ const ROMInfo* ROMImage::getROMInfo() const {
 	return romInfo;
 }
 
-ControlROMFeatureSet::ControlROMFeatureSet(bool useDefaultReverbMT32Compatible) : defaultReverbMT32Compatible(useDefaultReverbMT32Compatible) {
-}
+ControlROMFeatureSet::ControlROMFeatureSet(bool useDefaultReverbMT32Compatible, bool useOldMT32AnalogLPF) :
+	defaultReverbMT32Compatible(useDefaultReverbMT32Compatible),
+	oldMT32AnalogLPF(useOldMT32AnalogLPF)
+{}
 
 bool ControlROMFeatureSet::isDefaultReverbMT32Compatible() const {
 	return defaultReverbMT32Compatible;
+}
+
+bool ControlROMFeatureSet::isOldMT32AnalogLPF() const {
+	return oldMT32AnalogLPF;
 }
 
 }
