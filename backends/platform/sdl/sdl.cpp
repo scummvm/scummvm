@@ -42,8 +42,9 @@
 #else
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #endif
-
-#include "backends/events/sdl/sdl-events.h"
+// ResidualVM:
+// #include "backends/events/sdl/sdl-events.h"
+#include "backends/events/sdl/resvm-sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -156,7 +157,7 @@ void OSystem_SDL::initBackend() {
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
-		_eventSource = new SdlEventSource();
+		_eventSource = new ResVmSdlEventSource(); // ResidualVm: was SdlEventSource
 
 	if (_graphicsManager == 0) {
 		if (_graphicsManager == 0) {

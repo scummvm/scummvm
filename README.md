@@ -140,6 +140,14 @@ Alt + x     | Quit (ingame)
 Alt + enter | Switch between windowed-mode and fullscreen
 F1          | Menu
 
+### 3.4. Joystick/gamepad support ###
+
+If you want to use a joystick or gamepad for navigation, the joystick support
+of the engine needs to be enabled using one of the following two options:
+
+  * start residualvm with "--joystick" parameter
+  * add "joystick\_num=0" to the "[residualvm]" section of the configuration file
+    (see section 5.1. how to find the file)
 
 4. Running Myst III
 -------------------

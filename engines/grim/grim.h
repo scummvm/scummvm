@@ -193,6 +193,8 @@ protected:
 
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);
+	void handleJoyAxis(byte axis, int16 position);
+	void handleJoyButton(Common::EventType type, byte button);
 	void handleExit();
 	void handlePause();
 	void handleUserPaint();
@@ -243,6 +245,7 @@ protected:
 
 	bool *_controlsEnabled;
 	bool *_controlsState;
+	float *_joyAxisPosition;
 
 	bool _changeHardwareState;
 	bool _changeFullscreenState;
@@ -335,6 +338,9 @@ enum {
 	KEYCODE_AXIS_MOUSE_Z,
 	KEYCODE_EXTRA_LAST
 };
+
+#define NUM_JOY_AXES (KEYCODE_AXIS_JOY1_V - KEYCODE_AXIS_JOY1_X + 1)
+#define NUM_JOY_BUTTONS (KEYCODE_JOY1_B20 - KEYCODE_JOY1_B1 + 1)
 
 extern const ControlDescriptor controls[];
 

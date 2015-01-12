@@ -119,6 +119,10 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 		_controlsEnabled[i] = false;
 		_controlsState[i] = false;
 	}
+	_joyAxisPosition = new float[NUM_JOY_AXES];
+	for (int i = 0; i < NUM_JOY_AXES; i++) {
+		_joyAxisPosition[i] = 0;
+	}
 	_speechMode = TextAndVoice;
 	_textSpeed = 7;
 	_mode = _previousMode = NormalMode;
@@ -171,6 +175,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
+	delete[] _joyAxisPosition;
 
 	clearPools();
 
@@ -816,6 +821,10 @@ void GrimEngine::mainLoop() {
 					}
 				}
 			}
+			if (type == Common::EVENT_JOYAXIS_MOTION)
+				handleJoyAxis(event.joystick.axis, event.joystick.position);
+			if (type == Common::EVENT_JOYBUTTON_DOWN || type == Common::EVENT_JOYBUTTON_UP)
+				handleJoyButton(type, event.joystick.button);
 		}
 
 		if (_mode != PauseMode) {
@@ -1250,6 +1259,10 @@ void GrimEngine::setTextSpeed(int speed) {
 }
 
 float GrimEngine::getControlAxis(int num) {
+	int idx = num - KEYCODE_AXIS_JOY1_X;
+	if (idx >= 0 && idx < NUM_JOY_AXES) {
+		return _joyAxisPosition[idx];
+	}
 	return 0;
 }
 
