@@ -885,7 +885,7 @@ void Interface::draw3d(bool flag) {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
 		} else {
 			++mazeObject._frame;
-			if (i == objNum && _animCounter > 0 && (
+			if ((int)i == objNum && _animCounter > 0 && (
 					objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
 					objObject._spriteId == 58 || objObject._spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
@@ -1198,9 +1198,5 @@ void Interface::setMainButtons() {
 void Interface::setMazeBits() {
 
 }
-
-void Interface::getCell() {
-}
-
 
 } // End of namespace Xeen

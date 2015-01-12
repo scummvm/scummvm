@@ -351,6 +351,8 @@ private:
 	int _mazeDataIndex;
 	bool _currentSteppedOn;
 	int _currentSurfaceId;
+	int _currentWall;
+	int _currentTile;
 
 	void loadEvents(int mapId);
 
@@ -377,6 +379,8 @@ public:
 	void setCellSurfaceFlags(const Common::Point &pt, int bits);
 
 	void saveMaze();
+
+	int getCell(int idx);
 };
 
 } // End of namespace Xeen

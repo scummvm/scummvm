@@ -145,8 +145,6 @@ private:
 	void setMainButtons();
 
 	void setMazeBits();
-
-	void getCell();
 public:
 	Interface(XeenEngine *vm);
 

@@ -854,6 +854,8 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
 	_currentSurfaceId = 0;
+	_currentWall = 0;
+	_currentTile = 0;
 	_currentIsGrate = false;
 	_currentCantRest = false;
 	_currentIsDrain = false;
@@ -1215,6 +1217,134 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
 	mazeLookup(pt, 0);
 	_mazeData[0]._cells[pt.y][pt.x]._surfaceId |= bits;
+}
+
+
+int Map::getCell(int idx) {
+	int mapId = _vm->_party._mazeId;
+	Direction dir = _vm->_party._mazeDirection;
+	Common::Point pt(
+		_vm->_party._mazePosition.x + SCREEN_POSITIONING_X[_vm->_party._mazeDirection][idx],
+		_vm->_party._mazePosition.y + SCREEN_POSITIONING_Y[_vm->_party._mazeDirection][idx]
+	);
+
+	if (pt.x > 31 || pt.y > 31) {
+		if (_vm->_files->_isDarkCc) {
+			if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
+					mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
+				_currentSurfaceId = SURFTYPE_DESERT;
+			} else {
+				_currentSurfaceId = 0;
+			}
+		} else {
+			_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? 7 : 0;
+		}
+		_currentWall = 0x8888;
+		return _currentWall;
+	} 
+
+	_mazeDataIndex = 0;
+	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+		++_mazeDataIndex;
+
+	if (pt.y & 16) {
+		if (pt.y >= 0) {
+			pt.y -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._north;
+		} else {
+			pt.y += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._south;
+		}
+
+		if (!mapId) {
+			if (_isOutdoors) {
+				_currentSurfaceId = SURFTYPE_SPACE;
+				_currentWall = 0;
+				return 0;
+			} else {
+				if (_vm->_files->_isDarkCc) {
+					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
+						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
+						_currentSurfaceId = SURFTYPE_DESERT;
+					} else {
+						_currentSurfaceId = 0;
+					}
+				} else {
+					_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? SURFTYPE_ROAD : SURFTYPE_DEFAULT;
+				}
+
+				_currentWall = 0x8888;
+				return _currentWall;
+			}
+		
+			_mazeDataIndex = 0;
+			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+				++_mazeDataIndex;
+		}
+	}
+
+	if (pt.x & 16) {
+		if (pt.x >= 0) {
+			pt.x -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
+		} else {
+			pt.x += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
+		}
+
+		if (!mapId) {
+			if (_isOutdoors) {
+				_currentSurfaceId = SURFTYPE_SPACE;
+				_currentWall = 0;
+				return _currentWall;
+			} else {
+				if (_vm->_files->_isDarkCc) {
+					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
+						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
+						_currentSurfaceId = SURFTYPE_DESERT;
+					} else {
+						_currentSurfaceId = 0;
+					}
+				} else {
+					_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? SURFTYPE_ROAD : SURFTYPE_DEFAULT;
+				}
+
+				_currentWall = 0x8888;
+				return _currentWall;
+			}
+
+			_mazeDataIndex = 0;
+			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+				++_mazeDataIndex;
+		}
+	}
+
+	MazeWallLayers &wallLayers = _mazeData[_mazeDataIndex]._wallData[pt.y][pt.x];
+	if (_isOutdoors) {
+		if (mapId) {
+			// TODO: tile is set to word of (wallLayers >> 8) && 0xff? Makes no sense
+			_currentTile = wallLayers._outdoors._surfaceId;
+			_currentWall = wallLayers._outdoors._iMiddle;
+			_currentSurfaceId = wallLayers._outdoors._surfaceId;
+		} else {
+			_currentSurfaceId = SURFTYPE_DEFAULT;
+			_currentWall = 0;
+			_currentTile = 0;
+		}
+	} else {
+		if (!mapId)
+			return 0;
+
+		if (pt.x > 31 || pt.y > 31)
+			_currentSurfaceId = SURFTYPE_ROAD;
+		else
+			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
+
+		_currentWall = wallLayers._data;
+		return (_currentWall >> (WALL_NUMBERS[dir][idx * 2] * 4)) & 0xF;
+	}
+
+	return _currentWall;
 }
 
 } // End of namespace Xeen

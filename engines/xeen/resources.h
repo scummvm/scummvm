@@ -82,6 +82,8 @@ extern const int OUTDOOR_OBJECT_Y[2][12];
 
 extern const int DIRECTION_ANIM_POSITIONS[4][4];
 
+extern const byte WALL_NUMBERS[4][96];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */
