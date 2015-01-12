@@ -68,7 +68,9 @@ extern const char *const PLEASE_WAIT;
 
 extern const char *const OOPS;
 
-extern const int8 SCREEN_POSITIONING[384];
+extern const int8 SCREEN_POSITIONING_X[4][48];
+
+extern const int8 SCREEN_POSITIONING_Y[4][48];
 
 extern const int INDOOR_OBJECT_X[2][12];
 

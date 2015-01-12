@@ -40,7 +40,12 @@ public:
 public:
 	OutdoorDrawList();
 
-	DrawStruct &operator[](int idx) { return _data[idx]; }
+	DrawStruct &operator[](int idx) { 
+		assert(idx < size());
+		return _data[idx]; 
+	}
+
+	int size() const { return 132; }
 };
 
 class IndoorDrawList {
@@ -54,7 +59,12 @@ public:
 public:
 	IndoorDrawList();
 
-	DrawStruct &operator[](int idx) { return _data[idx]; }
+	DrawStruct &operator[](int idx) { 
+		assert(idx < size());
+		return _data[idx]; 
+	}
+
+	int size() const { return 170; }
 };
 
 
@@ -98,6 +108,7 @@ private:
 	bool _flag1;
 	int _animCounter;
 	bool _isAnimReset;
+	bool _charsShooting;
 	byte _tillMove;
 	int _objNumber;
 	byte _wp[20];
@@ -132,6 +143,10 @@ private:
 	void moveMonsters();
 
 	void setMainButtons();
+
+	void setMazeBits();
+
+	void getCell();
 public:
 	Interface(XeenEngine *vm);
 

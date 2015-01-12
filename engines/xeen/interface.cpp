@@ -363,6 +363,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_flag1 = false;
 	_animCounter = 0;
 	_isAnimReset = false;
+	_charsShooting = false;
 	_tillMove = 0;
 	_objNumber = 0;
 
@@ -873,6 +874,8 @@ void Interface::draw3d(bool flag) {
 	Direction partyDirection = _vm->_party._mazeDirection;
 	int objNum = _objNumber - 1;
 
+	// Loop to update the frame numbers for each maze object, applying the animation frame
+	// limits as specified by the map's _animationInfo listing
 	for (uint i = 0; i < _vm->_map->_mobData._objects.size(); ++i) {
 		MazeObject &mazeObject = _vm->_map->_mobData._objects[i];
 		AnimationEntry &animEntry = _vm->_map->_animationInfo[mazeObject._spriteId];
@@ -895,6 +898,40 @@ void Interface::draw3d(bool flag) {
 		mazeObject._flipped = animEntry._flipped._flags[directionIndex];
 	}
 
+	if (_vm->_map->_isOutdoors) {
+		error("TODO: draw3d outdoors handling");
+	} else {
+		// Default all the parts of draw struct not to be drawn by default
+		for (int idx = 3; idx < _indoorList.size(); ++idx)
+			_indoorList[idx]._frame = -1;
+
+		if (_flag1) {
+			for (int idx = 0; idx < 96; ++idx) {
+				if (_indoorList[79 + idx]._sprites != nullptr) {
+					_indoorList[79 + idx]._frame = 0;
+				} else if (_indoorList[111 + idx]._sprites != nullptr) {
+					_indoorList[111 + idx]._frame = 1;
+				} else if (_indoorList[135 + idx]._sprites != nullptr) {
+					_indoorList[135 + idx]._frame = 2;
+				} else if (_indoorList[162 + idx]._sprites != nullptr) {
+					_indoorList[162 + idx]._frame = 0;
+				}
+			}
+		} else if (_charsShooting) {
+			for (int idx = 0; idx < 96; ++idx) {
+				if (_indoorList[162 + idx]._sprites != nullptr) {
+					_indoorList[162 + idx]._frame = 0;
+				} else if (_indoorList[135 + idx]._sprites != nullptr) {
+					_indoorList[135 + idx]._frame = 1;
+				} else if (_indoorList[111 + idx]._sprites != nullptr) {
+					_indoorList[111 + idx]._frame = 2;
+				} else if (_indoorList[79 + idx]._sprites != nullptr) {
+					_indoorList[79 + idx]._frame = 0;
+				}
+			}
+		}
+	}
+
 	// TODO: more
 
 	warning("TODO");
@@ -911,7 +948,7 @@ void Interface::setIndoorsMonsters() {
 void Interface::setIndoorObjects() {
 	Common::Point mazePos = _vm->_party._mazePosition;
 	_objNumber = 0;
-	const int8 *posOffset = &SCREEN_POSITIONING[_vm->_party._mazeDirection * 48];
+	const int8 *posOffset = &SCREEN_POSITIONING_X[_vm->_party._mazeDirection][0];
 	Common::Point pt;
 
 	Common::Array<MazeObject> &objects = _vm->_map->_mobData._objects;
@@ -1157,5 +1194,13 @@ void Interface::setMainButtons() {
 	addButton(Common::Rect(239,  37, 312,  47),  50, &_iconSprites, false);
 	addButton(Common::Rect(239,  47, 312,  57),  51, &_iconSprites, false);
 }
+
+void Interface::setMazeBits() {
+
+}
+
+void Interface::getCell() {
+}
+
 
 } // End of namespace Xeen
