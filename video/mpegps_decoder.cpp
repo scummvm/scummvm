@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -22,25 +22,27 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "graphics/yuv_to_rgb.h"
 
 #include "video/mpegps_decoder.h"
+#include "image/codecs/mpeg.h"
 
 // The demuxing code is based on libav's demuxing code
 
 namespace Video {
 
-#define PACK_START_CODE          0x1BA
-#define SYSTEM_HEADER_START_CODE 0x1BB
-
-#define PROGRAM_STREAM_MAP       0x1BC
-#define PRIVATE_STREAM_1         0x1BD
-#define PADDING_STREAM           0x1BE
-#define PRIVATE_STREAM_2         0x1BF
+enum {
+	kStartCodePack = 0x1BA,
+	kStartCodeSystemHeader = 0x1BB,
+	kStartCodeProgramStreamMap = 0x1BC,
+	kStartCodePrivateStream1 = 0x1BD,
+	kStartCodePaddingStream = 0x1BE,
+	kStartCodePrivateStream2 = 0x1BF
+};
 
 MPEGPSDecoder::MPEGPSDecoder() {
 	_stream = 0;
@@ -102,28 +104,51 @@ void MPEGPSDecoder::readNextPacket() {
 		} else {
 			// We haven't seen this before
 
-			if (startCode == 0x1BD) {
-				// Private stream 1
+			if (startCode == kStartCodePrivateStream1) {
 				PrivateStreamType streamType = detectPrivateStreamType(packet);
-
 				packet->seek(0);
 
+				// TODO: Handling of these types (as needed)
+
+				const char *typeName;
+				bool handled = false; // ResidualVM
+
 				switch (streamType) {
-				case kPrivateStreamPS2Audio: {
+				case kPrivateStreamAC3:
+					typeName = "AC-3";
+					break;
+				case kPrivateStreamDTS:
+					typeName = "DTS";
+					break;
+				case kPrivateStreamDVDPCM:
+					typeName = "DVD PCM";
+					break;
+				case kPrivateStreamPS2Audio: { // ResidualVM start
+					typeName = "PS2 Audio";
 					// PS2 Audio stream
+					handled = true;
 					PS2AudioTrack *audioTrack = new PS2AudioTrack(packet);
 					stream = audioTrack;
 					_streamMap[startCode] = audioTrack;
 					addTrack(audioTrack);
 					break;
-				}
+				} // ResidualVM end
 				default:
-					// Unknown (silently ignore)
+					typeName = "Unknown";
 					break;
 				}
-			} if (startCode >= 0x1E0 && startCode <= 0x1EF) {
+
+				if (!handled) {// ResidualVM
+					warning("Unhandled DVD private stream: %s", typeName);
+
+					// Make it 0 so we don't get the warning twice
+					_streamMap[startCode] = 0;
+				}
+			} else if (startCode >= 0x1E0 && startCode <= 0x1EF) {
 				// Video stream
 				// TODO: Multiple video streams
+				warning("Found extra video stream 0x%04X", startCode);
+				_streamMap[startCode] = 0;
 			} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
 #ifdef USE_MAD
 				// MPEG Audio stream
@@ -131,7 +156,14 @@ void MPEGPSDecoder::readNextPacket() {
 				stream = audioTrack;
 				_streamMap[startCode] = audioTrack;
 				addTrack(audioTrack);
+#else
+				warning("Found audio stream 0x%04X, but no MAD support compiled in", startCode);
+				_streamMap[startCode] = 0;
 #endif
+			} else {
+				// Probably not relevant
+				debug(0, "Found unhandled MPEG-PS stream type 0x%04x", startCode);
+				_streamMap[startCode] = 0;
 			}
 		}
 
@@ -182,17 +214,17 @@ int MPEGPSDecoder::readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &d
 
 		uint32 lastSync = _stream->pos();
 
-		if (startCode == PACK_START_CODE || startCode == SYSTEM_HEADER_START_CODE)
+		if (startCode == kStartCodePack || startCode == kStartCodeSystemHeader)
 			continue;
 
 		int length = _stream->readUint16BE();
 
-		if (startCode == PADDING_STREAM || startCode == PRIVATE_STREAM_2) {
+		if (startCode == kStartCodePaddingStream || startCode == kStartCodePrivateStream2) {
 			_stream->skip(length);
 			continue;
 		}
 
-		if (startCode == PROGRAM_STREAM_MAP) {
+		if (startCode == kStartCodeProgramStreamMap) {
 			parseProgramStreamMap(length);
 			continue;
 		}
@@ -200,7 +232,7 @@ int MPEGPSDecoder::readNextPacketHeader(int32 &startCode, uint32 &pts, uint32 &d
 		// Find matching stream
 		if (!((startCode >= 0x1C0 && startCode <= 0x1DF) ||
 				(startCode >= 0x1E0 && startCode <= 0x1EF) ||
-				startCode == 0x1BD || startCode == 0x1FD))
+				startCode == kStartCodePrivateStream1 || startCode == 0x1FD))
 			continue;
 
 		// Stuffing
@@ -342,7 +374,7 @@ void MPEGPSDecoder::parseProgramStreamMap(int length) {
 		_psmESType[esID] = type;
 
 		// Skip program stream info
-        _stream->skip(esInfoLength);
+		_stream->skip(esInfoLength);
 
 		esMapLength -= 4 + esInfoLength;
 	}
@@ -379,15 +411,29 @@ bool MPEGPSDecoder::addFirstVideoTrack() {
 }
 
 MPEGPSDecoder::PrivateStreamType MPEGPSDecoder::detectPrivateStreamType(Common::SeekableReadStream *packet) {
-	packet->seek(4);
+	uint32 dvdCode = packet->readUint32LE();
+	if (packet->eos())
+		return kPrivateStreamUnknown;
 
-	if (packet->readUint32BE() == MKTAG('S', 'S', 'h', 'd'))
+	uint32 ps2Header = packet->readUint32BE();
+	if (!packet->eos() && ps2Header == MKTAG('S', 'S', 'h', 'd'))
 		return kPrivateStreamPS2Audio;
+
+	switch (dvdCode & 0xE0) {
+	case 0x80:
+		if ((dvdCode & 0xF8) == 0x88)
+			return kPrivateStreamDTS;
+
+		return kPrivateStreamAC3;
+	case 0xA0:
+		return kPrivateStreamDVDPCM;
+	}
 
 	return kPrivateStreamUnknown;
 }
 
 MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstPacket, const Graphics::PixelFormat &format) {
+	_surface = 0;
 	_endOfTrack = false;
 	_curFrame = -1;
 	_nextFrameStartTime = Audio::Timestamp(0, 27000000); // 27 MHz timer
@@ -395,33 +441,33 @@ MPEGPSDecoder::MPEGVideoTrack::MPEGVideoTrack(Common::SeekableReadStream *firstP
 	findDimensions(firstPacket, format);
 
 #ifdef USE_MPEG2
-	_mpegDecoder = mpeg2_init();
-
-	if (!_mpegDecoder)
-		error("Could not initialize libmpeg2");
-
-	_mpegInfo = mpeg2_info(_mpegDecoder);
+	_mpegDecoder = new Image::MPEGDecoder();
 #endif
 }
 
 MPEGPSDecoder::MPEGVideoTrack::~MPEGVideoTrack() {
 #ifdef USE_MPEG2
-	mpeg2_close(_mpegDecoder);
+	delete _mpegDecoder;
 #endif
 
-	_surface->free();
-	delete _surface;
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
 }
 
 uint16 MPEGPSDecoder::MPEGVideoTrack::getWidth() const {
-	return _surface->w;
+	return _surface ? _surface->w : 0;
 }
 
 uint16 MPEGPSDecoder::MPEGVideoTrack::getHeight() const {
-	return _surface->h;
+	return _surface ? _surface->h : 0;
 }
 
 Graphics::PixelFormat MPEGPSDecoder::MPEGVideoTrack::getPixelFormat() const {
+	if (!_surface)
+		return Graphics::PixelFormat();
+
 	return _surface->format;
 }
 
@@ -431,37 +477,13 @@ const Graphics::Surface *MPEGPSDecoder::MPEGVideoTrack::decodeNextFrame() {
 
 bool MPEGPSDecoder::MPEGVideoTrack::sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts) {
 #ifdef USE_MPEG2
-	// Decode as much as we can out of this packet
-	uint32 size = 0xFFFFFFFF;
-	mpeg2_state_t state;
-	bool foundFrame = false;
+	uint32 framePeriod;
+	bool foundFrame = _mpegDecoder->decodePacket(*packet, framePeriod, _surface);
 
-	do {
-		state = mpeg2_parse(_mpegDecoder);
-
-		switch (state) {
-		case STATE_BUFFER:
-			size = packet->read(_buffer, BUFFER_SIZE);
-			mpeg2_buffer(_mpegDecoder, _buffer, _buffer + size);
-			break;
-		case STATE_SLICE:
-		case STATE_END:
-			foundFrame = true;
-			_curFrame++;
-
-			if (_mpegInfo->display_fbuf) {
-				const mpeg2_sequence_t *sequence = _mpegInfo->sequence;
-				_nextFrameStartTime = _nextFrameStartTime.addFrames(sequence->frame_period);
-
-				YUVToRGBMan.convert420(_surface, Graphics::YUVToRGBManager::kScaleITU, _mpegInfo->display_fbuf->buf[0],
-						_mpegInfo->display_fbuf->buf[1], _mpegInfo->display_fbuf->buf[2], sequence->picture_width,
-						sequence->picture_height, sequence->width, sequence->chroma_width);
-			}
-			break;
-		default:
-			break;
-		}
-	} while (size != 0);
+	if (foundFrame) {
+		_curFrame++;
+		_nextFrameStartTime = _nextFrameStartTime.addFrames(framePeriod);
+	}
 #endif
 
 	delete packet;
@@ -484,7 +506,7 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 	uint16 width = firstPacket->readByte() << 4;
 	uint16 height = firstPacket->readByte();
 	width |= (height & 0xF0) >> 4;
-	height = ((height & 0xF) << 8) | firstPacket->readByte();
+	height = ((height & 0x0F) << 8) | firstPacket->readByte();
 
 	debug(0, "MPEG dimensions: %dx%d", width, height);
 
@@ -717,6 +739,7 @@ void MPEGPSDecoder::MPEGAudioTrack::decodeMP3Data(Common::SeekableReadStream *pa
 
 #endif
 
+// ResidualVM specific start
 MPEGPSDecoder::PS2AudioTrack::PS2AudioTrack(Common::SeekableReadStream *firstPacket) {
 	firstPacket->seek(12); // unknown data (4), 'SShd', header size (4)
 
@@ -828,5 +851,6 @@ uint32 MPEGPSDecoder::PS2AudioTrack::calculateSampleCount(uint32 packetSize) con
 
 	return result * _channels;
 }
+// ResidualVM specific end
 
 } // End of namespace Video
