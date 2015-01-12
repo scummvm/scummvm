@@ -490,8 +490,10 @@ void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surfac
 Common::String readWideLine(Common::SeekableReadStream &stream) {
 	Common::String asciiString;
 
-	while (!stream.eos()) {
+	while (true) {
 		uint32 value = stream.readUint16LE();
+		if (stream.eos())
+			break;
 		// Check for CRLF
 		if (value == 0x0A0D) {
 			// Read in the extra NULL char
