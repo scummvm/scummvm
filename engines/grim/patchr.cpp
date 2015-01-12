@@ -208,26 +208,18 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 			_diffCopy -= readSize;
 
 			//Read data from diff as blocks of size _kDiffBufferSize,
-			// then xor original data with them in groups of 4 or 8
-			// bytes, depending on the architecture
+			// then xor original data with them in groups of 4 bytes
 			while (readSize > 0) {
 				diffRead = MIN(readSize, _kDiffBufferSize);
 				rd = _diff->read(_diffBuffer, diffRead);
 				if (_diff->err() || rd != diffRead)
 					error("%s: Corrupted patchfile", _patchName.c_str());
 
-#ifdef SCUMM_64BITS
-				for (uint32 i = 0; i < diffRead / 8; ++i)
-					*((uint64 *)data + i) ^= *((uint64 *)_diffBuffer + i);
-				for (uint32 i = diffRead - diffRead % 8; i < diffRead; ++i)
-					data[i] ^= _diffBuffer[i];
-#else
 				for (uint32 i = 0; i < diffRead / 4; ++i)
-					*((uint32 *)data + i) ^= *((uint32 *)_diffBuffer + i);
+					WRITE_UINT32((uint32 *)data + i, READ_UINT32((uint32 *)data + i) ^ READ_UINT32((uint32 *)_diffBuffer + i));
 				for (uint32 i = diffRead - diffRead % 4; i < diffRead; ++i)
 					data[i] ^= _diffBuffer[i];
-#endif
-
+				
 				readSize -= diffRead;
 				data += diffRead;
 			}
