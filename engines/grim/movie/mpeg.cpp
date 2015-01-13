@@ -46,6 +46,7 @@ bool MpegPlayer::loadFile(const Common::String &filename) {
 	if (!stream)
 		return false;
 
+	_videoDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0));
 	_videoDecoder->loadStream(stream);
 	_videoDecoder->start();
 
