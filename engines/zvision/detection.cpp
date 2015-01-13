@@ -140,6 +140,20 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Zork Grand Inquisitor French CD version, reported by ulrichh on IRC
+		{
+			"zgi",
+			"CD",
+			AD_ENTRY1s("SCRIPTS.ZFS", "4d1ec4ade7ecc9ee9ec591d43ca3d213", 8338133),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
+		},
+		GID_GRANDINQUISITOR
+	},
+
+	{
 		// Zork Grand Inquisitor English DVD version
 		{
 			"zgi",
