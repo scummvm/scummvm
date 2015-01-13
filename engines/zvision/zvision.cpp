@@ -236,6 +236,8 @@ void ZVision::initialize() {
 	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
 }
 
+extern const FontStyle getSystemFont(int fontIndex);
+
 Common::Error ZVision::run() {
 	initialize();
 
@@ -246,23 +248,30 @@ Common::Error ZVision::run() {
 	bool foundAllFonts = true;
 
 	// Before starting, make absolutely sure that the user has copied the needed fonts
-	for (int i = 0; i < ARRAYSIZE(systemFonts); i++) {
-		Common::String freeFontBoldItalic = Common::String("Bold") + systemFonts[i].freeFontItalicName;
+	for (int i = 0; i < FONT_COUNT; i++) {
+		FontStyle curFont = getSystemFont(i);
+		Common::String freeFontBoldItalic = Common::String("Bold") + curFont.freeFontItalicName;
 		
 		const char *fontSuffixes[4] = { "", "bd", "i", "bi" };
-		const char *freeFontSuffixes[4] = { "", "Bold", systemFonts[i].freeFontItalicName, freeFontBoldItalic.c_str() };
+		const char *freeFontSuffixes[4] = { "", "Bold", curFont.freeFontItalicName, freeFontBoldItalic.c_str() };
+		const char *liberationFontSuffixes[4] = { "-Regular", "-Bold", "-Italic", "-BoldItalic" };
 
 		for (int j = 0; j < 4; j++) {
-			Common::String fontName = systemFonts[i].fontBase;
+			Common::String fontName = curFont.fontBase;
 			fontName += fontSuffixes[j];
 			fontName += ".ttf";
 
-			Common::String freeFontName = systemFonts[i].freeFontBase;
+			Common::String freeFontName = curFont.freeFontBase;
 			freeFontName += freeFontSuffixes[j];
 			freeFontName += ".ttf";
 
-			if (!Common::File::exists(fontName) && !Common::File::exists(freeFontName) &&
-				!_searchManager->hasFile(fontName) && !_searchManager->hasFile(freeFontName)) {
+			Common::String liberationFontName = curFont.liberationFontBase;
+			liberationFontName += liberationFontSuffixes[j];
+			liberationFontName += ".ttf";
+
+			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) &&
+				!Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) &&
+				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName)) {
 				foundAllFonts = false;
 				break;
 			}
@@ -278,9 +287,11 @@ Common::Error ZVision::run() {
 				"fonts into ScummVM's extras directory, or into the game directory. "
 				"On Windows, you'll need the following font files from the Windows "
 				"font directory: Times New Roman, Century Schoolbook, Garamond, "
-				"Courier New and Arial. Alternatively, you can download the GNU "
-				"FreeFont package. You'll need all the fonts from that package, "
-				"i.e., FreeMono, FreeSans and FreeSerif."
+				"Courier New and Arial. Alternatively, you can download the "
+				"Liberation Fonts or the GNU FreeFont package. You'll need all the "
+				"fonts from the font package you choose, i.e., LiberationMono, "
+				"LiberationSans and LiberationSerif, or FreeMono, FreeSans and "
+				"FreeSerif respectively."
 		);
 		dialog.runModal();
 		quitGame();

@@ -36,6 +36,22 @@
 
 namespace ZVision {
 
+const FontStyle systemFonts[] = {
+	{ "*times new roman*",	  "times",   "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*times*",		  "times",   "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*century schoolbook*", "censcbk", "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*garamond*", 	  "gara",    "FreeSerif", "Italic", "LiberationSerif"  },
+	{ "*courier new*",	  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
+	{ "*courier*",		  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
+	{ "*ZorkDeath*",	  "cour",    "FreeMono",  "Oblique", "LiberationMono" },
+	{ "*arial*",		  "arial",   "FreeSans",  "Oblique", "LiberationSans" },
+	{ "*ZorkNormal*",	  "arial",   "FreeSans",  "Oblique", "LiberationSans" }
+};
+
+const FontStyle getSystemFont(int fontIndex) {
+	return systemFonts[fontIndex];
+}
+
 StyledTTFont::StyledTTFont(ZVision *engine) {
 	_engine = engine;
 	_style = 0;
@@ -56,26 +72,35 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
 	Common::String newFontName;
 	Common::String freeFontName;
+	Common::String liberationFontName;
 
-	for (int i = 0; i < ARRAYSIZE(systemFonts); i++) {
-		if (fontName.matchString(systemFonts[i].zorkFont, true)) {
-			newFontName = systemFonts[i].fontBase;
-			freeFontName = systemFonts[i].freeFontBase;
+	for (int i = 0; i < FONT_COUNT; i++) {
+		FontStyle curFont = getSystemFont(i);
+		if (fontName.matchString(curFont.zorkFont, true)) {
+			newFontName = curFont.fontBase;
+			freeFontName = curFont.freeFontBase;
+			liberationFontName = curFont.liberationFontBase;
 
 			if ((_style & STTF_BOLD) && (_style & STTF_ITALIC)) {
 				newFontName += "bi";
 				freeFontName += "Bold";
-				freeFontName += systemFonts[i].freeFontItalicName;
+				freeFontName += curFont.freeFontItalicName;
+				liberationFontName += "-BoldItalic";
 			} else if (_style & STTF_BOLD) {
 				newFontName += "bd";
 				freeFontName += "Bold";
+				liberationFontName += "-Bold";
 			} else if (_style & STTF_ITALIC) {
 				newFontName += "i";
-				freeFontName += systemFonts[i].freeFontItalicName;
+				freeFontName += curFont.freeFontItalicName;
+				liberationFontName += "-Italic";
+			} else {
+				liberationFontName += "-Regular";
 			}
 
 			newFontName += ".ttf";
 			freeFontName += ".ttf";
+			liberationFontName += ".ttf";
 			break;
 		}
 	}
@@ -84,13 +109,16 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point) {
 		debug("Could not identify font: %s. Reverting to Arial", fontName.c_str());
 		newFontName = "arial.ttf";
 		freeFontName = "FreeSans.ttf";
+		liberationFontName = "LiberationSans-Regular.ttf";
 	}
 
 	bool sharp = (_style & STTF_SHARP) == STTF_SHARP;
 
 	Common::File file;
-	if (!file.open(newFontName) && !file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, newFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
-		error("Unable to open font file %s (free alternative: %s)", newFontName.c_str(), freeFontName.c_str());
+	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) &&
+		!file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) &&
+		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
+		error("Unable to open font file %s (Liberation Font alternative: %s, FreeFont alternative: %s)", newFontName.c_str(), liberationFontName.c_str(), freeFontName.c_str());
 
 	Graphics::Font *_newFont = Graphics::loadTTFFont(file, point, 60, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal)); // 66 dpi for 640 x 480 on 14" display
 	if (_newFont) {
