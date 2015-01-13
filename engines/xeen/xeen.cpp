@@ -36,6 +36,7 @@ namespace Xeen {
 
 XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: Engine(syst), _gameDescription(gameDesc), _randomSource("Xeen") {
+	_combat = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
 	_files = nullptr;
@@ -50,12 +51,13 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_face1State = 0;
 	_face2State = 0;
 	_noDirectionSense = false;
-	_falling = false;
+	_falling = 0;
 	_moveMonsters = false;
 	_mode = MODE_0;
 }
 
 XeenEngine::~XeenEngine() {
+	delete _combat;
 	delete _debugger;
 	delete _events;
 	delete _interface;
@@ -76,6 +78,7 @@ void XeenEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_files = new FileManager(this);
+	_combat = new Combat(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_interface = new Interface(this);

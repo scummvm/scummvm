@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	clouds\clouds_game.o \
 	darkside\darkside_game.o \
 	worldofxeen\worldofxeen_game.o \
+	combat.o \
 	debugger.o \
 	detection.o \
 	dialogs.o \

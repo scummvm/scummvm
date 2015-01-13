@@ -371,6 +371,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	Common::fill(&_wp[0], &_wp[20], 0);
 	Common::fill(&_wo[0], &_wo[308], 0);
+	Common::fill(&_charsArray1[0], &_charsArray1[12], 0);
 
 	initDrawStructs();
 }
@@ -408,6 +409,7 @@ void Interface::setup() {
 	_restoreSprites.load("restorex.icn");
 	_hpSprites.load("hpbars.icn");
 	_uiSprites.load("inn.icn");
+	_charPowSprites.load("charpow.icn");
 
 	// Get mappings to the active characters in the party
 	_vm->_party._activeParty.resize(_vm->_party._partyCount);
@@ -855,9 +857,11 @@ void Interface::moveCharacterToRoster() {
 	error("TODO");
 }
 
-void Interface::draw3d(bool flag) {
+void Interface::draw3d(bool updateFlag) {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
 	Screen &screen = *_vm->_screen;
-//	EventsManager &events = *_vm->_events;
 
 	if (!screen._windows[11]._enabled)
 		return;
@@ -871,15 +875,15 @@ void Interface::draw3d(bool flag) {
 			moveMonsters();
 	}
 
-	MazeObject &objObject = _vm->_map->_mobData._objects[_objNumber];
+	MazeObject &objObject = map._mobData._objects[_objNumber];
 	Direction partyDirection = _vm->_party._mazeDirection;
 	int objNum = _objNumber - 1;
 
 	// Loop to update the frame numbers for each maze object, applying the animation frame
 	// limits as specified by the map's _animationInfo listing
-	for (uint i = 0; i < _vm->_map->_mobData._objects.size(); ++i) {
-		MazeObject &mazeObject = _vm->_map->_mobData._objects[i];
-		AnimationEntry &animEntry = _vm->_map->_animationInfo[mazeObject._spriteId];
+	for (uint i = 0; i < map._mobData._objects.size(); ++i) {
+		MazeObject &mazeObject = map._mobData._objects[i];
+		AnimationEntry &animEntry = map._animationInfo[mazeObject._spriteId];
 		int directionIndex = DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
 
 		if (_isAnimReset) {
@@ -899,7 +903,7 @@ void Interface::draw3d(bool flag) {
 		mazeObject._flipped = animEntry._flipped._flags[directionIndex];
 	}
 
-	if (_vm->_map->_isOutdoors) {
+	if (map._isOutdoors) {
 		error("TODO: draw3d outdoors handling");
 	} else {
 		// Default all the parts of draw struct not to be drawn by default
@@ -931,11 +935,134 @@ void Interface::draw3d(bool flag) {
 				}
 			}
 		}
+
+		setMazeBits();
+		_isAnimReset = false;
+		const int INDOOR_INDEXES[3] = { 157, 151, 154 };
+		const int INDOOR_COMBAT_POS[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
+		const int INDOOR_COMBAT_POS2[4] = { 8, 6, 4, 2 };
+
+		MazeObject &objObject = map._mobData._objects[_objNumber - 1];
+
+		for (int idx = 0; idx < 3; ++idx) {
+			DrawStruct &ds1 = _indoorList[INDOOR_INDEXES[idx]];
+			DrawStruct &ds2 = _indoorList[INDOOR_INDEXES[idx] + 1];
+			ds1._sprites = nullptr;
+			ds2._sprites = nullptr;
+
+			if (_charsArray1[idx]) {
+				int posIndex= combat._attackMon2 && !combat._attackMon3 ? 1 : 0;
+				--combat._charsArray1[idx];
+
+				if (combat._monPow[idx]) {
+					ds1._x = INDOOR_COMBAT_POS[idx][0];
+					ds1._frame = 0;
+					ds1._scale = combat._monsterScale[idx];
+					if (ds1._scale == 0x8000) {
+						ds1._x /= 3;
+						ds1._y = 60;
+					} else {
+						ds1._y = 73;
+					}
+
+					ds1._flags = SPRFLAG_4000 | SPRFLAG_2000;
+					ds1._sprites = &_charPowSprites;
+				}
+
+				if (combat._elemPow[idx]) {
+					ds2._x = INDOOR_COMBAT_POS[idx][posIndex] + INDOOR_COMBAT_POS2[idx];
+					ds2._frame = combat._elemPow[idx];
+					ds2._scale = combat._elemScale[idx];
+					if (ds2._scale == 0x8000)
+						ds2._x /= 3;
+					ds2._flags = SPRFLAG_4000 | SPRFLAG_2000;
+					ds2._sprites = &_charPowSprites;
+				}
+			}
+		}
+
+		setIndoorsMonsters();
+		setIndoorObjects();
+		setIndoorWallPics();
+
+		_indoorList[161]._sprites = nullptr;
+		_indoorList[160]._sprites = nullptr;
+		_indoorList[159]._sprites = nullptr;
+
+		// Handle attacking monsters
+		int monsterIndex = 0;
+		if (combat._attackMon1 != -1 && map._mobData._monsters[combat._attackMon1]._frame >= 0) {
+			_indoorList[159] = _indoorList[156];
+			_indoorList[160] = _indoorList[157];
+			_indoorList[161] = _indoorList[158];
+			_indoorList[158]._sprites = nullptr;
+			_indoorList[156]._sprites = nullptr;
+			_indoorList[157]._sprites = nullptr;
+			monsterIndex = 1;
+		} else if (combat._attackMon2 != -1 && map._mobData._monsters[combat._attackMon2]._frame >= 0) {
+			_indoorList[159] = _indoorList[150];
+			_indoorList[160] = _indoorList[151];
+			_indoorList[161] = _indoorList[152];
+			_indoorList[152]._sprites = nullptr;
+			_indoorList[151]._sprites = nullptr;
+			_indoorList[150]._sprites = nullptr;
+			monsterIndex = 2;
+		} else if (combat._attackMon3 != -1 &&  map._mobData._monsters[combat._attackMon3]._frame >= 0) {
+			_indoorList[159] = _indoorList[153];
+			_indoorList[160] = _indoorList[154];
+			_indoorList[161] = _indoorList[155];
+			_indoorList[153]._sprites = nullptr;
+			_indoorList[154]._sprites = nullptr;
+			_indoorList[155]._sprites = nullptr;
+			monsterIndex = 3;
+		}
+
+		drawIndoors();
+
+		switch (monsterIndex) {
+		case 1:
+			_indoorList[156] = _indoorList[159];
+			_indoorList[157] = _indoorList[160];
+			_indoorList[158] = _indoorList[161];
+			break;
+		case 2:
+			_indoorList[150] = _indoorList[159];
+			_indoorList[151] = _indoorList[160];
+			_indoorList[152] = _indoorList[161];
+			break;
+		case 3:
+			_indoorList[153] = _indoorList[159];
+			_indoorList[154] = _indoorList[160];
+			_indoorList[155] = _indoorList[161];
+			break;
+		default:
+			break;
+		}
 	}
 
-	// TODO: more
+	animate3d();
+	updateAutoMap();
 
-	warning("TODO");
+	if (_vm->_falling == 1) {
+		error("TODO: Indoor falling");
+	}
+
+	if (_vm->_falling == 2) {
+		screen.saveBackground(1);
+	}
+
+	assembleBorder();
+
+	// TODO: write strings
+
+	if (updateFlag) {
+		screen._windows[1].update();
+		screen._windows[3].update();
+	}
+
+	// TODO: more stuff
+
+	events.wait(2);
 }
 
 void Interface::animate3d() {
@@ -1123,6 +1250,11 @@ void Interface::setIndoorObjects() {
 		}
 	}
 }
+
+void Interface::setIndoorWallPics() {
+	// TODO
+}
+
 
 void Interface::setOutdoorsMonsters() {
 
@@ -2689,6 +2821,14 @@ void Interface::setMazeBits() {
 	default:
 		break;
 	}
+}
+
+void Interface::drawIndoors() {
+	// TODO
+}
+
+void Interface::updateAutoMap() {
+	// TODO
 }
 
 } // End of namespace Xeen

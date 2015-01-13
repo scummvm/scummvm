@@ -31,6 +31,7 @@
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
+#include "xeen/combat.h"
 #include "xeen/debugger.h"
 #include "xeen/dialogs.h"
 #include "xeen/events.h"
@@ -124,6 +125,7 @@ private:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
+	Combat *_combat;
 	Debugger *_debugger;
 	EventsManager *_events;
 	FileManager *_files;
@@ -142,7 +144,7 @@ public:
 	int _face1State;
 	int _face2State;
 	bool _noDirectionSense;
-	bool _falling;
+	int _falling;
 	bool _moveMonsters;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);

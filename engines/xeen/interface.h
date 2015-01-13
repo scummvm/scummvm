@@ -81,6 +81,7 @@ private:
 	SpriteResource _hpSprites;
 	SpriteResource _uiSprites;
 	SpriteResource _iconSprites;
+	SpriteResource _charPowSprites;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
@@ -114,6 +115,7 @@ private:
 	byte _wp[20];
 	byte _wo[308];
 	bool _thinWall;
+	int _charsArray1[12];
 
 	void loadSprites();
 
@@ -137,6 +139,10 @@ private:
 
 	void setIndoorObjects();
 
+	void setIndoorWallPics();
+
+	void drawIndoors();
+
 	void setOutdoorsMonsters();
 
 	void setOutdoorsObjects();
@@ -146,6 +152,8 @@ private:
 	void setMainButtons();
 
 	void setMazeBits();
+
+	void updateAutoMap();
 public:
 	Interface(XeenEngine *vm);
 
@@ -157,7 +165,7 @@ public:
 
 	void loadPartyIcons();
 
-	void draw3d(bool flag);
+	void draw3d(bool updateFlag);
 
 	void startup();
 
