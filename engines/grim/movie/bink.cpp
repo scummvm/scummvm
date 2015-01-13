@@ -182,6 +182,7 @@ bool BinkPlayer::loadFile(const Common::String &filename) {
 
 	Common::SeekableReadStream *bink = nullptr;
 	bink = new Common::SeekableSubReadStream(stream, startBinkPos, stream->size(), DisposeAfterUse::YES);
+	_videoDecoder->setDefaultHighColorFormat(Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0));
 	return _videoDecoder->loadStream(bink);
 }
 
