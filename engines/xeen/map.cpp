@@ -1050,6 +1050,40 @@ void Map::load(int mapId) {
 		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
 		_mobData._wallItemSprites[i]._sprites.load(filename);
 	}
+
+	// Handle loading miscellaneous sprites for the map
+	if (_isOutdoors) {
+		warning("TODO");
+	} else {
+		warning("TODO");	// Sound loading
+
+		_skySprites.load(isDarkCc ? "sky.sky" : "night.sky");
+		_mazeSkySprites.load(Common::String::format("%s.sky",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		_groundSprites.load(Common::String::format("%s.gnd",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		_tileSprites.load(Common::String::format("%s.til",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+
+		for (int i = 0; i < TOTAL_SURFACES; ++i) {
+			_surfaceSprites[i].clear();
+
+			if (_mazeData[0]._surfaceTypes[i] != 0 || i == 4)
+				_surfaceSprites[i].load(OUTDOOR_SURFACES[i]);
+		}
+
+		_wallSprites._wal.clear();
+		Common::String fwlName = Common::String::format("%s.til",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]);
+		_wallSprites._fwl1.load(fwlName);
+		_wallSprites._fwl2.load(fwlName);
+		_wallSprites._fwl3.load(fwlName);
+		_wallSprites._fwl4.load(fwlName);
+		_wallSprites._swl.load(Common::String::format("s%s.swl",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+
+
+	}
 }
 
 int Map::mazeLookup(const Common::Point &pt, int directionLayerIndex) {

@@ -66,6 +66,23 @@ const char *const OPTIONS_TITLE =
 	"\v117Copyright (c) 1993 NWC, Inc.\n"
 	"All Rights Reserved\x01";
 
+const char *const TERRAIN_TYPES[6] = {
+	"town", "cave", "towr", "cstl", "dung", "scfi"
+};
+
+const char *const OUTDOOR_WALLS[15] = {
+	nullptr, "mount", "ltree", "dtree", "grass", "snotree", "snomnt",
+	"dedltree", "mount", "lavamnt", "palm", "dmount", "dedltree",
+	"dedltree", "dedltree"
+};
+
+const char *const OUTDOOR_SURFACES[16] = {
+	"water.srf", "dirt.srf", "grass.srf", "snow.srf", "swamp.srf",
+	"lava.srf", "desert.srf", "road.srf", "dwater.srf", "tflr.srf",
+	"sky.srf", "croad.srf", "sewer.srf", "cloud.srf", "scortch.srf",
+	"space.srf"
+};
+
 const byte SYMBOLS[20][64] = {
 	{ // 0
 		0x00, 0x00, 0xA8, 0xA4, 0xA4, 0xA4, 0xA4, 0xA4, 0x00, 0xA8, 0x9E, 0x9C, 0x9C, 0x9E, 0x9E, 0x9E,

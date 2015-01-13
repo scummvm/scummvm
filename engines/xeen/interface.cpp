@@ -164,11 +164,28 @@ OutdoorDrawList::OutdoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2
 
 /*------------------------------------------------------------------------*/
 
-IndoorDrawList::IndoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2]),
+IndoorDrawList::IndoorDrawList() : 
+	_sky(_data[1]), _ground(_data[2]), _horizon(_data[28]),
+	_swl_0F1R(_data[ 46]), _swl_0F1L(_data[44]),  _swl_1F1R(_data[134]), 
+	_swl_1F1L(_data[133]), _swl_2F2R(_data[110]), _swl_2F1R(_data[109]), 
+	_swl_2F1L(_data[108]), _swl_2F2L(_data[107]), _swl_3F1R(_data[ 78]), 
+	_swl_3F2R(_data[ 77]), _swl_3F3R(_data[ 76]), _swl_3F4R(_data[ 75]),
+	_swl_3F1L(_data[ 74]), _swl_3F2L(_data[ 73]), _swl_3F3L(_data[ 72]), 
+	_swl_3F4L(_data[ 71]), _swl_4F4R(_data[ 33]), _swl_4F3R(_data[ 34]), 
+	_swl_4F2R(_data[ 35]), _swl_4F1R(_data[ 36]), _swl_4F1L(_data[ 32]),
+	_swl_4F2L(_data[ 31]), _swl_4F3L(_data[ 30]), _swl_4F4L(_data[ 29]),
+	_fwl_4F4R(_data[ 45]), _fwl_4F3R(_data[ 44]), _fwl_4F2R(_data[ 43]), 
+	_fwl_4F1R(_data[ 42]), _fwl_4F(  _data[ 41]), _fwl_4F1L(_data[ 40]), 
+	_fwl_4F2L(_data[ 39]), _fwl_4F3L(_data[ 38]), _fwl_4F4L(_data[ 37]),
+	_fwl_2F1R(_data[121]), _fwl_2F(  _data[120]), _fwl_2F1L(_data[119]), 
+	_fwl_3F2R(_data[ 91]), _fwl_3F1R(_data[ 90]), _fwl_3F(  _data[ 89]), 
+	_fwl_3F1L(_data[ 88]), _fwl_3F2L(_data[ 87]), _fwl_1F(  _data[147]),
+	_fwl_1F1R(_data[145]), _fwl_1F1L(_data[143]),
 	_objects0(_data[149]), _objects1(_data[125]), _objects2(_data[126]),
 	_objects3(_data[127]), _objects4(_data[97]), _objects5(_data[98]),
 	_objects6(_data[99]), _objects7(_data[55]), _objects8(_data[56]),
 	_objects9(_data[58]), _objects10(_data[57]), _objects11(_data[59]) {
+	// Setup draw structure positions
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
 	_data[2] = DrawStruct(0, 8, 67);
@@ -2824,6 +2841,10 @@ void Interface::setMazeBits() {
 }
 
 void Interface::drawIndoors() {
+	Map &map = *_vm->_map;
+
+	map.getCell(36);
+
 	// TODO
 }
 

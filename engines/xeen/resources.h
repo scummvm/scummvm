@@ -32,6 +32,12 @@ extern const char *const CREDITS;
 
 extern const char *const OPTIONS_TITLE;
 
+extern const char *const TERRAIN_TYPES[6];
+
+extern const char *const OUTDOOR_WALLS[15];
+
+extern const char *const OUTDOOR_SURFACES[16];
+
 extern const byte SYMBOLS[20][64];
 
 extern const byte TEXT_COLORS[40][4];

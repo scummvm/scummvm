@@ -34,6 +34,7 @@ namespace Xeen {
 
 #define MAP_WIDTH 16
 #define MAP_HEIGHT 16
+#define TOTAL_SURFACES 16
 
 class XeenEngine;
 
@@ -269,6 +270,15 @@ public:
 	MazeWallItem();
 };
 
+struct WallSprites {
+	SpriteResource _wal;
+	SpriteResource _fwl1;
+	SpriteResource _fwl2;
+	SpriteResource _fwl3;
+	SpriteResource _fwl4;
+	SpriteResource _swl;
+};
+
 class Map;
 
 class MonsterObjectData {
@@ -361,6 +371,12 @@ public:
 	MazeEvents _events;
 	HeadData _headData;
 	AnimationInfo _animationInfo;
+	SpriteResource _skySprites;
+	SpriteResource _mazeSkySprites;
+	SpriteResource _groundSprites;
+	SpriteResource _tileSprites;
+	SpriteResource _surfaceSprites[TOTAL_SURFACES];
+	WallSprites _wallSprites;
 	bool _currentIsGrate;
 	bool _currentCantRest;
 	bool _currentIsDrain;
