@@ -650,12 +650,12 @@ moonbase	Moonbase Commander
 	ef71a322b6530ac45b1a070f7c0795f7	-1	en	Windows	Demo	Demo	-	Kirben
 
 pajama	Pajama Sam 1: No Need to Hide When It's Dark Outside
-	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	us	All	-	-	-	khalek
+	672dec94b82f7f0877ebb5b5cf7f4bc1	-1	en	All	-	-	-	khalek
 	1d7a2e1ddcade791e2de0cfceac86725	-1	fr	All	-	-	-	gist974, ThierryFR
 	4fa6870d9bc8c313b65d54b1da5a1891	-1	nl	All	-	-	-	joostp
 	a095e33061606d231ff37dca4c64c8ac	-1	de	All	HE 99	-	-	Joachim Eberhard
 	898eaa21f79cf8d4f08db856244689ff	66505	en	Windows	HE 99	Updated	-	Joachim Eberhard
-	37aed3f91c1ef959e0bd265f9b13781f	-1	us	All	HE 100	Updated	-	Kirben
+	37aed3f91c1ef959e0bd265f9b13781f	66599	en	All	HE 100	Updated	-	Kirben
 	4aa93cb30e485b728504ba3a693f12bf	-1	ru	Windows	HE 100	-	-	sev
 	782393c5934ecd0b536eaf5fd541bd26	-1	en	Windows	HE 101	Updated	-	Jonathan
 	c225bec1b6c0798a2b8c89ac226dc793	-1	en	Wii	HE 101	-	-	sanguinehearts
