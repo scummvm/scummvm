@@ -113,6 +113,7 @@ private:
 	int _objNumber;
 	byte _wp[20];
 	byte _wo[308];
+	bool _thinWall;
 
 	void loadSprites();
 

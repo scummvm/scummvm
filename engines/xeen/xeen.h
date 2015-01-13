@@ -138,7 +138,6 @@ public:
 	Roster _roster;
 	Party _party;
 	int _loadDarkSide;
-	bool _thinWall;
 	bool _dangerSenseAllowed;
 	int _face1State;
 	int _face2State;

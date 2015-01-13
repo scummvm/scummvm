@@ -351,8 +351,6 @@ private:
 	int _mazeDataIndex;
 	bool _currentSteppedOn;
 	int _currentSurfaceId;
-	int _currentWall;
-	int _currentTile;
 
 	void loadEvents(int mapId);
 
@@ -369,6 +367,8 @@ public:
 	bool _currentIsEvent;
 	bool _currentIsObject;
 	int _currentMonsterFlags;
+	int _currentWall;
+	int _currentTile;
 public:
 	Map(XeenEngine *vm);
 
