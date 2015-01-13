@@ -217,9 +217,14 @@ public:
 	int _startAboutItem;
 	int _startAboutBox;
 	int BOXDATASTART;
+	int BOXDATAEND;
 	int BOXSELECTY;
+	int BOXSELECTYOLD;
+	int NUMBLINES;
 	byte _byte26CB5;
 	int BCNT;
+	int _word234F3, _word234F7, _word234F5, _word234F9;
+	int _word234FB, _word234FF, _word234FD, _word23501;
 	//
 
 	bool _vidEnd;

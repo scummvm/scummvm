@@ -100,6 +100,12 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
 	BCNT = 0;
+	BOXDATASTART = BOXDATAEND = 0;
+	BOXSELECTY = 0;
+	BOXSELECTYOLD = -1;
+	NUMBLINES = 0;
+	_word234F3 = _word234F7 = _word234F5 = _word234F9 = 0;
+	_word234FB = _word234FF = _word234FD = _word23501 = 0;
 
 	_vidEnd = false;
 }

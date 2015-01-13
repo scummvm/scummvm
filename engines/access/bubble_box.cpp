@@ -30,12 +30,13 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_type = type;
 	_bounds = Common::Rect(x, y, x + w, y + h);
 	_bubbleDisplStr = title;
-	_fieldD = val1;
-	_fieldE = val2;
-	_fieldF = val3;
-	_field10 = val4;
+	_btnId1 = val1;
+	_btnX1 = val2;
+	_btnId2 = val3;
+	_btnX2 = val4;
+	_btnId3 = _btnX3 = 0; // Unused in MM and Amazon?
 	BOXSTARTX = BOXSTARTY = 0;
-	BICONSTARTX = 0;
+	BICONSTARTX = BICONSTARTY = 0;
 	BOXENDY = 0;
 	BOXPSTARTX = BOXPSTARTY = 0;
 }
@@ -283,6 +284,14 @@ void BubbleBox::doBox(int item, int box) {
 	delete icons;
 }
 
+void BubbleBox::displayBoxData() {
+	warning("TODO displayBoxData");
+}
+
+void BubbleBox::drawSelectBox() {
+	warning("TODO drawSelectBox");
+}
+
 int BubbleBox::doBox_v1(int item, int box, int &type) {
 	FontManager &fonts = _vm->_fonts;
 
@@ -349,9 +358,9 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 	if (_type != TYPE_2) {
 		oldY = _vm->_screen->_orgY1;
 		--_vm->_screen->_orgY2;
-		_vm->_screen->_orgY2 -= 8;
+		_vm->_screen->_orgY1 = _vm->_screen->_orgY2 - 8;
 		if (_type == TYPE_3)
-			_vm->_screen->_orgY2 -= 8;
+			_vm->_screen->_orgY1 -= 8;
 		_vm->_screen->drawRect();
 
 		int tmpX = BICONSTARTX = _vm->_screen->_orgX1;
@@ -359,9 +368,9 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 		int tmpY = BOXENDY = _vm->_screen->_orgY1;
 
 		if (_type == TYPE_3)
-			BOXSTARTY = tmpY - 7;
+			BICONSTARTY = tmpY - 7;
 		else
-			BOXSTARTY = tmpY + 1;
+			BICONSTARTY = tmpY + 1;
 
 		if (_type == TYPE_3)
 			warning("TODO: Implement more of TYPE_3");
@@ -401,6 +410,99 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 		warning("TODO: pop values");
 		_vm->_screen->restoreScreen();
 	}
+
+	_vm->_destIn = _vm->_screen;
+
+	// Draw buttons
+	int ICON1T = 0;
+	int ICON1X = 0;
+	int ICON1Y = 0;
+	if (_btnId1) {
+		ICON1T = _btnId1;
+		ICON1X = BICONSTARTX + _btnX1;
+		ICON1Y = BICONSTARTY;
+		_vm->_screen->plotImage(icons, ICON1T + 10, Common::Point(ICON1X, ICON1Y));
+
+		int ICON2T = 0;
+		int ICON2X = 0;
+		int ICON2Y = 0;
+		if (_btnId2) {
+			ICON2T = _btnId2;
+			ICON2X = BICONSTARTX + _btnX2;
+			ICON2Y = BICONSTARTY;
+			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, ICON2Y));
+
+			int ICON3T = 0;
+			int ICON3X = 0;
+			int ICON3Y = 0;
+			if (_btnId3) {
+				ICON3T = _btnId3;
+				ICON3X = BICONSTARTX + _btnX3;
+				ICON3Y = BICONSTARTY;
+				_vm->_screen->plotImage(icons, ICON3T + 10, Common::Point(ICON3X, ICON3Y));
+			}
+		}
+	}
+	
+	_vm->_screen->restoreScreen();
+	_vm->BOXDATASTART = _startItem;
+	_vm->BOXSELECTYOLD = -1;
+	_vm->BOXSELECTY = _startBox;
+
+	_vm->NUMBLINES = (_bounds.bottom >> 3) - 2;
+	if (_type == TYPE_3)
+		--_vm->NUMBLINES;
+
+	_vm->_events->showCursor();
+	displayBoxData();
+	drawSelectBox();
+
+	while (true) {
+		_vm->_events->pollEvents();
+		if (_vm->_events->_leftButton)
+			continue;
+
+		if ((_type != TYPE_1) && (_vm->_timers[2]._flag == 0)) {
+			++_vm->_timers[2]._flag;
+			if ((_vm->_events->_mousePos.x >= _vm->_word234F3) && (_vm->_events->_mousePos.x <= _vm->_word234F7)
+			&& (_vm->_events->_mousePos.y >= _vm->_word234F5) && (_vm->_events->_mousePos.y < _vm->_word234F9)) {
+				if (_vm->BCNT) {
+					if (_vm->BOXSELECTY != 0) {
+						--_vm->BOXSELECTY;
+						drawSelectBox();
+					} else if (_vm->BOXDATASTART != 0) {
+						--_vm->BOXDATASTART;
+						displayBoxData();
+						drawSelectBox();
+					}
+				}
+				continue;
+			} else if ((_vm->_events->_mousePos.x >= _vm->_word234FB) && (_vm->_events->_mousePos.x <= _vm->_word234FF)
+			&& (_vm->_events->_mousePos.y >= _vm->_word234FD) && (_vm->_events->_mousePos.y < _vm->_word23501)) {
+				if (_vm->BCNT) {
+					if (_vm->BCNT == _vm->NUMBLINES) {
+						if (_vm->BCNT != _vm->BOXSELECTY + 1) {
+							++_vm->BOXSELECTY;
+							drawSelectBox();
+						} else if (_vm->BOXDATAEND == 0) {
+							++_vm->BOXDATASTART;
+							displayBoxData();
+							drawSelectBox();
+						}
+					} else if (_vm->BCNT != _vm->BOXSELECTY + 1) {
+						++_vm->BOXSELECTY;
+						drawSelectBox();
+					}
+				}
+				continue;
+			}
+		}
+		warning("TODO Case 1");
+
+		displayBoxData();
+		drawSelectBox();
+	}
+
 
 	warning("TODO: more dobox_v1");
 	return -1;

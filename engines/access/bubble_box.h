@@ -43,22 +43,26 @@ private:
 	int _startItem, _startBox;
 	int _charCol, _rowOff;
 	Common::Point _fileStart;
-	int BOXSTARTX;
-	int BOXSTARTY;
+	int BOXSTARTX, BOXSTARTY;
 	int BOXENDY;
-	int BICONSTARTX;
-	int BOXPSTARTX;
-	int BOXPSTARTY;
+	int BICONSTARTX, BICONSTARTY;
+	int BOXPSTARTX, BOXPSTARTY;
+
+	void displayBoxData();
+	void drawSelectBox();
+
 public:
 	BoxType _type;
 	Common::Rect _bounds;
 	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
 	Common::String _bubbleDisplStr;
-	int _fieldD;
-	int _fieldE;
-	int _fieldF;
-	int _field10;
+	int _btnId1;
+	int _btnX1;
+	int _btnId2;
+	int _btnX2;
+	int _btnId3;
+	int _btnX3;
 
 	Common::Array<Common::Rect> _bubbles;
 public:
