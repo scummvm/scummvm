@@ -840,9 +840,9 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
 	27b2ef1653089fe5b897d9cc89ce784f	-1	ru	Windows	HE 80	-	-	George Kormendi
-	2232b0b9411575b1f9961713ebc9de61	-1	nl	Windows	HE 80	-	-	Ben Castricum
-	a22af0ad0e3126d19d22707b0267a37d	-1	nl	Windows	HE 80	-	-	Ben Castricum
-	a56a05c6b865b9956639f8c51269e5ab	-1	nl	Mac	HE 80	-	-	Ben Castricum
+	2232b0b9411575b1f9961713ebc9de61	12800	nl	Windows	HE 80	-	-	Ben Castricum
+	a22af0ad0e3126d19d22707b0267a37d	12800	nl	Windows	HE 80	-	-	Ben Castricum
+	a56a05c6b865b9956639f8c51269e5ab	12800	nl	Mac	HE 80	-	-	Ben Castricum
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku
 	8e3241ddd6c8dadf64305e8740d45e13	-1	en	All	HE 100	Updated	-	Kirben
 
@@ -887,7 +887,7 @@ spyfox	SPY Fox 1: Dry Cereal
 	ba888e6831517597859e91aa173f945c	-1	fr	All	-	Demo	-	Kirben
 	73b8197e236da4bf49adc99fe8f5fa1b	-1	de	All	-	Demo	-	Joachim Eberhard
 	4edbf9d03550f7ba01e7f34d69b678dd	-1	nl	All	HE 98.5	Demo	-	Kirben
-	f2ec78e50bdc63b70044e9758be10914	-1	nl	Mac	HE 98.5	Demo	-	Ben Castricum
+	f2ec78e50bdc63b70044e9758be10914	20141	nl	Mac	HE 98.5	Demo	-	Ben Castricum
 	9d4ab3e0e1d1ebc6ba8a6a4c470ed184	15943	us	All	HE 100	Demo	-	khalek
 
 spyfox2	SPY Fox 2: Some Assembly Required
