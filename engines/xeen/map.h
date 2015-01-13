@@ -367,7 +367,7 @@ public:
 	bool _currentIsEvent;
 	bool _currentIsObject;
 	int _currentMonsterFlags;
-	int _currentWall;
+	MazeWallLayers _currentWall;
 	int _currentTile;
 public:
 	Map(XeenEngine *vm);

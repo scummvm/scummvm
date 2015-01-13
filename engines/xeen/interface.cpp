@@ -1311,7 +1311,7 @@ void Interface::setMazeBits() {
 	case 14:
 		++_wo[287];
 		break;
-	defualt:
+	default:
 		break;
 	}
 
@@ -1497,7 +1497,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	_thinWall = (_vm->_map->_currentWall != 0x8888 && _wo[27]);
+	_thinWall = (_vm->_map->_currentWall._data != 0x8888) && _wo[27];
 
 	switch (_vm->_map->getCell(8)) {
 	case 1:
@@ -1571,7 +1571,7 @@ void Interface::setMazeBits() {
 
 	switch (_vm->_map->getCell(10)) {
 	case 0:
-		+_wo[117];
+		++_wo[117];
 		break;
 	case 1:
 		++_wo[55];

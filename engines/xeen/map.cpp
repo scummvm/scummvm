@@ -854,7 +854,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
 	_currentSurfaceId = 0;
-	_currentWall = 0;
+	_currentWall._data = 0;
 	_currentTile = 0;
 	_currentIsGrate = false;
 	_currentCantRest = false;
@@ -1239,8 +1239,8 @@ int Map::getCell(int idx) {
 		} else {
 			_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? 7 : 0;
 		}
-		_currentWall = 0x8888;
-		return _currentWall;
+		_currentWall._data = 0x8888;
+		return 0x8888;
 	} 
 
 	_mazeDataIndex = 0;
@@ -1259,7 +1259,7 @@ int Map::getCell(int idx) {
 		if (!mapId) {
 			if (_isOutdoors) {
 				_currentSurfaceId = SURFTYPE_SPACE;
-				_currentWall = 0;
+				_currentWall._data = 0;
 				return 0;
 			} else {
 				if (_vm->_files->_isDarkCc) {
@@ -1273,8 +1273,8 @@ int Map::getCell(int idx) {
 					_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? SURFTYPE_ROAD : SURFTYPE_DEFAULT;
 				}
 
-				_currentWall = 0x8888;
-				return _currentWall;
+				_currentWall._data = 0x8888;
+				return 0x8888;
 			}
 		
 			_mazeDataIndex = 0;
@@ -1295,8 +1295,8 @@ int Map::getCell(int idx) {
 		if (!mapId) {
 			if (_isOutdoors) {
 				_currentSurfaceId = SURFTYPE_SPACE;
-				_currentWall = 0;
-				return _currentWall;
+				_currentWall._data = 0;
+				return 0;
 			} else {
 				if (_vm->_files->_isDarkCc) {
 					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
@@ -1309,8 +1309,8 @@ int Map::getCell(int idx) {
 					_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? SURFTYPE_ROAD : SURFTYPE_DEFAULT;
 				}
 
-				_currentWall = 0x8888;
-				return _currentWall;
+				_currentWall._data = 0x8888;
+				return 0x8888;
 			}
 
 			_mazeDataIndex = 0;
@@ -1324,15 +1324,15 @@ int Map::getCell(int idx) {
 		if (mapId) {
 			// TODO: tile is set to word of (wallLayers >> 8) && 0xff? Makes no sense
 			_currentTile = wallLayers._outdoors._surfaceId;
-			_currentWall = wallLayers._outdoors._iMiddle;
+			_currentWall = wallLayers;
 			_currentSurfaceId = wallLayers._outdoors._surfaceId;
 		} else {
 			_currentSurfaceId = SURFTYPE_DEFAULT;
-			_currentWall = 0;
+			_currentWall._data = 0;
 			_currentTile = 0;
 		}
 	} else {
-		if (!mapId)
+		if (!mapId) 
 			return 0;
 
 		if (pt.x > 31 || pt.y > 31)
@@ -1340,11 +1340,11 @@ int Map::getCell(int idx) {
 		else
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 
-		_currentWall = wallLayers._data;
-		return (_currentWall >> (WALL_NUMBERS[dir][idx * 2] * 4)) & 0xF;
+		_currentWall = wallLayers;
+		return (_currentWall._data >> (WALL_NUMBERS[dir][idx * 2] * 4)) & 0xF;
 	}
 
-	return _currentWall;
+	return _currentWall._data;
 }
 
 } // End of namespace Xeen
