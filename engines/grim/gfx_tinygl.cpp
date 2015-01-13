@@ -1247,8 +1247,11 @@ void GfxTinyGL::selectTexture(const Texture *texture) {
 }
 
 void GfxTinyGL::destroyTexture(Texture *texture) {
-	tglDeleteTextures(1, (TGLuint *)texture->_texture);
-	delete[] (TGLuint *)texture->_texture;
+	TGLuint *textures = (TGLuint *)texture->_texture;
+	if (textures) {
+		tglDeleteTextures(1, textures);
+		delete[] textures;
+	}
 }
 
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
