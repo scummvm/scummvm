@@ -45,6 +45,7 @@
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/speech.h"
+#include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/resourcereference.h"
 
@@ -223,6 +224,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kAnimScriptItem:
 		resource = new AnimScriptItem(parent, subType, index, name);
+		break;
+	case ResourceType::kSoundItem:
+		resource = new Sound(parent, subType, index, name);
 		break;
 	case ResourceType::kBookmark:
 		resource = new Bookmark(parent, subType, index, name);

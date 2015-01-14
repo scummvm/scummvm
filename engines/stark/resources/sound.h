@@ -20,32 +20,51 @@
  *
  */
 
-#include "engines/stark/adpcm.h"
+#ifndef STARK_RESOURCES_SOUND_H
+#define STARK_RESOURCES_SOUND_H
+
+#include "common/str.h"
+
+#include "engines/stark/resources/resource.h"
 
 namespace Stark {
 
-int ISS_ADPCMStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples;
+class XRCReadStream;
 
-	assert(numSamples % 2 == 0);
+class Sound : public Resource {
+public:
+	static const ResourceType::Type TYPE = ResourceType::kSoundItem;
 
-	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-		if (_blockPos[0] == _blockAlign) {
-			// read block header
-			for (byte i = 0; i < _channels; i++) {
-				_status.ima_ch[i].last = _stream->readSint16LE();
-				_status.ima_ch[i].stepIndex = _stream->readSint16LE();
-			}
-			_blockPos[0] = 4 * _channels;
-		}
+	enum {
+		kSoundTypeVoice  = 0,
+		kSoundTypeEffect = 1,
+		kSoundTypeMusic  = 2
+	};
 
-		byte data = _stream->readByte();
-		buffer[samples] = decodeIMA(data & 0x0f);
-		buffer[samples + 1] = decodeIMA((data >> 4) & 0x0f, _channels == 2 ? 1 : 0);
-		_blockPos[0]++;
-	}
+	Sound(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~Sound();
 
-	return samples;
-}
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+protected:
+	void printData() override;
+
+	Common::String _filename;
+	Common::String _archiveName;
+	uint32 _enabled;
+	uint32 _looping;
+	uint32 _field_64;
+	uint32 _playUntilComplete;
+	uint32 _maxDuration;
+	uint32 _stockSoundType;
+	Common::String _soundName;
+	uint32 _field_6C;
+	uint32 _soundType;
+	uint32 _pan;
+	float _volume;
+};
 
 } // End of namespace Stark
+
+#endif // STARK_RESOURCES_SOUND_H

@@ -20,30 +20,25 @@
  *
  */
 
-#ifndef STARK_ADPCM_H
-#define STARK_ADPCM_H
+#ifndef STARK_ISS_H
+#define STARK_ISS_H
 
 #include "common/stream.h"
 
-#include "audio/decoders/adpcm_intern.h"
+#include "audio/audiostream.h"
 
 namespace Stark {
 
-class ISS_ADPCMStream : public Audio::Ima_ADPCMStream {
-protected:
-
-	int readBuffer(int16 *buffer, const int numSamples) override;
-
-public:
-	ISS_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
-		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
-
-		if (blockAlign == 0)
-			error("ISS_ADPCMStream(): blockAlign isn't specified");
-
-	}
-};
+/**
+ * Create a new RewindableAudioStream from the ISS data in the given stream.
+ * ISS is the file format used by the 4 CD version of the game.
+ *
+ * @param stream			the SeekableReadStream from which to read the ISS data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @return	a new RewindableAudioStream, or NULL, if an error occurred
+ */
+Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Stark
 
-#endif // STARK_ADPCM_H
+#endif // STARK_ISS_H

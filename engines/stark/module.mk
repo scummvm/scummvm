@@ -2,7 +2,6 @@ MODULE := engines/stark
 
 MODULE_OBJS := \
 	actor.o \
-	adpcm.o \
 	archive.o \
 	console.o \
 	detection.o \
@@ -11,6 +10,7 @@ MODULE_OBJS := \
 	gfx/opengl.o \
 	gfx/renderentry.o \
 	gfx/tinygl.o \
+	iss.o \
 	resources/anim.o \
 	resources/animhierarchy.o \
 	resources/animscript.o \
@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	resources/resource.o \
 	resources/root.o \
 	resources/script.o \
+	resources/sound.o \
 	resources/speech.o \
 	resources/textureset.o \
 	resourcereference.o \
@@ -44,7 +45,6 @@ MODULE_OBJS := \
 	services/stateprovider.o \
 	skeleton.o \
 	skeleton_anim.o \
-	sound.o \
 	stark.o \
 	texture.o \
 	visual/actor.o \
