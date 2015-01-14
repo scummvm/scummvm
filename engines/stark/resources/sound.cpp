@@ -22,7 +22,14 @@
 
 #include "engines/stark/resources/sound.h"
 
+#include "audio/decoders/vorbis.h"
+
+#include "common/system.h"
+
+#include "engines/stark/formats/iss.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 
@@ -42,6 +49,79 @@ Sound::Sound(Resource *parent, byte subType, uint16 index, const Common::String 
 		_pan(0),
 		_volume(0) {
 	_type = TYPE;
+}
+
+Audio::RewindableAudioStream *Sound::makeAudioStream() {
+	// Get the archive loader service
+	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+
+	Audio::RewindableAudioStream *audioStream = nullptr;
+
+	// First try the .iss / isn files
+	Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_filename, _archiveName);
+	if (stream) {
+		audioStream = makeISSStream(stream, DisposeAfterUse::YES);
+	}
+
+#ifdef USE_VORBIS
+	if (!audioStream) {
+		// The 2 CD version uses Ogg Vorbis
+		Common::String filename = _filename;
+		if (_filename.hasSuffix(".iss") || _filename.hasSuffix(".isn")) {
+			filename = Common::String(_filename.c_str(), _filename.size() - 4) + ".ovs";
+		}
+
+		stream = archiveLoader->getExternalFile(filename, _archiveName);
+		if (stream) {
+			audioStream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+		}
+	}
+#endif
+
+	if (!audioStream) {
+		error("Unable to load sound '%s'", _filename.c_str());
+	}
+
+	return audioStream;
+}
+
+Audio::Mixer::SoundType Sound::getMixerSoundType() {
+	switch (_soundType) {
+	case kSoundTypeVoice:
+		return Audio::Mixer::kSpeechSoundType;
+	case kSoundTypeEffect:
+		return Audio::Mixer::kSFXSoundType;
+	case kSoundTypeMusic:
+		return Audio::Mixer::kMusicSoundType;
+	default:
+		error("Unknown sound type '%d'", _soundType);
+	}
+}
+
+void Sound::play() {
+	Audio::AudioStream *stream;
+
+	if (_looping) {
+		stream = Audio::makeLoopingAudioStream(makeAudioStream(), 0);
+	} else {
+		stream = makeAudioStream();
+	}
+
+	g_system->getMixer()->playStream(getMixerSoundType(), &_handle, stream, -1, _volume * Audio::Mixer::kMaxChannelVolume);
+}
+
+bool Sound::isPlaying() {
+	return g_system->getMixer()->isSoundHandleActive(_handle);
+}
+
+void Sound::stop() {
+	g_system->getMixer()->stopHandle(_handle);
+	_handle = Audio::SoundHandle();
+}
+
+void Sound::onPreDestroy() {
+	Resource::onPreDestroy();
+	stop();
 }
 
 void Sound::readData(XRCReadStream *stream) {

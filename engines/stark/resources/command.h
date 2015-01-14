@@ -56,6 +56,8 @@ public:
 
 		kItemEnable = 87,
 
+		kSoundPlay = 112,
+
 		kItemPlaceDirection = 133
 	};
 
@@ -93,6 +95,7 @@ protected:
 	void opScriptPause(Script *script, const ResourceReference &durationRef);
 	void opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	void opItemEnable(const ResourceReference &itemRef, int32 enable);
+	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	void opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 
 	Common::Array<Argument> _arguments;

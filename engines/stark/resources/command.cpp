@@ -29,6 +29,7 @@
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/sound.h"
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
@@ -58,6 +59,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kItemEnable:
 		opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 		return nextCommand();
+	case kSoundPlay:
+		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kItemPlaceDirection:
 		opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 		return nextCommand();
@@ -118,6 +121,18 @@ void Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	case 2:
 		item->setEnabled(!previousState);
 		break;
+	}
+}
+
+Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend) {
+	Sound *sound = soundRef.resolve<Sound>();
+	sound->play();
+
+	if (suspend) {
+		script->suspend(sound);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
 	}
 }
 

@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/sound.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -175,6 +176,14 @@ void Script::updateSuspended() {
 			DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 			if (!dialogPlayer->isRunning()) {
 				// Resume the script execution if the dialog is complete
+				_suspendingResource = nullptr;
+			}
+			break;
+		}
+		case ResourceType::kSoundItem: {
+			Sound *soundItem = Resource::cast<Sound>(_suspendingResource);
+			if (!soundItem->isPlaying()) {
+				// Resume the script execution once the sound has stopped playing
 				_suspendingResource = nullptr;
 			}
 			break;

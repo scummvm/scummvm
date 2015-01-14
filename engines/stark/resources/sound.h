@@ -23,9 +23,15 @@
 #ifndef STARK_RESOURCES_SOUND_H
 #define STARK_RESOURCES_SOUND_H
 
+#include "audio/mixer.h"
+
 #include "common/str.h"
 
 #include "engines/stark/resources/resource.h"
+
+namespace Audio {
+	class RewindableAudioStream;
+}
 
 namespace Stark {
 
@@ -46,9 +52,22 @@ public:
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onPreDestroy() override;
+
+	/** Start playing the sound */
+	void play();
+
+	/** Is the sound playing */
+	bool isPlaying();
+
+	/** Stop the sound */
+	void stop();
 
 protected:
 	void printData() override;
+
+	Audio::RewindableAudioStream *makeAudioStream();
+	Audio::Mixer::SoundType getMixerSoundType();
 
 	Common::String _filename;
 	Common::String _archiveName;
@@ -63,6 +82,8 @@ protected:
 	uint32 _soundType;
 	uint32 _pan;
 	float _volume;
+
+	Audio::SoundHandle _handle;
 };
 
 } // End of namespace Stark
