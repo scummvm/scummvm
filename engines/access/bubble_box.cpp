@@ -26,7 +26,7 @@
 
 namespace Access {
 
-BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title) : Manager(vm) {
+BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title, byte *tmpList) : Manager(vm) {
 	_type = type;
 	_bounds = Common::Rect(x, y, x + w, y + h);
 	_bubbleDisplStr = title;
@@ -37,8 +37,10 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_btnId3 = _btnX3 = 0; // Unused in MM and Amazon?
 	BOXSTARTX = BOXSTARTY = 0;
 	BICONSTARTX = BICONSTARTY = 0;
-	BOXENDY = 0;
+	BOXENDX = BOXENDY = 0;
 	BOXPSTARTX = BOXPSTARTY = 0;
+	// Unused in AGoE
+	_tempListPtr = tmpList;
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
@@ -285,7 +287,64 @@ void BubbleBox::doBox(int item, int box) {
 }
 
 void BubbleBox::displayBoxData() {
-	warning("TODO displayBoxData");
+	_vm->BOXDATAEND = 0;
+	_rowOff = 2;
+	_vm->_fonts._charSet._lo = 7;  // 0xF7
+	_vm->_fonts._charSet._hi = 15;
+	_vm->_fonts._charFor._lo = 15; // 0xFF
+	_vm->_fonts._charFor._hi = 15;
+
+	if (!_tempListPtr)
+		return;
+
+	int idx = 0;
+	if ((_type == TYPE_1) || (_type == TYPE_3)) {
+		_vm->BCNT = 0;
+
+		if (_tempListPtr[idx] == -1) {
+			_vm->BOXDATAEND = 1;
+			return;
+		}
+
+		_vm->_events->hideCursor();
+
+		_vm->_screen->_orgX1 = BOXSTARTX;
+		_vm->_screen->_orgX2 = BOXENDX;
+		_vm->_screen->_orgY1 = BOXSTARTY;
+		_vm->_screen->_orgY2 = BOXENDY;
+		_vm->_screen->_lColor = 0xFA;
+		_vm->_screen->drawRect();
+		_vm->_events->showCursor();
+	}
+	
+	_vm->_events->hideCursor();
+	int oldPStartY = BOXPSTARTY;
+	++BOXPSTARTY;
+
+	for (int i = 0; i < _vm->BOXDATASTART; i++, idx++) {
+		while (_tempListPtr[idx] != 0)
+			++idx;
+	}
+
+	while (true) {
+		warning("TODO: SETCURSOR");
+		warning("TODO: PRINTSTR");
+		++idx;
+		++BOXPSTARTY;
+		++_vm->BCNT;
+		if (_tempListPtr[idx] == nullptr) {
+			BOXPSTARTY = oldPStartY;
+			_vm->_events->showCursor();
+			_vm->BOXDATAEND = 1;
+			return;
+		}
+
+		if (_vm->BCNT == _vm->NUMBLINES) {
+			BOXPSTARTY = oldPStartY;
+			_vm->_events->showCursor();
+			return;
+		}
+	}
 }
 
 void BubbleBox::drawSelectBox() {
@@ -503,9 +562,7 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 		drawSelectBox();
 	}
 
-
 	warning("TODO: more dobox_v1");
 	return -1;
 }
-
 } // End of namespace Access

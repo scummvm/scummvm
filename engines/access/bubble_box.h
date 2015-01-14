@@ -44,7 +44,7 @@ private:
 	int _charCol, _rowOff;
 	Common::Point _fileStart;
 	int BOXSTARTX, BOXSTARTY;
-	int BOXENDY;
+	int BOXENDX, BOXENDY;
 	int BICONSTARTX, BICONSTARTY;
 	int BOXPSTARTX, BOXPSTARTY;
 
@@ -57,6 +57,7 @@ public:
 	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
 	Common::String _bubbleDisplStr;
+	byte *_tempListPtr;
 	int _btnId1;
 	int _btnX1;
 	int _btnId2;
@@ -66,7 +67,7 @@ public:
 
 	Common::Array<Common::Rect> _bubbles;
 public:
-	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title);
+	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title, byte* tmpList);
 
 	void load(Common::SeekableReadStream *stream);
 
