@@ -23,6 +23,7 @@
 #include "engines/stark/resources/speech.h"
 
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/sound.h"
 
 namespace Stark {
 
@@ -31,8 +32,29 @@ Speech::~Speech() {
 
 Speech::Speech(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 				Resource(parent, subType, index, name),
-				_character(0) {
+				_character(0),
+				_soundResource(nullptr) {
 	_type = TYPE;
+}
+
+Common::String Speech::getPhrase() const {
+	return _phrase;
+}
+
+void Speech::playSound() {
+	_soundResource = findChild<Sound>();
+	_soundResource->play();
+}
+
+bool Speech::isPlaying() {
+	return _soundResource && _soundResource->isPlaying();
+}
+
+void Speech::stop() {
+	if (_soundResource) {
+		_soundResource->stop();
+		_soundResource = nullptr;
+	}
 }
 
 void Speech::readData(XRCReadStream *stream) {
@@ -40,6 +62,14 @@ void Speech::readData(XRCReadStream *stream) {
 
 	_phrase = stream->readString();
 	_character = stream->readUint32LE();
+}
+
+void Speech::onExitLocation() {
+	stop();
+}
+
+void Speech::onPreDestroy() {
+	stop();
 }
 
 void Speech::printData() {

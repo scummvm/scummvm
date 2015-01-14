@@ -29,6 +29,7 @@
 
 namespace Stark {
 
+class Sound;
 class XRCReadStream;
 
 class Speech : public Resource {
@@ -40,12 +41,29 @@ public:
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onExitLocation() override;
+	void onPreDestroy() override;
+
+
+	/** Obtain the text associated to the speech line */
+	Common::String getPhrase() const;
+
+	/** Play the voice over */
+	void playSound();
+
+	/** Return true if the speech is playing */
+	bool isPlaying();
+
+	/** Stop the speech if it is playing */
+	void stop();
 
 protected:
 	void printData() override;
 
 	Common::String _phrase;
 	uint32 _character;
+
+	Sound *_soundResource;
 };
 
 } // End of namespace Stark

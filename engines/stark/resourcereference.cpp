@@ -75,6 +75,10 @@ Resource *ResourceReference::resolve() const {
 	return resource;
 }
 
+bool ResourceReference::empty() const {
+	return _path.empty();
+}
+
 Common::String ResourceReference::describe() {
 	Common::String desc;
 

@@ -49,6 +49,9 @@ public:
 	template <class T>
 	T* resolve() const;
 
+	/** Return true if this reference is a null pointer */
+	bool empty() const;
+
 private:
 	Resource *resolve() const;
 

@@ -149,7 +149,7 @@ bool Script::shouldExecute(uint32 callMode) {
 	}
 
 	uint32 currentChapter = global->getCurrentChapter();
-	if (currentChapter < _minChapter || currentChapter > _maxChapter) {
+	if (currentChapter < _minChapter || currentChapter >= _maxChapter) {
 		return false; // Wrong chapter
 	}
 

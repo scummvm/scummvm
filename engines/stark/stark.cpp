@@ -151,6 +151,8 @@ void StarkEngine::mainLoop() {
 				_refreshDrawNeeded = true;*/
 		}
 
+		_dialogPlayer->update();
+
 		if (_resourceProvider->hasLocationChangeRequest()) {
 			_resourceProvider->performLocationChange();
 		}

@@ -23,19 +23,61 @@
 #ifndef STARK_SERVICES_DIALOG_PLAYER_H
 #define STARK_SERVICES_DIALOG_PLAYER_H
 
+#include "common/array.h"
+
+#include "engines/stark/resources/dialog.h"
+
 namespace Stark {
 
-class Dialog;
-
+/**
+ * Dialog player
+ *
+ * Handles the state of the currently running dialog, and implements the
+ * associated logic.
+ */
 class DialogPlayer {
 public:
+	DialogPlayer();
 	virtual ~DialogPlayer();
 
+	/** Enter a dialog */
 	void run(Dialog *dialog);
+
+	/** Check if a dialog is running */
 	bool isRunning();
 
-protected:
+	/** Update the currently running dialog */
+	void update();
 
+	/** Select a dialog option */
+	void selectOption(uint32 index);
+
+protected:
+	enum OptionType {
+		kOptionTypeAsk = 0
+	};
+
+	struct Option {
+		uint32 _type;
+		Common::String _caption;
+		Dialog::Topic *_topic;
+		int32 _replyIndex;
+	};
+
+	/** Build a list of available dialog options */
+	void buildOptions();
+
+	/** Initiate the next action after the end of a reply */
+	void onReplyEnd();
+
+	/** Clear the currently running dialog */
+	void reset();
+
+	Dialog *_currentDialog;
+	Dialog::Reply *_currentReply;
+
+	bool _speechReady;
+	Common::Array<Option> _options;
 };
 
 } // End of namespace Stark

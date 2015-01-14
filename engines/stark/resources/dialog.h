@@ -30,6 +30,7 @@
 
 namespace Stark {
 
+class Speech;
 class XRCReadStream;
 
 class Dialog : public Resource {
@@ -39,17 +40,16 @@ public:
 	Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Dialog();
 
-	// Resource API
-	void readData(XRCReadStream *stream) override;
+	class Reply {
+	public:
+		Reply();
+		void start();
+		void goToNextLine();
+		Speech *getCurrentSpeech();
 
-protected:
-	struct Line {
-		ResourceReference _field_0;
-		ResourceReference _field_30;
-	};
-
-	struct Reply {
-		Common::Array<Line> _lines;
+	private:
+		// Static data
+		Common::Array<ResourceReference> _lines;
 		uint32 _conditionType;
 		ResourceReference _conditionReference;
 		ResourceReference _conditionScriptReference;
@@ -57,16 +57,41 @@ protected:
 		uint32 _field_88;
 		uint32 _minChapter;
 		uint32 _maxChapter;
-		uint32 _field_84;
-		uint32 _nextDialogIndex;
+		uint32 _noCaption;
+		int32 _nextDialogIndex;
 		ResourceReference _nextScriptReference;
+
+		// State
+		int32 _nextSpeechIndex;
+
+		friend class Dialog;
 	};
 
-	struct Topic {
+	class Topic {
+	public:
+		Topic();
+		int32 getNextReplyIndex() const;
+		Common::String getCaption() const;
+
+		Reply *startReply(uint32 index);
+		Reply *getCurrentReply();
+
+	private:
 		Common::Array<Reply> _replies;
-		uint32 _field_14;
+
+		bool _removeOnceDepleted;
+		int32 _currentReplyIndex;
+
+		friend class Dialog;
 	};
 
+	// Resource API
+	void readData(XRCReadStream *stream) override;
+
+	Common::Array<Topic *> listAvailableTopics();
+	Dialog *getNextDialog(Dialog::Reply *reply);
+
+protected:
 	void printData() override;
 
 	Common::Array<Topic> _topics;
