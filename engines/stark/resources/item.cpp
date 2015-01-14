@@ -24,13 +24,13 @@
 
 #include "common/debug.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/textureset.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

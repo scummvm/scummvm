@@ -20,14 +20,16 @@
  *
  */
 
-#include "engines/stark/debug.h"
-#include "engines/stark/gfx/driver.h"
 #include "engines/stark/visual/image.h"
-#include "engines/stark/xmg.h"
+
+#include "common/stream.h"
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
-#include "common/stream.h"
+
+#include "engines/stark/debug.h"
+#include "engines/stark/formats/xmg.h"
+#include "engines/stark/gfx/driver.h"
 
 namespace Stark {
 

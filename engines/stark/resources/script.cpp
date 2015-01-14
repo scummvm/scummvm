@@ -22,12 +22,12 @@
 
 #include "engines/stark/resources/script.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

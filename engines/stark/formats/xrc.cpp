@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/stark/xrcreader.h"
+#include "engines/stark/formats/xrc.h"
 
-#include "engines/stark/archive.h"
+#include "engines/stark/formats/xarc.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/animscript.h"

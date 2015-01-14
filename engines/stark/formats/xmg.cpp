@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/xmg.h"
+#include "engines/stark/formats/xmg.h"
 #include "engines/stark/debug.h"
 #include "engines/stark/gfx/driver.h"
 

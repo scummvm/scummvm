@@ -22,7 +22,7 @@
 
 #include "engines/stark/services/archiveloader.h"
 
-#include "engines/stark/xrcreader.h"
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 

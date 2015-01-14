@@ -25,10 +25,10 @@
 #include "common/debug.h"
 #include "common/random.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

@@ -22,7 +22,7 @@
 
 #include "engines/stark/resources/knowledge.h"
 
-#include "engines/stark/xrcreader.h"
+#include "engines/stark/formats/xrc.h"
 
 namespace Stark {
 

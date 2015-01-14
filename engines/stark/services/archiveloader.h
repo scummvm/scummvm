@@ -30,7 +30,7 @@
 
 #include "math/vector3d.h"
 
-#include "engines/stark/archive.h"
+#include "engines/stark/formats/xarc.h"
 #include "engines/stark/resources/resource.h"
 
 namespace Stark {

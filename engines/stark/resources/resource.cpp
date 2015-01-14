@@ -21,12 +21,13 @@
  */
 
 #include "engines/stark/resources/resource.h"
-#include "engines/stark/xrcreader.h"
-#include "engines/stark/debug.h"
 
 #include "common/debug-channels.h"
 #include "common/streamdebug.h"
 #include "common/util.h"
+
+#include "engines/stark/debug.h"
+#include "engines/stark/formats/xrc.h"
 
 namespace Stark {
 

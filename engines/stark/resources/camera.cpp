@@ -23,9 +23,9 @@
 #include "engines/stark/resources/camera.h"
 
 #include "engines/stark/debug.h"
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

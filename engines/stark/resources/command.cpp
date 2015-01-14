@@ -23,6 +23,7 @@
 #include "engines/stark/resources/command.h"
 
 #include "engines/stark/debug.h"
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/item.h"
@@ -31,7 +32,6 @@
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

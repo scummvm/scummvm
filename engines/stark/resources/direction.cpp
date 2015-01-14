@@ -21,7 +21,8 @@
  */
 
 #include "engines/stark/resources/direction.h"
-#include "engines/stark/xrcreader.h"
+
+#include "engines/stark/formats/xrc.h"
 
 namespace Stark {
 

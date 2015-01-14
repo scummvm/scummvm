@@ -24,7 +24,7 @@
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/xrcreader.h"
+#include "engines/stark/formats/xrc.h"
 
 namespace Stark {
 

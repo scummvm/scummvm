@@ -2,7 +2,6 @@ MODULE := engines/stark
 
 MODULE_OBJS := \
 	actor.o \
-	archive.o \
 	console.o \
 	detection.o \
 	gfx/coordinate.o \
@@ -10,7 +9,10 @@ MODULE_OBJS := \
 	gfx/opengl.o \
 	gfx/renderentry.o \
 	gfx/tinygl.o \
-	iss.o \
+	formats/iss.o \
+	formats/xarc.o \
+	formats/xmg.o \
+	formats/xrc.o \
 	resources/anim.o \
 	resources/animhierarchy.o \
 	resources/animscript.o \
@@ -49,9 +51,7 @@ MODULE_OBJS := \
 	texture.o \
 	visual/actor.o \
 	visual/image.o \
-	visual/smacker.o \
-	xmg.o \
-	xrcreader.o
+	visual/smacker.o
 
 # Include common rules
 include $(srcdir)/rules.mk

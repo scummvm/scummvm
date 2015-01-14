@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/direction.h"
@@ -34,7 +35,6 @@
 #include "engines/stark/skeleton_anim.h"
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/smacker.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

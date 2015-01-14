@@ -24,10 +24,10 @@
 
 #include "common/debug.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/visual/image.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

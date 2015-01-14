@@ -22,8 +22,8 @@
 
 #include "engines/stark/resources/location.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/layer.h"
-#include "engines/stark/xrcreader.h"
 
 namespace Stark {
 

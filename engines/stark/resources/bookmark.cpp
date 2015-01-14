@@ -22,7 +22,7 @@
 
 #include "engines/stark/resources/bookmark.h"
 
-#include "engines/stark/xrcreader.h"
+#include "engines/stark/formats/xrc.h"
 
 namespace Stark {
 

@@ -23,7 +23,7 @@
 // Based on the Xentax Wiki documentation:
 // http://wiki.xentax.com/index.php?title=The_Longest_Journey_XARC
 
-#include "engines/stark/archive.h"
+#include "engines/stark/formats/xarc.h"
 #include "engines/stark/debug.h"
 
 #include "common/file.h"

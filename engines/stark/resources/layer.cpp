@@ -22,9 +22,9 @@
 
 #include "engines/stark/resources/layer.h"
 
+#include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/item.h"
-#include "engines/stark/xrcreader.h"
 
 #include "common/debug.h"
 

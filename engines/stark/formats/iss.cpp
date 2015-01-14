@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/iss.h"
+#include "engines/stark/formats/iss.h"
 
 #include "audio/decoders/adpcm_intern.h"
 

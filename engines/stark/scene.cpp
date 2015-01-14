@@ -22,13 +22,8 @@
 
 #include "engines/stark/scene.h"
 
-#include "engines/stark/archive.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
-#include "engines/stark/visual/actor.h"
-#include "engines/stark/skeleton_anim.h"
-#include "engines/stark/texture.h"
-#include "engines/stark/xmg.h"
 
 namespace Stark {
 
