@@ -360,7 +360,6 @@ private:
 	bool _stepped;
 	int _mazeDataIndex;
 	bool _currentSteppedOn;
-	int _currentSurfaceId;
 
 	void loadEvents(int mapId);
 
@@ -385,6 +384,7 @@ public:
 	int _currentMonsterFlags;
 	MazeWallLayers _currentWall;
 	int _currentTile;
+	int _currentSurfaceId;
 public:
 	Map(XeenEngine *vm);
 
@@ -397,6 +397,9 @@ public:
 	void saveMaze();
 
 	int getCell(int idx);
+
+	MazeData mazeData() { return _mazeData[0]; }
+
 };
 
 } // End of namespace Xeen

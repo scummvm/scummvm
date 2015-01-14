@@ -1095,7 +1095,9 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(OUTDOOR_SURFACES[i]);
 		}
 
-		_wallSprites._surfaces[0].clear();
+		for (int i = 0; i < TOTAL_SURFACES; ++i)
+			_wallSprites._surfaces[i].clear();
+
 		Common::String fwlName = Common::String::format("%s.til",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]);
 		_wallSprites._fwl1.load(fwlName);

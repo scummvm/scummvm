@@ -90,6 +90,10 @@ extern const int DIRECTION_ANIM_POSITIONS[4][4];
 
 extern const byte WALL_NUMBERS[4][96];
 
+extern const int DRAW_NUMBERS[25];
+
+extern const int DRAW_FRAMES[25][2];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

@@ -116,6 +116,7 @@ private:
 	int _hiliteChar;
 	int _intrIndex1;
 	bool _flipWtr;
+	bool _flipWall;
 	bool _flag1;
 	int _animCounter;
 	bool _isAnimReset;
@@ -125,7 +126,7 @@ private:
 	byte _wp[20];
 	byte _wo[308];
 	bool _thinWall;
-	int _charsArray1[12];
+	int _overallFrame;
 
 	void loadSprites();
 
