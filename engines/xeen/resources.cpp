@@ -70,7 +70,7 @@ const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
 };
 
-const char *const OUTDOOR_WALLS[15] = {
+const char *const SURFACE_TYPE_NAMES[15] = {
 	nullptr, "mount", "ltree", "dtree", "grass", "snotree", "snomnt",
 	"dedltree", "mount", "lavamnt", "palm", "dmount", "dedltree",
 	"dedltree", "dedltree"

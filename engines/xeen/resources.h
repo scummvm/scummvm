@@ -34,7 +34,7 @@ extern const char *const OPTIONS_TITLE;
 
 extern const char *const TERRAIN_TYPES[6];
 
-extern const char *const OUTDOOR_WALLS[15];
+extern const char *const SURFACE_TYPE_NAMES[15];
 
 extern const char *const OUTDOOR_SURFACES[16];
 

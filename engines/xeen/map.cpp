@@ -22,6 +22,7 @@
 
 #include "common/serializer.h"
 #include "xeen/map.h"
+#include "xeen/interface.h"
 #include "xeen/resources.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
@@ -866,6 +867,9 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 
 void Map::load(int mapId) {
 	Screen &screen = *_vm->_screen;
+	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
+	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
+
 	if (_vm->_falling) {
 		Window &w = screen._windows[9];
 		w.open();
@@ -1010,8 +1014,9 @@ void Map::load(int mapId) {
 	// TODO: Switch setting flags that don't seem to ever be used
  
 	// Reload the monster data for the main maze that we're loading
+	mapId = _vm->_party._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
-		(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
+		(mapId >= 100) ? 'x' : '0', mapId);
 	File mobFile(filename, *_vm->_saves);
 	XeenSerializer sMob(&mobFile, nullptr);
 	_mobData.synchronize(sMob, _monsterData);
@@ -1020,9 +1025,9 @@ void Map::load(int mapId) {
 	// Load sprites for the objects
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
 		if (_vm->_party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
-				_vm->_party._mazeId == 27 && isDarkCc) {
+				mapId == 27 && isDarkCc) {
 			// TODO: Flags set that don't seem to be used
-		} else if (_vm->_party._mazeId == 12 && _vm->_party._gameFlags[43] &&
+		} else if (mapId == 12 && _vm->_party._gameFlags[43] &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
@@ -1053,7 +1058,25 @@ void Map::load(int mapId) {
 
 	// Handle loading miscellaneous sprites for the map
 	if (_isOutdoors) {
-		warning("TODO");
+		warning("TODO");	// Sound loading
+
+		_skySprites.load(isDarkCc ? "sky.sky" : "night.sky");
+		_groundSprites.load("water.out");
+		_tileSprites.load("outdoor.til");
+		outdoorList._skySprite._sprites = &_skySprites;
+		outdoorList._groundSprite._sprites = &_groundSprites;
+		
+		for (int i = 0; i < TOTAL_SURFACES; ++i) {
+			_wallSprites._surfaces[i].clear();
+			if (_mazeData[0]._wallTypes[i] != 0) {
+				_wallSprites._surfaces[i].load(Common::String::format("%s.wal",
+					SURFACE_TYPE_NAMES[i]));
+			}
+
+			_surfaceSprites[i].clear();
+			if (i != 0 && _mazeData[0]._wallTypes[i] != 0)
+				_surfaceSprites[i].load(OUTDOOR_SURFACES[_mazeData[0]._surfaceTypes[i]]);
+		}
 	} else {
 		warning("TODO");	// Sound loading
 
@@ -1072,7 +1095,7 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(OUTDOOR_SURFACES[i]);
 		}
 
-		_wallSprites._wal.clear();
+		_wallSprites._surfaces[0].clear();
 		Common::String fwlName = Common::String::format("%s.til",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]);
 		_wallSprites._fwl1.load(fwlName);
@@ -1082,7 +1105,68 @@ void Map::load(int mapId) {
 		_wallSprites._swl.load(Common::String::format("s%s.swl",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]));
 
+		// Set entries in the indoor draw list to the correct sprites
+		// for drawing various parts of the background
+		indoorList._swl_0F1R._sprites = &_wallSprites._swl;
+		indoorList._swl_0F1L._sprites = &_wallSprites._swl;
+		indoorList._swl_1F1R._sprites = &_wallSprites._swl;
+		indoorList._swl_1F1L._sprites = &_wallSprites._swl;
+		indoorList._swl_2F2R._sprites = &_wallSprites._swl;
+		indoorList._swl_2F1R._sprites = &_wallSprites._swl;
+		indoorList._swl_2F1L._sprites = &_wallSprites._swl;
+		indoorList._swl_2F2L._sprites = &_wallSprites._swl;
 
+		indoorList._swl_3F1R._sprites = &_wallSprites._swl;
+		indoorList._swl_3F2R._sprites = &_wallSprites._swl;
+		indoorList._swl_3F3R._sprites = &_wallSprites._swl;
+		indoorList._swl_3F4R._sprites = &_wallSprites._swl;
+		indoorList._swl_3F1L._sprites = &_wallSprites._swl;
+		indoorList._swl_3F2L._sprites = &_wallSprites._swl;
+		indoorList._swl_3F3L._sprites = &_wallSprites._swl;
+		indoorList._swl_3F4L._sprites = &_wallSprites._swl;
+
+		indoorList._swl_4F4R._sprites = &_wallSprites._swl;
+		indoorList._swl_4F3R._sprites = &_wallSprites._swl;
+		indoorList._swl_4F2R._sprites = &_wallSprites._swl;
+		indoorList._swl_4F1R._sprites = &_wallSprites._swl;
+		indoorList._swl_4F1L._sprites = &_wallSprites._swl;
+		indoorList._swl_4F2L._sprites = &_wallSprites._swl;
+		indoorList._swl_4F3L._sprites = &_wallSprites._swl;
+		indoorList._swl_4F4L._sprites = &_wallSprites._swl;
+
+		indoorList._fwl_4F4R._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F3R._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F2R._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F1R._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F1L._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F2L._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F3L._sprites = &_wallSprites._fwl4;
+		indoorList._fwl_4F4L._sprites = &_wallSprites._fwl4;
+
+		indoorList._fwl_2F1R._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_2F._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_2F1L._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_3F2R._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_3F1R._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_3F._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_3F1L._sprites = &_wallSprites._fwl3;
+		indoorList._fwl_3F2L._sprites = &_wallSprites._fwl3;
+
+		indoorList._fwl_1F._sprites = &_wallSprites._fwl1;
+		indoorList._fwl_1F1R._sprites = &_wallSprites._fwl1;
+		indoorList._fwl_1F1L._sprites = &_wallSprites._fwl1;
+		
+		indoorList._horizon._sprites = &_groundSprites;
+
+		// Down show horizon for certain maps
+		if (_vm->_files->_isDarkCc) {
+			if ((mapId >= 89 && mapId <= 112) || mapId == 128 || mapId == 129)
+				indoorList._horizon._sprites = nullptr;
+		} else {
+			if (mapId >= 25 && mapId <= 27)
+				indoorList._horizon._sprites = nullptr;
+		}
 	}
 }
 

@@ -98,8 +98,6 @@ private:
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
 	DrawStruct _mainList[16];
-	OutdoorDrawList _outdoorList;
-	IndoorDrawList _indoorList;
 	int _combatCharIds[8];
 
 	int _batUIFrame;
@@ -166,6 +164,9 @@ private:
 	void setMazeBits();
 
 	void updateAutoMap();
+public:
+	OutdoorDrawList _outdoorList;
+	IndoorDrawList _indoorList;
 public:
 	Interface(XeenEngine *vm);
 

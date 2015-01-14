@@ -271,7 +271,7 @@ public:
 };
 
 struct WallSprites {
-	SpriteResource _wal;
+	SpriteResource _surfaces[TOTAL_SURFACES];
 	SpriteResource _fwl1;
 	SpriteResource _fwl2;
 	SpriteResource _fwl3;
