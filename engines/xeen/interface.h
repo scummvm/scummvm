@@ -117,6 +117,8 @@ private:
 	int _intrIndex1;
 	bool _flipWtr;
 	bool _flipWall;
+	bool _flipSky;
+	bool _flipGround;
 	bool _flag1;
 	int _animCounter;
 	bool _isAnimReset;
@@ -127,6 +129,7 @@ private:
 	byte _wo[308];
 	bool _thinWall;
 	int _overallFrame;
+	bool _isShooting;
 
 	void loadSprites();
 

@@ -146,6 +146,7 @@ public:
 	bool _noDirectionSense;
 	int _falling;
 	bool _moveMonsters;
+	int _openDoor;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

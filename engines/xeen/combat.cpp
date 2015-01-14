@@ -32,6 +32,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	Common::fill(&_monsterScale[0], &_monsterScale[12], 0);
 	Common::fill(&_elemPow[0], &_elemPow[12], 0);
 	Common::fill(&_elemScale[0], &_elemScale[12], 0);
+	Common::fill(&_shooting[0], &_shooting[6], 0);
 }
 
 } // End of namespace Xeen

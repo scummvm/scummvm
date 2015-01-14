@@ -362,8 +362,6 @@ private:
 	bool _currentSteppedOn;
 
 	void loadEvents(int mapId);
-
-	void cellFlagLookup(const Common::Point &pt);
 public:
 	bool _isOutdoors;
 	MonsterObjectData _mobData;
@@ -380,7 +378,7 @@ public:
 	bool _currentCantRest;
 	bool _currentIsDrain;
 	bool _currentIsEvent;
-	bool _currentIsObject;
+	bool _currentSky;
 	int _currentMonsterFlags;
 	MazeWallLayers _currentWall;
 	int _currentTile;
@@ -391,6 +389,8 @@ public:
 	void load(int mapId);
 
 	int mazeLookup(const Common::Point &pt, int directionLayerIndex);
+
+	void cellFlagLookup(const Common::Point &pt);
 
 	void setCellSurfaceFlags(const Common::Point &pt, int bits);
 

@@ -170,7 +170,7 @@ void Window::drawList(DrawStruct *items, int count) {
 	Screen &screen = *_vm->_screen;
 
 	for (int i = 0; i < count; ++i, ++items) {
-		if (items->_frame == -1 || items->_scale == -1)
+		if (items->_frame == -1 || items->_scale == -1 || items->_sprites == nullptr)
 			continue;
 
 		Common::Rect bounds = _innerBounds;

@@ -861,7 +861,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_currentCantRest = false;
 	_currentIsDrain = false;
 	_currentIsEvent = false;
-	_currentIsObject = false;
+	_currentSky = false;
 	_currentMonsterFlags = 0;
 }
 
@@ -1330,7 +1330,7 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 	_currentCantRest = cell._flags & FLAG_WATER;
 	_currentIsDrain = cell._flags & OUTFLAG_DRAIN;
 	_currentIsEvent = cell._flags & FLAG_AUTOEXECUTE_EVENT;
-	_currentIsObject = cell._flags & OUTFLAG_OBJECT_EXISTS;
+	_currentSky = cell._flags & OUTFLAG_OBJECT_EXISTS;
 	_currentMonsterFlags = cell._flags & 7;
 }
 

@@ -38,6 +38,7 @@ public:
 	int _monsterScale[12];
 	int _elemPow[12];
 	int _elemScale[12];
+	bool _shooting[6];
 	int _attackMon1, _attackMon2, _attackMon3;
 public:
 	Combat(XeenEngine *vm);

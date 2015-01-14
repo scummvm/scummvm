@@ -378,6 +378,8 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_intrIndex1 = 0;
 	_flipWtr = false;
 	_flipWall = false;
+	_flipSky = false;
+	_flipGround = false;
 	_flag1 = false;
 	_animCounter = 0;
 	_isAnimReset = false;
@@ -386,6 +388,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), _vm(vm) {
 	_objNumber = 0;
 	_thinWall = false;
 	_overallFrame = 0;
+	_isShooting = false;
 
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	Common::fill(&_wp[0], &_wp[20], 0);
@@ -960,6 +963,7 @@ void Interface::draw3d(bool updateFlag) {
 		const int INDOOR_COMBAT_POS[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
 		const int INDOOR_COMBAT_POS2[4] = { 8, 6, 4, 2 };
 
+		// TODO: Double check this, since it's not being used?
 		MazeObject &objObject = map._mobData._objects[_objNumber - 1];
 
 		for (int idx = 0; idx < 3; ++idx) {
@@ -3705,7 +3709,7 @@ void Interface::drawIndoors() {
 	}
 	else if (_wo[122]) {
 		_indoorList._fwl_2F1L._frame = 8;
-	} 
+	}
 	else if (_wo[142]) {
 		_indoorList._fwl_2F1L._frame = 9;
 	}
@@ -3733,7 +3737,244 @@ void Interface::drawIndoors() {
 	else if (_wo[302]) {
 		_indoorList._fwl_2F1L._frame = 13;
 	}
+
+	if (_wo[27] && _wo[26]) {
+	}
+	else if (_wo[27] && _wo[29]) {
+	}
+	else if (_wo[24] && _wo[26]) {
+	}
+	else if (_wo[24] && _wo[29]) {
+	}
+	else if (_wo[103]) {
+		_indoorList._fwl_2F1R._frame = 7;
+	}
+	else if (_wo[65]) {
+		_indoorList._fwl_2F1R._frame = 16;
+	}
+	else if (_wo[183]) {
+		_indoorList._fwl_2F1R._frame = 10;
+	}
+	else if (_wo[123]) {
+		_indoorList._fwl_2F1R._frame = 8;
+	}
+	else if (_wo[143]) {
+		_indoorList._fwl_2F1R._frame = 9;
+	}
+	else if (_wo[163]) {
+		_indoorList._fwl_2F1R._frame = _overallFrame + 1;
+	}
+	else if (_wo[21]) {
+		_indoorList._fwl_2F1R._frame = 0;
+	}
+	else if (_wo[203]) {
+		_indoorList._fwl_2F1R._frame = 15;
+	}
+	else if (_wo[223]) {
+		_indoorList._fwl_2F1R._frame = 14;
+	}
+	else if (_wo[243]) {
+		_indoorList._fwl_2F1R._frame = 6;
+	}
+	else if (_wo[263]) {
+		_indoorList._fwl_2F1R._frame = 11;
+	}
+	else if (_wo[283]) {
+		_indoorList._fwl_2F1R._frame = 12;
+	}
+	else if (_wo[303]) {
+		_indoorList._fwl_2F1R._frame = 13;
+	}
+
+	if (_wo[27]) {
+
+	}
+	else if (_wo[104]) {
+		_indoorList._fwl_2F._frame = 7;
+	}
+	else if (_wo[66]) {
+		_indoorList._fwl_2F._frame = 16;
+	}
+	else if (_wo[184]) {
+		_indoorList._fwl_2F._frame = 10;
+	}
+	else if (_wo[124]) {
+		_indoorList._fwl_2F._frame = 8;
+	}
+	else if (_wo[144]) {
+		_indoorList._fwl_2F._frame = 9;
+	}
+	else if (_wo[164]) {
+		_indoorList._fwl_2F._frame = _overallFrame + 1;
+	}
+	else if (_wo[22]) {
+		_indoorList._fwl_2F._frame = 0;
+	}
+	else if (_wo[204]) {
+		_indoorList._fwl_2F._frame = 15;
+	}
+	else if (_wo[224]) {
+		_indoorList._fwl_2F._frame = 14;
+	}
+	else if (_wo[244]) {
+		_indoorList._fwl_2F._frame = 6;
+	}
+	else if (_wo[264]) {
+		_indoorList._fwl_2F._frame = 11;
+	}
+	else if (_wo[284]) {
+		_indoorList._fwl_2F._frame = 12;
+	}
+	else if (_wo[304]) {
+		_indoorList._fwl_2F._frame = 13;
+	}
+
+	if (_wo[27]) {
+	}
+	else if (_wo[23]) {
+		_indoorList._swl_1F1L._frame = 2;
+	}
+	else if (_wo[67]) {
+		_indoorList._swl_1F1L._frame = 26;
+	}
+
+	if (_wo[27]) {
+	}
+	else if (_wo[24]) {
+		_indoorList._swl_1F1R._frame = 3;
+	}
+	else if (_wo[68]) {
+		_indoorList._swl_1F1R._frame = 27;
+	}
+
+	if (_wo[28]) {
+	}
+	else if (_wo[105] || _wo[25] || _wo[165] || _wo[125] || _wo[185] || _wo[145]) {
+		_indoorList._fwl_1F1L._frame = 0;
+		_indoorList._fwl_1F1L._sprites = &map._wallSprites._fwl1;
+	}
+	else if (_wo[69]) {
+		_indoorList._fwl_1F1L._frame = 9;
+		_indoorList._fwl_1F1L._sprites = &map._wallSprites._fwl2;
+	}
+
+	if (_wo[29]) {
+	}
+	else if (_wo[106] || _wo[26] || _wo[166] || _wo[126] || _wo[186] || _wo[146]) {
+		_indoorList._fwl_1F._frame = 0;
+		_indoorList._fwl_1F._sprites = &map._wallSprites._fwl1;
+	}
+	else if (_wo[70]) {
+		_indoorList._fwl_1F._frame = 9;
+		_indoorList._fwl_1F._sprites = &map._wallSprites._fwl2;
+	}
+
+	if (_wo[107]) {
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+		if (_vm->_openDoor)
+			_indoorList._fwl_1F1R._frame = 0;
+		else
+			_indoorList._fwl_1F1R._frame = map.mazeData()._wallKind ? 1 : 10;
+	}
+	else if (_wo[71]) {
+		_indoorList._fwl_1F1R._frame = 9;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[167]) {
+		_indoorList._fwl_1F1R._frame = _overallFrame + 1;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[127]) {
+		_indoorList._fwl_1F1R._frame = 1;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[147]) {
+		_indoorList._fwl_1F1R._frame = 2;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[187]) {
+		_indoorList._fwl_1F1R._frame = 3;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[27]) {
+		_indoorList._fwl_1F1R._frame = 0;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl1;
+	}
+	else if (_wo[207]) {
+		_indoorList._fwl_1F1R._frame = 8;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[227]) {
+		_indoorList._fwl_1F1R._frame = 7;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[247]) {
+		_indoorList._fwl_1F1R._frame = 6;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl1;
+	}
+	else if (_wo[267]) {
+		_indoorList._fwl_1F1R._frame = 4;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[287]) {
+		_indoorList._fwl_1F1R._frame = 5;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+	else if (_wo[307]) {
+		_indoorList._fwl_1F1R._frame = 6;
+		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
+	}
+
+	if (_wo[28]) {
+		_indoorList._swl_0F1L._frame = 0;
+	}
+	else if (_wo[72]) {
+		_indoorList._swl_0F1L._frame = 24;
+	}
+
+	if (_wo[29]) {
+		_indoorList._swl_0F1R._frame = 1;
+	}
+	else if (_wo[73]) {
+		_indoorList._swl_0F1R._frame = 25;
+	}
+
+	map.cellFlagLookup(_vm->_party._mazePosition);
+
+	// WORKAROUND: Original did an array lookup on _skySprites.
+	// Was this a feature for multiple skys that was abandoned?
+	_indoorList[0]._sprites = &map._skySprites;
+	_indoorList[0]._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
+
+	if (_vm->_openDoor) {
+		Common::Point pt(
+			_vm->_party._mazePosition.x + SCREEN_POSITIONING_X[
+				_vm->_party._mazeDirection][_vm->_party._mazePosition.x],
+			_vm->_party._mazePosition.y + SCREEN_POSITIONING_Y[
+				_vm->_party._mazeDirection][_vm->_party._mazePosition.y]
+			);
+		map.cellFlagLookup(pt);
+		
+		_indoorList._sky._sprites = &map._skySprites;
+	} else {
+		_indoorList._sky._sprites = _indoorList[0]._sprites;
+	}
+
+	_indoorList._sky._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
+	_indoorList._ground._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
+	_indoorList._horizon._frame = 7;
+
+	// Finally draw the darn indoor scene
+	_vm->_screen->_windows[3].drawList(&_indoorList[0], _indoorList.size());
+
+	// Check for any character shooting
+	_isShooting = false;
+	for (int i = 0; i < _vm->_party._partyCount; ++i) {
+		if (_vm->_combat->_shooting[i])
+			_isShooting = true;
+	}
 	
+	_charsShooting = _isShooting;
 
 	// TODO
 }
