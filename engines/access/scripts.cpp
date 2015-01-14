@@ -617,7 +617,7 @@ void Scripts::cmdRemoveLast() {
 
 void Scripts::cmdDoTravel() {
 	while (true) {
-		_vm->_travelBox->getList();
+		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->TRAVEL);
 		int type = 0;
 		int boxX = _vm->_travelBox->doBox_v1(_vm->STARTTRAVELITEM, _vm->STARTTRAVELBOX, type);
 		_vm->STARTTRAVELITEM = _vm->BOXDATASTART;

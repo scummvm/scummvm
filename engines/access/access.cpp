@@ -95,7 +95,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	for (int i = 0; i < 60; i++)
 		TRAVEL[i] = 0;
 	STARTTRAVELITEM = STARTTRAVELBOX = 0;
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 33; i++)
 		ASK[i];
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
@@ -163,12 +163,12 @@ void AccessEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_animation = new AnimationManager(this);
-	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "", nullptr);
+	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "");
 	if (getGameID() == GType_MartianMemorandum) {
-		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 146, 122, 1, 32, 2, 76, "HELP", TEMPLIST);
-		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 24, 2, 74, "TRAVEL", TEMPLIST);
-		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 146, 122, 1, 32, 2, 76, "INVENTORY", TEMPLIST);
-		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 32, 2, 76, "ASK ABOUT", TEMPLIST);
+		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 146, 122, 1, 32, 2, 76, "HELP");
+		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 24, 2, 74, "TRAVEL");
+		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 146, 122, 1, 32, 2, 76, "INVENTORY");
+		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 32, 2, 76, "ASK ABOUT");
 	} else {
 		_helpBox = nullptr;
 		_travelBox = nullptr;

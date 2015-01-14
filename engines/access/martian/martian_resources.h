@@ -55,8 +55,9 @@ extern const byte ICON_DATA[];
 
 extern const int RMOUSE[10][2];
 
-extern const char *const TRAVDATA[];
+extern byte HELP[];
 extern const char *const ASKTBL[];
+extern const char *TRAVDATA[];
 
 extern const byte DEATH_SCREENS[];
 extern const char *const DEATHMESSAGE[];

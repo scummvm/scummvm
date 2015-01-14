@@ -57,7 +57,7 @@ public:
 	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
 	Common::String _bubbleDisplStr;
-	byte *_tempListPtr;
+	Common::String _tempListPtr[60];
 	int _btnId1;
 	int _btnX1;
 	int _btnId2;
@@ -67,7 +67,7 @@ public:
 
 	Common::Array<Common::Rect> _bubbles;
 public:
-	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title, byte* tmpList);
+	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title);
 
 	void load(Common::SeekableReadStream *stream);
 
@@ -95,7 +95,7 @@ public:
 	void doBox(int item, int box);
 
 	int doBox_v1(int item, int box, int &type);
-	void getList() { warning("TODO: getList"); } // TODO: Check if implementation is useful
+	void getList(const char *data[], int *flags);
 };
 
 } // End of namespace Access

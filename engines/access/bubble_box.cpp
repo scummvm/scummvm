@@ -26,7 +26,7 @@
 
 namespace Access {
 
-BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title, byte *tmpList) : Manager(vm) {
+BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title) : Manager(vm) {
 	_type = type;
 	_bounds = Common::Rect(x, y, x + w, y + h);
 	_bubbleDisplStr = title;
@@ -40,7 +40,8 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	BOXENDX = BOXENDY = 0;
 	BOXPSTARTX = BOXPSTARTY = 0;
 	// Unused in AGoE
-	_tempListPtr = tmpList;
+	for (int i = 0; i < 60; i++)
+		_tempListPtr[i] = "";
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
@@ -294,14 +295,14 @@ void BubbleBox::displayBoxData() {
 	_vm->_fonts._charFor._lo = 15; // 0xFF
 	_vm->_fonts._charFor._hi = 15;
 
-	if (!_tempListPtr)
+	if (_tempListPtr[0].size() == 0)
 		return;
 
 	int idx = 0;
 	if ((_type == TYPE_1) || (_type == TYPE_3)) {
 		_vm->BCNT = 0;
 
-		if (_tempListPtr[idx] == -1) {
+		if (_tempListPtr[idx].size() == 0) {
 			_vm->BOXDATAEND = 1;
 			return;
 		}
@@ -322,7 +323,7 @@ void BubbleBox::displayBoxData() {
 	++BOXPSTARTY;
 
 	for (int i = 0; i < _vm->BOXDATASTART; i++, idx++) {
-		while (_tempListPtr[idx] != 0)
+		while (_tempListPtr[idx].size() != 0)
 			++idx;
 	}
 
@@ -332,7 +333,7 @@ void BubbleBox::displayBoxData() {
 		++idx;
 		++BOXPSTARTY;
 		++_vm->BCNT;
-		if (_tempListPtr[idx] == nullptr) {
+		if (_tempListPtr[idx].size() == 0) {
 			BOXPSTARTY = oldPStartY;
 			_vm->_events->showCursor();
 			_vm->BOXDATAEND = 1;
@@ -564,5 +565,18 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 
 	warning("TODO: more dobox_v1");
 	return -1;
+}
+
+void BubbleBox::getList(const char *data[], int *flags) {
+	int srcIdx = 0;
+	int destIdx = 0;
+	while (data[srcIdx]) {
+		if (flags[srcIdx]) {
+			_tempListPtr[destIdx] = Common::String(data[srcIdx]);
+			++destIdx;
+		}
+		srcIdx++;
+	}
+	_tempListPtr[destIdx] = "";
 }
 } // End of namespace Access

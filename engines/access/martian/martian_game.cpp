@@ -74,6 +74,7 @@ void MartianEngine::initVariables() {
 	_mouseMode = 0;
 	_numAnimTimers = 0;
 	TRAVEL[7] = 1;
+	ASK[33] = 1;
 }
 
 void MartianEngine::setNoteParams() {

@@ -807,7 +807,7 @@ const int RMOUSE[10][2] = {
 	{ 155, 185 }, { 188, 216 }, { 219, 260 }, { 263, 293 }, { 295, 214 }
 };
 
-const char *const TRAVDATA[] = {
+const char *TRAVDATA[] = {
 	"GALACTIC PICTURES", "TERRAFORM", "WASHROOM", "MR. BIG", "ALEXIS' HOME",
 	"JOHNNY FEDORA", "JUNKYARD IN", "TEX'S OFFICE", "MURDER SCENE", "PLAZA HOTEL",
 	"RESTAURANT", "GIFT SHOP", "LOVE SCENE", "RICK LOGAN", "HUT",
@@ -830,6 +830,14 @@ const char *const ASKTBL[] = {
 	"NATHAN BLOODWORTH", "MICHELLE BLOODWORTH", "BRADLEY ERICSON", "COOPER BRADBURY", "MARTIAN MEMORANDUM",
 	"JOHNNY FEDORA", "RHONDA FOXWORTH", "ANGELO ANDRETTI", "TEX MURPHY", "ROBERT BLOODWORTH",
 	"LARRRY HAMMOND", nullptr
+};
+
+
+byte HELP[] = {
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 };
 
 const byte DEATH_SCREENS[] = {
