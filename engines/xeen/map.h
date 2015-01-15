@@ -250,6 +250,7 @@ struct MazeMonster {
 	int _frame;
 	int _id;
 	int _spriteId;
+	int _field4;
 	int _hp;
 	int _effect1, _effect2;
 	int _effect3;
@@ -352,7 +353,6 @@ private:
 	XeenEngine *_vm;
 	MazeData _mazeData[9];
 	Common::String _mazeName;
-	MonsterData _monsterData;
 	SpriteResource _wallPicSprites;
 	int _townPortalSide;
 	int _sideObj;
@@ -365,6 +365,7 @@ private:
 public:
 	bool _isOutdoors;
 	MonsterObjectData _mobData;
+	MonsterData _monsterData;
 	MazeEvents _events;
 	HeadData _headData;
 	AnimationInfo _animationInfo;

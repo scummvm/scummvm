@@ -24,6 +24,7 @@
 #define XEEN_INTERFACE_MAP_H
 
 #include "common/scummsys.h"
+#include "xeen/map.h"
 #include "xeen/screen.h"
 
 namespace Xeen {
@@ -81,8 +82,12 @@ public:
 class InterfaceMap {
 private:
 	XeenEngine *_vm;
+	int _combatFloatCounter;
 
 	void initDrawStructs();
+
+	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, 
+		SpriteResource *sprites, int frame, int defaultY);
 protected:
 	byte _wp[20];
 	byte _wo[308];

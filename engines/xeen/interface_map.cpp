@@ -371,9 +371,80 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_isShooting = false;
 	_charsShooting = false;
 	_objNumber = 0;
+	_combatFloatCounter = 0;
 }
 
 void InterfaceMap::setIndoorsMonsters() {
+	Combat &combat = *_vm->_combat;
+	Map &map = *_vm->_map;
+	Direction dir = _vm->_party._mazeDirection;
+	const int INDOOR_MONSTERS_Y[4] = { 2, 34, 53, 59 };
+
+	combat.clear();
+	for (uint monsterIdx = 0; monsterIdx < map._mobData._monsters.size(); ++monsterIdx) {
+		MazeMonster &monster = map._mobData._monsters[monsterIdx];
+		SpriteResource *sprites = monster._sprites;
+		int frame = monster._frame;
+
+		if (frame >= 8) {
+			sprites = monster._attackSprites;
+			frame -= 8;
+		}
+
+		// The following long sequence sets up monsters in the various positions
+		if (monster._position.x == SCREEN_POSITIONING_X[dir][2] &&
+				monster._position.y == SCREEN_POSITIONING_Y[dir][2]) {
+			monster._field4 = 1;
+			if (combat._attackMonsters[0] == -1) {
+				combat._attackMonsters[0] = monsterIdx;
+				setMonsterSprite(_indoorList[156], monster, sprites, frame, INDOOR_MONSTERS_Y[0]);
+			} else if (combat._attackMonsters[1] == -1) {
+				combat._attackMonsters[1] = monsterIdx;
+				setMonsterSprite(_indoorList[150], monster, sprites, frame, INDOOR_MONSTERS_Y[0]);
+			} else if (combat._attackMonsters[2] == -1) {
+				combat._attackMonsters[2] = monsterIdx;
+				setMonsterSprite(_indoorList[153], monster, sprites, frame, INDOOR_MONSTERS_Y[0]);
+			}
+		}
+
+		if (monster._position.x == SCREEN_POSITIONING_X[dir][7] &&
+				monster._position.y == SCREEN_POSITIONING_Y[dir][7]) {
+			monster._field4 = 1;
+			if (!_wo[27]) {
+				if (combat._attackMonsters[3] == -1) {
+					combat._attackMonsters[3] = monsterIdx;
+					setMonsterSprite(_indoorList[132], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+				} else if (combat._attackMonsters[4] == -1) {
+					combat._attackMonsters[4] = monsterIdx;
+					setMonsterSprite(_indoorList[130], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+				} else if (combat._attackMonsters[2] == -1) {
+					combat._attackMonsters[5] = monsterIdx;
+					setMonsterSprite(_indoorList[131], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+				}
+			}
+		}
+	}
+}
+
+void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites, 
+		int frame, int defaultY) {
+	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
+	bool flying = monsterData._flying;
+
+	_indoorList[156]._frame = frame;
+	_indoorList[156]._sprites = sprites;
+	_indoorList[156]._y = defaultY;
+
+	if (flying) {
+		_indoorList[156]._x = COMBAT_FLOAT_X[_combatFloatCounter];
+		_indoorList[156]._y = COMBAT_FLOAT_Y[_combatFloatCounter];
+	} else {
+		_indoorList[156]._x = 0;
+	}
+
+	_indoorList[156]._flags &= SPRFLAG_HORIZ_FLIPPED | SPRFLAG_4000 | SPRFLAG_2000;
+	if (monster._effect2)
+		_indoorList[156]._flags = MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
 
 }
 

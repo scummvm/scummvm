@@ -94,6 +94,12 @@ extern const int DRAW_NUMBERS[25];
 
 extern const int DRAW_FRAMES[25][2];
 
+extern const int COMBAT_FLOAT_X[8];
+
+extern const int COMBAT_FLOAT_Y[8];
+
+extern const int MONSTER_EFFECT_FLAGS[15][8];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

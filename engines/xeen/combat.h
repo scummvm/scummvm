@@ -33,15 +33,18 @@ class Combat {
 private:
 	XeenEngine *_vm;
 public:
+	int _attackMonsters[26];
 	int _charsArray1[12];
 	bool _monPow[12];
 	int _monsterScale[12];
 	int _elemPow[12];
 	int _elemScale[12];
 	bool _shooting[6];
-	int _attackMon1, _attackMon2, _attackMon3;
+	int &_attackMon1, _attackMon2, _attackMon3;
 public:
 	Combat(XeenEngine *vm);
+
+	void clear();
 };
 
 } // End of namespace Xeen
