@@ -1532,7 +1532,7 @@ if test "$_gles_kms" = yes; then
 	_build_hq_scalers=no
 	_use_gles_custom=yes
 	_use_gles_kms=yes
-	_optimization_level=-O3
+	_default_optimization_level=-O3
 fi
 
 if test "$_gles_rpi" = yes; then
@@ -1541,7 +1541,7 @@ if test "$_gles_rpi" = yes; then
 	_build_hq_scalers=no
 	_use_gles_custom=yes
 	_use_gles_rpi=yes
-	_optimization_level=-O3
+	_default_optimization_level=-O3
 fi
 
 if test "$_gles_fbdev" = yes; then
@@ -1550,7 +1550,7 @@ if test "$_gles_fbdev" = yes; then
 	_build_hq_scalers=no
 	_use_gles_custom=yes
 	_use_gles_fbdev=yes
-	_optimization_level=-O3
+	_default_optimization_level=-O3
 fi
 
 #
@@ -4100,7 +4100,7 @@ if test "$_use_gles_custom" = yes ; then
 	
 	if test "$_use_gles_rpi" = yes ; then
 		GLES_RPI_CXXFLAGS="-mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s -I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads"
-		GLES_RPI_LIBS="-L/opt/vc/lib -lGLESv1_CM -lEGL -lm -lbcm_host -lvcos -lvchiq_arm"
+		GLES_RPI_LIBS="-L/opt/vc/lib -lGLESv1_CM -lEGL -lbcm_host -lvcos -lvchiq_arm"
 		_use_gles_rpi=no
 		cat > $TMPC << EOF
 #include <bcm_host.h>
@@ -4123,7 +4123,7 @@ EOF
 	
 	if test "$_use_gles_fbdev" = yes ; then
 		GLES_FBDEV_CXXFLAGS="-marm -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon"
-		GLES_FBDEV_LIBS="-lGLESv1_CM -lEGL -lm"
+		GLES_FBDEV_LIBS="-lGLESv1_CM -lEGL"
 		_use_gles_fbdev=no
 		cat > $TMPC << EOF
 #include <sys/ioctl.h>
@@ -4154,7 +4154,7 @@ EOF
 	
 	if test "$_use_gles_kms" = yes ; then
 		GLES_KMS_CXXFLAGS="-I/usr/include/drm"
-		GLES_KMS_LIBS="-lGLESv1_CM -lEGL -lm -ldrm -lgbm"
+		GLES_KMS_LIBS="-lGLESv1_CM -lEGL -ldrm -lgbm"
 		_use_gles_kms=no
 		cat > $TMPC << EOF
 #define virtual __virtual

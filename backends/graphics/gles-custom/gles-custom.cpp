@@ -52,8 +52,7 @@
 
 drmEventContext evctx;
 
-void page_flip_handler(int fd, uint frame,
-		  uint sec, uint usec, void *data) {
+void drmPageFlipHandler(int fd, uint frame, uint sec, uint usec, void *data) {
 	int *waiting_for_flip = (int*)data;
 	*waiting_for_flip = 0;
 }
@@ -124,9 +123,9 @@ bool OpenGLCustomGraphicsManager::init_drm(void) {
 
 	// In plain C, we can just init evctx at declare time, but it's now allowed in C++
 	evctx.version = DRM_EVENT_CONTEXT_VERSION;
-	evctx.page_flip_handler = page_flip_handler;
+	evctx.page_flip_handler = drmPageFlipHandler;
 
-	for (i = 0; i < (sizeof(modules) / sizeof(modules[0])); i++) {
+	for (i = 0; i < ARRAYSIZE(modules); i++) {
 		debug("trying to load module %s...", modules[i]);
 		drm.fd = drmOpen(modules[i], NULL);
 		if (drm.fd < 0) {
@@ -214,8 +213,7 @@ bool OpenGLCustomGraphicsManager::init_gbm() {
 	
 	return true;
 }
-
-#endif
+#endif // USE_GLES_KMS
 
 void OpenGLCustomGraphicsManager::init_egl() {
 	static const EGLint attribute_list[] = {
@@ -259,7 +257,7 @@ void OpenGLCustomGraphicsManager::init_egl() {
 	nativewindow.height = eglInfo.height;
     
 	vc_dispmanx_update_submit_sync(dispman_update);
-#endif    
+#endif // USE_GLES_RPI
 	
 #ifdef USE_GLES_FBDEV
 	fb_var_screeninfo vinfo;
@@ -286,7 +284,6 @@ void OpenGLCustomGraphicsManager::init_egl() {
 	}
 #endif	
 	
-	// get an EGL display connection
 #ifdef USE_GLES_KMS
 	eglInfo.display = eglGetDisplay((NativeDisplayType)gbm.dev);
 #else
@@ -423,7 +420,7 @@ void OpenGLCustomGraphicsManager::setFeatureState(OSystem::Feature f, bool enabl
 bool OpenGLCustomGraphicsManager::getFeatureState(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
-			return _wantsFullScreen;
+		return _wantsFullScreen;
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
 	}
@@ -587,7 +584,6 @@ bool OpenGLCustomGraphicsManager::notifyEvent(const Common::Event &event) {
 				return true;
 			} else if (event.kbd.keycode == Common::KEYCODE_f) {
 				// Ctrl+Alt+f toggles the graphics modes.
-
 				// We are crazy we will allow the OpenGL base class to
 				// introduce new graphics modes like shaders for special
 				// filtering. If some other OpenGL subclass needs this,
