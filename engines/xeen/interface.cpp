@@ -542,7 +542,7 @@ void Interface::draw3d(bool updateFlag) {
 	Map &map = *_vm->_map;
 	Screen &screen = *_vm->_screen;
 
-	if (!screen._windows[11]._enabled)
+	if (screen._windows[11]._enabled)
 		return;
 
 	_flipUIFrame = (_flipUIFrame + 1) % 4;

@@ -1157,9 +1157,10 @@ void Map::load(int mapId) {
 
 		indoorList._fwl_1F._sprites = &_wallSprites._fwl1;
 		indoorList._fwl_1F1R._sprites = &_wallSprites._fwl1;
-		indoorList._fwl_1F1L._sprites = &_wallSprites._fwl1;
-		
-		indoorList._horizon._sprites = &_groundSprites;
+		indoorList._fwl_1F1L._sprites = &_wallSprites._fwl1;		
+		indoorList._horizon._sprites = &_wallSprites._fwl1;
+
+		indoorList._ground._sprites = &_groundSprites;
 
 		// Down show horizon for certain maps
 		if (_vm->_files->_isDarkCc) {

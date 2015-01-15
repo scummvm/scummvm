@@ -101,9 +101,6 @@ private:
 
 	void updateAutoMap();
 public:
-	OutdoorDrawList _outdoorList;
-	IndoorDrawList _indoorList;
-public:
 	Interface(XeenEngine *vm);
 
 	void setup();
