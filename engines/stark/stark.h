@@ -48,6 +48,7 @@ class Console;
 class DialogPlayer;
 class GfxDriver;
 class Global;
+class UserInterface;
 class Scene;
 class StateProvider;
 class ResourceProvider;
@@ -78,6 +79,7 @@ private:
 	ArchiveLoader *_archiveLoader;
 	DialogPlayer *_dialogPlayer;
 	Global *_global;
+	UserInterface *_userInterface;
 	StateProvider *_stateProvider;
 	ResourceProvider *_resourceProvider;
 	Common::RandomSource *_randomSource;

@@ -33,6 +33,7 @@
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/userinterface.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
@@ -52,6 +53,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_scene(nullptr),
 		_console(nullptr),
 		_global(nullptr),
+		_userInterface(nullptr),
 		_archiveLoader(nullptr),
 		_stateProvider(nullptr),
 		_resourceProvider(nullptr),
@@ -70,6 +72,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 StarkEngine::~StarkEngine() {
+	delete _userInterface;
 	delete _dialogPlayer;
 	delete _randomSource;
 	delete _scene;
@@ -97,6 +100,7 @@ Common::Error StarkEngine::run() {
 	_randomSource = new Common::RandomSource("stark");
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
+	_userInterface = new UserInterface();
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -140,6 +144,8 @@ void StarkEngine::mainLoop() {
 					//handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
 
+			} else if (e.type == Common::EVENT_LBUTTONUP) {
+				_userInterface->skipCurrentSpeeches();
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);

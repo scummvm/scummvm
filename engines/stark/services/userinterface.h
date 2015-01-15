@@ -20,48 +20,25 @@
  *
  */
 
-#ifndef STARK_SERVICES_SERVICES_H
-#define STARK_SERVICES_SERVICES_H
-
-#include "common/singleton.h"
-
-namespace Common {
-class RandomSource;
-}
+#ifndef STARK_SERVICES_USER_INTERFACE_H
+#define STARK_SERVICES_USER_INTERFACE_H
 
 namespace Stark {
 
-class ArchiveLoader;
-class DialogPlayer;
-class Global;
-class ResourceProvider;
-class Scene;
-class UserInterface;
-
 /**
- * Public services available as a singleton
+ * Facade object for interacting with the game world
  */
-class StarkServices : public Common::Singleton<StarkServices> {
+class UserInterface {
 public:
-	StarkServices() {
-		archiveLoader = nullptr;
-		dialogPlayer = nullptr;
-		global = nullptr;
-		resourceProvider = nullptr;
-		randomSource = nullptr;
-		scene = nullptr;
-		userInterface = nullptr;
-	}
+	UserInterface();
+	~UserInterface();
 
-	ArchiveLoader *archiveLoader;
-	DialogPlayer *dialogPlayer;
-	Global *global;
-	ResourceProvider *resourceProvider;
-	Common::RandomSource *randomSource;
-	Scene *scene;
-	UserInterface *userInterface;
+	/** Skip currently playing speeches */
+	void skipCurrentSpeeches();
+
+private:
 };
 
 } // End of namespace Stark
 
-#endif // STARK_SERVICES_SERVICES_H
+#endif // STARK_SERVICES_USER_INTERFACE_H
