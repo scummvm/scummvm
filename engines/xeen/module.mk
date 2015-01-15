@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	files.o \
 	font.o \
 	interface.o \
+	interface_map.o \
 	items.o \
 	map.o \
 	party.o \
