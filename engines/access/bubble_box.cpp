@@ -287,8 +287,13 @@ void BubbleBox::doBox(int item, int box) {
 	delete icons;
 }
 
+void BubbleBox::SETCURSORPOS(int posX, int posY) {
+//	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point((posX << 3) + _rowOff, posY << 3);
+	warning("TODO: CURSORSET");
+}
+
 void BubbleBox::displayBoxData() {
-	_vm->BOXDATAEND = 0;
+	_vm->BOXDATAEND = false;
 	_rowOff = 2;
 	_vm->_fonts._charSet._lo = 7;  // 0xF7
 	_vm->_fonts._charSet._hi = 15;
@@ -303,7 +308,7 @@ void BubbleBox::displayBoxData() {
 		_vm->BCNT = 0;
 
 		if (_tempListPtr[idx].size() == 0) {
-			_vm->BOXDATAEND = 1;
+			_vm->BOXDATAEND = true;
 			return;
 		}
 
@@ -322,13 +327,12 @@ void BubbleBox::displayBoxData() {
 	int oldPStartY = BOXPSTARTY;
 	++BOXPSTARTY;
 
-	for (int i = 0; i < _vm->BOXDATASTART; i++, idx++) {
-		while (_tempListPtr[idx].size() != 0)
-			++idx;
-	}
+	idx += _vm->BOXDATASTART;
 
 	while (true) {
-		warning("TODO: SETCURSOR");
+//		SETCURSORPOS(BOXPSTARTX, BOXPSTARTY);
+//		_vm->_fonts._font1.drawString(_vm->_screen, _tempListPtr[idx], Common::Point((BOXPSTARTX << 3) + _rowOff, BOXPSTARTY << 3));
+
 		warning("TODO: PRINTSTR");
 		++idx;
 		++BOXPSTARTY;
@@ -336,7 +340,7 @@ void BubbleBox::displayBoxData() {
 		if (_tempListPtr[idx].size() == 0) {
 			BOXPSTARTY = oldPStartY;
 			_vm->_events->showCursor();
-			_vm->BOXDATAEND = 1;
+			_vm->BOXDATAEND = true;
 			return;
 		}
 
@@ -438,8 +442,54 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 		_vm->_screen->_orgY1 = oldY;
 	}
 
-	if ((_type == TYPE_0) || (_type == TYPE_3))
-		warning("TODO: Implement more of TYPE_0 or TYPE_3");
+	if ((_type != TYPE_0) && (_type != TYPE_2)) {
+		_vm->_screen->_orgY1 += 8;
+		if (_type == TYPE_3)
+			_vm->_screen->_orgY2 -= 8;
+
+		_vm->_screen->_orgY2 -= 8;
+		_vm->_word234F7 = _vm->_word234FF = _vm->_screen->_orgX2;
+		_vm->_word234F3 = _vm->_word234FB = _vm->_screen->_orgX1 = _vm->_screen->_orgX2 - 8;
+		BOXENDX = _vm->_screen->_orgX1 - 1;
+		_vm->_screen->drawBox();
+
+		_vm->_screen->_orgY1 += 6;
+		_vm->_screen->_orgY2 -= 6;
+		_vm->_screen->drawBox();
+
+		_vm->_word234F9 = _vm->_screen->_orgY1 + 1;
+		_vm->_word234F5 = _vm->_word234F9 - 5;
+		_vm->_word234FD = _vm->_screen->_orgY2 + 1;
+		_vm->_word23501 = _vm->_word234FD - 6;
+		_vm->_screen->_orgX1 += 4;
+		_vm->_screen->_orgX2 = _vm->_screen->_orgX1;
+		_vm->_screen->_orgY1 -= 4;
+		_vm->_screen->_orgY2 += 2;
+		_vm->_screen->drawLine();
+
+		++_vm->_screen->_orgY1;
+		--_vm->_screen->_orgX1;
+		++_vm->_screen->_orgX2;
+		_vm->_screen->drawLine();
+
+		++_vm->_screen->_orgY1;
+		--_vm->_screen->_orgX1;
+		++_vm->_screen->_orgX2;
+		_vm->_screen->drawLine();
+
+		_vm->_screen->_orgY1 = _vm->_screen->_orgY2;
+		_vm->_screen->drawLine();
+
+		++_vm->_screen->_orgX1;
+		--_vm->_screen->_orgX2;
+		++_vm->_screen->_orgY1;
+		_vm->_screen->drawLine();
+
+		++_vm->_screen->_orgX1;
+		--_vm->_screen->_orgX2;
+		++_vm->_screen->_orgY1;
+		_vm->_screen->drawLine();
+	}
 
 	int len = _bubbleDisplStr.size();
 	int ax = _bounds.top >> 3;
@@ -544,7 +594,7 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 						if (_vm->BCNT != _vm->BOXSELECTY + 1) {
 							++_vm->BOXSELECTY;
 							drawSelectBox();
-						} else if (_vm->BOXDATAEND == 0) {
+						} else if (!_vm->BOXDATAEND) {
 							++_vm->BOXDATASTART;
 							displayBoxData();
 							drawSelectBox();

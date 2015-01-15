@@ -100,7 +100,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
 	BCNT = 0;
-	BOXDATASTART = BOXDATAEND = 0;
+	BOXDATASTART = 0;
+	BOXDATAEND = false;
 	BOXSELECTY = 0;
 	BOXSELECTYOLD = -1;
 	NUMBLINES = 0;

@@ -217,7 +217,7 @@ public:
 	int _startAboutItem;
 	int _startAboutBox;
 	int BOXDATASTART;
-	int BOXDATAEND;
+	bool BOXDATAEND;
 	int BOXSELECTY;
 	int BOXSELECTYOLD;
 	int NUMBLINES;

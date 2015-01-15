@@ -97,6 +97,8 @@ public:
 
 	virtual void drawLine(int x1, int y1, int x2, int y2, int col);
 
+	virtual void drawLine();
+
 	virtual void drawBox();
 
 	virtual void transCopyFrom(ASurface *src, const Common::Point &destPos);
