@@ -582,8 +582,7 @@ void InterfaceMap::drawIndoors() {
 		if (surfaceId == 5 || surfaceId == 12) {
 			drawStruct._flags = _flipWtr;
 			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWtr ? 1 : 0];
-		}
-		else {
+		} else {
 			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWall ? 1 : 0];
 			drawStruct._flags = _flipWall ? 0 : SPRFLAG_HORIZ_FLIPPED;
 		}
@@ -719,82 +718,47 @@ void InterfaceMap::drawIndoors() {
 	}
 
 	if (_wo[28] && _wo[27]) {
-	}
-	else if (_wo[28] && _wo[12]) {
-	}
-	else if (_wo[28] && _wo[23]) {
-	}
-	else if (_wo[28] && _wo[8]) {
-	}
-	else if (_wo[25] && _wo[27]) {
-	}
-	else if (_wo[25] && _wo[12]) {
-	}
-	else if (_wo[25] && _wo[23]) {
-	}
-	else if (_wo[25] && _wo[8]) {
-	}
-	else if (_wo[11] && _wo[27]) {
-	}
-	else if (_wo[11] && _wo[12]) {
-	}
-	else if (_wo[11] && _wo[23]) {
-	}
-	else if (_wo[11] && _wo[8]) {
-	}
-	else if (_wo[17] && _wo[27]) {
-	}
-	else if (_wo[17] && _wo[12]) {
-	}
-	else if (_wo[17] && _wo[23]) {
-	}
-	else if (_wo[17] && _wo[8]) {
-	}
-	else if (_wo[20]) {
-	}
-	else if (_wo[30]) {
+	} else if (_wo[28] && _wo[12]) {
+	} else if (_wo[28] && _wo[23]) {
+	} else if (_wo[28] && _wo[8]) {
+	} else if (_wo[25] && _wo[27]) {
+	} else if (_wo[25] && _wo[12]) {
+	} else if (_wo[25] && _wo[23]) {
+	} else if (_wo[25] && _wo[8]) {
+	} else if (_wo[11] && _wo[27]) {
+	} else if (_wo[11] && _wo[12]) {
+	} else if (_wo[11] && _wo[23]) {
+	} else if (_wo[11] && _wo[8]) {
+	} else if (_wo[17] && _wo[27]) {
+	} else if (_wo[17] && _wo[12]) {
+	} else if (_wo[17] && _wo[23]) {
+	} else if (_wo[17] && _wo[8]) {
+	} else if (_wo[20]) {
+	} else if (_wo[30]) {
 		_indoorList._swl_3F3L._frame = 12;
-	}
-	else if (_wo[74]) {
+	} else if (_wo[74]) {
 		_indoorList._swl_3F3L._frame = 36;
 	}
 
 	if (_wo[29] && _wo[27]) {
-	}
-	else if (_wo[29] && _wo[14]) {
-	}
-	else if (_wo[29] && _wo[24]) {
-	}
-	else if (_wo[29] && _wo[10]) {
-	}
-	else if (_wo[26] && _wo[27]) {
-	}
-	else if (_wo[26] && _wo[14]) {
-	}
-	else if (_wo[26] && _wo[24]) {
-	}
-	else if (_wo[26] && _wo[10]) {
-	}
-	else if (_wo[13] && _wo[27]) {
-	}
-	else if (_wo[13] && _wo[14]) {
-	}
-	else if (_wo[13] && _wo[24]) {
-	}
-	else if (_wo[13] && _wo[10]) {
-	}
-	else if (_wo[19] && _wo[27]) {
-	}
-	else if (_wo[19] && _wo[24]) {
-	}
-	else if (_wo[19] && _wo[10]) {
-	}
-	else if (_wo[21]) {
-	}
-	else if (_wo[31]) {
+	} else if (_wo[29] && _wo[14]) {
+	} else if (_wo[29] && _wo[24]) {
+	} else if (_wo[29] && _wo[10]) {
+	} else if (_wo[26] && _wo[27]) {
+	} else if (_wo[26] && _wo[14]) {
+	} else if (_wo[26] && _wo[24]) {
+	} else if (_wo[26] && _wo[10]) {
+	} else if (_wo[13] && _wo[27]) {
+	} else if (_wo[13] && _wo[14]) {
+	} else if (_wo[13] && _wo[24]) {
+	} else if (_wo[13] && _wo[10]) {
+	} else if (_wo[19] && _wo[27]) {
+	} else if (_wo[19] && _wo[24]) {
+	} else if (_wo[19] && _wo[10]) {
+	} else if (_wo[21]) {
+	} else if (_wo[31]) {
 		_indoorList._swl_3F2R._frame = 13;
-	}
-	else if (_wo[75]) {
+	} else if (_wo[75]) {
 		_indoorList._swl_3F2R._frame = 37;
 	}
 
@@ -828,281 +792,190 @@ void InterfaceMap::drawIndoors() {
 	}
 
 	if (_wo[22] && _wo[20]) {
-	}
-	else if (_wo[22] && _wo[23]) {
-	}
-	else if (_wo[20] && _wo[17]) {
-	}
-	else if (_wo[23] && _wo[17]) {
-	}
-	else if (_wo[12]) {
-	}
-	else if (_wo[8]) {
-	}
-	else if (_wo[90]) {
+	} else if (_wo[22] && _wo[23]) {
+	} else if (_wo[20] && _wo[17]) {
+	} else if (_wo[23] && _wo[17]) {
+	} else if (_wo[12]) {
+	} else if (_wo[8]) {
+	} else if (_wo[90]) {
 		_indoorList._fwl_4F2L._frame = 7;
-	}
-	else if (_wo[45])  {
+	} else if (_wo[45])  {
 		_indoorList._fwl_4F2L._frame = 16;
-	}
-	else if (_wo[150]) {
+	} else if (_wo[150]) {
 		_indoorList._fwl_4F2L._frame = _overallFrame + 1;
-	}
-	else if (_wo[110]) {
+	} else if (_wo[110]) {
 		_indoorList._fwl_4F2L._frame = 8;
-	}
-	else if (_wo[170]) {
+	} else if (_wo[170]) {
 		_indoorList._fwl_4F2L._frame = 10;
-	}
-	else if (_wo[130]) {
+	} else if (_wo[130]) {
 		_indoorList._fwl_4F2L._frame = 9;
-	}
-	else if (_wo[1]) {
+	} else if (_wo[1]) {
 		_indoorList._fwl_4F2L._frame = 0;
-	}
-	else if (_wo[190]) {
+	} else if (_wo[190]) {
 		_indoorList._fwl_4F2L._frame = 15;
-	}
-	else if (_wo[210]) {
+	} else if (_wo[210]) {
 		_indoorList._fwl_4F2L._frame = 14;
-	}
-	else if (_wo[230]) {
+	} else if (_wo[230]) {
 		_indoorList._fwl_4F2L._frame = 6;
-	}
-	else if (_wo[250]) {
+	} else if (_wo[250]) {
 		_indoorList._fwl_4F2L._frame = 11;
-	}
-	else if (_wo[270]) {
+	} else if (_wo[270]) {
 		_indoorList._fwl_4F2L._frame = 12;
-	}
-	else if (_wo[290]) {
+	} else if (_wo[290]) {
 		_indoorList._fwl_4F2L._frame = 13;
 	}
 
 	if (_wo[15] && _wo[17]) {
-	}
-	else if (_wo[15] && _wo[12]) {
-	}
-	else if (_wo[12] && _wo[7]) {
-	}
-	else if (_wo[17] && _wo[7]) {
-	}
-	else if (_wo[91]) {
+	} else if (_wo[15] && _wo[12]) {
+	} else if (_wo[12] && _wo[7]) {
+	} else if (_wo[17] && _wo[7]) {
+	} else if (_wo[91]) {
 		_indoorList._fwl_4F1L._frame = 7;
-	}
-	else if (_wo[46]) {
+	} else if (_wo[46]) {
 		_indoorList._fwl_4F1L._frame = 16;
-	}
-	else if (_wo[151]) {
+	} else if (_wo[151]) {
 		_indoorList._fwl_4F1L._frame = _overallFrame + 1;
-	}
-	else if (_wo[111]) {
+	} else if (_wo[111]) {
 		_indoorList._fwl_4F1L._frame = 8;
-	}
-	else if (_wo[171]) {
+	} else if (_wo[171]) {
 		_indoorList._fwl_4F1L._frame = 10;
-	}
-	else if (_wo[131]) {
+	} else if (_wo[131]) {
 		_indoorList._fwl_4F1L._frame = 9;
-	}
-	else if (_wo[2]) {
+	} else if (_wo[2]) {
 		_indoorList._fwl_4F1L._frame = 0;
-	}
-	else if (_wo[191]) {
+	} else if (_wo[191]) {
 		_indoorList._fwl_4F1L._frame = 15;
-	}
-	else if (_wo[211]) {
+	} else if (_wo[211]) {
 		_indoorList._fwl_4F1L._frame = 14;
-	}
-	else if (_wo[231]) {
+	} else if (_wo[231]) {
 		_indoorList._fwl_4F1L._frame = 6;
-	}
-	else if (_wo[251]) {
+	} else if (_wo[251]) {
 		_indoorList._fwl_4F1L._frame = 11;
-	}
-	else if (_wo[271]) {
+	} else if (_wo[271]) {
 		_indoorList._fwl_4F1L._frame = 12;
-	}
-	else if (_wo[291]) {
+	} else if (_wo[291]) {
 		_indoorList._fwl_4F1L._frame = 13;
 	}
 
 	if (!_wo[27] && !_wo[21] && !_wo[14] && !_wo[24] && !_wo[10] && !_wo[31]) {
 		if (_wo[92]) {
 			_indoorList._fwl_4F3R._frame = 7;
-		}
-		else if (_wo[47]) {
+		} else if (_wo[47]) {
 			_indoorList._fwl_4F3R._frame = 16;
-		}
-		else if (_wo[152]) {
+		} else if (_wo[152]) {
 			_indoorList._fwl_4F3R._frame = _overallFrame + 1;
-		}
-		else if (_wo[112]) {
+		} else if (_wo[112]) {
 			_indoorList._fwl_4F3R._frame = 8;
-		}
-		else if (_wo[172]) {
+		} else if (_wo[172]) {
 			_indoorList._fwl_4F3R._frame = 10;
-		}
-		else if (_wo[132]) {
+		} else if (_wo[132]) {
 			_indoorList._fwl_4F3R._frame = 9;
-		}
-		else if (_wo[3]) {
+		} else if (_wo[3]) {
 			_indoorList._fwl_4F3R._frame = 0;
-		}
-		else if (_wo[192]) {
+		} else if (_wo[192]) {
 			_indoorList._fwl_4F3R._frame = 15;
-		}
-		else if (_wo[212]) {
+		} else if (_wo[212]) {
 			_indoorList._fwl_4F3R._frame = 14;
-		}
-		else if (_wo[232]) {
+		} else if (_wo[232]) {
 			_indoorList._fwl_4F3R._frame = 6;
-		}
-		else if (_wo[252]) {
+		} else if (_wo[252]) {
 			_indoorList._fwl_4F3R._frame = 11;
-		}
-		else if (_wo[272]) {
+		} else if (_wo[272]) {
 			_indoorList._fwl_4F3R._frame = 12;
-		}
-		else if (_wo[292]) {
+		} else if (_wo[292]) {
 			_indoorList._fwl_4F3R._frame = 13;
 		}
 	}
 
 	if (_wo[22] && _wo[21]) {
-	}
-	else if (_wo[22] && _wo[24]) {
-	}
-	else if (_wo[21] && _wo[19]) {
-	}
-	else if (_wo[24] && _wo[19]) {
-	}
-	else if (_wo[14] || _wo[10]) {
-	}
-	else if (_wo[94]) {
+	} else if (_wo[22] && _wo[24]) {
+	} else if (_wo[21] && _wo[19]) {
+	} else if (_wo[24] && _wo[19]) {
+	} else if (_wo[14] || _wo[10]) {
+	} else if (_wo[94]) {
 		_indoorList._fwl_4F2R._frame = 7;
-	}
-	else if (_wo[48]) {
+	} else if (_wo[48]) {
 		_indoorList._fwl_4F2R._frame = 16;
-	}
-	else if (_wo[154]) {
+	} else if (_wo[154]) {
 		_indoorList._fwl_4F2R._frame = _overallFrame + 1;
-	}
-	else if (_wo[114]) {
+	} else if (_wo[114]) {
 		_indoorList._fwl_4F2R._frame = 8;
-	}
-	else if (_wo[174]) {
+	} else if (_wo[174]) {
 		_indoorList._fwl_4F2R._frame = 10;
-	}
-	else if (_wo[134]) {
+	} else if (_wo[134]) {
 		_indoorList._fwl_4F2R._frame = 9;
-	}
-	else if (_wo[4]) {
+	} else if (_wo[4]) {
 		_indoorList._fwl_4F2R._frame = 0;
-	}
-	else if (_wo[194]) {
+	} else if (_wo[194]) {
 		_indoorList._fwl_4F2R._frame = 15;
-	}
-	else if (_wo[214]) {
+	} else if (_wo[214]) {
 		_indoorList._fwl_4F2R._frame = 14;
-	}
-	else if (_wo[234]) {
+	} else if (_wo[234]) {
 		_indoorList._fwl_4F2R._frame = 6;
-	}
-	else if (_wo[254]) {
+	} else if (_wo[254]) {
 		_indoorList._fwl_4F2R._frame = 11;
-	}
-	else if (_wo[274]) {
+	} else if (_wo[274]) {
 		_indoorList._fwl_4F2R._frame = 12;
-	}
-	else if (_wo[294]) {
+	} else if (_wo[294]) {
 		_indoorList._fwl_4F2R._frame = 13;
 	}
 
 	if (_wo[15] && _wo[19]) {
-	}
-	else if (_wo[15] && _wo[14]) {
-	}
-	else if (_wo[14] && _wo[9]) {
-	}
-	else if (_wo[19] && _wo[9]) {
-	}
-	else if (_wo[95]) {
+	} else if (_wo[15] && _wo[14]) {
+	} else if (_wo[14] && _wo[9]) {
+	} else if (_wo[19] && _wo[9]) {
+	} else if (_wo[95]) {
 		_indoorList._fwl_4F1R._frame = 7;
-	}
-	else if (_wo[49]) {
+	} else if (_wo[49]) {
 		_indoorList._fwl_4F1R._frame = 16;
-	}
-	else if (_wo[155]) {
+	} else if (_wo[155]) {
 		_indoorList._fwl_4F1R._frame = _overallFrame + 1;
-	}
-	else if (_wo[115]) {
+	} else if (_wo[115]) {
 		_indoorList._fwl_4F1R._frame = 8;
-	}
-	else if (_wo[175]) {
+	} else if (_wo[175]) {
 		_indoorList._fwl_4F1R._frame = 10;
-	}
-	else if (_wo[135]) {
+	} else if (_wo[135]) {
 		_indoorList._fwl_4F1R._frame = 9;
-	}
-	else if (_wo[5]) {
+	} else if (_wo[5]) {
 		_indoorList._fwl_4F1R._frame = 0;
-	}
-	else if (_wo[195]) {
+	} else if (_wo[195]) {
 		_indoorList._fwl_4F1R._frame = 15;
-	}
-	else if (_wo[215]) {
+	} else if (_wo[215]) {
 		_indoorList._fwl_4F1R._frame = 14;
-	}
-	else if (_wo[235]) {
+	} else if (_wo[235]) {
 		_indoorList._fwl_4F1R._frame = 6;
-	}
-	else if (_wo[255]) {
+	} else if (_wo[255]) {
 		_indoorList._fwl_4F1R._frame = 11;
-	}
-	else if (_wo[275]) {
+	} else if (_wo[275]) {
 		_indoorList._fwl_4F1R._frame = 12;
-	}
-	else if (_wo[295]) {
+	} else if (_wo[295]) {
 		_indoorList._fwl_4F1R._frame = 13;
 	}
 
 	if (_wo[27] || _wo[22] || _wo[15] || _wo[96]) {
-	}
-	else if (_wo[50]) {
+	} else if (_wo[50]) {
 		_indoorList._fwl_4F._frame = 16;
-	}
-	else if (_wo[156]) {
+	} else if (_wo[156]) {
 		_indoorList._fwl_4F._frame = _overallFrame + 1;
-	}
-	else if (_wo[116]) {
+	} else if (_wo[116]) {
 		_indoorList._fwl_4F._frame = 8;
-	}
-	else if (_wo[176]) {
+	} else if (_wo[176]) {
 		_indoorList._fwl_4F._frame = 10;
-	}
-	else if (_wo[136]) {
+	} else if (_wo[136]) {
 		_indoorList._fwl_4F._frame = 9;
-	}
-	else if (_wo[6]) {
+	} else if (_wo[6]) {
 		_indoorList._fwl_4F._frame = 0;
-	}
-	else if (_wo[196]) {
+	} else if (_wo[196]) {
 		_indoorList._fwl_4F._frame = 15;
-	}
-	else if (_wo[216]) {
+	} else if (_wo[216]) {
 		_indoorList._fwl_4F._frame = 14;
-	}
-	else if (_wo[236]) {
+	} else if (_wo[236]) {
 		_indoorList._fwl_4F._frame = 6;
-	}
-	else if (_wo[256]) {
+	} else if (_wo[256]) {
 		_indoorList._fwl_4F._frame = 11;
-	}
-	else if (_wo[276]) {
+	} else if (_wo[276]) {
 		_indoorList._fwl_4F._frame = 12;
-	}
-	else if (_wo[296]) {
+	} else if (_wo[296]) {
 		_indoorList._fwl_4F._frame = 13;
 	}
 
@@ -1114,479 +987,333 @@ void InterfaceMap::drawIndoors() {
 	}
 
 	if (_wo[22] && _wo[23]) {
-	}
-	else if (_wo[22] && _wo[20]) {
-	}
-	else if (_wo[17] && _wo[23]) {
-	}
-	else if (_wo[17] && _wo[20]) {
-	}
-	else if (_wo[8]) {
+	} else if (_wo[22] && _wo[20]) {
+	} else if (_wo[17] && _wo[23]) {
+	} else if (_wo[17] && _wo[20]) {
+	} else if (_wo[8]) {
 		_indoorList._swl_3F2L._frame = 10;
-	}
-	else if (_wo[52]) {
+	} else if (_wo[52]) {
 		_indoorList._swl_3F2L._frame = 34;
 	}
 
 	if (_wo[27] || _wo[22] || _wo[15]) {
-	}
-	else if (_wo[9]) {
+	} else if (_wo[9]) {
 		_indoorList._swl_3F4R._frame = 9;
-	}
-	else if (_wo[53]) {
+	} else if (_wo[53]) {
 		_indoorList._swl_3F4R._frame = 33;
 	}
 
 	if (_wo[22] && _wo[24]) {
-	}
-	else if (_wo[22] && _wo[21]) {
-	}
-	else if (_wo[19] && _wo[24]) {
-	}
-	else if (_wo[19] && _wo[21]) {
-	}
-	else if (_wo[14]) {
-	}
-	else if (_wo[10]) {
+	} else if (_wo[22] && _wo[21]) {
+	} else if (_wo[19] && _wo[24]) {
+	} else if (_wo[19] && _wo[21]) {
+	} else if (_wo[14]) {
+	} else if (_wo[10]) {
 		_indoorList._swl_3F3R._frame = 11;
-	}
-	else if (_wo[54]) {
+	} else if (_wo[54]) {
 		_indoorList._swl_3F3R._frame = 35;
 	}
 
 	if (_wo[25] || _wo[28] || _wo[20] || _wo[16]) {
-	}
-	else if (_wo[97]) {
+	} else if (_wo[97]) {
 		_indoorList._fwl_3F2L._frame = 24;
-	}
-	else if (_wo[55]) {
+	} else if (_wo[55]) {
 		_indoorList._fwl_3F2L._frame = 33;
-	}
-	else if (_wo[137]) {
+	} else if (_wo[137]) {
 		_indoorList._fwl_3F2L._frame = 26;
-	}
-	else if (_wo[157]) {
+	} else if (_wo[157]) {
 		_indoorList._fwl_3F2L._frame = _overallFrame + 18;
-	}
-	else if (_wo[117]) {
+	} else if (_wo[117]) {
 		_indoorList._fwl_3F2L._frame = 25;
-	}
-	else if (_wo[177]) {
+	} else if (_wo[177]) {
 		_indoorList._fwl_3F2L._frame = 27;
-	}
-	else if (_wo[11]) {
+	} else if (_wo[11]) {
 		_indoorList._fwl_3F2L._frame = 17;
-	}
-	else if (_wo[197]) {
+	} else if (_wo[197]) {
 		_indoorList._fwl_3F2L._frame = 32;
-	}
-	else if (_wo[217]) {
+	} else if (_wo[217]) {
 		_indoorList._fwl_3F2L._frame = 31;
-	}
-	else if (_wo[237]) {
+	} else if (_wo[237]) {
 		_indoorList._fwl_3F2L._frame = 23;
-	}
-	else if (_wo[257]) {
+	} else if (_wo[257]) {
 		_indoorList._fwl_3F2L._frame = 28;
-	}
-	else if (_wo[277]) {
+	} else if (_wo[277]) {
 		_indoorList._fwl_3F2L._frame = 29;
-	}
-	else if (_wo[297]) {
+	} else if (_wo[297]) {
 		_indoorList._fwl_3F2L._frame = 30;
 	}
 
 	if (_wo[22] && _wo[23]) {
-	}
-	else if (_wo[22] && _wo[20]) {
-	}
-	else if (_wo[23] && _wo[17]) {
-	}
-	else if (_wo[20] && _wo[17]) {
-	}
-	else if (_wo[98]) {
+	} else if (_wo[22] && _wo[20]) {
+	} else if (_wo[23] && _wo[17]) {
+	} else if (_wo[20] && _wo[17]) {
+	} else if (_wo[98]) {
 		_indoorList._fwl_3F1L._frame = 24;
-	}
-	else if (_wo[56]) {
+	} else if (_wo[56]) {
 		_indoorList._fwl_3F1L._frame = 33;
-	}
-	else if (_wo[178]) {
+	} else if (_wo[178]) {
 		_indoorList._fwl_3F1L._frame = 27;
-	}
-	else if (_wo[118]) {
+	} else if (_wo[118]) {
 		_indoorList._fwl_3F1L._frame = 25;
-	}
-	else if (_wo[158]) {
+	} else if (_wo[158]) {
 		_indoorList._fwl_3F1L._frame = _overallFrame + 18;
-	}
-	else if (_wo[138]) {
+	} else if (_wo[138]) {
 		_indoorList._fwl_3F1L._frame = 26;
-	}
-	else if (_wo[12]) {
+	} else if (_wo[12]) {
 		_indoorList._fwl_3F1L._frame = 17;
-	}
-	else if (_wo[198]) {
+	} else if (_wo[198]) {
 		_indoorList._fwl_3F1L._frame = 32;
-	}
-	else if (_wo[218]) {
+	} else if (_wo[218]) {
 		_indoorList._fwl_3F1L._frame = 31;
-	}
-	else if (_wo[238]) {
+	} else if (_wo[238]) {
 		_indoorList._fwl_3F1L._frame = 23;
-	}
-	else if (_wo[258]) {
+	} else if (_wo[258]) {
 		_indoorList._fwl_3F1L._frame = 28;
-	}
-	else if (_wo[278]) {
+	} else if (_wo[278]) {
 		_indoorList._fwl_3F1L._frame = 29;
-	}
-	else if (_wo[298]) {
+	} else if (_wo[298]) {
 		_indoorList._fwl_3F1L._frame = 30;
 	}
 
 	if (_wo[26] || _wo[29] || _wo[21] || _wo[18]) {
-	}
-	else if (_wo[99]) {
+	} else if (_wo[99]) {
 		_indoorList._fwl_3F2R._frame = 24;
-	}
-	else if (_wo[57]) {
+	} else if (_wo[57]) {
 		_indoorList._fwl_3F2R._frame = 33;
-	}
-	else if (_wo[139]) {
+	} else if (_wo[139]) {
 		_indoorList._fwl_3F2R._frame = 26;
-	}
-	else if (_wo[159]) {
+	} else if (_wo[159]) {
 		_indoorList._fwl_3F2R._frame = _overallFrame + 18;
-	}
-	else if (_wo[119]) {
+	} else if (_wo[119]) {
 		_indoorList._fwl_3F2R._frame = 25;
-	}
-	else if (_wo[179]) {
+	} else if (_wo[179]) {
 		_indoorList._fwl_3F2R._frame = 27;
-	}
-	else if (_wo[13]) {
+	} else if (_wo[13]) {
 		_indoorList._fwl_3F2R._frame = 17;
-	}
-	else if (_wo[199]) {
+	} else if (_wo[199]) {
 		_indoorList._fwl_3F2R._frame = 32;
-	}
-	else if (_wo[219]) {
+	} else if (_wo[219]) {
 		_indoorList._fwl_3F2R._frame = 31;
-	}
-	else if (_wo[239]) {
+	} else if (_wo[239]) {
 		_indoorList._fwl_3F2R._frame = 23;
-	}
-	else if (_wo[259]) {
+	} else if (_wo[259]) {
 		_indoorList._fwl_3F2R._frame = 28;
-	}
-	else if (_wo[279]) {
+	} else if (_wo[279]) {
 		_indoorList._fwl_3F2R._frame = 29;
-	}
-	else if (_wo[299]) {
+	} else if (_wo[299]) {
 		_indoorList._fwl_3F2R._frame = 30;
 	}
 
 	if (_wo[22] && _wo[24]) {
-	}
-	else if (_wo[22] && _wo[21]) {
-	}
-	else if (_wo[24] && _wo[19]) {
-	}
-	else if (_wo[21] && _wo[19]) {
-	}
-	else if (_wo[100]) {
+	} else if (_wo[22] && _wo[21]) {
+	} else if (_wo[24] && _wo[19]) {
+	} else if (_wo[21] && _wo[19]) {
+	} else if (_wo[100]) {
 		_indoorList._fwl_3F1R._frame = 24;
-	}
-	else if (_wo[58]) {
+	} else if (_wo[58]) {
 		_indoorList._fwl_3F1R._frame = 33;
-	}
-	else if (_wo[140]) {
+	} else if (_wo[140]) {
 		_indoorList._fwl_3F1R._frame = 26;
-	}
-	else if (_wo[160]) {
+	} else if (_wo[160]) {
 		_indoorList._fwl_3F1R._frame = _overallFrame + 18;
-	}
-	else if (_wo[120]) {
+	} else if (_wo[120]) {
 		_indoorList._fwl_3F1R._frame = 25;
-	}
-	else if (_wo[180]) {
+	} else if (_wo[180]) {
 		_indoorList._fwl_3F1R._frame = 27;
-	}
-	else if (_wo[14]) {
+	} else if (_wo[14]) {
 		_indoorList._fwl_3F1R._frame = 17;
-	}
-	else if (_wo[200]) {
+	} else if (_wo[200]) {
 		_indoorList._fwl_3F1R._frame = 32;
-	}
-	else if (_wo[220]) {
+	} else if (_wo[220]) {
 		_indoorList._fwl_3F1R._frame = 31;
-	}
-	else if (_wo[240]) {
+	} else if (_wo[240]) {
 		_indoorList._fwl_3F1R._frame = 23;
-	}
-	else if (_wo[260]) {
+	} else if (_wo[260]) {
 		_indoorList._fwl_3F1R._frame = 28;
-	}
-	else if (_wo[280]) {
+	} else if (_wo[280]) {
 		_indoorList._fwl_3F1R._frame = 29;
-	}
-	else if (_wo[300]) {
+	} else if (_wo[300]) {
 		_indoorList._fwl_3F1R._frame = 30;
 	}
 
 	if (_wo[22] || _wo[27]) {
-	}
-	else if (_wo[101]) {
+	} else if (_wo[101]) {
 		_indoorList._fwl_3F._frame = 24;
-	}
-	else if (_wo[59]) {
+	} else if (_wo[59]) {
 		_indoorList._fwl_3F._frame = 33;
-	}
-	else if (_wo[141]) {
+	} else if (_wo[141]) {
 		_indoorList._fwl_3F._frame = 26;
-	}
-	else if (_wo[161]) {
+	} else if (_wo[161]) {
 		_indoorList._fwl_3F._frame = _overallFrame + 18;
-	}
-	else if (_wo[121]) {
+	} else if (_wo[121]) {
 		_indoorList._fwl_3F._frame = 25;
-	}
-	else if (_wo[181]) {
+	} else if (_wo[181]) {
 		_indoorList._fwl_3F._frame = 27;
-	}
-	else if (_wo[15]) {
+	} else if (_wo[15]) {
 		_indoorList._fwl_3F._frame = 17;
-	}
-	else if (_wo[201]) {
+	} else if (_wo[201]) {
 		_indoorList._fwl_3F._frame = 32;
-	}
-	else if (_wo[221]) {
+	} else if (_wo[221]) {
 		_indoorList._fwl_3F._frame = 31;
-	}
-	else if (_wo[241]) {
+	} else if (_wo[241]) {
 		_indoorList._fwl_3F._frame = 23;
-	}
-	else if (_wo[261]) {
+	} else if (_wo[261]) {
 		_indoorList._fwl_3F._frame = 28;
-	}
-	else if (_wo[281]) {
+	} else if (_wo[281]) {
 		_indoorList._fwl_3F._frame = 29;
-	}
-	else if (_wo[301]) {
+	} else if (_wo[301]) {
 		_indoorList._fwl_3F._frame = 30;
 	}
 
 	if (_wo[25] || _wo[28] || _wo[20]) {
-	}
-	else if (_wo[16]) {
+	} else if (_wo[16]) {
 		_indoorList._swl_2F2L._frame = 6;
-	}
-	else if (_wo[60]) {
+	} else if (_wo[60]) {
 		_indoorList._swl_2F2L._frame = 30;
 	}
 
 	if (_wo[27] || _wo[22]) {
-	}
-	else if (_wo[17]) {
+	} else if (_wo[17]) {
 		_indoorList._swl_2F1L._frame = 4;
-	}
-	else if (_wo[61]) {
+	} else if (_wo[61]) {
 		_indoorList._swl_2F1L._frame = 28;
 	}
 
 	if (_wo[26] || _wo[29] || _wo[21]) {
-	}
-	else if (_wo[18]) {
+	} else if (_wo[18]) {
 		_indoorList._swl_2F2R._frame = 7;
-	}
-	else if (_wo[62]) {
+	} else if (_wo[62]) {
 		_indoorList._swl_2F2R._frame = 31;
 	}
 
 	if (_wo[27] || _wo[22]) {
-	}
-	else if (_wo[19]) {
+	} else if (_wo[19]) {
 		_indoorList._swl_2F1R._frame = 5;
-	}
-	else if (_wo[63]) {
+	} else if (_wo[63]) {
 		_indoorList._swl_2F1R._frame = 29;
 	}
 
 	if (_wo[27] && _wo[25]) {
-	}
-	else if (_wo[27] && _wo[28]) {
-	}
-	else if (_wo[23] & _wo[25]) {
-	}
-	else if (_wo[23] && _wo[28]) {
-	}
-	else if (_wo[102]) {
+	} else if (_wo[27] && _wo[28]) {
+	} else if (_wo[23] & _wo[25]) {
+	} else if (_wo[23] && _wo[28]) {
+	} else if (_wo[102]) {
 		_indoorList._fwl_2F1L._frame = 7;
-	}
-	else if (_wo[64]) {
+	} else if (_wo[64]) {
 		_indoorList._fwl_2F1L._frame = 16;
-	}
-	else if (_wo[182]) {
+	} else if (_wo[182]) {
 		_indoorList._fwl_2F1L._frame = 10;
-	}
-	else if (_wo[122]) {
+	} else if (_wo[122]) {
 		_indoorList._fwl_2F1L._frame = 8;
-	}
-	else if (_wo[142]) {
+	} else if (_wo[142]) {
 		_indoorList._fwl_2F1L._frame = 9;
-	}
-	else if (_wo[162]) {
+	} else if (_wo[162]) {
 		_indoorList._fwl_2F1L._frame = _overallFrame + 1;
-	}
-	else if (_wo[20]) {
+	} else if (_wo[20]) {
 		_indoorList._fwl_2F1L._frame = 0;
-	}
-	else if (_wo[202]) {
+	} else if (_wo[202]) {
 		_indoorList._fwl_2F1L._frame = 15;
-	}
-	else if (_wo[222]) {
+	} else if (_wo[222]) {
 		_indoorList._fwl_2F1L._frame = 14;
-	}
-	else if (_wo[242]) {
+	} else if (_wo[242]) {
 		_indoorList._fwl_2F1L._frame = 6;
-	}
-	else if (_wo[262]) {
+	} else if (_wo[262]) {
 		_indoorList._fwl_2F1L._frame = 11;
-	}
-	else if (_wo[282]) {
+	} else if (_wo[282]) {
 		_indoorList._fwl_2F1L._frame = 12;
-	}
-	else if (_wo[302]) {
+	} else if (_wo[302]) {
 		_indoorList._fwl_2F1L._frame = 13;
 	}
 
 	if (_wo[27] && _wo[26]) {
-	}
-	else if (_wo[27] && _wo[29]) {
-	}
-	else if (_wo[24] && _wo[26]) {
-	}
-	else if (_wo[24] && _wo[29]) {
-	}
-	else if (_wo[103]) {
+	} else if (_wo[27] && _wo[29]) {
+	} else if (_wo[24] && _wo[26]) {
+	} else if (_wo[24] && _wo[29]) {
+	} else if (_wo[103]) {
 		_indoorList._fwl_2F1R._frame = 7;
-	}
-	else if (_wo[65]) {
+	} else if (_wo[65]) {
 		_indoorList._fwl_2F1R._frame = 16;
-	}
-	else if (_wo[183]) {
+	} else if (_wo[183]) {
 		_indoorList._fwl_2F1R._frame = 10;
-	}
-	else if (_wo[123]) {
+	} else if (_wo[123]) {
 		_indoorList._fwl_2F1R._frame = 8;
-	}
-	else if (_wo[143]) {
+	} else if (_wo[143]) {
 		_indoorList._fwl_2F1R._frame = 9;
-	}
-	else if (_wo[163]) {
+	} else if (_wo[163]) {
 		_indoorList._fwl_2F1R._frame = _overallFrame + 1;
-	}
-	else if (_wo[21]) {
+	} else if (_wo[21]) {
 		_indoorList._fwl_2F1R._frame = 0;
-	}
-	else if (_wo[203]) {
+	} else if (_wo[203]) {
 		_indoorList._fwl_2F1R._frame = 15;
-	}
-	else if (_wo[223]) {
+	} else if (_wo[223]) {
 		_indoorList._fwl_2F1R._frame = 14;
-	}
-	else if (_wo[243]) {
+	} else if (_wo[243]) {
 		_indoorList._fwl_2F1R._frame = 6;
-	}
-	else if (_wo[263]) {
+	} else if (_wo[263]) {
 		_indoorList._fwl_2F1R._frame = 11;
-	}
-	else if (_wo[283]) {
+	} else if (_wo[283]) {
 		_indoorList._fwl_2F1R._frame = 12;
-	}
-	else if (_wo[303]) {
+	} else if (_wo[303]) {
 		_indoorList._fwl_2F1R._frame = 13;
 	}
 
 	if (_wo[27]) {
-
-	}
-	else if (_wo[104]) {
+	} else if (_wo[104]) {
 		_indoorList._fwl_2F._frame = 7;
-	}
-	else if (_wo[66]) {
+	} else if (_wo[66]) {
 		_indoorList._fwl_2F._frame = 16;
-	}
-	else if (_wo[184]) {
+	} else if (_wo[184]) {
 		_indoorList._fwl_2F._frame = 10;
-	}
-	else if (_wo[124]) {
+	} else if (_wo[124]) {
 		_indoorList._fwl_2F._frame = 8;
-	}
-	else if (_wo[144]) {
+	} else if (_wo[144]) {
 		_indoorList._fwl_2F._frame = 9;
-	}
-	else if (_wo[164]) {
+	} else if (_wo[164]) {
 		_indoorList._fwl_2F._frame = _overallFrame + 1;
-	}
-	else if (_wo[22]) {
+	} else if (_wo[22]) {
 		_indoorList._fwl_2F._frame = 0;
-	}
-	else if (_wo[204]) {
+	} else if (_wo[204]) {
 		_indoorList._fwl_2F._frame = 15;
-	}
-	else if (_wo[224]) {
+	} else if (_wo[224]) {
 		_indoorList._fwl_2F._frame = 14;
-	}
-	else if (_wo[244]) {
+	} else if (_wo[244]) {
 		_indoorList._fwl_2F._frame = 6;
-	}
-	else if (_wo[264]) {
+	} else if (_wo[264]) {
 		_indoorList._fwl_2F._frame = 11;
-	}
-	else if (_wo[284]) {
+	} else if (_wo[284]) {
 		_indoorList._fwl_2F._frame = 12;
-	}
-	else if (_wo[304]) {
+	} else if (_wo[304]) {
 		_indoorList._fwl_2F._frame = 13;
 	}
 
 	if (_wo[27]) {
-	}
-	else if (_wo[23]) {
+	} else if (_wo[23]) {
 		_indoorList._swl_1F1L._frame = 2;
-	}
-	else if (_wo[67]) {
+	} else if (_wo[67]) {
 		_indoorList._swl_1F1L._frame = 26;
 	}
 
 	if (_wo[27]) {
-	}
-	else if (_wo[24]) {
+	} else if (_wo[24]) {
 		_indoorList._swl_1F1R._frame = 3;
-	}
-	else if (_wo[68]) {
+	} else if (_wo[68]) {
 		_indoorList._swl_1F1R._frame = 27;
 	}
 
 	if (_wo[28]) {
-	}
-	else if (_wo[105] || _wo[25] || _wo[165] || _wo[125] || _wo[185] || _wo[145]) {
+	} else if (_wo[105] || _wo[25] || _wo[165] || _wo[125] || _wo[185] || _wo[145]) {
 		_indoorList._fwl_1F1L._frame = 0;
 		_indoorList._fwl_1F1L._sprites = &map._wallSprites._fwl1;
-	}
-	else if (_wo[69]) {
+	} else if (_wo[69]) {
 		_indoorList._fwl_1F1L._frame = 9;
 		_indoorList._fwl_1F1L._sprites = &map._wallSprites._fwl2;
 	}
 
 	if (_wo[29]) {
-	}
-	else if (_wo[106] || _wo[26] || _wo[166] || _wo[126] || _wo[186] || _wo[146]) {
+	} else if (_wo[106] || _wo[26] || _wo[166] || _wo[126] || _wo[186] || _wo[146]) {
 		_indoorList._fwl_1F._frame = 0;
 		_indoorList._fwl_1F._sprites = &map._wallSprites._fwl1;
-	}
-	else if (_wo[70]) {
+	} else if (_wo[70]) {
 		_indoorList._fwl_1F._frame = 9;
 		_indoorList._fwl_1F._sprites = &map._wallSprites._fwl2;
 	}
@@ -1597,67 +1324,53 @@ void InterfaceMap::drawIndoors() {
 			_indoorList._fwl_1F1R._frame = 0;
 		else
 			_indoorList._fwl_1F1R._frame = map.mazeData()._wallKind ? 1 : 10;
-	}
-	else if (_wo[71]) {
+	} else if (_wo[71]) {
 		_indoorList._fwl_1F1R._frame = 9;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[167]) {
+	} else if (_wo[167]) {
 		_indoorList._fwl_1F1R._frame = _overallFrame + 1;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[127]) {
+	} else if (_wo[127]) {
 		_indoorList._fwl_1F1R._frame = 1;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[147]) {
+	} else if (_wo[147]) {
 		_indoorList._fwl_1F1R._frame = 2;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[187]) {
+	} else if (_wo[187]) {
 		_indoorList._fwl_1F1R._frame = 3;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[27]) {
+	} else if (_wo[27]) {
 		_indoorList._fwl_1F1R._frame = 0;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl1;
-	}
-	else if (_wo[207]) {
+	} else if (_wo[207]) {
 		_indoorList._fwl_1F1R._frame = 8;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[227]) {
+	} else if (_wo[227]) {
 		_indoorList._fwl_1F1R._frame = 7;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[247]) {
+	} else if (_wo[247]) {
 		_indoorList._fwl_1F1R._frame = 6;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl1;
-	}
-	else if (_wo[267]) {
+	} else if (_wo[267]) {
 		_indoorList._fwl_1F1R._frame = 4;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[287]) {
+	} else if (_wo[287]) {
 		_indoorList._fwl_1F1R._frame = 5;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-	}
-	else if (_wo[307]) {
+	} else if (_wo[307]) {
 		_indoorList._fwl_1F1R._frame = 6;
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
 	}
 
 	if (_wo[28]) {
 		_indoorList._swl_0F1L._frame = 0;
-	}
-	else if (_wo[72]) {
+	} else if (_wo[72]) {
 		_indoorList._swl_0F1L._frame = 24;
 	}
 
 	if (_wo[29]) {
 		_indoorList._swl_0F1R._frame = 1;
-	}
-	else if (_wo[73]) {
+	} else if (_wo[73]) {
 		_indoorList._swl_0F1R._frame = 25;
 	}
 
