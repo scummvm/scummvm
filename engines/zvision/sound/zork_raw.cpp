@@ -256,9 +256,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::String &filePath, 
 		actualName.setChar('c', actualName.size() - 1);
 
 		if (!engine->getSearchManager()->openFile(*file, actualName))
-			error("File not found: %s", actualName.c_str());
+			return NULL;
 	} else if (!found && !isRaw) {
-		error("File not found: %s", actualName.c_str());
+		return NULL;
 	}
 
 	// Get the file name
