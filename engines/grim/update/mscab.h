@@ -84,7 +84,6 @@ private:
 		uint16 _startBlock, _inBlockStart, _endBlock, _inBlockEnd;
 
 		void copyBlock(byte *&data_ptr) const;
-		uint32 checksum(byte *data, uint32 bytes, uint32 cksum) const;
 
 		enum {
 			kMszipCompression = 1,

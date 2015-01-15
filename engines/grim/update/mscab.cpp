@@ -20,17 +20,6 @@
  *
  */
 
-/* Portions of this file are part of libmspack.
- * (C) 2003-2004 Stuart Caie.
- *
- * This source code is adapted and stripped for ResidualVM project.
- *
- * libmspack is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Lesser General Public License (LGPL) version 2.1
- *
- * For further details, see the file COPYING.LIB distributed with libmspack
- */
-
 #include "engines/grim/update/mscab.h"
 
 #include "common/file.h"
@@ -221,7 +210,6 @@ MsCabinet::Decompressor::~Decompressor() {
 bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &entry) {
 #ifdef USE_ZLIB
 	// Ref: http://blogs.kde.org/node/3181
-	uint32 cksum, cksum2;
 	uint16 uncompressedLen, compressedLen;
 	byte hdrS[4];
 	byte *buf_tmp, *dict;
@@ -259,7 +247,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 
 	while ((_curBlock + 1) <= _endBlock) {
 		// Read the CFDATA header
-		cksum = _data->readUint32LE();
+		_data->readUint32LE(); // checksum
 		_data->read(hdrS, 4);
 		compressedLen = READ_LE_UINT16(hdrS);
 		uncompressedLen = READ_LE_UINT16(hdrS + 2);
@@ -273,13 +261,6 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 		//Read the compressed block
 		if (_data->read(_compressedBlock, compressedLen) != compressedLen)
 			return false;
-
-		//Perform checksum test on the block (if one is stored)
-		if (cksum != 0) {
-			cksum2 = checksum(_compressedBlock, compressedLen, 0);
-			if (checksum(hdrS, 4, cksum2) != cksum)
-				return false;
-		}
 
 		//Check the CK header
 		if (_compressedBlock[0] != 'C' || _compressedBlock[1] != 'K')
@@ -317,23 +298,6 @@ void MsCabinet::Decompressor::copyBlock(byte *&data_ptr) const {
 		memcpy(data_ptr, _decompressedBlock + start, size);
 		data_ptr += size;
 	}
-}
-
-uint32 MsCabinet::Decompressor::checksum(byte *data, uint32 bytes, uint32 cksum) const {
-	uint32 len, ul = 0;
-
-	for (len = bytes >> 2; len--; data += 4) {
-		cksum ^= READ_LE_UINT32(data);
-	}
-
-	switch (bytes & 3) {
-		case 3: ul |= *data++ << 16;
-		case 2: ul |= *data++ <<  8;
-		case 1: ul |= *data;
-	}
-	cksum ^= ul;
-
-	return cksum;
 }
 
 } // End of namespace Grim
