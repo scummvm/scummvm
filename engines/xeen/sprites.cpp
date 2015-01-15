@@ -110,10 +110,15 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		if (lineLength == 0) {
 			// Skip the specified number of scan lines
 			yPos += f.readByte();
+		} else if ((destPos.y + yPos) < 0) {
+			// Skip over the bytes of the line
+			f.skip(lineLength);
 		} else {
 			// Skip the transparent pixels at the beginning of the scan line
 			int xPos = f.readByte() + xOffset; ++byteCount;
 			byte *destP = (byte *)dest.getBasePtr(destPos.x + xPos, destPos.y + yPos);
+			const byte *lineStartP = (const byte *)dest.getBasePtr(0, destPos.y + yPos);
+			const byte *lineEndP = (const byte *)dest.getBasePtr(dest.w, destPos.y + yPos);
 
 			while (byteCount < lineLength) {
 				// The next byte is an opcode that determines what 
@@ -128,14 +133,23 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 				case 0:   // The following len + 1 bytes are stored as indexes into the color table.
 				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
 					for (int i = 0; i < opcode + 1; ++i, ++xPos) {
-						*destP++ = f.readByte(); ++byteCount;
+						byte b = f.readByte();
+						if (destP < lineStartP || destP >= lineEndP)
+							++destP;
+						else
+							*destP++ = b; 
+						++byteCount;
 					}
 					break;
 
 				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
 					opr1 = f.readByte(); ++byteCount;
-					for (int i = 0; i < len + 3; ++i, ++xPos)
-						*destP++ = opr1;
+					for (int i = 0; i < len + 3; ++i, ++xPos) {
+						if (destP < lineStartP || destP >= lineEndP)
+							++destP;
+						else
+							*destP++ = opr1;
+					}
 					break;
 
 				case 3:   // Stream copy command.
@@ -143,8 +157,13 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					pos = f.pos();
 					f.seek(-opr1, SEEK_CUR);
 
-					for (int i = 0; i < len + 4; ++i, ++xPos)
-						*destP++ = f.readByte();
+					for (int i = 0; i < len + 4; ++i, ++xPos) {
+						byte b = f.readByte();
+						if (destP < lineStartP || destP >= lineEndP)
+							++destP;
+						else
+							*destP++ = b;
+					}
 
 					f.seek(pos, SEEK_SET);
 					break;
@@ -153,8 +172,12 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					opr1 = f.readByte(); ++byteCount;
 					opr2 = f.readByte(); ++byteCount;
 					for (int i = 0; i < len + 2; ++i, xPos += 2) {
-						*destP++ = opr1;
-						*destP++ = opr2;
+						if (destP < lineStartP || destP >= (lineEndP - 1)) {
+							destP += 2;
+						} else {
+							*destP++ = opr1;
+							*destP++ = opr2;
+						}
 					}
 					break;
 
@@ -171,7 +194,10 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 					opr1 = f.readByte(); ++byteCount;
 					for (int i = 0; i < len + 3; ++i, ++xPos) {
-						*destP++ = opr1;
+						if (destP < lineStartP || destP >= lineEndP)
+							++destP;
+						else
+							*destP++ = opr1;
 						opr1 += patternSteps[cmd + (i % 2)];
 					}
 					break;
@@ -183,9 +209,12 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			assert(byteCount == lineLength);
 		}
 	}
-
-	dest.addDirtyRect(Common::Rect(destPos.x + xOffset, destPos.y + yOffset,
+	
+	Common::Rect r(Common::Rect(destPos.x + xOffset, destPos.y + yOffset,
 		destPos.x + xOffset + width, destPos.y + yOffset + height));
+	r.clip(Common::Rect(0, 0, dest.w, dest.h));
+	if (!r.isEmpty())
+		dest.addDirtyRect(r);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, int flags) const {
