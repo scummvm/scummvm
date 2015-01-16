@@ -286,7 +286,6 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_curEdit = 0;
 	enterNewEditList(false);
 
-	_holdNextFrameStartTime = false;
 	_curFrame = -1;
 	_durationOverride = -1;
 	_scaledSurface = 0;
@@ -347,15 +346,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 		}
 	}
 
-	// All that's left is to figure out what our starting time is going to be
-	// Compare the starting point for the frame to where we need to be
-	_holdNextFrameStartTime = getRateAdjustedFrameTime() != (uint32)time.totalNumberOfFrames();
-
-	// If we went past the time, go back a frame. _curFrame before this point is at the frame
-	// that should be displayed. This adjustment ensures it is on the frame before the one that
-	// should be displayed.
-	if (_holdNextFrameStartTime)
+	// Check if we went past, then adjust the frame times
+	if (getRateAdjustedFrameTime() != (uint32)time.totalNumberOfFrames()) {
 		_curFrame--;
+		_durationOverride = getRateAdjustedFrameTime() - time.totalNumberOfFrames();
+		_nextFrameStartTime = time.totalNumberOfFrames();
+	}
 
 	if (_reversed) {
 		// Call setReverse again to update
@@ -449,20 +445,18 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	const Graphics::Surface *frame = bufferNextFrame();
 
 	if (_reversed) {
-		if (_holdNextFrameStartTime) {
-			// Don't set the next frame start time here; we just did a seek
-			_holdNextFrameStartTime = false;
+		if (_durationOverride >= 0) {
+			// Use our own duration overridden from a media seek
+			_nextFrameStartTime -= _durationOverride;
+			_durationOverride = -1;
 		} else {
 			// Just need to subtract the time
 			_nextFrameStartTime -= getFrameDuration();
 		}
 	} else {
-		if (_holdNextFrameStartTime) {
-			// Don't set the next frame start time here; we just did a seek
-			_holdNextFrameStartTime = false;
-		} else if (_durationOverride >= 0) {
-			// Use our own duration from the edit list calculation
-			_nextFrameStartTime += _durationOverride;
+		if (_durationOverride >= 0) {
+			// Use our own duration overridden from a media seek
+ 			_nextFrameStartTime += _durationOverride;
 			_durationOverride = -1;
 		} else {
 			_nextFrameStartTime += getFrameDuration();
@@ -499,11 +493,11 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 			_curEdit = _parent->editCount - 1;
 			_curFrame = _parent->frameCount;
 			_nextFrameStartTime = _parent->editList[_curEdit].trackDuration + _parent->editList[_curEdit].timeOffset;
-		} else if (_holdNextFrameStartTime) {
-			// We just seeked, so "pivot" around the frame that should be displayed
-			_curFrame++;
-			_nextFrameStartTime -= getFrameDuration();
-			_curFrame++;
+		} else if (_durationOverride >= 0) {
+			// We just had a media seek, so "pivot" around the frame that should
+			// be displayed.
+			_curFrame += 2;
+			_nextFrameStartTime += _durationOverride;
 		} else {
 			// We need to put _curFrame to be the one after the one that should be displayed.
 			// Since we're on the frame that should be displaying right now, add one.
@@ -518,11 +512,12 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 				return true;
 		}
 
-		if (_holdNextFrameStartTime) {
-			// We just seeked, so "pivot" around the frame that should be displayed
+		if (_durationOverride >= 0) {
+			// We just had a media seek, so "pivot" around the frame that should
+			// be displayed.
 			_curFrame--;
-			_nextFrameStartTime += getFrameDuration();
-		}
+			_nextFrameStartTime -= _durationOverride;
+ 		}
 
 		// We need to put _curFrame to be the one before the one that should be displayed.
 		// Since we're on the frame that should be displaying right now, subtract one.
