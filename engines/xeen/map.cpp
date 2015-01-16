@@ -650,6 +650,7 @@ MazeMonster::MazeMonster() {
 
 MazeWallItem::MazeWallItem() {
 	_id = 0;
+	_frame = 0;
 	_spriteId = 0;
 	_direction = DIR_NORTH;
 	_sprites = nullptr;

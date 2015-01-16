@@ -374,7 +374,7 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_combatFloatCounter = 0;
 }
 
-void InterfaceMap::setIndoorsMonsters() {
+void InterfaceMap::setIndoorsAttackingMonsters() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Direction dir = _vm->_party._mazeDirection;
@@ -820,8 +820,230 @@ void InterfaceMap::setIndoorObjects() {
 	}
 }
 
-void InterfaceMap::setIndoorWallPics() {
-	// TODO
+void InterfaceMap::setIndoorsWallPics() {
+	Map &map = *_vm->_map;
+	const Common::Point &mazePos = _vm->_party._mazePosition;
+	Direction dir = _vm->_party._mazeDirection;
+
+	Common::fill(&_wp[0], &_wp[20], -1);
+
+	for (uint idx = 0; idx < map._mobData._wallItems.size(); ++idx) {
+		MazeWallItem &wallItem = map._mobData._wallItems[idx];
+		if (wallItem._direction != dir)
+			continue;
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][2]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][2])) {
+			if (_wp[1] == -1) {
+				_indoorList[148]._frame = wallItem._frame;
+				_indoorList[148]._sprites = wallItem._sprites;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][7]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][7])) {
+			if (!_wo[27] && _wp[1] == -1) {
+				_indoorList[123]._frame = wallItem._frame;
+				_indoorList[123]._sprites = wallItem._sprites;
+				_wp[4] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][5]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][5])) {
+			if (_wo[27] && _wo[25]) {
+			} else if (_wo[27] && _wo[28]) {
+			} else if (_wo[23] && _wo[25]) {
+			} else if (_wo[23] && _wo[28]) {
+			} else if (_wp[3] == -1) {
+				_indoorList[122]._frame = wallItem._frame;
+				_indoorList[122]._sprites = wallItem._sprites;
+				_wp[3] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][9]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][9])) {
+			if (_wo[27] && _wo[26]) {
+			} else if (_wo[27] && _wo[29]) {
+			} else if (_wo[24] && _wo[26]) {
+			} else if (_wo[24] && _wo[29]) {
+			} else if (_wp[5] == -1) {
+				_indoorList[124]._frame = wallItem._frame;
+				_indoorList[124]._sprites = wallItem._sprites;
+				_wp[5] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][14]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][14])) {
+			if (!_wo[22] && !_wo[27] && !_wp[8]) {
+				_indoorList[94]._frame = wallItem._frame;
+				_indoorList[94]._sprites = wallItem._sprites;
+				_wp[8] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][12]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][12])) {
+			if (_wo[27]) {
+			} else if (_wo[22] && _wo[23]) {
+			} else if (_wo[22] && _wo[20]) {
+			} else if (_wo[23] && _wo[17]) {
+			} else if (_wo[20] && _wo[17]) {
+			} else if (_wp[7] == -1) {
+				_indoorList[93]._frame = wallItem._frame;
+				_indoorList[93]._sprites = wallItem._sprites;
+				_wp[7] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][16]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][16])) {
+			if (_wo[27]) {
+			} else if (_wo[22] && _wo[24]) {
+			} else if (_wo[22] && _wo[21]) {
+			} else if (_wo[24] && _wo[19]) {
+			} else if (_wo[21] && _wo[19]) {
+			} else if (_wp[9] == -1) {
+				_indoorList[95]._frame = wallItem._frame;
+				_indoorList[95]._sprites = wallItem._sprites;
+				_wp[9] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][12]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][12])) {
+			if (_wo[27]) {
+			} else if (_wo[25] && _wo[28]) {
+			} else if (_wo[20] && _wo[16]) {
+			} else if (_wp[6] == -1) {
+				_indoorList[92]._frame = wallItem._frame;
+				_indoorList[92]._sprites = wallItem._sprites;
+				_wp[6] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][16]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][16])) {
+			if (!_wo[26] && !_wo[29] && !_wo[21] && !_wo[18] && _wp[10] == -1) {
+				_indoorList[96]._frame = wallItem._frame;
+				_indoorList[96]._sprites = wallItem._sprites;
+				_wp[10] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][27]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][27])) {
+			if (!_wo[27] && !_wo[22] && !_wo[15] && _wp[15] == -1) {
+				_indoorList[50]._frame = wallItem._frame;
+				_indoorList[50]._sprites = wallItem._sprites;
+				_wp[15] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][25]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][25])) {
+			if (_wo[27]) {
+			} else if (_wo[27] && _wo[22]) {
+			} else if (_wo[15] && _wo[17]) {
+			} else if (_wo[15] && _wo[12]) {
+			} else if (_wo[12] && _wo[7]) {
+			} else if (_wo[17] && _wo[7]) {
+			} else if (_wp[14] == -1) {
+				_indoorList[49]._frame = wallItem._frame;
+				_indoorList[49]._sprites = wallItem._sprites;
+				_wp[14] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][23]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][23])) {
+			if (_wo[27]) {
+			} else if (_wo[22] && _wo[20]) {
+			} else if (_wo[22] && _wo[23]) {
+			} else if (_wo[20] && _wo[17]) {
+			} else if (_wo[23] && _wo[17]) {
+			} else if (_wo[12] && _wo[8]) {
+			} else if (_wp[13] == -1) {
+				_indoorList[48]._frame = wallItem._frame;
+				_indoorList[48]._sprites = wallItem._sprites;
+				_wp[13] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][29]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][29])) {
+			if (_wo[27] || _wo[22]) {
+			} else if (_wo[15] && _wo[19]) {
+			} else if (_wo[15] && _wo[14]) {
+			} else if (_wo[14] && _wo[9]) {
+			} else if (_wo[19] && _wo[9]) {
+			} else if (_wp[16] == -1) {
+				_indoorList[51]._frame = wallItem._frame;
+				_indoorList[51]._sprites = wallItem._sprites;
+				_wp[16] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][31]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][31])) {
+			if (_wo[27]) {
+			} else if (_wo[22] && _wo[21]) {
+			} else if (_wo[22] && _wo[24]) {
+			} else if (_wo[21] && _wo[19]) {
+			} else if (_wo[24] && _wo[19]) {
+			} else if (!_wo[14] && !_wo[10] && _wp[17] == -1) {
+				_indoorList[52]._frame = wallItem._frame;
+				_indoorList[52]._sprites = wallItem._sprites;
+				_wp[17] = idx;
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][23]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][23])) {
+			if (!_wo[27] && !_wo[20] && !_wo[12] && !_wo[23] && !_wo[8] && !_wo[30]) {
+				if (_wp[12] == -1) {
+					_indoorList[47]._frame = wallItem._frame;
+					_indoorList[47]._sprites = wallItem._sprites;
+					_wp[12] = idx;
+				}
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][31]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][31])) {
+			if (!_wo[27] && !_wo[21] && !_wo[14] && !_wo[24] && !_wo[10] && !_wo[31]) {
+				if (_wp[18] == -1) {
+					_indoorList[53]._frame = wallItem._frame;
+					_indoorList[53]._sprites = wallItem._sprites;
+					_wp[18] = idx;
+				}
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][23]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][23])) {
+			if (!_wo[25] && !_wo[28] && !_wo[20] && !_wo[11] && !_wo[16] && !_wo[30] && !_wo[32]) {
+				if (_wp[11] == -1) {
+					_indoorList[46]._frame = wallItem._frame;
+					_indoorList[46]._sprites = wallItem._sprites;
+					_wp[11] = idx;
+				}
+			}
+		}
+
+		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][31]) &&
+				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][31])) {
+			if (!_wo[26] && !_wo[20] && !_wo[21] && !_wo[13] && !_wo[18] && !_wo[31] && !_wo[33]) {
+				if (_wp[19] == -1) {
+					_indoorList[54]._frame = wallItem._frame;
+					_indoorList[54]._sprites = wallItem._sprites;
+					_wp[19] = idx;
+				}
+			}
+		}
+	}
 }
 
 void InterfaceMap::setOutdoorsMonsters() {
@@ -835,7 +1057,6 @@ void InterfaceMap::setOutdoorsObjects() {
 void InterfaceMap::drawIndoors() {
 	Map &map = *_vm->_map;
 	int surfaceId;
-	int idx;
 
 	for (int cellIndex = 0; cellIndex < 25; ++cellIndex) {
 		map.getCell(DRAW_NUMBERS[cellIndex]);

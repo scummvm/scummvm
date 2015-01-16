@@ -661,9 +661,9 @@ void Interface::draw3d(bool updateFlag) {
 			}
 		}
 
-		setIndoorsMonsters();
+		setIndoorsAttackingMonsters();
 		setIndoorObjects();
-		setIndoorWallPics();
+		setIndoorsWallPics();
 
 		_indoorList[161]._sprites = nullptr;
 		_indoorList[160]._sprites = nullptr;
@@ -756,7 +756,7 @@ void Interface::startup() {
 
 	animate3d();
 	if (_vm->_map->_isOutdoors) {
-		setIndoorsMonsters();
+		setIndoorsAttackingMonsters();
 		setIndoorObjects();
 	} else {
 		setOutdoorsMonsters();

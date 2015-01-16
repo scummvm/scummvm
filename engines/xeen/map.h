@@ -264,6 +264,7 @@ class MazeWallItem {
 public:
 	Common::Point _position;
 	int _id;
+	int _frame;
 	int _spriteId;
 	Direction _direction;
 	SpriteResource *_sprites;
