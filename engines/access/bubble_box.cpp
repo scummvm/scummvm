@@ -392,7 +392,10 @@ void BubbleBox::drawSelectBox() {
 }
 
 int BubbleBox::doBox_v1(int item, int box, int &type) {
+	static const int ICONW[] = { 0, 11, 28, 19, 19, 15 };
+
 	FontManager &fonts = _vm->_fonts;
+	int retval = -1;
 
 	_startItem = item;
 	_startBox = box;
@@ -454,6 +457,8 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 	BOXSTARTY = _vm->_screen->_orgY2 + 1;
 	_vm->_screen->_orgY2 = oldY;
 
+	int tmpX = 0;
+	int tmpY = 0;
 	if (_type != TYPE_2) {
 		oldY = _vm->_screen->_orgY1;
 		--_vm->_screen->_orgY2;
@@ -461,10 +466,10 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 		if (_type == TYPE_3)
 			_vm->_screen->_orgY1 -= 8;
 		_vm->_screen->drawRect();
+		tmpX = BICONSTARTX = _vm->_screen->_orgX1;
 
-		int tmpX = BICONSTARTX = _vm->_screen->_orgX1;
 		BOXSTARTX = tmpX + 1;
-		int tmpY = BOXENDY = _vm->_screen->_orgY1;
+		tmpY = BOXENDY = _vm->_screen->_orgY1;
 
 		if (_type == TYPE_3)
 			BICONSTARTY = tmpY - 7;
@@ -563,24 +568,24 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 	int ICON1T = 0;
 	int ICON1X = 0;
 	int ICON1Y = 0;
+	int ICON2T = 0;
+	int ICON2X = 0;
+	int ICON2Y = 0;
+	int ICON3T = 0;
+	int ICON3X = 0;
+	int ICON3Y = 0;
 	if (_btnId1) {
 		ICON1T = _btnId1;
 		ICON1X = BICONSTARTX + _btnX1;
 		ICON1Y = BICONSTARTY;
 		_vm->_screen->plotImage(icons, ICON1T + 10, Common::Point(ICON1X, ICON1Y));
 
-		int ICON2T = 0;
-		int ICON2X = 0;
-		int ICON2Y = 0;
 		if (_btnId2) {
 			ICON2T = _btnId2;
 			ICON2X = BICONSTARTX + _btnX2;
 			ICON2Y = BICONSTARTY;
 			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, ICON2Y));
 
-			int ICON3T = 0;
-			int ICON3X = 0;
-			int ICON3Y = 0;
 			if (_btnId3) {
 				ICON3T = _btnId3;
 				ICON3X = BICONSTARTX + _btnX3;
@@ -603,9 +608,9 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 	displayBoxData();
 	drawSelectBox();
 
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		_vm->_events->pollEvents();
-		if (_vm->_events->_leftButton)
+		if (!_vm->_events->_leftButton)
 			continue;
 
 		if ((_type != TYPE_1) && (_vm->_timers[2]._flag == 0)) {
@@ -643,14 +648,55 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 				continue;
 			}
 		}
-		warning("TODO Case 1");
 
-		displayBoxData();
-		drawSelectBox();
+		if ((_vm->_events->_mousePos.x >= BOXSTARTX) && (_vm->_events->_mousePos.x <= BOXENDX)
+		&&  (_vm->_events->_mousePos.y >= BOXSTARTY) && (_vm->_events->_mousePos.y <= BOXENDY)) {
+			int val = (_vm->_events->_mousePos.x >> 3) - BOXPSTARTY;
+			if (val > _vm->BCNT)
+				continue;
+			--val;
+			if (_type == TYPE_3)
+				_vm->_boxSelect = val;
+			else {
+				retval = 1;
+				if (_vm->BOXSELECTY == val)
+					break;
+				_vm->BOXSELECTY = val;
+				_vm->_events->debounceLeft();
+				drawSelectBox();
+				continue;
+			}
+		}
+
+		if ((_vm->_events->_mousePos.y >= ICON1Y) && (_vm->_events->_mousePos.y <= ICON1Y + 8)
+		&&  (_vm->_events->_mousePos.x >= ICON1X)) {
+			retval = 1;
+			if (_vm->_events->_mousePos.x < ICON1X + ICONW[ICON1T])
+				break;
+
+			if ((_vm->_events->_mousePos.x >= ICON2X) && (_vm->_events->_mousePos.x < ICON2X + ICONW[ICON2T])) {
+				retval = 2;
+				break;
+			}
+
+			if ((_vm->_events->_mousePos.x >= ICON3X) && (_vm->_events->_mousePos.x < ICON3X + ICONW[ICON3T])) {
+				retval = 3;
+				break;
+			}
+
+			if (_type != TYPE_3)
+				continue;
+			
+			if ((_vm->_events->_mousePos.x < tmpX) || (_vm->_events->_mousePos.x > tmpX + 144))
+				continue;
+
+			if ((_vm->_events->_mousePos.y < tmpY) || (_vm->_events->_mousePos.y > tmpY + 8))
+				continue;
+
+			warning("TODO: sub175B5");
+		}
 	}
-
-	warning("TODO: more dobox_v1");
-	return -1;
+	return retval;
 }
 
 void BubbleBox::getList(const char *data[], int *flags) {
