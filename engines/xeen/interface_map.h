@@ -89,7 +89,7 @@ private:
 	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, 
 		SpriteResource *sprites, int frame, int defaultY);
 protected:
-	byte _wp[20];
+	int8 _wp[20];
 	byte _wo[308];
 	int _overallFrame;
 	bool _flipWtr;

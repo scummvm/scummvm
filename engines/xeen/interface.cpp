@@ -862,7 +862,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(1)) {
+	switch (_vm->_map->getCell(1) - 1) {
 	case 1:
 		++_wo[72];
 		break;
@@ -932,7 +932,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(3)) {
+	switch (_vm->_map->getCell(3) - 1) {
 	case 1:
 		++_wo[73];
 		break;
@@ -1044,7 +1044,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(6)) {
+	switch (_vm->_map->getCell(6) - 1) {
 	case 1:
 		++_wo[67];
 		break;
@@ -1116,7 +1116,7 @@ void Interface::setMazeBits() {
 
 	_thinWall = (_vm->_map->_currentWall._data != 0x8888) && _wo[27];
 
-	switch (_vm->_map->getCell(8)) {
+	switch (_vm->_map->getCell(8) - 1) {
 	case 1:
 		++_wo[68];
 		break;
@@ -1231,7 +1231,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(11)) {
+	switch (_vm->_map->getCell(11) - 1) {
 	case 1:
 		++_wo[60];
 		break;
@@ -1301,7 +1301,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(13)) {
+	switch (_vm->_map->getCell(13) - 1) {
 	case 1:
 		++_wo[61];
 		break;
@@ -1371,7 +1371,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(15)) {
+	switch (_vm->_map->getCell(15) - 1) {
 	case 1:
 		++_wo[63];
 		break;
@@ -1441,7 +1441,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(17)) {
+	switch (_vm->_map->getCell(17) - 1) {
 	case 1:
 		++_wo[62];
 		break;
@@ -1556,7 +1556,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(20)) {
+	switch (_vm->_map->getCell(20) - 1) {
 	case 1:
 		++_wo[76];
 		break;
@@ -1626,7 +1626,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(22)) {
+	switch (_vm->_map->getCell(22) - 1) {
 	case 1:
 		++_wo[74];
 		break;
@@ -1696,7 +1696,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(24)) {
+	switch (_vm->_map->getCell(24) - 1) {
 	case 1:
 		++_wo[52];
 		break;
@@ -1766,7 +1766,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(26)) {
+	switch (_vm->_map->getCell(26) - 1) {
 	case 1:
 		++_wo[51];
 		break;
@@ -1836,7 +1836,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(28)) {
+	switch (_vm->_map->getCell(28) - 1) {
 	case 1:
 		++_wo[53];
 		break;
@@ -1906,7 +1906,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(30)) {
+	switch (_vm->_map->getCell(30) - 1) {
 	case 1:
 		++_wo[54];
 		break;
@@ -1975,7 +1975,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(32)) {
+	switch (_vm->_map->getCell(32) - 1) {
 	case 1:
 		++_wo[75];
 		break;
@@ -2045,7 +2045,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(34)) {
+	switch (_vm->_map->getCell(34) - 1) {
 	case 1:
 		++_wo[77];
 		break;
@@ -2115,7 +2115,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(36)) {
+	switch (_vm->_map->getCell(36) - 1) {
 	case 1:
 		++_wo[83];
 		break;
@@ -2139,7 +2139,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(37)) {
+	switch (_vm->_map->getCell(37) - 1) {
 	case 1:
 		++_wo[82];
 		break;
@@ -2163,7 +2163,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(38)) {
+	switch (_vm->_map->getCell(38) - 1) {
 	case 1:
 		++_wo[81];
 		break;
@@ -2187,7 +2187,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(34)) {
+	switch (_vm->_map->getCell(34) - 1) {
 	case 1:
 		++_wo[80];
 		break;
@@ -2211,7 +2211,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(40)) {
+	switch (_vm->_map->getCell(40) - 1) {
 	case 1:
 		++_wo[84];
 		break;
@@ -2235,7 +2235,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(41)) {
+	switch (_vm->_map->getCell(41) - 1) {
 	case 1:
 		++_wo[85];
 		break;
@@ -2259,7 +2259,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(42)) {
+	switch (_vm->_map->getCell(42) - 1) {
 	case 1:
 		++_wo[86];
 		break;
@@ -2283,7 +2283,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(43)) {
+	switch (_vm->_map->getCell(43) - 1) {
 	case 1:
 		++_wo[87];
 		break;
