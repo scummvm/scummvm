@@ -90,7 +90,7 @@ protected:
 
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
-
+	Command *opScriptBegin();
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);

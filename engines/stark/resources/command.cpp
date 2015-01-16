@@ -47,6 +47,8 @@ Command::Command(Resource *parent, byte subType, uint16 index, const Common::Str
 
 Command *Command::execute(uint32 callMode, Script *script) {
 	switch (_subType) {
+	case kCommandBegin:
+		return opScriptBegin();
 	case kDialogCall:
 		return opDialogCall(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kLocationGoTo:
@@ -67,6 +69,10 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		break;
 	}
 
+	return nextCommand();
+}
+
+Command *Command::opScriptBegin() {
 	return nextCommand();
 }
 
