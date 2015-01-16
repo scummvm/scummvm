@@ -331,7 +331,8 @@ void BubbleBox::displayBoxData() {
 
 	while (true) {
 //		SETCURSORPOS(BOXPSTARTX, BOXPSTARTY);
-//		_vm->_fonts._font1.drawString(_vm->_screen, _tempListPtr[idx], Common::Point((BOXPSTARTX << 3) + _rowOff, BOXPSTARTY << 3));
+		warning("%d %d -> %d %d", BOXPSTARTX, BOXPSTARTY, (BOXPSTARTX << 3) + _rowOff, BOXPSTARTY << 3);
+		_vm->_fonts._font1.drawString(_vm->_screen, _tempListPtr[idx], Common::Point((BOXPSTARTX << 3) + _rowOff, BOXPSTARTY << 3));
 
 		warning("TODO: PRINTSTR");
 		++idx;
@@ -492,27 +493,28 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 	}
 
 	int len = _bubbleDisplStr.size();
-	int ax = _bounds.top >> 3;
-	ax -= len;
-	ax /= 2;
-	int cx = _bounds.left >> 3;
-	BOXPSTARTX = cx;
-	ax += cx << 16;
+	int newX = _bounds.top >> 3;
+	newX = (len - newX) / 2;
 
-	cx = _bounds.right >> 3;
-	int bp = _bounds.right - (cx << 3) + 1;
+	BOXPSTARTX = _bounds.left >> 3;
+	newX += BOXPSTARTX;
+
+	int newY = _bounds.top >> 3;
+	int bp = _bounds.top - (newY << 3) + 1;
 	if (bp == 8) {
-		++cx;
+		++newY;
 		bp = 0;
 	}
 
 	_rowOff = bp;
-	BOXPSTARTY = cx;
-	ax += cx;
+	BOXPSTARTY = newY;
+
+	// setcursorpos
+	_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y = (newY << 3) + _rowOff;
+	_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x = (newX << 3);
+	//
 
 	_vm->_fonts._charFor._lo = -1;
-	_vm->_events->setCursor(CURSOR_ARROW);
-
 	_vm->_fonts._font1.drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
 
 	if (_type == TYPE_2) {
