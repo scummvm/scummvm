@@ -288,8 +288,13 @@ void BubbleBox::doBox(int item, int box) {
 }
 
 void BubbleBox::SETCURSORPOS(int posX, int posY) {
-//	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point((posX << 3) + _rowOff, posY << 3);
-	warning("TODO: CURSORSET");
+	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point((posX << 3) + _rowOff, posY << 3);
+	warning("Missing call to SETCURSOR");
+}
+
+void BubbleBox::PRINTSTR(Common::String msg) {
+	warning("TODO: Proper implementation of PRINTSTR");
+	_vm->_fonts._font1.drawString(_vm->_screen, msg, _vm->_screen->_printOrg);
 }
 
 void BubbleBox::displayBoxData() {
@@ -330,11 +335,9 @@ void BubbleBox::displayBoxData() {
 	idx += _vm->BOXDATASTART;
 
 	while (true) {
-//		SETCURSORPOS(BOXPSTARTX, BOXPSTARTY);
-		warning("%d %d -> %d %d", BOXPSTARTX, BOXPSTARTY, (BOXPSTARTX << 3) + _rowOff, BOXPSTARTY << 3);
-		_vm->_fonts._font1.drawString(_vm->_screen, _tempListPtr[idx], Common::Point((BOXPSTARTX << 3) + _rowOff, BOXPSTARTY << 3));
+		SETCURSORPOS(BOXPSTARTX, BOXPSTARTY);
+		PRINTSTR(_tempListPtr[idx]);
 
-		warning("TODO: PRINTSTR");
 		++idx;
 		++BOXPSTARTY;
 		++_vm->BCNT;
@@ -354,7 +357,38 @@ void BubbleBox::displayBoxData() {
 }
 
 void BubbleBox::drawSelectBox() {
-	warning("TODO drawSelectBox");
+	if (_tempListPtr[0].size() == 0)
+		return;
+
+	if (((_type != TYPE_1) && (_type != TYPE_3)) || !_vm->BCNT)
+		return;
+
+	if (_vm->BOXSELECTYOLD != -1) {
+		_vm->_events->hideCursor();
+		_vm->_screen->_lColor = 0xFA;
+
+		int val = _vm->BOXSELECTYOLD + BOXPSTARTY + 1;
+		_vm->_screen->_orgY1 = (val << 3) + 2;
+		_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 7;
+		_vm->_screen->_orgX1 = BOXSTARTX;
+		_vm->_screen->_orgX2 = BOXENDX;
+		_vm->_screen->drawBox();
+		_vm->_events->showCursor();
+	}
+
+	_vm->_events->hideCursor();
+	_vm->BOXSELECTYOLD = _vm->BOXSELECTY;
+	int val = BOXPSTARTY + _vm->BOXSELECTY + 1;
+	_vm->_screen->_orgY1 = (val << 3) + 2;
+	_vm->_screen->_orgY2 = _vm->_screen->_orgY1 + 7;
+	_vm->_screen->_orgX1 = BOXSTARTX;
+	_vm->_screen->_orgX2 = BOXENDX;
+	_vm->_screen->_lColor = 0xFE;
+	_vm->_screen->drawBox();
+	_vm->_events->showCursor();
+
+	if (_type == TYPE_3)
+		warning("TODO: List filenames");
 }
 
 int BubbleBox::doBox_v1(int item, int box, int &type) {

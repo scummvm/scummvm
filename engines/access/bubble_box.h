@@ -97,6 +97,7 @@ public:
 	int doBox_v1(int item, int box, int &type);
 	void getList(const char *data[], int *flags);
 	void SETCURSORPOS(int posX, int posY);
+	void PRINTSTR(Common::String msg);
 };
 
 } // End of namespace Access
