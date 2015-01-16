@@ -93,11 +93,11 @@ protected:
 
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
-	void opScriptPause(Script *script, const ResourceReference &durationRef);
-	void opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
-	void opItemEnable(const ResourceReference &itemRef, int32 enable);
+	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
+	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
+	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
-	void opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
+	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 
 	Common::Array<Argument> _arguments;
 };

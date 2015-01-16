@@ -52,19 +52,15 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kLocationGoTo:
 		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
-		opScriptPause(script, _arguments[1].referenceValue);
-		return this; // Stay on this command while the script is suspended
+		return opScriptPause(script, _arguments[1].referenceValue);
 	case kItem3DPlaceOn:
-		opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
-		return nextCommand();
+		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItemEnable:
-		opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
-		return nextCommand();
+		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kItemPlaceDirection:
-		opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
-		return nextCommand();
+		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -100,12 +96,14 @@ Command *Command::opLocationGoTo(const Common::String &level, const Common::Stri
 }
 
 
-void Command::opScriptPause(Script *script, const ResourceReference &durationRef) {
+Command *Command::opScriptPause(Script *script, const ResourceReference &durationRef) {
 	Knowledge *duration = durationRef.resolve<Knowledge>();
 	script->pause(duration->getIntegerValue());
+
+	return this; // Stay on this command while the script is suspended
 }
 
-void Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
+Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
 	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
 	Resource *target = targetRef.resolve<Resource>();
 
@@ -116,9 +114,11 @@ void Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceRe
 	default:
 		warning("Unimplemented op3DPlaceOn target type %s", target->getType().getName());
 	}
+
+	return nextCommand();
 }
 
-void Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
+Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	Item *item = itemRef.resolve<Item>();
 
 	bool previousState = item->isEnabled();
@@ -136,6 +136,8 @@ void Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 		item->setEnabled(!previousState);
 		break;
 	}
+
+	return nextCommand();
 }
 
 Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend) {
@@ -150,10 +152,12 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 	}
 }
 
-void Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {
+Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {
 	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
 
 	item->setDirection(abs(direction) % 360);
+
+	return nextCommand();
 }
 
 Command *Command::nextCommand() {
