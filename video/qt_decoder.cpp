@@ -629,30 +629,32 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	if (atLastEdit())
 		return;
 
+	uint32 mediaTime = _parent->editList[_curEdit].mediaTime;
 	uint32 frameNum = 0;
-	bool done = false;
 	uint32 totalDuration = 0;
-	uint32 prevDuration = 0;
+	_durationOverride = -1;
 
 	// Track down where the mediaTime is in the media
 	// This is basically time -> frame mapping
 	// Note that this code uses first frame = 0
-	for (int32 i = 0; i < _parent->timeToSampleCount && !done; i++) {
-		for (int32 j = 0; j < _parent->timeToSample[i].count; j++) {
-			if (totalDuration == (uint32)_parent->editList[_curEdit].mediaTime) {
-				done = true;
-				prevDuration = totalDuration;
-				break;
-			} else if (totalDuration > (uint32)_parent->editList[_curEdit].mediaTime) {
-				done = true;
-				frameNum--;
-				break;
-			}
+	for (int32 i = 0; i < _parent->timeToSampleCount; i++) {
+		uint32 duration = _parent->timeToSample[i].count * _parent->timeToSample[i].duration;
 
-			prevDuration = totalDuration;
-			totalDuration += _parent->timeToSample[i].duration;
-			frameNum++;
+		if (totalDuration + duration >= mediaTime) {
+			uint32 frameInc = (mediaTime - totalDuration) / _parent->timeToSample[i].duration;
+			frameNum += frameInc;
+			totalDuration += frameInc * _parent->timeToSample[i].duration;
+
+			// If we didn't get to the exact media time, mark an override for
+			// the time.
+			if (totalDuration != mediaTime)
+				_durationOverride = totalDuration + _parent->timeToSample[i].duration - mediaTime;
+
+			break;
 		}
+
+		frameNum += _parent->timeToSample[i].count;
+		totalDuration += duration;
 	}
 
 	if (bufferFrames) {
@@ -668,12 +670,6 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	}
 
 	_nextFrameStartTime = getCurEditTimeOffset();
-
-	// Set an override for the duration since we came up in-between two frames
-	if (prevDuration != totalDuration)
-		_durationOverride = totalDuration - prevDuration;
-	else
-		_durationOverride = -1;
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() {
