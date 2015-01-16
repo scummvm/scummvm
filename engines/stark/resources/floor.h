@@ -32,6 +32,7 @@
 
 namespace Stark {
 
+class FloorFace;
 class XRCReadStream;
 
 class Floor : public Resource {
@@ -41,12 +42,30 @@ public:
 	Floor(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Floor();
 
+	// Resource API
+	void onAllLoaded() override;
+
+	/** Obtain the vertex for an indice */
+	Math::Vector3d getVertex(uint32 indice) const;
+
+	/**
+	 * Obtain the index of the face containing the point when both the floorfield
+	 * and the point are projected on a Z=0 plane.
+	 *
+	 * Return -1 if no face contains the point.
+	 */
+	int32 findFaceContainingPoint(const Math::Vector3d &point) const;
+
+	/** Fill the z coordinate of the point so that it is on the plane of a face */
+	void computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) const;
+
 protected:
 	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	uint32 _facesCount;
-	Common::Array<Math::Vector3d> _positions;
+	Common::Array<Math::Vector3d> _vertices;
+	Common::Array<FloorFace *> _faces;
 };
 
 } // End of namespace Stark

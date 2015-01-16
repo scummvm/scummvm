@@ -30,7 +30,10 @@
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/bookmark.h"
+#include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/textureset.h"
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 
@@ -172,7 +175,8 @@ ItemSub13::ItemSub13(Resource *parent, byte subType, uint16 index, const Common:
 		_textureNormalIndex(-1),
 		_textureFaceIndex(-1),
 		_animHierarchyIndex(-1),
-		_referencedItem(nullptr) {
+		_referencedItem(nullptr),
+		_instanciatedItem(nullptr) {
 }
 
 void ItemSub13::onAllLoaded() {
@@ -320,12 +324,22 @@ ItemSub5610::~ItemSub5610() {
 ItemSub5610::ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name),
 		_direction3D(0.0),
-		_field_6C(-1) {
+		_floorFaceIndex(-1) {
 }
 
 void ItemSub5610::placeOnBookmark(Bookmark *target) {
-	// TODO: valorize the z coordinate using the floor height at that position
+	Global *global = StarkServices::instance().global;
+	Floor *floor = global->getCurrent()->getFloor();
+
 	_position3D = target->getPosition();
+
+	// Find the floor face index the item is on
+	_floorFaceIndex = floor->findFaceContainingPoint(_position3D);
+
+	// Set the z coordinate using the floor height at that position
+	if (_floorFaceIndex >= 0) {
+		floor->computePointHeightInFace(_position3D, _floorFaceIndex);
+	}
 }
 
 void ItemSub5610::setDirection(uint direction) {
@@ -342,7 +356,7 @@ ItemSub56::ItemSub56(Resource *parent, byte subType, uint16 index, const Common:
 void ItemSub56::readData(XRCReadStream *stream) {
 	ItemSub5610::readData(stream);
 
-	_field_6C = stream->readSint32LE();
+	_floorFaceIndex = stream->readSint32LE();
 	_position = stream->readPoint();
 }
 
@@ -362,7 +376,7 @@ RenderEntry *ItemSub56::getRenderEntry() {
 void ItemSub56::printData() {
 	ItemSub5610::printData();
 
-	debug("field_6C: %d", _field_6C);
+	debug("floorFaceIndex: %d", _floorFaceIndex);
 	debug("position: x %d, y %d", _position.x, _position.y);
 }
 

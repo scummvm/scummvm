@@ -41,11 +41,21 @@ public:
 	FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FloorFace();
 
+	// Resource API
+	virtual void onAllLoaded() override;
+
+	/** Return true if the point is inside the face when both are projected on a Z=0 plane*/
+	bool isPointInside(const Math::Vector3d &point) const;
+
+	/** Fill the z coordinate of the point so that it is on the plane */
+	void computePointHeight(Math::Vector3d &point) const;
+
 protected:
 	void readData(XRCReadStream *stream) override;
 	void printData() override;
 
 	int16 _indices[3];
+	Math::Vector3d _vertices[3];
 
 	float _unk1;
 	float _unk2;

@@ -178,7 +178,7 @@ public:
 	void setDirection(uint direction);
 
 protected:
-	int32 _field_6C;
+	int32 _floorFaceIndex;
 	Math::Vector3d _position3D;
 	float _direction3D;
 };

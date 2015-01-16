@@ -24,6 +24,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/floorface.h"
 
 namespace Stark {
 
@@ -36,22 +37,46 @@ Floor::Floor(Resource *parent, byte subType, uint16 index, const Common::String 
 Floor::~Floor() {
 }
 
+Math::Vector3d Floor::getVertex(uint32 indice) const {
+	return _vertices[indice];
+}
+
+int32 Floor::findFaceContainingPoint(const Math::Vector3d &point) const {
+	for (uint32 i = 0; i < _faces.size(); i++) {
+		if (_faces[i]->isPointInside(point)) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void Floor::computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) const {
+	_faces[faceIndex]->computePointHeight(point);
+}
+
 void Floor::readData(XRCReadStream *stream) {
 	_facesCount = stream->readUint32LE();
 	uint32 positionsCount = stream->readUint32LE();
 
 	for (uint i = 0; i < positionsCount; i++) {
 		Math::Vector3d v = stream->readVector3();
-		_positions.push_back(v);
+		_vertices.push_back(v);
 	}
+}
+
+void Floor::onAllLoaded() {
+	Resource::onAllLoaded();
+
+	_faces = listChildren<FloorFace>();
 }
 
 void Floor::printData() {
 	debug("face count: %d", _facesCount);
 
 	Common::Debug debug = streamDbg();
-	for (uint i = 0; i < _positions.size(); i++) {
-		debug << i << ": " << _positions[i] << "\n";
+	for (uint i = 0; i < _vertices.size(); i++) {
+		debug << i << ": " << _vertices[i] << "\n";
 	}
 }
 
