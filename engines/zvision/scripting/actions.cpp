@@ -486,6 +486,11 @@ ActionMusic::~ActionMusic() {
 }
 
 bool ActionMusic::execute() {
+	if (_engine->getScriptManager()->getSideFX(_slotKey)) {
+		_engine->getScriptManager()->killSideFx(_slotKey);
+		_engine->getScriptManager()->setStateValue(_slotKey, 2);
+	}
+
 	if (_midi) {
 		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, _volume));
 	} else {
