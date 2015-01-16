@@ -748,9 +748,9 @@ bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
-	// HACK: We're also accepting the time minus one because edit lists
-	// aren't as accurate as one would hope.
-	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1;
+	// We're at the end of the edit once the next frame's time would
+	// bring us past the end of the edit.
+	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration();
 }
 
 } // End of namespace Video
