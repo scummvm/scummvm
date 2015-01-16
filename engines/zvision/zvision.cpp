@@ -258,8 +258,17 @@ Common::Error ZVision::run() {
 
 		for (int j = 0; j < 4; j++) {
 			Common::String fontName = curFont.fontBase;
+			if (fontName == "censcbk" && j > 0)
+				fontName = "schlbk";
 			fontName += fontSuffixes[j];
 			fontName += ".ttf";
+
+			if (fontName == "schlbkbd.ttf")
+				fontName = "schlbkb.ttf";
+			if (fontName == "garabi.ttf")
+				continue;
+			if (fontName == "garai.ttf")
+				fontName = "garait.ttf";
 
 			Common::String freeFontName = curFont.freeFontBase;
 			freeFontName += freeFontSuffixes[j];
