@@ -166,6 +166,7 @@ private:
 		uint32 getCurEditTimeOffset() const;
 		uint32 getCurEditTrackDuration() const;
 		bool atLastEdit() const;
+		bool endOfCurEdit() const;
 	};
 };
 

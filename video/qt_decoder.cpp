@@ -397,8 +397,22 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getNextFrameStartTime() const {
 	if (endOfTrack())
 		return 0;
 
-	// Convert to milliseconds so the tracks can be compared
-	return getRateAdjustedFrameTime() * 1000 / _parent->timeScale;
+	Audio::Timestamp frameTime(0, getRateAdjustedFrameTime(), _parent->timeScale);
+
+	// Check if the frame goes beyond the end of the edit. In that case, the next frame
+	// should really be when we cross the edit boundary.
+	if (_reversed) {
+		Audio::Timestamp editStartTime(0, _parent->editList[_curEdit].timeOffset, _decoder->_timeScale);
+		if (frameTime < editStartTime)
+			return editStartTime.msecs();
+	} else {
+		Audio::Timestamp nextEditStartTime(0, _parent->editList[_curEdit].timeOffset + _parent->editList[_curEdit].trackDuration, _decoder->_timeScale);
+		if (frameTime > nextEditStartTime)
+			return nextEditStartTime.msecs();
+	}
+
+	// Not past an edit boundary, so the frame time is what should be used
+	return frameTime.msecs();
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() {
@@ -422,6 +436,16 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			bufferNextFrame();
 	}
 
+	// Update the edit list, if applicable
+	if (endOfCurEdit()) {
+		_curEdit++;
+
+		if (atLastEdit())
+			return 0;
+
+		enterNewEditList(true);
+	}
+
 	const Graphics::Surface *frame = bufferNextFrame();
 
 	if (_reversed) {
@@ -442,16 +466,6 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			_durationOverride = -1;
 		} else {
 			_nextFrameStartTime += getFrameDuration();
-		}
-
-		// Update the edit list, if applicable
-		// HACK: We're also accepting the time minus one because edit lists
-		// aren't as accurate as one would hope.
-		if (!atLastEdit() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
-			_curEdit++;
-
-			if (!atLastEdit())
-				enterNewEditList(true);
 		}
 	}
 
@@ -497,9 +511,7 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 		}
 	} else {
 		// Update the edit list, if applicable
-		// HACK: We're also accepting the time minus one because edit lists
-		// aren't as accurate as one would hope.
-		if (!atLastEdit() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
+		if (!atLastEdit() && endOfCurEdit()) {
 			_curEdit++;
 
 			if (atLastEdit())
@@ -737,6 +749,12 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
 
 bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
 	return _curEdit == _parent->editCount;
+}
+
+bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
+	// HACK: We're also accepting the time minus one because edit lists
+	// aren't as accurate as one would hope.
+	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1;
 }
 
 } // End of namespace Video
