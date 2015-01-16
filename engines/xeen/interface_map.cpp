@@ -1066,12 +1066,12 @@ void InterfaceMap::drawIndoors() {
 			drawStruct._sprites = &map._surfaceSprites[map._currentSurfaceId];
 
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
-		if (surfaceId == 5 || surfaceId == 12) {
-			drawStruct._flags = _flipWtr;
+		if (surfaceId == 0 || surfaceId == 5 || surfaceId == 12) {
+			drawStruct._flags = _flipWtr ? 1 : 0;
 			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWtr ? 1 : 0];
 		} else {
 			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWall ? 1 : 0];
-			drawStruct._flags = _flipWall ? 0 : SPRFLAG_HORIZ_FLIPPED;
+			drawStruct._flags = _flipWall ? SPRFLAG_HORIZ_FLIPPED : 0;
 		}
 	}
 
