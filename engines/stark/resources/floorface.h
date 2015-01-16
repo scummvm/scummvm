@@ -50,6 +50,9 @@ public:
 	/** Fill the z coordinate of the point so that it is on the plane */
 	void computePointHeight(Math::Vector3d &point) const;
 
+	/** Obtain the distance to the camera */
+	float getDistanceFromCamera() const;
+
 protected:
 	void readData(XRCReadStream *stream) override;
 	void printData() override;
@@ -57,7 +60,7 @@ protected:
 	int16 _indices[3];
 	Math::Vector3d _vertices[3];
 
-	float _unk1;
+	float _distanceFromCamera;
 	float _unk2;
 };
 

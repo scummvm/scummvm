@@ -55,6 +55,11 @@ void Floor::computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) co
 	_faces[faceIndex]->computePointHeight(point);
 }
 
+float Floor::getDistanceFromCamera(uint32 faceIndex) const {
+	FloorFace *face = _faces[faceIndex];
+	return face->getDistanceFromCamera();
+}
+
 void Floor::readData(XRCReadStream *stream) {
 	_facesCount = stream->readUint32LE();
 	uint32 positionsCount = stream->readUint32LE();

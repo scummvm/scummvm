@@ -45,6 +45,10 @@ public:
 	void setVisual(Visual *visual);
 	void setPosition(const Common::Point &position);
 	void setPosition3D(const Math::Vector3d &position, float direction);
+	void setSortKey(float sortKey);
+
+	/** Compare two render entries by their sort keys */
+	static bool compare(const RenderEntry *x, const RenderEntry *y);
 
 protected:
 	Common::String _name;
@@ -54,6 +58,7 @@ protected:
 	Common::Point _position;
 	Math::Vector3d _position3D;
 	float _direction3D;
+	float _sortKey;
 };
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;

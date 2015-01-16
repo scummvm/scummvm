@@ -30,7 +30,7 @@ namespace Stark {
 
 FloorFace::FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
-		_unk1(0),
+		_distanceFromCamera(0),
 		_unk2(0) {
 	_type = TYPE;
 
@@ -92,12 +92,16 @@ void FloorFace::computePointHeight(Math::Vector3d &point) const {
 	point.setValue(2, pointZ);
 }
 
+float FloorFace::getDistanceFromCamera() const {
+	return _distanceFromCamera;
+}
+
 void FloorFace::readData(XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();
 	}
 
-	_unk1 = stream->readFloat();
+	_distanceFromCamera = stream->readFloat();
 
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		stream->readSint16LE(); // Skipped in the original
@@ -116,7 +120,7 @@ void FloorFace::onAllLoaded() {
 }
 
 void FloorFace::printData() {
-	debug("indices: %d %d %d, unk1 %f, unk2 %f", _indices[0], _indices[1], _indices[2], _unk1, _unk2);
+	debug("indices: %d %d %d, distanceFromCamera %f, unk2 %f", _indices[0], _indices[1], _indices[2], _distanceFromCamera, _unk2);
 }
 
 } // End of namespace Stark

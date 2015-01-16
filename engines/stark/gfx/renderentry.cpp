@@ -33,7 +33,8 @@ RenderEntry::RenderEntry(Resource *owner, const Common::String &name) :
 	_visual(nullptr),
 	_name(name),
 	_owner(owner),
-	_direction3D(0.0) {
+	_direction3D(0.0),
+	_sortKey(0.0) {
 }
 
 void RenderEntry::render(GfxDriver *gfx) {
@@ -69,6 +70,14 @@ void RenderEntry::setPosition(const Common::Point &position) {
 void RenderEntry::setPosition3D(const Math::Vector3d &position, float direction) {
 	_position3D = position;
 	_direction3D = direction;
+}
+
+void RenderEntry::setSortKey(float sortKey) {
+	_sortKey = sortKey;
+}
+
+bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
+	return x->_sortKey < y->_sortKey;
 }
 
 } // End of namespace Stark

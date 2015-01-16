@@ -59,6 +59,9 @@ public:
 	/** Fill the z coordinate of the point so that it is on the plane of a face */
 	void computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) const;
 
+	/** Obtain teh distance to the camera for a face */
+	float getDistanceFromCamera(uint32 faceIndex) const;
+
 protected:
 	void readData(XRCReadStream *stream) override;
 	void printData() override;

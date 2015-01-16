@@ -339,11 +339,25 @@ void ItemSub5610::placeOnBookmark(Bookmark *target) {
 	// Set the z coordinate using the floor height at that position
 	if (_floorFaceIndex >= 0) {
 		floor->computePointHeightInFace(_position3D, _floorFaceIndex);
+	} else {
+		warning("Item '%s' has been place out of the floor field", getName().c_str());
 	}
 }
 
 void ItemSub5610::setDirection(uint direction) {
 	_direction3D = direction;
+}
+
+float ItemSub5610::getSortKey() const {
+	Global *global = StarkServices::instance().global;
+	Floor *floor = global->getCurrent()->getFloor();
+
+	if (_floorFaceIndex == -1) {
+		warning("Undefined floor face index for item '%s'", getName().c_str());
+		return floor->getDistanceFromCamera(0);
+	}
+
+	return floor->getDistanceFromCamera(_floorFaceIndex);
 }
 
 ItemSub56::~ItemSub56() {
@@ -366,6 +380,7 @@ RenderEntry *ItemSub56::getRenderEntry() {
 
 		_renderEntry->setVisual(visual);
 		_renderEntry->setPosition(_position);
+		_renderEntry->setSortKey(getSortKey());
 	} else {
 		_renderEntry->setVisual(nullptr);
 	}
@@ -518,6 +533,7 @@ RenderEntry *ItemSub10::getRenderEntry() {
 
 		_renderEntry->setVisual(visual);
 		_renderEntry->setPosition3D(_position3D, _direction3D);
+		_renderEntry->setSortKey(getSortKey());
 	} else {
 		_renderEntry->setVisual(nullptr);
 	}

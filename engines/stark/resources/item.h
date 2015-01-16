@@ -177,6 +177,8 @@ public:
 	void placeOnBookmark(Bookmark *target);
 	void setDirection(uint direction);
 
+	float getSortKey() const;
+
 protected:
 	int32 _floorFaceIndex;
 	Math::Vector3d _position3D;

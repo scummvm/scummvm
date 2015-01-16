@@ -137,15 +137,8 @@ RenderEntry *Layer3D::getBackgroundRenderEntry() {
 }
 
 RenderEntryArray Layer3D::listRenderEntries() {
-	RenderEntryArray renderEntries;
-
-	// Add the background render entry to the list first
-	RenderEntry *backgroundRenderEntry = getBackgroundRenderEntry();
-	if (backgroundRenderEntry) {
-		renderEntries.push_back(backgroundRenderEntry);
-	}
-
-	// Add the other items
+	// Sort the items by distance to the camera
+	RenderEntryArray itemEntries;
 	for (uint i = 0; i < _items.size(); i++) {
 		Item *item = _items[i];
 
@@ -157,9 +150,21 @@ RenderEntryArray Layer3D::listRenderEntries() {
 				continue;
 			}
 
-			renderEntries.push_back(renderEntry);
+			itemEntries.push_back(renderEntry);
 		}
 	}
+	Common::sort(itemEntries.begin(), itemEntries.end(), RenderEntry::compare);
+
+	RenderEntryArray renderEntries;
+
+	// Add the background render entry to the list first
+	RenderEntry *backgroundRenderEntry = getBackgroundRenderEntry();
+	if (backgroundRenderEntry) {
+		renderEntries.push_back(backgroundRenderEntry);
+	}
+
+	// Add the other items
+	renderEntries.push_back(itemEntries);
 
 	return renderEntries;
 }
