@@ -25,8 +25,7 @@
 
 namespace Xeen {
 
-Combat::Combat(XeenEngine *vm): _vm(vm), _attackMon1(_attackMonsters[0]),
-		_attackMon2(_attackMonsters[1]), _attackMon3(_attackMonsters[2]) {
+Combat::Combat(XeenEngine *vm): _vm(vm) {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
 	Common::fill(&_charsArray1[0], &_charsArray1[12], 0);
 	Common::fill(&_monPow[0], &_monPow[12], 0);

@@ -631,7 +631,7 @@ void Interface::draw3d(bool updateFlag) {
 			ds2._sprites = nullptr;
 
 			if (combat._charsArray1[idx]) {
-				int posIndex= combat._attackMon2 && !combat._attackMon3 ? 1 : 0;
+				int posIndex= combat._attackMonsters[1] && !combat._attackMonsters[2] ? 1 : 0;
 				--combat._charsArray1[idx];
 
 				if (combat._monPow[idx]) {
@@ -671,7 +671,7 @@ void Interface::draw3d(bool updateFlag) {
 
 		// Handle attacking monsters
 		int monsterIndex = 0;
-		if (combat._attackMon1 != -1 && map._mobData._monsters[combat._attackMon1]._frame >= 0) {
+		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 0) {
 			_indoorList[159] = _indoorList[156];
 			_indoorList[160] = _indoorList[157];
 			_indoorList[161] = _indoorList[158];
@@ -679,7 +679,7 @@ void Interface::draw3d(bool updateFlag) {
 			_indoorList[156]._sprites = nullptr;
 			_indoorList[157]._sprites = nullptr;
 			monsterIndex = 1;
-		} else if (combat._attackMon2 != -1 && map._mobData._monsters[combat._attackMon2]._frame >= 0) {
+		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 0) {
 			_indoorList[159] = _indoorList[150];
 			_indoorList[160] = _indoorList[151];
 			_indoorList[161] = _indoorList[152];
@@ -687,7 +687,7 @@ void Interface::draw3d(bool updateFlag) {
 			_indoorList[151]._sprites = nullptr;
 			_indoorList[150]._sprites = nullptr;
 			monsterIndex = 2;
-		} else if (combat._attackMon3 != -1 &&  map._mobData._monsters[combat._attackMon3]._frame >= 0) {
+		} else if (combat._attackMonsters[2] != -1 &&  map._mobData._monsters[combat._attackMonsters[2]]._frame >= 0) {
 			_indoorList[159] = _indoorList[153];
 			_indoorList[160] = _indoorList[154];
 			_indoorList[161] = _indoorList[155];
