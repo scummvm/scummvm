@@ -53,20 +53,20 @@ public:
 	DrawStruct &_sky;
 	DrawStruct &_ground;
 	DrawStruct &_horizon;
-	DrawStruct &_swl_0F1R, _swl_0F1L, _swl_1F1R, _swl_1F1L,
-		_swl_2F2R, _swl_2F1R, _swl_2F1L, _swl_2F2L,
-		_swl_3F1R, _swl_3F2R, _swl_3F3R, _swl_3F4R,
-		_swl_3F1L, _swl_3F2L, _swl_3F3L, _swl_3F4L,
-		_swl_4F4R, _swl_4F3R, _swl_4F2R, _swl_4F1R,
-		_swl_4F1L, _swl_4F2L, _swl_4F3L, _swl_4F4L;
-	DrawStruct &_fwl_4F4R, _fwl_4F3R, _fwl_4F2R, _fwl_4F1R,
-		_fwl_4F, _fwl_4F1L, _fwl_4F2L, _fwl_4F3L, _fwl_4F4L;
-	DrawStruct &_fwl_2F1R, _fwl_2F, _fwl_2F1L, _fwl_3F2R,
-		_fwl_3F1R, _fwl_3F, _fwl_3F1L, _fwl_3F2L;
-	DrawStruct &_fwl_1F, _fwl_1F1R, _fwl_1F1L;
-	DrawStruct &_objects0, _objects1, _objects2, _objects3;
-	DrawStruct &_objects4, _objects5, _objects6, _objects7;
-	DrawStruct &_objects8, _objects9, _objects10, _objects11;
+	DrawStruct &_swl_0F1R, &_swl_0F1L, &_swl_1F1R, &_swl_1F1L,
+		&_swl_2F2R, &_swl_2F1R, &_swl_2F1L, &_swl_2F2L,
+		&_swl_3F1R, &_swl_3F2R, &_swl_3F3R, &_swl_3F4R,
+		&_swl_3F1L, &_swl_3F2L, &_swl_3F3L, &_swl_3F4L,
+		&_swl_4F4R, &_swl_4F3R, &_swl_4F2R, &_swl_4F1R,
+		&_swl_4F1L, &_swl_4F2L, &_swl_4F3L, &_swl_4F4L;
+	DrawStruct &_fwl_4F4R, &_fwl_4F3R, &_fwl_4F2R, &_fwl_4F1R,
+		&_fwl_4F, &_fwl_4F1L, &_fwl_4F2L, &_fwl_4F3L, &_fwl_4F4L;
+	DrawStruct &_fwl_2F1R, &_fwl_2F, &_fwl_2F1L, &_fwl_3F2R,
+		&_fwl_3F1R, &_fwl_3F, &_fwl_3F1L, &_fwl_3F2L;
+	DrawStruct &_fwl_1F, &_fwl_1F1R, &_fwl_1F1L;
+	DrawStruct &_objects0, &_objects1, &_objects2, &_objects3;
+	DrawStruct &_objects4, &_objects5, &_objects6, &_objects7;
+	DrawStruct &_objects8, &_objects9, &_objects10, &_objects11;
 public:
 	IndoorDrawList();
 

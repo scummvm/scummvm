@@ -560,8 +560,8 @@ void Interface::draw3d(bool updateFlag) {
 
 	// Loop to update the frame numbers for each maze object, applying the animation frame
 	// limits as specified by the map's _animationInfo listing
-	for (uint i = 0; i < map._mobData._objects.size(); ++i) {
-		MazeObject &mazeObject = map._mobData._objects[i];
+	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
+		MazeObject &mazeObject = map._mobData._objects[idx];
 		AnimationEntry &animEntry = map._animationInfo[mazeObject._spriteId];
 		int directionIndex = DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
 
@@ -569,13 +569,13 @@ void Interface::draw3d(bool updateFlag) {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
 		} else {
 			++mazeObject._frame;
-			if ((int)i == objNum && _animCounter > 0 && (
+			if ((int)idx == objNum && _animCounter > 0 && (
 					objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
 					objObject._spriteId == 58 || objObject._spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
 					mazeObject._frame = 1;
-			} else if (mazeObject._frame == animEntry._frame2._frames[directionIndex]) {
-				mazeObject._frame = animEntry._frame2._frames[directionIndex];
+			} else if (mazeObject._frame >= animEntry._frame2._frames[directionIndex]) {
+				mazeObject._frame = animEntry._frame1._frames[directionIndex];
 			}
 		}
 
