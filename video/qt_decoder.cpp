@@ -566,10 +566,8 @@ Common::SeekableReadStream *QuickTimeDecoder::VideoTrackHandler::getNextFramePac
 		}
 	}
 
-	if (actualChunk < 0) {
-		warning("Could not find data for frame %d", _curFrame);
-		return 0;
-	}
+	if (actualChunk < 0)
+		error("Could not find data for frame %d", _curFrame);
 
 	// Next seek to that frame
 	Common::SeekableReadStream *stream = _decoder->_fd;
