@@ -33,6 +33,7 @@
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/resourceprovider.h"
 
 namespace Stark {
 
@@ -49,7 +50,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kDialogCall:
 		return opDialogCall(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kLocationGoTo:
-		return nullptr; // TODO, just end the script for now
+		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
 		opScriptPause(script, _arguments[1].referenceValue);
 		return this; // Stay on this command while the script is suspended
@@ -65,7 +66,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 		return nextCommand();
 	default:
-		// warning("Unimplemented opcode %d", _subType);
+		warning("Unimplemented command %d - %s", _subType, _name.c_str());
+		printData();
 		break;
 	}
 
@@ -85,6 +87,18 @@ Command *Command::opDialogCall(Script *script, const ResourceReference &dialogRe
 		return nextCommand();
 	}
 }
+
+Command *Command::opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction) {
+	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
+
+	uint levelIndex = strtol(level.c_str(), nullptr, 16);
+	uint locationIndex = strtol(location.c_str(), nullptr, 16);
+	resourceProvider->requestLocationChange(levelIndex, locationIndex);
+	resourceProvider->setNextLocationPosition(bookmarkRef, direction);
+
+	return nullptr;
+}
+
 
 void Command::opScriptPause(Script *script, const ResourceReference &durationRef) {
 	Knowledge *duration = durationRef.resolve<Knowledge>();

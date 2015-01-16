@@ -70,6 +70,9 @@ public:
 	virtual void setEnabled(bool enabled);
 	virtual RenderEntry *getRenderEntry();
 
+	/** Obtain the concrete instance of an item template */
+	virtual Item *getSceneInstance();
+
 protected:
 	void printData() override;
 
@@ -113,9 +116,15 @@ public:
 	// Resource API
 	void onAllLoaded() override;
 
-	virtual	BonesMesh *findBonesMesh() = 0;
+	// Item API
+	Item *getSceneInstance() override;
+
+	virtual BonesMesh *findBonesMesh() = 0;
 	virtual TextureSet *findTextureSet(uint32 textureType) = 0;
 	virtual AnimHierarchy *findStockAnimHierarchy() = 0;
+
+	/** Set the scene instanciation for this template */
+	void setInstanciatedItem(Item *instance);
 
 protected:
 	int32 _meshIndex;
@@ -123,6 +132,7 @@ protected:
 	int32 _textureFaceIndex;
 	int32 _animHierarchyIndex;
 
+	Item *_instanciatedItem;
 	ItemSub13 *_referencedItem;
 };
 
@@ -214,7 +224,7 @@ protected:
 	int32 _textureFaceIndex;
 
 	ResourceReference _reference;
-	ItemSub13 *_referenceItem;
+	ItemSub13 *_referencedItem;
 };
 
 class ItemSub78 : public ItemVisual {

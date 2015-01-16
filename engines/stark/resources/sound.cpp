@@ -79,7 +79,7 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 #endif
 
 	if (!audioStream) {
-		error("Unable to load sound '%s'", _filename.c_str());
+		warning("Unable to load sound '%s'", _filename.c_str());
 	}
 
 	return audioStream;

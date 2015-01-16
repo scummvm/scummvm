@@ -25,6 +25,8 @@
 
 #include "common/list.h"
 
+#include "engines/stark/resourcereference.h"
+
 namespace Stark {
 
 class Level;
@@ -65,6 +67,9 @@ public:
 	 */
 	void performLocationChange();
 
+	/** Set the initial position and direction for the next location change */
+	void setNextLocationPosition(const ResourceReference &bookmark, int32 direction);
+
 	/** Save the current location state to the state store. */
 	void commitActiveLocationsState();
 
@@ -86,6 +91,7 @@ private:
 	void purgeOldLocations();
 
 	void runLocationChangeScripts(Resource *resource, uint32 scriptCallMode);
+	void setAprilInitialPosition();
 
 	Global *_global;
 	ArchiveLoader *_archiveLoader;
@@ -95,6 +101,9 @@ private:
 	bool _restoreCurrentState;
 
 	CurrentList _locations;
+
+	ResourceReference _nextPositionBookmarkReference;
+	int32 _nextDirection;
 };
 
 } // End of namespace Stark

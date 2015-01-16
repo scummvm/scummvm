@@ -82,6 +82,10 @@ RenderEntry *Item::getRenderEntry() {
 	return nullptr;
 }
 
+Item *Item::getSceneInstance() {
+	return this;
+}
+
 void Item::printData() {
 	debug("enabled: %d", _enabled);
 	debug("field_38: %d", _field_38);
@@ -190,6 +194,18 @@ void ItemSub13::onAllLoaded() {
 	}
 }
 
+void ItemSub13::setInstanciatedItem(Item *instance) {
+	_instanciatedItem = instance;
+}
+
+Item *ItemSub13::getSceneInstance() {
+	if (_instanciatedItem) {
+		return _instanciatedItem->getSceneInstance();
+	}
+
+	return nullptr;
+}
+
 ItemSub1::~ItemSub1() {
 }
 
@@ -249,6 +265,9 @@ void ItemSub3::onAllLoaded() {
 	ItemSub13::onAllLoaded();
 
 	_referencedItem = _reference.resolve<ItemSub13>();
+	if (_referencedItem) {
+		_referencedItem->setInstanciatedItem(this);
+	}
 }
 
 BonesMesh *ItemSub3::findBonesMesh() {
@@ -389,7 +408,7 @@ ItemSub10::ItemSub10(Resource *parent, byte subType, uint16 index, const Common:
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
 		_textureFaceIndex(-1),
-		_referenceItem(nullptr) {
+		_referencedItem(nullptr) {
 }
 
 void ItemSub10::readData(XRCReadStream *stream) {
@@ -416,14 +435,17 @@ void ItemSub10::onAllLoaded() {
 		_textureFaceIndex = textureFace->getIndex();
 	}
 
-	_referenceItem = _reference.resolve<ItemSub13>();
+	_referencedItem = _reference.resolve<ItemSub13>();
+	if (_referencedItem) {
+		_referencedItem->setInstanciatedItem(this);
+	}
 }
 
 void ItemSub10::onEnterLocation() {
 	ItemSub5610::onEnterLocation();
 
-	if (_referenceItem) {
-		_animHierarchy = _referenceItem->findStockAnimHierarchy();
+	if (_referencedItem) {
+		_animHierarchy = _referencedItem->findStockAnimHierarchy();
 	}
 
 	setAnim(1);
@@ -436,7 +458,7 @@ BonesMesh *ItemSub10::findBonesMesh() {
 	// Otherwise, use a children mesh, or a referenced mesh
 	if (!bonesMesh) {
 		if (_meshIndex == -1) {
-			bonesMesh = _referenceItem->findBonesMesh();
+			bonesMesh = _referencedItem->findBonesMesh();
 		} else {
 			bonesMesh = findChildWithIndex<BonesMesh>(_meshIndex);
 		}
@@ -453,13 +475,13 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	if (!textureSet) {
 		if (textureType == TextureSet::kTextureNormal) {
 			if (_textureNormalIndex == -1) {
-				textureSet = _referenceItem->findTextureSet(textureType);
+				textureSet = _referencedItem->findTextureSet(textureType);
 			} else {
 				textureSet = findChildWithIndex<TextureSet>(_textureNormalIndex);
 			}
 		} else if (textureType == TextureSet::kTextureNormal) {
 			if (_textureFaceIndex == -1) {
-				textureSet = _referenceItem->findTextureSet(textureType);
+				textureSet = _referencedItem->findTextureSet(textureType);
 			} else {
 				textureSet = findChildWithIndex<TextureSet>(_textureFaceIndex);
 			}

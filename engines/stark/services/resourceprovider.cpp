@@ -22,8 +22,10 @@
 
 #include "engines/stark/services/resourceprovider.h"
 
+#include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
@@ -40,7 +42,8 @@ ResourceProvider::ResourceProvider(ArchiveLoader *archiveLoader, StateProvider *
 		_stateProvider(stateProvider),
 		_global(global),
 		_locationChangeRequest(false),
-		_restoreCurrentState(false) {
+		_restoreCurrentState(false),
+		_nextDirection(0) {
 }
 
 void ResourceProvider::initGlobal() {
@@ -69,7 +72,8 @@ void ResourceProvider::initGlobal() {
 	// Resource lifecycle update
 	global->onAllLoaded();
 
-	//TODO: Retrieve the inventory and April from the global tree
+	//TODO: Retrieve the inventory from the global tree
+	_global->setApril(global->findChildWithSubtype<ItemSub1>(Item::kItemSub1));
 }
 
 Current *ResourceProvider::findLevel(uint16 level) {
@@ -190,6 +194,13 @@ void ResourceProvider::performLocationChange() {
 	current->getLevel()->onEnterLocation();
 	current->getLocation()->onEnterLocation();
 
+	if (current->getLocation()->has3DLayer()) {
+		// Fetch the scene item for April
+		current->setInteractive(Resource::cast<ItemSub10>(_global->getApril()->getSceneInstance()));
+	}
+
+	setAprilInitialPosition();
+
 	// Trigger location change scripts
 	runLocationChangeScripts(current->getLevel(), Script::kCallModeEnterLocation);
 	runLocationChangeScripts(current->getLocation(), Script::kCallModeEnterLocation);
@@ -211,6 +222,32 @@ void ResourceProvider::runLocationChangeScripts(Resource *resource, uint32 scrip
 	for (uint i = 0; i < script.size(); i++) {
 		script[i]->execute(scriptCallMode);
 	}
+}
+
+void ResourceProvider::setNextLocationPosition(const ResourceReference &bookmark, int32 direction) {
+	_nextPositionBookmarkReference = bookmark;
+	_nextDirection = direction;
+}
+
+void ResourceProvider::setAprilInitialPosition() {
+	if (_nextPositionBookmarkReference.empty()) {
+		return; // No target location
+	}
+
+	Current *current = _global->getCurrent();
+	ItemSub10 *april = current->getInteractive();
+	if (!april) {
+		return; // No character
+	}
+
+	// Set the initial location for April
+	Bookmark *position = _nextPositionBookmarkReference.resolve<Bookmark>();
+
+	april->placeOnBookmark(position);
+	april->setDirection(_nextDirection);
+
+	_nextPositionBookmarkReference = ResourceReference();
+	_nextDirection = 0;
 }
 
 void ResourceProvider::purgeOldLocations() {
