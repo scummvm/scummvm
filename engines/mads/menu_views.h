@@ -191,6 +191,7 @@ private:
 	int _manualFrame2;
 	int _animFrameNumber;
 	bool _nextCyclingActive;
+	int _scrollFrameCtr;
 private:
 	void load();
 
@@ -201,6 +202,8 @@ private:
 	int getParameter();
 
 	void loadNextResource();
+
+	void scroll();
 protected:
 	virtual void display();
 

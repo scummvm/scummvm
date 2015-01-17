@@ -484,6 +484,7 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_animFrameNumber = 0;
 	_nextCyclingActive = false;
 	_sceneInfo = SceneInfo::init(_vm);
+	_scrollFrameCtr = 0;
 
 	load();
 }
@@ -547,6 +548,11 @@ void AnimationView::doFrame() {
 		}
 	} else if (_currentAnimation->getCurrentFrame() == 1) {
 		scene._cyclingActive = _nextCyclingActive;
+	}
+
+	if (++_scrollFrameCtr >= _currentAnimation->_header._scrollTicks) {
+		_scrollFrameCtr = 0;
+		scroll();
 	}
 
 	if (_currentAnimation) {
@@ -636,6 +642,21 @@ void AnimationView::loadNextResource() {
 	scene.initPaletteAnimation(paletteCycles, _nextCyclingActive && !_vm->_game->_fx);
 }
 
+void AnimationView::scroll() {
+	Scene &scene = _vm->_game->_scene;
+	Common::Point pt = _currentAnimation->_header._scrollPosition;
+
+	if (pt.x != 0) {
+		scene._backgroundSurface.scrollX(pt.x);
+		scene._spriteSlots.fullRefresh();
+	}
+
+	if (pt.y != 0) {
+		scene._backgroundSurface.scrollY(pt.y);
+		scene._spriteSlots.fullRefresh();
+	}
+}
+
 void AnimationView::scriptDone() {
 	_breakFlag = true;
 	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
@@ -656,6 +677,10 @@ void AnimationView::processLines() {
 			if (c != '\r' && c != '\0')
 				_currentLine += c;
 		}
+
+		// Check for comment line
+		if (_currentLine.hasPrefix("#"))
+			continue;
 
 		// Process the line
 		while (!_currentLine.empty()) {

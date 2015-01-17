@@ -41,7 +41,7 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	_spritesIndex = f->readUint16LE();
 	_scrollPosition.x = f->readSint16LE();
 	_scrollPosition.y = f->readSint16LE();
-	_scrollTicks = f->readUint32LE();
+	_scrollTicks = f->readUint32LE() & 0xffff;
 	f->skip(6);
 
 	char buffer[FILENAME_SIZE];
