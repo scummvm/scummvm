@@ -99,15 +99,20 @@ Audio::Mixer::SoundType Sound::getMixerSoundType() {
 }
 
 void Sound::play() {
-	Audio::AudioStream *stream;
+	Audio::RewindableAudioStream *rewindableStream = makeAudioStream();
 
-	if (_looping) {
-		stream = Audio::makeLoopingAudioStream(makeAudioStream(), 0);
-	} else {
-		stream = makeAudioStream();
+	if (!rewindableStream) {
+		return;
 	}
 
-	g_system->getMixer()->playStream(getMixerSoundType(), &_handle, stream, -1, _volume * Audio::Mixer::kMaxChannelVolume);
+	Audio::AudioStream *playStream;
+	if (_looping) {
+		playStream = Audio::makeLoopingAudioStream(rewindableStream, 0);
+	} else {
+		playStream = rewindableStream;
+	}
+
+	g_system->getMixer()->playStream(getMixerSoundType(), &_handle, playStream, -1, _volume * Audio::Mixer::kMaxChannelVolume);
 }
 
 bool Sound::isPlaying() {
