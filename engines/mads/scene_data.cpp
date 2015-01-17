@@ -266,7 +266,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 
 		MSprite *spr = asset->getFrame(si._frameNumber);
 		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface,
-			si._scale, spr->getTransparencyIndex());
+			si._scale, false, spr->getTransparencyIndex());
 	}
 
 	// Free the sprite sets
