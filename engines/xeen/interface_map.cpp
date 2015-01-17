@@ -1913,6 +1913,7 @@ void InterfaceMap::drawIndoors() {
 
 	// WORKAROUND: Original did an array lookup on _skySprites.
 	// Was this a feature for multiple skys that was abandoned?
+	assert(!map._currentSky);
 	_indoorList[0]._sprites = &map._skySprites;
 	_indoorList[0]._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
 

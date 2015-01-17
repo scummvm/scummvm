@@ -45,7 +45,7 @@ private:
 	int32 _filesize;
 	byte *_data;
 
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const;
+	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, int flags) const;
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);

@@ -85,7 +85,7 @@ void SpriteResource::clear() {
 	_filesize = 0;
 }
 
-void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos) const {
+void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, int flags) const {
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
 	f.seek(offset);
@@ -93,6 +93,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	int width = f.readUint16LE();
 	int yOffset = f.readUint16LE();
 	int height = f.readUint16LE();
+
+	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
+	int xInc = flipped ? -1 : 1;
 
 	if (dest.w < (xOffset + width) || dest.h < (yOffset + height))
 		dest.create(xOffset + width, yOffset + height);
@@ -116,9 +119,11 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		} else {
 			// Skip the transparent pixels at the beginning of the scan line
 			int xPos = f.readByte() + xOffset; ++byteCount;
-			byte *destP = (byte *)dest.getBasePtr(destPos.x + xPos, destPos.y + yPos);
 			const byte *lineStartP = (const byte *)dest.getBasePtr(0, destPos.y + yPos);
 			const byte *lineEndP = (const byte *)dest.getBasePtr(dest.w, destPos.y + yPos);
+			byte *destP = !flipped ?
+				(byte *)dest.getBasePtr(destPos.x + xPos, destPos.y + yPos) :
+				(byte *)dest.getBasePtr(destPos.x + width - xPos, destPos.y + yPos);
 
 			while (byteCount < lineLength) {
 				// The next byte is an opcode that determines what 
@@ -134,21 +139,20 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 				case 1:   // The following len + 33 bytes are stored as indexes into the color table.
 					for (int i = 0; i < opcode + 1; ++i, ++xPos) {
 						byte b = f.readByte();
-						if (destP < lineStartP || destP >= lineEndP)
-							++destP;
-						else
-							*destP++ = b; 
 						++byteCount;
+
+						if (destP >= lineStartP && destP < lineEndP)
+							*destP = b;
+						destP += xInc;
 					}
 					break;
 
 				case 2:   // The following byte is an index into the color table, draw it len + 3 times.
 					opr1 = f.readByte(); ++byteCount;
 					for (int i = 0; i < len + 3; ++i, ++xPos) {
-						if (destP < lineStartP || destP >= lineEndP)
-							++destP;
-						else
-							*destP++ = opr1;
+						if (destP >= lineStartP && destP < lineEndP)
+							*destP = opr1;
+						destP += xInc;
 					}
 					break;
 
@@ -159,10 +163,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 					for (int i = 0; i < len + 4; ++i, ++xPos) {
 						byte b = f.readByte();
-						if (destP < lineStartP || destP >= lineEndP)
-							++destP;
-						else
-							*destP++ = b;
+						if (destP >= lineStartP && destP < lineEndP)
+							*destP = b;
+						destP += xInc;
 					}
 
 					f.seek(pos, SEEK_SET);
@@ -173,17 +176,19 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 					opr2 = f.readByte(); ++byteCount;
 					for (int i = 0; i < len + 2; ++i, xPos += 2) {
 						if (destP < lineStartP || destP >= (lineEndP - 1)) {
-							destP += 2;
+							destP += 2 * xInc;
 						} else {
-							*destP++ = opr1;
-							*destP++ = opr2;
+							*destP = opr1;
+							destP += xInc;
+							*destP = opr2;
+							destP += xInc;
 						}
 					}
 					break;
 
 				case 5:   // Skip len + 1 pixels filling them with the transparent color.
 					xPos += len + 1;
-					destP += len + 1;
+					destP += (len + 1) * xInc;
 					break;
 
 				case 6:   // Pattern command.
@@ -194,10 +199,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 					opr1 = f.readByte(); ++byteCount;
 					for (int i = 0; i < len + 3; ++i, ++xPos) {
-						if (destP < lineStartP || destP >= lineEndP)
-							++destP;
-						else
-							*destP++ = opr1;
+						if (destP >= lineStartP && destP < lineEndP)
+							*destP = opr1;
+						destP += xInc;
 						opr1 += patternSteps[cmd + (i % 2)];
 					}
 					break;
@@ -219,11 +223,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, int flags) const {
 	// TODO: Support the different flags
-	assert(!flags);
-
-	drawOffset(dest, _index[frame]._offset1, destPos);
+	drawOffset(dest, _index[frame]._offset1, destPos, flags);
 	if (_index[frame]._offset2)
-		drawOffset(dest, _index[frame]._offset2, destPos);
+		drawOffset(dest, _index[frame]._offset2, destPos, flags);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame) const {

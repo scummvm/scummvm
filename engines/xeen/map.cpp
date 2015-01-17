@@ -1062,7 +1062,7 @@ void Map::load(int mapId) {
 	if (_isOutdoors) {
 		warning("TODO");	// Sound loading
 
-		_skySprites.load(isDarkCc ? "sky.sky" : "night.sky");
+		_skySprites.load(isDarkCc ? "night.sky" : "sky.sky");
 		_groundSprites.load("water.out");
 		_tileSprites.load("outdoor.til");
 		outdoorList._skySprite._sprites = &_skySprites;
@@ -1082,7 +1082,7 @@ void Map::load(int mapId) {
 	} else {
 		warning("TODO");	// Sound loading
 
-		_skySprites.load(isDarkCc ? "sky.sky" : "night.sky");
+		_skySprites.load(isDarkCc ? "night.sky" : "sky.sky");
 		_mazeSkySprites.load(Common::String::format("%s.sky",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
