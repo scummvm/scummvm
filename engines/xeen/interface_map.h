@@ -105,7 +105,7 @@ public:
 public:
 	InterfaceMap(XeenEngine *vm);
 
-	void setIndoorsAttackingMonsters();
+	void setIndoorsMonsters();
 
 	void setIndoorsObjects();
 
