@@ -4112,7 +4112,7 @@ EOF
 		cc_check $GLES_RPI_CXXFLAGS $GLES_RPI_LIBS && _use_gles_rpi=yes
 		if test "$_use_gles_rpi" = "yes"; then
 			echo "Activating custom GLES context for Raspberry Pi"
-			CXXFLAGS="$INCLUDES $GLES_RPI_CXXFLAGS"
+			CXXFLAGS="$CXXFLAGS $GLES_RPI_CXXFLAGS"
 			LIBS="$LIBS $GLES_RPI_LIBS"
 			add_line_to_config_mk "USE_GLES_RPI = 1"
 			add_line_to_config_h "#define USE_GLES_RPI"
