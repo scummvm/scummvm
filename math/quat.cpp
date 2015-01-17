@@ -20,17 +20,21 @@
  *
  */
 
-// Quaternion-math originally borrowed from plib http://plib.sourceforge.net/index.html
-// Which is covered by LGPL2
-// And has this additional copyright note:
 /*
- Quaternion routines are Copyright (C) 1999
- Kevin B. Thompson <kevinbthompson@yahoo.com>
- Modified by Sylvan W. Clebsch <sylvan@stanford.edu>
- Largely rewritten by "Negative0" <negative0@earthlink.net>
+ * Quaternion-math originally borrowed from plib http://plib.sourceforge.net/index.html
+ * This code was originally made available under the LGPLv2 license (or later).
+ *
+ * Quaternion routines are Copyright (C) 1999
+ * Kevin B. Thompson <kevinbthompson@yahoo.com>
+ * Modified by Sylvan W. Clebsch <sylvan@stanford.edu>
+ * Largely rewritten by "Negative0" <negative0@earthlink.net>
+ *
+ * This code (and our modifications) is made available here under the GPLv2 (or later).
+ *
+ * Additional changes written based on the math presented in
+ * http://www.swarthmore.edu/NatSci/mzucker1/e27/diebel2006attitude.pdf
+ *
  */
-// Additional changes written based on the math presented in
-// http://www.swarthmore.edu/NatSci/mzucker1/e27/diebel2006attitude.pdf
 
 #include "common/streamdebug.h"
 

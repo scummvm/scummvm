@@ -20,6 +20,19 @@
  *
  */
 
+/*
+ * The following functions: inverseTranslate, inverseRotate, transpose
+ * are adapted from Portalib3d, which is no longer available on the net.
+ * But is available through archive.org, for reference:
+ * http://web.archive.org/web/20050205215104/http://rsn.gamedev.net/pl3d/changelog.html
+ *
+ * This code was originally made available under the LGPL license (no version specified).
+ * Copyright (C)2000, 2001, Brett Porter. All Rights Reserved.
+ *
+ * This code (and our modifications) is made available here under the GPLv2 (or later).
+ *
+ */
+
 #include "math/matrix4.h"
 #include "math/vector4d.h"
 #include "math/squarematrix.h"
@@ -117,17 +130,6 @@ void Matrix<4, 4>::invertAffineOrthonormal() {
     setRotation(rotation);
     setPosition(position);
 }
-
-// The following functions are adapted from Portalib3d, which no longer is 
-// available on the net, but was used in the iconoclast-project:
-// http://code.google.com/p/iconoclast/
-// Original copyright notice (license.txt was not supplied in iconoclast)
-// http://web.archive.org/web/20050209062435/http://rsn.gamedev.net/pl3d/license.txt
-// Author:	Brett Porter
-// Email: brettporter@yahoo.com
-// Website: http://rsn.gamedev.net/pl3d
-// Copyright (C)2000, 2001, Brett Porter. All Rights Reserved.
-// This source code is released under the LGPL. See license.txt for details.
 
 void Matrix<4, 4>::inverseTranslate(Vector3d *v) const {
 	v->x() = v->x() - getValue(0, 3);

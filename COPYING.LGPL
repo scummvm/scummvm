@@ -1,6 +1,4 @@
 NOTE: Only certain parts of the ResidualVM project are under the GNU LGPL.
-ResidualVM use some math code of plib and Portalib3d software. Look into
-source code files "math/quat.cpp" and "math/matrix4.cpp" for more info.
 The majority of the files are under the GNU GPL. See the headers of the
 individual files to find out the exact license.
 
