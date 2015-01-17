@@ -144,6 +144,7 @@ class SceneInfo {
 	public:
 		int _spriteSetIndex;
 		Common::Point _position;
+		int _frameNumber;
 		int _depth;
 		int _scale;
 

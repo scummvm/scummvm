@@ -86,7 +86,8 @@ void ARTHeader::load(Common::SeekableReadStream *f, bool isV2) {
 void SceneInfo::SpriteInfo::load(Common::SeekableReadStream *f) {
 	f->skip(3);
 	_spriteSetIndex = f->readByte();
-	f->skip(2);
+	_frameNumber = f->readSByte();
+	f->skip(1);
 	_position.x = f->readSint16LE();
 	_position.y = f->readSint16LE();
 	_depth = f->readByte();
@@ -263,7 +264,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		SpriteAsset *asset = spriteSets[si._spriteSetIndex];
 		assert(asset && _depthStyle != 2);
 
-		MSprite *spr = asset->getFrame(asset->getCount() - 1);
+		MSprite *spr = asset->getFrame(si._frameNumber);
 		bgSurface.copyFrom(spr, si._position, si._depth, &depthSurface,
 			si._scale, spr->getTransparencyIndex());
 	}
