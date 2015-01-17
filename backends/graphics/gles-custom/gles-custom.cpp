@@ -522,7 +522,6 @@ bool OpenGLCustomGraphicsManager::setupMode(uint width, uint height) {
 		return(true);
 	}
 
-	//_hwScreen = SDL_SetVideoMode(eglInfo.width, eglInfo.height, 32, 0);
 	_hwScreen = SDL_SetVideoMode(0, 0, 32, 0);
 		
 	if (_hwScreen) {
