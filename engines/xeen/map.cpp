@@ -950,7 +950,7 @@ void Map::load(int mapId) {
 		if (mapId != 0) {
 			// Load in the maze's data file
 			Common::String datName = Common::String::format("maze%c%03d.dat",
-				(_vm->_party._mazeId >= 100) ? 'x' : '0', _vm->_party._mazeId);
+				(mapId >= 100) ? 'x' : '0', mapId);
 			File datFile(datName);
 			mazeData->synchronize(datFile);
 			datFile.close();
@@ -1435,11 +1435,11 @@ int Map::getCell(int idx) {
 				_currentWall._data = 0x8888;
 				return 0x8888;
 			}
-
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-				++_mazeDataIndex;
 		}
+
+		_mazeDataIndex = 0;
+		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+			++_mazeDataIndex;
 	}
 
 	MazeWallLayers &wallLayers = _mazeData[_mazeDataIndex]._wallData[pt.y][pt.x];

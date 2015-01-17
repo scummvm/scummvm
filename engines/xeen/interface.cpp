@@ -662,7 +662,7 @@ void Interface::draw3d(bool updateFlag) {
 		}
 
 		setIndoorsAttackingMonsters();
-		setIndoorObjects();
+		setIndoorsObjects();
 		setIndoorsWallPics();
 
 		_indoorList[161]._sprites = nullptr;
@@ -757,7 +757,7 @@ void Interface::startup() {
 	animate3d();
 	if (_vm->_map->_isOutdoors) {
 		setIndoorsAttackingMonsters();
-		setIndoorObjects();
+		setIndoorsObjects();
 	} else {
 		setOutdoorsMonsters();
 		setOutdoorsObjects();
@@ -816,7 +816,7 @@ void Interface::setMainButtons() {
 void Interface::setMazeBits() {
 	Common::fill(&_wo[0], &_wo[308], 0);
 
-	switch (_vm->_map->getCell(0)) {
+	switch (_vm->_map->getCell(0) - 1) {
 	case 0:
 		++_wo[125];
 		break;
@@ -886,7 +886,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(2)) {
+	switch (_vm->_map->getCell(2) - 1) {
 	case 0:
 		++_wo[127];
 		break;
@@ -956,7 +956,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(4)) {
+	switch (_vm->_map->getCell(4) - 1) {
 	case 0:
 		++_wo[126];
 		break;
@@ -1002,7 +1002,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(5)) {
+	switch (_vm->_map->getCell(5) - 1) {
 	case 0:
 		++_wo[122];
 		break;
@@ -1068,7 +1068,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(7)) {
+	switch (_vm->_map->getCell(7) - 1) {
 	case 0:
 		++_wo[124];
 		break;
@@ -1140,7 +1140,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(9)) {
+	switch (_vm->_map->getCell(9) - 1) {
 	case 0:
 		++_wo[123];
 		break;
@@ -1186,7 +1186,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(10)) {
+	switch (_vm->_map->getCell(10) - 1) {
 	case 0:
 		++_wo[117];
 		break;
@@ -1255,7 +1255,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(12)) {
+	switch (_vm->_map->getCell(12) - 1) {
 	case 0:
 		++_wo[118];
 		break;
@@ -1325,7 +1325,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(14)) {
+	switch (_vm->_map->getCell(14) - 1) {
 	case 0:
 		++_wo[121];
 		break;
@@ -1395,7 +1395,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(16)) {
+	switch (_vm->_map->getCell(16) - 1) {
 	case 0:
 		++_wo[120];
 		break;
@@ -1465,7 +1465,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(18)) {
+	switch (_vm->_map->getCell(18) - 1) {
 	case 0:
 		++_wo[119];
 		break;
@@ -1511,7 +1511,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(19)) {
+	switch (_vm->_map->getCell(19) - 1) {
 	case 0:
 		++_wo[108];
 		break;
@@ -1580,7 +1580,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(21)) {
+	switch (_vm->_map->getCell(21) - 1) {
 	case 0:
 		++_wo[109];
 		break;
@@ -1650,7 +1650,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(23)) {
+	switch (_vm->_map->getCell(23) - 1) {
 	case 0:
 		++_wo[110];
 		break;
@@ -1720,7 +1720,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(25)) {
+	switch (_vm->_map->getCell(25) - 1) {
 	case 0:
 		++_wo[111];
 		break;
@@ -1790,7 +1790,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(27)) {
+	switch (_vm->_map->getCell(27) - 1) {
 	case 0:
 		++_wo[116];
 		break;
@@ -1860,7 +1860,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(29)) {
+	switch (_vm->_map->getCell(29) - 1) {
 	case 0:
 		++_wo[115];
 		break;
@@ -1930,7 +1930,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(31)) {
+	switch (_vm->_map->getCell(31) - 1) {
 	case 0:
 		++_wo[114];
 		break;
@@ -1999,7 +1999,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(33)) {
+	switch (_vm->_map->getCell(33) - 1) {
 	case 0:
 		++_wo[112];
 		break;
@@ -2069,7 +2069,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(35)) {
+	switch (_vm->_map->getCell(35) - 1) {
 	case 0:
 		++_wo[113];
 		break;

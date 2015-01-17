@@ -107,7 +107,7 @@ public:
 
 	void setIndoorsAttackingMonsters();
 
-	void setIndoorObjects();
+	void setIndoorsObjects();
 
 	void setIndoorsWallPics();
 
