@@ -40,8 +40,10 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	BOXENDX = BOXENDY = 0;
 	BOXPSTARTX = BOXPSTARTY = 0;
 	// Unused in AGoE
-	for (int i = 0; i < 60; i++)
-		_tempListPtr[i] = "";
+	for (int i = 0; i < 60; i++) {
+		_tempList[i] = "";
+		_tempListIdx[i] = 0;
+	}
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
@@ -305,14 +307,14 @@ void BubbleBox::displayBoxData() {
 	_vm->_fonts._charFor._lo = 15; // 0xFF
 	_vm->_fonts._charFor._hi = 15;
 
-	if (_tempListPtr[0].size() == 0)
+	if (_tempList[0].size() == 0)
 		return;
 
 	int idx = 0;
 	if ((_type == TYPE_1) || (_type == TYPE_3)) {
 		_vm->BCNT = 0;
 
-		if (_tempListPtr[idx].size() == 0) {
+		if (_tempList[idx].size() == 0) {
 			_vm->BOXDATAEND = true;
 			return;
 		}
@@ -336,12 +338,12 @@ void BubbleBox::displayBoxData() {
 
 	while (true) {
 		SETCURSORPOS(BOXPSTARTX, BOXPSTARTY);
-		PRINTSTR(_tempListPtr[idx]);
+		PRINTSTR(_tempList[idx]);
 
 		++idx;
 		++BOXPSTARTY;
 		++_vm->BCNT;
-		if (_tempListPtr[idx].size() == 0) {
+		if (_tempList[idx].size() == 0) {
 			BOXPSTARTY = oldPStartY;
 			_vm->_events->showCursor();
 			_vm->BOXDATAEND = true;
@@ -357,7 +359,7 @@ void BubbleBox::displayBoxData() {
 }
 
 void BubbleBox::drawSelectBox() {
-	if (_tempListPtr[0].size() == 0)
+	if (_tempList[0].size() == 0)
 		return;
 
 	if (((_type != TYPE_1) && (_type != TYPE_3)) || !_vm->BCNT)
@@ -391,11 +393,11 @@ void BubbleBox::drawSelectBox() {
 		warning("TODO: List filenames");
 }
 
-int BubbleBox::doBox_v1(int item, int box, int &type) {
+int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	static const int ICONW[] = { 0, 11, 28, 19, 19, 15 };
 
 	FontManager &fonts = _vm->_fonts;
-	int retval = -1;
+	int retval_ = -1;
 
 	_startItem = item;
 	_startBox = box;
@@ -546,8 +548,9 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 	}
 
 	_rowOff = bp;
-	BOXPSTARTY = newY;
+	retval_ = BOXPSTARTY = newY;
 
+	
 	// setcursorpos
 	_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y = (newY << 3) + _rowOff;
 	_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x = (newX << 3);
@@ -560,6 +563,7 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 		_vm->_events->showCursor();
 		warning("TODO: pop values");
 		_vm->_screen->restoreScreen();
+		return retval_;
 	}
 
 	_vm->_destIn = _vm->_screen;
@@ -658,7 +662,7 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 			if (_type == TYPE_3)
 				_vm->_boxSelect = val;
 			else {
-				retval = 1;
+				btnSelected = 1;
 				if (_vm->BOXSELECTY == val)
 					break;
 				_vm->BOXSELECTY = val;
@@ -670,17 +674,17 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 
 		if ((_vm->_events->_mousePos.y >= ICON1Y) && (_vm->_events->_mousePos.y <= ICON1Y + 8)
 		&&  (_vm->_events->_mousePos.x >= ICON1X)) {
-			retval = 1;
+			btnSelected = 1;
 			if (_vm->_events->_mousePos.x < ICON1X + ICONW[ICON1T])
 				break;
 
 			if ((_vm->_events->_mousePos.x >= ICON2X) && (_vm->_events->_mousePos.x < ICON2X + ICONW[ICON2T])) {
-				retval = 2;
+				btnSelected = 2;
 				break;
 			}
 
 			if ((_vm->_events->_mousePos.x >= ICON3X) && (_vm->_events->_mousePos.x < ICON3X + ICONW[ICON3T])) {
-				retval = 3;
+				btnSelected = 3;
 				break;
 			}
 
@@ -696,7 +700,16 @@ int BubbleBox::doBox_v1(int item, int box, int &type) {
 			warning("TODO: sub175B5");
 		}
 	}
-	return retval;
+
+	_vm->_events->hideCursor();
+	_vm->_screen->restoreBlock();
+	_vm->_events->showCursor();
+	_vm->_events->debounceLeft();
+	if (_vm->BCNT == 0)
+		retval_ = -1;
+	else
+		retval_ = _vm->BOXDATASTART + _vm->BOXSELECTY;
+	return retval_;
 }
 
 void BubbleBox::getList(const char *data[], int *flags) {
@@ -704,11 +717,12 @@ void BubbleBox::getList(const char *data[], int *flags) {
 	int destIdx = 0;
 	while (data[srcIdx]) {
 		if (flags[srcIdx]) {
-			_tempListPtr[destIdx] = Common::String(data[srcIdx]);
+			_tempList[destIdx] = Common::String(data[srcIdx]);
+			_tempListIdx[destIdx] = srcIdx;
 			++destIdx;
 		}
 		srcIdx++;
 	}
-	_tempListPtr[destIdx] = "";
+	_tempList[destIdx] = "";
 }
 } // End of namespace Access

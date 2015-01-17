@@ -57,7 +57,8 @@ public:
 	Common::StringArray _nameIndex;
 	Common::String _bubbleTitle;
 	Common::String _bubbleDisplStr;
-	Common::String _tempListPtr[60];
+	Common::String _tempList[60];
+	int _tempListIdx[60];
 	int _btnId1;
 	int _btnX1;
 	int _btnId2;
@@ -94,7 +95,7 @@ public:
 
 	void doBox(int item, int box);
 
-	int doBox_v1(int item, int box, int &type);
+	int doBox_v1(int item, int box, int &btnSelected);
 	void getList(const char *data[], int *flags);
 	void SETCURSORPOS(int posX, int posY);
 	void PRINTSTR(Common::String msg);

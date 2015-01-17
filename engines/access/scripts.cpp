@@ -38,9 +38,6 @@ Scripts::Scripts(AccessEngine *vm) : Manager(vm) {
 	_charsOrg = Common::Point(0, 0);
 	_texsOrg = Common::Point(0, 0);
 	setOpcodes();
-
-	for (int i = 0; i < 60; i++)
-		TMPLPTR[i] = 0;
 }
 
 Scripts::~Scripts() {
@@ -618,16 +615,16 @@ void Scripts::cmdRemoveLast() {
 void Scripts::cmdDoTravel() {
 	while (true) {
 		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->TRAVEL);
-		int type = 0;
-		int boxX = _vm->_travelBox->doBox_v1(_vm->STARTTRAVELITEM, _vm->STARTTRAVELBOX, type);
+		int btnSelected = 0;
+		int boxX = _vm->_travelBox->doBox_v1(_vm->STARTTRAVELITEM, _vm->STARTTRAVELBOX, btnSelected);
 		_vm->STARTTRAVELITEM = _vm->BOXDATASTART;
 		_vm->STARTTRAVELBOX = _vm->BOXSELECTY;
 
 		if (boxX == -1)
-			type = 2;
+			btnSelected = 2;
 
-		if (type != 2) {
-			int idx = TMPLPTR[boxX];
+		if (btnSelected != 2) {
+			int idx = _vm->_travelBox->_tempListIdx[boxX];
 			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
 				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
 				_vm->_scripts->printString("YOU CAN'T GET THERE FROM HERE.");

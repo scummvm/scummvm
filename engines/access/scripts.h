@@ -146,7 +146,6 @@ public:
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
 
-	int TMPLPTR[60];
 public:
 	Scripts(AccessEngine *vm);
 
