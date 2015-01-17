@@ -830,7 +830,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, samsungtv, sdl) [sdl]
+  --backend=BACKEND       backend to build (android, sdl) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -860,7 +860,6 @@ Special configuration feature:
                                            android-mips for Android MIPS
                                            android-x86 for Android x86
                                            ps3 for PlayStation 3
-                                           samsungtv for Samsung TV
 
 Game engines:
   --enable-all-engines     enable all engines, including those which are
