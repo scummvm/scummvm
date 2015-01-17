@@ -105,8 +105,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	BOXSELECTY = 0;
 	BOXSELECTYOLD = -1;
 	NUMBLINES = 0;
-	_word234F3 = _word234F7 = _word234F5 = _word234F9 = 0;
-	_word234FB = _word234FF = _word234FD = _word23501 = 0;
 	TEMPLIST = nullptr;
 
 	_vidEnd = false;

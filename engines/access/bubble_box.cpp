@@ -44,6 +44,8 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 		_tempList[i] = "";
 		_tempListIdx[i] = 0;
 	}
+	_btnUpPos = Common::Rect(0, 0, 0, 0);
+	_btnDownPos = Common::Rect(0, 0, 0, 0);
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
@@ -490,8 +492,8 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			_vm->_screen->_orgY2 -= 8;
 
 		_vm->_screen->_orgY2 -= 8;
-		_vm->_word234F7 = _vm->_word234FF = _vm->_screen->_orgX2;
-		_vm->_word234F3 = _vm->_word234FB = _vm->_screen->_orgX1 = _vm->_screen->_orgX2 - 8;
+		_btnUpPos.right = _btnDownPos.right = _vm->_screen->_orgX2;
+		_btnUpPos.left = _btnDownPos.left = _vm->_screen->_orgX1 = _vm->_screen->_orgX2 - 8;
 		BOXENDX = _vm->_screen->_orgX1 - 1;
 		_vm->_screen->drawBox();
 
@@ -499,10 +501,11 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->_orgY2 -= 6;
 		_vm->_screen->drawBox();
 
-		_vm->_word234F9 = _vm->_screen->_orgY1 + 1;
-		_vm->_word234F5 = _vm->_word234F9 - 5;
-		_vm->_word234FD = _vm->_screen->_orgY2 + 1;
-		_vm->_word23501 = _vm->_word234FD - 6;
+		_btnUpPos.bottom = _vm->_screen->_orgY1 + 1;
+		_btnUpPos.top = _btnUpPos.bottom - 5;
+		_btnDownPos.top = _vm->_screen->_orgY2 + 1;
+		_btnDownPos.bottom = _btnDownPos.top + 6;
+
 		_vm->_screen->_orgX1 += 4;
 		_vm->_screen->_orgX2 = _vm->_screen->_orgX1;
 		_vm->_screen->_orgY1 -= 4;
@@ -619,8 +622,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 		if ((_type != TYPE_1) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
-			if ((_vm->_events->_mousePos.x >= _vm->_word234F3) && (_vm->_events->_mousePos.x <= _vm->_word234F7)
-			&& (_vm->_events->_mousePos.y >= _vm->_word234F5) && (_vm->_events->_mousePos.y < _vm->_word234F9)) {
+			if (_btnUpPos.contains(_vm->_events->_mousePos)) {
 				if (_vm->BCNT) {
 					if (_vm->BOXSELECTY != 0) {
 						--_vm->BOXSELECTY;
@@ -632,8 +634,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 					}
 				}
 				continue;
-			} else if ((_vm->_events->_mousePos.x >= _vm->_word234FB) && (_vm->_events->_mousePos.x <= _vm->_word234FF)
-			&& (_vm->_events->_mousePos.y >= _vm->_word234FD) && (_vm->_events->_mousePos.y < _vm->_word23501)) {
+			} else if (_btnDownPos.contains(_vm->_events->_mousePos)) {
 				if (_vm->BCNT) {
 					if (_vm->BCNT == _vm->NUMBLINES) {
 						if (_vm->BCNT != _vm->BOXSELECTY + 1) {
