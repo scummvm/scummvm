@@ -522,8 +522,12 @@ bool OpenGLCustomGraphicsManager::setupMode(uint width, uint height) {
 		return(true);
 	}
 
+	#ifdef USE_GLES_RPI
+	_hwScreen = SDL_SetVideoMode(0, 0, 16, 0);
+	#else
 	_hwScreen = SDL_SetVideoMode(0, 0, 32, 0);
-		
+	#endif	
+	
 	if (_hwScreen) {
 		// This is pretty confusing since RGBA8888 talks about the memory
 		// layout here. This is a different logical layout depending on
