@@ -27,10 +27,6 @@
 #include "common/str.h"
 #include "engines/stark/gfx/coordinate.h"
 
-namespace Common {
-	class ReadStream;
-}
-
 namespace Stark {
 
 class ArchiveReadStream;

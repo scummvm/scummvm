@@ -28,11 +28,6 @@
 
 #include "math/vector3d.h"
 
-namespace Common {
-	class ReadStream;
-	class Archive;
-}
-
 namespace Stark {
 
 class ArchiveReadStream;
