@@ -62,6 +62,9 @@ SoundManager::~SoundManager() {
 void SoundManager::init(int sectionNumber) {
 	assert(sectionNumber > 0 && sectionNumber < 10);
 
+	if (_driver != nullptr)
+		delete _driver;
+
 	switch (_vm->getGameID()) {
 	case GType_RexNebular:
 		switch (sectionNumber) {
