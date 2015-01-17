@@ -638,6 +638,13 @@ ActionPlayAnimation::ActionPlayAnimation(ZVision *engine, int32 slotkey, const C
 		_mask = -1;
 
 	_fileName = Common::String(fileName);
+
+	// WORKAROUND for bug #6769, location me1g.scr (the "Alchemical debacle"
+	// video in ZGI). We only scale up by 2x, in AnimationEffect::process(),
+	// but the dimensions of the target frame are off by 2 pixels. We fix that
+	// here, so that the video can be scaled.
+	if (_fileName == "me1ga011.avi" && _y2 == 213)
+		_y2 = 215;
 }
 
 ActionPlayAnimation::~ActionPlayAnimation() {
