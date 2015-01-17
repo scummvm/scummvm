@@ -1045,10 +1045,10 @@ void Map::load(int mapId) {
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
-		filename = Common::String::format("%03d.mon", _mobData._objectSprites[i]._spriteId);
+		filename = Common::String::format("%03d.mon", _mobData._monsterSprites[i]._spriteId);
 		_mobData._monsterSprites[i]._sprites.load(filename);
 
-		filename = Common::String::format("%03d.att", _mobData._objectSprites[i]._spriteId);
+		filename = Common::String::format("%03d.att", _mobData._monsterSprites[i]._spriteId);
 		_mobData._monsterSprites[i]._attackSprites.load(filename);
 	}
 
