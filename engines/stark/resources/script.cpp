@@ -223,10 +223,6 @@ void Script::execute(uint32 callMode) {
 			break;
 		}
 
-		_nextCommand = _nextCommand->execute(callMode, this);
-
-		executedCommands++;
-
 		if (!_nextCommand) {
 			break; // No next command, stop here
 		}
@@ -234,6 +230,10 @@ void Script::execute(uint32 callMode) {
 		if (isOnEnd()) {
 			break; // Reached the end of the script
 		}
+
+		_nextCommand = _nextCommand->execute(callMode, this);
+
+		executedCommands++;
 
 		if (executedCommands > 50) {
 			break; // Too many consecutive commands
