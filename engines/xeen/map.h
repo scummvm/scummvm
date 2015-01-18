@@ -89,7 +89,7 @@ public:
 	int _gold;
 	int _gems;
 	int _itemDrop;
-	int _flying;
+	bool _flying;
 	int _imageNumber;
 	int _loopAnimation;
 	int _animationEffect;

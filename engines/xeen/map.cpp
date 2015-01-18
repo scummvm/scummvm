@@ -94,13 +94,18 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ac
 
 
 void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
-	_experience = s.readByte();
-	_hp = s.readByte();
+	char name[16];
+	s.read(name, 16);
+	name[15] = '\0';
+	_name = Common::String(name);
+
+	_experience = s.readUint32LE();
+	_hp = s.readUint16LE();
 	_accuracy = s.readByte();
 	_speed = s.readByte();
 	_numberOfAttacks = s.readByte();
-	_hatesClass = CLASS_KNIGHT;
-	_strikes = s.readByte();
+	_hatesClass = (CharacterClass)s.readByte();
+	_strikes = s.readUint16LE();
 	_dmgPerStrike = s.readByte();
 	_attackType = (DamageType)s.readByte();
 	_specialAttack = (SpecialAttack)s.readByte();
@@ -115,18 +120,18 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	_magicResistence = s.readByte();
 	_phsyicalResistence = s.readByte();
 	_field29 = s.readByte();
-	_gold = s.readByte();
+	_gold = s.readUint16LE();
 	_gems = s.readByte();
 	_itemDrop = s.readByte();
-	_flying = s.readByte();
+	_flying = s.readByte() != 0;
 	_imageNumber = s.readByte();
 	_loopAnimation = s.readByte();
 	_animationEffect = s.readByte();
 	_field32 = s.readByte();
 	
-	char attackVoc[9];
+	char attackVoc[10];
 	s.read(attackVoc, 9);
-	attackVoc[8] = '\0';
+	attackVoc[9] = '\0';
 	_attackVoc = Common::String(attackVoc);
 }
 
