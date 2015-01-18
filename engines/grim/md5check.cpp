@@ -155,6 +155,9 @@ const char *local[] = {
 const char *gfdemo01[] = {
 	"25d831d57a93eb3ab8edbb07b7b63943"
 };
+const char *gdemo001[] = {
+	"aa44d6c01a1b03d4607901933635d385"
+};
 const char *gfdemo01ger[] = {
 	"fd728f040557118b7ca436f8205029e5"
 };
@@ -361,15 +364,25 @@ void MD5Check::init() {
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
+			bool isDemoWithVideo = false;
 			if (g_grim->getGameLanguage() == Common::DE_DEU) {
 				MD5SUM("gfdemo01.lab", gfdemo01ger)
 				MD5SUM("voice001.lab", voice001ger)
 			} else {
-				MD5SUM("gfdemo01.lab", gfdemo01)
-				MD5SUM("voice001.lab", voice001)
+				// Check which version we have
+				Common::File test;
+				if (!test.open("gfdemo01.lab")) {
+					isDemoWithVideo = true;
+					MD5SUM("gdemo001.lab", gdemo001);
+				} else {
+					MD5SUM("gfdemo01.lab", gfdemo01)
+					MD5SUM("voice001.lab", voice001)
+				}
+			}
+			if (!isDemoWithVideo) {
+				MD5SUM("sound001.lab", sound001)
 			}
 			MD5SUM("grimdemo.mus", grimdemo)
-			MD5SUM("sound001.lab", sound001)
 		} else {
 			MD5SUM("gfupd101.exe", gfupd101)
 			MD5SUM("year4mus.lab", year4mus)
