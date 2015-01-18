@@ -98,7 +98,7 @@ public:
 	void doBox(int item, int box);
 
 	int doBox_v1(int item, int box, int &btnSelected);
-	void getList(const char *data[], int *flags);
+	void getList(const char *const data[], int *flags);
 	void SETCURSORPOS(int posX, int posY);
 	void PRINTSTR(Common::String msg);
 };

@@ -70,7 +70,7 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	case GType_MartianMemorandum:
 		names = Martian::INVENTORY_NAMES;
 		combineP = &Martian::COMBO_TABLE[0][0];
-		_inv.resize(54);
+		_inv.resize(55);
 		break;
 	default:
 		error("Unknown game");
@@ -206,6 +206,33 @@ int InventoryManager::newDisplayInv() {
 	_invRefreshFlag = false;
 	_invChangeFlag = false;
 	return result;
+}
+
+int InventoryManager::displayInv() {
+	warning("TODO: displayInv");
+	int *inv = (int *) malloc (Martian::INVENTORY_SIZE * sizeof(int));
+
+	for (int i = 0; i < Martian::INVENTORY_SIZE; i++)
+		inv[i] = _inv[i]._value;
+	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
+	_vm->_invBox->getList(Martian::INVENTORY_NAMES, inv);
+
+	int btnSelected = 0;
+	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
+	_startInvItem = _vm->BOXDATASTART;
+	_startInvBox= _vm->BOXSELECTY;
+
+	if (boxX == -1)
+		btnSelected = 2;
+
+	if (btnSelected != 2)
+		_vm->_useItem = _vm->_invBox->_tempListIdx[boxX];
+	else
+		_vm->_useItem = -1;
+
+
+	free(inv);
+	return 0;
 }
 
 void InventoryManager::savedFields() {

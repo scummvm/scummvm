@@ -44,7 +44,6 @@ private:
 
 	void charLoop();
 	void printWatch();
-	void converse1(int val);
 
 protected:
 	Common::SeekableReadStream *_data;
@@ -172,6 +171,7 @@ public:
 	// Script commands that need to be public
 	void cmdFreeSound();
 	void cmdRetPos();
+	void converse1(int val);
 };
 
 } // End of namespace Access

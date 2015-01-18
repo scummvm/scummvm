@@ -515,9 +515,6 @@ void Room::cycleCommand(int incr) {
 }
 
 void Room::handleCommand(int commandId) {
-	if (commandId == 1)
-		--commandId;
-
 	if (commandId == 9) {
 		_vm->_events->debounceLeft();
 		_vm->_canSaveLoad = true;
@@ -536,39 +533,75 @@ void Room::executeCommand(int commandId) {
 	EventsManager &events = *_vm->_events;
 	_selectCommand = commandId;
 
-	switch (commandId) {
-	case 0:
-		events.forceSetCursor(CURSOR_LOOK);
-		break;
-	case 2:
-		events.forceSetCursor(CURSOR_USE);
-		break;
-	case 3:
-		events.forceSetCursor(CURSOR_TAKE);
-		break;
-	case 4:
-		events.setCursor(CURSOR_ARROW);
-		if (_vm->_inventory->newDisplayInv() == 2) {
-			commandOff();
-			return;
-		}
-		break;
-	case 5:
-		events.forceSetCursor(CURSOR_CLIMB);
-		break;
-	case 6:
-		events.forceSetCursor(CURSOR_TALK);
-		break;
-	case 7:
-		walkCursor();
-		return;
-	case 8:
-		events.forceSetCursor(CURSOR_HELP);
-		break;
-	default:
-		break;
-	}
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		switch (commandId) {
+		case 4:
+			events.setCursor(CURSOR_ARROW);
+			if (_vm->_inventory->displayInv() == 2) {
+				commandOff();
+				return;
+			}
+			if (_vm->_useItem == 39) {
+				if (_vm->_player->_roomNumber == 23)
+					_vm->_currentMan = 1;
+				commandOff();
+				return;
+			} else if (_vm->_useItem == 6) {
+				_vm->_flags[3] = 2;
+				_vm->_scripts->converse1(24);
 
+				_conFlag = true;
+				while (_conFlag && !_vm->shouldQuitOrRestart()) {
+					_conFlag = false;
+					_vm->_scripts->executeScript();
+				}
+
+				_vm->_boxSelect = true;
+			}
+			break;
+		case 7:
+			walkCursor();
+			return;
+		default:
+			// No set cursor in MM. Forcing to CROSSHAIRS
+			events.setCursor(CURSOR_CROSSHAIRS);
+			break;
+		}
+	} else {
+		switch (commandId) {
+		case 0:
+		case 1:
+			events.forceSetCursor(CURSOR_LOOK);
+			break;
+		case 2:
+			events.forceSetCursor(CURSOR_USE);
+			break;
+		case 3:
+			events.forceSetCursor(CURSOR_TAKE);
+			break;
+		case 4:
+			events.setCursor(CURSOR_ARROW);
+			if (_vm->_inventory->newDisplayInv() == 2) {
+				commandOff();
+				return;
+			}
+			break;
+		case 5:
+			events.forceSetCursor(CURSOR_CLIMB);
+			break;
+		case 6:
+			events.forceSetCursor(CURSOR_TALK);
+			break;
+		case 7:
+			walkCursor();
+			return;
+		case 8:
+			events.forceSetCursor(CURSOR_HELP);
+			break;
+		default:
+			break;
+		}
+	}
 	// Draw the default toolbar menu at the bottom of the screen
 	roomMenu();
 	_vm->_screen->saveScreen();
