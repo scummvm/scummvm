@@ -35,7 +35,6 @@ FILE_MANIFEST = $(PATH_BUILD)/AndroidManifest.xml
 
 APK_MAIN = ScummVM-debug.apk
 APK_MAIN_RELEASE = ScummVM-release-unsigned.apk
-APK_PLUGINS = $(patsubst plugins/lib%.so, scummvm-engine-%.apk, $(PLUGINS))
 
 $(FILE_MANIFEST): $(FILE_MANIFEST_SRC) | $(PATH_BUILD)
 	@$(MKDIR) -p $(@D)
@@ -89,18 +88,18 @@ androidrelease: $(APK_MAIN_RELEASE)
 
 androidtestmain: $(APK_MAIN)
 	$(ADB) install -r $(APK_MAIN)
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.ScummVMActivity
 
-androidtest: $(APK_MAIN) $(APK_PLUGINS)
+androidtest: $(APK_MAIN)
 	@set -e; for apk in $^; do \
 		$(ADB) install -r $$apk; \
 	done
-	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.Unpacker
+	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.scummvm.scummvm/.ScummVMActivity
 
 # used by buildbot!
 androiddistdebug: all
 	$(MKDIR) debug
-	$(CP) $(APK_MAIN) $(APK_PLUGINS) debug/
+	$(CP) $(APK_MAIN) debug/
 	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
 	done
