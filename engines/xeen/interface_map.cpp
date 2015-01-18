@@ -1946,10 +1946,6 @@ void InterfaceMap::drawIndoors() {
 	}
 	
 	_charsShooting = _isShooting;
-
-	// TODO
-	SpriteResource *spr = _vm->_map->_mobData._objects[41]._sprites;
-	spr->draw(*_vm->_screen, 0);
 }
 
 } // End of namespace Xeen
