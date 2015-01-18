@@ -850,8 +850,9 @@ void AnimationInfo::load(const Common::String &name) {
 
 Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_townPortalSide = 0;
-	_sideObj = 0;
-	_sideMon = 0;
+	_sideObjects = 0;
+	_sideMonsters = 0;
+	_sidePictures = 0;
 	_isOutdoors = false;
 	_stepped = false;
 	_mazeDataIndex = 0;
@@ -871,6 +872,7 @@ void Map::load(int mapId) {
 	Screen &screen = *_vm->_screen;
 	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
 	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
+	int sideNumber = 0;
 
 	if (_vm->_falling) {
 		Window &w = screen._windows[9];
@@ -884,7 +886,9 @@ void Map::load(int mapId) {
 	_vm->_party._mazeId = mapId;
 	_vm->_events->clearEvents();
 
-
+	_sideObjects = 1;
+	_sideMonsters = 1;
+	_sidePictures = 1;
 	if (mapId >= 113 && mapId <= 127) {
 		_townPortalSide = 0;
 	} else {
@@ -896,6 +900,9 @@ void Map::load(int mapId) {
 			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
 			_wallPicSprites.load("xeenpic.dat");
+			_sidePictures = 0;
+			_sideMonsters = 0;
+			_sideObjects = 0;
 		} else {
 			switch (mapId) {
 			case 113:
@@ -906,7 +913,7 @@ void Map::load(int mapId) {
 				_animationInfo.load("clouds.dat");
 				_monsterData.load("dark.mon");
 				_wallPicSprites.load("darkpic.dat");
-				_sideObj = 0;
+				_sideObjects = 0;
 				break;
 			case 117:
 			case 118:
@@ -916,8 +923,8 @@ void Map::load(int mapId) {
 				_animationInfo.load("clouds.dat");
 				_monsterData.load("xeen.mon");
 				_wallPicSprites.load("darkpic.dat");
-				_sideObj = 0;
-				_sideMon = 0;
+				_sideObjects = 0;
+				_sideMonsters = 0;
 				break;
 			case 125:
 			case 126:
@@ -925,6 +932,8 @@ void Map::load(int mapId) {
 				_animationInfo.load("clouds.dat");
 				_monsterData.load("dark.mon");
 				_wallPicSprites.load("xeenpic.dat");
+				_sideObjects = 0;
+				_sidePictures = 0;
 				break;
 			default:
 				_animationInfo.load("dark.dat");
@@ -1034,28 +1043,34 @@ void Map::load(int mapId) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
 		} else {
-			filename = Common::String::format("%03d.%cbj", 
+			filename = Common::String::format("xeen|%03d.%cbj", 
 				_mobData._objectSprites[i]._spriteId,
 				_mobData._objectSprites[i]._spriteId >= 100 ? '0' : 'o');
 		}
 
 		// Read in the object sprites
-		_mobData._objectSprites[i]._sprites.load(filename);
+		_mobData._objectSprites[i]._sprites.load(filename,
+			*_vm->_files->_sideArchives[_sideObjects]);
 	}
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
+		CCArchive *archive = _vm->_files->_sideArchives[
+			_mobData._monsterSprites[i]._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
+			0 : _sideMonsters];
+
 		filename = Common::String::format("%03d.mon", _mobData._monsterSprites[i]._spriteId);
-		_mobData._monsterSprites[i]._sprites.load(filename);
+		_mobData._monsterSprites[i]._sprites.load(filename, *archive);
 
 		filename = Common::String::format("%03d.att", _mobData._monsterSprites[i]._spriteId);
-		_mobData._monsterSprites[i]._attackSprites.load(filename);
+		_mobData._monsterSprites[i]._attackSprites.load(filename, *archive);
 	}
 
 	// Load wall picture sprite resources
 	for (uint i = 0; i < _mobData._wallItemSprites.size(); ++i) {
 		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
-		_mobData._wallItemSprites[i]._sprites.load(filename);
+		_mobData._wallItemSprites[i]._sprites.load(filename,
+			*_vm->_files->_sideArchives[_sidePictures]);
 	}
 
 	// Handle loading miscellaneous sprites for the map

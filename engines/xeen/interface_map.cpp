@@ -855,7 +855,7 @@ void InterfaceMap::setIndoorsObjects() {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[21] && _wo[19]) {
 			} else if (_wo[24] && _wo[19]) {
-			} else if (!_wo[14] && !_wo[10] && !_indoorList._objects11._frame == -1) {
+			} else if (!_wo[14] && !_wo[10] && _indoorList._objects11._frame == -1) {
 				_indoorList._objects11._x = INDOOR_OBJECT_X[listOffset][11];
 				_indoorList._objects11._y = INDOOR_OBJECT_Y[listOffset][11];
 				_indoorList._objects11._frame = mazeObject._frame;
@@ -1948,6 +1948,8 @@ void InterfaceMap::drawIndoors() {
 	_charsShooting = _isShooting;
 
 	// TODO
+	SpriteResource *spr = _vm->_map->_mobData._objects[41]._sprites;
+	spr->draw(*_vm->_screen, 0);
 }
 
 } // End of namespace Xeen

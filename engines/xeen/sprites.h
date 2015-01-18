@@ -45,6 +45,8 @@ private:
 	int32 _filesize;
 	byte *_data;
 
+	void load(Common::SeekableReadStream &f);
+
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, int flags) const;
 public:
 	SpriteResource();
@@ -55,6 +57,8 @@ public:
 	SpriteResource &operator=(const SpriteResource &src);
 
 	void load(const Common::String &filename);
+
+	void load(const Common::String &filename, Common::Archive &archive);
 
 	void clear();
 

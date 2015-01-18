@@ -33,6 +33,7 @@
 namespace Xeen {
 
 class XeenEngine;
+class CCArchive;
 
 #define SYNC_AS(SUFFIX,STREAM,TYPE,SIZE) \
 	template<typename T> \
@@ -53,6 +54,7 @@ class XeenEngine;
 class FileManager {
 public:
 	bool _isDarkCc;
+	CCArchive *_sideArchives[2];
 public:
 	FileManager(XeenEngine *vm);
 

@@ -356,8 +356,9 @@ private:
 	Common::String _mazeName;
 	SpriteResource _wallPicSprites;
 	int _townPortalSide;
-	int _sideObj;
-	int _sideMon;
+	int _sidePictures;
+	int _sideObjects;
+	int _sideMonsters;
 	bool _stepped;
 	int _mazeDataIndex;
 	bool _currentSteppedOn;

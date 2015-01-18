@@ -198,11 +198,22 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
  */
 FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
+	int sideNum = 0;
 
 	_isDarkCc = vm->getGameID() != GType_Clouds;
-	if (_isDarkCc)
-		SearchMan.add("dark", new CCArchive("dark.cc", "dark", true));
-	SearchMan.add("xeen", new CCArchive("xeen.cc", "xeen", true));
+	_sideArchives[0] = _sideArchives[1] = nullptr;
+
+	if (vm->getGameID() != GType_DarkSide) {
+		_sideArchives[0] = new CCArchive("xeen.cc", "xeen", true);
+		SearchMan.add("xeen", _sideArchives[0]);
+		sideNum = 1;
+	}
+
+	if (vm->getGameID() == GType_DarkSide || vm->getGameID() == GType_WorldOfXeen) {
+		_sideArchives[sideNum] = new CCArchive("dark.cc", "dark", true);
+		SearchMan.add("dark", _sideArchives[sideNum]);
+	}
+
 	SearchMan.add("intro", new CCArchive("intro.cc", "intro", true));
 }
 

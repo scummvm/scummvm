@@ -59,9 +59,16 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 }
 
 void SpriteResource::load(const Common::String &filename) {
-	// Open the resource
 	File f(filename);
+	load(f);
+}
 
+void SpriteResource::load(const Common::String &filename, Common::Archive &archive) {
+	File f(filename, archive);
+	load(f);
+}
+
+void SpriteResource::load(Common::SeekableReadStream &f) {
 	// Read in a copy of the file
 	_filesize = f.size();
 	delete[] _data;
