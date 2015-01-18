@@ -104,7 +104,7 @@ public:
 		int fireResistence, int electricityResistence, int coldResistence,
 		int poisonResistence, int energyResistence, int magicResistence,
 		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
-		int flying, int imageNumber, int loopAnimation, int animationEffect,
+		bool flying, int imageNumber, int loopAnimation, int animationEffect,
 		int field32, Common::String attackVoc);
 
 	void synchronize(Common::SeekableReadStream &s);
