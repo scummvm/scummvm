@@ -121,7 +121,7 @@ public:
 	bool _reloadSceneFlag;
 	Common::Point _posAdjust;
 	uint32 _frameStartTime;
-	Layer _layer;
+	ScreenMode _mode;
 	bool _lookFlag;
 	Common::Point _customDest;
 	Common::Array<PaletteUsage::UsageEntry> _paletteUsageF;

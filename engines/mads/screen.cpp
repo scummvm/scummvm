@@ -244,7 +244,7 @@ void DirtyAreas::reset() {
 ScreenObject::ScreenObject() {
 	_category = CAT_NONE;
 	_descId = 0;
-	_layer = 0;
+	_mode = 0;
 	_active = false;
 }
 
@@ -265,14 +265,12 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_baseTime = 0;
 }
 
-void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
-	//assert(size() < 100);
-
+void ScreenObjects::add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId) {
 	ScreenObject so;
 	so._bounds = bounds;
 	so._category = category;
 	so._descId = descId;
-	so._layer = layer;
+	so._mode = mode;
 	so._active = true;
 
 	push_back(so);
@@ -288,7 +286,7 @@ void ScreenObjects::check(bool scanFlag) {
 	if ((_vm->_events->_mouseMoved || userInterface._scrollbarActive
 			|| _v8332A || _forceRescan) && scanFlag) {
 		_category = CAT_NONE;
-		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
+		_selectedObject = scanBackwards(_vm->_events->currentPos(), SCREENMODE_VGA);
 		if (_selectedObject > 0) {
 			ScreenObject &scrObject = (*this)[_selectedObject];
 			_category = (ScrCategory)(scrObject._category & 7);
@@ -365,7 +363,7 @@ void ScreenObjects::check(bool scanFlag) {
 int ScreenObjects::scan(const Common::Point &pt, int layer) {
 	for (uint i = 1; i <= size(); ++i) {
 		ScreenObject &sObj = (*this)[i];
-		if (sObj._active && sObj._bounds.contains(pt) && sObj._layer == layer)
+		if (sObj._active && sObj._bounds.contains(pt) && sObj._mode == layer)
 			return i;
 	}
 
@@ -376,7 +374,7 @@ int ScreenObjects::scan(const Common::Point &pt, int layer) {
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {
 	for (int i = (int)size(); i >= 1; --i) {
 		ScreenObject &sObj = (*this)[i];
-		if (sObj._active && sObj._bounds.contains(pt) && sObj._layer == layer)
+		if (sObj._active && sObj._bounds.contains(pt) && sObj._mode == layer)
 			return i;
 	}
 
@@ -653,8 +651,10 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		transition(kTransitionFadeIn, surfaceFlag);
 		break;
 
-	case kCenterVertTransition:
-		warning("TODO: center vert transition");
+	case kNullPaletteCopy:
+		// Original temporarily set the palette to black, copied the scene to the
+		// screen, and then restored the palette. We can give a similiar effect
+		// by doing a standard quick palette fade in
 		transition(kTransitionFadeIn, surfaceFlag);
 		break;
 

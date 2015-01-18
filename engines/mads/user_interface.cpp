@@ -673,7 +673,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_SCROLLER, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_SCROLLER, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_INV_SCROLLER, idx);
 		}
 
 		// Set up actions
@@ -682,7 +682,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_COMMAND, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_COMMAND, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_COMMAND, idx);
 		}
 
 		// Set up inventory list
@@ -691,7 +691,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_LIST, _inventoryTopIndex + idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_LIST, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_INV_LIST, idx);
 		}
 
 		// Set up the inventory vocab list
@@ -700,12 +700,12 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_VOCAB, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_VOCAB, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_INV_VOCAB, idx);
 		}
 
 		// Set up the inventory item picture
 		_categoryIndexes[CAT_INV_ANIM - 1] = _vm->_game->_screenObjects.size() + 1;
-		_vm->_game->_screenObjects.add(Common::Rect(160, 159, 231, 194), LAYER_GUI,
+		_vm->_game->_screenObjects.add(Common::Rect(160, 159, 231, 194), SCREENMODE_VGA,
 			CAT_INV_ANIM, 0);
 	}
 
@@ -714,7 +714,7 @@ void UserInterface::loadElements() {
 		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
-			_vm->_game->_screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);
+			_vm->_game->_screenObjects.add(hs._bounds, SCREENMODE_VGA, CAT_HOTSPOT, hotspotIdx);
 		}
 	}
 
@@ -725,7 +725,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_TALK_ENTRY, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_TALK_ENTRY, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_TALK_ENTRY, idx);
 		}
 	}
 

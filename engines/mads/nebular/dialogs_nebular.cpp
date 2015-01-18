@@ -643,14 +643,14 @@ void GameDialog::setClickableLines() {
 			int maxHeight = _lines[idx]._font->getHeight();
 
 			screenObjects.add(Common::Rect(pt.x, pt.y, pt.x + strWidth, pt.y + maxHeight - 1),
-				LAYER_GUI, CAT_COMMAND, idx);
+				SCREENMODE_VGA, CAT_COMMAND, idx);
 		}
 	}
 
 	if (_vm->_dialogs->_pendingDialog == DIALOG_SAVE ||
 			_vm->_dialogs->_pendingDialog == DIALOG_RESTORE) {
-		screenObjects.add(Common::Rect(293, 26, 312, 75), LAYER_GUI, CAT_INV_LIST, 50);
-		screenObjects.add(Common::Rect(293, 78, 312, 127), LAYER_GUI, CAT_INV_LIST, 51);
+		screenObjects.add(Common::Rect(293, 26, 312, 75), SCREENMODE_VGA, CAT_INV_LIST, 50);
+		screenObjects.add(Common::Rect(293, 78, 312, 127), SCREENMODE_VGA, CAT_INV_LIST, 51);
 	}
 }
 
@@ -825,7 +825,7 @@ void GameDialog::handleEvents() {
 
 	// Scan for objects in the dialog
 	Common::Point mousePos = events.currentPos() - Common::Point(0, DIALOG_TOP);
-	int objIndex = screenObjects.scan(mousePos, LAYER_GUI);
+	int objIndex = screenObjects.scan(mousePos, SCREENMODE_VGA);
 
 	if (_movedFlag) {
 		int yp = mousePos.y;

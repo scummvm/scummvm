@@ -33,8 +33,8 @@ namespace MADS {
 #define MADS_SCREEN_WIDTH 320
 #define MADS_SCREEN_HEIGHT 200
 
-enum Layer {
-	LAYER_GUI = 19
+enum ScreenMode {
+	SCREENMODE_VGA = 19
 };
 
 enum ScreenTransition {
@@ -47,7 +47,7 @@ enum ScreenTransition {
 	kTransitionCircleIn3, kTransitionCircleIn4,
 	kVertTransition1, kVertTransition2, kVertTransition3,
 	kVertTransition4, kVertTransition5, kVertTransition6,
-	kVertTransition7, kCenterVertTransition
+	kVertTransition7, kNullPaletteCopy
 };
 
 enum InputMode {
@@ -130,7 +130,7 @@ public:
 	Common::Rect _bounds;
 	ScrCategory _category;
 	int _descId;
-	int _layer;
+	int _mode;
 
 	ScreenObject();
 };
@@ -162,7 +162,7 @@ public:
 	/**
 	* Add a new item to the list
 	*/
-	void add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId);
+	void add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId);
 
 	/**
 	 * Check objects on the screen

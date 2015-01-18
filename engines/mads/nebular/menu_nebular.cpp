@@ -86,7 +86,7 @@ void MainMenu::display() {
 			frame0->_offset.y - frame0->h);
 		screenObjects.add(
 			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w,
-			pt.y + frame0->h + DIALOG_TOP), LAYER_GUI, CAT_COMMAND, i);
+			pt.y + frame0->h + DIALOG_TOP), SCREENMODE_VGA, CAT_COMMAND, i);
 	}
 
 	// Set the cursor for when it's shown
@@ -292,7 +292,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 }
 
 int MainMenu::getHighlightedItem(const Common::Point &pt) {
-	return _vm->_game->_screenObjects.scan(pt, LAYER_GUI) - 1;
+	return _vm->_game->_screenObjects.scan(pt, SCREENMODE_VGA) - 1;
 }
 
 void MainMenu::unhighlightItem() {

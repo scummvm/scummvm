@@ -240,7 +240,7 @@ void Game::sectionLoop() {
 			_fx = kTransitionFadeOutIn;
 			break;
 		case SCREEN_FADE_FAST:
-			_fx = kCenterVertTransition;
+			_fx = kNullPaletteCopy;
 			break;
 		default:
 			_fx = kTransitionNone;
@@ -324,7 +324,7 @@ void Game::initSection(int sectionNumber) {
 	_vm->_palette->resetGamePalette(18, 10);
 	_vm->_palette->setLowRange();
 
-	if (_scene._layer == LAYER_GUI)
+	if (_scene._mode == SCREENMODE_VGA)
 		_vm->_palette->setPalette(_vm->_palette->_mainPalette, 0, 4);
 
 	_vm->_events->loadCursors("*CURSOR.SS");

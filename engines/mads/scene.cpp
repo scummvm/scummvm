@@ -52,7 +52,7 @@ Scene::Scene(MADSEngine *vm)
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
 	_frameStartTime = 0;
-	_layer = LAYER_GUI;
+	_mode = SCREENMODE_VGA;
 	_lookFlag = false;
 	_bandsRange = 0;
 	_scaleRange = 0;

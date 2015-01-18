@@ -449,7 +449,7 @@ void FullScreenDialog::display() {
 	}
 
 	// Set Fx state and palette entries
-	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kCenterVertTransition;
+	game._fx = _vm->_screenFade == SCREEN_FADE_SMOOTH ? kTransitionFadeIn : kNullPaletteCopy;
 	game._trigger = 0;
 
 	// Clear the screen and draw the upper and lower horizontal lines
