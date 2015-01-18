@@ -37,16 +37,18 @@ Localizer::Localizer() {
 	bool isAnyDemo = g_grim->getGameFlags() & ADGF_DEMO;
 	bool isGrimDemo = g_grim->getGameType() == GType_GRIM && isAnyDemo;
 	bool isGerman = g_grim->getGameLanguage() == Common::DE_DEU;
+	bool isFrench = g_grim->getGameLanguage() == Common::FR_FRA;
+	bool isTranslatedGrimDemo = (isGerman || isFrench) && isGrimDemo;
 	bool isPS2 = g_grim->getGamePlatform() == Common::kPlatformPS2;
 
-	if (isGrimDemo && !isGerman)
+	if (isGrimDemo && !isTranslatedGrimDemo)
 		return;
 
 	Common::String filename;
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		filename = "script.tab";
 	} else {
-		if (isGrimDemo && isGerman) {
+		if (isTranslatedGrimDemo) {
 			filename = "language.tab";
 		} else {
 			filename = "grim.tab";
@@ -68,7 +70,7 @@ Localizer::Localizer() {
 	delete f;
 
 	// Explicitly white-list german demo, as it has a .tab-file
-	if ((isGrimDemo && isGerman) || (!isAnyDemo && !isPS2)) {
+	if ((isTranslatedGrimDemo) || (!isAnyDemo && !isPS2)) {
 		if (filesize < 4)
 			error("%s to short: %i", filename.c_str(), filesize);
 		switch (READ_BE_UINT32(data)) {
