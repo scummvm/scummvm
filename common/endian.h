@@ -446,7 +446,7 @@
 #ifdef HAVE_INT64
 		inline uint64 READ_BE_UINT64(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
-			return (b[0] << 56) | (b[1] << 48) | (b[2] << 40) | (b[3] << 32) | (b[4] << 24) | (b[5] << 16) | (b[6] << 8) | (b[7]);
+			return ((uint64)b[0] << 56) | ((uint64)b[1] << 48) | ((uint64)b[2] << 40) | ((uint64)b[3] << 32) | ((uint64)b[4] << 24) | ((uint64)b[5] << 16) | ((uint64)b[6] << 8) | ((uint64)b[7]);
 		}
 		inline void WRITE_BE_UINT64(void *ptr, uint64 value) {
 			uint8 *b = (uint8 *)ptr;
@@ -550,7 +550,7 @@
 #ifdef HAVE_INT64
 	inline uint64 READ_LE_UINT64(const void *ptr) {
 		const uint8 *b = (const uint8 *)ptr;
-		return (b[7] << 56) | (b[6] << 48) | (b[5] << 40) | (b[4] << 32) | (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | (b[0]);
+		return ((uint64)b[7] << 56) | ((uint64)b[6] << 48) | ((uint64)b[5] << 40) | ((uint64)b[4] << 32) | ((uint64)b[3] << 24) | ((uint64)b[2] << 16) | ((uint64)b[1] << 8) | ((uint64)b[0]);
 	}
 	inline void WRITE_LE_UINT64(void *ptr, uint64 value) {
 		uint8 *b = (uint8 *)ptr;
