@@ -2181,6 +2181,17 @@ case $_host_os in
 		exit 1
 		;;
 	darwin*)
+		# Pass -mlongcall to gcc so that it emits long calls
+		# which will allow for calls larger than 32MB. The linker
+		# will discard the calls if they are not needed, but we
+		# need to ensure the compiler emits them in the first place.
+		case $_host_cpu in
+		powerpc*)
+			CFLAGS="$CFLAGS -mlongcall"
+			CXXFLAGS="$CXXFLAGS -mlongcall"
+			;;
+		esac
+
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
