@@ -3,15 +3,13 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.residualvm.residualvm"
-		android:versionCode="@ANDROID_VERSIONCODE@"
+		android:versionCode="1000"
 		android:versionName="@VERSION@"
-		android:installLocation="preferExternal"
 		android:sharedUserId="org.residualvm.residualvm">
 
 	<uses-sdk android:minSdkVersion="12"
-			android:targetSdkVersion="15"/>
-
-	<application android:name=".ResidualVMApplication"
+			android:targetSdkVersion="15" />
+	<application
 			android:label="@string/app_name"
 			android:description="@string/app_desc"
 			android:allowBackup="true"
@@ -23,41 +21,14 @@
 				android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
-			</intent-filter>
-		</activity>
-
-		<activity android:name=".Unpacker"
-				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-				android:screenOrientation="landscape"
-				android:configChanges="orientation|keyboardHidden">
-			<meta-data android:name="org.residualvm.unpacker.nextActivity"
-				android:value="org.residualvm.residualvm/.ResidualVMActivity"/>
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 				<category android:name="tv.ouya.intent.category.GAME"/>
 			</intent-filter>
 		</activity>
-	</application>
 
-	<permission android:name="org.residualvm.residualvm.permission.RESIDUALVM_PLUGIN"
-		android:label="@string/residualvm_perm_plugin_label"
-		android:description="@string/residualvm_perm_plugin_desc"
-		android:protectionLevel="signature"/>
+	</application>
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 	<uses-feature android:glEsVersion="0x00020000" android:required="true" />
-
-	<!-- Always needs some sort of qwerty keyboard.
-			Can work with a D-pad / trackball -->
-	<uses-configuration android:reqFiveWayNav="true"
-			android:reqKeyboardType="qwerty"/>
-
-	<!-- .. or touchscreen -->
-	<uses-configuration android:reqTouchScreen="finger"
-			android:reqKeyboardType="qwerty"/>
-
-	<uses-configuration android:reqTouchScreen="stylus"
-			android:reqKeyboardType="qwerty"/>
 </manifest>
