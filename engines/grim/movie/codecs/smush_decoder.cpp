@@ -530,7 +530,7 @@ void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream
 	assert(!_is16Bit);
 	assert(size >= 14);
 	byte codec = stream->readByte();
-	assert(codec == 47);
+	assert(codec == 47 || codec == 48);
 	/* byte codecParam = */ stream->readByte();
 	_x = stream->readSint16LE();
 	_y = stream->readSint16LE();
@@ -544,6 +544,11 @@ void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream
 	}
 	stream->readUint16LE();
 	stream->readUint16LE();
+
+	if (codec != 47) {
+		warning("not implemented codec: %d", codec);
+		return;
+	}
 
 	size -= 14;
 	byte *ptr = new byte[size];
