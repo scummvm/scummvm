@@ -234,6 +234,11 @@ void LuaBase::registerLua() {
 	refTextObjectLayer = lua_ref(true);
 }
 
+void LuaBase::forceDemo() {
+	lua_pushnumber(1);
+	lua_setglobal("DEMO");
+}
+
 struct luaL_reg baseOpcodes[] = {
 	{ "  concatfallback", LUA_OPCODE(LuaBase, concatFallback) },
 	{ "  typeoverride", LUA_OPCODE(LuaBase, typeOverride) },

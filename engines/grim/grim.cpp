@@ -343,6 +343,11 @@ Common::Error GrimEngine::run() {
 	lua->registerOpcodes();
 	lua->registerLua();
 
+	// One version of the demo doesn't set the demo flag in scripts.
+	if (getGameType() == GType_GRIM && _gameFlags & ADGF_DEMO) {
+		lua->forceDemo();
+	}
+
 	//Initialize Localizer first. In system-script are already localizeable Strings
 	g_localizer = new Localizer();
 	lua->loadSystemScript();

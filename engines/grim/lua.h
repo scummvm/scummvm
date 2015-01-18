@@ -124,6 +124,9 @@ public:
 	virtual void boot();
 	virtual void postRestoreHandle() { }
 
+	// Force the demo flag
+	virtual void forceDemo();
+
 	/**
 	 * Call a Lua function in the system table.
 	 *
