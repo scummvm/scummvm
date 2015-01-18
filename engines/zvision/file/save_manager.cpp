@@ -132,7 +132,7 @@ void SaveManager::writeSaveGameHeader(Common::OutSaveFile *file, const Common::S
 
 Common::Error SaveManager::loadGame(int slot) {
 	Common::SeekableReadStream *saveFile = NULL;
-	
+
 	if (slot >= 0) {
 		saveFile = getSlotFile(slot);
 	} else {

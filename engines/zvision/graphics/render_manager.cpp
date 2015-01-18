@@ -57,7 +57,7 @@ RenderManager::RenderManager(ZVision *engine, uint32 windowWidth, uint32 windowH
 	_effectSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
 	_warpedSceneSurface.create(_workingWindow.width(), _workingWindow.height(), _pixelFormat);
 	_menuSurface.create(windowWidth, workingWindow.top, _pixelFormat);
-	
+
 	_menuArea = Common::Rect(0, 0, windowWidth, workingWindow.top);
 
 	initSubArea(windowWidth, windowHeight, workingWindow);
@@ -601,7 +601,7 @@ void RenderManager::prepareBackground() {
 		_backgroundSurfaceDirtyRect = _backgroundDirtyRect;
 		_backgroundSurfaceDirtyRect.translate(_screenCenterX - _backgroundOffset, 0);
 
-		// Panorama mode allows the user to spin in circles. Therefore, we need to render 
+		// Panorama mode allows the user to spin in circles. Therefore, we need to render
 		// the portion of the image that wrapped to the other side of the screen
 		if (_backgroundOffset < _screenCenterX) {
 			viewPort.moveTo(-(_screenCenterX - (_backgroundOffset + _backgroundWidth)), 0);

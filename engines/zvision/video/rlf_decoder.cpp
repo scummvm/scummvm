@@ -197,7 +197,7 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 const Graphics::Surface *RLFDecoder::RLFVideoTrack::decodeNextFrame() {
 	if (_displayedFrame >= (int)_frameCount)
 		return NULL;
-	
+
 	_displayedFrame++;
 	applyFrameToCurrent(_displayedFrame);
 

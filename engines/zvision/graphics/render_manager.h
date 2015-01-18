@@ -84,7 +84,7 @@ private:
 	Graphics::Surface _currentBackgroundImage;
 	Common::Rect _backgroundDirtyRect;
 
-	/** 
+	/**
 	 * The x1 or y1 offset of the subRectangle of the background that is currently displayed on the screen
 	 * It will be x1 if PANORAMA, or y1 if TILT
 	 */
@@ -133,7 +133,7 @@ private:
 	EffectsList _effects;
 
 	bool _doubleFPS;
-	
+
 public:
 	void initialize();
 

@@ -62,7 +62,7 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 	bool loaded = animation->loadStream(_file);
 	if (!loaded)
 		error("Error loading animation %s", tmpFileName.c_str());
-	
+
 	return animation;
 }
 

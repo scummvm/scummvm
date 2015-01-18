@@ -336,7 +336,7 @@ void ZVision::onMouseMove(const Common::Point &pos) {
 					mspeed = 25;
 				}
 				_mouseVelocity  = MIN(((Common::Rational(mspeed, ROTATION_SCREEN_EDGE_OFFSET) * (clippedPos.x - _workingWindow.left)) - mspeed).toInt(), -1);
-				
+
 
 				_cursorManager->changeCursor(CursorIndex_Left);
 				cursorWasChanged = true;

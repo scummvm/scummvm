@@ -251,7 +251,7 @@ Common::Error ZVision::run() {
 	for (int i = 0; i < FONT_COUNT; i++) {
 		FontStyle curFont = getSystemFont(i);
 		Common::String freeFontBoldItalic = Common::String("Bold") + curFont.freeFontItalicName;
-		
+
 		const char *fontSuffixes[4] = { "", "bd", "i", "bi" };
 		const char *freeFontSuffixes[4] = { "", "Bold", curFont.freeFontItalicName, freeFontBoldItalic.c_str() };
 		const char *liberationFontSuffixes[4] = { "-Regular", "-Bold", "-Italic", "-BoldItalic" };
