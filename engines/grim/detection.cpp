@@ -242,6 +242,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
+	{
+		// Grim Fandango German demo version
+		{
+			"grim",
+			"Demo",
+			AD_ENTRY1s("gfdemo01.lab", "7df813f3809f2c0234213cfa4f6da062", 29533695),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+		},
+		GType_GRIM
+	},
 #ifdef ENABLE_MONKEY4
 	{
 		// Escape from Monkey Island English
