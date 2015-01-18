@@ -319,6 +319,7 @@ const char *emiPS2_voiceMon[] = {
 
 const char *emid_i9n[] = {
 	"d913504ec3a2fe52ee02a20a154a2b17", // english patched
+	"1cd0547b7cb26082274624b146dab3f1", // french
 	"0e011c72372acc4baeac259b46ae30f4", // german
 };
 const char *emid_lip[] = {
