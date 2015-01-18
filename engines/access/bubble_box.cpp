@@ -74,7 +74,7 @@ void BubbleBox::clearBubbles() {
 }
 
 void BubbleBox::placeBubble(const Common::String &msg) {
-	_vm->_screen->_maxChars = 27;
+	_vm->_screen->_maxChars = (_vm->getGameID() == GType_MartianMemorandum) ? 30 : 27;
 	placeBubble1(msg);
 }
 
@@ -82,15 +82,18 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 	_bubbles.clear();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = 29;
-	_vm->_fonts._charFor._hi = 32;
+	_vm->_fonts._charFor._lo = (_vm->getGameID() == GType_MartianMemorandum) ? 247 : 29;
+	_vm->_fonts._charFor._hi = (_vm->getGameID() == GType_MartianMemorandum) ? 255 : 32;
 
 	calcBubble(msg);
 
 	Common::Rect r = _bubbles[0];
 	r.translate(-2, 0);
 	_vm->_screen->saveBlock(r);
-	printBubble(msg);
+	if (_vm->getGameID() == GType_MartianMemorandum)
+		printBubble_v1(msg);
+	else
+		printBubble_v2(msg);
 }
 
 void BubbleBox::calcBubble(const Common::String &msg) {
@@ -149,7 +152,29 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	_vm->_screen->_printStart = printStart;
 }
 
-void BubbleBox::printBubble(const Common::String &msg) {
+void BubbleBox::printBubble_v1(const Common::String &msg) {
+	drawBubble(_bubbles.size() - 1);
+	
+	// Loop through drawing the lines
+	Common::String s = msg;
+	Common::String line;
+	int width = 0;
+	bool lastLine;
+	do {
+		// Get next line
+		Font &font2 = _vm->_fonts._font2;
+		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
+		// Draw the text
+		font2.drawString(_vm->_screen, line, _vm->_screen->_printOrg);
+
+		// Move print position
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+	} while (!lastLine);
+
+}
+
+void BubbleBox::printBubble_v2(const Common::String &msg) {
 	drawBubble(_bubbles.size() - 1);
 
 	// Loop through drawing the lines
@@ -183,7 +208,11 @@ void BubbleBox::printBubble(const Common::String &msg) {
 
 void BubbleBox::drawBubble(int index) {
 	_bounds = _bubbles[index];
-	doBox(0, 0);
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		int btnSelected = 0;
+		doBox_v1(0, 0, btnSelected);
+	} else
+		doBox(0, 0);
 }
 
 void BubbleBox::doBox(int item, int box) {

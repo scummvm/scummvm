@@ -87,7 +87,8 @@ public:
 	/**
 	 * Prints a text bubble and it's contents
 	 */
-	void printBubble(const Common::String &msg);
+	void printBubble_v1(const Common::String &msg);
+	void printBubble_v2(const Common::String &msg);
 
 	/*
 	 * Draws the background for a text bubble

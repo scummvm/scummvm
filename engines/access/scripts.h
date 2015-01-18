@@ -66,7 +66,8 @@ protected:
 	void cmdJumpUse();
 	void cmdJumpTalk();
 	void cmdNull();
-	void cmdPrint();
+	void cmdPrint_v1();
+	void cmdPrint_v2();
 	void cmdAnim();
 	void cmdSetFlag();
 	void cmdCheckFlag();

@@ -54,7 +54,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[6] = &Scripts::cmdJumpUse;
 	COMMAND_LIST[7] = &Scripts::cmdJumpTalk;
 	COMMAND_LIST[8] = &Scripts::cmdNull;
-	COMMAND_LIST[9] = &Scripts::cmdPrint;
+	COMMAND_LIST[9] = &Scripts::cmdPrint_v1;
 	COMMAND_LIST[10] = &Scripts::cmdRetPos;
 	COMMAND_LIST[11] = &Scripts::cmdAnim;
 	COMMAND_LIST[12] = &Scripts::cmdSetFlag;
@@ -121,6 +121,7 @@ void Scripts::setOpcodes() {
 }
 
 void Scripts::setOpcodes_v2() {
+	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
 	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
 	COMMAND_LIST[28] = &Scripts::cmdDispInv_v2;
 	COMMAND_LIST[29] = &Scripts::cmdSetTimer;
@@ -257,10 +258,22 @@ void Scripts::cmdNull() {
 
 #define PRINT_TIMER 25
 
-void Scripts::cmdPrint() {
+void Scripts::cmdPrint_v2() {
 	// Get a text line for display
 	Common::String msg = readString();
 	printString(msg);
+}
+
+void Scripts::cmdPrint_v1() {
+	_vm->_screen->_printOrg = Common::Point(20, 42);
+	_vm->_screen->_printStart = Common::Point(20, 32);
+	Common::String msg = readString();
+	_vm->_bubbleBox->placeBubble(msg);
+	_vm->_events->waitKeyMouse();
+	_vm->_events->hideCursor();
+	_vm->_screen->restoreBlock();
+	_vm->_events->showCursor();
+	findNull();
 }
 
 void Scripts::printString(const Common::String &msg) {
@@ -751,7 +764,7 @@ void Scripts::cmdTexChoice() {
 		tmpStr += (char)v;
 
 	_vm->_bubbleBox->calcBubble(tmpStr);
-	_vm->_bubbleBox->printBubble(tmpStr);
+	_vm->_bubbleBox->printBubble_v2(tmpStr);
 
 	Common::Array<Common::Rect> responseCoords;
 	responseCoords.push_back(_vm->_bubbleBox->_bounds);
@@ -766,7 +779,7 @@ void Scripts::cmdTexChoice() {
 	if (tmpStr.size() != 0) {
 		_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 2");
 		_vm->_bubbleBox->calcBubble(tmpStr);
-		_vm->_bubbleBox->printBubble(tmpStr);
+		_vm->_bubbleBox->printBubble_v2(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
 		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 	}
@@ -781,7 +794,7 @@ void Scripts::cmdTexChoice() {
 	if (tmpStr.size() != 0) {
 		_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 3");
 		_vm->_bubbleBox->calcBubble(tmpStr);
-		_vm->_bubbleBox->printBubble(tmpStr);
+		_vm->_bubbleBox->printBubble_v2(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
 		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 11;
 	}
