@@ -161,6 +161,9 @@ const char *gdemo001[] = {
 const char *gfdemo01ger[] = {
 	"fd728f040557118b7ca436f8205029e5"
 };
+const char *gfdemo01fra[] = {
+	"fd728f040557118b7ca436f8205029e5" // Same as german
+};
 const char *grimdemo[] = {
 	"3ba28e7e36a49b5fd01ba98e3c772fe8"
 };
@@ -172,6 +175,9 @@ const char *voice001[] = {
 };
 const char *voice001ger[] = {
 	"d1d68735ae10148ecccb6b5000a4db96"
+};
+const char *voice001fra[] = {
+	"43f56fca727e117b724051c740202c26"
 };
 
 // EMI retail PC version
@@ -368,6 +374,9 @@ void MD5Check::init() {
 			if (g_grim->getGameLanguage() == Common::DE_DEU) {
 				MD5SUM("gfdemo01.lab", gfdemo01ger)
 				MD5SUM("voice001.lab", voice001ger)
+			} else if (g_grim->getGameLanguage() == Common::FR_FRA) {
+				MD5SUM("gfdemo01.lab", gfdemo01fra)
+				MD5SUM("voice001.lab", voice001fra)
 			} else {
 				// Check which version we have
 				Common::File test;
