@@ -243,6 +243,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_GRIM
 	},
 	{
+		// Grim Fandango English demo version (with intro video)
+		{
+			"grim",
+			"Demo",
+			AD_ENTRY1s("gdemo001.lab", "c04c814093be829c4811a3a0aa80833d", 46615911),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+		},
+		GType_GRIM
+	},
+	{
 		// Grim Fandango German demo version
 		{
 			"grim",

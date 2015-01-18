@@ -111,6 +111,7 @@ ResourceLoader::ResourceLoader() {
 	if (g_grim->getGameType() == GType_GRIM) {
 		if (g_grim->getGameFlags() & ADGF_DEMO) {
 			SearchMan.listMatchingMembers(files, "gfdemo01.lab");
+			SearchMan.listMatchingMembers(files, "gdemo001.lab"); // For the english demo with video.
 			SearchMan.listMatchingMembers(files, "grimdemo.mus");
 			SearchMan.listMatchingMembers(files, "sound001.lab");
 			SearchMan.listMatchingMembers(files, "voice001.lab");
