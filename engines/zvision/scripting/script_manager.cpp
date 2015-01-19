@@ -576,11 +576,8 @@ void ScriptManager::ChangeLocationReal() {
 				_nextLocation.node = _currentLocation.node;
 				_nextLocation.view = _currentLocation.view;
 				_nextLocation.offset = _currentLocation.offset;
-				_currentLocation.world = '0';
-				_currentLocation.room = '0';
-				_currentLocation.node = '0';
-				_currentLocation.view = '0';
-				_currentLocation.offset = 0;
+				
+				return;
 			} else {
 				return;
 			}
@@ -742,11 +739,6 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 	cleanScriptScope(nodeview);
 	cleanScriptScope(room);
 	cleanScriptScope(world);
-
-	_currentLocation.node = 0;
-	_currentLocation.world = 0;
-	_currentLocation.room = 0;
-	_currentLocation.view = 0;
 
 	for (SideFXList::iterator iter = _activeSideFx.begin(); iter != _activeSideFx.end(); iter++) {
 		delete(*iter);
