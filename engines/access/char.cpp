@@ -27,11 +27,15 @@
 
 namespace Access {
 
-CharEntry::CharEntry(const byte *data) {
+CharEntry::CharEntry(const byte *data, int gameType) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	_estabIndex = s.readSint16LE();
+	if (gameType == GType_MartianMemorandum)
+		_estabIndex = -1;
+	else
+		_estabIndex = s.readSint16LE();
+
 	_screenFile.load(s);
 	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
@@ -73,16 +77,16 @@ CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 		// Setup character list
 		if (_vm->isDemo()) {
 			for (int i = 0; i < 27; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i]));
+				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i], vm->getGameID()));
 		} else {
 			for (int i = 0; i < 37; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL[i]));
+				_charTable.push_back(CharEntry(Amazon::CHARTBL[i], vm->getGameID()));
 		}
 		break;
 
 	case GType_MartianMemorandum:
 		for (int i = 0; i < 27; ++i)
-			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i]));
+			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i], vm->getGameID()));
 		break;
 
 	default:
