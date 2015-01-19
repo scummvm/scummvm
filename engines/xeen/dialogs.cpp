@@ -69,10 +69,10 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	} else if (events.isKeyPending()) {
 		Common::KeyState keyState;
 		events.getKey(keyState);
-		if (keyState.ascii >= 32 && keyState.ascii <= 127) {
-			_buttonValue = keyState.ascii;
+		
+		_buttonValue = keyState.keycode | (keyState.flags << 8);
+		if (_buttonValue)
 			return true;
-		}
 	}
 
 	return false;

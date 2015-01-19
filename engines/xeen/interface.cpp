@@ -801,13 +801,13 @@ void Interface::setMainButtons() {
 	addButton(Common::Rect(235, 117, 259, 137),  77, &_iconSprites);
 	addButton(Common::Rect(260, 117, 284, 137),  73, &_iconSprites);
 	addButton(Common::Rect(286, 117, 310, 137),  81, &_iconSprites);
-	addButton(Common::Rect(109, 137, 122, 147),   9, &_iconSprites);
-	addButton(Common::Rect(235, 148, 259, 168), 240, &_iconSprites);
-	addButton(Common::Rect(260, 148, 284, 168), 242, &_iconSprites);
-	addButton(Common::Rect(286, 148, 310, 168), 241, &_iconSprites);
-	addButton(Common::Rect(235, 169, 259, 189), 176, &_iconSprites);
-	addButton(Common::Rect(260, 169, 284, 189), 243, &_iconSprites);
-	addButton(Common::Rect(286, 169, 310, 189), 177, &_iconSprites);
+	addButton(Common::Rect(109, 137, 122, 147), Common::KEYCODE_TAB, &_iconSprites);
+	addButton(Common::Rect(235, 148, 259, 168), Common::KEYCODE_LEFT, &_iconSprites);
+	addButton(Common::Rect(260, 148, 284, 168), Common::KEYCODE_UP, &_iconSprites);
+	addButton(Common::Rect(286, 148, 310, 168), Common::KEYCODE_RIGHT, &_iconSprites);
+	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) |Common::KEYCODE_LEFT, &_iconSprites);
+	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, &_iconSprites);
+	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, &_iconSprites);
 	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS, &_iconSprites, false);
 	addButton(Common::Rect(239,  27, 312,  37),  49, &_iconSprites, false);
 	addButton(Common::Rect(239,  37, 312,  47),  50, &_iconSprites, false);
@@ -2768,6 +2768,131 @@ void Interface::perform() {
 
 		stepTime();
 		break;
+
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		if (checkMoveDirection((Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT)) {
+			switch (party._mazeDirection) {
+			case DIR_NORTH:
+				--party._mazePosition.x;
+				break;
+			case DIR_SOUTH:
+				++party._mazePosition.x;
+				break;
+			case DIR_EAST:
+				++party._mazePosition.y;
+				break;
+			case DIR_WEST:
+				--party._mazePosition.y;
+				break;
+			default:
+				break;
+			}
+
+			chargeStep();
+			_isAnimReset = true;
+			party._mazeDirection = (Direction)((int)party._mazeDirection & 3);
+			_flipSky = !_flipSky;
+			stepTime();
+		}
+		break;
+
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		if (checkMoveDirection((Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT)) {
+			switch (party._mazeDirection) {
+			case DIR_NORTH:
+				++party._mazePosition.x;
+				break;
+			case DIR_SOUTH:
+				--party._mazePosition.x;
+				break;
+			case DIR_EAST:
+				--party._mazePosition.y;
+				break;
+			case DIR_WEST:
+				++party._mazePosition.y;
+				break;
+			default:
+				break;
+			}
+
+			chargeStep();
+			_isAnimReset = true;
+			party._mazeDirection = (Direction)((int)party._mazeDirection & 3);
+			_flipSky = !_flipSky;
+			stepTime();
+		}
+		break;
+
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP7:
+		party._mazeDirection = (Direction)((int)party._mazeDirection - 1);
+		_isAnimReset = true;
+		party._mazeDirection = (Direction)((int)party._mazeDirection & 3);
+		_flipSky = !_flipSky;
+		stepTime();
+		break;
+
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP9:
+		party._mazeDirection = (Direction)((int)party._mazeDirection + 1);
+		_isAnimReset = true;
+		party._mazeDirection = (Direction)((int)party._mazeDirection & 3);
+		_flipSky = !_flipSky;
+		stepTime();
+		break;
+
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		if (checkMoveDirection(Common::KEYCODE_UP)) {
+			switch (party._mazeDirection) {
+			case DIR_NORTH:
+				++party._mazePosition.y;
+				break;
+			case DIR_SOUTH:
+				--party._mazePosition.y;
+				break;
+			case DIR_EAST:
+				++party._mazePosition.x;
+				break;
+			case DIR_WEST:
+				--party._mazePosition.x;
+				break;
+			default:
+				break;
+			}
+
+			chargeStep();
+			stepTime();
+		}
+		break;
+
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		if (checkMoveDirection(Common::KEYCODE_DOWN)) {
+			switch (party._mazeDirection) {
+			case DIR_NORTH:
+				--party._mazePosition.y;
+				break;
+			case DIR_SOUTH:
+				++party._mazePosition.y;
+				break;
+			case DIR_EAST:
+				--party._mazePosition.x;
+				break;
+			case DIR_WEST:
+				++party._mazePosition.x;
+				break;
+			default:
+				break;
+			}
+
+			chargeStep();
+			stepTime();
+		}
+		break;
+
 	case Common::KEYCODE_EQUALS:
 	case Common::KEYCODE_KP_EQUALS:
 		// Toggle minimap
@@ -2812,6 +2937,104 @@ void Interface::stepTime() {
 
 void Interface::doStepCode() {
 	// TODO
+}
+
+bool Interface::checkMoveDirection(int key) {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	Direction dir = party._mazeDirection;
+
+	switch (_buttonValue) {
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
+		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST :
+			(Direction)(party._mazeDirection - 1);
+		break;
+	case (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT:
+		party._mazeDirection = (party._mazeDirection == DIR_WEST) ? DIR_NORTH :
+			(Direction)(party._mazeDirection + 1);
+		break;
+	case Common::KEYCODE_DOWN:
+		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_SOUTH : DIR_NORTH;
+		break;
+	default:
+		break;
+	}
+	
+	map.getCell(7);
+	int startSurfaceId = map._currentSurfaceId;
+	int surfaceId;
+
+	if (map._isOutdoors) {
+		party._mazeDirection = dir;
+
+		switch ((int)map._currentWall._outdoors._surfaceId) {
+		case 5:
+			if (_vm->_files->_isDarkCc)
+				goto check;
+
+			// Deliberate FAll-through
+		case 0:
+		case 2:
+		case 4:
+		case 8:
+		case 11:
+		case 13:
+		case 14:
+			surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
+			if (surfaceId == SURFTYPE_WATER) {
+				if (party.checkSkill(SWIMMING) || party._walkOnWaterActive)
+					return true;
+			} else if (surfaceId == SURFTYPE_DWATER) {
+				if (party._walkOnWaterActive)
+					return true;
+			}
+			else if (surfaceId != SURFTYPE_SPACE) {
+				return true;
+			}
+
+			sound.playFX(21);
+			return false;
+
+		case 1:
+		case 7:
+		case 9:
+		case 10:
+		case 12:
+			check:
+			if (party.checkSkill(MOUNTAINEER))
+				return true;
+
+			sound.playFX(21);
+			return false;
+
+		default:
+			break;
+		}
+	} else {
+		int surfaceId = map.getCell(2);
+		if (surfaceId >= map.mazeData()._difficulties._wallNoPass) {
+			party._mazeDirection = dir;
+		} else {
+			party._mazeDirection = dir;
+
+			if (surfaceId == SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
+					party._walkOnWaterActive) {
+				sound.playFX(46);
+				return false;
+			} else {
+				if (_buttonValue == 242 && _wo[107]) {
+					_vm->_openDoor = true;
+					sound.playFX(47);
+					draw3d(true);
+					_vm->_openDoor = false;
+				}
+				return true;
+			}
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Xeen

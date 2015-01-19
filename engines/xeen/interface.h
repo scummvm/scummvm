@@ -107,6 +107,8 @@ private:
 	void stepTime();
 
 	void doStepCode();
+
+	bool checkMoveDirection(int key);
 public:
 	Interface(XeenEngine *vm);
 
