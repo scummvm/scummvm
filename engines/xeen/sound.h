@@ -35,11 +35,11 @@ private:
 public:
 	SoundManager(XeenEngine *vm);
 
-	void proc2(File &f);
+	void proc2(Common::SeekableReadStream &f);
 
 	void startMusic(int v1);
 
-	void playSong(const File &f) {}
+	void playSong(Common::SeekableReadStream &f) {}
 
 	void playSample(const Common::SeekableReadStream *stream, int v2) {}
 };

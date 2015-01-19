@@ -102,14 +102,14 @@ void ButtonContainer::doScroll(XeenEngine *vm, bool drawFlag, bool doFade) {
 	// Load hand vga files
 	SpriteResource *hand[16];
 	for (int i = 0; i < 16; ++i) {
-		Common::String name = Common::String::format("hand%02u.vga", i);
+		Common::String name = Common::String::format("hand%02d.vga", i);
 		hand[i] = new SpriteResource(name);
 	}
 
 	// Load marb vga files
 	SpriteResource *marb[5];
 	for (int i = 1; i < 5; ++i) {
-		Common::String name = Common::String::format("marb%02u.vga");
+		Common::String name = Common::String::format("marb%02d.vga", i);
 		marb[i] = new SpriteResource(name);
 	}
 

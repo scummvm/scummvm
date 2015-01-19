@@ -34,7 +34,7 @@ FontSurface::FontSurface() : XSurface(), _fontData(nullptr), _bgColor(DEFAULT_BG
 	_textColors[3] = 0x20;
 }
 
-FontSurface::FontSurface(int w, int h) : XSurface(), _fontData(nullptr), _msgWraps(false),
+FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _fontData(nullptr), _msgWraps(false),
 		_bgColor(DEFAULT_BG_COLOR), _fontReduced(false), _fontJustify(JUSTIFY_NONE) {
 	create(w, h);
 	_textColors[0] = 0;
@@ -173,12 +173,12 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 					_fontJustify = JUSTIFY_NONE;
 			} else if (c == 4) {
 				// Draw an empty box of a given width
-				int w = fontAtoi();
+				int wv = fontAtoi();
 				Common::Point pt = _writePos;
 				if (_fontJustify == JUSTIFY_RIGHT)
-					pt.x -= w;
+					pt.x -= wv;
 
-				Common::Rect r(pt.x, pt.y, pt.x + w, pt.y + (_fontReduced ? 9 : 10));
+				Common::Rect r(pt.x, pt.y, pt.x + wv, pt.y + (_fontReduced ? 9 : 10));
 				fillRect(r, _bgColor);
 			} else if (c == 5) {
 				continue;
@@ -187,8 +187,8 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				writeChar(' ');
 			} else if (c == 7) {
 				// Set text background color
-				int c = fontAtoi();
-				_bgColor = (c < 0 || c > 255) ? DEFAULT_BG_COLOR : c;
+				int bgColor = fontAtoi();
+				_bgColor = (bgColor < 0 || bgColor > 255) ? DEFAULT_BG_COLOR : bgColor;
 			} else if (c == 8) {
 				// Draw a character outline
 				c = getNextChar();
@@ -218,8 +218,8 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				}
 			} else if (c == 9) {
 				// Skip x position
-				int xp = fontAtoi();
-				_writePos.x = MIN(bounds.left + xp, (int)bounds.right);
+				int xAmount = fontAtoi();
+				_writePos.x = MIN(bounds.left + xAmount, (int)bounds.right);
 			} else if (c == 10) {
 				// Newline
 				if (newLine(bounds))
@@ -304,10 +304,10 @@ bool FontSurface::newLine(const Common::Rect &bounds) {
 	_msgWraps = false;
 	_writePos.x = bounds.left;
 	
-	int h = _fontReduced ? 9 : 10;
-	_writePos.y += h;
+	int hv = _fontReduced ? 9 : 10;
+	_writePos.y += hv;
 
-	return ((_writePos.y + h - 1) > bounds.bottom);
+	return ((_writePos.y + hv - 1) > bounds.bottom);
 }
 
 /**

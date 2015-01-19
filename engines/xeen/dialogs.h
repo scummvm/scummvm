@@ -76,6 +76,8 @@ protected:
 	virtual void showContents(SpriteResource &title1, bool mode);
 public:
 	SettingsBaseDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	virtual ~SettingsBaseDialog() {}
 };
 
 class CreditsScreen: public ButtonContainer {

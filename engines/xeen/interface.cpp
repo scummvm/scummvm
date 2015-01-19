@@ -28,7 +28,7 @@
 namespace Xeen {
 
 Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), _vm(vm) {
-	Common::fill(&_partyFaces[0], &_partyFaces[MAX_ACTIVE_PARTY], nullptr);
+	Common::fill(&_partyFaces[0], &_partyFaces[MAX_ACTIVE_PARTY], (SpriteResource *)nullptr);
 	_batUIFrame = 0;
 	_spotDoorsUIFrame = 0;
 	_dangerSenseUIFrame = 0;
@@ -425,7 +425,7 @@ void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool
 	int charId;
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
-		int charId = xeenSideChars[charIndex];
+		charId = xeenSideChars[charIndex];
 		bool isInParty = _vm->_party.isInParty(charId);
 
 		if (charId == 0xff) {
@@ -902,7 +902,7 @@ void Interface::setMazeBits() {
 		break;
 	case 4:
 	case 7:
-		_wo[27];
+		++_wo[27];
 		break;
 	case 5:
 		++_wo[227];

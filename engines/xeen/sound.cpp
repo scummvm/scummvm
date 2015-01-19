@@ -27,7 +27,7 @@ namespace Xeen {
 SoundManager::SoundManager(XeenEngine *vm): _vm(vm) {
 }
 
-void SoundManager::proc2(File &f) {
+void SoundManager::proc2(Common::SeekableReadStream &f) {
 
 }
 

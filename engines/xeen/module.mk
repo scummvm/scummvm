@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	items.o \
 	map.o \
 	party.o \
-	resdata.o \
 	resources.o \
 	saves.o \
 	screen.o \

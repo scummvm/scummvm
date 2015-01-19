@@ -66,9 +66,10 @@ void DarkSideEngine::showTitle1() {
 		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
 		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
 	};
-	File voc[3] = {
-		File("dragon1.voc"), File("dragon2.voc"), File("dragon3.voc")
-	};
+	Common::File voc[3];
+	voc[0].open("dragon1.voc");
+	voc[1].open("dragon2.voc");
+	voc[2].open("dragon3.voc");
 
 	// Load backgrounds
 	_screen->loadBackground("nwc1.raw");
@@ -168,9 +169,9 @@ void DarkSideEngine::showStartSequence() {
 	SpriteResource sprites[3] = {
 		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
 	};
-	File voc[2] = {
-		File("pharoh1a.voc"), File("pharoh1b.voc")
-	};
+	Common::File voc[2];
+	voc[0].open("pharoh1a.voc");
+	voc[1].open("pharoh1b.voc");
 
 	_screen->vertMerge(SCREEN_HEIGHT);
 	_screen->loadPage(0);

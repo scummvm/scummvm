@@ -38,7 +38,7 @@ void ErrorScroll::execute(const Common::String &msg, ErrorWaitType waitType) {
 	EventsManager &events = *_vm->_events;
 	Window &w = screen._windows[6];
 
-	Common::String s = Common::String::format("\x03c\v010\t000%s", msg);
+	Common::String s = Common::String::format("\x03c\v010\t000%s", msg.c_str());
 	w.open();
 	w.writeString(s);
 	w.update();

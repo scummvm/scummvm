@@ -46,6 +46,8 @@ protected:
 
 	virtual void openWindow() {}
 public:
+	virtual ~OptionsMenu() {}
+
 	static void show(XeenEngine *vm);
 };
 
@@ -54,6 +56,8 @@ protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 public:
 	CloudsOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
+
+	virtual ~CloudsOptionsMenu() {}
 };
 
 class DarkSideOptionsMenu : public OptionsMenu {
@@ -61,6 +65,8 @@ protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 public:
 	DarkSideOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
+
+	virtual ~DarkSideOptionsMenu() {}
 };
 
 class WorldOptionsMenu : public DarkSideOptionsMenu {
@@ -80,6 +86,8 @@ protected:
 	virtual void showContents(SpriteResource &title1, bool mode);
 public:
 	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm), _bgFrame(0) {}
+	
+	virtual ~WorldOptionsMenu() {}
 };
 
 } // End of namespace Xeen

@@ -58,7 +58,7 @@ public:
 	Justify _fontJustify;
 public:
 	FontSurface();
-	FontSurface(int w, int h);
+	FontSurface(int wv, int hv);
 	virtual ~FontSurface() {}
 
 	void writeSymbol(int symbolId);
