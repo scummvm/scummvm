@@ -23,9 +23,11 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "xeen/party.h"
+#include "xeen/dialogs_error.h"
 #include "xeen/files.h"
-#include "xeen/xeen.h"
+#include "xeen/resources.h"
 #include "xeen/saves.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -155,6 +157,16 @@ int PlayerStruct::getMaxHp() {
 	return 20;
 }
 
+int PlayerStruct::getStat(int statNum, int v2) {
+	// TODO
+	return 10;
+}
+
+bool PlayerStruct::charSavingThrow() {
+	// TODO
+	return false;
+}
+
 /*------------------------------------------------------------------------*/
 
 void Roster::synchronize(Common::Serializer &s) {
@@ -167,7 +179,7 @@ void Roster::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Party::Party() {
+Party::Party(XeenEngine *vm): _vm(vm) {
 	_partyCount = 0;
 	_realPartyCount = 0;
 	Common::fill(&_partyMembers[0], &_partyMembers[8], 0);
@@ -216,6 +228,9 @@ Party::Party() {
 		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
 
 	_combatPartyCount = 0;
+	_partyDead = false;
+	_newDay = false;
+	_isNight = false;
 }
 
 void Party::synchronize(Common::Serializer &s) {
@@ -342,5 +357,191 @@ void Party::copyPartyToRoster(Roster &r) {
 		r[_partyMembers[i]] = _activeParty[i];
 	}
 }
+
+/**
+ * Adds time to the party's playtime, taking into account the effect of any
+ * stat modifier changes
+ */
+void Party::changeTime(int numMinutes) {
+	bool killed = false;
+
+	if (((_minutes + numMinutes) / 480) != (_minutes / 480)) {
+		for (int idx = 0; idx < _partyCount; ++idx) {
+			PlayerStruct &player = _activeParty[idx];
+
+			if (!player._conditions[DEAD] && !player._conditions[STONED] &&
+					!player._conditions[ERADICATED]) {
+				for (int statNum = 0; statNum < TOTAL_STATS; ++statNum) {
+					int statVal = player.getStat(statNum, 0);
+					if (statVal < 1)
+						player._conditions[DEAD] = 1;
+				}
+			}
+
+			// Handle heart broken condition becoming depression
+			if (player._conditions[HEART_BROKEN]) {
+				if (++player._conditions[HEART_BROKEN] > 10) {
+					player._conditions[HEART_BROKEN] = 0;
+					player._conditions[DEPRESSED] = 1;
+				}
+			}
+
+			// Handle poisoning
+			if (!player._conditions[POISONED]) {
+				if (_vm->getRandomNumber(9) != 1 || !player.charSavingThrow())
+					player._conditions[POISONED] *= 2;
+				else
+					// Poison wears off
+					player._conditions[POISONED] = 0;
+			}
+
+			// Handle poisoning
+			if (!player._conditions[DISEASED]) {
+				if (_vm->getRandomNumber(9) != 1 || !player.charSavingThrow())
+					player._conditions[DISEASED] *= 2;
+				else
+					// Disease wears off
+					player._conditions[DISEASED] = 0;
+			}
+
+			// Handle insane status
+			if (player._conditions[INSANE])
+				player._conditions[INSANE]++;
+
+			if (player._conditions[DEAD]) {
+				if (++player._conditions[DEAD] == 0)
+					player._conditions[DEAD] = -1;
+			}
+
+			if (player._conditions[STONED]) {
+				if (++player._conditions[STONED] == 0)
+					player._conditions[STONED] = -1;
+			}
+
+			if (player._conditions[ERADICATED]) {
+				if (++player._conditions[ERADICATED] == 0)
+					player._conditions[ERADICATED] = -1;
+			}
+
+			if (player._conditions[IN_LOVE]) {
+				if (++player._conditions[IN_LOVE] > 10) {
+					player._conditions[IN_LOVE] = 0;
+					player._conditions[HEART_BROKEN] = 1;
+				}
+			}
+
+			player._conditions[WEAK] = player._conditions[DRUNK];
+			player._conditions[DRUNK] = 0;
+
+			if (player._conditions[DEPRESSED]) {
+				player._conditions[DEPRESSED] = (player._conditions[DEPRESSED] + 1) % 4;
+			}
+		}
+	}
+
+	// Increment the time
+	addTime(numMinutes);
+
+	for (int idx = 0; idx < _partyCount; ++idx) {
+		PlayerStruct &player = _activeParty[idx];
+
+		if (player._conditions[CONFUSED] && _vm->getRandomNumber(2) == 1) {
+			if (player.charSavingThrow()) {
+				player._conditions[CONFUSED] = 0;
+			} else {
+				player._conditions[CONFUSED]--;
+			}
+		}
+
+		if (player._conditions[PARALYZED] && _vm->getRandomNumber(4) == 1)
+			player._conditions[PARALYZED]--;
+	}
+	
+	if (killed)
+		_vm->_interface->charIconsPrint(true);
+
+	if (_isNight != (_minutes < (5 * 60) || _minutes >= (21 * 60)))
+		_vm->_map->loadSky();
+}
+
+void Party::addTime(int numMinutes) {
+	int day = _day;
+	_minutes += numMinutes;
+	
+	// If the total minutes has exceeded a day, move to next one
+	while (_minutes >= (24 * 60)) {
+		_minutes -= 24 * 60;
+		if (++_day >= 100) {
+			_day -= 100;
+			++_year;
+		}
+	}
+
+	if ((_day % 10) == 1 || numMinutes > (24 * 60)) {
+		if (_day != day) {
+			warning("TODO: resetBlacksmith? and giveInterest?");
+		}
+	}
+
+	if (_day != day)
+		_newDay = true;
+
+	if (_newDay && _minutes >= 300) {
+		if (_vm->_mode != MODE_9 && _vm->_mode != MODE_17) {
+			resetTemps();
+			if (_rested || _vm->_mode == MODE_5) {
+				_rested = false;
+			} else {
+				for (int idx = 0; idx < _partyCount; ++idx) {
+					if (_activeParty[idx]._conditions[WEAK] >= 0)
+						_activeParty[idx]._conditions[WEAK]++;
+				}
+
+				ErrorScroll::show(_vm, THE_PARTY_NEEDS_REST, WT_NONFREEZED_WAIT);
+			}
+
+			_vm->_interface->charIconsPrint(true);
+		}
+
+		_newDay = false;
+	}
+}
+
+void Party::resetTemps() {
+	for (int idx = 0; idx < _partyCount; ++idx) {
+		PlayerStruct &player = _activeParty[idx];
+
+		player._magicResistence._temporary = 0;
+		player._energyResistence._temporary = 0;
+		player._poisonResistence._temporary = 0;
+		player._electricityResistence._temporary = 0;
+		player._coldResistence._temporary = 0;
+		player._fireResistence._temporary = 0;
+		player._ACTemp = 0;
+		player._level._temporary = 0;
+		player._luck._temporary = 0;
+		player._accuracy._temporary = 0;
+		player._speed._temporary = 0;
+		player._endurance._temporary = 0;
+		player._personality._temporary = 0;
+		player._intellect._temporary = 0;
+		player._might._temporary = 0;
+	}
+
+	_poisonResistence = 0;
+	_coldResistence = 0;
+	_electricityResistence = 0;
+	_fireResistence = 0;
+	_lightCount = 0;
+	_levitateActive = false;
+	_walkOnWaterActive = false;
+	_wizardEyeActive = false;
+	_clairvoyanceActive = false;
+	_heroismActive = false;
+	_holyBonusActive = false;
+	_powerShieldActive = false;
+	_blessedActive = false;
+}
+
 
 } // End of namespace Xeen

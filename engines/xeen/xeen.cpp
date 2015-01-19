@@ -42,8 +42,10 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_files = nullptr;
 	_interface = nullptr;
 	_map = nullptr;
+	_party = nullptr;
 	_saves = nullptr;
 	_screen = nullptr;
+	_scripts = nullptr;
 	_sound = nullptr;
 	_eventData = nullptr;
 	_loadDarkSide = 1;
@@ -63,8 +65,10 @@ XeenEngine::~XeenEngine() {
 	delete _events;
 	delete _interface;
 	delete _map;
+	delete _party;
 	delete _saves;
 	delete _screen;
+	delete _scripts;
 	delete _sound;
 	delete _eventData;
 	delete _files;
@@ -84,8 +88,10 @@ void XeenEngine::initialize() {
 	_events = new EventsManager(this);
 	_interface = new Interface(this);
 	_map = new Map(this);
-	_saves = new SavesManager(this, _party, _roster);
+	_party = new Party(this);
+	_saves = new SavesManager(this, *_party, _roster);
 	_screen = new Screen(this);
+	_scripts = new Scripts(this);
 	_screen->setupWindows();
 	_sound = new SoundManager(this);
 
@@ -281,13 +287,13 @@ void XeenEngine::play() {
 
 	if (getGameID() != GType_WorldOfXeen && !_loadDarkSide) {
 		_loadDarkSide = true;
-		_party._mazeId = 29;
-		_party._mazeDirection = DIR_NORTH;
-		_party._mazePosition.x = 25;
-		_party._mazePosition.y = 21;
+		_party->_mazeId = 29;
+		_party->_mazeDirection = DIR_NORTH;
+		_party->_mazePosition.x = 25;
+		_party->_mazePosition.y = 21;
 	}
 
-	_map->load(_party._mazeId);
+	_map->load(_party->_mazeId);
 
 	_interface->startup();
 	if (_mode == MODE_0) {
@@ -307,9 +313,22 @@ void XeenEngine::play() {
 
 	_moveMonsters = true;
 
+	gameLoop();
+}
+
+void XeenEngine::gameLoop() {
 	// Main game loop
 	while (!shouldQuit()) {
-		_events->pollEventsAndWait();
+		_map->cellFlagLookup(_party->_mazePosition);
+		if (_map->_currentIsEvent) {
+			_scripts->checkEvents();
+			if (shouldQuit())
+				return;
+		}
+		_scripts->giveTreasure();
+
+		// Wait loop
+		_interface->wait();
 	}
 }
 

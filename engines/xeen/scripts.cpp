@@ -61,4 +61,21 @@ void MazeEvents::synchronize(XeenSerializer &s) {
 	}
 }
 
+/*------------------------------------------------------------------------*/
+
+Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
+}
+
+void Scripts::checkEvents() {
+	// TODO
+}
+
+void Scripts::giveTreasure() {
+	// TODO
+}
+
+void Scripts::openGrate(int v1, int v2) {
+	// TODO
+}
+
 } // End of namespace Xeen

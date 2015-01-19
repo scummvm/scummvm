@@ -230,6 +230,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, 
 		int flags, int scale) const {
+	scale = 0; // ***DEBUG***
 	if (scale == 0) {
 		drawOffset(dest, _index[frame]._offset1, destPos, flags);
 		if (_index[frame]._offset2)

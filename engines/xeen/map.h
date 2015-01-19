@@ -392,7 +392,7 @@ public:
 
 	void load(int mapId);
 
-	int mazeLookup(const Common::Point &pt, int directionLayerIndex);
+	int mazeLookup(const Common::Point &pt, int layerShift);
 
 	void cellFlagLookup(const Common::Point &pt);
 
@@ -404,6 +404,7 @@ public:
 
 	MazeData mazeData() { return _mazeData[0]; }
 
+	void loadSky();
 };
 
 } // End of namespace Xeen

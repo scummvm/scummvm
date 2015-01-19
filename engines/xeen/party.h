@@ -66,6 +66,7 @@ enum Condition { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 #define TOTAL_CHARACTERS 30
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
+#define TOTAL_STATS 7
 
 class XeenEngine;
 
@@ -133,6 +134,10 @@ public:
 	int getAge(int partyYear, bool ignoreTemp);
 
 	int getMaxHp();
+
+	int getStat(int statNum, int v2);
+
+	bool charSavingThrow();
 };
 
 class Roster: public Common::Array<PlayerStruct> {
@@ -143,6 +148,8 @@ public:
 };
 
 class Party {
+private:
+	XeenEngine *_vm;
 public:
 	// Dynamic data that's saved
 	int _partyCount;
@@ -202,8 +209,11 @@ public:
 	// Other party related runtime data
 	Common::Array<PlayerStruct> _activeParty;
 	int _combatPartyCount;
+	bool _partyDead;
+	bool _newDay;
+	bool _isNight;
 public:
-	Party();
+	Party(XeenEngine *vm);
 
 	void synchronize(Common::Serializer &s);
 
@@ -212,6 +222,12 @@ public:
 	bool isInParty(int charId);
 
 	void copyPartyToRoster(Roster &r);
+
+	void changeTime(int numMinutes);
+
+	void addTime(int numMinutes);
+
+	void resetTemps();
 };
 
 } // End of namespace Xeen

@@ -32,6 +32,8 @@ extern const char *const CREDITS;
 
 extern const char *const OPTIONS_TITLE;
 
+extern const char *const THE_PARTY_NEEDS_REST;
+
 extern const char *const TERRAIN_TYPES[6];
 
 extern const char *const SURFACE_TYPE_NAMES[15];
@@ -88,7 +90,7 @@ extern const int OUTDOOR_OBJECT_Y[2][12];
 
 extern const int DIRECTION_ANIM_POSITIONS[4][4];
 
-extern const byte WALL_NUMBERS[4][96];
+extern const byte WALL_NUMBERS[4][48];
 
 extern const int DRAW_NUMBERS[25];
 

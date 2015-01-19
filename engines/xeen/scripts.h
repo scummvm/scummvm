@@ -95,6 +95,8 @@ enum Opcode {
 	OP_PlayCD		= 0x3C
 };
 
+class XeenEngine;
+
 class MazeEvent {
 public:
 	Common::Point _position;
@@ -113,6 +115,19 @@ public:
 	Common::Array<byte> _text;
 public:
 	void synchronize(XeenSerializer &s);
+};
+
+class Scripts {
+private:
+	XeenEngine *_vm;
+public:
+	Scripts(XeenEngine *vm);
+
+	void checkEvents();
+
+	void giveTreasure();
+
+	void openGrate(int v1, int v2);
 };
 
 } // End of namespace Xeen

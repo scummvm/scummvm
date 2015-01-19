@@ -50,7 +50,7 @@ public:
 class IndoorDrawList {
 public:
 	DrawStruct _data[170];
-	DrawStruct &_sky;
+	DrawStruct &_sky1, &_sky2;
 	DrawStruct &_ground;
 	DrawStruct &_horizon;
 	DrawStruct * const _groundTiles;

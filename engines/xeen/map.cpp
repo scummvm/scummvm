@@ -887,7 +887,7 @@ void Map::load(int mapId) {
 	}
 
 	_stepped = true;
-	_vm->_party._mazeId = mapId;
+	_vm->_party->_mazeId = mapId;
 	_vm->_events->clearEvents();
 
 	_sideObjects = 1;
@@ -970,7 +970,7 @@ void Map::load(int mapId) {
 
 			if (isDarkCc && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!isDarkCc && _vm->_party._gameFlags[25] &&
+			if (!isDarkCc && _vm->_party->_gameFlags[25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
@@ -1004,14 +1004,14 @@ void Map::load(int mapId) {
 				_headData.synchronize(headFile);
 				headFile.close();
 
-				if (!isDarkCc && _vm->_party._mazeId)
+				if (!isDarkCc && _vm->_party->_mazeId)
 					_mobData._monsters.clear();
 
 				if (!isDarkCc && mapId == 15) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
-						_vm->_party._gameFlags[56] = true;
+						_vm->_party->_gameFlags[56] = true;
 					}
 				}
 			}
@@ -1029,7 +1029,7 @@ void Map::load(int mapId) {
 	// TODO: Switch setting flags that don't seem to ever be used
  
 	// Reload the monster data for the main maze that we're loading
-	mapId = _vm->_party._mazeId;
+	mapId = _vm->_party->_mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(mapId >= 100) ? 'x' : '0', mapId);
 	File mobFile(filename, *_vm->_saves);
@@ -1039,10 +1039,10 @@ void Map::load(int mapId) {
 
 	// Load sprites for the objects
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
-		if (_vm->_party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
+		if (_vm->_party->_cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
 				mapId == 27 && isDarkCc) {
 			// TODO: Flags set that don't seem to be used
-		} else if (mapId == 12 && _vm->_party._gameFlags[43] &&
+		} else if (mapId == 12 && _vm->_party->_gameFlags[43] &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
@@ -1081,7 +1081,6 @@ void Map::load(int mapId) {
 	if (_isOutdoors) {
 		warning("TODO");	// Sound loading
 
-		_skySprites.load(isDarkCc ? "night.sky" : "sky.sky");
 		_groundSprites.load("water.out");
 		_tileSprites.load("outdoor.til");
 		outdoorList._skySprite._sprites = &_skySprites;
@@ -1102,7 +1101,6 @@ void Map::load(int mapId) {
 	} else {
 		warning("TODO");	// Sound loading
 
-		_skySprites.load(isDarkCc ? "night.sky" : "sky.sky");
 		_mazeSkySprites.load(Common::String::format("%s.sky",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
@@ -1193,18 +1191,20 @@ void Map::load(int mapId) {
 				indoorList._horizon._sprites = nullptr;
 		}
 	}
+
+	loadSky();
 }
 
-int Map::mazeLookup(const Common::Point &pt, int directionLayerIndex) {
+int Map::mazeLookup(const Common::Point &pt, int layerShift) {
 	Common::Point pos = pt;
-	int mapId = _vm->_party._mazeId;
+	int mapId = _vm->_party->_mazeId;
 
 	if (pt.x < -16 || pt.y < -16 || pt.x >= 32 || pt.y >= 32)
 		error("Invalid coordinate");
 
 	// Find the correct maze data out of the set to use
 	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId != _vm->_party._mazeId)
+	while (_mazeData[_mazeDataIndex]._mazeId != _vm->_party->_mazeId)
 		++_mazeDataIndex;
 
 	// Handle map changing to the north or south as necessary
@@ -1259,7 +1259,7 @@ int Map::mazeLookup(const Common::Point &pt, int directionLayerIndex) {
 			_currentSteppedOn = _mazeData[_mazeDataIndex]._steppedOnTiles[pos.y][pos.x];
 		}
 
-		return (_mazeData[_mazeDataIndex]._wallData[pos.y][pos.x]._data >> (directionLayerIndex * 4)) & 0xF;
+		return (_mazeData[_mazeDataIndex]._wallData[pos.y][pos.x]._data >> layerShift) & 0xF;
 
 	} else {
 		_currentSteppedOn = _isOutdoors;
@@ -1312,7 +1312,7 @@ void Map::saveMaze() {
 
 void Map::cellFlagLookup(const Common::Point &pt) {
 	Common::Point pos = pt;
-	int mapId = _vm->_party._mazeId;
+	int mapId = _vm->_party->_mazeId;
 	_mazeDataIndex = 0;
 	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
 		++_mazeDataIndex;
@@ -1364,11 +1364,11 @@ void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
 
 
 int Map::getCell(int idx) {
-	int mapId = _vm->_party._mazeId;
-	Direction dir = _vm->_party._mazeDirection;
+	int mapId = _vm->_party->_mazeId;
+	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt(
-		_vm->_party._mazePosition.x + SCREEN_POSITIONING_X[_vm->_party._mazeDirection][idx],
-		_vm->_party._mazePosition.y + SCREEN_POSITIONING_Y[_vm->_party._mazeDirection][idx]
+		_vm->_party->_mazePosition.x + SCREEN_POSITIONING_X[_vm->_party->_mazeDirection][idx],
+		_vm->_party->_mazePosition.y + SCREEN_POSITIONING_Y[_vm->_party->_mazeDirection][idx]
 	);
 
 	if (pt.x > 31 || pt.y > 31) {
@@ -1484,10 +1484,19 @@ int Map::getCell(int idx) {
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 
 		_currentWall = wallLayers;
-		return (_currentWall._data >> (WALL_NUMBERS[dir][idx * 2] * 4)) & 0xF;
+		return (_currentWall._data >> WALL_NUMBERS[dir][idx]) & 0xF;
 	}
 
 	return _currentWall._data;
+}
+
+void Map::loadSky() {
+	Party &party = *_vm->_party;
+
+	party._isNight = party._minutes < (5 * 60) || party._minutes >= (21 * 60);
+	_skySprites.load(((party._mazeId >= 89 && party._mazeId <= 112) ||
+		party._mazeId == 128 || party._mazeId == 129) || !party._isNight 
+		? "sky.sky" : "night.sky");
 }
 
 } // End of namespace Xeen

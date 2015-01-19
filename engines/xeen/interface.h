@@ -63,7 +63,6 @@ private:
 	int _holyBonusUIFrame;
 	int _heroismUIFrame;
 	int _flipUIFrame;
-	bool _newDay;
 	bool _buttonsLoaded;
 	Common::String _interfaceText;
 	int _hiliteChar;
@@ -74,6 +73,7 @@ private:
 	byte _tillMove;
 	bool _thinWall;
 	int _overallFrame;
+	bool _upDoorText;
 
 	void initDrawStructs();
 
@@ -84,8 +84,6 @@ private:
 	void setupBackground();
 
 	void setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag);
-
-	void charIconsPrint(bool updateFlag);
 
 	void drawViewBackground(int bgType);
 
@@ -100,6 +98,8 @@ private:
 	void setMazeBits();
 
 	void updateAutoMap();
+
+	void chargeStep();
 public:
 	Interface(XeenEngine *vm);
 
@@ -116,6 +116,10 @@ public:
 	void startup();
 
 	void mainIconsPrint();
+
+	void charIconsPrint(bool updateFlag);
+
+	void wait();
 };
 
 } // End of namespace Xeen

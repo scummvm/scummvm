@@ -41,6 +41,7 @@
 #include "xeen/party.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
+#include "xeen/scripts.h"
 #include "xeen/sound.h"
 
 /**
@@ -102,6 +103,8 @@ private:
 	void play();
 
 	void pleaseWait();
+
+	void gameLoop();
 protected:
 	/**
 	* Play the game
@@ -131,14 +134,15 @@ public:
 	FileManager *_files;
 	Interface *_interface;
 	Map *_map;
+	Party *_party;
 	SavesManager *_saves;
 	Screen *_screen;
+	Scripts *_scripts;
 	SoundManager *_sound;
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
 	Roster _roster;
-	Party _party;
 	int _loadDarkSide;
 	bool _dangerSenseAllowed;
 	int _face1State;
