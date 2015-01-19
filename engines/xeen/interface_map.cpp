@@ -181,6 +181,7 @@ IndoorDrawList::IndoorDrawList() :
 	_fwl_3F2R(_data[ 91]), _fwl_3F1R(_data[ 90]), _fwl_3F(  _data[ 89]), 
 	_fwl_3F1L(_data[ 88]), _fwl_3F2L(_data[ 87]), _fwl_1F(  _data[147]),
 	_fwl_1F1R(_data[145]), _fwl_1F1L(_data[143]),
+	_groundTiles(&_data[3]),
 	_objects0(_data[149]), _objects1(_data[125]), _objects2(_data[126]),
 	_objects3(_data[127]), _objects4(_data[97]), _objects5(_data[98]),
 	_objects6(_data[99]), _objects7(_data[55]), _objects8(_data[56]),
@@ -364,10 +365,10 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	Common::fill(&_wp[0], &_wp[20], 0);
 	Common::fill(&_wo[0], &_wo[308], 0);
 	_overallFrame = 0;
-	_flipWtr = false;
-	_flipWall = false;
-	_flipSky = false;
+	_flipWater = false;
 	_flipGround = false;
+	_flipSky = false;
+	_flipDefaultGround = false;
 	_isShooting = false;
 	_charsShooting = false;
 	_objNumber = 0;
@@ -1106,20 +1107,22 @@ void InterfaceMap::drawIndoors() {
 	Map &map = *_vm->_map;
 	int surfaceId;
 
+	// Draw any surface tiles on top of the default ground
 	for (int cellIndex = 0; cellIndex < 25; ++cellIndex) {
 		map.getCell(DRAW_NUMBERS[cellIndex]);
 
-		DrawStruct &drawStruct = _indoorList[3 + cellIndex];
+		DrawStruct &drawStruct = _indoorList._groundTiles[cellIndex];
 		if (!map._surfaceSprites[map._currentSurfaceId].empty())
 			drawStruct._sprites = &map._surfaceSprites[map._currentSurfaceId];
 
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
-		if (surfaceId == 0 || surfaceId == 5 || surfaceId == 12) {
-			drawStruct._flags = _flipWtr ? 1 : 0;
-			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWtr ? 1 : 0];
+		if (surfaceId == SURFTYPE_WATER || surfaceId == SURFTYPE_LAVA || 
+				surfaceId == SURFTYPE_SEWER) {
+			drawStruct._flags = _flipWater ? 1 : 0;
+			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
 		} else {
-			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWall ? 1 : 0];
-			drawStruct._flags = _flipWall ? SPRFLAG_HORIZ_FLIPPED : 0;
+			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
+			drawStruct._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
 		}
 	}
 
@@ -1932,7 +1935,7 @@ void InterfaceMap::drawIndoors() {
 	}
 
 	_indoorList._sky._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
-	_indoorList._ground._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
+	_indoorList._ground._flags = _flipDefaultGround ? SPRFLAG_HORIZ_FLIPPED : 0;
 	_indoorList._horizon._frame = 7;
 
 	// Finally draw the darn indoor scene

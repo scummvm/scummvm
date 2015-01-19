@@ -53,6 +53,7 @@ public:
 	DrawStruct &_sky;
 	DrawStruct &_ground;
 	DrawStruct &_horizon;
+	DrawStruct * const _groundTiles;
 	DrawStruct &_swl_0F1R, &_swl_0F1L, &_swl_1F1R, &_swl_1F1L,
 		&_swl_2F2R, &_swl_2F1R, &_swl_2F1L, &_swl_2F2L,
 		&_swl_3F1R, &_swl_3F2R, &_swl_3F3R, &_swl_3F4R,
@@ -92,10 +93,10 @@ protected:
 	int8 _wp[20];
 	byte _wo[308];
 	int _overallFrame;
-	bool _flipWtr;
-	bool _flipWall;
-	bool _flipSky;
+	bool _flipWater;
 	bool _flipGround;
+	bool _flipSky;
+	bool _flipDefaultGround;
 	bool _isShooting;
 	bool _charsShooting;
 	int _objNumber;

@@ -310,7 +310,6 @@ void Interface::setupBackground() {
 
 void Interface::assembleBorder() {
 	Screen &screen = *_vm->_screen;
-	Window &gameWindow = screen._windows[28];
 
 	// Draw the outer frame
 	_globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
@@ -548,7 +547,7 @@ void Interface::draw3d(bool updateFlag) {
 
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
 	if (_flipUIFrame == 0)
-		_flipWtr = !_flipWtr;
+		_flipWater = !_flipWater;
 	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_2) &&
 			!_flag1 && _vm->_moveMonsters) {
 		if (--_tillMove == 0)

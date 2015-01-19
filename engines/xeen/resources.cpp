@@ -76,7 +76,7 @@ const char *const SURFACE_TYPE_NAMES[15] = {
 	"dedltree", "dedltree"
 };
 
-const char *const OUTDOOR_SURFACES[16] = {
+const char *const SURFACE_NAMES[16] = {
 	"water.srf", "dirt.srf", "grass.srf", "snow.srf", "swamp.srf",
 	"lava.srf", "desert.srf", "road.srf", "dwater.srf", "tflr.srf",
 	"sky.srf", "croad.srf", "sewer.srf", "cloud.srf", "scortch.srf",

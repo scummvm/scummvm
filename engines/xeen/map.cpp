@@ -877,7 +877,6 @@ void Map::load(int mapId) {
 	Screen &screen = *_vm->_screen;
 	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
 	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
-	int sideNumber = 0;
 
 	if (_vm->_falling) {
 		Window &w = screen._windows[9];
@@ -1097,7 +1096,7 @@ void Map::load(int mapId) {
 
 			_surfaceSprites[i].clear();
 			if (i != 0 && _mazeData[0]._wallTypes[i] != 0)
-				_surfaceSprites[i].load(OUTDOOR_SURFACES[_mazeData[0]._surfaceTypes[i]]);
+				_surfaceSprites[i].load(SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
 		warning("TODO");	// Sound loading
@@ -1114,7 +1113,7 @@ void Map::load(int mapId) {
 			_surfaceSprites[i].clear();
 
 			if (_mazeData[0]._surfaceTypes[i] != 0 || i == 4)
-				_surfaceSprites[i].load(OUTDOOR_SURFACES[i]);
+				_surfaceSprites[i].load(SURFACE_NAMES[i]);
 		}
 
 		for (int i = 0; i < TOTAL_SURFACES; ++i)
