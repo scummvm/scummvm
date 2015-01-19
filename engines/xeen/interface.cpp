@@ -313,10 +313,11 @@ void Interface::assembleBorder() {
 	Window &gameWindow = screen._windows[28];
 
 	// Draw the outer frame
-	_globalSprites.draw(gameWindow, 0);
+	_globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
 
 	// Draw the animating bat character used to show when levitate is active
-	_borderSprites.draw(screen, _vm->_party._levitateActive ? _batUIFrame + 16 : 16);
+	_borderSprites.draw(screen._windows[0], _vm->_party._levitateActive ? _batUIFrame + 16 : 16,
+		Common::Point(0, 82));
 	_batUIFrame = (_batUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can spot hidden doors
