@@ -564,12 +564,16 @@ void ScriptManager::ChangeLocationReal() {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
-	if (_nextLocation.world == 'g' && _nextLocation.room == 'j' && !ConfMan.getBool("originalsaveload")) {
-		if ((_nextLocation.node == 's' || _nextLocation.node == 'r') && _nextLocation.view == 'e') {
+	const bool enteringMenu = (_nextLocation.world == 'g' && _nextLocation.room == 'j');
+	const bool leavingMenu = (_currentLocation.world == 'g' && _currentLocation.room == 'j');
+	const bool isSaveScreen = (enteringMenu && _nextLocation.node == 's' && _nextLocation.view == 'e');
+	const bool isRestoreScreen = (enteringMenu && _nextLocation.node == 'r' && _nextLocation.view == 'e');
+
+	if (enteringMenu && !ConfMan.getBool("originalsaveload")) {
+		if (isSaveScreen || isRestoreScreen) {
 			// Hook up the ScummVM save/restore dialog
-			bool isSave = (_nextLocation.node == 's');
-			bool gameSavedOrLoaded = _engine->getSaveManager()->scummVMSaveLoadDialog(isSave);
-			if (!gameSavedOrLoaded || isSave) {
+			bool gameSavedOrLoaded = _engine->getSaveManager()->scummVMSaveLoadDialog(isSaveScreen);
+			if (!gameSavedOrLoaded || isSaveScreen) {
 				// Reload the current room
 				_nextLocation.world = _currentLocation.world;
 				_nextLocation.room = _currentLocation.room;
@@ -590,30 +594,26 @@ void ScriptManager::ChangeLocationReal() {
 
 	_engine->setRenderDelay(2);
 
-	if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
-		if (_nextLocation.world != 'g' || _nextLocation.room != 'j') {
+	if (!enteringMenu) {
+		if (!leavingMenu) {
 			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));
 			setStateValue(StateKey_LastRoom, getStateValue(StateKey_Room));
 			setStateValue(StateKey_LastNode, getStateValue(StateKey_Node));
 			setStateValue(StateKey_LastView, getStateValue(StateKey_View));
 			setStateValue(StateKey_LastViewPos, getStateValue(StateKey_ViewPos));
-		} else {
-			setStateValue(StateKey_Menu_LastWorld, getStateValue(StateKey_World));
-			setStateValue(StateKey_Menu_LastRoom, getStateValue(StateKey_Room));
-			setStateValue(StateKey_Menu_LastNode, getStateValue(StateKey_Node));
-			setStateValue(StateKey_Menu_LastView, getStateValue(StateKey_View));
-			setStateValue(StateKey_Menu_LastViewPos, getStateValue(StateKey_ViewPos));
-		}
-	}
-
-	if (_nextLocation.world == 'g' && _nextLocation.room == 'j') {
-		if (_nextLocation.node == 's' && _nextLocation.view == 'e' && _currentLocation.world != 'g') {
-			_engine->getSaveManager()->prepareSaveBuffer();
 		}
 	} else {
-		if (_currentLocation.world == 'g' && _currentLocation.room == 'j') {
-			_engine->getSaveManager()->flushSaveBuffer();
-		}
+		setStateValue(StateKey_Menu_LastWorld, getStateValue(StateKey_World));
+		setStateValue(StateKey_Menu_LastRoom, getStateValue(StateKey_Room));
+		setStateValue(StateKey_Menu_LastNode, getStateValue(StateKey_Node));
+		setStateValue(StateKey_Menu_LastView, getStateValue(StateKey_View));
+		setStateValue(StateKey_Menu_LastViewPos, getStateValue(StateKey_ViewPos));
+	}
+
+	if (isSaveScreen && !leavingMenu) {
+		_engine->getSaveManager()->prepareSaveBuffer();
+	} else if (leavingMenu) {
+		_engine->getSaveManager()->flushSaveBuffer();
 	}
 
 	setStateValue(StateKey_World, _nextLocation.world);
