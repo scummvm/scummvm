@@ -52,6 +52,7 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResou
 
 bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
+	_buttonValue = 0;
 
 	if (events._leftButton) {
 		// Check whether any button is selected

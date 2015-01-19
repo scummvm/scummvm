@@ -327,8 +327,8 @@ void XeenEngine::gameLoop() {
 		}
 		_scripts->giveTreasure();
 
-		// Wait loop
-		_interface->wait();
+		// Main user interface handler for waiting for and processing user input
+		_interface->perform();
 	}
 }
 

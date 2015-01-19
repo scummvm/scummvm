@@ -74,6 +74,7 @@ private:
 	bool _thinWall;
 	int _overallFrame;
 	bool _upDoorText;
+	int _steppingFX;
 
 	void initDrawStructs();
 
@@ -100,6 +101,10 @@ private:
 	void updateAutoMap();
 
 	void chargeStep();
+
+	void stepTime();
+
+	void doStepCode();
 public:
 	Interface(XeenEngine *vm);
 
@@ -119,7 +124,7 @@ public:
 
 	void charIconsPrint(bool updateFlag);
 
-	void wait();
+	void perform();
 };
 
 } // End of namespace Xeen

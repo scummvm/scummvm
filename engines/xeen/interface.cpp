@@ -49,6 +49,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), _vm(
 	_thinWall = false;
 	_overallFrame = 0;
 	_upDoorText = false;
+	_steppingFX = 0;
 
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	initDrawStructs();
@@ -2316,7 +2317,7 @@ void Interface::updateAutoMap() {
  * Waits for a keypress or click, whilst still allowing the game scene to
  * be animated.
  */
-void Interface::wait() {
+void Interface::perform() {
 	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -2328,7 +2329,7 @@ void Interface::wait() {
 		draw3d(true);
 
 		// Wait for a frame
-		while (!_vm->shouldQuit()) {
+		do {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		} while (!_buttonValue && events.timeElapsed() < 1 && !_vm->_party->_partyDead);
@@ -2392,6 +2393,8 @@ void Interface::wait() {
 			_upDoorText = false;
 			_flipDefaultGround = !_flipDefaultGround;
 			_flipGround = !_flipGround;
+
+			stepTime();
 			break;
 		default:
 			break;
@@ -2408,6 +2411,31 @@ void Interface::chargeStep() {
 
 		_tillMove = 3;
 	}
+}
+
+/**
+ * Handles incrementing game time
+ */
+void Interface::stepTime() {
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	doStepCode();
+	
+	if (++party._ctr24 == 24)
+		party._ctr24 = 0;
+
+	if (_buttonValue != Common::KEYCODE_SPACE && _buttonValue != Common::KEYCODE_w) {
+		_steppingFX ^= 1;
+		sound.playFX(_steppingFX + 7);
+	}
+
+	_upDoorText = false;
+	_flipDefaultGround = !_flipDefaultGround;
+	_flipGround = !_flipGround;
+}
+
+void Interface::doStepCode() {
+	// TODO
 }
 
 } // End of namespace Xeen

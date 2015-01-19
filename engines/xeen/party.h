@@ -176,7 +176,7 @@ public:
 	bool _cloudsEnd;
 	bool _darkSideEnd;
 	bool _worldEnd;
-	int hour_maybe;
+	int _ctr24;	// TODO: Figure out proper name
 	int _day;
 	int _year;
 	int _minutes;

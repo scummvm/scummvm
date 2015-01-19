@@ -198,7 +198,7 @@ Party::Party(XeenEngine *vm): _vm(vm) {
 	_cloudsEnd = false;
 	_darkSideEnd = false;
 	_worldEnd = false;
-	hour_maybe = 0;
+	_ctr24 = 0;
 	_day = 0;
 	_year = 0;
 	_minutes = 0;
@@ -273,7 +273,7 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_cloudsEnd);
 	s.syncAsUint16LE(_darkSideEnd);
 	s.syncAsUint16LE(_worldEnd);
-	s.syncAsUint16LE(hour_maybe);
+	s.syncAsUint16LE(_ctr24);
 	s.syncAsUint16LE(_day);
 	s.syncAsUint16LE(_year);
 	s.syncAsUint16LE(_minutes);

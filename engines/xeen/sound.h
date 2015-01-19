@@ -42,6 +42,8 @@ public:
 	void playSong(Common::SeekableReadStream &f) {}
 
 	void playSample(const Common::SeekableReadStream *stream, int v2) {}
+
+	void playFX(int id) {}
 };
 
 } // End of namespace Xeen
