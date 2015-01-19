@@ -120,7 +120,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		if (lineLength == 0) {
 			// Skip the specified number of scan lines
 			yPos += f.readByte();
-		} else if ((destPos.y + yPos) < 0) {
+		} else if ((destPos.y + yPos) < 0 || (destPos.y + yPos) >= dest.h) {
 			// Skip over the bytes of the line
 			f.skip(lineLength);
 		} else {

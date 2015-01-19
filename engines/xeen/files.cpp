@@ -175,7 +175,7 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 
 		// Read in the data for the specific resource
 		f.seek(ccEntry._offset);
-		byte *data = new byte[ccEntry._size];
+		byte *data = (byte *)malloc(ccEntry._size);
 		f.read(data, ccEntry._size);
 
 		if (_encoded) {

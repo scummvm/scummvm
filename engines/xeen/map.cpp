@@ -954,28 +954,28 @@ void Map::load(int mapId) {
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
 	bool isDarkCc = _vm->getGameID() == GType_DarkSide;
-	MazeData *mazeData = &_mazeData[0];
+	MazeData *mazeDataP = &_mazeData[0];
 	bool textLoaded = false;
 
-	for (int idx = 0; idx < 9; ++idx, ++mazeData) {
-		mazeData->_mazeId = mapId;
+	for (int idx = 0; idx < 9; ++idx, ++mazeDataP) {
+		mazeDataP->_mazeId = mapId;
 
 		if (mapId != 0) {
 			// Load in the maze's data file
 			Common::String datName = Common::String::format("maze%c%03d.dat",
 				(mapId >= 100) ? 'x' : '0', mapId);
 			File datFile(datName);
-			mazeData->synchronize(datFile);
+			mazeDataP->synchronize(datFile);
 			datFile.close();
 
 			if (isDarkCc && mapId == 50)
-				mazeData->setAllTilesStepped();
+				mazeDataP->setAllTilesStepped();
 			if (!isDarkCc && _vm->_party._gameFlags[25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
-				mazeData->clearCellSurfaces();
+				mazeDataP->clearCellSurfaces();
 			}
 
-			_isOutdoors = (mazeData->_mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
+			_isOutdoors = (mazeDataP->_mazeFlags2 & FLAG_IS_OUTDOORS) != 0;
 
 			// Handle loading text data
 			if (!textLoaded) {
