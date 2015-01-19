@@ -169,7 +169,7 @@ bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 
 	if (distance < 0) {
 		for (uint i = 0; i < _completeFrames.size(); ++i) {
-			if ((int)_completeFrames[i] > frame)
+			if (_completeFrames[i] > frame)
 				break;
 			closestFrame = _completeFrames[i];
 		}
