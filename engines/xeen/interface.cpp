@@ -792,15 +792,15 @@ void Interface::moveMonsters() {
 void Interface::setMainButtons() {
 	clearButtons();
 
-	addButton(Common::Rect(235,  75, 259,  95),  83, &_iconSprites);
-	addButton(Common::Rect(260,  75, 284,  95),  67, &_iconSprites);
-	addButton(Common::Rect(286,  75, 310,  95),  82, &_iconSprites);
-	addButton(Common::Rect(235,  96, 259, 116),  66, &_iconSprites);
-	addButton(Common::Rect(260,  96, 284, 116),  68, &_iconSprites);
-	addButton(Common::Rect(286,  96, 310, 116),  86, &_iconSprites);
-	addButton(Common::Rect(235, 117, 259, 137),  77, &_iconSprites);
-	addButton(Common::Rect(260, 117, 284, 137),  73, &_iconSprites);
-	addButton(Common::Rect(286, 117, 310, 137),  81, &_iconSprites);
+	addButton(Common::Rect(235,  75, 259,  95),  Common::KEYCODE_s, &_iconSprites);
+	addButton(Common::Rect(260,  75, 284,  95),  Common::KEYCODE_c, &_iconSprites);
+	addButton(Common::Rect(286,  75, 310,  95),  Common::KEYCODE_r, &_iconSprites);
+	addButton(Common::Rect(235,  96, 259, 116),  Common::KEYCODE_b, &_iconSprites);
+	addButton(Common::Rect(260,  96, 284, 116),  Common::KEYCODE_d, &_iconSprites);
+	addButton(Common::Rect(286,  96, 310, 116),  Common::KEYCODE_v, &_iconSprites);
+	addButton(Common::Rect(235, 117, 259, 137),  Common::KEYCODE_m, &_iconSprites);
+	addButton(Common::Rect(260, 117, 284, 137),  Common::KEYCODE_i, &_iconSprites);
+	addButton(Common::Rect(286, 117, 310, 137),  Common::KEYCODE_q, &_iconSprites);
 	addButton(Common::Rect(109, 137, 122, 147), Common::KEYCODE_TAB, &_iconSprites);
 	addButton(Common::Rect(235, 148, 259, 168), Common::KEYCODE_LEFT, &_iconSprites);
 	addButton(Common::Rect(260, 148, 284, 168), Common::KEYCODE_UP, &_iconSprites);
@@ -809,9 +809,9 @@ void Interface::setMainButtons() {
 	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, &_iconSprites);
 	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, &_iconSprites);
 	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS, &_iconSprites, false);
-	addButton(Common::Rect(239,  27, 312,  37),  49, &_iconSprites, false);
-	addButton(Common::Rect(239,  37, 312,  47),  50, &_iconSprites, false);
-	addButton(Common::Rect(239,  47, 312,  57),  51, &_iconSprites, false);
+	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1, &_iconSprites, false);
+	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, &_iconSprites, false);
+	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, &_iconSprites, false);
 }
 
 void Interface::setMazeBits() {
