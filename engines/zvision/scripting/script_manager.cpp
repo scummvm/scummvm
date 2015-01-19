@@ -576,13 +576,14 @@ void ScriptManager::ChangeLocationReal() {
 				_nextLocation.node = _currentLocation.node;
 				_nextLocation.view = _currentLocation.view;
 				_nextLocation.offset = _currentLocation.offset;
-				_currentLocation.world = '0';
+				
+				return;
+			} else {
+				_currentLocation.world = 'g';
 				_currentLocation.room = '0';
 				_currentLocation.node = '0';
 				_currentLocation.view = '0';
 				_currentLocation.offset = 0;
-			} else {
-				return;
 			}
 		}
 	}
