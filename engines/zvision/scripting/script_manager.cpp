@@ -74,7 +74,7 @@ void ScriptManager::initialize() {
 void ScriptManager::update(uint deltaTimeMillis) {
 	if (_currentLocation.node != _nextLocation.node || _currentLocation.room != _nextLocation.room ||
 	        _currentLocation.view != _nextLocation.view || _currentLocation.world != _nextLocation.world) {
-		ChangeLocationReal();
+		ChangeLocationReal(false);
 	}
 
 	updateNodes(deltaTimeMillis);
@@ -560,7 +560,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	}
 }
 
-void ScriptManager::ChangeLocationReal() {
+void ScriptManager::ChangeLocationReal(bool isLoading) {
 	assert(_nextLocation.world != 0);
 	debug(1, "Changing location to: %c %c %c %c %u", _nextLocation.world, _nextLocation.room, _nextLocation.node, _nextLocation.view, _nextLocation.offset);
 
@@ -595,7 +595,7 @@ void ScriptManager::ChangeLocationReal() {
 	_engine->setRenderDelay(2);
 
 	if (!enteringMenu) {
-		if (!leavingMenu) {
+		if (!isLoading && !leavingMenu) {
 			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));
 			setStateValue(StateKey_LastRoom, getStateValue(StateKey_Room));
 			setStateValue(StateKey_LastNode, getStateValue(StateKey_Node));
@@ -809,7 +809,7 @@ void ScriptManager::deserialize(Common::SeekableReadStream *stream) {
 
 	_nextLocation = nextLocation;
 
-	ChangeLocationReal();
+	ChangeLocationReal(true);
 
 	_engine->setRenderDelay(10);
 	setStateValue(StateKey_RestoreFlag, 1);

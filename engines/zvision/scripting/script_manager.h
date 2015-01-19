@@ -273,7 +273,7 @@ private:
 	bool execScope(ScriptScope &scope);
 
 	/** Perform change location */
-	void ChangeLocationReal();
+	void ChangeLocationReal(bool isLoading);
 
 	int8 inventoryGetCount();
 	void inventorySetCount(int8 cnt);
