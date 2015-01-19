@@ -62,7 +62,8 @@ public:
 
 	void clear();
 
-	void draw(XSurface &dest, int frame, const Common::Point &destPos, int flags = 0) const;
+	void draw(XSurface &dest, int frame, const Common::Point &destPos, 
+		int flags = 0, int scale = 0) const;
 
 	void draw(XSurface &dest, int frame) const;
 

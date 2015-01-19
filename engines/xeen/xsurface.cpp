@@ -24,6 +24,7 @@
 #include "common/util.h"
 #include "xeen/xsurface.h"
 #include "xeen/resources.h"
+#include "xeen/screen.h"
 
 namespace Xeen {
 
@@ -78,6 +79,126 @@ void XSurface::transBlitTo(XSurface &dest, const Common::Point &destPos) const {
 	}
 
 	dest.addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + w, destPos.y));
+}
+
+void XSurface::transBlitTo(XSurface &dest, const Common::Point &destPos, 
+		int scale, int transparentColor) {
+	int destX = destPos.x, destY = destPos.y;
+	int frameWidth = this->w;
+	int frameHeight = this->h;
+	int direction = 1;
+
+	int highestDim = MAX(frameWidth, frameHeight);
+	bool lineDist[SCREEN_WIDTH];
+	int distXCount = 0, distYCount = 0;
+
+	if (scale != 0) {
+		int distCtr = 0;
+		int distIndex = 0;
+		do {
+			distCtr += scale;
+			if (distCtr < 100) {
+				lineDist[distIndex] = false;
+			}
+			else {
+				lineDist[distIndex] = true;
+				distCtr -= 100;
+
+				if (distIndex < frameWidth)
+					++distXCount;
+
+				if (distIndex < frameHeight)
+					++distYCount;
+			}
+		} while (++distIndex < highestDim);
+
+		destX -= distXCount / 2;
+		destY -= distYCount - 1;
+	}
+
+	// Start of draw logic for scaled sprites
+	const byte *srcPixelsP = (const byte *)getPixels();
+
+	int destRight = dest.w - 1;
+	int destBottom = dest.h - 1;
+
+	// Check x bounding area
+	int spriteLeft = 0;
+	int spriteWidth = distXCount;
+	int widthAmount = destX + distXCount - 1;
+
+	if (destX < 0) {
+		spriteWidth += destX;
+		spriteLeft -= destX;
+	}
+	widthAmount -= destRight;
+	if (widthAmount > 0)
+		spriteWidth -= widthAmount;
+
+	if (spriteWidth <= 0)
+		return;
+
+	// Check y bounding area
+	int spriteTop = 0;
+	int spriteHeight = distYCount;
+	int heightAmount = destY + distYCount - 1;
+
+	if (destY < 0) {
+		spriteHeight += destY;
+		spriteTop -= destY;
+	}
+	heightAmount -= destBottom;
+	if (heightAmount > 0)
+		spriteHeight -= heightAmount;
+	int spriteBottom = spriteTop + spriteHeight;
+
+	if (spriteHeight <= 0)
+		return;
+
+	byte *destPixelsP = (byte *)dest.getBasePtr(destX + spriteLeft, destY + spriteTop);
+	int destWidth = 0, destHeight = 0;
+
+	spriteLeft = spriteLeft * direction;
+
+	// Loop through the lines of the sprite
+	for (int yp = 0, sprY = -1; yp < frameHeight; ++yp, srcPixelsP += this->pitch) {
+		if (!lineDist[yp])
+			// Not a display line, so skip it
+			continue;
+		// Check whether the sprite line is in the display range
+		++sprY;
+		if ((sprY >= spriteBottom) || (sprY < spriteTop))
+			continue;
+
+		// Found a line to display. Loop through the pixels
+		const byte *srcP = srcPixelsP;
+		byte *destP = destPixelsP;
+		++destHeight;
+
+		for (int xp = 0, sprX = 0; xp < frameWidth; ++xp, ++srcP) {
+			if (xp < spriteLeft)
+				// Not yet reached start of display area
+				continue;
+			if (!lineDist[sprX++])
+				// Not a display pixel
+				continue;
+
+			if (*srcP != transparentColor)
+				*destP = *srcP;
+
+			destP += direction;
+		}
+
+		// Keep track of widest line drawn
+		destWidth = MAX(destP - destPixelsP, destWidth);
+
+		// Move to the next destination line
+		destPixelsP += dest.pitch;
+	}
+
+	// Add a dirty rect for the affected area
+	dest.addDirtyRect(Common::Rect(destX + spriteLeft, destY + spriteTop,
+		destX + spriteLeft + destWidth, destY + spriteTop + destHeight));
 }
 
 void XSurface::blitTo(XSurface &dest, const Common::Point &destPos) const {

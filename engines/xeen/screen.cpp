@@ -178,7 +178,7 @@ void Window::drawList(DrawStruct *items, int count) {
 
 		// TODO: There are two sprite calls in this method. Figure out why
 		items->_sprites->draw(screen, items->_frame,
-			Common::Point(items->_x, items->_y), items->_flags);
+			Common::Point(items->_x, items->_y), items->_flags, items->_scale);
 	}
 }
 

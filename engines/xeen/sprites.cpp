@@ -228,11 +228,35 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		dest.addDirtyRect(r);
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, int flags) const {
-	// TODO: Support the different flags
-	drawOffset(dest, _index[frame]._offset1, destPos, flags);
-	if (_index[frame]._offset2)
-		drawOffset(dest, _index[frame]._offset2, destPos, flags);
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, 
+		int flags, int scale) const {
+	if (scale == 0) {
+		drawOffset(dest, _index[frame]._offset1, destPos, flags);
+		if (_index[frame]._offset2)
+			drawOffset(dest, _index[frame]._offset2, destPos, flags);
+	} else {
+		// Get the bounds for the surface and create a temporary one
+		Common::MemoryReadStream f(_data, _filesize);
+		f.seek(_index[frame]._offset1);
+		int xOffset = f.readUint16LE();
+		int width = f.readUint16LE();
+		int yOffset = f.readUint16LE();
+		int height = f.readUint16LE();
+		XSurface tempSurface(xOffset + width, yOffset + height);
+
+		// Draw sprite into temporary surface
+		tempSurface.fillRect(Common::Rect(0, 0, width, height), 0);
+		drawOffset(tempSurface, _index[frame]._offset1, Common::Point(), flags);
+		if (_index[frame]._offset2)
+			drawOffset(tempSurface, _index[frame]._offset2, Common::Point(), flags);
+
+		// TODO: I don't currently know the algorithm the original used for scaling.
+		// This is a best fit estimate that every increment of the scale field
+		// reduces the size of a sprite by approximately 6.6%
+		int newScale = MAX(100.0 - 6.6 * scale, 0.0);
+		if (newScale > 0)
+			tempSurface.transBlitTo(dest, Common::Point(), newScale, 0);
+	}
 }
 
 void SpriteResource::draw(XSurface &dest, int frame) const {
