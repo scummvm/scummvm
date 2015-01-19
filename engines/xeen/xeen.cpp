@@ -291,7 +291,7 @@ void XeenEngine::play() {
 
 	_interface->startup();
 	if (_mode == MODE_0) {
-		_screen->fadeOut(4);
+//		_screen->fadeOut(4);
 	}
 
 	_screen->_windows[0].update();
