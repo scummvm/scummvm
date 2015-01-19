@@ -1115,7 +1115,7 @@ void Interface::setMazeBits() {
 		break;
 	}
 
-	_thinWall = (_vm->_map->_currentWall._data != 0x8888) && _wo[27];
+	_thinWall = (_vm->_map->_currentWall._data != INVALID_CELL) && _wo[27];
 
 	switch (_vm->_map->getCell(8) - 1) {
 	case 1:
@@ -2315,9 +2315,13 @@ void Interface::drawMiniMap() {
 	Screen &screen = *_vm->_screen;
 	Window &window1 = screen._windows[1];
 
-	if (screen._windows[2]._enabled || screen._windows[10]._enabled ||
-			(!party._automapOn && !party._wizardEyeActive))
+	if (screen._windows[2]._enabled || screen._windows[10]._enabled)
 		return;
+	if (!party._automapOn && !party._wizardEyeActive) {
+		// Draw the Might & Magic logo
+		_globalSprites.draw(window1, 5, Common::Point(232, 9));
+		return;
+	}
 
 	int v, frame;
 	int frame2 = _overallFrame * 2;
@@ -2365,9 +2369,13 @@ void Interface::drawMiniMap() {
 				}
 			}
 		}
+		
+		// Draw the direction arrow
+		_globalSprites.draw(window1, party._mazeDirection + 1,
+			Common::Point(267, 36));
 	} else {
 		frame2 = (frame2 + 2) % 8;
-		
+		party._wizardEyeActive = true; //**DEBUG**
 		// First draw cell back for positions in the map that have been revealed
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
@@ -2375,7 +2383,7 @@ void Interface::drawMiniMap() {
 					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
 					0, 0xffff);
 
-				if (v != 0xffff && (map._currentSteppedOn || party._wizardEyeActive)) {
+				if (v != INVALID_CELL && (map._currentSteppedOn || party._wizardEyeActive)) {
 					map._tileSprites.draw(window1, 0, Common::Point(xp, yp));
 				}
 			}
@@ -2396,7 +2404,7 @@ void Interface::drawMiniMap() {
 				}
 			}
 		}
-
+		
 		v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0xffff, 0);
 		if (v != 0xffff && !map._currentSurfaceId && 
 				(map._currentSteppedOn || party._wizardEyeActive)) {
@@ -2548,7 +2556,7 @@ void Interface::drawMiniMap() {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
 					++colNum, ++xDiff, xp += 10) {
 				if (colNum == 4 && rowNum == 4) {
-					// Center of the minimap
+					// Center of the minimap. Draw the direction arrow
 					_globalSprites.draw(window1, party._mazeDirection + 1,
 						Common::Point(272, 40));
 				}
@@ -2673,11 +2681,7 @@ void Interface::drawMiniMap() {
 		}
 	}
 
-	if (map._isOutdoors) {
-		_globalSprites.draw(window1, party._mazeDirection + 1,
-			Common::Point(267, 36));
-	}
-
+	// Draw outer rectangle around the automap
 	_globalSprites.draw(window1, 6, Common::Point(223, 3));
 	party._wizardEyeActive = eyeActive;
 }

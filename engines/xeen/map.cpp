@@ -1225,7 +1225,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 		} else {
 			// No map, so reached outside indoor area or outer space outdoors
 			_currentSteppedOn = true;
-			return _isOutdoors ? SURFTYPE_SPACE : 0x8888;
+			return _isOutdoors ? SURFTYPE_SPACE : INVALID_CELL;
 		}
 	}
 
@@ -1263,7 +1263,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 
 	} else {
 		_currentSteppedOn = _isOutdoors;
-		return _isOutdoors ? SURFTYPE_SPACE : 0x8888;
+		return _isOutdoors ? SURFTYPE_SPACE : INVALID_CELL;
 	}
 }
 
@@ -1382,8 +1382,8 @@ int Map::getCell(int idx) {
 		} else {
 			_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? 7 : 0;
 		}
-		_currentWall._data = 0x8888;
-		return 0x8888;
+		_currentWall._data = INVALID_CELL;
+		return INVALID_CELL;
 	} 
 
 	_mazeDataIndex = 0;
@@ -1416,8 +1416,8 @@ int Map::getCell(int idx) {
 					_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? SURFTYPE_ROAD : SURFTYPE_DEFAULT;
 				}
 
-				_currentWall._data = 0x8888;
-				return 0x8888;
+				_currentWall._data = INVALID_CELL;
+				return INVALID_CELL;
 			}
 		
 			_mazeDataIndex = 0;
@@ -1452,8 +1452,8 @@ int Map::getCell(int idx) {
 					_currentSurfaceId = (mapId >= 25 && mapId <= 27) ? SURFTYPE_ROAD : SURFTYPE_DEFAULT;
 				}
 
-				_currentWall._data = 0x8888;
-				return 0x8888;
+				_currentWall._data = INVALID_CELL;
+				return INVALID_CELL;
 			}
 		}
 

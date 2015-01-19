@@ -35,6 +35,7 @@ namespace Xeen {
 #define MAP_WIDTH 16
 #define MAP_HEIGHT 16
 #define TOTAL_SURFACES 16
+#define INVALID_CELL 0x8888
 
 class XeenEngine;
 
