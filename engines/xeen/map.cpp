@@ -1195,7 +1195,7 @@ void Map::load(int mapId) {
 	loadSky();
 }
 
-int Map::mazeLookup(const Common::Point &pt, int layerShift) {
+int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	Common::Point pos = pt;
 	int mapId = _vm->_party->_mazeId;
 
@@ -1259,7 +1259,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift) {
 			_currentSteppedOn = _mazeData[_mazeDataIndex]._steppedOnTiles[pos.y][pos.x];
 		}
 
-		return (_mazeData[_mazeDataIndex]._wallData[pos.y][pos.x]._data >> layerShift) & 0xF;
+		return (_mazeData[_mazeDataIndex]._wallData[pos.y][pos.x]._data >> layerShift) & wallMask;
 
 	} else {
 		_currentSteppedOn = _isOutdoors;

@@ -33,6 +33,8 @@ namespace Xeen {
 
 class XeenEngine;
 
+#define MINIMAP_SIZE 7
+
 class Interface: public ButtonContainer, public InterfaceMap {
 private:
 	XeenEngine *_vm;
@@ -98,7 +100,7 @@ private:
 
 	void setMazeBits();
 
-	void updateAutoMap();
+	void drawMiniMap();
 
 	void chargeStep();
 

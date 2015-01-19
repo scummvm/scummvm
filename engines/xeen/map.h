@@ -362,7 +362,6 @@ private:
 	int _sideMonsters;
 	bool _stepped;
 	int _mazeDataIndex;
-	bool _currentSteppedOn;
 
 	void loadEvents(int mapId);
 public:
@@ -387,12 +386,13 @@ public:
 	MazeWallLayers _currentWall;
 	int _currentTile;
 	int _currentSurfaceId;
+	bool _currentSteppedOn;
 public:
 	Map(XeenEngine *vm);
 
 	void load(int mapId);
 
-	int mazeLookup(const Common::Point &pt, int layerShift);
+	int mazeLookup(const Common::Point &pt, int layerShift, int wallMask = 0xf);
 
 	void cellFlagLookup(const Common::Point &pt);
 
@@ -403,6 +403,8 @@ public:
 	int getCell(int idx);
 
 	MazeData mazeData() { return _mazeData[0]; }
+
+	MazeData mazeDataCurrent() { return _mazeData[_mazeDataIndex]; }
 
 	void loadSky();
 };

@@ -722,7 +722,7 @@ void Interface::draw3d(bool updateFlag) {
 	}
 
 	animate3d();
-	updateAutoMap();
+	drawMiniMap();
 
 	if (_vm->_falling == 1) {
 		error("TODO: Indoor falling");
@@ -808,7 +808,7 @@ void Interface::setMainButtons() {
 	addButton(Common::Rect(235, 169, 259, 189), 176, &_iconSprites);
 	addButton(Common::Rect(260, 169, 284, 189), 243, &_iconSprites);
 	addButton(Common::Rect(286, 169, 310, 189), 177, &_iconSprites);
-	addButton(Common::Rect(236,  11, 308,  69),  61, &_iconSprites, false);
+	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS, &_iconSprites, false);
 	addButton(Common::Rect(239,  27, 312,  37),  49, &_iconSprites, false);
 	addButton(Common::Rect(239,  37, 312,  47),  50, &_iconSprites, false);
 	addButton(Common::Rect(239,  47, 312,  57),  51, &_iconSprites, false);
@@ -2309,8 +2309,377 @@ void Interface::setMazeBits() {
 	}
 }
 
-void Interface::updateAutoMap() {
-	// TODO
+void Interface::drawMiniMap() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Window &window1 = screen._windows[1];
+
+	if (screen._windows[2]._enabled || screen._windows[10]._enabled ||
+			(!party._automapOn && !party._wizardEyeActive))
+		return;
+
+	int v, frame;
+	int frame2 = _overallFrame * 2;
+	bool eyeActive = party._wizardEyeActive;
+	if (party._automapOn)
+		party._wizardEyeActive = false;
+
+	if (map._isOutdoors) {
+		_globalSprites.draw(window1, 15, Common::Point(237, 12));
+
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					4);
+				frame = map.mazeDataCurrent()._surfaceTypes[v];
+
+				if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					4);
+				frame = map.mazeData()._wallTypes[v];
+
+				if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame + 16, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					4);
+
+				if (v != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, v + 32, Common::Point(xp, yp));
+				}
+			}
+		}
+	} else {
+		frame2 = (frame2 + 2) % 8;
+		
+		// First draw cell back for positions in the map that have been revealed
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+				if (v != 0xffff && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, 0, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		// Draw tiles based on the surface for each revelaed tile
+		for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+				if (v != 0xffff && !map._currentSurfaceId && 
+						(map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, 
+						map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+						Common::Point(xp, yp));
+				}
+			}
+		}
+
+		v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0xffff, 0);
+		if (v != 0xffff && !map._currentSurfaceId && 
+				(map._currentSteppedOn || party._wizardEyeActive)) {
+			map._tileSprites.draw(window1,
+				map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+				Common::Point(232, 9));
+		}
+
+		// Right edge
+		for (int rowNum = 0, yp = 242, yDiff = -3; rowNum < MINIMAP_SIZE; ++rowNum, --yDiff, yp += 8) {
+			v = map.mazeLookup(
+					Common::Point(party._mazePosition.x - 4, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+			if (v != 0xffff && !map._currentSurfaceId &&
+				(map._currentSteppedOn || party._wizardEyeActive)) {
+				map._tileSprites.draw(window1,
+					map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+					Common::Point(232, yp));
+			}
+		}
+
+		// Top edge
+		for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, --xDiff, xp += 8) {
+			v = map.mazeLookup(
+				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + 4),
+				0, 0xffff);
+
+			if (v != 0xffff && !map._currentSurfaceId &&
+					(map._currentSteppedOn || party._wizardEyeActive)) {
+				map._tileSprites.draw(window1,
+					map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+					Common::Point(xp, 9));
+			}
+		}
+
+		//
+		for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE; 
+				++idx, --xDiff, xp += 10, yp -= 8) {
+			v = map.mazeLookup(
+				Common::Point(party._mazePosition.x - 4, party._mazePosition.y - 3 + idx),
+				12, 0xffff);
+
+			switch (v) {
+			case 1:
+				frame = 18;
+				break;
+			case 3:
+				frame = 22;
+				break;
+			case 4:
+			case 13:
+				frame = 16;
+				break;
+			case 5:
+			case 8:
+				frame = 2;
+				break;
+			case 6:
+				frame = 30;
+				break;
+			case 7:
+				frame = 32;
+				break;
+			case 9:
+				frame = 24;
+				break;
+			case 10:
+				frame = 28;
+				break;
+			case 11:
+				frame = 14;
+				break;
+			case 12:
+				frame = frame2 + 4;
+				break;
+			case 14:
+				frame = 24;
+				break;
+			case 15:
+				frame = 26;
+				break;
+			default:
+				frame = -1;
+				break;
+			}
+
+			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
+				map._tileSprites.draw(window1, frame, Common::Point(222, yp));
+
+			v = map.mazeLookup(
+				Common::Point(party._mazePosition.x - 3 + idx, party._mazePosition.y + 4),
+				0);
+
+			switch (v) {
+			case 1:
+				frame = 19;
+				break;
+			case 2:
+				frame = 35;
+				break;
+			case 3:
+				frame = 23;
+				break;
+			case 4:
+			case 13:
+				frame = 17;
+				break;
+			case 5:
+			case 8:
+				frame = 3;
+				break;
+			case 6:
+				frame = 31;
+				break;
+			case 7:
+				frame = 33;
+				break;
+			case 9:
+				frame = 21;
+				break;
+			case 10:
+				frame = 29;
+				break;
+			case 11:
+				frame = 15;
+				break;
+			case 12:
+				frame = frame2 + 5;
+				break;
+			case 14:
+				frame = 25;
+				break;
+			case 15:
+				frame = 27;
+				break;
+			default:
+				frame = -1;
+				break;
+			}
+
+			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
+				map._tileSprites.draw(window1, frame, Common::Point(xp, 4));
+		}
+
+		//
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE;
+				++rowNum, --yDiff, yp -= 8) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
+					++colNum, ++xDiff, xp += 10) {
+				if (colNum == 4 && rowNum == 4) {
+					// Center of the minimap
+					_globalSprites.draw(window1, party._mazeDirection + 1,
+						Common::Point(272, 40));
+				}
+
+				v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
+					party._mazePosition.y + yDiff), 12, 0xffff);
+				switch (v) {
+				case 1:
+					frame = 18;
+					break;
+				case 3:
+					frame = 22;
+					break;
+				case 4:
+				case 13:
+					frame = 16;
+					break;
+				case 5:
+				case 8:
+					frame = 2;
+					break;
+				case 6:
+					frame = 30;
+					break;
+				case 7:
+					frame = 32;
+					break;
+				case 9:
+					frame = 20;
+					break;
+				case 10:
+					frame = 28;
+					break;
+				case 11:
+					frame = 14;
+					break;
+				case 12:
+					frame = frame2 + 4;
+					break;
+				case 14:
+					frame = 24;
+					break;
+				case 15:
+					frame = 26;
+					break;
+				default:
+					frame = -1;
+					break;
+				}
+
+				if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame, Common::Point(xp, yp));
+				}
+
+				v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
+					party._mazePosition.y + yDiff), 12, 0xffff);
+				switch (v) {
+				case 1:
+					frame = 19;
+					break;
+				case 2:
+					frame = 35;
+					break;
+				case 3:
+					frame = 23;
+					break;
+				case 4:
+				case 13:
+					frame = 17;
+					break;
+				case 5:
+				case 8:
+					frame = 3;
+					break;
+				case 6:
+					frame = 31;
+					break;
+				case 7:
+					frame = 33;
+					break;
+				case 9:
+					frame = 21;
+					break;
+				case 10:
+					frame = 29;
+					break;
+				case 11:
+					frame = 15;
+					break;
+				case 12:
+					frame = frame2 + 5;
+					break;
+				case 14:
+					frame = 25;
+					break;
+				case 15:
+					frame = 27;
+					break;
+				default:
+					frame = -1;
+					break;
+				}
+
+				if (v == -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		// Final loop
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+				if (v != 0xffff && !map._currentSurfaceId &&
+					(map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, 1, Common::Point(xp, yp));
+				}
+			}
+		}
+	}
+
+	if (map._isOutdoors) {
+		_globalSprites.draw(window1, party._mazeDirection + 1,
+			Common::Point(267, 36));
+	}
+
+	_globalSprites.draw(window1, 6, Common::Point(223, 3));
+	party._wizardEyeActive = eyeActive;
 }
 
 /**
@@ -2324,81 +2693,84 @@ void Interface::perform() {
 	Scripts &scripts = *_vm->_scripts;
 	const Common::Rect waitBounds(8, 8, 224, 140);
 
-	while (!_vm->shouldQuit()) {
-		events.updateGameCounter();
-		draw3d(true);
+	events.updateGameCounter();
+	draw3d(true);
 
-		// Wait for a frame
-		do {
-			events.pollEventsAndWait();
-			checkEvents(_vm);
-		} while (!_buttonValue && events.timeElapsed() < 1 && !_vm->_party->_partyDead);
+	// Wait for a frame
+	do {
+		events.pollEventsAndWait();
+		checkEvents(_vm);
+	} while (!_buttonValue && events.timeElapsed() < 1 && !_vm->_party->_partyDead);
 
-		if (!_buttonValue && !_vm->_party->_partyDead)
-			continue;
+	if (!_buttonValue && !_vm->_party->_partyDead)
+		return;
 
-		if (_buttonValue == Common::KEYCODE_SPACE ||
-				(events._leftButton && waitBounds.contains(events._mousePos))) {
-			int lookupId = map.mazeLookup(party._mazePosition, 
-				WALL_NUMBERS[party._mazeDirection][2]);
+	if (_buttonValue == Common::KEYCODE_SPACE ||
+			(events._leftButton && waitBounds.contains(events._mousePos))) {
+		int lookupId = map.mazeLookup(party._mazePosition, 
+			WALL_NUMBERS[party._mazeDirection][2]);
 
-			bool eventsFlag = true;
-			switch (lookupId) {
-			case 1:
-				if (!map._isOutdoors) {
-					scripts.openGrate(13, 1);
-					eventsFlag = _buttonValue != 0;
-				}
-
-			case 6:
-				if (!map._isOutdoors) {
-					scripts.openGrate(9, 0);
-					eventsFlag = _buttonValue != 0;
-				}
-				break;
-			case 9:
-				if (!map._isOutdoors) {
-					scripts.openGrate(6, 0);
-					eventsFlag = _buttonValue != 0;
-				}
-				break;
-			case 13:
-				if (!map._isOutdoors) {
-					scripts.openGrate(1, 1);
-					eventsFlag = _buttonValue != 0;
-				}
-				break;
-			default:
-				break;
+		bool eventsFlag = true;
+		switch (lookupId) {
+		case 1:
+			if (!map._isOutdoors) {
+				scripts.openGrate(13, 1);
+				eventsFlag = _buttonValue != 0;
 			}
-			if (eventsFlag) {
-				scripts.checkEvents();
-				if (_vm->shouldQuit())
-					return;
-			}
-		}
 
-		switch (_buttonValue) {
-		case Common::KEYCODE_TAB:
-			// Stop mosters doing any movement
-			_vm->_moveMonsters = false;
-			warning("TODO: showControlPanel");
+		case 6:
+			if (!map._isOutdoors) {
+				scripts.openGrate(9, 0);
+				eventsFlag = _buttonValue != 0;
+			}
 			break;
-
-		case Common::KEYCODE_SPACE:
-		case Common::KEYCODE_w:
-			// Wait one turn
-			chargeStep();
-			moveMonsters();
-			_upDoorText = false;
-			_flipDefaultGround = !_flipDefaultGround;
-			_flipGround = !_flipGround;
-
-			stepTime();
+		case 9:
+			if (!map._isOutdoors) {
+				scripts.openGrate(6, 0);
+				eventsFlag = _buttonValue != 0;
+			}
+			break;
+		case 13:
+			if (!map._isOutdoors) {
+				scripts.openGrate(1, 1);
+				eventsFlag = _buttonValue != 0;
+			}
 			break;
 		default:
 			break;
 		}
+		if (eventsFlag) {
+			scripts.checkEvents();
+			if (_vm->shouldQuit())
+				return;
+		}
+	}
+
+	switch (_buttonValue) {
+	case Common::KEYCODE_TAB:
+		// Stop mosters doing any movement
+		_vm->_moveMonsters = false;
+		warning("TODO: showControlPanel");
+		break;
+
+	case Common::KEYCODE_SPACE:
+	case Common::KEYCODE_w:
+		// Wait one turn
+		chargeStep();
+		moveMonsters();
+		_upDoorText = false;
+		_flipDefaultGround = !_flipDefaultGround;
+		_flipGround = !_flipGround;
+
+		stepTime();
+		break;
+	case Common::KEYCODE_EQUALS:
+	case Common::KEYCODE_KP_EQUALS:
+		// Toggle minimap
+		party._automapOn = !party._automapOn;
+		break;
+	default:
+		break;
 	}
 }
 
