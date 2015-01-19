@@ -594,26 +594,30 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 
 	_engine->setRenderDelay(2);
 
-	if (!enteringMenu) {
-		if (!isLoading && !leavingMenu) {
+	if (!leavingMenu) {
+		if (!isLoading && !enteringMenu) {
 			setStateValue(StateKey_LastWorld, getStateValue(StateKey_World));
 			setStateValue(StateKey_LastRoom, getStateValue(StateKey_Room));
 			setStateValue(StateKey_LastNode, getStateValue(StateKey_Node));
 			setStateValue(StateKey_LastView, getStateValue(StateKey_View));
 			setStateValue(StateKey_LastViewPos, getStateValue(StateKey_ViewPos));
+		} else {
+			setStateValue(StateKey_Menu_LastWorld, getStateValue(StateKey_World));
+			setStateValue(StateKey_Menu_LastRoom, getStateValue(StateKey_Room));
+			setStateValue(StateKey_Menu_LastNode, getStateValue(StateKey_Node));
+			setStateValue(StateKey_Menu_LastView, getStateValue(StateKey_View));
+			setStateValue(StateKey_Menu_LastViewPos, getStateValue(StateKey_ViewPos));
 		}
-	} else {
-		setStateValue(StateKey_Menu_LastWorld, getStateValue(StateKey_World));
-		setStateValue(StateKey_Menu_LastRoom, getStateValue(StateKey_Room));
-		setStateValue(StateKey_Menu_LastNode, getStateValue(StateKey_Node));
-		setStateValue(StateKey_Menu_LastView, getStateValue(StateKey_View));
-		setStateValue(StateKey_Menu_LastViewPos, getStateValue(StateKey_ViewPos));
 	}
 
-	if (isSaveScreen && !leavingMenu) {
-		_engine->getSaveManager()->prepareSaveBuffer();
-	} else if (leavingMenu) {
-		_engine->getSaveManager()->flushSaveBuffer();
+	if (enteringMenu) {
+		if (isSaveScreen && !leavingMenu) {
+			_engine->getSaveManager()->prepareSaveBuffer();
+		}
+	} else {
+		if (leavingMenu) {
+			_engine->getSaveManager()->flushSaveBuffer();
+		}
 	}
 
 	setStateValue(StateKey_World, _nextLocation.world);
