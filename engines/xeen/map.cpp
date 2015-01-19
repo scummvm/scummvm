@@ -1089,13 +1089,14 @@ void Map::load(int mapId) {
 		
 		for (int i = 0; i < TOTAL_SURFACES; ++i) {
 			_wallSprites._surfaces[i].clear();
+
 			if (_mazeData[0]._wallTypes[i] != 0) {
 				_wallSprites._surfaces[i].load(Common::String::format("%s.wal",
-					SURFACE_TYPE_NAMES[i]));
+					SURFACE_TYPE_NAMES[_mazeData[0]._wallTypes[i]]));
 			}
 
 			_surfaceSprites[i].clear();
-			if (i != 0 && _mazeData[0]._wallTypes[i] != 0)
+			if (i != 0 && _mazeData[0]._surfaceTypes[i] != 0)
 				_surfaceSprites[i].load(SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
@@ -1113,7 +1114,7 @@ void Map::load(int mapId) {
 			_surfaceSprites[i].clear();
 
 			if (_mazeData[0]._surfaceTypes[i] != 0 || i == 4)
-				_surfaceSprites[i].load(SURFACE_NAMES[i]);
+				_surfaceSprites[i].load(SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 
 		for (int i = 0; i < TOTAL_SURFACES; ++i)

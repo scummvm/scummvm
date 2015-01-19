@@ -1118,8 +1118,8 @@ void InterfaceMap::drawIndoors() {
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
 		if (surfaceId == SURFTYPE_WATER || surfaceId == SURFTYPE_LAVA || 
 				surfaceId == SURFTYPE_SEWER) {
-			drawStruct._flags = _flipWater ? 1 : 0;
 			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
+			drawStruct._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 		} else {
 			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
 			drawStruct._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
