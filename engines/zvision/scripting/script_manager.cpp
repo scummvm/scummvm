@@ -607,7 +607,7 @@ void ScriptManager::ChangeLocationReal() {
 	}
 
 	if (_nextLocation.world == 'g' && _nextLocation.room == 'j') {
-		if (_nextLocation.node == 's' && _nextLocation.view == 'e' && _currentLocation.world != 'g' && _currentLocation.room != 'j') {
+		if (_nextLocation.node == 's' && _nextLocation.view == 'e' && _currentLocation.world != 'g') {
 			_engine->getSaveManager()->prepareSaveBuffer();
 		}
 	} else {
