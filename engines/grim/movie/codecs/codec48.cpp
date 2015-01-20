@@ -20,8 +20,6 @@
  *
  */
 
-// Adopted from the smushplay - A simple LucasArts SMUSH video player
-
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/textconsole.h"

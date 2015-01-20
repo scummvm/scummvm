@@ -524,7 +524,7 @@ begin_credits("Credits");
 		add_person("Azamat H. Hackimov", "winterheart", "Configure fix");
 		add_person("Vincent Hamm", "yazoo", "Various engine code fixes and improvements");
 		add_person("Sven Hesse", "DrMcCoy", "Various compilation fixes");
-		add_person("Matthew Hoops", "clone2727", "Some engine improvements, some work on EMI support");
+		add_person("Matthew Hoops", "clone2727", "Smush codec48, Grim and EMI engine improvements");
 		add_person("Erich Hoover", "Compholio", "x86-64 fixes, various code fixes and improvements");
 		add_person("Max Horn", "fingolfin", "Few code fixes");
 		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");

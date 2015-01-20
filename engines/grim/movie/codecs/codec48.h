@@ -20,8 +20,6 @@
  *
  */
 
-// Adopted from the smushplay - A simple LucasArts SMUSH video player
-
 #ifndef CODEC48_H
 #define CODEC48_H
 

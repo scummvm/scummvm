@@ -42,8 +42,8 @@ ResidualVM
        Vincent Hamm                 - Various engine code fixes and
                                       improvements
        Sven Hesse                   - Various compilation fixes
-       Matthew Hoops                - Some engine improvements, some work on
-                                      EMI support
+       Matthew Hoops                - Smush codec48, Grim and EMI engine
+                                      improvements
        Erich Hoover                 - x86-64 fixes, various code fixes and
                                       improvements
        Max Horn                     - Few code fixes

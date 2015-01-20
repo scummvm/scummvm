@@ -63,7 +63,7 @@ static const char *credits[] = {
 "C0""Sven Hesse",
 "C2""Various compilation fixes",
 "C0""Matthew Hoops",
-"C2""Some engine improvements, some work on EMI support",
+"C2""Smush codec48, Grim and EMI engine improvements",
 "C0""Erich Hoover",
 "C2""x86-64 fixes, various code fixes and improvements",
 "C0""Max Horn",
