@@ -877,7 +877,7 @@ void Map::load(int mapId) {
 	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
 	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
 
-	if (_vm->_falling) {
+	if (_vm->_party->_falling) {
 		Window &w = screen._windows[9];
 		w.open();
 		w.writeString(OOPS);
@@ -1498,6 +1498,10 @@ void Map::loadSky() {
 	_skySprites.load(((party._mazeId >= 89 && party._mazeId <= 112) ||
 		party._mazeId == 128 || party._mazeId == 129) || !party._isNight 
 		? "sky.sky" : "night.sky");
+}
+
+void Map::getNewMaze() {
+	// TODO
 }
 
 } // End of namespace Xeen

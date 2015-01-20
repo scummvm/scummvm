@@ -21,6 +21,7 @@
  */
 
 #include "xeen/scripts.h"
+#include "xeen/party.h"
 
 namespace Xeen {
 

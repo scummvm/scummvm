@@ -148,7 +148,6 @@ public:
 	int _face1State;
 	int _face2State;
 	bool _noDirectionSense;
-	int _falling;
 	bool _moveMonsters;
 	int _openDoor;
 public:

@@ -26,6 +26,7 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "xeen/combat.h"
 #include "xeen/party.h"
 #include "xeen/scripts.h"
 #include "xeen/sprites.h"
@@ -38,24 +39,6 @@ namespace Xeen {
 #define INVALID_CELL 0x8888
 
 class XeenEngine;
-
-enum DamageType {
-	DT_PHYSICAL = 0, DT_1 = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,
-	DT_COLD = 4, DT_POISON = 5, DT_ENERGY = 6, DT_SLEEP = 7,
-	DT_FINGEROFDEATH = 8, DT_HOLYWORD = 9, DT_MASS_DISTORTION = 10,
-	DT_UNDED = 11, DT_BEASTMASTER = 12, DT_DRAGONSLEEP = 13,
-	DT_GOLEMSTOPPER = 14, DT_HYPNOTIZE = 15, DT_INSECT_SPRAY = 16,
-	DT_POISON_VALLEY = 17, DT_MAGIC_ARROW = 18
-};
-
-enum SpecialAttack {
-	SA_NONE = 0, SA_MAGIC = 1, SA_FIRE = 2, SA_ELEC = 3, SA_COLD = 4,
-	SA_POISON = 5, SA_ENERGY = 6, SA_DISEASE = 7, SA_INSANE = 8,
-	SA_SLEEP = 9, SA_CURSEITEM = 10, SA_INLOVE = 11, SA_DRAINSP = 12,
-	SA_CURSE = 13, SA_PARALYZE = 14, SA_UNCONSCIOUS = 15,
-	SA_CONFUSE = 16, SA_BREAKWEAPON = 17, SA_WEAKEN = 18,
-	SA_ERADICATE = 19, SA_AGING = 20, SA_DEATH = 21, SA_STONE = 22
-};
 
 enum MonsterType {
 	MONSTER_0 = 0, MONSTER_ANIMAL = 1, MONSTER_INSECT = 2,
@@ -407,6 +390,8 @@ public:
 	MazeData mazeDataCurrent() { return _mazeData[_mazeDataIndex]; }
 
 	void loadSky();
+
+	void getNewMaze();
 };
 
 } // End of namespace Xeen

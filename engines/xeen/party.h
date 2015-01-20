@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/serializer.h"
+#include "xeen/combat.h"
 #include "xeen/items.h"
 
 namespace Xeen {
@@ -213,6 +214,8 @@ public:
 	bool _newDay;
 	bool _isNight;
 	bool _stepped;
+	int _falling;
+	DamageType _damageType;
 public:
 	Party(XeenEngine *vm);
 

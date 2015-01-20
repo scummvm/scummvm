@@ -27,7 +27,6 @@
 #include "common/system.h"
 #include "common/serializer.h"
 #include "xeen/files.h"
-#include "xeen/party.h"
 
 namespace Xeen {
 

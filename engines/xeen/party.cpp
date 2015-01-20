@@ -232,6 +232,8 @@ Party::Party(XeenEngine *vm): _vm(vm) {
 	_newDay = false;
 	_isNight = false;
 	_stepped = false;
+	_damageType = DT_PHYSICAL;
+	_falling = false;
 }
 
 void Party::synchronize(Common::Serializer &s) {

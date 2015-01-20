@@ -129,6 +129,8 @@ public:
 
 	void charIconsPrint(bool updateFlag);
 
+	void doFalling();
+
 	void perform();
 };
 

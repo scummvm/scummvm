@@ -53,7 +53,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_face1State = 0;
 	_face2State = 0;
 	_noDirectionSense = false;
-	_falling = 0;
 	_moveMonsters = false;
 	_mode = MODE_0;
 	_openDoor = 0;

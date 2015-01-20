@@ -541,6 +541,7 @@ void Interface::draw3d(bool updateFlag) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 
 	if (screen._windows[11]._enabled)
@@ -724,11 +725,11 @@ void Interface::draw3d(bool updateFlag) {
 	animate3d();
 	drawMiniMap();
 
-	if (_vm->_falling == 1) {
+	if (party._falling == 1) {
 		error("TODO: Indoor falling");
 	}
 
-	if (_vm->_falling == 2) {
+	if (party._falling == 2) {
 		screen.saveBackground(1);
 	}
 
@@ -2940,6 +2941,72 @@ void Interface::stepTime() {
 }
 
 void Interface::doStepCode() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	int damage = 0;
+
+	party._stepped = true;
+	_upDoorText = false;
+
+	map.getCell(2);
+	int surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
+
+	switch (surfaceId) {
+	case SURFTYPE_SPACE:
+		// Wheeze.. can't breathe in space! Explosive decompression, here we come 
+		party._partyDead = true;
+		break;
+	case SURFTYPE_LAVA:
+		// It burns, it burns! 
+		damage = 100;
+		party._damageType = DT_FIRE;
+		break;
+	case SURFTYPE_SKY:
+		// We can fly, we can.. oh wait, we can't!
+		damage = 100;
+		party._damageType = DT_PHYSICAL;
+		party._falling = true;
+		break;
+	case SURFTYPE_DESERT:
+		// Without navigation skills, simulate getting lost by adding extra time
+		if (map._isOutdoors && !party.checkSkill(NAVIGATOR))
+			party.addTime(170);
+		break;
+	case SURFTYPE_CLOUD:
+		if (!party._levitateActive) {
+			party._damageType = DT_PHYSICAL;
+			party._falling = true;
+			damage = 100;
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (_vm->_files->_isDarkCc && party._gameFlags[374]) {
+		party._falling = false;
+	} else {
+		if (party._falling)
+			doFalling();
+
+		if ((party._mazePosition.x & 16) || (party._mazePosition.y & 16)) {
+			map.getNewMaze();
+		}
+
+		if (damage) {
+			_flipGround = !_flipGround;
+			draw3d(true);
+
+			warning("TODO: apply damage");
+
+			_flipGround = !_flipGround;
+		} else if (party._partyDead) {
+			draw3d(true);
+		}
+	}
+}
+
+void Interface::doFalling() {
 	// TODO
 }
 
