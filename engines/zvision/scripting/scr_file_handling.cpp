@@ -141,9 +141,17 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		else if (token.c_str()[0] == '<')
 			entry.criteriaOperator = Puzzle::LESS_THAN;
 
+		// There are supposed to be three tokens, but there is no
+		// guarantee that there will be a space between the second and
+		// the third one (bug #6774)
+		if (token.size() == 1) {
+			token = tokenizer.nextToken();
+		} else {
+			token.deleteChar(0);
+		}
+
 		// First determine if the last token is an id or a value
 		// Then parse it into 'argument'
-		token = tokenizer.nextToken();
 		if (token.contains('[')) {
 			sscanf(token.c_str(), "[%u]", &(entry.argument));
 			entry.argumentIsAKey = true;
