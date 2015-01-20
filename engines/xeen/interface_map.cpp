@@ -1112,8 +1112,8 @@ void InterfaceMap::drawIndoors() {
 		map.getCell(DRAW_NUMBERS[cellIndex]);
 
 		DrawStruct &drawStruct = _indoorList._groundTiles[cellIndex];
-		if (!map._surfaceSprites[map._currentSurfaceId].empty())
-			drawStruct._sprites = &map._surfaceSprites[map._currentSurfaceId];
+		SpriteResource &sprites = map._surfaceSprites[map._currentSurfaceId];
+		drawStruct._sprites = sprites.empty() ? (SpriteResource *)nullptr : &sprites;
 
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
 		if (surfaceId == SURFTYPE_WATER || surfaceId == SURFTYPE_LAVA || 
