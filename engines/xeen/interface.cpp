@@ -2375,7 +2375,7 @@ void Interface::drawMiniMap() {
 			Common::Point(267, 36));
 	} else {
 		frame2 = (frame2 + 2) % 8;
-		party._wizardEyeActive = true; //**DEBUG**
+
 		// First draw the default surface bases for each cell to show
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
@@ -2442,7 +2442,7 @@ void Interface::drawMiniMap() {
 		
 		//
 		for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE; 
-				++idx, --xDiff, xp += 10, yp -= 8) {
+				++idx, ++xDiff, xp += 10, yp -= 8) {
 			v = map.mazeLookup(
 				Common::Point(party._mazePosition.x - 4, party._mazePosition.y - 3 + idx),
 				12, 0xffff);
@@ -2549,7 +2549,7 @@ void Interface::drawMiniMap() {
 				map._tileSprites.draw(window1, frame, Common::Point(xp, 4));
 		}
 
-		//
+		// Draw the front/back walls of cells in the minimap
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE;
 				++rowNum, --yDiff, yp += 8) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
@@ -2665,15 +2665,14 @@ void Interface::drawMiniMap() {
 			}
 		}
 
-		// Final loop
+		// Draw the top of blocked/wall cells on the map
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
 				v = map.mazeLookup(
 					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
 					0, 0xffff);
 
-				if (v != INVALID_CELL && !map._currentSurfaceId &&
-						(map._currentSteppedOn || party._wizardEyeActive)) {
+				if (v == INVALID_CELL || (!map._currentSteppedOn && !party._wizardEyeActive)) {
 					map._tileSprites.draw(window1, 1, Common::Point(xp, yp));
 				}
 			}
