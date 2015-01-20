@@ -361,7 +361,6 @@ private:
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
-	bool _stepped;
 	int _mazeDataIndex;
 
 	void loadEvents(int mapId);

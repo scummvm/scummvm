@@ -212,6 +212,7 @@ public:
 	bool _partyDead;
 	bool _newDay;
 	bool _isNight;
+	bool _stepped;
 public:
 	Party(XeenEngine *vm);
 
@@ -228,6 +229,8 @@ public:
 	void addTime(int numMinutes);
 
 	void resetTemps();
+
+	void handleLight();
 };
 
 } // End of namespace Xeen

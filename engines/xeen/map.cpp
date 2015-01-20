@@ -544,8 +544,8 @@ MazeData::MazeData() {
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x)
 			_wallData[y][x]._data = 0;
-		Common::fill(&_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH], 0);
-		Common::fill(&_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH], 0);
+		Common::fill(&_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH], false);
+		Common::fill(&_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH], false);
 		_wallTypes[y] = 0;
 		_surfaceTypes[y] = 0;
 	}
@@ -859,7 +859,6 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideMonsters = 0;
 	_sidePictures = 0;
 	_isOutdoors = false;
-	_stepped = false;
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
 	_currentSurfaceId = 0;
@@ -886,7 +885,7 @@ void Map::load(int mapId) {
 		PleaseWait::show(_vm);
 	}
 
-	_stepped = true;
+	_vm->_party->_stepped = true;
 	_vm->_party->_mazeId = mapId;
 	_vm->_events->clearEvents();
 

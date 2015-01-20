@@ -743,6 +743,10 @@ void Interface::draw3d(bool updateFlag) {
 
 	// TODO: more stuff
 
+	_vm->_party->_stepped = false;
+	if (_vm->_mode == MODE_9) {
+		// TODO
+	}
 	events.wait(2);
 }
 
@@ -932,6 +936,8 @@ void Interface::setMazeBits() {
 	default:
 		break;
 	}
+
+	_vm->_party->handleLight();
 
 	switch (_vm->_map->getCell(3) - 1) {
 	case 1:
@@ -3015,7 +3021,7 @@ bool Interface::checkMoveDirection(int key) {
 		} else {
 			party._mazeDirection = dir;
 
-			if (surfaceId == SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
+			if (startSurfaceId == SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
 					party._walkOnWaterActive) {
 				sound.playFX(46);
 				return false;

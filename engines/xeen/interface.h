@@ -68,7 +68,6 @@ private:
 	bool _buttonsLoaded;
 	Common::String _interfaceText;
 	int _hiliteChar;
-	int _intrIndex1;
 	bool _flag1;
 	int _animCounter;
 	bool _isAnimReset;
@@ -109,6 +108,8 @@ private:
 	void doStepCode();
 
 	bool checkMoveDirection(int key);
+public:
+	int _intrIndex1;
 public:
 	Interface(XeenEngine *vm);
 

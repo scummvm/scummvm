@@ -231,6 +231,7 @@ Party::Party(XeenEngine *vm): _vm(vm) {
 	_partyDead = false;
 	_newDay = false;
 	_isNight = false;
+	_stepped = false;
 }
 
 void Party::synchronize(Common::Serializer &s) {
@@ -543,5 +544,21 @@ void Party::resetTemps() {
 	_blessedActive = false;
 }
 
+void Party::handleLight() {
+	Map &map = *_vm->_map;
+
+	if (_stepped) {
+		map.cellFlagLookup(_mazePosition);
+		if (map._currentIsDrain && _lightCount)
+			--_lightCount;
+
+		if (checkSkill(CARTOGRAPHER)) {
+			map.mazeDataCurrent()._steppedOnTiles[_mazePosition.y & 15][_mazePosition.x & 15] = true;
+		}
+	}
+
+	_vm->_interface->_intrIndex1 = _lightCount || 
+		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? 4 : 0;
+}
 
 } // End of namespace Xeen
