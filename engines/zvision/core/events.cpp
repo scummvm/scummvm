@@ -93,6 +93,11 @@ void ZVision::shortKeys(Common::Event event) {
 }
 
 void ZVision::cheatCodes(uint8 key) {
+	Location loc = _scriptManager->getCurrentLocation();
+	// Do not process cheat codes while in the game menus
+	if (loc.world == 'g' && loc.room == 'j')
+		return;
+
 	pushKeyToCheatBuf(key);
 
 	if (getGameId() == GID_GRANDINQUISITOR) {
@@ -146,7 +151,6 @@ void ZVision::cheatCodes(uint8 key) {
 		}
 
 		if (checkCode("HELLOSAILOR")) {
-			Location loc = _scriptManager->getCurrentLocation();
 			Audio::AudioStream *soundStream;
 			if (loc.world == 'v' && loc.room == 'b' && loc.node == '1' && loc.view == '0') {
 				soundStream = makeRawZorkStream("v000hpta.raw", this);
