@@ -35,6 +35,7 @@ class QueuingAudioStream;
 
 namespace Grim {
 
+class Codec48Decoder;
 class Blocky8;
 class Blocky16;
 
@@ -100,6 +101,7 @@ protected:
 		Common::Rational _frameRate;
 		Blocky8 *_blocky8;
 		Blocky16 *_blocky16;
+		Codec48Decoder *_codec48;
 		int32 _nbframes;
 		int _frameStart;
 	};

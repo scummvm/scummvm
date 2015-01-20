@@ -73,6 +73,7 @@ MODULE_OBJS := \
 	lua/lundump.o \
 	lua/lvm.o \
 	lua/lzio.o \
+	movie/codecs/codec48.o \
 	movie/codecs/blocky8.o \
 	movie/codecs/blocky16.o \
 	movie/codecs/vima.o \
