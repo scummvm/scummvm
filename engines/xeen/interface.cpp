@@ -2376,7 +2376,7 @@ void Interface::drawMiniMap() {
 	} else {
 		frame2 = (frame2 + 2) % 8;
 		party._wizardEyeActive = true; //**DEBUG**
-		// First draw cell back for positions in the map that have been revealed
+		// First draw the default surface bases for each cell to show
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
 				v = map.mazeLookup(
@@ -2388,59 +2388,58 @@ void Interface::drawMiniMap() {
 				}
 			}
 		}
-
-		// Draw tiles based on the surface for each revelaed tile
+		
+		// Draw correct surface bases for revealed tiles
 		for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
 				v = map.mazeLookup(
 					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
 					0, 0xffff);
+				int surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
 
-				if (v != 0xffff && !map._currentSurfaceId && 
+				if (v != INVALID_CELL && map._currentSurfaceId &&
 						(map._currentSteppedOn || party._wizardEyeActive)) {
-					map._tileSprites.draw(window1, 
-						map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
-						Common::Point(xp, yp));
+					map._tileSprites.draw(window1, surfaceId + 36, Common::Point(xp, yp));
 				}
 			}
 		}
 		
 		v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0xffff, 0);
-		if (v != 0xffff && !map._currentSurfaceId && 
+		if (v != INVALID_CELL && map._currentSurfaceId &&
 				(map._currentSteppedOn || party._wizardEyeActive)) {
 			map._tileSprites.draw(window1,
 				map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
 				Common::Point(232, 9));
 		}
-
-		// Right edge
-		for (int rowNum = 0, yp = 242, yDiff = -3; rowNum < MINIMAP_SIZE; ++rowNum, --yDiff, yp += 8) {
+		
+		// Handle drawing surface sprites partially clipped at the left edge
+		for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, --yDiff, yp += 8) {
 			v = map.mazeLookup(
 					Common::Point(party._mazePosition.x - 4, party._mazePosition.y + yDiff),
 					0, 0xffff);
 
-			if (v != 0xffff && !map._currentSurfaceId &&
-				(map._currentSteppedOn || party._wizardEyeActive)) {
+			if (v != INVALID_CELL && map._currentSurfaceId &&
+					(map._currentSteppedOn || party._wizardEyeActive)) {
 				map._tileSprites.draw(window1,
 					map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
 					Common::Point(232, yp));
 			}
 		}
 
-		// Top edge
-		for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, --xDiff, xp += 8) {
+		// Handle drawing surface sprites partially clipped at the top edge
+		for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, ++xDiff, xp += 8) {
 			v = map.mazeLookup(
 				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + 4),
 				0, 0xffff);
 
-			if (v != 0xffff && !map._currentSurfaceId &&
+			if (v != INVALID_CELL && map._currentSurfaceId &&
 					(map._currentSteppedOn || party._wizardEyeActive)) {
 				map._tileSprites.draw(window1,
 					map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
 					Common::Point(xp, 9));
 			}
 		}
-
+		
 		//
 		for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE; 
 				++idx, --xDiff, xp += 10, yp -= 8) {
@@ -2552,7 +2551,7 @@ void Interface::drawMiniMap() {
 
 		//
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE;
-				++rowNum, --yDiff, yp -= 8) {
+				++rowNum, --yDiff, yp += 8) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
 					++colNum, ++xDiff, xp += 10) {
 				if (colNum == 4 && rowNum == 4) {
@@ -2673,8 +2672,8 @@ void Interface::drawMiniMap() {
 					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
 					0, 0xffff);
 
-				if (v != 0xffff && !map._currentSurfaceId &&
-					(map._currentSteppedOn || party._wizardEyeActive)) {
+				if (v != INVALID_CELL && !map._currentSurfaceId &&
+						(map._currentSteppedOn || party._wizardEyeActive)) {
 					map._tileSprites.draw(window1, 1, Common::Point(xp, yp));
 				}
 			}
@@ -2988,8 +2987,7 @@ bool Interface::checkMoveDirection(int key) {
 			} else if (surfaceId == SURFTYPE_DWATER) {
 				if (party._walkOnWaterActive)
 					return true;
-			}
-			else if (surfaceId != SURFTYPE_SPACE) {
+			} else if (surfaceId != SURFTYPE_SPACE) {
 				return true;
 			}
 
