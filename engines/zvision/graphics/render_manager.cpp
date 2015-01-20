@@ -989,14 +989,33 @@ bool RenderManager::askQuestion(const Common::String &str) {
 		Common::Event evnt;
 		while (_engine->getEventManager()->pollEvent(evnt)) {
 			if (evnt.type == Common::EVENT_KEYDOWN) {
+				// English: yes/no
+				// German: ja/nein
+				// Spanish: si/no
+				// French: F4/any other key
 				switch (evnt.kbd.keycode) {
 				case Common::KEYCODE_y:
-					result = 2;
+					if (_engine->getLanguage() == Common::EN_ANY)
+						result = 2;
+					break;
+				case Common::KEYCODE_j:
+					if (_engine->getLanguage() == Common::DE_DEU)
+						result = 2;
+					break;
+				case Common::KEYCODE_s:
+					if (_engine->getLanguage() == Common::ES_ESP)
+						result = 2;
+					break;
+				case Common::KEYCODE_F4:
+					if (_engine->getLanguage() == Common::FR_FRA)
+						result = 2;
 					break;
 				case Common::KEYCODE_n:
 					result = 1;
 					break;
 				default:
+					if (_engine->getLanguage() == Common::FR_FRA)
+						result = 1;
 					break;
 				}
 			}
