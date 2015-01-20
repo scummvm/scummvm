@@ -27,19 +27,30 @@
 
 namespace Access {
 
-CharEntry::CharEntry(const byte *data, int gameType) {
+CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (gameType == GType_MartianMemorandum)
+	if (vm->getGameID() == GType_MartianMemorandum)
 		_estabIndex = -1;
 	else
 		_estabIndex = s.readSint16LE();
 
 	_screenFile.load(s);
+
+	if (vm->getGameID() == GType_MartianMemorandum) {
+		int idx = s.readSint16LE();
+		if (idx != -1)
+			warning("TODO: more CharEntry");
+	}
+
 	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
-	_numColors = s.readUint16LE();
+	if (vm->getGameID() == GType_MartianMemorandum) {
+		int lastColor = s.readUint16LE();
+		_numColors = lastColor - _startColor;
+	} else 
+		_numColors = s.readUint16LE();
 
 	// Load cells
 	for (byte cell = s.readByte(); cell != 0xff; cell = s.readByte()) {
@@ -77,16 +88,16 @@ CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 		// Setup character list
 		if (_vm->isDemo()) {
 			for (int i = 0; i < 27; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i], vm->getGameID()));
+				_charTable.push_back(CharEntry(Amazon::CHARTBL_DEMO[i], vm));
 		} else {
 			for (int i = 0; i < 37; ++i)
-				_charTable.push_back(CharEntry(Amazon::CHARTBL[i], vm->getGameID()));
+				_charTable.push_back(CharEntry(Amazon::CHARTBL[i], vm));
 		}
 		break;
 
 	case GType_MartianMemorandum:
 		for (int i = 0; i < 27; ++i)
-			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i], vm->getGameID()));
+			_charTable.push_back(CharEntry(Martian::CHARTBL_MM[i], vm));
 		break;
 
 	default:

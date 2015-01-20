@@ -41,7 +41,7 @@ public:
 	FileIdent _scriptFile;
 	Common::Array<ExtraCell> _extraCells;
 public:
-	CharEntry(const byte *data, int gameType);
+	CharEntry(const byte *data, AccessEngine *vm);
 
 	CharEntry();
 };
