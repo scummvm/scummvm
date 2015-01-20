@@ -104,6 +104,13 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
 
+	// Skip any commented out criteria. If all the criteria are commented out,
+	// we might end up with an invalid criteria list (bug #6776).
+	while (line.empty()) {
+		line = stream.readLine();
+		trimCommentsAndWhiteSpace(&line);
+	}
+
 	// Criteria can be empty
 	if (line.contains('}')) {
 		return false;
