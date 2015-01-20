@@ -112,8 +112,8 @@ void XSurface::transBlitTo(XSurface &dest, const Common::Point &destPos,
 			}
 		} while (++distIndex < highestDim);
 
-		destX -= distXCount / 2;
-		destY -= distYCount - 1;
+		destX += (this->w - distXCount) / 2;
+		destY += (this->h - distYCount) / 2;
 	}
 
 	// Start of draw logic for scaled sprites
