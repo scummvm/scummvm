@@ -1118,12 +1118,14 @@ void Map::load(int mapId) {
 		for (int i = 0; i < TOTAL_SURFACES; ++i)
 			_wallSprites._surfaces[i].clear();
 
-		Common::String fwlName = Common::String::format("%s.til",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]);
-		_wallSprites._fwl1.load(fwlName);
-		_wallSprites._fwl2.load(fwlName);
-		_wallSprites._fwl3.load(fwlName);
-		_wallSprites._fwl4.load(fwlName);
+		_wallSprites._fwl1.load(Common::String::format("f%s1.fwl",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		_wallSprites._fwl2.load(Common::String::format("f%s2.fwl",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		_wallSprites._fwl3.load(Common::String::format("f%s3.fwl",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+		_wallSprites._fwl4.load(Common::String::format("f%s4.fwl",
+			TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_wallSprites._swl.load(Common::String::format("s%s.swl",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]));
 
@@ -1182,7 +1184,7 @@ void Map::load(int mapId) {
 
 		indoorList._ground._sprites = &_groundSprites;
 
-		// Down show horizon for certain maps
+		// Don't show horizon for certain maps
 		if (_vm->_files->_isDarkCc) {
 			if ((mapId >= 89 && mapId <= 112) || mapId == 128 || mapId == 129)
 				indoorList._horizon._sprites = nullptr;
