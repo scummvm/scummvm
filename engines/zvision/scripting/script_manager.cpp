@@ -78,16 +78,16 @@ void ScriptManager::update(uint deltaTimeMillis) {
 	}
 
 	updateNodes(deltaTimeMillis);
-	if (! execScope(nodeview)) {
+	if (!execScope(nodeview)) {
 		return;
 	}
-	if (! execScope(room)) {
+	if (!execScope(room)) {
 		return;
 	}
-	if (! execScope(world)) {
+	if (!execScope(world)) {
 		return;
 	}
-	if (! execScope(universe)) {
+	if (!execScope(universe)) {
 		return;
 	}
 	updateControls(deltaTimeMillis);
