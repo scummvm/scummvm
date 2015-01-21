@@ -54,6 +54,8 @@ Console::Console(ZVision *engine) : GUI::Debugger(), _engine(engine) {
 	registerCmd("dumpfile", WRAP_METHOD(Console, cmdDumpFile));
 	registerCmd("dumpfiles", WRAP_METHOD(Console, cmdDumpFiles));
 	registerCmd("dumpimage", WRAP_METHOD(Console, cmdDumpImage));
+	registerCmd("statevalue", WRAP_METHOD(Console, cmdStateValue));
+	registerCmd("stateflag", WRAP_METHOD(Console, cmdStateFlag));
 }
 
 bool Console::cmdLoadVideo(int argc, const char **argv) {
@@ -325,6 +327,42 @@ bool Console::cmdDumpImage(int argc, const char **argv) {
 	out.close();
 
 	surface.free();
+
+	return true;
+}
+
+bool Console::cmdStateValue(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Use %s <valuenum> to show the value of a state variable\n", argv[0]);
+		debugPrintf("Use %s <valuenum> <newvalue> to set the value of a state variable\n", argv[0]);
+		return true;
+	}
+
+	int valueNum = atoi(argv[1]);
+	int newValue = (argc > 2) ? atoi(argv[2]) : -1;
+
+	if (argc == 2)
+		debugPrintf("[%d] = %d\n", valueNum, _engine->getScriptManager()->getStateValue(valueNum));
+	else if (argc == 3)
+		_engine->getScriptManager()->setStateValue(valueNum, newValue);
+
+	return true;
+}
+
+bool Console::cmdStateFlag(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Use %s <flagnum> to show the value of a state flag\n", argv[0]);
+		debugPrintf("Use %s <flagnum> <newvalue> to set the value of a state flag\n", argv[0]);
+		return true;
+	}
+
+	int valueNum = atoi(argv[1]);
+	int newValue = (argc > 2) ? atoi(argv[2]) : -1;
+
+	if (argc == 2)
+		debugPrintf("[%d] = %d\n", valueNum, _engine->getScriptManager()->getStateFlag(valueNum));
+	else if (argc == 3)
+		_engine->getScriptManager()->setStateFlag(valueNum, newValue);
 
 	return true;
 }
