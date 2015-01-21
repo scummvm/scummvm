@@ -1758,9 +1758,9 @@ void InterfaceMap::setMazeBits() {
 		break;
 	}
 
-	switch (_vm->_map->getCell(34) - 1) {
+	switch (_vm->_map->getCell(39) - 1) {
 	case 1:
-		++_wo[77];
+		++_wo[80];
 		break;
 	case 0:
 	case 2:
@@ -1776,7 +1776,7 @@ void InterfaceMap::setMazeBits() {
 	case 12:
 	case 13:
 	case 14:
-		++_wo[33];
+		++_wo[36];
 		break;
 	default:
 		break;

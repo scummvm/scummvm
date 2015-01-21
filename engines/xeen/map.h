@@ -384,9 +384,9 @@ public:
 
 	int getCell(int idx);
 
-	MazeData mazeData() { return _mazeData[0]; }
+	MazeData &mazeData() { return _mazeData[0]; }
 
-	MazeData mazeDataCurrent() { return _mazeData[_mazeDataIndex]; }
+	MazeData &mazeDataCurrent() { return _mazeData[_mazeDataIndex]; }
 
 	void loadSky();
 
