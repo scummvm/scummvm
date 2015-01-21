@@ -992,7 +992,8 @@ bool RenderManager::askQuestion(const Common::String &str) {
 				// English: yes/no
 				// German: ja/nein
 				// Spanish: si/no
-				// French: F4/any other key
+				// French Nemesis: F4/any other key
+				// French ZGI: oui/non
 				switch (evnt.kbd.keycode) {
 				case Common::KEYCODE_y:
 					if (_engine->getLanguage() == Common::EN_ANY)
@@ -1006,15 +1007,19 @@ bool RenderManager::askQuestion(const Common::String &str) {
 					if (_engine->getLanguage() == Common::ES_ESP)
 						result = 2;
 					break;
+				case Common::KEYCODE_o:
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_GRANDINQUISITOR)
+						result = 2;
+					break;
 				case Common::KEYCODE_F4:
-					if (_engine->getLanguage() == Common::FR_FRA)
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
 						result = 2;
 					break;
 				case Common::KEYCODE_n:
 					result = 1;
 					break;
 				default:
-					if (_engine->getLanguage() == Common::FR_FRA)
+					if (_engine->getLanguage() == Common::FR_FRA && _engine->getGameId() == GID_NEMESIS)
 						result = 1;
 					break;
 				}
