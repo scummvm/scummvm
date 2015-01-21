@@ -685,6 +685,8 @@ void Scripts::cmdDoTravel() {
 				continue;
 			}
 			if (_vm->_player->_roomNumber != idx) {
+				_vm->_player->_roomNumber = idx;
+				_vm->_room->_function = FN_CLEAR1;
 				if (Martian::TRAVEL_POS[idx][0] == -1) {
 					_vm->_player->_roomNumber = idx;
 					_vm->_room->_conFlag = true;

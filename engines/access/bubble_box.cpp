@@ -649,7 +649,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		if (!_vm->_events->_leftButton)
 			continue;
 
-		if ((_type != TYPE_1) && (_vm->_timers[2]._flag == 0)) {
+		if (((_type == TYPE_1) || (_type != TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
 			if (_btnUpPos.contains(_vm->_events->_mousePos)) {
 				if (_vm->BCNT) {
