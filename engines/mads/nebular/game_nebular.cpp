@@ -810,7 +810,7 @@ void GameNebular::step() {
 		(_player._facing == _player._turnToFacing)) {
 		if (_scene._frameStartTime >= *((uint32 *)&_globals[kWalkerTiming])) {
 			if (!_player._stopWalkerIndex) {
-				int randomVal = _vm->getRandomNumber(29999);;
+				int randomVal = _vm->getRandomNumber(29999);
 				if (_globals[kSexOfRex] == REX_MALE) {
 					switch (_player._facing) {
 					case FACING_SOUTHWEST:

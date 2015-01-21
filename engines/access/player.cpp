@@ -388,7 +388,7 @@ void Player::walkUpLeft() {
 	tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOffset];
 	_rawYTempL = (byte)tempL;
 	_rawYTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOffset] -
-		(tempL < 0 ? 1 : 0);;
+		(tempL < 0 ? 1 : 0);
 
 	if (_vm->_room->codeWalls()) {
 		plotCom2();

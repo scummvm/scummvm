@@ -202,7 +202,7 @@ uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Enti
 		break;
 	}
 
-	return Module::handleMessage(messageNum, param, sender);;
+	return Module::handleMessage(messageNum, param, sender);
 }
 
 void MenuModule::createLoadGameMenu() {
