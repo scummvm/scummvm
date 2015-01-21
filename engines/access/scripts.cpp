@@ -172,8 +172,49 @@ void Scripts::charLoop() {
 	_endFlag = endFlag;
 }
 
+void Scripts::clearWatch() {
+	_vm->_events->hideCursor();
+	_vm->_screen->_orgX1 = 128;
+	_vm->_screen->_orgY1 = 57;
+	_vm->_screen->_orgX2 = 228;
+	_vm->_screen->_orgY2 = 106;
+	_vm->_screen->_lColor = 0;
+	_vm->_screen->drawRect();
+
+	_vm->_events->showCursor();
+}
+
 void Scripts::printWatch() {
-	error("TODO: printWatch");
+	_vm->_fonts._charSet._lo = 8;
+	_vm->_fonts._charSet._hi = 2;
+	_vm->_fonts._charFor._lo = 2;
+	_vm->_fonts._charFor._hi = 255;
+
+	_vm->_screen->_maxChars = 19;
+	_vm->_screen->_printOrg = Common::Point(128, 58);
+	_vm->_screen->_printStart = Common::Point(128, 58);
+	clearWatch();
+
+	Common::String msg = readString();
+	Common::String line = "";
+	int width = 0;
+	bool lastLine;
+	do {
+		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_screen->_maxChars * 6, line, width);
+		warning("TODO: use printString");
+		// Draw the text
+		_vm->_fonts._font2.drawString(_vm->_screen, line, _vm->_screen->_printOrg);
+
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+
+		if (_vm->_screen->_printOrg.y == 106) {
+			_vm->_events->waitKeyMouse();
+			clearWatch();
+			_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y;
+		}
+	} while (!lastLine);
+	_vm->_events->waitKeyMouse();
 }
 
 void Scripts::findNull() {

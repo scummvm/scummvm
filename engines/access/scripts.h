@@ -43,6 +43,7 @@ private:
 	int _specialFunction;
 
 	void charLoop();
+	void clearWatch();
 	void printWatch();
 
 protected:
