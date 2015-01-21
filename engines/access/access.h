@@ -211,7 +211,7 @@ public:
 	// Fields used by MM
 	// TODO: Refactor
 	int TRAVEL[60];
-	int ASK[33];
+	int ASK[40];
 	int STARTTRAVELITEM;
 	int STARTTRAVELBOX;
 	int _startAboutItem;

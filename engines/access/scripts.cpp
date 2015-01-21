@@ -984,7 +984,19 @@ void Scripts::cmdPrintWatch() {
 }
 
 void Scripts::cmdDispAbout() {
-	error("TODO: DEMO - cmdDispAbout");
+	_vm->_travelBox->getList(Martian::ASKTBL, _vm->ASK);
+	int btnSelected = 0;
+	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
+	_vm->_startAboutItem = _vm->BOXDATASTART;
+	_vm->_startAboutBox = _vm->BOXSELECTY;
+
+	if (boxX == -1)
+		btnSelected = 2;
+
+	if (btnSelected == 2)
+		_vm->_useItem = -1;
+	else
+		_vm->_useItem = _vm->_travelBox->_tempListIdx[boxX];		
 }
 
 void Scripts::cmdPushLocation() {
