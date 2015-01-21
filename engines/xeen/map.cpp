@@ -1501,7 +1501,54 @@ void Map::loadSky() {
 }
 
 void Map::getNewMaze() {
-	// TODO
+	Party &party = *_vm->_party;
+	Common::Point pt = party._mazePosition;
+	int mapId = party._mazeId;
+
+	// Get the correct map to use from the cached list
+	_mazeDataIndex = 0;
+	while (_mazeData[_mazeDataIndex]._mazeId == mapId)
+		++_mazeDataIndex;
+
+	// Adjust Y and X to be in the 0-15 range, and on the correct surrounding
+	// map if either value is < 0 or >= 16
+	if (pt.y & 16) {
+		if (pt.y >= 0) {
+			pt.y -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._north;
+		} else {
+			pt.y += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._south;
+		}
+
+		if (mapId) {
+			_mazeDataIndex = 0;
+			while (_mazeData[_mazeDataIndex]._mazeId == mapId)
+				++_mazeDataIndex;
+		}
+	}
+
+	if (pt.x & 16) {
+		if (pt.x >= 0) {
+			pt.x -= 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
+		} else {
+			pt.x += 16;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
+		}
+
+		if (mapId) {
+			_mazeDataIndex = 0;
+			while (_mazeData[_mazeDataIndex]._mazeId == mapId)
+				++_mazeDataIndex;
+		}
+	}
+
+	// Save the adjusted (0,0)-(15,15) position and load the given map.
+	// This will make it the new center, with it's own surrounding mazees loaded
+	party._mazePosition = pt;
+	if (mapId)
+		load(mapId);
 }
 
 } // End of namespace Xeen
