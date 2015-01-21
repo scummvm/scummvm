@@ -3418,10 +3418,8 @@ void InterfaceMap::drawIndoors() {
 
 	map.cellFlagLookup(_vm->_party->_mazePosition);
 
-	// WORKAROUND: Original did an array lookup on _skySprites.
-	// Was this a feature for multiple skys that was abandoned?
-	assert(!map._currentSky);
-	_indoorList[0]._sprites = &map._skySprites;
+	assert(map._currentSky < 2);
+	_indoorList[0]._sprites = &map._skySprites[map._currentSky];
 	_indoorList[0]._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
 
 	if (_vm->_openDoor) {
@@ -3433,7 +3431,7 @@ void InterfaceMap::drawIndoors() {
 			);
 		map.cellFlagLookup(pt);
 		
-		_indoorList._sky2._sprites = &map._skySprites;
+		_indoorList._sky2._sprites = &map._skySprites[0];
 	} else {
 		_indoorList._sky2._sprites = _indoorList[0]._sprites;
 	}

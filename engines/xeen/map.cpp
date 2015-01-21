@@ -868,7 +868,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_currentCantRest = false;
 	_currentIsDrain = false;
 	_currentIsEvent = false;
-	_currentSky = false;
+	_currentSky = 0;
 	_currentMonsterFlags = 0;
 }
 
@@ -1082,7 +1082,7 @@ void Map::load(int mapId) {
 
 		_groundSprites.load("water.out");
 		_tileSprites.load("outdoor.til");
-		outdoorList._skySprite._sprites = &_skySprites;
+		outdoorList._skySprite._sprites = &_skySprites[0];
 		outdoorList._groundSprite._sprites = &_groundSprites;
 		
 		for (int i = 0; i < TOTAL_SURFACES; ++i) {
@@ -1100,7 +1100,7 @@ void Map::load(int mapId) {
 	} else {
 		warning("TODO");	// Sound loading
 
-		_mazeSkySprites.load(Common::String::format("%s.sky",
+		_skySprites[1].load(Common::String::format("%s.sky",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
 			TERRAIN_TYPES[_mazeData[0]._wallKind]));
@@ -1354,7 +1354,7 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 	_currentCantRest = cell._flags & FLAG_WATER;
 	_currentIsDrain = cell._flags & OUTFLAG_DRAIN;
 	_currentIsEvent = cell._flags & FLAG_AUTOEXECUTE_EVENT;
-	_currentSky = cell._flags & OUTFLAG_OBJECT_EXISTS;
+	_currentSky = (cell._flags & OUTFLAG_OBJECT_EXISTS) ? 1 : 0;
 	_currentMonsterFlags = cell._flags & 7;
 }
 
@@ -1495,7 +1495,7 @@ void Map::loadSky() {
 	Party &party = *_vm->_party;
 
 	party._isNight = party._minutes < (5 * 60) || party._minutes >= (21 * 60);
-	_skySprites.load(((party._mazeId >= 89 && party._mazeId <= 112) ||
+	_skySprites[0].load(((party._mazeId >= 89 && party._mazeId <= 112) ||
 		party._mazeId == 128 || party._mazeId == 129) || !party._isNight 
 		? "sky.sky" : "night.sky");
 }

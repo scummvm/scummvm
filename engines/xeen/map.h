@@ -354,8 +354,7 @@ public:
 	MazeEvents _events;
 	HeadData _headData;
 	AnimationInfo _animationInfo;
-	SpriteResource _skySprites;
-	SpriteResource _mazeSkySprites;
+	SpriteResource _skySprites[2];
 	SpriteResource _groundSprites;
 	SpriteResource _tileSprites;
 	SpriteResource _surfaceSprites[TOTAL_SURFACES];
@@ -364,7 +363,7 @@ public:
 	bool _currentCantRest;
 	bool _currentIsDrain;
 	bool _currentIsEvent;
-	bool _currentSky;
+	int _currentSky;
 	int _currentMonsterFlags;
 	MazeWallLayers _currentWall;
 	int _currentTile;
