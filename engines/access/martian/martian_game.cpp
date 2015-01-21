@@ -133,15 +133,19 @@ void MartianEngine::doSpecial5(int param1) {
 	_events->showCursor();
 	_screen->setIconPalette();
 	_screen->forceFadeIn();
-	warning("TODO: LoadCells");
+
+	Resource *cellsRes = _files->loadFile("CELLS00.LZ");
+	_objectsTable[0] = new SpriteResource(this, cellsRes);
+	delete cellsRes;
+
 	_timers[20]._timer = _timers[20]._initTm = 30;
-	Resource *_notesRes = _files->loadFile("NOTES.DAT");
-	_notesRes->_stream->skip(param1 * 2);
-	int pos = _notesRes->_stream->readUint16LE();
-	_notesRes->_stream->seek(pos);
+	Resource *notesRes = _files->loadFile("NOTES.DAT");
+	notesRes->_stream->skip(param1 * 2);
+	int pos = notesRes->_stream->readUint16LE();
+	notesRes->_stream->seek(pos);
 	Common::String msg = "";
 	byte c;
-	while ((c = (char)_notesRes->_stream->readByte()) != '\0')
+	while ((c = (char)notesRes->_stream->readByte()) != '\0')
 		msg += c;
 
 	displayNote(msg);
