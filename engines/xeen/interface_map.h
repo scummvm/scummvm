@@ -100,6 +100,9 @@ protected:
 	bool _isShooting;
 	bool _charsShooting;
 	int _objNumber;
+	bool _thinWall;
+
+	void setMazeBits();
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;

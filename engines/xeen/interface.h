@@ -72,7 +72,6 @@ private:
 	int _animCounter;
 	bool _isAnimReset;
 	byte _tillMove;
-	bool _thinWall;
 	int _overallFrame;
 	bool _upDoorText;
 	int _steppingFX;
@@ -96,8 +95,6 @@ private:
 	void moveMonsters();
 
 	void setMainButtons();
-
-	void setMazeBits();
 
 	void drawMiniMap();
 

@@ -373,6 +373,1510 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_charsShooting = false;
 	_objNumber = 0;
 	_combatFloatCounter = 0;
+	_thinWall = false;
+}
+
+
+void InterfaceMap::setMazeBits() {
+	Common::fill(&_wo[0], &_wo[308], 0);
+
+	switch (_vm->_map->getCell(0) - 1) {
+	case 0:
+		++_wo[125];
+		break;
+	case 1:
+		++_wo[69];
+		break;
+	case 2:
+		++_wo[185];
+		break;
+	case 3:
+	case 12:
+		++_wo[105];
+		break;
+	case 4:
+	case 7:
+		++_wo[25];
+		break;
+	case 5:
+		++_wo[225];
+		break;
+	case 6:
+		++_wo[205];
+		break;
+	case 8:
+		++_wo[145];
+		break;
+	case 9:
+		++_wo[305];
+		break;
+	case 10:
+		++_wo[245];
+		break;
+	case 11:
+		++_wo[165];
+		break;
+	case 13:
+		++_wo[265];
+		break;
+	case 14:
+		++_wo[285];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(1) - 1) {
+	case 1:
+		++_wo[72];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[28];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(2) - 1) {
+	case 0:
+		++_wo[127];
+		break;
+	case 1:
+		++_wo[71];
+		break;
+	case 2:
+		++_wo[187];
+		break;
+	case 3:
+	case 12:
+		++_wo[107];
+		break;
+	case 4:
+	case 7:
+		++_wo[27];
+		break;
+	case 5:
+		++_wo[227];
+		break;
+	case 6:
+		++_wo[207];
+		break;
+	case 8:
+		++_wo[147];
+		break;
+	case 9:
+		++_wo[307];
+		break;
+	case 10:
+		++_wo[247];
+		break;
+	case 11:
+		++_wo[167];
+		break;
+	case 13:
+		++_wo[267];
+		break;
+	case 14:
+		++_wo[287];
+		break;
+	default:
+		break;
+	}
+
+	_vm->_party->handleLight();
+
+	switch (_vm->_map->getCell(3) - 1) {
+	case 1:
+		++_wo[73];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[29];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(4) - 1) {
+	case 0:
+		++_wo[126];
+		break;
+	case 1:
+		++_wo[70];
+		break;
+	case 2:
+		++_wo[186];
+		break;
+	case 3:
+	case 12:
+		++_wo[106];
+		break;
+	case 4:
+	case 7:
+		++_wo[26];
+		break;
+	case 5:
+		++_wo[226];
+		break;
+	case 6:
+		++_wo[206];
+	case 8:
+		++_wo[146];
+		break;
+	case 9:
+		++_wo[306];
+		break;
+	case 10:
+		++_wo[246];
+		break;
+		break;
+	case 11:
+		++_wo[166];
+		break;
+	case 13:
+		++_wo[266];
+		break;
+	case 14:
+		++_wo[286];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(5) - 1) {
+	case 0:
+		++_wo[122];
+		break;
+	case 1:
+		++_wo[64];
+		break;
+	case 2:
+		++_wo[182];
+		break;
+	case 3:
+	case 12:
+		++_wo[102];
+		break;
+	case 4:
+	case 7:
+		++_wo[20];
+		break;
+	case 5:
+		++_wo[222];
+		break;
+	case 6:
+		++_wo[202];
+		break;
+	case 8:
+		++_wo[142];
+		break;
+	case 9:
+		++_wo[302];
+		break;
+	case 10:
+		++_wo[242];
+		break;
+	case 11:
+		++_wo[162];
+		break;
+	case 13:
+		++_wo[262];
+		break;
+	case 14:
+		++_wo[282];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(6) - 1) {
+	case 1:
+		++_wo[67];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[23];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(7) - 1) {
+	case 0:
+		++_wo[124];
+		break;
+	case 1:
+		++_wo[66];
+		break;
+	case 2:
+		++_wo[184];
+		break;
+	case 3:
+	case 12:
+		++_wo[104];
+		break;
+	case 4:
+	case 7:
+		++_wo[22];
+		break;
+	case 5:
+		++_wo[224];
+		break;
+	case 6:
+		++_wo[204];
+		break;
+	case 8:
+		++_wo[144];
+		break;
+	case 9:
+		++_wo[304];
+		break;
+	case 10:
+		++_wo[244];
+		break;
+	case 11:
+		++_wo[164];
+		break;
+	case 13:
+		++_wo[264];
+		break;
+	case 14:
+		++_wo[284];
+		break;
+	default:
+		break;
+	}
+
+	_thinWall = (_vm->_map->_currentWall._data != INVALID_CELL) && _wo[27];
+
+	switch (_vm->_map->getCell(8) - 1) {
+	case 1:
+		++_wo[68];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[24];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(9) - 1) {
+	case 0:
+		++_wo[123];
+		break;
+	case 1:
+		++_wo[65];
+		break;
+	case 2:
+		++_wo[183];
+		break;
+	case 3:
+	case 12:
+		++_wo[103];
+		break;
+	case 4:
+	case 7:
+		++_wo[21];
+		break;
+	case 5:
+		++_wo[223];
+		break;
+	case 6:
+		++_wo[203];
+		break;
+	case 8:
+		++_wo[143];
+		break;
+	case 9:
+		++_wo[3033];
+		break;
+	case 10:
+		++_wo[243];
+		break;
+	case 11:
+		++_wo[163];
+		break;
+	case 13:
+		++_wo[263];
+		break;
+	case 14:
+		++_wo[283];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(10) - 1) {
+	case 0:
+		++_wo[117];
+		break;
+	case 1:
+		++_wo[55];
+		break;
+	case 2:
+		++_wo[177];
+		break;
+	case 3:
+	case 12:
+		++_wo[97];
+		break;
+	case 4:
+	case 7:
+		++_wo[11];
+		break;
+	case 5:
+		++_wo[217];
+		break;
+	case 6:
+		++_wo[197];
+		break;
+	case 8:
+		++_wo[137];
+		break;
+	case 9:
+		++_wo[297];
+		break;
+	case 10:
+		++_wo[237];
+	case 11:
+		++_wo[157];
+		break;
+	case 13:
+		++_wo[257];
+		break;
+	case 14:
+		++_wo[277];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(11) - 1) {
+	case 1:
+		++_wo[60];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[16];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(12) - 1) {
+	case 0:
+		++_wo[118];
+		break;
+	case 1:
+		++_wo[56];
+		break;
+	case 2:
+		++_wo[178];
+		break;
+	case 3:
+	case 12:
+		++_wo[98];
+		break;
+	case 4:
+	case 7:
+		++_wo[12];
+		break;
+	case 5:
+		++_wo[218];
+		break;
+	case 6:
+		++_wo[198];
+		break;
+	case 8:
+		++_wo[138];
+		break;
+	case 9:
+		++_wo[298];
+		break;
+	case 10:
+		++_wo[238];
+		break;
+	case 11:
+		++_wo[158];
+		break;
+	case 13:
+		++_wo[258];
+		break;
+	case 14:
+		++_wo[278];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(13) - 1) {
+	case 1:
+		++_wo[61];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[17];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(14) - 1) {
+	case 0:
+		++_wo[121];
+		break;
+	case 1:
+		++_wo[59];
+		break;
+	case 2:
+		++_wo[181];
+		break;
+	case 3:
+	case 12:
+		++_wo[101];
+		break;
+	case 4:
+	case 7:
+		++_wo[15];
+		break;
+	case 5:
+		++_wo[221];
+		break;
+	case 6:
+		++_wo[201];
+		break;
+	case 8:
+		++_wo[141];
+		break;
+	case 9:
+		++_wo[301];
+		break;
+	case 10:
+		++_wo[241];
+		break;
+	case 11:
+		++_wo[161];
+		break;
+	case 13:
+		++_wo[261];
+		break;
+	case 14:
+		++_wo[281];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(15) - 1) {
+	case 1:
+		++_wo[63];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[19];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(16) - 1) {
+	case 0:
+		++_wo[120];
+		break;
+	case 1:
+		++_wo[58];
+		break;
+	case 2:
+		++_wo[180];
+		break;
+	case 3:
+	case 12:
+		++_wo[100];
+		break;
+	case 4:
+	case 7:
+		++_wo[14];
+		break;
+	case 5:
+		++_wo[220];
+		break;
+	case 6:
+		++_wo[200];
+		break;
+	case 8:
+		++_wo[140];
+		break;
+	case 9:
+		++_wo[300];
+		break;
+	case 10:
+		++_wo[240];
+		break;
+	case 11:
+		++_wo[160];
+		break;
+	case 13:
+		++_wo[260];
+		break;
+	case 14:
+		++_wo[280];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(17) - 1) {
+	case 1:
+		++_wo[62];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[18];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(18) - 1) {
+	case 0:
+		++_wo[119];
+		break;
+	case 1:
+		++_wo[57];
+		break;
+	case 2:
+		++_wo[179];
+		break;
+	case 3:
+	case 12:
+		++_wo[99];
+		break;
+	case 4:
+	case 7:
+		++_wo[13];
+		break;
+	case 5:
+		++_wo[219];
+		break;
+	case 6:
+		++_wo[199];
+		break;
+	case 8:
+		++_wo[139];
+		break;
+	case 9:
+		++_wo[299];
+		break;
+	case 10:
+		++_wo[239];
+		break;
+	case 11:
+		++_wo[159];
+		break;
+	case 13:
+		++_wo[259];
+		break;
+	case 14:
+		++_wo[279];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(19) - 1) {
+	case 0:
+		++_wo[108];
+		break;
+	case 1:
+		++_wo[78];
+		break;
+	case 2:
+		++_wo[168];
+	case 3:
+	case 12:
+		++_wo[88];
+		break;
+	case 4:
+	case 7:
+		++_wo[34];
+		break;
+	case 5:
+		++_wo[208];
+		break;
+	case 6:
+		++_wo[188];
+		break;
+	case 8:
+		++_wo[128];
+		break;
+	case 9:
+		++_wo[288];
+		break;
+	case 10:
+		++_wo[228];
+		break;
+	case 11:
+		++_wo[148];
+		break;
+	case 13:
+		++_wo[248];
+		break;
+	case 14:
+		++_wo[268];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(20) - 1) {
+	case 1:
+		++_wo[76];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[32];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(21) - 1) {
+	case 0:
+		++_wo[109];
+		break;
+	case 1:
+		++_wo[44];
+		break;
+	case 2:
+		++_wo[169];
+		break;
+	case 3:
+	case 12:
+		++_wo[89];
+		break;
+	case 4:
+	case 7:
+		++_wo[0];
+		break;
+	case 5:
+		++_wo[209];
+		break;
+	case 6:
+		++_wo[189];
+		break;
+	case 8:
+		++_wo[129];
+		break;
+	case 9:
+		++_wo[289];
+		break;
+	case 10:
+		++_wo[229];
+		break;
+	case 11:
+		++_wo[149];
+		break;
+	case 13:
+		++_wo[249];
+		break;
+	case 14:
+		++_wo[269];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(22) - 1) {
+	case 1:
+		++_wo[74];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[30];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(23) - 1) {
+	case 0:
+		++_wo[110];
+		break;
+	case 1:
+		++_wo[45];
+		break;
+	case 2:
+		++_wo[170];
+		break;
+	case 3:
+	case 12:
+		++_wo[90];
+		break;
+	case 4:
+	case 7:
+		++_wo[1];
+		break;
+	case 5:
+		++_wo[210];
+		break;
+	case 6:
+		++_wo[190];
+		break;
+	case 8:
+		++_wo[130];
+		break;
+	case 9:
+		++_wo[290];
+		break;
+	case 10:
+		++_wo[230];
+		break;
+	case 11:
+		++_wo[150];
+		break;
+	case 13:
+		++_wo[250];
+		break;
+	case 14:
+		++_wo[270];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(24) - 1) {
+	case 1:
+		++_wo[52];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[8];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(25) - 1) {
+	case 0:
+		++_wo[111];
+		break;
+	case 1:
+		++_wo[46];
+		break;
+	case 2:
+		++_wo[171];
+		break;
+	case 3:
+	case 12:
+		++_wo[91];
+		break;
+	case 4:
+	case 7:
+		++_wo[2];
+		break;
+	case 5:
+		++_wo[211];
+		break;
+	case 6:
+		++_wo[191];
+		break;
+	case 8:
+		++_wo[131];
+		break;
+	case 9:
+		++_wo[291];
+		break;
+	case 10:
+		++_wo[231];
+		break;
+	case 11:
+		++_wo[151];
+		break;
+	case 13:
+		++_wo[251];
+		break;
+	case 14:
+		++_wo[271];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(26) - 1) {
+	case 1:
+		++_wo[51];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[7];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(27) - 1) {
+	case 0:
+		++_wo[116];
+		break;
+	case 1:
+		++_wo[50];
+		break;
+	case 2:
+		++_wo[176];
+		break;
+	case 3:
+	case 12:
+		++_wo[96];
+		break;
+	case 4:
+	case 7:
+		++_wo[6];
+		break;
+	case 5:
+		++_wo[216];
+		break;
+	case 6:
+		++_wo[196];
+		break;
+	case 8:
+		++_wo[136];
+		break;
+	case 9:
+		++_wo[296];
+		break;
+	case 10:
+		++_wo[236];
+		break;
+	case 11:
+		++_wo[156];
+		break;
+	case 13:
+		++_wo[256];
+		break;
+	case 14:
+		++_wo[276];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(28) - 1) {
+	case 1:
+		++_wo[53];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[9];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(29) - 1) {
+	case 0:
+		++_wo[115];
+		break;
+	case 1:
+		++_wo[49];
+		break;
+	case 2:
+		++_wo[175];
+		break;
+	case 3:
+	case 12:
+		++_wo[95];
+		break;
+	case 4:
+	case 7:
+		++_wo[5];
+		break;
+	case 5:
+		++_wo[215];
+		break;
+	case 6:
+		++_wo[195];
+		break;
+	case 8:
+		++_wo[135];
+		break;
+	case 9:
+		++_wo[295];
+		break;
+	case 10:
+		++_wo[235];
+		break;
+	case 11:
+		++_wo[155];
+		break;
+	case 13:
+		++_wo[255];
+		break;
+	case 14:
+		++_wo[275];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(30) - 1) {
+	case 1:
+		++_wo[54];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[10];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(31) - 1) {
+	case 0:
+		++_wo[114];
+		break;
+	case 1:
+		++_wo[48];
+		break;
+	case 2:
+		++_wo[174];
+		break;
+	case 3:
+	case 12:
+		++_wo[94];
+		break;
+	case 4:
+	case 7:
+		++_wo[4];
+		break;
+	case 5:
+		++_wo[214];
+		break;
+	case 6:
+		++_wo[194];
+		break;
+	case 8:
+		++_wo[134];
+		break;
+	case 9:
+		++_wo[294];
+		break;
+	case 10:
+		++_wo[234];
+		break;
+	case 11:
+		++_wo[154];
+		break;
+	case 13:
+		++_wo[254];
+		break;
+	case 14:
+		++_wo[274];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(32) - 1) {
+	case 1:
+		++_wo[75];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[31];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(33) - 1) {
+	case 0:
+		++_wo[112];
+		break;
+	case 1:
+		++_wo[47];
+		break;
+	case 2:
+		++_wo[172];
+		break;
+	case 3:
+	case 12:
+		++_wo[92];
+		break;
+	case 4:
+	case 7:
+		++_wo[3];
+		break;
+	case 5:
+		++_wo[212];
+		break;
+	case 6:
+		++_wo[192];
+		break;
+	case 8:
+		++_wo[132];
+		break;
+	case 9:
+		++_wo[292];
+		break;
+	case 10:
+		++_wo[232];
+		break;
+	case 11:
+		++_wo[152];
+		break;
+	case 13:
+		++_wo[252];
+		break;
+	case 14:
+		++_wo[272];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(34) - 1) {
+	case 1:
+		++_wo[77];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[33];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(35) - 1) {
+	case 0:
+		++_wo[113];
+		break;
+	case 1:
+		++_wo[79];
+		break;
+	case 2:
+		++_wo[173];
+		break;
+	case 3:
+	case 12:
+		++_wo[93];
+		break;
+	case 4:
+	case 7:
+		++_wo[35];
+		break;
+	case 5:
+		++_wo[213];
+		break;
+	case 6:
+		++_wo[193];
+		break;
+	case 8:
+		++_wo[133];
+		break;
+	case 9:
+		++_wo[293];
+		break;
+	case 10:
+		++_wo[233];
+		break;
+	case 11:
+		++_wo[153];
+		break;
+	case 13:
+		++_wo[253];
+		break;
+	case 14:
+		++_wo[273];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(36) - 1) {
+	case 1:
+		++_wo[83];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[39];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(37) - 1) {
+	case 1:
+		++_wo[82];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[38];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(38) - 1) {
+	case 1:
+		++_wo[81];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[37];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(34) - 1) {
+	case 1:
+		++_wo[77];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[33];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(40) - 1) {
+	case 1:
+		++_wo[84];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[40];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(41) - 1) {
+	case 1:
+		++_wo[85];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[41];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(42) - 1) {
+	case 1:
+		++_wo[86];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[42];
+		break;
+	default:
+		break;
+	}
+
+	switch (_vm->_map->getCell(43) - 1) {
+	case 1:
+		++_wo[87];
+		break;
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		++_wo[43];
+		break;
+	default:
+		break;
+	}
 }
 
 void InterfaceMap::setIndoorsMonsters() {
