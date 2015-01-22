@@ -47,7 +47,7 @@ public:
 
 	enum {
 		kMaxObjectsCount = 256,
-		kMaxTracks = 2049
+		kMaxTracks = 2048
 	};
 
 	struct PianoKeyInfo {
@@ -140,6 +140,15 @@ public:
 	void loadSounds();
 	void playNote(int noteNum);
 	void stopNote(int noteNum);
+
+	bool getLoadFilename(Common::String &filename);
+	bool getSaveFilename(Common::String &filename);
+	bool querySaveModifiedDialog();
+	bool querySaveModifiedTracks();
+	bool loadTracks();
+	bool saveTracks();
+	bool loadFromStream(Common::ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
 
 };
 
