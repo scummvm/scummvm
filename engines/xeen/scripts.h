@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/serializer.h"
+#include "common/str-array.h"
 #include "xeen/files.h"
 
 namespace Xeen {
@@ -111,7 +112,7 @@ public:
 
 class MazeEvents : public Common::Array<MazeEvent> {
 public:
-	Common::Array<byte> _text;
+	Common::StringArray _text;
 public:
 	void synchronize(XeenSerializer &s);
 };
@@ -119,6 +120,81 @@ public:
 class Scripts {
 private:
 	XeenEngine *_vm;
+	int _charFX[6];
+	int _whoWill;
+	int _itemType;
+	int _treasureItems;
+	int _treasureGold;
+	int _treasureGems;
+
+	int _v2;
+	int _nEdamageType;
+
+	void doOpcode(Opcode opcode, Common::Array<byte> &params);
+	void cmdNone(Common::Array<byte> &params);
+	void cmdDisplay0x01(Common::Array<byte> &params);
+	void cmdDoorTextSml(Common::Array<byte> &params);
+	void cmdDoorTextLrg(Common::Array<byte> &params);
+	void cmdSignText(Common::Array<byte> &params);
+	void cmdNPC(Common::Array<byte> &params);
+	void cmdPlayFX(Common::Array<byte> &params);
+	void cmdTeleportAndExit(Common::Array<byte> &params);
+	void cmdIf1(Common::Array<byte> &params);
+	void cmdIf2(Common::Array<byte> &params);
+	void cmdIf3(Common::Array<byte> &params);
+	void cmdMoveObj(Common::Array<byte> &params);
+	void cmdTakeOrGive(Common::Array<byte> &params);
+	void cmdNoAction(Common::Array<byte> &params);
+	void cmdRemove(Common::Array<byte> &params);
+	void cmdSetChar(Common::Array<byte> &params);
+	void cmdSpawn(Common::Array<byte> &params);
+	void cmdDoTownEvent(Common::Array<byte> &params);
+	void cmdExit(Common::Array<byte> &params);
+	void cmdAfterMap(Common::Array<byte> &params);
+	void cmdGiveExtended(Common::Array<byte> &params);
+	void cmdConfirmWord(Common::Array<byte> &params);
+	void cmdDamage(Common::Array<byte> &params);
+	void cmdJumpRnd(Common::Array<byte> &params);
+	void cmdAfterEvent(Common::Array<byte> &params);
+	void cmdCallEvent(Common::Array<byte> &params);
+	void cmdReturn(Common::Array<byte> &params);
+	void cmdSetVar(Common::Array<byte> &params);
+	void cmdTakeOrGive2(Common::Array<byte> &params);
+	void cmdTakeOrGive3(Common::Array<byte> &params);
+	void cmdCutsceneEndClouds(Common::Array<byte> &params);
+	void cmdTeleportAndContinue(Common::Array<byte> &params);
+	void cmdWhoWill(Common::Array<byte> &params);
+	void cmdRndDamage(Common::Array<byte> &params);
+	void cmdMoveWallObj(Common::Array<byte> &params);
+	void cmdAlterCellFlag(Common::Array<byte> &params);
+	void cmdAlterHed(Common::Array<byte> &params);
+	void cmdDisplayStat(Common::Array<byte> &params);
+	void cmdTakeOrGive4(Common::Array<byte> &params);
+	void cmdSeatTextSml(Common::Array<byte> &params);
+	void cmdPlayEventVoc(Common::Array<byte> &params);
+	void cmdDisplayBottom(Common::Array<byte> &params);
+	void cmdIfMapFlag(Common::Array<byte> &params);
+	void cmdSelRndChar(Common::Array<byte> &params);
+	void cmdGiveEnchanted(Common::Array<byte> &params);
+	void cmdItemType(Common::Array<byte> &params);
+	void cmdMakeNothingHere(Common::Array<byte> &params);
+	void cmdNoAction2(Common::Array<byte> &params);
+	void cmdChooseNumeric(Common::Array<byte> &params);
+	void cmdDisplayBottomTwoLines(Common::Array<byte> &params);
+	void cmdDisplayLarge(Common::Array<byte> &params);
+	void cmdExchObj(Common::Array<byte> &params);
+	void cmdFallToMap(Common::Array<byte> &params);
+	void cmdDisplayMain(Common::Array<byte> &params);
+	void cmdGoto(Common::Array<byte> &params);
+	void cmdConfirmWord2(Common::Array<byte> &params);
+	void cmdGotoRandom(Common::Array<byte> &params);
+	void cmdCutsceneEndDarkside(Common::Array<byte> &params);
+	void cmdCutsceneEdWorld(Common::Array<byte> &params);
+	void cmdFlipWorld(Common::Array<byte> &params);
+	void cmdPlayCD(Common::Array<byte> &params);
+public:
+	int _animCounter;
+	bool _eventSkipped;
 public:
 	Scripts(XeenEngine *vm);
 

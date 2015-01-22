@@ -43,7 +43,6 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), _vm(
 	_hiliteChar = -1;
 	_intrIndex1 = 0;
 	_flag1 = false;
-	_animCounter = 0;
 	_isAnimReset = false;
 	_tillMove = 0;
 	_overallFrame = 0;
@@ -542,6 +541,7 @@ void Interface::draw3d(bool updateFlag) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
 
 	if (screen._windows[11]._enabled)
 		return;
@@ -570,7 +570,7 @@ void Interface::draw3d(bool updateFlag) {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
 		} else {
 			++mazeObject._frame;
-			if ((int)idx == objNum && _animCounter > 0 && (
+			if ((int)idx == objNum && scripts._animCounter > 0 && (
 					objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
 					objObject._spriteId == 58 || objObject._spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)

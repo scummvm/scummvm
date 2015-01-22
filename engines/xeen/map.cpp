@@ -1284,8 +1284,9 @@ void Map::loadEvents(int mapId) {
 	filename = Common::String::format("aaze%c%03d.txt",
 		(mapId >= 100) ? 'x' : '0', mapId);
 	File fText(filename);
-	_events._text.resize(fText.size());
-	fText.read(&_events._text[0], fText.size());
+	_events._text.clear();
+	while (fText.pos() < fText.size())
+		_events._text.push_back(fText.readString());
 	fText.close();
 }
 

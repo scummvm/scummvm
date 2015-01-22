@@ -232,4 +232,15 @@ void File::openFile(const Common::String &filename, Common::Archive &archive) {
 		error("Could not open file - %s", filename.c_str());
 }
 
+Common::String File::readString() {
+	Common::String result;
+	char c;
+
+	while (pos() < size() && (c = (char)readByte()) != '\0')
+		result += c;
+
+	return result;
+}
+
+
 } // End of namespace Xeen

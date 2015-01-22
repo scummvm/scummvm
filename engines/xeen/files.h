@@ -75,6 +75,8 @@ public:
 
 	void openFile(const Common::String &filename);
 	void openFile(const Common::String &filename, Common::Archive &archive);
+
+	Common::String readString();
 };
 
 class XeenSerializer : public Common::Serializer {

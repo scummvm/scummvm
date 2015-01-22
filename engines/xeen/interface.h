@@ -66,10 +66,8 @@ private:
 	int _heroismUIFrame;
 	int _flipUIFrame;
 	bool _buttonsLoaded;
-	Common::String _interfaceText;
 	int _hiliteChar;
 	bool _flag1;
-	int _animCounter;
 	bool _isAnimReset;
 	byte _tillMove;
 	int _overallFrame;
@@ -107,6 +105,7 @@ private:
 	bool checkMoveDirection(int key);
 public:
 	int _intrIndex1;
+	Common::String _interfaceText;
 public:
 	Interface(XeenEngine *vm);
 
