@@ -188,7 +188,7 @@ void Scripts::doOpcode(Opcode opcode, Common::Array<byte> &params) {
  */
 void Scripts::cmdDisplay1(Common::Array<byte> &params) {
 	Screen &screen = *_vm->_screen;
-	Common::String msg = Common::String::format("\r\x03c%s", _paramText.c_str());
+	Common::String msg = Common::String::format("\r\x03""c%s", _paramText.c_str());
 
 	screen._windows[12].close();
 	if (screen._windows[38]._enabled)
@@ -205,7 +205,7 @@ void Scripts::cmdDisplay1(Common::Array<byte> &params) {
  */
 void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
-	intf._screenText = Common::String::format("\x02\f08\x03c\t116\v025%s\x03l\fd\x01",
+	intf._screenText = Common::String::format("\x02\f""08\x03""c\t116\v025%s\x03""l\fd""\x01", 
 		_paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
@@ -219,7 +219,7 @@ void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
  */
 void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
-	intf._screenText = Common::String::format("\f04\x03c\t116\v030%s\x03l\fd",
+	intf._screenText = Common::String::format("\f04\x03""c\t116\v030%s\x03""l\fd",
 		_paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
