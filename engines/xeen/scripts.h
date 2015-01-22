@@ -132,8 +132,9 @@ private:
 	int _var4F;
 	int _nEdamageType;
 	Common::String _paramText;
+	MazeEvent *_event;
 
-	void doOpcode(Opcode opcode, Common::Array<byte> &params);
+	void doOpcode(MazeEvent &event);
 	void cmdDisplay1(Common::Array<byte> &params);
 	void cmdDoorTextSml(Common::Array<byte> &params);
 	void cmdDoorTextLrg(Common::Array<byte> &params);

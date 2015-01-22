@@ -374,9 +374,266 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_objNumber = 0;
 	_combatFloatCounter = 0;
 	_thinWall = false;
+	_isAnimReset = false;
+	_upDoorText = false;
+	_batUIFrame = 0;
+	_spotDoorsUIFrame = 0;
+	_dangerSenseUIFrame = 0;
+	_face1UIFrame = 0;
+	_face2UIFrame = 0;
+	_blessedUIFrame = 0;
+	_powerShieldUIFrame = 0;
+	_holyBonusUIFrame = 0;
+	_heroismUIFrame = 0;
+	_flipUIFrame = 0;
+	_tillMove = 0;
+	_flag1 = false;
+	_overallFrame = 0;
 }
 
+void InterfaceMap::setup() {
+	_globalSprites.load("global.icn");
+	_borderSprites.load("border.icn");
+	_spellFxSprites.load("spellfx.icn");
+	_fecpSprites.load("fecp.brd");
+	_blessSprites.load("bless.icn");
+	_charPowSprites.load("charpow.icn");
+}
 
+void InterfaceMap::draw3d(bool updateFlag) {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
+
+	if (screen._windows[11]._enabled)
+		return;
+
+	_flipUIFrame = (_flipUIFrame + 1) % 4;
+	if (_flipUIFrame == 0)
+		_flipWater = !_flipWater;
+	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_2) &&
+		!_flag1 && _vm->_moveMonsters) {
+		if (--_tillMove == 0)
+			moveMonsters();
+	}
+
+	MazeObject &objObject = map._mobData._objects[_objNumber];
+	Direction partyDirection = _vm->_party->_mazeDirection;
+	int objNum = _objNumber - 1;
+
+	// Loop to update the frame numbers for each maze object, applying the animation frame
+	// limits as specified by the map's _animationInfo listing
+	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
+		MazeObject &mazeObject = map._mobData._objects[idx];
+		AnimationEntry &animEntry = map._animationInfo[mazeObject._spriteId];
+		int directionIndex = DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
+
+		if (_isAnimReset) {
+			mazeObject._frame = animEntry._frame1._frames[directionIndex];
+		}
+		else {
+			++mazeObject._frame;
+			if ((int)idx == objNum && scripts._animCounter > 0 && (
+				objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
+				objObject._spriteId == 58 || objObject._spriteId == 73)) {
+				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
+					mazeObject._frame = 1;
+			}
+			else if (mazeObject._frame >= animEntry._frame2._frames[directionIndex]) {
+				mazeObject._frame = animEntry._frame1._frames[directionIndex];
+			}
+		}
+
+		mazeObject._flipped = animEntry._flipped._flags[directionIndex];
+	}
+
+	if (map._isOutdoors) {
+		error("TODO: draw3d outdoors handling");
+	}
+	else {
+		// Default all the parts of draw struct not to be drawn by default
+		for (int idx = 3; idx < _indoorList.size(); ++idx)
+			_indoorList[idx]._frame = -1;
+
+		if (_flag1) {
+			for (int idx = 0; idx < 96; ++idx) {
+				if (_indoorList[79 + idx]._sprites != nullptr) {
+					_indoorList[79 + idx]._frame = 0;
+				}
+				else if (_indoorList[111 + idx]._sprites != nullptr) {
+					_indoorList[111 + idx]._frame = 1;
+				}
+				else if (_indoorList[135 + idx]._sprites != nullptr) {
+					_indoorList[135 + idx]._frame = 2;
+				}
+				else if (_indoorList[162 + idx]._sprites != nullptr) {
+					_indoorList[162 + idx]._frame = 0;
+				}
+			}
+		}
+		else if (_charsShooting) {
+			for (int idx = 0; idx < 96; ++idx) {
+				if (_indoorList[162 + idx]._sprites != nullptr) {
+					_indoorList[162 + idx]._frame = 0;
+				}
+				else if (_indoorList[135 + idx]._sprites != nullptr) {
+					_indoorList[135 + idx]._frame = 1;
+				}
+				else if (_indoorList[111 + idx]._sprites != nullptr) {
+					_indoorList[111 + idx]._frame = 2;
+				}
+				else if (_indoorList[79 + idx]._sprites != nullptr) {
+					_indoorList[79 + idx]._frame = 0;
+				}
+			}
+		}
+
+		setMazeBits();
+		_isAnimReset = false;
+		const int INDOOR_INDEXES[3] = { 157, 151, 154 };
+		const int INDOOR_COMBAT_POS[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
+		const int INDOOR_COMBAT_POS2[4] = { 8, 6, 4, 2 };
+
+		// Double check this, since it's not being used?
+		//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
+
+		for (int idx = 0; idx < 3; ++idx) {
+			DrawStruct &ds1 = _indoorList[INDOOR_INDEXES[idx]];
+			DrawStruct &ds2 = _indoorList[INDOOR_INDEXES[idx] + 1];
+			ds1._sprites = nullptr;
+			ds2._sprites = nullptr;
+
+			if (combat._charsArray1[idx]) {
+				int posIndex = combat._attackMonsters[1] && !combat._attackMonsters[2] ? 1 : 0;
+				--combat._charsArray1[idx];
+
+				if (combat._monPow[idx]) {
+					ds1._x = INDOOR_COMBAT_POS[idx][0];
+					ds1._frame = 0;
+					ds1._scale = combat._monsterScale[idx];
+					if (ds1._scale == 0x8000) {
+						ds1._x /= 3;
+						ds1._y = 60;
+					}
+					else {
+						ds1._y = 73;
+					}
+
+					ds1._flags = SPRFLAG_4000 | SPRFLAG_2000;
+					ds1._sprites = &_charPowSprites;
+				}
+
+				if (combat._elemPow[idx]) {
+					ds2._x = INDOOR_COMBAT_POS[idx][posIndex] + INDOOR_COMBAT_POS2[idx];
+					ds2._frame = combat._elemPow[idx];
+					ds2._scale = combat._elemScale[idx];
+					if (ds2._scale == 0x8000)
+						ds2._x /= 3;
+					ds2._flags = SPRFLAG_4000 | SPRFLAG_2000;
+					ds2._sprites = &_charPowSprites;
+				}
+			}
+		}
+
+		setIndoorsMonsters();
+		setIndoorsObjects();
+		setIndoorsWallPics();
+
+		_indoorList[161]._sprites = nullptr;
+		_indoorList[160]._sprites = nullptr;
+		_indoorList[159]._sprites = nullptr;
+
+		// Handle attacking monsters
+		int monsterIndex = 0;
+		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 0) {
+			_indoorList[159] = _indoorList[156];
+			_indoorList[160] = _indoorList[157];
+			_indoorList[161] = _indoorList[158];
+			_indoorList[158]._sprites = nullptr;
+			_indoorList[156]._sprites = nullptr;
+			_indoorList[157]._sprites = nullptr;
+			monsterIndex = 1;
+		}
+		else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 0) {
+			_indoorList[159] = _indoorList[150];
+			_indoorList[160] = _indoorList[151];
+			_indoorList[161] = _indoorList[152];
+			_indoorList[152]._sprites = nullptr;
+			_indoorList[151]._sprites = nullptr;
+			_indoorList[150]._sprites = nullptr;
+			monsterIndex = 2;
+		}
+		else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 0) {
+			_indoorList[159] = _indoorList[153];
+			_indoorList[160] = _indoorList[154];
+			_indoorList[161] = _indoorList[155];
+			_indoorList[153]._sprites = nullptr;
+			_indoorList[154]._sprites = nullptr;
+			_indoorList[155]._sprites = nullptr;
+			monsterIndex = 3;
+		}
+
+		drawIndoors();
+
+		switch (monsterIndex) {
+		case 1:
+			_indoorList[156] = _indoorList[159];
+			_indoorList[157] = _indoorList[160];
+			_indoorList[158] = _indoorList[161];
+			break;
+		case 2:
+			_indoorList[150] = _indoorList[159];
+			_indoorList[151] = _indoorList[160];
+			_indoorList[152] = _indoorList[161];
+			break;
+		case 3:
+			_indoorList[153] = _indoorList[159];
+			_indoorList[154] = _indoorList[160];
+			_indoorList[155] = _indoorList[161];
+			break;
+		default:
+			break;
+		}
+	}
+
+	animate3d();
+	drawMiniMap();
+
+	if (party._falling == 1) {
+		error("TODO: Indoor falling");
+	}
+
+	if (party._falling == 2) {
+		screen.saveBackground(1);
+	}
+
+	assembleBorder();
+
+	// Draw any on-screen text if flagged to do so
+	if (_upDoorText && combat._attackMonsters[0] == -1) {
+		screen._windows[3].writeString(_screenText);
+	}
+
+	if (updateFlag) {
+		screen._windows[1].update();
+		screen._windows[3].update();
+	}
+
+	// TODO: more stuff
+
+	_vm->_party->_stepped = false;
+	if (_vm->_mode == MODE_9) {
+		// TODO
+	}
+	events.wait(2);
+}
+
+void InterfaceMap::animate3d() {
+
+}
 void InterfaceMap::setMazeBits() {
 	Common::fill(&_wo[0], &_wo[308], 0);
 
@@ -3451,6 +3708,493 @@ void InterfaceMap::drawIndoors() {
 	}
 	
 	_charsShooting = _isShooting;
+}
+
+void InterfaceMap::moveMonsters() {
+	// TODO
+}
+
+void InterfaceMap::assembleBorder() {
+	Screen &screen = *_vm->_screen;
+
+	// Draw the outer frame
+	_globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
+
+	// Draw the animating bat character used to show when levitate is active
+	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateActive ? _batUIFrame + 16 : 16,
+		Common::Point(0, 82));
+	_batUIFrame = (_batUIFrame + 1) % 12;
+
+	// Draw UI element to indicate whether can spot hidden doors
+	_borderSprites.draw(screen,
+		(_thinWall && _vm->_party->checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
+		Common::Point(194, 91));
+	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
+
+	// Draw UI element to indicate whether can sense danger
+	_borderSprites.draw(screen,
+		(_vm->_dangerSenseAllowed && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
+		Common::Point(107, 9));
+	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
+
+	// Handle the face UI elements for indicating clairvoyance status
+	_face1UIFrame = (_face1UIFrame + 1) % 4;
+	if (_vm->_face1State == 0)
+		_face1UIFrame += 4;
+	else if (_vm->_face1State == 2)
+		_face1UIFrame = 0;
+
+	_face2UIFrame = (_face2UIFrame + 1) % 4 + 12;
+	if (_vm->_face2State == 0)
+		_face2UIFrame += 252;
+	else if (_vm->_face2State == 2)
+		_face2UIFrame = 0;
+
+	if (!_vm->_party->_clairvoyanceActive) {
+		_face1UIFrame = 0;
+		_face2UIFrame = 8;
+	}
+
+	_borderSprites.draw(screen, _face1UIFrame, Common::Point(0, 32));
+	_borderSprites.draw(screen,
+		screen._windows[10]._enabled || screen._windows[2]._enabled ?
+		52 : _face2UIFrame,
+		Common::Point(215, 32));
+
+	// Draw resistence indicators
+	if (!screen._windows[10]._enabled && !screen._windows[2]._enabled
+		&& screen._windows[38]._enabled) {
+		_fecpSprites.draw(screen, _vm->_party->_fireResistence ? 1 : 0,
+			Common::Point(2, 2));
+		_fecpSprites.draw(screen, _vm->_party->_electricityResistence ? 3 : 2,
+			Common::Point(219, 2));
+		_fecpSprites.draw(screen, _vm->_party->_coldResistence ? 5 : 4,
+			Common::Point(2, 134));
+		_fecpSprites.draw(screen, _vm->_party->_poisonResistence ? 7 : 6,
+			Common::Point(219, 134));
+	} else {
+		_fecpSprites.draw(screen, _vm->_party->_fireResistence ? 9 : 8,
+			Common::Point(8, 8));
+		_fecpSprites.draw(screen, _vm->_party->_electricityResistence ? 10 : 11,
+			Common::Point(219, 8));
+		_fecpSprites.draw(screen, _vm->_party->_coldResistence ? 12 : 13,
+			Common::Point(8, 134));
+		_fecpSprites.draw(screen, _vm->_party->_poisonResistence ? 14 : 15,
+			Common::Point(219, 134));
+	}
+
+	// Draw UI element for blessed
+	_blessSprites.draw(screen, 16, Common::Point(33, 137));
+	if (_vm->_party->_blessedActive) {
+		_blessedUIFrame = (_blessedUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _blessedUIFrame, Common::Point(33, 137));
+	}
+
+	// Draw UI element for power shield
+	if (_vm->_party->_powerShieldActive) {
+		_powerShieldUIFrame = (_powerShieldUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _powerShieldUIFrame + 4,
+			Common::Point(55, 137));
+	}
+
+	// Draw UI element for holy bonus
+	if (_vm->_party->_holyBonusActive) {
+		_holyBonusUIFrame = (_holyBonusUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _holyBonusUIFrame + 8, Common::Point(160, 137));
+	}
+
+	// Draw UI element for heroism
+	if (_vm->_party->_heroismActive) {
+		_heroismUIFrame = (_heroismUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _heroismUIFrame + 12, Common::Point(182, 137));
+	}
+
+	// Draw direction character if direction sense is active
+	if (_vm->_party->checkSkill(DIRECTION_SENSE) && !_vm->_noDirectionSense) {
+		const char *dirText = DIRECTION_TEXT[_vm->_party->_mazeDirection];
+		Common::String msg = Common::String::format(
+			"\002""08\003""c\013""139\011""116%c\014""d\001", *dirText);
+		screen._windows[0].writeString(msg);
+	}
+
+	// Draw view frame
+	if (screen._windows[12]._enabled)
+		screen._windows[12].frame();
+}
+
+void InterfaceMap::drawMiniMap() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Window &window1 = screen._windows[1];
+
+	if (screen._windows[2]._enabled || screen._windows[10]._enabled)
+		return;
+	if (!party._automapOn && !party._wizardEyeActive) {
+		// Draw the Might & Magic logo
+		_globalSprites.draw(window1, 5, Common::Point(232, 9));
+		return;
+	}
+
+	int v, frame;
+	int frame2 = _overallFrame * 2;
+	bool eyeActive = party._wizardEyeActive;
+	if (party._automapOn)
+		party._wizardEyeActive = false;
+
+	if (map._isOutdoors) {
+		_globalSprites.draw(window1, 15, Common::Point(237, 12));
+
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					4);
+				frame = map.mazeDataCurrent()._surfaceTypes[v];
+
+				if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					4);
+				frame = map.mazeData()._wallTypes[v];
+
+				if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame + 16, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					4);
+
+				if (v != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, v + 32, Common::Point(xp, yp));
+				}
+			}
+		}
+		
+		// Draw the direction arrow
+		_globalSprites.draw(window1, party._mazeDirection + 1,
+			Common::Point(267, 36));
+	} else {
+		frame2 = (frame2 + 2) % 8;
+
+		// First draw the default surface bases for each cell to show
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+				if (v != INVALID_CELL && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, 0, Common::Point(xp, yp));
+				}
+			}
+		}
+		
+		// Draw correct surface bases for revealed tiles
+		for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					0, 0xffff);
+				int surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
+
+				if (v != INVALID_CELL && map._currentSurfaceId &&
+						(map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, surfaceId + 36, Common::Point(xp, yp));
+				}
+			}
+		}
+		
+		v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0xffff, 0);
+		if (v != INVALID_CELL && map._currentSurfaceId &&
+				(map._currentSteppedOn || party._wizardEyeActive)) {
+			map._tileSprites.draw(window1,
+				map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+				Common::Point(232, 9));
+		}
+		
+		// Handle drawing surface sprites partially clipped at the left edge
+		for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, --yDiff, yp += 8) {
+			v = map.mazeLookup(
+					Common::Point(party._mazePosition.x - 4, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+			if (v != INVALID_CELL && map._currentSurfaceId &&
+					(map._currentSteppedOn || party._wizardEyeActive)) {
+				map._tileSprites.draw(window1,
+					map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+					Common::Point(232, yp));
+			}
+		}
+
+		// Handle drawing surface sprites partially clipped at the top edge
+		for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, ++xDiff, xp += 8) {
+			v = map.mazeLookup(
+				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + 4),
+				0, 0xffff);
+
+			if (v != INVALID_CELL && map._currentSurfaceId &&
+					(map._currentSteppedOn || party._wizardEyeActive)) {
+				map._tileSprites.draw(window1,
+					map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
+					Common::Point(xp, 9));
+			}
+		}
+		
+		//
+		for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE; 
+				++idx, ++xDiff, xp += 10, yp -= 8) {
+			v = map.mazeLookup(
+				Common::Point(party._mazePosition.x - 4, party._mazePosition.y - 3 + idx),
+				12, 0xffff);
+
+			switch (v) {
+			case 1:
+				frame = 18;
+				break;
+			case 3:
+				frame = 22;
+				break;
+			case 4:
+			case 13:
+				frame = 16;
+				break;
+			case 5:
+			case 8:
+				frame = 2;
+				break;
+			case 6:
+				frame = 30;
+				break;
+			case 7:
+				frame = 32;
+				break;
+			case 9:
+				frame = 24;
+				break;
+			case 10:
+				frame = 28;
+				break;
+			case 11:
+				frame = 14;
+				break;
+			case 12:
+				frame = frame2 + 4;
+				break;
+			case 14:
+				frame = 24;
+				break;
+			case 15:
+				frame = 26;
+				break;
+			default:
+				frame = -1;
+				break;
+			}
+
+			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
+				map._tileSprites.draw(window1, frame, Common::Point(222, yp));
+
+			v = map.mazeLookup(
+				Common::Point(party._mazePosition.x - 3 + idx, party._mazePosition.y + 4),
+				0);
+
+			switch (v) {
+			case 1:
+				frame = 19;
+				break;
+			case 2:
+				frame = 35;
+				break;
+			case 3:
+				frame = 23;
+				break;
+			case 4:
+			case 13:
+				frame = 17;
+				break;
+			case 5:
+			case 8:
+				frame = 3;
+				break;
+			case 6:
+				frame = 31;
+				break;
+			case 7:
+				frame = 33;
+				break;
+			case 9:
+				frame = 21;
+				break;
+			case 10:
+				frame = 29;
+				break;
+			case 11:
+				frame = 15;
+				break;
+			case 12:
+				frame = frame2 + 5;
+				break;
+			case 14:
+				frame = 25;
+				break;
+			case 15:
+				frame = 27;
+				break;
+			default:
+				frame = -1;
+				break;
+			}
+
+			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
+				map._tileSprites.draw(window1, frame, Common::Point(xp, 4));
+		}
+
+		// Draw the front/back walls of cells in the minimap
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE;
+				++rowNum, --yDiff, yp += 8) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
+					++colNum, ++xDiff, xp += 10) {
+				if (colNum == 4 && rowNum == 4) {
+					// Center of the minimap. Draw the direction arrow
+					_globalSprites.draw(window1, party._mazeDirection + 1,
+						Common::Point(272, 40));
+				}
+
+				v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
+					party._mazePosition.y + yDiff), 12, 0xffff);
+				switch (v) {
+				case 1:
+					frame = 18;
+					break;
+				case 3:
+					frame = 22;
+					break;
+				case 4:
+				case 13:
+					frame = 16;
+					break;
+				case 5:
+				case 8:
+					frame = 2;
+					break;
+				case 6:
+					frame = 30;
+					break;
+				case 7:
+					frame = 32;
+					break;
+				case 9:
+					frame = 20;
+					break;
+				case 10:
+					frame = 28;
+					break;
+				case 11:
+					frame = 14;
+					break;
+				case 12:
+					frame = frame2 + 4;
+					break;
+				case 14:
+					frame = 24;
+					break;
+				case 15:
+					frame = 26;
+					break;
+				default:
+					frame = -1;
+					break;
+				}
+
+				if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame, Common::Point(xp, yp));
+				}
+
+				v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
+					party._mazePosition.y + yDiff), 12, 0xffff);
+				switch (v) {
+				case 1:
+					frame = 19;
+					break;
+				case 2:
+					frame = 35;
+					break;
+				case 3:
+					frame = 23;
+					break;
+				case 4:
+				case 13:
+					frame = 17;
+					break;
+				case 5:
+				case 8:
+					frame = 3;
+					break;
+				case 6:
+					frame = 31;
+					break;
+				case 7:
+					frame = 33;
+					break;
+				case 9:
+					frame = 21;
+					break;
+				case 10:
+					frame = 29;
+					break;
+				case 11:
+					frame = 15;
+					break;
+				case 12:
+					frame = frame2 + 5;
+					break;
+				case 14:
+					frame = 25;
+					break;
+				case 15:
+					frame = 27;
+					break;
+				default:
+					frame = -1;
+					break;
+				}
+
+				if (v == -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, frame, Common::Point(xp, yp));
+				}
+			}
+		}
+
+		// Draw the top of blocked/wall cells on the map
+		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
+			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+				v = map.mazeLookup(
+					Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+					0, 0xffff);
+
+				if (v == INVALID_CELL || (!map._currentSteppedOn && !party._wizardEyeActive)) {
+					map._tileSprites.draw(window1, 1, Common::Point(xp, yp));
+				}
+			}
+		}
+	}
+
+	// Draw outer rectangle around the automap
+	_globalSprites.draw(window1, 6, Common::Point(223, 3));
+	party._wizardEyeActive = eyeActive;
 }
 
 } // End of namespace Xeen

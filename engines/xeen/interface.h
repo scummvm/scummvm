@@ -38,47 +38,25 @@ class XeenEngine;
 class Interface: public ButtonContainer, public InterfaceMap {
 private:
 	XeenEngine *_vm;
-	SpriteResource _dseFace;
-	SpriteResource _globalSprites;
-	SpriteResource _borderSprites;
-	SpriteResource _spellFxSprites;
-	SpriteResource _fecpSprites;
-	SpriteResource _blessSprites;
 	SpriteResource _restoreSprites;
+	SpriteResource _dseFace;
 	SpriteResource _hpSprites;
 	SpriteResource _uiSprites;
 	SpriteResource _iconSprites;
-	SpriteResource _charPowSprites;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
 	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
 	DrawStruct _mainList[16];
 	int _combatCharIds[8];
 
-	int _batUIFrame;
-	int _spotDoorsUIFrame;
-	int _dangerSenseUIFrame;
-	int _face1UIFrame;
-	int _face2UIFrame;
-	int _blessedUIFrame;
-	int _powerShieldUIFrame;
-	int _holyBonusUIFrame;
-	int _heroismUIFrame;
-	int _flipUIFrame;
 	bool _buttonsLoaded;
 	int _hiliteChar;
-	bool _flag1;
-	bool _isAnimReset;
-	byte _tillMove;
-	int _overallFrame;
 	int _steppingFX;
 	Common::String _interfaceText;
 
 	void initDrawStructs();
 
 	void loadSprites();
-
-	void assembleBorder();
 
 	void setupBackground();
 
@@ -88,13 +66,7 @@ private:
 
 	void moveCharacterToRoster();
 
-	void animate3d();
-
-	void moveMonsters();
-
 	void setMainButtons();
-
-	void drawMiniMap();
 
 	void chargeStep();
 
@@ -105,20 +77,18 @@ private:
 	bool checkMoveDirection(int key);
 public:
 	int _intrIndex1;
-	Common::String _screenText;
-	bool _upDoorText;
 public:
 	Interface(XeenEngine *vm);
 
-	void setup();
+	virtual ~Interface() {}
+
+	virtual void setup();
 
 	void manageCharacters(bool soundPlayed);
 
 	void loadCharIcons();
 
 	void loadPartyIcons();
-
-	void draw3d(bool updateFlag);
 
 	void startup();
 

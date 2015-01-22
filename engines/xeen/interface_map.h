@@ -83,6 +83,11 @@ public:
 class InterfaceMap {
 private:
 	XeenEngine *_vm;
+	SpriteResource _borderSprites;
+	SpriteResource _spellFxSprites;
+	SpriteResource _fecpSprites;
+	SpriteResource _blessSprites;
+	SpriteResource _charPowSprites;
 	int _combatFloatCounter;
 
 	void initDrawStructs();
@@ -90,9 +95,9 @@ private:
 	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, 
 		SpriteResource *sprites, int frame, int defaultY);
 protected:
+	SpriteResource _globalSprites;
 	int8 _wp[20];
 	byte _wo[308];
-	int _overallFrame;
 	bool _flipWater;
 	bool _flipGround;
 	bool _flipSky;
@@ -101,13 +106,43 @@ protected:
 	bool _charsShooting;
 	int _objNumber;
 	bool _thinWall;
+	bool _isAnimReset;
+	int _batUIFrame;
+	int _spotDoorsUIFrame;
+	int _dangerSenseUIFrame;
+	int _face1UIFrame;
+	int _face2UIFrame;
+	int _blessedUIFrame;
+	int _powerShieldUIFrame;
+	int _holyBonusUIFrame;
+	int _heroismUIFrame;
+	int _flipUIFrame;
+	byte _tillMove;
+	bool _flag1;
+	int _overallFrame;
 
 	void setMazeBits();
+
+	void animate3d();
+
+	void moveMonsters();
+
+	void drawMiniMap();
+
+	void assembleBorder();
+
+	virtual void setup();
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
+	bool _upDoorText;
+	Common::String _screenText;
 public:
 	InterfaceMap(XeenEngine *vm);
+
+	virtual ~InterfaceMap() {}
+
+	void draw3d(bool updateFlag);
 
 	void setIndoorsMonsters();
 

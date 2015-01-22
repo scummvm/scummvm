@@ -129,7 +129,7 @@ void Scripts::checkEvents() {
 						_vm->_mode = MODE_9;
 						_paramText = event._parameters.size() == 0 ? "" :
 							map._events._text[event._parameters[0]];
-						doOpcode(event._opcode, event._parameters);
+						doOpcode(event);
 						break;
 					} else {
 						var50 = true;
@@ -154,7 +154,10 @@ void Scripts::openGrate(int v1, int v2) {
 
 typedef void(Scripts::*ScriptMethodPtr)(Common::Array<byte> &);
 
-void Scripts::doOpcode(Opcode opcode, Common::Array<byte> &params) {
+/**
+ * Handles executing a given script command
+ */
+void Scripts::doOpcode(MazeEvent &event) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		nullptr, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
 		&Scripts::cmdDoorTextLrg, &Scripts::cmdSignText,
@@ -180,7 +183,8 @@ void Scripts::doOpcode(Opcode opcode, Common::Array<byte> &params) {
 		&Scripts::cmdCutsceneEdWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD
 	};
 
-	(this->*COMMAND_LIST[opcode])(params);
+	_event = &event;
+	(this->*COMMAND_LIST[event._opcode])(event._parameters);
 }
 
 /**
@@ -209,8 +213,8 @@ void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 		_paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
-	_var4F = true;
 
+	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -223,16 +227,52 @@ void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 		_paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
-	_var4F = true;
 
+	_var4F = true;
 	cmdNoAction(params);
 }
 
-void Scripts::cmdSignText(Common::Array<byte> &params) {}
-void Scripts::cmdNPC(Common::Array<byte> &params) {}
-void Scripts::cmdPlayFX(Common::Array<byte> &params) {}
-void Scripts::cmdTeleport(Common::Array<byte> &params) {}
-void Scripts::cmdIf(Common::Array<byte> &params) {}
+void Scripts::cmdSignText(Common::Array<byte> &params) {
+	Interface &intf = *_vm->_interface;
+	intf._screenText = Common::String::format("\f08\x03""c\t120\v088%s\x03""l\fd",
+		_paramText.c_str());
+	intf._upDoorText = true;
+	intf.draw3d(true);
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdNPC(Common::Array<byte> &params) {
+	warning("TODO: cmdNPC");
+}
+
+void Scripts::cmdPlayFX(Common::Array<byte> &params) {
+	_vm->_sound->playFX(params[0]);
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdTeleport(Common::Array<byte> &params) {
+}
+
+void Scripts::cmdIf(Common::Array<byte> &params) {
+	switch (params[0]) {
+	case 16:
+	case 34:
+	case 100:
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		break;
+	default:
+		break;
+	}
+}
+
 void Scripts::cmdMoveObj(Common::Array<byte> &params) {}
 void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {}
 
