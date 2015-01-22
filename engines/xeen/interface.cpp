@@ -734,7 +734,10 @@ void Interface::draw3d(bool updateFlag) {
 
 	assembleBorder();
 
-	// TODO: write strings
+	// Draw any on-screen text if flagged to do so
+	if (_upDoorText && combat._attackMonsters[0] == -1) {
+		screen._windows[3].writeString(_screenText);
+	}
 
 	if (updateFlag) {
 		screen._windows[1].update();

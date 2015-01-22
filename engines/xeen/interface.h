@@ -71,8 +71,8 @@ private:
 	bool _isAnimReset;
 	byte _tillMove;
 	int _overallFrame;
-	bool _upDoorText;
 	int _steppingFX;
+	Common::String _interfaceText;
 
 	void initDrawStructs();
 
@@ -105,7 +105,8 @@ private:
 	bool checkMoveDirection(int key);
 public:
 	int _intrIndex1;
-	Common::String _interfaceText;
+	Common::String _screenText;
+	bool _upDoorText;
 public:
 	Interface(XeenEngine *vm);
 

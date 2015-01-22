@@ -126,22 +126,22 @@ private:
 	int _treasureItems;
 	int _treasureGold;
 	int _treasureGems;
+	int _lineNum;
 
 	int _v2;
+	int _var4F;
 	int _nEdamageType;
+	Common::String _paramText;
 
 	void doOpcode(Opcode opcode, Common::Array<byte> &params);
-	void cmdNone(Common::Array<byte> &params);
-	void cmdDisplay0x01(Common::Array<byte> &params);
+	void cmdDisplay1(Common::Array<byte> &params);
 	void cmdDoorTextSml(Common::Array<byte> &params);
 	void cmdDoorTextLrg(Common::Array<byte> &params);
 	void cmdSignText(Common::Array<byte> &params);
 	void cmdNPC(Common::Array<byte> &params);
 	void cmdPlayFX(Common::Array<byte> &params);
-	void cmdTeleportAndExit(Common::Array<byte> &params);
-	void cmdIf1(Common::Array<byte> &params);
-	void cmdIf2(Common::Array<byte> &params);
-	void cmdIf3(Common::Array<byte> &params);
+	void cmdTeleport(Common::Array<byte> &params);
+	void cmdIf(Common::Array<byte> &params);
 	void cmdMoveObj(Common::Array<byte> &params);
 	void cmdTakeOrGive(Common::Array<byte> &params);
 	void cmdNoAction(Common::Array<byte> &params);
@@ -159,17 +159,13 @@ private:
 	void cmdCallEvent(Common::Array<byte> &params);
 	void cmdReturn(Common::Array<byte> &params);
 	void cmdSetVar(Common::Array<byte> &params);
-	void cmdTakeOrGive2(Common::Array<byte> &params);
-	void cmdTakeOrGive3(Common::Array<byte> &params);
 	void cmdCutsceneEndClouds(Common::Array<byte> &params);
-	void cmdTeleportAndContinue(Common::Array<byte> &params);
 	void cmdWhoWill(Common::Array<byte> &params);
 	void cmdRndDamage(Common::Array<byte> &params);
 	void cmdMoveWallObj(Common::Array<byte> &params);
 	void cmdAlterCellFlag(Common::Array<byte> &params);
 	void cmdAlterHed(Common::Array<byte> &params);
 	void cmdDisplayStat(Common::Array<byte> &params);
-	void cmdTakeOrGive4(Common::Array<byte> &params);
 	void cmdSeatTextSml(Common::Array<byte> &params);
 	void cmdPlayEventVoc(Common::Array<byte> &params);
 	void cmdDisplayBottom(Common::Array<byte> &params);

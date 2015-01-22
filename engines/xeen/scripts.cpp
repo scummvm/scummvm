@@ -87,7 +87,7 @@ void Scripts::checkEvents() {
 
 	int var18 = 0;
 	_itemType = 0;
-	int var4F = 0;
+	_var4F = 0;
 	bool var50 = false;
 	_whoWill = 0;
 	Mode oldMode = _vm->_mode;
@@ -101,7 +101,7 @@ void Scripts::checkEvents() {
 	}
 
 	do {
-		int var4 = 0;
+		_lineNum = 0;
 		int varA = 0;
 		_animCounter = 0;
 		int var4E = 0;
@@ -111,28 +111,33 @@ void Scripts::checkEvents() {
 		_nEdamageType = 0;
 		int var40 = -1;
 
-		// Break out of the events if there's an attacking monster
-		if (combat._attackMonsters[0] != -1) {
-			_eventSkipped = true;
-			break;
-		}
+		while (_lineNum >= 0) {
+			// Break out of the events if there's an attacking monster
+			if (combat._attackMonsters[0] != -1) {
+				_eventSkipped = true;
+				break;
+			}
 
-		_eventSkipped = false;
+			_eventSkipped = false;
+			uint eventIndex;
+			for (eventIndex = 0; eventIndex < map._events.size(); ++eventIndex) {
+				MazeEvent &event = map._events[eventIndex];
 
-		for (uint eventIndex = 0; eventIndex < map._events.size(); ++eventIndex) {
-			MazeEvent &event = map._events[eventIndex];
-
-			if (event._position == pt && party._mazeDirection != (pt.x | pt.y)) {
-				if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
-					_vm->_mode = MODE_9;
-					intf._interfaceText = event._parameters.size() == 0 ? "" :
-						map._events._text[event._parameters[0]];
-					doOpcode(event._opcode, event._parameters);
-
-				} else {
-					var50 = true;
+				if (event._position == pt && party._mazeDirection != (pt.x | pt.y)
+						&& event._line == _lineNum) {
+					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
+						_vm->_mode = MODE_9;
+						_paramText = event._parameters.size() == 0 ? "" :
+							map._events._text[event._parameters[0]];
+						doOpcode(event._opcode, event._parameters);
+						break;
+					} else {
+						var50 = true;
+					}
 				}
 			}
+			if (eventIndex == map._events.size())
+				break;
 		}
 	} while (0);
 
@@ -151,20 +156,20 @@ typedef void(Scripts::*ScriptMethodPtr)(Common::Array<byte> &);
 
 void Scripts::doOpcode(Opcode opcode, Common::Array<byte> &params) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
-		&Scripts::cmdNone, &Scripts::cmdDisplay0x01, &Scripts::cmdDoorTextSml,
+		nullptr, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
 		&Scripts::cmdDoorTextLrg, &Scripts::cmdSignText,
-		&Scripts::cmdNPC, &Scripts::cmdPlayFX, &Scripts::cmdTeleportAndExit,
-		&Scripts::cmdIf1, &Scripts::cmdIf2, &Scripts::cmdIf3,
+		&Scripts::cmdNPC, &Scripts::cmdPlayFX, &Scripts::cmdTeleport,
+		&Scripts::cmdIf, &Scripts::cmdIf, &Scripts::cmdIf,
 		&Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdNoAction,
 		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
 		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAfterMap,
 		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
 		&Scripts::cmdJumpRnd, &Scripts::cmdAfterEvent, &Scripts::cmdCallEvent,
-		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive2,
-		&Scripts::cmdTakeOrGive3, &Scripts::cmdCutsceneEndClouds,
-		&Scripts::cmdTeleportAndContinue, &Scripts::cmdWhoWill,
+		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
+		&Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
+		&Scripts::cmdTeleport, &Scripts::cmdWhoWill,
 		&Scripts::cmdRndDamage, &Scripts::cmdMoveWallObj, &Scripts::cmdAlterCellFlag,
-		&Scripts::cmdAlterHed, &Scripts::cmdDisplayStat, &Scripts::cmdTakeOrGive4,
+		&Scripts::cmdAlterHed, &Scripts::cmdDisplayStat, &Scripts::cmdTakeOrGive,
 		&Scripts::cmdSeatTextSml, &Scripts::cmdPlayEventVoc, &Scripts::cmdDisplayBottom,
 		&Scripts::cmdIfMapFlag, &Scripts::cmdSelRndChar, &Scripts::cmdGiveEnchanted,
 		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdNoAction2,
@@ -178,20 +183,64 @@ void Scripts::doOpcode(Opcode opcode, Common::Array<byte> &params) {
 	(this->*COMMAND_LIST[opcode])(params);
 }
 
-void Scripts::cmdNone(Common::Array<byte> &params) {}
-void Scripts::cmdDisplay0x01(Common::Array<byte> &params) {}
-void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {}
-void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {}
+/**
+ * Display a msesage on-screen
+ */
+void Scripts::cmdDisplay1(Common::Array<byte> &params) {
+	Screen &screen = *_vm->_screen;
+	Common::String msg = Common::String::format("\r\x03c%s", _paramText.c_str());
+
+	screen._windows[12].close();
+	if (screen._windows[38]._enabled)
+		screen._windows[38].open();
+	screen._windows[38].writeString(msg);
+	screen._windows[38].update();
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+/**
+ * Displays a door text message using the small font
+ */
+void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
+	Interface &intf = *_vm->_interface;
+	intf._screenText = Common::String::format("\x02\f08\x03c\t116\v025%s\x03l\fd\x01",
+		_paramText.c_str());
+	intf._upDoorText = true;
+	intf.draw3d(true);
+	_var4F = true;
+
+	cmdNoAction(params);
+}
+
+/**
+ * Displays a door text message using the large font
+ */
+void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
+	Interface &intf = *_vm->_interface;
+	intf._screenText = Common::String::format("\f04\x03c\t116\v030%s\x03l\fd",
+		_paramText.c_str());
+	intf._upDoorText = true;
+	intf.draw3d(true);
+	_var4F = true;
+
+	cmdNoAction(params);
+}
+
 void Scripts::cmdSignText(Common::Array<byte> &params) {}
 void Scripts::cmdNPC(Common::Array<byte> &params) {}
 void Scripts::cmdPlayFX(Common::Array<byte> &params) {}
-void Scripts::cmdTeleportAndExit(Common::Array<byte> &params) {}
-void Scripts::cmdIf1(Common::Array<byte> &params) {}
-void Scripts::cmdIf2(Common::Array<byte> &params) {}
-void Scripts::cmdIf3(Common::Array<byte> &params) {}
+void Scripts::cmdTeleport(Common::Array<byte> &params) {}
+void Scripts::cmdIf(Common::Array<byte> &params) {}
 void Scripts::cmdMoveObj(Common::Array<byte> &params) {}
 void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {}
-void Scripts::cmdNoAction(Common::Array<byte> &params) {}
+
+void Scripts::cmdNoAction(Common::Array<byte> &params) {
+	// Move to next line
+	_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
+}
+
 void Scripts::cmdRemove(Common::Array<byte> &params) {}
 void Scripts::cmdSetChar(Common::Array<byte> &params) {}
 void Scripts::cmdSpawn(Common::Array<byte> &params) {}
@@ -206,17 +255,13 @@ void Scripts::cmdAfterEvent(Common::Array<byte> &params) {}
 void Scripts::cmdCallEvent(Common::Array<byte> &params) {}
 void Scripts::cmdReturn(Common::Array<byte> &params) {}
 void Scripts::cmdSetVar(Common::Array<byte> &params) {}
-void Scripts::cmdTakeOrGive2(Common::Array<byte> &params) {}
-void Scripts::cmdTakeOrGive3(Common::Array<byte> &params) {}
 void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) {}
-void Scripts::cmdTeleportAndContinue(Common::Array<byte> &params) {}
 void Scripts::cmdWhoWill(Common::Array<byte> &params) {}
 void Scripts::cmdRndDamage(Common::Array<byte> &params) {}
 void Scripts::cmdMoveWallObj(Common::Array<byte> &params) {}
 void Scripts::cmdAlterCellFlag(Common::Array<byte> &params) {}
 void Scripts::cmdAlterHed(Common::Array<byte> &params) {}
 void Scripts::cmdDisplayStat(Common::Array<byte> &params) {}
-void Scripts::cmdTakeOrGive4(Common::Array<byte> &params) {}
 void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {}
 void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {}
 void Scripts::cmdDisplayBottom(Common::Array<byte> &params) {}
