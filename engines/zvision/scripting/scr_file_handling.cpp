@@ -358,6 +358,16 @@ Control *ScriptManager::parseControl(Common::String &line, Common::SeekableReadS
 	Common::String controlType(controlTypeBuffer);
 
 	if (controlType.equalsIgnoreCase("push_toggle")) {
+		// WORKAROUND for a script bug in ZGI: There is an invalid hotspot
+		// at scene em1h (bottom of tower), which points to a missing
+		// script em1n. This is a hotspot at the right of the screen.
+		// In the original, this hotspot doesn't lead anywhere anyway,
+		// so instead of moving to a missing scene, we just remove the
+		// hotspot altogether. The alternative would be to just process
+		// and ignore invalid scenes, but I don't think it's worth the
+		// effort. Fixes bug #6780.
+		if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 5653)
+			return NULL;
 		return new PushToggleControl(_engine, key, stream);
 	} else if (controlType.equalsIgnoreCase("flat")) {
 		Control::parseFlatControl(_engine);
