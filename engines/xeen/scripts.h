@@ -121,18 +121,20 @@ class Scripts {
 private:
 	XeenEngine *_vm;
 	int _charFX[6];
-	int _whoWill;
 	int _itemType;
 	int _treasureItems;
 	int _treasureGold;
 	int _treasureGems;
 	int _lineNum;
+	int _charIndex;
 
 	int _v2;
 	int _var4F;
 	int _nEdamageType;
 	Common::String _paramText;
 	MazeEvent *_event;
+
+	int whoWill(int v1, int v2, int v3);
 
 	void doOpcode(MazeEvent &event);
 	void cmdDisplay1(Common::Array<byte> &params);
@@ -192,6 +194,7 @@ private:
 public:
 	int _animCounter;
 	bool _eventSkipped;
+	int _whoWill;
 public:
 	Scripts(XeenEngine *vm);
 

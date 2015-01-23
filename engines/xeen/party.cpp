@@ -167,6 +167,12 @@ bool PlayerStruct::charSavingThrow() {
 	return false;
 }
 
+bool PlayerStruct::noActions() {
+	// TODO
+	return false;
+}
+
+
 /*------------------------------------------------------------------------*/
 
 void Roster::synchronize(Common::Serializer &s) {

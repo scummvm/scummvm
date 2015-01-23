@@ -145,8 +145,6 @@ public:
 	Roster _roster;
 	int _loadDarkSide;
 	bool _dangerSenseAllowed;
-	int _face1State;
-	int _face2State;
 	bool _noDirectionSense;
 	bool _moveMonsters;
 	int _openDoor;
@@ -162,6 +160,8 @@ public:
 	uint32 getGameFeatures() const;
 
 	int getRandomNumber(int maxNumber);
+
+	int getRandomNumber(int minNumber, int maxNumber);
 
 	/**
 	 * Load a savegame

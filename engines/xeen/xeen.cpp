@@ -50,8 +50,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_eventData = nullptr;
 	_loadDarkSide = 1;
 	_dangerSenseAllowed = false;
-	_face1State = 0;
-	_face2State = 0;
 	_noDirectionSense = false;
 	_moveMonsters = false;
 	_mode = MODE_0;
@@ -126,6 +124,10 @@ Common::Error XeenEngine::run() {
 
 int XeenEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
+}
+
+int XeenEngine::getRandomNumber(int minNumber, int maxNumber) {
+	return getRandomNumber(maxNumber - minNumber) + minNumber;
 }
 
 Common::Error XeenEngine::saveGameState(int slot, const Common::String &desc) {

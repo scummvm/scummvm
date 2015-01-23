@@ -103,7 +103,6 @@ private:
 	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, 
 		SpriteResource *sprites, int frame, int defaultY);
 protected:
-	SpriteResource _globalSprites;
 	int8 _wp[20];
 	byte _wo[308];
 	bool _flipWater;
@@ -143,8 +142,11 @@ protected:
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
+	SpriteResource _globalSprites;
 	bool _upDoorText;
 	Common::String _screenText;
+	int _face1State;
+	int _face2State;
 public:
 	InterfaceMap(XeenEngine *vm);
 
@@ -163,6 +165,8 @@ public:
 	void setOutdoorsMonsters();
 
 	void setOutdoorsObjects();
+
+	void drawTownAnim(int v);
 };
 
 } // End of namespace Xeen

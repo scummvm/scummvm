@@ -34,11 +34,17 @@ extern const char *const OPTIONS_TITLE;
 
 extern const char *const THE_PARTY_NEEDS_REST;
 
+extern const char *const WHO_WILL;
+
 extern const char *const TERRAIN_TYPES[6];
 
 extern const char *const SURFACE_TYPE_NAMES[15];
 
 extern const char *const SURFACE_NAMES[16];
+
+extern const char *const WHO_ACTIONS[32];
+
+extern const char *const WHO_WILL_ACTIONS[4];
 
 extern const byte SYMBOLS[20][64];
 

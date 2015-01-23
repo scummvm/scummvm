@@ -68,6 +68,9 @@ const char *const OPTIONS_TITLE =
 
 const char *const THE_PARTY_NEEDS_REST = "\x0B""012The Party needs rest!";
 
+const char *const WHO_WILL = "\X03""c\X0B""000\x09""000%s\x0A\x0A"
+	"Who will\x0A%s?\x0A\x0B""055F1 - F%d";
+
 const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
 };
@@ -83,6 +86,17 @@ const char *const SURFACE_NAMES[16] = {
 	"lava.srf", "desert.srf", "road.srf", "dwater.srf", "tflr.srf",
 	"sky.srf", "croad.srf", "sewer.srf", "cloud.srf", "scortch.srf",
 	"space.srf"
+};
+
+const char *const WHO_ACTIONS[32] = {
+	"aSearch", "aOpen", "aDrink", "aMine", "aTouch", "aRead", "aLearn", "aTake",
+	"aBang", "aSteal", "aBribe", "aPay", "aSit", "aTry", "aTurn", "aBathe",
+	"aDestroy", "aPull", "aDescend", "aTossACoin", "aPray", "aJoin", "aAct",
+	"aPlay", "aPush", "aRub", "aPick", "aEat", "aSign", "aClose", "aLook", "aTry"
+};
+
+const char *const WHO_WILL_ACTIONS[4] = {
+	"Open Grate", "Open Door", "Open Scroll", "Select Char"
 };
 
 const byte SYMBOLS[20][64] = {

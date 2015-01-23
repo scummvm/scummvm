@@ -139,6 +139,8 @@ public:
 	int getStat(int statNum, int v2);
 
 	bool charSavingThrow();
+
+	bool noActions();
 };
 
 class Roster: public Common::Array<PlayerStruct> {

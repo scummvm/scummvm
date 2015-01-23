@@ -21,6 +21,7 @@
  */
 
 #include "xeen/scripts.h"
+#include "xeen/dialogs_whowill.h"
 #include "xeen/party.h"
 #include "xeen/xeen.h"
 
@@ -72,7 +73,8 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_treasureItems = 0;
 	_treasureGold = 0;
 	_treasureGems = 0;
-
+	_lineNum = 0;
+	_charIndex = 0;
 	_v2 = 0;
 	_nEdamageType = 0;
 	_animCounter = 0;
@@ -85,7 +87,7 @@ void Scripts::checkEvents() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 
-	int var18 = 0;
+//	int var18 = 0;
 	_itemType = 0;
 	_var4F = 0;
 	bool var50 = false;
@@ -102,14 +104,14 @@ void Scripts::checkEvents() {
 
 	do {
 		_lineNum = 0;
-		int varA = 0;
+//		int varA = 0;
 		_animCounter = 0;
-		int var4E = 0;
+//		int var4E = 0;
 		const Common::Point pt = party._mazePosition;
-		int varC = 1;
+		_charIndex = 1;
 		_v2 = 1;
 		_nEdamageType = 0;
-		int var40 = -1;
+//		int var40 = -1;
 
 		while (_lineNum >= 0) {
 			// Break out of the events if there's an attacking monster
@@ -232,6 +234,9 @@ void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
+/**
+ * Show a sign text on-screen
+ */
 void Scripts::cmdSignText(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 	intf._screenText = Common::String::format("\f08\x03""c\t120\v088%s\x03""l\fd",
@@ -247,6 +252,9 @@ void Scripts::cmdNPC(Common::Array<byte> &params) {
 	warning("TODO: cmdNPC");
 }
 
+/**
+ * Play a sound FX
+ */
 void Scripts::cmdPlayFX(Common::Array<byte> &params) {
 	_vm->_sound->playFX(params[0]);
 
@@ -255,74 +263,118 @@ void Scripts::cmdPlayFX(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdTeleport(Common::Array<byte> &params) {
+	error("TODO");
 }
 
+/**
+ * Do a conditional check
+ */
 void Scripts::cmdIf(Common::Array<byte> &params) {
 	switch (params[0]) {
 	case 16:
 	case 34:
 	case 100:
+		// TODO
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
+		// TODO
 		break;
 	default:
 		break;
 	}
 }
 
-void Scripts::cmdMoveObj(Common::Array<byte> &params) {}
-void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {}
+void Scripts::cmdMoveObj(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdTakeOrGive(Common::Array<byte> &params) { error("TODO"); }
 
+/**
+ * Move to the next line of the script
+ */
 void Scripts::cmdNoAction(Common::Array<byte> &params) {
 	// Move to next line
 	_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
 }
 
-void Scripts::cmdRemove(Common::Array<byte> &params) {}
-void Scripts::cmdSetChar(Common::Array<byte> &params) {}
-void Scripts::cmdSpawn(Common::Array<byte> &params) {}
-void Scripts::cmdDoTownEvent(Common::Array<byte> &params) {}
-void Scripts::cmdExit(Common::Array<byte> &params) {}
-void Scripts::cmdAfterMap(Common::Array<byte> &params) {}
-void Scripts::cmdGiveExtended(Common::Array<byte> &params) {}
-void Scripts::cmdConfirmWord(Common::Array<byte> &params) {}
-void Scripts::cmdDamage(Common::Array<byte> &params) {}
-void Scripts::cmdJumpRnd(Common::Array<byte> &params) {}
-void Scripts::cmdAfterEvent(Common::Array<byte> &params) {}
-void Scripts::cmdCallEvent(Common::Array<byte> &params) {}
-void Scripts::cmdReturn(Common::Array<byte> &params) {}
-void Scripts::cmdSetVar(Common::Array<byte> &params) {}
-void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) {}
-void Scripts::cmdWhoWill(Common::Array<byte> &params) {}
-void Scripts::cmdRndDamage(Common::Array<byte> &params) {}
-void Scripts::cmdMoveWallObj(Common::Array<byte> &params) {}
-void Scripts::cmdAlterCellFlag(Common::Array<byte> &params) {}
-void Scripts::cmdAlterHed(Common::Array<byte> &params) {}
-void Scripts::cmdDisplayStat(Common::Array<byte> &params) {}
-void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {}
-void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {}
-void Scripts::cmdDisplayBottom(Common::Array<byte> &params) {}
-void Scripts::cmdIfMapFlag(Common::Array<byte> &params) {}
-void Scripts::cmdSelRndChar(Common::Array<byte> &params) {}
-void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {}
-void Scripts::cmdItemType(Common::Array<byte> &params) {}
-void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {}
-void Scripts::cmdNoAction2(Common::Array<byte> &params) {}
-void Scripts::cmdChooseNumeric(Common::Array<byte> &params) {}
-void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) {}
-void Scripts::cmdDisplayLarge(Common::Array<byte> &params) {}
-void Scripts::cmdExchObj(Common::Array<byte> &params) {}
-void Scripts::cmdFallToMap(Common::Array<byte> &params) {}
-void Scripts::cmdDisplayMain(Common::Array<byte> &params) {}
-void Scripts::cmdGoto(Common::Array<byte> &params) {}
-void Scripts::cmdConfirmWord2(Common::Array<byte> &params) {}
-void Scripts::cmdGotoRandom(Common::Array<byte> &params) {}
-void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {}
-void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) {}
-void Scripts::cmdFlipWorld(Common::Array<byte> &params) {}
-void Scripts::cmdPlayCD(Common::Array<byte> &params) {}
+void Scripts::cmdRemove(Common::Array<byte> &params) { error("TODO"); }
+
+/**
+ * Set the currently active character for other script operations
+ */
+void Scripts::cmdSetChar(Common::Array<byte> &params) { 
+	if (params[0] != 7) {
+		_charIndex = WhoWill::show(_vm, 22, 3, false);
+		if (_charIndex == 0) {
+			cmdExit(params);
+			return;
+		}
+	} else {
+		_charIndex = _vm->getRandomNumber(1, _vm->_party->_partyCount);
+	}
+
+	_v2 = 1;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdSpawn(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDoTownEvent(Common::Array<byte> &params) { error("TODO"); }
+
+/**
+ * Stop executing the script
+ */
+void Scripts::cmdExit(Common::Array<byte> &params) { 
+	_lineNum = -1;
+}
+
+void Scripts::cmdAfterMap(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdGiveExtended(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdConfirmWord(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDamage(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdJumpRnd(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdAfterEvent(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdCallEvent(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdReturn(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdSetVar(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) { error("TODO"); }
+
+void Scripts::cmdWhoWill(Common::Array<byte> &params) { 
+	_charIndex = WhoWill::show(_vm, params[0], params[1], true);
+
+	_var4F = true;
+	if (_charIndex == 0)
+		cmdExit(params);
+	else
+		cmdNoAction(params);
+}
+
+void Scripts::cmdRndDamage(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdMoveWallObj(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdAlterCellFlag(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdAlterHed(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDisplayStat(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdSeatTextSml(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDisplayBottom(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdIfMapFlag(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdSelRndChar(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdItemType(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdNoAction2(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdChooseNumeric(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDisplayLarge(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdExchObj(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdFallToMap(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDisplayMain(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdGoto(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdConfirmWord2(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdGotoRandom(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdFlipWorld(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdPlayCD(Common::Array<byte> &params) { error("TODO"); }
 
 } // End of namespace Xeen

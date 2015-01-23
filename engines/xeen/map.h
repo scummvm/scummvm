@@ -309,6 +309,8 @@ public:
 	HeadData();
 
 	void synchronize(Common::SeekableReadStream &s);
+
+	HeadEntry *operator[](int y) { return &_data[y][0]; }
 };
 
 struct AnimationFrame { int _front, _left, _back, _right; };

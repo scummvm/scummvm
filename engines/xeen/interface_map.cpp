@@ -393,6 +393,7 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_tillMove = 0;
 	_flag1 = false;
 	_overallFrame = 0;
+	_face1State = _face2State = 0;
 }
 
 void InterfaceMap::setup() {
@@ -3852,15 +3853,15 @@ void InterfaceMap::assembleBorder() {
 
 	// Handle the face UI elements for indicating clairvoyance status
 	_face1UIFrame = (_face1UIFrame + 1) % 4;
-	if (_vm->_face1State == 0)
+	if (_face1State == 0)
 		_face1UIFrame += 4;
-	else if (_vm->_face1State == 2)
+	else if (_face1State == 2)
 		_face1UIFrame = 0;
 
 	_face2UIFrame = (_face2UIFrame + 1) % 4 + 12;
-	if (_vm->_face2State == 0)
+	if (_face2State == 0)
 		_face2UIFrame += 252;
-	else if (_vm->_face2State == 2)
+	else if (_face2State == 2)
 		_face2UIFrame = 0;
 
 	if (!_vm->_party->_clairvoyanceActive) {
@@ -4308,6 +4309,10 @@ void InterfaceMap::drawMiniMap() {
 	// Draw outer rectangle around the automap
 	_globalSprites.draw(window1, 6, Common::Point(223, 3));
 	party._wizardEyeActive = eyeActive;
+}
+
+void InterfaceMap::drawTownAnim(int v) {
+	warning("TODO");
 }
 
 } // End of namespace Xeen

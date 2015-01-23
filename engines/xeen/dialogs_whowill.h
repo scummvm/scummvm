@@ -20,28 +20,24 @@
  *
  */
 
-#ifndef XEEN_DIALOGS_ERROR_H
-#define XEEN_DIALOGS_ERROR_H
+#ifndef XEEN_DIALOGS_WHOWHILL_H
+#define XEEN_DIALOGS_WHOWHILL_H
 
 #include "xeen/dialogs.h"
 
 namespace Xeen {
 
-enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1, 
-	WT_2 = 2, WT_3 = 3};
-
-class ErrorScroll: public ButtonContainer {
+class WhoWill : public ButtonContainer {
 private:
 	XeenEngine *_vm;
 
-	ErrorScroll(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	WhoWill(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	void execute(const Common::String &msg, ErrorWaitType waitType);
+	int execute(int message, int action, bool type);
 public:
-	static void show(XeenEngine *vm, const Common::String &msg, 
-		ErrorWaitType waitType = WT_FREEZE_WAIT);
+	static int show(XeenEngine *vm, int message, int action, bool type);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_DIALOGS_ERROR_H */
+#endif /* XEEN_DIALOGS_WHOWHILL_H */

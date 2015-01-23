@@ -10,6 +10,8 @@ MODULE_OBJS := \
 	dialogs.o \
 	dialogs_error.o \
 	dialogs_options.o \
+	dialogs_whowill.o \
+	dialogs_yesno.o \
 	events.o \
 	files.o \
 	font.o \
