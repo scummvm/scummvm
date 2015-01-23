@@ -66,12 +66,12 @@ int DialogManager::show(const Common::String &msg) {
 		drawAlertBox(10, 5, colNumb);
 	} else {
 		drawAlertBox(8, 7, colNumb);
-		int i = 0;
+		int i = -1;
 		_vm->_screenSurface->_textPos.y = 70;
 		do {
 			curPos.x = 320;
 			Common::String displayStr = "";
-			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
+			while ((alertStr[i + 1] != '|') && (alertStr[i + 1] != ']')) {
 				++i;
 				displayStr += alertStr[i];
 				curPos.x -= 3;
