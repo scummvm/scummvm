@@ -27,7 +27,9 @@
 
 namespace Xeen {
 
-OutdoorDrawList::OutdoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2]) {
+OutdoorDrawList::OutdoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2]),
+	_combatImgs1(&_data[124]), _combatImgs2(&_data[95]),
+	_combatImgs3(&_data[76]), _combatImgs4(&_data[53]) {
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
 	_data[2] = DrawStruct(0, 8, 67);
@@ -185,7 +187,9 @@ IndoorDrawList::IndoorDrawList() :
 	_objects0(_data[149]), _objects1(_data[125]), _objects2(_data[126]),
 	_objects3(_data[127]), _objects4(_data[97]), _objects5(_data[98]),
 	_objects6(_data[99]), _objects7(_data[55]), _objects8(_data[56]),
-	_objects9(_data[58]), _objects10(_data[57]), _objects11(_data[59]) {
+	_objects9(_data[58]), _objects10(_data[57]), _objects11(_data[59]),
+	_combatImgs1(&_data[162]), _combatImgs2(&_data[135]),
+	_combatImgs3(&_data[111]), _combatImgs4(&_data[80]) {
 	// Setup draw structure positions
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
@@ -631,9 +635,118 @@ void InterfaceMap::draw3d(bool updateFlag) {
 	events.wait(2);
 }
 
+/**
+ * Handles animation of monsters, wall items, and combat within the 3d
+ * view by cycling the appropriate frame numbers
+ */
 void InterfaceMap::animate3d() {
+	Combat &combat = *_vm->_combat;
+	Map &map = *_vm->_map;
+	_overallFrame = (_overallFrame + 1) % 5;
+	_combatFloatCounter = (_combatFloatCounter + 1) % 8;
 
+	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
+		MazeMonster &monster = map._mobData._monsters[idx];
+		if (!monster._field7) {
+			if (monster._frame < 8) {
+				MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+				if (!monsterData._loopAnimation) {
+					// Monster isn't specially looped, so cycle through the 8 frames
+					monster._frame = (monster._frame + 1) % 8;
+				} else if (!monster._field9) {
+					monster._frame = (monster._frame + 1) % 8;
+					if (monster._frame == 0) {
+						monster._field9 ^= 1;
+						monster._frame = 6;
+					}
+				} else {
+					if (monster._frame)
+						--monster._frame;
+					if (monster._frame == 0)
+						monster._field9 = 0;
+				}
+			} else if (monster._frame == 11) {
+				--monster._fieldA;
+				if (monster._fieldA == 0)
+					monster._frame = 0;
+			} else {
+				++monster._frame;
+				if (monster._frame == 11) {
+					--monster._frame;
+					monster._frame = monster._fieldA ? 10 : 0;
+				}
+			}
+		}
+
+		// Block 2
+		if (monster._effect2) {
+			if (monster._effect1) {
+				if (monster._effect1 & 0x80) {
+					if (monster._effect3)
+						--monster._effect3;
+					if (monster._effect3 == 0)
+						monster._effect1 ^= 0x80;
+				} else {
+					monster._effect3 = (monster._effect3 + 1) % 3;
+					if (monster._effect3 == 0) {
+						monster._effect1 ^= 0x80;
+						monster._effect3 = 2;
+					}
+				}
+			}
+		} else {
+			monster._effect3 = (monster._effect3 + 1) % 8;
+			if (monster._effect3 == 0) {
+				MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+				monster._effect1 = monster._effect2 = monsterData._animationEffect;
+			}
+		}
+	}
+
+	DrawStruct *combatImgs1 = map._isOutdoors ? _outdoorList._combatImgs1 : _indoorList._combatImgs1;
+	DrawStruct *combatImgs2 = map._isOutdoors ? _outdoorList._combatImgs2 : _indoorList._combatImgs2;
+	DrawStruct *combatImgs3 = map._isOutdoors ? _outdoorList._combatImgs3 : _indoorList._combatImgs3;
+	DrawStruct *combatImgs4 = map._isOutdoors ? _outdoorList._combatImgs4 : _indoorList._combatImgs4;
+
+	if (_flag1) {
+		for (int idx = 0; idx < 8; ++idx) {
+			if (combatImgs1[idx]._sprites) {
+				combatImgs1[idx]._sprites = nullptr;
+				combat._shooting[idx] = false;
+			} else if (combatImgs2[idx]._sprites) {
+				combatImgs1[idx]._sprites = combatImgs2[idx]._sprites;
+				combatImgs2[idx]._sprites = nullptr;
+			} else if (combatImgs3[idx]._sprites) {
+				combatImgs2[idx]._sprites = combatImgs3[idx]._sprites;
+				combatImgs3[idx]._sprites = nullptr;
+			} else if (combatImgs4[idx]._sprites) {
+				combatImgs3[idx]._sprites = combatImgs4[idx]._sprites;
+				combatImgs4[idx]._sprites = nullptr;
+			}
+		}
+	} else if (_charsShooting) {
+		for (int idx = 0; idx < 8; ++idx) {
+			if (combatImgs4[idx]._sprites) {
+				combatImgs4[idx]._sprites = nullptr;
+			} else if (combatImgs3[idx]._sprites) {
+				combatImgs4[idx]._sprites = combatImgs3[idx]._sprites;
+				combatImgs3[idx]._sprites = nullptr;
+			} else if (combatImgs2[idx]._sprites) {
+				combatImgs3[idx]._sprites = combatImgs2[idx]._sprites;
+				combatImgs2[idx]._sprites = nullptr;
+			} else if (combatImgs1[idx]._sprites) {
+				combatImgs2[idx]._sprites = combatImgs1[idx]._sprites;
+				combatImgs1[idx]._sprites = nullptr;
+			}
+		}
+	}
+
+	for (uint idx = 0; idx < map._mobData._wallItems.size(); ++idx) {
+		MazeWallItem &wallItem = map._mobData._wallItems[idx];
+		wallItem._frame = (wallItem._frame + 1) % wallItem._sprites->size();
+	}
 }
+
 void InterfaceMap::setMazeBits() {
 	Common::fill(&_wo[0], &_wo[308], 0);
 

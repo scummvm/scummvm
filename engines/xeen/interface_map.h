@@ -36,6 +36,10 @@ public:
 	DrawStruct _data[132];
 	DrawStruct &_skySprite;
 	DrawStruct &_groundSprite;
+	DrawStruct * const _combatImgs1;
+	DrawStruct * const _combatImgs2;
+	DrawStruct * const _combatImgs3;
+	DrawStruct * const _combatImgs4;
 public:
 	OutdoorDrawList();
 
@@ -68,6 +72,10 @@ public:
 	DrawStruct &_objects0, &_objects1, &_objects2, &_objects3;
 	DrawStruct &_objects4, &_objects5, &_objects6, &_objects7;
 	DrawStruct &_objects8, &_objects9, &_objects10, &_objects11;
+	DrawStruct * const _combatImgs1;
+	DrawStruct * const _combatImgs2;
+	DrawStruct * const _combatImgs3;
+	DrawStruct * const _combatImgs4;
 public:
 	IndoorDrawList();
 

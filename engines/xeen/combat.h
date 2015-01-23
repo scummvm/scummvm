@@ -57,7 +57,7 @@ public:
 	int _monsterScale[12];
 	int _elemPow[12];
 	int _elemScale[12];
-	bool _shooting[6];
+	bool _shooting[8];
 public:
 	Combat(XeenEngine *vm);
 

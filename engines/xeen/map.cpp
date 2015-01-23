@@ -644,6 +644,9 @@ MazeMonster::MazeMonster() {
 	_id = 0;
 	_spriteId = 0;
 	_isAttacking = false;
+	_field7 = 0;
+	_field9 = 0;
+	_fieldA = 0;
 	_hp = 0;
 	_effect1 = _effect2 = 0;
 	_effect3 = 0;

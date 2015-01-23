@@ -236,6 +236,9 @@ struct MazeMonster {
 	int _id;
 	int _spriteId;
 	bool _isAttacking;
+	int _field7;
+	int _field9;
+	int _fieldA;
 	int _hp;
 	int _effect1, _effect2;
 	int _effect3;
