@@ -47,15 +47,13 @@ namespace ZVision {
 void ScriptManager::parseScrFile(const Common::String &fileName, ScriptScope &scope) {
 	Common::File file;
 	if (!_engine->getSearchManager()->openFile(file, fileName)) {
-		warning("Script file not found: %s", fileName.c_str());
-		return;
+		error("Script file not found: %s", fileName.c_str());
 	}
 
 	while (!file.eos()) {
 		Common::String line = file.readLine();
 		if (file.err()) {
-			warning("Error parsing scr file: %s", fileName.c_str());
-			return;
+			error("Error parsing scr file: %s", fileName.c_str());
 		}
 
 		trimCommentsAndWhiteSpace(&line);
