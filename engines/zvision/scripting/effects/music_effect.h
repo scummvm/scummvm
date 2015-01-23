@@ -48,9 +48,9 @@ public:
 	virtual bool process(uint32 deltaTimeInMillis) = 0;
 
 	virtual void setVolume(uint8 volume) = 0;
-
-	virtual void setPanTrack(int16 pos) = 0;
-	virtual void unsetPanTrack() = 0;
+	virtual uint8 getVolume() = 0;
+	virtual void setDeltaVolume(uint8 volume) = 0;
+	virtual void setBalance(int8 balance) = 0;
 
 	virtual void setFade(int32 time, uint8 target) = 0;
 };
@@ -70,17 +70,16 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 
 	void setVolume(uint8 volume);
-
-	void setPanTrack(int16 pos);
-	void unsetPanTrack();
+	uint8 getVolume();
+	void setDeltaVolume(uint8 volume);
+	void setBalance(int8 balance);
 
 	void setFade(int32 time, uint8 target);
 
 private:
-	bool _pantrack;
-	int32 _pantrackPosition;
-	int32 _attenuate;
 	uint8 _volume;
+	uint8 _deltaVolume;
+	int8 _balance;
 	bool _loop;
 	bool _crossfade;
 	uint8 _crossfadeTarget;
@@ -107,9 +106,9 @@ public:
 	bool process(uint32 deltaTimeInMillis);
 
 	void setVolume(uint8 volume);
-
-	void setPanTrack(int16 pos);
-	void unsetPanTrack();
+	uint8 getVolume();
+	void setDeltaVolume(uint8 volume);
+	void setBalance(int8 balance);
 
 	void setFade(int32 time, uint8 target);
 
@@ -126,8 +125,11 @@ public:
 	PanTrackNode(ZVision *engine, uint32 key, uint32 slot, int16 pos);
 	~PanTrackNode();
 
+	bool process(uint32 deltaTimeInMillis);
+
 private:
 	uint32 _slot;
+	int16 _position;
 };
 
 } // End of namespace ZVision
