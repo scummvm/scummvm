@@ -405,7 +405,7 @@ void DialogManager::drawF3F8() {
 	int f8Width = _vm->_screenSurface->getStringWidth(f8);
 
 	// Write out the bounding box
-	_vm->_screenSurface->drawBox(0, 42, MAX(f3Width, f8Width) + 6, 18, 7);
+	_vm->_screenSurface->drawBox(0, 42, MAX(f3Width, f8Width) + 4, 16, 7);
 }
 
 /**

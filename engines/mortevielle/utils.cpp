@@ -1653,11 +1653,11 @@ void MortevielleEngine::clearDescriptionBar() {
 	_mouse->hideMouse();
 	if (_largestClearScreen) {
 		_screenSurface->fillRect(0, Common::Rect(1, 176, 633, 199));
-		_screenSurface->drawBox(0, 176, 634, 23, 15);
+		_screenSurface->drawBox(0, 175, 634, 24, 15);
 		_largestClearScreen = false;
 	} else {
 		_screenSurface->fillRect(0, Common::Rect(1, 176, 633, 190));
-		_screenSurface->drawBox(0, 176, 634, 14, 15);
+		_screenSurface->drawBox(0, 175, 634, 15, 15);
 	}
 	_mouse->showMouse();
 }
