@@ -103,7 +103,7 @@ ActionAttenuate::ActionAttenuate(ZVision *engine, int32 slotkey, const Common::S
 bool ActionAttenuate::execute() {
 	ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
-		MusicNode *mus = (MusicNode *)fx;
+		MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 		mus->setVolume(255 * (10000 - abs(_attenuation)) / 10000 );
 	}
 	return true;
@@ -154,7 +154,7 @@ bool ActionCrossfade::execute() {
 	if (_keyOne) {
 		ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_keyOne);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
-			MusicNode *mus = (MusicNode *)fx;
+			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_oneStartVolume >= 0)
 				mus->setVolume((_oneStartVolume * 255) / 100);
 
@@ -165,7 +165,7 @@ bool ActionCrossfade::execute() {
 	if (_keyTwo) {
 		ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_keyTwo);
 		if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
-			MusicNode *mus = (MusicNode *)fx;
+			MusicNodeBASE *mus = (MusicNodeBASE *)fx;
 			if (_twoStartVolume >= 0)
 				mus->setVolume((_twoStartVolume * 255) / 100);
 
