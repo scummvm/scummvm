@@ -104,7 +104,7 @@ bool ActionAttenuate::execute() {
 	ScriptingEffect *fx = _engine->getScriptManager()->getSideFX(_key);
 	if (fx && fx->getType() == ScriptingEffect::SCRIPTING_EFFECT_AUDIO) {
 		MusicNode *mus = (MusicNode *)fx;
-		mus->setVolume(255 - (abs(_attenuation) >> 7));
+		mus->setVolume(255 * (10000 - abs(_attenuation)) / 10000 );
 	}
 	return true;
 }
