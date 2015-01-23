@@ -136,13 +136,15 @@ Common::Error SaveManager::loadGame(int slot) {
 	if (slot >= 0) {
 		saveFile = getSlotFile(slot);
 	} else {
-		Common::File *saveFile = _engine->getSearchManager()->openFile("r.svr");
+		saveFile = _engine->getSearchManager()->openFile("r.svr");
 		if (!saveFile) {
-			saveFile = new Common::File;
-			if (!saveFile->open("r.svr")) {
-				delete saveFile;
+			Common::File *restoreFile = new Common::File();
+			if (!restoreFile->open("r.svr")) {
+				delete restoreFile;
 				return Common::kPathDoesNotExist;
 			}
+
+			saveFile = restoreFile;
 		}
 	}
 
