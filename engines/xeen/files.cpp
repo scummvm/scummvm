@@ -200,7 +200,7 @@ FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
 	int sideNum = 0;
 
-	_isDarkCc = vm->getGameID() != GType_Clouds;
+	_isDarkCc = vm->getGameID() == GType_DarkSide;
 	_sideArchives[0] = _sideArchives[1] = nullptr;
 
 	if (vm->getGameID() != GType_DarkSide) {

@@ -116,7 +116,7 @@ void Scripts::checkEvents() {
 		_nEdamageType = 0;
 //		int var40 = -1;
 
-		while (_lineNum >= 0) {
+		while (!_vm->shouldQuit() && _lineNum >= 0) {
 			// Break out of the events if there's an attacking monster
 			if (combat._attackMonsters[0] != -1) {
 				_eventSkipped = true;
@@ -140,9 +140,9 @@ void Scripts::checkEvents() {
 				}
 			}
 			if (eventIndex == map._events.size())
-				break;
+				_lineNum = -1;
 		}
-	} while (0);
+	} while (!_vm->shouldQuit() && _lineNum != -1);
 
 	// TODO
 }
@@ -304,7 +304,7 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 
 	bool result;
 	if ((_charIndex != 0 && _charIndex != 8) || params[0] == 44) {
-		result = ifProc(params[0], mask, _event->_opcode - 8, _charIndex);
+		result = ifProc(params[0], mask, _event->_opcode - 8, _charIndex - 1);
 	} else {
 		result = false;
 		for (int idx = 0; idx < party._partyCount && !result; ++idx) {
@@ -826,8 +826,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		if (_vm->_files->_isDarkCc)
 			mask += 0x100;
 		assert(mask < 0x200);
-		if (party._gameFlags[mask])
-			v = mask;
+		v = party._gameFlags[mask] ? mask : 0xffffffff;
 		break;
 	case 21:
 		// Scans inventories for given item number
@@ -1063,8 +1062,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 99:
 		// Party skills check
-		if (party.checkSkill((Skill)mask))
-			v = mask;
+		v = party.checkSkill((Skill)mask) ? mask : 0xffffffff;
 		break;
 	case 102:
 		// Thievery skill
@@ -1072,13 +1070,12 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 103:
 		// Get value of world flag
-		if (party._worldFlags[mask])
-			v = mask;
+		v = party._worldFlags[mask] ? mask : 0xffffffff;
 		break;
 	case 104:
 		// Get value of quest flag
-		if (party._quests[mask + (_vm->_files->_isDarkCc ? 30 : 0)])
-			v = mask;
+		v = party._quests[mask + (_vm->_files->_isDarkCc ? 30 : 0)] ?
+			mask : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock
