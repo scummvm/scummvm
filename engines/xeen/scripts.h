@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/serializer.h"
+#include "common/stack.h"
 #include "common/str-array.h"
 #include "xeen/files.h"
 
@@ -117,6 +118,12 @@ public:
 	void synchronize(XeenSerializer &s);
 };
 
+struct StackEntry : public Common::Point {
+	int line;
+
+	StackEntry(const Common::Point &pt, int l) : Common::Point(pt), line(l) {}
+};
+
 class Scripts {
 private:
 	XeenEngine *_vm;
@@ -133,6 +140,8 @@ private:
 	int _nEdamageType;
 	Common::String _paramText;
 	MazeEvent *_event;
+	Common::Point _currentPos;
+	Common::Stack<StackEntry> _stack;
 
 	void doOpcode(MazeEvent &event);
 	void cmdDisplay1(Common::Array<byte> &params);

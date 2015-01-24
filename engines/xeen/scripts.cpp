@@ -109,7 +109,7 @@ void Scripts::checkEvents() {
 //		int varA = 0;
 		_animCounter = 0;
 //		int var4E = 0;
-		const Common::Point pt = party._mazePosition;
+		_currentPos = party._mazePosition;
 		_charIndex = 1;
 		_v2 = 1;
 		_nEdamageType = 0;
@@ -127,8 +127,8 @@ void Scripts::checkEvents() {
 			for (eventIndex = 0; eventIndex < map._events.size(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
 
-				if (event._position == pt && party._mazeDirection != (pt.x | pt.y)
-						&& event._line == _lineNum) {
+				if (event._position == _currentPos && party._mazeDirection != 
+						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
 						_vm->_mode = MODE_9;
 						_paramText = event._parameters.size() == 0 ? "" :
@@ -454,8 +454,33 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 void Scripts::cmdDamage(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdJumpRnd(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdAfterEvent(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdCallEvent(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdReturn(Common::Array<byte> &params) { error("TODO"); }
+
+/**
+ * Stores the current location and line for later resuming, and set up to execute
+ * a script at a given location
+ */
+void Scripts::cmdCallEvent(Common::Array<byte> &params) { 
+	_stack.push(StackEntry(_currentPos, _lineNum));
+	_currentPos = Common::Point(params[0], params[1]);
+	_lineNum = params[2] - 1;
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+/**
+ * Return from executing a script to the script location that previously 
+ * called the script
+ */
+void Scripts::cmdReturn(Common::Array<byte> &params) {
+	StackEntry &se = _stack.top();
+	_currentPos = se;
+	_lineNum = se.line;
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
 void Scripts::cmdSetVar(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) { error("TODO"); }
 
