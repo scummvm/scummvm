@@ -132,8 +132,6 @@ void Scripts::checkEvents() {
 						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
 						_vm->_mode = MODE_9;
-						_paramText = event._parameters.size() == 0 ? "" :
-							map._events._text[event._parameters[0]];
 						doOpcode(event);
 						break;
 					} else {
@@ -197,7 +195,8 @@ void Scripts::doOpcode(MazeEvent &event) {
  */
 void Scripts::cmdDisplay1(Common::Array<byte> &params) {
 	Screen &screen = *_vm->_screen;
-	Common::String msg = Common::String::format("\r\x03""c%s", _paramText.c_str());
+	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
+	Common::String msg = Common::String::format("\r\x03""c%s", paramText.c_str());
 
 	screen._windows[12].close();
 	if (screen._windows[38]._enabled)
@@ -214,8 +213,10 @@ void Scripts::cmdDisplay1(Common::Array<byte> &params) {
  */
 void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
+
+	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
 	intf._screenText = Common::String::format("\x02\f""08\x03""c\t116\v025%s\x03""l\fd""\x01", 
-		_paramText.c_str());
+		paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -228,8 +229,10 @@ void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
  */
 void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
+
+	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
 	intf._screenText = Common::String::format("\f04\x03""c\t116\v030%s\x03""l\fd",
-		_paramText.c_str());
+		paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -242,8 +245,10 @@ void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
  */
 void Scripts::cmdSignText(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
+
+	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
 	intf._screenText = Common::String::format("\f08\x03""c\t120\v088%s\x03""l\fd",
-		_paramText.c_str());
+		paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -273,21 +278,47 @@ void Scripts::cmdTeleport(Common::Array<byte> &params) {
  * Do a conditional check
  */
 void Scripts::cmdIf(Common::Array<byte> &params) {
+	Party &party = *_vm->_party;
+	uint32 mask;
+	int newLineNum;
+
 	switch (params[0]) {
 	case 16:
 	case 34:
 	case 100:
-		// TODO
+		mask = (params[4] << 24) | (params[3] << 16) | (params[2] << 8) | params[1];
+		newLineNum = params[5];
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		// TODO
+		mask = (params[2] << 8) | params[1];
+		newLineNum = params[3];
 		break;
 	default:
+		mask = params[1];
+		newLineNum = params[2];
 		break;
 	}
+
+	bool result;
+	if ((_charIndex != 0 && _charIndex != 8) || params[0] == 44) {
+		result = ifProc(params[0], mask, _event->_opcode - 8, _charIndex);
+	} else {
+		result = false;
+		for (int idx = 0; idx < party._partyCount && !result; ++idx) {
+			if (_charIndex == 0 || (_charIndex == 8 && idx != _v2)) {
+				result = ifProc(params[0], mask, _event->_opcode - 8, idx);
+			}
+		}
+	}
+
+	if (result)
+		_lineNum = newLineNum - 1;
+
+	_var4F = true;
+	cmdNoAction(params);
 }
 
 /**

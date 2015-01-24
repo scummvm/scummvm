@@ -138,7 +138,6 @@ private:
 	int _v2;
 	int _var4F;
 	int _nEdamageType;
-	Common::String _paramText;
 	MazeEvent *_event;
 	Common::Point _currentPos;
 	Common::Stack<StackEntry> _stack;
