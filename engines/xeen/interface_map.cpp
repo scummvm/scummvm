@@ -2379,7 +2379,6 @@ void InterfaceMap::setIndoorsMonsters() {
 	Map &map = *_vm->_map;
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
-	const int INDOOR_MONSTERS_Y[4] = { 2, 34, 53, 59 };
 
 	combat.clear();
 	for (uint monsterIdx = 0; monsterIdx < map._mobData._monsters.size(); ++monsterIdx) {
@@ -3105,6 +3104,255 @@ void InterfaceMap::setIndoorsWallPics() {
 }
 
 void InterfaceMap::setOutdoorsMonsters() {
+	Combat &combat = *_vm->_combat;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Direction dir = party._mazeDirection;
+	Common::Point pt = party._mazePosition;
+
+	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
+		MazeMonster &monster = map._mobData._monsters[idx];
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][2]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][2])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[0] == -1) {
+				_outdoorList[118]._frame = idx;
+				combat._attackMonsters[0] = idx;
+			} else if (combat._attackMonsters[1] == -1) {
+				_outdoorList[112]._frame = idx;
+				combat._attackMonsters[1] = idx;
+			} else if (combat._attackMonsters[2] == -1) {
+				_outdoorList[115]._frame = idx;
+				combat._attackMonsters[2] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][7]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][7])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[3] == -1) {
+				_outdoorList[94]._frame = idx;
+				combat._attackMonsters[3] = idx;
+			} else if (combat._attackMonsters[4] == -1) {
+				_outdoorList[92]._frame = idx;
+				combat._attackMonsters[4] = idx;
+			} else if (combat._attackMonsters[5] == -1) {
+				_outdoorList[93]._frame = idx;
+				combat._attackMonsters[5] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][5]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][5])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[12] == -1) {
+				_outdoorList[90]._frame = idx;
+				combat._attackMonsters[12] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][9]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][9])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[13] == -1) {
+				_outdoorList[91]._frame = idx;
+				combat._attackMonsters[13] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][14]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][14])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[6] == -1) {
+				_outdoorList[75]._frame = idx;
+				combat._attackMonsters[6] = idx;
+			} else if (combat._attackMonsters[7] == -1) {
+				_outdoorList[73]._frame = idx;
+				combat._attackMonsters[7] = idx;
+			} else if (combat._attackMonsters[8] == -1) {
+				_outdoorList[74]._frame = idx;
+				combat._attackMonsters[8] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][12]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][12])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[14] == -1) {
+				_outdoorList[69]._frame = idx;
+				combat._attackMonsters[14] = idx;
+			} else if (combat._attackMonsters[20] == -1) {
+				_outdoorList[70]._frame = idx;
+				combat._attackMonsters[20] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][16]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][16])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[15] == -1) {
+				_outdoorList[71]._frame = idx;
+				combat._attackMonsters[15] = idx;
+			} else if (combat._attackMonsters[21] == -1) {
+				_outdoorList[72]._frame = idx;
+				combat._attackMonsters[21] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][27]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][27])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[9] == -1) {
+				_outdoorList[52]._frame = idx;
+				combat._attackMonsters[9] = idx;
+			} else if (combat._attackMonsters[10] == -1) {
+				_outdoorList[50]._frame = idx;
+				combat._attackMonsters[10] = idx;
+			} else if (combat._attackMonsters[11] == -1) {
+				_outdoorList[51]._frame = idx;
+				combat._attackMonsters[11] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][25]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][25])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[16] == -1) {
+				_outdoorList[44]._frame = idx;
+				combat._attackMonsters[16] = idx;
+			} else if (combat._attackMonsters[22] == -1) {
+				_outdoorList[42]._frame = idx;
+				combat._attackMonsters[22] = idx;
+			} else if (combat._attackMonsters[24] == -1) {
+				_outdoorList[43]._frame = idx;
+				combat._attackMonsters[24] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][23]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][23])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[18] == -1) {
+				_outdoorList[48]._frame = idx;
+				combat._attackMonsters[18] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][29]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][29])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[17] == -1) {
+				_outdoorList[47]._frame = idx;
+				combat._attackMonsters[17] = idx;
+			} else if (combat._attackMonsters[23] == -1) {
+				_outdoorList[45]._frame = idx;
+				combat._attackMonsters[23] = idx;
+			} else if (combat._attackMonsters[25] == -1) {
+				_outdoorList[46]._frame = idx;
+				combat._attackMonsters[25] = idx;
+			}
+		}
+
+		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][31]) &&
+				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][31])) {
+			monster._isAttacking = true;
+			if (combat._attackMonsters[19] == -1) {
+				_outdoorList[49]._frame = idx;
+				combat._attackMonsters[19] = idx;
+			}
+		}
+	}
+
+	_outdoorList[115]._x = 58;
+	_outdoorList[93]._x = 25;
+	_outdoorList[74]._x = 9;
+	_outdoorList[51]._x = -1;
+	_outdoorList[43]._x = -26;
+	_outdoorList[46]._x = 23;
+	_outdoorList[48]._x = -58;
+	_outdoorList[49]._x = 40;
+	_outdoorList[69]._x = -65;
+	_outdoorList[70]._x = -85;
+	_outdoorList[71]._x = 49;
+	_outdoorList[72]._x = 65;
+	_outdoorList[90]._x = -112;
+	_outdoorList[91]._x = 98;
+
+	if (combat._attackMonsters[1] != -1 && combat._attackMonsters[2] == -1) {
+		_outdoorList[118]._x = 31;
+		_outdoorList[112]._x = -36;
+	} else {
+		_outdoorList[118]._x = -5;
+		_outdoorList[112]._x = -67;
+	}
+	if (combat._attackMonsters[4] != -1 && combat._attackMonsters[5] == -1) {
+		_outdoorList[94]._x = 8;
+		_outdoorList[92]._x = -23;
+	} else {
+		_outdoorList[94]._x = -7;
+		_outdoorList[92]._x = -38;
+	}
+	if (combat._attackMonsters[7] != -1 && combat._attackMonsters[8] == -1) {
+		_outdoorList[75]._x = 0;
+		_outdoorList[73]._x = -16;
+	} else {
+		_outdoorList[75]._x = -8;
+		_outdoorList[73]._x = -24;
+	}
+	if (combat._attackMonsters[10] != -1 && combat._attackMonsters[11] == -1) {
+		_outdoorList[52]._x = -5;
+		_outdoorList[50]._x = -13;
+	} else {
+		_outdoorList[52]._x = -9;
+		_outdoorList[50]._x = -17;
+	}
+	if (combat._attackMonsters[22] != -1 && combat._attackMonsters[24] == -1) {
+		_outdoorList[44]._x = -27;
+		_outdoorList[42]._x = -37;
+	} else {
+		_outdoorList[44]._x = -34;
+		_outdoorList[42]._x = -41;
+	}
+	if (combat._attackMonsters[23] != -1 && combat._attackMonsters[25] == -1) {
+		_outdoorList[47]._x = 20;
+		_outdoorList[45]._x = -12;
+	} else {
+		_outdoorList[47]._x = 16;
+		_outdoorList[45]._x = -16;
+	}
+
+	for (int idx = 0; idx < 26; ++idx) {
+		DrawStruct &ds = _outdoorList[OUTDOOR_MONSTER_INDEXES[idx]];
+
+		if (ds._frame != -1) {
+			ds._flags &= ~0xfff;
+
+			// TODO: Double-check.. this section looks *weird*
+			MazeMonster &monster = map._mobData._monsters[ds._frame];
+			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+
+			ds._frame = monster._frame;
+
+			if (monster._effect2) {
+				ds._flags = MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
+			}
+
+			if (monster._frame > 7) {
+				monster._frame -= 8;
+				ds._sprites = monster._attackSprites;
+			} else {
+				ds._sprites = monster._sprites;
+			}
+
+			ds._y = OUTDOOR_MONSTERS_Y[idx];
+
+			if (monsterData._flying) {
+				ds._x += COMBAT_FLOAT_X[_combatFloatCounter];
+				ds._y += COMBAT_FLOAT_Y[_combatFloatCounter];
+			}
+		}
+	}
 	// TODO
 }
 

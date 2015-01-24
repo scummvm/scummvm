@@ -98,9 +98,13 @@ extern const int INDOOR_OBJECT_X[2][12];
 
 extern const int INDOOR_OBJECT_Y[2][12];
 
+extern const int INDOOR_MONSTERS_Y[4];
+
 extern const int OUTDOOR_OBJECT_X[2][12];
 
-extern const int OUTDOOR_OBJECT_Y[2][12];
+extern const int OUTDOOR_MONSTER_INDEXES[26];
+
+extern const int OUTDOOR_MONSTERS_Y[26];
 
 extern const int DIRECTION_ANIM_POSITIONS[4][4];
 
