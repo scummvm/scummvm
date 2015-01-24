@@ -21,6 +21,7 @@
  */
 
 #include "xeen/items.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 
@@ -34,6 +35,23 @@ void XeenItem::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_name);
 	s.syncAsByte(_bonusFlags);
 	s.syncAsByte(_equipped);
+}
+
+int XeenItem::getElementalCategory() const {
+	int idx;
+	for (idx = 0; ELEMENTAL_CATEGORIES[idx] < _material; ++idx)
+		;
+
+	return idx;
+}
+
+int XeenItem::getAttributeCategory() const {
+	int m = _material - 59;
+	int idx;
+	for (idx = 0; ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
+		;
+
+	return idx;
 }
 
 Treasure::Treasure() {

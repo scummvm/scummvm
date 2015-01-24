@@ -40,6 +40,10 @@ public:
 	XeenItem();
 
 	void synchronize(Common::Serializer &s);
+
+	int getElementalCategory() const;
+
+	int getAttributeCategory() const;
 };
 
 class Treasure {

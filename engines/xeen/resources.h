@@ -38,6 +38,8 @@ extern const char *const WHO_WILL;
 
 extern const char *const WHATS_THE_PASSWORD;
 
+extern const char *const IN_NO_CONDITION;
+
 extern const char *const TERRAIN_TYPES[6];
 
 extern const char *const SURFACE_TYPE_NAMES[15];
@@ -55,6 +57,10 @@ extern const byte TEXT_COLORS[40][4];
 extern const char *const DIRECTION_TEXT[4];
 
 extern const char *const RACE_NAMES[5];
+
+extern const int RACE_HP_BONUSES[5];
+
+extern const int RACE_SP_BONUSES[5][2];
 
 extern const char *const CLASS_NAMES[11];
 
@@ -110,7 +116,31 @@ extern const int COMBAT_FLOAT_Y[8];
 
 extern const int MONSTER_EFFECT_FLAGS[15][8];
 
-extern const int SPELLS_ALLOWED[3][40];
+extern const uint SPELLS_ALLOWED[3][40];
+
+extern const int BASE_HP_BY_CLASS[10];
+
+extern const int AGE_RANGES[10];
+
+extern const int AGE_RANGES_ADJUST[2][10];
+
+extern const int STAT_VALUES[24];
+
+extern const int STAT_BONUSES[24];
+
+extern const int ELEMENTAL_CATEGORIES[6];
+
+extern const int ATTRIBUTE_CATEGORIES[10];
+
+extern const int ATTRIBUTE_BONUSES[72];
+
+extern const int ELEMENTAL_RESISTENCES[37];
+
+extern const int ELEMENTAL_DAMAGE[37];
+
+extern const int METAL_LAC[9];
+
+extern const int ARMOR_STRENGTHS[14];
 
 } // End of namespace Xeen
 

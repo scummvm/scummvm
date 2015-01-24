@@ -170,7 +170,7 @@ MonsterData::MonsterData() {
 				   10, 100, 10, 10, 10, 10, 0, 0, 0, 10, 0, false, 8, 0, 0,
 				   117, "cleric"));
 	push_back(MonsterStruct("Mok Heretic", 50000, 150, 12, 50, 1, CLASS_CLERIC,
-				   500, 1, DT_1, SA_NONE, 1, 1, MONSTER_HUMANOID, 20, 50,
+				   500, 1, DT_MAGICAL, SA_NONE, 1, 1, MONSTER_HUMANOID, 20, 50,
 				   20, 20, 20, 30, 0, 0, 0, 25, 4, false, 8, 0, 0, 117,
 				   "cleric"));
 	push_back(MonsterStruct("Mantis Ant", 40000, 300, 30, 40, 2, CLASS_16, 2, 100,
@@ -226,7 +226,7 @@ MonsterData::MonsterData() {
 				   DT_PHYSICAL, SA_NONE, 1, 0, MONSTER_0, 0, 0, 0, 0, 0,
 				   0, 0, 0, 0, 0, 0, false, 25, 0, 0, 131, "gremlin"));
 	push_back(MonsterStruct("Onyx Golem", 1000000, 10000, 50, 100, 1, CLASS_15, 2,
-				   250, DT_1, SA_DRAINSP, 1, 0, MONSTER_GOLEM, 100, 100,
+				   250, DT_MAGICAL, SA_DRAINSP, 1, 0, MONSTER_GOLEM, 100, 100,
 				   100, 100, 100, 100, 50, 0, 0, 100, 0, true, 24, 0, 10,
 				   100, "golem"));
 	push_back(MonsterStruct("Gremlin", 2000, 20, 7, 35, 2, CLASS_16, 2, 10,
@@ -260,7 +260,7 @@ MonsterData::MonsterData() {
 				   DT_FIRE, SA_NONE, 1, 0, MONSTER_INSECT, 100, 100, 0,
 				   100, 0, 0, 0, 0, 0, 0, 0, false, 33, 0, 0, 131, "Phantom"));
 	push_back(MonsterStruct("Power Lich", 200000, 500, 20, 60, 1, CLASS_15, 10, 10,
-				   DT_1, SA_UNCONSCIOUS, 1, 1, MONSTER_UNDEAD, 0, 0, 0, 0,
+				   DT_MAGICAL, SA_UNCONSCIOUS, 1, 1, MONSTER_UNDEAD, 0, 0, 0, 0,
 				   0, 80, 70, 0, 0, 0, 0, true, 34, 0, 0, 141, "lich"));
 	push_back(MonsterStruct("Mystic Mage", 100000, 200, 20, 70, 1, CLASS_15, 10,
 				   20, DT_ELECTRICAL, SA_NONE, 1, 1, MONSTER_0, 50, 100,
@@ -317,7 +317,7 @@ MonsterData::MonsterData() {
 				   10, 100, 10, 10, 10, 20, 0, 0, 0, 20, 0, false, 50, 0, 0,
 				   163, "disint"));
 	push_back(MonsterStruct("Sorceress", 80000, 200, 30, 80, 1, CLASS_15, 2, 50,
-				   DT_1, SA_NONE, 1, 1, MONSTER_HUMANOID, 10, 20, 10, 10,
+				   DT_MAGICAL, SA_NONE, 1, 1, MONSTER_HUMANOID, 10, 20, 10, 10,
 				   10, 80, 0, 0, 0, 50, 5, false, 50, 0, 0, 163, "disint"));
 	push_back(MonsterStruct("Arachnoid", 4000, 50, 10, 40, 1, CLASS_16, 3, 5,
 				   DT_POISON, SA_POISON, 1, 0, MONSTER_INSECT, 0, 0, 0,
@@ -367,7 +367,7 @@ MonsterData::MonsterData() {
 				   50, 50, 50, 50, 50, 0, 0, 0, 50, 0, false, 64, 0, 0, 163,
 				   "boltelec"));
 	push_back(MonsterStruct("Wizard", 60000, 250, 20, 125, 1, CLASS_PALADIN, 10,
-				   25, DT_1, SA_NONE, 1, 1, MONSTER_HUMANOID, 50, 30, 30,
+				   25, DT_MAGICAL, SA_NONE, 1, 1, MONSTER_HUMANOID, 50, 30, 30,
 				   30, 30, 30, 0, 0, 0, 20, 0, false, 65, 0, 0, 163, "wizard"));
 	push_back(MonsterStruct("Dark Wolf", 10000, 70, 10, 70, 3, CLASS_16, 3, 8,
 				   DT_PHYSICAL, SA_NONE, 10, 0, MONSTER_ANIMAL, 0, 0, 0,
@@ -391,7 +391,7 @@ MonsterData::MonsterData() {
 				   MONSTER_HUMANOID, 80, 80, 80, 80, 80, 20, 0, 0, 200,
 				   0, 7, false, 30, 0, 10, 100, "knight"));
 	push_back(MonsterStruct("Sandro", 200000, 1000, 20, 75, 1, CLASS_15, 10, 10,
-				   DT_1, SA_DEATH, 1, 1, MONSTER_UNDEAD, 0, 0, 0, 0, 0,
+				   DT_MAGICAL, SA_DEATH, 1, 1, MONSTER_UNDEAD, 0, 0, 0, 0, 0,
 				   90, 80, 0, 0, 100, 7, true, 34, 0, 10, 100, "lich"));
 	push_back(MonsterStruct("Mega Mage", 500000, 500, 35, 100, 1, CLASS_15, 10, 40,
 				   DT_ELECTRICAL, SA_NONE, 1, 1, MONSTER_0, 80, 100, 80,
@@ -439,7 +439,7 @@ MonsterData::MonsterData() {
 				   0, MONSTER_UNDEAD, 80, 80, 80, 80, 80, 80, 90, 0, 0, 0,
 				   0, false, 58, 0, 0, 100, "vamp"));
 	push_back(MonsterStruct("Valio", 60000, 150, 15, 60, 1, CLASS_PALADIN, 10, 25,
-				   DT_1, SA_NONE, 1, 0, MONSTER_HUMANOID, 50, 30, 30, 30,
+				   DT_MAGICAL, SA_NONE, 1, 0, MONSTER_HUMANOID, 50, 30, 30, 30,
 				   40, 30, 0, 0, 0, 0, 0, false, 65, 0, 0, 100, "wizard"));
 	push_back(MonsterStruct("Sky Golem", 200000, 1000, 50, 100, 1, CLASS_15, 2,
 				   100, DT_COLD, SA_NONE, 1, 1, MONSTER_GOLEM, 50, 50,

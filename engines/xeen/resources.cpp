@@ -73,6 +73,8 @@ const char *const WHO_WILL = "\X03""c\X0B""000\x09""000%s\x0A\x0A"
 
 const char *const WHATS_THE_PASSWORD = "What's the Password?";
 
+const char *const IN_NO_CONDITION = "\x0B""007%s is not in any condition to perform actions!";
+
 const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
 };
@@ -270,6 +272,12 @@ const byte TEXT_COLORS[40][4] = {
 const char *const DIRECTION_TEXT[4] = { "NORTH", "EAST", "SOUTH", "WEST" };
 
 const char *const RACE_NAMES[5] = { "Human", "Elf", "Dwarf", "Gnome", "H-Orc" };
+
+const int RACE_HP_BONUSES[5] = { 0, -2, 1, -1, 2 };
+
+const int RACE_SP_BONUSES[5][2] = {
+	{ 0, 0 }, { 2, 0 }, { -1, -1 }, { 1, 1 }, { -2, -2 }
+};
 
 const char *const ALIGNMENT_NAMES[3] = { "Good", "Neutral", "Evil" };
 
@@ -471,7 +479,7 @@ const int MONSTER_EFFECT_FLAGS[15][8] = {
 	{ 0x108, 0x108, 0x108, 0x108, 0x108, 0x108, 0x108, 0x108 }
 };
 
-const int SPELLS_ALLOWED[3][40] = {
+const uint SPELLS_ALLOWED[3][40] = {
 	{
 		0, 1, 2, 3, 5, 6, 7, 8, 9, 10,
 		12, 14, 16, 23, 26, 27, 28, 30, 31, 32,
@@ -489,5 +497,57 @@ const int SPELLS_ALLOWED[3][40] = {
 		60, 61, 62, 67, 68, 72, 73, 74, 75, 76
 	}
 };
+
+const int BASE_HP_BY_CLASS[10] = { 10, 8, 7, 5, 4, 8, 7, 12, 6, 9 };
+
+const int AGE_RANGES[10] = { 1, 6, 11, 18, 36, 51, 76, 101, 201, 0xffff };
+
+const int AGE_RANGES_ADJUST[2][10] = {
+	{ -250, -50, -20, -10, 0, -2, -5, -10, -20, -50 },
+	{ -250, -50, -20, -10, 0, 2, 5, 10, 20, 50 }
+};
+
+const int STAT_VALUES[24] = {
+	11, 13, 15, 17, 19, 21, 25, 30, 35, 40, 50, 75,
+	100, 125, 150, 175, 200, 225, 250, 65535
+};
+
+const int STAT_BONUSES[24] = {
+	251, 252, 253, 254, 255, 0, 1, 2, 3, 4, 5, 6,
+	7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20
+};
+
+const int ELEMENTAL_CATEGORIES[6] = { 8, 15, 20, 25, 33, 36 };
+
+const int ATTRIBUTE_CATEGORIES[10] = {
+	9, 17, 25, 33, 39, 45, 50, 56, 61, 72 };
+
+const int ATTRIBUTE_BONUSES[72] = {
+	2, 3, 5, 8, 12, 17, 23, 30, 38, 47,	// Might bonus
+	2, 3, 5, 8, 12, 17, 23, 30,			// INT bonus
+	2, 3, 5, 8, 12, 17, 23, 30,			// PER bonus
+	2, 3, 5, 8, 12, 17, 23, 30,			// SPD bonus
+	3, 5, 10, 15, 20, 30,				// ACC bonus
+	5, 10, 15, 20, 25, 30,				// LUC bonus
+	4, 6, 10, 20, 50,					// HP bonus
+	4, 8, 12, 16, 20, 25,				// SP bonus
+	2, 4, 6, 10, 16,					// AC bonus
+	4, 6, 8, 10, 12, 14, 16, 18, 20, 25	// Thievery bonus
+};
+
+const int ELEMENTAL_RESISTENCES[37] = {
+	0, 5, 7, 9, 12, 15, 20, 25, 30, 5, 7, 9, 12, 15, 20, 25,
+	5, 10, 15, 20, 25, 10, 15, 20, 25, 40, 5, 7, 9, 11, 13, 15, 20, 25,
+	5, 10, 20
+};
+
+const int ELEMENTAL_DAMAGE[37] = {
+	0, 2, 3, 4, 5, 10, 15, 20, 30, 2, 3, 4, 5, 10, 15, 20, 2, 4, 5, 10, 20,
+	2, 4, 8, 16, 32, 2, 3, 4, 5, 10, 15, 20, 30, 5, 10, 25
+};
+
+const int METAL_LAC[9] = { -3, 0, -2, -1, 1, 2, 4, 6, 8 };
+
+const int ARMOR_STRENGTHS[14] = { 0, 2, 4, 5, 6, 7, 8, 10, 4, 2, 1, 1, 1, 1 };
 
 } // End of namespace Xeen

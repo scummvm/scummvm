@@ -86,7 +86,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 
 void Scripts::checkEvents() {
 	Combat &combat = *_vm->_combat;
-	Interface &intf = *_vm->_interface;
+//	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 
@@ -415,7 +415,7 @@ void Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 		break;
 	}
 
-	if ((_charIndex != 0 & _charIndex != 8) || params[0] == 44) {
+	if ((_charIndex != 0 && _charIndex != 8) || params[0] == 44) {
 		result = ifProc(params[0], mask, _event->_opcode - OP_If1, _charIndex - 1);
 	} else {
 		result = false;
@@ -566,7 +566,7 @@ void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
 
 	// Scan through the event list and mark the opcodes for all the lines of any scripts
 	// on the party's current cell as having no operation, effectively disabling them
-	for (int idx = 0; idx < map._events.size(); ++idx) {
+	for (uint idx = 0; idx < map._events.size(); ++idx) {
 		MazeEvent &evt = map._events[idx];
 		if (evt._position == party._mazePosition)
 			evt._opcode = OP_None;
@@ -804,22 +804,22 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		if (mask < 82) {
 			for (int idx = 0; idx < 9; ++idx) {
 				if (mask == 35) {
-					if (ps._weapons[idx]._name == mask) {
+					if ((int)ps._weapons[idx]._name == mask) {
 						v = mask;
 						break;
 					}
 				} else if (mask < 49) {
-					if (ps._armor[idx]._name == (mask - 35)) {
+					if ((int)ps._armor[idx]._name == (mask - 35)) {
 						v = mask;
 						break;
 					}
 				} else if (mask < 60) {
-					if (ps._accessories[idx]._name == (mask - 49)) {
+					if ((int)ps._accessories[idx]._name == (mask - 49)) {
 						v = mask;
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._name == (mask - 60)) {
+					if ((int)ps._misc[idx]._name == (mask - 60)) {
 						v = mask;
 						break;
 					}
@@ -1020,7 +1020,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	case 91:
 	case 92:
 		// Get a player stat
-		v = ps.getStat(action - 86, 0);
+		v = ps.getStat((Attribute)(action - 86), 0);
 		break;
 	case 93:
 		// Current day of the week (10 days per week)

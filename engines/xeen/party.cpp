@@ -165,28 +165,194 @@ int PlayerStruct::getAge(bool ignoreTemp) const {
 }
 
 int PlayerStruct::getMaxHP() const {
-	warning("TODO: getMaxHp");
-	return 20;
+	int hp = BASE_HP_BY_CLASS[_class];
+	hp += statBonus(getStat(ENDURANCE, false));
+	hp += RACE_HP_BONUSES[_race];
+	if (_skills[BODYBUILDER])
+		++hp;
+	if (hp < 1)
+		hp = 1;
+
+	hp *= getCurrentLevel();
+	hp += itemScan(7);
+
+	if (hp < 0)
+		hp = 0;
+
+	return hp;
 }
 
 int PlayerStruct::getMaxSP() const {
-	warning("TODO: getMaxSP");
-	return 20;
+	int result = 0;
+	bool flag = false;
+	int amount;
+	Attribute attrib;
+	Skill skill;
+
+	if (_hasSpells)
+		return 0;
+
+	if (_class == CLASS_SORCERER || _class == CLASS_ARCHER) {
+		attrib = INTELLECT;
+		skill = PRESTIDIGITATION;
+	} else {
+		attrib = PERSONALITY;
+		skill = PRAYER_MASTER;
+	}
+	if (_class == CLASS_DRUID || _class == CLASS_RANGER)
+		skill = ASTROLOGER;
+
+	for (;;) {
+		// Get the base number of spell points
+		result = statBonus(getStat(attrib, false));
+		result += RACE_SP_BONUSES[_race][attrib - 1];
+
+		if (_skills[skill])
+			result += 2;
+		if (result < 1)
+			result = 1;
+
+		// Multiply it by the character's level
+		result *= getCurrentLevel();
+
+		// Classes other than sorcerer, clerics, and druids only get half the SP
+		if (_class != CLASS_SORCERER && _class != CLASS_CLERIC && _class != CLASS_DRUID)
+			result /= 2;
+
+		if (flag || (_class != CLASS_DRUID && _class != CLASS_RANGER))
+			break;
+
+		// Druids and rangers get bonuses averaged on both personality and intellect
+		attrib = INTELLECT;
+		flag = true;
+		amount = result;
+	}
+	if (flag)
+		result = (amount + result) / 2;
+
+	result += itemScan(8);
+	if (result < 0)
+		result = 0;
+
+	return result;
 }
 
-int PlayerStruct::getStat(int statNum, int v2) {
-	// TODO
-	return 10;
+/**
+ * Get the effective value of a given stat for the character
+ */
+int PlayerStruct::getStat(Attribute attrib, bool applyMod) const {
+	AttributePair attr;
+	int mode = 0;
+
+	switch (attrib) {
+	case MIGHT:
+		attr = _might;
+		break;
+	case INTELLECT:
+		attr = _intellect;
+		mode = 1;
+		break;
+	case PERSONALITY:
+		attr = _personality;
+		mode = 1;
+		break;
+	case ENDURANCE:
+		attr = _endurance;
+		break;
+	case SPEED:
+		attr = _speed;
+		break;
+	case ACCURACY:
+		attr = _accuracy;
+		break;
+	case LUCK:
+		attr = _luck;
+		mode = 2;
+		break;
+	default:
+		return 0;
+	}
+
+	// All the attributes except luck are affected by the character's age
+	if (mode < 2) {
+		int age = getAge(false);
+		int ageIndex = 0;
+		while (AGE_RANGES[ageIndex] < age)
+			++ageIndex;
+
+		attr._permanent += AGE_RANGES_ADJUST[mode][ageIndex];
+	}
+
+	if (applyMod) {
+		attr._permanent += conditionMod(attrib);
+		attr._permanent += attr._temporary;
+	}
+
+	return (attr._permanent >= 1) ? attr._permanent : 0;
 }
 
-bool PlayerStruct::charSavingThrow() {
-	// TODO
-	return false;
+int PlayerStruct::statBonus(int statValue) const {
+	for (int idx = 0; STAT_VALUES[idx] <= statValue; ++idx)
+		return STAT_BONUSES[idx];
+
+	return 0;
+}
+
+bool PlayerStruct::charSavingThrow(DamageType attackType) const {
+	int v, vMax;
+
+	if (attackType == DT_PHYSICAL) {
+		v = statBonus(getStat(LUCK, false)) + getCurrentLevel();
+		vMax = v + 20;
+	} else {
+		switch (attackType) {
+		case DT_MAGICAL:
+			v = _magicResistence._permanent + _magicResistence._temporary + itemScan(16);
+			break;
+		case DT_FIRE:
+			v = _fireResistence._permanent + _fireResistence._temporary + itemScan(11);
+			break;
+		case DT_ELECTRICAL:
+			v = _electricityResistence._permanent + _electricityResistence._temporary + itemScan(12);
+			break;
+		case DT_COLD:
+			v = _coldResistence._permanent + _coldResistence._temporary + itemScan(13);
+			break;
+		case DT_POISON:
+			v = _poisonResistence._permanent + _poisonResistence._temporary + itemScan(14);
+			break;
+		case DT_ENERGY:
+			v = _energyResistence._permanent + _energyResistence._temporary + itemScan(15);
+			break;
+		default:
+			v = 0;
+			break;
+		}
+
+		vMax = v + 40;
+	}
+
+	return Party::_vm->getRandomNumber(1, vMax) <= v;
 }
 
 bool PlayerStruct::noActions() {
-	// TODO
-	return false;
+	Condition condition = worstCondition();
+
+	switch (condition) {
+	case CURSED:
+	case POISONED:
+	case DISEASED:
+	case INSANE:
+	case IN_LOVE:
+	case DRUNK: {
+		Common::String msg = Common::String::format(IN_NO_CONDITION, _name.c_str());
+		ErrorScroll::show(Party::_vm, msg, 
+			Party::_vm->_mode == 17 ? WT_2 : WT_NONFREEZED_WAIT);
+		return true;
+	}
+	default:
+		return false;
+	}
 }
 
 void PlayerStruct::setAward(int awardId, bool value) {
@@ -210,13 +376,177 @@ bool PlayerStruct::hasAward(int awardId) const {
 }
 
 int PlayerStruct::getArmorClass(bool baseOnly) const {
-	// TODO
-	return 1;
+	Party &party = *Party::_vm->_party;
+
+	int result = statBonus(getStat(SPEED, false)) + itemScan(9);
+	if (!baseOnly)
+		result += (party._blessedActive ? 1 : 0) + _ACTemp;
+
+	return MAX(result, 0);
 }
 
+/**
+ * Returns the thievery skill level, adjusted by class and race
+ */
 int PlayerStruct::getThievery() const {
-	// TODO
-	return 1;
+	int result = getCurrentLevel() * 2;
+
+	if (_class == CLASS_NINJA)
+		result += 15;
+	else if (_class == CLASS_ROBBER)
+		result += 30;
+
+	switch (_race) {
+	case ELF:
+	case GNOME:
+		result += 10;
+		break;
+	case DWARF:
+		result += 5;
+		break;
+	case HALF_ORC:
+		result -= 10;
+		break;
+	default:
+		break;
+	}
+
+	result += itemScan(10);
+
+	// If the character doesn't have a thievery skill, then do'nt allow any result
+	if (!_skills[THIEVERY])
+		result = 0;
+
+	return MAX(result, 0);
+}
+
+int PlayerStruct::getCurrentLevel() const {
+	return MAX(_level._permanent + _level._temporary, 0);
+}
+
+int PlayerStruct::itemScan(int itemId) const {
+	int result = 0;
+
+	for (int accessIdx = 0; accessIdx < 3; ++accessIdx) {
+		switch (accessIdx) {
+		case 0:
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				const XeenItem &item = _weapons[idx];
+
+				if (item._equipped && !(item._bonusFlags & 0xC0) && itemId < 11
+						&& itemId != 3 && item._material >= 59 && item._material <= 130) {
+					int mIndex = item.getAttributeCategory();
+					if (mIndex > 2)
+						++mIndex;
+
+					if (mIndex == itemId)
+						result += ATTRIBUTE_BONUSES[item._material - 59];
+				}
+			}
+			break;
+
+		case 1:
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				const XeenItem &item = _armor[idx];
+
+				if (item._equipped && !(item._bonusFlags & 0xC0)) {
+					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+						int mIndex = item.getAttributeCategory();
+						if (mIndex > 2)
+							++mIndex;
+
+						if (mIndex == itemId)
+							result += ATTRIBUTE_BONUSES[item._material - 59];
+					}
+
+					if (itemId > 10 && item._material < 37) {
+						int mIndex = item.getElementalCategory() + 11;
+
+						if (mIndex == itemId) {
+							result += ELEMENTAL_RESISTENCES[item._material];
+						}
+					}
+
+					if (itemId == 9) {
+						result += ARMOR_STRENGTHS[item._name];
+
+						if (item._material >= 37 && item._material <= 58)
+							result += METAL_LAC[item._material - 37];
+					}
+				}
+			}
+			break;
+
+		case 2:
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				const XeenItem &item = _accessories[idx];
+
+				if (item._equipped && !(item._bonusFlags & 0xC0) && itemId < 11 && itemId != 3) {
+					if (item._material >= 59 && item._material <= 130) {
+						int mIndex = item.getAttributeCategory();
+						if (mIndex > 2)
+							++mIndex;
+
+						if (mIndex == itemId) {
+							result += ATTRIBUTE_BONUSES[item._material - 59];
+						}
+					}
+
+					if (itemId > 10 && item._material < 37) {
+						int mIndex = item.getElementalCategory() + 11;
+						
+						if (mIndex == itemId)
+							result += ELEMENTAL_RESISTENCES[item._material];
+					}
+				}
+			}
+			break;
+		}
+	};
+
+	return result;
+}
+
+/**
+ * Modifies a passed attribute value based on player's condition
+ */
+int PlayerStruct::conditionMod(Attribute attrib) const {
+	if (_conditions[DEAD] || _conditions[STONED] || _conditions[ERADICATED])
+		return 0;
+
+	int v[7];
+	Common::fill(&v[0], &v[7], 0);
+	if (_conditions[CURSED])
+		v[6] -= _conditions[CURSED];
+
+	if (_conditions[INSANE]) {
+		v[2] -= _conditions[INSANE];
+		v[1] -= _conditions[INSANE];
+		v[5] -= _conditions[INSANE];
+		v[0] -= _conditions[INSANE];
+		v[4] -= _conditions[INSANE];
+	}
+
+	if (_conditions[POISONED]) {
+		v[0] -= _conditions[POISONED];
+		v[4] -= _conditions[POISONED];
+		v[5] -= _conditions[POISONED];
+	}
+
+	if (_conditions[DISEASED]) {
+		v[3] -= _conditions[DISEASED];
+		v[2] -= _conditions[DISEASED];
+		v[1] -= _conditions[DISEASED];
+	}
+
+	for (int idx = 0; idx < 7; ++idx) {
+		v[idx] -= _conditions[HEART_BROKEN];
+		v[idx] -= _conditions[IN_LOVE];
+		v[idx] -= _conditions[WEAK];
+		v[idx] -= _conditions[DRUNK];
+	}
+
+	return v[attrib];
 }
 
 /*------------------------------------------------------------------------*/
@@ -432,7 +762,7 @@ void Party::changeTime(int numMinutes) {
 			if (!player._conditions[DEAD] && !player._conditions[STONED] &&
 					!player._conditions[ERADICATED]) {
 				for (int statNum = 0; statNum < TOTAL_STATS; ++statNum) {
-					int statVal = player.getStat(statNum, 0);
+					int statVal = player.getStat((Attribute)statNum, false);
 					if (statVal < 1)
 						player._conditions[DEAD] = 1;
 				}
@@ -448,16 +778,16 @@ void Party::changeTime(int numMinutes) {
 
 			// Handle poisoning
 			if (!player._conditions[POISONED]) {
-				if (_vm->getRandomNumber(9) != 1 || !player.charSavingThrow())
+				if (_vm->getRandomNumber(1, 10) != 1 || !player.charSavingThrow(DT_ELECTRICAL))
 					player._conditions[POISONED] *= 2;
 				else
 					// Poison wears off
 					player._conditions[POISONED] = 0;
 			}
 
-			// Handle poisoning
+			// Handle disease
 			if (!player._conditions[DISEASED]) {
-				if (_vm->getRandomNumber(9) != 1 || !player.charSavingThrow())
+				if (_vm->getRandomNumber(9) != 1 || !player.charSavingThrow(DT_COLD))
 					player._conditions[DISEASED] *= 2;
 				else
 					// Disease wears off
@@ -506,7 +836,7 @@ void Party::changeTime(int numMinutes) {
 		PlayerStruct &player = _activeParty[idx];
 
 		if (player._conditions[CONFUSED] && _vm->getRandomNumber(2) == 1) {
-			if (player.charSavingThrow()) {
+			if (player.charSavingThrow(DT_PHYSICAL)) {
 				player._conditions[CONFUSED] = 0;
 			} else {
 				player._conditions[CONFUSED]--;

@@ -49,6 +49,11 @@ enum CharacterClass {
 	CLASS_12 = 12, CLASS_15 = 15, CLASS_16 = 16
 };
 
+enum Attribute{
+	MIGHT = 0, INTELLECT = 1, PERSONALITY = 2, ENDURANCE = 3, SPEED = 4,
+	ACCURACY = 5, LUCK = 6
+};
+
 enum Skill { THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
 	CARTOGRAPHER = 4, CRUSADER = 5, DIRECTION_SENSE = 6, LINGUIST = 7, 
 	MERCHANT = 8, MOUNTAINEER = 9, NAVIGATOR = 10, PATHFINDER = 11,
@@ -68,6 +73,7 @@ enum Condition { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
 #define TOTAL_STATS 7
+#define INV_ITEMS_TOTAL 9
 
 class XeenEngine;
 
@@ -81,6 +87,8 @@ public:
 };
 
 class PlayerStruct {
+private:
+	int conditionMod(Attribute attrib) const;
 public:
 	Common::String _name;
 	Sex _sex;
@@ -106,10 +114,10 @@ public:
 	bool _hasSpells;
 	int _currentSpell;
 	int _quickOption;
-	XeenItem _weapons[9];
-	XeenItem _armor[9];
-	XeenItem _accessories[9];
-	XeenItem _misc[9];
+	XeenItem _weapons[INV_ITEMS_TOTAL];
+	XeenItem _armor[INV_ITEMS_TOTAL];
+	XeenItem _accessories[INV_ITEMS_TOTAL];
+	XeenItem _misc[INV_ITEMS_TOTAL];
 	int _lloydSide;
 	AttributePair _fireResistence;
 	AttributePair _coldResistence;
@@ -138,9 +146,11 @@ public:
 
 	int getMaxSP() const;
 
-	int getStat(int statNum, int v2);
+	int getStat(Attribute attrib, bool applyMod) const;
 
-	bool charSavingThrow();
+	int statBonus(int statValue) const;
+
+	bool charSavingThrow(DamageType attackType) const;
 
 	bool noActions();
 
@@ -151,6 +161,10 @@ public:
 	int getArmorClass(bool baseOnly) const;
 
 	int getThievery() const;
+
+	int getCurrentLevel() const;
+
+	int itemScan(int itemId) const;
 };
 
 class Roster: public Common::Array<PlayerStruct> {
