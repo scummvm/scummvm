@@ -314,7 +314,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 		}
 	}
 
-	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->setWindowCaption(cap);
 }
 
 void OSystem_SDL::quit() {
@@ -477,8 +477,7 @@ void OSystem_SDL::setupIcon() {
 	if (!sdl_surf) {
 		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
 	}
-	SDL_WM_SetIcon(sdl_surf, NULL);
-	SDL_FreeSurface(sdl_surf);
+	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->setWindowIcon(sdl_surf);
 	free(icon);
 }
 

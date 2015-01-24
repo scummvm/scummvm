@@ -25,7 +25,9 @@
 
 #include "backends/graphics/graphics.h"
 
+#include "backends/platform/sdl/sdl-sys.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 class SdlEventSource;
 
@@ -90,6 +92,42 @@ public:
 	 * @param mouse Mouse position.
 	 */
 	virtual void notifyMousePos(Common::Point mouse) = 0;
+
+	/**
+	 * Change the caption of the window.
+	 *
+	 * @param caption New window caption in UTF-8 encoding.
+	 */
+	void setWindowCaption(const Common::String &caption);
+
+	/**
+	 * Attach an icon to the window.
+	 *
+	 * @param icon The surface to use as icon. SdlGraphicsManager takes
+	 *             ownership over it.
+	 */
+	void setWindowIcon(SDL_Surface *icon);
+
+	/**
+	 * Toggle mouse grab state. This decides whether the cursor can leave the
+	 * window or not.
+	 */
+	void toggleMouseGrab();
+
+	/**
+	 * Check whether the application has mouse focus.
+	 */
+	bool hasMouseFocus() const;
+
+	/**
+	 * Warp the mouse to the specified position in window coordinates.
+	 */
+	void warpMouseInWindow(uint x, uint y);
+
+	/**
+	 * Iconifies the window.
+	 */
+	void iconifyWindow();
 
 protected:
 	SdlEventSource *_eventSource;

@@ -235,7 +235,7 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 		break;
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
-			SDL_WM_IconifyWindow();
+			iconifyWindow();
 		break;
 	default:
 		break;
@@ -1710,7 +1710,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	int y1 = y;
 
 	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
-	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS)) {
+	if (!hasMouseFocus()) {
 		setMousePos(x, y); // but change game cursor position
 		return;
 	}
@@ -1720,9 +1720,9 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (!_overlayVisible)
-			SDL_WarpMouse(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
+			warpMouseInWindow(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
 		else
-			SDL_WarpMouse(x, y1);
+			warpMouseInWindow(x, y1);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the

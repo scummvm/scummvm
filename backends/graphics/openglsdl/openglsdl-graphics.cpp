@@ -108,7 +108,7 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 
 	case OSystem::kFeatureIconifyWindow:
 		if (enable) {
-			SDL_WM_IconifyWindow();
+			iconifyWindow();
 		}
 		break;
 
@@ -229,7 +229,7 @@ void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 }
 
 void OpenGLSdlGraphicsManager::setInternalMousePosition(int x, int y) {
-	SDL_WarpMouse(x, y);
+	warpMouseInWindow(x, y);
 }
 
 bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {

@@ -49,11 +49,6 @@ public:
 	 */
 	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
 
-	/**
-	 * Toggles mouse input grab
-	 */
-	virtual void toggleMouseGrab();
-
 protected:
 	/** @name Keyboard mouse emulation
 	 * Disabled by fingolfin 2004-12-18.

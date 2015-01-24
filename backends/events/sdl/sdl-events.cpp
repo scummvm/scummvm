@@ -173,7 +173,9 @@ void SdlEventSource::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
-			SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
+			if (_graphicsManager) {
+				_graphicsManager->warpMouseInWindow((Uint16)_km.x, (Uint16)_km.y);
+			}
 		}
 	}
 }
@@ -429,7 +431,9 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	// Ctrl-m toggles mouse capture
 	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
-		toggleMouseGrab();
+		if (_graphicsManager) {
+			_graphicsManager->toggleMouseGrab();
+		}
 		return false;
 	}
 
@@ -750,13 +754,6 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 #endif
 	return false;
-}
-
-void SdlEventSource::toggleMouseGrab() {
-	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-	else
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {

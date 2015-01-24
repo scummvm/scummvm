@@ -22,7 +22,9 @@
 
 #include "backends/graphics/sdl/sdl-graphics.h"
 
+#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "common/textconsole.h"
 
 SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source)
 	: _eventSource(source) {
@@ -37,4 +39,33 @@ void SdlGraphicsManager::activateManager() {
 
 void SdlGraphicsManager::deactivateManager() {
 	_eventSource->setGraphicsManager(0);
+}
+
+void SdlGraphicsManager::setWindowCaption(const Common::String &caption) {
+	SDL_WM_SetCaption(caption.c_str(), caption.c_str());
+}
+
+void SdlGraphicsManager::setWindowIcon(SDL_Surface *icon) {
+	SDL_WM_SetIcon(icon, NULL);
+	SDL_FreeSurface(icon);
+}
+
+void SdlGraphicsManager::toggleMouseGrab() {
+	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF) {
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	} else {
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	}
+}
+
+bool SdlGraphicsManager::hasMouseFocus() const {
+	return (SDL_GetAppState() & SDL_APPMOUSEFOCUS);
+}
+
+void SdlGraphicsManager::warpMouseInWindow(uint x, uint y) {
+	SDL_WarpMouse(x, y);
+}
+
+void SdlGraphicsManager::iconifyWindow() {
+	SDL_WM_IconifyWindow();
 }

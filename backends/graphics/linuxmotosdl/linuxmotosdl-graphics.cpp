@@ -134,7 +134,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
 	if	(w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_eventSource->toggleMouseGrab();
+		toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
