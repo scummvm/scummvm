@@ -34,8 +34,9 @@ class XeenEngine;
 class OutdoorDrawList {
 public:
 	DrawStruct _data[132];
-	DrawStruct &_skySprite;
+	DrawStruct &_sky1, &_sky2;
 	DrawStruct &_groundSprite;
+	DrawStruct * const _groundTiles;
 	DrawStruct * const _combatImgs1;
 	DrawStruct * const _combatImgs2;
 	DrawStruct * const _combatImgs3;

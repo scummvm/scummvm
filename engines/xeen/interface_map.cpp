@@ -27,9 +27,9 @@
 
 namespace Xeen {
 
-OutdoorDrawList::OutdoorDrawList() : _skySprite(_data[1]), _groundSprite(_data[2]),
-	_combatImgs1(&_data[124]), _combatImgs2(&_data[95]),
-	_combatImgs3(&_data[76]), _combatImgs4(&_data[53]) {
+OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]), 
+	_groundSprite(_data[2]), _combatImgs1(&_data[124]), _combatImgs2(&_data[95]),
+	_combatImgs3(&_data[76]), _combatImgs4(&_data[53]), _groundTiles(&_data[3]) {
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
 	_data[2] = DrawStruct(0, 8, 67);
@@ -4390,7 +4390,72 @@ void InterfaceMap::drawIndoors() {
  * Draw the contents of the current 3d view of an outdoor map
  */
 void InterfaceMap::drawOutdoors() {
-	// TODO
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	int surfaceId;
+
+	// Draw any surface tiles on top of the default ground
+	for (int cellIndex = 0; cellIndex < 25; ++cellIndex) {
+		map.getCell(cellIndex == 24 ? 2 : DRAW_NUMBERS[cellIndex]);
+
+		DrawStruct &drawStruct = _indoorList._groundTiles[cellIndex];
+		SpriteResource &sprites = map._surfaceSprites[map._currentSurfaceId];
+		drawStruct._sprites = sprites.empty() ? (SpriteResource *)nullptr : &sprites;
+
+		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
+		if (surfaceId == SURFTYPE_DWATER || surfaceId == SURFTYPE_LAVA) {
+			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
+			drawStruct._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
+		} else {
+			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
+			drawStruct._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
+		}
+	}
+
+	party.handleLight();
+
+	// Set up terrain draw entries
+	const int TERRAIN_INDEXES1[9] = { 44, 36, 37, 38, 45, 43, 42, 41, 39 };
+	const int TERRAIN_INDEXES2[5] = { 22, 24, 31, 29, 26 };
+	const int TERRAIN_INDEXES3[3] = { 11, 16, 13 };
+	const int TERRAIN_INDEXES4[5] = { 5, 9, 7, 0, 4 };
+
+	for (int idx = 0; idx < 9; ++idx) {
+		map.getCell(TERRAIN_INDEXES1[idx]);
+		_outdoorList[36 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	}
+	for (int idx = 0; idx < 5; ++idx) {
+		map.getCell(TERRAIN_INDEXES2[idx]);
+		_outdoorList[61 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	}
+	for (int idx = 0; idx < 3; ++idx) {
+		map.getCell(TERRAIN_INDEXES3[idx]);
+		_outdoorList[84 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	}
+	for (int idx = 0; idx < 5; ++idx) {
+		map.getCell(TERRAIN_INDEXES4[idx]);
+		_outdoorList[103 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	}
+
+	map.getCell(1);
+	_outdoorList[108]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	_outdoorList[109]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	_outdoorList[110]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	_outdoorList._sky1._flags = _outdoorList._sky2._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
+	_outdoorList._groundSprite._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
+
+	// Finally render the outdoor scene
+	screen._windows[3].drawList(&_outdoorList[0], _outdoorList.size());
+
+	// Check for any character shooting
+	_isShooting = false;
+	for (int i = 0; i < _vm->_party->_partyCount; ++i) {
+		if (_vm->_combat->_shooting[i])
+			_isShooting = true;
+	}
+
+	_charsShooting = _isShooting;
 }
 
 
