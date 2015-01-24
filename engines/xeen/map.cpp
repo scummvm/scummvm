@@ -1044,7 +1044,9 @@ void Map::load(int mapId) {
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
 		if (_vm->_party->_cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
 				mapId == 27 && isDarkCc) {
-			// TODO: Flags set that don't seem to be used
+			_mobData._objects[29]._spriteId = 0;
+			_mobData._objects[29]._id = 8;
+			_mobData._objectSprites[i]._sprites.clear();
 		} else if (mapId == 12 && _vm->_party->_gameFlags[43] &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
