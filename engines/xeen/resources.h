@@ -96,7 +96,7 @@ extern const int8 SCREEN_POSITIONING_Y[4][48];
 
 extern const int INDOOR_OBJECT_X[2][12];
 
-extern const int INDOOR_OBJECT_Y[2][12];
+extern const int MAP_OBJECT_Y[2][12];
 
 extern const int INDOOR_MONSTERS_Y[4];
 
