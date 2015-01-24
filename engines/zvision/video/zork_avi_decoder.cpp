@@ -39,6 +39,7 @@ Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDec
 }
 
 void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {
+	bool updateCurChunk = true;
 	if (_audStream) {
 		if (_wvInfo.tag == kWaveFormatZorkPCM) {
 			assert(_wvInfo.size == 8);
@@ -54,8 +55,18 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 				_audStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
 			}
 		} else {
+			updateCurChunk = false;
 			AVIAudioTrack::queueSound(stream);
 		}
+	} else {
+		delete stream;
+	}
+
+	// The superclass always updates _curChunk, whether or not audio has
+	// been queued, so we should do that too. Unless the superclass already
+	// has done it for us.
+	if (updateCurChunk) {
+		_curChunk++;
 	}
 }
 
