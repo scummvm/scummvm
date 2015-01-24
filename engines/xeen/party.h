@@ -221,6 +221,9 @@ public:
 	bool _isNight;
 	bool _stepped;
 	int _falling;
+	Common::Point _fallPosition;
+	int _fallMaze;
+	int _fallDamage;
 	DamageType _damageType;
 public:
 	Party(XeenEngine *vm);

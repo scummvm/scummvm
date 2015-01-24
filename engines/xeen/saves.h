@@ -67,6 +67,9 @@ private:
 public:
 	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
 public:
+	bool _wonWorld;
+	bool _wonDarkSide;
+public:
 	SavesManager(XeenEngine *vm, Party &party, Roster &roster);
 
 	~SavesManager();

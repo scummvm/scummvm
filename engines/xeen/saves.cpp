@@ -49,6 +49,8 @@ SavesManager::SavesManager(XeenEngine *vm, Party &party, Roster &roster) :
 		BaseCCArchive(), _vm(vm), _party(party), _roster(roster) {
 	SearchMan.add("saves", this, 0, false);
 	_data = nullptr;
+	_wonWorld = false;
+	_wonDarkSide = false;
 }
 
 SavesManager::~SavesManager() {

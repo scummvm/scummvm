@@ -48,7 +48,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_scripts = nullptr;
 	_sound = nullptr;
 	_eventData = nullptr;
-	_loadDarkSide = 1;
 	_dangerSenseAllowed = false;
 	_noDirectionSense = false;
 	_moveMonsters = false;
@@ -287,8 +286,8 @@ void XeenEngine::play() {
 	_screen->loadPalette("mm4.pal");
 	_interface->loadPartyIcons();
 
-	if (getGameID() != GType_WorldOfXeen && !_loadDarkSide) {
-		_loadDarkSide = true;
+	if (getGameID() != GType_WorldOfXeen && !_map->_loadDarkSide) {
+		_map->_loadDarkSide = true;
 		_party->_mazeId = 29;
 		_party->_mazeDirection = DIR_NORTH;
 		_party->_mazePosition.x = 25;

@@ -486,15 +486,82 @@ void Scripts::cmdNoAction2(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdChooseNumeric(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayLarge(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdExchObj(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdFallToMap(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdDisplayMain(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdGoto(Common::Array<byte> &params) { error("TODO"); }
 
-void Scripts::cmdGotoRandom(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdFlipWorld(Common::Array<byte> &params) { error("TODO"); }
+/**
+ * Exchange the positions of two objects in the maze
+ */
+void Scripts::cmdExchObj(Common::Array<byte> &params) {
+	MazeObject &obj1 = _vm->_map->_mobData._objects[params[0]];
+	MazeObject &obj2 = _vm->_map->_mobData._objects[params[1]];
+
+	Common::Point pt = obj1._position;
+	obj1._position = obj2._position;
+	obj2._position = pt;
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdFallToMap(Common::Array<byte> &params) {
+	Party &party = *_vm->_party;
+	party._fallMaze = params[0];
+	party._fallPosition = Common::Point(params[1], params[2]);
+	party._fallDamage = params[3];
+
+	_var4F = true;
+	_lineNum = -1;
+}
+
+void Scripts::cmdDisplayMain(Common::Array<byte> &params) { 
+	error("TODO"); 
+}
+
+/**
+ * Jumps to a given line number if the surface at relative cell position 1 matches
+ * a specified surface.
+ * @remarks		This opcode is apparently never actually used
+ */
+void Scripts::cmdGoto(Common::Array<byte> &params) { 
+	Map &map = *_vm->_map;
+	map.getCell(1);
+	if (params[0] == map._currentSurfaceId)
+		_lineNum = params[1] - 1;
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+/**
+ * Pick a random value from the parameter list and jump to that line number
+ */
+void Scripts::cmdGotoRandom(Common::Array<byte> &params) { 
+	_lineNum = params[_vm->getRandomNumber(1, params[0])] - 1;
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) { 
+	Party &party = *_vm->_party;
+	_vm->_saves->_wonDarkSide = true;
+	party._questItems[53] = 1;
+	party._darkSideEnd = true;
+	party._mazeId = 29;
+	party._mazeDirection = DIR_NORTH;
+	party._mazePosition = Common::Point(25, 21);
+
+	doEndGame2();
+}
+
+void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) { 
+	_vm->_saves->_wonWorld = true;
+	_vm->_party->_worldEnd = true;
+	doWorldEnd();
+}
+
+void Scripts::cmdFlipWorld(Common::Array<byte> &params) { 
+	_vm->_map->_loadDarkSide = params[0] != 0;
+}
+
 void Scripts::cmdPlayCD(Common::Array<byte> &params) { error("TODO"); }
 
 void Scripts::doEndGame() {

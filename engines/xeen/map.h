@@ -345,7 +345,7 @@ private:
 	MazeData _mazeData[9];
 	Common::String _mazeName;
 	SpriteResource _wallPicSprites;
-	int _townPortalSide;
+	bool _townPortalSide;
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
@@ -374,6 +374,7 @@ public:
 	int _currentTile;
 	int _currentSurfaceId;
 	bool _currentSteppedOn;
+	bool _loadDarkSide;
 public:
 	Map(XeenEngine *vm);
 

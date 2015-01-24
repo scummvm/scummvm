@@ -857,7 +857,8 @@ void AnimationInfo::load(const Common::String &name) {
 /*------------------------------------------------------------------------*/
 
 Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
-	_townPortalSide = 0;
+	_townPortalSide = false;
+	_loadDarkSide = false;
 	_sideObjects = 0;
 	_sideMonsters = 0;
 	_sidePictures = 0;
@@ -896,13 +897,13 @@ void Map::load(int mapId) {
 	_sideMonsters = 1;
 	_sidePictures = 1;
 	if (mapId >= 113 && mapId <= 127) {
-		_townPortalSide = 0;
+		_townPortalSide = false;
 	} else {
-		_townPortalSide = _vm->_loadDarkSide;
+		_townPortalSide = _loadDarkSide;
 	}
 
 	if (_vm->getGameID() == GType_WorldOfXeen) {
-		if (_vm->_loadDarkSide) {
+		if (_loadDarkSide) {
 			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
 			_wallPicSprites.load("xeenpic.dat");

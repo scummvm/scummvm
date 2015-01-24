@@ -79,8 +79,9 @@ void Interface::setup() {
 }
 
 void Interface::manageCharacters(bool soundPlayed) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
+	Screen &screen = *_vm->_screen;
 	bool flag = false;
 
 start:
@@ -106,7 +107,7 @@ start:
 		// Build up a list of characters on the same Xeen side being loaded
 		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
 			PlayerStruct &player = _vm->_roster[i];
-			if (player._name.empty() || player._xeenSide != _vm->_loadDarkSide)
+			if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
 				continue;
 
 			xeenSideChars.push_back(i);
