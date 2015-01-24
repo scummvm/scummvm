@@ -315,7 +315,18 @@ void Scripts::cmdNoAction(Common::Array<byte> &params) {
 	_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
 }
 
-void Scripts::cmdRemove(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdRemove(Common::Array<byte> &params) { 
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+
+	if (intf._objNumber) {
+		// Give the active object a completely way out of bounds position
+		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
+		obj._position = Common::Point(128, 128);
+	}
+
+	cmdMakeNothingHere(params);
+}
 
 /**
  * Set the currently active character for other script operations
@@ -545,7 +556,26 @@ void Scripts::cmdIfMapFlag(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdSelRndChar(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdItemType(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) { error("TODO"); }
+
+/**
+ * Disable all the scripts at the party's current position
+ */
+void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+
+	// Scan through the event list and mark the opcodes for all the lines of any scripts
+	// on the party's current cell as having no operation, effectively disabling them
+	for (int idx = 0; idx < map._events.size(); ++idx) {
+		MazeEvent &evt = map._events[idx];
+		if (evt._position == party._mazePosition)
+			evt._opcode = OP_None;
+	}
+
+	_var4F = true;
+	cmdExit(params);
+}
+
 void Scripts::cmdNoAction2(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdChooseNumeric(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }

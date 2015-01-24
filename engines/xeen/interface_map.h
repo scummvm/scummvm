@@ -111,7 +111,6 @@ protected:
 	bool _flipDefaultGround;
 	bool _isShooting;
 	bool _charsShooting;
-	int _objNumber;
 	bool _thinWall;
 	bool _isAnimReset;
 	int _batUIFrame;
@@ -147,6 +146,7 @@ public:
 	int _face1State;
 	int _face2State;
 	byte _tillMove;
+	int _objNumber;
 public:
 	InterfaceMap(XeenEngine *vm);
 
