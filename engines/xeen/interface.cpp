@@ -106,7 +106,7 @@ start:
 
 		// Build up a list of characters on the same Xeen side being loaded
 		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
-			PlayerStruct &player = _vm->_roster[i];
+			Character &player = _vm->_roster[i];
 			if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
 				continue;
 
@@ -300,7 +300,7 @@ void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool
 
 		Common::Rect &b = _buttons[7 + posIndex]._bounds;
 		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
-		PlayerStruct &ps = _vm->_roster[xeenSideChars[charIndex + posIndex]];
+		Character &ps = _vm->_roster[xeenSideChars[charIndex + posIndex]];
 		playerNames[posIndex] = isInParty ? IN_PARTY : ps._name;
 		playerRaces[posIndex] = RACE_NAMES[ps._race];
 		playerSex[posIndex] = SEX_NAMES[ps._sex];
@@ -336,7 +336,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 	for (int idx = 0; idx < (stateFlag ? _vm->_party->_combatPartyCount : 
 			_vm->_party->_partyCount); ++idx) {
 		int charIndex = stateFlag ? _combatCharIds[idx] : idx;
-		PlayerStruct &ps = _vm->_party->_activeParty[charIndex];
+		Character &ps = _vm->_party->_activeParty[charIndex];
 		Condition charCondition = ps.worstCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 		
@@ -352,7 +352,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 		for (int idx = 0; idx < (stateFlag ? _vm->_party->_combatPartyCount :
 			_vm->_party->_partyCount); ++idx) {
 			int charIndex = stateFlag ? _combatCharIds[idx] : idx;
-			PlayerStruct &ps = _vm->_party->_activeParty[charIndex];
+			Character &ps = _vm->_party->_activeParty[charIndex];
 
 			// Draw the Hp bar
 			int maxHp = ps.getMaxHP();

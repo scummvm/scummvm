@@ -42,7 +42,7 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-PlayerStruct::PlayerStruct() {
+Character::Character() {
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;
@@ -69,7 +69,7 @@ PlayerStruct::PlayerStruct() {
 	_currentCombatSpell = 0;
 }
 
-void PlayerStruct::synchronize(Common::Serializer &s) {
+void Character::synchronize(Common::Serializer &s) {
 	char name[16];
 	Common::fill(&name[0], &name[16], '\0');
 	strncpy(name, _name.c_str(), 16);
@@ -149,7 +149,7 @@ void PlayerStruct::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_currentCombatSpell);
 }
 
-Condition PlayerStruct::worstCondition() const {
+Condition Character::worstCondition() const {
 	for (int cond = ERADICATED; cond >= CURSED; --cond) {
 		if (_conditions[cond])
 			return (Condition)cond;
@@ -158,13 +158,13 @@ Condition PlayerStruct::worstCondition() const {
 	return NO_CONDITION;
 }
 
-int PlayerStruct::getAge(bool ignoreTemp) const {
+int Character::getAge(bool ignoreTemp) const {
 	int year = MIN(Party::_vm->_party->_year - _ybDay, 254);
 
 	return ignoreTemp ? year : year + _tempAge;
 }
 
-int PlayerStruct::getMaxHP() const {
+int Character::getMaxHP() const {
 	int hp = BASE_HP_BY_CLASS[_class];
 	hp += statBonus(getStat(ENDURANCE, false));
 	hp += RACE_HP_BONUSES[_race];
@@ -182,7 +182,7 @@ int PlayerStruct::getMaxHP() const {
 	return hp;
 }
 
-int PlayerStruct::getMaxSP() const {
+int Character::getMaxSP() const {
 	int result = 0;
 	bool flag = false;
 	int amount;
@@ -240,7 +240,7 @@ int PlayerStruct::getMaxSP() const {
 /**
  * Get the effective value of a given stat for the character
  */
-int PlayerStruct::getStat(Attribute attrib, bool applyMod) const {
+int Character::getStat(Attribute attrib, bool applyMod) const {
 	AttributePair attr;
 	int mode = 0;
 
@@ -291,14 +291,14 @@ int PlayerStruct::getStat(Attribute attrib, bool applyMod) const {
 	return (attr._permanent >= 1) ? attr._permanent : 0;
 }
 
-int PlayerStruct::statBonus(int statValue) const {
+int Character::statBonus(int statValue) const {
 	for (int idx = 0; STAT_VALUES[idx] <= statValue; ++idx)
 		return STAT_BONUSES[idx];
 
 	return 0;
 }
 
-bool PlayerStruct::charSavingThrow(DamageType attackType) const {
+bool Character::charSavingThrow(DamageType attackType) const {
 	int v, vMax;
 
 	if (attackType == DT_PHYSICAL) {
@@ -335,7 +335,7 @@ bool PlayerStruct::charSavingThrow(DamageType attackType) const {
 	return Party::_vm->getRandomNumber(1, vMax) <= v;
 }
 
-bool PlayerStruct::noActions() {
+bool Character::noActions() {
 	Condition condition = worstCondition();
 
 	switch (condition) {
@@ -355,7 +355,7 @@ bool PlayerStruct::noActions() {
 	}
 }
 
-void PlayerStruct::setAward(int awardId, bool value) {
+void Character::setAward(int awardId, bool value) {
 	int v = awardId;
 	if (awardId == 73)
 		v = 126;
@@ -365,7 +365,7 @@ void PlayerStruct::setAward(int awardId, bool value) {
 	_awards[v] = value;
 }
 
-bool PlayerStruct::hasAward(int awardId) const {
+bool Character::hasAward(int awardId) const {
 	int v = awardId;
 	if (awardId == 73)
 		v = 126;
@@ -375,7 +375,7 @@ bool PlayerStruct::hasAward(int awardId) const {
 	return _awards[v];
 }
 
-int PlayerStruct::getArmorClass(bool baseOnly) const {
+int Character::getArmorClass(bool baseOnly) const {
 	Party &party = *Party::_vm->_party;
 
 	int result = statBonus(getStat(SPEED, false)) + itemScan(9);
@@ -388,7 +388,7 @@ int PlayerStruct::getArmorClass(bool baseOnly) const {
 /**
  * Returns the thievery skill level, adjusted by class and race
  */
-int PlayerStruct::getThievery() const {
+int Character::getThievery() const {
 	int result = getCurrentLevel() * 2;
 
 	if (_class == CLASS_NINJA)
@@ -420,11 +420,11 @@ int PlayerStruct::getThievery() const {
 	return MAX(result, 0);
 }
 
-int PlayerStruct::getCurrentLevel() const {
+int Character::getCurrentLevel() const {
 	return MAX(_level._permanent + _level._temporary, 0);
 }
 
-int PlayerStruct::itemScan(int itemId) const {
+int Character::itemScan(int itemId) const {
 	int result = 0;
 
 	for (int accessIdx = 0; accessIdx < 3; ++accessIdx) {
@@ -510,7 +510,7 @@ int PlayerStruct::itemScan(int itemId) const {
 /**
  * Modifies a passed attribute value based on player's condition
  */
-int PlayerStruct::conditionMod(Attribute attrib) const {
+int Character::conditionMod(Attribute attrib) const {
 	if (_conditions[DEAD] || _conditions[STONED] || _conditions[ERADICATED])
 		return 0;
 
@@ -757,7 +757,7 @@ void Party::changeTime(int numMinutes) {
 
 	if (((_minutes + numMinutes) / 480) != (_minutes / 480)) {
 		for (int idx = 0; idx < _partyCount; ++idx) {
-			PlayerStruct &player = _activeParty[idx];
+			Character &player = _activeParty[idx];
 
 			if (!player._conditions[DEAD] && !player._conditions[STONED] &&
 					!player._conditions[ERADICATED]) {
@@ -833,7 +833,7 @@ void Party::changeTime(int numMinutes) {
 	addTime(numMinutes);
 
 	for (int idx = 0; idx < _partyCount; ++idx) {
-		PlayerStruct &player = _activeParty[idx];
+		Character &player = _activeParty[idx];
 
 		if (player._conditions[CONFUSED] && _vm->getRandomNumber(2) == 1) {
 			if (player.charSavingThrow(DT_PHYSICAL)) {
@@ -899,7 +899,7 @@ void Party::addTime(int numMinutes) {
 
 void Party::resetTemps() {
 	for (int idx = 0; idx < _partyCount; ++idx) {
-		PlayerStruct &player = _activeParty[idx];
+		Character &player = _activeParty[idx];
 
 		player._magicResistence._temporary = 0;
 		player._energyResistence._temporary = 0;

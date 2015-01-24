@@ -86,7 +86,7 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-class PlayerStruct {
+class Character {
 private:
 	int conditionMod(Attribute attrib) const;
 public:
@@ -135,7 +135,7 @@ public:
 	int _currentAdventuringSpell;
 	int _currentCombatSpell;
 public:
-	PlayerStruct();
+	Character();
 	void synchronize(Common::Serializer &s);
 
 	Condition worstCondition() const;
@@ -167,7 +167,7 @@ public:
 	int itemScan(int itemId) const;
 };
 
-class Roster: public Common::Array<PlayerStruct> {
+class Roster: public Common::Array<Character> {
 public:
 	Roster() {}
 
@@ -175,7 +175,7 @@ public:
 };
 
 class Party {
-	friend class PlayerStruct;
+	friend class Character;
 private:
 	static XeenEngine *_vm;
 public:
@@ -235,7 +235,7 @@ public:
 	bool _characterFlags[30][24];
 public:
 	// Other party related runtime data
-	Common::Array<PlayerStruct> _activeParty;
+	Common::Array<Character> _activeParty;
 	int _combatPartyCount;
 	bool _partyDead;
 	bool _newDay;

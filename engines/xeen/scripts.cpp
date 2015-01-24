@@ -667,7 +667,7 @@ void Scripts::doEndGame2() {
 	int v2 = 0;
 
 	for (int idx = 0; idx < party._partyCount; ++idx) {
-		PlayerStruct &player = party._activeParty[idx];
+		Character &player = party._activeParty[idx];
 		if (player.hasAward(77)) {
 			v2 = 2;
 			break;
@@ -696,7 +696,7 @@ void Scripts::doEnding(const Common::String &endStr, int v2) {
  */
 bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	Party &party = *_vm->_party;
-	PlayerStruct &ps = party._activeParty[charIndex];
+	Character &ps = party._activeParty[charIndex];
 	uint v = 0;
 
 	switch (action) {
