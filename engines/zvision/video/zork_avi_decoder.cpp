@@ -58,6 +58,8 @@ void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *s
 			updateCurChunk = false;
 			AVIAudioTrack::queueSound(stream);
 		}
+	} else {
+		delete stream;
 	}
 
 	// The superclass always updates _curChunk, whether or not audio has
