@@ -165,7 +165,7 @@ private:
 	void cmdConfirmWord(Common::Array<byte> &params);
 	void cmdDamage(Common::Array<byte> &params);
 	void cmdJumpRnd(Common::Array<byte> &params);
-	void cmdAfterEvent(Common::Array<byte> &params);
+	void cmdAlterEvent(Common::Array<byte> &params);
 	void cmdCallEvent(Common::Array<byte> &params);
 	void cmdReturn(Common::Array<byte> &params);
 	void cmdSetVar(Common::Array<byte> &params);

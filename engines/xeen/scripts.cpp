@@ -452,8 +452,20 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdDamage(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdJumpRnd(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdAfterEvent(Common::Array<byte> &params) { error("TODO"); }
+
+/**
+ * Jump if a random number matches a given value
+ */
+void Scripts::cmdJumpRnd(Common::Array<byte> &params) {
+	int v = _vm->getRandomNumber(1, params[0]);
+	if (v == params[1])
+		_lineNum = params[2] - 1;
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdAlterEvent(Common::Array<byte> &params) { error("TODO"); }
 
 /**
  * Stores the current location and line for later resuming, and set up to execute
