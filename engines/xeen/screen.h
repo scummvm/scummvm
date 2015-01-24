@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/array.h"
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "xeen/font.h"
 #include "xeen/sprites.h"
@@ -66,6 +67,8 @@ private:
 	int _ycL, _ycH;
 
 	void open2();
+
+	Common::KeyCode doCursor(const Common::String &msg);
 public:
 	bool _enabled;
 public:
@@ -91,6 +94,8 @@ public:
 	void writeString(const Common::String &s);
 
 	void drawList(DrawStruct *items, int count);
+
+	int getString(Common::String &line, int maxLen, int maxWidth);
 };
 
 class Screen: public FontSurface {

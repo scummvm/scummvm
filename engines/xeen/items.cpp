@@ -36,4 +36,8 @@ void XeenItem::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_equipped);
 }
 
+Treasure::Treasure() {
+	_hasItems = false;
+}
+
 } // End of namespace Xeen

@@ -385,6 +385,8 @@ public:
 
 	void setCellSurfaceFlags(const Common::Point &pt, int bits);
 
+	void setWall(const Common::Point &pt, Direction dir, int v);
+
 	void saveMaze();
 
 	int getCell(int idx);

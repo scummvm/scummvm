@@ -124,7 +124,6 @@ protected:
 	int _holyBonusUIFrame;
 	int _heroismUIFrame;
 	int _flipUIFrame;
-	byte _tillMove;
 	bool _flag1;
 	int _overallFrame;
 
@@ -147,6 +146,7 @@ public:
 	Common::String _screenText;
 	int _face1State;
 	int _face2State;
+	byte _tillMove;
 public:
 	InterfaceMap(XeenEngine *vm);
 

@@ -52,7 +52,6 @@ private:
 	bool _buttonsLoaded;
 	int _hiliteChar;
 	int _steppingFX;
-	Common::String _interfaceText;
 
 	void initDrawStructs();
 
@@ -78,6 +77,7 @@ private:
 public:
 	SpriteResource _townSprites[8];
 	int _intrIndex1;
+	Common::String _interfaceText;
 public:
 	Interface(XeenEngine *vm);
 

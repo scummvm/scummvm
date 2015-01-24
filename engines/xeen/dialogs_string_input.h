@@ -20,39 +20,26 @@
  *
  */
 
-#ifndef XEEN_ITEMS_H
-#define XEEN_ITEMS_H
+#ifndef XEEN_DIALOGS_STRING_INPUT_H
+#define XEEN_DIALOGS_STRING_INPUT_H
 
-#include "common/scummsys.h"
-#include "common/serializer.h"
+#include "xeen/dialogs.h"
 
 namespace Xeen {
 
-#define TOTAL_ITEMS 10
+class StringInput : public ButtonContainer {
+private:
+	XeenEngine *_vm;
 
-class XeenItem {
-public:
-	int _material;
-	int _name;
-	int _bonusFlags;
-	bool _equipped;
-public:
-	XeenItem();
+	StringInput(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	void synchronize(Common::Serializer &s);
-};
-
-class Treasure {
+	int execute(bool type, const Common::String &expected, 
+		const Common::String &title, int opcode);
 public:
-	XeenItem _misc[TOTAL_ITEMS];
-	XeenItem _accessories[TOTAL_ITEMS];
-	XeenItem _armor[TOTAL_ITEMS];
-	XeenItem _weapons[TOTAL_ITEMS];
-	bool _hasItems;
-public:
-	Treasure();
+	static int show(XeenEngine *vm, bool type, const Common::String &msg1, 
+		const Common::String &msg2, int opcdoe);
 };
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_ITEMS_H */
+#endif /* XEEN_DIALOGS_STRING_INPUT_H */

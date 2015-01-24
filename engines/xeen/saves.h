@@ -77,6 +77,8 @@ public:
 
 	void writeCharFile();
 
+	void saveChars();
+
 	// Archive implementation
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 };

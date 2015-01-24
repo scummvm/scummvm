@@ -71,6 +71,8 @@ const char *const THE_PARTY_NEEDS_REST = "\x0B""012The Party needs rest!";
 const char *const WHO_WILL = "\X03""c\X0B""000\x09""000%s\x0A\x0A"
 	"Who will\x0A%s?\x0A\x0B""055F1 - F%d";
 
+const char *const WHATS_THE_PASSWORD = "What's the Password?";
+
 const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
 };
@@ -408,7 +410,7 @@ const int DIRECTION_ANIM_POSITIONS[4][4] = {
 	{ 0, 1, 2, 3 }, { 3, 0, 1, 2 }, { 2, 3, 0, 1 }, { 1, 2, 3, 0 }
 };
 
-const byte WALL_NUMBERS[4][48] = {
+const byte WALL_SHIFTS[4][48] = {
 	{
 		12, 0, 12, 8, 12, 12, 0, 12, 8, 12, 12, 0,
 		12, 0, 12, 8, 12, 8, 12, 12, 0, 12, 0, 12,

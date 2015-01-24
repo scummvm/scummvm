@@ -1367,6 +1367,14 @@ void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
 	_mazeData[0]._cells[pt.y][pt.x]._surfaceId |= bits;
 }
 
+void Map::setWall(const Common::Point &pt, Direction dir, int v) {
+	const int XOR_MASKS[4] = { 0xFFF, 0xF0FF, 0xFF0F, 0xFFF0 };
+	mazeLookup(pt, 0, 0);
+	
+	MazeWallLayers &wallLayer = _mazeData[0]._wallData[pt.y][pt.x];
+	wallLayer._data &= XOR_MASKS[dir];
+	wallLayer._data |= v << WALL_SHIFTS[dir][2];
+}
 
 int Map::getCell(int idx) {
 	int mapId = _vm->_party->_mazeId;
@@ -1489,7 +1497,7 @@ int Map::getCell(int idx) {
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 
 		_currentWall = wallLayers;
-		return (_currentWall._data >> WALL_NUMBERS[dir][idx]) & 0xF;
+		return (_currentWall._data >> WALL_SHIFTS[dir][idx]) & 0xF;
 	}
 
 	return _currentWall._data;

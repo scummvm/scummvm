@@ -72,6 +72,7 @@ bool YesNo::execute(bool type, int v2) {
 		}
 
 		events.wait(3, true);
+		checkEvents(_vm);
 		if (!_buttonValue)
 			continue;
 

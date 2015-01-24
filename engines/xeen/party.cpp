@@ -51,7 +51,7 @@ PlayerStruct::PlayerStruct() {
 	_dbDay = 0;
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
-	Common::fill(&_awards[0], &_awards[512], false);
+	Common::fill(&_awards[0], &_awards[128], false);
 	Common::fill(&_spells[9], &_spells[312], false);
 	_lloydMap = 0;
 	_hasSpells = false;
@@ -95,9 +95,21 @@ void PlayerStruct::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_dbDay);
 	s.syncAsByte(_tempAge);
 	
-	for (int i = 0; i < 18; ++i)
-		s.syncAsByte(_skills[i]);
-	SavesManager::syncBitFlags(s, &_awards[0], &_awards[512]);
+	// Synchronize the skill list
+	for (int idx = 0; idx < 18; ++idx)
+		s.syncAsByte(_skills[idx]);
+
+	// Synchronize character awards
+	for (int idx = 0; idx < 64; ++idx) {
+		byte b = (_awards[idx] ? 1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
+		s.syncAsByte(b);
+		if (s.isLoading()) {
+			_awards[idx] = (b & 0xF) != 0;
+			_awards[idx + 64] = (b & 0xF0) != 0;
+		}
+	}
+
+	// Synchronize spell list
 	SavesManager::syncBitFlags(s, &_spells[0], &_spells[312]);
 	
 	s.syncAsByte(_lloydMap);
@@ -170,6 +182,26 @@ bool PlayerStruct::charSavingThrow() {
 bool PlayerStruct::noActions() {
 	// TODO
 	return false;
+}
+
+void PlayerStruct::setAward(int awardId, bool value) {
+	int v = awardId;
+	if (awardId == 73)
+		v = 126;
+	else if (awardId == 81)
+		v = 127;
+
+	_awards[v] = value;
+}
+
+bool PlayerStruct::hasAward(int awardId) {
+	int v = awardId;
+	if (awardId == 73)
+		v = 126;
+	else if (awardId == 81)
+		v = 127;
+
+	return _awards[v];
 }
 
 

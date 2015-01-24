@@ -99,7 +99,7 @@ public:
 	int _dbDay;
 	int _tempAge;
 	int _skills[18];
-	bool _awards[512];
+	bool _awards[128];
 	bool _spells[312];
 	int _lloydMap;
 	Common::Point _lloydPosition;
@@ -141,6 +141,10 @@ public:
 	bool charSavingThrow();
 
 	bool noActions();
+
+	bool hasAward(int awardId);
+
+	void setAward(int awardId, bool value);
 };
 
 class Roster: public Common::Array<PlayerStruct> {

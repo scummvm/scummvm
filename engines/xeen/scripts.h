@@ -134,8 +134,6 @@ private:
 	Common::String _paramText;
 	MazeEvent *_event;
 
-	int whoWill(int v1, int v2, int v3);
-
 	void doOpcode(MazeEvent &event);
 	void cmdDisplay1(Common::Array<byte> &params);
 	void cmdDoorTextSml(Common::Array<byte> &params);
@@ -153,7 +151,7 @@ private:
 	void cmdSpawn(Common::Array<byte> &params);
 	void cmdDoTownEvent(Common::Array<byte> &params);
 	void cmdExit(Common::Array<byte> &params);
-	void cmdAfterMap(Common::Array<byte> &params);
+	void cmdAlterMap(Common::Array<byte> &params);
 	void cmdGiveExtended(Common::Array<byte> &params);
 	void cmdConfirmWord(Common::Array<byte> &params);
 	void cmdDamage(Common::Array<byte> &params);
@@ -185,12 +183,21 @@ private:
 	void cmdFallToMap(Common::Array<byte> &params);
 	void cmdDisplayMain(Common::Array<byte> &params);
 	void cmdGoto(Common::Array<byte> &params);
-	void cmdConfirmWord2(Common::Array<byte> &params);
 	void cmdGotoRandom(Common::Array<byte> &params);
 	void cmdCutsceneEndDarkside(Common::Array<byte> &params);
 	void cmdCutsceneEdWorld(Common::Array<byte> &params);
 	void cmdFlipWorld(Common::Array<byte> &params);
 	void cmdPlayCD(Common::Array<byte> &params);
+
+	int whoWill(int v1, int v2, int v3);
+
+	void doEndGame();
+
+	void doEndGame2();
+
+	void doWorldEnd();
+
+	void doEnding(const Common::String &endStr, int v2);
 public:
 	int _animCounter;
 	bool _eventSkipped;

@@ -76,6 +76,7 @@ int WhoWill::execute(int message, int action, bool type) {
 		}
 
 		events.wait(numFrames, true);
+		checkEvents(_vm);
 		if (!_buttonValue)
 			continue;
 

@@ -182,6 +182,84 @@ void Window::drawList(DrawStruct *items, int count) {
 	}
 }
 
+/**
+ * Allows the user to enter a string
+ */
+int Window::getString(Common::String &line, int maxLen, int maxWidth) {
+	Interface &intf = *_vm->_interface;
+
+	_vm->_noDirectionSense = true;
+	Common::String msg = Common::String::format("\x03""l\t000\x04%03d\x03""c", maxWidth);
+	writeString(msg);
+	update();
+
+	while (!_vm->shouldQuit()) {
+		Common::KeyCode keyCode = doCursor(msg);
+		
+		if ((keyCode == Common::KEYCODE_BACKSPACE || keyCode == Common::KEYCODE_DELETE)
+				&& line.size() > 0)
+			line.deleteLastChar();
+		else if (keyCode >= Common::KEYCODE_SPACE && keyCode < Common::KEYCODE_DELETE
+				&& line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)) {
+
+		} else if (keyCode == Common::KEYCODE_RETURN || keyCode == Common::KEYCODE_KP_ENTER) {
+			break;
+		} else if (keyCode == Common::KEYCODE_ESCAPE) {
+			line = "";
+			break;
+		}
+	}
+
+	_vm->_noDirectionSense = false;
+	return line.size();
+}
+
+/**
+ * Draws the cursor and waits until the user presses a key
+ */
+Common::KeyCode Window::doCursor(const Common::String &msg) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Screen &screen = *_vm->_screen;
+	
+	bool oldUpDoorText = intf._upDoorText;
+	byte oldTillMove = intf._tillMove;
+	intf._upDoorText = false;
+	intf._tillMove = 0;
+
+	bool flag = !_vm->_startupWindowActive && !screen._windows[25]._enabled
+			&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
+
+	Common::KeyCode ch = Common::KEYCODE_INVALID;
+	while (!_vm->shouldQuit()) {
+		events.updateGameCounter();
+
+		if (flag)
+			intf.draw3d(false);
+		writeString(msg);
+		update();
+
+		if (flag)
+			screen._windows[3].update();
+
+		events.wait(1, true);
+		if (events.isKeyPending()) {
+			Common::KeyState keyState;
+			events.getKey(keyState);
+			ch = keyState.keycode;
+			break;
+		}
+	}
+
+	writeString("");
+	update();
+
+	intf._tillMove = oldTillMove;
+	intf._upDoorText = oldUpDoorText;
+
+	return ch;
+}
+
 /*------------------------------------------------------------------------*/
 
 /**

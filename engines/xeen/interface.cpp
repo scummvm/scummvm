@@ -485,7 +485,7 @@ void Interface::perform() {
 	if (_buttonValue == Common::KEYCODE_SPACE ||
 			(events._leftButton && waitBounds.contains(events._mousePos))) {
 		int lookupId = map.mazeLookup(party._mazePosition, 
-			WALL_NUMBERS[party._mazeDirection][2]);
+			WALL_SHIFTS[party._mazeDirection][2]);
 
 		bool eventsFlag = true;
 		switch (lookupId) {

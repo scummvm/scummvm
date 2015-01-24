@@ -168,4 +168,8 @@ void SavesManager::writeCharFile() {
 	warning("TODO: writeCharFile");
 }
 
+void SavesManager::saveChars() {
+	warning("TODO: saveChars");
+}
+
 } // End of namespace Xeen

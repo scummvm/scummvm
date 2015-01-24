@@ -72,6 +72,7 @@ enum XeenDebugChannels {
 };
 
 enum Mode {
+	MODE_FF = -1,
 	MODE_0 = 0,
 	MODE_1 = 1,
 	MODE_2 = 2,
@@ -139,6 +140,7 @@ public:
 	Screen *_screen;
 	Scripts *_scripts;
 	SoundManager *_sound;
+	Treasure _treasure;
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
@@ -148,6 +150,7 @@ public:
 	bool _noDirectionSense;
 	bool _moveMonsters;
 	int _openDoor;
+	bool _startupWindowActive;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

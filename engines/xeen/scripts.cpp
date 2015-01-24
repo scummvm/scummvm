@@ -21,8 +21,10 @@
  */
 
 #include "xeen/scripts.h"
+#include "xeen/dialogs_string_input.h"
 #include "xeen/dialogs_whowill.h"
 #include "xeen/party.h"
+#include "xeen/resources.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -167,7 +169,7 @@ void Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdIf, &Scripts::cmdIf, &Scripts::cmdIf,
 		&Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdNoAction,
 		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
-		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAfterMap,
+		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
 		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
 		&Scripts::cmdJumpRnd, &Scripts::cmdAfterEvent, &Scripts::cmdCallEvent,
 		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
@@ -180,7 +182,7 @@ void Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdNoAction2,
 		&Scripts::cmdChooseNumeric, &Scripts::cmdDisplayBottomTwoLines,
 		&Scripts::cmdDisplayLarge, &Scripts::cmdExchObj, &Scripts::cmdFallToMap,
-		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmWord2,
+		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmWord,
 		&Scripts::cmdGotoRandom, &Scripts::cmdCutsceneEndDarkside,
 		&Scripts::cmdCutsceneEdWorld, &Scripts::cmdFlipWorld, &Scripts::cmdPlayCD
 	};
@@ -287,7 +289,21 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 	}
 }
 
-void Scripts::cmdMoveObj(Common::Array<byte> &params) { error("TODO"); }
+/**
+ * Moves the position of an object
+ */
+void Scripts::cmdMoveObj(Common::Array<byte> &params) { 
+	MazeObject &mazeObj = _vm->_map->_mobData._objects[params[0]];
+
+	if (mazeObj._position.x == params[1] && mazeObj._position.y == params[2]) {
+		// Already in position, so simply flip it
+		mazeObj._flipped = !mazeObj._flipped;
+	} else {
+		mazeObj._position.x = params[1];
+		mazeObj._position.y = params[2];
+	}
+}
+
 void Scripts::cmdTakeOrGive(Common::Array<byte> &params) { error("TODO"); }
 
 /**
@@ -318,7 +334,23 @@ void Scripts::cmdSetChar(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdSpawn(Common::Array<byte> &params) { error("TODO"); }
+/**
+ * Spawn a monster
+ */
+void Scripts::cmdSpawn(Common::Array<byte> &params) {
+	MazeMonster &monster = _vm->_map->_mobData._monsters[params[0]];
+	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
+	monster._position.x = params[1];
+	monster._position.y = params[2];
+	monster._frame = _vm->getRandomNumber(7);
+	monster._field7 = 0;
+	monster._isAttacking = params[1] != 0;
+	monster._hp = monsterData._hp;
+
+	_var4F = 1;
+	cmdNoAction(params);
+}
+
 void Scripts::cmdDoTownEvent(Common::Array<byte> &params) { error("TODO"); }
 
 /**
@@ -328,9 +360,97 @@ void Scripts::cmdExit(Common::Array<byte> &params) {
 	_lineNum = -1;
 }
 
-void Scripts::cmdAfterMap(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdGiveExtended(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdConfirmWord(Common::Array<byte> &params) { error("TODO"); }
+/**
+ * Changes the value for the wall on a given cell
+ */
+void Scripts::cmdAlterMap(Common::Array<byte> &params) { 
+	Map &map = *_vm->_map;
+
+	if (params[2] == DIR_ALL) {
+		for (int dir = DIR_NORTH; dir <= DIR_WEST; ++dir)
+			map.setWall(Common::Point(params[0], params[1]), (Direction)dir, params[3]);
+	} else {
+		map.setWall(Common::Point(params[0], params[1]), (Direction)params[2], params[3]);
+	}
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
+void Scripts::cmdGiveExtended(Common::Array<byte> &params) { 
+	switch (params[0]) {
+	case 16:
+	case 34:
+	case 100:
+		// TODO
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		// TODO
+		break;
+	default:
+		break;
+	}
+}
+
+void Scripts::cmdConfirmWord(Common::Array<byte> &params) { 
+	Map &map = *_vm->_map;
+	Common::String msg1 = params[2] ? map._events._text[params[2]] :
+		_vm->_interface->_interfaceText;
+	Common::String msg2;
+
+	if (_event->_opcode == OP_ConfirmWord_2) {
+		msg2 = map._events._text[params[3]];
+	} else if (params[3]) {
+		msg2 = "";
+	} else {
+		msg2 = WHATS_THE_PASSWORD;
+	}
+
+	int result = StringInput::show(_vm, params[0], msg1, msg2,_event->_opcode);
+	if (result) {
+		if (result == 33 && _vm->_files->_isDarkCc) {
+			doEndGame2();
+		} else if (result == 34 && _vm->_files->_isDarkCc) {
+			doWorldEnd();
+		} else if (result == 35 && _vm->_files->_isDarkCc &&
+				_vm->getGameID() == GType_WorldOfXeen) {
+			doEndGame();
+		} else if (result == 40 && !_vm->_files->_isDarkCc) {
+			doEndGame();
+		} else if (result == 60 && !_vm->_files->_isDarkCc) {
+			doEndGame2();
+		}
+		else if (result == 61 && !_vm->_files->_isDarkCc) {
+			doWorldEnd();
+		} else {		
+			if (result == 59 && !_vm->_files->_isDarkCc) {
+				for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
+					XeenItem &item = _vm->_treasure._weapons[idx];
+					if (!item._name) {
+						item._name = 34;
+						item._material = 0;
+						item._bonusFlags = 0;
+						_vm->_treasure._hasItems = true;
+						
+						cmdExit(params);
+						return;
+					}
+				}
+			}
+
+			_lineNum = result == -1 ? params[3] : params[1];
+			
+			return;
+		}
+	}
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
 void Scripts::cmdDamage(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdJumpRnd(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdAfterEvent(Common::Array<byte> &params) { error("TODO"); }
@@ -370,11 +490,45 @@ void Scripts::cmdExchObj(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdFallToMap(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayMain(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdGoto(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdConfirmWord2(Common::Array<byte> &params) { error("TODO"); }
+
 void Scripts::cmdGotoRandom(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdFlipWorld(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdPlayCD(Common::Array<byte> &params) { error("TODO"); }
+
+void Scripts::doEndGame() {
+	doEnding("ENDGAME", 0);
+}
+
+void Scripts::doEndGame2() {
+	Party &party = *_vm->_party;
+	int v2 = 0;
+
+	for (int idx = 0; idx < party._partyCount; ++idx) {
+		PlayerStruct &player = party._activeParty[idx];
+		if (player.hasAward(77)) {
+			v2 = 2;
+			break;
+		}
+		else if (player.hasAward(76)) {
+			v2 = 1;
+			break;
+		}
+	}
+
+	doEnding("ENDGAME2", v2);
+}
+
+void Scripts::doWorldEnd() {
+
+}
+
+void Scripts::doEnding(const Common::String &endStr, int v2) {
+	_vm->_saves->saveChars();
+	
+	warning("TODO: doEnding");
+}
+
 
 } // End of namespace Xeen
