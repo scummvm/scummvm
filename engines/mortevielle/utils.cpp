@@ -234,6 +234,7 @@ void MortevielleEngine::setMousePos(const Common::Point &pt) {
 void MortevielleEngine::delay(int amount) {
 	uint32 endTime = g_system->getMillis() + amount;
 
+	g_system->showMouse(false);
 	while (g_system->getMillis() < endTime) {
 		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 			_lastGameFrame = g_system->getMillis();
@@ -244,6 +245,7 @@ void MortevielleEngine::delay(int amount) {
 
 		g_system->delayMillis(10);
 	}
+	g_system->showMouse(true);
 }
 
 /**
@@ -2124,6 +2126,7 @@ void MortevielleEngine::showTitleScreen() {
 	_caff = 51;
 	_text->taffich();
 	testKeyboard();
+	delay(DISK_ACCESS_DELAY);
 	clearScreen();
 	draw(0, 0);
 
@@ -2519,6 +2522,18 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 				_coreVar._pctHintFound[6] = '*';
 			else if (mesgId == 179)
 				_coreVar._pctHintFound[10] = '*';
+			}
+			break;
+		case 7: {
+			prepareScreenType3();
+			Common::String tmpStr = getString(mesgId);
+			// CHECKME: original code seems to consider one extra character
+			// See text position in the 3rd intro screen
+			int size = tmpStr.size() + 1;
+			if (size < 40)
+				_text->displayStr(tmpStr, 252 - size * 3, 86, 50, 3, 5);
+			else
+				_text->displayStr(tmpStr, 144, 86, 50, 3, 5);
 			}
 			break;
 		default:
