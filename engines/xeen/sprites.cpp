@@ -104,9 +104,10 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;
 
-	if (dest.w < (xOffset + width) || dest.h < (yOffset + height))
-		dest.create(xOffset + width, yOffset + height);
-
+	if (flags & SPRFLAG_RESIZE) {
+		if (dest.w < (xOffset + width) || dest.h < (yOffset + height))
+			dest.create(xOffset + width, yOffset + height);
+	}
 	// The pattern steps used in the pattern command
 	const int patternSteps[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
 

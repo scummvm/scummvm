@@ -38,7 +38,7 @@ Window::Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
 		_vm(vm), _enabled(false), _a(a), _border(border), 
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
-	create(_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	create(_vm->_screen, bounds);
 }
 
 void Window::setBounds(const Common::Rect &r) {
@@ -167,17 +167,12 @@ void Window::writeString(const Common::String &s) {
 }
 
 void Window::drawList(DrawStruct *items, int count) {
-	Screen &screen = *_vm->_screen;
-
 	for (int i = 0; i < count; ++i, ++items) {
 		if (items->_frame == -1 || items->_scale == -1 || items->_sprites == nullptr)
 			continue;
-
-		Common::Rect bounds = _innerBounds;
-		bounds.translate(items->_x, items->_y);
-
+			
 		// TODO: There are two sprite calls in this method. Figure out why
-		items->_sprites->draw(screen, items->_frame,
+		items->_sprites->draw(*this, items->_frame,
 			Common::Point(items->_x, items->_y), items->_flags, items->_scale);
 	}
 }
