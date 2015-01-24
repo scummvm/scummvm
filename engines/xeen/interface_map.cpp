@@ -438,8 +438,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 
 		if (_isAnimReset) {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
-		}
-		else {
+		} else {
 			++mazeObject._frame;
 			if ((int)idx == objNum && scripts._animCounter > 0 && (
 				objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
@@ -457,8 +456,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 
 	if (map._isOutdoors) {
 		error("TODO: draw3d outdoors handling");
-	}
-	else {
+	} else {
 		// Default all the parts of draw struct not to be drawn by default
 		for (int idx = 3; idx < _indoorList.size(); ++idx)
 			_indoorList[idx]._frame = -1;
@@ -478,8 +476,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 					_indoorList[162 + idx]._frame = 0;
 				}
 			}
-		}
-		else if (_charsShooting) {
+		} else if (_charsShooting) {
 			for (int idx = 0; idx < 96; ++idx) {
 				if (_indoorList[162 + idx]._sprites != nullptr) {
 					_indoorList[162 + idx]._frame = 0;
@@ -522,8 +519,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 					if (ds1._scale == 0x8000) {
 						ds1._x /= 3;
 						ds1._y = 60;
-					}
-					else {
+					} else {
 						ds1._y = 73;
 					}
 
@@ -561,8 +557,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 			_indoorList[156]._sprites = nullptr;
 			_indoorList[157]._sprites = nullptr;
 			monsterIndex = 1;
-		}
-		else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 0) {
+		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 0) {
 			_indoorList[159] = _indoorList[150];
 			_indoorList[160] = _indoorList[151];
 			_indoorList[161] = _indoorList[152];
@@ -570,8 +565,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 			_indoorList[151]._sprites = nullptr;
 			_indoorList[150]._sprites = nullptr;
 			monsterIndex = 2;
-		}
-		else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 0) {
+		} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 0) {
 			_indoorList[159] = _indoorList[153];
 			_indoorList[160] = _indoorList[154];
 			_indoorList[161] = _indoorList[155];
@@ -2250,6 +2244,9 @@ void InterfaceMap::setMazeBits() {
 	}
 }
 
+/**
+ * Set up draw structures for displaying on-screen monsters
+ */
 void InterfaceMap::setIndoorsMonsters() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
@@ -2498,6 +2495,10 @@ void InterfaceMap::setIndoorsMonsters() {
 	}
 }
 
+/**
+ * Helper method for setIndoorsMonsters to set a draw structure
+ * with the deatils for a given monster
+ */
 void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites, 
 		int frame, int defaultY) {
 	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
@@ -2519,6 +2520,9 @@ void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster
 		drawStruct._flags = MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
 }
 
+/**
+ * Set up draw structures for displaying on-screen objects
+ */
 void InterfaceMap::setIndoorsObjects() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
@@ -2744,6 +2748,9 @@ void InterfaceMap::setIndoorsObjects() {
 	}
 }
 
+/**
+ * Set up draw structures for displaying on-screen wall items
+ */
 void InterfaceMap::setIndoorsWallPics() {
 	Map &map = *_vm->_map;
 	const Common::Point &mazePos = _vm->_party->_mazePosition;
@@ -2978,6 +2985,9 @@ void InterfaceMap::setOutdoorsObjects() {
 
 }
 
+/**
+ * Draw the contents of the current 3d view of an indoor map
+ */
 void InterfaceMap::drawIndoors() {
 	Map &map = *_vm->_map;
 	int surfaceId;
