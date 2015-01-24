@@ -184,6 +184,7 @@ bool SmushDecoder::readHeader() {
 		_file->readUint32BE();
 		_file->readUint32BE();
 		_audioTrack = new SmushAudioTrack(false, audioRate, 2);
+		addTrack(_audioTrack);
 		return true;
 
 	} else if (tag == MKTAG('S', 'H', 'D', 'R')) { // Retail
