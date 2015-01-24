@@ -113,8 +113,10 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				}
 			} else {
 				// Found word break, find end of previous word 
-				while (displayEnd > _displayString && (*displayEnd & 0x7f) == ' ')
-					--displayEnd;
+				while (endP > _displayString && (*endP & 0x7f) == ' ')
+					--endP;
+
+				displayEnd = endP;
 			}
 		}
 
@@ -123,9 +125,12 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 			// Figure out the width of the selected portion of the string
 			int totalWidth = 0;
 			while (!getNextCharWidth(totalWidth)) {
-				if (_displayString > displayEnd && *displayEnd == ' ') {
-					// Don't include any ending space as part of the total
-					totalWidth -= _fontReduced ? 4 : 5;
+				if (_displayString > displayEnd) {
+					if (*displayEnd == ' ') {
+						// Don't include any ending space as part of the total
+						totalWidth -= _fontReduced ? 4 : 5;
+					}
+					break;
 				}
 			}
 
