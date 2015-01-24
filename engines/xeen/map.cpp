@@ -857,8 +857,8 @@ void AnimationInfo::load(const Common::String &name) {
 /*------------------------------------------------------------------------*/
 
 Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
-	_townPortalSide = false;
 	_loadDarkSide = false;
+	_sideTownPortal = 0;
 	_sideObjects = 0;
 	_sideMonsters = 0;
 	_sidePictures = 0;
@@ -897,13 +897,13 @@ void Map::load(int mapId) {
 	_sideMonsters = 1;
 	_sidePictures = 1;
 	if (mapId >= 113 && mapId <= 127) {
-		_townPortalSide = false;
+		_sideTownPortal = 0;
 	} else {
-		_townPortalSide = _loadDarkSide;
+		_sideTownPortal = _loadDarkSide ? 1 : 0;
 	}
 
 	if (_vm->getGameID() == GType_WorldOfXeen) {
-		if (_loadDarkSide) {
+		if (!_loadDarkSide) {
 			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
 			_wallPicSprites.load("xeenpic.dat");
@@ -1050,7 +1050,7 @@ void Map::load(int mapId) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
 		} else {
-			filename = Common::String::format("xeen|%03d.%cbj", 
+			filename = Common::String::format("%03d.%cbj", 
 				_mobData._objectSprites[i]._spriteId,
 				_mobData._objectSprites[i]._spriteId >= 100 ? '0' : 'o');
 		}

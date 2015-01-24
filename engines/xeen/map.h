@@ -345,7 +345,7 @@ private:
 	MazeData _mazeData[9];
 	Common::String _mazeName;
 	SpriteResource _wallPicSprites;
-	bool _townPortalSide;
+	int _sideTownPortal;
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
