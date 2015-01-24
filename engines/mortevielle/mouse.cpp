@@ -51,7 +51,7 @@ void MouseHandler::initMouse() {
  * @remarks	Originally called 'hide_mouse'
  */
 void MouseHandler::hideMouse() {
-	// No implementation needed in ScummVM
+	g_system->showMouse(false);
 }
 
 /**
@@ -59,7 +59,7 @@ void MouseHandler::hideMouse() {
  * @remarks	Originally called 'show_mouse'
  */
 void MouseHandler::showMouse() {
-	// ScummVM implementation uses CursorMan for drawing the cursor
+	g_system->showMouse(true);
 }
 
 /**

@@ -92,6 +92,7 @@ enum DataType {
 #define MORT_DAT_REQUIRED_VERSION 1
 #define MORT_DAT "mort.dat"
 #define GAME_FRAME_DELAY (1000 / 50)
+#define DISK_ACCESS_DELAY 3000
 
 const int kTime1 = 410;
 const int kTime2 = 250;
