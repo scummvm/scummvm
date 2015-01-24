@@ -355,7 +355,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 			PlayerStruct &ps = _vm->_party->_activeParty[charIndex];
 
 			// Draw the Hp bar
-			int maxHp = ps.getMaxHp();
+			int maxHp = ps.getMaxHP();
 			int frame;
 			if (ps._currentHp < 1)
 				frame = 4;

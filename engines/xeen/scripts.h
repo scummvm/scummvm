@@ -41,8 +41,8 @@ enum Opcode {
 	OP_NPC			= 0x05,
 	OP_PlayFX		= 0x06,
 	OP_TeleportAndExit = 0x07,
-	OP_If_1			= 0x08,
-	OP_If_2			= 0x09,
+	OP_If1			= 0x08,
+	OP_If2			= 0x09,
 	OP_If3			= 0x0A,
 	OP_MoveObj		= 0x0B,
 	OP_TakeOrGive	= 0x0C,
@@ -207,6 +207,8 @@ private:
 	void doWorldEnd();
 
 	void doEnding(const Common::String &endStr, int v2);
+
+	bool ifProc(int action, uint32 mask, int mode, int charIndex);
 public:
 	int _animCounter;
 	bool _eventSkipped;

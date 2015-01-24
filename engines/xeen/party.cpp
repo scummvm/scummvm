@@ -158,14 +158,19 @@ Condition PlayerStruct::worstCondition() const {
 	return NO_CONDITION;
 }
 
-int PlayerStruct::getAge(int partyYear, bool ignoreTemp) {
-	int year = MIN(partyYear - _ybDay, 254);
+int PlayerStruct::getAge(bool ignoreTemp) const {
+	int year = MIN(Party::_vm->_party->_year - _ybDay, 254);
 
 	return ignoreTemp ? year : year + _tempAge;
 }
 
-int PlayerStruct::getMaxHp() {
+int PlayerStruct::getMaxHP() const {
 	warning("TODO: getMaxHp");
+	return 20;
+}
+
+int PlayerStruct::getMaxSP() const {
+	warning("TODO: getMaxSP");
 	return 20;
 }
 
@@ -194,7 +199,7 @@ void PlayerStruct::setAward(int awardId, bool value) {
 	_awards[v] = value;
 }
 
-bool PlayerStruct::hasAward(int awardId) {
+bool PlayerStruct::hasAward(int awardId) const {
 	int v = awardId;
 	if (awardId == 73)
 		v = 126;
@@ -204,6 +209,15 @@ bool PlayerStruct::hasAward(int awardId) {
 	return _awards[v];
 }
 
+int PlayerStruct::getArmorClass(bool baseOnly) const {
+	// TODO
+	return 1;
+}
+
+int PlayerStruct::getThievery() const {
+	// TODO
+	return 1;
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -217,7 +231,10 @@ void Roster::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Party::Party(XeenEngine *vm): _vm(vm) {
+XeenEngine *Party::_vm;
+
+Party::Party(XeenEngine *vm) {
+	_vm = vm;
 	_partyCount = 0;
 	_realPartyCount = 0;
 	Common::fill(&_partyMembers[0], &_partyMembers[8], 0);
@@ -258,7 +275,7 @@ Party::Party(XeenEngine *vm): _vm(vm) {
 	_rested = false;
 
 	Common::fill(&_gameFlags[0], &_gameFlags[512], false);
-	Common::fill(&_autoNotes[0], &_autoNotes[128], false);
+	Common::fill(&_worldFlags[0], &_worldFlags[128], false);
 	Common::fill(&_quests[0], &_quests[64], false);
 	Common::fill(&_questItems[0], &_questItems[85], 0);
 
@@ -337,7 +354,7 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_totalTime);
 	s.syncAsByte(_rested);
 	SavesManager::syncBitFlags(s, &_gameFlags[0], &_gameFlags[512]);
-	SavesManager::syncBitFlags(s, &_autoNotes[0], &_autoNotes[128]);
+	SavesManager::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
 	SavesManager::syncBitFlags(s, &_quests[0], &_quests[64]);
 
 	for (int i = 0; i < 85; ++i)

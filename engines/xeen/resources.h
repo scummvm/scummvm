@@ -110,6 +110,8 @@ extern const int COMBAT_FLOAT_Y[8];
 
 extern const int MONSTER_EFFECT_FLAGS[15][8];
 
+extern const int SPELLS_ALLOWED[3][40];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

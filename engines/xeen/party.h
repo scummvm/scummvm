@@ -132,9 +132,11 @@ public:
 
 	Condition worstCondition() const;
 
-	int getAge(int partyYear, bool ignoreTemp);
+	int getAge(bool ignoreTemp) const;
 
-	int getMaxHp();
+	int getMaxHP() const;
+
+	int getMaxSP() const;
 
 	int getStat(int statNum, int v2);
 
@@ -142,9 +144,13 @@ public:
 
 	bool noActions();
 
-	bool hasAward(int awardId);
-
 	void setAward(int awardId, bool value);
+
+	bool hasAward(int awardId) const;
+
+	int getArmorClass(bool baseOnly) const;
+
+	int getThievery() const;
 };
 
 class Roster: public Common::Array<PlayerStruct> {
@@ -155,8 +161,9 @@ public:
 };
 
 class Party {
+	friend class PlayerStruct;
 private:
-	XeenEngine *_vm;
+	static XeenEngine *_vm;
 public:
 	// Dynamic data that's saved
 	int _partyCount;
@@ -204,7 +211,7 @@ public:
 	int _totalTime;
 	bool _rested;
 	bool _gameFlags[512];
-	bool _autoNotes[128];
+	bool _worldFlags[128];
 	bool _quests[64];
 	int _questItems[85];
 	XeenItem _blacksmithWeapons2[ITEMS_COUNT];

@@ -23,6 +23,7 @@
 #include "xeen/scripts.h"
 #include "xeen/dialogs_string_input.h"
 #include "xeen/dialogs_whowill.h"
+#include "xeen/dialogs_yesno.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -171,7 +172,7 @@ void Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
 		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
 		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
-		&Scripts::cmdJumpRnd, &Scripts::cmdAfterEvent, &Scripts::cmdCallEvent,
+		&Scripts::cmdJumpRnd, &Scripts::cmdAlterEvent, &Scripts::cmdCallEvent,
 		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
 		&Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
 		&Scripts::cmdTeleport, &Scripts::cmdWhoWill,
@@ -378,21 +379,47 @@ void Scripts::cmdAlterMap(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdGiveExtended(Common::Array<byte> &params) { 
+	Party &party = *_vm->_party;
+	uint32 mask;
+	int newLineNum;
+	bool result;
+
 	switch (params[0]) {
 	case 16:
 	case 34:
 	case 100:
-		// TODO
+		mask = (params[4] << 24) | params[3] | (params[2] << 8) | (params[1] << 16);
+		newLineNum = params[5];
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		// TODO
+		mask = (params[2] << 8) | params[1];
+		newLineNum = params[3];
 		break;
 	default:
+		mask = params[1];
+		newLineNum = params[2];
 		break;
 	}
+
+	if ((_charIndex != 0 & _charIndex != 8) || params[0] == 44) {
+		result = ifProc(params[0], mask, _event->_opcode - OP_If1, _charIndex - 1);
+	} else {
+		result = false;
+		for (int idx = 0; idx < party._partyCount && !result; ++idx) {
+			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
+				result = ifProc(params[0], mask, _event->_opcode - OP_If1, idx);
+			}
+		}
+	}
+
+	if (result)
+		_lineNum = newLineNum - 1;
+
+	_var4F = true;
+	cmdNoAction(params);
 }
 
 void Scripts::cmdConfirmWord(Common::Array<byte> &params) { 
@@ -634,5 +661,386 @@ void Scripts::doEnding(const Common::String &endStr, int v2) {
 	warning("TODO: doEnding");
 }
 
+/**
+ * This monstrosity handles doing the various types of If checks on various data
+ */
+bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
+	Party &party = *_vm->_party;
+	PlayerStruct &ps = party._activeParty[charIndex];
+	uint v = 0;
+
+	switch (action) {
+	case 3:
+		// Player sex
+		v = (uint)ps._sex;
+		break;
+	case 4:
+		// Player race
+		v = (uint)ps._race;
+		break;
+	case 5:
+		// Player class
+		v = (uint)ps._class;
+		break;
+	case 8:
+		// Current health points
+		v = (uint)ps._currentHp;
+		break;
+	case 9:
+		// Current spell points
+		v = (uint)ps._currentSp;
+		break;
+	case 10:
+		// Get armor class
+		v = (uint)ps.getArmorClass(false);
+		break;
+	case 11:
+		// Level bonus (extra beyond base)
+		v = ps._level._temporary;
+		break;
+	case 12:
+		// Current age, including unnatural aging
+		v = ps.getAge(false);
+		break;
+	case 13:
+		assert(mask < 18);
+		if (ps._skills[mask])
+			v = mask;
+		break;
+	case 15:
+		// Award
+		assert(mask < 128);
+		if (ps.hasAward(mask))
+			v = mask;
+		break;
+	case 16:
+		// Experience
+		v = ps._experience;
+		break;
+	case 17:
+		// Party poison resistence
+		v = party._poisonResistence;
+		break;
+	case 18:
+		// Condition
+		assert(mask < 16);
+		if (!ps._conditions[mask] && !(mask & 0x10))
+			v = mask;
+		break;
+	case 19: {
+		// Can player cast a given spell
+
+		// Get the type of character
+		int category;
+		switch (ps._class) {
+		case CLASS_KNIGHT:
+		case CLASS_ARCHER:
+			category = 0;
+			break;
+		case CLASS_PALADIN:
+		case CLASS_CLERIC:
+			category = 1;
+			break;
+		case CLASS_BARBARIAN:
+		case CLASS_DRUID:
+			category = 2;
+			break;
+		default:
+			category = 0;
+			break;
+		}
+
+		// Check if the character class can cast the particular spell
+		for (int idx = 0; idx < 39; ++idx) {
+			if (SPELLS_ALLOWED[mode][idx] == mask) {
+				// Can cast it. Check if the player has it in their spellbook
+				if (ps._spells[idx])
+					v = mask;
+				break;
+			}
+		}
+		break;
+	}
+	case 20:
+		if (_vm->_files->_isDarkCc)
+			mask += 0x100;
+		assert(mask < 0x200);
+		if (party._gameFlags[mask])
+			v = mask;
+		break;
+	case 21:
+		// Scans inventories for given item number
+		v = 0xFFFFFFFF;
+		if (mask < 82) {
+			for (int idx = 0; idx < 9; ++idx) {
+				if (mask == 35) {
+					if (ps._weapons[idx]._name == mask) {
+						v = mask;
+						break;
+					}
+				} else if (mask < 49) {
+					if (ps._armor[idx]._name == (mask - 35)) {
+						v = mask;
+						break;
+					}
+				} else if (mask < 60) {
+					if (ps._accessories[idx]._name == (mask - 49)) {
+						v = mask;
+						break;
+					}
+				} else {
+					if (ps._misc[idx]._name == (mask - 60)) {
+						v = mask;
+						break;
+					}
+				}
+			}
+		} else {
+			int baseFlag = 8 * (6 + mask);
+			for (int idx = 0; idx < 8; ++idx) {
+				if (party._gameFlags[baseFlag + idx]) {
+					v = mask;
+					break;
+				}
+			}
+		}
+		break;
+	case 25:
+		// Returns number of minutes elapsed in the day (0-1440)
+		v = party._minutes;
+		break;
+	case 34:
+		// Current party gold
+		v = party._gold;
+		break;
+	case 35:
+		// Current party gems
+		v = party._gems;
+		break;
+	case 37:
+		// Might bonus (extra beond base)
+		v = ps._might._temporary;
+		break;
+	case 38:
+		// Intellect bonus (extra beyond base)
+		v = ps._intellect._temporary;
+		break;
+	case 39:
+		// Personality bonus (extra beyond base)
+		v = ps._personality._temporary;
+		break;
+	case 40:
+		// Endurance bonus (extra beyond base)
+		v = ps._endurance._temporary;
+		break;
+	case 41:
+		// Speed bonus (extra beyond base)
+		v = ps._speed._temporary;
+		break;
+	case 42:
+		// Accuracy bonus (extra beyond base)
+		v = ps._accuracy._temporary;
+		break;
+	case 43:
+		// Luck bonus (extra beyond base)
+		v = ps._luck._temporary;
+		break;
+	case 44:
+		v = YesNo::show(_vm, mask, 0);
+		if (!mask && v)
+			v = 0;
+		break;
+	case 45:
+		// Might base (before bonus)
+		v = ps._might._permanent;
+		break;
+	case 46:
+		// Intellect base (before bonus)
+		v = ps._intellect._permanent;
+		break;
+	case 47:
+		// Personality base (before bonus)
+		v = ps._personality._permanent;
+		break;
+	case 48:
+		// Endurance base (before bonus)
+		v = ps._endurance._permanent;
+		break;
+	case 49:
+		// Speed base (before bonus)
+		v = ps._speed._permanent;
+		break;
+	case 50:
+		// Accuracy base (before bonus)
+		v = ps._accuracy._permanent;
+		break;
+	case 51:
+		// Luck base (before bonus)
+		v = ps._luck._permanent;
+		break;
+	case 52:
+		// Fire resistence (before bonus)
+		v = ps._fireResistence._permanent;
+		break;
+	case 53:
+		// Elecricity resistence (before bonus)
+		v = ps._electricityResistence._permanent;
+		break;
+	case 54:
+		// Cold resistence (before bonus)
+		v = ps._coldResistence._permanent;
+		break;
+	case 55:
+		// Poison resistence (before bonus)
+		v = ps._poisonResistence._permanent;
+		break;
+	case 56:
+		// Energy reistence (before bonus)
+		v = ps._energyResistence._permanent;
+		break;
+	case 57:
+		// Energy resistence (before bonus)
+		v = ps._magicResistence._permanent;
+		break;
+	case 58:
+		// Fire resistence (extra beyond base)
+		v = ps._fireResistence._temporary;
+		break;
+	case 59:
+		// Electricity resistence (extra beyond base)
+		v = ps._electricityResistence._temporary;
+		break;
+	case 60:
+		// Cold resistence (extra beyond base)
+		v = ps._coldResistence._temporary;
+		break;
+	case 61:
+		// Poison resistence (extra beyod base)
+		v = ps._poisonResistence._temporary;
+		break;
+	case 62:
+		// Energy resistence (extra beyond base)
+		v = ps._energyResistence._temporary;
+		break;
+	case 63:
+		// Magic resistence (extra beyond base)
+		v = ps._magicResistence._temporary;
+		break;
+	case 64:
+		// Level (before bonus)
+		v = ps._level._permanent;
+		break;
+	case 65:
+		// Total party food
+		v = party._food;
+		break;
+	case 69:
+		// Test for Levitate being active
+		v = party._levitateActive ? 1 : 0;
+		break;
+	case 70:
+		// Amount of light
+		v = party._lightCount;
+		break;
+	case 71:
+		// Party magical fire resistence
+		v = party._fireResistence;
+		break;
+	case 72:
+		// Party magical electricity resistence
+		v = party._electricityResistence;
+		break;
+	case 73:
+		// Party magical cold resistence
+		v = party._coldResistence;
+		break;
+	case 76:
+		// Day of the year (100 per year)
+		v = party._day;
+		break;
+	case 77:
+		// Armor class (extra beyond base)
+		v = ps._ACTemp;
+		break;
+	case 78:
+		// Test whether current Hp is equal to or exceeds the max HP
+		v = ps._currentHp >= ps.getMaxHP() ? 1 : 0;
+		break;
+	case 79:
+		// Test for Wizard Eye being active
+		v = party._wizardEyeActive ? 1 : 0;
+		break;
+	case 81:
+		// Test whether current Sp is equal to or exceeds the max SP
+		v = ps._currentSp >= ps.getMaxSP() ? 1 : 0;
+		break;
+	case 84:
+		// Current facing direction
+		v = (uint)party._mazeDirection;
+		break;
+	case 85:
+		// Current game year since start
+		v = party._year;
+		break;
+	case 86:
+	case 87:
+	case 88:
+	case 89:
+	case 90:
+	case 91:
+	case 92:
+		// Get a player stat
+		v = ps.getStat(action - 86, 0);
+		break;
+	case 93:
+		// Current day of the week (10 days per week)
+		v = party._day / 10;
+		break;
+	case 94:
+		// Test whether Walk on Water is currently active
+		v = party._walkOnWaterActive ? 1 : 0;
+		break;
+	case 99:
+		// Party skills check
+		if (party.checkSkill((Skill)mask))
+			v = mask;
+		break;
+	case 102:
+		// Thievery skill
+		v = ps.getThievery();
+		break;
+	case 103:
+		// Get value of world flag
+		if (party._worldFlags[mask])
+			v = mask;
+		break;
+	case 104:
+		// Get value of quest flag
+		if (party._quests[mask + (_vm->_files->_isDarkCc ? 30 : 0)])
+			v = mask;
+		break;
+	case 105:
+		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock
+		v = party._questItems[26];
+		break;
+	case 107:
+		// Get value of character flag
+		error("Unused");
+		break;
+	default:
+		break;
+	}
+
+	switch (mode) {
+	case 0:
+		return mask >= v;
+	case 1:
+		return mask == v;
+	case 2:
+		return mask <= v;
+	default:
+		return false;
+	}
+}
 
 } // End of namespace Xeen
