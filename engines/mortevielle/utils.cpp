@@ -234,7 +234,7 @@ void MortevielleEngine::setMousePos(const Common::Point &pt) {
 void MortevielleEngine::delay(int amount) {
 	uint32 endTime = g_system->getMillis() + amount;
 
-	_mouse->hideMouse();
+	g_system->showMouse(false);
 	while (g_system->getMillis() < endTime) {
 		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 			_lastGameFrame = g_system->getMillis();
@@ -245,7 +245,7 @@ void MortevielleEngine::delay(int amount) {
 
 		g_system->delayMillis(10);
 	}
-	_mouse->showMouse();
+	g_system->showMouse(true);
 }
 
 /**
