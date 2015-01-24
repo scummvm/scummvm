@@ -166,7 +166,7 @@ int Character::getAge(bool ignoreTemp) const {
 
 int Character::getMaxHP() const {
 	int hp = BASE_HP_BY_CLASS[_class];
-	hp += statBonus(getStat(ENDURANCE, false));
+	hp += statBonus(getStat(ENDURANCE));
 	hp += RACE_HP_BONUSES[_race];
 	if (_skills[BODYBUILDER])
 		++hp;
@@ -176,10 +176,7 @@ int Character::getMaxHP() const {
 	hp *= getCurrentLevel();
 	hp += itemScan(7);
 
-	if (hp < 0)
-		hp = 0;
-
-	return hp;
+	return MAX(hp, 0);
 }
 
 int Character::getMaxSP() const {
@@ -204,7 +201,7 @@ int Character::getMaxSP() const {
 
 	for (;;) {
 		// Get the base number of spell points
-		result = statBonus(getStat(attrib, false));
+		result = statBonus(getStat(attrib));
 		result += RACE_SP_BONUSES[_race][attrib - 1];
 
 		if (_skills[skill])
@@ -240,7 +237,7 @@ int Character::getMaxSP() const {
 /**
  * Get the effective value of a given stat for the character
  */
-int Character::getStat(Attribute attrib, bool applyMod) const {
+int Character::getStat(Attribute attrib, bool baseOnly) const {
 	AttributePair attr;
 	int mode = 0;
 
@@ -277,32 +274,36 @@ int Character::getStat(Attribute attrib, bool applyMod) const {
 	if (mode < 2) {
 		int age = getAge(false);
 		int ageIndex = 0;
-		while (AGE_RANGES[ageIndex] < age)
+		while (AGE_RANGES[ageIndex] <= age)
 			++ageIndex;
 
 		attr._permanent += AGE_RANGES_ADJUST[mode][ageIndex];
 	}
 
-	if (applyMod) {
+
+	attr._permanent += itemScan((int)attrib);
+
+	if (!baseOnly) {
 		attr._permanent += conditionMod(attrib);
 		attr._permanent += attr._temporary;
 	}
 
-	return (attr._permanent >= 1) ? attr._permanent : 0;
+	return MAX(attr._permanent, 0);
 }
 
 int Character::statBonus(int statValue) const {
-	for (int idx = 0; STAT_VALUES[idx] <= statValue; ++idx)
-		return STAT_BONUSES[idx];
+	int idx;
+	for (idx = 0; STAT_VALUES[idx] <= statValue; ++idx)
+		;
 
-	return 0;
+	return STAT_BONUSES[idx];
 }
 
 bool Character::charSavingThrow(DamageType attackType) const {
 	int v, vMax;
 
 	if (attackType == DT_PHYSICAL) {
-		v = statBonus(getStat(LUCK, false)) + getCurrentLevel();
+		v = statBonus(getStat(LUCK)) + getCurrentLevel();
 		vMax = v + 20;
 	} else {
 		switch (attackType) {
@@ -378,7 +379,7 @@ bool Character::hasAward(int awardId) const {
 int Character::getArmorClass(bool baseOnly) const {
 	Party &party = *Party::_vm->_party;
 
-	int result = statBonus(getStat(SPEED, false)) + itemScan(9);
+	int result = statBonus(getStat(SPEED)) + itemScan(9);
 	if (!baseOnly)
 		result += (party._blessedActive ? 1 : 0) + _ACTemp;
 
@@ -762,7 +763,7 @@ void Party::changeTime(int numMinutes) {
 			if (!player._conditions[DEAD] && !player._conditions[STONED] &&
 					!player._conditions[ERADICATED]) {
 				for (int statNum = 0; statNum < TOTAL_STATS; ++statNum) {
-					int statVal = player.getStat((Attribute)statNum, false);
+					int statVal = player.getStat((Attribute)statNum);
 					if (statVal < 1)
 						player._conditions[DEAD] = 1;
 				}

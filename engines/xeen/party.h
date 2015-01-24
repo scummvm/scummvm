@@ -146,7 +146,7 @@ public:
 
 	int getMaxSP() const;
 
-	int getStat(Attribute attrib, bool applyMod) const;
+	int getStat(Attribute attrib, bool baseOnly = false) const;
 
 	int statBonus(int statValue) const;
 
