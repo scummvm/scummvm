@@ -166,6 +166,8 @@ public:
 
 	void setOutdoorsObjects();
 
+	void drawOutdoors();
+
 	void drawTownAnim(int v);
 };
 

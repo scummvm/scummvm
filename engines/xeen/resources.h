@@ -142,6 +142,8 @@ extern const int METAL_LAC[9];
 
 extern const int ARMOR_STRENGTHS[14];
 
+extern const int OUTDOOR_DRAWSTRCT_INDEXES[44];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

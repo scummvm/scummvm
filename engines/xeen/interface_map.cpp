@@ -413,6 +413,11 @@ void InterfaceMap::draw3d(bool updateFlag) {
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 
+	const int COMBAT_POS_X[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
+	const int INDOOR_INDEXES[3] = { 157, 151, 154 };
+	const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
+	const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
+
 	if (screen._windows[11]._enabled)
 		return;
 
@@ -455,8 +460,133 @@ void InterfaceMap::draw3d(bool updateFlag) {
 	}
 
 	if (map._isOutdoors) {
-		error("TODO: draw3d outdoors handling");
+		// Outdoors drawing
+		for (int idx = 0; idx < 44; ++idx)
+			_outdoorList[OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
+
+		if (_flag1) {
+			for (int idx = 0; idx < 8; ++idx) {
+				if (_outdoorList._combatImgs4[idx]._sprites)
+					_outdoorList._combatImgs4[idx]._frame = 0;
+				else if (_outdoorList._combatImgs3[idx]._sprites)
+					_outdoorList._combatImgs3[idx]._frame = 1;
+				else if (_outdoorList._combatImgs2[idx]._sprites)
+					_outdoorList._combatImgs2[idx]._frame = 2;
+				else if (_outdoorList._combatImgs1[idx]._sprites)
+					_outdoorList._combatImgs1[idx]._frame = 0;
+			}
+		} else if (_charsShooting) {
+			for (int idx = 0; idx < 8; ++idx) {
+				if (_outdoorList._combatImgs1[idx]._sprites)
+					_outdoorList._combatImgs1[idx]._frame = 0;
+				else if (_outdoorList._combatImgs2[idx]._sprites)
+					_outdoorList._combatImgs2[idx]._frame = 1;
+				else if (_outdoorList._combatImgs3[idx]._sprites)
+					_outdoorList._combatImgs3[idx]._frame = 2;
+				else if (_outdoorList._combatImgs4[idx]._sprites)
+					_outdoorList._combatImgs1[idx]._frame = 0;
+			}
+		}
+
+		_isAnimReset = false;
+		int attackMon2 = combat._attackMonsters[2];
+
+		for (int idx = 0; idx < 3; ++idx) {
+			DrawStruct &ds1 = _outdoorList[OUTDOOR_INDEXES[idx] + 1];
+			DrawStruct &ds2 = _outdoorList[OUTDOOR_INDEXES[idx]];
+			ds1._sprites = nullptr;
+			ds2._sprites = nullptr;
+
+			if (combat._charsArray1[idx]) {
+				int vIndex = combat._attackMonsters[1] && !attackMon2 ? 1 : 0;
+				combat._charsArray1[idx]--;
+
+				if (combat._monPow[idx]) {
+					ds2._x = COMBAT_POS_X[idx][vIndex];
+					ds2._frame = 0;
+					ds2._scale = combat._monsterScale[idx];
+
+					if (ds2._scale == 0x8000) {
+						ds2._x /= 3;
+						ds2._y = 60;
+					} else {
+						ds2._y = 73;
+					}
+
+					ds2._flags = SPRFLAG_4000 | SPRFLAG_2000;
+					ds2._sprites = &_charPowSprites;
+				}
+
+				if (combat._elemPow[idx]) {
+					ds1._x = COMBAT_POS_X[idx][vIndex] + COMBAT_OFFSET_X[idx];
+					ds1._frame = combat._elemPow[idx];
+					ds1._scale = combat._elemScale[idx];
+
+					if (ds1._scale == 0x8000)
+						ds1._x /= 3;
+					ds1._flags = SPRFLAG_4000 | SPRFLAG_2000;
+					ds1._sprites = &_charPowSprites;
+				}
+			}
+		}
+
+		setOutdoorsMonsters();
+		setOutdoorsObjects();
+
+		_outdoorList[123]._sprites = nullptr;
+		_outdoorList[122]._sprites = nullptr;
+		_outdoorList[121]._sprites = nullptr;
+
+		int monsterIndex;
+		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 8) {
+			_outdoorList[121] = _outdoorList[118];
+			_outdoorList[122] = _outdoorList[119];
+			_outdoorList[123] = _outdoorList[120];
+			_outdoorList[118]._sprites = nullptr;
+			_outdoorList[119]._sprites = nullptr;
+			_outdoorList[120]._sprites = nullptr;
+			monsterIndex = 1;
+		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 8) {
+			_outdoorList[121] = _outdoorList[112];
+			_outdoorList[122] = _outdoorList[113];
+			_outdoorList[123] = _outdoorList[114];
+			_outdoorList[112]._sprites = nullptr;
+			_outdoorList[113]._sprites = nullptr;
+			_outdoorList[124]._sprites = nullptr;
+			monsterIndex = 2;
+		} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
+			_outdoorList[121] = _outdoorList[115];
+			_outdoorList[122] = _outdoorList[116];
+			_outdoorList[123] = _outdoorList[117];
+			_outdoorList[115]._sprites = nullptr;
+			_outdoorList[116]._sprites = nullptr;
+			_outdoorList[117]._sprites = nullptr;
+			monsterIndex = 3;
+		}
+
+		drawOutdoors();
+
+		switch (monsterIndex) {
+		case 1:
+			_outdoorList[118] = _outdoorList[121];
+			_outdoorList[119] = _outdoorList[122];
+			_outdoorList[120] = _outdoorList[123];
+			break;
+		case 2:
+			_outdoorList[112] = _outdoorList[121];
+			_outdoorList[113] = _outdoorList[122];
+			_outdoorList[114] = _outdoorList[123];
+			break;
+		case 3:
+			_outdoorList[115] = _outdoorList[121];
+			_outdoorList[116] = _outdoorList[122];
+			_outdoorList[117] = _outdoorList[123];
+			break;
+		default:
+			break;
+		}
 	} else {
+		// Indoor drawing
 		// Default all the parts of draw struct not to be drawn by default
 		for (int idx = 3; idx < _indoorList.size(); ++idx)
 			_indoorList[idx]._frame = -1;
@@ -495,11 +625,8 @@ void InterfaceMap::draw3d(bool updateFlag) {
 
 		setMazeBits();
 		_isAnimReset = false;
-		const int INDOOR_INDEXES[3] = { 157, 151, 154 };
-		const int INDOOR_COMBAT_POS[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
-		const int INDOOR_COMBAT_POS2[4] = { 8, 6, 4, 2 };
 
-		// Double check this, since it's not being used?
+		// Code in the original that's not being used
 		//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
 
 		for (int idx = 0; idx < 3; ++idx) {
@@ -513,7 +640,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 				--combat._charsArray1[idx];
 
 				if (combat._monPow[idx]) {
-					ds1._x = INDOOR_COMBAT_POS[idx][0];
+					ds1._x = COMBAT_POS_X[idx][posIndex];
 					ds1._frame = 0;
 					ds1._scale = combat._monsterScale[idx];
 					if (ds1._scale == 0x8000) {
@@ -528,7 +655,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 				}
 
 				if (combat._elemPow[idx]) {
-					ds2._x = INDOOR_COMBAT_POS[idx][posIndex] + INDOOR_COMBAT_POS2[idx];
+					ds2._x = COMBAT_POS_X[idx][posIndex] + COMBAT_OFFSET_X[idx];
 					ds2._frame = combat._elemPow[idx];
 					ds2._scale = combat._elemScale[idx];
 					if (ds2._scale == 0x8000)
@@ -549,7 +676,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 
 		// Handle attacking monsters
 		int monsterIndex = 0;
-		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 0) {
+		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 8) {
 			_indoorList[159] = _indoorList[156];
 			_indoorList[160] = _indoorList[157];
 			_indoorList[161] = _indoorList[158];
@@ -557,7 +684,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 			_indoorList[156]._sprites = nullptr;
 			_indoorList[157]._sprites = nullptr;
 			monsterIndex = 1;
-		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 0) {
+		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 8) {
 			_indoorList[159] = _indoorList[150];
 			_indoorList[160] = _indoorList[151];
 			_indoorList[161] = _indoorList[152];
@@ -565,7 +692,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 			_indoorList[151]._sprites = nullptr;
 			_indoorList[150]._sprites = nullptr;
 			monsterIndex = 2;
-		} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 0) {
+		} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
 			_indoorList[159] = _indoorList[153];
 			_indoorList[160] = _indoorList[154];
 			_indoorList[161] = _indoorList[155];
@@ -2978,11 +3105,11 @@ void InterfaceMap::setIndoorsWallPics() {
 }
 
 void InterfaceMap::setOutdoorsMonsters() {
-
+	// TODO
 }
 
 void InterfaceMap::setOutdoorsObjects() {
-
+	// TODO
 }
 
 /**
@@ -3833,6 +3960,14 @@ void InterfaceMap::drawIndoors() {
 	
 	_charsShooting = _isShooting;
 }
+
+/**
+ * Draw the contents of the current 3d view of an outdoor map
+ */
+void InterfaceMap::drawOutdoors() {
+	// TODO
+}
+
 
 void InterfaceMap::moveMonsters() {
 	// TODO
