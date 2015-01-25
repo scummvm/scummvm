@@ -557,11 +557,28 @@ void Room::executeCommand(int commandId) {
 				}
 
 				_vm->_boxSelect = true;
+				return;
 			}
 			break;
 		case 7:
 			walkCursor();
 			return;
+		case 8: {
+			EventsManager &events = *_vm->_events;
+
+			events.forceSetCursor(CURSOR_CROSSHAIRS);
+			_vm->_scripts->_sequence = 10000;
+			_vm->_scripts->searchForSequence();
+
+			_conFlag = true;
+			while (_conFlag && !_vm->shouldQuitOrRestart()) {
+				_conFlag = false;
+				_vm->_scripts->executeScript();
+			}
+
+			_vm->_boxSelect = true;
+			return;
+			}
 		default:
 			// No set cursor in MM. Forcing to CROSSHAIRS
 			events.setCursor(CURSOR_CROSSHAIRS);
@@ -602,8 +619,6 @@ void Room::executeCommand(int commandId) {
 			break;
 		}
 	}
-	// Draw the default toolbar menu at the bottom of the screen
-	roomMenu();
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
 
