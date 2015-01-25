@@ -147,6 +147,7 @@ private:
 	int _lineNum;
 	int _charIndex;
 	int _mirrorId;
+	int _refreshIcons;
 
 	int _v2;
 	int _var4F;

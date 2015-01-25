@@ -101,15 +101,17 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_animCounter = 0;
 	_eventSkipped = false;
 	_mirrorId = -1;
+	_refreshIcons = false;
 }
 
 void Scripts::checkEvents() {
 	Combat &combat = *_vm->_combat;
-//	Interface &intf = *_vm->_interface;
+	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
 
-//	int var18 = 0;
+	_refreshIcons = false;
 	_itemType = 0;
 	_var4F = 0;
 	bool var50 = false;
@@ -162,6 +164,12 @@ void Scripts::checkEvents() {
 				_lineNum = -1;
 		}
 	} while (!_vm->shouldQuit() && _lineNum != -1);
+
+	intf._face1State = intf._face2State = 2;
+	if (_refreshIcons) {
+		screen.closeWindows();
+		intf.charIconsPrint(true);
+	}
 
 	// TODO
 }
@@ -669,6 +677,7 @@ void Scripts::cmdReturn(Common::Array<byte> &params) {
 void Scripts::cmdSetVar(Common::Array<byte> &params) { 
 	Party &party = *_vm->_party;
 	uint val;
+	_refreshIcons = true;
 
 	switch (params[0]) {
 	case 25:
