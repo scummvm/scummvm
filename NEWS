@@ -1,9 +1,9 @@
 
 0.3.0 (2015-xx-xx)
 
-0.2.1 (2015-xx-xx)
+0.2.1 (2015-01-25)
 	Grim fixes:
-	- Fixes for IRIX platform
+	- Fixed crash on IRIX platform
 
 	Myst III fixes:
 	- Fixed crash when Polish subtitles are enabled
