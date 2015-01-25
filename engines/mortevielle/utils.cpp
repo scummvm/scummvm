@@ -391,7 +391,7 @@ void MortevielleEngine::setTextColor(int col) {
  */
 void MortevielleEngine::prepareScreenType1() {
 	// Large drawing
-	_screenSurface->drawBox(0, 11, 512, 164, 15);
+	_screenSurface->drawBox(0, 11, 512, 163, 15);
 }
 
 /**
@@ -1381,7 +1381,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		showPeoplePresent(_currBitIndex);
 		_caff = 77;
 		drawPictureWithText();
-		_screenSurface->drawBox(223, 47, 155, 92, 15);
+		_screenSurface->drawBox(223, 47, 155, 91, 15);
 		handleDescriptionText(2, 33);
 		testKey(false);
 		menuUp();
@@ -2885,10 +2885,10 @@ void MortevielleEngine::drawPicture() {
 	clearUpperLeftPart();
 	if (_caff > 99) {
 		draw(60, 33);
-		_screenSurface->drawBox(118, 32, 291, 122, 15);         // Medium box
+		_screenSurface->drawBox(118, 32, 291, 121, 15);         // Medium box
 	} else if (_caff > 69) {
 		draw(112, 48);           // Heads
-		_screenSurface->drawBox(222, 47, 155, 92, 15);
+		_screenSurface->drawBox(222, 47, 155, 91, 15);
 	} else {
 		draw(0, 12);
 		prepareScreenType1();
@@ -2926,6 +2926,9 @@ void MortevielleEngine::drawPicture() {
 	}
 }
 
+/**
+ * @remarks	Originally called 'afdes'
+ */
 void MortevielleEngine::drawPictureWithText() {
 	_text->taffich();
 	drawPicture();
@@ -3087,7 +3090,7 @@ void MortevielleEngine::menuUp() {
  */
 void MortevielleEngine::drawDiscussionBox() {
 	draw(10, 80);
-	_screenSurface->drawBox(18, 79, 155, 92, 15);
+	_screenSurface->drawBox(18, 79, 155, 91, 15);
 }
 
 /**
