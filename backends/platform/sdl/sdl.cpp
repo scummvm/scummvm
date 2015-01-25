@@ -571,14 +571,8 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	//
 	// This is a probably temporary workaround to fix bugs like #3368143
 	// "SDL/OpenGL: Crash when switching renderer backend".
-	const int screenWidth = _graphicsManager->getWidth();
-	const int screenHeight = _graphicsManager->getHeight();
-	const bool arState = _graphicsManager->getFeatureState(kFeatureAspectRatioCorrection);
-	const bool fullscreen = _graphicsManager->getFeatureState(kFeatureFullscreenMode);
-	const bool cursorPalette = _graphicsManager->getFeatureState(kFeatureCursorPalette);
-#ifdef USE_RGB_COLOR
-	const Graphics::PixelFormat pixelFormat = _graphicsManager->getScreenFormat();
-#endif
+	SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+	SdlGraphicsManager::State state = sdlGraphicsManager->getState();
 
 	bool switchedManager = false;
 
@@ -586,16 +580,16 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	// manager, delete and create the new mode graphics manager
 	if (_graphicsMode >= _firstGLMode && mode < _firstGLMode) {
 		debug(1, "switching to plain SDL graphics");
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 
 		switchedManager = true;
 	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
 
 		switchedManager = true;
 	}
@@ -603,24 +597,10 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	_graphicsMode = mode;
 
 	if (switchedManager) {
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
+		sdlGraphicsManager->activateManager();
 
-		_graphicsManager->beginGFXTransaction();
-#ifdef USE_RGB_COLOR
-		_graphicsManager->initSize(screenWidth, screenHeight, &pixelFormat);
-#else
-		_graphicsManager->initSize(screenWidth, screenHeight, 0);
-#endif
-		_graphicsManager->setFeatureState(kFeatureAspectRatioCorrection, arState);
-		_graphicsManager->setFeatureState(kFeatureFullscreenMode, fullscreen);
-		_graphicsManager->setFeatureState(kFeatureCursorPalette, cursorPalette);
-
-		// Worst part about this right now, tell the cursor manager to
-		// resetup the cursor + cursor palette if necessarily
-
-		// First we need to try to setup the old state on the new manager...
-		if (_graphicsManager->endGFXTransaction() != kTransactionSuccess) {
-			// Oh my god if this failed the client code might just explode.
+		// This failing will probably have bad consequences...
+		if (!sdlGraphicsManager->setState(state)) {
 			return false;
 		}
 
@@ -629,7 +609,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		CursorMan.popCursor();
 
 		// Next setup cursor palette if needed
-		if (cursorPalette) {
+		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
 			CursorMan.pushCursorPalette(0, 0, 0);
 			CursorMan.popCursorPalette();
 		}

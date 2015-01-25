@@ -69,3 +69,36 @@ void SdlGraphicsManager::warpMouseInWindow(uint x, uint y) {
 void SdlGraphicsManager::iconifyWindow() {
 	SDL_WM_IconifyWindow();
 }
+
+SdlGraphicsManager::State SdlGraphicsManager::getState() {
+	State state;
+
+	state.screenWidth   = getWidth();
+	state.screenHeight  = getHeight();
+	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
+	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
+	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
+#ifdef USE_RGB_COLOR
+	state.pixelFormat   = getScreenFormat();
+#endif
+
+	return state;
+}
+
+bool SdlGraphicsManager::setState(const State &state) {
+	beginGFXTransaction();
+#ifdef USE_RGB_COLOR
+		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+#else
+		initSize(state.screenWidth, state.screenHeight, 0);
+#endif
+		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
+		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
+		setFeatureState(OSystem::kFeatureCursorPalette, state.cursorPalette);
+
+	if (endGFXTransaction() != OSystem::kTransactionSuccess) {
+		return false;
+	} else {
+		return true;
+	}
+}

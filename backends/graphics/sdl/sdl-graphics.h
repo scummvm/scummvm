@@ -129,6 +129,31 @@ public:
 	 */
 	void iconifyWindow();
 
+	/**
+	 * A (subset) of the graphic manager's state. This is used when switching
+	 * between different SDL graphic managers on runtime.
+	 */
+	struct State {
+		int screenWidth, screenHeight;
+		bool aspectRatio;
+		bool fullscreen;
+		bool cursorPalette;
+
+#ifdef USE_RGB_COLOR
+		Graphics::PixelFormat pixelFormat;
+#endif
+	};
+
+	/**
+	 * Queries the current state of the graphic manager.
+	 */
+	State getState();
+
+	/**
+	 * Setup a basic state of the graphic manager.
+	 */
+	bool setState(const State &state);
+
 protected:
 	SdlEventSource *_eventSource;
 };
