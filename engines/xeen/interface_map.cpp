@@ -4399,7 +4399,7 @@ void InterfaceMap::drawOutdoors() {
 	for (int cellIndex = 0; cellIndex < 25; ++cellIndex) {
 		map.getCell(cellIndex == 24 ? 2 : DRAW_NUMBERS[cellIndex]);
 
-		DrawStruct &drawStruct = _indoorList._groundTiles[cellIndex];
+		DrawStruct &drawStruct = _outdoorList._groundTiles[cellIndex];
 		SpriteResource &sprites = map._surfaceSprites[map._currentSurfaceId];
 		drawStruct._sprites = sprites.empty() ? (SpriteResource *)nullptr : &sprites;
 
