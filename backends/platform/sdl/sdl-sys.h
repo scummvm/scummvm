@@ -110,7 +110,7 @@ typedef struct { int FAKE; } FAKE_FILE;
 #define SDL_SRCALPHA    0
 #define SDL_FULLSCREEN  0x40000000
 
-// Compatability implementations for removed functionality.
+// Compatibility implementations for removed functionality.
 int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
 int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
 
