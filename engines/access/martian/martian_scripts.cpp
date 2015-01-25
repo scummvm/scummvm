@@ -34,7 +34,18 @@ MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
 }
 
-void MartianScripts::cmdSpecial5(int param1) {
+void MartianScripts::cmdSpecial3() {
+	_vm->_screen->forceFadeOut();
+	_vm->_events->hideCursor();
+	_vm->_files->loadScreen(57, 3);
+	_vm->_buffer2.copyFrom(*_vm->_screen);
+
+	_vm->_screen->setIconPalette();
+	_vm->_events->showCursor();
+	_vm->_screen->forceFadeIn();
+}
+
+void MartianScripts::doIntro(int param1) {
 	_game->doSpecial5(param1);
 }
 
@@ -50,13 +61,13 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		warning("TODO: cmdSpecial2");
 		break;
 	case 3:
-		warning("TODO: cmdSpecial3");
+		cmdSpecial3();
 		break;
 	case 4:
 		warning("TODO: cmdSpecial4");
 		break;
 	case 5:
-		cmdSpecial5(param1);
+		doIntro(param1);
 		break;
 	case 6:
 		warning("TODO: cmdSpecial6");
