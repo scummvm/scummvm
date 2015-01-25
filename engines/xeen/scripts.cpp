@@ -178,7 +178,7 @@ void Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdAlterHed, &Scripts::cmdDisplayStat, &Scripts::cmdTakeOrGive,
 		&Scripts::cmdSeatTextSml, &Scripts::cmdPlayEventVoc, &Scripts::cmdDisplayBottom,
 		&Scripts::cmdIfMapFlag, &Scripts::cmdSelRndChar, &Scripts::cmdGiveEnchanted,
-		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdNoAction2,
+		&Scripts::cmdItemType, &Scripts::cmdMakeNothingHere, &Scripts::cmdCheckProtection,
 		&Scripts::cmdChooseNumeric, &Scripts::cmdDisplayBottomTwoLines,
 		&Scripts::cmdDisplayLarge, &Scripts::cmdExchObj, &Scripts::cmdFallToMap,
 		&Scripts::cmdDisplayMain, &Scripts::cmdGoto, &Scripts::cmdConfirmWord,
@@ -534,7 +534,25 @@ void Scripts::cmdJumpRnd(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdAlterEvent(Common::Array<byte> &params) { error("TODO"); }
+/**
+ * Alter an existing event
+ */
+void Scripts::cmdAlterEvent(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+
+	for (uint idx = 0; idx < map._events.size(); ++idx) {
+		MazeEvent &evt = map._events[idx];
+		if (evt._position == party._mazePosition &&
+				(evt._direction == DIR_ALL || evt._direction == party._mazeDirection) &&
+				evt._line == params[0]) {
+			evt._opcode = (Opcode)params[1];
+		}
+	}
+
+	_var4F = true;
+	cmdNoAction(params);
+}
 
 /**
  * Stores the current location and line for later resuming, and set up to execute
@@ -607,7 +625,13 @@ void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
 	cmdExit(params);
 }
 
-void Scripts::cmdNoAction2(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdCheckProtection(Common::Array<byte> &params) {
+	if (copyProtectionCheck())
+		cmdNoAction(params);
+	else
+		cmdExit(params);
+}
+
 void Scripts::cmdChooseNumeric(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayLarge(Common::Array<byte> &params) { error("TODO"); }
@@ -907,8 +931,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		break;
 	case 44:
 		v = YesNo::show(_vm, mask, 0);
-		if (!mask && v)
-			v = 0;
+		v = (!v && !mask) ? 2 : mask;
 		break;
 	case 45:
 		// Might base (before bonus)
@@ -1099,6 +1122,11 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	default:
 		return false;
 	}
+}
+
+bool Scripts::copyProtectionCheck() {
+	// Currentl not implemented
+	return true;
 }
 
 } // End of namespace Xeen

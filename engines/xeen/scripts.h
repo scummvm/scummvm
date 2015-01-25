@@ -183,7 +183,7 @@ private:
 	void cmdGiveEnchanted(Common::Array<byte> &params);
 	void cmdItemType(Common::Array<byte> &params);
 	void cmdMakeNothingHere(Common::Array<byte> &params);
-	void cmdNoAction2(Common::Array<byte> &params);
+	void cmdCheckProtection(Common::Array<byte> &params);
 	void cmdChooseNumeric(Common::Array<byte> &params);
 	void cmdDisplayBottomTwoLines(Common::Array<byte> &params);
 	void cmdDisplayLarge(Common::Array<byte> &params);
@@ -208,6 +208,8 @@ private:
 	void doEnding(const Common::String &endStr, int v2);
 
 	bool ifProc(int action, uint32 mask, int mode, int charIndex);
+
+	bool copyProtectionCheck();
 public:
 	int _animCounter;
 	bool _eventSkipped;
