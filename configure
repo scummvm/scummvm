@@ -3070,6 +3070,9 @@ case $_backend in
 			1.3.*)
 				add_line_to_config_mk "USE_SDL13 = 1"
 				;;
+			2.0.*)
+				add_line_to_config_mk "USE_SDL2 = 1"
+				;;
 			*)
 				;;
 		esac

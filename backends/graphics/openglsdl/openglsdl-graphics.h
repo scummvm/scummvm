@@ -68,8 +68,14 @@ protected:
 private:
 	bool setupMode(uint width, uint height);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GLContext _glContext;
+#else
 	uint32 _lastVideoModeLoad;
 	SDL_Surface *_hwScreen;
+#endif
+
+	void getWindowDimensions(int *width, int *height);
 
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;

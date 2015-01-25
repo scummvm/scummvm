@@ -134,6 +134,9 @@ public:
 	 * between different SDL graphic managers on runtime.
 	 */
 	struct State {
+		State();
+		~State();
+
 		int screenWidth, screenHeight;
 		bool aspectRatio;
 		bool fullscreen;
@@ -141,6 +144,12 @@ public:
 
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat pixelFormat;
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		bool inputGrabState;
+		Common::String windowCaption;
+		SDL_Surface *windowIcon;
 #endif
 	};
 
@@ -156,6 +165,17 @@ public:
 
 protected:
 	SdlEventSource *_eventSource;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window *_window;
+
+	bool createWindow(int width, int height, uint32 flags);
+	void destroyWindow();
+private:
+	bool _inputGrabState;
+	Common::String _windowCaption;
+	SDL_Surface *_windowIcon;
+#endif
 };
 
 #endif

@@ -122,7 +122,11 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
-	_hwscreen(0), _screen(0), _tmpscreen(0),
+	_hwscreen(0),
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_renderer(nullptr), _screenTexture(nullptr),
+#endif
+	_screen(0), _tmpscreen(0),
 #ifdef USE_RGB_COLOR
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
@@ -681,12 +685,22 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	const int w = width;
 	const int h = height;
 
+	int bestW = 0, bestH = 0;
+	uint bestMetric = (uint)-1; // Metric is wasted space
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	const int numModes = SDL_GetNumDisplayModes(0);
+	SDL_DisplayMode modeData, *mode = &modeData;
+	for (int i = 0; i < numModes; ++i) {
+		if (SDL_GetDisplayMode(0, i, &modeData)) {
+			continue;
+		}
+#else
 	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_SWSURFACE); //TODO : Maybe specify a pixel format
 	assert(availableModes);
 
-	const SDL_Rect *bestMode = NULL;
-	uint bestMetric = (uint)-1; // Metric is wasted space
 	while (const SDL_Rect *mode = *availableModes++) {
+#endif
 		if (mode->w < w)
 			continue;
 		if (mode->h < h)
@@ -699,15 +713,23 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 			continue;
 
 		bestMetric = metric;
-		bestMode = mode;
-	}
+		bestW = mode->w;
+		bestH = mode->h;
 
-	if (!bestMode) {
+	// Make editors a bit more happy by having the same amount of closing as
+	// opening curley braces.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	}
+#else
+	}
+#endif
+
+	if (!bestW || !bestH) {
 		warning("Unable to enforce the desired aspect ratio");
 		return;
 	}
-	width = bestMode->w;
-	height = bestMode->h;
+	width = bestW;
+	height = bestH;
 }
 
 bool SurfaceSdlGraphicsManager::loadGFXMode() {
@@ -875,6 +897,10 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 		SDL_FreeSurface(_screen);
 		_screen = NULL;
 	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	deinitializeRenderer();
+#endif
 
 	if (_hwscreen) {
 		SDL_FreeSurface(_hwscreen);
@@ -1443,6 +1469,9 @@ void SurfaceSdlGraphicsManager::setPalette(const byte *colors, uint start, uint 
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		base[i].a = 255;
+#endif
 	}
 
 	if (start < _paletteDirtyStart)
@@ -1481,6 +1510,9 @@ void SurfaceSdlGraphicsManager::setCursorPalette(const byte *colors, uint start,
 		base[i].r = b[0];
 		base[i].g = b[1];
 		base[i].b = b[2];
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		base[i].a = 255;
+#endif
 	}
 
 	_cursorPaletteDisabled = false;
@@ -2316,5 +2348,53 @@ void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 	transformMouseCoordinates(mouse);
 	setMousePos(mouse.x, mouse.y);
 }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void SurfaceSdlGraphicsManager::deinitializeRenderer() {
+	SDL_DestroyTexture(_screenTexture);
+	_screenTexture = nullptr;
+
+	SDL_DestroyRenderer(_renderer);
+	_renderer = nullptr;
+
+	destroyWindow();
+}
+
+SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+	deinitializeRenderer();
+
+	if (!createWindow(width, height, (flags & SDL_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
+		return nullptr;
+	}
+
+	_renderer = SDL_CreateRenderer(_window, -1, 0);
+	if (!_renderer) {
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	_screenTexture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, width, height);
+	if (!_screenTexture) {
+		deinitializeRenderer();
+		return nullptr;
+	}
+
+	SDL_Surface *screen = SDL_CreateRGBSurface(0, width, height, 16, 0xF800, 0x7E0, 0x1F, 0);
+	if (!screen) {
+		deinitializeRenderer();
+		return nullptr;
+	} else {
+		return screen;
+	}
+}
+
+void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) {
+	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
+
+	SDL_RenderClear(_renderer);
+	SDL_RenderCopy(_renderer, _screenTexture, NULL, NULL);
+	SDL_RenderPresent(_renderer);
+}
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif

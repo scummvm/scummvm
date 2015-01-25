@@ -126,8 +126,10 @@ void OSystem_SDL::init() {
 	// Initialize SDL
 	initSDL();
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
+#endif
 
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
@@ -158,10 +160,14 @@ void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
+#else
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
 	sdlDriverName[0] = '\0';
 	SDL_VideoDriverName(sdlDriverName, maxNameLen);
+#endif
 	// Using printf rather than debug() here as debug()/logging
 	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
@@ -172,6 +178,13 @@ void OSystem_SDL::initBackend() {
 		_eventSource = new SdlEventSource();
 
 #ifdef USE_OPENGL
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_DisplayMode displayMode;
+	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
+		_desktopWidth  = displayMode.w;
+		_desktopHeight = displayMode.h;
+	}
+#else
 	// Query the desktop resolution. We simply hope nothing tried to change
 	// the resolution so far.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
@@ -179,6 +192,7 @@ void OSystem_SDL::initBackend() {
 		_desktopWidth  = videoInfo->current_w;
 		_desktopHeight = videoInfo->current_h;
 	}
+#endif
 #endif
 
 	if (_graphicsManager == 0) {
@@ -681,5 +695,38 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode++;
 	}
 }
-
 #endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
+	if (surface->format->palette) {
+		return !SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) ? 1 : 0;
+	} else {
+		return 0;
+	}
+}
+
+int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
+	if (SDL_SetSurfaceAlphaMod(surface, alpha)) {
+		return -1;
+	}
+
+	if (alpha == 255 || !flag) {
+		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
+			return -1;
+		}
+	} else {
+		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+#undef SDL_SetColorKey
+int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
+	return SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
+}
+#endif
+
