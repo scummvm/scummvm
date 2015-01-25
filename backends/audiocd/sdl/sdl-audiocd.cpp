@@ -24,8 +24,11 @@
 
 #if defined(SDL_BACKEND)
 
-#include "common/textconsole.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"
+
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
+
+#include "common/textconsole.h"
 
 SdlAudioCDManager::SdlAudioCDManager()
 	:
@@ -132,5 +135,7 @@ void SdlAudioCDManager::updateCD() {
 		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
 	}
 }
+
+#endif // !SDL_VERSION_ATLEAST(1, 3, 0)
 
 #endif
