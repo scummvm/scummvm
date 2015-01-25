@@ -38,7 +38,7 @@ Window::Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
 		_vm(vm), _enabled(false), _a(a), _border(border), 
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
-	create(_vm->_screen, bounds);
+	create(_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 void Window::setBounds(const Common::Rect &r) {
