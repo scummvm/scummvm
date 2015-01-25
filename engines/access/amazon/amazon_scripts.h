@@ -49,7 +49,7 @@ protected:
 	void setInactive();
 	void boatWalls(int param1, int param2);
 
-	void cmdHelp();
+	void cmdHelp_v2();
 	void cmdCycleBack();
 	void cmdChapter();
 	void cmdSetHelp();

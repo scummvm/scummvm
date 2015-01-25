@@ -118,6 +118,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[70] = &Scripts::cmdDead;
 	COMMAND_LIST[71] = &Scripts::cmdFadeOut;
 	COMMAND_LIST[72] = &Scripts::cmdEndVideo;
+	COMMAND_LIST[73] = &Scripts::cmdHelp_v1;
 }
 
 void Scripts::setOpcodes_v2() {
@@ -318,11 +319,13 @@ void Scripts::cmdPrint_v1() {
 }
 
 void Scripts::printString(const Common::String &msg) {
-	_vm->_screen->_printOrg = Common::Point(20, 42);
-	_vm->_screen->_printStart = Common::Point(20, 42);
-	_vm->_timers[PRINT_TIMER]._timer = 50;
-	_vm->_timers[PRINT_TIMER]._initTm = 50;
-	++_vm->_timers[PRINT_TIMER]._flag;
+	if (_vm->getGameID() != GType_MartianMemorandum) {
+		_vm->_screen->_printOrg = Common::Point(20, 42);
+		_vm->_screen->_printStart = Common::Point(20, 42);
+		_vm->_timers[PRINT_TIMER]._timer = 50;
+		_vm->_timers[PRINT_TIMER]._initTm = 50;
+		++_vm->_timers[PRINT_TIMER]._flag;
+	}
 
 	// Display the text in a bubble, and wait for a keypress or mouse click
 	_vm->_bubbleBox->placeBubble(msg);
@@ -704,6 +707,34 @@ void Scripts::cmdDoTravel() {
 
 		return;
 	}
+}
+
+void Scripts::cmdHelp_v1() {
+	int idx = 0;
+	for (int i = 0; i < 40; i++) {
+		byte c = _data->readByte();
+		if (c != 0xFF) {
+			Common::String tmpStr = c + readString();
+			if (Martian::HELP[i]) {
+				_vm->_helpBox->_tempList[idx] = tmpStr;
+				_vm->_helpBox->_tempListIdx[idx] = i;
+				++idx;
+			}
+		} else
+			break;
+	}
+	_vm->_helpBox->_tempList[idx] = "";
+
+	int btnSelected = 0;
+	int boxX = _vm->_helpBox->doBox_v1(0, 0, btnSelected);
+
+	if (boxX == -1)
+		btnSelected = 2;
+
+	if (btnSelected != 2)
+		_vm->_useItem = _vm->_helpBox->_tempListIdx[boxX];
+	else
+		_vm->_useItem = -1;
 }
 
 void Scripts::cmdCheckAbout() {

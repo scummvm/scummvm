@@ -135,7 +135,8 @@ protected:
 	void cmdDead();
 	void cmdFadeOut();
 	void cmdEndVideo();
-	void cmdHelp();
+	void cmdHelp_v1();
+	void cmdHelp_v2();
 	void cmdCycleBack();
 	void cmdSetHelp();
 public:
