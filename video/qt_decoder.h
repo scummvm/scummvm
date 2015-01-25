@@ -151,7 +151,6 @@ private:
 		int32 _curFrame;
 		uint32 _nextFrameStartTime;
 		Graphics::Surface *_scaledSurface;
-		bool _holdNextFrameStartTime;
 		int32 _durationOverride;
 		const byte *_curPalette;
 		mutable bool _dirtyPalette;
@@ -166,6 +165,7 @@ private:
 		uint32 getCurEditTimeOffset() const;
 		uint32 getCurEditTrackDuration() const;
 		bool atLastEdit() const;
+		bool endOfCurEdit() const;
 	};
 };
 
