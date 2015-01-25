@@ -73,7 +73,7 @@ public:
 	/** Associate the animation to an Item */
 	virtual void applyToItem(Item *item);
 
-	/** Deassociate the animation from an item */
+	/** Dissociate the animation from an item */
 	virtual void removeFromItem(Item *item);
 
 	/** Check is the animation is being used by an item */

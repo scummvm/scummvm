@@ -33,6 +33,15 @@ class Anim;
 class AnimScriptItem;
 class XRCReadStream;
 
+/**
+ * Animation scripts control the currently displayed frame for images animation
+ * resources.
+ *
+ * Animation scripts contain animation script items defining which frames
+ * should be displayed and when.
+ *
+ * Animation scripts also allow to play sounds.
+ */
 class AnimScript : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kAnimScript;
@@ -54,17 +63,23 @@ protected:
 	int32 _msecsToNextUpdate;
 };
 
+/**
+ * Animation script element
+ *
+ * Has a type defining the operation to perform,
+ * an argument and a duration.
+ */
 class AnimScriptItem : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kAnimScriptItem;
 
 	enum Opcodes {
-		kDisplayFrame = 0,
-		kPlayAnimSound = 1,
-		kGoToItem = 2,
-		kDisplayRandomFrame = 3,
+		kDisplayFrame        = 0,
+		kPlayAnimSound       = 1,
+		kGoToItem            = 2,
+		kDisplayRandomFrame  = 3,
 		kSleepRandomDuration = 4,
-		kPlayStockSound = 5
+		kPlayStockSound      = 5
 	};
 
 	AnimScriptItem(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -73,8 +88,13 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	/** Obtain the operation code */
 	uint32 getOpcode() const { return _opcode; }
+
+	/** Obtain the operation parameter */
 	uint32 getOperand() const { return _operand; }
+
+	/** Obtain the operation duration */
 	uint32 getDuration() const { return _duration; }
 
 protected:

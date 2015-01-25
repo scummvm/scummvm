@@ -36,6 +36,12 @@ class ItemVisual;
 class TextureSet;
 class XRCReadStream;
 
+/**
+ * An animation hierarchy is a container resource referencing the available
+ * animations for an item.
+ *
+ * This resource keeps track of the currently selected animation.
+ */
 class AnimHierarchy : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kAnimHierarchy;
@@ -47,12 +53,25 @@ public:
 	void readData(XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
+	/** Set and apply the current animation for an item */
 	void setItemAnim(ItemVisual *item, int32 index);
+
+	/** Unselect the current animation and remove it from an item */
 	void unselectItemAnim(ItemVisual *item);
+
+	/** Apply the current animation to an item */
 	void selectItemAnim(ItemVisual *item);
 
+	/** Obtain the currently selected animation */
 	Anim *getCurrentAnim();
+
+	/** Retrieve the first bone mesh from the anim hierarchy children, if any */
 	BonesMesh *findBonesMesh();
+
+	/**
+	 * Retrieve the first texture of the appropriate type from the anim
+	 * hierarchy children, if any
+	 */
 	TextureSet *findTextureSet(uint32 textureType);
 
 protected:
