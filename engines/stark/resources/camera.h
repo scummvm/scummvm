@@ -36,6 +36,10 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * Camera resources define the camera position, perspective parameters,
+ * and look at direction.
+ */
 class Camera : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kCamera;
@@ -46,6 +50,7 @@ public:
 	// Resource API
 	void onEnterLocation() override;
 
+	/** Define the near and far clip planes distances */
 	void setClipPlanes(float near, float far);
 
 protected:

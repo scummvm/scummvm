@@ -35,6 +35,13 @@ class Script;
 class ResourceReference;
 class XRCReadStream;
 
+/**
+ * Command resources are script operations.
+ *
+ * The operation code is the resource subtype.
+ *
+ * The operation arguments can be integers, strings or resource references.
+ */
 class Command : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kCommand;

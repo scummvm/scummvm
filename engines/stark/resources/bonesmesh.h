@@ -32,6 +32,9 @@ namespace Stark {
 class Actor;
 class XRCReadStream;
 
+/**
+ * Bone mesh resources reference a mesh usable by actor resources
+ */
 class BonesMesh : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kBonesMesh;
@@ -43,6 +46,7 @@ public:
 	void readData(XRCReadStream *stream) override;
 	void onPostRead() override;
 
+	/** Obtain the mesh object */
 	Actor *getActor();
 
 protected:

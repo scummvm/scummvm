@@ -32,6 +32,12 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * Bookmark resources are handles for a position on the floor field.
+ *
+ * The height value is not set, it needs to be retrieved by interpolation
+ * from the floor field.
+ */
 class Bookmark : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kBookmark;
@@ -42,6 +48,7 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	/** Obtain the position */
 	Math::Vector3d getPosition() const;
 
 protected:
