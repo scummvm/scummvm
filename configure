@@ -35,6 +35,7 @@ SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_ASFLAGS=$ASFLAGS
 SAVED_WINDRESFLAGS=$WINDRESFLAGS
+SAVED_SDL_CONFIG=$SDL_CONFIG
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -170,7 +171,7 @@ _stagingpath="staging"
 _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
 _staticlibpath=
-_sdlconfig=sdl-config
+_sdlconfig="$SDL_CONFIG"
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
 _freetypepath="$PATH"
@@ -4581,6 +4582,7 @@ SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
 SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
 SAVED_ASFLAGS      := $SAVED_ASFLAGS
 SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
+SAVED_SDL_CONFIG   := $SAVED_SDL_CONFIG
 EOF
 
 #
