@@ -53,8 +53,8 @@ bool YesNo::execute(bool type, int v2) {
 		confirmSprites.draw(screen, 2, Common::Point(260, 75));
 		screen._windows[34].update();
 
-		addButton(Common::Rect(235, 75, 259, 95), 'Y', &confirmSprites);
-		addButton(Common::Rect(260, 75, 284, 95), 'N', &confirmSprites);
+		addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_y, &confirmSprites);
+		addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_n, &confirmSprites);
 
 		intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
 		intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
@@ -76,10 +76,10 @@ bool YesNo::execute(bool type, int v2) {
 		if (!_buttonValue)
 			continue;
 
-		if (type || _buttonValue == 'Y') {
+		if (type || _buttonValue == Common::KEYCODE_y) {
 			result = true;
 			break;
-		} else if (_buttonValue == 'N' || _buttonValue == Common::KEYCODE_ESCAPE)
+		} else if (_buttonValue == Common::KEYCODE_n || _buttonValue == Common::KEYCODE_ESCAPE)
 			break;
 	}
 
