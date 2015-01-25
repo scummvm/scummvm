@@ -809,7 +809,7 @@ bool Interface::checkMoveDirection(int key) {
 	if (map._isOutdoors) {
 		party._mazeDirection = dir;
 
-		switch ((int)map._currentWall._outdoors._surfaceId) {
+		switch (map._currentWall) {
 		case 5:
 			if (_vm->_files->_isDarkCc)
 				goto check;

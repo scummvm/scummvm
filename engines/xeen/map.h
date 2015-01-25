@@ -370,7 +370,7 @@ public:
 	bool _currentIsEvent;
 	int _currentSky;
 	int _currentMonsterFlags;
-	MazeWallLayers _currentWall;
+	int _currentWall;
 	int _currentTile;
 	int _currentSurfaceId;
 	bool _currentSteppedOn;

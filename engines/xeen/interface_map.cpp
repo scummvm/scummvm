@@ -1176,7 +1176,7 @@ void InterfaceMap::setMazeBits() {
 		break;
 	}
 
-	_thinWall = (_vm->_map->_currentWall._data != INVALID_CELL) && _wo[27];
+	_thinWall = (_vm->_map->_currentWall != INVALID_CELL) && _wo[27];
 
 	switch (_vm->_map->getCell(8) - 1) {
 	case 1:
@@ -4423,25 +4423,25 @@ void InterfaceMap::drawOutdoors() {
 
 	for (int idx = 0; idx < 9; ++idx) {
 		map.getCell(TERRAIN_INDEXES1[idx]);
-		_outdoorList[36 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+		_outdoorList[36 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall];
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES2[idx]);
-		_outdoorList[61 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+		_outdoorList[61 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall];
 	}
 	for (int idx = 0; idx < 3; ++idx) {
 		map.getCell(TERRAIN_INDEXES3[idx]);
-		_outdoorList[84 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+		_outdoorList[84 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall];
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES4[idx]);
-		_outdoorList[103 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+		_outdoorList[103 + idx]._sprites = &map._wallSprites._surfaces[map._currentWall];
 	}
 
 	map.getCell(1);
-	_outdoorList[108]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
-	_outdoorList[109]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
-	_outdoorList[110]._sprites = &map._wallSprites._surfaces[map._currentWall._data];
+	_outdoorList[108]._sprites = &map._wallSprites._surfaces[map._currentWall];
+	_outdoorList[109]._sprites = &map._wallSprites._surfaces[map._currentWall];
+	_outdoorList[110]._sprites = &map._wallSprites._surfaces[map._currentWall];
 	_outdoorList._sky1._flags = _outdoorList._sky2._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
 	_outdoorList._groundSprite._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 

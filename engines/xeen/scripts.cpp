@@ -322,7 +322,10 @@ void Scripts::cmdTeleport(Common::Array<byte> &params) {
 
 	party._stepped = true;
 	if (mapId != party._mazeId) {
-		switch (map._mobData._objects[intf._objNumber - 1]._spriteId) {
+		int spriteId = (intf._objNumber == 0) ? -1 :
+			map._mobData._objects[intf._objNumber - 1]._spriteId;
+
+		switch (spriteId) {
 		case 47:
 			sound.playFX(45);
 			break;
