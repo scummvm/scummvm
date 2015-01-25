@@ -29,6 +29,7 @@
 #include "common/stack.h"
 #include "common/str-array.h"
 #include "xeen/files.h"
+#include "xeen/party.h"
 
 namespace Xeen {
 
@@ -124,6 +125,17 @@ struct StackEntry : public Common::Point {
 	StackEntry(const Common::Point &pt, int l) : Common::Point(pt), line(l) {}
 };
 
+struct MirrorEntry {
+	Common::String _name;
+	int _mapId;
+	Common::Point _position;
+	int _direction;
+
+	MirrorEntry() : _mapId(0), _direction(DIR_ALL) {}
+	
+	bool synchronize(Common::SeekableReadStream &s);
+};
+
 class Scripts {
 private:
 	XeenEngine *_vm;
@@ -134,6 +146,7 @@ private:
 	int _treasureGems;
 	int _lineNum;
 	int _charIndex;
+	int _mirrorId;
 
 	int _v2;
 	int _var4F;
@@ -214,6 +227,7 @@ public:
 	bool _eventSkipped;
 	int _whoWill;
 	int _nEdamageType;
+	Common::Array<MirrorEntry> _mirror;
 public:
 	Scripts(XeenEngine *vm);
 

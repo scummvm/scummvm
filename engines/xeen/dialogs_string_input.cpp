@@ -21,6 +21,7 @@
  */
 
 #include "xeen/dialogs_string_input.h"
+#include "xeen/scripts.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -38,6 +39,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
 	Window &w = screen._windows[6];
 	SoundManager &sound = *_vm->_sound;
 	int result = 0;
@@ -58,8 +60,13 @@ int StringInput::execute(bool type, const Common::String &expected,
 			// Load in the mirror list
 			File f(Common::String::format("%smirr.txt",
 				_vm->_files->_isDarkCc ? "dark" : "xeen"));
-			for (int idx = 0; f.pos() < f.size(); ++idx) {
-				if (line == f.readLine()) {
+			MirrorEntry me;
+			scripts._mirror.clear();
+			while (me.synchronize(f))
+				scripts._mirror.push_back(me);
+
+			for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
+				if (line == scripts._mirror[idx]._name) {
 					result = idx;
 					sound.playFX(_vm->_files->_isDarkCc ? 35 : 61);
 					break;

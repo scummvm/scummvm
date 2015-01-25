@@ -69,6 +69,24 @@ void MazeEvents::synchronize(XeenSerializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+bool MirrorEntry::synchronize(Common::SeekableReadStream &s) {
+	if (s.pos() >= s.size())
+		return false;
+
+	char buffer[28];
+	s.read(buffer, 28);
+	buffer[27] = '\0';
+
+	_name = Common::String(buffer);
+	_mapId = s.readByte();
+	_position.x = s.readSByte();
+	_position.y = s.readSByte();
+	_direction = s.readSByte();
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
 Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
 	_whoWill = 0;
@@ -82,6 +100,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_nEdamageType = 0;
 	_animCounter = 0;
 	_eventSkipped = false;
+	_mirrorId = -1;
 }
 
 void Scripts::checkEvents() {
@@ -271,7 +290,67 @@ void Scripts::cmdPlayFX(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdTeleport(Common::Array<byte> &params) {
-	error("TODO");
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+
+	screen.closeWindows();
+	_var4F = true;
+
+	int mapId;
+	Common::Point pt;
+
+	if (params[0]) {
+		mapId = params[0];
+		pt = Common::Point((int8)params[1], (int8)params[2]);
+	} else {
+		assert(_mirrorId > 0);
+		MirrorEntry &me = _mirror[_mirrorId - 1];
+		mapId = me._mapId;
+		pt = me._position;
+		if (me._direction != -1)
+			party._mazeDirection = (Direction)me._direction;
+
+		if (pt.x == 0 && pt.y == 0)
+			pt.x = 999;
+
+		sound.playFX(51);
+	}
+
+	party._stepped = true;
+	if (mapId != party._mazeId) {
+		switch (map._mobData._objects[intf._objNumber - 1]._spriteId) {
+		case 47:
+			sound.playFX(45);
+			break;
+		case 48:
+			sound.playFX(44);
+			break;
+		default:
+			break;
+		}
+
+		// Load the new map
+		map.load(mapId);
+	}
+
+	if (pt.x == 999) {
+		party._mazePosition = map.mazeData()._runPosition;
+	} else {
+		party._mazePosition = pt;
+	}
+
+	events.clearEvents();
+
+	if (_event->_opcode == OP_TeleportAndContinue) {
+		intf.draw3d(true);
+		_lineNum = 0;
+	} else {
+		cmdExit(params);
+	}
 }
 
 /**
@@ -586,7 +665,6 @@ void Scripts::cmdReturn(Common::Array<byte> &params) {
 
 void Scripts::cmdSetVar(Common::Array<byte> &params) { 
 	Party &party = *_vm->_party;
-	bool flag = true;
 	uint val;
 
 	switch (params[0]) {
@@ -898,22 +976,22 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		if (mask < 82) {
 			for (int idx = 0; idx < 9; ++idx) {
 				if (mask == 35) {
-					if ((int)ps._weapons[idx]._name == mask) {
+					if (ps._weapons[idx]._name == mask) {
 						v = mask;
 						break;
 					}
 				} else if (mask < 49) {
-					if ((int)ps._armor[idx]._name == (mask - 35)) {
+					if (ps._armor[idx]._name == (mask - 35)) {
 						v = mask;
 						break;
 					}
 				} else if (mask < 60) {
-					if ((int)ps._accessories[idx]._name == (mask - 49)) {
+					if (ps._accessories[idx]._name == (mask - 49)) {
 						v = mask;
 						break;
 					}
 				} else {
-					if ((int)ps._misc[idx]._name == (mask - 60)) {
+					if (ps._misc[idx]._name == (mask - 60)) {
 						v = mask;
 						break;
 					}

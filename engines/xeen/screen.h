@@ -95,7 +95,7 @@ public:
 
 	void drawList(DrawStruct *items, int count);
 
-	int getString(Common::String &line, int maxLen, int maxWidth);
+	int getString(Common::String &line, uint maxLen, int maxWidth);
 };
 
 class Screen: public FontSurface {

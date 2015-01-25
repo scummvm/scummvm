@@ -180,9 +180,7 @@ void Window::drawList(DrawStruct *items, int count) {
 /**
  * Allows the user to enter a string
  */
-int Window::getString(Common::String &line, int maxLen, int maxWidth) {
-	Interface &intf = *_vm->_interface;
-
+int Window::getString(Common::String &line, uint maxLen, int maxWidth) {
 	_vm->_noDirectionSense = true;
 	Common::String msg = Common::String::format("\x03""l\t000\x04%03d\x03""c", maxWidth);
 	writeString(msg);

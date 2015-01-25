@@ -33,7 +33,7 @@ namespace Xeen {
 class XeenItem {
 public:
 	int _material;
-	int _name;
+	uint _name;
 	int _bonusFlags;
 	bool _equipped;
 public:
