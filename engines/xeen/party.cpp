@@ -182,7 +182,7 @@ int Character::getMaxHP() const {
 int Character::getMaxSP() const {
 	int result = 0;
 	bool flag = false;
-	int amount;
+	int amount = 0;
 	Attribute attrib;
 	Skill skill;
 
@@ -548,6 +548,213 @@ int Character::conditionMod(Attribute attrib) const {
 	}
 
 	return v[attrib];
+}
+
+void Character::setValue(int id, uint value) {
+	Party &party = *Party::_vm->_party;
+	Scripts &scripts = *Party::_vm->_scripts;
+
+	switch (id) {
+	case 3:
+		// Set character sex
+		_sex = (Sex)value;
+		break;
+	case 4:
+		// Set race
+		_race = (Race)value;
+		break;
+	case 5:
+		// Set class
+		_class = (CharacterClass)value;
+		break;
+	case 8:
+		// Set the current Hp
+		_currentHp = value;
+		break;
+	case 9:
+		// Set the current Sp
+		_currentSp = value;
+		break;
+	case 10:
+	case 77:
+		// Set temporary armor class
+		_ACTemp = value;
+		break;
+	case 11:
+		// Set temporary level
+		_level._temporary = value;
+		break;
+	case 12:
+		// Set the character's temporary age
+		_tempAge = value;
+		break;
+	case 16:
+		// Set character experience
+		_experience = value;
+		break;
+	case 17:
+		// Set party poison resistence
+		party._poisonResistence = value;
+		break;
+	case 18:
+		// Set condition
+		if (value == 16) {
+			// Clear all the conditions
+			Common::fill(&_conditions[CURSED], &_conditions[NO_CONDITION], false);
+		} else if (value == 6) {
+			_conditions[value] = 1;
+		} else {
+			++_conditions[value];
+		}
+
+		if (value >= DEAD && value <= ERADICATED && _currentHp > 0)
+			_currentHp = 0;
+		break;
+	case 25:
+		// Set time of day in minutes (0-1440)
+		party._minutes = value;
+		break;
+	case 34:
+		// Set party gold
+		party._gold = value;
+		break;
+	case 35:
+		// Set party gems
+		party._gems = value;
+		break;
+	case 37:
+		_might._temporary = value;
+		break;
+	case 38:
+		_intellect._temporary = value;
+		break;
+	case 39:
+		_personality._temporary = value;
+		break;
+	case 40:
+		_endurance._temporary = value;
+		break;
+	case 41:
+		_speed._temporary = value;
+		break;
+	case 42:
+		_accuracy._temporary = value;
+		break;
+	case 43:
+		_luck._temporary = value;
+		break;
+	case 45:
+		_might._permanent = value;
+		break;
+	case 46:
+		_intellect._permanent = value;
+		break;
+	case 47:
+		_personality._permanent = value;
+		break;
+	case 48:
+		_endurance._permanent = value;
+		break;
+	case 49:
+		_speed._permanent = value;
+		break;
+	case 50:
+		_accuracy._permanent = value;
+		break;
+	case 51:
+		_luck._permanent = value;
+		break;
+	case 52:
+		_fireResistence._permanent = value;
+		break;
+	case 53:
+		_electricityResistence._permanent = value;
+		break;
+	case 54:
+		_coldResistence._permanent = value;
+		break;
+	case 55:
+		_poisonResistence._permanent = value;
+		break;
+	case 56:
+		_energyResistence._permanent = value;
+		break;
+	case 57:
+		_magicResistence._permanent = value;
+		break;
+	case 58:
+		_fireResistence._temporary = value;
+		break;
+	case 59:
+		_electricityResistence._temporary = value;
+		break;
+	case 60:
+		_coldResistence._temporary = value;
+		break;
+	case 61:
+		_poisonResistence._temporary = value;
+		break;
+	case 62:
+		_energyResistence._temporary = value;
+		break;
+	case 63:
+		_magicResistence._temporary = value;
+		break;
+	case 64:
+		_level._permanent = value;
+		break;
+	case 65:
+		// Set party food
+		party._food = value;
+		break;
+	case 69:
+		// Set levitate active
+		party._levitateActive = value != 0;
+		break;
+	case 70:
+		party._lightCount = value;
+		break;
+	case 71:
+		party._fireResistence = value;
+		break;
+	case 72:
+		party._electricityResistence = value;
+		break;
+	case 73:
+		party._coldResistence = value;
+		break;
+	case 74:
+		party._walkOnWaterActive = value != 0;
+		party._poisonResistence = value;
+		party._wizardEyeActive = value != 0;
+		party._coldResistence = value;
+		party._electricityResistence = value;
+		party._fireResistence = value;
+		party._lightCount = value;
+		party._levitateActive = value != 0;
+		break;
+	case 76:
+		// Set day of the year (0-99)
+		party._day = value;
+		break;
+	case 79:
+		party._wizardEyeActive = true;
+		break;
+	case 83:
+		scripts._nEdamageType = value;
+		break;
+	case 84:
+		party._mazeDirection = (Direction)value;
+		break;
+	case 85:
+		party._year = value;
+		break;
+	case 94:
+		party._walkOnWaterActive = value != 0;
+		break;
+	default:
+		break;
+	}
 }
 
 /*------------------------------------------------------------------------*/

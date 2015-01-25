@@ -137,7 +137,6 @@ private:
 
 	int _v2;
 	int _var4F;
-	int _nEdamageType;
 	MazeEvent *_event;
 	Common::Point _currentPos;
 	Common::Stack<StackEntry> _stack;
@@ -214,6 +213,7 @@ public:
 	int _animCounter;
 	bool _eventSkipped;
 	int _whoWill;
+	int _nEdamageType;
 public:
 	Scripts(XeenEngine *vm);
 

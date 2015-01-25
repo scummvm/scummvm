@@ -381,6 +381,10 @@ void Scripts::cmdSetChar(Common::Array<byte> &params) {
  * Spawn a monster
  */
 void Scripts::cmdSpawn(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+	if (params[0] >= map._mobData._monsters.size())
+		map._mobData._monsters.resize(params[0] + 1);
+
 	MazeMonster &monster = _vm->_map->_mobData._monsters[params[0]];
 	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
 	monster._position.x = params[1];
@@ -580,7 +584,43 @@ void Scripts::cmdReturn(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdSetVar(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdSetVar(Common::Array<byte> &params) { 
+	Party &party = *_vm->_party;
+	bool flag = true;
+	uint val;
+
+	switch (params[0]) {
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		val = (params[2] << 8) | params[1];
+		break;
+	case 16:
+	case 34:
+	case 100:
+		val = (params[4] << 24) | (params[3] << 16) | (params[2] << 8) | params[3];
+		break;
+	default:
+		val = params[1];
+		break;
+	}
+
+	if (_charIndex != 0 && _charIndex != 8) {
+		party._activeParty[_charIndex - 1].setValue(params[0], val);
+	} else {
+		// Set value for entire party
+		for (int idx = 0; idx < party._partyCount; ++idx) {
+			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
+				party._activeParty[idx].setValue(params[0], val);
+			}
+		}
+	}
+
+	_var4F = true;
+	cmdNoAction(params);
+}
+
 void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) { error("TODO"); }
 
 void Scripts::cmdWhoWill(Common::Array<byte> &params) { 

@@ -165,6 +165,8 @@ public:
 	int getCurrentLevel() const;
 
 	int itemScan(int itemId) const;
+
+	void setValue(int id, uint value);
 };
 
 class Roster: public Common::Array<Character> {
