@@ -112,21 +112,6 @@ void Player::load() {
 	_downDelta = -10;
 	_scrollConst = 5;
 
-	for (int i = 0; i < dataCount; ++i) {
-		_walkOffRight[i] = SIDEOFFR[i];
-		_walkOffLeft[i] = SIDEOFFL[i];
-		_walkOffUp[i] = SIDEOFFU[i];
-		_walkOffDown[i] = SIDEOFFD[i];
-		_walkOffUR[i].x = DIAGOFFURX[i];
-		_walkOffUR[i].y = DIAGOFFURY[i];
-		_walkOffDR[i].x = DIAGOFFDRX[i];
-		_walkOffDR[i].y = DIAGOFFDRY[i];
-		_walkOffUL[i].x = DIAGOFFULX[i];
-		_walkOffUL[i].y = DIAGOFFULY[i];
-		_walkOffDL[i].x = DIAGOFFDLX[i];
-		_walkOffDL[i].y = DIAGOFFDLY[i];
-	}
-
 	_sideWalkMin = 0;
 	_sideWalkMax = 7;
 	_upWalkMin = 16;
@@ -394,7 +379,7 @@ void Player::walkRight() {
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
 
-		plotCom(0);
+		plotCom0();
 	}
 }
 
@@ -671,15 +656,19 @@ void Player::checkMove() {
 }
 
 void Player::plotCom(int flags) {
-	_flags &= ~2;
-	_flags &= ~8;
+	_flags &= ~IMGFLAG_BACKWARDS;
+	_flags &= ~IMGFLAG_UNSCALED;
 	_flags |= flags;
 
 	plotCom3();
 }
 
+void Player::plotCom0() {
+	plotCom(_vm->getGameID() == GType_Amazon ? 0 : IMGFLAG_BACKWARDS);
+}
+
 void Player::plotCom1() {
-	plotCom(2);
+	plotCom(_vm->getGameID() == GType_Amazon ? IMGFLAG_BACKWARDS : 0);
 }
 
 void Player::plotCom2() {

@@ -60,6 +60,7 @@ protected:
 	int _inactiveYOff;
 
 	void plotCom(int v1);
+	void plotCom0();
 	void plotCom1();
 	void plotCom2();
 	void plotCom3();

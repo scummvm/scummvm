@@ -31,6 +31,11 @@ namespace Martian {
 
 extern const char *const FILENAMES[];
 
+extern const int SIDEOFFR[];
+extern const int SIDEOFFL[];
+extern const int SIDEOFFU[];
+extern const int SIDEOFFD[];
+
 extern const byte *const CURSORS[4];
 
 extern const int TRAVEL_POS[][2];

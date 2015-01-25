@@ -78,6 +78,22 @@ void AmazonPlayer::load() {
 		_diagDownWalkMin = 0;
 		_diagDownWalkMax = 5;
 		_game->_guard->setPosition(Common::Point(56, 190));
+	} else {
+		for (int i = 0; i < _vm->_playerDataCount; ++i) {
+			_walkOffRight[i] = SIDEOFFR[i];
+			_walkOffLeft[i] = SIDEOFFL[i];
+			_walkOffUp[i] = SIDEOFFU[i];
+			_walkOffDown[i] = SIDEOFFD[i];
+
+			_walkOffUR[i].x = DIAGOFFURX[i];
+			_walkOffUR[i].y = DIAGOFFURY[i];
+			_walkOffDR[i].x = DIAGOFFDRX[i];
+			_walkOffDR[i].y = DIAGOFFDRY[i];
+			_walkOffUL[i].x = DIAGOFFULX[i];
+			_walkOffUL[i].y = DIAGOFFULY[i];
+			_walkOffDL[i].x = DIAGOFFDLX[i];
+			_walkOffDL[i].y = DIAGOFFDLY[i];
+		}
 	}
 }
 
