@@ -3521,7 +3521,7 @@ void Scene935::Action1::signal() {
 		scene->_visualSpeaker.removeText();
 		scene->_visualSpeaker._textPos.y = scene->_sceneBounds.top + 80;
 		scene->_visualSpeaker._color1 = 252;
-		scene->_visualSpeaker._color1 = 251;
+		scene->_visualSpeaker._color2 = 251;
 		scene->_visualSpeaker.setText("Jake! Hide in the closet!");
 		setDelay(3);
 		break;
