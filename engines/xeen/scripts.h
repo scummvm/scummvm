@@ -149,7 +149,7 @@ private:
 	int _mirrorId;
 	int _refreshIcons;
 	int _scriptResult;
-	bool _v2;
+	int _v2;
 	bool _scriptExecuted;
 	bool _var50;
 	MazeEvent *_event;
@@ -222,8 +222,6 @@ private:
 	void doEnding(const Common::String &endStr, int v2);
 
 	bool ifProc(int action, uint32 mask, int mode, int charIndex);
-
-	bool doTownEvent(int actionId);
 
 	bool copyProtectionCheck();
 public:

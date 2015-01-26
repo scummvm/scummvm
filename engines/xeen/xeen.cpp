@@ -48,6 +48,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_scripts = nullptr;
 	_sound = nullptr;
 	_spells = nullptr;
+	_town = nullptr;
 	_eventData = nullptr;
 	_dangerSenseAllowed = false;
 	_noDirectionSense = false;
@@ -69,6 +70,7 @@ XeenEngine::~XeenEngine() {
 	delete _scripts;
 	delete _sound;
 	delete _spells;
+	delete _town;
 	delete _eventData;
 	delete _files;
 }
@@ -94,6 +96,7 @@ void XeenEngine::initialize() {
 	_screen->setupWindows();
 	_sound = new SoundManager(this);
 	_spells = new Spells(this);
+	_town = new Town(this);
 
 	File f("029.obj");
 	_eventData = f.readStream(f.size());

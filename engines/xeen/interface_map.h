@@ -114,18 +114,12 @@ protected:
 	bool _charsShooting;
 	bool _thinWall;
 	bool _isAnimReset;
-	int _batUIFrame;
-	int _spotDoorsUIFrame;
-	int _dangerSenseUIFrame;
-	int _face1UIFrame;
-	int _face2UIFrame;
 	int _blessedUIFrame;
 	int _powerShieldUIFrame;
 	int _holyBonusUIFrame;
 	int _heroismUIFrame;
 	int _flipUIFrame;
 	bool _flag1;
-	int _overallFrame;
 
 	void setMazeBits();
 
@@ -135,8 +129,6 @@ protected:
 
 	void drawMiniMap();
 
-	void assembleBorder();
-
 	virtual void setup();
 public:
 	OutdoorDrawList _outdoorList;
@@ -144,10 +136,14 @@ public:
 	SpriteResource _globalSprites;
 	bool _upDoorText;
 	Common::String _screenText;
-	int _face1State;
-	int _face2State;
+	int _face1State, _face2State;
+	int _face1UIFrame, _face2UIFrame;
+	int _spotDoorsUIFrame;
+	int _dangerSenseUIFrame;
 	byte _tillMove;
 	int _objNumber;
+	int _overallFrame;
+	int _batUIFrame;
 public:
 	InterfaceMap(XeenEngine *vm);
 
@@ -169,7 +165,9 @@ public:
 
 	void drawOutdoors();
 
-	void drawTownAnim(int v);
+	void drawTownAnim(bool v);
+
+	void assembleBorder();
 };
 
 } // End of namespace Xeen

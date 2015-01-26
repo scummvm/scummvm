@@ -780,6 +780,14 @@ void Interface::doFalling() {
 	// TODO
 }
 
+void Interface::highlightChar(int charId) {
+	error("TODO: highlightChar");
+}
+
+void Interface::unhighlightChar() {
+	error("TODO: unhighlight");
+}
+
 bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;

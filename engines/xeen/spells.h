@@ -37,6 +37,7 @@ private:
 	void load();
 public:
 	Common::StringArray _spellNames;
+	Common::StringArray _maeNames;
 public:
 	Spells(XeenEngine *vm);
 };

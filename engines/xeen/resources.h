@@ -150,6 +150,14 @@ extern const int ARMOR_STRENGTHS[14];
 
 extern const int OUTDOOR_DRAWSTRCT_INDEXES[44];
 
+extern const int TOWN_MAXES[2][11];
+
+extern const char *const TOWN_ACTION_MUSIC[14];
+
+extern const char *const TOWN_ACTION_SHAPES[4];
+
+extern const int TOWN_ACTION_FILES[2][7];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

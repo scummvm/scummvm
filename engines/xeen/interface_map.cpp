@@ -4964,7 +4964,7 @@ void InterfaceMap::drawMiniMap() {
 	party._wizardEyeActive = eyeActive;
 }
 
-void InterfaceMap::drawTownAnim(int v) {
+void InterfaceMap::drawTownAnim(bool v) {
 	warning("TODO");
 }
 

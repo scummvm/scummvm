@@ -20,26 +20,56 @@
  *
  */
 
-#include "xeen/spells.h"
-#include "xeen/files.h"
-#include "xeen/xeen.h"
+#ifndef XEEN_TOWN_H
+#define XEEN_TOWN_H
+
+#include "common/scummsys.h"
+#include "common/str-array.h"
+#include "xeen/dialogs.h"
 
 namespace Xeen {
 
-Spells::Spells(XeenEngine *vm) : _vm(vm) {
-	load();
-}
+class XeenEngine;
 
-void Spells::load() {
-	File f1("spells.xen");
-	while (f1.pos() < f1.size())
-		_spellNames.push_back(f1.readString());
-	f1.close();
+class Town: public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _icons1, _icons2;
+	Common::StringArray _textStrings;
+	Common::Array<SpriteResource> _townSprites;
+	int _townMaxId;
+	int _townActionId;
+	int _townCurrent;
+	int _v1;
+	int _v2;
+	Common::Point _townPos;
+	int _arr1[6];
 
-	File f2("mae.xen");
-	while (f2.pos() < f2.size())
-		_maeNames.push_back(f2.readString());
-	f2.close();
-}
+	void loadStrings(const Common::String &name);
+
+	void pyramidEvent();
+
+	void arenaEvent();
+
+	void reaperEvent();
+
+	void golemEvent();
+
+	void sphinxEvent();
+
+	void dwarfEvent();
+
+	Common::String createTownText();
+
+	void townWait();
+
+	void doTownOptions();
+public:
+	Town(XeenEngine *vm);
+
+	int townAction(int actionId);
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_SPELLS_H */

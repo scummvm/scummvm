@@ -99,6 +99,10 @@ public:
 
 	void doFalling();
 
+	void highlightChar(int charId);
+
+	void unhighlightChar();
+
 	void perform();
 };
 

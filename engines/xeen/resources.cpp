@@ -68,7 +68,7 @@ const char *const OPTIONS_TITLE =
 
 const char *const THE_PARTY_NEEDS_REST = "\x0B""012The Party needs rest!";
 
-const char *const WHO_WILL = "\X03""c\X0B""000\x09""000%s\x0A\x0A"
+const char *const WHO_WILL = "\x03""c\x0B""000\x09""000%s\x0A\x0A"
 	"Who will\x0A%s?\x0A\x0B""055F1 - F%d";
 
 const char *const WHATS_THE_PASSWORD = "What's the Password?";
@@ -564,6 +564,25 @@ const int OUTDOOR_DRAWSTRCT_INDEXES[44] = {
 	48, 49, 52, 50, 51, 66, 67, 68, 69, 70, 71,
 	72, 75, 73, 74, 87, 88, 89, 90, 91, 94, 92,
 	93, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120
+};
+
+const int TOWN_MAXES[2][11] = {
+	{ 23, 13, 32, 16, 26, 16, 16, 16, 16, 16, 16 },
+	{ 26, 19, 48, 27, 26, 37, 16, 16, 16, 16, 16 }
+};
+
+const char *const TOWN_ACTION_MUSIC[14] = {
+	"bank.m", "smith.m", "guild.m", "tavern.m", "temple.m",
+	"grounds.m", "endgame.m", "bank.m", "sf09.m", "guild.m",
+	"tavern.m", "temple.m", "smith.m", "endgame.m"
+};
+
+const char *const TOWN_ACTION_SHAPES[4] = {
+	"bankr", "blck", "gild", "tvrn"
+};
+
+const int TOWN_ACTION_FILES[2][7] = {
+	{ 3, 2, 4, 2, 4, 2, 1 }, { 5, 3, 7, 5, 4, 6, 1 }
 };
 
 } // End of namespace Xeen

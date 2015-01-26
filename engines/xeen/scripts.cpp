@@ -96,7 +96,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_treasureGems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
-	_v2 = false;
+	_v2 = 0;
 	_nEdamageType = 0;
 	_animCounter = 0;
 	_eventSkipped = false;
@@ -123,7 +123,7 @@ bool Scripts::checkEvents() {
 	_whoWill = 0;
 	Mode oldMode = _vm->_mode;
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
-	int items = _treasureItems;
+	//int items = _treasureItems;
 	
 	if (_treasureGold & _treasureItems) {
 		// TODO
@@ -138,7 +138,7 @@ bool Scripts::checkEvents() {
 //		int var4E = 0;
 		_currentPos = party._mazePosition;
 		_charIndex = 1;
-		_v2 = true;
+		_v2 = 1;
 		_nEdamageType = 0;
 //		int var40 = -1;
 
@@ -202,7 +202,7 @@ bool Scripts::checkEvents() {
 		w.close();
 	}
 
-	_v2 = true;
+	_v2 = 1;
 	Common::fill(&_charFX[0], &_charFX[6], 0);
 
 	return _scriptResult;
@@ -490,7 +490,7 @@ void Scripts::cmdSetChar(Common::Array<byte> &params) {
 		_charIndex = _vm->getRandomNumber(1, _vm->_party->_partyCount);
 	}
 
-	_v2 = true;
+	_v2 = 1;
 	cmdNoAction(params);
 }
 
@@ -515,7 +515,7 @@ void Scripts::cmdSpawn(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdDoTownEvent(Common::Array<byte> &params) {
-	_scriptResult = doTownEvent(params[0]);
+	_scriptResult = _vm->_town->townAction(params[0]);
 	_vm->_party->_stepped = true;
 	
 	cmdExit(params);
@@ -1269,15 +1269,6 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	default:
 		return false;
 	}
-}
-
-bool Scripts::doTownEvent(int actionId) {
-	if (actionId == 12)
-		return false;
-
-
-
-	return false;
 }
 
 bool Scripts::copyProtectionCheck() {

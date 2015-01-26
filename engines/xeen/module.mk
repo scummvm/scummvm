@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	sound.o \
 	spells.o \
 	sprites.o \
+	town.o \
 	xeen.o \
 	xsurface.o
 
