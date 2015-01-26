@@ -21,7 +21,6 @@
  */
 
 #include "common/scummsys.h"
-#include "common/tokenizer.h"
 #include "video/video_decoder.h"
 
 #include "zvision/scripting/actions.h"
@@ -446,51 +445,48 @@ bool ActionMenuBarEnable::execute() {
 
 ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &line, bool global) :
 	ResultAction(engine, slotkey),
-	_volume(255),
 	_note(0),
 	_prog(0),
 	_universe(global) {
-	Common::StringTokenizer tokenizer(line);
+	uint type = 0;
+	char fileNameBuffer[25];
+	uint loop = 0;
+	char volumeBuffer[15];
 
-	// Parse the type of action. Type 4 actions are MIDI commands, not
-	// files. These are only used by Zork: Nemesis, for the flute and piano
-	// puzzles (tj4e and ve6f, as well as vr)
-	uint type = atoi(tokenizer.nextToken().c_str());
+	// Volume is optional. If it doesn't appear, assume full volume
+	strcpy(volumeBuffer, "100");
 
+	sscanf(line.c_str(), "%u %24s %u %14s", &type, fileNameBuffer, &loop, volumeBuffer);
+
+	// Type 4 actions are MIDI commands, not files. These are only used by
+	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
+	// as vr)
 	if (type == 4) {
 		_midi = true;
-		_prog = atoi(tokenizer.nextToken().c_str());
-		_note = atoi(tokenizer.nextToken().c_str());
-		_volume = atoi(tokenizer.nextToken().c_str());
-		_volumeIsAKey = false;
+		int note;
+		int prog;
+		sscanf(line.c_str(), "%u %d %d %14s", &type, &prog, &note, volumeBuffer);
+		_volume = new ValueSlot(_engine->getScriptManager(), volumeBuffer);
+		_note = note;
+		_prog = prog;
 	} else {
 		_midi = false;
-		_fileName = tokenizer.nextToken();
-		_loop = atoi(tokenizer.nextToken().c_str()) == 1;
-		if (!tokenizer.empty()) {
-			Common::String token = tokenizer.nextToken();
-			if (token.contains('[')) {
-				sscanf(token.c_str(), "[%u]", &_volume);
-				_volumeIsAKey = true;
-			} else {
-				_volume = atoi(token.c_str());
-				if (_volume > 100) {
-					warning("ActionMusic: Adjusting volume for %s from %d to 100", _fileName.c_str(), _volume);
-					_volume = 100;
-				}
-				_volumeIsAKey = false;
-			}
-		} else {
-			// Volume is optional. If it doesn't appear, assume full volume
-			_volume = 100;
-			_volumeIsAKey = false;
+		_fileName = Common::String(fileNameBuffer);
+		_loop = loop == 1 ? true : false;
+		if (volumeBuffer[0] != '[' && atoi(volumeBuffer) > 100) {
+			// I thought I saw a case like this in Zork Nemesis, so
+			// let's guard against it.
+			warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.c_str(), volumeBuffer);
+			strcpy(volumeBuffer, "100");
 		}
+		_volume = new ValueSlot(engine->getScriptManager(), volumeBuffer);
 	}
 }
 
 ActionMusic::~ActionMusic() {
 	if (!_universe)
 		_engine->getScriptManager()->killSideFx(_slotKey);
+	delete _volume;
 }
 
 bool ActionMusic::execute() {
@@ -499,12 +495,7 @@ bool ActionMusic::execute() {
 		_engine->getScriptManager()->setStateValue(_slotKey, 2);
 	}
 
-	uint volume;
-	if (_volumeIsAKey) {
-		volume = _engine->getScriptManager()->getStateValue(_volume);
-	} else {
-		volume = _volume;
-	}
+	uint volume = _volume->getValue();
 
 	if (_midi) {
 		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, volume));
@@ -513,7 +504,6 @@ bool ActionMusic::execute() {
 			return true;
 
 		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
-
 		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume * 255 / 100));
 	}
 
