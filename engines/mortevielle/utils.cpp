@@ -1359,6 +1359,7 @@ void MortevielleEngine::endSearch() {
 	_heroSearching = false;
 	_obpart = false;
 	_searchCount = 0;
+	_is = 0;
 	_menu->unsetSearchMenu();
 }
 
@@ -1469,6 +1470,7 @@ void MortevielleEngine::gameLoaded() {
 	_num = 0;
 	_startTime = 0;
 	_endTime = 0;
+	_is = 0;
 	_searchCount = 0;
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
@@ -2989,6 +2991,26 @@ void MortevielleEngine::displayNarrativePicture(int af, int ob) {
 }
 
 /**
+ * Display a message switching from a screen to another.
+ * @remarks	Originally called 'messint'
+ */
+void MortevielleEngine::displayInterScreenMessage(int mesgId) {
+	clearUpperLeftPart();
+	clearDescriptionBar();
+	clearVerbBar();
+
+	GfxSurface surface;
+	surface.decode(_rightFramePict + 1008);
+	surface._offset.x = 80;
+	surface._offset.y = 40;
+	setPal(90);
+	_screenSurface->drawPicture(surface, 0, 0);
+	_screenSurface->drawPicture(surface, 0, 70);
+	handleDescriptionText(7, mesgId);
+	delay(DISK_ACCESS_DELAY);
+}
+
+/**
  * Prepare Display Text
  * @remarks	Originally called 'affrep'
  */
@@ -3196,6 +3218,7 @@ void MortevielleEngine::prepareNextObject() {
 	} while ((objId == 0) && (_searchCount <= 9));
 
 	if ((objId != 0) && (_searchCount < 11)) {
+		_is++;
 		_caff = objId;
 		_crep = _caff + 400;
 		if (_currBitIndex != 0)

@@ -416,6 +416,7 @@ public:
 	int _maff;
 	int _caff;
 	int _crep;
+	int _is;		// ???
 
 	byte _destinationArray[7][25];
 
@@ -466,6 +467,7 @@ public:
 	void gameLoaded();
 	void initGame();
 	void displayAloneText();
+	void displayInterScreenMessage(int mesgId);
 	void draw(int x, int y);
 	void charToHour();
 	void hourToChar();
