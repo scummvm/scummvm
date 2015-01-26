@@ -50,6 +50,11 @@ private:
 
 	void displayBoxData();
 	void drawSelectBox();
+	/**
+	 * Prints a text bubble and it's contents
+	 */
+	void printBubble_v1(const Common::String &msg);
+	void printBubble_v2(const Common::String &msg);
 
 public:
 	BoxType _type;
@@ -87,8 +92,7 @@ public:
 	/**
 	 * Prints a text bubble and it's contents
 	 */
-	void printBubble_v1(const Common::String &msg);
-	void printBubble_v2(const Common::String &msg);
+	void printBubble(const Common::String &msg);
 
 	/*
 	 * Draws the background for a text bubble

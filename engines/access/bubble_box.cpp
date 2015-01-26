@@ -90,10 +90,7 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 	Common::Rect r = _bubbles[0];
 	r.translate(-2, 0);
 	_vm->_screen->saveBlock(r);
-	if (_vm->getGameID() == GType_MartianMemorandum)
-		printBubble_v1(msg);
-	else
-		printBubble_v2(msg);
+	printBubble(msg);
 }
 
 void BubbleBox::calcBubble(const Common::String &msg) {
@@ -150,6 +147,13 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	// Restore points
 	_vm->_screen->_printOrg = printOrg;
 	_vm->_screen->_printStart = printStart;
+}
+
+void BubbleBox::printBubble(const Common::String &msg) {
+	if (_vm->getGameID() == GType_MartianMemorandum)
+		printBubble_v1(msg);
+	else
+		printBubble_v2(msg);
 }
 
 void BubbleBox::printBubble_v1(const Common::String &msg) {
@@ -333,10 +337,8 @@ void BubbleBox::PRINTSTR(Common::String msg) {
 void BubbleBox::displayBoxData() {
 	_vm->BOXDATAEND = false;
 	_rowOff = 2;
-	_vm->_fonts._charSet._lo = 7;  // 0xF7
-	_vm->_fonts._charSet._hi = 15;
-	_vm->_fonts._charFor._lo = 15; // 0xFF
-	_vm->_fonts._charFor._hi = 15;
+	_vm->_fonts._charFor._lo = 0xF7;
+	_vm->_fonts._charFor._hi = 0xFF;
 
 	if (_tempList[0].size() == 0)
 		return;
@@ -582,13 +584,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_rowOff = bp;
 	retval_ = BOXPSTARTY = newY;
 
-	
-	// setcursorpos
-	_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y = (newY << 3) + _rowOff;
-	_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x = (newX << 3);
-	//
+	SETCURSORPOS(newX, newY);
 
-	_vm->_fonts._charFor._lo = -1;
+	_vm->_fonts._charFor._lo = 0xFF;
 	_vm->_fonts._font1.drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
 
 	if (_type == TYPE_2) {
@@ -727,7 +725,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			if ((_vm->_events->_mousePos.y < tmpY) || (_vm->_events->_mousePos.y > tmpY + 8))
 				continue;
 
-			warning("TODO: sub175B5");
+			warning("TODO: sub175B5 - List of files");
 		}
 	}
 
