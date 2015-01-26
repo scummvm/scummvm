@@ -56,6 +56,9 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 	_bounds = s.getBounds();
 
 	DEALLOCATE(imgData);
+	_visage = 0;
+	_strip = 0;
+	_frame = 0;
 }
 
 InvObject::InvObject(int visage, int strip, int frame) {
