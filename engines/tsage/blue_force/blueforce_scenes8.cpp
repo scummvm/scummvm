@@ -964,9 +964,10 @@ Scene810::Scene810(): SceneExt() {
 }
 
 void Scene810::synchronize(Serializer &s) {
+	int dummy = 0;
 	SceneExt::synchronize(s);
 	s.syncAsSint16LE(_fieldA70);
-	s.syncAsSint16LE(_fieldA72);
+	s.syncAsSint16LE(dummy);
 	s.syncAsSint16LE(_fieldA74);
 }
 
