@@ -5789,6 +5789,7 @@ Scene2320::Scene2320() :
 	_area3._pt = Common::Point(200, 75);
 	_area4.setup(2153, 1, 1, 10);
 	_area4._pt = Common::Point(237, 77);
+	_hotspotPtr = nullptr;
 }
 
 void Scene2320::postInit(SceneObjectList *OwnerList) {
