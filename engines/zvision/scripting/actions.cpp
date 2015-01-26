@@ -79,8 +79,7 @@ ActionAssign::ActionAssign(ZVision *engine, int32 slotkey, const Common::String 
 }
 
 ActionAssign::~ActionAssign() {
-	if (_value)
-		delete _value;
+	delete _value;
 }
 
 bool ActionAssign::execute() {
@@ -804,8 +803,7 @@ ActionRandom::ActionRandom(ZVision *engine, int32 slotkey, const Common::String 
 }
 
 ActionRandom::~ActionRandom() {
-	if (_max)
-		delete _max;
+	delete _max;
 }
 
 bool ActionRandom::execute() {
@@ -1044,8 +1042,7 @@ ActionTimer::ActionTimer(ZVision *engine, int32 slotkey, const Common::String &l
 }
 
 ActionTimer::~ActionTimer() {
-	if (_time)
-		delete _time;
+	delete _time;
 	_engine->getScriptManager()->killSideFx(_slotKey);
 }
 
