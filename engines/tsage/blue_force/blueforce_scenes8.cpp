@@ -2221,6 +2221,7 @@ Scene840::Scene840(): PalettedScene() {
 	_field1AC2 = 0;
 	_field1AC4 = 0;
 	_field1AC6 = (BF_GLOBALS._dayNumber > 3) ? 1 : 0;
+	_field1ABA = 0;
 }
 
 void Scene840::synchronize(Serializer &s) {
