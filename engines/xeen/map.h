@@ -112,6 +112,8 @@ public:
 public:
 	SurroundingMazes();
 
+	void clear();
+
 	void synchronize(Common::SeekableReadStream &s);
 
 	int &operator[](int idx);
@@ -198,6 +200,8 @@ public:
 	int _mazeId;
 public:
 	MazeData();
+
+	void clear();
 
 	void synchronize(Common::SeekableReadStream &s);
 

@@ -491,6 +491,10 @@ void MonsterData::synchronize(Common::SeekableReadStream &s) {
 /*------------------------------------------------------------------------*/
 
 SurroundingMazes::SurroundingMazes() {
+	clear();
+}
+
+void SurroundingMazes::clear() {
 	_north = 0;
 	_east = 0;
 	_south = 0;
@@ -541,6 +545,10 @@ void MazeDifficulties::synchronize(Common::SeekableReadStream &s) {
 /*------------------------------------------------------------------------*/
 
 MazeData::MazeData() {
+	clear();
+}
+
+void MazeData::clear() {
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x)
 			_wallData[y][x]._data = 0;
@@ -550,6 +558,7 @@ MazeData::MazeData() {
 		_surfaceTypes[y] = 0;
 	}
 	_mazeNumber = 0;
+	_surroundingMazes.clear();
 	_mazeFlags = _mazeFlags2  = 0;
 	_floorType = 0;
 	_trapDamage = 0;
@@ -963,7 +972,9 @@ void Map::load(int mapId) {
 	for (int idx = 0; idx < 9; ++idx, ++mazeDataP) {
 		mazeDataP->_mazeId = mapId;
 
-		if (mapId != 0) {
+		if (mapId == 0) {
+			mazeDataP->clear();
+		} else {
 			// Load in the maze's data file
 			Common::String datName = Common::String::format("maze%c%03d.dat",
 				(mapId >= 100) ? 'x' : '0', mapId);
