@@ -403,7 +403,7 @@ void EventsManager::vDoCycleInt() {
 					int palIndex = READ_LE_UINT16(pSrc);
 					pPal[palIndex * 3] = pSrc[3];
 					pPal[palIndex * 3 + 1] = pSrc[4];
-					pPal[palIndex * 3 + 1] = pSrc[5];
+					pPal[palIndex * 3 + 2] = pSrc[5];
 					pSrc += 6;
 
 					if ((int16)READ_LE_UINT16(pSrc) >= 0) {
