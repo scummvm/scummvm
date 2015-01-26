@@ -3384,6 +3384,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[111];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][0];
 			ds._y = MAP_OBJECT_Y[posIndex][0];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3398,6 +3399,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[87];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][1];
 			ds._y = MAP_OBJECT_Y[posIndex][1];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3411,6 +3413,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[88];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][2];
 			ds._y = MAP_OBJECT_Y[posIndex][2];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3424,6 +3427,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[89];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][3];
 			ds._y = MAP_OBJECT_Y[posIndex][3];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3437,6 +3441,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[66];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][4];
 			ds._y = MAP_OBJECT_Y[posIndex][4];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3450,6 +3455,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[67];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][5];
 			ds._y = MAP_OBJECT_Y[posIndex][5];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3463,6 +3469,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[68];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][6];
 			ds._y = MAP_OBJECT_Y[posIndex][6];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3476,6 +3483,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[37];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][7];
 			ds._y = MAP_OBJECT_Y[posIndex][7];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3489,6 +3497,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[38];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][8];
 			ds._y = MAP_OBJECT_Y[posIndex][8];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3502,6 +3511,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[40];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][10];
 			ds._y = MAP_OBJECT_Y[posIndex][10];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3515,6 +3525,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[39];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][9];
 			ds._y = MAP_OBJECT_Y[posIndex][9];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -3528,6 +3539,7 @@ void InterfaceMap::setOutdoorsObjects() {
 			DrawStruct &ds = _outdoorList[41];
 			ds._x = OUTDOOR_OBJECT_X[posIndex][11];
 			ds._y = MAP_OBJECT_Y[posIndex][11];
+			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
 			ds._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -4421,10 +4433,11 @@ void InterfaceMap::drawOutdoors() {
 	const int TERRAIN_INDEXES3[3] = { 11, 16, 13 };
 	const int TERRAIN_INDEXES4[5] = { 5, 9, 7, 0, 4 };
 
+	// Loops to set draw entries for the terrain
 	for (int idx = 0; idx < 9; ++idx) {
 		map.getCell(TERRAIN_INDEXES1[idx]);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[36 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[28 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES2[idx]);
