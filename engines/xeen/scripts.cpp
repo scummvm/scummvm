@@ -96,25 +96,30 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_treasureGems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
-	_v2 = 0;
+	_v2 = false;
 	_nEdamageType = 0;
 	_animCounter = 0;
 	_eventSkipped = false;
 	_mirrorId = -1;
 	_refreshIcons = false;
+	_scriptResult = false;
+	_scriptExecuted = false;
+	_var50 = false;
 }
 
-void Scripts::checkEvents() {
+bool Scripts::checkEvents() {
 	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
 
 	_refreshIcons = false;
 	_itemType = 0;
-	_var4F = 0;
-	bool var50 = false;
+	_scriptExecuted = false;
+	_var50 = false;
 	_whoWill = 0;
 	Mode oldMode = _vm->_mode;
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
@@ -128,12 +133,12 @@ void Scripts::checkEvents() {
 
 	do {
 		_lineNum = 0;
-//		int varA = 0;
+		_scriptResult = false;
 		_animCounter = 0;
 //		int var4E = 0;
 		_currentPos = party._mazePosition;
 		_charIndex = 1;
-		_v2 = 1;
+		_v2 = true;
 		_nEdamageType = 0;
 //		int var40 = -1;
 
@@ -156,7 +161,7 @@ void Scripts::checkEvents() {
 						doOpcode(event);
 						break;
 					} else {
-						var50 = true;
+						_var50 = true;
 					}
 				}
 			}
@@ -172,6 +177,35 @@ void Scripts::checkEvents() {
 	}
 
 	// TODO
+
+	_animCounter = 0;
+	_vm->_mode = oldMode;
+	screen.closeWindows();
+
+	if (_scriptExecuted || !intf._objNumber || _var50) {
+		if (_var50 && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
+			sound.playFX(21);
+		}
+	} else {
+		Window &w = screen._windows[38];
+		w.open();
+		w.writeString(NOTHING_HERE);
+		w.update();
+
+		do {
+			intf.draw3d(true);
+			events.updateGameCounter();
+			events.wait(1, true);
+		} while (!events.isKeyMousePressed());
+		events.clearEvents();
+
+		w.close();
+	}
+
+	_v2 = true;
+	Common::fill(&_charFX[0], &_charFX[6], 0);
+
+	return _scriptResult;
 }
 
 void Scripts::giveTreasure() {
@@ -231,7 +265,6 @@ void Scripts::cmdDisplay1(Common::Array<byte> &params) {
 	screen._windows[38].writeString(msg);
 	screen._windows[38].update();
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -247,7 +280,6 @@ void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -263,7 +295,6 @@ void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -279,7 +310,6 @@ void Scripts::cmdSignText(Common::Array<byte> &params) {
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -293,7 +323,6 @@ void Scripts::cmdNPC(Common::Array<byte> &params) {
 void Scripts::cmdPlayFX(Common::Array<byte> &params) {
 	_vm->_sound->playFX(params[0]);
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -306,7 +335,6 @@ void Scripts::cmdTeleport(Common::Array<byte> &params) {
 	SoundManager &sound = *_vm->_sound;
 
 	screen.closeWindows();
-	_var4F = true;
 
 	int mapId;
 	Common::Point pt;
@@ -407,7 +435,6 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 	if (result)
 		_lineNum = newLineNum - 1;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -463,7 +490,7 @@ void Scripts::cmdSetChar(Common::Array<byte> &params) {
 		_charIndex = _vm->getRandomNumber(1, _vm->_party->_partyCount);
 	}
 
-	_v2 = 1;
+	_v2 = true;
 	cmdNoAction(params);
 }
 
@@ -484,11 +511,15 @@ void Scripts::cmdSpawn(Common::Array<byte> &params) {
 	monster._isAttacking = params[1] != 0;
 	monster._hp = monsterData._hp;
 
-	_var4F = 1;
 	cmdNoAction(params);
 }
 
-void Scripts::cmdDoTownEvent(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDoTownEvent(Common::Array<byte> &params) {
+	_scriptResult = doTownEvent(params[0]);
+	_vm->_party->_stepped = true;
+	
+	cmdExit(params);
+}
 
 /**
  * Stop executing the script
@@ -510,7 +541,6 @@ void Scripts::cmdAlterMap(Common::Array<byte> &params) {
 		map.setWall(Common::Point(params[0], params[1]), (Direction)params[2], params[3]);
 	}
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -554,7 +584,6 @@ void Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 	if (result)
 		_lineNum = newLineNum - 1;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -610,7 +639,6 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 		}
 	}
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -624,7 +652,6 @@ void Scripts::cmdJumpRnd(Common::Array<byte> &params) {
 	if (v == params[1])
 		_lineNum = params[2] - 1;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -644,7 +671,6 @@ void Scripts::cmdAlterEvent(Common::Array<byte> &params) {
 		}
 	}
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -657,7 +683,6 @@ void Scripts::cmdCallEvent(Common::Array<byte> &params) {
 	_currentPos = Common::Point(params[0], params[1]);
 	_lineNum = params[2] - 1;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -670,7 +695,6 @@ void Scripts::cmdReturn(Common::Array<byte> &params) {
 	_currentPos = se;
 	_lineNum = se.line;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -707,7 +731,6 @@ void Scripts::cmdSetVar(Common::Array<byte> &params) {
 		}
 	}
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -716,7 +739,6 @@ void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) { error("TODO");
 void Scripts::cmdWhoWill(Common::Array<byte> &params) { 
 	_charIndex = WhoWill::show(_vm, params[0], params[1], true);
 
-	_var4F = true;
 	if (_charIndex == 0)
 		cmdExit(params);
 	else
@@ -751,7 +773,6 @@ void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
 			evt._opcode = OP_None;
 	}
 
-	_var4F = true;
 	cmdExit(params);
 }
 
@@ -777,7 +798,6 @@ void Scripts::cmdExchObj(Common::Array<byte> &params) {
 	obj1._position = obj2._position;
 	obj2._position = pt;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -787,7 +807,6 @@ void Scripts::cmdFallToMap(Common::Array<byte> &params) {
 	party._fallPosition = Common::Point(params[1], params[2]);
 	party._fallDamage = params[3];
 
-	_var4F = true;
 	_lineNum = -1;
 }
 
@@ -806,7 +825,6 @@ void Scripts::cmdGoto(Common::Array<byte> &params) {
 	if (params[0] == map._currentSurfaceId)
 		_lineNum = params[1] - 1;
 
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -815,7 +833,6 @@ void Scripts::cmdGoto(Common::Array<byte> &params) {
  */
 void Scripts::cmdGotoRandom(Common::Array<byte> &params) { 
 	_lineNum = params[_vm->getRandomNumber(1, params[0])] - 1;
-	_var4F = true;
 	cmdNoAction(params);
 }
 
@@ -1252,6 +1269,15 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	default:
 		return false;
 	}
+}
+
+bool Scripts::doTownEvent(int actionId) {
+	if (actionId == 12)
+		return false;
+
+
+
+	return false;
 }
 
 bool Scripts::copyProtectionCheck() {

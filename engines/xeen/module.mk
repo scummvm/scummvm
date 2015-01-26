@@ -26,6 +26,7 @@ MODULE_OBJS := \
 	screen.o \
 	scripts.o \
 	sound.o \
+	spells.o \
 	sprites.o \
 	xeen.o \
 	xsurface.o

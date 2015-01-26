@@ -148,9 +148,10 @@ private:
 	int _charIndex;
 	int _mirrorId;
 	int _refreshIcons;
-
-	int _v2;
-	int _var4F;
+	int _scriptResult;
+	bool _v2;
+	bool _scriptExecuted;
+	bool _var50;
 	MazeEvent *_event;
 	Common::Point _currentPos;
 	Common::Stack<StackEntry> _stack;
@@ -222,6 +223,8 @@ private:
 
 	bool ifProc(int action, uint32 mask, int mode, int charIndex);
 
+	bool doTownEvent(int actionId);
+
 	bool copyProtectionCheck();
 public:
 	int _animCounter;
@@ -232,7 +235,7 @@ public:
 public:
 	Scripts(XeenEngine *vm);
 
-	void checkEvents();
+	bool checkEvents();
 
 	void giveTreasure();
 

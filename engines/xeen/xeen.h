@@ -43,6 +43,7 @@
 #include "xeen/screen.h"
 #include "xeen/scripts.h"
 #include "xeen/sound.h"
+#include "xeen/spells.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -140,6 +141,7 @@ public:
 	Screen *_screen;
 	Scripts *_scripts;
 	SoundManager *_sound;
+	Spells *_spells;
 	Treasure _treasure;
 	Mode _mode;
 	GameEvent _gameEvent;

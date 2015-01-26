@@ -40,6 +40,8 @@ extern const char *const WHATS_THE_PASSWORD;
 
 extern const char *const IN_NO_CONDITION;
 
+extern const char *const NOTHING_HERE;
+
 extern const char *const TERRAIN_TYPES[6];
 
 extern const char *const SURFACE_TYPE_NAMES[15];

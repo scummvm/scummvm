@@ -75,6 +75,8 @@ const char *const WHATS_THE_PASSWORD = "What's the Password?";
 
 const char *const IN_NO_CONDITION = "\x0B""007%s is not in any condition to perform actions!";
 
+const char *const NOTHING_HERE = "\x03""c\x0B""010Nothing here.";
+
 const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
 };
