@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/tokenizer.h"
 #include "video/video_decoder.h"
 
 #include "zvision/scripting/actions.h"
@@ -449,33 +450,40 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &l
 	_note(0),
 	_prog(0),
 	_universe(global) {
-	uint type = 0;
-	char fileNameBuffer[25];
-	uint loop = 0;
-	uint volume = 255;
+	Common::StringTokenizer tokenizer(line);
 
-	sscanf(line.c_str(), "%u %24s %u %u", &type, fileNameBuffer, &loop, &volume);
+	// Parse the type of action. Type 4 actions are MIDI commands, not
+	// files. These are only used by Zork: Nemesis, for the flute and piano
+	// puzzles (tj4e and ve6f, as well as vr)
+	uint type = atoi(tokenizer.nextToken().c_str());
 
-	// Type 4 actions are MIDI commands, not files. These are only used by
-	// Zork: Nemesis, for the flute and piano puzzles (tj4e and ve6f, as well
-	// as vr)
 	if (type == 4) {
 		_midi = true;
-		int note;
-		int prog;
-		sscanf(line.c_str(), "%u %d %d %u", &type, &prog, &note, &volume);
-		_volume = volume;
-		_note = note;
-		_prog = prog;
+		_prog = atoi(tokenizer.nextToken().c_str());
+		_note = atoi(tokenizer.nextToken().c_str());
+		_volume = atoi(tokenizer.nextToken().c_str());
+		_volumeIsAKey = false;
 	} else {
 		_midi = false;
-		_fileName = Common::String(fileNameBuffer);
-		_loop = loop == 1 ? true : false;
-
-		// Volume is optional. If it doesn't appear, assume full volume
-		if (volume != 255) {
-			// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
-			_volume = volume * 255 / 100;
+		_fileName = tokenizer.nextToken();
+		_loop = atoi(tokenizer.nextToken().c_str()) == 1;
+		if (!tokenizer.empty()) {
+			Common::String token = tokenizer.nextToken();
+			if (token.contains('[')) {
+				sscanf(token.c_str(), "[%u]", &_volume);
+				_volumeIsAKey = true;
+			} else {
+				_volume = atoi(token.c_str());
+				if (_volume > 100) {
+					warning("ActionMusic: Adjusting volume for %s from %d to 100", _fileName.c_str(), _volume);
+					_volume = 100;
+				}
+				_volumeIsAKey = false;
+			}
+		} else {
+			// Volume is optional. If it doesn't appear, assume full volume
+			_volume = 100;
+			_volumeIsAKey = false;
 		}
 	}
 }
@@ -491,13 +499,22 @@ bool ActionMusic::execute() {
 		_engine->getScriptManager()->setStateValue(_slotKey, 2);
 	}
 
+	uint volume;
+	if (_volumeIsAKey) {
+		volume = _engine->getScriptManager()->getStateValue(_volume);
+	} else {
+		volume = _volume;
+	}
+
 	if (_midi) {
-		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, _volume));
+		_engine->getScriptManager()->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, volume));
 	} else {
 		if (!_engine->getSearchManager()->hasFile(_fileName))
 			return true;
 
-		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, _volume));
+		// Volume in the script files is mapped to [0, 100], but the ScummVM mixer uses [0, 255]
+
+		_engine->getScriptManager()->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume * 255 / 100));
 	}
 
 	return true;
