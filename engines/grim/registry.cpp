@@ -153,6 +153,9 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _spewOnError;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
+	} else {
+		warning("write unknown regisry value %s", key.c_str());
+		return _musicVolume;
 	}
 
 	assert(0);

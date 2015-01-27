@@ -952,7 +952,10 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "SetResolutionScaling", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "SetAdvancedLighting", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "SetLanguage", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "IsPlayingCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "EnableCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "ClearCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "LoadRemappedKeys", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "GlobalSaveResolved", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "StopCommentaryImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
@@ -967,10 +970,13 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "OverlayMove", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "AddHotspot", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "OverlayFade", LUA_OPCODE(Lua_V1, PreloadCursors) },
-
-	
-	
-	
+	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "ShowCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "CacheCurrentWalkVector", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "UnlockConcept", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "IsConceptUnlocked", LUA_OPCODE(Lua_V1, PreloadCursors) },	
 };
 
 static struct luaL_reg grimTextOpcodes[] = {
