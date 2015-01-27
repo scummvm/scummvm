@@ -34,6 +34,12 @@ MODULE_OBJS += \
 	ps3/ps3.o
 endif
 
+ifdef RASPBERRYPI
+MODULE_OBJS += \
+	raspberrypi/raspberrypi-main.o \
+	raspberrypi/raspberrypi.o
+endif
+
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)

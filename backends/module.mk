@@ -193,6 +193,11 @@ MODULE_OBJS += \
 	timer/psp/timer.o
 endif
 
+ifeq ($(BACKEND),raspberrypi)
+MODULE_OBJS += \
+	graphics/dispmanxsdl/dispmanxsdl-graphics.o
+endif
+
 ifeq ($(BACKEND),samsungtv)
 MODULE_OBJS += \
 	events/samsungtvsdl/samsungtvsdl-events.o \
