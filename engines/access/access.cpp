@@ -94,6 +94,9 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_cheatFl = false;
 	_restartFl = false;
 	_printEnd = 0;
+	for (int i = 0; i < 100; i++)
+		_objectsTable[i] = nullptr;
+	_clearSummaryFlag = false;
 }
 
 AccessEngine::~AccessEngine() {
