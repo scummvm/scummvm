@@ -116,6 +116,7 @@ const int kInventoryStringIndex = 186;
 const int kQuestionStringIndex = 247;
 const int kDialogStringIndex = 292;
 const int kMenuPlaceStringIndex = 435;
+const int kStartingScreenStringIndex = 456;
 const int kMenuActionStringIndex = 476;
 const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;

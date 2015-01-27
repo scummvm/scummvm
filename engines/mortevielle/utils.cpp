@@ -1732,7 +1732,7 @@ void MortevielleEngine::showConfigScreen() {
 	clearScreen();
  	do {
  		++cy;
- 		tmpStr = getString(cy + 456);
+ 		tmpStr = getString(cy + kStartingScreenStringIndex);
  		width = _screenSurface->getStringWidth(tmpStr);
  		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
  	} while (cy != 20);
