@@ -105,7 +105,7 @@ static int32 hashindex(TObject *r) {
 		h = (int32)nvalue(r);
 		break;
 	default:
-		lua_error("unexpected type to index table");
+		//lua_error("unexpected type to index table");
 		h = 0;  // to avoid warnings
 	}
 	return (h >= 0 ? h : -(h + 1));

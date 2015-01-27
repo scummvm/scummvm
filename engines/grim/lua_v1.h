@@ -286,6 +286,15 @@ protected:
 	DECLARE_LUA_OPCODE(GetMemoryUsage);
 	DECLARE_LUA_OPCODE(GetFontDimensions);
 	DECLARE_LUA_OPCODE(PurgeText);
+
+	// Remastered
+
+	DECLARE_LUA_OPCODE(GetPlatform);
+	DECLARE_LUA_OPCODE(PreloadCursors);
+	DECLARE_LUA_OPCODE(ReadRegistryIntValue);
+	DECLARE_LUA_OPCODE(WidescreenCorrectionFactor);
+
+	
 };
 
 }

@@ -171,6 +171,15 @@ void Sector::load(TextSplitter &ts) {
 	float length = _normal.getMagnitude();
 	if (length > 0)
 		_normal /= length;
+
+	int _numTris;
+	ts.scanString(" numtris %d", 1, &_numTris);
+	//_vertices = new Math::Vector3d[_numVertices + 1];
+	int a,b,c;
+
+	ts.scanString(" triangles: %f %f %f", 3, &a, &b, &c);
+	for (i = 1; i < _numTris; i++)
+		ts.scanString(" %f %f %f", 3, &a, &b, &c);
 }
 
 void Sector::loadBinary(Common::SeekableReadStream *data) {

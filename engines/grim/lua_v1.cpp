@@ -676,6 +676,18 @@ void Lua_V1::LightMgrStartup() {
 	// we will not implement this opcode
 }
 
+void Lua_V1::WidescreenCorrectionFactor() {
+	warning("Stub function: WidescreenCorrectionFactor, returns 1");
+	lua_pushnumber(1);
+}
+
+void Lua_V1::GetFontDimensions() {
+	warning("Stub function: GetFontDimensions, returns 1");
+	lua_pushnumber(1);
+
+}
+
+
 void Lua_V1::JustLoaded() {
 	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
@@ -691,6 +703,10 @@ static void stubWarning(const char *funcName) {
 }
 
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
+
+STUB_FUNC(Lua_V1::GetPlatform)
+STUB_FUNC(Lua_V1::PreloadCursors)
+STUB_FUNC(Lua_V1::ReadRegistryIntValue)
 
 STUB_FUNC(Lua_V1::SetActorInvClipNode)
 STUB_FUNC(Lua_V1::NukeResources)
@@ -718,7 +734,6 @@ STUB_FUNC(Lua_V1::GetCameraFOV)
 STUB_FUNC(Lua_V1::SetCameraFOV)
 STUB_FUNC(Lua_V1::GetCameraRoll)
 STUB_FUNC(Lua_V1::GetMemoryUsage)
-STUB_FUNC(Lua_V1::GetFontDimensions)
 STUB_FUNC(Lua_V1::PurgeText)
 
 struct luaL_reg grimMainOpcodes[] = {
@@ -929,6 +944,33 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "RestoreIMuse", LUA_OPCODE(Lua_V1, RestoreIMuse) },
 	{ "GetMemoryUsage", LUA_OPCODE(Lua_V1, GetMemoryUsage) },
 	{ "dofile", LUA_OPCODE(Lua_V1, new_dofile) },
+	{ "GetPlatform", LUA_OPCODE(Lua_V1, GetPlatform) },
+	{ "PreloadCursors", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "AreAchievementsInstalled", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "ImSetCommentaryVol", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetMouseSpeedScale", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetResolutionScaling", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetAdvancedLighting", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetLanguage", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "EnableCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "LoadRemappedKeys", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "GlobalSaveResolved", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "StopCommentaryImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "ReadRegistryIntValue", LUA_OPCODE(Lua_V1, ReadRegistryIntValue) },
+	{ "DestroyAllUIButtonsImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayClearCache", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "GetGameRenderMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetGameRenderMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "WidescreenCorrectionFactor", LUA_OPCODE(Lua_V1, WidescreenCorrectionFactor) },
+	{ "OverlayCreate", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayDimensions", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayMove", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "AddHotspot", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayFade", LUA_OPCODE(Lua_V1, PreloadCursors) },
+
+	
+	
+	
 };
 
 static struct luaL_reg grimTextOpcodes[] = {

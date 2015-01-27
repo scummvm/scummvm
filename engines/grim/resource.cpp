@@ -78,7 +78,7 @@ ResourceLoader::ResourceLoader() {
 	Common::ArchiveMemberList files, updFiles;
 
 	//Load the update from the executable, if needed
-	const char *updateFilename = g_grim->getUpdateFilename();
+	const char *updateFilename = NULL;//g_grim->getUpdateFilename();
 	if (updateFilename) {
 		Common::File *updStream = new Common::File();
 		if (updStream && updStream->open(updateFilename)) {
@@ -119,7 +119,7 @@ ResourceLoader::ResourceLoader() {
 			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
 				error("residualvm-grim-patch.lab not found");
 
-			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
+			//SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
 			SearchMan.listMatchingMembers(files, "data004.lab");
 			SearchMan.listMatchingMembers(files, "data003.lab");
