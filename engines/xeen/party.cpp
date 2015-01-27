@@ -757,6 +757,65 @@ void Character::setValue(int id, uint value) {
 	}
 }
 
+bool Character::guildMember() const {
+	Party &party = *Party::_vm->_party;
+
+	if (party._mazeId == 49 && !Party::_vm->_files->_isDarkCc) {
+		return hasAward(5);
+	}
+
+	switch (party._mazeId) {
+	case 29:
+		return hasAward(83);
+	case 31:
+		return hasAward(84);
+	case 33:
+		return hasAward(85);
+	case 35:
+		return hasAward(86);
+	default:
+		return hasAward(87);
+	}
+}
+
+uint Character::nextExperienceLevel() const {
+	uint base = currentExperienceLevel();
+	uint curr = getCurrentExperience();
+	return (curr < base) ? 0 : curr - base;
+}
+
+uint Character::currentExperienceLevel() const {
+	int shift, base;
+	if (_level._permanent >= 12) {
+		base = _level._permanent - 12;
+		shift = 10;
+	} else {
+		base = 0;
+		shift = _level._permanent;
+	}
+	
+	return (base * 1024000) + (CLASS_EXP_LEVELS[_class] << shift);
+}
+
+uint Character::getCurrentExperience() const {
+	int lev = _level._permanent - 1;
+	int shift, base;
+
+	if (lev > 0 && lev < 12)
+		return _experience;
+
+	if (lev >= 12) {
+		base = lev - 12;
+		shift = 10;
+	} else {
+		base = 0;
+		shift = lev - 1;
+	}
+
+	return (base * 1024000) + (CLASS_EXP_LEVELS[_class] << shift) +
+		_experience;
+}
+
 /*------------------------------------------------------------------------*/
 
 void Roster::synchronize(Common::Serializer &s) {

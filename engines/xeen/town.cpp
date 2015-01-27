@@ -27,12 +27,23 @@
 namespace Xeen {
 
 Town::Town(XeenEngine *vm) : _vm(vm) {
+	Common::fill(&_arr1[0], &_arr1[6], 0);
 	_townMaxId = 0;
 	_townActionId = 0;
 	_townCurrent = 0;
+	_currentCharLevel = 0;
 	_v1 = 0;
 	_v2 = 0;
-	Common::fill(&_arr1[0], &_arr1[6], 0);
+	_donation = 0;
+	_healCost = 0;
+	_v5 = _v6 = 0;
+	_v10 = _v11 = 0;
+	_v12 = _v13 = 0;
+	_v14 = 0;
+	_v20 = 0;
+	_uncurseCost = 0;
+	_flag1 = false;
+	_nextExperienceLevel = 0;
 }
 
 void Town::loadStrings(const Common::String &name) {
@@ -191,7 +202,8 @@ int Town::townAction(int actionId) {
 		_townSprites[idx].load(shapesName);
 	}
 
-	Common::String title = createTownText();
+	Character *charP = &party._activeParty[0];
+	Common::String title = createTownText(*charP);
 	intf._face1UIFrame = intf._face2UIFrame = 0;
 	intf._dangerSenseUIFrame = 0; 
 	intf._spotDoorsUIFrame = 0;
@@ -222,7 +234,7 @@ int Town::townAction(int actionId) {
 
 	do {
 		townWait();
-		doTownOptions();
+		charP = doTownOptions(charP);
 		screen._windows[10].writeString(title);
 		drawButtons(&screen);
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
@@ -309,11 +321,159 @@ void Town::dwarfEvent() {
 	error("TODO: dwarfEvent");
 }
 
-Common::String Town::createTownText() {
-	error("TODO");
+Common::String Town::createTownText(Character &ch) {
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	Common::String msg;
+
+	switch (_townActionId) {
+	case 0:
+		// Bank
+		return Common::String::format(BANK_TEXT,
+			XeenEngine::printMil(party._bankGold).c_str(),
+			XeenEngine::printMil(party._bankGems).c_str(),
+			XeenEngine::printMil(party._gold).c_str(),
+			XeenEngine::printMil(party._gems).c_str());
+	case 1:
+		// Blacksmith
+		return Common::String::format(BLACKSMITH_TEXT,
+			XeenEngine::printMil(party._gold));
+
+	case 2:
+		// Guild
+		return !ch.guildMember() ? GUILD_NOT_MEMBER_TEXT :
+			Common::String::format(GUILD_TEXT, ch._name.c_str());
+
+	case 3:
+		// Tavern
+		return Common::String::format(TAVERN_TEXT, ch._name,
+			FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
+
+	case 4:
+		// Temple
+		_donation = 0;
+		_uncurseCost = 0;
+		_v5 = 0;
+		_v6 = 0;
+		_healCost = 0;
+
+		if (party._mazeId == (_vm->_files->_isDarkCc ? 29 : 28)) {
+			_v10 = _v11 = _v12 = _v13 = 0;
+			_v14 = 10;
+		} else if (party._mazeId == (_vm->_files->_isDarkCc ? 31 : 30)) {
+			_v13 = 10;
+			_v12 = 50;
+			_v11 = 500;
+			_v10 = 100;
+			_v14 = 25;
+		} else if (party._mazeId == (_vm->_files->_isDarkCc ? 37 : 73)) {
+			_v13 = 20;
+			_v12 = 100;
+			_v11 = 1000;
+			_v10 = 200;
+			_v14 = 50;
+		} else if (_vm->_files->_isDarkCc || party._mazeId == 49) {
+			_v13 = 100;
+			_v12 = 500;
+			_v11 = 5000;
+			_v10 = 300;
+			_v14 = 100;
+		}
+
+		_currentCharLevel = ch.getCurrentLevel();
+		if (ch._currentHp < ch.getMaxHP()) {
+			_healCost = _currentCharLevel * 10 + _v13;
+		}
+
+		for (int attrib = HEART_BROKEN; attrib <= UNCONSCIOUS; ++attrib) {
+			if (ch._conditions[attrib])
+				_healCost += _currentCharLevel * 10;
+		}
+
+		_v6 = 0;
+		if (ch._conditions[DEAD]) {
+			_v6 += (_currentCharLevel * 100) + (ch._conditions[DEAD] * 50) + _v12;
+		}
+		if (ch._conditions[STONED]) {
+			_v6 += (_currentCharLevel * 100) + (ch._conditions[STONED] * 50) + _v12;
+		}
+		if (ch._conditions[ERADICATED]) {
+			_v5 = (_currentCharLevel * 1000) + (ch._conditions[ERADICATED] * 500) + _v11;
+		}
+
+		for (int idx = 0; idx < 9; ++idx) {
+			_uncurseCost |= ch._weapons[idx]._bonusFlags & 0x40;
+			_uncurseCost |= ch._armor[idx]._bonusFlags & 0x40;
+			_uncurseCost |= ch._accessories[idx]._bonusFlags & 0x40;
+			_uncurseCost |= ch._misc[idx]._bonusFlags & 0x40;
+		}
+
+		if (_uncurseCost || ch._conditions[CURSED])
+			_v5 = (_currentCharLevel * 20) + _v10;
+
+		_donation = _flag1 ? 0 : _v14;
+		_healCost += _v6 + _v5;
+
+		return Common::String::format(TEMPLE_TEXT, ch._name.c_str(),
+			_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
+			XeenEngine::printMil(party._gold).c_str());
+
+	case 5:
+		// Training
+		if (_vm->_files->_isDarkCc) {
+			switch (party._mazeId) {
+			case 29:
+				_v20 = 30;
+				break;
+			case 31:
+				_v20 = 50;
+				break;
+			case 37:
+				_v20 = 200;
+				break;
+			default:
+				_v20 = 100;
+				break;
+			}
+		} else {
+			switch (party._mazeId) {
+			case 28:
+				_v20 = 10;
+				break;
+			case 30:
+				_v20 = 15;
+				break;
+			default:
+				_v20 = 20;
+				break;
+			}
+		}
+
+		_nextExperienceLevel = ch.nextExperienceLevel();
+
+		if (_nextExperienceLevel >= 0x10000 && ch._level._permanent < _v20) {
+			int nextLevel = ch._level._permanent + 1;
+			return Common::String::format(EXPERIENCE_FOR_LEVEL,
+				ch._name.c_str(), _nextExperienceLevel, nextLevel);
+		} else if (ch._level._permanent >= 20) {
+			_nextExperienceLevel = 1;
+			msg = Common::String::format(LEARNED_ALL, ch._name.c_str());
+		} else {
+			msg = Common::String::format(ELIGIBLE_FOR_LEVEL,
+				ch._name.c_str(), ch._level._permanent + 1);
+		}
+
+		return Common::String::format(TRAINING_TEXT,
+			XeenEngine::printMil(party._gold).c_str());
+
+	default:
+		return "";
+	}
 }
 
-void Town::doTownOptions() {
+Character *Town::doTownOptions(Character *charP) {
+	Common::String result;
+
 	error("TODO: doTownOptions");
 }
 

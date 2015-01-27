@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-array.h"
 #include "xeen/dialogs.h"
+#include "xeen/party.h"
 
 namespace Xeen {
 
@@ -40,10 +41,19 @@ private:
 	int _townMaxId;
 	int _townActionId;
 	int _townCurrent;
-	int _v1;
-	int _v2;
+	int _v1, _v2;
+	int _donation;
+	int _healCost;
+	int _v5, _v6;
+	int _v10, _v11, _v12;
+	int _v13, _v14;
+	int _v20;
+	int _uncurseCost;
 	Common::Point _townPos;
 	int _arr1[6];
+	int _currentCharLevel;
+	bool _flag1;
+	uint _nextExperienceLevel;
 
 	void loadStrings(const Common::String &name);
 
@@ -59,11 +69,11 @@ private:
 
 	void dwarfEvent();
 
-	Common::String createTownText();
+	Common::String createTownText(Character &ch);
 
 	void townWait();
 
-	void doTownOptions();
+	Character *doTownOptions(Character *charP);
 public:
 	Town(XeenEngine *vm);
 

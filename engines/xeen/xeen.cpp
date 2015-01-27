@@ -339,4 +339,14 @@ void XeenEngine::gameLoop() {
 	}
 }
 
+Common::String XeenEngine::printMil(uint value) {
+	return (value >= 1000000) ? Common::String::format("%lu mil", value / 1000000) :
+		Common::String::format("%lu", value);
+}
+
+Common::String XeenEngine::printK(uint value) {
+	return (value > 9999) ? Common::String::format("%uk", value / 1000) :
+		Common::String::format("%u", value);
+}
+
 } // End of namespace Xeen

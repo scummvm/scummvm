@@ -290,6 +290,10 @@ const char *const CLASS_NAMES[11] = {
 	"Ninja", "Barbarian", "Druid", "Ranger", nullptr
 };
 
+const uint CLASS_EXP_LEVELS[10] = {
+	1500, 2000, 2000, 1500, 2000, 1000, 1500, 1500, 1500, 2000
+};
+
 const char *const CONDITION_NAMES[18] = {
 	nullptr, "Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased", 
 	"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused", 
@@ -584,5 +588,65 @@ const char *const TOWN_ACTION_SHAPES[4] = {
 const int TOWN_ACTION_FILES[2][7] = {
 	{ 3, 2, 4, 2, 4, 2, 1 }, { 5, 3, 7, 5, 4, 6, 1 }
 };
+
+const char *const BANK_TEXT = "\x0D\x02\x03""c\x0B""122\x09""013"
+	"\x0C""37D\x0C""dep\x09""040\x0C""37W\x0C""dith\x09""067ESC"
+	"\x01\x09""000\x0B""000Bank of Xeen\x0B""015\n"
+	"Bank\x03l\n"
+	"Gold\x03r\x09""000%s\x03l\n"
+	"Gems\x03r\x09""000%s\x03""c\n"
+	"\n"
+	"Party\x03l\n"
+	"Gold\x03r\x09""000%s\x03l\n"
+	"Gems\x03r\x09""000%s";
+
+const char *const BLACKSMITH_TEXT = "\x01\x0D\x03""c\x0B""000\x09""000"
+	"Store Options for\x09""039\x0B""027%s\x03""l\x0B""046\n"
+	"\x09""011\x0C""37B\x0C""drowse\n"
+	"\x09""000\x0B""090Gold\x03r\x09""000%s"
+	"\x02\x03""c\x0B""122\x09""040ESC\x01";
+
+const char *const GUILD_NOT_MEMBER_TEXT =
+	"\n\nYou have to be a member to shop here.";
+
+const char *const GUILD_TEXT = "\x03""c\x0B""027\x09""039%s"
+	"\x03l\x0B""046\n"
+	"\x09""012\x0C""37B\x0C""duy Spells\n"
+	"\x09""012\x0C""37S\x0C""dpell Info";
+
+const char *const TAVERN_TEXT =
+	"\x0D\x03""c\x0B""000\x09""000Tavern Options for\x09""039"
+	"\x0B""027%s%s\x03l\x09""000"
+	"\x0B""090Gold\x03r\x09""000%s\x02\x03""c\x0B""122"
+	"\x09""021\x0C""37S\x0C""dign in\x09""060ESC\x01";
+
+const char *const FOOD_AND_DRINK =
+	"\x03l\x09""017\x0B""046\x0C""37D\x0C""drink\n"
+	"\x09""017\x0C""37F\x0C""dood\n"
+	"\x09""017\x0C""37T\x0C""dip\n"
+	"\x09""017\x0C""37R\x0C""dumors";
+
+const char *const TEMPLE_TEXT =
+	"\x0D\x03""c\x0B""000\x09""000Temple Options for"
+	"\x09""039\x0B""027%s\x03l\x09""000\x0B""046"
+	"\x0C""37H\x0C""deal\x03r\x09""000%lu\x03l\n"
+	"\x0C""37D\x0C""donation\x03r\x09""000%lu\x03l\n"
+	"\x0C""37U\x0C""dnCurse\x03r\x09""000%s"
+	"\x03l\x09""000\x0B""090Gold\x03r\x09""000%s"
+	"\x02\x03""c\x0B""122\x09""040ESC\x01";
+
+const char *const EXPERIENCE_FOR_LEVEL = 
+	"%s needs %lu experience for level %u.";
+
+const char *const LEARNED_ALL = "%s has learned all we can teach!";
+
+const char *const ELIGIBLE_FOR_LEVEL = "%s is eligible for level %d.";
+
+const char *const TRAINING_TEXT =
+	"\x0D\x03""cTraining Options\n"
+	"\n"
+	"%s\x03l\x0B""090\x09""000Gold\x03r\x09"
+	"000%s\x02\x03""c\x0B""122\x09""021"
+	"\x0C""37T\x0C""drain\x09""060ESC\x01";
 
 } // End of namespace Xeen

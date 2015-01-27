@@ -167,6 +167,14 @@ public:
 	int itemScan(int itemId) const;
 
 	void setValue(int id, uint value);
+
+	bool guildMember() const;
+
+	uint nextExperienceLevel() const;
+
+	uint currentExperienceLevel() const;
+
+	uint getCurrentExperience() const;
 };
 
 class Roster: public Common::Array<Character> {

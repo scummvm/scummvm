@@ -198,6 +198,10 @@ public:
 	 * Write out a savegame header
 	 */
 	void writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header);
+
+	static Common::String printMil(uint value);
+
+	static Common::String printK(uint value);
 };
 
 } // End of namespace Xeen

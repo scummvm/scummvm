@@ -66,6 +66,8 @@ extern const int RACE_SP_BONUSES[5][2];
 
 extern const char *const CLASS_NAMES[11];
 
+extern const uint CLASS_EXP_LEVELS[10];
+
 extern const char *const ALIGNMENT_NAMES[3];
 
 extern const char *const SEX_NAMES[2];
@@ -157,6 +159,28 @@ extern const char *const TOWN_ACTION_MUSIC[14];
 extern const char *const TOWN_ACTION_SHAPES[4];
 
 extern const int TOWN_ACTION_FILES[2][7];
+
+extern const char *const BANK_TEXT;
+
+extern const char *const BLACKSMITH_TEXT;
+
+extern const char *const GUILD_NOT_MEMBER_TEXT;
+
+extern const char *const GUILD_TEXT;
+
+extern const char *const TAVERN_TEXT;
+
+extern const char *const FOOD_AND_DRINK;
+
+extern const char *const TEMPLE_TEXT;
+
+extern const char *const EXPERIENCE_FOR_LEVEL;
+
+extern const char *const LEARNED_ALL;
+
+extern const char *const ELIGIBLE_FOR_LEVEL;
+
+extern const char *const TRAINING_TEXT;
 
 } // End of namespace Xeen
 
