@@ -184,6 +184,8 @@ extern const char *const TRAINING_TEXT;
 
 extern const char *const GOLD_GEMS;
 
+extern const char *const GOLD_GEMS_2;
+
 extern const char *const DEPOSIT_WITHDRAWL[2];
 
 extern const char *const NOT_ENOUGH_X_IN_THE_Y;

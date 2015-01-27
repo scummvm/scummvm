@@ -218,7 +218,7 @@ public:
 	int _day;
 	int _year;
 	int _minutes;
-	int _food;
+	uint _food;
 	int _lightCount;
 	int _torchCount;
 	int _fireResistence;
@@ -228,10 +228,10 @@ public:
 	int _deathCount;
 	int _winCount;
 	int _lossCount;
-	int _gold;
-	int _gems;
-	int _bankGold;
-	int _bankGems;
+	uint _gold;
+	uint _gems;
+	uint _bankGold;
+	uint _bankGems;
 	int _totalTime;
 	bool _rested;
 	bool _gameFlags[512];

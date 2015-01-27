@@ -657,6 +657,13 @@ const char *const GOLD_GEMS =
 	"\x0C""37o\x0C""dld\x09""040G\x0C\x03""7e"
 	"\x0C""dms\x09""067ESC\x01";
 
+const char *const GOLD_GEMS_2 =
+	"\x09""000\x0B""000\x03""c%s\x03l\n"
+	"\n"
+	"\x04""077Gold\x03r\x09""000%s\x03l\n"
+	"\x04""077Gems\x03r\x09""000%s\x03l\x09""000\x0B""051\x04""077\n"
+	"\x04""077";
+
 const char *const DEPOSIT_WITHDRAWL[2] = { "Deposit", "Withdrawl" };
 
 const char *const NOT_ENOUGH_X_IN_THE_Y =

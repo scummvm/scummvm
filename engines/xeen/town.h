@@ -79,6 +79,8 @@ private:
 	void depositWithdrawl(int choice);
 
 	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
+
+	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait);
 public:
 	Town(XeenEngine *vm);
 

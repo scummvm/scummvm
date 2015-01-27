@@ -21,6 +21,7 @@
  */
 
 #include "xeen/town.h"
+#include "xeen/dialogs_input.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -322,7 +323,6 @@ void Town::dwarfEvent() {
 }
 
 Common::String Town::createTownText(Character &ch) {
-	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Common::String msg;
 
@@ -507,7 +507,7 @@ void Town::depositWithdrawl(int choice) {
 	}
 
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
-		_buttons[idx]._sprites = &_icons1;
+		_buttons[idx]._sprites = &_icons2;
 	_buttons[0]._value = Common::KEYCODE_o;
 	_buttons[1]._value = Common::KEYCODE_e;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
@@ -523,45 +523,141 @@ void Town::depositWithdrawl(int choice) {
 	screen._windows[35].update();
 
 	sound.playSample(nullptr, 0);
-	File f("coina.voc");
-	bool flag;
+	File voc("coina.voc");
+	bool flag = false;
 
 	do {
-		bool flag;
 		switch (townWait()) {
 		case Common::KEYCODE_o:
-			continue;
+			flag = false;
+			break;
 		case Common::KEYCODE_e:
-			flag = 1;
+			flag = true;
+			break;
+		case Common::KEYCODE_ESCAPE:
 			break;
 		default:
-			flag = 0;
-			break;
+			continue;
 		}
 		
 		if ((choice && !party._bankGems && flag) ||
 			(choice && !party._bankGold && !flag) ||
-			(choice && !party._gems && flag) ||
-			(choice && !party._gold && !flag)) {
+			(!choice && !party._gems && flag) ||
+			(!choice && !party._gold && !flag)) {
 			notEnough(flag, choice, 1, WT_2);
 		} else {
 			screen._windows[35].writeString(AMOUNT);
+			int amount = NumericInput::show(_vm, 35, 10, 77);
 
-			// TODO
+			if (amount) {
+				if (flag) {
+					if (subtract(true, amount, choice, WT_2)) {
+						if (choice) {
+							party._gems += amount;
+						} else {
+							party._bankGems += amount;
+						}
+					}
+				} else {
+					if (subtract(false, amount, choice, WT_2)) {
+						if (choice) {
+							party._gold += amount;
+						} else {
+							party._bankGold += amount;
+						}
+					}
+				}
+			}
+
+			uint gold, gems;
+			if (choice) {
+				gold = party._bankGold;
+				gems = party._bankGems;
+			} else {
+				gold = party._gold;
+				gems = party._gems;
+			}
+
+			sound.playSample(&voc, 0);
+			msg = Common::String::format(GOLD_GEMS_2, DEPOSIT_WITHDRAWL[choice],
+				XeenEngine::printMil(gold), XeenEngine::printMil(gems));
+			screen._windows[35].writeString(msg);
+			screen._windows[35].update();
 		}
 		// TODO
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
+	for (uint idx = 0; idx < _buttons.size(); ++idx)
+		_buttons[idx]._sprites = &_icons1;
+	_buttons[0]._value = Common::KEYCODE_d;
+	_buttons[1]._value = Common::KEYCODE_w;
+	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 }
 
 void Town::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait) {
-	SoundManager &sound = *_vm->_sound;
-
 	Common::String msg = Common::String::format(
 		mode ? NO_X_IN_THE_Y : NOT_ENOUGH_X_IN_THE_Y,
 		CONSUMABLE_NAMES[consumableId], WHERE_NAMES[whereId]);
 	ErrorScroll::show(_vm, msg, wait);
 }
 
+int Town::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
+	Party &party = *_vm->_party;
+
+	switch (mode) {
+	case 0:
+		// Gold
+		if (whereId) {
+			if (amount <= party._bankGold) {
+				party._bankGold -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		} else {
+			if (amount <= party._gold) {
+				party._gold -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		}
+		break;
+
+	case 1:
+		// Gems
+		if (whereId) {
+			if (amount <= party._bankGems) {
+				party._bankGems -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		} else {
+			if (amount <= party._gems) {
+				party._gems -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		}
+		break;
+
+	case 2:
+		// Food
+		if (amount > party._food) {
+			party._food -= amount;
+		} else {
+			notEnough(5, 0, 0, wait);
+			return false;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
+}
 
 } // End of namespace Xeen
