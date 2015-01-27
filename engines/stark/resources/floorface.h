@@ -34,6 +34,9 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * A floor face is a 3D triangle used to build the floor field
+ */
 class FloorFace : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kFloorFace;

@@ -33,6 +33,9 @@ namespace Stark {
 class Visual;
 class XRCReadStream;
 
+/**
+ * A still image resource
+ */
 class Image : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kImage;
@@ -54,6 +57,7 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	/** Initialize the renderable for the image */
 	virtual Visual *getVisual();
 
 protected:
@@ -73,6 +77,9 @@ protected:
 	Common::Array<Polygon> _polygons;
 };
 
+/**
+ * A still image resource loading its data from an XMG file
+ */
 class ImageSub23 : public Image {
 public:
 	ImageSub23(Resource *parent, byte subType, uint16 index, const Common::String &name);

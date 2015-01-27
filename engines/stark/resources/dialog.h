@@ -33,6 +33,16 @@ namespace Stark {
 class Speech;
 class XRCReadStream;
 
+/**
+ * A dialog between two characters.
+ *
+ * Dialogs are made of a list of topics. Each topic has a list of
+ * possible answers, one of which is played when the player selects the topic,
+ * until all the possible answers have been played.
+ *
+ * Answers are made of a list of lines. All of the lines of an answer are played,
+ * one after the other when an answer is played. Lines reference Speech resources.
+ */
 class Dialog : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kDialog;
@@ -40,11 +50,20 @@ public:
 	Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Dialog();
 
+	/**
+	 * A topic reply
+	 */
 	class Reply {
 	public:
 		Reply();
+
+		/** Start playing the reply. Sets the current line to the first one */
 		void start();
+
+		/** Select the next line to be played */
 		void goToNextLine();
+
+		/** Obtain the Speech resource for the current line, or null if the reply has ended */
 		Speech *getCurrentSpeech();
 
 	private:
@@ -67,13 +86,23 @@ public:
 		friend class Dialog;
 	};
 
+	/**
+	 * A dialog topic
+	 */
 	class Topic {
 	public:
 		Topic();
+
+		/** Compute the next possible reply index after the currently selected reply */
 		int32 getNextReplyIndex() const;
+
+		/** Obtain the caption for the topic */
 		Common::String getCaption() const;
 
+		/** Select a reply from its index */
 		Reply *startReply(uint32 index);
+
+		/** Returns the selected reply, or null if no reply is selected */
 		Reply *getCurrentReply();
 
 	private:
@@ -88,7 +117,10 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	/** List the currently available topics for this Dialog */
 	Common::Array<Topic *> listAvailableTopics();
+
+	/** Obtain the Dialog which should be played at the outcome of this one, if any */
 	Dialog *getNextDialog(Dialog::Reply *reply);
 
 protected:

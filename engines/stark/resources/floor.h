@@ -35,6 +35,12 @@ namespace Stark {
 class FloorFace;
 class XRCReadStream;
 
+/**
+ * This resource represents the floor field of a 3D layer.
+ * Characters can only walk on the floor field.
+ *
+ * The floor field is made of a list of faces building a mesh.
+ */
 class Floor : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kFloor;
@@ -45,7 +51,7 @@ public:
 	// Resource API
 	void onAllLoaded() override;
 
-	/** Obtain the vertex for an indice */
+	/** Obtain the vertex for an index */
 	Math::Vector3d getVertex(uint32 indice) const;
 
 	/**
@@ -59,7 +65,7 @@ public:
 	/** Fill the z coordinate of the point so that it is on the plane of a face */
 	void computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) const;
 
-	/** Obtain teh distance to the camera for a face */
+	/** Obtain the distance to the camera for a face */
 	float getDistanceFromCamera(uint32 faceIndex) const;
 
 protected:
