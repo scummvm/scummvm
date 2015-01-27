@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-array.h"
 #include "xeen/dialogs.h"
+#include "xeen/dialogs_error.h"
 #include "xeen/party.h"
 
 namespace Xeen {
@@ -71,9 +72,13 @@ private:
 
 	Common::String createTownText(Character &ch);
 
-	void townWait();
+	int townWait();
 
-	Character *doTownOptions(Character *charP);
+	Character *doTownOptions(Character *c);
+
+	void depositWithdrawl(int choice);
+
+	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
 public:
 	Town(XeenEngine *vm);
 

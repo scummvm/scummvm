@@ -67,8 +67,6 @@ private:
 	int _ycL, _ycH;
 
 	void open2();
-
-	Common::KeyCode doCursor(const Common::String &msg);
 public:
 	bool _enabled;
 public:

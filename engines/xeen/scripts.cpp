@@ -21,7 +21,7 @@
  */
 
 #include "xeen/scripts.h"
-#include "xeen/dialogs_string_input.h"
+#include "xeen/dialogs_input.h"
 #include "xeen/dialogs_whowill.h"
 #include "xeen/dialogs_yesno.h"
 #include "xeen/party.h"

@@ -649,4 +649,31 @@ const char *const TRAINING_TEXT =
 	"000%s\x02\x03""c\x0B""122\x09""021"
 	"\x0C""37T\x0C""drain\x09""060ESC\x01";
 
+const char *const GOLD_GEMS =
+	"\x03""c\x0B""000\x09""000%s\x03l\n"
+	"\n"
+	"Gold\x03r\x09""000%s\x03l\n"
+	"Gems\x03r\x09""000%s\x02\x03""c\x0B""096\x09""013G"
+	"\x0C""37o\x0C""dld\x09""040G\x0C\x03""7e"
+	"\x0C""dms\x09""067ESC\x01";
+
+const char *const DEPOSIT_WITHDRAWL[2] = { "Deposit", "Withdrawl" };
+
+const char *const NOT_ENOUGH_X_IN_THE_Y =
+	"\x03""c\x0B""012Not enough %s in the %s!\x03l";
+
+const char *const NO_X_IN_THE_Y = "\x03""c\x0B""012No %s in the %s!\x03l";
+
+const char *const STAT_NAMES[16] = {
+	"Might", "Intellect", "Personality", "Endurance", "Speed",
+	"Accuracy", "Luck", "Age", "Level", "Armor Class", "Hit Points",
+	"Spell Points", "Resistances", "Skills", "Awards", "Experience"
+};
+
+const char *const CONSUMABLE_NAMES[4] = { "Gold", "Gems", "Food", "Condition" };
+
+const char *const WHERE_NAMES[2] = { "Party", "Bank" };
+
+const char *const AMOUNT = "\x03""c\x09""000\x0B""051Amount\x03l\n";
+
 } // End of namespace Xeen

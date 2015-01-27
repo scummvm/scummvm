@@ -195,8 +195,8 @@ int Town::townAction(int actionId) {
 
 	sound.loadMusic(TOWN_ACTION_MUSIC[actionId], 223);
 
-	_townSprites.clear();
-	for (int idx = 0; idx < TOWN_ACTION_FILES[isDarkCc][actionId]; ++idx) {
+	_townSprites.resize(TOWN_ACTION_FILES[isDarkCc][actionId]);
+	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
 			TOWN_ACTION_SHAPES[actionId], idx + 1);
 		_townSprites[idx].load(shapesName);
@@ -281,20 +281,20 @@ int Town::townAction(int actionId) {
 	return result;
 }
 
-void Town::townWait() {
+int Town::townWait() {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldQuit() && !_buttonValue) {
 		events.updateGameCounter();
 		while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() < 3) {
 			checkEvents(_vm);
 		}
-		if (_buttonValue)
-			return;
-
-		intf.drawTownAnim(!_vm->_screen->_windows[11]._enabled);
+		if (!_buttonValue)
+			intf.drawTownAnim(!_vm->_screen->_windows[11]._enabled);
 	}
+
+	return _buttonValue;
 }
 
 void Town::pyramidEvent() {
@@ -471,10 +471,96 @@ Common::String Town::createTownText(Character &ch) {
 	}
 }
 
-Character *Town::doTownOptions(Character *charP) {
-	Common::String result;
+Character *Town::doTownOptions(Character *c) {
+	switch (_townActionId) {
+	case 0:
+		if (_buttonValue == Common::KEYCODE_d)
+			_buttonValue = 0;
+		else if (_buttonValue == Common::KEYCODE_w)
+			_buttonValue = 1;
+		else
+			break;
 
-	error("TODO: doTownOptions");
+		depositWithdrawl(_buttonValue);
+		break;
+
+	default:
+		// TODO: remaining cases
+		error("TODO: doTownOptions");
+	}
+
+	return c;
+}
+
+void Town::depositWithdrawl(int choice) {
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	int gold, gems;
+
+	if (choice) {
+		gold = party._bankGold;
+		gems = party._bankGems;
+	} else {
+		gold = party._gold;
+		gems = party._gems;
+	}
+
+	for (uint idx = 0; idx < _buttons.size(); ++idx)
+		_buttons[idx]._sprites = &_icons1;
+	_buttons[0]._value = Common::KEYCODE_o;
+	_buttons[1]._value = Common::KEYCODE_e;
+	_buttons[2]._value = Common::KEYCODE_ESCAPE;
+
+	Common::String msg = Common::String::format(GOLD_GEMS,
+		DEPOSIT_WITHDRAWL[choice],
+		XeenEngine::printMil(gold).c_str(),
+		XeenEngine::printMil(gems).c_str());
+
+	screen._windows[35].open();
+	screen._windows[35].writeString(msg);
+	drawButtons(&screen._windows[35]);
+	screen._windows[35].update();
+
+	sound.playSample(nullptr, 0);
+	File f("coina.voc");
+	bool flag;
+
+	do {
+		bool flag;
+		switch (townWait()) {
+		case Common::KEYCODE_o:
+			continue;
+		case Common::KEYCODE_e:
+			flag = 1;
+			break;
+		default:
+			flag = 0;
+			break;
+		}
+		
+		if ((choice && !party._bankGems && flag) ||
+			(choice && !party._bankGold && !flag) ||
+			(choice && !party._gems && flag) ||
+			(choice && !party._gold && !flag)) {
+			notEnough(flag, choice, 1, WT_2);
+		} else {
+			screen._windows[35].writeString(AMOUNT);
+
+			// TODO
+		}
+		// TODO
+	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+
+}
+
+void Town::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait) {
+	SoundManager &sound = *_vm->_sound;
+
+	Common::String msg = Common::String::format(
+		mode ? NO_X_IN_THE_Y : NOT_ENOUGH_X_IN_THE_Y,
+		CONSUMABLE_NAMES[consumableId], WHERE_NAMES[whereId]);
+	ErrorScroll::show(_vm, msg, wait);
 }
 
 

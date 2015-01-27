@@ -23,21 +23,42 @@
 #ifndef XEEN_DIALOGS_STRING_INPUT_H
 #define XEEN_DIALOGS_STRING_INPUT_H
 
+#include "common/keyboard.h"
 #include "xeen/dialogs.h"
+#include "xeen/screen.h"
 
 namespace Xeen {
 
-class StringInput : public ButtonContainer {
+class Input : public ButtonContainer {
 private:
+	Common::KeyCode doCursor(const Common::String &msg);
+protected:
 	XeenEngine *_vm;
+	Window *_window;
 
-	StringInput(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	int getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric);
+
+	Input(XeenEngine *vm, Window *window) : _vm(vm), _window(window) {}
+};
+
+class StringInput : public Input {
+protected:
+	StringInput(XeenEngine *vm);
 
 	int execute(bool type, const Common::String &expected, 
 		const Common::String &title, int opcode);
 public:
 	static int show(XeenEngine *vm, bool type, const Common::String &msg1, 
-		const Common::String &msg2, int opcdoe);
+		const Common::String &msg2, int opcode);
+};
+
+class NumericInput : public Input {
+private:
+	NumericInput(XeenEngine *vm, int window);
+
+	int execute(int maxLength, int maxWidth);
+public:
+	static int show(XeenEngine *vm, int window, int maxLength, int maxWidth);
 };
 
 } // End of namespace Xeen

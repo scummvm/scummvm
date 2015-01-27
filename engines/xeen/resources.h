@@ -182,6 +182,22 @@ extern const char *const ELIGIBLE_FOR_LEVEL;
 
 extern const char *const TRAINING_TEXT;
 
+extern const char *const GOLD_GEMS;
+
+extern const char *const DEPOSIT_WITHDRAWL[2];
+
+extern const char *const NOT_ENOUGH_X_IN_THE_Y;
+
+extern const char *const NO_X_IN_THE_Y;
+
+extern const char *const STAT_NAMES[16];
+
+extern const char *const CONSUMABLE_NAMES[4];
+
+extern const char *const WHERE_NAMES[2];
+
+extern const char *const AMOUNT;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */
