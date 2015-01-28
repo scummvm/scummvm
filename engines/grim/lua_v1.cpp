@@ -779,6 +779,7 @@ STUB_FUNC(Lua_V1::GetFindSaveGameStatus)
 STUB_FUNC(Lua_V1::FindSaveGames)
 STUB_FUNC(Lua_V1::InitiateFindSaveGames)
 STUB_FUNC(Lua_V1::AreAchievementsInstalled)
+STUB_FUNC(Lua_V1::UnlockAchievement)
 STUB_FUNC(Lua_V1::ImGetCommentaryVol)
 STUB_FUNC(Lua_V1::ImSetCommentaryVol)
 STUB_FUNC(Lua_V1::SetMouseSpeedScale)
@@ -1029,6 +1030,7 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "GetLanguage", LUA_OPCODE(Lua_V1, GetLanguage) },
 	{ "PreloadCursors", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "AreAchievementsInstalled", LUA_OPCODE(Lua_V1, AreAchievementsInstalled) },
+	{ "UnlockAchievement", LUA_OPCODE(Lua_V1, UnlockAchievement) },
 	{ "ImGetCommentaryVol", LUA_OPCODE(Lua_V1, ImGetCommentaryVol) },
 	{ "ImSetCommentaryVol", LUA_OPCODE(Lua_V1, ImSetCommentaryVol) },
 	{ "SetMouseSpeedScale", LUA_OPCODE(Lua_V1, SetMouseSpeedScale) },

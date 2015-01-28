@@ -298,6 +298,7 @@ protected:
 	DECLARE_LUA_OPCODE(FindSaveGames);
 	DECLARE_LUA_OPCODE(GetFindSaveGameStatus);
 	DECLARE_LUA_OPCODE(AreAchievementsInstalled);
+	DECLARE_LUA_OPCODE(UnlockAchievement);
 	DECLARE_LUA_OPCODE(ImGetCommentaryVol);
 	DECLARE_LUA_OPCODE(ImSetCommentaryVol);
 	DECLARE_LUA_OPCODE(SetMouseSpeedScale);
