@@ -1726,6 +1726,22 @@ void MortevielleEngine::showMoveMenuAlert() {
  * @remarks	Originally called 'dialpre'
  */
 void MortevielleEngine::showConfigScreen() {
+	// FIXME: need a DOS palette, index 9 (light blue). Also we should show DOS font here
+	Common::String tmpStr;
+	int width, cy = 0;
+	clearScreen();
+ 	do {
+ 		++cy;
+ 		tmpStr = getString(cy + kStartingScreenStringIndex);
+ 		width = _screenSurface->getStringWidth(tmpStr);
+ 		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
+ 	} while (cy != 20);
+
+ 	int ix = 0;
+ 	do {
+ 		++ix;
+ 	} while (!(keyPressed() || ix == 0x5e5));
+
 	_crep = 998;
 }
 
@@ -2132,6 +2148,7 @@ void MortevielleEngine::showTitleScreen() {
 	clearScreen();
 	draw(0, 0);
 
+	// FIXME: should be a DOS font here
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
 	_screenSurface->putxy(104 + 72 * kResolutionScaler, 185);
 	_screenSurface->drawString(cpr, 0);
