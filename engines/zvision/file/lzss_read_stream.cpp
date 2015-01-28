@@ -31,8 +31,9 @@ LzssReadStream::LzssReadStream(Common::SeekableReadStream *source)
 	  // It's convention to set the starting cursor position to blockSize - 16
 	  _windowCursor(0x0FEE),
 	  _eosFlag(false) {
-	// Clear the window to null
-	memset(_window, 0, BLOCK_SIZE);
+	// All values up to _windowCursor inits by 0x20
+	memset(_window, 0x20, _windowCursor);
+	memset(_window + _windowCursor, 0, BLOCK_SIZE - _windowCursor);
 }
 
 uint32 LzssReadStream::decompressBytes(byte *destination, uint32 numberOfBytes) {
