@@ -41,6 +41,7 @@ int WhoWill::execute(int message, int action, bool type) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
+	Town &town = *_vm->_town;
 	int numFrames;
 
 	if (party._partyCount <= 1)
@@ -65,7 +66,7 @@ int WhoWill::execute(int message, int action, bool type) {
 		events.updateGameCounter();
 
 		if (screen._windows[11]._enabled) {
-			intf.drawTownAnim(0);
+			town.drawTownAnim(0);
 			screen._windows[36].frame();
 			numFrames = 3;
 		} else {

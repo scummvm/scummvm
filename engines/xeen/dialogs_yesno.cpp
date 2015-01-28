@@ -39,6 +39,7 @@ bool YesNo::execute(bool type, int v2) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	Town &town = *_vm->_town;
 	SpriteResource confirmSprites;
 	int numFrames;
 	bool result = false;
@@ -67,7 +68,7 @@ bool YesNo::execute(bool type, int v2) {
 			intf.draw3d(true);
 			numFrames = 1;
 		} else {
-			intf.drawTownAnim(v2);
+			town.drawTownAnim(v2);
 			numFrames = 3;
 		}
 

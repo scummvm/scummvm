@@ -60,6 +60,7 @@ private:
 	int _currentCharLevel;
 	bool _flag1;
 	uint _nextExperienceLevel;
+	int _drawCtr1, _drawCtr2;
 
 	void loadStrings(const Common::String &name);
 
@@ -106,6 +107,8 @@ public:
 	Town(XeenEngine *vm);
 
 	int townAction(int actionId);
+
+	void drawTownAnim(bool flag);
 };
 
 } // End of namespace Xeen

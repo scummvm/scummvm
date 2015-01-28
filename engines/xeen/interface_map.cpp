@@ -4964,8 +4964,4 @@ void InterfaceMap::drawMiniMap() {
 	party._wizardEyeActive = eyeActive;
 }
 
-void InterfaceMap::drawTownAnim(bool v) {
-	warning("TODO");
-}
-
 } // End of namespace Xeen

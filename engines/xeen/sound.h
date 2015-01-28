@@ -45,6 +45,8 @@ public:
 
 	void playSample(const Common::SeekableReadStream *stream, int v2 = 1) {}
 
+	bool playSample(int v1, int v2) { return false; }
+
 	void playFX(int id) {}
 };
 

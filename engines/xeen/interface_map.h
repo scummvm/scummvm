@@ -165,8 +165,6 @@ public:
 
 	void drawOutdoors();
 
-	void drawTownAnim(bool v);
-
 	void assembleBorder();
 };
 

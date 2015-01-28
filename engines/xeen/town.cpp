@@ -51,6 +51,7 @@ Town::Town(XeenEngine *vm) : _vm(vm) {
 	_uncurseCost = 0;
 	_flag1 = false;
 	_nextExperienceLevel = 0;
+	_drawCtr1 = _drawCtr2 = 0;
 }
 
 void Town::loadStrings(const Common::String &name) {
@@ -231,7 +232,7 @@ int Town::townAction(int actionId) {
 
 	screen._windows[0].update();
 	intf.highlightChar(0);
-	intf.drawTownAnim(1);
+	drawTownAnim(1);
 
 	if (actionId == 0)
 		intf._overallFrame = 2;
@@ -290,7 +291,6 @@ int Town::townAction(int actionId) {
 
 int Town::townWait() {
 	EventsManager &events = *_vm->_events;
-	Interface &intf = *_vm->_interface;
 
 	_buttonValue = 0;
 	while (!_vm->shouldQuit() && !_buttonValue) {
@@ -300,7 +300,7 @@ int Town::townWait() {
 			checkEvents(_vm);
 		}
 		if (!_buttonValue)
-			intf.drawTownAnim(!_vm->_screen->_windows[11]._enabled);
+			drawTownAnim(!_vm->_screen->_windows[11]._enabled);
 	}
 
 	return _buttonValue;
@@ -1116,6 +1116,136 @@ int Town::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
 	}
 
 	return true;
+}
+
+void Town::drawTownAnim(bool flag) {
+	Interface &intf = *_vm->_interface;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+
+	if (_townActionId == 1) {
+		if (sound.playSample(1, 0)) {
+			if (isDarkCc) {
+				_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
+					Common::Point(34, 33));
+				_townSprites[2].draw(screen, _vm->getRandomNumber(5) + 3,
+					Common::Point(34, 54));
+			}
+		} else {
+			_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+			if (isDarkCc) {
+				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
+					Common::Point(34, 33));
+			}
+		}
+	} else {
+		if (!isDarkCc || _townActionId != 5) {
+			if (!_townSprites[_townCurrent / 8].empty())
+				_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+		}
+	}
+
+	switch (_townActionId) {
+	case 0:
+		if (sound.playSample(1, 0) || (isDarkCc && intf._overallFrame)) {
+			if (isDarkCc) {
+				if (sound.playSample(1, 0) || intf._overallFrame == 1) {
+					_townSprites[4].draw(screen, _vm->getRandomNumber(13, 18),
+						Common::Point(8, 30));
+				} else if (intf._overallFrame > 1) {
+					_townSprites[4].draw(screen, 13 - intf._overallFrame++,
+						Common::Point(8, 30));
+					if (intf._overallFrame > 14)
+						intf._overallFrame = 0;
+				}
+			} else {
+				_townSprites[2].draw(screen, _vm->getRandomNumber(7, 11), Common::Point(8, 8));
+			}
+		}
+		break;
+
+	case 2:
+		if (sound.playSample(1, 0)) {
+			if (isDarkCc) {
+				if (intf._overallFrame) {
+					intf._overallFrame ^= 1;
+					_townSprites[6].draw(screen, intf._overallFrame, Common::Point(8, 106));
+				} else {
+					_townSprites[6].draw(screen, _vm->getRandomNumber(3), Common::Point(16, 48));
+				}
+			}
+		}
+		break;
+
+	case 3:
+		if (sound.playSample(1, 0) && isDarkCc) {
+			_townSprites[4].draw(screen, _vm->getRandomNumber(7), Common::Point(153, 49));
+		}
+		break;
+	case 4:
+		if (sound.playSample(1, 0)) {
+			_townSprites[3].draw(screen, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
+
+		}
+		break;
+
+	case 5:
+		if (sound.playSample(1, 0)) {
+			if (isDarkCc) {
+				_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+			}
+		} else {
+			if (isDarkCc) {
+				_townSprites[0].draw(screen, ++intf._overallFrame % 8, Common::Point(8, 8));
+				_townSprites[5].draw(screen, _vm->getRandomNumber(5), Common::Point(61, 74));
+			} else {
+				_townSprites[1].draw(screen, _vm->getRandomNumber(8, 12), Common::Point(8, 8));
+			}
+		}
+	}
+
+	if (flag) {
+		intf._face1UIFrame = 0;
+		intf._face2UIFrame = 0;
+		intf._dangerSenseUIFrame = 0;
+		intf._spotDoorsUIFrame = 0;
+		intf._batUIFrame = 0;
+
+		intf.assembleBorder();
+	}
+
+	if (screen._windows[11]._enabled) {
+		_drawCtr1 = (_drawCtr1 + 1) % 2;
+		if (!_drawCtr1 || !_drawCtr2) {
+			_townCurrent = 0;
+			_drawCtr2 = 0;
+		} else {
+			_townCurrent = _vm->getRandomNumber(3);
+		}
+	} else {
+		_townCurrent = (_townCurrent + 1) % _townMaxId;
+	}
+
+	if (isDarkCc) {
+		if (_townActionId == 1 && (_townCurrent == 4 || _townCurrent == 13))
+			sound.playFX(45);
+
+		if (_townActionId == 5 && _townCurrent == 23) {
+			File f("spit1.voc");
+			sound.playSample(&f, 0);
+		}
+	} else {
+		if (_townMaxId == 32 || _townCurrent == 0)
+			_townCurrent = 17;
+		if (_townMaxId == 26 || _townCurrent == 0)
+			_townCurrent = 20;
+		if (_townActionId == 1 && (_townCurrent == 3 || _townCurrent == 9))
+			sound.playFX(45);
+	}
+
+	screen._windows[3].update();
 }
 
 Character *Town::showItems(Character *c, int v2) {
