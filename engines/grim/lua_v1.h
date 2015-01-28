@@ -306,6 +306,7 @@ protected:
 	DECLARE_LUA_OPCODE(IsPlayingCommentary);
 	DECLARE_LUA_OPCODE(EnableCommentary);
 	DECLARE_LUA_OPCODE(ClearCommentary);
+	DECLARE_LUA_OPCODE(HasHeardCommentary);
 	DECLARE_LUA_OPCODE(SetCommentary);
 	DECLARE_LUA_OPCODE(LoadRemappedKeys);
 	DECLARE_LUA_OPCODE(GlobalSaveResolved);
@@ -316,10 +317,13 @@ protected:
 	DECLARE_LUA_OPCODE(SetGameRenderMode);
 	DECLARE_LUA_OPCODE(OverlayMove);
 	DECLARE_LUA_OPCODE(OverlayCreate);
+	DECLARE_LUA_OPCODE(OverlayDestroy);
+	DECLARE_LUA_OPCODE(OverlayFade);
 	DECLARE_LUA_OPCODE(OverlayDimensions);
 	DECLARE_LUA_OPCODE(AddHotspot);
-	DECLARE_LUA_OPCODE(OverlayFade);
+	DECLARE_LUA_OPCODE(RemoveHotspot);
 	DECLARE_LUA_OPCODE(HideMouseCursor);
+	DECLARE_LUA_OPCODE(SetCursor);
 	DECLARE_LUA_OPCODE(ShowCursor);
 	DECLARE_LUA_OPCODE(UnlockCutscene);
 	DECLARE_LUA_OPCODE(SetActorHKHackMode);
@@ -328,6 +332,7 @@ protected:
 	DECLARE_LUA_OPCODE(IsConceptUnlocked);
 	DECLARE_LUA_OPCODE(SaveRegistryToDisk);
 	DECLARE_LUA_OPCODE(GetRemappedKeyName);
+	DECLARE_LUA_OPCODE(GetRemappedKeyHint);
 	DECLARE_LUA_OPCODE(New);
 	
 };

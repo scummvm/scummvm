@@ -759,6 +759,7 @@ STUB_FUNC(Lua_V1::SetLanguage)
 STUB_FUNC(Lua_V1::IsPlayingCommentary)
 STUB_FUNC(Lua_V1::EnableCommentary)
 STUB_FUNC(Lua_V1::ClearCommentary)
+STUB_FUNC(Lua_V1::HasHeardCommentary)
 STUB_FUNC(Lua_V1::SetCommentary)
 STUB_FUNC(Lua_V1::LoadRemappedKeys)
 STUB_FUNC(Lua_V1::GlobalSaveResolved)
@@ -768,9 +769,12 @@ STUB_FUNC(Lua_V1::OverlayClearCache)
 STUB_FUNC(Lua_V1::GetGameRenderMode)
 STUB_FUNC(Lua_V1::SetGameRenderMode)
 STUB_FUNC(Lua_V1::OverlayMove)
+STUB_FUNC(Lua_V1::OverlayDestroy)
 STUB_FUNC(Lua_V1::AddHotspot)
+STUB_FUNC(Lua_V1::RemoveHotspot)
 STUB_FUNC(Lua_V1::OverlayFade)
 STUB_FUNC(Lua_V1::HideMouseCursor)
+STUB_FUNC(Lua_V1::SetCursor)
 STUB_FUNC(Lua_V1::ShowCursor)
 STUB_FUNC(Lua_V1::UnlockCutscene)
 STUB_FUNC(Lua_V1::SetActorHKHackMode)
@@ -779,6 +783,7 @@ STUB_FUNC(Lua_V1::UnlockConcept)
 STUB_FUNC(Lua_V1::IsConceptUnlocked)
 STUB_FUNC(Lua_V1::SaveRegistryToDisk)
 STUB_FUNC(Lua_V1::GetRemappedKeyName)
+STUB_FUNC(Lua_V1::GetRemappedKeyHint)
 STUB_FUNC(Lua_V1::New)
 
 struct luaL_reg grimMainOpcodes[] = {
@@ -1002,7 +1007,7 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "IsPlayingCommentary", LUA_OPCODE(Lua_V1, IsPlayingCommentary) },
 	{ "EnableCommentary", LUA_OPCODE(Lua_V1, EnableCommentary) },
 	{ "ClearCommentary", LUA_OPCODE(Lua_V1, ClearCommentary) },
-	{ "HasHeardCommentary", LUA_OPCDOE(Lua_V1, PreloadCursors) },
+	{ "HasHeardCommentary", LUA_OPCODE(Lua_V1, HasHeardCommentary) },
 	{ "SetCommentary", LUA_OPCODE(Lua_V1, SetCommentary) },
 	{ "LoadRemappedKeys", LUA_OPCODE(Lua_V1, LoadRemappedKeys) },
 	{ "GlobalSaveResolved", LUA_OPCODE(Lua_V1, GlobalSaveResolved) },
@@ -1015,20 +1020,20 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "OverlayCreate", LUA_OPCODE(Lua_V1, OverlayCreate) },
 	{ "OverlayClearCache", LUA_OPCODE(Lua_V1, OverlayClearCache) },
 	{ "OverlayDimensions", LUA_OPCODE(Lua_V1, OverlayDimensions) },
-	{ "OverlayDestroy", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "OverlayFade", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayDestroy", LUA_OPCODE(Lua_V1, OverlayDestroy) },
+	{ "OverlayFade", LUA_OPCODE(Lua_V1, OverlayFade) },
 	{ "OverlayMove", LUA_OPCODE(Lua_V1, OverlayMove) },
 	{ "AddHotspot", LUA_OPCODE(Lua_V1, AddHotspot) },
-	{ "RemoveHotspot", LUA_OPCODE(Lua_V1, OverlayFade) },
+	{ "RemoveHotspot", LUA_OPCODE(Lua_V1, RemoveHotspot) },
 	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, HideMouseCursor) },
 	{ "ShowCursor", LUA_OPCODE(Lua_V1, ShowCursor) },
-	{ "SetCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetCursor", LUA_OPCODE(Lua_V1, SetCursor) },
 	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, UnlockCutscene) },
 	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, SetActorHKHackMode) },
 	{ "CacheCurrentWalkVector", LUA_OPCODE(Lua_V1, CacheCurrentWalkVector) },
 	{ "UnlockConcept", LUA_OPCODE(Lua_V1, UnlockConcept) },
 	{ "IsConceptUnlocked", LUA_OPCODE(Lua_V1, IsConceptUnlocked) },
-	{ "GetRemappedKeyHint", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "GetRemappedKeyHint", LUA_OPCODE(Lua_V1, GetRemappedKeyHint) },
 	{ "SaveRegistryToDisk", LUA_OPCODE(Lua_V1, SaveRegistryToDisk) },	
 	{ "InitiateFindSaveGames", LUA_OPCODE(Lua_V1, InitiateFindSaveGames) },
 	{ "GetFindSaveGameStatus", LUA_OPCODE(Lua_V1, GetFindSaveGameStatus) },
