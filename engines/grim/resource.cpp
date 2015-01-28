@@ -117,7 +117,7 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "voice001.lab");
 		} else {
 			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
-				error("residualvm-grim-patch.lab not found");
+				warning("residualvm-grim-patch.lab not found");
 
 			//SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
