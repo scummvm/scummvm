@@ -312,6 +312,7 @@ protected:
 	DECLARE_LUA_OPCODE(GlobalSaveResolved);
 	DECLARE_LUA_OPCODE(StopCommentaryImmediately);
 	DECLARE_LUA_OPCODE(DestroyAllUIButtonsImmediately);
+	DECLARE_LUA_OPCODE(UpdateUIButtons);
 	DECLARE_LUA_OPCODE(OverlayClearCache);
 	DECLARE_LUA_OPCODE(GetGameRenderMode);
 	DECLARE_LUA_OPCODE(SetGameRenderMode);
@@ -319,12 +320,15 @@ protected:
 	DECLARE_LUA_OPCODE(OverlayCreate);
 	DECLARE_LUA_OPCODE(OverlayDestroy);
 	DECLARE_LUA_OPCODE(OverlayFade);
+	DECLARE_LUA_OPCODE(OverlayGetScreenSize);
 	DECLARE_LUA_OPCODE(OverlayDimensions);
 	DECLARE_LUA_OPCODE(AddHotspot);
 	DECLARE_LUA_OPCODE(RemoveHotspot);
+	DECLARE_LUA_OPCODE(QueryActiveHotspots);
 	DECLARE_LUA_OPCODE(HideMouseCursor);
 	DECLARE_LUA_OPCODE(SetCursor);
 	DECLARE_LUA_OPCODE(ShowCursor);
+	DECLARE_LUA_OPCODE(UpdateMouseCursor);
 	DECLARE_LUA_OPCODE(UnlockCutscene);
 	DECLARE_LUA_OPCODE(SetActorHKHackMode);
 	DECLARE_LUA_OPCODE(CacheCurrentWalkVector);

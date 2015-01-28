@@ -693,9 +693,21 @@ void Lua_V1::OverlayDimensions() {
 	lua_pushnumber(1);
 }
 
+void Lua_V1::OverlayGetScreenSize() {
+	warning("Stub function: OverlayGetScreenSize, returns 1, 1");
+	lua_pushnumber(1);
+	lua_pushnumber(1);
+}
+
 void Lua_V1::OverlayCreate() {
 	warning("Stub function: OverlayCreate, returns 1");
 	lua_pushnumber(1);
+}
+
+void Lua_V1::QueryActiveHotspots() {
+	warning("Stub function: QueryActiveHotspots, returns empty table");
+	lua_Object resObj = lua_createtable();
+	lua_pushobject(resObj);
 }
 
 void Lua_V1::JustLoaded() {
@@ -765,6 +777,7 @@ STUB_FUNC(Lua_V1::LoadRemappedKeys)
 STUB_FUNC(Lua_V1::GlobalSaveResolved)
 STUB_FUNC(Lua_V1::StopCommentaryImmediately)
 STUB_FUNC(Lua_V1::DestroyAllUIButtonsImmediately)
+STUB_FUNC(Lua_V1::UpdateUIButtons)
 STUB_FUNC(Lua_V1::OverlayClearCache)
 STUB_FUNC(Lua_V1::GetGameRenderMode)
 STUB_FUNC(Lua_V1::SetGameRenderMode)
@@ -776,6 +789,7 @@ STUB_FUNC(Lua_V1::OverlayFade)
 STUB_FUNC(Lua_V1::HideMouseCursor)
 STUB_FUNC(Lua_V1::SetCursor)
 STUB_FUNC(Lua_V1::ShowCursor)
+STUB_FUNC(Lua_V1::UpdateMouseCursor)
 STUB_FUNC(Lua_V1::UnlockCutscene)
 STUB_FUNC(Lua_V1::SetActorHKHackMode)
 STUB_FUNC(Lua_V1::CacheCurrentWalkVector)
@@ -1014,6 +1028,7 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "StopCommentaryImmediately", LUA_OPCODE(Lua_V1, StopCommentaryImmediately) },
 	{ "ReadRegistryIntValue", LUA_OPCODE(Lua_V1, ReadRegistryIntValue) },
 	{ "DestroyAllUIButtonsImmediately", LUA_OPCODE(Lua_V1, DestroyAllUIButtonsImmediately) },
+	{ "UpdateUIButtons", LUA_OPCODE(Lua_V1, UpdateUIButtons) },
 	{ "GetGameRenderMode", LUA_OPCODE(Lua_V1, GetGameRenderMode) },
 	{ "SetGameRenderMode", LUA_OPCODE(Lua_V1, SetGameRenderMode) },
 	{ "WidescreenCorrectionFactor", LUA_OPCODE(Lua_V1, WidescreenCorrectionFactor) },
@@ -1022,11 +1037,14 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "OverlayDimensions", LUA_OPCODE(Lua_V1, OverlayDimensions) },
 	{ "OverlayDestroy", LUA_OPCODE(Lua_V1, OverlayDestroy) },
 	{ "OverlayFade", LUA_OPCODE(Lua_V1, OverlayFade) },
+	{ "OverlayGetScreenSize", LUA_OPCODE(Lua_V1, OverlayGetScreenSize) },
 	{ "OverlayMove", LUA_OPCODE(Lua_V1, OverlayMove) },
 	{ "AddHotspot", LUA_OPCODE(Lua_V1, AddHotspot) },
 	{ "RemoveHotspot", LUA_OPCODE(Lua_V1, RemoveHotspot) },
+	{ "QueryActiveHotspots", LUA_OPCODE(Lua_V1, QueryActiveHotspots) },
 	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, HideMouseCursor) },
 	{ "ShowCursor", LUA_OPCODE(Lua_V1, ShowCursor) },
+	{ "UpdateMouseCursor", LUA_OPCODE(Lua_V1, UpdateMouseCursor) },
 	{ "SetCursor", LUA_OPCODE(Lua_V1, SetCursor) },
 	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, UnlockCutscene) },
 	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, SetActorHKHackMode) },
