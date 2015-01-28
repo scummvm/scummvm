@@ -290,6 +290,7 @@ protected:
 	// Remastered
 
 	DECLARE_LUA_OPCODE(GetPlatform);
+	DECLARE_LUA_OPCODE(GetLanguage);
 	DECLARE_LUA_OPCODE(PreloadCursors);
 	DECLARE_LUA_OPCODE(ReadRegistryIntValue);
 	DECLARE_LUA_OPCODE(WidescreenCorrectionFactor);
@@ -329,6 +330,7 @@ protected:
 	DECLARE_LUA_OPCODE(SetCursor);
 	DECLARE_LUA_OPCODE(ShowCursor);
 	DECLARE_LUA_OPCODE(UpdateMouseCursor);
+	DECLARE_LUA_OPCODE(GetCursorPosition);
 	DECLARE_LUA_OPCODE(UnlockCutscene);
 	DECLARE_LUA_OPCODE(SetActorHKHackMode);
 	DECLARE_LUA_OPCODE(CacheCurrentWalkVector);

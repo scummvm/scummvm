@@ -93,6 +93,15 @@ private:
 	Value _joystick;
 	Value _spewOnError;
 	Value _transcript;
+	
+	// Remastered (TODO: Fix the type-handling), TODO: Disable for original
+	Value _directorsCommentary;
+	Value _widescreen;
+	Value _language;
+	Value _resolutionScaling;
+	Value _mouseSpeed;
+	Value _advancedLighting;
+	Value _directorsCommentaryVolume;
 
 	bool _dirty;
 

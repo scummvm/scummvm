@@ -710,6 +710,23 @@ void Lua_V1::QueryActiveHotspots() {
 	lua_pushobject(resObj);
 }
 
+void Lua_V1::GetLanguage() {
+	warning("Stub function: GetLanguage, returns 1");
+	lua_pushnumber(1);
+}
+
+void Lua_V1::SaveRegistryToDisk() {
+	warning("Guesswork: SaveRegistryToDisk");
+	g_registry->save();
+	ConfMan.flushToDisk(); // Since we can't consistently exit yet, we force a write for now
+}
+
+void Lua_V1::GetCursorPosition() {
+	warning("Stub function: GetCursorPosition, returns 0, 0");
+	lua_pushnumber(0);
+	lua_pushnumber(0);
+}
+
 void Lua_V1::JustLoaded() {
 	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
@@ -795,7 +812,6 @@ STUB_FUNC(Lua_V1::SetActorHKHackMode)
 STUB_FUNC(Lua_V1::CacheCurrentWalkVector)
 STUB_FUNC(Lua_V1::UnlockConcept)
 STUB_FUNC(Lua_V1::IsConceptUnlocked)
-STUB_FUNC(Lua_V1::SaveRegistryToDisk)
 STUB_FUNC(Lua_V1::GetRemappedKeyName)
 STUB_FUNC(Lua_V1::GetRemappedKeyHint)
 STUB_FUNC(Lua_V1::New)
@@ -1010,6 +1026,7 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "dofile", LUA_OPCODE(Lua_V1, new_dofile) },
 // Remastered
 	{ "GetPlatform", LUA_OPCODE(Lua_V1, GetPlatform) },
+	{ "GetLanguage", LUA_OPCODE(Lua_V1, GetLanguage) },
 	{ "PreloadCursors", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "AreAchievementsInstalled", LUA_OPCODE(Lua_V1, AreAchievementsInstalled) },
 	{ "ImGetCommentaryVol", LUA_OPCODE(Lua_V1, ImGetCommentaryVol) },
@@ -1045,6 +1062,7 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, HideMouseCursor) },
 	{ "ShowCursor", LUA_OPCODE(Lua_V1, ShowCursor) },
 	{ "UpdateMouseCursor", LUA_OPCODE(Lua_V1, UpdateMouseCursor) },
+	{ "GetCursorPosition", LUA_OPCODE(Lua_V1, GetCursorPosition) },
 	{ "SetCursor", LUA_OPCODE(Lua_V1, SetCursor) },
 	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, UnlockCutscene) },
 	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, SetActorHKHackMode) },

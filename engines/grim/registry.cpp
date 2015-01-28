@@ -118,6 +118,15 @@ Registry::Registry() :
 	_movement.setString(ConfMan.get("movement"));
 	_joystick.setString(ConfMan.get("joystick"));
 	_transcript.setString(ConfMan.get("transcript"));
+
+	// Remastered
+	_widescreen.setString(ConfMan.get("widescreen"));
+	_directorsCommentary.setString(ConfMan.get("directors_commentary"));
+	_language.setInt(ConfMan.getInt("grim_language")); // Avoid overlap with confman
+	_resolutionScaling.setString(ConfMan.get("resolution_scaling"));
+	_mouseSpeed.setString(ConfMan.get("mouse_speed"));
+	_advancedLighting.setString(ConfMan.get("adanced_lighting"));
+	_directorsCommentaryVolume.setString(ConfMan.get("directors_commentary_volume"));
 }
 
 Registry::Value &Registry::value(const Common::String &key) {
@@ -153,6 +162,20 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _spewOnError;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
+	} else if (scumm_stricmp("DirectorsCommentary", key.c_str()) == 0) {
+		return _directorsCommentary;
+	} else if (scumm_stricmp("Widescreen", key.c_str()) == 0) {
+		return _widescreen;
+	} else if (scumm_stricmp("Language", key.c_str()) == 0) {
+		return _language;
+	} else if (scumm_stricmp("ResolutionScaling", key.c_str()) == 0) {
+		return _resolutionScaling;
+	} else if (scumm_stricmp("MouseSpeed", key.c_str()) == 0) {
+		return _mouseSpeed;
+	} else if (scumm_stricmp("AdvancedLighting", key.c_str()) == 0) {
+		return _advancedLighting;
+	} else if (scumm_stricmp("DirectorsCommentaryVolume", key.c_str()) == 0) {
+		return _directorsCommentaryVolume;
 	} else {
 		warning("write unknown regisry value %s", key.c_str());
 		return _musicVolume;
@@ -194,6 +217,20 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 		return _spewOnError;
 	} else if (scumm_stricmp("Transcript", key.c_str()) == 0) {
 		return _transcript;
+	} else if (scumm_stricmp("DirectorsCommentary", key.c_str()) == 0) {
+		return _directorsCommentary;
+	} else if (scumm_stricmp("Widescreen", key.c_str()) == 0) {
+		return _widescreen;
+	} else if (scumm_stricmp("Language", key.c_str()) == 0) {
+		return _language;
+	} else if (scumm_stricmp("ResolutionScaling", key.c_str()) == 0) {
+		return _resolutionScaling;
+	} else if (scumm_stricmp("MouseSpeed", key.c_str()) == 0) {
+		return _mouseSpeed;
+	} else if (scumm_stricmp("AdvancedLighting", key.c_str()) == 0) {
+		return _advancedLighting;
+	} else if (scumm_stricmp("DirectorsCommentaryVolume", key.c_str()) == 0) {
+		return _directorsCommentaryVolume;
 	} else {
 		warning("unknown regisry value %s", key.c_str());
 		return _musicVolume;
@@ -255,6 +292,15 @@ void Registry::save() {
 	ConfMan.set("joystick", _joystick.getString());
 	ConfMan.set("voice_effects", _voiceEffects.getString());
 	ConfMan.set("transcript", _transcript.getString());
+
+	// Remastered (TODO: These are handled as string for now)
+	ConfMan.set("widescreen", _widescreen.getString());
+	ConfMan.set("directors_commentary", _directorsCommentary.getString());
+	ConfMan.setInt("grim_language", _language.getInt());
+	ConfMan.set("resolution_scaling", _resolutionScaling.getString());
+	ConfMan.set("mouse_speed", _mouseSpeed.getString());
+	ConfMan.set("advanced_lighting", _advancedLighting.getString());
+	ConfMan.set("directors_commentary_volume", _directorsCommentaryVolume.getString());
 
 	_dirty = false;
 }
