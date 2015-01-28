@@ -437,7 +437,9 @@ ObjArray *Chr::getWeapons(bool includeMagic) {
 ObjArray *Chr::getMagicalObjects() {
 	ObjArray *list = new ObjArray;
 
-	warning("STUB: getMagicalObjects");
+	for (uint i = 0; i < _inventory.size(); i++)
+		if (_inventory[i]->_type == Obj::MAGICAL_OBJECT)
+			list->push_back(_inventory[i]);
 
 	return list;
 }
