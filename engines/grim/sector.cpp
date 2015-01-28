@@ -172,6 +172,10 @@ void Sector::load(TextSplitter &ts) {
 	if (length > 0)
 		_normal /= length;
 
+	// Remastered
+	if (!ts.checkString("numtris")) {
+		return;
+	}
 	int _numTris;
 	ts.scanString(" numtris %d", 1, &_numTris);
 	//_vertices = new Math::Vector3d[_numVertices + 1];
