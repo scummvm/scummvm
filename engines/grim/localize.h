@@ -33,6 +33,7 @@ public:
 
 	Common::String localize(const char *str) const;
 private:
+	void parseRemasteredData(const Common::String &data);
 	Common::StringMap _entries;
 };
 
