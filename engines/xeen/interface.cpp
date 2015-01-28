@@ -781,11 +781,31 @@ void Interface::doFalling() {
 }
 
 void Interface::highlightChar(int charId) {
-	error("TODO: highlightChar");
+	Screen &screen = *_vm->_screen;
+
+	if (charId != _hiliteChar && _hiliteChar != HILIGHT_CHAR_DISABLED) {
+		// Handle deselecting any previusly selected char
+		if (_hiliteChar != -1) {
+			_globalSprites.draw(screen, 9 + _hiliteChar,
+				Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+		}
+
+		// Highlight new character
+		_globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[charId] - 1, 149));
+		_hiliteChar = charId;
+		screen._windows[33].update();
+	}
 }
 
 void Interface::unhighlightChar() {
-	error("TODO: unhighlight");
+	Screen &screen = *_vm->_screen;
+
+	if (_hiliteChar != -1) {
+		_globalSprites.draw(screen, _hiliteChar + 9,
+			Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+		_hiliteChar = -1;
+		screen._windows[33].update();
+	}
 }
 
 bool Interface::checkMoveDirection(int key) {

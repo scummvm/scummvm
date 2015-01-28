@@ -34,6 +34,7 @@ namespace Xeen {
 class XeenEngine;
 
 #define MINIMAP_SIZE 7
+#define HILIGHT_CHAR_DISABLED -2
 
 class Interface: public ButtonContainer, public InterfaceMap {
 private:

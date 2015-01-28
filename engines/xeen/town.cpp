@@ -292,9 +292,11 @@ int Town::townWait() {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 
+	_buttonValue = 0;
 	while (!_vm->shouldQuit() && !_buttonValue) {
 		events.updateGameCounter();
 		while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() < 3) {
+			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}
 		if (!_buttonValue)
@@ -343,7 +345,7 @@ Common::String Town::createTownText(Character &ch) {
 	case 1:
 		// Blacksmith
 		return Common::String::format(BLACKSMITH_TEXT,
-			XeenEngine::printMil(party._gold));
+			XeenEngine::printMil(party._gold).c_str());
 
 	case 2:
 		// Guild
@@ -352,7 +354,7 @@ Common::String Town::createTownText(Character &ch) {
 
 	case 3:
 		// Tavern
-		return Common::String::format(TAVERN_TEXT, ch._name,
+		return Common::String::format(TAVERN_TEXT, ch._name.c_str(),
 			FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
 
 	case 4:
@@ -564,12 +566,12 @@ Character *Town::doGuildOptions(Character *c) {
 	}
 	else if (_buttonValue == Common::KEYCODE_s) {
 		if (c->guildMember())
-			c = showAvailableSpells(c);
+			c = showAvailableSpells(c, 0x80);
 		_buttonValue = 0;
 	} else if (_buttonValue == Common::KEYCODE_c) {
 		if (!c->noActions()) {
 			if (c->guildMember())
-				c = showAvailableSpells(c);
+				c = showAvailableSpells(c, 0);
 			_buttonValue = 0;
 		}
 	}
@@ -612,7 +614,7 @@ Character *Town::doTavernOptions(Character *c) {
 
 				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
 					c->_name.c_str(), GOOD_STUFF,
-					XeenEngine::printMil(party._gold)));
+					XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&screen._windows[0]);
 				screen._windows[10].update();
 
@@ -728,7 +730,7 @@ Character *Town::doTavernOptions(Character *c) {
 			if (!_v21) {
 				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
 					c->_name.c_str(), HAVE_A_DRINK,
-					XeenEngine::printMil(party._gold)));
+					XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&screen);
 				screen._windows[10].update();
 				townWait();
@@ -737,7 +739,7 @@ Character *Town::doTavernOptions(Character *c) {
 				if (c->_conditions[DRUNK]) {
 					screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
 						c->_name.c_str(), YOURE_DRUNK,
-						XeenEngine::printMil(party._gold)));
+						XeenEngine::printMil(party._gold).c_str()));
 					drawButtons(&screen);
 					screen._windows[10].update();
 					townWait();
@@ -1036,7 +1038,7 @@ void Town::depositWithdrawl(int choice) {
 
 			sound.playSample(&voc, 0);
 			msg = Common::String::format(GOLD_GEMS_2, DEPOSIT_WITHDRAWL[choice],
-				XeenEngine::printMil(gold), XeenEngine::printMil(gems));
+				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
 			screen._windows[35].writeString(msg);
 			screen._windows[35].update();
 		}
@@ -1120,7 +1122,7 @@ Character *Town::showItems(Character *c, int v2) {
 	error("TODO: showItems");
 }
 
-Character *Town::showAvailableSpells(Character *c) {
+Character *Town::showAvailableSpells(Character *c, int v2) {
 	error("TODO: showAvailableSpells");
 }
 

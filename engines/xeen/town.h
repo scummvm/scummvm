@@ -101,7 +101,7 @@ private:
 
 	Character *showItems(Character *c, int v2);
 
-	Character *showAvailableSpells(Character *c);
+	Character *showAvailableSpells(Character *c, int v2);
 public:
 	Town(XeenEngine *vm);
 
