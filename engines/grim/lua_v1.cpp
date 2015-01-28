@@ -684,9 +684,18 @@ void Lua_V1::WidescreenCorrectionFactor() {
 void Lua_V1::GetFontDimensions() {
 	warning("Stub function: GetFontDimensions, returns 1");
 	lua_pushnumber(1);
-
 }
 
+void Lua_V1::OverlayDimensions() {
+	warning("Stub function: OverlayDimensions, returns 1, 1");
+	lua_pushnumber(1);
+	lua_pushnumber(1);
+}
+
+void Lua_V1::OverlayCreate() {
+	warning("Stub function: OverlayCreate, returns 1");
+	lua_pushnumber(1);
+}
 
 void Lua_V1::JustLoaded() {
 	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
@@ -955,28 +964,33 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "IsPlayingCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "EnableCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "ClearCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "HasHeardCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "SetCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "LoadRemappedKeys", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "GlobalSaveResolved", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "StopCommentaryImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "ReadRegistryIntValue", LUA_OPCODE(Lua_V1, ReadRegistryIntValue) },
 	{ "DestroyAllUIButtonsImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "OverlayClearCache", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "GetGameRenderMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "SetGameRenderMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "WidescreenCorrectionFactor", LUA_OPCODE(Lua_V1, WidescreenCorrectionFactor) },
-	{ "OverlayCreate", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "OverlayDimensions", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayCreate", LUA_OPCODE(Lua_V1, OverlayCreate) },
+	{ "OverlayClearCache", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayDimensions", LUA_OPCODE(Lua_V1, OverlayDimensions) },
+	{ "OverlayDestroy", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayFade", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "OverlayMove", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "AddHotspot", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "OverlayFade", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "RemoveHotspot", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "ShowCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SetCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "CacheCurrentWalkVector", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "UnlockConcept", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "IsConceptUnlocked", LUA_OPCODE(Lua_V1, PreloadCursors) },	
+	{ "IsConceptUnlocked", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "GetRemappedKeyHint", LUA_OPCODE(Lua_V1, PreloadCursors) },
 };
 
 static struct luaL_reg grimTextOpcodes[] = {
