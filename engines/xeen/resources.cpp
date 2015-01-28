@@ -626,6 +626,34 @@ const char *const FOOD_AND_DRINK =
 	"\x09""017\x0C""37T\x0C""dip\n"
 	"\x09""017\x0C""37R\x0C""dumors";
 
+const char *const GOOD_STUFF = "\n"
+	"\n"
+	"Good Stuff\n"
+	"\n"
+	"Hit a key!";
+
+const char *const HAVE_A_DRINK = "\n\nHave a Drink\n\nHit a key!";
+
+const char *const YOURE_DRUNK = "\n\nYou're Drunk\n\nHit a key!";
+
+const int TAVERN_EXIT_LIST[2][6][5][2] = {
+	{
+		{ { 21, 17 }, { 0, 0 }, { 20, 3 }, { 0, 0 }, { 0, 0 } },
+		{ { 13, 4 }, { 0, 0 }, { 19, 9 }, { 0, 0 }, { 0, 0 } },
+		{ { 20, 10 }, { 12, 8 }, { 5, 26 }, { 3, 4 }, { 7, 5 } },
+		{ { 18, 4 }, { 0, 0 }, { 19, 16 }, { 0, 0 }, { 11, 12 } },
+		{ { 15, 21 }, { 0, 0 }, { 13, 21 }, { 0, 0 }, { 0, 0 } },
+		{ { 10, 8 }, { 0, 0 }, { 15, 12 }, { 0, 0 }, { 0, 0 } },
+	}, {
+		{ { 21, 17 }, { 0, 0 }, { 20, 3 }, { 0, 0 }, { 0, 0 } },
+		{ { 13, 4 }, { 0, 0 }, { 19, 9 }, { 0, 0 }, { 0, 0 } },
+		{ { 20, 10 }, { 12, 8 }, { 5, 26 }, { 3, 4 }, { 7, 5 } },
+		{ { 17, 24 }, { 14, 13 }, { 0, 0 }, { 0, 0 }, { 9, 4 } },
+		{ { 15, 21 }, { 0, 0 }, { 13, 21 }, { 0, 0 }, { 0, 0 } },
+		{ { 10, 8 }, { 0, 0 }, { 15, 12 }, { 0, 0 }, { 0, 0 } }
+	}
+};
+
 const char *const TEMPLE_TEXT =
 	"\x0D\x03""c\x0B""000\x09""000Temple Options for"
 	"\x09""039\x0B""027%s\x03l\x09""000\x0B""046"
@@ -682,5 +710,7 @@ const char *const CONSUMABLE_NAMES[4] = { "Gold", "Gems", "Food", "Condition" };
 const char *const WHERE_NAMES[2] = { "Party", "Bank" };
 
 const char *const AMOUNT = "\x03""c\x09""000\x0B""051Amount\x03l\n";
+
+const char *const FOOD_PACKS_FULL = "\v007Your food packs are already full!";
 
 } // End of namespace Xeen

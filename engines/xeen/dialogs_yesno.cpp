@@ -25,7 +25,7 @@
 
 namespace Xeen {
 
-bool YesNo::show(XeenEngine *vm, bool type, int v2) {
+bool YesNo::show(XeenEngine *vm, bool type, bool v2) {
 	YesNo *dlg = new YesNo(vm);
 	bool result = dlg->execute(type, v2);
 	delete dlg;

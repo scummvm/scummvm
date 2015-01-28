@@ -35,7 +35,7 @@ private:
 
 	bool execute(bool type, int v2);
 public:
-	static bool show(XeenEngine *vm, bool type, int v2);
+	static bool show(XeenEngine *vm, bool type, bool v2);
 };
 
 } // End of namespace Xeen

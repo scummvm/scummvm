@@ -30,6 +30,8 @@ namespace Xeen {
 
 #define TOTAL_ITEMS 10
 
+enum BonusFlags { FLAG_CURSED = 0x40 };
+
 class XeenItem {
 public:
 	int _material;

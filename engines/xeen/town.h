@@ -49,6 +49,11 @@ private:
 	int _v10, _v11, _v12;
 	int _v13, _v14;
 	int _v20;
+	int _v21;
+	uint _v22;
+	int _v23;
+	int _v24;
+	int _dayOfWeek;
 	int _uncurseCost;
 	Common::Point _townPos;
 	int _arr1[6];
@@ -76,11 +81,27 @@ private:
 
 	Character *doTownOptions(Character *c);
 
+	Character *doBankOptions(Character *c);
+
+	Character *doBlacksmithOptions(Character *c);
+
+	Character *doGuildOptions(Character *c);
+
+	Character *doTavernOptions(Character *c);
+
+	Character *doTempleOptions(Character *c);
+
+	Character *doTrainingOptions(Character *c);
+
 	void depositWithdrawl(int choice);
 
 	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
 
 	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait);
+
+	Character *showItems(Character *c, int v2);
+
+	Character *showAvailableSpells(Character *c);
 public:
 	Town(XeenEngine *vm);
 

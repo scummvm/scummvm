@@ -4552,26 +4552,26 @@ void InterfaceMap::assembleBorder() {
 
 	// Draw UI element for blessed
 	_blessSprites.draw(screen, 16, Common::Point(33, 137));
-	if (_vm->_party->_blessedActive) {
+	if (_vm->_party->_blessed) {
 		_blessedUIFrame = (_blessedUIFrame + 1) % 4;
 		_blessSprites.draw(screen, _blessedUIFrame, Common::Point(33, 137));
 	}
 
 	// Draw UI element for power shield
-	if (_vm->_party->_powerShieldActive) {
+	if (_vm->_party->_powerShield) {
 		_powerShieldUIFrame = (_powerShieldUIFrame + 1) % 4;
 		_blessSprites.draw(screen, _powerShieldUIFrame + 4,
 			Common::Point(55, 137));
 	}
 
 	// Draw UI element for holy bonus
-	if (_vm->_party->_holyBonusActive) {
+	if (_vm->_party->_holyBonus) {
 		_holyBonusUIFrame = (_holyBonusUIFrame + 1) % 4;
 		_blessSprites.draw(screen, _holyBonusUIFrame + 8, Common::Point(160, 137));
 	}
 
 	// Draw UI element for heroism
-	if (_vm->_party->_heroismActive) {
+	if (_vm->_party->_heroism) {
 		_heroismUIFrame = (_heroismUIFrame + 1) % 4;
 		_blessSprites.draw(screen, _heroismUIFrame + 12, Common::Point(182, 137));
 	}

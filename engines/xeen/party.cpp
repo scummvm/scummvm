@@ -60,7 +60,7 @@ Character::Character() {
 	_lloydSide = 0;
 	Common::fill(&_conditions[0], &_conditions[16], 0);
 	_townUnknown = 0;
-	_unknown2 = 0;
+	_savedMazeId = 0;
 	_currentHp = 0;
 	_currentSp = 0;
 	_ybDay = 0;
@@ -140,7 +140,7 @@ void Character::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_conditions[i]);
 
 	s.syncAsUint16LE(_townUnknown);
-	s.syncAsByte(_unknown2);
+	s.syncAsByte(_savedMazeId);
 	s.syncAsUint16LE(_currentHp);
 	s.syncAsUint16LE(_currentSp);
 	s.syncAsUint16LE(_ybDay);
@@ -381,7 +381,7 @@ int Character::getArmorClass(bool baseOnly) const {
 
 	int result = statBonus(getStat(SPEED)) + itemScan(9);
 	if (!baseOnly)
-		result += (party._blessedActive ? 1 : 0) + _ACTemp;
+		result += party._blessed + _ACTemp;
 
 	return MAX(result, 0);
 }
@@ -842,10 +842,10 @@ Party::Party(XeenEngine *vm) {
 	_wizardEyeActive = false;
 	_clairvoyanceActive = false;
 	_walkOnWaterActive = false;
-	_blessedActive = false;
-	_powerShieldActive = false;
-	_holyBonusActive = false;
-	_heroismActive = false;
+	_blessed = 0;
+	_powerShield = 0;
+	_holyBonus = 0;
+	_heroism = 0;
 	_difficulty = ADVENTURER;
 	_cloudsEnd = false;
 	_darkSideEnd = false;
@@ -912,10 +912,10 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_wizardEyeActive);
 	s.syncAsByte(_clairvoyanceActive);
 	s.syncAsByte(_walkOnWaterActive);
-	s.syncAsByte(_blessedActive);
-	s.syncAsByte(_powerShieldActive);
-	s.syncAsByte(_holyBonusActive);
-	s.syncAsByte(_heroismActive);
+	s.syncAsByte(_blessed);
+	s.syncAsByte(_powerShield);
+	s.syncAsByte(_holyBonus);
+	s.syncAsByte(_heroism);
 	s.syncAsByte(_difficulty);
 
 	for (int i = 0; i < ITEMS_COUNT; ++i)
@@ -1194,10 +1194,10 @@ void Party::resetTemps() {
 	_walkOnWaterActive = false;
 	_wizardEyeActive = false;
 	_clairvoyanceActive = false;
-	_heroismActive = false;
-	_holyBonusActive = false;
-	_powerShieldActive = false;
-	_blessedActive = false;
+	_heroism = 0;
+	_holyBonus = 0;
+	_powerShield = 0;
+	_blessed = 0;
 }
 
 void Party::handleLight() {

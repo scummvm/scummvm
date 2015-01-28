@@ -22,6 +22,7 @@
 
 #include "xeen/town.h"
 #include "xeen/dialogs_input.h"
+#include "xeen/dialogs_yesno.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -42,6 +43,11 @@ Town::Town(XeenEngine *vm) : _vm(vm) {
 	_v12 = _v13 = 0;
 	_v14 = 0;
 	_v20 = 0;
+	_v21 = 0;
+	_v22 = 0;
+	_v23 = 0;
+	_v24 = 0;
+	_dayOfWeek = 0;
 	_uncurseCost = 0;
 	_flag1 = false;
 	_nextExperienceLevel = 0;
@@ -474,19 +480,469 @@ Common::String Town::createTownText(Character &ch) {
 Character *Town::doTownOptions(Character *c) {
 	switch (_townActionId) {
 	case 0:
-		if (_buttonValue == Common::KEYCODE_d)
-			_buttonValue = 0;
-		else if (_buttonValue == Common::KEYCODE_w)
-			_buttonValue = 1;
-		else
-			break;
+		// Bank
+		c = doBankOptions(c);
+		break;
+	case 1:
+		// Blacksmith
+		c = doBlacksmithOptions(c);
+		break;
+	case 2:
+		// Guild
+		c = doGuildOptions(c);
+		break;
+	case 3:
+		// Tavern
+		c = doTavernOptions(c);
+		break;
+	case 4:
+		// Temple
+		c = doTempleOptions(c);
+	case 5:
+		// Training
+		c = doTrainingOptions(c);
+		break;
+	default:
+		break;
+	}
 
-		depositWithdrawl(_buttonValue);
+	return c;
+}
+
+Character *Town::doBankOptions(Character *c) {
+	if (_buttonValue == Common::KEYCODE_d)
+		_buttonValue = 0;
+	else if (_buttonValue == Common::KEYCODE_w)
+		_buttonValue = 1;
+	else
+		return c;
+
+	depositWithdrawl(_buttonValue);
+	return c;
+}
+
+Character *Town::doBlacksmithOptions(Character *c) {
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	
+	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
+		// Switch character
+		_buttonValue -= Common::KEYCODE_F1;
+		if (_buttonValue < party._partyCount) {
+			c = &party._activeParty[_buttonValue];
+			intf.highlightChar(_buttonValue);
+		}
+	}
+	else if (_buttonValue == Common::KEYCODE_c) {
+		c = showItems(c, 1);
+		_buttonValue = 0;
+	}
+
+	return c;
+}
+
+Character *Town::doGuildOptions(Character *c) {
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+
+	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
+		// Switch character
+		_buttonValue -= Common::KEYCODE_F1;
+		if (_buttonValue < party._partyCount) {
+			c = &party._activeParty[_buttonValue];
+			intf.highlightChar(_buttonValue);
+
+			if (!c->guildMember()) {
+				sound.playSample(nullptr, 0);
+				intf._overallFrame = 5;
+				File f(isDarkCc ? "skull1.voc" : "guild11.voc");
+				sound.playSample(&f, 1);
+			}
+		}
+	}
+	else if (_buttonValue == Common::KEYCODE_s) {
+		if (c->guildMember())
+			c = showAvailableSpells(c);
+		_buttonValue = 0;
+	} else if (_buttonValue == Common::KEYCODE_c) {
+		if (!c->noActions()) {
+			if (c->guildMember())
+				c = showAvailableSpells(c);
+			_buttonValue = 0;
+		}
+	}
+
+	return c;
+}
+
+Character *Town::doTavernOptions(Character *c) {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	Screen &screen = *_vm->_screen;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+	int idx = 0;
+
+	switch (_buttonValue) {
+	case Common::KEYCODE_F1:
+	case Common::KEYCODE_F2:
+	case Common::KEYCODE_F3:
+	case Common::KEYCODE_F4:
+	case Common::KEYCODE_F5:
+	case Common::KEYCODE_F6:
+		// Switch character
+		_buttonValue -= Common::KEYCODE_F1;
+		if (_buttonValue < party._partyCount) {
+			c = &party._activeParty[_buttonValue];
+			intf.highlightChar(_buttonValue);
+			_v21 = 0;
+		}
+		break;
+	case Common::KEYCODE_d:
+		// Drink
+		if (!c->noActions()) {
+			if (subtract(0, 1, 0, WT_2)) {
+				sound.playSample(nullptr, 0);
+				File f("gulp.voc");
+				sound.playSample(&f, 0);
+				_v21 = 1;
+
+				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
+					c->_name.c_str(), GOOD_STUFF,
+					XeenEngine::printMil(party._gold)));
+				drawButtons(&screen._windows[0]);
+				screen._windows[10].update();
+
+				if (_vm->getRandomNumber(100) < 26) {
+					++c->_conditions[DRUNK];
+					intf.charIconsPrint(true);
+					sound.playFX(28);
+				}
+
+				townWait();
+			}
+		}
+		break;
+	case Common::KEYCODE_f: {
+		if (party._mazeId == (isDarkCc ? 29 : 28)) {
+			_v22 = party._partyCount * 15;
+			_v23 = 10;
+			idx = 0;
+		} else if (isDarkCc && party._mazeId == 31) {
+			_v22 = party._partyCount * 60;
+			_v23 = 100;
+			idx = 1;
+		} else if (!isDarkCc && party._mazeId == 30) {
+			_v22 = party._partyCount * 50;
+			_v23 = 50;
+			idx = 1;
+		} else if (isDarkCc) {
+			_v22 = party._partyCount * 120;
+			_v23 = 250;
+			idx = 2;
+		} else if (party._mazeId == 49) {
+			_v22 = party._partyCount * 120;
+			_v23 = 100;
+			idx = 2;
+		} else {
+			_v22 = party._partyCount * 15;
+			_v23 = 10;
+			idx = 0;
+		}
+
+		Common::String msg = _textStrings[(isDarkCc ? 60 : 75) + idx];
+		screen._windows[10].close();
+		screen._windows[12].open();
+		screen._windows[12].writeString(msg);
+
+		if (YesNo::show(_vm, false, true)) {
+			if (party._food >= _v22) {
+				ErrorScroll::show(_vm, FOOD_PACKS_FULL, WT_2);
+			} else if (subtract(0, _v23, 0, WT_2)) {
+				party._food = _v22;
+				sound.playSample(nullptr, 0);
+				File f(isDarkCc ? "thanks2.voc" : "thankyou.voc");
+				sound.playSample(&f, 1);
+			}
+		}
+
+		screen._windows[12].close();
+		screen._windows[10].open();
+		_buttonValue = 0;
+		break;
+	}
+
+	case Common::KEYCODE_r: {
+		if (party._mazeId == (isDarkCc ? 29 : 28)) {
+			idx = 0;
+		} else if (party._mazeId == (isDarkCc ? 31 : 30)) {
+			idx = 10;
+		} else if (isDarkCc || party._mazeId == 49) {
+			idx = 20;
+		}
+
+		Common::String msg = Common::String::format("\x03""c\x0B""012%s",
+			_textStrings[(party._day % 10) + idx]);
+		Window &w = screen._windows[12];
+		w.open();
+		w.writeString(msg);
+		w.update();
+
+		townWait();
+		w.close();
+		break;
+	}
+
+	case Common::KEYCODE_s: {
+		// Save game
+		// TODO: This needs to be fit in better with ScummVM framework
+		int idx = isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
+		assert(idx >= 0);
+		party._mazePosition.x = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][0];
+		party._mazePosition.y = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][1];
+
+		if (!isDarkCc || party._mazeId == 29)
+			party._mazeDirection = DIR_WEST;
+		else if (party._mazeId == 31)
+			party._mazeDirection = DIR_EAST;
+		else
+			party._mazeDirection = DIR_SOUTH;
+
+		party._priorMazeId = party._mazeId;
+		for (int idx = 0; idx < party._partyCount; ++idx) {
+			party._activeParty[idx]._savedMazeId = party._mazeId;
+			party._activeParty[idx]._xeenSide = map._loadDarkSide;
+		}
+
+		party.addTime(1440);
+		party._mazeId = 0;
+		_vm->quitGame();
+		break;
+	}
+
+	case Common::KEYCODE_t:
+		if (!c->noActions()) {
+			if (!_v21) {
+				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
+					c->_name.c_str(), HAVE_A_DRINK,
+					XeenEngine::printMil(party._gold)));
+				drawButtons(&screen);
+				screen._windows[10].update();
+				townWait();
+			} else {
+				_v21 = 0;
+				if (c->_conditions[DRUNK]) {
+					screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
+						c->_name.c_str(), YOURE_DRUNK,
+						XeenEngine::printMil(party._gold)));
+					drawButtons(&screen);
+					screen._windows[10].update();
+					townWait();
+				} else if (subtract(0, 1, 0, WT_2)) {
+					sound.playSample(nullptr, 0);
+					File f(isDarkCc ? "thanks2.voc" : "thankyou.voc");
+					sound.playSample(&f, 1);
+
+					if (party._mazeId == (isDarkCc ? 29 : 28)) {
+						_v24 = 30;
+					} else if (isDarkCc && party._mazeId == 31) {
+						_v24 = 40;
+					} else if (!isDarkCc && party._mazeId == 45) {
+						_v24 = 45;
+					} else if (!isDarkCc && party._mazeId == 49) {
+						_v24 = 60;
+					} else if (isDarkCc) {
+						_v24 = 50;
+					}
+
+					Common::String msg = _textStrings[map.mazeData()._tavernTips + _v24];
+					map.mazeData()._tavernTips = (map.mazeData()._tavernTips + 1) /
+						(isDarkCc ? 10 : 15);
+
+					Window &w = screen._windows[12];
+					w.open();
+					w.writeString(Common::String::format("\x03""c\x0B""012%s", msg.c_str()));
+					w.update();
+					townWait();
+					w.close();
+				}
+			}
+		}
 		break;
 
 	default:
-		// TODO: remaining cases
-		error("TODO: doTownOptions");
+		break;
+	}
+
+	return c;
+}
+
+Character *Town::doTempleOptions(Character *c) {
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	
+	switch (_buttonValue) {
+	case Common::KEYCODE_F1:
+	case Common::KEYCODE_F2:
+	case Common::KEYCODE_F3:
+	case Common::KEYCODE_F4:
+	case Common::KEYCODE_F5:
+	case Common::KEYCODE_F6:
+		// Switch character
+		_buttonValue -= Common::KEYCODE_F1;
+		if (_buttonValue < party._partyCount) {
+			c = &party._activeParty[_buttonValue];
+			intf.highlightChar(_buttonValue);
+			_dayOfWeek = 0;
+		}
+		break;
+
+	case Common::KEYCODE_d:
+		if (_donation && subtract(0, _donation, 0, WT_2)) {
+			sound.playSample(nullptr, 0);
+			File f("coina.voc");
+			sound.playSample(&f, 1);
+			_dayOfWeek = (_dayOfWeek + 1) / 10;
+
+			if (_dayOfWeek == (party._day / 10)) {
+				party._clairvoyanceActive = true;
+				party._lightCount = 1;
+				
+				int amt = _dayOfWeek ? _dayOfWeek : 10;
+				party._heroism = amt;
+				party._holyBonus = amt;
+				party._powerShield = amt;
+				party._blessed = amt;
+
+				intf.charIconsPrint(true);
+				sound.playSample(nullptr, 0);
+				File f("ahh.voc");
+				sound.playSample(&f, 1);
+				_flag1 = true;
+				_donation = 0;
+			}
+		}
+		break;
+
+	case Common::KEYCODE_h:
+		if (_healCost && subtract(0, _healCost, 0, WT_2)) {
+			c->_magicResistence._temporary = 0;
+			c->_energyResistence._temporary = 0;
+			c->_poisonResistence._temporary = 0;
+			c->_electricityResistence._temporary = 0;
+			c->_coldResistence._temporary = 0;
+			c->_fireResistence._temporary = 0;
+			c->_ACTemp = 0;
+			c->_level._temporary = 0;
+			c->_luck._temporary = 0;
+			c->_accuracy._temporary = 0;
+			c->_speed._temporary = 0;
+			c->_endurance._temporary = 0;
+			c->_personality._temporary = 0;
+			c->_intellect._temporary = 0;
+			c->_might._temporary = 0;
+			c->_currentHp = c->getMaxHP();
+			Common::fill(&c->_conditions[HEART_BROKEN], &c->_conditions[NO_CONDITION], 0);
+
+			_v1 = 1440;
+			intf.charIconsPrint(true);
+			sound.playSample(nullptr, 0);
+			File f("ahh.voc");
+			sound.playSample(&f, 1);
+		}
+		break;
+
+	case Common::KEYCODE_u:
+		if (_uncurseCost && subtract(0, _uncurseCost, 0, WT_2)) {
+			for (int idx = 0; idx < 9; ++idx) {
+				c->_weapons[idx]._bonusFlags &= ~FLAG_CURSED;
+				c->_armor[idx]._bonusFlags &= ~FLAG_CURSED;
+				c->_accessories[idx]._bonusFlags &= ~FLAG_CURSED;
+				c->_misc[idx]._bonusFlags &= ~FLAG_CURSED;
+			}
+
+			_v1 = 1440;
+			intf.charIconsPrint(true);
+			sound.playSample(nullptr, 0);
+			File f("ahh.voc");
+			sound.playSample(&f, 1);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return c;
+}
+
+Character *Town::doTrainingOptions(Character *c) {
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+
+	switch (_buttonValue) {
+	case Common::KEYCODE_F1:
+	case Common::KEYCODE_F2:
+	case Common::KEYCODE_F3:
+	case Common::KEYCODE_F4:
+	case Common::KEYCODE_F5:
+	case Common::KEYCODE_F6:
+		// Switch character
+		_buttonValue -= Common::KEYCODE_F1;
+		if (_buttonValue < party._partyCount) {
+			_v2 = _buttonValue;
+			c = &party._activeParty[_buttonValue];
+			intf.highlightChar(_buttonValue);
+		}
+		break;
+
+	case Common::KEYCODE_t:
+		if (_nextExperienceLevel) {
+			sound.playSample(nullptr, 0);
+			_townCurrent = 0;
+
+			Common::String name;
+			if (c->_level._permanent >= _v20) {
+				name = isDarkCc ? "gtlost.voc" : "trainin1.voc";
+			} else {
+				name = isDarkCc ? "gtlost.voc" : "trainin0.voc";
+			}
+
+			File f(name);
+			sound.playSample(&f);
+
+		} else if (!c->noActions()) {
+			if (subtract(0, (c->_level._permanent * c->_level._permanent) * 10, 0, WT_2)) {
+				_townCurrent = 0;
+				sound.playSample(nullptr, 0);
+				File f(isDarkCc ? "prtygd.voc" : "trainin2.voc");
+				sound.playSample(&f, 1);
+
+				c->_experience -=  c->currentExperienceLevel() - 
+					(c->getCurrentExperience() - c->_experience);
+				c->_level._permanent++;
+
+				if (!_arr1[_v2]) {
+					party.addTime(1440);
+					_arr1[_v2] = 1;
+				}
+
+				party.resetTemps();
+				c->_currentHp = c->getMaxHP();
+				c->_currentSp = c->getMaxSP();
+				intf.charIconsPrint(true);
+			}
+		}
+		break;
+
+	default:
+		break;
 	}
 
 	return c;
@@ -658,6 +1114,14 @@ int Town::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
 	}
 
 	return true;
+}
+
+Character *Town::showItems(Character *c, int v2) {
+	error("TODO: showItems");
+}
+
+Character *Town::showAvailableSpells(Character *c) {
+	error("TODO: showAvailableSpells");
 }
 
 } // End of namespace Xeen

@@ -127,7 +127,7 @@ public:
 	AttributePair _magicResistence;
 	int _conditions[16];
 	int _townUnknown;
-	int _unknown2;
+	int _savedMazeId;
 	int _currentHp;
 	int _currentSp;
 	int _ybDay;
@@ -202,10 +202,10 @@ public:
 	bool _wizardEyeActive;
 	bool _clairvoyanceActive;
 	bool _walkOnWaterActive;
-	bool _blessedActive;
-	bool _powerShieldActive;
-	bool _holyBonusActive;
-	bool _heroismActive;
+	int _blessed;
+	int _powerShield;
+	int _holyBonus;
+	int _heroism;
 	Difficulty _difficulty;
 	XeenItem _blacksmithWeapons[ITEMS_COUNT];
 	XeenItem _blacksmithArmor[ITEMS_COUNT];

@@ -170,6 +170,14 @@ extern const char *const GUILD_TEXT;
 
 extern const char *const TAVERN_TEXT;
 
+extern const char *const GOOD_STUFF;
+
+extern const char *const HAVE_A_DRINK;
+
+extern const char *const YOURE_DRUNK;
+
+extern const int TAVERN_EXIT_LIST[2][6][5][2];
+
 extern const char *const FOOD_AND_DRINK;
 
 extern const char *const TEMPLE_TEXT;
@@ -199,6 +207,8 @@ extern const char *const CONSUMABLE_NAMES[4];
 extern const char *const WHERE_NAMES[2];
 
 extern const char *const AMOUNT;
+
+extern const char *const FOOD_PACKS_FULL;
 
 } // End of namespace Xeen
 

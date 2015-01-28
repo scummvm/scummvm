@@ -43,7 +43,7 @@ public:
 
 	void playSong(Common::SeekableReadStream &f) {}
 
-	void playSample(const Common::SeekableReadStream *stream, int v2) {}
+	void playSample(const Common::SeekableReadStream *stream, int v2 = 1) {}
 
 	void playFX(int id) {}
 };
