@@ -676,6 +676,7 @@ void Lua_V1::LightMgrStartup() {
 	// we will not implement this opcode
 }
 
+// Remastered:
 void Lua_V1::WidescreenCorrectionFactor() {
 	warning("Stub function: WidescreenCorrectionFactor, returns 1");
 	lua_pushnumber(1);
@@ -712,11 +713,7 @@ static void stubWarning(const char *funcName) {
 }
 
 #define STUB_FUNC(name) void name() { stubWarning(#name); }
-
-STUB_FUNC(Lua_V1::GetPlatform)
-STUB_FUNC(Lua_V1::PreloadCursors)
-STUB_FUNC(Lua_V1::ReadRegistryIntValue)
-
+// Original
 STUB_FUNC(Lua_V1::SetActorInvClipNode)
 STUB_FUNC(Lua_V1::NukeResources)
 STUB_FUNC(Lua_V1::ResetTextures)
@@ -744,6 +741,45 @@ STUB_FUNC(Lua_V1::SetCameraFOV)
 STUB_FUNC(Lua_V1::GetCameraRoll)
 STUB_FUNC(Lua_V1::GetMemoryUsage)
 STUB_FUNC(Lua_V1::PurgeText)
+
+// Remastered
+STUB_FUNC(Lua_V1::GetPlatform)
+STUB_FUNC(Lua_V1::PreloadCursors)
+STUB_FUNC(Lua_V1::ReadRegistryIntValue)
+STUB_FUNC(Lua_V1::GetFindSaveGameStatus)
+STUB_FUNC(Lua_V1::FindSaveGames)
+STUB_FUNC(Lua_V1::InitiateFindSaveGames)
+STUB_FUNC(Lua_V1::AreAchievementsInstalled)
+STUB_FUNC(Lua_V1::ImGetCommentaryVol)
+STUB_FUNC(Lua_V1::ImSetCommentaryVol)
+STUB_FUNC(Lua_V1::SetMouseSpeedScale)
+STUB_FUNC(Lua_V1::SetResolutionScaling)
+STUB_FUNC(Lua_V1::SetAdvancedLighting)
+STUB_FUNC(Lua_V1::SetLanguage)
+STUB_FUNC(Lua_V1::IsPlayingCommentary)
+STUB_FUNC(Lua_V1::EnableCommentary)
+STUB_FUNC(Lua_V1::ClearCommentary)
+STUB_FUNC(Lua_V1::SetCommentary)
+STUB_FUNC(Lua_V1::LoadRemappedKeys)
+STUB_FUNC(Lua_V1::GlobalSaveResolved)
+STUB_FUNC(Lua_V1::StopCommentaryImmediately)
+STUB_FUNC(Lua_V1::DestroyAllUIButtonsImmediately)
+STUB_FUNC(Lua_V1::OverlayClearCache)
+STUB_FUNC(Lua_V1::GetGameRenderMode)
+STUB_FUNC(Lua_V1::SetGameRenderMode)
+STUB_FUNC(Lua_V1::OverlayMove)
+STUB_FUNC(Lua_V1::AddHotspot)
+STUB_FUNC(Lua_V1::OverlayFade)
+STUB_FUNC(Lua_V1::HideMouseCursor)
+STUB_FUNC(Lua_V1::ShowCursor)
+STUB_FUNC(Lua_V1::UnlockCutscene)
+STUB_FUNC(Lua_V1::SetActorHKHackMode)
+STUB_FUNC(Lua_V1::CacheCurrentWalkVector)
+STUB_FUNC(Lua_V1::UnlockConcept)
+STUB_FUNC(Lua_V1::IsConceptUnlocked)
+STUB_FUNC(Lua_V1::SaveRegistryToDisk)
+STUB_FUNC(Lua_V1::GetRemappedKeyName)
+STUB_FUNC(Lua_V1::New)
 
 struct luaL_reg grimMainOpcodes[] = {
 	{ "EngineDisplay", LUA_OPCODE(Lua_V1, EngineDisplay) },
@@ -953,44 +989,53 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "RestoreIMuse", LUA_OPCODE(Lua_V1, RestoreIMuse) },
 	{ "GetMemoryUsage", LUA_OPCODE(Lua_V1, GetMemoryUsage) },
 	{ "dofile", LUA_OPCODE(Lua_V1, new_dofile) },
+// Remastered
 	{ "GetPlatform", LUA_OPCODE(Lua_V1, GetPlatform) },
 	{ "PreloadCursors", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "AreAchievementsInstalled", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "ImSetCommentaryVol", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetMouseSpeedScale", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetResolutionScaling", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetAdvancedLighting", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetLanguage", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "IsPlayingCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "EnableCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "ClearCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "HasHeardCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetCommentary", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "LoadRemappedKeys", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "GlobalSaveResolved", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "StopCommentaryImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "AreAchievementsInstalled", LUA_OPCODE(Lua_V1, AreAchievementsInstalled) },
+	{ "ImGetCommentaryVol", LUA_OPCODE(Lua_V1, ImGetCommentaryVol) },
+	{ "ImSetCommentaryVol", LUA_OPCODE(Lua_V1, ImSetCommentaryVol) },
+	{ "SetMouseSpeedScale", LUA_OPCODE(Lua_V1, SetMouseSpeedScale) },
+	{ "SetResolutionScaling", LUA_OPCODE(Lua_V1, SetResolutionScaling) },
+	{ "SetAdvancedLighting", LUA_OPCODE(Lua_V1, SetAdvancedLighting) },
+	{ "SetLanguage", LUA_OPCODE(Lua_V1, SetLanguage) },
+	{ "IsPlayingCommentary", LUA_OPCODE(Lua_V1, IsPlayingCommentary) },
+	{ "EnableCommentary", LUA_OPCODE(Lua_V1, EnableCommentary) },
+	{ "ClearCommentary", LUA_OPCODE(Lua_V1, ClearCommentary) },
+	{ "HasHeardCommentary", LUA_OPCDOE(Lua_V1, PreloadCursors) },
+	{ "SetCommentary", LUA_OPCODE(Lua_V1, SetCommentary) },
+	{ "LoadRemappedKeys", LUA_OPCODE(Lua_V1, LoadRemappedKeys) },
+	{ "GlobalSaveResolved", LUA_OPCODE(Lua_V1, GlobalSaveResolved) },
+	{ "StopCommentaryImmediately", LUA_OPCODE(Lua_V1, StopCommentaryImmediately) },
 	{ "ReadRegistryIntValue", LUA_OPCODE(Lua_V1, ReadRegistryIntValue) },
-	{ "DestroyAllUIButtonsImmediately", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "GetGameRenderMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetGameRenderMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "DestroyAllUIButtonsImmediately", LUA_OPCODE(Lua_V1, DestroyAllUIButtonsImmediately) },
+	{ "GetGameRenderMode", LUA_OPCODE(Lua_V1, GetGameRenderMode) },
+	{ "SetGameRenderMode", LUA_OPCODE(Lua_V1, SetGameRenderMode) },
 	{ "WidescreenCorrectionFactor", LUA_OPCODE(Lua_V1, WidescreenCorrectionFactor) },
 	{ "OverlayCreate", LUA_OPCODE(Lua_V1, OverlayCreate) },
-	{ "OverlayClearCache", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayClearCache", LUA_OPCODE(Lua_V1, OverlayClearCache) },
 	{ "OverlayDimensions", LUA_OPCODE(Lua_V1, OverlayDimensions) },
 	{ "OverlayDestroy", LUA_OPCODE(Lua_V1, PreloadCursors) },
 	{ "OverlayFade", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "OverlayMove", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "AddHotspot", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "RemoveHotspot", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "ShowCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "OverlayMove", LUA_OPCODE(Lua_V1, OverlayMove) },
+	{ "AddHotspot", LUA_OPCODE(Lua_V1, AddHotspot) },
+	{ "RemoveHotspot", LUA_OPCODE(Lua_V1, OverlayFade) },
+	{ "HideMouseCursor", LUA_OPCODE(Lua_V1, HideMouseCursor) },
+	{ "ShowCursor", LUA_OPCODE(Lua_V1, ShowCursor) },
 	{ "SetCursor", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "CacheCurrentWalkVector", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "UnlockConcept", LUA_OPCODE(Lua_V1, PreloadCursors) },
-	{ "IsConceptUnlocked", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "UnlockCutscene", LUA_OPCODE(Lua_V1, UnlockCutscene) },
+	{ "SetActorHKHackMode", LUA_OPCODE(Lua_V1, SetActorHKHackMode) },
+	{ "CacheCurrentWalkVector", LUA_OPCODE(Lua_V1, CacheCurrentWalkVector) },
+	{ "UnlockConcept", LUA_OPCODE(Lua_V1, UnlockConcept) },
+	{ "IsConceptUnlocked", LUA_OPCODE(Lua_V1, IsConceptUnlocked) },
 	{ "GetRemappedKeyHint", LUA_OPCODE(Lua_V1, PreloadCursors) },
+	{ "SaveRegistryToDisk", LUA_OPCODE(Lua_V1, SaveRegistryToDisk) },	
+	{ "InitiateFindSaveGames", LUA_OPCODE(Lua_V1, InitiateFindSaveGames) },
+	{ "GetFindSaveGameStatus", LUA_OPCODE(Lua_V1, GetFindSaveGameStatus) },
+	{ "FindSaveGames", LUA_OPCODE(Lua_V1, FindSaveGames) },
+	{ "GetRemappedKeyName", LUA_OPCODE(Lua_V1, GetRemappedKeyName) },
+	{ "New", LUA_OPCODE(Lua_V1, New) },
+		
 };
 
 static struct luaL_reg grimTextOpcodes[] = {
