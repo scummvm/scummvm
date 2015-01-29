@@ -688,7 +688,7 @@ Character *Town::doTavernOptions(Character *c) {
 		}
 
 		Common::String msg = Common::String::format("\x03""c\x0B""012%s",
-			_textStrings[(party._day % 10) + idx]);
+			_textStrings[(party._day % 10) + idx].c_str());
 		Window &w = screen._windows[12];
 		w.open();
 		w.writeString(msg);
