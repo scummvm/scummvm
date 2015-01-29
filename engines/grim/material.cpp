@@ -59,7 +59,7 @@ void loadPNG(Common::SeekableReadStream *data, Texture *t) {
 	int bpp = tgaSurface->format.bytesPerPixel;
 	assert(bpp == 4); // Assure we have 32 bpp
 
-	t->_colorFormat = BM_ARGB;
+	t->_colorFormat = BM_RGBA;
 	t->_bpp = 4;
 	t->_hasAlpha = true;
 
