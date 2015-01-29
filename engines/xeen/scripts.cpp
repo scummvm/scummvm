@@ -158,6 +158,7 @@ bool Scripts::checkEvents() {
 						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
 						_vm->_mode = MODE_9;
+						_scriptExecuted = true;
 						doOpcode(event);
 						break;
 					} else {
@@ -517,7 +518,8 @@ void Scripts::cmdSpawn(Common::Array<byte> &params) {
 void Scripts::cmdDoTownEvent(Common::Array<byte> &params) {
 	_scriptResult = _vm->_town->townAction(params[0]);
 	_vm->_party->_stepped = true;
-	
+	_refreshIcons = true;
+
 	cmdExit(params);
 }
 

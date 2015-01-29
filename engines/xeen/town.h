@@ -41,7 +41,6 @@ private:
 	Common::Array<SpriteResource> _townSprites;
 	int _townMaxId;
 	int _townActionId;
-	int _townCurrent;
 	int _v1, _v2;
 	int _donation;
 	int _healCost;
@@ -60,6 +59,7 @@ private:
 	int _currentCharLevel;
 	bool _flag1;
 	uint _nextExperienceLevel;
+	int _drawFrameIndex;
 	int _drawCtr1, _drawCtr2;
 
 	void loadStrings(const Common::String &name);

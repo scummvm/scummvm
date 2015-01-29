@@ -32,7 +32,7 @@ Town::Town(XeenEngine *vm) : _vm(vm) {
 	Common::fill(&_arr1[0], &_arr1[6], 0);
 	_townMaxId = 0;
 	_townActionId = 0;
-	_townCurrent = 0;
+	_drawFrameIndex = 0;
 	_currentCharLevel = 0;
 	_v1 = 0;
 	_v2 = 0;
@@ -77,7 +77,7 @@ int Town::townAction(int actionId) {
 
 	_townMaxId = TOWN_MAXES[_vm->_files->_isDarkCc][actionId];
 	_townActionId = actionId;
-	_townCurrent = 0;
+	_drawFrameIndex = 0;
 	_v1 = 0;
 	_townPos = Common::Point(8, 8);
 	intf._overallFrame = 0;
@@ -217,7 +217,7 @@ int Town::townAction(int actionId) {
 	intf._spotDoorsUIFrame = 0;
 	intf._batUIFrame = 0;
 
-	_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+	_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 	if (actionId == 0 && isDarkCc) {
 		_townSprites[4].draw(screen, _vm->getRandomNumber(13, 18),
 			Common::Point(8, 30));
@@ -907,7 +907,7 @@ Character *Town::doTrainingOptions(Character *c) {
 	case Common::KEYCODE_t:
 		if (_nextExperienceLevel) {
 			sound.playSample(nullptr, 0);
-			_townCurrent = 0;
+			_drawFrameIndex = 0;
 
 			Common::String name;
 			if (c->_level._permanent >= _v20) {
@@ -921,7 +921,7 @@ Character *Town::doTrainingOptions(Character *c) {
 
 		} else if (!c->noActions()) {
 			if (subtract(0, (c->_level._permanent * c->_level._permanent) * 10, 0, WT_2)) {
-				_townCurrent = 0;
+				_drawFrameIndex = 0;
 				sound.playSample(nullptr, 0);
 				File f(isDarkCc ? "prtygd.voc" : "trainin2.voc");
 				sound.playSample(&f, 1);
@@ -1127,14 +1127,14 @@ void Town::drawTownAnim(bool flag) {
 	if (_townActionId == 1) {
 		if (sound.playSample(1, 0)) {
 			if (isDarkCc) {
-				_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
 				_townSprites[2].draw(screen, _vm->getRandomNumber(5) + 3,
 					Common::Point(34, 54));
 			}
 		} else {
-			_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+			_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 			if (isDarkCc) {
 				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
@@ -1142,8 +1142,8 @@ void Town::drawTownAnim(bool flag) {
 		}
 	} else {
 		if (!isDarkCc || _townActionId != 5) {
-			if (!_townSprites[_townCurrent / 8].empty())
-				_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+			if (!_townSprites[_drawFrameIndex / 8].empty())
+				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 		}
 	}
 
@@ -1194,7 +1194,7 @@ void Town::drawTownAnim(bool flag) {
 	case 5:
 		if (sound.playSample(1, 0)) {
 			if (isDarkCc) {
-				_townSprites[_townCurrent / 8].draw(screen, _townCurrent % 8, _townPos);
+				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 			}
 		} else {
 			if (isDarkCc) {
@@ -1219,29 +1219,29 @@ void Town::drawTownAnim(bool flag) {
 	if (screen._windows[11]._enabled) {
 		_drawCtr1 = (_drawCtr1 + 1) % 2;
 		if (!_drawCtr1 || !_drawCtr2) {
-			_townCurrent = 0;
+			_drawFrameIndex = 0;
 			_drawCtr2 = 0;
 		} else {
-			_townCurrent = _vm->getRandomNumber(3);
+			_drawFrameIndex = _vm->getRandomNumber(3);
 		}
 	} else {
-		_townCurrent = (_townCurrent + 1) % _townMaxId;
+		_drawFrameIndex = (_drawFrameIndex + 1) % _townMaxId;
 	}
 
 	if (isDarkCc) {
-		if (_townActionId == 1 && (_townCurrent == 4 || _townCurrent == 13))
+		if (_townActionId == 1 && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
 			sound.playFX(45);
 
-		if (_townActionId == 5 && _townCurrent == 23) {
+		if (_townActionId == 5 && _drawFrameIndex == 23) {
 			File f("spit1.voc");
 			sound.playSample(&f, 0);
 		}
 	} else {
-		if (_townMaxId == 32 || _townCurrent == 0)
-			_townCurrent = 17;
-		if (_townMaxId == 26 || _townCurrent == 0)
-			_townCurrent = 20;
-		if (_townActionId == 1 && (_townCurrent == 3 || _townCurrent == 9))
+		if (_townMaxId == 32 && _drawFrameIndex == 0)
+			_drawFrameIndex = 17;
+		if (_townMaxId == 26 && _drawFrameIndex == 0)
+			_drawFrameIndex = 20;
+		if (_townActionId == 1 && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
 			sound.playFX(45);
 	}
 
