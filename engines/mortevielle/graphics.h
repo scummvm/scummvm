@@ -36,6 +36,15 @@
 namespace Mortevielle {
 class MortevielleEngine;
 
+const int kResolutionScaler = 2;
+
+struct Font {
+	byte *_fontData;
+	int _width;
+	int _height;
+	int _numChars;
+};
+
 class PaletteManager {
 private:
 	void setPalette(const int *palette, uint idx, uint size);
@@ -44,9 +53,18 @@ public:
 	void setDefaultPalette();
 };
 
+enum {
+	kFontDOS = 0,
+	kFontEngine = 1
+};
+
 #define FONT_WIDTH 8
 #define FONT_HEIGHT 6
 #define FONT_NUM_CHARS 121
+
+#define DOS_FONT_WIDTH 8
+#define DOS_FONT_HEIGHT 16
+#define DOS_FONT_NUM_CHARS 95
 
 class GfxSurface : public Graphics::Surface {
 private:
@@ -88,7 +106,11 @@ private:
 	MortevielleEngine *_vm;
 
 	Common::List<Common::Rect> _dirtyRects;
-	byte _fontData[FONT_NUM_CHARS * FONT_HEIGHT];
+
+	Font _fonts[2];
+	int _curFont;
+
+	int setFont(int index);
 
 public:
 	ScreenSurface(MortevielleEngine *vm);
@@ -99,7 +121,7 @@ public:
 	void updateScreen();
 	void drawPicture(GfxSurface &surface, int x, int y);
 	void copyFrom(Graphics::Surface &src, int x, int y);
-	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex);
+	void writeCharacter(const Common::Point &pt, unsigned char ch, int palIndex, int scaleFactor = kResolutionScaler);
 	void drawBox(int x, int y, int dx, int dy, int col);
 	void fillRect(int color, const Common::Rect &bounds);
 	void clearScreen();
@@ -108,6 +130,10 @@ public:
 	int  getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
 	void drawRectangle(int x, int y, int dx, int dy);
+
+	void drawSystemString(const Common::String &l, int color);
+
+	~ScreenSurface();
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);
