@@ -76,7 +76,6 @@ private:
 
 	bool checkMoveDirection(int key);
 public:
-	SpriteResource _townSprites[8];
 	int _intrIndex1;
 	Common::String _interfaceText;
 public:

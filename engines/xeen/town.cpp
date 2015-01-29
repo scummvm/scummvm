@@ -1249,6 +1249,13 @@ void Town::drawTownAnim(bool flag) {
 	screen._windows[3].update();
 }
 
+/**
+ * Returns true if a town location (bank, blacksmith, etc.) is currently active
+ */
+bool Town::isActive() const {
+	return _townSprites.size() > 0 && !_townSprites[0].empty();
+}
+
 Character *Town::showItems(Character *c, int v2) {
 	error("TODO: showItems");
 }

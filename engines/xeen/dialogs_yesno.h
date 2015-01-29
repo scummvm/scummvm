@@ -33,9 +33,9 @@ private:
 
 	YesNo(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	bool execute(bool type, int v2);
+	bool execute(bool type, bool townFlag);
 public:
-	static bool show(XeenEngine *vm, bool type, bool v2);
+	static bool show(XeenEngine *vm, bool type, bool townFlag = false);
 };
 
 } // End of namespace Xeen

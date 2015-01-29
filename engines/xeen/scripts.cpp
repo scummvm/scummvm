@@ -1079,7 +1079,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		v = ps._luck._temporary;
 		break;
 	case 44:
-		v = YesNo::show(_vm, mask, false);
+		v = YesNo::show(_vm, mask);
 		v = (!v && !mask) ? 2 : mask;
 		break;
 	case 45:

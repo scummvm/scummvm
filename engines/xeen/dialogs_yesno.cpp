@@ -33,7 +33,7 @@ bool YesNo::show(XeenEngine *vm, bool type, bool v2) {
 	return result;
 }
 
-bool YesNo::execute(bool type, int v2) {
+bool YesNo::execute(bool type, bool townFlag) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
@@ -64,12 +64,12 @@ bool YesNo::execute(bool type, int v2) {
 	while (!_vm->shouldQuit()) {
 		events.updateGameCounter();
 		
-		if (intf._townSprites[0].empty()) {
+		if (town.isActive()) {
+			town.drawTownAnim(townFlag);
+			numFrames = 3;
+		} else {
 			intf.draw3d(true);
 			numFrames = 1;
-		} else {
-			town.drawTownAnim(v2);
-			numFrames = 3;
 		}
 
 		events.wait(3, true);

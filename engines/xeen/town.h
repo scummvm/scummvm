@@ -109,6 +109,8 @@ public:
 	int townAction(int actionId);
 
 	void drawTownAnim(bool flag);
+
+	bool isActive() const;
 };
 
 } // End of namespace Xeen
