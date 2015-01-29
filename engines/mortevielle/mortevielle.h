@@ -122,7 +122,6 @@ const int kMenuSelfStringIndex = 497;
 const int kMenuSayStringIndex = 502;
 const int kMaxPatt = 20;
 
-const int kResolutionScaler = 2;
 /*
 18  "It's already open$",
 26  "A photograph$"
