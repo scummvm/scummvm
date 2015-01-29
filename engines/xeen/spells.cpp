@@ -22,6 +22,7 @@
 
 #include "xeen/spells.h"
 #include "xeen/files.h"
+#include "xeen/resources.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -40,6 +41,17 @@ void Spells::load() {
 	while (f2.pos() < f2.size())
 		_maeNames.push_back(f2.readString());
 	f2.close();
+}
+
+int Spells::calcSpellCost(int spellId, int expenseFactor) const {
+	int amount = SPELL_COSTS[spellId];
+	return (amount >= 0) ? (amount * 100) << expenseFactor :
+		(amount * -500) << expenseFactor;
+}
+
+int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
+	int amount = SPELL_COSTS[spellId];
+	return (amount >= 0) ? amount : amount * -1 * expenseFactor;
 }
 
 } // End of namespace Xeen

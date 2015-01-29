@@ -30,6 +30,8 @@ namespace Xeen {
 
 class XeenEngine;
 
+#define MAX_SPELLS_PER_CLASS 40
+
 class Spells {
 private:
 	XeenEngine *_vm;
@@ -40,6 +42,11 @@ public:
 	Common::StringArray _maeNames;
 public:
 	Spells(XeenEngine *vm);
+
+	int calcSpellCost(int spellId, int expenseFactor) const;
+
+	int calcSpellPoints(int spellId, int expenseFactor) const;
+
 };
 
 } // End of namespace Xeen

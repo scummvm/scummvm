@@ -210,6 +210,24 @@ extern const char *const AMOUNT;
 
 extern const char *const FOOD_PACKS_FULL;
 
+extern const char *const BUY_SPELLS;
+
+extern const char *const GUILD_OPTIONS;
+
+extern const int SPELL_COSTS[77];
+
+extern const int CLOUDS_SPELL_OFFSETS[5][20];
+
+extern const int DARK_SPELL_OFFSETS[3][39];
+
+extern const int DARK_SPELL_RANGES[12][2];
+
+extern const int SPELL_LEVEL_OFFSETS[3][39];
+
+extern const int SPELL_GEM_COST[77];
+
+extern const char *NOT_A_SPELL_CASTER;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

@@ -101,8 +101,6 @@ private:
 	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait);
 
 	Character *showItems(Character *c, int v2);
-
-	Character *showAvailableSpells(Character *c, int v2);
 public:
 	Town(XeenEngine *vm);
 

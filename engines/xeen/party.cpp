@@ -27,6 +27,7 @@
 #include "xeen/files.h"
 #include "xeen/resources.h"
 #include "xeen/saves.h"
+#include "xeen/spells.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -52,7 +53,7 @@ Character::Character() {
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
 	Common::fill(&_awards[0], &_awards[128], false);
-	Common::fill(&_spells[9], &_spells[312], false);
+	Common::fill(&_spells[0], &_spells[39], 0);
 	_lloydMap = 0;
 	_hasSpells = false;
 	_currentSpell = 0;
@@ -110,8 +111,8 @@ void Character::synchronize(Common::Serializer &s) {
 	}
 
 	// Synchronize spell list
-	SavesManager::syncBitFlags(s, &_spells[0], &_spells[312]);
-	
+	for (int i = 0; i < MAX_SPELLS_PER_CLASS - 1; ++i)
+		s.syncAsByte(_spells[i]);	
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);
 	s.syncAsByte(_lloydPosition.y);

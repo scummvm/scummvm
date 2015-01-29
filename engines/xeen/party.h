@@ -108,7 +108,7 @@ public:
 	int _tempAge;
 	int _skills[18];
 	bool _awards[128];
-	bool _spells[312];
+	int _spells[39];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;

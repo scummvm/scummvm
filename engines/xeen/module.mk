@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	dialogs_error.o \
 	dialogs_options.o \
 	dialogs_input.o \
+	dialogs_spells.o \
 	dialogs_whowill.o \
 	dialogs_yesno.o \
 	events.o \

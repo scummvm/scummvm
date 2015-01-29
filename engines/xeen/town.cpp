@@ -23,6 +23,7 @@
 #include "xeen/town.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/dialogs_yesno.h"
+#include "xeen/dialogs_spells.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -563,15 +564,14 @@ Character *Town::doGuildOptions(Character *c) {
 				sound.playSample(&f, 1);
 			}
 		}
-	}
-	else if (_buttonValue == Common::KEYCODE_s) {
+	} else if (_buttonValue == Common::KEYCODE_s) {
 		if (c->guildMember())
-			c = showAvailableSpells(c, 0x80);
+			c = SpellsScroll::show(_vm, c, 0x80);
 		_buttonValue = 0;
 	} else if (_buttonValue == Common::KEYCODE_c) {
 		if (!c->noActions()) {
 			if (c->guildMember())
-				c = showAvailableSpells(c, 0);
+				c = SpellsScroll::show(_vm, c, 0);
 			_buttonValue = 0;
 		}
 	}
@@ -1258,10 +1258,6 @@ bool Town::isActive() const {
 
 Character *Town::showItems(Character *c, int v2) {
 	error("TODO: showItems");
-}
-
-Character *Town::showAvailableSpells(Character *c, int v2) {
-	error("TODO: showAvailableSpells");
 }
 
 } // End of namespace Xeen
