@@ -809,6 +809,7 @@ STUB_FUNC(Lua_V1::SetMouseSpeedScale)
 STUB_FUNC(Lua_V1::SetResolutionScaling)
 STUB_FUNC(Lua_V1::SetAdvancedLighting)
 STUB_FUNC(Lua_V1::SetLanguage)
+STUB_FUNC(Lua_V1::PlayCurrentCommentary)
 STUB_FUNC(Lua_V1::IsPlayingCommentary)
 STUB_FUNC(Lua_V1::EnableCommentary)
 STUB_FUNC(Lua_V1::ClearCommentary)
@@ -1059,6 +1060,7 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "SetResolutionScaling", LUA_OPCODE(Lua_V1, SetResolutionScaling) },
 	{ "SetAdvancedLighting", LUA_OPCODE(Lua_V1, SetAdvancedLighting) },
 	{ "SetLanguage", LUA_OPCODE(Lua_V1, SetLanguage) },
+	{ "PlayCurrentCommentary", LUA_OPCODE(Lua_V1, PlayCurrentCommentary) },
 	{ "IsPlayingCommentary", LUA_OPCODE(Lua_V1, IsPlayingCommentary) },
 	{ "EnableCommentary", LUA_OPCODE(Lua_V1, EnableCommentary) },
 	{ "ClearCommentary", LUA_OPCODE(Lua_V1, ClearCommentary) },
