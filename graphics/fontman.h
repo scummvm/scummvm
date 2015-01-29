@@ -41,7 +41,8 @@ public:
 		kLocalizedFont = 0,
 		kConsoleFont = 1,
 		kGUIFont = 2,
-		kBigGUIFont = 3
+		kBigGUIFont = 3,
+		kDOSFont = 4
 	};
 
 	/**

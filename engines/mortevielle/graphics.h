@@ -105,6 +105,7 @@ public:
 	void clearScreen();
 	void putxy(int x, int y) { _textPos = Common::Point(x, y); }
 	void drawString(const Common::String &l, int command);
+	void drawSystemString(const Common::String &l, int color);
 	int  getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
 	void drawRectangle(int x, int y, int dx, int dy);
