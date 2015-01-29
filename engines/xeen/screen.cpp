@@ -60,11 +60,17 @@ void Window::open() {
 }
 
 void Window::open2() {
+	Screen &screen = *_vm->_screen;
+
+	// Save a copy of the area under the window
+	_savedArea.create(_bounds.width(), _bounds.height());
+	_savedArea.copyRectToSurface(screen, 0, 0, _bounds);
+
+	// Mark the area as dirty and fill it with a default background
 	addDirtyRect(_bounds);
 	frame();
 	fill();
 
-	Screen &screen = *_vm->_screen;
 	screen._writePos.x = _bounds.right - 8;
 	screen.writeSymbol(19);
 
@@ -130,10 +136,16 @@ void Window::frame() {
 }
 
 void Window::close() {
+	Screen &screen = *_vm->_screen;
+
 	if (_enabled) {
-		// Update any remaining pending changes to the screen and free
-		// the window's internal surface storage
+		// Update the window
 		update();
+
+		// Restore the saved original content
+		screen.copyRectToSurface(_savedArea, _bounds.left, _bounds.top,
+			Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+		addDirtyRect(_bounds);
 
 		// Remove the window from the stack and flag it as now disabled
 		for (uint i = 0; i < _vm->_screen->_windowStack.size(); ++i) {

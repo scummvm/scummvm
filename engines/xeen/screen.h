@@ -61,6 +61,7 @@ private:
 	XeenEngine *_vm;
 	Common::Rect _bounds;
 	Common::Rect _innerBounds;
+	XSurface _savedArea;
 	int _a;
 	int _border;
 	int _xLo, _xHi;
