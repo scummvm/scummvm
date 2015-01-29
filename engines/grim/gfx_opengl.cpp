@@ -49,6 +49,7 @@
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
 #include "engines/grim/emi/modelemi.h"
+#include "engines/grim/remastered/overlay.h"
 #include "engines/grim/registry.h"
 
 
@@ -916,6 +917,55 @@ void GfxOpenGL::drawSprite(const Sprite *sprite) {
 		glVertex3f(-halfWidth, 0.0f, 0.0f);
 		glEnd();
 	}
+
+	glEnable(GL_LIGHTING);
+	glDisable(GL_ALPHA_TEST);
+	glDepthMask(GL_TRUE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+
+	glPopMatrix();
+}
+
+void GfxOpenGL::drawOverlay(const Overlay *overlay) {
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glEnable(GL_TEXTURE_2D);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+
+	glDisable(GL_LIGHTING);
+
+
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GEQUAL, 0.5f);
+
+
+
+	glDisable(GL_DEPTH_TEST);
+	
+
+
+	// In Grim, the bottom edge of the sprite is at y=0 and
+	// the texture is flipped along the X-axis.
+	float height = overlay->_material->getData()->_textures[0]->_height;
+	float width = overlay->_material->getData()->_textures[0]->_width;
+
+	glBegin(GL_POLYGON);
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(0, height, 0.0f);
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(0, 0, 0.0f);
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(width, +0, 0.0f);
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(width, height, 0.0f);
+	glEnd();
+	
 
 	glEnable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);

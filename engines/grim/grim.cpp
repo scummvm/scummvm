@@ -63,6 +63,7 @@
 #include "engines/grim/sound.h"
 #include "engines/grim/stuffit.h"
 #include "engines/grim/debugger.h"
+#include "engines/grim/remastered/overlay.h"
 
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/emi/sound/emisound.h"
@@ -653,6 +654,10 @@ void GrimEngine::drawNormalMode() {
 
 	// Draw Primitives
 	foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
+		p->draw();
+	}
+
+	foreach (Overlay *p, Overlay::getPool()) {
 		p->draw();
 	}
 

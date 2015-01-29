@@ -41,6 +41,7 @@
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/skeleton.h"
+#include "engines/grim/remastered/overlay.h"
 #include "engines/grim/patchr.h"
 #include "engines/grim/md5check.h"
 #include "engines/grim/update/update.h"
@@ -120,6 +121,7 @@ ResourceLoader::ResourceLoader() {
 				warning("residualvm-grim-patch.lab not found");
 
 			//SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
+			SearchMan.listMatchingMembers(files, "images.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
 			SearchMan.listMatchingMembers(files, "data004.lab");
 			SearchMan.listMatchingMembers(files, "data003.lab");
@@ -509,6 +511,22 @@ AnimationEmi *ResourceLoader::loadAnimationEmi(const Common::String &filename) {
 
 	AnimationEmi *result = new AnimationEmi(filename, stream);
 	_emiAnims.push_back(result);
+	delete stream;
+
+	return result;
+}
+
+Overlay *ResourceLoader::loadOverlay(const Common::String &filename) {
+	Common::String fname = fixFilename(filename);
+	Common::SeekableReadStream *stream;
+
+	stream = openNewStreamFile(fname.c_str(), true);
+	if (!stream) {
+		warning("Could not find overlay %s", filename.c_str());
+		return nullptr;
+	}
+
+	Overlay *result = new Overlay(filename, stream);
 	delete stream;
 
 	return result;

@@ -88,6 +88,8 @@ public:
 	void drawModelFace(const Mesh *mesh, const MeshFace *face) override;
 	void drawSprite(const Sprite *sprite) override;
 
+	void drawOverlay(const Overlay *overlay) override;
+
 	void enableLights() override;
 	void disableLights() override;
 	void setupLight(Light *light, int lightId) override;

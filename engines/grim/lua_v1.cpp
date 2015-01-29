@@ -39,6 +39,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/remastered/overlay.h"
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
@@ -700,8 +701,30 @@ void Lua_V1::OverlayGetScreenSize() {
 }
 
 void Lua_V1::OverlayCreate() {
-	warning("Stub function: OverlayCreate, returns 1");
-	lua_pushnumber(1);
+	warning("Stub function: OverlayCreate");
+	lua_Object param1 = lua_getparam(1);
+	if (!lua_isstring(param1)) {
+		return;
+	}
+	const char *overlayName = lua_getstring(param1);
+
+	Overlay *overlay = g_resourceloader->loadOverlay(overlayName);
+
+	if (overlay) {
+		lua_pushusertag(overlay->getId(), overlay->getTag());
+	} else {
+		lua_pushnil();
+	}
+}
+
+void Lua_V1::OverlayDestroy() {
+	warning("Stub function: OverlayDestroy");
+	lua_Object actorObj = lua_getparam(1);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != Overlay::getStaticTag())
+		return;
+
+	Overlay *overlay = Overlay::getPool().getObject(lua_getuserdata(actorObj));
+	delete overlay;
 }
 
 void Lua_V1::QueryActiveHotspots() {
@@ -800,7 +823,6 @@ STUB_FUNC(Lua_V1::OverlayClearCache)
 STUB_FUNC(Lua_V1::GetGameRenderMode)
 STUB_FUNC(Lua_V1::SetGameRenderMode)
 STUB_FUNC(Lua_V1::OverlayMove)
-STUB_FUNC(Lua_V1::OverlayDestroy)
 STUB_FUNC(Lua_V1::AddHotspot)
 STUB_FUNC(Lua_V1::RemoveHotspot)
 STUB_FUNC(Lua_V1::OverlayFade)

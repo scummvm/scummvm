@@ -22,6 +22,7 @@
 
 #include "common/endian.h"
 #include "image/tga.h"
+#include "image/png.h"
 #include "graphics/surface.h"
 
 #include "engines/grim/grim.h"
@@ -46,7 +47,40 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 	}
 }
 
+void loadPNG(Common::SeekableReadStream *data, Texture *t) {
+	Image::PNGDecoder *tgaDecoder = new Image::PNGDecoder();
+	tgaDecoder->loadStream(*data);
+	const Graphics::Surface *tgaSurface = tgaDecoder->getSurface();
+
+	t->_width = tgaSurface->w;
+	t->_height = tgaSurface->h;
+	t->_texture = nullptr;
+
+	int bpp = tgaSurface->format.bytesPerPixel;
+	assert(bpp == 4); // Assure we have 32 bpp
+
+	t->_colorFormat = BM_ARGB;
+	t->_bpp = 4;
+	t->_hasAlpha = true;
+
+
+	// Allocate room for the texture.
+	t->_data = new uint8[t->_width * t->_height * (bpp)];
+
+	// Copy the texture data, as the decoder owns the current copy.
+	memcpy(t->_data, tgaSurface->getPixels(), t->_width * t->_height * (bpp));
+
+	delete tgaDecoder;
+}
+
 void MaterialData::initGrim(Common::SeekableReadStream *data) {
+	 if (_fname.hasSuffix(".png")) {
+		_numImages = 1;
+		_textures = new Texture*[1];
+		_textures[0] = new Texture();
+		loadPNG(data, _textures[0]);
+		return;
+	}
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('M','A','T',' '))
 		error("Invalid header for texture %s. Expected 'MAT ', got '%c%c%c%c'", _fname.c_str(),

@@ -83,6 +83,7 @@ MODULE_OBJS := \
 	movie/movie.o \
 	movie/quicktime.o \
 	movie/smush.o \
+	remastered/overlay.o \
 	update/packfile.o \
 	update/mscab.o \
 	update/lang_filter.o \
