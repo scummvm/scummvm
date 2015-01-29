@@ -48,15 +48,16 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 }
 
 void loadPNG(Common::SeekableReadStream *data, Texture *t) {
-	Image::PNGDecoder *tgaDecoder = new Image::PNGDecoder();
-	tgaDecoder->loadStream(*data);
-	const Graphics::Surface *tgaSurface = tgaDecoder->getSurface();
+	Image::PNGDecoder *pngDecoder = new Image::PNGDecoder();
+	pngDecoder->loadStream(*data);
 
-	t->_width = tgaSurface->w;
-	t->_height = tgaSurface->h;
+	Graphics::Surface *pngSurface =pngDecoder->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	
+	t->_width = pngSurface->w;
+	t->_height = pngSurface->h;
 	t->_texture = nullptr;
 
-	int bpp = tgaSurface->format.bytesPerPixel;
+	int bpp = pngSurface->format.bytesPerPixel;
 	assert(bpp == 4); // Assure we have 32 bpp
 
 	t->_colorFormat = BM_RGBA;
@@ -68,9 +69,11 @@ void loadPNG(Common::SeekableReadStream *data, Texture *t) {
 	t->_data = new uint8[t->_width * t->_height * (bpp)];
 
 	// Copy the texture data, as the decoder owns the current copy.
-	memcpy(t->_data, tgaSurface->getPixels(), t->_width * t->_height * (bpp));
+	memcpy(t->_data, pngSurface->getPixels(), t->_width * t->_height * (bpp));
 
-	delete tgaDecoder;
+	pngSurface->free();
+	delete pngSurface;
+	delete pngDecoder;
 }
 
 void MaterialData::initGrim(Common::SeekableReadStream *data) {
