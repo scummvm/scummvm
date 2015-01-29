@@ -63,6 +63,15 @@ void Window::open2() {
 	addDirtyRect(_bounds);
 	frame();
 	fill();
+
+	Screen &screen = *_vm->_screen;
+	screen._writePos.x = _bounds.right - 8;
+	screen.writeSymbol(19);
+
+	screen._writePos.x = _innerBounds.left;
+	screen._writePos.y = _innerBounds.top;
+	screen._fontJustify = JUSTIFY_NONE;
+	screen._fontReduced = false;
 }
 
 void Window::frame() {

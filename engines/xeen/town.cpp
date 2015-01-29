@@ -659,6 +659,7 @@ Character *Town::doTavernOptions(Character *c) {
 		screen._windows[10].close();
 		screen._windows[12].open();
 		screen._windows[12].writeString(msg);
+		screen._windows[12].update();
 
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
