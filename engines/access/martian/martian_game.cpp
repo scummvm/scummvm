@@ -209,27 +209,26 @@ bool MartianEngine::showCredits() {
 	_screen->clearScreen();
 	_destIn = _screen;
 
-	int val1 = _creditsStream->readSint16LE();
-	int val2 = 0;
-	int val3 = 0;
+	int posX = _creditsStream->readSint16LE();
+	int posY = 0;
 
-	while(val1 != -1) {
-		val2 = _creditsStream->readSint16LE();
-		val3 = _creditsStream->readSint16LE();
-		_screen->plotImage(_introObjects, val3, Common::Point(val1, val2));
+	while(posX != -1) {
+		posY = _creditsStream->readSint16LE();
+		int frameNum = _creditsStream->readSint16LE();
+		_screen->plotImage(_introObjects, frameNum, Common::Point(posX, posY));
 
-		val1 = _creditsStream->readSint16LE();
+		posX = _creditsStream->readSint16LE();
 	}
 
-	val2 = _creditsStream->readSint16LE();
-	if (val2 == -1) {
+	posY = _creditsStream->readSint16LE();
+	if (posY == -1) {
 		_events->showCursor();
 		_screen->forceFadeOut();
 		return true;
 	}
 
 	_screen->forceFadeIn();
-	_timers[3]._timer = _timers[3]._initTm = val2;
+	_timers[3]._timer = _timers[3]._initTm = posY;
 
 	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[3]._timer) {
 		_events->pollEventsAndWait();
