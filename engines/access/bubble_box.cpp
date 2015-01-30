@@ -604,10 +604,8 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	int ICON1Y = 0;
 	int ICON2T = 0;
 	int ICON2X = 0;
-	int ICON2Y = 0;
 	int ICON3T = 0;
 	int ICON3X = 0;
-	int ICON3Y = 0;
 	if (_btnId1) {
 		ICON1T = _btnId1;
 		ICON1X = BICONSTARTX + _btnX1;
@@ -617,14 +615,12 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		if (_btnId2) {
 			ICON2T = _btnId2;
 			ICON2X = BICONSTARTX + _btnX2;
-			ICON2Y = BICONSTARTY;
-			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, ICON2Y));
+			_vm->_screen->plotImage(icons, ICON2T + 10, Common::Point(ICON2X, BICONSTARTY));
 
 			if (_btnId3) {
 				ICON3T = _btnId3;
 				ICON3X = BICONSTARTX + _btnX3;
-				ICON3Y = BICONSTARTY;
-				_vm->_screen->plotImage(icons, ICON3T + 10, Common::Point(ICON3X, ICON3Y));
+				_vm->_screen->plotImage(icons, ICON3T + 10, Common::Point(ICON3X, BICONSTARTY));
 			}
 		}
 	}
