@@ -896,7 +896,7 @@ void Scripts::cmdTexChoice() {
 
 		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
-			if (_vm->_events->_mouseRow >= (_vm->getGameID() == GType_MartianMemorandum) ? 23 : 22) {
+			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == GType_MartianMemorandum) ? 23 : 22)) {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
 				for (int i = 0; i < BTN_COUNT; i++) {
