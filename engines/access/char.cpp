@@ -31,17 +31,12 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (vm->getGameID() == GType_MartianMemorandum)
-		_estabIndex = -1;
-	else
-		_estabIndex = s.readSint16LE();
-
-	_screenFile.load(s);
-
 	if (vm->getGameID() == GType_MartianMemorandum) {
-		int idx = s.readSint16LE();
-		if (idx != -1)
-			warning("TODO: more CharEntry");
+		_screenFile.load(s);
+		_estabIndex = s.readSint16LE();
+	} else {
+		_estabIndex = s.readSint16LE();
+		_screenFile.load(s);
 	}
 
 	_paletteFile.load(s);
