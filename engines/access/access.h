@@ -194,7 +194,6 @@ public:
 	bool _canSaveLoad;
 
 	Resource *_establish;
-	int _et;
 	int _printEnd;
 	int _txtPages;
 	int _narateFile;
