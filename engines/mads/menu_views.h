@@ -191,7 +191,7 @@ private:
 	int _manualFrame2;
 	int _animFrameNumber;
 	bool _nextCyclingActive;
-	int _scrollFrameCtr;
+	uint _scrollFrameCtr;
 private:
 	void load();
 
