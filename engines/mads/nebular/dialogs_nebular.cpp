@@ -91,6 +91,8 @@ bool DialogsNebular::show(int messageId, int objectId) {
 							dialog->incNumLines();
 						}
 					} else if (commandCheck("ASK", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						dialog->addInput();
 					} else if (commandCheck("VERB", valStr, commandText)) {
 						dialogText += getVocab(action._activeAction._verbId);
@@ -114,12 +116,18 @@ bool DialogsNebular::show(int messageId, int objectId) {
 					} else if (commandCheck("WIDTH", valStr, commandText)) {
 						_dialogWidth = atoi(valStr.c_str());
 					} else if (commandCheck("BAR", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						dialog->addBarLine();
 					} else if (commandCheck("UNDER", valStr, commandText)) {
 						underlineFlag = true;
 					} else if (commandCheck("DOWN", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						dialog->downPixelLine();
 					} else if (commandCheck("TAB", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						int xp = atoi(valStr.c_str());
 						dialog->setLineXp(xp);
 					}
@@ -163,6 +171,9 @@ bool DialogsNebular::show(int messageId, int objectId) {
 
 	if (!centerFlag)
 		dialog->incNumLines();
+
+	if (!dialog)
+		error("DialogsNebular::show - Uninitialized dialog");
 
 	// Show the dialog
 	_vm->_events->setCursor(CURSOR_ARROW);
