@@ -44,7 +44,6 @@ EventsManager::EventsManager(MADSEngine *vm) {
 	_vD2 = 0;
 	_mouseStatusCopy = 0;
 	_mouseMoved = false;
-	_vD8 = 0;
 	_rightMousePressed = false;
 	_eventTarget = nullptr;
 }
@@ -261,7 +260,7 @@ void EventsManager::waitForNextFrame() {
 void EventsManager::initVars() {
 	_mousePos = Common::Point(-1, -1);
 	_mouseStatusCopy = _mouseStatus;
-	_vD2 = _vD8 = 0;
+	_vD2 = 0;
 }
 
 } // End of namespace MADS

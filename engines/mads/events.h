@@ -70,7 +70,6 @@ public:
 	int _vD2;
 	int _mouseStatusCopy;
 	bool _mouseMoved;
-	int _vD8;
 	Common::Stack<Common::Event> _pendingKeys;
 public:
 	/**
