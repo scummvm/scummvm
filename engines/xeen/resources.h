@@ -248,6 +248,34 @@ extern const char *const SPELL_DETAILS;
 
 extern const char *const MAP_TEXT;
 
+extern const char *const LIGHT_COUNT_TEXT;
+
+extern const char *const FIRE_RESISTENCE_TEXT;
+
+extern const char *const ELECRICITY_RESISTENCE_TEXT;
+
+extern const char *const COLD_RESISTENCE_TEXT;
+
+extern const char *const POISON_RESISTENCE_TEXT;
+
+extern const char *const CLAIRVOYANCE_TEXT;
+
+extern const char *const LEVITATE_TEXT;
+
+extern const char *const WALK_ON_WATER_TEXT;
+
+extern const char *const GAME_INFORMATION;
+
+extern const char *const WORLD_GAME_TEXT;
+
+extern const char *const DARKSIDE_GAME_TEXT;
+
+extern const char *const CLOUDS_GAME_TEXT;
+
+extern const char *const SWORDS_GAME_TEXT;
+
+extern const char *const WEEK_DAY_STRINGS[10];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

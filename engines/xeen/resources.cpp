@@ -832,4 +832,38 @@ const char *const MAP_TEXT =
 	"\x3""c\xB""000\x9""000%s\x3l\xB""139"
 	"\x9""000X = %d\x3r\x9""000Y = %d\x3""c\x9""000%s";
 
+const char *const LIGHT_COUNT_TEXT = "\x3l\n\n\t024Light\x3r\t124%d";
+
+const char *const FIRE_RESISTENCE_TEXT = "%c%sFire%s%u";
+
+const char *const ELECRICITY_RESISTENCE_TEXT = "%c%sElectricity%s%u";
+
+const char *const COLD_RESISTENCE_TEXT = "c%sCold%s%u";
+
+const char *const POISON_RESISTENCE_TEXT = "%c%sPoison/Acid%s%u";
+
+const char *const CLAIRVOYANCE_TEXT = "%c%sClairvoyance%s";
+
+const char *const LEVITATE_TEXT = "%c%sLevitate%s";
+
+const char *const WALK_ON_WATER_TEXT = "%c%sWalk on Water";
+
+const char *const GAME_INFORMATION = 
+	"\xD\x3""c\x9""000\xB""001\xC""37%s of Xeen\xC""d\n"
+	"Game Information\n"
+	"\n"
+	"Today is \xC""37%ssday\xC""d\n"
+	"\n"
+	"\x9""032Time\x9""072Day\x9""112Year\n"
+	"\x9""032\xC""37%d:%02d%c\x9""072%u\x9""112%u\xC""d%s";
+
+const char *const WORLD_GAME_TEXT = "World";
+const char *const DARKSIDE_GAME_TEXT = "Darkside";
+const char *const CLOUDS_GAME_TEXT = "Clouds";
+const char *const SWORDS_GAME_TEXT = "Swords";
+
+const char *const WEEK_DAY_STRINGS[10] = {
+	"Ten", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
+};
+
 } // End of namespace Xeen

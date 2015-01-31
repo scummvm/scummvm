@@ -23,6 +23,7 @@
 #include "xeen/interface.h"
 #include "xeen/dialogs_error.h"
 #include "xeen/dialogs_automap.h"
+#include "xeen/dialogs_info.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -672,6 +673,11 @@ void Interface::perform() {
 	case Common::KEYCODE_KP_EQUALS:
 		// Toggle minimap
 		party._automapOn = !party._automapOn;
+		break;
+
+	case Common::KEYCODE_i:
+		// Show Info dialog
+		InfoDialog::show(_vm);
 		break;
 
 	case Common::KEYCODE_m:
