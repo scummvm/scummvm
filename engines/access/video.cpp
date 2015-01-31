@@ -37,16 +37,12 @@ VideoPlayer::~VideoPlayer() {
 	closeVideo();
 }
 
-
-void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
+void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, int rate) {
 	_vidSurface = vidSurface;
 	vidSurface->_orgX1 = pt.x;
 	vidSurface->_orgY1 = pt.y;
 	_vm->_timers[31]._timer = rate;
 	_vm->_timers[31]._initTm = rate;
-
-	// Open up video stream
-	_videoData = _vm->_files->loadFile(videoFile);
 
 	// Load in header
 	_header._frameCount = _videoData->_stream->readUint16LE();
@@ -78,6 +74,20 @@ void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const 
 	}
 
 	_videoEnd = false;
+}
+
+void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const Common::String filename, int rate) {
+	// Open up video stream
+	_videoData = _vm->_files->loadFile(filename);
+
+	setVideo(vidSurface, pt, rate);
+}
+
+void VideoPlayer::setVideo(ASurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
+	// Open up video stream
+	_videoData = _vm->_files->loadFile(videoFile);
+	
+	setVideo(vidSurface, pt, rate);
 }
 
 void VideoPlayer::closeVideo() {

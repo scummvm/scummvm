@@ -51,6 +51,7 @@ private:
 	Common::Rect _videoBounds;
 
 	void getFrame();
+	void setVideo(ASurface *vidSurface, const Common::Point &pt, int rate);
 public:
 	int _videoFrame;
 	bool _soundFlag;
@@ -64,6 +65,7 @@ public:
 	 * Start up a video
 	 */
 	void setVideo(ASurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate);
+	void setVideo(ASurface *vidSurface, const Common::Point &pt, const Common::String filename, int rate);
 
 	/**
 	 * Decodes a frame of the video
