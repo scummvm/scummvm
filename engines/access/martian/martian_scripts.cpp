@@ -34,6 +34,19 @@ MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
 }
 
+void MartianScripts::cmdSpecial1(int param1) {
+	_vm->_events->hideCursor();
+	
+	if (param1 != -1) {
+		_vm->_files->loadScreen(49, param1);
+		_vm->_buffer2.copyBuffer(_vm->_screen);
+	}
+
+	_vm->_screen->setIconPalette();
+	_vm->_screen->forceFadeIn();
+	_vm->_events->showCursor();
+}
+
 void MartianScripts::cmdSpecial3() {
 	_vm->_screen->forceFadeOut();
 	_vm->_events->hideCursor();
@@ -55,7 +68,7 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		warning("TODO: cmdSpecial0");
 		break;
 	case 1:
-		warning("TODO: cmdSpecial1");
+		cmdSpecial1(param1);
 		break;
 	case 2:
 		warning("TODO: cmdSpecial2");
@@ -71,6 +84,9 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		break;
 	case 6:
 		warning("TODO: cmdSpecial6");
+		break;
+	case 7:
+		warning("TODO: cmdSpecial7");
 		break;
 	default:
 		warning("Unexpected Special code %d - Skipped", commandIndex);
