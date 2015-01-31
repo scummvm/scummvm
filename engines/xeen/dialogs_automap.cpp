@@ -80,8 +80,8 @@ void AutoMapDialog::execute() {
 	
 	events.updateGameCounter();
 	do {
-//		if (drawFlag)
-//			intf.draw3d(false);
+		if (drawFlag)
+			intf.draw3d(false);
 		screen._windows[5].writeString("\n");
 
 		if (map._isOutdoors) {
@@ -277,7 +277,7 @@ void AutoMapDialog::execute() {
 					// Draw the arrow if at the correct position
 					if ((arrowPt.x / 10) == xCtr && (14 - (arrowPt.y / 10)) == yCtr && frameEndFlag) {
 						globalSprites.draw(screen, party._mazeDirection + 1,
-							Common::Point(arrowPt.x, arrowPt.y + 29));
+							Common::Point(arrowPt.x + 81, arrowPt.y + 29));
 					}
 
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 12);
@@ -384,14 +384,14 @@ void AutoMapDialog::execute() {
 						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
 				}
 			}
-
+			
 			// Draw overlay on cells that haven't been stepped on yet
 			for (int yDiff = pt.y + 7, yp = 38; yp < 166; --yDiff, yp += 8) {
 				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
-					if (v != INVALID_CELL && !map._currentSteppedOn)
-						map._tileSprites.draw(screen, 0, Common::Point(xp, yp));
+					if (v == INVALID_CELL || !map._currentSteppedOn)
+						map._tileSprites.draw(screen, 1, Common::Point(xp, yp));
 				}
 			}
 		}
@@ -417,6 +417,7 @@ void AutoMapDialog::execute() {
 		screen._windows[3].update();
 
 		events.pollEvents();
+		drawFlag = false;
 	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
 
 	events.clearEvents();
