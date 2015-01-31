@@ -41,10 +41,8 @@ void AutoMapDialog::execute() {
 	Party &party = *_vm->_party;
 	int frame2 = intf._overallFrame * 2;
 	int varSI = 1;
-	bool frameEndFlag;
+	bool frameEndFlag = false;
 
-	int yDiffStart = 8;
-	int xDiffStart = 248;
 	Common::Point pt = party._mazePosition;
 	Common::Point arrowPt;
 	SpriteResource globalSprites;
@@ -82,15 +80,14 @@ void AutoMapDialog::execute() {
 	
 	events.updateGameCounter();
 	do {
-		if (drawFlag)
-			intf.draw3d(false);
+//		if (drawFlag)
+//			intf.draw3d(false);
 		screen._windows[5].writeString("\n");
 
 		if (map._isOutdoors) {
 			// Draw outdoors map
-			for (int yCtr = 0, yDiff = yDiffStart - 1, yp = 38; yCtr < 16; 
-					++yCtr, --yDiff, yp += 8) {
-				for (int xp = 80, xDiff = xDiffStart + 1; xp < 240; xp += 10, ++xDiff) {
+			for (int yp = 38, yDiff = pt.y + 7; pt.y < 166; --yDiff, yp += 8) {
+				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
 
 					if (map._currentSteppedOn) {
@@ -100,9 +97,8 @@ void AutoMapDialog::execute() {
 				}
 			}
 
-			for (int yCtr = 0, yDiff = yDiffStart - 1, yp = 38; yCtr < 16;
-				++yCtr, --yDiff, yp += 8) {
-				for (int xp = 80, xDiff = xDiffStart + 1; xp < 240; xp += 10, ++xDiff) {
+			for (int yp = 38, yDiff = pt.y + 7; yp < 166; --yDiff, yp += 8) {
+				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 4);
 					int wallType = map.mazeDataCurrent()._wallTypes[v];
 
@@ -111,124 +107,12 @@ void AutoMapDialog::execute() {
 				}
 			}
 
-			for (int yCtr = 0, yDiff = yDiffStart - 1, yp = 38; yCtr < 16;
-				++yCtr, --yDiff, yp += 8) {
-				for (int xCtr = 0, xp = 80, xDiff = xDiffStart + 1; xp < 240; 
-						++xCtr, ++xDiff, xp += 10) {
-					if (xCtr == (arrowPt.x / 10) && yCtr == (14 - (arrowPt.y)) && frameEndFlag)
-						map._tileSprites.draw(screen, party._mazeDirection + 1,
-							Common::Point(arrowPt.x + 81, arrowPt.y + 29));
-					
-					v = map.mazeLookup(Common::Point(xDiff, yDiff), 12);					
-					int frame;
-					switch (v) {
-					case SURFTYPE_WATER:
-						frame = 18;
-						break;
-					case SURFTYPE_DIRT:
-						frame = 34;
-						break;
-					case SURFTYPE_GRASS:
-						frame = 22;
-						break;
-					case SURFTYPE_SNOW:
-					case SURFTYPE_SEWER:
-						frame = 16;
-						break;
-					case SURFTYPE_SWAMP:
-					case SURFTYPE_ROAD:
-						frame = 2;
-					case SURFTYPE_LAVA:
-						frame = 30;
-						break;
-					case SURFTYPE_DESERT:
-						frame = 32;
-						break;
-					case SURFTYPE_DWATER:
-						frame = 20;
-						break;
-					case SURFTYPE_TFLR:
-						frame = 28;
-						break;
-					case SURFTYPE_SKY:
-						frame = 14;
-						break;
-					case SURFTYPE_CROAD:
-						frame = frame2 + 4;
-						break;
-					case SURFTYPE_CLOUD:
-						frame = 24;
-						break;
-					case SURFTYPE_SCORCH:
-						frame = 26;
-						break;
-					default:
-						frame = -1;
-						break;
-					}
-					
-					if (frame != -1 && map._currentSteppedOn)
-						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
+		
+			for (int yp = 38, yDiff = pt.y + 7; yp < 166; yp += 8, --yDiff) {
+				for (int xp = 80, xDiff = -7; xp < 240; xp += 10, ++xDiff) {
+					v = map.mazeLookup(Common::Point(xDiff, yDiff), 8);
 
-					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
-					switch (v) {
-					case SURFTYPE_WATER:
-						frame = 19;
-						break;
-					case SURFTYPE_DIRT:
-						frame = 35;
-						break;
-					case SURFTYPE_GRASS:
-						frame = 23;
-						break;
-					case SURFTYPE_SNOW:
-					case SURFTYPE_SEWER:
-						frame = 17;
-						break;
-					case SURFTYPE_SWAMP:
-					case SURFTYPE_ROAD:
-						frame = 3;
-						break;
-					case SURFTYPE_LAVA:
-						frame = 31;
-						break;
-					case SURFTYPE_DESERT:
-						frame = 33;
-						break;
-					case SURFTYPE_DWATER:
-						frame = 21;
-						break;
-					case SURFTYPE_TFLR:
-						frame = 29;
-						break;
-					case SURFTYPE_SKY:
-						frame = 15;
-						break;
-					case SURFTYPE_CROAD:
-						frame = frame2 + 5;
-						break;
-					case SURFTYPE_CLOUD:
-						frame = 25;
-						break;
-					case SURFTYPE_SCORCH:
-						frame = 27;
-						break;
-					default:
-						frame = -1;
-						break;
-					}
-					
-					if (frame != -1 && map._currentSteppedOn)
-						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
-				}
-			}
-
-			for (int yCtr = 0, yDiff = yDiffStart - 1, yp = 38; yCtr < 16;
-				++yCtr, --yDiff, yp += 8) {
-				for (int xp = 80, xDiff = xDiffStart + 1; xp < 240; xp += 10, ++xDiff) {
-					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
-
-					if (v != INVALID_CELL && map._currentSteppedOn)
+					if (v && map._currentSteppedOn)
 						map._tileSprites.draw(screen, 1, Common::Point(xp, yp));
 				}
 			}
@@ -236,9 +120,43 @@ void AutoMapDialog::execute() {
 			// Draw indoors map
 			frame2 = (frame2 + 2) % 8;
 
-			for (int yCtr = 0, yDiff = yDiffStart - 1, yp = 38; yCtr < 16;
-				++yCtr, --yDiff, yp += 8) {
-				for (int xp = 80, xDiff = xDiffStart + 1; xp < 240; xp += 10, ++xDiff) {
+			// Draw ground tiles
+			for (int yp = 38, yDiff = pt.y + 7; yp < 166; yp += 8, --yDiff) {
+				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
+					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
+
+					if (v != INVALID_CELL && map._currentSteppedOn)
+						map._tileSprites.draw(screen, 0, Common::Point(xp, yp));
+				}
+			}
+			
+			// Draw thinner ground tiles on the left edge of the map
+			for (int yp = 43, yDiff = pt.y + 7; yp < 171; yp += 8, --yDiff) {
+				v = map.mazeLookup(Common::Point(pt.x - 8, yDiff), 0, 0xffff);
+
+				if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
+					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
+						map._currentSurfaceId], Common::Point(75, yp));
+			}
+			
+			// Draw thin tile portion on top-left corner of map
+			v = map.mazeLookup(Common::Point(pt.x - 8, pt.y + 8), 0, 0xffff);
+			if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
+				map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
+					map._currentSurfaceId], Common::Point(75, 35));
+			
+			// Draw any thin tiles at the very top of the map
+			for (int xp = 85, xDiff = pt.x - 7; xp < 245; xp += 10, ++xDiff) {
+				v = map.mazeLookup(Common::Point(xDiff, pt.y + 8), 0, 0xffff);
+
+				if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
+					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
+						map._currentSurfaceId], Common::Point(xp, 35));
+			}
+
+			// Draw the default ground tiles
+			for (int yp = 43, yDiff = pt.y + 7; yp < 171; yp += 8, --yDiff) {
+				for (int xp = 85, xDiff = pt.x - 7; xp < 245; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
 					if (v != INVALID_CELL && map._currentSteppedOn)
@@ -246,69 +164,50 @@ void AutoMapDialog::execute() {
 				}
 			}
 
-			for (int yDiff = yDiffStart - 1, yp = 38; yp < 171; --yDiff, yp += 8) {
-				v = map.mazeLookup(Common::Point(pt.x - 8, yDiff), 0, 0xffff);
-
-				if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
-					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[v],
-						Common::Point(75, yp));
-			}
-
-			v = map.mazeLookup(Common::Point(pt.x - 8, pt.y + 8), 0, 0xffff);
-			if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
-				map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[v],
-				Common::Point(75, 35));
-
-			for (int xp = 85, xDiff = xDiffStart + 1; xp < 245; xp += 10, ++xDiff) {
-				v = map.mazeLookup(Common::Point(xDiff, pt.y + 8), 0, 0xffff);
-
-				if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
-					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[v],
-					Common::Point(xp, 35));
-			}
-
+			// Draw walls on left and top edges of map
 			for (int xp = 80, yp = 158, xDiff = pt.x - 7, yDiff = pt.y - 8; xp < 250; 
-					xp += 10, yp += 8, ++xDiff, ++yDiff) {
+					xp += 10, yp -= 8, ++xDiff, ++yDiff) {
+				// Draw walls on left edge of map
 				v = map.mazeLookup(Common::Point(pt.x - 8, yDiff), 12);
 
 				int frame;
 				switch (v) {
-				case SURFTYPE_WATER:
+				case SURFTYPE_DIRT:
 					frame = 18;
 					break;
-				case SURFTYPE_GRASS:
-					frame = 24;
-					break;
 				case SURFTYPE_SNOW:
-				case SURFTYPE_SEWER:
-					frame = 16;
+					frame = 22;
 					break;
 				case SURFTYPE_SWAMP:
-				case SURFTYPE_ROAD:
-					frame = 2;
+				case SURFTYPE_CLOUD:
+					frame = 16;
 					break;
 				case SURFTYPE_LAVA:
-					frame = 30;
+				case SURFTYPE_DWATER:
+					frame = 2;
 					break;
 				case SURFTYPE_DESERT:
+					frame = 30;
+					break;
+				case SURFTYPE_ROAD:
 					frame = 32;
 					break;
-				case SURFTYPE_DWATER:
+				case SURFTYPE_TFLR:
 					frame = 20;
 					break;
-				case SURFTYPE_TFLR:
+				case SURFTYPE_SKY:
 					frame = 28;
 					break;
-				case SURFTYPE_SKY:
+				case SURFTYPE_CROAD:
 					frame = 14;
 					break;
-				case SURFTYPE_CROAD:
+				case SURFTYPE_SEWER:
 					frame = frame2 + 4;
 					break;
-				case SURFTYPE_CLOUD:
+				case SURFTYPE_SCORCH:
 					frame = 24;
 					break;
-				case SURFTYPE_SCORCH:
+				case SURFTYPE_SPACE:
 					frame = 26;
 					break;
 				default:
@@ -319,48 +218,49 @@ void AutoMapDialog::execute() {
 				if (frame != -1 && map._currentSteppedOn)
 					map._tileSprites.draw(screen, frame, Common::Point(70, yp));
 
+				// Draw walls on top edge of map
 				v = map.mazeLookup(Common::Point(xDiff, pt.y + 8), 0);
 
 				switch (v) {
-				case SURFTYPE_WATER:
+				case SURFTYPE_DIRT:
 					frame = 19;
 					break;
-				case SURFTYPE_DIRT:
+				case SURFTYPE_GRASS:
 					frame = 35;
 					break;
-				case SURFTYPE_GRASS:
+				case SURFTYPE_SNOW:
 					frame = 23;
 					break;
-				case SURFTYPE_SNOW:
-				case SURFTYPE_SEWER:
+				case SURFTYPE_SWAMP:
+				case SURFTYPE_CLOUD:
 					frame = 17;
 					break;
-				case SURFTYPE_SWAMP:
-				case SURFTYPE_ROAD:
+				case SURFTYPE_LAVA:
+				case SURFTYPE_DWATER:
 					frame = 3;
 					break;
-				case SURFTYPE_LAVA:
+				case SURFTYPE_DESERT:
 					frame = 31;
 					break;
-				case SURFTYPE_DESERT:
+				case SURFTYPE_ROAD:
 					frame = 33;
 					break;
-				case SURFTYPE_DWATER:
+				case SURFTYPE_TFLR:
 					frame = 21;
 					break;
-				case SURFTYPE_TFLR:
+				case SURFTYPE_SKY:
 					frame = 29;
 					break;
-				case SURFTYPE_SKY:
+				case SURFTYPE_CROAD:
 					frame = 15;
 					break;
-				case SURFTYPE_CROAD:
+				case SURFTYPE_SEWER:
 					frame = frame2 + 5;
 					break;
-				case SURFTYPE_CLOUD:
+				case SURFTYPE_SCORCH:
 					frame = 25;
 					break;
-				case SURFTYPE_SCORCH:
+				case SURFTYPE_SPACE:
 					frame = 27;
 					break;
 				default:
@@ -372,12 +272,125 @@ void AutoMapDialog::execute() {
 					map._tileSprites.draw(screen, frame, Common::Point(xp, 30));
 			}
 
-			for (int yCtr = 0, yDiff = yDiffStart - 1, yp = 38; yCtr < 16;
-				++yCtr, --yDiff, yp += 8) {
-				for (int xp = 80, xDiff = xDiffStart + 1; xp < 240; xp += 10, ++xDiff) {
+			for (int yCtr = 0, yp = 38, yDiff = pt.y + 7; yCtr < 16; ++yCtr, yp += 8, --yDiff) {
+				for (int xCtr = 0, xp = 80, xDiff = pt.x - 7; xCtr < 16; ++xCtr, xp += 10, ++xDiff) {
+					// Draw the arrow if at the correct position
+					if ((arrowPt.x / 10) == xCtr && (14 - (arrowPt.y / 10)) == yCtr && frameEndFlag) {
+						globalSprites.draw(screen, party._mazeDirection + 1,
+							Common::Point(arrowPt.x, arrowPt.y + 29));
+					}
+
+					v = map.mazeLookup(Common::Point(xDiff, yDiff), 12);
+					int frame;
+					switch (v) {
+					case SURFTYPE_DIRT:
+						frame = 18;
+						break;
+					case SURFTYPE_GRASS:
+						frame = 34;
+						break;
+					case SURFTYPE_SNOW:
+						frame = 22;
+						break;
+					case SURFTYPE_SWAMP:
+					case SURFTYPE_CLOUD:
+						frame = 16;
+						break;
+					case SURFTYPE_LAVA:
+					case SURFTYPE_DWATER:
+						frame = 2;
+						break;
+					case SURFTYPE_DESERT:
+						frame = 30;
+						break;
+					case SURFTYPE_ROAD:
+						frame = 32;
+						break;
+					case SURFTYPE_TFLR:
+						frame = 20;
+						break;
+					case SURFTYPE_SKY:
+						frame = 28;
+						break;
+					case SURFTYPE_CROAD:
+						frame = 14;
+						break;
+					case SURFTYPE_SEWER:
+						frame = frame2 + 4;
+						break;
+					case SURFTYPE_SCORCH:
+						frame = 24;
+						break;
+					case SURFTYPE_SPACE:
+						frame = 26;
+						break;
+					default:
+						frame = -1;
+						break;
+					}
+
+					if (frame != -1 && map._currentSteppedOn)
+						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
+
+					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
+					switch (v) {
+					case SURFTYPE_DIRT:
+						frame = 19;
+						break;
+					case SURFTYPE_GRASS:
+						frame = 35;
+						break;
+					case SURFTYPE_SNOW:
+						frame = 23;
+						break;
+					case SURFTYPE_SWAMP:
+					case SURFTYPE_CLOUD:
+						frame = 17;
+						break;
+					case SURFTYPE_LAVA:
+					case SURFTYPE_DWATER:
+						frame = 3;
+						break;
+					case SURFTYPE_DESERT:
+						frame = 31;
+						break;
+					case SURFTYPE_ROAD:
+						frame = 33;
+						break;
+					case SURFTYPE_TFLR:
+						frame = 21;
+						break;
+					case SURFTYPE_SKY:
+						frame = 29;
+						break;
+					case SURFTYPE_CROAD:
+						frame = 15;
+						break;
+					case SURFTYPE_SEWER:
+						frame = frame2 + 5;
+						break;
+					case SURFTYPE_SCORCH:
+						frame = 25;
+						break;
+					case SURFTYPE_SPACE:
+						frame = 27;
+						break;
+					default:
+						frame = -1;
+						break;
+					}
+
+					if (frame != -1 && map._currentSteppedOn)
+						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
+				}
+			}
+
+			// Draw overlay on cells that haven't been stepped on yet
+			for (int yDiff = pt.y + 7, yp = 38; yp < 166; --yDiff, yp += 8) {
+				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
-					if (v != INVALID_CELL && map._currentSteppedOn)
+					if (v != INVALID_CELL && !map._currentSteppedOn)
 						map._tileSprites.draw(screen, 0, Common::Point(xp, yp));
 				}
 			}
@@ -393,7 +406,7 @@ void AutoMapDialog::execute() {
 
 		if (events.timeElapsed() > 5) {
 			// Set the flag to make the basic arrow blinking effect
-			frameEndFlag = true;
+			frameEndFlag = !frameEndFlag;
 			events.updateGameCounter();
 		}
 
