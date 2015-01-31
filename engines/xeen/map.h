@@ -347,7 +347,6 @@ class Map {
 private:
 	XeenEngine *_vm;
 	MazeData _mazeData[9];
-	Common::String _mazeName;
 	SpriteResource _wallPicSprites;
 	int _sideTownPortal;
 	int _sidePictures;
@@ -357,6 +356,7 @@ private:
 
 	void loadEvents(int mapId);
 public:
+	Common::String _mazeName;
 	bool _isOutdoors;
 	MonsterObjectData _mobData;
 	MonsterData _monsterData;

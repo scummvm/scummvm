@@ -271,7 +271,9 @@ const byte TEXT_COLORS[40][4] = {
 	{ 0x00, 0xDB, 0xDB, 0xDB },
 };
 
-const char *const DIRECTION_TEXT[4] = { "NORTH", "EAST", "SOUTH", "WEST" };
+const char *const DIRECTION_TEXT_UPPER[4] = { "NORTH", "EAST", "SOUTH", "WEST" };
+
+const char *const DIRECTION_TEXT[4] = { "North", "East", "South", "West" };
 
 const char *const RACE_NAMES[5] = { "Human", "Elf", "Dwarf", "Gnome", "H-Orc" };
 
@@ -815,15 +817,19 @@ const char *const SPELLS_PURCHASE =
 	"\xC""09%s\xC""d for %u?"; 
 
 const char *const SPELL_DETAILS =
-"\xD\x2\x3""c\xB""122\x9""013\xC""37C\xC""dast"
-"\x9""040\xC""37N\xC""dew\x9""067ESC\x1""000\xB""000\x3""cCast Spell\n"
-"\n"
-"%s\x3l\n"
-"\n"
-"Spell Ready:\x3""c\n"
-"\n"
-"\xC""09%s\xC""d\x2\x3l\n"
-"\xB""082Cost\x3r\x9""000%u/%u\x3l\n"
-"Cur SP\x3r\x9""000%u\x1";
+	"\xD\x2\x3""c\xB""122\x9""013\xC""37C\xC""dast"
+	"\x9""040\xC""37N\xC""dew\x9""067ESC\x1""000\xB""000\x3""cCast Spell\n"
+	"\n"
+	"%s\x3l\n"
+	"\n"
+	"Spell Ready:\x3""c\n"
+	"\n"
+	"\xC""09%s\xC""d\x2\x3l\n"
+	"\xB""082Cost\x3r\x9""000%u/%u\x3l\n"
+	"Cur SP\x3r\x9""000%u\x1";
+
+const char *const MAP_TEXT =
+	"\x3""c\xB""000\x9""000%s\x3l\xB""139"
+	"\x9""000X = %d\x3r\x9""000Y = %d\x3""c\x9""000%s";
 
 } // End of namespace Xeen

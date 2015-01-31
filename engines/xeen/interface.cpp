@@ -22,6 +22,7 @@
 
 #include "xeen/interface.h"
 #include "xeen/dialogs_error.h"
+#include "xeen/dialogs_automap.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -672,6 +673,12 @@ void Interface::perform() {
 		// Toggle minimap
 		party._automapOn = !party._automapOn;
 		break;
+
+	case Common::KEYCODE_m:
+		// Show map dialog
+		AutoMapDialog::show(_vm);
+		break;
+
 	default:
 		break;
 	}

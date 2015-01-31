@@ -4580,7 +4580,7 @@ void InterfaceMap::assembleBorder() {
 
 	// Draw direction character if direction sense is active
 	if (_vm->_party->checkSkill(DIRECTION_SENSE) && !_vm->_noDirectionSense) {
-		const char *dirText = DIRECTION_TEXT[_vm->_party->_mazeDirection];
+		const char *dirText = DIRECTION_TEXT_UPPER[_vm->_party->_mazeDirection];
 		Common::String msg = Common::String::format(
 			"\002""08\003""c\013""139\011""116%c\014""d\001", *dirText);
 		screen._windows[0].writeString(msg);

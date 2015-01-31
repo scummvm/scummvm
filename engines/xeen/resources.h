@@ -56,6 +56,8 @@ extern const byte SYMBOLS[20][64];
 
 extern const byte TEXT_COLORS[40][4];
 
+extern const char *const DIRECTION_TEXT_UPPER[4];
+
 extern const char *const DIRECTION_TEXT[4];
 
 extern const char *const RACE_NAMES[5];
@@ -243,6 +245,8 @@ extern const char *const SPELLS_PRESS_A_KEY;
 extern const char *const SPELLS_PURCHASE;
 
 extern const char *const SPELL_DETAILS;
+
+extern const char *const MAP_TEXT;
 
 } // End of namespace Xeen
 

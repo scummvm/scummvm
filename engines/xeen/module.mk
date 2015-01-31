@@ -8,6 +8,8 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	dialogs.o \
+	automap.o \
+	dialogs_automap.o \
 	dialogs_confirm.o \
 	dialogs_error.o \
 	dialogs_options.o \
