@@ -550,7 +550,7 @@ void AnimationView::doFrame() {
 		scene._cyclingActive = _nextCyclingActive;
 	}
 
-	if (++_scrollFrameCtr >= _currentAnimation->_header._scrollTicks) {
+	if (_currentAnimation && (++_scrollFrameCtr >= _currentAnimation->_header._scrollTicks)) {
 		_scrollFrameCtr = 0;
 		scroll();
 	}
