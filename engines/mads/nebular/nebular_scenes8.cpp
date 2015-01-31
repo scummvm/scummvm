@@ -1129,8 +1129,7 @@ void Scene804::actions() {
 		} else {
 			_messWithThrottle = true;
 		}
-	}
-	else if (_action.isAction(VERB_APPLY, NOUN_POLYCEMENT, NOUN_CRACK) ||
+	} else if (_action.isAction(VERB_APPLY, NOUN_POLYCEMENT, NOUN_CRACK) ||
 		_action.isAction(VERB_PUT, NOUN_POLYCEMENT, NOUN_CRACK)) {
 		if (!_globals[kWindowFixed]) {
 			_resetFrame = 2;

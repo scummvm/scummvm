@@ -567,9 +567,8 @@ void MADSAction::leftClick() {
 		switch (userInterface._category) {
 		case CAT_COMMAND:
 			if (_selectedRow >= 0) {
-				if (_verbType == VERB_ONLY) {
+				if (_verbType == VERB_ONLY)
 					_selectedAction = -1;
-				}
 				else {
 					_recentCommand = _selectedRow;
 					_recentCommandSource = _commandSource;

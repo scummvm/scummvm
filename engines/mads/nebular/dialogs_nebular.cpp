@@ -387,8 +387,7 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 		addLine("ANSWER INCORRECT!", true);
 		wordWrap("\n");
 		addLine("(But we'll give you another chance!)");
-	}
-	else {
+	} else {
 		addLine("REX NEBULAR version 8.43", true);
 		wordWrap("\n");
 		addLine("(Copy Protection, for your convenience)");

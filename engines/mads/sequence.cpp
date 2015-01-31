@@ -526,8 +526,7 @@ void SequenceList::setMotion(int seqIndex, int flags, int deltaX, int deltaY) {
 
 	if (deltaY > 0) {
 		se._posSign.y = 1;
-	}
-	else if (deltaY < 0) {
+	} else if (deltaY < 0) {
 		se._posSign.y = -1;
 	} else {
 		se._posSign.y = 0;

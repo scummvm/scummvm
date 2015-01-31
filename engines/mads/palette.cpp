@@ -503,16 +503,12 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 		for (int colorCtr = 0; colorCtr < 3; ++colorCtr) {
 			if (_colorFlags[colorCtr]) {
 				int shiftSign = _colorValues[colorCtr];
-				if (shiftSign >= 0) {
+				if (shiftSign >= 0)
 					intensity = map[index]._intensity << shiftSign;
-				}
-				else {
+				else
 					intensity = map[index]._intensity >> abs(shiftSign);
-				}
-			}
-			else {
+			} else
 				intensity = _colorValues[colorCtr];
-			}
 
 			int diff = _rgb64Map[destPalette[palCtr * 3 + colorCtr]] - intensity;
 			palIndex[palCtr][colorCtr] = (byte)ABS(diff);

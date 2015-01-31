@@ -454,7 +454,7 @@ void GameNebular::doObjectAction() {
 		dialogs.show(464);
 	} else if (action.isAction(VERB_REFLECT)) {
 		dialogs.show(466);
-	} 	else if (action.isAction(VERB_GAZE_INTO, NOUN_REARVIEW_MIRROR)) {
+	} else if (action.isAction(VERB_GAZE_INTO, NOUN_REARVIEW_MIRROR)) {
 		dialogs.show(467);
 	} else if (action.isAction(VERB_EAT, NOUN_CHICKEN_BOMB)) {
 		dialogs.show(469);
