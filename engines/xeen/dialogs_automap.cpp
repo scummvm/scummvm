@@ -120,7 +120,7 @@ void AutoMapDialog::execute() {
 			// Draw indoors map
 			frame2 = (frame2 + 2) % 8;
 
-			// Draw ground tiles
+			// Draw default ground for all the valid explored areas
 			for (int yp = 38, yDiff = pt.y + 7; yp < 166; yp += 8, --yDiff) {
 				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
@@ -159,8 +159,9 @@ void AutoMapDialog::execute() {
 				for (int xp = 85, xDiff = pt.x - 7; xp < 245; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
-					if (v != INVALID_CELL && map._currentSteppedOn)
-						map._tileSprites.draw(screen, 0, Common::Point(xp, yp));
+					if (v != INVALID_CELL && map._currentSurfaceId && map._currentSteppedOn)
+						map._tileSprites.draw(screen, map.mazeData()._surfaceTypes[
+							map._currentSurfaceId], Common::Point(xp, yp));
 				}
 			}
 
@@ -272,6 +273,7 @@ void AutoMapDialog::execute() {
 					map._tileSprites.draw(screen, frame, Common::Point(xp, 30));
 			}
 
+			// Draw any walls on the cells
 			for (int yCtr = 0, yp = 38, yDiff = pt.y + 7; yCtr < 16; ++yCtr, yp += 8, --yDiff) {
 				for (int xCtr = 0, xp = 80, xDiff = pt.x - 7; xCtr < 16; ++xCtr, xp += 10, ++xDiff) {
 					// Draw the arrow if at the correct position

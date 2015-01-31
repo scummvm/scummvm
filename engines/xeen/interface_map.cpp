@@ -756,7 +756,13 @@ void InterfaceMap::draw3d(bool updateFlag) {
 	if (_vm->_mode == MODE_9) {
 		// TODO
 	}
-	events.wait(2);
+
+	// TODO: Check use of updateFlag here. Original doesn't have it, but I
+	// wanted to ensure in places like the AutoMapDialog, that the draw3d
+	// doesn't result in the screen updating until the dialog has had
+	// a chance to full render itself
+	if (updateFlag)
+		events.wait(2);
 }
 
 /**
