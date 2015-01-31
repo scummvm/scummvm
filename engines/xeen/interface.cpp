@@ -672,12 +672,16 @@ void Interface::perform() {
 	case Common::KEYCODE_EQUALS:
 	case Common::KEYCODE_KP_EQUALS:
 		// Toggle minimap
+		_vm->_moveMonsters = false;
 		party._automapOn = !party._automapOn;
+		_vm->_moveMonsters = true;
 		break;
 
 	case Common::KEYCODE_i:
 		// Show Info dialog
+		_vm->_moveMonsters = false;
 		InfoDialog::show(_vm);
+		_vm->_moveMonsters = true;
 		break;
 
 	case Common::KEYCODE_m:
