@@ -606,7 +606,7 @@ Character *Town::doTavernOptions(Character *c) {
 	case Common::KEYCODE_d:
 		// Drink
 		if (!c->noActions()) {
-			if (subtract(0, 1, 0, WT_2)) {
+			if (party.subtract(0, 1, 0, WT_2)) {
 				sound.playSample(nullptr, 0);
 				File f("gulp.voc");
 				sound.playSample(&f, 0);
@@ -664,7 +664,7 @@ Character *Town::doTavernOptions(Character *c) {
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
 				ErrorScroll::show(_vm, FOOD_PACKS_FULL, WT_2);
-			} else if (subtract(0, _v23, 0, WT_2)) {
+			} else if (party.subtract(0, _v23, 0, WT_2)) {
 				party._food = _v22;
 				sound.playSample(nullptr, 0);
 				File f(isDarkCc ? "thanks2.voc" : "thankyou.voc");
@@ -744,7 +744,7 @@ Character *Town::doTavernOptions(Character *c) {
 					drawButtons(&screen);
 					screen._windows[10].update();
 					townWait();
-				} else if (subtract(0, 1, 0, WT_2)) {
+				} else if (party.subtract(0, 1, 0, WT_2)) {
 					sound.playSample(nullptr, 0);
 					File f(isDarkCc ? "thanks2.voc" : "thankyou.voc");
 					sound.playSample(&f, 1);
@@ -805,7 +805,7 @@ Character *Town::doTempleOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_d:
-		if (_donation && subtract(0, _donation, 0, WT_2)) {
+		if (_donation && party.subtract(0, _donation, 0, WT_2)) {
 			sound.playSample(nullptr, 0);
 			File f("coina.voc");
 			sound.playSample(&f, 1);
@@ -832,7 +832,7 @@ Character *Town::doTempleOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_h:
-		if (_healCost && subtract(0, _healCost, 0, WT_2)) {
+		if (_healCost && party.subtract(0, _healCost, 0, WT_2)) {
 			c->_magicResistence._temporary = 0;
 			c->_energyResistence._temporary = 0;
 			c->_poisonResistence._temporary = 0;
@@ -860,7 +860,7 @@ Character *Town::doTempleOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_u:
-		if (_uncurseCost && subtract(0, _uncurseCost, 0, WT_2)) {
+		if (_uncurseCost && party.subtract(0, _uncurseCost, 0, WT_2)) {
 			for (int idx = 0; idx < 9; ++idx) {
 				c->_weapons[idx]._bonusFlags &= ~FLAG_CURSED;
 				c->_armor[idx]._bonusFlags &= ~FLAG_CURSED;
@@ -921,7 +921,7 @@ Character *Town::doTrainingOptions(Character *c) {
 			sound.playSample(&f);
 
 		} else if (!c->noActions()) {
-			if (subtract(0, (c->_level._permanent * c->_level._permanent) * 10, 0, WT_2)) {
+			if (party.subtract(0, (c->_level._permanent * c->_level._permanent) * 10, 0, WT_2)) {
 				_drawFrameIndex = 0;
 				sound.playSample(nullptr, 0);
 				File f(isDarkCc ? "prtygd.voc" : "trainin2.voc");
@@ -1003,14 +1003,14 @@ void Town::depositWithdrawl(int choice) {
 			(choice && !party._bankGold && !flag) ||
 			(!choice && !party._gems && flag) ||
 			(!choice && !party._gold && !flag)) {
-			notEnough(flag, choice, 1, WT_2);
+			party.notEnough(flag, choice, 1, WT_2);
 		} else {
 			screen._windows[35].writeString(AMOUNT);
 			int amount = NumericInput::show(_vm, 35, 10, 77);
 
 			if (amount) {
 				if (flag) {
-					if (subtract(true, amount, choice, WT_2)) {
+					if (party.subtract(true, amount, choice, WT_2)) {
 						if (choice) {
 							party._gems += amount;
 						} else {
@@ -1018,7 +1018,7 @@ void Town::depositWithdrawl(int choice) {
 						}
 					}
 				} else {
-					if (subtract(false, amount, choice, WT_2)) {
+					if (party.subtract(false, amount, choice, WT_2)) {
 						if (choice) {
 							party._gold += amount;
 						} else {
@@ -1051,72 +1051,6 @@ void Town::depositWithdrawl(int choice) {
 	_buttons[0]._value = Common::KEYCODE_d;
 	_buttons[1]._value = Common::KEYCODE_w;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
-}
-
-void Town::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait) {
-	Common::String msg = Common::String::format(
-		mode ? NO_X_IN_THE_Y : NOT_ENOUGH_X_IN_THE_Y,
-		CONSUMABLE_NAMES[consumableId], WHERE_NAMES[whereId]);
-	ErrorScroll::show(_vm, msg, wait);
-}
-
-int Town::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
-	Party &party = *_vm->_party;
-
-	switch (mode) {
-	case 0:
-		// Gold
-		if (whereId) {
-			if (amount <= party._bankGold) {
-				party._bankGold -= amount;
-			} else {
-				notEnough(0, whereId, false, wait);
-				return false;
-			}
-		} else {
-			if (amount <= party._gold) {
-				party._gold -= amount;
-			} else {
-				notEnough(0, whereId, false, wait);
-				return false;
-			}
-		}
-		break;
-
-	case 1:
-		// Gems
-		if (whereId) {
-			if (amount <= party._bankGems) {
-				party._bankGems -= amount;
-			} else {
-				notEnough(0, whereId, false, wait);
-				return false;
-			}
-		} else {
-			if (amount <= party._gems) {
-				party._gems -= amount;
-			} else {
-				notEnough(0, whereId, false, wait);
-				return false;
-			}
-		}
-		break;
-
-	case 2:
-		// Food
-		if (amount > party._food) {
-			party._food -= amount;
-		} else {
-			notEnough(5, 0, 0, wait);
-			return false;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	return true;
 }
 
 void Town::drawTownAnim(bool flag) {

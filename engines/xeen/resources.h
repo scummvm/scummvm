@@ -124,7 +124,7 @@ extern const int COMBAT_FLOAT_Y[8];
 
 extern const int MONSTER_EFFECT_FLAGS[15][8];
 
-extern const uint SPELLS_ALLOWED[3][40];
+extern const int SPELLS_ALLOWED[3][40];
 
 extern const int BASE_HP_BY_CLASS[10];
 
@@ -226,7 +226,23 @@ extern const int SPELL_LEVEL_OFFSETS[3][39];
 
 extern const int SPELL_GEM_COST[77];
 
-extern const char *NOT_A_SPELL_CASTER;
+extern const char *const NOT_A_SPELL_CASTER;
+
+extern const char *const SPELLS_FOR;
+
+extern const char *const SPELL_LINES_0_TO_9;
+
+extern const char *const SPELLS_DIALOG_SPELLS;
+
+extern const char *const SPELL_PTS;
+
+extern const char *const GOLD;
+
+extern const char *const SPELLS_PRESS_A_KEY;
+
+extern const char *const SPELLS_PURCHASE;
+
+extern const char *const SPELL_DETAILS;
 
 } // End of namespace Xeen
 

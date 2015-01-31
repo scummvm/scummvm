@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "xeen/combat.h"
+#include "xeen/dialogs_error.h"
 #include "xeen/items.h"
 
 namespace Xeen {
@@ -274,6 +275,10 @@ public:
 	void resetTemps();
 
 	void handleLight();
+
+	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait);
+
+	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
 };
 
 } // End of namespace Xeen

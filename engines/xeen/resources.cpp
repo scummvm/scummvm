@@ -492,7 +492,7 @@ const int MONSTER_EFFECT_FLAGS[15][8] = {
 	{ 0x108, 0x108, 0x108, 0x108, 0x108, 0x108, 0x108, 0x108 }
 };
 
-const uint SPELLS_ALLOWED[3][40] = {
+const int SPELLS_ALLOWED[3][40] = {
 	{
 		0, 1, 2, 3, 5, 6, 7, 8, 9, 10,
 		12, 14, 16, 23, 26, 27, 28, 30, 31, 32,
@@ -781,6 +781,49 @@ const int SPELL_GEM_COST[77] = {
 	5, 0, 0, 0, 0, 5, 1, 2, 0, 2, 0
 };
 
-extern const char *NOT_A_SPELL_CASTER = "Not a spell caster...";
+const char *const NOT_A_SPELL_CASTER = "Not a spell caster...";
+
+const char *const SPELLS_FOR = "\xD\xC""d%s\x2\x3""c\x9""000\xB""002Spells for %s";
+
+const char *const SPELL_LINES_0_TO_9 =
+	"\x2\x3l\xB""015\x9""0011\n2\n3\n4\n5\n6\n7\n8\n9\n0";
+
+const char *const SPELLS_DIALOG_SPELLS = "\x3l\xB""015"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l\n"
+	"\x9""010\xC""%2u%s\xC""d\x3l"
+	"\x9""004\xB""110%s - %lu\x1";
+
+const char *const SPELL_PTS = "Spell Pts";
+
+const char *const GOLD = "Gold";
+
+const char *const SPELLS_PRESS_A_KEY =
+	"\x3""c\xC""09%s\xC""d\x3l\n"
+	"\n"
+	"%s\x3""c\x9""000\xB""100Press a Key!";
+
+const char *const SPELLS_PURCHASE =
+	"\x3l\xB""000\x9""000\xC""d%s  Do you wish to purchase "
+	"\xC""09%s\xC""d for %u?"; 
+
+const char *const SPELL_DETAILS =
+"\xD\x2\x3""c\xB""122\x9""013\xC""37C\xC""dast"
+"\x9""040\xC""37N\xC""dew\x9""067ESC\x1""000\xB""000\x3""cCast Spell\n"
+"\n"
+"%s\x3l\n"
+"\n"
+"Spell Ready:\x3""c\n"
+"\n"
+"\xC""09%s\xC""d\x2\x3l\n"
+"\xB""082Cost\x3r\x9""000%u/%u\x3l\n"
+"Cur SP\x3r\x9""000%u\x1";
 
 } // End of namespace Xeen

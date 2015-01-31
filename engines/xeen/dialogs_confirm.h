@@ -20,40 +20,24 @@
  *
  */
 
-#include "xeen/spells.h"
-#include "xeen/files.h"
-#include "xeen/resources.h"
-#include "xeen/xeen.h"
+#ifndef XEEN_DIALOGS_CONFIRM_H
+#define XEEN_DIALOGS_CONFIRM_H
+
+#include "xeen/dialogs.h"
 
 namespace Xeen {
 
-Spells::Spells(XeenEngine *vm) : _vm(vm) {
-	_lastCaster = 0;
+class ConfirmDialog : public ButtonContainer {
+private:
+	XeenEngine *_vm;
 
-	load();
-}
+	ConfirmDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-void Spells::load() {
-	File f1("spells.xen");
-	while (f1.pos() < f1.size())
-		_spellNames.push_back(f1.readString());
-	f1.close();
-
-	File f2("mae.xen");
-	while (f2.pos() < f2.size())
-		_maeNames.push_back(f2.readString());
-	f2.close();
-}
-
-int Spells::calcSpellCost(int spellId, int expenseFactor) const {
-	int amount = SPELL_COSTS[spellId];
-	return (amount >= 0) ? (amount * 100) << expenseFactor :
-		(amount * -500) << expenseFactor;
-}
-
-int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
-	int amount = SPELL_COSTS[spellId];
-	return (amount >= 0) ? amount : amount * -1 * expenseFactor;
-}
+	bool execute(const Common::String &msg, int v2);
+public:
+	static bool show(XeenEngine *vm, const Common::String &msg, int v2);
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_DIALOGS_CONFIRM_H */

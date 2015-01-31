@@ -20,40 +20,42 @@
  *
  */
 
-#include "xeen/spells.h"
-#include "xeen/files.h"
-#include "xeen/resources.h"
-#include "xeen/xeen.h"
+#ifndef XEEN_DIALOGS_SPELLS_H
+#define XEEN_DIALOGS_SPELLS_H
+
+#include "common/array.h"
+#include "xeen/dialogs.h"
+#include "xeen/party.h"
 
 namespace Xeen {
 
-Spells::Spells(XeenEngine *vm) : _vm(vm) {
-	_lastCaster = 0;
+struct SpellEntry {
+	Common::String _name;
+	int _spellIndex;
+	int _spellId;
 
-	load();
-}
+	SpellEntry(const Common::String &name, int spellIndex, int spellId) :
+		_name(name), _spellIndex(spellIndex), _spellId(spellId) {}
+};
 
-void Spells::load() {
-	File f1("spells.xen");
-	while (f1.pos() < f1.size())
-		_spellNames.push_back(f1.readString());
-	f1.close();
+class SpellsScroll : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+	SpriteResource _scrollSprites;
+	Common::Array<SpellEntry> _spells;
 
-	File f2("mae.xen");
-	while (f2.pos() < f2.size())
-		_maeNames.push_back(f2.readString());
-	f2.close();
-}
+	SpellsScroll(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-int Spells::calcSpellCost(int spellId, int expenseFactor) const {
-	int amount = SPELL_COSTS[spellId];
-	return (amount >= 0) ? (amount * 100) << expenseFactor :
-		(amount * -500) << expenseFactor;
-}
+	Character *execute(Character *c, int v2);
 
-int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
-	int amount = SPELL_COSTS[spellId];
-	return (amount >= 0) ? amount : amount * -1 * expenseFactor;
-}
+	void loadButtons();
+
+	const char *setSpellText(Character *c, int v2);
+public:
+	static Character *show(XeenEngine *vm, Character *c, int v2);
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_DIALOGS_SPELLS_H */

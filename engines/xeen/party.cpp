@@ -1218,4 +1218,70 @@ void Party::handleLight() {
 		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? 4 : 0;
 }
 
+int Party::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
+	switch (mode) {
+	case 0:
+		// Gold
+		if (whereId) {
+			if (amount <= _bankGold) {
+				_bankGold -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		}
+		else {
+			if (amount <= _gold) {
+				_gold -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		}
+		break;
+
+	case 1:
+		// Gems
+		if (whereId) {
+			if (amount <= _bankGems) {
+				_bankGems -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		}
+		else {
+			if (amount <= _gems) {
+				_gems -= amount;
+			} else {
+				notEnough(0, whereId, false, wait);
+				return false;
+			}
+		}
+		break;
+
+	case 2:
+		// Food
+		if (amount > _food) {
+			_food -= amount;
+		} else {
+			notEnough(5, 0, 0, wait);
+			return false;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void Party::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait) {
+	Common::String msg = Common::String::format(
+		mode ? NO_X_IN_THE_Y : NOT_ENOUGH_X_IN_THE_Y,
+		CONSUMABLE_NAMES[consumableId], WHERE_NAMES[whereId]);
+	ErrorScroll::show(_vm, msg, wait);
+}
+
 } // End of namespace Xeen
