@@ -949,23 +949,23 @@ void GfxOpenGL::drawOverlay(const Overlay *overlay) {
 	glDisable(GL_DEPTH_TEST);
 	
 
+	float height = overlay->getHeight();
+	float width = overlay->getWidth();
+	float x = overlay->_x;
+	float y = overlay->_y;
 
-	// In Grim, the bottom edge of the sprite is at y=0 and
-	// the texture is flipped along the X-axis.
-	float height = overlay->_material->getData()->_textures[0]->_height;
-	float width = overlay->_material->getData()->_textures[0]->_width;
-
-	glBegin(GL_POLYGON);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(0, height, 0.0f);
+	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(0, 0, 0.0f);
+	glVertex2f(x, y);
 	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(width, +0, 0.0f);
+	glVertex2f((x + width), y);
 	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(width, height, 0.0f);
+	glVertex2f((x + width), (y + height));
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex2f(x, (y + height));
 	glEnd();
-	
+
+
 
 	glEnable(GL_LIGHTING);
 	glDisable(GL_ALPHA_TEST);

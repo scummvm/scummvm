@@ -24,6 +24,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/foreach.h"
 
 #include "graphics/pixelbuffer.h"
 #include "graphics/colormasks.h"
@@ -684,14 +685,34 @@ void Lua_V1::WidescreenCorrectionFactor() {
 }
 
 void Lua_V1::GetFontDimensions() {
-	warning("Stub function: GetFontDimensions, returns 1");
-	lua_pushnumber(1);
+	// Taken from Lua_v2 and modified
+	lua_Object fontObj = lua_getparam(1);
+	if (!lua_isuserdata(fontObj) || lua_tag(fontObj) != Font::getStaticTag())
+		return;
+
+	Font *font = Font::getPool().getObject(lua_getuserdata(fontObj));
+
+	if (font) {
+		int32 h = font->getBaseOffsetY();
+		int32 w = font->getCharKernedWidth('w');
+		lua_pushnumber(w);
+		lua_pushnumber(h);
+	} else {
+		warning("Lua_V1::GetFontDimensions for invalid font: returns 0,0");
+		lua_pushnumber(0.f);
+		lua_pushnumber(0.f);
+	}
 }
 
+
 void Lua_V1::OverlayDimensions() {
-	warning("Stub function: OverlayDimensions, returns 1, 1");
-	lua_pushnumber(1);
-	lua_pushnumber(1);
+	lua_Object overlayObj = lua_getparam(1);
+	if (!lua_isuserdata(overlayObj) || lua_tag(overlayObj) != Overlay::getStaticTag())
+		return;
+
+	Overlay *overlay = Overlay::getPool().getObject(lua_getuserdata(overlayObj));
+	lua_pushnumber(overlay->getWidth());
+	lua_pushnumber(overlay->getHeight());
 }
 
 void Lua_V1::OverlayGetScreenSize() {
@@ -701,14 +722,19 @@ void Lua_V1::OverlayGetScreenSize() {
 }
 
 void Lua_V1::OverlayCreate() {
-	warning("Stub function: OverlayCreate");
+	warning("Stub function: OverlayCreate missing table get");
 	lua_Object param1 = lua_getparam(1);
-	if (!lua_isstring(param1)) {
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+	if (!lua_isstring(param1) || !lua_isnumber(param2) || !lua_isnumber(param3)) {
 		return;
 	}
 	const char *overlayName = lua_getstring(param1);
+	float x = lua_getnumber(param2);
+	float y = lua_getnumber(param3);
 
 	Overlay *overlay = g_resourceloader->loadOverlay(overlayName);
+	overlay->setPos(x, y);
 
 	if (overlay) {
 		lua_pushusertag(overlay->getId(), overlay->getTag());
@@ -718,13 +744,26 @@ void Lua_V1::OverlayCreate() {
 }
 
 void Lua_V1::OverlayDestroy() {
-	warning("Stub function: OverlayDestroy");
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != Overlay::getStaticTag())
 		return;
 
 	Overlay *overlay = Overlay::getPool().getObject(lua_getuserdata(actorObj));
 	delete overlay;
+}
+
+void Lua_V1::OverlayMove() {
+	lua_Object overlayObj = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+
+	if (!lua_isuserdata(overlayObj) || lua_tag(overlayObj) != Overlay::getStaticTag())
+		return;
+
+	Overlay *overlay = Overlay::getPool().getObject(lua_getuserdata(overlayObj));
+	float x = lua_getnumber(param2);
+	float y = lua_getnumber(param3);
+	overlay->setPos(x, y);
 }
 
 void Lua_V1::QueryActiveHotspots() {
@@ -823,7 +862,6 @@ STUB_FUNC(Lua_V1::UpdateUIButtons)
 STUB_FUNC(Lua_V1::OverlayClearCache)
 STUB_FUNC(Lua_V1::GetGameRenderMode)
 STUB_FUNC(Lua_V1::SetGameRenderMode)
-STUB_FUNC(Lua_V1::OverlayMove)
 STUB_FUNC(Lua_V1::AddHotspot)
 STUB_FUNC(Lua_V1::RemoveHotspot)
 STUB_FUNC(Lua_V1::OverlayFade)

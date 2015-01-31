@@ -30,7 +30,8 @@
 
 namespace Grim {
 
-Overlay::Overlay(const Common::String &filename, Common::SeekableReadStream *data) {
+Overlay::Overlay(const Common::String &filename, Common::SeekableReadStream *data) :
+		_x(0), _y(0) {
 	_material = g_resourceloader->loadMaterial(filename, NULL, true);
 }
 
@@ -41,6 +42,14 @@ Overlay::~Overlay() {
 void Overlay::draw() {
 	_material->select();
 	g_driver->drawOverlay(this);
+}
+
+int Overlay::getWidth() const {
+	return _material->getData()->_textures[0]->_width;
+}
+
+int Overlay::getHeight() const {
+	return _material->getData()->_textures[0]->_height;
 }
 
 }

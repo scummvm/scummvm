@@ -238,7 +238,8 @@ MaterialData *MaterialData::getMaterialData(const Common::String &filename, Comm
 			++m->_refCount;
 			return m;
 		}
-		if (m->_fname == filename && m->_cmap->getFilename() == cmap->getFilename()) {
+		// We need to allow null cmaps for remastered overlays
+		if (m->_fname == filename && (!(m->_cmap || cmap) || m->_cmap->getFilename() == cmap->getFilename())) {
 			++m->_refCount;
 			return m;
 		}

@@ -38,6 +38,9 @@ public:
 	~Overlay();
 
 	void draw();
+	void setPos(float x, float y) { _x = x; _y = y; }
+	int getWidth() const;
+	int getHeight() const;
 	
 	static int32 getStaticTag() { return MKTAG('O','V','E','R'); }
 
@@ -45,6 +48,8 @@ public:
 
 //private:
 	Material *_material;
+	float _x;
+	float _y;
 };
 
 }
