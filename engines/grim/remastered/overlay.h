@@ -39,6 +39,7 @@ public:
 
 	void draw();
 	void setPos(float x, float y) { _x = x; _y = y; }
+	void setLayer(int layer) { _layer = layer; }
 	int getWidth() const;
 	int getHeight() const;
 	
@@ -50,6 +51,7 @@ public:
 	Material *_material;
 	float _x;
 	float _y;
+	int _layer;
 };
 
 }

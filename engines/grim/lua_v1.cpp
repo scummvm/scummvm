@@ -722,19 +722,26 @@ void Lua_V1::OverlayGetScreenSize() {
 }
 
 void Lua_V1::OverlayCreate() {
-	warning("Stub function: OverlayCreate missing table get");
+	warning("Stub function: OverlayCreate not done");
 	lua_Object param1 = lua_getparam(1);
 	lua_Object param2 = lua_getparam(2);
 	lua_Object param3 = lua_getparam(3);
-	if (!lua_isstring(param1) || !lua_isnumber(param2) || !lua_isnumber(param3)) {
+	lua_Object param4 = lua_getparam(4);
+	if (!lua_isstring(param1) || !lua_isnumber(param2) || !lua_isnumber(param3) || !lua_istable(param4)) {
 		return;
 	}
 	const char *overlayName = lua_getstring(param1);
 	float x = lua_getnumber(param2);
 	float y = lua_getnumber(param3);
 
+	lua_pushobject(param4);
+	lua_pushstring("layer");
+	lua_Object table = lua_gettable();
+	float layer = lua_getnumber(table);
+
 	Overlay *overlay = g_resourceloader->loadOverlay(overlayName);
 	overlay->setPos(x, y);
+	overlay->setLayer(layer);
 
 	if (overlay) {
 		lua_pushusertag(overlay->getId(), overlay->getTag());
