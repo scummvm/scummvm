@@ -178,31 +178,29 @@ int PaletteUsage::process(Common::Array<RGB6> &palette, uint flags) {
 		}
 
 		if (!changed && !noUsageFlag) {
-			int var2 = (palette[palIndex]._flags & 0x20) ||
-				(((flags & 0x2000) || (palette[palIndex]._flags & 0x4000)) &&
+			int bestHash = (palette[palIndex]._flags & 0x20) ||
+				(((flags & 0x2000) || (palette[palIndex]._flags & 0x40)) &&
 				((flags & 0x1000) || (palCount == 0))) ? 0x7fff : 1;
 			int var36 = (palette[palIndex]._flags & 0x80) ? 0 : 2;
 
 			for (int idx = palLow; idx < palIdx; ++idx) {
 				uint32 v = _vm->_palette->_palFlags[idx];
 				if ((v & var3A) && !(v & var36)) {
-					int var10;
-
-					if (var2 > 1) {
-						var10 = rgbFactor(&_vm->_palette->_mainPalette[idx * 3], palette[palIndex]);
-					}
-					else if (_vm->_palette->_mainPalette[idx * 3] != palette[palIndex].r ||
+					int hash;
+					if (bestHash > 1) {
+						hash = rgbFactor(&_vm->_palette->_mainPalette[idx * 3], palette[palIndex]);
+					} else if (_vm->_palette->_mainPalette[idx * 3] != palette[palIndex].r ||
 							_vm->_palette->_mainPalette[idx * 3 + 1] != palette[palIndex].g ||
 							_vm->_palette->_mainPalette[idx * 3 + 2] != palette[palIndex].b) {
-						var10 = 1;
+						hash = 1;
 					} else {
-						var10 = 0;
+						hash = 0;
 					}
 
-					if (var2 > var10) {
+					if (bestHash > hash) {
 						changed = true;
 						newPalIndex = idx;
-						var2 = var10;
+						bestHash = hash;
 					}
 				}
 			}
