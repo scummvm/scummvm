@@ -27,6 +27,8 @@
 
 namespace Xeen {
 
+static bool debugFlag = false;
+
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]), 
 	_groundSprite(_data[2]), _combatImgs1(&_data[124]), _combatImgs2(&_data[95]),
 	_combatImgs3(&_data[76]), _combatImgs4(&_data[53]), _groundTiles(&_data[3]) {
@@ -189,7 +191,7 @@ IndoorDrawList::IndoorDrawList() :
 	_objects6(_data[99]), _objects7(_data[55]), _objects8(_data[56]),
 	_objects9(_data[58]), _objects10(_data[57]), _objects11(_data[59]),
 	_combatImgs1(&_data[162]), _combatImgs2(&_data[135]),
-	_combatImgs3(&_data[111]), _combatImgs4(&_data[80]) {
+	_combatImgs3(&_data[111]), _combatImgs4(&_data[79]) {
 	// Setup draw structure positions
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
@@ -3699,7 +3701,7 @@ void InterfaceMap::drawIndoors() {
 
 	if (!_wo[26] && !_wo[29] && !_wo[21] && !_wo[13] && !_wo[18] && !_wo[31]) {
 		if (_wo[33])
-			_indoorList._fwl_3F1R._frame = 15;
+			_indoorList._swl_3F1R._frame = 15;
 		else if (_wo[77])
 			_indoorList._swl_3F1R._frame = 39;
 	}
