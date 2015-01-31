@@ -707,11 +707,11 @@ void MortevielleEngine::displayAloneText() {
 	Common::String sAlone = getEngineString(S_ALONE);
 
 	clearUpperRightPart();
-	_screenSurface->putxy(580 - (_screenSurface->getStringWidth(sYou) / 2), 30);
+	_screenSurface->putxy(560, 30);
 	_screenSurface->drawString(sYou, 4);
-	_screenSurface->putxy(580 - (_screenSurface->getStringWidth(sAre) / 2), 50);
+	_screenSurface->putxy(560, 50);
 	_screenSurface->drawString(sAre, 4);
-	_screenSurface->putxy(580 - (_screenSurface->getStringWidth(sAlone) / 2), 70);
+	_screenSurface->putxy(560, 70);
 	_screenSurface->drawString(sAlone, 4);
 
 	_currBitIndex = 0;
@@ -1695,7 +1695,7 @@ void MortevielleEngine::clearUpperRightPart() {
 	else if (_coreVar._faithScore > 65)
 		st = getEngineString(S_MALSAINE);
 
-	int x1 = 580 - (_screenSurface->getStringWidth(st) / 2);
+	int x1 = 574 - (_screenSurface->getStringWidth(st) / 2);
 	_screenSurface->putxy(x1, 92);
 	_screenSurface->drawString(st, 4);
 
