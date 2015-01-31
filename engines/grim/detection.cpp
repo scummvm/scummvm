@@ -65,8 +65,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			"",
-		//	 {"VOX0001.LAB", 0, "", },
-			AD_ENTRY1s("VOX0001.LAB", "0ff872fb353707fbdb9579038d4cf31c", 382736476),
+			AD_ENTRY1s("VOX0001.LAB", "444f05f2af689c1bffd179b8b6a632bd", 57993159),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -285,6 +284,19 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+		},
+		GType_GRIM
+	},
+	{
+		// Grim Fandango Remastered
+		{
+			"grim",
+			"Remastered",
+			AD_ENTRY1s("VOX0001.LAB", "0ff872fb353707fbdb9579038d4cf31c", 382736476),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_REMASTERED,
 			GUIO1(GAMEOPTION_LOAD_DATAUSR)
 		},
 		GType_GRIM

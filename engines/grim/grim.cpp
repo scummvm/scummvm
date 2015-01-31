@@ -275,7 +275,7 @@ Common::Error GrimEngine::run() {
 	}
 
 	ConfMan.registerDefault("check_gamedata", true);
-	if (ConfMan.getBool("check_gamedata")) {
+	if (ConfMan.getBool("check_gamedata") && getGameFlags() != ADGF_REMASTERED) {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::String confirmString("ResidualVM found some problems with your game data files.\n"
