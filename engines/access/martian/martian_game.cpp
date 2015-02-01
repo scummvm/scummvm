@@ -278,6 +278,12 @@ void MartianEngine::doCredits() {
 }
 
 void MartianEngine::setupGame() {
+	// Load death list
+	_deaths.resize(20);
+	for (int i = 0; i < 20; ++i) {
+		_deaths[i]._screenId = Martian::DEATH_SCREENS[i];
+		_deaths[i]._msg = Martian::DEATHMESSAGE[i];
+	}
 
 	// Setup timers
 	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
@@ -302,6 +308,60 @@ void MartianEngine::setupGame() {
 
 void MartianEngine::drawHelp() {
 	error("TODO: drawHelp");
+}
+
+void MartianEngine::sub13D10(Common::String msg) {
+	warning("TODO: Rename sub13d10");
+	Common::String line = "";
+	int width = 0;
+	bool lastLine;
+	do {
+		lastLine = _fonts._font2.getLine(msg, _screen->_maxChars * 6, line, width);
+		warning("TODO: use printString");
+		// Draw the text
+		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+
+		_screen->_printOrg.y += 6;
+		_screen->_printOrg.x = _screen->_printStart.x;
+
+		if (_screen->_printOrg.y == 180) {
+			_events->waitKeyMouse();
+			_screen->copyBuffer(&_buffer2);
+			_screen->_printOrg.y = _screen->_printStart.y;
+		}
+	} while (!lastLine);
+	_events->waitKeyMouse();
+}
+
+void MartianEngine::dead(int deathId) {
+	// Load and display death screen
+	_events->hideCursor();
+	_screen->forceFadeOut();
+	_files->loadScreen(48, _deaths[deathId]._screenId);
+	_screen->setIconPalette();
+	_buffer2.copyBuffer(_screen);
+	_screen->forceFadeIn();
+	_events->showCursor();
+
+	// Setup fonts
+	_fonts._charSet._hi = 10;
+	_fonts._charSet._lo = 1;
+	_fonts._charFor._lo = 247;
+	_fonts._charFor._hi = 255;
+	_screen->_maxChars = 50;
+	_screen->_printOrg = Common::Point(24, 18);
+	_screen->_printStart = Common::Point(24, 18);
+	
+	// Display death message
+	sub13D10(_deaths[deathId]._msg);
+	
+	_screen->forceFadeOut();
+	_room->clearRoom();
+	freeChar();
+
+	// The original was jumping to the restart label in main
+	_restartFl = true;
+	_events->pollEvents();
 }
 
 } // End of namespace Martian

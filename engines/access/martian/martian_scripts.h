@@ -36,8 +36,6 @@ class MartianScripts : public Scripts {
 private:
 	MartianEngine *_game;
 
-	void sub13D10(Common::String msg);
-
 	void cmdSpecial1(int param1);
 	void cmdSpecial3();
 	void doIntro(int param1);

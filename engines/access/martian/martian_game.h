@@ -55,7 +55,7 @@ protected:
 	 */
 	virtual void playGame();
 
-	virtual void dead(int deathId) {}
+	virtual void dead(int deathId);
 
 	void setNoteParams();
 	void displayNote(const Common::String &msg);
@@ -65,6 +65,7 @@ public:
 
 	void doSpecial5(int param1);
 	void drawHelp();
+	void sub13D10(Common::String msg);
 	virtual void establish(int esatabIndex, int sub) {};
 };
 
