@@ -42,6 +42,11 @@ class TextureSet;
 class Visual;
 class XRCReadStream;
 
+/**
+ * A scene element
+ *
+ * Can be a character, background, animation, ...
+ */
 class Item : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kItem;
@@ -66,8 +71,13 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 
+	/** Is the item present in the scene */
 	bool isEnabled() const;
+
+	/** Enable or disable the item */
 	virtual void setEnabled(bool enabled);
+
+	/** Obtain the render entry to use to display the item */
 	virtual RenderEntry *getRenderEntry();
 
 	/** Obtain the concrete instance of an item template */
@@ -80,6 +90,11 @@ protected:
 	int32 _field_38;
 };
 
+/**
+ * A renderable item
+ *
+ * Renderable items are found in location layers
+ */
 class ItemVisual : public Item {
 public:
 	ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -92,6 +107,7 @@ public:
 	// Item API
 	void setEnabled(bool enabled) override;
 
+	/** Define the current animation index for the item */
 	void setAnim(int32 index);
 
 protected:
@@ -108,6 +124,11 @@ protected:
 	uint32 _field_44;
 };
 
+/**
+ * An item template
+ *
+ * Item templates need to be instanciated into renderable items to be displayed
+ */
 class ItemSub13 : public Item {
 public:
 	ItemSub13(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -119,8 +140,13 @@ public:
 	// Item API
 	Item *getSceneInstance() override;
 
+	/** Obtain the bone mesh to use to render the item */
 	virtual BonesMesh *findBonesMesh() = 0;
+
+	/** Obtain the texture to use to render the item */
 	virtual TextureSet *findTextureSet(uint32 textureType) = 0;
+
+	/** Obtain the animation hierarchy to fetch animations from */
 	virtual AnimHierarchy *findStockAnimHierarchy() = 0;
 
 	/** Set the scene instanciation for this template */
@@ -136,6 +162,11 @@ protected:
 	ItemSub13 *_referencedItem;
 };
 
+/**
+ * A global item template
+ *
+ * Global item templates are found in the global level
+ */
 class ItemSub1 : public ItemSub13 {
 public:
 	ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -149,6 +180,12 @@ public:
 protected:
 };
 
+/**
+ * A level item template
+ *
+ * Level item templates are found in levels so that they can be shared between
+ * locations.
+ */
 class ItemSub3 : public ItemSub13 {
 public:
 	ItemSub3(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -169,14 +206,24 @@ protected:
 	ResourceReference _reference;
 };
 
+/**
+ * 3D positioned item
+ *
+ * Items with a 3D position, used in 3D layers. The sort key determines the order
+ * in which such items are drawn in.
+ */
 class ItemSub5610 : public ItemVisual {
 public:
 	ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub5610();
 
+	/** Move the item to a bookmarked position */
 	void placeOnBookmark(Bookmark *target);
+
+	/** Set the direction the item faces */
 	void setDirection(uint direction);
 
+	/** Obtain the sort value for the item, used to compute the draw order */
 	float getSortKey() const;
 
 protected:
@@ -185,6 +232,11 @@ protected:
 	float _direction3D;
 };
 
+/**
+ * 3D positioned image item
+ *
+ * Used to display still images or animated images in 3D layers
+ */
 class ItemSub56 : public ItemSub5610 {
 public:
 	ItemSub56(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -202,6 +254,11 @@ protected:
 	Common::Point _position;
 };
 
+/**
+ * Mesh item
+ *
+ * Used to draw characters
+ */
 class ItemSub10 : public ItemSub5610 {
 public:
 	ItemSub10(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -229,6 +286,11 @@ protected:
 	ItemSub13 *_referencedItem;
 };
 
+/**
+ * 2D positioned image item
+ *
+ * Used to display background elements in 2D layers
+ */
 class ItemSub78 : public ItemVisual {
 public:
 	ItemSub78(Resource *parent, byte subType, uint16 index, const Common::String &name);
