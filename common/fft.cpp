@@ -61,6 +61,10 @@ FFT::~FFT() {
 	delete[] _tmpBuf;
 }
 
+const uint16 *FFT::getRevTab() const {
+	return _revTab;
+}
+
 void FFT::permute(Complex *z) {
 	int np = 1 << _bits;
 
