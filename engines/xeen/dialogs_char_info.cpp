@@ -88,9 +88,9 @@ void CharacterInfo::execute(int charIndex) {
 				charIndex = _buttonValue;
 				c = (oldMode != MODE_InCombat) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
 			} else {
-				_iconSprites.load("view.icn");
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}
+			redrawFlag = true;
 			break;
 
 		case Common::KEYCODE_UP:
@@ -290,7 +290,7 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		RACE_NAMES[c._race], CLASS_NAMES[c._class],
 		c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
 		c.statColor(c.getStat(ACCURACY), c.getStat(ACCURACY, true)), c.getStat(ACCURACY),
-		c.statColor(c._currentHp, c.getMaxHP()),
+		c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
 		c.getCurrentExperience(),
 		c.statColor(c.getStat(INTELLECT), c.getStat(INTELLECT, true)), c.getStat(INTELLECT),
 		c.statColor(c.getStat(LUCK), c.getStat(LUCK, true)), c.getStat(LUCK),

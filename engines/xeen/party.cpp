@@ -187,7 +187,7 @@ int Character::getMaxSP() const {
 	Attribute attrib;
 	Skill skill;
 
-	if (_hasSpells)
+	if (!_hasSpells)
 		return 0;
 
 	if (_class == CLASS_SORCERER || _class == CLASS_ARCHER) {
@@ -202,7 +202,7 @@ int Character::getMaxSP() const {
 
 	for (;;) {
 		// Get the base number of spell points
-		result = statBonus(getStat(attrib));
+		result = statBonus(getStat(attrib)) + 3;
 		result += RACE_SP_BONUSES[_race][attrib - 1];
 
 		if (_skills[skill])

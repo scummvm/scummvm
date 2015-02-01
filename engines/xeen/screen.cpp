@@ -192,9 +192,12 @@ void Window::drawList(DrawStruct *items, int count) {
 		if (items->_frame == -1 || items->_scale == -1 || items->_sprites == nullptr)
 			continue;
 			
+		Common::Point pt(items->_x, items->_y);
+		pt.x += _innerBounds.left;
+		pt.y += _innerBounds.top;
+
 		// TODO: There are two sprite calls in this method. Figure out why
-		items->_sprites->draw(*this, items->_frame,
-			Common::Point(items->_x, items->_y), items->_flags, items->_scale);
+		items->_sprites->draw(*this, items->_frame, pt, items->_flags, items->_scale);
 	}
 }
 

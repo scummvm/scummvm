@@ -304,9 +304,9 @@ const uint CLASS_EXP_LEVELS[10] = {
 };
 
 const char *const CONDITION_NAMES[17] = {
-	nullptr, "Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased", 
+	"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased", 
 	"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused", 
-	"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated" 
+	"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
 };
 
 const int CONDITION_COLORS[17] = {
