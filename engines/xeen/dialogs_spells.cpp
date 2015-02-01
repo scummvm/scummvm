@@ -50,7 +50,7 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 	int v2Copy = v2;
 	v2 &= 0x7f;
 	int selection = -1;
-	int topIndex = 0;
+	uint topIndex = 0;
 	int newSelection;
 	screen._windows[25].open();
 
@@ -109,7 +109,7 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 		switch (_buttonValue) {
 		case Common::KEYCODE_F1:
 		case Common::KEYCODE_F6:
-			if (_vm->_mode != MODE_2) {
+			if (_vm->_mode != MODE_InCombat) {
 				_buttonValue -= Common::KEYCODE_F1;
 				if (_buttonValue < party._partyCount) {
 					c = &party._activeParty[_buttonValue];
@@ -233,12 +233,12 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 
 		case Common::KEYCODE_PAGEUP:
 		case Common::KEYCODE_KP9:
-			topIndex = MAX(topIndex - 10, 0);
+			topIndex = MAX((int)topIndex - 10, 0);
 			break;
 
 		case Common::KEYCODE_PAGEDOWN:
 		case Common::KEYCODE_KP3:
-			topIndex = MIN(topIndex + 10, (((int)_spells.size() - 1) / 10) * 10);
+			topIndex = MIN(topIndex + 10, ((_spells.size() - 1) / 10) * 10);
 			break;
 
 		case Common::KEYCODE_UP:
@@ -249,7 +249,7 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
-			if (topIndex < ((int)_spells.size() - 10))
+			if (topIndex < (_spells.size() - 10))
 				++topIndex;
 			break;
 		}
@@ -321,7 +321,7 @@ const char *SpellsScroll::setSpellText(Character *c, int v2) {
 
 		if (category != -1) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
-				for (int spellId = 0; spellId < 76; ++spellId) {
+				for (uint spellId = 0; spellId < 76; ++spellId) {
 					int idx = 0;
 					while (idx < MAX_SPELLS_PER_CLASS && SPELLS_ALLOWED[category][idx] == spellId)
 						++idx;
@@ -338,8 +338,8 @@ const char *SpellsScroll::setSpellText(Character *c, int v2) {
 				}
 			} else if (isDarkCc) {
 				int groupIndex = (party._mazeId - 29) / 2;
-				for (int spellId = DARK_SPELL_RANGES[category][0];
-						spellId < DARK_SPELL_RANGES[category][1]; ++spellId) {
+				for (int spellId = DARK_SPELL_RANGES[groupIndex][0];
+						spellId < DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
 					int idx = 0;
 					while (idx < 40 && SPELLS_ALLOWED[category][idx] ==
 						DARK_SPELL_OFFSETS[category][spellId]);
@@ -357,7 +357,7 @@ const char *SpellsScroll::setSpellText(Character *c, int v2) {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
 					while (CLOUDS_SPELL_OFFSETS[party._mazeId - 29][spellId] !=
-						SPELLS_ALLOWED[category][idx] && idx < 40) ;
+						(int)SPELLS_ALLOWED[category][idx] && idx < 40) ;
 
 					if (idx < 40) {
 						if (!c->_spells[idx] || (v2 & 0x80)) {

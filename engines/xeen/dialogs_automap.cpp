@@ -40,7 +40,6 @@ void AutoMapDialog::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	int frame2 = intf._overallFrame * 2;
-	int varSI = 1;
 	bool frameEndFlag = false;
 
 	Common::Point pt = party._mazePosition;
@@ -74,7 +73,7 @@ void AutoMapDialog::execute() {
 	}
 
 	screen._windows[5].open();
-	MazeData &mazeData = map.mazeDataCurrent();
+//	MazeData &mazeData = map.mazeDataCurrent();
 	bool drawFlag = true;
 	int v;
 	

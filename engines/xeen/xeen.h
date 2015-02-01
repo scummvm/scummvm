@@ -77,7 +77,7 @@ enum Mode {
 	MODE_FF = -1,
 	MODE_0 = 0,
 	MODE_1 = 1,
-	MODE_2 = 2,
+	MODE_InCombat = 2,
 	MODE_3 = 3,
 	MODE_4 = 4,
 	MODE_5 = 5,
@@ -85,6 +85,7 @@ enum Mode {
 	MODE_7 = 7,
 	MODE_8 = 8,
 	MODE_9 = 9,
+	MODE_CHARACTER_INFO = 10,
 	MODE_17 = 17
 };
 

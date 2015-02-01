@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	dialogs.o \
 	automap.o \
 	dialogs_automap.o \
+	dialogs_char_info.o \
 	dialogs_confirm.o \
 	dialogs_error.o \
 	dialogs_options.o \

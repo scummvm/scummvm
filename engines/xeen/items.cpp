@@ -56,6 +56,7 @@ int XeenItem::getAttributeCategory() const {
 
 Treasure::Treasure() {
 	_hasItems = false;
+	_v1 = false;
 }
 
 } // End of namespace Xeen

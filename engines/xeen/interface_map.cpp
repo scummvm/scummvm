@@ -426,7 +426,7 @@ void InterfaceMap::draw3d(bool updateFlag) {
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
 	if (_flipUIFrame == 0)
 		_flipWater = !_flipWater;
-	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_2) &&
+	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_InCombat) &&
 		!_flag1 && _vm->_moveMonsters) {
 		if (--_tillMove == 0)
 			moveMonsters();

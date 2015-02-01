@@ -238,7 +238,7 @@ int Character::getMaxSP() const {
 /**
  * Get the effective value of a given stat for the character
  */
-int Character::getStat(Attribute attrib, bool baseOnly) const {
+uint Character::getStat(Attribute attrib, bool baseOnly) const {
 	AttributePair attr;
 	int mode = 0;
 
@@ -289,7 +289,24 @@ int Character::getStat(Attribute attrib, bool baseOnly) const {
 		attr._permanent += attr._temporary;
 	}
 
-	return MAX(attr._permanent, 0);
+	return MAX(attr._permanent, (uint)0);
+}
+
+/**
+ * Return the color number to use for a given stat value in the character
+ * info or quick reference dialogs
+ */
+int Character::statColor(int amount, int threshold) {
+	if (amount < 1)
+		return 6;
+	else if (amount > threshold)
+		return 2;
+	else if (amount == threshold)
+		return 15;
+	else if (amount <= (threshold / 4))
+		return 9;
+	else
+		return 32;
 }
 
 int Character::statBonus(int statValue) const {
@@ -422,8 +439,8 @@ int Character::getThievery() const {
 	return MAX(result, 0);
 }
 
-int Character::getCurrentLevel() const {
-	return MAX(_level._permanent + _level._temporary, 0);
+uint Character::getCurrentLevel() const {
+	return MAX(_level._permanent + _level._temporary, (uint)0);
 }
 
 int Character::itemScan(int itemId) const {
@@ -816,6 +833,28 @@ uint Character::getCurrentExperience() const {
 	return (base * 1024000) + (CLASS_EXP_LEVELS[_class] << shift) +
 		_experience;
 }
+
+
+int Character::getNumSkills() const {
+	int total = 0;
+	for (int idx = THIEVERY; idx <= DANGER_SENSE; ++idx) {
+		if (_skills[idx])
+			++total;
+	}
+
+	return total;
+}
+
+int Character::getNumAwards() const {
+	int total = 0;
+	for (int idx = 0; idx < 88; ++idx) {
+		if (hasAward(idx))
+			++total;
+	}
+
+	return total;
+}
+
 
 /*------------------------------------------------------------------------*/
 

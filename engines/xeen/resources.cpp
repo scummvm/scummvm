@@ -287,6 +287,13 @@ const char *const ALIGNMENT_NAMES[3] = { "Good", "Neutral", "Evil" };
 
 const char *const SEX_NAMES[2] = { "Male", "Female" };
 
+const char *const SKILL_NAMES[18] = {
+	"Thievery", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
+	"Crusader", "Direction Sense", "Linguist", "Merchant", "Mountaineer", 
+	"Navigator", "Path Finder", "Prayer Master", "Prestidigitator",
+	"Swimmer", "Tracker", "Spot Secret Door", "Danger Sense"
+};
+
 const char *const CLASS_NAMES[11] = {
 	"Knight", "Paladin", "Archer", "Cleric", "Sorcerer", "Robber", 
 	"Ninja", "Barbarian", "Druid", "Ranger", nullptr
@@ -296,11 +303,25 @@ const uint CLASS_EXP_LEVELS[10] = {
 	1500, 2000, 2000, 1500, 2000, 1000, 1500, 1500, 1500, 2000
 };
 
-const char *const CONDITION_NAMES[18] = {
+const char *const CONDITION_NAMES[17] = {
 	nullptr, "Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased", 
 	"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused", 
-	"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
+	"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated" 
 };
+
+const int CONDITION_COLORS[17] = {
+	9, 9, 9, 9, 9, 9, 9, 9, 32, 32, 32, 32, 6, 6, 6, 6, 15
+};
+
+const char *const GOOD = "Good";
+
+const char *const BLESSED = "\n\t020Blessed\t095%+d";
+
+const char *const POWER_SHIELD = "\n\t020Power Shield\t095%+d";
+
+const char *const HOLY_BONUS = "\n\t020Holy Bonus\t095%+d";
+
+const char *const HEROISM = "\n\t020Heroism\t095%+d";
 
 const char *const IN_PARTY = "\014""15In Party\014""d";
 
@@ -494,7 +515,7 @@ const int MONSTER_EFFECT_FLAGS[15][8] = {
 	{ 0x108, 0x108, 0x108, 0x108, 0x108, 0x108, 0x108, 0x108 }
 };
 
-const int SPELLS_ALLOWED[3][40] = {
+const uint SPELLS_ALLOWED[3][40] = {
 	{
 		0, 1, 2, 3, 5, 6, 7, 8, 9, 10,
 		12, 14, 16, 23, 26, 27, 28, 30, 31, 32,
@@ -760,7 +781,7 @@ const int CLOUDS_SPELL_OFFSETS[5][20] = {
 	}
 };
 
-const int DARK_SPELL_OFFSETS[3][39] = {
+const uint DARK_SPELL_OFFSETS[3][39] = {
 	{
 		42, 1, 26, 59, 27, 10, 50, 68, 55, 62, 67, 73, 2,
 		5, 3, 31, 30, 52, 49, 28, 74, 0, 9, 7, 14, 8,
@@ -865,5 +886,87 @@ const char *const SWORDS_GAME_TEXT = "Swords";
 const char *const WEEK_DAY_STRINGS[10] = {
 	"Ten", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
 };
+
+const char *const CHARACTER_DETAILS =
+	"\x3l\xB""041\x9""196%s\x9""000\xB""002%s : %s %s %s"
+	"\x3r\x9""053\xB""028\xC%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
+	"\x3l\x9""131\xC""%02u%d\xC""d\x9""196\xC""15%lu\xC""d\x3r"
+	"\x9""053\xB""051\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
+	"\x3l\x9""131\xC""%02u%u\xC""d\x9""196\xC""15%lu\xC""d"
+	"\x3r\x9""053\xB""074\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
+	"\x3l\x9""131\xC""15%u\xC""d\x9""196\xC""15%lu\xC""d"
+	"\x3r\x9""053\xB""097\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
+	"\x3l\x9""131\xC""15%u\xC""d\x9""196\xC""15%u day%c\xC""d"
+	"\x3r\x9""053\xB""120\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
+	"\x3l\x9""131\xC""15%u\xC""d\x9""196\xC""%02u%s\xC""d"
+	"\x9""230%s%s%s%s\xC""d";
+
+const char *const PARTY_GOLD = "Party Gold";
+
+const char *const PLUS_14 = "14+";
+
+const char *const CHARACTER_TEMPLATE =
+	"\x1\xC""00\xD\x3l\x9""029\xB""018Mgt\x9""080Acy\x9""131H.P.\x9""196Experience"
+	"\x9""029\xB""041Int\x9""080Lck\x9""131S.P.\x9""029\xB""064Per\x9""080Age"
+	"\x9""131Resis\x9""196Party Gems\x9""029\xB""087End\x9""080Lvl\x9""131Skills"
+	"\x9""196Party Food\x9""029\xB""110Spd\x9""080AC\x9""131Awrds\x9""196Condition\x3""c"
+	"\x9""290\xB""025\xC""37I\xC""dtem\x9""290\xB""057\xC""37Q"
+	"\xC""duick\x9""290\xB""089\xC""37E\xC""dxch\x9""290\xB""121Exit\x3l%s";
+
+const char *const EXCHANGING_IN_COMBAT = "\x3""c\xB""007\x9""000Exchanging in combat is not allowed!";
+
+const char *const CURRENT_MAXIMUM_RATING_TEXT = "\x2\x3""c%s\n"
+	"Current / Maximum\n"
+	"\x3r\x9""054%lu\x3l\x9""058/ %lu\n"
+	"\x3""cRating: %s";
+
+const char *const CURRENT_MAXIMUM_TEXT = "\x2\x3""c%s\n"
+	"Current / Maximum\n"
+	"\x3r\x9""054%u\x3l\x9""058/ %u";
+
+const char *const RATING_TEXT[24] = {
+	"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Averarage", "Good",
+	"Very Good", "High", "Very High", "Great", "Super", "Amazing", "Incredible",
+	"Gigantic", "Fantastic", "Astoundig", "Astonishing", "Monumental", "Tremendous",
+	"Collosal", "Awesome", "AweInspiring", "aUltimate"
+};
+
+const char *const AGE_TEXT = "\x2\x3""c%s\n"
+	"Current / Natural\n"
+	"\x3r\x9""057%u\x3l\x9""061/ %u\n"
+	"\x3""cBorn: %u / %u\x1";
+
+const char *const LEVEL_TEXT =
+	"\x2\x3""c%s\n"
+	"Current / Maximum\n"
+	"\x3r\x9""054%u\x3l\x9""058/ %u\n"
+	"\x3""c%u Attack%s/Round\x1";
+
+const char *const RESISTENCES_TEXT = 
+	"\x2\x3""c%s\x3l\n"
+	"\x9""020Fire\x9""100%u\n"
+	"\x9""020Cold\x9""100%u\n"
+	"\x9""020Electricity\x9""100%u\n"
+	"\x9""020Poison\x9""100%u\n"
+	"\x9""020Energy\x9""100%u\n"
+	"\x9""020Magic\x9""100%u";
+
+const char *const NONE = "\n\x9""020";
+
+const char *const EXPERIENCE_TEXT = "\x2\x3""c%s\x3l\n"
+	"\x9""010Current:\x9""070%lu\n"
+	"\x9""010Next Level:\x9""070%s\x1";
+
+const char *const ELIGIBLE = "\xC""12Eligible\xC""d";
+
+const char *const IN_PARTY_IN_BANK =
+	"\x2\x3""cParty %s\n"
+	"%lu on hand\n"
+	"%lu in bank\x1\x3l";
+
+const char *const FOOD_TEXT =
+	"\x2\x3""cParty %s\n"
+	"%u on hand\n"
+   "Enough for %u day%s\x3l";
 
 } // End of namespace Xeen

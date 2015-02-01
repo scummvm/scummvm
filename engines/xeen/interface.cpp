@@ -21,6 +21,7 @@
  */
 
 #include "xeen/interface.h"
+#include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_error.h"
 #include "xeen/dialogs_automap.h"
 #include "xeen/dialogs_info.h"
@@ -331,7 +332,7 @@ void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool
 
 void Interface::charIconsPrint(bool updateFlag) {
 	Screen &screen = *_vm->_screen;
-	bool stateFlag = _vm->_mode == MODE_2;
+	bool stateFlag = _vm->_mode == MODE_InCombat;
 	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
 
 	// Handle drawing the party faces
@@ -666,6 +667,20 @@ void Interface::perform() {
 
 			chargeStep();
 			stepTime();
+		}
+		break;
+
+	case Common::KEYCODE_F1:
+	case Common::KEYCODE_F2:
+	case Common::KEYCODE_F3:
+	case Common::KEYCODE_F4:
+	case Common::KEYCODE_F5:
+	case Common::KEYCODE_F6:
+		_buttonValue -= Common::KEYCODE_F1;
+		if (_buttonValue < party._partyCount) {
+			CharacterInfo::show(_vm, _buttonValue);
+			if (party._stepped)
+				moveMonsters();
 		}
 		break;
 

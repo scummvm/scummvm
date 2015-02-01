@@ -47,7 +47,7 @@ private:
 	int _v5, _v6;
 	int _v10, _v11, _v12;
 	int _v13, _v14;
-	int _v20;
+	uint _v20;
 	int _v21;
 	uint _v22;
 	int _v23;

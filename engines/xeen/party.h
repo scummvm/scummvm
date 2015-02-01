@@ -80,8 +80,8 @@ class XeenEngine;
 
 class AttributePair {
 public:	
-	int _permanent;
-	int _temporary;
+	uint _permanent;
+	uint _temporary;
 public:
 	AttributePair();
 	void synchronize(Common::Serializer &s);
@@ -141,13 +141,15 @@ public:
 
 	Condition worstCondition() const;
 
-	int getAge(bool ignoreTemp) const;
+	int getAge(bool ignoreTemp = false) const;
 
 	int getMaxHP() const;
 
 	int getMaxSP() const;
 
-	int getStat(Attribute attrib, bool baseOnly = false) const;
+	uint getStat(Attribute attrib, bool baseOnly = false) const;
+
+	static int statColor(int amount, int threshold);
 
 	int statBonus(int statValue) const;
 
@@ -159,11 +161,11 @@ public:
 
 	bool hasAward(int awardId) const;
 
-	int getArmorClass(bool baseOnly) const;
+	int getArmorClass(bool baseOnly = false) const;
 
 	int getThievery() const;
 
-	int getCurrentLevel() const;
+	uint getCurrentLevel() const;
 
 	int itemScan(int itemId) const;
 
@@ -176,6 +178,10 @@ public:
 	uint currentExperienceLevel() const;
 
 	uint getCurrentExperience() const;
+
+	int getNumSkills() const;
+
+	int getNumAwards() const;
 };
 
 class Roster: public Common::Array<Character> {
@@ -247,6 +253,7 @@ public:
 public:
 	// Other party related runtime data
 	Common::Array<Character> _activeParty;
+	Common::Array<Character *> _combatParty;
 	int _combatPartyCount;
 	bool _partyDead;
 	bool _newDay;

@@ -74,8 +74,21 @@ extern const char *const ALIGNMENT_NAMES[3];
 
 extern const char *const SEX_NAMES[2];
 
-extern const char *const CONDITION_NAMES[18];
+extern const char *const SKILL_NAMES[18];
 
+extern const char *const CONDITION_NAMES[17];
+
+extern const int CONDITION_COLORS[17];
+
+extern const char *const GOOD;
+
+extern const char *const BLESSED;
+
+extern const char *const POWER_SHIELD;
+
+extern const char *const HOLY_BONUS;
+
+extern const char *const HEROISM;
 extern const char *const IN_PARTY;
 
 extern const char *const PARTY_DETAILS;
@@ -126,7 +139,7 @@ extern const int COMBAT_FLOAT_Y[8];
 
 extern const int MONSTER_EFFECT_FLAGS[15][8];
 
-extern const int SPELLS_ALLOWED[3][40];
+extern const uint SPELLS_ALLOWED[3][40];
 
 extern const int BASE_HP_BY_CLASS[10];
 
@@ -220,7 +233,7 @@ extern const int SPELL_COSTS[77];
 
 extern const int CLOUDS_SPELL_OFFSETS[5][20];
 
-extern const int DARK_SPELL_OFFSETS[3][39];
+extern const uint DARK_SPELL_OFFSETS[3][39];
 
 extern const int DARK_SPELL_RANGES[12][2];
 
@@ -275,6 +288,38 @@ extern const char *const CLOUDS_GAME_TEXT;
 extern const char *const SWORDS_GAME_TEXT;
 
 extern const char *const WEEK_DAY_STRINGS[10];
+
+extern const char *const CHARACTER_DETAILS;
+
+extern const char *const PARTY_GOLD;
+
+extern const char *const PLUS_14;
+
+extern const char *const CHARACTER_TEMPLATE;
+
+extern const char *const EXCHANGING_IN_COMBAT;
+
+extern const char *const CURRENT_MAXIMUM_RATING_TEXT;
+
+extern const char *const CURRENT_MAXIMUM_TEXT;
+
+extern const char *const RATING_TEXT[24];
+
+extern const char *const AGE_TEXT;
+
+extern const char *const LEVEL_TEXT;
+
+extern const char *const RESISTENCES_TEXT;
+
+extern const char *const NONE;
+
+extern const char *const EXPERIENCE_TEXT;
+
+extern const char *const ELIGIBLE;
+
+extern const char *const IN_PARTY_IN_BANK;
+
+extern const char *const FOOD_TEXT;
 
 } // End of namespace Xeen
 
