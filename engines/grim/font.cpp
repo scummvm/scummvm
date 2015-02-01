@@ -22,6 +22,9 @@
 
 #include "common/endian.h"
 
+#include "graphics/fonts/ttf.h"
+#include "graphics/font.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
@@ -81,6 +84,8 @@ void Font::load(const Common::String &filename, Common::SeekableReadStream *data
 
 	g_driver->createFont(this);
 }
+
+
 
 uint16 Font::getCharIndex(unsigned char c) const {
 	uint16 c2 = uint16(c);
@@ -158,6 +163,12 @@ void Font::restoreState(SaveGame *state) {
 	stream = g_resourceloader->openNewStreamFile(fname.c_str(), true);
 	load(fname, stream);
 	delete stream;
+}
+
+void FontTTF::loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size) {
+	_font = Graphics::loadTTFFont(*data, size);
+
+	//f->
 }
 
 // Hardcoded default font for GUI, etc

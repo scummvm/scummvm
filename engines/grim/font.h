@@ -25,6 +25,8 @@
 
 #include "engines/grim/pool.h"
 
+#include "graphics/font.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -42,23 +44,24 @@ public:
 
 	void load(const Common::String &filename, Common::SeekableReadStream *data);
 
+
 	const Common::String &getFilename() const { return _filename; }
-	int32 getKernedHeight() const { return _kernedHeight; }
-	int32 getBaseOffsetY() const { return _baseOffsetY; }
-	int32 getCharBitmapWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
-	int32 getCharBitmapHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
-	int32 getCharKernedWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].kernedWidth; }
-	int32 getCharStartingCol(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingCol; }
-	int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
-	int32 getCharOffset(unsigned char c) const { return _charHeaders[getCharIndex(c)].offset; }
+	virtual int32 getKernedHeight() const { return _kernedHeight; }
+	virtual int32 getBaseOffsetY() const { return _baseOffsetY; }
+	virtual int32 getCharBitmapWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapWidth; }
+	virtual int32 getCharBitmapHeight(unsigned char c) const { return _charHeaders[getCharIndex(c)].bitmapHeight; }
+	virtual int32 getCharKernedWidth(unsigned char c) const { return _charHeaders[getCharIndex(c)].kernedWidth; }
+	virtual int32 getCharStartingCol(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingCol; }
+	virtual int32 getCharStartingLine(unsigned char c) const { return _charHeaders[getCharIndex(c)].startingLine; }
+	virtual int32 getCharOffset(unsigned char c) const { return _charHeaders[getCharIndex(c)].offset; }
 	const byte *getCharData(unsigned char c) const { return _fontData + (_charHeaders[getCharIndex(c)].offset); }
 
 	const byte *getFontData() const { return _fontData; }
 	uint32 getDataSize() const { return _dataSize; }
 
-	int getKernedStringLength(const Common::String &text) const;
-	int getBitmapStringLength(const Common::String &text) const;
-	int getStringHeight(const Common::String &text) const;
+	virtual int getKernedStringLength(const Common::String &text) const;
+	virtual int getBitmapStringLength(const Common::String &text) const;
+	virtual int getStringHeight(const Common::String &text) const;
 
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
@@ -88,6 +91,20 @@ private:
 	byte *_fontData;
 	Common::String _filename;
 	void *_userData;
+};
+
+class FontTTF : public Font
+{
+public:
+	void loadTTF(const Common::String &filename, Common::SeekableReadStream *data, int size);
+
+	int32 getKernedHeight() const override { return _font->getFontHeight(); }
+	int32 getBaseOffsetY() const override { return 0; }
+	int32 getCharKernedWidth(unsigned char c) const override { return _font->getCharWidth(c); }
+
+	int getKernedStringLength(const Common::String &text) const override { return _font->getStringWidth(text); }
+
+	Graphics::Font *_font;
 };
 
 } // end of namespace Grim

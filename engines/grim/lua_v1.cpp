@@ -693,7 +693,7 @@ void Lua_V1::GetFontDimensions() {
 	Font *font = Font::getPool().getObject(lua_getuserdata(fontObj));
 
 	if (font) {
-		int32 h = font->getBaseOffsetY();
+		int32 h = font->getKernedHeight();
 		int32 w = font->getCharKernedWidth('w');
 		lua_pushnumber(w);
 		lua_pushnumber(h);

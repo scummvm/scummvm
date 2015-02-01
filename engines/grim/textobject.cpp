@@ -47,7 +47,7 @@ void TextObjectCommon::setLayer(int layer) {
 TextObject::TextObject() :
 		TextObjectCommon(), _numberLines(1), _textID(""), _elapsedTime(0),
 		_maxLineWidth(0), _lines(nullptr), _userData(nullptr), _created(false),
-		_blastDraw(false), _isSpeech(false), _stackLevel(0) {
+		_blastDraw(false), _isSpeech(false), _stackLevel(0), _global(false) {
 }
 
 TextObject::~TextObject() {

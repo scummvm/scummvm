@@ -292,7 +292,10 @@ protected:
 	Texture _specialtyTextures[_numSpecialtyTextures];
 	static const int _gameHeight = 480;
 	static const int _gameWidth = 640;
+	static const int _globalHeight = 1080;
+	static const int _globalWidth = 1920;
 	float _scaleW, _scaleH;
+	float _globalScaleW, _globalScaleH;
 	int _screenWidth, _screenHeight;
 	bool _isFullscreen;
 	Shadow *_currentShadowArray;

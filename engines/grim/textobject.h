@@ -101,6 +101,8 @@ public:
 	void setBlastDraw() { _blastDraw = true; }
 	bool isBlastDraw() { return _blastDraw; }
 
+	bool isGlobal() const { return _global; }
+
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
 
@@ -143,6 +145,7 @@ protected:
 	bool _blastDraw;
 	bool _isSpeech;
 	bool _created;
+	bool _global;
 
 	int _stackLevel;
 };

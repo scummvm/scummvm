@@ -132,8 +132,8 @@ void Lua_V1::GetTextObjectDimensions() {
 		TextObject *textObject = gettextobject(textObj);
 		lua_pushnumber(textObject->getBitmapWidth());
 		lua_pushnumber(textObject->getBitmapHeight());
-		lua_pushnumber(1);
-		lua_pushnumber(1);
+		lua_pushnumber(textObject->getX());
+		lua_pushnumber(textObject->getY());
 	}
 }
 
