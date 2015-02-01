@@ -1121,7 +1121,7 @@ void MinigameBbAirGuitar::noteOff(int noteNum) {
 		if (_actionTrackPos + _ticksDelta > 15000)
 			_ticksDelta = 15000 - _actionTrackPos;
 		_track[_trackCount].ticks = _ticksDelta;
-		if (_trackCount < 2048)
+		if (_trackCount + 1 < 2048)
 			++_trackCount;
 		_track[_trackCount].noteNum = -2;
 		_noteStartTime = _vm->_system->getMillis();
