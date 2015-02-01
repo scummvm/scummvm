@@ -45,7 +45,6 @@ private:
 	SpriteResource _uiSprites;
 	SpriteResource _iconSprites;
 	SpriteResource _charFaces[TOTAL_CHARACTERS];
-	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 	DrawStruct _faceDrawStructs[4];
 	DrawStruct _mainList[16];
 	int _combatCharIds[8];
@@ -78,6 +77,7 @@ private:
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;
+	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 public:
 	Interface(XeenEngine *vm);
 

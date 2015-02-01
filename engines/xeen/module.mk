@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	dialogs_char_info.o \
 	dialogs_confirm.o \
 	dialogs_error.o \
+	dialogs_exchange.o \
 	dialogs_options.o \
 	dialogs_info.o \
 	dialogs_input.o \

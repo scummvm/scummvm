@@ -969,4 +969,6 @@ const char *const FOOD_TEXT =
 	"%u on hand\n"
    "Enough for %u day%s\x3l";
 
+const char *const EXCHANGE_WITH_WHOM = "\t010\v005Exchange with whom?";
+
 } // End of namespace Xeen

@@ -321,6 +321,8 @@ extern const char *const IN_PARTY_IN_BANK;
 
 extern const char *const FOOD_TEXT;
 
+extern const char *const EXCHANGE_WITH_WHOM;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

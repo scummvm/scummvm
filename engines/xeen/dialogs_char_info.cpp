@@ -21,6 +21,7 @@
  */
 
 #include "xeen/dialogs_char_info.h"
+#include "xeen/dialogs_exchange.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -38,7 +39,7 @@ void CharacterInfo::execute(int charIndex) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	
-	bool redrawFlag = false;
+	bool redrawFlag = true;
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_CHARACTER_INFO;
 	loadDrawStructs();
@@ -60,8 +61,10 @@ void CharacterInfo::execute(int charIndex) {
 
 		// Wait for keypress, showing a blinking cursor
 		events.updateGameCounter();
-	bool cursorFlag = false;
-		while (!_vm->shouldQuit() && !events.isKeyMousePressed()) {
+		bool cursorFlag = false;
+		_buttonValue = 0;
+		while (!_vm->shouldQuit() && !_buttonValue) {
+			events.pollEventsAndWait();
 			if (events.timeElapsed() > 4) {
 				cursorFlag = !cursorFlag;
 				events.updateGameCounter();
@@ -69,8 +72,8 @@ void CharacterInfo::execute(int charIndex) {
 
 			showCursor(cursorFlag);
 			w.update();
+			checkEvents(_vm);
 		}
-		checkEvents(_vm);
 		events.clearEvents();
 
 		switch (_buttonValue) {
@@ -84,8 +87,7 @@ void CharacterInfo::execute(int charIndex) {
 			if (_buttonValue < (int)(oldMode == MODE_InCombat ? party._combatParty.size() : party._activeParty.size())) {
 				charIndex = _buttonValue;
 				c = (oldMode != MODE_InCombat) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
-			}
-			else {
+			} else {
 				_iconSprites.load("view.icn");
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}
@@ -173,7 +175,7 @@ void CharacterInfo::execute(int charIndex) {
 				ErrorScroll::show(_vm, EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
 			} else {
 				_vm->_mode = oldMode;
-				error("c = exchangeChar(&charIndex)");
+				ExchangeDialog::show(_vm, c, charIndex);
 				_vm->_mode = MODE_CHARACTER_INFO;
 				redrawFlag = true;
 			}
