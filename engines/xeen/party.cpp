@@ -49,7 +49,7 @@ Character::Character() {
 	_xeenSide = 0;
 	_class = CLASS_KNIGHT;
 	_ACTemp = 0;
-	_dbDay = 0;
+	_birthDay = 0;
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
 	Common::fill(&_awards[0], &_awards[128], false);
@@ -64,7 +64,7 @@ Character::Character() {
 	_savedMazeId = 0;
 	_currentHp = 0;
 	_currentSp = 0;
-	_ybDay = 0;
+	_birthYear = 0;
 	_experience = 0;
 	_currentAdventuringSpell = 0;
 	_currentCombatSpell = 0;
@@ -93,7 +93,7 @@ void Character::synchronize(Common::Serializer &s) {
 	_luck.synchronize(s);
 	s.syncAsByte(_ACTemp);
 	_level.synchronize(s);
-	s.syncAsByte(_dbDay);
+	s.syncAsByte(_birthDay);
 	s.syncAsByte(_tempAge);
 	
 	// Synchronize the skill list
@@ -144,7 +144,7 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_savedMazeId);
 	s.syncAsUint16LE(_currentHp);
 	s.syncAsUint16LE(_currentSp);
-	s.syncAsUint16LE(_ybDay);
+	s.syncAsUint16LE(_birthYear);
 	s.syncAsUint32LE(_experience);
 	s.syncAsByte(_currentAdventuringSpell);
 	s.syncAsByte(_currentCombatSpell);
@@ -160,7 +160,7 @@ Condition Character::worstCondition() const {
 }
 
 int Character::getAge(bool ignoreTemp) const {
-	int year = MIN(Party::_vm->_party->_year - _ybDay, 254);
+	int year = MIN(Party::_vm->_party->_year - _birthYear, (uint)254);
 
 	return ignoreTemp ? year : year + _tempAge;
 }
@@ -796,22 +796,22 @@ bool Character::guildMember() const {
 	}
 }
 
-uint Character::nextExperienceLevel() const {
-	uint base = currentExperienceLevel();
+uint Character::experienceToNextLevel() const {
+	uint next = nextExperienceLevel();
 	uint curr = getCurrentExperience();
-	return (curr < base) ? 0 : curr - base;
+	return (curr >= next) ? 0 : next - curr;
 }
 
-uint Character::currentExperienceLevel() const {
+uint Character::nextExperienceLevel() const {
 	int shift, base;
 	if (_level._permanent >= 12) {
 		base = _level._permanent - 12;
 		shift = 10;
 	} else {
 		base = 0;
-		shift = _level._permanent;
+		shift = _level._permanent - 1;
 	}
-	
+
 	return (base * 1024000) + (CLASS_EXP_LEVELS[_class] << shift);
 }
 

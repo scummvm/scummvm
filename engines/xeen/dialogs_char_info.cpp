@@ -243,7 +243,7 @@ void CharacterInfo::loadDrawStructs() {
  * Set up the button list for the dialog
  */
 void CharacterInfo::addButtons() {
-	addButton(Common::Rect(10, 24, 34, 64), 1001, &_iconSprites);
+	addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites);
 	addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites);
 	addButton(Common::Rect(10, 70, 34, 90), 1003, &_iconSprites);
 	addButton(Common::Rect(10, 93, 34, 113), 1004, &_iconSprites);
@@ -343,7 +343,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
 		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
 	Party &party = *_vm->_party;
-	int stat1, stat2;
+	uint stat1, stat2;
 	uint idx;
 	Common::String msg;
 
@@ -371,7 +371,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getAge(false);
 		stat2 = c.getAge(true);
 		msg = Common::String::format(AGE_TEXT, STAT_NAMES[attrib],
-			stat2, c._dbDay, c._ybDay);
+			stat1, stat2, c._birthDay, c._birthYear);
 		break;
 
 	case 8: {
@@ -422,6 +422,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary,
 			c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary,
 			c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary);
+		bounds.setHeight(80);
 		break;
 
 	case 13: {
@@ -466,10 +467,10 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	case 15:
 		// Experience
 		stat1 = c.getCurrentExperience();
-		stat2 = c.nextExperienceLevel();
+		stat2 = c.experienceToNextLevel();
 		msg = Common::String::format(EXPERIENCE_TEXT,
 			STAT_NAMES[attrib], stat1,
-			stat2 == 0 ? ELIGIBLE : Common::String::format("%d", stat2)
+			stat2 == 0 ? ELIGIBLE : Common::String::format("%d", stat2).c_str()
 		);
 		bounds.setHeight(43);
 		break;
@@ -478,6 +479,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Gold
 		msg = Common::String::format(IN_PARTY_IN_BANK, STAT_NAMES[attrib],
 			party._gold, party._bankGold);
+		bounds.setHeight(43);
 		break;
 
 	case 17:
@@ -516,6 +518,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		Condition condition = c.worstCondition();
 		if (condition == NO_CONDITION) {
 			lines[0] = Common::String::format("\n\t020%s", GOOD);
+			++total;
 		}
 
 		if (party._blessed)
@@ -537,7 +540,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			lines[17].c_str(), lines[18].c_str(), lines[19].c_str()
 		);
 
-		bounds.top = ((total - 1) / 2) * 8;
+		bounds.top -= ((total - 1) / 2) * 8;
 		bounds.setHeight(total * 9 + 26);
 		if (bounds.bottom >= SCREEN_HEIGHT)
 			bounds.moveTo(bounds.left, SCREEN_HEIGHT - bounds.height() - 1);

@@ -105,7 +105,7 @@ public:
 	AttributePair _luck;
 	int _ACTemp;
 	AttributePair _level;
-	int _dbDay;
+	uint _birthDay;
 	int _tempAge;
 	int _skills[18];
 	bool _awards[128];
@@ -131,7 +131,7 @@ public:
 	int _savedMazeId;
 	int _currentHp;
 	int _currentSp;
-	int _ybDay;
+	uint _birthYear;
 	uint32 _experience;
 	int _currentAdventuringSpell;
 	int _currentCombatSpell;
@@ -173,9 +173,9 @@ public:
 
 	bool guildMember() const;
 
-	uint nextExperienceLevel() const;
+	uint experienceToNextLevel() const;
 
-	uint currentExperienceLevel() const;
+	uint nextExperienceLevel() const;
 
 	uint getCurrentExperience() const;
 
@@ -223,7 +223,7 @@ public:
 	bool _worldEnd;
 	int _ctr24;	// TODO: Figure out proper name
 	int _day;
-	int _year;
+	uint _year;
 	int _minutes;
 	uint _food;
 	int _lightCount;

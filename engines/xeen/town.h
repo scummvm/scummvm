@@ -58,7 +58,7 @@ private:
 	int _arr1[6];
 	int _currentCharLevel;
 	bool _flag1;
-	uint _nextExperienceLevel;
+	uint _experienceToNextLevel;
 	int _drawFrameIndex;
 	int _drawCtr1, _drawCtr2;
 

@@ -51,7 +51,7 @@ Town::Town(XeenEngine *vm) : _vm(vm) {
 	_dayOfWeek = 0;
 	_uncurseCost = 0;
 	_flag1 = false;
-	_nextExperienceLevel = 0;
+	_experienceToNextLevel = 0;
 	_drawCtr1 = _drawCtr2 = 0;
 }
 
@@ -458,14 +458,14 @@ Common::String Town::createTownText(Character &ch) {
 			}
 		}
 
-		_nextExperienceLevel = ch.nextExperienceLevel();
+		_experienceToNextLevel = ch.experienceToNextLevel();
 
-		if (_nextExperienceLevel >= 0x10000 && ch._level._permanent < _v20) {
+		if (_experienceToNextLevel >= 0x10000 && ch._level._permanent < _v20) {
 			int nextLevel = ch._level._permanent + 1;
 			return Common::String::format(EXPERIENCE_FOR_LEVEL,
-				ch._name.c_str(), _nextExperienceLevel, nextLevel);
+				ch._name.c_str(), _experienceToNextLevel, nextLevel);
 		} else if (ch._level._permanent >= 20) {
-			_nextExperienceLevel = 1;
+			_experienceToNextLevel = 1;
 			msg = Common::String::format(LEARNED_ALL, ch._name.c_str());
 		} else {
 			msg = Common::String::format(ELIGIBLE_FOR_LEVEL,
@@ -906,7 +906,7 @@ Character *Town::doTrainingOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_t:
-		if (_nextExperienceLevel) {
+		if (_experienceToNextLevel) {
 			sound.playSample(nullptr, 0);
 			_drawFrameIndex = 0;
 
@@ -927,7 +927,7 @@ Character *Town::doTrainingOptions(Character *c) {
 				File f(isDarkCc ? "prtygd.voc" : "trainin2.voc");
 				sound.playSample(&f, 1);
 
-				c->_experience -=  c->currentExperienceLevel() - 
+				c->_experience -=  c->nextExperienceLevel() - 
 					(c->getCurrentExperience() - c->_experience);
 				c->_level._permanent++;
 
