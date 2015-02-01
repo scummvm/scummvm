@@ -1630,6 +1630,14 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	int width = frame->w;
 	byte *bitmap = (byte *)frame->getPixels();
 
+	double scaleW = _scaleW;
+	double scaleH = _scaleH;
+	// Remastered hack, don't scale full-screen videos for now.
+	if (height == 1080) {
+		_scaleW = 1.0f;
+		_scaleH = 1.0f;
+	}
+
 	GLenum format;
 	GLenum dataType;
 	int bytesPerPixel = frame->format.bytesPerPixel;
@@ -1692,9 +1700,18 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	_smushWidth = (int)(width * _scaleW);
 	_smushHeight = (int)(height * _scaleH);
+	_scaleW = scaleW;
+	_scaleH = scaleH;
 }
 
 void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
+	double scaleW = _scaleW;
+	double scaleH = _scaleH;
+	// Remastered hack, don't scale full-screen videos for now.
+	if (_smushHeight == 1080) {
+		_scaleW = 1.0f;
+		_scaleH = 1.0f;
+	}
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -1741,6 +1758,9 @@ void GfxOpenGL::drawMovieFrame(int offsetX, int offsetY) {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+
+	_scaleW = scaleW;
+	_scaleH = scaleH;
 }
 
 void GfxOpenGL::releaseMovieFrame() {

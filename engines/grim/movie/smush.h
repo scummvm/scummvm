@@ -25,6 +25,10 @@
 
 #include "engines/grim/movie/movie.h"
 
+namespace Video {
+	class TheoraDecoder;
+}
+
 namespace Grim {
 
 class SmushDecoder;
@@ -32,7 +36,7 @@ class SmushDecoder;
 class SmushPlayer : public MoviePlayer {
 public:
 	SmushPlayer(bool demo);
-
+	virtual ~SmushPlayer();
 	void restore(SaveGame *state) override;
 
 private:
@@ -41,7 +45,9 @@ private:
 	void postHandleFrame() override;
 	void init() override;
 	bool _demo;
+	bool _currentVideoIsTheora;
 	SmushDecoder *_smushDecoder;
+	Video::TheoraDecoder *_theoraDecoder; // HACK for now, move to other class later?
 };
 
 } // end of namespace Grim
