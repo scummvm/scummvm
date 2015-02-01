@@ -1473,8 +1473,9 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 			if (g_grim->getGameType() == GType_GRIM)
 				w += font->getBaseOffsetY();
 			float z = x + font->getCharStartingCol(character);
-			z *= _scaleW;
-			w *= _scaleH;
+			// TODO: We can't scale in the remastered version
+			//z *= _scaleW;
+			//w *= _scaleH;
 			glBindTexture(GL_TEXTURE_2D, texture);
 			float width = 1 / 16.f;
 			float cx = ((character - 1) % 16) / 16.0f;

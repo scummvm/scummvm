@@ -740,10 +740,10 @@ void Lua_V1::OverlayCreate() {
 	float layer = lua_getnumber(table);
 
 	Overlay *overlay = g_resourceloader->loadOverlay(overlayName);
-	overlay->setPos(x, y);
-	overlay->setLayer(layer);
 
 	if (overlay) {
+		overlay->setPos(x, y);
+		overlay->setLayer(layer);
 		lua_pushusertag(overlay->getId(), overlay->getTag());
 	} else {
 		lua_pushnil();
@@ -796,6 +796,11 @@ void Lua_V1::GetCursorPosition() {
 	lua_pushnumber(0);
 }
 
+void Lua_V1::GetPlatform() {
+	warning("Stub function: GetPlatform, returns 1 (windows)");
+	lua_pushnumber(1);
+}
+
 void Lua_V1::JustLoaded() {
 	Debug::error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
@@ -841,7 +846,6 @@ STUB_FUNC(Lua_V1::GetMemoryUsage)
 STUB_FUNC(Lua_V1::PurgeText)
 
 // Remastered
-STUB_FUNC(Lua_V1::GetPlatform)
 STUB_FUNC(Lua_V1::PreloadCursors)
 STUB_FUNC(Lua_V1::ReadRegistryIntValue)
 STUB_FUNC(Lua_V1::GetFindSaveGameStatus)
@@ -884,6 +888,10 @@ STUB_FUNC(Lua_V1::IsConceptUnlocked)
 STUB_FUNC(Lua_V1::GetRemappedKeyName)
 STUB_FUNC(Lua_V1::GetRemappedKeyHint)
 STUB_FUNC(Lua_V1::New)
+STUB_FUNC(Lua_V1::RemoveBorders)
+STUB_FUNC(Lua_V1::GetSaveStatus)
+STUB_FUNC(Lua_V1::StartCheckOfCrossSaveStatus)
+STUB_FUNC(Lua_V1::GetCrossSaveStatus)
 
 struct luaL_reg grimMainOpcodes[] = {
 	{ "EngineDisplay", LUA_OPCODE(Lua_V1, EngineDisplay) },
@@ -1147,7 +1155,11 @@ struct luaL_reg grimMainOpcodes[] = {
 	{ "FindSaveGames", LUA_OPCODE(Lua_V1, FindSaveGames) },
 	{ "GetRemappedKeyName", LUA_OPCODE(Lua_V1, GetRemappedKeyName) },
 	{ "New", LUA_OPCODE(Lua_V1, New) },
-		
+	{ "RemoveBorders", LUA_OPCODE(Lua_V1, RemoveBorders) },
+	{ "GetSaveStatus", LUA_OPCODE(Lua_V1, GetSaveStatus) },
+	{ "StartCheckOfCrossSaveStatus", LUA_OPCODE(Lua_V1, StartCheckOfCrossSaveStatus) },
+	{ "GetCrossSaveStatus", LUA_OPCODE(Lua_V1, GetCrossSaveStatus) },
+
 };
 
 static struct luaL_reg grimTextOpcodes[] = {

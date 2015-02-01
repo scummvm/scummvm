@@ -342,6 +342,10 @@ protected:
 	DECLARE_LUA_OPCODE(GetRemappedKeyName);
 	DECLARE_LUA_OPCODE(GetRemappedKeyHint);
 	DECLARE_LUA_OPCODE(New);
+	DECLARE_LUA_OPCODE(RemoveBorders);
+	DECLARE_LUA_OPCODE(GetSaveStatus);
+	DECLARE_LUA_OPCODE(StartCheckOfCrossSaveStatus);
+	DECLARE_LUA_OPCODE(GetCrossSaveStatus);
 	
 };
 
