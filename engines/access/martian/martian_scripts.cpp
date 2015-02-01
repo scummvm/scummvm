@@ -62,6 +62,71 @@ void MartianScripts::doIntro(int param1) {
 	_game->doSpecial5(param1);
 }
 
+void MartianScripts::sub13D10(Common::String msg) {
+	warning("TODO: Rename sub13d10");
+	Common::String line = "";
+	int width = 0;
+	bool lastLine;
+	do {
+		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_screen->_maxChars * 6, line, width);
+		warning("TODO: use printString");
+		// Draw the text
+		_vm->_fonts._font2.drawString(_vm->_screen, line, _vm->_screen->_printOrg);
+
+		_vm->_screen->_printOrg.y += 6;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
+
+		if (_vm->_screen->_printOrg.y == 180) {
+			_vm->_events->waitKeyMouse();
+			_vm->_screen->copyBuffer(&_vm->_buffer2);
+			_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y;
+		}
+	} while (!lastLine);
+	_vm->_events->waitKeyMouse();
+}
+
+void MartianScripts::cmdSpecial6() {
+	_vm->_midi->stopSong();
+	_vm->_screen->setDisplayScan();
+	_vm->_events->clearEvents();
+	_vm->_screen->forceFadeOut();
+	_vm->_events->hideCursor();
+	_vm->_files->loadScreen(49, 9);
+	_vm->_events->showCursor();
+	_vm->_screen->setIconPalette();
+	_vm->_screen->forceFadeIn();
+
+	Resource *cellsRes = _vm->_files->loadFile("CELLS00.LZ");
+	_vm->_objectsTable[0] = new SpriteResource(_vm, cellsRes);
+	delete cellsRes;
+
+	_vm->_timers[20]._timer = _vm->_timers[20]._initTm = 30;
+	_vm->_fonts._charSet._lo = 1;
+	_vm->_fonts._charSet._hi = 10;
+	_vm->_fonts._charFor._lo = 1;
+	_vm->_fonts._charFor._hi = 255;
+
+	_vm->_screen->_maxChars = 50;
+	_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(24, 18);
+
+	Resource *notesRes = _vm->_files->loadFile("ETEXT.DAT");
+	notesRes->_stream->seek(72);
+
+	// Read the message
+	Common::String msg = "";
+	byte c;
+	while ((c = (char)notesRes->_stream->readByte()) != '\0')
+		msg += c;
+
+	//display the message
+	sub13D10(msg);
+
+	delete notesRes;
+	delete _vm->_objectsTable[0];
+	_vm->_objectsTable[0] = nullptr;
+	_vm->_midi->stopSong();
+}
+
 void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 0:
