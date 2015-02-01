@@ -31,6 +31,11 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * The top level element of the game resource tree.
+ *
+ * Contains all the levels.
+ */
 class Root : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kRoot;

@@ -140,10 +140,19 @@ class Resource {
 public:
 	virtual ~Resource();
 
+	/** Get the resource type */
 	ResourceType getType() const { return _type; }
+
+	/** Get the resource sub type */
 	byte getSubType() const { return _subType; }
+
+	/** Get the resource index */
 	uint16 getIndex() const { return _index; }
+
+	/** Get the resource index as a string */
 	Common::String getIndexAsString() const { return Common::String::format("%02x", _index); }
+
+	/** Get the name of the resource */
 	Common::String getName() const { return _name; }
 
 	/**
@@ -207,25 +216,33 @@ public:
 	template<class T>
 	T *findParent();
 
+	/** Find a child resource matching the specified type, index and subtype */
 	Resource *findChildWithIndex(ResourceType type, uint16 index, int subType = -1);
 
+	/** Find a child matching the template parameter type */
 	template<class T>
 	T *findChild(bool mustBeUnique = true);
 
+	/** Find a child matching the template parameter type and the specified subtype */
 	template<class T>
 	T *findChildWithSubtype(int subType, bool mustBeUnique = true);
 
+	/** Find a child matching the template parameter type and the specified index */
 	template<class T>
 	T *findChildWithIndex(uint16 index, int subType = -1);
 
+	/** List children matching the template parameter type and the specified subtype */
 	template<class T>
 	Common::Array<T *> listChildren(int subType = -1);
 
+	/** List children recursively matching the template parameter type and the specified subtype */
 	template<class T>
 	Common::Array<T *> listChildrenRecursive(int subType = -1);
 
+	/** Add a resource to the children list */
 	void addChild(Resource *child);
 
+	/** Print debug information for the resource */
 	void print(uint depth = 0);
 
 protected:
@@ -242,6 +259,12 @@ protected:
 	Common::Array<Resource *> _children;
 };
 
+/**
+ * An unimplemented resource type.
+ *
+ * Used to display the raw resource data when dumping a resource tree.
+ * To be removed once all the resource types are implemented.
+ */
 class UnimplementedResource : public Resource {
 public:
 	UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name);

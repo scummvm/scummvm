@@ -31,6 +31,12 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * Levels are holder resources for the locations
+ *
+ * Levels are used to share resources between related locations.
+ * Resources in a level are kept when switching to another location of the same level.
+ */
 class Level : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kLevel;

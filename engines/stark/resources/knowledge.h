@@ -32,6 +32,9 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * A game logic state value holder
+ */
 class Knowledge : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kKnowledge;
@@ -50,10 +53,16 @@ public:
 	// Resource API
 	void readData(XRCReadStream *stream) override;
 
+	/** Define the value for boolean Knowledge elements */
 	void setBooleanValue(bool value);
+
+	/** Obtain the value for boolean Knowledge elements */
 	bool getBooleanValue();
 
+	/** Define the value for integer Knowledge elements */
 	void setIntegerValue(int32 value);
+
+	/** Obtain the value for integer Knowledge elements */
 	int32 getIntegerValue();
 
 protected:

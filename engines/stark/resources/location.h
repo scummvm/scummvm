@@ -33,6 +33,12 @@ namespace Stark {
 class Layer;
 class XRCReadStream;
 
+/**
+ * A location is a scene of the game
+ *
+ * Locations contain layers. The game engine retrieves the list of renderable
+ * items from the current location.
+ */
 class Location : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kLocation;
@@ -43,7 +49,10 @@ public:
 	// Resource API
 	void onAllLoaded() override;
 
+	/** Does the location have a 3D layer ? */
 	bool has3DLayer();
+
+	/** Obtain a list of render entries for all the items in the location */
 	RenderEntryArray listRenderEntries();
 
 protected:

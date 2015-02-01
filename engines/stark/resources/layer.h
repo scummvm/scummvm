@@ -34,6 +34,11 @@ namespace Stark {
 class Item;
 class XRCReadStream;
 
+/**
+ * A location layer
+ *
+ * Layers own the scene items
+ */
 class Layer : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kLayer;
@@ -52,7 +57,10 @@ public:
 	// Resource API
 	virtual void readData(XRCReadStream *stream) override;
 
+	/** Obtain the render entry for the background item */
 	virtual RenderEntry *getBackgroundRenderEntry() = 0;
+
+	/** Obtain the render entries for all items, including the background */
 	virtual RenderEntryArray listRenderEntries() = 0;
 
 protected:
@@ -62,6 +70,11 @@ protected:
 	uint _field_50;
 };
 
+/**
+ * A 2D layer
+ *
+ * 2D layers contain 2D positioned items
+ */
 class Layer2D : public Layer {
 public:
 	Layer2D(Resource *parent, byte subType, uint16 index, const Common::String &name);
@@ -80,6 +93,11 @@ protected:
 	Common::Array<uint32> _itemIndices;
 };
 
+/**
+ * A 3D layer
+ *
+ * 3D layers contain 3D positioned items, a camera and a floorfield
+ */
 class Layer3D : public Layer {
 public:
 	Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name);

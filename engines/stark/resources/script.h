@@ -32,6 +32,12 @@ namespace Stark {
 class Command;
 class XRCReadStream;
 
+/**
+ * A script resource
+ *
+ * Scripts are made of a collection of Command resources. Commands
+ * return the next command to be executed, allowing for branches.
+ */
 class Script : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kScript;
@@ -56,6 +62,13 @@ public:
 		kGameEventOnExitLocation = 2
 	};
 
+	/**
+	 * Script call modes.
+	 *
+	 * Most script types are only meaningful for a call mode.
+	 * The shouldExecute method checks the consistency between
+	 * the script type and the call mode.
+	 */
 	enum CallMode {
 		kCallModeGameLoop = 1,
 		kCallModeExitLocation = 2,
@@ -73,10 +86,19 @@ public:
 	void onAllLoaded();
 	void onGameLoop();
 
+	/** Reset the script so that it can be executed again from the beginning */
 	void reset();
+
+	/** Is the script enabled? */
 	bool isEnabled();
+
+	/** Is the script on its Begin command? */
 	bool isOnBegin();
+
+	/** Has the script ended? */
 	bool isOnEnd();
+
+	/** Attempt to run the script using the specified call mode */
 	void execute(uint32 callMode);
 
 	/** Pause the script for the specified time */

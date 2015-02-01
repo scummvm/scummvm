@@ -37,11 +37,14 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * A sound resource
+ */
 class Sound : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kSoundItem;
 
-	enum {
+	enum SoundType {
 		kSoundTypeVoice  = 0,
 		kSoundTypeEffect = 1,
 		kSoundTypeMusic  = 2

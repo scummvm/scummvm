@@ -32,6 +32,13 @@ namespace Stark {
 class Sound;
 class XRCReadStream;
 
+/**
+ * Speech resource
+ *
+ * Speech resources are used to define dialog lines.
+ * A Speech resource contains text for a character and references
+ * a Sound resource for the dubbing.
+ */
 class Speech : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kSpeech;

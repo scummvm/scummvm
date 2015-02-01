@@ -31,6 +31,9 @@ namespace Stark {
 
 class XRCReadStream;
 
+/**
+ * A typed collection of Knowledge resources
+ */
 class KnowledgeSet : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kKnowledgeSet;

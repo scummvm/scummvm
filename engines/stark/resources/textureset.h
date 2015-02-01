@@ -32,6 +32,11 @@ namespace Stark {
 class Texture;
 class XRCReadStream;
 
+/**
+ * A texture resource
+ *
+ * Used by items to provide textures to meshes
+ */
 class TextureSet : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kTextureSet;
@@ -48,6 +53,7 @@ public:
 	void readData(XRCReadStream *stream) override;
 	void onPostRead() override;
 
+	/** Obtain the texture to be rendered */
 	Texture *getTexture();
 
 protected:
