@@ -1467,8 +1467,11 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 		int height = 1024;
 		int width = 1024;
 		surface.create(height, width, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-		gf->drawString(&surface, text->getLines()[0], 0, 0, 1024, 0xFFFFFFFF);
-
+		int numLines = text->getNumLines();
+		// Not at all correct for line-wrapping, but atleast we get all the lines now.
+		for (int i = 0; i < numLines; i++) {
+			gf->drawString(&surface, text->getLines()[i], 0, i * gf->getFontHeight(), 1024, 0xFFFFFFFF);
+		}
 
 		byte *bitmap = (byte *)surface.getPixels();
 
