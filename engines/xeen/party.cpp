@@ -309,7 +309,7 @@ int Character::statColor(int amount, int threshold) {
 		return 32;
 }
 
-int Character::statBonus(int statValue) const {
+int Character::statBonus(uint statValue) const {
 	int idx;
 	for (idx = 0; STAT_VALUES[idx] <= statValue; ++idx)
 		;

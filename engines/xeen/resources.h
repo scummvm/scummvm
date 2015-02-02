@@ -147,7 +147,7 @@ extern const int AGE_RANGES[10];
 
 extern const int AGE_RANGES_ADJUST[2][10];
 
-extern const int STAT_VALUES[24];
+extern const uint STAT_VALUES[24];
 
 extern const int STAT_BONUSES[24];
 
@@ -322,6 +322,10 @@ extern const char *const IN_PARTY_IN_BANK;
 extern const char *const FOOD_TEXT;
 
 extern const char *const EXCHANGE_WITH_WHOM;
+
+extern const char *const QUICK_REF_LINE;
+
+extern const char *const QUICK_REFERENCE;
 
 } // End of namespace Xeen
 

@@ -22,6 +22,7 @@
 
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_exchange.h"
+#include "xeen/dialogs_quick_ref.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -192,6 +193,11 @@ void CharacterInfo::execute(int charIndex) {
 			}
 
 			_vm->_mode = MODE_CHARACTER_INFO;
+			break;
+
+		case Common::KEYCODE_q:
+			QuickReferenceDialog::show(_vm);
+			redrawFlag = true;
 			break;
 
 		case Common::KEYCODE_ESCAPE:
@@ -567,6 +573,5 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	w.close();
 	return false;
 }
-
 
 } // End of namespace Xeen

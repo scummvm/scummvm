@@ -58,6 +58,7 @@ public:
 	int _elemPow[12];
 	int _elemScale[12];
 	bool _shooting[8];
+	int _globalCombat;
 public:
 	Combat(XeenEngine *vm);
 

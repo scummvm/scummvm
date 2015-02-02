@@ -543,9 +543,9 @@ const int AGE_RANGES_ADJUST[2][10] = {
 	{ -250, -50, -20, -10, 0, 2, 5, 10, 20, 50 }
 };
 
-const int STAT_VALUES[24] = {
+const uint STAT_VALUES[24] = {
 	3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 25, 30, 35, 40, 
-	50, 75, 100, 125, 150, 175, 200, 225, 250, 65535
+	50, 75, 100, 125, 150, 175, 200, 225, 250, 
 };
 
 const int STAT_BONUSES[24] = {
@@ -970,5 +970,18 @@ const char *const FOOD_TEXT =
    "Enough for %u day%s\x3l";
 
 const char *const EXCHANGE_WITH_WHOM = "\t010\v005Exchange with whom?";
+
+const char *const QUICK_REF_LINE = 
+	"\xB%3d\x9""007%u)\x9""027%s\x9""110%c%c%c\x3r\x9""160\xC%02u%u\xC""d"
+	"\x3l\x9""170\xC%02u%d\xC""d\x9""208\xC%02u%u\xC""d\x9""247\xC"
+	"%02u%u\xC""d\x9""270\xC%02u%c%c%c%c\xC""d";
+
+const char *const QUICK_REFERENCE =
+	"\xD\x3""cQuick Reference Chart\xB""012\x3l"
+	"\x9""007#\x9""027Name\x9""110Cls\x9""140Lvl\x9""176H.P."
+	"\x9""212S.P.\x9""241A.C.\x9""270Cond"
+	"%s%s%s%s%s%s%s%s"
+	"\xB""110\x9""064\x3""cGold\x9""144Gems\x9""224Food\xB""119"
+	"\x9""064\xC""15%lu\x9""144%lu\x9""224%u day%s\xC""d";
 
 } // End of namespace Xeen

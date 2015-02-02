@@ -151,7 +151,7 @@ public:
 
 	static int statColor(int amount, int threshold);
 
-	int statBonus(int statValue) const;
+	int statBonus(uint statValue) const;
 
 	bool charSavingThrow(DamageType attackType) const;
 

@@ -28,19 +28,13 @@ namespace Xeen {
 
 FontSurface::FontSurface() : XSurface(), _fontData(nullptr), _bgColor(DEFAULT_BG_COLOR), 
 		_fontReduced(false),_fontJustify(JUSTIFY_NONE), _msgWraps(false) {
-	_textColors[0] = 0;
-	_textColors[1] = 0x40;
-	_textColors[2] = 0x30;
-	_textColors[3] = 0x20;
+	setTextColor(0);
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _fontData(nullptr), _msgWraps(false),
 		_bgColor(DEFAULT_BG_COLOR), _fontReduced(false), _fontJustify(JUSTIFY_NONE) {
 	create(w, h);
-	_textColors[0] = 0;
-	_textColors[1] = 0x40;
-	_textColors[2] = 0x30;
-	_textColors[3] = 0x20;
+	setTextColor(0);
 }
 
 /**

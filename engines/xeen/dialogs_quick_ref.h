@@ -20,24 +20,24 @@
  *
  */
 
-#include "xeen/combat.h"
-#include "common/algorithm.h"
+#ifndef XEEN_DIALOGS_QUICK_REF_H
+#define XEEN_DIALOGS_QUICK_REF_H
+
+#include "xeen/dialogs.h"
 
 namespace Xeen {
 
-Combat::Combat(XeenEngine *vm): _vm(vm) {
-	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
-	Common::fill(&_charsArray1[0], &_charsArray1[12], 0);
-	Common::fill(&_monPow[0], &_monPow[12], 0);
-	Common::fill(&_monsterScale[0], &_monsterScale[12], 0);
-	Common::fill(&_elemPow[0], &_elemPow[12], 0);
-	Common::fill(&_elemScale[0], &_elemScale[12], 0);
-	Common::fill(&_shooting[0], &_shooting[8], 0);
-	_globalCombat = 0;
-}
+class QuickReferenceDialog : public ButtonContainer {
+private:
+	XeenEngine *_vm;
 
-void Combat::clear() {
-	Common::fill(&_attackMonsters[0], &_attackMonsters[26], -1);
-}
+	QuickReferenceDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	void execute();
+public:
+	static void show(XeenEngine *vm);
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_DIALOGS_QUICK_REF_H */
