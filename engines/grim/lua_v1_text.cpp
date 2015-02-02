@@ -130,8 +130,8 @@ void Lua_V1::GetTextObjectDimensions() {
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
-		lua_pushnumber(textObject->getBitmapWidth());
-		lua_pushnumber(textObject->getBitmapHeight());
+		lua_pushnumber(textObject->getWidth()); // REMASTERED HACK
+		lua_pushnumber(textObject->getHeight()); // REMASTERED HACK
 		lua_pushnumber(textObject->getX());
 		lua_pushnumber(textObject->getY());
 	}
