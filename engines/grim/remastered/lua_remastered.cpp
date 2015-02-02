@@ -229,7 +229,8 @@ void Lua_Remastered::SetResolutionScaling() {
 void Lua_Remastered::IsConceptUnlocked() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
-	warning("Stub function: IsConceptUnlocked(%f)", lua_getnumber(param1));
+	warning("Stub function: IsConceptUnlocked(%f) returns 1", lua_getnumber(param1));
+	lua_pushnumber(1);
 }
 
 void Lua_Remastered::UnlockConcept() {

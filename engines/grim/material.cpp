@@ -51,7 +51,7 @@ void loadPNG(Common::SeekableReadStream *data, Texture *t) {
 	Image::PNGDecoder *pngDecoder = new Image::PNGDecoder();
 	pngDecoder->loadStream(*data);
 
-	Graphics::Surface *pngSurface =pngDecoder->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	Graphics::Surface *pngSurface =pngDecoder->getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), pngDecoder->getPalette());
 	
 	t->_width = pngSurface->w;
 	t->_height = pngSurface->h;
