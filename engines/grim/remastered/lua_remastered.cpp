@@ -33,6 +33,8 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/registry.h"
 
+#include "engines/grim/localize.h"
+
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 
@@ -140,8 +142,8 @@ void Lua_Remastered::QueryActiveHotspots() {
 }
 
 void Lua_Remastered::GetLanguage() {
-	warning("Stub function: GetLanguage, returns 0");
-	lua_pushnumber(0);
+	warning("Stub function: GetLanguage, just guesswork");
+	lua_pushnumber(g_grim->getLanguage());
 }
 
 void Lua_Remastered::SaveRegistryToDisk() {
@@ -188,6 +190,9 @@ void Lua_Remastered::SetLanguage() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
 	warning("Stub function: SetLanguage(%f)", lua_getnumber(param1));
+	g_grim->setLanguage(lua_getnumber(param1));
+	delete g_localizer;
+	g_localizer = new Localizer();
 }
 
 void Lua_Remastered::SetMouseSpeedScale() {

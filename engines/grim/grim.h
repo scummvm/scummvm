@@ -172,6 +172,9 @@ public:
 	void setMovieSubtitle(TextObject *to);
 	void setMovieSetup();
 
+	int getLanguage() const { return _language; }
+	void setLanguage(int langId) { _language = langId; }
+
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
 
@@ -264,6 +267,9 @@ protected:
 	Common::Language _gameLanguage;
 	Debugger *_debugger;
 	uint32 _pauseStartTime;
+
+	// Remastered;
+	uint32 _language;
 };
 
 extern GrimEngine *g_grim;

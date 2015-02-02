@@ -78,7 +78,7 @@ GfxBase *g_driver = nullptr;
 int g_imuseState = -1;
 
 GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, Common::Platform platform, Common::Language language) :
-		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0) {
+		Engine(syst), _currSet(nullptr), _selectedActor(nullptr), _pauseStartTime(0), _language(0) {
 	g_grim = this;
 
 	_debugger = new Debugger();

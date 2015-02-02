@@ -33,6 +33,7 @@ namespace Grim {
 
 Localizer *g_localizer = nullptr;
 
+
 Localizer::Localizer() {
 	// To avoid too wide lines further below, we just name these here.
 	bool isAnyDemo = g_grim->getGameFlags() & ADGF_DEMO;
@@ -41,7 +42,16 @@ Localizer::Localizer() {
 	bool isFrench = g_grim->getGameLanguage() == Common::FR_FRA;
 	bool isTranslatedGrimDemo = (isGerman || isFrench) && isGrimDemo;
 	bool isPS2 = g_grim->getGamePlatform() == Common::kPlatformPS2;
-	bool isRemastered = true; // TODO: Add handling of this from g_grim.
+	bool isRemastered = g_grim->getGameFlags() & ADGF_REMASTERED; // TODO: Add handling of this from g_grim.
+
+	const char *langMap[] = {
+		"en",
+		"de",
+		"es",
+		"fr",
+		"it",
+		"pt"
+	};
 
 	if (isGrimDemo && !isTranslatedGrimDemo)
 		return;
@@ -51,7 +61,7 @@ Localizer::Localizer() {
 		filename = "script.tab";
 	} else {
 		if (isRemastered) {
-			filename = "grim.en.tab"; // TODO: Detect based on language.
+			filename = Common::String("grim.") + langMap[g_grim->getLanguage()] + Common::String(".tab"); // TODO: Detect based on language.
 		} else if (isTranslatedGrimDemo) {
 			filename = "language.tab";
 		} else {
