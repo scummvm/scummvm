@@ -160,6 +160,17 @@ void Lua_Remastered::GetPlatform() {
 	lua_pushnumber(1);
 }
 
+void Lua_Remastered::GetRemappedKeyName() {
+	lua_Object param1 = lua_getparam(1);
+
+	const char *str = "";
+	if (lua_isstring(param1)) {
+		str = lua_getstring(param1);
+	}
+	warning("Stub function: GetRemappedKeyName(%s), returns TODO", str);
+
+	lua_pushstring("TODO");
+}
 
 
 // Stub function for builtin functions not yet implemented
@@ -213,7 +224,6 @@ STUB_FUNC(Lua_Remastered::SetActorHKHackMode)
 STUB_FUNC(Lua_Remastered::CacheCurrentWalkVector)
 STUB_FUNC(Lua_Remastered::UnlockConcept)
 STUB_FUNC(Lua_Remastered::IsConceptUnlocked)
-STUB_FUNC(Lua_Remastered::GetRemappedKeyName)
 STUB_FUNC(Lua_Remastered::GetRemappedKeyHint)
 STUB_FUNC(Lua_Remastered::New)
 STUB_FUNC(Lua_Remastered::RemoveBorders)
