@@ -984,4 +984,29 @@ const char *const QUICK_REFERENCE =
 	"\xB""110\x9""064\x3""cGold\x9""144Gems\x9""224Food\xB""119"
 	"\x9""064\xC""15%lu\x9""144%lu\x9""224%u day%s\xC""d";
 
+const uint BLACKSMITH_MAP_IDS[2][4] = { { 28, 30, 73, 49 }, { 29, 31, 37, 43 } };
+
+char *const ITEMS_DIALOG_TEXT1 =
+	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
+	"\f37c\fdces\t119\f37M\fdisc\t153%s\t187%s\t221%s"
+	"\t255%s\t289Exit";
+
+char *const ITEMS_DIALOG_TEXT2 =
+	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
+	"\f37c\fdces\t119\f37M\fdisc\t153\f37%s\t289Exit";
+
+const char *const BTN_BUY = "\f37B\fduy";
+const char *const BTN_SELL = "\f37S\fdell";
+const char *const BTN_IDENTIFY = "\f37I\fddentify";
+const char *const BTN_FIX = "\f37F\fdix";
+const char *const BTN_USE = "\f37U\fdse";
+const char *const BTN_EQUIP = "\f37E\fdquip";
+const char *const BTN_REMOVE = "\f37R\fdem";
+const char *const BTN_DISCARD = "\f37D\fdisc";
+const char *const BTN_QUEST = "\f37Q\fduest";
+const char *const BTN_ENCHANT = "E\fdnchant";
+const char *const BTN_RECHARGE = "R\fdechrg";
+const char *const BTN_GOLD = "G\fdold";
+
+
 } // End of namespace Xeen

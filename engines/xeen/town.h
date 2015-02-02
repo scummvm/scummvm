@@ -95,8 +95,6 @@ private:
 	Character *doTrainingOptions(Character *c);
 
 	void depositWithdrawl(int choice);
-
-	Character *showItems(Character *c, int v2);
 public:
 	Town(XeenEngine *vm);
 

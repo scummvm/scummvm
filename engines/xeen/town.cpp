@@ -22,6 +22,7 @@
 
 #include "xeen/town.h"
 #include "xeen/dialogs_input.h"
+#include "xeen/dialogs_items.h"
 #include "xeen/dialogs_yesno.h"
 #include "xeen/dialogs_spells.h"
 #include "xeen/resources.h"
@@ -536,8 +537,8 @@ Character *Town::doBlacksmithOptions(Character *c) {
 			intf.highlightChar(_buttonValue);
 		}
 	}
-	else if (_buttonValue == Common::KEYCODE_c) {
-		c = showItems(c, 1);
+	else if (_buttonValue == Common::KEYCODE_b) {
+		c = ItemsDialog::show(_vm, c, ITEMMODE_BLACKSMITH);
 		_buttonValue = 0;
 	}
 
@@ -1188,10 +1189,6 @@ void Town::drawTownAnim(bool flag) {
  */
 bool Town::isActive() const {
 	return _townSprites.size() > 0 && !_townSprites[0].empty();
-}
-
-Character *Town::showItems(Character *c, int v2) {
-	error("TODO: showItems");
 }
 
 } // End of namespace Xeen

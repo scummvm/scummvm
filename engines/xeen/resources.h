@@ -327,6 +327,25 @@ extern const char *const QUICK_REF_LINE;
 
 extern const char *const QUICK_REFERENCE;
 
+extern const uint BLACKSMITH_MAP_IDS[2][4];
+
+extern char *const ITEMS_DIALOG_TEXT1;
+extern char *const ITEMS_DIALOG_TEXT2;
+
+extern const char *const BTN_BUY;
+extern const char *const BTN_SELL;
+extern const char *const BTN_IDENTIFY;
+extern const char *const BTN_FIX;
+extern const char *const BTN_USE;
+extern const char *const BTN_EQUIP;
+extern const char *const BTN_REMOVE;
+extern const char *const BTN_DISCARD;
+extern const char *const BTN_EQUIP;
+extern const char *const BTN_QUEST;
+extern const char *const BTN_ENCHANT;
+extern const char *const BTN_RECHARGE;
+extern const char *const BTN_GOLD;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

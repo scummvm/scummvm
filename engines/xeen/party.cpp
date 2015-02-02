@@ -487,7 +487,7 @@ int Character::itemScan(int itemId) const {
 					}
 
 					if (itemId == 9) {
-						result += ARMOR_STRENGTHS[item._name];
+						result += ARMOR_STRENGTHS[item._id];
 
 						if (item._material >= 37 && item._material <= 58)
 							result += METAL_LAC[item._material - 37];
@@ -959,13 +959,13 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_difficulty);
 
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithWeapons[i].synchronize(s);
+		_blacksmithWeapons[0][i].synchronize(s);
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithArmor[i].synchronize(s);
+		_blacksmithArmor[0][i].synchronize(s);
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithAccessories[i].synchronize(s);
+		_blacksmithAccessories[0][i].synchronize(s);
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithMisc[i].synchronize(s);
+		_blacksmithMisc[0][i].synchronize(s);
 
 	s.syncAsUint16LE(_cloudsEnd);
 	s.syncAsUint16LE(_darkSideEnd);
@@ -998,13 +998,13 @@ void Party::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_questItems[i]);
 
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithWeapons2[i].synchronize(s);
+		_blacksmithWeapons[1][i].synchronize(s);
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithArmor2[i].synchronize(s);
+		_blacksmithArmor[1][i].synchronize(s);
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithAccessories2[i].synchronize(s);
+		_blacksmithAccessories[1][i].synchronize(s);
 	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithMisc2[i].synchronize(s);
+		_blacksmithMisc[1][i].synchronize(s);
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
 		SavesManager::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);

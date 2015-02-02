@@ -623,8 +623,8 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 			if (result == 59 && !_vm->_files->_isDarkCc) {
 				for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
 					XeenItem &item = _vm->_treasure._weapons[idx];
-					if (!item._name) {
-						item._name = 34;
+					if (!item._id) {
+						item._id = 34;
 						item._material = 0;
 						item._bonusFlags = 0;
 						_vm->_treasure._hasItems = true;
@@ -1007,22 +1007,22 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 		if (mask < 82) {
 			for (int idx = 0; idx < 9; ++idx) {
 				if (mask == 35) {
-					if (ps._weapons[idx]._name == mask) {
+					if (ps._weapons[idx]._id == mask) {
 						v = mask;
 						break;
 					}
 				} else if (mask < 49) {
-					if (ps._armor[idx]._name == (mask - 35)) {
+					if (ps._armor[idx]._id == (mask - 35)) {
 						v = mask;
 						break;
 					}
 				} else if (mask < 60) {
-					if (ps._accessories[idx]._name == (mask - 49)) {
+					if (ps._accessories[idx]._id == (mask - 49)) {
 						v = mask;
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._name == (mask - 60)) {
+					if (ps._misc[idx]._id == (mask - 60)) {
 						v = mask;
 						break;
 					}

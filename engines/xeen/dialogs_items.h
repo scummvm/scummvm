@@ -20,46 +20,44 @@
  *
  */
 
-#ifndef XEEN_ITEMS_H
-#define XEEN_ITEMS_H
+#ifndef XEEN_DIALOGS_ITEMS_H
+#define XEEN_DIALOGS_ITEMS_H
 
-#include "common/scummsys.h"
-#include "common/serializer.h"
+#include "xeen/dialogs.h"
+#include "xeen/party.h"
+#include "xeen/screen.h"
 
 namespace Xeen {
 
-#define TOTAL_ITEMS 10
-
-enum BonusFlags { FLAG_CURSED = 0x40 };
-
-class XeenItem {
-public:
-	int _material;
-	uint _id;
-	int _bonusFlags;
-	int _equipped;
-public:
-	XeenItem();
-
-	void synchronize(Common::Serializer &s);
-
-	int getElementalCategory() const;
-
-	int getAttributeCategory() const;
+enum ItemsMode {
+	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_4 = 4, 
+	ITEMMODE_6 = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8, 
+	ITEMMODE_9 = 9, ITEMMODE_10 = 10, ITEMMODE_TO_GOLD = 11
 };
 
-class Treasure {
+class ItemsDialog : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+	SpriteResource _equipSprites;
+	Character _itemsCharacter;
+	Character *_oldCharacter;
+	DrawStruct _itemsDrawList[9];
+
+	ItemsDialog(XeenEngine *vm) : ButtonContainer(), 
+		_vm(vm), _oldCharacter(nullptr) {}
+
+	Character *execute(Character *c, ItemsMode mode);
+
+	void loadButtons(ItemsMode mode, Character *&c);
+
+	void blackData2CharData();
+
+	void setEquipmentIcons();
 public:
-	XeenItem _misc[TOTAL_ITEMS];
-	XeenItem _accessories[TOTAL_ITEMS];
-	XeenItem _armor[TOTAL_ITEMS];
-	XeenItem _weapons[TOTAL_ITEMS];
-	bool _hasItems;
-	bool _v1;
-public:
-	Treasure();
+	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };
 
 } // End of namespace Xeen
 
-#endif	/* XEEN_ITEMS_H */
+#endif /* XEEN_DIALOGS_ITEMS_H */

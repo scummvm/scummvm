@@ -35,7 +35,6 @@ void QuickReferenceDialog::show(XeenEngine *vm) {
 void QuickReferenceDialog::execute() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
-	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Common::String lines[8];

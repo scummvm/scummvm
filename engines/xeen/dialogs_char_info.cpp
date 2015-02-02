@@ -22,6 +22,7 @@
 
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_exchange.h"
+#include "xeen/dialogs_items.h"
 #include "xeen/dialogs_quick_ref.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -185,7 +186,7 @@ void CharacterInfo::execute(int charIndex) {
 		case Common::KEYCODE_i:
 			_vm->_mode = oldMode;
 			_vm->_treasure._v1 = _vm->_mode == MODE_InCombat;
-			error("TODO: c = ItemDialog::show");
+			c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
 
 			if (!c) {
 				party._stepped = true;

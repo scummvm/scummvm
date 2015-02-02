@@ -214,10 +214,10 @@ public:
 	int _holyBonus;
 	int _heroism;
 	Difficulty _difficulty;
-	XeenItem _blacksmithWeapons[ITEMS_COUNT];
-	XeenItem _blacksmithArmor[ITEMS_COUNT];
-	XeenItem _blacksmithAccessories[ITEMS_COUNT];
-	XeenItem _blacksmithMisc[ITEMS_COUNT];
+	XeenItem _blacksmithWeapons[2][ITEMS_COUNT];
+	XeenItem _blacksmithArmor[2][ITEMS_COUNT];
+	XeenItem _blacksmithAccessories[2][ITEMS_COUNT];
+	XeenItem _blacksmithMisc[2][ITEMS_COUNT];
 	bool _cloudsEnd;
 	bool _darkSideEnd;
 	bool _worldEnd;
@@ -245,10 +245,6 @@ public:
 	bool _worldFlags[128];
 	bool _quests[64];
 	int _questItems[85];
-	XeenItem _blacksmithWeapons2[ITEMS_COUNT];
-	XeenItem _blacksmithArmor2[ITEMS_COUNT];
-	XeenItem _blacksmithAccessories2[ITEMS_COUNT];
-	XeenItem _blacksmithMisc2[ITEMS_COUNT];
 	bool _characterFlags[30][24];
 public:
 	// Other party related runtime data
