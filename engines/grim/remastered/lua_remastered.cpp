@@ -28,6 +28,7 @@
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/overlay.h"
 
+#include "engines/grim/grim.h"
 #include "engines/grim/font.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/registry.h"
@@ -172,7 +173,119 @@ void Lua_Remastered::GetRemappedKeyName() {
 	lua_pushstring("TODO");
 }
 
+void Lua_Remastered::ImSetCommentaryVol() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: ImSetCommentaryVol(%f)", lua_getnumber(param1));
+}
 
+void Lua_Remastered::SetLanguage() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: SetLanguage(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::SetMouseSpeedScale() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: SetMouseSpeedScale(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::EnableCommentary() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: EnableCommentary(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::SetCommentary() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isstring(param1));
+	warning("Stub function: SetCommentary(%s)", lua_getstring(param1));
+}
+
+void Lua_Remastered::HasHeardCommentary() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isstring(param1));
+	warning("Stub function: HasHeardCommentary(%s) returns 1", lua_getstring(param1));
+	lua_pushnumber(1);
+}
+
+void Lua_Remastered::SetResolutionScaling() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: SetResolutionScaling(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::IsConceptUnlocked() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: IsConceptUnlocked(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::UnlockConcept() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: UnlockConcept(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::UnlockCutscene() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: UnlockCutscene(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::GetGameRenderMode() {
+	warning("Stub function: GetGameRenderMode() - not all modes possible yet");
+	lua_pushnumber(g_grim->getMode());
+}
+
+void Lua_Remastered::SetGameRenderMode() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: SetGameRenderMode(%f)", lua_getnumber(param1));
+	g_grim->setMode((GrimEngine::EngineMode)lua_getnumber(param1));
+}
+
+void Lua_Remastered::AddHotspot() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+	lua_Object param4 = lua_getparam(4);
+	lua_Object param5 = lua_getparam(5);
+	lua_Object param6 = lua_getparam(6);
+	lua_Object param7 = lua_getparam(7);
+	lua_Object param8 = lua_getparam(8);
+	lua_Object param9 = lua_getparam(9);
+	lua_Object param10 = lua_getparam(10);
+	lua_Object param11 = lua_getparam(11);
+
+	assert(lua_isstring(param1));
+	assert(lua_isnumber(param2));
+	assert(lua_isnumber(param3));
+	assert(lua_isnumber(param4));
+	assert(lua_isnumber(param5));
+	assert(lua_isnumber(param6));
+	assert(lua_isnumber(param7));
+	assert(lua_isnumber(param8));
+	assert(lua_isnumber(param11));
+
+	const char *p9str = "nil";
+	const char *p10str = "nil";
+	if (lua_isstring(param9)) {
+		p9str = lua_getstring(param9);
+	} else if (!lua_isnil(param9)) {
+		assert(lua_isnil(param9));
+	}
+
+	if (lua_isstring(param10)) {
+		p10str = lua_getstring(param10);
+	} else if (!lua_isnil(param10)) {
+		assert(lua_isnil(param10));
+	}
+	warning("Stub function: AddHotspot(%s, %f, %f, %f, %f, %f, %f, %f, %s, %s, %f)", lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5), lua_getnumber(param6), lua_getnumber(param6), lua_getnumber(param7), lua_getnumber(param8), p9str, p10str, lua_getnumber(param11));  
+
+	lua_pushnil();
+}
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
     warning("Stub function: %s", funcName);
@@ -193,37 +306,24 @@ STUB_FUNC(Lua_Remastered::InitiateFindSaveGames)
 STUB_FUNC(Lua_Remastered::AreAchievementsInstalled)
 STUB_FUNC(Lua_Remastered::UnlockAchievement)
 STUB_FUNC(Lua_Remastered::ImGetCommentaryVol)
-STUB_FUNC(Lua_Remastered::ImSetCommentaryVol)
-STUB_FUNC(Lua_Remastered::SetMouseSpeedScale)
-STUB_FUNC(Lua_Remastered::SetResolutionScaling)
 STUB_FUNC(Lua_Remastered::SetAdvancedLighting)
-STUB_FUNC(Lua_Remastered::SetLanguage)
 STUB_FUNC(Lua_Remastered::PlayCurrentCommentary)
 STUB_FUNC(Lua_Remastered::IsPlayingCommentary)
-STUB_FUNC(Lua_Remastered::EnableCommentary)
 STUB_FUNC(Lua_Remastered::ClearCommentary)
-STUB_FUNC(Lua_Remastered::HasHeardCommentary)
-STUB_FUNC(Lua_Remastered::SetCommentary)
 STUB_FUNC(Lua_Remastered::LoadRemappedKeys)
 STUB_FUNC(Lua_Remastered::GlobalSaveResolved)
 STUB_FUNC(Lua_Remastered::StopCommentaryImmediately)
 STUB_FUNC(Lua_Remastered::DestroyAllUIButtonsImmediately)
 STUB_FUNC(Lua_Remastered::UpdateUIButtons)
 STUB_FUNC(Lua_Remastered::OverlayClearCache)
-STUB_FUNC(Lua_Remastered::GetGameRenderMode)
-STUB_FUNC(Lua_Remastered::SetGameRenderMode)
-STUB_FUNC(Lua_Remastered::AddHotspot)
 STUB_FUNC(Lua_Remastered::RemoveHotspot)
 STUB_FUNC(Lua_Remastered::OverlayFade)
 STUB_FUNC(Lua_Remastered::HideMouseCursor)
 STUB_FUNC(Lua_Remastered::SetCursor)
 STUB_FUNC(Lua_Remastered::ShowCursor)
 STUB_FUNC(Lua_Remastered::UpdateMouseCursor)
-STUB_FUNC(Lua_Remastered::UnlockCutscene)
 STUB_FUNC(Lua_Remastered::SetActorHKHackMode)
 STUB_FUNC(Lua_Remastered::CacheCurrentWalkVector)
-STUB_FUNC(Lua_Remastered::UnlockConcept)
-STUB_FUNC(Lua_Remastered::IsConceptUnlocked)
 STUB_FUNC(Lua_Remastered::GetRemappedKeyHint)
 STUB_FUNC(Lua_Remastered::New)
 STUB_FUNC(Lua_Remastered::RemoveBorders)
