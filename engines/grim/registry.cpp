@@ -120,14 +120,14 @@ Registry::Registry() :
 	_transcript.setString(ConfMan.get("transcript"));
 
 	// Remastered
-	_widescreen.setString(ConfMan.get("widescreen"));
-	_directorsCommentary.setString(ConfMan.get("directors_commentary"));
+	_widescreen.setInt(ConfMan.getInt("widescreen"));
+	_directorsCommentary.setInt(ConfMan.getInt("directors_commentary"));
 	_language.setInt(ConfMan.getInt("grim_language")); // Avoid overlap with confman
 	_resolutionScaling.setString(ConfMan.get("resolution_scaling"));
 	_mouseSpeed.setString(ConfMan.get("mouse_speed"));
 	_advancedLighting.setString(ConfMan.get("adanced_lighting"));
 	_directorsCommentaryVolume.setString(ConfMan.get("directors_commentary_volume"));
-	_renderingMode.setString(ConfMan.get("directors_commentary_volume"));
+	_renderingMode.setInt(ConfMan.getInt("rendering_mode"));
 }
 
 Registry::Value &Registry::value(const Common::String &key) {
@@ -299,14 +299,14 @@ void Registry::save() {
 	ConfMan.set("transcript", _transcript.getString());
 
 	// Remastered (TODO: These are handled as string for now)
-	ConfMan.set("widescreen", _widescreen.getString());
-	ConfMan.set("directors_commentary", _directorsCommentary.getString());
+	ConfMan.setInt("widescreen", _widescreen.getInt());
+	ConfMan.setInt("directors_commentary", _directorsCommentary.getInt());
 	ConfMan.setInt("grim_language", _language.getInt());
 	ConfMan.set("resolution_scaling", _resolutionScaling.getString());
 	ConfMan.set("mouse_speed", _mouseSpeed.getString());
 	ConfMan.set("advanced_lighting", _advancedLighting.getString());
 	ConfMan.set("directors_commentary_volume", _directorsCommentaryVolume.getString());
-	ConfMan.set("rendering_mode", _renderingMode.getString());
+	ConfMan.setInt("rendering_mode", _renderingMode.getInt());
 
 	_dirty = false;
 }

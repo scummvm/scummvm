@@ -140,8 +140,8 @@ void Lua_Remastered::QueryActiveHotspots() {
 }
 
 void Lua_Remastered::GetLanguage() {
-	warning("Stub function: GetLanguage, returns 1");
-	lua_pushnumber(1);
+	warning("Stub function: GetLanguage, returns 0");
+	lua_pushnumber(0);
 }
 
 void Lua_Remastered::SaveRegistryToDisk() {
@@ -177,6 +177,11 @@ void Lua_Remastered::ImSetCommentaryVol() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
 	warning("Stub function: ImSetCommentaryVol(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::ImGetCommentaryVol() {
+	warning("Stub function: ImGetCommentaryVol() returns 0");
+	lua_pushnumber(0);
 }
 
 void Lua_Remastered::SetLanguage() {
@@ -286,6 +291,25 @@ void Lua_Remastered::AddHotspot() {
 
 	lua_pushnil();
 }
+
+void Lua_Remastered::GlobalSaveResolved() {
+	warning("Stub function: GlobalSaveResolved() returns 1");
+	lua_pushnumber(1);
+}
+
+void Lua_Remastered::ShowCursor() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: ShowCursor(%f)", lua_getnumber(param1));
+}
+
+void Lua_Remastered::ReadRegistryIntValue() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isstring(param1));
+	warning("Stub function: ReadRegistryIntValue(%s) returns nil", lua_getstring(param1));
+	lua_pushnil();
+}
+
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
     warning("Stub function: %s", funcName);
@@ -299,19 +323,16 @@ static void stubError(const char *funcName) {
 #define STUB_FUNC2(name) void name() { stubError(#name); }
 
 STUB_FUNC(Lua_Remastered::PreloadCursors)
-STUB_FUNC(Lua_Remastered::ReadRegistryIntValue)
 STUB_FUNC(Lua_Remastered::GetFindSaveGameStatus)
 STUB_FUNC(Lua_Remastered::FindSaveGames)
 STUB_FUNC(Lua_Remastered::InitiateFindSaveGames)
 STUB_FUNC(Lua_Remastered::AreAchievementsInstalled)
 STUB_FUNC(Lua_Remastered::UnlockAchievement)
-STUB_FUNC(Lua_Remastered::ImGetCommentaryVol)
 STUB_FUNC(Lua_Remastered::SetAdvancedLighting)
 STUB_FUNC(Lua_Remastered::PlayCurrentCommentary)
 STUB_FUNC(Lua_Remastered::IsPlayingCommentary)
 STUB_FUNC(Lua_Remastered::ClearCommentary)
 STUB_FUNC(Lua_Remastered::LoadRemappedKeys)
-STUB_FUNC(Lua_Remastered::GlobalSaveResolved)
 STUB_FUNC(Lua_Remastered::StopCommentaryImmediately)
 STUB_FUNC(Lua_Remastered::DestroyAllUIButtonsImmediately)
 STUB_FUNC(Lua_Remastered::UpdateUIButtons)
@@ -320,11 +341,11 @@ STUB_FUNC(Lua_Remastered::RemoveHotspot)
 STUB_FUNC(Lua_Remastered::OverlayFade)
 STUB_FUNC(Lua_Remastered::HideMouseCursor)
 STUB_FUNC(Lua_Remastered::SetCursor)
-STUB_FUNC(Lua_Remastered::ShowCursor)
 STUB_FUNC(Lua_Remastered::UpdateMouseCursor)
 STUB_FUNC(Lua_Remastered::SetActorHKHackMode)
 STUB_FUNC(Lua_Remastered::CacheCurrentWalkVector)
 STUB_FUNC(Lua_Remastered::GetRemappedKeyHint)
+STUB_FUNC(Lua_Remastered::SetKeyMappingMode)
 STUB_FUNC(Lua_Remastered::New)
 STUB_FUNC(Lua_Remastered::RemoveBorders)
 STUB_FUNC(Lua_Remastered::GetSaveStatus)
@@ -380,6 +401,7 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "UnlockConcept", LUA_OPCODE(Lua_Remastered, UnlockConcept) },
 	{ "IsConceptUnlocked", LUA_OPCODE(Lua_Remastered, IsConceptUnlocked) },
 	{ "GetRemappedKeyHint", LUA_OPCODE(Lua_Remastered, GetRemappedKeyHint) },
+	{ "SetKeyMappingMode", LUA_OPCODE(Lua_Remastered, SetKeyMappingMode) },
 	{ "SaveRegistryToDisk", LUA_OPCODE(Lua_Remastered, SaveRegistryToDisk) },	
 	{ "InitiateFindSaveGames", LUA_OPCODE(Lua_Remastered, InitiateFindSaveGames) },
 	{ "GetFindSaveGameStatus", LUA_OPCODE(Lua_Remastered, GetFindSaveGameStatus) },

@@ -91,6 +91,7 @@ protected:
 	DECLARE_LUA_OPCODE(SaveRegistryToDisk);
 	DECLARE_LUA_OPCODE(GetRemappedKeyName);
 	DECLARE_LUA_OPCODE(GetRemappedKeyHint);
+	DECLARE_LUA_OPCODE(SetKeyMappingMode);
 	DECLARE_LUA_OPCODE(New);
 	DECLARE_LUA_OPCODE(RemoveBorders);
 	DECLARE_LUA_OPCODE(GetSaveStatus);
