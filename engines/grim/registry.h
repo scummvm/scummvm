@@ -102,6 +102,7 @@ private:
 	Value _mouseSpeed;
 	Value _advancedLighting;
 	Value _directorsCommentaryVolume;
+	Value _renderingMode;
 
 	bool _dirty;
 

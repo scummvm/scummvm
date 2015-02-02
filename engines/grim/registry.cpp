@@ -127,6 +127,7 @@ Registry::Registry() :
 	_mouseSpeed.setString(ConfMan.get("mouse_speed"));
 	_advancedLighting.setString(ConfMan.get("adanced_lighting"));
 	_directorsCommentaryVolume.setString(ConfMan.get("directors_commentary_volume"));
+	_renderingMode.setString(ConfMan.get("directors_commentary_volume"));
 }
 
 Registry::Value &Registry::value(const Common::String &key) {
@@ -176,6 +177,8 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _advancedLighting;
 	} else if (scumm_stricmp("DirectorsCommentaryVolume", key.c_str()) == 0) {
 		return _directorsCommentaryVolume;
+	} else if (scumm_stricmp("RenderingMode", key.c_str()) == 0) {
+		return _renderingMode;
 	} else {
 		warning("write unknown regisry value %s", key.c_str());
 		return _musicVolume;
@@ -231,6 +234,8 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 		return _advancedLighting;
 	} else if (scumm_stricmp("DirectorsCommentaryVolume", key.c_str()) == 0) {
 		return _directorsCommentaryVolume;
+	} else if (scumm_stricmp("RenderingMode", key.c_str()) == 0) {
+		return _renderingMode;
 	} else {
 		warning("unknown regisry value %s", key.c_str());
 		return _musicVolume;
@@ -301,6 +306,7 @@ void Registry::save() {
 	ConfMan.set("mouse_speed", _mouseSpeed.getString());
 	ConfMan.set("advanced_lighting", _advancedLighting.getString());
 	ConfMan.set("directors_commentary_volume", _directorsCommentaryVolume.getString());
+	ConfMan.set("rendering_mode", _renderingMode.getString());
 
 	_dirty = false;
 }
