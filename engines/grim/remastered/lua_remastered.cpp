@@ -175,6 +175,12 @@ void Lua_Remastered::GetRemappedKeyName() {
 	lua_pushstring("TODO");
 }
 
+void Lua_Remastered::GetRemappedKeyHint() {
+	lua_Object param1 = lua_getparam(1);
+	warning("Stub function: GetRemappedKeyHint(%s), returns key_empty.png", lua_getstring(param1));
+	lua_pushstring("key_empty.png");
+}
+
 void Lua_Remastered::ImSetCommentaryVol() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
@@ -288,7 +294,7 @@ void Lua_Remastered::AddHotspot() {
 	assert(lua_isnumber(param5));
 	assert(lua_isnumber(param6));
 	assert(lua_isnumber(param7));
-	assert(lua_isnumber(param8));
+//	assert(lua_isnumber(param8));
 	assert(lua_isnumber(param11));
 
 	const char *p9str = "nil";
@@ -361,7 +367,6 @@ STUB_FUNC(Lua_Remastered::SetCursor)
 STUB_FUNC(Lua_Remastered::UpdateMouseCursor)
 STUB_FUNC(Lua_Remastered::SetActorHKHackMode)
 STUB_FUNC(Lua_Remastered::CacheCurrentWalkVector)
-STUB_FUNC(Lua_Remastered::GetRemappedKeyHint)
 STUB_FUNC(Lua_Remastered::SetKeyMappingMode)
 STUB_FUNC(Lua_Remastered::New)
 STUB_FUNC(Lua_Remastered::RemoveBorders)
