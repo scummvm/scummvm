@@ -239,6 +239,13 @@ void Lua_Remastered::UnlockCutscene() {
 	warning("Stub function: UnlockCutscene(%f)", lua_getnumber(param1));
 }
 
+void Lua_Remastered::IsCutsceneUnlocked() {
+	lua_Object param1 = lua_getparam(1);
+	assert(lua_isnumber(param1));
+	warning("Stub function: IsCutsceneUnlocked(%f) -> returns 1", lua_getnumber(param1));
+	lua_pushnumber(1);
+}
+
 void Lua_Remastered::GetGameRenderMode() {
 	warning("Stub function: GetGameRenderMode() - not all modes possible yet");
 	lua_pushnumber(g_grim->getMode());
@@ -396,6 +403,7 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "GetCursorPosition", LUA_OPCODE(Lua_Remastered, GetCursorPosition) },
 	{ "SetCursor", LUA_OPCODE(Lua_Remastered, SetCursor) },
 	{ "UnlockCutscene", LUA_OPCODE(Lua_Remastered, UnlockCutscene) },
+	{ "IsCutsceneUnlocked", LUA_OPCODE(Lua_Remastered, IsCutsceneUnlocked) },
 	{ "SetActorHKHackMode", LUA_OPCODE(Lua_Remastered, SetActorHKHackMode) },
 	{ "CacheCurrentWalkVector", LUA_OPCODE(Lua_Remastered, CacheCurrentWalkVector) },
 	{ "UnlockConcept", LUA_OPCODE(Lua_Remastered, UnlockConcept) },

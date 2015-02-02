@@ -84,6 +84,7 @@ protected:
 	DECLARE_LUA_OPCODE(UpdateMouseCursor);
 	DECLARE_LUA_OPCODE(GetCursorPosition);
 	DECLARE_LUA_OPCODE(UnlockCutscene);
+	DECLARE_LUA_OPCODE(IsCutsceneUnlocked);
 	DECLARE_LUA_OPCODE(SetActorHKHackMode);
 	DECLARE_LUA_OPCODE(CacheCurrentWalkVector);
 	DECLARE_LUA_OPCODE(UnlockConcept);
