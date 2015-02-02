@@ -1008,5 +1008,37 @@ const char *const BTN_ENCHANT = "E\fdnchant";
 const char *const BTN_RECHARGE = "R\fdechrg";
 const char *const BTN_GOLD = "G\fdold";
 
+const char *const ITEM_BROKEN = "\f32broken ";
+const char *const ITEM_CURSED = "\f09cursed ";
+const char *const BONUS_NAMES[7] = {
+	"", "Dragon Slayer", "Undead Eater", "Golem Smasher",
+	"Bug Zapper", "Monster Masher", "Beast Bopper"
+};
+const char *const WEAPON_NAMES[35] = {
+	nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ", 
+	"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ", 
+	"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ", 
+	"bardiche ", "glaive ", "halberd ", "pike ", "flamberge ", "trident ",
+	"staff ", "hammer ", "naginata ", "battle axe ", "grand axe ", "great axe ", 
+	"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword"
+};
+
+const char *const ARMOR_NAMES[14] = {
+	nullptr, "Robes ", "Scale rmor ", "ring mail ", "chain mail ",
+	"splint mail ", "plate mail ", "plate armor ", "shield ",
+	"helm ", "boots ", "cloak ", "cape ", "gauntlets "
+};
+
+const char *const ACCESSORY_NAMES[11] = {
+	nullptr, "ring ", "belt ", "broach ", "medal ", "charm ", "cameo ",
+	"scarab ", "pendant ", "necklace ", "amulet "
+};
+
+const char *const MISC_NAMES[22] = {
+	nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
+	"wand ", "whistle ", "potion ", "scroll ", "RogueVM", 
+	"bogus", "bogus", "bogus", "bogus", "bogus", 
+	"bogus", "bogus", "bogus", "bogus"
+};
 
 } // End of namespace Xeen

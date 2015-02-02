@@ -855,6 +855,70 @@ int Character::getNumAwards() const {
 	return total;
 }
 
+/**
+ * Assembles a full lines description for a specified item for use in
+ * the Items dialog
+ */
+Common::String Character::assembleItemName(int itemIndex, int displayNum, int typeNum) {
+	Spells &spells = *Party::_vm->_spells;
+
+	switch (typeNum) {
+	case 0: {
+		// Weapons
+		XeenItem &i = _weapons[itemIndex];
+		return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
+			!i._bonusFlags ? spells._maeNames[i._material] : "",
+			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+			WEAPON_NAMES[i._id],
+			!i._bonusFlags ? "" : BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
+			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
+				!i._bonusFlags ? "\b " : ""
+		);
+	}
+
+	case 1: {
+		// Armor
+		XeenItem &i = _armor[itemIndex];
+		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+			!i._bonusFlags ? "" : spells._maeNames[i._material],
+			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+			ARMOR_NAMES[i._id],
+			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
+				!i._bonusFlags ? "\b " : ""
+		);
+	}
+		
+	case 2: {
+		// Accessories
+		XeenItem &i = _accessories[itemIndex];
+		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+			!i._bonusFlags ? "" : spells._maeNames[i._material],
+			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+			ARMOR_NAMES[i._id],
+			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
+				!i._bonusFlags ? "\b " : ""
+		);
+	}
+
+	case 3: {
+		// Misc
+		XeenItem &i = _misc[itemIndex];
+		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+			!i._bonusFlags ? "" : spells._maeNames[i._material],
+			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+			ARMOR_NAMES[i._id],
+			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
+				!i._id ? "\b " : ""
+		);
+	}
+	default:
+		return "";
+	}
+}
 
 /*------------------------------------------------------------------------*/
 

@@ -346,6 +346,14 @@ extern const char *const BTN_ENCHANT;
 extern const char *const BTN_RECHARGE;
 extern const char *const BTN_GOLD;
 
+extern const char *const ITEM_BROKEN;
+extern const char *const ITEM_CURSED;
+extern const char *const BONUS_NAMES[7];
+extern const char *const WEAPON_NAMES[35];
+extern const char *const ARMOR_NAMES[14];
+extern const char *const ACCESSORY_NAMES[11];
+extern const char *const MISC_NAMES[22];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

@@ -30,7 +30,9 @@ namespace Xeen {
 
 #define TOTAL_ITEMS 10
 
-enum BonusFlags { FLAG_CURSED = 0x40 };
+enum BonusFlags { 
+	ITEMFLAG_BONUS_MASK = 0xBF,  ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80 
+};
 
 class XeenItem {
 public:

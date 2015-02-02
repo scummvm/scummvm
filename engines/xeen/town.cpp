@@ -863,10 +863,10 @@ Character *Town::doTempleOptions(Character *c) {
 	case Common::KEYCODE_u:
 		if (_uncurseCost && party.subtract(0, _uncurseCost, 0, WT_2)) {
 			for (int idx = 0; idx < 9; ++idx) {
-				c->_weapons[idx]._bonusFlags &= ~FLAG_CURSED;
-				c->_armor[idx]._bonusFlags &= ~FLAG_CURSED;
-				c->_accessories[idx]._bonusFlags &= ~FLAG_CURSED;
-				c->_misc[idx]._bonusFlags &= ~FLAG_CURSED;
+				c->_weapons[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
+				c->_armor[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
+				c->_accessories[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
+				c->_misc[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
 			}
 
 			_v1 = 1440;

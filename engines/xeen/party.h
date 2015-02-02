@@ -182,6 +182,8 @@ public:
 	int getNumSkills() const;
 
 	int getNumAwards() const;
+	
+	Common::String assembleItemName(int itemIndex, int displayNum, int typeNum);
 };
 
 class Roster: public Common::Array<Character> {
