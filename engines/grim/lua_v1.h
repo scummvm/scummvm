@@ -286,67 +286,6 @@ protected:
 	DECLARE_LUA_OPCODE(GetMemoryUsage);
 	DECLARE_LUA_OPCODE(GetFontDimensions);
 	DECLARE_LUA_OPCODE(PurgeText);
-
-	// Remastered
-
-	DECLARE_LUA_OPCODE(GetPlatform);
-	DECLARE_LUA_OPCODE(GetLanguage);
-	DECLARE_LUA_OPCODE(PreloadCursors);
-	DECLARE_LUA_OPCODE(ReadRegistryIntValue);
-	DECLARE_LUA_OPCODE(WidescreenCorrectionFactor);
-	DECLARE_LUA_OPCODE(InitiateFindSaveGames);
-	DECLARE_LUA_OPCODE(FindSaveGames);
-	DECLARE_LUA_OPCODE(GetFindSaveGameStatus);
-	DECLARE_LUA_OPCODE(AreAchievementsInstalled);
-	DECLARE_LUA_OPCODE(UnlockAchievement);
-	DECLARE_LUA_OPCODE(ImGetCommentaryVol);
-	DECLARE_LUA_OPCODE(ImSetCommentaryVol);
-	DECLARE_LUA_OPCODE(SetMouseSpeedScale);
-	DECLARE_LUA_OPCODE(SetResolutionScaling);
-	DECLARE_LUA_OPCODE(SetAdvancedLighting);
-	DECLARE_LUA_OPCODE(SetLanguage);
-	DECLARE_LUA_OPCODE(PlayCurrentCommentary);
-	DECLARE_LUA_OPCODE(IsPlayingCommentary);
-	DECLARE_LUA_OPCODE(EnableCommentary);
-	DECLARE_LUA_OPCODE(ClearCommentary);
-	DECLARE_LUA_OPCODE(HasHeardCommentary);
-	DECLARE_LUA_OPCODE(SetCommentary);
-	DECLARE_LUA_OPCODE(LoadRemappedKeys);
-	DECLARE_LUA_OPCODE(GlobalSaveResolved);
-	DECLARE_LUA_OPCODE(StopCommentaryImmediately);
-	DECLARE_LUA_OPCODE(DestroyAllUIButtonsImmediately);
-	DECLARE_LUA_OPCODE(UpdateUIButtons);
-	DECLARE_LUA_OPCODE(OverlayClearCache);
-	DECLARE_LUA_OPCODE(GetGameRenderMode);
-	DECLARE_LUA_OPCODE(SetGameRenderMode);
-	DECLARE_LUA_OPCODE(OverlayMove);
-	DECLARE_LUA_OPCODE(OverlayCreate);
-	DECLARE_LUA_OPCODE(OverlayDestroy);
-	DECLARE_LUA_OPCODE(OverlayFade);
-	DECLARE_LUA_OPCODE(OverlayGetScreenSize);
-	DECLARE_LUA_OPCODE(OverlayDimensions);
-	DECLARE_LUA_OPCODE(AddHotspot);
-	DECLARE_LUA_OPCODE(RemoveHotspot);
-	DECLARE_LUA_OPCODE(QueryActiveHotspots);
-	DECLARE_LUA_OPCODE(HideMouseCursor);
-	DECLARE_LUA_OPCODE(SetCursor);
-	DECLARE_LUA_OPCODE(ShowCursor);
-	DECLARE_LUA_OPCODE(UpdateMouseCursor);
-	DECLARE_LUA_OPCODE(GetCursorPosition);
-	DECLARE_LUA_OPCODE(UnlockCutscene);
-	DECLARE_LUA_OPCODE(SetActorHKHackMode);
-	DECLARE_LUA_OPCODE(CacheCurrentWalkVector);
-	DECLARE_LUA_OPCODE(UnlockConcept);
-	DECLARE_LUA_OPCODE(IsConceptUnlocked);
-	DECLARE_LUA_OPCODE(SaveRegistryToDisk);
-	DECLARE_LUA_OPCODE(GetRemappedKeyName);
-	DECLARE_LUA_OPCODE(GetRemappedKeyHint);
-	DECLARE_LUA_OPCODE(New);
-	DECLARE_LUA_OPCODE(RemoveBorders);
-	DECLARE_LUA_OPCODE(GetSaveStatus);
-	DECLARE_LUA_OPCODE(StartCheckOfCrossSaveStatus);
-	DECLARE_LUA_OPCODE(GetCrossSaveStatus);
-	
 };
 
 }

@@ -64,6 +64,7 @@
 #include "engines/grim/stuffit.h"
 #include "engines/grim/debugger.h"
 #include "engines/grim/remastered/overlay.h"
+#include "engines/grim/remastered/lua_remastered.h"
 
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/emi/sound/emisound.h"
@@ -222,7 +223,11 @@ void GrimEngine::clearPools() {
 }
 
 LuaBase *GrimEngine::createLua() {
-	return new Lua_V1();
+	if (getGameFlags() == ADGF_REMASTERED) {
+		return new Lua_Remastered();
+	} else {
+		return new Lua_V1();
+	}
 }
 
 void GrimEngine::createRenderer() {
