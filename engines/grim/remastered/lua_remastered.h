@@ -76,7 +76,9 @@ protected:
 	DECLARE_LUA_OPCODE(OverlayGetScreenSize);
 	DECLARE_LUA_OPCODE(OverlayDimensions);
 	DECLARE_LUA_OPCODE(AddHotspot);
+	DECLARE_LUA_OPCODE(LinkHotspot);
 	DECLARE_LUA_OPCODE(RemoveHotspot);
+	DECLARE_LUA_OPCODE(UpdateHotspot);
 	DECLARE_LUA_OPCODE(QueryActiveHotspots);
 	DECLARE_LUA_OPCODE(HideMouseCursor);
 	DECLARE_LUA_OPCODE(SetCursor);
@@ -93,6 +95,8 @@ protected:
 	DECLARE_LUA_OPCODE(GetRemappedKeyName);
 	DECLARE_LUA_OPCODE(GetRemappedKeyHint);
 	DECLARE_LUA_OPCODE(SetKeyMappingMode);
+	DECLARE_LUA_OPCODE(ResetKeyMappingToDefault);
+	DECLARE_LUA_OPCODE(SaveRemappedKeys);
 	DECLARE_LUA_OPCODE(New);
 	DECLARE_LUA_OPCODE(RemoveBorders);
 	DECLARE_LUA_OPCODE(GetSaveStatus);

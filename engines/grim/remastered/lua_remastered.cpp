@@ -360,7 +360,9 @@ STUB_FUNC(Lua_Remastered::StopCommentaryImmediately)
 STUB_FUNC(Lua_Remastered::DestroyAllUIButtonsImmediately)
 STUB_FUNC(Lua_Remastered::UpdateUIButtons)
 STUB_FUNC(Lua_Remastered::OverlayClearCache)
+STUB_FUNC(Lua_Remastered::LinkHotspot)
 STUB_FUNC(Lua_Remastered::RemoveHotspot)
+STUB_FUNC(Lua_Remastered::UpdateHotspot)
 STUB_FUNC(Lua_Remastered::OverlayFade)
 STUB_FUNC(Lua_Remastered::HideMouseCursor)
 STUB_FUNC(Lua_Remastered::SetCursor)
@@ -368,6 +370,8 @@ STUB_FUNC(Lua_Remastered::UpdateMouseCursor)
 STUB_FUNC(Lua_Remastered::SetActorHKHackMode)
 STUB_FUNC(Lua_Remastered::CacheCurrentWalkVector)
 STUB_FUNC(Lua_Remastered::SetKeyMappingMode)
+STUB_FUNC(Lua_Remastered::ResetKeyMappingToDefault)
+STUB_FUNC(Lua_Remastered::SaveRemappedKeys)
 STUB_FUNC(Lua_Remastered::New)
 STUB_FUNC(Lua_Remastered::RemoveBorders)
 STUB_FUNC(Lua_Remastered::GetSaveStatus)
@@ -410,7 +414,9 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "OverlayGetScreenSize", LUA_OPCODE(Lua_Remastered, OverlayGetScreenSize) },
 	{ "OverlayMove", LUA_OPCODE(Lua_Remastered, OverlayMove) },
 	{ "AddHotspot", LUA_OPCODE(Lua_Remastered, AddHotspot) },
+	{ "LinkHotspot", LUA_OPCODE(Lua_Remastered, LinkHotspot) },
 	{ "RemoveHotspot", LUA_OPCODE(Lua_Remastered, RemoveHotspot) },
+	{ "UpdateHotspot", LUA_OPCODE(Lua_Remastered, UpdateHotspot) },
 	{ "QueryActiveHotspots", LUA_OPCODE(Lua_Remastered, QueryActiveHotspots) },
 	{ "HideMouseCursor", LUA_OPCODE(Lua_Remastered, HideMouseCursor) },
 	{ "ShowCursor", LUA_OPCODE(Lua_Remastered, ShowCursor) },
@@ -425,6 +431,8 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "IsConceptUnlocked", LUA_OPCODE(Lua_Remastered, IsConceptUnlocked) },
 	{ "GetRemappedKeyHint", LUA_OPCODE(Lua_Remastered, GetRemappedKeyHint) },
 	{ "SetKeyMappingMode", LUA_OPCODE(Lua_Remastered, SetKeyMappingMode) },
+	{ "ResetKeyMappingToDefault", LUA_OPCODE(Lua_Remastered, ResetKeyMappingToDefault) },
+	{ "SaveRemappedKeys", LUA_OPCODE(Lua_Remastered, SaveRemappedKeys) },
 	{ "SaveRegistryToDisk", LUA_OPCODE(Lua_Remastered, SaveRegistryToDisk) },	
 	{ "InitiateFindSaveGames", LUA_OPCODE(Lua_Remastered, InitiateFindSaveGames) },
 	{ "GetFindSaveGameStatus", LUA_OPCODE(Lua_Remastered, GetFindSaveGameStatus) },
