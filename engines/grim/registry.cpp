@@ -122,11 +122,11 @@ Registry::Registry() :
 	// Remastered
 	_widescreen.setInt(ConfMan.getInt("widescreen"));
 	_directorsCommentary.setInt(ConfMan.getInt("directors_commentary"));
+	_directorsCommentaryVolume.setInt(convertVolumeFromMixer(ConfMan.getInt("directors_commentary_volume")));
 	_language.setInt(ConfMan.getInt("grim_language")); // Avoid overlap with confman
 	_resolutionScaling.setString(ConfMan.get("resolution_scaling"));
 	_mouseSpeed.setString(ConfMan.get("mouse_speed"));
 	_advancedLighting.setString(ConfMan.get("adanced_lighting"));
-	_directorsCommentaryVolume.setString(ConfMan.get("directors_commentary_volume"));
 	_renderingMode.setInt(ConfMan.getInt("rendering_mode"));
 }
 
@@ -305,7 +305,7 @@ void Registry::save() {
 	ConfMan.set("resolution_scaling", _resolutionScaling.getString());
 	ConfMan.set("mouse_speed", _mouseSpeed.getString());
 	ConfMan.set("advanced_lighting", _advancedLighting.getString());
-	ConfMan.set("directors_commentary_volume", _directorsCommentaryVolume.getString());
+	ConfMan.setInt("directors_commentary_volume", convertVolumeToMixer(_directorsCommentaryVolume.getInt()));
 	ConfMan.setInt("rendering_mode", _renderingMode.getInt());
 
 	_dirty = false;
