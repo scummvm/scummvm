@@ -253,6 +253,10 @@ void Lua_Remastered::GetGameRenderMode() {
 
 void Lua_Remastered::SetGameRenderMode() {
 	lua_Object param1 = lua_getparam(1);
+	if (lua_isnil(param1)) {
+		warning("SetGameRenderMode(nil) - Should it be possible to call this with nil?");
+		return;
+	}
 	assert(lua_isnumber(param1));
 	warning("Stub function: SetGameRenderMode(%f)", lua_getnumber(param1));
 	g_grim->setMode((GrimEngine::EngineMode)lua_getnumber(param1));
