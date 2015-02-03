@@ -306,12 +306,7 @@ void MartianEngine::setupGame() {
 	_player->_playerY = _player->_rawPlayer.y = TRAVEL_POS[_player->_roomNumber][1];
 }
 
-void MartianEngine::drawHelp() {
-	error("TODO: drawHelp");
-}
-
-void MartianEngine::sub13D10(Common::String msg) {
-	warning("TODO: Rename sub13d10");
+void MartianEngine::showDeathText(Common::String msg) {
 	Common::String line = "";
 	int width = 0;
 	bool lastLine;
@@ -353,7 +348,7 @@ void MartianEngine::dead(int deathId) {
 	_screen->_printStart = Common::Point(24, 18);
 	
 	// Display death message
-	sub13D10(_deaths[deathId]._msg);
+	showDeathText(_deaths[deathId]._msg);
 	
 	_screen->forceFadeOut();
 	_room->clearRoom();

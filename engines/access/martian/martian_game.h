@@ -64,8 +64,7 @@ public:
 	virtual ~MartianEngine();
 
 	void doSpecial5(int param1);
-	void drawHelp();
-	void sub13D10(Common::String msg);
+	void showDeathText(Common::String msg);
 	virtual void establish(int esatabIndex, int sub) {};
 };
 
