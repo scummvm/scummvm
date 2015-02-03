@@ -125,7 +125,7 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		doIntro(param1);
 		break;
 	case 6:
-		warning("TODO: cmdSpecial6");
+		cmdSpecial6();
 		break;
 	case 7:
 		warning("TODO: cmdSpecial7");
