@@ -49,8 +49,6 @@ extern const int ROOM_NUMB;
 
 extern const byte *const CHARTBL_MM[];
 
-extern const int COMBO_TABLE[54][4];
-
 extern const int SIDEOFFR[];
 extern const int SIDEOFFL[];
 extern const int SIDEOFFU[];

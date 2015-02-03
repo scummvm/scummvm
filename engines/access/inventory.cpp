@@ -31,10 +31,17 @@ namespace Access {
 void InventoryEntry::load(const Common::String &name, const int *data) {
 	_value = ITEM_NOT_FOUND;
 	_name = name;
-	_otherItem1 = *data++;
-	_newItem1 = *data++;
-	_otherItem2 = *data++;
-	_newItem2 = *data;
+	if (data) {
+		_otherItem1 = *data++;
+		_newItem1 = *data++;
+		_otherItem2 = *data++;
+		_newItem2 = *data;
+	} else {
+		_otherItem1 = -1;
+		_newItem1 = -1;
+		_otherItem2 = -1;
+		_newItem2 = -1;
+	}
 }
 
 int InventoryEntry::checkItem(int itemId) {
@@ -69,16 +76,15 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 		break;
 	case GType_MartianMemorandum:
 		names = Martian::INVENTORY_NAMES;
-		combineP = &Martian::COMBO_TABLE[0][0];
+		combineP = nullptr;
 		_inv.resize(55);
 		break;
 	default:
 		error("Unknown game");
 	}
 
-	for (uint i = 0; i < _inv.size(); ++i, combineP += 4) {
+	for (uint i = 0; i < _inv.size(); ++i, combineP += 4)
 		_inv[i].load(names[i], combineP);
-	}
 
 	for (uint i = 0; i < 26; ++i) {
 		const int *r = INVCOORDS[i];
