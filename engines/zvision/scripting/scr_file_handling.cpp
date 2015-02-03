@@ -83,7 +83,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("criteria {", true)) {
-			parseCriteria(stream, puzzle->criteriaList);
+			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
 		} else if (line.matchString("flags {", true)) {
@@ -97,7 +97,7 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 	puzzle->addedBySetState = false;
 }
 
-bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList) const {
+bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::List<Common::List<Puzzle::CriteriaEntry> > &criteriaList, uint32 key) const {
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
 	trimCommentsAndWhiteSpace(&line);
@@ -117,6 +117,21 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	// Create a new List to hold the CriteriaEntries
 	criteriaList.push_back(Common::List<Puzzle::CriteriaEntry>());
 
+	// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
+	// Since we patch the script that triggers when manipulating the left fist
+	// (below), we add an additional check for the left fist sound, so that it
+	// doesn't get killed immediately when the left fist animation starts.
+	// Together with the workaround below, it fixes bug #6783.
+	if (_engine->getGameId() == GID_NEMESIS && key == 3594) {
+		Puzzle::CriteriaEntry entry;
+		entry.key = 567;
+		entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
+		entry.argumentIsAKey = false;
+		entry.argument = 1;
+
+		criteriaList.back().push_back(entry);
+	}
+
 	while (!stream.eos() && !line.contains('}')) {
 		Puzzle::CriteriaEntry entry;
 
@@ -127,6 +142,13 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		// Parse the id out of the first token
 		token = tokenizer.nextToken();
 		sscanf(token.c_str(), "[%u]", &(entry.key));
+
+		// WORKAROUND for a script bug in Zork: Nemesis, room td9e (fist puzzle)
+		// Check for the state of animation 567 (left fist) when manipulating
+		// the fingers of the left fist (puzzle slots 3582, 3583).
+		// Together with the workaround above, it fixes bug #6783.
+		if (_engine->getGameId() == GID_NEMESIS && (key == 3582 || key == 3583) && entry.key == 568)
+			entry.key = 567;
 
 		// Parse the operator out of the second token
 		token = tokenizer.nextToken();
