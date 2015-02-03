@@ -115,6 +115,10 @@ public:
 				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '\r' && data_end[1] == '\n') {
 					break;
 				}
+				// In Steam mac version LF is used instead of CR-LF
+				if (data_end[-2] == '\n' && data_end[-1] == '\n') {
+					break;
+				}
 				// In Russian Full Throttle strings are finished with
 				// just one pair of CR-LF
 				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '#') {
