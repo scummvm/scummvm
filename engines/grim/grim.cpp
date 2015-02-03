@@ -1384,4 +1384,23 @@ void GrimEngine::debugLua(const Common::String &str) {
 	lua_dostring(str.c_str());
 }
 
+Common::String GrimEngine::getLanguagePrefix() const {
+	switch (getLanguage()) {
+		case 0:
+			return Common::String("en");
+		case 1:
+			return Common::String("de");
+		case 2:
+			return Common::String("es");
+		case 3:
+			return Common::String("fr");
+		case 4:
+			return Common::String("it");
+		case 5:
+			return Common::String("pt");
+		default:
+			error("Unknown language id %d", getLanguage());
+	}
+}
+
 } // end of namespace Grim

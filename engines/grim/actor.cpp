@@ -1175,6 +1175,9 @@ void Actor::sayLine(const char *msgId, bool background, float x, float y) {
 	Common::String soundName = id;
 
 	if (g_grim->getGameType() == GType_GRIM) {
+		if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+			soundName = g_grim->getLanguagePrefix() + "_" + soundName;
+		}
 		soundName += ".wav";
 	} else if (g_grim->getGameType() == GType_MONKEY4 && g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		soundName += ".scx";

@@ -174,6 +174,7 @@ public:
 
 	int getLanguage() const { return _language; }
 	void setLanguage(int langId) { _language = langId; }
+	Common::String getLanguagePrefix() const;
 
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
