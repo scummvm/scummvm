@@ -329,8 +329,10 @@ extern const char *const QUICK_REFERENCE;
 
 extern const uint BLACKSMITH_MAP_IDS[2][4];
 
-extern char *const ITEMS_DIALOG_TEXT1;
-extern char *const ITEMS_DIALOG_TEXT2;
+extern const char *const ITEMS_DIALOG_TEXT1;
+extern const char *const ITEMS_DIALOG_TEXT2;
+extern const char *const ITEMS_DIALOG_LINE1;
+extern const char *const ITEMS_DIALOG_LINE2;
 
 extern const char *const BTN_BUY;
 extern const char *const BTN_SELL;
@@ -353,6 +355,14 @@ extern const char *const WEAPON_NAMES[35];
 extern const char *const ARMOR_NAMES[14];
 extern const char *const ACCESSORY_NAMES[11];
 extern const char *const MISC_NAMES[22];
+
+extern const int WEAPON_BASE_COSTS[35];
+extern const int ARMOR_BASE_COSTS[25];
+extern const int ACCESSORY_BASE_COSTS[11];
+extern const int MISC_MATERIAL_COSTS[22];
+extern const int MISC_BASE_COSTS[76];
+extern const int METAL_BASE_MULTIPLIERS[22];
+extern const int ITEM_SKILL_DIVISORS[4];
 
 } // End of namespace Xeen
 

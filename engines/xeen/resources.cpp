@@ -986,14 +986,15 @@ const char *const QUICK_REFERENCE =
 
 const uint BLACKSMITH_MAP_IDS[2][4] = { { 28, 30, 73, 49 }, { 29, 31, 37, 43 } };
 
-char *const ITEMS_DIALOG_TEXT1 =
+const char *const ITEMS_DIALOG_TEXT1 =
 	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
 	"\f37c\fdces\t119\f37M\fdisc\t153%s\t187%s\t221%s"
 	"\t255%s\t289Exit";
-
-char *const ITEMS_DIALOG_TEXT2 =
+const char *const ITEMS_DIALOG_TEXT2 =
 	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
 	"\f37c\fdces\t119\f37M\fdisc\t153\f37%s\t289Exit";
+const char *const ITEMS_DIALOG_LINE1 = "\x3r\f%02u\f023%2d)\x3l\t028%s\n";
+const char *const ITEMS_DIALOG_LINE2 = "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%lu\n";
 
 const char *const BTN_BUY = "\f37B\fduy";
 const char *const BTN_SELL = "\f37S\fdell";
@@ -1037,8 +1038,38 @@ const char *const ACCESSORY_NAMES[11] = {
 const char *const MISC_NAMES[22] = {
 	nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
 	"wand ", "whistle ", "potion ", "scroll ", "RogueVM", 
-	"bogus", "bogus", "bogus", "bogus", "bogus", 
+	"bogusg", "bogus", "bogus", "bogus", "bogus", 
 	"bogus", "bogus", "bogus", "bogus"
 };
+
+const int WEAPON_BASE_COSTS[35] = {
+	0, 50, 15, 100, 80, 40, 60, 1, 10, 150, 30, 60, 8, 50,
+	100, 15, 30, 15, 200, 80, 250, 150, 400, 100, 40, 120,
+	300, 100, 200, 300, 25, 100, 50, 15, 0
+};
+const int ARMOR_BASE_COSTS[25] = {
+	0, 20, 100, 200, 400, 600, 1000, 2000, 100, 60, 40, 250, 200, 100
+};
+const int ACCESSORY_BASE_COSTS[11] = {
+	0, 100, 100, 250, 100, 50, 300, 200, 500, 1000, 2000
+};
+const int MISC_MATERIAL_COSTS[22] = {
+	0, 50, 1000, 500, 10, 100, 20, 10, 50, 10, 10, 100,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+};
+const int MISC_BASE_COSTS[76] = {
+	0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+	100, 100, 100, 100, 200, 200, 200, 200, 200, 200, 200, 200,
+	200, 200, 200, 200, 200, 200, 200, 300, 300, 300, 300, 300,
+	300, 300, 300, 300, 300, 400, 400, 400, 400, 400, 400, 400,
+	400, 400, 400, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+	500, 600, 600, 600, 600, 600, 600, 600, 600, 600, 600, 600,
+	600, 600, 600, 600
+};
+const int METAL_BASE_MULTIPLIERS[22] = {
+	10, 25, 5, 75, 2, 5, 10, 20, 50, 2, 3, 5, 10, 20, 30, 40,
+	50, 60, 70, 80, 90, 100
+};
+const int ITEM_SKILL_DIVISORS[4] = { 1, 2, 100, 10 };
 
 } // End of namespace Xeen

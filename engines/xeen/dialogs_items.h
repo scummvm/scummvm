@@ -30,8 +30,8 @@
 namespace Xeen {
 
 enum ItemsMode {
-	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_4 = 4, 
-	ITEMMODE_6 = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8, 
+	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_2 = 2,
+	ITEMMODE_4 = 4, ITEMMODE_6 = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8, 
 	ITEMMODE_9 = 9, ITEMMODE_10 = 10, ITEMMODE_TO_GOLD = 11
 };
 
@@ -54,6 +54,8 @@ private:
 	void blackData2CharData();
 
 	void setEquipmentIcons();
+
+	int calcItemCost(Character *c, int itemIndex, int mode, int skillLevel, int typeNum);
 public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };

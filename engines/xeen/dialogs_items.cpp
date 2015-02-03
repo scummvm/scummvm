@@ -94,8 +94,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			drawButtons(&screen);
 		}
 
+		Common::StringArray lines;
 		int arr[40];
-		Common::fill(&arr[0], &arr[40], false);
+		Common::fill(&arr[0], &arr[40], 0);
 		int var2 = -1;
 	
 		if (mode == ITEMMODE_CHAR_INFO || typeNum != 3) {
@@ -132,8 +133,20 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				if (c->_weapons[idx]._id) {
 					if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
 							|| mode == ITEMMODE_6 || mode == ITEMMODE_4) {
-						// TODO
+						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
+							arr[idx], idx + 1,
+							c->assembleItemName(idx, arr[idx], typeNum)));
+					} else {
+						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
+							arr[idx], idx + 1,
+							c->assembleItemName(idx, arr[idx], typeNum),
+							calcItemCost(c, idx, mode,
+								mode == ITEMMODE_TO_GOLD ? 1 : c->_skills[MERCHANT],
+								typeNum)
+						));
 					}
+
+					// TODO
 				} else if (_itemsDrawList[idx]._sprites == nullptr) {
 					// TODO
 				}
@@ -288,5 +301,113 @@ void ItemsDialog::setEquipmentIcons() {
 		}
 	}
 }
+
+/**
+ * Calculate the cost of an item
+ */
+int ItemsDialog::calcItemCost(Character *c, int itemIndex, int mode,
+		int skillLevel, int typeNum) {
+	int amount1 = 0, amount2 = 0, amount3 = 0, amount4 = 0;
+	int result = 0;
+	int level = skillLevel & 0x7f;
+
+	switch (mode) {
+	case ITEMMODE_BLACKSMITH:
+		level = 0;
+		break;
+	case ITEMMODE_2:
+	case ITEMMODE_TO_GOLD:
+		level = level == 0 ? 1 : 0;
+		break;
+	case ITEMMODE_10:
+		level = 2;
+		break;
+	case ITEMMODE_9:
+		level = 3;
+		break;
+	default:
+		break;
+	}
+	
+	switch (typeNum) {
+	case 0:
+	case 1:
+	case 2: {
+		// 0=Weapons, 1=Armor, 2=Accessories
+		XeenItem &i = (mode == 0) ? c->_weapons[itemIndex] :
+			(mode == 1 ? c->_armor[itemIndex] : c->_accessories[itemIndex]);
+		amount1 = (mode == 0) ? WEAPON_BASE_COSTS[i._id] :
+			(mode == 1 ? ARMOR_BASE_COSTS[i._id] : ACCESSORY_BASE_COSTS[i._id]);
+		
+		if (i._material > 36 && i._material < 59) {
+			switch (i._material) {
+			case 37:
+				amount1 /= 10;
+				break;
+			case 38:
+				amount1 /= 4;
+				break;
+			case 39:
+				amount1 /= 2;
+				break;
+			case 40:
+				amount1 /= 4;
+				break;
+			default:
+				amount1 *= METAL_BASE_MULTIPLIERS[i._material - 37];
+				break;
+			}
+		}
+
+		if (i._material < 37)
+			amount2 = ELEMENTAL_DAMAGE[i._material] * 100;
+		else if (i._material > 58)
+			amount3 = METAL_BASE_MULTIPLIERS[i._material] * 100;
+		
+		switch (mode) {
+		case ITEMMODE_BLACKSMITH:
+		case ITEMMODE_2:
+		case ITEMMODE_9:
+		case ITEMMODE_10:
+		case ITEMMODE_TO_GOLD:
+			result = (amount1 + amount2 + amount3 + amount4) / ITEM_SKILL_DIVISORS[level];
+			if (!result)
+				result = 1;
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+
+	case 3: {
+		// Misc
+		XeenItem &i = c->_misc[itemIndex];
+		amount1 = MISC_MATERIAL_COSTS[i._material];
+		amount4 = MISC_BASE_COSTS[i._id];
+		
+		switch (mode) {
+		case ITEMMODE_BLACKSMITH:
+		case ITEMMODE_2:
+		case ITEMMODE_9:
+		case ITEMMODE_10:
+		case ITEMMODE_TO_GOLD:
+			result = (amount1 + amount2 + amount3 + amount4) / ITEM_SKILL_DIVISORS[level];
+			if (!result)
+				result = 1;
+			break;
+		default:
+			break;
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	return (mode == ITEMMODE_CHAR_INFO) ? 0 : result;
+}
+
 
 } // End of namespace Xeen
