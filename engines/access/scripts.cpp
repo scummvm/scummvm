@@ -526,7 +526,7 @@ void Scripts::cmdSetAnim() {
 }
 
 void Scripts::cmdDispInv_v1() {
-	error("TODO: cmdDisplInv_v1");
+	_vm->_inventory->displayInv();
 }
 
 void Scripts::cmdDispInv_v2() {
