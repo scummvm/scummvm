@@ -271,7 +271,7 @@ void Lua_Remastered::SetGameRenderMode() {
 	}
 	assert(lua_isnumber(param1));
 	warning("Stub function: SetGameRenderMode(%f)", lua_getnumber(param1));
-	g_grim->setMode((GrimEngine::EngineMode)lua_getnumber(param1));
+	g_grim->setMode((GrimEngine::EngineMode)(int)lua_getnumber(param1));
 }
 
 void Lua_Remastered::AddHotspot() {
@@ -310,7 +310,7 @@ void Lua_Remastered::AddHotspot() {
 	} else if (!lua_isnil(param10)) {
 		assert(lua_isnil(param10));
 	}
-	warning("Stub function: AddHotspot(%s, %f, %f, %f, %f, %f, %f, %f, %s, %s, %f)", lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5), lua_getnumber(param6), lua_getnumber(param6), lua_getnumber(param7), lua_getnumber(param8), p9str, p10str, lua_getnumber(param11));  
+	warning("Stub function: AddHotspot(%s, %f, %f, %f, %f, %f, %f, %f, %s, %s, %f)", lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5), lua_getnumber(param6), lua_getnumber(param7), lua_getnumber(param8), p9str, p10str, lua_getnumber(param11));  
 
 	lua_pushnil();
 }
