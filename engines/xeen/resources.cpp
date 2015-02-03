@@ -1085,4 +1085,7 @@ const int ITEM_RESTRICTIONS[86] = {
 const char *const NOT_PROFICIENT =
 	"\t000\v007\x3""c%ss are not proficient with a %s!";
 
+const char *const NO_ITEMS_AVAILABLE = "\x3""c\n"
+	"\t000No items available.";
+
 } // End of namespace Xeen

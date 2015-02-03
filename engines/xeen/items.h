@@ -43,7 +43,7 @@ public:
 	int _material;
 	uint _id;
 	int _bonusFlags;
-	int _equipped;
+	int _frame;
 public:
 	XeenItem();
 

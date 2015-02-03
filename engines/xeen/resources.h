@@ -369,6 +369,8 @@ extern const int ITEM_RESTRICTIONS[86];
 
 extern const char *const NOT_PROFICIENT;
 
+extern const char *const NO_ITEMS_AVAILABLE;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

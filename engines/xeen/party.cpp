@@ -452,7 +452,7 @@ int Character::itemScan(int itemId) const {
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				const XeenItem &item = _weapons[idx];
 
-				if (item._equipped && !(item._bonusFlags & 0xC0) && itemId < 11
+				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
 						&& itemId != 3 && item._material >= 59 && item._material <= 130) {
 					int mIndex = item.getAttributeCategory();
 					if (mIndex > 2)
@@ -468,7 +468,7 @@ int Character::itemScan(int itemId) const {
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				const XeenItem &item = _armor[idx];
 
-				if (item._equipped && !(item._bonusFlags & 0xC0)) {
+				if (item._frame && !(item._bonusFlags & 0xC0)) {
 					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
 						int mIndex = item.getAttributeCategory();
 						if (mIndex > 2)
@@ -500,7 +500,7 @@ int Character::itemScan(int itemId) const {
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				const XeenItem &item = _accessories[idx];
 
-				if (item._equipped && !(item._bonusFlags & 0xC0) && itemId < 11 && itemId != 3) {
+				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11 && itemId != 3) {
 					if (item._material >= 59 && item._material <= 130) {
 						int mIndex = item.getAttributeCategory();
 						if (mIndex > 2)

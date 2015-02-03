@@ -147,9 +147,14 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						));
 					}
 
-					// TODO
+					DrawStruct &ds = _itemsDrawList[idx];
+					ds._sprites = &_equipSprites;
+					if (passRestrictions(c->_class, c->_weapons[idx]._id, true, CATEGORY_WEAPON))
+						ds._frame = c->_weapons[idx]._frame;
+					else
+						ds._frame = 14;
 				} else if (_itemsDrawList[idx]._sprites == nullptr) {
-					// TODO
+					lines.push_back(NO_ITEMS_AVAILABLE);
 				}
 				break;
 				// TODO
@@ -260,26 +265,26 @@ void ItemsDialog::setEquipmentIcons() {
 			case 0: {
 				XeenItem &i = _itemsCharacter._weapons[idx];
 				if (i._id <= 17)
-					i._equipped = 1;
+					i._frame = 1;
 				else if (i._id <= 29 || i._id > 33)
-					i._equipped = 13;
+					i._frame = 13;
 				else
-					i._equipped = 4;
+					i._frame = 4;
 				break;
 			}
 
 			case 1: {
 				XeenItem &i = _itemsCharacter._armor[idx];
 				if (i._id <= 7)
-					i._equipped = 3;
+					i._frame = 3;
 				else if (i._id == 9)
-					i._equipped = 5;
+					i._frame = 5;
 				else if (i._id == 10)
-					i._equipped = 9;
+					i._frame = 9;
 				else if (i._id <= 12)
-					i._equipped = 10;
+					i._frame = 10;
 				else
-					i._equipped = 6;
+					i._frame = 6;
 				break;
 			}
 
@@ -288,11 +293,11 @@ void ItemsDialog::setEquipmentIcons() {
 				if (i._id == 1)
 					i._id = 8;
 				else if (i._id == 2)
-					i._equipped = 12;
+					i._frame = 12;
 				else if (i._id <= 7)
-					i._equipped = 7;
+					i._frame = 7;
 				else
-					i._equipped = 11;
+					i._frame = 11;
 				break;
 			}
 			
@@ -410,6 +415,9 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, int mode,
 	return (mode == ITEMMODE_CHAR_INFO) ? 0 : result;
 }
 
+/**
+ * Return whether a given item passes class-based usage restrictions
+ */
 bool ItemsDialog::passRestrictions(CharacterClass charClass, int itemId, 
 		bool showError, ItemCategory category) const {
 	switch (charClass) {

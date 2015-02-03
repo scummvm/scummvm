@@ -27,14 +27,14 @@ namespace Xeen {
 
 XeenItem::XeenItem() {
 	_material = _id = _bonusFlags = 0;
-	_equipped = 0;
+	_frame = 0;
 }
 
 void XeenItem::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_material);
 	s.syncAsByte(_id);
 	s.syncAsByte(_bonusFlags);
-	s.syncAsByte(_equipped);
+	s.syncAsByte(_frame);
 }
 
 int XeenItem::getElementalCategory() const {
