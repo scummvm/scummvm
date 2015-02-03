@@ -181,6 +181,10 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	for (int i = 0; i < kNumConcepts; i++) {
 		_conceptEnabled[i] = false;
 	}
+	
+	_saveMeta1 = "";
+	_saveMeta2 = 0;
+	_saveMeta3 = "";
 }
 
 GrimEngine::~GrimEngine() {
@@ -1039,6 +1043,17 @@ void GrimEngine::restoreGRIM() {
 	_savedState->endSection();
 }
 
+void GrimEngine::storeSaveGameMetadata(SaveGame *state) {
+	if (!g_grim->getGameFlags() & ADGF_REMASTERED) {
+		return;
+	}
+	state->beginSection('META');
+	state->writeString(_saveMeta1);
+	state->writeLEUint32(_saveMeta2);
+	state->writeString(_saveMeta3);
+	state->endSection();
+}
+
 void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
@@ -1085,6 +1100,7 @@ void GrimEngine::savegameSave() {
 		GUI::displayErrorDialog("Error: the game could not be saved.");
 		return;
 	}
+	storeSaveGameMetadata(_savedState);
 
 	storeSaveGameImage(_savedState);
 
@@ -1430,6 +1446,12 @@ bool GrimEngine::isCutsceneEnabled(uint32 number) const {
 void GrimEngine::enableCutscene(uint32 number) {
 	assert (number < kNumCutscenes);
 	_cutsceneEnabled[number] = true;
+}
+
+void GrimEngine::setSaveMetaData(const char *meta1, int meta2, const char *meta3) {
+	_saveMeta1 = meta1;
+	_saveMeta2 = meta2;
+	_saveMeta3 = meta3;
 }
 
 } // end of namespace Grim

@@ -181,6 +181,9 @@ public:
 	
 	bool isCutsceneEnabled(uint32 number) const;
 	void enableCutscene(uint32 number);
+	
+	// TODO: Refactor.
+	void setSaveMetaData(const char*, int, const char*);
 
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
@@ -225,6 +228,7 @@ protected:
 	void savegameRestore();
 	void restoreGRIM();
 
+	virtual void storeSaveGameMetadata(SaveGame *state);
 	virtual void storeSaveGameImage(SaveGame *savedState);
 
 	bool _savegameLoadRequest;
@@ -281,6 +285,10 @@ protected:
 	static const uint32 kNumCutscenes = 40;
 	bool _cutsceneEnabled[kNumCutscenes]; // TODO, could probably use a different data structure
 	bool _conceptEnabled[kNumConcepts];
+	
+	Common::String _saveMeta1;
+	int _saveMeta2;
+	Common::String _saveMeta3;
 };
 
 extern GrimEngine *g_grim;

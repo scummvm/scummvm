@@ -330,6 +330,136 @@ void Lua_Remastered::GlobalSaveResolved() {
 	lua_pushnumber(1);
 }
 
+void Lua_Remastered::FindSaveGames() {
+	warning("Stub function: FindSaveGames()");
+	
+	Common::SaveFileManager *saveMan = g_grim->getSaveFileManager();
+	Common::StringArray saveFiles = saveMan->listSavefiles("grim_r???.sav");
+
+	if (saveFiles.empty()) {
+		lua_pushnil();
+		return;
+	}
+
+	lua_Object result = lua_createtable();
+	
+	Common::StringArray::iterator it = saveFiles.begin();
+	for (int i = 0; it != saveFiles.end(); ++it) {
+		const char *filename  = (*it).c_str();
+		warning("Savefile: %s", filename);
+		SaveGame *savedState = SaveGame::openForLoading(filename);
+		
+		if (!savedState || !savedState->isCompatible()) {
+			if (!savedState) {
+				error("Savegame %s is invalid", filename);
+			} else {
+				error("Savegame %s is incompatible with this ResidualVM build. Save version: %d.%d; current version: %d.%d",
+					filename, savedState->saveMajorVersion(), savedState->saveMinorVersion(),
+					SaveGame::SAVEGAME_MAJOR_VERSION, SaveGame::SAVEGAME_MINOR_VERSION);
+			}
+			delete savedState;
+			return;
+		}
+		int slot = atoi((*it).c_str() + 6);
+		Common::String str1;
+		Common::String str2;
+		int x;
+		int32 dataSize = savedState->beginSection('META');
+		char str[200] = {};
+		int32 strSize = 0;
+		
+		strSize = savedState->readLESint32();
+		savedState->read(str, strSize);
+		str1 = str;
+		x = savedState->readLESint32();
+		strSize = savedState->readLESint32();
+		savedState->read(str, strSize);
+		str2 = str;
+		savedState->endSection();
+		delete savedState;
+		
+		lua_pushobject(result);
+		lua_pushnumber(i++);
+
+		str2 = g_localizer->localize(str2.c_str());
+
+		lua_Object keyVal = lua_createtable();
+		// The key-value-mapping:
+		{
+			
+			lua_pushobject(keyVal);
+			lua_pushstring("slot");
+			lua_pushnumber(slot);
+			lua_settable();
+
+			lua_pushobject(keyVal);
+			lua_pushstring("title");
+			lua_pushstring(str2.c_str());
+			lua_settable();
+			
+			lua_pushobject(keyVal);
+			lua_pushstring("timeDateString");
+			lua_pushstring("Unknown");
+			lua_settable();
+			
+			lua_pushobject(keyVal);
+			lua_pushstring("mural_info");
+			lua_pushstring(str1.c_str());
+			lua_settable();
+			
+			lua_pushobject(keyVal);
+			lua_pushstring("setIndex");
+			lua_pushnumber(x);
+			lua_settable();
+		}
+		lua_pushobject(keyVal);
+
+		lua_settable();
+	}
+
+	lua_pushobject(result);
+}
+
+
+void Lua_Remastered::Load() {
+	lua_Object fileName = lua_getparam(1);
+//	lua_Object param2 = lua_getparam(2);
+	
+	if (lua_isnil(fileName)) {
+		g_grim->loadGame("");
+	} else if (lua_isnumber(fileName)) {
+		int slot = lua_getnumber(fileName);
+		Common::String saveGameFilename = Common::String::format("grim_r%03d.sav", slot);
+		g_grim->loadGame(saveGameFilename.c_str());
+	} else if (lua_isstring(fileName)) { // Check for number before this
+		g_grim->loadGame(lua_getstring(fileName));
+	} else {
+		warning("Load() fileName is wrong");
+		return;
+	}
+}
+
+void Lua_Remastered::Save() {
+	lua_Object param1 = lua_getparam(1);
+	lua_Object param2 = lua_getparam(2);
+	lua_Object param3 = lua_getparam(3);
+	lua_Object param4 = lua_getparam(4);
+	assert(lua_isnumber(param1));
+	assert(lua_isstring(param2));
+	assert(lua_isnumber(param3));
+	assert(lua_isstring(param4));
+	
+	int slot = lua_getnumber(param1);
+	const char *p2Str = lua_getstring(param2);
+	int p3Num = lua_getnumber(param3);
+	const char *p4Str = lua_getstring(param4);
+	
+	warning("REMASTERED save: %d, %s, %d, %s", slot, p2Str, p3Num, p4Str);
+	Common::String saveGameFilename = Common::String::format("grim_r%03d.sav", slot);
+	g_grim->setSaveMetaData(p2Str, p3Num, p4Str);
+	g_grim->saveGame(saveGameFilename.c_str());
+}
+
 void Lua_Remastered::ShowCursor() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
@@ -357,7 +487,6 @@ static void stubError(const char *funcName) {
 
 STUB_FUNC(Lua_Remastered::PreloadCursors)
 STUB_FUNC(Lua_Remastered::GetFindSaveGameStatus)
-STUB_FUNC(Lua_Remastered::FindSaveGames)
 STUB_FUNC(Lua_Remastered::InitiateFindSaveGames)
 STUB_FUNC(Lua_Remastered::AreAchievementsInstalled)
 STUB_FUNC(Lua_Remastered::UnlockAchievement)
