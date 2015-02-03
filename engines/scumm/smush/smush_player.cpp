@@ -115,7 +115,8 @@ public:
 				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '\r' && data_end[1] == '\n') {
 					break;
 				}
-				// In Steam mac version LF is used instead of CR-LF
+				// In the Steam Mac version of The Dig, LF-LF is used
+				// instead of CR-LF
 				if (data_end[-2] == '\n' && data_end[-1] == '\n') {
 					break;
 				}
