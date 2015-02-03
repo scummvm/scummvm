@@ -34,6 +34,10 @@ enum BonusFlags {
 	ITEMFLAG_BONUS_MASK = 0xBF,  ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80 
 };
 
+enum ItemCategory {
+	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3
+};
+
 class XeenItem {
 public:
 	int _material;

@@ -183,7 +183,7 @@ public:
 
 	int getNumAwards() const;
 	
-	Common::String assembleItemName(int itemIndex, int displayNum, int typeNum);
+	Common::String assembleItemName(int itemIndex, int displayNum, ItemCategory category);
 };
 
 class Roster: public Common::Array<Character> {

@@ -55,7 +55,11 @@ private:
 
 	void setEquipmentIcons();
 
-	int calcItemCost(Character *c, int itemIndex, int mode, int skillLevel, int typeNum);
+	int calcItemCost(Character *c, int itemIndex, int mode, int skillLevel, 
+		ItemCategory category);
+
+	bool passRestrictions(CharacterClass charClass, int itemId,
+		bool showError, ItemCategory category) const;
 public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };

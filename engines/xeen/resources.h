@@ -364,6 +364,11 @@ extern const int MISC_BASE_COSTS[76];
 extern const int METAL_BASE_MULTIPLIERS[22];
 extern const int ITEM_SKILL_DIVISORS[4];
 
+extern const int RESTRICTION_OFFSETS[4];
+extern const int ITEM_RESTRICTIONS[86];
+
+extern const char *const NOT_PROFICIENT;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

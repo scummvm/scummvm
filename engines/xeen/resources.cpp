@@ -1072,4 +1072,17 @@ const int METAL_BASE_MULTIPLIERS[22] = {
 };
 const int ITEM_SKILL_DIVISORS[4] = { 1, 2, 100, 10 };
 
+const int RESTRICTION_OFFSETS[4] = { 0, 35, 49, 60 };
+
+const int ITEM_RESTRICTIONS[86] = {
+	0, 86, 86, 86, 86, 86, 86, 0, 6, 239, 239, 239, 2, 4, 4, 4, 4, 
+	6, 70, 70, 70, 70, 94, 70, 0, 4, 239, 86, 86, 86, 70, 70, 70, 70, 
+	0, 0, 0, 68, 100, 116, 125, 255, 255, 85, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+const char *const NOT_PROFICIENT =
+	"\t000\v007\x3""c%ss are not proficient with a %s!";
+
 } // End of namespace Xeen

@@ -41,7 +41,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	Screen &screen = *_vm->_screen;
 	
 	Character *tempChar = c;
-	int typeNum = mode == ITEMMODE_4 || mode == ITEMMODE_COMBAT ? 3 : 0;
+	ItemCategory category = mode == ITEMMODE_4 || mode == ITEMMODE_COMBAT ? 
+		CATEGORY_MISC : CATEGORY_WEAPON;
 	int varA = mode == ITEMMODE_COMBAT ? 1 : 0;
 	if (varA != 0)
 		mode = ITEMMODE_CHAR_INFO;
@@ -56,7 +57,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	bool redrawFlag = true;
 	while (!_vm->shouldQuit()) {
 		if (redrawFlag) {
-			if ((mode != ITEMMODE_CHAR_INFO || typeNum != 3) && mode != ITEMMODE_6
+			if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_6
 					&& mode != ITEMMODE_4 && mode != ITEMMODE_TO_GOLD) {
 				_buttons[8]._bounds.moveTo(148, _buttons[8]._bounds.top);
 				_buttons[9]._draw = false;
@@ -80,7 +81,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					BTN_SELL, BTN_IDENTIFY, BTN_FIX);
 			} else if (mode != ITEMMODE_6  && mode != ITEMMODE_4 && mode != ITEMMODE_TO_GOLD) {
 				msg = Common::String::format(ITEMS_DIALOG_TEXT1,
-					typeNum == 3 ? BTN_USE : BTN_EQUIP, 
+					category == 3 ? BTN_USE : BTN_EQUIP, 
 					BTN_REMOVE, BTN_DISCARD, BTN_QUEST);
 			} else if (mode == ITEMMODE_6) {
 				msg = Common::String::format(ITEMS_DIALOG_TEXT2, BTN_ENCHANT);
@@ -99,7 +100,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		Common::fill(&arr[0], &arr[40], 0);
 		int var2 = -1;
 	
-		if (mode == ITEMMODE_CHAR_INFO || typeNum != 3) {
+		if (mode == ITEMMODE_CHAR_INFO || category != 3) {
 			_iconSprites.draw(screen, 8, Common::Point(148, 109));
 		}
 		if (mode != ITEMMODE_6 && mode != ITEMMODE_4 && mode != ITEMMODE_TO_GOLD) {
@@ -128,21 +129,21 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		for (int idx = 0; idx < 9; ++idx) {
 			_itemsDrawList[idx]._y = 10 + idx * 9;
 
-			switch (typeNum) {
-			case 0:
+			switch (category) {
+			case CATEGORY_WEAPON:
 				if (c->_weapons[idx]._id) {
 					if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
 							|| mode == ITEMMODE_6 || mode == ITEMMODE_4) {
 						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
 							arr[idx], idx + 1,
-							c->assembleItemName(idx, arr[idx], typeNum)));
+							c->assembleItemName(idx, arr[idx], category)));
 					} else {
 						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
 							arr[idx], idx + 1,
-							c->assembleItemName(idx, arr[idx], typeNum),
+							c->assembleItemName(idx, arr[idx], category),
 							calcItemCost(c, idx, mode,
 								mode == ITEMMODE_TO_GOLD ? 1 : c->_skills[MERCHANT],
-								typeNum)
+								category)
 						));
 					}
 
@@ -306,7 +307,7 @@ void ItemsDialog::setEquipmentIcons() {
  * Calculate the cost of an item
  */
 int ItemsDialog::calcItemCost(Character *c, int itemIndex, int mode,
-		int skillLevel, int typeNum) {
+		int skillLevel, ItemCategory category) {
 	int amount1 = 0, amount2 = 0, amount3 = 0, amount4 = 0;
 	int result = 0;
 	int level = skillLevel & 0x7f;
@@ -329,10 +330,10 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, int mode,
 		break;
 	}
 	
-	switch (typeNum) {
-	case 0:
-	case 1:
-	case 2: {
+	switch (category) {
+	case CATEGORY_WEAPON:
+	case CATEGORY_ARMOR:
+	case CATEGORY_ACCESSORY: {
 		// 0=Weapons, 1=Armor, 2=Accessories
 		XeenItem &i = (mode == 0) ? c->_weapons[itemIndex] :
 			(mode == 1 ? c->_armor[itemIndex] : c->_accessories[itemIndex]);
@@ -409,5 +410,54 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, int mode,
 	return (mode == ITEMMODE_CHAR_INFO) ? 0 : result;
 }
 
+bool ItemsDialog::passRestrictions(CharacterClass charClass, int itemId, 
+		bool showError, ItemCategory category) const {
+	switch (charClass) {
+	case CLASS_KNIGHT:
+	case CLASS_PALADIN:
+		return true;
+
+	case CLASS_ARCHER:
+	case CLASS_CLERIC:
+	case CLASS_SORCERER:
+	case CLASS_ROBBER:
+	case CLASS_NINJA:
+	case CLASS_BARBARIAN:
+	case CLASS_DRUID:
+	case CLASS_RANGER: {
+		if (!(ITEM_RESTRICTIONS[itemId + RESTRICTION_OFFSETS[category]] &
+				(1 << (charClass - CLASS_ARCHER))))
+			return true;
+		break;
+	}
+
+	default:
+		break;
+	}
+	
+	Common::String name;
+	switch (category) {
+	case CATEGORY_WEAPON:
+		name = WEAPON_NAMES[itemId];
+		break;
+	case CATEGORY_ARMOR:
+		name = ARMOR_NAMES[itemId];
+		break;
+	case CATEGORY_ACCESSORY:
+		name = ACCESSORY_NAMES[itemId];
+		break;
+	case CATEGORY_MISC:
+		name = MISC_NAMES[itemId];
+		break;
+	}
+
+	if (showError) {
+		Common::String msg = Common::String::format(NOT_PROFICIENT, 
+			CLASS_NAMES[charClass], name.c_str());
+		ErrorScroll::show(_vm, msg, WT_FREEZE_WAIT);
+	}
+
+	return false;
+}
 
 } // End of namespace Xeen

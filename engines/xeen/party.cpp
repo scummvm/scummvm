@@ -859,11 +859,12 @@ int Character::getNumAwards() const {
  * Assembles a full lines description for a specified item for use in
  * the Items dialog
  */
-Common::String Character::assembleItemName(int itemIndex, int displayNum, int typeNum) {
+Common::String Character::assembleItemName(int itemIndex, int displayNum, 
+		ItemCategory category) {
 	Spells &spells = *Party::_vm->_spells;
 
-	switch (typeNum) {
-	case 0: {
+	switch (category) {
+	case CATEGORY_WEAPON: {
 		// Weapons
 		XeenItem &i = _weapons[itemIndex];
 		return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
@@ -877,7 +878,7 @@ Common::String Character::assembleItemName(int itemIndex, int displayNum, int ty
 		);
 	}
 
-	case 1: {
+	case CATEGORY_ARMOR: {
 		// Armor
 		XeenItem &i = _armor[itemIndex];
 		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
@@ -890,7 +891,7 @@ Common::String Character::assembleItemName(int itemIndex, int displayNum, int ty
 		);
 	}
 		
-	case 2: {
+	case CATEGORY_ACCESSORY: {
 		// Accessories
 		XeenItem &i = _accessories[itemIndex];
 		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
@@ -903,7 +904,7 @@ Common::String Character::assembleItemName(int itemIndex, int displayNum, int ty
 		);
 	}
 
-	case 3: {
+	case CATEGORY_MISC: {
 		// Misc
 		XeenItem &i = _misc[itemIndex];
 		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
