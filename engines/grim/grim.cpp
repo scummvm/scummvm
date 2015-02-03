@@ -172,6 +172,15 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	SearchMan.addSubDirectoryMatching(gameDataDir, "credits");
 
 	Debug::registerDebugChannels();
+	
+	
+	//Remastered:
+	for (int i = 0; i < kNumCutscenes; i++) {
+		_cutsceneEnabled[i] = false;
+	}
+	for (int i = 0; i < kNumConcepts; i++) {
+		_conceptEnabled[i] = false;
+	}
 }
 
 GrimEngine::~GrimEngine() {
@@ -1401,6 +1410,26 @@ Common::String GrimEngine::getLanguagePrefix() const {
 		default:
 			error("Unknown language id %d", getLanguage());
 	}
+}
+
+bool GrimEngine::isConceptEnabled(uint32 number) const {
+	assert (number < kNumConcepts);
+	return _conceptEnabled[number];
+}
+
+void GrimEngine::enableConcept(uint32 number) {
+	assert (number < kNumConcepts);
+	_conceptEnabled[number] = true;
+}
+	
+bool GrimEngine::isCutsceneEnabled(uint32 number) const {
+	assert (number < kNumCutscenes);
+	return _cutsceneEnabled[number];
+}
+
+void GrimEngine::enableCutscene(uint32 number) {
+	assert (number < kNumCutscenes);
+	_cutsceneEnabled[number] = true;
 }
 
 } // end of namespace Grim

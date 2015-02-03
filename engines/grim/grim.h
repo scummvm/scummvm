@@ -175,6 +175,12 @@ public:
 	int getLanguage() const { return _language; }
 	void setLanguage(int langId) { _language = langId; }
 	Common::String getLanguagePrefix() const;
+	
+	bool isConceptEnabled(uint32 number) const;
+	void enableConcept(uint32 number);
+	
+	bool isCutsceneEnabled(uint32 number) const;
+	void enableCutscene(uint32 number);
 
 	void saveGame(const Common::String &file);
 	void loadGame(const Common::String &file);
@@ -271,6 +277,10 @@ protected:
 
 	// Remastered;
 	uint32 _language;
+	static const uint32 kNumConcepts = 98;
+	static const uint32 kNumCutscenes = 40;
+	bool _cutsceneEnabled[kNumCutscenes]; // TODO, could probably use a different data structure
+	bool _conceptEnabled[kNumConcepts];
 };
 
 extern GrimEngine *g_grim;
