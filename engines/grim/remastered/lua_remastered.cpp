@@ -78,9 +78,9 @@ void Lua_Remastered::OverlayDimensions() {
 }
 
 void Lua_Remastered::OverlayGetScreenSize() {
-	warning("Stub function: OverlayGetScreenSize, returns 1, 1");
-	lua_pushnumber(1);
-	lua_pushnumber(1);
+	warning("Stub function: OverlayGetScreenSize, returns 1920, 1080");
+	lua_pushnumber(1920);
+	lua_pushnumber(1080);
 }
 
 void Lua_Remastered::OverlayCreate() {
@@ -119,6 +119,22 @@ void Lua_Remastered::OverlayDestroy() {
 
 	Overlay *overlay = Overlay::getPool().getObject(lua_getuserdata(actorObj));
 	delete overlay;
+}
+
+void Lua_Remastered::OverlayFade() {
+	lua_Object overlayObj = lua_getparam(1);
+	lua_Object fadeObj = lua_getparam(2);
+	if (!lua_isuserdata(overlayObj) || lua_tag(overlayObj) != Overlay::getStaticTag())
+		return;
+	assert(lua_isnumber(fadeObj));
+
+	int fadeType = lua_getnumber(fadeObj);
+	warning("Stub function: OverlayFade(%d)", fadeType);
+	Overlay *overlay = Overlay::getPool().getObject(lua_getuserdata(overlayObj));
+
+	if (fadeType == 3) {
+		delete overlay;
+	}
 }
 
 void Lua_Remastered::OverlayMove() {
@@ -502,7 +518,6 @@ STUB_FUNC(Lua_Remastered::OverlayClearCache)
 STUB_FUNC(Lua_Remastered::LinkHotspot)
 STUB_FUNC(Lua_Remastered::RemoveHotspot)
 STUB_FUNC(Lua_Remastered::UpdateHotspot)
-STUB_FUNC(Lua_Remastered::OverlayFade)
 STUB_FUNC(Lua_Remastered::HideMouseCursor)
 STUB_FUNC(Lua_Remastered::SetCursor)
 STUB_FUNC(Lua_Remastered::UpdateMouseCursor)
