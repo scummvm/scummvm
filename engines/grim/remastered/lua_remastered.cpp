@@ -276,7 +276,7 @@ void Lua_Remastered::IsConceptUnlocked() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
 	warning("Remastered function: IsConceptUnlocked(%f) returns %d", lua_getnumber(param1), g_grim->isConceptEnabled(lua_getnumber(param1)));
-	if (g_grim->isConceptEnabled(param1)) {
+	if (g_grim->isConceptEnabled(lua_getnumber(param1))) {
 		lua_pushnumber(1);
 	} else {
 		lua_pushnil();
