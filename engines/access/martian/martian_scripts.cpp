@@ -96,7 +96,7 @@ void MartianScripts::cmdSpecial6() {
 		msg += c;
 
 	//display the message
-	_game->sub13D10(msg);
+	_game->showDeathText(msg);
 
 	delete notesRes;
 	delete _vm->_objectsTable[0];
