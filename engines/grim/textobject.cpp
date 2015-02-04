@@ -264,6 +264,10 @@ void TextObject::setupText() {
 
 	_lines = new Common::String[_numberLines];
 
+
+	// Reset the max width so it can be recalculated
+	_maxLineWidth = 0;
+
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos, cutLen;
 		const char *breakPos = strchr(message.c_str(), '\n');
