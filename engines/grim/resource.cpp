@@ -134,6 +134,9 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "local.lab");
 			SearchMan.listMatchingMembers(files, "credits.lab");
 
+			if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+				SearchMan.listMatchingMembers(files, "commentary.lab");
+			}
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
 

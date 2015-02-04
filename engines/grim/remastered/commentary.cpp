@@ -21,36 +21,129 @@
  */
 
 #include "engines/grim/remastered/commentary.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/textsplit.h"
+#include "engines/grim/localize.h"
 
 #include "common/textconsole.h"
 
 namespace Grim {
 
-class Comment {
-	Common::String _name;
-public:
-	Comment();
-	Common::String getName() const;
+struct CommentLine {
+	int _id;
+	Common::String _line;
+	int _start;
+	int _end;
 };
 
-Comment::Comment() : _name("") {
+class Comment {
+	Common::String _name;
+	Common::String _filename;
+	Common::Array<CommentLine> _lines;
+public:
+	Comment(const Common::String &name, const Common::String &filename);
+	Common::String getName() const;
+	void addLine(int id, const Common::String &text, int start, int end);
+	void play() const;
+};
+
+Comment::Comment(const Common::String &name, const Common::String &filename) : _name(name), _filename(filename) {
+}
+
+void Comment::addLine(int id, const Common::String &text, int start, int end) {
+	CommentLine line;
+	line._id = id;
+	line._line = text;
+	line._start = start;
+	line._end = end;
+	_lines.push_back(line);
 }
 
 Common::String Comment::getName() const {
 	return _name;
 }
 
-Commentary::Commentary() : _currentCommentary(nullptr) {
+void Comment::play() const {
+	for (int i = 0; i < _lines.size(); i++) {
+		Common::String text = g_localizer->localize(_lines[i]._line.c_str());
+		warning("Line: %d Start: %d End: %d Id: %d Text: %s", i, _lines[i]._start, _lines[i]._end, _lines[i]._id, text.c_str());
+	}
+}
 
+Commentary::Commentary() : _currentCommentary(nullptr) {
+	loadCommentary();
+}
+
+Commentary::~Commentary() {
+	Common::HashMap<Common::String, Comment*>::iterator it = _comments.begin();
+	for (; it != _comments.end(); ++it) {
+		delete it->_value;
+	}
+	_comments.clear();
+}
+
+void Commentary::loadCommentary() {
+	Common::String filename = "commentary_def.txt";
+	Common::SeekableReadStream *f = g_resourceloader->openNewStreamFile(filename);
+	if (!f) {
+		error("Commentary::loadCommentary: Unable to find commentary definition (%s)", filename.c_str());
+		return;
+	}
+	TextSplitter ts(filename, f);
+
+	while (!ts.isEof()) {
+		// Skip comments
+		while (ts.checkString("#")) {
+			ts.nextLine();
+		}
+		// Skip blank lines and trim input
+		Common::String currentLine = ts.getCurrentLine();
+		currentLine.trim();
+		while (currentLine.size() == 0) {
+			currentLine = ts.nextLine();
+			currentLine.trim();
+		}
+
+		Common::String name = currentLine;
+		name.trim();
+		Common::String filename = ts.nextLine();
+		ts.nextLine();
+		filename.trim();
+
+		Comment *c = new Comment(name, filename);
+
+		int numLines = 0;
+		ts.scanString("\t%d", 1, &numLines);
+
+		char str[20] = {0};
+		for (int i = 0; i < numLines; i++) {
+			int id = 0;
+			int start = 0;
+			int end = 0;
+			ts.scanString("%d\t%s\t%d\t%d", 4, &id, str, &start, &end);
+			c->addLine(id, str, start, end);
+		}
+
+		_comments.setVal(name, c);
+	}
 }
 
 Comment *Commentary::findCommentary(const Common::String &name) {
-	return nullptr;
+	Common::String lowerName = name;
+	lowerName.toLowercase();
+	if (!_comments.contains(lowerName)) {
+		return nullptr;
+	} else {
+		return _comments.getVal(lowerName);
+	}
 }
 
 void Commentary::playCurrentCommentary() {
 	if (_currentCommentary != nullptr) {
 		warning("Commentary::playCurrentCommentary, current is %s", _currentCommentary->getName().c_str());
+			_currentCommentary->play();
+	} else {
+		warning("Commentary::playCurrentCommentary, no current commentary");
 	}
 }
  

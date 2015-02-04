@@ -30,11 +30,14 @@ namespace Grim {
 class Comment;
 
 class Commentary {
+	// TODO: Case sensitivity
 	Common::HashMap<Common::String, Comment*> _comments;
 	Comment *_currentCommentary;
 	Comment *findCommentary(const Common::String &name);
+	void loadCommentary();
 public:
 	Commentary();
+	~Commentary();
 	void playCurrentCommentary();
 	void setCurrentCommentary(const Common::String &name);
 };

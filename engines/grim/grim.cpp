@@ -187,10 +187,8 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 		_saveMeta1 = "";
 		_saveMeta2 = 0;
 		_saveMeta3 = "";
-		_commentary = new Commentary();
-	} else {
-		_commentary = nullptr;
 	}
+	_commentary = nullptr;
 }
 
 GrimEngine::~GrimEngine() {
@@ -332,6 +330,10 @@ Common::Error GrimEngine::run() {
 	if (getGameType() == GType_GRIM) {
 		g_imuse = new Imuse(20, demo);
 		g_emiSound = nullptr;
+		if (g_grim->getGameFlags() & ADGF_REMASTERED) {
+			// This must happen here, since we need the resource loader set up.
+			_commentary = new Commentary();
+		}
 	} else if (getGameType() == GType_MONKEY4) {
 		g_emiSound = new EMISound(20);
 		g_imuse = nullptr;
