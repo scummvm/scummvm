@@ -263,7 +263,11 @@ void Lua_Remastered::HasHeardCommentary() {
 	assert(lua_isstring(param1));
 	bool hasHeard = g_grim->getCommentary()->hasHeardCommentary(lua_getstring(param1));
 	warning("Remastered function: HasHeardCommentary(%s) returns %d", lua_getstring(param1), hasHeard);
-	lua_pushnumber(hasHeard);
+	if (hasHeard) {
+		lua_pushnumber(1);
+	} else {
+		lua_pushnil();
+	}
 }
 
 void Lua_Remastered::SetResolutionScaling() {
