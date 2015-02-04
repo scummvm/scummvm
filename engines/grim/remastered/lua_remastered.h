@@ -36,7 +36,9 @@ protected:
 
 	// Overrides from Lua_V1
 	DECLARE_LUA_OPCODE(GetFontDimensions);
-
+	DECLARE_LUA_OPCODE(GetTextObjectDimensions);
+	DECLARE_LUA_OPCODE(Load);
+	DECLARE_LUA_OPCODE(Save);
 
 	// Remastered
 	DECLARE_LUA_OPCODE(GetPlatform);
@@ -102,10 +104,6 @@ protected:
 	DECLARE_LUA_OPCODE(GetSaveStatus);
 	DECLARE_LUA_OPCODE(StartCheckOfCrossSaveStatus);
 	DECLARE_LUA_OPCODE(GetCrossSaveStatus);
-	
-	// Overridden:
-	DECLARE_LUA_OPCODE(Load);
-	DECLARE_LUA_OPCODE(Save);
 };
 
 } // end of namespace Grim

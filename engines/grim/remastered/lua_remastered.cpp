@@ -66,6 +66,22 @@ void Lua_Remastered::GetFontDimensions() {
 	}
 }
 
+void Lua_Remastered::GetTextObjectDimensions() {
+	lua_Object textObj = lua_getparam(1);
+	lua_Object coordsObj = lua_getparam(2);
+	if (lua_isnumber(coordsObj)) {
+		int val = lua_getnumber(coordsObj);
+		warning("Stub function: GetTextObjectDimensions(%d)", val);
+	}
+
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
+		TextObject *textObject = gettextobject(textObj);
+		lua_pushnumber(textObject->getWidth()); // REMASTERED HACK
+		lua_pushnumber(textObject->getHeight()); // REMASTERED HACK
+		lua_pushnumber(textObject->getX());
+		lua_pushnumber(textObject->getY());
+	}
+}
 
 void Lua_Remastered::OverlayDimensions() {
 	lua_Object overlayObj = lua_getparam(1);
