@@ -952,10 +952,10 @@ void GfxOpenGL::drawOverlay(const Overlay *overlay) {
 	glDisable(GL_DEPTH_TEST);
 	
 
-	float height = overlay->getHeight();
-	float width = overlay->getWidth();
-	float x = overlay->_x;
-	float y = overlay->_y;
+	float height = overlay->getHeight() * _globalScaleH;
+	float width = overlay->getWidth() * _globalScaleW;
+	float x = overlay->_x * _globalScaleW;
+	float y = overlay->_y * _globalScaleH;
 
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
