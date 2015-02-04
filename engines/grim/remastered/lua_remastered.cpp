@@ -239,6 +239,7 @@ void Lua_Remastered::SetMouseSpeedScale() {
 	warning("Stub function: SetMouseSpeedScale(%f)", lua_getnumber(param1));
 }
 
+// Commentary
 void Lua_Remastered::EnableCommentary() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
@@ -249,6 +250,12 @@ void Lua_Remastered::SetCommentary() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isstring(param1));
 	warning("Stub function: SetCommentary(%s)", lua_getstring(param1));
+	g_grim->getCommentary()->setCurrentCommentary(lua_getstring(param1));
+}
+
+void Lua_Remastered::PlayCurrentCommentary() {
+	warning("Stub function: PlayCurrentCommentary");
+	g_grim->getCommentary()->playCurrentCommentary();
 }
 
 void Lua_Remastered::HasHeardCommentary() {
@@ -523,7 +530,6 @@ STUB_FUNC(Lua_Remastered::InitiateFindSaveGames)
 STUB_FUNC(Lua_Remastered::AreAchievementsInstalled)
 STUB_FUNC(Lua_Remastered::UnlockAchievement)
 STUB_FUNC(Lua_Remastered::SetAdvancedLighting)
-STUB_FUNC(Lua_Remastered::PlayCurrentCommentary)
 STUB_FUNC(Lua_Remastered::IsPlayingCommentary)
 STUB_FUNC(Lua_Remastered::ClearCommentary)
 STUB_FUNC(Lua_Remastered::LoadRemappedKeys)

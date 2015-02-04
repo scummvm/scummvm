@@ -65,6 +65,7 @@
 #include "engines/grim/debugger.h"
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
+#include "engines/grim/remastered/commentary.h"
 
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/emi/sound/emisound.h"
@@ -175,16 +176,21 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	
 	
 	//Remastered:
-	for (int i = 0; i < kNumCutscenes; i++) {
-		_cutsceneEnabled[i] = false;
+	if (getGameFlags() & ADGF_REMASTERED) {
+		for (int i = 0; i < kNumCutscenes; i++) {
+			_cutsceneEnabled[i] = false;
+		}
+		for (int i = 0; i < kNumConcepts; i++) {
+			_conceptEnabled[i] = false;
+		}
+		
+		_saveMeta1 = "";
+		_saveMeta2 = 0;
+		_saveMeta3 = "";
+		_commentary = new Commentary();
+	} else {
+		_commentary = nullptr;
 	}
-	for (int i = 0; i < kNumConcepts; i++) {
-		_conceptEnabled[i] = false;
-	}
-	
-	_saveMeta1 = "";
-	_saveMeta2 = 0;
-	_saveMeta3 = "";
 }
 
 GrimEngine::~GrimEngine() {
@@ -216,6 +222,9 @@ GrimEngine::~GrimEngine() {
 	g_driver = nullptr;
 	delete _iris;
 	delete _debugger;
+
+	// Remastered:
+	delete _commentary;
 
 	ConfMan.flushToDisk();
 	DebugMan.clearAllDebugChannels();

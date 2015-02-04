@@ -47,6 +47,7 @@ class TextObject;
 class PrimitiveObject;
 class Debugger;
 class LuaBase;
+class Commentary;
 
 enum GrimGameType {
 	GType_GRIM,
@@ -181,7 +182,9 @@ public:
 	
 	bool isCutsceneEnabled(uint32 number) const;
 	void enableCutscene(uint32 number);
-	
+
+	Commentary *getCommentary() { return _commentary; }
+
 	// TODO: Refactor.
 	void setSaveMetaData(const char*, int, const char*);
 
@@ -289,6 +292,8 @@ protected:
 	Common::String _saveMeta1;
 	int _saveMeta2;
 	Common::String _saveMeta3;
+	
+	Commentary *_commentary;
 };
 
 extern GrimEngine *g_grim;
