@@ -1510,13 +1510,13 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 
 			float y = text->getLineY(i);
 
-			if (!text->isGlobal()) {
+			if (text->getCoords() == 2 || text->getCoords() == 1) {
 				x *= _globalScaleW;
 				y *= _globalScaleH;
 
 				width  *= _globalScaleW;
 				height *= _globalScaleH;
-			} else {
+			} else if (text->getCoords() == 0) {
 				x *= _scaleW;
 				y *= _scaleH;
 

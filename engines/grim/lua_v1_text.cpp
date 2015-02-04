@@ -127,6 +127,11 @@ void Lua_V1::MakeTextObject() {
 
 void Lua_V1::GetTextObjectDimensions() {
 	lua_Object textObj = lua_getparam(1);
+	lua_Object coordsObj = lua_getparam(2);
+	if (lua_isnumber(coordsObj)) {
+		int val = lua_getnumber(coordsObj);
+		warning("Stub function: GetTextObjectDimensions(%d)", val);
+	}
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);

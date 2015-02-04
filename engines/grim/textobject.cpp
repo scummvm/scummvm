@@ -33,7 +33,7 @@ namespace Grim {
 
 TextObjectCommon::TextObjectCommon() :
 		_x(0), _y(0), _fgColor(0), _justify(0), _width(0), _height(0),
-		_font(nullptr), _duration(0), _layer(0) {
+		_font(nullptr), _duration(0), _layer(0), _coords(0) {
 	if (g_grim)
 		g_grim->invalidateTextObjectsSortOrder();
 }
@@ -47,7 +47,7 @@ void TextObjectCommon::setLayer(int layer) {
 TextObject::TextObject() :
 		TextObjectCommon(), _numberLines(1), _textID(""), _elapsedTime(0),
 		_maxLineWidth(0), _lines(nullptr), _userData(nullptr), _created(false),
-		_blastDraw(false), _isSpeech(false), _stackLevel(0), _global(false) {
+		_blastDraw(false), _isSpeech(false), _stackLevel(0) {
 }
 
 TextObject::~TextObject() {

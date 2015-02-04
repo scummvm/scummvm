@@ -62,6 +62,9 @@ public:
 	void setLayer(int layer);
 	int getLayer() const { return _layer; }
 
+	void setCoords(int coords) { _coords = coords; }
+	int getCoords() const { return _coords; }
+
 protected:
 	TextObjectCommon();
 
@@ -71,6 +74,7 @@ protected:
 	int _justify;
 	int _duration;
 	int _layer;
+	int _coords;
 	Color _fgColor;
 };
 
@@ -100,8 +104,6 @@ public:
 	void setIsSpeech() { _isSpeech = true; }
 	void setBlastDraw() { _blastDraw = true; }
 	bool isBlastDraw() { return _blastDraw; }
-
-	bool isGlobal() const { return _global; }
 
 	const void *getUserData() const { return _userData; }
 	void setUserData(void *data) { _userData = data; }
@@ -145,7 +147,6 @@ protected:
 	bool _blastDraw;
 	bool _isSpeech;
 	bool _created;
-	bool _global;
 
 	int _stackLevel;
 };
