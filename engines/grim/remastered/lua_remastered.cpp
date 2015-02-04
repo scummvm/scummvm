@@ -300,7 +300,7 @@ void Lua_Remastered::UnlockCutscene() {
 void Lua_Remastered::IsCutsceneUnlocked() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isnumber(param1));
-	warning("Remastered function: IsCutsceneUnlocked(%f) returns", lua_getnumber(param1), g_grim->isCutsceneEnabled(lua_getnumber(param1)));
+	warning("Remastered function: IsCutsceneUnlocked(%f) returns %d", lua_getnumber(param1), g_grim->isCutsceneEnabled(lua_getnumber(param1)));
 	if (g_grim->isCutsceneEnabled(lua_getnumber(param1))) {
 		lua_pushnumber(1);
 	} else {
