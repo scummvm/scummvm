@@ -1432,7 +1432,43 @@ void GfxOpenGL::destroyFont(Font *font) {
 	}
 }
 
+struct TextObjectUserData {
+	GLuint *_texids;
+};
+
 void GfxOpenGL::createTextObject(TextObject *text) {
+	//error("Could not get font userdata");
+	const Font *font = text->getFont();
+	const FontTTF *f = static_cast<const FontTTF *>(font);
+	Graphics::Font *gf = f->_font;
+	int numLines = text->getNumLines();
+	GLuint *texids = new GLuint[numLines];
+	glGenTextures(numLines, texids);
+	// Not at all correct for line-wrapping, but atleast we get all the lines now.
+	for (int i = 0; i < numLines; i++) {
+		Graphics::Surface surface;
+
+		int width = gf->getStringWidth(text->getLines()[i]);
+		int height = width;
+		surface.create(height, width, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+		gf->drawString(&surface, text->getLines()[i], 0, 0, width, 0xFFFFFFFF);
+
+		byte *bitmap = (byte *)surface.getPixels();
+
+		glBindTexture(GL_TEXTURE_2D, texids[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap);
+
+		surface.free();
+	}
+	TextObjectUserData *ud = new TextObjectUserData;
+
+	ud->_texids = texids;
+	text->setUserData(ud);
+
 }
 
 void GfxOpenGL::drawTextObject(const TextObject *text) {
@@ -1460,67 +1496,48 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 	glColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 	const FontUserData *userData = (const FontUserData *)font->getUserData();
 	if (!userData) {
-		//error("Could not get font userdata");
 		const FontTTF *f = static_cast<const FontTTF *>(font);
 		Graphics::Font *gf = f->_font;
-		Graphics::Surface surface;
-		int height = 1024;
-		int width = 1024;
-		surface.create(height, width, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+
+		const TextObjectUserData *ud = (const TextObjectUserData *)text->getUserData();
+
 		int numLines = text->getNumLines();
-		// Not at all correct for line-wrapping, but atleast we get all the lines now.
-		for (int i = 0; i < numLines; i++) {
-			gf->drawString(&surface, text->getLines()[i], 0, i * gf->getFontHeight(), 1024, 0xFFFFFFFF);
+		for (int i = 0; i < numLines; ++i) {
+			float width = gf->getStringWidth(text->getLines()[i]);
+			float height = width;
+			float x = text->getLineX(i);
+
+			float y = text->getLineY(i);
+
+			if (!text->isGlobal()) {
+				x *= _globalScaleW;
+				y *= _globalScaleH;
+
+				width  *= _globalScaleW;
+				height *= _globalScaleH;
+			} else {
+				x *= _scaleW;
+				y *= _scaleH;
+
+				width  *= _scaleW;
+				height *= _scaleH;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, ud->_texids[i]);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 0.0f);
+			glVertex2f(x, y);
+			glTexCoord2f(1.0f, 0.0f);
+			glVertex2f((x + width), y);
+			glTexCoord2f(1.0f, 1.0f);
+			glVertex2f((x + width), (y + height));
+			glTexCoord2f(0.0f, 1.0f);
+			glVertex2f(x, (y + height));
+			glEnd();
+
+
 		}
-
-		byte *bitmap = (byte *)surface.getPixels();
-
-
-		GLuint texid;
-		glGenTextures(1, &texid);
-
-		glBindTexture(GL_TEXTURE_2D, texid);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap);
-
-		float x = text->getX();
-
-		float y = text->getY();
-
-		if (!text->isGlobal()) {
-			x -= gf->getStringWidth(text->getLines()[0]);
-			x *= _globalScaleW;
-			y *= _globalScaleH;
-
-			width  *= _globalScaleW;
-			height *= _globalScaleH;
-		} else {
-			x *= _scaleW;
-			y *= _scaleH;
-
-			width  *= _scaleW;
-			height *= _scaleH;
-		}
-
-		glBindTexture(GL_TEXTURE_2D, texid);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(x, y);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f((x + width), y);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f((x + width), (y + height));
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(x, (y + height));
-		glEnd();
-
-
-		glDeleteTextures(1, &texid);
-
-		surface.free();
 
 		glColor3f(1, 1, 1);
 
@@ -1577,6 +1594,9 @@ void GfxOpenGL::drawTextObject(const TextObject *text) {
 }
 
 void GfxOpenGL::destroyTextObject(TextObject *text) {
+	TextObjectUserData *ud = (TextObjectUserData *)text->getUserData();
+	glDeleteTextures(text->getNumLines(), ud->_texids);
+	delete ud;
 }
 
 void GfxOpenGL::createTexture(Texture *texture, const uint8 *data, const CMap *cmap, bool clamp) {
