@@ -103,6 +103,7 @@ private:
 	Value _advancedLighting;
 	Value _directorsCommentaryVolume;
 	Value _renderingMode;
+	Value _fullScreen;
 
 	bool _dirty;
 

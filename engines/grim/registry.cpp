@@ -126,8 +126,9 @@ Registry::Registry() :
 	_language.setInt(ConfMan.getInt("grim_language")); // Avoid overlap with confman
 	_resolutionScaling.setInt(ConfMan.getInt("resolution_scaling"));
 	_mouseSpeed.setInt(ConfMan.getInt("mouse_speed"));
-	_advancedLighting.setString(ConfMan.get("adanced_lighting"));
+	_advancedLighting.setInt(ConfMan.getInt("advanced_lighting"));
 	_renderingMode.setInt(ConfMan.getInt("rendering_mode"));
+	_fullScreen.setInt(ConfMan.getInt("grim_fullscreen")); // TODO: Should probably map against normal fullscreen, but this may have issues with alt-enter, so leaving it like this for now.
 }
 
 Registry::Value &Registry::value(const Common::String &key) {
@@ -179,6 +180,8 @@ Registry::Value &Registry::value(const Common::String &key) {
 		return _directorsCommentaryVolume;
 	} else if (scumm_stricmp("RenderingMode", key.c_str()) == 0) {
 		return _renderingMode;
+	} else if (scumm_stricmp("Fullscreen", key.c_str()) == 0) {
+		return _fullScreen;
 	} else {
 		warning("write unknown regisry value %s", key.c_str());
 		return _musicVolume;
@@ -236,6 +239,8 @@ const Registry::Value &Registry::value(const Common::String &key) const {
 		return _directorsCommentaryVolume;
 	} else if (scumm_stricmp("RenderingMode", key.c_str()) == 0) {
 		return _renderingMode;
+	} else if (scumm_stricmp("Fullscreen", key.c_str()) == 0) {
+		return _fullScreen;
 	} else {
 		warning("unknown regisry value %s", key.c_str());
 		return _musicVolume;
@@ -304,10 +309,10 @@ void Registry::save() {
 	ConfMan.setInt("grim_language", _language.getInt());
 	ConfMan.setInt("resolution_scaling", _resolutionScaling.getInt());
 	ConfMan.setInt("mouse_speed", _mouseSpeed.getInt());
-	ConfMan.set("advanced_lighting", _advancedLighting.getString());
+	ConfMan.setInt("advanced_lighting", _advancedLighting.getInt());
 	ConfMan.setInt("directors_commentary_volume", convertVolumeToMixer(_directorsCommentaryVolume.getInt()));
 	ConfMan.setInt("rendering_mode", _renderingMode.getInt());
-
+	ConfMan.setInt("grim_fullscreen", _fullScreen.getInt());
 	_dirty = false;
 }
 
