@@ -72,8 +72,91 @@ void Room::freeTileData() {
 	_tile = nullptr;
 }
 
+void Room::clearCamera() {
+	_vm->_player->_scrollFlag = true;
+	_vm->_events->hideCursor();
+
+	_vm->_screen->_orgX1 = 48;
+	_vm->_screen->_orgY1 = 24;
+	_vm->_screen->_orgX2 = 274;
+	_vm->_screen->_orgY2 = 152;
+	_vm->_screen->_lColor = 0;
+	_vm->_screen->drawRect();
+
+	_vm->_events->showCursor();
+
+	_vm->_events->_vbCount = 4;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+}
+
 void Room::takePicture() {
-	warning("TODO: takePicture");
+	_vm->_events->pollEvents();
+	if (!_vm->_events->_leftButton)
+		return;
+
+	Common::Array<Common::Rect> pictureCoords;
+	for (int i = 0; Martian::PICTURERANGE[i][0] != -1; i += 2) {
+		pictureCoords.push_back(Common::Rect(Martian::PICTURERANGE[i][0], Martian::PICTURERANGE[i + 1][0],
+			                                 Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
+	}
+
+	int result = _vm->_events->checkMouseBox1(pictureCoords);
+
+	if (result == 4) {
+		warning("TODO case 4");
+		_vm->_events->debounceLeft();
+		if (_vm->_inventory->_inv[44]._value != ITEM_IN_INVENTORY) {
+			Common::String msg = "YOU HAVE NO MORE FILM.";
+			_vm->_scripts->doCmdPrint_v1(msg);
+			return;
+		}
+
+		// TODO: simplify the second part of the test when tested
+		if ((_vm->_scrollCol < 35) || ((_vm->_scrollRow >= 10) && (_vm->_scrollRow >= 20))){
+			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
+			_vm->_scripts->doCmdPrint_v1(msg);
+			return;
+		}
+
+		if (_vm->_inventory->_inv[26]._value != ITEM_USED) {
+			Common::String msg = "ALTHOUGH IT WOULD MAKE A NICE PICTURE, YOU MAY FIND SOMETHING MORE INTERESTING TO USE YOUR FILM ON.";
+			_vm->_scripts->doCmdPrint_v1(msg);
+			return;
+		}
+
+		Common::String msg = "THAT PHOTO MAY COME IN HANDY SOME DAY.";
+		_vm->_scripts->doCmdPrint_v1(msg);
+		_vm->_inventory->_inv[8]._value = ITEM_IN_INVENTORY;
+		_vm->_pictureTaken++;
+		if (_vm->_pictureTaken == 16)
+			_vm->_inventory->_inv[44]._value = ITEM_USED;
+
+		_vm->_events->debounceLeft();
+		_vm->_sound->playSound(0);
+		clearCamera();
+		return;
+	} else if (result == 5) {
+		if (_vm->_flags[26] != 2) {
+			_vm->_video->closeVideo();
+			_vm->_video->_videoEnd = true;
+		}
+		_vm->_player->_roomNumber = 7;
+		_vm->_room->_function = FN_CLEAR1;
+		return;
+	} else if (result >= 0) 
+		_vm->_player->_move = (Direction)(result + 1);
+
+	_vm->_player->_scrollFlag = false;
+	if (_vm->_player->_move == UP)
+		warning("TODO: loc_163E9 2");
+	else if (_vm->_player->_move == DOWN)
+		warning("TODO: loc_1644A 2");
+	else if (_vm->_player->_move == LEFT)
+		warning("TODO: loc_1631E 2");
+	else if (_vm->_player->_move == RIGHT)
+		warning("TODO: loc_1637F 2");
+	else return;
 }
 
 void Room::doRoom() {

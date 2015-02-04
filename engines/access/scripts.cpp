@@ -306,16 +306,20 @@ void Scripts::cmdPrint_v2() {
 	printString(msg);
 }
 
-void Scripts::cmdPrint_v1() {
+void Scripts::doCmdPrint_v1(Common::String msg) {
 	_vm->_screen->_printOrg = Common::Point(20, 42);
 	_vm->_screen->_printStart = Common::Point(20, 32);
-	Common::String msg = readString();
 	_vm->_bubbleBox->placeBubble(msg);
 	_vm->_events->waitKeyMouse();
 	_vm->_events->hideCursor();
 	_vm->_screen->restoreBlock();
 	_vm->_events->showCursor();
 	findNull();
+}
+
+void Scripts::cmdPrint_v1() {
+	Common::String msg = readString();
+	doCmdPrint_v1(msg);
 }
 
 void Scripts::printString(const Common::String &msg) {

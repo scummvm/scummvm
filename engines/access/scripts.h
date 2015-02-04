@@ -165,6 +165,7 @@ public:
 	int executeScript();
 
 	void findNull();
+	void doCmdPrint_v1(Common::String msg);
 
 	/**
 	 * Print a given message to the screen in a bubble box

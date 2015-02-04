@@ -819,5 +819,16 @@ const byte _byte1EEB5[] = {
 	1
 };
 
+const int PICTURERANGE[][2] = {
+// { min X, max X}, {min Y, max Y}
+	{ 20, 30 },  { 82, 87 },
+	{ 20, 30 },  { 105, 110 },
+	{ 0, 8 },    { 92, 100 },
+	{ 42, 46 },  { 92, 100 },
+	{ 9, 41 },   { 88, 104 },
+	{ 9, 41 },   { 117, 133 },
+	{ -1, -1 }
+};
+
 } // End of namespace Martian
 } // End of namespace Access

@@ -223,6 +223,7 @@ public:
 	byte _byte26CB5;
 	int BCNT;
 	byte *TEMPLIST;
+	int _pictureTaken;
 	//
 
 	bool _vidEnd;

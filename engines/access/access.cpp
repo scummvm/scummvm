@@ -106,6 +106,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	BOXSELECTYOLD = -1;
 	NUMBLINES = 0;
 	TEMPLIST = nullptr;
+	_pictureTaken = 0;
 
 	_vidEnd = false;
 }

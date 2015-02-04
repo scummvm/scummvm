@@ -105,6 +105,8 @@ protected:
 	 */
 	void executeCommand(int commandId);
 
+	void clearCamera();
+
 	virtual void reloadRoom() = 0;
 
 	virtual void reloadRoom1() = 0;
