@@ -40,14 +40,16 @@ class Comment {
 	Common::String _name;
 	Common::String _filename;
 	Common::Array<CommentLine> _lines;
+	bool _hasHeard; //TODO: Should be saved
 public:
 	Comment(const Common::String &name, const Common::String &filename);
 	Common::String getName() const;
 	void addLine(int id, const Common::String &text, int start, int end);
-	void play() const;
+	void play();
+	bool hasHeard() const { return _hasHeard; }
 };
 
-Comment::Comment(const Common::String &name, const Common::String &filename) : _name(name), _filename(filename) {
+Comment::Comment(const Common::String &name, const Common::String &filename) : _name(name), _filename(filename), _hasHeard(false) {
 }
 
 void Comment::addLine(int id, const Common::String &text, int start, int end) {
@@ -63,11 +65,12 @@ Common::String Comment::getName() const {
 	return _name;
 }
 
-void Comment::play() const {
+void Comment::play() {
 	for (int i = 0; i < _lines.size(); i++) {
 		Common::String text = g_localizer->localize(_lines[i]._line.c_str());
 		warning("Line: %d Start: %d End: %d Id: %d Text: %s", i, _lines[i]._start, _lines[i]._end, _lines[i]._id, text.c_str());
 	}
+	_hasHeard = true;
 }
 
 Commentary::Commentary() : _currentCommentary(nullptr) {
@@ -83,13 +86,13 @@ Commentary::~Commentary() {
 }
 
 void Commentary::loadCommentary() {
-	Common::String filename = "commentary_def.txt";
-	Common::SeekableReadStream *f = g_resourceloader->openNewStreamFile(filename);
+	Common::String defFilename = "commentary_def.txt";
+	Common::SeekableReadStream *f = g_resourceloader->openNewStreamFile(defFilename);
 	if (!f) {
-		error("Commentary::loadCommentary: Unable to find commentary definition (%s)", filename.c_str());
+		error("Commentary::loadCommentary: Unable to find commentary definition (%s)", defFilename.c_str());
 		return;
 	}
-	TextSplitter ts(filename, f);
+	TextSplitter ts(defFilename, f);
 
 	while (!ts.isEof()) {
 		// Skip comments
@@ -151,8 +154,19 @@ void Commentary::setCurrentCommentary(const Common::String &name) {
 	warning("Commentary::setCurrentCommentary(%s)", name.c_str());
 	_currentCommentary = findCommentary(name);
 	if (_currentCommentary == nullptr) {
-		warning("Commentary::setCurrentCommentary(%s) could not find commentary");
+		warning("Commentary::setCurrentCommentary(%s) could not find commentary", name.c_str());
 	}
 }
- 
+
+bool Commentary::hasHeardCommentary(const Common::String &name) const {
+	Common::String lowerName = name;
+	lowerName.toLowercase();
+	if (!_comments.contains(lowerName)) {
+		warning("Commentary::hasHeardCommentary(%s) could not find commentary", name.c_str());
+		return false;
+	} else {
+		return _comments.getVal(lowerName)->hasHeard();
+	}
+}
+
 } // end of namespace Grim

@@ -40,9 +40,9 @@ public:
 	~Commentary();
 	void playCurrentCommentary();
 	void setCurrentCommentary(const Common::String &name);
+	bool hasHeardCommentary(const Common::String &name) const;
 };
 
 } // end of namespace Grim
 
- #endif
- 
+#endif

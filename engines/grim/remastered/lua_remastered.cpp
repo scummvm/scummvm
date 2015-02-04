@@ -261,8 +261,9 @@ void Lua_Remastered::PlayCurrentCommentary() {
 void Lua_Remastered::HasHeardCommentary() {
 	lua_Object param1 = lua_getparam(1);
 	assert(lua_isstring(param1));
-	warning("Stub function: HasHeardCommentary(%s) returns 1", lua_getstring(param1));
-	lua_pushnumber(1);
+	bool hasHeard = g_grim->getCommentary()->hasHeardCommentary(lua_getstring(param1));
+	warning("Remastered function: HasHeardCommentary(%s) returns %d", lua_getstring(param1), hasHeard);
+	lua_pushnumber(hasHeard);
 }
 
 void Lua_Remastered::SetResolutionScaling() {
