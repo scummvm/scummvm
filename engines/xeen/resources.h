@@ -371,6 +371,33 @@ extern const char *const NOT_PROFICIENT;
 
 extern const char *const NO_ITEMS_AVAILABLE;
 
+extern const char *const CATEGORY_NAMES[4];
+
+extern const char *const X_FOR_THE_Y;
+
+extern const char *const X_FOR_Y;
+
+extern const char *const X_FOR_Y_GOLD;
+
+extern const char *const FMT_CHARGES;
+
+extern const char *const AVAILABLE_GOLD_COST;
+
+extern const char *const CHARGES;
+
+extern const char *const COST;
+
+extern const char *const ITEM_ACTIONS[7];
+extern const char *const WHICH_ITEM;
+
+extern const char *const WHATS_YOUR_HURRY;
+
+extern const char *const USE_ITEM_IN_COMBAT;
+
+extern const char *const NO_SPECIAL_ABILITIES;
+
+extern const char *const CANT_CAST_WHILE_ENGAGED;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

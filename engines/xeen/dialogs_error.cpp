@@ -38,7 +38,16 @@ void ErrorScroll::execute(const Common::String &msg, ErrorWaitType waitType) {
 	EventsManager &events = *_vm->_events;
 	Window &w = screen._windows[6];
 
-	Common::String s = Common::String::format("\x03c\v010\t000%s", msg.c_str());
+	Common::String s;
+	if (waitType == WT_UNFORMATTED) {
+		// This type isn't technically a waiting type, but it saved on adding 
+		// yet another parameter
+		waitType = WT_FREEZE_WAIT;
+		s = msg;
+	} else {
+		s = Common::String::format("\x03c\v010\t000%s", msg.c_str());
+	}
+
 	w.open();
 	w.writeString(s);
 	w.update();

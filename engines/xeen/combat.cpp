@@ -34,6 +34,8 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	Common::fill(&_elemScale[0], &_elemScale[12], 0);
 	Common::fill(&_shooting[0], &_shooting[8], 0);
 	_globalCombat = 0;
+	_whosTurn = -1;
+	_itemFlag = false;
 }
 
 void Combat::clear() {

@@ -185,7 +185,7 @@ void CharacterInfo::execute(int charIndex) {
 
 		case Common::KEYCODE_i:
 			_vm->_mode = oldMode;
-			_vm->_treasure._v1 = _vm->_mode == MODE_InCombat;
+			_vm->_combat->_itemFlag = _vm->_mode == MODE_InCombat;
 			c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
 
 			if (!c) {
@@ -209,7 +209,7 @@ exit:
 	w.close();
 	intf.unhighlightChar();
 	_vm->_mode = oldMode;
-	_vm->_treasure._v1 = false;
+	_vm->_combat->_itemFlag = false;
 }
 
 /**

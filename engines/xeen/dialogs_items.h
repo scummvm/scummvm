@@ -30,8 +30,8 @@
 namespace Xeen {
 
 enum ItemsMode {
-	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_2 = 2,
-	ITEMMODE_4 = 4, ITEMMODE_6 = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8, 
+	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_2 = 2, ITEMMODE_3 = 3,
+	ITEMMODE_4 = 4, ITEMMODE_5 = 5, ITEMMODE_6 = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8, 
 	ITEMMODE_9 = 9, ITEMMODE_10 = 10, ITEMMODE_TO_GOLD = 11
 };
 
@@ -42,7 +42,7 @@ private:
 	SpriteResource _equipSprites;
 	Character _itemsCharacter;
 	Character *_oldCharacter;
-	DrawStruct _itemsDrawList[9];
+	DrawStruct _itemsDrawList[INV_ITEMS_TOTAL];
 
 	ItemsDialog(XeenEngine *vm) : ButtonContainer(), 
 		_vm(vm), _oldCharacter(nullptr) {}
@@ -55,11 +55,14 @@ private:
 
 	void setEquipmentIcons();
 
-	int calcItemCost(Character *c, int itemIndex, int mode, int skillLevel, 
+	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel, 
 		ItemCategory category);
 
 	bool passRestrictions(CharacterClass charClass, int itemId,
 		bool showError, ItemCategory category) const;
+
+	bool doItemOptions(Character &c, int actionIndex, int itemIndex, 
+		ItemCategory category, ItemsMode mode);
 public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };

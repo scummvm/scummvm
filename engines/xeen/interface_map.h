@@ -111,7 +111,6 @@ protected:
 	bool _flipSky;
 	bool _flipDefaultGround;
 	bool _isShooting;
-	bool _charsShooting;
 	bool _thinWall;
 	bool _isAnimReset;
 	int _blessedUIFrame;
@@ -124,8 +123,6 @@ protected:
 	void setMazeBits();
 
 	void animate3d();
-
-	void moveMonsters();
 
 	void drawMiniMap();
 
@@ -144,6 +141,7 @@ public:
 	int _objNumber;
 	int _overallFrame;
 	int _batUIFrame;
+	bool _charsShooting;
 public:
 	InterfaceMap(XeenEngine *vm);
 
@@ -166,6 +164,9 @@ public:
 	void drawOutdoors();
 
 	void assembleBorder();
+
+	void moveMonsters();
+
 };
 
 } // End of namespace Xeen

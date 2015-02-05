@@ -28,7 +28,7 @@
 namespace Xeen {
 
 enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1, 
-	WT_2 = 2, WT_3 = 3};
+	WT_2 = 2, WT_3 = 3, WT_UNFORMATTED = 9 };
 
 class ErrorScroll: public ButtonContainer {
 private:

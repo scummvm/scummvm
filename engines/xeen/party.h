@@ -74,7 +74,6 @@ enum Condition { CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
 #define TOTAL_STATS 7
-#define INV_ITEMS_TOTAL 9
 
 class XeenEngine;
 
@@ -115,10 +114,11 @@ public:
 	bool _hasSpells;
 	int _currentSpell;
 	int _quickOption;
-	XeenItem _weapons[INV_ITEMS_TOTAL];
-	XeenItem _armor[INV_ITEMS_TOTAL];
-	XeenItem _accessories[INV_ITEMS_TOTAL];
-	XeenItem _misc[INV_ITEMS_TOTAL];
+	InventoryItemsGroup _items;
+	InventoryItems _weapons;
+	InventoryItems _armor;
+	InventoryItems _accessories;
+	InventoryItems _misc;
 	int _lloydSide;
 	AttributePair _fireResistence;
 	AttributePair _coldResistence;

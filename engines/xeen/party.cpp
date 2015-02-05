@@ -43,7 +43,7 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Character::Character() {
+Character::Character(): _items(_weapons, _armor, _accessories, _misc) {
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;

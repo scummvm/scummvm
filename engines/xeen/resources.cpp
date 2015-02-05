@@ -1088,4 +1088,41 @@ const char *const NOT_PROFICIENT =
 const char *const NO_ITEMS_AVAILABLE = "\x3""c\n"
 	"\t000No items available.";
 
+const char *const CATEGORY_NAMES[4] = { "Weapons", "Armor", "Accessories", "Miscellaneous" };
+
+const char *const X_FOR_THE_Y =
+	"\x1\fd\r%s\v000\t000%s for %s the %s%s\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+
+const char *const X_FOR_Y =
+	"\x1\xC""d\r\x3l\v000\t000%s for %s\x3r\t000%s\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\xC""d";
+
+const char *const X_FOR_Y_GOLD =
+	"\x1\fd\r\x3l\v000\t000%s for %s\t150Gold - %lu%s\x3l\v011"
+	"\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+
+const char *const FMT_CHARGES = "\x3rr\t000Charges\x3l";
+
+const char *const AVAILABLE_GOLD_COST =
+	"\x1\fd\r\x3l\v000\t000Available %s%s\t150Gold - %lu\x3r\t000Cost"
+	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\xC""d";
+
+const char *const CHARGES = "Charges";
+
+const char *const COST = "Cost";
+
+const char *const ITEM_ACTIONS[7] = {
+	"Equip", "Remove", "Use", "Discard", "Enchant", "Recharge", "Gold"
+};
+const char *const WHICH_ITEM = "\t010\v005%s which item?";
+
+const char *const WHATS_YOUR_HURRY = "\v007What's your hurry?\n"
+	"Wait till you get out of here!";
+
+const char *const USE_ITEM_IN_COMBAT = 
+	"\v007To use an item in Combat, invoke the Use command on your turn!";
+
+const char *const NO_SPECIAL_ABILITIES = "\v005\x3""c%s\fdhas no special abilities!";
+
+const char *const CANT_CAST_WHILE_ENGAGED = "\x03c\v007Can't cast %s while engaged!";
+
 } // End of namespace Xeen

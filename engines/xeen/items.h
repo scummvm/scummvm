@@ -24,11 +24,13 @@
 #define XEEN_ITEMS_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/serializer.h"
 
 namespace Xeen {
 
 #define TOTAL_ITEMS 10
+#define INV_ITEMS_TOTAL 9
 
 enum BonusFlags { 
 	ITEMFLAG_BONUS_MASK = 0xBF,  ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80 
@@ -47,11 +49,36 @@ public:
 public:
 	XeenItem();
 
+	void clear();
+
 	void synchronize(Common::Serializer &s);
 
 	int getElementalCategory() const;
 
 	int getAttributeCategory() const;
+};
+
+class InventoryItems : public Common::Array<XeenItem> {
+public:
+	InventoryItems();
+
+	void discardItem(int itemIndex);
+
+	void equipItem(int itemIndex);
+
+	void removeItem(int itemIndex);
+
+	void sort();
+};
+
+class InventoryItemsGroup {
+private:
+	InventoryItems *_itemSets[4];
+public:
+	InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
+		InventoryItems &accessories, InventoryItems &misc);
+
+	InventoryItems &operator[](ItemCategory category);
 };
 
 class Treasure {
@@ -61,7 +88,6 @@ public:
 	XeenItem _armor[TOTAL_ITEMS];
 	XeenItem _weapons[TOTAL_ITEMS];
 	bool _hasItems;
-	bool _v1;
 public:
 	Treasure();
 };
