@@ -106,6 +106,7 @@ protected:
 	DECLARE_LUA_OPCODE(StartCheckOfCrossSaveStatus);
 	DECLARE_LUA_OPCODE(GetCrossSaveStatus);
 	DECLARE_LUA_OPCODE(GetFloorWalkPos);
+	DECLARE_LUA_OPCODE(CursorMovieEnabled);
 };
 
 } // end of namespace Grim

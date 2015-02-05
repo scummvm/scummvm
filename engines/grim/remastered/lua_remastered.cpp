@@ -610,6 +610,7 @@ STUB_FUNC(Lua_Remastered::GetSaveStatus)
 STUB_FUNC(Lua_Remastered::StartCheckOfCrossSaveStatus)
 STUB_FUNC(Lua_Remastered::GetCrossSaveStatus)
 STUB_FUNC(Lua_Remastered::GetFloorWalkPos)
+STUB_FUNC(Lua_Remastered::CursorMovieEnabled)
 
 
 struct luaL_reg remasteredMainOpcodes[] = {
@@ -677,6 +678,7 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "StartCheckOfCrossSaveStatus", LUA_OPCODE(Lua_Remastered, StartCheckOfCrossSaveStatus) },
 	{ "GetCrossSaveStatus", LUA_OPCODE(Lua_Remastered, GetCrossSaveStatus) },
 	{ "GetFloorWalkPos", LUA_OPCODE(Lua_Remastered, GetFloorWalkPos) },
+	{ "CursorMovieEnabled", LUA_OPCODE(Lua_Remastered, CursorMovieEnabled) },
 };
 
 void Lua_Remastered::registerOpcodes() {

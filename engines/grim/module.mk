@@ -83,9 +83,10 @@ MODULE_OBJS := \
 	movie/movie.o \
 	movie/quicktime.o \
 	movie/smush.o \
+	remastered/commentary.o \
+	remastered/hotspot.o \
 	remastered/lua_remastered.o \
 	remastered/overlay.o \
-	remastered/commentary.o \
 	update/packfile.o \
 	update/mscab.o \
 	update/lang_filter.o \
