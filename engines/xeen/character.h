@@ -95,22 +95,50 @@ public:
 };
 
 class InventoryItems : public Common::Array<XeenItem> {
-private:
+protected:
 	Character *_character;
 	ItemCategory _category;
 	const char *const *_names;
+
+	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
+		ItemCategory category2);
 public:
 	InventoryItems(Character *character, ItemCategory category);
 
 	bool passRestrictions(int itemId, bool showError) const;
 
+	Common::String getName(int itemIndex);
+
 	void discardItem(int itemIndex);
 
-	void equipItem(int itemIndex);
+	virtual void equipItem(int itemIndex) {}
 
 	void removeItem(int itemIndex);
 
 	void sort();
+};
+
+class WeaponItems: public InventoryItems {
+public:
+	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
+	virtual void equipItem(int itemIndex);
+};
+
+class ArmorItems : public InventoryItems {
+public:
+	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
+	virtual void equipItem(int itemIndex);
+};
+
+class AccessoryItems : public InventoryItems {
+public:
+	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
+	virtual void equipItem(int itemIndex);
+};
+
+class MiscItems : public InventoryItems {
+public:
+	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
 };
 
 class InventoryItemsGroup {
@@ -162,10 +190,10 @@ public:
 	int _currentSpell;
 	int _quickOption;
 	InventoryItemsGroup _items;
-	InventoryItems _weapons;
-	InventoryItems _armor;
-	InventoryItems _accessories;
-	InventoryItems _misc;
+	WeaponItems _weapons;
+	ArmorItems _armor;
+	AccessoryItems _accessories;
+	MiscItems _misc;
 	int _lloydSide;
 	AttributePair _fireResistence;
 	AttributePair _coldResistence;

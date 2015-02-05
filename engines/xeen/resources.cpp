@@ -1125,4 +1125,9 @@ const char *const NO_SPECIAL_ABILITIES = "\v005\x3""c%s\fdhas no special abiliti
 
 const char *const CANT_CAST_WHILE_ENGAGED = "\x03c\v007Can't cast %s while engaged!";
 
+const char *const EQUIPPED_ALL_YOU_CAN = "\x3""c\v007You have equipped all the %ss you can!";
+const char *const REMOVE_X_TO_EQUIP_Y = "\x3""c\v007You must remove %sto equip %s\x8!";
+const char *const RING = "ring";
+const char *const MEDAL = "medal";
+
 } // End of namespace Xeen

@@ -398,6 +398,11 @@ extern const char *const NO_SPECIAL_ABILITIES;
 
 extern const char *const CANT_CAST_WHILE_ENGAGED;
 
+extern const char *const EQUIPPED_ALL_YOU_CAN;
+extern const char *const REMOVE_X_TO_EQUIP_Y;
+extern const char *const RING;
+extern const char *const MEDAL;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

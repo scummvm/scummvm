@@ -100,8 +100,8 @@ void Spells::doSpell(int spellId) {
 	if (_vm->_mode == MODE_InCombat) {
 		if (spellId == 15 || spellId == 20 || spellId == 27 || spellId == 41
 				|| spellId == 47 || spellId == 54 || spellId == 57) {
-			ErrorScroll::show(_vm, Common::String::format(CANT_CAST_WHILE_ENGAGED,
-				_spellNames[spellId].c_str()), WT_UNFORMATTED);
+			ErrorDialog::show(_vm, Common::String::format(CANT_CAST_WHILE_ENGAGED,
+				_spellNames[spellId].c_str()));
 			return;
 		}
 	}

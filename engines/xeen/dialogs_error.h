@@ -24,19 +24,26 @@
 #define XEEN_DIALOGS_ERROR_H
 
 #include "xeen/dialogs.h"
+#include "xeen/character.h"
 
 namespace Xeen {
 
 enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1, 
-	WT_2 = 2, WT_3 = 3, WT_UNFORMATTED = 9 };
+	WT_2 = 2, WT_3 = 3 };
 
-class ErrorScroll: public ButtonContainer {
+class ErrorDialog : public ButtonContainer {
 private:
 	XeenEngine *_vm;
 
-	ErrorScroll(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	ErrorDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
 	void execute(const Common::String &msg, ErrorWaitType waitType);
+public:
+	static void show(XeenEngine *vm, const Common::String &msg,
+		ErrorWaitType waitType = WT_FREEZE_WAIT);
+};
+
+class ErrorScroll {
 public:
 	static void show(XeenEngine *vm, const Common::String &msg, 
 		ErrorWaitType waitType = WT_FREEZE_WAIT);

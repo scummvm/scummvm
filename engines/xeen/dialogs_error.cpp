@@ -27,29 +27,19 @@
 
 namespace Xeen {
 
-void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType waitType) {
-	ErrorScroll *dlg = new ErrorScroll(vm);
+void ErrorDialog::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType waitType) {
+	ErrorDialog *dlg = new ErrorDialog(vm);
 	dlg->execute(msg, waitType);
 	delete dlg;
 }
 
-void ErrorScroll::execute(const Common::String &msg, ErrorWaitType waitType) {
+void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Window &w = screen._windows[6];
 
-	Common::String s;
-	if (waitType == WT_UNFORMATTED) {
-		// This type isn't technically a waiting type, but it saved on adding 
-		// yet another parameter
-		waitType = WT_FREEZE_WAIT;
-		s = msg;
-	} else {
-		s = Common::String::format("\x03c\v010\t000%s", msg.c_str());
-	}
-
 	w.open();
-	w.writeString(s);
+	w.writeString(msg);
 	w.update();
 
 	switch (waitType) {
@@ -81,6 +71,13 @@ void ErrorScroll::execute(const Common::String &msg, ErrorWaitType waitType) {
 	default:
 		break;
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType waitType) {
+	Common::String s = Common::String::format("\x03c\v010\t000%s", msg.c_str());
+	ErrorDialog::show(vm, s, waitType);
 }
 
 } // End of namespace Xeen

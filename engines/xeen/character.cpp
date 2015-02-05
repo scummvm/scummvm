@@ -21,6 +21,7 @@
  */
 
 #include "xeen/character.h"
+#include "xeen/dialogs_error.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -110,12 +111,25 @@ bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 	return false;
 }
 
+/**
+ * Return the bare name of a given inventory item
+ */
+Common::String InventoryItems::getName(int itemIndex) {
+	int id = operator[](itemIndex)._id;
+	return _names[id];
+}
 
+/**
+ * Discard an item from the inventory
+ */
 void InventoryItems::discardItem(int itemIndex) {
 	operator[](itemIndex).clear();
 	sort();
 }
 
+/**
+ * Sorts the items list, removing any empty item slots to the end of the array
+ */
 void InventoryItems::sort() {
 	for (uint idx = 0; idx < size(); ++idx) {
 		if (operator[](idx)._id == 0) {
@@ -135,14 +149,89 @@ void InventoryItems::sort() {
 	}
 }
 
-void InventoryItems::equipItem(int itemIndex) {
-	error("TODO");
-}
-
 void InventoryItems::removeItem(int itemIndex) {
 	error("TODO");
 }
 
+void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
+		ItemCategory category2) {
+	XeenEngine *vm = Party::_vm;
+
+	if (itemIndex1 >= 0) {
+		Common::String itemName1 = _character->_items[category1].getName(itemIndex1);
+		Common::String itemName2 = _character->_items[category2].getName(itemIndex2);
+
+		ErrorDialog::show(vm, Common::String::format(REMOVE_X_TO_EQUIP_Y,
+			itemName1.c_str(), itemName2.c_str()));
+	} else {
+		ErrorDialog::show(vm, Common::String::format(EQUIPPED_ALL_YOU_CAN,
+			(itemIndex1 == -1) ? RING : MEDAL));
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void WeaponItems::equipItem(int itemIndex) {
+	XeenItem &item = operator[](itemIndex);
+
+	if (item._id <= 17) {
+		if (passRestrictions(item._id, false)) {
+			for (uint idx = 0; idx < size(); ++idx) {
+				XeenItem &i = operator[](idx);
+				if (i._frame == 13 || i._frame == 1) {
+					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_WEAPON);
+					return;
+				}
+			}
+
+			item._frame = 1;
+		}
+	} else if (item._id >= 30 && item._id <= 33) {
+		if (passRestrictions(item._id, false)) {
+			for (uint idx = 0; idx < size(); ++idx) {
+				XeenItem &i = operator[](idx);
+				if (i._frame == 4) {
+					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_WEAPON);
+					return;
+				}
+			}
+
+			item._frame = 4;
+		}
+	} else {
+		if (passRestrictions(item._id, false)) {
+			for (uint idx = 0; idx < size(); ++idx) {
+				XeenItem &i = operator[](idx);
+				if (i._frame == 13 || i._frame == 1) {
+					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_WEAPON);
+					return;
+				}
+			}
+
+			for (uint idx = 0; idx < size(); ++idx) {
+				XeenItem &i = _character->_armor[idx];
+				if (i._frame == 2) {
+					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_WEAPON);
+					return;
+				}
+			}
+
+			item._frame = 13;
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+void ArmorItems::equipItem(int itemIndex) {
+	error("TODO");
+}
+
+/*------------------------------------------------------------------------*/
+
+void AccessoryItems::equipItem(int itemIndex) {
+	error("TODO");
+}
 /*------------------------------------------------------------------------*/
 
 InventoryItemsGroup::InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
@@ -174,8 +263,7 @@ AttributePair::AttributePair() {
 /*------------------------------------------------------------------------*/
 
 Character::Character():
-		_weapons(this, CATEGORY_WEAPON), _armor(this, CATEGORY_ARMOR),
-		_accessories(this, CATEGORY_ACCESSORY), _misc(this, CATEGORY_MISC),
+		_weapons(this), _armor(this), _accessories(this), _misc(this),
 		_items(_weapons, _armor, _accessories, _misc) {
 	_sex = MALE;
 	_race = HUMAN;
