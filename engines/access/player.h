@@ -135,10 +135,10 @@ public:
 
 	void calcPlayer();
 
-	bool scrollUp();
-	bool scrollDown();
-	bool scrollLeft();
-	bool scrollRight();
+	bool scrollUp(int forcedAmount = -1);
+	bool scrollDown(int forcedAmount = -1);
+	bool scrollLeft(int forcedAmount = -1);
+	bool scrollRight(int forcedAmount = -1);
 	void checkScroll();
 
 	void checkMove();

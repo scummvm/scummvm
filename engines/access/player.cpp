@@ -735,8 +735,12 @@ void Player::checkScroll() {
 	}
 }
 
-bool Player::scrollUp() {
-	_scrollAmount = -(_vm->_screen->_clipHeight - _playerY - _scrollThreshold);
+bool Player::scrollUp(int forcedAmount) {
+	if (forcedAmount == -1)
+		_scrollAmount = -(_vm->_screen->_clipHeight - _playerY - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
 			_vm->_room->_playFieldHeight)
 		return true;
@@ -763,8 +767,12 @@ bool Player::scrollUp() {
 	return false;
 }
 
-bool Player::scrollDown() {
-	_scrollAmount = -(_playerY - _scrollThreshold);
+bool Player::scrollDown(int forcedAmount) {
+	if (forcedAmount == -1)
+		_scrollAmount = -(_playerY - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	_scrollFlag = true;
 	_vm->_scrollY -= _scrollAmount;
 	if (_vm->_scrollY >= 0)
@@ -788,9 +796,13 @@ bool Player::scrollDown() {
 	return true;
 }
 
-bool Player::scrollLeft() {
+bool Player::scrollLeft(int forcedAmount) {
 	Screen &screen = *_vm->_screen;
-	_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
+	if (forcedAmount == -1)
+		_scrollAmount = -(_vm->_screen->_clipWidth - _playerX - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	if ((_vm->_scrollCol + screen._vWindowWidth) == _vm->_room->_playFieldWidth) {
 		_scrollEnd = 2;
 		_vm->_scrollX = 0;
@@ -815,8 +827,12 @@ bool Player::scrollLeft() {
 	}
 }
 
-bool Player::scrollRight() {
-	_scrollAmount = -(_playerX - _scrollThreshold);
+bool Player::scrollRight(int forcedAmount) {
+	if (forcedAmount == -1)
+		_scrollAmount = -(_playerX - _scrollThreshold);
+	else
+		_scrollAmount = forcedAmount;
+
 	_scrollFlag = true;
 	_vm->_scrollX -= _scrollAmount;
 

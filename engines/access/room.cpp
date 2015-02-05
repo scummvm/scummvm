@@ -148,13 +148,13 @@ void Room::takePicture() {
 
 	_vm->_player->_scrollFlag = false;
 	if (_vm->_player->_move == UP)
-		_vm->_player->scrollDown();
+		_vm->_player->scrollDown(2);
 	else if (_vm->_player->_move == DOWN)
-		_vm->_player->scrollUp();
+		_vm->_player->scrollUp(2);
 	else if (_vm->_player->_move == LEFT)
-		_vm->_player->scrollRight();
+		_vm->_player->scrollRight(2);
 	else if (_vm->_player->_move == RIGHT)
-		_vm->_player->scrollLeft();
+		_vm->_player->scrollLeft(2);
 }
 
 void Room::doRoom() {
