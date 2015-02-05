@@ -74,10 +74,6 @@ protected:
 	void walkUpRight();
 	void walkDownRight();
 	void checkScrollUp();
-	bool scrollUp();
-	bool scrollDown();
-	bool scrollLeft();
-	bool scrollRight();
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
@@ -139,6 +135,10 @@ public:
 
 	void calcPlayer();
 
+	bool scrollUp();
+	bool scrollDown();
+	bool scrollLeft();
+	bool scrollRight();
 	void checkScroll();
 
 	void checkMove();

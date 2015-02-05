@@ -104,7 +104,6 @@ void Room::takePicture() {
 	int result = _vm->_events->checkMouseBox1(pictureCoords);
 
 	if (result == 4) {
-		warning("TODO case 4");
 		_vm->_events->debounceLeft();
 		if (_vm->_inventory->_inv[44]._value != ITEM_IN_INVENTORY) {
 			Common::String msg = "YOU HAVE NO MORE FILM.";
@@ -149,14 +148,13 @@ void Room::takePicture() {
 
 	_vm->_player->_scrollFlag = false;
 	if (_vm->_player->_move == UP)
-		warning("TODO: loc_163E9 2");
+		_vm->_player->scrollDown();
 	else if (_vm->_player->_move == DOWN)
-		warning("TODO: loc_1644A 2");
+		_vm->_player->scrollUp();
 	else if (_vm->_player->_move == LEFT)
-		warning("TODO: loc_1631E 2");
+		_vm->_player->scrollRight();
 	else if (_vm->_player->_move == RIGHT)
-		warning("TODO: loc_1637F 2");
-	else return;
+		_vm->_player->scrollLeft();
 }
 
 void Room::doRoom() {
