@@ -353,6 +353,19 @@ void GrimEngine::handleJoyAxis(byte axis, int16 position) {
 	}
 }
 
+void GrimEngine::handleMouseAxis(byte axis, int16 position) {
+	int keycode = KEYCODE_AXIS_MOUSE_X;
+	if (!_controlsEnabled[keycode])
+		return;
+
+	LuaObjects objects;
+	objects.add(keycode);
+	objects.add(position);
+	if (!LuaBase::instance()->callback("axisHandler", objects)) {
+		error("handleJoyAxis: invalid joystick handler");
+	}
+}
+
 void GrimEngine::handleJoyButton(Common::EventType operation, byte button) {
 	if (button > NUM_JOY_BUTTONS)
 		return;

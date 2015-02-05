@@ -27,6 +27,7 @@
 
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/overlay.h"
+#include "engines/grim/remastered/hotspot.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/font.h"
@@ -168,9 +169,45 @@ void Lua_Remastered::OverlayMove() {
 }
 
 void Lua_Remastered::QueryActiveHotspots() {
-	warning("Stub function: QueryActiveHotspots, returns empty table");
-	lua_Object resObj = lua_createtable();
-	lua_pushobject(resObj);
+	lua_Object param = lua_getparam(1);
+
+	assert(lua_isnumber(param));
+
+	warning("Stub function: QueryActiveHotspots(%d)", lua_getnumber(param));
+
+	lua_Object result = lua_createtable();
+	int count = 0;
+	foreach (Hotspot *h, Hotspot::getPool()) {
+		lua_Object inner = lua_createtable();
+
+		lua_pushobject(inner);
+		lua_pushstring("type");
+		lua_pushstring("normal");
+		lua_settable();
+
+		lua_pushobject(inner);
+		lua_pushstring("cursor");
+		lua_pushnumber(0);
+		lua_settable();
+
+		lua_pushobject(inner);
+		lua_pushstring("id");
+		lua_pushstring(h->_name.c_str());
+		lua_settable();
+
+		lua_pushobject(inner);
+		lua_pushstring("obj");
+		lua_pushusertag(h->getId(), h->getTag());
+		lua_settable();
+
+		lua_pushobject(result);
+		lua_pushnumber(count++);
+		lua_pushobject(inner);
+		lua_settable();
+	}
+
+
+	lua_pushobject(result);
 }
 
 void Lua_Remastered::GetLanguage() {
@@ -185,9 +222,16 @@ void Lua_Remastered::SaveRegistryToDisk() {
 }
 
 void Lua_Remastered::GetCursorPosition() {
-	warning("Stub function: GetCursorPosition, returns 0, 0");
-	lua_pushnumber(0);
-	lua_pushnumber(0);
+	lua_pushnumber(g_grim->_cursorX);
+	lua_pushnumber(g_grim->_cursorX);
+}
+
+void Lua_Remastered::SetCursor() {
+	lua_Object param1 = lua_getparam(1);
+
+	assert(lua_isnumber(param1));
+
+	warning("Stub function: SetCursor(%d)", lua_getnumber(param1));
 }
 
 void Lua_Remastered::GetPlatform() {
@@ -366,7 +410,16 @@ void Lua_Remastered::AddHotspot() {
 	}
 	warning("Stub function: AddHotspot(%s, %f, %f, %f, %f, %f, %f, %f, %s, %s, %f)", lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5), lua_getnumber(param6), lua_getnumber(param7), lua_getnumber(param8), p9str, p10str, lua_getnumber(param11));  
 
-	lua_pushnil();
+	Hotspot *hotspot = new Hotspot(lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5));
+
+	lua_pushusertag(hotspot->getId(), hotspot->getTag());
+
+}
+
+void Lua_Remastered::RemoveHotspot() {
+	lua_Object hotspotObj = lua_getparam(1);
+	Hotspot *hotspot = Hotspot::getPool().getObject(lua_getuserdata(hotspotObj));
+	delete hotspot;
 }
 
 void Lua_Remastered::GlobalSaveResolved() {
@@ -543,10 +596,8 @@ STUB_FUNC(Lua_Remastered::DestroyAllUIButtonsImmediately)
 STUB_FUNC(Lua_Remastered::UpdateUIButtons)
 STUB_FUNC(Lua_Remastered::OverlayClearCache)
 STUB_FUNC(Lua_Remastered::LinkHotspot)
-STUB_FUNC(Lua_Remastered::RemoveHotspot)
 STUB_FUNC(Lua_Remastered::UpdateHotspot)
 STUB_FUNC(Lua_Remastered::HideMouseCursor)
-STUB_FUNC(Lua_Remastered::SetCursor)
 STUB_FUNC(Lua_Remastered::UpdateMouseCursor)
 STUB_FUNC(Lua_Remastered::SetActorHKHackMode)
 STUB_FUNC(Lua_Remastered::CacheCurrentWalkVector)
@@ -558,6 +609,7 @@ STUB_FUNC(Lua_Remastered::RemoveBorders)
 STUB_FUNC(Lua_Remastered::GetSaveStatus)
 STUB_FUNC(Lua_Remastered::StartCheckOfCrossSaveStatus)
 STUB_FUNC(Lua_Remastered::GetCrossSaveStatus)
+STUB_FUNC(Lua_Remastered::GetFloorWalkPos)
 
 
 struct luaL_reg remasteredMainOpcodes[] = {
@@ -624,6 +676,7 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "GetSaveStatus", LUA_OPCODE(Lua_Remastered, GetSaveStatus) },
 	{ "StartCheckOfCrossSaveStatus", LUA_OPCODE(Lua_Remastered, StartCheckOfCrossSaveStatus) },
 	{ "GetCrossSaveStatus", LUA_OPCODE(Lua_Remastered, GetCrossSaveStatus) },
+	{ "GetFloorWalkPos", LUA_OPCODE(Lua_Remastered, GetFloorWalkPos) },
 };
 
 void Lua_Remastered::registerOpcodes() {

@@ -864,7 +864,23 @@ void GrimEngine::mainLoop() {
 				handleJoyAxis(event.joystick.axis, event.joystick.position);
 			if (type == Common::EVENT_JOYBUTTON_DOWN || type == Common::EVENT_JOYBUTTON_UP)
 				handleJoyButton(type, event.joystick.button);
+
+			if (type == Common::EVENT_LBUTTONDOWN) {
+				_cursorX = event.mouse.x;
+				_cursorY = event.mouse.y;
+				Common::KeyState k;
+				k.keycode = (Common::KeyCode)KEYCODE_MOUSE_B1;
+				handleControls(Common::EVENT_KEYDOWN, k);
+			}
+			if (type == Common::EVENT_MOUSEMOVE) {
+				_cursorX = event.mouse.x;
+				_cursorY = event.mouse.y;
+				handleMouseAxis(0, _cursorX);
+				handleMouseAxis(1, _cursorY);
+			}
 		}
+
+
 
 		if (_mode != PauseMode) {
 			// Draw the display scene before doing the luaUpdate.

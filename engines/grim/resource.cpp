@@ -121,7 +121,6 @@ ResourceLoader::ResourceLoader() {
 				warning("residualvm-grim-patch.lab not found");
 
 			//SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
-			SearchMan.listMatchingMembers(files, "images.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
 			SearchMan.listMatchingMembers(files, "data004.lab");
 			SearchMan.listMatchingMembers(files, "data003.lab");
@@ -136,6 +135,7 @@ ResourceLoader::ResourceLoader() {
 
 			if (g_grim->getGameFlags() & ADGF_REMASTERED) {
 				SearchMan.listMatchingMembers(files, "commentary.lab");
+				SearchMan.listMatchingMembers(files, "images.lab");
 			}
 			//Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());

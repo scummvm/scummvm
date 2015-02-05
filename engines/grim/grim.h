@@ -210,6 +210,7 @@ protected:
 	void handleControls(Common::EventType type, const Common::KeyState &key);
 	void handleChars(Common::EventType type, const Common::KeyState &key);
 	void handleJoyAxis(byte axis, int16 position);
+	void handleMouseAxis(byte axis, int16 position);
 	void handleJoyButton(Common::EventType type, byte button);
 	void handleExit();
 	void handlePause();
@@ -294,6 +295,10 @@ protected:
 	Common::String _saveMeta3;
 	
 	Commentary *_commentary;
+
+public:
+	int _cursorX;
+	int _cursorY;
 };
 
 extern GrimEngine *g_grim;
