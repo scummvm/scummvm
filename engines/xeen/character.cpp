@@ -61,9 +61,55 @@ int XeenItem::getAttributeCategory() const {
 
 /*------------------------------------------------------------------------*/
 
-InventoryItems::InventoryItems() {
+InventoryItems::InventoryItems(Character *character, ItemCategory category):
+		_character(character), _category(category) {
 	resize(INV_ITEMS_TOTAL);
+
+	static const char *const *NAMES[4] = { 
+		WEAPON_NAMES, ARMOR_NAMES, ACCESSORY_NAMES, MISC_NAMES 
+	};
+	_names = NAMES[category];
 }
+
+/**
+* Return whether a given item passes class-based usage restrictions
+*/
+bool InventoryItems::passRestrictions(int itemId, bool showError) const {
+	CharacterClass charClass = _character->_class;
+
+	switch (charClass) {
+	case CLASS_KNIGHT:
+	case CLASS_PALADIN:
+		return true;
+
+	case CLASS_ARCHER:
+	case CLASS_CLERIC:
+	case CLASS_SORCERER:
+	case CLASS_ROBBER:
+	case CLASS_NINJA:
+	case CLASS_BARBARIAN:
+	case CLASS_DRUID:
+	case CLASS_RANGER: {
+		if (!(ITEM_RESTRICTIONS[itemId + RESTRICTION_OFFSETS[_category]] &
+			(1 << (charClass - CLASS_ARCHER))))
+			return true;
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	Common::String name = _names[itemId];
+	if (showError) {
+		Common::String msg = Common::String::format(NOT_PROFICIENT,
+			CLASS_NAMES[charClass], name.c_str());
+		ErrorScroll::show(Party::_vm, msg, WT_FREEZE_WAIT);
+	}
+
+	return false;
+}
+
 
 void InventoryItems::discardItem(int itemIndex) {
 	operator[](itemIndex).clear();
@@ -127,7 +173,10 @@ AttributePair::AttributePair() {
 
 /*------------------------------------------------------------------------*/
 
-Character::Character(): _items(_weapons, _armor, _accessories, _misc) {
+Character::Character():
+		_weapons(this, CATEGORY_WEAPON), _armor(this, CATEGORY_ARMOR),
+		_accessories(this, CATEGORY_ACCESSORY), _misc(this, CATEGORY_MISC),
+		_items(_weapons, _armor, _accessories, _misc) {
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;

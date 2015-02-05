@@ -154,7 +154,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 					DrawStruct &ds = _itemsDrawList[idx];
 					ds._sprites = &_equipSprites;
-					if (passRestrictions(c->_class, i._id, true, CATEGORY_WEAPON))
+					if (c->_weapons.passRestrictions(i._id, true))
 						ds._frame = i._frame;
 					else
 						ds._frame = 14;
@@ -535,59 +535,6 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	}
 
 	return (mode == ITEMMODE_CHAR_INFO) ? 0 : result;
-}
-
-/**
- * Return whether a given item passes class-based usage restrictions
- */
-bool ItemsDialog::passRestrictions(CharacterClass charClass, int itemId, 
-		bool showError, ItemCategory category) const {
-	switch (charClass) {
-	case CLASS_KNIGHT:
-	case CLASS_PALADIN:
-		return true;
-
-	case CLASS_ARCHER:
-	case CLASS_CLERIC:
-	case CLASS_SORCERER:
-	case CLASS_ROBBER:
-	case CLASS_NINJA:
-	case CLASS_BARBARIAN:
-	case CLASS_DRUID:
-	case CLASS_RANGER: {
-		if (!(ITEM_RESTRICTIONS[itemId + RESTRICTION_OFFSETS[category]] &
-				(1 << (charClass - CLASS_ARCHER))))
-			return true;
-		break;
-	}
-
-	default:
-		break;
-	}
-	
-	Common::String name;
-	switch (category) {
-	case CATEGORY_WEAPON:
-		name = WEAPON_NAMES[itemId];
-		break;
-	case CATEGORY_ARMOR:
-		name = ARMOR_NAMES[itemId];
-		break;
-	case CATEGORY_ACCESSORY:
-		name = ACCESSORY_NAMES[itemId];
-		break;
-	case CATEGORY_MISC:
-		name = MISC_NAMES[itemId];
-		break;
-	}
-
-	if (showError) {
-		Common::String msg = Common::String::format(NOT_PROFICIENT, 
-			CLASS_NAMES[charClass], name.c_str());
-		ErrorScroll::show(_vm, msg, WT_FREEZE_WAIT);
-	}
-
-	return false;
 }
 
 bool ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, ItemCategory category,

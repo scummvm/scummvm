@@ -58,9 +58,6 @@ private:
 	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel, 
 		ItemCategory category);
 
-	bool passRestrictions(CharacterClass charClass, int itemId,
-		bool showError, ItemCategory category) const;
-
 	bool doItemOptions(Character &c, int actionIndex, int itemIndex, 
 		ItemCategory category, ItemsMode mode);
 public:

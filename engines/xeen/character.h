@@ -74,6 +74,7 @@ enum Condition {
 };
 
 class XeenEngine;
+class Character;
 
 class XeenItem {
 public:
@@ -94,8 +95,14 @@ public:
 };
 
 class InventoryItems : public Common::Array<XeenItem> {
+private:
+	Character *_character;
+	ItemCategory _category;
+	const char *const *_names;
 public:
-	InventoryItems();
+	InventoryItems(Character *character, ItemCategory category);
+
+	bool passRestrictions(int itemId, bool showError) const;
 
 	void discardItem(int itemIndex);
 

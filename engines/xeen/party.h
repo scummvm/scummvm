@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/serializer.h"
+#include "xeen/character.h"
 #include "xeen/combat.h"
 #include "xeen/dialogs_error.h"
 #include "xeen/items.h"
@@ -54,6 +55,7 @@ public:
 
 class Party {
 	friend class Character;
+	friend class InventoryItems;
 private:
 	static XeenEngine *_vm;
 public:
