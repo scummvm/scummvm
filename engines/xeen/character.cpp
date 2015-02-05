@@ -171,6 +171,9 @@ void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int item
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Equip a given weapon
+ */
 void WeaponItems::equipItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 
@@ -208,10 +211,10 @@ void WeaponItems::equipItem(int itemIndex) {
 				}
 			}
 
-			for (uint idx = 0; idx < size(); ++idx) {
+			for (uint idx = 0; idx < _character->_armor.size(); ++idx) {
 				XeenItem &i = _character->_armor[idx];
 				if (i._frame == 2) {
-					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_WEAPON);
+					equipError(itemIndex, CATEGORY_WEAPON, idx, CATEGORY_ARMOR);
 					return;
 				}
 			}
@@ -223,14 +226,138 @@ void WeaponItems::equipItem(int itemIndex) {
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Equip a given piece of armor
+ */
 void ArmorItems::equipItem(int itemIndex) {
-	error("TODO");
+	XeenItem &item = operator[](itemIndex);
+
+	if (item._id <= 7) {
+		if (passRestrictions(item._id, false)) {
+			for (uint idx = 0; idx < size(); ++idx) {
+				XeenItem &i = operator[](idx);
+				if (i._frame == 9) {
+					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
+					return;
+				}
+			}
+
+			item._frame = 3;
+		}
+	} else if (item._id == 8) {
+		if (passRestrictions(item._id, false)) {
+			for (uint idx = 0; idx < size(); ++idx) {
+				XeenItem &i = operator[](idx);
+				if (i._frame == 2) {
+					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
+					return;
+				}
+			}
+
+			for (uint idx = 0; idx < _character->_weapons.size(); ++idx) {
+				XeenItem &i = _character->_weapons[idx];
+				if (i._frame == 13) {
+					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_WEAPON);
+					return;
+				}
+			}
+
+			item._frame = 2;
+		}
+	} else if (item._id == 9) {
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 5) {
+				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
+				return;
+			}
+		}
+
+		item._frame = 5;
+	} else if (item._id == 10) {
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 9) {
+				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
+				return;
+			}
+		}
+
+		item._frame = 9;
+	} else if (item._id <= 12) {
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 10) {
+				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
+				return;
+			}
+		}
+
+		item._frame = 10;
+	} else {
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 6) {
+				equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
+				return;
+			}
+		}
+
+		item._frame = 6;
+	}
 }
 
 /*------------------------------------------------------------------------*/
 
+/**
+ * Equip a given accessory
+ */
 void AccessoryItems::equipItem(int itemIndex) {
-	error("TODO");
+	XeenItem &item = operator[](itemIndex);
+
+	if (item._id == 1) {
+		int count = 0;
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 8)
+				++count;
+		}
+
+		if (count <= 1)
+			item._frame = 8;
+		else
+			equipError(-1, CATEGORY_ACCESSORY, itemIndex, CATEGORY_ACCESSORY);
+	} else if (item._id == 2) {
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 12) {
+				equipError(itemIndex, CATEGORY_ACCESSORY, idx, CATEGORY_ACCESSORY);
+				return;
+			}
+		}
+	} else if (item._id <= 7) {
+		int count = 0;
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 7)
+				++count;
+		}
+
+		if (count <= 1)
+			item._frame = 7;
+		else
+			equipError(-2, CATEGORY_ACCESSORY, itemIndex, CATEGORY_ACCESSORY);
+	} else {
+		for (uint idx = 0; idx < size(); ++idx) {
+			XeenItem &i = operator[](idx);
+			if (i._frame == 11) {
+				equipError(itemIndex, CATEGORY_ACCESSORY, idx, CATEGORY_ACCESSORY);
+				return;
+			}
+		}
+
+		item._frame = 11;
+	}
 }
 /*------------------------------------------------------------------------*/
 
