@@ -865,6 +865,13 @@ void GrimEngine::mainLoop() {
 			if (type == Common::EVENT_JOYBUTTON_DOWN || type == Common::EVENT_JOYBUTTON_UP)
 				handleJoyButton(type, event.joystick.button);
 
+			if (type == Common::EVENT_LBUTTONUP) {
+				_cursorX = event.mouse.x;
+				_cursorY = event.mouse.y;
+				Common::KeyState k;
+				k.keycode = (Common::KeyCode)KEYCODE_MOUSE_B1;
+				handleControls(Common::EVENT_KEYUP, k);
+			}
 			if (type == Common::EVENT_LBUTTONDOWN) {
 				_cursorX = event.mouse.x;
 				_cursorY = event.mouse.y;
