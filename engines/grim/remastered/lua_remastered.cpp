@@ -78,8 +78,9 @@ void Lua_Remastered::GetTextObjectDimensions() {
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKTAG('T', 'E', 'X', 'T')) {
 		TextObject *textObject = gettextobject(textObj);
 		lua_pushnumber(textObject->getWidth()); // REMASTERED HACK
-		lua_pushnumber(textObject->getHeight()); // REMASTERED HACK
-		lua_pushnumber(textObject->getX());
+		lua_pushnumber(textObject->getBitmapHeight()); // REMASTERED HACK
+		// If the line is rjustified getX does us no good
+		lua_pushnumber(textObject->getLineX(0));
 		lua_pushnumber(textObject->getY());
 	}
 }
@@ -175,9 +176,16 @@ void Lua_Remastered::QueryActiveHotspots() {
 
 	warning("Stub function: QueryActiveHotspots(%d)", lua_getnumber(param));
 
+	// TODO: Handle coord scaling better
+	float scaleX = 1920.0f/1600;
+	float scaleY = 1080.0f/900;
+	Math::Vector2d pos(g_grim->_cursorX*scaleX, g_grim->_cursorY*scaleY);
 	lua_Object result = lua_createtable();
 	int count = 0;
 	foreach (Hotspot *h, Hotspot::getPool()) {
+		if (!h->_rect.containsPoint(pos)) {
+			continue;
+		}
 		lua_Object inner = lua_createtable();
 
 		lua_pushobject(inner);
