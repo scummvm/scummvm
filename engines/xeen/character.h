@@ -1,0 +1,231 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef XEEN_CHARACTER_H
+#define XEEN_CHARACTER_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/rect.h"
+#include "common/serializer.h"
+#include "xeen/combat.h"
+
+namespace Xeen {
+
+#define INV_ITEMS_TOTAL 9
+
+enum BonusFlags {
+	ITEMFLAG_BONUS_MASK = 0xBF, ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80
+};
+
+enum ItemCategory {
+	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3
+};
+
+enum Sex { MALE = 0, FEMALE = 1, YES_PLEASE = 2 };
+
+enum Race { HUMAN = 0, ELF = 1, DWARF = 2, GNOME = 3, HALF_ORC = 4 };
+
+enum CharacterClass {
+	CLASS_KNIGHT = 0, CLASS_PALADIN = 1, CLASS_ARCHER = 2, CLASS_CLERIC = 3,
+	CLASS_SORCERER = 4, CLASS_ROBBER = 5, CLASS_NINJA = 6, CLASS_BARBARIAN = 7,
+	CLASS_DRUID = 8, CLASS_RANGER = 9,
+	CLASS_12 = 12, CLASS_15 = 15, CLASS_16 = 16
+};
+
+enum Attribute {
+	MIGHT = 0, INTELLECT = 1, PERSONALITY = 2, ENDURANCE = 3, SPEED = 4,
+	ACCURACY = 5, LUCK = 6
+};
+
+enum Skill {
+	THIEVERY = 0, ARMS_MASTER = 1, ASTROLOGER = 2, BODYBUILDER = 3,
+	CARTOGRAPHER = 4, CRUSADER = 5, DIRECTION_SENSE = 6, LINGUIST = 7,
+	MERCHANT = 8, MOUNTAINEER = 9, NAVIGATOR = 10, PATHFINDER = 11,
+	PRAYER_MASTER = 12, PRESTIDIGITATION = 13, SWIMMING = 14, TRACKING = 15,
+	SPOT_DOORS = 16, DANGER_SENSE = 17
+};
+
+enum Condition {
+	CURSED = 0, HEART_BROKEN = 1, WEAK = 2, POISONED = 3,
+	DISEASED = 4, INSANE = 5, IN_LOVE = 6, DRUNK = 7, SLEEP = 8,
+	DEPRESSED = 9, CONFUSED = 10, PARALYZED = 11, UNCONSCIOUS = 12,
+	DEAD = 13, STONED = 14, ERADICATED = 15,
+	NO_CONDITION = 16
+};
+
+class XeenEngine;
+
+class XeenItem {
+public:
+	int _material;
+	uint _id;
+	int _bonusFlags;
+	int _frame;
+public:
+	XeenItem();
+
+	void clear();
+
+	void synchronize(Common::Serializer &s);
+
+	int getElementalCategory() const;
+
+	int getAttributeCategory() const;
+};
+
+class InventoryItems : public Common::Array<XeenItem> {
+public:
+	InventoryItems();
+
+	void discardItem(int itemIndex);
+
+	void equipItem(int itemIndex);
+
+	void removeItem(int itemIndex);
+
+	void sort();
+};
+
+class InventoryItemsGroup {
+private:
+	InventoryItems *_itemSets[4];
+public:
+	InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
+		InventoryItems &accessories, InventoryItems &misc);
+
+	InventoryItems &operator[](ItemCategory category);
+};
+
+
+class AttributePair {
+public:
+	uint _permanent;
+	uint _temporary;
+public:
+	AttributePair();
+	void synchronize(Common::Serializer &s);
+};
+
+class Character {
+private:
+	int conditionMod(Attribute attrib) const;
+public:
+	Common::String _name;
+	Sex _sex;
+	Race _race;
+	int _xeenSide;
+	CharacterClass _class;
+	AttributePair _might;
+	AttributePair _intellect;
+	AttributePair _personality;
+	AttributePair _endurance;
+	AttributePair _speed;
+	AttributePair _accuracy;
+	AttributePair _luck;
+	int _ACTemp;
+	AttributePair _level;
+	uint _birthDay;
+	int _tempAge;
+	int _skills[18];
+	bool _awards[128];
+	int _spells[39];
+	int _lloydMap;
+	Common::Point _lloydPosition;
+	bool _hasSpells;
+	int _currentSpell;
+	int _quickOption;
+	InventoryItemsGroup _items;
+	InventoryItems _weapons;
+	InventoryItems _armor;
+	InventoryItems _accessories;
+	InventoryItems _misc;
+	int _lloydSide;
+	AttributePair _fireResistence;
+	AttributePair _coldResistence;
+	AttributePair _electricityResistence;
+	AttributePair _poisonResistence;
+	AttributePair _energyResistence;
+	AttributePair _magicResistence;
+	int _conditions[16];
+	int _townUnknown;
+	int _savedMazeId;
+	int _currentHp;
+	int _currentSp;
+	uint _birthYear;
+	uint32 _experience;
+	int _currentAdventuringSpell;
+	int _currentCombatSpell;
+public:
+	Character();
+	void synchronize(Common::Serializer &s);
+
+	Condition worstCondition() const;
+
+	int getAge(bool ignoreTemp = false) const;
+
+	int getMaxHP() const;
+
+	int getMaxSP() const;
+
+	uint getStat(Attribute attrib, bool baseOnly = false) const;
+
+	static int statColor(int amount, int threshold);
+
+	int statBonus(uint statValue) const;
+
+	bool charSavingThrow(DamageType attackType) const;
+
+	bool noActions();
+
+	void setAward(int awardId, bool value);
+
+	bool hasAward(int awardId) const;
+
+	int getArmorClass(bool baseOnly = false) const;
+
+	int getThievery() const;
+
+	uint getCurrentLevel() const;
+
+	int itemScan(int itemId) const;
+
+	void setValue(int id, uint value);
+
+	bool guildMember() const;
+
+	uint experienceToNextLevel() const;
+
+	uint nextExperienceLevel() const;
+
+	uint getCurrentExperience() const;
+
+	int getNumSkills() const;
+
+	int getNumAwards() const;
+
+	Common::String assembleItemName(int itemIndex, int displayNum, ItemCategory category);
+};
+
+} // End of namespace Xeen
+
+#endif /* XEEN_CHARACTER_H */
