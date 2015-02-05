@@ -273,8 +273,6 @@ public:
 
 	void copyBF2Vid();
 
-	void doLoadSave();
-
 	void freeChar();
 
 	/**

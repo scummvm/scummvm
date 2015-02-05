@@ -440,10 +440,6 @@ void AccessEngine::playVideo(int videoNum, const Common::Point &pt) {
 	}
 }
 
-void AccessEngine::doLoadSave() {
-	error("TODO: doLoadSave");
-}
-
 void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
