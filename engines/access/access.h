@@ -310,6 +310,9 @@ public:
 	 * Write out a savegame header
 	 */
 	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
+
+	void SPRINTCHR(char c, int fontNum);
+	void PRINTCHR(Common::String msg, int fontNum);
 };
 
 } // End of namespace Access

@@ -592,6 +592,36 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	out->writeUint32LE(_events->getFrameCounter());
 }
 
+void AccessEngine::SPRINTCHR(char c, int fontNum) {
+	warning("TODO: SPRINTCHR");
+	_fonts._font1.drawChar(_screen, c, _screen->_printOrg);
+}
+
+void AccessEngine::PRINTCHR(Common::String msg, int fontNum) {
+	_events->hideCursor();
+	warning("TODO: PRINTCHR - Handle fontNum");
+
+	for (int i = 0; msg[i]; i++) {
+		if (!(_fonts._charSet._hi & 8)) {
+			_fonts._font1.drawChar(_screen, msg[i], _screen->_printOrg);
+			continue;
+		} else if (_fonts._charSet._hi & 2) {
+			Common::Point oldPos = _screen->_printOrg;
+			int oldFontLo = _fonts._charFor._lo;
+
+			_fonts._charFor._lo = 0;
+			_screen->_printOrg.x++;
+			_screen->_printOrg.y++;
+			SPRINTCHR(msg[i], fontNum);
+
+			_screen->_printOrg = oldPos;
+			_fonts._charFor._lo = oldFontLo;
+		}
+		SPRINTCHR(msg[i], fontNum);
+	}
+	_events->showCursor();
+}
+
 bool AccessEngine::shouldQuitOrRestart() {
 	return shouldQuit() || _restartFl;
 }
