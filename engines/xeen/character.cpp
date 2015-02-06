@@ -122,9 +122,19 @@ Common::String InventoryItems::getName(int itemIndex) {
 /**
  * Discard an item from the inventory
  */
-void InventoryItems::discardItem(int itemIndex) {
-	operator[](itemIndex).clear();
-	sort();
+bool InventoryItems::discardItem(int itemIndex) {
+	XeenItem &item = operator[](itemIndex);
+	XeenEngine *vm = Party::_vm;
+
+	if (item._bonusFlags & ITEMFLAG_CURSED) {
+		ErrorScroll::show(vm, CANNOT_DISCARD_CURSED_ITEM);
+		return false;
+	} else {
+		Common::String itemDesc = getFullDescription(itemIndex, 4);
+
+		error("TODO: discardItem - %s", itemDesc.c_str());
+	}
+	error("TODO");
 }
 
 /**
@@ -149,8 +159,21 @@ void InventoryItems::sort() {
 	}
 }
 
+/**
+ * Un-equips the given item
+ */
 void InventoryItems::removeItem(int itemIndex) {
-	error("TODO");
+	XeenItem &item = operator[](itemIndex);
+	XeenEngine *vm = Party::_vm;
+
+	if (item._bonusFlags & ITEMFLAG_CURSED)
+		ErrorScroll::show(vm, CANNOT_REMOVE_CURSED_ITEM);
+	else
+		item._frame = 0;
+}
+
+XeenEngine *InventoryItems::vm() {
+	return Party::_vm;
 }
 
 void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
@@ -222,6 +245,25 @@ void WeaponItems::equipItem(int itemIndex) {
 			item._frame = 13;
 		}
 	}
+}
+
+/**
+ * Assembles a full lines description for a specified item for use in
+ * the Items dialog
+ */
+Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
+	XeenItem &i = operator[](itemIndex);
+	Spells &spells = *vm()->_spells;
+
+	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
+		!i._bonusFlags ? spells._maeNames[i._material] : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		WEAPON_NAMES[i._id],
+		!i._bonusFlags ? "" : BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
+		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
+			!i._bonusFlags ? "\b " : ""
+	);
 }
 
 /*------------------------------------------------------------------------*/
@@ -307,6 +349,24 @@ void ArmorItems::equipItem(int itemIndex) {
 	}
 }
 
+/**
+ * Assembles a full lines description for a specified item for use in
+ * the Items dialog
+ */
+Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
+	XeenItem &i = operator[](itemIndex);
+	Spells &spells = *vm()->_spells;
+
+	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+		!i._bonusFlags ? "" : spells._maeNames[i._material],
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		ARMOR_NAMES[i._id],
+		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
+			!i._bonusFlags ? "\b " : ""
+	);
+}
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -359,6 +419,46 @@ void AccessoryItems::equipItem(int itemIndex) {
 		item._frame = 11;
 	}
 }
+
+/**
+ * Assembles a full lines description for a specified item for use in
+ * the Items dialog
+ */
+Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum) {
+	Spells &spells = *vm()->_spells;
+	XeenItem &i = operator[](itemIndex);
+
+	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+		!i._bonusFlags ? "" : spells._maeNames[i._material],
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		ARMOR_NAMES[i._id],
+		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
+			!i._bonusFlags ? "\b " : ""
+	);
+}
+
+/*------------------------------------------------------------------------*/
+
+/**
+ * Assembles a full lines description for a specified item for use in
+ * the Items dialog
+ */
+Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
+	XeenItem &i = operator[](itemIndex);
+	Spells &spells = *vm()->_spells;
+
+	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+		!i._bonusFlags ? "" : spells._maeNames[i._material],
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		ARMOR_NAMES[i._id],
+		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
+			!i._id ? "\b " : ""
+	);
+}
+
+
 /*------------------------------------------------------------------------*/
 
 InventoryItemsGroup::InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
@@ -1201,72 +1301,6 @@ int Character::getNumAwards() const {
 	}
 
 	return total;
-}
-
-/**
- * Assembles a full lines description for a specified item for use in
- * the Items dialog
- */
-Common::String Character::assembleItemName(int itemIndex, int displayNum, 
-		ItemCategory category) {
-	Spells &spells = *Party::_vm->_spells;
-
-	switch (category) {
-	case CATEGORY_WEAPON: {
-		// Weapons
-		XeenItem &i = _weapons[itemIndex];
-		return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
-			!i._bonusFlags ? spells._maeNames[i._material] : "",
-			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
-			WEAPON_NAMES[i._id],
-			!i._bonusFlags ? "" : BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
-			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
-				!i._bonusFlags ? "\b " : ""
-		);
-	}
-
-	case CATEGORY_ARMOR: {
-		// Armor
-		XeenItem &i = _armor[itemIndex];
-		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-			!i._bonusFlags ? "" : spells._maeNames[i._material],
-			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
-			ARMOR_NAMES[i._id],
-			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-				!i._bonusFlags ? "\b " : ""
-		);
-	}
-		
-	case CATEGORY_ACCESSORY: {
-		// Accessories
-		XeenItem &i = _accessories[itemIndex];
-		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-			!i._bonusFlags ? "" : spells._maeNames[i._material],
-			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
-			ARMOR_NAMES[i._id],
-			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-				!i._bonusFlags ? "\b " : ""
-		);
-	}
-
-	case CATEGORY_MISC: {
-		// Misc
-		XeenItem &i = _misc[itemIndex];
-		return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-			!i._bonusFlags ? "" : spells._maeNames[i._material],
-			(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-			(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
-			ARMOR_NAMES[i._id],
-			(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
-				!i._id ? "\b " : ""
-		);
-	}
-	default:
-		return "";
-	}
 }
 
 } // End of namespace Xeen

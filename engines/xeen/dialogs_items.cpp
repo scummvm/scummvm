@@ -141,11 +141,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							|| mode == ITEMMODE_6 || mode == ITEMMODE_4) {
 						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
 							arr[idx], idx + 1,
-							c->assembleItemName(idx, arr[idx], category)));
+							c->_items[category].getFullDescription(idx, arr[idx])));
 					} else {
 						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
 							arr[idx], idx + 1,
-							c->assembleItemName(idx, arr[idx], category),
+							c->_items[category].getFullDescription(idx, arr[idx]),
 							calcItemCost(c, idx, mode,
 								mode == ITEMMODE_TO_GOLD ? 1 : startingChar->_skills[MERCHANT],
 								category)
@@ -186,7 +186,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 					lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
 						arr[idx], idx + 1,
-						c->assembleItemName(idx, arr[idx], category),
+						c->_items[category].getFullDescription(idx, arr[idx]),
 						calcItemCost(c, idx, tempMode, skill, category)
 					));
 				}
@@ -631,8 +631,8 @@ bool ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, It
 							ErrorScroll::show(_vm, USE_ITEM_IN_COMBAT);
 						} else if (i._id && (i._bonusFlags & ITEMFLAG_BONUS_MASK)
 								&& !(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
-							int bonus = (i._bonusFlags & ITEMFLAG_BONUS_MASK) - 1;
-							i._bonusFlags = bonus;
+							int charges = (i._bonusFlags & ITEMFLAG_BONUS_MASK) - 1;
+							i._bonusFlags = charges;
 							_oldCharacter = &c;
 
 							screen._windows[30].close();
@@ -640,16 +640,19 @@ bool ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, It
 							screen._windows[24].close();
 							spells.doSpell(i._id);
 
-							if (!bonus) {
-								c._items[category].discardItem(itemIndex);
+							if (!charges) {
+								// Ran out of charges, so make item disappear
+								c._items[category][itemIndex].clear();
+								c._items[category].sort();
 							}
 						} else {
 							ErrorScroll::show(_vm, Common::String::format(NO_SPECIAL_ABILITIES,
-								c.assembleItemName(itemIndex, 15, category).c_str()
+								c._items[category].getFullDescription(itemIndex, 15).c_str()
 							));
 						}
 					}
 				}
+				break;
 			case 3:
 				// TODO: Remaining switches
 			default:

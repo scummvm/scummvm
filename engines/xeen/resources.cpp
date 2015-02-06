@@ -1130,4 +1130,8 @@ const char *const REMOVE_X_TO_EQUIP_Y = "\x3""c\v007You must remove %sto equip %
 const char *const RING = "ring";
 const char *const MEDAL = "medal";
 
+const char *const CANNOT_REMOVE_CURSED_ITEM = "\x3""You cannot remove a cursed item!";
+
+const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x""cYou cannot discard a cursed item!";
+
 } // End of namespace Xeen

@@ -100,6 +100,7 @@ protected:
 	ItemCategory _category;
 	const char *const *_names;
 
+	XeenEngine *vm();
 	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
 		ItemCategory category2);
 public:
@@ -109,7 +110,9 @@ public:
 
 	Common::String getName(int itemIndex);
 
-	void discardItem(int itemIndex);
+	virtual Common::String getFullDescription(int itemIndex, int displayNum) = 0;
+
+	bool discardItem(int itemIndex);
 
 	virtual void equipItem(int itemIndex) {}
 
@@ -121,24 +124,35 @@ public:
 class WeaponItems: public InventoryItems {
 public:
 	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
+
 	virtual void equipItem(int itemIndex);
+
+	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };
 
 class ArmorItems : public InventoryItems {
 public:
 	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
+
 	virtual void equipItem(int itemIndex);
+
+	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };
 
 class AccessoryItems : public InventoryItems {
 public:
 	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
+
 	virtual void equipItem(int itemIndex);
+
+	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };
 
 class MiscItems : public InventoryItems {
 public:
 	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
+
+	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };
 
 class InventoryItemsGroup {
@@ -257,8 +271,6 @@ public:
 	int getNumSkills() const;
 
 	int getNumAwards() const;
-
-	Common::String assembleItemName(int itemIndex, int displayNum, ItemCategory category);
 };
 
 } // End of namespace Xeen

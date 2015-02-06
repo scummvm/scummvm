@@ -403,6 +403,10 @@ extern const char *const REMOVE_X_TO_EQUIP_Y;
 extern const char *const RING;
 extern const char *const MEDAL;
 
+extern const char *const CANNOT_REMOVE_CURSED_ITEM;
+
+extern const char *const CANNOT_DISCARD_CURSED_ITEM;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */
