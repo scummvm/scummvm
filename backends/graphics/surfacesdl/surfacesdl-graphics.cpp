@@ -590,6 +590,7 @@ void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
 	glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_SCISSOR_TEST);
 
