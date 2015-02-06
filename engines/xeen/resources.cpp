@@ -1144,4 +1144,6 @@ const char *const CANNOT_REMOVE_CURSED_ITEM = "\x3""You cannot remove a cursed i
 
 const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x""cYou cannot discard a cursed item!";
 
+const char *const PERMANENTLY_DISCARD = "\v000\t000\x03lPermanently discard %s\fd?";
+
 } // End of namespace Xeen

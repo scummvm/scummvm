@@ -418,6 +418,8 @@ extern const char *const CANNOT_REMOVE_CURSED_ITEM;
 
 extern const char *const CANNOT_DISCARD_CURSED_ITEM;
 
+extern const char *const PERMANENTLY_DISCARD;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

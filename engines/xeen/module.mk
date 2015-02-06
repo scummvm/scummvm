@@ -12,17 +12,16 @@ MODULE_OBJS := \
 	automap.o \
 	dialogs_automap.o \
 	dialogs_char_info.o \
-	dialogs_confirm.o \
 	dialogs_error.o \
 	dialogs_exchange.o \
 	dialogs_options.o \
 	dialogs_info.o \
 	dialogs_input.o \
 	dialogs_items.o \
+	dialogs_query.o \
 	dialogs_quick_ref.o \
 	dialogs_spells.o \
 	dialogs_whowill.o \
-	dialogs_yesno.o \
 	events.o \
 	files.o \
 	font.o \

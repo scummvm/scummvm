@@ -20,10 +20,73 @@
  *
  */
 
-#include "xeen/dialogs_yesno.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
+
+bool Confirm::show(XeenEngine *vm, const Common::String &msg, int mode) {
+	Confirm *dlg = new Confirm(vm);
+	bool result = dlg->execute(msg, mode);
+	delete dlg;
+
+	return result;
+}
+
+bool Confirm::execute(const Common::String &msg, int mode) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	SpriteResource confirmSprites;
+	bool result = false;
+
+	confirmSprites.load("confirm.icn");
+	addButton(Common::Rect(129, 112, 153, 122), Common::KEYCODE_y, &confirmSprites);
+	addButton(Common::Rect(185, 112, 209, 122), Common::KEYCODE_n, &confirmSprites);
+
+	Window &w = screen._windows[mode ? 22 : 21];
+	w.open();
+
+	if (!mode) {
+		confirmSprites.draw(w, 0, Common::Point(129, 112));
+		confirmSprites.draw(w, 2, Common::Point(185, 112));
+		_buttons[0]._bounds.moveTo(129, 112);
+		_buttons[1]._bounds.moveTo(185, 112);
+	} else {
+		if (mode & 0x80) {
+			clearButtons();
+		} else {
+			confirmSprites.draw(w, 0, Common::Point(120, 133));
+			confirmSprites.draw(w, 2, Common::Point(176, 133));
+			_buttons[0]._bounds.moveTo(120, 133);
+			_buttons[1]._bounds.moveTo(176, 133);
+		}
+	}
+
+	w.writeString(msg);
+	w.update();
+
+	events.clearEvents();
+	while (!_vm->shouldQuit()) {
+		while (!_vm->shouldQuit() && !_buttonValue) {
+			events.pollEvents();
+			checkEvents(_vm);
+		}
+
+		if ((mode & 0x80) || _buttonValue == Common::KEYCODE_ESCAPE
+				|| _buttonValue == Common::KEYCODE_n)
+			break;
+
+		if (_buttonValue == Common::KEYCODE_y) {
+			result = true;
+			break;
+		}
+	}
+
+	w.close();
+	return result;
+}
+
+/*------------------------------------------------------------------------*/
 
 bool YesNo::show(XeenEngine *vm, bool type, bool townFlag) {
 	YesNo *dlg = new YesNo(vm);

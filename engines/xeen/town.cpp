@@ -23,7 +23,7 @@
 #include "xeen/town.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/dialogs_items.h"
-#include "xeen/dialogs_yesno.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/dialogs_spells.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"

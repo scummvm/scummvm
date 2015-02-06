@@ -21,7 +21,7 @@
  */
 
 #include "xeen/dialogs_spells.h"
-#include "xeen/dialogs_confirm.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/resources.h"
 #include "xeen/spells.h"
 #include "xeen/sprites.h"
@@ -216,7 +216,7 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 						Common::String::format(SPELLS_PRESS_A_KEY, msg.c_str()) :
 						Common::String::format(SPELLS_PURCHASE, msg.c_str(), spellCost);
 
-					if (ConfirmDialog::show(_vm, msg, v2Copy + 1)) {
+					if (Confirm::show(_vm, msg, v2Copy + 1)) {
 						if (party.subtract(0, spellCost, 0, WT_FREEZE_WAIT)) {
 							++c->_spells[spellIndex];
 							sound.playSample(nullptr, 0);

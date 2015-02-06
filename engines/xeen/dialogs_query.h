@@ -20,24 +20,35 @@
  *
  */
 
-#ifndef XEEN_DIALOGS_CONFIRM_H
-#define XEEN_DIALOGS_CONFIRM_H
+#ifndef XEEN_DIALOGS_QUERY_H
+#define XEEN_DIALOGS_QUERY_H
 
 #include "xeen/dialogs.h"
 
 namespace Xeen {
 
-class ConfirmDialog : public ButtonContainer {
+class Confirm : public ButtonContainer {
 private:
 	XeenEngine *_vm;
 
-	ConfirmDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	Confirm(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	bool execute(const Common::String &msg, int v2);
+	bool execute(const Common::String &msg, int mode);
 public:
-	static bool show(XeenEngine *vm, const Common::String &msg, int v2);
+	static bool show(XeenEngine *vm, const Common::String &msg, int mode = 0);
+};
+
+class YesNo : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+
+	YesNo(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	bool execute(bool type, bool townFlag);
+public:
+	static bool show(XeenEngine *vm, bool type, bool townFlag = false);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_DIALOGS_CONFIRM_H */
+#endif /* XEEN_DIALOGS_QUERY_H */

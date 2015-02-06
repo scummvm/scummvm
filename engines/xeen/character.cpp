@@ -21,6 +21,7 @@
  */
 
 #include "xeen/character.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/dialogs_error.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -128,13 +129,19 @@ bool InventoryItems::discardItem(int itemIndex) {
 
 	if (item._bonusFlags & ITEMFLAG_CURSED) {
 		ErrorScroll::show(vm, CANNOT_DISCARD_CURSED_ITEM);
-		return false;
 	} else {
 		Common::String itemDesc = getFullDescription(itemIndex, 4);
+		Common::String msg = Common::String::format(PERMANENTLY_DISCARD, itemDesc.c_str());
 
-		error("TODO: discardItem - %s", itemDesc.c_str());
+		if (Confirm::show(vm, msg)) {
+			operator[](itemIndex).clear();
+			sort();
+
+			return true;
+		}		
 	}
-	error("TODO");
+
+	return true;
 }
 
 /**

@@ -23,7 +23,7 @@
 #include "xeen/scripts.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/dialogs_whowill.h"
-#include "xeen/dialogs_yesno.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
