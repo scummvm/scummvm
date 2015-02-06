@@ -23,6 +23,9 @@
 #ifndef BLADERUNNER_SET_H
 #define BLADERUNNER_SET_H
 
+#include "bladerunner/boundingbox.h"
+
+#include "common/scummsys.h"
 #include "common/str.h"
 
 namespace BladeRunner {
@@ -31,13 +34,36 @@ class BladeRunnerEngine;
 
 class VQADecoder;
 
+struct Object {
+	char        _name[20];
+	BoundingBox _bbox;
+	uint8       _isObstacle;
+	uint8       _isClickable;
+	uint8       _isHotMouse;
+	uint8       _isCombatTarget;
+};
+
+struct Walkbox {
+	char    _name[20];
+	float   _altitude;
+	uint32  _vertexCount;
+	Vector3 _vertices[8];
+};
+
 class Set {
 	BladeRunnerEngine *_vm;
 
+	uint32   _objectCount;
+	uint32   _walkboxCount;
+	Object  *_objects;
+	Walkbox *_walkboxes;
+	int      _walkboxStepSound[85];
+	int      _footstepSoundOverride;
+	float    _unknown[10];
+
 public:
-	Set(BladeRunnerEngine *vm)
-	{
-	}
+	Set(BladeRunnerEngine *vm);
+	~Set();
 
 	bool open(const Common::String &name);
 };

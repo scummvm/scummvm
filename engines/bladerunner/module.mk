@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	aud_decoder.o \
 	audio_player.o \
 	bladerunner.o \
+	boundingbox.o \
 	chapters.o \
 	decompress_lcw.o \
 	decompress_lzo.o \

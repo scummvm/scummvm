@@ -70,8 +70,8 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		_vm->_script->InitializeScene();
 
 	Common::String setResourceName = Common::String::format("%s-MIN.SET", sceneName.c_str());
-	// if (!_set->open(setResourceName))
-	// 	return false;
+	if (!_set->open(setResourceName))
+		return false;
 
 	// TODO: Set view
 	if (isLoadingGame) {

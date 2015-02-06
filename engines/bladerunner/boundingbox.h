@@ -20,53 +20,19 @@
  *
  */
 
-#ifndef BLADERUNNER_SCENE_H
-#define BLADERUNNER_SCENE_H
+#ifndef BLADERUNNER_BOUNDING_BOX_H
+#define BLADERUNNER_BOUNDING_BOX_H
 
-#include "bladerunner/bladerunner.h"
-
-#include "bladerunner/set.h"
-#include "bladerunner/view.h"
-#include "bladerunner/vqa_player.h"
+#include "vector.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
-
-class Scene {
-	BladeRunnerEngine *_vm;
+class BoundingBox {
+	Vector3 _vertices[2];
 
 public:
-	Set        *_set;
-	int         _setId;
-	int         _sceneId;
-	VQAPlayer   _vqaPlayer;
-	int         _defaultLoop;
-	int         _nextSetId;
-	int         _nextSceneId;
-	int         _frame;
-	Vector3     _actorStartPosition;
-	int         _actorStartFacing;
-	bool        _playerWalkedIn;
-	View        _view;
-
-public:
-	Scene(BladeRunnerEngine *vm)
-		: _vm(vm),
-		  _set(new Set(vm)),
-		  _setId(-1),
-		  _sceneId(-1),
-		  _vqaPlayer(vm),
-		  _defaultLoop(0),
-		  _nextSetId(-1),
-		  _nextSceneId(-1),
-		  _playerWalkedIn(false)
-	{
-	}
-
-	bool open(int setId, int sceneId, bool isLoadingGame);
-	int  advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer);
-	void setActorStart(Vector3 position, int facing);
+	BoundingBox() {}
+	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
 };
 
 } // End of namespace BladeRunner
