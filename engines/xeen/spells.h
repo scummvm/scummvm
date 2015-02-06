@@ -121,7 +121,6 @@ private:
 	void divineIntervention();
 public:
 	Common::StringArray _spellNames;
-	Common::StringArray _maeNames;
 	int _lastCaster;
 public:
 	Spells(XeenEngine *vm);

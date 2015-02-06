@@ -38,11 +38,6 @@ void Spells::load() {
 	while (f1.pos() < f1.size())
 		_spellNames.push_back(f1.readString());
 	f1.close();
-
-	File f2("mae.xen");
-	while (f2.pos() < f2.size())
-		_maeNames.push_back(f2.readString());
-	f2.close();
 }
 
 int Spells::calcSpellCost(int spellId, int expenseFactor) const {

@@ -253,10 +253,10 @@ void WeaponItems::equipItem(int itemIndex) {
  */
 Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Spells &spells = *vm()->_spells;
+	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
-		!i._bonusFlags ? spells._maeNames[i._material] : "",
+		!i._bonusFlags ? res._maeNames[i._material] : "",
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		WEAPON_NAMES[i._id],
@@ -355,10 +355,10 @@ void ArmorItems::equipItem(int itemIndex) {
  */
 Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Spells &spells = *vm()->_spells;
+	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : spells._maeNames[i._material],
+		!i._bonusFlags ? "" : res._maeNames[i._material],
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		ARMOR_NAMES[i._id],
@@ -425,11 +425,11 @@ void AccessoryItems::equipItem(int itemIndex) {
  * the Items dialog
  */
 Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum) {
-	Spells &spells = *vm()->_spells;
 	XeenItem &i = operator[](itemIndex);
+	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : spells._maeNames[i._material],
+		!i._bonusFlags ? "" : res._maeNames[i._material],
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		ARMOR_NAMES[i._id],
@@ -446,10 +446,10 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
  */
 Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Spells &spells = *vm()->_spells;
+	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : spells._maeNames[i._material],
+		!i._bonusFlags ? "" : res._maeNames[i._material],
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		ARMOR_NAMES[i._id],
@@ -457,7 +457,6 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 			!i._id ? "\b " : ""
 	);
 }
-
 
 /*------------------------------------------------------------------------*/
 

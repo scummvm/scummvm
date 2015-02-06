@@ -22,8 +22,18 @@
 
 #include "common/scummsys.h"
 #include "xeen/resources.h"
+#include "xeen/files.h"
 
 namespace Xeen {
+
+Resources::Resources() {
+	File f("mae.xen");
+	while (f.pos() < f.size())
+		_maeNames.push_back(f.readString());
+	f.close();
+}
+
+/*------------------------------------------------------------------------*/
 
 const char *const CREDITS =
 	"\013""012\010""000\003""c\014""35Designed and Directed By:\n"

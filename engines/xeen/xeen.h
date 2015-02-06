@@ -39,6 +39,7 @@
 #include "xeen/interface.h"
 #include "xeen/map.h"
 #include "xeen/party.h"
+#include "xeen/resources.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
 #include "xeen/scripts.h"
@@ -139,6 +140,7 @@ public:
 	Interface *_interface;
 	Map *_map;
 	Party *_party;
+	Resources *_resources;
 	SavesManager *_saves;
 	Screen *_screen;
 	Scripts *_scripts;

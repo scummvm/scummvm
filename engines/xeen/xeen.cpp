@@ -43,6 +43,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_interface = nullptr;
 	_map = nullptr;
 	_party = nullptr;
+	_resources = nullptr;
 	_saves = nullptr;
 	_screen = nullptr;
 	_scripts = nullptr;
@@ -72,6 +73,7 @@ XeenEngine::~XeenEngine() {
 	delete _spells;
 	delete _town;
 	delete _eventData;
+	delete _resources;
 	delete _files;
 }
 
@@ -84,6 +86,7 @@ void XeenEngine::initialize() {
 
 	// Create sub-objects of the engine
 	_files = new FileManager(this);
+	_resources = new Resources();
 	_combat = new Combat(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);

@@ -24,9 +24,20 @@
 #define XEEN_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "common/str-array.h"
 #include "gui/debugger.h"
 
 namespace Xeen {
+
+class Resources {
+public:
+	// Magic and equipment names
+	Common::StringArray _maeNames;
+public:
+	Resources();
+};
+
+#define Res (*_vm->_resources)
 
 extern const char *const CREDITS;
 
