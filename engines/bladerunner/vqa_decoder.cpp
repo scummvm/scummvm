@@ -650,7 +650,6 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-#if 1
 static
 int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 {
@@ -694,13 +693,9 @@ int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 	}
 	return dstSize - dstRemain;
 }
-#endif
 
 bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size)
 {
-	// s->skip(roundup(size));
-	// return true;
-#if 1
 	if (size > _maxZBUFChunkSize) {
 		debug("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
 		s->skip(roundup(size));
@@ -725,12 +720,10 @@ bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 s
 	_zbufChunkComplete = complete;
 	_zbufChunkSize = remain;
 	s->read(_zbufChunk, roundup(remain));
-#endif
 
 	return true;
 }
 
-#if 1
 const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 {
 	if (_maxZBUFChunkSize == 0)
@@ -738,11 +731,6 @@ const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 
 	if (!_zbuffer)
 		_zbuffer = new uint16[_width * _height];
-	// {
-		// if (!complete) {
-		// 	return false;
-		// }
-	// }
 
 	if (_zbufChunkComplete) {
 		size_t zbufOutSize;
@@ -751,13 +739,8 @@ const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 		decodeZBUF_partial(_zbufChunk, _zbuffer, _zbufChunkSize);
 	}
 
-	// if (!_zbuf)
-	// 	return false;
-
-	// memcpy(zbuf, _zbuffer, 2 * _width * _height);
 	return _zbuffer;
 }
-#endif
 
 bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size)
 {
