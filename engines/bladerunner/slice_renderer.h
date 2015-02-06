@@ -76,7 +76,7 @@ class SliceRenderer {
 	int _c6;
 
 	Matrix3x2 calculateFacingRotationMatrix();
-	void drawSlice(int slice, uint16 *frameLinePtr);
+	void drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr);
 
 public:
 	SliceRenderer(BladeRunnerEngine *vm)
@@ -88,7 +88,7 @@ public:
 	void setupFrame(int animation, int frame, Vector3 position, float facing, float scale = 1.0f);
 	void calculateBoundingRect();
 
-	void drawFrame(Graphics::Surface &surface);
+	void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
 };
 
 } // End of namespace BladeRunner

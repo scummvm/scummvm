@@ -20,47 +20,27 @@
  *
  */
 
-#ifndef BLADERUNNER_ARCHIVE_H
-#define BLADERUNNER_ARCHIVE_H
+#ifndef BLADERUNNER_GAMEFLAGS_H
+#define BLADERUNNER_GAMEFLAGS_H
 
-#include "common/array.h"
-#include "common/file.h"
-#include "common/substream.h"
+#include <common/scummsys.h>
 
 namespace BladeRunner {
 
-class MIXArchive {
+class GameFlags {
+	uint32 *flags;
+	int     flagCount;
+
 public:
-	MIXArchive();
-	~MIXArchive();
+	GameFlags();
+	~GameFlags();
 
-	bool open(const Common::String &filename);
-	void close();
-	bool isOpen() const;
+	void setFlagCount(int count);
 
-	Common::String getName() { return _fd.getName(); }
-
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name);
-
-private:
-	Common::File _fd;
-	bool _isTLK;
-
-	uint16 _entry_count;
-	uint32 _size;
-
-	struct ArchiveEntry {
-		int32  id;
-		uint32 offset;
-		uint32 length;
-	};
-
-	Common::Array<ArchiveEntry> _entries;
-
-	uint32 indexForId(int32 id) const;
+	void set(int flag);
+	void reset(int flag);
+	bool query(int flag);
 };
-
-int32 mix_id(const Common::String &name);
 
 } // End of namespace BladeRunner
 

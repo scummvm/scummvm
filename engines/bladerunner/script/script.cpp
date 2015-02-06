@@ -24,6 +24,13 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/ambient_sounds.h"
+#include "bladerunner/audio_player.h"
+#include "bladerunner/gameinfo.h"
+#include "bladerunner/gameflags.h"
+#include "bladerunner/scene.h"
+#include "bladerunner/vector.h"
+
 namespace BladeRunner {
 
 bool Script::open(const Common::String &name) {
@@ -55,5 +62,87 @@ void Script::SceneFrameAdvanced(int frame) {
 	_currentScript->SceneFrameAdvanced(frame);
 	_inScriptCounter--;
 }
+
+void ScriptBase::Game_Flag_Set(int flag) {
+	_vm->_gameFlags->set(flag);
+}
+
+void ScriptBase::Game_Flag_Reset(int flag) {
+	_vm->_gameFlags->reset(flag);
+}
+
+bool ScriptBase::Game_Flag_Query(int flag) {
+	return _vm->_gameFlags->query(flag);
+}
+
+int ScriptBase::Global_Variable_Set(int var, int value) {
+	return _vm->_gameVars[var] = value;
+}
+
+int ScriptBase::Global_Variable_Reset(int var) {
+	return _vm->_gameVars[var] = 0;
+}
+
+int ScriptBase::Global_Variable_Query(int var) {
+	return _vm->_gameVars[var];
+}
+
+int ScriptBase::Global_Variable_Increment(int var, int inc) {
+	return _vm->_gameVars[var] += inc;
+}
+
+int ScriptBase::Global_Variable_Decrement(int var, int dec) {
+	return _vm->_gameVars[var] -= dec;
+}
+
+void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int priority) {
+	const char *name = _vm->_gameInfo->getSfxTrack(id);
+	_vm->_audioPlayer->playAud(name, volume, panFrom, panTo, priority);
+}
+
+void ScriptBase::Scene_Loop_Set_Default(int a) {
+	debug("Scene_Loop_Set_Default(%d)", a);
+}
+
+void ScriptBase::Scene_Loop_Start_Special(int a, int b, int c) {
+	debug("Scene_Loop_Start_Special(%d, %d, %d)", a, b, c);
+}
+
+void ScriptBase::Outtake_Play(int id, int noLocalization, int container) {
+	_vm->outtakePlay(id, noLocalization, container);
+}
+
+void ScriptBase::Ambient_Sounds_Add_Sound(int id, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk) {
+	_vm->_ambientSounds->addSound(id, time1, time2, volume1, volume2, pan1begin, pan1end, pan2begin, pan2end, priority, unk);
+}
+
+void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(int time) {
+	// _vm->_ambientSounds->removeAllNonLoopingSounds(time);
+}
+
+void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int id, int volume, int pan, int fadeInTime) {
+	_vm->_ambientSounds->addLoopingSound(id, volume, pan, fadeInTime);
+}
+
+void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(int time) {
+	// _vm->_ambientSounds->removeAllLoopingSounds(time);
+}
+
+void ScriptBase::Setup_Scene_Information(float actorX, float actorY, float actorZ, int actorFacing) {
+	_vm->_scene->setActorStart(Vector3(actorX, actorY, actorZ), actorFacing);
+}
+
+void ScriptBase::Scene_Exit_Add_2D_Exit(int a, int b, int c, int d, int e, int f) {
+	debug("Scene_Exit_Add_2D_Exit(%d, %d, %d, %d, %d, %d)", a, b, c, d, e, f);
+}
+
+void ScriptBase::Scene_2D_Region_Add(int a, int b, int c, int d, int e) {
+	debug("Scene_2D_Region_Add(%d, %d, %d, %d, %d)", a, b, c, d, e);
+}
+
+void ScriptBase::I_Sez(const char *str) {
+	_vm->ISez(str);
+}
+
 
 } // End of namespace BladeRunner

@@ -26,6 +26,7 @@
 #include "bladerunner/archive.h"
 
 #include "common/array.h"
+#include "common/random.h"
 #include "common/stream.h"
 #include "common/types.h"
 
@@ -35,8 +36,11 @@
 
 namespace BladeRunner {
 
+class AmbientSounds;
+class AudioPlayer;
 class Chapters;
 class GameInfo;
+class GameFlags;
 class Scene;
 class Script;
 class Settings;
@@ -48,18 +52,26 @@ public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 
+	AmbientSounds   *_ambientSounds;
+	AudioPlayer     *_audioPlayer;
 	Chapters        *_chapters;
 	GameInfo        *_gameInfo;
+	GameFlags       *_gameFlags;
 	Scene           *_scene;
 	Script          *_script;
 	Settings        *_settings;
 	SliceAnimations *_sliceAnimations;
 	SliceRenderer   *_sliceRenderer;
+	int             *_gameVars;
 
 	int in_script_counter;
 
-	Graphics::Surface _surface1;
-	Graphics::Surface _surface2;
+	Graphics::Surface  _surface1;
+	Graphics::Surface  _surface2;
+	uint16            *_zBuffer1;
+	uint16            *_zBuffer2;
+
+	Common::RandomSource _rnd;
 
 private:
 	static const int kArchiveCount = 10;

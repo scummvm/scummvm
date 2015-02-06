@@ -39,6 +39,7 @@ class VQAPlayer {
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
 	const Graphics::Surface     *_surface;
+	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
 
 	int _curFrame;
@@ -80,6 +81,7 @@ public:
 
 	int  update();
 	const Graphics::Surface *getSurface() const;
+	const uint16 *getZBuffer() const;
 	const View &getView() const { return _view; }
 
 	void setLoopSpecial(int loop, bool wait);

@@ -41,6 +41,8 @@ public:
 	int         _nextSetId;
 	int         _nextSceneId;
 	int         _frame;
+	Vector3     _actorStartPosition;
+	int         _actorStartFacing;
 	bool        _playerWalkedIn;
 	View        _view;
 
@@ -58,7 +60,8 @@ public:
 	}
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
-	int advanceFrame(Graphics::Surface &surface);
+	int  advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer);
+	void setActorStart(Vector3 position, int facing);
 };
 
 } // End of namespace BladeRunner

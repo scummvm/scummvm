@@ -65,6 +65,42 @@ public:
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
 	virtual void SceneFrameAdvanced(int frame) = 0;
+
+protected:
+
+	void Game_Flag_Set(int flag);
+	void Game_Flag_Reset(int flag);
+	bool Game_Flag_Query(int flag);
+
+	int Global_Variable_Set(int, int);
+	int Global_Variable_Reset(int);
+	int Global_Variable_Query(int);
+	int Global_Variable_Increment(int, int);
+	int Global_Variable_Decrement(int, int);
+
+	void Sound_Play(int id, int volume, int panFrom, int panTo, int priority);
+
+	void Scene_Loop_Set_Default(int);
+	void Scene_Loop_Start_Special(int, int, int);
+
+	void Outtake_Play(int id, int noLocalization = false, int container = -1);
+	void Ambient_Sounds_Add_Sound(int id, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk);
+	// Ambient_Sounds_Remove_Sound
+	// Ambient_Sounds_Add_Speech_Sound
+	// Ambient_Sounds_Remove_Speech_Sound
+	// Ambient_Sounds_Play_Sound
+	// Ambient_Sounds_Play_Speech_Sound
+	void Ambient_Sounds_Remove_All_Non_Looping_Sounds(int time);
+	void Ambient_Sounds_Add_Looping_Sound(int id, int volume, int pan, int fadeInTime);
+	// Ambient_Sounds_Adjust_Looping_Sound
+	// Ambient_Sounds_Remove_Looping_Sound
+	void Ambient_Sounds_Remove_All_Looping_Sounds(int time);
+	void Setup_Scene_Information(float actorX, float actorY, float actorZ, int actorFacing);
+
+	void Scene_Exit_Add_2D_Exit(int, int, int, int, int, int);
+	void Scene_2D_Region_Add(int, int, int, int, int);
+
+	void I_Sez(const char *str);
 };
 
 #define DECLARE_SCRIPT(name) \

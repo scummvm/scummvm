@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -22,8 +23,11 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/ambient_sounds.h"
+#include "bladerunner/audio_player.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
+#include "bladerunner/gameflags.h"
 #include "bladerunner/image.h"
 #include "bladerunner/outtake.h"
 #include "bladerunner/scene.h"
@@ -43,12 +47,19 @@
 
 namespace BladeRunner {
 
-BladeRunnerEngine::BladeRunnerEngine(OSystem *syst) : Engine(syst) {
+BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
+	: Engine(syst),
+	  _rnd("bladerunner")
+{
 	_windowIsActive = true;
 	_gameIsRunning  = true;
 
+	_ambientSounds = new AmbientSounds(this);
+	_audioPlayer = new AudioPlayer(this);
 	_chapters = nullptr;
 	_gameInfo = nullptr;
+	_gameFlags = new GameFlags();
+	_gameVars = nullptr;
 	_scene = new Scene(this);
 	_script = new Script(this);
 	_settings = new Settings(this);
@@ -62,8 +73,12 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _settings;
 	delete _script;
 	delete _scene;
+	delete _gameVars;
+	delete _gameFlags;
 	delete _gameInfo;
 	delete _chapters;
+	delete _audioPlayer;
+	delete _ambientSounds;
 
 	_surface1.free();
 	_surface2.free();
@@ -76,6 +91,8 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 Common::Error BladeRunnerEngine::run() {
 	Graphics::PixelFormat format = createRGB555();
 	initGraphics(640, 480, true, &format);
+
+	_system->showMouse(true);
 
 	if (!startup())
 		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
@@ -111,6 +128,10 @@ bool BladeRunnerEngine::startup() {
 	if (!r)
 		return false;
 
+	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
+
+	_gameVars = new int[_gameInfo->getGlobalVarCount()];
+
 	_chapters = new Chapters(this);
 	if (!_chapters)
 		return false;
@@ -139,6 +160,9 @@ bool BladeRunnerEngine::startup() {
 	if (!r)
 		return false;
 
+	_zBuffer1 = new uint16[640 * 480];
+	_zBuffer2 = new uint16[640 * 480];
+
 	initChapterAndScene();
 
 	return true;
@@ -152,6 +176,8 @@ void BladeRunnerEngine::initChapterAndScene() {
 }
 
 void BladeRunnerEngine::shutdown() {
+	_mixer->stopAll();
+
 	if (_chapters) {
 		if (_chapters->hasOpenResources())
 			_chapters->closeResources();
@@ -212,15 +238,18 @@ void BladeRunnerEngine::gameTick() {
 		// TODO: Call Script_Player_Walked_In if applicable
 		// TODO: Gun range announcements
 		// TODO: ZBUF repair dirty rects
-		// TODO: Tick Ambient Audio (in Replicant)
+
+		_ambientSounds->tick();
 
 		bool backgroundChanged = false;
-		int frame = _scene->advanceFrame(_surface1);
+		int frame = _scene->advanceFrame(_surface1, _zBuffer1);
 		if (frame >= 0) {
 			_script->SceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
+		(void)backgroundChanged;
 		_surface2.copyFrom(_surface1);
+		memcpy(_zBuffer2, _zBuffer1, 640*480*2);
 
 		// TODO: Render overlays (mostly in Replicant)
 		// TODO: Tick Actor AI and Timers (timers in Replicant)
@@ -230,13 +259,13 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Tick and draw all actors in current set (drawing works in Replicant)
 
 			// Hardcode McCoy in place to test the slice renderer
-			Vector3 pos(-151.98f, -0.30f, 318.15f);
+			Vector3 pos = _scene->_actorStartPosition;
 			Vector3 draw_pos(pos.x, -pos.z, pos.y + 2);
 			float facing = -1.570796f;
 
 			_sliceRenderer->setView(_scene->_view);
 			_sliceRenderer->setupFrame(19, 1, draw_pos, facing);
-			_sliceRenderer->drawFrame(_surface2);
+			_sliceRenderer->drawFrame(_surface2, _zBuffer2);
 
 			// TODO: Draw items (drawing works in Replicant)
 			// TODO: Draw item pickup (understood, drawing works in Replicant)
@@ -264,7 +293,7 @@ void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) 
 
 	OuttakePlayer player(this);
 
-	player.play(name, noLocalization, -1);
+	player.play(name, noLocalization, container);
 }
 
 bool BladeRunnerEngine::openArchive(const Common::String &name) {

@@ -20,48 +20,49 @@
  *
  */
 
-#ifndef BLADERUNNER_ARCHIVE_H
-#define BLADERUNNER_ARCHIVE_H
+#include "bladerunner/gameflags.h"
 
-#include "common/array.h"
-#include "common/file.h"
-#include "common/substream.h"
+#include "common/debug.h"
 
 namespace BladeRunner {
 
-class MIXArchive {
-public:
-	MIXArchive();
-	~MIXArchive();
+GameFlags::GameFlags()
+	: flags(NULL), flagCount(0)
+{
+}
 
-	bool open(const Common::String &filename);
-	void close();
-	bool isOpen() const;
+GameFlags::~GameFlags() {
+	delete[] flags;
+}
 
-	Common::String getName() { return _fd.getName(); }
+void GameFlags::setFlagCount(int count) {
+	assert(count > 0);
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name);
+	debug("flagCount: %d", count);
 
-private:
-	Common::File _fd;
-	bool _isTLK;
+	flagCount = count;
+	flags = new uint32[count / 32 + 1];
 
-	uint16 _entry_count;
-	uint32 _size;
+	for (int i = 0; i <= flagCount; ++i)
+		reset(i);
+}
 
-	struct ArchiveEntry {
-		int32  id;
-		uint32 offset;
-		uint32 length;
-	};
+void GameFlags::set(int flag) {
+	assert(flag >= 0 && flag <= flagCount);
 
-	Common::Array<ArchiveEntry> _entries;
+	flags[flag / 32] |= (1 << (flag % 32));
+}
 
-	uint32 indexForId(int32 id) const;
-};
+void GameFlags::reset(int flag) {
+	assert(flag >= 0 && flag <= flagCount);
 
-int32 mix_id(const Common::String &name);
+	flags[flag / 32] &= ~(1 << (flag % 32));
+}
+
+bool GameFlags::query(int flag) {
+	assert(flag >= 0 && flag <= flagCount);
+
+	return !!(flags[flag / 32] & (1 << (flag % 32)));
+}
 
 } // End of namespace BladeRunner
-
-#endif

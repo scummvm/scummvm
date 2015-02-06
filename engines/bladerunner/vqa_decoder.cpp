@@ -196,6 +196,10 @@ const Graphics::Surface *VQADecoder::decodeVideoFrame() {
 	return _videoTrack->decodeVideoFrame();
 }
 
+const uint16 *VQADecoder::decodeZBuffer() {
+	return _videoTrack->decodeZBuffer();
+}
+
 Audio::SeekableAudioStream *VQADecoder::decodeAudioFrame() {
 	return _audioTrack->decodeAudioFrame();
 }
@@ -295,6 +299,7 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
 		debug("_header.unk4         %d", _header.unk4);
 		debug("_header.maxCBFZSize  %d", _header.maxCBFZSize);
 		debug("_header.unk5         %d", _header.unk5);
+		debug("\n");
 	}
 
 	assert(_header.version == 2);
@@ -538,6 +543,7 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_maxVPTRSize = header->maxVPTRSize;
 	_maxCBFZSize = header->maxCBFZSize;
 	_maxZBUFChunkSize = vqaDecoder->_maxZBUFChunkSize;
+	_zbuffer = nullptr;
 
 	_codebookSize = 0;
 	_codebook  = nullptr;
@@ -644,7 +650,7 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-#if 0
+#if 1
 static
 int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 {
@@ -654,7 +660,7 @@ int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 	uint16 *curzp = curZBUF;
 	uint16 *inp = (uint16*)src;
 
-	while (dstRemain && (inp - (uint16*)src) < (ptrdiff_t)srcLen)
+	while (dstRemain && (inp - (uint16*)src) < (std::ptrdiff_t)srcLen)
 	{
 		uint32 count = FROM_LE_16(*inp++);
 
@@ -692,9 +698,9 @@ int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 
 bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size)
 {
-	s->skip(roundup(size));
-	return true;
-#if 0
+	// s->skip(roundup(size));
+	// return true;
+#if 1
 	if (size > _maxZBUFChunkSize) {
 		debug("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
 		s->skip(roundup(size));
@@ -709,43 +715,47 @@ bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 s
 
 	uint32 remain = size - 16;
 
-	if (width != width || height != height)
+	if (_width != width || _height != height)
 	{
 		debug("%d, %d, %d, %d", width, height, complete, unk0);
 		s->skip(roundup(remain));
 		return false;
 	}
 
+	_zbufChunkComplete = complete;
+	_zbufChunkSize = remain;
 	s->read(_zbufChunk, roundup(remain));
-
-	if (!_zbuf)
-	{
-		if (!complete) {
-			s->skip(roundup(remain));
-			return false;
-		}
-		_zbuf = new uint16[width * height];
-	}
-
-	if (complete) {
-		size_t zbufOutSize;
-		decompress_lzo1x(_zbufChunk, remain, (uint8*)_zbuf, &zbufOutSize);
-	} else {
-		decodeZBUF_partial(_zbufChunk, _zbuf, remain);
-	}
 #endif
 
 	return true;
 }
 
-#if 0
-bool VQADecoder::VQAVideoTrack::getZBUF(uint16 *zbuf)
+#if 1
+const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 {
-	if (!_zbuf)
-		return false;
+	if (_maxZBUFChunkSize == 0)
+		return nullptr;
 
-	memcpy(zbuf, _zbuf, 2 * _header.width * _header.height);
-	return true;
+	if (!_zbuffer)
+		_zbuffer = new uint16[_width * _height];
+	// {
+		// if (!complete) {
+		// 	return false;
+		// }
+	// }
+
+	if (_zbufChunkComplete) {
+		size_t zbufOutSize;
+		decompress_lzo1x(_zbufChunk, _zbufChunkSize, (uint8*)_zbuffer, &zbufOutSize);
+	} else {
+		decodeZBUF_partial(_zbufChunk, _zbuffer, _zbufChunkSize);
+	}
+
+	// if (!_zbuf)
+	// 	return false;
+
+	// memcpy(zbuf, _zbuffer, 2 * _width * _height);
+	return _zbuffer;
 }
 #endif
 

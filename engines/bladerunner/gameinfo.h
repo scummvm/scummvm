@@ -35,6 +35,7 @@ class GameInfo {
 	BladeRunnerEngine *_vm;
 
 	uint32 _actor_count;
+	uint32 _player_id;
 	uint32 _flag_count;
 	uint32 _global_var_count;
 	uint32 _set_names_count;
@@ -59,6 +60,7 @@ public:
 	bool open(const Common::String &name);
 
 	uint32 getActorCount()         { return _actor_count; }
+	uint32 getPlayerId()           { return _player_id; }
 	uint32 getFlagCount()          { return _flag_count; }
 	uint32 getGlobalVarCount()     { return _global_var_count; }
 	uint32 getSetNamesCount()      { return _set_names_count; }
@@ -71,10 +73,10 @@ public:
 	uint32 getCoverWaypointCount() { return _cover_waypoint_count; }
 	uint32 getFleeWaypointCount()  { return _flee_waypoint_count; }
 
-	char *getSetName(int i)        { return _set_names[i]; }
-	char *getSfxTrack(int i)       { return _sfx_tracks[i]; }
-	char *getMusicTrack(int i)     { return _music_tracks[i]; }
-	char *getOuttake(int i)        { return _outtakes[i]; }
+	const char *getSetName(int i)    { return _set_names[i]; }
+	const char *getSfxTrack(int i)   { return _sfx_tracks[i]; }
+	const char *getMusicTrack(int i) { return _music_tracks[i]; }
+	const char *getOuttake(int i)    { return _outtakes[i]; }
 };
 
 } // End of namespace BladeRunner

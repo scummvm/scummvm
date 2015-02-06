@@ -50,6 +50,7 @@ public:
 	void readNextPacket();
 
 	const Graphics::Surface    *decodeVideoFrame();
+	const uint16               *decodeZBuffer();
 	Audio::SeekableAudioStream *decodeAudioFrame();
 
 	const View &getView() { return _videoTrack->getView(); }
@@ -161,6 +162,7 @@ private:
 		int getCurFrame() const;
 		int getFrameCount() const;
 		const Graphics::Surface *decodeVideoFrame();
+		const uint16 *decodeZBuffer();
 		const View &getView() { return _view; }
 
 		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
@@ -179,6 +181,7 @@ private:
 
 	private:
 		Graphics::Surface *_surface;
+		uint16            *_zbuffer;
 		bool     _hasNewFrame;
 
 		uint16 _numFrames;
@@ -195,6 +198,8 @@ private:
 		uint32   _codebookSize;
 		uint8   *_codebook;
 		uint8   *_cbfz;
+		bool     _zbufChunkComplete;
+		uint32   _zbufChunkSize;
 		uint8   *_zbufChunk;
 
 		uint32   _vpointerSize;

@@ -20,47 +20,54 @@
  *
  */
 
-#ifndef BLADERUNNER_ARCHIVE_H
-#define BLADERUNNER_ARCHIVE_H
+#ifndef BLADERUNNER_AUDIO_H
+#define BLADERUNNER_AUDIO_H
 
-#include "common/array.h"
-#include "common/file.h"
-#include "common/substream.h"
+#include "audio/mixer.h"
+#include "common/str.h"
+#include "common/types.h"
 
 namespace BladeRunner {
 
-class MIXArchive {
-public:
-	MIXArchive();
-	~MIXArchive();
+class BladeRunnerEngine;
+class AudioCache;
 
-	bool open(const Common::String &filename);
-	void close();
-	bool isOpen() const;
+#define TRACKS 6
 
-	Common::String getName() { return _fd.getName(); }
+class AudioPlayer {
+	BladeRunnerEngine *_vm;
+	AudioCache *_cache;
 
-	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name);
+	struct Track {
+		bool               isMaybeActive;
+		Audio::SoundHandle soundHandle;
+		int                priority;
+		int32              hash;
+		int                volume;
 
-private:
-	Common::File _fd;
-	bool _isTLK;
-
-	uint16 _entry_count;
-	uint32 _size;
-
-	struct ArchiveEntry {
-		int32  id;
-		uint32 offset;
-		uint32 length;
+		Track()
+			: isMaybeActive(false)
+		{}
 	};
 
-	Common::Array<ArchiveEntry> _entries;
+	Track _tracks[TRACKS];
 
-	uint32 indexForId(int32 id) const;
+	bool isTrackActive(Track *track);
+	void fadeAndStopTrack(Track *track, int time);
+
+public:
+	AudioPlayer(BladeRunnerEngine *vm);
+	~AudioPlayer();
+
+	enum {
+		LOOP = 1,
+		OVERRIDE_VOLUME = 2
+	};
+
+	int playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags = 0);
+
+	void stopAll();
 };
-
-int32 mix_id(const Common::String &name);
 
 } // End of namespace BladeRunner
 

@@ -101,13 +101,19 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	return true;
 }
 
-int Scene::advanceFrame(Graphics::Surface &surface) {
+int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	int frame = _vqaPlayer.update();
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer.getSurface());
+		memcpy(zBuffer, _vqaPlayer.getZBuffer(), 640*480*2);
 		_view = _vqaPlayer.getView();
 	}
 	return frame;
+}
+
+void Scene::setActorStart(Vector3 position, int facing) {
+	_actorStartPosition = position;
+	_actorStartFacing = facing;
 }
 
 } // End of namespace BladeRunner

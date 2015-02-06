@@ -53,7 +53,7 @@ bool GameInfo::open(const Common::String &name) {
 
 	uint32 unk;
 	_actor_count          = s->readUint32LE();   /* 00 */
-	unk                   = s->readUint32LE();   /* 01 */
+	_player_id            = s->readUint32LE();   /* 01 */
 	_flag_count           = s->readUint32LE();   /* 02 */
 	unk                   = s->readUint32LE();   /* 03 */
 	_global_var_count     = s->readUint32LE();   /* 04 */

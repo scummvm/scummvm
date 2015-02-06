@@ -1,13 +1,16 @@
 MODULE := engines/bladerunner
 
 MODULE_OBJS = \
+	ambient_sounds.o \
 	archive.o \
 	aud_decoder.o \
+	audio_player.o \
 	bladerunner.o \
 	chapters.o \
 	decompress_lcw.o \
 	decompress_lzo.o \
 	detection.o \
+	gameflags.o \
 	gameinfo.o \
 	image.o \
 	matrix.o \

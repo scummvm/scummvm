@@ -322,7 +322,7 @@ void setupLookupTable(int t[256], int inc) {
 	}
 }
 
-void SliceRenderer::drawFrame(Graphics::Surface &surface) {
+void SliceRenderer::drawFrame(Graphics::Surface &surface, uint16 *zbuffer) {
 	assert(_sliceFramePtr);
 
 	SliceLineIterator sliceLineIterator;
@@ -340,7 +340,8 @@ void SliceRenderer::drawFrame(Graphics::Surface &surface) {
 
 	int frameY = sliceLineIterator._field_18;
 
-	uint16 *frameLinePtr = (uint16*)surface.getPixels() + 640 * frameY;
+	uint16 *frameLinePtr  = (uint16*)surface.getPixels() + 640 * frameY;
+	uint16 *zBufferLinePtr = zbuffer + 640 * frameY;
 
 	while (sliceLineIterator._field_3C <= sliceLineIterator._field_1C) {
 		_c3 = sliceLineIterator._field_00[0][2];
@@ -349,16 +350,17 @@ void SliceRenderer::drawFrame(Graphics::Surface &surface) {
 		float sliceLine = sliceLineIterator.line();
 
 		if (frameY >= 0 && frameY < 480)
-			drawSlice((int)sliceLine, frameLinePtr);
+			drawSlice((int)sliceLine, frameLinePtr, zBufferLinePtr);
 
 		sliceLineIterator.advance();
 		frameY += 1;
 		frameLinePtr += 640;
+		zBufferLinePtr += 640;
 	}
 }
 
-void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr) {
-	if (slice < 0 || slice >= _frameSliceCount)
+void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr) {
+	if (slice < 0 || (uint32)slice >= _frameSliceCount)
 		return;
 
 	SlicePalette &palette = _vm->_sliceAnimations->getPalette(_framePaletteIndex);
@@ -371,11 +373,6 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr) {
 
 	uint32 polyCount = READ_LE_UINT32(p);
 	p += 4;
-
-	int zbufLinePtr[640];
-	for (int i = 0; i != 640; ++i)
-		zbufLinePtr[i] = 65535;
-
 	while (polyCount--) {
 		uint32 vertexCount = READ_LE_UINT32(p);
 		p += 4;
@@ -396,9 +393,10 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr) {
 
 				if (vertexZ >= 0 && vertexZ < 65536) {
 					for (int x = previousVertexX; x != vertexX; ++x) {
+						// debug("\t%04x < %04x", vertexZ, zbufLinePtr[x]);
 						if (vertexZ < zbufLinePtr[x]) {
 							frameLinePtr[x] = palette[p[2]];
-							zbufLinePtr[x] = (int16)vertexZ;
+							zbufLinePtr[x] = (uint16)vertexZ;
 						}
 					}
 				}

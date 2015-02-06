@@ -80,7 +80,6 @@ bool MIXArchive::isOpen() const {
 
 #define ROL(n) ((n << 1) | ((n >> 31) & 1))
 
-static
 int32 mix_id(const Common::String &name) {
 	char buffer[12] = { 0 };
 
