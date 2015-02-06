@@ -73,18 +73,19 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 		names = Amazon::INVENTORY_NAMES;
 		combineP = &Amazon::COMBO_TABLE[0][0];
 		_inv.resize(85);
+		for (uint i = 0; i < _inv.size(); ++i, combineP += 4)
+			_inv[i].load(names[i], combineP);
 		break;
 	case GType_MartianMemorandum:
 		names = Martian::INVENTORY_NAMES;
 		combineP = nullptr;
 		_inv.resize(55);
+		for (uint i = 0; i < _inv.size(); ++i)
+			_inv[i].load(names[i], nullptr);
 		break;
 	default:
 		error("Unknown game");
 	}
-
-	for (uint i = 0; i < _inv.size(); ++i, combineP += 4)
-		_inv[i].load(names[i], combineP);
 
 	for (uint i = 0; i < 26; ++i) {
 		const int *r = INVCOORDS[i];
