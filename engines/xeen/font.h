@@ -48,7 +48,7 @@ private:
 
 	void setTextColor(int idx);
 
-	void writeChar(char c);
+	void writeChar(char c, const Common::Rect &clipRect);
 public:
 	const byte *_fontData;
 	Common::Point _writePos;
@@ -63,7 +63,7 @@ public:
 
 	void writeSymbol(int symbolId);
 
-	Common::String writeString(const Common::String &s, const Common::Rect &bounds);
+	Common::String writeString(const Common::String &s, const Common::Rect &clipRect);
 };
 
 } // End of namespace Xeen

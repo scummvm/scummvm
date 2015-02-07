@@ -60,7 +60,7 @@ void FontSurface::writeSymbol(int symbolId) {
 /**
  * Write a string to the surface
  * @param s			String to display
- * @param bounds	Window bounds to display string within
+ * @param clipRect	Window bounds to display string within
  * @returns			Any string remainder that couldn't be displayed
  * @remarks		Note that bounds is just used for wrapping purposes. Unless
  *		justification is set, the message will be written at _writePos
@@ -183,7 +183,7 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				continue;
 			} else if (c == 6) {
 				// Non-breakable space
-				writeChar(' ');
+				writeChar(' ', bounds);
 			} else if (c == 7) {
 				// Set text background color
 				int bgColor = fontAtoi();
@@ -210,7 +210,7 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 					Common::copy(&_textColors[0], &_textColors[4], &oldColor[0]);
 
 					_textColors[1] = _textColors[2] = _textColors[3] = _bgColor;
-					writeChar(c);
+					writeChar(c, bounds);
 
 					Common::copy(&oldColor[0], &oldColor[4], &_textColors[0]);
 					_writePos.x = oldX;
@@ -239,7 +239,7 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 				break;
 			} else {
 				// Standard character - write it out
-				writeChar(c);
+				writeChar(c, bounds);
 			}
 		}
 
@@ -340,7 +340,7 @@ void FontSurface::setTextColor(int idx) {
 /**
  * Wrie a character to the surface
  */
-void FontSurface::writeChar(char c) {
+void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	// Get y position, handling kerning
 	int y = _writePos.y;
 	if (c == 'g' || c == 'p' || c == 'q' || c == 'y')
@@ -354,11 +354,17 @@ void FontSurface::writeChar(char c) {
 		uint16 lineData = READ_LE_UINT16(srcP); srcP += 2;
 		byte *destP = (byte *)getBasePtr(_writePos.x, y);
 
+		// Ignore line if it's outside the clipping rect
+		if (y < clipRect.top || y >= clipRect.bottom)
+			continue;
+		const byte *lineStart = (const byte *)getBasePtr(clipRect.left, y);
+		const byte *lineEnd = (const byte *)getBasePtr(clipRect.right, y);
+
 		for (int xp = 0; xp < FONT_WIDTH; ++xp, ++destP) {
 			int colIndex = lineData & 3;
 			lineData >>= 2;
 
-			if (colIndex)
+			if (colIndex && destP >= lineStart && destP < lineEnd)
 				*destP = _textColors[colIndex];
 		}
 	}
