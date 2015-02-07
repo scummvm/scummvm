@@ -23,6 +23,7 @@
 #ifndef XEEN_DIALOGS_QUESTS_H
 #define XEEN_DIALOGS_QUESTS_H
 
+#include "common/str-array.h"
 #include "xeen/dialogs.h"
 
 namespace Xeen {
@@ -30,10 +31,16 @@ namespace Xeen {
 class Quests : public ButtonContainer {
 private:
 	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+	Common::StringArray _questNotes;
 
 	Quests(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
 	void execute();
+
+	void addButtons();
+
+	void loadQuestNotes();
 public:
 	static void show(XeenEngine *vm);
 };

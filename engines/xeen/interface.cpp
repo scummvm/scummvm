@@ -25,6 +25,7 @@
 #include "xeen/dialogs_error.h"
 #include "xeen/dialogs_automap.h"
 #include "xeen/dialogs_info.h"
+#include "xeen/dialogs_quests.h"
 #include "xeen/dialogs_quick_ref.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -708,6 +709,11 @@ void Interface::perform() {
 	case Common::KEYCODE_q:
 		// Show the quick reference dialog
 		QuickReferenceDialog::show(_vm);
+		break;
+
+	case Common::KEYCODE_v:
+		// Show the quests dialog
+		Quests::show(_vm);
 		break;
 
 	default:

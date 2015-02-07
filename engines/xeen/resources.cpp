@@ -1144,6 +1144,94 @@ const char *const EFFECTIVENESS_NAMES[7] = {
 	nullptr, "Dragons", "Undead", "Golems", "Bugs", "Monsters", "Beasts"
 };
 
+const char *const QUEST_ITEM_NAMES[85] = {
+	"Deed to New Castle",
+	"Crystal Key to Witch Tower",
+	"Skeleton Key to Darzog's Tower",
+	"Enchanted Key to Tower of High Magic",
+	"Jeweled Amulet of the Northern Sphinx",
+	"Stone of a Thousand Terrors",
+	"Golem Stone of Admittance",
+	"Yak Stone of Opening",
+	"Xeen's Scepter of Temporal Distortion",
+	"Alacorn of Falista",
+	"Elixir of Restoration",
+	"Wand of Faery Magic",
+	"Princess Roxanne's Tiara",
+	"Holy Book of Elvenkind",
+	"Scarab of Imaging",
+	"Crystals of Piezoelectricity",
+	"Scroll of Insight",
+	"Phirna Root",
+	"Orothin's Bone Whistle",
+	"Barok's Magic Pendant",
+	"Ligono's Missing Skull",
+	"Last Flower of Summer",
+	"Last Raindrop of Spring",
+	"Last Snowflake of Winter",
+	"Last Leaf of Autumn",
+	"Ever Hot Lava Rock",
+	"King's Mega Credit",
+	"Excavation Permit",
+	"Cupie Doll",
+	"Might Doll",
+	"Speed Doll",
+	"Endurance Doll",
+	"Accuracy Doll",
+	"Luck Doll",
+	"Widget",
+	"Pass to Castleview",
+	"Pass to Sandcaster",
+	"Pass to Lakeside",
+	"Pass to Necropolis",
+	"Pass to Olympus",
+	"Key to Great Western Tower",
+	"Key to Great Southern Tower",
+	"Key to Great Eastern Tower",
+	"Key to Great Northern Tower",
+	"Key to Ellinger's Tower",
+	"Key to Dragon Tower",
+	"Key to Darkstone Tower",
+	"Key to Temple of Bark",
+	"Key to Dungeon of Lost Souls",
+	"Key to Ancient Pyramid",
+	"Key to Dungeon of Death",
+	"Amulet of the Southern Sphinx",
+	"Dragon Pharoah's Orb",
+	"Cube of Power",
+	"Chime of Opening",
+	"Gold ID Card",
+	"Silver ID Card",
+	"Vulture Repellant",
+	"Bridle",
+	"Enchanted Bridle",
+	"Treasure Map (Goto E1 x1, y11)",
+	nullptr,
+	"Fake Map",
+	"Onyx Necklace",
+	"Dragon Egg",
+	"Tribble",
+	"Golden Pegasus Statuette",
+	"Golden Dragon Statuette",
+	"Golden Griffin Statuette",
+	"Chalice of Protection",
+	"Jewel of Ages",
+	"Songbird of Serenity",
+	"Sandro's Heart",
+	"Ector's Ring",
+	"Vespar's Emerald Handle",
+	"Queen Kalindra's Crown",
+	"Caleb's Magnifying Glass",
+	"Soul Box",
+	"Soul Box with Corak inside",
+	"Ruby Rock",
+	"Emerald Rock",
+	"Sapphire Rock",
+	"Diamond Rock",
+	"Monga Melon",
+	"Energy Disk"
+};
+
 const int WEAPON_BASE_COSTS[35] = {
 	0, 50, 15, 100, 80, 40, 60, 1, 10, 150, 30, 60, 8, 50,
 	100, 15, 30, 15, 200, 80, 250, 150, 400, 100, 40, 120,
@@ -1287,5 +1375,52 @@ const char *const DAMAGE_X_TO_Y = "%d to %d";
 const char *const ELEMENTAL_XY_DAMAGE = "%+d %s Damage";
 const char *const ATTR_XY_BONUS = "%+d %s";
 const char *const EFFECTIVE_AGAINST = "x3 vs %s";
+
+const char *const QUESTS_DIALOG_TEXT =
+	"\r2\x2""c\v021\t017\f37I\fdtems\t085\f37Q\fduests\t153"
+	"\f37A\fduto Notes\t221\f37U\fdp\t255\f37D\fdown\t289Exit";
+
+const char *const CLOUDS_OF_XEEN_LINE = "\b \b*-- \f04Clouds of Xeen\fd --";
+const char *const DARKSIDE_OF_XEEN_LINE = "\b \b*-- \f04Darkside of Xeen\fd --";
+
+const char *const NO_QUEST_ITEMS =
+	"\rd\x3""c\v000	000Quest Items\x3l\x2\n"
+	"\n"
+	"\x3""cNo Quest Items";
+const char *const NO_CURRENT_QUESTS =
+	"\x3""c\v000\t000\n"
+	"\n"
+	"No Current Quests";
+const char *const NO_AUTO_NOTES = "\x3""cNo Auto Notes";
+
+const char *const QUEST_ITEMS_DATA =
+	"\r\x1\fd\x3""c\v000\t000Quest Items\x3l\x2\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s\n"
+	"\f04 * \fd%s";
+const char *const CURRENT_QUESTS_DATA = 
+	"\r\x1\fd\x3""c\t000\v000Current Quests\x3l\x2\n"
+	"%s\n"
+	"\n"
+	"%s\n"
+	"\n"
+	"%s";
+const char *const AUTO_NOTES_DATA =
+	"\r\x1\fd\x3""c\t000\v000Auto Notes\x3l\x2\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l\n"
+	"%s\x3l";
 
 } // End of namespace Xeen

@@ -45,6 +45,8 @@ enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
 #define TOTAL_STATS 7
+#define TOTAL_QUEST_ITEMS 85
+#define TOTAL_QUEST_FLAGS 56
 
 class Roster: public Common::Array<Character> {
 public:
@@ -107,7 +109,7 @@ public:
 	bool _gameFlags[512];
 	bool _worldFlags[128];
 	bool _quests[64];
-	int _questItems[85];
+	int _questItems[TOTAL_QUEST_ITEMS];
 	bool _characterFlags[30][24];
 public:
 	// Other party related runtime data

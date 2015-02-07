@@ -387,6 +387,7 @@ extern const char *const MISC_NAMES[22];
 extern const char *const ELEMENTAL_NAMES[6];
 extern const char *const ATTRIBUTE_NAMES[10];
 extern const char *const EFFECTIVENESS_NAMES[7];
+extern const char *const QUEST_ITEM_NAMES[85];
 
 extern const int WEAPON_BASE_COSTS[35];
 extern const int ARMOR_BASE_COSTS[25];
@@ -473,6 +474,17 @@ extern const char *const DAMAGE_X_TO_Y;
 extern const char *const ELEMENTAL_XY_DAMAGE;
 extern const char *const ATTR_XY_BONUS;
 extern const char *const EFFECTIVE_AGAINST;
+
+extern const char *const QUESTS_DIALOG_TEXT;
+extern const char *const CLOUDS_OF_XEEN_LINE;
+extern const char *const DARKSIDE_OF_XEEN_LINE;
+
+extern const char *const NO_QUEST_ITEMS;
+extern const char *const NO_CURRENT_QUESTS;
+extern const char *const NO_AUTO_NOTES;
+extern const char *const QUEST_ITEMS_DATA;
+extern const char *const CURRENT_QUESTS_DATA;
+extern const char *const AUTO_NOTES_DATA;
 
 } // End of namespace Xeen
 
