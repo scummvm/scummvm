@@ -73,6 +73,11 @@ InventoryItems::InventoryItems(Character *character, ItemCategory category):
 	_names = NAMES[category];
 }
 
+void InventoryItems::clear() {
+	for (uint idx = 0; idx < size(); ++idx)
+		operator[](idx).clear();
+}
+
 /**
 * Return whether a given item passes class-based usage restrictions
 */
@@ -199,6 +204,12 @@ void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int item
 	}
 }
 
+void InventoryItems::enchantItem(int itemIndex, int amount) {
+	XeenEngine *vm = Party::_vm;
+	vm->_sound->playFX(21);
+	ErrorScroll::show(vm, Common::String::format(NOT_ENCHANTABLE, SPELL_FAILED));
+}
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -271,6 +282,23 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
 			!i._bonusFlags ? "\b " : ""
 	);
+}
+
+void WeaponItems::enchantItem(int itemIndex, int amount) {
+	SoundManager &sound = *vm()->_sound;
+	XeenItem &item = operator[](itemIndex);
+	Character tempCharacter;
+
+	if (item._material == 0 && item._bonusFlags == 0 && item._id != 34) {
+		tempCharacter.makeItem(amount, 0, 1);
+		XeenItem &tempItem = tempCharacter._weapons[0];
+
+		item._material = tempItem._material;
+		item._bonusFlags = tempItem._bonusFlags;
+		sound.playFX(19);
+	} else {
+		InventoryItems::enchantItem(itemIndex, amount);
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -372,6 +400,23 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
+}
+
+void ArmorItems::enchantItem(int itemIndex, int amount) {
+	SoundManager &sound = *vm()->_sound;
+	XeenItem &item = operator[](itemIndex);
+	Character tempCharacter;
+
+	if (item._material == 0 && item._bonusFlags == 0) {
+		tempCharacter.makeItem(amount, 0, 2);
+		XeenItem &tempItem = tempCharacter._armor[0];
+
+		item._material = tempItem._material;
+		item._bonusFlags = tempItem._bonusFlags;
+		sound.playFX(19);
+	} else {
+		InventoryItems::enchantItem(itemIndex, amount);
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -498,6 +543,10 @@ AttributePair::AttributePair() {
 Character::Character():
 		_weapons(this), _armor(this), _accessories(this), _misc(this),
 		_items(_weapons, _armor, _accessories, _misc) {
+	clear();
+}
+
+void Character::clear() {
 	_sex = MALE;
 	_race = HUMAN;
 	_xeenSide = 0;
@@ -522,6 +571,24 @@ Character::Character():
 	_experience = 0;
 	_currentAdventuringSpell = 0;
 	_currentCombatSpell = 0;
+
+	_might._permanent = _might._temporary = 0;
+	_intellect._permanent = _intellect._temporary = 0;
+	_personality._permanent = _personality._temporary = 0;
+	_endurance._permanent = _endurance._temporary = 0;
+	_speed._permanent = _speed._temporary = 0;
+	_accuracy._permanent = _accuracy._temporary = 0;
+	_luck._permanent = _luck._temporary = 0;
+	_fireResistence._permanent = _fireResistence._temporary = 0;
+	_coldResistence._permanent = _coldResistence._temporary = 0;
+	_electricityResistence._permanent = _electricityResistence._temporary = 0;
+	_poisonResistence._permanent = _poisonResistence._temporary = 0;
+	_energyResistence._permanent = _energyResistence._temporary = 0;
+	_magicResistence._permanent = _magicResistence._temporary = 0;
+	_weapons.clear();
+	_armor.clear();
+	_accessories.clear();
+	_misc.clear();
 }
 
 void Character::synchronize(Common::Serializer &s) {
@@ -1308,5 +1375,251 @@ int Character::getNumAwards() const {
 
 	return total;
 }
+
+int Character::makeItem(int p1, int itemIndex, int p3) {
+	XeenEngine *vm = Party::_vm;
+	Scripts &scripts = *vm->_scripts;
+
+	if (!p1)
+		return 0;
+
+	int itemId = 0;
+	int v4 = vm->getRandomNumber(100);
+	int v6 = vm->getRandomNumber(p1 < 6 ? 100 : 80);
+	ItemCategory category;
+	int v16 = 0, v14 = 0, miscBonus = 0, miscId = 0, v8 = 0, v12 = 0;
+
+	// Randomly pick a category and item Id
+	if (p3 == 12) {
+		if (scripts._itemType < 35) {
+			category = CATEGORY_WEAPON;
+			itemId = scripts._itemType;
+		} else if (scripts._itemType < 49) {
+			category = CATEGORY_ARMOR;
+			itemId = scripts._itemType - 35;
+		} else if (scripts._itemType < 60) {
+			category = CATEGORY_ACCESSORY;
+			itemId = scripts._itemType - 49;
+		} else {
+			category = CATEGORY_MISC;
+			itemId = scripts._itemType - 60;
+		}
+	} else {
+		switch (p3) {
+		case 1:
+			v4 = 35;
+			break;
+		case 2:
+			v4 = 60;
+			break;
+		case 3:
+			v4 = 100;
+			break;
+		default:
+			break;
+		}
+
+		if (p1 == 1) {
+			if (v4 <= 40) {
+				category = CATEGORY_WEAPON;
+				if (v6 <= 30) {
+					itemId = vm->getRandomNumber(1, 6);
+				} else if (v6 <= 60) {
+					itemId = vm->getRandomNumber(7, 17);
+				} else if (v6 <= 85) {
+					itemId = vm->getRandomNumber(18, 29);
+				} else {
+					itemId = vm->getRandomNumber(30, 33);
+				}
+			} else if (v4 <= 85) {
+				category = CATEGORY_ARMOR;
+				itemId = vm->getRandomNumber(1, 7);
+			} else {
+				category = CATEGORY_MISC;
+				itemId = vm->getRandomNumber(1, 9);
+			}
+		} else if (v4 <= 35) {
+			category = CATEGORY_WEAPON;
+			if (v6 <= 30) {
+				itemId = vm->getRandomNumber(1, 6);
+			} else if (v6 <= 60) {
+				itemId = vm->getRandomNumber(7, 17);
+			} else if (v6 <= 85) {
+				itemId = vm->getRandomNumber(18, 29);
+			} else {
+				itemId = vm->getRandomNumber(30, 33);
+			}
+		} else if (v4 <= 60) {
+			category = CATEGORY_ARMOR;
+			itemId = (v6 > 70) ? 8 : vm->getRandomNumber(1, 7);
+		} else if (v6 <= 10) {
+			category = CATEGORY_ARMOR;
+			itemId = 9;
+		} else if (v6 <= 20) {
+			category = CATEGORY_ARMOR;
+			itemId = 13;
+		} else if (v6 <= 35) {
+			category = CATEGORY_ACCESSORY;
+			itemId = 1;
+		} else if (v6 <= 45) {
+			category = CATEGORY_ARMOR;
+			itemId = 10;
+		} else if (v6 <= 55) {
+			category = CATEGORY_ARMOR;
+			itemId = vm->getRandomNumber(11, 12);
+		} else if (v6 <= 65) {
+			category = CATEGORY_ACCESSORY;
+			itemId = 2;
+		} else if (v6 <= 75) {
+			category = CATEGORY_ACCESSORY;
+			itemId = vm->getRandomNumber(3, 7);
+		} else if (v6 <= 80) {
+			category = CATEGORY_ACCESSORY;
+			itemId = vm->getRandomNumber(8, 10);
+		} else {
+			category = CATEGORY_MISC;
+			itemId = vm->getRandomNumber(1, 9);
+		}
+	}
+
+	XeenItem &newItem = _items[category][itemIndex];
+	newItem.clear();
+	newItem._id = itemId;
+
+	v4 = vm->getRandomNumber(1, 100);
+	switch (category) {
+	case CATEGORY_WEAPON:
+	case CATEGORY_ARMOR:
+		if (p1 != 1) {
+			if (v4 <= 70) {
+				v8 = 3;
+			} else if (v4 <= 98) {
+				v8 = 1;
+			} else {
+				v8 = 2;
+			}
+		}
+		break;
+
+	case CATEGORY_ACCESSORY:
+		if (v4 <= 20) {
+			v8 = 3;
+		} else if (v4 <= 60) {
+			v8 = 1;
+		} else {
+			v8 = 2;
+		}
+		break;
+
+	case CATEGORY_MISC:
+		v8 = 4;
+		break;
+	}
+
+	if (p1 != 1 || category == CATEGORY_MISC) {
+		int rval, mult;
+		switch (v8) {
+		case 1:
+			rval = vm->getRandomNumber(1, 100);
+			if (rval <= 25) {
+				mult = 0;
+			}
+			else if (rval <= 45) {
+				mult = 1;
+			}
+			else if (rval <= 60) {
+				mult = 2;
+			}
+			else if (rval <= 75) {
+				mult = 3;
+			}
+			else if (rval <= 95) {
+				mult = 4;
+			}
+			else {
+				mult = 5;
+			}
+
+			v12 = MAKE_ITEM_ARR1[vm->getRandomNumber(MAKE_ITEM_ARR2[mult][p1][0],
+				MAKE_ITEM_ARR2[mult][p1][1])];
+			break;
+
+		case 2:
+			rval = vm->getRandomNumber(1, 100);
+			if (rval <= 15) {
+				mult = 0;
+			}
+			else if (rval <= 25) {
+				mult = 1;
+			}
+			else if (rval <= 35) {
+				mult = 2;
+			}
+			else if (mult <= 50) {
+				mult = 3;
+			}
+			else if (mult <= 65) {
+				mult = 4;
+			}
+			else if (mult <= 80) {
+				mult = 5;
+			}
+			else if (mult <= 85) {
+				mult = 6;
+			}
+			else if (mult <= 90) {
+				mult = 7;
+			}
+			else if (mult <= 95) {
+				mult = 8;
+			}
+			else {
+				mult = 9;
+			}
+
+			v12 = MAKE_ITEM_ARR1[vm->getRandomNumber(MAKE_ITEM_ARR3[mult][p1][0],
+				MAKE_ITEM_ARR3[mult][p1][1])];
+			break;
+
+		case 3:
+			rval = p1 == 7 || vm->getRandomNumber(1, 100) > 70;
+			v16 = vm->getRandomNumber(MAKE_ITEM_ARR4[mult][p1][0],
+				MAKE_ITEM_ARR4[mult][p1][1]);
+			break;
+
+		case 4:
+			miscBonus = vm->getRandomNumber(MAKE_ITEM_ARR5[p1][0], MAKE_ITEM_ARR5[p1][1]);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	switch (category) {
+	case CATEGORY_WEAPON:
+		if (p1 != 1) {
+			newItem._material = (v14 ? v14 + 58 : 0) + (v16 ? v16 + 36 : 0) + v12;
+			if (vm->getRandomNumber(20) == 10)
+				newItem._bonusFlags = vm->getRandomNumber(1, 6);
+		}
+		break;
+
+	case CATEGORY_ARMOR:
+	case CATEGORY_ACCESSORY:
+		if (p1 != 1) {
+			newItem._material = (v14 ? v14 + 58 : 0) + (v16 ? v16 + 36 : 0) + v12;
+		}
+		break;
+
+	case CATEGORY_MISC:
+		newItem._id = miscId;
+		newItem._bonusFlags = miscBonus;
+		break;
+	}
+
+	return category;
+}
+
 
 } // End of namespace Xeen

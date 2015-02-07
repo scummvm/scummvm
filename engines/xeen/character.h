@@ -106,11 +106,13 @@ protected:
 public:
 	InventoryItems(Character *character, ItemCategory category);
 
+	void clear();
+
 	bool passRestrictions(int itemId, bool showError) const;
 
 	Common::String getName(int itemIndex);
 
-	virtual Common::String getFullDescription(int itemIndex, int displayNum) = 0;
+	virtual Common::String getFullDescription(int itemIndex, int displayNum = 15) = 0;
 
 	bool discardItem(int itemIndex);
 
@@ -119,6 +121,8 @@ public:
 	void removeItem(int itemIndex);
 
 	void sort();
+
+	virtual void enchantItem(int itemIndex, int amount);
 };
 
 class WeaponItems: public InventoryItems {
@@ -128,6 +132,8 @@ public:
 	virtual void equipItem(int itemIndex);
 
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
+
+	virtual void enchantItem(int itemIndex, int amount);
 };
 
 class ArmorItems : public InventoryItems {
@@ -137,6 +143,8 @@ public:
 	virtual void equipItem(int itemIndex);
 
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
+
+	virtual void enchantItem(int itemIndex, int amount);
 };
 
 class AccessoryItems : public InventoryItems {
@@ -226,6 +234,9 @@ public:
 	int _currentCombatSpell;
 public:
 	Character();
+
+	void clear();
+
 	void synchronize(Common::Serializer &s);
 
 	Condition worstCondition() const;
@@ -271,6 +282,8 @@ public:
 	int getNumSkills() const;
 
 	int getNumAwards() const;
+
+	int makeItem(int p1, int itemIndex, int p3);
 };
 
 } // End of namespace Xeen

@@ -176,6 +176,16 @@ extern const int METAL_LAC[9];
 
 extern const int ARMOR_STRENGTHS[14];
 
+extern const int MAKE_ITEM_ARR1[6];
+
+extern const int MAKE_ITEM_ARR2[6][7][2];
+
+extern const int MAKE_ITEM_ARR3[10][7][2];
+
+extern const int MAKE_ITEM_ARR4[2][7][2];
+
+extern const int MAKE_ITEM_ARR5[8][2];
+
 extern const int OUTDOOR_DRAWSTRCT_INDEXES[44];
 
 extern const int TOWN_MAXES[2][11];
@@ -419,6 +429,20 @@ extern const char *const CANNOT_REMOVE_CURSED_ITEM;
 extern const char *const CANNOT_DISCARD_CURSED_ITEM;
 
 extern const char *const PERMANENTLY_DISCARD;
+
+extern const char *const BACKPACK_IS_FULL;
+
+extern const char *const BUY_X_FOR_Y_GOLD;
+
+extern const char *const SELL_X_FOR_Y_GOLD;
+
+extern const char *const NO_NEED_OF_THIS;
+
+extern const char *const NOT_RECHARGABLE;
+
+extern const char *const SPELL_FAILED;
+
+extern const char *const NOT_ENCHANTABLE;
 
 } // End of namespace Xeen
 

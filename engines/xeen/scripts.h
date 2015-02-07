@@ -140,7 +140,6 @@ class Scripts {
 private:
 	XeenEngine *_vm;
 	int _charFX[6];
-	int _itemType;
 	int _treasureItems;
 	int _treasureGold;
 	int _treasureGems;
@@ -229,6 +228,7 @@ public:
 	bool _eventSkipped;
 	int _whoWill;
 	int _nEdamageType;
+	int _itemType;
 	Common::Array<MirrorEntry> _mirror;
 public:
 	Scripts(XeenEngine *vm);

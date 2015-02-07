@@ -596,6 +596,41 @@ const int METAL_LAC[9] = { -3, 0, -2, -1, 1, 2, 4, 6, 8 };
 
 const int ARMOR_STRENGTHS[14] = { 0, 2, 4, 5, 6, 7, 8, 10, 4, 2, 1, 1, 1, 1 };
 
+const int MAKE_ITEM_ARR1[6] = { 0, 8, 15, 20, 25, 33 };
+
+const int MAKE_ITEM_ARR2[6][7][2] = {
+	{ { 0, 0 }, { 1, 3 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 5, 8 }, { 8, 8 } },
+	{ { 0, 0 }, { 1, 3 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 6, 7 }, { 7, 7 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 3 }, { 2, 4 }, { 3, 5 }, { 4, 5 }, { 5, 5 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 3 }, { 2, 4 }, { 3, 4 }, { 4, 5 }, { 5, 5 } },
+	{ { 0, 0 }, { 1, 3 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 5, 8 }, { 8, 8 } },
+	{ { 0, 0 }, { 1, 1 }, { 1, 1 }, { 1, 2 }, { 2, 2 }, { 2, 3 }, { 3, 3 } }
+};
+
+const int MAKE_ITEM_ARR3[10][7][2] = {
+	{ { 0, 0 }, { 1, 4 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 6, 10 }, { 10, 10 } },
+	{ { 0, 0 }, { 1, 3 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 5, 8 }, { 8, 8 } },
+	{ { 0, 0 }, { 1, 3 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 5, 8 }, { 8, 8 } },
+	{ { 0, 0 }, { 1, 3 }, { 2, 5 }, { 3, 6 }, { 4, 7 }, { 5, 8 }, { 8, 8 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 3 }, { 2, 4 }, { 3, 5 }, { 4, 6 }, { 6, 6 } },
+	{ { 0, 0 }, { 1, 2 }, { 2, 3 }, { 3, 4 }, { 4, 5 }, { 5, 6 }, { 6, 6 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 3 }, { 2, 4 }, { 3, 4 }, { 4, 5 }, { 5, 5 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 3 }, { 2, 4 }, { 3, 5 }, { 4, 6 }, { 6, 6 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 3 }, { 2, 4 }, { 3, 4 }, { 4, 5 }, { 5, 5 } },
+	{ { 0, 0 }, { 1, 2 }, { 1, 4 }, { 3, 6 }, { 5, 8 }, { 7, 10 }, { 10, 10 } }
+};
+
+const int MAKE_ITEM_ARR4[2][7][2] = {
+	{ { 0, 0 }, { 1, 4 }, { 3, 7 }, { 4, 8 }, { 5, 9 }, { 8, 9 }, { 9, 9 } },
+	{ { 0, 0 }, { 1, 4 }, { 2, 6 }, { 4, 7 }, { 6, 10 }, { 9, 13 }, { 13, 13 } }
+};
+
+
+const int MAKE_ITEM_ARR5[8][2] = {
+	{ 0, 0 }, { 1, 15 }, { 16, 30 }, { 31, 40 }, { 41, 50 },
+	{ 51, 60 }, { 61, 73 }, { 61, 73 }
+};
+
 const int OUTDOOR_DRAWSTRCT_INDEXES[44] = {
 	37, 38, 39, 40, 41, 44, 42, 43, 47, 45, 46,
 	48, 49, 52, 50, 51, 66, 67, 68, 69, 70, 71,
@@ -1145,5 +1180,19 @@ const char *const CANNOT_REMOVE_CURSED_ITEM = "\x3""You cannot remove a cursed i
 const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x""cYou cannot discard a cursed item!";
 
 const char *const PERMANENTLY_DISCARD = "\v000\t000\x03lPermanently discard %s\fd?";
+
+const char *const BACKPACK_IS_FULL = "\v005\x03c\fd%s's backpack is full.";
+
+const char *const BUY_X_FOR_Y_GOLD = "\x3l\v000\t000\fdBuy %s\fd for %lu gold?";
+
+const char *const SELL_X_FOR_Y_GOLD = "\x3l\v000\t000\fdSell %s\fd for %lu gold?";
+
+const char *const NO_NEED_OF_THIS = "\v005\x03c\fdWe have no need of this %s\f!";
+
+const char *const NOT_RECHARGABLE = "\v012\x03c\fdNot Rechargeable.  %s";
+
+const char *const NOT_ENCHANTABLE = "\v012\t000\x03cNot Enchantable.  %s";
+
+const char *const SPELL_FAILED = "Spell Failed!";
 
 } // End of namespace Xeen
