@@ -142,7 +142,7 @@ public:
 
 	void handleLight();
 
-	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait);
+	int subtract(int mode, uint amount, int whereId, ErrorWaitType wait = WT_FREEZE_WAIT);
 
 	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
 };

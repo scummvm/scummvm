@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-array.h"
 #include "gui/debugger.h"
+#include "xeen/spells.h"
 
 namespace Xeen {
 
@@ -172,6 +173,11 @@ extern const int ELEMENTAL_RESISTENCES[37];
 
 extern const int ELEMENTAL_DAMAGE[37];
 
+extern const int WEAPON_DAMAGE_BASE[35];
+extern const int WEAPON_DAMAGE_MULTIPLIER[35];
+extern const int METAL_DAMAGE[22];
+extern const int METAL_DAMAGE_PERCENT[22];
+
 extern const int METAL_LAC[9];
 
 extern const int ARMOR_STRENGTHS[14];
@@ -249,6 +255,8 @@ extern const char *const FOOD_PACKS_FULL;
 extern const char *const BUY_SPELLS;
 
 extern const char *const GUILD_OPTIONS;
+
+extern const int MISC_SPELL_INDEX[74];
 
 extern const int SPELL_COSTS[77];
 
@@ -376,6 +384,9 @@ extern const char *const WEAPON_NAMES[35];
 extern const char *const ARMOR_NAMES[14];
 extern const char *const ACCESSORY_NAMES[11];
 extern const char *const MISC_NAMES[22];
+extern const char *const ELEMENTAL_NAMES[6];
+extern const char *const ATTRIBUTE_NAMES[10];
+extern const char *const EFFECTIVENESS_NAMES[7];
 
 extern const int WEAPON_BASE_COSTS[35];
 extern const int ARMOR_BASE_COSTS[25];
@@ -443,6 +454,23 @@ extern const char *const NOT_RECHARGABLE;
 extern const char *const SPELL_FAILED;
 
 extern const char *const NOT_ENCHANTABLE;
+
+extern const char *const ITEM_NOT_BROKEN;
+
+extern const char *const FIX_IDENTIFY[2];
+
+extern const char *const FIX_IDENTIFY_GOLD;
+
+extern const char *const IDENTIFY_ITEM_MSG;
+
+extern const char *const ITEM_DETAILS;
+
+extern const char *const ALL;
+extern const char *const FIELD_NONE;
+extern const char *const DAMAGE_X_TO_Y;
+extern const char *const ELEMENTAL_XY_DAMAGE;
+extern const char *const ATTR_XY_BONUS;
+extern const char *const EFFECTIVE_AGAINST;
 
 } // End of namespace Xeen
 

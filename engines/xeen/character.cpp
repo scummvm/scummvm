@@ -44,21 +44,21 @@ void XeenItem::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_frame);
 }
 
-int XeenItem::getElementalCategory() const {
+ElementalCategory XeenItem::getElementalCategory() const {
 	int idx;
 	for (idx = 0; ELEMENTAL_CATEGORIES[idx] < _material; ++idx)
 		;
 
-	return idx;
+	return (ElementalCategory)idx;
 }
 
-int XeenItem::getAttributeCategory() const {
+AttributeCategory XeenItem::getAttributeCategory() const {
 	int m = _material - 59;
 	int idx;
 	for (idx = 0; ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
 		;
 
-	return idx;
+	return (AttributeCategory)idx;
 }
 
 /*------------------------------------------------------------------------*/
@@ -123,6 +123,24 @@ bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 Common::String InventoryItems::getName(int itemIndex) {
 	int id = operator[](itemIndex)._id;
 	return _names[id];
+}
+
+Common::String InventoryItems::getIdentifiedDetails(int itemIndex) {
+	XeenItem &item = operator[](itemIndex);
+
+	Common::String classes;
+	for (int charClass = CLASS_KNIGHT; charClass <= CLASS_RANGER; ++charClass) {
+		if (passRestrictions(charClass, true)) {
+			const char *const name = CLASS_NAMES[charClass];
+			classes += name[0];
+			classes += name[1];
+			classes += " ";
+		}
+	}
+	if (classes.size() == 30)
+		classes = ALL;
+
+	return getAttributes(item, classes);
 }
 
 /**
@@ -301,6 +319,53 @@ void WeaponItems::enchantItem(int itemIndex, int amount) {
 	}
 }
 
+/*
+ * Returns a text string listing all the stats/attributes of a given item
+ */
+Common::String WeaponItems::getAttributes(XeenItem &item, const Common::String &classes) {
+	Common::String attrBonus, elemDamage, physDamage, toHit, specialPower;
+	attrBonus = elemDamage = physDamage = toHit = specialPower = FIELD_NONE;
+
+	// First calculate physical damage
+	int minVal = WEAPON_DAMAGE_BASE[item._id];
+	int maxVal = minVal * WEAPON_DAMAGE_MULTIPLIER[item._id];
+
+	if (item._material >= 37 && item._material <= 58) {
+		minVal += METAL_DAMAGE[item._material - 37];
+		maxVal += METAL_DAMAGE[item._material - 37];
+		toHit = Common::String::format("%+d", METAL_DAMAGE_PERCENT[item._material - 37]);
+	}
+	
+	physDamage = Common::String::format(DAMAGE_X_TO_Y, minVal, maxVal);
+
+	// Next handle elemental/attribute damage
+	if (item._material < 37) {
+		int damage = ELEMENTAL_DAMAGE[item._material];
+		if (damage > 0) {
+			ElementalCategory elemCategory = item.getElementalCategory();
+			elemDamage = Common::String::format(ELEMENTAL_XY_DAMAGE,
+				damage, ELEMENTAL_NAMES[elemCategory]);
+		}
+	} else if (item._material >= 59) {
+		int bonus = ATTRIBUTE_BONUSES[item._material - 59];
+		AttributeCategory attrCategory = item.getAttributeCategory();
+		attrBonus = Common::String::format(ATTR_XY_BONUS, bonus,
+			ATTRIBUTE_NAMES[attrCategory]);
+	}
+
+	// Handle weapon effective against
+	int effective = item._bonusFlags & ITEMFLAG_BONUS_MASK;
+	if (effective) {
+		specialPower = Common::String::format(EFFECTIVE_AGAINST,
+			EFFECTIVENESS_NAMES[effective]);
+	}
+
+	return Common::String::format(ITEM_DETAILS, classes.c_str(),
+		toHit.c_str(), physDamage.c_str(), elemDamage.c_str(),
+		FIELD_NONE, FIELD_NONE, attrBonus.c_str(), specialPower.c_str()
+	);
+}
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -419,6 +484,41 @@ void ArmorItems::enchantItem(int itemIndex, int amount) {
 	}
 }
 
+/*
+* Returns a text string listing all the stats/attributes of a given item
+*/
+Common::String ArmorItems::getAttributes(XeenItem &item, const Common::String &classes) {
+	Common::String elemResist, attrBonus, acBonus;
+	elemResist = attrBonus = acBonus = FIELD_NONE;
+
+	if (item._material < 36) {
+		int resistence = ELEMENTAL_RESISTENCES[item._material];
+		if (resistence > 0) {
+			int eCategory = ELEM_FIRE;
+			while (eCategory < ELEM_MAGIC && ELEMENTAL_CATEGORIES[eCategory] < item._material)
+				++eCategory;
+				
+			elemResist = Common::String::format(ATTR_XY_BONUS, resistence,
+				ELEMENTAL_NAMES[eCategory]);
+		}
+	} else if (item._material >= 59) {
+		int bonus = ATTRIBUTE_BONUSES[item._material - 59];
+		AttributeCategory aCategory = item.getAttributeCategory();
+		attrBonus = Common::String::format(ATTR_XY_BONUS, bonus,
+			ATTRIBUTE_NAMES[aCategory]);
+	}
+
+	int strength = ARMOR_STRENGTHS[item._id];
+	if (item._material >= 37 && item._material <= 58) {
+		strength += METAL_LAC[item._material - 37];
+	}
+	acBonus = Common::String::format("%+d", strength);
+
+	return Common::String::format(ITEM_DETAILS, classes.c_str(),
+		FIELD_NONE, FIELD_NONE, FIELD_NONE,
+		elemResist.c_str(), acBonus.c_str(), attrBonus.c_str(), FIELD_NONE);
+}
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -490,6 +590,35 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 	);
 }
 
+/*
+* Returns a text string listing all the stats/attributes of a given item
+*/
+Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::String &classes) {
+	Common::String elemResist, attrBonus;
+	elemResist = attrBonus = FIELD_NONE;
+
+	if (item._material < 36) {
+		int resistence = ELEMENTAL_RESISTENCES[item._material];
+		if (resistence > 0) {
+			int eCategory = ELEM_FIRE;
+			while (eCategory < ELEM_MAGIC && ELEMENTAL_CATEGORIES[eCategory] < item._material)
+				++eCategory;
+
+			elemResist = Common::String::format(ATTR_XY_BONUS, resistence,
+				ELEMENTAL_NAMES[eCategory]);
+		}
+	} else if (item._material >= 59) {
+		int bonus = ATTRIBUTE_BONUSES[item._material - 59];
+		AttributeCategory aCategory = item.getAttributeCategory();
+		attrBonus = Common::String::format(ATTR_XY_BONUS, bonus,
+			ATTRIBUTE_NAMES[aCategory]);
+	}
+
+	return Common::String::format(ITEM_DETAILS, classes.c_str(),
+		FIELD_NONE, FIELD_NONE, FIELD_NONE,
+		elemResist.c_str(), FIELD_NONE, attrBonus.c_str(), FIELD_NONE);
+}
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -510,6 +639,22 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	);
 }
 
+
+/*
+* Returns a text string listing all the stats/attributes of a given item
+*/
+Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &classes) {
+	Common::String specialPower = FIELD_NONE;
+	Spells &spells = *vm()->_spells;
+
+	if (item._id) {
+		specialPower = spells._spellNames[MISC_SPELL_INDEX[item._id]];
+	}
+
+	return Common::String::format(ITEM_DETAILS, classes.c_str(),
+		FIELD_NONE, FIELD_NONE, FIELD_NONE, FIELD_NONE, FIELD_NONE, 
+		FIELD_NONE, specialPower.c_str());
+}
 /*------------------------------------------------------------------------*/
 
 InventoryItemsGroup::InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
@@ -975,8 +1120,8 @@ int Character::itemScan(int itemId) const {
 
 				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
 						&& itemId != 3 && item._material >= 59 && item._material <= 130) {
-					int mIndex = item.getAttributeCategory();
-					if (mIndex > 2)
+					int mIndex = (int)item.getAttributeCategory();
+					if (mIndex > PERSONALITY)
 						++mIndex;
 
 					if (mIndex == itemId)
@@ -991,8 +1136,8 @@ int Character::itemScan(int itemId) const {
 
 				if (item._frame && !(item._bonusFlags & 0xC0)) {
 					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
-						int mIndex = item.getAttributeCategory();
-						if (mIndex > 2)
+						int mIndex = (int)item.getAttributeCategory();
+						if (mIndex > PERSONALITY)
 							++mIndex;
 
 						if (mIndex == itemId)
@@ -1023,8 +1168,8 @@ int Character::itemScan(int itemId) const {
 
 				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11 && itemId != 3) {
 					if (item._material >= 59 && item._material <= 130) {
-						int mIndex = item.getAttributeCategory();
-						if (mIndex > 2)
+						int mIndex = (int)item.getAttributeCategory();
+						if (mIndex > PERSONALITY)
 							++mIndex;
 
 						if (mIndex == itemId) {

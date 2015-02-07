@@ -32,6 +32,34 @@ class XeenEngine;
 
 #define MAX_SPELLS_PER_CLASS 40
 
+enum MagicSpell {
+	MS_AcidSpray = 0, MS_Awaken = 1, MS_BeastMaster = 2, MS_Bless = 3,
+	MS_Clairvoyance = 4,  MS_ColdRay = 5, MS_CreateFood = 6,
+	MS_CureDisease = 7, MS_CureParalysis = 8, MS_CurePoison = 9,
+	MS_CureWounds = 10, MS_DancingSword = 11, MS_DayOfProtection = 12,
+	MS_DayOfSorcery = 13, MS_DeadlySwarm = 14, MS_DetectMonster = 15,
+	MS_DivineIntervention = 16, MS_DragonSleep = 17, MS_ElementalStorm = 18,
+	MS_EnchantItem = 19, MS_EnergyBlast = 20, MS_Etheralize = 21,
+	MS_FantasticFreeze = 22, MS_FieryFlail = 23, MS_FingerOfDeath = 24,
+	MS_FireBall = 25, MS_FirstAid = 26, MS_FlyingFist = 27,
+	MS_FrostBite = 28, MS_GolemStopper = 29, MS_Heroism = 30,
+	MS_HolyBonus = 31, MS_HolyWord = 32, MS_Hynotize = 33,
+	MS_IdentifyMonster = 34, MS_Implosion = 35, MS_Incinerate = 36,
+	MS_Inferno = 37, MS_InsectSpray = 38, MS_ItemToGold = 39,
+	MS_Jump = 40, MS_Levitate = 41, MS_Light = 42, MS_LightningBolt = 43,
+	MS_LloydsBeacon = 44, MS_MagicArrow = 45, MS_MassDistortion = 46,
+	MS_MegaVolts = 47, MS_MoonRay = 48, MS_NaturesCure = 49, MS_Pain = 50,
+	MS_PoisonVolley = 51, MS_PowerCure = 52, MS_PowerShield = 53,
+	MS_PrismaticLight = 54, MS_ProtFromElements = 55, MS_RaiseDead = 56,
+	MS_RechargeItem = 57, MS_Resurrection = 58, MS_Revitalize = 59,
+	MS_Shrapmetal = 60, MS_Sleep = 61, MS_Sparks = 62, MS_StarBurst = 63,
+	MS_StoneToFlesh = 64, MS_SunRay = 65, MS_SuperShelter = 66,
+	MS_SuppressDisease = 67, MS_SuppressPoison = 68, MS_Teleport = 69,
+	MS_TimeDistortion = 70, MS_TownPortal = 71, MS_ToxicCloud = 72,
+	MS_TurnUndead = 73, MS_WalkOnWater = 74, MS_WizardEye = 75,
+	NO_SPELL = 76
+};
+
 class Spells {
 private:
 	XeenEngine *_vm;

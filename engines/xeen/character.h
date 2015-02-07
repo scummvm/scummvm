@@ -73,6 +73,17 @@ enum Condition {
 	NO_CONDITION = 16
 };
 
+enum ElementalCategory { 
+	ELEM_FIRE = 0, ELEM_ELECTRICITY = 1, ELEM_COLD = 2,
+	ELEM_ACID_POISON = 3, ELEM_ENERGY = 4, ELEM_MAGIC = 5 
+};
+
+enum AttributeCategory {
+	ATTR_MIGHT = 0, ATTR_INTELLECT = 1, ATTR_PERSONALITY = 2, ATTR_SPEED = 3,
+	ATTR_ACCURACY = 4, ATTR_LUCK = 5, ATTR_HIT_POINTS = 6, ATTR_SPELL_POINTS = 7,
+	ATTR_ARMOR_CLASS = 8, ATTR_THIEVERY  = 9
+};
+
 class XeenEngine;
 class Character;
 
@@ -89,9 +100,9 @@ public:
 
 	void synchronize(Common::Serializer &s);
 
-	int getElementalCategory() const;
+	ElementalCategory getElementalCategory() const;
 
-	int getAttributeCategory() const;
+	AttributeCategory getAttributeCategory() const;
 };
 
 class InventoryItems : public Common::Array<XeenItem> {
@@ -103,6 +114,8 @@ protected:
 	XeenEngine *vm();
 	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
 		ItemCategory category2);
+
+	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes) = 0;
 public:
 	InventoryItems(Character *character, ItemCategory category);
 
@@ -113,6 +126,8 @@ public:
 	Common::String getName(int itemIndex);
 
 	virtual Common::String getFullDescription(int itemIndex, int displayNum = 15) = 0;
+
+	Common::String getIdentifiedDetails(int itemIndex);
 
 	bool discardItem(int itemIndex);
 
@@ -126,6 +141,8 @@ public:
 };
 
 class WeaponItems: public InventoryItems {
+protected:
+	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
 
@@ -137,6 +154,8 @@ public:
 };
 
 class ArmorItems : public InventoryItems {
+protected:
+	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
 
@@ -148,6 +167,8 @@ public:
 };
 
 class AccessoryItems : public InventoryItems {
+protected:
+	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
 
@@ -157,6 +178,8 @@ public:
 };
 
 class MiscItems : public InventoryItems {
+protected:
+	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
 

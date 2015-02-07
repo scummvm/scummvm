@@ -117,10 +117,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		case ITEMMODE_BLACKSMITH:
 			_iconSprites.draw(screen, 11, Common::Point(182, 109));
 			break;
-		case ITEMMODE_9:
+		case ITEMMODE_REPAIR:
 			_iconSprites.draw(screen, 15, Common::Point(250, 109));
 			break;
-		case ITEMMODE_10:
+		case ITEMMODE_IDENTIFY:
 			_iconSprites.draw(screen, 13, Common::Point(216, 109));
 			break;
 		default:
@@ -230,8 +230,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		case ITEMMODE_2:
 		case ITEMMODE_RECHARGE:
 		case ITEMMODE_ENCHANT:
-		case ITEMMODE_9:
-		case ITEMMODE_10:
+		case ITEMMODE_REPAIR:
+		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
 			screen._windows[30].writeString(Common::String::format(X_FOR_Y,
 				CATEGORY_NAMES[category], startingChar->_name.c_str(),
@@ -269,10 +269,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			case ITEMMODE_2:
 				actionIndex = 1;
 				break;
-			case ITEMMODE_9:
+			case ITEMMODE_REPAIR:
 				actionIndex = 3;
 				break;
-			case ITEMMODE_10:
+			case ITEMMODE_IDENTIFY:
 				actionIndex = 2;
 				break;
 			default:
@@ -448,10 +448,10 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	case ITEMMODE_TO_GOLD:
 		level = level == 0 ? 1 : 0;
 		break;
-	case ITEMMODE_10:
+	case ITEMMODE_IDENTIFY:
 		level = 2;
 		break;
-	case ITEMMODE_9:
+	case ITEMMODE_REPAIR:
 		level = 3;
 		break;
 	default:
@@ -496,8 +496,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:
 		case ITEMMODE_2:
-		case ITEMMODE_9:
-		case ITEMMODE_10:
+		case ITEMMODE_REPAIR:
+		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
 			result = (amount1 + amount2 + amount3 + amount4) / ITEM_SKILL_DIVISORS[level];
 			if (!result)
@@ -518,8 +518,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:
 		case ITEMMODE_2:
-		case ITEMMODE_9:
-		case ITEMMODE_10:
+		case ITEMMODE_REPAIR:
+		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
 			result = (amount1 + amount2 + amount3 + amount4) / ITEM_SKILL_DIVISORS[level];
 			if (!result)
@@ -603,6 +603,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	}
 
 	if (itemIndex != -1) {
+		XeenItem &item = c._items[category][itemIndex];
+
 		switch (mode) {
 		case ITEMMODE_CHAR_INFO:
 		case ITEMMODE_8:
@@ -695,7 +697,6 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		}
 
 		case ITEMMODE_2: {
-			XeenItem &item = c._items[category][itemIndex];
 			bool noNeed;
 			switch (category) {
 			case CATEGORY_WEAPON:
@@ -742,20 +743,57 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			return 2;
 
 		case ITEMMODE_ENCHANT: {
-			Character *ps = &_itemsCharacter;
-			ps->clear();
-			int charges = _vm->getRandomNumber(1, _oldCharacter->getCurrentLevel() / 5 + 1);
-			charges = MIN(charges, 5);
+			int amount = _vm->getRandomNumber(1, _oldCharacter->getCurrentLevel() / 5 + 1);
+			amount = MIN(amount, 5);
+			_oldCharacter->_items[category].enchantItem(itemIndex, amount);
+			break;
+		}
 
-			switch (category) {
-			case CATEGORY_WEAPON:
+		case ITEMMODE_REPAIR:
+			if (!(item._bonusFlags & ITEMFLAG_BROKEN)) {
+				ErrorScroll::show(_vm, ITEM_NOT_BROKEN);
+			} else {
+				int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
+				Common::String msg = Common::String::format(FIX_IDENTIFY_GOLD,
+					FIX_IDENTIFY[0],
+					c._items[category].getFullDescription(itemIndex),
+					cost);
 
-			default:
-				break;
+				if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
+					item._bonusFlags &= ~ITEMFLAG_BROKEN;
+				}
 			}
+			break;
 
-			// TODO
-			return 2;
+		case ITEMMODE_IDENTIFY: {
+			int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
+			Common::String msg = Common::String::format(FIX_IDENTIFY_GOLD,
+				FIX_IDENTIFY[1],
+				c._items[category].getFullDescription(itemIndex),
+				cost);
+
+			if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
+				Common::String details = c._items[category].getIdentifiedDetails(itemIndex);
+				Common::String desc = c._items[category].getFullDescription(itemIndex);
+				Common::String msg = Common::String::format(IDENTIFY_ITEM_MSG,
+					desc.c_str(), details.c_str());
+
+				Window &w = screen._windows[14];
+				w.open();
+				w.writeString(msg);
+				w.update();
+
+				saveButtons();
+				clearButtons();
+
+				while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+					events.pollEventsAndWait();
+				events.clearEvents();
+
+				restoreButtons();
+				w.close();
+			}
+			break;
 		}
 
 		default:

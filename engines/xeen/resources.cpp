@@ -592,6 +592,28 @@ const int ELEMENTAL_DAMAGE[37] = {
 	2, 4, 8, 16, 32, 2, 3, 4, 5, 10, 15, 20, 30, 5, 10, 25
 };
 
+const int WEAPON_DAMAGE_BASE[35] = {
+	0, 3, 2, 3, 2, 2, 4, 1, 2, 4, 2, 3,
+	2, 2, 1, 1, 1, 1, 4, 4, 3, 2, 4, 2,
+	2, 2, 5, 3, 3, 3, 3, 5, 4, 2, 6
+};
+
+const int WEAPON_DAMAGE_MULTIPLIER[35] = {
+	0, 3, 3, 4, 5, 4, 2, 3, 3, 3, 3, 3,
+	2, 4, 10, 6, 8, 9, 4, 3, 6, 8, 5, 6,
+	4, 5, 3, 5, 6, 7, 2, 2, 2, 2, 4
+};
+
+const int METAL_DAMAGE[22] = {
+	-3, -6, -4, -2, 2, 4, 6, 8, 10, 0, 1,
+	1, 2, 2, 3, 4, 5, 12, 15, 20, 30, 50
+};
+
+const int METAL_DAMAGE_PERCENT[22] = {
+	253, 252, 3, 2, 1, 2, 3, 4, 6, 0, 1,
+	1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10
+};
+
 const int METAL_LAC[9] = { -3, 0, -2, -1, 1, 2, 4, 6, 8 };
 
 const int ARMOR_STRENGTHS[14] = { 0, 2, 4, 5, 6, 7, 8, 10, 4, 2, 1, 1, 1, 1 };
@@ -790,6 +812,28 @@ const char *const GUILD_OPTIONS =
 	"\x0D\x0C""00\x03""c\x0B""000\x09""000Guild Options for%s"
 	"\x03l\x09""000\x0B""090Gold"
 	"\x03r\x09""000%s\x02\x03""c\x0B""122\x09""040ESC\x01";
+
+const int MISC_SPELL_INDEX[74] = {
+	NO_SPELL, MS_Light, MS_Awaken, MS_MagicArrow,
+	MS_FirstAid, MS_FlyingFist, MS_EnergyBlast, MS_Sleep,
+	MS_Revitalize, MS_CureWounds, MS_Sparks, MS_Shrapmetal,
+	MS_InsectSpray, MS_ToxicCloud, MS_ProtFromElements, MS_Pain,
+	MS_Jump, MS_BeastMaster, MS_Clairvoyance, MS_TurnUndead,
+	MS_Levitate, MS_WizardEye, MS_Bless, MS_IdentifyMonster,
+	MS_LightningBolt, MS_HolyBonus, MS_PowerCure, MS_NaturesCure,
+	MS_LloydsBeacon, MS_PowerShield, MS_Heroism, MS_Hynotize,
+	MS_WalkOnWater, MS_FrostBite, MS_DetectMonster, MS_FireBall,
+	MS_ColdRay, MS_CurePoison, MS_AcidSpray, MS_TimeDistortion,
+	MS_DragonSleep, MS_CureDisease, MS_Teleport, MS_FingerOfDeath,
+	MS_CureParalysis, MS_GolemStopper, MS_PoisonVolley, MS_DeadlySwarm,
+	MS_SuperShelter, MS_DayOfProtection, MS_DayOfSorcery, MS_CreateFood,
+	MS_FieryFlail, MS_RechargeItem, MS_FantasticFreeze, MS_TownPortal,
+	MS_StoneToFlesh, MS_RaiseDead, MS_Etheralize, MS_DancingSword,
+	MS_MoonRay, MS_MassDistortion, MS_PrismaticLight, MS_EnchantItem,
+	MS_Incinerate, MS_HolyWord, MS_Resurrection, MS_ElementalStorm,
+	MS_MegaVolts, MS_Inferno, MS_SunRay, MS_Implosion,
+	MS_StarBurst, MS_DivineIntervention
+};
 
 const int SPELL_COSTS[77] = {
 	8, 1, 5, -2, 5, -2, 20, 10, 12, 8, 3,
@@ -1087,6 +1131,19 @@ const char *const MISC_NAMES[22] = {
 	"bogus", "bogus", "bogus", "bogus"
 };
 
+const char *const ELEMENTAL_NAMES[6] = {
+	"Fire", "Elec", "Cold", "Acid/Poison", "Energy", "Magic"
+};
+
+const char *const ATTRIBUTE_NAMES[10] = {
+	"might", "Intellect", "Personality", "Speed", "accuracy", "Luck",
+	"Hit Points", "Spell Points", "Armor Class", "Thievery"
+};
+
+const char *const EFFECTIVENESS_NAMES[7] = {
+	nullptr, "Dragons", "Undead", "Golems", "Bugs", "Monsters", "Beasts"
+};
+
 const int WEAPON_BASE_COSTS[35] = {
 	0, 50, 15, 100, 80, 40, 60, 1, 10, 150, 30, 60, 8, 50,
 	100, 15, 30, 15, 200, 80, 250, 150, 400, 100, 40, 120,
@@ -1194,5 +1251,34 @@ const char *const NOT_RECHARGABLE = "\v012\x03c\fdNot Rechargeable.  %s";
 const char *const NOT_ENCHANTABLE = "\v012\t000\x03cNot Enchantable.  %s";
 
 const char *const SPELL_FAILED = "Spell Failed!";
+
+const char *const ITEM_NOT_BROKEN =  "\fdThat item is not broken!";
+
+const char *const FIX_IDENTIFY[2] = { "Fix", "Identify" };
+
+const char *const FIX_IDENTIFY_GOLD = "\x3l\v000\t000%s %s\fd for %lu gold?";
+
+const char *const IDENTIFY_ITEM_MSG = "\fd\v000\t000\x3""cIdentify Item\x3l\n"
+	"\n"
+	"\v012%s\fd\n"
+	"\n"
+	"%s";
+
+const char *const ITEM_DETAILS =
+	"Proficient Classes\t132:\t140%s\n"
+	"to Hit Modifier\t132:\t140%s\n"
+	"Physical Damage\t132:\t140%s\n"
+	"Elemental Damage\t132:\t140%s\n"
+	"Elemental Resistance\t132:\t140%s\n"
+	"Armor Class Bonus\t132:\t140%s\n"
+	"Attribute Bonus\t132:\t140%s\n"
+	"Special Power\t132:\t140%s";
+
+const char *const ALL = "All";
+const char *const FIELD_NONE = "None";
+const char *const DAMAGE_X_TO_Y = "%d to %d";
+const char *const ELEMENTAL_XY_DAMAGE = "%+d %s Damage";
+const char *const ATTR_XY_BONUS = "%+d %s";
+const char *const EFFECTIVE_AGAINST = "x3 vs %s";
 
 } // End of namespace Xeen
