@@ -55,7 +55,7 @@ bool GameInfo::open(const Common::String &name) {
 	_actor_count          = s->readUint32LE();   /* 00 */
 	_player_id            = s->readUint32LE();   /* 01 */
 	_flag_count           = s->readUint32LE();   /* 02 */
-	unk                   = s->readUint32LE();   /* 03 */
+	_clue_count           = s->readUint32LE();   /* 03 */
 	_global_var_count     = s->readUint32LE();   /* 04 */
 	_set_names_count      = s->readUint32LE();   /* 05 */
 	_initial_scene_id     = s->readUint32LE();   /* 06 */

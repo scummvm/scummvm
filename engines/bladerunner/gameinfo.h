@@ -37,6 +37,7 @@ class GameInfo {
 	uint32 _actor_count;
 	uint32 _player_id;
 	uint32 _flag_count;
+	uint32 _clue_count;
 	uint32 _global_var_count;
 	uint32 _set_names_count;
 	uint32 _initial_scene_id;
@@ -62,6 +63,7 @@ public:
 	uint32 getActorCount()         { return _actor_count; }
 	uint32 getPlayerId()           { return _player_id; }
 	uint32 getFlagCount()          { return _flag_count; }
+	uint32 getClueCount()          { return _clue_count; }
 	uint32 getGlobalVarCount()     { return _global_var_count; }
 	uint32 getSetNamesCount()      { return _set_names_count; }
 	uint32 getInitialSceneId()     { return _initial_scene_id; }

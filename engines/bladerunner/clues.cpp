@@ -20,43 +20,37 @@
  *
  */
 
-#ifndef BLADERUNNER_SCRIPT_INIT_H
-#define BLADERUNNER_SCRIPT_INIT_H
+#include "bladerunner/clues.h"
 
-#include "bladerunner/script/script.h"
+#include "bladerunner/bladerunner.h"
+#include "bladerunner/text_resource.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
+Clues::Clues(BladeRunnerEngine *vm, const char *cluesResource, uint32 clueCount)
+	: _clueCount(clueCount)
+{
+	// reset();
 
-class ScriptInit : ScriptBase {
-public:
-	ScriptInit(BladeRunnerEngine *vm)
-		: ScriptBase(vm)
-	{}
+	_crimes     = new int[_clueCount];
+	_assetTypes = new int[_clueCount];
 
-	void SCRIPT_Initialize_Game();
+	_cluesText = new TextResource(vm);
+	_cluesText->open(cluesResource);
 
-private:
-	void Init_Globals();
-	void Init_Game_Flags();
-	void Init_Clues();
-	void Init_Clues2();
-	void Init_World_Waypoints();
-	void Init_SDB();
-	void Init_CDB();
-	void Init_Spinner();
-	void Init_Actor_Friendliness();
-	void Init_Actor_Combat_Aggressiveness();
-	void Init_Actor_Honesty();
-	void Init_Actor_Intelligence();
-	void Init_Actor_Stability();
-	void Init_Actor_Health();
-	void Init_Combat_Cover_Waypoints();
-	void Init_Combat_Flee_Waypoints();
-	void Init_Shadows();
-};
+	for (uint32 i = 0; i != _clueCount; ++i) {
+		_crimes[i] = -1;
+		_assetTypes[i] = -1;
+	}
+}
+
+Clues::~Clues() {
+	delete[] _assetTypes;
+	delete[] _crimes;
+}
+
+const char *Clues::getClueText(int id) {
+	return _cluesText->getText(id);
+}
 
 } // End of namespace BladeRunner
-
-#endif

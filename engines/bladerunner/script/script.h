@@ -111,7 +111,7 @@ protected:
 	// Actor_Force_Stop_Walking
 	// Loop_Actor_Travel_Stairs
 	// Loop_Actor_Travel_Ladder
-	// Actor_Clue_Add_To_Database
+	void Actor_Clue_Add_To_Database(int a0, int a1, int a2, int a3, int a4, int a5);
 	// Actor_Clue_Acquire
 	// Actor_Clue_Lose
 	// Actor_Clue_Query
@@ -151,7 +151,7 @@ protected:
 	int Global_Variable_Query(int);
 	int Global_Variable_Increment(int, int);
 	int Global_Variable_Decrement(int, int);
-	// Random_Query
+	int Random_Query(int min, int max);
 	void Sound_Play(int id, int volume, int panFrom, int panTo, int priority);
 	// Sound_Play_Speech_Line
 	// Sound_Left_Footstep_Walk
@@ -234,7 +234,7 @@ protected:
 	// Elevator_Activate
 	// View_Score_Board
 	// Query_Score
-	// Set_Score
+	void Set_Score(int a0, int a1);
 	// Give_McCoy_Ammo
 	void Assign_Player_Gun_Hit_Sounds(int a0, int a1, int a2, int a3);
 	void Assign_Player_Gun_Miss_Sounds(int a0, int a1, int a2, int a3);

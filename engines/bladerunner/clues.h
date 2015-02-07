@@ -20,41 +20,27 @@
  *
  */
 
-#ifndef BLADERUNNER_SCRIPT_INIT_H
-#define BLADERUNNER_SCRIPT_INIT_H
+#ifndef BLADERUNNER_CLUES_H
+#define BLADERUNNER_CLUES_H
 
-#include "bladerunner/script/script.h"
+#include "common/scummsys.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class TextResource;
 
-class ScriptInit : ScriptBase {
+class Clues {
+	uint32        _clueCount;
+	int          *_crimes;
+	int          *_assetTypes;
+	TextResource *_cluesText;
+
 public:
-	ScriptInit(BladeRunnerEngine *vm)
-		: ScriptBase(vm)
-	{}
+	Clues(BladeRunnerEngine *vm, const char *cluesResource, uint32 clueCount);
+	~Clues();
 
-	void SCRIPT_Initialize_Game();
-
-private:
-	void Init_Globals();
-	void Init_Game_Flags();
-	void Init_Clues();
-	void Init_Clues2();
-	void Init_World_Waypoints();
-	void Init_SDB();
-	void Init_CDB();
-	void Init_Spinner();
-	void Init_Actor_Friendliness();
-	void Init_Actor_Combat_Aggressiveness();
-	void Init_Actor_Honesty();
-	void Init_Actor_Intelligence();
-	void Init_Actor_Stability();
-	void Init_Actor_Health();
-	void Init_Combat_Cover_Waypoints();
-	void Init_Combat_Flee_Waypoints();
-	void Init_Shadows();
+	const char *getClueText(int id);
 };
 
 } // End of namespace BladeRunner

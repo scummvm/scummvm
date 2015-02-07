@@ -26,9 +26,11 @@
 
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/clues.h"
 #include "bladerunner/gameflags.h"
+#include "bladerunner/gameinfo.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
@@ -133,7 +135,13 @@ void Script::SceneFrameAdvanced(int frame) {
 // ScriptBase::Actor_Force_Stop_Walking
 // ScriptBase::Loop_Actor_Travel_Stairs
 // ScriptBase::Loop_Actor_Travel_Ladder
-// ScriptBase::Actor_Clue_Add_To_Database
+
+void ScriptBase::Actor_Clue_Add_To_Database(int a0, int a1, int a2, int a3, int a4, int a5) {
+	// debug("STUB: Actor_Clue_Add_To_Database(%d, %3d, %3d, %d, %d, %d)", a0, a1, a2, a3, a4, a5);
+	// debug("\tACTOR: %s", _vm->_actorNames->getText(a0));
+	// debug("\tCLUE:  %s\n", _vm->_clues->getClueText(a1));
+}
+
 // ScriptBase::Actor_Clue_Acquire
 // ScriptBase::Actor_Clue_Lose
 // ScriptBase::Actor_Clue_Query
@@ -199,7 +207,9 @@ int ScriptBase::Global_Variable_Decrement(int var, int dec) {
 	return _vm->_gameVars[var] -= dec;
 }
 
-// ScriptBase::Random_Query
+int ScriptBase::Random_Query(int min, int max) {
+	return _vm->_rnd.getRandomNumberRng(min, max);
+}
 
 void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int priority) {
 	const char *name = _vm->_gameInfo->getSfxTrack(id);
@@ -322,7 +332,11 @@ void ScriptBase::Scene_2D_Region_Add(int a, int b, int c, int d, int e) {
 // ScriptBase::Elevator_Activate
 // ScriptBase::View_Score_Board
 // ScriptBase::Query_Score
-// ScriptBase::Set_Score
+
+void ScriptBase::Set_Score(int a0, int a1) {
+	debug("STUB: Set_Score(%d, %d)", a0, a1);
+}
+
 // ScriptBase::Give_McCoy_Ammo
 
 void ScriptBase::Assign_Player_Gun_Hit_Sounds(int a0, int a1, int a2, int a3) {

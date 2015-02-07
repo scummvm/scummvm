@@ -26,6 +26,7 @@
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/chapters.h"
+#include "bladerunner/clues.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/image.h"
@@ -36,6 +37,7 @@
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_decoder.h"
 
 #include "common/error.h"
@@ -58,6 +60,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_ambientSounds = new AmbientSounds(this);
 	_audioPlayer = new AudioPlayer(this);
 	_chapters = nullptr;
+	_clues = nullptr;
 	_gameInfo = nullptr;
 	_gameFlags = new GameFlags();
 	_gameVars = nullptr;
@@ -77,6 +80,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _gameVars;
 	delete _gameFlags;
 	delete _gameInfo;
+	delete _clues;
 	delete _chapters;
 	delete _audioPlayer;
 	delete _ambientSounds;
@@ -163,6 +167,11 @@ bool BladeRunnerEngine::startup() {
 
 	_zBuffer1 = new uint16[640 * 480];
 	_zBuffer2 = new uint16[640 * 480];
+
+	_actorNames = new TextResource(this);
+	_actorNames->open("ACTORS");
+
+	_clues = new Clues(this, "CLUES", _gameInfo->getClueCount());
 
 	ScriptInit initScript(this);
 	initScript.SCRIPT_Initialize_Game();

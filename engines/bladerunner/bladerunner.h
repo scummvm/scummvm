@@ -39,6 +39,7 @@ namespace BladeRunner {
 class AmbientSounds;
 class AudioPlayer;
 class Chapters;
+class Clues;
 class GameInfo;
 class GameFlags;
 class Scene;
@@ -46,6 +47,7 @@ class Script;
 class Settings;
 class SliceAnimations;
 class SliceRenderer;
+class TextResource;
 
 class BladeRunnerEngine : public Engine {
 public:
@@ -55,6 +57,7 @@ public:
 	AmbientSounds   *_ambientSounds;
 	AudioPlayer     *_audioPlayer;
 	Chapters        *_chapters;
+	Clues           *_clues;
 	GameInfo        *_gameInfo;
 	GameFlags       *_gameFlags;
 	Scene           *_scene;
@@ -63,6 +66,8 @@ public:
 	SliceAnimations *_sliceAnimations;
 	SliceRenderer   *_sliceRenderer;
 	int             *_gameVars;
+
+	TextResource    *_actorNames;
 
 	int in_script_counter;
 

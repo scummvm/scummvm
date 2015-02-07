@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	bladerunner.o \
 	boundingbox.o \
 	chapters.o \
+	clues.o \
 	decompress_lcw.o \
 	decompress_lzo.o \
 	detection.o \
@@ -24,6 +25,7 @@ MODULE_OBJS = \
 	settings.o \
 	slice_animations.o \
 	slice_renderer.o \
+	text_resource.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o
