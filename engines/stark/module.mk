@@ -34,6 +34,7 @@ MODULE_OBJS := \
 	resources/resource.o \
 	resources/root.o \
 	resources/script.o \
+	resources/scroll.o \
 	resources/sound.o \
 	resources/speech.o \
 	resources/textureset.o \

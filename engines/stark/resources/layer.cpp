@@ -46,19 +46,19 @@ Layer::~Layer() {
 
 Layer::Layer(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
-		_field_44(1.0),
+		_scrollScale(1.0),
 		_field_50(1) {
 	_type = TYPE;
 }
 
 void Layer::readData(XRCReadStream *stream) {
-	_field_44 = stream->readFloat();
-	if (_field_44 > 10.0 || _field_44 < -1.0)
-		_field_44 = 0;
+	_scrollScale = stream->readFloat();
+	if (_scrollScale > 10.0 || _scrollScale < -1.0)
+		_scrollScale = 0;
 }
 
 void Layer::printData() {
-	debug("field_44: %f", _field_44);
+	debug("scrollScale: %f", _scrollScale);
 	debug("field_50: %d", _field_50);
 }
 

@@ -44,6 +44,7 @@
 #include "engines/stark/resources/resource.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/scroll.h"
 #include "engines/stark/resources/speech.h"
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/textureset.h"
@@ -248,6 +249,9 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 		break;
 	case ResourceType::kBonesMesh:
 		resource = new BonesMesh(parent, subType, index, name);
+		break;
+	case ResourceType::kScroll:
+		resource = new Scroll(parent, subType, index, name);
 		break;
 	case ResourceType::kTextureSet:
 		resource = new TextureSet(parent, subType, index, name);

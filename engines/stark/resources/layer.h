@@ -66,7 +66,7 @@ public:
 protected:
 	void printData() override;
 
-	float _field_44;
+	float _scrollScale; // Used for the parallax effect
 	uint _field_50;
 };
 
