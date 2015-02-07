@@ -1240,6 +1240,13 @@ const char *const PERMANENTLY_DISCARD = "\v000\t000\x03lPermanently discard %s\f
 
 const char *const BACKPACK_IS_FULL = "\v005\x03c\fd%s's backpack is full.";
 
+const char *const CATEGORY_BACKPACK_IS_FULL[4] = {
+	"\v010\t000\x3""c%s's weapons backpack is full.",
+	"\v010\t000\x3""c%s's armor backpack is full.",
+	"\v010\t000\x3""c%s's accessories backpack is full.",
+	"\v010\t000\x3""c%s's miscellaneous backpack is full."
+};
+
 const char *const BUY_X_FOR_Y_GOLD = "\x3l\v000\t000\fdBuy %s\fd for %lu gold?";
 
 const char *const SELL_X_FOR_Y_GOLD = "\x3l\v000\t000\fdSell %s\fd for %lu gold?";

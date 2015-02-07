@@ -22,6 +22,7 @@
 
 #include "xeen/dialogs_items.h"
 #include "xeen/dialogs_query.h"
+#include "xeen/dialogs_quests.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -47,7 +48,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	int varA = mode == ITEMMODE_COMBAT ? 1 : 0;
 	if (varA != 0)
 		mode = ITEMMODE_CHAR_INFO;
-	int varE = mode == 1 ? 1 : 0;
+	bool updateStock = mode == ITEMMODE_BLACKSMITH;
+	int itemIndex = -1;
+	Common::StringArray lines;
+	int arr[40];
+	int actionIndex = -1;
 
 	events.setCursor(0);
 	loadButtons(mode, c);
@@ -55,9 +60,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	screen._windows[29].open();
 	screen._windows[30].open();
 
-	bool redrawFlag = true;
+	enum { REDRAW_NONE, REDRAW_TEXT, REDRAW_FULL } redrawFlag = REDRAW_FULL;
 	while (!_vm->shouldQuit()) {
-		if (redrawFlag) {
+		if (redrawFlag == REDRAW_FULL) {
 			if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
 				_buttons[8]._bounds.moveTo(148, _buttons[8]._bounds.top);
@@ -94,174 +99,177 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 			screen._windows[29].writeString(msg);
 			drawButtons(&screen);
+
+			Common::fill(&arr[0], &arr[40], 0);
+			itemIndex = -1;
 		}
 
-		Common::StringArray lines;
-		int arr[40];
-		Common::fill(&arr[0], &arr[40], 0);
-		int var2 = -1;
-	
-		if (mode == ITEMMODE_CHAR_INFO || category != 3) {
-			_iconSprites.draw(screen, 8, Common::Point(148, 109));
-		}
-		if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-			_iconSprites.draw(screen, 10, Common::Point(182, 109));
-			_iconSprites.draw(screen, 12, Common::Point(216, 109));
-			_iconSprites.draw(screen, 14, Common::Point(250, 109));
-		}
+		if (redrawFlag == REDRAW_TEXT || redrawFlag == REDRAW_FULL) {
+			lines.clear();
 
-		switch (mode) {
-		case ITEMMODE_CHAR_INFO:
-			_iconSprites.draw(screen, 9, Common::Point(148, 109));
-			break;
-		case ITEMMODE_BLACKSMITH:
-			_iconSprites.draw(screen, 11, Common::Point(182, 109));
-			break;
-		case ITEMMODE_REPAIR:
-			_iconSprites.draw(screen, 15, Common::Point(250, 109));
-			break;
-		case ITEMMODE_IDENTIFY:
-			_iconSprites.draw(screen, 13, Common::Point(216, 109));
-			break;
-		default:
-			break;
-		}
+			if (mode == ITEMMODE_CHAR_INFO || category != 3) {
+				_iconSprites.draw(screen, 8, Common::Point(148, 109));
+			}
+			if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
+				_iconSprites.draw(screen, 10, Common::Point(182, 109));
+				_iconSprites.draw(screen, 12, Common::Point(216, 109));
+				_iconSprites.draw(screen, 14, Common::Point(250, 109));
+			}
 
-		for (int idx = 0; idx < 9; ++idx) {
-			_itemsDrawList[idx]._y = 10 + idx * 9;
+			switch (mode) {
+			case ITEMMODE_CHAR_INFO:
+				_iconSprites.draw(screen, 9, Common::Point(148, 109));
+				break;
+			case ITEMMODE_BLACKSMITH:
+				_iconSprites.draw(screen, 11, Common::Point(182, 109));
+				break;
+			case ITEMMODE_REPAIR:
+				_iconSprites.draw(screen, 15, Common::Point(250, 109));
+				break;
+			case ITEMMODE_IDENTIFY:
+				_iconSprites.draw(screen, 13, Common::Point(216, 109));
+				break;
+			default:
+				break;
+			}
 
-			switch (category) {
-			case CATEGORY_WEAPON: 
-			case CATEGORY_ARMOR:
-			case CATEGORY_ACCESSORY: {
-				XeenItem &i = (category == CATEGORY_WEAPON) ? c->_weapons[idx] :
-					((category == CATEGORY_ARMOR) ? c->_armor[idx] : c->_accessories[idx]);
+			for (int idx = 0; idx < 9; ++idx) {
+				_itemsDrawList[idx]._y = 10 + idx * 9;
 
-				if (i._id) {
-					if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
-							|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
-						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
-							arr[idx], idx + 1,
-							c->_items[category].getFullDescription(idx, arr[idx])));
+				switch (category) {
+				case CATEGORY_WEAPON: 
+				case CATEGORY_ARMOR:
+				case CATEGORY_ACCESSORY: {
+					XeenItem &i = (category == CATEGORY_WEAPON) ? c->_weapons[idx] :
+						((category == CATEGORY_ARMOR) ? c->_armor[idx] : c->_accessories[idx]);
+
+					if (i._id) {
+						if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
+								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
+							lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
+								arr[idx], idx + 1,
+								c->_items[category].getFullDescription(idx, arr[idx])));
+						} else {
+							lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
+								arr[idx], idx + 1,
+								c->_items[category].getFullDescription(idx, arr[idx]),
+								calcItemCost(c, idx, mode,
+									mode == ITEMMODE_TO_GOLD ? 1 : startingChar->_skills[MERCHANT],
+									category)
+							));
+						}
+
+						DrawStruct &ds = _itemsDrawList[idx];
+						ds._sprites = &_equipSprites;
+						if (c->_weapons.passRestrictions(i._id, true))
+							ds._frame = i._frame;
+						else
+							ds._frame = 14;
+					} else if (_itemsDrawList[idx]._sprites == nullptr) {
+						lines.push_back(NO_ITEMS_AVAILABLE);
+					}
+					break;
+				}
+
+				case CATEGORY_MISC: {
+					XeenItem &i = c->_misc[idx];
+					_itemsDrawList[idx]._sprites = nullptr;
+
+					if (i._material == 0) {
+						// No item
+						if (idx == 0) {
+							lines.push_back(NO_ITEMS_AVAILABLE);
+						}
 					} else {
+						ItemsMode tempMode = mode;
+						int skill = startingChar->_skills[MERCHANT];
+
+						if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
+								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
+							tempMode = ITEMMODE_ENCHANT;
+						} else if (mode == ITEMMODE_TO_GOLD) {
+							skill = 1;
+						}
+
 						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
 							arr[idx], idx + 1,
 							c->_items[category].getFullDescription(idx, arr[idx]),
-							calcItemCost(c, idx, mode,
-								mode == ITEMMODE_TO_GOLD ? 1 : startingChar->_skills[MERCHANT],
-								category)
+							calcItemCost(c, idx, tempMode, skill, category)
 						));
 					}
-
-					DrawStruct &ds = _itemsDrawList[idx];
-					ds._sprites = &_equipSprites;
-					if (c->_weapons.passRestrictions(i._id, true))
-						ds._frame = i._frame;
-					else
-						ds._frame = 14;
-				} else if (_itemsDrawList[idx]._sprites == nullptr) {
-					lines.push_back(NO_ITEMS_AVAILABLE);
+					break;
 				}
+
+				default:
+					break;
+				}
+			}
+			while (lines.size() < INV_ITEMS_TOTAL)
+				lines.push_back("");
+
+			// Draw out overall text and the list of items
+			switch (mode) {
+			case ITEMMODE_CHAR_INFO:
+			case ITEMMODE_8:
+				screen._windows[30].writeString(Common::String::format(X_FOR_THE_Y,
+					category == CATEGORY_MISC ? "\x3l" : "\x3c",
+					CATEGORY_NAMES[category], c->_name.c_str(), CLASS_NAMES[c->_class],
+					category == CATEGORY_MISC ? FMT_CHARGES : " ",
+					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
+					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
+					lines[8].c_str()
+				));
+
+			case ITEMMODE_BLACKSMITH: {
+				// Original uses var in this block that's never set?!
+				const int v1 = 0;
+				screen._windows[30].writeString(Common::String::format(AVAILABLE_GOLD_COST,
+					CATEGORY_NAMES[category], 
+					v1 ? "" : "s", party._gold,
+					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
+					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
+					lines[8].c_str()
+				));
 				break;
 			}
 
-			case CATEGORY_MISC: {
-				XeenItem &i = c->_misc[idx];
-				_itemsDrawList[idx]._sprites = nullptr;
+			case ITEMMODE_2:
+			case ITEMMODE_RECHARGE:
+			case ITEMMODE_ENCHANT:
+			case ITEMMODE_REPAIR:
+			case ITEMMODE_IDENTIFY:
+			case ITEMMODE_TO_GOLD:
+				screen._windows[30].writeString(Common::String::format(X_FOR_Y,
+					CATEGORY_NAMES[category], startingChar->_name.c_str(),
+					(mode == ITEMMODE_RECHARGE || mode == ITEMMODE_ENCHANT) ? CHARGES : COST,
+					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
+					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
+					lines[8].c_str()
+				));
+				break;
 
-				if (i._material == 0) {
-					// No item
-					if (idx == 0) {
-						lines.push_back(NO_ITEMS_AVAILABLE);
-					}
-				} else {
-					ItemsMode tempMode = mode;
-					int skill = startingChar->_skills[MERCHANT];
-
-					if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
-							|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
-						tempMode = ITEMMODE_ENCHANT;
-					} else if (mode == ITEMMODE_TO_GOLD) {
-						skill = 1;
-					}
-
-					lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
-						arr[idx], idx + 1,
-						c->_items[category].getFullDescription(idx, arr[idx]),
-						calcItemCost(c, idx, tempMode, skill, category)
+			case ITEMMODE_3:
+			case ITEMMODE_5:
+				screen._windows[30].writeString(Common::String::format(X_FOR_Y_GOLD,
+					CATEGORY_NAMES[category], c->_name.c_str(), party._gold, CHARGES,
+					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
+					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
+					lines[8].c_str()
 					));
-				}
 				break;
-			}
 
 			default:
 				break;
 			}
-		}
-		while (lines.size() < INV_ITEMS_TOTAL)
-			lines.push_back("");
 
-		// Draw out overall text and the list of items
-		switch (mode) {
-		case ITEMMODE_CHAR_INFO:
-		case ITEMMODE_8:
-			screen._windows[30].writeString(Common::String::format(X_FOR_THE_Y,
-				category == CATEGORY_MISC ? "\x3l" : "\x3c",
-				CATEGORY_NAMES[category], c->_name.c_str(), CLASS_NAMES[c->_class],
-				category == CATEGORY_MISC ? FMT_CHARGES : " ",
-				lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
-				lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-				lines[8].c_str()
-			));
-
-		case ITEMMODE_BLACKSMITH: {
-			// Original uses var in this block that's never set?!
-			const int v1 = 0;
-			screen._windows[30].writeString(Common::String::format(AVAILABLE_GOLD_COST,
-				CATEGORY_NAMES[category], 
-				v1 ? "" : "s", party._gold,
-				lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
-				lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-				lines[8].c_str()
-			));
-			break;
+			// Draw the glyphs for the items
+			screen._windows[0].drawList(_itemsDrawList, INV_ITEMS_TOTAL);
+			screen._windows[0].update();
 		}
 
-		case ITEMMODE_2:
-		case ITEMMODE_RECHARGE:
-		case ITEMMODE_ENCHANT:
-		case ITEMMODE_REPAIR:
-		case ITEMMODE_IDENTIFY:
-		case ITEMMODE_TO_GOLD:
-			screen._windows[30].writeString(Common::String::format(X_FOR_Y,
-				CATEGORY_NAMES[category], startingChar->_name.c_str(),
-				(mode == ITEMMODE_RECHARGE || mode == ITEMMODE_ENCHANT) ? CHARGES : COST,
-				lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
-				lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-				lines[8].c_str()
-			));
-			break;
+		redrawFlag = REDRAW_NONE;
 
-		case ITEMMODE_3:
-		case ITEMMODE_5:
-			screen._windows[30].writeString(Common::String::format(X_FOR_Y_GOLD,
-				CATEGORY_NAMES[category], c->_name.c_str(), party._gold, CHARGES,
-				lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
-				lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
-				lines[8].c_str()
-				));
-			break;
-
-		default:
-			break;
-		}
-
-		// Draw the glyphs for the items
-		screen._windows[0].drawList(_itemsDrawList, INV_ITEMS_TOTAL);
-		screen._windows[0].update();
-
-		if (var2 != -1) {
-			int actionIndex = -1;
+		if (itemIndex != -1) {
 			switch (mode) {
 			case ITEMMODE_BLACKSMITH:
 				actionIndex = 0;
@@ -278,14 +286,228 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			default:
 				break;
 			}
-
-			if (actionIndex >= 0) {
-				doItemOptions(*c, actionIndex, var2, category, mode);
+		} 
+		
+		// If it's time to do an item action, take care of it
+		if (actionIndex >= 0) {
+			int result = doItemOptions(*c, actionIndex, itemIndex, category, mode);
+			if (result == 1) {
+				// Finish dialog with no selected character
+				c = nullptr;
+				break;
+			} else if (result == 2) {
+				// Close dialogs and finish dialog with original starting character
+				screen._windows[30].close();
+				screen._windows[29].close();
+				c = startingChar;
+				break;
 			}
+
+			// Otherwise, result and continue showing dialog
+			actionIndex = -1;
+		}
+		
+		// Wait for a selection
+		_buttonValue = 0;
+		while (!_vm->shouldQuit() && !_buttonValue) {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+		}
+		if (_vm->shouldQuit())
+			return nullptr;
+
+		// Handle escaping out of dialog
+		if (_buttonValue == Common::KEYCODE_ESCAPE) {
+			if (mode == ITEMMODE_8)
+				continue;
+			break;
 		}
 
-		// TODO
+		// Handle other selections
+		switch (_buttonValue) {
+		case Common::KEYCODE_F1:
+		case Common::KEYCODE_F2:
+		case Common::KEYCODE_F3:
+		case Common::KEYCODE_F4:
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_F6:
+			if (!varA && mode != ITEMMODE_3 && mode != ITEMMODE_ENCHANT 
+					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD
+					&& party._mazeId != 0) {
+				_buttonValue -= Common::KEYCODE_F1;
+				
+				if (_buttonValue < (int)(_vm->_mode == MODE_InCombat ?
+						party._combatParty.size() : party._activeParty.size())) {
+					// Character number is valid
+					redrawFlag = REDRAW_TEXT;
+					Character *newChar = _vm->_mode == MODE_InCombat ?
+						party._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
+
+					if (mode == ITEMMODE_BLACKSMITH) {
+						_oldCharacter = newChar;
+						startingChar = newChar;
+						c = &_itemsCharacter;
+					} else if (mode != ITEMMODE_2 && mode != ITEMMODE_REPAIR
+							&& mode != ITEMMODE_IDENTIFY && itemIndex != -1) {
+						InventoryItems &destItems = newChar->_items[category];
+						XeenItem &destItem = destItems[INV_ITEMS_TOTAL - 1];
+						InventoryItems &srcItems = c->_items[category];
+						XeenItem &srcItem = srcItems[itemIndex];
+
+						if (srcItem._bonusFlags & ITEMFLAG_CURSED)
+							ErrorScroll::show(_vm, CANNOT_REMOVE_CURSED_ITEM);
+						else if (destItems[INV_ITEMS_TOTAL - 1]._id)
+							ErrorScroll::show(_vm, Common::String::format(
+							CATEGORY_BACKPACK_IS_FULL[category], c->_name.c_str()));
+						else {
+							destItem = srcItem;
+							srcItem.clear();
+							destItem._frame = 0;
+
+							srcItems.sort();
+							destItems.sort();
+						}
+
+						continue;
+					}
+
+					c = newChar;
+					startingChar = newChar;
+					intf.highlightChar(_buttonValue);
+				}
+			}
+			break;
+
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_2:
+		case Common::KEYCODE_3:
+		case Common::KEYCODE_4:
+		case Common::KEYCODE_5:
+		case Common::KEYCODE_6:
+		case Common::KEYCODE_7:
+		case Common::KEYCODE_8:
+		case Common::KEYCODE_9:
+			// Select an item
+			if (mode == ITEMMODE_3)
+				break;
+				
+			_buttonValue -= Common::KEYCODE_1;
+			if (_buttonValue != itemIndex) {
+				// Check whether the new selection has an associated item
+				if (!c->_items[category][_buttonValue].empty()) {
+					itemIndex = _buttonValue;
+					Common::fill(&arr[0], &arr[40], 0);
+					arr[itemIndex] = 15;
+				}
+
+				redrawFlag = REDRAW_TEXT;
+			}
+			break;
+
+		case Common::KEYCODE_a:
+			// Armor category
+			category = CATEGORY_ARMOR;
+			redrawFlag = REDRAW_FULL;
+			break;
+
+		case Common::KEYCODE_b:
+			// Buy
+			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_RECHARGE &&
+					mode != ITEMMODE_ENCHANT && mode != ITEMMODE_TO_GOLD) {
+				mode = ITEMMODE_BLACKSMITH;
+				c = &_itemsCharacter;
+				redrawFlag = REDRAW_FULL;
+			}
+			break;
+
+		case Common::KEYCODE_c:
+			// Accessories category
+			category = CATEGORY_ACCESSORY;
+			redrawFlag = REDRAW_FULL;
+			break;
+
+		case Common::KEYCODE_d:
+			if (mode == ITEMMODE_CHAR_INFO)
+				actionIndex = 3;
+			break;
+			
+		case Common::KEYCODE_e:
+			if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_ENCHANT ||
+					mode == ITEMMODE_TO_GOLD) {
+				if (category != CATEGORY_MISC) {
+					actionIndex = mode == ITEMMODE_ENCHANT ? 4 : 0;
+				}
+			}
+			break;
+
+		case Common::KEYCODE_f:
+			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_RECHARGE &&
+					mode != ITEMMODE_ENCHANT && mode != ITEMMODE_TO_GOLD) {
+				mode = ITEMMODE_REPAIR;
+				c = startingChar;
+				redrawFlag = REDRAW_TEXT;
+			}	
+			break;
+
+		case Common::KEYCODE_g:
+			if (mode == ITEMMODE_TO_GOLD)
+				actionIndex = 6;
+			break;
+
+		case Common::KEYCODE_i:
+			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_RECHARGE &&
+					mode != ITEMMODE_ENCHANT && mode != ITEMMODE_TO_GOLD) {
+				mode = ITEMMODE_IDENTIFY;
+				c = startingChar;
+				redrawFlag = REDRAW_TEXT;
+			}
+			break;
+
+		case Common::KEYCODE_n:
+			// Misc category
+			category = CATEGORY_MISC;
+			redrawFlag = REDRAW_TEXT;
+			break;
+
+		case Common::KEYCODE_q:
+			if (mode == ITEMMODE_CHAR_INFO) {
+				Quests::show(_vm);
+				redrawFlag = REDRAW_TEXT;
+			}
+			break;
+
+		case Common::KEYCODE_r:
+			if (mode == ITEMMODE_CHAR_INFO)
+				actionIndex = 1;
+			else if (mode == ITEMMODE_RECHARGE)
+				actionIndex = 5;
+			break;
+
+		case Common::KEYCODE_s:
+			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_RECHARGE &&
+					mode != ITEMMODE_ENCHANT && mode != ITEMMODE_TO_GOLD) {
+				mode = ITEMMODE_2;
+				c = startingChar;
+				redrawFlag = REDRAW_TEXT;
+			}
+			break;
+
+		case Common::KEYCODE_u:
+			if (mode == ITEMMODE_CHAR_INFO && category == CATEGORY_MISC)
+				actionIndex = 2;
+			break;
+
+		case Common::KEYCODE_w:
+			// Weapons category
+			category = CATEGORY_WEAPON;
+			redrawFlag = REDRAW_TEXT;
+			break;
+		}
 	}
+
+	intf.charIconsPrint(true);
+	if (updateStock)
+		charData2BlackData();
 
 	return c;
 }
@@ -375,6 +597,27 @@ void ItemsDialog::blackData2CharData() {
 		_itemsCharacter._armor[idx] = party._blacksmithArmor[isDarkCc][idx];
 		_itemsCharacter._accessories[idx] = party._blacksmithAccessories[isDarkCc][idx];
 		_itemsCharacter._misc[idx] = party._blacksmithMisc[isDarkCc][idx];
+	}
+}
+
+/**
+* Saves the inventory from the temporary _itemsCharacter character back into the
+* blacksmith storage, so changes in blacksmith inventory remain persistent
+*/
+void ItemsDialog::charData2BlackData() {
+	Party &party = *_vm->_party;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+	int slotIndex = 0;
+	while (party._mazeId != (int)BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
+		++slotIndex;
+	if (slotIndex == 4)
+		slotIndex = 0;
+
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		party._blacksmithWeapons[isDarkCc][idx] = _itemsCharacter._weapons[idx];
+		party._blacksmithArmor[isDarkCc][idx] = _itemsCharacter._armor[idx];
+		party._blacksmithAccessories[isDarkCc][idx] = _itemsCharacter._accessories[idx];
+		party._blacksmithMisc[isDarkCc][idx] = _itemsCharacter._misc[idx];
 	}
 }
 

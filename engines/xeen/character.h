@@ -98,6 +98,8 @@ public:
 
 	void clear();
 
+	bool empty() const { return _id != 0; }
+
 	void synchronize(Common::Serializer &s);
 
 	ElementalCategory getElementalCategory() const;

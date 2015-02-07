@@ -443,6 +443,8 @@ extern const char *const PERMANENTLY_DISCARD;
 
 extern const char *const BACKPACK_IS_FULL;
 
+extern const char *const CATEGORY_BACKPACK_IS_FULL[4];
+
 extern const char *const BUY_X_FOR_Y_GOLD;
 
 extern const char *const SELL_X_FOR_Y_GOLD;

@@ -53,6 +53,8 @@ private:
 
 	void blackData2CharData();
 
+	void charData2BlackData();
+
 	void setEquipmentIcons();
 
 	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel, 

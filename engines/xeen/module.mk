@@ -19,6 +19,7 @@ MODULE_OBJS := \
 	dialogs_input.o \
 	dialogs_items.o \
 	dialogs_query.o \
+	dialogs_quests.o \
 	dialogs_quick_ref.o \
 	dialogs_spells.o \
 	dialogs_whowill.o \
