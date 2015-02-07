@@ -82,6 +82,8 @@ public:
 
 	// Resource API
 	void readData(XRCReadStream *stream) override;
+	void onEnterLocation() override;
+	void onExitLocation() override;
 
 	// Layer API
 	RenderEntry *getBackgroundRenderEntry() override;
@@ -91,6 +93,7 @@ protected:
 	void printData() override;
 
 	Common::Array<uint32> _itemIndices;
+	Common::Array<Item *> _items;
 };
 
 /**

@@ -68,7 +68,7 @@ void Camera::printData() {
 	debug << "lookDirection: " << _lookDirection << "\n";
 	debug << "f1: " << _f1 << "\n";
 	debug << "fov: " << _fov << "\n";
-	_viewport.debugPrint(0, "viewport:");
+	debug << "viewport:" << _viewport.left << _viewport.top << _viewport.right << _viewport.bottom << "\n";
 	debug << "v4: " << _v4 << "\n";
 }
 

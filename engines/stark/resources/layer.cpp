@@ -81,14 +81,50 @@ void Layer2D::readData(XRCReadStream *stream) {
 	_field_50 = stream->readUint32LE();
 }
 
+void Layer2D::onEnterLocation() {
+	Layer::onEnterLocation();
+
+	Common::Array<Item *> items = listChildren<Item>();
+
+	// Build the item list in the appropriate order
+	_items.clear();
+	for (uint i = 0; i < _itemIndices.size(); i++) {
+		for (uint j = 0; j < items.size(); j++) {
+			if (items[j]->getIndex() == _itemIndices[i]) {
+				_items.push_back(items[j]);
+				break;
+			}
+		}
+	}
+}
+
+void Layer2D::onExitLocation() {
+	Layer::onExitLocation();
+
+	_items.clear();
+}
+
 RenderEntry *Layer2D::getBackgroundRenderEntry() {
 	// TODO
 	return nullptr;
 }
 
 RenderEntryArray Layer2D::listRenderEntries() {
-	// TODO
-	return RenderEntryArray();
+	RenderEntryArray renderEntries;
+	for (uint i = 0; i < _items.size(); i++) {
+		Item *item = _items[i];
+
+		RenderEntry *renderEntry = item->getRenderEntry();
+
+		if (!renderEntry) {
+			// warning("No render entry for item '%s'", item->getName().c_str());
+			continue;
+		}
+
+		renderEntries.push_back(renderEntry);
+	}
+
+	return renderEntries;
 }
 
 void Layer2D::printData() {
