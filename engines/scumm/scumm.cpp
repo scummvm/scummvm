@@ -2612,7 +2612,7 @@ bool ScummEngine::startManiac() {
 			if (path.hasPrefix(currentPath)) {
 				path.erase(0, currentPath.size() + 1);
 				if (path.equalsIgnoreCase("maniac")) {
-					maniacTarget = dom.getVal("gameid");
+					maniacTarget = iter->_key;
 					break;
 				}
 			}
