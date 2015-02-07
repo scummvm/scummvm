@@ -405,8 +405,8 @@ ItemSub78::ItemSub78(Resource *parent, byte subType, uint16 index, const Common:
 void ItemSub78::readData(XRCReadStream *stream) {
 	ItemVisual::readData(stream);
 
-	_reference = stream->readResourceReference();
 	_position = stream->readPoint();
+	_reference = stream->readResourceReference();
 }
 
 RenderEntry *ItemSub78::getRenderEntry() {
