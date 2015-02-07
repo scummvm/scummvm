@@ -31,6 +31,7 @@
 #include "bladerunner/image.h"
 #include "bladerunner/outtake.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/script/init.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_animations.h"
@@ -162,6 +163,9 @@ bool BladeRunnerEngine::startup() {
 
 	_zBuffer1 = new uint16[640 * 480];
 	_zBuffer2 = new uint16[640 * 480];
+
+	ScriptInit initScript(this);
+	initScript.SCRIPT_Initialize_Game();
 
 	initChapterAndScene();
 

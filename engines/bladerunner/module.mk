@@ -17,6 +17,7 @@ MODULE_OBJS = \
 	matrix.o \
 	outtake.o \
 	scene.o \
+	script/init.o \
 	script/rc01.o \
 	script/script.o \
 	set.o \
