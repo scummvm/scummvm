@@ -60,6 +60,8 @@ private:
 
 	int doItemOptions(Character &c, int actionIndex, int itemIndex, 
 		ItemCategory category, ItemsMode mode);
+
+	void itemToGold(Character &c, int itemIndex, ItemCategory category, ItemsMode mode);
 public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };

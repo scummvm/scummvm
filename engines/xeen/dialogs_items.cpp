@@ -552,7 +552,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	XeenItem *itemCategories[4] = { &c._weapons[0], &c._armor[0], &c._accessories[0], &c._misc[0] };
 	XeenItem *items = itemCategories[category];
 	if (!items[0]._id)
-		return false;
+		// Inventory is empty
+		return category == CATEGORY_MISC ? 0 : 2;
 
 	Window &w = screen._windows[11];
 	SpriteResource escSprites;
@@ -796,6 +797,11 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			break;
 		}
 
+		case ITEMMODE_TO_GOLD:
+			// Convert item in inventory to gold
+			itemToGold(c, itemIndex, category, mode);
+			return 2;
+
 		default:
 			break;
 		}
@@ -805,6 +811,28 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	intf.moveMonsters();
 	combat._whosTurn = -1;
 	return true;
+}
+
+void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
+		ItemsMode mode) {
+	XeenItem &item = c._items[category][itemIndex];
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	if (category == CATEGORY_WEAPON && item._id == 34) {
+		sound.playFX(21);
+		ErrorScroll::show(_vm, Common::String::format("\v012\t000\x03c%s",
+			SPELL_FAILED));
+	} else if (item._id != 0) {
+		// There is a valid item present
+		// Calculate cost of item and add it to the party's total
+		int cost = calcItemCost(&c, itemIndex, mode, 1, category);
+		party._gold += cost;
+
+		// Remove the item from the inventory
+		item.clear();
+		c._items[category].sort();
+	}
 }
 
 } // End of namespace Xeen
