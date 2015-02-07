@@ -233,9 +233,9 @@ void Quests::addButtons() {
 	addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_i, &_iconSprites);
 	addButton(Common::Rect(80, 109, 104, 129), Common::KEYCODE_q, &_iconSprites);
 	addButton(Common::Rect(148, 109, 172, 129), Common::KEYCODE_a, &_iconSprites);
-	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_i, &_iconSprites);
-	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_UP, &_iconSprites);
-	addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_DOWN, &_iconSprites);
+	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_UP, &_iconSprites);
+	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_DOWN, &_iconSprites);
+	addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
 }
 
 void Quests::loadQuestNotes() {

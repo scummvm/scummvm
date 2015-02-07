@@ -1377,14 +1377,14 @@ const char *const ATTR_XY_BONUS = "%+d %s";
 const char *const EFFECTIVE_AGAINST = "x3 vs %s";
 
 const char *const QUESTS_DIALOG_TEXT =
-	"\r2\x2""c\v021\t017\f37I\fdtems\t085\f37Q\fduests\t153"
-	"\f37A\fduto Notes\t221\f37U\fdp\t255\f37D\fdown\t289Exit";
-
+	"\r\x2\x3""c\v021\t017\f37I\fdtems\t085\f37Q\fduests\t153"
+	"\f37A\fduto Notes	221\f37U\fdp\t255\f37D\fdown"
+	"\t289Exit";
 const char *const CLOUDS_OF_XEEN_LINE = "\b \b*-- \f04Clouds of Xeen\fd --";
 const char *const DARKSIDE_OF_XEEN_LINE = "\b \b*-- \f04Darkside of Xeen\fd --";
 
 const char *const NO_QUEST_ITEMS =
-	"\rd\x3""c\v000	000Quest Items\x3l\x2\n"
+	"\r\x3""c\v000	000Quest Items\x3l\x2\n"
 	"\n"
 	"\x3""cNo Quest Items";
 const char *const NO_CURRENT_QUESTS =
