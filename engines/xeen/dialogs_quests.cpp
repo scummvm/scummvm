@@ -40,7 +40,7 @@ void Quests::execute() {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	Mode oldMode = _vm->_mode;
 	int count = 0;
 	bool headerShown = false;
 	int topRow = 0;
@@ -190,12 +190,15 @@ void Quests::execute() {
 		switch (_buttonValue) {
 		case Common::KEYCODE_a:
 			mode = AUTO_NOTES;
+			topRow = 0;
 			break;
 		case Common::KEYCODE_i:
 			mode = QUEST_ITEMS;
+			topRow = 0;
 			break;
 		case Common::KEYCODE_q:
 			mode = CURRENT_QUESTS;
+			topRow = 0;
 			break;
 		case Common::KEYCODE_HOME:
 			topRow = 0;
@@ -226,10 +229,13 @@ void Quests::execute() {
 		screen._windows[30].close();
 		screen._windows[29].close();
 	}
+	_vm->_mode = oldMode;
 }
 
 void Quests::addButtons() {
 	_iconSprites.load("quest.icn");
+
+
 	addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_i, &_iconSprites);
 	addButton(Common::Rect(80, 109, 104, 129), Common::KEYCODE_q, &_iconSprites);
 	addButton(Common::Rect(148, 109, 172, 129), Common::KEYCODE_a, &_iconSprites);
@@ -239,7 +245,7 @@ void Quests::addButtons() {
 }
 
 void Quests::loadQuestNotes() {
-	File f("qnotes.bin");
+	File f("qnotes.bin", *_vm->_files->_sideArchives[_vm->getGameID() == GType_Clouds ? 0 : 1]);
 	while (f.pos() < f.size())
 		_questNotes.push_back(f.readString());
 	f.close();

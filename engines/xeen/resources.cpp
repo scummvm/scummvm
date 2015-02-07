@@ -1206,7 +1206,7 @@ const char *const QUEST_ITEM_NAMES[85] = {
 	"Bridle",
 	"Enchanted Bridle",
 	"Treasure Map (Goto E1 x1, y11)",
-	nullptr,
+	"",
 	"Fake Map",
 	"Onyx Necklace",
 	"Dragon Egg",
