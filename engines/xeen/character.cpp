@@ -1757,5 +1757,33 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 	return category;
 }
 
+void Character::subtractHitPoints(int amount) {
+	SoundManager &sound = *Party::_vm->_sound;
+	_currentHp -= amount;
+	bool flag = _currentHp <= 10;
+
+	if (_currentHp < 1) {
+		int v = getMaxHP() + _currentHp;
+		if (v >= 1) {
+			_conditions[UNCONSCIOUS] = 1;
+			sound.playFX(38);;
+		} else {
+			_conditions[DEAD] = 1;
+			flag = true;
+			if (_currentHp > 0)
+				_currentHp = 0;
+		}
+
+		if (flag) {
+			// Check for breaking equipped armor
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				XeenItem &item = _armor[idx];
+				if (item._id && item._frame)
+					item._bonusFlags |= ITEMFLAG_BROKEN;
+			}
+		}
+	}
+}
+
 
 } // End of namespace Xeen

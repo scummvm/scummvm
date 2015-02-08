@@ -309,6 +309,8 @@ public:
 	int getNumAwards() const;
 
 	int makeItem(int p1, int itemIndex, int p3);
+
+	void subtractHitPoints(int amount);
 };
 
 } // End of namespace Xeen

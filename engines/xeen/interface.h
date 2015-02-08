@@ -106,6 +106,8 @@ public:
 	void perform();
 
 	void rest();
+
+	void bash(const Common::Point &pt, Direction direction);
 };
 
 } // End of namespace Xeen

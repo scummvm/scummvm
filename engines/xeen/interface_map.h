@@ -96,7 +96,6 @@ private:
 	SpriteResource _spellFxSprites;
 	SpriteResource _fecpSprites;
 	SpriteResource _blessSprites;
-	SpriteResource _charPowSprites;
 	int _combatFloatCounter;
 
 	void initDrawStructs();
@@ -130,6 +129,7 @@ protected:
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
+	SpriteResource _charPowSprites;
 	SpriteResource _globalSprites;
 	bool _upDoorText;
 	Common::String _screenText;

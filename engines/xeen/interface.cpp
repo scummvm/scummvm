@@ -695,6 +695,32 @@ void Interface::perform() {
 		_vm->_moveMonsters = true;
 		break;
 
+	case Common::KEYCODE_b:
+		chargeStep();
+		
+		if (map.getCell(2) < map.mazeData()._difficulties._wallNoPass
+				&& !map._isOutdoors) {
+			switch (party._mazeDirection) {
+			case DIR_NORTH:
+				++party._mazePosition.y;
+				break;
+			case DIR_EAST:
+				++party._mazePosition.x;
+				break;
+			case DIR_SOUTH:
+				--party._mazePosition.y;
+				break;
+			case DIR_WEST:
+				--party._mazePosition.x;
+				break;
+			}
+			chargeStep();
+			stepTime();
+		} else {
+			bash(party._mazePosition, party._mazeDirection);
+		}
+		break;
+
 	case Common::KEYCODE_i:
 		// Show Info dialog
 		_vm->_moveMonsters = false;
@@ -1085,5 +1111,95 @@ void Interface::rest() {
 		party.checkPartyDead();
 	}
 }
+
+void Interface::bash(const Common::Point &pt, Direction direction) {
+	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+
+	if (map._isOutdoors)
+		return;
+
+	sound.playFX(31);
+
+	uint charNum1 = 0, charNum2 = 0;
+	for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
+		Character &c = party._activeParty[charIdx];
+		Condition condition = c.worstCondition();
+
+		if (!(condition == ASLEEP || (condition >= PARALYZED &&
+				condition <= ERADICATED))) {
+			if (charNum1) {
+				charNum2 = charIdx + 1;
+				break;
+			} else {
+				charNum1 = charIdx + 1;
+			}
+		}
+	}
+
+	party._activeParty[charNum1 - 1].subtractHitPoints(2);
+	_charPowSprites.draw(screen._windows[0], 0, 
+		Common::Point(CHAR_FACES_X[charNum1 - 1], 150));
+	screen._windows[0].update();
+
+	if (charNum2) {
+		party._activeParty[charNum2 - 1].subtractHitPoints(2);
+		_charPowSprites.draw(screen._windows[0], 0,
+			Common::Point(CHAR_FACES_X[charNum2 - 1], 150));
+		screen._windows[0].update();
+	}
+
+	int cell = map.mazeLookup(Common::Point(pt.x + SCREEN_POSITIONING_X[direction][7],
+		pt.y + SCREEN_POSITIONING_Y[direction][7]), 0, 0xffff);
+	if (cell != INVALID_CELL) {
+		int v = map.getCell(2);
+
+		if (v == 7) {
+			++_wo[207];
+			++_wo[267];
+			++_wo[287];
+		} else if (v == 14) {
+			++_wo[267];
+			++_wo[287];
+		} else if (v == 15) {
+			++_wo[287];
+		} else {
+			int might = party._activeParty[charNum1 - 1].getStat(MIGHT) +
+				_vm->getRandomNumber(1, 30);
+			if (charNum2)
+				might += party._activeParty[charNum2 - 1].getStat(MIGHT);
+
+			int bashThreshold = (v == 9) ? map.mazeData()._difficulties._bashGrate :
+				map.mazeData()._difficulties._bashWall;
+			if (might >= bashThreshold) {
+				// Remove the wall on the current cell, and the reverse wall
+				// on the cell we're bashing through to
+				map.setWall(pt, direction, 3);
+				switch (direction) {
+				case DIR_NORTH:
+					map.setWall(Common::Point(pt.x, pt.y + 1), DIR_SOUTH, 3);
+					break;
+				case DIR_EAST:
+					map.setWall(Common::Point(pt.x + 1, pt.y), DIR_WEST, 3);
+					break;
+				case DIR_SOUTH:
+					map.setWall(Common::Point(pt.x, pt.y - 1), DIR_NORTH, 3);
+					break;
+				case DIR_WEST:
+					map.setWall(Common::Point(pt.x - 1, pt.y), DIR_EAST, 3);
+					break;
+				}
+			}
+		}
+	}
+
+	party.checkPartyDead();
+	events.ipause(2);
+	charIconsPrint(true);
+}
+
 
 } // End of namespace Xeen

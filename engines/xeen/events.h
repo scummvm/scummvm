@@ -90,6 +90,8 @@ public:
 	uint32 timeElapsed5() const { return _frameCounter - _gameCounters[5]; }
 
 	bool wait(uint numFrames, bool interruptable = false);
+
+	void ipause(int amount);
 };
 
 class GameEvent {

@@ -168,6 +168,14 @@ bool EventsManager::wait(uint numFrames, bool interruptable) {
 	return false;
 }
 
+void EventsManager::ipause(int amount) {
+	updateGameCounter();
+	do {
+		_vm->_interface->draw3d(true);
+		pollEventsAndWait();
+	} while (!_vm->shouldQuit() && timeElapsed() < amount);
+}
+
 /**
  * Handles moving to the next game frame
  */
