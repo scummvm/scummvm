@@ -1718,7 +1718,7 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 			break;
 
 		case 3:
-			rval = p1 == 7 || vm->getRandomNumber(1, 100) > 70;
+			mult = p1 == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
 			v16 = vm->getRandomNumber(MAKE_ITEM_ARR4[mult][p1][0],
 				MAKE_ITEM_ARR4[mult][p1][1]);
 			break;
