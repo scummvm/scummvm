@@ -56,6 +56,7 @@ private:
 	bool _readOnly;
 
 	int16 _txtWidth;
+	int16 _maxTxtWidth;
 	Video::VideoDecoder *_animation;
 	int32 _frameDelay;
 	int16 _frame;

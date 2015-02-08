@@ -110,6 +110,10 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
+
+	_maxTxtWidth = _textRectangle.width();
+	if (_animation)
+		_maxTxtWidth -= _animation->getWidth();
 }
 
 InputControl::~InputControl() {
@@ -208,12 +212,20 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 		Graphics::Surface txt;
 		txt.copyFrom(*_background);
 
+		int32 oldTxtWidth = _txtWidth;
+
 		if (!_readOnly || !_focused)
 			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringInit, txt);
 		else
 			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringChooserInit, txt);
 
-		_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);
+		if (_readOnly || _txtWidth <= _maxTxtWidth)
+			_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);
+		else {
+			// Assume the last character caused the overflow.
+			_currentInputText.deleteLastChar();
+			_txtWidth = oldTxtWidth;
+		}
 
 		txt.free();
 	}
