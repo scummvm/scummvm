@@ -30,6 +30,8 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xmg.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 
@@ -45,6 +47,10 @@ VisualImageXMG::~VisualImageXMG() {
 	delete _surface;
 }
 
+void VisualImageXMG::setHotSpot(const Common::Point &hotspot) {
+	_hotspot = hotspot;
+}
+
 VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
 	// Create the element to return
 	VisualImageXMG *element = new VisualImageXMG();
@@ -56,8 +62,7 @@ VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
 }
 
 void VisualImageXMG::render(GfxDriver *gfx, const Common::Point &position) {
-	// Draw the current element
-	gfx->drawSurface(_surface, position);
+	gfx->drawSurface(_surface, position - _hotspot);
 }
 
 } // End of namespace Stark

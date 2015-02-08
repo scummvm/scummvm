@@ -78,7 +78,7 @@ public:
 	virtual void setEnabled(bool enabled);
 
 	/** Obtain the render entry to use to display the item */
-	virtual RenderEntry *getRenderEntry();
+	virtual RenderEntry *getRenderEntry(const Common::Point &positionOffset);
 
 	/** Obtain the concrete instance of an item template */
 	virtual Item *getSceneInstance();
@@ -246,7 +246,7 @@ public:
 	virtual void readData(XRCReadStream *stream) override;
 
 	// Item API
-	RenderEntry *getRenderEntry() override;
+	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 protected:
 	void printData() override;
@@ -270,7 +270,7 @@ public:
 	void onEnterLocation() override;
 
 	// Item API
-	RenderEntry *getRenderEntry();
+	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 	BonesMesh *findBonesMesh();
 	TextureSet *findTextureSet(uint32 textureType);
@@ -300,7 +300,7 @@ public:
 	virtual void readData(XRCReadStream *stream) override;
 
 	// Item API
-	RenderEntry *getRenderEntry() override;
+	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 protected:
 	void printData() override;

@@ -47,8 +47,12 @@ public:
 	static VisualImageXMG *load(Common::ReadStream *stream);
 	void render(GfxDriver *gfx, const Common::Point &position);
 
+	/** Set an offset used when rendering */
+	void setHotSpot(const Common::Point &hotspot);
+
 private:
 	Graphics::Surface *_surface;
+	Common::Point _hotspot;
 };
 
 } // End of namespace Stark

@@ -24,6 +24,8 @@
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/layer.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/services/services.h"
 
 namespace Stark {
 
@@ -31,7 +33,8 @@ Location::~Location() {
 }
 
 Location::Location(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name) {
+				Resource(parent, subType, index, name),
+				_canScroll(false) {
 	_type = TYPE;
 }
 
@@ -54,6 +57,33 @@ RenderEntryArray Location::listRenderEntries() {
 	}
 
 	return renderEntries;
+}
+
+void Location::initScroll(const Common::Point &maxScroll) {
+	_maxScroll = maxScroll;
+	_canScroll = _maxScroll.x != 0 || _maxScroll.y != 0;
+}
+
+Common::Point Location::getScrollPosition() const {
+	return _scroll;
+}
+
+void Location::setScrollPosition(const Common::Point &position) {
+	Scene *scene = StarkServices::instance().scene;
+
+	_scroll.x = CLIP<int16>(position.x, 0, _maxScroll.x);
+	_scroll.y = CLIP<int16>(position.y, 0, _maxScroll.y);
+
+
+	// Setup the layers scroll position
+	for (uint i = 0; i < _layers.size(); i++) {
+		_layers[i]->setScrollPosition(_scroll);
+	}
+
+	// Reconfigure the camera
+	Common::Rect viewport(640, 365);
+	viewport.translate(_scroll.x, _scroll.y);
+	scene->scrollCamera(viewport);
 }
 
 void Location::printData() {

@@ -24,6 +24,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
@@ -51,15 +52,27 @@ void Camera::readData(XRCReadStream *stream) {
 	_lookDirection = stream->readVector3();
 	_f1 = stream->readFloat();
 	_fov = stream->readFloat();
-	_viewport = stream->readRect();
+	_viewSize = stream->readRect();
 	_v4 = stream->readVector3();
+}
+
+void Camera::onAllLoaded() {
+	Resource::onAllLoaded();
+
+	// Compute scroll coordinates bounds
+	Common::Point maxScroll;
+	maxScroll.x = _viewSize.width() - 640;
+	maxScroll.y = _viewSize.height() - 365;
+
+	Location *location = findParent<Location>();
+	location->initScroll(maxScroll);
 }
 
 void Camera::onEnterLocation() {
 	Resource::onEnterLocation();
 
 	Scene *scene = StarkServices::instance().scene;
-	scene->initCamera(_position, _lookDirection, _fov, _viewport, _nearClipPlane, _farClipPlane);
+	scene->initCamera(_position, _lookDirection, _fov, _viewSize, _nearClipPlane, _farClipPlane);
 }
 
 void Camera::printData() {
@@ -68,7 +81,7 @@ void Camera::printData() {
 	debug << "lookDirection: " << _lookDirection << "\n";
 	debug << "f1: " << _f1 << "\n";
 	debug << "fov: " << _fov << "\n";
-	debug << "viewport:" << _viewport.left << _viewport.top << _viewport.right << _viewport.bottom << "\n";
+	debug << "viewSize:" << _viewSize.left << _viewSize.top << _viewSize.right << _viewSize.bottom << "\n";
 	debug << "v4: " << _v4 << "\n";
 }
 

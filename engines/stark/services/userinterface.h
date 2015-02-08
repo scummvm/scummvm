@@ -23,6 +23,8 @@
 #ifndef STARK_SERVICES_USER_INTERFACE_H
 #define STARK_SERVICES_USER_INTERFACE_H
 
+#include "common/scummsys.h"
+
 namespace Stark {
 
 /**
@@ -35,6 +37,9 @@ public:
 
 	/** Skip currently playing speeches */
 	void skipCurrentSpeeches();
+
+	/** Scroll the current location by an offset */
+	void scrollLocation(int32 dX, int32 dY);
 
 private:
 };

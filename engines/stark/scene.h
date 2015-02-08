@@ -50,7 +50,10 @@ public:
 	void render(RenderEntryArray renderEntries);
 
 	void initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
-			float fov, Common::Rect viewport, float nearClipPlane, float farClipPlane);
+			float fov, Common::Rect viewSize, float nearClipPlane, float farClipPlane);
+
+	/** Configure rendering so that only the specified rect can be seen */
+	void scrollCamera(const Common::Rect &viewport);
 
 private:
 	GfxDriver *_gfx;
@@ -58,6 +61,7 @@ private:
 	Math::Vector3d _cameraPosition;
 	Math::Vector3d _cameraLookDirection;
 	float _fov;
+	Common::Rect _viewSize;
 	Common::Rect _viewport;
 	float _nearClipPlane;
 	float _farClipPlane;

@@ -63,11 +63,15 @@ public:
 	/** Obtain the render entries for all items, including the background */
 	virtual RenderEntryArray listRenderEntries() = 0;
 
+	/** Scroll the layer to the specified position */
+	void setScrollPosition(const Common::Point &position);
+
 protected:
 	void printData() override;
 
+	Common::Point _scroll;
 	float _scrollScale; // Used for the parallax effect
-	uint _field_50;
+	bool _enabled;
 };
 
 /**

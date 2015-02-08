@@ -23,6 +23,8 @@
 #include "engines/stark/visual/smacker.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/scene.h"
+#include "engines/stark/services/services.h"
 
 #include "common/str.h"
 #include "common/archive.h"

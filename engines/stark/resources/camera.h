@@ -48,6 +48,7 @@ public:
 	virtual ~Camera();
 
 	// Resource API
+	void onAllLoaded() override;
 	void onEnterLocation() override;
 
 	/** Define the near and far clip planes distances */
@@ -61,7 +62,7 @@ protected:
 	Math::Vector3d _lookDirection;
 	float _f1;
 	float _fov;
-	Common::Rect _viewport;
+	Common::Rect _viewSize;
 	Math::Vector3d _v4;
 
 	float _nearClipPlane;

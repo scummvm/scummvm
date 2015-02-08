@@ -47,7 +47,7 @@ Layer::~Layer() {
 Layer::Layer(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
 		_scrollScale(1.0),
-		_field_50(1) {
+		_enabled(true) {
 	_type = TYPE;
 }
 
@@ -59,7 +59,13 @@ void Layer::readData(XRCReadStream *stream) {
 
 void Layer::printData() {
 	debug("scrollScale: %f", _scrollScale);
-	debug("field_50: %d", _field_50);
+	debug("enabled: %d", _enabled);
+}
+
+void Layer::setScrollPosition(const Common::Point &position) {
+	// The location scroll position is scaled to create a parallax effect
+	_scroll.x = (_scrollScale + 1.0) * (float) position.x;
+	_scroll.y = (_scrollScale + 1.0) * (float) position.y;
 }
 
 Layer2D::~Layer2D() {
@@ -78,7 +84,7 @@ void Layer2D::readData(XRCReadStream *stream) {
 		_itemIndices.push_back(itemIndex);
 	}
 
-	_field_50 = stream->readUint32LE();
+	_enabled = stream->readBool();
 }
 
 void Layer2D::onEnterLocation() {
@@ -114,7 +120,7 @@ RenderEntryArray Layer2D::listRenderEntries() {
 	for (uint i = 0; i < _items.size(); i++) {
 		Item *item = _items[i];
 
-		RenderEntry *renderEntry = item->getRenderEntry();
+		RenderEntry *renderEntry = item->getRenderEntry(_scroll);
 
 		if (!renderEntry) {
 			// warning("No render entry for item '%s'", item->getName().c_str());
@@ -169,7 +175,7 @@ RenderEntry *Layer3D::getBackgroundRenderEntry() {
 		return nullptr;
 	}
 
-	return _backgroundItem->getRenderEntry();
+	return _backgroundItem->getRenderEntry(_scroll);
 }
 
 RenderEntryArray Layer3D::listRenderEntries() {
@@ -179,7 +185,7 @@ RenderEntryArray Layer3D::listRenderEntries() {
 		Item *item = _items[i];
 
 		if (item->getSubType() != Item::kItemSub8) {
-			RenderEntry *renderEntry = item->getRenderEntry();
+			RenderEntry *renderEntry = item->getRenderEntry(_scroll);
 
 			if (!renderEntry) {
 				// warning("No render entry for item '%s'", item->getName().c_str());

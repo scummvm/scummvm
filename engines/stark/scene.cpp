@@ -38,13 +38,17 @@ Scene::~Scene() {
 }
 
 void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &lookDirection,
-		float fov, Common::Rect viewport, float nearClipPlane, float farClipPlane) {
+		float fov, Common::Rect viewSize, float nearClipPlane, float farClipPlane) {
 	_cameraPosition = position;
 	_cameraLookDirection = lookDirection;
 	_fov = fov;
-	_viewport = viewport;
+	_viewSize = viewSize;
 	_nearClipPlane = nearClipPlane;
 	_farClipPlane = farClipPlane;
+}
+
+void Scene::scrollCamera(const Common::Rect &viewport) {
+	_viewport = viewport;
 }
 
 void Scene::render(RenderEntryArray renderEntries) {

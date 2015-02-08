@@ -81,7 +81,7 @@ void Item::setEnabled(bool enabled) {
 	_enabled = enabled;
 }
 
-RenderEntry *Item::getRenderEntry() {
+RenderEntry *Item::getRenderEntry(const Common::Point &positionOffset) {
 	return nullptr;
 }
 
@@ -374,12 +374,12 @@ void ItemSub56::readData(XRCReadStream *stream) {
 	_position = stream->readPoint();
 }
 
-RenderEntry *ItemSub56::getRenderEntry() {
+RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
 		_renderEntry->setVisual(visual);
-		_renderEntry->setPosition(_position);
+		_renderEntry->setPosition(_position - positionOffset);
 		_renderEntry->setSortKey(getSortKey());
 	} else {
 		_renderEntry->setVisual(nullptr);
@@ -409,12 +409,12 @@ void ItemSub78::readData(XRCReadStream *stream) {
 	_reference = stream->readResourceReference();
 }
 
-RenderEntry *ItemSub78::getRenderEntry() {
+RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
 		_renderEntry->setVisual(visual);
-		_renderEntry->setPosition(_position);
+		_renderEntry->setPosition(_position - positionOffset);
 	} else {
 		_renderEntry->setVisual(nullptr);
 	}
@@ -522,7 +522,7 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	return textureSet;
 }
 
-RenderEntry *ItemSub10::getRenderEntry() {
+RenderEntry *ItemSub10::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 

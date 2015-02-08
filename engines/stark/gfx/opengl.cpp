@@ -101,13 +101,14 @@ void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 	if (rect.isEmpty())
 		rect = Common::Rect(surface->w, surface->h);
 
-	dest.y += 36; // 36px is the height of the top black border
+	dest += Common::Point(0, 36); // Top border
 
 	start2DMode();
 
-	float rasterX = (2 * (float)dest.x / (float)_screenWidth);
-	float rasterY = (2 * (float)dest.y / (float)_screenHeight);
-	glRasterPos2f(-1.0f + rasterX, 1.0f - rasterY);
+	glDisable(GL_TEXTURE_2D);
+
+	glRasterPos2f(-1.0, 1.0);
+	glBitmap(0, 0, 0, 0, dest.x, -dest.y, nullptr);
 	glDrawPixels(surface->w, surface->h, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 
 	//glBegin(GL_QUADS); glVertex3i(-1, -1, -1); glVertex3i(1, -1, -1); glVertex3i(1, 1, -1); glVertex3i(-1, 1, -1); glEnd();

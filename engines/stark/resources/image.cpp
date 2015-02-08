@@ -145,7 +145,10 @@ void ImageSub23::initVisual() {
 
 	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
 
-	_visual = VisualImageXMG::load(stream);
+	VisualImageXMG *xmg = VisualImageXMG::load(stream);
+	xmg->setHotSpot(_hotspot);
+
+	_visual = xmg;
 
 	delete stream;
 }

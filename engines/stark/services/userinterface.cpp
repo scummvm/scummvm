@@ -59,4 +59,20 @@ void UserInterface::skipCurrentSpeeches() {
 	}
 }
 
+void UserInterface::scrollLocation(int32 dX, int32 dY) {
+	Global *global = StarkServices::instance().global;
+	Current *current = global->getCurrent();
+
+	if (!current) {
+		return; // No current location, nothing to do
+	}
+
+	Location *location = current->getLocation();
+
+	Common::Point scroll = location->getScrollPosition();
+	scroll.x += dX;
+	scroll.y += dY;
+	location->setScrollPosition(scroll);
+}
+
 } // End of namespace Stark

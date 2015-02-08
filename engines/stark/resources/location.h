@@ -23,6 +23,7 @@
 #ifndef STARK_RESOURCES_LOCATION_H
 #define STARK_RESOURCES_LOCATION_H
 
+#include "common/rect.h"
 #include "common/str.h"
 
 #include "engines/stark/gfx/renderentry.h"
@@ -55,11 +56,24 @@ public:
 	/** Obtain a list of render entries for all the items in the location */
 	RenderEntryArray listRenderEntries();
 
+	/** Initialize scrolling from Camera data */
+	void initScroll(const Common::Point &maxScroll);
+
+	/** Obtain the current scroll position */
+	Common::Point getScrollPosition() const;
+
+	/** Scroll the location to the specified position if possible */
+	void setScrollPosition(const Common::Point &position);
+
 protected:
 	void printData() override;
 
 private:
 	Common::Array<Layer *> _layers;
+
+	bool _canScroll;
+	Common::Point _scroll;
+	Common::Point _maxScroll;
 };
 
 } // End of namespace Stark

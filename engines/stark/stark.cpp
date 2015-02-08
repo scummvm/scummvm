@@ -146,6 +146,8 @@ void StarkEngine::mainLoop() {
 
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				_userInterface->skipCurrentSpeeches();
+			} else if (e.type == Common::EVENT_MOUSEMOVE) {
+				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
