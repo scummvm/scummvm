@@ -26,8 +26,9 @@
 #ifndef STARK_GFX_DRIVER_H
 #define STARK_GFX_DRIVER_H
 
-#include "graphics/surface.h"
 #include "common/rect.h"
+#include "graphics/surface.h"
+#include "math/matrix4.h"
 #include "math/vector3d.h"
 
 namespace Stark {
@@ -40,8 +41,8 @@ public:
 
 	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
-	virtual void setupPerspective(float fov, float nearClipPlane, float farClipPlane) = 0;
-	virtual void setupCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt) = 0;
+	virtual void setupPerspective(const Math::Matrix4 &projectionMatrix) = 0;
+	virtual void setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) = 0;
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;

@@ -41,8 +41,8 @@ public:
 
 	void setupScreen(int screenW, int screenH, bool fullscreen);
 
-	void setupPerspective(float fov, float nearClipPlane, float farClipPlane) override;
-	void setupCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt) override;
+	void setupPerspective(const Math::Matrix4 &projectionMatrix) override;
+	void setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) override;
 
 	void clearScreen();
 	void flipBuffer();

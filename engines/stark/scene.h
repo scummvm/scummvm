@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "math/matrix4.h"
 #include "math/vector3d.h"
 
 #include "engines/stark/actor.h"
@@ -65,6 +66,9 @@ private:
 	Common::Rect _viewport;
 	float _nearClipPlane;
 	float _farClipPlane;
+
+	Math::Matrix4 _perspectiveMatrix;
+	Math::Matrix4 _lookAtMatrix;
 
 };
 

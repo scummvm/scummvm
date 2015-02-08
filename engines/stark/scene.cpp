@@ -25,6 +25,8 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
+#include "math/glmath.h"
+
 namespace Stark {
 
 Scene::Scene(GfxDriver *gfx) :
@@ -45,6 +47,9 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 	_viewSize = viewSize;
 	_nearClipPlane = nearClipPlane;
 	_farClipPlane = farClipPlane;
+
+	_perspectiveMatrix = Math::makePerspectiveMatrix(_fov, 1.0, _nearClipPlane, _farClipPlane);
+	_lookAtMatrix = Math::makeLookAtMatrix(_cameraPosition, _cameraPosition + _cameraLookDirection, Math::Vector3d(0.0, 0.0, 1.0));
 }
 
 void Scene::scrollCamera(const Common::Rect &viewport) {
@@ -53,8 +58,8 @@ void Scene::scrollCamera(const Common::Rect &viewport) {
 
 void Scene::render(RenderEntryArray renderEntries) {
 	// setup cam
-	_gfx->setupPerspective(_fov, _nearClipPlane, _farClipPlane);
-	_gfx->setupCamera(_cameraPosition, _cameraPosition + _cameraLookDirection);
+	_gfx->setupPerspective(_perspectiveMatrix);
+	_gfx->setupCamera(_cameraPosition, _lookAtMatrix);
 
 	// Draw bg
 

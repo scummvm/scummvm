@@ -29,7 +29,6 @@
 
 #include "graphics/pixelbuffer.h"
 
-#include "math/glmath.h"
 #include "math/matrix4.h"
 
 #ifdef USE_OPENGL
@@ -56,20 +55,16 @@ void OpenGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_screenHeight = screenH;
 }
 
-void OpenGLGfxDriver::setupPerspective(float fov, float nearClipPlane, float farClipPlane) {
+void OpenGLGfxDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
-	Math::Matrix4 m = Math::makePerspectiveMatrix(fov, _screenWidth / _screenHeight, nearClipPlane, farClipPlane);
-	glMultMatrixf(m.getData());
+	glMultMatrixf(projectionMatrix.getData());
 }
 
-void OpenGLGfxDriver::setupCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt) {
+void OpenGLGfxDriver::setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	Math::Matrix4 lookMatrix = Math::makeLookAtMatrix(position, lookAt, Math::Vector3d(0.0, 0.0, 1.0));
-	glMultMatrixf(lookMatrix.getData());
+	glMultMatrixf(lookAt.getData());
 	glTranslatef(-position.x(), -position.y(), -position.z());
 }
 
