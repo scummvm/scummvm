@@ -315,8 +315,6 @@ int32 TextRenderer::drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Gra
 	StyledTTFont font(_engine);
 	fontStyle.setFont(font);
 
-	dst.fillRect(Common::Rect(dst.w, dst.h), 0);
-
 	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(fontStyle._red, fontStyle._green, fontStyle._blue);
 
 	int16 w;

@@ -38,8 +38,10 @@ namespace ZVision {
 class InputControl : public Control {
 public:
 	InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
+	~InputControl();
 
 private:
+	Graphics::Surface *_background;
 	Common::Rect _textRectangle;
 	Common::Rect _headerRectangle;
 	cTxtStyle _stringInit;

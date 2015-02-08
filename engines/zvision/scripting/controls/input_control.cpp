@@ -39,6 +39,7 @@ namespace ZVision {
 
 InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
 	: Control(engine, key, CONTROL_INPUT),
+	  _background(0),
 	  _nextTabstop(0),
 	  _focused(false),
 	  _textChanged(false),
@@ -109,6 +110,11 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 		getParams(line, param, values);
 	}
+}
+
+InputControl::~InputControl() {
+	_background->free();
+	delete _background;
 }
 
 bool InputControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
@@ -191,12 +197,16 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
+	if (!_background) {
+		_background = _engine->getRenderManager()->getBkgRect(_textRectangle);
+	}
+
 	// First see if we need to render the text
 	if (_textChanged) {
 		// Blit the text using the RenderManager
 
 		Graphics::Surface txt;
-		txt.create(_textRectangle.width(), _textRectangle.height(), _engine->_resourcePixelFormat);
+		txt.copyFrom(*_background);
 
 		if (!_readOnly || !_focused)
 			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringInit, txt);
