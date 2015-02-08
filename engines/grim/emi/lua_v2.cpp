@@ -522,8 +522,10 @@ void Lua_V2::ThumbnailFromFile() {
 
 void Lua_V2::GetMemoryCardId() {
 	// 0 - No mem card
-	lua_pushnumber(0);
-	warning("GetMemoryCardId: Currently just returning 0");
+	// 1 - Not formatted
+	// 2 - Not enough space
+	// 3 - Error occured
+	lua_pushnumber(4);
 }
 
 void Lua_V2::SetReplayMode() {

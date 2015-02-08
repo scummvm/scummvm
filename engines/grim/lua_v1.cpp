@@ -497,8 +497,14 @@ void Lua_V1::GetSpeechMode() {
 }
 
 void Lua_V1::GetDiskFreeSpace() {
+	if (g_grim->getGameType() == GType_MONKEY4 &&
+		g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		//wants more than 600 KB
+		lua_pushnumber(700);
+	} else {
 	// amount of free space in MB, used for creating saves
-	lua_pushnumber(50);
+		lua_pushnumber(50);
+	}
 }
 
 void Lua_V1::GetCurrentScript() {
