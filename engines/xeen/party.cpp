@@ -102,6 +102,7 @@ Party::Party(XeenEngine *vm) {
 	_falling = false;
 	_fallMaze = 0;
 	_fallDamage = 0;
+	_dead = false;
 }
 
 void Party::synchronize(Common::Serializer &s) {
@@ -360,7 +361,7 @@ void Party::addTime(int numMinutes) {
 	if (_newDay && _minutes >= 300) {
 		if (_vm->_mode != MODE_9 && _vm->_mode != MODE_17) {
 			resetTemps();
-			if (_rested || _vm->_mode == MODE_5) {
+			if (_rested || _vm->_mode == MODE_SLEEPING) {
 				_rested = false;
 			} else {
 				for (int idx = 0; idx < _partyCount; ++idx) {
@@ -495,6 +496,21 @@ void Party::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wa
 		mode ? NO_X_IN_THE_Y : NOT_ENOUGH_X_IN_THE_Y,
 		CONSUMABLE_NAMES[consumableId], WHERE_NAMES[whereId]);
 	ErrorScroll::show(_vm, msg, wait);
+}
+
+void Party::checkPartyDead() {
+	bool inCombat = _vm->_mode == MODE_COMBAT;
+
+	for (uint charIdx = 0; charIdx < (inCombat ? _combatParty.size() : _activeParty.size()); ++charIdx) {
+		Character &c = inCombat ? *_combatParty[charIdx] : _activeParty[charIdx];
+		Condition cond = c.worstCondition();
+		if (cond <= CONFUSED || cond == NO_CONDITION) {
+			_dead = false;
+			return;
+		}
+	}
+
+	_dead = true;
 }
 
 } // End of namespace Xeen

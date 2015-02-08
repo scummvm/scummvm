@@ -47,7 +47,7 @@ void CharacterInfo::execute(int charIndex) {
 	loadDrawStructs();
 	addButtons();
 
-	Character *c = (oldMode != MODE_InCombat) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
+	Character *c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
 	intf.highlightChar(charIndex);
 	Window &w = screen._windows[24];
 	w.open();
@@ -86,9 +86,9 @@ void CharacterInfo::execute(int charIndex) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
 			_buttonValue -= Common::KEYCODE_F1;
-			if (_buttonValue < (int)(oldMode == MODE_InCombat ? party._combatParty.size() : party._activeParty.size())) {
+			if (_buttonValue < (int)(oldMode == MODE_COMBAT ? party._combatParty.size() : party._activeParty.size())) {
 				charIndex = _buttonValue;
-				c = (oldMode != MODE_InCombat) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
+				c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
 			} else {
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}
@@ -166,14 +166,14 @@ void CharacterInfo::execute(int charIndex) {
 			w.update();
 
 			bool result = expandStat(_cursorCell, *c);
-			_vm->_mode = MODE_InCombat;
+			_vm->_mode = MODE_COMBAT;
 			if (result)
 				redrawFlag = true;
 			break;
 		}
 
 		case Common::KEYCODE_e:
-			if (oldMode == MODE_InCombat) {
+			if (oldMode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
 			} else {
 				_vm->_mode = oldMode;
@@ -185,7 +185,7 @@ void CharacterInfo::execute(int charIndex) {
 
 		case Common::KEYCODE_i:
 			_vm->_mode = oldMode;
-			_vm->_combat->_itemFlag = _vm->_mode == MODE_InCombat;
+			_vm->_combat->_itemFlag = _vm->_mode == MODE_COMBAT;
 			c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
 
 			if (!c) {

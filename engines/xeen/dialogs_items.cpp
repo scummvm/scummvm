@@ -336,11 +336,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					&& party._mazeId != 0) {
 				_buttonValue -= Common::KEYCODE_F1;
 				
-				if (_buttonValue < (int)(_vm->_mode == MODE_InCombat ?
+				if (_buttonValue < (int)(_vm->_mode == MODE_COMBAT ?
 						party._combatParty.size() : party._activeParty.size())) {
 					// Character number is valid
 					redrawFlag = REDRAW_TEXT;
-					Character *newChar = _vm->_mode == MODE_InCombat ?
+					Character *newChar = _vm->_mode == MODE_COMBAT ?
 						party._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
 
 					if (mode == ITEMMODE_BLACKSMITH) {
@@ -867,7 +867,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 
 					Condition condition = c.worstCondition();
 					switch (condition) {
-					case SLEEP:
+					case ASLEEP:
 					case PARALYZED:
 					case UNCONSCIOUS:
 					case DEAD:

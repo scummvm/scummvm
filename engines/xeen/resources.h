@@ -486,6 +486,12 @@ extern const char *const QUEST_ITEMS_DATA;
 extern const char *const CURRENT_QUESTS_DATA;
 extern const char *const AUTO_NOTES_DATA;
 
+extern const char *const REST_COMPLETE;
+extern const char *const PARTY_IS_STARVING;
+extern const char *const HIT_SPELL_POINTS_RESTORED;
+extern const char *const TOO_DANGEROUS_TO_REST;
+extern const char *const SOME_CHARS_MAY_DIE;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

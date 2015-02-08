@@ -76,7 +76,7 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 /*------------------------------------------------------------------------*/
 
 void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType waitType) {
-	Common::String s = Common::String::format("\x03c\v010\t000%s", msg.c_str());
+	Common::String s = Common::String::format("\x3""c\v010\t000%s", msg.c_str());
 	ErrorDialog::show(vm, s, waitType);
 }
 

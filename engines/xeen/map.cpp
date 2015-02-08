@@ -1369,7 +1369,7 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 	// Get the cell flags
 	const MazeCell &cell = _mazeData[_mazeDataIndex]._cells[pos.y][pos.x];
 	_currentIsGrate = cell._flags & OUTFLAG_GRATE;
-	_currentCantRest = cell._flags & FLAG_WATER;
+	_currentCantRest = cell._flags & RESTRICTION_REST;
 	_currentIsDrain = cell._flags & OUTFLAG_DRAIN;
 	_currentIsEvent = cell._flags & FLAG_AUTOEXECUTE_EVENT;
 	_currentSky = (cell._flags & OUTFLAG_OBJECT_EXISTS) ? 1 : 0;

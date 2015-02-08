@@ -1423,4 +1423,13 @@ const char *const AUTO_NOTES_DATA =
 	"%s\x3l\n"
 	"%s\x3l";
 
+const char *const REST_COMPLETE = 
+	"\v000\t0008 hours pass.  Rest complete.\n"
+	"%s\n"
+	"%d food consumed.";
+const char *const PARTY_IS_STARVING = "\f07The Party is Starving!\fd";
+const char *const HIT_SPELL_POINTS_RESTORED = "Hit Pts and Spell Pts restored.";
+const char *const TOO_DANGEROUS_TO_REST = "Too dangerous to rest here!";
+const char *const SOME_CHARS_MAY_DIE = "Some Chars may die. Rest anyway?";
+
 } // End of namespace Xeen

@@ -109,7 +109,7 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 		switch (_buttonValue) {
 		case Common::KEYCODE_F1:
 		case Common::KEYCODE_F6:
-			if (_vm->_mode != MODE_InCombat) {
+			if (_vm->_mode != MODE_COMBAT) {
 				_buttonValue -= Common::KEYCODE_F1;
 				if (_buttonValue < party._partyCount) {
 					c = &party._activeParty[_buttonValue];

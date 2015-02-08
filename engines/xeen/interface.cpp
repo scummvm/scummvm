@@ -25,6 +25,7 @@
 #include "xeen/dialogs_error.h"
 #include "xeen/dialogs_automap.h"
 #include "xeen/dialogs_info.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/dialogs_quests.h"
 #include "xeen/dialogs_quick_ref.h"
 #include "xeen/resources.h"
@@ -334,7 +335,7 @@ void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool
 
 void Interface::charIconsPrint(bool updateFlag) {
 	Screen &screen = *_vm->_screen;
-	bool stateFlag = _vm->_mode == MODE_InCombat;
+	bool stateFlag = _vm->_mode == MODE_COMBAT;
 	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
 
 	// Handle drawing the party faces
@@ -711,6 +712,11 @@ void Interface::perform() {
 		QuickReferenceDialog::show(_vm);
 		break;
 
+	case Common::KEYCODE_r:
+		// Rest
+		rest();
+		break;
+
 	case Common::KEYCODE_v:
 		// Show the quests dialog
 		Quests::show(_vm);
@@ -947,6 +953,137 @@ bool Interface::checkMoveDirection(int key) {
 	}
 
 	return true;
+}
+
+void Interface::rest() {
+	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+
+	map.cellFlagLookup(party._mazePosition);
+
+	if ((map._currentCantRest || (map.mazeData()._mazeFlags & RESTRICTION_REST))
+			&& _vm->_mode != MODE_12) {
+		ErrorScroll::show(_vm, TOO_DANGEROUS_TO_REST, WT_NONFREEZED_WAIT);
+	} else {
+		// Check whether any character is in danger of dying
+		bool dangerFlag = false;
+		for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
+			for (int attrib = MIGHT; attrib <= LUCK; ++attrib) {
+				if (party._activeParty[charIdx].getStat((Attribute)attrib) < 1)
+					dangerFlag = true;
+			}
+		}
+
+		if (dangerFlag) {
+			if (!Confirm::show(_vm, SOME_CHARS_MAY_DIE))
+				return;
+		}
+
+		// Mark all the players as being asleep
+		for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
+			party._activeParty[charIdx]._conditions[ASLEEP] = 1;
+		}
+		charIconsPrint(true);
+
+		Mode oldMode = _vm->_mode;
+		_vm->_mode = MODE_SLEEPING;
+
+		if (oldMode == MODE_12) {
+			party.changeTime(8 * 60);
+		} else {
+			for (int idx = 0; idx < 10; ++idx) {
+				chargeStep();
+				draw3d(true);
+				
+				if (_vm->_mode == MODE_1) {
+					_vm->_mode = oldMode;
+					return;
+				}
+			}
+
+			party.changeTime(map._isOutdoors ? 380 : 470);
+		}
+
+		if (_vm->getRandomNumber(1, 20) == 1) {
+			// Show dream
+			screen.saveBackground();
+			screen.fadeOut(4);
+			events.hideCursor();
+
+			screen.loadBackground("scene1.raw");
+			screen._windows[0].update();
+			screen.fadeIn(4);
+
+			events.updateGameCounter();
+			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
+				events.pollEventsAndWait();
+
+			File f("dreams2.voc");
+			sound.playSample(&f, 1);
+			while (!_vm->shouldQuit() && sound.playSample(1, 0))
+				events.pollEventsAndWait();
+			f.close();
+
+			f.openFile("laff1.voc");
+			sound.playSample(&f, 1);
+			while (!_vm->shouldQuit() && sound.playSample(1, 0))
+				events.pollEventsAndWait();
+			f.close();
+
+			events.updateGameCounter();
+			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
+				events.pollEventsAndWait();
+
+			screen.fadeOut(4);
+			events.setCursor(0);
+			screen.restoreBackground();
+			screen._windows[0].update();
+
+			screen.fadeIn(4);
+		}
+
+		party.resetTemps();
+
+		// Wake up the party
+		bool starving = false;
+		int foodConsumed = 0;
+		for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
+			Character &c = party._activeParty[charIdx];
+			c._conditions[ASLEEP] = 0;
+
+			if (party._food == 0) {
+				starving = true;
+			} else {
+				party._rested = true;
+				Condition condition = c.worstCondition();
+
+				if (condition < DEAD || condition > ERADICATED) {
+					--party._food;
+					++foodConsumed;
+					party._heroism = 0;
+					party._holyBonus = 0;
+					party._powerShield = 0;
+					party._blessed = 0;
+					c._conditions[UNCONSCIOUS] = 0;
+					c._currentHp = c.getMaxHP();
+					c._currentSp = c.getMaxSP();
+				}
+			}
+		}
+
+		charIconsPrint(true);
+		_vm->_mode = oldMode;
+		doStepCode();
+		draw3d(true);
+
+		ErrorScroll::show(_vm, Common::String::format(REST_COMPLETE,
+			starving ? PARTY_IS_STARVING : HIT_SPELL_POINTS_RESTORED,
+			foodConsumed));
+		party.checkPartyDead();
+	}
 }
 
 } // End of namespace Xeen

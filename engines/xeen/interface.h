@@ -104,6 +104,8 @@ public:
 	void unhighlightChar();
 
 	void perform();
+
+	void rest();
 };
 
 } // End of namespace Xeen
