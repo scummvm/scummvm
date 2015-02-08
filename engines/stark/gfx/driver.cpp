@@ -25,7 +25,8 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/opengl.h"
-#include "engines/stark/gfx/tinygl.h"
+
+#include "common/textconsole.h"
 
 namespace Stark {
 
@@ -39,13 +40,7 @@ GfxDriver *GfxDriver::create() {
 		return driver;
 #endif // USE_OPENGL
 
-	// TinyGL
-	driver = new TinyGLGfxDriver();
-	if (driver)
-		return driver;
-
 	error("Couldn't instance any graphics driver");
-	return NULL;
 }
 
 } // End of namespace Stark

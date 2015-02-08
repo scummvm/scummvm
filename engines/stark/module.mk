@@ -8,7 +8,6 @@ MODULE_OBJS := \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/renderentry.o \
-	gfx/tinygl.o \
 	formats/iss.o \
 	formats/xarc.o \
 	formats/xmg.o \
