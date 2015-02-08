@@ -39,8 +39,6 @@ public:
 	OpenGLGfxDriver();
 	~OpenGLGfxDriver();
 
-	const char *getVideoDeviceName();
-
 	void setupScreen(int screenW, int screenH, bool fullscreen);
 
 	void setupPerspective(float fov, float nearClipPlane, float farClipPlane) override;
@@ -51,17 +49,8 @@ public:
 
 	void drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect);
 
-/*
-	bool isHardwareAccelerated();
-*/
 	void set3DMode();
-/*
-	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(Math::Vector3d pos, Math::Vector3d interest);
 
-	void translateViewpointStart(Math::Vector3d pos, float pitch, float yaw, float roll);
-	void translateViewpointFinish();
-*/
 private:
 	void start2DMode();
 	void end2DMode();
