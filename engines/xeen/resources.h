@@ -492,6 +492,8 @@ extern const char *const HIT_SPELL_POINTS_RESTORED;
 extern const char *const TOO_DANGEROUS_TO_REST;
 extern const char *const SOME_CHARS_MAY_DIE;
 
+extern const char *const CANT_DISMISS_LAST_CHAR;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

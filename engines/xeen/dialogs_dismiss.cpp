@@ -1,0 +1,99 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "xeen/dialogs_dismiss.h"
+#include "xeen/party.h"
+#include "xeen/resources.h"
+#include "xeen/xeen.h"
+
+namespace Xeen {
+
+void Dismiss::show(XeenEngine *vm) {
+	Dismiss *dlg = new Dismiss(vm);
+	dlg->execute();
+	delete dlg;
+}
+
+void Dismiss::execute() {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	loadButtons();
+
+	Window &w = screen._windows[31];
+	w.open();
+	_iconSprites.draw(w, 0, Common::Point(225, 120));
+	w.update();
+
+	while (!_vm->shouldQuit()) {
+		do {
+			events.updateGameCounter();
+			intf.draw3d(false);
+			w.frame();
+			w.writeString("\r");
+			_iconSprites.draw(w, 0, Common::Point(225, 120));
+			screen._windows[3].update();
+			w.update();
+
+			do {
+				events.pollEventsAndWait();
+				checkEvents(_vm);
+			} while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() == 0);
+		} while (!_vm->shouldQuit() && !_buttonValue);
+
+		if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
+			_buttonValue -= Common::KEYCODE_F1;
+
+			if (_buttonValue < (int)party._activeParty.size()) {
+				if (party._activeParty.size() == 1) {
+					w.close();
+					ErrorScroll::show(_vm, CANT_DISMISS_LAST_CHAR, WT_NONFREEZED_WAIT);
+					w.open();
+				} else {
+					Character tempChar = party._activeParty[_buttonValue];
+					int charIndex = party._partyMembers[_buttonValue];
+					intf._partyFaces[_buttonValue] = 0;
+
+					intf.sortFaces();
+//					party.sortParty();
+
+					// TODO
+				}
+				break;
+			}
+		} else if (_buttonValue == Common::KEYCODE_ESCAPE) {
+			
+		}
+	}
+}
+
+void Dismiss::loadButtons() {
+	_iconSprites.load("esc.icn");
+	addButton(Common::Rect(225, 120, 249, 140), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_iconSprites, false);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_iconSprites, false);
+	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3, &_iconSprites, false);
+	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4, &_iconSprites, false);
+}
+
+} // End of namespace Xeen

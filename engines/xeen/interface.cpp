@@ -385,6 +385,23 @@ void Interface::charIconsPrint(bool updateFlag) {
 		screen._windows[33].update();
 }
 
+/**
+ * Removes any empty character entries from the faces list
+ */
+void Interface::sortFaces() {
+	for (uint charIdx = 0; charIdx < MAX_ACTIVE_PARTY; ++charIdx) {
+		if (!_partyFaces[charIdx]) {
+			for (uint charIdx2 = charIdx + 1; charIdx2 < 8; ++charIdx2) {
+				if (_partyFaces[charIdx2]) {
+					_partyFaces[charIdx] = _partyFaces[charIdx2];
+					_partyFaces[charIdx2] = 0;
+					break;
+				}
+			}
+		}
+	}
+}
+
 void Interface::drawViewBackground(int bgType) {
 	if (bgType >= 4)
 		return;

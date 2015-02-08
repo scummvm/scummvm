@@ -97,6 +97,8 @@ public:
 
 	void charIconsPrint(bool updateFlag);
 
+	void sortFaces();
+
 	void doFalling();
 
 	void highlightChar(int charId);

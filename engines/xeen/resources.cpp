@@ -1432,4 +1432,6 @@ const char *const HIT_SPELL_POINTS_RESTORED = "Hit Pts and Spell Pts restored.";
 const char *const TOO_DANGEROUS_TO_REST = "Too dangerous to rest here!";
 const char *const SOME_CHARS_MAY_DIE = "Some Chars may die. Rest anyway?";
 
+const char *const CANT_DISMISS_LAST_CHAR = "You cannot dismiss your last character!";
+
 } // End of namespace Xeen
