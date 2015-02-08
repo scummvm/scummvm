@@ -1693,32 +1693,23 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 			rval = vm->getRandomNumber(1, 100);
 			if (rval <= 15) {
 				mult = 0;
-			}
-			else if (rval <= 25) {
+			} else if (rval <= 25) {
 				mult = 1;
-			}
-			else if (rval <= 35) {
+			} else if (rval <= 35) {
 				mult = 2;
-			}
-			else if (mult <= 50) {
+			} else if (rval <= 50) {
 				mult = 3;
-			}
-			else if (mult <= 65) {
+			} else if (rval <= 65) {
 				mult = 4;
-			}
-			else if (mult <= 80) {
+			} else if (rval <= 80) {
 				mult = 5;
-			}
-			else if (mult <= 85) {
+			} else if (rval <= 85) {
 				mult = 6;
-			}
-			else if (mult <= 90) {
+			} else if (rval <= 90) {
 				mult = 7;
-			}
-			else if (mult <= 95) {
+			} else if (rval <= 95) {
 				mult = 8;
-			}
-			else {
+			} else {
 				mult = 9;
 			}
 
