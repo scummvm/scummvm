@@ -888,19 +888,19 @@ void Palette::refreshSceneColors() {
 int Palette::closestColor(const byte *matchColor, const byte *refPalette,
 		int listWrap, int count) {
 	int bestColor = 0;
-	int bestDifference = 0x7fff;
+	int bestDistance = 0x7fff;
 
 	for (int idx = 0; idx < count; ++idx) {
 		// Figure out hash for color
-		int hash = 0;
+		int distance = 0;
 		for (int rgbIdx = 0; rgbIdx < 3; ++rgbIdx, ++refPalette) {
 			byte diff = *refPalette - matchColor[rgbIdx];
-			hash += (int)diff * (int)diff;
+			distance += (int)diff * (int)diff;
 		}
 
 		// If the given color is a closer match to our color, store the index
-		if (hash < bestDifference) {
-			bestDifference = hash;
+		if (distance < bestDistance) {
+			bestDistance = distance;
 			bestColor = idx;
 		}
 
