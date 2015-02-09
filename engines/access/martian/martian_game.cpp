@@ -35,6 +35,7 @@ MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDes
 }
 
 MartianEngine::~MartianEngine() {
+	_introObjects = _spec7Objects = nullptr;
 }
 
 void MartianEngine::initObjects() {

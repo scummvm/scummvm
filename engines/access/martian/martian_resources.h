@@ -65,6 +65,7 @@ extern const char *const TRAVDATA[];
 
 extern const byte DEATH_SCREENS[];
 extern const char *const DEATHMESSAGE[];
+extern const char *const SPEC7MESSAGE;
 
 extern const byte _byte1EEB5[];
 extern const int PICTURERANGE[][2];

@@ -42,7 +42,6 @@ private:
 	Resource *_resource;
 	int _specialFunction;
 
-	void charLoop();
 	void clearWatch();
 	void printWatch();
 
@@ -52,6 +51,8 @@ protected:
 
 	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
+
+	void charLoop();
 
 	/**
 	 * Read a null terminated string from the script
