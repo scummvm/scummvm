@@ -578,7 +578,11 @@ void Lua_V1::GetSaveGameData() {
 	lua_Object param = lua_getparam(1);
 	if (!lua_isstring(param))
 		return;
-	const char *filename = lua_getstring(param);
+	Common::String filename(lua_getstring(param));
+	if (g_grim->getGameType() == GType_MONKEY4 &&
+		g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		filename += ".gsv";
+	}
 	SaveGame *savedState = SaveGame::openForLoading(filename);
 	lua_Object result = lua_createtable();
 
@@ -590,10 +594,10 @@ void Lua_V1::GetSaveGameData() {
 		lua_pushobject(result);
 
 		if (!savedState) {
-			warning("Savegame %s is invalid", filename);
+			warning("Savegame %s is invalid", filename.c_str());
 		} else {
 			warning("Savegame %s is incompatible with this ResidualVM build. Save version: %d.%d; current version: %d.%d",
-					filename, savedState->saveMajorVersion(), savedState->saveMinorVersion(),
+					filename.c_str(), savedState->saveMajorVersion(), savedState->saveMinorVersion(),
 					SaveGame::SAVEGAME_MAJOR_VERSION, SaveGame::SAVEGAME_MINOR_VERSION);
 		}
 		delete savedState;
@@ -625,11 +629,16 @@ void Lua_V1::GetSaveGameData() {
 }
 
 void Lua_V1::Load() {
-	lua_Object fileName = lua_getparam(1);
-	if (lua_isnil(fileName)) {
+	lua_Object fileNameObj = lua_getparam(1);
+	if (lua_isnil(fileNameObj)) {
 		g_grim->loadGame("");
-	} else if (lua_isstring(fileName)) {
-		g_grim->loadGame(lua_getstring(fileName));
+	} else if (lua_isstring(fileNameObj)) {
+		Common::String fileName(lua_getstring(fileNameObj));
+		if (g_grim->getGameType() == GType_MONKEY4 &&
+			g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			fileName += ".gsv";
+		}
+		g_grim->loadGame(fileName);
 	} else {
 		warning("Load() fileName is wrong");
 		return;
@@ -637,11 +646,16 @@ void Lua_V1::Load() {
 }
 
 void Lua_V1::Save() {
-	lua_Object fileName = lua_getparam(1);
-	if (lua_isnil(fileName)) {
+	lua_Object fileNameObj = lua_getparam(1);
+	if (lua_isnil(fileNameObj)) {
 		g_grim->saveGame("");
-	} else if (lua_isstring(fileName)) {
-		g_grim->saveGame(lua_getstring(fileName));
+	} else if (lua_isstring(fileNameObj)) {
+		Common::String fileName(lua_getstring(fileNameObj));
+		if (g_grim->getGameType() == GType_MONKEY4 &&
+			g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			fileName += ".gsv";
+		}
+		g_grim->saveGame(fileName);
 	} else {
 		warning("Save() fileName is wrong");
 		return;
