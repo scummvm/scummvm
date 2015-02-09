@@ -220,6 +220,13 @@ public:
 	 * Create a new surface which is a flipped horizontal copy of the current one
 	 */
 	MSurface *flipHorizontal() const;
+
+	/**
+	 * Copy an area from one surface to another, translating it using a palette
+	 * map as it's done
+	 */
+	void copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
+		const Common::Point &destPos, const Common::Rect &srcRect);
 };
 
 class DepthSurface : public MSurface {

@@ -56,6 +56,11 @@ enum InputMode {
 	kInputLimitedSentences = 2		// Use only scene hotspots
 };
 
+enum ThroughBlack {
+	THROUGH_BLACK1 = 1,
+	THROUGH_BLACK2 = 2
+};
+
 class SpriteSlot;
 class TextDisplay;
 class UISlot;
@@ -207,6 +212,14 @@ private:
 	uint16 _random;
 	byte *_surfacePixels;
 	Common::Rect _clipBounds;
+
+	void panTransition(MSurface &newScreen, byte *palData, int entrySide,
+		const Common::Point &srcPos, const Common::Point &destPos,
+		ThroughBlack throughBlack, bool setPalette, int numTicks);
+
+	void swapForeground(byte *palData, byte *paletteMap);
+
+	void swapPalette(byte palData[PALETTE_SIZE], byte swapTable[PALETTE_COUNT], int start);
 public:
 	int _shakeCountdown;
 public:

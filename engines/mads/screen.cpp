@@ -607,6 +607,7 @@ void ScreenSurface::updateScreen() {
 
 void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag) {
 	Palette &pal = *_vm->_palette;
+	Scene &scene = _vm->_game->_scene;
 	byte palData[PALETTE_SIZE];
 
 	switch (transitionType) {
@@ -639,8 +640,9 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 
 	case kTransitionPanLeftToRight:
 	case kTransitionPanRightToLeft:
-		warning("TODO: pan transition");
-		transition(kTransitionFadeIn, surfaceFlag);
+		panTransition(scene._backgroundSurface, pal._mainPalette,
+			transitionType - kTransitionPanLeftToRight,
+			Common::Point(0, 0), scene._posAdjust, THROUGH_BLACK2, true, 1);
 		break;
 
 	case kTransitionCircleIn1:
@@ -672,6 +674,122 @@ void ScreenSurface::setClipBounds(const Common::Rect &r) {
 
 void ScreenSurface::resetClipBounds() {
 	setClipBounds(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+}
+
+void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entrySide,
+		const Common::Point &srcPos, const Common::Point &destPos,
+		ThroughBlack throughBlack, bool setPalette, int numTicks) {
+	EventsManager &events = *_vm->_events;
+	Palette &palette = *_vm->_palette;
+	Common::Point size;
+	int y1, y2;
+	int startX = 0;
+	int deltaX;
+	int sizeY;
+	int xAt;
+	int loopStart;
+//	uint32 baseTicks, currentTicks;
+	byte paletteMap[256];
+
+	size.x = MIN(newScreen.w, (uint16)MADS_SCREEN_WIDTH);
+	size.y = newScreen.h;
+	if (newScreen.h >= MADS_SCREEN_HEIGHT)
+		size.y = MADS_SCENE_HEIGHT;
+
+	// Set starting position and direction delta for the transition
+	if (entrySide == 1)
+		// Right to left
+		startX = size.x - 1;
+	deltaX = startX ? -1 : 1;
+
+	if (setPalette & !throughBlack)
+		palette.setFullPalette(palData);
+
+	// TODO: Original uses a different frequency ticks counter. Need to
+	// confirm frequency and see whether we need to implement it, or
+	// if the current frame ticks can substitute for it
+//	baseTicks = events.getFrameCounter();
+
+	y1 = 0;
+	y2 = size.y - 1;
+	sizeY = y2 - y1 + 1;
+
+	if (throughBlack == THROUGH_BLACK2)
+		swapForeground(palData, &paletteMap[0]);
+
+	loopStart = throughBlack == THROUGH_BLACK1 ? 0 : 1;
+	for (int loop = loopStart; loop < 2; ++loop) {
+		xAt = startX;
+		for (int xCtr = 0; xCtr < size.x; ++xCtr, xAt += deltaX) {
+			if (!loop) {
+				fillRect(Common::Rect(xAt + destPos.x, y1 + destPos.y,
+					xAt + destPos.x + 1, y2 + destPos.y), 0);
+			} else if (throughBlack == THROUGH_BLACK2) {
+				copyRectTranslate(newScreen, paletteMap,
+					Common::Point(xAt, destPos.y),
+					Common::Rect(srcPos.x + xAt, srcPos.y,
+					srcPos.x + xAt + 1, srcPos.y + size.y));
+			} else {
+				newScreen.copyRectToSurface(*this, xAt, destPos.y,
+					Common::Rect(srcPos.x + xAt, srcPos.y, 
+					srcPos.x + xAt + 1, srcPos.y + size.y));
+			}
+
+			copyRectToScreen(Common::Rect(xAt, destPos.y, xAt + 1, destPos.y + size.y));
+
+			// Slight delay
+			events.delay(1);
+		}
+
+		if ((setPalette && !loop) || throughBlack == THROUGH_BLACK2)
+			palette.setFullPalette(palData);
+	}
+
+	if (throughBlack == THROUGH_BLACK2) {
+		Common::Rect r(srcPos.x, srcPos.y, srcPos.x + size.x, srcPos.y + size.y);
+		copyRectToSurface(newScreen, destPos.x, destPos.y, r);
+		copyRectToScreen(r);
+	}
+}
+
+void ScreenSurface::swapForeground(byte palData[PALETTE_SIZE], byte *paletteMap) {
+	Palette &palette = *_vm->_palette;
+	byte oldPalette[PALETTE_SIZE];
+	byte oldMap[256];
+	byte newMap[256];
+
+	palette.getFullPalette(oldPalette);
+	swapPalette(oldPalette, oldMap, true);
+	swapPalette(palData, newMap, false);
+
+	Common::copy(&palData[3], &palData[PALETTE_SIZE], &oldPalette[3]);
+
+	copyRectTranslate(*this, oldMap, Common::Point(0, 0), 
+		Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+	palette.setFullPalette(oldPalette);
+}
+
+void ScreenSurface::swapPalette(byte *palData, byte swapTable[PALETTE_COUNT], 
+		int start) {
+	byte *dynamicList = &palData[start * 3];
+	int staticStart = 1 - start;
+	byte *staticList = &palData[staticStart * 3];
+	const int PALETTE_START = 1;
+	const int PALETTE_END = 252;
+
+	// Set initial index values
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+		swapTable[idx] = idx;
+
+	for (int idx = 0; idx < 128; ++idx) {
+		if (start >= PALETTE_START && start <= PALETTE_END) {
+			swapTable[start] = Palette::closestColor(dynamicList, staticList, 
+				6, 128) * 2 + staticStart;
+		}
+
+		dynamicList += 6;
+		start += 2;
+	}
 }
 
 

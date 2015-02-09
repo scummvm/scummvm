@@ -318,6 +318,9 @@ public:
 	void unlock();
 
 	void refreshSceneColors();
+
+	static int closestColor(const byte *matchColor, const byte *refPalette, 
+		int listWrap, int count);
 };
 
 } // End of namespace MADS

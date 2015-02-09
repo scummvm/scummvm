@@ -885,4 +885,30 @@ void Palette::refreshSceneColors() {
 	setPalette(_mainPalette + (val * 3), val, 256 - val);
 }
 
+int Palette::closestColor(const byte *matchColor, const byte *refPalette,
+		int listWrap, int count) {
+	int bestColor = 0;
+	int bestDifference = 0x7fff;
+
+	for (int idx = 0; idx < count; ++idx) {
+		// Figure out hash for color
+		int hash = 0;
+		for (int rgbIdx = 0; rgbIdx < 3; ++rgbIdx, ++refPalette) {
+			byte diff = *refPalette - matchColor[rgbIdx];
+			hash += (int)diff * (int)diff;
+		}
+
+		// If the given color is a closer match to our color, store the index
+		if (hash < bestDifference) {
+			bestDifference = hash;
+			bestColor = idx;
+		}
+
+		refPalette += listWrap - 3;
+	}
+
+	return bestColor;
+}
+
+
 } // End of namespace MADS

@@ -485,7 +485,6 @@ void MSurface::scrollY(int yAmount) {
 	delete[] tempData;
 }
 
-
 void MSurface::translate(Common::Array<RGB6> &palette) {
 	for (int y = 0; y < this->h; ++y) {
 		byte *pDest = getBasePtr(0, y);
@@ -519,6 +518,20 @@ MSurface *MSurface::flipHorizontal() const {
 	}
 
 	return dest;
+}
+
+void MSurface::copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
+		const Common::Point &destPos, const Common::Rect &srcRect) {
+	// Loop through the lines
+	for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
+		const byte *srcP = srcSurface.getBasePtr(srcRect.left, srcRect.top + yCtr);
+		byte *destP = getBasePtr(destPos.x, destPos.y + yCtr);
+
+		// Copy the line over
+		for (int xCtr = 0; xCtr < srcRect.width(); ++xCtr, ++srcP, ++destP) {
+			*destP = paletteMap[*srcP];
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
