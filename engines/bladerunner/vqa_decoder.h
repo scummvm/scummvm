@@ -23,7 +23,7 @@
 #ifndef BLADERUNNER_VQA_DECODER_H
 #define BLADERUNNER_VQA_DECODER_H
 
-#include "bladerunner/aud_decoder.h"
+#include "bladerunner/adpcm_decoder.h"
 #include "bladerunner/view.h"
 
 #include "audio/audiostream.h"

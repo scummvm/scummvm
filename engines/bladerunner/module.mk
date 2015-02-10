@@ -1,9 +1,10 @@
 MODULE := engines/bladerunner
 
 MODULE_OBJS = \
+	adpcm_decoder.o \
 	ambient_sounds.o \
 	archive.o \
-	aud_decoder.o \
+	aud_stream.o \
 	audio_player.o \
 	bladerunner.o \
 	boundingbox.o \

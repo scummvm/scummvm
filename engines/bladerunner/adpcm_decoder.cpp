@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/aud_decoder.h"
+#include "bladerunner/adpcm_decoder.h"
 
 #include "common/util.h"
 

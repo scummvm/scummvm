@@ -24,6 +24,8 @@
 #define BLADERUNNER_AUDIO_H
 
 #include "audio/mixer.h"
+#include "common/array.h"
+#include "common/mutex.h"
 #include "common/str.h"
 #include "common/types.h"
 
@@ -33,6 +35,41 @@ class BladeRunnerEngine;
 class AudioCache;
 
 #define TRACKS 6
+
+/*
+ * This is a poor imitation of Bladerunner's resource cache
+ */
+class AudioCache {
+	struct cacheItem {
+		int32   hash;
+		int     refs;
+		uint    lastAccess;
+		byte   *data;
+		uint32  size;
+	};
+
+	Common::Mutex            _mutex;
+	Common::Array<cacheItem> _cacheItems;
+
+	uint32 _totalSize;
+	uint32 _maxSize;
+	uint32 _accessCounter;
+public:
+	AudioCache() :
+		_totalSize(0),
+		_maxSize(2457600),
+		_accessCounter(0)
+	{}
+	~AudioCache();
+
+	bool  canAllocate(uint32 size);
+	bool  dropOldest();
+	byte *findByHash(int32 hash);
+	void  storeByHash(int32 hash, Common::SeekableReadStream *stream);
+
+	void  incRef(int32 hash);
+	void  decRef(int32 hash);
+};
 
 class AudioPlayer {
 	BladeRunnerEngine *_vm;

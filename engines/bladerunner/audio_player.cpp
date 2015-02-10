@@ -23,16 +23,14 @@
 #include "audio_player.h"
 
 #include "bladerunner/archive.h"
-#include "bladerunner/aud_decoder.h"
+#include "bladerunner/aud_stream.h"
 
 #include "bladerunner/bladerunner.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
-#include "common/array.h"
 #include "common/debug.h"
-#include "common/mutex.h"
 #include "common/stream.h"
 
 namespace Common {
@@ -40,41 +38,6 @@ namespace Common {
 }
 
 namespace BladeRunner {
-
-/*
- * This is a poor imitation of Bladerunner's resource cache
- */
-class AudioCache {
-	struct cacheItem {
-		int32   hash;
-		int     refs;
-		uint    lastAccess;
-		byte   *data;
-		uint32  size;
-	};
-
-	Common::Mutex            _mutex;
-	Common::Array<cacheItem> _cacheItems;
-
-	uint32 _totalSize;
-	uint32 _maxSize;
-	uint32 _accessCounter;
-public:
-	AudioCache() :
-		_totalSize(0),
-		_maxSize(2457600),
-		_accessCounter(0)
-	{}
-	~AudioCache();
-
-	bool  canAllocate(uint32 size);
-	bool  dropOldest();
-	byte *findByHash(int32 hash);
-	void  storeByHash(int32 hash, Common::SeekableReadStream *stream);
-
-	void  incRef(int32 hash);
-	void  decRef(int32 hash);
-};
 
 AudioCache::~AudioCache() {
 	for (uint i = 0; i != _cacheItems.size(); ++i) {
@@ -161,91 +124,6 @@ void AudioCache::decRef(int32 hash) {
 		}
 	}
 	assert(0 && "AudioCache::decRef: hash not found");
-}
-
-class AudStream : public Audio::RewindableAudioStream {
-	byte       *_data;
-	byte       *_p;
-	byte       *_end;
-	AudioCache *_cache;
-	int32       _hash;
-	byte        _compressionType;
-	uint16      _deafBlockRemain;
-
-	ADPCMWestwoodDecoder _decoder;
-
-public:
-	AudStream(AudioCache *cache, int32 hash)
-		: _cache(cache), _hash(hash)
-	{
-		_data = _cache->findByHash(_hash);
-		_end = _data + READ_LE_UINT32(_data + 2) + 12;
-		_cache->incRef(_hash);
-
-		assert(_end - _data >= 12);
-
-		_compressionType = *(_data + 11);
-
-		_deafBlockRemain = 0;
-		_p = _data + 12;
-	}
-	~AudStream() {
-		_cache->decRef(_hash);
-	}
-
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	int getRate() const { return READ_LE_UINT16(_data); };
-	bool endOfData() const { return _p == _end; }
-	bool rewind();
-};
-
-int AudStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samplesRead = 0;
-
-	assert(numSamples % 2 == 0);
-
-	if (_compressionType == 99) {
-		while (samplesRead < numSamples) {
-			if (_deafBlockRemain == 0) {
-				if (_end - _p == 0)
-					break;
-
-				assert(_end - _p >= 6);
-
-				uint16 blockSize     = READ_LE_UINT16(_p);
-				uint16 blockOutSize  = READ_LE_UINT16(_p + 2);
-				uint32 sig           = READ_LE_UINT32(_p + 4);
-				_p += 8;
-
-				assert(sig == 0xdeaf);
-				assert(_end - _p >= blockSize);
-				assert(blockOutSize = 4 * blockSize);
-
-				_deafBlockRemain = blockSize;
-			}
-
-			assert(_end - _p >= _deafBlockRemain);
-
-			int bytesConsumed = MIN<int>(_deafBlockRemain, (numSamples - samplesRead) / 2);
-
-			_decoder.decode(_p, bytesConsumed, buffer + samplesRead);
-			_p += bytesConsumed;
-			_deafBlockRemain -= bytesConsumed;
-
-			samplesRead += 2 * bytesConsumed;
-		}
-	} else {
-		assert(0 && "readBuffer: Unimplemented");
-	}
-
-	return samplesRead;
-}
-
-bool AudStream::rewind() {
-	_p = _data + 12;
-	_decoder.setParameters(0, 0);
-	return true;
 }
 
 AudioPlayer::AudioPlayer(BladeRunnerEngine *vm)
