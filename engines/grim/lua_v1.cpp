@@ -39,6 +39,7 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
+#include "engines/grim/localize.h"
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
@@ -554,6 +555,7 @@ void Lua_V1::SubmitSaveGameData() {
 		error("Cannot obtain saved game");
 	savedState->beginSection('SUBS');
 	int count = 0;
+	Common::String localized;
 	for (;;) {
 		lua_pushobject(table);
 		lua_pushnumber(count);
@@ -562,11 +564,26 @@ void Lua_V1::SubmitSaveGameData() {
 		if (lua_isnil(table2))
 			break;
 		str = lua_getstring(table2);
+		if (g_grim->getGameType() == GType_MONKEY4 &&
+			g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			if (count == 1) {
+				localized = g_localizer->localize(str);
+			}
+		}
 		int32 len = strlen(str) + 1;
 		savedState->writeLESint32(len);
 		savedState->write(str, len);
 	}
 	savedState->endSection();
+	
+	//give ps2 saves a human-readable name
+	if (g_grim->getGameType() == GType_MONKEY4 &&
+		g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		savedState->beginSection('PS2S');
+		savedState->writeLESint32(localized.size() + 1);
+		savedState->write(localized.c_str(), localized.size() + 1);
+		savedState->endSection();
+	}
 }
 
 void Lua_V1::GetSaveGameData() {
