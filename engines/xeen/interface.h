@@ -57,10 +57,6 @@ private:
 
 	void setupBackground();
 
-	void drawViewBackground(int bgType);
-
-	void moveCharacterToRoster();
-
 	void setMainButtons();
 
 	void chargeStep();

@@ -85,7 +85,6 @@ void Interface::loadPartyIcons() {
 }
 
 void Interface::charIconsPrint(bool updateFlag) {
-	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	bool stateFlag = _vm->_mode == MODE_COMBAT;
 	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
@@ -151,27 +150,6 @@ void Interface::sortFaces() {
 			}
 		}
 	}
-}
-
-void Interface::drawViewBackground(int bgType) {
-	if (bgType >= 4)
-		return;
-
-	if (bgType == 0) {
-		// Totally black background
-		_vm->_screen->fillRect(Common::Rect(8, 8, 224, 140), 0);
-	} else {
-		const byte *lookup = BACKGROUND_XLAT + bgType;
-		for (int yp = 8; yp < 140; ++yp) {
-			byte *destP = (byte *)_vm->_screen->getBasePtr(8, yp);
-			for (int xp = 8; xp < 224; ++xp, ++destP)
-				*destP = lookup[*destP];
-		}
-	}
-}
-
-void Interface::moveCharacterToRoster() {
-	error("TODO");
 }
 
 void Interface::startup() {

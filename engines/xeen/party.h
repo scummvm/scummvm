@@ -138,7 +138,7 @@ public:
 
 	bool isInParty(int charId);
 
-	void copyPartyToRoster(Roster &r);
+	void copyPartyToRoster();
 
 	void changeTime(int numMinutes);
 

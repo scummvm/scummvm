@@ -231,9 +231,9 @@ bool Party::isInParty(int charId) {
 	return false;
 }
 
-void Party::copyPartyToRoster(Roster &r) {
+void Party::copyPartyToRoster() {
 	for (int i = 0; i < _partyCount; ++i) {
-		r[_partyMembers[i]] = _activeParty[i];
+		_roster[_partyMembers[i]] = _activeParty[i];
 	}
 }
 

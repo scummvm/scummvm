@@ -40,6 +40,7 @@ void PartyDialog::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	bool modeFlag = false;
 
 	loadButtons();
 	setupBackground();
@@ -73,10 +74,7 @@ void PartyDialog::execute() {
 		_iconSprites.draw(w, 10, Common::Point(192, 100));
 		screen.loadPalette("mm4.pal");
 
-	/*
-
-
-		if (flag) {
+		if (modeFlag) {
 			screen._windows[0].update();
 			events.setCursor(0);
 			screen.fadeIn(4);
@@ -94,7 +92,6 @@ void PartyDialog::execute() {
 			}
 		}
 
-		// TODO
 		bool breakFlag = false;
 		while (!_vm->shouldQuit() && !breakFlag) {
 			events.pollEventsAndWait();
@@ -105,13 +102,13 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_SPACE:
 			case Common::KEYCODE_e:
 			case Common::KEYCODE_x:
-				if (_vm->_party->_partyCount == 0) {
+				if (party._partyCount == 0) {
 					ErrorScroll::show(_vm, NO_ONE_TO_ADVENTURE_WITH);
 				} else {
 					if (_vm->_mode != MODE_0) {
-						for (_intrIndex1 = 4; _intrIndex1 >= 0; --_intrIndex1) {
+						for (int idx = 4; idx >= 0; --idx) {
 							events.updateGameCounter();
-							drawViewBackground(_intrIndex1);
+							screen.frameWindow(idx);
 							w.update();
 
 							while (events.timeElapsed() < 1)
@@ -120,10 +117,10 @@ void PartyDialog::execute() {
 					}
 
 					w.close();
-					_vm->_party->_realPartyCount = _vm->_party->_partyCount;
-					_vm->_party->_mazeId = _vm->_party->_priorMazeId;
+					party._realPartyCount = party._partyCount;
+					party._mazeId = party._priorMazeId;
 
-					_vm->_party->copyPartyToRoster(_vm->_roster);
+					party.copyPartyToRoster();
 					_vm->_saves->writeCharFile();
 					breakFlag = true;
 					break;
@@ -143,18 +140,17 @@ void PartyDialog::execute() {
 				} else {
 					screen.fadeOut(4);
 					w.close();
-					moveCharacterToRoster();
+					party.copyPartyToRoster();
 					_vm->_saves->writeCharFile();
 					screen.fadeOut(4);
-					flag = true;
-					_buttonsLoaded = true;
-					goto start;
+					modeFlag = true;
+					breakFlag = true;
 				}
 				break;
 			case Common::KEYCODE_d:
 				break;
 			case Common::KEYCODE_r:
-				if (_vm->_party->_partyCount > 0) {
+				if (party._partyCount > 0) {
 					// TODO
 				}
 				break;
@@ -186,12 +182,6 @@ void PartyDialog::execute() {
 				break;
 			}
 		}
-	}
-
-	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		_charFaces[i].clear();
-		*/
-		// TODO
 	}
 }
 
@@ -237,7 +227,7 @@ void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bo
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
 		charId = xeenSideChars[charIndex];
-		bool isInParty = _vm->_party->isInParty(charId);
+		bool isInParty = party.isInParty(charId);
 
 		if (charId == 0xff) {
 			while ((int)_buttons.size() >(7 + posIndex))
