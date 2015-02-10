@@ -44,8 +44,6 @@ private:
 	SpriteResource _hpSprites;
 	SpriteResource _uiSprites;
 	SpriteResource _iconSprites;
-	SpriteResource _charFaces[TOTAL_CHARACTERS];
-	DrawStruct _faceDrawStructs[4];
 	DrawStruct _mainList[16];
 	int _combatCharIds[8];
 
@@ -58,8 +56,6 @@ private:
 	void loadSprites();
 
 	void setupBackground();
-
-	void setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag);
 
 	void drawViewBackground(int bgType);
 

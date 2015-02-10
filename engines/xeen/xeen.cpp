@@ -51,6 +51,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_spells = nullptr;
 	_town = nullptr;
 	_eventData = nullptr;
+	_quitMode = 0;
 	_dangerSenseAllowed = false;
 	_noDirectionSense = false;
 	_moveMonsters = false;
@@ -289,6 +290,7 @@ void XeenEngine::playGame() {
  */
 void XeenEngine::play() {
 	// TODO: Init variables
+	_quitMode = 0;
 
 	_interface->setup();
 	_screen->loadBackground("back.raw");
@@ -331,8 +333,8 @@ void XeenEngine::gameLoop() {
 	while (!shouldQuit()) {
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
-			_scripts->checkEvents();
-			if (shouldQuit())
+			_quitMode = _scripts->checkEvents();
+			if (shouldQuit() || _quitMode)
 				return;
 		}
 		_scripts->giveTreasure();

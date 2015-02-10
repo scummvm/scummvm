@@ -168,7 +168,7 @@ bool EventsManager::wait(uint numFrames, bool interruptable) {
 	return false;
 }
 
-void EventsManager::ipause(int amount) {
+void EventsManager::ipause(uint amount) {
 	updateGameCounter();
 	do {
 		_vm->_interface->draw3d(true);

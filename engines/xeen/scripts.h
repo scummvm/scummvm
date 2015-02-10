@@ -233,7 +233,7 @@ public:
 public:
 	Scripts(XeenEngine *vm);
 
-	bool checkEvents();
+	int checkEvents();
 
 	void giveTreasure();
 

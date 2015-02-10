@@ -46,11 +46,6 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), _vm(
 
 
 void Interface::initDrawStructs() {
-	_faceDrawStructs[0] = DrawStruct(0, 0, 0);
-	_faceDrawStructs[1] = DrawStruct(0, 101, 0);
-	_faceDrawStructs[2] = DrawStruct(0, 0, 43);
-	_faceDrawStructs[3] = DrawStruct(0, 101, 43);
-
 	_mainList[0] = DrawStruct(7, 232, 74);
 	_mainList[1] = DrawStruct(0, 235, 75);
 	_mainList[2] = DrawStruct(2, 260, 75);
@@ -85,70 +80,8 @@ void Interface::setup() {
 }
 
 void Interface::manageCharacters(bool soundPlayed) {
-	EventsManager &events = *_vm->_events;
-	Map &map = *_vm->_map;
-	Screen &screen = *_vm->_screen;
-	bool flag = false;
-
-start:
-	if (_vm->_party->_mazeId != 0) {
-		_vm->_mode = MODE_0;
-		_buttonsLoaded = true;
-	} else {
-		if (!soundPlayed) {
-			warning("TODO: loadSound?");
-		}
-
-		if (!_partyFaces[0]) {
-			// Xeen only uses 24 of possible 30 character slots
-			loadCharIcons();
-
-			for (int i = 0; i < _vm->_party->_partyCount; ++i)
-				_partyFaces[i] = &_charFaces[_vm->_party->_partyMembers[i]];
-		}
-
-		_vm->_mode = MODE_1;
-		Common::Array<int> xeenSideChars;
-
-		// Build up a list of characters on the same Xeen side being loaded
-		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
-			Character &player = _vm->_roster[i];
-			if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
-				continue;
-
-			xeenSideChars.push_back(i);
-		}
-
-		// Add in buttons for the UI
-		_interfaceText = "";
-		_buttonsLoaded = true;
-		addButton(Common::Rect(16, 100, 40, 120), 242, &_uiSprites, true);
-		addButton(Common::Rect(52, 100, 76, 120), 243, &_uiSprites, true);
-		addButton(Common::Rect(87, 100, 111, 120), 68, &_uiSprites, true);
-		addButton(Common::Rect(122, 100, 146, 120), 82, &_uiSprites, true);
-		addButton(Common::Rect(157, 100, 181, 120), 67, &_uiSprites, true);
-		addButton(Common::Rect(192, 100, 216, 120), 88, &_uiSprites, true);
-		addButton(Common::Rect(), 27, &_uiSprites, false);
-		addButton(Common::Rect(16, 16, 48, 48), 49, &_uiSprites, false);
-		addButton(Common::Rect(117, 16, 139, 48), 50, &_uiSprites, false);
-		addButton(Common::Rect(16, 59, 48, 81), 51, &_uiSprites, false);
-		addButton(Common::Rect(117, 59, 149, 81), 52, &_uiSprites, false);
-
-		setupBackground();
-		Window &w = screen._windows[11];
-		w.open();
-		setupFaces(0, xeenSideChars, false);
-		w.writeString(_interfaceText);
-		w.drawList(&_faceDrawStructs[0], 4);
-
-		_uiSprites.draw(w, 0, Common::Point(16, 100));
-		_uiSprites.draw(w, 2, Common::Point(52, 100));
-		_uiSprites.draw(w, 4, Common::Point(87, 100));
-		_uiSprites.draw(w, 6, Common::Point(122, 100));
-		_uiSprites.draw(w, 8, Common::Point(157, 100));
-		_uiSprites.draw(w, 10, Common::Point(192, 100));
-
-		screen.loadPalette("mm4.pal");
+	/*
+	
 
 		if (flag) {
 			screen._windows[0].update();
@@ -264,76 +197,23 @@ start:
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
 		_charFaces[i].clear();
+		*/
 }
 
 void Interface::loadCharIcons() {
-	for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
-		// Load new character resource
-		Common::String name = Common::String::format("char%02d.fac", i + 1);
-		_charFaces[i].load(name);
-	}
-
 	_dseFace.load("dse.fac");
 }
 
 void Interface::loadPartyIcons() {
-	for (int i = 0; i < _vm->_party->_partyCount; ++i)
-		_partyFaces[i] = &_charFaces[_vm->_party->_partyMembers[i]];
-}
+	Party &party = *_vm->_party;
+	Resources &res = *_vm->_resources;
 
-void Interface::setupBackground() {
-	_vm->_screen->loadBackground("back.raw");
-	assembleBorder();
-}
-
-void Interface::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag) {
-	Common::String playerNames[4];
-	Common::String playerRaces[4];
-	Common::String playerSex[4];
-	Common::String playerClass[4];
-	int posIndex;
-	int charId;
-
-	for (posIndex = 0; posIndex < 4; ++posIndex) {
-		charId = xeenSideChars[charIndex];
-		bool isInParty = _vm->_party->isInParty(charId);
-
-		if (charId == 0xff) {
-			while ((int)_buttons.size() > (7 + posIndex))
-				_buttons.remove_at(_buttons.size() - 1);
-			break;
-		}
-
-		Common::Rect &b = _buttons[7 + posIndex]._bounds;
-		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
-		Character &ps = _vm->_roster[xeenSideChars[charIndex + posIndex]];
-		playerNames[posIndex] = isInParty ? IN_PARTY : ps._name;
-		playerRaces[posIndex] = RACE_NAMES[ps._race];
-		playerSex[posIndex] = SEX_NAMES[ps._sex];
-		playerClass[posIndex] = CLASS_NAMES[ps._class];
-	}
-
-	charIconsPrint(updateFlag);
-
-	// Set up the sprite set to use for each face
-	charId = xeenSideChars[charIndex];
-	_faceDrawStructs[0]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
-	charId = xeenSideChars[charIndex + 1];
-	_faceDrawStructs[1]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
-	charId = xeenSideChars[charIndex + 2];
-	_faceDrawStructs[2]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
-	charId = xeenSideChars[charIndex + 3];
-	_faceDrawStructs[3]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &_charFaces[charId];
-
-	_interfaceText = Common::String::format(PARTY_DETAILS,
-		playerNames[0].c_str(), playerRaces[0].c_str(), playerSex[0].c_str(), playerClass[0].c_str(),
-		playerNames[1].c_str(), playerRaces[1].c_str(), playerSex[1].c_str(), playerClass[1].c_str(),
-		playerNames[2].c_str(), playerRaces[2].c_str(), playerSex[2].c_str(), playerClass[2].c_str(),
-		playerNames[3].c_str(), playerRaces[3].c_str(), playerSex[3].c_str(), playerClass[3].c_str()
-	);
+	for (int i = 0; i < party._partyCount; ++i)
+		_partyFaces[i] = &res._charFaces[_vm->_party->_partyMembers[i]];
 }
 
 void Interface::charIconsPrint(bool updateFlag) {
+	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	bool stateFlag = _vm->_mode == MODE_COMBAT;
 	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
@@ -346,8 +226,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 		Condition charCondition = ps.worstCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 		
-		SpriteResource *sprites = (charFrame > 4 && !_charFaces[0].empty()) ?
-			&_dseFace : _partyFaces[charIndex];
+		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : _partyFaces[charIndex];
 		if (charFrame > 4)
 			charFrame -= 5;
 

@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-array.h"
 #include "gui/debugger.h"
+#include "xeen/party.h"
 #include "xeen/spells.h"
 
 namespace Xeen {
@@ -34,6 +35,7 @@ class Resources {
 public:
 	// Magic and equipment names
 	Common::StringArray _maeNames;
+	SpriteResource _charFaces[TOTAL_CHARACTERS];
 public:
 	Resources();
 };

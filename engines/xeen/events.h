@@ -91,7 +91,7 @@ public:
 
 	bool wait(uint numFrames, bool interruptable = false);
 
-	void ipause(int amount);
+	void ipause(uint amount);
 };
 
 class GameEvent {

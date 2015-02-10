@@ -153,6 +153,7 @@ public:
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
 	Roster _roster;
+	int _quitMode;
 	bool _dangerSenseAllowed;
 	bool _noDirectionSense;
 	bool _moveMonsters;

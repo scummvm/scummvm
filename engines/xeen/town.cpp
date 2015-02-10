@@ -630,6 +630,7 @@ Character *Town::doTavernOptions(Character *c) {
 		}
 		break;
 	case Common::KEYCODE_f: {
+		// Food
 		if (party._mazeId == (isDarkCc ? 29 : 28)) {
 			_v22 = party._partyCount * 15;
 			_v23 = 10;
@@ -680,6 +681,7 @@ Character *Town::doTavernOptions(Character *c) {
 	}
 
 	case Common::KEYCODE_r: {
+		// Rumors
 		if (party._mazeId == (isDarkCc ? 29 : 28)) {
 			idx = 0;
 		} else if (party._mazeId == (isDarkCc ? 31 : 30)) {
@@ -701,8 +703,7 @@ Character *Town::doTavernOptions(Character *c) {
 	}
 
 	case Common::KEYCODE_s: {
-		// Save game
-		// TODO: This needs to be fit in better with ScummVM framework
+		// Sign In
 		int idx = isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
 		party._mazePosition.x = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][0];
@@ -723,7 +724,7 @@ Character *Town::doTavernOptions(Character *c) {
 
 		party.addTime(1440);
 		party._mazeId = 0;
-		_vm->quitGame();
+		_vm->_quitMode = 2;
 		break;
 	}
 

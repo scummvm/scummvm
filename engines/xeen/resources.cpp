@@ -31,6 +31,12 @@ Resources::Resources() {
 	while (f.pos() < f.size())
 		_maeNames.push_back(f.readString());
 	f.close();
+
+	for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
+		// Load new character resource
+		Common::String name = Common::String::format("char%02d.fac", i + 1);
+		_charFaces[i].load(name);
+	}
 }
 
 /*------------------------------------------------------------------------*/

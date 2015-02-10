@@ -107,7 +107,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_var50 = false;
 }
 
-bool Scripts::checkEvents() {
+int Scripts::checkEvents() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
