@@ -571,6 +571,7 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	if (_surface)
 		_surface->free();
 	delete _surface;
+	delete _zbuffer;
 }
 
 uint16 VQADecoder::VQAVideoTrack::getWidth() const {

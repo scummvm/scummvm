@@ -71,15 +71,22 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_settings = new Settings(this);
 	_sliceAnimations = new SliceAnimations(this);
 	_sliceRenderer = new SliceRenderer(this);
+
+	_zBuffer1 = nullptr;
+	_zBuffer2 = nullptr;
+
+	_actorNames = nullptr;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
+	delete _actorNames;
+
 	delete _sliceRenderer;
 	delete _sliceAnimations;
 	delete _settings;
 	delete _script;
 	delete _scene;
-	delete _gameVars;
+	delete[] _gameVars;
 	delete _gameFlags;
 	delete _gameInfo;
 	delete _clues;
@@ -90,6 +97,9 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 
 	_surface1.free();
 	_surface2.free();
+
+	delete[] _zBuffer1;
+	delete[] _zBuffer2;
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
@@ -102,8 +112,10 @@ Common::Error BladeRunnerEngine::run() {
 
 	_system->showMouse(true);
 
-	if (!startup())
+	if (!startup()) {
+		shutdown();
 		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
+	}
 
 	if (warnUserAboutUnsupportedGame()) {
 		init2();

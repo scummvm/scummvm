@@ -50,7 +50,7 @@ bool TextResource::open(const char *name) {
 
 	char resName[13];
 	sprintf(resName, "%s.TRE", name);
-	Common::SeekableReadStream *s = _vm->getResourceStream(resName);
+	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
 	if (!s)
 		return false;
 

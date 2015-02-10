@@ -61,7 +61,10 @@ public:
 		  _nextSetId(-1),
 		  _nextSceneId(-1),
 		  _playerWalkedIn(false)
-	{
+	{}
+
+	~Scene() {
+		delete _set;
 	}
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
