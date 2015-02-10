@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_party.h"
 #include "xeen/character.h"
 #include "xeen/events.h"
@@ -41,6 +42,7 @@ void PartyDialog::execute() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	bool modeFlag = false;
+	int startingChar = 0;
 
 	loadButtons();
 	setupBackground();
@@ -62,7 +64,7 @@ void PartyDialog::execute() {
 
 		Window &w = screen._windows[11];
 		w.open();
-		setupFaces(0, xeenSideChars, false);
+		setupFaces(startingChar, xeenSideChars, false);
 		w.writeString(_displayText);
 		w.drawList(&_faceDrawStructs[0], 4);
 
@@ -122,18 +124,30 @@ void PartyDialog::execute() {
 
 					party.copyPartyToRoster();
 					_vm->_saves->writeCharFile();
-					breakFlag = true;
-					break;
+					return;
 				}
 				break;
+
+			case Common::KEYCODE_F1:
+			case Common::KEYCODE_F2:
+			case Common::KEYCODE_F3:
+			case Common::KEYCODE_F4:
+			case Common::KEYCODE_F5:
+			case Common::KEYCODE_F6:
+				// Show character info
+				_buttonValue -= Common::KEYCODE_F1;
+				if (_buttonValue < party._partyCount)
+					CharacterInfo::show(_vm, _buttonValue);
+				break;
+
 			case Common::KEYCODE_1:
-				break;
 			case Common::KEYCODE_2:
-				break;
 			case Common::KEYCODE_3:
-				break;
 			case Common::KEYCODE_4:
+				_buttonValue -= Common::KEYCODE_1 - 7;
+				// TODO
 				break;
+
 			case Common::KEYCODE_c:
 				if (xeenSideChars.size() == 24) {
 					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
@@ -154,28 +168,17 @@ void PartyDialog::execute() {
 					// TODO
 				}
 				break;
-			case 201:
+
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+				if (startingChar > 0) {
+					startingChar -= 4;
+					startingCharChanged(xeenSideChars, startingChar);
+				}
 				// TODO
 				break;
-			case 202:
-				// TODO
-				break;
-			case 203:
-				// TODO
-				break;
-			case 204:
-				// TODO
-				break;
-			case 205:
-				// TODO
-				break;
-			case 206:
-				// TODO
-				break;
-			case 242:
-				// TODO
-				break;
-			case 243:
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
 				// TODO
 				break;
 			default:
@@ -215,7 +218,7 @@ void PartyDialog::setupBackground() {
 /**
  * Sets up the faces for display in the party dialog
  */
-void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag) {
+void PartyDialog::setupFaces(int firstDisplayChar, Common::Array<int> xeenSideChars, bool updateFlag) {
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
 	Common::String charNames[4];
@@ -226,10 +229,11 @@ void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bo
 	int charId;
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
-		charId = xeenSideChars[charIndex];
+		charId = (firstDisplayChar + posIndex) >= xeenSideChars.size() ? -1 :
+			xeenSideChars[firstDisplayChar + posIndex];
 		bool isInParty = party.isInParty(charId);
 
-		if (charId == 0xff) {
+		if (charId == -1) {
 			while ((int)_buttons.size() >(7 + posIndex))
 				_buttons.remove_at(_buttons.size() - 1);
 			break;
@@ -237,7 +241,7 @@ void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bo
 
 		Common::Rect &b = _buttons[7 + posIndex]._bounds;
 		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
-		Character &ps = party._roster[xeenSideChars[charIndex + posIndex]];
+		Character &ps = party._roster[xeenSideChars[firstDisplayChar + posIndex]];
 		charNames[posIndex] = isInParty ? IN_PARTY : ps._name;
 		charRaces[posIndex] = RACE_NAMES[ps._race];
 		charSex[posIndex] = SEX_NAMES[ps._sex];
@@ -247,14 +251,12 @@ void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bo
 	charIconsPrint(updateFlag);
 
 	// Set up the sprite set to use for each face
-	charId = xeenSideChars[charIndex];
-	_faceDrawStructs[0]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &res._charFaces[charId];
-	charId = xeenSideChars[charIndex + 1];
-	_faceDrawStructs[1]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &res._charFaces[charId];
-	charId = xeenSideChars[charIndex + 2];
-	_faceDrawStructs[2]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &res._charFaces[charId];
-	charId = xeenSideChars[charIndex + 3];
-	_faceDrawStructs[3]._sprites = (charId == 0xff) ? (SpriteResource *)nullptr : &res._charFaces[charId];
+	for (int posIndex = 0; posIndex < 4; ++posIndex) {
+		if ((firstDisplayChar + posIndex) >= xeenSideChars.size())
+			_faceDrawStructs[posIndex]._sprites = nullptr;
+		else
+			_faceDrawStructs[posIndex]._sprites = party._roster[posIndex]._faceSprites;
+	}
 
 	_displayText = Common::String::format(PARTY_DETAILS,
 		charNames[0].c_str(), charRaces[0].c_str(), charSex[0].c_str(), charClasses[0].c_str(),
@@ -262,6 +264,11 @@ void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bo
 		charNames[2].c_str(), charRaces[2].c_str(), charSex[2].c_str(), charClasses[2].c_str(),
 		charNames[3].c_str(), charRaces[3].c_str(), charSex[3].c_str(), charClasses[3].c_str()
 		);
+}
+
+void PartyDialog::startingCharChanged(Common::Array<int> &charList, int firstDisplayChar) {
+	Party &party = *_vm->_party;
+
 }
 
 } // End of namespace Xeen

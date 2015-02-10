@@ -23,6 +23,7 @@
 #ifndef XEEN_DIALOGS_PARTY_H
 #define XEEN_DIALOGS_PARTY_H
 
+#include "common/array.h"
 #include "xeen/dialogs.h"
 #include "xeen/screen.h"
 #include "xeen/sprites.h"
@@ -48,7 +49,9 @@ private:
 
 	void charIconsPrint(bool updateFlag);
 
-	void setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag);
+	void setupFaces(int firstDisplayChar, Common::Array<int> xeenSideChars, bool updateFlag);
+
+	void startingCharChanged(Common::Array<int> &charList, int firstDisplayChar);
 public:
 	static void show(XeenEngine *vm);
 };

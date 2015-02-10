@@ -35,7 +35,6 @@ class Resources {
 public:
 	// Magic and equipment names
 	Common::StringArray _maeNames;
-	SpriteResource _charFaces[TOTAL_CHARACTERS];
 public:
 	Resources();
 };

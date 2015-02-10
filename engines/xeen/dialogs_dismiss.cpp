@@ -72,7 +72,6 @@ void Dismiss::execute() {
 				} else {
 					Character tempChar = party._activeParty[_buttonValue];
 					int charIndex = party._partyMembers[_buttonValue];
-					intf._partyFaces[_buttonValue] = 0;
 
 					intf.sortFaces();
 //					party.sortParty();

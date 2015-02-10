@@ -34,7 +34,6 @@
 namespace Xeen {
 
 Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), _vm(vm) {
-	Common::fill(&_partyFaces[0], &_partyFaces[MAX_ACTIVE_PARTY], (SpriteResource *)nullptr);
 	_buttonsLoaded = false;
 	_hiliteChar = -1;
 	_intrIndex1 = 0;
@@ -76,14 +75,6 @@ void Interface::setup() {
 	party._newDay = party._minutes >= 300;
 }
 
-void Interface::loadPartyIcons() {
-	Party &party = *_vm->_party;
-	Resources &res = *_vm->_resources;
-
-	for (int i = 0; i < party._partyCount; ++i)
-		_partyFaces[i] = &res._charFaces[_vm->_party->_partyMembers[i]];
-}
-
 void Interface::charIconsPrint(bool updateFlag) {
 	Screen &screen = *_vm->_screen;
 	bool stateFlag = _vm->_mode == MODE_COMBAT;
@@ -97,7 +88,7 @@ void Interface::charIconsPrint(bool updateFlag) {
 		Condition charCondition = ps.worstCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 		
-		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : _partyFaces[charIndex];
+		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : ps._faceSprites;
 		if (charFrame > 4)
 			charFrame -= 5;
 
@@ -139,17 +130,7 @@ void Interface::charIconsPrint(bool updateFlag) {
  * Removes any empty character entries from the faces list
  */
 void Interface::sortFaces() {
-	for (uint charIdx = 0; charIdx < MAX_ACTIVE_PARTY; ++charIdx) {
-		if (!_partyFaces[charIdx]) {
-			for (uint charIdx2 = charIdx + 1; charIdx2 < 8; ++charIdx2) {
-				if (_partyFaces[charIdx2]) {
-					_partyFaces[charIdx] = _partyFaces[charIdx2];
-					_partyFaces[charIdx2] = 0;
-					break;
-				}
-			}
-		}
-	}
+	// No implementation needed
 }
 
 void Interface::startup() {

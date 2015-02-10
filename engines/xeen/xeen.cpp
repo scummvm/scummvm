@@ -295,7 +295,6 @@ void XeenEngine::play() {
 	_interface->setup();
 	_screen->loadBackground("back.raw");
 	_screen->loadPalette("mm4.pal");
-	_interface->loadPartyIcons();
 
 	if (getGameID() != GType_WorldOfXeen && !_map->_loadDarkSide) {
 		_map->_loadDarkSide = true;

@@ -54,7 +54,6 @@ void ExchangeDialog::execute(Character *&c, int &charIndex) {
 			if (_buttonValue < party._partyCount) {
 				SWAP(party._activeParty[charIndex], party._activeParty[_buttonValue]);
 				SWAP(party._partyMembers[charIndex], party._partyMembers[_buttonValue]);
-				SWAP(intf._partyFaces[charIndex], intf._partyFaces[_buttonValue]);
 
 				charIndex = _buttonValue;
 				c = &party._activeParty[charIndex];

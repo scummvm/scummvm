@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "xeen/combat.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
 
@@ -257,6 +258,8 @@ public:
 	uint32 _experience;
 	int _currentAdventuringSpell;
 	int _currentCombatSpell;
+
+	SpriteResource *_faceSprites;
 public:
 	Character();
 

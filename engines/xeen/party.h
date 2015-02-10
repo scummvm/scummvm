@@ -50,7 +50,9 @@ enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
 
 class Roster: public Common::Array<Character> {
 public:
-	Roster() {}
+	SpriteResource _charFaces[TOTAL_CHARACTERS];
+public:
+	Roster();
 
 	void synchronize(Common::Serializer &s);
 };

@@ -69,7 +69,6 @@ private:
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;
-	SpriteResource *_partyFaces[MAX_ACTIVE_PARTY];
 public:
 	Interface(XeenEngine *vm);
 
@@ -78,8 +77,6 @@ public:
 	virtual void setup();
 
 	void manageCharacters(bool soundPlayed);
-
-	void loadPartyIcons();
 
 	void startup();
 

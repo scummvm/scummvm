@@ -734,6 +734,8 @@ void Character::clear() {
 	_armor.clear();
 	_accessories.clear();
 	_misc.clear();
+
+	_faceSprites = nullptr;
 }
 
 void Character::synchronize(Common::Serializer &s) {

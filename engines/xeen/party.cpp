@@ -32,10 +32,22 @@
 
 namespace Xeen {
 
-void Roster::synchronize(Common::Serializer &s) {
-	if (s.isLoading())
-		resize(30);
+Roster::Roster() {
+	resize(TOTAL_CHARACTERS);
 
+	for (int idx = 0; idx < TOTAL_CHARACTERS; ++idx) {
+		if (idx < XEEN_TOTAL_CHARACTERS) {
+			// Load new character resource
+			Common::String name = Common::String::format("char%02d.fac", idx + 1);
+			_charFaces[idx].load(name);
+			operator[](idx)._faceSprites = &_charFaces[idx];
+		} else {
+			operator[](idx)._faceSprites = nullptr;
+		}
+	}
+}
+
+void Roster::synchronize(Common::Serializer &s) {
 	for (uint i = 0; i < 30; ++i)
 		(*this)[i].synchronize(s);
 }
