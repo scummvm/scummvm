@@ -583,6 +583,9 @@ SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String targetString(target);
 	Common::String pattern = targetString.hasPrefix("monkey4") ? "efmi*.gsv" : "grim*.gsv";
+	
+	if (targetString.hasPrefix("monkey4-ps2"))
+		pattern = "efmi*.ps2";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 

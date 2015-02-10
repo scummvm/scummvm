@@ -481,7 +481,7 @@ void Lua_V2::ThumbnailFromFile() {
 	
 	if (g_grim->getGameType() == GType_MONKEY4 &&
 		g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		filename += ".gsv";
+		filename += ".ps2";
 	}
 
 	int width = 256, height = 128;

@@ -576,7 +576,7 @@ void Lua_V1::GetSaveGameData() {
 	Common::String filename(lua_getstring(param));
 	if (g_grim->getGameType() == GType_MONKEY4 &&
 		g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		filename += ".gsv";
+		filename += ".ps2";
 	}
 	SaveGame *savedState = SaveGame::openForLoading(filename);
 	lua_Object result = lua_createtable();
@@ -631,7 +631,7 @@ void Lua_V1::Load() {
 		Common::String fileName(lua_getstring(fileNameObj));
 		if (g_grim->getGameType() == GType_MONKEY4 &&
 			g_grim->getGamePlatform() == Common::kPlatformPS2) {
-			fileName += ".gsv";
+			fileName += ".ps2";
 		}
 		g_grim->loadGame(fileName);
 	} else {
@@ -648,7 +648,7 @@ void Lua_V1::Save() {
 		Common::String fileName(lua_getstring(fileNameObj));
 		if (g_grim->getGameType() == GType_MONKEY4 &&
 			g_grim->getGamePlatform() == Common::kPlatformPS2) {
-			fileName += ".gsv";
+			fileName += ".ps2";
 		}
 		g_grim->saveGame(fileName);
 	} else {
