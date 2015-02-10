@@ -118,7 +118,17 @@ void ScriptRC01::InitializeScene() {
 }
 
 void ScriptRC01::SceneLoaded() {
-
+	if (!Game_Flag_Query(24)){
+		// ADQ_Flush();
+		Actor_Voice_Over(1830, 99);
+		Actor_Voice_Over(1850, 99);
+		if (!Game_Flag_Query(378)) {
+			Actor_Voice_Over(1860, 99);
+			I_Sez("MG: Is David Leary a self-respecting human or is he powered by rechargeable");
+			I_Sez("batteries?\n");
+		}
+		Game_Flag_Set(24);
+	}
 }
 
 void ScriptRC01::SceneFrameAdvanced(int frame) {

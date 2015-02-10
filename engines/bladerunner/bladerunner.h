@@ -38,6 +38,7 @@ namespace BladeRunner {
 
 class AmbientSounds;
 class AudioPlayer;
+class AudioSpeech;
 class Chapters;
 class Clues;
 class GameInfo;
@@ -56,6 +57,7 @@ public:
 
 	AmbientSounds   *_ambientSounds;
 	AudioPlayer     *_audioPlayer;
+	AudioSpeech     *_audioSpeech;
 	Chapters        *_chapters;
 	Clues           *_clues;
 	GameInfo        *_gameInfo;
@@ -100,6 +102,7 @@ public:
 	void gameLoop();
 	void gameTick();
 	void handleEvents();
+	void loopActorSpeaking();
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
 

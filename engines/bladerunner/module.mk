@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	archive.o \
 	aud_stream.o \
 	audio_player.o \
+	audio_speech.o \
 	bladerunner.o \
 	boundingbox.o \
 	chapters.o \

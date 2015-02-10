@@ -25,6 +25,7 @@
 
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
+#include "bladerunner/audio_speech.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/clues.h"
 #include "bladerunner/gameinfo.h"
@@ -59,6 +60,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 
 	_ambientSounds = new AmbientSounds(this);
 	_audioPlayer = new AudioPlayer(this);
+	_audioSpeech = new AudioSpeech(this);
 	_chapters = nullptr;
 	_clues = nullptr;
 	_gameInfo = nullptr;
@@ -82,6 +84,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	delete _gameInfo;
 	delete _clues;
 	delete _chapters;
+	delete _audioSpeech;
 	delete _audioPlayer;
 	delete _ambientSounds;
 
@@ -299,6 +302,19 @@ void BladeRunnerEngine::handleEvents() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 	}
+}
+
+void BladeRunnerEngine::loopActorSpeaking() {
+	if (!_audioSpeech->isPlaying())
+		return;
+
+	// playerLosesControl();
+
+	do {
+		gameTick();
+	} while (_audioSpeech->isPlaying());
+
+	// playerGainsControl();
 }
 
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {

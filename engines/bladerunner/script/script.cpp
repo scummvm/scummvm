@@ -26,6 +26,7 @@
 
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
+#include "bladerunner/audio_speech.h"
 #include "bladerunner/clues.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
@@ -108,7 +109,17 @@ void Script::SceneFrameAdvanced(int frame) {
 // ScriptBase::Actor_Set_Targetable
 // ScriptBase::Actor_Says
 // ScriptBase::Actor_Says_With_Pause
-// ScriptBase::Actor_Voice_Over
+
+void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
+	// Wait for any existing speech to end
+	_vm->loopActorSpeaking();
+
+	// TODO: Hack - This needs to go through the actor class
+	char name[13];
+	sprintf(name, "%02d-%04d.AUD", actorId, sentenceId);
+	_vm->_audioSpeech->playSpeech(name);
+}
+
 // ScriptBase::Actor_Start_Speech_Sample
 // ScriptBase::Actor_Start_Voice_Over_Sample
 // ScriptBase::Actor_Query_Which_Set_In

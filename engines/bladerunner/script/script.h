@@ -84,7 +84,7 @@ protected:
 	// Actor_Set_Targetable
 	// Actor_Says
 	// Actor_Says_With_Pause
-	// Actor_Voice_Over
+	void Actor_Voice_Over(int sentenceId, int actorId);
 	// Actor_Start_Speech_Sample
 	// Actor_Start_Voice_Over_Sample
 	// Actor_Query_Which_Set_In
