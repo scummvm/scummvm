@@ -34,6 +34,47 @@ MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
 }
 
+void MartianScripts::cmdSpecial0() {
+	_vm->_sound->stopSound();
+	_vm->_midi->stopSong();
+
+	_vm->_midi->loadMusic(47, 1);
+	_vm->_midi->midiPlay();
+	_vm->_midi->setLoop(true);
+
+	_vm->_events->_vbCount = 300;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+
+	_vm->_screen->forceFadeOut();
+	_vm->_files->loadScreen("HOUSE.SC");
+
+	_vm->_video->setVideo(_vm->_screen, Common::Point(46, 30), "HVID.VID", 20);
+	
+	do {
+		_vm->_video->playVideo();
+		if (_vm->_video->_videoFrame == 4) {
+			_vm->_screen->flashPalette(16);
+			_vm->_sound->playSound(4);
+			do {
+				_vm->_events->pollEvents();
+			} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+			_vm->_timers[31]._timer = _vm->_timers[31]._initTm = 40;
+		}
+	} while (!_vm->_video->_videoEnd && !_vm->shouldQuit());
+
+	if (_vm->_video->_videoEnd) {
+		_vm->_screen->flashPalette(12);
+		_vm->_sound->playSound(4);
+		do {
+			_vm->_events->pollEvents();
+		} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+		_vm->_midi->stopSong();
+		_vm->_midi->freeMusic();
+		warning("TODO: Pop Midi");
+	}
+}
+
 void MartianScripts::cmdSpecial1(int param1) {
 	_vm->_events->hideCursor();
 	
@@ -261,7 +302,7 @@ void MartianScripts::cmdSpecial7() {
 void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 0:
-		warning("TODO: cmdSpecial0");
+		cmdSpecial0();
 		break;
 	case 1:
 		cmdSpecial1(param1);

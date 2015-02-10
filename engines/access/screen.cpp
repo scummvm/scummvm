@@ -336,6 +336,10 @@ void Screen::cyclePaletteBackwards() {
 	}
 }
 
+void Screen::flashPalette(int count) {
+	warning("TODO: Implement flashPalette");
+}
+
 void Screen::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push_back(r);
 	assert(r.isValidRect() && r.width() > 0 && r.height() > 0);

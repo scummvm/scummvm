@@ -158,6 +158,8 @@ public:
 
 	void getPalette(byte *pal);
 
+	void flashPalette(int count);
+
 	/**
 	 * Copy a buffer to the screen
 	 */
