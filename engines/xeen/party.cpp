@@ -186,6 +186,13 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncBytes(&dummy[0], 30);
 }
 
+void Party::loadActiveParty() {
+	_activeParty.resize(_partyCount);
+	for (int i = 0; i < _partyCount; ++i) {
+		_activeParty[i] = _roster[_partyMembers[i]];
+	}
+}
+
 bool Party::checkSkill(Skill skillId) {
 	uint total = 0;
 	for (uint i = 0; i < _activeParty.size(); ++i) {

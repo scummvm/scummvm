@@ -45,8 +45,8 @@ void OutFile::finalize() {
 
 /*------------------------------------------------------------------------*/
 
-SavesManager::SavesManager(XeenEngine *vm, Party &party, Roster &roster) : 
-		BaseCCArchive(), _vm(vm), _party(party), _roster(roster) {
+SavesManager::SavesManager(XeenEngine *vm, Party &party) : 
+		BaseCCArchive(), _vm(vm), _party(party) {
 	SearchMan.add("saves", this, 0, false);
 	_data = nullptr;
 	_wonWorld = false;
@@ -113,7 +113,7 @@ void SavesManager::load(Common::SeekableReadStream *stream) {
 	// Load in the character stats and active party
 	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
 	Common::Serializer sChr(chr, nullptr);
-	_roster.synchronize(sChr);
+	_party._roster.synchronize(sChr);
 	delete chr;
 
 	Common::SeekableReadStream *pty = createReadStreamForMember("maze.pty");
@@ -158,7 +158,7 @@ void SavesManager::reset() {
 
 	File fChar("maze.chr", gameCur);
 	Common::Serializer sChar(&fChar, nullptr);
-	_roster.synchronize(sChar);
+	_party._roster.synchronize(sChar);
 	fChar.close();
 }
 

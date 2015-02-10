@@ -69,139 +69,11 @@ void Interface::setup() {
 	_restoreSprites.load("restorex.icn");
 	_hpSprites.load("hpbars.icn");
 	_uiSprites.load("inn.icn");
-
-	// Get mappings to the active characters in the party
-	_vm->_party->_activeParty.resize(_vm->_party->_partyCount);
-	for (int i = 0; i < _vm->_party->_partyCount; ++i) {
-		_vm->_party->_activeParty[i] = _vm->_roster[_vm->_party->_partyMembers[i]];
-	}
-
-	_vm->_party->_newDay = _vm->_party->_minutes >= 300;
-}
-
-void Interface::manageCharacters(bool soundPlayed) {
-	/*
-	
-
-		if (flag) {
-			screen._windows[0].update();
-			events.setCursor(0);
-			screen.fadeIn(4);
-		} else {
-			if (_vm->getGameID() == GType_DarkSide) {
-				screen.fadeOut(4);
-				screen._windows[0].update();
-			}
-
-			doScroll(_vm, false, false);
-			events.setCursor(0);
-
-			if (_vm->getGameID() == GType_DarkSide) {
-				screen.fadeIn(4);
-			}
-		}
-
-		// TODO
-		bool breakFlag = false;
-		while (!_vm->shouldQuit() && !breakFlag) {
-			events.pollEventsAndWait();
-			checkEvents(_vm);
-
-			switch (_buttonValue) {
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_SPACE:
-			case Common::KEYCODE_e:
-			case Common::KEYCODE_x:
-				if (_vm->_party->_partyCount == 0) {
-					ErrorScroll::show(_vm, NO_ONE_TO_ADVENTURE_WITH);
-				} else {
-					if (_vm->_mode != MODE_0) {
-						for (_intrIndex1 = 4; _intrIndex1 >= 0; --_intrIndex1) {
-							events.updateGameCounter();
-							drawViewBackground(_intrIndex1);
-							w.update();
-
-							while (events.timeElapsed() < 1)
-								events.pollEventsAndWait();
-						}
-					}
-
-					w.close();
-					_vm->_party->_realPartyCount = _vm->_party->_partyCount;
-					_vm->_party->_mazeId = _vm->_party->_priorMazeId;
-
-					_vm->_party->copyPartyToRoster(_vm->_roster);
-					_vm->_saves->writeCharFile();
-					breakFlag = true;
-					break;
-				}
-				break;
-			case Common::KEYCODE_1:
-				break;
-			case Common::KEYCODE_2:
-				break;
-			case Common::KEYCODE_3:
-				break;
-			case Common::KEYCODE_4:
-				break;
-			case Common::KEYCODE_c:
-				if (xeenSideChars.size() == 24) {
-					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
-				} else {
-					screen.fadeOut(4);
-					w.close();
-					moveCharacterToRoster();
-					_vm->_saves->writeCharFile();
-					screen.fadeOut(4);
-					flag = true;
-					_buttonsLoaded = true;
-					goto start;
-				}
-				break;
-			case Common::KEYCODE_d:
-				break;
-			case Common::KEYCODE_r:
-				if (_vm->_party->_partyCount > 0) {
-					// TODO
-				}
-				break;
-			case 201:
-				// TODO
-				break;
-			case 202:
-				// TODO
-				break;
-			case 203:
-				// TODO
-				break;
-			case 204:
-				// TODO
-				break;
-			case 205:
-				// TODO
-				break;
-			case 206:
-				// TODO
-				break;
-			case 242:
-				// TODO
-				break;
-			case 243:
-				// TODO
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
-	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		_charFaces[i].clear();
-		*/
-}
-
-void Interface::loadCharIcons() {
 	_dseFace.load("dse.fac");
+
+	Party &party = *_vm->_party;
+	party.loadActiveParty();
+	party._newDay = party._minutes >= 300;
 }
 
 void Interface::loadPartyIcons() {
@@ -304,7 +176,6 @@ void Interface::moveCharacterToRoster() {
 
 void Interface::startup() {
 	Screen &screen = *_vm->_screen;
-	loadCharIcons();
 	_iconSprites.load("main.icn");
 
 	animate3d();

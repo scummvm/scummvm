@@ -38,38 +38,161 @@ namespace Xeen {
 void PartyDialog::execute() {
 	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 
 	loadButtons();
 	setupBackground();
 
-	_vm->_mode = MODE_1;
-	Common::Array<int> xeenSideChars;
+	while (!_vm->shouldQuit()) {
+		_vm->_mode = MODE_1;
+		Common::Array<int> xeenSideChars;
 
-	// Build up a list of characters on the same Xeen side being loaded
-	for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
-		Character &player = _vm->_roster[i];
-		if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
-			continue;
+		party.loadActiveParty();
 
-		xeenSideChars.push_back(i);
+		// Build up a list of characters on the same Xeen side being loaded
+		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
+			Character &player = party._roster[i];
+			if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
+				continue;
+
+			xeenSideChars.push_back(i);
+		}
+
+		Window &w = screen._windows[11];
+		w.open();
+		setupFaces(0, xeenSideChars, false);
+		w.writeString(_displayText);
+		w.drawList(&_faceDrawStructs[0], 4);
+
+		_iconSprites.draw(w, 0, Common::Point(16, 100));
+		_iconSprites.draw(w, 2, Common::Point(52, 100));
+		_iconSprites.draw(w, 4, Common::Point(87, 100));
+		_iconSprites.draw(w, 6, Common::Point(122, 100));
+		_iconSprites.draw(w, 8, Common::Point(157, 100));
+		_iconSprites.draw(w, 10, Common::Point(192, 100));
+		screen.loadPalette("mm4.pal");
+
+	/*
+
+
+		if (flag) {
+			screen._windows[0].update();
+			events.setCursor(0);
+			screen.fadeIn(4);
+		} else {
+			if (_vm->getGameID() == GType_DarkSide) {
+				screen.fadeOut(4);
+				screen._windows[0].update();
+			}
+
+			doScroll(_vm, false, false);
+			events.setCursor(0);
+
+			if (_vm->getGameID() == GType_DarkSide) {
+				screen.fadeIn(4);
+			}
+		}
+
+		// TODO
+		bool breakFlag = false;
+		while (!_vm->shouldQuit() && !breakFlag) {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+
+			switch (_buttonValue) {
+			case Common::KEYCODE_ESCAPE:
+			case Common::KEYCODE_SPACE:
+			case Common::KEYCODE_e:
+			case Common::KEYCODE_x:
+				if (_vm->_party->_partyCount == 0) {
+					ErrorScroll::show(_vm, NO_ONE_TO_ADVENTURE_WITH);
+				} else {
+					if (_vm->_mode != MODE_0) {
+						for (_intrIndex1 = 4; _intrIndex1 >= 0; --_intrIndex1) {
+							events.updateGameCounter();
+							drawViewBackground(_intrIndex1);
+							w.update();
+
+							while (events.timeElapsed() < 1)
+								events.pollEventsAndWait();
+						}
+					}
+
+					w.close();
+					_vm->_party->_realPartyCount = _vm->_party->_partyCount;
+					_vm->_party->_mazeId = _vm->_party->_priorMazeId;
+
+					_vm->_party->copyPartyToRoster(_vm->_roster);
+					_vm->_saves->writeCharFile();
+					breakFlag = true;
+					break;
+				}
+				break;
+			case Common::KEYCODE_1:
+				break;
+			case Common::KEYCODE_2:
+				break;
+			case Common::KEYCODE_3:
+				break;
+			case Common::KEYCODE_4:
+				break;
+			case Common::KEYCODE_c:
+				if (xeenSideChars.size() == 24) {
+					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
+				} else {
+					screen.fadeOut(4);
+					w.close();
+					moveCharacterToRoster();
+					_vm->_saves->writeCharFile();
+					screen.fadeOut(4);
+					flag = true;
+					_buttonsLoaded = true;
+					goto start;
+				}
+				break;
+			case Common::KEYCODE_d:
+				break;
+			case Common::KEYCODE_r:
+				if (_vm->_party->_partyCount > 0) {
+					// TODO
+				}
+				break;
+			case 201:
+				// TODO
+				break;
+			case 202:
+				// TODO
+				break;
+			case 203:
+				// TODO
+				break;
+			case 204:
+				// TODO
+				break;
+			case 205:
+				// TODO
+				break;
+			case 206:
+				// TODO
+				break;
+			case 242:
+				// TODO
+				break;
+			case 243:
+				// TODO
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
-	Window &w = screen._windows[11];
-	w.open();
-	setupFaces(0, xeenSideChars, false);
-	w.writeString(_displayText);
-	w.drawList(&_faceDrawStructs[0], 4);
-
-	_iconSprites.draw(w, 0, Common::Point(16, 100));
-	_iconSprites.draw(w, 2, Common::Point(52, 100));
-	_iconSprites.draw(w, 4, Common::Point(87, 100));
-	_iconSprites.draw(w, 6, Common::Point(122, 100));
-	_iconSprites.draw(w, 8, Common::Point(157, 100));
-	_iconSprites.draw(w, 10, Common::Point(192, 100));
-
-	screen.loadPalette("mm4.pal");
-	// TODO
+	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
+		_charFaces[i].clear();
+		*/
+		// TODO
+	}
 }
 
 void PartyDialog::loadButtons() {
@@ -103,6 +226,7 @@ void PartyDialog::setupBackground() {
  * Sets up the faces for display in the party dialog
  */
 void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bool updateFlag) {
+	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
 	Common::String charNames[4];
 	Common::String charRaces[4];
@@ -123,7 +247,7 @@ void PartyDialog::setupFaces(int charIndex, Common::Array<int> xeenSideChars, bo
 
 		Common::Rect &b = _buttons[7 + posIndex]._bounds;
 		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
-		Character &ps = _vm->_roster[xeenSideChars[charIndex + posIndex]];
+		Character &ps = party._roster[xeenSideChars[charIndex + posIndex]];
 		charNames[posIndex] = isInParty ? IN_PARTY : ps._name;
 		charRaces[posIndex] = RACE_NAMES[ps._race];
 		charSex[posIndex] = SEX_NAMES[ps._sex];

@@ -113,6 +113,7 @@ public:
 	bool _characterFlags[30][24];
 public:
 	// Other party related runtime data
+	Roster _roster;
 	Common::Array<Character> _activeParty;
 	Common::Array<Character *> _combatParty;
 	int _combatPartyCount;
@@ -130,6 +131,8 @@ public:
 	Party(XeenEngine *vm);
 
 	void synchronize(Common::Serializer &s);
+
+	void loadActiveParty();
 
 	bool checkSkill(Skill skillId);
 

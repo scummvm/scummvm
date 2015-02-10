@@ -83,8 +83,6 @@ public:
 
 	void manageCharacters(bool soundPlayed);
 
-	void loadCharIcons();
-
 	void loadPartyIcons();
 
 	void startup();

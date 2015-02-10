@@ -59,7 +59,6 @@ class SavesManager: public BaseCCArchive {
 private:
 	XeenEngine *_vm;
 	Party &_party;
-	Roster &_roster;
 	byte *_data;
 	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic > _newData;
 
@@ -70,7 +69,7 @@ public:
 	bool _wonWorld;
 	bool _wonDarkSide;
 public:
-	SavesManager(XeenEngine *vm, Party &party, Roster &roster);
+	SavesManager(XeenEngine *vm, Party &party);
 
 	~SavesManager();
 

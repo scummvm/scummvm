@@ -94,7 +94,7 @@ void XeenEngine::initialize() {
 	_interface = new Interface(this);
 	_map = new Map(this);
 	_party = new Party(this);
-	_saves = new SavesManager(this, *_party, _roster);
+	_saves = new SavesManager(this, *_party);
 	_screen = new Screen(this);
 	_scripts = new Scripts(this);
 	_screen->setupWindows();
