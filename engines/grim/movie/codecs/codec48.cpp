@@ -503,22 +503,22 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 				break;
 			case 0xF7:
 				// Raw 8x8 block
-				*((uint32 *)dst) = *((uint32 *)src);
-				*((uint32 *)(dst + 4)) = *((uint32 *)(src + 4));
-				*((uint32 *)(dst + _pitch)) = *((uint32 *)(src + 8));
-				*((uint32 *)(dst + _pitch + 4)) = *((uint32 *)(src + 12));
-				*((uint32 *)(dst + _pitch * 2)) = *((uint32 *)(src + 16));
-				*((uint32 *)(dst + _pitch * 2 + 4)) = *((uint32 *)(src + 20));
-				*((uint32 *)(dst + _pitch * 3)) = *((uint32 *)(src + 24));
-				*((uint32 *)(dst + _pitch * 3 + 4)) = *((uint32 *)(src + 28));
-				*((uint32 *)(dst + _pitch * 4)) = *((uint32 *)(src + 32));
-				*((uint32 *)(dst + _pitch * 4 + 4)) = *((uint32 *)(src + 36));
-				*((uint32 *)(dst + _pitch * 5)) = *((uint32 *)(src + 40));
-				*((uint32 *)(dst + _pitch * 5 + 4)) = *((uint32 *)(src + 44));
-				*((uint32 *)(dst + _pitch * 6)) = *((uint32 *)(src + 48));
-				*((uint32 *)(dst + _pitch * 6 + 4)) = *((uint32 *)(src + 52));
-				*((uint32 *)(dst + _pitch * 7)) = *((uint32 *)(src + 56));
-				*((uint32 *)(dst + _pitch * 7 + 4)) = *((uint32 *)(src + 60));
+				*((uint32 *)dst) = *((const uint32 *)src);
+				*((uint32 *)(dst + 4)) = *((const uint32 *)(src + 4));
+				*((uint32 *)(dst + _pitch)) = *((const uint32 *)(src + 8));
+				*((uint32 *)(dst + _pitch + 4)) = *((const uint32 *)(src + 12));
+				*((uint32 *)(dst + _pitch * 2)) = *((const uint32 *)(src + 16));
+				*((uint32 *)(dst + _pitch * 2 + 4)) = *((const uint32 *)(src + 20));
+				*((uint32 *)(dst + _pitch * 3)) = *((const uint32 *)(src + 24));
+				*((uint32 *)(dst + _pitch * 3 + 4)) = *((const uint32 *)(src + 28));
+				*((uint32 *)(dst + _pitch * 4)) = *((const uint32 *)(src + 32));
+				*((uint32 *)(dst + _pitch * 4 + 4)) = *((const uint32 *)(src + 36));
+				*((uint32 *)(dst + _pitch * 5)) = *((const uint32 *)(src + 40));
+				*((uint32 *)(dst + _pitch * 5 + 4)) = *((const uint32 *)(src + 44));
+				*((uint32 *)(dst + _pitch * 6)) = *((const uint32 *)(src + 48));
+				*((uint32 *)(dst + _pitch * 6 + 4)) = *((const uint32 *)(src + 52));
+				*((uint32 *)(dst + _pitch * 7)) = *((const uint32 *)(src + 56));
+				*((uint32 *)(dst + _pitch * 7 + 4)) = *((const uint32 *)(src + 60));
 
 				src += 64;
 				break;
@@ -539,8 +539,8 @@ void Codec48Decoder::copyBlock(byte *dst, int deltaBufOffset, int offset) {
 	const byte *src = dst + deltaBufOffset + offset;
 
 	for (int i = 0; i < 8; i++) {
-		*((uint32 *)(dst + _pitch * i)) = *((uint32 *)(src + _pitch * i));
-		*((uint32 *)(dst + _pitch * i + 4)) = *((uint32 *)(src + _pitch * i + 4));
+		*((uint32 *)(dst + _pitch * i)) = *((const uint32 *)(src + _pitch * i));
+		*((uint32 *)(dst + _pitch * i + 4)) = *((const uint32 *)(src + _pitch * i + 4));
 	}
 }
 
