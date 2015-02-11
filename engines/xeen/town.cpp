@@ -621,7 +621,7 @@ Character *Town::doTavernOptions(Character *c) {
 
 				if (_vm->getRandomNumber(100) < 26) {
 					++c->_conditions[DRUNK];
-					intf.charIconsPrint(true);
+					intf.drawParty(true);
 					sound.playFX(28);
 				}
 
@@ -823,7 +823,7 @@ Character *Town::doTempleOptions(Character *c) {
 				party._powerShield = amt;
 				party._blessed = amt;
 
-				intf.charIconsPrint(true);
+				intf.drawParty(true);
 				sound.playSample(nullptr, 0);
 				File f("ahh.voc");
 				sound.playSample(&f, 1);
@@ -854,7 +854,7 @@ Character *Town::doTempleOptions(Character *c) {
 			Common::fill(&c->_conditions[HEART_BROKEN], &c->_conditions[NO_CONDITION], 0);
 
 			_v1 = 1440;
-			intf.charIconsPrint(true);
+			intf.drawParty(true);
 			sound.playSample(nullptr, 0);
 			File f("ahh.voc");
 			sound.playSample(&f, 1);
@@ -871,7 +871,7 @@ Character *Town::doTempleOptions(Character *c) {
 			}
 
 			_v1 = 1440;
-			intf.charIconsPrint(true);
+			intf.drawParty(true);
 			sound.playSample(nullptr, 0);
 			File f("ahh.voc");
 			sound.playSample(&f, 1);
@@ -941,7 +941,7 @@ Character *Town::doTrainingOptions(Character *c) {
 				party.resetTemps();
 				c->_currentHp = c->getMaxHP();
 				c->_currentSp = c->getMaxSP();
-				intf.charIconsPrint(true);
+				intf.drawParty(true);
 			}
 		}
 		break;

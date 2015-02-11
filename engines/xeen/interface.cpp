@@ -33,9 +33,96 @@
 
 namespace Xeen {
 
-Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), _vm(vm) {
-	_buttonsLoaded = false;
+PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
+	_restoreSprites.load("restorex.icn");
+	_hpSprites.load("hpbars.icn");
+	_dseFace.load("dse.fac");
 	_hiliteChar = -1;
+}
+
+void PartyDrawer::drawParty(bool updateFlag) {
+	Party &party = *_vm->_party;
+	Resources &res = *_vm->_resources;
+	Screen &screen = *_vm->_screen;
+	bool inCombat = _vm->_mode == MODE_COMBAT;
+	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
+
+	// Handle drawing the party faces
+	uint partyCount = inCombat ? party._combatParty.size() : party._activeParty.size();
+	for (uint idx = 0; idx < partyCount; ++idx) {
+		Character &ps = inCombat ? *party._combatParty[idx] : party._activeParty[idx];
+		Condition charCondition = ps.worstCondition();
+		int charFrame = FACE_CONDITION_FRAMES[charCondition];
+		
+		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : ps._faceSprites;
+		if (charFrame > 4)
+			charFrame -= 5;
+
+		sprites->draw(screen, charFrame, Common::Point(CHAR_FACES_X[idx], 150));
+	}
+
+	for (uint idx = 0; idx < partyCount; ++idx) {
+		Character &ps = inCombat ? *party._combatParty[idx] : party._activeParty[idx];
+
+		// Draw the Hp bar
+		int maxHp = ps.getMaxHP();
+		int frame;
+		if (ps._currentHp < 1)
+			frame = 4;
+		else if (ps._currentHp > maxHp)
+			frame = 3;
+		else if (ps._currentHp == maxHp)
+			frame = 0;
+		else if (ps._currentHp < (maxHp / 4))
+			frame = 2;
+		else
+			frame = 1;
+
+		_hpSprites.draw(screen, frame, Common::Point(HP_BARS_X[idx], 182));
+	}
+
+	if (_hiliteChar != -1)
+		res._globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+
+	if (updateFlag)
+		screen._windows[33].update();
+}
+
+void PartyDrawer::highlightChar(int charId) {
+	Resources &res = *_vm->_resources;
+	Screen &screen = *_vm->_screen;
+
+	if (charId != _hiliteChar && _hiliteChar != HILIGHT_CHAR_DISABLED) {
+		// Handle deselecting any previusly selected char
+		if (_hiliteChar != -1) {
+			res._globalSprites.draw(screen, 9 + _hiliteChar,
+				Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+		}
+
+		// Highlight new character
+		res._globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[charId] - 1, 149));
+		_hiliteChar = charId;
+		screen._windows[33].update();
+	}
+}
+
+void PartyDrawer::unhighlightChar() {
+	Resources &res = *_vm->_resources;
+	Screen &screen = *_vm->_screen;
+
+	if (_hiliteChar != -1) {
+		res._globalSprites.draw(screen, _hiliteChar + 9,
+			Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+		_hiliteChar = -1;
+		screen._windows[33].update();
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), 
+		PartyDrawer(vm), _vm(vm) {
+	_buttonsLoaded = false;
 	_intrIndex1 = 0;
 	_steppingFX = 0;
 
@@ -65,75 +152,15 @@ void Interface::initDrawStructs() {
 
 void Interface::setup() {
 	InterfaceMap::setup();
-	_restoreSprites.load("restorex.icn");
-	_hpSprites.load("hpbars.icn");
 	_uiSprites.load("inn.icn");
-	_dseFace.load("dse.fac");
 
 	Party &party = *_vm->_party;
 	party.loadActiveParty();
 	party._newDay = party._minutes >= 300;
 }
 
-void Interface::charIconsPrint(bool updateFlag) {
-	Screen &screen = *_vm->_screen;
-	bool stateFlag = _vm->_mode == MODE_COMBAT;
-	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
-
-	// Handle drawing the party faces
-	for (int idx = 0; idx < (stateFlag ? _vm->_party->_combatPartyCount : 
-			_vm->_party->_partyCount); ++idx) {
-		int charIndex = stateFlag ? _combatCharIds[idx] : idx;
-		Character &ps = _vm->_party->_activeParty[charIndex];
-		Condition charCondition = ps.worstCondition();
-		int charFrame = FACE_CONDITION_FRAMES[charCondition];
-		
-		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : ps._faceSprites;
-		if (charFrame > 4)
-			charFrame -= 5;
-
-		sprites->draw(screen, charFrame, Common::Point(CHAR_FACES_X[idx], 150));
-	}
-
-	if (!_hpSprites.empty()) {
-		for (int idx = 0; idx < (stateFlag ? _vm->_party->_combatPartyCount :
-			_vm->_party->_partyCount); ++idx) {
-			int charIndex = stateFlag ? _combatCharIds[idx] : idx;
-			Character &ps = _vm->_party->_activeParty[charIndex];
-
-			// Draw the Hp bar
-			int maxHp = ps.getMaxHP();
-			int frame;
-			if (ps._currentHp < 1)
-				frame = 4;
-			else if (ps._currentHp > maxHp)
-				frame = 3;
-			else if (ps._currentHp == maxHp)
-				frame = 0;
-			else if (ps._currentHp < (maxHp / 4))
-				frame = 2;
-			else
-				frame = 1;
-
-			_hpSprites.draw(screen, frame, Common::Point(HP_BARS_X[idx], 182));
-		}
-	}
-
-	if (_hiliteChar != -1)
-		_globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
-
-	if (updateFlag)
-		screen._windows[33].update();
-}
-
-/**
- * Removes any empty character entries from the faces list
- */
-void Interface::sortFaces() {
-	// No implementation needed
-}
-
 void Interface::startup() {
+	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	_iconSprites.load("main.icn");
 
@@ -147,10 +174,10 @@ void Interface::startup() {
 	}
 	draw3d(false);
 
-	_globalSprites.draw(screen._windows[1], 5, Common::Point(232, 9));
-	charIconsPrint(false);
+	res._globalSprites.draw(screen._windows[1], 5, Common::Point(232, 9));
+	drawParty(false);
 
-	_mainList[0]._sprites = &_globalSprites;
+	_mainList[0]._sprites = &res._globalSprites;
 	for (int i = 1; i < 16; ++i)
 		_mainList[i]._sprites = &_iconSprites;
 
@@ -582,34 +609,6 @@ void Interface::doFalling() {
 	// TODO
 }
 
-void Interface::highlightChar(int charId) {
-	Screen &screen = *_vm->_screen;
-
-	if (charId != _hiliteChar && _hiliteChar != HILIGHT_CHAR_DISABLED) {
-		// Handle deselecting any previusly selected char
-		if (_hiliteChar != -1) {
-			_globalSprites.draw(screen, 9 + _hiliteChar,
-				Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
-		}
-
-		// Highlight new character
-		_globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[charId] - 1, 149));
-		_hiliteChar = charId;
-		screen._windows[33].update();
-	}
-}
-
-void Interface::unhighlightChar() {
-	Screen &screen = *_vm->_screen;
-
-	if (_hiliteChar != -1) {
-		_globalSprites.draw(screen, _hiliteChar + 9,
-			Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
-		_hiliteChar = -1;
-		screen._windows[33].update();
-	}
-}
-
 bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -738,7 +737,7 @@ void Interface::rest() {
 		for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
 			party._activeParty[charIdx]._conditions[ASLEEP] = 1;
 		}
-		charIconsPrint(true);
+		drawParty(true);
 
 		Mode oldMode = _vm->_mode;
 		_vm->_mode = MODE_SLEEPING;
@@ -826,7 +825,7 @@ void Interface::rest() {
 			}
 		}
 
-		charIconsPrint(true);
+		drawParty(true);
 		_vm->_mode = oldMode;
 		doStepCode();
 		draw3d(true);
@@ -924,7 +923,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 
 	party.checkPartyDead();
 	events.ipause(2);
-	charIconsPrint(true);
+	drawParty(true);
 }
 
 

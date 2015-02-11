@@ -97,11 +97,12 @@ bool YesNo::show(XeenEngine *vm, bool type, bool townFlag) {
 }
 
 bool YesNo::execute(bool type, bool townFlag) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	Resources &res = *_vm->_resources;
+	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
 	SpriteResource confirmSprites;
 	int numFrames;
@@ -112,7 +113,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 
 	if (!type) {
 		confirmSprites.load("confirm.icn");
-		intf._globalSprites.draw(screen, 7, Common::Point(232, 74));
+		res._globalSprites.draw(screen, 7, Common::Point(232, 74));
 		confirmSprites.draw(screen, 0, Common::Point(235, 75));
 		confirmSprites.draw(screen, 2, Common::Point(260, 75));
 		screen._windows[34].update();

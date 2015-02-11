@@ -33,8 +33,8 @@ namespace Xeen {
 
 class Resources {
 public:
-	// Magic and equipment names
-	Common::StringArray _maeNames;
+	SpriteResource _globalSprites;
+	Common::StringArray _maeNames;		// Magic and equipment names
 public:
 	Resources();
 };

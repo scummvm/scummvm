@@ -174,7 +174,7 @@ int Scripts::checkEvents() {
 	intf._face1State = intf._face2State = 2;
 	if (_refreshIcons) {
 		screen.closeWindows();
-		intf.charIconsPrint(true);
+		intf.drawParty(true);
 	}
 
 	// TODO

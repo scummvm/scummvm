@@ -47,7 +47,7 @@ private:
 
 	void setupBackground();
 
-	void charIconsPrint(bool updateFlag);
+	void drawParty(bool updateFlag);
 
 	void setupFaces(int firstDisplayChar, Common::Array<int> xeenSideChars, bool updateFlag);
 

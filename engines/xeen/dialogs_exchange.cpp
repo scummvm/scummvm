@@ -65,7 +65,7 @@ void ExchangeDialog::execute(Character *&c, int &charIndex) {
 	}
 
 	w.close();
-	intf.charIconsPrint(true);
+	intf.drawParty(true);
 	intf.highlightChar(charIndex);
 }
 

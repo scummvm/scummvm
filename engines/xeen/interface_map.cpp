@@ -399,7 +399,6 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 }
 
 void InterfaceMap::setup() {
-	_globalSprites.load("global.icn");
 	_borderSprites.load("border.icn");
 	_spellFxSprites.load("spellfx.icn");
 	_fecpSprites.load("fecp.brd");
@@ -4490,10 +4489,11 @@ void InterfaceMap::moveMonsters() {
 }
 
 void InterfaceMap::assembleBorder() {
+	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 
 	// Draw the outer frame
-	_globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
+	res._globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
 
 	// Draw the animating bat character used to show when levitate is active
 	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateActive ? _batUIFrame + 16 : 16,
@@ -4600,6 +4600,7 @@ void InterfaceMap::assembleBorder() {
 void InterfaceMap::drawMiniMap() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 	Window &window1 = screen._windows[1];
 
@@ -4607,7 +4608,7 @@ void InterfaceMap::drawMiniMap() {
 		return;
 	if (!party._automapOn && !party._wizardEyeActive) {
 		// Draw the Might & Magic logo
-		_globalSprites.draw(window1, 5, Common::Point(232, 9));
+		res._globalSprites.draw(window1, 5, Common::Point(232, 9));
 		return;
 	}
 
@@ -4618,7 +4619,7 @@ void InterfaceMap::drawMiniMap() {
 		party._wizardEyeActive = false;
 
 	if (map._isOutdoors) {
-		_globalSprites.draw(window1, 15, Common::Point(237, 12));
+		res._globalSprites.draw(window1, 15, Common::Point(237, 12));
 
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
@@ -4659,7 +4660,7 @@ void InterfaceMap::drawMiniMap() {
 		}
 		
 		// Draw the direction arrow
-		_globalSprites.draw(window1, party._mazeDirection + 1,
+		res._globalSprites.draw(window1, party._mazeDirection + 1,
 			Common::Point(267, 36));
 	} else {
 		frame2 = (frame2 + 2) % 8;
@@ -4844,7 +4845,7 @@ void InterfaceMap::drawMiniMap() {
 					++colNum, ++xDiff, xp += 10) {
 				if (colNum == 4 && rowNum == 4) {
 					// Center of the minimap. Draw the direction arrow
-					_globalSprites.draw(window1, party._mazeDirection + 1,
+					res._globalSprites.draw(window1, party._mazeDirection + 1,
 						Common::Point(272, 40));
 				}
 
@@ -4968,7 +4969,7 @@ void InterfaceMap::drawMiniMap() {
 	}
 
 	// Draw outer rectangle around the automap
-	_globalSprites.draw(window1, 6, Common::Point(223, 3));
+	res._globalSprites.draw(window1, 6, Common::Point(223, 3));
 	party._wizardEyeActive = eyeActive;
 }
 

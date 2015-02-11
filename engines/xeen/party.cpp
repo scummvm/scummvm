@@ -349,7 +349,7 @@ void Party::changeTime(int numMinutes) {
 	}
 	
 	if (killed)
-		_vm->_interface->charIconsPrint(true);
+		_vm->_interface->drawParty(true);
 
 	if (_isNight != (_minutes < (5 * 60) || _minutes >= (21 * 60)))
 		_vm->_map->loadSky();
@@ -391,7 +391,7 @@ void Party::addTime(int numMinutes) {
 				ErrorScroll::show(_vm, THE_PARTY_NEEDS_REST, WT_NONFREEZED_WAIT);
 			}
 
-			_vm->_interface->charIconsPrint(true);
+			_vm->_interface->drawParty(true);
 		}
 
 		_newDay = false;

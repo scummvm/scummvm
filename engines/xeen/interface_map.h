@@ -130,7 +130,6 @@ public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
 	SpriteResource _charPowSprites;
-	SpriteResource _globalSprites;
 	bool _upDoorText;
 	Common::String _screenText;
 	int _face1State, _face2State;

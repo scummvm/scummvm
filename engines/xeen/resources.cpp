@@ -27,6 +27,8 @@
 namespace Xeen {
 
 Resources::Resources() {
+	_globalSprites.load("global.icn");
+
 	File f("mae.xen");
 	while (f.pos() < f.size())
 		_maeNames.push_back(f.readString());

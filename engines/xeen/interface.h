@@ -36,19 +36,38 @@ class XeenEngine;
 #define MINIMAP_SIZE 7
 #define HILIGHT_CHAR_DISABLED -2
 
-class Interface: public ButtonContainer, public InterfaceMap {
+/**
+ * Class responsible for drawing the images of the characters in the party
+ */
+class PartyDrawer {
 private:
 	XeenEngine *_vm;
-	SpriteResource _restoreSprites;
 	SpriteResource _dseFace;
 	SpriteResource _hpSprites;
+	SpriteResource _restoreSprites;
+	int _hiliteChar;
+public:
+	PartyDrawer(XeenEngine *vm);
+
+	void drawParty(bool updateFlag);
+
+	void highlightChar(int charId);
+
+	void unhighlightChar();
+};
+
+/**
+ * Implements the main in-game interface
+ */
+class Interface: public ButtonContainer, public InterfaceMap, public PartyDrawer {
+private:
+	XeenEngine *_vm;
 	SpriteResource _uiSprites;
 	SpriteResource _iconSprites;
 	DrawStruct _mainList[16];
 	int _combatCharIds[8];
 
 	bool _buttonsLoaded;
-	int _hiliteChar;
 	int _steppingFX;
 
 	void initDrawStructs();
@@ -82,15 +101,7 @@ public:
 
 	void mainIconsPrint();
 
-	void charIconsPrint(bool updateFlag);
-
-	void sortFaces();
-
 	void doFalling();
-
-	void highlightChar(int charId);
-
-	void unhighlightChar();
 
 	void perform();
 

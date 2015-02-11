@@ -505,7 +505,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		}
 	}
 
-	intf.charIconsPrint(true);
+	intf.drawParty(true);
 	if (updateStock)
 		charData2BlackData();
 
