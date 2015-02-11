@@ -755,7 +755,7 @@ void RenderManager::processSubs(uint16 deltatime) {
 			if (sub->txt.size()) {
 				Graphics::Surface *rndr = new Graphics::Surface();
 				rndr->create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
-				_engine->getTextRenderer()->drawTxtInOneLine(sub->txt, *rndr);
+				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, *rndr);
 				Common::Rect empty;
 				blitSurfaceToSurface(*rndr, empty, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
 				rndr->free();

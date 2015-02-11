@@ -79,13 +79,13 @@ InputControl::InputControl(ZVision *engine, uint32 key, Common::SeekableReadStre
 
 			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
-			_stringInit.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			_stringInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("chooser_init_string", true)) {
 			uint fontFormatNumber;
 
 			sscanf(values.c_str(), "%u", &fontFormatNumber);
 
-			_stringChooserInit.readAllStyle(_engine->getStringManager()->getTextLine(fontFormatNumber));
+			_stringChooserInit.readAllStyles(_engine->getStringManager()->getTextLine(fontFormatNumber));
 		} else if (param.matchString("next_tabstop", true)) {
 			sscanf(values.c_str(), "%u", &_nextTabstop);
 		} else if (param.matchString("cursor_dimensions", true)) {
@@ -215,9 +215,9 @@ bool InputControl::process(uint32 deltaTimeInMillis) {
 		int32 oldTxtWidth = _txtWidth;
 
 		if (!_readOnly || !_focused)
-			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringInit, txt);
+			_txtWidth = _engine->getTextRenderer()->drawText(_currentInputText, _stringInit, txt);
 		else
-			_txtWidth = _engine->getTextRenderer()->drawTxt(_currentInputText, _stringChooserInit, txt);
+			_txtWidth = _engine->getTextRenderer()->drawText(_currentInputText, _stringChooserInit, txt);
 
 		if (_readOnly || _txtWidth <= _maxTxtWidth)
 			_engine->getRenderManager()->blitSurfaceToBkg(txt, _textRectangle.left, _textRectangle.top);

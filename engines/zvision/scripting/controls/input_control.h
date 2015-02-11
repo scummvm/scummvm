@@ -44,8 +44,8 @@ private:
 	Graphics::Surface *_background;
 	Common::Rect _textRectangle;
 	Common::Rect _headerRectangle;
-	cTxtStyle _stringInit;
-	cTxtStyle _stringChooserInit;
+	TextStyleState _stringInit;
+	TextStyleState _stringChooserInit;
 	uint32 _nextTabstop;
 	bool _focused;
 

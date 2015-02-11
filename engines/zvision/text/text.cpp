@@ -38,7 +38,7 @@
 
 namespace ZVision {
 
-cTxtStyle::cTxtStyle() {
+TextStyleState::TextStyleState() {
 	_fontname = "Arial";
 	_blue = 255;
 	_green = 255;
@@ -49,7 +49,7 @@ cTxtStyle::cTxtStyle() {
 	_escapement = 0;
 #endif
 	_italic = false;
-	_justify = TXT_JUSTIFY_LEFT;
+	_justification = TEXT_JUSTIFY_LEFT;
 	_size = 12;
 #if 0
 	_skipcolor = false;
@@ -60,10 +60,10 @@ cTxtStyle::cTxtStyle() {
 	_sharp = false;
 }
 
-txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
-	Common::String buf = Common::String(strin.c_str(), ln);
+TextChange TextStyleState::parseStyle(const Common::String &str, int16 len) {
+	Common::String buf = Common::String(str.c_str(), len);
 
-	int8 retval = TXT_RET_NOTHING;
+	uint retval = TEXT_CHANGE_NONE;
 
 	Common::StringTokenizer tokenizer(buf, " ");
 	Common::String token;
@@ -89,7 +89,7 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				if (!tokenizer.empty())
 					_fontname = token;
 			}
-			retval |= TXT_RET_FNTCHG;
+			retval |= TEXT_CHANGE_FONT_TYPE;
 
 		} else if (token.matchString("blue", true)) {
 			if (!tokenizer.empty()) {
@@ -97,7 +97,7 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				int32 tmp = atoi(token.c_str());
 				if (_blue != tmp) {
 					_blue = tmp;
-					retval |= TXT_RET_FNTSTL;
+					retval |= TEXT_CHANGE_FONT_STYLE;
 				}
 			}
 		} else if (token.matchString("red", true)) {
@@ -106,7 +106,7 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				int32 tmp = atoi(token.c_str());
 				if (_red != tmp) {
 					_red = tmp;
-					retval |= TXT_RET_FNTSTL;
+					retval |= TEXT_CHANGE_FONT_STYLE;
 				}
 			}
 		} else if (token.matchString("green", true)) {
@@ -115,7 +115,7 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				int32 tmp = atoi(token.c_str());
 				if (_green != tmp) {
 					_green = tmp;
-					retval |= TXT_RET_FNTSTL;
+					retval |= TEXT_CHANGE_FONT_STYLE;
 				}
 			}
 		} else if (token.matchString("newline", true)) {
@@ -125,14 +125,14 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 
 			_newline++;
 #endif
-			retval |= TXT_RET_NEWLN;
+			retval |= TEXT_CHANGE_NEWLINE;
 		} else if (token.matchString("point", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				int32 tmp = atoi(token.c_str());
 				if (_size != tmp) {
 					_size = tmp;
-					retval |= TXT_RET_FNTCHG;
+					retval |= TEXT_CHANGE_FONT_TYPE;
 				}
 			}
 		} else if (token.matchString("escapement", true)) {
@@ -149,12 +149,12 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				if (token.matchString("on", true)) {
 					if (_italic != true) {
 						_italic = true;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				} else if (token.matchString("off", true)) {
 					if (_italic != false) {
 						_italic = false;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				}
 			}
@@ -164,12 +164,12 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				if (token.matchString("on", true)) {
 					if (_underline != true) {
 						_underline = true;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				} else if (token.matchString("off", true)) {
 					if (_underline != false) {
 						_underline = false;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				}
 			}
@@ -179,12 +179,12 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				if (token.matchString("on", true)) {
 					if (_strikeout != true) {
 						_strikeout = true;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				} else if (token.matchString("off", true)) {
 					if (_strikeout != false) {
 						_strikeout = false;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				}
 			}
@@ -194,12 +194,12 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 				if (token.matchString("on", true)) {
 					if (_bold != true) {
 						_bold = true;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				} else if (token.matchString("off", true)) {
 					if (_bold != false) {
 						_bold = false;
-						retval |= TXT_RET_FNTSTL;
+						retval |= TEXT_CHANGE_FONT_STYLE;
 					}
 				}
 			}
@@ -220,24 +220,24 @@ txtReturn cTxtStyle::parseStyle(const Common::String &strin, int16 ln) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				_statebox = atoi(token.c_str());
-				retval |= TXT_RET_HASSTBOX;
+				retval |= TEXT_CHANGE_HAS_STATE_BOX;
 			}
 		} else if (token.matchString("justify", true)) {
 			if (!tokenizer.empty()) {
 				token = tokenizer.nextToken();
 				if (token.matchString("center", true))
-					_justify = TXT_JUSTIFY_CENTER;
+					_justification = TEXT_JUSTIFY_CENTER;
 				else if (token.matchString("left", true))
-					_justify = TXT_JUSTIFY_LEFT;
+					_justification = TEXT_JUSTIFY_LEFT;
 				else if (token.matchString("right", true))
-					_justify = TXT_JUSTIFY_RIGHT;
+					_justification = TEXT_JUSTIFY_RIGHT;
 			}
 		}
 	}
-	return (txtReturn)retval;
+	return (TextChange)retval;
 }
 
-void cTxtStyle::readAllStyle(const Common::String &txt) {
+void TextStyleState::readAllStyles(const Common::String &txt) {
 	int16 startTextPosition = -1;
 	int16 endTextPosition = -1;
 
@@ -246,243 +246,264 @@ void cTxtStyle::readAllStyle(const Common::String &txt) {
 			startTextPosition = i;
 		else if (txt[i] == '>') {
 			endTextPosition = i;
-			if (startTextPosition != -1)
-				if ((endTextPosition - startTextPosition - 1) > 0)
+			if (startTextPosition != -1) {
+				if ((endTextPosition - startTextPosition - 1) > 0) {
 					parseStyle(Common::String(txt.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
+				}
+			}
 		}
 
 	}
 }
 
-void cTxtStyle::setFontStyle(StyledTTFont &font) {
+void TextStyleState::updateFontWithTextState(StyledTTFont &font) {
 	uint tempStyle = 0;
 
-	if (_bold)
-		tempStyle |= StyledTTFont::STTF_BOLD;
-
-	if (_italic)
-		tempStyle |= StyledTTFont::STTF_ITALIC;
-
-	if (_underline)
-		tempStyle |= StyledTTFont::STTF_UNDERLINE;
-
-	if (_strikeout)
-		tempStyle |= StyledTTFont::STTF_STRIKEOUT;
-
-	if (_sharp)
-		tempStyle |= StyledTTFont::STTF_SHARP;
-
-	font.setStyle(tempStyle);
-}
-
-void cTxtStyle::setFont(StyledTTFont &font) {
-	uint tempStyle = 0;
-
-	if (_bold)
-		tempStyle |= StyledTTFont::STTF_BOLD;
-
-	if (_italic)
-		tempStyle |= StyledTTFont::STTF_ITALIC;
-
-	if (_underline)
-		tempStyle |= StyledTTFont::STTF_UNDERLINE;
-
-	if (_strikeout)
-		tempStyle |= StyledTTFont::STTF_STRIKEOUT;
-
-	if (_sharp)
-		tempStyle |= StyledTTFont::STTF_SHARP;
+	if (_bold) {
+		tempStyle |= StyledTTFont::TTF_STYLE_BOLD;
+	}
+	if (_italic) {
+		tempStyle |= StyledTTFont::TTF_STYLE_ITALIC;
+	}
+	if (_underline) {
+		tempStyle |= StyledTTFont::TTF_STYLE_UNDERLINE;
+	}
+	if (_strikeout) {
+		tempStyle |= StyledTTFont::TTF_STYLE_STRIKETHROUGH;
+	}
+	if (_sharp) {
+		tempStyle |= StyledTTFont::TTF_STYLE_SHARP;
+	}
 
 	font.loadFont(_fontname, _size, tempStyle);
 }
 
-Graphics::Surface *TextRenderer::render(StyledTTFont &fnt, const Common::String &txt, cTxtStyle &style) {
-	style.setFontStyle(fnt);
-	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(style._red, style._green, style._blue);
-	return fnt.renderSolidText(txt, clr);
+void TextRenderer::drawTextWithJustification(const Common::String &text, StyledTTFont &font, uint32 color, Graphics::Surface &dest, int lineY, TextJustification justify) {
+	if (justify == TEXT_JUSTIFY_LEFT)
+		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignLeft);
+	else if (justify == TEXT_JUSTIFY_CENTER)
+		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignCenter);
+	else if (justify == TEXT_JUSTIFY_RIGHT)
+		font.drawString(&dest, text, 0, lineY, dest.w, color, Graphics::kTextAlignRight);
 }
 
-void TextRenderer::drawTxtWithJustify(const Common::String &txt, StyledTTFont &fnt, uint32 color, Graphics::Surface &dst, int lineY, txtJustify justify) {
-	if (justify == TXT_JUSTIFY_LEFT)
-		fnt.drawString(&dst, txt, 0, lineY, dst.w, color, Graphics::kTextAlignLeft);
-	else if (justify == TXT_JUSTIFY_CENTER)
-		fnt.drawString(&dst, txt, 0, lineY, dst.w, color, Graphics::kTextAlignCenter);
-	else if (justify == TXT_JUSTIFY_RIGHT)
-		fnt.drawString(&dst, txt, 0, lineY, dst.w, color, Graphics::kTextAlignRight);
-}
-
-int32 TextRenderer::drawTxt(const Common::String &txt, cTxtStyle &fontStyle, Graphics::Surface &dst) {
+int32 TextRenderer::drawText(const Common::String &text, TextStyleState &state, Graphics::Surface &dest) {
 	StyledTTFont font(_engine);
-	fontStyle.setFont(font);
+	state.updateFontWithTextState(font);
 
-	uint32 clr = _engine->_resourcePixelFormat.RGBToColor(fontStyle._red, fontStyle._green, fontStyle._blue);
+	uint32 color = _engine->_resourcePixelFormat.RGBToColor(state._red, state._green, state._blue);
+	drawTextWithJustification(text, font, color, dest, 0, state._justification);
 
-	int16 w;
-
-	w = font.getStringWidth(txt);
-
-	drawTxtWithJustify(txt, font, clr, dst, 0, fontStyle._justify);
-
-	return w;
+	return font.getStringWidth(text);
 }
 
-void TextRenderer::drawTxtInOneLine(const Common::String &text, Graphics::Surface &dst) {
-	const int16 TXT_CFG_TEXTURES_LINES = 256; // For now I don't want remake it
-	const int TXT_CFG_TEXTURES_PER_LINE = 6;
-	cTxtStyle style, style2;
-	int16 startTextPosition = -1;
-	int16 endTextPosition = -1;
-	int16 i = 0;
-	int16 dx = 0, dy = 0;
-	int16 textPixelWidth;
-	int16 textPosition = 0;
-	Common::String buf;
-	Common::String buf2;
-
-	Graphics::Surface *TxtSurfaces[TXT_CFG_TEXTURES_LINES][TXT_CFG_TEXTURES_PER_LINE];
-	int16 currentline = 0, currentlineitm = 0;
-
-	int TxtJustify[TXT_CFG_TEXTURES_LINES];
-	int TxtPoint[TXT_CFG_TEXTURES_LINES];
-
-	for (int16 k = 0; k < TXT_CFG_TEXTURES_LINES; k++) {
-		TxtPoint[k] = 0;
-		for (int j = 0; j < TXT_CFG_TEXTURES_PER_LINE; j++)
-			TxtSurfaces[k][j] = NULL;
+struct TextSurface {
+	TextSurface(Graphics::Surface *surface, Common::Point surfaceOffset, uint lineNumber)
+		: _surface(surface),
+		  _surfaceOffset(surfaceOffset),
+		  _lineNumber(lineNumber) {
 	}
 
-	int16 stringlen = text.size();
+	Graphics::Surface *_surface;
+	Common::Point _surfaceOffset;
+	uint _lineNumber;
+};
 
+void TextRenderer::drawTextWithWordWrapping(const Common::String &text, Graphics::Surface &dest) {
+	Common::Array<TextSurface> textSurfaces;
+	Common::Array<uint> lineWidths;
+	Common::Array<TextJustification> lineJustifications;
+
+	// Create the initial text state
+	TextStyleState currentState;
+
+	// Create an empty font and bind it to the state
 	StyledTTFont font(_engine);
+	currentState.updateFontWithTextState(font);
 
-	style.setFont(font);
+	Common::String currentSentence; // Not a true 'grammatical' sentence. Rather, it's just a collection of words
+	Common::String currentWord;
+	int sentenceWidth = 0;
+	int wordWidth = 0;
+	int lineWidth = 0;
+	int lineHeight = font.getFontHeight();
 
-	int16 prevbufspace = 0, prevtxtspace = 0;
+	uint currentLineNumber = 0u;
+
+	uint numSpaces = 0u;
+	int spaceWidth = 0;
+
+	// The pixel offset to the currentSentence
+	Common::Point sentencePixelOffset;
+
+	uint i = 0u;
+	uint stringlen = text.size();
 
 	while (i < stringlen) {
-		TxtJustify[currentline] = style._justify;
 		if (text[i] == '<') {
-			int16 ret = 0;
+			// Flush the currentWord to the currentSentence			
+			currentSentence += currentWord;
+			sentenceWidth += wordWidth;
 
-			startTextPosition = i;
-			while (i < stringlen && text[i] != '>')
-				i++;
-			endTextPosition = i;
-			if (startTextPosition != -1)
-				if ((endTextPosition - startTextPosition - 1) > 0) {
-					style2 = style;
-					ret = style.parseStyle(Common::String(text.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
-				}
+			// Reset the word variables
+			currentWord.clear();
+			wordWidth = 0;
+			
+			// Parse the style tag
+			uint startTextPosition = i;
+			while (i < stringlen && text[i] != '>') {
+				++i;
+			}
+			uint endTextPosition = i;
 
-			if (ret & (TXT_RET_FNTCHG | TXT_RET_FNTSTL | TXT_RET_NEWLN)) {
-				if (buf.size() > 0) {
-					textPixelWidth = font.getStringWidth(buf);
+			uint32 textColor = currentState.getTextColor(_engine);
 
-					TxtSurfaces[currentline][currentlineitm] = render(font, buf, style2);
-					TxtPoint[currentline] = MAX(font.getFontHeight(), TxtPoint[currentline]);
-
-					currentlineitm++;
-
-					buf.clear();
-					prevbufspace = 0;
-					textPosition = 0;
-					dx += textPixelWidth;
-
-				}
-				if (ret & TXT_RET_FNTCHG) {
-					style.setFont(font);
-				}
-				if (ret & TXT_RET_FNTSTL)
-					style.setFontStyle(font);
-
-				if (ret & TXT_RET_NEWLN) {
-					currentline++;
-					currentlineitm = 0;
-					dx = 0;
-				}
+			uint stateChanges = 0u;
+			if ((endTextPosition - startTextPosition - 1) > 0) {
+				stateChanges = currentState.parseStyle(Common::String(text.c_str() + startTextPosition + 1), endTextPosition - startTextPosition - 1);
 			}
 
-			if (ret & TXT_RET_HASSTBOX) {
-				Common::String buf3;
-				buf3 = Common::String::format("%d", _engine->getScriptManager()->getStateValue(style._statebox));
-				buf += buf3;
-				textPosition += buf3.size();
-			}
+			if (stateChanges & (TEXT_CHANGE_FONT_TYPE | TEXT_CHANGE_FONT_STYLE)) {
+				// Use the last state to render out the current sentence
+				// Styles apply to the text 'after' them
+				if (!currentSentence.empty()) {
+					textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, textColor), sentencePixelOffset, currentLineNumber));
 
+					lineWidth += sentenceWidth;
+					sentencePixelOffset.x += sentenceWidth;
+
+					// Reset the sentence variables
+					currentSentence.clear();
+					sentenceWidth = 0;
+				}
+
+				// Update the current state with the style information
+				currentState.updateFontWithTextState(font);
+
+				lineHeight = MAX(lineHeight, font.getFontHeight());
+				spaceWidth = font.getCharWidth(' ');
+			}
+			if (stateChanges & TEXT_CHANGE_NEWLINE) {
+				// If the current sentence has content, render it out
+				if (!currentSentence.empty()) {
+					textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, textColor), sentencePixelOffset, currentLineNumber));
+				}
+				
+				// Set line width
+				lineWidths.push_back(lineWidth + sentenceWidth - (numSpaces * spaceWidth));
+
+				currentSentence.clear();
+				sentenceWidth = 0;
+				
+				// Update the offsets
+				sentencePixelOffset.x = 0u;
+				sentencePixelOffset.y += lineHeight;
+
+				// Reset the line variables
+				lineHeight = font.getFontHeight();
+				lineWidth = 0;
+				++currentLineNumber;
+				lineJustifications.push_back(currentState._justification);
+			}
+			if (stateChanges & TEXT_CHANGE_HAS_STATE_BOX) {
+				Common::String temp = Common::String::format("%d", _engine->getScriptManager()->getStateValue(currentState._statebox));
+				wordWidth += font.getStringWidth(temp);
+
+				// If the word causes the line to overflow, render the sentence and start a new line
+				if (lineWidth + sentenceWidth + wordWidth > dest.w) {
+					textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, textColor), sentencePixelOffset, currentLineNumber));
+
+					// Set line width
+					lineWidths.push_back(lineWidth + sentenceWidth - (numSpaces * spaceWidth));
+
+					currentSentence.clear();
+					sentenceWidth = 0;
+
+					// Update the offsets
+					sentencePixelOffset.x = 0u;
+					sentencePixelOffset.y += lineHeight;
+
+					// Reset the line variables
+					lineHeight = font.getFontHeight();
+					lineWidth = 0;
+					++currentLineNumber;
+					lineJustifications.push_back(currentState._justification);
+				}
+			}
 		} else {
-
-			buf += text[i];
-			textPosition++;
+			currentWord += text[i];
+			wordWidth += font.getCharWidth(text[i]);
 
 			if (text[i] == ' ') {
-				prevbufspace = textPosition - 1;
-				prevtxtspace = i;
-			}
+				// When we hit the first space, flush the current word to the sentence
+				if (!currentWord.empty()) {
+					currentSentence += currentWord;
+					sentenceWidth += wordWidth;
 
-			if (font.isLoaded()) {
-				textPixelWidth = font.getStringWidth(buf);
-				if (textPixelWidth + dx > dst.w) {
-					if (prevbufspace == 0) {
-						prevtxtspace = i;
-						prevbufspace = textPosition - 1;
-					}
-					buf2 = Common::String(buf.c_str(), prevbufspace + 1);
-
-					if (buf2.size() > 0) {
-						TxtSurfaces[currentline][currentlineitm] = render(font, buf2, style);
-						TxtPoint[currentline] = MAX(font.getFontHeight(), TxtPoint[currentline]);
-					}
-
-					buf.clear();
-					i = prevtxtspace;
-					prevbufspace = 0;
-					textPosition = 0;
-					currentline++;
-					currentlineitm = 0;
-					dx = 0;
+					currentWord.clear();
+					wordWidth = 0;
 				}
+
+				// We track the number of spaces so we can disregard their width in lineWidth calculations
+				++numSpaces;
+			} else {			
+				// If the word causes the line to overflow, render the sentence and start a new line
+				if (lineWidth + sentenceWidth + wordWidth > dest.w) {
+					// Only render out content
+					if (!currentSentence.empty()) {
+						textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, currentState.getTextColor(_engine)), sentencePixelOffset, currentLineNumber));
+					}
+
+					// Set line width
+					lineWidths.push_back(lineWidth + sentenceWidth - (numSpaces * spaceWidth));
+
+					currentSentence.clear();
+					sentenceWidth = 0;
+
+					// Update the offsets
+					sentencePixelOffset.x = 0u;
+					sentencePixelOffset.y += lineHeight;
+
+					// Reset the line variables
+					lineHeight = font.getFontHeight();
+					lineWidth = 0;
+					++currentLineNumber;
+					lineJustifications.push_back(currentState._justification);
+				}
+
+				numSpaces = 0u;
 			}
 		}
+
 		i++;
 	}
 
-	if (buf.size() > 0) {
-		TxtSurfaces[currentline][currentlineitm] = render(font, buf, style);
-		TxtPoint[currentline] = MAX(font.getFontHeight(), TxtPoint[currentline]);
+	// Render out any remaining words/sentences
+	if (!currentWord.empty() || !currentSentence.empty()) {
+		currentSentence += currentWord;
+		sentenceWidth += wordWidth;
+		
+		textSurfaces.push_back(TextSurface(font.renderSolidText(currentSentence, currentState.getTextColor(_engine)), sentencePixelOffset, currentLineNumber));
 	}
 
-	dy = 0;
-	for (i = 0; i <= currentline; i++) {
-		int16 j = 0;
-		int16 width = 0;
-		while (TxtSurfaces[i][j] != NULL) {
-			width += TxtSurfaces[i][j]->w;
-			j++;
-		}
-		dx = 0;
+	lineWidths.push_back(lineWidth + sentenceWidth);
+	lineJustifications.push_back(currentState._justification);
+
+	for (Common::Array<TextSurface>::iterator iter = textSurfaces.begin(); iter != textSurfaces.end(); ++iter) {
 		Common::Rect empty;
-		for (int32 jj = 0; jj < j; jj++) {
-			if (TxtJustify[i] == TXT_JUSTIFY_LEFT)
-				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], empty, dst, dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
 
-			else if (TxtJustify[i] == TXT_JUSTIFY_CENTER)
-				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], empty, dst, ((dst.w - width) / 2) + dx,  dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
-
-			else if (TxtJustify[i] == TXT_JUSTIFY_RIGHT)
-				_engine->getRenderManager()->blitSurfaceToSurface(*TxtSurfaces[i][jj], empty, dst, dst.w - width + dx, dy + TxtPoint[i] - TxtSurfaces[i][jj]->h, 0);
-
-			dx += TxtSurfaces[i][jj]->w;
+		if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_LEFT) {
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
+		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_CENTER) {
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, ((dest.w - lineWidths[iter->_lineNumber]) / 2) + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
+		} else if (lineJustifications[iter->_lineNumber] == TEXT_JUSTIFY_RIGHT) {
+			_engine->getRenderManager()->blitSurfaceToSurface(*iter->_surface, empty, dest, dest.w - lineWidths[iter->_lineNumber]  + iter->_surfaceOffset.x, iter->_surfaceOffset.y, 0);
 		}
 
-		dy += TxtPoint[i];
+		// Release memory
+		iter->_surface->free();
+		delete iter->_surface;
 	}
-
-	for (i = 0; i < TXT_CFG_TEXTURES_LINES; i++)
-		for (int32 j = 0; j < TXT_CFG_TEXTURES_PER_LINE; j++)
-			if (TxtSurfaces[i][j] != NULL) {
-				TxtSurfaces[i][j]->free();
-				delete TxtSurfaces[i][j];
-			}
 }
 
 Common::String readWideLine(Common::SeekableReadStream &stream) {
