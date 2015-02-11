@@ -111,7 +111,7 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 		case Common::KEYCODE_F6:
 			if (_vm->_mode != MODE_COMBAT) {
 				_buttonValue -= Common::KEYCODE_F1;
-				if (_buttonValue < party._partyCount) {
+				if (_buttonValue < (int)party._activeParty.size()) {
 					c = &party._activeParty[_buttonValue];
 					spells._lastCaster = _buttonValue;
 					intf.highlightChar(_buttonValue);

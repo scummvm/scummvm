@@ -1436,4 +1436,10 @@ const char *const SOME_CHARS_MAY_DIE = "Some Chars may die. Rest anyway?";
 
 const char *const CANT_DISMISS_LAST_CHAR = "You cannot dismiss your last character!";
 
+const char *const REMOVE_DELETE[2] = { "Remove", "Delete" };
+
+const char *const REMOVE_OR_DELETE_WHICH = "\x3l\t010\v005%s which character?";
+
+const char *const YOUR_PARTY_IS_FULL = "\v007Your party is full!";
+
 } // End of namespace Xeen

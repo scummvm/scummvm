@@ -532,7 +532,7 @@ Character *Town::doBlacksmithOptions(Character *c) {
 	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
-		if (_buttonValue < party._partyCount) {
+		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 		}
@@ -554,7 +554,7 @@ Character *Town::doGuildOptions(Character *c) {
 	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
-		if (_buttonValue < party._partyCount) {
+		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 
@@ -598,7 +598,7 @@ Character *Town::doTavernOptions(Character *c) {
 	case Common::KEYCODE_F6:
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
-		if (_buttonValue < party._partyCount) {
+		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 			_v21 = 0;
@@ -632,27 +632,27 @@ Character *Town::doTavernOptions(Character *c) {
 	case Common::KEYCODE_f: {
 		// Food
 		if (party._mazeId == (isDarkCc ? 29 : 28)) {
-			_v22 = party._partyCount * 15;
+			_v22 = party._activeParty.size() * 15;
 			_v23 = 10;
 			idx = 0;
 		} else if (isDarkCc && party._mazeId == 31) {
-			_v22 = party._partyCount * 60;
+			_v22 = party._activeParty.size() * 60;
 			_v23 = 100;
 			idx = 1;
 		} else if (!isDarkCc && party._mazeId == 30) {
-			_v22 = party._partyCount * 50;
+			_v22 = party._activeParty.size() * 50;
 			_v23 = 50;
 			idx = 1;
 		} else if (isDarkCc) {
-			_v22 = party._partyCount * 120;
+			_v22 = party._activeParty.size() * 120;
 			_v23 = 250;
 			idx = 2;
 		} else if (party._mazeId == 49) {
-			_v22 = party._partyCount * 120;
+			_v22 = party._activeParty.size() * 120;
 			_v23 = 100;
 			idx = 2;
 		} else {
-			_v22 = party._partyCount * 15;
+			_v22 = party._activeParty.size() * 15;
 			_v23 = 10;
 			idx = 0;
 		}
@@ -717,7 +717,7 @@ Character *Town::doTavernOptions(Character *c) {
 			party._mazeDirection = DIR_SOUTH;
 
 		party._priorMazeId = party._mazeId;
-		for (int idx = 0; idx < party._partyCount; ++idx) {
+		for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 			party._activeParty[idx]._savedMazeId = party._mazeId;
 			party._activeParty[idx]._xeenSide = map._loadDarkSide;
 		}
@@ -799,7 +799,7 @@ Character *Town::doTempleOptions(Character *c) {
 	case Common::KEYCODE_F6:
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
-		if (_buttonValue < party._partyCount) {
+		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 			_dayOfWeek = 0;
@@ -900,7 +900,7 @@ Character *Town::doTrainingOptions(Character *c) {
 	case Common::KEYCODE_F6:
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
-		if (_buttonValue < party._partyCount) {
+		if (_buttonValue < (int)party._activeParty.size()) {
 			_v2 = _buttonValue;
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);

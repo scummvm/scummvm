@@ -495,6 +495,11 @@ extern const char *const SOME_CHARS_MAY_DIE;
 
 extern const char *const CANT_DISMISS_LAST_CHAR;
 
+extern const char *const REMOVE_DELETE[2];
+extern const char *const REMOVE_OR_DELETE_WHICH;
+
+extern const char *const YOUR_PARTY_IS_FULL;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

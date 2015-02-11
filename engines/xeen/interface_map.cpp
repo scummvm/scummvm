@@ -4397,8 +4397,8 @@ void InterfaceMap::drawIndoors() {
 
 	// Check for any character shooting
 	_isShooting = false;
-	for (int i = 0; i < _vm->_party->_partyCount; ++i) {
-		if (_vm->_combat->_shooting[i])
+	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
+		if (_vm->_combat->_shooting[idx])
 			_isShooting = true;
 	}
 	
@@ -4475,8 +4475,8 @@ void InterfaceMap::drawOutdoors() {
 
 	// Check for any character shooting
 	_isShooting = false;
-	for (int i = 0; i < _vm->_party->_partyCount; ++i) {
-		if (_vm->_combat->_shooting[i])
+	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
+		if (_vm->_combat->_shooting[idx])
 			_isShooting = true;
 	}
 

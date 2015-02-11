@@ -426,7 +426,7 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 		result = ifProc(params[0], mask, _event->_opcode - 8, _charIndex - 1);
 	} else {
 		result = false;
-		for (int idx = 0; idx < party._partyCount && !result; ++idx) {
+		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && idx != _v2)) {
 				result = ifProc(params[0], mask, _event->_opcode - 8, idx);
 			}
@@ -488,7 +488,7 @@ void Scripts::cmdSetChar(Common::Array<byte> &params) {
 			return;
 		}
 	} else {
-		_charIndex = _vm->getRandomNumber(1, _vm->_party->_partyCount);
+		_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
 	}
 
 	_v2 = 1;
@@ -576,7 +576,7 @@ void Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 		result = ifProc(params[0], mask, _event->_opcode - OP_If1, _charIndex - 1);
 	} else {
 		result = false;
-		for (int idx = 0; idx < party._partyCount && !result; ++idx) {
+		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
 				result = ifProc(params[0], mask, _event->_opcode - OP_If1, idx);
 			}
@@ -726,7 +726,7 @@ void Scripts::cmdSetVar(Common::Array<byte> &params) {
 		party._activeParty[_charIndex - 1].setValue(params[0], val);
 	} else {
 		// Set value for entire party
-		for (int idx = 0; idx < party._partyCount; ++idx) {
+		for (int idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
 				party._activeParty[idx].setValue(params[0], val);
 			}
@@ -870,7 +870,7 @@ void Scripts::doEndGame2() {
 	Party &party = *_vm->_party;
 	int v2 = 0;
 
-	for (int idx = 0; idx < party._partyCount; ++idx) {
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		Character &player = party._activeParty[idx];
 		if (player.hasAward(77)) {
 			v2 = 2;

@@ -44,7 +44,7 @@ int WhoWill::execute(int message, int action, bool type) {
 	Town &town = *_vm->_town;
 	int numFrames;
 
-	if (party._partyCount <= 1)
+	if (party._activeParty.size() <= 1)
 		// Unless there's at least two characters, just return the first one
 		return 1;
 
@@ -53,7 +53,7 @@ int WhoWill::execute(int message, int action, bool type) {
 
 	Common::String actionStr = type ? map._events._text[action] : WHO_WILL_ACTIONS[action];
 	Common::String msg = Common::String::format(WHO_WILL, actionStr.c_str(),
-		WHO_ACTIONS[message], party._partyCount);
+		WHO_ACTIONS[message], party._activeParty.size());
 
 	screen._windows[36].open();
 	screen._windows[36].writeString(msg);
@@ -86,7 +86,7 @@ int WhoWill::execute(int message, int action, bool type) {
 			break;
 		} else if (_buttonValue >= 201 && _buttonValue <= 206) {
 			_buttonValue -= 201;
-			if (_buttonValue > party._partyCount)
+			if (_buttonValue > (int)party._activeParty.size())
 				continue;
 
 			if (party._activeParty[_buttonValue - 1].noActions())

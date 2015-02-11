@@ -433,7 +433,7 @@ void Interface::perform() {
 	case Common::KEYCODE_F5:
 	case Common::KEYCODE_F6:
 		_buttonValue -= Common::KEYCODE_F1;
-		if (_buttonValue < party._partyCount) {
+		if (_buttonValue < (int)party._activeParty.size()) {
 			CharacterInfo::show(_vm, _buttonValue);
 			if (party._stepped)
 				moveMonsters();

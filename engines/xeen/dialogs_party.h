@@ -25,19 +25,21 @@
 
 #include "common/array.h"
 #include "xeen/dialogs.h"
+#include "xeen/interface.h"
 #include "xeen/screen.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
 
-class PartyDialog : public ButtonContainer {
+class PartyDialog : public ButtonContainer, public PartyDrawer {
 private:
 	XeenEngine *_vm;
-	SpriteResource _iconSprites;
+	SpriteResource _uiSprites;
 	DrawStruct _faceDrawStructs[4];
 	Common::String _displayText;
+	Common::Array<int> _charList;
 
-	PartyDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	PartyDialog(XeenEngine *vm);
 
 	void execute();
 
@@ -49,9 +51,13 @@ private:
 
 	void drawParty(bool updateFlag);
 
-	void setupFaces(int firstDisplayChar, Common::Array<int> xeenSideChars, bool updateFlag);
+	void setupFaces(int firstDisplayChar, bool updateFlag);
 
-	void startingCharChanged(Common::Array<int> &charList, int firstDisplayChar);
+	void startingCharChanged(int firstDisplayChar);
+
+	void createChar();
+
+	int selectCharacter(bool isDelete, int firstDisplayChar);
 public:
 	static void show(XeenEngine *vm);
 };

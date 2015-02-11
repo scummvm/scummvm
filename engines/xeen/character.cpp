@@ -689,6 +689,8 @@ Character::Character():
 		_weapons(this), _armor(this), _accessories(this), _misc(this),
 		_items(_weapons, _armor, _accessories, _misc) {
 	clear();
+	_faceSprites = nullptr;
+	_rosterId = -1;
 }
 
 void Character::clear() {
@@ -734,8 +736,6 @@ void Character::clear() {
 	_armor.clear();
 	_accessories.clear();
 	_misc.clear();
-
-	_faceSprites = nullptr;
 }
 
 void Character::synchronize(Common::Serializer &s) {

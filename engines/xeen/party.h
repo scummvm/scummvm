@@ -44,6 +44,7 @@ enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
 #define TOTAL_CHARACTERS 30
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
+#define MAX_PARTY_COUNT 8
 #define TOTAL_STATS 7
 #define TOTAL_QUEST_ITEMS 85
 #define TOTAL_QUEST_FLAGS 56
@@ -64,9 +65,6 @@ private:
 	static XeenEngine *_vm;
 public:
 	// Dynamic data that's saved
-	int _partyCount;
-	int _realPartyCount;
-	int _partyMembers[8];
 	Direction _mazeDirection;
 	Common::Point _mazePosition;
 	int _mazeId;

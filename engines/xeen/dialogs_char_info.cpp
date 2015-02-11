@@ -282,7 +282,7 @@ void CharacterInfo::addButtons() {
 Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 	Condition condition = c.worstCondition();
 	Party &party = *_vm->_party;
-	int foodVal = party._food / party._partyCount / 3;
+	int foodVal = party._food / party._activeParty.size() / 3;
 
 	int totalResist =
 		c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary +
@@ -498,7 +498,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 	case 18: {
 		// Food
-		int food = (party._food / party._partyCount) / 3;
+		int food = (party._food / party._activeParty.size()) / 3;
 		msg = Common::String::format(FOOD_TEXT, STAT_NAMES[attrib],
 			party._food, food, food != 1 ? "s" : "");
 		break;

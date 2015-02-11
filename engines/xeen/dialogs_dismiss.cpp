@@ -71,7 +71,7 @@ void Dismiss::execute() {
 					w.open();
 				} else {
 					Character tempChar = party._activeParty[_buttonValue];
-					int charIndex = party._partyMembers[_buttonValue];
+					int charIndex = party._activeParty[_buttonValue]._rosterId;
 
 //					party.sortParty();
 

@@ -42,7 +42,7 @@ void QuickReferenceDialog::execute() {
 	events.setCursor(0);
 
 	for (uint idx = 0; idx < (combat._globalCombat == 2 ? party._combatParty.size() :
-			party._partyCount); ++idx) {
+			party._activeParty.size()); ++idx) {
 		Character &c = combat._globalCombat == 2 ? *party._combatParty[idx] :
 			party._activeParty[idx];
 		Condition condition = c.worstCondition();
@@ -59,7 +59,7 @@ void QuickReferenceDialog::execute() {
 		);
 	}
 
-	int food = (party._food / party._partyCount) / 3;
+	int food = (party._food / party._activeParty.size()) / 3;
 	Common::String msg = Common::String::format(QUICK_REFERENCE,
 		lines[0].c_str(), lines[1].c_str(), lines[2].c_str(),
 		lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),

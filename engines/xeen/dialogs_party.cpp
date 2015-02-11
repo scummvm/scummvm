@@ -30,7 +30,11 @@
 
 namespace Xeen {
 
-	void PartyDialog::show(XeenEngine *vm) {
+PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(), 
+		PartyDrawer(vm), _vm(vm) {
+}
+
+void PartyDialog::show(XeenEngine *vm) {
 	PartyDialog *dlg = new PartyDialog(vm);
 	dlg->execute();
 	delete dlg;
@@ -41,6 +45,7 @@ void PartyDialog::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
 	bool modeFlag = false;
 	int startingChar = 0;
 
@@ -49,31 +54,29 @@ void PartyDialog::execute() {
 
 	while (!_vm->shouldQuit()) {
 		_vm->_mode = MODE_1;
-		Common::Array<int> xeenSideChars;
-
-		party.loadActiveParty();
 
 		// Build up a list of characters on the same Xeen side being loaded
+		_charList.clear();
 		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
 			Character &player = party._roster[i];
 			if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
 				continue;
 
-			xeenSideChars.push_back(i);
+			_charList.push_back(i);
 		}
 
 		Window &w = screen._windows[11];
 		w.open();
-		setupFaces(startingChar, xeenSideChars, false);
+		setupFaces(startingChar, false);
 		w.writeString(_displayText);
 		w.drawList(&_faceDrawStructs[0], 4);
 
-		_iconSprites.draw(w, 0, Common::Point(16, 100));
-		_iconSprites.draw(w, 2, Common::Point(52, 100));
-		_iconSprites.draw(w, 4, Common::Point(87, 100));
-		_iconSprites.draw(w, 6, Common::Point(122, 100));
-		_iconSprites.draw(w, 8, Common::Point(157, 100));
-		_iconSprites.draw(w, 10, Common::Point(192, 100));
+		_uiSprites.draw(w, 0, Common::Point(16, 100));
+		_uiSprites.draw(w, 2, Common::Point(52, 100));
+		_uiSprites.draw(w, 4, Common::Point(87, 100));
+		_uiSprites.draw(w, 6, Common::Point(122, 100));
+		_uiSprites.draw(w, 8, Common::Point(157, 100));
+		_uiSprites.draw(w, 10, Common::Point(192, 100));
 		screen.loadPalette("mm4.pal");
 
 		if (modeFlag) {
@@ -104,7 +107,7 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_SPACE:
 			case Common::KEYCODE_e:
 			case Common::KEYCODE_x:
-				if (party._partyCount == 0) {
+				if (party._activeParty.size() == 0) {
 					ErrorScroll::show(_vm, NO_ONE_TO_ADVENTURE_WITH);
 				} else {
 					if (_vm->_mode != MODE_0) {
@@ -119,7 +122,6 @@ void PartyDialog::execute() {
 					}
 
 					w.close();
-					party._realPartyCount = party._partyCount;
 					party._mazeId = party._priorMazeId;
 
 					party.copyPartyToRoster();
@@ -136,7 +138,7 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_F6:
 				// Show character info
 				_buttonValue -= Common::KEYCODE_F1;
-				if (_buttonValue < party._partyCount)
+				if (_buttonValue < (int)party._activeParty.size())
 					CharacterInfo::show(_vm, _buttonValue);
 				break;
 
@@ -145,15 +147,49 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_3:
 			case Common::KEYCODE_4:
 				_buttonValue -= Common::KEYCODE_1 - 7;
+				if ((_buttonValue - 7 + startingChar) < (int)_charList.size()) {
+					// Check if the selected character is already in the party
+					uint idx = 0;
+					for (; idx < party._activeParty.size(); ++idx) {
+						if (_charList[_buttonValue - 7 + startingChar] ==
+							party._activeParty[idx]._rosterId)
+							break;
+					}
+
+					if (idx == party._activeParty.size()) {
+						sound.playFX(21);
+						ErrorScroll::show(_vm, YOUR_PARTY_IS_FULL);
+					} else {
+						party._activeParty.push_back(party._roster[
+							_charList[_buttonValue - 7 + startingChar]]);
+						error("TODO");
+					}
+				}
+				// TODO
+				break;
+
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+				if (startingChar > 0) {
+					startingChar -= 4;
+					startingCharChanged(startingChar);
+				}
+				break;
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
 				// TODO
 				break;
 
 			case Common::KEYCODE_c:
-				if (xeenSideChars.size() == 24) {
+				// Create
+				if (_charList.size() == XEEN_TOTAL_CHARACTERS) {
 					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
 				} else {
 					screen.fadeOut(4);
 					w.close();
+
+					createChar();
+
 					party.copyPartyToRoster();
 					_vm->_saves->writeCharFile();
 					screen.fadeOut(4);
@@ -162,25 +198,20 @@ void PartyDialog::execute() {
 				}
 				break;
 			case Common::KEYCODE_d:
+				// Delete character
 				break;
 			case Common::KEYCODE_r:
-				if (party._partyCount > 0) {
-					// TODO
+				// Remove character
+				if (party._activeParty.size() > 0) {
+					int charButtonValue = selectCharacter(false, startingChar);
+					if (charButtonValue != 0) {
+						party.copyPartyToRoster();
+						party._activeParty.remove_at(charButtonValue - Common::KEYCODE_F1);
+					}
+					startingCharChanged(startingChar);
 				}
 				break;
-
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP8:
-				if (startingChar > 0) {
-					startingChar -= 4;
-					startingCharChanged(xeenSideChars, startingChar);
-				}
-				// TODO
-				break;
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP2:
-				// TODO
-				break;
+		
 			default:
 				break;
 			}
@@ -189,18 +220,18 @@ void PartyDialog::execute() {
 }
 
 void PartyDialog::loadButtons() {
-	_iconSprites.load("inn.icn");
-	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_iconSprites);
-	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_iconSprites);
-	addButton(Common::Rect(87, 100, 111, 120), Common::KEYCODE_d, &_iconSprites);
-	addButton(Common::Rect(122, 100, 146, 120), Common::KEYCODE_r, &_iconSprites);
-	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_iconSprites);
-	addButton(Common::Rect(192, 100, 116, 120), Common::KEYCODE_x, &_iconSprites);
-	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE, &_iconSprites, false);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_iconSprites, false);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_iconSprites, false);
-	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3, &_iconSprites, false);
-	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4, &_iconSprites, false);
+	_uiSprites.load("inn.icn");
+	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_uiSprites);
+	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_uiSprites);
+	addButton(Common::Rect(87, 100, 111, 120), Common::KEYCODE_d, &_uiSprites);
+	addButton(Common::Rect(122, 100, 146, 120), Common::KEYCODE_r, &_uiSprites);
+	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_uiSprites);
+	addButton(Common::Rect(192, 100, 116, 120), Common::KEYCODE_x, &_uiSprites);
+	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE, &_uiSprites, false);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_uiSprites, false);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_uiSprites, false);
+	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3, &_uiSprites, false);
+	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4, &_uiSprites, false);
 }
 
 void PartyDialog::initDrawStructs() {
@@ -218,7 +249,7 @@ void PartyDialog::setupBackground() {
 /**
  * Sets up the faces for display in the party dialog
  */
-void PartyDialog::setupFaces(int firstDisplayChar, Common::Array<int> xeenSideChars, bool updateFlag) {
+void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	Party &party = *_vm->_party;
 	Common::String charNames[4];
 	Common::String charRaces[4];
@@ -228,8 +259,8 @@ void PartyDialog::setupFaces(int firstDisplayChar, Common::Array<int> xeenSideCh
 	int charId;
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
-		charId = (firstDisplayChar + posIndex) >= (int)xeenSideChars.size() ? -1 :
-			xeenSideChars[firstDisplayChar + posIndex];
+		charId = (firstDisplayChar + posIndex) >= (int)_charList.size() ? -1 :
+			_charList[firstDisplayChar + posIndex];
 		bool isInParty = party.isInParty(charId);
 
 		if (charId == -1) {
@@ -240,7 +271,7 @@ void PartyDialog::setupFaces(int firstDisplayChar, Common::Array<int> xeenSideCh
 
 		Common::Rect &b = _buttons[7 + posIndex]._bounds;
 		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
-		Character &ps = party._roster[xeenSideChars[firstDisplayChar + posIndex]];
+		Character &ps = party._roster[_charList[firstDisplayChar + posIndex]];
 		charNames[posIndex] = isInParty ? IN_PARTY : ps._name;
 		charRaces[posIndex] = RACE_NAMES[ps._race];
 		charSex[posIndex] = SEX_NAMES[ps._sex];
@@ -251,7 +282,7 @@ void PartyDialog::setupFaces(int firstDisplayChar, Common::Array<int> xeenSideCh
 
 	// Set up the sprite set to use for each face
 	for (int posIndex = 0; posIndex < 4; ++posIndex) {
-		if ((firstDisplayChar + posIndex) >= (int)xeenSideChars.size())
+		if ((firstDisplayChar + posIndex) >= (int)_charList.size())
 			_faceDrawStructs[posIndex]._sprites = nullptr;
 		else
 			_faceDrawStructs[posIndex]._sprites = party._roster[posIndex]._faceSprites;
@@ -265,9 +296,91 @@ void PartyDialog::setupFaces(int firstDisplayChar, Common::Array<int> xeenSideCh
 		);
 }
 
-void PartyDialog::startingCharChanged(Common::Array<int> &charList, int firstDisplayChar) {
+void PartyDialog::startingCharChanged(int firstDisplayChar) {
+	Window &w = _vm->_screen->_windows[11];
+
+	setupFaces(firstDisplayChar, true);
+	w.writeString(_displayText);
+	w.drawList(_faceDrawStructs, 4);
+
+	_uiSprites.draw(w, 0, Common::Point(16, 100));
+	_uiSprites.draw(w, 2, Common::Point(52, 100));
+	_uiSprites.draw(w, 4, Common::Point(87, 100));
+	_uiSprites.draw(w, 6, Common::Point(122, 100));
+	_uiSprites.draw(w, 8, Common::Point(157, 100));
+	_uiSprites.draw(w, 10, Common::Point(192, 100));
+
+	w.update();
+}
+
+void PartyDialog::createChar() {
+	error("TODO: createChar");
+}
+
+int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
+	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
-	// TODO
+	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[28];
+
+	SpriteResource iconSprites;
+	iconSprites.load("esc.icn");
+
+	w.setBounds(Common::Rect(50, isDelete ? 112 : 76, 266, isDelete ? 148 : 112));
+	w.open();
+	w.writeString(Common::String::format(REMOVE_OR_DELETE_WHICH,
+		REMOVE_DELETE[isDelete ? 1 : 0]));
+	iconSprites.draw(w, 0, Common::Point(225, isDelete ? 120 : 84));
+	w.update();
+
+	saveButtons();
+	addButton(Common::Rect(225, isDelete ? 120 : 84, 249, isDelete ? 140 : 104), 
+		Common::KEYCODE_ESCAPE, &iconSprites);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &iconSprites, false);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &iconSprites, false);
+	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3, &iconSprites, false);
+	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4, &iconSprites, false);
+
+	int result = -1, v;
+	while (!_vm->shouldQuit() && result == -1) {
+		_buttonValue = 0;
+		while (!_vm->shouldQuit() && !_buttonValue) {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+		}
+
+		switch (_buttonValue) {
+		case Common::KEYCODE_ESCAPE:
+			result = 0;
+			break;
+
+		case Common::KEYCODE_F1:
+		case Common::KEYCODE_F2:
+		case Common::KEYCODE_F3:
+		case Common::KEYCODE_F4:
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_F6:
+			v = _buttonValue - Common::KEYCODE_F1;
+			if (v < (int)party._activeParty.size())
+				result = _buttonValue;
+			break;
+
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_2:
+		case Common::KEYCODE_3:
+		case Common::KEYCODE_4:
+			v = _buttonValue - Common::KEYCODE_1;
+			if ((firstDisplayChar + v) < (int)_charList.size())
+				result = _buttonValue;
+
+		default:
+			break;
+		}
+	} 
+
+	w.close();
+	restoreButtons();
+	return result == -1 ? 0 : result;
 }
 
 } // End of namespace Xeen

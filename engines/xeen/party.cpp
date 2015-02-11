@@ -36,6 +36,9 @@ Roster::Roster() {
 	resize(TOTAL_CHARACTERS);
 
 	for (int idx = 0; idx < TOTAL_CHARACTERS; ++idx) {
+		// Set the index of the character in the roster list
+		operator[](idx)._rosterId = idx;
+
 		if (idx < XEEN_TOTAL_CHARACTERS) {
 			// Load new character resource
 			Common::String name = Common::String::format("char%02d.fac", idx + 1);
@@ -48,7 +51,7 @@ Roster::Roster() {
 }
 
 void Roster::synchronize(Common::Serializer &s) {
-	for (uint i = 0; i < 30; ++i)
+	for (uint i = 0; i < TOTAL_CHARACTERS; ++i)
 		(*this)[i].synchronize(s);
 }
 
@@ -58,9 +61,6 @@ XeenEngine *Party::_vm;
 
 Party::Party(XeenEngine *vm) {
 	_vm = vm;
-	_partyCount = 0;
-	_realPartyCount = 0;
-	Common::fill(&_partyMembers[0], &_partyMembers[8], 0);
 	_mazeDirection = DIR_NORTH;
 	_mazeId = _priorMazeId = 0;
 	_levitateActive = false;
@@ -120,11 +120,25 @@ Party::Party(XeenEngine *vm) {
 void Party::synchronize(Common::Serializer &s) {
 	byte dummy[30];
 	Common::fill(&dummy[0], &dummy[30], 0);
+	int partyCount = _activeParty.size();
 
-	s.syncAsByte(_partyCount);
-	s.syncAsByte(_realPartyCount);
-	for (int i = 0; i < 8; ++i)
-		s.syncAsByte(_partyMembers[i]);
+	int8 partyMembers[MAX_PARTY_COUNT];
+	if (s.isSaving()) {
+		Common::fill(&partyMembers[0], &partyMembers[8], -1);
+		for (uint idx = 0; idx < _activeParty.size(); ++idx)
+			partyMembers[idx] = _activeParty[idx]._rosterId;
+	} else {
+		_activeParty.clear();
+	}
+
+	s.syncAsByte(partyCount);	// Party count
+	s.syncAsByte(partyCount);	// Real party count
+	for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
+		s.syncAsByte(partyMembers[idx]);
+		if (s.isLoading() && idx < partyCount && partyMembers[idx] != -1)
+			_activeParty.push_back(_roster[partyMembers[idx]]);
+	}
+
 	s.syncAsByte(_mazeDirection);
 	s.syncAsByte(_mazePosition.x);
 	s.syncAsByte(_mazePosition.y);
@@ -199,10 +213,7 @@ void Party::synchronize(Common::Serializer &s) {
 }
 
 void Party::loadActiveParty() {
-	_activeParty.resize(_partyCount);
-	for (int i = 0; i < _partyCount; ++i) {
-		_activeParty[i] = _roster[_partyMembers[i]];
-	}
+	// No implementation needed
 }
 
 bool Party::checkSkill(Skill skillId) {
@@ -235,17 +246,20 @@ bool Party::checkSkill(Skill skillId) {
 }
 
 bool Party::isInParty(int charId) {
-	for (int i = 0; i < 8; ++i) {
-		if (_partyMembers[i] == charId)
+	for (uint i = 0; i < _activeParty.size(); ++i) {
+		if (_activeParty[i]._rosterId == charId)
 			return true;
 	}
 
 	return false;
 }
 
+/**
+ * Copy the currently active party characters' data back to the roster
+ */
 void Party::copyPartyToRoster() {
-	for (int i = 0; i < _partyCount; ++i) {
-		_roster[_partyMembers[i]] = _activeParty[i];
+	for (uint i = 0; i < _activeParty.size(); ++i) {
+		_roster[_activeParty[i]._rosterId] = _activeParty[i];
 	}
 }
 
@@ -257,7 +271,7 @@ void Party::changeTime(int numMinutes) {
 	bool killed = false;
 
 	if (((_minutes + numMinutes) / 480) != (_minutes / 480)) {
-		for (int idx = 0; idx < _partyCount; ++idx) {
+		for (int idx = 0; idx < (int)_activeParty.size(); ++idx) {
 			Character &player = _activeParty[idx];
 
 			if (!player._conditions[DEAD] && !player._conditions[STONED] &&
@@ -333,7 +347,7 @@ void Party::changeTime(int numMinutes) {
 	// Increment the time
 	addTime(numMinutes);
 
-	for (int idx = 0; idx < _partyCount; ++idx) {
+	for (int idx = 0; idx < (int)_activeParty.size(); ++idx) {
 		Character &player = _activeParty[idx];
 
 		if (player._conditions[CONFUSED] && _vm->getRandomNumber(2) == 1) {
@@ -383,7 +397,7 @@ void Party::addTime(int numMinutes) {
 			if (_rested || _vm->_mode == MODE_SLEEPING) {
 				_rested = false;
 			} else {
-				for (int idx = 0; idx < _partyCount; ++idx) {
+				for (int idx = 0; idx < (int)_activeParty.size(); ++idx) {
 					if (_activeParty[idx]._conditions[WEAK] >= 0)
 						_activeParty[idx]._conditions[WEAK]++;
 				}
@@ -399,7 +413,7 @@ void Party::addTime(int numMinutes) {
 }
 
 void Party::resetTemps() {
-	for (int idx = 0; idx < _partyCount; ++idx) {
+	for (int idx = 0; idx < (int)_activeParty.size(); ++idx) {
 		Character &player = _activeParty[idx];
 
 		player._magicResistence._temporary = 0;

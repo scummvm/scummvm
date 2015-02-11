@@ -260,6 +260,7 @@ public:
 	int _currentCombatSpell;
 
 	SpriteResource *_faceSprites;
+	int _rosterId;
 public:
 	Character();
 

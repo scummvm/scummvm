@@ -33,6 +33,7 @@ namespace Xeen {
  */
 void ButtonContainer::saveButtons() {
 	_savedButtons.push(_buttons);
+	clearButtons();
 }
 
 /*
