@@ -216,7 +216,6 @@ int InventoryManager::newDisplayInv() {
 }
 
 int InventoryManager::displayInv() {
-	warning("TODO: displayInv");
 	int *inv = (int *) malloc (Martian::INVENTORY_SIZE * sizeof(int));
 
 	for (int i = 0; i < Martian::INVENTORY_SIZE; i++)
