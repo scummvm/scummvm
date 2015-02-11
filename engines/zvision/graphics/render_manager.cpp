@@ -971,8 +971,6 @@ void RenderManager::bkgFill(uint8 r, uint8 g, uint8 b) {
 void RenderManager::timedMessage(const Common::String &str, uint16 milsecs) {
 	uint16 msgid = createSubArea();
 	updateSubArea(msgid, str);
-	processSubs(0);
-	renderSceneToScreen();
 	deleteSubArea(msgid, milsecs);
 }
 
