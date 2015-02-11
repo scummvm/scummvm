@@ -975,10 +975,11 @@ void RenderManager::timedMessage(const Common::String &str, uint16 milsecs) {
 }
 
 bool RenderManager::askQuestion(const Common::String &str) {
-	uint16 msgid = createSubArea();
-	updateSubArea(msgid, str);
-	processSubs(0);
-	renderSceneToScreen();
+	Graphics::Surface textSurface;
+	textSurface.create(_subtitleArea.width(), _subtitleArea.height(), _engine->_resourcePixelFormat);
+	_engine->getTextRenderer()->drawTextWithWordWrapping(str, textSurface);
+	copyToScreen(textSurface, _subtitleArea, 0, 0);
+
 	_engine->stopClock();
 
 	int result = 0;
@@ -1029,7 +1030,14 @@ bool RenderManager::askQuestion(const Common::String &str) {
 		else
 			_system->delayMillis(66);
 	}
-	deleteSubArea(msgid);
+
+	// Draw over the text in order to clear it
+	textSurface.fillRect(Common::Rect(_subtitleArea.width(), _subtitleArea.height()), 0);
+	copyToScreen(textSurface, _subtitleArea, 0, 0);
+
+	// Free the surface
+	textSurface.free();
+
 	_engine->startClock();
 	return result == 2;
 }
