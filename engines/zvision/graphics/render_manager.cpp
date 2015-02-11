@@ -753,13 +753,12 @@ void RenderManager::processSubs(uint16 deltatime) {
 		for (SubtitleMap::iterator it = _subsList.begin(); it != _subsList.end(); it++) {
 			OneSubtitle *sub = &it->_value;
 			if (sub->txt.size()) {
-				Graphics::Surface *rndr = new Graphics::Surface();
-				rndr->create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
-				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, *rndr);
+				Graphics::Surface subtitleSurface;
+				subtitleSurface.create(sub->r.width(), sub->r.height(), _engine->_resourcePixelFormat);
+				_engine->getTextRenderer()->drawTextWithWordWrapping(sub->txt, subtitleSurface);
 				Common::Rect empty;
-				blitSurfaceToSurface(*rndr, empty, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
-				rndr->free();
-				delete rndr;
+				blitSurfaceToSurface(subtitleSurface, empty, _subtitleSurface, sub->r.left - _subtitleArea.left + _workingWindow.left, sub->r.top - _subtitleArea.top + _workingWindow.top);
+				subtitleSurface.free();
 			}
 			sub->redraw = false;
 		}
