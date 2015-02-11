@@ -33,7 +33,9 @@ Scene::Scene(GfxDriver *gfx) :
 		_gfx(gfx),
 		_fov(45.0),
 		_nearClipPlane(100.0),
-		_farClipPlane(64000.0) {
+		_farClipPlane(64000.0),
+		_scollXFactor(0.0),
+		_scollYFactor(0.0) {
 }
 
 Scene::~Scene() {
@@ -48,12 +50,49 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 	_nearClipPlane = nearClipPlane;
 	_farClipPlane = farClipPlane;
 
-	_perspectiveMatrix = Math::makePerspectiveMatrix(_fov, 1.0, _nearClipPlane, _farClipPlane);
+	float xmax, ymax;
+	computeSymmetricPerspectiveRect(nullptr, &xmax, nullptr, &ymax);
+
+	// The amounts by which translate to clipping planes to account for one pixel
+	// of camera scrolling movement
+	_scollXFactor = xmax / 640.0 * 2;
+	_scollYFactor = ymax / 365.0 * 2;
+
 	_lookAtMatrix = Math::makeLookAtMatrix(_cameraPosition, _cameraPosition + _cameraLookDirection, Math::Vector3d(0.0, 0.0, 1.0));
 }
 
 void Scene::scrollCamera(const Common::Rect &viewport) {
 	_viewport = viewport;
+
+	// The perspective matrix is a symmetric perspective matrix as returned
+	// by Math::makePerspectiveMatrix with the clipping rect translated
+	// to account for the camera scrolling.
+
+	float xmin, xmax, ymin, ymax;
+	computeSymmetricPerspectiveRect(&xmin, &xmax, &ymin, &ymax);
+
+	int32 distanceToCenterX = _viewport.left + _viewport.width() / 2 - _viewSize.width() / 2;
+	int32 distanceToCenterY = _viewport.top + _viewport.height() / 2 - _viewSize.height() / 2;
+
+	xmin += distanceToCenterX * _scollXFactor;
+	xmax += distanceToCenterX * _scollXFactor;
+	ymin += distanceToCenterY * _scollYFactor;
+	ymax += distanceToCenterY * _scollYFactor;
+
+	_perspectiveMatrix = Math::makeFrustumMatrix(xmin, xmax, ymin, ymax, _nearClipPlane, _farClipPlane);
+}
+
+void Scene::computeSymmetricPerspectiveRect(float *xmin, float *xmax, float *ymin, float *ymax) {
+	float aspectRatio = 1.0;
+	float ymaxValue = _nearClipPlane * tan(_fov * M_PI / 360.0);
+	float yminValue = -ymaxValue;
+	float xminValue = yminValue / aspectRatio;
+	float xmaxValue = ymaxValue / aspectRatio;
+
+	if (xmin) *xmin = xminValue;
+	if (xmax) *xmax = xmaxValue;
+	if (ymin) *ymin = yminValue;
+	if (ymax) *ymax = ymaxValue;
 }
 
 void Scene::render(RenderEntryArray renderEntries) {

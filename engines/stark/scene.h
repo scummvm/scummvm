@@ -57,6 +57,8 @@ public:
 	void scrollCamera(const Common::Rect &viewport);
 
 private:
+	void computeSymmetricPerspectiveRect(float *xmin, float *xmax, float *ymin, float *ymax);
+
 	GfxDriver *_gfx;
 
 	Math::Vector3d _cameraPosition;
@@ -66,6 +68,9 @@ private:
 	Common::Rect _viewport;
 	float _nearClipPlane;
 	float _farClipPlane;
+
+	float _scollXFactor;
+	float _scollYFactor;
 
 	Math::Matrix4 _perspectiveMatrix;
 	Math::Matrix4 _lookAtMatrix;
