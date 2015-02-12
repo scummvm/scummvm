@@ -67,6 +67,8 @@ public:
 	void restoreButtons();
 
 	void addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw = true);
+
+	void addPartyButtons(XeenEngine *vm);
 };
 
 class SettingsBaseDialog : public ButtonContainer {

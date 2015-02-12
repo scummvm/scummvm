@@ -51,6 +51,15 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResou
 	_buttons.push_back(UIButton(bounds, val, sprites, draw));
 }
 
+void ButtonContainer::addPartyButtons(XeenEngine *vm) {
+	Party &party = *vm->_party;
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		addButton(Common::Rect(CHAR_FACES_X[idx], 150, CHAR_FACES_X[idx] + 32, 182),
+			Common::KEYCODE_F1 + idx, nullptr, false);
+	}
+}
+
 bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
 	_buttonValue = 0;

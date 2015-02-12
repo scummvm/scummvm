@@ -44,7 +44,7 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 
 	switch (waitType) {
 	case WT_FREEZE_WAIT:
-		while (!_vm->shouldQuit() && !events.isKeyPending())
+		while (!_vm->shouldQuit() && !events.isKeyMousePressed())
 			events.pollEventsAndWait();
 
 		events.clearEvents();
@@ -71,6 +71,8 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 	default:
 		break;
 	}
+
+	w.close();
 }
 
 /*------------------------------------------------------------------------*/

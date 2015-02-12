@@ -56,7 +56,8 @@ void PartyDialog::execute() {
 	while (!_vm->shouldQuit()) {
 		_vm->_mode = MODE_1;
 
-		// Build up a list of characters on the same Xeen side being loaded
+		// Build up a list of available characters in the Roster that are on the
+		// same side of Xeen as the player is currently on
 		_charList.clear();
 		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
 			Character &player = party._roster[i];
@@ -159,28 +160,37 @@ void PartyDialog::execute() {
 							break;
 					}
 
+					// Only add the character if they're not already in the party
 					if (idx == party._activeParty.size()) {
-						sound.playFX(21);
-						ErrorScroll::show(_vm, YOUR_PARTY_IS_FULL);
-					} else {
-						party._activeParty.push_back(party._roster[
-							_charList[_buttonValue - 7 + startingChar]]);
-						error("TODO");
+						if (party._activeParty.size() == MAX_ACTIVE_PARTY) {
+							sound.playFX(21);
+							ErrorScroll::show(_vm, YOUR_PARTY_IS_FULL);
+						} else {
+							// Add the character to the active party
+							party._activeParty.push_back(party._roster[
+								_charList[_buttonValue - 7 + startingChar]]);
+								startingCharChanged(startingChar);
+						}
 					}
 				}
-				// TODO
 				break;
 
 			case Common::KEYCODE_UP:
 			case Common::KEYCODE_KP8:
+				// Up arrow
 				if (startingChar > 0) {
 					startingChar -= 4;
 					startingCharChanged(startingChar);
 				}
 				break;
+
 			case Common::KEYCODE_DOWN:
 			case Common::KEYCODE_KP2:
-				// TODO
+				// Down arrow
+				if (startingChar < (_charList.size() - 4)) {
+					startingChar += 4;
+					startingCharChanged(startingChar);
+				}
 				break;
 
 			case Common::KEYCODE_c:
@@ -231,10 +241,6 @@ void PartyDialog::loadButtons() {
 	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_uiSprites);
 	addButton(Common::Rect(192, 100, 216, 120), Common::KEYCODE_x, &_uiSprites);
 	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE, &_uiSprites, false);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_uiSprites, false);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_uiSprites, false);
-	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3, &_uiSprites, false);
-	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4, &_uiSprites, false);
 }
 
 void PartyDialog::initDrawStructs() {
@@ -260,6 +266,15 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	Common::String charClasses[4];
 	int posIndex;
 	int charId;
+
+	// Reset the button areas for the display character images
+	while (_buttons.size() > 7)
+		_buttons.remove_at(7);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_uiSprites, false);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_uiSprites, false);
+	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3, &_uiSprites, false);
+	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4, &_uiSprites, false);
+
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
 		charId = (firstDisplayChar + posIndex) >= (int)_charList.size() ? -1 :
@@ -304,7 +319,7 @@ void PartyDialog::startingCharChanged(int firstDisplayChar) {
 	Window &w = _vm->_screen->_windows[11];
 
 	setupFaces(firstDisplayChar, true);
-	w.writeString(_partyDetails);
+	w.writeString(Common::String::format(PARTY_DIALOG_TEXT, _partyDetails.c_str()));
 	w.drawList(_faceDrawStructs, 4);
 
 	_uiSprites.draw(w, 0, Common::Point(16, 100));
@@ -344,6 +359,7 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &iconSprites, false);
 	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3, &iconSprites, false);
 	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4, &iconSprites, false);
+	addPartyButtons(_vm);
 
 	int result = -1, v;
 	while (!_vm->shouldQuit() && result == -1) {
@@ -364,18 +380,23 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 		case Common::KEYCODE_F4:
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
-			v = _buttonValue - Common::KEYCODE_F1;
-			if (v < (int)party._activeParty.size())
-				result = _buttonValue;
+			if (!isDelete) {
+				v = _buttonValue - Common::KEYCODE_F1;
+				if (v < (int)party._activeParty.size())
+					result = _buttonValue;
+			}
 			break;
 
 		case Common::KEYCODE_1:
 		case Common::KEYCODE_2:
 		case Common::KEYCODE_3:
 		case Common::KEYCODE_4:
-			v = _buttonValue - Common::KEYCODE_1;
-			if ((firstDisplayChar + v) < (int)_charList.size())
-				result = _buttonValue;
+			if (isDelete) {
+				v = _buttonValue - Common::KEYCODE_1;
+				if ((firstDisplayChar + v) < (int)_charList.size())
+					result = _buttonValue;
+			}
+			break;
 
 		default:
 			break;
