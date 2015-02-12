@@ -55,6 +55,10 @@ void OpenGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_screenHeight = screenH;
 }
 
+void OpenGLGfxDriver::setGameViewport() {
+	glViewport(0, _screenHeight - kGameViewportHeight - kTopBorderHeight, _screenWidth, kGameViewportHeight);
+}
+
 void OpenGLGfxDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -80,8 +84,6 @@ void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 	// Draw the whole surface by default
 	if (rect.isEmpty())
 		rect = Common::Rect(surface->w, surface->h);
-
-	dest += Common::Point(0, 36); // Top border
 
 	start2DMode();
 

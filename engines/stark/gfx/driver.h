@@ -41,6 +41,8 @@ public:
 
 	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
+	virtual void setGameViewport() = 0;
+
 	virtual void setupPerspective(const Math::Matrix4 &projectionMatrix) = 0;
 	virtual void setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) = 0;
 
@@ -50,6 +52,9 @@ public:
 	virtual void drawSurface(const Graphics::Surface *surface, Common::Point dest = Common::Point(), Common::Rect rect = Common::Rect()) = 0;
 
 	virtual void set3DMode() = 0;
+
+	static const int32 kTopBorderHeight = 36;
+	static const int32 kGameViewportHeight = 365;
 
 protected:
 	int _screenWidth;

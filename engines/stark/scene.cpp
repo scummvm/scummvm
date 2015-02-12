@@ -33,9 +33,7 @@ Scene::Scene(GfxDriver *gfx) :
 		_gfx(gfx),
 		_fov(45.0),
 		_nearClipPlane(100.0),
-		_farClipPlane(64000.0),
-		_scollXFactor(0.0),
-		_scollYFactor(0.0) {
+		_farClipPlane(64000.0) {
 }
 
 Scene::~Scene() {
@@ -50,44 +48,38 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 	_nearClipPlane = nearClipPlane;
 	_farClipPlane = farClipPlane;
 
-	float xmax, ymax;
-	computeSymmetricPerspectiveRect(nullptr, &xmax, nullptr, &ymax);
-
-	// The amounts by which translate to clipping planes to account for one pixel
-	// of camera scrolling movement
-	_scollXFactor = xmax / 640.0 * 2;
-	_scollYFactor = ymax / 365.0 * 2;
-
 	_lookAtMatrix = Math::makeLookAtMatrix(_cameraPosition, _cameraPosition + _cameraLookDirection, Math::Vector3d(0.0, 0.0, 1.0));
 }
 
 void Scene::scrollCamera(const Common::Rect &viewport) {
 	_viewport = viewport;
 
-	// The perspective matrix is a symmetric perspective matrix as returned
-	// by Math::makePerspectiveMatrix with the clipping rect translated
-	// to account for the camera scrolling.
-
 	float xmin, xmax, ymin, ymax;
-	computeSymmetricPerspectiveRect(&xmin, &xmax, &ymin, &ymax);
+	computeClippingRect(&xmin, &xmax, &ymin, &ymax);
 
-	int32 distanceToCenterX = _viewport.left + _viewport.width() / 2 - _viewSize.width() / 2;
-	int32 distanceToCenterY = _viewport.top + _viewport.height() / 2 - _viewSize.height() / 2;
+	// The amounts by which translate to clipping planes to account for one pixel
+	// of camera scrolling movement
+	float scollXFactor = (xmax - xmin) / _viewport.width();
+	float scollYFactor = (ymax - ymin) / _viewport.height();
 
-	xmin += distanceToCenterX * _scollXFactor;
-	xmax += distanceToCenterX * _scollXFactor;
-	ymin += distanceToCenterY * _scollYFactor;
-	ymax += distanceToCenterY * _scollYFactor;
+	int32 distanceToRight = _viewport.right - _viewSize.width();
+	int32 distanceToBottom = _viewport.bottom - _viewSize.height();
+
+	xmin += distanceToRight * scollXFactor;
+	xmax += distanceToRight * scollXFactor;
+	ymin += distanceToBottom * scollYFactor;
+	ymax += distanceToBottom * scollYFactor;
 
 	_perspectiveMatrix = Math::makeFrustumMatrix(xmin, xmax, ymin, ymax, _nearClipPlane, _farClipPlane);
 }
 
-void Scene::computeSymmetricPerspectiveRect(float *xmin, float *xmax, float *ymin, float *ymax) {
-	float aspectRatio = 1.0;
-	float ymaxValue = _nearClipPlane * tan(_fov * M_PI / 360.0);
-	float yminValue = -ymaxValue;
-	float xminValue = yminValue / aspectRatio;
-	float xmaxValue = ymaxValue / aspectRatio;
+void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax) {
+	float aspectRatio = _viewSize.width() / (float) _viewSize.height();
+	float xmaxValue = _nearClipPlane * tan(_fov * M_PI / 360.0);
+	float ymaxValue = xmaxValue / aspectRatio;
+
+	float xminValue = xmaxValue - 2 * xmaxValue * (_viewport.width() / (float) _viewSize.width());
+	float yminValue = ymaxValue - 2 * ymaxValue * (_viewport.height() / (float) _viewSize.height());
 
 	if (xmin) *xmin = xminValue;
 	if (xmax) *xmax = xmaxValue;
@@ -97,6 +89,7 @@ void Scene::computeSymmetricPerspectiveRect(float *xmin, float *xmax, float *ymi
 
 void Scene::render(RenderEntryArray renderEntries) {
 	// setup cam
+	_gfx->setGameViewport();
 	_gfx->setupPerspective(_perspectiveMatrix);
 	_gfx->setupCamera(_cameraPosition, _lookAtMatrix);
 
