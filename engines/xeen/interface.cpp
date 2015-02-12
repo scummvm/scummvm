@@ -31,6 +31,8 @@
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
+#include "xeen/dialogs_party.h"
+
 namespace Xeen {
 
 PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
@@ -501,6 +503,9 @@ void Interface::perform() {
 		Quests::show(_vm);
 		break;
 
+	case Common::KEYCODE_x:
+		// ****DEBUG***
+		PartyDialog::show(_vm); //***DEBUG****
 	default:
 		break;
 	}

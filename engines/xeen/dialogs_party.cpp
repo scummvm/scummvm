@@ -32,6 +32,7 @@ namespace Xeen {
 
 PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(), 
 		PartyDrawer(vm), _vm(vm) {
+	initDrawStructs();
 }
 
 void PartyDialog::show(XeenEngine *vm) {
@@ -68,7 +69,7 @@ void PartyDialog::execute() {
 		Window &w = screen._windows[11];
 		w.open();
 		setupFaces(startingChar, false);
-		w.writeString(_displayText);
+		w.writeString(Common::String::format(PARTY_DIALOG_TEXT, _partyDetails.c_str()));
 		w.drawList(&_faceDrawStructs[0], 4);
 
 		_uiSprites.draw(w, 0, Common::Point(16, 100));
@@ -99,8 +100,10 @@ void PartyDialog::execute() {
 
 		bool breakFlag = false;
 		while (!_vm->shouldQuit() && !breakFlag) {
-			events.pollEventsAndWait();
-			checkEvents(_vm);
+			do {
+				events.pollEventsAndWait();
+				checkEvents(_vm);
+			} while (!_vm->shouldQuit() && !_buttonValue);
 
 			switch (_buttonValue) {
 			case Common::KEYCODE_ESCAPE:
@@ -226,7 +229,7 @@ void PartyDialog::loadButtons() {
 	addButton(Common::Rect(87, 100, 111, 120), Common::KEYCODE_d, &_uiSprites);
 	addButton(Common::Rect(122, 100, 146, 120), Common::KEYCODE_r, &_uiSprites);
 	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_uiSprites);
-	addButton(Common::Rect(192, 100, 116, 120), Common::KEYCODE_x, &_uiSprites);
+	addButton(Common::Rect(192, 100, 216, 120), Common::KEYCODE_x, &_uiSprites);
 	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE, &_uiSprites, false);
 	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_uiSprites, false);
 	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_uiSprites, false);
@@ -247,7 +250,7 @@ void PartyDialog::setupBackground() {
 }
 
 /**
- * Sets up the faces for display in the party dialog
+ * Sets up the faces from the avaialble roster for display in the party dialog
  */
 void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	Party &party = *_vm->_party;
@@ -285,10 +288,11 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 		if ((firstDisplayChar + posIndex) >= (int)_charList.size())
 			_faceDrawStructs[posIndex]._sprites = nullptr;
 		else
-			_faceDrawStructs[posIndex]._sprites = party._roster[posIndex]._faceSprites;
+			_faceDrawStructs[posIndex]._sprites = party._roster[
+				_charList[firstDisplayChar + posIndex]]._faceSprites;
 	}
 
-	_displayText = Common::String::format(PARTY_DETAILS,
+	_partyDetails = Common::String::format(PARTY_DETAILS,
 		charNames[0].c_str(), charRaces[0].c_str(), charSex[0].c_str(), charClasses[0].c_str(),
 		charNames[1].c_str(), charRaces[1].c_str(), charSex[1].c_str(), charClasses[1].c_str(),
 		charNames[2].c_str(), charRaces[2].c_str(), charSex[2].c_str(), charClasses[2].c_str(),
@@ -300,7 +304,7 @@ void PartyDialog::startingCharChanged(int firstDisplayChar) {
 	Window &w = _vm->_screen->_windows[11];
 
 	setupFaces(firstDisplayChar, true);
-	w.writeString(_displayText);
+	w.writeString(_partyDetails);
 	w.drawList(_faceDrawStructs, 4);
 
 	_uiSprites.draw(w, 0, Common::Point(16, 100));

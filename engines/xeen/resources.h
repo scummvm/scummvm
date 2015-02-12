@@ -105,6 +105,7 @@ extern const char *const HEROISM;
 extern const char *const IN_PARTY;
 
 extern const char *const PARTY_DETAILS;
+extern const char *const PARTY_DIALOG_TEXT;
 
 extern const int FACE_CONDITION_FRAMES[17];
 

@@ -354,6 +354,9 @@ const char *const PARTY_DETAILS = "\015\003l\002\014""00"
 	"\013""052""\011""136%s" 
 	"\013""060""\011""136%s" 
 	"\013""068""\011""136%s";
+const char *const PARTY_DIALOG_TEXT =
+	"%s\x2\x3""c\v106\t013Up\t048Down\t083\f37D\fdel\t118\f37R\fdem"
+	"\t153\f37C\fdreate\t188E\f37x\fdit\x1";
 
 const int FACE_CONDITION_FRAMES[17] = { 
 	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0 

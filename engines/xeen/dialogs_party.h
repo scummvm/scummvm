@@ -36,7 +36,7 @@ private:
 	XeenEngine *_vm;
 	SpriteResource _uiSprites;
 	DrawStruct _faceDrawStructs[4];
-	Common::String _displayText;
+	Common::String _partyDetails;
 	Common::Array<int> _charList;
 
 	PartyDialog(XeenEngine *vm);
@@ -48,8 +48,6 @@ private:
 	void initDrawStructs();
 
 	void setupBackground();
-
-	void drawParty(bool updateFlag);
 
 	void setupFaces(int firstDisplayChar, bool updateFlag);
 
