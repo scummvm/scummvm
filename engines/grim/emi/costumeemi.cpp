@@ -315,4 +315,19 @@ EMIModel *EMICostume::getEMIModel() const {
 	return _wearChore->getMesh()->_obj;
 }
 
+EMIModel *EMICostume::getEMIModel(int num) const {
+	if (num >= _numChores) {
+		return nullptr;
+	}
+	EMIChore *chore = static_cast<EMIChore *>(_chores[num]);
+	if (chore == nullptr) {
+		return nullptr;
+	}
+	EMIMeshComponent *mesh = chore->getMesh();
+	if (mesh == nullptr) {
+		return nullptr;
+	}
+	return mesh->_obj;
+}
+
 } // end of namespace Grim

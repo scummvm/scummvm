@@ -24,6 +24,7 @@
 #define GRIM_MODELEMI_H
 
 #include "engines/grim/object.h"
+#include "engines/grim/actor.h"
 #include "math/matrix4.h"
 #include "math/vector2d.h"
 #include "math/vector3d.h"
@@ -84,6 +85,9 @@ public:
 		// There are more flags, but their purpose is currently unknown.
 	};
 
+	Common::String _meshName;
+	Actor::AlphaMode _meshAlphaMode;
+	float _meshAlpha;
 	int _numVertices;
 	Math::Vector3d *_vertices;
 	Math::Vector3d *_drawVertices;

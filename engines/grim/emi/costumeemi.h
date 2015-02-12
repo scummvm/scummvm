@@ -60,6 +60,7 @@ public:
 	void setHeadLimits(float yawRange, float maxPitch, float minPitch);
 
 	EMIModel *getEMIModel() const;
+	EMIModel *getEMIModel(int num) const;
 public:
 	EMIChore *_wearChore;
 	EMISkelComponent *_emiSkel;

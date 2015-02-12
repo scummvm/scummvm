@@ -41,6 +41,7 @@ class Set;
 class Material;
 struct SetShadow;
 struct Joint;
+class EMIModel;
 
 struct Plane {
 	Common::String setName;
@@ -538,8 +539,8 @@ public:
 	float getGlobalAlpha() const { return _globalAlpha; }
 	AlphaMode getAlphaMode() const { return _alphaMode; }
 	float getEffectiveAlpha() const { return _alphaMode != AlphaOff ? _globalAlpha : 1.f; }
-	void setGlobalAlpha(float alpha) { _globalAlpha = alpha; }
-	void setAlphaMode(AlphaMode mode) { _alphaMode = mode; }
+	void setGlobalAlpha(float alpha, const Common::String &mesh);
+	void setAlphaMode(AlphaMode mode, const Common::String &mesh);
 
 	int getSortOrder() const;
 	void setSortOrder(const int order);
@@ -587,6 +588,7 @@ private:
 	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
 
 	bool getSphereInfo(bool adjustZ, float &size, Math::Vector3d &pos) const;
+	EMIModel *findModelWithMesh(const Common::String &mesh);
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set

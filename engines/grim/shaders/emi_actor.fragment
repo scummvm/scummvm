@@ -5,6 +5,7 @@ uniform sampler2D tex;
 uniform bool textured;
 uniform bool swapRandB;
 uniform float alphaRef;
+uniform float meshAlpha;
 
 OUTPUT
 
@@ -18,6 +19,7 @@ void main()
 			texColor.rb = texColor.br;
 #endif
 		outColor.rgba *= texColor.rgba;
+		outColor.a *= meshAlpha;
 		if (outColor.a < alphaRef)
 			discard;
 	}
