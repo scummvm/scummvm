@@ -1445,4 +1445,9 @@ const char *const REMOVE_OR_DELETE_WHICH = "\x3l\t010\v005%s which character?";
 
 const char *const YOUR_PARTY_IS_FULL = "\v007Your party is full!";
 
+const char *const HAS_SLAYER_SWORD =
+	"\v000\t000This character has the Xeen Slayer Sword and cannot be deleted!";
+const char *const SURE_TO_DELETE_CHAR = 
+	"Are you sure you want to delete %s the %s?";
+
 } // End of namespace Xeen

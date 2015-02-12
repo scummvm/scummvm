@@ -501,6 +501,9 @@ extern const char *const REMOVE_OR_DELETE_WHICH;
 
 extern const char *const YOUR_PARTY_IS_FULL;
 
+extern const char *const HAS_SLAYER_SWORD;
+extern const char *const SURE_TO_DELETE_CHAR;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

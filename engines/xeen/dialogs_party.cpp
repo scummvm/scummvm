@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_party.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/character.h"
 #include "xeen/events.h"
 #include "xeen/party.h"
@@ -187,7 +188,7 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_DOWN:
 			case Common::KEYCODE_KP2:
 				// Down arrow
-				if (startingChar < (_charList.size() - 4)) {
+				if (startingChar < ((int)_charList.size() - 4)) {
 					startingChar += 4;
 					startingCharChanged(startingChar);
 				}
@@ -210,9 +211,47 @@ void PartyDialog::execute() {
 					breakFlag = true;
 				}
 				break;
+
 			case Common::KEYCODE_d:
 				// Delete character
+				if (_charList.size() > 0) {
+					int charButtonValue = selectCharacter(true, startingChar);
+					if (charButtonValue != 0) {
+						int charIndex = charButtonValue - Common::KEYCODE_1 + startingChar;
+						Character &c = party._roster[_charList[charIndex]];
+						if (c.hasSpecialItem()) {
+							ErrorScroll::show(_vm, HAS_SLAYER_SWORD);
+						} else {
+							Common::String msg = Common::String::format(SURE_TO_DELETE_CHAR,
+								c._name.c_str(), CLASS_NAMES[c._class]);
+							if (Confirm::show(_vm, msg)) {
+								// If the character is in the party, remove it
+								for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+									if (party._activeParty[idx]._rosterId == c._rosterId) {
+										party._activeParty.remove_at(idx);
+										break;
+									}
+								}
+
+								// Empty the character in the roster
+								c.clear();
+
+								// Rebuild the character list
+								_charList.clear();
+								for (int idx = 0; idx < XEEN_TOTAL_CHARACTERS; ++idx) {
+									Character &c = party._roster[idx];
+									if (!c._name.empty() && c._savedMazeId == party._priorMazeId) {
+										_charList.push_back(idx);
+									}
+								}
+
+								startingCharChanged(startingChar);
+							}
+						}
+					}
+				}
 				break;
+
 			case Common::KEYCODE_r:
 				// Remove character
 				if (party._activeParty.size() > 0) {

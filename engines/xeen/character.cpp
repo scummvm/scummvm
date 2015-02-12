@@ -1787,5 +1787,14 @@ void Character::subtractHitPoints(int amount) {
 	}
 }
 
+bool Character::hasSpecialItem() const {
+	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		if (_weapons[idx]._id == 34)
+			// Character has Xeen Slayer sword
+			return true;
+	}
+
+	return false;
+}
 
 } // End of namespace Xeen
