@@ -54,7 +54,7 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResou
 void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 	Party &party = *vm->_party;
 
-	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+	for (uint idx = 0; idx < MAX_ACTIVE_PARTY; ++idx) {
 		addButton(Common::Rect(CHAR_FACES_X[idx], 150, CHAR_FACES_X[idx] + 32, 182),
 			Common::KEYCODE_F1 + idx, nullptr, false);
 	}

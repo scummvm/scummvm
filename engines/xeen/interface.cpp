@@ -219,6 +219,7 @@ void Interface::setMainButtons() {
 	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1, &_iconSprites, false);
 	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, &_iconSprites, false);
 	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, &_iconSprites, false);
+	addPartyButtons(_vm);
 }
 
 /**

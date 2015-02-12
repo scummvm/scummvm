@@ -274,6 +274,7 @@ void CharacterInfo::addButtons() {
 	addButton(Common::Rect(285, 43, 309, 63), Common::KEYCODE_q, &_iconSprites);
 	addButton(Common::Rect(285, 75, 309, 95), Common::KEYCODE_e, &_iconSprites);
 	addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addPartyButtons(_vm);
 }
 
 /**

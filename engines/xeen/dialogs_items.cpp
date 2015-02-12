@@ -557,6 +557,7 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 		addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7, &_iconSprites, false);
 		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8, &_iconSprites, false);
 		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9, &_iconSprites, false);
+		addPartyButtons(_vm);
 	}
 
 	if (mode == ITEMMODE_BLACKSMITH) {
