@@ -44,4 +44,10 @@ int32 Global::getCurrentChapter() {
 	return chapter->getIntegerValue();
 }
 
+void Global::setCurrentChapter(int32 value) {
+	KnowledgeSet *globalState = _level->findChildWithSubtype<KnowledgeSet>(KnowledgeSet::kState);
+	Knowledge *chapter = globalState->findChildWithIndex<Knowledge>(0);
+	chapter->setIntegerValue(value);
+}
+
 } // End of namespace Stark

@@ -93,6 +93,9 @@ public:
 
 	/** Retrieve the current chapter number from the global resource tree */
 	int32 getCurrentChapter();
+
+	/** Change the current chapter */
+	void setCurrentChapter(int32 value);
 private:
     uint _millisecondsPerGameloop;
     Root *_root;

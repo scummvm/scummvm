@@ -42,7 +42,10 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("dumpLevel",			WRAP_METHOD(Console, Cmd_DumpLevel));
 	registerCmd("dumpLocation",			WRAP_METHOD(Console, Cmd_DumpLocation));
 	registerCmd("listLocations",		WRAP_METHOD(Console, Cmd_ListLocations));
+	registerCmd("location",				WRAP_METHOD(Console, Cmd_Location));
+	registerCmd("chapter",				WRAP_METHOD(Console, Cmd_Chapter));
 	registerCmd("changeLocation",		WRAP_METHOD(Console, Cmd_ChangeLocation));
+	registerCmd("changeChapter",		WRAP_METHOD(Console, Cmd_ChangeChapter));
 }
 
 Console::~Console() {
@@ -171,6 +174,54 @@ bool Console::Cmd_ChangeLocation(int argc, const char **argv) {
 	resourceProvider->requestLocationChange(levelIndex, locationIndex);
 
 	return false;
+}
+
+bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Change the current chapter.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("changeChapter [value]\n");
+		return true;
+	}
+
+	uint32 value = atoi(argv[1]);
+
+	Global *global = StarkServices::instance().global;
+	global->setCurrentChapter(value);
+
+	return true;
+}
+
+bool Console::Cmd_Location(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Display the current location.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("location\n");
+		return true;
+	}
+
+	Global *global = StarkServices::instance().global;
+	Current *current = global->getCurrent();
+
+	debugPrintf("location: %02x %02x\n", current->getLevel()->getIndex(), current->getLocation()->getIndex());
+
+	return true;
+}
+
+bool Console::Cmd_Chapter(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Display the current chapter.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("chapter\n");
+		return true;
+	}
+
+	Global *global = StarkServices::instance().global;
+	int32 value = global->getCurrentChapter();
+
+	debugPrintf("chapter: %d\n", value);
+
+	return true;
 }
 
 } // End of namespace Stark

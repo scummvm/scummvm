@@ -42,7 +42,10 @@ private:
 	bool Cmd_DumpLevel(int argc, const char **argv);
 	bool Cmd_DumpLocation(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);
+	bool Cmd_Location(int argc, const char **argv);
+	bool Cmd_Chapter(int argc, const char **argv);
 	bool Cmd_ChangeLocation(int argc, const char **argv);
+	bool Cmd_ChangeChapter(int argc, const char **argv);
 };
 
 } // End of namespace Stark

@@ -115,6 +115,7 @@ Common::Error StarkEngine::run() {
 	_resourceProvider->initGlobal();
 
 	// Start us up at the house of all worlds
+	_global->setCurrentChapter(0);
 	_resourceProvider->requestLocationChange(0x45, 0x00);
 
 	// Start running
