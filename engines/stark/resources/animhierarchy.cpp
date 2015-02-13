@@ -31,6 +31,7 @@
 #include "engines/stark/resources/textureset.h"
 
 namespace Stark {
+namespace Resources {
 
 AnimHierarchy::~AnimHierarchy() {
 }
@@ -133,4 +134,5 @@ void AnimHierarchy::printData() {
 	debug("field_5C: %f", _field_5C);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

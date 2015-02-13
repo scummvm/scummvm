@@ -37,6 +37,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * A sound resource
  */
@@ -89,6 +91,7 @@ protected:
 	Audio::SoundHandle _handle;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_SOUND_H

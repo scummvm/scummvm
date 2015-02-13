@@ -29,9 +29,11 @@
 
 namespace Stark {
 
+namespace Resources {
 class Level;
 class Location;
 class Resource;
+}
 
 class ArchiveLoader;
 class Current;
@@ -77,10 +79,10 @@ public:
 	void shutdown();
 
 	/** Obtain the root resource for a loaded level */
-	Level *getLevel(uint16 level);
+	Resources::Level *getLevel(uint16 level);
 
 	/** Obtain the root resource for a loaded location */
-	Location *getLocation(uint16 level, uint16 location);
+	Resources::Location *getLocation(uint16 level, uint16 location);
 
 private:
 	typedef Common::List<Current *> CurrentList;
@@ -90,7 +92,7 @@ private:
 
 	void purgeOldLocations();
 
-	void runLocationChangeScripts(Resource *resource, uint32 scriptCallMode);
+	void runLocationChangeScripts(Resources::Resource *resource, uint32 scriptCallMode);
 	void setAprilInitialPosition();
 
 	Global *_global;

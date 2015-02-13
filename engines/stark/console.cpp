@@ -128,27 +128,27 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	StarkServices::instance().archiveLoader = archiveLoader;
 
 	archiveLoader->load("x.xarc");
-	Root *root = archiveLoader->useRoot<Root>("x.xarc");
+	Resources::Root *root = archiveLoader->useRoot<Resources::Root>("x.xarc");
 
 	// Find all the levels
-	Common::Array<Level *> levels = root->listChildren<Level>();
+	Common::Array<Resources::Level *> levels = root->listChildren<Resources::Level>();
 
 	// Loop over the levels
 	for (uint i = 0; i < levels.size(); i++) {
-		Level *level = levels[i];
+		Resources::Level *level = levels[i];
 
 		Common::String levelArchive = archiveLoader->buildArchiveName(level);
 		debugPrintf("%s - %s\n", levelArchive.c_str(), level->getName().c_str());
 
 		// Load the detailed level archive
 		archiveLoader->load(levelArchive);
-		level = archiveLoader->useRoot<Level>(levelArchive);
+		level = archiveLoader->useRoot<Resources::Level>(levelArchive);
 
-		Common::Array<Location *> locations = level->listChildren<Location>();
+		Common::Array<Resources::Location *> locations = level->listChildren<Resources::Location>();
 
 		// Loop over the locations
 		for (uint j = 0; j < locations.size(); j++) {
-			Location *location = locations[j];
+			Resources::Location *location = locations[j];
 
 			Common::String roomArchive = archiveLoader->buildArchiveName(level, location);
 			debugPrintf("%s - %s\n", roomArchive.c_str(), location->getName().c_str());

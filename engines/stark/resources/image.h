@@ -33,6 +33,8 @@ namespace Stark {
 class Visual;
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * A still image resource
  */
@@ -100,6 +102,7 @@ protected:
 	bool _noName;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_IMAGE_H

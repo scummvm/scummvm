@@ -32,6 +32,8 @@ namespace Stark {
 class Texture;
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * A texture resource
  *
@@ -65,6 +67,7 @@ protected:
 	Texture *_texture;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_TEXTURE_SET_H

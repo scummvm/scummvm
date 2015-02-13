@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 Bookmark::~Bookmark() {
 }
@@ -47,4 +48,5 @@ void Bookmark::printData() {
 	debug << "position: " << _position << "\n";
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

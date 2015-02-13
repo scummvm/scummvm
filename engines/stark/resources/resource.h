@@ -31,6 +31,8 @@ namespace Stark {
 class XRCReadStream;
 class ResourceSerializer;
 
+namespace Resources {
+
 class ResourceType {
 public:
 	enum Type {
@@ -363,6 +365,7 @@ T *Resource::findChildWithIndex(uint16 index, int subType) {
 	return Resource::cast<T>(findChildWithIndex(T::TYPE, index, subType));
 }
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_RESOURCE_H

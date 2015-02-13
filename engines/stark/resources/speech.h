@@ -29,8 +29,11 @@
 
 namespace Stark {
 
-class Sound;
 class XRCReadStream;
+
+namespace Resources {
+
+class Sound;
 
 /**
  * Speech resource
@@ -73,6 +76,7 @@ protected:
 	Sound *_soundResource;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_SPEECH_H

@@ -31,9 +31,11 @@
 
 namespace Stark {
 
+namespace Resources {
 class Resource;
 class Level;
 class Location;
+}
 
 class StateReadStream : public Common::SeekableSubReadStream {
 public:
@@ -52,7 +54,7 @@ public:
 };
 
 /**
- * Resource state provider.
+ * Resources::Resource state provider.
  *
  * Maintains a serialized version of the state of the resource trees.
  */
@@ -60,17 +62,17 @@ class StateProvider {
 public:
 	~StateProvider();
 
-	void restoreLevelState(Level *level);
-	void restoreCurrentLevelState(Level *level);
-	void restoreLocationState(Level *level, Location *location);
-	void restoreCurrentLocationState(Level *level, Location *location);
-	void restoreGlobalState(Level *level);
+	void restoreLevelState(Resources::Level *level);
+	void restoreCurrentLevelState(Resources::Level *level);
+	void restoreLocationState(Resources::Level *level, Resources::Location *location);
+	void restoreCurrentLocationState(Resources::Level *level, Resources::Location *location);
+	void restoreGlobalState(Resources::Level *level);
 
-	void saveLevelState(Level *level);
-	void saveCurrentLevelState(Level *level);
-	void saveLocationState(Level *level, Location *location);
-	void saveCurrentLocationState(Level *level, Location *location);
-	void saveGlobalState(Level *level);
+	void saveLevelState(Resources::Level *level);
+	void saveCurrentLevelState(Resources::Level *level);
+	void saveLocationState(Resources::Level *level, Resources::Location *location);
+	void saveCurrentLocationState(Resources::Level *level, Resources::Location *location);
+	void saveGlobalState(Resources::Level *level);
 
 	/** Replace the current states by those read from the stream */
 	void readStateFromStream(StateReadStream*stream);
@@ -94,11 +96,11 @@ private:
 
 	typedef Common::HashMap<Common::String, ResourceTreeState *> ResourceTreeStateMap;
 
-	void restoreResourceTreeState(Common::String storeKey, Resource *root, bool current);
-	void saveResourceTreeState(Common::String storeKey, Resource *root, bool current);
+	void restoreResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current);
+	void saveResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current);
 
-	void readResourceTree(Resource *resource, Common::SeekableReadStream *stream, bool current);
-	void writeResourceTree(Resource *resource, Common::WriteStream *stream, bool current);
+	void readResourceTree(Resources::Resource *resource, Common::SeekableReadStream *stream, bool current);
+	void writeResourceTree(Resources::Resource *resource, Common::WriteStream *stream, bool current);
 
 	void clear();
 

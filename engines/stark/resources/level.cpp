@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 Level::~Level() {
 }
@@ -37,4 +38,5 @@ Level::Level(Resource *parent, byte subType, uint16 index, const Common::String 
 void Level::printData() {
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

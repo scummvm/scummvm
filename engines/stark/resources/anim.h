@@ -30,14 +30,17 @@
 
 namespace Stark {
 
-class Direction;
-class Image;
-class Item;
 class SkeletonAnim;
 class VisualActor;
 class VisualSmacker;
 class Visual;
 class XRCReadStream;
+
+namespace Resources {
+
+class Direction;
+class Image;
+class Item;
 
 /**
  * Animation base class
@@ -195,6 +198,7 @@ protected:
 	VisualActor *_visual;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_ANIM_H

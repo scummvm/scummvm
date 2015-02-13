@@ -36,7 +36,7 @@ DialogPlayer::DialogPlayer() :
 DialogPlayer::~DialogPlayer() {
 }
 
-void DialogPlayer::run(Dialog *dialog) {
+void DialogPlayer::run(Resources::Dialog *dialog) {
 	reset();
 
 	_currentDialog = dialog;
@@ -48,7 +48,7 @@ bool DialogPlayer::isRunning() {
 }
 
 void DialogPlayer::buildOptions() {
-	Common::Array<Dialog::Topic *> availableTopics = _currentDialog->listAvailableTopics();
+	Common::Array<Resources::Dialog::Topic *> availableTopics = _currentDialog->listAvailableTopics();
 
 	// TODO: This is very minimal, complete
 
@@ -76,12 +76,12 @@ void DialogPlayer::selectOption(uint32 index) {
 
 	switch (option._type) {
 	case kOptionTypeAsk: {
-		Dialog::Topic *topic = option._topic;
+		Resources::Dialog::Topic *topic = option._topic;
 
 		// Set the current reply
 		_currentReply = topic->startReply(index);
 
-		Speech *speech = _currentReply->getCurrentSpeech();
+		Resources::Speech *speech = _currentReply->getCurrentSpeech();
 		if (speech) {
 			_speechReady = true;
 		} else {
@@ -95,7 +95,7 @@ void DialogPlayer::selectOption(uint32 index) {
 }
 
 void DialogPlayer::onReplyEnd() {
-	Dialog *nextDialog = _currentDialog->getNextDialog(_currentReply);
+	Resources::Dialog *nextDialog = _currentDialog->getNextDialog(_currentReply);
 
 	//TODO: Complete
 
@@ -121,7 +121,7 @@ void DialogPlayer::update() {
 
 	//TODO: Complete / Refactor
 
-	Speech *speech = _currentReply->getCurrentSpeech();
+	Resources::Speech *speech = _currentReply->getCurrentSpeech();
 	if (speech && _speechReady) {
 		// A new line can be played
 		speech->playSound();

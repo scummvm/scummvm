@@ -112,7 +112,7 @@ ArchiveLoader::LoadedArchive *ArchiveLoader::findArchive(const Common::String &a
 	error("The archive with name '%s' is not loaded.", archiveName.c_str());
 }
 
-Common::String ArchiveLoader::buildArchiveName(Level *level, Location *location) {
+Common::String ArchiveLoader::buildArchiveName(Resources::Level *level, Resources::Location *location) {
 	Common::String archive;
 
 	if (!location) {

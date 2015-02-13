@@ -32,8 +32,11 @@
 
 namespace Stark {
 
-class FloorFace;
 class XRCReadStream;
+
+namespace Resources {
+
+class FloorFace;
 
 /**
  * This resource represents the floor field of a 3D layer.
@@ -77,6 +80,7 @@ protected:
 	Common::Array<FloorFace *> _faces;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_FLOOR_H

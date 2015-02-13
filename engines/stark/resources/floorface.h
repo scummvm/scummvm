@@ -34,6 +34,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * A floor face is a 3D triangle used to build the floor field
  */
@@ -67,6 +69,7 @@ protected:
 	float _unk2;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_FLOOR_FACE_H

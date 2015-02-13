@@ -28,6 +28,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Stark {
+namespace Resources {
 
 Location::~Location() {
 }
@@ -89,4 +90,5 @@ void Location::setScrollPosition(const Common::Point &position) {
 void Location::printData() {
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

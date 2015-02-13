@@ -29,6 +29,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Stark {
+namespace Resources {
 
 Camera::~Camera() {
 }
@@ -90,4 +91,5 @@ void Camera::printData() {
 	debug << "v4: " << _v4 << "\n";
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

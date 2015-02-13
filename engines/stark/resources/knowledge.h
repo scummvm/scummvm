@@ -32,6 +32,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * A game logic state value holder
  */
@@ -73,6 +75,7 @@ protected:
 	ResourceReference _referenceValue;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_KNOWLEDGE_H

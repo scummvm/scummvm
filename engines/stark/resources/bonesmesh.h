@@ -32,6 +32,8 @@ namespace Stark {
 class Actor;
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * Bone mesh resources reference a mesh usable by actor resources
  */
@@ -58,6 +60,7 @@ protected:
 	Actor *_actor;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_BONES_MESH_H

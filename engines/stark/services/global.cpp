@@ -39,14 +39,14 @@ Global::Global() :
 }
 
 int32 Global::getCurrentChapter() {
-	KnowledgeSet *globalState = _level->findChildWithSubtype<KnowledgeSet>(KnowledgeSet::kState);
-	Knowledge *chapter = globalState->findChildWithIndex<Knowledge>(0);
+	Resources::KnowledgeSet *globalState = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kState);
+	Resources::Knowledge *chapter = globalState->findChildWithIndex<Resources::Knowledge>(0);
 	return chapter->getIntegerValue();
 }
 
 void Global::setCurrentChapter(int32 value) {
-	KnowledgeSet *globalState = _level->findChildWithSubtype<KnowledgeSet>(KnowledgeSet::kState);
-	Knowledge *chapter = globalState->findChildWithIndex<Knowledge>(0);
+	Resources::KnowledgeSet *globalState = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kState);
+	Resources::Knowledge *chapter = globalState->findChildWithIndex<Resources::Knowledge>(0);
 	chapter->setIntegerValue(value);
 }
 

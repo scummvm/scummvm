@@ -31,6 +31,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Stark {
+namespace Resources {
 
 Script::~Script() {
 }
@@ -254,4 +255,5 @@ void Script::printData() {
 	debug("shouldResetGameSpeed: %d", _shouldResetGameSpeed);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

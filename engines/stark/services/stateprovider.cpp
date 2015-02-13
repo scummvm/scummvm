@@ -75,31 +75,31 @@ void StateProvider::clear() {
 	_stateStore.clear();
 }
 
-void StateProvider::restoreLevelState(Level *level) {
+void StateProvider::restoreLevelState(Resources::Level *level) {
 	Common::String storeKey = level->getName();
 
 	restoreResourceTreeState(storeKey, level, false);
 }
 
-void StateProvider::restoreCurrentLevelState(Level *level) {
+void StateProvider::restoreCurrentLevelState(Resources::Level *level) {
 	restoreResourceTreeState("Current", level, true);
 }
 
-void StateProvider::restoreLocationState(Level *level, Location *location) {
+void StateProvider::restoreLocationState(Resources::Level *level, Resources::Location *location) {
 	Common::String storeKey = level->getName() + location->getName();
 
 	restoreResourceTreeState(storeKey, location, false);
 }
 
-void StateProvider::restoreCurrentLocationState(Level *level, Location *location) {
+void StateProvider::restoreCurrentLocationState(Resources::Level *level, Resources::Location *location) {
 	restoreResourceTreeState("CurrentCurrent", location, true);
 }
 
-void StateProvider::restoreGlobalState(Level *level) {
+void StateProvider::restoreGlobalState(Resources::Level *level) {
 	restoreResourceTreeState("CurrentGlobal", level, true);
 }
 
-void StateProvider::restoreResourceTreeState(Common::String storeKey, Resource *root, bool current) {
+void StateProvider::restoreResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current) {
 	if (_stateStore.contains(storeKey)) {
 		ResourceTreeState *state = _stateStore[storeKey];
 
@@ -108,7 +108,7 @@ void StateProvider::restoreResourceTreeState(Common::String storeKey, Resource *
 	}
 }
 
-void StateProvider::readResourceTree(Resource *resource, Common::SeekableReadStream *stream, bool current) {
+void StateProvider::readResourceTree(Resources::Resource *resource, Common::SeekableReadStream *stream, bool current) {
 	// Read the resource to the source stream
 	/* byte type = */ stream->readByte();
 	/* byte subType = */ stream->readByte();
@@ -127,37 +127,37 @@ void StateProvider::readResourceTree(Resource *resource, Common::SeekableReadStr
 	}
 
 	// Deserialize the resource children
-	Common::Array<Resource *> children = resource->listChildren<Resource>();
+	Common::Array<Resources::Resource *> children = resource->listChildren<Resources::Resource>();
 	for (uint i = 0; i < children.size(); i++) {
 		readResourceTree(children[i], stream, current);
 	}
 }
 
-void StateProvider::saveLevelState(Level *level) {
+void StateProvider::saveLevelState(Resources::Level *level) {
 	Common::String storeKey = level->getName();
 
 	saveResourceTreeState(storeKey, level, false);
 }
 
-void StateProvider::saveCurrentLevelState(Level *level) {
+void StateProvider::saveCurrentLevelState(Resources::Level *level) {
 	saveResourceTreeState("Current", level, true);
 }
 
-void StateProvider::saveLocationState(Level *level, Location *location) {
+void StateProvider::saveLocationState(Resources::Level *level, Resources::Location *location) {
 	Common::String storeKey = level->getName() + location->getName();
 
 	saveResourceTreeState(storeKey, location, false);
 }
 
-void StateProvider::saveCurrentLocationState(Level *level, Location *location) {
+void StateProvider::saveCurrentLocationState(Resources::Level *level, Resources::Location *location) {
 	saveResourceTreeState("CurrentCurrent", location, true);
 }
 
-void StateProvider::saveGlobalState(Level *level) {
+void StateProvider::saveGlobalState(Resources::Level *level) {
 	saveResourceTreeState("CurrentGlobal", level, true);
 }
 
-void StateProvider::saveResourceTreeState(Common::String storeKey, Resource *root, bool current) {
+void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current) {
 	// Delete any previous data
 	if (!_stateStore.contains(storeKey)) {
 		delete _stateStore[storeKey];
@@ -172,7 +172,7 @@ void StateProvider::saveResourceTreeState(Common::String storeKey, Resource *roo
 	_stateStore[storeKey] = new ResourceTreeState(stream.size(), stream.getData());
 }
 
-void StateProvider::writeResourceTree(Resource *resource, Common::WriteStream *stream, bool current) {
+void StateProvider::writeResourceTree(Resources::Resource *resource, Common::WriteStream *stream, bool current) {
 	// Explicit scope to control the lifespan of the memory stream
 	{
 		Common::MemoryWriteStreamDynamic resourceStream(DisposeAfterUse::YES);
@@ -195,7 +195,7 @@ void StateProvider::writeResourceTree(Resource *resource, Common::WriteStream *s
 	}
 
 	// Serialize the resource children
-	Common::Array<Resource *> children = resource->listChildren<Resource>();
+	Common::Array<Resources::Resource *> children = resource->listChildren<Resources::Resource>();
 	for (uint i = 0; i < children.size(); i++) {
 		writeResourceTree(children[i], stream, current);
 	}

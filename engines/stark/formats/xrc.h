@@ -51,7 +51,7 @@ public:
 	Common::String getArchiveName() const;
 
 	Common::String readString();
-	ResourceType readResourceType();
+	Resources::ResourceType readResourceType();
 	ResourceReference readResourceReference();
 	Math::Vector3d readVector3();
 	Common::Rect readRect();
@@ -72,13 +72,13 @@ public:
 	/**
 	 * Build a resource tree from a stream
 	 */
-	static Resource *importTree(XARCArchive *archive);
+	static Resources::Resource *importTree(XARCArchive *archive);
 
 protected:
-	static Resource *importResource(XRCReadStream *stream, Resource *parent);
-	static Resource *createResource(XRCReadStream *stream, Resource *parent);
-	static void importResourceChildren(XRCReadStream *stream, Resource *resource);
-	static void importResourceData(XRCReadStream* stream, Resource* resource);
+	static Resources::Resource *importResource(XRCReadStream *stream, Resources::Resource *parent);
+	static Resources::Resource *createResource(XRCReadStream *stream, Resources::Resource *parent);
+	static void importResourceChildren(XRCReadStream *stream, Resources::Resource *resource);
+	static void importResourceData(XRCReadStream* stream, Resources::Resource* resource);
 };
 
 } // End of namespace Stark

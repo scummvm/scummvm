@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 Root::~Root() {
 }
@@ -37,4 +38,5 @@ Root::Root(Resource *parent, byte subType, uint16 index, const Common::String &n
 void Root::printData() {
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

@@ -27,6 +27,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 BonesMesh::~BonesMesh() {
 	delete _actor;
@@ -63,4 +64,5 @@ void BonesMesh::printData() {
 	debug("filename: %s", _filename.c_str());
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

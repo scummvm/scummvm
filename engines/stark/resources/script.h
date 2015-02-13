@@ -29,8 +29,11 @@
 
 namespace Stark {
 
-class Command;
 class XRCReadStream;
+
+namespace Resources {
+
+class Command;
 
 /**
  * A script resource
@@ -128,6 +131,7 @@ protected:
 	Resource *_suspendingResource;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_SCRIPT_H

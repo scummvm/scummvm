@@ -30,6 +30,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 ResourceType::ResourceType(Type type) {
 	_type = type;
@@ -259,4 +260,5 @@ void UnimplementedResource::printData() {
 	}
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

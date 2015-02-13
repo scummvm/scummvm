@@ -31,8 +31,11 @@
 
 namespace Stark {
 
-class Item;
 class XRCReadStream;
+
+namespace Resources {
+
+class Item;
 
 /**
  * A location layer
@@ -130,6 +133,7 @@ protected:
 	Common::Array<Item *> _items;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_LAYER_H

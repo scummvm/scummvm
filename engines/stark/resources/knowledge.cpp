@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 Knowledge::~Knowledge() {
 }
@@ -90,4 +91,5 @@ void Knowledge::printData() {
 	}
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

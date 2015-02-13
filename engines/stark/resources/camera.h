@@ -36,6 +36,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * Camera resources define the camera position, perspective parameters,
  * and look at direction.
@@ -69,6 +71,7 @@ protected:
 	float _farClipPlane;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_CAMERA_H

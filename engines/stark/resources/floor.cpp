@@ -27,6 +27,7 @@
 #include "engines/stark/resources/floorface.h"
 
 namespace Stark {
+namespace Resources {
 
 Floor::Floor(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
@@ -85,4 +86,5 @@ void Floor::printData() {
 	}
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

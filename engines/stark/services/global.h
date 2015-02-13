@@ -27,6 +27,7 @@
 
 namespace Stark {
 
+namespace Resources {
 class Camera;
 class Floor;
 class ItemSub1;
@@ -34,6 +35,7 @@ class ItemSub10;
 class Level;
 class Location;
 class Root;
+}
 
 /**
  * Current level / location holder object
@@ -48,24 +50,24 @@ public:
 		_interactive(nullptr) {
 	}
 
-	Level *getLevel() const { return _level; }
-	Location *getLocation() const { return _location; }
-	Floor *getFloor() const { return _floor; }
-	Camera *getCamera() const { return _camera; }
-	ItemSub10 *getInteractive() const { return _interactive; }
+	Resources::Level *getLevel() const { return _level; }
+	Resources::Location *getLocation() const { return _location; }
+	Resources::Floor *getFloor() const { return _floor; }
+	Resources::Camera *getCamera() const { return _camera; }
+	Resources::ItemSub10 *getInteractive() const { return _interactive; }
 
-	void setLevel(Level *level) { _level = level; }
-	void setLocation(Location *location) { _location = location; }
-	void setFloor(Floor *floor) { _floor = floor; }
-	void setCamera(Camera *camera) { _camera = camera; }
-	void setInteractive(ItemSub10 *interactive) { _interactive = interactive; }
+	void setLevel(Resources::Level *level) { _level = level; }
+	void setLocation(Resources::Location *location) { _location = location; }
+	void setFloor(Resources::Floor *floor) { _floor = floor; }
+	void setCamera(Resources::Camera *camera) { _camera = camera; }
+	void setInteractive(Resources::ItemSub10 *interactive) { _interactive = interactive; }
 
 private:
-	Level *_level;
-	Location *_location;
-	ItemSub10 *_interactive;
-	Floor *_floor;
-	Camera *_camera;
+	Resources::Level *_level;
+	Resources::Location *_location;
+	Resources::ItemSub10 *_interactive;
+	Resources::Floor *_floor;
+	Resources::Camera *_camera;
 };
 
 /**
@@ -75,21 +77,21 @@ class Global {
 public:
 	Global();
 
-	Root *getRoot() const { return _root; }
-	Level *getLevel() const { return _level; }
+	Resources::Root *getRoot() const { return _root; }
+	Resources::Level *getLevel() const { return _level; }
 	Current *getCurrent() const { return _current; }
 	bool isDebug() const { return _debug; }
 	bool isFastForward() const { return _fastForward; }
 	uint getMillisecondsPerGameloop() const { return _millisecondsPerGameloop; }
-	ItemSub1 *getApril() const { return _april; }
+	Resources::ItemSub1 *getApril() const { return _april; }
 
-	void setRoot(Root *root) { _root = root; }
-	void setLevel(Level *level) { _level = level; }
+	void setRoot(Resources::Root *root) { _root = root; }
+	void setLevel(Resources::Level *level) { _level = level; }
 	void setCurrent(Current *current) { _current = current; }
 	void setDebug(bool debug) { _debug = debug; }
 	void setFastForward(bool fastForward) { _fastForward = fastForward; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
-	void setApril(ItemSub1 *april) { _april = april; }
+	void setApril(Resources::ItemSub1 *april) { _april = april; }
 
 	/** Retrieve the current chapter number from the global resource tree */
 	int32 getCurrentChapter();
@@ -98,10 +100,10 @@ public:
 	void setCurrentChapter(int32 value);
 private:
     uint _millisecondsPerGameloop;
-    Root *_root;
-    Level *_level;
+    Resources::Root *_root;
+    Resources::Level *_level;
     /* Inventory *_inventory; */
-    ItemSub1 *_april;
+    Resources::ItemSub1 *_april;
     Current *_current;
     bool _debug;
     bool _fastForward;

@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 KnowledgeSet::~KnowledgeSet() {
 }
@@ -37,4 +38,5 @@ KnowledgeSet::KnowledgeSet(Resource *parent, byte subType, uint16 index, const C
 void KnowledgeSet::printData() {
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

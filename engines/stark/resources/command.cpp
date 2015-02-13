@@ -36,6 +36,7 @@
 #include "engines/stark/services/resourceprovider.h"
 
 namespace Stark {
+namespace Resources {
 
 Command::~Command() {
 }
@@ -234,4 +235,5 @@ void Command::printData() {
 	}
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

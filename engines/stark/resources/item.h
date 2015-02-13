@@ -33,14 +33,17 @@
 
 namespace Stark {
 
+class RenderEntry;
+class Visual;
+class XRCReadStream;
+
+namespace Resources {
+
 class Anim;
 class AnimHierarchy;
 class BonesMesh;
 class Bookmark;
-class RenderEntry;
 class TextureSet;
-class Visual;
-class XRCReadStream;
 
 /**
  * A scene element
@@ -309,6 +312,7 @@ protected:
 	Common::Point _position;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_ITEM_H

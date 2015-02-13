@@ -30,6 +30,7 @@
 #include "engines/stark/visual/image.h"
 
 namespace Stark {
+namespace Resources {
 
 Resource *Image::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
@@ -157,4 +158,5 @@ void ImageSub23::printData() {
 	Image::printData();
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

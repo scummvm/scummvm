@@ -35,8 +35,10 @@
 
 namespace Stark {
 
+namespace Resources {
 class Level;
 class Location;
+}
 
 /**
  * A read stream with helper functions to read usual data types
@@ -79,7 +81,7 @@ public:
 	bool returnRoot(const Common::String &archiveName);
 
 	/** Build the archive filename for a level or a location */
-	Common::String buildArchiveName(Level *level, Location *location = nullptr);
+	Common::String buildArchiveName(Resources::Level *level, Resources::Location *location = nullptr);
 
 	/** Retrieve a file relative to a specified archive */
 	Common::SeekableReadStream *getExternalFile(const Common::String &fileName, const Common::String &archiveName);
@@ -92,7 +94,7 @@ private:
 
 		Common::String &getFilename() { return _filename; }
 		XARCArchive &getXArc() { return _xarc; }
-		Resource *getRoot() { return _root; }
+		Resources::Resource *getRoot() { return _root; }
 
 		void importResources();
 
@@ -104,7 +106,7 @@ private:
 		uint _useCount;
 		Common::String _filename;
 		XARCArchive _xarc;
-		Resource *_root;
+		Resources::Resource *_root;
 	};
 
 	typedef Common::List<LoadedArchive *> LoadedArchiveList;
@@ -119,7 +121,7 @@ template <class T>
 T *ArchiveLoader::useRoot(const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	archive->incUsage();
-	return Resource::cast<T>(archive->getRoot());
+	return Resources::Resource::cast<T>(archive->getRoot());
 }
 
 } // End of namespace Stark

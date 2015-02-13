@@ -27,6 +27,7 @@
 #include "engines/stark/resources/floor.h"
 
 namespace Stark {
+namespace Resources {
 
 FloorFace::FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
@@ -123,4 +124,5 @@ void FloorFace::printData() {
 	debug("indices: %d %d %d, distanceFromCamera %f, unk2 %f", _indices[0], _indices[1], _indices[2], _distanceFromCamera, _unk2);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

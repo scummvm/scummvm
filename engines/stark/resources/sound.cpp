@@ -32,6 +32,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Stark {
+namespace Resources {
 
 Sound::~Sound() {
 }
@@ -161,4 +162,5 @@ void Sound::printData() {
 	debug("volume: %f", _volume);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

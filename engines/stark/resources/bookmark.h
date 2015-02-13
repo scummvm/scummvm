@@ -32,6 +32,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * Bookmark resources are handles for a position on the floor field.
  *
@@ -57,6 +59,7 @@ protected:
 	Math::Vector3d _position;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_BOOKMARK_H

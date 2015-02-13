@@ -31,6 +31,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 class Direction : public Resource {
 public:
 	static const ResourceType::Type TYPE = ResourceType::kDirection;
@@ -48,6 +50,7 @@ protected:
 	uint32 _field_3C;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_DIRECTION_H

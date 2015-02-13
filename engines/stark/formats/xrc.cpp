@@ -74,10 +74,10 @@ Common::String XRCReadStream::readString() {
 	return string;
 }
 
-ResourceType XRCReadStream::readResourceType() {
+Resources::ResourceType XRCReadStream::readResourceType() {
 	byte rawType;
 	rawType = readByte();
-	return ResourceType((ResourceType::Type) (rawType));
+	return Resources::ResourceType((Resources::ResourceType::Type) (rawType));
 }
 
 ResourceReference XRCReadStream::readResourceReference() {
@@ -85,7 +85,7 @@ ResourceReference XRCReadStream::readResourceReference() {
 
 	uint32 pathSize = readUint32LE();
 	for (uint i = 0; i < pathSize; i++) {
-		ResourceType type = readResourceType();
+		Resources::ResourceType type = readResourceType();
 		uint16 index = readUint16LE();
 
 		reference.addPathElement(type, index);
@@ -135,7 +135,7 @@ Common::String XRCReadStream::getArchiveName() const {
 	return _archiveName;
 }
 
-Resource *XRCReader::importTree(XARCArchive *archive) {
+Resources::Resource *XRCReader::importTree(XARCArchive *archive) {
 	// Find the XRC file
 	Common::ArchiveMemberList members;
 	archive->listMatchingMembers(members, "*.xrc");
@@ -151,15 +151,15 @@ Resource *XRCReader::importTree(XARCArchive *archive) {
 	XRCReadStream *xrcStream = new XRCReadStream(archive->getFilename(), stream);
 
 	// Import the resource tree
-	Resource *root = importResource(xrcStream, nullptr);
+	Resources::Resource *root = importResource(xrcStream, nullptr);
 
 	delete xrcStream;
 
 	return root;
 }
 
-Resource *XRCReader::importResource(XRCReadStream *stream, Resource *parent) {
-	Resource *resource = createResource(stream, parent);
+Resources::Resource *XRCReader::importResource(XRCReadStream *stream, Resources::Resource *parent) {
+	Resources::Resource *resource = createResource(stream, parent);
 	importResourceData(stream, resource);
 	importResourceChildren(stream, resource);
 
@@ -169,9 +169,9 @@ Resource *XRCReader::importResource(XRCReadStream *stream, Resource *parent) {
 	return resource;
 }
 
-Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
+Resources::Resource *XRCReader::createResource(XRCReadStream *stream, Resources::Resource *parent) {
 	// Read the resource type and subtype
-	ResourceType type = stream->readResourceType();
+	Resources::ResourceType type = stream->readResourceType();
 	byte subType = stream->readByte();
 
 	// Read the resource properties
@@ -179,92 +179,92 @@ Resource *XRCReader::createResource(XRCReadStream *stream, Resource *parent) {
 	Common::String name = stream->readString();
 
 	// Create a new resource
-	Resource *resource;
+	Resources::Resource *resource;
 	switch (type.get()) {
-	case ResourceType::kRoot:
-		resource = new Root(parent, subType, index, name);
+	case Resources::ResourceType::kRoot:
+		resource = new Resources::Root(parent, subType, index, name);
 		break;
-	case ResourceType::kLevel:
-		resource = new Level(parent, subType, index, name);
+	case Resources::ResourceType::kLevel:
+		resource = new Resources::Level(parent, subType, index, name);
 		break;
-	case ResourceType::kLocation:
-		resource = new Location(parent, subType, index, name);
+	case Resources::ResourceType::kLocation:
+		resource = new Resources::Location(parent, subType, index, name);
 		break;
-	case ResourceType::kLayer:
-		resource = Layer::construct(parent, subType, index, name);
+	case Resources::ResourceType::kLayer:
+		resource = Resources::Layer::construct(parent, subType, index, name);
 		break;
-	case ResourceType::kCamera:
-		resource = new Camera(parent, subType, index, name);
+	case Resources::ResourceType::kCamera:
+		resource = new Resources::Camera(parent, subType, index, name);
 		break;
-	case ResourceType::kFloor:
-		resource = new Floor(parent, subType, index, name);
+	case Resources::ResourceType::kFloor:
+		resource = new Resources::Floor(parent, subType, index, name);
 		break;
-	case ResourceType::kFloorFace:
-		resource = new FloorFace(parent, subType, index, name);
+	case Resources::ResourceType::kFloorFace:
+		resource = new Resources::FloorFace(parent, subType, index, name);
 		break;
-	case ResourceType::kItem:
-		resource = Item::construct(parent, subType, index, name);
+	case Resources::ResourceType::kItem:
+		resource = Resources::Item::construct(parent, subType, index, name);
 		break;
-	case ResourceType::kScript:
-		resource = new Script(parent, subType, index, name);
+	case Resources::ResourceType::kScript:
+		resource = new Resources::Script(parent, subType, index, name);
 		break;
-	case ResourceType::kAnimHierarchy:
-		resource = new AnimHierarchy(parent, subType, index, name);
+	case Resources::ResourceType::kAnimHierarchy:
+		resource = new Resources::AnimHierarchy(parent, subType, index, name);
 		break;
-	case ResourceType::kAnim:
-		resource = Anim::construct(parent, subType, index, name);
+	case Resources::ResourceType::kAnim:
+		resource = Resources::Anim::construct(parent, subType, index, name);
 		break;
-	case ResourceType::kDirection:
-		resource = new Direction(parent, subType, index, name);
+	case Resources::ResourceType::kDirection:
+		resource = new Resources::Direction(parent, subType, index, name);
 		break;
-	case ResourceType::kImage:
-		resource = Image::construct(parent, subType, index, name);
+	case Resources::ResourceType::kImage:
+		resource = Resources::Image::construct(parent, subType, index, name);
 		break;
-	case ResourceType::kAnimScript:
-		resource = new AnimScript(parent, subType, index, name);
+	case Resources::ResourceType::kAnimScript:
+		resource = new Resources::AnimScript(parent, subType, index, name);
 		break;
-	case ResourceType::kAnimScriptItem:
-		resource = new AnimScriptItem(parent, subType, index, name);
+	case Resources::ResourceType::kAnimScriptItem:
+		resource = new Resources::AnimScriptItem(parent, subType, index, name);
 		break;
-	case ResourceType::kSoundItem:
-		resource = new Sound(parent, subType, index, name);
+	case Resources::ResourceType::kSoundItem:
+		resource = new Resources::Sound(parent, subType, index, name);
 		break;
-	case ResourceType::kBookmark:
-		resource = new Bookmark(parent, subType, index, name);
+	case Resources::ResourceType::kBookmark:
+		resource = new Resources::Bookmark(parent, subType, index, name);
 		break;
-	case ResourceType::kKnowledgeSet:
-		resource = new KnowledgeSet(parent, subType, index, name);
+	case Resources::ResourceType::kKnowledgeSet:
+		resource = new Resources::KnowledgeSet(parent, subType, index, name);
 		break;
-	case ResourceType::kKnowledge:
-		resource = new Knowledge(parent, subType, index, name);
+	case Resources::ResourceType::kKnowledge:
+		resource = new Resources::Knowledge(parent, subType, index, name);
 		break;
-	case ResourceType::kCommand:
-		resource = new Command(parent, subType, index, name);
+	case Resources::ResourceType::kCommand:
+		resource = new Resources::Command(parent, subType, index, name);
 		break;
-	case ResourceType::kDialog:
-		resource = new Dialog(parent, subType, index, name);
+	case Resources::ResourceType::kDialog:
+		resource = new Resources::Dialog(parent, subType, index, name);
 		break;
-	case ResourceType::kSpeech:
-		resource = new Speech(parent, subType, index, name);
+	case Resources::ResourceType::kSpeech:
+		resource = new Resources::Speech(parent, subType, index, name);
 		break;
-	case ResourceType::kBonesMesh:
-		resource = new BonesMesh(parent, subType, index, name);
+	case Resources::ResourceType::kBonesMesh:
+		resource = new Resources::BonesMesh(parent, subType, index, name);
 		break;
-	case ResourceType::kScroll:
-		resource = new Scroll(parent, subType, index, name);
+	case Resources::ResourceType::kScroll:
+		resource = new Resources::Scroll(parent, subType, index, name);
 		break;
-	case ResourceType::kTextureSet:
-		resource = new TextureSet(parent, subType, index, name);
+	case Resources::ResourceType::kTextureSet:
+		resource = new Resources::TextureSet(parent, subType, index, name);
 		break;
 	default:
-		resource = new UnimplementedResource(parent, type, subType, index, name);
+		resource = new Resources::UnimplementedResource(parent, type, subType, index, name);
 		break;
 	}
 
 	return resource;
 }
 
-void XRCReader::importResourceData(XRCReadStream *stream, Resource *resource) {
+void XRCReader::importResourceData(XRCReadStream *stream, Resources::Resource *resource) {
 	// Read the data length
 	uint32 dataLength = stream->readUint32LE();
 
@@ -283,7 +283,7 @@ void XRCReader::importResourceData(XRCReadStream *stream, Resource *resource) {
 	}
 }
 
-void XRCReader::importResourceChildren(XRCReadStream *stream, Resource *resource) {
+void XRCReader::importResourceChildren(XRCReadStream *stream, Resources::Resource *resource) {
 	// Get the number of children
 	uint16 numChildren = stream->readUint16LE();
 
@@ -295,7 +295,7 @@ void XRCReader::importResourceChildren(XRCReadStream *stream, Resource *resource
 
 	// Read the children resources
 	for (int i = 0; i < numChildren; i++) {
-		Resource *child = importResource(stream, resource);
+		Resources::Resource *child = importResource(stream, resource);
 
 		// Add child to parent
 		resource->addChild(child);

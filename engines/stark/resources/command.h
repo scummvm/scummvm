@@ -31,9 +31,12 @@
 
 namespace Stark {
 
-class Script;
 class ResourceReference;
 class XRCReadStream;
+
+namespace Resources {
+
+class Script;
 
 /**
  * Command resources are script operations.
@@ -109,6 +112,7 @@ protected:
 	Common::Array<Argument> _arguments;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_COMMAND_H

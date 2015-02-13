@@ -41,7 +41,7 @@ public:
 	virtual ~DialogPlayer();
 
 	/** Enter a dialog */
-	void run(Dialog *dialog);
+	void run(Resources::Dialog *dialog);
 
 	/** Check if a dialog is running */
 	bool isRunning();
@@ -60,7 +60,7 @@ protected:
 	struct Option {
 		uint32 _type;
 		Common::String _caption;
-		Dialog::Topic *_topic;
+		Resources::Dialog::Topic *_topic;
 		int32 _replyIndex;
 	};
 
@@ -73,8 +73,8 @@ protected:
 	/** Clear the currently running dialog */
 	void reset();
 
-	Dialog *_currentDialog;
-	Dialog::Reply *_currentReply;
+	Resources::Dialog *_currentDialog;
+	Resources::Dialog::Reply *_currentReply;
 
 	bool _speechReady;
 	Common::Array<Option> _options;

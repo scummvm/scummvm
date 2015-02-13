@@ -30,11 +30,14 @@
 
 namespace Stark {
 
+class XRCReadStream;
+
+namespace Resources {
+
 class Anim;
 class BonesMesh;
 class ItemVisual;
 class TextureSet;
-class XRCReadStream;
 
 /**
  * An animation hierarchy is a container resource referencing the available
@@ -88,6 +91,7 @@ protected:
 	Anim *_currentAnim;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_ANIM_HIERARCHY_H

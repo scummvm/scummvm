@@ -28,6 +28,7 @@
 #include "engines/stark/services/global.h"
 
 namespace Stark {
+namespace Resources {
 
 Dialog::~Dialog() {
 }
@@ -260,4 +261,5 @@ Dialog *Dialog::getNextDialog(Dialog::Reply *reply) {
 	return _parent->findChildWithIndex<Dialog>(reply->_nextDialogIndex);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

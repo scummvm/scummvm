@@ -51,29 +51,29 @@ void ResourceProvider::initGlobal() {
 	_archiveLoader->load("x.xarc");
 
 	// Set the root tree
-	Root *root = _archiveLoader->useRoot<Root>("x.xarc");
+	Resources::Root *root = _archiveLoader->useRoot<Resources::Root>("x.xarc");
 	_global->setRoot(root);
 
-	// Resource lifecycle update
+	// Resources::Resource lifecycle update
 	root->onAllLoaded();
 
 	// Find the global level node
-	Level *global = root->findChildWithSubtype<Level>(1);
+	Resources::Level *global = root->findChildWithSubtype<Resources::Level>(1);
 
 	// Load the global archive
 	Common::String globalArchiveName = _archiveLoader->buildArchiveName(global);
 	_archiveLoader->load(globalArchiveName);
 
 	// Set the global tree
-	global = _archiveLoader->useRoot<Level>(globalArchiveName);
+	global = _archiveLoader->useRoot<Resources::Level>(globalArchiveName);
 	_stateProvider->restoreLevelState(global);
 	_global->setLevel(global);
 
-	// Resource lifecycle update
+	// Resources::Resource lifecycle update
 	global->onAllLoaded();
 
 	//TODO: Retrieve the inventory from the global tree
-	_global->setApril(global->findChildWithSubtype<ItemSub1>(Item::kItemSub1));
+	_global->setApril(global->findChildWithSubtype<Resources::ItemSub1>(Resources::Item::kItemSub1));
 }
 
 Current *ResourceProvider::findLevel(uint16 level) {
@@ -97,7 +97,7 @@ Current *ResourceProvider::findLocation(uint16 level, uint16 location) {
 	return nullptr;
 }
 
-Level *ResourceProvider::getLevel(uint16 level) {
+Resources::Level *ResourceProvider::getLevel(uint16 level) {
 	Current *current = findLevel(level);
 
 	if (current) {
@@ -107,7 +107,7 @@ Level *ResourceProvider::getLevel(uint16 level) {
 	return nullptr;
 }
 
-Location *ResourceProvider::getLocation(uint16 level, uint16 location) {
+Resources::Location *ResourceProvider::getLocation(uint16 level, uint16 location) {
 	Current *current = findLocation(level, location);
 
 	if (current) {
@@ -122,13 +122,13 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	_locations.push_back(currentLocation);
 
 	// Retrieve the level archive name
-	Root *root = _global->getRoot();
-	Level *rootLevelResource = root->findChildWithIndex<Level>(level);
+	Resources::Root *root = _global->getRoot();
+	Resources::Level *rootLevelResource = root->findChildWithIndex<Resources::Level>(level);
 	Common::String levelArchive = _archiveLoader->buildArchiveName(rootLevelResource);
 
 	// Load the archive, and get the resource sub-tree root
 	bool newlyLoaded = _archiveLoader->load(levelArchive);
-	currentLocation->setLevel(_archiveLoader->useRoot<Level>(levelArchive));
+	currentLocation->setLevel(_archiveLoader->useRoot<Resources::Level>(levelArchive));
 
 	// If we just loaded a resource tree, restore its state
 	if (newlyLoaded) {
@@ -137,18 +137,18 @@ void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	}
 
 	// Retrieve the location archive name
-	Level *levelResource = currentLocation->getLevel();
-	Location *levelLocationResource = levelResource->findChildWithIndex<Location>(location);
+	Resources::Level *levelResource = currentLocation->getLevel();
+	Resources::Location *levelLocationResource = levelResource->findChildWithIndex<Resources::Location>(location);
 	Common::String locationArchive = _archiveLoader->buildArchiveName(levelResource, levelLocationResource);
 
 	// Load the archive, and get the resource sub-tree root
 	newlyLoaded = _archiveLoader->load(locationArchive);
-	currentLocation->setLocation(_archiveLoader->useRoot<Location>(locationArchive));
+	currentLocation->setLocation(_archiveLoader->useRoot<Resources::Location>(locationArchive));
 
 	if (currentLocation->getLocation()->has3DLayer()) {
-		Layer3D *layer = currentLocation->getLocation()->findChildWithSubtype<Layer3D>(Layer::kLayer3D);
-		currentLocation->setFloor(layer->findChild<Floor>());
-		currentLocation->setCamera(layer->findChild<Camera>());
+		Resources::Layer3D *layer = currentLocation->getLocation()->findChildWithSubtype<Resources::Layer3D>(Resources::Layer::kLayer3D);
+		currentLocation->setFloor(layer->findChild<Resources::Floor>());
+		currentLocation->setCamera(layer->findChild<Resources::Camera>());
 	} else {
 		currentLocation->setFloor(nullptr);
 		currentLocation->setCamera(nullptr);
@@ -169,10 +169,10 @@ void ResourceProvider::performLocationChange() {
 		Current *previous = _global->getCurrent();
 
 		// Trigger location change scripts
-		runLocationChangeScripts(previous->getLevel(), Script::kCallModeExitLocation);
-		runLocationChangeScripts(previous->getLocation(), Script::kCallModeExitLocation);
+		runLocationChangeScripts(previous->getLevel(), Resources::Script::kCallModeExitLocation);
+		runLocationChangeScripts(previous->getLocation(), Resources::Script::kCallModeExitLocation);
 
-		// Resource lifecycle update
+		// Resources::Resource lifecycle update
 		previous->getLocation()->onExitLocation();
 		previous->getLevel()->onExitLocation();
 		_global->getLevel()->onExitLocation();
@@ -189,31 +189,31 @@ void ResourceProvider::performLocationChange() {
 		_restoreCurrentState = false;
 	}
 
-	// Resource lifecycle update
+	// Resources::Resource lifecycle update
 	_global->getLevel()->onEnterLocation();
 	current->getLevel()->onEnterLocation();
 	current->getLocation()->onEnterLocation();
 
 	if (current->getLocation()->has3DLayer()) {
 		// Fetch the scene item for April
-		current->setInteractive(Resource::cast<ItemSub10>(_global->getApril()->getSceneInstance()));
+		current->setInteractive(Resources::Resource::cast<Resources::ItemSub10>(_global->getApril()->getSceneInstance()));
 	}
 
 	setAprilInitialPosition();
 
 	// Trigger location change scripts
-	runLocationChangeScripts(current->getLevel(), Script::kCallModeEnterLocation);
-	runLocationChangeScripts(current->getLocation(), Script::kCallModeEnterLocation);
+	runLocationChangeScripts(current->getLevel(), Resources::Script::kCallModeEnterLocation);
+	runLocationChangeScripts(current->getLocation(), Resources::Script::kCallModeEnterLocation);
 
 	purgeOldLocations();
 
 	_locationChangeRequest = false;
 }
 
-void ResourceProvider::runLocationChangeScripts(Resource *resource, uint32 scriptCallMode) {
-	Common::Array<Script *> script = resource->listChildrenRecursive<Script>();
+void ResourceProvider::runLocationChangeScripts(Resources::Resource *resource, uint32 scriptCallMode) {
+	Common::Array<Resources::Script *> script = resource->listChildrenRecursive<Resources::Script>();
 
-	if (scriptCallMode == Script::kCallModeEnterLocation) {
+	if (scriptCallMode == Resources::Script::kCallModeEnterLocation) {
 		for (uint i = 0; i < script.size(); i++) {
 			script[i]->reset();
 		}
@@ -235,13 +235,13 @@ void ResourceProvider::setAprilInitialPosition() {
 	}
 
 	Current *current = _global->getCurrent();
-	ItemSub10 *april = current->getInteractive();
+	Resources::ItemSub10 *april = current->getInteractive();
 	if (!april) {
 		return; // No character
 	}
 
 	// Set the initial location for April
-	Bookmark *position = _nextPositionBookmarkReference.resolve<Bookmark>();
+	Resources::Bookmark *position = _nextPositionBookmarkReference.resolve<Resources::Bookmark>();
 
 	april->placeOnBookmark(position);
 	april->setDirection(_nextDirection);

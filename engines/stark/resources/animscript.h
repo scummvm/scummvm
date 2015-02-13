@@ -29,9 +29,12 @@
 
 namespace Stark {
 
+class XRCReadStream;
+
+namespace Resources {
+
 class Anim;
 class AnimScriptItem;
-class XRCReadStream;
 
 /**
  * Animation scripts control the currently displayed frame for images animation
@@ -105,6 +108,7 @@ protected:
 	uint32 _duration;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_ANIM_SCRIPT_H

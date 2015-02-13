@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 Scroll::~Scroll() {
 }
@@ -53,4 +54,5 @@ void Scroll::printData() {
 	debug("bookmarkIndex: %d", _bookmarkIndex);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

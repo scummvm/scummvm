@@ -37,6 +37,7 @@
 #include "engines/stark/visual/smacker.h"
 
 namespace Stark {
+namespace Resources {
 
 Resource *Anim::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
@@ -338,4 +339,5 @@ void AnimSkeleton::printData() {
 	debug("field_6C: %d", _field_6C);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

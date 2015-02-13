@@ -26,6 +26,7 @@
 #include "engines/stark/resources/sound.h"
 
 namespace Stark {
+namespace Resources {
 
 Speech::~Speech() {
 }
@@ -79,4 +80,5 @@ void Speech::printData() {
 	debug("character: %d", _character);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

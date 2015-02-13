@@ -31,6 +31,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * The top level element of the game resource tree.
  *
@@ -47,6 +49,7 @@ protected:
 	void printData() override;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_ROOT_H

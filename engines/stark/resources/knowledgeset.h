@@ -31,6 +31,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * A typed collection of Knowledge resources
  */
@@ -53,6 +55,7 @@ protected:
 	void printData() override;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_KNOWLEDGE_SET_H

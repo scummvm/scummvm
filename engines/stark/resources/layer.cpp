@@ -29,6 +29,7 @@
 #include "common/debug.h"
 
 namespace Stark {
+namespace Resources {
 
 Resource *Layer::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
@@ -220,4 +221,5 @@ void Layer3D::printData() {
 	debug("farClipPlane: %f", _farClipPlane);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

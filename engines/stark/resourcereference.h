@@ -43,7 +43,7 @@ public:
 
 	Common::String describe();
 
-	void addPathElement(ResourceType type, uint16 index);
+	void addPathElement(Resources::ResourceType type, uint16 index);
 
 	/** Resolve the reference to the actual resource */
 	template <class T>
@@ -53,18 +53,18 @@ public:
 	bool empty() const;
 
 private:
-	Resource *resolve() const;
+	Resources::Resource *resolve() const;
 
 	class PathElement {
 	public:
-		PathElement(ResourceType type, uint16 index);
+		PathElement(Resources::ResourceType type, uint16 index);
 		Common::String describe();
 
-		ResourceType getType() const { return _type; }
+		Resources::ResourceType getType() const { return _type; }
 		uint16 getIndex() const { return _index; }
 
 	private:
-		ResourceType _type;
+		Resources::ResourceType _type;
 		uint16 _index;
 	};
 
@@ -73,7 +73,7 @@ private:
 
 template<class T>
 T* ResourceReference::resolve() const {
-	return Resource::cast<T>(resolve());
+	return Resources::Resource::cast<T>(resolve());
 }
 
 } // End of namespace Stark

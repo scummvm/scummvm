@@ -25,6 +25,7 @@
 #include "engines/stark/formats/xrc.h"
 
 namespace Stark {
+namespace Resources {
 
 Direction::~Direction() {
 }
@@ -49,4 +50,5 @@ void Direction::printData() {
 	debug("field_3C: %d", _field_3C);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

@@ -31,6 +31,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Stark {
+namespace Resources {
 
 AnimScript::~AnimScript() {
 }
@@ -135,4 +136,5 @@ void AnimScriptItem::printData() {
 	debug("op: %d, duration: %d ms, operand: %d", _opcode, _duration, _operand);
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

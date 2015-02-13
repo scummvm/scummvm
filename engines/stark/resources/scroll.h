@@ -31,6 +31,8 @@ namespace Stark {
 
 class XRCReadStream;
 
+namespace Resources {
+
 /**
  * Scroll position for a location
  */
@@ -53,6 +55,7 @@ protected:
 	uint32 _bookmarkIndex;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_SCROLL_H

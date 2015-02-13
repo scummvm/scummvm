@@ -31,8 +31,11 @@
 
 namespace Stark {
 
-class Layer;
 class XRCReadStream;
+
+namespace Resources {
+
+class Layer;
 
 /**
  * A location is a scene of the game
@@ -76,6 +79,7 @@ private:
 	Common::Point _maxScroll;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_LOCATION_H

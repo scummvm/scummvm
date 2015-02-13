@@ -36,6 +36,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Stark {
+namespace Resources {
 
 Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
@@ -547,4 +548,5 @@ void ItemSub10::printData() {
 	debug("reference: %s", _reference.describe().c_str());
 }
 
+} // End of namespace Resources
 } // End of namespace Stark

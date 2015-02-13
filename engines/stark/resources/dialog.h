@@ -30,8 +30,11 @@
 
 namespace Stark {
 
-class Speech;
 class XRCReadStream;
+
+namespace Resources {
+
+class Speech;
 
 /**
  * A dialog between two characters.
@@ -131,6 +134,7 @@ protected:
 	uint32 _hasAskAbout;
 };
 
+} // End of namespace Resources
 } // End of namespace Stark
 
 #endif // STARK_RESOURCES_DIALOG_H

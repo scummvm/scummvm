@@ -45,14 +45,14 @@ void UserInterface::skipCurrentSpeeches() {
 	}
 
 	// Get all speeches
-	Common::Array<Speech *> speeches;
-	speeches.push_back(global->getLevel()->listChildrenRecursive<Speech>());
-	speeches.push_back(current->getLevel()->listChildrenRecursive<Speech>());
-	speeches.push_back(current->getLocation()->listChildrenRecursive<Speech>());
+	Common::Array<Resources::Speech *> speeches;
+	speeches.push_back(global->getLevel()->listChildrenRecursive<Resources::Speech>());
+	speeches.push_back(current->getLevel()->listChildrenRecursive<Resources::Speech>());
+	speeches.push_back(current->getLocation()->listChildrenRecursive<Resources::Speech>());
 
 	// Stop them
 	for (uint i = 0; i < speeches.size(); i++) {
-		Speech *speech = speeches[i];
+		Resources::Speech *speech = speeches[i];
 		if (speech->isPlaying()) {
 			speech->stop();
 		}
@@ -67,7 +67,7 @@ void UserInterface::scrollLocation(int32 dX, int32 dY) {
 		return; // No current location, nothing to do
 	}
 
-	Location *location = current->getLocation();
+	Resources::Location *location = current->getLocation();
 
 	Common::Point scroll = location->getScrollPosition();
 	scroll.x += dX;

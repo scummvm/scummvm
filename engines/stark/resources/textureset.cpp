@@ -28,6 +28,7 @@
 #include "engines/stark/texture.h"
 
 namespace Stark {
+namespace Resources {
 
 TextureSet::~TextureSet() {
 	delete _texture;
@@ -64,4 +65,5 @@ void TextureSet::printData() {
 	debug("filename: %s", _filename.c_str());
 }
 
+} // End of namespace Resources
 } // End of namespace Stark
