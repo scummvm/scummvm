@@ -114,6 +114,7 @@ public:
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 	Skeleton *getSkeleton() const { return _skeleton; }
 	const Texture *getTexture() const { return _texture; }
+	float getFacingDirection() const { return _facingDirection; }
 
 	/**
 	 * Load animation data from the specified stream
@@ -127,7 +128,7 @@ public:
 
 private:
 	uint32 _u1;
-	float _u2;
+	float _facingDirection;
 
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
