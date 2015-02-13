@@ -32,7 +32,7 @@
 namespace Stark {
 
 
-ResourceReference::PathElement::PathElement(Resources::ResourceType type, uint16 index) :
+ResourceReference::PathElement::PathElement(Resources::Type type, uint16 index) :
 		_type(type), _index(index) {
 }
 
@@ -43,7 +43,7 @@ Common::String ResourceReference::PathElement::describe() {
 ResourceReference::ResourceReference() {
 }
 
-void ResourceReference::addPathElement(Resources::ResourceType type, uint16 index) {
+void ResourceReference::addPathElement(Resources::Type type, uint16 index) {
 	_path.push_back(PathElement(type, index));
 }
 
@@ -56,14 +56,14 @@ Resources::Resource *ResourceReference::resolve() const {
 		PathElement element = _path[i];
 
 		switch (element.getType().get()) {
-		case Resources::ResourceType::kLevel:
+		case Resources::Type::kLevel:
 			if (element.getIndex()) {
 				resource = resourceProvider->getLevel(element.getIndex());
 			} else {
 				resource = global->getLevel();
 			}
 			break;
-		case Resources::ResourceType::kLocation:
+		case Resources::Type::kLocation:
 			resource = resourceProvider->getLocation(resource->getIndex(), element.getIndex());
 			break;
 		default:

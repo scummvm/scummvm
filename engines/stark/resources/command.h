@@ -47,7 +47,7 @@ class Script;
  */
 class Command : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kCommand;
+	static const Type::ResourceType TYPE = Type::kCommand;
 
 	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Command();

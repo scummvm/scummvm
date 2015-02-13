@@ -44,7 +44,7 @@ namespace Resources {
  */
 class Sound : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kSoundItem;
+	static const Type::ResourceType TYPE = Type::kSoundItem;
 
 	enum SoundType {
 		kSoundTypeVoice  = 0,

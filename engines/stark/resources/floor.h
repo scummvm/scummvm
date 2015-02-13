@@ -46,7 +46,7 @@ class FloorFace;
  */
 class Floor : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kFloor;
+	static const Type::ResourceType TYPE = Type::kFloor;
 
 	Floor(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Floor();

@@ -74,10 +74,10 @@ Common::String XRCReadStream::readString() {
 	return string;
 }
 
-Resources::ResourceType XRCReadStream::readResourceType() {
+Resources::Type XRCReadStream::readResourceType() {
 	byte rawType;
 	rawType = readByte();
-	return Resources::ResourceType((Resources::ResourceType::Type) (rawType));
+	return Resources::Type((Resources::Type::ResourceType) (rawType));
 }
 
 ResourceReference XRCReadStream::readResourceReference() {
@@ -85,7 +85,7 @@ ResourceReference XRCReadStream::readResourceReference() {
 
 	uint32 pathSize = readUint32LE();
 	for (uint i = 0; i < pathSize; i++) {
-		Resources::ResourceType type = readResourceType();
+		Resources::Type type = readResourceType();
 		uint16 index = readUint16LE();
 
 		reference.addPathElement(type, index);
@@ -171,7 +171,7 @@ Resources::Resource *XRCReader::importResource(XRCReadStream *stream, Resources:
 
 Resources::Resource *XRCReader::createResource(XRCReadStream *stream, Resources::Resource *parent) {
 	// Read the resource type and subtype
-	Resources::ResourceType type = stream->readResourceType();
+	Resources::Type type = stream->readResourceType();
 	byte subType = stream->readByte();
 
 	// Read the resource properties
@@ -181,79 +181,79 @@ Resources::Resource *XRCReader::createResource(XRCReadStream *stream, Resources:
 	// Create a new resource
 	Resources::Resource *resource;
 	switch (type.get()) {
-	case Resources::ResourceType::kRoot:
+	case Resources::Type::kRoot:
 		resource = new Resources::Root(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kLevel:
+	case Resources::Type::kLevel:
 		resource = new Resources::Level(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kLocation:
+	case Resources::Type::kLocation:
 		resource = new Resources::Location(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kLayer:
+	case Resources::Type::kLayer:
 		resource = Resources::Layer::construct(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kCamera:
+	case Resources::Type::kCamera:
 		resource = new Resources::Camera(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kFloor:
+	case Resources::Type::kFloor:
 		resource = new Resources::Floor(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kFloorFace:
+	case Resources::Type::kFloorFace:
 		resource = new Resources::FloorFace(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kItem:
+	case Resources::Type::kItem:
 		resource = Resources::Item::construct(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kScript:
+	case Resources::Type::kScript:
 		resource = new Resources::Script(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kAnimHierarchy:
+	case Resources::Type::kAnimHierarchy:
 		resource = new Resources::AnimHierarchy(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kAnim:
+	case Resources::Type::kAnim:
 		resource = Resources::Anim::construct(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kDirection:
+	case Resources::Type::kDirection:
 		resource = new Resources::Direction(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kImage:
+	case Resources::Type::kImage:
 		resource = Resources::Image::construct(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kAnimScript:
+	case Resources::Type::kAnimScript:
 		resource = new Resources::AnimScript(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kAnimScriptItem:
+	case Resources::Type::kAnimScriptItem:
 		resource = new Resources::AnimScriptItem(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kSoundItem:
+	case Resources::Type::kSoundItem:
 		resource = new Resources::Sound(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kBookmark:
+	case Resources::Type::kBookmark:
 		resource = new Resources::Bookmark(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kKnowledgeSet:
+	case Resources::Type::kKnowledgeSet:
 		resource = new Resources::KnowledgeSet(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kKnowledge:
+	case Resources::Type::kKnowledge:
 		resource = new Resources::Knowledge(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kCommand:
+	case Resources::Type::kCommand:
 		resource = new Resources::Command(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kDialog:
+	case Resources::Type::kDialog:
 		resource = new Resources::Dialog(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kSpeech:
+	case Resources::Type::kSpeech:
 		resource = new Resources::Speech(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kBonesMesh:
+	case Resources::Type::kBonesMesh:
 		resource = new Resources::BonesMesh(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kScroll:
+	case Resources::Type::kScroll:
 		resource = new Resources::Scroll(parent, subType, index, name);
 		break;
-	case Resources::ResourceType::kTextureSet:
+	case Resources::Type::kTextureSet:
 		resource = new Resources::TextureSet(parent, subType, index, name);
 		break;
 	default:

@@ -40,7 +40,7 @@ namespace Resources {
  */
 class Root : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kRoot;
+	static const Type::ResourceType TYPE = Type::kRoot;
 
 	Root(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Root();

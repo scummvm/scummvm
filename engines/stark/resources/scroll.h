@@ -38,7 +38,7 @@ namespace Resources {
  */
 class Scroll : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kScroll;
+	static const Type::ResourceType TYPE = Type::kScroll;
 
 	Scroll(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Scroll();

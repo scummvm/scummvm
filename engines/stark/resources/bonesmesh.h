@@ -39,7 +39,7 @@ namespace Resources {
  */
 class BonesMesh : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kBonesMesh;
+	static const Type::ResourceType TYPE = Type::kBonesMesh;
 
 	BonesMesh(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~BonesMesh();

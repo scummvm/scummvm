@@ -42,7 +42,7 @@ namespace Resources {
  */
 class Bookmark : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kBookmark;
+	static const Type::ResourceType TYPE = Type::kBookmark;
 
 	Bookmark(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Bookmark();

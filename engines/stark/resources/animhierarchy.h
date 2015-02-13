@@ -47,7 +47,7 @@ class TextureSet;
  */
 class AnimHierarchy : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kAnimHierarchy;
+	static const Type::ResourceType TYPE = Type::kAnimHierarchy;
 
 	AnimHierarchy(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimHierarchy();

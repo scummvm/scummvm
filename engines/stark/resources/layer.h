@@ -44,7 +44,7 @@ class Item;
  */
 class Layer : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kLayer;
+	static const Type::ResourceType TYPE = Type::kLayer;
 
 	enum SubType {
 		kLayer2D = 1,

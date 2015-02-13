@@ -44,7 +44,7 @@ class Sound;
  */
 class Speech : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kSpeech;
+	static const Type::ResourceType TYPE = Type::kSpeech;
 
 	Speech(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Speech();

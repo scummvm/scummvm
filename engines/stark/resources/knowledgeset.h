@@ -38,7 +38,7 @@ namespace Resources {
  */
 class KnowledgeSet : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kKnowledgeSet;
+	static const Type::ResourceType TYPE = Type::kKnowledgeSet;
 
 	enum SubType {
 		kInventory = 1,

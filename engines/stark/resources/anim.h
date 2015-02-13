@@ -49,7 +49,7 @@ class Item;
  */
 class Anim : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kAnim;
+	static const Type::ResourceType TYPE = Type::kAnim;
 
 	enum SubType {
 		kAnimImages   = 1,

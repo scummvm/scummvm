@@ -47,7 +47,7 @@ class AnimScriptItem;
  */
 class AnimScript : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kAnimScript;
+	static const Type::ResourceType TYPE = Type::kAnimScript;
 
 	AnimScript(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimScript();
@@ -74,7 +74,7 @@ protected:
  */
 class AnimScriptItem : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kAnimScriptItem;
+	static const Type::ResourceType TYPE = Type::kAnimScriptItem;
 
 	enum Opcodes {
 		kDisplayFrame        = 0,

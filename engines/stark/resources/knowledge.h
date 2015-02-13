@@ -39,7 +39,7 @@ namespace Resources {
  */
 class Knowledge : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kKnowledge;
+	static const Type::ResourceType TYPE = Type::kKnowledge;
 
 	enum SubType {
 		kBoolean = 0,

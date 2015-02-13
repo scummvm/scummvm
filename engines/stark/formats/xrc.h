@@ -51,7 +51,7 @@ public:
 	Common::String getArchiveName() const;
 
 	Common::String readString();
-	Resources::ResourceType readResourceType();
+	Resources::Type readResourceType();
 	ResourceReference readResourceReference();
 	Math::Vector3d readVector3();
 	Common::Rect readRect();

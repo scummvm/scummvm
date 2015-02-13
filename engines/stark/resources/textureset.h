@@ -41,7 +41,7 @@ namespace Resources {
  */
 class TextureSet : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kTextureSet;
+	static const Type::ResourceType TYPE = Type::kTextureSet;
 
 	enum SubType {
 		kTextureNormal = 1,

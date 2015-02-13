@@ -173,7 +173,7 @@ void Script::updateSuspended() {
 	if (_suspendingResource) {
 		// Check if the suspending resource is still active
 		switch (_suspendingResource->getType().get()) {
-		case ResourceType::kDialog: {
+		case Type::kDialog: {
 			DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 			if (!dialogPlayer->isRunning()) {
 				// Resume the script execution if the dialog is complete
@@ -181,7 +181,7 @@ void Script::updateSuspended() {
 			}
 			break;
 		}
-		case ResourceType::kSoundItem: {
+		case Type::kSoundItem: {
 			Sound *soundItem = Resource::cast<Sound>(_suspendingResource);
 			if (!soundItem->isPlaying()) {
 				// Resume the script execution once the sound has stopped playing

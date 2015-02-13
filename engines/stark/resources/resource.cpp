@@ -32,54 +32,54 @@
 namespace Stark {
 namespace Resources {
 
-ResourceType::ResourceType(Type type) {
+Type::Type(ResourceType type) {
 	_type = type;
 }
 
-ResourceType::ResourceType() :
-		ResourceType::ResourceType(kInvalid) {
+Type::Type() :
+		Type::Type(kInvalid) {
 }
 
-const char *ResourceType::getName() {
+const char *Type::getName() {
 	static const struct {
-		ResourceType::Type type;
+		Type::ResourceType type;
 		const char *name;
 	} typeNames[] = {
-			{ ResourceType::kInvalid,                "Invalid"                },
-			{ ResourceType::kRoot,                   "Root"                   },
-			{ ResourceType::kLevel,                  "Level"                  },
-			{ ResourceType::kLocation,               "Location"               },
-			{ ResourceType::kLayer,                  "Layer"                  },
-			{ ResourceType::kCamera,                 "Camera"                 },
-			{ ResourceType::kFloor,                  "Floor"                  },
-			{ ResourceType::kFloorFace,              "FloorFace"              },
-			{ ResourceType::kItem,                   "Item"                   },
-			{ ResourceType::kScript,                 "Script"                 },
-			{ ResourceType::kAnimHierarchy,          "AnimHierarchy"          },
-			{ ResourceType::kAnim,                   "Anim"                   },
-			{ ResourceType::kDirection,              "Direction"              },
-			{ ResourceType::kImage,                  "Image"                  },
-			{ ResourceType::kAnimScript,             "AnimScript"             },
-			{ ResourceType::kAnimScriptItem,         "AnimScriptItem"         },
-			{ ResourceType::kSoundItem,              "SoundItem"              },
-			{ ResourceType::kFloorField,             "FloorField"             },
-			{ ResourceType::kBookmark,               "Bookmark"               },
-			{ ResourceType::kKnowledgeSet,           "KnowledgeSet"           },
-			{ ResourceType::kKnowledge,              "Knowledge"              },
-			{ ResourceType::kCommand,                "Command"                },
-			{ ResourceType::kPATTable,               "PATTable"               },
-			{ ResourceType::kContainer,              "Container"              },
-			{ ResourceType::kDialog,                 "Dialog"                 },
-			{ ResourceType::kSpeech,                 "Speech"                 },
-			{ ResourceType::kLight,                  "Light"                  },
-			{ ResourceType::kCursor,                 "Cursor"                 },
-			{ ResourceType::kBonesMesh,              "BonesMesh"              },
-			{ ResourceType::kScroll,                 "Scroll"                 },
-			{ ResourceType::kFMV,                    "FMV"                    },
-			{ ResourceType::kLipSynch,               "LipSynch"               },
-			{ ResourceType::kAnimScriptBonesTrigger, "AnimScriptBonesTrigger" },
-			{ ResourceType::kString,                 "String"                 },
-			{ ResourceType::kTextureSet,             "TextureSet"             }
+			{ Type::kInvalid,                "Invalid"                },
+			{ Type::kRoot,                   "Root"                   },
+			{ Type::kLevel,                  "Level"                  },
+			{ Type::kLocation,               "Location"               },
+			{ Type::kLayer,                  "Layer"                  },
+			{ Type::kCamera,                 "Camera"                 },
+			{ Type::kFloor,                  "Floor"                  },
+			{ Type::kFloorFace,              "FloorFace"              },
+			{ Type::kItem,                   "Item"                   },
+			{ Type::kScript,                 "Script"                 },
+			{ Type::kAnimHierarchy,          "AnimHierarchy"          },
+			{ Type::kAnim,                   "Anim"                   },
+			{ Type::kDirection,              "Direction"              },
+			{ Type::kImage,                  "Image"                  },
+			{ Type::kAnimScript,             "AnimScript"             },
+			{ Type::kAnimScriptItem,         "AnimScriptItem"         },
+			{ Type::kSoundItem,              "SoundItem"              },
+			{ Type::kFloorField,             "FloorField"             },
+			{ Type::kBookmark,               "Bookmark"               },
+			{ Type::kKnowledgeSet,           "KnowledgeSet"           },
+			{ Type::kKnowledge,              "Knowledge"              },
+			{ Type::kCommand,                "Command"                },
+			{ Type::kPATTable,               "PATTable"               },
+			{ Type::kContainer,              "Container"              },
+			{ Type::kDialog,                 "Dialog"                 },
+			{ Type::kSpeech,                 "Speech"                 },
+			{ Type::kLight,                  "Light"                  },
+			{ Type::kCursor,                 "Cursor"                 },
+			{ Type::kBonesMesh,              "BonesMesh"              },
+			{ Type::kScroll,                 "Scroll"                 },
+			{ Type::kFMV,                    "FMV"                    },
+			{ Type::kLipSynch,               "LipSynch"               },
+			{ Type::kAnimScriptBonesTrigger, "AnimScriptBonesTrigger" },
+			{ Type::kString,                 "String"                 },
+			{ Type::kTextureSet,             "TextureSet"             }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(typeNames); i++) {
@@ -91,13 +91,13 @@ const char *ResourceType::getName() {
 	return nullptr;
 }
 
-ResourceType::Type ResourceType::get() {
+Type::ResourceType Type::get() {
 	return _type;
 }
 
 Resource::Resource(Resource *parent, byte subType, uint16 index, const Common::String &name) :
 		_parent(parent),
-		_type(ResourceType::kInvalid),
+		_type(Type::kInvalid),
 		_subType(subType),
 		_index(index),
 		_name(name) {
@@ -193,7 +193,7 @@ void Resource::print(uint depth) {
 	}
 }
 
-Resource *Resource::findChildWithIndex(ResourceType type, uint16 index, int subType) {
+Resource *Resource::findChildWithIndex(Type type, uint16 index, int subType) {
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i]->getType() == type
 				&& (_children[i]->getSubType() == subType || subType == -1)
@@ -229,7 +229,7 @@ void Resource::addChild(Resource *child) {
 	_children.push_back(child);
 }
 
-UnimplementedResource::UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name) :
+UnimplementedResource::UnimplementedResource(Resource *parent, Type type, byte subType, uint16 index, const Common::String &name) :
 		Resource(parent, subType, index, name),
 		_dataLength(0),
 		_data(nullptr) {

@@ -33,9 +33,9 @@ class ResourceSerializer;
 
 namespace Resources {
 
-class ResourceType {
+class Type {
 public:
-	enum Type {
+	enum ResourceType {
 		kInvalid                = 0,
 		kRoot                   = 1,
 		kLevel                  = 2,
@@ -73,30 +73,30 @@ public:
 		kTextureSet             = 38
 	};
 
-	ResourceType();
-	ResourceType(Type type);
+	Type();
+	Type(ResourceType type);
 
-	Type get();
+	ResourceType get();
 	const char *getName();
 
-	bool operator==(const ResourceType &other) const {
+	bool operator==(const Type &other) const {
 		return other._type == _type;
 	}
 
-	bool operator!=(const ResourceType &other) const {
+	bool operator!=(const Type &other) const {
 		return other._type != _type;
 	}
 
-	bool operator==(const ResourceType::Type other) const {
+	bool operator==(const Type::ResourceType other) const {
 		return other == _type;
 	}
 
-	bool operator!=(const ResourceType::Type other) const {
+	bool operator!=(const Type::ResourceType other) const {
 		return other != _type;
 	}
 
 private:
-	Type _type;
+	ResourceType _type;
 };
 
 /**
@@ -143,7 +143,7 @@ public:
 	virtual ~Resource();
 
 	/** Get the resource type */
-	ResourceType getType() const { return _type; }
+	Type getType() const { return _type; }
 
 	/** Get the resource sub type */
 	byte getSubType() const { return _subType; }
@@ -219,7 +219,7 @@ public:
 	T *findParent();
 
 	/** Find a child resource matching the specified type, index and subtype */
-	Resource *findChildWithIndex(ResourceType type, uint16 index, int subType = -1);
+	Resource *findChildWithIndex(Type type, uint16 index, int subType = -1);
 
 	/** Find a child matching the template parameter type */
 	template<class T>
@@ -252,7 +252,7 @@ protected:
 
 	virtual void printData();
 
-	ResourceType _type;
+	Type _type;
 	byte _subType;
 	uint16 _index;
 	Common::String _name;
@@ -269,7 +269,7 @@ protected:
  */
 class UnimplementedResource : public Resource {
 public:
-	UnimplementedResource(Resource *parent, ResourceType type, byte subType, uint16 index, const Common::String &name);
+	UnimplementedResource(Resource *parent, Type type, byte subType, uint16 index, const Common::String &name);
 	virtual ~UnimplementedResource();
 
 protected:
@@ -284,7 +284,7 @@ template <class T>
 T* Resource::cast(Resource *resource) {
 	if (resource && resource->_type != T::TYPE) {
 		error("Unexpected resource type when casting resource %s instead of %s",
-				resource->_type.getName(), ResourceType(T::TYPE).getName());
+				resource->_type.getName(), Type(T::TYPE).getName());
 	}
 
 	return (T *) resource;
@@ -354,7 +354,7 @@ T *Resource::findChildWithSubtype(int subType, bool mustBeUnique) {
 	}
 
 	if (list.size() > 1 && mustBeUnique) {
-		error("Several children resources matching criteria type = %s, subtype = %d", ResourceType(T::TYPE).getName(), subType);
+		error("Several children resources matching criteria type = %s, subtype = %d", Type(T::TYPE).getName(), subType);
 	}
 
 	return list.front();

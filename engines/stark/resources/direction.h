@@ -35,7 +35,7 @@ namespace Resources {
 
 class Direction : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kDirection;
+	static const Type::ResourceType TYPE = Type::kDirection;
 
 	Direction(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Direction();

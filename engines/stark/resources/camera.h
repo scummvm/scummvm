@@ -44,7 +44,7 @@ namespace Resources {
  */
 class Camera : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kCamera;
+	static const Type::ResourceType TYPE = Type::kCamera;
 
 	Camera(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Camera();

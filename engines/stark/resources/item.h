@@ -52,7 +52,7 @@ class TextureSet;
  */
 class Item : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kItem;
+	static const Type::ResourceType TYPE = Type::kItem;
 
 	enum SubType {
 		kItemSub1 = 1,

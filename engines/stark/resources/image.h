@@ -40,7 +40,7 @@ namespace Resources {
  */
 class Image : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kImage;
+	static const Type::ResourceType TYPE = Type::kImage;
 
 	enum SubType {
 		kImageSub2 = 2,

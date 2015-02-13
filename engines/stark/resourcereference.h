@@ -43,7 +43,7 @@ public:
 
 	Common::String describe();
 
-	void addPathElement(Resources::ResourceType type, uint16 index);
+	void addPathElement(Resources::Type type, uint16 index);
 
 	/** Resolve the reference to the actual resource */
 	template <class T>
@@ -57,14 +57,14 @@ private:
 
 	class PathElement {
 	public:
-		PathElement(Resources::ResourceType type, uint16 index);
+		PathElement(Resources::Type type, uint16 index);
 		Common::String describe();
 
-		Resources::ResourceType getType() const { return _type; }
+		Resources::Type getType() const { return _type; }
 		uint16 getIndex() const { return _index; }
 
 	private:
-		Resources::ResourceType _type;
+		Resources::Type _type;
 		uint16 _index;
 	};
 

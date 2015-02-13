@@ -48,7 +48,7 @@ class Speech;
  */
 class Dialog : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kDialog;
+	static const Type::ResourceType TYPE = Type::kDialog;
 
 	Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Dialog();

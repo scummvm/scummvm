@@ -43,7 +43,7 @@ class Command;
  */
 class Script : public Resource {
 public:
-	static const ResourceType::Type TYPE = ResourceType::kScript;
+	static const Type::ResourceType TYPE = Type::kScript;
 
 	enum SubType {
 		kSubTypeGameEvent = 4,

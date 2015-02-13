@@ -115,7 +115,7 @@ Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const Resour
 	Resource *target = targetRef.resolve<Resource>();
 
 	switch (target->getType().get()) {
-	case ResourceType::kBookmark:
+	case Type::kBookmark:
 		item->placeOnBookmark(Resource::cast<Bookmark>(target));
 		break;
 	default:
