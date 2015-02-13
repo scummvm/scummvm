@@ -82,7 +82,7 @@ void Item::setEnabled(bool enabled) {
 	_enabled = enabled;
 }
 
-RenderEntry *Item::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *Item::getRenderEntry(const Common::Point &positionOffset) {
 	return nullptr;
 }
 
@@ -105,7 +105,7 @@ ItemVisual::ItemVisual(Object *parent, byte subType, uint16 index, const Common:
 				_animHierarchy(nullptr),
 				_currentAnimIndex(-1),
 				_field_44(1) {
-	_renderEntry = new RenderEntry(this, getName());
+	_renderEntry = new Gfx::RenderEntry(this, getName());
 }
 
 void ItemVisual::readData(Formats::XRCReadStream *stream) {
@@ -375,7 +375,7 @@ void ItemSub56::readData(Formats::XRCReadStream *stream) {
 	_position = stream->readPoint();
 }
 
-RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
@@ -410,7 +410,7 @@ void ItemSub78::readData(Formats::XRCReadStream *stream) {
 	_reference = stream->readResourceReference();
 }
 
-RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
@@ -523,7 +523,7 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	return textureSet;
 }
 
-RenderEntry *ItemSub10::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *ItemSub10::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 

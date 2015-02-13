@@ -33,6 +33,7 @@
 #include "engines/stark/gfx/driver.h"
 
 namespace Stark {
+namespace Gfx {
 
 class OpenGLGfxDriver : public GfxDriver {
 public:
@@ -50,7 +51,7 @@ public:
 	void clearScreen();
 	void flipBuffer();
 
-	Gfx::MipMapTexture *createMipMapTexture() override;
+	MipMapTexture *createMipMapTexture() override;
 
 	void drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect);
 
@@ -61,6 +62,7 @@ private:
 	void end2DMode();
 };
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
 #endif // USE_OPENGL

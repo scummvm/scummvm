@@ -31,9 +31,12 @@ class RandomSource;
 
 namespace Stark {
 
+namespace Gfx {
+class GfxDriver;
+}
+
 class ArchiveLoader;
 class DialogPlayer;
-class GfxDriver;
 class Global;
 class ResourceProvider;
 class Scene;
@@ -57,7 +60,7 @@ public:
 
 	ArchiveLoader *archiveLoader;
 	DialogPlayer *dialogPlayer;
-	GfxDriver *gfx;
+	Gfx::GfxDriver *gfx;
 	Global *global;
 	ResourceProvider *resourceProvider;
 	Common::RandomSource *randomSource;

@@ -55,7 +55,7 @@ VisualSmacker *VisualSmacker::load(Common::SeekableReadStream *stream) {
 	return new VisualSmacker(stream);
 }
 
-void VisualSmacker::render(GfxDriver *gfx, const Common::Point &position) {
+void VisualSmacker::render(Gfx::GfxDriver *gfx, const Common::Point &position) {
 	gfx->drawSurface(_surface, position);
 }
 

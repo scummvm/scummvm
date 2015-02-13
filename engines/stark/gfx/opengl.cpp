@@ -43,6 +43,7 @@
 #endif
 
 namespace Stark {
+namespace Gfx {
 
 OpenGLGfxDriver::OpenGLGfxDriver() {
 }
@@ -86,8 +87,8 @@ void OpenGLGfxDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-Gfx::MipMapTexture *OpenGLGfxDriver::createMipMapTexture() {
-	return new Gfx::OpenGlMipMapTexture();
+MipMapTexture *OpenGLGfxDriver::createMipMapTexture() {
+	return new OpenGlMipMapTexture();
 }
 
 void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {
@@ -155,6 +156,7 @@ void OpenGLGfxDriver::set3DMode() {
 	glDepthFunc(GL_LESS);
 }
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
 #endif // USE_OPENGL

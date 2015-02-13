@@ -64,7 +64,7 @@ public:
 	/**
 	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp
 	 */
-	Coordinate getCoordForBone(uint32 time, int boneIdx);
+	Gfx::Coordinate getCoordForBone(uint32 time, int boneIdx);
 
 	/**
 	 * Get total animation length (in ms)

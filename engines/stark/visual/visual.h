@@ -28,7 +28,9 @@
 
 namespace Stark {
 
+namespace Gfx {
 class GfxDriver;
+}
 
 class Visual {
 public:

@@ -29,6 +29,7 @@
 #include "math/vector3d.h"
 
 namespace Stark {
+namespace Gfx {
 
 /**
  * Convenient 'joint' coordinate manipulation structure.
@@ -117,6 +118,7 @@ inline Coordinate operator -(const Coordinate& c) {
 	return c * (-1.f);
 }
 
-} // end of namespace Stark
+} // End of namespace Gfx
+} // End of namespace Stark
 
 #endif

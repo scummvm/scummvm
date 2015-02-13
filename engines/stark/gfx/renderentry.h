@@ -31,12 +31,15 @@
 
 namespace Stark {
 
+class Visual;
+
 namespace Resources {
 class Object;
 }
 
+namespace Gfx {
+
 class GfxDriver;
-class Visual;
 
 class RenderEntry {
 public:
@@ -66,6 +69,7 @@ protected:
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
 #endif // STARK_GFX_RENDER_ENTRY_H

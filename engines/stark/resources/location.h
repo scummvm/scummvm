@@ -59,7 +59,7 @@ public:
 	bool has3DLayer();
 
 	/** Obtain a list of render entries for all the items in the location */
-	RenderEntryArray listRenderEntries();
+	Gfx::RenderEntryArray listRenderEntries();
 
 	/** Initialize scrolling from Camera data */
 	void initScroll(const Common::Point &maxScroll);

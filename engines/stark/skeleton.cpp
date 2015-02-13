@@ -69,8 +69,8 @@ void Skeleton::setAnim(SkeletonAnim *anim) {
 	_anim = anim;
 }
 
-void Skeleton::setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoord) {
-	Coordinate animCoord = _anim->getCoordForBone(time, bone->_idx);
+void Skeleton::setNode(uint32 time, BoneNode *bone, const Gfx::Coordinate &parentCoord) {
+	Gfx::Coordinate animCoord = _anim->getCoordForBone(time, bone->_idx);
 	animCoord.rotate(parentCoord);
 	bone->_animPos = parentCoord + animCoord;
 
@@ -86,7 +86,7 @@ void Skeleton::animate(uint32 time) {
 	//  - Process that childs children
 
 	if (time != _lastTime) {
-		setNode(time, _bones[0], Coordinate());
+		setNode(time, _bones[0], Gfx::Coordinate());
 		_lastTime = time;
 	}
 }

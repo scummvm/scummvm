@@ -46,7 +46,7 @@ public:
 
 	static VisualSmacker *load(Common::SeekableReadStream *stream);
 	void update(uint32 delta);
-	void render(GfxDriver *gfx, const Common::Point &position);
+	void render(Gfx::GfxDriver *gfx, const Common::Point &position);
 	bool isDone();
 
 private:

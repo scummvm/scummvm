@@ -42,7 +42,7 @@ public:
 	int _parent;
 	int _idx;
 
-	Coordinate _animPos;
+	Gfx::Coordinate _animPos;
 };
 
 /**
@@ -71,7 +71,7 @@ public:
 	const Common::Array<BoneNode *> &getBones() const { return _bones; }
 
 private:
-	void setNode(uint32 time, BoneNode *bone, const Coordinate &parentCoord);
+	void setNode(uint32 time, BoneNode *bone, const Gfx::Coordinate &parentCoord);
 
 	Common::Array<BoneNode *> _bones;
 	SkeletonAnim *_anim;

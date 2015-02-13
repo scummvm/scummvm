@@ -33,7 +33,7 @@
 namespace Stark {
 namespace Formats {
 
-TextureSetReader::TextureSetReader(GfxDriver *driver) :
+TextureSetReader::TextureSetReader(Gfx::GfxDriver *driver) :
 		_palette(nullptr),
 		_driver(driver) {
 }

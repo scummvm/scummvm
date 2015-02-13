@@ -32,11 +32,10 @@
 #include "math/vector3d.h"
 
 namespace Stark {
-
 namespace Gfx {
+
 class Texture;
 class MipMapTexture;
-}
 
 class GfxDriver {
 public:
@@ -60,7 +59,7 @@ public:
 	 *
 	 * The caller is responsible for freeing it.
 	 */
-	virtual Gfx::MipMapTexture *createMipMapTexture() = 0;
+	virtual MipMapTexture *createMipMapTexture() = 0;
 
 	virtual void drawSurface(const Graphics::Surface *surface, Common::Point dest = Common::Point(), Common::Rect rect = Common::Rect()) = 0;
 
@@ -74,6 +73,7 @@ protected:
 	int _screenHeight;
 };
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
 #endif // STARK_GFX_DRIVER_H

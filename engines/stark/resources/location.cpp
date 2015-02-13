@@ -49,8 +49,8 @@ bool Location::has3DLayer() {
 	return findChildWithSubtype<Layer>(Layer::kLayer3D) != nullptr;
 }
 
-RenderEntryArray Location::listRenderEntries() {
-	RenderEntryArray renderEntries;
+Gfx::RenderEntryArray Location::listRenderEntries() {
+	Gfx::RenderEntryArray renderEntries;
 
 	for (uint i = 0; i < _layers.size(); i++) {
 		Layer *layer = _layers[i];

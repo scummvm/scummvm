@@ -59,7 +59,7 @@ void VisualActor::setTime(uint32 time) {
 	_time = time;
 }
 
-void VisualActor::render(Stark::GfxDriver *gfx, const Math::Vector3d position, float direction) {
+void VisualActor::render(Gfx::GfxDriver *gfx, const Math::Vector3d position, float direction) {
 	_actor->getSkeleton()->animate(_time);
 
 	// Prepare vertex list and push to gfx driver
@@ -105,18 +105,18 @@ void VisualActor::render(Stark::GfxDriver *gfx, const Math::Vector3d position, f
 						vertIdx = (*tri)->_vert2;
 
 
-					Coordinate b1 = (*face)->_verts[vertIdx]->_pos1;
+					Gfx::Coordinate b1 = (*face)->_verts[vertIdx]->_pos1;
 					BoneNode *bone = bones[(*face)->_verts[vertIdx]->_bone1];
 					b1.rotate(bone->_animPos);
 					b1.translate(bone->_animPos);
 
-					Coordinate b2 = (*face)->_verts[vertIdx]->_pos2;
+					Gfx::Coordinate b2 = (*face)->_verts[vertIdx]->_pos2;
 					bone = bones[(*face)->_verts[vertIdx]->_bone2];
 					b2.rotate(bone->_animPos);
 					b2.translate(bone->_animPos);
 
 					float w = (*face)->_verts[vertIdx]->_boneWeight;
-					Coordinate pos = b1 * w + b2 * (1.f - w);
+					Gfx::Coordinate pos = b1 * w + b2 * (1.f - w);
 					if (tex)
 						glTexCoord2f(-(*face)->_verts[vertIdx]->_texS, (*face)->_verts[vertIdx]->_texT);
 

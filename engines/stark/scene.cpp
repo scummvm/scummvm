@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-Scene::Scene(GfxDriver *gfx) :
+Scene::Scene(Gfx::GfxDriver *gfx) :
 		_gfx(gfx),
 		_fov(45.0),
 		_nearClipPlane(100.0),
@@ -87,7 +87,7 @@ void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ym
 	if (ymax) *ymax = ymaxValue;
 }
 
-void Scene::render(RenderEntryArray renderEntries) {
+void Scene::render(Gfx::RenderEntryArray renderEntries) {
 	// setup cam
 	_gfx->setGameViewport();
 	_gfx->setupPerspective(_perspectiveMatrix);
@@ -98,7 +98,7 @@ void Scene::render(RenderEntryArray renderEntries) {
 	// Draw other things
 
 	// Render all the scene elements
-	RenderEntryArray::iterator element = renderEntries.begin();
+	Gfx::RenderEntryArray::iterator element = renderEntries.begin();
 	while (element != renderEntries.end()) {
 		// Draw the current element
 		(*element)->render(_gfx);

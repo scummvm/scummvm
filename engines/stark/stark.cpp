@@ -88,7 +88,7 @@ StarkEngine::~StarkEngine() {
 
 Common::Error StarkEngine::run() {
 	_console = new Console();
-	_gfx = GfxDriver::create();
+	_gfx = Gfx::GfxDriver::create();
 
 	// Get the screen prepared
 	_gfx->setupScreen(640, 480, ConfMan.getBool("fullscreen"));
@@ -187,7 +187,7 @@ void StarkEngine::updateDisplayScene() {
 	_global->getCurrent()->getLocation()->onGameLoop();
 
 	// Render the current scene
-	RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
+	Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
 	_scene->render(renderEntries);
 
 	// Swap buffers

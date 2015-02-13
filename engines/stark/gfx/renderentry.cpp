@@ -28,6 +28,7 @@
 #include "engines/stark/visual/visual.h"
 
 namespace Stark {
+namespace Gfx {
 
 RenderEntry::RenderEntry(Resources::Object *owner, const Common::String &name) :
 	_visual(nullptr),
@@ -80,4 +81,5 @@ bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 	return x->_sortKey < y->_sortKey;
 }
 
+} // End of namespace Gfx
 } // End of namespace Stark

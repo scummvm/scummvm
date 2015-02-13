@@ -111,17 +111,17 @@ void Layer2D::onExitLocation() {
 	_items.clear();
 }
 
-RenderEntry *Layer2D::getBackgroundRenderEntry() {
+Gfx::RenderEntry *Layer2D::getBackgroundRenderEntry() {
 	// TODO
 	return nullptr;
 }
 
-RenderEntryArray Layer2D::listRenderEntries() {
-	RenderEntryArray renderEntries;
+Gfx::RenderEntryArray Layer2D::listRenderEntries() {
+	Gfx::RenderEntryArray renderEntries;
 	for (uint i = 0; i < _items.size(); i++) {
 		Item *item = _items[i];
 
-		RenderEntry *renderEntry = item->getRenderEntry(_scroll);
+		Gfx::RenderEntry *renderEntry = item->getRenderEntry(_scroll);
 
 		if (!renderEntry) {
 			// warning("No render entry for item '%s'", item->getName().c_str());
@@ -171,7 +171,7 @@ void Layer3D::onAllLoaded() {
 	camera->setClipPlanes(_nearClipPlane, _farClipPlane);
 }
 
-RenderEntry *Layer3D::getBackgroundRenderEntry() {
+Gfx::RenderEntry *Layer3D::getBackgroundRenderEntry() {
 	if (!_backgroundItem) {
 		return nullptr;
 	}
@@ -179,14 +179,14 @@ RenderEntry *Layer3D::getBackgroundRenderEntry() {
 	return _backgroundItem->getRenderEntry(_scroll);
 }
 
-RenderEntryArray Layer3D::listRenderEntries() {
+Gfx::RenderEntryArray Layer3D::listRenderEntries() {
 	// Sort the items by distance to the camera
-	RenderEntryArray itemEntries;
+	Gfx::RenderEntryArray itemEntries;
 	for (uint i = 0; i < _items.size(); i++) {
 		Item *item = _items[i];
 
 		if (item->getSubType() != Item::kItemSub8) {
-			RenderEntry *renderEntry = item->getRenderEntry(_scroll);
+			Gfx::RenderEntry *renderEntry = item->getRenderEntry(_scroll);
 
 			if (!renderEntry) {
 				// warning("No render entry for item '%s'", item->getName().c_str());
@@ -196,12 +196,12 @@ RenderEntryArray Layer3D::listRenderEntries() {
 			itemEntries.push_back(renderEntry);
 		}
 	}
-	Common::sort(itemEntries.begin(), itemEntries.end(), RenderEntry::compare);
+	Common::sort(itemEntries.begin(), itemEntries.end(), Gfx::RenderEntry::compare);
 
-	RenderEntryArray renderEntries;
+	Gfx::RenderEntryArray renderEntries;
 
 	// Add the background render entry to the list first
-	RenderEntry *backgroundRenderEntry = getBackgroundRenderEntry();
+	Gfx::RenderEntry *backgroundRenderEntry = getBackgroundRenderEntry();
 	if (backgroundRenderEntry) {
 		renderEntries.push_back(backgroundRenderEntry);
 	}

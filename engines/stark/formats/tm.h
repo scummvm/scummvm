@@ -31,9 +31,8 @@ namespace Common {
 
 namespace Stark {
 
-class GfxDriver;
-
 namespace Gfx {
+class GfxDriver;
 class TextureSet;
 }
 
@@ -44,7 +43,7 @@ namespace Formats {
  */
 class TextureSetReader {
 public:
-	TextureSetReader(GfxDriver *driver);
+	TextureSetReader(Gfx::GfxDriver *driver);
 	~TextureSetReader();
 
 	/**
@@ -58,7 +57,7 @@ private:
 	void readChunk(Common::ReadStream *stream, uint32 format, Gfx::TextureSet *textureSet);
 
 	byte *_palette;
-	GfxDriver *_driver;
+	Gfx::GfxDriver *_driver;
 };
 
 } // End of namespace Formats

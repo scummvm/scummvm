@@ -73,8 +73,8 @@ void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
 	}
 }
 
-Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
-	Coordinate c;
+Gfx::Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
+	Gfx::Coordinate c;
 
 	for (Common::Array<AnimKey *>::iterator it = _anims[boneIdx]->_keys.begin(); it < _anims[boneIdx]->_keys.end(); ++it) {
 		if ((*it)->_time == time) {

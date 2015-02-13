@@ -30,14 +30,12 @@ namespace Common {
 class RandomSource;
 }
 
+
 namespace Stark {
 
-/*
-enum StarkGameID {
-	GID_TLJ = 0,
-	GID_DREAM
-};
-*/
+namespace Gfx {
+class GfxDriver;
+}
 
 enum StarkGameFeatures {
 	GF_DVD =  (1 << 1)
@@ -46,7 +44,6 @@ enum StarkGameFeatures {
 class ArchiveLoader;
 class Console;
 class DialogPlayer;
-class GfxDriver;
 class Global;
 class UserInterface;
 class Scene;
@@ -72,7 +69,7 @@ private:
 	void mainLoop();
 	void updateDisplayScene();
 
-	GfxDriver *_gfx;
+	Gfx::GfxDriver *_gfx;
 	Console *_console;
 
 	// Services

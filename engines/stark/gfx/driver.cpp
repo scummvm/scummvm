@@ -29,6 +29,7 @@
 #include "common/textconsole.h"
 
 namespace Stark {
+namespace Gfx {
 
 GfxDriver *GfxDriver::create() {
 	GfxDriver *driver = NULL;
@@ -43,4 +44,5 @@ GfxDriver *GfxDriver::create() {
 	error("Couldn't instance any graphics driver");
 }
 
+} // End of namespace Gfx
 } // End of namespace Stark

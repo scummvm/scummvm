@@ -45,7 +45,7 @@ public:
 	virtual ~VisualImageXMG();
 
 	static VisualImageXMG *load(Common::ReadStream *stream);
-	void render(GfxDriver *gfx, const Common::Point &position);
+	void render(Gfx::GfxDriver *gfx, const Common::Point &position);
 
 	/** Set an offset used when rendering */
 	void setHotSpot(const Common::Point &hotspot);

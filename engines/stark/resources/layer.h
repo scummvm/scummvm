@@ -63,10 +63,10 @@ public:
 	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	/** Obtain the render entry for the background item */
-	virtual RenderEntry *getBackgroundRenderEntry() = 0;
+	virtual Gfx::RenderEntry *getBackgroundRenderEntry() = 0;
 
 	/** Obtain the render entries for all items, including the background */
-	virtual RenderEntryArray listRenderEntries() = 0;
+	virtual Gfx::RenderEntryArray listRenderEntries() = 0;
 
 	/** Scroll the layer to the specified position */
 	void setScrollPosition(const Common::Point &position);
@@ -95,8 +95,8 @@ public:
 	void onExitLocation() override;
 
 	// Layer API
-	RenderEntry *getBackgroundRenderEntry() override;
-	RenderEntryArray listRenderEntries() override;
+	Gfx::RenderEntry *getBackgroundRenderEntry() override;
+	Gfx::RenderEntryArray listRenderEntries() override;
 
 protected:
 	void printData() override;
@@ -120,8 +120,8 @@ public:
 	void onAllLoaded() override;
 
 	// Layer API
-	RenderEntry *getBackgroundRenderEntry() override;
-	RenderEntryArray listRenderEntries() override;
+	Gfx::RenderEntry *getBackgroundRenderEntry() override;
+	Gfx::RenderEntryArray listRenderEntries() override;
 
 protected:
 	void printData() override;

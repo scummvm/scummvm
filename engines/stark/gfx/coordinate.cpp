@@ -27,6 +27,7 @@
 #include "math/vector3d.h"
 
 namespace Stark {
+namespace Gfx {
 
 /*
  * Quaternion to rotation matrix
@@ -108,4 +109,5 @@ void Coordinate::setRotation(float w, float x, float y, float z) {
 	_coords[6] = z;
 }
 
-} // end of namespace Stark
+} // End of namespace Gfx
+} // End of namespace Stark

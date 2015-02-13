@@ -33,8 +33,12 @@
 
 namespace Stark {
 
-class RenderEntry;
 class Visual;
+
+namespace Gfx {
+class RenderEntry;
+}
+
 namespace Formats {
 class XRCReadStream;
 }
@@ -83,7 +87,7 @@ public:
 	virtual void setEnabled(bool enabled);
 
 	/** Obtain the render entry to use to display the item */
-	virtual RenderEntry *getRenderEntry(const Common::Point &positionOffset);
+	virtual Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset);
 
 	/** Obtain the concrete instance of an item template */
 	virtual Item *getSceneInstance();
@@ -122,7 +126,7 @@ protected:
 	Anim *getAnim();
 	Visual *getVisual();
 
-	RenderEntry *_renderEntry;
+	Gfx::RenderEntry *_renderEntry;
 
 	AnimHierarchy *_animHierarchy;
 	int32 _currentAnimIndex;
@@ -251,7 +255,7 @@ public:
 	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	// Item API
-	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 protected:
 	void printData() override;
@@ -275,7 +279,7 @@ public:
 	void onEnterLocation() override;
 
 	// Item API
-	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 	BonesMesh *findBonesMesh();
 	TextureSet *findTextureSet(uint32 textureType);
@@ -305,7 +309,7 @@ public:
 	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	// Item API
-	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
+	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 protected:
 	void printData() override;

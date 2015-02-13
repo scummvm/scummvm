@@ -34,21 +34,23 @@
 
 namespace Stark {
 
+namespace Gfx {
 class GfxDriver;
 class RenderEntry;
+}
 
 /** 
  * Manager for the current game scene
  */
 class Scene {
 public:
-	Scene(GfxDriver *gfx);
+	Scene(Gfx::GfxDriver *gfx);
 	~Scene();
 
 	/**
 	 * Render the scene
 	 */
-	void render(RenderEntryArray renderEntries);
+	void render(Gfx::RenderEntryArray renderEntries);
 
 	void initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
 			float fov, Common::Rect viewSize, float nearClipPlane, float farClipPlane);
@@ -59,7 +61,7 @@ public:
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
-	GfxDriver *_gfx;
+	Gfx::GfxDriver *_gfx;
 
 	Math::Vector3d _cameraPosition;
 	Math::Vector3d _cameraLookDirection;
