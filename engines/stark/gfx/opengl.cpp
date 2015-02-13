@@ -59,6 +59,10 @@ void OpenGLGfxDriver::setGameViewport() {
 	glViewport(0, _screenHeight - kGameViewportHeight - kTopBorderHeight, _screenWidth, kGameViewportHeight);
 }
 
+void OpenGLGfxDriver::setScreenViewport() {
+	glViewport(0, 0, _screenWidth, _screenHeight);
+}
+
 void OpenGLGfxDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

@@ -114,6 +114,7 @@ void Scene::render(RenderEntryArray renderEntries) {
 	// draw actors
 
 	// draw overlay
+	_gfx->setScreenViewport();
 }
 
 } // End of namespace Stark

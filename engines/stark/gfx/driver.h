@@ -42,6 +42,7 @@ public:
 	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
 	virtual void setGameViewport() = 0;
+	virtual void setScreenViewport() = 0;
 
 	virtual void setupPerspective(const Math::Matrix4 &projectionMatrix) = 0;
 	virtual void setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) = 0;
