@@ -507,13 +507,24 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		tmpY = BOXENDY = _vm->_screen->_orgY1;
 
 		if (_type == TYPE_3)
-			BICONSTARTY = tmpY - 7;
+			BICONSTARTY = tmpY + 9;
 		else
 			BICONSTARTY = tmpY + 1;
 
-		if (_type == TYPE_3)
-			warning("TODO: Implement more of TYPE_3");
-
+		if (_type == TYPE_3) {
+			_fileStart = Common::Point((tmpX + 2) >> 3, (tmpY + 2) >> 3);
+			int rowOff = tmpY - (_fileStart.y << 3) + 1;
+			if (rowOff == 8) {
+				rowOff = 0;
+				++_fileStart.y;
+			}
+			_fileOff.y = _rowOff = rowOff;
+			SETCURSORPOS(_fileStart.x, _fileStart.y);
+			_vm->_fonts._charFor._lo = 0xF7;
+			_vm->_fonts._charFor._hi = 0;
+			PRINTSTR("FILE:           ");
+			_vm->_fonts._charFor._hi = 0xFF;
+		}
 		_vm->_screen->_orgY1 = oldY;
 	}
 

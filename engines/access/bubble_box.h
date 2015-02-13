@@ -43,6 +43,7 @@ private:
 	int _startItem, _startBox;
 	int _charCol, _rowOff;
 	Common::Point _fileStart;
+	Common::Point _fileOff;
 	int BOXSTARTX, BOXSTARTY;
 	int BOXENDX, BOXENDY;
 	int BICONSTARTX, BICONSTARTY;
