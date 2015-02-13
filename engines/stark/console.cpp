@@ -60,7 +60,7 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 		return true;
 	}
 
-	XARCArchive xarc;
+	Formats::XARCArchive xarc;
 	if (!xarc.open(argv[1])) {
 		debugPrintf("Can't open archive with name '%s'\n", argv[1]);
 		return true;

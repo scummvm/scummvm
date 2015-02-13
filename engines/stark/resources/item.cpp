@@ -69,7 +69,7 @@ Item::Item(Object *parent, byte subType, uint16 index, const Common::String &nam
 	_type = TYPE;
 }
 
-void Item::readData(XRCReadStream *stream) {
+void Item::readData(Formats::XRCReadStream *stream) {
 	_enabled = stream->readBool();
 	_field_38 = stream->readSint32LE();
 }
@@ -108,7 +108,7 @@ ItemVisual::ItemVisual(Object *parent, byte subType, uint16 index, const Common:
 	_renderEntry = new RenderEntry(this, getName());
 }
 
-void ItemVisual::readData(XRCReadStream *stream) {
+void ItemVisual::readData(Formats::XRCReadStream *stream) {
 	Item::readData(stream);
 
 	_field_44 = stream->readUint32LE();
@@ -260,7 +260,7 @@ ItemSub3::ItemSub3(Object *parent, byte subType, uint16 index, const Common::Str
 		ItemSub13(parent, subType, index, name) {
 }
 
-void ItemSub3::readData(XRCReadStream *stream) {
+void ItemSub3::readData(Formats::XRCReadStream *stream) {
 	ItemSub13::readData(stream);
 
 	_reference = stream->readResourceReference();
@@ -368,7 +368,7 @@ ItemSub56::ItemSub56(Object *parent, byte subType, uint16 index, const Common::S
 		ItemSub5610(parent, subType, index, name) {
 }
 
-void ItemSub56::readData(XRCReadStream *stream) {
+void ItemSub56::readData(Formats::XRCReadStream *stream) {
 	ItemSub5610::readData(stream);
 
 	_floorFaceIndex = stream->readSint32LE();
@@ -403,7 +403,7 @@ ItemSub78::ItemSub78(Object *parent, byte subType, uint16 index, const Common::S
 		ItemVisual(parent, subType, index, name) {
 }
 
-void ItemSub78::readData(XRCReadStream *stream) {
+void ItemSub78::readData(Formats::XRCReadStream *stream) {
 	ItemVisual::readData(stream);
 
 	_position = stream->readPoint();
@@ -441,7 +441,7 @@ ItemSub10::ItemSub10(Object *parent, byte subType, uint16 index, const Common::S
 		_referencedItem(nullptr) {
 }
 
-void ItemSub10::readData(XRCReadStream *stream) {
+void ItemSub10::readData(Formats::XRCReadStream *stream) {
 	ItemSub5610::readData(stream);
 
 	_reference = stream->readResourceReference();

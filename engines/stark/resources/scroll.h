@@ -29,7 +29,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -44,7 +46,7 @@ public:
 	virtual ~Scroll();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 protected:
 	void printData() override;

@@ -51,6 +51,7 @@
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
+namespace Formats {
 
 XRCReadStream::XRCReadStream(const Common::String &archiveName,
 		Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream) :
@@ -302,4 +303,5 @@ void XRCReader::importResourceChildren(XRCReadStream *stream, Resources::Object 
 	}
 }
 
+} // End of namespace Formats
 } // End of namespace Stark

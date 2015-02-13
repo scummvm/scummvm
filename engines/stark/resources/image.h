@@ -31,7 +31,9 @@
 namespace Stark {
 
 class Visual;
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -57,7 +59,7 @@ public:
 	virtual ~Image();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	/** Initialize the renderable for the image */
 	virtual Visual *getVisual();
@@ -88,7 +90,7 @@ public:
 	virtual ~ImageSub23();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
 
 	// Image API

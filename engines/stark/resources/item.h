@@ -35,7 +35,9 @@ namespace Stark {
 
 class RenderEntry;
 class Visual;
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -72,7 +74,7 @@ public:
 	virtual ~Item();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	/** Is the item present in the scene */
 	bool isEnabled() const;
@@ -104,7 +106,7 @@ public:
 	virtual ~ItemVisual();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	virtual void readData(Formats::XRCReadStream *stream) override;
 	virtual void onAllLoaded() override;
 
 	// Item API
@@ -195,7 +197,7 @@ public:
 	virtual ~ItemSub3();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
 	// ItemSub13 API
@@ -246,7 +248,7 @@ public:
 	virtual ~ItemSub56();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	// Item API
 	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
@@ -268,7 +270,7 @@ public:
 	virtual ~ItemSub10();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 	void onEnterLocation() override;
 
@@ -300,7 +302,7 @@ public:
 	virtual ~ItemSub78();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	// Item API
 	RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;

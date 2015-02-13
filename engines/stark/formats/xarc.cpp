@@ -30,6 +30,7 @@
 #include "common/substream.h"
 
 namespace Stark {
+namespace Formats {
 
 // ARCHIVE MEMBER
 
@@ -212,4 +213,5 @@ Common::SeekableReadStream *XARCArchive::createReadStreamForMember(const XARCMem
 	//return f.readStream(member->getLength());
 }
 
+} // End of namespace Formats
 } // End of namespace Stark

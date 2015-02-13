@@ -29,7 +29,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -89,7 +91,7 @@ public:
 	virtual ~AnimScriptItem();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	/** Obtain the operation code */
 	uint32 getOpcode() const { return _opcode; }

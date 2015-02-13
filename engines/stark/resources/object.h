@@ -28,7 +28,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 class ResourceSerializer;
 
 namespace Resources {
@@ -160,7 +162,7 @@ public:
 	/**
 	 * Deserialize the resource static data and initial state.
 	 */
-	virtual void readData(XRCReadStream *stream);
+	virtual void readData(Formats::XRCReadStream *stream);
 
 	/**
 	 * Persist / restore the resource state
@@ -273,7 +275,7 @@ public:
 	virtual ~UnimplementedResource();
 
 protected:
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
 
 	uint32 _dataLength;

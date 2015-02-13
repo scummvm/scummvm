@@ -66,7 +66,7 @@ Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &nam
 	_type = TYPE;
 }
 
-void Anim::readData(XRCReadStream *stream) {
+void Anim::readData(Formats::XRCReadStream *stream) {
 	_field_30 = stream->readUint32LE();
 	_numFrames = stream->readUint32LE();
 }
@@ -104,7 +104,7 @@ AnimImages::AnimImages(Object *parent, byte subType, uint16 index, const Common:
 				_currentFrameImage(nullptr) {
 }
 
-void AnimImages::readData(XRCReadStream *stream) {
+void AnimImages::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 
 	_field_3C = stream->readFloat();
@@ -157,7 +157,7 @@ AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::S
 				_field_7C(0) {
 }
 
-void AnimVideo::readData(XRCReadStream *stream) {
+void AnimVideo::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 	_smackerFile = stream->readString();
 	_width = stream->readUint32LE();
@@ -269,7 +269,7 @@ Visual *AnimSkeleton::getVisual() {
 	return _visual;
 }
 
-void AnimSkeleton::readData(XRCReadStream *stream) {
+void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 
 	_animFilename = stream->readString();

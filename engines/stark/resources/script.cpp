@@ -50,7 +50,7 @@ Script::Script(Object *parent, byte subType, uint16 index, const Common::String 
 	_type = TYPE;
 }
 
-void Script::readData(XRCReadStream *stream) {
+void Script::readData(Formats::XRCReadStream *stream) {
 	uint32 type = stream->readUint32LE();
 	_runEvent = stream->readUint32LE();
 	_minChapter = stream->readUint32LE();

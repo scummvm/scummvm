@@ -32,7 +32,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -72,7 +74,7 @@ public:
 	float getDistanceFromCamera(uint32 faceIndex) const;
 
 protected:
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
 
 	uint32 _facesCount;

@@ -29,7 +29,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -85,7 +87,7 @@ public:
 	virtual ~Script();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded();
 	void onGameLoop();
 

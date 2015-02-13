@@ -31,7 +31,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -58,7 +60,7 @@ public:
 	virtual ~Layer();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	/** Obtain the render entry for the background item */
 	virtual RenderEntry *getBackgroundRenderEntry() = 0;
@@ -88,7 +90,7 @@ public:
 	virtual ~Layer2D();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onEnterLocation() override;
 	void onExitLocation() override;
 
@@ -114,7 +116,7 @@ public:
 	virtual ~Layer3D();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
 	// Layer API

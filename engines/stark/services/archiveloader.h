@@ -93,7 +93,7 @@ private:
 		~LoadedArchive();
 
 		Common::String &getFilename() { return _filename; }
-		XARCArchive &getXArc() { return _xarc; }
+		Formats::XARCArchive &getXArc() { return _xarc; }
 		Resources::Object *getRoot() { return _root; }
 
 		void importResources();
@@ -105,7 +105,7 @@ private:
 	private:
 		uint _useCount;
 		Common::String _filename;
-		XARCArchive _xarc;
+		Formats::XARCArchive _xarc;
 		Resources::Object *_root;
 	};
 

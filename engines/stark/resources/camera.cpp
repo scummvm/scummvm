@@ -48,7 +48,7 @@ void Camera::setClipPlanes(float near, float far) {
 	_farClipPlane = far;
 }
 
-void Camera::readData(XRCReadStream *stream) {
+void Camera::readData(Formats::XRCReadStream *stream) {
 	_position = stream->readVector3();
 	_lookDirection = stream->readVector3();
 	_f1 = stream->readFloat();

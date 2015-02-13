@@ -39,7 +39,7 @@ BonesMesh::BonesMesh(Object *parent, byte subType, uint16 index, const Common::S
 	_type = TYPE;
 }
 
-void BonesMesh::readData(XRCReadStream *stream) {
+void BonesMesh::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_archiveName = stream->getArchiveName();
 }

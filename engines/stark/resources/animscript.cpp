@@ -126,7 +126,7 @@ AnimScriptItem::AnimScriptItem(Object *parent, byte subType, uint16 index, const
 	_type = TYPE;
 }
 
-void AnimScriptItem::readData(XRCReadStream *stream) {
+void AnimScriptItem::readData(Formats::XRCReadStream *stream) {
 	_opcode = stream->readUint32LE();
 	_duration = stream->readUint32LE();
 	_operand = stream->readUint32LE();

@@ -30,7 +30,9 @@
 namespace Stark {
 
 class Actor;
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -45,7 +47,7 @@ public:
 	virtual ~BonesMesh();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
 
 	/** Obtain the mesh object */

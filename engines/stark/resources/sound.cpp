@@ -61,7 +61,7 @@ Audio::RewindableAudioStream *Sound::makeAudioStream() {
 	// First try the .iss / isn files
 	Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_filename, _archiveName);
 	if (stream) {
-		audioStream = makeISSStream(stream, DisposeAfterUse::YES);
+		audioStream = Formats::makeISSStream(stream, DisposeAfterUse::YES);
 	}
 
 #ifdef USE_VORBIS
@@ -130,7 +130,7 @@ void Sound::onPreDestroy() {
 	stop();
 }
 
-void Sound::readData(XRCReadStream *stream) {
+void Sound::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_enabled = stream->readUint32LE();
 	_looping = stream->readUint32LE();

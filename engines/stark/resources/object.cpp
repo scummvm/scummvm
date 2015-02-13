@@ -112,7 +112,7 @@ Object::~Object() {
 	}
 }
 
-void Object::readData(XRCReadStream *stream) {
+void Object::readData(Formats::XRCReadStream *stream) {
 }
 
 void Object::printData() {
@@ -241,7 +241,7 @@ UnimplementedResource::~UnimplementedResource() {
 	delete[] _data;
 }
 
-void UnimplementedResource::readData(XRCReadStream *stream) {
+void UnimplementedResource::readData(Formats::XRCReadStream *stream) {
 	// Read the data
 	_dataLength = stream->size();
 	_data = new byte[_dataLength];

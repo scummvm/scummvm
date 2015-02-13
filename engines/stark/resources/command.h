@@ -32,7 +32,9 @@
 namespace Stark {
 
 class ResourceReference;
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -95,7 +97,7 @@ public:
 	Command *nextCommandIf(bool predicate);
 
 protected:
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
 
 	Command *resolveArgumentSiblingReference(const Argument &argument);

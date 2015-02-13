@@ -97,7 +97,7 @@ float FloorFace::getDistanceFromCamera() const {
 	return _distanceFromCamera;
 }
 
-void FloorFace::readData(XRCReadStream *stream) {
+void FloorFace::readData(Formats::XRCReadStream *stream) {
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_indices[i] = stream->readSint16LE();
 	}

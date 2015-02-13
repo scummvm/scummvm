@@ -30,7 +30,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -118,7 +120,7 @@ public:
 	};
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	/** List the currently available topics for this Dialog */
 	Common::Array<Topic *> listAvailableTopics();

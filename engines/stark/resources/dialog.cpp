@@ -40,7 +40,7 @@ Dialog::Dialog(Object *parent, byte subType, uint16 index, const Common::String 
 	_type = TYPE;
 }
 
-void Dialog::readData(XRCReadStream *stream) {
+void Dialog::readData(Formats::XRCReadStream *stream) {
 	Object::readData(stream);
 
 	_hasAskAbout = stream->readUint32LE();

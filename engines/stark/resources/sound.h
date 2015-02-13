@@ -35,7 +35,9 @@ namespace Audio {
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -56,7 +58,7 @@ public:
 	virtual ~Sound();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onPreDestroy() override;
 
 	/** Start playing the sound */

@@ -29,7 +29,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -50,7 +52,7 @@ public:
 	virtual ~Speech();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onExitLocation() override;
 	void onPreDestroy() override;
 

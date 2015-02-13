@@ -30,7 +30,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -48,7 +50,7 @@ public:
 	virtual ~Bookmark();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	/** Obtain the position */
 	Math::Vector3d getPosition() const;

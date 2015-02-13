@@ -30,7 +30,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -53,7 +55,7 @@ public:
 	virtual ~Knowledge();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 	/** Define the value for boolean Knowledge elements */
 	void setBooleanValue(bool value);

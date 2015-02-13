@@ -58,7 +58,7 @@ void Speech::stop() {
 	}
 }
 
-void Speech::readData(XRCReadStream *stream) {
+void Speech::readData(Formats::XRCReadStream *stream) {
 	Object::readData(stream);
 
 	_phrase = stream->readString();

@@ -44,7 +44,7 @@ Texture *TextureSet::getTexture() {
 	return _texture;
 }
 
-void TextureSet::readData(XRCReadStream *stream) {
+void TextureSet::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_archiveName = stream->getArchiveName();
 }

@@ -61,7 +61,7 @@ float Floor::getDistanceFromCamera(uint32 faceIndex) const {
 	return face->getDistanceFromCamera();
 }
 
-void Floor::readData(XRCReadStream *stream) {
+void Floor::readData(Formats::XRCReadStream *stream) {
 	_facesCount = stream->readUint32LE();
 	uint32 positionsCount = stream->readUint32LE();
 

@@ -30,6 +30,7 @@
 #include "common/stream.h"
 
 namespace Stark {
+namespace Formats {
 
 Graphics::Surface *XMGDecoder::decode(Common::ReadStream *stream) {
 	XMGDecoder dec;
@@ -190,4 +191,5 @@ void XMGDecoder::processRGB() {
 	_pixels[_scanLen + 1] = color;
 }
 
+} // End of namespace Formats
 } // End of namespace Stark

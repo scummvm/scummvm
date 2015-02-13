@@ -34,7 +34,9 @@ class SkeletonAnim;
 class VisualActor;
 class VisualSmacker;
 class Visual;
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -65,7 +67,7 @@ public:
 	virtual ~Anim();
 
 	// Resource API
-	virtual void readData(XRCReadStream *stream) override;
+	virtual void readData(Formats::XRCReadStream *stream) override;
 
 	/** Sets the animation frame to be displayed */
 	virtual void selectFrame(uint32 frameIndex);
@@ -100,7 +102,7 @@ public:
 	virtual ~AnimImages();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
 	// Anim API
@@ -133,7 +135,7 @@ public:
 	virtual ~AnimVideo();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 	void onGameLoop() override;
 
@@ -171,7 +173,7 @@ public:
 	virtual ~AnimSkeleton();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
 	void onAllLoaded() override;
 	void onGameLoop() override;

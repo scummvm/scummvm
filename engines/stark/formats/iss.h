@@ -28,6 +28,7 @@
 #include "audio/audiostream.h"
 
 namespace Stark {
+namespace Formats {
 
 /**
  * Create a new RewindableAudioStream from the ISS data in the given stream.
@@ -39,6 +40,7 @@ namespace Stark {
  */
 Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
+} // End of namespace Formats
 } // End of namespace Stark
 
 #endif // STARK_ISS_H

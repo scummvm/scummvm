@@ -38,7 +38,7 @@ Direction::Direction(Object *parent, byte subType, uint16 index, const Common::S
 	_type = TYPE;
 }
 
-void Direction::readData(XRCReadStream *stream) {
+void Direction::readData(Formats::XRCReadStream *stream) {
 	_field_34 = stream->readUint32LE();
 	_field_38 = stream->readUint32LE();
 	_field_3C = stream->readUint32LE();

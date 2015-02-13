@@ -30,6 +30,7 @@ struct Surface;
 }
 
 namespace Stark {
+namespace Formats {
 
 /**
  * XMG (still image) decoder
@@ -54,6 +55,7 @@ private:
 	uint32 _scanLen;
 };
 
+} // End of namespace Formats
 } // End of namespace Stark
 
 #endif // STARK_XMG_H

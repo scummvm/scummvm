@@ -27,6 +27,7 @@
 #include "common/stream.h"
 
 namespace Stark {
+namespace Formats {
 
 class XARCMember;
 
@@ -49,6 +50,7 @@ private:
 	Common::ArchiveMemberList _members;
 };
 
+} // End of namespace Formats
 } // End of namespace Stark
 
 #endif // STARK_ARCHIVE_H

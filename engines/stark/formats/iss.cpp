@@ -25,6 +25,7 @@
 #include "audio/decoders/adpcm_intern.h"
 
 namespace Stark {
+namespace Formats {
 
 /**
  * ADPCM decoder for the .iss files
@@ -110,4 +111,5 @@ Audio::RewindableAudioStream *makeISSStream(Common::SeekableReadStream *stream, 
 	}
 }
 
+} // End of namespace Formats
 } // End of namespace Stark

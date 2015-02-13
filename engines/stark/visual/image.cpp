@@ -56,7 +56,7 @@ VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
 	VisualImageXMG *element = new VisualImageXMG();
 
 	// Decode the XMG
-	element->_surface = XMGDecoder::decode(stream);
+	element->_surface = Formats::XMGDecoder::decode(stream);
 
 	return element;
 }

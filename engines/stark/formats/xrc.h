@@ -36,6 +36,7 @@
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
+namespace Formats {
 
 class XARCArchive;
 
@@ -81,6 +82,7 @@ protected:
 	static void importResourceData(XRCReadStream* stream, Resources::Object* resource);
 };
 
+} // End of namespace Formats
 } // End of namespace Stark
 
 #endif // STARK_XRC_READER_H

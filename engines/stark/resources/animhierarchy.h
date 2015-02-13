@@ -29,8 +29,9 @@
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
-
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -53,7 +54,7 @@ public:
 	virtual ~AnimHierarchy();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
 	/** Set and apply the current animation for an item */

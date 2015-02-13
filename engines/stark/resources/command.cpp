@@ -188,7 +188,7 @@ Command *Command::resolveArgumentSiblingReference(const Argument &argument) {
 	return _parent->findChildWithIndex<Command>(argument.intValue);
 }
 
-void Command::readData(XRCReadStream *stream) {
+void Command::readData(Formats::XRCReadStream *stream) {
 	uint32 count = stream->readUint32LE();
 	for (uint i = 0; i < count; i++) {
 		Argument argument;

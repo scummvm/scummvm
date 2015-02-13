@@ -45,7 +45,7 @@ AnimHierarchy::AnimHierarchy(Object *parent, byte subType, uint16 index, const C
 	_type = TYPE;
 }
 
-void AnimHierarchy::readData(XRCReadStream *stream) {
+void AnimHierarchy::readData(Formats::XRCReadStream *stream) {
 	_animationReferences.clear();
 
 	uint32 refCount = stream->readUint32LE();

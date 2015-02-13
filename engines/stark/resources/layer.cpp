@@ -52,7 +52,7 @@ Layer::Layer(Object *parent, byte subType, uint16 index, const Common::String &n
 	_type = TYPE;
 }
 
-void Layer::readData(XRCReadStream *stream) {
+void Layer::readData(Formats::XRCReadStream *stream) {
 	_scrollScale = stream->readFloat();
 	if (_scrollScale > 10.0 || _scrollScale < -1.0)
 		_scrollScale = 0;
@@ -76,7 +76,7 @@ Layer2D::Layer2D(Object *parent, byte subType, uint16 index, const Common::Strin
 		Layer(parent, subType, index, name) {
 }
 
-void Layer2D::readData(XRCReadStream *stream) {
+void Layer2D::readData(Formats::XRCReadStream *stream) {
 	Layer::readData(stream);
 
 	uint32 itemsCount = stream->readUint32LE();
@@ -150,7 +150,7 @@ Layer3D::Layer3D(Object *parent, byte subType, uint16 index, const Common::Strin
 		_backgroundItem(nullptr) {
 }
 
-void Layer3D::readData(XRCReadStream *stream) {
+void Layer3D::readData(Formats::XRCReadStream *stream) {
 	Layer::readData(stream);
 
 	_field_54 = stream->readUint32LE();

@@ -39,7 +39,7 @@ Scroll::Scroll(Object *parent, byte subType, uint16 index, const Common::String 
 	_type = TYPE;
 }
 
-void Scroll::readData(XRCReadStream *stream) {
+void Scroll::readData(Formats::XRCReadStream *stream) {
 	  _coordinate = stream->readUint32LE();
 	  _field_30 = stream->readUint32LE();
 	  _field_34 = stream->readUint32LE();

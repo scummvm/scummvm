@@ -46,7 +46,7 @@ ArchiveLoader::LoadedArchive::~LoadedArchive() {
 
 void ArchiveLoader::LoadedArchive::importResources() {
 	// Import the resource tree
-	_root = XRCReader::importTree(&_xarc);
+	_root = Formats::XRCReader::importTree(&_xarc);
 }
 
 ArchiveLoader::~ArchiveLoader() {
@@ -81,7 +81,7 @@ void ArchiveLoader::unloadUnused() {
 
 ArchiveReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
-	XARCArchive &xarc = archive->getXArc();
+	Formats::XARCArchive &xarc = archive->getXArc();
 	return new ArchiveReadStream(xarc.createReadStreamForMember(fileName));
 }
 

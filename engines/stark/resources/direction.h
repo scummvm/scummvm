@@ -29,7 +29,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -40,7 +42,7 @@ public:
 	Direction(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Direction();
 
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 
 protected:
 	void printData() override;

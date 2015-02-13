@@ -34,7 +34,9 @@
 
 namespace Stark {
 
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -57,7 +59,7 @@ public:
 	void setClipPlanes(float near, float far);
 
 protected:
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
 
 	Math::Vector3d _position;

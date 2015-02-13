@@ -30,7 +30,9 @@
 namespace Stark {
 
 class Texture;
+namespace Formats {
 class XRCReadStream;
+}
 
 namespace Resources {
 
@@ -52,7 +54,7 @@ public:
 	virtual ~TextureSet();
 
 	// Resource API
-	void readData(XRCReadStream *stream) override;
+	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
 
 	/** Obtain the texture to be rendered */

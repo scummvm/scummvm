@@ -58,7 +58,7 @@ Image::Image(Object *parent, byte subType, uint16 index, const Common::String &n
 	_type = TYPE;
 }
 
-void Image::readData(XRCReadStream *stream) {
+void Image::readData(Formats::XRCReadStream *stream) {
 	_filename = stream->readString();
 	_hotspot = stream->readPoint();
 	_transparent = stream->readBool();
@@ -108,7 +108,7 @@ ImageSub23::ImageSub23(Object *parent, byte subType, uint16 index, const Common:
 				_noName(false) {
 }
 
-void ImageSub23::readData(XRCReadStream *stream) {
+void ImageSub23::readData(Formats::XRCReadStream *stream) {
 	Image::readData(stream);
 
 	if (stream->isDataLeft()) {

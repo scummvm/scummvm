@@ -53,7 +53,7 @@ int32 Knowledge::getIntegerValue() {
 	return _integerValue;
 }
 
-void Knowledge::readData(XRCReadStream *stream) {
+void Knowledge::readData(Formats::XRCReadStream *stream) {
 	Object::readData(stream);
 
 	switch (_subType) {
