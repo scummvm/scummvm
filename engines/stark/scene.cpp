@@ -63,12 +63,12 @@ void Scene::scrollCamera(const Common::Rect &viewport) {
 	float scollYFactor = (ymax - ymin) / _viewport.height();
 
 	int32 distanceToRight = _viewport.right - _viewSize.width();
-	int32 distanceToBottom = _viewport.bottom - _viewSize.height();
+	int32 distanceToTop = -_viewport.top;
 
 	xmin += distanceToRight * scollXFactor;
 	xmax += distanceToRight * scollXFactor;
-	ymin += distanceToBottom * scollYFactor;
-	ymax += distanceToBottom * scollYFactor;
+	ymin += distanceToTop * scollYFactor;
+	ymax += distanceToTop * scollYFactor;
 
 	_perspectiveMatrix = Math::makeFrustumMatrix(xmin, xmax, ymin, ymax, _nearClipPlane, _farClipPlane);
 }
