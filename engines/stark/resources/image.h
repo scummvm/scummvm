@@ -26,7 +26,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -38,7 +38,7 @@ namespace Resources {
 /**
  * A still image resource
  */
-class Image : public Resource {
+class Image : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kImage;
 
@@ -49,11 +49,11 @@ public:
 	};
 
 	/** Image factory */
-	static Resource *construct(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	static Object *construct(Object *parent, byte subType, uint16 index, const Common::String &name);
 
 	typedef Common::Array<Common::Point> Polygon;
 
-	Image(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Image(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Image();
 
 	// Resource API
@@ -84,7 +84,7 @@ protected:
  */
 class ImageSub23 : public Image {
 public:
-	ImageSub23(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ImageSub23(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ImageSub23();
 
 	// Resource API

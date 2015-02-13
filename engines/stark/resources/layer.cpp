@@ -31,7 +31,7 @@
 namespace Stark {
 namespace Resources {
 
-Resource *Layer::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
+Object *Layer::construct(Object *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
 	case kLayer2D:
 		return new Layer2D(parent, subType, index, name);
@@ -45,8 +45,8 @@ Resource *Layer::construct(Resource *parent, byte subType, uint16 index, const C
 Layer::~Layer() {
 }
 
-Layer::Layer(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
+Layer::Layer(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name),
 		_scrollScale(1.0),
 		_enabled(true) {
 	_type = TYPE;
@@ -72,7 +72,7 @@ void Layer::setScrollPosition(const Common::Point &position) {
 Layer2D::~Layer2D() {
 }
 
-Layer2D::Layer2D(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+Layer2D::Layer2D(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Layer(parent, subType, index, name) {
 }
 
@@ -141,7 +141,7 @@ void Layer2D::printData() {
 Layer3D::~Layer3D() {
 }
 
-Layer3D::Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+Layer3D::Layer3D(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Layer(parent, subType, index, name),
 		_field_54(1),
 		_maxShadowLength(75),

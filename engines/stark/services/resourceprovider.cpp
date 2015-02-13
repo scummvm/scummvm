@@ -196,7 +196,7 @@ void ResourceProvider::performLocationChange() {
 
 	if (current->getLocation()->has3DLayer()) {
 		// Fetch the scene item for April
-		current->setInteractive(Resources::Resource::cast<Resources::ItemSub10>(_global->getApril()->getSceneInstance()));
+		current->setInteractive(Resources::Object::cast<Resources::ItemSub10>(_global->getApril()->getSceneInstance()));
 	}
 
 	setAprilInitialPosition();
@@ -210,7 +210,7 @@ void ResourceProvider::performLocationChange() {
 	_locationChangeRequest = false;
 }
 
-void ResourceProvider::runLocationChangeScripts(Resources::Resource *resource, uint32 scriptCallMode) {
+void ResourceProvider::runLocationChangeScripts(Resources::Object *resource, uint32 scriptCallMode) {
 	Common::Array<Resources::Script *> script = resource->listChildrenRecursive<Resources::Script>();
 
 	if (scriptCallMode == Resources::Script::kCallModeEnterLocation) {

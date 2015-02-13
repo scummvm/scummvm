@@ -27,7 +27,7 @@
 #include "common/str.h"
 
 #include "engines/stark/gfx/renderentry.h"
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -42,7 +42,7 @@ class Item;
  *
  * Layers own the scene items
  */
-class Layer : public Resource {
+class Layer : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kLayer;
 
@@ -52,9 +52,9 @@ public:
 	};
 
 	/** Layer factory */
-	static Resource *construct(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	static Object *construct(Object *parent, byte subType, uint16 index, const Common::String &name);
 
-	Layer(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Layer(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Layer();
 
 	// Resource API
@@ -84,7 +84,7 @@ protected:
  */
 class Layer2D : public Layer {
 public:
-	Layer2D(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Layer2D(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Layer2D();
 
 	// Resource API
@@ -110,7 +110,7 @@ protected:
  */
 class Layer3D : public Layer {
 public:
-	Layer3D(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Layer3D(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Layer3D();
 
 	// Resource API

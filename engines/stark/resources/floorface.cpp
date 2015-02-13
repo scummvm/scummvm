@@ -29,8 +29,8 @@
 namespace Stark {
 namespace Resources {
 
-FloorFace::FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
+FloorFace::FloorFace(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name),
 		_distanceFromCamera(0),
 		_unk2(0) {
 	_type = TYPE;
@@ -112,8 +112,8 @@ void FloorFace::readData(XRCReadStream *stream) {
 }
 
 void FloorFace::onAllLoaded() {
-	Resource::onAllLoaded();
-	Floor *floor = Resource::cast<Floor>(_parent);
+	Object::onAllLoaded();
+	Floor *floor = Object::cast<Floor>(_parent);
 
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		_vertices[i] = floor->getVertex(_indices[i]);

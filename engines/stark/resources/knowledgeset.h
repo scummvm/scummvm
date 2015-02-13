@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -36,7 +36,7 @@ namespace Resources {
 /**
  * A typed collection of Knowledge resources
  */
-class KnowledgeSet : public Resource {
+class KnowledgeSet : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kKnowledgeSet;
 
@@ -48,7 +48,7 @@ public:
 		kDiary     = 5
 	};
 
-	KnowledgeSet(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	KnowledgeSet(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~KnowledgeSet();
 
 protected:

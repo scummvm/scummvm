@@ -34,8 +34,8 @@ TextureSet::~TextureSet() {
 	delete _texture;
 }
 
-TextureSet::TextureSet(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+TextureSet::TextureSet(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_texture(nullptr) {
 	_type = TYPE;
 }

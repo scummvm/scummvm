@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -38,11 +38,11 @@ namespace Resources {
  *
  * Contains all the levels.
  */
-class Root : public Resource {
+class Root : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kRoot;
 
-	Root(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Root(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Root();
 
 protected:

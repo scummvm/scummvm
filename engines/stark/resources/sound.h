@@ -27,7 +27,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Audio {
 	class RewindableAudioStream;
@@ -42,7 +42,7 @@ namespace Resources {
 /**
  * A sound resource
  */
-class Sound : public Resource {
+class Sound : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kSoundItem;
 
@@ -52,7 +52,7 @@ public:
 		kSoundTypeMusic  = 2
 	};
 
-	Sound(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Sound(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Sound();
 
 	// Resource API

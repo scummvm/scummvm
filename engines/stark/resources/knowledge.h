@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -37,7 +37,7 @@ namespace Resources {
 /**
  * A game logic state value holder
  */
-class Knowledge : public Resource {
+class Knowledge : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kKnowledge;
 
@@ -49,7 +49,7 @@ public:
 		kBooleanWithChild = 5
 	};
 
-	Knowledge(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Knowledge(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Knowledge();
 
 	// Resource API

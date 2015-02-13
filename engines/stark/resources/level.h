@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -39,11 +39,11 @@ namespace Resources {
  * Levels are used to share resources between related locations.
  * Resources in a level are kept when switching to another location of the same level.
  */
-class Level : public Resource {
+class Level : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kLevel;
 
-	Level(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Level(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Level();
 
 protected:

@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 #include "common/debug-channels.h"
 #include "common/streamdebug.h"
@@ -95,7 +95,7 @@ Type::ResourceType Type::get() {
 	return _type;
 }
 
-Resource::Resource(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+Object::Object(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		_parent(parent),
 		_type(Type::kInvalid),
 		_subType(subType),
@@ -103,71 +103,71 @@ Resource::Resource(Resource *parent, byte subType, uint16 index, const Common::S
 		_name(name) {
 }
 
-Resource::~Resource() {
+Object::~Object() {
 	// Delete the children resources
-	Common::Array<Resource *>::iterator i = _children.begin();
+	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
 		delete *i;
 		i++;
 	}
 }
 
-void Resource::readData(XRCReadStream *stream) {
+void Object::readData(XRCReadStream *stream) {
 }
 
-void Resource::printData() {
+void Object::printData() {
 }
 
-void Resource::saveLoad(ResourceSerializer *serializer) {
+void Object::saveLoad(ResourceSerializer *serializer) {
 }
 
-void Resource::saveLoadCurrent(ResourceSerializer *serializer) {
+void Object::saveLoadCurrent(ResourceSerializer *serializer) {
 }
 
-void Resource::onPostRead() {
+void Object::onPostRead() {
 }
 
-void Resource::onAllLoaded() {
-	Common::Array<Resource *>::iterator i = _children.begin();
+void Object::onAllLoaded() {
+	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
 		(*i)->onAllLoaded();
 		i++;
 	}
 }
 
-void Resource::onEnterLocation() {
-	Common::Array<Resource *>::iterator i = _children.begin();
+void Object::onEnterLocation() {
+	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
 		(*i)->onEnterLocation();
 		i++;
 	}
 }
 
-void Resource::onGameLoop() {
-	Common::Array<Resource *>::iterator i = _children.begin();
+void Object::onGameLoop() {
+	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
 		(*i)->onGameLoop();
 		i++;
 	}
 }
 
-void Resource::onExitLocation() {
-	Common::Array<Resource *>::iterator i = _children.begin();
+void Object::onExitLocation() {
+	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
 		(*i)->onExitLocation();
 		i++;
 	}
 }
 
-void Resource::onPreDestroy() {
-	Common::Array<Resource *>::iterator i = _children.begin();
+void Object::onPreDestroy() {
+	Common::Array<Object *>::iterator i = _children.begin();
 	while (i != _children.end()) {
 		(*i)->onPreDestroy();
 		i++;
 	}
 }
 
-void Resource::print(uint depth) {
+void Object::print(uint depth) {
 	// Display value for the resource type
 	Common::String type(_type.getName());
 	if (type.empty()) {
@@ -193,7 +193,7 @@ void Resource::print(uint depth) {
 	}
 }
 
-Resource *Resource::findChildWithIndex(Type type, uint16 index, int subType) {
+Object *Object::findChildWithIndex(Type type, uint16 index, int subType) {
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i]->getType() == type
 				&& (_children[i]->getSubType() == subType || subType == -1)
@@ -207,16 +207,16 @@ Resource *Resource::findChildWithIndex(Type type, uint16 index, int subType) {
 }
 
 template<>
-Resource *Resource::cast<Resource>(Resource *resource) {
+Object *Object::cast<Object>(Object *resource) {
 	// No type check when asking for the abstract resource
 	return resource;
 }
 
 template<>
-Common::Array<Resource *> Resource::listChildren<Resource>(int subType) {
+Common::Array<Object *> Object::listChildren<Object>(int subType) {
 	assert(subType == -1);
 
-	Common::Array<Resource *> list;
+	Common::Array<Object *> list;
 
 	for (uint i = 0; i < _children.size(); i++) {
 		list.push_back(_children[i]);
@@ -225,12 +225,12 @@ Common::Array<Resource *> Resource::listChildren<Resource>(int subType) {
 	return list;
 }
 
-void Resource::addChild(Resource *child) {
+void Object::addChild(Object *child) {
 	_children.push_back(child);
 }
 
-UnimplementedResource::UnimplementedResource(Resource *parent, Type type, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
+UnimplementedResource::UnimplementedResource(Object *parent, Type type, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name),
 		_dataLength(0),
 		_data(nullptr) {
 	_type = type;

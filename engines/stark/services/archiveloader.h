@@ -31,7 +31,7 @@
 #include "math/vector3d.h"
 
 #include "engines/stark/formats/xarc.h"
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -94,7 +94,7 @@ private:
 
 		Common::String &getFilename() { return _filename; }
 		XARCArchive &getXArc() { return _xarc; }
-		Resources::Resource *getRoot() { return _root; }
+		Resources::Object *getRoot() { return _root; }
 
 		void importResources();
 
@@ -106,7 +106,7 @@ private:
 		uint _useCount;
 		Common::String _filename;
 		XARCArchive _xarc;
-		Resources::Resource *_root;
+		Resources::Object *_root;
 	};
 
 	typedef Common::List<LoadedArchive *> LoadedArchiveList;
@@ -121,7 +121,7 @@ template <class T>
 T *ArchiveLoader::useRoot(const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
 	archive->incUsage();
-	return Resources::Resource::cast<T>(archive->getRoot());
+	return Resources::Object::cast<T>(archive->getRoot());
 }
 
 } // End of namespace Stark

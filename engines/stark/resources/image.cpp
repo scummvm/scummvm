@@ -32,7 +32,7 @@
 namespace Stark {
 namespace Resources {
 
-Resource *Image::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
+Object *Image::construct(Object *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
 	case kImageSub2:
 	case kImageSub3:
@@ -48,8 +48,8 @@ Image::~Image() {
 	delete _visual;
 }
 
-Image::Image(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Image::Image(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_transparent(false),
 				_transparency(0),
 				_field_44_ADF(0),
@@ -103,7 +103,7 @@ void Image::printData() {
 ImageSub23::~ImageSub23() {
 }
 
-ImageSub23::ImageSub23(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ImageSub23::ImageSub23(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Image(parent, subType, index, name),
 				_noName(false) {
 }

@@ -41,7 +41,7 @@
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/scroll.h"
@@ -135,7 +135,7 @@ Common::String XRCReadStream::getArchiveName() const {
 	return _archiveName;
 }
 
-Resources::Resource *XRCReader::importTree(XARCArchive *archive) {
+Resources::Object *XRCReader::importTree(XARCArchive *archive) {
 	// Find the XRC file
 	Common::ArchiveMemberList members;
 	archive->listMatchingMembers(members, "*.xrc");
@@ -151,15 +151,15 @@ Resources::Resource *XRCReader::importTree(XARCArchive *archive) {
 	XRCReadStream *xrcStream = new XRCReadStream(archive->getFilename(), stream);
 
 	// Import the resource tree
-	Resources::Resource *root = importResource(xrcStream, nullptr);
+	Resources::Object *root = importResource(xrcStream, nullptr);
 
 	delete xrcStream;
 
 	return root;
 }
 
-Resources::Resource *XRCReader::importResource(XRCReadStream *stream, Resources::Resource *parent) {
-	Resources::Resource *resource = createResource(stream, parent);
+Resources::Object *XRCReader::importResource(XRCReadStream *stream, Resources::Object *parent) {
+	Resources::Object *resource = createResource(stream, parent);
 	importResourceData(stream, resource);
 	importResourceChildren(stream, resource);
 
@@ -169,7 +169,7 @@ Resources::Resource *XRCReader::importResource(XRCReadStream *stream, Resources:
 	return resource;
 }
 
-Resources::Resource *XRCReader::createResource(XRCReadStream *stream, Resources::Resource *parent) {
+Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::Object *parent) {
 	// Read the resource type and subtype
 	Resources::Type type = stream->readResourceType();
 	byte subType = stream->readByte();
@@ -179,7 +179,7 @@ Resources::Resource *XRCReader::createResource(XRCReadStream *stream, Resources:
 	Common::String name = stream->readString();
 
 	// Create a new resource
-	Resources::Resource *resource;
+	Resources::Object *resource;
 	switch (type.get()) {
 	case Resources::Type::kRoot:
 		resource = new Resources::Root(parent, subType, index, name);
@@ -264,7 +264,7 @@ Resources::Resource *XRCReader::createResource(XRCReadStream *stream, Resources:
 	return resource;
 }
 
-void XRCReader::importResourceData(XRCReadStream *stream, Resources::Resource *resource) {
+void XRCReader::importResourceData(XRCReadStream *stream, Resources::Object *resource) {
 	// Read the data length
 	uint32 dataLength = stream->readUint32LE();
 
@@ -283,7 +283,7 @@ void XRCReader::importResourceData(XRCReadStream *stream, Resources::Resource *r
 	}
 }
 
-void XRCReader::importResourceChildren(XRCReadStream *stream, Resources::Resource *resource) {
+void XRCReader::importResourceChildren(XRCReadStream *stream, Resources::Object *resource) {
 	// Get the number of children
 	uint16 numChildren = stream->readUint16LE();
 
@@ -295,7 +295,7 @@ void XRCReader::importResourceChildren(XRCReadStream *stream, Resources::Resourc
 
 	// Read the children resources
 	for (int i = 0; i < numChildren; i++) {
-		Resources::Resource *child = importResource(stream, resource);
+		Resources::Object *child = importResource(stream, resource);
 
 		// Add child to parent
 		resource->addChild(child);

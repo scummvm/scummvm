@@ -32,7 +32,7 @@
 namespace Stark {
 
 namespace Resources {
-class Resource;
+class Object;
 }
 
 class GfxDriver;
@@ -40,7 +40,7 @@ class Visual;
 
 class RenderEntry {
 public:
-	RenderEntry(Resources::Resource *owner, const Common::String &name);
+	RenderEntry(Resources::Object *owner, const Common::String &name);
 	virtual ~RenderEntry() {};
 
 	void render(GfxDriver *gfx);
@@ -55,7 +55,7 @@ public:
 
 protected:
 	Common::String _name;
-	Resources::Resource *_owner;
+	Resources::Object *_owner;
 
 	Visual *_visual;
 	Common::Point _position;

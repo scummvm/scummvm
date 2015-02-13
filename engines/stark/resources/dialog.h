@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -46,11 +46,11 @@ class Speech;
  * Answers are made of a list of lines. All of the lines of an answer are played,
  * one after the other when an answer is played. Lines reference Speech resources.
  */
-class Dialog : public Resource {
+class Dialog : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kDialog;
 
-	Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Dialog(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Dialog();
 
 	/**

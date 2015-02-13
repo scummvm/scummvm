@@ -30,7 +30,7 @@ MODULE_OBJS := \
 	resources/layer.o \
 	resources/level.o \
 	resources/location.o \
-	resources/resource.o \
+	resources/object.o \
 	resources/root.o \
 	resources/script.o \
 	resources/scroll.o \

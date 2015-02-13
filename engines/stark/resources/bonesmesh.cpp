@@ -33,8 +33,8 @@ BonesMesh::~BonesMesh() {
 	delete _actor;
 }
 
-BonesMesh::BonesMesh(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+BonesMesh::BonesMesh(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_actor(nullptr) {
 	_type = TYPE;
 }

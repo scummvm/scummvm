@@ -23,7 +23,7 @@
 #include "engines/stark/console.h"
 
 #include "engines/stark/formats/xarc.h"
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/root.h"

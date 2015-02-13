@@ -31,8 +31,8 @@ namespace Resources {
 Speech::~Speech() {
 }
 
-Speech::Speech(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Speech::Speech(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_character(0),
 				_soundResource(nullptr) {
 	_type = TYPE;
@@ -59,7 +59,7 @@ void Speech::stop() {
 }
 
 void Speech::readData(XRCReadStream *stream) {
-	Resource::readData(stream);
+	Object::readData(stream);
 
 	_phrase = stream->readString();
 	_character = stream->readUint32LE();
@@ -74,7 +74,7 @@ void Speech::onPreDestroy() {
 }
 
 void Speech::printData() {
-	Resource::printData();
+	Object::printData();
 
 	debug("phrase: %s", _phrase.c_str());
 	debug("character: %d", _character);

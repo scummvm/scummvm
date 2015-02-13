@@ -28,7 +28,7 @@
 
 #include "math/vector3d.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -44,11 +44,11 @@ class FloorFace;
  *
  * The floor field is made of a list of faces building a mesh.
  */
-class Floor : public Resource {
+class Floor : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kFloor;
 
-	Floor(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Floor(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Floor();
 
 	// Resource API

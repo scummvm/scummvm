@@ -32,7 +32,7 @@
 namespace Stark {
 
 namespace Resources {
-class Resource;
+class Object;
 class Level;
 class Location;
 }
@@ -96,11 +96,11 @@ private:
 
 	typedef Common::HashMap<Common::String, ResourceTreeState *> ResourceTreeStateMap;
 
-	void restoreResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current);
-	void saveResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current);
+	void restoreResourceTreeState(Common::String storeKey, Resources::Object *root, bool current);
+	void saveResourceTreeState(Common::String storeKey, Resources::Object *root, bool current);
 
-	void readResourceTree(Resources::Resource *resource, Common::SeekableReadStream *stream, bool current);
-	void writeResourceTree(Resources::Resource *resource, Common::WriteStream *stream, bool current);
+	void readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current);
+	void writeResourceTree(Resources::Object *resource, Common::WriteStream *stream, bool current);
 
 	void clear();
 

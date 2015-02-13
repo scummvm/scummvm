@@ -33,14 +33,14 @@ namespace Resources {
 Location::~Location() {
 }
 
-Location::Location(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Location::Location(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_canScroll(false) {
 	_type = TYPE;
 }
 
 void Location::onAllLoaded() {
-	Resource::onAllLoaded();
+	Object::onAllLoaded();
 
 	_layers = listChildren<Layer>();
 }

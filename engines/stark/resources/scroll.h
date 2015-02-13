@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -36,11 +36,11 @@ namespace Resources {
 /**
  * Scroll position for a location
  */
-class Scroll : public Resource {
+class Scroll : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kScroll;
 
-	Scroll(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Scroll(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Scroll();
 
 	// Resource API

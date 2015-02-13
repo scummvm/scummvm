@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/stream.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -53,7 +53,7 @@ public:
 	bool empty() const;
 
 private:
-	Resources::Resource *resolve() const;
+	Resources::Object *resolve() const;
 
 	class PathElement {
 	public:
@@ -73,7 +73,7 @@ private:
 
 template<class T>
 T* ResourceReference::resolve() const {
-	return Resources::Resource::cast<T>(resolve());
+	return Resources::Object::cast<T>(resolve());
 }
 
 } // End of namespace Stark

@@ -30,8 +30,8 @@ namespace Resources {
 Scroll::~Scroll() {
 }
 
-Scroll::Scroll(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Scroll::Scroll(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_coordinate(0),
 				_field_30(0),
 				_field_34(0),

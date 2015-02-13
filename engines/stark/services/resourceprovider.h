@@ -32,7 +32,7 @@ namespace Stark {
 namespace Resources {
 class Level;
 class Location;
-class Resource;
+class Object;
 }
 
 class ArchiveLoader;
@@ -92,7 +92,7 @@ private:
 
 	void purgeOldLocations();
 
-	void runLocationChangeScripts(Resources::Resource *resource, uint32 scriptCallMode);
+	void runLocationChangeScripts(Resources::Object *resource, uint32 scriptCallMode);
 	void setAprilInitialPosition();
 
 	Global *_global;

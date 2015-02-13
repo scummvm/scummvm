@@ -36,8 +36,8 @@ namespace Resources {
 Script::~Script() {
 }
 
-Script::Script(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Script::Script(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_scriptType(0),
 				_runEvent(0),
 				_minChapter(0),
@@ -75,12 +75,12 @@ void Script::readData(XRCReadStream *stream) {
 }
 
 void Script::onAllLoaded() {
-	Resource::onAllLoaded();
+	Object::onAllLoaded();
 	reset();
 }
 
 void Script::onGameLoop() {
-	Resource::onGameLoop();
+	Object::onGameLoop();
 	execute(kCallModeGameLoop);
 }
 
@@ -182,7 +182,7 @@ void Script::updateSuspended() {
 			break;
 		}
 		case Type::kSoundItem: {
-			Sound *soundItem = Resource::cast<Sound>(_suspendingResource);
+			Sound *soundItem = Object::cast<Sound>(_suspendingResource);
 			if (!soundItem->isPlaying()) {
 				// Resume the script execution once the sound has stopped playing
 				_suspendingResource = nullptr;
@@ -204,7 +204,7 @@ void Script::pause(int32 msecs) {
 	_pauseTimeLeft = msecs;
 }
 
-void Script::suspend(Resource *cause) {
+void Script::suspend(Object *cause) {
 	_suspendingResource = cause;
 }
 

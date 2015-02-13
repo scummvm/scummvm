@@ -32,7 +32,7 @@
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -72,13 +72,13 @@ public:
 	/**
 	 * Build a resource tree from a stream
 	 */
-	static Resources::Resource *importTree(XARCArchive *archive);
+	static Resources::Object *importTree(XARCArchive *archive);
 
 protected:
-	static Resources::Resource *importResource(XRCReadStream *stream, Resources::Resource *parent);
-	static Resources::Resource *createResource(XRCReadStream *stream, Resources::Resource *parent);
-	static void importResourceChildren(XRCReadStream *stream, Resources::Resource *resource);
-	static void importResourceData(XRCReadStream* stream, Resources::Resource* resource);
+	static Resources::Object *importResource(XRCReadStream *stream, Resources::Object *parent);
+	static Resources::Object *createResource(XRCReadStream *stream, Resources::Object *parent);
+	static void importResourceChildren(XRCReadStream *stream, Resources::Object *resource);
+	static void importResourceData(XRCReadStream* stream, Resources::Object* resource);
 };
 
 } // End of namespace Stark

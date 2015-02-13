@@ -36,8 +36,8 @@ namespace Resources {
 AnimHierarchy::~AnimHierarchy() {
 }
 
-AnimHierarchy::AnimHierarchy(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+AnimHierarchy::AnimHierarchy(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_animIndex(0),
 				_currentAnim(nullptr),
 				_animHierarchy(nullptr),
@@ -58,7 +58,7 @@ void AnimHierarchy::readData(XRCReadStream *stream) {
 }
 
 void AnimHierarchy::onAllLoaded() {
-	Resource::onAllLoaded();
+	Object::onAllLoaded();
 
 	_animations.clear();
 

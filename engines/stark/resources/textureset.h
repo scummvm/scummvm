@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -39,7 +39,7 @@ namespace Resources {
  *
  * Used by items to provide textures to meshes
  */
-class TextureSet : public Resource {
+class TextureSet : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kTextureSet;
 
@@ -48,7 +48,7 @@ public:
 		kTextureFace = 2
 	};
 
-	TextureSet(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	TextureSet(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~TextureSet();
 
 	// Resource API

@@ -37,8 +37,8 @@ namespace Resources {
 Sound::~Sound() {
 }
 
-Sound::Sound(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
+Sound::Sound(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name),
 		_enabled(0),
 		_looping(0),
 		_field_64(0),
@@ -126,7 +126,7 @@ void Sound::stop() {
 }
 
 void Sound::onPreDestroy() {
-	Resource::onPreDestroy();
+	Object::onPreDestroy();
 	stop();
 }
 

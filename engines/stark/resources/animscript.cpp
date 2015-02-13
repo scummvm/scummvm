@@ -36,8 +36,8 @@ namespace Resources {
 AnimScript::~AnimScript() {
 }
 
-AnimScript::AnimScript(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+AnimScript::AnimScript(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_anim(nullptr),
 				_msecsToNextUpdate(0),
 				_nextItemIndex(-1) {
@@ -45,9 +45,9 @@ AnimScript::AnimScript(Resource *parent, byte subType, uint16 index, const Commo
 }
 
 void AnimScript::onAllLoaded() {
-	Resource::onAllLoaded();
+	Object::onAllLoaded();
 
-	_anim = Resource::cast<Anim>(_parent);
+	_anim = Object::cast<Anim>(_parent);
 	_items = listChildren<AnimScriptItem>();
 
 	if (!_items.empty()) {
@@ -57,7 +57,7 @@ void AnimScript::onAllLoaded() {
 }
 
 void AnimScript::onGameLoop() {
-	Resource::onGameLoop();
+	Object::onGameLoop();
 
 	if (!_anim || !_anim->isInUse() || _nextItemIndex == -1) {
 		// The script is disabled, do nothing
@@ -118,8 +118,8 @@ void AnimScript::goToNextItem() {
 AnimScriptItem::~AnimScriptItem() {
 }
 
-AnimScriptItem::AnimScriptItem(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+AnimScriptItem::AnimScriptItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_opcode(0),
 				_duration(0),
 				_operand(0) {

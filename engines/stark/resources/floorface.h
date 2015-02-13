@@ -28,7 +28,7 @@
 
 #include "math/vector3d.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -39,11 +39,11 @@ namespace Resources {
 /**
  * A floor face is a 3D triangle used to build the floor field
  */
-class FloorFace : public Resource {
+class FloorFace : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kFloorFace;
 
-	FloorFace(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	FloorFace(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~FloorFace();
 
 	// Resource API

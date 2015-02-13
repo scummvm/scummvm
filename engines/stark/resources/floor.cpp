@@ -29,8 +29,8 @@
 namespace Stark {
 namespace Resources {
 
-Floor::Floor(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
+Floor::Floor(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name),
 		_facesCount(0) {
 	_type = TYPE;
 }
@@ -72,7 +72,7 @@ void Floor::readData(XRCReadStream *stream) {
 }
 
 void Floor::onAllLoaded() {
-	Resource::onAllLoaded();
+	Object::onAllLoaded();
 
 	_faces = listChildren<FloorFace>();
 }

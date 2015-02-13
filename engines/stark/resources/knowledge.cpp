@@ -30,8 +30,8 @@ namespace Resources {
 Knowledge::~Knowledge() {
 }
 
-Knowledge::Knowledge(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Knowledge::Knowledge(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_booleanValue(false),
 				_integerValue(0) {
 	_type = TYPE;
@@ -54,7 +54,7 @@ int32 Knowledge::getIntegerValue() {
 }
 
 void Knowledge::readData(XRCReadStream *stream) {
-	Resource::readData(stream);
+	Object::readData(stream);
 
 	switch (_subType) {
 	case kBoolean:

@@ -39,7 +39,7 @@
 namespace Stark {
 namespace Resources {
 
-Resource *Anim::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
+Object *Anim::construct(Object *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
 	case kAnimImages:
 		return new AnimImages(parent, subType, index, name);
@@ -57,8 +57,8 @@ Resource *Anim::construct(Resource *parent, byte subType, uint16 index, const Co
 Anim::~Anim() {
 }
 
-Anim::Anim(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_field_30(0),
 				_currentFrame(0),
 				_numFrames(0),
@@ -97,7 +97,7 @@ void Anim::printData() {
 AnimImages::~AnimImages() {
 }
 
-AnimImages::AnimImages(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimImages::AnimImages(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_field_3C(0),
 				_currentDirection(0),
@@ -139,7 +139,7 @@ void AnimImages::printData() {
 AnimSub2::~AnimSub2() {
 }
 
-AnimSub2::AnimSub2(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimSub2::AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name) {
 }
 
@@ -147,7 +147,7 @@ AnimVideo::~AnimVideo() {
 	delete _smacker;
 }
 
-AnimVideo::AnimVideo(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_width(0),
 				_height(0),
@@ -236,7 +236,7 @@ AnimSkeleton::~AnimSkeleton() {
 	delete _seletonAnim;
 }
 
-AnimSkeleton::AnimSkeleton(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Anim(parent, subType, index, name),
 				_castsShadow(true),
 				_field_48(0),
@@ -251,7 +251,7 @@ AnimSkeleton::AnimSkeleton(Resource *parent, byte subType, uint16 index, const C
 void AnimSkeleton::applyToItem(Item *item) {
 	Anim::applyToItem(item);
 
-	ItemSub10 *actor = Resource::cast<ItemSub10>(item);
+	ItemSub10 *actor = Object::cast<ItemSub10>(item);
 
 	BonesMesh *mesh = actor->findBonesMesh();
 	TextureSet *texture = actor->findTextureSet(TextureSet::kTextureNormal);

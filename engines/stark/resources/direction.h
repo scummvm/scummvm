@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -33,11 +33,11 @@ class XRCReadStream;
 
 namespace Resources {
 
-class Direction : public Resource {
+class Direction : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kDirection;
 
-	Direction(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Direction(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Direction();
 
 	void readData(XRCReadStream *stream) override;

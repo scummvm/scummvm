@@ -26,7 +26,7 @@
 #include "common/str.h"
 #include "math/vector3d.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -40,11 +40,11 @@ namespace Resources {
  * The height value is not set, it needs to be retrieved by interpolation
  * from the floor field.
  */
-class Bookmark : public Resource {
+class Bookmark : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kBookmark;
 
-	Bookmark(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Bookmark(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Bookmark();
 
 	// Resource API

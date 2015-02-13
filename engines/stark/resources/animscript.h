@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -45,11 +45,11 @@ class AnimScriptItem;
  *
  * Animation scripts also allow to play sounds.
  */
-class AnimScript : public Resource {
+class AnimScript : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kAnimScript;
 
-	AnimScript(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimScript(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimScript();
 
 	// Resource API
@@ -72,7 +72,7 @@ protected:
  * Has a type defining the operation to perform,
  * an argument and a duration.
  */
-class AnimScriptItem : public Resource {
+class AnimScriptItem : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kAnimScriptItem;
 
@@ -85,7 +85,7 @@ public:
 		kPlayStockSound      = 5
 	};
 
-	AnimScriptItem(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimScriptItem(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimScriptItem();
 
 	// Resource API

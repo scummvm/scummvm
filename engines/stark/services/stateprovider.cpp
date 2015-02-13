@@ -26,7 +26,7 @@
 
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -99,7 +99,7 @@ void StateProvider::restoreGlobalState(Resources::Level *level) {
 	restoreResourceTreeState("CurrentGlobal", level, true);
 }
 
-void StateProvider::restoreResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current) {
+void StateProvider::restoreResourceTreeState(Common::String storeKey, Resources::Object *root, bool current) {
 	if (_stateStore.contains(storeKey)) {
 		ResourceTreeState *state = _stateStore[storeKey];
 
@@ -108,7 +108,7 @@ void StateProvider::restoreResourceTreeState(Common::String storeKey, Resources:
 	}
 }
 
-void StateProvider::readResourceTree(Resources::Resource *resource, Common::SeekableReadStream *stream, bool current) {
+void StateProvider::readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current) {
 	// Read the resource to the source stream
 	/* byte type = */ stream->readByte();
 	/* byte subType = */ stream->readByte();
@@ -127,7 +127,7 @@ void StateProvider::readResourceTree(Resources::Resource *resource, Common::Seek
 	}
 
 	// Deserialize the resource children
-	Common::Array<Resources::Resource *> children = resource->listChildren<Resources::Resource>();
+	Common::Array<Resources::Object *> children = resource->listChildren<Resources::Object>();
 	for (uint i = 0; i < children.size(); i++) {
 		readResourceTree(children[i], stream, current);
 	}
@@ -157,7 +157,7 @@ void StateProvider::saveGlobalState(Resources::Level *level) {
 	saveResourceTreeState("CurrentGlobal", level, true);
 }
 
-void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Resource *root, bool current) {
+void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Object *root, bool current) {
 	// Delete any previous data
 	if (!_stateStore.contains(storeKey)) {
 		delete _stateStore[storeKey];
@@ -172,7 +172,7 @@ void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Re
 	_stateStore[storeKey] = new ResourceTreeState(stream.size(), stream.getData());
 }
 
-void StateProvider::writeResourceTree(Resources::Resource *resource, Common::WriteStream *stream, bool current) {
+void StateProvider::writeResourceTree(Resources::Object *resource, Common::WriteStream *stream, bool current) {
 	// Explicit scope to control the lifespan of the memory stream
 	{
 		Common::MemoryWriteStreamDynamic resourceStream(DisposeAfterUse::YES);
@@ -195,7 +195,7 @@ void StateProvider::writeResourceTree(Resources::Resource *resource, Common::Wri
 	}
 
 	// Serialize the resource children
-	Common::Array<Resources::Resource *> children = resource->listChildren<Resources::Resource>();
+	Common::Array<Resources::Object *> children = resource->listChildren<Resources::Object>();
 	for (uint i = 0; i < children.size(); i++) {
 		writeResourceTree(children[i], stream, current);
 	}

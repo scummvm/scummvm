@@ -26,7 +26,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -47,7 +47,7 @@ class Item;
  *
  * Animations provide a time dependent visual state to Items
  */
-class Anim : public Resource {
+class Anim : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kAnim;
 
@@ -59,9 +59,9 @@ public:
 	};
 
 	/** Anim factory */
-	static Resource *construct(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	static Object *construct(Object *parent, byte subType, uint16 index, const Common::String &name);
 
-	Anim(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Anim(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Anim();
 
 	// Resource API
@@ -96,7 +96,7 @@ protected:
  */
 class AnimImages : public Anim {
 public:
-	AnimImages(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimImages(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimImages();
 
 	// Resource API
@@ -120,7 +120,7 @@ protected:
 
 class AnimSub2 : public Anim {
 public:
-	AnimSub2(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimSub2(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimSub2();
 };
 
@@ -129,7 +129,7 @@ public:
  */
 class AnimVideo : public Anim {
 public:
-	AnimVideo(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimVideo(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimVideo();
 
 	// Resource API
@@ -167,7 +167,7 @@ protected:
  */
 class AnimSkeleton : public Anim {
 public:
-	AnimSkeleton(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimSkeleton(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimSkeleton();
 
 	// Resource API

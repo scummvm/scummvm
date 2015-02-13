@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -37,11 +37,11 @@ namespace Resources {
 /**
  * Bone mesh resources reference a mesh usable by actor resources
  */
-class BonesMesh : public Resource {
+class BonesMesh : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kBonesMesh;
 
-	BonesMesh(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	BonesMesh(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~BonesMesh();
 
 	// Resource API

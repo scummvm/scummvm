@@ -34,8 +34,8 @@ namespace Resources {
 Camera::~Camera() {
 }
 
-Camera::Camera(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-		Resource(parent, subType, index, name),
+Camera::Camera(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		Object(parent, subType, index, name),
 		_f1(0),
 		_fov(45),
 		_nearClipPlane(100.0),
@@ -58,7 +58,7 @@ void Camera::readData(XRCReadStream *stream) {
 }
 
 void Camera::onAllLoaded() {
-	Resource::onAllLoaded();
+	Object::onAllLoaded();
 
 	// Compute scroll coordinates bounds
 	Common::Point maxScroll;
@@ -70,7 +70,7 @@ void Camera::onAllLoaded() {
 }
 
 void Camera::onEnterLocation() {
-	Resource::onEnterLocation();
+	Object::onEnterLocation();
 
 	// Setup the camera
 	Scene *scene = StarkServices::instance().scene;

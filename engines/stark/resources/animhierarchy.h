@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -45,11 +45,11 @@ class TextureSet;
  *
  * This resource keeps track of the currently selected animation.
  */
-class AnimHierarchy : public Resource {
+class AnimHierarchy : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kAnimHierarchy;
 
-	AnimHierarchy(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	AnimHierarchy(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~AnimHierarchy();
 
 	// Resource API

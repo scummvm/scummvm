@@ -41,8 +41,8 @@ namespace Resources {
 Command::~Command() {
 }
 
-Command::Command(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name) {
+Command::Command(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name) {
 	_type = TYPE;
 }
 
@@ -112,11 +112,11 @@ Command *Command::opScriptPause(Script *script, const ResourceReference &duratio
 
 Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
 	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
-	Resource *target = targetRef.resolve<Resource>();
+	Object *target = targetRef.resolve<Object>();
 
 	switch (target->getType().get()) {
 	case Type::kBookmark:
-		item->placeOnBookmark(Resource::cast<Bookmark>(target));
+		item->placeOnBookmark(Object::cast<Bookmark>(target));
 		break;
 	default:
 		warning("Unimplemented op3DPlaceOn target type %s", target->getType().getName());

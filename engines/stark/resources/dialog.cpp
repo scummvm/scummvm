@@ -33,15 +33,15 @@ namespace Resources {
 Dialog::~Dialog() {
 }
 
-Dialog::Dialog(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Dialog::Dialog(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_character(0),
 				_hasAskAbout(0) {
 	_type = TYPE;
 }
 
 void Dialog::readData(XRCReadStream *stream) {
-	Resource::readData(stream);
+	Object::readData(stream);
 
 	_hasAskAbout = stream->readUint32LE();
 	_character = stream->readUint32LE();
@@ -80,7 +80,7 @@ void Dialog::readData(XRCReadStream *stream) {
 }
 
 void Dialog::printData() {
-	Resource::printData();
+	Object::printData();
 
 	debug("character: %d", _character);
 	debug("hasAskAbout: %d", _hasAskAbout);

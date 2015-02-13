@@ -138,9 +138,9 @@ private:
  * The OnGameLoop method is called during the game loop.
  *
  */
-class Resource {
+class Object {
 public:
-	virtual ~Resource();
+	virtual ~Object();
 
 	/** Get the resource type */
 	Type getType() const { return _type; }
@@ -212,14 +212,14 @@ public:
 	 * Cast a resource, performing a type check
 	 */
 	template<class T>
-	static T *cast(Resource *resource);
+	static T *cast(Object *resource);
 
 	/** Find the first parent resource with the specified type */
 	template<class T>
 	T *findParent();
 
 	/** Find a child resource matching the specified type, index and subtype */
-	Resource *findChildWithIndex(Type type, uint16 index, int subType = -1);
+	Object *findChildWithIndex(Type type, uint16 index, int subType = -1);
 
 	/** Find a child matching the template parameter type */
 	template<class T>
@@ -242,13 +242,13 @@ public:
 	Common::Array<T *> listChildrenRecursive(int subType = -1);
 
 	/** Add a resource to the children list */
-	void addChild(Resource *child);
+	void addChild(Object *child);
 
 	/** Print debug information for the resource */
 	void print(uint depth = 0);
 
 protected:
-	Resource(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Object(Object *parent, byte subType, uint16 index, const Common::String &name);
 
 	virtual void printData();
 
@@ -257,8 +257,8 @@ protected:
 	uint16 _index;
 	Common::String _name;
 
-	Resource *_parent;
-	Common::Array<Resource *> _children;
+	Object *_parent;
+	Common::Array<Object *> _children;
 };
 
 /**
@@ -267,9 +267,9 @@ protected:
  * Used to display the raw resource data when dumping a resource tree.
  * To be removed once all the resource types are implemented.
  */
-class UnimplementedResource : public Resource {
+class UnimplementedResource : public Object {
 public:
-	UnimplementedResource(Resource *parent, Type type, byte subType, uint16 index, const Common::String &name);
+	UnimplementedResource(Object *parent, Type type, byte subType, uint16 index, const Common::String &name);
 	virtual ~UnimplementedResource();
 
 protected:
@@ -281,7 +281,7 @@ protected:
 };
 
 template <class T>
-T* Resource::cast(Resource *resource) {
+T* Object::cast(Object *resource) {
 	if (resource && resource->_type != T::TYPE) {
 		error("Unexpected resource type when casting resource %s instead of %s",
 				resource->_type.getName(), Type(T::TYPE).getName());
@@ -291,10 +291,10 @@ T* Resource::cast(Resource *resource) {
 }
 
 template<>
-Resource *Resource::cast<Resource>(Resource *resource);
+Object *Object::cast<Object>(Object *resource);
 
 template<class T>
-T *Resource::findParent() {
+T *Object::findParent() {
 	if (getType() == T::TYPE) {
 		return cast<T>(this);
 	} else if (!_parent) {
@@ -305,14 +305,14 @@ T *Resource::findParent() {
 }
 
 template <class T>
-Common::Array<T *> Resource::listChildren(int subType) {
+Common::Array<T *> Object::listChildren(int subType) {
 	Common::Array<T *> list;
 
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i]->getType() == T::TYPE
 				&& (_children[i]->getSubType() == subType || subType == -1)) {
 			// Found a matching child
-			list.push_back(Resource::cast<T>(_children[i]));
+			list.push_back(Object::cast<T>(_children[i]));
 		}
 	}
 
@@ -320,14 +320,14 @@ Common::Array<T *> Resource::listChildren(int subType) {
 }
 
 template<class T>
-Common::Array<T *> Resource::listChildrenRecursive(int subType) {
+Common::Array<T *> Object::listChildrenRecursive(int subType) {
 	Common::Array<T *> list;
 
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i]->getType() == T::TYPE
 				&& (_children[i]->getSubType() == subType || subType == -1)) {
 			// Found a matching child
-			list.push_back(Resource::cast<T>(_children[i]));
+			list.push_back(Object::cast<T>(_children[i]));
 		}
 
 		// Look for matching resources in the child's children
@@ -338,15 +338,15 @@ Common::Array<T *> Resource::listChildrenRecursive(int subType) {
 }
 
 template<>
-Common::Array<Resource *> Resource::listChildren<Resource>(int subType);
+Common::Array<Object *> Object::listChildren<Object>(int subType);
 
 template<class T>
-T *Resource::findChild(bool mustBeUnique) {
+T *Object::findChild(bool mustBeUnique) {
 	return findChildWithSubtype<T>(-1, mustBeUnique);
 }
 
 template <class T>
-T *Resource::findChildWithSubtype(int subType, bool mustBeUnique) {
+T *Object::findChildWithSubtype(int subType, bool mustBeUnique) {
 	Common::Array<T *> list = listChildren<T>(subType);
 
 	if (list.empty()) {
@@ -361,8 +361,8 @@ T *Resource::findChildWithSubtype(int subType, bool mustBeUnique) {
 }
 
 template <class T>
-T *Resource::findChildWithIndex(uint16 index, int subType) {
-	return Resource::cast<T>(findChildWithIndex(T::TYPE, index, subType));
+T *Object::findChildWithIndex(uint16 index, int subType) {
+	return Object::cast<T>(findChildWithIndex(T::TYPE, index, subType));
 }
 
 } // End of namespace Resources

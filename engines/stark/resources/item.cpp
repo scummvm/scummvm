@@ -38,7 +38,7 @@
 namespace Stark {
 namespace Resources {
 
-Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Common::String &name) {
+Object *Item::construct(Object *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
 	case kItemSub1:
 		return new ItemSub1(parent, subType, index, name);
@@ -62,8 +62,8 @@ Resource *Item::construct(Resource *parent, byte subType, uint16 index, const Co
 Item::~Item() {
 }
 
-Item::Item(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Item::Item(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_enabled(true),
 				_field_38(0) {
 	_type = TYPE;
@@ -99,7 +99,7 @@ ItemVisual::~ItemVisual() {
 	delete _renderEntry;
 }
 
-ItemVisual::ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemVisual::ItemVisual(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Item(parent, subType, index, name),
 				_renderEntry(nullptr),
 				_animHierarchy(nullptr),
@@ -170,7 +170,7 @@ Visual *ItemVisual::getVisual() {
 ItemSub13::~ItemSub13() {
 }
 
-ItemSub13::ItemSub13(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub13::ItemSub13(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Item(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
@@ -214,7 +214,7 @@ Item *ItemSub13::getSceneInstance() {
 ItemSub1::~ItemSub1() {
 }
 
-ItemSub1::ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub1::ItemSub1(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemSub13(parent, subType, index, name) {
 	_animHierarchyIndex = 0;
 }
@@ -256,7 +256,7 @@ AnimHierarchy *ItemSub1::findStockAnimHierarchy() {
 ItemSub3::~ItemSub3() {
 }
 
-ItemSub3::ItemSub3(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub3::ItemSub3(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemSub13(parent, subType, index, name) {
 }
 
@@ -322,7 +322,7 @@ void ItemSub3::printData() {
 ItemSub5610::~ItemSub5610() {
 }
 
-ItemSub5610::ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub5610::ItemSub5610(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name),
 		_direction3D(0.0),
 		_floorFaceIndex(-1) {
@@ -364,7 +364,7 @@ float ItemSub5610::getSortKey() const {
 ItemSub56::~ItemSub56() {
 }
 
-ItemSub56::ItemSub56(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub56::ItemSub56(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemSub5610(parent, subType, index, name) {
 }
 
@@ -399,7 +399,7 @@ void ItemSub56::printData() {
 ItemSub78::~ItemSub78() {
 }
 
-ItemSub78::ItemSub78(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub78::ItemSub78(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name) {
 }
 
@@ -433,7 +433,7 @@ void ItemSub78::printData() {
 ItemSub10::~ItemSub10() {
 }
 
-ItemSub10::ItemSub10(Resource *parent, byte subType, uint16 index, const Common::String &name) :
+ItemSub10::ItemSub10(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemSub5610(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),

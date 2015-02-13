@@ -30,7 +30,7 @@
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -42,11 +42,11 @@ namespace Resources {
  * Camera resources define the camera position, perspective parameters,
  * and look at direction.
  */
-class Camera : public Resource {
+class Camera : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kCamera;
 
-	Camera(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Camera(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Camera();
 
 	// Resource API

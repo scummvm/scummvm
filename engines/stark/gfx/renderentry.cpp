@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-RenderEntry::RenderEntry(Resources::Resource *owner, const Common::String &name) :
+RenderEntry::RenderEntry(Resources::Object *owner, const Common::String &name) :
 	_visual(nullptr),
 	_name(name),
 	_owner(owner),

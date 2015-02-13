@@ -30,8 +30,8 @@ namespace Resources {
 Root::~Root() {
 }
 
-Root::Root(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name) {
+Root::Root(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name) {
 	_type = TYPE;
 }
 

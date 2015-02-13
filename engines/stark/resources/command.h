@@ -26,7 +26,7 @@
 #include "common/array.h"
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
@@ -45,11 +45,11 @@ class Script;
  *
  * The operation arguments can be integers, strings or resource references.
  */
-class Command : public Resource {
+class Command : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kCommand;
 
-	Command(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Command(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Command();
 
 	enum SubType {

@@ -30,8 +30,8 @@ namespace Resources {
 Direction::~Direction() {
 }
 
-Direction::Direction(Resource *parent, byte subType, uint16 index, const Common::String &name) :
-				Resource(parent, subType, index, name),
+Direction::Direction(Object *parent, byte subType, uint16 index, const Common::String &name) :
+				Object(parent, subType, index, name),
 				_field_34(0),
 				_field_38(0),
 				_field_3C(0) {

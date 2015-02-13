@@ -27,7 +27,7 @@
 #include "common/str.h"
 
 #include "engines/stark/gfx/renderentry.h"
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -43,11 +43,11 @@ class Layer;
  * Locations contain layers. The game engine retrieves the list of renderable
  * items from the current location.
  */
-class Location : public Resource {
+class Location : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kLocation;
 
-	Location(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Location(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Location();
 
 	// Resource API

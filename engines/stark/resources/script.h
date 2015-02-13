@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -41,7 +41,7 @@ class Command;
  * Scripts are made of a collection of Command resources. Commands
  * return the next command to be executed, allowing for branches.
  */
-class Script : public Resource {
+class Script : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kScript;
 
@@ -81,7 +81,7 @@ public:
 		kCallModeDialogAnswer = 6
 	};
 
-	Script(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Script(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Script();
 
 	// Resource API
@@ -108,7 +108,7 @@ public:
 	void pause(int32 msecs);
 
 	/** Suspend the script while the specified resource is running */
-	void suspend(Resource *cause);
+	void suspend(Object *cause);
 
 protected:
 	void printData() override;
@@ -128,7 +128,7 @@ protected:
 	Command *_nextCommand;
 
 	int32 _pauseTimeLeft;
-	Resource *_suspendingResource;
+	Object *_suspendingResource;
 };
 
 } // End of namespace Resources

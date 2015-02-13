@@ -23,7 +23,7 @@
 #ifndef STARK_RESOURCES_ITEM_H
 #define STARK_RESOURCES_ITEM_H
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 #include "engines/stark/resourcereference.h"
 
 #include "common/rect.h"
@@ -50,7 +50,7 @@ class TextureSet;
  *
  * Can be a character, background, animation, ...
  */
-class Item : public Resource {
+class Item : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kItem;
 
@@ -66,9 +66,9 @@ public:
 	};
 
 	/** Item factory */
-	static Resource *construct(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	static Object *construct(Object *parent, byte subType, uint16 index, const Common::String &name);
 
-	Item(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Item(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Item();
 
 	// Resource API
@@ -100,7 +100,7 @@ protected:
  */
 class ItemVisual : public Item {
 public:
-	ItemVisual(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemVisual(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemVisual();
 
 	// Resource API
@@ -134,7 +134,7 @@ protected:
  */
 class ItemSub13 : public Item {
 public:
-	ItemSub13(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub13(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub13();
 
 	// Resource API
@@ -172,7 +172,7 @@ protected:
  */
 class ItemSub1 : public ItemSub13 {
 public:
-	ItemSub1(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub1(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub1();
 
 	// ItemSub13 API
@@ -191,7 +191,7 @@ protected:
  */
 class ItemSub3 : public ItemSub13 {
 public:
-	ItemSub3(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub3(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub3();
 
 	// Resource API
@@ -217,7 +217,7 @@ protected:
  */
 class ItemSub5610 : public ItemVisual {
 public:
-	ItemSub5610(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub5610(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub5610();
 
 	/** Move the item to a bookmarked position */
@@ -242,7 +242,7 @@ protected:
  */
 class ItemSub56 : public ItemSub5610 {
 public:
-	ItemSub56(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub56(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub56();
 
 	// Resource API
@@ -264,7 +264,7 @@ protected:
  */
 class ItemSub10 : public ItemSub5610 {
 public:
-	ItemSub10(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub10(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub10();
 
 	// Resource API
@@ -296,7 +296,7 @@ protected:
  */
 class ItemSub78 : public ItemVisual {
 public:
-	ItemSub78(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	ItemSub78(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~ItemSub78();
 
 	// Resource API

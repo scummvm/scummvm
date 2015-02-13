@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "engines/stark/resources/resource.h"
+#include "engines/stark/resources/object.h"
 
 namespace Stark {
 
@@ -42,11 +42,11 @@ class Sound;
  * A Speech resource contains text for a character and references
  * a Sound resource for the dubbing.
  */
-class Speech : public Resource {
+class Speech : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kSpeech;
 
-	Speech(Resource *parent, byte subType, uint16 index, const Common::String &name);
+	Speech(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~Speech();
 
 	// Resource API

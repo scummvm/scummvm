@@ -47,11 +47,11 @@ void ResourceReference::addPathElement(Resources::Type type, uint16 index) {
 	_path.push_back(PathElement(type, index));
 }
 
-Resources::Resource *ResourceReference::resolve() const {
+Resources::Object *ResourceReference::resolve() const {
 	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
 	Global *global = StarkServices::instance().global;
 
-	Resources::Resource *resource = nullptr;
+	Resources::Object *resource = nullptr;
 	for (uint i = 0; i < _path.size(); i++) {
 		PathElement element = _path[i];
 
