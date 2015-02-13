@@ -123,6 +123,10 @@ bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();
 
+	// Temporarily replace the global archive loader with our instance
+	ArchiveLoader *gameArchiveLoader = StarkServices::instance().archiveLoader;
+	StarkServices::instance().archiveLoader = archiveLoader;
+
 	archiveLoader->load("x.xarc");
 	Root *root = archiveLoader->useRoot<Root>("x.xarc");
 
@@ -153,6 +157,9 @@ bool Console::Cmd_ListLocations(int argc, const char **argv) {
 		archiveLoader->returnRoot(levelArchive);
 		archiveLoader->unloadUnused();
 	}
+
+	// Restore the global archive loader
+	StarkServices::instance().archiveLoader = gameArchiveLoader;
 
 	delete archiveLoader;
 
