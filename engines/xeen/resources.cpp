@@ -1450,4 +1450,25 @@ const char *const HAS_SLAYER_SWORD =
 const char *const SURE_TO_DELETE_CHAR = 
 	"Are you sure you want to delete %s the %s?";
 
+const char *const CREATE_CHAR_DETAILS = 
+	"\f04\x3""c\x2\t144\v119\f37R\f04oll\t144\v149\f37C\f04reate"
+	"\t144\v179\f37ESC\f04\x3l\x1\t195\v021\f37M\f04gt"
+	"\t195\v045\f37I\f04nt\t195\v069\f37P\f04er\t195\v093\f37E\f04nd"
+	"\t195\v116\f37S\f04pd\t195\v140\f37A\f04cy\t195\v164\f37L\f04ck%s";
+
+const char *const NEW_CHAR_STATS =
+	"\f04\x3l\t022\v148Race\t055: %s\n"
+	"\t022Sex\t055: %s\n"
+	"\t022Class\t055:\n"
+	"\x3r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
+	"\t215\v151%d\t215\v175%d\x3l\t242\v020\f%2dKnight\t242\v031\f%2d"
+	"Paladin\t242\v042\f%2dArcher\t242\v053\f%2dCleric\t242\v064\f%2d"
+	"Sorcerer\t242\v075\f%2dRobber\t242\v086\f%2dNinja\t242\v097\f%2d"
+	"Barbarian\t242\v108\f%2dDruid\t242\v119\f%2dRanger\f04\x3""c"
+	"\t265\v142Skills\x3l\t223\v155%s\t223\v170%s%s";
+
+const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
+const int NEW_CHAR_SKILLS_LEN[10] = { 11, 8, 0, 0, 12, 8, 8, 0, 9, 11 };
+const int NEW_CHAR_RACE_SKILLS[10] = { 14, -1, 17, 16, -1, 0, 0, 0, 0, 0 };
+
 } // End of namespace Xeen

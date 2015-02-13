@@ -504,6 +504,13 @@ extern const char *const YOUR_PARTY_IS_FULL;
 extern const char *const HAS_SLAYER_SWORD;
 extern const char *const SURE_TO_DELETE_CHAR;
 
+extern const char *const CREATE_CHAR_DETAILS;
+
+extern const char *const NEW_CHAR_STATS;
+extern const int NEW_CHAR_SKILLS[10];
+extern const int NEW_CHAR_SKILLS_LEN[10];
+extern const int NEW_CHAR_RACE_SKILLS[10];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

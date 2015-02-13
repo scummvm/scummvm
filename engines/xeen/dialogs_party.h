@@ -56,6 +56,18 @@ private:
 	void createChar();
 
 	int selectCharacter(bool isDelete, int firstDisplayChar);
+
+	void throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
+
+	void checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
+
+	int newCharDetails(const uint attribs[TOTAL_ATTRIBUTES], 
+		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
+		int selectedClass, Common::String &msg);
+
+	void printSelectionArrow(SpriteResource &icons, int selectedClass);
+
+	void drawDice(SpriteResource &dice);
 public:
 	static void show(XeenEngine *vm);
 };
