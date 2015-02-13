@@ -55,7 +55,7 @@ public:
 	void setTexture(Gfx::TextureSet *texture);
 	void setTime(uint32 time);
 
-	void render(Gfx::GfxDriver *gfx, const Math::Vector3d position, float direction);
+	void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction);
 
 private:
 	Actor *_actor;

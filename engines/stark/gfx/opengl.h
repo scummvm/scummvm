@@ -35,10 +35,10 @@
 namespace Stark {
 namespace Gfx {
 
-class OpenGLGfxDriver : public GfxDriver {
+class OpenGLDriver : public Driver {
 public:
-	OpenGLGfxDriver();
-	~OpenGLGfxDriver();
+	OpenGLDriver();
+	~OpenGLDriver();
 
 	void setupScreen(int screenW, int screenH, bool fullscreen);
 

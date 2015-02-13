@@ -35,7 +35,7 @@
 namespace Stark {
 
 namespace Gfx {
-class GfxDriver;
+class Driver;
 class RenderEntry;
 }
 
@@ -44,7 +44,7 @@ class RenderEntry;
  */
 class Scene {
 public:
-	Scene(Gfx::GfxDriver *gfx);
+	Scene(Gfx::Driver *gfx);
 	~Scene();
 
 	/**
@@ -61,7 +61,7 @@ public:
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
-	Gfx::GfxDriver *_gfx;
+	Gfx::Driver *_gfx;
 
 	Math::Vector3d _cameraPosition;
 	Math::Vector3d _cameraLookDirection;

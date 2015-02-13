@@ -39,14 +39,14 @@ class Object;
 
 namespace Gfx {
 
-class GfxDriver;
+class Driver;
 
 class RenderEntry {
 public:
 	RenderEntry(Resources::Object *owner, const Common::String &name);
 	virtual ~RenderEntry() {};
 
-	void render(GfxDriver *gfx);
+	void render(Driver *gfx);
 
 	void setVisual(Visual *visual);
 	void setPosition(const Common::Point &position);

@@ -31,12 +31,12 @@
 namespace Stark {
 namespace Gfx {
 
-GfxDriver *GfxDriver::create() {
-	GfxDriver *driver = NULL;
+Driver *Driver::create() {
+	Driver *driver = NULL;
 
 #ifdef USE_OPENGL
 	// OpenGL
-	driver = new OpenGLGfxDriver();
+	driver = new OpenGLDriver();
 	if (driver)
 		return driver;
 #endif // USE_OPENGL

@@ -53,7 +53,7 @@ void TextureSet::readData(Formats::XRCReadStream *stream) {
 void TextureSet::onPostRead() {
 	// Get the required services
 	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-	Gfx::GfxDriver *gfxDriver = StarkServices::instance().gfx;
+	Gfx::Driver *gfxDriver = StarkServices::instance().gfx;
 
 	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
 

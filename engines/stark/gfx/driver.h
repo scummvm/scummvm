@@ -37,11 +37,11 @@ namespace Gfx {
 class Texture;
 class MipMapTexture;
 
-class GfxDriver {
+class Driver {
 public:
-	static GfxDriver *create();
+	static Driver *create();
 
-	virtual ~GfxDriver() {}
+	virtual ~Driver() {}
 
 	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 

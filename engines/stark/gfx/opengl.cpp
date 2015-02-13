@@ -45,53 +45,53 @@
 namespace Stark {
 namespace Gfx {
 
-OpenGLGfxDriver::OpenGLGfxDriver() {
+OpenGLDriver::OpenGLDriver() {
 }
 
-OpenGLGfxDriver::~OpenGLGfxDriver() {
+OpenGLDriver::~OpenGLDriver() {
 }
 
-void OpenGLGfxDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
+void OpenGLDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->setupScreen(screenW, screenH, fullscreen, true);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 }
 
-void OpenGLGfxDriver::setGameViewport() {
+void OpenGLDriver::setGameViewport() {
 	glViewport(0, _screenHeight - kGameViewportHeight - kTopBorderHeight, _screenWidth, kGameViewportHeight);
 }
 
-void OpenGLGfxDriver::setScreenViewport() {
+void OpenGLDriver::setScreenViewport() {
 	glViewport(0, 0, _screenWidth, _screenHeight);
 }
 
-void OpenGLGfxDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
+void OpenGLDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glMultMatrixf(projectionMatrix.getData());
 }
 
-void OpenGLGfxDriver::setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) {
+void OpenGLDriver::setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glMultMatrixf(lookAt.getData());
 	glTranslatef(-position.x(), -position.y(), -position.z());
 }
 
-void OpenGLGfxDriver::clearScreen() {
+void OpenGLDriver::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLGfxDriver::flipBuffer() {
+void OpenGLDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-MipMapTexture *OpenGLGfxDriver::createMipMapTexture() {
+MipMapTexture *OpenGLDriver::createMipMapTexture() {
 	return new OpenGlMipMapTexture();
 }
 
-void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {
+void OpenGLDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {
 	// Draw the whole surface by default
 	if (rect.isEmpty())
 		rect = Common::Rect(surface->w, surface->h);
@@ -108,7 +108,7 @@ void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Poin
 }
 
 
-void OpenGLGfxDriver::start2DMode() {
+void OpenGLDriver::start2DMode() {
 
 	// Load the ModelView matrix with the identity
 	glMatrixMode(GL_MODELVIEW);
@@ -134,7 +134,7 @@ void OpenGLGfxDriver::start2DMode() {
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
-void OpenGLGfxDriver::end2DMode() {
+void OpenGLDriver::end2DMode() {
 	// Disable alpha blending
 	glDisable(GL_BLEND);
 
@@ -150,7 +150,7 @@ void OpenGLGfxDriver::end2DMode() {
 
 }
 
-void OpenGLGfxDriver::set3DMode() {
+void OpenGLDriver::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);

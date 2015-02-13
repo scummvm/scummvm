@@ -29,7 +29,7 @@
 namespace Stark {
 
 namespace Gfx {
-class GfxDriver;
+class Driver;
 }
 
 class Visual {

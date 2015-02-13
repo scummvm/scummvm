@@ -38,7 +38,7 @@ RenderEntry::RenderEntry(Resources::Object *owner, const Common::String &name) :
 	_sortKey(0.0) {
 }
 
-void RenderEntry::render(GfxDriver *gfx) {
+void RenderEntry::render(Driver *gfx) {
 	if (!_visual) {
 		// warning("No visual for render entry '%s'", _name.c_str());
 		return;

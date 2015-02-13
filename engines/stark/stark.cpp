@@ -88,7 +88,7 @@ StarkEngine::~StarkEngine() {
 
 Common::Error StarkEngine::run() {
 	_console = new Console();
-	_gfx = Gfx::GfxDriver::create();
+	_gfx = Gfx::Driver::create();
 
 	// Get the screen prepared
 	_gfx->setupScreen(640, 480, ConfMan.getBool("fullscreen"));

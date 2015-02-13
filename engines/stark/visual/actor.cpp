@@ -59,7 +59,7 @@ void VisualActor::setTime(uint32 time) {
 	_time = time;
 }
 
-void VisualActor::render(Gfx::GfxDriver *gfx, const Math::Vector3d position, float direction) {
+void VisualActor::render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) {
 	_actor->getSkeleton()->animate(_time);
 
 	// Prepare vertex list and push to gfx driver

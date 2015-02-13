@@ -29,7 +29,7 @@
 
 namespace Stark {
 
-Scene::Scene(Gfx::GfxDriver *gfx) :
+Scene::Scene(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_fov(45.0),
 		_nearClipPlane(100.0),

@@ -61,7 +61,7 @@ VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
 	return element;
 }
 
-void VisualImageXMG::render(Gfx::GfxDriver *gfx, const Common::Point &position) {
+void VisualImageXMG::render(Gfx::Driver *gfx, const Common::Point &position) {
 	gfx->drawSurface(_surface, position - _hotspot);
 }
 

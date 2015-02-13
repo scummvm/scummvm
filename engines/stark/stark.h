@@ -34,7 +34,7 @@ class RandomSource;
 namespace Stark {
 
 namespace Gfx {
-class GfxDriver;
+class Driver;
 }
 
 enum StarkGameFeatures {
@@ -69,7 +69,7 @@ private:
 	void mainLoop();
 	void updateDisplayScene();
 
-	Gfx::GfxDriver *_gfx;
+	Gfx::Driver *_gfx;
 	Console *_console;
 
 	// Services
