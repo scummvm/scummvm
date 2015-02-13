@@ -20,59 +20,49 @@
  *
  */
 
-#ifndef STARK_RESOURCES_TEXTURE_SET_H
-#define STARK_RESOURCES_TEXTURE_SET_H
+#ifndef STARK_GFX_OPENGL_TEXTURE_H
+#define STARK_GFX_OPENGL_TEXTURE_H
 
-#include "common/str.h"
-
-#include "engines/stark/resources/object.h"
+#include "engines/stark/gfx/texture.h"
 
 namespace Stark {
-
 namespace Gfx {
-class TextureSet;
-}
-
-namespace Formats {
-class XRCReadStream;
-}
-
-namespace Resources {
 
 /**
- * A texture resource
- *
- * Used by items to provide textures to meshes
+ * An OpenGL texture wrapper
  */
-class TextureSet : public Object {
+class OpenGlTexture : public Texture {
 public:
-	static const Type::ResourceType TYPE = Type::kTextureSet;
+	OpenGlTexture();
+	virtual ~OpenGlTexture();
 
-	enum SubType {
-		kTextureNormal = 1,
-		kTextureFace = 2
-	};
-
-	TextureSet(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~TextureSet();
-
-	// Resource API
-	void readData(Formats::XRCReadStream *stream) override;
-	void onPostRead() override;
-
-	/** Obtain the texture to be rendered */
-	Gfx::TextureSet *getTexture();
+	// Texture API
+	void bind() const override;
 
 protected:
-	void printData() override;
-
-	Common::String _filename;
-	Common::String _archiveName;
-
-	Gfx::TextureSet *_textureSet;
+	uint32 _id;
 };
 
-} // End of namespace Resources
+/**
+ * An OpenGL MipMap texture wrapper
+ */
+class OpenGlMipMapTexture : public MipMapTexture, public OpenGlTexture {
+public:
+	OpenGlMipMapTexture();
+	virtual ~OpenGlMipMapTexture();
+
+	// Texture API
+	void bind() const override;
+
+	// MipMapTexture API
+	void setLevelCount(uint32 count) override;
+	void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) override;
+
+protected:
+	uint32 _levelCount;
+};
+
+} // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_TEXTURE_SET_H
+#endif // STARK_GFX_OPENGL_TEXTURE_H

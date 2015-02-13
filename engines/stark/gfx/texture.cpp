@@ -20,37 +20,43 @@
  *
  */
 
-#ifndef STARK_TEXTURE_H
-#define STARK_TEXTURE_H
+#include "engines/stark/gfx/texture.h"
 
-#include "common/hash-str.h"
-
-namespace Common {
-	class ReadStream;
-}
+#include "graphics/surface.h"
 
 namespace Stark {
+namespace Gfx {
 
-/**
- * Texture manager to load and store actor textures
- */
-class Texture {
-public:
-	Texture();
-	~Texture();
+Texture::~Texture() {
+}
 
-	void createFromStream(Common::ReadStream *stream);
+MipMapTexture::~MipMapTexture() {
+}
 
-	uint32 getTexture(Common::String name) const;
+TextureSet::TextureSet() {
+}
 
-private:
-	void readChunk(Common::ReadStream *stream, uint32 format);
+TextureSet::~TextureSet() {
+	for (TextureMap::iterator it = _texMap.begin(); it != _texMap.end(); ++it) {
+		delete it->_value;
+	}
+}
 
-	uint32 *_palette;
+void TextureSet::addTexture(const Common::String &name, Texture *texture) {
+	if (_texMap.contains(name)) {
+		error("A texture with the name '%s' already exists in the set.", name.c_str());
+	}
 
-	Common::HashMap<Common::String, uint32> _texMap;
-};
+	_texMap.setVal(name, texture);
+}
 
+const Texture *TextureSet::getTexture(const Common::String &name) const {
+	TextureMap::const_iterator it = _texMap.find(name);
+	if (it != _texMap.end())
+		return it->_value;
+
+	return 0;
+}
+
+} // End of namespace Gfx
 } // End of namespace Stark
-
-#endif // STARK_TEXTURE_H

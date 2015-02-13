@@ -7,8 +7,11 @@ MODULE_OBJS := \
 	gfx/coordinate.o \
 	gfx/driver.o \
 	gfx/opengl.o \
+	gfx/opengltexture.o \
 	gfx/renderentry.o \
+	gfx/texture.o \
 	formats/iss.o \
+	formats/tm.o \
 	formats/xarc.o \
 	formats/xmg.o \
 	formats/xrc.o \
@@ -49,7 +52,6 @@ MODULE_OBJS := \
 	skeleton.o \
 	skeleton_anim.o \
 	stark.o \
-	texture.o \
 	visual/actor.o \
 	visual/image.o \
 	visual/smacker.o

@@ -20,59 +20,48 @@
  *
  */
 
-#ifndef STARK_RESOURCES_TEXTURE_SET_H
-#define STARK_RESOURCES_TEXTURE_SET_H
+#ifndef STARK_FORMATS_TM_H
+#define STARK_FORMATS_TM_H
 
-#include "common/str.h"
+#include "common/scummsys.h"
 
-#include "engines/stark/resources/object.h"
+namespace Common {
+	class ReadStream;
+}
 
 namespace Stark {
+
+class GfxDriver;
 
 namespace Gfx {
 class TextureSet;
 }
 
 namespace Formats {
-class XRCReadStream;
-}
-
-namespace Resources {
 
 /**
- * A texture resource
- *
- * Used by items to provide textures to meshes
+ * A texture set loader able to read '.tm' files
  */
-class TextureSet : public Object {
+class TextureSetReader {
 public:
-	static const Type::ResourceType TYPE = Type::kTextureSet;
+	TextureSetReader(GfxDriver *driver);
+	~TextureSetReader();
 
-	enum SubType {
-		kTextureNormal = 1,
-		kTextureFace = 2
-	};
+	/**
+	 * Load a texture set from the provided stream.
+	 *
+	 * The caller is responsible for freeing the texture set.
+	 */
+	Gfx::TextureSet *read(Common::ReadStream *stream);
 
-	TextureSet(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~TextureSet();
+private:
+	void readChunk(Common::ReadStream *stream, uint32 format, Gfx::TextureSet *textureSet);
 
-	// Resource API
-	void readData(Formats::XRCReadStream *stream) override;
-	void onPostRead() override;
-
-	/** Obtain the texture to be rendered */
-	Gfx::TextureSet *getTexture();
-
-protected:
-	void printData() override;
-
-	Common::String _filename;
-	Common::String _archiveName;
-
-	Gfx::TextureSet *_textureSet;
+	byte *_palette;
+	GfxDriver *_driver;
 };
 
-} // End of namespace Resources
+} // End of namespace Formats
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_TEXTURE_SET_H
+#endif // STARK_FORMATS_TM_H

@@ -33,6 +33,11 @@
 
 namespace Stark {
 
+namespace Gfx {
+class Texture;
+class MipMapTexture;
+}
+
 class GfxDriver {
 public:
 	static GfxDriver *create();
@@ -49,6 +54,13 @@ public:
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;
+
+	/**
+	 * Create a new mipmap texture.
+	 *
+	 * The caller is responsible for freeing it.
+	 */
+	virtual Gfx::MipMapTexture *createMipMapTexture() = 0;
 
 	virtual void drawSurface(const Graphics::Surface *surface, Common::Point dest = Common::Point(), Common::Rect rect = Common::Rect()) = 0;
 

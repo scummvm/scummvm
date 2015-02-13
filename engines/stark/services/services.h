@@ -33,6 +33,7 @@ namespace Stark {
 
 class ArchiveLoader;
 class DialogPlayer;
+class GfxDriver;
 class Global;
 class ResourceProvider;
 class Scene;
@@ -46,6 +47,7 @@ public:
 	StarkServices() {
 		archiveLoader = nullptr;
 		dialogPlayer = nullptr;
+		gfx = nullptr;
 		global = nullptr;
 		resourceProvider = nullptr;
 		randomSource = nullptr;
@@ -55,6 +57,7 @@ public:
 
 	ArchiveLoader *archiveLoader;
 	DialogPlayer *dialogPlayer;
+	GfxDriver *gfx;
 	Global *global;
 	ResourceProvider *resourceProvider;
 	Common::RandomSource *randomSource;

@@ -35,9 +35,13 @@ namespace Common {
 
 namespace Stark {
 
+namespace Gfx {
+class TextureSet;
+}
+
 class Actor;
 class SkeletonAnim;
-class Texture;
+
 
 class VisualActor : public Visual {
 public:
@@ -48,7 +52,7 @@ public:
 
 	void setMesh(Actor *mesh);
 	void setAnim(SkeletonAnim *anim);
-	void setTexture(Texture *texture);
+	void setTexture(Gfx::TextureSet *texture);
 	void setTime(uint32 time);
 
 	void render(GfxDriver *gfx, const Math::Vector3d position, float direction);

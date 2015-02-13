@@ -106,6 +106,7 @@ Common::Error StarkEngine::run() {
 	StarkServices &services = StarkServices::instance();
 	services.archiveLoader = _archiveLoader;
 	services.dialogPlayer = _dialogPlayer;
+	services.gfx = _gfx;
 	services.global = _global;
 	services.resourceProvider = _resourceProvider;
 	services.randomSource = _randomSource;

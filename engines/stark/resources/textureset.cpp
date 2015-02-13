@@ -22,26 +22,27 @@
 
 #include "engines/stark/resources/textureset.h"
 
+#include "engines/stark/formats/tm.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/gfx/texture.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/texture.h"
 
 namespace Stark {
 namespace Resources {
 
 TextureSet::~TextureSet() {
-	delete _texture;
+	delete _textureSet;
 }
 
 TextureSet::TextureSet(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_texture(nullptr) {
+				_textureSet(nullptr) {
 	_type = TYPE;
 }
 
-Texture *TextureSet::getTexture() {
-	return _texture;
+Gfx::TextureSet *TextureSet::getTexture() {
+	return _textureSet;
 }
 
 void TextureSet::readData(Formats::XRCReadStream *stream) {
@@ -50,14 +51,17 @@ void TextureSet::readData(Formats::XRCReadStream *stream) {
 }
 
 void TextureSet::onPostRead() {
-	// Get the archive loader service
+	// Get the required services
 	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+	GfxDriver *gfxDriver = StarkServices::instance().gfx;
 
 	Common::ReadStream *stream = archiveLoader->getFile(_filename, _archiveName);
 
-	_texture = new Texture();
-	_texture->createFromStream(stream);
+	Formats::TextureSetReader *reader = new Formats::TextureSetReader(gfxDriver);
 
+	_textureSet = reader->read(stream);
+
+	delete reader;
 	delete stream;
 }
 

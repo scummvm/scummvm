@@ -24,8 +24,8 @@
 
 #include "engines/stark/actor.h"
 #include "engines/stark/skeleton.h"
-#include "engines/stark/texture.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 
 #include "common/archive.h"
 #include "common/stream.h"
@@ -51,8 +51,8 @@ void VisualActor::setAnim(SkeletonAnim *anim) {
 	_actor->setAnim(anim);
 }
 
-void VisualActor::setTexture(Texture *texture) {
-	_actor->setTexture(texture);
+void VisualActor::setTexture(Gfx::TextureSet *texture) {
+	_actor->setTextureSet(texture);
 }
 
 void VisualActor::setTime(uint32 time) {
@@ -70,23 +70,24 @@ void VisualActor::render(Stark::GfxDriver *gfx, const Math::Vector3d position, f
 	glRotatef(90, 1.f, 0.f, 0.f);
 	glRotatef(90 - (_actor->getFacingDirection() + direction), 0.f, 1.f, 0.f);
 
-	glEnable(GL_TEXTURE_2D);
-
 	Common::Array<BoneNode *> bones = _actor->getSkeleton()->getBones();
 	Common::Array<MeshNode *> meshes = _actor->getMeshes();
 	Common::Array<MaterialNode *> mats = _actor->getMaterials();
-	const Texture *texture = _actor->getTexture();
+	const Gfx::TextureSet *texture = _actor->getTextureSet();
 
 	for (Common::Array<MeshNode *>::iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh) {
 		for (Common::Array<FaceNode *>::iterator face = (*mesh)->_faces.begin(); face != (*mesh)->_faces.end(); ++face) {
 			// For each triangle to draw
-			uint32 tex = texture->getTexture(mats[(*face)->_matIdx]->_texName);
-				if (tex)
+			const Gfx::Texture *tex = texture->getTexture(mats[(*face)->_matIdx]->_texName);
+				if (tex) {
 					glColor3f(1.f, 1.f, 1.f);
-				else
-					glColor3f(mats[(*face)->_matIdx]->_r, mats[(*face)->_matIdx]->_g, mats[(*face)->_matIdx]->_b);
+					glEnable(GL_TEXTURE_2D);
 
-			glBindTexture(GL_TEXTURE_2D, tex);
+					tex->bind();
+				} else {
+					glColor3f(mats[(*face)->_matIdx]->_r, mats[(*face)->_matIdx]->_g, mats[(*face)->_matIdx]->_b);
+					glDisable(GL_TEXTURE_2D);
+				}
 
 			glBegin(GL_TRIANGLES);
 			for (Common::Array<TriNode *>::iterator tri = (*face)->_tris.begin(); tri != (*face)->_tris.end(); ++tri) {

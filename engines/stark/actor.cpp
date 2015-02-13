@@ -24,7 +24,7 @@
 
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/skeleton.h"
-#include "engines/stark/texture.h"
+#include "engines/stark/gfx/texture.h"
 
 #include "common/stream.h"
 
@@ -32,7 +32,7 @@ namespace Stark {
 
 Actor::Actor() :
 		_skeleton(nullptr),
-		_texture(nullptr),
+		_textureSet(nullptr),
 		_u1(0),
 		_facingDirection(0.0) {
 
@@ -142,8 +142,8 @@ void Actor::setAnim(SkeletonAnim *anim)
 	_skeleton->setAnim(anim);
 }
 
-void Actor::setTexture(Texture *texture) {
-	_texture = texture;
+void Actor::setTextureSet(Gfx::TextureSet *texture) {
+	_textureSet = texture;
 }
 
 } // End of namespace Stark

@@ -31,6 +31,8 @@
 
 #include "math/matrix4.h"
 
+#include "engines/stark/gfx/opengltexture.h"
+
 #ifdef USE_OPENGL
 
 #ifdef SDL_BACKEND
@@ -82,6 +84,10 @@ void OpenGLGfxDriver::clearScreen() {
 
 void OpenGLGfxDriver::flipBuffer() {
 	g_system->updateScreen();
+}
+
+Gfx::MipMapTexture *OpenGLGfxDriver::createMipMapTexture() {
+	return new Gfx::OpenGlMipMapTexture();
 }
 
 void OpenGLGfxDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {

@@ -50,6 +50,8 @@ public:
 	void clearScreen();
 	void flipBuffer();
 
+	Gfx::MipMapTexture *createMipMapTexture() override;
+
 	void drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect);
 
 	void set3DMode();

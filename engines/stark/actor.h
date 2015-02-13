@@ -30,10 +30,14 @@
 
 namespace Stark {
 
+namespace Gfx {
+class TextureSet;
+}
+
 class ArchiveReadStream;
 class Skeleton;
 class SkeletonAnim;
-class Texture;
+
 
 class VertNode {
 public:
@@ -113,7 +117,7 @@ public:
 	const Common::Array<MeshNode *> &getMeshes() const { return _meshes; }
 	const Common::Array<MaterialNode *> &getMaterials() const { return _materials; }
 	Skeleton *getSkeleton() const { return _skeleton; }
-	const Texture *getTexture() const { return _texture; }
+	const Gfx::TextureSet *getTextureSet() const { return _textureSet; }
 	float getFacingDirection() const { return _facingDirection; }
 
 	/**
@@ -124,7 +128,7 @@ public:
 	/**
 	 * Load texture data from the specified stream
 	 */
-	void setTexture(Texture *texture);
+	void setTextureSet(Gfx::TextureSet *textureSet);
 
 private:
 	uint32 _u1;
@@ -133,7 +137,7 @@ private:
 	Common::Array<MaterialNode *> _materials;
 	Common::Array<MeshNode *> _meshes;
 	Skeleton *_skeleton;
-	Texture *_texture;
+	Gfx::TextureSet *_textureSet;
 };
 
 } // End of namespace Stark
