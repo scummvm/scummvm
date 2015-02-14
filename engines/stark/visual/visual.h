@@ -30,6 +30,7 @@ namespace Stark {
 
 namespace Gfx {
 class Driver;
+class Texture;
 }
 
 class Visual {

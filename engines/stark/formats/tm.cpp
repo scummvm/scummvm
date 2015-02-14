@@ -93,7 +93,7 @@ void TextureSetReader::readChunk(Common::ReadStream *stream, uint32 format, Gfx:
 		delete[] name;
 		byte u = stream->readByte();
 
-		Gfx::MipMapTexture *texture = _driver->createMipMapTexture();
+		Gfx::Texture *texture = _driver->createTexture();
 
 		uint32 w = stream->readUint32LE();
 		uint32 h = stream->readUint32LE();

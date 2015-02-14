@@ -37,23 +37,19 @@ namespace Gfx {
  */
 class Texture {
 public:
+	Texture();
 	virtual ~Texture();
 
 	/** Make the texture active */
 	virtual void bind() const = 0;
-};
 
-/**
- * An abstract texture with manual mipmap levels support
- */
-class MipMapTexture : public Texture {
-public:
-	virtual ~MipMapTexture();
+	/** Define or update the texture pixel data */
+	virtual void update(const Graphics::Surface *surface, const byte *palette = nullptr) = 0;
 
 	/**
-	 * Define the total number of levels
+	 * Define the total number of levels of details
 	 *
-	 * Must be called before adding any level
+	 * Must be called before adding levels
 	 */
 	virtual void setLevelCount(uint32 count) = 0;
 
@@ -61,6 +57,16 @@ public:
 	 * Add a detail level to the texture
 	 */
 	virtual void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) = 0;
+
+	/** Get the texture width */
+	uint32 width() const { return _width; }
+
+	/** Get teh texture height */
+	uint32 height() const { return _height; }
+
+protected:
+	uint32 _width;
+	uint32 _height;
 };
 
 /**

@@ -26,32 +26,27 @@
 #include "common/stream.h"
 #include "engines/stark/visual/visual.h"
 
-namespace Graphics {
-struct Surface;
-}
-
 namespace Stark {
 
 /**
  * XMG (still image) renderer
  */
 class VisualImageXMG : public Visual {
-private:
-	VisualImageXMG();
-
 public:
 	static const VisualType TYPE = Visual::kImageXMG;
 
+	VisualImageXMG(Gfx::Driver *gfx);
 	virtual ~VisualImageXMG();
 
-	static VisualImageXMG *load(Common::ReadStream *stream);
-	void render(Gfx::Driver *gfx, const Common::Point &position);
+	void load(Common::ReadStream *stream);
+	void render(const Common::Point &position);
 
 	/** Set an offset used when rendering */
 	void setHotSpot(const Common::Point &hotspot);
 
 private:
-	Graphics::Surface *_surface;
+	Gfx::Driver *_gfx;
+	Gfx::Texture *_texture;
 	Common::Point _hotspot;
 };
 

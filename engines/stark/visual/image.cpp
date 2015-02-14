@@ -30,39 +30,40 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xmg.h"
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
 namespace Stark {
 
-VisualImageXMG::VisualImageXMG() :
+VisualImageXMG::VisualImageXMG(Gfx::Driver *gfx) :
 		Visual(TYPE),
-		_surface(NULL) {
+		_gfx(gfx),
+		_texture(nullptr) {
 }
 
 VisualImageXMG::~VisualImageXMG() {
-	// Free the surface
-	if (_surface)
-		_surface->free();
-	delete _surface;
+	delete _texture;
 }
 
 void VisualImageXMG::setHotSpot(const Common::Point &hotspot) {
 	_hotspot = hotspot;
 }
 
-VisualImageXMG *VisualImageXMG::load(Common::ReadStream *stream) {
-	// Create the element to return
-	VisualImageXMG *element = new VisualImageXMG();
+void VisualImageXMG::load(Common::ReadStream *stream) {
+	delete _texture;
 
 	// Decode the XMG
-	element->_surface = Formats::XMGDecoder::decode(stream);
+	Graphics::Surface *surface = Formats::XMGDecoder::decode(stream);
 
-	return element;
+	_texture = _gfx->createTexture(surface);
+
+	surface->free();
+	delete surface;
 }
 
-void VisualImageXMG::render(Gfx::Driver *gfx, const Common::Point &position) {
-	gfx->drawSurface(_surface, position - _hotspot);
+void VisualImageXMG::render(const Common::Point &position) {
+	_gfx->drawSurface(_texture, position - _hotspot);
 }
 
 } // End of namespace Stark

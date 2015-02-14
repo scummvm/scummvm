@@ -46,7 +46,7 @@ void RenderEntry::render(Driver *gfx) {
 
 	VisualImageXMG *imageXMG = _visual->get<VisualImageXMG>();
 	if (imageXMG) {
-		imageXMG->render(gfx, _position);
+		imageXMG->render(_position);
 	}
 
 	VisualActor *actor = _visual->get<VisualActor>();
@@ -56,7 +56,7 @@ void RenderEntry::render(Driver *gfx) {
 
 	VisualSmacker *smacker = _visual->get<VisualSmacker>();
 	if (smacker) {
-		smacker->render(gfx, _position);
+		smacker->render(_position);
 	}
 }
 

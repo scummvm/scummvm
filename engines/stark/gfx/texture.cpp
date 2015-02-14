@@ -27,10 +27,12 @@
 namespace Stark {
 namespace Gfx {
 
-Texture::~Texture() {
+Texture::Texture() :
+	_width(0),
+	_height(0) {
 }
 
-MipMapTexture::~MipMapTexture() {
+Texture::~Texture() {
 }
 
 TextureSet::TextureSet() {

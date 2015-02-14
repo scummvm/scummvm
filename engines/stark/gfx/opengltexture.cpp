@@ -31,8 +31,17 @@ namespace Gfx {
 
 OpenGlTexture::OpenGlTexture() :
 	Texture(),
-	_id(0) {
+	_id(0),
+	_levelCount(0) {
 	glGenTextures(1, &_id);
+
+	bind();
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 OpenGlTexture::~OpenGlTexture() {
@@ -43,47 +52,49 @@ void OpenGlTexture::bind() const {
 	glBindTexture(GL_TEXTURE_2D, _id);
 }
 
-OpenGlMipMapTexture::OpenGlMipMapTexture() :
-	OpenGlTexture(),
-	MipMapTexture(),
-	_levelCount(0) {
-
-	bind();
-
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-}
-
-OpenGlMipMapTexture::~OpenGlMipMapTexture() {
-}
-
-void OpenGlMipMapTexture::setLevelCount(uint32 count) {
-	_levelCount = count;
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
-}
-
-void OpenGlMipMapTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
-	assert(level < _levelCount);
+void OpenGlTexture::updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
+	if (level == 0) {
+		_width = surface->w;
+		_height = surface->h;
+	}
 
 	if (surface->format.bytesPerPixel != 4) {
 		// Convert the surface to texture format
 		Graphics::Surface *convertedSurface = surface->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), palette);
 
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, convertedSurface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, convertedSurface->w, convertedSurface->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, convertedSurface->getPixels());
 
 		convertedSurface->free();
 		delete convertedSurface;
 	} else {
-		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+		glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, surface->getPixels());
 	}
 }
 
-void OpenGlMipMapTexture::bind() const {
-	OpenGlTexture::bind();
+void OpenGlTexture::update(const Graphics::Surface *surface, const byte *palette) {
+	bind();
+	updateLevel(0, surface, palette);
+}
+
+void OpenGlTexture::setLevelCount(uint32 count) {
+	_levelCount = count;
+
+	if (count >= 1) {
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
+
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+}
+
+void OpenGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
+	assert(level < _levelCount);
+
+	updateLevel(level, surface, palette);
 }
 
 } // End of namespace Gfx

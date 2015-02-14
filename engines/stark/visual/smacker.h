@@ -31,29 +31,25 @@ namespace Video {
 	class SmackerDecoder;
 }
 
-namespace Graphics {
-	class Surface;
-}
-
-
 namespace Stark {
 
 class VisualSmacker : public Visual {
 public:
 	static const VisualType TYPE = Visual::kSmackerStream;
 
+	VisualSmacker(Gfx::Driver *gfx);
 	virtual ~VisualSmacker();
 
-	static VisualSmacker *load(Common::SeekableReadStream *stream);
+	void load(Common::SeekableReadStream *stream);
 	void update(uint32 delta);
-	void render(Gfx::Driver *gfx, const Common::Point &position);
+	void render(const Common::Point &position);
 	bool isDone();
 
 private:
-	VisualSmacker(Common::SeekableReadStream *stream);
-
 	Video::SmackerDecoder *_smacker;
-	Graphics::Surface *_surface;
+
+	Gfx::Driver *_gfx;
+	Gfx::Texture *_texture;
 };
 
 } // End of namespace Stark

@@ -185,8 +185,12 @@ void AnimVideo::readData(Formats::XRCReadStream *stream) {
 void AnimVideo::onAllLoaded() {
 	if (!_smacker) {
 		ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
+		Gfx::Driver *gfx = StarkServices::instance().gfx;
+
 		Common::SeekableReadStream *stream = archiveLoader->getExternalFile(_smackerFile, _archiveName);
-		_smacker = VisualSmacker::load(stream);
+
+		_smacker = new VisualSmacker(gfx);
+		_smacker->load(stream);
 	}
 }
 

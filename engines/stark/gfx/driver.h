@@ -35,7 +35,6 @@ namespace Stark {
 namespace Gfx {
 
 class Texture;
-class MipMapTexture;
 
 class Driver {
 public:
@@ -55,17 +54,22 @@ public:
 	virtual void flipBuffer() = 0;
 
 	/**
-	 * Create a new mipmap texture.
+	 * Create a new texture
 	 *
 	 * The caller is responsible for freeing it.
+	 *
 	 */
-	virtual MipMapTexture *createMipMapTexture() = 0;
+	virtual Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
 
-	virtual void drawSurface(const Graphics::Surface *surface, Common::Point dest = Common::Point(), Common::Rect rect = Common::Rect()) = 0;
+	/**
+	 * Draw a 2D surface from the specified texture
+	 */
+	virtual void drawSurface(const Texture *texture, const Common::Point &dest) = 0;
 
 	virtual void set3DMode() = 0;
 
 	static const int32 kTopBorderHeight = 36;
+	static const int32 kGameViewportWidth = 640;
 	static const int32 kGameViewportHeight = 365;
 
 protected:

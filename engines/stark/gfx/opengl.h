@@ -26,6 +26,7 @@
 #ifndef STARK_GFX_OPENGL_H
 #define STARK_GFX_OPENGL_H
 
+#include "common/rect.h"
 #include "common/system.h"
 
 #ifdef USE_OPENGL
@@ -51,15 +52,17 @@ public:
 	void clearScreen();
 	void flipBuffer();
 
-	MipMapTexture *createMipMapTexture() override;
+	Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) override;
 
-	void drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect);
+	void drawSurface(const Texture *texture, const Common::Point &dest) override;
 
 	void set3DMode();
 
 private:
 	void start2DMode();
 	void end2DMode();
+
+	Common::Rect _viewport;
 };
 
 } // End of namespace Gfx

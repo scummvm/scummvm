@@ -23,6 +23,7 @@
 #include "engines/stark/visual/smacker.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
 
@@ -33,30 +34,33 @@
 
 namespace Stark {
 
-VisualSmacker::VisualSmacker(Common::SeekableReadStream *stream) :
-		Visual(TYPE) {
-	_surface = new Graphics::Surface();
+VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
+		Visual(TYPE),
+		_gfx(gfx),
+		_texture(nullptr),
+		_smacker(nullptr) {
+}
+
+VisualSmacker::~VisualSmacker() {
+	delete _texture;
+	delete _smacker;
+}
+
+void VisualSmacker::load(Common::SeekableReadStream *stream) {
+	delete _texture;
+	delete _smacker;
 
 	_smacker = new Video::SmackerDecoder();
 	_smacker->loadStream(stream);
 	_smacker->start();
+
+	_texture = _gfx->createTexture();
+
 	update(0);
 }
 
-VisualSmacker::~VisualSmacker() {
-	_smacker->close();
-	delete _smacker;
-
-	_surface->free();
-	delete _surface;
-}
-
-VisualSmacker *VisualSmacker::load(Common::SeekableReadStream *stream) {
-	return new VisualSmacker(stream);
-}
-
-void VisualSmacker::render(Gfx::Driver *gfx, const Common::Point &position) {
-	gfx->drawSurface(_surface, position);
+void VisualSmacker::render(const Common::Point &position) {
+	_gfx->drawSurface(_texture, position);
 }
 
 void VisualSmacker::update(uint32 delta) {
@@ -64,18 +68,10 @@ void VisualSmacker::update(uint32 delta) {
 		_smacker->rewind();
 		_smacker->start();
 	}
+
 	if (_smacker->needsUpdate()) {
-		const Graphics::Surface *temp = _smacker->decodeNextFrame();
-		if (temp->format.bytesPerPixel == 1) {
-			Graphics::Surface *converted = temp->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _smacker->getPalette());
-			_surface->free();
-			_surface->copyFrom(*converted);
-			converted->free();
-			delete converted;
-		} else {
-			_surface->free();
-			_surface->copyFrom(*temp);
-		}
+		const Graphics::Surface *surface = _smacker->decodeNextFrame();
+		_texture->update(surface, _smacker->getPalette());
 	}
 }
 

@@ -38,27 +38,14 @@ public:
 
 	// Texture API
 	void bind() const override;
-
-protected:
-	uint32 _id;
-};
-
-/**
- * An OpenGL MipMap texture wrapper
- */
-class OpenGlMipMapTexture : public MipMapTexture, public OpenGlTexture {
-public:
-	OpenGlMipMapTexture();
-	virtual ~OpenGlMipMapTexture();
-
-	// Texture API
-	void bind() const override;
-
-	// MipMapTexture API
+	void update(const Graphics::Surface *surface, const byte *palette = nullptr) override;
 	void setLevelCount(uint32 count) override;
 	void addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr) override;
 
 protected:
+	void updateLevel(uint32 level, const Graphics::Surface *surface, const byte *palette = nullptr);
+
+	uint32 _id;
 	uint32 _levelCount;
 };
 

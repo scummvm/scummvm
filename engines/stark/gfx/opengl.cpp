@@ -39,7 +39,6 @@
 #include <SDL_opengl.h>
 #else
 #include <GL/gl.h>
-//#include <GL/glu.h>
 #endif
 
 namespace Stark {
@@ -59,11 +58,16 @@ void OpenGLDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 }
 
 void OpenGLDriver::setGameViewport() {
-	glViewport(0, _screenHeight - kGameViewportHeight - kTopBorderHeight, _screenWidth, kGameViewportHeight);
+	_viewport = Common::Rect(kGameViewportWidth, kGameViewportHeight);
+	_viewport.translate(0, _screenHeight - kGameViewportHeight - kTopBorderHeight);
+
+	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
 void OpenGLDriver::setScreenViewport() {
-	glViewport(0, 0, _screenWidth, _screenHeight);
+	_viewport = Common::Rect(_screenWidth, _screenHeight);
+
+	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
 void OpenGLDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
@@ -87,26 +91,52 @@ void OpenGLDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-MipMapTexture *OpenGLDriver::createMipMapTexture() {
-	return new OpenGlMipMapTexture();
+Texture *OpenGLDriver::createTexture(const Graphics::Surface *surface, const byte *palette) {
+	OpenGlTexture *texture = new OpenGlTexture();
+
+	if (surface) {
+		texture->update(surface, palette);
+	}
+
+	return texture;
 }
 
-void OpenGLDriver::drawSurface(const Graphics::Surface *surface, Common::Point dest, Common::Rect rect) {
-	// Draw the whole surface by default
-	if (rect.isEmpty())
-		rect = Common::Rect(surface->w, surface->h);
+void OpenGLDriver::drawSurface(const Texture *texture, const Common::Point &dest) {
+	// Source texture rectangle
+	const float tLeft = 0.0;
+	const float tWidth = 1.0;
+	const float tTop = 0.0;
+	const float tHeight = 1.0;
+
+	// Destination rectangle
+	const float sLeft = dest.x;
+	const float sTop = dest.y;
+	const float sWidth = texture->width();
+	const float sHeight = texture->height();
 
 	start2DMode();
 
-	glDisable(GL_TEXTURE_2D);
+	glColor3f(1.f, 1.f, 1.f);
+	glEnable(GL_TEXTURE_2D);
 
-	glRasterPos2f(-1.0, 1.0);
-	glBitmap(0, 0, 0, 0, dest.x, -dest.y, nullptr);
-	glDrawPixels(surface->w, surface->h, GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+	texture->bind();
+
+	glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(tLeft, tTop + tHeight);
+		glVertex3f(sLeft + 0, sTop + sHeight, 1.0f);
+
+		glTexCoord2f(tLeft + tWidth, tTop + tHeight);
+		glVertex3f(sLeft + sWidth, sTop + sHeight, 1.0f);
+
+		glTexCoord2f(tLeft, tTop);
+		glVertex3f(sLeft + 0, sTop + 0, 1.0f);
+
+		glTexCoord2f(tLeft + tWidth, tTop);
+		glVertex3f(sLeft + sWidth, sTop + 0, 1.0f);
+	glEnd();
 
 	end2DMode();
 }
-
 
 void OpenGLDriver::start2DMode() {
 
@@ -119,6 +149,7 @@ void OpenGLDriver::start2DMode() {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
+	glOrtho(0.0, _viewport.width(), _viewport.height(), 0.0, -1.0, 1.0);
 
 	// Enable alpha blending
 	glEnable(GL_BLEND);
@@ -126,12 +157,6 @@ void OpenGLDriver::start2DMode() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glDepthMask(GL_FALSE);
-
-	// Flip the Y component
-	glPixelZoom(1.0f, -1.0f);
-
-	// Required by RGB sources, but not by RGBA
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void OpenGLDriver::end2DMode() {
