@@ -228,6 +228,8 @@ public:
 
 	byte getCurrentReverb();
 
+	void needsRemap() { _needsRemap = true; }
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
@@ -249,9 +251,9 @@ protected:
 	bool _useDigitalSFX;
 
 	// remapping:
-	void remapChannels();
+	void remapChannels(bool mainThread = true);
 	ChannelRemapping *determineChannelMap();
-	void resetDeviceChannel(int devChannel);
+	void resetDeviceChannel(int devChannel, bool mainThread);
 
 private:
 	MusicList _playList;
@@ -260,6 +262,7 @@ private:
 	MusicEntry *_usedChannel[16];
 	int8 _channelRemap[16];
 	int8 _globalReverb;
+	bool _needsRemap;
 
 	DeviceChannelUsage _channelMap[16];
 

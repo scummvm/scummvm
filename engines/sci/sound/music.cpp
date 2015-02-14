@@ -145,6 +145,7 @@ void SciMusic::init() {
 
 	_currentlyPlayingSample = NULL;
 	_timeCounter = 0;
+	_needsRemap = false;
 }
 
 void SciMusic::miditimerCallback(void *p) {
@@ -158,6 +159,11 @@ void SciMusic::onTimer() {
 	const MusicList::iterator end = _playList.end();
 	// sending out queued commands that were "sent" via main thread
 	sendMidiCommandsFromQueue();
+
+	// remap channels, if requested
+	if (_needsRemap)
+		remapChannels(false);
+	_needsRemap = false;
 
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
 		(*i)->onTimer();
@@ -920,12 +926,12 @@ int ChannelRemapping::lowestPrio() const {
 }
 
 
-void SciMusic::remapChannels() {
+void SciMusic::remapChannels(bool mainThread) {
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		return;
 
-	// NB: This function should only be called from the main thread,
-	// with _mutex locked
+	// NB: This function should only be called with _mutex locked
+	// Make sure to set the mainThread argument correctly.
 
 
 	ChannelRemapping *map = determineChannelMap();
@@ -978,9 +984,9 @@ void SciMusic::remapChannels() {
 
 		for (int j = 0; j < 16; ++j) {
 			if (!channelMapped[j]) {
-				song->pMidiParser->mainThreadBegin();
+				if (mainThread) song->pMidiParser->mainThreadBegin();
 				song->pMidiParser->remapChannel(j, -1);
-				song->pMidiParser->mainThreadEnd();
+				if (mainThread) song->pMidiParser->mainThreadEnd();
 #ifdef DEBUG_REMAP
 				if (channelUsed[j])
 					debug(" Unmapping song %d, channel %d", songIndex, j);
@@ -1012,9 +1018,9 @@ void SciMusic::remapChannels() {
 #ifdef DEBUG_REMAP
 			debug(" Mapping (dontRemap) song %d, channel %d to device channel %d", songIndex, _channelMap[i]._channel, i);
 #endif
-			_channelMap[i]._song->pMidiParser->mainThreadBegin();
+			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadBegin();
 			_channelMap[i]._song->pMidiParser->remapChannel(_channelMap[i]._channel, i);
-			_channelMap[i]._song->pMidiParser->mainThreadEnd();
+			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadEnd();
 		}
 
 	}
@@ -1067,9 +1073,9 @@ void SciMusic::remapChannels() {
 #ifdef DEBUG_REMAP
 				debug(" Mapping song %d, channel %d to device channel %d", songIndex, _channelMap[j]._channel, j);
 #endif
-				_channelMap[j]._song->pMidiParser->mainThreadBegin();
+				if (mainThread) _channelMap[j]._song->pMidiParser->mainThreadBegin();
 				_channelMap[j]._song->pMidiParser->remapChannel(_channelMap[j]._channel, j);
-				_channelMap[j]._song->pMidiParser->mainThreadEnd();
+				if (mainThread) _channelMap[j]._song->pMidiParser->mainThreadEnd();
 				break;
 			}
 		}
@@ -1079,7 +1085,7 @@ void SciMusic::remapChannels() {
 	// And finally, stop any empty channels
 	for (int i = _driverLastChannel; i >= _driverFirstChannel; --i) {
 		if (!_channelMap[i]._song && currentMap[i]._song)
-			resetDeviceChannel(i);
+			resetDeviceChannel(i, mainThread);
 	}
 
 	delete map;
@@ -1307,14 +1313,18 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 	return map;
 }
 
-void SciMusic::resetDeviceChannel(int devChannel) {
-	// NB: This function should only be called from the main thread
-
+void SciMusic::resetDeviceChannel(int devChannel, bool mainThread) {
 	assert(devChannel >= 0 && devChannel <= 0x0F);
 
-	putMidiCommandInQueue(0x0040B0 | devChannel); // sustain off
-	putMidiCommandInQueue(0x007BB0 | devChannel); // notes off
-	putMidiCommandInQueue(0x004BB0 | devChannel); // release voices
+	if (mainThread) {
+		putMidiCommandInQueue(0x0040B0 | devChannel); // sustain off
+		putMidiCommandInQueue(0x007BB0 | devChannel); // notes off
+		putMidiCommandInQueue(0x004BB0 | devChannel); // release voices
+	} else {
+		_pMidiDrv->send(0x0040B0 | devChannel); // sustain off
+		_pMidiDrv->send(0x007BB0 | devChannel); // notes off
+		_pMidiDrv->send(0x004BB0 | devChannel); // release voices
+	}
 }
 
 

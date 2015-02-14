@@ -487,8 +487,11 @@ void MidiParser_SCI::trackState(uint32 b) {
 			s._sustain = (op2 != 0);
 			break;
 		case 0x4B: // voices
-			if (s._voices != op2)
-				warning("Voice change (%d to %d) without remapping", s._voices, op2);
+			if (s._voices != op2) {
+				// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
+				debugC(2, kDebugLevelSound, "Dynamic voice change (%d to %d)", s._voices, op2);
+				_music->needsRemap();
+			}
 			s._voices = op2;
 			_pSnd->_chan[channel]._voices = op2; // Also sync our MusicEntry
 			break;
@@ -500,8 +503,9 @@ void MidiParser_SCI::trackState(uint32 b) {
 				bool m = op2;
 				if (_pSnd->_chan[channel]._mute != m) {
 					_pSnd->_chan[channel]._mute = m;
-					// TODO: If muting/unmuting a channel, remap channels.
-					warning("Mute change without immediate remapping (mainThread = %d)", _mainThreadCalled);
+					// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
+					_music->needsRemap();
+					debugC(2, kDebugLevelSound, "Dynamic mute change (mainThread = %d)", _mainThreadCalled);
 				}
 			}
 			break;
