@@ -26,6 +26,15 @@
 
 namespace Xeen {
 
+int Input::show(XeenEngine *vm, Window *window, Common::String &line, 
+		uint maxLen, int maxWidth, bool isNumeric) {
+	Input *dlg = new Input(vm, window);
+	int result = dlg->getString(line, maxLen, maxWidth, isNumeric);
+	delete dlg;
+
+	return result;
+}
+
 /**
  * Allows the user to enter a string
  */

@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_party.h"
+#include "xeen/dialogs_input.h"
 #include "xeen/dialogs_query.h"
 #include "xeen/character.h"
 #include "xeen/events.h"
@@ -375,12 +376,22 @@ void PartyDialog::createChar() {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[0];
 	SpriteResource dice, icons;
-	Mode oldMode = _vm->_mode;
 	Common::Array<int> freeCharList;
+	int classId;
 	int selectedClass = 0;
 	bool hasFadedIn = false;
+	bool restartFlag = true;
+	uint attribs[TOTAL_ATTRIBUTES];
+	bool allowedClasses[TOTAL_CLASSES];
+	Race race;
+	Sex sex;
+	Common::String msg;
+	int charIndex;
 
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_4;
 	dice.load("dice.vga");
 	icons.load("create.raw");
 
@@ -414,93 +425,261 @@ void PartyDialog::createChar() {
 	events.setCursor(0);
 
 	while (!_vm->shouldQuit()) {
-		int classId = -1;
+		classId = -1;
 
-		// Build up list of roster slot indexes that are free
-		freeCharList.clear();
-		for (uint idx = 0; idx < XEEN_TOTAL_CHARACTERS; ++idx) {
-			if (party._roster[idx]._name.empty())
-				freeCharList.push_back(idx);
-		}		
-		int charIndex = 0;
-		//bool flag9 = true;
+		if (restartFlag) {
+			// Build up list of roster slot indexes that are free
+			freeCharList.clear();
+			for (uint idx = 0; idx < XEEN_TOTAL_CHARACTERS; ++idx) {
+				if (party._roster[idx]._name.empty())
+					freeCharList.push_back(idx);
+			}
+			charIndex = 0;
+			//bool flag9 = true;
 
-		if (freeCharList.size() == XEEN_TOTAL_CHARACTERS)
+			if (freeCharList.size() == XEEN_TOTAL_CHARACTERS)
+				break;
+
+			// Get and race and sex for the given character
+			race = (Race)((freeCharList[charIndex] / 4) % 5);
+			sex = (Sex)(freeCharList[charIndex] & 1);
+
+			// Randomly determine attributes, and which classes they allow
+			throwDice(attribs, allowedClasses);
+
+			// Set up display of the rolled character details
+			selectedClass = newCharDetails(attribs, allowedClasses,
+				race, sex, classId, selectedClass, msg);
+
+			// Draw the screen
+			icons.draw(w, 10, Common::Point(168, 19));
+			icons.draw(w, 12, Common::Point(168, 43));
+			icons.draw(w, 14, Common::Point(168, 67));
+			icons.draw(w, 16, Common::Point(168, 91));
+			icons.draw(w, 18, Common::Point(168, 115));
+			icons.draw(w, 20, Common::Point(168, 139));
+			icons.draw(w, 22, Common::Point(168, 163));
+			for (int idx = 0; idx < 9; ++idx)
+				icons.draw(w, 24 + idx * 2, Common::Point(227, 19 + 11 * idx));
+
+			for (int idx = 0; idx < 7; ++idx)
+				icons.draw(w, 50 + idx, Common::Point(195, 31 + 24 * idx));
+
+			icons.draw(w, 57, Common::Point(62, 148));
+			icons.draw(w, 58, Common::Point(62, 158));
+			icons.draw(w, 59, Common::Point(62, 168));
+			icons.draw(w, 61, Common::Point(220, 19));
+			icons.draw(w, 64, Common::Point(220, 155));
+			icons.draw(w, 65, Common::Point(220, 170));
+
+			party._roster[freeCharList[charIndex]]._faceSprites->draw(
+				w, 0, Common::Point(27, 102));
+
+			icons.draw(w, 0, Common::Point(132, 98));
+			icons.draw(w, 2, Common::Point(132, 128));
+			icons.draw(w, 4, Common::Point(132, 158));
+			icons.draw(w, 6, Common::Point(86, 98));
+			icons.draw(w, 8, Common::Point(86, 120));
+
+			w.writeString(msg);
+			w.update();
+
+			// Draw the arrow for the selected class, if applicable
+			if (selectedClass != -1)
+				printSelectionArrow(icons, selectedClass);
+
+			// Draw the dice
+			drawDice(dice);
+			if (!hasFadedIn) {
+				screen.fadeIn(4);
+				hasFadedIn = true;
+			}
+
+			restartFlag = false;
+		}
+
+		// Animate the dice until a user action occurs
+		_buttonValue = 0;
+		while (!_vm->shouldQuit() && !_buttonValue)
+			drawDice(dice);
+
+		// Handling for different actions
+		switch (_buttonValue) {
+		case Common::KEYCODE_UP:
+			if (charIndex == 0)
+				continue;
+
+			race = (Race)((freeCharList[charIndex] / 4) % 5);
+			sex = (Sex)(freeCharList[charIndex] & 1);
 			break;
 
-		// Get and race and sex for the given character
-		Race race = (Race)((freeCharList[charIndex] / 4) % 5);
-		Sex sex = (Sex)(freeCharList[charIndex] & 1);
+		case Common::KEYCODE_DOWN:
+			if (++charIndex == (int)freeCharList.size()) {
+				--charIndex;
+				continue;
+			} else {
+				race = (Race)((freeCharList[charIndex] / 4) % 5);
+				sex = (Sex)(freeCharList[charIndex] & 1);
+			}
+			break;
 
-		// Randomly determine attributes, and which classes they allow
-		uint attribs[TOTAL_ATTRIBUTES];
-		bool allowedClasses[TOTAL_CLASSES];
-		throwDice(attribs, allowedClasses);
+		case Common::KEYCODE_PAGEUP:
+			for (int tempClass = selectedClass - 1; tempClass >= 0; --tempClass) {
+				if (allowedClasses[tempClass]) {
+					selectedClass = tempClass;
+					break;
+				}
+			}
 
-		// Set up display of the rolled character details
-		Common::String msg;
-		selectedClass = newCharDetails(attribs, allowedClasses,
-			race, sex, classId, selectedClass, msg);
-
-		// Draw the screen
-		Window &w = screen._windows[0];
-		icons.draw(w, 10, Common::Point(168, 19));
-		icons.draw(w, 12, Common::Point(168, 43));
-		icons.draw(w, 14, Common::Point(168, 67));
-		icons.draw(w, 16, Common::Point(168, 91));
-		icons.draw(w, 18, Common::Point(168, 115));
-		icons.draw(w, 20, Common::Point(168, 139));
-		icons.draw(w, 22, Common::Point(168, 163));
-		for (int idx = 0; idx < 9; ++idx)
-			icons.draw(w, 24 + idx * 2, Common::Point(227, 19 + 11 * idx));
-
-		for (int idx = 0; idx < 7; ++idx)
-			icons.draw(w, 50 + idx, Common::Point(195, 31 + 24 * idx));
-
-		icons.draw(w, 57, Common::Point(62, 148));
-		icons.draw(w, 58, Common::Point(62, 158));
-		icons.draw(w, 59, Common::Point(62, 168));
-		icons.draw(w, 61, Common::Point(220, 19));
-		icons.draw(w, 64, Common::Point(220, 155));
-		icons.draw(w, 65, Common::Point(220, 170));
-		
-		party._roster[freeCharList[charIndex]]._faceSprites->draw(
-			w, 0, Common::Point(27, 102));
-
-		icons.draw(w, 0, Common::Point(132, 98));
-		icons.draw(w, 2, Common::Point(132, 128));
-		icons.draw(w, 4, Common::Point(132, 158));
-		icons.draw(w, 6, Common::Point(86, 98));
-		icons.draw(w, 8, Common::Point(86, 120));
-
-		w.writeString(msg);
-		w.update();
-
-		// Draw the arrow for the selected class, if applicable
-		if (selectedClass != -1)
 			printSelectionArrow(icons, selectedClass);
+			continue;
 
-		// Draw the dice
-		drawDice(dice);
-		if (!hasFadedIn) {
-			screen.fadeIn(4);
-			hasFadedIn = true;
+		case Common::KEYCODE_PAGEDOWN:
+			break;
+
+		case Common::KEYCODE_m:
+		case Common::KEYCODE_i:
+		case Common::KEYCODE_p:
+		case Common::KEYCODE_e:
+		case Common::KEYCODE_s:
+		case Common::KEYCODE_a:
+		case Common::KEYCODE_l: {
+			Attribute srcAttrib, destAttrib;
+			if (_buttonValue == Common::KEYCODE_m)
+				srcAttrib = MIGHT;
+			else if (_buttonValue == Common::KEYCODE_i)
+				srcAttrib = INTELLECT;
+			else if (_buttonValue == Common::KEYCODE_p)
+				srcAttrib = PERSONALITY;
+			else if (_buttonValue == Common::KEYCODE_e)
+				srcAttrib = ENDURANCE;
+			else if (_buttonValue == Common::KEYCODE_s)
+				srcAttrib = SPEED;
+			else if (_buttonValue == Common::KEYCODE_a)
+				srcAttrib = ACCURACY;
+			else
+				srcAttrib = LUCK;
+
+			_vm->_mode = MODE_86;
+			icons.draw(w, srcAttrib * 2 + 11, Common::Point(
+				_buttons[srcAttrib + 5]._bounds.left, _buttons[srcAttrib + 5]._bounds.top));
+			w.update();
+
+			int destAttribVal = exchangeAttribute(srcAttrib + 1);
+			if (destAttribVal) {
+				destAttrib = (Attribute)(destAttribVal - 1);
+				icons.draw(w, destAttrib * 2 + 11, Common::Point(
+					_buttons[destAttrib + 10]._bounds.left,
+					_buttons[destAttrib + 10]._bounds.top));
+				w.update();
+				
+				SWAP(attribs[srcAttrib], attribs[destAttrib]);
+				checkClass(attribs, allowedClasses);
+				classId = -1;
+				selectedClass = newCharDetails(attribs, allowedClasses, 
+					race, sex, classId, selectedClass, msg);
+			} else {
+				icons.draw(w, srcAttrib * 2 + 10, Common::Point(
+					_buttons[srcAttrib + 5]._bounds.left,
+					_buttons[srcAttrib + 5]._bounds.top));
+				w.update();
+				_vm->_mode = MODE_SLEEPING;
+				continue;
+			}
+			break;
 		}
 
-		// Key handling loop
-		while (!_vm->shouldQuit()) {
-			// Animate the dice until a user action occurs
-			_buttonValue = 0;
-			while (!_vm->shouldQuit() && !_buttonValue)
-				drawDice(dice);
+		case 1000:
+		case 1001:
+		case 1002:
+		case 1003:
+		case 1004:
+		case 1005:
+		case 1006:
+		case 1007:
+		case 1008:
+		case 1009:
+			if (allowedClasses[_buttonValue - 1000]) {
+				selectedClass = classId = _buttonValue - 1000;
+			}
+			break;
 
-			// TODO
+		case Common::KEYCODE_c: {
+			_vm->_mode = MODE_FF;
+			bool result = saveCharacter(party._roster[freeCharList[charIndex]],
+				(CharacterClass)classId, race, sex, attribs);
+			_vm->_mode = MODE_4;
+
+			if (result)
+				restartFlag = true;
+			continue;
 		}
+
+		case Common::KEYCODE_RETURN:
+			classId = selectedClass;
+			break;
+
+		case Common::KEYCODE_SPACE:
+		case Common::KEYCODE_r:
+			// Re-roll the attributes
+			throwDice(attribs, allowedClasses);
+			classId = -1;
+			break;
+
+		default:
+			// For all other keypresses, skip the code below the switch
+			// statement, and go to wait for the next key
+			continue;
+		}
+
+		if (_buttonValue != Common::KEYCODE_PAGEDOWN) {
+			selectedClass = newCharDetails(attribs, allowedClasses,
+				race, sex, classId, selectedClass, msg);
+			
+			for (int idx = 0; idx < 7; ++idx)
+				icons.draw(w, 10 + idx * 2, Common::Point(168, 19 + idx * 24));
+			for (int idx = 0; idx < 10; ++idx)
+				icons.draw(w, 24 + idx * 2, Common::Point(227, 19 + idx * 11));
+			for (int idx = 0; idx < 8; ++idx)
+				icons.draw(w, 50 + idx, Common::Point(195, 31 + idx * 24));
+
+			icons.draw(w, 57, Common::Point(62, 148));
+			icons.draw(w, 58, Common::Point(62, 158));
+			icons.draw(w, 59, Common::Point(62, 168));
+			icons.draw(w, 61, Common::Point(220, 19));
+			icons.draw(w, 64, Common::Point(220, 155));
+			icons.draw(w, 65, Common::Point(220, 170));
+			
+			party._roster[freeCharList[charIndex]]._faceSprites->draw(w, 0,
+				Common::Point(27, 102));
+
+			icons.draw(w, 0, Common::Point(132, 98));
+			icons.draw(w, 2, Common::Point(132, 128));
+			icons.draw(w, 4, Common::Point(132, 158));
+			icons.draw(w, 6, Common::Point(86, 98));
+			icons.draw(w, 8, Common::Point(86, 120));
+
+			w.writeString(msg);
+			w.update();
+
+			if (selectedClass != -1) {
+				printSelectionArrow(icons, selectedClass);
+				continue;
+			}
+		}
+
+		// Move to next available class, or if the code block above resulted in 
+		// selectedClass being -1, move to select the first available class
+		for (int tempClass = selectedClass + 1; tempClass <= CLASS_RANGER; ++tempClass) {
+			if (allowedClasses[tempClass]) {
+				selectedClass = tempClass;
+				break;
+			}
+		}
+
+		printSelectionArrow(icons, selectedClass);
+	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 		
-		// TODO: More
-		error("TODO: createChar");
-	}
-
 	_vm->_mode = oldMode;
 }
 
@@ -690,5 +869,89 @@ void PartyDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) 
 void PartyDialog::drawDice(SpriteResource &dice) {
 	error("TODO: drawDice");
 }
+
+/**
+ * Exchanging two attributes for the character being rolled
+ */
+int PartyDialog::exchangeAttribute(int srcAttr) {
+	error("TODO: exchangeAttribute");
+}
+
+bool PartyDialog::saveCharacter(Character &c, CharacterClass classId,
+		Race race, Sex sex, uint attribs[TOTAL_ATTRIBUTES]) {
+	if (classId == -1) {
+		ErrorScroll::show(_vm, SELECT_CLASS_BEFORE_SAVING);
+		return false;
+	}
+
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[6];
+	Common::String name;
+	int result;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+
+	saveButtons();
+	w.writeString(NAME_FOR_NEW_CHARACTER);
+
+	result = Input::show(_vm, &w, name, 10, 200);
+	w.close();
+	restoreButtons();
+	if (!result)
+		return false;
+
+	// Save new character details
+	c.clear();
+	c._name = name;
+	c._savedMazeId = party._priorMazeId;
+	c._xeenSide = map._loadDarkSide;
+	c._sex = sex;
+	c._race = race;
+	c._class = classId;
+	c._level._permanent = isDarkCc ? 5 : 1;
+
+	c._might._permanent = attribs[MIGHT];
+	c._intellect._permanent = attribs[INTELLECT];
+	c._personality._permanent = attribs[PERSONALITY];
+	c._endurance._permanent = attribs[ENDURANCE];
+	c._speed._permanent = attribs[SPEED];
+	c._accuracy._permanent = attribs[ACCURACY];
+	c._luck._permanent = attribs[LUCK];
+
+	c._magicResistence._permanent = RACE_MAGIC_RESISTENCES[race];
+	c._fireResistence._permanent = RACE_FIRE_RESISTENCES[race];
+	c._electricityResistence._permanent = RACE_ELECTRIC_RESISTENCES[race];
+	c._coldResistence._permanent = RACE_COLD_RESISTENCES[race];
+	c._energyResistence._permanent = RACE_ENERGY_RESISTENCES[race];
+	c._poisonResistence._permanent = RACE_POISON_RESISTENCES[race];
+
+	c._birthYear = party._year - 18;
+	c._birthDay = party._day;
+	c._hasSpells = false;
+	c._currentSpell = -1;
+
+	// Set up any default spells for the character's class
+	for (int idx = 0; idx < 4; ++idx) {
+		if (NEW_CHARACTER_SPELLS[c._class][idx] != -1) {
+			c._hasSpells = true;
+			c._currentSpell = NEW_CHARACTER_SPELLS[c._class][idx];
+			c._spells[c._currentSpell] = 1;
+		}
+	}
+
+	int classSkill = NEW_CHAR_SKILLS[c._class];
+	if (classSkill != -1)
+		c._skills[classSkill] = 1;
+
+	int raceSkill = NEW_CHAR_RACE_SKILLS[c._race];
+	if (raceSkill != -1)
+		c._skills[raceSkill] = 1;
+
+	c._currentHp = c.getMaxHP();
+	c._currentSp = c.getMaxSP();
+	return true;
+}
+
 
 } // End of namespace Xeen

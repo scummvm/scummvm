@@ -68,6 +68,11 @@ private:
 	void printSelectionArrow(SpriteResource &icons, int selectedClass);
 
 	void drawDice(SpriteResource &dice);
+
+	int exchangeAttribute(int srcAttr);
+
+	bool saveCharacter(Character &c, CharacterClass classId, Race race,
+		Sex sex, uint attribs[TOTAL_ATTRIBUTES]);
 public:
 	static void show(XeenEngine *vm);
 };

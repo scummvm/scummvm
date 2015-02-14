@@ -52,8 +52,6 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResou
 }
 
 void ButtonContainer::addPartyButtons(XeenEngine *vm) {
-	Party &party = *vm->_party;
-
 	for (uint idx = 0; idx < MAX_ACTIVE_PARTY; ++idx) {
 		addButton(Common::Rect(CHAR_FACES_X[idx], 150, CHAR_FACES_X[idx] + 32, 182),
 			Common::KEYCODE_F1 + idx, nullptr, false);
@@ -80,7 +78,15 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 		Common::KeyState keyState;
 		events.getKey(keyState);
 		
-		_buttonValue = keyState.keycode | (keyState.flags << 8);
+		_buttonValue = keyState.keycode;
+		if (_buttonValue == Common::KEYCODE_KP8)
+			_buttonValue = Common::KEYCODE_UP;
+		else if (_buttonValue == Common::KEYCODE_KP2)
+			_buttonValue = Common::KEYCODE_DOWN;
+		else if (_buttonValue == Common::KEYCODE_KP_ENTER)
+			_buttonValue = Common::KEYCODE_RETURN;
+
+		_buttonValue |= (keyState.flags << 8);
 		if (_buttonValue)
 			return true;
 	}

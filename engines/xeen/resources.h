@@ -507,9 +507,19 @@ extern const char *const SURE_TO_DELETE_CHAR;
 extern const char *const CREATE_CHAR_DETAILS;
 
 extern const char *const NEW_CHAR_STATS;
+extern const char *const NAME_FOR_NEW_CHARACTER;
+extern const char *const SELECT_CLASS_BEFORE_SAVING;
 extern const int NEW_CHAR_SKILLS[10];
 extern const int NEW_CHAR_SKILLS_LEN[10];
 extern const int NEW_CHAR_RACE_SKILLS[10];
+
+extern const int RACE_MAGIC_RESISTENCES[5];
+extern const int RACE_FIRE_RESISTENCES[5];
+extern const int RACE_ELECTRIC_RESISTENCES[5];
+extern const int RACE_COLD_RESISTENCES[5];
+extern const int RACE_ENERGY_RESISTENCES[5];
+extern const int RACE_POISON_RESISTENCES[5];
+extern const int NEW_CHARACTER_SPELLS[10][4];
 
 } // End of namespace Xeen
 

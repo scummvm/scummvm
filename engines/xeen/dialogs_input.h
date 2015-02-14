@@ -39,6 +39,9 @@ protected:
 	int getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric);
 
 	Input(XeenEngine *vm, Window *window) : _vm(vm), _window(window) {}
+public:
+	static int show(XeenEngine *vm, Window *window, Common::String &line, 
+		uint maxLen, int maxWidth, bool isNumeric = false);
 };
 
 class StringInput : public Input {

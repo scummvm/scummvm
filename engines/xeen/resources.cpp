@@ -1467,8 +1467,31 @@ const char *const NEW_CHAR_STATS =
 	"Barbarian\t242\v108\f%2dDruid\t242\v119\f%2dRanger\f04\x3""c"
 	"\t265\v142Skills\x3l\t223\v155%s\t223\v170%s%s";
 
+const char *const NAME_FOR_NEW_CHARACTER =
+	"\x3""cEnter a Name for this Character";
+const char *const SELECT_CLASS_BEFORE_SAVING =
+	"\v006\x3""cSelect a Class before saving.\x3l";
 const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
 const int NEW_CHAR_SKILLS_LEN[10] = { 11, 8, 0, 0, 12, 8, 8, 0, 9, 11 };
 const int NEW_CHAR_RACE_SKILLS[10] = { 14, -1, 17, 16, -1, 0, 0, 0, 0, 0 };
+
+const int RACE_MAGIC_RESISTENCES[5] = { 7, 5, 20, 0, 0 };
+const int RACE_FIRE_RESISTENCES[5] = { 7, 0, 2, 5, 10 };
+const int RACE_ELECTRIC_RESISTENCES[5] = { 7, 0, 2, 5, 10 };
+const int RACE_COLD_RESISTENCES[5] = { 7, 0, 2, 5, 10 };
+const int RACE_ENERGY_RESISTENCES[5] = { 7, 5, 2, 5, 0 };
+const int RACE_POISON_RESISTENCES[5] = { 7, 0, 2, 20, 0 };
+const int NEW_CHARACTER_SPELLS[10][4] = {
+	{ -1, -1, -1, -1 },
+	{ 21, -1, -1, -1 },
+	{ 22, -1, -1, -1 },
+	{ 21, 1, 14, -1 },
+	{ 22, 0, 25, -1 },
+	{ -1, -1, -1, -1 },
+	{ -1, -1, -1, -1 },
+	{ -1, -1, -1, -1 },
+	{ 20, 1, 11, 23 },
+	{ 20, 1, -1, -1 }
+};
 
 } // End of namespace Xeen
