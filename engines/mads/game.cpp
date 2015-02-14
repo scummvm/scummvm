@@ -403,12 +403,12 @@ Common::StringArray Game::getMessage(uint32 id) {
 
 static const char *const DEBUG_STRING = "WIDEPIPE";
 
-void Game::handleKeypress(const Common::Event &event) {
-	if (event.kbd.flags & Common::KBD_CTRL) {
+void Game::handleKeypress(const Common::KeyState &kbd) {
+	if (kbd.flags & Common::KBD_CTRL) {
 		if (_widepipeCtr == 8) {
 			// Implement original game cheating keys here someday
 		} else {
-			if (event.kbd.keycode == (Common::KEYCODE_a +
+			if (kbd.keycode == (Common::KEYCODE_a +
 					(DEBUG_STRING[_widepipeCtr] - 'a'))) {
 				if (++_widepipeCtr == 8) {
 					MessageDialog *dlg = new MessageDialog(_vm, 2,
@@ -420,7 +420,7 @@ void Game::handleKeypress(const Common::Event &event) {
 		}
 	}
 
-	switch (event.kbd.keycode) {
+	switch (kbd.keycode) {
 	case Common::KEYCODE_F1:
 		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;
 		break;

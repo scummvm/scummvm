@@ -204,7 +204,7 @@ public:
 	/**
 	* Handle a keyboard event
 	*/
-	void handleKeypress(const Common::Event &event);
+	void handleKeypress(const Common::KeyState &kbd);
 
 	/**
 	 * Starts a savegame loading.

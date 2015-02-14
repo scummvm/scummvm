@@ -157,7 +157,7 @@ void EventsManager::pollEvents() {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				_pendingKeys.push(event);
+				_pendingKeys.push(event.kbd);
 			}
 			return;
 		case Common::EVENT_KEYUP:

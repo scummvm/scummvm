@@ -70,7 +70,7 @@ public:
 	int _vD2;
 	int _mouseStatusCopy;
 	bool _mouseMoved;
-	Common::Stack<Common::Event> _pendingKeys;
+	Common::Stack<Common::KeyState> _pendingKeys;
 public:
 	/**
 	 * Constructor
@@ -168,6 +168,8 @@ public:
 	 * Returns true if there's any pending keys to be processed
 	 */
 	bool isKeyPressed() const { return !_pendingKeys.empty(); }
+
+	Common::KeyState getKey() { return _pendingKeys.pop(); }
 };
 
 } // End of namespace MADS

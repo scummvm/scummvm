@@ -804,7 +804,7 @@ void GameDialog::show() {
 
 	Scene &scene = _vm->_game->_scene;
 
-	while (_selectedLine < 1 && !_vm->shouldQuit()) {
+	while (_selectedLine == -1 && !_vm->shouldQuit()) {
 		handleEvents();
 		if (_redrawFlag) {
 			if (!_tempLine)
@@ -831,7 +831,17 @@ void GameDialog::handleEvents() {
 		_lines[i]._state = DLGSTATE_UNSELECTED;
 
 	// Process pending events
-	_vm->_events->pollEvents();
+	events.pollEvents();
+
+	if (events.isKeyPressed()) {
+		switch (events.getKey().keycode) {
+		case Common::KEYCODE_ESCAPE:
+			_selectedLine = 0;
+			break;
+		default:
+			break;
+		}
+	}
 
 	// Scan for objects in the dialog
 	Common::Point mousePos = events.currentPos() - Common::Point(0, DIALOG_TOP);
@@ -1010,12 +1020,13 @@ void GameMenuDialog::show() {
 		_vm->_dialogs->_pendingDialog = DIALOG_OPTIONS;
 		_vm->_dialogs->showDialog();
 		break;
+	case 5:
+		_vm->quitGame();
+		break;
 	case 4:
+	default:
 		// Resume game
 		break;
-	case 5:
-	default:
-		_vm->quitGame();
 	}
 }
 
