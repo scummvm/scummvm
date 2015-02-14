@@ -169,7 +169,7 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 		Font &font2 = _vm->_fonts._font2;
 		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
 		// Draw the text
-		font2.drawString(_vm->_screen, line, _vm->_screen->_printOrg);
+		PRINTSTR(line);
 
 		// Move print position
 		_vm->_screen->_printOrg.y += 6;

@@ -114,7 +114,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 	bool lastLine = false;
 	do {
 		lastLine = _fonts._font1.getLine(lines, _screen->_maxChars * 6, line, width);
-		_fonts._font1.drawString(_screen, line, _screen->_printOrg);
+		_bubbleBox->PRINTSTR(line);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
 
 		if (_screen->_printOrg.y == 196) {
@@ -313,9 +313,8 @@ void MartianEngine::showDeathText(Common::String msg) {
 	bool lastLine;
 	do {
 		lastLine = _fonts._font2.getLine(msg, _screen->_maxChars * 6, line, width);
-		warning("TODO: use printString");
 		// Draw the text
-		_fonts._font2.drawString(_screen, line, _screen->_printOrg);
+		_bubbleBox->PRINTSTR(line);
 
 		_screen->_printOrg.y += 6;
 		_screen->_printOrg.x = _screen->_printStart.x;

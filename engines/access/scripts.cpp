@@ -202,9 +202,8 @@ void Scripts::printWatch() {
 	bool lastLine;
 	do {
 		lastLine = _vm->_fonts._font2.getLine(msg, _vm->_screen->_maxChars * 6, line, width);
-		warning("TODO: use printString");
 		// Draw the text
-		_vm->_fonts._font2.drawString(_vm->_screen, line, _vm->_screen->_printOrg);
+		_vm->_bubbleBox->PRINTSTR(line);
 
 		_vm->_screen->_printOrg.y += 6;
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
@@ -688,7 +687,7 @@ void Scripts::cmdDoTravel() {
 			int idx = _vm->_travelBox->_tempListIdx[boxX];
 			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
 				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
-				_vm->_scripts->printString("YOU CAN'T GET THERE FROM HERE.");
+				_vm->_bubbleBox->PRINTSTR("YOU CAN'T GET THERE FROM HERE.");
 				continue;
 			}
 			if (_vm->_player->_roomNumber != idx) {
