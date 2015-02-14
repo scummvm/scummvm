@@ -610,7 +610,7 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 	Scene &scene = _vm->_game->_scene;
 	byte palData[PALETTE_SIZE];
 
-	switch (transitionType) {
+ 	switch (transitionType) {
 	case kTransitionFadeIn:
 	case kTransitionFadeOutIn:
 		Common::fill(&pal._colorValues[0], &pal._colorValues[3], 0);
@@ -738,7 +738,8 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 			copyRectToScreen(Common::Rect(xAt, destPos.y, xAt + 1, destPos.y + size.y));
 
 			// Slight delay
-			events.delay(1);
+			events.pollEvents();
+			g_system->delayMillis(1);
 		}
 
 		if ((setPalette && !loop) || throughBlack == THROUGH_BLACK2)
@@ -752,28 +753,49 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 	}
 }
 
-void ScreenSurface::swapForeground(byte palData[PALETTE_SIZE], byte *paletteMap) {
+/**
+ * Translates the current screen from the old palette to the new palette
+ */
+void ScreenSurface::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap) {
 	Palette &palette = *_vm->_palette;
 	byte oldPalette[PALETTE_SIZE];
-	byte oldMap[256];
-	byte newMap[256];
+	byte oldMap[PALETTE_COUNT];
 
 	palette.getFullPalette(oldPalette);
 	swapPalette(oldPalette, oldMap, true);
-	swapPalette(palData, newMap, false);
+	swapPalette(newPalette, paletteMap, false);
 
-	Common::copy(&palData[3], &palData[PALETTE_SIZE], &oldPalette[3]);
+	// Transfer translated foreground colors. Since foregrounds are interleaved
+	// with background, we only copy over each alternate RGB tuplet
+	const byte *srcP = &newPalette[RGB_SIZE];
+	byte *destP = &oldPalette[RGB_SIZE];
+	while (destP < &oldPalette[PALETTE_SIZE]) {
+		Common::copy(srcP, srcP + RGB_SIZE, destP);
+		srcP += 2 * RGB_SIZE;
+		destP += 2 * RGB_SIZE;
+	}
 
+	Common::Rect oldClip = _clipBounds;
+	resetClipBounds();
+	
 	copyRectTranslate(*this, oldMap, Common::Point(0, 0), 
 		Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
 	palette.setFullPalette(oldPalette);
+
+	setClipBounds(oldClip);
 }
 
-void ScreenSurface::swapPalette(byte *palData, byte swapTable[PALETTE_COUNT], 
-		int start) {
-	byte *dynamicList = &palData[start * 3];
+/**
+ * Translates a given palette into a mapping table.
+ * Palettes consist of 128 RGB entries for the foreground and background
+ * respectively, with the two interleaved together. So the start 
+ */
+void ScreenSurface::swapPalette(const byte *palData, byte swapTable[PALETTE_COUNT], 
+		bool foreground) {
+	int start = foreground ? 1 : 0;
+	const byte *dynamicList = &palData[start * RGB_SIZE];
 	int staticStart = 1 - start;
-	byte *staticList = &palData[staticStart * 3];
+	const byte *staticList = &palData[staticStart * RGB_SIZE];
 	const int PALETTE_START = 1;
 	const int PALETTE_END = 252;
 
@@ -781,13 +803,14 @@ void ScreenSurface::swapPalette(byte *palData, byte swapTable[PALETTE_COUNT],
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
 		swapTable[idx] = idx;
 
-	for (int idx = 0; idx < 128; ++idx) {
+	// Handle the 128 palette entries for the foreground or background
+	for (int idx = 0; idx < (PALETTE_COUNT / 2); ++idx) {
 		if (start >= PALETTE_START && start <= PALETTE_END) {
 			swapTable[start] = Palette::closestColor(dynamicList, staticList, 
-				6, 128) * 2 + staticStart;
+				2 * RGB_SIZE, PALETTE_COUNT / 2) * 2 + staticStart;
 		}
 
-		dynamicList += 6;
+		dynamicList += 2 * RGB_SIZE;
 		start += 2;
 	}
 }

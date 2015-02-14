@@ -36,6 +36,7 @@ class MADSEngine;
 #define PALETTE_RESERVED_HIGH_COUNT 10
 
 #define PALETTE_COUNT 256
+#define RGB_SIZE 3
 #define PALETTE_SIZE (256 * 3)
 
 /**
@@ -212,16 +213,12 @@ public:
 	/**
 	* Gets the entire palette at once
 	*/
-	void getFullPalette(byte palette[PALETTE_SIZE]) {
-		grabPalette(&palette[0], 0, PALETTE_COUNT);
-	}
+	void getFullPalette(byte palette[PALETTE_SIZE]);
 
 	/**
 	* Sets the entire palette at once
 	*/
-	void setFullPalette(byte palette[PALETTE_SIZE]) {
-		setPalette(&palette[0], 0, PALETTE_COUNT);
-	}
+	void setFullPalette(byte palette[PALETTE_SIZE]);
 
 	/**
 	* Calculates a merge/hash for a given palette entry
@@ -320,7 +317,7 @@ public:
 	void refreshSceneColors();
 
 	static int closestColor(const byte *matchColor, const byte *refPalette, 
-		int listWrap, int count);
+		int paletteInc, int count);
 };
 
 } // End of namespace MADS

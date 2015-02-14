@@ -217,9 +217,9 @@ private:
 		const Common::Point &srcPos, const Common::Point &destPos,
 		ThroughBlack throughBlack, bool setPalette, int numTicks);
 
-	void swapForeground(byte *palData, byte *paletteMap);
+	void swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap);
 
-	void swapPalette(byte palData[PALETTE_SIZE], byte swapTable[PALETTE_COUNT], int start);
+	void swapPalette(const byte palData[PALETTE_SIZE], byte swapTable[PALETTE_COUNT], bool foreground);
 public:
 	int _shakeCountdown;
 public:

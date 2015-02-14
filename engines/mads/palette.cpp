@@ -428,6 +428,14 @@ void Fader::grabPalette(byte *colors, uint start, uint num) {
 	g_system->getPaletteManager()->grabPalette(colors, start, num);
 }
 
+void Fader::getFullPalette(byte palette[PALETTE_SIZE]) {
+	grabPalette(&palette[0], 0, PALETTE_COUNT);
+}
+
+void Fader::setFullPalette(byte palette[PALETTE_SIZE]) {
+	setPalette(&palette[0], 0, PALETTE_COUNT);
+}
+
 void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 		int baseColor, int numColors, int baseGrey, int numGreys,
 		int tickDelay, int steps) {
@@ -886,25 +894,25 @@ void Palette::refreshSceneColors() {
 }
 
 int Palette::closestColor(const byte *matchColor, const byte *refPalette,
-		int listWrap, int count) {
+		int paletteInc, int count) {
 	int bestColor = 0;
 	int bestDistance = 0x7fff;
 
 	for (int idx = 0; idx < count; ++idx) {
-		// Figure out hash for color
+		// Figure out figure for 'distance' between two colors
 		int distance = 0;
-		for (int rgbIdx = 0; rgbIdx < 3; ++rgbIdx, ++refPalette) {
-			byte diff = *refPalette - matchColor[rgbIdx];
-			distance += (int)diff * (int)diff;
+		for (int rgbIdx = 0; rgbIdx < RGB_SIZE; ++rgbIdx) {
+			int diff = refPalette[rgbIdx] - matchColor[rgbIdx];
+			distance += diff * diff;
 		}
 
 		// If the given color is a closer match to our color, store the index
-		if (distance < bestDistance) {
+		if (distance <= bestDistance) {
 			bestDistance = distance;
 			bestColor = idx;
 		}
 
-		refPalette += listWrap - 3;
+		refPalette += paletteInc;
 	}
 
 	return bestColor;
