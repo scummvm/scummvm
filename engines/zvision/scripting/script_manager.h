@@ -113,6 +113,28 @@ struct Location {
 	uint32 offset;
 };
 
+inline bool operator==(const Location& lhs, const Location& rhs) {
+	return (
+		lhs.world == rhs.world &&
+		lhs.room == rhs.room &&
+		lhs.node == rhs.node &&
+		lhs.view == rhs.view
+	);
+}
+
+inline bool operator==(const Location& lhs, const char* rhs) {
+	Common::String lhsStr = Common::String::format("%c%c%c%c", lhs.world, lhs.room, lhs.node, lhs.view);
+	return lhsStr == rhs;
+}
+
+inline bool operator!=(const Location& lhs, const Location& rhs) {
+	return !(lhs == rhs);
+}
+
+inline bool operator!=(const Location& lhs, const char* rhs) {
+	return !(lhs == rhs);
+}
+
 typedef Common::List<Puzzle *> PuzzleList;
 typedef Common::Queue<Puzzle *> PuzzleQueue;
 typedef Common::List<Control *> ControlList;

@@ -152,7 +152,7 @@ void ZVision::cheatCodes(uint8 key) {
 
 		if (checkCode("HELLOSAILOR")) {
 			Audio::AudioStream *soundStream;
-			if (loc.world == 'v' && loc.room == 'b' && loc.node == '1' && loc.view == '0') {
+			if (loc == "vb10") {
 				soundStream = makeRawZorkStream("v000hpta.raw", this);
 			} else {
 				soundStream = makeRawZorkStream("v000hnta.raw", this);

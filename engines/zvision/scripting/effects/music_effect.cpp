@@ -227,8 +227,7 @@ bool PanTrackNode::process(uint32 deltaTimeInMillis) {
 		int volumeCorrection = 2;
 
 		if (_engine->getGameId() == GID_GRANDINQUISITOR) {
-			Location loc = scriptManager->getCurrentLocation();
-			if (loc.world == 'd' && loc.room == 'c' && loc.node == '1' && loc.view == '0')
+			if (scriptManager->getCurrentLocation() == "dc10")
 				volumeCorrection = 5;
 		}
 

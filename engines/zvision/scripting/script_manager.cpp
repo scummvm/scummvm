@@ -72,8 +72,7 @@ void ScriptManager::initialize() {
 }
 
 void ScriptManager::update(uint deltaTimeMillis) {
-	if (_currentLocation.node != _nextLocation.node || _currentLocation.room != _nextLocation.room ||
-	        _currentLocation.view != _nextLocation.view || _currentLocation.world != _nextLocation.world) {
+	if (_currentLocation != _nextLocation) {
 		ChangeLocationReal(false);
 	}
 
@@ -543,7 +542,7 @@ void ScriptManager::changeLocation(char _world, char _room, char _node, char _vi
 	_nextLocation.view = _view;
 	_nextLocation.offset = offset;
 	// If next location is 0000, return to the previous location.
-	if (_nextLocation.world == '0' && _nextLocation.room == '0' && _nextLocation.node == '0' && _nextLocation.view == '0') {
+	if (_nextLocation == "0000") {
 		if (getStateValue(StateKey_World) != 'g' || getStateValue(StateKey_Room) != 'j') {
 			_nextLocation.world = getStateValue(StateKey_LastWorld);
 			_nextLocation.room = getStateValue(StateKey_LastRoom);
@@ -680,7 +679,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	// Change the background position
 	_engine->getRenderManager()->setBackgroundPosition(_nextLocation.offset);
 
-	if (_currentLocation.world == 0 && _currentLocation.room == 0 && _currentLocation.node == 0 && _currentLocation.view == 0) {
+	if (_currentLocation == "0000") {
 		_currentLocation = _nextLocation;
 		execScope(world);
 		execScope(room);
