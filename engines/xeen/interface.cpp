@@ -698,7 +698,7 @@ bool Interface::checkMoveDirection(int key) {
 				sound.playFX(46);
 				return false;
 			} else {
-				if (_buttonValue == 242 && _wo[107]) {
+				if (_buttonValue == Common::KEYCODE_UP && _wo[107]) {
 					_vm->_openDoor = true;
 					sound.playFX(47);
 					draw3d(true);
