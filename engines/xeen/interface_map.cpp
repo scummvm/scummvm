@@ -4314,7 +4314,7 @@ void InterfaceMap::drawIndoors() {
 
 	if (_wo[107]) {
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-		if (_vm->_openDoor)
+		if (!_vm->_openDoor)
 			_indoorList._fwl_1F1R._frame = 0;
 		else
 			_indoorList._fwl_1F1R._frame = map.mazeData()._wallKind ? 1 : 10;
