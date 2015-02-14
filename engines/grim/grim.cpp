@@ -417,7 +417,11 @@ void GrimEngine::playAspyrLogo() {
 Common::Error GrimEngine::loadGameState(int slot) {
 	assert(slot >= 0);
 	if (getGameType() == GType_MONKEY4) {
-		_savegameFileName = Common::String::format("efmi%03d.gsv", slot);
+		if (getGamePlatform() == Common::kPlatformPS2) {
+			_savegameFileName = Common::String::format("efmi%03d.ps2", slot);
+		} else {
+			_savegameFileName = Common::String::format("efmi%03d.gsv", slot);
+		}
 	} else {
 		_savegameFileName = Common::String::format("grim%02d.gsv", slot);
 	}

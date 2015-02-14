@@ -477,14 +477,19 @@ void Lua_V2::ThumbnailFromFile() {
 		return;
 	}
 	int index = (int)lua_getnumber(texIdObj);
-	const char *filename = lua_getstring(filenameObj);
+	Common::String filename(lua_getstring(filenameObj));
+	
+	if (g_grim->getGameType() == GType_MONKEY4 &&
+		g_grim->getGamePlatform() == Common::kPlatformPS2) {
+		filename += ".ps2";
+	}
 
 	int width = 256, height = 128;
 
 	SaveGame *savedState = SaveGame::openForLoading(filename);
 	if (!savedState || !savedState->isCompatible()) {
 		delete savedState;
-		warning("Lua_V2::ThumbnailFromFile: savegame %s not compatible", filename);
+		warning("Lua_V2::ThumbnailFromFile: savegame %s not compatible", filename.c_str());
 		lua_pushnil();
 		return;
 	}
@@ -503,7 +508,7 @@ void Lua_V2::ThumbnailFromFile() {
 	Bitmap *screenshot = new Bitmap(buf, width, height, "screenshot");
 	if (!screenshot) {
 		lua_pushnil();
-		warning("Lua_V2::ThumbnailFromFile: Could not restore screenshot from file %s", filename);
+		warning("Lua_V2::ThumbnailFromFile: Could not restore screenshot from file %s", filename.c_str());
 		delete screenshot;
 		delete[] data;
 		delete savedState;
@@ -522,8 +527,10 @@ void Lua_V2::ThumbnailFromFile() {
 
 void Lua_V2::GetMemoryCardId() {
 	// 0 - No mem card
-	lua_pushnumber(0);
-	warning("GetMemoryCardId: Currently just returning 0");
+	// 1 - Not formatted
+	// 2 - Not enough space
+	// 3 - Error occured
+	lua_pushnumber(4);
 }
 
 void Lua_V2::SetReplayMode() {
