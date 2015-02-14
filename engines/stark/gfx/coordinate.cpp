@@ -96,17 +96,17 @@ void Coordinate::rotate(const Coordinate &coord) {
 	rotate(coord._coords[3], coord._coords[4], coord._coords[5], coord._coords[6]);
 }
 
-void Coordinate::setTranslation(float x, float y, float z) {
-	_coords[0] = x;
-	_coords[1] = y;
-	_coords[2] = z;
+void Coordinate::setTranslation(const Math::Vector3d &translation) {
+	_coords[0] = translation.x();
+	_coords[1] = translation.y();
+	_coords[2] = translation.z();
 }
 
-void Coordinate::setRotation(float w, float x, float y, float z) {
-	_coords[3] = w;
-	_coords[4] = x;
-	_coords[5] = y;
-	_coords[6] = z;
+void Coordinate::setRotation(const Math::Quaternion &rotation) {
+	_coords[3] = rotation.w();
+	_coords[4] = rotation.x();
+	_coords[5] = rotation.y();
+	_coords[6] = rotation.z();
 }
 
 } // End of namespace Gfx

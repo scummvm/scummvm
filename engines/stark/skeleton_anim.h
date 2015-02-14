@@ -25,6 +25,7 @@
 
 #include "engines/stark/gfx/coordinate.h"
 
+#include "math/quat.h"
 #include "math/vector3d.h"
 #include "common/array.h"
 
@@ -35,8 +36,7 @@ class ArchiveReadStream;
 class AnimKey {
 public:
 	uint32 _time;
-	Math::Vector3d _rot;
-	float _rotW;
+	Math::Quaternion _rot;
 	Math::Vector3d _pos;
 };
 

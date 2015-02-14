@@ -63,8 +63,7 @@ void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
 		for (uint32 j = 0; j < numKeys; ++j) {
 			AnimKey *key = new AnimKey();
 			key->_time = stream->readUint32LE();
-			key->_rot = stream->readVector3();
-			key->_rotW = stream->readFloat();
+			key->_rot = stream->readQuaternion();
 			key->_pos = stream->readVector3();
 			node->_keys.push_back(key);
 		}
@@ -79,20 +78,20 @@ Gfx::Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
 	for (Common::Array<AnimKey *>::iterator it = _anims[boneIdx]->_keys.begin(); it < _anims[boneIdx]->_keys.end(); ++it) {
 		if ((*it)->_time == time) {
 			AnimKey *key = *it;
-			c.setTranslation(key->_pos.x(), key->_pos.y(), key->_pos.z());
-			c.setRotation(key->_rotW, key->_rot.x(), key->_rot.y(), key->_rot.z());
+			c.setTranslation(key->_pos);
+			c.setRotation(key->_rot);
 			break;
 
 		} else if ((*it)->_time > time) {
-			// LERP for the time being - works, though potentially looks odd...
+			// Between two key frames, interpolate
 			AnimKey *a = *it;
 			--it;
 			AnimKey *b = *it;
 
 			float t = (float)(time - b->_time) / (float)(a->_time - b->_time);
 
-			c.setTranslation(b->_pos.x() + (a->_pos.x() - b->_pos.x()) * t, b->_pos.y() + (a->_pos.y() - b->_pos.y()) * t, b->_pos.z() + (a->_pos.z() - b->_pos.z()) * t);
-			c.setRotation(b->_rotW + (a->_rotW - b->_rotW) * t, b->_rot.x() + (a->_rot.x() - b->_rot.x()) * t, b->_rot.y()+ (a->_rot.y() - b->_rot.y()) * t, b->_rot.z() + (a->_rot.z() - b->_rot.z()) * t);
+			c.setTranslation(b->_pos + (a->_pos - b->_pos) * t);
+			c.setRotation(b->_rot.slerpQuat(a->_rot, t));
 
 			break;
 		}

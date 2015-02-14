@@ -26,6 +26,7 @@
 #ifndef STARK_GFX_COORDINATE_H
 #define STARK_GFX_COORDINATE_H
 
+#include "math/quat.h"
 #include "math/vector3d.h"
 
 namespace Stark {
@@ -66,11 +67,12 @@ public:
 	/**
 	 * Set the coordinate rotation to an explicit value
 	 */
-	void setRotation(float w, float x, float y, float z);
+	void setRotation(const Math::Quaternion &rotation);
+
 	/**
 	 * Set the coordinate vector to an explicit value
 	 */
-	void setTranslation(float x, float y, float z);
+	void setTranslation(const Math::Vector3d &translation);
 
 	/**
 	 * Add two coordinates - rotation affected as we're moving down the chain

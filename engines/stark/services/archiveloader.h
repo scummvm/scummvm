@@ -28,6 +28,7 @@
 #include "common/substream.h"
 #include "common/util.h"
 
+#include "math/quat.h"
 #include "math/vector3d.h"
 
 #include "engines/stark/formats/xarc.h"
@@ -50,6 +51,7 @@ public:
 
 	Common::String readString();
 	Math::Vector3d readVector3();
+	Math::Quaternion readQuaternion();
 	float readFloat();
 };
 

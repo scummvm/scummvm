@@ -174,6 +174,12 @@ Math::Vector3d ArchiveReadStream::readVector3() {
 	return v;
 }
 
+Math::Quaternion ArchiveReadStream::readQuaternion() {
+	Math::Quaternion q;
+	q.readFromStream(this);
+	return q;
+}
+
 float ArchiveReadStream::readFloat() {
 	float f;
 	read(&f, sizeof(float));
