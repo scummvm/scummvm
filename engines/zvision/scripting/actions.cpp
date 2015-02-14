@@ -217,6 +217,9 @@ ActionDelayRender::ActionDelayRender(ZVision *engine, int32 slotkey, const Commo
 	ResultAction(engine, slotkey) {
 	_framesToDelay = 0;
 	sscanf(line.c_str(), "%u", &_framesToDelay);
+	// Limit to 10 frames maximum. This fixes the script bug in ZGI scene px10
+	// (outside Frobozz Electric building), where this is set to 100 (bug #6791).
+	_framesToDelay = MIN<uint32>(_framesToDelay, 10);
 }
 
 bool ActionDelayRender::execute() {
