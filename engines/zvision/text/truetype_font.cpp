@@ -65,13 +65,13 @@ StyledTTFont::~StyledTTFont() {
 }
 
 bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint style) {
-	_style = style;
-
 	// Don't re-load the font if we've already loaded it
 	// We have to check for empty so we can default to Arial 
-	if (!fontName.empty() && _fontName.equalsIgnoreCase(fontName)) {
+	if (!fontName.empty() && _fontName.equalsIgnoreCase(fontName) && _lineHeight == point && _style == style) {
 		return true;
 	}
+
+	_style = style;
 
 	Common::String newFontName;
 	Common::String freeFontName;
