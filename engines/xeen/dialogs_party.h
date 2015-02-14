@@ -38,6 +38,9 @@ private:
 	DrawStruct _faceDrawStructs[4];
 	Common::String _partyDetails;
 	Common::Array<int> _charList;
+	int _diceFrame[3];
+	Common::Point _dicePos[3];
+	Common::Point _diceInc[3];
 
 	PartyDialog(XeenEngine *vm);
 

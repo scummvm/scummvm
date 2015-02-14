@@ -395,6 +395,16 @@ void PartyDialog::createChar() {
 	dice.load("dice.vga");
 	icons.load("create.raw");
 
+	_dicePos[0] = Common::Point(20, 17);
+	_dicePos[1] = Common::Point(112, 35);
+	_dicePos[2] = Common::Point(61, 50);
+	_diceFrame[0] = 0;
+	_diceFrame[1] = 2;
+	_diceFrame[2] = 4;
+	_diceInc[0] = Common::Point(10, -10);
+	_diceInc[1] = Common::Point(-10, -10);
+	_diceInc[2] = Common::Point(-10, 10);
+
 	// Add buttons
 	saveButtons();
 	addButton(Common::Rect(132, 98, 156, 118), Common::KEYCODE_r, &icons);
@@ -867,7 +877,38 @@ void PartyDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) 
  * Print the dice animation
  */
 void PartyDialog::drawDice(SpriteResource &dice) {
-	error("TODO: drawDice");
+	EventsManager &events = *_vm->_events;
+	Window &w = _vm->_screen->_windows[32];
+	dice.draw(w, 7, Common::Point(12, 11));
+
+	for (int diceNum = 0; diceNum < 3; ++diceNum) {
+		_diceFrame[diceNum] = (_diceFrame[diceNum] + 1) % 7;
+		_dicePos[diceNum] += _diceInc[diceNum];
+
+		if (_dicePos[diceNum].x < 13) {
+			_dicePos[diceNum].x = 13;
+			_diceInc[diceNum].x *= -1;
+		} else if (_dicePos[diceNum].x >= 163) {
+			_dicePos[diceNum].x = 163;
+			_diceInc[diceNum].x *= -1;
+		}
+
+		if (_dicePos[diceNum].y < 12) {
+			_dicePos[diceNum].y = 12;
+			_diceInc[diceNum].y *= -1;
+		} else if (_dicePos[diceNum].y >= 93) {
+			_dicePos[diceNum].y = 93;
+			_diceInc[diceNum].y *= -1;
+		}
+
+		dice.draw(w, _diceFrame[diceNum], _dicePos[diceNum]);
+	}
+
+	w.update();
+
+	// Wait for keypress
+	events.wait(1, true);
+	checkEvents(_vm);
 }
 
 /**
