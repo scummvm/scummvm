@@ -184,7 +184,15 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 	}
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+
+	// Get song priority from either obj or soundRes
+	byte resourcePriority = musicSlot->soundRes->getSoundPriority();
+	if (!musicSlot->overridePriority && resourcePriority != 0xFF) {
+		musicSlot->priority = resourcePriority;
+	} else {
+		musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	}
+
 	// Reset hold when starting a new song. kDoSoundSetHold is always called after
 	// kDoSoundPlay to set it properly, if needed. Fixes bug #3413589.
 	musicSlot->hold = -1;
@@ -677,23 +685,19 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 	}
 
 	if (value == -1) {
-		uint16 resourceId = musicSlot->resourceId;
+		musicSlot->overridePriority = false;
+		musicSlot->priority = 0;
 
-		// Set priority from the song data
-		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, resourceId), 0);
-		if (song->data[0] == 0xf0)
-			_music->soundSetPriority(musicSlot, song->data[1]);
-		else
-			warning("kDoSound(setPriority): Attempt to unset song priority when there is no built-in value");
+		// NB: It seems SSCI doesn't actually reset the priority here.
 
-		//pSnd->prio=0;field_15B=0
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
 	} else {
 		// Scripted priority
+		musicSlot->overridePriority = true;
 
-		//pSnd->field_15B=1;
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | 2);
-		//DoSOund(0xF,hobj,w)
+
+		_music->soundSetPriority(musicSlot, value);
 	}
 	return acc;
 }

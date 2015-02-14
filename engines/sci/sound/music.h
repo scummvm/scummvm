@@ -88,6 +88,7 @@ public:
 	int16 hold;
 	int8 reverb;
 	bool playBed;
+	bool overridePriority; // Use soundObj's priority instead of resource's
 
 	int16 pauseCounter;
 	uint sampleLoopCounter;

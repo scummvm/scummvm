@@ -621,6 +621,10 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsByte(playBed);
 	else if (s.isLoading())
 		playBed = false;
+	if (s.getVersion() >= 33)
+		s.syncAsByte(overridePriority);
+	else if (s.isLoading())
+		overridePriority = false;
 
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()

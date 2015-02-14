@@ -579,6 +579,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		return;
 
 	_innerResource = resource;
+	_soundPriority = 0xFF;
 
 	byte *data, *data2;
 	byte *dataEnd;
@@ -725,6 +726,9 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 					data += 6;
 				}
 			} else {
+				// The first byte of the 0xF0 track's channel list is priority
+				_soundPriority = *data;
+
 				// Skip over digital track
 				data += 6;
 			}
