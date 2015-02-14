@@ -509,6 +509,7 @@ extern const char *const CREATE_CHAR_DETAILS;
 extern const char *const NEW_CHAR_STATS;
 extern const char *const NAME_FOR_NEW_CHARACTER;
 extern const char *const SELECT_CLASS_BEFORE_SAVING;
+extern const char *const EXCHANGE_ATTR_WITH;
 extern const int NEW_CHAR_SKILLS[10];
 extern const int NEW_CHAR_SKILLS_LEN[10];
 extern const int NEW_CHAR_RACE_SKILLS[10];

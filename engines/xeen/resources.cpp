@@ -1471,6 +1471,8 @@ const char *const NAME_FOR_NEW_CHARACTER =
 	"\x3""cEnter a Name for this Character";
 const char *const SELECT_CLASS_BEFORE_SAVING =
 	"\v006\x3""cSelect a Class before saving.\x3l";
+const char *const EXCHANGE_ATTR_WITH = "Exchange %s with...";
+
 const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
 const int NEW_CHAR_SKILLS_LEN[10] = { 11, 8, 0, 0, 12, 8, 8, 0, 9, 11 };
 const int NEW_CHAR_RACE_SKILLS[10] = { 14, -1, 17, 16, -1, 0, 0, 0, 0, 0 };

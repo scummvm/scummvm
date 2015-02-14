@@ -874,9 +874,83 @@ void PartyDialog::drawDice(SpriteResource &dice) {
  * Exchanging two attributes for the character being rolled
  */
 int PartyDialog::exchangeAttribute(int srcAttr) {
-	error("TODO: exchangeAttribute");
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	SpriteResource icons;
+	icons.load("create2.icn");
+
+	saveButtons();
+	addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &icons);
+	addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_m);
+	addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i);
+	addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p);
+	addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e);
+	addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s);
+	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a);
+	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l);
+
+	Window &w = screen._windows[26];
+	w.open();
+	w.writeString(Common::String::format(EXCHANGE_ATTR_WITH, STAT_NAMES[srcAttr - 1]));
+	icons.draw(w, 0, Common::Point(118, 58));
+	w.update();
+
+	int result = 0;
+	bool breakFlag = false;
+	while (!_vm->shouldQuit() && !breakFlag) {
+		// Wait for an action
+		do {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+		} while (!_vm->shouldQuit() && !_buttonValue);
+
+		Attribute destAttr;
+		switch (_buttonValue) {
+		case Common::KEYCODE_m:
+			destAttr = MIGHT;
+			break;
+		case Common::KEYCODE_i:
+			destAttr = INTELLECT;
+			break;
+		case Common::KEYCODE_p:
+			destAttr = PERSONALITY;
+			break;
+		case Common::KEYCODE_e:
+			destAttr = ENDURANCE;
+			break;
+		case Common::KEYCODE_s:
+			destAttr = SPEED;
+			break;
+		case Common::KEYCODE_a:
+			destAttr = ACCURACY;
+			break;
+		case Common::KEYCODE_l:
+			destAttr = LUCK;
+			break;
+		case Common::KEYCODE_ESCAPE:
+			result = 0;
+			breakFlag = true;
+			continue;
+		default:
+			continue;
+		}
+
+		if ((srcAttr - 1) != destAttr) {
+			result = destAttr + 1;
+			break;
+		}
+	}
+
+	w.close();
+	_buttonValue = 0;
+	restoreButtons();
+
+	return result;
 }
 
+/**
+ * Saves the rolled character into the roster
+ */
 bool PartyDialog::saveCharacter(Character &c, CharacterClass classId,
 		Race race, Sex sex, uint attribs[TOTAL_ATTRIBUTES]) {
 	if (classId == -1) {
@@ -952,6 +1026,5 @@ bool PartyDialog::saveCharacter(Character &c, CharacterClass classId,
 	c._currentSp = c.getMaxSP();
 	return true;
 }
-
 
 } // End of namespace Xeen
