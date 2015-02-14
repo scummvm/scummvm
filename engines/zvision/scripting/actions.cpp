@@ -480,6 +480,14 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotkey, const Common::String &l
 		}
 		_volume = new ValueSlot(engine->getScriptManager(), volumeBuffer);
 	}
+
+	// WORKAROUND for a script bug in Zork Nemesis, rooms mq70/mq80.
+	// Fixes an edge case where the player goes to the dark room with the grue
+	// without holding a torch, and then quickly runs away before the grue's
+	// sound effect finishes. Fixes script bug #6794.
+	if (engine->getGameId() == GID_NEMESIS && _slotKey == 14822 && engine->getScriptManager()->getStateValue(_slotKey) == 2)
+		engine->getScriptManager()->setStateValue(_slotKey, 0);
+
 }
 
 ActionMusic::~ActionMusic() {
