@@ -612,9 +612,12 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 }
 
 void GameDialog::display() {
+	Palette &palette = *_vm->_palette;
+	palette.initPalette();
+	palette.resetGamePalette(18, 10);
+
 	FullScreenDialog::display();
 
-	Palette &palette = *_vm->_palette;
 	palette.setEntry(10, 0, 63, 0);
 	palette.setEntry(11, 0, 45, 0);
 	palette.setEntry(12, 63, 63, 0);
@@ -1094,7 +1097,7 @@ void OptionsDialog::show() {
 	StoryMode prevStoryMode = game._storyMode;
 
 	do {
-		_selectedLine = 0;
+		_selectedLine = -1;
 		GameDialog::show();
 
 		switch (_selectedLine) {
@@ -1133,22 +1136,16 @@ void OptionsDialog::show() {
 		clearLines();
 		setLines();
 		setClickableLines();
-	} while (_selectedLine <= 7);
+	} while (!_vm->shouldQuit() && _selectedLine != 0 && _selectedLine <= 7);
 
-	switch (_selectedLine) {
-	case 8:	// Done
-		// New options will be applied
-		break;
-	case 9:	// Cancel
+	// If Done button not pressed, reset settings
+	if (_selectedLine != 8) {
 		// Revert all options from the saved ones
 		_vm->_easyMouse = prevEasyMouse;
 		_vm->_invObjectsAnimated = prevInvObjectsAnimated;
 		_vm->_textWindowStill = prevTextWindowStill;
 		_vm->_screenFade = prevScreenFade;
 		game._storyMode = prevStoryMode;
-		break;
-	default:
-		break;
 	}
 }
 
