@@ -509,10 +509,11 @@ void Player::idle() {
 		return;
 	}
 
-	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesStart + _spritesIdx])
+	int idx = _spritesStart + _spritesIdx;
+	if (idx < 0 || (idx < PLAYER_SPRITES_FILE_COUNT && !_spriteSetsPresent[idx]))
 		return;
 
-	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
+	SpriteAsset &spriteSet = *scene._sprites[idx];
 	assert(spriteSet._charInfo);
 	if (spriteSet._charInfo->_numEntries == 0)
 		// No entries, so exit immediately
