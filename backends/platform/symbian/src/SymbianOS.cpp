@@ -109,7 +109,7 @@ void OSystem_SDL_Symbian::initBackend() {
 		_mixerManager->init();
 	}
 	if (_graphicsManager == 0)
-		_graphicsManager = new SymbianSdlGraphicsManager(_eventSource);
+		_graphicsManager = new SymbianSdlGraphicsManager(_eventSource, _window);
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();

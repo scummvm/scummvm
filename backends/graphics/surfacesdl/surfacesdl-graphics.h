@@ -77,7 +77,7 @@ public:
  */
 class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
 
 	virtual void activateManager();

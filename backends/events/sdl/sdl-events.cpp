@@ -183,7 +183,7 @@ void SdlEventSource::handleKbdMouse() {
 			}
 
 			if (_graphicsManager) {
-				_graphicsManager->warpMouseInWindow((Uint16)_km.x, (Uint16)_km.y);
+				_graphicsManager->getWindow()->warpMouseInWindow((Uint16)_km.x, (Uint16)_km.y);
 			}
 		}
 	}
@@ -471,7 +471,7 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	// Ctrl-m toggles mouse capture
 	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
 		if (_graphicsManager) {
-			_graphicsManager->toggleMouseGrab();
+			_graphicsManager->getWindow()->toggleMouseGrab();
 		}
 		return false;
 	}

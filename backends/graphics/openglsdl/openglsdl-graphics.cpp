@@ -28,8 +28,8 @@
 #include "common/translation.h"
 #endif
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource)
-    : SdlGraphicsManager(eventSource), _lastRequestedHeight(0),
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window)
+    : SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
       _glContext(),
 #else
@@ -134,7 +134,7 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 
 	case OSystem::kFeatureIconifyWindow:
 		if (enable) {
-			iconifyWindow();
+			_window->iconifyWindow();
 		}
 		break;
 
@@ -148,7 +148,7 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	case OSystem::kFeatureFullscreenMode:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_window) {
-			return (SDL_GetWindowFlags(_window) & SDL_WINDOW_FULLSCREEN) != 0;
+			return (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_FULLSCREEN) != 0;
 		} else {
 			return _wantsFullScreen;
 		}
@@ -236,7 +236,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 
 	// Swap OpenGL buffers
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_GL_SwapWindow(_window);
+	SDL_GL_SwapWindow(_window->getSDLWindow());
 #else
 	SDL_GL_SwapBuffers();
 #endif
@@ -271,7 +271,7 @@ void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 }
 
 void OpenGLSdlGraphicsManager::setInternalMousePosition(int x, int y) {
-	warpMouseInWindow(x, y);
+	_window->warpMouseInWindow(x, y);
 }
 
 bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
@@ -362,7 +362,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		_glContext = nullptr;
 	}
 
-	destroyWindow();
+	_window->destroyWindow();
 
 	uint32 flags = SDL_WINDOW_OPENGL;
 	if (_wantsFullScreen) {
@@ -371,26 +371,26 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		flags |= SDL_WINDOW_RESIZABLE;
 	}
 
-	if (!createWindow(width, height, flags)) {
+	if (!_window->createWindow(width, height, flags)) {
 		// We treat fullscreen requests as a "hint" for now. This means in
 		// case it is not available we simply ignore it.
 		if (_wantsFullScreen) {
-			createWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+			_window->createWindow(width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 		}
 
-		if (!_window) {
+		if (!_window->getSDLWindow()) {
 			return false;
 		}
 	}
 
-	_glContext = SDL_GL_CreateContext(_window);
+	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 	if (!_glContext) {
 		return false;
 	}
 
 	notifyContextCreate(rgba8888, rgba8888);
 	int actualWidth, actualHeight;
-	SDL_GetWindowSize(_window, &actualWidth, &actualHeight);
+	getWindowDimensions(&actualWidth, &actualHeight);
 	setActualScreenSize(actualWidth, actualHeight);
 	return true;
 #else
@@ -451,7 +451,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 void OpenGLSdlGraphicsManager::getWindowDimensions(int *width, int *height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_GetWindowSize(_window, width, height);
+	SDL_GetWindowSize(_window->getSDLWindow(), width, height);
 #else
 	if (width) {
 		*width = _hwScreen->w;

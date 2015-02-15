@@ -24,10 +24,9 @@
 #define BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 
 #include "backends/graphics/graphics.h"
+#include "backends/platform/sdl/sdl-window.h"
 
-#include "backends/platform/sdl/sdl-sys.h"
 #include "common/rect.h"
-#include "common/str.h"
 
 class SdlEventSource;
 
@@ -38,7 +37,7 @@ class SdlEventSource;
  */
 class SdlGraphicsManager : virtual public GraphicsManager {
 public:
-	SdlGraphicsManager(SdlEventSource *source);
+	SdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
 	virtual ~SdlGraphicsManager();
 
 	/**
@@ -94,49 +93,10 @@ public:
 	virtual void notifyMousePos(Common::Point mouse) = 0;
 
 	/**
-	 * Change the caption of the window.
-	 *
-	 * @param caption New window caption in UTF-8 encoding.
-	 */
-	void setWindowCaption(const Common::String &caption);
-
-	/**
-	 * Attach an icon to the window.
-	 *
-	 * @param icon The surface to use as icon. SdlGraphicsManager takes
-	 *             ownership over it.
-	 */
-	void setWindowIcon(SDL_Surface *icon);
-
-	/**
-	 * Toggle mouse grab state. This decides whether the cursor can leave the
-	 * window or not.
-	 */
-	void toggleMouseGrab();
-
-	/**
-	 * Check whether the application has mouse focus.
-	 */
-	bool hasMouseFocus() const;
-
-	/**
-	 * Warp the mouse to the specified position in window coordinates.
-	 */
-	void warpMouseInWindow(uint x, uint y);
-
-	/**
-	 * Iconifies the window.
-	 */
-	void iconifyWindow();
-
-	/**
 	 * A (subset) of the graphic manager's state. This is used when switching
 	 * between different SDL graphic managers on runtime.
 	 */
 	struct State {
-		State();
-		~State();
-
 		int screenWidth, screenHeight;
 		bool aspectRatio;
 		bool fullscreen;
@@ -144,12 +104,6 @@ public:
 
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat pixelFormat;
-#endif
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		bool inputGrabState;
-		Common::String windowCaption;
-		SDL_Surface *windowIcon;
 #endif
 	};
 
@@ -163,19 +117,14 @@ public:
 	 */
 	bool setState(const State &state);
 
+	/**
+	 * Queries the SDL window.
+	 */
+	SdlWindow *getWindow() const { return _window; }
+
 protected:
 	SdlEventSource *_eventSource;
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_Window *_window;
-
-	bool createWindow(int width, int height, uint32 flags);
-	void destroyWindow();
-private:
-	bool _inputGrabState;
-	Common::String _windowCaption;
-	SDL_Surface *_windowIcon;
-#endif
+	SdlWindow *_window;
 };
 
 #endif

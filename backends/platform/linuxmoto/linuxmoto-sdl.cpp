@@ -31,7 +31,7 @@ void OSystem_LINUXMOTO::initBackend() {
 		_eventSource = new LinuxmotoSdlEventSource();
 
 	if (_graphicsManager == 0)
-		_graphicsManager = new LinuxmotoSdlGraphicsManager(_eventSource);
+		_graphicsManager = new LinuxmotoSdlGraphicsManager(_eventSource, _window);
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();

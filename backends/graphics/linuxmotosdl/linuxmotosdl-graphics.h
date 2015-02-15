@@ -27,7 +27,7 @@
 
 class LinuxmotoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 	virtual void initSize(uint w, uint h);
 	virtual void setGraphicsModeIntern();

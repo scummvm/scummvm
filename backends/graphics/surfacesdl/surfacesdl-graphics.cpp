@@ -116,9 +116,9 @@ static AspectRatio getDesiredAspectRatio() {
 }
 #endif
 
-SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
+SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	:
-	SdlGraphicsManager(sdlEventSource),
+	SdlGraphicsManager(sdlEventSource, window),
 #ifdef USE_OSD
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
@@ -239,7 +239,7 @@ void SurfaceSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 		break;
 	case OSystem::kFeatureIconifyWindow:
 		if (enable)
-			iconifyWindow();
+			_window->iconifyWindow();
 		break;
 	default:
 		break;
@@ -1742,7 +1742,7 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 	int y1 = y;
 
 	// Don't change actual mouse position, when mouse is outside of our window (in case of windowed mode)
-	if (!hasMouseFocus()) {
+	if (!_window->hasMouseFocus()) {
 		setMousePos(x, y); // but change game cursor position
 		return;
 	}
@@ -1752,9 +1752,9 @@ void SurfaceSdlGraphicsManager::warpMouse(int x, int y) {
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (!_overlayVisible)
-			warpMouseInWindow(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
+			_window->warpMouseInWindow(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
 		else
-			warpMouseInWindow(x, y1);
+			_window->warpMouseInWindow(x, y1);
 
 		// SDL_WarpMouse() generates a mouse movement event, so
 		// setMousePos() would be called eventually. However, the
@@ -2357,17 +2357,17 @@ void SurfaceSdlGraphicsManager::deinitializeRenderer() {
 	SDL_DestroyRenderer(_renderer);
 	_renderer = nullptr;
 
-	destroyWindow();
+	_window->destroyWindow();
 }
 
 SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
 	deinitializeRenderer();
 
-	if (!createWindow(width, height, (flags & SDL_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
+	if (!_window->createWindow(width, height, (flags & SDL_FULLSCREEN) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0)) {
 		return nullptr;
 	}
 
-	_renderer = SDL_CreateRenderer(_window, -1, 0);
+	_renderer = SDL_CreateRenderer(_window->getSDLWindow(), -1, 0);
 	if (!_renderer) {
 		deinitializeRenderer();
 		return nullptr;

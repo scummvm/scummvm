@@ -28,8 +28,8 @@
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 #include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
 
-SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SurfaceSdlGraphicsManager(sdlEventSource) {
+SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {

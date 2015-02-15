@@ -93,7 +93,7 @@ void OSystem_SDL_Maemo::initBackend() {
 		_eventSource = new MaemoSdlEventSource();
 
 	if (_graphicsManager == 0)
-		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource);
+		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource, _window);
 
 	if (_eventObserver == 0)
 		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);

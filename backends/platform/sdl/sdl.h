@@ -29,6 +29,7 @@
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
+#include "backends/platform/sdl/sdl-window.h"
 
 #include "common/array.h"
 
@@ -90,6 +91,11 @@ protected:
 	 * The event source we use for obtaining SDL events.
 	 */
 	SdlEventSource *_eventSource;
+
+	/**
+	 * The SDL output window.
+	 */
+	SdlWindow *_window;
 
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 

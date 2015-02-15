@@ -77,7 +77,8 @@ OSystem_SDL::OSystem_SDL()
 	_initedSDL(false),
 	_logger(0),
 	_mixerManager(0),
-	_eventSource(0) {
+	_eventSource(0),
+	_window(0) {
 
 }
 
@@ -95,6 +96,8 @@ OSystem_SDL::~OSystem_SDL() {
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
+	delete _window;
+	_window = 0;
 	delete _eventManager;
 	_eventManager = 0;
 	delete _eventSource;
@@ -148,6 +151,9 @@ void OSystem_SDL::init() {
 	// (we check for this to allow subclasses to provide their own).
 	if (_mutexManager == 0)
 		_mutexManager = new SdlMutexManager();
+
+	if (_window == 0)
+		_window = new SdlWindow();
 
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
@@ -210,7 +216,7 @@ void OSystem_SDL::initBackend() {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {
 				if (!scumm_stricmp(_graphicsModes[i].name, gfxMode.c_str())) {
-					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
 					_graphicsMode = i;
 					break;
 				}
@@ -219,7 +225,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 		}
 	}
 
@@ -328,7 +334,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 		}
 	}
 
-	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->setWindowCaption(cap);
+	_window->setWindowCaption(cap);
 }
 
 void OSystem_SDL::quit() {
@@ -491,7 +497,7 @@ void OSystem_SDL::setupIcon() {
 	if (!sdl_surf) {
 		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
 	}
-	dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->setWindowIcon(sdl_surf);
+	_window->setWindowIcon(sdl_surf);
 	free(icon);
 }
 
@@ -596,14 +602,14 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		debug(1, "switching to plain SDL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 
 		switchedManager = true;
 	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
 		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
 
 		switchedManager = true;
 	}
@@ -653,7 +659,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	const OSystem::GraphicsMode *srcMode;
 	int defaultMode;
 
-	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource);
+	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
@@ -667,7 +673,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	assert(_defaultSDLMode != -1);
 
 	_firstGLMode = _graphicsModes.size();
-	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {

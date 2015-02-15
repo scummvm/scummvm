@@ -1,7 +1,8 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
-	sdl.o
+	sdl.o \
+	sdl-window.o
 
 ifdef POSIX
 MODULE_OBJS += \

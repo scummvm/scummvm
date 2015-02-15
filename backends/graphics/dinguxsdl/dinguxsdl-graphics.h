@@ -34,7 +34,7 @@ enum {
 
 class DINGUXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	DINGUXSdlGraphicsManager(SdlEventSource *boss);
+	DINGUXSdlGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
 	bool hasFeature(OSystem::Feature f);
 	void setFeatureState(OSystem::Feature f, bool enable);
