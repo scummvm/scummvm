@@ -932,5 +932,116 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 	drawParty(true);
 }
 
+void Interface::draw3d(bool updateFlag) {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	
+	if (screen._windows[11]._enabled)
+		return;
+
+	// Draw the map
+	drawMap(updateFlag);
+
+	// Draw the minimap
+	drawMiniMap();
+
+	if (party._falling == 1)
+		handleFalling();
+
+	if (party._falling == 2) {
+		screen.saveBackground(1);
+	}
+
+	assembleBorder();
+
+	// Draw any on-screen text if flagged to do so
+	if (_upDoorText && combat._attackMonsters[0] == -1) {
+		screen._windows[3].writeString(_screenText);
+	}
+
+	if (updateFlag) {
+		screen._windows[1].update();
+		screen._windows[3].update();
+	}
+
+	// TODO: more stuff
+
+	_vm->_party->_stepped = false;
+	if (_vm->_mode == MODE_9) {
+		// TODO
+	}
+
+	// TODO: Check use of updateFlag here. Original doesn't have it, but I
+	// wanted to ensure in places like the AutoMapDialog, that the draw3d
+	// doesn't result in the screen updating until the dialog has had
+	// a chance to full render itself
+	if (updateFlag)
+		events.wait(2);
+}
+
+void Interface::handleFalling() {
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	Window &w = screen._windows[3];
+	File voc1("scream.voc");
+	File voc2("unnh.voc");
+	saveFall();
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		party._activeParty[idx]._faceSprites->draw(screen._windows[0], 4,
+			Common::Point(CHAR_FACES_X[idx], 150));
+	}
+
+	screen._windows[33].update();
+	sound.playFX(11);
+	sound.playSample(&voc1, 0);
+
+	for (int idx = 0, incr = 2; idx < 133; ++incr, idx += incr) {
+		fall(idx);
+		assembleBorder();
+		w.update();
+	}
+
+	fall(132);
+	assembleBorder();
+	w.update();
+
+	sound.playSample(nullptr, 0);
+	sound.playSample(&voc2, 0);
+	sound.playFX(31);
+
+	fall(127);
+	assembleBorder();
+	w.update();
+
+	fall(132);
+	assembleBorder();
+	w.update();
+
+	fall(129);
+	assembleBorder();
+	w.update();
+
+	fall(132);
+	assembleBorder();
+	w.update();
+
+	shake();
+}
+
+void Interface::saveFall() {
+
+}
+
+void Interface::fall(int v) {
+
+}
+
+void Interface::shake() {
+
+}
 
 } // End of namespace Xeen

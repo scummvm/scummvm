@@ -406,21 +406,15 @@ void InterfaceMap::setup() {
 	_charPowSprites.load("charpow.icn");
 }
 
-void InterfaceMap::draw3d(bool updateFlag) {
+void InterfaceMap::drawMap(bool updateFlag) {
 	Combat &combat = *_vm->_combat;
-	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
-	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 
 	const int COMBAT_POS_X[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
 	const int INDOOR_INDEXES[3] = { 157, 151, 154 };
 	const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
 	const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
-
-	if (screen._windows[11]._enabled)
-		return;
 
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
 	if (_flipUIFrame == 0)
@@ -727,41 +721,6 @@ void InterfaceMap::draw3d(bool updateFlag) {
 	}
 
 	animate3d();
-	drawMiniMap();
-
-	if (party._falling == 1) {
-		error("TODO: Indoor falling");
-	}
-
-	if (party._falling == 2) {
-		screen.saveBackground(1);
-	}
-
-	assembleBorder();
-
-	// Draw any on-screen text if flagged to do so
-	if (_upDoorText && combat._attackMonsters[0] == -1) {
-		screen._windows[3].writeString(_screenText);
-	}
-
-	if (updateFlag) {
-		screen._windows[1].update();
-		screen._windows[3].update();
-	}
-
-	// TODO: more stuff
-
-	_vm->_party->_stepped = false;
-	if (_vm->_mode == MODE_9) {
-		// TODO
-	}
-
-	// TODO: Check use of updateFlag here. Original doesn't have it, but I
-	// wanted to ensure in places like the AutoMapDialog, that the draw3d
-	// doesn't result in the screen updating until the dialog has had
-	// a chance to full render itself
-	if (updateFlag)
-		events.wait(2);
 }
 
 /**

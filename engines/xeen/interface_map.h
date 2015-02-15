@@ -126,6 +126,8 @@ protected:
 	void drawMiniMap();
 
 	virtual void setup();
+
+	void drawMap(bool updateFlag);
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
@@ -145,8 +147,6 @@ public:
 	InterfaceMap(XeenEngine *vm);
 
 	virtual ~InterfaceMap() {}
-
-	void draw3d(bool updateFlag);
 
 	void setIndoorsMonsters();
 

@@ -85,6 +85,14 @@ private:
 	void doStepCode();
 
 	bool checkMoveDirection(int key);
+
+	void handleFalling();
+
+	void saveFall();
+
+	void fall(int v);
+
+	void shake();
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;
@@ -108,6 +116,8 @@ public:
 	void rest();
 
 	void bash(const Common::Point &pt, Direction direction);
+
+	void draw3d(bool updateFlag);
 };
 
 } // End of namespace Xeen
