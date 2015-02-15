@@ -308,6 +308,9 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		if (!copyRect.isValidRect())
 			return;
 
+		if (flipped)
+			copyRect.moveTo(0, copyRect.top);
+
 		byte *data = src->getData();
 		byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
 		byte *destPtr = (byte *)pixels + (destY * pitch) + destX;
