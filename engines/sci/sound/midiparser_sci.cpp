@@ -498,7 +498,7 @@ void MidiParser_SCI::trackState(uint32 b) {
 		case 0x4E: // mute
 			// This is channel mute only for sci1.
 			// (It's velocity control for sci0, but we don't need state in sci0)
-			if (_soundVersion >= SCI_VERSION_1_EARLY) {
+			if (_soundVersion > SCI_VERSION_1_EARLY) {
 				// FIXME: mute is a level, not a bool, in some SCI versions
 				bool m = op2;
 				if (_pSnd->_chan[channel]._mute != m) {
