@@ -410,8 +410,22 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 void SciMusic::soundPlay(MusicEntry *pSnd) {
 	_mutex.lock();
 
-	// TODO: if pSnd->playBed, and version <= SCI1_EARLY, then kill
-	// existing sounds with playBed enabled.
+	if (_soundVersion <= SCI_VERSION_1_EARLY && pSnd->playBed) {
+		// If pSnd->playBed, and version <= SCI1_EARLY, then kill
+		// existing sounds with playBed enabled.
+
+		uint playListCount = _playList.size();
+		for (uint i = 0; i < playListCount; i++) {
+			if (_playList[i] != pSnd && _playList[i]->playBed) {
+				debugC(2, kDebugLevelSound, "Automatically stopping old playBed song from soundPlay");
+				MusicEntry *old = _playList[i];
+				_mutex.unlock();
+				soundStop(old);
+				_mutex.lock();
+				break;
+			}
+		}
+	}
 
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
