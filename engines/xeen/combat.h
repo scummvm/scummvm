@@ -65,6 +65,8 @@ public:
 	Combat(XeenEngine *vm);
 
 	void clear();
+
+	void doCombat();
 };
 
 } // End of namespace Xeen

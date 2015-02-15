@@ -937,12 +937,13 @@ void Interface::draw3d(bool updateFlag) {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
 	
 	if (screen._windows[11]._enabled)
 		return;
 
 	// Draw the map
-	drawMap(updateFlag);
+	drawMap();
 
 	// Draw the minimap
 	drawMiniMap();
@@ -966,11 +967,20 @@ void Interface::draw3d(bool updateFlag) {
 		screen._windows[3].update();
 	}
 
-	// TODO: more stuff
+	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
+			|| combat._attackMonsters[2] != -1) {
+		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) && !_flag1
+				&& !_charsShooting && _vm->_moveMonsters) {
+			combat.doCombat();
+			if (scripts._eventSkipped)
+				scripts.checkEvents();
+		}
+	}
 
-	_vm->_party->_stepped = false;
+	party._stepped = false;
 	if (_vm->_mode == MODE_9) {
-		// TODO
+		// TODO: Save current scripts data?
+		error("TODO: save scripts?");
 	}
 
 	// TODO: Check use of updateFlag here. Original doesn't have it, but I
@@ -1029,7 +1039,7 @@ void Interface::handleFalling() {
 	assembleBorder();
 	w.update();
 
-	shake();
+	shake(10);
 }
 
 void Interface::saveFall() {
@@ -1040,7 +1050,7 @@ void Interface::fall(int v) {
 
 }
 
-void Interface::shake() {
+void Interface::shake(int time) {
 
 }
 

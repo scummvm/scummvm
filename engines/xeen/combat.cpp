@@ -22,6 +22,7 @@
 
 #include "xeen/combat.h"
 #include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace Xeen {
 
@@ -41,5 +42,10 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 void Combat::clear() {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], -1);
 }
+
+void Combat::doCombat() {
+	error("TODO: doCombat");
+}
+
 
 } // End of namespace Xeen

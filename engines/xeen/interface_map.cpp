@@ -406,7 +406,7 @@ void InterfaceMap::setup() {
 	_charPowSprites.load("charpow.icn");
 }
 
-void InterfaceMap::drawMap(bool updateFlag) {
+void InterfaceMap::drawMap() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Scripts &scripts = *_vm->_scripts;

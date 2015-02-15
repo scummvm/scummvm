@@ -92,7 +92,7 @@ private:
 
 	void fall(int v);
 
-	void shake();
+	void shake(int time);
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;

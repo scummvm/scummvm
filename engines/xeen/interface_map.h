@@ -127,7 +127,7 @@ protected:
 
 	virtual void setup();
 
-	void drawMap(bool updateFlag);
+	void drawMap();
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
