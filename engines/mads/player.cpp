@@ -235,11 +235,12 @@ void Player::selectSeries() {
 
 void Player::updateFrame() {
 	// WORKAROUND: Prevent character info being referenced when not present
-	if ((_spritesStart + _spritesIdx) < 0 || !_spriteSetsPresent[_spritesStart + _spritesIdx])
+	int idx = _spritesStart + _spritesIdx;
+	if (idx < 0 || (idx < PLAYER_SPRITES_FILE_COUNT && !_spriteSetsPresent[idx]))
 		return;
 
 	Scene &scene = _vm->_game->_scene;
-	SpriteAsset &spriteSet = *scene._sprites[_spritesStart + _spritesIdx];
+	SpriteAsset &spriteSet = *scene._sprites[idx];
 	assert(spriteSet._charInfo);
 
 	if (!spriteSet._charInfo->_numEntries) {
@@ -529,11 +530,11 @@ void Player::idle() {
 		_frameNumber += direction;
 		_forceRefresh = true;
 
-		if (spriteSet._charInfo->_stopFrames[frameIndex] < _frameNumber) {
+		if (_frameNumber > spriteSet._charInfo->_stopFrames[frameIndex]) {
 			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
-		if (spriteSet._charInfo->_startFrames[frameIndex] < _frameNumber) {
+		if (_frameNumber < spriteSet._charInfo->_startFrames[frameIndex]) {
 			_trigger = _upcomingTrigger;
 			updateFrame();
 		}
