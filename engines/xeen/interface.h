@@ -93,6 +93,8 @@ private:
 	void fall(int v);
 
 	void shake(int time);
+
+	void drawMiniMap();
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;

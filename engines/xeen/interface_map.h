@@ -123,8 +123,6 @@ protected:
 
 	void animate3d();
 
-	void drawMiniMap();
-
 	virtual void setup();
 
 	void drawMap();
