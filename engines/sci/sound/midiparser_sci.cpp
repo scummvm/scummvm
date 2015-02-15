@@ -505,7 +505,7 @@ void MidiParser_SCI::trackState(uint32 b) {
 					_pSnd->_chan[channel]._mute = m;
 					// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
 					_music->needsRemap();
-					debugC(2, kDebugLevelSound, "Dynamic mute change (mainThread = %d)", _mainThreadCalled);
+					debugC(2, kDebugLevelSound, "Dynamic mute change (arg = %d, mainThread = %d)", m, _mainThreadCalled);
 				}
 			}
 			break;

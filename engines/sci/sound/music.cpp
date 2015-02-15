@@ -1154,10 +1154,18 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 			if (c == 0xFF || c == 0xFE || c == 0x0F)
 				continue;
 			const MusicEntryChannel &channel = song->_chan[c];
-			if (channel._dontMap)
+			if (channel._dontMap) {
+#ifdef DEBUG_REMAP
+				debug("  Channel %d dontMap, skipping", c);
+#endif
 				continue;
-			if (channel._mute)
+			}
+			if (channel._mute) {
+#ifdef DEBUG_REMAP
+				debug("  Channel %d muted, skipping", c);
+#endif
 				continue;
+			}
 
 			bool dontRemap = channel._dontRemap || song->playBed;
 
