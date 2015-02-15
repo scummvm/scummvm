@@ -75,6 +75,8 @@ public:
 	SoundResource *soundRes;
 	uint16 resourceId;
 
+	int time; // "tim"estamp to indicate in which order songs have been added
+
 	bool isQueued; // for SCI0 only!
 
 	uint16 dataInc;
@@ -85,6 +87,8 @@ public:
 	int16 volume;
 	int16 hold;
 	int8 reverb;
+	bool playBed;
+	bool overridePriority; // Use soundObj's priority instead of resource's
 
 	int16 pauseCounter;
 	uint sampleLoopCounter;
@@ -224,6 +228,8 @@ public:
 
 	byte getCurrentReverb();
 
+	void needsRemap() { _needsRemap = true; }
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
@@ -245,9 +251,9 @@ protected:
 	bool _useDigitalSFX;
 
 	// remapping:
-	void remapChannels();
+	void remapChannels(bool mainThread = true);
 	ChannelRemapping *determineChannelMap();
-	void resetDeviceChannel(int devChannel);
+	void resetDeviceChannel(int devChannel, bool mainThread);
 
 private:
 	MusicList _playList;
@@ -256,6 +262,7 @@ private:
 	MusicEntry *_usedChannel[16];
 	int8 _channelRemap[16];
 	int8 _globalReverb;
+	bool _needsRemap;
 
 	DeviceChannelUsage _channelMap[16];
 
@@ -266,6 +273,9 @@ private:
 	int _driverLastChannel;
 
 	MusicEntry *_currentlyPlayingSample;
+
+	int _timeCounter; // Used to keep track of the order in which MusicEntries
+	                  // are added, for priority purposes.
 };
 
 } // End of namespace Sci

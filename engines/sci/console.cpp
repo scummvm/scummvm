@@ -2172,6 +2172,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 		return true;
 	}
 
+	// TODO: Maybe also add a playBed option.
 	g_sci->_soundCmd->startNewSound(number);
 	return cmdExit(0, 0);
 }
@@ -2198,9 +2199,10 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	Common::String newState = argv[2];
 	newState.toLowercase();
 
-	if (newState == "play")
-		g_sci->_soundCmd->processPlaySound(id);
-	else if (newState == "stop")
+	if (newState == "play") {
+		// Maybe also have a 'playbed' option. (Second argument to processPlaySound.)
+		g_sci->_soundCmd->processPlaySound(id, false);
+	} else if (newState == "stop")
 		g_sci->_soundCmd->processStopSound(id, false);
 	else
 		debugPrintf("New state can either be 'play' or 'stop'");
