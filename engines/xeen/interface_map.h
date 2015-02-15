@@ -88,7 +88,6 @@ public:
 	int size() const { return 170; }
 };
 
-
 class InterfaceMap {
 private:
 	XeenEngine *_vm;
@@ -108,11 +107,6 @@ protected:
 	bool _isShooting;
 	bool _thinWall;
 	bool _isAnimReset;
-	int _blessedUIFrame;
-	int _powerShieldUIFrame;
-	int _holyBonusUIFrame;
-	int _heroismUIFrame;
-	int _flipUIFrame;
 	bool _flag1;
 
 	void setMazeBits();
@@ -124,16 +118,8 @@ public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
 	SpriteResource _charPowSprites;
-	bool _upDoorText;
-	Common::String _screenText;
-	int _face1State, _face2State;
-	int _face1UIFrame, _face2UIFrame;
-	int _spotDoorsUIFrame;
-	int _dangerSenseUIFrame;
-	byte _tillMove;
 	int _objNumber;
 	int _overallFrame;
-	int _batUIFrame;
 	bool _charsShooting;
 public:
 	InterfaceMap(XeenEngine *vm);
@@ -153,9 +139,6 @@ public:
 	void setOutdoorsObjects();
 
 	void drawOutdoors();
-
-	void moveMonsters();
-
 };
 
 } // End of namespace Xeen

@@ -127,11 +127,24 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm),
 	_buttonsLoaded = false;
 	_intrIndex1 = 0;
 	_steppingFX = 0;
+	_falling = false;
+	_blessedUIFrame = 0;
+	_powerShieldUIFrame = 0;
+	_holyBonusUIFrame = 0;
+	_heroismUIFrame = 0;
+	_flipUIFrame = 0;
+	_face1UIFrame = 0;
+	_face2UIFrame = 0;
+	_batUIFrame = 0;
+	_spotDoorsUIFrame = 0;
+	_dangerSenseUIFrame = 0;
+	_face1State = _face2State = 0;
+	_upDoorText = false;
+	_tillMove = 0;
 
 	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	initDrawStructs();
 }
-
 
 void Interface::initDrawStructs() {
 	_mainList[0] = DrawStruct(7, 232, 74);
@@ -1162,6 +1175,15 @@ void Interface::draw3d(bool updateFlag) {
 	if (screen._windows[11]._enabled)
 		return;
 
+	_flipUIFrame = (_flipUIFrame + 1) % 4;
+	if (_flipUIFrame == 0)
+		_flipWater = !_flipWater;
+	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_COMBAT) &&
+		!_flag1 && _vm->_moveMonsters) {
+		if (--_tillMove == 0)
+			moveMonsters();
+	}
+
 	// Draw the map
 	drawMap();
 
@@ -1200,7 +1222,6 @@ void Interface::draw3d(bool updateFlag) {
 	party._stepped = false;
 	if (_vm->_mode == MODE_9) {
 		// TODO: Save current scripts data?
-		error("TODO: save scripts?");
 	}
 
 	// TODO: Check use of updateFlag here. Original doesn't have it, but I
@@ -1772,5 +1793,8 @@ void Interface::assembleBorder() {
 		screen._windows[12].frame();
 }
 
+void Interface::moveMonsters() {
+	// TODO
+}
 
 } // End of namespace Xeen

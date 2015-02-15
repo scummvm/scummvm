@@ -381,21 +381,8 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_combatFloatCounter = 0;
 	_thinWall = false;
 	_isAnimReset = false;
-	_upDoorText = false;
-	_batUIFrame = 0;
-	_spotDoorsUIFrame = 0;
-	_dangerSenseUIFrame = 0;
-	_face1UIFrame = 0;
-	_face2UIFrame = 0;
-	_blessedUIFrame = 0;
-	_powerShieldUIFrame = 0;
-	_holyBonusUIFrame = 0;
-	_heroismUIFrame = 0;
-	_flipUIFrame = 0;
-	_tillMove = 0;
 	_flag1 = false;
 	_overallFrame = 0;
-	_face1State = _face2State = 0;
 }
 
 void InterfaceMap::drawMap() {
@@ -407,15 +394,6 @@ void InterfaceMap::drawMap() {
 	const int INDOOR_INDEXES[3] = { 157, 151, 154 };
 	const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
 	const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
-
-	_flipUIFrame = (_flipUIFrame + 1) % 4;
-	if (_flipUIFrame == 0)
-		_flipWater = !_flipWater;
-	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_COMBAT) &&
-		!_flag1 && _vm->_moveMonsters) {
-		if (--_tillMove == 0)
-			moveMonsters();
-	}
 
 	MazeObject &objObject = map._mobData._objects[_objNumber];
 	Direction partyDirection = _vm->_party->_mazeDirection;
@@ -4432,11 +4410,6 @@ void InterfaceMap::drawOutdoors() {
 	}
 
 	_charsShooting = _isShooting;
-}
-
-
-void InterfaceMap::moveMonsters() {
-	// TODO
 }
 
 } // End of namespace Xeen

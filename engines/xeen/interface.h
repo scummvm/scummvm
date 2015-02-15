@@ -73,6 +73,11 @@ private:
 
 	bool _buttonsLoaded;
 	int _steppingFX;
+	int _blessedUIFrame;
+	int _powerShieldUIFrame;
+	int _holyBonusUIFrame;
+	int _heroismUIFrame;
+	int _flipUIFrame;
 
 	void initDrawStructs();
 
@@ -103,6 +108,14 @@ public:
 	int _intrIndex1;
 	Common::String _interfaceText;
 	int _falling;
+	int _face1State, _face2State;
+	int _face1UIFrame, _face2UIFrame;
+	int _spotDoorsUIFrame;
+	int _dangerSenseUIFrame;
+	int _batUIFrame;
+	bool _upDoorText;
+	Common::String _screenText;
+	byte _tillMove;
 public:
 	Interface(XeenEngine *vm);
 
@@ -127,6 +140,8 @@ public:
 	void draw3d(bool updateFlag);
 
 	void assembleBorder();
+
+	void moveMonsters();
 };
 
 } // End of namespace Xeen
