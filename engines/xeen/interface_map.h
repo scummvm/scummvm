@@ -92,10 +92,6 @@ public:
 class InterfaceMap {
 private:
 	XeenEngine *_vm;
-	SpriteResource _borderSprites;
-	SpriteResource _spellFxSprites;
-	SpriteResource _fecpSprites;
-	SpriteResource _blessSprites;
 	int _combatFloatCounter;
 
 	void initDrawStructs();
@@ -122,8 +118,6 @@ protected:
 	void setMazeBits();
 
 	void animate3d();
-
-	virtual void setup();
 
 	void drawMap();
 public:
@@ -159,8 +153,6 @@ public:
 	void setOutdoorsObjects();
 
 	void drawOutdoors();
-
-	void assembleBorder();
 
 	void moveMonsters();
 

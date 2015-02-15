@@ -64,6 +64,10 @@ private:
 	XeenEngine *_vm;
 	SpriteResource _uiSprites;
 	SpriteResource _iconSprites;
+	SpriteResource _borderSprites;
+	SpriteResource _spellFxSprites;
+	SpriteResource _fecpSprites;
+	SpriteResource _blessSprites;
 	DrawStruct _mainList[16];
 	int _combatCharIds[8];
 
@@ -104,7 +108,7 @@ public:
 
 	virtual ~Interface() {}
 
-	virtual void setup();
+	void setup();
 
 	void manageCharacters(bool soundPlayed);
 
@@ -121,6 +125,8 @@ public:
 	void bash(const Common::Point &pt, Direction direction);
 
 	void draw3d(bool updateFlag);
+
+	void assembleBorder();
 };
 
 } // End of namespace Xeen

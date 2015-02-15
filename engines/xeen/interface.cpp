@@ -153,7 +153,11 @@ void Interface::initDrawStructs() {
 }
 
 void Interface::setup() {
-	InterfaceMap::setup();
+	_borderSprites.load("border.icn");
+	_spellFxSprites.load("spellfx.icn");
+	_fecpSprites.load("fecp.brd");
+	_blessSprites.load("bless.icn");
+	_charPowSprites.load("charpow.icn");
 	_uiSprites.load("inn.icn");
 
 	Party &party = *_vm->_party;
@@ -1655,5 +1659,118 @@ void Interface::drawMiniMap() {
 	res._globalSprites.draw(window1, 6, Common::Point(223, 3));
 	party._wizardEyeActive = eyeActive;
 }
+
+/**
+ * Draw the display borders
+ */
+void Interface::assembleBorder() {
+	Resources &res = *_vm->_resources;
+	Screen &screen = *_vm->_screen;
+
+	// Draw the outer frame
+	res._globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
+
+	// Draw the animating bat character used to show when levitate is active
+	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateActive ? _batUIFrame + 16 : 16,
+		Common::Point(0, 82));
+	_batUIFrame = (_batUIFrame + 1) % 12;
+
+	// Draw UI element to indicate whether can spot hidden doors
+	_borderSprites.draw(screen,
+		(_thinWall && _vm->_party->checkSkill(SPOT_DOORS)) ? _spotDoorsUIFrame + 28 : 28,
+		Common::Point(194, 91));
+	_spotDoorsUIFrame = (_spotDoorsUIFrame + 1) % 12;
+
+	// Draw UI element to indicate whether can sense danger
+	_borderSprites.draw(screen,
+		(_vm->_dangerSenseAllowed && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
+		Common::Point(107, 9));
+	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
+
+	// Handle the face UI elements for indicating clairvoyance status
+	_face1UIFrame = (_face1UIFrame + 1) % 4;
+	if (_face1State == 0)
+		_face1UIFrame += 4;
+	else if (_face1State == 2)
+		_face1UIFrame = 0;
+
+	_face2UIFrame = (_face2UIFrame + 1) % 4 + 12;
+	if (_face2State == 0)
+		_face2UIFrame += 252;
+	else if (_face2State == 2)
+		_face2UIFrame = 0;
+
+	if (!_vm->_party->_clairvoyanceActive) {
+		_face1UIFrame = 0;
+		_face2UIFrame = 8;
+	}
+
+	_borderSprites.draw(screen, _face1UIFrame, Common::Point(0, 32));
+	_borderSprites.draw(screen,
+		screen._windows[10]._enabled || screen._windows[2]._enabled ?
+		52 : _face2UIFrame,
+		Common::Point(215, 32));
+
+	// Draw resistence indicators
+	if (!screen._windows[10]._enabled && !screen._windows[2]._enabled
+		&& screen._windows[38]._enabled) {
+		_fecpSprites.draw(screen, _vm->_party->_fireResistence ? 1 : 0,
+			Common::Point(2, 2));
+		_fecpSprites.draw(screen, _vm->_party->_electricityResistence ? 3 : 2,
+			Common::Point(219, 2));
+		_fecpSprites.draw(screen, _vm->_party->_coldResistence ? 5 : 4,
+			Common::Point(2, 134));
+		_fecpSprites.draw(screen, _vm->_party->_poisonResistence ? 7 : 6,
+			Common::Point(219, 134));
+	} else {
+		_fecpSprites.draw(screen, _vm->_party->_fireResistence ? 9 : 8,
+			Common::Point(8, 8));
+		_fecpSprites.draw(screen, _vm->_party->_electricityResistence ? 10 : 11,
+			Common::Point(219, 8));
+		_fecpSprites.draw(screen, _vm->_party->_coldResistence ? 12 : 13,
+			Common::Point(8, 134));
+		_fecpSprites.draw(screen, _vm->_party->_poisonResistence ? 14 : 15,
+			Common::Point(219, 134));
+	}
+
+	// Draw UI element for blessed
+	_blessSprites.draw(screen, 16, Common::Point(33, 137));
+	if (_vm->_party->_blessed) {
+		_blessedUIFrame = (_blessedUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _blessedUIFrame, Common::Point(33, 137));
+	}
+
+	// Draw UI element for power shield
+	if (_vm->_party->_powerShield) {
+		_powerShieldUIFrame = (_powerShieldUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _powerShieldUIFrame + 4,
+			Common::Point(55, 137));
+	}
+
+	// Draw UI element for holy bonus
+	if (_vm->_party->_holyBonus) {
+		_holyBonusUIFrame = (_holyBonusUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _holyBonusUIFrame + 8, Common::Point(160, 137));
+	}
+
+	// Draw UI element for heroism
+	if (_vm->_party->_heroism) {
+		_heroismUIFrame = (_heroismUIFrame + 1) % 4;
+		_blessSprites.draw(screen, _heroismUIFrame + 12, Common::Point(182, 137));
+	}
+
+	// Draw direction character if direction sense is active
+	if (_vm->_party->checkSkill(DIRECTION_SENSE) && !_vm->_noDirectionSense) {
+		const char *dirText = DIRECTION_TEXT_UPPER[_vm->_party->_mazeDirection];
+		Common::String msg = Common::String::format(
+			"\002""08\003""c\013""139\011""116%c\014""d\001", *dirText);
+		screen._windows[0].writeString(msg);
+	}
+
+	// Draw view frame
+	if (screen._windows[12]._enabled)
+		screen._windows[12].frame();
+}
+
 
 } // End of namespace Xeen
