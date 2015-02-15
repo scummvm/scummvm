@@ -804,10 +804,12 @@ void Scripts::cmdExchObj(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdFallToMap(Common::Array<byte> &params) {
+	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	party._fallMaze = params[0];
 	party._fallPosition = Common::Point(params[1], params[2]);
 	party._fallDamage = params[3];
+	intf.startFalling(true);
 
 	_lineNum = -1;
 }

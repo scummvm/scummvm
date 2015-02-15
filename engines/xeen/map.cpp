@@ -886,11 +886,12 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 }
 
 void Map::load(int mapId) {
+	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
 	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
 	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
 
-	if (_vm->_party->_falling) {
+	if (intf._falling) {
 		Window &w = screen._windows[9];
 		w.open();
 		w.writeString(OOPS);

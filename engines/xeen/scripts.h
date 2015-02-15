@@ -148,7 +148,6 @@ private:
 	int _mirrorId;
 	int _refreshIcons;
 	int _scriptResult;
-	int _v2;
 	bool _scriptExecuted;
 	bool _var50;
 	MazeEvent *_event;
@@ -229,6 +228,7 @@ public:
 	int _whoWill;
 	int _nEdamageType;
 	int _itemType;
+	int _v2;
 	Common::Array<MirrorEntry> _mirror;
 public:
 	Scripts(XeenEngine *vm);

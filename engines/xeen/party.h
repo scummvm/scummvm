@@ -121,7 +121,6 @@ public:
 	bool _newDay;
 	bool _isNight;
 	bool _stepped;
-	int _falling;
 	Common::Point _fallPosition;
 	int _fallMaze;
 	int _fallDamage;

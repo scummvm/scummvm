@@ -47,5 +47,9 @@ void Combat::doCombat() {
 	error("TODO: doCombat");
 }
 
+void Combat::giveCharDamage(int damage, int v2, int v3) {
+	error("TODO: giveCharDamage");
+}
+
 
 } // End of namespace Xeen

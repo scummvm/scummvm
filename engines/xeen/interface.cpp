@@ -569,7 +569,7 @@ void Interface::doStepCode() {
 		// We can fly, we can.. oh wait, we can't!
 		damage = 100;
 		party._damageType = DT_PHYSICAL;
-		party._falling = true;
+		_falling = true;
 		break;
 	case SURFTYPE_DESERT:
 		// Without navigation skills, simulate getting lost by adding extra time
@@ -579,7 +579,7 @@ void Interface::doStepCode() {
 	case SURFTYPE_CLOUD:
 		if (!party._levitateActive) {
 			party._damageType = DT_PHYSICAL;
-			party._falling = true;
+			_falling = true;
 			damage = 100;
 		}
 		break;
@@ -588,10 +588,10 @@ void Interface::doStepCode() {
 	}
 
 	if (_vm->_files->_isDarkCc && party._gameFlags[374]) {
-		party._falling = false;
+		_falling = false;
 	} else {
-		if (party._falling)
-			doFalling();
+		if (_falling)
+			startFalling(false);
 
 		if ((party._mazePosition.x & 16) || (party._mazePosition.y & 16)) {
 			if (map._isOutdoors)
@@ -611,17 +611,233 @@ void Interface::doStepCode() {
 	}
 }
 
-void Interface::doFalling() {
-	// TODO
+/**
+ * Start the party falling
+ */
+void Interface::startFalling(bool flag) {
+	Combat &combat = *_vm->_combat;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Scripts &scripts = *_vm->_scripts;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+
+	if (isDarkCc && party._gameFlags[374]) {
+		_falling = 0;
+		return;
+	}
+
+	_falling = false;
+	draw3d(true);
+	_falling = 2;
+	draw3d(false);
+
+	if (flag) {
+		if (!isDarkCc || party._fallMaze != 0) {
+			party._mazeId = party._fallMaze;
+			party._mazePosition = party._fallPosition;
+		}
+	}
+
+	_falling = true;
+	map.load(party._mazeId);
+	if (flag) {
+		if (((party._mazePosition.x & 16) || (party._mazePosition.y & 16)) &&
+				map._isOutdoors) {
+			map.getNewMaze();
+		}
+	} 
+	
+	if (isDarkCc) {
+		switch (party._mazeId - 25) {
+		case 0:
+		case 26:
+		case 27:
+		case 28:
+		case 29:
+			party._mazeId = 24;
+			party._mazePosition = Common::Point(11, 9);
+			break;
+		case 1:
+		case 30:
+		case 31:
+		case 32:
+		case 33:
+			party._mazeId = 12;
+			party._mazePosition = Common::Point(6, 15);
+			break;
+		case 2:
+		case 34:
+		case 35:
+		case 36:
+		case 37:
+		case 51:
+		case 52:
+		case 53:
+			party._mazeId = 15;
+			party._mazePosition = Common::Point(4, 12);
+			party._mazeDirection = DIR_SOUTH;
+			break;
+		case 40:
+		case 41:
+			party._mazeId = 14;
+			party._mazePosition = Common::Point(8, 3);
+			break;
+		case 44:
+		case 45:
+			party._mazeId = 1;
+			party._mazePosition = Common::Point(8, 7);
+			party._mazeDirection = DIR_NORTH;
+			break;
+		case 49:
+			party._mazeId = 12;
+			party._mazePosition = Common::Point(11, 13);
+			party._mazeDirection = DIR_SOUTH;
+			break;
+		case 57:
+		case 58:
+		case 59:
+			party._mazeId = 5;
+			party._mazePosition = Common::Point(12, 7);
+			party._mazeDirection = DIR_NORTH;
+			break;
+		case 60:
+			party._mazeId = 6;
+			party._mazePosition = Common::Point(12, 3);
+			party._mazeDirection = DIR_NORTH;
+			break;
+		default:
+			party._mazeId = 23;
+			party._mazePosition = Common::Point(12, 10);
+			party._mazeDirection = DIR_NORTH;
+			break;
+		}
+	} else {
+		if (party._mazeId > 89 && party._mazeId < 113) {
+			party._mazeId += 168;
+		} else {
+			switch (party._mazeId - 25) {
+			case 0:
+				party._mazeId = 89;
+				party._mazePosition = Common::Point(2, 14);
+				break;
+			case 1:
+				party._mazeId = 109;
+				party._mazePosition = Common::Point(13, 14);
+				break;
+			case 2:
+				party._mazeId = 112;
+				party._mazePosition = Common::Point(13, 3);
+				break;
+			case 3:
+				party._mazeId = 92;
+				party._mazePosition = Common::Point(2, 3);
+				break;
+			case 12:
+			case 13:
+				party._mazeId = 14;
+				party._mazePosition = Common::Point(10, 2);
+				break;
+			case 16:
+			case 17:
+			case 18:
+				party._mazeId = 4;
+				party._mazePosition = Common::Point(5, 14);
+				break;
+			case 20:
+			case 21:
+			case 22:
+				party._mazeId = 21;
+				party._mazePosition = Common::Point(9, 11);
+				break;
+			case 24:
+			case 25:
+			case 26:
+				party._mazeId = 1;
+				party._mazePosition = Common::Point(10, 4);
+				break;
+			case 28:
+			case 29:
+			case 30:
+			case 31:
+				party._mazeId = 26;
+				party._mazePosition = Common::Point(12, 10);
+				break;
+			case 32:
+			case 33:
+			case 34:
+			case 35:
+				party._mazeId = 3;
+				party._mazePosition = Common::Point(4, 9);
+				break;
+			case 36:
+			case 37:
+			case 38:
+			case 39:
+				party._mazeId = 16;
+				party._mazePosition = Common::Point(2, 7);
+				break;
+			case 40:
+			case 41:
+			case 42:
+			case 43:
+				party._mazeId = 23;
+				party._mazePosition = Common::Point(10, 9);
+				break;
+			case 44:
+			case 45:
+			case 46:
+			case 47:
+				party._mazeId = 13;
+				party._mazePosition = Common::Point(2, 10);
+				break;
+			case 103:
+			case 104:
+				map._loadDarkSide = false;
+				party._mazeId = 8;
+				party._mazePosition = Common::Point(11, 15);
+				party._mazeDirection = DIR_NORTH;
+				break;
+			case 105:
+				party._mazeId = 24;
+				party._mazePosition = Common::Point(11, 9);
+				break;
+			case 106:
+				party._mazeId = 12;
+				party._mazePosition = Common::Point(6, 15);
+				break;
+			case 107:
+				party._mazeId = 15;
+				party._mazePosition = Common::Point(4, 12);
+				break;
+			default:
+				party._mazeId = 29;
+				party._mazePosition = Common::Point(25, 21);
+				party._mazeDirection = DIR_NORTH;
+				break;
+			}
+		}
+	}
+
+	_flipGround ^= 1;
+	draw3d(true);
+	int tempVal = scripts._v2;
+	scripts._v2 = 0;
+	combat.giveCharDamage(party._fallDamage, 0, 0);
+	scripts._v2 = tempVal;
+
+	_flipGround ^= 1;
 }
 
+/**
+ * Check movement in the given direction
+ */
 bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 	Direction dir = party._mazeDirection;
 
-	switch (_buttonValue) {
+	switch (key) {
 	case (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT:
 		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_WEST :
 			(Direction)(party._mazeDirection - 1);
@@ -948,10 +1164,10 @@ void Interface::draw3d(bool updateFlag) {
 	// Draw the minimap
 	drawMiniMap();
 
-	if (party._falling == 1)
+	if (_falling == 1)
 		handleFalling();
 
-	if (party._falling == 2) {
+	if (_falling == 2) {
 		screen.saveBackground(1);
 	}
 
@@ -991,6 +1207,9 @@ void Interface::draw3d(bool updateFlag) {
 		events.wait(2);
 }
 
+/**
+ * Handle doing the falling
+ */
 void Interface::handleFalling() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
@@ -1043,17 +1262,23 @@ void Interface::handleFalling() {
 }
 
 void Interface::saveFall() {
-
+	// TODO
 }
 
 void Interface::fall(int v) {
 
 }
 
+/**
+ * Shake the screen
+ */
 void Interface::shake(int time) {
 
 }
 
+/**
+ * Draw the minimap
+ */
 void Interface::drawMiniMap() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;

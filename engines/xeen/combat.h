@@ -67,6 +67,8 @@ public:
 	void clear();
 
 	void doCombat();
+
+	void giveCharDamage(int damage, int v2, int v3);
 };
 
 } // End of namespace Xeen

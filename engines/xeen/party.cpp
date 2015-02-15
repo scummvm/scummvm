@@ -111,7 +111,6 @@ Party::Party(XeenEngine *vm) {
 	_isNight = false;
 	_stepped = false;
 	_damageType = DT_PHYSICAL;
-	_falling = false;
 	_fallMaze = 0;
 	_fallDamage = 0;
 	_dead = false;

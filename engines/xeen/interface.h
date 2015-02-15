@@ -98,6 +98,7 @@ private:
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;
+	int _falling;
 public:
 	Interface(XeenEngine *vm);
 
@@ -111,7 +112,7 @@ public:
 
 	void mainIconsPrint();
 
-	void doFalling();
+	void startFalling(bool v);
 
 	void perform();
 
