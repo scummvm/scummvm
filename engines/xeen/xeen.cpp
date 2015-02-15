@@ -56,7 +56,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_noDirectionSense = false;
 	_moveMonsters = false;
 	_mode = MODE_0;
-	_openDoor = 0;
 	_startupWindowActive = false;
 }
 

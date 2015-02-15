@@ -157,7 +157,6 @@ public:
 	bool _dangerSenseAllowed;
 	bool _noDirectionSense;
 	bool _moveMonsters;
-	int _openDoor;
 	bool _startupWindowActive;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);

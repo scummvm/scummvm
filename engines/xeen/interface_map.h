@@ -121,6 +121,7 @@ public:
 	int _objNumber;
 	int _overallFrame;
 	bool _charsShooting;
+	bool _openDoor;
 public:
 	InterfaceMap(XeenEngine *vm);
 

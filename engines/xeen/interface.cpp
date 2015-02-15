@@ -934,10 +934,10 @@ bool Interface::checkMoveDirection(int key) {
 				return false;
 			} else {
 				if (_buttonValue == Common::KEYCODE_UP && _wo[107]) {
-					_vm->_openDoor = true;
+					_openDoor = true;
 					sound.playFX(47);
 					draw3d(true);
-					_vm->_openDoor = false;
+					_openDoor = false;
 				}
 				return true;
 			}

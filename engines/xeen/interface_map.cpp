@@ -383,6 +383,7 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_isAnimReset = false;
 	_flag1 = false;
 	_overallFrame = 0;
+	_openDoor = false;
 }
 
 void InterfaceMap::drawMap() {
@@ -4243,7 +4244,7 @@ void InterfaceMap::drawIndoors() {
 
 	if (_wo[107]) {
 		_indoorList._fwl_1F1R._sprites = &map._wallSprites._fwl2;
-		if (!_vm->_openDoor)
+		if (!_openDoor)
 			_indoorList._fwl_1F1R._frame = 0;
 		else
 			_indoorList._fwl_1F1R._frame = map.mazeData()._wallKind ? 1 : 10;
@@ -4303,7 +4304,7 @@ void InterfaceMap::drawIndoors() {
 	_indoorList[0]._sprites = &map._skySprites[map._currentSky];
 	_indoorList[0]._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
 
-	if (_vm->_openDoor) {
+	if (_openDoor) {
 		Common::Point pt(
 			_vm->_party->_mazePosition.x + SCREEN_POSITIONING_X[
 				_vm->_party->_mazeDirection][_vm->_party->_mazePosition.x],
