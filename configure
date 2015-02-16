@@ -171,7 +171,7 @@ _stagingpath="staging"
 _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
 _staticlibpath=
-_sdlconfig="$SDL_CONFIG"
+_sdlconfig=sdl-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
 _freetypepath="$PATH"
@@ -354,7 +354,7 @@ define_in_config_if_yes() {
 # TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
-	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
 
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
