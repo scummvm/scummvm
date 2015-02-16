@@ -1052,7 +1052,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	}
 
 	intf._charsShooting = false;
-	intf.moveMonsters();
+	combat.moveMonsters();
 	combat._whosTurn = -1;
 	return true;
 }

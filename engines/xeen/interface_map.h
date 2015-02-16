@@ -37,10 +37,10 @@ public:
 	DrawStruct &_sky1, &_sky2;
 	DrawStruct &_groundSprite;
 	DrawStruct * const _groundTiles;
-	DrawStruct * const _combatImgs1;
-	DrawStruct * const _combatImgs2;
-	DrawStruct * const _combatImgs3;
-	DrawStruct * const _combatImgs4;
+	DrawStruct * const _attackImgs1;
+	DrawStruct * const _attackImgs2;
+	DrawStruct * const _attackImgs3;
+	DrawStruct * const _attackImgs4;
 public:
 	OutdoorDrawList();
 
@@ -73,10 +73,10 @@ public:
 	DrawStruct &_objects0, &_objects1, &_objects2, &_objects3;
 	DrawStruct &_objects4, &_objects5, &_objects6, &_objects7;
 	DrawStruct &_objects8, &_objects9, &_objects10, &_objects11;
-	DrawStruct * const _combatImgs1;
-	DrawStruct * const _combatImgs2;
-	DrawStruct * const _combatImgs3;
-	DrawStruct * const _combatImgs4;
+	DrawStruct * const _attackImgs1;
+	DrawStruct * const _attackImgs2;
+	DrawStruct * const _attackImgs3;
+	DrawStruct * const _attackImgs4;
 public:
 	IndoorDrawList();
 
@@ -104,10 +104,8 @@ protected:
 	bool _flipGround;
 	bool _flipSky;
 	bool _flipDefaultGround;
-	bool _isShooting;
 	bool _thinWall;
 	bool _isAnimReset;
-	bool _flag1;
 
 	void setMazeBits();
 
@@ -122,6 +120,7 @@ public:
 	int _overallFrame;
 	bool _charsShooting;
 	bool _openDoor;
+	bool _isAttacking;
 public:
 	InterfaceMap(XeenEngine *vm);
 

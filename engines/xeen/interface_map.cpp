@@ -30,8 +30,8 @@ namespace Xeen {
 static bool debugFlag = false;
 
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]), 
-	_groundSprite(_data[2]), _combatImgs1(&_data[124]), _combatImgs2(&_data[95]),
-	_combatImgs3(&_data[76]), _combatImgs4(&_data[53]), _groundTiles(&_data[3]) {
+	_groundSprite(_data[2]), _attackImgs1(&_data[124]), _attackImgs2(&_data[95]),
+	_attackImgs3(&_data[76]), _attackImgs4(&_data[53]), _groundTiles(&_data[3]) {
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
 	_data[2] = DrawStruct(0, 8, 67);
@@ -190,8 +190,8 @@ IndoorDrawList::IndoorDrawList() :
 	_objects3(_data[127]), _objects4(_data[97]), _objects5(_data[98]),
 	_objects6(_data[99]), _objects7(_data[55]), _objects8(_data[56]),
 	_objects9(_data[58]), _objects10(_data[57]), _objects11(_data[59]),
-	_combatImgs1(&_data[162]), _combatImgs2(&_data[135]),
-	_combatImgs3(&_data[111]), _combatImgs4(&_data[79]) {
+	_attackImgs1(&_data[162]), _attackImgs2(&_data[135]),
+	_attackImgs3(&_data[111]), _attackImgs4(&_data[79]) {
 	// Setup draw structure positions
 	_data[0] = DrawStruct(0, 8, 8);
 	_data[1] = DrawStruct(1, 8, 25);
@@ -375,13 +375,12 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_flipGround = false;
 	_flipSky = false;
 	_flipDefaultGround = false;
-	_isShooting = false;
+	_isAttacking = false;
 	_charsShooting = false;
 	_objNumber = 0;
 	_combatFloatCounter = 0;
 	_thinWall = false;
 	_isAnimReset = false;
-	_flag1 = false;
 	_overallFrame = 0;
 	_openDoor = false;
 }
@@ -430,27 +429,27 @@ void InterfaceMap::drawMap() {
 		for (int idx = 0; idx < 44; ++idx)
 			_outdoorList[OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
 
-		if (_flag1) {
+		if (combat._monstersAttacking) {
 			for (int idx = 0; idx < 8; ++idx) {
-				if (_outdoorList._combatImgs4[idx]._sprites)
-					_outdoorList._combatImgs4[idx]._frame = 0;
-				else if (_outdoorList._combatImgs3[idx]._sprites)
-					_outdoorList._combatImgs3[idx]._frame = 1;
-				else if (_outdoorList._combatImgs2[idx]._sprites)
-					_outdoorList._combatImgs2[idx]._frame = 2;
-				else if (_outdoorList._combatImgs1[idx]._sprites)
-					_outdoorList._combatImgs1[idx]._frame = 0;
+				if (_outdoorList._attackImgs4[idx]._sprites)
+					_outdoorList._attackImgs4[idx]._frame = 0;
+				else if (_outdoorList._attackImgs3[idx]._sprites)
+					_outdoorList._attackImgs3[idx]._frame = 1;
+				else if (_outdoorList._attackImgs2[idx]._sprites)
+					_outdoorList._attackImgs2[idx]._frame = 2;
+				else if (_outdoorList._attackImgs1[idx]._sprites)
+					_outdoorList._attackImgs1[idx]._frame = 0;
 			}
 		} else if (_charsShooting) {
 			for (int idx = 0; idx < 8; ++idx) {
-				if (_outdoorList._combatImgs1[idx]._sprites)
-					_outdoorList._combatImgs1[idx]._frame = 0;
-				else if (_outdoorList._combatImgs2[idx]._sprites)
-					_outdoorList._combatImgs2[idx]._frame = 1;
-				else if (_outdoorList._combatImgs3[idx]._sprites)
-					_outdoorList._combatImgs3[idx]._frame = 2;
-				else if (_outdoorList._combatImgs4[idx]._sprites)
-					_outdoorList._combatImgs1[idx]._frame = 0;
+				if (_outdoorList._attackImgs1[idx]._sprites)
+					_outdoorList._attackImgs1[idx]._frame = 0;
+				else if (_outdoorList._attackImgs2[idx]._sprites)
+					_outdoorList._attackImgs2[idx]._frame = 1;
+				else if (_outdoorList._attackImgs3[idx]._sprites)
+					_outdoorList._attackImgs3[idx]._frame = 2;
+				else if (_outdoorList._attackImgs4[idx]._sprites)
+					_outdoorList._attackImgs1[idx]._frame = 0;
 			}
 		}
 
@@ -557,7 +556,7 @@ void InterfaceMap::drawMap() {
 		for (int idx = 3; idx < _indoorList.size(); ++idx)
 			_indoorList[idx]._frame = -1;
 
-		if (_flag1) {
+		if (combat._monstersAttacking) {
 			for (int idx = 0; idx < 96; ++idx) {
 				if (_indoorList[79 + idx]._sprites != nullptr) {
 					_indoorList[79 + idx]._frame = 0;
@@ -762,12 +761,12 @@ void InterfaceMap::animate3d() {
 		}
 	}
 
-	DrawStruct *combatImgs1 = map._isOutdoors ? _outdoorList._combatImgs1 : _indoorList._combatImgs1;
-	DrawStruct *combatImgs2 = map._isOutdoors ? _outdoorList._combatImgs2 : _indoorList._combatImgs2;
-	DrawStruct *combatImgs3 = map._isOutdoors ? _outdoorList._combatImgs3 : _indoorList._combatImgs3;
-	DrawStruct *combatImgs4 = map._isOutdoors ? _outdoorList._combatImgs4 : _indoorList._combatImgs4;
+	DrawStruct *combatImgs1 = map._isOutdoors ? _outdoorList._attackImgs1 : _indoorList._attackImgs1;
+	DrawStruct *combatImgs2 = map._isOutdoors ? _outdoorList._attackImgs2 : _indoorList._attackImgs2;
+	DrawStruct *combatImgs3 = map._isOutdoors ? _outdoorList._attackImgs3 : _indoorList._attackImgs3;
+	DrawStruct *combatImgs4 = map._isOutdoors ? _outdoorList._attackImgs4 : _indoorList._attackImgs4;
 
-	if (_flag1) {
+	if (combat._monstersAttacking) {
 		for (int idx = 0; idx < 8; ++idx) {
 			if (combatImgs1[idx]._sprites) {
 				combatImgs1[idx]._sprites = nullptr;
@@ -4326,13 +4325,13 @@ void InterfaceMap::drawIndoors() {
 	_vm->_screen->_windows[3].drawList(&_indoorList[0], _indoorList.size());
 
 	// Check for any character shooting
-	_isShooting = false;
+	_isAttacking = false;
 	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
 		if (_vm->_combat->_shooting[idx])
-			_isShooting = true;
+			_isAttacking = true;
 	}
 	
-	_charsShooting = _isShooting;
+	_charsShooting = _isAttacking;
 }
 
 /**
@@ -4404,13 +4403,13 @@ void InterfaceMap::drawOutdoors() {
 	screen._windows[3].drawList(&_outdoorList[0], _outdoorList.size());
 
 	// Check for any character shooting
-	_isShooting = false;
+	_isAttacking = false;
 	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
 		if (_vm->_combat->_shooting[idx])
-			_isShooting = true;
+			_isAttacking = true;
 	}
 
-	_charsShooting = _isShooting;
+	_charsShooting = _isAttacking;
 }
 
 } // End of namespace Xeen

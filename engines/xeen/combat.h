@@ -24,8 +24,12 @@
 #define XEEN_COMBAT_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
+
+#define MAX_NUM_MONSTERS 107
 
 enum DamageType {
 	DT_PHYSICAL = 0, DT_MAGICAL = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,
@@ -51,16 +55,39 @@ class Combat {
 private:
 	XeenEngine *_vm;
 public:
+	SpriteResource _powSprites;
 	int _attackMonsters[26];
 	int _charsArray1[12];
 	bool _monPow[12];
 	int _monsterScale[12];
 	int _elemPow[12];
 	int _elemScale[12];
-	bool _shooting[8];
+	int _shooting[8];
 	int _globalCombat;
 	int _whosTurn;
 	bool _itemFlag;
+	int _monsterMap[32][32];
+	bool _monsterMoved[MAX_NUM_MONSTERS];
+	bool _rangeAttacking[MAX_NUM_MONSTERS];
+	int _gmonHit[36];
+	bool _monstersAttacking;
+
+	void monstersAttack();
+
+	void setupMonsterAttack(int monsterDataIndex, const Common::Point &pt);
+
+	bool monsterCanMove(const Common::Point &pt, int wallShift,
+		int v1, int v2, int monsterId);
+
+	void moveMonster(int monsterId, const Common::Point &pt);
+
+	void attackMonster(int monsterId);
+
+	void endAttack();
+
+	void monsterOvercome();
+	
+	bool stopAttack(const Common::Point &diffPt);
 public:
 	Combat(XeenEngine *vm);
 
@@ -69,6 +96,8 @@ public:
 	void doCombat();
 
 	void giveCharDamage(int damage, int v2, int v3);
+
+	void moveMonsters();
 };
 
 } // End of namespace Xeen

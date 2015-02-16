@@ -69,7 +69,6 @@ private:
 	SpriteResource _fecpSprites;
 	SpriteResource _blessSprites;
 	DrawStruct _mainList[16];
-	int _combatCharIds[8];
 
 	bool _buttonsLoaded;
 	int _steppingFX;
@@ -140,8 +139,6 @@ public:
 	void draw3d(bool updateFlag);
 
 	void assembleBorder();
-
-	void moveMonsters();
 };
 
 } // End of namespace Xeen

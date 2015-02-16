@@ -142,7 +142,6 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm),
 	_upDoorText = false;
 	_tillMove = 0;
 
-	Common::fill(&_combatCharIds[0], &_combatCharIds[8], 0);
 	initDrawStructs();
 }
 
@@ -244,6 +243,7 @@ void Interface::setMainButtons() {
  * be animated.
  */
 void Interface::perform() {
+	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -314,7 +314,7 @@ void Interface::perform() {
 	case Common::KEYCODE_w:
 		// Wait one turn
 		chargeStep();
-		moveMonsters();
+		combat.moveMonsters();
 		_upDoorText = false;
 		_flipDefaultGround = !_flipDefaultGround;
 		_flipGround = !_flipGround;
@@ -456,7 +456,7 @@ void Interface::perform() {
 		if (_buttonValue < (int)party._activeParty.size()) {
 			CharacterInfo::show(_vm, _buttonValue);
 			if (party._stepped)
-				moveMonsters();
+				combat.moveMonsters();
 		}
 		break;
 
@@ -533,7 +533,7 @@ void Interface::chargeStep() {
 	if (_vm->_party->_partyDead) {
 		_vm->_party->changeTime(_vm->_map->_isOutdoors ? 10 : 1);
 		if (!_tillMove) {
-			moveMonsters();
+			_vm->_combat->moveMonsters();
 		}
 
 		_tillMove = 3;
@@ -1181,9 +1181,9 @@ void Interface::draw3d(bool updateFlag) {
 	if (_flipUIFrame == 0)
 		_flipWater = !_flipWater;
 	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_COMBAT) &&
-		!_flag1 && _vm->_moveMonsters) {
+		!combat._monstersAttacking && _vm->_moveMonsters) {
 		if (--_tillMove == 0)
-			moveMonsters();
+			combat.moveMonsters();
 	}
 
 	// Draw the map
@@ -1213,8 +1213,8 @@ void Interface::draw3d(bool updateFlag) {
 
 	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 			|| combat._attackMonsters[2] != -1) {
-		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) && !_flag1
-				&& !_charsShooting && _vm->_moveMonsters) {
+		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) && 
+				!combat._monstersAttacking && !_charsShooting && _vm->_moveMonsters) {
 			combat.doCombat();
 			if (scripts._eventSkipped)
 				scripts.checkEvents();
@@ -1793,10 +1793,6 @@ void Interface::assembleBorder() {
 	// Draw view frame
 	if (screen._windows[12]._enabled)
 		screen._windows[12].frame();
-}
-
-void Interface::moveMonsters() {
-	// TODO
 }
 
 } // End of namespace Xeen
