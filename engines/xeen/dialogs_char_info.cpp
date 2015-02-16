@@ -36,18 +36,19 @@ void CharacterInfo::show(XeenEngine *vm, int charIndex) {
 }
 
 void CharacterInfo::execute(int charIndex) {
-	Screen &screen = *_vm->_screen;
+	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	
+	Screen &screen = *_vm->_screen;
+
 	bool redrawFlag = true;
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_CHARACTER_INFO;
 	loadDrawStructs();
 	addButtons();
 
-	Character *c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
+	Character *c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
 	intf.highlightChar(charIndex);
 	Window &w = screen._windows[24];
 	w.open();
@@ -86,9 +87,9 @@ void CharacterInfo::execute(int charIndex) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
 			_buttonValue -= Common::KEYCODE_F1;
-			if (_buttonValue < (int)(oldMode == MODE_COMBAT ? party._combatParty.size() : party._activeParty.size())) {
+			if (_buttonValue < (int)(oldMode == MODE_COMBAT ? combat._combatParty.size() : party._activeParty.size())) {
 				charIndex = _buttonValue;
-				c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : party._combatParty[charIndex];
+				c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
 			} else {
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}

@@ -22,6 +22,7 @@
 
 #include "common/algorithm.h"
 #include "common/rect.h"
+#include "xeen/character.h"
 #include "xeen/combat.h"
 #include "xeen/interface.h"
 #include "xeen/xeen.h"
@@ -94,14 +95,11 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	_whosTurn = -1;
 	_itemFlag = false;
 	_monstersAttacking = false;
+	_combatMode = 0;
 }
 
 void Combat::clear() {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], -1);
-}
-
-void Combat::doCombat() {
-	error("TODO: doCombat");
 }
 
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
@@ -414,9 +412,9 @@ void Combat::monstersAttack() {
 	if (_vm->_mode != MODE_COMBAT) {
 		// Combat wasn't previously active, but it is now. Set up
 		// the combat party from the currently active party
-		party._combatParty.clear();
+		_combatParty.clear();
 		for (uint idx = 0; idx < party._activeParty.size(); ++idx)
-			party._combatParty.push_back(&party._activeParty[idx]);
+			_combatParty.push_back(&party._activeParty[idx]);
 	}
 
 	for (int idx = 0; idx < 36; ++idx) {
@@ -523,8 +521,6 @@ void Combat::endAttack() {
 	OutdoorDrawList &outdoorList = intf._outdoorList;
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-		Character &c = party._activeParty[idx];
-
 		if (map._isOutdoors) {
 			outdoorList._attackImgs1[idx]._scale = 0;
 			outdoorList._attackImgs2[idx]._scale = 0;

@@ -37,6 +37,7 @@ Character *ItemsDialog::show(XeenEngine *vm, Character *c, ItemsMode mode) {
 }
 
 Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
+	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
@@ -337,11 +338,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				_buttonValue -= Common::KEYCODE_F1;
 				
 				if (_buttonValue < (int)(_vm->_mode == MODE_COMBAT ?
-						party._combatParty.size() : party._activeParty.size())) {
+						combat._combatParty.size() : party._activeParty.size())) {
 					// Character number is valid
 					redrawFlag = REDRAW_TEXT;
 					Character *newChar = _vm->_mode == MODE_COMBAT ?
-						party._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
+						combat._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
 
 					if (mode == ITEMMODE_BLACKSMITH) {
 						_oldCharacter = newChar;

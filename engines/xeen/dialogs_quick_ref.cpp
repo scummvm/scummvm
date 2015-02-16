@@ -41,9 +41,9 @@ void QuickReferenceDialog::execute() {
 
 	events.setCursor(0);
 
-	for (uint idx = 0; idx < (combat._globalCombat == 2 ? party._combatParty.size() :
+	for (uint idx = 0; idx < (combat._globalCombat == 2 ? combat._combatParty.size() :
 			party._activeParty.size()); ++idx) {
-		Character &c = combat._globalCombat == 2 ? *party._combatParty[idx] :
+		Character &c = combat._globalCombat == 2 ? *combat._combatParty[idx] :
 			party._activeParty[idx];
 		Condition condition = c.worstCondition();
 		lines[idx] = Common::String::format(QUICK_REF_LINE,

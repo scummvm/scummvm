@@ -43,6 +43,7 @@ PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
 }
 
 void PartyDrawer::drawParty(bool updateFlag) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
@@ -50,9 +51,9 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	_restoreSprites.draw(screen, 0, Common::Point(8, 149));
 
 	// Handle drawing the party faces
-	uint partyCount = inCombat ? party._combatParty.size() : party._activeParty.size();
+	uint partyCount = inCombat ? combat._combatParty.size() : party._activeParty.size();
 	for (uint idx = 0; idx < partyCount; ++idx) {
-		Character &ps = inCombat ? *party._combatParty[idx] : party._activeParty[idx];
+		Character &ps = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
 		Condition charCondition = ps.worstCondition();
 		int charFrame = FACE_CONDITION_FRAMES[charCondition];
 		
@@ -64,7 +65,7 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	}
 
 	for (uint idx = 0; idx < partyCount; ++idx) {
-		Character &ps = inCombat ? *party._combatParty[idx] : party._activeParty[idx];
+		Character &ps = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
 
 		// Draw the Hp bar
 		int maxHp = ps.getMaxHP();
@@ -212,7 +213,7 @@ void Interface::mainIconsPrint() {
 	screen._windows[34].update();
 }
 
-void Interface::setMainButtons() {
+void Interface::setMainButtons(bool combatMode) {
 	clearButtons();
 
 	addButton(Common::Rect(235,  75, 259,  95),  Common::KEYCODE_s, &_iconSprites);
@@ -236,6 +237,18 @@ void Interface::setMainButtons() {
 	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, &_iconSprites, false);
 	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, &_iconSprites, false);
 	addPartyButtons(_vm);
+
+	if (combatMode) {
+		_buttons[0]._value = Common::KEYCODE_f;
+		_buttons[1]._value = Common::KEYCODE_c;
+		_buttons[2]._value = Common::KEYCODE_a;
+		_buttons[3]._value = Common::KEYCODE_u;
+		_buttons[4]._value = Common::KEYCODE_r;
+		_buttons[5]._value = Common::KEYCODE_b;
+		_buttons[6]._value = Common::KEYCODE_o;
+		_buttons[7]._value = Common::KEYCODE_i;
+		_buttons[16]._value = 0;
+	}
 }
 
 /**
@@ -1215,7 +1228,7 @@ void Interface::draw3d(bool updateFlag) {
 			|| combat._attackMonsters[2] != -1) {
 		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) && 
 				!combat._monstersAttacking && !_charsShooting && _vm->_moveMonsters) {
-			combat.doCombat();
+			doCombat();
 			if (scripts._eventSkipped)
 				scripts.checkEvents();
 		}
@@ -1793,6 +1806,30 @@ void Interface::assembleBorder() {
 	// Draw view frame
 	if (screen._windows[12]._enabled)
 		screen._windows[12].frame();
+}
+
+void Interface::doCombat() {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	bool isDarkCc = _vm->_files->_isDarkCc;
+	bool upDoorText = _upDoorText;
+	
+	_upDoorText = false;
+	combat._combatMode = 2;
+	_vm->_mode = MODE_COMBAT;
+
+	_iconSprites.load("combat.icn");
+	for (int idx = 1; idx < 16; ++idx)
+		_mainList[idx]._sprites = nullptr;
+
+	// Set the combat buttons
+	setMainButtons(true);
+	mainIconsPrint();
+
+
+
+	error("TODO");
 }
 
 } // End of namespace Xeen

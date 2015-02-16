@@ -115,8 +115,6 @@ public:
 	// Other party related runtime data
 	Roster _roster;
 	Common::Array<Character> _activeParty;
-	Common::Array<Character *> _combatParty;
-	int _combatPartyCount;
 	bool _partyDead;
 	bool _newDay;
 	bool _isNight;

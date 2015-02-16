@@ -50,11 +50,15 @@ enum SpecialAttack {
 };
 
 class XeenEngine;
+class Character;
 
 class Combat {
 private:
 	XeenEngine *_vm;
 public:
+	Common::Array<Character *> _combatParty;
+	Common::Array<int> _charsBlocked;
+	Common::Array<int> _charsGone;
 	SpriteResource _powSprites;
 	int _attackMonsters[26];
 	int _charsArray1[12];
@@ -71,6 +75,7 @@ public:
 	bool _rangeAttacking[MAX_NUM_MONSTERS];
 	int _gmonHit[36];
 	bool _monstersAttacking;
+	int _combatMode;
 
 	void monstersAttack();
 
@@ -92,8 +97,6 @@ public:
 	Combat(XeenEngine *vm);
 
 	void clear();
-
-	void doCombat();
 
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 

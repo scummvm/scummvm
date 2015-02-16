@@ -105,7 +105,6 @@ Party::Party(XeenEngine *vm) {
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
 		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
 
-	_combatPartyCount = 0;
 	_partyDead = false;
 	_newDay = false;
 	_isNight = false;
@@ -531,10 +530,11 @@ void Party::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wa
 }
 
 void Party::checkPartyDead() {
+	Combat &combat = *_vm->_combat;
 	bool inCombat = _vm->_mode == MODE_COMBAT;
 
-	for (uint charIdx = 0; charIdx < (inCombat ? _combatParty.size() : _activeParty.size()); ++charIdx) {
-		Character &c = inCombat ? *_combatParty[charIdx] : _activeParty[charIdx];
+	for (uint charIdx = 0; charIdx < (inCombat ? combat._combatParty.size() : _activeParty.size()); ++charIdx) {
+		Character &c = inCombat ? *combat._combatParty[charIdx] : _activeParty[charIdx];
 		Condition cond = c.worstCondition();
 		if (cond <= CONFUSED || cond == NO_CONDITION) {
 			_dead = false;

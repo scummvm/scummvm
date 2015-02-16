@@ -84,7 +84,7 @@ private:
 
 	void setupBackground();
 
-	void setMainButtons();
+	void setMainButtons(bool combatMode = false);
 
 	void chargeStep();
 
@@ -139,6 +139,8 @@ public:
 	void draw3d(bool updateFlag);
 
 	void assembleBorder();
+
+	void doCombat();
 };
 
 } // End of namespace Xeen
