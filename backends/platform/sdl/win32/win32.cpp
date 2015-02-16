@@ -54,7 +54,7 @@ void OSystem_Win32::init() {
 
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
-	_taskbarManager = new Win32TaskbarManager();
+	_taskbarManager = new Win32TaskbarManager(_window);
 #endif
 
 	// Invoke parent implementation of this method

@@ -37,11 +37,14 @@ void SdlWindow_Win32::setupIcon() {
 	HMODULE handle = GetModuleHandle(NULL);
 	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
 	if (ico) {
-		SDL_SysWMinfo  wminfo;
-		SDL_VERSION(&wminfo.version);
-		if (SDL_GetWMInfo(&wminfo)) {
+		SDL_SysWMinfo wminfo;
+		if (getSDLWMInformation(&wminfo)) {
 			// Replace the handle to the icon associated with the window class by our custom icon
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
+#else
 			SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
+#endif
 
 			// Since there wasn't any default icon, we can't use the return value from SetClassLong
 			// to check for errors (it would be 0 in both cases: error or no previous value for the

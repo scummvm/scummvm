@@ -28,6 +28,8 @@
 
 #include "icons/scummvm.xpm"
 
+#include <SDL_syswm.h>
+
 SdlWindow::SdlWindow()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"), _windowIcon(nullptr)
@@ -168,6 +170,15 @@ void SdlWindow::iconifyWindow() {
 	}
 #else
 	SDL_WM_IconifyWindow();
+#endif
+}
+
+bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
+	SDL_VERSION(&info->version);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return SDL_GetWindowWMInfo(_window, info);
+#else
+	return SDL_GetWMInfo(info);
 #endif
 }
 

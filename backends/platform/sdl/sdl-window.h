@@ -27,6 +27,8 @@
 
 #include "common/str.h"
 
+struct SDL_SysWMinfo;
+
 class SdlWindow {
 public:
 	SdlWindow();
@@ -64,6 +66,14 @@ public:
 	 * Iconifies the window.
 	 */
 	void iconifyWindow();
+
+	/**
+	 * Query platform specific SDL window manager information.
+	 *
+	 * Since this is an SDL internal structure clients are responsible
+	 * for accessing it in a version safe manner.
+	 */
+	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
