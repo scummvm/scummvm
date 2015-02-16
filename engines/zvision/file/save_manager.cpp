@@ -165,6 +165,27 @@ Common::Error SaveManager::loadGame(int slot) {
 	if (header.thumbnail)
 		delete header.thumbnail;
 
+	if (_engine->getGameId() == GID_NEMESIS && scriptManager->getCurrentLocation() == "tv2f") {
+		// WORKAROUND for script bug #6793: location tv2f (stairs) has two states:
+		// one at the top of the stairs, and one at the bottom. When the player
+		// goes to the bottom of the stairs, the screen changes, and hotspot
+		// 4652 (exit opposite the stairs) is enabled. However, the variable that
+		// controls the state (2408) is reset when the player goes down the stairs.
+		// Furthermore, the room's initialization script disables the stair exit
+		// control (4652). This leads to an impossible situation, where all the
+		// exit controls are disabled, and the player can't more anywhere. Thus,
+		// when loading a game in that room, we check for that impossible
+		// situation, which only occurs after the player has moved down the stairs,
+		// and fix it here by setting the correct background, and enabling the
+		// stair exit hotspot.
+		if ((scriptManager->getStateFlag(2411) & Puzzle::DISABLED) &&
+			(scriptManager->getStateFlag(2408) & Puzzle::DISABLED) &&
+			(scriptManager->getStateFlag(4652) & Puzzle::DISABLED)) {
+			_engine->getRenderManager()->setBackgroundImage("tv2fb21c.tga");
+			scriptManager->unsetStateFlag(4652, Puzzle::DISABLED);
+		}
+	}
+
 	return Common::kNoError;
 }
 
