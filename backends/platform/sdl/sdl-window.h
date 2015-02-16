@@ -33,19 +33,16 @@ public:
 	virtual ~SdlWindow();
 
 	/**
+	 * Setup the window icon.
+	 */
+	virtual void setupIcon();
+
+	/**
 	 * Change the caption of the window.
 	 *
 	 * @param caption New window caption in UTF-8 encoding.
 	 */
 	void setWindowCaption(const Common::String &caption);
-
-	/**
-	 * Attach an icon to the window.
-	 *
-	 * @param icon The surface to use as icon. SdlGraphicsManager takes
-	 *             ownership over it.
-	 */
-	void setWindowIcon(SDL_Surface *icon);
 
 	/**
 	 * Toggle mouse grab state. This decides whether the cursor can leave the
@@ -98,6 +95,11 @@ private:
 	Common::String _windowCaption;
 	SDL_Surface *_windowIcon;
 #endif
+};
+
+class SdlIconlessWindow : public SdlWindow {
+public:
+	virtual void setupIcon() {}
 };
 
 #endif

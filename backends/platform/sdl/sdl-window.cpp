@@ -24,6 +24,10 @@
 
 #include "backends/platform/sdl/sdl-window.h"
 
+#include "common/textconsole.h"
+
+#include "icons/scummvm.xpm"
+
 SdlWindow::SdlWindow()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"), _windowIcon(nullptr)
@@ -38,6 +42,77 @@ SdlWindow::~SdlWindow() {
 #endif
 }
 
+void SdlWindow::setupIcon() {
+	int x, y, w, h, ncols, nbytes, i;
+	unsigned int rgba[256];
+	unsigned int *icon;
+
+	if (sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
+		warning("Wrong format of scummvm_icon[0] (%s)", scummvm_icon[0]);
+
+		return;
+	}
+	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
+		return;
+	}
+	icon = (unsigned int*)malloc(w*h*sizeof(unsigned int));
+	if (!icon) {
+		warning("Could not allocate temp storage for the built-in icon");
+		return;
+	}
+
+	for (i = 0; i < ncols; i++) {
+		unsigned char code;
+		char color[32];
+		memset(color, 0, sizeof(color));
+		unsigned int col;
+		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
+			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
+		}
+		if (!strcmp(color, "None"))
+			col = 0x00000000;
+		else if (!strcmp(color, "black"))
+			col = 0xFF000000;
+		else if (color[0] == '#') {
+			if (sscanf(color + 1, "%06x", &col) != 1) {
+				warning("Wrong format of color (%s)", color + 1);
+			}
+			col |= 0xFF000000;
+		} else {
+			warning("Could not load the built-in icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
+			free(icon);
+			return;
+		}
+
+		rgba[code] = col;
+	}
+	for (y = 0; y < h; y++) {
+		const char *line = scummvm_icon[1 + ncols + y];
+		for (x = 0; x < w; x++) {
+			icon[x + w * y] = rgba[(int)line[x]];
+		}
+	}
+
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, w, h, 32, w * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	if (!sdl_surf) {
+		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_FreeSurface(_windowIcon);
+	_windowIcon = sdl_surf;
+	if (_window) {
+		SDL_SetWindowIcon(_window, sdl_surf);
+	}
+#else
+	SDL_WM_SetIcon(sdl_surf, NULL);
+	SDL_FreeSurface(sdl_surf);
+#endif
+
+	free(icon);
+}
+
 void SdlWindow::setWindowCaption(const Common::String &caption) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_windowCaption = caption;
@@ -46,19 +121,6 @@ void SdlWindow::setWindowCaption(const Common::String &caption) {
 	}
 #else
 	SDL_WM_SetCaption(caption.c_str(), caption.c_str());
-#endif
-}
-
-void SdlWindow::setWindowIcon(SDL_Surface *icon) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_FreeSurface(_windowIcon);
-	_windowIcon = icon;
-	if (_window) {
-		SDL_SetWindowIcon(_window, icon);
-	}
-#else
-	SDL_WM_SetIcon(icon, NULL);
-	SDL_FreeSurface(icon);
 #endif
 }
 

@@ -20,6 +20,7 @@ endif
 ifdef WIN32
 MODULE_OBJS += \
 	win32/win32-main.o \
+	win32/win32-window.o \
 	win32/win32.o
 endif
 

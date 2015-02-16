@@ -104,11 +104,6 @@ protected:
 	 */
 	virtual void initSDL();
 
-	/**
-	 * Setup the window icon.
-	 */
-	virtual void setupIcon();
-
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }
 	Backends::Log::Log *_logger;

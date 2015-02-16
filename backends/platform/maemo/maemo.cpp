@@ -84,6 +84,15 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 }
 #endif
 
+void OSystem_SDL_Maemo::init() {
+	// Use an iconless window for Maemo
+	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
+	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
+	_window = new SdlIconlessWindow();
+
+	OSystem_POSIX::init();
+}
+
 void OSystem_SDL_Maemo::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
@@ -176,12 +185,6 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 			return *model;
 	}
 	return *model;
-}
-
-void OSystem_SDL_Maemo::setupIcon() {
-	// no Maemo version needs setupIcon
-	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
-	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
 }
 
 #ifdef ENABLE_KEYMAPPER
