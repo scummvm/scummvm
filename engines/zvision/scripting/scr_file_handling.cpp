@@ -86,6 +86,15 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			parseCriteria(stream, puzzle->criteriaList, puzzle->key);
 		} else if (line.matchString("results {", true)) {
 			parseResults(stream, puzzle->resultActions);
+
+			// WORKAROUND for a script bug in Zork Nemesis, room ve5e (tuning
+			// fork box closeup). If the player leaves the screen while the
+			// box is open, puzzle 19398 shows the animation where the box
+			// closes, but the box state (state variable 19397) is not updated.
+			// We insert the missing assignment for the box state here.
+			// Fixes bug #6803.
+			if (_engine->getGameId() == GID_NEMESIS && puzzle->key == 19398)
+				puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
 		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
 		}
