@@ -95,7 +95,7 @@ public:
 
 	void doCombat();
 
-	void giveCharDamage(int damage, int v2, int v3);
+	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 
 	void moveMonsters();
 };

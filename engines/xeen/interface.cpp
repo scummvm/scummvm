@@ -839,7 +839,7 @@ void Interface::startFalling(bool flag) {
 	draw3d(true);
 	int tempVal = scripts._v2;
 	scripts._v2 = 0;
-	combat.giveCharDamage(party._fallDamage, 0, 0);
+	combat.giveCharDamage(party._fallDamage, DT_PHYSICAL, 0);
 	scripts._v2 = tempVal;
 
 	_flipGround ^= 1;

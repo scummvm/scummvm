@@ -104,8 +104,132 @@ void Combat::doCombat() {
 	error("TODO: doCombat");
 }
 
-void Combat::giveCharDamage(int damage, int v2, int v3) {
-	error("TODO: giveCharDamage");
+void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
+	SoundManager &sound = *_vm->_sound;
+	int charIndex1 = charIndex + 1;
+	int selectedIndex1 = 0;
+	int selectedIndex2 = 0;
+	bool breakFlag = false;
+
+	screen.closeWindows();
+	
+	int idx = (int)party._activeParty.size();
+	if (!scripts._v2) {
+		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
+			Character &c = party._activeParty[idx];
+			Condition condition = c.worstCondition();
+
+			if (!(condition >= UNCONSCIOUS && condition <= ERADICATED)) {
+				if (!selectedIndex1) {
+					selectedIndex1 = idx + 1;
+				} else {
+					selectedIndex2 = idx + 1;
+					break;
+				}
+			}
+		}
+	}
+	if (idx == (int)party._activeParty.size()) {
+		selectedIndex1 = scripts._v2 ? charIndex : 0;
+		goto loop;
+	}
+
+	for (;;) {
+		// The if below is to get around errors due to the
+		// goto I was forced to use when reimplementing this method
+		if (true) {
+			Character &c = party._activeParty[selectedIndex1];
+			c._conditions[ASLEEP] = 0;	// Force character to be awake
+
+			int frame = 0, fx = 0;
+			switch (attackType) {
+			case DT_PHYSICAL:
+				fx = 29;
+				break;
+			case DT_MAGICAL:
+				frame = 6;
+				fx = 27;
+				break;
+			case DT_FIRE:
+				damage -= party._fireResistence;
+				frame = 1;
+				fx = 22;
+				break;
+			case DT_ELECTRICAL:
+				damage -= party._electricityResistence;
+				frame = 2;
+				fx = 23;
+				break;
+			case DT_COLD:
+				damage -= party._coldResistence;
+				frame = 3;
+				fx = 24;
+				break;
+			case DT_POISON:
+				damage -= party._poisonResistence;
+				frame = 4;
+				fx = 26;
+				break;
+			case DT_ENERGY:
+				frame = 5;
+				fx = 25;
+				break;
+			case DT_SLEEP:
+				fx = 38;
+				break;
+			default:
+				break;
+			}
+
+			// All attack types other than physical allow for saving
+			// throws to reduce the damage
+			if (attackType != DT_PHYSICAL) {
+				while (c.charSavingThrow(attackType) && damage > 0)
+					damage /= 2;
+			}
+
+			// Draw the attack effect on the character sprite
+			sound.playFX(fx);
+			_powSprites.draw(screen, frame,
+				Common::Point(CHAR_FACES_X[selectedIndex1], 150));
+			screen._windows[33].update();
+
+			// Reduce damage if power shield active, and set it zero
+			// if the damage amount has become negative.. you wouldn't
+			// want attacks healing the characters
+			if (party._powerShield)
+				damage -= party._powerShield;
+			if (damage < 0)
+				damage = 0;
+
+			// TODO: This seems weird.. maybe I've got attack types wrong..
+			// why should attack type 7 (DT_SLEEP) set the dead condition?
+			if (attackType == DT_SLEEP) {
+				damage = c._currentHp;
+				c._conditions[DEAD] = 1;
+			}
+
+			// Subtract the hit points from the character
+			c.subtractHitPoints(damage);
+		}
+
+		if (selectedIndex2) {
+			++selectedIndex1;
+loop:
+			if ((scripts._v2 ? charIndex1 : (int)party._activeParty.size()) > selectedIndex1)
+				break;
+		}
+
+		// Break check and if not, move to other index
+		if (!selectedIndex2 || breakFlag)
+			break;
+
+		selectedIndex1 = selectedIndex2 - 1;
+		breakFlag = true;
+	}
 }
 
 void Combat::moveMonsters() {
@@ -445,6 +569,12 @@ void Combat::attackMonster(int monsterId) {
 }
 
 bool Combat::stopAttack(const Common::Point &diffPt) {
+	Map &map = *_vm->_map;
+
+	if (map._isOutdoors) {
+
+	}
+
 	// TODO
 	return false;
 }
