@@ -153,7 +153,7 @@ void readImage(byte **buffer, Image **im) {
 
 
 extern RoomData *Rooms;
-extern char *ViewPath;
+extern const char *ViewPath;
 
 static Image *Map, *Room, *UpArrowRoom, *DownArrowRoom, *Bridge,
 			 *HRoom, *VRoom, *Maze, *HugeMaze, *Path, *MapNorth,

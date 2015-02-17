@@ -71,8 +71,8 @@ void    mayShowCrumbIndicatorOff();
 
 bool Alternate = false, ispal = false, noupdatediff = false, MainDisplay = true, QuitLab = false, DoNotReset = false;
 
-extern char *NewFileName;  /* When ProcessRoom.c decides to change the filename
-                              of the current picture. */
+extern const char *NewFileName;  /* When ProcessRoom.c decides to change the filename
+                                    of the current picture. */
 
 extern char *LAMPONMSG, *TURNLEFT, *TURNRIGHT;
 extern char *GOFORWARDDIR, *NOPATH, *TAKEITEM, *USEONWHAT, *TAKEWHAT, *MOVEWHAT, *OPENWHAT, *CLOSEWHAT, *LOOKWHAT, *NOTHING, *USEMAP, *USEJOURNAL, *TURNLAMPON, *TURNLAMPOFF, *USEWHISKEY, *USEPITH, *USEHELMET;
