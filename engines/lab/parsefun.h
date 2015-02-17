@@ -77,7 +77,7 @@ void setCurClose(uint16 x, uint16 y, CloseDataPtr *cptr);
 
 bool takeItem(uint16 x, uint16 y, CloseDataPtr *cptr);
 
-bool doActionRule(int16 x, int16 y, int16 Action, int16 RoomNum, CloseDataPtr *LCPtr);
+bool doActionRule(int16 x, int16 y, int16 action, int16 RoomNum, CloseDataPtr *LCPtr);
 
 bool doOperateRule(int16 x, int16 y, int16 ItemNum, CloseDataPtr *LCPtr);
 

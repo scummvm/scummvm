@@ -716,10 +716,10 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 /*****************************************************************************/
 /* Does the work for doActionRule.                                           */
 /*****************************************************************************/
-static bool doActionRuleSub(int16 Action, int16 roomNum, CloseDataPtr LCPtr, CloseDataPtr *Set, bool AllowDefaults) {
+static bool doActionRuleSub(int16 action, int16 roomNum, CloseDataPtr LCPtr, CloseDataPtr *Set, bool AllowDefaults) {
 	RulePtr RPtr;
 
-	Action++;
+	action++;
 
 	if (LCPtr) {
 		RPtr = Rooms[roomNum].RuleList;
@@ -732,11 +732,11 @@ static bool doActionRuleSub(int16 Action, int16 roomNum, CloseDataPtr LCPtr, Clo
 
 		while (RPtr) {
 			if ((RPtr->RuleType == ACTION) &&
-			        ((RPtr->Param1 == Action) || ((RPtr->Param1 == 0) && AllowDefaults))) {
+			        ((RPtr->Param1 == action) || ((RPtr->Param1 == 0) && AllowDefaults))) {
 				if (((RPtr->Param2 == LCPtr->CloseUpType) ||
 				        ((RPtr->Param2 == 0) && AllowDefaults))
 				        ||
-				        ((Action == 1) && (RPtr->Param2 == (-LCPtr->CloseUpType)))) {
+				        ((action == 1) && (RPtr->Param2 == (-LCPtr->CloseUpType)))) {
 					if (checkConditions(RPtr->Condition)) {
 						doActions(RPtr->ActionList, Set);
 						return true;
@@ -754,7 +754,7 @@ static bool doActionRuleSub(int16 Action, int16 roomNum, CloseDataPtr LCPtr, Clo
 /*****************************************************************************/
 /* Goes through the rules if an action is taken.                             */
 /*****************************************************************************/
-bool doActionRule(int16 x, int16 y, int16 Action, int16 roomNum, CloseDataPtr *LCPtr) {
+bool doActionRule(int16 x, int16 y, int16 action, int16 roomNum, CloseDataPtr *LCPtr) {
 	CloseDataPtr TLCPtr;
 
 	if (roomNum)
@@ -764,13 +764,13 @@ bool doActionRule(int16 x, int16 y, int16 Action, int16 roomNum, CloseDataPtr *L
 
 	TLCPtr = getObject(x, y, *LCPtr);
 
-	if (doActionRuleSub(Action, roomNum, TLCPtr, LCPtr, false))
+	if (doActionRuleSub(action, roomNum, TLCPtr, LCPtr, false))
 		return true;
-	else if (doActionRuleSub(Action, roomNum, *LCPtr, LCPtr, false))
+	else if (doActionRuleSub(action, roomNum, *LCPtr, LCPtr, false))
 		return true;
-	else if (doActionRuleSub(Action, roomNum, TLCPtr, LCPtr, true))
+	else if (doActionRuleSub(action, roomNum, TLCPtr, LCPtr, true))
 		return true;
-	else if (doActionRuleSub(Action, roomNum, *LCPtr, LCPtr, true))
+	else if (doActionRuleSub(action, roomNum, *LCPtr, LCPtr, true))
 		return true;
 
 	return false;
