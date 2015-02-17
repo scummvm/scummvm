@@ -105,6 +105,12 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	char f[4];
 	data->read(f, 4);
+	for (uint l = 0; l < nameString.size(); ++l) {
+		if (nameString[l] == '\\') {
+			nameString.setChar('/', l);
+		}
+	}
+	_meshName = nameString;
 	_radius = get_float(f);
 	_center->readFromStream(data);
 
@@ -424,6 +430,8 @@ Math::AABB EMIModel::calculateWorldBounds(const Math::Matrix4 &matrix) const {
 
 EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *data, EMICostume *costume) :
 		_fname(filename), _costume(costume) {
+	_meshAlphaMode = Actor::AlphaOff;
+	_meshAlpha = 1.0;
 	_numVertices = 0;
 	_vertices = nullptr;
 	_drawVertices = nullptr;

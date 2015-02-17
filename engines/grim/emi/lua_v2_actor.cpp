@@ -76,7 +76,7 @@ void Lua_V2::SetActorLocalAlpha() {
 void Lua_V2::SetActorGlobalAlpha() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object alphaObj = lua_getparam(2);
-//  lua_Object meshObj = lua_getparam(3);
+	lua_Object meshObj = lua_getparam(3);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -88,13 +88,17 @@ void Lua_V2::SetActorGlobalAlpha() {
 	if (!lua_isnumber(alphaObj))
 		return;
 
+	const char *mesh = nullptr;
+	if (lua_isstring(meshObj)) {
+		mesh = lua_getstring(meshObj);
+	}
 	float alpha = lua_getnumber(alphaObj);
 	if (alpha == Actor::AlphaOff ||
 	    alpha == Actor::AlphaReplace ||
 	    alpha == Actor::AlphaModulate) {
-			actor->setAlphaMode((Actor::AlphaMode) (int) alpha);
+			actor->setAlphaMode((Actor::AlphaMode) (int) alpha, mesh);
 	} else {
-		actor->setGlobalAlpha(alpha);
+		actor->setGlobalAlpha(alpha, mesh);
 	}
 }
 

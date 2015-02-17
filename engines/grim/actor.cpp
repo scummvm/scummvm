@@ -1446,6 +1446,47 @@ float Actor::getLookAtRate() const {
 	return getCurrentCostume()->getLookAtRate();
 }
 
+EMIModel *Actor::findModelWithMesh(const Common::String &mesh) {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		EMICostume *costume = static_cast<EMICostume *>(*i);
+		if (!costume) {
+			continue;
+		}
+		for (int j = 0; j < costume->getNumChores(); j++) {
+			EMIModel *model = costume->getEMIModel(j);
+			if (!model) {
+				continue;
+			}
+			if (mesh == model->_meshName) {
+				return model;
+			}
+		}
+	}
+	return nullptr;
+}
+
+void Actor::setGlobalAlpha(float alpha, const Common::String &mesh) {
+	if (mesh.empty()) {
+		_globalAlpha = alpha;
+	} else {
+		EMIModel *model = findModelWithMesh(mesh);
+		if (model != nullptr) {
+			model->_meshAlpha = alpha;
+		}
+	}
+}
+
+void Actor::setAlphaMode(AlphaMode mode, const Common::String &mesh) {
+	if (mesh.empty()) {
+		_alphaMode = mode;
+	} else {
+		EMIModel *model = findModelWithMesh(mesh);
+		if (model != nullptr) {
+			model->_meshAlphaMode = mode;
+		}
+	}
+}
+
 Costume *Actor::findCostume(const Common::String &n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
 		if ((*i)->getFilename().compareToIgnoreCase(n) == 0)

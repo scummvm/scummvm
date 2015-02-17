@@ -759,6 +759,10 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 		glEnable(GL_BLEND);
 
 	glBegin(GL_TRIANGLES);
+	float alpha = _alpha;
+	if (model->_meshAlphaMode == Actor::AlphaReplace) {
+		alpha *= model->_meshAlpha;
+	}
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 
@@ -770,7 +774,7 @@ void GfxOpenGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 			byte r = (byte)(model->_colorMap[index].r * lighting.x());
 			byte g = (byte)(model->_colorMap[index].g * lighting.y());
 			byte b = (byte)(model->_colorMap[index].b * lighting.z());
-			byte a = (int)(model->_colorMap[index].a * _alpha * _currentActor->getLocalAlpha(index));
+			byte a = (int)(model->_colorMap[index].a * alpha * _currentActor->getLocalAlpha(index));
 			glColor4ub(r, g, b, a);
 		}
 
