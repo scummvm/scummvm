@@ -45,7 +45,7 @@ static byte *buffer = NULL, *realbufferstart = NULL, *startoffilestorage = NULL;
 byte **startoffile = &startoffilestorage;
 static uint32 buffersize, realbuffersize;
 
-uint32 ReadSoFar;
+int32 ReadSoFar;
 bool ReadIsError, ReadIsDone;
 
 /*****************************************************************************/

@@ -298,8 +298,8 @@ void mouseHideXY(void) {
 
 
 
-extern int g_MouseX;
-extern int g_MouseY;
+extern uint32 g_MouseX;
+extern uint32 g_MouseY;
 
 /*****************************************************************************/
 /* Gets the current mouse co-ordinates.  NOTE: On IBM version, will scale    */

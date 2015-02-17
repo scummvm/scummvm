@@ -54,8 +54,8 @@ int g_ScreenWasLocked = 0;
 int g_IgnoreUpdateDisplay = 0;
 int g_LastWaitTOFTicks = 0;
 
-int g_MouseX = 0;
-int g_MouseY = 0;
+uint32 g_MouseX = 0;
+uint32 g_MouseY = 0;
 
 uint16 g_NextKeyIn = 0;
 uint16 g_KeyBuf[64];

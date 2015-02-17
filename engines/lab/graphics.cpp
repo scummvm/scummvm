@@ -242,7 +242,7 @@ static void getLine(TextFont *tf, char *LineBuffer, const char **MainBuffer, uin
 /* each line less than 255 characters.                                        */
 /******************************************************************************/
 uint32 flowText(void *font,      /* the TextAttr pointer */
-                uint16 spacing,          /* How much vertical spacing between the lines */
+                int16 spacing,          /* How much vertical spacing between the lines */
                 uint16 pencolor,         /* pen number to use for text */
                 uint16 backpen,          /* the background color */
                 bool fillback,                /* Whether to fill the background */
@@ -314,7 +314,7 @@ extern byte *VGABASEADDRESS;
 /* Calls flowText, but flows it to memory.  Same restrictions as flowText.    */
 /******************************************************************************/
 uint32 flowTextToMem(Image *DestIm, void *font,     /* the TextAttr pointer */
-                     uint16 spacing,          /* How much vertical spacing between the lines */
+                     int16 spacing,          /* How much vertical spacing between the lines */
                      uint16 pencolor,         /* pen number to use for text */
                      uint16 backpen,          /* the background color */
                      bool fillback,                /* Whether to fill the background */
