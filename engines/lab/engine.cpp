@@ -715,12 +715,12 @@ static void process(void) {
 	IntuiMessage *Msg;
 	uint32 Class;
 
-	uint16 Code, Qualifier, MouseX, MouseY, ActionMode = 4;
+	uint16 Code = 0, Qualifier, MouseX, MouseY, ActionMode = 4;
 	uint16 CurInv = MAPNUM, LastInv = MAPNUM, Old;
 
 	bool ForceDraw = false, doit, GotMessage = true;
 
-	uint16 OldRoomNum, OldDirection, GadID, NewDir;
+	uint16 OldRoomNum, OldDirection = 0, GadID = 0, NewDir;
 
 	CloseDataPtr OldCPtr, TempCPtr, HCPtr = NULL;
 	ViewDataPtr VPtr;
