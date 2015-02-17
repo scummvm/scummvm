@@ -25,7 +25,9 @@
 
 #include "common/array.h"
 #include "common/str.h"
-#include "engines/stark/gfx/coordinate.h"
+
+#include "math/quat.h"
+#include "math/vector3d.h"
 
 namespace Stark {
 
@@ -42,7 +44,9 @@ public:
 	int _parent;
 	int _idx;
 
-	Gfx::Coordinate _animPos;
+	Math::Vector3d _animPos;
+	Math::Quaternion _animRot;
+	Math::Matrix4 _animTransform;
 };
 
 /**
@@ -68,10 +72,13 @@ public:
 	 */
 	void readFromStream(ArchiveReadStream *stream);
 
-	const Common::Array<BoneNode *> &getBones() const { return _bones; }
+	/**
+	 * Transform the vertex so that it is attached to the requested bone
+	 */
+	void applyBoneTransform(uint32 boneIdx, Math::Vector3d &vertex);
 
 private:
-	void setNode(uint32 time, BoneNode *bone, const Gfx::Coordinate &parentCoord);
+	void setNode(uint32 time, BoneNode *bone, const BoneNode *parent);
 
 	Common::Array<BoneNode *> _bones;
 	SkeletonAnim *_anim;

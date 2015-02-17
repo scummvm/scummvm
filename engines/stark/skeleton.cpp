@@ -22,7 +22,6 @@
 
 #include "engines/stark/skeleton.h"
 
-#include "engines/stark/gfx/coordinate.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/skeleton_anim.h"
@@ -69,14 +68,25 @@ void Skeleton::setAnim(SkeletonAnim *anim) {
 	_anim = anim;
 }
 
-void Skeleton::setNode(uint32 time, BoneNode *bone, const Gfx::Coordinate &parentCoord) {
-	Gfx::Coordinate animCoord = _anim->getCoordForBone(time, bone->_idx);
-	animCoord.rotate(parentCoord);
-	bone->_animPos = parentCoord + animCoord;
+void Skeleton::setNode(uint32 time, BoneNode *bone, const BoneNode *parent) {
+	_anim->getCoordForBone(time, bone->_idx, bone->_animPos, bone->_animRot);
+
+	if (parent) {
+		parent->_animTransform.transform(&bone->_animPos, true);
+		bone->_animRot = parent->_animRot * bone->_animRot;
+	}
+
+	bone->_animTransform = bone->_animRot.toMatrix();
+	bone->_animTransform.setPosition(bone->_animPos);
 
 	for (uint i = 0; i < bone->_children.size(); ++i) {
-		setNode(time, _bones[bone->_children[i]], bone->_animPos);
+		setNode(time, _bones[bone->_children[i]], bone);
 	}
+}
+
+void Skeleton::applyBoneTransform(uint32 boneIdx, Math::Vector3d &vertex) {
+       const BoneNode *bone = _bones[boneIdx];
+       bone->_animTransform.transform(&vertex, true);
 }
 
 void Skeleton::animate(uint32 time) {
@@ -86,7 +96,7 @@ void Skeleton::animate(uint32 time) {
 	//  - Process that childs children
 
 	if (time != _lastTime) {
-		setNode(time, _bones[0], Gfx::Coordinate());
+		setNode(time, _bones[0], nullptr);
 		_lastTime = time;
 	}
 }

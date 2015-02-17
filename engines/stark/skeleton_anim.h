@@ -23,8 +23,6 @@
 #ifndef STARK_SKELETON_ANIM_H
 #define STARK_SKELETON_ANIM_H
 
-#include "engines/stark/gfx/coordinate.h"
-
 #include "math/quat.h"
 #include "math/vector3d.h"
 #include "common/array.h"
@@ -64,7 +62,7 @@ public:
 	/**
 	 * Get the interpolated bone coordinate for a given bone at a given animation timestamp
 	 */
-	Gfx::Coordinate getCoordForBone(uint32 time, int boneIdx);
+	void getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot);
 
 	/**
 	 * Get total animation length (in ms)

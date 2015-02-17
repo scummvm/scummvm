@@ -70,7 +70,7 @@ void VisualActor::render(Gfx::Driver *gfx, const Math::Vector3d position, float 
 	glRotatef(90, 1.f, 0.f, 0.f);
 	glRotatef(90 - (_actor->getFacingDirection() + direction), 0.f, 1.f, 0.f);
 
-	Common::Array<BoneNode *> bones = _actor->getSkeleton()->getBones();
+	Skeleton *skeleton = _actor->getSkeleton();
 	Common::Array<MeshNode *> meshes = _actor->getMeshes();
 	Common::Array<MaterialNode *> mats = _actor->getMaterials();
 	const Gfx::TextureSet *texture = _actor->getTextureSet();
@@ -104,23 +104,19 @@ void VisualActor::render(Gfx::Driver *gfx, const Math::Vector3d position, float 
 					else
 						vertIdx = (*tri)->_vert2;
 
+					Math::Vector3d b1 = (*face)->_verts[vertIdx]->_pos1;
+					skeleton->applyBoneTransform((*face)->_verts[vertIdx]->_bone1, b1);
 
-					Gfx::Coordinate b1 = (*face)->_verts[vertIdx]->_pos1;
-					BoneNode *bone = bones[(*face)->_verts[vertIdx]->_bone1];
-					b1.rotate(bone->_animPos);
-					b1.translate(bone->_animPos);
-
-					Gfx::Coordinate b2 = (*face)->_verts[vertIdx]->_pos2;
-					bone = bones[(*face)->_verts[vertIdx]->_bone2];
-					b2.rotate(bone->_animPos);
-					b2.translate(bone->_animPos);
+					Math::Vector3d b2 = (*face)->_verts[vertIdx]->_pos2;
+					skeleton->applyBoneTransform((*face)->_verts[vertIdx]->_bone2, b2);
 
 					float w = (*face)->_verts[vertIdx]->_boneWeight;
-					Gfx::Coordinate pos = b1 * w + b2 * (1.f - w);
+					Math::Vector3d pos = b1 * w + b2 * (1.f - w);
+
 					if (tex)
 						glTexCoord2f(-(*face)->_verts[vertIdx]->_texS, (*face)->_verts[vertIdx]->_texT);
 
-					glVertex3f(pos.getX(), pos.getY(), -pos.getZ()); // - is LHS->RHS
+					glVertex3f(pos.x(), pos.y(), -pos.z()); // - is LHS->RHS
 				}
 			}
 			glEnd();

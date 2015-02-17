@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	actor.o \
 	console.o \
 	detection.o \
-	gfx/coordinate.o \
 	gfx/driver.o \
 	gfx/opengl.o \
 	gfx/opengltexture.o \

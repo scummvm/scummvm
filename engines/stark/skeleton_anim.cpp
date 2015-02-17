@@ -72,14 +72,12 @@ void SkeletonAnim::createFromStream(ArchiveReadStream *stream) {
 	}
 }
 
-Gfx::Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
-	Gfx::Coordinate c;
-
+void SkeletonAnim::getCoordForBone(uint32 time, int boneIdx, Math::Vector3d &pos, Math::Quaternion &rot) {
 	for (Common::Array<AnimKey *>::iterator it = _anims[boneIdx]->_keys.begin(); it < _anims[boneIdx]->_keys.end(); ++it) {
 		if ((*it)->_time == time) {
 			AnimKey *key = *it;
-			c.setTranslation(key->_pos);
-			c.setRotation(key->_rot);
+			pos = key->_pos;
+			rot = key->_rot;
 			break;
 
 		} else if ((*it)->_time > time) {
@@ -90,14 +88,12 @@ Gfx::Coordinate SkeletonAnim::getCoordForBone(uint32 time, int boneIdx) {
 
 			float t = (float)(time - b->_time) / (float)(a->_time - b->_time);
 
-			c.setTranslation(b->_pos + (a->_pos - b->_pos) * t);
-			c.setRotation(b->_rot.slerpQuat(a->_rot, t));
+			pos = b->_pos + (a->_pos - b->_pos) * t;
+			rot = b->_rot.slerpQuat(a->_rot, t);
 
 			break;
 		}
 	}
-
-	return c;
 }
 
 } // End of namespace Stark
