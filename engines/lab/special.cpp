@@ -126,7 +126,7 @@ static void doCombination(void) {
 }
 
 
-extern char *TempScrollData;
+extern byte *TempScrollData;
 
 /*****************************************************************************/
 /* Reads in a backdrop picture.                                              */
@@ -245,7 +245,7 @@ void mouseCombination(uint16 x, uint16 y) {
 /*----------------------------------------------------------------------------*/
 
 Image *Tiles[16];
-int16 CurTile[4] [4] = {
+uint16 CurTile[4] [4] = {
 	{ 1, 5,  9, 13 },
 	{ 2, 6, 10, 14 },
 	{ 3, 7, 11, 15 },
@@ -1338,7 +1338,7 @@ static bool processSaveLoad() {
 
 			if (((Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Qualifier)) ||
 			        ((Class == RAWKEY) && (Code == 27)))
-				return -1;
+				return true;
 
 			if (Class == RAWKEY) {
 				if (Code == 'l' || Code == 'L') {
@@ -1422,7 +1422,7 @@ static bool processSaveLoad() {
 							break;
 
 						case ID_CANCEL:
-							return -1;
+							return true;
 						}
 					}
 				}
