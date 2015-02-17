@@ -2282,10 +2282,40 @@ static const uint16 qfg3PatchWooDialog[] = {
 	PATCH_END
 };
 
+// Alternative version, with uint16 offsets, for GOG release of QfG3.
+static const uint16 qfg3SignatureWooDialogAlt[] = {
+	SIG_MAGICDWORD,
+	0x67, 0x12,                         // pTos 12 (query)
+	0x35, 0xb6,                         // ldi b6
+	0x1a,                               // eq?
+	0x2e, SIG_UINT16(0x0005),           // bt 05
+	0x67, 0x12,                         // pTos 12 (query)
+	0x35, 0x9b,                         // ldi 9b
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x000c),           // bnt 0c
+	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi 0297
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x010c),           // pushi 010c
+	0x7a,                               // push2
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x08,                         // send 08
+	0x67, 0x12,                         // pTos 12 (query)
+	0x35, 0xb5,                         // ldi b5
+	SIG_END
+};
+
+static const uint16 qfg3PatchWooDialogAlt[] = {
+	PATCH_ADDTOOFFSET(+0x2C),
+	0x33, 0x12,                         // jmp to 0x708, the call to hero::solvePuzzle for 0xFFFC
+	PATCH_END
+};
+
+
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
 	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt, qfg3PatchWooDialogAlt },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
