@@ -42,14 +42,11 @@ extern uint32 VGAScreenWidth, VGAScreenHeight;
 void mouseHideXY(void);
 
 static bool LeftClick = false;
-static uint16 leftx = 0, lefty = 0;
 static bool RightClick = false;
-static uint16 rightx = 0, righty = 0;
 
 static bool MouseHidden = true, QuitMouseHandler = false;
 static int32 NumHidden   = 1;
 static uint16 CurMouseX, CurMouseY;
-static uint16 MouseImageWidth = 10, MouseImageHeight = 15;
 static Gadget *LastGadgetHit = NULL;
 Gadget *ScreenGadgetList = NULL;
 static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -68,6 +65,8 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 						   0, 0, 0, 0, 0, 1, 7, 7, 1, 0,
 						   0, 0, 0, 0, 0, 0, 1, 1, 0, 0};
 
+#define MOUSE_WIDTH 10
+#define MOUSE_HEIGHT 15
 
 static bool drawmouse = false, gadhit    = false;
 static Gadget *hitgad = NULL;
@@ -127,14 +126,14 @@ void attachGadgetList(Gadget *GadList) {
 static Gadget *TempGad;
 
 
-void mouse_handler(int32 max, int32 mcx, int32 mdx) {
+void mouse_handler(int32 flag, int32 mouseX, int32 mouseY) {
 	if (!IsHiRes)
-		mcx /= 2;
+		mouseX /= 2;
 
-	if (max & 0x01) { /* mouse Move */
-		if ((CurMouseX != mcx) || (CurMouseY != mdx)) {
-			CurMouseX = mcx;
-			CurMouseY = mdx;
+	if (flag & 0x01) { /* mouse Move */
+		if ((CurMouseX != mouseX) || (CurMouseY != mouseY)) {
+			CurMouseX = mouseX;
+			CurMouseY = mouseY;
 
 			if (IsHiRes && !QuitMouseHandler) {
 				drawmouse = true;
@@ -142,9 +141,9 @@ void mouse_handler(int32 max, int32 mcx, int32 mdx) {
 		}
 	}
 
-	if ((max & 0x02) && (NumHidden < 2)) { /* Left mouse button click */
+	if ((flag & 0x02) && (NumHidden < 2)) { /* Left mouse button click */
 		if (ScreenGadgetList)
-			TempGad = checkGadgetHit(ScreenGadgetList, mcx, mdx);
+			TempGad = checkGadgetHit(ScreenGadgetList, mouseX, mouseY);
 		else
 			TempGad = NULL;
 
@@ -152,15 +151,15 @@ void mouse_handler(int32 max, int32 mcx, int32 mdx) {
 			LastGadgetHit = TempGad;
 		} else {
 			LeftClick = true;
-			leftx     = mcx;
-			lefty     = mdx;
+			CurMouseX     = mouseX;
+			CurMouseY     = mouseY;
 		}
 	}
 
-	if ((max & 0x08) && (NumHidden < 2)) { /* Right mouse button click */
+	if ((flag & 0x08) && (NumHidden < 2)) { /* Right mouse button click */
 		RightClick = true;
-		rightx     = mcx;
-		righty     = mdx;
+		CurMouseX     = mouseX;
+		CurMouseY     = mouseY;
 	}
 }
 
@@ -206,7 +205,7 @@ void updateMouse(void) {
 /* Initializes the mouse.                                                    */
 /*****************************************************************************/
 bool initMouse(void) {
-	g_system->setMouseCursor(MouseData, MouseImageWidth, MouseImageHeight, 0, 0, 0);
+	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
 
 	mouseMove(0, 0);
@@ -344,15 +343,15 @@ void mouseMove(uint16 x, uint16 y) {
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = leftx;
-			*y = lefty;
+			*x = CurMouseX;
+			*y = CurMouseY;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = rightx;
-			*y = righty;
+			*x = CurMouseX;
+			*y = CurMouseY;
 			RightClick = false;
 			return true;
 		}
