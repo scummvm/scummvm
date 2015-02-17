@@ -150,6 +150,8 @@ public:
 	void notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait);
 
 	void checkPartyDead();
+
+	void moveToRunLocation();
 };
 
 } // End of namespace Xeen

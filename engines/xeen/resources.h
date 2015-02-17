@@ -522,6 +522,8 @@ extern const int RACE_ENERGY_RESISTENCES[5];
 extern const int RACE_POISON_RESISTENCES[5];
 extern const int NEW_CHARACTER_SPELLS[10][4];
 
+extern const char *const COMBAT_DETAILS;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

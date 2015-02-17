@@ -54,6 +54,8 @@ public:
 	void highlightChar(int charId);
 
 	void unhighlightChar();
+
+	void resetHighlight();
 };
 
 /**
@@ -103,6 +105,8 @@ private:
 	void shake(int time);
 
 	void drawMiniMap();
+
+	void nextChar();
 public:
 	int _intrIndex1;
 	Common::String _interfaceText;

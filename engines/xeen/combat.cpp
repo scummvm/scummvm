@@ -96,6 +96,10 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	_itemFlag = false;
 	_monstersAttacking = false;
 	_combatMode = 0;
+	_monsterIndex = 0;
+	_partyRan = false;
+	_monster2Attack = -1;
+	_whosSpeed = 0;
 }
 
 void Combat::clear() {
@@ -412,9 +416,7 @@ void Combat::monstersAttack() {
 	if (_vm->_mode != MODE_COMBAT) {
 		// Combat wasn't previously active, but it is now. Set up
 		// the combat party from the currently active party
-		_combatParty.clear();
-		for (uint idx = 0; idx < party._activeParty.size(); ++idx)
-			_combatParty.push_back(&party._activeParty[idx]);
+		setupCombatParty();
 	}
 
 	for (int idx = 0; idx < 36; ++idx) {
@@ -574,5 +576,151 @@ bool Combat::stopAttack(const Common::Point &diffPt) {
 	// TODO
 	return false;
 }
+
+/**
+ * Setup the combat party with a copy of the currently active party
+ */
+void Combat::setupCombatParty() {
+	Party &party = *_vm->_party;
+
+	_combatParty.clear();
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx)
+		_combatParty.push_back(&party._activeParty[idx]);
+}
+
+void Combat::setSpeedTable() {
+	Map &map = *_vm->_map;
+	Common::Array<int> charSpeeds;
+	bool flag = _whosSpeed != -1;
+	int oldSpeed = (_whosSpeed == -1) ? 0 : _speedTable[_whosSpeed];
+
+	Common::fill(&_speedTable[0], &_speedTable[12], -1);
+	Common::fill(&charSpeeds[0], &charSpeeds[12], -1);
+
+	// Set up speeds for party membres
+	int maxSpeed = 0;
+	for (uint charNum = 0; charNum < _combatParty.size(); ++charNum) {
+		Character &c = *_combatParty[charNum];
+		charSpeeds.push_back(c.getStat(SPEED));
+
+		maxSpeed = MAX(charSpeeds[charNum], maxSpeed);
+	}
+
+	// Add in speeds of attacking monsters
+	for (int monsterNum = 0; monsterNum < 3; ++monsterNum) {
+		if (_attackMonsters[monsterNum] != -1) {
+			MazeMonster &monster = map._mobData._monsters[_attackMonsters[monsterNum]];
+			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+			charSpeeds.push_back(monsterData._speed);
+
+			maxSpeed = MAX(maxSpeed, monsterData._speed);
+		} else {
+			charSpeeds.push_back(0);
+		}
+	}
+
+	_speedTable.clear();
+	for (; maxSpeed >= 0; --maxSpeed) {
+		for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
+			if (charSpeeds[idx] == maxSpeed)
+				_speedTable.push_back(idx);
+		}
+	}
+
+	if (flag) {
+		if (_speedTable[_whosSpeed] != oldSpeed) {
+			for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
+				if (oldSpeed == _speedTable[idx]) {
+					_whosSpeed = idx;
+					break;
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Returns true if all participants in the combat are disabled
+ */
+bool Combat::allHaveGone() const {
+	for (uint idx = 0; idx < _charsGone.size(); ++idx) {
+		if (!_charsGone[idx]) {
+			if (idx >= _combatParty.size()) {
+				return false;
+			} else {
+				Condition condition = _combatParty[idx]->worstCondition();
+				if (condition < PARALYZED || condition == NO_CONDITION)
+					return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Combat::charsCantAct() const {
+	for (uint idx = 0; idx < _combatParty.size(); ++idx) {
+		Condition condition = _combatParty[idx]->worstCondition();
+
+		if (!(condition == ASLEEP || (condition >= PARALYZED && condition != NO_CONDITION)))
+			return false;
+	}
+
+	return true;
+}
+
+Common::String Combat::getMonsterDescriptions() {
+	Map &map = *_vm->_map;
+	Common::String lines[3];
+
+	// Get names of monsters attacking, if any
+	for (int idx = 0; idx < 3; ++idx) {
+		if (_attackMonsters[idx] != -1) {
+			MazeMonster &monster = map._mobData._monsters[_attackMonsters[idx]];
+			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+
+			Common::String format = "\n\v020\f%2u%s\fd";
+			format.setChar('2' + idx, 3);
+			lines[idx] = Common::String::format(format.c_str(), monsterData._name.c_str());
+		}
+	}
+
+	if (_monsterIndex == 2 && _attackMonsters[2] != -1) {
+		_monster2Attack = _attackMonsters[2];
+	} if (_monsterIndex == 1 && _attackMonsters[1] != -1) {
+		_monster2Attack = _attackMonsters[1];
+	} else {
+		_monster2Attack = _attackMonsters[0];
+		_monsterIndex = 0;
+	}
+
+	return Common::String::format(COMBAT_DETAILS, lines[0].c_str(),
+		lines[1].c_str(), lines[2].c_str());
+}
+
+void Combat::attack(Character &c, int v2) {
+	error("TODO");
+}
+
+void Combat::block() {
+	_charsBlocked[_whosTurn] = true;
+}
+
+bool Combat::castSpell(bool flag) {
+	error("TODO: castSpell");
+}
+
+void Combat::quickFight() {
+	error("TODO: quickFight");
+}
+
+void Combat::giveTreasure() {
+	error("TODO: giveTreasure");
+}
+
+void Combat::run() {
+	error("TODO: run");
+}
+
 
 } // End of namespace Xeen

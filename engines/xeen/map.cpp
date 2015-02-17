@@ -67,7 +67,7 @@ MonsterStruct::MonsterStruct() {
 	_imageNumber = 0;
 	_loopAnimation = 0;
 	_animationEffect = 0;
-	_field32 = 0;
+	_fx = 0;
 }
 
 MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int accuracy,
@@ -78,7 +78,7 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ac
 		int poisonResistence, int energyResistence, int magicResistence,
 		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
 		bool flying, int imageNumber, int loopAnimation, int animationEffect,
-		int field32, Common::String attackVoc):
+		int fx, Common::String attackVoc):
 		_name(name), _experience(experience), _hp(hp), _accuracy(accuracy),
 		_speed(speed), _numberOfAttacks(numberOfAttacks), _hatesClass(hatesClass), 
 		_strikes(strikes), _dmgPerStrike(dmgPerStrike), _attackType(attackType), 
@@ -89,9 +89,8 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ac
 		_magicResistence(magicResistence), _phsyicalResistence(phsyicalResistence), 
 		_field29(field29), _gold(gold), _gems(gems), _itemDrop(itemDrop),
 		_flying(flying), _imageNumber(imageNumber), _loopAnimation(loopAnimation),
-		_animationEffect(animationEffect), _field32(field32), _attackVoc(attackVoc) {
+		_animationEffect(animationEffect), _fx(fx), _attackVoc(attackVoc) {
 }
-
 
 void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	char name[16];
@@ -127,7 +126,7 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	_imageNumber = s.readByte();
 	_loopAnimation = s.readByte();
 	_animationEffect = s.readByte();
-	_field32 = s.readByte();
+	_fx = s.readByte();
 	
 	char attackVoc[10];
 	s.read(attackVoc, 9);

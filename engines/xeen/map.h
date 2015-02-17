@@ -77,7 +77,7 @@ public:
 	int _imageNumber;
 	int _loopAnimation;
 	int _animationEffect;
-	int _field32;
+	int _fx;
 	Common::String _attackVoc;
 public:
 	MonsterStruct();

@@ -818,6 +818,9 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_currentCombatSpell);
 }
 
+/**
+ * Returns the worst condition the character is suffering from
+ */
 Condition Character::worstCondition() const {
 	for (int cond = ERADICATED; cond >= CURSED; --cond) {
 		if (_conditions[cond])
@@ -827,6 +830,28 @@ Condition Character::worstCondition() const {
 	return NO_CONDITION;
 }
 
+/**
+ * Returns whether the given character has a disabling condition, but still alive
+ */
+bool Character::isDisabled() const {
+	Condition condition = worstCondition();
+
+	return condition == ASLEEP || condition == PARALYZED || condition == UNCONSCIOUS
+		|| condition == STONED || condition == ERADICATED;
+}
+
+/**
+* Returns whether the given character has a disabling condition, or is dead
+*/
+bool Character::isDisabledOrDead() const {
+	Condition condition = worstCondition();
+
+	return condition == ASLEEP || (condition >= PARALYZED && condition <= ERADICATED);
+}
+
+/**
+ * Get the character's age
+ */
 int Character::getAge(bool ignoreTemp) const {
 	int year = MIN(Party::_vm->_party->_year - _birthYear, (uint)254);
 

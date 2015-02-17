@@ -57,15 +57,17 @@ private:
 	XeenEngine *_vm;
 public:
 	Common::Array<Character *> _combatParty;
-	Common::Array<int> _charsBlocked;
+	Common::Array<bool> _charsBlocked;
 	Common::Array<int> _charsGone;
 	SpriteResource _powSprites;
 	int _attackMonsters[26];
+	int _monster2Attack;
 	int _charsArray1[12];
 	bool _monPow[12];
 	int _monsterScale[12];
 	int _elemPow[12];
 	int _elemScale[12];
+	Common::Array<int> _speedTable;
 	int _shooting[8];
 	int _globalCombat;
 	int _whosTurn;
@@ -76,6 +78,9 @@ public:
 	int _gmonHit[36];
 	bool _monstersAttacking;
 	int _combatMode;
+	int _monsterIndex;
+	bool _partyRan;
+	int _whosSpeed;
 
 	void monstersAttack();
 
@@ -101,6 +106,28 @@ public:
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 
 	void moveMonsters();
+
+	void setupCombatParty();
+
+	void setSpeedTable();
+
+	bool allHaveGone() const;
+
+	bool charsCantAct() const;
+
+	Common::String getMonsterDescriptions();
+
+	void attack(Character &c, int v2);
+
+	void block();
+
+	bool castSpell(bool flag);
+
+	void quickFight();
+
+	void giveTreasure();
+
+	void run();
 };
 
 } // End of namespace Xeen

@@ -1496,4 +1496,6 @@ const int NEW_CHARACTER_SPELLS[10][4] = {
 	{ 20, 1, -1, -1 }
 };
 
+const char *const COMBAT_DETAILS = "\r\f00\x03c\v000\t000\x02Combat%s%s%s\x1";
+
 } // End of namespace Xeen

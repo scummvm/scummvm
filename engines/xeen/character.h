@@ -270,6 +270,10 @@ public:
 
 	Condition worstCondition() const;
 
+	bool isDisabled() const;
+
+	bool isDisabledOrDead() const;
+
 	int getAge(bool ignoreTemp = false) const;
 
 	int getMaxHP() const;

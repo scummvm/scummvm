@@ -545,4 +545,11 @@ void Party::checkPartyDead() {
 	_dead = true;
 }
 
+/**
+ * Move party position to the run destination on the current map
+ */
+void Party::moveToRunLocation() {
+	_mazePosition = _vm->_map->mazeData()._runPosition;
+}
+
 } // End of namespace Xeen

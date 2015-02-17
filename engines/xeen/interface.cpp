@@ -21,10 +21,13 @@
  */
 
 #include "xeen/interface.h"
-#include "xeen/dialogs_char_info.h"
-#include "xeen/dialogs_error.h"
 #include "xeen/dialogs_automap.h"
+#include "xeen/dialogs_char_info.h"
+#include "xeen/dialogs_control_panel.h"
+#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_fight_options.h"
 #include "xeen/dialogs_info.h"
+#include "xeen/dialogs_items.h"
 #include "xeen/dialogs_query.h"
 #include "xeen/dialogs_quests.h"
 #include "xeen/dialogs_quick_ref.h"
@@ -121,6 +124,9 @@ void PartyDrawer::unhighlightChar() {
 	}
 }
 
+void PartyDrawer::resetHighlight() {
+	_hiliteChar = -1;
+}
 /*------------------------------------------------------------------------*/
 
 Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), 
@@ -320,7 +326,11 @@ void Interface::perform() {
 	case Common::KEYCODE_TAB:
 		// Stop mosters doing any movement
 		_vm->_moveMonsters = false;
-		warning("TODO: showControlPanel");
+		if (ControlPanel::show(_vm) == -1) {
+			_vm->_quitMode = 2;
+		} else {
+			_vm->_moveMonsters = 1;
+		}
 		break;
 
 	case Common::KEYCODE_SPACE:
@@ -1811,9 +1821,13 @@ void Interface::assembleBorder() {
 void Interface::doCombat() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	Scripts &scripts = *_vm->_scripts;
+	SoundManager &sound = *_vm->_sound;
 	bool upDoorText = _upDoorText;
+	bool reloadMap = false;
 	
 	_upDoorText = false;
 	combat._combatMode = 2;
@@ -1827,9 +1841,345 @@ void Interface::doCombat() {
 	setMainButtons(true);
 	mainIconsPrint();
 
+	combat._combatParty.clear();
+	combat._charsGone.clear();
+	combat._charsBlocked.clear();
+	combat._charsArray1[0] = 0;
+	combat._charsArray1[1] = 0;
+	combat._charsArray1[2] = 0;
+	combat._monstersAttacking = 0;
+	combat._partyRan = false;
 
+	// Set up the combat party
+	combat.setupCombatParty();
+	combat.setSpeedTable();
+	combat._whosSpeed = -1;
+	combat._whosTurn = -1;
+	resetHighlight();
 
-	error("TODO");
+	nextChar();
+
+	if (!party._dead) {
+		combat.setSpeedTable();
+		if (_tillMove) {
+			combat.moveMonsters();
+			draw3d(true);
+		}
+
+		Window &w = screen._windows[2];
+		w.open();
+		bool breakFlag = false;
+
+		while (!_vm->shouldQuit() && !breakFlag) {
+			highlightChar(combat._whosTurn);
+			combat.setSpeedTable();
+
+			// Write out the description of the monsters being battled
+			w.writeString(combat.getMonsterDescriptions());
+			_iconSprites.draw(screen, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
+				0x8010000);
+			w.update();
+
+			// Wait for keypress
+			int index = 0;
+			do {
+				events.updateGameCounter();
+				draw3d(true);
+
+				if (++index == 5 && combat._attackMonsters[0] != -1) {
+					MazeMonster &monster = map._mobData._monsters[combat._monster2Attack];
+					MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+					sound.playFX(monsterData._fx);
+				}
+
+				do {
+					events.pollEventsAndWait();
+					checkEvents(_vm);
+				} while (!_vm->shouldQuit() && events.timeElapsed() < 1 && !_buttonValue);
+			} while (!_vm->shouldQuit() && !_buttonValue);
+			if (_vm->shouldQuit())
+				return;
+
+			switch (_buttonValue) {
+			case Common::KEYCODE_TAB:
+				// Show the control panel
+				if (ControlPanel::show(_vm) == 2) {
+					reloadMap = true;
+					breakFlag = true;
+				} else {
+					highlightChar(combat._whosTurn);
+				}
+				break;
+
+			case Common::KEYCODE_1:
+			case Common::KEYCODE_2:
+			case Common::KEYCODE_3:
+				_buttonValue -= Common::KEYCODE_1;
+				if (combat._attackMonsters[_buttonValue] != -1) {
+					combat._monster2Attack = combat._attackMonsters[_buttonValue];
+					combat._monsterIndex = _buttonValue;
+				}
+				break;
+
+			case Common::KEYCODE_a:
+				// Attack
+				combat.attack(*combat._combatParty[combat._whosTurn], 0);
+				nextChar();
+				break;
+
+			case Common::KEYCODE_b:
+				// Block
+				combat.block();
+				nextChar();
+				break;
+				
+			case Common::KEYCODE_c:
+				// Cast Spell
+				if (combat.castSpell(false)) {
+					nextChar();
+				} else {
+					highlightChar(combat._combatParty[combat._whosTurn]->_rosterId);
+				}
+				break;
+
+			case Common::KEYCODE_f:
+				// Quick Fight
+				combat.quickFight();
+				nextChar();
+				break;
+
+			case Common::KEYCODE_i:
+				// Info dialog
+				InfoDialog::show(_vm);
+				highlightChar(combat._whosTurn);
+				break;
+
+			case Common::KEYCODE_o:
+				// Fight Options
+				FightOptions::show(_vm);
+				highlightChar(combat._whosTurn);
+				break;
+			
+			case Common::KEYCODE_q:
+				// Quick Reference dialog
+				QuickReferenceDialog::show(_vm);
+				highlightChar(combat._whosTurn);
+				break;
+
+			case Common::KEYCODE_r:
+				// Run from combat
+				combat.run();
+				nextChar();
+
+				if (_vm->_mode == MODE_1) {
+					warning("TODO: loss of treasure");
+					party.moveToRunLocation();
+					breakFlag = true;
+				}
+				break;
+
+			case Common::KEYCODE_u: {
+				int whosTurn = combat._whosTurn;
+				ItemsDialog::show(_vm, combat._combatParty[combat._whosTurn], ITEMMODE_COMBAT);
+				if (combat._whosTurn == whosTurn) {
+					highlightChar(combat._whosTurn);
+				} else {
+					combat._whosTurn = whosTurn;
+					nextChar();
+				}
+				break;
+			}
+
+			case Common::KEYCODE_F1:
+			case Common::KEYCODE_F2:
+			case Common::KEYCODE_F3:
+			case Common::KEYCODE_F4:
+			case Common::KEYCODE_F5:
+			case Common::KEYCODE_F6:
+				// Show character info
+				_buttonValue -= Common::KEYCODE_F1;
+				if (_buttonValue < (int)combat._combatParty.size()) {
+					CharacterInfo::show(_vm, _buttonValue);
+				}
+				highlightChar(combat._whosTurn);
+				break;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_RIGHT:
+				// Rotate party direction left or right
+				if (_buttonValue == Common::KEYCODE_LEFT) {
+					party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? 
+						DIR_WEST : (Direction)((int)party._mazeDirection - 1);
+				} else {
+					party._mazeDirection = (party._mazeDirection == DIR_WEST) ?
+					DIR_NORTH : (Direction)((int)party._mazeDirection + 1);
+				}
+
+				_flipSky ^= 1;
+				if (_tillMove)
+					combat.moveMonsters();
+				party._stepped = true;
+				break;
+			}
+
+			// Handling for if the combat turn is complete
+			if (combat.allHaveGone()) {
+				Common::fill(&combat._charsGone[0], &combat._charsGone[combat._charsGone.size()], false);
+				Common::fill(&combat._charsBlocked[0], &combat._charsBlocked[combat._charsBlocked.size()], false);
+				combat.setSpeedTable();
+				combat._whosTurn = -1;
+				combat._whosSpeed = -1;
+				nextChar();
+
+				for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
+					MazeMonster &monster = map._mobData._monsters[idx];
+					if (monster._spriteId == 53) {
+						warning("TODO: Monster 53's HP is altered here?!");
+					}
+				}
+
+				combat.moveMonsters();
+				setIndoorsMonsters();
+				party.changeTime(1);
+			}
+
+			if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
+					&& combat._attackMonsters[2] == -1) {
+				party.changeTime(1);
+				draw3d(true);
+
+				if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
+						&& combat._attackMonsters[2] == -1)
+					break;
+			}
+
+			party.checkPartyDead();
+			if (party._dead || _vm->_mode != MODE_COMBAT)
+				break;
+		}
+
+		_vm->_mode = MODE_1;
+		if (combat._partyRan && (combat._attackMonsters[0] != -1 ||
+				combat._attackMonsters[1] != -1 || combat._attackMonsters[2] != -1)) {
+			party.checkPartyDead();
+			if (!party._dead) {
+				party.moveToRunLocation();
+
+				for (uint idx = 0; idx < combat._combatParty.size(); ++idx) {
+					Character &c = *combat._combatParty[idx];
+					if (c.isDisabled())
+						c._conditions[DEAD] = 1;
+				}
+			}
+		}
+
+		w.close();
+		events.clearEvents();
+
+		_vm->_mode = MODE_COMBAT;
+		draw3d(true);
+		combat.giveTreasure();
+		_vm->_mode = MODE_1;
+		party._stepped = true;
+		unhighlightChar();
+
+		combat.setupCombatParty();
+		drawParty(true);
+	}
+
+	_iconSprites.load("main.icn");
+	for (int idx = 1; idx < 16; ++idx)
+		_mainList[idx]._sprites = &_iconSprites;
+
+	setMainButtons();
+	mainIconsPrint();
+	combat._monster2Attack = -1;
+
+	if (upDoorText) {
+		map.cellFlagLookup(party._mazePosition);
+		if (map._currentIsEvent)
+			scripts.checkEvents();
+	}
+
+	if (reloadMap) {
+		sound.playFX(51);
+		map._loadDarkSide = _vm->getGameID() != GType_WorldOfXeen;
+		map.load(_vm->getGameID() == GType_WorldOfXeen ? 28 : 29);
+		party._mazeDirection = _vm->getGameID() == GType_WorldOfXeen ?
+			DIR_EAST : DIR_SOUTH;
+	}
+
+	combat._combatMode = 1;
+}
+
+/**
+ * Select next character or monster to be attacking
+ */
+void Interface::nextChar() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+
+	if (combat.allHaveGone())
+		return;
+	if ((combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1 &&
+		combat._attackMonsters[2] == -1) || combat._combatParty.size() == 0) {
+		_vm->_mode = MODE_1;
+		return;
+	}
+
+	for (;;) {
+		// Check if party is dead
+		party.checkPartyDead();
+		if (party._dead) {
+			_vm->_mode = MODE_1;
+			break;
+		}
+
+		if (combat._whosTurn < (int)combat._combatParty.size()) {
+			if (!combat.allHaveGone())
+				highlightChar(combat._whosTurn);
+			break;
+		} else {
+			combat.attackMonster(0);
+			if (!party._dead)
+				party.checkPartyDead();
+
+			if (party._dead)
+				break;
+		}
+
+		// Check the combat participants
+		bool resetFlag = false;
+		for (uint idx = 0; idx < combat._speedTable.size(); ++idx) {
+			// Mark the given character as haven taken their turn
+			if (combat._whosTurn != -1) {
+				combat._charsGone[combat._whosTurn] = true;
+			}
+
+			combat._whosSpeed %= combat._speedTable.size();
+			combat._whosTurn = combat._speedTable[combat._whosSpeed];
+
+			if (combat.allHaveGone()) {
+				if (combat.charsCantAct()) {
+					combat.setSpeedTable();
+					combat._whosTurn = -1;
+					combat._whosSpeed = -1;
+
+					combat._charsGone.resize(combat._speedTable.size());
+					Common::fill(&combat._charsGone[0], &combat._charsGone[combat._charsGone.size()], 0);
+					resetFlag = true;
+					break;
+				}
+				return;
+			} else if (combat._whosTurn >= (int)combat._combatParty.size() ||
+					!combat._combatParty[combat._whosTurn]->isDisabledOrDead()) {
+				break;
+			}
+		}
+
+		if (party._dead)
+			break;
+	}
 }
 
 } // End of namespace Xeen

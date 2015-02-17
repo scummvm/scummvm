@@ -378,7 +378,7 @@ void Scripts::cmdTeleport(Common::Array<byte> &params) {
 	}
 
 	if (pt.x == 999) {
-		party._mazePosition = map.mazeData()._runPosition;
+		party.moveToRunLocation();
 	} else {
 		party._mazePosition = pt;
 	}
