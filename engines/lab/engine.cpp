@@ -1498,7 +1498,6 @@ void LabEngine::go() {
 	g_music->freeMusic();
 	freeAudio();
 
-	mouseReset();
 	setMode((char)OldMode);
 }
 

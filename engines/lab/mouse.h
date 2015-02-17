@@ -39,8 +39,6 @@ struct Gadget;
 
 bool initMouse(void);
 
-bool mouseReset(void);
-
 void updateMouse(void);
 
 void mouseShow(void);
