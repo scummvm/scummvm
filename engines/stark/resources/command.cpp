@@ -180,7 +180,8 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 }
 
 Command *Command::opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown) {
-	warning("(TODO: Implement) opPlayFullMotionVideo : %s - %d", movieRef.describe().c_str(), unknown);
+	Object *movie =  movieRef.resolve<Object>();
+	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
 	return nextCommand();
 }
 
