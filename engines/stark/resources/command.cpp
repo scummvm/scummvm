@@ -30,6 +30,7 @@
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/sound.h"
+#include "engines/stark/resources/textureset.h"
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
@@ -68,6 +69,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opPlayFullMotionVideo(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kActivateTexture:
+		return opActivateTexture(_arguments[1].referenceValue);
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -180,6 +183,13 @@ Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 d
 	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
 
 	item->setDirection(abs(direction) % 360);
+
+	return nextCommand();
+}
+
+Command *Command::opActivateTexture(const ResourceReference &textureRef) {
+	TextureSet *texture = textureRef.resolve<TextureSet>();
+	warning("(TODO: Implement) opActivateTexture(%s) : %s", texture->getName().c_str(), textureRef.describe().c_str());
 
 	return nextCommand();
 }

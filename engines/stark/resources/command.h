@@ -73,7 +73,9 @@ public:
 
 		kPlayFullMotionVideo = 123,
 
-		kItemPlaceDirection = 133
+		kItemPlaceDirection = 133,
+
+		kActivateTexture = 135
 	};
 
 	struct Argument {
@@ -115,6 +117,7 @@ protected:
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
+	Command *opActivateTexture(const ResourceReference &textureRef);
 
 	Common::Array<Argument> _arguments;
 };
