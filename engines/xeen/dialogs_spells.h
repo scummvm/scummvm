@@ -56,6 +56,21 @@ public:
 	static Character *show(XeenEngine *vm, Character *c, int v2);
 };
 
+class CastSpell : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+
+	CastSpell(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	int execute(Character *c, int mode);
+
+	void loadButtons();
+public:
+	static int show(XeenEngine *vm, int mode);
+	static int show(XeenEngine *vm, Character *c, int mode);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_SPELLS_H */

@@ -85,6 +85,10 @@ enum AttributeCategory {
 	ATTR_ARMOR_CLASS = 8, ATTR_THIEVERY  = 9
 };
 
+enum QuickAction {
+	QUICK_ATTACK = 0, QUICK_SPELL = 1, QUICK_BLOCK = 2, QUICK_RUN = 3
+};
+
 class XeenEngine;
 class Character;
 
@@ -235,8 +239,8 @@ public:
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;
-	int _currentSpell;
-	int _quickOption;
+	int8 _currentSpell;
+	QuickAction _quickOption;
 	InventoryItemsGroup _items;
 	WeaponItems _weapons;
 	ArmorItems _armor;
@@ -321,6 +325,8 @@ public:
 	void subtractHitPoints(int amount);
 
 	bool hasSpecialItem() const;
+
+	int getClassCategory() const;
 };
 
 } // End of namespace Xeen

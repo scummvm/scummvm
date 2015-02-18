@@ -413,4 +413,146 @@ const char *SpellsScroll::setSpellText(Character *c, int v2) {
 	return nullptr;
 }
 
+/*------------------------------------------------------------------------*/
+
+int CastSpell::show(XeenEngine *vm, int mode) {
+	Combat &combat = *vm->_combat;
+	Interface &intf = *vm->_interface;
+	Party &party = *vm->_party;
+	Spells &spells = *vm->_spells;
+	int charNum;
+
+	// Get which character is doing the casting
+	if (mode == MODE_COMBAT) {
+		charNum = combat._whosTurn;
+	} else if (spells._lastCaster >= 0 && spells._lastCaster < (int)party._activeParty.size()) {
+		charNum = spells._lastCaster;
+	} else {
+		for (charNum = (int)party._activeParty.size() - 1; charNum >= 0; --charNum) {
+			if (party._activeParty[charNum]._hasSpells) {
+				spells._lastCaster = charNum;
+				break;
+			}
+		}
+	}
+
+	Character &c = party._activeParty[charNum];
+	intf.highlightChar(charNum);
+
+	CastSpell *dlg = new CastSpell(vm);
+	int spellId = dlg->execute(&c, mode);
+	delete dlg;
+
+	return spellId;
+}
+
+int CastSpell::show(XeenEngine *vm, Character *c, int mode) {
+	CastSpell *dlg = new CastSpell(vm);
+	int spellId = dlg->execute(c, mode);
+	delete dlg;
+
+	return spellId;
+}
+
+int CastSpell::execute(Character *c, int mode) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	Spells &spells = *_vm->_spells;
+	Window &w = screen._windows[10];
+	int charNum;
+
+	Mode oldMode = (Mode)mode;
+	int category = c->getClassCategory();
+
+	w.open();
+	loadButtons();
+	drawButtons(&screen);
+
+	int spellId = -1;
+	bool redrawFlag = true;
+	do {
+		if (redrawFlag) {
+			int spellIndex = c->_currentSpell != -1 ? c->_currentSpell : 39;
+			spellId = SPELLS_ALLOWED[category][spellIndex];
+			int gemCost = SPELL_GEM_COST[spellId];
+			int spCost = spells.calcSpellPoints(spellId, c->getCurrentLevel());
+
+			w.writeString(Common::String::format(CAST_SPELL_DETAILS,
+				c->_name.c_str(), spells._spellNames[spellId].c_str(), 
+				spCost, gemCost, c->_currentSp));
+			w.update();
+
+			_vm->_mode = MODE_3;
+			redrawFlag = false;
+		}
+
+		events.updateGameCounter();
+		intf.draw3d(true);
+
+		// Wait for event or time expiry
+		do {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+		} while (!_vm->shouldQuit() && events.timeElapsed() < 1 && !_buttonValue);
+
+		switch (_buttonValue) {
+		case Common::KEYCODE_F1:
+		case Common::KEYCODE_F2:
+		case Common::KEYCODE_F3:
+		case Common::KEYCODE_F4:
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_F6:
+			// Only allow changing character if the party is not in combat
+			if (oldMode != MODE_COMBAT) {
+				_vm->_mode = oldMode;
+				_buttonValue -= Common::KEYCODE_F1;
+
+				if (_buttonValue < (int)party._activeParty.size()) {
+					c = &party._activeParty[_buttonValue];
+					intf.highlightChar(_buttonValue);
+					redrawFlag = true;
+					break;
+				}
+			}
+			break;
+
+		case Common::KEYCODE_ESCAPE:
+			spellId = -1;
+			break;
+
+		case Common::KEYCODE_c:
+			// Cast spell - return the selected spell Id to be cast
+			if (c->_currentSpell != -1 && !c->noActions())
+				_buttonValue = Common::KEYCODE_ESCAPE;
+			break;
+
+		case Common::KEYCODE_n:
+			// Select new spell
+			_vm->_mode = oldMode;
+			c = SpellsScroll::show(_vm, c, 1);
+			redrawFlag = true;
+			break;
+
+		default:
+			break;
+		}
+	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+
+	w.close();
+	intf.unhighlightChar();
+
+	return spellId;
+}
+
+void CastSpell::loadButtons() {
+	_iconSprites.load("cast.icn");
+	addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_d, &_iconSprites);
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_w, &_iconSprites);
+	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addPartyButtons(_vm);
+}
+
 } // End of namespace Xeen

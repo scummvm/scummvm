@@ -1498,4 +1498,19 @@ const int NEW_CHARACTER_SPELLS[10][4] = {
 
 const char *const COMBAT_DETAILS = "\r\f00\x03c\v000\t000\x02Combat%s%s%s\x1";
 
+const char *NOT_ENOUGH_TO_CAST = "\x03c\v010Not enough %s to Cast %s";
+const char *SPELL_CAST_COMPONENTS[2] = { "Spell Points", "Gems" };
+
+const char *const CAST_SPELL_DETAILS = 
+	"\r\x2\x3""c\v122\t013\f37C\fdast\t040\f37N\fdew"
+	"\t067ESC\x1\t000\v000\x3""cCast Spell\n"
+	"\n"
+	"%s\x3l\n"
+	"\n"
+	"Spell Ready:\x3""c\n"
+	"\n"
+	"\f09%s\fd\x2\x3l\n"
+	"\v082Cost\x3r\t000%u/%u\x3l\n"
+	"Cur SP\x3r\t000%u\x1";
+
 } // End of namespace Xeen

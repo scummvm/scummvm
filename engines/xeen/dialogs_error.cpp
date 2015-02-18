@@ -82,4 +82,34 @@ void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType 
 	ErrorDialog::show(vm, s, waitType);
 }
 
+/*------------------------------------------------------------------------*/
+
+void CantCast::show(XeenEngine *vm, int spellId, int componentNum) {
+	CantCast *dlg = new CantCast(vm);
+	dlg->execute(spellId, componentNum);
+	delete dlg;
+}
+
+void CantCast::execute(int spellId, int componentNum) {
+	EventsManager &events = *_vm->_events;
+	SoundManager &sound = *_vm->_sound;
+	Window &w = _vm->_screen->_windows[6];
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_FF;
+
+	sound.playFX(21);
+	w.open();
+	w.writeString(Common::String::format(NOT_ENOUGH_TO_CAST,
+		SPELL_CAST_COMPONENTS[componentNum - 1]));
+	w.update();
+
+	do {
+		events.pollEventsAndWait();
+	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+	events.clearEvents();
+
+	w.close();
+	_vm->_mode = oldMode;
+}
+
 } // End of namespace Xeen

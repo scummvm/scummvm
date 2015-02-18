@@ -81,6 +81,8 @@ public:
 	int _monsterIndex;
 	bool _partyRan;
 	int _whosSpeed;
+	DamageType _damageType;
+	Character *_oldCharacter;
 
 	void monstersAttack();
 
@@ -120,8 +122,6 @@ public:
 	void attack(Character &c, int v2);
 
 	void block();
-
-	bool castSpell(bool flag);
 
 	void quickFight();
 

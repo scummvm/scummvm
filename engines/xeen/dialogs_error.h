@@ -49,6 +49,17 @@ public:
 		ErrorWaitType waitType = WT_FREEZE_WAIT);
 };
 
+class CantCast: public ButtonContainer {
+private:
+	XeenEngine *_vm;
+
+	CantCast(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	void execute(int spellId, int componentNum);
+public:
+	static void show(XeenEngine *vm, int spellId, int componentNum);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_ERROR_H */

@@ -524,6 +524,11 @@ extern const int NEW_CHARACTER_SPELLS[10][4];
 
 extern const char *const COMBAT_DETAILS;
 
+extern const char *NOT_ENOUGH_TO_CAST;
+extern const char *SPELL_CAST_COMPONENTS[2];
+
+extern const char *const CAST_SPELL_DETAILS;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

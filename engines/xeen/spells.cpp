@@ -104,6 +104,37 @@ void Spells::doSpell(int spellId) {
 	(this->*SPELL_LIST[spellId])();
 }
 
+void Spells::castSpell(int spellId) {
+	// TODO
+	error("TODO: castSpell");
+}
+
+/**
+ * Subtract the requirements for a given spell if available, returning
+ * true if there was sufficient
+ */
+int Spells::subSpellCost(Character &c, int spellId) {
+	Party &party = *_vm->_party;
+	int gemCost = SPELL_GEM_COST[spellId];
+	int spCost = SPELL_COSTS[spellId];
+
+	// Negative SP costs indicate it's dependent on the character's level
+	if (spCost <= 0) {
+		spCost = c.getCurrentLevel() * (spCost * -1);
+	}
+
+	if (spCost > c._currentSp)
+		// Not enough SP
+		return 1;
+	if (gemCost > party._gems)
+		// Not enough gems
+		return 2;
+
+	c._currentSp -= spCost;
+	party._gems -= gemCost;
+	return 0;
+}
+
 void Spells::light() { error("TODO: spell"); }
 void Spells::awaken() { error("TODO: spell"); }
 void Spells::magicArrow() { error("TODO: spell"); }

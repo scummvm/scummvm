@@ -100,6 +100,8 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	_partyRan = false;
 	_monster2Attack = -1;
 	_whosSpeed = 0;
+	_damageType = DT_PHYSICAL;
+	_oldCharacter = nullptr;
 }
 
 void Combat::clear() {
@@ -658,17 +660,21 @@ bool Combat::allHaveGone() const {
 	return true;
 }
 
+/**
+ * Returns true if all the characters of the party are disabled
+ */
 bool Combat::charsCantAct() const {
 	for (uint idx = 0; idx < _combatParty.size(); ++idx) {
-		Condition condition = _combatParty[idx]->worstCondition();
-
-		if (!(condition == ASLEEP || (condition >= PARALYZED && condition != NO_CONDITION)))
+		if (!_combatParty[idx]->isDisabledOrDead())
 			return false;
 	}
 
 	return true;
 }
 
+/**
+ * Return a description of the monsters being faced
+ */
 Common::String Combat::getMonsterDescriptions() {
 	Map &map = *_vm->_map;
 	Common::String lines[3];
@@ -702,25 +708,61 @@ void Combat::attack(Character &c, int v2) {
 	error("TODO");
 }
 
+/**
+ * Flag the currently active character as blocking/defending
+ */
 void Combat::block() {
 	_charsBlocked[_whosTurn] = true;
 }
 
-bool Combat::castSpell(bool flag) {
-	error("TODO: castSpell");
-}
-
+/**
+ * Perform whatever the current combat character's quick action is
+ */
 void Combat::quickFight() {
-	error("TODO: quickFight");
+	Spells &spells = *_vm->_spells;
+	Character *c = _combatParty[_whosTurn];
+	int spellId;
+
+	switch (c->_quickOption) {
+	case QUICK_ATTACK:
+		attack(*c, 0);
+		break;
+	case QUICK_SPELL:
+		if (c->_currentSpell != -1) {
+			spells.castSpell(SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
+		}
+		break;
+	case QUICK_BLOCK:
+		block();
+		break;
+	case QUICK_RUN:
+		run();
+		break;
+	default:
+		break;
+	}
 }
 
 void Combat::giveTreasure() {
 	error("TODO: giveTreasure");
 }
 
+/**
+ * Current selected character is trying to run away
+ */
 void Combat::run() {
-	error("TODO: run");
-}
+	Map &map = *_vm->_map;
+	SoundManager &sound = *_vm->_sound;
 
+	if (_vm->getRandomNumber(1, 100) < map.mazeData()._difficulties._chance2Run) {
+		// Remove the character from the combat party
+		_combatParty.remove_at(_whosTurn);
+		setSpeedTable();
+		--_whosSpeed;
+		_whosTurn = -1;
+		_partyRan = true;
+		sound.playFX(51);
+	}
+}
 
 } // End of namespace Xeen

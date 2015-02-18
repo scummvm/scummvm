@@ -707,7 +707,7 @@ void Character::clear() {
 	_lloydMap = 0;
 	_hasSpells = false;
 	_currentSpell = 0;
-	_quickOption = 0;
+	_quickOption = QUICK_ATTACK;
 	_lloydSide = 0;
 	Common::fill(&_conditions[0], &_conditions[16], 0);
 	_townUnknown = 0;
@@ -1821,5 +1821,21 @@ bool Character::hasSpecialItem() const {
 
 	return false;
 }
+
+int Character::getClassCategory() const {
+	switch (_class) {
+	case CLASS_ARCHER:
+	case CLASS_SORCERER:
+		return 1;
+		
+	case CLASS_DRUID:
+	case CLASS_RANGER:
+		return 2;
+		
+	default:
+		return 0;
+	}
+}
+
 
 } // End of namespace Xeen

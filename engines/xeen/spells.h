@@ -29,6 +29,7 @@
 namespace Xeen {
 
 class XeenEngine;
+class Character;
 
 #define MAX_SPELLS_PER_CLASS 40
 
@@ -158,6 +159,10 @@ public:
 	int calcSpellPoints(int spellId, int expenseFactor) const;
 
 	void doSpell(int spellId);
+
+	void castSpell(int spellId);
+
+	int subSpellCost(Character &c, int spellId);
 };
 
 } // End of namespace Xeen

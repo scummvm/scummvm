@@ -31,6 +31,7 @@
 #include "xeen/dialogs_query.h"
 #include "xeen/dialogs_quests.h"
 #include "xeen/dialogs_quick_ref.h"
+#include "xeen/dialogs_spells.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -267,6 +268,7 @@ void Interface::perform() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
+	Spells &spells = *_vm->_spells;
 	const Common::Rect waitBounds(8, 8, 224, 140);
 
 	events.updateGameCounter();
@@ -517,6 +519,14 @@ void Interface::perform() {
 		}
 		break;
 
+	case Common::KEYCODE_c: {
+		// Cast spell
+		int spellId = CastSpell::show(_vm, _vm->_mode);
+		if (spellId != -1)
+			spells.castSpell(spellId);
+		break;
+	}
+
 	case Common::KEYCODE_i:
 		// Show Info dialog
 		_vm->_moveMonsters = false;
@@ -585,8 +595,10 @@ void Interface::stepTime() {
 }
 
 void Interface::doStepCode() {
+	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
+	Scripts &scripts = *_vm->_scripts;
 	int damage = 0;
 
 	party._stepped = true;
@@ -642,8 +654,11 @@ void Interface::doStepCode() {
 			_flipGround = !_flipGround;
 			draw3d(true);
 
-			warning("TODO: apply damage");
+			int oldVal = scripts._v2;
+			scripts._v2 = 0;
+			combat.giveCharDamage(damage, combat._damageType, 0);
 
+			scripts._v2 = oldVal;
 			_flipGround = !_flipGround;
 		} else if (party._partyDead) {
 			draw3d(true);
@@ -1825,6 +1840,7 @@ void Interface::doCombat() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
+	Spells &spells = *_vm->_spells;
 	SoundManager &sound = *_vm->_sound;
 	bool upDoorText = _upDoorText;
 	bool reloadMap = false;
@@ -1933,14 +1949,13 @@ void Interface::doCombat() {
 				nextChar();
 				break;
 				
-			case Common::KEYCODE_c:
-				// Cast Spell
-				if (combat.castSpell(false)) {
-					nextChar();
-				} else {
-					highlightChar(combat._combatParty[combat._whosTurn]->_rosterId);
-				}
+			case Common::KEYCODE_c: {
+				// Cast spell
+				int spellId = CastSpell::show(_vm, _vm->_mode);
+				if (spellId != -1)
+					spells.castSpell(spellId);
 				break;
+			}
 
 			case Common::KEYCODE_f:
 				// Quick Fight
