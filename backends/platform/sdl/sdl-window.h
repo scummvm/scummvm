@@ -27,8 +27,6 @@
 
 #include "common/str.h"
 
-struct SDL_SysWMinfo;
-
 class SdlWindow {
 public:
 	SdlWindow();

@@ -52,10 +52,47 @@ typedef struct { int FAKE; } FAKE_FILE;
 #define strncasecmp FAKE_strncasecmp
 #endif
 
+// HACK: SDL might include windows.h which defines its own ARRAYSIZE.
+// However, we want to use the version from common/util.h. Thus, we make sure
+// that we actually have this definition after including the SDL headers.
+#if defined(ARRAYSIZE) && defined(COMMON_UTIL_H)
+#define HACK_REDEFINE_ARRAYSIZE
+#undef ARRAYSIZE
+#endif
+
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
 #else
 #include <SDL.h>
+#endif
+
+#include <SDL_syswm.h>
+// SDL_syswm.h will include windows.h on Win32. We need to undefine its
+// ARRAYSIZE definition because we supply our own.
+#undef ARRAYSIZE
+
+#ifdef HACK_REDEFINE_ARRAYSIZE
+#undef HACK_REDEFINE_ARRAYSIZE
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+#endif
+
+// In a moment of brilliance Xlib.h included by SDL_syswm.h #defines the
+// following names. In a moment of mental breakdown, which occured upon
+// gazing at Xlib.h, LordHoto decided to undefine them to prevent havoc.
+#ifdef Status
+#undef Status
+#endif
+
+#ifdef Bool
+#undef Bool
+#endif
+
+#ifdef True
+#undef True
+#endif
+
+#ifdef False
+#undef False
 #endif
 
 // Finally forbid FILE again (if it was forbidden to start with)

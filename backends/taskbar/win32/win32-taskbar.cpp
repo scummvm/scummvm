@@ -48,9 +48,6 @@
 
 #include <shlobj.h>
 
-// For HWND
-#include <SDL_syswm.h>
-
 #include "common/scummsys.h"
 
 #include "backends/taskbar/win32/win32-taskbar.h"

@@ -31,8 +31,6 @@
 #include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
-#include <SDL_syswm.h> // For setting the icon
-
 void SdlWindow_Win32::setupIcon() {
 	HMODULE handle = GetModuleHandle(NULL);
 	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
