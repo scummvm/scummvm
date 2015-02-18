@@ -29,15 +29,15 @@
 
 namespace Xeen {
 
-Character *SpellsScroll::show(XeenEngine *vm, Character *c, int v2) {
-	SpellsScroll *dlg = new SpellsScroll(vm);
+Character *SpellsDialog::show(XeenEngine *vm, Character *c, int v2) {
+	SpellsDialog *dlg = new SpellsDialog(vm);
 	Character *result = dlg->execute(c, v2);
 	delete dlg;
 
 	return result;
 }
 
-Character *SpellsScroll::execute(Character *c, int v2) {
+Character *SpellsDialog::execute(Character *c, int isCasting) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
@@ -47,15 +47,15 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	loadButtons();
 
-	int v2Copy = v2;
-	v2 &= 0x7f;
+	int castingCopy = isCasting;
+	isCasting &= 0x7f;
 	int selection = -1;
 	uint topIndex = 0;
 	int newSelection;
 	screen._windows[25].open();
 
-	while (!_vm->shouldQuit()) {
-		if (!v2) {
+	do {
+		if (!isCasting) {
 			if (!c->guildMember()) {
 				sound.playSample(nullptr, 0);
 				intf._overallFrame = 5;
@@ -73,38 +73,46 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 		}
 
 		_spells.clear();
-		const char *errorMsg = setSpellText(c, v2Copy);
+		const char *errorMsg = setSpellText(c, castingCopy);
 		screen._windows[25].writeString(Common::String::format(SPELLS_FOR,
-			errorMsg == nullptr ? SPELL_LINES_0_TO_9 : nullptr));
+			errorMsg == nullptr ? SPELL_LINES_0_TO_9 : nullptr,
+			c->_name.c_str()));
+
+		// Setup and write out spell list
+		const char *names[10];
+		int colors[10];
+		Common::String emptyStr = "";
+		Common::fill(&names[0], &names[10], emptyStr.c_str());
+		Common::fill(&colors[0], &colors[10], 9);
+
+		for (int idx = 0; idx < 10; ++idx) {
+			if ((topIndex + idx) < _spells.size()) {
+				names[idx] = _spells[topIndex + idx]._name.c_str();
+				colors[idx] = _spells[topIndex + idx]._color;
+			}
+		}
 
 		screen._windows[37].writeString(Common::String::format(SPELLS_DIALOG_SPELLS,
-			(topIndex + 0) < _spells.size() ? _spells[topIndex + 0]._name.c_str() : nullptr,
-			(topIndex + 1) < _spells.size() ? _spells[topIndex + 1]._name.c_str() : nullptr,
-			(topIndex + 2) < _spells.size() ? _spells[topIndex + 2]._name.c_str() : nullptr,
-			(topIndex + 3) < _spells.size() ? _spells[topIndex + 3]._name.c_str() : nullptr,
-			(topIndex + 4) < _spells.size() ? _spells[topIndex + 4]._name.c_str() : nullptr,
-			(topIndex + 5) < _spells.size() ? _spells[topIndex + 5]._name.c_str() : nullptr,
-			(topIndex + 6) < _spells.size() ? _spells[topIndex + 6]._name.c_str() : nullptr,
-			(topIndex + 7) < _spells.size() ? _spells[topIndex + 7]._name.c_str() : nullptr,
-			(topIndex + 8) < _spells.size() ? _spells[topIndex + 8]._name.c_str() : nullptr,
-			(topIndex + 9) < _spells.size() ? _spells[topIndex + 9]._name.c_str() : nullptr,
-			v2 ? SPELL_PTS : GOLD,
-			v2 ? c->_currentSp : party._gold
+			colors[0], names[0], colors[1], names[1], colors[2], names[2],
+			colors[3], names[3], colors[4], names[4], colors[5], names[5],
+			colors[6], names[6], colors[7], names[7], colors[8], names[8],
+			colors[9], names[9],
+			isCasting ? SPELL_PTS : GOLD,
+			isCasting ? c->_currentSp : party._gold
 		));
 
-		_iconSprites.draw(screen, 4, Common::Point(39, 26));
-		_iconSprites.draw(screen, 0, Common::Point(187, 26));
-		_iconSprites.draw(screen, 2, Common::Point(187, 111));
-		if (v2)
-			_iconSprites.draw(screen._windows[25], 5, Common::Point(132, 123));
+		_scrollSprites.draw(screen, 4, Common::Point(39, 26));
+		_scrollSprites.draw(screen, 0, Common::Point(187, 26));
+		_scrollSprites.draw(screen, 2, Common::Point(187, 111));
+		if (isCasting)
+			_scrollSprites.draw(screen._windows[25], 5, Common::Point(132, 123));
 
 		screen._windows[25].update();
 
-		while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+		do {
 			events.pollEventsAndWait();
-		if (_vm->shouldQuit())
-			break;
-		checkEvents(_vm);
+			checkEvents(_vm);
+		} while (!_vm->shouldQuit() && !_buttonValue);
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_F1:
@@ -207,16 +215,16 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 				int spellId = _spells[newSelection]._spellId;
 				int spellIndex = _spells[newSelection]._spellIndex;
 				int spellCost = spells.calcSpellCost(spellId, expenseFactor);
-				if (v2) {
+				if (isCasting) {
 					// TODO: Confirm this refactoring against against original
 					selection = _buttonValue;
 				} else {
 					Common::String spellName = _spells[_buttonValue]._name;
-					Common::String msg = (v2Copy & 0x80) ?
+					Common::String msg = (castingCopy & 0x80) ?
 						Common::String::format(SPELLS_PRESS_A_KEY, msg.c_str()) :
 						Common::String::format(SPELLS_PURCHASE, msg.c_str(), spellCost);
 
-					if (Confirm::show(_vm, msg, v2Copy + 1)) {
+					if (Confirm::show(_vm, msg, castingCopy + 1)) {
 						if (party.subtract(0, spellCost, 0, WT_FREEZE_WAIT)) {
 							++c->_spells[spellIndex];
 							sound.playSample(nullptr, 0);
@@ -253,37 +261,38 @@ Character *SpellsScroll::execute(Character *c, int v2) {
 				++topIndex;
 			break;
 		}
-	}
+	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	screen._windows[25].close();
-	if (v2 && selection != -1)
+	if (isCasting && selection != -1)
 		c->_currentSpell = _spells[selection]._spellIndex;
 
 	return c;
 }
 
-void SpellsScroll::loadButtons() {
+void SpellsDialog::loadButtons() {
 	_iconSprites.load("main.icn");
 	_scrollSprites.load("scroll.icn");
 	addButton(Common::Rect(187, 26, 198, 36), Common::KEYCODE_UP, &_scrollSprites, true);
 	addButton(Common::Rect(187, 111, 198, 121), Common::KEYCODE_DOWN, &_scrollSprites, true);
-	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1, &_scrollSprites, false);
-	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2, &_scrollSprites, false);
-	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3, &_scrollSprites, false);
-	addButton(Common::Rect(40, 55, 187, 63), Common::KEYCODE_4, &_scrollSprites, false);
-	addButton(Common::Rect(40, 64, 187, 72), Common::KEYCODE_5, &_scrollSprites, false);
-	addButton(Common::Rect(40, 73, 187, 81), Common::KEYCODE_6, &_scrollSprites, false);
-	addButton(Common::Rect(40, 82, 187, 90), Common::KEYCODE_7, &_scrollSprites, false);
-	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8, &_scrollSprites, false);
-	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9, &_scrollSprites, false);
-	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0, &_scrollSprites, false);
-	addButton(Common::Rect(174, 123, 198, 133), Common::KEYCODE_ESCAPE, &_scrollSprites, false);
-	addButton(Common::Rect(187, 35, 198, 73), Common::KEYCODE_PAGEUP, &_scrollSprites, false);
-	addButton(Common::Rect(187, 74, 198, 112), Common::KEYCODE_PAGEDOWN, &_scrollSprites, false);
-	addButton(Common::Rect(132, 123, 168, 133), Common::KEYCODE_s, &_scrollSprites, false);
+	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1);
+	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2);
+	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3);
+	addButton(Common::Rect(40, 55, 187, 63), Common::KEYCODE_4);
+	addButton(Common::Rect(40, 64, 187, 72), Common::KEYCODE_5);
+	addButton(Common::Rect(40, 73, 187, 81), Common::KEYCODE_6);
+	addButton(Common::Rect(40, 82, 187, 90), Common::KEYCODE_7);
+	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8);
+	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9);
+	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0);
+	addButton(Common::Rect(174, 123, 198, 133), Common::KEYCODE_ESCAPE);
+	addButton(Common::Rect(187, 35, 198, 73), Common::KEYCODE_PAGEUP);
+	addButton(Common::Rect(187, 74, 198, 112), Common::KEYCODE_PAGEDOWN);
+	addButton(Common::Rect(132, 123, 168, 133), Common::KEYCODE_s);
+	addPartyButtons(_vm);
 }
 
-const char *SpellsScroll::setSpellText(Character *c, int v2) {
+const char *SpellsDialog::setSpellText(Character *c, int v2) {
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -459,10 +468,8 @@ int CastSpell::execute(Character *c, int mode) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Window &w = screen._windows[10];
-	int charNum;
 
 	Mode oldMode = (Mode)mode;
 	int category = c->getClassCategory();
@@ -532,7 +539,7 @@ int CastSpell::execute(Character *c, int mode) {
 		case Common::KEYCODE_n:
 			// Select new spell
 			_vm->_mode = oldMode;
-			c = SpellsScroll::show(_vm, c, 1);
+			c = SpellsDialog::show(_vm, c, 1);
 			redrawFlag = true;
 			break;
 
@@ -549,8 +556,8 @@ int CastSpell::execute(Character *c, int mode) {
 
 void CastSpell::loadButtons() {
 	_iconSprites.load("cast.icn");
-	addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_d, &_iconSprites);
-	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_w, &_iconSprites);
+	addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_c, &_iconSprites);
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_n, &_iconSprites);
 	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_iconSprites);
 	addPartyButtons(_vm);
 }

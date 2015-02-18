@@ -33,19 +33,20 @@ struct SpellEntry {
 	Common::String _name;
 	int _spellIndex;
 	int _spellId;
+	int _color;
 
 	SpellEntry(const Common::String &name, int spellIndex, int spellId) :
-		_name(name), _spellIndex(spellIndex), _spellId(spellId) {}
+		_name(name), _spellIndex(spellIndex), _spellId(spellId), _color(9) {}
 };
 
-class SpellsScroll : public ButtonContainer {
+class SpellsDialog : public ButtonContainer {
 private:
 	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 	SpriteResource _scrollSprites;
 	Common::Array<SpellEntry> _spells;
 
-	SpellsScroll(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	SpellsDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
 	Character *execute(Character *c, int v2);
 
@@ -53,7 +54,7 @@ private:
 
 	const char *setSpellText(Character *c, int v2);
 public:
-	static Character *show(XeenEngine *vm, Character *c, int v2);
+	static Character *show(XeenEngine *vm, Character *c, int isCasting);
 };
 
 class CastSpell : public ButtonContainer {
