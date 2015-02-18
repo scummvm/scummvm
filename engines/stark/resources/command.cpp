@@ -64,6 +64,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kPlayFullMotionVideo:
+		return opPlayFullMotionVideo(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	default:
@@ -167,6 +169,11 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 	} else {
 		return nextCommand();
 	}
+}
+
+Command *Command::opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown) {
+	warning("(TODO: Implement) opPlayFullMotionVideo : %s - %d", movieRef.describe().c_str(), unknown);
+	return nextCommand();
 }
 
 Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {

@@ -71,6 +71,8 @@ public:
 
 		kSoundPlay = 112,
 
+		kPlayFullMotionVideo = 123,
+
 		kItemPlaceDirection = 133
 	};
 
@@ -111,6 +113,7 @@ protected:
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
+	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 
 	Common::Array<Argument> _arguments;
