@@ -469,7 +469,6 @@ int CastSpell::execute(Character *c, int mode) {
 
 	w.open();
 	loadButtons();
-	drawButtons(&screen);
 
 	int spellId = -1;
 	bool redrawFlag = true;
@@ -483,6 +482,7 @@ int CastSpell::execute(Character *c, int mode) {
 			w.writeString(Common::String::format(CAST_SPELL_DETAILS,
 				c->_name.c_str(), spells._spellNames[spellId].c_str(), 
 				spCost, gemCost, c->_currentSp));
+			drawButtons(&screen);
 			w.update();
 
 			_vm->_mode = MODE_3;
