@@ -56,6 +56,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
 		return opScriptPause(script, _arguments[1].referenceValue);
+	case kScriptPauseRandom:
+		return opPauseRandom(script, _arguments[1].referenceValue);
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItemEnable:
@@ -107,6 +109,14 @@ Command *Command::opScriptPause(Script *script, const ResourceReference &duratio
 	Knowledge *duration = durationRef.resolve<Knowledge>();
 	script->pause(duration->getIntegerValue());
 
+	return this; // Stay on this command while the script is suspended
+}
+
+Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
+	Knowledge *duration = ref.resolve<Knowledge>();
+	warning("(TODO: Implement) Pause random: %d, %s", duration->getIntegerValue(), ref.describe().c_str());
+	// TODO: Actually get a random value here.
+	script->pause(1000);
 	return this; // Stay on this command while the script is suspended
 }
 

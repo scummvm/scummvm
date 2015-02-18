@@ -63,6 +63,7 @@ public:
 		kLocationGoTo = 5,
 
 		kScriptPause = 9,
+		kScriptPauseRandom = 10,
 
 		kItem3DPlaceOn = 81,
 
@@ -106,6 +107,7 @@ protected:
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
+	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
