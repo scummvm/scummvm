@@ -25,6 +25,7 @@
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/resources/bookmark.h"
+#include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
@@ -71,6 +72,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kActivateTexture:
 		return opActivateTexture(_arguments[1].referenceValue);
+	case kActivateMesh:
+		return opActivateMesh(_arguments[1].referenceValue);
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -190,6 +193,13 @@ Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 d
 Command *Command::opActivateTexture(const ResourceReference &textureRef) {
 	TextureSet *texture = textureRef.resolve<TextureSet>();
 	warning("(TODO: Implement) opActivateTexture(%s) : %s", texture->getName().c_str(), textureRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opActivateMesh(const ResourceReference &meshRef) {
+	BonesMesh *mesh = meshRef.resolve<BonesMesh>();
+	warning("(TODO: Implement) opActivateMesh(%s) : %s", mesh->getName().c_str(), meshRef.describe().c_str());
 
 	return nextCommand();
 }

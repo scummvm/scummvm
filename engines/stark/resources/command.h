@@ -75,7 +75,8 @@ public:
 
 		kItemPlaceDirection = 133,
 
-		kActivateTexture = 135
+		kActivateTexture = 135,
+		kActivateMesh = 136
 	};
 
 	struct Argument {
@@ -118,6 +119,7 @@ protected:
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
+	Command *opActivateMesh(const ResourceReference &meshRef);
 
 	Common::Array<Argument> _arguments;
 };
