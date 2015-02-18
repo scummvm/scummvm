@@ -69,6 +69,8 @@ public:
 
 		kItemEnable = 87,
 
+		kScriptEnable = 94,
+
 		kSoundPlay = 112,
 
 		kPlayFullMotionVideo = 123,
@@ -117,6 +119,7 @@ protected:
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
+	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);

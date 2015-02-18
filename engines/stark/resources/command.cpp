@@ -64,6 +64,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kScriptEnable:
+		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayFullMotionVideo:
@@ -163,6 +165,14 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 		item->setEnabled(!previousState);
 		break;
 	}
+
+	return nextCommand();
+}
+
+Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enable) {
+	assert(_arguments.size() == 3);
+	Object *script = scriptRef.resolve<Object>();
+	warning("(TODO: Implement) opScriptEnable(%s, %d) : %s", script->getName().c_str(), enable, scriptRef.describe().c_str());
 
 	return nextCommand();
 }
