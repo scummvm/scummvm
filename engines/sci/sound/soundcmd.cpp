@@ -186,7 +186,9 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed) {
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
 
 	// Get song priority from either obj or soundRes
-	byte resourcePriority = musicSlot->soundRes->getSoundPriority();
+	byte resourcePriority = 0xFF;
+	if (musicSlot->soundRes)
+		resourcePriority = musicSlot->soundRes->getSoundPriority();
 	if (!musicSlot->overridePriority && resourcePriority != 0xFF) {
 		musicSlot->priority = resourcePriority;
 	} else {
