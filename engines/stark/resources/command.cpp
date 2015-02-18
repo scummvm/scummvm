@@ -31,6 +31,7 @@
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/sound.h"
+#include "engines/stark/resources/speech.h"
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/resourcereference.h"
 #include "engines/stark/services/services.h"
@@ -76,6 +77,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opActivateTexture(_arguments[1].referenceValue);
 	case kActivateMesh:
 		return opActivateMesh(_arguments[1].referenceValue);
+	case kSpeakWithoutTalking:
+		return opSpeakWithoutTalking(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kIsOnFloorField:
 		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsSet:
@@ -216,6 +219,16 @@ Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	BonesMesh *mesh = meshRef.resolve<BonesMesh>();
 	warning("(TODO: Implement) opActivateMesh(%s) : %s", mesh->getName().c_str(), meshRef.describe().c_str());
 
+	return nextCommand();
+}
+
+Command *Command::opSpeakWithoutTalking(const ResourceReference &speechRef, int32 unknown) {
+	assert(_arguments.size() == 3);
+	Speech *speechObj = speechRef.resolve<Speech>();
+	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speechObj->getName().c_str(), unknown, speechRef.describe().c_str());
+
+	// TODO: Block further calls untill it'd done
+	speechObj->playSound();
 	return nextCommand();
 }
 

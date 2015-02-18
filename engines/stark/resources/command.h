@@ -80,6 +80,8 @@ public:
 		kActivateTexture = 135,
 		kActivateMesh = 136,
 
+		kSpeakWithoutTalking = 139,
+
 		kIsOnFloorField = 162,
 
 		kIsSet = 166
@@ -127,6 +129,7 @@ protected:
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
+	Command *opSpeakWithoutTalking(const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 
