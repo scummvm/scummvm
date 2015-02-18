@@ -36,7 +36,7 @@ ResourceReference::PathElement::PathElement(Resources::Type type, uint16 index) 
 		_type(type), _index(index) {
 }
 
-Common::String ResourceReference::PathElement::describe() {
+Common::String ResourceReference::PathElement::describe() const {
 	return  Common::String::format("(%s idx %d)", _type.getName(), _index);
 }
 
@@ -79,7 +79,7 @@ bool ResourceReference::empty() const {
 	return _path.empty();
 }
 
-Common::String ResourceReference::describe() {
+Common::String ResourceReference::describe() const {
 	Common::String desc;
 
 	for (uint i = 0; i < _path.size(); i++) {

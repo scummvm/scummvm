@@ -41,7 +41,7 @@ class ResourceReference {
 public:
 	ResourceReference();
 
-	Common::String describe();
+	Common::String describe() const;
 
 	void addPathElement(Resources::Type type, uint16 index);
 
@@ -58,7 +58,7 @@ private:
 	class PathElement {
 	public:
 		PathElement(Resources::Type type, uint16 index);
-		Common::String describe();
+		Common::String describe() const;
 
 		Resources::Type getType() const { return _type; }
 		uint16 getIndex() const { return _index; }

@@ -79,7 +79,7 @@ public:
 	Type(ResourceType type);
 
 	ResourceType get();
-	const char *getName();
+	const char *getName() const;
 
 	bool operator==(const Type &other) const {
 		return other._type == _type;

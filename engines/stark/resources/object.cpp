@@ -40,7 +40,7 @@ Type::Type() :
 		Type::Type(kInvalid) {
 }
 
-const char *Type::getName() {
+const char *Type::getName() const {
 	static const struct {
 		Type::ResourceType type;
 		const char *name;
