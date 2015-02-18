@@ -76,6 +76,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opActivateTexture(_arguments[1].referenceValue);
 	case kActivateMesh:
 		return opActivateMesh(_arguments[1].referenceValue);
+	case kIsOnFloorField:
+		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	default:
@@ -215,6 +217,14 @@ Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	warning("(TODO: Implement) opActivateMesh(%s) : %s", mesh->getName().c_str(), meshRef.describe().c_str());
 
 	return nextCommand();
+}
+
+Command *Command::opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef) {
+	Object *itemObj = itemRef.resolve<Object>();
+	Object *floorFieldObj = floorFieldRef.resolve<Object>();
+	warning("(TODO: Implement) opIsOnFloorField(%d, %d, %s, %s) : %s , %s", branch1, branch2, itemObj->getName().c_str(), floorFieldObj->getName().c_str(), itemRef.describe().c_str(), floorFieldRef.describe().c_str());
+	// TODO: Actually implement the logic
+	return nextCommandIf(false);
 }
 
 Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef) {

@@ -80,6 +80,8 @@ public:
 		kActivateTexture = 135,
 		kActivateMesh = 136,
 
+		kIsOnFloorField = 162,
+
 		kIsSet = 166
 	};
 
@@ -125,6 +127,7 @@ protected:
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
+	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 
 	Common::Array<Argument> _arguments;
