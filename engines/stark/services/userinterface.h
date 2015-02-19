@@ -24,15 +24,21 @@
 #define STARK_SERVICES_USER_INTERFACE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Stark {
+
+namespace Gfx {
+class Driver;
+class Texture;
+}
 
 /**
  * Facade object for interacting with the game world
  */
 class UserInterface {
 public:
-	UserInterface();
+	UserInterface(Gfx::Driver *driver);
 	~UserInterface();
 
 	/** Skip currently playing speeches */
@@ -41,7 +47,15 @@ public:
 	/** Scroll the current location by an offset */
 	void scrollLocation(int32 dX, int32 dY);
 
+	/** Update the mouse position */
+	void setMousePosition(Common::Point pos);
+
+	/** Draw the mouse pointer, and any additional currently active UI */
+	void render();
 private:
+	Common::Point _mousePos;
+	Gfx::Texture *_cursorTexture;
+	Gfx::Driver *_gfx;
 };
 
 } // End of namespace Stark

@@ -100,7 +100,7 @@ Common::Error StarkEngine::run() {
 	_randomSource = new Common::RandomSource("stark");
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
-	_userInterface = new UserInterface();
+	_userInterface = new UserInterface(_gfx);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -150,6 +150,7 @@ void StarkEngine::mainLoop() {
 				_userInterface->skipCurrentSpeeches();
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
+				_userInterface->setMousePosition(e.mouse);
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
@@ -191,6 +192,8 @@ void StarkEngine::updateDisplayScene() {
 	_scene->render(renderEntries);
 
 	_dialogPlayer->renderText();
+
+	_userInterface->render();
 
 	// Swap buffers
 	_gfx->flipBuffer();
