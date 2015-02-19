@@ -203,6 +203,9 @@ Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 valu
 	Knowledge *boolean = knowledgeRef.resolve<Knowledge>();
 	warning("(TODO: Implement) opSetBoolean(%s, %d) : %s", boolean->getName().c_str(), value, knowledgeRef.describe().c_str());
 
+	// This seems to have no effect currently, perhaps because the location is reloaded
+	boolean->setBooleanValue(value);
+
 	return nextCommand();
 }
 
@@ -275,9 +278,9 @@ Command *Command::opIsOnFloorField(int branch1, int branch2, const ResourceRefer
 Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef) {
 	assert(_arguments.size() == 3);
 	Knowledge *value = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opIsSet(%d, %d, %s) %d : %s", branch1, branch2, value->getName().c_str(), value->getIntegerValue(), knowledgeRef.describe().c_str());
+	warning("(TODO: Implement) opIsSet(%d, %d, %s) %d : %s", branch1, branch2, value->getName().c_str(), value->getBooleanValue(), knowledgeRef.describe().c_str());
 	// TODO: Verify how this logic actually should be handled
-	return nextCommandIf(value->getIntegerValue());
+	return nextCommandIf(value->getBooleanValue());
 }
 
 Command *Command::opIsRandom(int branch1, int branch2, int32 unknown) {
