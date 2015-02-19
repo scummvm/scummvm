@@ -69,6 +69,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kScriptEnable:
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kSetBoolean:
+		return opSetBoolean(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayFullMotionVideo:
@@ -188,6 +190,14 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 	assert(_arguments.size() == 3);
 	Object *script = scriptRef.resolve<Object>();
 	warning("(TODO: Implement) opScriptEnable(%s, %d) : %s", script->getName().c_str(), enable, scriptRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 value) {
+	assert(_arguments.size() == 3);
+	Knowledge *boolean = knowledgeRef.resolve<Knowledge>();
+	warning("(TODO: Implement) opSetBoolean(%s, %d) : %s", boolean->getName().c_str(), value, knowledgeRef.describe().c_str());
 
 	return nextCommand();
 }
