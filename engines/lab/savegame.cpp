@@ -219,7 +219,7 @@ bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot) {
 			CurTile[i][j] = file->readUint16LE();
 
 	// Breadcrumbs
-	for (i = 0; i < sizeof(BreadCrumbs); i++) {
+	for (i = 0; i < 128; i++) {
 		BreadCrumbs[i].RoomNum = file->readUint16LE();
 		BreadCrumbs[i].Direction = file->readUint16LE();
 	}
@@ -227,10 +227,10 @@ bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot) {
 	DroppingCrumbs = (BreadCrumbs[0].RoomNum != 0);
 	FollowingCrumbs = false;
 
-	for (i = 0; i < sizeof(BreadCrumbs); i++) {
+	for (i = 0; i < 128; i++) {
 		if (BreadCrumbs[i].RoomNum == 0)
 			break;
-		NumCrumbs++;
+		NumCrumbs = i;
 	}
 
 	delete file;

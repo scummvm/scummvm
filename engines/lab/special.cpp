@@ -972,28 +972,16 @@ bool saveRestoreGame(void) {
 		// Restore
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int slot = dialog->runModalWithCurrentTarget();
-		if (slot >= 0)
+		if (slot >= 0) {
 			isOK = loadGame(&RoomNum, &Direction, &(Inventory[QUARTERNUM].Many), slot);
+			if (isOK)
+				g_music->resetMusic();
+		}
 	}
 
-	if (!isOK)
-		return false;
-
-	g_music->resetMusic();
-
-	eatMessages();
-
-	mouseHide();
-	memset(diffcmap, 0, 3 * 256);
-	VGASetPal(diffcmap, 256);
-	setAPen(0);
-	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
-	blackScreen();
 	WSDL_UpdateScreen();
-
-	freeAllStolenMem();
-
-	return true;
+	
+	return isOK;
 }
 
 /*---------------------------------------------------------------------------*/
