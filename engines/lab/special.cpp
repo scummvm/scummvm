@@ -888,17 +888,6 @@ static void processJournal() {
 
 
 /*****************************************************************************/
-/* Cleans up behind all memory allocations.                                  */
-/*****************************************************************************/
-static void journalCleanUp(void) {
-	freeAllStolenMem();
-}
-
-
-
-
-
-/*****************************************************************************/
 /* Does the journal processing.                                              */
 /*****************************************************************************/
 void doJournal() {
@@ -936,7 +925,7 @@ void doJournal() {
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
 	blackScreen();
 
-	journalCleanUp();
+	freeAllStolenMem();
 
 	ungetVGABaseAddr();
 }
@@ -1001,8 +990,6 @@ bool saveRestoreGame(void) {
 	rectFill(0, 0, VGAScreenWidth - 1, VGAScreenHeight - 1);
 	blackScreen();
 	WSDL_UpdateScreen();
-
-	journalCleanUp();
 
 	freeAllStolenMem();
 
