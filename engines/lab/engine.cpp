@@ -1398,10 +1398,12 @@ void LabEngine::go() {
 
 	IsHiRes = ((getFeatures() & GF_LOWRES) == 0);
 
+#if 0
 	if (IsHiRes)
 		warning("Running in HiRes mode");
 	else
 		warning("Running in LowRes mode");
+#endif
 
 #if 0
 	for (counter = 1; counter < argc; counter++) {
