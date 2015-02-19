@@ -244,7 +244,6 @@ void Music::startMusic(bool startatbegin) {
 /*****************************************************************************/
 bool Music::initMusic(void) {
 	uint16 counter;
-	bool mem;
 
 	if (!_turnMusicOn)
 		return true;
