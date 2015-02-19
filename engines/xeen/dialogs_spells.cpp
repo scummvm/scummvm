@@ -29,15 +29,16 @@
 
 namespace Xeen {
 
-Character *SpellsDialog::show(XeenEngine *vm, Character *c, int isCasting) {
+Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog, 
+		Character *c, int isCasting) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
-	Character *result = dlg->execute(c, isCasting);
+	Character *result = dlg->execute(priorDialog, c, isCasting);
 	delete dlg;
 
 	return result;
 }
 
-Character *SpellsDialog::execute(Character *c, int isCasting) {
+Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int isCasting) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
@@ -158,7 +159,8 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 							SPELL_GEM_COST[spellId], c->_currentSp));
 					}
 
-					drawButtons(&screen);
+					if (priorDialog != nullptr)
+						priorDialog->drawButtons(&screen);
 					screen._windows[10].update();
 				}
 			}
@@ -299,7 +301,7 @@ void SpellsDialog::loadButtons() {
 	addPartyButtons(_vm);
 }
 
-const char *SpellsDialog::setSpellText(Character *c, int v2) {
+const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -307,7 +309,7 @@ const char *SpellsDialog::setSpellText(Character *c, int v2) {
 	int currLevel = c->getCurrentLevel();
 	int category;
 
-	if ((v2 & 0x7f) == 0) {
+	if ((isCasting & 0x7f) == 0) {
 		switch (c->_class) {
 		case CLASS_PALADIN:
 			expenseFactor = 1;
@@ -344,7 +346,7 @@ const char *SpellsDialog::setSpellText(Character *c, int v2) {
 
 					// Handling if the spell is appropriate for the character's class
 					if (idx < MAX_SPELLS_PER_CLASS) {
-						if (!c->_spells[idx] || (v2 & 0x80)) {
+						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
 								spells._spellNames[SPELLS_ALLOWED[category][idx]], cost), 
@@ -361,7 +363,7 @@ const char *SpellsDialog::setSpellText(Character *c, int v2) {
 						DARK_SPELL_OFFSETS[category][spellId]);
 
 					if (idx < 40) {
-						if (!c->_spells[idx] || (v2 & 0x80)) {
+						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
 								spells._spellNames[SPELLS_ALLOWED[category][idx]], cost), 
@@ -376,7 +378,7 @@ const char *SpellsDialog::setSpellText(Character *c, int v2) {
 						(int)SPELLS_ALLOWED[category][idx] && idx < 40) ;
 
 					if (idx < 40) {
-						if (!c->_spells[idx] || (v2 & 0x80)) {
+						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
 								spells._spellNames[SPELLS_ALLOWED[category][idx]], cost), 
@@ -390,7 +392,7 @@ const char *SpellsDialog::setSpellText(Character *c, int v2) {
 		if (c->getMaxSP() == 0)
 			return NOT_A_SPELL_CASTER;
 
-	} else if ((v2 & 0x7f) == 1) {
+	} else if ((isCasting & 0x7f) == 1) {
 		switch (c->_class) {
 		case 0:
 		case 12:
@@ -546,7 +548,7 @@ int CastSpell::execute(Character *&c, int mode) {
 		case Common::KEYCODE_n:
 			// Select new spell
 			_vm->_mode = oldMode;
-			c = SpellsDialog::show(_vm, c, 1);
+			c = SpellsDialog::show(_vm, this, c, 1);
 			redrawFlag = true;
 			break;
 

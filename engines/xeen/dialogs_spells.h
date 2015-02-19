@@ -48,13 +48,14 @@ private:
 
 	SpellsDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	Character *execute(Character *c, int v2);
+	Character *execute(ButtonContainer *priorDialog, Character *c, int isCasting);
 
 	void loadButtons();
 
-	const char *setSpellText(Character *c, int v2);
+	const char *setSpellText(Character *c, int isCasting);
 public:
-	static Character *show(XeenEngine *vm, Character *c, int isCasting);
+	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog, 
+		Character *c, int isCasting);
 };
 
 class CastSpell : public ButtonContainer {

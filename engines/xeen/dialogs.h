@@ -55,8 +55,6 @@ protected:
 	void doScroll(XeenEngine *vm, bool drawFlag, bool doFade);
 
 	bool checkEvents(XeenEngine *vm);
-
-	void drawButtons(XSurface *surface);
 public:
 	ButtonContainer() : _buttonValue(0) {}
 
@@ -71,6 +69,8 @@ public:
 	void addButton(const Common::Rect &bounds, int val);
 
 	void addPartyButtons(XeenEngine *vm);
+
+	void drawButtons(XSurface *surface);
 };
 
 class SettingsBaseDialog : public ButtonContainer {
