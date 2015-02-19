@@ -89,6 +89,21 @@ void UserInterface::render() {
 	if (_cursorTexture) {
 		_gfx->drawSurface(_cursorTexture, _mousePos);
 	}
+	Common::String debugStr;
+
+	Global *global = StarkServices::instance().global;
+	Current *current = global->getCurrent();
+
+	int32 chapter = global->getCurrentChapter();
+
+	debugStr += Common::String::format("location: %02x %02x ", current->getLevel()->getIndex(), current->getLocation()->getIndex());
+	debugStr += current->getLevel()->getName() + ", " + current->getLocation()->getName();
+	debugStr += Common::String::format(" chapter: %d mouse(%d, %d)", chapter, _mousePos.x, _mousePos.y);
+
+	
+	Gfx::Texture *debugTexture = _gfx->createTextureFromString(debugStr, 0xF0FF0F00);
+	_gfx->drawSurface(debugTexture, Common::Point(0,0));
+	delete debugTexture;
 }
 
 } // End of namespace Stark
