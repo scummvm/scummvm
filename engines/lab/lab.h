@@ -52,11 +52,12 @@ public:
 	virtual Common::Error run();
 	void go();
 
-	bool hasFeature(EngineFeature f) const;
-
 	const ADGameDescription *_gameDescription;
 	Common::Platform getPlatform() const;
 	uint32 getFeatures() const;
+
+	bool hasFeature(EngineFeature f) const;
+	Common::String generateSaveFileName(uint slot);
 
 	LargeSet *_conditions, *_roomsFound;
 };
