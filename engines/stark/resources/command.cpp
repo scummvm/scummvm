@@ -89,6 +89,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+	case kIsRandom:
+		return opIsRandom(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].intValue);
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -274,6 +276,13 @@ Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &kno
 	warning("(TODO: Implement) opIsSet(%d, %d, %s) %d : %s", branch1, branch2, value->getName().c_str(), value->getIntegerValue(), knowledgeRef.describe().c_str());
 	// TODO: Verify how this logic actually should be handled
 	return nextCommandIf(value->getIntegerValue());
+}
+
+Command *Command::opIsRandom(int branch1, int branch2, int32 unknown) {
+	assert(_arguments.size() == 3);
+	warning("(TODO: Implement) opIsRandom(%d, %d, %d)", branch1, branch2, unknown);
+	// TODO: Verify how this logic actually should be handled
+	return nextCommandIf(true);
 }
 
 Command *Command::nextCommand() {

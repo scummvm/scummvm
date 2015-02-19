@@ -88,7 +88,9 @@ public:
 
 		kIsOnFloorField = 162,
 
-		kIsSet = 166
+		kIsSet = 166,
+
+		kIsRandom = 175
 	};
 
 	struct Argument {
@@ -139,6 +141,7 @@ protected:
 	Command *opSpeakWithoutTalking(const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
+	Command *opIsRandom(int branch1, int branch2, int32 unknown);
 
 	Common::Array<Argument> _arguments;
 };
