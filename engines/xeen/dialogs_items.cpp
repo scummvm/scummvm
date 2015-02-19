@@ -889,7 +889,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 							screen._windows[30].close();
 							screen._windows[29].close();
 							screen._windows[24].close();
-							spells.doSpell(i._id);
+							spells.castItemSpell(i._id);
 
 							if (!charges) {
 								// Ran out of charges, so make item disappear

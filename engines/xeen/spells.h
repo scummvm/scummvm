@@ -67,6 +67,8 @@ private:
 
 	void load();
 
+	void executeSpell(int spellId);
+
 	// Spell list
 	void light();
 	void awaken();
@@ -158,11 +160,13 @@ public:
 
 	int calcSpellPoints(int spellId, int expenseFactor) const;
 
-	void doSpell(int spellId);
+	void castItemSpell(int spellId);
 
-	void castSpell(int spellId);
+	int castSpell(Character *c, int spellId);
 
 	int subSpellCost(Character &c, int spellId);
+
+	void addSpellCost(Character &c, int spellId);
 };
 
 } // End of namespace Xeen

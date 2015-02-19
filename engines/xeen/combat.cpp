@@ -721,7 +721,6 @@ void Combat::block() {
 void Combat::quickFight() {
 	Spells &spells = *_vm->_spells;
 	Character *c = _combatParty[_whosTurn];
-	int spellId;
 
 	switch (c->_quickOption) {
 	case QUICK_ATTACK:
@@ -729,7 +728,7 @@ void Combat::quickFight() {
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
-			spells.castSpell(SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
+			spells.castSpell(c, SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
 		}
 		break;
 	case QUICK_BLOCK:

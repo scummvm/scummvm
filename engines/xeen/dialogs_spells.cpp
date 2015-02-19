@@ -29,9 +29,9 @@
 
 namespace Xeen {
 
-Character *SpellsDialog::show(XeenEngine *vm, Character *c, int v2) {
+Character *SpellsDialog::show(XeenEngine *vm, Character *c, int isCasting) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
-	Character *result = dlg->execute(c, v2);
+	Character *result = dlg->execute(c, isCasting);
 	delete dlg;
 
 	return result;
@@ -116,6 +116,10 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_F1:
+		case Common::KEYCODE_F2:
+		case Common::KEYCODE_F3:
+		case Common::KEYCODE_F4:
+		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
 			if (_vm->_mode != MODE_COMBAT) {
 				_buttonValue -= Common::KEYCODE_F1;
@@ -143,7 +147,7 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 							break;
 						}
 
-						int spellIndex = (c->_currentSp == -1) ? 39 : c->_currentSpell;
+						int spellIndex = (c->_currentSpell == -1) ? 39 : c->_currentSpell;
 						int spellId = SPELLS_ALLOWED[category][spellIndex];
 						screen._windows[10].writeString(Common::String::format(SPELL_DETAILS,
 							spells._spellNames[spellId].c_str(),
@@ -445,17 +449,9 @@ int CastSpell::show(XeenEngine *vm, int mode) {
 		}
 	}
 
-	Character &c = party._activeParty[charNum];
+	Character *c = &party._activeParty[charNum];
 	intf.highlightChar(charNum);
 
-	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(&c, mode);
-	delete dlg;
-
-	return spellId;
-}
-
-int CastSpell::show(XeenEngine *vm, Character *c, int mode) {
 	CastSpell *dlg = new CastSpell(vm);
 	int spellId = dlg->execute(c, mode);
 	delete dlg;
@@ -463,7 +459,15 @@ int CastSpell::show(XeenEngine *vm, Character *c, int mode) {
 	return spellId;
 }
 
-int CastSpell::execute(Character *c, int mode) {
+int CastSpell::show(XeenEngine *vm, Character *&c, int mode) {
+	CastSpell *dlg = new CastSpell(vm);
+	int spellId = dlg->execute(c, mode);
+	delete dlg;
+
+	return spellId;
+}
+
+int CastSpell::execute(Character *&c, int mode) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;

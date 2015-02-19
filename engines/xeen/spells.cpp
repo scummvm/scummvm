@@ -53,7 +53,7 @@ int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
 
 typedef void(Spells::*SpellMethodPtr)();
 
-void Spells::doSpell(int spellId) {
+void Spells::executeSpell(int spellId) {
 	static const SpellMethodPtr SPELL_LIST[73] = {
 		&Spells::light, &Spells::awaken, &Spells::magicArrow, &Spells::firstAid,
 		&Spells::flyingFist, &Spells::energyBlast, &Spells::sleep,
@@ -92,6 +92,10 @@ void Spells::doSpell(int spellId) {
 		&Spells::implosion, &Spells::starBurst, &Spells::divineIntervention
 	};
 
+	(this->*SPELL_LIST[spellId])();
+}
+
+void Spells::castItemSpell(int spellId) {
 	if (_vm->_mode == MODE_COMBAT) {
 		if (spellId == 15 || spellId == 20 || spellId == 27 || spellId == 41
 				|| spellId == 47 || spellId == 54 || spellId == 57) {
@@ -101,12 +105,47 @@ void Spells::doSpell(int spellId) {
 		}
 	}
 
-	(this->*SPELL_LIST[spellId])();
+	executeSpell(spellId);
 }
 
-void Spells::castSpell(int spellId) {
-	// TODO
-	error("TODO: castSpell");
+/**
+ * Cast a given spell
+ */
+int Spells::castSpell(Character *c, int spellId) {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	int oldTillMove = intf._tillMove;
+	int result = 1;
+	combat._oldCharacter = c;
+	
+	// Try and subtract the SP and gem requirements for the spell
+	int resultError = subSpellCost(*c, spellId);
+	if (resultError) {
+		CantCast::show(_vm, spellId, resultError);
+		result = -1;
+	} else {
+		// Some spells have special handling
+		switch (spellId) {
+		case 19:
+			// Enchant item
+			if (_vm->_mode != MODE_COMBAT) {
+				enchantItem();
+			} else {
+				// Return the spell costs and flag that another spell can be selected
+				addSpellCost(*c, spellId);
+				result = -1;
+			}
+			break;
+
+		default:
+			executeSpell(spellId);
+			break;
+		}
+	}
+
+	_vm->_moveMonsters = 1;
+	intf._tillMove = oldTillMove;
+	return result;
 }
 
 /**
@@ -126,7 +165,7 @@ int Spells::subSpellCost(Character &c, int spellId) {
 	if (spCost > c._currentSp)
 		// Not enough SP
 		return 1;
-	if (gemCost > party._gems)
+	if (gemCost > (int)party._gems)
 		// Not enough gems
 		return 2;
 
@@ -134,6 +173,23 @@ int Spells::subSpellCost(Character &c, int spellId) {
 	party._gems -= gemCost;
 	return 0;
 }
+
+/**
+ * Add the SP and gem requirements for a given spell to the given 
+ * character and party
+ */
+void Spells::addSpellCost(Character &c, int spellId) {
+	Party &party = *_vm->_party;
+	int gemCost = SPELL_GEM_COST[spellId];
+	int spCost = SPELL_COSTS[spellId];
+
+	if (spCost < 1)
+		spCost *= -1 * c.getCurrentLevel();
+
+	c._currentSp += spCost;
+	party._gems += gemCost;
+}
+
 
 void Spells::light() { error("TODO: spell"); }
 void Spells::awaken() { error("TODO: spell"); }

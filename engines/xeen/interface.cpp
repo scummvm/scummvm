@@ -521,9 +521,25 @@ void Interface::perform() {
 
 	case Common::KEYCODE_c: {
 		// Cast spell
-		int spellId = CastSpell::show(_vm, _vm->_mode);
-		if (spellId != -1)
-			spells.castSpell(spellId);
+		if (_tillMove) {
+			combat.moveMonsters();
+			draw3d(true);
+		}
+
+		int result = 0;
+		do {
+			Character *c = nullptr;
+			int spellId = CastSpell::show(_vm, c, _vm->_mode);
+			if (spellId == -1 || c == nullptr)
+				break;
+
+			result = spells.castSpell(c, spellId);
+		} while (result != -1);
+
+		if (result == 1) {
+			chargeStep();
+			doStepCode();
+		}
 		break;
 	}
 
@@ -1952,8 +1968,10 @@ void Interface::doCombat() {
 			case Common::KEYCODE_c: {
 				// Cast spell
 				int spellId = CastSpell::show(_vm, _vm->_mode);
-				if (spellId != -1)
-					spells.castSpell(spellId);
+				if (spellId != -1) {
+					Character *c = combat._combatParty[combat._whosTurn];
+					spells.castSpell(c, spellId);
+				}
 				break;
 			}
 

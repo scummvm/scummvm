@@ -64,12 +64,12 @@ private:
 
 	CastSpell(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
 
-	int execute(Character *c, int mode);
+	int execute(Character *&c, int mode);
 
 	void loadButtons();
 public:
 	static int show(XeenEngine *vm, int mode);
-	static int show(XeenEngine *vm, Character *c, int mode);
+	static int show(XeenEngine *vm, Character *&c, int mode);
 };
 
 } // End of namespace Xeen
