@@ -930,17 +930,6 @@ void doJournal() {
 	ungetVGABaseAddr();
 }
 
-/*
-struct SaveGameInfo {
-	unsigned short RoomNumber;
-	unsigned short Direction;
-	byte *SaveGameImage;
-	char SaveGameDate[128];
-};
-
-int getSaveGameList(SaveGameInfo *info, int maxNum);
-*/
-
 #define QUARTERNUM           30
 
 extern InventoryData *Inventory;
