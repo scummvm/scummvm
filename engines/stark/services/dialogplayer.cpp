@@ -20,7 +20,11 @@
  *
  */
 
+#include "engines/stark/gfx/texture.h"
+#include "engines/stark/gfx/driver.h"
+
 #include "engines/stark/services/dialogplayer.h"
+#include "engines/stark/services/services.h"
 
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/speech.h"
@@ -30,10 +34,12 @@ namespace Stark {
 DialogPlayer::DialogPlayer() :
 		_currentDialog(nullptr),
 		_currentReply(nullptr),
-		_speechReady(false) {
+		_speechReady(false),
+		_texture(nullptr) {
 }
 
 DialogPlayer::~DialogPlayer() {
+	delete _texture;
 }
 
 void DialogPlayer::run(Resources::Dialog *dialog) {
@@ -123,6 +129,7 @@ void DialogPlayer::update() {
 
 	Resources::Speech *speech = _currentReply->getCurrentSpeech();
 	if (speech && _speechReady) {
+		setSubtitles(speech->getPhrase());
 		// A new line can be played
 		speech->playSound();
 		_speechReady = false;
@@ -130,6 +137,8 @@ void DialogPlayer::update() {
 	}
 
 	if (!speech || !speech->isPlaying()) {
+		// A line has ended, clear the subtitle
+		clearSubtitles();
 		// A line has ended, play the next one
 		_currentReply->goToNextLine();
 		speech = _currentReply->getCurrentSpeech();
@@ -138,6 +147,24 @@ void DialogPlayer::update() {
 		} else {
 			onReplyEnd();
 		}
+	}
+}
+
+void DialogPlayer::setSubtitles(const Common::String &str) {
+	delete _texture;
+	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	_texture = gfx->createTextureFromString(str, 0xFFFF0000);
+}
+
+void DialogPlayer::clearSubtitles() {
+	delete _texture;
+	_texture = nullptr;
+}
+
+void DialogPlayer::renderText() {
+	if (_texture) {
+		Gfx::Driver *gfx = StarkServices::instance().gfx;
+		gfx->drawSurface(_texture, Common::Point(10, 400));
 	}
 }
 

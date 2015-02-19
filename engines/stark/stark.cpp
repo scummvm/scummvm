@@ -190,6 +190,8 @@ void StarkEngine::updateDisplayScene() {
 	Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
 	_scene->render(renderEntries);
 
+	_dialogPlayer->renderText();
+
 	// Swap buffers
 	_gfx->flipBuffer();
 }

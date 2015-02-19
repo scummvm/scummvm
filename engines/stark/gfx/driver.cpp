@@ -23,6 +23,10 @@
  *
  */
 
+#include "graphics/surface.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/opengl.h"
 
@@ -42,6 +46,30 @@ Driver *Driver::create() {
 #endif // USE_OPENGL
 
 	error("Couldn't instance any graphics driver");
+}
+
+Texture *Driver::createTextureFromString(const Common::String &str, uint32 color) {
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+
+	// TODO: The hardcoded widths here are not exactly perfect.
+	Common::Array<Common::String> lines;
+	font->wordWrapText(str, 580, lines);
+
+	int height = font->getFontHeight();
+	int width = 0;
+	for (int i = 0; i < lines.size(); i++) {
+		width = MAX(width, font->getStringWidth(lines[i]));
+	}
+
+	Graphics::Surface surface;
+	surface.create(width, height*lines.size(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+
+	for (int i = 0; i < lines.size(); i++) {
+		font->drawString(&surface, lines[i], 0, height*i, 580, color);
+	}
+	Texture *texture = createTexture(&surface);
+	surface.free();
+	return texture;
 }
 
 } // End of namespace Gfx
