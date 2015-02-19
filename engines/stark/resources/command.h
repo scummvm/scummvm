@@ -73,6 +73,8 @@ public:
 
 		kSetBoolean = 96,
 
+		kEnableFloorField = 103,
+
 		kSoundPlay = 112,
 
 		kPlayFullMotionVideo = 123,
@@ -132,6 +134,7 @@ protected:
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
+	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);

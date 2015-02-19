@@ -71,6 +71,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSetBoolean:
 		return opSetBoolean(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kEnableFloorField:
+		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayFullMotionVideo:
@@ -205,6 +207,14 @@ Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 valu
 
 	// This seems to have no effect currently, perhaps because the location is reloaded
 	boolean->setBooleanValue(value);
+
+	return nextCommand();
+}
+
+Command *Command::opEnableFloorField(const ResourceReference &floorFieldRef, int32 value) {
+	assert(_arguments.size() == 3);
+	Object *floorFieldObj = floorFieldRef.resolve<Object>();
+	warning("(TODO: Implement) opEnableFloorField(%s, %d) : %s", floorFieldObj->getName().c_str(), value, floorFieldRef.describe().c_str());
 
 	return nextCommand();
 }
