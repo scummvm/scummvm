@@ -46,13 +46,6 @@ namespace Lab {
 #define EAST    2
 #define WEST    3
 
-
-
-/* Generic co-ordinate define. */
-typedef struct {
-	uint16 x1, y1;
-} Cords;
-
 struct Image;
 struct TextFont;
 struct Gadget;
