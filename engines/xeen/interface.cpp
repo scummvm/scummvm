@@ -527,8 +527,10 @@ void Interface::perform() {
 		}
 
 		int result = 0;
+		Character *c = &party._activeParty[(spells._lastCaster < 0 ||
+			spells._lastCaster >= (int)party._activeParty.size()) ?
+			(int)party._activeParty.size() - 1 : spells._lastCaster];
 		do {
-			Character *c = nullptr;
 			int spellId = CastSpell::show(_vm, c, _vm->_mode);
 			if (spellId == -1 || c == nullptr)
 				break;

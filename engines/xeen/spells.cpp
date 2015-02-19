@@ -126,13 +126,21 @@ int Spells::castSpell(Character *c, int spellId) {
 	} else {
 		// Some spells have special handling
 		switch (spellId) {
-		case 19:
-			// Enchant item
+		case 19:	// Enchant item
+		case 21:	// Etherialize
+		case 40:	// Jump
+		case 44:	// Lloyd's Beacon
+		case 66:	// Super Shelter
+		case 69:	// Teleport
+		case 71:	// Town Portal
+		case 75:	// Wizard Eye
 			if (_vm->_mode != MODE_COMBAT) {
-				enchantItem();
+				executeSpell(spellId);
 			} else {
 				// Return the spell costs and flag that another spell can be selected
 				addSpellCost(*c, spellId);
+				ErrorDialog::show(_vm, Common::String::format(CANT_CAST_WHILE_ENGAGED,
+					_spellNames[spellId]));
 				result = -1;
 			}
 			break;
