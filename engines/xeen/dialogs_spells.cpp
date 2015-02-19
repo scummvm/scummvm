@@ -93,6 +93,8 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			}
 		}
 
+		if (selection >= topIndex && selection < (topIndex + 10))
+			colors[selection - topIndex] = 15;
 		if (_spells.size() == 0)
 			names[0] = errorMsg;
 
@@ -225,10 +227,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				int spellIndex = _spells[newSelection]._spellIndex;
 				int spellCost = spells.calcSpellCost(spellId, expenseFactor);
 				if (isCasting) {
-					// TODO: Confirm this refactoring against against original
-					selection = _buttonValue;
+					selection = newSelection;					
 				} else {
-					Common::String spellName = _spells[_buttonValue]._name;
+					Common::String spellName = _spells[newSelection]._name;
 					Common::String msg = (castingCopy & 0x80) ?
 						Common::String::format(SPELLS_PRESS_A_KEY, msg.c_str()) :
 						Common::String::format(SPELLS_PURCHASE, msg.c_str(), spellCost);
@@ -273,6 +274,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	screen._windows[25].close();
+
+	if (_vm->shouldQuit())
+		selection = -1;
 	if (isCasting && selection != -1)
 		c->_currentSpell = _spells[selection]._spellIndex;
 
@@ -479,7 +483,6 @@ int CastSpell::execute(Character *&c, int mode) {
 	Window &w = screen._windows[10];
 
 	Mode oldMode = (Mode)mode;
-	int category = c->getClassCategory();
 
 	w.open();
 	loadButtons();
@@ -488,6 +491,7 @@ int CastSpell::execute(Character *&c, int mode) {
 	bool redrawFlag = true;
 	do {
 		if (redrawFlag) {
+			int category = c->getClassCategory();
 			int spellIndex = c->_currentSpell != -1 ? c->_currentSpell : 39;
 			spellId = SPELLS_ALLOWED[category][spellIndex];
 			int gemCost = SPELL_GEM_COST[spellId];
