@@ -69,6 +69,7 @@ public:
 	/** Obtain the value for integer Knowledge elements */
 	int32 getIntegerValue();
 
+	void saveLoad(ResourceSerializer *serializer) override;
 protected:
 	void printData() override;
 

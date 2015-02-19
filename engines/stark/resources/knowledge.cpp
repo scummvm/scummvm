@@ -24,6 +24,8 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/services/stateprovider.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -51,6 +53,15 @@ void Knowledge::setIntegerValue(int32 value) {
 
 int32 Knowledge::getIntegerValue() {
 	return _integerValue;
+}
+
+void Knowledge::saveLoad(ResourceSerializer *serializer) {
+	if (!serializer->matchBytes("KNOWLEDGE", 9)) {
+		error("Couldn't fint the correct save header");
+	}
+	serializer->syncAsSint32LE(_integerValue);
+	serializer->syncAsSint32LE(_booleanValue);
+	// TODO: Do we need to synch the reference?
 }
 
 void Knowledge::readData(Formats::XRCReadStream *stream) {
