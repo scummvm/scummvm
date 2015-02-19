@@ -112,18 +112,15 @@ static void freeFile(uint16 RMarker) {
 /*****************************************************************************/
 /* Gets a chunk of memory from the buffer.                                   */
 /*****************************************************************************/
-static void *getCurMem(uint32 size) {
+static void *getCurMemLabFile(uint32 size) {
 	void *ptr = 0;
 
-	warning ("STUB: getCurMem(%d)", size);
-
-#if 0
 	if ((((char *) MemPlace) + size - 1) >=
 	        (((char *) buffer) + buffersize))
 		MemPlace = buffer;
 
 	ptr = MemPlace;
-	((char *)MemPlace) += size;
+	MemPlace = (char *)MemPlace + size;
 
 	for (int counter = 0; counter < MAXMARKERS; counter++) {
 		if (FileMarkers[counter].name[0]) {
@@ -137,7 +134,7 @@ static void *getCurMem(uint32 size) {
 				freeFile(counter);
 		}
 	}
-#endif
+
 	return ptr;
 }
 
@@ -198,7 +195,7 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName) {
 	freeFile(RMarker);
 	strcpy(FileMarkers[RMarker].name, fileName);
 
-	*Ptr = getCurMem(Size);
+	*Ptr = getCurMemLabFile(Size);
 	FileMarkers[RMarker].Start = *Ptr;
 	FileMarkers[RMarker].End   = (void *)(((char *)(*Ptr)) + Size - 1);
 
