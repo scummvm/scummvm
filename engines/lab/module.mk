@@ -15,13 +15,11 @@ MODULE_OBJS := \
 	labtext.o \
 	machine.o \
 	map.o \
-	modernsavegame.o \
 	mouse.o \
 	processroom.o \
 	readdiff.o \
 	readparse.o \
 	savegame.o \
-	savegamepalmap.o \
 	special.o \
 	text.o \
 	timing.o \

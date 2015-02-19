@@ -43,10 +43,6 @@
 
 namespace Lab {
 
-bool LabEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL) ? true : false;
-}
-
 LabEngine *g_lab;
 
 LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)

@@ -34,6 +34,9 @@
 #include "lab/stddefines.h"
 #include "lab/parsetypes.h"
 #include "common/file.h"
+#include "common/savefile.h"
+
+#include "engines/savestate.h"
 
 namespace Lab {
 
@@ -53,6 +56,13 @@ typedef struct {
 struct Image;
 struct TextFont;
 struct Gadget;
+
+struct SaveGameHeader {
+	byte version;
+	SaveStateDescriptor desc;
+	uint16 roomNumber;
+	uint16 direction;
+};
 
 /*----------------------------*/
 /*------ From Audioi.c -------*/
@@ -345,8 +355,6 @@ void doWestPaper(void);
 
 void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
-uint16 doDisks(void);
-
 bool saveRestoreGame(void);
 
 
@@ -355,11 +363,10 @@ bool saveRestoreGame(void);
 /*----- From saveGame.c ----*/
 /*--------------------------*/
 
-bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters, uint16 filenum, uint16 type);
+bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Common::String desc);
+bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot);
 
-bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuarters, uint16 filenum, uint16 type);
-
-
+bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header);
 
 /*--------------------------*/
 /*----- From Special.c -----*/

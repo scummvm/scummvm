@@ -1451,8 +1451,6 @@ void LabEngine::go() {
 	mem = mem && initRoomBuffer() &&
 	      initLabText();
 
-	doDisks();
-
 	if (!dointro)
 		g_music->initMusic();
 

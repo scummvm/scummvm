@@ -29,11 +29,17 @@
  */
 
 #include "engines/advancedDetector.h"
+
 #include "common/system.h"
+#include "common/str-array.h"
+#include "common/savefile.h"
 
 #include "base/plugins.h"
 
+#include "graphics/surface.h"
+
 #include "lab/lab.h"
+#include "lab/labfun.h"
 
 static const PlainGameDescriptor lab_setting[] = {
 	{ "lab", "Labyrith of Time" },
@@ -143,7 +149,111 @@ public:
 		return true;
 	}
 
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
+	void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
+
+bool LabMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+	(f == kSupportsListSaves) ||
+	//(f == kSupportsLoadingDuringStartup) ||
+	(f == kSupportsDeleteSave) ||
+	(f == kSavesSupportMetaInfo) ||
+	(f == kSavesSupportThumbnail) ||
+	(f == kSavesSupportCreationDate) ||
+	(f == kSavesSupportPlayTime);
+}
+
+bool Lab::LabEngine::hasFeature(EngineFeature f) const {
+    return
+        (f == kSupportsRTL);
+        //(f == kSupportsLoadingDuringRuntime) ||
+        //(f == kSupportsSavingDuringRuntime);
+}
+
+SaveStateList LabMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Lab::SaveGameHeader header;
+	Common::String pattern = target;
+	pattern += ".???";
+
+	Common::StringArray filenames;
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)*/
+
+	SaveStateList saveList;
+
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+	        // Obtain the last 3 digits of the filename, since they correspond to the save slot
+	        int slotNum = atoi(file->c_str() + file->size() - 3);
+
+	        if (slotNum >= 0 && slotNum <= 999) {
+	            Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+	            if (in) {
+					if (Lab::readSaveGameHeader(in, header))
+	                    saveList.push_back(SaveStateDescriptor(slotNum, header.desc.getDescription()));
+	                delete in;
+	            }
+	        }
+	}
+
+	return saveList;
+}
+
+int LabMetaEngine::getMaximumSaveSlot() const {
+	return 999;
+}
+
+void LabMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String filename = Common::String::format("%s.%03u", target, slot);
+
+	saveFileMan->removeSavefile(filename.c_str());
+
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern += ".???";
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
+
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+	    // Obtain the last 3 digits of the filename, since they correspond to the save slot
+	    int slotNum = atoi(file->c_str() + file->size() - 3);
+
+	    // Rename every slot greater than the deleted slot,
+	    if (slotNum > slot) {
+	        saveFileMan->renameSavefile(file->c_str(), filename.c_str());
+	        filename = Common::String::format("%s.%03u", target, ++slot);
+	    }
+	}
+}
+
+SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03u", target, slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+
+	if (in) {
+	    Lab::SaveGameHeader header;
+
+		bool successfulRead = Lab::readSaveGameHeader(in, header);
+	    delete in;
+
+	    if (successfulRead) {
+	        SaveStateDescriptor desc(slot, header.desc.getDescription());
+			// Do not allow save slot 0 (used for auto-saving) to be deleted or
+			// overwritten.
+			//desc.setDeletableFlag(slot != 0);
+			//desc.setWriteProtectedFlag(slot == 0);
+
+	        return header.desc;
+	    }
+	}
+
+	return SaveStateDescriptor();
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(LAB)
 	REGISTER_PLUGIN_DYNAMIC(LAB, PLUGIN_TYPE_ENGINE, LabMetaEngine);

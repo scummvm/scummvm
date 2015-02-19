@@ -28,167 +28,155 @@
  *
  */
 
+#include "common/savefile.h"
+
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
+
 #include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
-#include "lab/modernsavegame.h"
 
 namespace Lab {
 
-/* The version string */
-#if defined(DOSCODE)
-#define SAVEVERSION         "LBS2"
-#else
-#define SAVEVERSION         "LBS3"
-#define SAVEVERSION_COMPAT  "LBS2"
-#endif
+// Labyrinth of Time ScummVM
+#define SAVEGAME_ID       MKTAG('L', 'O', 'T', 'S')
+#define SAVEGAME_VERSION  1
 
 #define BOOKMARK  0
 #define CARDMARK  1
 #define FLOPPY    2
-
-typedef void *LABFH;
-#define INVALID_LABFH   NULL
-
-uint16 FileType, FileNum;
-
-
-
-/*----- The Amiga specific area of saveGame.c -----*/
-
-
-/*****************************************************************************/
-/* Opens a file to write to from disk.                                       */
-/*****************************************************************************/
-static LABFH saveGameOpen(char *filename, bool iswrite) {
-	warning("STUB: saveGameOpen");
-	return 0;
-
-#if 0
-	if (iswrite) {
-		unlink(filename);
-		return fopen(filename, "wb");
-	} else
-		return fopen(filename, "rb");
-#endif
-}
-
-
-
-
-/*****************************************************************************/
-/* Closes a file.                                                            */
-/*****************************************************************************/
-static void saveGameClose(LABFH file, bool iswrite) {
-	warning("STUB: saveGameClose");
-	return;
-
-#if 0
-	if (file != INVALID_LABFH)
-		fclose(file);
-#endif
-}
-
-
-
-
-/*****************************************************************************/
-/* Writes a block of memory to whatever it is that we're writing to.         */
-/*****************************************************************************/
-static void saveGameWriteBlock(LABFH file, void *data, uint32 size) {
-	warning("STUB: saveGameWriteBlock");
-	return;
-
-	//fwrite(data, 1, size, file);
-}
-
-
-
-/*****************************************************************************/
-/* Writes a block of memory to whatever it is that we're writing to.         */
-/*****************************************************************************/
-static void saveGameReadBlock(LABFH file, void *data, uint32 size) {
-	warning("STUB: saveGameReadBlock");
-	return;
-
-	//fread(data, 1, size, file);
-}
-
-
 
 
 /*----- The machine independent section of saveGame.c -----*/
 
 
 /* Lab: Labyrinth specific */
-extern uint16 combination[6];
+extern byte combination[6];
 extern uint16 CurTile[4] [4];
-
-#if !defined(DOSCODE)
 extern CrumbData BreadCrumbs[MAX_CRUMBS];
 extern uint16 NumCrumbs;
 extern bool DroppingCrumbs;
 extern bool FollowingCrumbs;
-#endif
+
+void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName) {
+	out->writeUint32BE(SAVEGAME_ID);
+
+	// Write version
+	out->writeByte(SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->writeString(saveName);
+	out->writeByte(0);
+
+	// Save the game thumbnail
+	Graphics::saveThumbnail(*out);
+
+	// Creation date/time
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
+
+	out->writeUint32BE(saveDate);
+	out->writeUint16BE(saveTime);
+	out->writeUint32BE(playTime);
+}
+
+bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
+	uint32 id = in->readUint32BE();
+	
+	// Check if it's a valid ScummVM savegame
+	if (id != SAVEGAME_ID)
+		return false;
+
+	// Read in the version
+	header.version = in->readByte();
+
+	// Check that the save version isn't newer than this binary
+	if (header.version > SAVEGAME_VERSION)
+		return false;
+
+	// Read in the save name
+	Common::String saveName;
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		saveName += ch;
+	header.desc.setDescription(saveName);
+
+	// Get the thumbnail
+	header.desc.setThumbnail(Graphics::loadThumbnail(*in));
+
+	uint32 saveDate = in->readUint32BE();
+	uint16 saveTime = in->readUint16BE();
+	uint32 playTime = in->readUint32BE();
+
+	int day = (saveDate >> 24) & 0xFF;
+	int month = (saveDate >> 16) & 0xFF;
+	int year = saveDate & 0xFFFF;
+	header.desc.setSaveDate(year, month, day);
+
+	int hour = (saveTime >> 8) & 0xFF;
+	int minutes = saveTime & 0xFF;
+	header.desc.setSaveTime(hour, minutes);
+
+	header.desc.setPlayTime(playTime * 1000);
+	g_engine->setTotalPlayTime(playTime * 1000);
+
+	return true;
+}
+
+extern char *getPictName(CloseDataPtr *LCPtr);
 
 /*****************************************************************************/
 /* Writes the game out to disk.                                              */
-/* Assumes that the file has already been openned and is there.              */
 /*****************************************************************************/
-static bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, LABFH file) {
-#if !defined(DOSCODE)
-	uint16 temp;
-	CrumbData crumbs[sizeof(BreadCrumbs) / sizeof(CrumbData)];
-#endif
-	uint16 last, counter, counter1;
-	char c;
+bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, int slot, Common::String desc) {
+	uint16 i, j;
+	Common::String fileName = g_lab->generateSaveFileName(slot);
+	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
+	Common::OutSaveFile *file = saveFileManager->openForSaving(fileName);
 
-	saveGameWriteBlock(file, (void *)SAVEVERSION, 4L);
-#if defined(DOSCODE)
-	saveGameWriteBlock(file, &RoomNum, 2L);
-	saveGameWriteBlock(file, &Direction, 2L);
-	saveGameWriteBlock(file, &Quarters, 2L);
-#else
-	temp = swapUShort(RoomNum);
-	saveGameWriteBlock(file, &temp, 2L);
-	temp = swapUShort(Direction);
-	saveGameWriteBlock(file, &temp, 2L);
-	temp = swapUShort(Quarters);
-	saveGameWriteBlock(file, &temp, 2L);
-#endif
+	if (!file)
+		return false;
 
-	last = g_lab->_conditions->_lastElement / 8;
-	saveGameWriteBlock(file, g_lab->_conditions->_array, (uint32) last);
+	// Load scene pic
+	CloseDataPtr CPtr = NULL;
+	readPict(getPictName(&CPtr), true);
 
-	last = g_lab->_roomsFound->_lastElement / 8;
-	saveGameWriteBlock(file, g_lab->_roomsFound->_array, (uint32) last);
+	writeSaveGameHeader(file, desc);
+	file->writeUint16LE(RoomNum);
+	file->writeUint16LE(Direction);
+	file->writeUint16LE(Quarters);
 
-	/* LAB: the combination lock and tile stuff */
-	for (counter = 0; counter < 6; counter++) {
-		c = (char)combination[counter];
-		saveGameWriteBlock(file, &c, 1L);
+	// Conditions
+	for (i = 0; i < g_lab->_conditions->_lastElement / (8 * 2); i++)
+		file->writeUint16LE(g_lab->_conditions->_array[i]);
+
+	// Rooms found
+	for (i = 0; i < g_lab->_roomsFound->_lastElement / (8 * 2); i++)
+		file->writeUint16LE(g_lab->_roomsFound->_array[i]);
+
+	// Combination lock and tile stuff
+	for (i = 0; i < 6; i++)
+		file->writeByte(combination[i]);
+
+	// Tiles
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			file->writeUint16LE(CurTile[i][j]);
+
+	// Breadcrumbs
+	for (i = 0; i < sizeof(BreadCrumbs); i++) {
+		file->writeUint16LE(BreadCrumbs[i].RoomNum);
+		file->writeUint16LE(BreadCrumbs[i].Direction);
 	}
 
-	for (counter = 0; counter < 4; counter++)
-		for (counter1 = 0; counter1 < 4; counter1++)
-#if defined(DOSCODE)
-			saveGameWriteBlock(file, &(CurTile[counter] [counter1]), 2L);
-
-#else
-		{
-			temp = swapUShort(CurTile[counter] [counter1]);
-			saveGameWriteBlock(file, &temp, 2L);
-		}
-#endif
-
-#if !defined(DOSCODE)
-	saveGameWriteBlock(file, g_SaveGameImage, SAVED_IMAGE_SIZE);
-	memcpy(crumbs, BreadCrumbs, sizeof BreadCrumbs);
-	swapUShortPtr(&crumbs[0].RoomNum, sizeof(BreadCrumbs) / sizeof(uint16));
-	saveGameWriteBlock(file, crumbs, sizeof BreadCrumbs);
-#endif
-
-	saveGameClose(file, true);
+	file->flush();
+	file->finalize();
+	delete file;
 
 	return true;
 }
@@ -197,128 +185,58 @@ static bool saveGame(uint16 RoomNum, uint16 Direction, uint16 Quarters, LABFH fi
 
 /*****************************************************************************/
 /* Reads the game from disk.                                                 */
-/* Assumes that the file has already been openned and is there.              */
 /*****************************************************************************/
-static bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, LABFH file) {
-#if !defined(DOSCODE)
-	uint16 t;
-	CrumbData crumbs[sizeof(BreadCrumbs) / sizeof(CrumbData)];
-#endif
-	char temp[5], c;
-	uint16 last, counter, counter1;
-
-	saveGameReadBlock(file, temp, 4L);
-	temp[4] = 0;
-
-	/*
-	   if (strcmp(temp, SAVEVERSION) != 0)
-	   {
-	    saveGameClose(file, false);
-	    return false;
-	   }
-	 */
-
-#if defined(DOSCODE)
-	saveGameReadBlock(file, RoomNum, 2L);
-	saveGameReadBlock(file, Direction, 2L);
-	saveGameReadBlock(file, Quarters, 2L);
-#else
-	saveGameReadBlock(file, &t, 2L);
-	*RoomNum = swapUShort(t);
-	saveGameReadBlock(file, &t, 2L);
-	*Direction = swapUShort(t);
-	saveGameReadBlock(file, &t, 2L);
-	*Quarters = swapUShort(t);
-#endif
-
-	last = g_lab->_conditions->_lastElement / 8;
-	saveGameReadBlock(file, g_lab->_conditions->_array, (uint32) last);
-
-	last = g_lab->_roomsFound->_lastElement / 8;
-	saveGameReadBlock(file, g_lab->_roomsFound->_array, (uint32) last);
-
-	/* LAB: the combination lock and tile stuff */
-	for (counter = 0; counter < 6; counter++) {
-		saveGameReadBlock(file, &c, 1L);
-		combination[counter] = c;
-	}
-
-	for (counter = 0; counter < 4; counter++)
-		for (counter1 = 0; counter1 < 4; counter1++)
-#if defined(DOSCODE)
-			saveGameReadBlock(file, &(CurTile[counter] [counter1]), 2L);
-
-#else
-		{
-			saveGameReadBlock(file, &t, 2L);
-			CurTile[counter] [counter1] = swapUShort(t);
-		}
-#endif
-
-	if (strcmp(temp, SAVEVERSION) == 0) {
-		saveGameReadBlock(file, g_SaveGameImage, SAVED_IMAGE_SIZE);
-
-		memset(crumbs, 0, sizeof BreadCrumbs);
-		saveGameReadBlock(file, crumbs, sizeof BreadCrumbs);
-		swapUShortPtr(&crumbs[0].RoomNum, sizeof(BreadCrumbs) / sizeof(uint16));
-		memcpy(BreadCrumbs, crumbs, sizeof BreadCrumbs);
-		DroppingCrumbs = (BreadCrumbs[0].RoomNum != 0);
-		FollowingCrumbs = false;
-
-		for (counter = 0; counter < MAX_CRUMBS; counter++)
-			if (BreadCrumbs[counter].RoomNum == 0) break;
-
-		NumCrumbs = counter;
-	}
-
-	saveGameClose(file, false);
-
-	return true;
-}
-
-
-
-
-/*****************************************************************************/
-/* Saves the game to the floppy disk.                                        */
-/*****************************************************************************/
-bool saveFloppy(char *path, uint16 RoomNum, uint16 Direction, uint16 NumQuarters, uint16 filenum, uint16 type) {
-	LABFH FPtr;
-
-	g_music->checkMusic();
-
-	FileType = type;
-	FileNum  = filenum;
-
-	if ((FPtr = saveGameOpen(path, true)) != INVALID_LABFH)
-		saveGame(RoomNum, Direction, NumQuarters, FPtr);
-	else
+bool loadGame(uint16 *RoomNum, uint16 *Direction, uint16 *Quarters, int slot) {
+	uint16 i, j;
+	Common::String fileName = g_lab->generateSaveFileName(slot);
+	Common::SaveFileManager *saveFileManager = g_system->getSavefileManager();
+	Common::InSaveFile *file = saveFileManager->openForLoading(fileName);
+	
+	if (!file)
 		return false;
 
+	SaveGameHeader header;
+	readSaveGameHeader(file, header);
+	*RoomNum = file->readUint16LE();
+	*Direction = file->readUint16LE();
+	*Quarters = file->readUint16LE();
+
+	// Conditions
+	for (i = 0; i < g_lab->_conditions->_lastElement / (8 * 2); i++)
+		g_lab->_conditions->_array[i] = file->readUint16LE();
+
+	// Rooms found
+	for (i = 0; i < g_lab->_roomsFound->_lastElement / (8 * 2); i++)
+		g_lab->_roomsFound->_array[i] = file->readUint16LE();
+
+	// Combination lock and tile stuff
+	for (i = 0; i < 6; i++)
+		combination[i] = file->readByte();
+
+	// Tiles
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++)
+			CurTile[i][j] = file->readUint16LE();
+
+	// Breadcrumbs
+	for (i = 0; i < sizeof(BreadCrumbs); i++) {
+		BreadCrumbs[i].RoomNum = file->readUint16LE();
+		BreadCrumbs[i].Direction = file->readUint16LE();
+	}
+
+	DroppingCrumbs = (BreadCrumbs[0].RoomNum != 0);
+	FollowingCrumbs = false;
+
+	for (i = 0; i < sizeof(BreadCrumbs); i++) {
+		if (BreadCrumbs[i].RoomNum == 0)
+			break;
+		NumCrumbs++;
+	}
+
+	delete file;
+
 	return true;
 }
 
-
-
-
-/*****************************************************************************/
-/* Reads the game from the floppy disk.                                      */
-/*****************************************************************************/
-bool readFloppy(char *path, uint16 *RoomNum, uint16 *Direction, uint16 *NumQuarters, uint16 filenum, uint16 type) {
-	LABFH FPtr;
-
-	g_music->checkMusic();
-
-	FileType = type;
-	FileNum  = filenum;
-
-	if ((FPtr = saveGameOpen(path, false)) != INVALID_LABFH) {
-		if (!loadGame(RoomNum, Direction, NumQuarters, FPtr))
-			return false;
-	} else
-		return false;
-
-	return true;
-}
 
 } // End of namespace Lab
