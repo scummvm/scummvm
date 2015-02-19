@@ -190,8 +190,10 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 
 Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enable) {
 	assert(_arguments.size() == 3);
-	Object *script = scriptRef.resolve<Object>();
+	Script *script = scriptRef.resolve<Script>();
 	warning("(TODO: Implement) opScriptEnable(%s, %d) : %s", script->getName().c_str(), enable, scriptRef.describe().c_str());
+
+	script->enable(enable);
 
 	return nextCommand();
 }

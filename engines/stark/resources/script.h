@@ -97,6 +97,9 @@ public:
 	/** Is the script enabled? */
 	bool isEnabled();
 
+	/** Enable the script */
+	void enable(bool value);
+
 	/** Is the script on its Begin command? */
 	bool isOnBegin();
 

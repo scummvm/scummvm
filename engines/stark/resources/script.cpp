@@ -111,6 +111,10 @@ bool Script::isEnabled() {
 	}
 }
 
+void Script::enable(bool value) {
+	_enabled = value;
+}
+
 bool Script::shouldExecute(uint32 callMode) {
 	Global *global = StarkServices::instance().global;
 
