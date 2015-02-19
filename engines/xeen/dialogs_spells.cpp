@@ -75,7 +75,7 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 		_spells.clear();
 		const char *errorMsg = setSpellText(c, castingCopy);
 		screen._windows[25].writeString(Common::String::format(SPELLS_FOR,
-			errorMsg == nullptr ? SPELL_LINES_0_TO_9 : nullptr,
+			errorMsg == nullptr ? SPELL_LINES_0_TO_9 : "",
 			c->_name.c_str()));
 
 		// Setup and write out spell list
@@ -91,6 +91,9 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 				colors[idx] = _spells[topIndex + idx]._color;
 			}
 		}
+
+		if (_spells.size() == 0)
+			names[0] = errorMsg;
 
 		screen._windows[37].writeString(Common::String::format(SPELLS_DIALOG_SPELLS,
 			colors[0], names[0], colors[1], names[1], colors[2], names[2],
@@ -150,7 +153,7 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 						int spellIndex = (c->_currentSpell == -1) ? 39 : c->_currentSpell;
 						int spellId = SPELLS_ALLOWED[category][spellIndex];
 						screen._windows[10].writeString(Common::String::format(SPELL_DETAILS,
-							spells._spellNames[spellId].c_str(),
+							c->_name.c_str(), spells._spellNames[spellId].c_str(),
 							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
 							SPELL_GEM_COST[spellId], c->_currentSp));
 					}
@@ -554,6 +557,9 @@ int CastSpell::execute(Character *&c, int mode) {
 
 	w.close();
 	intf.unhighlightChar();
+
+	if (_vm->shouldQuit())
+		spellId = -1;
 
 	return spellId;
 }
