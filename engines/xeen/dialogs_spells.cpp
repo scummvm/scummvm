@@ -394,18 +394,16 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 
 	} else if ((isCasting & 0x7f) == 1) {
 		switch (c->_class) {
-		case 0:
-		case 12:
-			category = 0;
-			break;
-		case 1:
-		case 3:
+		case CLASS_ARCHER:
+		case CLASS_SORCERER:
 			category = 1;
 			break;
-		case 7:
-		case 8:
+		case CLASS_DRUID:
+		case CLASS_RANGER:
 			category = 2;
 			break;
+		case CLASS_PALADIN:
+		case CLASS_CLERIC:
 		default:
 			category = 0;
 			break;
