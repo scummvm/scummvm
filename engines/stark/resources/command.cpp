@@ -67,6 +67,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kPlayAnimation:
+		return opPlayAnimation(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kScriptEnable:
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSetBoolean:
@@ -192,6 +194,14 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 		item->setEnabled(!previousState);
 		break;
 	}
+
+	return nextCommand();
+}
+
+Command *Command::opPlayAnimation(const ResourceReference &animRef, int32 unknown) {
+	assert(_arguments.size() == 3);
+	Object *anim = animRef.resolve<Object>();
+	warning("(TODO: Implement) opPlayAnimation(%s, %d) : %s", anim->getName().c_str(), unknown, animRef.describe().c_str());
 
 	return nextCommand();
 }

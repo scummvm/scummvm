@@ -69,6 +69,7 @@ public:
 
 		kItemEnable = 87,
 
+		kPlayAnimation = 93,
 		kScriptEnable = 94,
 
 		kSetBoolean = 96,
@@ -137,6 +138,7 @@ protected:
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
+	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
