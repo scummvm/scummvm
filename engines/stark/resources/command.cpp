@@ -75,6 +75,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kScrollSet:
+		return opScrollSet(_arguments[1].referenceValue);
 	case kPlayFullMotionVideo:
 		return opPlayFullMotionVideo(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableDiaryEntry:
@@ -231,6 +233,14 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 	} else {
 		return nextCommand();
 	}
+}
+
+Command *Command::opScrollSet(const ResourceReference &scrollRef) {
+	assert(_arguments.size() == 2);
+	Object *scroll =  scrollRef.resolve<Object>();
+	warning("(TODO: Implement) opScrollSet(%s) : %s", scroll->getName().c_str(), scrollRef.describe().c_str());
+
+	return nextCommand();
 }
 
 Command *Command::opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown) {

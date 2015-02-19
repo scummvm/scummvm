@@ -77,6 +77,7 @@ public:
 
 		kSoundPlay = 112,
 
+		kScrollSet = 122,
 		kPlayFullMotionVideo = 123,
 
 		kEnableDiaryEntry = 127,
@@ -138,6 +139,7 @@ protected:
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
+	Command *opScrollSet(const ResourceReference &scrollRef);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
