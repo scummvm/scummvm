@@ -81,6 +81,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opPlayFullMotionVideo(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableDiaryEntry:
 		return opEnableDiaryEntry(_arguments[1].referenceValue);
+	case kChangeSound:
+		return opChangeSound(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kActivateTexture:
@@ -254,6 +256,13 @@ Command *Command::opEnableDiaryEntry(const ResourceReference &knowledgeRef) {
 	Knowledge *entry = knowledgeRef.resolve<Knowledge>();
 	warning("(TODO: Implement) opEnableDiaryEntry(%s) : %s", entry->getName().c_str(), knowledgeRef.describe().c_str());
 
+	return nextCommand();
+}
+
+Command *Command::opChangeSound(const ResourceReference &soundRef, int32 unknown1, int32 unknown2, int32 unknown3, int32 unknown4) {
+	assert(_arguments.size() == 6);
+	Object *sound = soundRef.resolve<Object>();
+	warning("(TODO: Implement) opChangeSound(%s, %d, %d, %d, %d) : %s", sound->getName().c_str(), unknown1, unknown2, unknown3, unknown4, soundRef.describe().c_str());
 	return nextCommand();
 }
 

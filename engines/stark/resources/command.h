@@ -82,6 +82,8 @@ public:
 
 		kEnableDiaryEntry = 127,
 
+		kChangeSound = 129,
+
 		kItemPlaceDirection = 133,
 
 		kActivateTexture = 135,
@@ -142,6 +144,7 @@ protected:
 	Command *opScrollSet(const ResourceReference &scrollRef);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
+	Command *opChangeSound(const ResourceReference &soundRef, int32 unknown1, int32 unknown2, int32 unknown3, int32 unknown4);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
