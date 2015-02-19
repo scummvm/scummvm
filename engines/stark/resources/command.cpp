@@ -65,6 +65,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opPauseRandom(script, _arguments[1].referenceValue);
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
+	case kItem3DWalkTo:
+		return opItem3DWalkTo(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimation:
@@ -172,6 +174,15 @@ Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const Resour
 	default:
 		warning("Unimplemented op3DPlaceOn target type %s", target->getType().getName());
 	}
+
+	return nextCommand();
+}
+
+Command *Command::opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown) {
+	assert(_arguments.size() == 4);
+	Object *item = itemRef.resolve<Object>();
+	Object *target = targetRef.resolve<Object>();
+	warning("(TODO: Implement) opItem3DWalkTo(%s, %s, %d), %s : %s", item->getName().c_str(), target->getName().c_str(), unknown, itemRef.describe().c_str(), targetRef.describe().c_str());
 
 	return nextCommand();
 }

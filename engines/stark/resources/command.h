@@ -66,6 +66,7 @@ public:
 		kScriptPauseRandom = 10,
 
 		kItem3DPlaceOn = 81,
+		kItem3DWalkTo = 82,
 
 		kItemEnable = 87,
 
@@ -137,6 +138,7 @@ protected:
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
+	Command *opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
