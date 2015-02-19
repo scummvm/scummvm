@@ -73,6 +73,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayFullMotionVideo:
 		return opPlayFullMotionVideo(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kEnableDiaryEntry:
+		return opEnableDiaryEntry(_arguments[1].referenceValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kActivateTexture:
@@ -205,6 +207,14 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 Command *Command::opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown) {
 	Object *movie =  movieRef.resolve<Object>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
+	return nextCommand();
+}
+
+Command *Command::opEnableDiaryEntry(const ResourceReference &knowledgeRef) {
+	assert(_arguments.size() == 2);
+	Knowledge *entry = knowledgeRef.resolve<Knowledge>();
+	warning("(TODO: Implement) opEnableDiaryEntry(%s) : %s", entry->getName().c_str(), knowledgeRef.describe().c_str());
+
 	return nextCommand();
 }
 

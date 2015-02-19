@@ -75,6 +75,8 @@ public:
 
 		kPlayFullMotionVideo = 123,
 
+		kEnableDiaryEntry = 127,
+
 		kItemPlaceDirection = 133,
 
 		kActivateTexture = 135,
@@ -127,6 +129,7 @@ protected:
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
+	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
