@@ -92,7 +92,9 @@ public:
 
 		kIsSet = 166,
 
-		kIsRandom = 175
+		kIsRandom = 175,
+
+		kIsOnPlace = 177
 	};
 
 	struct Argument {
@@ -145,6 +147,7 @@ protected:
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);
+	Command *opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position);
 
 	Common::Array<Argument> _arguments;
 };

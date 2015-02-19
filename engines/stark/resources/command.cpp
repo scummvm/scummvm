@@ -93,6 +93,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsRandom:
 		return opIsRandom(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].intValue);
+	case kIsOnPlace:
+		return opIsOnPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	default:
 		warning("Unimplemented command %d - %s", _subType, _name.c_str());
 		printData();
@@ -298,6 +300,15 @@ Command *Command::opIsRandom(int branch1, int branch2, int32 unknown) {
 	warning("(TODO: Implement) opIsRandom(%d, %d, %d)", branch1, branch2, unknown);
 	// TODO: Verify how this logic actually should be handled
 	return nextCommandIf(true);
+}
+
+Command *Command::opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position) {
+	assert(_arguments.size() == 4);
+	Object *itemObj = itemRef.resolve<Object>();
+	Object *positionObj = position.resolve<Object>();
+	warning("(TODO: Implement) opIsOnPlace(%d, %d, %s, %s) %s : %s", branch1, branch2, itemObj->getName().c_str(), positionObj->getName().c_str(), itemRef.describe().c_str(), position.describe().c_str());
+	// TODO: Verify how this logic actually should be handled
+	return nextCommandIf(false);
 }
 
 Command *Command::nextCommand() {
