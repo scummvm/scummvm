@@ -108,11 +108,11 @@ int Town::townAction(int actionId) {
 	case 1:
 		// Blacksmith
 		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1, true);
-		addButton(Common::Rect(234, 54, 308, 62), 0, &_icons1, false);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b, &_icons1, false);
-		addButton(Common::Rect(234, 74, 308, 82), 0, &_icons1, false);
-		addButton(Common::Rect(234, 84, 308, 92), 0, &_icons1, false);
+		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(234, 54, 308, 62), 0);
+		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
+		addButton(Common::Rect(234, 74, 308, 82), 0);
+		addButton(Common::Rect(234, 84, 308, 92), 0);
 
 		sound.playSample(nullptr, 0);
 		vocName = isDarkCc ? "see2.voc" : "whaddayo.voc";
@@ -122,11 +122,11 @@ int Town::townAction(int actionId) {
 		// Guild
 		loadStrings("spldesc.bin");
 		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1, true);
-		addButton(Common::Rect(234, 54, 308, 62), 0, &_icons1, false);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b, &_icons1, false);
-		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s, &_icons1, false);
-		addButton(Common::Rect(234, 84, 308, 92), 0, &_icons1, false);
+		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(234, 54, 308, 62), 0);
+		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
+		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
+		addButton(Common::Rect(234, 84, 308, 92), 0);
 		_vm->_mode = MODE_17;
 
 		sound.playSample(nullptr, 0);
@@ -137,12 +137,12 @@ int Town::townAction(int actionId) {
 		// Tavern
 		loadStrings("tavern.bin");
 		_icons1.load("tavern.icn");
-		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1, true);
-		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_s, &_icons1, true);
-		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_d, &_icons1, false);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f, &_icons1, false);
-		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t, &_icons1, false);
-		addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r, &_icons1, false);
+		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_s, &_icons1);
+		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_d);
+		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f);
+		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t);
+		addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
 		_vm->_mode = MODE_17;
 
 		sound.playSample(nullptr, 0);
@@ -152,11 +152,11 @@ int Town::townAction(int actionId) {
 	case 4:
 		// Temple
 		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1, true);
-		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h, &_icons1, false);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_d, &_icons1, false);
-		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u, &_icons1, false);
-		addButton(Common::Rect(234, 84, 308, 92), 0, &_icons1, false);
+		addButton(Common::Rect(261, 100, 285, 120), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h);
+		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_d);
+		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
+		addButton(Common::Rect(234, 84, 308, 92), 0);
 
 		sound.playSample(nullptr, 0);
 		vocName = isDarkCc ? "help2.voc" : "maywe2.voc";
@@ -168,8 +168,8 @@ int Town::townAction(int actionId) {
 		_v2 = 0;
 
 		_icons1.load("train.icn");
-		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1, true);
-		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1, false);
+		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
+		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t);
 
 		sound.playSample(nullptr, 0);
 		vocName = isDarkCc ? "training.voc" : "youtrn1.voc";

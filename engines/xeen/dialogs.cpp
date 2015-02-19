@@ -47,14 +47,19 @@ void ButtonContainer::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
-void ButtonContainer::addButton(const Common::Rect &bounds, int val, SpriteResource *sprites, bool draw) {
-	_buttons.push_back(UIButton(bounds, val, sprites, draw));
+void ButtonContainer::addButton(const Common::Rect &bounds, int val, 
+		SpriteResource *sprites) {
+	_buttons.push_back(UIButton(bounds, val, sprites, true));
+}
+
+void ButtonContainer::addButton(const Common::Rect &bounds, int val) {
+	_buttons.push_back(UIButton(bounds, val, nullptr, false));
 }
 
 void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 	for (uint idx = 0; idx < MAX_ACTIVE_PARTY; ++idx) {
 		addButton(Common::Rect(CHAR_FACES_X[idx], 150, CHAR_FACES_X[idx] + 32, 182),
-			Common::KEYCODE_F1 + idx, nullptr, false);
+			Common::KEYCODE_F1 + idx);
 	}
 }
 

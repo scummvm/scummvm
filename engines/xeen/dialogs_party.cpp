@@ -280,7 +280,7 @@ void PartyDialog::loadButtons() {
 	addButton(Common::Rect(122, 100, 146, 120), Common::KEYCODE_r, &_uiSprites);
 	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_uiSprites);
 	addButton(Common::Rect(192, 100, 216, 120), Common::KEYCODE_x, &_uiSprites);
-	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE, &_uiSprites, false);
+	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE);
 }
 
 void PartyDialog::initDrawStructs() {
@@ -310,10 +310,10 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	// Reset the button areas for the display character images
 	while (_buttons.size() > 7)
 		_buttons.remove_at(7);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_uiSprites, false);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_uiSprites, false);
-	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3, &_uiSprites, false);
-	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4, &_uiSprites, false);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
+	addButton(Common::Rect(59, 59, 91, 91), Common::KEYCODE_3);
+	addButton(Common::Rect(117, 59, 151, 91), Common::KEYCODE_4);
 
 
 	for (posIndex = 0; posIndex < 4; ++posIndex) {
@@ -712,10 +712,10 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	saveButtons();
 	addButton(Common::Rect(225, isDelete ? 120 : 84, 249, isDelete ? 140 : 104), 
 		Common::KEYCODE_ESCAPE, &iconSprites);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &iconSprites, false);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &iconSprites, false);
-	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3, &iconSprites, false);
-	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4, &iconSprites, false);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
+	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3);
+	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4);
 	addPartyButtons(_vm);
 
 	int result = -1, v;

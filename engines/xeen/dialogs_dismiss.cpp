@@ -88,10 +88,10 @@ void Dismiss::execute() {
 void Dismiss::loadButtons() {
 	_iconSprites.load("esc.icn");
 	addButton(Common::Rect(225, 120, 249, 140), Common::KEYCODE_ESCAPE, &_iconSprites);
-	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1, &_iconSprites, false);
-	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2, &_iconSprites, false);
-	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3, &_iconSprites, false);
-	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4, &_iconSprites, false);
+	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
+	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
+	addButton(Common::Rect(16, 59, 48, 91), Common::KEYCODE_3);
+	addButton(Common::Rect(117, 59, 149, 91), Common::KEYCODE_4);
 }
 
 } // End of namespace Xeen

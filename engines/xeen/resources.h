@@ -288,8 +288,6 @@ extern const char *const SPELLS_PRESS_A_KEY;
 
 extern const char *const SPELLS_PURCHASE;
 
-extern const char *const SPELL_DETAILS;
-
 extern const char *const MAP_TEXT;
 
 extern const char *const LIGHT_COUNT_TEXT;

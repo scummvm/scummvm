@@ -239,10 +239,10 @@ void Interface::setMainButtons(bool combatMode) {
 	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) |Common::KEYCODE_LEFT, &_iconSprites);
 	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, &_iconSprites);
 	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, &_iconSprites);
-	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS, &_iconSprites, false);
-	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1, &_iconSprites, false);
-	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, &_iconSprites, false);
-	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, &_iconSprites, false);
+	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS);
+	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1);
+	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2);
+	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3);
 	addPartyButtons(_vm);
 
 	if (combatMode) {

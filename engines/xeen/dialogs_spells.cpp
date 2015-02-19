@@ -152,7 +152,7 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 
 						int spellIndex = (c->_currentSpell == -1) ? 39 : c->_currentSpell;
 						int spellId = SPELLS_ALLOWED[category][spellIndex];
-						screen._windows[10].writeString(Common::String::format(SPELL_DETAILS,
+						screen._windows[10].writeString(Common::String::format(CAST_SPELL_DETAILS,
 							c->_name.c_str(), spells._spellNames[spellId].c_str(),
 							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
 							SPELL_GEM_COST[spellId], c->_currentSp));
@@ -280,8 +280,8 @@ Character *SpellsDialog::execute(Character *c, int isCasting) {
 void SpellsDialog::loadButtons() {
 	_iconSprites.load("main.icn");
 	_scrollSprites.load("scroll.icn");
-	addButton(Common::Rect(187, 26, 198, 36), Common::KEYCODE_UP, &_scrollSprites, true);
-	addButton(Common::Rect(187, 111, 198, 121), Common::KEYCODE_DOWN, &_scrollSprites, true);
+	addButton(Common::Rect(187, 26, 198, 36), Common::KEYCODE_UP, &_scrollSprites);
+	addButton(Common::Rect(187, 111, 198, 121), Common::KEYCODE_DOWN, &_scrollSprites);
 	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1);
 	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2);
 	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3);

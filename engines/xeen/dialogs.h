@@ -66,8 +66,9 @@ public:
 
 	void restoreButtons();
 
-	void addButton(const Common::Rect &bounds, int val, 
-		SpriteResource *sprites = nullptr, bool draw = true);
+	void addButton(const Common::Rect &bounds, int val, SpriteResource *sprites);
+
+	void addButton(const Common::Rect &bounds, int val);
 
 	void addPartyButtons(XeenEngine *vm);
 };

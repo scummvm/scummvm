@@ -155,17 +155,17 @@ void OptionsMenu::showTitles2() {
 }
 
 void OptionsMenu::setupButtons(SpriteResource *buttons) {
-	addButton(Common::Rect(124, 87, 124 + 53, 87 + 10), 'S', buttons, false);
-	addButton(Common::Rect(126, 98, 126 + 47, 98 + 10), 'L', buttons, false);
-	addButton(Common::Rect(91, 110, 91 + 118, 110 + 10), 'C', buttons, false);
-	addButton(Common::Rect(85, 121, 85 + 131, 121 + 10), 'O', buttons, false);
+	addButton(Common::Rect(124, 87, 124 + 53, 87 + 10), 'S');
+	addButton(Common::Rect(126, 98, 126 + 47, 98 + 10), 'L');
+	addButton(Common::Rect(91, 110, 91 + 118, 110 + 10), 'C');
+	addButton(Common::Rect(85, 121, 85 + 131, 121 + 10), 'O');
 }
 
 void WorldOptionsMenu::setupButtons(SpriteResource *buttons) {
-	addButton(Common::Rect(93, 53, 93 + 134, 53 + 20), 'S', buttons, true);
-	addButton(Common::Rect(93, 78, 93 + 134, 78 + 20), 'L', buttons, true);
-	addButton(Common::Rect(93, 103, 93 + 134, 103 + 20), 'C', buttons, true);
-	addButton(Common::Rect(93, 128, 93 + 134, 128 + 20), 'O', buttons, true);
+	addButton(Common::Rect(93, 53, 93 + 134, 53 + 20), 'S', buttons);
+	addButton(Common::Rect(93, 78, 93 + 134, 78 + 20), 'L', buttons);
+	addButton(Common::Rect(93, 103, 93 + 134, 103 + 20), 'C', buttons);
+	addButton(Common::Rect(93, 128, 93 + 134, 128 + 20), 'O', buttons);
 }
 
 /*------------------------------------------------------------------------*/
