@@ -55,6 +55,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opScriptBegin();
 	case kDialogCall:
 		return opDialogCall(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kSetInteractiveMode:
+		return opSetInteractiveMode(_arguments[1].intValue);
 	case kLocationGoTo:
 		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
@@ -108,6 +110,12 @@ Command *Command::opDialogCall(Script *script, const ResourceReference &dialogRe
 	} else {
 		return nextCommand();
 	}
+}
+
+Command *Command::opSetInteractiveMode(bool enabled) {
+	assert(_arguments.size() == 2);
+	warning("(TODO: Implement) opSetInteractiveMode(%d)", enabled);
+	return nextCommand();
 }
 
 Command *Command::opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction) {

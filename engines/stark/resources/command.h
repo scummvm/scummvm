@@ -59,7 +59,7 @@ public:
 		kCommandEnd = 1,
 
 		kDialogCall = 3,
-
+		kSetInteractiveMode = 4,
 		kLocationGoTo = 5,
 
 		kScriptPause = 9,
@@ -118,6 +118,7 @@ protected:
 
 	Command *opScriptBegin();
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
+	Command *opSetInteractiveMode(bool enabled);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
