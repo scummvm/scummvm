@@ -221,10 +221,14 @@ static const byte velocityMap2[64] = {
 	0x3d, 0x3e, 0x3e, 0x3e, 0x3e, 0x3f, 0x3f, 0x3f
 };
 
-static const int ym3812_note[13] = {
-	0x157, 0x16b, 0x181, 0x198, 0x1b0, 0x1ca,
-	0x1e5, 0x202, 0x220, 0x241, 0x263, 0x287,
-	0x2ae
+// One octave with three pitch wheel positions after each note
+static const int adlibFreq[48] = {
+	0x157, 0x15c, 0x161, 0x166, 0x16b, 0x171, 0x176, 0x17b,
+	0x181, 0x186, 0x18c, 0x192, 0x198, 0x19e, 0x1a4, 0x1aa,
+	0x1b0, 0x1b6, 0x1bd, 0x1c3, 0x1ca, 0x1d0, 0x1d7, 0x1de,
+	0x1e5, 0x1ec, 0x1f3, 0x1fa, 0x202, 0x209, 0x211, 0x218,
+	0x220, 0x228, 0x230, 0x238, 0x241, 0x249, 0x252, 0x25a,
+	0x263, 0x26c, 0x275, 0x27e, 0x287, 0x290, 0x29a, 0x2a4
 };
 
 int MidiDriver_AdLib::openAdLib() {
@@ -700,37 +704,52 @@ void MidiDriver_AdLib::voiceOff(int voice) {
 
 void MidiDriver_AdLib::setNote(int voice, int note, bool key) {
 	int channel = _voices[voice].channel;
-	int n, fre, oct;
-	float delta;
-	int bend = _channels[channel].pitchWheel;
 
 	if ((channel == 9) && _rhythmKeyMap)
 		note = _rhythmKeyMap[CLIP(note, 27, 88) - 27];
 
 	_voices[voice].note = note;
 
-	n = note % 12;
+	int index = note << 2;
+	uint16 pitchWheel = _channels[channel].pitchWheel;
+	int sign;
 
-	if (bend < 8192)
-		bend = 8192 - bend;
-	delta = (float)pow(2.0, (bend % 8192) / 8192.0);
+	if (pitchWheel == 0x2000) {
+		pitchWheel = 0;
+		sign = 0;
+	} else if (pitchWheel > 0x2000) {
+		pitchWheel -= 0x2000;
+		sign = 1;
+	} else {
+		pitchWheel = 0x2000 - pitchWheel;
+		sign = -1;
+	}
 
-	if (bend > 8192)
-		fre = (int)(ym3812_note[n] * delta);
+	pitchWheel /= 171;
+
+	if (sign == 1)
+		index += pitchWheel;
 	else
-		fre = (int)(ym3812_note[n] / delta);
+		index -= pitchWheel;
 
-	oct = note / 12 - 1;
+	if (index > 0x1fc) // Limit to max MIDI note (<< 2)
+		index = 0x1fc;
 
-	if (oct < 0)
-		oct = 0;
+	if (index < 0) // Not in SSCI
+		index = 0;
 
-	if (oct > 7)
+	int freq = adlibFreq[index % 48];
+
+	setRegister(0xA0 + voice, freq & 0xff);
+
+	int oct = index / 48;
+	if (oct > 0)
+		--oct;
+
+	if (oct > 7) // Not in SSCI
 		oct = 7;
 
-	setRegister(0xA0 + voice, fre & 0xff);
-	setRegister(0xB0 + voice, (key << 5) | (oct << 2) | (fre >> 8));
-
+	setRegister(0xB0 + voice, (key << 5) | (oct << 2) | (freq >> 8));
 	setVelocity(voice);
 }
 
