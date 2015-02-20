@@ -122,6 +122,10 @@ bool Script::shouldExecute(uint32 callMode) {
 		return false; // Don't execute disabled scripts
 	}
 
+	if (callMode == kCallModeCalledByScript) {
+		return true;
+	}
+
 	if (callMode == kCallModeGameLoop && !isOnBegin()) {
 		return true; // Continue previously running script
 	}

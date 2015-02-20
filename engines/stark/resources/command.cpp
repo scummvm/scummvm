@@ -53,6 +53,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	switch (_subType) {
 	case kCommandBegin:
 		return opScriptBegin();
+	case kScriptCall:
+		return opScriptCall(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kDialogCall:
 		return opDialogCall(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kSetInteractiveMode:
@@ -113,6 +115,16 @@ Command *Command::execute(uint32 callMode, Script *script) {
 }
 
 Command *Command::opScriptBegin() {
+	return nextCommand();
+}
+
+Command *Command::opScriptCall(Script *script, const ResourceReference &scriptRef, int32 unknown) {
+	Script *scriptObj = scriptRef.resolve<Script>();
+	warning("(TODO: Implement) opScriptCall(%s, %d) : %s", scriptObj->getName().c_str(), unknown, scriptRef.describe().c_str());
+
+	// TODO: Presumably not right.
+	scriptObj->execute(Script::kCallModeCalledByScript);
+	
 	return nextCommand();
 }
 

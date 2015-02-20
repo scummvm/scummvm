@@ -57,7 +57,7 @@ public:
 	enum SubType {
 		kCommandBegin = 0,
 		kCommandEnd = 1,
-
+		kScriptCall = 2,
 		kDialogCall = 3,
 		kSetInteractiveMode = 4,
 		kLocationGoTo = 5,
@@ -132,6 +132,7 @@ protected:
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
 	Command *opScriptBegin();
+	Command *opScriptCall(Script *script, const ResourceReference &scriptRef, int32 unknown);
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
 	Command *opSetInteractiveMode(bool enabled);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);

@@ -80,7 +80,8 @@ public:
 		kCallModeEnterLocation = 3,
 		kCallModePlayerAction = 4,
 		kCallModeDialogCreateSelections = 5,
-		kCallModeDialogAnswer = 6
+		kCallModeDialogAnswer = 6,
+		kCallModeCalledByScript = 7 // NOT an actual number, just a way to override the call mode from scripts.
 	};
 
 	Script(Object *parent, byte subType, uint16 index, const Common::String &name);
