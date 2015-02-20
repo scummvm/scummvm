@@ -54,7 +54,7 @@ public:
 	int _accuracy;
 	int _speed;
 	int _numberOfAttacks;
-	CharacterClass _hatesClass;
+	int _hatesClass;
 	int _strikes;
 	int _dmgPerStrike;
 	DamageType _attackType;

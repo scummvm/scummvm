@@ -236,6 +236,13 @@ loop:
 	}
 }
 
+/**
+ * Do damage to a specific character
+ */
+void Combat::doCharDamage(Character *c, int monsterDataIndex) {
+	error("TODO");
+}
+
 void Combat::moveMonsters() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
@@ -565,7 +572,184 @@ void Combat::monsterOvercome() {
 }
 
 void Combat::attackMonster(int monsterId) {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	int monRefId;
 
+	if (_monstersAttacking) {
+		warning("TODO: Original used uninitialized variables if flag was set");
+		return;
+	}
+
+	int monsterIndex;
+	switch (_whosTurn - _combatParty.size()) {
+	case 0:
+		monsterIndex = _attackMonsters[0];
+		intf._indoorList[156]._scale = 0;
+		break;
+	case 1:
+		monsterIndex = _attackMonsters[1];
+		intf._indoorList[150]._scale = 0;
+		break;
+	case 2:
+	default:
+		monsterIndex = _attackMonsters[2];
+		intf._indoorList[153]._scale = 0;
+	} 
+
+	MazeMonster &monster = map._mobData._monsters[monsterIndex];
+	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	if (monster._field7)
+		return;
+
+	monster._frame = 8;
+	monster._fieldA = 3;
+	monster._field9 = 0;
+	intf.draw3d(true);
+	intf.draw3d(true);
+
+	File f(monsterData._attackVoc);
+	sound.playSample(&f, 0);
+	bool flag = false;
+
+	for (int attackNum = 0; attackNum < monsterData._numberOfAttacks; ++attackNum) {
+		int charNum = -1;
+		bool isHated = false;
+
+		if (monsterData._hatesClass != -1) {
+			if (monsterData._hatesClass == 15)
+				// Monster hates all classes
+				goto loop;
+
+			for (uint charIndex = 0; charIndex < _combatParty.size(); ++charIndex) {
+				Character &c = *_combatParty[charIndex];
+				Condition cond = c.worstCondition();
+				if (cond >= PARALYZED && cond <= ERADICATED)
+					continue;
+
+				bool isHated = false;
+				switch (monsterData._hatesClass) {
+				case CLASS_KNIGHT:
+				case CLASS_PALADIN:
+				case CLASS_ARCHER:
+				case CLASS_CLERIC:
+				case CLASS_SORCERER:
+				case CLASS_ROBBER:
+				case CLASS_NINJA:
+				case CLASS_BARBARIAN:
+				case CLASS_DRUID:
+				case CLASS_RANGER:
+					isHated = c._class == monsterData._hatesClass;
+					break;
+				case 12:
+					isHated = c._race == DWARF;
+					break;
+				default:
+					break;
+				}
+
+				if (isHated) {
+					charNum = charIndex;
+					break;
+				}
+			}
+		}
+
+		if (!isHated) {
+			// No particularly hated foe, so decide which character to start with
+			switch (_combatParty.size()) {
+			case 1:
+				charNum = 0;
+				break;
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				charNum = _vm->getRandomNumber(0, _combatParty.size() - 1);
+				break;
+			case 6:
+				if (_vm->getRandomNumber(1, 6) == 6)
+					charNum = 5;
+				else
+					charNum = _vm->getRandomNumber(0, 4);
+				break;
+			}
+		}
+
+		// Attacking loop
+		do {
+			if (!flag) {
+				Condition cond = _combatParty[charNum]->worstCondition();
+
+				if (cond >= PARALYZED && cond <= ERADICATED) {
+					Common::Array<int> ableChars;
+					bool skip = false;
+					
+					for (uint idx = 0; idx < _combatParty.size() && !skip; ++idx) {
+						switch (_combatParty[idx]->worstCondition()) {
+						case PARALYZED:
+						case UNCONSCIOUS:
+							if (flag)
+								skip = true;
+							break;
+						case DEAD:
+						case STONED:
+						case ERADICATED:
+							break;
+						default:
+							ableChars.push_back(idx);
+							break;
+						}
+					}
+
+					if (!skip) {
+						if (ableChars.size() == 0) {
+							party._dead = true;
+							_vm->_mode = MODE_1;
+							return;
+						}
+
+						charNum = ableChars[_vm->getRandomNumber(0, ableChars.size() - 1)];
+					}
+				}
+			}
+
+			// Unconditional if to get around goto initialization errors
+			if (true) {
+				Character &c = *_combatParty[charNum];
+				if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
+					doCharDamage(&c, monster._spriteId);
+				} else {
+					int v = _vm->getRandomNumber(1, 20);
+					if (v == 1) {
+						sound.playFX(6);
+					} else {
+						if (v == 20)
+							doCharDamage(&c, monster._spriteId);
+						v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
+							monsterData._hitChance);
+
+						int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 :
+							c.getCurrentLevel() / 2 + 15);
+						if (ac > v) {
+							sound.playFX(6);
+						} else {
+							doCharDamage(&c, monster._spriteId);
+						}
+					}
+				}
+
+				if (flag)
+					break;
+			}
+loop:
+			flag = true;
+		} while (++charNum < (int)_combatParty.size());
+	}
+
+	intf.drawParty(true);
 }
 
 int Combat::stopAttack(const Common::Point &diffPt) {

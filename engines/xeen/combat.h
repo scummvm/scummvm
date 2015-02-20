@@ -107,6 +107,8 @@ public:
 
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 
+	void doCharDamage(Character *c, int monsterDataIndex);
+
 	void moveMonsters();
 
 	void setupCombatParty();
