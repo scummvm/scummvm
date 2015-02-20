@@ -73,6 +73,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimation:
 		return opPlayAnimation(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kShowPlay:
+		return opShowPlay(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kScriptEnable:
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSetBoolean:
@@ -236,6 +238,16 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 
 	script->enable(enable);
 
+	return nextCommand();
+}
+
+Command *Command::opShowPlay(const ResourceReference &ref, int32 unknown) {
+	assert(_arguments.size() == 3);
+	Speech *speechObj = ref.resolve<Speech>();
+	assert(speechObj->getType().get() == Type::kSpeech);
+	speechObj->playSound();
+	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speechObj->getName().c_str(), unknown, speechObj->getPhrase().c_str(), ref.describe().c_str());
+	// TODO: Presumably there is a show-part to this too, so we might want to look out for non-Speech objects.
 	return nextCommand();
 }
 

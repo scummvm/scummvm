@@ -72,7 +72,7 @@ public:
 
 		kPlayAnimation = 93,
 		kScriptEnable = 94,
-
+		kShowPlay = 95,
 		kSetBoolean = 96,
 
 		kEnableFloorField = 103,
@@ -143,6 +143,7 @@ protected:
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
+	Command *opShowPlay(const ResourceReference &ref, int32 unknown);
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
