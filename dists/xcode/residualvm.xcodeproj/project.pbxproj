@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		031C37361A97A9E800B375C1 /* codec48.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 031C37351A97A9E800B375C1 /* codec48.cpp */; };
+		031C37381A97A9FE00B375C1 /* quicktime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 031C37371A97A9FE00B375C1 /* quicktime.cpp */; };
+		031C373A1A97AA2D00B375C1 /* resvm-sdl-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 031C37391A97AA2D00B375C1 /* resvm-sdl-events.cpp */; };
 		2857822F19B1D67700AA2E6F /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 285781C519B1D67700AA2E6F /* audiostream.cpp */; };
 		2857823019B1D67700AA2E6F /* aac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 285781C819B1D67700AA2E6F /* aac.cpp */; };
 		2857823119B1D67700AA2E6F /* adpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 285781CA19B1D67700AA2E6F /* adpcm.cpp */; };
@@ -441,6 +444,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		031C37351A97A9E800B375C1 /* codec48.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = codec48.cpp; sourceTree = "<group>"; };
+		031C37371A97A9FE00B375C1 /* quicktime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quicktime.cpp; sourceTree = "<group>"; };
+		031C37391A97AA2D00B375C1 /* resvm-sdl-events.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "resvm-sdl-events.cpp"; sourceTree = "<group>"; };
+		03A1BC521A97AEBB00AD8831 /* resvm-sdl-events.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "resvm-sdl-events.h"; sourceTree = "<group>"; };
+		03A1BC531A97AECD00AD8831 /* codec48.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = codec48.h; sourceTree = "<group>"; };
+		03A1BC541A97AEDC00AD8831 /* quicktime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = quicktime.h; sourceTree = "<group>"; };
 		283E247119B1E1E4004DE6D1 /* math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = math.h; sourceTree = "<group>"; };
 		285781C519B1D67700AA2E6F /* audiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audiostream.cpp; sourceTree = "<group>"; };
 		285781C619B1D67700AA2E6F /* audiostream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audiostream.h; sourceTree = "<group>"; };
@@ -1523,6 +1532,8 @@
 		2857827419B1D6FC00AA2E6F /* sdl */ = {
 			isa = PBXGroup;
 			children = (
+				031C37391A97AA2D00B375C1 /* resvm-sdl-events.cpp */,
+				03A1BC521A97AEBB00AD8831 /* resvm-sdl-events.h */,
 				2857827519B1D6FC00AA2E6F /* sdl-events.cpp */,
 				2857827619B1D6FC00AA2E6F /* sdl-events.h */,
 			);
@@ -2621,6 +2632,8 @@
 				2857875319B1D9CA00AA2E6F /* movie.h */,
 				2857875419B1D9CA00AA2E6F /* mpeg.cpp */,
 				2857875519B1D9CA00AA2E6F /* mpeg.h */,
+				031C37371A97A9FE00B375C1 /* quicktime.cpp */,
+				03A1BC541A97AEDC00AD8831 /* quicktime.h */,
 				2857875619B1D9CA00AA2E6F /* smush.cpp */,
 				2857875719B1D9CA00AA2E6F /* smush.h */,
 			);
@@ -2634,6 +2647,8 @@
 				2857874A19B1D9CA00AA2E6F /* blocky16.h */,
 				2857874B19B1D9CA00AA2E6F /* blocky8.cpp */,
 				2857874C19B1D9CA00AA2E6F /* blocky8.h */,
+				031C37351A97A9E800B375C1 /* codec48.cpp */,
+				03A1BC531A97AECD00AD8831 /* codec48.h */,
 				2857874E19B1D9CA00AA2E6F /* smush_decoder.cpp */,
 				2857874F19B1D9CA00AA2E6F /* smush_decoder.h */,
 				2857875019B1D9CA00AA2E6F /* vima.cpp */,
@@ -2875,6 +2890,7 @@
 				2857886319B1D9CA00AA2E6F /* lang_filter.cpp in Sources */,
 				2857887619B1D9CA00AA2E6F /* hotspot.cpp in Sources */,
 				2857884819B1D9CA00AA2E6F /* material.cpp in Sources */,
+				031C37381A97A9FE00B375C1 /* quicktime.cpp in Sources */,
 				285787F519B1D9CA00AA2E6F /* sprite_component.cpp in Sources */,
 				2857841B19B1D6FD00AA2E6F /* macosx-main.cpp in Sources */,
 				2857824219B1D67700AA2E6F /* mixer.cpp in Sources */,
@@ -2932,6 +2948,7 @@
 				285785BE19B1D89800AA2E6F /* saveload-dialog.cpp in Sources */,
 				285785A519B1D89800AA2E6F /* yuv_to_rgb.cpp in Sources */,
 				2857845E19B1D6FD00AA2E6F /* streamdebug.cpp in Sources */,
+				031C373A1A97AA2D00B375C1 /* resvm-sdl-events.cpp in Sources */,
 				2857846719B1D6FD00AA2E6F /* winexe.cpp in Sources */,
 				2857884919B1D9CA00AA2E6F /* md5check.cpp in Sources */,
 				2857864119B1D8B300AA2E6F /* plane.cpp in Sources */,
@@ -3063,6 +3080,7 @@
 				2857880519B1D9CA00AA2E6F /* emi.cpp in Sources */,
 				2857880E19B1D9CA00AA2E6F /* aifftrack.cpp in Sources */,
 				2857888319B1D9CA00AA2E6F /* subtitles.cpp in Sources */,
+				031C37361A97A9E800B375C1 /* codec48.cpp in Sources */,
 				285785AE19B1D89800AA2E6F /* dialog.cpp in Sources */,
 				285785FF19B1D8A400AA2E6F /* bmp.cpp in Sources */,
 				2857841D19B1D6FD00AA2E6F /* posix-main.cpp in Sources */,
