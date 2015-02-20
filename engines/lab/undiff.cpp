@@ -39,8 +39,6 @@ extern uint16 DataBytesPerRow;
 /*****************************************************************************/
 /* Copies memory.                                                            */
 /*****************************************************************************/
-#define turbocopymem(Dest, Source, Len) (memcpy(Dest, Source, Len))
-
 
 static void copytwo(byte *Dest, byte *Source) {
 #if defined(USE_SWAP)
@@ -86,7 +84,7 @@ static void unDIFFByteByte(byte *Dest, byte *diff) {
 		}
 
 		Dest += skip;
-		turbocopymem(Dest, diff, copy);
+		memcpy(Dest, diff, copy);
 		Dest += copy;
 		diff += copy;
 	}
@@ -150,42 +148,6 @@ static void unDIFFByteWord(uint16 *Dest, uint16 *diff) {
 
 
 
-#ifdef undef
-
-/*****************************************************************************/
-/* Undiffs a piece of memory when header size is a byte, and copy/skip size  */
-/* is a long word.                                                           */
-/*****************************************************************************/
-static void unDIFFByteLong(byte *Dest, byte *diff) {
-	uint16 skip, copy;
-
-	while (1) {
-		skip = *diff << 2;
-		diff++;
-		copy = *diff << 2;
-		diff++;
-
-		if (skip == (255 << 2)) {
-			if (copy == 0) {
-				skip = swapUShort(*((uint16 *) diff)) << 2;
-				diff += 2;
-				copy = swapUShort(*((uint16 *) diff) << 2;
-				                  diff += 2;
-			} else if (copy == (255 << 2))
-				       return;
-		}
-
-		Dest += skip;
-		turbocopymem(Dest, diff, copy);
-		Dest += copy;
-		diff += copy;
-	}
-}
-
-#endif
-
-
-
 /*****************************************************************************/
 /* UnDiffs a coded DIFF string onto an already initialized piece of memory.  */
 /*****************************************************************************/
@@ -197,33 +159,10 @@ bool unDIFFMemory(byte *Dest, byte *diff, uint16 HeaderSize, uint16 CopySize) {
 		else if (CopySize == 2)
 			unDIFFByteWord((uint16 *)Dest, (uint16 *)diff);
 
-#ifdef undef
-		else if (CopySize == 4)
-			unDIFFByteLong((uint32 *)Dest, (uint32 *)diff);
-
-#endif
-
 		else
 			return false;
-	}
-	/*
-	   else if (HeaderSize == 2)
-	   {
-	    if (CopySize == 1)
-	      unDIFFWordByte(Dest, diff);
-
-	    else if (CopySize == 2)
-	      unDIFFWordWord(Dest, diff);
-
-	    else if (CopySize == 4)
-	      unDIFFWordLong(Dest, diff);
-
-	    else
-	      return false;
-	   }
-	 */
-	else
-		return (false);
+	} else
+		error("unDIFFMemory: HeaderSize is %d", HeaderSize);
 
 	return true;
 }
@@ -431,7 +370,7 @@ void runLengthDecode(byte *Dest, byte *Source) {
 		if (num == 127) {
 			return;
 		} else if (num > '\0') {
-			turbocopymem(Dest, Source, num);
+			memcpy(Dest, Source, num);
 			Source += num;
 			Dest   += num;
 		} else {

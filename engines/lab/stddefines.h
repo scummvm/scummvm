@@ -38,14 +38,12 @@
 namespace Lab {
 
 #define IS_MACOSX 1
-#define USE_NOSWAP 1
 
 #if defined(IS_MACOSX)
 #define getTime Lab_GetTime
 #define delay Lab_Delay
 #endif
 
-#if defined(USE_NOSWAP)
 #define swapUShort(value) (value)
 #define swapUShortPtr(ptr,count) (ptr)
 #define swapShort(value) (value)
@@ -58,20 +56,6 @@ namespace Lab {
 #define swapULongPtr(ptr,count) (ptr)
 #define swapLong(value) (value)
 #define swapLongPtr(ptr,count) (ptr)
-#else
-uint16 swapUShort(uint16 value);
-uint16 *swapUShortPtr(uint16 *ptr, int count);
-int16 swapShort(int16 value);
-int16 *swapShortPtr(int16 *ptr, int count);
-unsigned int swapUInt(unsigned int value);
-unsigned int *swapUIntPtr(unsigned int *ptr, int count);
-int swapInt(int value);
-int *swapIntPtr(int *ptr, int count);
-uint32 swapULong(uint32 value);
-uint32 *swapULongPtr(uint32 *ptr, int count);
-int32 swapLong(int32 value);
-int32 *swapLongPtr(int32 *ptr, int count);
-#endif
 
 } // End of namespace Lab
 
