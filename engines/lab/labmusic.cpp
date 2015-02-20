@@ -472,11 +472,8 @@ byte **Music::newOpen(const char *name) {
 	if (_musicOn) {
 		updateMusic();
 
-#if defined(DOSCODE)
-		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;
-#else
-		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);
-#endif
+		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
+		//LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit) - TODO
 
 		filelength = sizeOfFile(name) * 10;
 		Time = 10 +                           /* Seek time for the music and the file */
@@ -511,11 +508,9 @@ void Music::fileCheckMusic(uint32 filelength) {
 	if (_musicOn) {
 		updateMusic();
 
-#if defined(DOSCODE)
-		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;
-#else
-		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);
-#endif
+		
+		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
+		//LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit) - TODO
 
 		filelength *= 10;
 		Time = 5 +                            /* Seek time for the music */
