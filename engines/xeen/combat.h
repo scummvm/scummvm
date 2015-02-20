@@ -99,7 +99,7 @@ public:
 
 	void monsterOvercome();
 	
-	bool stopAttack(const Common::Point &diffPt);
+	int stopAttack(const Common::Point &diffPt);
 public:
 	Combat(XeenEngine *vm);
 

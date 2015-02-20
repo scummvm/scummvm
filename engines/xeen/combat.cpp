@@ -568,15 +568,113 @@ void Combat::attackMonster(int monsterId) {
 
 }
 
-bool Combat::stopAttack(const Common::Point &diffPt) {
+int Combat::stopAttack(const Common::Point &diffPt) {
 	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Direction dir = party._mazeDirection;
+	const Common::Point &mazePos = party._mazePosition;
 
 	if (map._isOutdoors) {
+		if (diffPt.x > 0) {
+			for (int x = 1; x <= diffPt.x; ++x) {
+				int v = map.mazeLookup(Common::Point(mazePos.x + x, mazePos.y), 0, 8);
+				if (v)
+					return 0;
+			}
+			return (dir == DIR_EAST) ? diffPt.x + 1 : 1;
 
+		} else if (diffPt.x < 0) {
+			for (int x = diffPt.x; x < 0; ++x) {
+				int v = map.mazeLookup(Common::Point(mazePos.x + x, mazePos.y), 4);
+				switch (v) {
+				case 0:
+				case 2:
+				case 4:
+				case 5:
+				case 8:
+				case 11:
+				case 13:
+				case 14:
+					break;
+				default:
+					return 0;
+				}
+			}
+			return dir == DIR_WEST ? diffPt.x * -1 + 1 : 1;
+		
+		} else if (diffPt.y <= 0) {
+			for (int y = diffPt.y; y < 0; ++y) {
+				int v = map.mazeLookup(Common::Point(mazePos.x, mazePos.y + y), 4);
+				switch (v) {
+				case 0:
+				case 2:
+				case 4:
+				case 5:
+				case 8:
+				case 11:
+				case 13:
+				case 14:
+					break;
+				default:
+					return 0;
+				}
+			}
+			return party._mazeDirection == DIR_SOUTH ? diffPt.y * -1 + 1 : 1;
+
+		} else {
+			for (int y = 1; y <= diffPt.y; ++y) {
+				int v = map.mazeLookup(Common::Point(mazePos.x, mazePos.y + y), 4);
+				switch (v) {
+				case 0:
+				case 2:
+				case 4:
+				case 5:
+				case 8:
+				case 11:
+				case 13:
+				case 14:
+					break;
+				default:
+					return 0;
+				}
+			}
+			return dir == DIR_NORTH ? diffPt.y + 1 : 1;
+		}
+	} else {
+		// Indoors
+		if (diffPt.x > 0) {
+			for (int x = 1; x <= diffPt.x; ++x) {
+				int v = map.mazeLookup(Common::Point(mazePos.x + x, mazePos.y), 0, 8);
+				if (v)
+					return 0;
+			}
+			return dir == DIR_EAST ? diffPt.x + 1 : 1;
+
+		} else if (diffPt.x < 0) {
+			for (int x = diffPt.x; x < 0; ++x) {
+				int v = map.mazeLookup(Common::Point(mazePos.x + x, mazePos.y), 0, 0x800);
+				if (v)
+					return 0;
+			}
+			return dir == DIR_WEST ? diffPt.x * -1 + 1 : 1;
+		
+		} else if (diffPt.y <= 0) {
+			for (int y = diffPt.y; y < 0; ++y) {
+				int v = map.mazeLookup(Common::Point(mazePos.x, mazePos.y + y), 0, 0x8000);
+				if (v)
+					return 0;
+			}
+			return dir == DIR_SOUTH ? diffPt.y * -1 + 1 : 1;
+
+		} else {
+			for (int y = 1; y <= diffPt.y; ++y) {
+				int v = map.mazeLookup(Common::Point(mazePos.x, mazePos.y + y), 0, 0x80);
+				if (v)
+					return 0;
+			}
+			return dir == DIR_NORTH ? diffPt.y + 1 : 1;
+		}
 	}
-
-	// TODO
-	return false;
 }
 
 /**
