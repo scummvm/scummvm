@@ -201,6 +201,8 @@ public:
 		InventoryItems &accessories, InventoryItems &misc);
 
 	InventoryItems &operator[](ItemCategory category);
+
+	void breakAllItems();
 };
 
 

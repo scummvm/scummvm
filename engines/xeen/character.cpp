@@ -669,6 +669,24 @@ InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) {
 	return *_itemSets[category];
 }
 
+/**
+ * Breaks all the items in a given character's inventory
+ */
+void InventoryItemsGroup::breakAllItems() {
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		if ((*_itemSets[0])[idx]._id != 34) {
+			(*_itemSets[0])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+			(*_itemSets[0])[idx]._frame = 0;
+		}
+
+		(*_itemSets[1])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+		(*_itemSets[2])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+		(*_itemSets[3])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+		(*_itemSets[1])[idx]._frame = 0;
+		(*_itemSets[2])[idx]._frame = 0;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 

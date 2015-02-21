@@ -239,8 +239,176 @@ loop:
 /**
  * Do damage to a specific character
  */
-void Combat::doCharDamage(Character *c, int monsterDataIndex) {
-	error("TODO");
+void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
+
+	// Attacked characters are automatically woken up
+	c._conditions[ASLEEP] = 0;
+
+	// Figure out the damage amount
+	int damage = 0;
+	for (int idx = 0; idx < monsterData._strikes; ++idx)
+		damage += _vm->getRandomNumber(1, monsterData._dmgPerStrike);
+
+
+	int fx = 29, frame = 0;
+	if (monsterData._attackType) {
+		if (c.charSavingThrow(monsterData._attackType))
+			damage /= 2;
+
+		switch (monsterData._attackType) {
+		case DT_MAGICAL:
+			frame = 6;
+			fx = 27;
+			break;
+		case DT_FIRE:
+			damage -= party._fireResistence;
+			frame = 1;
+			fx = 22;
+			break;
+		case DT_ELECTRICAL:
+			damage -= party._electricityResistence;
+			frame = 2;
+			fx = 23;
+			break;
+		case DT_COLD:
+			damage -= party._coldResistence;
+			frame = 3;
+			fx = 24;
+			break;
+		case DT_POISON:
+			damage -= party._poisonResistence;
+			frame = 4;
+			fx = 26;
+			break;
+		case DT_ENERGY:
+			frame = 5;
+			fx = 25;
+			break;
+		default:
+			break;
+		}
+
+		while (damage > 0 && c.charSavingThrow(monsterData._attackType))
+			damage /= 2;
+	}
+
+	sound.playFX(fx);
+	intf._charPowSprites.draw(screen, frame, Common::Point(CHAR_FACES_X[charNum], 150));
+	screen._windows[33].update();
+
+	damage -= party._powerShield;
+	if (damage > 0 && monsterData._specialAttack && !c.charSavingThrow(DT_PHYSICAL)) {
+		switch (monsterData._specialAttack) {
+		case SA_POISON:
+			if (!++c._conditions[POISONED])
+				c._conditions[POISONED] = -1;
+			sound.playFX(26);
+			break;
+		case SA_DISEASE:
+			if (!++c._conditions[DISEASED])
+				c._conditions[DISEASED] = -1;
+			sound.playFX(26);
+			break;
+		case SA_INSANE:
+			if (!++c._conditions[INSANE])
+				c._conditions[INSANE] = -1;
+			sound.playFX(28);
+			break;
+		case SA_SLEEP:
+			if (!++c._conditions[ASLEEP])
+				c._conditions[ASLEEP] = -1;
+			sound.playFX(36);
+			break;
+		case SA_CURSEITEM:
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				if (c._weapons[idx]._id != 34)
+					c._weapons[idx]._bonusFlags |= ITEMFLAG_CURSED;
+				c._armor[idx]._bonusFlags |= ITEMFLAG_CURSED;
+				c._accessories[idx]._bonusFlags |= ITEMFLAG_CURSED;
+				c._misc[idx]._bonusFlags |= ITEMFLAG_CURSED;;
+			}
+			sound.playFX(37);
+			break;
+		case SA_DRAINSP:
+			c._currentSp = 0;
+			sound.playFX(37);
+			break;
+		case SA_CURSE:
+			if (!++c._conditions[CURSED])
+				c._conditions[CURSED] = -1;
+			sound.playFX(37);
+			break;
+		case SA_PARALYZE:
+			if (!++c._conditions[PARALYZED])
+				c._conditions[PARALYZED] = -1;
+			sound.playFX(37);
+			break;
+		case SA_UNCONSCIOUS:
+			if (!++c._conditions[UNCONSCIOUS])
+				c._conditions[UNCONSCIOUS] = -1;
+			sound.playFX(37);
+			break;
+		case SA_CONFUSE:
+			if (!++c._conditions[CONFUSED])
+				c._conditions[CONFUSED] = -1;
+			sound.playFX(28);
+			break;
+		case SA_BREAKWEAPON:
+			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+				XeenItem &weapon = c._weapons[idx];
+				if (weapon._id != 34 && weapon._id != 0 && weapon._frame != 0) {
+					weapon._bonusFlags |= ITEMFLAG_BROKEN;
+					weapon._frame = 0;
+				}
+			}
+			sound.playFX(37);
+			break;
+		case SA_WEAKEN:
+			if (!++c._conditions[WEAK])
+				c._conditions[WEAK] = -1;
+			sound.playFX(36);
+			break;
+		case SA_ERADICATE:
+			if (!++c._conditions[ERADICATED])
+				c._conditions[ERADICATED] = -1;
+			c._items.breakAllItems();
+			sound.playFX(37);
+
+			if (c._currentHp > 0)
+				c._currentHp = 0;
+			break;
+		case SA_AGING:
+			++c._tempAge;
+			sound.playFX(37);
+			break;
+		case SA_DEATH:
+			if (!++c._conditions[DEAD])
+				c._conditions[DEAD] = -1;
+			sound.playFX(38);
+			if (c._currentHp > 0)
+				c._currentHp = 0;
+			break;
+		case SA_STONE:
+			if (!++c._conditions[STONED])
+				c._conditions[STONED] = -1;
+			sound.playFX(38);
+			if (c._currentHp > 0)
+				c._currentHp = 0;
+			break;
+		}
+
+		c.subtractHitPoints(damage);
+	}
+
+	events.ipause(2);
+	intf.drawParty(true);
 }
 
 void Combat::moveMonsters() {
@@ -576,7 +744,6 @@ void Combat::attackMonster(int monsterId) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
-	int monRefId;
 
 	if (_monstersAttacking) {
 		warning("TODO: Original used uninitialized variables if flag was set");
@@ -720,14 +887,14 @@ void Combat::attackMonster(int monsterId) {
 			if (true) {
 				Character &c = *_combatParty[charNum];
 				if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
-					doCharDamage(&c, monster._spriteId);
+					doCharDamage(c, charNum, monster._spriteId);
 				} else {
 					int v = _vm->getRandomNumber(1, 20);
 					if (v == 1) {
 						sound.playFX(6);
 					} else {
 						if (v == 20)
-							doCharDamage(&c, monster._spriteId);
+							doCharDamage(c, charNum, monster._spriteId);
 						v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
 							monsterData._hitChance);
 
@@ -736,7 +903,7 @@ void Combat::attackMonster(int monsterId) {
 						if (ac > v) {
 							sound.playFX(6);
 						} else {
-							doCharDamage(&c, monster._spriteId);
+							doCharDamage(c, charNum, monster._spriteId);
 						}
 					}
 				}
