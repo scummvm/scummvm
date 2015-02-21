@@ -170,11 +170,7 @@ void Shader::use(bool forceReload) {
 		if (attrib._enabled) {
 			glEnableVertexAttribArray(i);
 			glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo);
-			if (attrib._integer) {
-				glVertexAttribIPointer(i, attrib._size, attrib._type, attrib._stride, (const GLvoid *)attrib._offset);
-			} else {
-				glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, (const GLvoid *)attrib._offset);
-			}
+			glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, (const GLvoid *)attrib._offset);
 		} else {
 			glDisableVertexAttribArray(i);
 			switch (attrib._size) {
@@ -220,22 +216,10 @@ VertexAttrib &Shader::getAttribute(const char *attrib) {
 void Shader::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLboolean normalized, GLsizei stride, uint32 offset) {
 	VertexAttrib &va = getAttribute(attrib);
 	va._enabled = true;
-	va._integer = false;
 	va._vbo = vbo;
 	va._size = size;
 	va._type = type;
 	va._normalized = normalized;
-	va._stride = stride;
-	va._offset = offset;
-}
-
-void Shader::enableIntegerVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLsizei stride, uint32 offset) {
-	VertexAttrib &va = getAttribute(attrib);
-	va._enabled = true;
-	va._integer = true;
-	va._vbo = vbo;
-	va._size = size;
-	va._type = type;
 	va._stride = stride;
 	va._offset = offset;
 }

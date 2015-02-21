@@ -45,10 +45,9 @@ namespace BuiltinShaders {
 
 struct VertexAttrib {
 	VertexAttrib(uint32 idx, const char *name) :
-		_enabled(false), _integer(false), _idx(idx), _name(name), _vbo(0), _size(0),
+		_enabled(false), _idx(idx), _name(name), _vbo(0), _size(0),
 		_type(GL_FLOAT), _normalized(false), _stride(0), _offset(0) {}
 	bool _enabled;
-	bool _integer;
 	uint32 _idx;
 	Common::String _name;
 	GLuint _vbo;
@@ -126,7 +125,6 @@ public:
 	}
 
 	void enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLboolean normalized, GLsizei stride, uint32 offset);
-	void enableIntegerVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLsizei stride, uint32 offset);
 	void disableVertexAttribute(const char *attrib, int size, const float *data);
 	template <int r>
 	void disableVertexAttribute(const char *attrib, const Math::Matrix<r,1> &m) {
