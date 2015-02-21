@@ -45,10 +45,10 @@ TextureSetReader::~TextureSetReader() {
 Gfx::TextureSet *TextureSetReader::read(Common::ReadStream *stream) {
 	Gfx::TextureSet *textureSet = new Gfx::TextureSet();
 
-	uint32 id = stream->readUint32LE();
+	/*uint32 id = */stream->readUint32LE();
 	uint32 format = stream->readUint32LE();
-	uint32 u1 = stream->readUint32LE();
-	uint32 u2 = stream->readUint32LE();
+	/*uint32 u1 = */stream->readUint32LE();
+	/*uint32 u2 = */stream->readUint32LE();
 
 	uint32 len = stream->readUint32LE();
 	for (uint32 i = 0; i < len; ++i) {
@@ -65,12 +65,12 @@ void TextureSetReader::readChunk(Common::ReadStream *stream, uint32 format, Gfx:
 	}
 
 	uint32 type = stream->readUint32LE();
-	uint32 u3 = stream->readUint32LE();
+	/*uint32 u3 = */stream->readUint32LE();
 
 	uint32 size = stream->readUint32LE();
 
 	if (format == 2)
-		uint u4 = stream->readUint32LE();
+		/*uint u4 = */stream->readUint32LE();
 
 	if (type == 0x02faf082) {
 		// Palette
@@ -91,7 +91,7 @@ void TextureSetReader::readChunk(Common::ReadStream *stream, uint32 format, Gfx:
 		stream->read(name, nameLength);
 		Common::String nameStr = Common::String(name, nameLength);
 		delete[] name;
-		byte u = stream->readByte();
+		/*byte u = */stream->readByte();
 
 		Gfx::Texture *texture = _driver->createTexture();
 

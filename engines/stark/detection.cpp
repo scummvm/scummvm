@@ -180,7 +180,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 	AD_TABLE_END_MARKER
 };
-
+/*
 // File based fallback game description
 static const ADGameDescription fallbackDescription = {
 	"tlj", "Unknown", {
@@ -197,7 +197,7 @@ static const ADGameDescription fallbackDescription = {
 static const ADFileBasedFallback fileBasedFallback[] = {
 	{&fallbackDescription, {"x.xarc", "chapters.ini", "w_world.ini", NULL}},
 	{NULL, {NULL}}
-};
+};*/
 
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:

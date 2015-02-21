@@ -182,7 +182,7 @@ void Object::print(uint depth) {
 	description += Common::String::format(" %s - %s - (sub=%d, order=%d)", type.c_str(), _name.c_str(), _subType, _index);
 
 	// Print the resource description
-	debug(description.c_str());
+	debug("%s ", description.c_str());
 
 	// Print the resource data
 	printData();
