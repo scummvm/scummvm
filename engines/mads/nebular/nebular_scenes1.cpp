@@ -1621,6 +1621,7 @@ void Scene104::setup() {
 void Scene104::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('h', -1));
 	_globals._sequenceIndexes[1] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[1], false, 14, 0, 0, 1);
+	_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 
 	if (_scene->_priorSceneId == 105)
 		_game._player._playerPos = Common::Point(302, 107);
