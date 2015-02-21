@@ -23,6 +23,7 @@
 #include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
