@@ -24,7 +24,7 @@
 #define STARK_SERVICES_SERVICES_H
 
 #include "common/singleton.h"
-#include "common/c++11-compat.h"
+#include "common/scummsys.h"
 
 namespace Common {
 class RandomSource;
