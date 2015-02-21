@@ -1448,12 +1448,14 @@ Scene207::Scene207(MADSEngine *vm) : Scene2xx(vm) {
 	_eyeFl = false;
 	_spiderHotspotId = -1;
 	_vultureHotspotId = -1;
-	_spiderTime = 0;
-	_vultureTime = 0;
+
+	_spiderTime = _game._player._priorTimer;
+	_vultureTime = _game._player._priorTimer;
 }
 
 void Scene207::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
+	uint32 unused;
 
 	s.syncAsByte(_vultureFl);
 	s.syncAsByte(_spiderFl);
@@ -1461,8 +1463,8 @@ void Scene207::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint32LE(_spiderHotspotId);
 	s.syncAsSint32LE(_vultureHotspotId);
-	s.syncAsSint32LE(_spiderTime);
-	s.syncAsSint32LE(_vultureTime);
+	s.syncAsSint32LE(unused);
+	s.syncAsSint32LE(unused);
 }
 
 void Scene207::setup() {
@@ -1501,7 +1503,6 @@ void Scene207::enter() {
 
 	if (_vultureFl) {
 		_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 30, 0, 0, 400);
-		_vultureTime = _game._player._priorTimer;
 		_vultureHotspotId = _scene->_dynamicHotspots.add(389, 13, _globals._sequenceIndexes[1], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_vultureHotspotId, Common::Point(254, 94), FACING_WEST);
 	}
@@ -1509,7 +1510,6 @@ void Scene207::enter() {
 	if (_spiderFl) {
 		_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], -1, -1);
-		_spiderTime = _game._player._priorTimer;
 		_spiderHotspotId = _scene->_dynamicHotspots.add(333, 13, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(_spiderHotspotId, Common::Point(59, 132), FACING_SOUTH);
 	}
@@ -1549,11 +1549,17 @@ void Scene207::moveSpider() {
 }
 
 void Scene207::step() {
-	if (!_vultureFl)
-		moveVulture();
+	Player &player = _game._player;
 
-	if (_spiderFl)
-		moveSpider();
+	if (_vultureFl) {
+		if (((int32)player._priorTimer - _vultureTime) > 1700)
+			moveVulture();
+	}
+
+	if (_spiderFl) {
+		if (((int32)player._priorTimer - _spiderTime) > 800)
+			moveSpider();
+	}
 
 	if (_game._trigger == 70) {
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 10, 0, 0, 0);
