@@ -56,6 +56,10 @@ enum ElementalCategory {
 	ELEM_ACID_POISON = 3, ELEM_ENERGY = 4, ELEM_MAGIC = 5
 };
 
+enum RangeType {
+	RT_0 = 0, RT_1 = 1, RT_2 = 2, RT_3 = 3
+};
+
 class XeenEngine;
 class Character;
 class XeenItem;
@@ -64,17 +68,17 @@ class Combat {
 private:
 	XeenEngine *_vm;
 
-	void attack2(int damage, int ranged);
+	void attack2(int damage, RangeType rangeType);
 
-	bool hitMonster(Character &c, int ranged);
+	bool hitMonster(Character &c, RangeType rangeType);
 
-	bool getWeaponDamage(Character &c, int ranged);
+	void getWeaponDamage(Character &c, RangeType rangeType);
 
 	int getMonsterDamage(Character &c);
 
 	int getDamageScale(int v);
 
-	int getMonsterResistence(int ranged);
+	int getMonsterResistence(RangeType rangeType);
 
 	void giveExperience(int experience);
 public:
@@ -109,8 +113,11 @@ public:
 	int _shootType;
 	int _monsterDamage;
 	int _weaponDamage;
+	int _weaponDie, _weaponDice;
 	XeenItem *_attackWeapon;
+	int _attackWeaponId;
 	File _missVoc, _pow1Voc;
+	int _hitChanceBonus;
 public:
 	Combat(XeenEngine *vm);
 
@@ -132,13 +139,11 @@ public:
 
 	Common::String getMonsterDescriptions();
 
-	void attack(Character &c, int ranged);
+	void attack(Character &c, RangeType rangeType);
 
 	void block();
 
 	void quickFight();
-
-	void giveTreasure();
 
 	void run();
 

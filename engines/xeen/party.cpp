@@ -559,4 +559,32 @@ void Party::moveToRunLocation() {
 	_mazePosition = _vm->_map->mazeData()._runPosition;
 }
 
+/**
+ * Give treasure to the party
+ */
+void Party::giveTreasure() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	SoundManager &sound = *_vm->_sound;
+
+	if (!_treasure._gold && !_treasure._gems)
+		return;
+
+	bool monstersPresent = false;
+	for (int idx = 0; idx < 26 && !monstersPresent; ++idx)
+		monstersPresent = combat._attackMonsters[idx] != -1;
+
+	if (_vm->_mode != MODE_9 && monstersPresent)
+		return;
+
+	Common::fill(&combat._shooting[0], &combat._shooting[MAX_PARTY_COUNT], 0);
+	intf._charsShooting = false;
+	intf.draw3d(true);
+
+	if (_treasure._gold || _treasure._gems)
+		sound.playFX(54);
+
+	error("TODO");
+}
+
 } // End of namespace Xeen

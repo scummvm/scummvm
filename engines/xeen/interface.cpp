@@ -1957,7 +1957,7 @@ void Interface::doCombat() {
 
 			case Common::KEYCODE_a:
 				// Attack
-				combat.attack(*combat._combatParty[combat._whosTurn], 0);
+				combat.attack(*combat._combatParty[combat._whosTurn], RT_0);
 				nextChar();
 				break;
 
@@ -2113,7 +2113,7 @@ void Interface::doCombat() {
 
 		_vm->_mode = MODE_COMBAT;
 		draw3d(true);
-		combat.giveTreasure();
+		party.giveTreasure();
 		_vm->_mode = MODE_1;
 		party._stepped = true;
 		unhighlightChar();

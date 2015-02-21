@@ -166,6 +166,8 @@ public:
 	void checkPartyDead();
 
 	void moveToRunLocation();
+
+	void giveTreasure();
 };
 
 } // End of namespace Xeen

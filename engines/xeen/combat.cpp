@@ -119,7 +119,10 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_shootType = 0;
 	_monsterDamage = 0;
 	_weaponDamage = 0;
+	_weaponDie = _weaponDice = 0;
 	_attackWeapon = nullptr;
+	_attackWeaponId = 0;
+	_hitChanceBonus = 0;
 }
 
 void Combat::clear() {
@@ -1171,7 +1174,7 @@ Common::String Combat::getMonsterDescriptions() {
 		lines[1].c_str(), lines[2].c_str());
 }
 
-void Combat::attack(Character &c, int ranged) {
+void Combat::attack(Character &c, RangeType rangeType) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1184,12 +1187,12 @@ void Combat::attack(Character &c, int ranged) {
 	int monsterDataIndex = monster._spriteId;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
-	if (ranged) {
+	if (rangeType) {
 		if (_shootType != 1 || _damageType == DT_MAGIC_ARROW) {
 			if (!monsterData._magicResistence || monsterData._magicResistence <=
 					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
 				if (_monsterDamage != 0) {
-					attack2(damage, ranged);
+					attack2(damage, rangeType);
 					setSpeedTable();
 				} else {
 					switch (_damageType) {
@@ -1203,26 +1206,26 @@ void Combat::attack(Character &c, int ranged) {
 						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
 							&& !monsterSavingThrow(monsterDataIndex)) {
 							damage = MIN(monster._hp, 50);
-							attack2(damage, 2);
+							attack2(damage, RT_2);
 							setSpeedTable();
 						}
 						break;
 					case DT_HOLYWORD:
 						if (monsterData._monsterType == MONSTER_UNDEAD) {
-							attack2(monster._hp, 2);
+							attack2(monster._hp, RT_2);
 							setSpeedTable();
 						}
 						break;
 					case DT_MASS_DISTORTION:
-						attack2(MAX(monster._hp / 2, 1), 2);
+						attack2(MAX(monster._hp / 2, 1), RT_2);
 						setSpeedTable();
 						break;
 					case DT_UNDEAD:
 						if (monsterData._monsterType == MONSTER_UNDEAD)
 							damage = 25;
 						else
-							ranged = 2;
-						attack2(damage, ranged);
+							rangeType = RT_2;
+						attack2(damage, rangeType);
 						setSpeedTable();
 						break;
 					case DT_BEASTMASTER:
@@ -1237,7 +1240,7 @@ void Combat::attack(Character &c, int ranged) {
 						break;
 					case DT_GOLEMSTOPPER:
 						if (monsterData._monsterType == MONSTER_GOLEM) {
-							attack2(100, ranged);
+							attack2(100, rangeType);
 							setSpeedTable();
 						}
 						break;
@@ -1249,12 +1252,12 @@ void Combat::attack(Character &c, int ranged) {
 						break;
 					case DT_INSECT_SPRAY:
 						if (monsterData._monsterType == MONSTER_INSECT) {
-							attack2(25, ranged);
+							attack2(25, rangeType);
 							setSpeedTable();
 						}
 						break;
 					case DT_MAGIC_ARROW:
-						attack2(8, ranged);
+						attack2(8, rangeType);
 						setSpeedTable();
 						break;
 					default:
@@ -1270,12 +1273,12 @@ void Combat::attack(Character &c, int ranged) {
 				Character &c = party._activeParty[charIndex];
 
 				if (_shooting[charIndex] && !_missedShot[charIndex]) {
-					if (!hitMonster(c, ranged)) {
+					if (!hitMonster(c, rangeType)) {
 						++_missedShot[charIndex];
 					} else {
 						damage = _monsterDamage ? _monsterDamage : _weaponDamage;
 						_shooting[charIndex] = 0;
-						attack2(damage, ranged);
+						attack2(damage, rangeType);
 
 						if (map._isOutdoors) {
 							intf._outdoorList._attackImgs1[charIndex]._scale = 0;
@@ -1333,7 +1336,7 @@ void Combat::attack(Character &c, int ranged) {
 		damage = 0;
 
 		while (numberOfAttacks-- > 0) {
-			if (hitMonster(c, 0))
+			if (hitMonster(c, RT_0))
 				damage += getMonsterDamage(c);
 		}
 
@@ -1369,12 +1372,12 @@ void Combat::attack(Character &c, int ranged) {
 			}
 		}
 
-		attack2(damage, ranged);
+		attack2(damage, rangeType);
 		setSpeedTable();
 	}
 }
 
-void Combat::attack2(int damage, int ranged) {
+void Combat::attack2(int damage, RangeType rangeType) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1384,7 +1387,7 @@ void Combat::attack2(int damage, int ranged) {
 	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
 	bool monsterDied = false;
 
-	if (!isDarkCc && damage && ranged && monster._spriteId == 89)
+	if (!isDarkCc && damage && rangeType && monster._spriteId == 89)
 		damage = 0;
 
 	if (!damage) {
@@ -1396,7 +1399,7 @@ void Combat::attack2(int damage, int ranged) {
 		if (monster._damageType == DT_SLEEP || monster._damageType == DT_DRAGONSLEEP)
 			monster._damageType = DT_PHYSICAL;
 		
-		if ((!ranged || !_damageType) && _attackWeapon->_id != 34) {
+		if ((!rangeType || !_damageType) && _attackWeaponId != 34) {
 			if (monsterData._phsyicalResistence != 0) {
 				if (monsterData._phsyicalResistence == 100) {
 					damage = 0;
@@ -1409,26 +1412,26 @@ void Combat::attack2(int damage, int ranged) {
 
 		if (damage) {
 			_charsArray1[_monsterIndex] = 3;
-			_monPow[_monsterIndex] = _damageType == DT_PHYSICAL && (ranged == 3 || ranged == 0);
+			_monPow[_monsterIndex] = _damageType == DT_PHYSICAL && (rangeType == 3 || rangeType == 0);
 			monster._frame = 11;
 			monster._fieldA = 5;
 		}
 
-		int monsterResist = getMonsterResistence(ranged);
+		int monsterResist = getMonsterResistence(rangeType);
 		damage += monsterResist;
 		if (monsterResist > 0) {
 			_elemPow[_monsterIndex] = _attackWeapon->getElementalCategory();
 			_elemScale[_monsterIndex] = getDamageScale(monsterResist);
-		} else if (ranged != 3) {
+		} else if (rangeType != 3) {
 			_elemPow[_monsterIndex] = ELEM_FIRE;
 		}
 
-		if (ranged != 0 && ranged != 3) {
+		if (rangeType != 0 && rangeType != 3) {
 			monster._effect2 = DAMAGE_TYPE_EFFECTS[_damageType];
 			monster._effect1 = 0;
 		}
 
-		if (ranged && monsterSavingThrow(monster._spriteId)) {
+		if (rangeType && monsterSavingThrow(monster._spriteId)) {
 			switch (_damageType) {
 			case DT_FINGEROFDEATH:
 			case DT_MASS_DISTORTION:
@@ -1459,8 +1462,8 @@ void Combat::attack2(int damage, int ranged) {
 			
 			sound.playSample(nullptr, 0);
 			File powVoc(Common::String::format("pow%d.voc",
-				POW_WEAPON_VOCS[_attackWeapon->_id]));
-			sound.playFX(60 + POW_WEAPON_VOCS[_attackWeapon->_id]);
+				POW_WEAPON_VOCS[_attackWeaponId]));
+			sound.playFX(60 + POW_WEAPON_VOCS[_attackWeaponId]);
 			sound.playSample(&powVoc, 1);
 
 			if (monster._hp > damage) {
@@ -1580,7 +1583,7 @@ void Combat::quickFight() {
 
 	switch (c->_quickOption) {
 	case QUICK_ATTACK:
-		attack(*c, 0);
+		attack(*c, RT_0);
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
@@ -1596,10 +1599,6 @@ void Combat::quickFight() {
 	default:
 		break;
 	}
-}
-
-void Combat::giveTreasure() {
-	error("TODO: giveTreasure");
 }
 
 /**
@@ -1620,16 +1619,98 @@ void Combat::run() {
 	}
 }
 
-bool Combat::hitMonster(Character &c, int ranged) {
-	error("TODO");
+bool Combat::hitMonster(Character &c, RangeType rangeType) {
+	Map &map = *_vm->_map;
+	getWeaponDamage(c, rangeType);
+	int chance = c.statBonus(c.getStat(ACCURACY)) + _hitChanceBonus;
+	int divisor;
+	
+	switch (c._class) {
+	case CLASS_KNIGHT:
+	case CLASS_BARBARIAN:
+		divisor = 1;
+		break;
+	case CLASS_PALADIN :
+	case CLASS_ARCHER:
+	case CLASS_ROBBER:
+	case CLASS_NINJA:
+	case CLASS_RANGER:
+		divisor = 2;
+		break;
+	case CLASS_CLERIC:
+	case CLASS_DRUID:
+		divisor = 3;
+		break;
+	case CLASS_SORCERER:
+		divisor = 4;
+		break;
+	}
+
+	chance += c.getCurrentLevel() / divisor;
+	chance -= c._conditions[CURSED];
+
+	// Add on a random amount
+	int v;
+	do {
+		v = _vm->getRandomNumber(1, 20);
+		chance += v;
+	} while (v == 20);
+
+	assert(_monster2Attack != -1);
+	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
+	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+
+	if (monster._damageType != DT_PHYSICAL)
+		chance += 20;
+
+	return chance >= (monsterData._accuracy + 10);
 }
 
-bool Combat::getWeaponDamage(Character &c, int ranged) {
-	error("TODO");
+void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
+	Party &party = *_vm->_party;
+	_attackWeapon = nullptr;
+	_weaponDie = _weaponDice = 0;
+	_weaponDamage = 0;
+	_hitChanceBonus = 0;
+
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		bool flag;
+		if (rangeType) {
+			flag = c._weapons[idx]._frame == 4;
+		} else {
+			flag = c._weapons[idx]._frame == 1 || c._weapons[idx]._frame == 13;
+		}
+
+		if (flag) {
+			if (!(c._weapons[idx]._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
+				_attackWeapon = &c._weapons[idx];
+
+				if (c._weapons[idx]._material >= 37 && c._weapons[idx]._material < 59) {
+					_hitChanceBonus = METAL_DAMAGE_PERCENT[c._weapons[idx]._material - 37];
+					_weaponDamage = METAL_DAMAGE[c._weapons[idx]._material - 37];
+				}
+			}
+
+			_hitChanceBonus += party._heroism;
+			_attackWeaponId = c._weapons[idx]._id;
+			_weaponDice = WEAPON_DAMAGE_BASE[_attackWeaponId];
+			_weaponDie = WEAPON_DAMAGE_MULTIPLIER[_attackWeaponId];
+
+			for (int diceIdx = 0; diceIdx < _weaponDice; ++diceIdx)
+				_weaponDamage += _vm->getRandomNumber(1, _weaponDie);
+		}
+	}
+
+	if (_weaponDamage < 1)
+		_weaponDamage = 0;
+	if (!party._difficulty) {
+		_hitChanceBonus += 5;
+		_weaponDamage *= 3;
+	}
 }
 
 int Combat::getMonsterDamage(Character &c) {
-	error("TODO");
+	return (c.statBonus(c.getStat(MIGHT)) + _weaponDamage) < 1;
 }
 
 int Combat::getDamageScale(int v) {
@@ -1641,13 +1722,97 @@ int Combat::getDamageScale(int v) {
 		return 0x8000;
 }
 
-int Combat::getMonsterResistence(int ranged) {
-	error("TODO");
+int Combat::getMonsterResistence(RangeType rangeType) {
+	Map &map = *_vm->_map;
+	assert(_monster2Attack != -1);
+	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
+	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	int resistence = 0, damage = 0;
+
+	if (rangeType != RT_0 && rangeType != RT_3) {
+		switch (_damageType) {
+		case DT_PHYSICAL:
+			resistence = monsterData._phsyicalResistence;
+			break;
+		case DT_MAGICAL:
+			resistence = monsterData._magicResistence;
+			break;
+		case DT_FIRE:
+			resistence = monsterData._fireResistence;
+			break;
+		case DT_ELECTRICAL:
+			resistence = monsterData._electricityResistence;
+			break;
+		case DT_COLD:
+			resistence = monsterData._coldResistence;
+			break;
+		case DT_POISON:
+			resistence = monsterData._poisonResistence;
+			break;
+		case DT_ENERGY:
+			resistence = monsterData._energyResistence;
+			break;
+		default:
+			break;
+		}
+	} else {
+		int material = !_attackWeapon ? 0 : _attackWeapon->_material;
+		damage = ELEMENTAL_DAMAGE[material];
+
+		if (material != 0) {
+			if (material < 9)
+				resistence = monsterData._fireResistence;
+			else if (material < 16)
+				resistence = monsterData._electricityResistence;
+			else if (material < 21)
+				resistence = monsterData._coldResistence;
+			else if (material < 26)
+				resistence = monsterData._poisonResistence;
+			else if (material < 34)
+				resistence = monsterData._energyResistence;
+			else
+				resistence = monsterData._magicResistence;			
+		}
+	}
+
+	if (resistence != 0) {
+		if (resistence == 100)
+			return 0;
+		else
+			return ((100 - resistence) * damage) / 100;
+	} 
+
+	return damage;
 }
 
+/**
+ * Distribute experience between active party members
+ */
 void Combat::giveExperience(int experience) {
-	error("TODO");
-}
+	Party &party = *_vm->_party;
+	bool inCombat = _vm->_mode == MODE_COMBAT;
+	int count = 0;
 
+	// Two loops: first to figure out how many active characters there are,
+	// and the second to distribute the experience between them
+	for (int loopNum = 0; loopNum < 2; ++loopNum) {
+		for (uint charIndex = 0; charIndex < (inCombat ? _combatParty.size() :
+				party._activeParty.size()); ++charIndex) {
+			Character &c = inCombat ? *_combatParty[charIndex] : party._activeParty[charIndex];
+			Condition condition = c.worstCondition();
+
+			if (condition != DEAD && condition != STONED && condition != ERADICATED) {
+				if (loopNum == 0) {
+					++count;
+				} else {
+					int exp = experience / count;
+					if (c._level._permanent < 15)
+						exp /= 2;
+					c._experience += exp;
+				}
+			}
+		}
+	}
+}
 
 } // End of namespace Xeen
