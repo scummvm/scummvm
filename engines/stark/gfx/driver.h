@@ -29,6 +29,9 @@
 #include "math/vector3d.h"
 
 namespace Stark {
+
+class VisualActor;
+
 namespace Gfx {
 
 class Texture;
@@ -56,6 +59,14 @@ public:
 	 *
 	 */
 	virtual Texture *createTexture(const Graphics::Surface *surface = nullptr, const byte *palette = nullptr) = 0;
+
+	/**
+	 * Create a new actor renderer
+	 *
+	 * The caller is responsible for freeing it.
+	 *
+	 */
+	virtual VisualActor *createActorRenderer() = 0;
 
 	/**
 	 * Draw a 2D surface from the specified texture

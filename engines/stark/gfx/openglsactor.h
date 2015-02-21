@@ -20,49 +20,44 @@
  *
  */
 
-#ifndef STARK_VISUAL_ACTOR_H
-#define STARK_VISUAL_ACTOR_H
+#ifndef STARK_GFX_OPENGL_S_ACTOR_H
+#define STARK_GFX_OPENGL_S_ACTOR_H
 
+#include "common/hash-str.h"
 #include "common/str.h"
 
-#include "math/matrix4.h"
-#include "math/vector3d.h"
+#include "engines/stark/visual/actor.h"
 
-#include "engines/stark/visual/visual.h"
-
-namespace Stark {
-
-namespace Gfx {
-class TextureSet;
+namespace Graphics {
+	class Shader;
 }
 
-class Actor;
-class FaceNode;
-class SkeletonAnim;
+namespace Stark {
+namespace Gfx {
 
-
-class VisualActor : public Visual {
+class OpenGLSActorRenderer : public VisualActor {
 public:
-	static const VisualType TYPE = Visual::kActor;
+	OpenGLSActorRenderer();
+	virtual ~OpenGLSActorRenderer();
 
-	VisualActor();
-	virtual ~VisualActor();
-
-	void setMesh(Actor *mesh);
-	void setAnim(SkeletonAnim *anim);
-	void setTexture(Gfx::TextureSet *texture);
-	void setTime(uint32 time);
-
-	virtual void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) = 0;
+	void render(Gfx::Driver *gfx, const Math::Vector3d position, float direction) override;
 
 protected:
-	Actor *_actor;
-	uint32 _time;
-	bool _meshIsDirty;
+	Graphics::Shader *_shader;
 
-	Math::Matrix4 getModelMatrix(const Math::Vector3d& position, float direction);
+	Common::HashMap<Common::String, uint32> _faceVBO;
+	Common::HashMap<Common::String, uint32> _faceEBO;
+
+	Common::String faceHash(const FaceNode *face) const;
+	void clearVertices();
+	void uploadVertices();
+	uint32 createFaceVBO(const FaceNode *face);
+	uint32 createFaceEBO(const FaceNode *face);
+	void setBonePositionArrayUniform(const char *uniform);
+	void setBoneRotationArrayUniform(const char *uniform);
 };
 
+} // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // STARK_VISUAL_ACTOR_H
+#endif // STARK_GFX_OPENGL_S_ACTOR_H

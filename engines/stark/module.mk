@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	gfx/driver.o \
 	gfx/opengl.o \
+	gfx/openglsactor.o \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \
 	gfx/texture.o \

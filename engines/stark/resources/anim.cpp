@@ -23,6 +23,7 @@
 #include "common/debug.h"
 
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/gfx/driver.h"
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/direction.h"
@@ -249,7 +250,8 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 				_seletonAnim(nullptr),
 				_currentTime(0),
 				_totalTime(0) {
-	_visual = new VisualActor();
+	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	_visual = gfx->createActorRenderer();
 }
 
 void AnimSkeleton::applyToItem(Item *item) {

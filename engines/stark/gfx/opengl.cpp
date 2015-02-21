@@ -28,11 +28,12 @@
 
 #include "math/matrix4.h"
 
+#include "engines/stark/gfx/openglsactor.h"
 #include "engines/stark/gfx/opengltexture.h"
 
 #ifdef USE_OPENGL
 
-#include "graphics/opengles2/shader.h"
+#include "graphics/opengles2/system_headers.h"
 
 namespace Stark {
 namespace Gfx {
@@ -82,6 +83,10 @@ Texture *OpenGLDriver::createTexture(const Graphics::Surface *surface, const byt
 	}
 
 	return texture;
+}
+
+VisualActor *OpenGLDriver::createActorRenderer() {
+	return new OpenGLSActorRenderer();
 }
 
 void OpenGLDriver::drawSurface(const Texture *texture, const Common::Point &dest) {
