@@ -140,7 +140,6 @@ private:
 	bool _scrollFlag;
 	int _noSegmentsActive;
 	int _someSegmentsActive;
-	ScrollbarActive _scrollbarStrokeType;
 
 	/**
 	 * Loads the elements of the user interface
@@ -216,6 +215,7 @@ public:
 	bool _scrollbarQuickly;
 	uint32 _scrollbarMilliTime;
 	int _scrollbarElevator, _scrollbarOldElevator;
+	ScrollbarActive _scrollbarStrokeType;
 public:
 	/**
 	* Constructor
@@ -274,6 +274,11 @@ public:
 	void selectObject(int invIndex);
 
 	void updateSelection(ScrCategory category, int newIndex, int *idx);
+
+	/**
+	* Updates the current top visible item of the scrollbar
+	*/
+	void changeScrollBar();
 
 	void scrollerChanged();
 

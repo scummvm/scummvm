@@ -495,7 +495,6 @@ void UserInterface::drawScroller() {
 
 void UserInterface::updateInventoryScroller() {
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
-	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
 
 	if (screenObjects._inputMode != kInputBuildingSentences)
 		return;
@@ -518,45 +517,8 @@ void UserInterface::updateInventoryScroller() {
 					_scrollbarQuickly = _vm->_events->_vD2 < 1;
 					_scrollbarMilliTime = currentMilli;
 
-					switch (_scrollbarStrokeType) {
-					case SCROLLBAR_UP:
-						// Scroll up
-						if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
-							--_inventoryTopIndex;
-							_inventoryChanged = true;
-						}
-						break;
-
-					case SCROLLBAR_DOWN:
-						// Scroll down
-						if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
-							++_inventoryTopIndex;
-							_inventoryChanged = true;
-						}
-						break;
-
-					case SCROLLBAR_ELEVATOR: {
-						// Inventory slider
-						int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
-							* inventoryList.size() / 10;
-						if (newIndex >= (int)inventoryList.size())
-							newIndex = inventoryList.size() - 1;
-
-						if (inventoryList.size() > 0) {
-							_inventoryChanged = newIndex != _inventoryTopIndex;
-							_inventoryTopIndex = newIndex;
-						}
-						break;
-					}
-
-					default:
-						break;
-					}
-
-					if (_inventoryChanged) {
-						int dummy;
-						updateSelection(CAT_INV_LIST, 0, &dummy);
-					}
+					// Change the scrollbar and visible inventory list
+					changeScrollBar();
 				}
 			}
 		}
@@ -567,6 +529,54 @@ void UserInterface::updateInventoryScroller() {
 
 	_scrollbarOldActive = _scrollbarActive;
 	_scrollbarOldElevator = _scrollbarElevator;
+}
+
+void UserInterface::changeScrollBar() {
+	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+
+	if (screenObjects._inputMode != kInputBuildingSentences)
+		return;
+
+	switch (_scrollbarStrokeType) {
+	case SCROLLBAR_UP:
+		// Scroll up
+		if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
+			--_inventoryTopIndex;
+			_inventoryChanged = true;
+		}
+		break;
+
+	case SCROLLBAR_DOWN:
+		// Scroll down
+		if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
+			++_inventoryTopIndex;
+			_inventoryChanged = true;
+		}
+		break;
+
+	case SCROLLBAR_ELEVATOR: {
+		// Inventory slider
+		int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
+			* inventoryList.size() / 10;
+		if (newIndex >= (int)inventoryList.size())
+			newIndex = inventoryList.size() - 1;
+
+		if (inventoryList.size() > 0) {
+			_inventoryChanged = newIndex != _inventoryTopIndex;
+			_inventoryTopIndex = newIndex;
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	if (_inventoryChanged) {
+		int dummy;
+		updateSelection(CAT_INV_LIST, 0, &dummy);
+	}
 }
 
 void UserInterface::scrollbarChanged() {

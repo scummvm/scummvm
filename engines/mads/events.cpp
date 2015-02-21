@@ -162,6 +162,12 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_KEYUP:
 			return;
+		case Common::EVENT_WHEELUP:
+			_pendingKeys.push(Common::KeyState(Common::KEYCODE_PAGEUP));
+			return;
+		case Common::EVENT_WHEELDOWN:
+			_pendingKeys.push(Common::KeyState(Common::KEYCODE_PAGEDOWN));
+			return;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseClicked = true;
