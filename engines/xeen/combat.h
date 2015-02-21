@@ -30,12 +30,13 @@
 namespace Xeen {
 
 #define MAX_NUM_MONSTERS 107
+#define PARTY_AND_MONSTERS 11
 
 enum DamageType {
 	DT_PHYSICAL = 0, DT_MAGICAL = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,
 	DT_COLD = 4, DT_POISON = 5, DT_ENERGY = 6, DT_SLEEP = 7,
 	DT_FINGEROFDEATH = 8, DT_HOLYWORD = 9, DT_MASS_DISTORTION = 10,
-	DT_UNDED = 11, DT_BEASTMASTER = 12, DT_DRAGONSLEEP = 13,
+	DT_UNDEAD = 11, DT_BEASTMASTER = 12, DT_DRAGONSLEEP = 13,
 	DT_GOLEMSTOPPER = 14, DT_HYPNOTIZE = 15, DT_INSECT_SPRAY = 16,
 	DT_POISON_VALLEY = 17, DT_MAGIC_ARROW = 18
 };
@@ -55,6 +56,14 @@ class Character;
 class Combat {
 private:
 	XeenEngine *_vm;
+
+	void attack2(int damage, int ranged);
+
+	bool hitMonster(Character &c, int ranged);
+
+	bool getWeaponDamage(Character &c, int ranged);
+
+	int getMonsterDamage(Character &c);
 public:
 	Common::Array<Character *> _combatParty;
 	Common::Array<bool> _charsBlocked;
@@ -62,11 +71,12 @@ public:
 	SpriteResource _powSprites;
 	int _attackMonsters[26];
 	int _monster2Attack;
-	int _charsArray1[12];
-	bool _monPow[12];
-	int _monsterScale[12];
-	int _elemPow[12];
-	int _elemScale[12];
+	int _charsArray1[PARTY_AND_MONSTERS];
+	bool _monPow[PARTY_AND_MONSTERS];
+	int _monsterScale[PARTY_AND_MONSTERS];
+	int _elemPow[PARTY_AND_MONSTERS];
+	int _elemScale[PARTY_AND_MONSTERS];
+	int _missedShot[8];
 	Common::Array<int> _speedTable;
 	int _shooting[8];
 	int _globalCombat;
@@ -83,23 +93,9 @@ public:
 	int _whosSpeed;
 	DamageType _damageType;
 	Character *_oldCharacter;
-
-	void monstersAttack();
-
-	void setupMonsterAttack(int monsterDataIndex, const Common::Point &pt);
-
-	bool monsterCanMove(const Common::Point &pt, int wallShift,
-		int v1, int v2, int monsterId);
-
-	void moveMonster(int monsterId, const Common::Point &pt);
-
-	void attackMonster(int monsterId);
-
-	void endAttack();
-
-	void monsterOvercome();
-	
-	int stopAttack(const Common::Point &diffPt);
+	int _shootType;
+	int _monsterDamage;
+	int _weaponDamage;
 public:
 	Combat(XeenEngine *vm);
 
@@ -121,7 +117,7 @@ public:
 
 	Common::String getMonsterDescriptions();
 
-	void attack(Character &c, int v2);
+	void attack(Character &c, int ranged);
 
 	void block();
 
@@ -130,6 +126,23 @@ public:
 	void giveTreasure();
 
 	void run();
+
+	void monstersAttack();
+
+	void setupMonsterAttack(int monsterDataIndex, const Common::Point &pt);
+
+	bool monsterCanMove(const Common::Point &pt, int wallShift,
+		int v1, int v2, int monsterId);
+
+	void moveMonster(int monsterId, const Common::Point &pt);
+
+	void attackMonster(int monsterId);
+
+	void endAttack();
+
+	void monsterOvercome();
+
+	int stopAttack(const Common::Point &diffPt);
 };
 
 } // End of namespace Xeen

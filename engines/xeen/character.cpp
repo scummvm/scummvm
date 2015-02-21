@@ -1855,5 +1855,4 @@ int Character::getClassCategory() const {
 	}
 }
 
-
 } // End of namespace Xeen

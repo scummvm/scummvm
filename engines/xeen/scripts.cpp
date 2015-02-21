@@ -508,7 +508,7 @@ void Scripts::cmdSpawn(Common::Array<byte> &params) {
 	monster._position.x = params[1];
 	monster._position.y = params[2];
 	monster._frame = _vm->getRandomNumber(7);
-	monster._field7 = 0;
+	monster._damageType = 0;
 	monster._isAttacking = params[1] != 0;
 	monster._hp = monsterData._hp;
 

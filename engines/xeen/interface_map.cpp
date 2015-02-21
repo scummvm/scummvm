@@ -705,7 +705,7 @@ void InterfaceMap::animate3d() {
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
-		if (!monster._field7) {
+		if (!monster._damageType) {
 			if (monster._frame < 8) {
 				MonsterStruct &monsterData = map._monsterData[monster._spriteId];
 				if (!monsterData._loopAnimation) {

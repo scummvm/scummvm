@@ -51,7 +51,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	int castingCopy = isCasting;
 	isCasting &= 0x7f;
 	int selection = -1;
-	uint topIndex = 0;
+	int topIndex = 0;
 	int newSelection;
 	screen._windows[25].open();
 
@@ -87,7 +87,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		Common::fill(&colors[0], &colors[10], 9);
 
 		for (int idx = 0; idx < 10; ++idx) {
-			if ((topIndex + idx) < _spells.size()) {
+			if ((topIndex + idx) < (int)_spells.size()) {
 				names[idx] = _spells[topIndex + idx]._name.c_str();
 				colors[idx] = _spells[topIndex + idx]._color;
 			}
@@ -256,7 +256,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 		case Common::KEYCODE_PAGEDOWN:
 		case Common::KEYCODE_KP3:
-			topIndex = MIN(topIndex + 10, ((_spells.size() - 1) / 10) * 10);
+			topIndex = MIN(topIndex + 10, (((int)_spells.size() - 1) / 10) * 10);
 			break;
 
 		case Common::KEYCODE_UP:
@@ -267,7 +267,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
-			if (topIndex < (_spells.size() - 10))
+			if (topIndex < ((int)_spells.size() - 10))
 				++topIndex;
 			break;
 		}

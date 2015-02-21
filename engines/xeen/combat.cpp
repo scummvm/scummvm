@@ -77,6 +77,8 @@ static const int MONSTER_SHOOT_POW[7] = { 12, 14, 0, 4, 8, 10, 13 };
 
 static const int COMBAT_SHOOTING[4] = { 1, 1, 2, 3 };
 
+#define monsterSavingThrow(MONINDEX) (_vm->getRandomNumber(1, 50 + MONINDEX) <= MONINDEX)
+
 /*------------------------------------------------------------------------*/
 
 Combat::Combat(XeenEngine *vm): _vm(vm) {
@@ -91,6 +93,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	Common::fill(&_monsterMoved[0], &_monsterMoved[MAX_NUM_MONSTERS], false);
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
 	Common::fill(&_gmonHit[0], &_gmonHit[36], 0);
+	Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], 0);
 	_globalCombat = 0;
 	_whosTurn = -1;
 	_itemFlag = false;
@@ -102,6 +105,9 @@ Combat::Combat(XeenEngine *vm): _vm(vm) {
 	_whosSpeed = 0;
 	_damageType = DT_PHYSICAL;
 	_oldCharacter = nullptr;
+	_shootType = 0;
+	_monsterDamage = 0;
+	_weaponDamage = 0;
 }
 
 void Combat::clear() {
@@ -455,7 +461,7 @@ void Combat::moveMonsters() {
 								// Check for range attacks
 								if (monsterData._rangeAttack && !_rangeAttacking[idx]
 									&& _attackMonsters[0] != idx && _attackMonsters[1] != idx
-									&& _attackMonsters[2] != idx && !monster._field7) {
+									&& _attackMonsters[2] != idx && !monster._damageType) {
 									// Setup monster for attacking
 									setupMonsterAttack(monster._spriteId, pt);
 									_rangeAttacking[idx] = true;
@@ -683,7 +689,7 @@ void Combat::moveMonster(int monsterId, const Common::Point &pt) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 
-	if (_monsterMap[pt.y][pt.x] < 3 && !monster._field7 && _vm->_moveMonsters) {
+	if (_monsterMap[pt.y][pt.x] < 3 && !monster._damageType && _vm->_moveMonsters) {
 		++_monsterMap[pt.y][pt.x];
 		--_monsterMap[monster._position.y][monster._position.x];
 		monster._position = pt;
@@ -731,10 +737,10 @@ void Combat::monsterOvercome() {
 		MazeMonster &monster = map._mobData._monsters[idx];
 		int dataIndex = monster._spriteId;
 
-		if (monster._field7 != 0 && monster._field7 != 13) {
+		if (monster._damageType != 0 && monster._damageType != 13) {
 			// Do a saving throw for monster
 			if (dataIndex <= _vm->getRandomNumber(1, dataIndex + 50))
-				monster._field7 = 0;
+				monster._damageType = 0;
 		}
 	}
 }
@@ -768,7 +774,7 @@ void Combat::attackMonster(int monsterId) {
 
 	MazeMonster &monster = map._mobData._monsters[monsterIndex];
 	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
-	if (monster._field7)
+	if (monster._damageType)
 		return;
 
 	monster._frame = 8;
@@ -1153,7 +1159,210 @@ Common::String Combat::getMonsterDescriptions() {
 		lines[1].c_str(), lines[2].c_str());
 }
 
-void Combat::attack(Character &c, int v2) {
+void Combat::attack(Character &c, int ranged) {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	int damage = _monsterDamage;
+
+	if (_monster2Attack == -1)
+		return;
+
+	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
+	int monsterDataIndex = monster._spriteId;
+	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
+
+	if (ranged) {
+		if (_shootType != 1 || _damageType == DT_MAGIC_ARROW) {
+			if (!monsterData._magicResistence || monsterData._magicResistence <=
+					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
+				if (_monsterDamage != 0) {
+					attack2(damage, ranged);
+					setSpeedTable();
+				} else {
+					switch (_damageType) {
+					case DT_SLEEP:
+						if (monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID) {
+							if (_vm->getRandomNumber(1, 50 + monsterDataIndex) > monsterDataIndex)
+								monster._damageType = DT_SLEEP;
+						}
+						break;
+					case DT_FINGEROFDEATH:
+						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
+							&& !monsterSavingThrow(monsterDataIndex)) {
+							damage = MIN(monster._hp, 50);
+							attack2(damage, 2);
+							setSpeedTable();
+						}
+						break;
+					case DT_HOLYWORD:
+						if (monsterData._monsterType == MONSTER_UNDEAD) {
+							attack2(monster._hp, 2);
+							setSpeedTable();
+						}
+						break;
+					case DT_MASS_DISTORTION:
+						attack2(MAX(monster._hp / 2, 1), 2);
+						setSpeedTable();
+						break;
+					case DT_UNDEAD:
+						if (monsterData._monsterType == MONSTER_UNDEAD)
+							damage = 25;
+						else
+							ranged = 2;
+						attack2(damage, ranged);
+						setSpeedTable();
+						break;
+					case DT_BEASTMASTER:
+						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
+							&& !monsterSavingThrow(monsterDataIndex)) {
+							monster._damageType = DT_BEASTMASTER;
+						}
+						break;
+					case DT_DRAGONSLEEP:
+						if (monsterData._monsterType == MONSTER_DRAGON && !monsterSavingThrow(monsterDataIndex))
+							monster._damageType = DT_DRAGONSLEEP;
+						break;
+					case DT_GOLEMSTOPPER:
+						if (monsterData._monsterType == MONSTER_GOLEM) {
+							attack2(100, ranged);
+							setSpeedTable();
+						}
+						break;
+					case DT_HYPNOTIZE:
+						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
+							&& !monsterSavingThrow(monsterDataIndex)) {
+							monster._damageType = _damageType;
+						}
+						break;
+					case DT_INSECT_SPRAY:
+						if (monsterData._monsterType == MONSTER_INSECT) {
+							attack2(25, ranged);
+							setSpeedTable();
+						}
+						break;
+					case DT_MAGIC_ARROW:
+						attack2(8, ranged);
+						setSpeedTable();
+						break;
+					default:
+						break;
+					}
+				}
+			} 
+		} else {
+			Common::fill(&_elemPow[0], &_elemPow[PARTY_AND_MONSTERS], 0);
+			damage = 0;
+
+			for (uint charIndex = 0; charIndex < party._activeParty.size(); ++charIndex) {
+				Character &c = party._activeParty[charIndex];
+
+				if (_shooting[charIndex] && !_missedShot[charIndex]) {
+					if (!hitMonster(c, ranged)) {
+						++_missedShot[charIndex];
+					} else {
+						damage = _monsterDamage ? _monsterDamage : _weaponDamage;
+						_shooting[charIndex] = 0;
+						attack2(damage, ranged);
+
+						if (map._isOutdoors) {
+							intf._outdoorList._attackImgs1[charIndex]._scale = 0;
+							intf._outdoorList._attackImgs1[charIndex]._sprites = nullptr;
+							intf._outdoorList._attackImgs2[charIndex]._scale = 0;
+							intf._outdoorList._attackImgs2[charIndex]._sprites = nullptr;
+							intf._outdoorList._attackImgs3[charIndex]._scale = 0;
+							intf._outdoorList._attackImgs3[charIndex]._sprites = nullptr;
+							intf._outdoorList._attackImgs4[charIndex]._scale = 0;
+							intf._outdoorList._attackImgs4[charIndex]._sprites = nullptr;
+						} else {
+							intf._indoorList._attackImgs1[charIndex]._scale = 0;
+							intf._indoorList._attackImgs1[charIndex]._sprites = nullptr;
+							intf._indoorList._attackImgs2[charIndex]._scale = 0;
+							intf._indoorList._attackImgs2[charIndex]._sprites = nullptr;
+							intf._indoorList._attackImgs3[charIndex]._scale = 0;
+							intf._indoorList._attackImgs3[charIndex]._sprites = nullptr;
+							intf._indoorList._attackImgs4[charIndex]._scale = 0;
+							intf._indoorList._attackImgs4[charIndex]._sprites = nullptr;
+						}
+
+						if (_monster2Attack == -1)
+							return;
+					}
+				}
+			}
+		}
+	} else {
+		_damageType = DT_PHYSICAL;
+		int divisor = 0;
+		switch (c._class) {
+		case CLASS_BARBARIAN:
+			divisor = 4;
+			break;
+		case CLASS_KNIGHT:
+		case CLASS_NINJA:
+			divisor = 5;
+			break;
+		case CLASS_PALADIN:
+		case CLASS_ARCHER:
+		case CLASS_ROBBER:
+		case CLASS_RANGER:
+			divisor = 6;
+			break;
+		case CLASS_CLERIC:
+		case CLASS_DRUID:
+			divisor = 7;
+			break;
+		case CLASS_SORCERER:
+			divisor = 8;
+			break;
+		}
+
+		int numberOfAttacks = c.getCurrentLevel() / divisor;
+		damage = 0;
+
+		while (numberOfAttacks-- > 0) {
+			if (hitMonster(c, 0))
+				damage += getMonsterDamage(c);
+		}
+
+		for (int itemIndex = 0; itemIndex < INV_ITEMS_TOTAL; ++itemIndex) {
+			XeenItem &weapon = c._weapons[itemIndex];
+			if (weapon._frame != 0) {
+				switch (weapon._bonusFlags & ITEMFLAG_BONUS_MASK) {
+				case 1:
+					if (monsterData._monsterType == MONSTER_DRAGON)
+						damage *= 3;
+					break;
+				case 2:
+					if (monsterData._monsterType == MONSTER_UNDEAD)
+						damage *= 3;
+					break;
+				case 3:
+					if (monsterData._monsterType == MONSTER_GOLEM)
+						damage *= 3;
+					break;
+				case 4:
+					if (monsterData._monsterType == MONSTER_INSECT)
+						damage *= 3;
+					break;
+				case 5:
+					if (monsterData._monsterType == MONSTER_0)
+						damage *= 3;
+					break;
+				case 6:
+					if (monsterData._monsterType == MONSTER_ANIMAL)
+						damage *= 3;
+					break;
+				}
+			}
+		}
+
+		attack2(damage, ranged);
+		setSpeedTable();
+	}
+}
+
+void Combat::attack2(int damage, int ranged) {
 	error("TODO");
 }
 
@@ -1212,5 +1421,18 @@ void Combat::run() {
 		sound.playFX(51);
 	}
 }
+
+bool Combat::hitMonster(Character &c, int ranged) {
+	error("TODO");
+}
+
+bool Combat::getWeaponDamage(Character &c, int ranged) {
+	error("TODO");
+}
+
+int Combat::getMonsterDamage(Character &c) {
+	error("TODO");
+}
+
 
 } // End of namespace Xeen
