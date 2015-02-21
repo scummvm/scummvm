@@ -27,18 +27,7 @@
 
 namespace Xeen {
 
-#define TOTAL_ITEMS 10
 
-class Treasure {
-public:
-	XeenItem _misc[TOTAL_ITEMS];
-	XeenItem _accessories[TOTAL_ITEMS];
-	XeenItem _armor[TOTAL_ITEMS];
-	XeenItem _weapons[TOTAL_ITEMS];
-	bool _hasItems;
-public:
-	Treasure();
-};
 
 } // End of namespace Xeen
 

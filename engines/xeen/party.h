@@ -48,6 +48,7 @@ enum Difficulty { ADVENTURER = 0, WARRIOR = 1 };
 #define TOTAL_STATS 7
 #define TOTAL_QUEST_ITEMS 85
 #define TOTAL_QUEST_FLAGS 56
+#define MAX_TREASURE_ITEMS 10
 
 class Roster: public Common::Array<Character> {
 public:
@@ -56,6 +57,18 @@ public:
 	Roster();
 
 	void synchronize(Common::Serializer &s);
+};
+
+class Treasure {
+public:
+	XeenItem _misc[MAX_TREASURE_ITEMS];
+	XeenItem _accessories[MAX_TREASURE_ITEMS];
+	XeenItem _armor[MAX_TREASURE_ITEMS];
+	XeenItem _weapons[MAX_TREASURE_ITEMS];
+	bool _hasItems;
+	int _gems, _gold;
+public:
+	Treasure();
 };
 
 class Party {
@@ -124,6 +137,7 @@ public:
 	int _fallDamage;
 	DamageType _damageType;
 	bool _dead;
+	Treasure _treasure;
 public:
 	Party(XeenEngine *vm);
 

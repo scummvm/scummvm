@@ -92,8 +92,6 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_whoWill = 0;
 	_itemType = 0;
 	_treasureItems = 0;
-	_treasureGold = 0;
-	_treasureGems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
 	_v2 = 0;
@@ -125,7 +123,7 @@ int Scripts::checkEvents() {
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
 	//int items = _treasureItems;
 	
-	if (_treasureGold & _treasureItems) {
+	if (party._treasure._gold & party._treasure._gems) {
 		// TODO
 	} else {
 		// TODO
@@ -591,6 +589,7 @@ void Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 
 void Scripts::cmdConfirmWord(Common::Array<byte> &params) { 
 	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
 	Common::String msg1 = params[2] ? map._events._text[params[2]] :
 		_vm->_interface->_interfaceText;
 	Common::String msg2;
@@ -621,13 +620,13 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 			doWorldEnd();
 		} else {		
 			if (result == 59 && !_vm->_files->_isDarkCc) {
-				for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
-					XeenItem &item = _vm->_treasure._weapons[idx];
+				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+					XeenItem &item = party._treasure._weapons[idx];
 					if (!item._id) {
 						item._id = 34;
 						item._material = 0;
 						item._bonusFlags = 0;
-						_vm->_treasure._hasItems = true;
+						party._treasure._hasItems = true;
 						
 						cmdExit(params);
 						return;

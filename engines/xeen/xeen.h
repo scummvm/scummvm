@@ -149,7 +149,6 @@ public:
 	SoundManager *_sound;
 	Spells *_spells;
 	Town *_town;
-	Treasure _treasure;
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;

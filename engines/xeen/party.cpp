@@ -57,6 +57,13 @@ void Roster::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+Treasure::Treasure() {
+	_hasItems = false;
+	_gold = _gems = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
 XeenEngine *Party::_vm;
 
 Party::Party(XeenEngine *vm) {

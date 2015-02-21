@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "xeen/files.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -50,8 +51,14 @@ enum SpecialAttack {
 	SA_ERADICATE = 19, SA_AGING = 20, SA_DEATH = 21, SA_STONE = 22
 };
 
+enum ElementalCategory {
+	ELEM_FIRE = 0, ELEM_ELECTRICITY = 1, ELEM_COLD = 2,
+	ELEM_ACID_POISON = 3, ELEM_ENERGY = 4, ELEM_MAGIC = 5
+};
+
 class XeenEngine;
 class Character;
+class XeenItem;
 
 class Combat {
 private:
@@ -64,6 +71,12 @@ private:
 	bool getWeaponDamage(Character &c, int ranged);
 
 	int getMonsterDamage(Character &c);
+
+	int getDamageScale(int v);
+
+	int getMonsterResistence(int ranged);
+
+	void giveExperience(int experience);
 public:
 	Common::Array<Character *> _combatParty;
 	Common::Array<bool> _charsBlocked;
@@ -74,7 +87,7 @@ public:
 	int _charsArray1[PARTY_AND_MONSTERS];
 	bool _monPow[PARTY_AND_MONSTERS];
 	int _monsterScale[PARTY_AND_MONSTERS];
-	int _elemPow[PARTY_AND_MONSTERS];
+	ElementalCategory _elemPow[PARTY_AND_MONSTERS];
 	int _elemScale[PARTY_AND_MONSTERS];
 	int _missedShot[8];
 	Common::Array<int> _speedTable;
@@ -96,6 +109,8 @@ public:
 	int _shootType;
 	int _monsterDamage;
 	int _weaponDamage;
+	XeenItem *_attackWeapon;
+	File _missVoc, _pow1Voc;
 public:
 	Combat(XeenEngine *vm);
 

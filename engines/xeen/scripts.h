@@ -141,8 +141,6 @@ private:
 	XeenEngine *_vm;
 	int _charFX[6];
 	int _treasureItems;
-	int _treasureGold;
-	int _treasureGems;
 	int _lineNum;
 	int _charIndex;
 	int _mirrorId;

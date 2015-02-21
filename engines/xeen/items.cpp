@@ -25,8 +25,5 @@
 
 namespace Xeen {
 
-Treasure::Treasure() {
-	_hasItems = false;
-}
 
 } // End of namespace Xeen

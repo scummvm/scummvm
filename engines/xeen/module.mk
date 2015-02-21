@@ -32,7 +32,6 @@ MODULE_OBJS := \
 	font.o \
 	interface.o \
 	interface_map.o \
-	items.o \
 	map.o \
 	party.o \
 	resources.o \
