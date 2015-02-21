@@ -43,8 +43,7 @@ public:
 	void setGameViewport() override;
 	void setScreenViewport() override;
 
-	void setupPerspective(const Math::Matrix4 &projectionMatrix) override;
-	void setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) override;
+	void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) override;
 
 	void clearScreen();
 	void flipBuffer();

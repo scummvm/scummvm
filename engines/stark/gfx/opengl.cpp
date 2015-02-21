@@ -32,11 +32,7 @@
 
 #ifdef USE_OPENGL
 
-#ifdef SDL_BACKEND
-#include <SDL_opengl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include "graphics/opengles2/shader.h"
 
 namespace Stark {
 namespace Gfx {
@@ -67,17 +63,7 @@ void OpenGLDriver::setScreenViewport() {
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
-void OpenGLDriver::setupPerspective(const Math::Matrix4 &projectionMatrix) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMultMatrixf(projectionMatrix.getData());
-}
-
-void OpenGLDriver::setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glMultMatrixf(lookAt.getData());
-	glTranslatef(-position.x(), -position.y(), -position.z());
+void OpenGLDriver::setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) {
 }
 
 void OpenGLDriver::clearScreen() {
@@ -165,7 +151,7 @@ void OpenGLDriver::end2DMode() {
 	// Pop the identity Projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
-	
+
 	// Pop the identity ModelView matrix
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();

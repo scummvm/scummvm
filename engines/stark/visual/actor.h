@@ -23,14 +23,20 @@
 #ifndef STARK_VISUAL_ACTOR_H
 #define STARK_VISUAL_ACTOR_H
 
+#include "common/hash-str.h"
 #include "common/str.h"
 
+#include "math/matrix4.h"
 #include "math/vector3d.h"
 
 #include "engines/stark/visual/visual.h"
 
 namespace Common {
 	class Archive;
+}
+
+namespace Graphics {
+	class Shader;
 }
 
 namespace Stark {
@@ -40,6 +46,7 @@ class TextureSet;
 }
 
 class Actor;
+class FaceNode;
 class SkeletonAnim;
 
 
@@ -60,6 +67,20 @@ public:
 private:
 	Actor *_actor;
 	uint32 _time;
+
+	Graphics::Shader *_shader;
+
+	Common::HashMap<Common::String, uint32> _faceVBO;
+	Common::HashMap<Common::String, uint32> _faceEBO;
+
+	Math::Matrix4 getModelMatrix(const Math::Vector3d& position, float direction);
+	Common::String faceHash(const FaceNode *face) const;
+	void clearVertices();
+	void uploadVertices();
+	uint32 createFaceVBO(const FaceNode *face);
+	uint32 createFaceEBO(const FaceNode *face);
+	void setBonePositionArrayUniform(const char *uniform);
+	void setBoneRotationArrayUniform(const char *uniform);
 };
 
 } // End of namespace Stark

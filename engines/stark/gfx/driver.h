@@ -44,8 +44,7 @@ public:
 	virtual void setGameViewport() = 0;
 	virtual void setScreenViewport() = 0;
 
-	virtual void setupPerspective(const Math::Matrix4 &projectionMatrix) = 0;
-	virtual void setupCamera(const Math::Vector3d &position, const Math::Matrix4 &lookAt) = 0;
+	virtual void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) = 0;
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;

@@ -46,7 +46,6 @@ public:
 
 	Math::Vector3d _animPos;
 	Math::Quaternion _animRot;
-	Math::Matrix4 _animTransform;
 };
 
 /**
@@ -73,9 +72,9 @@ public:
 	void readFromStream(ArchiveReadStream *stream);
 
 	/**
-	 * Transform the vertex so that it is attached to the requested bone
+	 * Obtain the list of bones
 	 */
-	void applyBoneTransform(uint32 boneIdx, Math::Vector3d &vertex);
+	const Common::Array<BoneNode *> getBones();
 
 private:
 	void setNode(uint32 time, BoneNode *bone, const BoneNode *parent);

@@ -41,6 +41,10 @@ Skeleton::~Skeleton() {
 		delete *it;
 }
 
+const Common::Array<BoneNode *> Skeleton::getBones() {
+	return _bones;
+}
+
 void Skeleton::readFromStream(ArchiveReadStream *stream) {
 	uint32 numBones = stream->readUint32LE();
 	for (uint32 i = 0; i < numBones; ++i) {
@@ -72,21 +76,15 @@ void Skeleton::setNode(uint32 time, BoneNode *bone, const BoneNode *parent) {
 	_anim->getCoordForBone(time, bone->_idx, bone->_animPos, bone->_animRot);
 
 	if (parent) {
-		parent->_animTransform.transform(&bone->_animPos, true);
+		parent->_animRot.transform(bone->_animPos);
+
+		bone->_animPos = parent->_animPos + bone->_animPos;
 		bone->_animRot = parent->_animRot * bone->_animRot;
 	}
-
-	bone->_animTransform = bone->_animRot.toMatrix();
-	bone->_animTransform.setPosition(bone->_animPos);
 
 	for (uint i = 0; i < bone->_children.size(); ++i) {
 		setNode(time, _bones[bone->_children[i]], bone);
 	}
-}
-
-void Skeleton::applyBoneTransform(uint32 boneIdx, Math::Vector3d &vertex) {
-       const BoneNode *bone = _bones[boneIdx];
-       bone->_animTransform.transform(&vertex, true);
 }
 
 void Skeleton::animate(uint32 time) {

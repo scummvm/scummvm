@@ -48,7 +48,9 @@ void Scene::initCamera(const Math::Vector3d &position, const Math::Vector3d &loo
 	_nearClipPlane = nearClipPlane;
 	_farClipPlane = farClipPlane;
 
-	_lookAtMatrix = Math::makeLookAtMatrix(_cameraPosition, _cameraPosition + _cameraLookDirection, Math::Vector3d(0.0, 0.0, 1.0));
+	_viewMatrix = Math::makeLookAtMatrix(_cameraPosition, _cameraPosition + _cameraLookDirection, Math::Vector3d(0.0, 0.0, 1.0));
+	_viewMatrix.transpose(); // Math::makeLookAtMatrix outputs transposed matrices ...
+	_viewMatrix.translate(-_cameraPosition);
 }
 
 void Scene::scrollCamera(const Common::Rect &viewport) {
@@ -70,7 +72,8 @@ void Scene::scrollCamera(const Common::Rect &viewport) {
 	ymin += distanceToTop * scollYFactor;
 	ymax += distanceToTop * scollYFactor;
 
-	_perspectiveMatrix = Math::makeFrustumMatrix(xmin, xmax, ymin, ymax, _nearClipPlane, _farClipPlane);
+	_projectionMatrix = Math::makeFrustumMatrix(xmin, xmax, ymin, ymax, _nearClipPlane, _farClipPlane);
+	_projectionMatrix.transpose(); // Math::makeFrustumMatrix outputs transposed matrices ...
 }
 
 void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax) {
@@ -90,8 +93,7 @@ void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ym
 void Scene::render(Gfx::RenderEntryArray renderEntries) {
 	// setup cam
 	_gfx->setGameViewport();
-	_gfx->setupPerspective(_perspectiveMatrix);
-	_gfx->setupCamera(_cameraPosition, _lookAtMatrix);
+	_gfx->setupCamera(_projectionMatrix, _viewMatrix);
 
 	// Draw bg
 

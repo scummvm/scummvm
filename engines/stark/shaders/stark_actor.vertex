@@ -1,0 +1,28 @@
+in vec3 position1;
+in vec3 position2;
+in int bone1;
+in int bone2;
+in float boneWeight;
+in vec2 texcoord;
+
+out vec2 Texcoord;
+
+uniform mat4 mvp;
+uniform vec4 boneRotation[70];
+uniform vec3 bonePosition[70];
+
+vec3 qrot(vec4 q, vec3 v)
+{
+        return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
+}
+
+void main()
+{
+	Texcoord = texcoord;
+
+	vec3 b1 = qrot(boneRotation[bone1], position1) + bonePosition[bone1];
+	vec3 b2 = qrot(boneRotation[bone2], position2) + bonePosition[bone2];
+	vec3 pos = mix(b2, b1, boneWeight);
+
+	gl_Position = mvp * vec4(pos.x, pos.y, -pos.z, 1.0);
+}

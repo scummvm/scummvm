@@ -82,7 +82,6 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 	if (count >= 1) {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
 
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

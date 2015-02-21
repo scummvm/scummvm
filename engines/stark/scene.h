@@ -58,6 +58,12 @@ public:
 	/** Configure rendering so that only the specified rect can be seen */
 	void scrollCamera(const Common::Rect &viewport);
 
+	/** Get the projection matrix (Screen -> Camera) */
+	Math::Matrix4 getProjectionMatrix() const { return _projectionMatrix; }
+
+	/** Get the projection matrix (Camera -> World) */
+	Math::Matrix4 getViewMatrix() const { return _viewMatrix; }
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 
@@ -71,8 +77,8 @@ private:
 	float _nearClipPlane;
 	float _farClipPlane;
 
-	Math::Matrix4 _perspectiveMatrix;
-	Math::Matrix4 _lookAtMatrix;
+	Math::Matrix4 _projectionMatrix;
+	Math::Matrix4 _viewMatrix;
 
 };
 
