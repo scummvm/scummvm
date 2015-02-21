@@ -36,8 +36,8 @@ Type::Type(ResourceType type) {
 	_type = type;
 }
 
-Type::Type() :
-		Type::Type(kInvalid) {
+Type::Type() {
+	_type = kInvalid;
 }
 
 const char *Type::getName() const {
