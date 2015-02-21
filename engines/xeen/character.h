@@ -39,7 +39,8 @@ enum BonusFlags {
 };
 
 enum ItemCategory {
-	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3
+	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3,
+	NUM_ITEM_CATEGORIES = 4
 };
 
 enum Sex { MALE = 0, FEMALE = 1, YES_PLEASE = 2 };
@@ -140,6 +141,8 @@ public:
 	void sort();
 
 	virtual void enchantItem(int itemIndex, int amount);
+
+	bool isFull() const;
 };
 
 class WeaponItems: public InventoryItems {

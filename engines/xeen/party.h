@@ -65,6 +65,7 @@ public:
 	XeenItem _accessories[MAX_TREASURE_ITEMS];
 	XeenItem _armor[MAX_TREASURE_ITEMS];
 	XeenItem _weapons[MAX_TREASURE_ITEMS];
+	XeenItem *_categories[4];
 	bool _hasItems;
 	int _gems, _gold;
 public:
@@ -76,6 +77,8 @@ class Party {
 	friend class InventoryItems;
 private:
 	static XeenEngine *_vm;
+
+	void giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex);
 public:
 	// Dynamic data that's saved
 	Direction _mazeDirection;
@@ -168,6 +171,8 @@ public:
 	void moveToRunLocation();
 
 	void giveTreasure();
+
+	bool arePacksFull() const;
 };
 
 } // End of namespace Xeen

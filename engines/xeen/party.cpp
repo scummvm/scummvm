@@ -60,6 +60,11 @@ void Roster::synchronize(Common::Serializer &s) {
 Treasure::Treasure() {
 	_hasItems = false;
 	_gold = _gems = 0;
+
+	_categories[0] = &_weapons[0];
+	_categories[1] = &_armor[0];
+	_categories[2] = &_accessories[0];
+	_categories[3] = &_misc[0];
 }
 
 /*------------------------------------------------------------------------*/
@@ -564,8 +569,12 @@ void Party::moveToRunLocation() {
  */
 void Party::giveTreasure() {
 	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
+	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
 	SoundManager &sound = *_vm->_sound;
+	Window &w = screen._windows[10];
 
 	if (!_treasure._gold && !_treasure._gems)
 		return;
@@ -584,7 +593,146 @@ void Party::giveTreasure() {
 	if (_treasure._gold || _treasure._gems)
 		sound.playFX(54);
 
-	error("TODO");
+	events.clearEvents();
+	w.close();
+	w.open();
+	w.writeString(Common::String::format(PARTY_FOUND, _treasure._gold, _treasure._gems));
+	w.update();
+
+	if (_vm->_mode != MODE_COMBAT)
+		_vm->_mode = MODE_7;
+
+	if (arePacksFull())
+		ErrorScroll::show(_vm, BACKPACKS_FULL_PRESS_KEY, WT_NONFREEZED_WAIT);
+
+	for (int categoryNum = 0; categoryNum < NUM_ITEM_CATEGORIES; ++categoryNum) {
+		for (int itemNum = 0; itemNum < MAX_TREASURE_ITEMS; ++itemNum) {
+			if (arePacksFull()) {
+				if (_treasure._weapons[itemNum]._id == 34) {
+					// Important item, so clear a slot for it
+					_activeParty[0]._weapons[INV_ITEMS_TOTAL - 1].clear();
+				} else {
+					// Otherwise, clear all the remaining treasure items, 
+					// since all the party's packs are full
+					for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+						_treasure._weapons[idx].clear();
+						_treasure._armor[idx].clear();
+						_treasure._accessories[idx].clear();
+						_treasure._armor[idx].clear();
+					}
+				}
+			}
+
+			// If there's no treasure item to be distributed, skip to next slot
+			if (!_treasure._categories[categoryNum][itemNum]._id)
+				continue;
+
+			int charIndex = scripts._whoWill - 1;
+			if (charIndex >= 0 && charIndex < (int)_activeParty.size()) {
+				// Check the designated character first
+				Character &c = _activeParty[charIndex];
+				if (!c._items[(ItemCategory)categoryNum].isFull() && !c.isDisabledOrDead()) {
+					giveTreasureToCharacter(c, (ItemCategory)categoryNum, itemNum);
+					continue;
+				}
+
+				// Fall back on checking the entire conscious party
+				for (charIndex = 0; charIndex < (int)_activeParty.size(); ++charIndex) {
+					Character &c = _activeParty[charIndex];
+					if (!c._items[(ItemCategory)categoryNum].isFull() && !c.isDisabledOrDead()) {
+						giveTreasureToCharacter(c, (ItemCategory)categoryNum, itemNum);
+						break;
+					}
+				}
+				if (charIndex != (int)_activeParty.size())
+					continue;
+			}
+
+			// At this point, find an empty pack for any character, irrespective
+			// of whether the character is conscious or not
+			for (charIndex = 0; charIndex < (int)_activeParty.size(); ++charIndex) {
+				Character &c = _activeParty[charIndex];
+				if (!c._items[(ItemCategory)categoryNum].isFull() && !c.isDisabledOrDead()) {
+					giveTreasureToCharacter(c, (ItemCategory)categoryNum, itemNum);
+					continue;
+				}
+			}
+		}
+	}
+
+	w.writeString(HIT_A_KEY);
+	w.update();
+
+	do {
+		events.updateGameCounter();
+		intf.draw3d(true);
+
+		while (!events.isKeyMousePressed() && events.timeElapsed() < 1)
+			events.pollEventsAndWait();
+	} while (!_vm->shouldQuit() && events.timeElapsed() == 1);
+	
+	if (_vm->_mode != MODE_COMBAT)
+		_vm->_mode = MODE_1;
+
+	w.close();
+	_gold += _treasure._gold;
+	_gems += _treasure._gems;
+	_treasure._gold = 0;
+	_treasure._gems = 0;
+	
+	_treasure._hasItems = false;
+	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+		_treasure._weapons[idx].clear();
+		_treasure._armor[idx].clear();
+		_treasure._accessories[idx].clear();
+		_treasure._armor[idx].clear();
+	}
+
+	scripts._v2 = 1;
+}
+
+/**
+ * Returns true if all the packs for all the characters are full
+ */
+bool Party::arePacksFull() const {
+	uint total = 0;
+	for (uint idx = 0; idx < _activeParty.size(); ++idx) {
+		const Character &c = _activeParty[idx];
+		total += (c._weapons[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0)
+			+ (c._armor[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0)
+			+ (c._accessories[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0)
+			+ (c._misc[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0);
+	}
+
+	return total == (_activeParty.size() * NUM_ITEM_CATEGORIES);
+}
+
+/**
+ * Give a treasure item to the given character's inventory
+ */
+void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex) {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	Window &w = screen._windows[10];
+	XeenItem &treasureItem = _treasure._categories[category][itemIndex];
+	sound.playFX(20);
+	
+	if (treasureItem._id < 82) {
+		// Copy item into the character's inventory
+		c._items[category][INV_ITEMS_TOTAL - 1] = treasureItem;
+		c._items[category].sort();
+	}
+
+	w.writeString(GIVE_TREASURE_FORMATTING);
+	w.update();
+	events.ipause(5);
+
+	w.writeString(Common::String::format(X_FOUND_Y, c._name.c_str(),
+		ITEM_NAMES[category][treasureItem._id]));
+	w.update();
+
+	events.ipause(5);
 }
 
 } // End of namespace Xeen

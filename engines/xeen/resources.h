@@ -384,6 +384,8 @@ extern const char *const WEAPON_NAMES[35];
 extern const char *const ARMOR_NAMES[14];
 extern const char *const ACCESSORY_NAMES[11];
 extern const char *const MISC_NAMES[22];
+extern const char *const *ITEM_NAMES[4];
+
 extern const char *const ELEMENTAL_NAMES[6];
 extern const char *const ATTRIBUTE_NAMES[10];
 extern const char *const EFFECTIVENESS_NAMES[7];
@@ -526,6 +528,16 @@ extern const char *NOT_ENOUGH_TO_CAST;
 extern const char *SPELL_CAST_COMPONENTS[2];
 
 extern const char *const CAST_SPELL_DETAILS;
+
+extern const char *const PARTY_FOUND;
+
+extern const char *const BACKPACKS_FULL_PRESS_KEY;
+
+extern const char *const HIT_A_KEY;
+
+extern const char *const GIVE_TREASURE_FORMATTING;
+
+extern const char *const X_FOUND_Y;
 
 } // End of namespace Xeen
 

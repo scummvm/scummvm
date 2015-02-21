@@ -228,6 +228,14 @@ void InventoryItems::enchantItem(int itemIndex, int amount) {
 	ErrorScroll::show(vm, Common::String::format(NOT_ENCHANTABLE, SPELL_FAILED));
 }
 
+/**
+ * Return if the given inventory items list is full
+ */
+bool InventoryItems::isFull() const {
+	return operator[](size() - 1)._id != 0;
+}
+
+
 /*------------------------------------------------------------------------*/
 
 /**

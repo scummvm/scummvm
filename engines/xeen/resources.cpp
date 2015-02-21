@@ -1097,6 +1097,7 @@ const char *const BONUS_NAMES[7] = {
 	"", "Dragon Slayer", "Undead Eater", "Golem Smasher",
 	"Bug Zapper", "Monster Masher", "Beast Bopper"
 };
+
 const char *const WEAPON_NAMES[35] = {
 	nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ", 
 	"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ", 
@@ -1122,6 +1123,10 @@ const char *const MISC_NAMES[22] = {
 	"wand ", "whistle ", "potion ", "scroll ", "RogueVM", 
 	"bogusg", "bogus", "bogus", "bogus", "bogus", 
 	"bogus", "bogus", "bogus", "bogus"
+};
+
+const char *const *ITEM_NAMES[4] = {
+	&WEAPON_NAMES[0], &ARMOR_NAMES[0], &ACCESSORY_NAMES[0], &MISC_NAMES[0]
 };
 
 const char *const ELEMENTAL_NAMES[6] = {
@@ -1500,5 +1505,27 @@ const char *const CAST_SPELL_DETAILS =
 	"\f09%s\fd\x2\x3l\n"
 	"\v082Cost\x3r\t000%u/%u\x3l\n"
 	"Cur SP\x3r\t000%u\x1";
+
+const char *const PARTY_FOUND =
+	"\x3""cThe Party Found:\n"
+	"\n"
+	"\x3r\t000%lu Gold\n"
+	"%lu Gems";
+
+const char *const BACKPACKS_FULL_PRESS_KEY =
+	"\v007\f12Warning!  BackPacks Full!\fd\n"
+	"Press a Key";
+
+const char *const HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\f'd";
+
+const char *const GIVE_TREASURE_FORMATTING =
+	"\x3l\v060\t000\x4""077\n"
+	"\x4""077\n"
+	"\x4""077\n"
+	"\x4""077\n"
+	"\x4""077\n"
+	"\x4""077";
+
+const char *const X_FOUND_Y = "\v060\t000\x03c%s found: %s";
 
 } // End of namespace Xeen
