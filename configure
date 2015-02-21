@@ -4365,6 +4365,10 @@ if test `get_engine_build myst3` = yes && test ! "$_bink" = yes ; then
 	engine_disable myst3
 fi
 
+if test `get_engine_build stark` = yes && test ! "$_opengl_shaders" = yes ; then
+	echo "...disabling STARK engine. OpenGL with shaders is required"
+	engine_disable stark
+fi
 
 #
 # Figure out installation directories
