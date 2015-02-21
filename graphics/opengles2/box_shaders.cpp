@@ -28,7 +28,6 @@ namespace Graphics {
 namespace BuiltinShaders {
 
 const char *boxVertex =
-	"#version 100\n"
 	"attribute vec2 position;\n"
 	"attribute vec2 texcoord;\n"
 	"uniform vec2 offsetXY;\n"
@@ -47,11 +46,12 @@ const char *boxVertex =
 	"}\n";
 
 const char *boxFragment =
-	"#version 100\n"
-	"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
-		"precision highp float;\n"
-	"#else\n"
-		"precision mediump float;\n"
+	"#ifdef GL_ES\n"
+		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+			"precision highp float;\n"
+		"#else\n"
+			"precision mediump float;\n"
+		"#endif\n"
 	"#endif\n"
 	"varying vec2 Texcoord;\n"
 	"uniform sampler2D tex;\n"

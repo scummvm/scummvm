@@ -74,7 +74,11 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 #ifdef USE_GLES2
 		"#version 100\n",
 #else
+	#ifdef MACOSX
+		"#version 120\n",
+	#else
 		"#version 130\n",
+	#endif
 #endif
 		compatSource,
 		shaderSource
