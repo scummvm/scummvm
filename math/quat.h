@@ -160,6 +160,12 @@ public:
 	Quaternion &normalize();
 
 	/**
+	 * Rotate a vector by a Quaternion
+	 * @param v The Vector to be rotated
+	 */
+	void transform(Vector3d &v) const;
+
+	/**
 	 * Converts from this Quaternion to a Matrix4 representation
 	 * @return              The resulting matrix
 	 */

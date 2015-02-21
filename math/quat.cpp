@@ -114,6 +114,11 @@ Quaternion& Quaternion::normalize() {
 	return *this;
 }
 
+void Quaternion::transform(Vector3d &v) const {
+	const Vector3d im = Vector3d(x(), y(), z());
+	v += 2.0 * Vector3d::crossProduct(im, Vector3d::crossProduct(im, v) + w() * v);
+}
+
 void Quaternion::fromMatrix(const Matrix3 &m) {
 	float qx, qy, qz, qw;
 	float tr = m.getValue(0, 0) + m.getValue(1, 1) + m.getValue(2, 2);
