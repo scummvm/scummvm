@@ -95,8 +95,8 @@ void OpenGLSActorRenderer::render(Gfx::Driver *gfx, const Math::Vector3d positio
 
 			_shader->enableVertexAttribute("position1", vbo, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 0);
 			_shader->enableVertexAttribute("position2", vbo, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 12);
-			_shader->enableIntegerVertexAttribute("bone1", vbo, 1, GL_INT, 11 * sizeof(float), 24);
-			_shader->enableIntegerVertexAttribute("bone2", vbo, 1, GL_INT, 11 * sizeof(float), 28);
+			_shader->enableVertexAttribute("bone1", vbo, 1, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 24);
+			_shader->enableVertexAttribute("bone2", vbo, 1, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 28);
 			_shader->enableVertexAttribute("boneWeight", vbo, 1, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 32);
 			_shader->enableVertexAttribute("texcoord", vbo, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 36);
 			_shader->use(true);
@@ -148,8 +148,8 @@ uint32 OpenGLSActorRenderer::createFaceVBO(const FaceNode *face) {
 		*vertPtr++ = (*tri)->_pos2.y();
 		*vertPtr++ = (*tri)->_pos2.z();
 
-		*(uint32 *)vertPtr++ = (*tri)->_bone1;
-		*(uint32 *)vertPtr++ = (*tri)->_bone2;
+		*vertPtr++ = (*tri)->_bone1;
+		*vertPtr++ = (*tri)->_bone2;
 
 		*vertPtr++ = (*tri)->_boneWeight;
 
