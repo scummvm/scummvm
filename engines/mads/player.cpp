@@ -240,8 +240,13 @@ void Player::updateFrame() {
 		return;
 
 	Scene &scene = _vm->_game->_scene;
+	assert(scene._sprites[idx] != nullptr);
 	SpriteAsset &spriteSet = *scene._sprites[idx];
-	assert(spriteSet._charInfo);
+	
+	// WORKAROUND: Certain cutscenes set up player sprites that don't have any 
+	// character info. In such cases, simply ignore player updates
+	if (!spriteSet._charInfo)
+		return;
 
 	if (!spriteSet._charInfo->_numEntries) {
 		_frameNumber = 1;
@@ -515,8 +520,7 @@ void Player::idle() {
 		return;
 
 	SpriteAsset &spriteSet = *scene._sprites[idx];
-	assert(spriteSet._charInfo);
-	if (spriteSet._charInfo->_numEntries == 0)
+	if (spriteSet._charInfo == nullptr || spriteSet._charInfo->_numEntries == 0)
 		// No entries, so exit immediately
 		return;
 

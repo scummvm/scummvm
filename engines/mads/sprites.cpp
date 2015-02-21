@@ -371,16 +371,13 @@ int SpriteSets::add(SpriteAsset *asset, int idx) {
 	if (idx)
 		idx = idx + 49;
 	else
-		idx = size();
+		idx = _assetCount++;
 
 	if (idx >= (int)size())
 		resize(idx + 1);
 
-	if ((*this)[idx]) {
+	if ((*this)[idx])
 		delete (*this)[idx];
-	} else {
-		++_assetCount;
-	}
 
 	(*this)[idx] = asset;
 	return idx;
