@@ -1745,7 +1745,8 @@ void Scene208::enter() {
 }
 
 void Scene208::step() {
-	if (_boundingFl && (_rhotundaTime <= _scene->_activeAnimation->getCurrentFrame())) {
+	if (_boundingFl && _scene->_activeAnimation &&
+			(_rhotundaTime <= _scene->_activeAnimation->getCurrentFrame())) {
 		_rhotundaTime = _scene->_activeAnimation->getCurrentFrame();
 
 		if (_rhotundaTime == 125)
