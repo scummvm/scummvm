@@ -45,7 +45,8 @@ void Dismiss::execute() {
 	_iconSprites.draw(w, 0, Common::Point(225, 120));
 	w.update();
 
-	while (!_vm->shouldQuit()) {
+	bool breakFlag = false;
+	while (!_vm->shouldQuit() && !breakFlag) {
 		do {
 			events.updateGameCounter();
 			intf.draw3d(false);
@@ -70,17 +71,14 @@ void Dismiss::execute() {
 					ErrorScroll::show(_vm, CANT_DISMISS_LAST_CHAR, WT_NONFREEZED_WAIT);
 					w.open();
 				} else {
-					Character tempChar = party._activeParty[_buttonValue];
-					int charIndex = party._activeParty[_buttonValue]._rosterId;
-
-//					party.sortParty();
-
-					// TODO
+					// Remove the character from the party
+					party._activeParty.remove_at(_buttonValue);
+					breakFlag = true;
 				}
 				break;
 			}
 		} else if (_buttonValue == Common::KEYCODE_ESCAPE) {
-			
+			breakFlag = true;
 		}
 	}
 }
