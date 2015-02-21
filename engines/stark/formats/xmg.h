@@ -26,7 +26,7 @@
 #include "common/stream.h"
 
 namespace Graphics {
-struct Surface;
+	struct Surface;
 }
 
 namespace Stark {

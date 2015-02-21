@@ -26,7 +26,7 @@
 #include "common/hash-str.h"
 
 namespace Graphics {
-	class Surface;
+	struct Surface;
 }
 
 namespace Stark {
