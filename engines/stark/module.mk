@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	resources/light.o \
 	resources/location.o \
 	resources/object.o \
+	resources/pattable.o \
 	resources/root.o \
 	resources/script.o \
 	resources/scroll.o \

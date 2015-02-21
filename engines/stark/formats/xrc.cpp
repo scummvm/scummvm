@@ -43,6 +43,7 @@
 #include "engines/stark/resources/light.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/object.h"
+#include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/scroll.h"
@@ -242,6 +243,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kCommand:
 		resource = new Resources::Command(parent, subType, index, name);
+		break;
+	case Resources::Type::kPATTable:
+		resource = new Resources::PATTable(parent, subType, index, name);
 		break;
 	case Resources::Type::kDialog:
 		resource = new Resources::Dialog(parent, subType, index, name);
