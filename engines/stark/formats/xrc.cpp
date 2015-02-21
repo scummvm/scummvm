@@ -40,6 +40,7 @@
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
+#include "engines/stark/resources/light.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resources/root.h"
@@ -247,6 +248,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kSpeech:
 		resource = new Resources::Speech(parent, subType, index, name);
+		break;
+	case Resources::Type::kLight:
+		resource = new Resources::Light(parent, subType, index, name);
 		break;
 	case Resources::Type::kBonesMesh:
 		resource = new Resources::BonesMesh(parent, subType, index, name);
