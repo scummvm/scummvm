@@ -28,15 +28,37 @@ namespace Graphics {
 namespace BuiltinShaders {
 
 const char *compatVertex =
+#if defined(USE_OPENGL_SHADERS)
+	"#if __VERSION__ < 130\n"
+		"float round(in float x) {\n"
+		"return sign(x) * floor(abs(x) + .5);\n"
+		"}\n"
+		"#define highp\n"
+		"#define in attribute\n"
+		"#define out varying\n"
+	"#endif\n"
+#else
 	"#ifdef GL_ES\n"
-	"mediump float round(in mediump float x) {\n"
-	"	return sign(x) * floor(abs(x) + .5);\n"
-	"}\n"
-	"#define in attribute\n"
-	"#define out varying\n"
-	"#endif\n";
+		"mediump float round(in mediump float x) {\n"
+			"return sign(x) * floor(abs(x) + .5);\n"
+		"}\n"
+		"#define in attribute\n"
+		"#define out varying\n"
+	"#endif\n"
+#endif
+;
 
 const char *compatFragment =
+#if defined(USE_OPENGL_SHADERS)
+	"#if __VERSION__ < 130\n"
+		"#define in varying\n"
+		"#define OUTPUT\n"
+		"#define outColor gl_FragColor\n"
+		"#define texture texture2D\n"
+	"#else\n"
+		"#define OUTPUT out vec4 outColor;\n"
+	"#endif\n"
+#else
 	"#ifdef GL_ES\n"
 		"#define in varying\n"
 		"#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
@@ -49,7 +71,9 @@ const char *compatFragment =
 		"#define texture texture2D\n"
 	"#else\n"
 		"#define OUTPUT out vec4 outColor;\n"
-	"#endif\n";
+	"#endif\n"
+#endif
+;
 
 }
 }
