@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	gfx/driver.o \
-	gfx/opengl.o \
+	gfx/opengls.o \
 	gfx/openglsactor.o \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \

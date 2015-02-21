@@ -25,7 +25,7 @@
 #include "graphics/fontman.h"
 
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/opengl.h"
+#include "engines/stark/gfx/opengls.h"
 
 #include "common/textconsole.h"
 
@@ -35,12 +35,12 @@ namespace Gfx {
 Driver *Driver::create() {
 	Driver *driver = NULL;
 
-#ifdef USE_OPENGL
-	// OpenGL
-	driver = new OpenGLDriver();
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+	// OpenGL Shaders
+	driver = new OpenGLSDriver();
 	if (driver)
 		return driver;
-#endif // USE_OPENGL
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 	error("Couldn't instance any graphics driver");
 }

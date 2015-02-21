@@ -20,62 +20,79 @@
  *
  */
 
-#include "engines/stark/gfx/opengl.h"
+#include "engines/stark/gfx/opengls.h"
 
 #include "common/system.h"
 
-#include "graphics/pixelbuffer.h"
-
 #include "math/matrix4.h"
+
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/openglsactor.h"
 #include "engines/stark/gfx/opengltexture.h"
 
-#ifdef USE_OPENGL
-
-#include "graphics/opengles2/system_headers.h"
+#include "graphics/pixelbuffer.h"
+#include "graphics/opengles2/shader.h"
 
 namespace Stark {
 namespace Gfx {
 
-OpenGLDriver::OpenGLDriver() {
+static const GLfloat boxVertices[] = {
+	// XS   YT
+	0.0, 0.0,
+	1.0, 0.0,
+	0.0, 1.0,
+	1.0, 1.0,
+};
+
+OpenGLSDriver::OpenGLSDriver() :
+	_boxShader(nullptr),
+	_boxVBO(0) {
 }
 
-OpenGLDriver::~OpenGLDriver() {
+OpenGLSDriver::~OpenGLSDriver() {
+	Graphics::Shader::freeBuffer(_boxVBO);
+	delete _boxShader;
 }
 
-void OpenGLDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
+void OpenGLSDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 	g_system->setupScreen(screenW, screenH, fullscreen, true);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
+
+	static const char* attributes[] = { "position", "texcoord", nullptr };
+	_boxShader = Graphics::Shader::fromFiles("stark_box", attributes);
+	_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices);
+	_boxShader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	_boxShader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
-void OpenGLDriver::setGameViewport() {
+void OpenGLSDriver::setGameViewport() {
 	_viewport = Common::Rect(kGameViewportWidth, kGameViewportHeight);
 	_viewport.translate(0, _screenHeight - kGameViewportHeight - kTopBorderHeight);
 
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
-void OpenGLDriver::setScreenViewport() {
+void OpenGLSDriver::setScreenViewport() {
 	_viewport = Common::Rect(_screenWidth, _screenHeight);
 
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
-void OpenGLDriver::setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) {
+void OpenGLSDriver::setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) {
 }
 
-void OpenGLDriver::clearScreen() {
+void OpenGLSDriver::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLDriver::flipBuffer() {
+void OpenGLSDriver::flipBuffer() {
 	g_system->updateScreen();
 }
 
-Texture *OpenGLDriver::createTexture(const Graphics::Surface *surface, const byte *palette) {
+Texture *OpenGLSDriver::createTexture(const Graphics::Surface *surface, const byte *palette) {
 	OpenGlTexture *texture = new OpenGlTexture();
 
 	if (surface) {
@@ -85,11 +102,11 @@ Texture *OpenGLDriver::createTexture(const Graphics::Surface *surface, const byt
 	return texture;
 }
 
-VisualActor *OpenGLDriver::createActorRenderer() {
+VisualActor *OpenGLSDriver::createActorRenderer() {
 	return new OpenGLSActorRenderer();
 }
 
-void OpenGLDriver::drawSurface(const Texture *texture, const Common::Point &dest) {
+void OpenGLSDriver::drawSurface(const Texture *texture, const Common::Point &dest) {
 	// Source texture rectangle
 	const float tLeft = 0.0;
 	const float tWidth = 1.0;
@@ -97,48 +114,28 @@ void OpenGLDriver::drawSurface(const Texture *texture, const Common::Point &dest
 	const float tHeight = 1.0;
 
 	// Destination rectangle
-	const float sLeft = dest.x;
-	const float sTop = dest.y;
-	const float sWidth = texture->width();
-	const float sHeight = texture->height();
+	const float sLeft = dest.x / (float) _viewport.width();
+	const float sTop = dest.y / (float) _viewport.height();
+	const float sWidth = texture->width() / (float) _viewport.width();
+	const float sHeight = texture->height() / (float) _viewport.height();
 
 	start2DMode();
 
-	glColor3f(1.f, 1.f, 1.f);
-	glEnable(GL_TEXTURE_2D);
+	_boxShader->use();
+	_boxShader->setUniform("textured", true);
+	_boxShader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
+	_boxShader->setUniform("verOffsetXY", Math::Vector2d(sLeft, sTop));
+	_boxShader->setUniform("verSizeWH", Math::Vector2d(sWidth, sHeight));
+	_boxShader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
+	_boxShader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
 
 	texture->bind();
-
-	glBegin(GL_TRIANGLE_STRIP);
-		glTexCoord2f(tLeft, tTop + tHeight);
-		glVertex3f(sLeft + 0, sTop + sHeight, 1.0f);
-
-		glTexCoord2f(tLeft + tWidth, tTop + tHeight);
-		glVertex3f(sLeft + sWidth, sTop + sHeight, 1.0f);
-
-		glTexCoord2f(tLeft, tTop);
-		glVertex3f(sLeft + 0, sTop + 0, 1.0f);
-
-		glTexCoord2f(tLeft + tWidth, tTop);
-		glVertex3f(sLeft + sWidth, sTop + 0, 1.0f);
-	glEnd();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	end2DMode();
 }
 
-void OpenGLDriver::start2DMode() {
-
-	// Load the ModelView matrix with the identity
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	// Load the Projection matrix with the identity
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0.0, _viewport.width(), _viewport.height(), 0.0, -1.0, 1.0);
-
+void OpenGLSDriver::start2DMode() {
 	// Enable alpha blending
 	glEnable(GL_BLEND);
 	//glBlendEquation(GL_FUNC_ADD); // It's the default
@@ -147,24 +144,14 @@ void OpenGLDriver::start2DMode() {
 	glDepthMask(GL_FALSE);
 }
 
-void OpenGLDriver::end2DMode() {
+void OpenGLSDriver::end2DMode() {
 	// Disable alpha blending
 	glDisable(GL_BLEND);
 
 	glDepthMask(GL_TRUE);
-
-	// Pop the identity Projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	// Pop the identity ModelView matrix
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
 }
 
-void OpenGLDriver::set3DMode() {
-	glMatrixMode(GL_MODELVIEW);
+void OpenGLSDriver::set3DMode() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
@@ -172,4 +159,4 @@ void OpenGLDriver::set3DMode() {
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // USE_OPENGL
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)

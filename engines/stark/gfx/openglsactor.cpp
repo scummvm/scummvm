@@ -29,9 +29,6 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
-#include "common/archive.h"
-#include "common/stream.h"
-
 #include "graphics/opengles2/shader.h"
 
 namespace Stark {
@@ -39,7 +36,7 @@ namespace Gfx {
 
 OpenGLSActorRenderer::OpenGLSActorRenderer() :
 		VisualActor() {
-	static const char* attributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "texcoord", NULL };
+	static const char* attributes[] = { "position1", "position2", "bone1", "bone2", "boneWeight", "texcoord", nullptr };
 	_shader = Graphics::Shader::fromFiles("stark_actor", attributes);
 }
 

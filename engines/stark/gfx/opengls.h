@@ -20,23 +20,27 @@
  *
  */
 
-#ifndef STARK_GFX_OPENGL_H
-#define STARK_GFX_OPENGL_H
+#ifndef STARK_GFX_OPENGLS_H
+#define STARK_GFX_OPENGLS_H
 
 #include "common/rect.h"
 #include "common/system.h"
 
-#ifdef USE_OPENGL
+#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/driver.h"
+
+namespace Graphics {
+class Shader;
+}
 
 namespace Stark {
 namespace Gfx {
 
-class OpenGLDriver : public Driver {
+class OpenGLSDriver : public Driver {
 public:
-	OpenGLDriver();
-	~OpenGLDriver();
+	OpenGLSDriver();
+	~OpenGLSDriver();
 
 	void setupScreen(int screenW, int screenH, bool fullscreen);
 
@@ -60,11 +64,14 @@ private:
 	void end2DMode();
 
 	Common::Rect _viewport;
+
+	Graphics::Shader *_boxShader;
+	uint32 _boxVBO;
 };
 
 } // End of namespace Gfx
 } // End of namespace Stark
 
-#endif // USE_OPENGL
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-#endif // STARK_GFX_OPENGL_H
+#endif // STARK_GFX_OPENGLS_H
