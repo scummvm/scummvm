@@ -1623,7 +1623,7 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	Map &map = *_vm->_map;
 	getWeaponDamage(c, rangeType);
 	int chance = c.statBonus(c.getStat(ACCURACY)) + _hitChanceBonus;
-	int divisor;
+	int divisor = 0;
 	
 	switch (c._class) {
 	case CLASS_KNIGHT:
