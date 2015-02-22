@@ -32,6 +32,7 @@
 namespace Xeen {
 
 class XeenEngine;
+class Window;
 
 enum SpriteFlags { SPRFLAG_2000 = 0x2000, SPRFLAG_4000 = 0x4000, 
 	SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000 };
@@ -47,7 +48,11 @@ private:
 
 	void load(Common::SeekableReadStream &f);
 
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, int flags) const;
+	void draw(XSurface &dest, int frame, const Common::Point &destPos,
+		const Common::Rect &bounds, int flags = 0, int scale = 0) const;
+
+	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, 
+		const Common::Rect &bounds, int flags) const;
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
@@ -63,6 +68,9 @@ public:
 	void clear();
 
 	void draw(XSurface &dest, int frame, const Common::Point &destPos, 
+		int flags = 0, int scale = 0) const;
+
+	void draw(Window &dest, int frame, const Common::Point &destPos,
 		int flags = 0, int scale = 0) const;
 
 	void draw(XSurface &dest, int frame) const;

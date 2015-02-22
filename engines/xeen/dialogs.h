@@ -27,6 +27,7 @@
 #include "common/stack.h"
 #include "common/rect.h"
 #include "xeen/sprites.h"
+#include "xeen/xsurface.h"
 
 namespace Xeen {
 

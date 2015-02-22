@@ -24,6 +24,7 @@
 #include "xeen/dialogs.h"
 #include "xeen/events.h"
 #include "xeen/resources.h"
+#include "xeen/screen.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {

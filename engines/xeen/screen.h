@@ -80,6 +80,8 @@ public:
 
 	void setBounds(const Common::Rect &r);
 
+	const Common::Rect &getBounds() { return _bounds; }
+
 	void open();
 
 	void close();

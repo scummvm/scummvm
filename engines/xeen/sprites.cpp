@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "xeen/xeen.h"
+#include "xeen/screen.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -110,7 +111,8 @@ void SpriteResource::clear() {
 /**
  * Draws a frame using data at a specific offset in the sprite resource
  */
-void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, int flags) const {
+void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, 
+		const Common::Rect &bounds, int flags) const {
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
 	f.seek(offset);
@@ -139,14 +141,14 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		if (lineLength == 0) {
 			// Skip the specified number of scan lines
 			yPos += f.readByte();
-		} else if ((destPos.y + yPos) < 0 || (destPos.y + yPos) >= dest.h) {
+		} else if ((destPos.y + yPos) < bounds.top || (destPos.y + yPos) >= bounds.bottom) {
 			// Skip over the bytes of the line
 			f.skip(lineLength);
 		} else {
 			// Skip the transparent pixels at the beginning of the scan line
 			int xPos = f.readByte() + xOffset; ++byteCount;
-			const byte *lineStartP = (const byte *)dest.getBasePtr(0, destPos.y + yPos);
-			const byte *lineEndP = (const byte *)dest.getBasePtr(dest.w, destPos.y + yPos);
+			const byte *lineStartP = (const byte *)dest.getBasePtr(bounds.left, destPos.y + yPos);
+			const byte *lineEndP = (const byte *)dest.getBasePtr(bounds.right, destPos.y + yPos);
 			byte *destP = !flipped ?
 				(byte *)dest.getBasePtr(destPos.x + xPos, destPos.y + yPos) :
 				(byte *)dest.getBasePtr(destPos.x + width - xPos, destPos.y + yPos);
@@ -247,17 +249,27 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		dest.addDirtyRect(r);
 }
 
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
+		int flags, int scale) const {
+	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
+}
+
+void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
+		int flags, int scale) const {
+	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
+}
+
 /**
  * Draw the sprite onto the given surface
  */
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, 
-		int flags, int scale) const {
+		const Common::Rect &bounds, int flags, int scale) const {
 	assert(scale != 0x8000); // TODO: TO test when I find scale value used
 
 	if (scale == 0) {
-		drawOffset(dest, _index[frame]._offset1, destPos, flags);
+		drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags);
 		if (_index[frame]._offset2)
-			drawOffset(dest, _index[frame]._offset2, destPos, flags);
+			drawOffset(dest, _index[frame]._offset2, destPos, bounds, flags);
 	} else {
 		// Get the bounds for the surface and create a temporary one
 		Common::MemoryReadStream f(_data, _filesize);
@@ -267,12 +279,13 @@ void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPo
 		int yOffset = f.readUint16LE();
 		int height = f.readUint16LE();
 		XSurface tempSurface(xOffset + width, yOffset + height);
+		Common::Rect tempBounds(0, 0, tempSurface.w, tempSurface.h);
 
 		// Draw sprite into temporary surface
 		tempSurface.fillRect(Common::Rect(0, 0, width, height), 0);
-		drawOffset(tempSurface, _index[frame]._offset1, Common::Point(), flags);
+		drawOffset(tempSurface, _index[frame]._offset1, Common::Point(), tempBounds, flags);
 		if (_index[frame]._offset2)
-			drawOffset(tempSurface, _index[frame]._offset2, Common::Point(), flags);
+			drawOffset(tempSurface, _index[frame]._offset2, Common::Point(), tempBounds, flags);
 
 		// TODO: I don't currently know the algorithm the original used for scaling.
 		// This is a best fit estimate that every increment of the scale field
