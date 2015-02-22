@@ -108,7 +108,7 @@ Common::Error StarkEngine::run() {
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
 	_cursor = new Cursor(_gfx);
-	_userInterface = new UserInterface(_gfx);
+	_userInterface = new UserInterface(_gfx, _cursor);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -126,6 +126,7 @@ Common::Error StarkEngine::run() {
 	_staticProvider->init();
 	_cursor->init();
 	_dialogPlayer->init();
+	_userInterface->init();
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);
@@ -181,6 +182,7 @@ void StarkEngine::mainLoop() {
 			_resourceProvider->performLocationChange();
 		}
 
+		_userInterface->update();
 		updateDisplayScene();
 		g_system->delayMillis(50);
 	}

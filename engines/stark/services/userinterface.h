@@ -27,6 +27,9 @@
 
 namespace Stark {
 
+class VisualImageXMG;
+class Cursor;
+
 namespace Gfx {
 class Driver;
 class Texture;
@@ -37,8 +40,10 @@ class Texture;
  */
 class UserInterface {
 public:
-	UserInterface(Gfx::Driver *driver);
+	UserInterface(Gfx::Driver *driver, const Cursor *cursor);
 	~UserInterface();
+
+	void init();
 
 	/** Skip currently playing speeches */
 	void skipCurrentSpeeches();
@@ -48,7 +53,13 @@ public:
 
 	/** Draw the mouse pointer, and any additional currently active UI */
 	void render();
+	
+	/** Update the current state of the user interface */
+	void update();
 private:
+	bool _interfaceVisible;
+	const Cursor *_cursor;
+	VisualImageXMG *_exitButton;
 	Gfx::Driver *_gfx;
 };
 

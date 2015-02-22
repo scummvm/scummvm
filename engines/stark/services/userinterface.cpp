@@ -25,19 +25,32 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
+#include "engines/stark/services/staticprovider.h"
+
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/speech.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 
+#include "engines/stark/visual/image.h"
+#include "engines/stark/cursor.h"
+
 namespace Stark {
 
-UserInterface::UserInterface(Gfx::Driver *driver) {
+UserInterface::UserInterface(Gfx::Driver *driver, const Cursor *cursor) {
 	_gfx = driver;
+	_cursor = cursor;
+	_interfaceVisible = false;
 }
 
 UserInterface::~UserInterface() {
+}
+
+void UserInterface::init() {
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
+	_exitButton = staticProvider->getCursorImage(8);
 }
 
 void UserInterface::skipCurrentSpeeches() {
@@ -79,6 +92,15 @@ void UserInterface::scrollLocation(int32 dX, int32 dY) {
 	location->setScrollPosition(scroll);
 }
 
+void UserInterface::update() {
+	// TODO: Unhardcode
+	if (_cursor->getMousePosition().y < 40) {
+		_interfaceVisible = true;
+	} else {
+		_interfaceVisible = false;
+	}
+}
+
 void UserInterface::render() {
 	// TODO: Move this elsewhere
 
@@ -98,6 +120,11 @@ void UserInterface::render() {
 
 	_gfx->setScreenViewport(false);
 	_gfx->drawSurface(debugTexture, Common::Point(0,0));
+
+	if (_interfaceVisible) {
+		// TODO: Unhardcode position
+		_exitButton->render(Common::Point(600, 0));
+	}
 
 	delete debugTexture;
 }
