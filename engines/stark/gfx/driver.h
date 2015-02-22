@@ -47,6 +47,9 @@ public:
 	virtual void setGameViewport() = 0;
 	virtual void setScreenViewport(bool noScaling) = 0;
 
+	/** Get the screen viewport in actual resolution */
+	Common::Rect getScreenViewport() { return _screenViewport; }
+
 	virtual void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) = 0;
 
 	virtual void clearScreen() = 0;

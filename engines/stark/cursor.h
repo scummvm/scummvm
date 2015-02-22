@@ -53,7 +53,7 @@ public:
 	/** Update the mouse position */
 	void setMousePosition(Common::Point pos);
 
-	Common::Point getMousePosition() const { return _mousePos; }
+	Common::Point getMousePosition() const;
 private:
 	Gfx::Driver *_gfx;
 

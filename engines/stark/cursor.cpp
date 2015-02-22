@@ -55,4 +55,19 @@ void Cursor::render() {
 	_cursorImage->render(_mousePos);
 }
 
+Common::Point Cursor::getMousePosition() const {
+	Common::Rect viewport = _gfx->getScreenViewport();
+
+	// The rest of the engine expects 640x480 coordinates
+	Common::Point scaledPosition = _mousePos;
+	scaledPosition.x -= viewport.left;
+	scaledPosition.y -= viewport.top;
+	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, viewport.width());
+	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, viewport.height());
+	scaledPosition.x *= Gfx::Driver::kOriginalWidth / (float)viewport.width();
+	scaledPosition.y *= Gfx::Driver::kOriginalHeight / (float)viewport.height();
+
+	return scaledPosition;
+}
+
 } // End of namespace Stark
