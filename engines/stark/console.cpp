@@ -31,6 +31,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/staticprovider.h"
 
 #include "common/file.h"
 
@@ -38,6 +39,8 @@ namespace Stark {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dumpArchive",			WRAP_METHOD(Console, Cmd_DumpArchive));
+	registerCmd("dumpRoot",				WRAP_METHOD(Console, Cmd_DumpRoot));
+	registerCmd("dumpStatic",			WRAP_METHOD(Console, Cmd_DumpStatic));
 	registerCmd("dumpGlobal",			WRAP_METHOD(Console, Cmd_DumpGlobal));
 	registerCmd("dumpLevel",			WRAP_METHOD(Console, Cmd_DumpLevel));
 	registerCmd("dumpLocation",			WRAP_METHOD(Console, Cmd_DumpLocation));
@@ -96,10 +99,26 @@ bool Console::Cmd_DumpArchive(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_DumpRoot(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
+
+	global->getRoot()->print();
+
+	return true;
+}
+
 bool Console::Cmd_DumpGlobal(int argc, const char **argv) {
 	Global *global = StarkServices::instance().global;
 
 	global->getLevel()->print();
+
+	return true;
+}
+
+bool Console::Cmd_DumpStatic(int argc, const char **argv) {
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+
+	staticProvider->getLevel()->print();
 
 	return true;
 }

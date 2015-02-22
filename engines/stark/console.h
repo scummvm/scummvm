@@ -38,6 +38,8 @@ public:
 
 private:
 	bool Cmd_DumpArchive(int argc, const char **argv);
+	bool Cmd_DumpRoot(int argc, const char **argv);
+	bool Cmd_DumpStatic(int argc, const char **argv);
 	bool Cmd_DumpGlobal(int argc, const char **argv);
 	bool Cmd_DumpLevel(int argc, const char **argv);
 	bool Cmd_DumpLocation(int argc, const char **argv);

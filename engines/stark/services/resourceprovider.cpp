@@ -54,11 +54,11 @@ void ResourceProvider::initGlobal() {
 	Resources::Root *root = _archiveLoader->useRoot<Resources::Root>("x.xarc");
 	_global->setRoot(root);
 
-	// Resources::Resource lifecycle update
+	// Resources lifecycle update
 	root->onAllLoaded();
 
 	// Find the global level node
-	Resources::Level *global = root->findChildWithSubtype<Resources::Level>(1);
+	Resources::Level *global = root->findChildWithSubtype<Resources::Level>(Resources::Level::kGlobal);
 
 	// Load the global archive
 	Common::String globalArchiveName = _archiveLoader->buildArchiveName(global);
@@ -69,7 +69,7 @@ void ResourceProvider::initGlobal() {
 	_stateProvider->restoreLevelState(global);
 	_global->setLevel(global);
 
-	// Resources::Resource lifecycle update
+	// Resources lifecycle update
 	global->onAllLoaded();
 
 	//TODO: Retrieve the inventory from the global tree
@@ -172,7 +172,7 @@ void ResourceProvider::performLocationChange() {
 		runLocationChangeScripts(previous->getLevel(), Resources::Script::kCallModeExitLocation);
 		runLocationChangeScripts(previous->getLocation(), Resources::Script::kCallModeExitLocation);
 
-		// Resources::Resource lifecycle update
+		// Resources lifecycle update
 		previous->getLocation()->onExitLocation();
 		previous->getLevel()->onExitLocation();
 		_global->getLevel()->onExitLocation();
@@ -189,7 +189,7 @@ void ResourceProvider::performLocationChange() {
 		_restoreCurrentState = false;
 	}
 
-	// Resources::Resource lifecycle update
+	// Resources lifecycle update
 	_global->getLevel()->onEnterLocation();
 	current->getLevel()->onEnterLocation();
 	current->getLocation()->onEnterLocation();

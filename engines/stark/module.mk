@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	services/resourceprovider.o \
 	services/services.o \
 	services/stateprovider.o \
+	services/staticprovider.o \
 	services/userinterface.o \
 	skeleton.o \
 	skeleton_anim.o \

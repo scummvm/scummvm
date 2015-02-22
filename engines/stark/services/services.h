@@ -40,6 +40,7 @@ class ArchiveLoader;
 class DialogPlayer;
 class Global;
 class ResourceProvider;
+class StaticProvider;
 class Scene;
 class UserInterface;
 
@@ -56,6 +57,7 @@ public:
 		resourceProvider = nullptr;
 		randomSource = nullptr;
 		scene = nullptr;
+		staticProvider = nullptr;
 		userInterface = nullptr;
 	}
 
@@ -66,6 +68,7 @@ public:
 	ResourceProvider *resourceProvider;
 	Common::RandomSource *randomSource;
 	Scene *scene;
+	StaticProvider *staticProvider;
 	UserInterface *userInterface;
 };
 

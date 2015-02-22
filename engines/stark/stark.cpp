@@ -34,6 +34,7 @@
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/userinterface.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
@@ -58,6 +59,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_userInterface(nullptr),
 		_archiveLoader(nullptr),
 		_stateProvider(nullptr),
+		_staticProvider(nullptr),
 		_resourceProvider(nullptr),
 		_randomSource(nullptr),
 		_dialogPlayer(nullptr) {
@@ -81,6 +83,7 @@ StarkEngine::~StarkEngine() {
 	delete _scene;
 	delete _console;
 	delete _gfx;
+	delete _staticProvider;
 	delete _resourceProvider;
 	delete _global;
 	delete _stateProvider;
@@ -100,6 +103,7 @@ Common::Error StarkEngine::run() {
 	_stateProvider = new StateProvider();
 	_global = new Global();
 	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
+	_staticProvider = new StaticProvider(_archiveLoader, _global);
 	_randomSource = new Common::RandomSource("stark");
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
@@ -115,9 +119,11 @@ Common::Error StarkEngine::run() {
 	services.resourceProvider = _resourceProvider;
 	services.randomSource = _randomSource;
 	services.scene = _scene;
+	services.staticProvider = _staticProvider;
 
 	// Load global resources
 	_resourceProvider->initGlobal();
+	_staticProvider->init();
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);
@@ -126,6 +132,7 @@ Common::Error StarkEngine::run() {
 	// Start running
 	mainLoop();
 
+	_staticProvider->shutdown();
 	_resourceProvider->shutdown();
 
 	return Common::kNoError;

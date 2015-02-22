@@ -48,6 +48,7 @@ class Global;
 class UserInterface;
 class Scene;
 class StateProvider;
+class StaticProvider;
 class ResourceProvider;
 
 class StarkEngine : public Engine {
@@ -78,6 +79,7 @@ private:
 	Global *_global;
 	UserInterface *_userInterface;
 	StateProvider *_stateProvider;
+	StaticProvider *_staticProvider;
 	ResourceProvider *_resourceProvider;
 	Common::RandomSource *_randomSource;
 

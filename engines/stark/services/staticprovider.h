@@ -20,45 +20,46 @@
  *
  */
 
-#ifndef STARK_RESOURCES_LEVEL_H
-#define STARK_RESOURCES_LEVEL_H
+#ifndef STARK_STATIC_PROVIDER_H
+#define STARK_STATIC_PROVIDER_H
 
-#include "common/str.h"
-
-#include "engines/stark/resources/object.h"
+#include "common/scummsys.h"
 
 namespace Stark {
 
-namespace Formats {
-class XRCReadStream;
+namespace Resources {
+class Level;
 }
 
-namespace Resources {
+class ArchiveLoader;
+class Global;
 
 /**
- * Levels are holder resources for the locations
+ * Static Resource provider.
  *
- * Levels are used to share resources between related locations.
- * Resources in a level are kept when switching to another location of the same level.
+ * Maintains the static resource trees.
+ * Maintained trees are the level and the location ones.
  */
-class Level : public Object {
+class StaticProvider {
 public:
-	static const Type::ResourceType TYPE = Type::kLevel;
+	StaticProvider(ArchiveLoader *archiveLoader, Global *global);
 
-	enum SubType {
-		kGlobal = 1,
-		kGame   = 2,
-		kStatic = 3
-	};
+	/** Load the static level archive */
+	void init();
 
-	Level(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Level();
+	/** Release the static resources */
+	void shutdown();
 
-protected:
-	void printData() override;
+	/** Obtain the static level */
+	Resources::Level *getLevel() const { return _level; }
+
+private:
+	ArchiveLoader *_archiveLoader;
+	Global *_global;
+
+	Resources::Level *_level;
 };
 
-} // End of namespace Resources
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_LEVEL_H
+#endif // STARK_STATIC_PROVIDER_H
