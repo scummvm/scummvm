@@ -151,7 +151,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			const byte *lineEndP = (const byte *)dest.getBasePtr(bounds.right, destPos.y + yPos);
 			byte *destP = !flipped ?
 				(byte *)dest.getBasePtr(destPos.x + xPos, destPos.y + yPos) :
-				(byte *)dest.getBasePtr(destPos.x + width - xPos, destPos.y + yPos);
+				(byte *)dest.getBasePtr(destPos.x + xOffset + width - xPos, destPos.y + yPos);
 
 			while (byteCount < lineLength) {
 				// The next byte is an opcode that determines what 
