@@ -426,7 +426,7 @@ void TextView::doFrame() {
 			scene._textDisplay.expire(tl._textDisplayIndex);
 
 		tl._pos.y--;
-		if (tl._pos.y < 0) {
+		if (tl._pos.y + _font->getHeight() < 0) {
 			_textLines.remove_at(i);
 		} else {
 			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y,
