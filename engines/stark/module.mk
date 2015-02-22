@@ -3,6 +3,7 @@ MODULE := engines/stark
 MODULE_OBJS := \
 	actor.o \
 	console.o \
+	cursor.o \
 	detection.o \
 	gfx/driver.o \
 	gfx/opengls.o \

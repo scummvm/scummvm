@@ -23,6 +23,7 @@
 #include "engines/stark/stark.h"
 
 #include "engines/stark/console.h"
+#include "engines/stark/cursor.h"
 #include "engines/stark/debug.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
@@ -52,6 +53,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_gfx(nullptr),
 		_scene(nullptr),
 		_console(nullptr),
+		_cursor(nullptr),
 		_global(nullptr),
 		_userInterface(nullptr),
 		_archiveLoader(nullptr),
@@ -73,6 +75,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 
 StarkEngine::~StarkEngine() {
 	delete _userInterface;
+	delete _cursor;
 	delete _dialogPlayer;
 	delete _randomSource;
 	delete _scene;
@@ -100,6 +103,7 @@ Common::Error StarkEngine::run() {
 	_randomSource = new Common::RandomSource("stark");
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
+	_cursor = new Cursor(_gfx);
 	_userInterface = new UserInterface(_gfx);
 
 	// Setup the public services
@@ -150,7 +154,7 @@ void StarkEngine::mainLoop() {
 				_userInterface->skipCurrentSpeeches();
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
-				_userInterface->setMousePosition(e.mouse);
+				_cursor->setMousePosition(e.mouse);
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
@@ -194,6 +198,7 @@ void StarkEngine::updateDisplayScene() {
 	_dialogPlayer->renderText();
 
 	_userInterface->render();
+	_cursor->render();
 
 	// Swap buffers
 	_gfx->flipBuffer();

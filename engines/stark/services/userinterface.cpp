@@ -35,12 +35,9 @@ namespace Stark {
 
 UserInterface::UserInterface(Gfx::Driver *driver) {
 	_gfx = driver;
-	// TODO: This is just a quick solution to get anything drawn, we will need load-code for the actual pointers.
-	_cursorTexture = _gfx->createTextureFromString("X", 0xFF00FF00);
 }
 
 UserInterface::~UserInterface() {
-	delete _cursorTexture;
 }
 
 void UserInterface::skipCurrentSpeeches() {
@@ -82,14 +79,7 @@ void UserInterface::scrollLocation(int32 dX, int32 dY) {
 	location->setScrollPosition(scroll);
 }
 
-void UserInterface::setMousePosition(Common::Point pos) {
-	_mousePos = pos;
-}
-
 void UserInterface::render() {
-	if (_cursorTexture) {
-		_gfx->drawSurface(_cursorTexture, _mousePos);
-	}
 	Common::String debugStr;
 
 	Global *global = StarkServices::instance().global;
@@ -99,7 +89,7 @@ void UserInterface::render() {
 
 	debugStr += Common::String::format("location: %02x %02x ", current->getLevel()->getIndex(), current->getLocation()->getIndex());
 	debugStr += current->getLevel()->getName() + ", " + current->getLocation()->getName();
-	debugStr += Common::String::format(" chapter: %d mouse(%d, %d)", chapter, _mousePos.x, _mousePos.y);
+	debugStr += Common::String::format(" chapter: %d", chapter);
 
 	
 	Gfx::Texture *debugTexture = _gfx->createTextureFromString(debugStr, 0xF0FF0F00);

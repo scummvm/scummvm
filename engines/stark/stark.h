@@ -30,7 +30,6 @@ namespace Common {
 class RandomSource;
 }
 
-
 namespace Stark {
 
 namespace Gfx {
@@ -43,6 +42,7 @@ enum StarkGameFeatures {
 
 class ArchiveLoader;
 class Console;
+class Cursor;
 class DialogPlayer;
 class Global;
 class UserInterface;
@@ -83,6 +83,7 @@ private:
 
 	const ADGameDescription *_gameDescription;
 
+	Cursor *_cursor;
 	Scene *_scene;
 };
 

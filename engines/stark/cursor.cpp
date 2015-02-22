@@ -20,38 +20,29 @@
  *
  */
 
-#ifndef STARK_SERVICES_USER_INTERFACE_H
-#define STARK_SERVICES_USER_INTERFACE_H
+#include "engines/stark/cursor.h"
 
-#include "common/scummsys.h"
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 
 namespace Stark {
 
-namespace Gfx {
-class Driver;
-class Texture;
+Cursor::Cursor(Gfx::Driver *gfx) :
+		_gfx(gfx) {
+	// TODO: This is just a quick solution to get anything drawn, we will need load-code for the actual pointers.
+	_cursorTexture = _gfx->createTextureFromString("X", 0xFF00FF00);
 }
 
-/**
- * Facade object for interacting with the game world
- */
-class UserInterface {
-public:
-	UserInterface(Gfx::Driver *driver);
-	~UserInterface();
+Cursor::~Cursor() {
+	delete _cursorTexture;
+}
 
-	/** Skip currently playing speeches */
-	void skipCurrentSpeeches();
+void Cursor::setMousePosition(Common::Point pos) {
+	_mousePos = pos;
+}
 
-	/** Scroll the current location by an offset */
-	void scrollLocation(int32 dX, int32 dY);
-
-	/** Draw the mouse pointer, and any additional currently active UI */
-	void render();
-private:
-	Gfx::Driver *_gfx;
-};
+void Cursor::render() {
+	_gfx->drawSurface(_cursorTexture, _mousePos);
+}
 
 } // End of namespace Stark
-
-#endif // STARK_SERVICES_USER_INTERFACE_H

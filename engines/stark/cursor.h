@@ -20,9 +20,10 @@
  *
  */
 
-#ifndef STARK_SERVICES_USER_INTERFACE_H
-#define STARK_SERVICES_USER_INTERFACE_H
+#ifndef STARK_CURSOR_H
+#define STARK_CURSOR_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace Stark {
@@ -32,26 +33,29 @@ class Driver;
 class Texture;
 }
 
-/**
- * Facade object for interacting with the game world
+/** 
+ * Manager for the current game Cursor
  */
-class UserInterface {
+class Cursor {
 public:
-	UserInterface(Gfx::Driver *driver);
-	~UserInterface();
+	Cursor(Gfx::Driver *gfx);
+	~Cursor();
 
-	/** Skip currently playing speeches */
-	void skipCurrentSpeeches();
-
-	/** Scroll the current location by an offset */
-	void scrollLocation(int32 dX, int32 dY);
-
-	/** Draw the mouse pointer, and any additional currently active UI */
+	/**
+	 * Render the Cursor
+	 */
 	void render();
+
+	/** Update the mouse position */
+	void setMousePosition(Common::Point pos);
+
 private:
 	Gfx::Driver *_gfx;
+
+	Common::Point _mousePos;
+	Gfx::Texture *_cursorTexture;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_SERVICES_USER_INTERFACE_H
+#endif // STARK_CURSOR_H
