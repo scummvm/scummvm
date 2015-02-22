@@ -26,6 +26,7 @@
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/sound.h"
+#include "engines/stark/resources/speech.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -193,6 +194,14 @@ void Script::updateSuspended() {
 			Sound *soundItem = Object::cast<Sound>(_suspendingResource);
 			if (!soundItem->isPlaying()) {
 				// Resume the script execution once the sound has stopped playing
+				_suspendingResource = nullptr;
+			}
+			break;
+		}
+		case Type::kSpeech: {
+			Speech *speech = Object::cast<Speech>(_suspendingResource);
+			if (!speech->isPlaying()) {
+				// Resume the script execution once the speech has stopped playing
 				_suspendingResource = nullptr;
 			}
 			break;

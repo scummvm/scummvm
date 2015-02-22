@@ -154,7 +154,7 @@ protected:
 	Command *opItemPlaceDirection(const ResourceReference &itemRef, int32 direction);
 	Command *opActivateTexture(const ResourceReference &textureRef);
 	Command *opActivateMesh(const ResourceReference &meshRef);
-	Command *opSpeakWithoutTalking(const ResourceReference &speechRef, int32 unknown);
+	Command *opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);

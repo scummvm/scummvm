@@ -98,7 +98,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kActivateMesh:
 		return opActivateMesh(_arguments[1].referenceValue);
 	case kSpeakWithoutTalking:
-		return opSpeakWithoutTalking(_arguments[1].referenceValue, _arguments[2].intValue);
+		return opSpeakWithoutTalking(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kIsOnFloorField:
 		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsSet:
@@ -333,14 +333,20 @@ Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	return nextCommand();
 }
 
-Command *Command::opSpeakWithoutTalking(const ResourceReference &speechRef, int32 unknown) {
+Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 suspend) {
 	assert(_arguments.size() == 3);
-	Speech *speechObj = speechRef.resolve<Speech>();
-	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speechObj->getName().c_str(), unknown, speechRef.describe().c_str());
+	Speech *speech = speechRef.resolve<Speech>();
+	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speech->getName().c_str(), suspend, speechRef.describe().c_str());
 
-	// TODO: Block further calls untill it'd done
-	speechObj->playSound();
-	return nextCommand();
+	// TODO: Complete
+	speech->playSound();
+
+	if (suspend) {
+		script->suspend(speech);
+		return this; // Stay on the same command while suspended
+	} else {
+		return nextCommand();
+	}
 }
 
 Command *Command::opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef) {
