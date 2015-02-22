@@ -28,6 +28,8 @@
 
 namespace Stark {
 
+class VisualImageXMG;
+
 namespace Gfx {
 class Driver;
 class Texture;
@@ -41,6 +43,8 @@ public:
 	Cursor(Gfx::Driver *gfx);
 	~Cursor();
 
+	void init();
+
 	/**
 	 * Render the Cursor
 	 */
@@ -53,7 +57,7 @@ private:
 	Gfx::Driver *_gfx;
 
 	Common::Point _mousePos;
-	Gfx::Texture *_cursorTexture;
+	VisualImageXMG *_cursorImage;
 };
 
 } // End of namespace Stark

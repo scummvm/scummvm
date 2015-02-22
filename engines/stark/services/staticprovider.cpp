@@ -22,18 +22,12 @@
 
 #include "engines/stark/services/staticprovider.h"
 
-#include "engines/stark/resources/bookmark.h"
-#include "engines/stark/resources/camera.h"
-#include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
-#include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
-#include "engines/stark/resources/location.h"
-#include "engines/stark/resources/root.h"
-#include "engines/stark/resources/script.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
-#include "engines/stark/services/stateprovider.h"
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
@@ -52,6 +46,9 @@ void StaticProvider::init() {
 
 	// Resources lifecycle update
 	_level->onAllLoaded();
+
+	Resources::Item *staticItem = _level->findChild<Resources::Item>();
+	_stockAnims = staticItem->listChildren<Resources::Anim>();
 }
 
 void StaticProvider::shutdown() {
@@ -59,6 +56,11 @@ void StaticProvider::shutdown() {
 
 	_archiveLoader->returnRoot("static/static.xarc");
 	_archiveLoader->unloadUnused();
+}
+
+VisualImageXMG *StaticProvider::getCursorImage(uint32 stockAnim) {
+	Resources::Anim *anim = _stockAnims[stockAnim];
+	return anim->getVisual()->get<VisualImageXMG>();
 }
 
 } // End of namespace Stark

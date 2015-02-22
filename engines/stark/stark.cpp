@@ -124,6 +124,7 @@ Common::Error StarkEngine::run() {
 	// Load global resources
 	_resourceProvider->initGlobal();
 	_staticProvider->init();
+	_cursor->init();
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);

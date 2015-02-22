@@ -24,17 +24,25 @@
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/staticprovider.h"
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
 Cursor::Cursor(Gfx::Driver *gfx) :
-		_gfx(gfx) {
-	// TODO: This is just a quick solution to get anything drawn, we will need load-code for the actual pointers.
-	_cursorTexture = _gfx->createTextureFromString("X", 0xFF00FF00);
+		_gfx(gfx),
+		_cursorImage(nullptr) {
 }
 
 Cursor::~Cursor() {
-	delete _cursorTexture;
+}
+
+void Cursor::init() {
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+
+	// TODO: This is just a quick solution to get anything drawn.
+	_cursorImage = staticProvider->getCursorImage(0);
 }
 
 void Cursor::setMousePosition(Common::Point pos) {
@@ -44,7 +52,7 @@ void Cursor::setMousePosition(Common::Point pos) {
 void Cursor::render() {
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 
-	_gfx->drawSurface(_cursorTexture, _mousePos);
+	_cursorImage->render(_mousePos);
 }
 
 } // End of namespace Stark

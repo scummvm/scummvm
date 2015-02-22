@@ -23,16 +23,19 @@
 #ifndef STARK_STATIC_PROVIDER_H
 #define STARK_STATIC_PROVIDER_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 
 namespace Stark {
 
 namespace Resources {
+class Anim;
 class Level;
 }
 
 class ArchiveLoader;
 class Global;
+class VisualImageXMG;
 
 /**
  * Static Resource provider.
@@ -53,11 +56,14 @@ public:
 	/** Obtain the static level */
 	Resources::Level *getLevel() const { return _level; }
 
+	VisualImageXMG *getCursorImage(uint32 stockAnim);
+
 private:
 	ArchiveLoader *_archiveLoader;
 	Global *_global;
 
 	Resources::Level *_level;
+	Common::Array<Resources::Anim *> _stockAnims;
 };
 
 } // End of namespace Stark
