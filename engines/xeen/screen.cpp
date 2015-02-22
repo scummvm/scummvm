@@ -196,7 +196,6 @@ void Window::drawList(DrawStruct *items, int count) {
 		pt.x += _innerBounds.left;
 		pt.y += _innerBounds.top;
 
-		// TODO: There are two sprite calls in this method. Figure out why
 		items->_sprites->draw(*this, items->_frame, pt, items->_flags, items->_scale);
 	}
 }
