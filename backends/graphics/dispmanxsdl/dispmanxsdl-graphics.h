@@ -26,6 +26,9 @@
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 
 struct dispvarsStruct;
+struct dispmanxPage;
+
+typedef uint32_t DISPMANX_UPDATE_HANDLE_T;
 
 class DispmanXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
@@ -41,7 +44,10 @@ protected:
 	void DispmanXSetup(int width, int height, int bpp);
 	void DispmanXInit();
 	void DispmanXUpdate();
-	void DispmanXFreeResources(void);
+	void DispmanXFlip(struct dispmanxPage *page);
+	//void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void * arg);
+	struct dispmanxPage *DispmanXGetFreePage();
+	void DispmanXFreeResources();
 	void DispmanXVideoQuit();
 	struct dispvarsStruct *_dispvars;
 };
