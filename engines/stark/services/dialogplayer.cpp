@@ -162,8 +162,10 @@ void DialogPlayer::clearSubtitles() {
 }
 
 void DialogPlayer::renderText() {
+
 	if (_texture) {
 		Gfx::Driver *gfx = StarkServices::instance().gfx;
+		gfx->setScreenViewport(false);
 		gfx->drawSurface(_texture, Common::Point(10, 400));
 	}
 }

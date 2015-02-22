@@ -94,7 +94,7 @@ Common::Error StarkEngine::run() {
 	_gfx = Gfx::Driver::create();
 
 	// Get the screen prepared
-	_gfx->setupScreen(640, 480, ConfMan.getBool("fullscreen"));
+	_gfx->init();
 
 	_archiveLoader = new ArchiveLoader();
 	_stateProvider = new StateProvider();
@@ -207,7 +207,8 @@ void StarkEngine::updateDisplayScene() {
 bool StarkEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsArbitraryResolutions);
 }
 
 bool StarkEngine::canLoadGameStateCurrently() {

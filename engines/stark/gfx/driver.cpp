@@ -69,5 +69,32 @@ Texture *Driver::createTextureFromString(const Common::String &str, uint32 color
 	return texture;
 }
 
+void Driver::computeScreenViewport() {
+	int32 screenWidth = g_system->getWidth();
+	int32 screenHeight = g_system->getHeight();
+
+	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		// Aspect ratio correction
+		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * kOriginalWidth / kOriginalHeight);
+		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * kOriginalHeight / kOriginalWidth);
+		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+
+		// Pillarboxing
+		_screenViewport.translate((screenWidth - viewportWidth) / 2,
+			(screenHeight - viewportHeight) / 2);
+	} else {
+		// Aspect ratio correction disabled, just stretch
+		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	}
+}
+
+Common::Rect Driver::gameViewport() const {
+	Common::Rect game = Common::Rect(_screenViewport.width(), _screenViewport.height() * kGameViewportHeight / kOriginalHeight);
+	game.translate(_screenViewport.left, _screenViewport.top + _screenViewport.height() * kBottomBorderHeight / kOriginalHeight);
+
+	return game;
+}
+
+
 } // End of namespace Gfx
 } // End of namespace Stark

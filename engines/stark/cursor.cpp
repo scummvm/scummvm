@@ -42,6 +42,8 @@ void Cursor::setMousePosition(Common::Point pos) {
 }
 
 void Cursor::render() {
+	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
+
 	_gfx->drawSurface(_cursorTexture, _mousePos);
 }
 

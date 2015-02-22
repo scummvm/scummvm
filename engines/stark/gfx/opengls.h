@@ -23,12 +23,15 @@
 #ifndef STARK_GFX_OPENGLS_H
 #define STARK_GFX_OPENGLS_H
 
-#include "common/rect.h"
 #include "common/system.h"
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 #include "engines/stark/gfx/driver.h"
+
+#include "common/rect.h"
+
+#include "math/vector2d.h"
 
 namespace Graphics {
 class Shader;
@@ -42,10 +45,10 @@ public:
 	OpenGLSDriver();
 	~OpenGLSDriver();
 
-	void setupScreen(int screenW, int screenH, bool fullscreen);
+	void init() override;
 
 	void setGameViewport() override;
-	void setScreenViewport() override;
+	void setScreenViewport(bool noScaling) override;
 
 	void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) override;
 
@@ -63,7 +66,10 @@ private:
 	void start2DMode();
 	void end2DMode();
 
+	Math::Vector2d scaled(float x, float y) const;
+
 	Common::Rect _viewport;
+	Common::Rect _unscaledViewport;
 
 	Graphics::Shader *_boxShader;
 	uint32 _boxVBO;

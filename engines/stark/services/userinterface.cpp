@@ -80,6 +80,8 @@ void UserInterface::scrollLocation(int32 dX, int32 dY) {
 }
 
 void UserInterface::render() {
+	// TODO: Move this elsewhere
+
 	Common::String debugStr;
 
 	Global *global = StarkServices::instance().global;
@@ -93,7 +95,10 @@ void UserInterface::render() {
 
 	
 	Gfx::Texture *debugTexture = _gfx->createTextureFromString(debugStr, 0xF0FF0F00);
+
+	_gfx->setScreenViewport(false);
 	_gfx->drawSurface(debugTexture, Common::Point(0,0));
+
 	delete debugTexture;
 }
 

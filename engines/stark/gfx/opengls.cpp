@@ -22,6 +22,7 @@
 
 #include "engines/stark/gfx/opengls.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "math/matrix4.h"
@@ -55,11 +56,11 @@ OpenGLSDriver::~OpenGLSDriver() {
 	delete _boxShader;
 }
 
-void OpenGLSDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
-	g_system->setupScreen(screenW, screenH, fullscreen, true);
+void OpenGLSDriver::init() {
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	g_system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, true);
 
-	_screenWidth = screenW;
-	_screenHeight = screenH;
+	computeScreenViewport();
 
 	static const char* attributes[] = { "position", "texcoord", nullptr };
 	_boxShader = Graphics::Shader::fromFiles("stark_box", attributes);
@@ -69,16 +70,27 @@ void OpenGLSDriver::setupScreen(int screenW, int screenH, bool fullscreen) {
 }
 
 void OpenGLSDriver::setGameViewport() {
-	_viewport = Common::Rect(kGameViewportWidth, kGameViewportHeight);
-	_viewport.translate(0, _screenHeight - kGameViewportHeight - kTopBorderHeight);
+	_viewport = gameViewport();
+	_unscaledViewport = Common::Rect(kGameViewportWidth, kGameViewportHeight);
+	_unscaledViewport.translate(0, kBottomBorderHeight);
 
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
-void OpenGLSDriver::setScreenViewport() {
-	_viewport = Common::Rect(_screenWidth, _screenHeight);
+void OpenGLSDriver::setScreenViewport(bool noScaling) {
+	if (noScaling) {
+		_viewport = Common::Rect(g_system->getWidth(), g_system->getHeight());
+		_unscaledViewport = _viewport;
+	} else {
+		_viewport = _screenViewport;
+		_unscaledViewport = Common::Rect(kOriginalWidth, kOriginalHeight);
+	}
 
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
+}
+
+Math::Vector2d OpenGLSDriver::scaled(float x, float y) const {
+	return Math::Vector2d(x / (float) _unscaledViewport.width(), y / (float) _unscaledViewport.height());
 }
 
 void OpenGLSDriver::setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) {
@@ -114,18 +126,18 @@ void OpenGLSDriver::drawSurface(const Texture *texture, const Common::Point &des
 	const float tHeight = 1.0;
 
 	// Destination rectangle
-	const float sLeft = dest.x / (float) _viewport.width();
-	const float sTop = dest.y / (float) _viewport.height();
-	const float sWidth = texture->width() / (float) _viewport.width();
-	const float sHeight = texture->height() / (float) _viewport.height();
+	const float sLeft = dest.x;
+	const float sTop = dest.y;
+	const float sWidth = texture->width();
+	const float sHeight = texture->height();
 
 	start2DMode();
 
 	_boxShader->use();
 	_boxShader->setUniform("textured", true);
 	_boxShader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f));
-	_boxShader->setUniform("verOffsetXY", Math::Vector2d(sLeft, sTop));
-	_boxShader->setUniform("verSizeWH", Math::Vector2d(sWidth, sHeight));
+	_boxShader->setUniform("verOffsetXY", scaled(sLeft, sTop));
+	_boxShader->setUniform("verSizeWH", scaled(sWidth, sHeight));
 	_boxShader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
 	_boxShader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
 

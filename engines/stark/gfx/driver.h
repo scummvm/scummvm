@@ -42,10 +42,10 @@ public:
 
 	virtual ~Driver() {}
 
-	virtual void setupScreen(int screenW, int screenH, bool fullscreen) = 0;
+	virtual void init() = 0;
 
 	virtual void setGameViewport() = 0;
-	virtual void setScreenViewport() = 0;
+	virtual void setScreenViewport(bool noScaling) = 0;
 
 	virtual void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) = 0;
 
@@ -77,13 +77,20 @@ public:
 
 	virtual void set3DMode() = 0;
 
+	static const int32 kOriginalWidth = 640;
+	static const int32 kOriginalHeight = 480;
+
 	static const int32 kTopBorderHeight = 36;
-	static const int32 kGameViewportWidth = 640;
 	static const int32 kGameViewportHeight = 365;
+	static const int32 kBottomBorderHeight = 79;
+
+	static const int32 kGameViewportWidth = 640;
 
 protected:
-	int _screenWidth;
-	int _screenHeight;
+	void computeScreenViewport();
+	Common::Rect gameViewport() const;
+
+	Common::Rect _screenViewport;
 };
 
 } // End of namespace Gfx
