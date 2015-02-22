@@ -29,6 +29,8 @@
 
 namespace Stark {
 
+class VisualImageXMG;
+
 namespace Gfx {
 class Texture;
 }
@@ -43,6 +45,9 @@ class DialogPlayer {
 public:
 	DialogPlayer();
 	virtual ~DialogPlayer();
+
+	/** Initialise textures etc, that can't be created at constructor-time */
+	void init();
 
 	/** Enter a dialog */
 	void run(Resources::Dialog *dialog);
@@ -91,6 +96,7 @@ protected:
 	bool _speechReady;
 	Common::Array<Option> _options;
 
+	VisualImageXMG *_passiveBackGroundTexture;
 	Gfx::Texture *_texture;
 };
 

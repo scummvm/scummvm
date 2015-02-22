@@ -25,9 +25,12 @@
 
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/speech.h"
+
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
@@ -40,6 +43,12 @@ DialogPlayer::DialogPlayer() :
 
 DialogPlayer::~DialogPlayer() {
 	delete _texture;
+}
+
+void DialogPlayer::init() {
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+	// TODO: Un-hardcode
+	_passiveBackGroundTexture = staticProvider->getCursorImage(21);
 }
 
 void DialogPlayer::run(Resources::Dialog *dialog) {
@@ -162,7 +171,10 @@ void DialogPlayer::clearSubtitles() {
 }
 
 void DialogPlayer::renderText() {
-
+	// TODO: Unhardcode
+	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	gfx->setScreenViewport(true);
+	_passiveBackGroundTexture->render(Common::Point(0, 400));
 	if (_texture) {
 		Gfx::Driver *gfx = StarkServices::instance().gfx;
 		gfx->setScreenViewport(false);

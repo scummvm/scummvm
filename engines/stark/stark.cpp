@@ -125,6 +125,7 @@ Common::Error StarkEngine::run() {
 	_resourceProvider->initGlobal();
 	_staticProvider->init();
 	_cursor->init();
+	_dialogPlayer->init();
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);
