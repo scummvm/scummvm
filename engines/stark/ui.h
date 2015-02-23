@@ -48,7 +48,7 @@ class UI {
 	void handleClick();
 public:
 	UI(Gfx::Driver *gfx, Cursor *cursor);
-	void update(Gfx::RenderEntryArray renderEntries);
+	void update(Gfx::RenderEntryArray renderEntries, bool keepExisting = false);
 	void render();
 	void notifyClick();
 };

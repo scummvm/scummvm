@@ -151,7 +151,10 @@ Resources::Object *UserInterface::getObjectForRenderEntryAtPosition(Common::Poin
 	}
 	Resources::Object *owner = (Resources::Object*)entry->getOwner();
 	if (owner->getType() != Resources::Type::kItem) {
-		error("Owner of render entry should be an item");
+		// HACK: We don't have ItemSub2 yet.
+		if (owner->getType() != Resources::Type::kAnim) {
+			error("Owner of render entry should be an item, was: %s", owner->getType().getName());
+		}
 	}
 	int index = entry->indexForPoint(pos);
 	// No table index
@@ -229,6 +232,14 @@ bool UserInterface::performActionOnObject(Resources::Object *object, Resources::
 	} else {
 		// This is where we should trigger the Action Menu
 		return false;
+	}
+}
+
+Gfx::RenderEntryArray UserInterface::getRenderEntries() {
+	if (_actionMenuActive) {
+		return _actionMenu->getRenderEntries();
+	} else {
+		return Gfx::RenderEntryArray();
 	}
 }
 

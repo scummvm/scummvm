@@ -39,11 +39,18 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	{
 }
 
-void UI::update(Gfx::RenderEntryArray renderEntries) {
+void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	Common::Point pos = _cursor->getMousePosition();
 	UserInterface *ui = StarkServices::instance().userInterface;
 	Gfx::RenderEntry *currentEntry = ui->getEntryAtPosition(pos, renderEntries);
-	_objectUnderCursor = ui->getObjectForRenderEntryAtPosition(pos, currentEntry);
+	Resources::Object *object = ui->getObjectForRenderEntryAtPosition(pos, currentEntry);
+	// So that we can run update multiple times, without resetting (i.e. after drawing the action menu)
+	if (!object && keepExisting) {
+		return;
+	} else {
+		// Subsequent runs ignore sort order of items drawn earlier.
+		_objectUnderCursor = object;
+	}
 	Common::String mouseHint = ui->getMouseHintForObject(_objectUnderCursor);
 
 	if (_objectUnderCursor) {
@@ -102,6 +109,14 @@ void UI::handleClick() {
 
 void UI::notifyClick() {
 	_hasClicked = true;
+}
+
+
+void UI::render() {
+	Common::Point pos = _cursor->getMousePosition();
+	UserInterface *ui = StarkServices::instance().userInterface;
+	update(ui->getRenderEntries(), true);
+	ui->render();
 }
 
 } // End of namespace Stark

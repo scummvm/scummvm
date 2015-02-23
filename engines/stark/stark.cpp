@@ -210,12 +210,16 @@ void StarkEngine::updateDisplayScene() {
 
 	// Render the current scene
 	Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
+	// Update the UI state before displaying the scene
 	_ui->update(renderEntries);
 	_scene->render(renderEntries);
 
 	_dialogPlayer->renderText();
 
-	_userInterface->render();
+	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
+	_ui->render();
+
+	// The cursor depends on the UI being done.
 	_cursor->render();
 
 	// Swap buffers

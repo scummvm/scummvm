@@ -54,6 +54,7 @@ public:
 	void render(Common::Point pos);
 	void clearActions();
 	void enableAction(ActionMenuType action);
+	Gfx::RenderEntryArray getRenderEntries() { return _renderEntries; }
 };
 
 

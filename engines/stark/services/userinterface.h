@@ -87,6 +87,8 @@ public:
 	void activateActionMenuOn(Common::Point pos, Resources::Object *activeObject);
 	bool isActionMenuOpen() const { return _actionMenuActive; }
 	void deactivateActionMenu() { _actionMenuActive = false; }
+
+	Gfx::RenderEntryArray getRenderEntries();
 private:
 
 	int _indexForCurrentObject;
