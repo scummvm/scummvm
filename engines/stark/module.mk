@@ -1,6 +1,7 @@
 MODULE := engines/stark
 
 MODULE_OBJS := \
+	actionmenu.o \
 	actor.o \
 	console.o \
 	cursor.o \

@@ -34,6 +34,7 @@
 #include "engines/stark/services/services.h"
 
 #include "engines/stark/visual/image.h"
+#include "engines/stark/actionmenu.h"
 #include "engines/stark/cursor.h"
 
 namespace Stark {
@@ -51,6 +52,8 @@ void UserInterface::init() {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
 	_exitButton = staticProvider->getCursorImage(8);
+
+	_actionMenu = new ActionMenu(_gfx);
 }
 
 void UserInterface::skipCurrentSpeeches() {
@@ -101,6 +104,21 @@ void UserInterface::update() {
 	}
 }
 
+void UserInterface::activateActionMenu(Common::Point pos, bool eye, bool hand, bool mouth) {
+	_actionMenuActive = true;
+	_actionMenuPos = pos;
+	_actionMenu->clearActions();
+	if (eye) {
+		_actionMenu->enableAction(ActionMenu::kActionEye);
+	}
+	if (hand) {
+		_actionMenu->enableAction(ActionMenu::kActionHand);
+	}
+	if (mouth) {
+		_actionMenu->enableAction(ActionMenu::kActionMouth);
+	}
+}
+
 void UserInterface::render() {
 	// TODO: Move this elsewhere
 
@@ -124,6 +142,10 @@ void UserInterface::render() {
 	if (_interfaceVisible) {
 		// TODO: Unhardcode position
 		_exitButton->render(Common::Point(600, 0));
+	}
+
+	if (_actionMenuActive) {
+		_actionMenu->render(_actionMenuPos);
 	}
 
 	delete debugTexture;

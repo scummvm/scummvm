@@ -20,60 +20,43 @@
  *
  */
 
-#ifndef STARK_SERVICES_USER_INTERFACE_H
-#define STARK_SERVICES_USER_INTERFACE_H
+#ifndef ACTIONMENU_H_
+#define ACTIONMENU_H_
 
-#include "common/scummsys.h"
-#include "common/rect.h"
+#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 
-class ActionMenu;
 class VisualImageXMG;
-class Cursor;
 
 namespace Resources {
 class Item;
 }
 
-namespace Gfx {
-class Driver;
-class Texture;
-}
-
-/**
- * Facade object for interacting with the game world
- */
-class UserInterface {
-public:
-	UserInterface(Gfx::Driver *driver, const Cursor *cursor);
-	~UserInterface();
-
-	void init();
-
-	/** Skip currently playing speeches */
-	void skipCurrentSpeeches();
-
-	/** Scroll the current location by an offset */
-	void scrollLocation(int32 dX, int32 dY);
-
-	/** Draw the mouse pointer, and any additional currently active UI */
-	void render();
-	
-	/** Update the current state of the user interface */
-	void update();
-
-	void activateActionMenu(Common::Point pos, bool eye, bool hand, bool mouth);
-private:
-	bool _interfaceVisible;
-	bool _actionMenuActive;
-	Common::Point _actionMenuPos;
-	const Cursor *_cursor;
-	VisualImageXMG *_exitButton;
-	ActionMenu *_actionMenu;
+class ActionMenu {
+	Resources::Item *_eye;
+	Resources::Item *_hand;
+	Resources::Item *_mouth;
+	VisualImageXMG *_background;
+	Gfx::RenderEntry *_eyeEntry;
+	Gfx::RenderEntry *_handEntry;
+	Gfx::RenderEntry *_mouthEntry;
+	Gfx::RenderEntryArray _renderEntries;
 	Gfx::Driver *_gfx;
+public:
+	enum ActionMenuType {
+		kActionHand,
+		kActionMouth,
+		kActionEye
+	};
+	ActionMenu(Gfx::Driver *gfx);
+	~ActionMenu();
+	void render(Common::Point pos);
+	void clearActions();
+	void enableAction(ActionMenuType action);
 };
+
 
 } // End of namespace Stark
 
-#endif // STARK_SERVICES_USER_INTERFACE_H
+ #endif

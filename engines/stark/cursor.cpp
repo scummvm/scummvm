@@ -26,6 +26,7 @@
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/userinterface.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resources/pattable.h"
@@ -142,6 +143,10 @@ void Cursor::handleClick() {
 		}
 		Resources::PATTable *table = _mouseOverEntry->getOwner()->findChildWithIndex<Resources::PATTable>(index);
 		if (table) {
+			if (table->getNumActions() > 1) {
+				UserInterface *ui = StarkServices::instance().userInterface;
+				ui->activateActionMenu(_mousePos, table->canPerformAction(Resources::PATTable::kActionLook), table->canPerformAction(Resources::PATTable::kActionUse), table->canPerformAction(Resources::PATTable::kActionTalk));
+			}
 			Resources::Script *script = table->getScriptForAction(Resources::PATTable::kActionLook);
 			if (script) {
 				script->execute(Resources::Script::kCallModePlayerAction);
