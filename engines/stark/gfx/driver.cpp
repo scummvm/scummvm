@@ -95,6 +95,22 @@ Common::Rect Driver::gameViewport() const {
 	return game;
 }
 
+Common::Point Driver::scalePoint(Common::Point point) {
+	double factorX = (double(kOriginalWidth) / _screenViewport.width());
+	double factorY = (double(kOriginalHeight) / _screenViewport.height());
+
+	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+		point.x -= _screenViewport.left;
+		// Bound the cursor inside the actually drawn area.
+		point.x = MAX<int32>(point.x, 0);
+		point.x = MIN<int32>(point.x, _screenViewport.right);
+	}
+
+	point.x *= factorX;
+	point.y *= factorY;
+
+	return point;
+}
 
 } // End of namespace Gfx
 } // End of namespace Stark

@@ -71,6 +71,8 @@ public:
 	 */
 	virtual VisualActor *createActorRenderer() = 0;
 
+	/** Scale a coordinate from original to current coordinates */
+	Common::Point scalePoint(Common::Point point);
 	/**
 	 * Draw a 2D surface from the specified texture
 	 */
