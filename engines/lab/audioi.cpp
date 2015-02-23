@@ -202,6 +202,8 @@ void playSoundEffect(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flus
 	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
 	if (g_lab->getPlatform() == Common::kPlatformWindows)
 		soundFlags |= Audio::FLAG_16BITS;
+	else
+		soundFlags |= Audio::FLAG_UNSIGNED;
 
 	Audio::SeekableAudioStream *audStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
 	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &g_musicHandle, audStream);
