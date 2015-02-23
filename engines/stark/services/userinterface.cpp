@@ -47,6 +47,7 @@ UserInterface::UserInterface(Gfx::Driver *driver, const Cursor *cursor) {
 	_gfx = driver;
 	_cursor = cursor;
 	_interfaceVisible = false;
+	_actionMenuActive = false;
 }
 
 UserInterface::~UserInterface() {
