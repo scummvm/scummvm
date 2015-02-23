@@ -23,6 +23,8 @@
 #ifndef STARK_SERVICES_USER_INTERFACE_H
 #define STARK_SERVICES_USER_INTERFACE_H
 
+#include "engines/stark/gfx/renderentry.h"
+
 #include "common/scummsys.h"
 #include "common/rect.h"
 
@@ -34,11 +36,13 @@ class Cursor;
 
 namespace Resources {
 class Item;
+class Object;
 }
 
 namespace Gfx {
 class Driver;
 class Texture;
+class RenderEntry;
 }
 
 /**
@@ -63,8 +67,30 @@ public:
 	/** Update the current state of the user interface */
 	void update();
 
-	void activateActionMenu(Common::Point pos, bool eye, bool hand, bool mouth);
+	Gfx::RenderEntry *getEntryAtPosition(Common::Point, Gfx::RenderEntryArray entries);
+	
+	Resources::Object *getObjectForRenderEntryAtPosition(Common::Point pos, Gfx::RenderEntry *entry);
+
+	Common::String getMouseHintForObject(Resources::Object *object);
+
+	enum ActionFlags {
+		kActionNonePossible = 0,
+		kActionUsePossible = 1,
+		kActionLookPossible = 2,
+		kActionTalkPossible = 4,
+		kActionExitPossible = 8
+	};
+
+	int getActionsPossibleForObject(Resources::Object *object);
+	/** Attempt to run the relevant action on the object, returns true if action menu is needed, false if no action is possible */
+	bool performActionOnObject(Resources::Object *object, Resources::Object *activeObject);
+	void activateActionMenuOn(Common::Point pos, Resources::Object *activeObject);
+	bool isActionMenuOpen() const { return _actionMenuActive; }
+	void deactivateActionMenu() { _actionMenuActive = false; }
 private:
+
+	int _indexForCurrentObject;
+	Resources::Object *_object;
 	bool _interfaceVisible;
 	bool _actionMenuActive;
 	Common::Point _actionMenuPos;

@@ -39,7 +39,7 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_cursorImage(nullptr),
 		_mouseText(nullptr),
 		_currentCursorType(kNone),
-		_mouseOverEntry(nullptr) {
+		_currentHint("") {
 }
 
 Cursor::~Cursor() {
@@ -85,73 +85,15 @@ Common::Point Cursor::getMousePosition() const {
 	return _gfx->scalePoint(_mousePos);
 }
 
-void Cursor::handleMouseOver(Gfx::RenderEntryArray renderEntries) {
-	Gfx::RenderEntryArray::iterator element = renderEntries.begin();
-	_mouseOverEntry = nullptr;
-	// We need this scaled. (Optionally, if we want to scale the cursor, we can move the scaling to the setMousePosition-function)
-	Common::Point mousePos = getMousePosition();
-	while (element != renderEntries.end()) {
-		if ((*element)->containsPoint(mousePos)) {
-			if (!_mouseOverEntry) {
-				_mouseOverEntry = *element;
-			// This assumes that lower sort keys are more important than higher sortkeys.
-			} else if (Gfx::RenderEntry::compare(*element, _mouseOverEntry)) {
-				_mouseOverEntry = *element;
-			}
-		}
-		++element;
-	}
-	if (_mouseOverEntry) {
-		Resources::Item *owner = (Resources::Item*)_mouseOverEntry->getOwner();
-		int index = _mouseOverEntry->indexForPoint(_mousePos);
-		if (index == -1) {
-			delete _mouseText;
-			_mouseText = nullptr;
-			setCursorType(kDefault);
-		}
-		Resources::PATTable *table = _mouseOverEntry->getOwner()->findChildWithIndex<Resources::PATTable>(index);
-		_mouseText = _gfx->createTextureFromString(table->getName(), 0xFFFF0000);
-		// TODO: This is not the entire story for selecting this, so for now we set the cursor to passive
-		if (table->getNumActions() == 1) {
-			if (table->canPerformAction(Resources::PATTable::kActionLook)) {
-				setCursorType(kEye);
-			} else if (table->canPerformAction(Resources::PATTable::kActionLook)) {
-				setCursorType(kHand);
-			} else if (table->canPerformAction(Resources::PATTable::kActionLook)) {
-				setCursorType(kMouth);
-			} else {
-				// Exit only?
-				setCursorType(kPassive);
-			}
-		} else {
-			setCursorType(kPassive);
-		}
-	} else {
-		setCursorType(kDefault);
+void Cursor::setMouseHint(const Common::String &hint) {
+	if (hint != _currentHint) {
 		delete _mouseText;
-		_mouseText = nullptr;
-	}
-}
-
-void Cursor::handleClick() {
-	if (_mouseOverEntry) {
-		Resources::Item *owner = (Resources::Item*)_mouseOverEntry->getOwner();
-		int index = _mouseOverEntry->indexForPoint(_mousePos);
-
-		if (index == -1) {
-			return;
+		if (hint != "") {
+			_mouseText = _gfx->createTextureFromString(hint, 0xFFFF0000);
+		} else {
+			_mouseText = nullptr;
 		}
-		Resources::PATTable *table = _mouseOverEntry->getOwner()->findChildWithIndex<Resources::PATTable>(index);
-		if (table) {
-			if (table->getNumActions() > 1) {
-				UserInterface *ui = StarkServices::instance().userInterface;
-				ui->activateActionMenu(_mousePos, table->canPerformAction(Resources::PATTable::kActionLook), table->canPerformAction(Resources::PATTable::kActionUse), table->canPerformAction(Resources::PATTable::kActionTalk));
-			}
-			Resources::Script *script = table->getScriptForAction(Resources::PATTable::kActionLook);
-			if (script) {
-				script->execute(Resources::Script::kCallModePlayerAction);
-			}
-		}
+		_currentHint = hint;
 	}
 }
 

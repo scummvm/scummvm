@@ -20,65 +20,39 @@
  *
  */
 
-#ifndef STARK_CURSOR_H
-#define STARK_CURSOR_H
+#ifndef STARK_UI_H
+#define STARK_UI_H
 
-#include "common/rect.h"
 #include "common/scummsys.h"
+
 #include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 
-class VisualImageXMG;
+namespace Resources {
+class Object;
+}
 
 namespace Gfx {
 class Driver;
-class Texture;
 }
 
-/** 
- * Manager for the current game Cursor
- */
-class Cursor {
-public:
-	Cursor(Gfx::Driver *gfx);
-	~Cursor();
+class Cursor;
 
-	void init();
-
-	/**
-	 * Render the Cursor
-	 */
-	void render();
-
-	/** Update the mouse position */
-	void setMousePosition(Common::Point pos);
-
-	Common::Point getMousePosition() const;
-
-	enum CursorType {
-		kNone = -1,
-		kDefault = 0,
-		kActive = 3,
-		kPassive = 9,
-		kEye = 10,
-		kHand = 11,
-		kMouth = 12
-	};
-
-	void setCursorType(CursorType type);
-	void setMouseHint(const Common::String &hint);
-private:
-	
+class UI {
+	Resources::Object *_currentObject;
+	Resources::Object *_objectUnderCursor;
 	Gfx::Driver *_gfx;
-
-	Common::String _currentHint;
-	Common::Point _mousePos;
-	VisualImageXMG *_cursorImage;
-	Gfx::Texture *_mouseText;
-	CursorType _currentCursorType;
+	Cursor *_cursor;
+	bool _hasClicked;
+	void handleClick();
+public:
+	UI(Gfx::Driver *gfx, Cursor *cursor);
+	void update(Gfx::RenderEntryArray renderEntries);
+	void render();
+	void notifyClick();
 };
 
 } // End of namespace Stark
 
-#endif // STARK_CURSOR_H
+#endif // STARK_UI_H

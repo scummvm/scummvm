@@ -33,6 +33,10 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 
+#include "engines/stark/resources/object.h"
+#include "engines/stark/resources/pattable.h"
+#include "engines/stark/resources/script.h"
+
 #include "engines/stark/visual/image.h"
 #include "engines/stark/actionmenu.h"
 #include "engines/stark/cursor.h"
@@ -104,18 +108,126 @@ void UserInterface::update() {
 	}
 }
 
-void UserInterface::activateActionMenu(Common::Point pos, bool eye, bool hand, bool mouth) {
+void UserInterface::activateActionMenuOn(Common::Point pos, Resources::Object *activeObject) {
 	_actionMenuActive = true;
 	_actionMenuPos = pos;
 	_actionMenu->clearActions();
-	if (eye) {
+	int possible = getActionsPossibleForObject(activeObject);
+	if (possible & kActionLookPossible) {
 		_actionMenu->enableAction(ActionMenu::kActionEye);
 	}
-	if (hand) {
+	if (possible & kActionUsePossible) {
 		_actionMenu->enableAction(ActionMenu::kActionHand);
 	}
-	if (mouth) {
+	if (possible & kActionTalkPossible) {
 		_actionMenu->enableAction(ActionMenu::kActionMouth);
+	}
+}
+
+Gfx::RenderEntry *UserInterface::getEntryAtPosition(Common::Point pos, Gfx::RenderEntryArray entries) {
+	Gfx::RenderEntryArray::iterator element = entries.begin();
+	Gfx::RenderEntry *objectAtPos = nullptr;
+	// We need this scaled. (Optionally, if we want to scale the cursor, we can move the scaling to the setMousePosition-function)
+	while (element != entries.end()) {
+		if ((*element)->containsPoint(pos)) {
+			if (!objectAtPos) {
+				objectAtPos = *element;
+			// This assumes that lower sort keys are more important than higher sortkeys.
+			} else if (Gfx::RenderEntry::compare(*element, objectAtPos)) {
+				objectAtPos = *element;
+			}
+		}
+		++element;
+	}
+	return objectAtPos;
+}
+
+// To be specific, this returns the PATTable, so that the distinction on index is resolved,
+// any code that needs the item will thus have to traverse back up.
+Resources::Object *UserInterface::getObjectForRenderEntryAtPosition(Common::Point pos, Gfx::RenderEntry *entry) {
+	if (entry == nullptr) {
+		return nullptr;
+	}
+	Resources::Object *owner = (Resources::Object*)entry->getOwner();
+	if (owner->getType() != Resources::Type::kItem) {
+		error("Owner of render entry should be an item");
+	}
+	int index = entry->indexForPoint(pos);
+	// No table index
+	if (index == -1) {
+		return nullptr;
+	}
+	Resources::PATTable *table = owner->findChildWithIndex<Resources::PATTable>(index);
+	if (table) {
+		return table;
+	}
+	return nullptr;
+}
+
+Common::String UserInterface::getMouseHintForObject(Resources::Object *object) {
+	if (object) {
+		return object->getName();
+	} else {
+		return "";
+	}
+}
+
+int UserInterface::getActionsPossibleForObject(Resources::Object *object) {
+	if (object == nullptr) {
+		return kActionNonePossible;
+	}
+	if (object->getType() != Resources::Type::kPATTable) {
+		error("getActionsPossibleForObject requires a PATTable");
+	}
+	Resources::PATTable *table = (Resources::PATTable*)object;
+	int possible = UserInterface::kActionNonePossible;
+	if (table->canPerformAction(Resources::PATTable::kActionLook)) {
+		possible |= kActionLookPossible;
+	}
+	if (table->canPerformAction(Resources::PATTable::kActionUse)) {
+		possible |= kActionUsePossible;
+	}
+	if (table->canPerformAction(Resources::PATTable::kActionTalk)) {
+		possible |= kActionTalkPossible;
+	}
+	if (table->canPerformAction(Resources::PATTable::kActionExit)) {
+		possible |= kActionExitPossible;
+	}
+	return possible;
+}
+
+bool UserInterface::performActionOnObject(Resources::Object *object, Resources::Object *activeObject) {
+	if (object->getType() != Resources::Type::kPATTable) {
+		error("performActionOnObject requires a PATTable");
+	}
+	Resources::PATTable *table = (Resources::PATTable*)object;
+	// Possibilites:
+	// * Click on something that doesn't take an action
+	// * Click on something that takes exactly 1 action.
+	// * Click on something that takes more than 1 action (open action menu)
+	// * Click in the action menu, which has 0 available actions (TODO)
+	if (table->getNumActions() == 0) {
+		if (activeObject) {
+			warning("TODO: We should check if the active object got an action from the action menu");
+		}
+		return true;
+	} else if (table->getNumActions() == 1) {
+		if (table->canPerformAction(Resources::PATTable::kActionLook)) {
+			table->getScriptForAction(Resources::PATTable::kActionLook)->execute(Resources::Script::kCallModePlayerAction);
+		}
+		if (table->canPerformAction(Resources::PATTable::kActionUse)) {
+			table->getScriptForAction(Resources::PATTable::kActionUse)->execute(Resources::Script::kCallModePlayerAction);
+		}
+		if (table->canPerformAction(Resources::PATTable::kActionTalk)) {
+			table->getScriptForAction(Resources::PATTable::kActionTalk)->execute(Resources::Script::kCallModePlayerAction);
+		}
+		if (table->canPerformAction(Resources::PATTable::kActionExit)) {
+			table->getScriptForAction(Resources::PATTable::kActionExit)->execute(Resources::Script::kCallModePlayerAction);
+		}
+		return true;
+	} else {
+		// This is where we should trigger the Action Menu
+		return false;
 	}
 }
 

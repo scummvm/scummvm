@@ -28,6 +28,7 @@
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
+#include "engines/stark/ui.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
@@ -88,6 +89,7 @@ StarkEngine::~StarkEngine() {
 	delete _global;
 	delete _stateProvider;
 	delete _archiveLoader;
+	delete _ui;
 
 	StarkServices::destroy();
 }
@@ -109,6 +111,7 @@ Common::Error StarkEngine::run() {
 	_dialogPlayer = new DialogPlayer();
 	_cursor = new Cursor(_gfx);
 	_userInterface = new UserInterface(_gfx, _cursor);
+	_ui = new UI(_gfx, _cursor);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -167,7 +170,7 @@ void StarkEngine::mainLoop() {
 				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-				_cursor->handleClick();
+				_ui->notifyClick();
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
@@ -207,7 +210,7 @@ void StarkEngine::updateDisplayScene() {
 
 	// Render the current scene
 	Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
-	_cursor->handleMouseOver(renderEntries);
+	_ui->update(renderEntries);
 	_scene->render(renderEntries);
 
 	_dialogPlayer->renderText();
