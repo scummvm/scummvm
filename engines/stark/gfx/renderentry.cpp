@@ -21,11 +21,15 @@
  */
 
 #include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/smacker.h"
 #include "engines/stark/visual/visual.h"
+
+// TODO: Refactor this logic elsewhere
+#include "engines/stark/resources/item.h"
 
 namespace Stark {
 namespace Gfx {
@@ -85,8 +89,13 @@ bool RenderEntry::containsPoint(Common::Point point) {
 	// TODO: This doesn't consider 3D at all.
 	// TODO: This is just a quick fix, we still need to calculate the position, after any scaling and 3D transforms.
 	// TODO: We more or less ignore Y for now, since all we consider is the position-point.
-	if (abs(_position.x - point.x) < 20 && (_position.y - point.y) < 20) {
-		return true;
+
+	if (getOwner() && getOwner()->getType() == Resources::Type::kItem) {
+		Resources::Item *item = (Resources::Item*)getOwner();
+		point.x -= _position.x;
+		point.y -= _position.y;
+		point.y -= Gfx::Driver::kTopBorderHeight; // Adjust for the top part.
+		return item->containsPoint(point);
 	}
 	return false;
 }

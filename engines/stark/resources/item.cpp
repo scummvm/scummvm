@@ -167,6 +167,14 @@ Visual *ItemVisual::getVisual() {
 	return anim->getVisual();
 }
 
+bool ItemVisual::containsPoint(Common::Point point) {
+	Anim *anim = getAnim();
+	if (anim) {
+		return anim->containsPoint(point);
+	}
+	return false;
+}
+
 ItemSub13::~ItemSub13() {
 }
 

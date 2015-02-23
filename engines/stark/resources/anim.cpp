@@ -137,6 +137,13 @@ void AnimImages::printData() {
 	debug("field_3C: %f", _field_3C);
 }
 
+bool AnimImages::containsPoint(Common::Point point) {
+	if (_currentFrameImage) {
+		return _currentFrameImage->polygonContainsPoint(point);
+	}
+	return false;
+}
+
 AnimSub2::~AnimSub2() {
 }
 

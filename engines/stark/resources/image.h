@@ -64,6 +64,8 @@ public:
 	/** Initialize the renderable for the image */
 	virtual Visual *getVisual();
 
+	bool polygonContainsPoint(Common::Point point);
+
 protected:
 	void printData() override;
 

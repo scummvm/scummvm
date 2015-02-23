@@ -29,6 +29,9 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/visual/image.h"
 
+#include "math/line2d.h"
+#include "math/vector2d.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -98,6 +101,37 @@ void Image::printData() {
 		}
 		debug("polygon %d: %s", i, description.c_str());
 	}
+}
+
+bool Image::polygonContainsPoint(Common::Point point) {
+	Math::Vector2d prevPoint;
+	Math::Segment2d testLine(Math::Vector2d(point.x, point.y), Math::Vector2d(-1, -1));
+	int intersectCount = 0;
+	// TODO: Should we actually check all the polygons this way?
+	for (uint32 i = 0; i < _polygons.size(); i++) {
+		for (uint32 j = 0; j < _polygons[i].size(); j++) {
+			Math::Vector2d curPoint = Math::Vector2d(_polygons[i][j].x, _polygons[i][j].y);
+			if (j == 0) {
+				// Special case the line created between the last point and the first
+				if (_polygons[i].size() > 1) {
+					prevPoint = Math::Vector2d(_polygons[i][_polygons[i].size() - 1].x, _polygons[i][_polygons[i].size() - 1].y);
+				} else {
+					break;
+				}
+			}
+			Math::Segment2d l(prevPoint, curPoint);
+			if (l.intersectsSegment(testLine, nullptr)) {
+				intersectCount++;
+			}
+			prevPoint = curPoint;
+		}
+	}
+
+	if (intersectCount % 2 == 0) {
+		return false;
+	}
+
+	return true;
 }
 
 ImageSub23::~ImageSub23() {

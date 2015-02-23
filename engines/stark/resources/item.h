@@ -92,6 +92,7 @@ public:
 	/** Obtain the concrete instance of an item template */
 	virtual Item *getSceneInstance();
 
+	virtual bool containsPoint(Common::Point point) { return false; };
 protected:
 	void printData() override;
 
@@ -119,6 +120,7 @@ public:
 	/** Define the current animation index for the item */
 	void setAnim(int32 index);
 
+	bool containsPoint(Common::Point point) override;
 protected:
 	// Resource API
 	void printData() override;

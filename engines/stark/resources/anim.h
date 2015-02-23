@@ -84,6 +84,7 @@ public:
 	/** Check is the animation is being used by an item */
 	bool isInUse();
 
+	virtual bool containsPoint(Common::Point point) { return false; }
 protected:
 	virtual void printData() override;
 
@@ -109,6 +110,7 @@ public:
 	void selectFrame(uint32 frameIndex) override;
 	Visual *getVisual() override;
 
+	bool containsPoint(Common::Point point);
 protected:
 	void printData() override;
 
