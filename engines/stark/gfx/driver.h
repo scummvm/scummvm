@@ -71,6 +71,9 @@ public:
 	 */
 	virtual VisualActor *createActorRenderer() = 0;
 
+	/** Bound a screen coordinate coord within the actual game area */
+	Common::Point getScreenPosBounded(Common::Point point);
+
 	/** Scale a coordinate from original to current coordinates */
 	Common::Point scalePoint(Common::Point point);
 	/**

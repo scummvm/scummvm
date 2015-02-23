@@ -48,7 +48,7 @@ void Cursor::init() {
 }
 
 void Cursor::setMousePosition(Common::Point pos) {
-	_mousePos = pos;
+	_mousePos = _gfx->getScreenPosBounded(pos);
 }
 
 void Cursor::render() {

@@ -95,6 +95,12 @@ Common::Rect Driver::gameViewport() const {
 	return game;
 }
 
+Common::Point Driver::getScreenPosBounded(Common::Point point) {
+	Common::Point boundedPos = point;
+	boundedPos.x = CLIP<int16>(boundedPos.x, _screenViewport.left, _screenViewport.right);
+	return boundedPos;
+}
+
 Common::Point Driver::scalePoint(Common::Point point) {
 	// Most of the engine expects 640x480 coordinates
 	Common::Point scaledPosition = point;
