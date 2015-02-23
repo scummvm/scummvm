@@ -2057,8 +2057,10 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 		char *buffer = new char[_screenWidth * _screenHeight * 4];
 
 		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-		memcpy(src.getRawBuffer(), buffer, _screenWidth * _screenHeight * 4);
-
+		byte *rawBuf = src.getRawBuffer();
+		for (int i = 0; i < _screenHeight; i++) {
+			memcpy(&(rawBuf[(_screenHeight - i - 1) * _screenWidth * 4]), &buffer[4 * _screenWidth * i], _screenWidth * 4);
+		}
 		delete[] buffer;
 	} else
 #endif
