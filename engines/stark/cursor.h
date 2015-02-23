@@ -56,14 +56,24 @@ public:
 
 	Common::Point getMousePosition() const;
 
+	enum CursorType {
+		kNone = -1,
+		kDefault = 0,
+		kActive = 3,
+		kPassive = 9
+	};
+
+	void setCursorType(CursorType type);
 	/** Check whether the current mouse position intersects some renderEntry */
 	void handleMouseOver(Gfx::RenderEntryArray renderEntries);
 private:
+	
 	Gfx::Driver *_gfx;
 
 	Common::Point _mousePos;
 	VisualImageXMG *_cursorImage;
 	Gfx::Texture *_mouseText;
+	CursorType _currentCursorType;
 };
 
 } // End of namespace Stark

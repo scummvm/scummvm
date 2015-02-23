@@ -33,7 +33,8 @@ namespace Stark {
 Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursorImage(nullptr),
-		_mouseText(nullptr) {
+		_mouseText(nullptr),
+		_currentCursorType(kNone) {
 }
 
 Cursor::~Cursor() {
@@ -41,10 +42,22 @@ Cursor::~Cursor() {
 }
 
 void Cursor::init() {
+	setCursorType(kDefault);
+}
+
+void Cursor::setCursorType(CursorType type) {
+	if (type == _currentCursorType) {
+		return;
+	}
+	_currentCursorType = type;
+	if (type == kNone) {
+		_cursorImage = nullptr;
+		return;
+	}
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 
 	// TODO: This is just a quick solution to get anything drawn.
-	_cursorImage = staticProvider->getCursorImage(0);
+	_cursorImage = staticProvider->getCursorImage(_currentCursorType);
 }
 
 void Cursor::setMousePosition(Common::Point pos) {
@@ -53,8 +66,9 @@ void Cursor::setMousePosition(Common::Point pos) {
 
 void Cursor::render() {
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
-
-	_cursorImage->render(_mousePos);
+	if (_cursorImage) {
+		_cursorImage->render(_mousePos);
+	}
 	if (_mouseText) {
 		// TODO: Should probably query the image for the width of the cursor
 		_gfx->drawSurface(_mouseText, Common::Point(_mousePos.x + 20, _mousePos.y));
@@ -84,7 +98,10 @@ void Cursor::handleMouseOver(Gfx::RenderEntryArray renderEntries) {
 	}
 	if (mouseOverEntry) {
 		_mouseText = _gfx->createTextureFromString(mouseOverEntry->getOwner()->getName(), 0xFFFF0000);
+		// TODO: This is not the entire story for selecting this, so for now we set the cursor to passive
+		setCursorType(kPassive);
 	} else {
+		setCursorType(kDefault);
 		delete _mouseText;
 		_mouseText = nullptr;
 	}
