@@ -143,7 +143,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm),
 	_flipUIFrame = 0;
 	_face1UIFrame = 0;
 	_face2UIFrame = 0;
-	_batUIFrame = 0;
+	_levitateUIFrame = 0;
 	_spotDoorsUIFrame = 0;
 	_dangerSenseUIFrame = 0;
 	_face1State = _face2State = 0;
@@ -327,11 +327,11 @@ void Interface::perform() {
 	switch (_buttonValue) {
 	case Common::KEYCODE_TAB:
 		// Stop mosters doing any movement
-		_vm->_moveMonsters = false;
+		combat._moveMonsters = false;
 		if (ControlPanel::show(_vm) == -1) {
 			_vm->_quitMode = 2;
 		} else {
-			_vm->_moveMonsters = 1;
+			combat._moveMonsters = 1;
 		}
 		break;
 
@@ -488,9 +488,9 @@ void Interface::perform() {
 	case Common::KEYCODE_EQUALS:
 	case Common::KEYCODE_KP_EQUALS:
 		// Toggle minimap
-		_vm->_moveMonsters = false;
+		combat._moveMonsters = false;
 		party._automapOn = !party._automapOn;
-		_vm->_moveMonsters = true;
+		combat._moveMonsters = true;
 		break;
 
 	case Common::KEYCODE_b:
@@ -547,9 +547,9 @@ void Interface::perform() {
 
 	case Common::KEYCODE_i:
 		// Show Info dialog
-		_vm->_moveMonsters = false;
+		combat._moveMonsters = false;
 		InfoDialog::show(_vm);
-		_vm->_moveMonsters = true;
+		combat._moveMonsters = true;
 		break;
 
 	case Common::KEYCODE_m:
@@ -1237,7 +1237,7 @@ void Interface::draw3d(bool updateFlag) {
 	if (_flipUIFrame == 0)
 		_flipWater = !_flipWater;
 	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_COMBAT) &&
-		!combat._monstersAttacking && _vm->_moveMonsters) {
+		!combat._monstersAttacking && combat._moveMonsters) {
 		if (--_tillMove == 0)
 			combat.moveMonsters();
 	}
@@ -1270,7 +1270,7 @@ void Interface::draw3d(bool updateFlag) {
 	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 			|| combat._attackMonsters[2] != -1) {
 		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) && 
-				!combat._monstersAttacking && !_charsShooting && _vm->_moveMonsters) {
+				!combat._monstersAttacking && !_charsShooting && combat._moveMonsters) {
 			doCombat();
 			if (scripts._eventSkipped)
 				scripts.checkEvents();
@@ -1743,16 +1743,18 @@ void Interface::drawMiniMap() {
  * Draw the display borders
  */
 void Interface::assembleBorder() {
+	Combat &combat = *_vm->_combat;
 	Resources &res = *_vm->_resources;
 	Screen &screen = *_vm->_screen;
 
 	// Draw the outer frame
 	res._globalSprites.draw(screen._windows[0], 0, Common::Point(8, 8));
 
-	// Draw the animating bat character used to show when levitate is active
-	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateActive ? _batUIFrame + 16 : 16,
+	// Draw the animating bat character on the left screen edge to indicate
+	// that the party is being levitated
+	_borderSprites.draw(screen._windows[0], _vm->_party->_levitateActive ? _levitateUIFrame + 16 : 16,
 		Common::Point(0, 82));
-	_batUIFrame = (_batUIFrame + 1) % 12;
+	_levitateUIFrame = (_levitateUIFrame + 1) % 12;
 
 	// Draw UI element to indicate whether can spot hidden doors
 	_borderSprites.draw(screen,
@@ -1762,7 +1764,7 @@ void Interface::assembleBorder() {
 
 	// Draw UI element to indicate whether can sense danger
 	_borderSprites.draw(screen,
-		(_vm->_dangerSenseAllowed && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
+		(combat._dangerPresent && _vm->_party->checkSkill(DANGER_SENSE)) ? _spotDoorsUIFrame + 40 : 40,
 		Common::Point(107, 9));
 	_dangerSenseUIFrame = (_dangerSenseUIFrame + 1) % 12;
 

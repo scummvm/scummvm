@@ -153,9 +153,7 @@ public:
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
 	int _quitMode;
-	bool _dangerSenseAllowed;
 	bool _noDirectionSense;
-	bool _moveMonsters;
 	bool _startupWindowActive;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);

@@ -115,7 +115,7 @@ public:
 	int _face1UIFrame, _face2UIFrame;
 	int _spotDoorsUIFrame;
 	int _dangerSenseUIFrame;
-	int _batUIFrame;
+	int _levitateUIFrame;
 	bool _upDoorText;
 	Common::String _screenText;
 	byte _tillMove;

@@ -52,9 +52,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_town = nullptr;
 	_eventData = nullptr;
 	_quitMode = 0;
-	_dangerSenseAllowed = false;
 	_noDirectionSense = false;
-	_moveMonsters = false;
 	_mode = MODE_0;
 	_startupWindowActive = false;
 }
@@ -315,13 +313,13 @@ void XeenEngine::play() {
 	_screen->_windows[0].update();
 	_events->setCursor(0);
 
-	_moveMonsters = true;
+	_combat->_moveMonsters = true;
 	if (_mode == MODE_0) {
 		_mode = MODE_1;
 		_screen->fadeIn(4);
 	}
 
-	_moveMonsters = true;
+	_combat->_moveMonsters = true;
 
 	gameLoop();
 }

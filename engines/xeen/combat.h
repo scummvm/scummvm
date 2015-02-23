@@ -118,6 +118,8 @@ public:
 	int _attackWeaponId;
 	File _missVoc, _pow1Voc;
 	int _hitChanceBonus;
+	bool _dangerPresent;
+	bool _moveMonsters;
 public:
 	Combat(XeenEngine *vm);
 

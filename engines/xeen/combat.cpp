@@ -123,6 +123,8 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_attackWeapon = nullptr;
 	_attackWeaponId = 0;
 	_hitChanceBonus = 0;
+	_dangerPresent = false;
+	_moveMonsters = false;
 }
 
 void Combat::clear() {
@@ -437,7 +439,7 @@ void Combat::moveMonsters() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 
-	if (!_vm->_moveMonsters)
+	if (!_moveMonsters)
 		return;
 
 	intf._tillMove = 0;
@@ -448,7 +450,7 @@ void Combat::moveMonsters() {
 	Common::fill(&_monsterMoved[0], &_monsterMoved[MAX_NUM_MONSTERS], false);
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
 	Common::fill(&_gmonHit[0], &_gmonHit[36], -1);
-	_vm->_dangerSenseAllowed = false;
+	_dangerPresent = false;
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
@@ -469,7 +471,7 @@ void Combat::moveMonsters() {
 					MonsterStruct &monsterData = map._monsterData[monster._spriteId];
 
 					if (pt == monster._position) {
-						_vm->_dangerSenseAllowed = true;
+						_dangerPresent = true;
 						if ((monster._isAttacking || _vm->_mode == MODE_SLEEPING)
 								&& !_monsterMoved[idx]) {
 							if (party._mazePosition.x == pt.x || party._mazePosition.y == pt.y) {
@@ -704,7 +706,7 @@ void Combat::moveMonster(int monsterId, const Common::Point &pt) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 
-	if (_monsterMap[pt.y][pt.x] < 3 && !monster._damageType && _vm->_moveMonsters) {
+	if (_monsterMap[pt.y][pt.x] < 3 && !monster._damageType && _moveMonsters) {
 		++_monsterMap[pt.y][pt.x];
 		--_monsterMap[monster._position.y][monster._position.x];
 		monster._position = pt;

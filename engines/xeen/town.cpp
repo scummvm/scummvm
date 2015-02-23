@@ -217,7 +217,7 @@ int Town::townAction(int actionId) {
 	intf._face1UIFrame = intf._face2UIFrame = 0;
 	intf._dangerSenseUIFrame = 0; 
 	intf._spotDoorsUIFrame = 0;
-	intf._batUIFrame = 0;
+	intf._levitateUIFrame = 0;
 
 	_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 	if (actionId == 0 && isDarkCc) {
@@ -1148,7 +1148,7 @@ void Town::drawTownAnim(bool flag) {
 		intf._face2UIFrame = 0;
 		intf._dangerSenseUIFrame = 0;
 		intf._spotDoorsUIFrame = 0;
-		intf._batUIFrame = 0;
+		intf._levitateUIFrame = 0;
 
 		intf.assembleBorder();
 	}

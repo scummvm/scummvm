@@ -151,7 +151,7 @@ int Spells::castSpell(Character *c, int spellId) {
 		}
 	}
 
-	_vm->_moveMonsters = 1;
+	combat._moveMonsters = 1;
 	intf._tillMove = oldTillMove;
 	return result;
 }
