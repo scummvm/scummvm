@@ -104,11 +104,17 @@ void Image::printData() {
 }
 
 bool Image::polygonContainsPoint(Common::Point point) {
+	return (indexForPoint(point) != -1);
+}
+
+int Image::indexForPoint(Common::Point point) {
 	Math::Vector2d prevPoint;
 	Math::Segment2d testLine(Math::Vector2d(point.x, point.y), Math::Vector2d(-1, -1));
 	int intersectCount = 0;
-	// TODO: Should we actually check all the polygons this way?
+	// TODO: This doesn't necessarily get the innermost polygon
+	int index = -1;
 	for (uint32 i = 0; i < _polygons.size(); i++) {
+		intersectCount = 0;
 		for (uint32 j = 0; j < _polygons[i].size(); j++) {
 			Math::Vector2d curPoint = Math::Vector2d(_polygons[i][j].x, _polygons[i][j].y);
 			if (j == 0) {
@@ -125,13 +131,12 @@ bool Image::polygonContainsPoint(Common::Point point) {
 			}
 			prevPoint = curPoint;
 		}
+		if (intersectCount % 2 != 0) {
+			index = i;
+		}
 	}
 
-	if (intersectCount % 2 == 0) {
-		return false;
-	}
-
-	return true;
+	return index;
 }
 
 ImageSub23::~ImageSub23() {

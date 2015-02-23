@@ -165,6 +165,8 @@ void StarkEngine::mainLoop() {
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);
+			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
+				_cursor->handleClick();
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);

@@ -144,6 +144,13 @@ bool AnimImages::containsPoint(Common::Point point) {
 	return false;
 }
 
+int AnimImages::indexForPoint(Common::Point point) {
+	if (_currentFrameImage) {
+		return _currentFrameImage->indexForPoint(point);
+	}
+	return -1;
+}
+
 AnimSub2::~AnimSub2() {
 }
 

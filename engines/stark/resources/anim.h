@@ -85,6 +85,7 @@ public:
 	bool isInUse();
 
 	virtual bool containsPoint(Common::Point point) { return false; }
+	virtual int indexForPoint(Common::Point point) { return -1; }
 protected:
 	virtual void printData() override;
 
@@ -111,6 +112,7 @@ public:
 	Visual *getVisual() override;
 
 	bool containsPoint(Common::Point point);
+	int indexForPoint(Common::Point point);
 protected:
 	void printData() override;
 

@@ -175,6 +175,14 @@ bool ItemVisual::containsPoint(Common::Point point) {
 	return false;
 }
 
+int ItemVisual::indexForPoint(Common::Point point) {
+	Anim *anim = getAnim();
+	if (anim) {
+		return anim->indexForPoint(point);
+	}
+	return -1;
+}
+
 ItemSub13::~ItemSub13() {
 }
 

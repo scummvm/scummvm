@@ -66,6 +66,8 @@ public:
 
 	bool polygonContainsPoint(Common::Point point);
 
+	/** Get the pat-table index for a given point */
+	int indexForPoint(Common::Point);
 protected:
 	void printData() override;
 

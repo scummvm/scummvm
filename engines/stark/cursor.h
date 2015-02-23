@@ -66,6 +66,7 @@ public:
 	void setCursorType(CursorType type);
 	/** Check whether the current mouse position intersects some renderEntry */
 	void handleMouseOver(Gfx::RenderEntryArray renderEntries);
+	void handleClick();
 private:
 	
 	Gfx::Driver *_gfx;
@@ -73,6 +74,7 @@ private:
 	Common::Point _mousePos;
 	VisualImageXMG *_cursorImage;
 	Gfx::Texture *_mouseText;
+	Gfx::RenderEntry *_mouseOverEntry;
 	CursorType _currentCursorType;
 };
 

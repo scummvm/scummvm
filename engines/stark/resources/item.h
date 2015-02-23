@@ -93,6 +93,7 @@ public:
 	virtual Item *getSceneInstance();
 
 	virtual bool containsPoint(Common::Point point) { return false; };
+	virtual int indexForPoint(Common::Point point) { return -1; };
 protected:
 	void printData() override;
 
@@ -121,6 +122,7 @@ public:
 	void setAnim(int32 index);
 
 	bool containsPoint(Common::Point point) override;
+	int indexForPoint(Common::Point point) override;
 protected:
 	// Resource API
 	void printData() override;

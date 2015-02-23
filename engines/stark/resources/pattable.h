@@ -35,6 +35,8 @@ class XRCReadStream;
 
 namespace Resources {
 
+class Script;
+
 class PATTable : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kPATTable;
@@ -48,6 +50,8 @@ public:
 
 	PATTable(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~PATTable();
+
+	Script *getScriptForAction(ActionType action);
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;

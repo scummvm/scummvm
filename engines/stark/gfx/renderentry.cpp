@@ -86,6 +86,10 @@ bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 }
 
 bool RenderEntry::containsPoint(Common::Point point) {
+	return indexForPoint(point) != -1;
+}
+
+int RenderEntry::indexForPoint(Common::Point point) {
 	// TODO: This doesn't consider 3D at all.
 	// TODO: This is just a quick fix, we still need to calculate the position, after any scaling and 3D transforms.
 	// TODO: We more or less ignore Y for now, since all we consider is the position-point.
@@ -95,7 +99,7 @@ bool RenderEntry::containsPoint(Common::Point point) {
 		point.x -= _position.x;
 		point.y -= _position.y;
 		point.y -= Gfx::Driver::kTopBorderHeight; // Adjust for the top part.
-		return item->containsPoint(point);
+		return item->indexForPoint(point);
 	}
 	return false;
 }

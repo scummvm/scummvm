@@ -55,8 +55,9 @@ public:
 
 	/** Checks whether the render entry will draw anything to a specific point */
 	bool containsPoint(Common::Point point);
+	int indexForPoint(Common::Point point);
 	/** Gets the owner-object */
-	const Resources::Object *getOwner() const { return _owner; }
+	Resources::Object *getOwner() { return _owner; }
 	/** Compare two render entries by their sort keys */
 	static bool compare(const RenderEntry *x, const RenderEntry *y);
 

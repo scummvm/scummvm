@@ -21,6 +21,7 @@
  */
 
 #include "engines/stark/resources/pattable.h"
+#include "engines/stark/resources/script.h"
 
 #include "engines/stark/formats/xrc.h"
 
@@ -56,6 +57,25 @@ void PATTable::printData() {
 		debug("entry[%d].scriptIndex: %d", i, _entries[i]._scriptIndex);
 	}
 	debug("field_2C: %d", _field_2C);
+}
+
+Script *PATTable::getScriptForAction(ActionType action) {
+	switch (action) {
+		case kActionUse:
+		case kActionLook:
+		case kActionTalk:
+		case kActionExit:
+			break;
+		default:
+			error("Unhandled action type for PAT");
+	}
+	for (int i = 0; i < _entries.size(); i++) {
+		if (_entries[i]._actionType == action) {
+			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
+			return script;
+		}
+	}
+	return nullptr;
 }
 
 } // End of namespace Resources
