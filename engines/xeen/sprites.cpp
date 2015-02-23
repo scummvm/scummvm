@@ -115,7 +115,7 @@ void SpriteResource::clear() {
 /**
  * Draws a frame using data at a specific offset in the sprite resource
  */
-void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, 
+void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
 		const Common::Rect &bounds, int flags, int scale) {
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
@@ -132,6 +132,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	if (newScale == 0)
 		return;
 	setupScaling(newScale, xOffset + width, yOffset + height);
+
+	Common::Point destPos = pt;
+	destPos.x += (xOffset + width - _scaledWidth) / 2;
 
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;

@@ -53,7 +53,7 @@ private:
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, int flags = 0, int scale = 0);
 
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, 
+	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
 		const Common::Rect &bounds, int flags, int scale);
 
 	void setupScaling(int scale, int frameWidth, int frameHeight);
