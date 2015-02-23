@@ -65,8 +65,6 @@ bool initAudio(void);
 
 void freeAudio(void);
 
-void initSampleRate(uint16 SampleSpeed);
-
 bool musicBufferEmpty(uint16 i);
 
 void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed);

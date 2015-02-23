@@ -219,8 +219,6 @@ void Music::startMusic(bool startatbegin) {
 		_leftinfile  = _filelength;
 	}
 
-	initSampleRate(SAMPLESPEED);
-
 	_musicPlaying  = 0;
 	_musicOnBuffer = 0;
 	_musicFilledTo = _manyBuffers - 1;

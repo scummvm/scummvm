@@ -81,8 +81,6 @@ bool readDiff(bool playonce);
 
 void diffNextFrame(void);
 
-void playCntMusic(void);
-
 void readSound(void);
 
 void stopDiff(void);
@@ -90,8 +88,6 @@ void stopDiff(void);
 void stopDiffEnd(void);
 
 void stopSound(void);
-
-void diffSetMusic(void);
 
 } // End of namespace Lab
 

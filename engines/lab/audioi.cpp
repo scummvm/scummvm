@@ -87,20 +87,6 @@ bool initAudio(void) {
 }
 
 
-void initSampleRate(uint16 SampleSpeed) {
-	flushAudio();
-
-	if (SampleSpeed < 4000)
-		SampleSpeed = 4000;
-
-	//firstblock.sample_rate = SampleSpeed;
-	//firstblock.pack_type = AUDIO_S16; // SOUND_MONO | SOUND_16BIT;  // 16-bit mono sample
-	// TODO: 8-bit mono sample for DOS
-}
-
-
-
-
 bool musicBufferEmpty(uint16 i) {
 	// TODO: Multiple streams
 	return !g_lab->_mixer->isSoundHandleActive(g_musicHandle);
@@ -114,10 +100,6 @@ void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed
 
 	if (SampleSpeed < 4000)
 		SampleSpeed = 4000;
-
-	firstblock.sample_rate = SampleSpeed;
-	firstblock.pack_type = SOUND_MONO | SOUND_16BIT;  // 16-bit mono sample
-	// TODO: 8-bit mono sample for DOS
 
 	tempblock = firstblock;
 	tempblock.sel_data = Ptr;
@@ -207,8 +189,6 @@ void playMusic(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, voi
 	if (SampleSpeed < 4000)
 		SampleSpeed = 4000;
 
-	//firstblock.sample_rate = SampleSpeed;
-	//firstblock.pack_type = SOUND_MONO | SOUND_16BIT;  // 16-bit mono sample
 	// TODO: 8-bit mono sample for DOS
 	//firstblock.len = Length;
 	bufnum = 0;
