@@ -62,25 +62,17 @@ void Cursor::render() {
 }
 
 Common::Point Cursor::getMousePosition() const {
-	Common::Rect viewport = _gfx->getScreenViewport();
-
 	// The rest of the engine expects 640x480 coordinates
-	Common::Point scaledPosition = _mousePos;
-	scaledPosition.x -= viewport.left;
-	scaledPosition.y -= viewport.top;
-	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, viewport.width());
-	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, viewport.height());
-	scaledPosition.x *= Gfx::Driver::kOriginalWidth / (float)viewport.width();
-	scaledPosition.y *= Gfx::Driver::kOriginalHeight / (float)viewport.height();
-
-	return scaledPosition;
+	return _gfx->scalePoint(_mousePos);
 }
 
 void Cursor::handleMouseOver(Gfx::RenderEntryArray renderEntries) {
 	Gfx::RenderEntryArray::iterator element = renderEntries.begin();
 	Gfx::RenderEntry *mouseOverEntry = nullptr;
+	// We need this scaled. (Optionally, if we want to scale the cursor, we can move the scaling to the setMousePosition-function)
+	Common::Point mousePos = getMousePosition();
 	while (element != renderEntries.end()) {
-		if ((*element)->containsPoint(_mousePos)) {
+		if ((*element)->containsPoint(mousePos)) {
 			if (!mouseOverEntry) {
 				mouseOverEntry = *element;
 			// This assumes that lower sort keys are more important than higher sortkeys.

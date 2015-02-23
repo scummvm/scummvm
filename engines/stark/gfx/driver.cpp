@@ -96,20 +96,16 @@ Common::Rect Driver::gameViewport() const {
 }
 
 Common::Point Driver::scalePoint(Common::Point point) {
-	double factorX = (double(kOriginalWidth) / _screenViewport.width());
-	double factorY = (double(kOriginalHeight) / _screenViewport.height());
+	// Most of the engine expects 640x480 coordinates
+	Common::Point scaledPosition = point;
+	scaledPosition.x -= _screenViewport.left;
+	scaledPosition.y -= _screenViewport.top;
+	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, _screenViewport.width());
+	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, _screenViewport.height());
+	scaledPosition.x *= Gfx::Driver::kOriginalWidth / (float)_screenViewport.width();
+	scaledPosition.y *= Gfx::Driver::kOriginalHeight / (float)_screenViewport.height();
 
-	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
-		point.x -= _screenViewport.left;
-		// Bound the cursor inside the actually drawn area.
-		point.x = MAX<int32>(point.x, 0);
-		point.x = MIN<int32>(point.x, _screenViewport.right);
-	}
-
-	point.x *= factorX;
-	point.y *= factorY;
-
-	return point;
+	return scaledPosition;
 }
 
 } // End of namespace Gfx
