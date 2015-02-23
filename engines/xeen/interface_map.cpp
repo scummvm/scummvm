@@ -2760,8 +2760,8 @@ void InterfaceMap::setIndoorsObjects() {
 			} else if (_wo[20] && _wo[17]) {
 			} else if (_wo[23] && _wo[17]) {
 			} else if (!_wo[12] && !_wo[8] && _indoorList._objects9._frame == -1) {
-				_indoorList._objects9._x = INDOOR_OBJECT_X[listOffset][9];
-				_indoorList._objects9._y = MAP_OBJECT_Y[listOffset][9];
+				_indoorList._objects9._x = INDOOR_OBJECT_X[listOffset][10];
+				_indoorList._objects9._y = MAP_OBJECT_Y[listOffset][10];
 				_indoorList._objects9._frame = mazeObject._frame;
 				_indoorList._objects9._sprites = mazeObject._sprites;
 				_indoorList._objects9._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2779,8 +2779,8 @@ void InterfaceMap::setIndoorsObjects() {
 			} else if (_wo[14] && _wo[9]) {
 			} else if (_wo[19] && _wo[9]) {
 			} else if (_indoorList._objects10._frame == -1) {
-				_indoorList._objects10._x = INDOOR_OBJECT_X[listOffset][10];
-				_indoorList._objects10._y = MAP_OBJECT_Y[listOffset][10];
+				_indoorList._objects10._x = INDOOR_OBJECT_X[listOffset][9];
+				_indoorList._objects10._y = MAP_OBJECT_Y[listOffset][9];
 				_indoorList._objects10._frame = mazeObject._frame;
 				_indoorList._objects10._sprites = mazeObject._sprites;
 				_indoorList._objects10._flags &= ~SPRFLAG_HORIZ_FLIPPED;
