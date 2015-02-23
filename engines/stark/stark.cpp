@@ -120,6 +120,7 @@ Common::Error StarkEngine::run() {
 	services.randomSource = _randomSource;
 	services.scene = _scene;
 	services.staticProvider = _staticProvider;
+	services.userInterface = _userInterface;
 
 	// Load global resources
 	_resourceProvider->initGlobal();
