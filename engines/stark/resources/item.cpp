@@ -176,6 +176,7 @@ bool ItemVisual::containsPoint(Common::Point point) {
 }
 
 int ItemVisual::indexForPoint(Common::Point point) {
+	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
 		return anim->indexForPoint(point);

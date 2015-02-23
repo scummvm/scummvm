@@ -30,6 +30,7 @@
 
 // TODO: Refactor this logic elsewhere
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/anim.h"
 
 namespace Stark {
 namespace Gfx {
@@ -94,12 +95,18 @@ int RenderEntry::indexForPoint(Common::Point point) {
 	// TODO: This is just a quick fix, we still need to calculate the position, after any scaling and 3D transforms.
 	// TODO: We more or less ignore Y for now, since all we consider is the position-point.
 
-	if (getOwner() && getOwner()->getType() == Resources::Type::kItem) {
-		Resources::Item *item = (Resources::Item*)getOwner();
+	// HACK: Since we lack Subtype2
+	if (getOwner() && (getOwner()->getType() == Resources::Type::kItem || getOwner()->getType() == Resources::Type::kAnim)) {
 		point.x -= _position.x;
 		point.y -= _position.y;
 		point.y -= Gfx::Driver::kTopBorderHeight; // Adjust for the top part.
-		return item->indexForPoint(point);
+		if (getOwner()->getType() == Resources::Type::kItem) {
+			Resources::Item *item = (Resources::Item*)getOwner();
+			return item->indexForPoint(point);
+		} else if (getOwner()->getType() == Resources::Type::kAnim) { // HACK Until we get Subtype2
+			Resources::Anim *anim = (Resources::Anim*)getOwner();
+			return anim->indexForPoint(point);
+		}
 	}
 	return false;
 }

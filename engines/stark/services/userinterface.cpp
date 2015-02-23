@@ -36,6 +36,7 @@
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
+#include "engines/stark/resources/item.h"
 
 #include "engines/stark/visual/image.h"
 #include "engines/stark/actionmenu.h"
@@ -154,6 +155,9 @@ Resources::Object *UserInterface::getObjectForRenderEntryAtPosition(Common::Poin
 		// HACK: We don't have ItemSub2 yet.
 		if (owner->getType() != Resources::Type::kAnim) {
 			error("Owner of render entry should be an item, was: %s", owner->getType().getName());
+		} else if (owner->getType() == Resources::Type::kAnim) {
+			// HACK
+			owner = owner->findParent<Resources::Item>();
 		}
 	}
 	int index = entry->indexForPoint(pos);
@@ -170,7 +174,12 @@ Resources::Object *UserInterface::getObjectForRenderEntryAtPosition(Common::Poin
 
 Common::String UserInterface::getMouseHintForObject(Resources::Object *object) {
 	if (object) {
-		return object->getName();
+		Resources::Item *item = object->findParent<Resources::Item>();
+		if (item) {
+			return item->getName();
+		} else {
+			return object->getName();
+		}
 	} else {
 		return "";
 	}
