@@ -44,13 +44,6 @@ public:
 
 	void create(XSurface *s, const Common::Rect &bounds);
 
-	void transBlitTo(XSurface &dest) const;
-
-	void transBlitTo(XSurface &dest, const Common::Point &destPos) const;
-
-	void transBlitTo(XSurface &dest, const Common::Point &destPos,
-		int scale, int transparentColor);
-
 	void blitTo(XSurface &dest, const Common::Point &destPos) const;
 
 	void blitTo(XSurface &dest) const;

@@ -45,14 +45,20 @@ private:
 	Common::Array<IndexEntry> _index;
 	int32 _filesize;
 	byte *_data;
+	bool _lineDist[320];
+	int _scaledWidth, _scaledHeight;
 
 	void load(Common::SeekableReadStream &f);
 
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, int flags = 0, int scale = 0) const;
+		const Common::Rect &bounds, int flags = 0, int scale = 0);
 
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &destPos, 
-		const Common::Rect &bounds, int flags) const;
+		const Common::Rect &bounds, int flags, int scale);
+
+	void setupScaling(int scale, int frameWidth, int frameHeight);
+
+	int getScaledValue(int xy);
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
@@ -68,12 +74,12 @@ public:
 	void clear();
 
 	void draw(XSurface &dest, int frame, const Common::Point &destPos, 
-		int flags = 0, int scale = 0) const;
+		int flags = 0, int scale = 0);
 
 	void draw(Window &dest, int frame, const Common::Point &destPos,
-		int flags = 0, int scale = 0) const;
+		int flags = 0, int scale = 0);
 
-	void draw(XSurface &dest, int frame) const;
+	void draw(XSurface &dest, int frame);
 
 	int size() const { return _index.size(); }
 
