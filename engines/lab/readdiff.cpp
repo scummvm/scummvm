@@ -125,7 +125,7 @@ void blackScreen() {
 /*****************************************************************************/
 /* Changes the front screen to white.                                        */
 /*****************************************************************************/
-void whiteScreen(void) {
+void whiteScreen() {
 	memset(blackbuffer, 255, 248 * 3);
 	writeColorRegs(blackbuffer, 8, 248);
 }
@@ -149,7 +149,7 @@ static byte *Buffer, temp[5];
 static bool FirstThru = true, donepal   = false;
 static byte *storagefordifffile, * *difffile = &storagefordifffile;
 
-void diffNextFrame(void) {
+void diffNextFrame() {
 	if (header == 65535)  /* Already done. */
 		return;
 
@@ -340,7 +340,7 @@ void diffNextFrame(void) {
 /*****************************************************************************/
 /* A separate task launched by readDiff.  Plays the DIFF.                    */
 /*****************************************************************************/
-void playDiff(void) {
+void playDiff() {
 	processed = 0L;
 	WaitSec   = 0L;
 	WaitMicros = 0L;
@@ -445,7 +445,7 @@ void playDiff(void) {
 /*****************************************************************************/
 /* Stops an animation from running.                                          */
 /*****************************************************************************/
-void stopDiff(void) {
+void stopDiff() {
 	if (IsPlaying) {
 		StopPlaying = true;
 
@@ -464,7 +464,7 @@ void stopDiff(void) {
 /*****************************************************************************/
 /* Stops an animation from running.                                          */
 /*****************************************************************************/
-void stopDiffEnd(void) {
+void stopDiffEnd() {
 	if (IsPlaying) {
 		StopPlayingEnd = true;
 
@@ -480,7 +480,7 @@ void stopDiffEnd(void) {
 /*****************************************************************************/
 /* Stops the continuous sound from playing.                                  */
 /*****************************************************************************/
-void stopSound(void) {
+void stopSound() {
 	stopsound = true;
 }
 
@@ -500,7 +500,7 @@ bool readDiff(bool playonce) {
 static byte *mstart;
 
 
-void readSound(void) {
+void readSound() {
 	uint32 header_ = 0, size_;
 	uint16 samplespeed_;
 //  uint16 numchunks = 1;

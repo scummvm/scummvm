@@ -51,7 +51,7 @@ static char *CurMusic, *startMusic;
 static uint32 StartMusicLen;
 static Audio::SoundHandle g_musicHandle;
 
-void freeAudio(void) {
+void freeAudio() {
 	if (!DoMusic)
 		return;
 
@@ -61,7 +61,7 @@ void freeAudio(void) {
 
 
 
-bool initAudio(void) {
+bool initAudio() {
 	if (!DoMusic)
 		return true;
 
@@ -110,7 +110,7 @@ void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed
 }
 
 
-void updateSoundBuffers(void) {
+void updateSoundBuffers() {
 	if (!DoMusic)
 		return;
 
@@ -166,7 +166,7 @@ void updateSoundBuffers(void) {
 
 
 
-void flushAudio(void) {
+void flushAudio() {
 	if (!DoMusic)
 		return;
 

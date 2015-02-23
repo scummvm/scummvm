@@ -217,7 +217,7 @@ static uint16 mapScaleY(uint16 y) {
 /*****************************************************************************/
 /* Loads in the map data.                                                    */
 /*****************************************************************************/
-static bool loadMapData(void) {
+static bool loadMapData() {
 	byte **buffer, Temp[5];
 	int32 Size;
 	Gadget *gptr;
@@ -892,7 +892,7 @@ void processMap(uint16 CurRoom) {
 /*****************************************************************************/
 /* Cleans up behind itself.                                                  */
 /*****************************************************************************/
-void mapCleanUp(void) {
+void mapCleanUp() {
 	freeAllStolenMem();
 }
 

@@ -39,7 +39,7 @@ namespace Lab {
 extern bool IsHiRes;
 extern uint32 VGAScreenWidth, VGAScreenHeight;
 
-void mouseHideXY(void);
+void mouseHideXY();
 
 static bool LeftClick = false;
 static bool RightClick = false;
@@ -166,7 +166,7 @@ void mouse_handler(int32 flag, int32 mouseX, int32 mouseY) {
 
 
 
-void updateMouse(void) {
+void updateMouse() {
 	uint16 counter;
 	bool doUpdateDisplay = false;
 
@@ -204,7 +204,7 @@ void updateMouse(void) {
 /*****************************************************************************/
 /* Initializes the mouse.                                                    */
 /*****************************************************************************/
-bool initMouse(void) {
+bool initMouse() {
 	g_system->setMouseCursor(MouseData, MOUSE_WIDTH, MOUSE_HEIGHT, 0, 0, 0);
 	g_system->showMouse(false);
 
@@ -219,7 +219,7 @@ bool initMouse(void) {
 /*****************************************************************************/
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
-void mouseShow(void) {
+void mouseShow() {
 	mouseShowXY(CurMouseX, CurMouseY);
 
 	g_system->showMouse(true);
@@ -253,7 +253,7 @@ void mouseShowXY(uint16 MouseX, uint16 MouseY) {
 /*****************************************************************************/
 /* Hides the mouse.                                                          */
 /*****************************************************************************/
-void mouseHide(void) {
+void mouseHide() {
 	QuitMouseHandler = true;
 
 	NumHidden++;
@@ -273,7 +273,7 @@ void mouseHide(void) {
 /*****************************************************************************/
 /* Hides the mouse.                                                          */
 /*****************************************************************************/
-void mouseHideXY(void) {
+void mouseHideXY() {
 	QuitMouseHandler = true;
 
 	NumHidden++;
@@ -355,7 +355,7 @@ bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 
 
 
-Gadget *mouseGadget(void) {
+Gadget *mouseGadget() {
 	Gadget *Temp = LastGadgetHit;
 
 	LastGadgetHit = NULL;

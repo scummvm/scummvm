@@ -117,7 +117,7 @@ static uint16 combx[] = {45, 83, 129, 166, 211, 248};
 /*****************************************************************************/
 /* Draws the images of the combination lock to the display bitmap.           */
 /*****************************************************************************/
-static void doCombination(void) {
+static void doCombination() {
 	uint16 counter;
 
 	for (counter = 0; counter <= 5; counter++)
@@ -513,7 +513,7 @@ static TextFont bmfont;
 /*****************************************************************************/
 /* Does the things to properly set up the detective notes.                   */
 /*****************************************************************************/
-void doNotes(void) {
+void doNotes() {
 	char *ntext;
 
 	/* Load in the data */
@@ -546,7 +546,7 @@ void doNotes(void) {
 /* Does the things to properly set up the old west newspaper.  Assumes that  */
 /* OpenHiRes already called.                                                 */
 /*****************************************************************************/
-void doWestPaper(void) {
+void doWestPaper() {
 	char *ntext;
 	int32 FileLen, CharsPrinted;
 	uint16 y = 268;
@@ -727,7 +727,7 @@ static bool loadJournalData() {
 /*****************************************************************************/
 /* Draws the text to the back journal screen to the appropriate Page number  */
 /*****************************************************************************/
-static void drawJournalText(void) {
+static void drawJournalText() {
 	uint16 DrawingToPage = 1;
 	int32 CharsDrawn    = 0L;
 	char *CurText = journaltext;
@@ -935,7 +935,7 @@ void doJournal() {
 extern InventoryData *Inventory;
 extern uint16 RoomNum, Direction;
 
-bool saveRestoreGame(void) {
+bool saveRestoreGame() {
 	bool isOK = false;
 
 	// The original had one screen for saving/loading. We have two.
@@ -993,7 +993,7 @@ Image *MonButton, *AltMonButton, *MonQuit, *AltMonQuit, *MonBack, *AltMonBack,
 /*****************************************************************************/
 /* Makes sure that the buttons are in memory.                                */
 /*****************************************************************************/
-static void getMonImages(void) {
+static void getMonImages() {
 	byte **buffer;
 
 	resetBuffer();

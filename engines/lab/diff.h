@@ -75,19 +75,19 @@ void blackScreen();
 
 void blackAllScreen();
 
-void whiteScreen(void);
+void whiteScreen();
 
 bool readDiff(bool playonce);
 
-void diffNextFrame(void);
+void diffNextFrame();
 
-void readSound(void);
+void readSound();
 
-void stopDiff(void);
+void stopDiff();
 
-void stopDiffEnd(void);
+void stopDiffEnd();
 
-void stopSound(void);
+void stopSound();
 
 } // End of namespace Lab
 

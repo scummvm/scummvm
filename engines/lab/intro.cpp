@@ -63,7 +63,7 @@ extern int32 longcharsdrawn;
 /* Goes thru, and responds to all the intuition messages currently in the     */
 /* the message port.                                                          */
 /******************************************************************************/
-void introEatMessages(void) {
+void introEatMessages() {
 	IntuiMessage *Msg;
 
 	while (1) {
@@ -229,7 +229,7 @@ static void doPictText(const char *Filename, bool isscreen) {
 /*****************************************************************************/
 /* Does a one second delay, but checks the music while doing it.             */
 /*****************************************************************************/
-void musicDelay(void) {
+void musicDelay() {
 	int16 counter;
 
 	g_music->newCheckMusic();
@@ -268,7 +268,7 @@ static void NReadPict(const char *Filename, bool PlayOnce) {
 /*****************************************************************************/
 /* Does the introduction sequence for Labyrinth.                             */
 /*****************************************************************************/
-void introSequence(void) {
+void introSequence() {
 	uint16 counter, counter1;
 
 	DoBlack = true;

@@ -71,7 +71,7 @@ Music::Music() {
 /* Figures out which buffer is currently playing based on messages sent to   */
 /* it from the Audio device.                                                 */
 /*****************************************************************************/
-void Music::updateMusic(void) {
+void Music::updateMusic() {
 	uint16 i;
 
 	WSDL_ProcessInput(0);
@@ -125,7 +125,7 @@ void Music::fillbuffer(uint16 unit) {
 /*****************************************************************************/
 /* Figures out how many *complete* buffers of music left to play.            */
 /*****************************************************************************/
-uint16 Music::getManyBuffersLeft(void) {
+uint16 Music::getManyBuffersLeft() {
 	uint16 mp = _musicOnBuffer;
 
 	if (mp == _musicFilledTo) /* Already filled */
@@ -240,7 +240,7 @@ void Music::startMusic(bool startatbegin) {
 /*****************************************************************************/
 /* Initializes the music buffers.                                            */
 /*****************************************************************************/
-bool Music::initMusic(void) {
+bool Music::initMusic() {
 	uint16 counter;
 
 	if (!_turnMusicOn)
@@ -278,7 +278,7 @@ bool Music::initMusic(void) {
 /*****************************************************************************/
 /* Frees up the music buffers and closes the file.                           */
 /*****************************************************************************/
-void Music::freeMusic(void) {
+void Music::freeMusic() {
 	_musicOn = false;
 
 	if (_file->isOpen())
@@ -291,7 +291,7 @@ void Music::freeMusic(void) {
 /*****************************************************************************/
 /* Pauses the background music.                                              */
 /*****************************************************************************/
-void Music::pauseBackMusic(void) {
+void Music::pauseBackMusic() {
 	if (!_musicPaused && _musicOn) {
 		updateMusic();
 		_musicOn = false;
@@ -311,7 +311,7 @@ void Music::pauseBackMusic(void) {
 /*****************************************************************************/
 /* Restarts the paused background music.                                     */
 /*****************************************************************************/
-void Music::restartBackMusic(void) {
+void Music::restartBackMusic() {
 	if (_musicPaused) {
 		flushAudio();
 		_musicOn = true;
@@ -327,7 +327,7 @@ void Music::restartBackMusic(void) {
 /*****************************************************************************/
 /* Checks to see if need to fill buffers fill of music.                      */
 /*****************************************************************************/
-void Music::checkMusic(void) {
+void Music::checkMusic() {
 	updateMusic();
 
 	if (!_musicOn)
@@ -341,7 +341,7 @@ void Music::checkMusic(void) {
 /*****************************************************************************/
 /* Checks to see if need to fill buffers fill of music.                      */
 /*****************************************************************************/
-void Music::newCheckMusic(void) {
+void Music::newCheckMusic() {
 	checkMusic();
 }
 
@@ -405,7 +405,7 @@ void Music::changeMusic(const char *newmusic) {
 /*****************************************************************************/
 /* Changes the background music to the original piece playing.               */
 /*****************************************************************************/
-void Music::resetMusic(void) {
+void Music::resetMusic() {
 	if (!_tFile)
 		return;
 

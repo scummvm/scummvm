@@ -59,7 +59,7 @@ static int32 MemLeftInBuffer = 0L;
 /*****************************************************************************/
 /* Allocates the memory for the room buffers.                                */
 /*****************************************************************************/
-bool initRoomBuffer(void) {
+bool initRoomBuffer() {
 	uint16 counter;
 
 	CurMarker = 0;
@@ -82,7 +82,7 @@ bool initRoomBuffer(void) {
 /*****************************************************************************/
 /* Frees the memory for the room buffers.                                    */
 /*****************************************************************************/
-void freeRoomBuffer(void) {
+void freeRoomBuffer() {
 	if (RoomBuffer)
 		free(RoomBuffer);
 }

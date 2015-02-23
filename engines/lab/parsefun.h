@@ -44,9 +44,9 @@ bool parse(const char *InputFile);
 
 /* From allocRoom.c */
 
-bool initRoomBuffer(void);
+bool initRoomBuffer();
 
-void freeRoomBuffer(void);
+void freeRoomBuffer();
 
 void allocRoom(void **Ptr, uint16 Size, uint16 RoomNum);
 

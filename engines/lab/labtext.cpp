@@ -64,7 +64,7 @@ static void setString(char **string) {
 /*****************************************************************************/
 /* Initializes everything for the Labyrinth text stuff                       */
 /*****************************************************************************/
-bool initLabText(void) {
+bool initLabText() {
 	if ((SizeOfMemChunk = sizeOfFile(LABTEXTFILE)))
 		if ((BeginOfMemChunk = (char *)calloc(SizeOfMemChunk, 1))) {
 			Common::File *file = openPartial(LABTEXTFILE);
@@ -143,7 +143,7 @@ bool initLabText(void) {
 /*****************************************************************************/
 /* Frees the memory from the Labyrinth text stuff.                           */
 /*****************************************************************************/
-void freeLabText(void) {
+void freeLabText() {
 	if (SizeOfMemChunk && BeginOfMemChunk)
 		free(BeginOfMemChunk);
 }

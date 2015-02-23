@@ -124,7 +124,7 @@ void ghoastGadget(Gadget *curgad, uint16 pencolor);
 
 void unGhoastGadget(Gadget *curgad);
 
-IntuiMessage *getMsg(void);
+IntuiMessage *getMsg();
 
 void replyMsg(void *Msg);
 

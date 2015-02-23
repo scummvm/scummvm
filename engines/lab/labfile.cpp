@@ -278,7 +278,7 @@ void skip(byte **File, uint32 skip) {
 /*****************************************************************************/
 /* Resets the internal buffers to empty.                                     */
 /*****************************************************************************/
-void resetBuffer(void) {
+void resetBuffer() {
 	uint16 RMarker;
 
 	CurMarker = 0;
@@ -314,7 +314,7 @@ bool initBuffer(uint32 BufSize, bool IsGraphicsMem) {
 /*****************************************************************************/
 /* Frees the buffer.                                                         */
 /*****************************************************************************/
-void freeBuffer(void) {
+void freeBuffer() {
 	freeAllStolenMem();
 
 	if (buffer)
@@ -335,7 +335,7 @@ void freeBuffer(void) {
 /*****************************************************************************/
 /* Clears all the buffers.                                                   */
 /*****************************************************************************/
-static void flushBuffers(void) {
+static void flushBuffers() {
 	uint16 RMarker;
 
 	RMarker = 0;
@@ -385,7 +385,7 @@ Common::File *openPartial(const char *name) {
 /*****************************************************************************/
 /* Frees all the memory stolen from the buffer.                              */
 /*****************************************************************************/
-void freeAllStolenMem(void) {
+void freeAllStolenMem() {
 	flushBuffers();
 
 	buffer = realbufferstart;

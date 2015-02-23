@@ -37,13 +37,13 @@ namespace Lab {
 
 struct Gadget;
 
-bool initMouse(void);
+bool initMouse();
 
-void updateMouse(void);
+void updateMouse();
 
-void mouseShow(void);
+void mouseShow();
 
-void mouseHide(void);
+void mouseHide();
 
 void mouseXY(uint16 *x, uint16 *y);
 
@@ -51,7 +51,7 @@ void mouseMove(uint16 x, uint16 y);
 
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton);
 
-Gadget *mouseGadget(void);
+Gadget *mouseGadget();
 
 void attachGadgetList(Gadget *GadList);
 

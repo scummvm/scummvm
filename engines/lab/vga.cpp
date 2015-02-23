@@ -100,11 +100,11 @@ void setPage(uint16 PageNum) {
 	assert(PageNum == 0);
 }
 
-void VGAStorePage(void) {
+void VGAStorePage() {
 	// does nothing in SDL
 }
 
-void VGARestorePage(void) {
+void VGARestorePage() {
 	// does nothing in SDL
 }
 
@@ -321,7 +321,7 @@ void WSDL_UpdateScreen() {
 /*****************************************************************************/
 /* Returns the base address of the current VGA display.                      */
 /*****************************************************************************/
-byte *getVGABaseAddr(void) {
+byte *getVGABaseAddr() {
 	if (VGABASEADDRESS)
 		return VGABASEADDRESS;
 

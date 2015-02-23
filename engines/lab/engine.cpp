@@ -146,7 +146,7 @@ static char initcolors[] = { '\x00', '\x00', '\x00', '\x30',
 /******************************************************************************/
 /* Draws the control panel display.                                           */
 /******************************************************************************/
-void drawPanel(void) {
+void drawPanel() {
 	mouseHide();
 
 	setAPen(3);                 /* Clear Area */
@@ -241,7 +241,7 @@ static uint16 OldMode;
 /******************************************************************************/
 /* Sets up the Labyrinth screens, and opens up the initial windows.           */
 /******************************************************************************/
-bool setUpScreens(void) {
+bool setUpScreens() {
 	uint16 counter;
 	byte *bufferstorage, **buffer = &bufferstorage;
 	Gadget *curgad;
@@ -416,7 +416,7 @@ static void perFlipGadget(uint16 GadID) {
 /******************************************************************************/
 /* Eats all the available messages.                                           */
 /******************************************************************************/
-void eatMessages(void) {
+void eatMessages() {
 	IntuiMessage *Msg;
 
 	do {
@@ -440,7 +440,7 @@ static uint16 lastmusicroom = 1;
 /******************************************************************************/
 /* Checks the music that should be playing in a particular room.              */
 /******************************************************************************/
-static void checkRoomMusic(void) {
+static void checkRoomMusic() {
 	if ((lastmusicroom == RoomNum) || !g_music->_musicOn)
 		return;
 
@@ -546,7 +546,7 @@ static bool interfaceisoff = false;
 /******************************************************************************/
 /* Turns the interface off.                                                   */
 /******************************************************************************/
-static void interfaceOff(void) {
+static void interfaceOff() {
 	if (!interfaceisoff) {
 		attachGadgetList(NULL);
 		mouseHide();
@@ -560,7 +560,7 @@ static void interfaceOff(void) {
 /******************************************************************************/
 /* Turns the interface on.                                                    */
 /******************************************************************************/
-static void interfaceOn(void) {
+static void interfaceOn() {
 	if (interfaceisoff) {
 		interfaceisoff = false;
 
@@ -711,7 +711,7 @@ static bool novesa = false, noaudio = false;
 /******************************************************************************/
 /* Processes user input events.                                               */
 /******************************************************************************/
-static void process(void) {
+static void process() {
 	IntuiMessage *Msg;
 	uint32 Class;
 

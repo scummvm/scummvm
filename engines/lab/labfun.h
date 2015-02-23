@@ -61,17 +61,17 @@ struct SaveGameHeader {
 /*------ From Audioi.c -------*/
 /*----------------------------*/
 
-bool initAudio(void);
+bool initAudio();
 
-void freeAudio(void);
+void freeAudio();
 
 bool musicBufferEmpty(uint16 i);
 
 void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed);
 
-void updateSoundBuffers(void);
+void updateSoundBuffers();
 
-void flushAudio(void);
+void flushAudio();
 
 void playMusic(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data);
 
@@ -146,7 +146,7 @@ void gadgetsOnOff(void *gptr, void *win, int32 num, bool on);
 /*---- From Intro.c ----*/
 /*----------------------*/
 
-void introSequence(void);
+void introSequence();
 
 
 
@@ -154,13 +154,13 @@ void introSequence(void);
 /*----- From Lab.c -----*/
 /*----------------------*/
 
-void eatMessages(void);
+void eatMessages();
 
-bool setUpScreens(void);
+bool setUpScreens();
 
-void drawPanel(void);
+void drawPanel();
 
-bool quitPlaying(void);
+bool quitPlaying();
 
 
 
@@ -182,11 +182,11 @@ char readChar(char **File);
 
 void skip(byte **File, uint32 skip);
 
-void resetBuffer(void);
+void resetBuffer();
 
 bool initBuffer(uint32 BufSize, bool IsGraphicsMem);
 
-void freeBuffer(void);
+void freeBuffer();
 
 
 /* Functions that borrow memory from the buffer */
@@ -195,7 +195,7 @@ bool allocFile(void **Ptr, uint32 Size, const char *fileName);
 
 void *stealBufMem(int32 Size);
 
-void freeAllStolenMem(void);
+void freeAllStolenMem();
 
 
 /* Read chunks of a file */
@@ -210,9 +210,9 @@ void closePartial(int32 File);
 /*------ From LabText.c -----*/
 /*---------------------------*/
 
-bool initLabText(void);
+bool initLabText();
 
-void freeLabText(void);
+void freeLabText();
 
 void decrypt(byte *text);
 
@@ -231,18 +231,18 @@ public:
 	Music();
 
 	byte **newOpen(const char *name);
-	bool initMusic(void);
-	void freeMusic(void);
+	bool initMusic();
+	void freeMusic();
 	void fillUpMusic(bool doit);
-	void updateMusic(void);
-	void checkMusic(void);
-	void newCheckMusic(void);
-	void closeMusic(void);
+	void updateMusic();
+	void checkMusic();
+	void newCheckMusic();
+	void closeMusic();
 	void setMusic(bool on);
-	void restartBackMusic(void);
-	void pauseBackMusic(void);
+	void restartBackMusic();
+	void pauseBackMusic();
 	void changeMusic(const char *newmusic);
-	void resetMusic(void);
+	void resetMusic();
 	void fileCheckMusic(uint32 filelength);
 
 	bool _winmusic, _doNotFileFlushAudio;
@@ -251,7 +251,7 @@ public:
 
 private:
 	void fillbuffer(uint16 unit);
-	uint16 getManyBuffersLeft(void);
+	uint16 getManyBuffersLeft();
 	void startMusic(bool startatbegin);
 
 	Common::File *_file;
@@ -340,13 +340,13 @@ void doMap(uint16 CurRoom);
 
 void doJournal();
 
-void doNotes(void);
+void doNotes();
 
-void doWestPaper(void);
+void doWestPaper();
 
 void doMonitor(char *background, char *textfile, bool isinteractive, uint16 x1, uint16 y1, uint16 x2, uint16 y2);
 
-bool saveRestoreGame(void);
+bool saveRestoreGame();
 
 
 

@@ -47,17 +47,17 @@ void getMode(uint16 *Mode);
 
 void setPage(uint16 PageNum);
 
-void VGAStorePage(void);
+void VGAStorePage();
 
-void VGARestorePage(void);
+void VGARestorePage();
 
 bool createScreen(bool HiRes);
 
-void waitTOF(void);
+void waitTOF();
 
-void quickWaitTOF(void);
+void quickWaitTOF();
 
-byte *getVGABaseAddr(void);
+byte *getVGABaseAddr();
 
 void ungetVGABaseAddr();
 

@@ -495,7 +495,7 @@ void copyLong64(uint32 *Dest, uint32 *Source, uint32 Many64) {
 /*****************************************************************************/
 /* Scrolls the display to black.                                             */
 /*****************************************************************************/
-static void doScrollBlack(void) {
+static void doScrollBlack() {
 	byte *mem, *tempmem;
 	Image Im;
 	uint16 width, height, by, nheight, CurPage;
@@ -675,7 +675,7 @@ static void doScrollWipe(char *filename) {
 /*****************************************************************************/
 /* Does the scroll bounce.  Assumes bitmap already in memory.                */
 /*****************************************************************************/
-static void doScrollBounce(void) {
+static void doScrollBounce() {
 	const uint16 *newby, *newby1;
 
 	const uint16 newbyd[5] = {5, 4, 3, 2, 1}, newby1d[8] = {3, 3, 2, 2, 2, 1, 1, 1};

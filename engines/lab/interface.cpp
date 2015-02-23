@@ -165,7 +165,7 @@ static bool keyPress(uint16 *KeyCode) {
 IntuiMessage IMessage;
 extern Gadget *ScreenGadgetList;
 
-IntuiMessage *getMsg(void) {
+IntuiMessage *getMsg() {
 	Gadget *curgad;
 	int Qualifiers;
 
