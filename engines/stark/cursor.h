@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "engines/stark/gfx/renderentry.h"
 
 namespace Stark {
 
@@ -54,11 +55,15 @@ public:
 	void setMousePosition(Common::Point pos);
 
 	Common::Point getMousePosition() const;
+
+	/** Check whether the current mouse position intersects some renderEntry */
+	void handleMouseOver(Gfx::RenderEntryArray renderEntries);
 private:
 	Gfx::Driver *_gfx;
 
 	Common::Point _mousePos;
 	VisualImageXMG *_cursorImage;
+	Gfx::Texture *_mouseText;
 };
 
 } // End of namespace Stark

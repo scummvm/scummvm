@@ -27,15 +27,17 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/visual/image.h"
-
+#include "engines/stark/resources/object.h"
 namespace Stark {
 
 Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
-		_cursorImage(nullptr) {
+		_cursorImage(nullptr),
+		_mouseText(nullptr) {
 }
 
 Cursor::~Cursor() {
+	delete _mouseText;
 }
 
 void Cursor::init() {
@@ -53,6 +55,10 @@ void Cursor::render() {
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 
 	_cursorImage->render(_mousePos);
+	if (_mouseText) {
+		// TODO: Should probably query the image for the width of the cursor
+		_gfx->drawSurface(_mouseText, Common::Point(_mousePos.x + 20, _mousePos.y));
+	}
 }
 
 Common::Point Cursor::getMousePosition() const {
@@ -68,6 +74,28 @@ Common::Point Cursor::getMousePosition() const {
 	scaledPosition.y *= Gfx::Driver::kOriginalHeight / (float)viewport.height();
 
 	return scaledPosition;
+}
+
+void Cursor::handleMouseOver(Gfx::RenderEntryArray renderEntries) {
+	Gfx::RenderEntryArray::iterator element = renderEntries.begin();
+	Gfx::RenderEntry *mouseOverEntry = nullptr;
+	while (element != renderEntries.end()) {
+		if ((*element)->containsPoint(_mousePos)) {
+			if (!mouseOverEntry) {
+				mouseOverEntry = *element;
+			// This assumes that lower sort keys are more important than higher sortkeys.
+			} else if (Gfx::RenderEntry::compare(*element, mouseOverEntry)) {
+				mouseOverEntry = *element;
+			}
+		}
+		++element;
+	}
+	if (mouseOverEntry) {
+		_mouseText = _gfx->createTextureFromString(mouseOverEntry->getOwner()->getName(), 0xFFFF0000);
+	} else {
+		delete _mouseText;
+		_mouseText = nullptr;
+	}
 }
 
 } // End of namespace Stark

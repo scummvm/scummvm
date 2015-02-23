@@ -204,6 +204,7 @@ void StarkEngine::updateDisplayScene() {
 
 	// Render the current scene
 	Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
+	_cursor->handleMouseOver(renderEntries);
 	_scene->render(renderEntries);
 
 	_dialogPlayer->renderText();

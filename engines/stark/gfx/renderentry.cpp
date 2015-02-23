@@ -81,5 +81,15 @@ bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 	return x->_sortKey < y->_sortKey;
 }
 
+bool RenderEntry::containsPoint(Common::Point point) {
+	// TODO: This doesn't consider 3D at all.
+	// TODO: This is just a quick fix, we still need to calculate the position, after any scaling and 3D transforms.
+	// TODO: We more or less ignore Y for now, since all we consider is the position-point.
+	if (abs(_position.x - point.x) < 20 && (_position.y - point.y) < 20) {
+		return true;
+	}
+	return false;
+}
+
 } // End of namespace Gfx
 } // End of namespace Stark
