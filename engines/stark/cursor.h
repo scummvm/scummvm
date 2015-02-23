@@ -60,7 +60,10 @@ public:
 		kNone = -1,
 		kDefault = 0,
 		kActive = 3,
-		kPassive = 9
+		kPassive = 9,
+		kEye = 10,
+		kHand = 11,
+		kMouth = 12
 	};
 
 	void setCursorType(CursorType type);

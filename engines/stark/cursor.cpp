@@ -108,10 +108,23 @@ void Cursor::handleMouseOver(Gfx::RenderEntryArray renderEntries) {
 			_mouseText = nullptr;
 			setCursorType(kDefault);
 		}
-		Resources::Object *object = _mouseOverEntry->getOwner()->findChildWithIndex<Resources::PATTable>(index);
-		_mouseText = _gfx->createTextureFromString(object->getName(), 0xFFFF0000);
+		Resources::PATTable *table = _mouseOverEntry->getOwner()->findChildWithIndex<Resources::PATTable>(index);
+		_mouseText = _gfx->createTextureFromString(table->getName(), 0xFFFF0000);
 		// TODO: This is not the entire story for selecting this, so for now we set the cursor to passive
-		setCursorType(kPassive);
+		if (table->getNumActions() == 1) {
+			if (table->canPerformAction(Resources::PATTable::kActionLook)) {
+				setCursorType(kEye);
+			} else if (table->canPerformAction(Resources::PATTable::kActionLook)) {
+				setCursorType(kHand);
+			} else if (table->canPerformAction(Resources::PATTable::kActionLook)) {
+				setCursorType(kMouth);
+			} else {
+				// Exit only?
+				setCursorType(kPassive);
+			}
+		} else {
+			setCursorType(kPassive);
+		}
 	} else {
 		setCursorType(kDefault);
 		delete _mouseText;

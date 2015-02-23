@@ -59,6 +59,25 @@ void PATTable::printData() {
 	debug("field_2C: %d", _field_2C);
 }
 
+int PATTable::getNumActions() const {
+	int count = 0;
+	for (int i = 0; i < _entries.size(); i++) {
+		if (_entries[i]._scriptIndex != -1) {
+			count++;
+		}
+	}
+	return count;
+}
+
+bool PATTable::canPerformAction(ActionType action) const {
+	for (int i = 0; i < _entries.size(); i++) {
+		if (_entries[i]._actionType == action && _entries[i]._scriptIndex != -1) {
+			return true;
+		}
+	}
+	return false;
+}
+
 Script *PATTable::getScriptForAction(ActionType action) {
 	switch (action) {
 		case kActionUse:

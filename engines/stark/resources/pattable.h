@@ -53,6 +53,8 @@ public:
 
 	Script *getScriptForAction(ActionType action);
 
+	int getNumActions() const;
+	bool canPerformAction(ActionType action) const;
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 
