@@ -291,7 +291,7 @@ void diffNextFrame() {
 			uint32 musicsize = size;
 			skip(difffile, size);
 
-			playMusic(samplespeed, 64, musicsize, true, music);
+			playSoundEffect(samplespeed, 64, musicsize, true, music);
 			break;
 		}
 		case 65535L:
@@ -563,7 +563,7 @@ void readSound() {
 			uint32 musicsize = size_;
 			skip(difffile_, size_);
 
-			playMusic(samplespeed_, 64, musicsize, true, music);
+			playSoundEffect(samplespeed_, 64, musicsize, true, music);
 		} else if (header_ == 65535L) {
 			if (mwaiteffect) {
 				while (EffectPlaying) {

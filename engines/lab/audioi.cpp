@@ -177,7 +177,7 @@ void flushAudio() {
 
 
 
-void playMusic(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data) {
+void playSoundEffect(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data) {
 	if (!DoMusic)
 		return;
 
@@ -204,7 +204,7 @@ void playMusic(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, voi
 		soundFlags |= Audio::FLAG_16BITS;
 
 	Audio::SeekableAudioStream *audStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
-	g_lab->_mixer->playStream(Audio::Mixer::kMusicSoundType, &g_musicHandle, audStream);
+	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &g_musicHandle, audStream);
 
 	updateSoundBuffers();
 }

@@ -73,7 +73,7 @@ void updateSoundBuffers();
 
 void flushAudio();
 
-void playMusic(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data);
+void playSoundEffect(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data);
 
 
 
