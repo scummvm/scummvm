@@ -33,6 +33,7 @@
 #include "lab/timing.h"
 #include "lab/mouse.h"
 #include "lab/vga.h"
+#include "lab/lab.h"
 
 namespace Lab {
 
@@ -470,8 +471,10 @@ byte **Music::newOpen(const char *name) {
 	if (_musicOn) {
 		updateMusic();
 
-		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
-		//LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit) - TODO
+		if (g_lab->getPlatform() == Common::kPlatformWindows)
+			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
+		else
+			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit)
 
 		filelength = sizeOfFile(name) * 10;
 		Time = 10 +                           /* Seek time for the music and the file */
@@ -507,8 +510,10 @@ void Music::fileCheckMusic(uint32 filelength) {
 		updateMusic();
 
 		
-		LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
-		//LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit) - TODO
+		if (g_lab->getPlatform() == Common::kPlatformWindows)
+			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
+		else
+			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit)
 
 		filelength *= 10;
 		Time = 5 +                            /* Seek time for the music */
