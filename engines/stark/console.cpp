@@ -30,6 +30,7 @@
 #include "engines/stark/resources/root.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
 #include "engines/stark/services/services.h"
@@ -56,6 +57,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("changeLocation",		WRAP_METHOD(Console, Cmd_ChangeLocation));
 	registerCmd("changeChapter",		WRAP_METHOD(Console, Cmd_ChangeChapter));
 	registerCmd("changeKnowledge",		WRAP_METHOD(Console, Cmd_ChangeKnowledge));
+	registerCmd("selectDialogOption",	WRAP_METHOD(Console, Cmd_SelectDialogOption));
 }
 
 Console::~Console() {
@@ -358,6 +360,19 @@ bool Console::Cmd_ChangeChapter(int argc, const char **argv) {
 	global->setCurrentChapter(value);
 
 	return true;
+}
+
+bool Console::Cmd_SelectDialogOption(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Select a dialog option.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("selectDialogOption [option]\n");
+		return true;
+	}
+	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+	dialogPlayer->selectOption(atoi(argv[1]));
+
+	return false;
 }
 
 bool Console::Cmd_Location(int argc, const char **argv) {

@@ -53,6 +53,7 @@ private:
 	bool Cmd_ChangeLocation(int argc, const char **argv);
 	bool Cmd_ChangeChapter(int argc, const char **argv);
 	bool Cmd_ChangeKnowledge(int argc, const char **argv);
+	bool Cmd_SelectDialogOption(int argc, const char **argv);
 };
 
 } // End of namespace Stark
