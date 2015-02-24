@@ -26,7 +26,9 @@
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
+#include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/root.h"
+#include "engines/stark/resources/script.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/resourceprovider.h"
@@ -43,12 +45,17 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("dumpStatic",			WRAP_METHOD(Console, Cmd_DumpStatic));
 	registerCmd("dumpGlobal",			WRAP_METHOD(Console, Cmd_DumpGlobal));
 	registerCmd("dumpLevel",			WRAP_METHOD(Console, Cmd_DumpLevel));
+	registerCmd("dumpKnowledge",	WRAP_METHOD(Console, Cmd_DumpKnowledge));
 	registerCmd("dumpLocation",			WRAP_METHOD(Console, Cmd_DumpLocation));
-	registerCmd("listLocations",		WRAP_METHOD(Console, Cmd_ListLocations));
+	registerCmd("listScripts",			WRAP_METHOD(Console, Cmd_ListScripts));
+	registerCmd("enableScript",			WRAP_METHOD(Console, Cmd_EnableScript));
+	registerCmd("forceScript",			WRAP_METHOD(Console, Cmd_ForceScript));
+	registerCmd("listLocations",			WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("location",				WRAP_METHOD(Console, Cmd_Location));
 	registerCmd("chapter",				WRAP_METHOD(Console, Cmd_Chapter));
 	registerCmd("changeLocation",		WRAP_METHOD(Console, Cmd_ChangeLocation));
 	registerCmd("changeChapter",		WRAP_METHOD(Console, Cmd_ChangeChapter));
+	registerCmd("changeKnowledge",		WRAP_METHOD(Console, Cmd_ChangeKnowledge));
 }
 
 Console::~Console() {
@@ -130,6 +137,141 @@ bool Console::Cmd_DumpLevel(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Console::Cmd_DumpKnowledge(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
+
+	Resources::Level *level = global->getCurrent()->getLevel();
+	Resources::Location *location = global->getCurrent()->getLocation();
+	Common::Array<Resources::Knowledge*> knowledge = level->listChildrenRecursive<Resources::Knowledge>();
+	knowledge.insert_at(knowledge.size(), location->listChildrenRecursive<Resources::Knowledge>());
+	Common::Array<Resources::Knowledge*>::iterator it;
+	for (it = knowledge.begin(); it != knowledge.end(); ++it) {
+		(*it)->print();
+	}
+	return true;
+}
+
+bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
+	int index = 0;
+	char type = 0;
+
+	if (argc >= 4) {
+		index = atoi(argv[1]);
+		type = argv[2][0];
+		if (type == 'b' || type == 'i') {
+			Global *global = StarkServices::instance().global;
+
+			Resources::Level *level = global->getCurrent()->getLevel();
+			Resources::Location *location = global->getCurrent()->getLocation();
+			Common::Array<Resources::Knowledge*> knowledgeArr = level->listChildrenRecursive<Resources::Knowledge>();
+			knowledgeArr.insert_at(knowledgeArr.size(), location->listChildrenRecursive<Resources::Knowledge>());
+			if (index < knowledgeArr.size() ) {
+				Resources::Knowledge *knowledge = knowledgeArr[index];
+				if (type == 'b') {
+					knowledge->setBooleanValue(atoi(argv[3]));
+				} else if (type == 'i') {
+					knowledge->setIntegerValue(atoi(argv[3]));
+				}
+				return true;
+			} else {
+				debugPrintf("Invalid index %d, only %d indices available\n", index, knowledgeArr.size());
+			}
+		} else {
+			debugPrintf("Invalid type: %c, only b and i are available\n", type);
+		}
+	} else {
+		debugPrintf("Too few args\n");
+	}
+
+	debugPrintf("Change the value of some knowledge. Use dumpKnowledge to get an id\n");
+	debugPrintf("Usage :\n");
+	debugPrintf("changeKnowledge [id] [type] [value]\n");
+	debugPrintf("available types: b(inary), i(nteger)\n");
+	return true;
+}
+
+bool Console::Cmd_ListScripts(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
+
+	Resources::Level *level = global->getCurrent()->getLevel();
+	Resources::Location *location = global->getCurrent()->getLocation();
+	Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
+	scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
+	Common::Array<Resources::Script*>::iterator it;
+	int i = 0;
+	for (it = scriptArr.begin(); it != scriptArr.end(); ++it) {
+		debugPrintf("%d: %s - enabled: %d\n", i++, (*it)->getName().c_str(), (*it)->isEnabled());
+	}
+	return true;
+}
+
+bool Console::Cmd_EnableScript(int argc, const char **argv) {
+	int index = 0;
+
+	if (argc >= 2) {
+		index = atoi(argv[1]);
+		Global *global = StarkServices::instance().global;
+
+		bool value = true;
+		if (argc >= 3) {
+			value = atoi(argv[2]);
+		}
+		Resources::Level *level = global->getCurrent()->getLevel();
+		Resources::Location *location = global->getCurrent()->getLocation();
+		Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
+		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
+		if (index < scriptArr.size() ) {
+			Resources::Script *script = scriptArr[index];
+			script->enable(value);
+			return true;
+		} else {
+			debugPrintf("Invalid index %d, only %d indices available\n", index, scriptArr.size());
+		}
+	} else {
+		debugPrintf("Too few args\n");
+	}
+
+	debugPrintf("Change the value of some knowledge. Use dumpKnowledge to get an id\n");
+	debugPrintf("Usage :\n");
+	debugPrintf("enableScript [id] (value)\n");
+	return true;
+}
+
+bool Console::Cmd_ForceScript(int argc, const char **argv) {
+	int index = 0;
+
+	if (argc >= 2) {
+		index = atoi(argv[1]);
+		Global *global = StarkServices::instance().global;
+
+		bool value = true;
+		if (argc >= 3) {
+			value = atoi(argv[2]);
+		}
+		Resources::Level *level = global->getCurrent()->getLevel();
+		Resources::Location *location = global->getCurrent()->getLocation();
+		Common::Array<Resources::Script*> scriptArr = level->listChildrenRecursive<Resources::Script>();
+		scriptArr.insert_at(scriptArr.size(), location->listChildrenRecursive<Resources::Script>());
+		if (index < scriptArr.size() ) {
+			Resources::Script *script = scriptArr[index];
+			script->enable(value);
+			// Use this mode to avoid being stopped
+			script->execute(Resources::Script::kCallModeCalledByScript);
+			return true;
+		} else {
+			debugPrintf("Invalid index %d, only %d indices available\n", index, scriptArr.size());
+		}
+	} else {
+		debugPrintf("Too few args\n");
+	}
+
+	debugPrintf("Change the value of some knowledge. Use dumpKnowledge to get an id\n");
+	debugPrintf("Usage :\n");
+	debugPrintf("enableScript [id] (value)\n");
+	return true;
+}
+
 
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 	Global *global = StarkServices::instance().global;

@@ -41,13 +41,18 @@ private:
 	bool Cmd_DumpRoot(int argc, const char **argv);
 	bool Cmd_DumpStatic(int argc, const char **argv);
 	bool Cmd_DumpGlobal(int argc, const char **argv);
+	bool Cmd_DumpKnowledge(int argc, const char **argv);
 	bool Cmd_DumpLevel(int argc, const char **argv);
 	bool Cmd_DumpLocation(int argc, const char **argv);
+	bool Cmd_ForceScript(int argc, const char **argv);
 	bool Cmd_ListLocations(int argc, const char** argv);
+	bool Cmd_ListScripts(int argc, const char** argv);
+	bool Cmd_EnableScript(int argc, const char** argv);
 	bool Cmd_Location(int argc, const char **argv);
 	bool Cmd_Chapter(int argc, const char **argv);
 	bool Cmd_ChangeLocation(int argc, const char **argv);
 	bool Cmd_ChangeChapter(int argc, const char **argv);
+	bool Cmd_ChangeKnowledge(int argc, const char **argv);
 };
 
 } // End of namespace Stark
