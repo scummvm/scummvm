@@ -50,16 +50,8 @@ Music::Music() {
 	_musicPaused = false;
 
 	_tMusicOn = false;
-	_tFileLength = 0;
 	_tLeftInFile = 0;
 
-	_manyBuffers = MANYBUFFERS;
-
-	_musicFilledTo = 0;
-	_musicPlaying  = 0;
-	_musicOnBuffer = 0;
-
-	_filelength = 0;
 	_leftinfile = 0;
 
 	_musicOn = false;
@@ -73,70 +65,36 @@ Music::Music() {
 /* it from the Audio device.                                                 */
 /*****************************************************************************/
 void Music::updateMusic() {
-	uint16 i;
-
 	WSDL_ProcessInput(0);
 
 	updateMouse();
 
 	if (EffectPlaying)
 		updateSoundBuffers();
-	else if (_musicOn) {
-		for (i = 0; i < 2; i++) {
-			if (musicBufferEmpty(i)) {
-				playMusicBlock(_musicBuffer[_musicPlaying], MUSICBUFSIZE, i, SAMPLESPEED);
-
-				if (_musicPlaying)
-					_musicOnBuffer = _musicPlaying - 1;
-				else
-					_musicOnBuffer = _manyBuffers - 1;
-
-				_musicPlaying++;
-
-				if (_musicPlaying >= _manyBuffers)
-					_musicPlaying = 0;
-			}
-		}
+	
+	if (_musicOn && getPlayingBufferCount() < MAXBUFFERS) {
+		// NOTE: We need to use malloc(), cause this will be freed with free()
+		// by the music code
+		byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
+		fillbuffer(musicBuffer);
+		playMusicBlock(musicBuffer, MUSICBUFSIZE, 0, SAMPLESPEED);
 	}
 }
 
 
-void Music::fillbuffer(uint16 unit) {
-	return;
-
-	warning("STUB: Music::fillbuffer");
-	uint32 Size = MUSICBUFSIZE;
-	void *ptr  = _musicBuffer[unit];
-
-	if (Size < _leftinfile) {
-		_file->read(ptr, Size);
-		_leftinfile -= Size;
+void Music::fillbuffer(byte *musicBuffer) {
+	if (MUSICBUFSIZE < _leftinfile) {
+		_file->read(musicBuffer, MUSICBUFSIZE);
+		_leftinfile -= MUSICBUFSIZE;
 	} else {
-		_file->read(ptr, _leftinfile);
+		_file->read(musicBuffer, _leftinfile);
 
-		memset((char *)ptr + _leftinfile, 0, Size - _leftinfile);
+		memset((char *)musicBuffer + _leftinfile, 0, MUSICBUFSIZE - _leftinfile);
 
 		_file->seek(0);
-		_leftinfile = _filelength;
+		_leftinfile = _file->size();
 	}
 }
-
-
-
-/*****************************************************************************/
-/* Figures out how many *complete* buffers of music left to play.            */
-/*****************************************************************************/
-uint16 Music::getManyBuffersLeft() {
-	uint16 mp = _musicOnBuffer;
-
-	if (mp == _musicFilledTo) /* Already filled */
-		return _manyBuffers;
-	else if (mp > _musicFilledTo)
-		return _manyBuffers - (mp - _musicFilledTo);
-	else
-		return _musicFilledTo - mp;
-}
-
 
 
 /*****************************************************************************/
@@ -145,71 +103,14 @@ uint16 Music::getManyBuffersLeft() {
 /* Check if there are MINBUFFERS or less buffers that are playing.           */
 /*****************************************************************************/
 void Music::fillUpMusic(bool doit) {
-	int16 ManyLeft, ManyFill;
-
 	updateMusic();
-
-	if (!_musicOn)
-		return;
-
-	ManyLeft = getManyBuffersLeft();
-
-	if (ManyLeft < MINBUFFERS)
-		doit = true;
-	else if (ManyLeft == _manyBuffers)  /* All the buffers are already full */
-		doit = false;
-
-	if (doit && (ManyLeft < _manyBuffers) && ManyLeft) {
-		ManyFill = _manyBuffers - ManyLeft - 1;
-
-		while (ManyFill > 0) {
-			_musicFilledTo++;
-
-			if (_musicFilledTo >= _manyBuffers)
-				_musicFilledTo = 0;
-
-			fillbuffer(_musicFilledTo);
-			updateMusic();
-
-			ManyFill--;
-		}
-
-		updateMusic();
-
-		ManyLeft = getManyBuffersLeft();
-
-		if (ManyLeft < _manyBuffers) {
-			ManyFill = _manyBuffers - ManyLeft - 1;
-
-			while (ManyFill > 0) {
-				_musicFilledTo++;
-
-				if (_musicFilledTo >= _manyBuffers)
-					_musicFilledTo = 0;
-
-				fillbuffer(_musicFilledTo);
-				updateMusic();
-
-				ManyFill--;
-			}
-		}
-	}
-
-	updateMusic();
-
-	/* NYI: A check for dirty cds; for instance, if lots of buffers already
-	   played */
 }
-
-
 
 
 /*****************************************************************************/
 /* Starts up the music initially.                                            */
 /*****************************************************************************/
 void Music::startMusic(bool startatbegin) {
-	uint16 counter;
-
 	if (!_musicOn)
 		return;
 
@@ -217,32 +118,18 @@ void Music::startMusic(bool startatbegin) {
 
 	if (startatbegin) {
 		_file->seek(0);
-		_leftinfile  = _filelength;
+		_leftinfile  = _file->size();
 	}
-
-	_musicPlaying  = 0;
-	_musicOnBuffer = 0;
-	_musicFilledTo = _manyBuffers - 1;
-
-	_musicOn = false;
-
-	for (counter = 0; counter < _manyBuffers; counter++)
-		fillbuffer(counter);
 
 	_musicOn = true;
 	updateMusic();
 }
 
 
-
-
-
-
 /*****************************************************************************/
 /* Initializes the music buffers.                                            */
 /*****************************************************************************/
 bool Music::initMusic() {
-	uint16 counter;
 
 	if (!_turnMusicOn)
 		return true;
@@ -257,12 +144,6 @@ bool Music::initMusic() {
 	else
 		filename = "Music:BackGrou";
 
-	if (_musicBuffer[0] == NULL) {
-		for (counter = 0; counter < _manyBuffers; counter++)
-			_musicBuffer[counter] = malloc(MUSICBUFSIZE);
-	}
-
-	_filelength = sizeOfFile(filename);
 	_file = openPartial(filename);
 
 	if (_file) {
@@ -298,10 +179,7 @@ void Music::pauseBackMusic() {
 		_musicOn = false;
 		flushAudio();
 
-		if (_musicPlaying)
-			_musicPlaying--;
-		else
-			_musicPlaying = _manyBuffers - 1;
+		// TODO: Pause
 
 		_musicPaused = true;
 	}
@@ -373,13 +251,12 @@ void Music::changeMusic(const char *newmusic) {
 	if (!_tFile) {
 		_tFile = _file;
 		_tMusicOn = _musicOn;
-		_tFileLength = _filelength;
 #if defined(DOSCODE)
 		_tLeftInFile = _leftinfile;
 #else
 		_tLeftInFile = _leftinfile + 65536L;
 
-		if (_tLeftInFile > _tFileLength)
+		if (_tLeftInFile > (uint32)_tFile->size())
 			_tLeftInFile = _leftinfile;
 
 #endif
@@ -390,9 +267,6 @@ void Music::changeMusic(const char *newmusic) {
 	if (_file) {
 		_musicOn = true;   /* turn it off */
 		setMusic(false);
-
-		_filelength = sizeOfFile(newmusic);
-
 		_musicOn = false;  /* turn it back on */
 		setMusic(true);
 	} else {
@@ -414,10 +288,9 @@ void Music::resetMusic() {
 		_file->close();
 
 	_file      = _tFile;
-	_filelength = _tFileLength;
 	_leftinfile = _tLeftInFile;
 
-	_file->seek(_filelength - _leftinfile);
+	_file->seek(_file->size() - _leftinfile);
 
 	_musicOn = true;
 	setMusic(false);
@@ -435,14 +308,6 @@ void Music::resetMusic() {
 }
 
 
-
-
-
-#define FUDGEFACTOR  5L
-#define READSPEED    (2 * 130000L)
-
-
-
 /*****************************************************************************/
 /* Checks whether or note enough memory in music buffer before loading any   */
 /* files.  Fills it if not.  Does not take into account the current buffer   */
@@ -452,8 +317,6 @@ void Music::resetMusic() {
 /* Here, the seconds are multipled by 10.                                    */
 /*****************************************************************************/
 byte **Music::newOpen(const char *name) {
-	uint32 filelength, LeftSecs, Time;
-
 	byte **file;
 
 	if (name == NULL) {
@@ -470,19 +333,7 @@ byte **Music::newOpen(const char *name) {
 
 	if (_musicOn) {
 		updateMusic();
-
-		if (g_lab->getPlatform() == Common::kPlatformWindows)
-			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
-		else
-			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit)
-
-		filelength = sizeOfFile(name) * 10;
-		Time = 10 +                           /* Seek time for the music and the file */
-		       (filelength / READSPEED) +     /* Read time for the file */
-		       FUDGEFACTOR;
-
-		if (Time >= LeftSecs)
-			fillUpMusic(true);
+		fillUpMusic(true);
 	}
 
 	if (!_doNotFileFlushAudio && EffectPlaying)
@@ -491,38 +342,6 @@ byte **Music::newOpen(const char *name) {
 	file = openFile(name);
 	checkMusic();
 	return file;
-}
-
-
-
-/*****************************************************************************/
-/* Checks whether or note enough memory in music buffer to continue loading  */
-/* in a file.   Fills the music buffer if not.  Does not take into account   */
-/* the current buffer playing; a built in fudge factor.  We've also got      */
-/* another FUDGEFACTOR defined above in case things go wrong.                */
-/*                                                                           */
-/* Here, the seconds are multipled by 10.                                    */
-/*****************************************************************************/
-void Music::fileCheckMusic(uint32 filelength) {
-	uint32 LeftSecs, Time;
-
-	if (_musicOn) {
-		updateMusic();
-
-		
-		if (g_lab->getPlatform() == Common::kPlatformWindows)
-			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / (2 * SAMPLESPEED);	// Windows (16-bit)
-		else
-			LeftSecs = (getManyBuffersLeft() * MUSICBUFSIZE * 10) / SAMPLESPEED;	// DOS (8-bit)
-
-		filelength *= 10;
-		Time = 5 +                            /* Seek time for the music */
-		       (filelength / READSPEED) +     /* Read time for the file  */
-		       FUDGEFACTOR;
-
-		if (Time >= LeftSecs)
-			fillUpMusic(true);
-	}
 }
 
 } // End of namespace Lab

@@ -50,63 +50,61 @@ bool EffectPlaying = false, ContMusic = false, DoMusic = false;
 static char *CurMusic, *startMusic;
 static uint32 StartMusicLen;
 static Audio::SoundHandle g_musicHandle;
+static Audio::SoundHandle g_sfxHandle;
+static Audio::QueuingAudioStream *queuingAudioStream = NULL;
+
+static byte *playBuffer;
 
 void freeAudio() {
 	if (!DoMusic)
 		return;
 
-	// TODO
-	//SDLWrapAudio();
+	g_lab->_mixer->stopHandle(g_musicHandle);
+	g_lab->_mixer->stopHandle(g_sfxHandle);
+
+	delete queuingAudioStream;
+	queuingAudioStream = NULL;
+	delete[] playBuffer;
 }
 
 
 
 bool initAudio() {
-	if (!DoMusic)
-		return true;
-
-// TODO
-#if 0
-	// we allocate extra mempory for 16-bit samples
-	// TODO: 8-bit mono sample for DOS
-	buf1 = malloc(PLAYBUFSIZE);
-
-	if (buf1 == NULL)
-		return false;
-
-	buf2 = malloc(PLAYBUFSIZE);
-
-	if (buf2 == NULL)
-		return false;
-
-	if (!SDLInitAudio())
-		return false;
-#endif
-
+	playBuffer = new byte[PLAYBUFSIZE];
 	return true;
 }
 
 
-bool musicBufferEmpty(uint16 i) {
-	// TODO: Multiple streams
-	return !g_lab->_mixer->isSoundHandleActive(g_musicHandle);
+bool musicBufferEmpty() {
+	return !g_lab->_mixer->isSoundHandleActive(g_sfxHandle);
 }
 
 
+uint16 getPlayingBufferCount() {
+	return (queuingAudioStream) ? queuingAudioStream->numQueuedStreams() : 0;
+}
 
 void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed) {
-	// TODO
-#if 0
+	bool startMusic = false;
 
 	if (SampleSpeed < 4000)
 		SampleSpeed = 4000;
 
-	tempblock = firstblock;
-	tempblock.sel_data = Ptr;
-	tempblock.len      = Size;
+	if (!queuingAudioStream) {
+		queuingAudioStream = Audio::makeQueuingAudioStream(SampleSpeed, false);
+		startMusic = true;
+	}
 
-	SDLPlayBuffer(BufferNum, &tempblock);
-#endif
+	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
+	if (g_lab->getPlatform() == Common::kPlatformWindows)
+		soundFlags |= Audio::FLAG_16BITS;
+	else
+		soundFlags |= Audio::FLAG_UNSIGNED;
+
+	queuingAudioStream->queueBuffer((byte *)Ptr, Size, DisposeAfterUse::YES, soundFlags);
+
+	if (startMusic)
+		g_lab->_mixer->playStream(Audio::Mixer::kMusicSoundType, &g_musicHandle, queuingAudioStream);
 }
 
 
@@ -119,7 +117,7 @@ void updateSoundBuffers() {
 
 	// TODO
 	// FIXME: Very crude implementation
-	if (musicBufferEmpty(0)) {
+	if (musicBufferEmpty()) {
 		flushAudio();
 		EffectPlaying = false;
 	}
@@ -170,7 +168,7 @@ void flushAudio() {
 	if (!DoMusic)
 		return;
 
-	g_lab->_mixer->stopHandle(g_musicHandle);
+	g_lab->_mixer->stopHandle(g_sfxHandle);
 	EffectPlaying = false;
 }
 
@@ -206,7 +204,7 @@ void playSoundEffect(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flus
 		soundFlags |= Audio::FLAG_UNSIGNED;
 
 	Audio::SeekableAudioStream *audStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
-	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &g_musicHandle, audStream);
+	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &g_sfxHandle, audStream);
 
 	updateSoundBuffers();
 }

@@ -62,17 +62,12 @@ struct SaveGameHeader {
 /*----------------------------*/
 
 bool initAudio();
-
 void freeAudio();
-
-bool musicBufferEmpty(uint16 i);
-
+bool musicBufferEmpty();
 void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed);
-
+uint16 getPlayingBufferCount();
 void updateSoundBuffers();
-
 void flushAudio();
-
 void playSoundEffect(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data);
 
 
@@ -222,9 +217,7 @@ void decrypt(byte *text);
 /*----- From LabMusic.c -----*/
 /*---------------------------*/
 
-#define MANYBUFFERS        5L
 #define MAXBUFFERS         5L
-#define MINBUFFERS         2L
 
 class Music {
 public:
@@ -243,15 +236,13 @@ public:
 	void pauseBackMusic();
 	void changeMusic(const char *newmusic);
 	void resetMusic();
-	void fileCheckMusic(uint32 filelength);
 
 	bool _winmusic, _doNotFileFlushAudio;
 	bool _turnMusicOn;
 	bool _musicOn;
 
 private:
-	void fillbuffer(uint16 unit);
-	uint16 getManyBuffersLeft();
+	void fillbuffer(byte *musicBuffer);
 	void startMusic(bool startatbegin);
 
 	Common::File *_file;
@@ -259,15 +250,8 @@ private:
 	bool _musicPaused;
 
 	bool _tMusicOn;
-	uint32 _tFileLength;
 	uint32 _tLeftInFile;
-
-	uint16 _manyBuffers;
-
-	void *_musicBuffer[MAXBUFFERS];
-	uint16 _musicFilledTo, _musicPlaying, _musicOnBuffer;
-
-	uint32 _filelength, _leftinfile;
+	uint32 _leftinfile;
 };
 
 
