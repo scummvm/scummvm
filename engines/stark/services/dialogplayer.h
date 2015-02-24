@@ -29,12 +29,6 @@
 
 namespace Stark {
 
-class VisualImageXMG;
-
-namespace Gfx {
-class Texture;
-}
-
 /**
  * Dialog player
  *
@@ -61,8 +55,6 @@ public:
 	/** Select a dialog option */
 	void selectOption(uint32 index);
 
-	void renderText();
-
 protected:
 	enum OptionType {
 		kOptionTypeAsk = 0
@@ -87,17 +79,11 @@ protected:
 	/** Update the on screen text */
 	void setSubtitles(const Common::String &str);
 
-	/** Clear the current subtitle */
-	void clearSubtitles();
-
 	Resources::Dialog *_currentDialog;
 	Resources::Dialog::Reply *_currentReply;
 
 	bool _speechReady;
 	Common::Array<Option> _options;
-
-	VisualImageXMG *_passiveBackGroundTexture;
-	Gfx::Texture *_texture;
 };
 
 } // End of namespace Stark

@@ -31,7 +31,6 @@
 namespace Stark {
 
 class ActionMenu;
-class VisualImageXMG;
 class Cursor;
 
 namespace Resources {
@@ -93,11 +92,9 @@ private:
 
 	int _indexForCurrentObject;
 	Resources::Object *_object;
-	bool _interfaceVisible;
 	bool _actionMenuActive;
 	Common::Point _actionMenuPos;
 	const Cursor *_cursor;
-	VisualImageXMG *_exitButton;
 	ActionMenu *_actionMenu;
 	Gfx::Driver *_gfx;
 };

@@ -124,6 +124,7 @@ Common::Error StarkEngine::run() {
 	services.scene = _scene;
 	services.staticProvider = _staticProvider;
 	services.userInterface = _userInterface;
+	services.ui = _ui;
 
 	// Load global resources
 	_resourceProvider->initGlobal();
@@ -131,6 +132,8 @@ Common::Error StarkEngine::run() {
 	_cursor->init();
 	_dialogPlayer->init();
 	_userInterface->init();
+	// Initialize the UI
+	_ui->init();
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);
@@ -213,8 +216,6 @@ void StarkEngine::updateDisplayScene() {
 	// Update the UI state before displaying the scene
 	_ui->update(renderEntries);
 	_scene->render(renderEntries);
-
-	_dialogPlayer->renderText();
 
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	_ui->render();

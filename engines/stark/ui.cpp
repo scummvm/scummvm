@@ -28,6 +28,10 @@
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
+
+#include "engines/stark/ui/topmenu.h"
+#include "engines/stark/ui/dialoginterface.h"
+
 namespace Stark {
 
 UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
@@ -35,8 +39,20 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_cursor(cursor),
 	_currentObject(nullptr),
 	_objectUnderCursor(nullptr),
-	_hasClicked(false)
+	_hasClicked(false),
+	_topMenu(nullptr),
+	_dialogInterface(nullptr)
 	{
+}
+
+UI::~UI() {
+	delete _topMenu;
+	delete _dialogInterface;
+}
+
+void UI::init() {
+	_topMenu = new TopMenu();
+	_dialogInterface = new DialogInterface();
 }
 
 void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
@@ -107,6 +123,13 @@ void UI::notifyClick() {
 	_hasClicked = true;
 }
 
+void UI::notifySubtitle(const Common::String &subtitle) {
+	_dialogInterface->notifySubtitle(subtitle);
+}
+
+void UI::notifyDialogOptions(const Common::StringArray &options) {
+	_dialogInterface->notifyDialogOptions(options);
+}
 
 void UI::render() {
 	Common::Point pos = _cursor->getMousePosition();
@@ -116,6 +139,13 @@ void UI::render() {
 	if (_hasClicked) {
 		handleClick();
 	}
+
+	// TODO: Unhardcode
+	if (_cursor->getMousePosition().y < 40) {
+		_topMenu->render();
+	}
+
+	_dialogInterface->render();
 	ui->render();
 }
 

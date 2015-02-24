@@ -20,48 +20,28 @@
  *
  */
 
-#ifndef STARK_UI_H
-#define STARK_UI_H
+#include "engines/stark/ui/topmenu.h"
 
-#include "common/scummsys.h"
-#include "common/str-array.h"
+#include "engines/stark/gfx/driver.h"
 
-#include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/staticprovider.h"
+
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
-namespace Resources {
-class Object;
+TopMenu::TopMenu() {
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
+	_exitButton = staticProvider->getCursorImage(8);
 }
 
-namespace Gfx {
-class Driver;
+void TopMenu::render() {
+	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	gfx->setScreenViewport(false);
+	// TODO: Unhardcode position
+	_exitButton->render(Common::Point(600, 0));
 }
-
-class DialogInterface;
-class TopMenu;
-class Cursor;
-
-class UI {
-	DialogInterface *_dialogInterface;
-	TopMenu *_topMenu;
-	Resources::Object *_currentObject;
-	Resources::Object *_objectUnderCursor;
-	Gfx::Driver *_gfx;
-	Cursor *_cursor;
-	bool _hasClicked;
-	void handleClick();
-public:
-	UI(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~UI();
-	void init();
-	void update(Gfx::RenderEntryArray renderEntries, bool keepExisting = false);
-	void render();
-	void notifyClick();
-	void notifySubtitle(const Common::String &subtitle);
-	void notifyDialogOptions(const Common::StringArray &options);
-};
 
 } // End of namespace Stark
-
-#endif // STARK_UI_H

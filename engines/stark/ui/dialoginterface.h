@@ -20,61 +20,35 @@
  *
  */
 
-#ifndef STARK_SERVICES_SERVICES_H
-#define STARK_SERVICES_SERVICES_H
+#ifndef STARK_DIALOGINTERFACE_H
+#define STARK_DIALOGINTERFACE_H
 
-#include "common/singleton.h"
 #include "common/scummsys.h"
-
-namespace Common {
-class RandomSource;
-}
+#include "common/str.h"
+#include "common/str-array.h"
 
 namespace Stark {
 
+class VisualImageXMG;
+
 namespace Gfx {
-class Driver;
+class Texture;
 }
 
-class ArchiveLoader;
-class DialogPlayer;
-class Global;
-class ResourceProvider;
-class StaticProvider;
-class Scene;
-class UserInterface;
-class UI;
-
-/**
- * Public services available as a singleton
- */
-class StarkServices : public Common::Singleton<StarkServices> {
+class DialogInterface {
+	VisualImageXMG *_passiveBackGroundTexture;
+	VisualImageXMG *_activeBackGroundTexture;
+	Gfx::Texture *_texture;
+	bool _hasOptions;
 public:
-	StarkServices() {
-		archiveLoader = nullptr;
-		dialogPlayer = nullptr;
-		gfx = nullptr;
-		global = nullptr;
-		resourceProvider = nullptr;
-		randomSource = nullptr;
-		scene = nullptr;
-		staticProvider = nullptr;
-		userInterface = nullptr;
-		ui = nullptr;
-	}
-
-	ArchiveLoader *archiveLoader;
-	DialogPlayer *dialogPlayer;
-	Gfx::Driver *gfx;
-	Global *global;
-	ResourceProvider *resourceProvider;
-	Common::RandomSource *randomSource;
-	Scene *scene;
-	StaticProvider *staticProvider;
-	UserInterface *userInterface;
-	UI *ui;
+	DialogInterface();
+	virtual ~DialogInterface();
+	void render();
+	void update();
+	void notifySubtitle(const Common::String &subtitle);
+	void notifyDialogOptions(const Common::StringArray &options);
 };
 
 } // End of namespace Stark
 
-#endif // STARK_SERVICES_SERVICES_H
+#endif // STARK_DIALOG_INTERFACE_H

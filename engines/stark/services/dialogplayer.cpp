@@ -20,35 +20,26 @@
  *
  */
 
-#include "engines/stark/gfx/texture.h"
-#include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/services.h"
-#include "engines/stark/services/staticprovider.h"
+
+#include "engines/stark/ui.h"
 
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/speech.h"
-
-#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
 DialogPlayer::DialogPlayer() :
 		_currentDialog(nullptr),
 		_currentReply(nullptr),
-		_speechReady(false),
-		_texture(nullptr) {
+		_speechReady(false) {
 }
 
-DialogPlayer::~DialogPlayer() {
-	delete _texture;
-}
+DialogPlayer::~DialogPlayer() {}
 
 void DialogPlayer::init() {
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
-	// TODO: Un-hardcode
-	_passiveBackGroundTexture = staticProvider->getCursorImage(21);
 }
 
 void DialogPlayer::run(Resources::Dialog *dialog) {
@@ -82,12 +73,11 @@ void DialogPlayer::buildOptions() {
 		// Only one option, just run it
 		selectOption(0);
 	} else {
-		Common::String options;
+		Common::StringArray options;
 		for (uint i = 0; i < availableTopics.size(); i++) {
-			options += _options[i]._caption + '\n';
+			options.push_back(_options[i]._caption);
 		}
-		setSubtitles(options);
-		warning("We need to select between options");
+		StarkServices::instance().ui->notifyDialogOptions(options);
 	}
 }
 
@@ -154,7 +144,7 @@ void DialogPlayer::update() {
 
 	if (!speech || !speech->isPlaying()) {
 		// A line has ended, clear the subtitle
-		clearSubtitles();
+		setSubtitles("");
 		// A line has ended, play the next one
 		_currentReply->goToNextLine();
 		speech = _currentReply->getCurrentSpeech();
@@ -167,24 +157,7 @@ void DialogPlayer::update() {
 }
 
 void DialogPlayer::setSubtitles(const Common::String &str) {
-	delete _texture;
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_texture = gfx->createTextureFromString(str, 0xFFFF0000);
-}
-
-void DialogPlayer::clearSubtitles() {
-	delete _texture;
-	_texture = nullptr;
-}
-
-void DialogPlayer::renderText() {
-	// TODO: Unhardcode
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->setScreenViewport(false);
-	_passiveBackGroundTexture->render(Common::Point(0, 401));
-	if (_texture) {
-		gfx->drawSurface(_texture, Common::Point(10, 400));
-	}
+	StarkServices::instance().ui->notifySubtitle(str);
 }
 
 } // End of namespace Stark

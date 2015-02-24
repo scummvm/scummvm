@@ -20,61 +20,22 @@
  *
  */
 
-#ifndef STARK_SERVICES_SERVICES_H
-#define STARK_SERVICES_SERVICES_H
+#ifndef STARK_TOPMENU_H
+#define STARK_TOPMENU_H
 
-#include "common/singleton.h"
 #include "common/scummsys.h"
-
-namespace Common {
-class RandomSource;
-}
 
 namespace Stark {
 
-namespace Gfx {
-class Driver;
-}
+class VisualImageXMG;
 
-class ArchiveLoader;
-class DialogPlayer;
-class Global;
-class ResourceProvider;
-class StaticProvider;
-class Scene;
-class UserInterface;
-class UI;
-
-/**
- * Public services available as a singleton
- */
-class StarkServices : public Common::Singleton<StarkServices> {
+class TopMenu {
+	VisualImageXMG *_exitButton;
 public:
-	StarkServices() {
-		archiveLoader = nullptr;
-		dialogPlayer = nullptr;
-		gfx = nullptr;
-		global = nullptr;
-		resourceProvider = nullptr;
-		randomSource = nullptr;
-		scene = nullptr;
-		staticProvider = nullptr;
-		userInterface = nullptr;
-		ui = nullptr;
-	}
-
-	ArchiveLoader *archiveLoader;
-	DialogPlayer *dialogPlayer;
-	Gfx::Driver *gfx;
-	Global *global;
-	ResourceProvider *resourceProvider;
-	Common::RandomSource *randomSource;
-	Scene *scene;
-	StaticProvider *staticProvider;
-	UserInterface *userInterface;
-	UI *ui;
+	TopMenu();
+	void render();
 };
 
 } // End of namespace Stark
 
-#endif // STARK_SERVICES_SERVICES_H
+#endif // STARK_TOPMENU_H
