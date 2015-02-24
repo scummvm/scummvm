@@ -45,11 +45,11 @@ BitMap bit1, bit2, *DispBitMap = &bit1, *DrawBitMap = &bit1;
 
 extern BitMap RawDiffBM;
 extern char diffcmap[256 * 3], lastcmap[256 * 3];
-extern bool IsBM, NoFlip, nopalchange, ContMusic;
+extern bool IsBM, NoFlip, nopalchange;
 
 extern int32 ReadSoFar;
 extern bool ReadIsDone, ReadIsError;
-extern bool DoBlack, EffectPlaying, stopsound;
+extern bool DoBlack, stopsound;
 extern bool IsHiRes;
 extern TextFont *MsgFont;
 extern const char *CurFileName;
@@ -622,7 +622,7 @@ static void doScrollWipe(char *filename) {
 	width = VGAScaleX(320);
 	height = VGAScaleY(149) + SVGACord(2);
 
-	while (EffectPlaying) {
+	while (g_music->isSoundEffectActive()) {
 		g_music->newCheckMusic();
 		waitTOF();
 	}

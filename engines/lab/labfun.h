@@ -33,6 +33,12 @@
 
 #include "lab/stddefines.h"
 #include "lab/parsetypes.h"
+
+// For the Music class - TODO: Move to another header file
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+#include "audio/decoders/raw.h"
+
 #include "common/file.h"
 #include "common/savefile.h"
 
@@ -56,22 +62,6 @@ struct SaveGameHeader {
 	uint16 roomNumber;
 	uint16 direction;
 };
-
-/*----------------------------*/
-/*------ From Audioi.c -------*/
-/*----------------------------*/
-
-bool initAudio();
-void freeAudio();
-bool musicBufferEmpty();
-void playMusicBlock(void *Ptr, uint32 Size, uint16 BufferNum, uint16 SampleSpeed);
-uint16 getPlayingBufferCount();
-void updateSoundBuffers();
-void flushAudio();
-void playSoundEffect(uint16 SampleSpeed, uint16 Volume, uint32 Length, bool flush, void *Data);
-
-
-
 
 /*----------------------------*/
 /*----- From graphics.c ------*/
@@ -228,18 +218,23 @@ public:
 	void freeMusic();
 	void fillUpMusic(bool doit);
 	void updateMusic();
+	uint16 getPlayingBufferCount();
 	void checkMusic();
 	void newCheckMusic();
 	void closeMusic();
 	void setMusic(bool on);
-	void restartBackMusic();
+	void resumeBackMusic();
 	void pauseBackMusic();
 	void changeMusic(const char *newmusic);
 	void resetMusic();
+	
+	void playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data);
+	void stopSoundEffect();
+	bool isSoundEffectActive() const;
 
-	bool _winmusic, _doNotFileFlushAudio;
-	bool _turnMusicOn;
+	bool _winmusic, _doNotFilestopSoundEffect;
 	bool _musicOn;
+	bool _loopSoundEffect;
 
 private:
 	void fillbuffer(byte *musicBuffer);
@@ -252,6 +247,11 @@ private:
 	bool _tMusicOn;
 	uint32 _tLeftInFile;
 	uint32 _leftinfile;
+
+	Audio::SoundHandle _musicHandle;
+	Audio::SoundHandle _sfxHandle;
+
+	Audio::QueuingAudioStream *_queuingAudioStream;
 };
 
 

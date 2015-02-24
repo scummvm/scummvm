@@ -64,9 +64,6 @@ bool NoFlip         = false,  /* Don't flip the new picture to front  */
 
 uint16 DataBytesPerRow;
 
-extern bool EffectPlaying;
-
-
 #define CONTINUOUS      0xFFFF
 
 DIFFHeader headerdata;
@@ -274,7 +271,7 @@ void diffNextFrame() {
 		case 30L:
 		case 31L: {
 			if (waitForEffect) {
-				while (EffectPlaying) {
+				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
 					waitTOF();
 				}
@@ -291,7 +288,7 @@ void diffNextFrame() {
 			uint32 musicsize = size;
 			skip(difffile, size);
 
-			playSoundEffect(samplespeed, 64, musicsize, true, music);
+			g_music->playSoundEffect(samplespeed, musicsize, music);
 			break;
 		}
 		case 65535L:
@@ -299,7 +296,7 @@ void diffNextFrame() {
 				int didTOF = 0;
 
 				if (waitForEffect) {
-					while (EffectPlaying) {
+					while (g_music->isSoundEffectActive()) {
 						g_music->updateMusic();
 						waitTOF();
 
@@ -545,7 +542,7 @@ void readSound() {
 
 		if ((header_ == 30) || (header_ == 31)) {
 			if (mwaitForEffect) {
-				while (EffectPlaying) {
+				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
 					waitTOF();
 				}
@@ -563,10 +560,10 @@ void readSound() {
 			uint32 musicsize = size_;
 			skip(difffile_, size_);
 
-			playSoundEffect(samplespeed_, 64, musicsize, true, music);
+			g_music->playSoundEffect(samplespeed_, musicsize, music);
 		} else if (header_ == 65535L) {
 			if (mwaitForEffect) {
-				while (EffectPlaying) {
+				while (g_music->isSoundEffectActive()) {
 					g_music->updateMusic();
 					waitTOF();
 				}

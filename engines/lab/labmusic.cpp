@@ -28,6 +28,8 @@
  *
  */
 
+#include "audio/mixer.h"
+
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
 #include "lab/timing.h"
@@ -41,7 +43,6 @@ namespace Lab {
 
 #define SAMPLESPEED    15000L
 
-extern bool EffectPlaying;
 Music *g_music;
 
 Music::Music() {
@@ -55,9 +56,10 @@ Music::Music() {
 	_leftinfile = 0;
 
 	_musicOn = false;
-	_turnMusicOn = false;
 	_winmusic = false;
-	_doNotFileFlushAudio = false;
+	_loopSoundEffect = false;
+	_queuingAudioStream = NULL;
+	_doNotFilestopSoundEffect = false;
 }
 
 /*****************************************************************************/
@@ -69,18 +71,63 @@ void Music::updateMusic() {
 
 	updateMouse();
 
-	if (EffectPlaying)
-		updateSoundBuffers();
-	
 	if (_musicOn && getPlayingBufferCount() < MAXBUFFERS) {
 		// NOTE: We need to use malloc(), cause this will be freed with free()
 		// by the music code
 		byte *musicBuffer = (byte *)malloc(MUSICBUFSIZE);
 		fillbuffer(musicBuffer);
-		playMusicBlock(musicBuffer, MUSICBUFSIZE, 0, SAMPLESPEED);
+
+		// Queue a music block, and start the music, if needed
+		bool startMusic = false;
+
+		if (!_queuingAudioStream) {
+			_queuingAudioStream = Audio::makeQueuingAudioStream(SAMPLESPEED, false);
+			startMusic = true;
+		}
+
+		byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
+		if (g_lab->getPlatform() == Common::kPlatformWindows)
+			soundFlags |= Audio::FLAG_16BITS;
+		else
+			soundFlags |= Audio::FLAG_UNSIGNED;
+
+		_queuingAudioStream->queueBuffer(musicBuffer, MUSICBUFSIZE, DisposeAfterUse::YES, soundFlags);
+
+		if (startMusic)
+			g_lab->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _queuingAudioStream);
 	}
 }
 
+uint16 Music::getPlayingBufferCount() {
+	return (_queuingAudioStream) ? _queuingAudioStream->numQueuedStreams() : 0;
+}
+
+void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
+	pauseBackMusic();
+	stopSoundEffect();
+
+	if (SampleSpeed < 4000)
+		SampleSpeed = 4000;
+
+	byte soundFlags = Audio::FLAG_LITTLE_ENDIAN;
+	if (g_lab->getPlatform() == Common::kPlatformWindows)
+		soundFlags |= Audio::FLAG_16BITS;
+	else
+		soundFlags |= Audio::FLAG_UNSIGNED;
+
+	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
+	uint loops = (_loopSoundEffect) ? 0 : 1;
+	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops, DisposeAfterUse::YES);
+	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
+}
+
+void Music::stopSoundEffect() {
+	g_lab->_mixer->stopHandle(_sfxHandle);
+}
+
+bool Music::isSoundEffectActive() const {
+	return g_lab->_mixer->isSoundHandleActive(_sfxHandle);
+}
 
 void Music::fillbuffer(byte *musicBuffer) {
 	if (MUSICBUFSIZE < _leftinfile) {
@@ -114,7 +161,7 @@ void Music::startMusic(bool startatbegin) {
 	if (!_musicOn)
 		return;
 
-	flushAudio();
+	stopSoundEffect();
 
 	if (startatbegin) {
 		_file->seek(0);
@@ -130,10 +177,6 @@ void Music::startMusic(bool startatbegin) {
 /* Initializes the music buffers.                                            */
 /*****************************************************************************/
 bool Music::initMusic() {
-
-	if (!_turnMusicOn)
-		return true;
-
 	_musicOn = true;
 	_musicPaused = false;
 
@@ -167,6 +210,12 @@ void Music::freeMusic() {
 		_file->close();
 
 	_file = 0;
+
+	g_lab->_mixer->stopHandle(_musicHandle);
+	g_lab->_mixer->stopHandle(_sfxHandle);
+
+	delete _queuingAudioStream;
+	_queuingAudioStream = NULL;
 }
 
 
@@ -177,9 +226,9 @@ void Music::pauseBackMusic() {
 	if (!_musicPaused && _musicOn) {
 		updateMusic();
 		_musicOn = false;
-		flushAudio();
+		stopSoundEffect();
 
-		// TODO: Pause
+		g_lab->_mixer->pauseHandle(_musicHandle, true);
 
 		_musicPaused = true;
 	}
@@ -188,19 +237,19 @@ void Music::pauseBackMusic() {
 
 
 /*****************************************************************************/
-/* Restarts the paused background music.                                     */
+/* Resumes the paused background music.                                      */
 /*****************************************************************************/
-void Music::restartBackMusic() {
+void Music::resumeBackMusic() {
 	if (_musicPaused) {
-		flushAudio();
+		stopSoundEffect();
 		_musicOn = true;
+
+		g_lab->_mixer->pauseHandle(_musicHandle, false);
+
 		updateMusic();
 		_musicPaused = false;
 	}
 }
-
-
-
 
 
 /*****************************************************************************/
@@ -232,7 +281,7 @@ void Music::newCheckMusic() {
 /* Turns the music on and off.                                               */
 /*****************************************************************************/
 void Music::setMusic(bool on) {
-	flushAudio();
+	stopSoundEffect();
 
 	if (on && !_musicOn) {
 		_musicOn = true;
@@ -251,15 +300,10 @@ void Music::changeMusic(const char *newmusic) {
 	if (!_tFile) {
 		_tFile = _file;
 		_tMusicOn = _musicOn;
-#if defined(DOSCODE)
-		_tLeftInFile = _leftinfile;
-#else
 		_tLeftInFile = _leftinfile + 65536L;
 
 		if (_tLeftInFile > (uint32)_tFile->size())
 			_tLeftInFile = _leftinfile;
-
-#endif
 	}
 
 	_file = openPartial(newmusic);
@@ -336,8 +380,8 @@ byte **Music::newOpen(const char *name) {
 		fillUpMusic(true);
 	}
 
-	if (!_doNotFileFlushAudio && EffectPlaying)
-		flushAudio();
+	if (!_doNotFilestopSoundEffect && isSoundEffectActive())
+		stopSoundEffect();
 
 	file = openFile(name);
 	checkMusic();

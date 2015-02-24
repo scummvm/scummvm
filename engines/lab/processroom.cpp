@@ -62,7 +62,7 @@ const char *ViewPath = "LAB:Rooms/";
 const char *NewFileName;
 
 extern bool DoNotDrawMessage;
-extern bool NoFlip, IsBM, noupdatediff, waitForEffect, mwaitForEffect, QuitLab, EffectPlaying, soundplaying, MusicOn, DoBlack, ContMusic, DoNotReset;
+extern bool NoFlip, IsBM, noupdatediff, waitForEffect, mwaitForEffect, QuitLab, soundplaying, MusicOn, DoBlack, DoNotReset;
 extern char diffcmap[256 * 3];
 
 extern CloseDataPtr CPtr;
@@ -407,20 +407,20 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 		switch (APtr->ActionType) {
 		case PLAYSOUND:
 			mwaitForEffect = true; /* Plays a sound, but waits for it to be done before continuing */
-			ContMusic = false;
+			g_music->_loopSoundEffect = false;
 			readMusic((char *)APtr->Data);
 			mwaitForEffect = false;
 			break;
 
 		case PLAYSOUNDB:
 			mwaitForEffect = false; /* Plays a sound in the background. */
-			ContMusic = false;
+			g_music->_loopSoundEffect = false;
 			readMusic((char *)APtr->Data);
 			break;
 
 		case PLAYSOUNDCONT:
-			g_music->_doNotFileFlushAudio = true;
-			ContMusic = true;
+			g_music->_doNotFilestopSoundEffect = true;
+			g_music->_loopSoundEffect = true;
 			readMusic((char *)APtr->Data);
 			break;
 
@@ -605,19 +605,13 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case CHANGEMUSIC:
-			if (g_music->_turnMusicOn) {
-				g_music->changeMusic((const char *)APtr->Data);
-				DoNotReset = true;
-			}
-
+			g_music->changeMusic((const char *)APtr->Data);
+			DoNotReset = true;
 			break;
 
 		case RESETMUSIC:
-			if (g_music->_turnMusicOn) {
-				g_music->resetMusic();
-				DoNotReset = false;
-			}
-
+			g_music->resetMusic();
+			DoNotReset = false;
 			break;
 
 		case FILLMUSIC:
@@ -625,7 +619,7 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case WAITSOUND:
-			while (EffectPlaying) {
+			while (g_music->isSoundEffectActive()) {
 				g_music->updateMusic();
 				diffNextFrame();
 				waitTOF();
@@ -634,21 +628,18 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			break;
 
 		case CLEARSOUND:
-			if (ContMusic) {
-				ContMusic = false;
-				flushAudio();
-			} else if (EffectPlaying)
-				flushAudio();
+			if (g_music->_loopSoundEffect) {
+				g_music->_loopSoundEffect = false;
+				g_music->stopSoundEffect();
+			} else if (g_music->isSoundEffectActive())
+				g_music->stopSoundEffect();
 
 			break;
 
 		case WINMUSIC:
-			if (g_music->_turnMusicOn) {
-				g_music->_winmusic = true;
-				g_music->freeMusic();
-				g_music->initMusic();
-			}
-
+			g_music->_winmusic = true;
+			g_music->freeMusic();
+			g_music->initMusic();
 			break;
 
 		case WINGAME:
@@ -699,18 +690,18 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 		APtr = APtr->NextAction;
 	}
 
-	if (ContMusic) {
-		ContMusic = false;
-		flushAudio();
+	if (g_music->_loopSoundEffect) {
+		g_music->_loopSoundEffect = false;
+		g_music->stopSoundEffect();
 	} else {
-		while (EffectPlaying) {
+		while (g_music->isSoundEffectActive()) {
 			g_music->updateMusic();
 			diffNextFrame();
 			waitTOF();
 		}
 	}
 
-	g_music->_doNotFileFlushAudio = false;
+	g_music->_doNotFilestopSoundEffect = false;
 }
 
 /*****************************************************************************/

@@ -47,7 +47,7 @@ bool LongWinInFront = false;
 
 TextFont *MsgFont;
 
-extern bool DoBlack, waitForEffect, EffectPlaying, stopsound, DoNotDrawMessage, IsHiRes, nopalchange, DoMusic;
+extern bool DoBlack, waitForEffect, stopsound, DoNotDrawMessage, IsHiRes, nopalchange;
 
 /* Global parser data */
 
@@ -698,7 +698,6 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 
 static bool nosvgamem = false;
 static bool didintro = false;
-static bool novesa = false, noaudio = false;
 
 /******************************************************************************/
 /* Processes user input events.                                               */
@@ -750,7 +749,7 @@ static void process() {
 				break;
 			}
 
-			g_music->restartBackMusic();
+			g_music->resumeBackMusic();
 
 			/* Sees what kind of close up we're in and does the appropriate stuff, if any. */
 			if (doCloseUp(CPtr)) {
@@ -1382,8 +1381,6 @@ void LabEngine::go() {
 	bool mem, dointro = false;
 	uint16 counter;
 
-	DoMusic = true;
-	g_music->_turnMusicOn = true;
 	dointro = true;
 
 	IsHiRes = ((getFeatures() & GF_LOWRES) == 0);
@@ -1394,23 +1391,6 @@ void LabEngine::go() {
 	else
 		warning("Running in LowRes mode");
 #endif
-
-#if 0
-	for (counter = 1; counter < argc; counter++) {
-			if (((argv[counter])[0] == 'q') || ((argv[counter])[0] == 'Q')) {
-				DoMusic = false;
-				g_music->_turnMusicOn = false;
-			}
-
-			else if (((argv[counter])[0] == '/') && ((argv[counter])[1] == '?')) {
-				debug("\n\nPlayer Version 1.0.  Copyright (c) 1993 Terra Nova Development\n");
-				debug("Player v q\n");
-				debug("    q : Start in quiet mode; no sound output.\n\n");
-				return;
-			}
-	}
-#endif
-
 	if (initBuffer(BUFFERSIZE, true)) {
 		mem = true;
 	} else {
@@ -1418,17 +1398,8 @@ void LabEngine::go() {
 		return;
 	}
 
-	if (!initAudio()) {
-		noaudio = true;
-		DoMusic = false;
-		g_music->_turnMusicOn = false;
-		debug("Could not open Audio.");
-		g_system->delayMillis(500);
-	}
-
 	if (!setUpScreens()) {
 		IsHiRes = false;
-		novesa = true;
 		mem = mem && setUpScreens();
 	}
 
@@ -1484,7 +1455,6 @@ void LabEngine::go() {
 	freeBuffer();
 
 	g_music->freeMusic();
-	freeAudio();
 }
 
 /*****************************************************************************/

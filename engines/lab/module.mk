@@ -2,7 +2,6 @@ MODULE := engines/lab
 
 MODULE_OBJS := \
 	allocroom.o \
-	audioi.o \
 	detection.o \
 	engine.o \
 	graphics.o \
