@@ -176,7 +176,12 @@ Common::String UserInterface::getMouseHintForObject(Resources::Object *object) {
 	if (object) {
 		Resources::Item *item = object->findParent<Resources::Item>();
 		if (item) {
-			return item->getName();
+			if (item->listChildrenRecursive<Resources::PATTable>().size() > 1) {
+				// Use the PAT Table name if more than one defined in item.
+				return object->getName();
+			} else {
+				return item->getName();
+			}
 		} else {
 			return object->getName();
 		}
