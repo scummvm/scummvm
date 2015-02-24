@@ -182,7 +182,7 @@ void Interface::setup() {
 
 	Party &party = *_vm->_party;
 	party.loadActiveParty();
-	party._newDay = party._minutes >= 300;
+	party._newDay = party._minutes < 300;
 }
 
 void Interface::startup() {
@@ -581,7 +581,7 @@ void Interface::perform() {
 }
 
 void Interface::chargeStep() {
-	if (_vm->_party->_partyDead) {
+	if (!_vm->_party->_partyDead) {
 		_vm->_party->changeTime(_vm->_map->_isOutdoors ? 10 : 1);
 		if (!_tillMove) {
 			_vm->_combat->moveMonsters();
