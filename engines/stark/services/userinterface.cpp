@@ -221,7 +221,18 @@ bool UserInterface::performActionOnObject(Resources::Object *object, Resources::
 	// * Click in the action menu, which has 0 available actions (TODO)
 	if (table->getNumActions() == 0) {
 		if (activeObject) {
-			warning("TODO: We should check if the active object got an action from the action menu");
+			// HACK: presumably this can be resolved by adding SubItem2, and hooking up the item to the actionMenu directly.
+			int menuResult = _actionMenu->isThisYourButton(object);
+			if (menuResult != -1 && activeObject->getType() == Resources::Type::kPATTable) {
+				Resources::PATTable *table = (Resources::PATTable *)activeObject;
+				if (menuResult == ActionMenu::kActionHand) {
+					table->getScriptForAction(Resources::PATTable::kActionUse)->execute(Resources::Script::kCallModePlayerAction);
+				} else if (menuResult == ActionMenu::kActionEye) {
+					table->getScriptForAction(Resources::PATTable::kActionLook)->execute(Resources::Script::kCallModePlayerAction);
+				} else if (menuResult == ActionMenu::kActionMouth) {
+					table->getScriptForAction(Resources::PATTable::kActionTalk)->execute(Resources::Script::kCallModePlayerAction);
+				}
+			}
 		}
 		return true;
 	} else if (table->getNumActions() == 1) {

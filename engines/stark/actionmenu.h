@@ -31,6 +31,7 @@ class VisualImageXMG;
 
 namespace Resources {
 class Item;
+class Object;
 }
 
 class ActionMenu {
@@ -55,6 +56,7 @@ public:
 	void clearActions();
 	void enableAction(ActionMenuType action);
 	Gfx::RenderEntryArray getRenderEntries() { return _renderEntries; }
+	int isThisYourButton(Resources::Object *object);
 };
 
 

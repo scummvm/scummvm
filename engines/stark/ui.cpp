@@ -85,10 +85,6 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 		_cursor->setCursorType(Cursor::kPassive);
 	}
 	_cursor->setMouseHint(mouseHint);
-
-	if (_hasClicked) {
-		handleClick();
-	}
 }
 
 void UI::handleClick() {
@@ -116,6 +112,10 @@ void UI::render() {
 	Common::Point pos = _cursor->getMousePosition();
 	UserInterface *ui = StarkServices::instance().userInterface;
 	update(ui->getRenderEntries(), true);
+	// Can't handle clicks before this point, since we need to have updated the mouse-over state to include the UI.
+	if (_hasClicked) {
+		handleClick();
+	}
 	ui->render();
 }
 

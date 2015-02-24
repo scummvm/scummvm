@@ -103,5 +103,19 @@ void ActionMenu::enableAction(ActionMenuType action) {
 			error("Invalid action type in ActionMenu::enableAction");
 	}
 }
+
+int ActionMenu::isThisYourButton(Resources::Object *object) {
+	Resources::Item *item = object->findParent<Resources::Item>();
+	warning("Item: %s", item->getName().c_str());
+	if (item == _mouth) {
+		return kActionHand;
+	} else if (item == _eye) {
+		return kActionEye;
+	} else if (item == _hand) {
+		return kActionHand;
+	} else {
+		return -1;
+	}
+}
  
 } // End of namespace Stark
