@@ -52,7 +52,6 @@ static bool PlayOnce = false, changedscreen;
 bool NoFlip         = false,  /* Don't flip the new picture to front  */
      DoBlack        = false,     /* Black the screen before new picture  */
      nopalchange    = false,     /* Don't change the palette.            */
-     noscreenchange = false,     /* Don't change the screen type.        */
      IsBM           = false,     /* Just fill in the RawDIFFBM structure */
      hidemouse      = false,     /* Don't set the mouse colors           */
      stopsound      = false,

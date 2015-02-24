@@ -40,7 +40,7 @@ namespace Lab {
 
 static TextFont filler, *msgfont = &filler;
 
-extern bool nopalchange, noscreenchange, hidemouse, DoBlack, NoFlip, IsHiRes;
+extern bool nopalchange, hidemouse, DoBlack, NoFlip, IsHiRes;
 
 extern char diffcmap[256 * 3];
 
@@ -248,18 +248,19 @@ void musicDelay() {
 
 
 static void NReadPict(const char *Filename, bool PlayOnce) {
-	char filename[20] = "P:Intro/";
+	Common::String finalFileName = "P:Intro/";
 
 	g_music->newCheckMusic();
+	introEatMessages();
 
 	if (QuitIntro)
 		return;
 
-	strcat(filename, Filename);
+	finalFileName += Filename;
 
 	DoBlack = IntroDoBlack;
 	stopDiffEnd();
-	readPict(filename, PlayOnce);
+	readPict(finalFileName.c_str(), PlayOnce);
 }
 
 
@@ -274,13 +275,17 @@ void introSequence() {
 	DoBlack = true;
 
 	if (g_lab->getPlatform() != Common::kPlatformWindows) {
-		readPict("p:Intro/EA0", true);
-		readPict("p:Intro/EA1", true);
-		readPict("p:Intro/EA2", true);
-		readPict("p:Intro/EA3", true);
+		NReadPict("EA0", true);
+		NReadPict("EA1", true);
+		NReadPict("EA2", true);
+		NReadPict("EA3", true);
 	} else {
-		readPict("p:Intro/WYRMKEEP", true);
-		microDelay(4, 0);
+		NReadPict("WYRMKEEP", true);
+		for (counter = 0; counter < 4; counter++) {
+			if (QuitIntro)
+				break;
+			microDelay(1, 0);
+		}
 	}
 
 	blackAllScreen();
@@ -288,14 +293,15 @@ void introSequence() {
 	g_music->initMusic();
 
 	nopalchange = true;
-	noscreenchange = true;
-	readPict("p:Intro/TNDcycle2.pic", true);
+	NReadPict("TNDcycle2.pic", true);
 	nopalchange = false;
-	noscreenchange = false;
 
 	FadePalette = Palette;
 
 	for (counter = 0; counter < 16; counter++) {
+		if (QuitIntro)
+			break;
+
 		Palette[counter] = ((diffcmap[counter * 3] >> 2) << 8) +
 		                   ((diffcmap[counter * 3 + 1] >> 2) << 4) +
 		                   (diffcmap[counter * 3 + 2] >> 2);
@@ -305,6 +311,9 @@ void introSequence() {
 	fade(true, 0);
 
 	for (int times = 0; times < 150; times++) {
+		if (QuitIntro)
+			break;
+
 		g_music->newCheckMusic();
 		uint16 temp = Palette[2];
 
@@ -322,24 +331,24 @@ void introSequence() {
 
 	g_music->newCheckMusic();
 
-	readPict("p:Intro/Title.A", true);
-	readPict("p:Intro/AB", true);
+	NReadPict("Title.A", true);
+	NReadPict("AB", true);
 	musicDelay();
-	readPict("p:Intro/BA", true);
-	readPict("p:Intro/AC", true);
-	musicDelay();
-
-	if (g_lab->getPlatform() == Common::kPlatformWindows)
-		musicDelay(); // more credits on this page now
-
-	readPict("p:Intro/CA", true);
-	readPict("p:Intro/AD", true);
+	NReadPict("BA", true);
+	NReadPict("AC", true);
 	musicDelay();
 
 	if (g_lab->getPlatform() == Common::kPlatformWindows)
 		musicDelay(); // more credits on this page now
 
-	readPict("p:Intro/DA", true);
+	NReadPict("CA", true);
+	NReadPict("AD", true);
+	musicDelay();
+
+	if (g_lab->getPlatform() == Common::kPlatformWindows)
+		musicDelay(); // more credits on this page now
+
+	NReadPict("DA", true);
 	musicDelay();
 
 	g_music->newOpen("p:Intro/Intro.1");  /* load the picture into the buffer */
@@ -351,9 +360,7 @@ void introSequence() {
 	getFont("P:Map.font", msgfont);
 
 	nopalchange = true;
-	noscreenchange = true;
-	readPict("p:Intro/Intro.1", true);
-	noscreenchange = false;
+	NReadPict("Intro.1", true);
 	nopalchange = false;
 
 	for (counter = 0; counter < 16; counter++) {

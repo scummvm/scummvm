@@ -696,13 +696,10 @@ static void decIncInv(uint16 *CurInv, bool dec) {
 }
 
 
-static bool nosvgamem = false;
-static bool didintro = false;
-
 /******************************************************************************/
-/* Processes user input events.                                               */
+/* The main game loop                                                         */
 /******************************************************************************/
-static void process() {
+static void mainGameLoop() {
 	IntuiMessage *Msg;
 	uint32 Class;
 
@@ -1415,16 +1412,16 @@ void LabEngine::go() {
 
 	openFont("P:AvanteG.12", &MsgFont);
 
+	mouseHide();
+
 	if (dointro && mem) {
-		didintro = true;
 		introSequence();
-		didintro = true;
 	} else
 		DoBlack = true;
 
 	if (mem) {
 		mouseShow();
-		process();
+		mainGameLoop();
 	} else
 		debug("\n\nNot enough memory to start game.\n\n");
 
