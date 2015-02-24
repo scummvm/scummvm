@@ -37,10 +37,10 @@ TopMenu::TopMenu() {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: The animations on these should be driven by the engine internally, so we probably shouldn't be holding
 	// image references here?
-	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
-	_inventoryButton = new Button("Inventory", staticProvider->getCursorImage(16), Common::Point(0, 0));
-	_exitButton = new Button("Exit", staticProvider->getCursorImage(8), Common::Point(600, 0));
-	_diaryButton = new Button("Diary", staticProvider->getCursorImage(15), Common::Point(560, 0));
+	// TODO:  Unhardcode
+	_inventoryButton = new Button("Inventory", staticProvider->getUIItem(StaticProvider::kInventory), Common::Point(0, 0));
+	_exitButton = new Button("Exit", staticProvider->getUIItem(StaticProvider::kQuit), Common::Point(600, 0));
+	_diaryButton = new Button("Diary", staticProvider->getUIItem(StaticProvider::kDiaryNormal), Common::Point(560, 0));
 }
 
 TopMenu::~TopMenu() {

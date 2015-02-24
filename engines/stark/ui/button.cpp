@@ -23,6 +23,9 @@
 #include "engines/stark/ui/button.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/visual/visual.h"
+
+#include "engines/stark/resources/anim.h"
 
 #include "engines/stark/services/services.h"
 
@@ -30,7 +33,7 @@
 
 namespace Stark {
 
-Button::Button(const Common::String &text, VisualImageXMG *image, Common::Point pos)
+Button::Button(const Common::String &text, Resources::Anim *image, Common::Point pos)
 	: _position(pos),
 	  _image(image),
 	  _text(text) {
@@ -38,15 +41,15 @@ Button::Button(const Common::String &text, VisualImageXMG *image, Common::Point 
 
 void Button::render() {
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_image->render(_position);
+	_image->getVisual()->get<VisualImageXMG>()->render(_position);
 }
 
 bool Button::containsPoint(Common::Point point) {
 	Common::Rect r;
 	r.left = _position.x;
 	r.top = _position.y;
-	r.setWidth(_image->getWidth());
-	r.setHeight(_image->getHeight());
+	r.setWidth(_image->getVisual()->get<VisualImageXMG>()->getWidth());
+	r.setHeight(_image->getVisual()->get<VisualImageXMG>()->getHeight());
 	return r.contains(point);
 }
 

@@ -31,12 +31,16 @@ namespace Stark {
 
 class VisualImageXMG;
 
+namespace Resources {
+class Anim;
+}
+
 class Button {
-	VisualImageXMG *_image;
+	Resources::Anim *_image;
 	Common::Point _position;
 	Common::String _text;
 public:
-	Button(const Common::String &text, VisualImageXMG *image, Common::Point pos);
+	Button(const Common::String &text, Resources::Anim *image, Common::Point pos);
 	void setPosition(Common::Point pos) { _position = pos; }
 	void render();
 	bool containsPoint(Common::Point point);

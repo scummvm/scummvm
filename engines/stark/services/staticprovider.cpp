@@ -63,4 +63,8 @@ VisualImageXMG *StaticProvider::getCursorImage(uint32 stockAnim) {
 	return anim->getVisual()->get<VisualImageXMG>();
 }
 
+Resources::Anim *StaticProvider::getUIItem(StaticItems stockAnim) {
+	return _stockAnims[stockAnim];
+}
+
 } // End of namespace Stark

@@ -58,6 +58,17 @@ public:
 
 	VisualImageXMG *getCursorImage(uint32 stockAnim);
 
+	enum StaticItems {
+		kQuit = 8,
+		kDiaryNormal = 15,
+		kInventory = 16,
+		kTextBackgroundActive = 20,
+		kTextBackgroundPassive = 21
+	};
+
+	// TODO: This is awaiting subItem2-too.
+	Resources::Anim *getUIItem(StaticItems stockAnim);
+
 private:
 	ArchiveLoader *_archiveLoader;
 	Global *_global;
