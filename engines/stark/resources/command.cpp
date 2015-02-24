@@ -65,6 +65,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opScriptPause(script, _arguments[1].referenceValue);
 	case kScriptPauseRandom:
 		return opPauseRandom(script, _arguments[1].referenceValue);
+	case kExit2DLocation:
+		return opExit2DLocation(script);
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
@@ -175,6 +177,11 @@ Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
 	// TODO: Actually get a random value here.
 	script->pause(1000);
 	return this; // Stay on this command while the script is suspended
+}
+
+Command *Command::opExit2DLocation(Script *script) {
+	warning("(TODO: Implement) Exit 2D Location");
+	return nullptr;
 }
 
 Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
