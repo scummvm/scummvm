@@ -39,14 +39,11 @@ namespace Lab {
 extern bool IsHiRes;
 extern uint32 VGAScreenWidth, VGAScreenHeight;
 
-void mouseHideXY();
-
 static bool LeftClick = false;
 static bool RightClick = false;
 
-static bool MouseHidden = true, QuitMouseHandler = false;
+static bool MouseHidden = true;
 static int32 NumHidden   = 1;
-static uint16 CurMouseX, CurMouseY;
 static Gadget *LastGadgetHit = NULL;
 Gadget *ScreenGadgetList = NULL;
 static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -68,10 +65,8 @@ static byte MouseData[] = {1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 #define MOUSE_WIDTH 10
 #define MOUSE_HEIGHT 15
 
-static bool drawmouse = false, gadhit    = false;
+static bool gadhit    = false;
 static Gadget *hitgad = NULL;
-
-void mouseShowXY(uint16 CurMouseX, uint16 CurMouseY);
 
 /*****************************************************************************/
 /* Checks whether or not the cords fall within one of the gadgets in a list  */
@@ -89,20 +84,18 @@ static Gadget *checkGadgetHit(Gadget *gadlist, uint16 x, uint16 y) {
 				gadhit = true;
 				hitgad = gadlist;
 			} else {
-				QuitMouseHandler = true;
 				VGAStorePage();
-				mouseHideXY();
+				mouseHide();
 				drawImage(gadlist->ImAlt, gadlist->x, gadlist->y);
-				mouseShowXY(x, y);
+				mouseShow();
 
 				for (counter = 0; counter < 3; counter++)
 					waitTOF();
 
-				mouseHideXY();
+				mouseHide();
 				drawImage(gadlist->Im, gadlist->x, gadlist->y);
-				mouseShowXY(x, y);
+				mouseShow();
 				VGARestorePage();
-				QuitMouseHandler = false;
 			}
 
 			return gadlist;
@@ -131,14 +124,6 @@ void mouse_handler(int32 flag, int32 mouseX, int32 mouseY) {
 		mouseX /= 2;
 
 	if (flag & 0x01) { /* mouse Move */
-		if ((CurMouseX != mouseX) || (CurMouseY != mouseY)) {
-			CurMouseX = mouseX;
-			CurMouseY = mouseY;
-
-			if (IsHiRes && !QuitMouseHandler) {
-				drawmouse = true;
-			}
-		}
 	}
 
 	if ((flag & 0x02) && (NumHidden < 2)) { /* Left mouse button click */
@@ -151,15 +136,11 @@ void mouse_handler(int32 flag, int32 mouseX, int32 mouseY) {
 			LastGadgetHit = TempGad;
 		} else {
 			LeftClick = true;
-			CurMouseX     = mouseX;
-			CurMouseY     = mouseY;
 		}
 	}
 
 	if ((flag & 0x08) && (NumHidden < 2)) { /* Right mouse button click */
 		RightClick = true;
-		CurMouseX     = mouseX;
-		CurMouseY     = mouseY;
 	}
 }
 
@@ -170,16 +151,12 @@ void updateMouse() {
 	uint16 counter;
 	bool doUpdateDisplay = false;
 
-	if (drawmouse && !MouseHidden) {
-		QuitMouseHandler = true;
-		drawmouse = false;
-		QuitMouseHandler = false;
+	if (!MouseHidden) {
 		doUpdateDisplay = true;
 	}
 
 	if (gadhit) {
 		gadhit = false;
-		QuitMouseHandler = true;
 		mouseHide();
 		drawImage(hitgad->ImAlt, hitgad->x, hitgad->y);
 		mouseShow();
@@ -191,7 +168,6 @@ void updateMouse() {
 		drawImage(hitgad->Im, hitgad->x, hitgad->y);
 		mouseShow();
 		doUpdateDisplay = true;
-		QuitMouseHandler = false;
 	}
 
 	if (doUpdateDisplay)
@@ -220,42 +196,21 @@ bool initMouse() {
 /* Shows the mouse.                                                          */
 /*****************************************************************************/
 void mouseShow() {
-	mouseShowXY(CurMouseX, CurMouseY);
-
-	g_system->showMouse(true);
-}
-
-
-
-
-
-/*****************************************************************************/
-/* Shows the mouse.                                                          */
-/*****************************************************************************/
-void mouseShowXY(uint16 MouseX, uint16 MouseY) {
-	QuitMouseHandler = true;
-
 	if (NumHidden)
 		NumHidden--;
 
 	if ((NumHidden == 0) && MouseHidden) {
-		CurMouseX = MouseX;
-		CurMouseY = MouseY;
 		WSDL_ProcessInput(0);
 		MouseHidden = false;
 	}
 
-	QuitMouseHandler = false;
+	g_system->showMouse(true);
 }
-
-
 
 /*****************************************************************************/
 /* Hides the mouse.                                                          */
 /*****************************************************************************/
 void mouseHide() {
-	QuitMouseHandler = true;
-
 	NumHidden++;
 
 	if (NumHidden && !MouseHidden) {
@@ -263,30 +218,7 @@ void mouseHide() {
 
 		g_system->showMouse(false);
 	}
-
-	QuitMouseHandler = false;
 }
-
-
-
-
-/*****************************************************************************/
-/* Hides the mouse.                                                          */
-/*****************************************************************************/
-void mouseHideXY() {
-	QuitMouseHandler = true;
-
-	NumHidden++;
-
-	if (NumHidden && !MouseHidden) {
-		MouseHidden = true;
-
-		g_system->showMouse(false);
-	}
-
-	QuitMouseHandler = false;
-}
-
 
 
 extern uint32 g_MouseX;
@@ -317,10 +249,7 @@ void mouseMove(uint16 x, uint16 y) {
 	g_system->warpMouse(x, y);
 
 	if (!MouseHidden) {
-		QuitMouseHandler = true;
-		mouseXY(&CurMouseX, &CurMouseY);
 		WSDL_ProcessInput(0);
-		QuitMouseHandler = false;
 	}
 }
 
@@ -335,15 +264,15 @@ void mouseMove(uint16 x, uint16 y) {
 bool mouseButton(uint16 *x, uint16 *y, bool leftbutton) {
 	if (leftbutton) {
 		if (LeftClick) {
-			*x = CurMouseX;
-			*y = CurMouseY;
+			*x = (!IsHiRes) ? (uint16)g_MouseX / 2 : (uint16)g_MouseX;
+			*y = (uint16)g_MouseY;
 			LeftClick = false;
 			return true;
 		}
 	} else {
 		if (RightClick) {
-			*x = CurMouseX;
-			*y = CurMouseY;
+			*x = (!IsHiRes) ? (uint16)g_MouseX / 2 : (uint16)g_MouseX;
+			*y = (uint16)g_MouseY;
 			RightClick = false;
 			return true;
 		}
