@@ -134,9 +134,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	setupScaling(newScale, xOffset + width, yOffset + height);
 
 	Common::Point destPos = pt;
-	if (!(flags & SPRFLAG_2000)) {
-		destPos.x += (xOffset + width - _scaledWidth) / 2;
-	}
+	destPos.x += (xOffset + width - _scaledWidth) / 2;
 
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;

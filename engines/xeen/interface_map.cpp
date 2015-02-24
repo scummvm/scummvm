@@ -2555,6 +2555,68 @@ void InterfaceMap::setIndoorsMonsters() {
 			}
 		}
 	}
+
+	_indoorList[153]._x += 58;
+	_indoorList[131]._x += 25;
+	_indoorList[105]._x += 9;
+	_indoorList[69]._x--;
+	_indoorList[61]._x -= 26;
+	_indoorList[64]._x += 23;
+	_indoorList[66]._x -= 58;
+	_indoorList[67]._x += 40;
+	_indoorList[100]._x -= 65;
+	_indoorList[101]._x -= 85;
+	_indoorList[102]._x += 49;
+	_indoorList[103]._x += 65;
+	_indoorList[128]._x -= 112;
+	_indoorList[129]._x += 98;
+
+	if (combat._attackMonsters[1] != -1 && combat._attackMonsters[2] == -1) {
+		_indoorList[156]._x += 31;
+		_indoorList[150]._x -= 36;
+	} else {
+		_indoorList[156]._x -= 5;
+		_indoorList[150]._x -= 67;
+	}
+
+	if (combat._attackMonsters[4] != -1 && combat._attackMonsters[5] == -1) {
+		_indoorList[132]._x += 8;
+		_indoorList[130]._x -= 23;
+	} else {
+		_indoorList[132]._x -= 7;
+		_indoorList[130]._x -= 38;
+	}
+
+	if (combat._attackMonsters[7] != -1 && combat._attackMonsters[8] == -1) {
+		_indoorList[104]._x -= 16;
+	} else {
+		_indoorList[106]._x -= 8;
+		_indoorList[104]._x -= 24;
+	}
+
+	if (combat._attackMonsters[10] != -1 && combat._attackMonsters[11] == -1) {
+		_indoorList[70]._x -= 5;
+		_indoorList[68]._x -= 13;
+	} else {
+		_indoorList[70]._x -= 9;
+		_indoorList[68]._x -= 17;
+	}
+
+	if (combat._attackMonsters[22] == -1 && combat._attackMonsters[24] == -1) {
+		_indoorList[62]._x -= 27;
+		_indoorList[60]._x -= 37;
+	} else {
+		_indoorList[62]._x -= 34;
+		_indoorList[60]._x -= 41;
+	}
+
+	if (combat._attackMonsters[23] != -1 && combat._attackMonsters[25] == -1) {
+		_indoorList[65]._x += 20;
+		_indoorList[63]._x -= 12;
+	} else {
+		_indoorList[65]._x += 16;
+		_indoorList[63]._x -= 16;
+	}
 }
 
 /**
@@ -2577,7 +2639,7 @@ void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster
 		drawStruct._x = 0;
 	}
 
-	drawStruct._flags &= SPRFLAG_HORIZ_FLIPPED | SPRFLAG_4000 | SPRFLAG_2000;
+	drawStruct._flags &= ~0xFFF;
 	if (monster._effect2)
 		drawStruct._flags = MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
 }
