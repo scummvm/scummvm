@@ -80,7 +80,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kPlayAnimation:
 		return opPlayAnimation(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kShowPlay:
-		return opShowPlay(_arguments[1].referenceValue, _arguments[2].intValue);
+		return opShowPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kScriptEnable:
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSetBoolean:
@@ -279,14 +279,21 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 	return nextCommand();
 }
 
-Command *Command::opShowPlay(const ResourceReference &ref, int32 unknown) {
+Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32 unknown) {
 	assert(_arguments.size() == 3);
 	Speech *speechObj = ref.resolve<Speech>();
 	assert(speechObj->getType().get() == Type::kSpeech);
-	speechObj->playSound();
+	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+	dialogPlayer->playSingle(speechObj);
 	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speechObj->getName().c_str(), unknown, speechObj->getPhrase().c_str(), ref.describe().c_str());
-	// TODO: Presumably there is a show-part to this too, so we might want to look out for non-Speech objects.
-	return nextCommand();
+	// TODO guesswork:
+	if (unknown) {
+		script->suspend(speechObj);
+		return this;
+	} else {
+		// TODO: Presumably there is a show-part to this too, so we might want to look out for non-Speech objects.
+		return nextCommand();
+	}
 }
 
 Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 value) {
@@ -384,7 +391,8 @@ Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference 
 	warning("(TODO: Implement) opSpeakWithoutTalking(%s, %d) : %s", speech->getName().c_str(), suspend, speechRef.describe().c_str());
 
 	// TODO: Complete
-	speech->playSound();
+	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+	dialogPlayer->playSingle(speech);
 
 	if (suspend) {
 		script->suspend(speech);

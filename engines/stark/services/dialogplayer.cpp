@@ -34,7 +34,8 @@ namespace Stark {
 DialogPlayer::DialogPlayer() :
 		_currentDialog(nullptr),
 		_currentReply(nullptr),
-		_speechReady(false) {
+		_speechReady(false),
+		_singleSpeech(nullptr) {
 }
 
 DialogPlayer::~DialogPlayer() {}
@@ -49,8 +50,17 @@ void DialogPlayer::run(Resources::Dialog *dialog) {
 	buildOptions();
 }
 
+void DialogPlayer::playSingle(Resources::Speech *speech) {
+	if (speech) {
+		_singleSpeech = speech;
+		speech->playSound();
+		setSubtitles(speech->getPhrase());
+		_speechReady = false;
+	}
+}
+
 bool DialogPlayer::isRunning() {
-	return _currentDialog != nullptr;
+	return _singleSpeech != nullptr || _currentDialog != nullptr;
 }
 
 void DialogPlayer::buildOptions() {
@@ -127,6 +137,12 @@ void DialogPlayer::reset() {
 }
 
 void DialogPlayer::update() {
+	// Check this first.
+	if (_singleSpeech && !_singleSpeech->isPlaying()) {
+		_singleSpeech = nullptr;
+		_speechReady = true;
+		setSubtitles("");
+	}
 	if (!_currentDialog || !_currentReply) {
 		return; // Nothing to do
 	}

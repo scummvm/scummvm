@@ -46,6 +46,9 @@ public:
 	/** Enter a dialog */
 	void run(Resources::Dialog *dialog);
 
+	/** Play a one-shot sentence */
+	void playSingle(Resources::Speech *speech);
+
 	/** Check if a dialog is running */
 	bool isRunning();
 
@@ -81,6 +84,8 @@ protected:
 
 	Resources::Dialog *_currentDialog;
 	Resources::Dialog::Reply *_currentReply;
+
+	Resources::Speech *_singleSpeech;
 
 	bool _speechReady;
 	Common::Array<Option> _options;
