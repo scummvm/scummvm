@@ -59,6 +59,7 @@ MODULE_OBJS := \
 	stark.o \
 	ui.o \
 	ui/button.o \
+	ui/clicktext.o \
 	ui/dialoginterface.o \
 	ui/topmenu.o \
 	visual/actor.o \

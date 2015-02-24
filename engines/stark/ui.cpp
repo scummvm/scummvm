@@ -66,6 +66,11 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 		return;
 	}
 
+	if (_dialogInterface->containsPoint(pos)) {
+		_dialogInterface->handleMouseOver(pos);
+		return;
+	}
+
 	// Check for game world mouse overs
 	UserInterface *ui = StarkServices::instance().userInterface;
 	Gfx::RenderEntry *currentEntry = ui->getEntryAtPosition(pos, renderEntries);
@@ -128,6 +133,9 @@ void UI::handleClick() {
 	}
 	if (_topMenu->containsPoint(_cursor->getMousePosition())) {
 		_topMenu->handleClick(_cursor->getMousePosition());
+	}
+	if (_dialogInterface->containsPoint(_cursor->getMousePosition())) {
+		_dialogInterface->handleClick(_cursor->getMousePosition());
 	}
 	_hasClicked = false;
 }

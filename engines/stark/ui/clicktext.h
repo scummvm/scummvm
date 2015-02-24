@@ -20,44 +20,38 @@
  *
  */
 
-#ifndef STARK_DIALOGINTERFACE_H
-#define STARK_DIALOGINTERFACE_H
+#ifndef STARK_CLICKTEXT_H
+#define STARK_CLICKTEXT_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
-#include "common/str-array.h"
-#include "common/array.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Stark {
 
 class VisualImageXMG;
-class ClickText;
 
 namespace Gfx {
 class Texture;
 }
 
-class DialogInterface {
-	VisualImageXMG *_passiveBackGroundTexture;
-	VisualImageXMG *_activeBackGroundTexture;
-	Gfx::Texture *_texture;
-	Common::Array<ClickText*> _options;
-	bool _hasOptions;
-	void clearOptions();
-	void renderOptions();
+class ClickText {
+	Gfx::Texture *_texturePassive;
+	Gfx::Texture *_textureActive;
+	Gfx::Texture *_curTexture;
+	Common::Point _position;
+	Common::String _text;
+	Common::Rect _bbox;
 public:
-	DialogInterface();
-	virtual ~DialogInterface();
+	ClickText(const Common::String &text, Common::Point pos);
+	void setPosition(Common::Point pos) { _position = pos; }
 	void render();
-	void update();
-	void notifySubtitle(const Common::String &subtitle);
-	void notifyDialogOptions(const Common::StringArray &options);
 	bool containsPoint(Common::Point point);
-	void handleMouseOver(Common::Point point);
-	void handleClick(Common::Point point);
+	void handleMouseOver();
+	void setPassive() { _curTexture = _texturePassive; }
+	int getHeight() const { return _bbox.height(); }
 };
 
 } // End of namespace Stark
 
-#endif // STARK_DIALOG_INTERFACE_H
+#endif // STARK_BUTTON_H

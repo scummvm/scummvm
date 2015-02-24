@@ -21,6 +21,7 @@
  */
 
 #include "engines/stark/ui/dialoginterface.h"
+#include "engines/stark/ui/clicktext.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -41,7 +42,22 @@ DialogInterface::DialogInterface() : _texture(nullptr), _hasOptions(false) {
 }
 
 DialogInterface::~DialogInterface() {
+	clearOptions();
 	delete _texture;
+}
+
+void DialogInterface::clearOptions() {
+	for (int i = 0; i < _options.size(); i++) {
+		delete _options[i];
+	}
+	_options.clear();
+	_hasOptions = false;
+}
+
+void DialogInterface::renderOptions() {
+	for (int i = 0; i < _options.size(); i++) {
+		_options[i]->render();
+	}
 }
 
 void DialogInterface::render() {
@@ -49,6 +65,7 @@ void DialogInterface::render() {
 	gfx->setScreenViewport(false);
 	if (_hasOptions) {
 		_activeBackGroundTexture->render(Common::Point(0, 401));
+		renderOptions();
 	} else {
 		_passiveBackGroundTexture->render(Common::Point(0, 401));
 	}
@@ -62,22 +79,63 @@ void DialogInterface::update() {
 }
 
 void DialogInterface::notifySubtitle(const Common::String &subtitle) {
-	_hasOptions = false;
+	clearOptions();
 	delete _texture;
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
 	_texture = gfx->createTextureFromString(subtitle, 0xFFFF0000);
 }
 
 void DialogInterface::notifyDialogOptions(const Common::StringArray &options) {
-	warning("Was notified");
-	Common::String str;
-	for (int i = 0; i < options.size(); i++) {
-		str += options[i] + '\n';
-	}
+	clearOptions();
 	delete _texture;
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_texture = gfx->createTextureFromString(str, 0xFFFF0000);
+	_texture = nullptr;
+
+	int pos = 401;
+	for (int i = 0; i < options.size(); i++) {
+		ClickText *text = new ClickText(options[i], Common::Point(0, pos));
+		_options.push_back(text);
+		pos += text->getHeight();
+		// TODO: Add buttons?
+		if (pos > 480) {
+			break;
+		}
+	}
 	_hasOptions = true;
+}
+
+bool DialogInterface::containsPoint(Common::Point point) {
+	if (_hasOptions && _options.size() > 0) {
+		for (int i = 0; i < _options.size(); i++) {
+			if (_options[i]->containsPoint(point)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void DialogInterface::handleMouseOver(Common::Point point) {
+	if (_hasOptions && _options.size() > 0) {
+		for (int i = 0; i < _options.size(); i++) {
+			if (_options[i]->containsPoint(point)) {
+				_options[i]->handleMouseOver();
+			} else {
+				_options[i]->setPassive();
+			}
+		}
+	}
+}
+
+void DialogInterface::handleClick(Common::Point point) {
+	if (_hasOptions && _options.size() > 0) {
+		for (int i = 0; i < _options.size(); i++) {
+			if (_options[i]->containsPoint(point)) {
+				DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+				dialogPlayer->selectOption(i);
+				return;
+			}
+		}
+	}
 }
 
 } // End of namespace Stark

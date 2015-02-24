@@ -20,44 +20,40 @@
  *
  */
 
-#ifndef STARK_DIALOGINTERFACE_H
-#define STARK_DIALOGINTERFACE_H
+#include "engines/stark/ui/clicktext.h"
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "common/str-array.h"
-#include "common/array.h"
-#include "common/rect.h"
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
+
+#include "engines/stark/services/services.h"
+
+#include "engines/stark/visual/image.h"
 
 namespace Stark {
 
-class VisualImageXMG;
-class ClickText;
-
-namespace Gfx {
-class Texture;
+ClickText::ClickText(const Common::String &text, Common::Point pos)
+	: _position(pos),
+	  _text(text) {
+	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	_texturePassive = gfx->createTextureFromString(text, 0xFFFF0000);
+	_textureActive = gfx->createTextureFromString(_text, 0xFF00FF00);
+	_curTexture = _texturePassive;
+	_bbox = gfx->getBoundingBoxForString(text);
 }
 
-class DialogInterface {
-	VisualImageXMG *_passiveBackGroundTexture;
-	VisualImageXMG *_activeBackGroundTexture;
-	Gfx::Texture *_texture;
-	Common::Array<ClickText*> _options;
-	bool _hasOptions;
-	void clearOptions();
-	void renderOptions();
-public:
-	DialogInterface();
-	virtual ~DialogInterface();
-	void render();
-	void update();
-	void notifySubtitle(const Common::String &subtitle);
-	void notifyDialogOptions(const Common::StringArray &options);
-	bool containsPoint(Common::Point point);
-	void handleMouseOver(Common::Point point);
-	void handleClick(Common::Point point);
-};
+void ClickText::render() {
+	Gfx::Driver *gfx = StarkServices::instance().gfx;
+	gfx->drawSurface(_curTexture, _position);
+}
+
+bool ClickText::containsPoint(Common::Point point) {
+	Common::Rect r = _bbox;
+	r.translate(_position.x, _position.y);
+	return r.contains(point);
+}
+
+void ClickText::handleMouseOver() {
+	_curTexture = _textureActive;
+}
 
 } // End of namespace Stark
-
-#endif // STARK_DIALOG_INTERFACE_H

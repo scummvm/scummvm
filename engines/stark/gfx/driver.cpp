@@ -69,6 +69,21 @@ Texture *Driver::createTextureFromString(const Common::String &str, uint32 color
 	return texture;
 }
 
+Common::Rect Driver::getBoundingBoxForString(const Common::String &str) {
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	// TODO: The hardcoded widths here are not exactly perfect.
+	Common::Array<Common::String> lines;
+	font->wordWrapText(str, 580, lines);
+	Common::Rect result;
+	
+	int height = font->getFontHeight();
+	for (int i = 0; i < lines.size(); i++) {
+		Common::Rect thisLine = font->getBoundingBox(lines[i], 0, height * i, 580);
+		result.extend(thisLine);
+	}
+	return result;
+}
+
 void Driver::computeScreenViewport() {
 	int32 screenWidth = g_system->getWidth();
 	int32 screenHeight = g_system->getHeight();
