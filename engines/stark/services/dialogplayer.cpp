@@ -81,6 +81,13 @@ void DialogPlayer::buildOptions() {
 	if (_options.size() == 1) {
 		// Only one option, just run it
 		selectOption(0);
+	} else {
+		Common::String options;
+		for (uint i = 0; i < availableTopics.size(); i++) {
+			options += _options[i]._caption + '\n';
+		}
+		setSubtitles(options);
+		warning("We need to select between options");
 	}
 }
 
