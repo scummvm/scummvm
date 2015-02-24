@@ -62,7 +62,7 @@ const char *ViewPath = "LAB:Rooms/";
 const char *NewFileName;
 
 extern bool DoNotDrawMessage;
-extern bool NoFlip, IsBM, noupdatediff, waiteffect, mwaiteffect, QuitLab, EffectPlaying, soundplaying, MusicOn, DoBlack, ContMusic, DoNotReset;
+extern bool NoFlip, IsBM, noupdatediff, waitForEffect, mwaitForEffect, QuitLab, EffectPlaying, soundplaying, MusicOn, DoBlack, ContMusic, DoNotReset;
 extern char diffcmap[256 * 3];
 
 extern CloseDataPtr CPtr;
@@ -406,14 +406,14 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 
 		switch (APtr->ActionType) {
 		case PLAYSOUND:
-			mwaiteffect = true; /* Plays a sound, but waits for it to be done before continuing */
+			mwaitForEffect = true; /* Plays a sound, but waits for it to be done before continuing */
 			ContMusic = false;
 			readMusic((char *)APtr->Data);
-			mwaiteffect = false;
+			mwaitForEffect = false;
 			break;
 
 		case PLAYSOUNDB:
-			mwaiteffect = false; /* Plays a sound in the background. */
+			mwaitForEffect = false; /* Plays a sound in the background. */
 			ContMusic = false;
 			readMusic((char *)APtr->Data);
 			break;

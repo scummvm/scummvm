@@ -47,7 +47,7 @@ bool LongWinInFront = false;
 
 TextFont *MsgFont;
 
-extern bool DoBlack, waiteffect, EffectPlaying, stopsound, DoNotDrawMessage, IsHiRes, nopalchange, DoMusic;
+extern bool DoBlack, waitForEffect, EffectPlaying, stopsound, DoNotDrawMessage, IsHiRes, nopalchange, DoMusic;
 
 /* Global parser data */
 
@@ -612,9 +612,9 @@ static bool doUse(uint16 CurInv) {
 		}
 
 		DoBlack = false;
-		waiteffect = true;
+		waitForEffect = true;
 		readPict("Music:Click", true);
-		waiteffect = false;
+		waitForEffect = false;
 
 		DoBlack = false;
 		Test = getInvName(CurInv);

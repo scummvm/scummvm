@@ -58,9 +58,9 @@ bool NoFlip         = false,  /* Don't flip the new picture to front  */
      stopsound      = false,
      soundplaying   = false,
      screenbuffer   = false,
-     waiteffect     = false, /* Wait for each sound effect to finish
+     waitForEffect     = false, /* Wait for each sound effect to finish
                                                                                                       before coninuing.                    */
-                      mwaiteffect    = false;
+                      mwaitForEffect    = false;
 
 uint16 DataBytesPerRow;
 
@@ -273,7 +273,7 @@ void diffNextFrame() {
 
 		case 30L:
 		case 31L: {
-			if (waiteffect) {
+			if (waitForEffect) {
 				while (EffectPlaying) {
 					g_music->updateMusic();
 					waitTOF();
@@ -298,7 +298,7 @@ void diffNextFrame() {
 			if ((framenumber == 1) || PlayOnce || StopPlayingEnd) {
 				int didTOF = 0;
 
-				if (waiteffect) {
+				if (waitForEffect) {
 					while (EffectPlaying) {
 						g_music->updateMusic();
 						waitTOF();
@@ -544,7 +544,7 @@ void readSound() {
 		swapULong(&size_);
 
 		if ((header_ == 30) || (header_ == 31)) {
-			if (mwaiteffect) {
+			if (mwaitForEffect) {
 				while (EffectPlaying) {
 					g_music->updateMusic();
 					waitTOF();
@@ -565,7 +565,7 @@ void readSound() {
 
 			playSoundEffect(samplespeed_, 64, musicsize, true, music);
 		} else if (header_ == 65535L) {
-			if (mwaiteffect) {
+			if (mwaitForEffect) {
 				while (EffectPlaying) {
 					g_music->updateMusic();
 					waitTOF();
