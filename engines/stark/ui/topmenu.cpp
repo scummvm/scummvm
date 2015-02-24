@@ -35,24 +35,36 @@ namespace Stark {
 
 TopMenu::TopMenu() {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+	// TODO: The animations on these should be driven by the engine internally, so we probably shouldn't be holding
+	// image references here?
 	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
+	_inventoryButton = new Button("Inventory", staticProvider->getCursorImage(16), Common::Point(0, 0));
 	_exitButton = new Button("Exit", staticProvider->getCursorImage(8), Common::Point(600, 0));
+	_diaryButton = new Button("Diary", staticProvider->getCursorImage(15), Common::Point(560, 0));
 }
 
 TopMenu::~TopMenu() {
 	delete _exitButton;
+	delete _inventoryButton;
+	delete _diaryButton;
 }
 
 void TopMenu::render() {
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
 	gfx->setScreenViewport(false);
+	_inventoryButton->render();
 	_exitButton->render();
-	// TODO: Unhardcode position
-	_exitButton->render();
+	_diaryButton->render();
 }
 
 bool TopMenu::containsPoint(Common::Point point) {
 	if (_exitButton->containsPoint(point)) {
+		return true;
+	}
+	if (_inventoryButton->containsPoint(point)) {
+		return true;
+	}
+	if (_diaryButton->containsPoint(point)) {
 		return true;
 	}
 	return false;
@@ -63,6 +75,19 @@ void TopMenu::handleClick(Common::Point point) {
 		// TODO: Ask
 		StarkServices::instance().ui->notifyShouldExit();
 	}
+}
+
+Common::String TopMenu::getMouseHintAtPosition(Common::Point point) {
+	if (_exitButton->containsPoint(point)) {
+		return _exitButton->getText();
+	}
+	if (_diaryButton->containsPoint(point)) {
+		return _diaryButton->getText();
+	}
+	if (_inventoryButton->containsPoint(point)) {
+		return _inventoryButton->getText();
+	}
+	return "";
 }
 
 } // End of namespace Stark

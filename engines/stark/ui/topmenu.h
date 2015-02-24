@@ -31,13 +31,16 @@ namespace Stark {
 class VisualImageXMG;
 class Button;
 class TopMenu {
+	Button *_inventoryButton;
 	Button *_exitButton;
+	Button *_diaryButton;
 public:
 	TopMenu();
 	~TopMenu();
 	void render();
 	bool containsPoint(Common::Point point);
 	void handleClick(Common::Point point);
+	Common::String getMouseHintAtPosition(Common::Point point);
 };
 
 } // End of namespace Stark

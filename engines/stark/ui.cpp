@@ -62,7 +62,7 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	// Check for UI mouse overs
 	if (_topMenu->containsPoint(pos)) {
 		_cursor->setCursorType(Cursor::kActive);
-		_cursor->setMouseHint("Menu item");
+		_cursor->setMouseHint(_topMenu->getMouseHintAtPosition(pos));
 		return;
 	}
 
