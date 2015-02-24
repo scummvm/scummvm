@@ -37,25 +37,14 @@
 
 namespace Lab {
 
-#define IS_MACOSX 1
-
-#if defined(IS_MACOSX)
-#define getTime Lab_GetTime
-#define delay Lab_Delay
-#endif
-
 #define swapUShort(value) (value)
 #define swapUShortPtr(ptr,count) (ptr)
 #define swapShort(value) (value)
 #define swapShortPtr(ptr,count) (ptr)
 #define swapUInt(value) (value)
-#define swapUIntPtr(ptr,count) (ptr)
 #define swapInt(value) (value)
-#define swapIntPtr(ptr,count) (ptr)
 #define swapULong(value) (value)
-#define swapULongPtr(ptr,count) (ptr)
 #define swapLong(value) (value)
-#define swapLongPtr(ptr,count) (ptr)
 
 } // End of namespace Lab
 

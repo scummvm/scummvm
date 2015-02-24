@@ -205,9 +205,9 @@ void diffNextFrame() {
 
 		g_music->updateMusic();
 		readBlock(&header, 4L, difffile);
-		swapULongPtr(&header, 1);
+		swapULong(&header);
 		readBlock(&size, 4L, difffile);
-		swapULongPtr(&size, 1);
+		swapULong(&size);
 
 		processed += 8L;
 
@@ -379,7 +379,7 @@ void playDiff() {
 	temp[4] = '\0';
 
 	readBlock(&header, 4L, difffile);
-	swapULongPtr(&header, 1);
+	swapULong(&header);
 
 	processed += 8L;
 
@@ -389,10 +389,10 @@ void playDiff() {
 	}
 
 	readBlock(&header, 4L, difffile);
-	swapULongPtr(&header, 1);
+	swapULong(&header);
 
 	readBlock(&size, 4L, difffile);
-	swapULongPtr(&size, 1);
+	swapULong(&size);
 
 	if (header == 0) {
 		// sizeof(headerdata) != 18, but the padding might be at the end
@@ -408,9 +408,9 @@ void playDiff() {
 		skip(difffile, size - 18);
 
 		swapUShortPtr(&headerdata.Version, 3);
-		swapULongPtr(&headerdata.BufferSize, 1);
+		swapULong(&headerdata.BufferSize);
 		swapUShortPtr(&headerdata.Machine, 1);
-		swapULongPtr(&headerdata.Flags, 1);
+		swapULong(&headerdata.Flags);
 
 		continuous = CONTINUOUS & headerdata.Flags;
 		diffwidth = headerdata.x;
@@ -517,7 +517,7 @@ void readSound() {
 	readBlock(temp_, 4L, difffile_);
 	temp_[4] = '\0';
 	readBlock(&header_, 4L, difffile_);
-	swapULongPtr(&header_, 1);
+	swapULong(&header_);
 
 	processed += 8L;
 
@@ -525,10 +525,10 @@ void readSound() {
 		return;
 
 	readBlock(&header_, 4L, difffile_);
-	swapULongPtr(&header_, 1);
+	swapULong(&header_);
 
 	readBlock(&size_, 4L, difffile_);
-	swapULongPtr(&size_, 1);
+	swapULong(&size_);
 
 	if (header_ == 0)
 		skip(difffile_, size_);
@@ -538,10 +538,10 @@ void readSound() {
 	while (header_ != 65535) {
 		g_music->updateMusic();
 		readBlock(&header_, 4L, difffile_);
-		swapULongPtr(&header_, 1);
+		swapULong(&header_);
 
 		readBlock(&size_, 4L, difffile_);
-		swapULongPtr(&size_, 1);
+		swapULong(&size_);
 
 		if ((header_ == 30) || (header_ == 31)) {
 			if (mwaiteffect) {

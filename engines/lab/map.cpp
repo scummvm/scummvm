@@ -291,7 +291,7 @@ static bool loadMapData() {
 
 		for (counter = 1; counter <= MaxRooms; counter++) {
 			swapUShortPtr(&Maps[counter].x, 4);
-			swapULongPtr(&Maps[counter].MapFlags, 1);
+			swapULong(&Maps[counter].MapFlags);
 		}
 	} else
 		return false;
