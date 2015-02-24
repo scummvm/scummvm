@@ -690,6 +690,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 	if (model->_meshAlphaMode == Actor::AlphaReplace) {
 		alpha *= model->_meshAlpha;
 	}
+	Math::Vector3d noLighting(1.f, 1.f, 1.f);
 	for (uint j = 0; j < face->_faceLength * 3; j++) {
 		int index = indices[j];
 		if (!_currentShadowArray) {
@@ -697,7 +698,7 @@ void GfxTinyGL::drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face)
 				tglTexCoord2f(model->_texVerts[index].getX(), model->_texVerts[index].getY());
 			}
 
-			Math::Vector3d lighting = model->_lighting[index];
+			Math::Vector3d lighting = (face->_flags & EMIMeshFace::kNoLighting) ? noLighting : model->_lighting[index];
 			byte r = (byte)(model->_colorMap[index].r * lighting.x());
 			byte g = (byte)(model->_colorMap[index].g * lighting.y());
 			byte b = (byte)(model->_colorMap[index].b * lighting.z());

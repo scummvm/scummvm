@@ -937,7 +937,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 	mud->_shader->use();
 	bool textured = face->_hasTexture && !_currentShadowArray;
 	mud->_shader->setUniform("textured", textured ? GL_TRUE : GL_FALSE);
-	mud->_shader->setUniform("lightsEnabled", _lightsEnabled);
+	mud->_shader->setUniform("lightsEnabled", (face->_flags & EMIMeshFace::kNoLighting) ? false : _lightsEnabled);
 	mud->_shader->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
 	mud->_shader->setUniform("useVertexAlpha", _selectedTexture->_colorFormat == BM_BGRA);
 	mud->_shader->setUniform1f("meshAlpha", (model->_meshAlphaMode == Actor::AlphaReplace) ? model->_meshAlpha : 1.0f);
