@@ -573,7 +573,8 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 	glPopAttrib();
 }
 
-void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
+void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture& tex, const Math::Rect2d& rect) {
+#ifndef USE_OPENGL_SHADERS
 	// Save current state
 	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
 
@@ -596,22 +597,18 @@ void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_ALPHA_TEST);
 	glDepthMask(GL_FALSE);
-	glEnable(GL_SCISSOR_TEST);
 
-	glScissor(0, 0, _desktopW, _desktopH);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	float texcropX = tex.getWidth() / float(tex.getTexWidth());
+	float texcropY = tex.getHeight() / float(tex.getTexHeight());
 
-	float texcropX = _frameBuffer->getWidth() / float(_frameBuffer->getTexWidth());
-	float texcropY = _frameBuffer->getHeight() / float(_frameBuffer->getTexHeight());
-
-	float offsetX = _gameRect.getTopLeft().getX();
-	float offsetY = _gameRect.getTopLeft().getY();
-	float sizeX   = _gameRect.getWidth();
-	float sizeY   = _gameRect.getHeight();
+	float offsetX = rect.getTopLeft().getX();
+	float offsetY = rect.getTopLeft().getY();
+	float sizeX   = rect.getWidth();
+	float sizeY   = rect.getHeight();
 
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
-	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getTextureName());
+	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, texcropY);
 	glVertex2f(offsetX, offsetY);
@@ -634,6 +631,21 @@ void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
 	glPopMatrix();
 
 	glPopAttrib();
+#else
+	glBindTexture(GL_TEXTURE_2D, tex.getTextureName());
+
+	_boxShader->use();
+	float texcropX = tex.getWidth() / float(tex.getTexWidth());
+	float texcropY = tex.getHeight() / float(tex.getTexHeight());
+	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
+	_boxShader->setUniform("flipY", false);
+
+	_boxShader->setUniform("offsetXY", rect.getTopLeft());
+	_boxShader->setUniform("sizeWH", Math::Vector2d(rect.getWidth(), rect.getHeight()));
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 }
 
 #ifdef USE_OPENGL_SHADERS
@@ -666,22 +678,6 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 	}
 }
 
-void SurfaceSdlGraphicsManager::drawFramebufferOpenGLShaders() {
-	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getTextureName());
-
-	_boxShader->use();
-	float texcropX = _frameBuffer->getWidth() / float(_frameBuffer->getTexWidth());
-	float texcropY = _frameBuffer->getHeight() / float(_frameBuffer->getTexHeight());
-	_boxShader->setUniform("texcrop", Math::Vector2d(texcropX, texcropY));
-	_boxShader->setUniform("flipY", false);
-
-	_boxShader->setUniform("offsetXY", _gameRect.getTopLeft());
-	_boxShader->setUniform("sizeWH", Math::Vector2d(_gameRect.getWidth(), _gameRect.getHeight()));
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
 #endif
 #endif
 
@@ -712,11 +708,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-#ifndef USE_OPENGL_SHADERS
-			drawFramebufferOpenGL();
-#else
-			drawFramebufferOpenGLShaders();
-#endif
+			drawTexture(*_frameBuffer, _gameRect);
 		}
 
 		if (_overlayVisible) {

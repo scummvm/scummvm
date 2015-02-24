@@ -26,6 +26,7 @@
 #ifdef USE_OPENGL
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/framebuffer.h"
+#include "graphics/opengl/texture.h"
 #endif
 
 #undef ARRAYSIZE
@@ -174,7 +175,7 @@ protected:
 
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
-	void drawFramebufferOpenGL();
+	void drawTexture(const Graphics::Texture &tex, const Math::Rect2d &dst);
 
 	Graphics::FrameBuffer *_frameBuffer;
 
@@ -183,7 +184,6 @@ protected:
 	GLuint _boxVerticesVBO;
 
 	void drawOverlayOpenGLShaders();
-	void drawFramebufferOpenGLShaders();
 #endif
 #endif
 
