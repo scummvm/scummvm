@@ -63,6 +63,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opLocationGoTo(_arguments[0].stringValue, _arguments[1].stringValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPause:
 		return opScriptPause(script, _arguments[1].referenceValue);
+	case kWalkTo:
+		return opWalkTo(_arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kScriptPauseRandom:
 		return opPauseRandom(script, _arguments[1].referenceValue);
 	case kExit2DLocation:
@@ -177,6 +179,14 @@ Command *Command::opScriptPause(Script *script, const ResourceReference &duratio
 	script->pause(duration->getIntegerValue());
 
 	return this; // Stay on this command while the script is suspended
+}
+
+Command *Command::opWalkTo(int32 unknown, const ResourceReference &bookmarkRef, int32 unknown2) {
+	assert(_arguments.size() == 4);
+	Object *target = bookmarkRef.resolve<Object>();
+	warning("(TODO: Implement) opWalkTo(%d %s %d) : %s", unknown, target->getName().c_str(), unknown2, bookmarkRef.describe().c_str());
+
+	return nextCommand();
 }
 
 Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
