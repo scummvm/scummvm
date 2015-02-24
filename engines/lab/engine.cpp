@@ -236,8 +236,6 @@ static void drawRoomMessage(uint16 CurInv, CloseDataPtr cptr) {
 }
 
 
-static uint16 OldMode;
-
 /******************************************************************************/
 /* Sets up the Labyrinth screens, and opens up the initial windows.           */
 /******************************************************************************/
@@ -1390,8 +1388,6 @@ void LabEngine::go() {
 	bool mem, dointro = false;
 	uint16 counter;
 
-	getMode(&OldMode);
-
 	DoMusic = true;
 	g_music->_turnMusicOn = true;
 	dointro = true;
@@ -1443,8 +1439,6 @@ void LabEngine::go() {
 	}
 
 	if (!initMouse()) {
-		setMode((char) OldMode);
-
 		return;
 	}
 
@@ -1497,8 +1491,6 @@ void LabEngine::go() {
 
 	g_music->freeMusic();
 	freeAudio();
-
-	setMode((char)OldMode);
 }
 
 /*****************************************************************************/

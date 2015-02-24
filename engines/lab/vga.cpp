@@ -63,13 +63,6 @@ uint16 g_NextKeyOut = 0;
 bool g_MouseAtEdge = false;
 
 /*****************************************************************************/
-/* Sets the display mode.                                                    */
-/*****************************************************************************/
-void setMode(char mode) {
-	// There are no modes for SDL.
-}
-
-/*****************************************************************************/
 /* Sets up either a low-res or a high-res 256 color screen.                  */
 /*****************************************************************************/
 bool createScreen(bool HiRes) {
@@ -331,13 +324,6 @@ byte *getVGABaseAddr() {
 void ungetVGABaseAddr() {
 	if (!VGABASEADDRESS)
 		WSDL_UnlockVideo();
-}
-
-/*****************************************************************************/
-/* Gets information about the current display.                               */
-/*****************************************************************************/
-void getMode(uint16 *Mode) {
-	// Only one mode in SDL.
 }
 
 /*****************************************************************************/

@@ -41,10 +41,6 @@ struct Image {
 	byte *ImageData;
 };
 
-void setMode(char mode);
-
-void getMode(uint16 *Mode);
-
 void setPage(uint16 PageNum);
 
 void VGAStorePage();
