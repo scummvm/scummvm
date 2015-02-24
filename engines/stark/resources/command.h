@@ -101,7 +101,9 @@ public:
 
 		kIsRandom = 175,
 
-		kIsOnPlace = 177
+		kIsOnPlace = 177,
+
+		kIsAnimAtTime = 185
 	};
 
 	struct Argument {
@@ -162,7 +164,8 @@ protected:
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);
 	Command *opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position);
-
+	Command *opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time);
+	
 	Common::Array<Argument> _arguments;
 };
 
