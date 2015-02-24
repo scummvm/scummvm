@@ -107,6 +107,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+	case kIsIntegerEqual:
+		return opIsIntegerEqual(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsRandom:
 		return opIsRandom(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].intValue);
 	case kIsOnPlace:
@@ -385,6 +387,14 @@ Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &kno
 	warning("(TODO: Implement) opIsSet(%d, %d, %s) %d : %s", branch1, branch2, value->getName().c_str(), value->getBooleanValue(), knowledgeRef.describe().c_str());
 	// TODO: Verify how this logic actually should be handled
 	return nextCommandIf(value->getBooleanValue());
+}
+
+Command *Command::opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
+	assert(_arguments.size() == 4);
+	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
+	warning("(TODO: Implement) opIsIntegerEqual(%d, %d, %s) %d %d : %s", branch1, branch2, knowledgeValue->getName().c_str(), knowledgeValue->getIntegerValue(), value, knowledgeRef.describe().c_str());
+
+	return nextCommandIf(knowledgeValue->getIntegerValue() == value);
 }
 
 Command *Command::opIsRandom(int branch1, int branch2, int32 unknown) {
