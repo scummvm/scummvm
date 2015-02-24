@@ -41,7 +41,8 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_objectUnderCursor(nullptr),
 	_hasClicked(false),
 	_topMenu(nullptr),
-	_dialogInterface(nullptr)
+	_dialogInterface(nullptr),
+	_exitGame(false)
 	{
 }
 
@@ -57,6 +58,15 @@ void UI::init() {
 
 void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	Common::Point pos = _cursor->getMousePosition();
+
+	// Check for UI mouse overs
+	if (_topMenu->containsPoint(pos)) {
+		_cursor->setCursorType(Cursor::kActive);
+		_cursor->setMouseHint("Menu item");
+		return;
+	}
+
+	// Check for game world mouse overs
 	UserInterface *ui = StarkServices::instance().userInterface;
 	Gfx::RenderEntry *currentEntry = ui->getEntryAtPosition(pos, renderEntries);
 	Resources::Object *object = ui->getObjectForRenderEntryAtPosition(pos, currentEntry);
@@ -115,6 +125,9 @@ void UI::handleClick() {
 			ui->deactivateActionMenu();
 			_currentObject = nullptr;
 		}
+	}
+	if (_topMenu->containsPoint(_cursor->getMousePosition())) {
+		_topMenu->handleClick(_cursor->getMousePosition());
 	}
 	_hasClicked = false;
 }

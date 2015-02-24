@@ -50,6 +50,7 @@ class UI {
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _hasClicked;
+	bool _exitGame;
 	void handleClick();
 public:
 	UI(Gfx::Driver *gfx, Cursor *cursor);
@@ -60,6 +61,8 @@ public:
 	void notifyClick();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
+	void notifyShouldExit() { _exitGame = true; }
+	bool shouldExit() { return _exitGame; }
 };
 
 } // End of namespace Stark

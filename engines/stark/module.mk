@@ -58,8 +58,9 @@ MODULE_OBJS := \
 	skeleton_anim.o \
 	stark.o \
 	ui.o \
-	ui/topmenu.o \
+	ui/button.o \
 	ui/dialoginterface.o \
+	ui/topmenu.o \
 	visual/actor.o \
 	visual/image.o \
 	visual/smacker.o

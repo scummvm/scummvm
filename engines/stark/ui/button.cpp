@@ -20,49 +20,34 @@
  *
  */
 
-#include "engines/stark/ui/topmenu.h"
 #include "engines/stark/ui/button.h"
-#include "engines/stark/ui.h"
 
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/services/services.h"
-#include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/visual/image.h"
 
 namespace Stark {
 
-TopMenu::TopMenu() {
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
-	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
-	_exitButton = new Button("Exit", staticProvider->getCursorImage(8), Common::Point(600, 0));
+Button::Button(const Common::String &text, VisualImageXMG *image, Common::Point pos)
+	: _position(pos),
+	  _image(image),
+	  _text(text) {
 }
 
-TopMenu::~TopMenu() {
-	delete _exitButton;
-}
-
-void TopMenu::render() {
+void Button::render() {
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->setScreenViewport(false);
-	_exitButton->render();
-	// TODO: Unhardcode position
-	_exitButton->render();
+	_image->render(_position);
 }
 
-bool TopMenu::containsPoint(Common::Point point) {
-	if (_exitButton->containsPoint(point)) {
-		return true;
-	}
-	return false;
-}
-
-void TopMenu::handleClick(Common::Point point) {
-	if (_exitButton->containsPoint(point)) {
-		// TODO: Ask
-		StarkServices::instance().ui->notifyShouldExit();
-	}
+bool Button::containsPoint(Common::Point point) {
+	Common::Rect r;
+	r.left = _position.x;
+	r.top = _position.y;
+	r.setWidth(_image->getWidth());
+	r.setHeight(_image->getHeight());
+	return r.contains(point);
 }
 
 } // End of namespace Stark

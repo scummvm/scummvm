@@ -20,26 +20,29 @@
  *
  */
 
-#ifndef STARK_TOPMENU_H
-#define STARK_TOPMENU_H
+#ifndef STARK_BUTTON_H
+#define STARK_BUTTON_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/str.h"
 
 namespace Stark {
 
 class VisualImageXMG;
-class Button;
-class TopMenu {
-	Button *_exitButton;
+
+class Button {
+	VisualImageXMG *_image;
+	Common::Point _position;
+	Common::String _text;
 public:
-	TopMenu();
-	~TopMenu();
+	Button(const Common::String &text, VisualImageXMG *image, Common::Point pos);
+	void setPosition(Common::Point pos) { _position = pos; }
 	void render();
 	bool containsPoint(Common::Point point);
-	void handleClick(Common::Point point);
+	Common::String getText() const { return _text; }
 };
 
 } // End of namespace Stark
 
-#endif // STARK_TOPMENU_H
+#endif // STARK_BUTTON_H

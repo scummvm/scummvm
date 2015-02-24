@@ -194,6 +194,11 @@ void StarkEngine::mainLoop() {
 		_userInterface->update();
 		updateDisplayScene();
 		g_system->delayMillis(50);
+
+		if (_ui->shouldExit()) {
+			quitGame();
+			break;
+		}
 	}
 }
 
