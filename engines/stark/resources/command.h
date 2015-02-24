@@ -104,6 +104,7 @@ public:
 		kIsSet = 166,
 
 		kIsIntegerEqual = 172,
+		kIsIntegerLower = 173,
 		kIsRandom = 175,
 
 		kIsOnPlace = 177,
@@ -171,6 +172,7 @@ protected:
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 	Command *opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsIntegerLower(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);
 	Command *opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position);
 	Command *opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time);
