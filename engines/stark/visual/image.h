@@ -44,7 +44,11 @@ public:
 	/** Set an offset used when rendering */
 	void setHotSpot(const Common::Point &hotspot);
 
+	int getWidth() const { return _width; }
+	int getHeight() const { return _height; }
 private:
+	int _width;
+	int _height;
 	Gfx::Driver *_gfx;
 	Gfx::Texture *_texture;
 	Common::Point _hotspot;

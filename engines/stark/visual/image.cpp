@@ -39,7 +39,9 @@ namespace Stark {
 VisualImageXMG::VisualImageXMG(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
-		_texture(nullptr) {
+		_texture(nullptr),
+		_width(0),
+		_height(0) {
 }
 
 VisualImageXMG::~VisualImageXMG() {
@@ -55,7 +57,8 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 
 	// Decode the XMG
 	Graphics::Surface *surface = Formats::XMGDecoder::decode(stream);
-
+	_width = surface->w;
+	_height = surface->h;
 	_texture = _gfx->createTexture(surface);
 
 	surface->free();
