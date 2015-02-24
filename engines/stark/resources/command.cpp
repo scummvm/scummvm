@@ -67,6 +67,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opPauseRandom(script, _arguments[1].referenceValue);
 	case kExit2DLocation:
 		return opExit2DLocation(script);
+	case kGoto2DLocation:
+		return opGoto2DLocation(_arguments[0].stringValue, _arguments[1].stringValue);
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
@@ -183,6 +185,17 @@ Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
 
 Command *Command::opExit2DLocation(Script *script) {
 	warning("(TODO: Implement) Exit 2D Location");
+	return nullptr;
+}
+
+Command *Command::opGoto2DLocation(const Common::String &level, const Common::String &location) {
+	ResourceProvider *resourceProvider = StarkServices::instance().resourceProvider;
+
+	warning("TODO: Implement) opGoto2DLocation");
+	// TODO: This needs to be handled differently, to allow exiting.
+	uint levelIndex = strtol(level.c_str(), nullptr, 16);
+	uint locationIndex = strtol(location.c_str(), nullptr, 16);
+	resourceProvider->requestLocationChange(levelIndex, locationIndex);
 	return nullptr;
 }
 

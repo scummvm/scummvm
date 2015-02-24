@@ -66,6 +66,7 @@ public:
 		kScriptPauseRandom = 10,
 
 		kExit2DLocation = 16,
+		kGoto2DLocation = 17,
 
 		kItem3DPlaceOn = 81,
 		kItem3DWalkTo = 82,
@@ -143,6 +144,7 @@ protected:
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opExit2DLocation(Script *script);
+	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
