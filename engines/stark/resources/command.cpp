@@ -87,6 +87,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kGoLayer:
+		return opGoLayer(_arguments[1].referenceValue);
 	case kScrollSet:
 		return opScrollSet(_arguments[1].referenceValue);
 	case kPlayFullMotionVideo:
@@ -304,6 +306,13 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 	} else {
 		return nextCommand();
 	}
+}
+
+Command *Command::opGoLayer(const ResourceReference &layerRef) {
+	Object *layerObj = layerRef.resolve<Object>();
+	warning("(TODO: Implement) opGoLayer(%s) : %s", layerObj->getName().c_str(), layerRef.describe().c_str());
+
+	return nextCommand();
 }
 
 Command *Command::opScrollSet(const ResourceReference &scrollRef) {
