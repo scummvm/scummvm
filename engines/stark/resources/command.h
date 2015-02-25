@@ -120,6 +120,7 @@ public:
 
 		kIsSet = 166,
 
+		kIsIntegerInRange = 170,
 		kIsIntegerEqual = 172,
 		kIsIntegerLower = 173,
 		kIsScriptActive = 174,
@@ -206,6 +207,7 @@ protected:
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
+	Command *opIsIntegerInRange(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 min, int32 max);
 	Command *opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsIntegerLower(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsScriptActive(int branch1, int branch2, const ResourceReference &scriptRef);

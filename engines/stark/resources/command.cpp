@@ -138,6 +138,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsItemEnabled(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+	case kIsIntegerInRange:
+		return opIsIntegerInRange(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kIsIntegerEqual:
 		return opIsIntegerEqual(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsIntegerLower:
@@ -559,6 +561,15 @@ Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &kno
 	warning("(TODO: Implement) opIsSet(%d, %d, %s) %d : %s", branch1, branch2, value->getName().c_str(), value->getBooleanValue(), knowledgeRef.describe().c_str());
 	// TODO: Verify how this logic actually should be handled
 	return nextCommandIf(value->getBooleanValue());
+}
+
+Command *Command::opIsIntegerInRange(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 min, int32 max) {
+	assert(_arguments.size() == 5);
+	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
+	int value = knowledgeValue->getIntegerValue();
+	warning("opIsIntegerInRange(%s, %d, [%d, %d]) %d %d : %s", knowledgeValue->getName().c_str(), value, min, max, branch1, branch2, knowledgeRef.describe().c_str());
+	// TODO: Inclusive?
+	return nextCommandIf(value >= min && value <= max);
 }
 
 Command *Command::opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
