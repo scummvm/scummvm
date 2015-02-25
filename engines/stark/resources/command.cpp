@@ -81,6 +81,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemLookAt(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kItemSetActivity:
+		return opItemSetActivity(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kUseAnimHierarchy:
 		return opUseAnimHierachy(_arguments[1].referenceValue);
 	case kPlayAnimation:
@@ -293,6 +295,14 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 		item->setEnabled(!previousState);
 		break;
 	}
+
+	return nextCommand();
+}
+
+Command *Command::opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2) {
+	assert(_arguments.size() == 4);
+	Object *itemObj = itemRef.resolve<Object>();
+	warning("(TODO: Implement) opSetActivity(%s, %d, %d) : %s", itemObj->getName().c_str(), unknown1, unknown2, itemRef.describe().c_str());
 
 	return nextCommand();
 }

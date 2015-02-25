@@ -76,6 +76,7 @@ public:
 		kItemLookAt = 84,
 
 		kItemEnable = 87,
+		kItemSetActivity = 88,
 
 		kUseAnimHierarchy = 92,
 		kPlayAnimation = 93,
@@ -169,6 +170,7 @@ protected:
 	Command *opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown);
 	Command *opItemLookAt(const ResourceReference &itemRef, const ResourceReference &itemRef2, int32 unknown, int32 unknown2);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
+	Command *opItemSetActivity(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
 	Command *opUseAnimHierachy(const ResourceReference &animHierRef);
 	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
