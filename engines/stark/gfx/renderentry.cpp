@@ -31,6 +31,7 @@
 // TODO: Refactor this logic elsewhere
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/pattable.h"
 
 namespace Stark {
 namespace Gfx {
@@ -102,7 +103,20 @@ int RenderEntry::indexForPoint(Common::Point point) {
 		point.y -= Gfx::Driver::kTopBorderHeight; // Adjust for the top part.
 		if (getOwner()->getType() == Resources::Type::kItem) {
 			Resources::Item *item = (Resources::Item*)getOwner();
-			return item->indexForPoint(point);
+			int index = item->indexForPoint(point);
+			if (index == -1) {
+				return -1;
+			} else {
+				Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(index);
+				// Ignore any uninteractable Items
+				// this should not be done when handling UI-buttons, as they have 0 actions.
+				// For now that special case is handled in the Owner == Anim type below,
+				// but in practice it should be done by way of checking for ItemSub2
+				if (table->getNumActions() == 0) {
+					return -1;
+				}
+			}
+			return index;
 		} else if (getOwner()->getType() == Resources::Type::kAnim) { // HACK Until we get Subtype2
 			Resources::Anim *anim = (Resources::Anim*)getOwner();
 			return anim->indexForPoint(point);
