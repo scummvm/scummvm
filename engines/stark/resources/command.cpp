@@ -75,6 +75,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opGoto2DLocation(_arguments[0].stringValue, _arguments[1].stringValue);
 	case kRumbleScene:
 		return opRumbleScene(_arguments[1].intValue, _arguments[2].intValue);
+	case kFadeScene:
+		return opFadeScene(_arguments[1].intValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kItem3DPlaceOn:
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
@@ -248,6 +250,12 @@ Command *Command::opGoto2DLocation(const Common::String &level, const Common::St
 
 Command *Command::opRumbleScene(int32 unknown1, int32 unknown2) {
 	warning("(TODO: Implement) opRumble(%d, %d)", unknown1, unknown2);
+
+	return nextCommand();
+}
+
+Command *Command::opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3) {
+	warning("(TODO: Implement) opFadeScene(%d, %d, %d) : %s", unknown1, unknown2, unknown3, getName().c_str());
 
 	return nextCommand();
 }
