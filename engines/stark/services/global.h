@@ -96,6 +96,9 @@ public:
 	/** Retrieve the current chapter number from the global resource tree */
 	int32 getCurrentChapter();
 
+	/** Temporary HACK to allow us to query the inventory */
+	void printInventory();
+
 	/** Change the current chapter */
 	void setCurrentChapter(int32 value);
 private:

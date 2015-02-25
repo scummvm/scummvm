@@ -22,6 +22,7 @@
 
 #include "engines/stark/services/global.h"
 
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/knowledgeset.h"
@@ -48,6 +49,17 @@ void Global::setCurrentChapter(int32 value) {
 	Resources::KnowledgeSet *globalState = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kState);
 	Resources::Knowledge *chapter = globalState->findChildWithIndex<Resources::Knowledge>(0);
 	chapter->setIntegerValue(value);
+}
+
+void Global::printInventory() {
+	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
+	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
+	for (; it != inventoryItems.end(); ++it) {
+		if ((*it)->isEnabled()) {
+			warning("Item: %s", (*it)->getName().c_str());
+		}
+	}
 }
 
 } // End of namespace Stark

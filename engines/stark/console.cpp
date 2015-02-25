@@ -51,6 +51,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("listScripts",			WRAP_METHOD(Console, Cmd_ListScripts));
 	registerCmd("enableScript",			WRAP_METHOD(Console, Cmd_EnableScript));
 	registerCmd("forceScript",			WRAP_METHOD(Console, Cmd_ForceScript));
+	registerCmd("listInventory",			WRAP_METHOD(Console, Cmd_ListInventory));
 	registerCmd("listLocations",			WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("location",				WRAP_METHOD(Console, Cmd_Location));
 	registerCmd("chapter",				WRAP_METHOD(Console, Cmd_Chapter));
@@ -279,6 +280,13 @@ bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 	Global *global = StarkServices::instance().global;
 
 	global->getCurrent()->getLocation()->print();
+
+	return true;
+}
+
+bool Console::Cmd_ListInventory(int argc, const char **argv) {
+	Global *global = StarkServices::instance().global;
+	global->printInventory();
 
 	return true;
 }
