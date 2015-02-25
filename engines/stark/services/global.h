@@ -24,12 +24,14 @@
 #define STARK_SERVICES_GLOBAL_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Stark {
 
 namespace Resources {
 class Camera;
 class Floor;
+class Item; // TODO: Should be ItemSub2
 class ItemSub1;
 class ItemSub10;
 class Level;
@@ -98,6 +100,7 @@ public:
 
 	/** Temporary HACK to allow us to query the inventory */
 	void printInventory();
+	Common::Array<Resources::Item*> getInventoryContents(); // TODO: Create a class for the inventory instead
 
 	/** Change the current chapter */
 	void setCurrentChapter(int32 value);

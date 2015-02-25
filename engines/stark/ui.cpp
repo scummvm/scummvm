@@ -67,7 +67,7 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	// Check for inventory to avoid mouse-overs from the world poking through.
 	if (_inventoryOpen && _inventoryInterface->containsPoint(pos)) {
 		// TODO: Get mouse overs from the inventory.
-		_cursor->setMouseHint("");
+		_cursor->setMouseHint(_inventoryInterface->getMouseHintAtPosition(pos));
 		return;
 	}
 
@@ -166,6 +166,12 @@ void UI::notifySubtitle(const Common::String &subtitle) {
 
 void UI::notifyDialogOptions(const Common::StringArray &options) {
 	_dialogInterface->notifyDialogOptions(options);
+}
+
+void UI::notifyShouldOpenInventory() {
+	_inventoryOpen = true;
+	// Make the inventory update it's contents.
+	_inventoryInterface->update();
 }
 
 void UI::render() {

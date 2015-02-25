@@ -23,8 +23,11 @@
 #ifndef STARK_INVENTORYINTERFACE_H
 #define STARK_INVENTORYINTERFACE_H
 
+#include "engines/stark/gfx/renderentry.h"
+
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "common/array.h"
 
 namespace Stark {
 
@@ -33,6 +36,7 @@ class ClickText;
 
 namespace Resources {
 class Anim;
+class Item;
 }
 
 namespace Gfx {
@@ -42,11 +46,15 @@ class Texture;
 class InventoryInterface {
 	Resources::Anim *_backgroundTexture;
 	Common::Point _position;
+	Common::Array<Resources::Item*> _items;
+	Gfx::RenderEntryArray _renderEntries;
 public:
 	InventoryInterface();
 	virtual ~InventoryInterface() {}
 	void render();
+	void update();
 	bool containsPoint(Common::Point point);
+	Common::String getMouseHintAtPosition(Common::Point point);
 };
 
 } // End of namespace Stark

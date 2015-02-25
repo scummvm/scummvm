@@ -65,7 +65,7 @@ public:
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
 	void notifyShouldExit() { _exitGame = true; }
-	void notifyShouldOpenInventory() { _inventoryOpen = true; }
+	void notifyShouldOpenInventory();
 	bool shouldExit() { return _exitGame; }
 };
 

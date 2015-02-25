@@ -25,11 +25,15 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/item.h"
 
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/visual/image.h"
+
+#include "engines/stark/scene.h"
 
 namespace Stark {
 
@@ -44,6 +48,28 @@ void InventoryInterface::render() {
 	gfx->setScreenViewport(false);
 
 	_backgroundTexture->getVisual()->get<VisualImageXMG>()->render(_position);
+	
+	Scene *scene = StarkServices::instance().scene;
+	scene->render(_renderEntries);
+}
+
+void InventoryInterface::update() {
+	Global *global = StarkServices::instance().global;
+	_items = global->getInventoryContents();
+
+	Common::Array<Resources::Item*>::iterator it = _items.begin();
+	// TODO: Unhardcode positions
+	Common::Point pos = _position;
+	int width =_backgroundTexture->getVisual()->get<VisualImageXMG>()->getWidth();
+	pos.x += 40;
+	for (;it != _items.end(); ++it) {
+		_renderEntries.push_back((*it)->getRenderEntry(pos));
+		pos.x += 40;
+		if (pos.x > _position.x + width - 40) {
+			pos.x = _position.x + 20;
+			pos.y+= 40;
+		}
+	}
 }
 
 bool InventoryInterface::containsPoint(Common::Point point) {
@@ -53,6 +79,17 @@ bool InventoryInterface::containsPoint(Common::Point point) {
 	r.setWidth(_backgroundTexture->getVisual()->get<VisualImageXMG>()->getWidth());
 	r.setHeight(_backgroundTexture->getVisual()->get<VisualImageXMG>()->getHeight());
 	return r.contains(point);
+}
+
+Common::String InventoryInterface::getMouseHintAtPosition(Common::Point point) {
+	for (int i = 0; i < _renderEntries.size(); i++) {
+		int index = _renderEntries[i]->indexForPoint(point);
+		if (index != -1) {
+			// TODO: Care about index
+			return _renderEntries[i]->getOwner()->getName();
+		}
+	}
+	return "";
 }
 
 } // End of namespace Stark

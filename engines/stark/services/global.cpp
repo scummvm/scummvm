@@ -62,4 +62,20 @@ void Global::printInventory() {
 	}
 }
 
+Common::Array<Resources::Item*> Global::getInventoryContents() {
+	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
+	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
+	Common::Array<Resources::Item*> result;
+
+	int i = 0;
+	for (; it != inventoryItems.end(); ++it, ++i) {
+		if (i < 4) continue; 	// HACK: The first 4 elements are UI elements, so skip them for now.
+		if ((*it)->isEnabled()) {
+			result.push_back(*it);
+		}
+	}
+	return result;
+}
+
 } // End of namespace Stark
