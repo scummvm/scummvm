@@ -77,6 +77,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItem3DPlaceOn(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kItem3DWalkTo:
 		return opItem3DWalkTo(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
+	case kItemLookAt:
+		return opItemLookAt(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimation:
@@ -254,6 +256,15 @@ Command *Command::opItem3DWalkTo(const ResourceReference &itemRef, const Resourc
 	Object *item = itemRef.resolve<Object>();
 	Object *target = targetRef.resolve<Object>();
 	warning("(TODO: Implement) opItem3DWalkTo(%s, %s, %d), %s : %s", item->getName().c_str(), target->getName().c_str(), unknown, itemRef.describe().c_str(), targetRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opItemLookAt(const ResourceReference &itemRef1, const ResourceReference &itemRef2, int32 unknown1, int32 unknown2) {
+	assert(_arguments.size() == 5);
+	Object *item1 = itemRef1.resolve<Object>();
+	Object *item2 = itemRef2.resolve<Object>();
+	warning("(TODO: Implement) opItemLookAt(%s, %s, %d, %d), %s : %s", item1->getName().c_str(), item2->getName().c_str(), unknown1, unknown2, itemRef1.describe().c_str(), itemRef2.describe().c_str());
 
 	return nextCommand();
 }

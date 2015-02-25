@@ -73,6 +73,8 @@ public:
 		kItem3DPlaceOn = 81,
 		kItem3DWalkTo = 82,
 
+		kItemLookAt = 84,
+
 		kItemEnable = 87,
 
 		kPlayAnimation = 93,
@@ -162,6 +164,7 @@ protected:
 	Command *opGoto2DLocation(const Common::String &level, const Common::String &location);
 	Command *opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef);
 	Command *opItem3DWalkTo(const ResourceReference &itemRef, const ResourceReference &targetRef, int32 unknown);
+	Command *opItemLookAt(const ResourceReference &itemRef, const ResourceReference &itemRef2, int32 unknown, int32 unknown2);
 	Command *opItemEnable(const ResourceReference &itemRef, int32 enable);
 	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
