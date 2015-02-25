@@ -109,6 +109,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opActivateTexture(_arguments[1].referenceValue);
 	case kActivateMesh:
 		return opActivateMesh(_arguments[1].referenceValue);
+	case kSetTarget:
+		return opSetTarget(_arguments[1].referenceValue, _arguments[2].referenceValue);
 	case kSpeakWithoutTalking:
 		return opSpeakWithoutTalking(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kIsOnFloorField:
@@ -405,6 +407,14 @@ Command *Command::opActivateTexture(const ResourceReference &textureRef) {
 Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	BonesMesh *mesh = meshRef.resolve<BonesMesh>();
 	warning("(TODO: Implement) opActivateMesh(%s) : %s", mesh->getName().c_str(), meshRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opSetTarget(const ResourceReference &itemRef1, const ResourceReference &itemRef2) {
+	Object *itemObj1 = itemRef1.resolve<Object>();
+	Object *itemObj2 = itemRef2.resolve<Object>();
+	warning("(TODO: Implement) opSetTarget(%s, %s) %s : %s", itemObj1->getName().c_str(), itemObj2->getName().c_str(), itemRef1.describe().c_str(), itemRef2.describe().c_str());
 
 	return nextCommand();
 }
