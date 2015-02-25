@@ -93,6 +93,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
+	case kLookDirection:
+		return opLookDirection(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
 	case kGoLayer:
 		return opGoLayer(_arguments[1].referenceValue);
 	case kScrollSet:
@@ -353,6 +355,14 @@ Command *Command::opSoundPlay(Script *script, const ResourceReference &soundRef,
 	} else {
 		return nextCommand();
 	}
+}
+
+Command *Command::opLookDirection(const ResourceReference &itemRef, int32 unknown1, int32 unknown2) {
+	assert(_arguments.size() == 4);
+	Object *itemObj = itemRef.resolve<Object>();
+	warning("(TODO: Implement) opLookDirection(%s %d %d) : %s", itemObj->getName().c_str(), unknown1, unknown2, itemRef.describe().c_str());
+
+	return nextCommand();
 }
 
 Command *Command::opGoLayer(const ResourceReference &layerRef) {
