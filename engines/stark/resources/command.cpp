@@ -120,6 +120,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opEnableDiaryEntry(_arguments[1].referenceValue);
 	case kChangeSound:
 		return opChangeSound(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue, _arguments[4].intValue, _arguments[5].intValue);
+	case kItem3DRunTo:
+		return opItem3DRunTo(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kItemPlaceDirection:
 		return opItemPlaceDirection(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kActivateTexture:
@@ -476,6 +478,16 @@ Command *Command::opChangeSound(const ResourceReference &soundRef, int32 unknown
 	assert(_arguments.size() == 6);
 	Object *sound = soundRef.resolve<Object>();
 	warning("(TODO: Implement) opChangeSound(%s, %d, %d, %d, %d) : %s", sound->getName().c_str(), unknown1, unknown2, unknown3, unknown4, soundRef.describe().c_str());
+	return nextCommand();
+}
+
+Command *Command::opItem3DRunTo(const ResourceReference &itemRef, const ResourceReference &bookmarkRef, int32 unknown) {
+	assert(_arguments.size() == 4);
+	Object *itemObj = itemRef.resolve<Object>();
+	Object *bookmarkObj = bookmarkRef.resolve<Object>();
+
+	warning("(TODO: Implement) opItem3DRunTo(%s, %s, %d) %s : %s", itemObj->getName().c_str(), bookmarkObj->getName().c_str(),unknown, itemRef.describe().c_str(), bookmarkRef.describe().c_str());
+
 	return nextCommand();
 }
 
