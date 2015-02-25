@@ -36,6 +36,8 @@
 
 #include "engines/util.h"
 
+#include "gui/message.h"
+
 #include "lab/lab.h"
 #include "lab/labfun.h"
 
@@ -46,7 +48,7 @@ namespace Lab {
 LabEngine *g_lab;
 
 LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst), _gameDescription(gameDesc) {
+ : Engine(syst), _gameDescription(gameDesc), _extraGameFeatures(0) {
 	g_lab = this;
 }
 
@@ -62,6 +64,40 @@ Common::Error LabEngine::run() {
 		initGraphics(640, 480, true);
 
 	g_music = new Music();
+
+	if (getPlatform() == Common::kPlatformWindows) {
+		// Check if this is the Wyrmkeep trial
+		Common::File roomFile;
+		bool knownVersion = true;
+		bool roomFileOpened = roomFile.open("game/rooms/48");
+
+		if (!roomFileOpened)
+			knownVersion = false;
+		else if (roomFile.size() != 892)
+			knownVersion = false;
+		else {
+			roomFile.seek(352);
+			byte checkByte = roomFile.readByte();
+			if (checkByte == 0x00) {
+				// Full Windows version
+			} else if (checkByte == 0x80) {
+				// Wyrmkeep trial version
+				_extraGameFeatures = GF_WINDOWS_TRIAL;
+
+				GUI::MessageDialog trialMessage("This is a trial Windows version of the game. To play the full version, you will need to use the original interpreter and purchase a key from Wyrmkeep");
+				trialMessage.runModal();
+			} else {
+				knownVersion = false;
+			}
+			
+			roomFile.close();
+
+			if (!knownVersion) {
+				warning("Unknown Windows version found, please report this version to the ScummVM team");
+				return Common::kNoGameDataFoundError;
+			}
+		}
+	}
 
 	go();
 

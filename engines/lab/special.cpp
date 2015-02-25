@@ -47,10 +47,6 @@
 
 namespace Lab {
 
-#ifdef GAME_TRIAL
-int g_IsRegistered;
-#endif
-
 extern bool nopalchange, DoBlack, IsHiRes;
 
 extern BitMap *DispBitMap, *DrawBitMap;
@@ -450,12 +446,11 @@ static void changeTile(uint16 col, uint16 row) {
 		return;
 #endif
 
-#if defined(GAME_TRIAL)
-
-		if (!g_IsRegistered)
+		if (g_lab->getFeatures() & GF_WINDOWS_TRIAL) {
+			GUI::MessageDialog trialMessage("This puzzle is not available in the trial version of the game");
+			trialMessage.runModal();
 			return;
-
-#endif
+		}
 
 		check = true;
 		row   = 0;

@@ -28,6 +28,8 @@
  *
  */
 
+#include "gui/message.h"
+
 #include "lab/lab.h"
 #include "lab/stddefines.h"
 #include "lab/labfun.h"
@@ -39,10 +41,6 @@
 #include "lab/interface.h"
 
 namespace Lab {
-
-#ifdef GAME_TRIAL
-extern int g_IsRegistered;
-#endif
 
 /* Global parser data */
 
@@ -519,30 +517,16 @@ static void doActions(ActionPtr APtr, CloseDataPtr *LCPtr) {
 			}
 
 #endif
-#if defined(GAME_TRIAL)
-
-			if (APtr->Param1 & 0x8000) { // check registration if high-bit set
-				if (!g_IsRegistered) {
-					extern int trialCheckInGame();
-					int result;
-
-					// Time to pay up!
-					result = trialCheckInGame();
-
-					CurFileName = getPictName(LCPtr);
-					readPict(CurFileName, true);
-
-					if (!g_IsRegistered) {
-						APtr = NULL;
-						continue;
-					}
-				}
-
-				// fix-up data
-				APtr->Param1 &= 0x7fff; // clear high-bit
+			if (APtr->Param1 & 0x8000) {
+				// This is a Wyrmkeep Windows trial version, thus stop at this
+				// point, since we can't check for game payment status
+				readPict(getPictName(LCPtr), true);
+				APtr = NULL;
+				GUI::MessageDialog trialMessage("This is the end of the trial version. You can play the full game using the original interpreter from Wyrmkeep");
+				trialMessage.runModal();
+				continue;
 			}
 
-#endif
 			RoomNum   = APtr->Param1;
 			Direction = APtr->Param2 - 1;
 			*LCPtr      = NULL;

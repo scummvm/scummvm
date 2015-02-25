@@ -41,7 +41,8 @@ struct ADGameDescription;
 namespace Lab {
 
 enum GameFeatures {
-        GF_LOWRES = 1 << 0
+	GF_LOWRES = 1 << 0,
+	GF_WINDOWS_TRIAL = 1 << 1
 };
 
 class LabEngine : public Engine {
@@ -60,6 +61,9 @@ public:
 	Common::String generateSaveFileName(uint slot);
 
 	LargeSet *_conditions, *_roomsFound;
+
+private:
+	uint32 _extraGameFeatures;
 };
 
 extern LabEngine *g_lab;

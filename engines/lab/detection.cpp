@@ -120,7 +120,7 @@ Common::Platform LabEngine::getPlatform() const {
 }
 
 uint32 LabEngine::getFeatures() const {
-	return _gameDescription->flags;
+	return _gameDescription->flags | _extraGameFeatures;
 }
 
 } // End of namespace Lab
