@@ -69,11 +69,17 @@ void introEatMessages() {
 	while (1) {
 		Msg = getMsg();
 
+		if (g_engine->shouldQuit()) {
+			QuitIntro = true;
+			return;
+		}
+
 		if (Msg == NULL)
 			return;
 		else {
 			if (((Msg->Class == MOUSEBUTTONS) && (IEQUALIFIER_RBUTTON & Msg->Qualifier)) ||
-			        ((Msg->Class == RAWKEY) && (Msg->Code == 27)))
+			        ((Msg->Class == RAWKEY) && (Msg->Code == 27))
+				)
 				QuitIntro = true;
 
 			replyMsg(Msg);

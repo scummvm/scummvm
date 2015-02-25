@@ -741,7 +741,7 @@ static void mainGameLoop() {
 		WSDL_ProcessInput(1);
 
 		if (GotMessage) {
-			if (QuitLab) {
+			if (QuitLab || g_engine->shouldQuit()) {
 				stopDiff();
 				break;
 			}
