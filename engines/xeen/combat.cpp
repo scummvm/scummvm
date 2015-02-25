@@ -462,7 +462,7 @@ void Combat::moveMonsters() {
 	for (int loopNum = 0; loopNum < 2; ++loopNum) {
 		int arrIndex = -1;
 		for (int yDiff = 3; yDiff >= -3; --yDiff) {
-			for (int xDiff = 3; xDiff >= -3; --xDiff) {
+			for (int xDiff = -3; xDiff <= 3; ++xDiff) {
 				Common::Point pt = party._mazePosition + Common::Point(xDiff, yDiff);
 				++arrIndex;
 
@@ -484,43 +484,43 @@ void Combat::moveMonsters() {
 									_rangeAttacking[idx] = true;
 								}
 							}
-						}
-					}
 
-					switch (party._mazeDirection) {
-					case DIR_NORTH:
-					case DIR_SOUTH:
-						if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
-								MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
-							// Move the monster
-							moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
-						} else {
-							if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
-								arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
-								arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
-								idx))
-							if (arrIndex >= 21 && arrIndex <= 27) {
-								moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
-							} else {
-								moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
-							}
-						}
-						break;
+							switch (party._mazeDirection) {
+							case DIR_NORTH:
+							case DIR_SOUTH:
+								if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
+									// Move the monster
+									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
+								} else {
+									if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+										arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
+										arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
+										idx))
+									if (arrIndex >= 21 && arrIndex <= 27) {
+										moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
+									} else {
+										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
+									}
+								}
+								break;
 
-					case DIR_EAST:
-					case DIR_WEST:
-						if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
-							arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
-							arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
-							idx)) {
-							if (arrIndex >= 21 && arrIndex <= 27) {
-								moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
-							} else {
-								moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
+							case DIR_EAST:
+							case DIR_WEST:
+								if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+									arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
+									arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
+									idx)) {
+									if (arrIndex >= 21 && arrIndex <= 27) {
+										moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
+									} else {
+										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
+									}
+								} else if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
+									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
+								}
 							}
-						} else if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
-								MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
-							moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 						}
 					}
 				}
@@ -660,6 +660,9 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 	}
 }
 
+/**
+ * Determines whether a given monster can move
+ */
 bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 		int xDiff, int yDiff, int monsterId) {
 	Map &map = *_vm->_map;
@@ -702,14 +705,19 @@ bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 	}
 }
 
-void Combat::moveMonster(int monsterId, const Common::Point &pt) {
+/**
+ * Moves a monster by a given delta amount if it's a valid move
+ */
+void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
+	Common::Point newPos = monster._position + moveDelta;
 
-	if (_monsterMap[pt.y][pt.x] < 3 && !monster._damageType && _moveMonsters) {
-		++_monsterMap[pt.y][pt.x];
+	if (_monsterMap[newPos.y][newPos.x] < 3 && !monster._damageType && _moveMonsters) {
+		// Adjust monster's position
+		++_monsterMap[newPos.y][newPos.x];
 		--_monsterMap[monster._position.y][monster._position.x];
-		monster._position = pt;
+		monster._position = newPos;
 		_monsterMoved[monsterId] = true;
 	}
 }
@@ -754,7 +762,7 @@ void Combat::monsterOvercome() {
 		MazeMonster &monster = map._mobData._monsters[idx];
 		int dataIndex = monster._spriteId;
 
-		if (monster._damageType != 0 && monster._damageType != 13) {
+		if (monster._damageType != DT_PHYSICAL && monster._damageType != DT_DRAGONSLEEP) {
 			// Do a saving throw for monster
 			if (dataIndex <= _vm->getRandomNumber(1, dataIndex + 50))
 				monster._damageType = 0;

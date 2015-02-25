@@ -156,7 +156,7 @@ public:
 	bool monsterCanMove(const Common::Point &pt, int wallShift,
 		int v1, int v2, int monsterId);
 
-	void moveMonster(int monsterId, const Common::Point &pt);
+	void moveMonster(int monsterId, const Common::Point &moveDelta);
 
 	void attackMonster(int monsterId);
 
