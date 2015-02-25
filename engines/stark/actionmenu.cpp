@@ -42,25 +42,19 @@ namespace Stark {
 ActionMenu::ActionMenu(Gfx::Driver *gfx) : _gfx(gfx) {
 	Global *global = StarkServices::instance().global;
 	Resources::Object *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
-	_hand = inventory->findChildWithIndex<Resources::Item>(1);
-	_eye = inventory->findChildWithIndex<Resources::Item>(2);
-	_mouth = inventory->findChildWithIndex<Resources::Item>(3);
+	_hand = inventory->findChildWithIndex<Resources::ItemSub2>(1);
+	_eye = inventory->findChildWithIndex<Resources::ItemSub2>(2);
+	_mouth = inventory->findChildWithIndex<Resources::ItemSub2>(3);
 
-	Resources::Anim *handAnim = _hand->findChild<Resources::Anim>(false);
+	// TODO: Should these be hardcoded?
+	_hand->setPosition(Common::Point(90, -21));
+	_eye->setPosition(Common::Point(5, 40));
+	_mouth->setPosition(Common::Point(43, 0));
 
-	_handEntry = new Gfx::RenderEntry(handAnim, handAnim->getName());
-	_handEntry->setVisual(handAnim->getVisual());
+	_renderEntries.push_back(_hand->getRenderEntry(Common::Point(0, 0)));
+	_renderEntries.push_back(_eye->getRenderEntry(Common::Point(0, 0)));
+	_renderEntries.push_back(_mouth->getRenderEntry(Common::Point(0, 0)));
 
-	Resources::Anim *eyeAnim = _eye->findChild<Resources::Anim>(false);
-
-	_eyeEntry = new Gfx::RenderEntry(eyeAnim, eyeAnim->getName());
-	_eyeEntry->setVisual(eyeAnim->getVisual());
-	
-	Resources::Anim *mouthAnim = _mouth->findChild<Resources::Anim>(false);
-
-	_mouthEntry = new Gfx::RenderEntry(mouthAnim, mouthAnim->getName());
-	_mouthEntry->setVisual(mouthAnim->getVisual());
-	
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
 	_background = staticProvider->getCursorImage(5);
@@ -68,16 +62,21 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx) : _gfx(gfx) {
 
 ActionMenu::~ActionMenu() {
 	_renderEntries.clear();
-	delete _mouthEntry;
-	delete _handEntry;
-	delete _eyeEntry;
 }
 
 void ActionMenu::render(Common::Point pos) {
 	_gfx->setScreenViewport(true); // Drawn unscaled
-	_handEntry->setPosition(pos + Common::Point(90, -21));
-	_eyeEntry->setPosition(pos + Common::Point(5, 40));
-	_mouthEntry->setPosition(pos + Common::Point(43, 0));
+	_renderEntries.clear();
+
+	if (_handEnabled) {
+		_renderEntries.push_back(_hand->getRenderEntry(pos));
+	}
+	if (_eyeEnabled) {
+		_renderEntries.push_back(_eye->getRenderEntry(pos));
+	}
+	if (_mouthEnabled) {
+		_renderEntries.push_back(_mouth->getRenderEntry(pos));
+	}
 
 	Scene *scene = StarkServices::instance().scene;
 	_background->render(pos);
@@ -85,19 +84,19 @@ void ActionMenu::render(Common::Point pos) {
 }
 
 void ActionMenu::clearActions() {
-	_renderEntries.clear();
+	_handEnabled = _mouthEnabled = _eyeEnabled = false;
 }
 
 void ActionMenu::enableAction(ActionMenuType action) {
 	switch (action) {
 		case kActionHand:
-			_renderEntries.push_back(_handEntry);
+			_handEnabled = true;
 			break;
 		case kActionMouth:
-			_renderEntries.push_back(_mouthEntry);
+			_mouthEnabled = true;
 			break;
 		case kActionEye:
-			_renderEntries.push_back(_eyeEntry);
+			_eyeEnabled = true;
 			break;
 		default:
 			error("Invalid action type in ActionMenu::enableAction");
@@ -106,7 +105,6 @@ void ActionMenu::enableAction(ActionMenuType action) {
 
 int ActionMenu::isThisYourButton(Resources::Object *object) {
 	Resources::Item *item = object->findParent<Resources::Item>();
-	warning("Item: %s", item->getName().c_str());
 	if (item == _mouth) {
 		return kActionHand;
 	} else if (item == _eye) {

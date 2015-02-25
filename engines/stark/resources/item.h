@@ -120,7 +120,7 @@ public:
 	void setEnabled(bool enabled) override;
 
 	/** Define the current animation index for the item */
-	void setAnim(int32 index);
+	virtual void setAnim(int32 index); // TODO: Just virtual to allow hack in ItemSub2
 
 	bool containsPoint(Common::Point point) override;
 	int indexForPoint(Common::Point point) override;
@@ -136,6 +136,18 @@ protected:
 	AnimHierarchy *_animHierarchy;
 	int32 _currentAnimIndex;
 	uint32 _field_44;
+};
+
+// Just a stub-class for now, to reduce the amount of hackery necessary elsewhere.
+class ItemSub2 : public ItemVisual {
+	Common::Point _position;
+public:
+	ItemSub2(Object *parent, byte subType, uint16 index, const Common::String &name) : ItemVisual(parent, subType, index, name), _position(0, 0) {};
+	// This function does not actually need to be virtual in the super class, but
+	// it's HACKED this way to work around the action-menu stuff for now.
+	void setAnim(int32 index) override { ItemVisual::setAnim(0); }
+	void setPosition(Common::Point pos) { _position = pos; }
+	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset);
 };
 
 /**

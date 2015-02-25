@@ -44,7 +44,7 @@ Object *Item::construct(Object *parent, byte subType, uint16 index, const Common
 	case kItemSub1:
 		return new ItemSub1(parent, subType, index, name);
 	case kItemSub2:
-		return new Item(parent, subType, index, name); // TODO
+		return new ItemSub2(parent, subType, index, name); // TODO
 	case kItemSub3:
 		return new ItemSub3(parent, subType, index, name);
 	case kItemSub5:
@@ -190,6 +190,20 @@ int ItemVisual::indexForPoint(Common::Point point) {
 		return anim->indexForPoint(point);
 	}
 	return -1;
+}
+
+Gfx::RenderEntry *ItemSub2::getRenderEntry(const Common::Point &positionOffset) {
+	if (_enabled) {
+		Visual *visual = getVisual();
+
+		_renderEntry->setVisual(visual);
+		_renderEntry->setPosition(_position + positionOffset);
+//		_renderEntry->setSortKey(getSortKey());
+	} else {
+		_renderEntry->setVisual(nullptr);
+	}
+
+	return _renderEntry;
 }
 
 ItemSub13::~ItemSub13() {

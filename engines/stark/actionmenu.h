@@ -30,18 +30,18 @@ namespace Stark {
 class VisualImageXMG;
 
 namespace Resources {
-class Item;
+class ItemSub2;
 class Object;
 }
 
 class ActionMenu {
-	Resources::Item *_eye;
-	Resources::Item *_hand;
-	Resources::Item *_mouth;
+	Resources::ItemSub2 *_eye;
+	Resources::ItemSub2 *_hand;
+	Resources::ItemSub2 *_mouth;
 	VisualImageXMG *_background;
-	Gfx::RenderEntry *_eyeEntry;
-	Gfx::RenderEntry *_handEntry;
-	Gfx::RenderEntry *_mouthEntry;
+	bool _eyeEnabled;
+	bool _handEnabled;
+	bool _mouthEnabled;
 	Gfx::RenderEntryArray _renderEntries;
 	Gfx::Driver *_gfx;
 public:
