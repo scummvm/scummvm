@@ -92,6 +92,7 @@ public:
 	/** Obtain the concrete instance of an item template */
 	virtual Item *getSceneInstance();
 
+	void saveLoad(ResourceSerializer *serializer) override;
 	virtual bool containsPoint(Common::Point point) { return false; };
 	virtual int indexForPoint(Common::Point point) { return -1; };
 protected:

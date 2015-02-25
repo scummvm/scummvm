@@ -34,6 +34,7 @@
 #include "engines/stark/resources/textureset.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 namespace Stark {
 namespace Resources {
@@ -93,6 +94,13 @@ Item *Item::getSceneInstance() {
 void Item::printData() {
 	debug("enabled: %d", _enabled);
 	debug("field_38: %d", _field_38);
+}
+
+void Item::saveLoad(ResourceSerializer *serializer) {
+	if (!serializer->matchBytes("ITEM", 9)) {
+		error("Couldn't fint the correct save header");
+	}
+	serializer->syncAsSint32LE(_enabled);
 }
 
 ItemVisual::~ItemVisual() {
