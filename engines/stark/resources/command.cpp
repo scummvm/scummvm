@@ -125,6 +125,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsRandom(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].intValue);
 	case kIsOnPlace:
 		return opIsOnPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
+	case kIsOnNearPlace:
+		return opIsOnNearPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
 	case kIsAnimAtTime:
 		return opIsAnimAtTime(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	default:
@@ -482,6 +484,15 @@ Command *Command::opIsOnPlace(int branch1, int branch2, const ResourceReference 
 	warning("(TODO: Implement) opIsOnPlace(%d, %d, %s, %s) %s : %s", branch1, branch2, itemObj->getName().c_str(), positionObj->getName().c_str(), itemRef.describe().c_str(), position.describe().c_str());
 	// TODO: Verify how this logic actually should be handled
 	return nextCommandIf(false);
+}
+
+Command *Command::opIsOnNearPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position, int32 unknown) {
+	assert(_arguments.size() == 5);
+	Object *itemObj = itemRef.resolve<Object>();
+	Object *positionObj = position.resolve<Object>();
+	warning("(TODO: Implement) opIsOnPlace(%d, %d, %s, %s, %d) %s : %s", branch1, branch2, itemObj->getName().c_str(), positionObj->getName().c_str(), unknown, itemRef.describe().c_str(), position.describe().c_str());
+	// TODO: Verify how this logic actually should be handled
+	return nextCommandIf(true);
 }
 
 Command *Command::opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time) {
