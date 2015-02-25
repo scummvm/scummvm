@@ -65,10 +65,8 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	Common::Point pos = _cursor->getMousePosition();
 
 	// Check for inventory to avoid mouse-overs from the world poking through.
-	if (_inventoryOpen && _inventoryInterface->containsPoint(pos)) {
-		// TODO: Get mouse overs from the inventory.
-		_cursor->setMouseHint(_inventoryInterface->getMouseHintAtPosition(pos));
-		return;
+	if (_inventoryOpen && _inventoryInterface->containsPoint(pos) && keepExisting == false) {
+		renderEntries = _inventoryInterface->getRenderEntries();
 	}
 
 	// Check for UI mouse overs
@@ -98,36 +96,39 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 
 	if (_objectUnderCursor) {
 		int actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor);
-
-		bool moreThanOneActionPossible = false;
-		switch (actionsPossible) {
-			case UserInterface::kActionLookPossible:
-				_cursor->setCursorType(Cursor::kEye);
-				break;
-			case UserInterface::kActionTalkPossible:
-				_cursor->setCursorType(Cursor::kMouth);
-				break;
-			case UserInterface::kActionUsePossible:
-				_cursor->setCursorType(Cursor::kHand);
-				break;
-			case UserInterface::kActionExitPossible:
-				_cursor->setCursorType(Cursor::kDefault); // TODO
-				break;
-			default:
-				if (actionsPossible != 0) {
-					_cursor->setCursorType(Cursor::kPassive);
-					moreThanOneActionPossible = true;
-				}
-				break;
-		}
-		if (moreThanOneActionPossible) {
-			_cursor->setCursorType(Cursor::kActive);
-		}
+		setCursorDependingOnActionsAvailable(actionsPossible);
 	} else {
 		// Not an object
 		_cursor->setCursorType(Cursor::kPassive);
 	}
 	_cursor->setMouseHint(mouseHint);
+}
+
+void UI::setCursorDependingOnActionsAvailable(int actionsAvailable) {
+	bool moreThanOneActionPossible = false;
+	switch (actionsAvailable) {
+		case UserInterface::kActionLookPossible:
+			_cursor->setCursorType(Cursor::kEye);
+			break;
+		case UserInterface::kActionTalkPossible:
+			_cursor->setCursorType(Cursor::kMouth);
+			break;
+		case UserInterface::kActionUsePossible:
+			_cursor->setCursorType(Cursor::kHand);
+			break;
+		case UserInterface::kActionExitPossible:
+			_cursor->setCursorType(Cursor::kDefault); // TODO
+			break;
+		default:
+			if (actionsAvailable != 0) {
+				_cursor->setCursorType(Cursor::kPassive);
+				moreThanOneActionPossible = true;
+			}
+			break;
+	}
+	if (moreThanOneActionPossible) {
+		_cursor->setCursorType(Cursor::kActive);
+	}
 }
 
 void UI::handleClick() {

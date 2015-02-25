@@ -55,6 +55,7 @@ public:
 	void update();
 	bool containsPoint(Common::Point point);
 	Common::String getMouseHintAtPosition(Common::Point point);
+	Gfx::RenderEntryArray getRenderEntries() { return _renderEntries; }
 };
 
 } // End of namespace Stark

@@ -55,6 +55,7 @@ class UI {
 	bool _exitGame;
 	bool _inventoryOpen;
 	void handleClick();
+	void setCursorDependingOnActionsAvailable(int actionsAvailable);
 public:
 	UI(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~UI();
