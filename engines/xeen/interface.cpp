@@ -583,7 +583,7 @@ void Interface::perform() {
 void Interface::chargeStep() {
 	if (!_vm->_party->_partyDead) {
 		_vm->_party->changeTime(_vm->_map->_isOutdoors ? 10 : 1);
-		if (!_tillMove) {
+		if (_tillMove) {
 			_vm->_combat->moveMonsters();
 		}
 
