@@ -59,6 +59,7 @@ public:
 	VisualImageXMG *getCursorImage(uint32 stockAnim);
 
 	enum StaticItems {
+		kInventoryBg = 4,
 		kQuit = 8,
 		kDiaryNormal = 15,
 		kInventory = 16,

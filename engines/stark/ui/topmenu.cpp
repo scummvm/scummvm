@@ -75,6 +75,9 @@ void TopMenu::handleClick(Common::Point point) {
 		// TODO: Ask
 		StarkServices::instance().ui->notifyShouldExit();
 	}
+	if (_inventoryButton->containsPoint(point)) {
+		StarkServices::instance().ui->notifyShouldOpenInventory();
+	}
 }
 
 Common::String TopMenu::getMouseHintAtPosition(Common::Point point) {

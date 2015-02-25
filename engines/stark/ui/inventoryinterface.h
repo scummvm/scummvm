@@ -20,55 +20,35 @@
  *
  */
 
-#ifndef STARK_UI_H
-#define STARK_UI_H
+#ifndef STARK_INVENTORYINTERFACE_H
+#define STARK_INVENTORYINTERFACE_H
 
 #include "common/scummsys.h"
-#include "common/str-array.h"
-
-#include "engines/stark/gfx/renderentry.h"
+#include "common/rect.h"
 
 namespace Stark {
 
+class VisualImageXMG;
+class ClickText;
+
 namespace Resources {
-class Object;
+class Anim;
 }
 
 namespace Gfx {
-class Driver;
+class Texture;
 }
 
-class DialogInterface;
-class InventoryInterface;
-class TopMenu;
-class Cursor;
-
-class UI {
-	DialogInterface *_dialogInterface;
-	InventoryInterface *_inventoryInterface;
-	TopMenu *_topMenu;
-	Resources::Object *_currentObject;
-	Resources::Object *_objectUnderCursor;
-	Gfx::Driver *_gfx;
-	Cursor *_cursor;
-	bool _hasClicked;
-	bool _exitGame;
-	bool _inventoryOpen;
-	void handleClick();
+class InventoryInterface {
+	Resources::Anim *_backgroundTexture;
+	Common::Point _position;
 public:
-	UI(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~UI();
-	void init();
-	void update(Gfx::RenderEntryArray renderEntries, bool keepExisting = false);
+	InventoryInterface();
+	virtual ~InventoryInterface() {}
 	void render();
-	void notifyClick();
-	void notifySubtitle(const Common::String &subtitle);
-	void notifyDialogOptions(const Common::StringArray &options);
-	void notifyShouldExit() { _exitGame = true; }
-	void notifyShouldOpenInventory() { _inventoryOpen = true; }
-	bool shouldExit() { return _exitGame; }
+	bool containsPoint(Common::Point point);
 };
 
 } // End of namespace Stark
 
-#endif // STARK_UI_H
+#endif // STARK_DIALOG_INTERFACE_H

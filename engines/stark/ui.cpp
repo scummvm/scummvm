@@ -31,6 +31,7 @@
 
 #include "engines/stark/ui/topmenu.h"
 #include "engines/stark/ui/dialoginterface.h"
+#include "engines/stark/ui/inventoryinterface.h"
 
 namespace Stark {
 
@@ -40,8 +41,10 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_currentObject(nullptr),
 	_objectUnderCursor(nullptr),
 	_hasClicked(false),
+	_inventoryOpen(false),
 	_topMenu(nullptr),
 	_dialogInterface(nullptr),
+	_inventoryInterface(nullptr),
 	_exitGame(false)
 	{
 }
@@ -49,15 +52,24 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 UI::~UI() {
 	delete _topMenu;
 	delete _dialogInterface;
+	delete _inventoryInterface;
 }
 
 void UI::init() {
 	_topMenu = new TopMenu();
 	_dialogInterface = new DialogInterface();
+	_inventoryInterface = new InventoryInterface();
 }
 
 void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	Common::Point pos = _cursor->getMousePosition();
+
+	// Check for inventory to avoid mouse-overs from the world poking through.
+	if (_inventoryOpen && _inventoryInterface->containsPoint(pos)) {
+		// TODO: Get mouse overs from the inventory.
+		_cursor->setMouseHint("");
+		return;
+	}
 
 	// Check for UI mouse overs
 	if (_topMenu->containsPoint(pos)) {
@@ -131,6 +143,10 @@ void UI::handleClick() {
 			_currentObject = nullptr;
 		}
 	}
+	// Check this before handling the menu clicks, otherwise it closes again on the same event.
+	if (_inventoryOpen && !_inventoryInterface->containsPoint(_cursor->getMousePosition())) {
+		_inventoryOpen = false;
+	}
 	if (_topMenu->containsPoint(_cursor->getMousePosition())) {
 		_topMenu->handleClick(_cursor->getMousePosition());
 	}
@@ -164,6 +180,10 @@ void UI::render() {
 	// TODO: Unhardcode
 	if (_cursor->getMousePosition().y < 40) {
 		_topMenu->render();
+	}
+
+	if (_inventoryOpen) {
+		_inventoryInterface->render();
 	}
 
 	_dialogInterface->render();
