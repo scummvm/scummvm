@@ -115,6 +115,7 @@ public:
 		kSpeakWithoutTalking = 139,
 
 		kIsOnFloorField = 162,
+		kIsItemEnabled = 163,
 
 		kIsSet = 166,
 
@@ -199,6 +200,7 @@ protected:
 	Command *opSetTarget(const ResourceReference &itemRef1, const ResourceReference &itemRef2);
 	Command *opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
+	Command *opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 	Command *opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsIntegerLower(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);

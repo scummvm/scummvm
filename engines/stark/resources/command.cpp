@@ -132,6 +132,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opSpeakWithoutTalking(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kIsOnFloorField:
 		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
+	case kIsItemEnabled:
+		return opIsItemEnabled(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsIntegerEqual:
@@ -528,6 +530,13 @@ Command *Command::opIsOnFloorField(int branch1, int branch2, const ResourceRefer
 	warning("(TODO: Implement) opIsOnFloorField(%d, %d, %s, %s) : %s , %s", branch1, branch2, itemObj->getName().c_str(), floorFieldObj->getName().c_str(), itemRef.describe().c_str(), floorFieldRef.describe().c_str());
 	// TODO: Actually implement the logic
 	return nextCommandIf(false);
+}
+
+Command *Command::opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef) {
+	Item *itemObj = itemRef.resolve<Item>();
+	warning("opIsItemEnabled(%d, %d, %s) -> %d : %s", branch1, branch2, itemObj->getName().c_str(), itemObj->isEnabled(), itemRef.describe().c_str());
+
+	return nextCommandIf(itemObj->isEnabled());
 }
 
 Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef) {
