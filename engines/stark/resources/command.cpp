@@ -65,6 +65,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opScriptPause(script, _arguments[1].referenceValue);
 	case kWalkTo:
 		return opWalkTo(_arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
+	case kGameLoop:
+		return opGameLoop(_arguments[1].intValue);
 	case kScriptPauseRandom:
 		return opPauseRandom(script, _arguments[1].referenceValue);
 	case kExit2DLocation:
@@ -189,6 +191,14 @@ Command *Command::opWalkTo(int32 unknown, const ResourceReference &bookmarkRef, 
 	assert(_arguments.size() == 4);
 	Object *target = bookmarkRef.resolve<Object>();
 	warning("(TODO: Implement) opWalkTo(%d %s %d) : %s", unknown, target->getName().c_str(), unknown2, bookmarkRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opGameLoop(int32 unknown) {
+	assert(_arguments.size() == 2);
+	assert(_arguments[1].type == Argument::kTypeInteger1 || _arguments[1].type == Argument::kTypeInteger2);
+	warning("(TODO: Implement) opGameLoop(%d)", unknown);
 
 	return nextCommand();
 }

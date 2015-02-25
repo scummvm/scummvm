@@ -63,6 +63,7 @@ public:
 		kLocationGoTo = 5,
 
 		kWalkTo = 7,
+		kGameLoop = 8,
 		kScriptPause = 9,
 		kScriptPauseRandom = 10,
 
@@ -149,6 +150,7 @@ protected:
 	Command *opSetInteractiveMode(bool enabled);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);
 	Command *opWalkTo(int32 unknown, const ResourceReference &bookmarkRef, int32 unknown2);
+	Command *opGameLoop(int32 unknown);
 	Command *opScriptPause(Script *script, const ResourceReference &durationRef);
 	Command *opPauseRandom(Script *script, const ResourceReference &itemRef);
 	Command *opExit2DLocation(Script *script);
