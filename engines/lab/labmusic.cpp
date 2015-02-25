@@ -117,7 +117,7 @@ void Music::playSoundEffect(uint16 SampleSpeed, uint32 Length, void *Data) {
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream((const byte *)Data, Length, SampleSpeed, soundFlags, DisposeAfterUse::NO);
 	uint loops = (_loopSoundEffect) ? 0 : 1;
-	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops, DisposeAfterUse::YES);
+	Audio::LoopingAudioStream *loopingAudioStream = new Audio::LoopingAudioStream(audioStream, loops);
 	g_lab->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, loopingAudioStream);
 }
 
@@ -143,7 +143,6 @@ void Music::fillbuffer(byte *musicBuffer) {
 	}
 }
 
-
 /*****************************************************************************/
 /* Fills up the buffers that have already been played if necessary; if doit  */
 /* is set to TRUE then it will fill up all empty buffers.  Otherwise, it     */
@@ -152,7 +151,6 @@ void Music::fillbuffer(byte *musicBuffer) {
 void Music::fillUpMusic(bool doit) {
 	updateMusic();
 }
-
 
 /*****************************************************************************/
 /* Starts up the music initially.                                            */
@@ -171,7 +169,6 @@ void Music::startMusic(bool startatbegin) {
 	_musicOn = true;
 	updateMusic();
 }
-
 
 /*****************************************************************************/
 /* Initializes the music buffers.                                            */
@@ -198,26 +195,20 @@ bool Music::initMusic() {
 	return false;
 }
 
-
-
 /*****************************************************************************/
 /* Frees up the music buffers and closes the file.                           */
 /*****************************************************************************/
 void Music::freeMusic() {
 	_musicOn = false;
 
-	if (_file->isOpen())
-		_file->close();
-
-	_file = 0;
-
 	g_lab->_mixer->stopHandle(_musicHandle);
+	_queuingAudioStream = NULL;
+
 	g_lab->_mixer->stopHandle(_sfxHandle);
 
-	delete _queuingAudioStream;
-	_queuingAudioStream = NULL;
+	delete _file;
+	_file = NULL;
 }
-
 
 /*****************************************************************************/
 /* Pauses the background music.                                              */
@@ -234,8 +225,6 @@ void Music::pauseBackMusic() {
 	}
 }
 
-
-
 /*****************************************************************************/
 /* Resumes the paused background music.                                      */
 /*****************************************************************************/
@@ -251,7 +240,6 @@ void Music::resumeBackMusic() {
 	}
 }
 
-
 /*****************************************************************************/
 /* Checks to see if need to fill buffers fill of music.                      */
 /*****************************************************************************/
@@ -264,18 +252,12 @@ void Music::checkMusic() {
 	fillUpMusic(false);
 }
 
-
-
 /*****************************************************************************/
 /* Checks to see if need to fill buffers fill of music.                      */
 /*****************************************************************************/
 void Music::newCheckMusic() {
 	checkMusic();
 }
-
-
-
-
 
 /*****************************************************************************/
 /* Turns the music on and off.                                               */
@@ -319,8 +301,6 @@ void Music::changeMusic(const char *newmusic) {
 	}
 }
 
-
-
 /*****************************************************************************/
 /* Changes the background music to the original piece playing.               */
 /*****************************************************************************/
@@ -350,7 +330,6 @@ void Music::resetMusic() {
 
 	_tFile = 0;
 }
-
 
 /*****************************************************************************/
 /* Checks whether or note enough memory in music buffer before loading any   */
