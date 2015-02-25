@@ -117,6 +117,33 @@ Resources::Location *ResourceProvider::getLocation(uint16 level, uint16 location
 	return nullptr;
 }
 
+// TODO: This approach doesn't carry over all the stuff that it should, perhaps we should avoid reloading?
+void ResourceProvider::pushAndChangeLocation(int16 level, int16 location) {
+	pushCurrentLocation();
+	requestLocationChange(level, location);
+}
+
+void ResourceProvider::returnToPushedLocation() {
+	popCurrentLocation();
+}
+
+void ResourceProvider::pushCurrentLocation() {
+	_levelStack.push_back(_global->getCurrent()->getLevel()->getIndex());
+	_locationStack.push_back(_global->getCurrent()->getLocation()->getIndex());
+}
+
+void ResourceProvider::popCurrentLocation() {
+	if (_locationStack.empty() || _levelStack.empty()) {
+		error("Empty location stack");
+	} else {
+		int16 level = _levelStack.back();
+		int16 location = _locationStack.back();
+		_levelStack.pop_back();
+		_locationStack.pop_back();
+		requestLocationChange(level, location);
+	}
+}
+
 void ResourceProvider::requestLocationChange(uint16 level, uint16 location) {
 	Current *currentLocation = new Current();
 	_locations.push_back(currentLocation);

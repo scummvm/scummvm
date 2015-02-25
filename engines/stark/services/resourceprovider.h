@@ -61,6 +61,8 @@ public:
 
 	void setShouldRestoreCurrentState() { _restoreCurrentState = true; }
 
+	void pushAndChangeLocation(int16 level, int16 location);
+	void returnToPushedLocation();
 	/**
 	 * Apply a location change request.
 	 *
@@ -85,6 +87,10 @@ public:
 	Resources::Location *getLocation(uint16 level, uint16 location);
 
 private:
+	void pushCurrentLocation();
+	void popCurrentLocation();
+	Common::List<int16> _locationStack;
+	Common::List<int16> _levelStack;
 	typedef Common::List<Current *> CurrentList;
 
 	Current *findLevel(uint16 level);

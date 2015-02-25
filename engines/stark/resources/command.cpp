@@ -201,6 +201,7 @@ Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
 
 Command *Command::opExit2DLocation(Script *script) {
 	warning("(TODO: Implement) Exit 2D Location");
+	StarkServices::instance().resourceProvider->returnToPushedLocation();
 	return nullptr;
 }
 
@@ -211,7 +212,7 @@ Command *Command::opGoto2DLocation(const Common::String &level, const Common::St
 	// TODO: This needs to be handled differently, to allow exiting.
 	uint levelIndex = strtol(level.c_str(), nullptr, 16);
 	uint locationIndex = strtol(location.c_str(), nullptr, 16);
-	resourceProvider->requestLocationChange(levelIndex, locationIndex);
+	resourceProvider->pushAndChangeLocation(levelIndex, locationIndex);
 	return nullptr;
 }
 
