@@ -140,6 +140,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsIntegerInRange:
 		return opIsIntegerInRange(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
+	case kIsIntegerAbove:
+		return opIsIntegerAbove(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsIntegerEqual:
 		return opIsIntegerEqual(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsIntegerLower:
@@ -570,6 +572,14 @@ Command *Command::opIsIntegerInRange(int branch1, int branch2, const ResourceRef
 	warning("opIsIntegerInRange(%s, %d, [%d, %d]) %d %d : %s", knowledgeValue->getName().c_str(), value, min, max, branch1, branch2, knowledgeRef.describe().c_str());
 	// TODO: Inclusive?
 	return nextCommandIf(value >= min && value <= max);
+}
+
+Command *Command::opIsIntegerAbove(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
+	assert(_arguments.size() == 4);
+	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
+	warning("opIsIntegerAbove(%s, %d > %d) %d %d : %s", knowledgeValue->getName().c_str(), knowledgeValue->getIntegerValue(), value, branch1, branch2, knowledgeRef.describe().c_str());
+
+	return nextCommandIf(knowledgeValue->getIntegerValue() > value);
 }
 
 Command *Command::opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
