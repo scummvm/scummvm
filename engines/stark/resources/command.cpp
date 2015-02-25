@@ -148,6 +148,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opIsOnPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsOnNearPlace:
 		return opIsOnNearPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue, _arguments[4].intValue);
+	case kIsAnimPlaying:
+		return opIsAnimPlaying(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsAnimAtTime:
 		return opIsAnimAtTime(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
 	default:
@@ -595,6 +597,15 @@ Command *Command::opIsOnNearPlace(int branch1, int branch2, const ResourceRefere
 	warning("(TODO: Implement) opIsOnPlace(%d, %d, %s, %s, %d) %s : %s", branch1, branch2, itemObj->getName().c_str(), positionObj->getName().c_str(), unknown, itemRef.describe().c_str(), position.describe().c_str());
 	// TODO: Verify how this logic actually should be handled
 	return nextCommandIf(true);
+}
+
+Command *Command::opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef) {
+	assert(_arguments.size() == 3);
+	Object *animObj = animRef.resolve<Object>();
+	warning("(TODO: Implement opIsAnimPlaying(%d %d %s) %s", branch1, branch2, animObj->getName().c_str(), animRef.describe().c_str());
+
+	// TODO: Just returning true, since we're skipping anims for now.
+	return nextCommandIf(false);
 }
 
 Command *Command::opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time) {

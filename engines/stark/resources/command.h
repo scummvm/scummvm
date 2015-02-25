@@ -126,6 +126,8 @@ public:
 
 		kIsOnPlace = 177,
 
+		kIsAnimPlaying = 179,
+
 		kIsOnNearPlace = 183,
 
 		kIsAnimAtTime = 185
@@ -208,6 +210,7 @@ protected:
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);
 	Command *opIsOnNearPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position, int32 unknown);
 	Command *opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position);
+	Command *opIsAnimPlaying(int branch1, int branch2, const ResourceReference &animRef);
 	Command *opIsAnimAtTime(int branch1, int branch2, const ResourceReference &animRef, int32 time);
 	
 	Common::Array<Argument> _arguments;
