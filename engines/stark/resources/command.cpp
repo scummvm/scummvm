@@ -24,6 +24,7 @@
 
 #include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/dialog.h"
@@ -101,6 +102,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opSetInteger(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableFloorField:
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kPlayAnimScriptItem:
+		return opPlayAnimScriptItem(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kLookDirection:
@@ -393,6 +396,18 @@ Command *Command::opEnableFloorField(const ResourceReference &floorFieldRef, int
 	Object *floorFieldObj = floorFieldRef.resolve<Object>();
 	warning("(TODO: Implement) opEnableFloorField(%s, %d) : %s", floorFieldObj->getName().c_str(), value, floorFieldRef.describe().c_str());
 
+	return nextCommand();
+}
+
+Command *Command::opPlayAnimScriptItem(const ResourceReference &animScriptItemRef, int32 value) {
+	assert(_arguments.size() == 3);
+	Object *animScriptItemObj = animScriptItemRef.resolve<Object>();
+
+	AnimScript *animScript = animScriptItemObj->findParent<AnimScript>();
+	assert(animScript);
+	animScript->setCurrentIndex(animScriptItemObj->getIndex());
+	// TODO: What is the value good for?
+	warning("(TODO: Implement) opPlayAnimScriptItem(%s, %d) : %s", animScriptItemObj->getName().c_str(), value, animScriptItemRef.describe().c_str());
 	return nextCommand();
 }
 

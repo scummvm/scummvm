@@ -58,6 +58,7 @@ public:
 	void onAllLoaded() override;
 	void onGameLoop() override;
 
+	void setCurrentIndex(int32 index);
 protected:
 	void goToNextItem();
 

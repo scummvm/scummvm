@@ -90,6 +90,7 @@ public:
 		kSetInteger = 100,
 
 		kEnableFloorField = 103,
+		kPlayAnimScriptItem = 104,
 
 		kSoundPlay = 112,
 
@@ -183,6 +184,7 @@ protected:
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
 	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
+	Command *opPlayAnimScriptItem(const ResourceReference &animScriptItemRef, int32 value);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opLookDirection(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
 	Command *opStopPlayingSound(const ResourceReference &soundRef);
