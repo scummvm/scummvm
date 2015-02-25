@@ -122,7 +122,7 @@ int RenderEntry::indexForPoint(Common::Point point) {
 			return anim->indexForPoint(point);
 		}
 	}
-	return false;
+	return -1;
 }
 
 } // End of namespace Gfx
