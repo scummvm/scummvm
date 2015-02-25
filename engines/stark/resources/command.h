@@ -79,6 +79,8 @@ public:
 		kShowPlay = 95,
 		kSetBoolean = 96,
 
+		kSetInteger = 100,
+
 		kEnableFloorField = 103,
 
 		kSoundPlay = 112,
@@ -158,6 +160,7 @@ protected:
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 unknown);
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
+	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opGoLayer(const ResourceReference &layerRef);

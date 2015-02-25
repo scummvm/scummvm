@@ -85,6 +85,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opScriptEnable(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSetBoolean:
 		return opSetBoolean(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kSetInteger:
+		return opSetInteger(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableFloorField:
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
@@ -304,6 +306,17 @@ Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 valu
 
 	// This seems to have no effect currently, perhaps because the location is reloaded
 	boolean->setBooleanValue(value);
+
+	return nextCommand();
+}
+
+Command *Command::opSetInteger(const ResourceReference &knowledgeRef, int32 value) {
+	assert(_arguments.size() == 3);
+	Knowledge *integer = knowledgeRef.resolve<Knowledge>();
+	warning("(TODO: Implement) opSetInteger(%s, %d) : %s", integer->getName().c_str(), value, knowledgeRef.describe().c_str());
+
+	// This seems to have no effect currently, perhaps because the location is reloaded
+	integer->setIntegerValue(value);
 
 	return nextCommand();
 }
