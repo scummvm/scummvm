@@ -116,7 +116,10 @@ int RenderEntry::indexForPoint(Common::Point point) {
 				// this should not be done when handling UI-buttons, as they have 0 actions.
 				// For now that special case is handled in the Owner == Anim type below,
 				// but in practice it should be done by way of checking for ItemSub2
-				if (table->getNumActions() == 0) {
+				if (!table) {
+					warning("Item %s has no PAT Table", item->getName().c_str());
+				}
+				if (!table || table->getNumActions() == 0) {
 					return -1;
 				}
 			}
