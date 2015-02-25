@@ -81,6 +81,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opItemLookAt(_arguments[1].referenceValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kItemEnable:
 		return opItemEnable(_arguments[1].referenceValue, _arguments[2].intValue);
+	case kUseAnimHierarchy:
+		return opUseAnimHierachy(_arguments[1].referenceValue);
 	case kPlayAnimation:
 		return opPlayAnimation(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kShowPlay:
@@ -291,6 +293,14 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 		item->setEnabled(!previousState);
 		break;
 	}
+
+	return nextCommand();
+}
+
+Command *Command::opUseAnimHierachy(const ResourceReference &animHierRef) {
+	assert(_arguments.size() == 2);
+	Object *animHier = animHierRef.resolve<Object>();
+	warning("(TODO: Implement) opUseAnimHierarchy(%s) : %s", animHier->getName().c_str(), animHierRef.describe().c_str());
 
 	return nextCommand();
 }
