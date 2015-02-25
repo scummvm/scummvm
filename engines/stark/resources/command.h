@@ -90,6 +90,7 @@ public:
 
 		kLookDirection = 118,
 
+		kStopPlayingSound = 119,
 		kGoLayer = 120,
 
 		kScrollSet = 122,
@@ -174,6 +175,7 @@ protected:
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opSoundPlay(Script *script, const ResourceReference &soundRef, int32 suspend);
 	Command *opLookDirection(const ResourceReference &itemRef, int32 unknown1, int32 unknown2);
+	Command *opStopPlayingSound(const ResourceReference &soundRef);
 	Command *opGoLayer(const ResourceReference &layerRef);
 	Command *opScrollSet(const ResourceReference &scrollRef);
 	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);

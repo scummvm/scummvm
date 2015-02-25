@@ -97,6 +97,8 @@ Command *Command::execute(uint32 callMode, Script *script) {
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kLookDirection:
 		return opLookDirection(_arguments[1].referenceValue, _arguments[2].intValue, _arguments[3].intValue);
+	case kStopPlayingSound:
+		return opStopPlayingSound(_arguments[1].referenceValue);
 	case kGoLayer:
 		return opGoLayer(_arguments[1].referenceValue);
 	case kScrollSet:
@@ -372,6 +374,14 @@ Command *Command::opLookDirection(const ResourceReference &itemRef, int32 unknow
 	assert(_arguments.size() == 4);
 	Object *itemObj = itemRef.resolve<Object>();
 	warning("(TODO: Implement) opLookDirection(%s %d %d) : %s", itemObj->getName().c_str(), unknown1, unknown2, itemRef.describe().c_str());
+
+	return nextCommand();
+}
+
+Command *Command::opStopPlayingSound(const ResourceReference &soundRef) {
+	assert(_arguments.size() == 2);
+	Object *soundObj = soundRef.resolve<Object>();
+	warning("(TODO: Implement) opStopPlayingSound(%s) : %s", soundObj->getName().c_str(), soundRef.describe().c_str());
 
 	return nextCommand();
 }
