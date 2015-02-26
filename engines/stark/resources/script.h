@@ -116,6 +116,7 @@ public:
 	/** Suspend the script while the specified resource is running */
 	void suspend(Object *cause);
 
+	void saveLoad(ResourceSerializer *serializer) override;
 protected:
 	void printData() override;
 

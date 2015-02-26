@@ -30,6 +30,7 @@
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/ui.h" // For suspending through FMV
 
@@ -280,6 +281,13 @@ void Script::printData() {
 	debug("minChapter: %d", _minChapter);
 	debug("maxChapter: %d", _maxChapter);
 	debug("shouldResetGameSpeed: %d", _shouldResetGameSpeed);
+}
+
+void Script::saveLoad(ResourceSerializer *serializer) {
+	if (!serializer->matchBytes("SCRIPT", 9)) {
+		error("Couldn't fint the correct save header");
+	}
+	serializer->syncAsSint32LE(_enabled);
 }
 
 } // End of namespace Resources
