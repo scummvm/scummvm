@@ -1885,6 +1885,13 @@ void Interface::doCombat() {
 	// Set up the combat party
 	combat.setupCombatParty();
 	combat.setSpeedTable();
+
+	// Initialize arrays for character/monster states
+	combat._charsGone.resize(combat._speedTable.size());
+	combat._charsBlocked.resize(combat._speedTable.size());
+	Common::fill(&combat._charsGone[0], &combat._charsGone[0] + combat._speedTable.size(), 0);
+	Common::fill(&combat._charsBlocked[0], &combat._charsBlocked[0] + combat._speedTable.size(), false);
+
 	combat._whosSpeed = -1;
 	combat._whosTurn = -1;
 	resetHighlight();
@@ -1893,6 +1900,7 @@ void Interface::doCombat() {
 
 	if (!party._dead) {
 		combat.setSpeedTable();
+
 		if (_tillMove) {
 			combat.moveMonsters();
 			draw3d(true);
@@ -2160,6 +2168,8 @@ void Interface::nextChar() {
 		return;
 	}
 
+	// Loop for potentially multiple monsters attacking until it's time
+	// for one of the party's turn
 	for (;;) {
 		// Check if party is dead
 		party.checkPartyDead();
@@ -2168,50 +2178,53 @@ void Interface::nextChar() {
 			break;
 		}
 
-		if (combat._whosTurn < (int)combat._combatParty.size()) {
-			if (!combat.allHaveGone())
-				highlightChar(combat._whosTurn);
-			break;
-		} else {
-			combat.attackMonster(0);
-			if (!party._dead)
-				party.checkPartyDead();
-
-			if (party._dead)
-				break;
-		}
-
-		// Check the combat participants
-		bool resetFlag = false;
-		for (uint idx = 0; idx < combat._speedTable.size(); ++idx) {
-			// Mark the given character as haven taken their turn
+		int idx;
+		for (idx = 0; idx < (int)combat._speedTable.size(); ++idx) {
 			if (combat._whosTurn != -1) {
 				combat._charsGone[combat._whosTurn] = true;
 			}
 
-			combat._whosSpeed %= combat._speedTable.size();
+			combat._whosSpeed = (combat._whosSpeed + 1) % combat._speedTable.size();
 			combat._whosTurn = combat._speedTable[combat._whosSpeed];
-
 			if (combat.allHaveGone()) {
-				if (combat.charsCantAct()) {
-					combat.setSpeedTable();
-					combat._whosTurn = -1;
-					combat._whosSpeed = -1;
-
-					combat._charsGone.resize(combat._speedTable.size());
-					Common::fill(&combat._charsGone[0], &combat._charsGone[combat._charsGone.size()], 0);
-					resetFlag = true;
-					break;
-				}
-				return;
-			} else if (combat._whosTurn >= (int)combat._combatParty.size() ||
-					!combat._combatParty[combat._whosTurn]->isDisabledOrDead()) {
+				idx = -1;
 				break;
 			}
+
+			if (combat._whosTurn < (int)combat._combatParty.size()) {
+				if (!combat._combatParty[idx]->isDisabledOrDead())
+					continue;
+			}
+
+			break;
 		}
 
-		if (party._dead)
+		if (idx == -1) {
+			if (!combat.charsCantAct())
+				return;
+
+			combat.setSpeedTable();
+			combat._whosTurn = -1;
+			combat._whosSpeed = -1;
+			Common::fill(&combat._charsGone[0], &combat._charsGone[0] + combat._charsGone.size(), 0);
+			continue;
+		}
+
+		if (combat._whosTurn < (int)combat._combatParty.size()) {
+			// It's a party character's turn now, so highlight the character
+			if (!combat.allHaveGone()) {
+				highlightChar(combat._whosTurn);
+			}
 			break;
+		} else {
+			// It's a monster's turn to attack
+			combat.attackMonster(0);
+			if (!party._dead) {
+				party.checkPartyDead();
+				if (party._dead)
+					break;
+			}
+		}
 	}
 }
 
