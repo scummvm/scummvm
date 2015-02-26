@@ -243,6 +243,7 @@ bool UserInterface::performActionOnObject(Resources::Object *object, Resources::
 		if (activeObject) {
 			// HACK: presumably this can be resolved by adding SubItem2, and hooking up the item to the actionMenu directly.
 			int menuResult = _actionMenu->isThisYourButton(object);
+			Resources::Script *script = nullptr;
 			if (menuResult != -1 && activeObject->getType() == Resources::Type::kPATTable) {
 				Resources::PATTable *activeObjectTable = (Resources::PATTable *)activeObject;
 				if (menuResult == ActionMenu::kActionHand) {
@@ -250,11 +251,19 @@ bool UserInterface::performActionOnObject(Resources::Object *object, Resources::
 						StarkServices::instance().ui->notifySelectedInventoryItem(activeObject);
 						return true;
 					}
-					activeObjectTable->getScriptForAction(Resources::PATTable::kActionUse)->execute(Resources::Script::kCallModePlayerAction);
+					script = activeObjectTable->getScriptForAction(Resources::PATTable::kActionUse);
 				} else if (menuResult == ActionMenu::kActionEye) {
-					activeObjectTable->getScriptForAction(Resources::PATTable::kActionLook)->execute(Resources::Script::kCallModePlayerAction);
+					script = activeObjectTable->getScriptForAction(Resources::PATTable::kActionLook);
 				} else if (menuResult == ActionMenu::kActionMouth) {
-					activeObjectTable->getScriptForAction(Resources::PATTable::kActionTalk)->execute(Resources::Script::kCallModePlayerAction);
+					script = activeObjectTable->getScriptForAction(Resources::PATTable::kActionTalk);
+				}
+				if (script != nullptr) {
+					script->execute(Resources::Script::kCallModePlayerAction);
+					return true;
+				} else {
+					warning("No script, did the action menu buttons misalign again?");
+					// Return true here too to clear the event as handled, even though we had a wrong PAT.
+					return true;
 				}
 			}
 		}
