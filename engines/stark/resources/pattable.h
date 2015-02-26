@@ -51,7 +51,7 @@ public:
 	PATTable(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~PATTable();
 
-	Script *getScriptForAction(ActionType action);
+	Script *getScriptForAction(int action);
 
 	int getNumActions() const;
 	bool canPerformAction(ActionType action) const;

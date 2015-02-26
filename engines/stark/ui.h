@@ -49,6 +49,7 @@ class UI {
 	TopMenu *_topMenu;
 	Resources::Object *_currentObject;
 	Resources::Object *_objectUnderCursor;
+	int _selectedInventoryItem;
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _hasClicked;
@@ -65,6 +66,7 @@ public:
 	void notifyClick();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
+	void notifySelectedInventoryItem(Resources::Object *selectedItem);
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
 	bool shouldExit() { return _exitGame; }

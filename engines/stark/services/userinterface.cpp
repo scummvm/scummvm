@@ -38,6 +38,7 @@
 
 #include "engines/stark/actionmenu.h"
 #include "engines/stark/cursor.h"
+#include "engines/stark/ui.h"
 
 namespace Stark {
 
@@ -188,7 +189,7 @@ int UserInterface::getActionsPossibleForObject(Resources::Object *object) {
 	if (table->canPerformAction(Resources::PATTable::kActionLook)) {
 		possible |= kActionLookPossible;
 	}
-	if (table->canPerformAction(Resources::PATTable::kActionUse)) {
+	if (table->canPerformAction(Resources::PATTable::kActionUse) || isInventoryObject(object)) {
 		possible |= kActionUsePossible;
 	}
 	if (table->canPerformAction(Resources::PATTable::kActionTalk)) {
@@ -200,28 +201,60 @@ int UserInterface::getActionsPossibleForObject(Resources::Object *object) {
 	return possible;
 }
 
-bool UserInterface::performActionOnObject(Resources::Object *object, Resources::Object *activeObject) {
+bool UserInterface::isInventoryObject(Resources::Object *object) {
+	if (object->getType() != Resources::Type::kPATTable) {
+		error("isInventoryObject requires a PATTable");
+	}
+	Resources::PATTable *table = (Resources::PATTable*)object;
+	Resources::ItemSub2 *inventoryParent = table->findParent<Resources::ItemSub2>();
+	if (_actionMenu->isThisYourButton(object) != -1 || inventoryParent->getSubType() != Resources::Item::kItemSub2) {
+		// Do not explicitly add use on action-menu buttons.
+		inventoryParent = nullptr;
+	}
+	return inventoryParent != nullptr;
+}
+
+bool UserInterface::performActionOnObject(Resources::Object *object, Resources::Object *activeObject, int action) {
 	if (object->getType() != Resources::Type::kPATTable) {
 		error("performActionOnObject requires a PATTable");
 	}
+	// PATTable of object under cursor
 	Resources::PATTable *table = (Resources::PATTable*)object;
 	// Possibilites:
 	// * Click on something that doesn't take an action
 	// * Click on something that takes exactly 1 action.
 	// * Click on something that takes more than 1 action (open action menu)
 	// * Click in the action menu, which has 0 available actions (TODO)
+	if (action != -1) {
+		Resources::Script *script = table->getScriptForAction(action);
+		if (script != nullptr) {
+			script->execute(Resources::Script::kCallModePlayerAction);
+			return true;
+		} else {
+			warning("Could not perform action %d on %s", action, table->getName().c_str());
+		}
+	}
+	// Assume all inventory objects need action menu.
+	if (isInventoryObject(object)) {
+		return false;
+	}
 	if (table->getNumActions() == 0) {
+		
 		if (activeObject) {
 			// HACK: presumably this can be resolved by adding SubItem2, and hooking up the item to the actionMenu directly.
 			int menuResult = _actionMenu->isThisYourButton(object);
 			if (menuResult != -1 && activeObject->getType() == Resources::Type::kPATTable) {
-				Resources::PATTable *table = (Resources::PATTable *)activeObject;
+				Resources::PATTable *activeObjectTable = (Resources::PATTable *)activeObject;
 				if (menuResult == ActionMenu::kActionHand) {
-					table->getScriptForAction(Resources::PATTable::kActionUse)->execute(Resources::Script::kCallModePlayerAction);
+					if (isInventoryObject(activeObjectTable)) {
+						StarkServices::instance().ui->notifySelectedInventoryItem(activeObject);
+						return true;
+					}
+					activeObjectTable->getScriptForAction(Resources::PATTable::kActionUse)->execute(Resources::Script::kCallModePlayerAction);
 				} else if (menuResult == ActionMenu::kActionEye) {
-					table->getScriptForAction(Resources::PATTable::kActionLook)->execute(Resources::Script::kCallModePlayerAction);
+					activeObjectTable->getScriptForAction(Resources::PATTable::kActionLook)->execute(Resources::Script::kCallModePlayerAction);
 				} else if (menuResult == ActionMenu::kActionMouth) {
-					table->getScriptForAction(Resources::PATTable::kActionTalk)->execute(Resources::Script::kCallModePlayerAction);
+					activeObjectTable->getScriptForAction(Resources::PATTable::kActionTalk)->execute(Resources::Script::kCallModePlayerAction);
 				}
 			}
 		}

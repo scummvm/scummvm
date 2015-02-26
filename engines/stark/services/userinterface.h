@@ -82,10 +82,11 @@ public:
 
 	int getActionsPossibleForObject(Resources::Object *object);
 	/** Attempt to run the relevant action on the object, returns true if action menu is needed, false if no action is possible */
-	bool performActionOnObject(Resources::Object *object, Resources::Object *activeObject);
+	bool performActionOnObject(Resources::Object *object, Resources::Object *activeObject, int action = -1);
 	void activateActionMenuOn(Common::Point pos, Resources::Object *activeObject);
 	bool isActionMenuOpen() const { return _actionMenuActive; }
 	void deactivateActionMenu() { _actionMenuActive = false; }
+	bool isInventoryObject(Resources::Object *object);
 
 	Gfx::RenderEntryArray getRenderEntries();
 private:

@@ -26,6 +26,9 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
+#include "engines/stark/resources/object.h"
+#include "engines/stark/resources/item.h"
+
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 
@@ -45,6 +48,7 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_topMenu(nullptr),
 	_dialogInterface(nullptr),
 	_inventoryInterface(nullptr),
+	_selectedInventoryItem(-1),
 	_exitGame(false)
 	{
 }
@@ -134,14 +138,20 @@ void UI::setCursorDependingOnActionsAvailable(int actionsAvailable) {
 void UI::handleClick() {
 	if (_objectUnderCursor) {
 		UserInterface *ui = StarkServices::instance().userInterface;
-		if (!ui->performActionOnObject(_objectUnderCursor, _currentObject)) {
+		if (!ui->performActionOnObject(_objectUnderCursor, _currentObject, _selectedInventoryItem)) {
 			_currentObject = _objectUnderCursor;
 			ui->activateActionMenuOn(_cursor->getMousePosition(), _currentObject);
 		// This currently potentially allows for click-through
-		} else if (ui->isActionMenuOpen()) {
-			// If the click resulted in a multi-action possibility, then it was outside the action menu.
-			ui->deactivateActionMenu();
-			_currentObject = nullptr;
+		} else {
+			if (ui->isActionMenuOpen()) {
+				// If the click resulted in a multi-action possibility, then it was outside the action menu.
+				ui->deactivateActionMenu();
+				_currentObject = nullptr;
+				// If we were in the action menu, then retain the selected item.
+			} else if (_selectedInventoryItem != -1) {
+				_inventoryInterface->update();
+				_selectedInventoryItem = -1;
+			}
 		}
 	}
 	// Check this before handling the menu clicks, otherwise it closes again on the same event.
@@ -173,6 +183,10 @@ void UI::notifyShouldOpenInventory() {
 	_inventoryOpen = true;
 	// Make the inventory update it's contents.
 	_inventoryInterface->update();
+}
+
+void UI::notifySelectedInventoryItem(Resources::Object *selectedItem) {
+	_selectedInventoryItem = selectedItem->findParent<Resources::ItemSub2>()->getIndex();
 }
 
 void UI::render() {

@@ -78,7 +78,7 @@ bool PATTable::canPerformAction(ActionType action) const {
 	return false;
 }
 
-Script *PATTable::getScriptForAction(ActionType action) {
+Script *PATTable::getScriptForAction(int action) {
 	switch (action) {
 		case kActionUse:
 		case kActionLook:
@@ -86,7 +86,7 @@ Script *PATTable::getScriptForAction(ActionType action) {
 		case kActionExit:
 			break;
 		default:
-			error("Unhandled action type for PAT");
+			break; // Not one of the 4 basic ones.
 	}
 	for (int i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._actionType == action) {
