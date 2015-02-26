@@ -118,7 +118,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kScrollSet:
 		return opScrollSet(_arguments[1].referenceValue);
 	case kPlayFullMotionVideo:
-		return opPlayFullMotionVideo(_arguments[1].referenceValue, _arguments[2].intValue);
+		return opPlayFullMotionVideo(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kEnableDiaryEntry:
 		return opEnableDiaryEntry(_arguments[1].referenceValue);
 	case kChangeSound:
@@ -467,11 +467,13 @@ Command *Command::opScrollSet(const ResourceReference &scrollRef) {
 	return nextCommand();
 }
 
-Command *Command::opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown) {
+Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown) {
 	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
 	StarkServices::instance().ui->notifyFMVRequest(movie->getFilename());
-	return nextCommand();
+	// TODO: Is this unconditional suspension?
+	script->suspend(movie);
+	return this; // Stay on the same command while suspended
 }
 
 Command *Command::opEnableDiaryEntry(const ResourceReference &knowledgeRef) {

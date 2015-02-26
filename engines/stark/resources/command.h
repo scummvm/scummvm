@@ -196,7 +196,7 @@ protected:
 	Command *opStopPlayingSound(const ResourceReference &soundRef);
 	Command *opGoLayer(const ResourceReference &layerRef);
 	Command *opScrollSet(const ResourceReference &scrollRef);
-	Command *opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown);
+	Command *opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown);
 	Command *opEnableDiaryEntry(const ResourceReference &knowledgeRef);
 	Command *opChangeSound(const ResourceReference &soundRef, int32 unknown1, int32 unknown2, int32 unknown3, int32 unknown4);
 	Command *opItem3DRunTo(const ResourceReference &itemRef, const ResourceReference &bookmarkRef, int32 unknown);

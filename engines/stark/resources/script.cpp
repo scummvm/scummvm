@@ -31,6 +31,8 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 
+#include "engines/stark/ui.h" // For suspending through FMV
+
 namespace Stark {
 namespace Resources {
 
@@ -185,6 +187,14 @@ void Script::updateSuspended() {
 		case Type::kDialog: {
 			DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 			if (!dialogPlayer->isRunning()) {
+				// Resume the script execution if the dialog is complete
+				_suspendingResource = nullptr;
+			}
+			break;
+		}
+		case Type::kFMV: {
+			UI *ui = StarkServices::instance().ui;
+			if (!ui->isPlayingFMV()) {
 				// Resume the script execution if the dialog is complete
 				_suspendingResource = nullptr;
 			}
