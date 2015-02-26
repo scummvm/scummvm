@@ -167,7 +167,7 @@ int Scripts::checkEvents() {
 			if (eventIndex == map._events.size())
 				_lineNum = -1;
 		}
-	} while (!_vm->shouldQuit() && _lineNum != -1);
+	} while (!_vm->shouldQuit() && !_eventSkipped && _lineNum != -1);
 
 	intf._face1State = intf._face2State = 2;
 	if (_refreshIcons) {
