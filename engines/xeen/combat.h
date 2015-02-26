@@ -158,7 +158,7 @@ public:
 
 	void moveMonster(int monsterId, const Common::Point &moveDelta);
 
-	void attackMonster(int monsterId);
+	void doMonsterTurn(int monsterId);
 
 	void endAttack();
 

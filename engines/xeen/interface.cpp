@@ -2218,7 +2218,7 @@ void Interface::nextChar() {
 			break;
 		} else {
 			// It's a monster's turn to attack
-			combat.attackMonster(0);
+			combat.doMonsterTurn(0);
 			if (!party._dead) {
 				party.checkPartyDead();
 				if (party._dead)

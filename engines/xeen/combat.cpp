@@ -621,7 +621,7 @@ void Combat::monstersAttack() {
 
 	for (int idx = 0; idx < 36; ++idx) {
 		if (_gmonHit[idx] != -1)
-			attackMonster(_gmonHit[idx]);
+			doMonsterTurn(_gmonHit[idx]);
 	}
 
 	_monstersAttacking = false;
@@ -770,7 +770,7 @@ void Combat::monsterOvercome() {
 	}
 }
 
-void Combat::attackMonster(int monsterId) {
+void Combat::doMonsterTurn(int monsterId) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -808,7 +808,7 @@ void Combat::attackMonster(int monsterId) {
 	intf.draw3d(true);
 	intf.draw3d(true);
 
-	File f(monsterData._attackVoc);
+	File f(Common::String::format("%s.voc", monsterData._attackVoc.c_str()));
 	sound.playSample(&f, 0);
 	bool flag = false;
 
@@ -1073,7 +1073,7 @@ void Combat::setupCombatParty() {
 void Combat::setSpeedTable() {
 	Map &map = *_vm->_map;
 	Common::Array<int> charSpeeds;
-	bool hasSpeed = _whosSpeed != -1 && _whosSpeed < _speedTable.size();
+	bool hasSpeed = _whosSpeed != -1 && _whosSpeed < (int)_speedTable.size();
 	int oldSpeed = hasSpeed ? _speedTable[_whosSpeed] : 0;
 
 	// Set up speeds for party membres
