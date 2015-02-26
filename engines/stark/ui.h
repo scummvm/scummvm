@@ -50,6 +50,7 @@ class UI {
 	Resources::Object *_currentObject;
 	Resources::Object *_objectUnderCursor;
 	int _selectedInventoryItem;
+	Common::String _selectedInventoryItemText; // Just a temp HACK untill we get cursors sorted.
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _hasClicked;

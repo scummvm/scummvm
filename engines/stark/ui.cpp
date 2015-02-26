@@ -76,7 +76,7 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	// Check for UI mouse overs
 	if (_topMenu->containsPoint(pos)) {
 		_cursor->setCursorType(Cursor::kActive);
-		_cursor->setMouseHint(_topMenu->getMouseHintAtPosition(pos));
+		_cursor->setMouseHint(_selectedInventoryItemText + _topMenu->getMouseHintAtPosition(pos));
 		return;
 	}
 
@@ -105,7 +105,7 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 		// Not an object
 		_cursor->setCursorType(Cursor::kPassive);
 	}
-	_cursor->setMouseHint(mouseHint);
+	_cursor->setMouseHint(_selectedInventoryItemText + mouseHint);
 }
 
 void UI::setCursorDependingOnActionsAvailable(int actionsAvailable) {
@@ -151,6 +151,7 @@ void UI::handleClick() {
 			} else if (_selectedInventoryItem != -1) {
 				_inventoryInterface->update();
 				_selectedInventoryItem = -1;
+				_selectedInventoryItemText = "";
 			}
 		}
 	}
@@ -187,6 +188,7 @@ void UI::notifyShouldOpenInventory() {
 
 void UI::notifySelectedInventoryItem(Resources::Object *selectedItem) {
 	_selectedInventoryItem = selectedItem->findParent<Resources::ItemSub2>()->getIndex();
+	_selectedInventoryItemText = selectedItem->findParent<Resources::ItemSub2>()->getName() + " -> ";
 }
 
 void UI::render() {
