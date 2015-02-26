@@ -253,6 +253,7 @@ struct MazeMonster {
 	int _effect3;
 	SpriteResource *_sprites;
 	SpriteResource *_attackSprites;
+	MonsterStruct *_monsterData;
 
 	MazeMonster();
 
@@ -306,7 +307,7 @@ public:
 public:
 	MonsterObjectData(XeenEngine *vm);
 
-	void synchronize(XeenSerializer &s, MonsterData monsterData);
+	void synchronize(XeenSerializer &s, MonsterData &monsterData);
 };
 
 class HeadData {

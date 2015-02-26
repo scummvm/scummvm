@@ -707,7 +707,7 @@ void InterfaceMap::animate3d() {
 		MazeMonster &monster = map._mobData._monsters[idx];
 		if (!monster._damageType) {
 			if (monster._frame < 8) {
-				MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+				MonsterStruct &monsterData = *monster._monsterData;
 				if (!monsterData._loopAnimation) {
 					// Monster isn't specially looped, so cycle through the 8 frames
 					monster._frame = (monster._frame + 1) % 8;
@@ -755,7 +755,7 @@ void InterfaceMap::animate3d() {
 		} else {
 			monster._effect3 = (monster._effect3 + 1) % 8;
 			if (monster._effect3 == 0) {
-				MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+				MonsterStruct &monsterData = *monster._monsterData;
 				monster._effect1 = monster._effect2 = monsterData._animationEffect;
 			}
 		}
@@ -2625,7 +2625,7 @@ void InterfaceMap::setIndoorsMonsters() {
  */
 void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites, 
 		int frame, int defaultY) {
-	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
+	MonsterStruct &monsterData = *monster._monsterData;
 	bool flying = monsterData._flying;
 
 	drawStruct._frame = frame;
@@ -3331,7 +3331,7 @@ void InterfaceMap::setOutdoorsMonsters() {
 
 			// TODO: Double-check.. this section looks *weird*
 			MazeMonster &monster = map._mobData._monsters[ds._frame];
-			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+			MonsterStruct &monsterData = *monster._monsterData;
 
 			ds._frame = monster._frame;
 

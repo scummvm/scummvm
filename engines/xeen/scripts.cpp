@@ -503,6 +503,7 @@ void Scripts::cmdSpawn(Common::Array<byte> &params) {
 
 	MazeMonster &monster = _vm->_map->_mobData._monsters[params[0]];
 	MonsterStruct &monsterData = _vm->_map->_monsterData[monster._spriteId];
+	monster._monsterData = &monsterData;
 	monster._position.x = params[1];
 	monster._position.y = params[2];
 	monster._frame = _vm->getRandomNumber(7);

@@ -660,11 +660,20 @@ MazeMonster::MazeMonster() {
 	_effect3 = 0;
 	_sprites = nullptr;
 	_attackSprites = nullptr;
+	_monsterData = nullptr;
 }
 
+/**
+ * Return the text color to use when displaying the monster's name in combat
+ * to indicate how damaged they are
+ */
 int MazeMonster::getTextColor() const {
-	warning("TODO: getTextColor");
-	return 0;
+	if (_hp == _monsterData->_hp)
+		return 15;
+	else if (_hp >= (_monsterData->_hp / 2))
+		return 9;
+	else
+		return 32;
 }
 
 /*------------------------------------------------------------------------*/
@@ -682,7 +691,7 @@ MazeWallItem::MazeWallItem() {
 MonsterObjectData::MonsterObjectData(XeenEngine *vm): _vm(vm) {
 }
 
-void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData monsterData) {
+void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData) {
 	Common::Array<MobStruct> mobStructs;
 	MobStruct mobStruct;
 	byte b;
@@ -781,10 +790,11 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData monsterData) 
 			mon._spriteId = _monsterSprites[mon._id]._spriteId;
 			mon._sprites = &_monsterSprites[mon._id]._sprites;
 			mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
-
-			MonsterStruct &md = monsterData[mon._spriteId];
-			mon._hp = md._hp;
+			mon._monsterData = &monsterData[mon._spriteId];
 			mon._frame = _vm->getRandomNumber(7);
+
+			MonsterStruct &md = *mon._monsterData;
+			mon._hp = md._hp;
 			mon._effect1 = mon._effect2 = md._animationEffect;
 			if (md._animationEffect)
 				mon._effect3 = _vm->getRandomNumber(7);

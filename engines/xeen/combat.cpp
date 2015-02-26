@@ -468,7 +468,7 @@ void Combat::moveMonsters() {
 
 				for (int idx = 0; idx < (int)map._mobData._monsters.size(); ++idx) {
 					MazeMonster &monster = map._mobData._monsters[idx];
-					MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+					MonsterStruct &monsterData = *monster._monsterData;
 
 					if (pt == monster._position) {
 						_dangerPresent = true;
@@ -667,7 +667,7 @@ bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 		int xDiff, int yDiff, int monsterId) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
-	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	MonsterStruct &monsterData = *monster._monsterData;
 
 	Common::Point tempPos = pt;
 	if (map._isOutdoors) {
@@ -798,7 +798,7 @@ void Combat::attackMonster(int monsterId) {
 	} 
 
 	MazeMonster &monster = map._mobData._monsters[monsterIndex];
-	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	MonsterStruct &monsterData = *monster._monsterData;
 	if (monster._damageType)
 		return;
 
@@ -1089,7 +1089,7 @@ void Combat::setSpeedTable() {
 	for (int monsterNum = 0; monsterNum < 3; ++monsterNum) {
 		if (_attackMonsters[monsterNum] != -1) {
 			MazeMonster &monster = map._mobData._monsters[_attackMonsters[monsterNum]];
-			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+			MonsterStruct &monsterData = *monster._monsterData;
 			charSpeeds.push_back(monsterData._speed);
 
 			maxSpeed = MAX(maxSpeed, monsterData._speed);
@@ -1162,7 +1162,7 @@ Common::String Combat::getMonsterDescriptions() {
 	for (int idx = 0; idx < 3; ++idx) {
 		if (_attackMonsters[idx] != -1) {
 			MazeMonster &monster = map._mobData._monsters[_attackMonsters[idx]];
-			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+			MonsterStruct &monsterData = *monster._monsterData;
 			int textColor = monster.getTextColor();
 
 			Common::String format = "\n\v020\f%2u%s\fd";
@@ -1395,7 +1395,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	SoundManager &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
-	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	MonsterStruct &monsterData = *monster._monsterData;
 	bool monsterDied = false;
 
 	if (!isDarkCc && damage && rangeType && monster._spriteId == 89)
@@ -1669,7 +1669,7 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 
 	assert(_monster2Attack != -1);
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
-	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	MonsterStruct &monsterData = *monster._monsterData;
 
 	if (monster._damageType != DT_PHYSICAL)
 		chance += 20;
@@ -1737,7 +1737,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 	Map &map = *_vm->_map;
 	assert(_monster2Attack != -1);
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
-	MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+	MonsterStruct &monsterData = *monster._monsterData;
 	int resistence = 0, damage = 0;
 
 	if (rangeType != RT_0 && rangeType != RT_3) {

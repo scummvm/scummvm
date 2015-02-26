@@ -1924,7 +1924,7 @@ void Interface::doCombat() {
 
 				if (++index == 5 && combat._attackMonsters[0] != -1) {
 					MazeMonster &monster = map._mobData._monsters[combat._monster2Attack];
-					MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+					MonsterStruct &monsterData = *monster._monsterData;
 					sound.playFX(monsterData._fx);
 				}
 
