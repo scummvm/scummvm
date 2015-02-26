@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	resources/direction.o \
 	resources/floor.o \
 	resources/floorface.o \
+	resources/fmv.o \
 	resources/image.o \
 	resources/item.o \
 	resources/knowledge.o \

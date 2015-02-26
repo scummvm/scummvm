@@ -32,6 +32,7 @@
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/direction.h"
+#include "engines/stark/resources/fmv.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/floor.h"
@@ -261,6 +262,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kScroll:
 		resource = new Resources::Scroll(parent, subType, index, name);
+		break;
+	case Resources::Type::kFMV:
+		resource = new Resources::FMV(parent, subType, index, name);
 		break;
 	case Resources::Type::kTextureSet:
 		resource = new Resources::TextureSet(parent, subType, index, name);
