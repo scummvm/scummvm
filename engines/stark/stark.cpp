@@ -169,6 +169,8 @@ void StarkEngine::mainLoop() {
 
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				_userInterface->skipCurrentSpeeches();
+				// Quick-hack for now.
+				_ui->stopPlayingFMV();
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);

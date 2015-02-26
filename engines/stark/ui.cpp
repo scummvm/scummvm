@@ -203,6 +203,10 @@ bool UI::isPlayingFMV() const {
 	return _fmvPlayer->isPlaying();
 }
 
+void UI::stopPlayingFMV() {
+	_fmvPlayer->stop();
+}
+
 void UI::render() {
 	if (_fmvPlayer->isPlaying()) {
 		_fmvPlayer->render();

@@ -74,6 +74,7 @@ public:
 	void notifyShouldOpenInventory();
 	void notifyFMVRequest(const Common::String &name);
 	bool isPlayingFMV() const;
+	void stopPlayingFMV();
 	bool shouldExit() { return _exitGame; }
 };
 
