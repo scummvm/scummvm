@@ -29,6 +29,7 @@
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resources/item.h"
 
+#include "engines/stark/services/fmvplayer.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 
@@ -49,7 +50,8 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_dialogInterface(nullptr),
 	_inventoryInterface(nullptr),
 	_selectedInventoryItem(-1),
-	_exitGame(false)
+	_exitGame(false),
+	_fmvPlayer(nullptr)
 	{
 }
 
@@ -57,12 +59,14 @@ UI::~UI() {
 	delete _topMenu;
 	delete _dialogInterface;
 	delete _inventoryInterface;
+	delete _fmvPlayer;
 }
 
 void UI::init() {
 	_topMenu = new TopMenu();
 	_dialogInterface = new DialogInterface();
 	_inventoryInterface = new InventoryInterface();
+	_fmvPlayer = new FMVPlayer();
 }
 
 void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
@@ -192,6 +196,10 @@ void UI::notifySelectedInventoryItem(Resources::Object *selectedItem) {
 }
 
 void UI::render() {
+	if (_fmvPlayer->isPlaying()) {
+		_fmvPlayer->render();
+		return;
+	}
 	Common::Point pos = _cursor->getMousePosition();
 	UserInterface *ui = StarkServices::instance().userInterface;
 	update(ui->getRenderEntries(), true);

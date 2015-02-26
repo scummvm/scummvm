@@ -49,6 +49,7 @@ MODULE_OBJS := \
 	scene.o \
 	services/archiveloader.o \
 	services/dialogplayer.o \
+	services/fmvplayer.o \
 	services/global.o \
 	services/resourceprovider.o \
 	services/services.o \

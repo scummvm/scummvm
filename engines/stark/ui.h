@@ -42,8 +42,10 @@ class DialogInterface;
 class InventoryInterface;
 class TopMenu;
 class Cursor;
+class FMVPlayer;
 
 class UI {
+	FMVPlayer *_fmvPlayer;
 	DialogInterface *_dialogInterface;
 	InventoryInterface *_inventoryInterface;
 	TopMenu *_topMenu;
