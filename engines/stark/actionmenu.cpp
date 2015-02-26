@@ -106,7 +106,7 @@ void ActionMenu::enableAction(ActionMenuType action) {
 int ActionMenu::isThisYourButton(Resources::Object *object) {
 	Resources::Item *item = object->findParent<Resources::Item>();
 	if (item == _mouth) {
-		return kActionHand;
+		return kActionMouth;
 	} else if (item == _eye) {
 		return kActionEye;
 	} else if (item == _hand) {
