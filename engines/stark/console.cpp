@@ -59,6 +59,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("changeChapter",		WRAP_METHOD(Console, Cmd_ChangeChapter));
 	registerCmd("changeKnowledge",		WRAP_METHOD(Console, Cmd_ChangeKnowledge));
 	registerCmd("selectDialogOption",	WRAP_METHOD(Console, Cmd_SelectDialogOption));
+	registerCmd("enableInventoryItem", WRAP_METHOD(Console, Cmd_EnableInventoryItem));
 }
 
 Console::~Console() {
@@ -286,10 +287,23 @@ bool Console::Cmd_DumpLocation(int argc, const char **argv) {
 
 bool Console::Cmd_ListInventory(int argc, const char **argv) {
 	Global *global = StarkServices::instance().global;
-	global->printInventory();
+	global->printInventory(argc != 2);
 
 	return true;
 }
+
+bool Console::Cmd_EnableInventoryItem(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Enable a specific inventory item.\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("changeLocation [level] [location]\n");
+		return true;
+	}
+	Global *global = StarkServices::instance().global;
+	global->enableInventoryItem(atoi(argv[1]));
+	return true;
+}
+
 
 bool Console::Cmd_ListLocations(int argc, const char **argv) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();

@@ -99,8 +99,9 @@ public:
 	int32 getCurrentChapter();
 
 	/** Temporary HACK to allow us to query the inventory */
-	void printInventory();
+	void printInventory(bool printAll);
 	Common::Array<Resources::Item*> getInventoryContents(); // TODO: Create a class for the inventory instead
+	void enableInventoryItem(int32 num);
 
 	/** Change the current chapter */
 	void setCurrentChapter(int32 value);

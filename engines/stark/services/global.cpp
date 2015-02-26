@@ -51,15 +51,21 @@ void Global::setCurrentChapter(int32 value) {
 	chapter->setIntegerValue(value);
 }
 
-void Global::printInventory() {
+void Global::printInventory(bool printAll) {
 	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
 	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
 	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
-	for (; it != inventoryItems.end(); ++it) {
-		if ((*it)->isEnabled()) {
-			warning("Item: %s", (*it)->getName().c_str());
+	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
+		if (printAll || (*it)->isEnabled()) {
+			warning("Item %d: %s", i, (*it)->getName().c_str());
 		}
 	}
+}
+
+void Global::enableInventoryItem(int32 num) {
+	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
+	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	inventoryItems[num]->setEnabled(true);
 }
 
 Common::Array<Resources::Item*> Global::getInventoryContents() {
