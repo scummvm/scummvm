@@ -84,6 +84,8 @@ public:
 	virtual Texture *createTextureFromString(const Common::String &str, uint32 color);
 	virtual Common::Rect getBoundingBoxForString(const Common::String &str);
 
+	virtual Graphics::PixelFormat getScreenFormat();
+
 	virtual void set3DMode() = 0;
 
 	static const int32 kOriginalWidth = 640;

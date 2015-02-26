@@ -45,6 +45,10 @@ Driver *Driver::create() {
 	error("Couldn't instance any graphics driver");
 }
 
+Graphics::PixelFormat Driver::getScreenFormat() {
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+}
+
 Texture *Driver::createTextureFromString(const Common::String &str, uint32 color) {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 
@@ -59,7 +63,7 @@ Texture *Driver::createTextureFromString(const Common::String &str, uint32 color
 	}
 
 	Graphics::Surface surface;
-	surface.create(width, height*lines.size(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	surface.create(width, height*lines.size(), getScreenFormat());
 
 	for (int i = 0; i < lines.size(); i++) {
 		font->drawString(&surface, lines[i], 0, height*i, 580, color);
