@@ -45,7 +45,6 @@ protected:
 	void DispmanXInit();
 	void DispmanXUpdate();
 	void DispmanXFlip(struct dispmanxPage *page);
-	//void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void * arg);
 	struct dispmanxPage *DispmanXGetFreePage();
 	void DispmanXFreeResources();
 	void DispmanXVideoQuit();

@@ -189,7 +189,7 @@ struct dispmanxPage *DispmanXSdlGraphicsManager::DispmanXGetFreePage()
 }
 
 void DispmanXSdlGraphicsManager::DispmanXUpdate() {	
-	// Triple buffer update function //
+	// Triple buffer update function
 	struct dispmanxPage *page;
       	page = DispmanXGetFreePage();
 	
