@@ -2192,7 +2192,9 @@ void Interface::nextChar() {
 			}
 
 			if (combat._whosTurn < (int)combat._combatParty.size()) {
-				if (!combat._combatParty[idx]->isDisabledOrDead())
+				// If it's a party member, only allow them to become active if
+				// they're still conscious
+				if (combat._combatParty[idx]->isDisabledOrDead())
 					continue;
 			}
 

@@ -777,41 +777,40 @@ void Combat::doMonsterTurn(int monsterId) {
 	SoundManager &sound = *_vm->_sound;
 
 	if (_monstersAttacking) {
-		warning("TODO: Original used uninitialized variables if flag was set");
-		return;
+		int monsterIndex;
+		switch (_whosTurn - _combatParty.size()) {
+		case 0:
+			monsterIndex = _attackMonsters[0];
+			intf._indoorList[156]._scale = 0;
+			break;
+		case 1:
+			monsterIndex = _attackMonsters[1];
+			intf._indoorList[150]._scale = 0;
+			break;
+		case 2:
+		default:
+			monsterIndex = _attackMonsters[2];
+			intf._indoorList[153]._scale = 0;
+		}
+
+		MazeMonster &monster = map._mobData._monsters[monsterIndex];
+		MonsterStruct &monsterData = *monster._monsterData;
+		if (monster._damageType)
+			return;
+
+		monster._frame = 8;
+		monster._fieldA = 3;
+		monster._field9 = 0;
+		intf.draw3d(true);
+		intf.draw3d(true);
+
+		File f(Common::String::format("%s.voc", monsterData._attackVoc.c_str()));
+		sound.playSample(&f, 0);
+		monsterId = monster._spriteId;
 	}
 
-	int monsterIndex;
-	switch (_whosTurn - _combatParty.size()) {
-	case 0:
-		monsterIndex = _attackMonsters[0];
-		intf._indoorList[156]._scale = 0;
-		break;
-	case 1:
-		monsterIndex = _attackMonsters[1];
-		intf._indoorList[150]._scale = 0;
-		break;
-	case 2:
-	default:
-		monsterIndex = _attackMonsters[2];
-		intf._indoorList[153]._scale = 0;
-	} 
-
-	MazeMonster &monster = map._mobData._monsters[monsterIndex];
-	MonsterStruct &monsterData = *monster._monsterData;
-	if (monster._damageType)
-		return;
-
-	monster._frame = 8;
-	monster._fieldA = 3;
-	monster._field9 = 0;
-	intf.draw3d(true);
-	intf.draw3d(true);
-
-	File f(Common::String::format("%s.voc", monsterData._attackVoc.c_str()));
-	sound.playSample(&f, 0);
+	MonsterStruct &monsterData = map._monsterData[monsterId];
 	bool flag = false;
-
 	for (int attackNum = 0; attackNum < monsterData._numberOfAttacks; ++attackNum) {
 		int charNum = -1;
 		bool isHated = false;
@@ -918,14 +917,14 @@ void Combat::doMonsterTurn(int monsterId) {
 			if (true) {
 				Character &c = *_combatParty[charNum];
 				if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
-					doCharDamage(c, charNum, monster._spriteId);
+					doCharDamage(c, charNum, monsterId);
 				} else {
 					int v = _vm->getRandomNumber(1, 20);
 					if (v == 1) {
 						sound.playFX(6);
 					} else {
 						if (v == 20)
-							doCharDamage(c, charNum, monster._spriteId);
+							doCharDamage(c, charNum, monsterId);
 						v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
 							monsterData._hitChance);
 
@@ -934,7 +933,7 @@ void Combat::doMonsterTurn(int monsterId) {
 						if (ac > v) {
 							sound.playFX(6);
 						} else {
-							doCharDamage(c, charNum, monster._spriteId);
+							doCharDamage(c, charNum, monsterId);
 						}
 					}
 				}
