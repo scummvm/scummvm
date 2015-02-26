@@ -140,7 +140,7 @@ public:
 
 	void bash(const Common::Point &pt, Direction direction);
 
-	void draw3d(bool updateFlag);
+	void draw3d(bool updateFlag, bool skipDelay = false);
 
 	void assembleBorder();
 

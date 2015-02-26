@@ -1223,7 +1223,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 	drawParty(true);
 }
 
-void Interface::draw3d(bool updateFlag) {
+void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
@@ -1282,11 +1282,7 @@ void Interface::draw3d(bool updateFlag) {
 		// TODO: Save current scripts data?
 	}
 
-	// TODO: Check use of updateFlag here. Original doesn't have it, but I
-	// wanted to ensure in places like the AutoMapDialog, that the draw3d
-	// doesn't result in the screen updating until the dialog has had
-	// a chance to full render itself
-	if (updateFlag)
+	if (!skipDelay)
 		events.wait(2);
 }
 
@@ -1871,7 +1867,7 @@ void Interface::doCombat() {
 
 	_iconSprites.load("combat.icn");
 	for (int idx = 1; idx < 16; ++idx)
-		_mainList[idx]._sprites = nullptr;
+		_mainList[idx]._sprites = &_iconSprites;
 
 	// Set the combat buttons
 	setMainButtons(true);
