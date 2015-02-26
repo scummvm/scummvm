@@ -662,6 +662,11 @@ MazeMonster::MazeMonster() {
 	_attackSprites = nullptr;
 }
 
+int MazeMonster::getTextColor() const {
+	warning("TODO: getTextColor");
+	return 0;
+}
+
 /*------------------------------------------------------------------------*/
 
 MazeWallItem::MazeWallItem() {

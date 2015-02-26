@@ -255,6 +255,8 @@ struct MazeMonster {
 	SpriteResource *_attackSprites;
 
 	MazeMonster();
+
+	int getTextColor() const;
 };
 
 class MazeWallItem {

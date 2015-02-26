@@ -1073,11 +1073,8 @@ void Combat::setupCombatParty() {
 void Combat::setSpeedTable() {
 	Map &map = *_vm->_map;
 	Common::Array<int> charSpeeds;
-	bool flag = _whosSpeed != -1;
-	int oldSpeed = (_whosSpeed == -1) ? 0 : _speedTable[_whosSpeed];
-
-	Common::fill(&_speedTable[0], &_speedTable[12], -1);
-	Common::fill(&charSpeeds[0], &charSpeeds[12], -1);
+	bool hasSpeed = _whosSpeed != -1 && _whosSpeed < _speedTable.size();
+	int oldSpeed = hasSpeed ? _speedTable[_whosSpeed] : 0;
 
 	// Set up speeds for party membres
 	int maxSpeed = 0;
@@ -1101,6 +1098,8 @@ void Combat::setSpeedTable() {
 		}
 	}
 
+	// Populate the _speedTable list with the character/monster indexes
+	// in order of attacking speed
 	_speedTable.clear();
 	for (; maxSpeed >= 0; --maxSpeed) {
 		for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
@@ -1109,7 +1108,7 @@ void Combat::setSpeedTable() {
 		}
 	}
 
-	if (flag) {
+	if (hasSpeed) {
 		if (_speedTable[_whosSpeed] != oldSpeed) {
 			for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
 				if (oldSpeed == _speedTable[idx]) {
@@ -1164,10 +1163,12 @@ Common::String Combat::getMonsterDescriptions() {
 		if (_attackMonsters[idx] != -1) {
 			MazeMonster &monster = map._mobData._monsters[_attackMonsters[idx]];
 			MonsterStruct &monsterData = map._monsterData[monster._spriteId];
+			int textColor = monster.getTextColor();
 
 			Common::String format = "\n\v020\f%2u%s\fd";
 			format.setChar('2' + idx, 3);
-			lines[idx] = Common::String::format(format.c_str(), monsterData._name.c_str());
+			lines[idx] = Common::String::format(format.c_str(), textColor,
+				monsterData._name.c_str());
 		}
 	}
 

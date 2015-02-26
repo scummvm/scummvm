@@ -1489,7 +1489,7 @@ const int NEW_CHARACTER_SPELLS[10][4] = {
 	{ 20, 1, -1, -1 }
 };
 
-const char *const COMBAT_DETAILS = "\r\f00\x03c\v000\t000\x02Combat%s%s%s\x1";
+const char *const COMBAT_DETAILS = "\r\f00\x3""c\v000\t000\x2""Combat%s%s%s\x1";
 
 const char *NOT_ENOUGH_TO_CAST = "\x03c\v010Not enough %s to Cast %s";
 const char *SPELL_CAST_COMPONENTS[2] = { "Spell Points", "Gems" };
