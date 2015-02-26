@@ -72,6 +72,8 @@ public:
 	void notifySelectedInventoryItem(Resources::Object *selectedItem);
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
+	void notifyFMVRequest(const Common::String &name);
+	bool isPlayingFMV() const;
 	bool shouldExit() { return _exitGame; }
 };
 

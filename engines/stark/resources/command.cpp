@@ -28,6 +28,7 @@
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/dialog.h"
+#include "engines/stark/resources/fmv.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/script.h"
@@ -38,6 +39,8 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/resourceprovider.h"
+
+#include "engines/stark/ui.h"
 
 namespace Stark {
 namespace Resources {
@@ -465,8 +468,9 @@ Command *Command::opScrollSet(const ResourceReference &scrollRef) {
 }
 
 Command *Command::opPlayFullMotionVideo(const ResourceReference &movieRef, int32 unknown) {
-	Object *movie =  movieRef.resolve<Object>();
+	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
+	StarkServices::instance().ui->notifyFMVRequest(movie->getFilename());
 	return nextCommand();
 }
 

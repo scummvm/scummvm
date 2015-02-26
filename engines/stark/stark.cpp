@@ -211,17 +211,20 @@ void StarkEngine::updateDisplayScene() {
 	// Clear the screen
 	_gfx->clearScreen();
 
-	// Update the game resources
-	_global->getLevel()->onGameLoop();
-	_global->getCurrent()->getLevel()->onGameLoop();
-	_global->getCurrent()->getLocation()->onGameLoop();
+	// Avoid drawing the game engine, as well as updating while FMVs play,
+	// TODO: this can probably be refactored to stalling the script that triggered the FMV.
+	if (!_ui->isPlayingFMV()) {
+		// Update the game resources
+		_global->getLevel()->onGameLoop();
+		_global->getCurrent()->getLevel()->onGameLoop();
+		_global->getCurrent()->getLocation()->onGameLoop();
 
-	// Render the current scene
-	Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
-	// Update the UI state before displaying the scene
-	_ui->update(renderEntries);
-	_scene->render(renderEntries);
-
+		// Render the current scene
+		Gfx::RenderEntryArray renderEntries = _global->getCurrent()->getLocation()->listRenderEntries();
+		// Update the UI state before displaying the scene
+		_ui->update(renderEntries);
+		_scene->render(renderEntries);
+	}
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	_ui->render();
 

@@ -190,9 +190,17 @@ void UI::notifyShouldOpenInventory() {
 	_inventoryInterface->update();
 }
 
+void UI::notifyFMVRequest(const Common::String &name) {
+	_fmvPlayer->play(name);
+}
+
 void UI::notifySelectedInventoryItem(Resources::Object *selectedItem) {
 	_selectedInventoryItem = selectedItem->findParent<Resources::ItemSub2>()->getIndex();
 	_selectedInventoryItemText = selectedItem->findParent<Resources::ItemSub2>()->getName() + " -> ";
+}
+
+bool UI::isPlayingFMV() const {
+	return _fmvPlayer->isPlaying();
 }
 
 void UI::render() {
