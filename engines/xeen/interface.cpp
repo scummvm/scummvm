@@ -920,7 +920,7 @@ bool Interface::checkMoveDirection(int key) {
 			(Direction)(party._mazeDirection + 1);
 		break;
 	case Common::KEYCODE_DOWN:
-		party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? DIR_SOUTH : DIR_NORTH;
+		party._mazeDirection = (Direction)((int)party._mazeDirection ^ 2);
 		break;
 	default:
 		break;
