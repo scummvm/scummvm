@@ -1342,11 +1342,11 @@ void Combat::attack(Character &c, RangeType rangeType) {
 			break;
 		}
 
-		int numberOfAttacks = c.getCurrentLevel() / divisor;
+		int numberOfAttacks = c.getCurrentLevel() / divisor + 1;
 		damage = 0;
 
 		while (numberOfAttacks-- > 0) {
-			if (hitMonster(c, RT_0))
+			if (hitMonster(c, RT_CLOSE))
 				damage += getMonsterDamage(c);
 		}
 
@@ -1593,7 +1593,7 @@ void Combat::quickFight() {
 
 	switch (c->_quickOption) {
 	case QUICK_ATTACK:
-		attack(*c, RT_0);
+		attack(*c, RT_CLOSE);
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
@@ -1720,7 +1720,7 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 }
 
 int Combat::getMonsterDamage(Character &c) {
-	return (c.statBonus(c.getStat(MIGHT)) + _weaponDamage) < 1;
+	return MAX(c.statBonus(c.getStat(MIGHT)) + _weaponDamage, 1);
 }
 
 int Combat::getDamageScale(int v) {
@@ -1739,7 +1739,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	int resistence = 0, damage = 0;
 
-	if (rangeType != RT_0 && rangeType != RT_3) {
+	if (rangeType != RT_CLOSE && rangeType != RT_3) {
 		switch (_damageType) {
 		case DT_PHYSICAL:
 			resistence = monsterData._phsyicalResistence;

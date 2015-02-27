@@ -1963,7 +1963,7 @@ void Interface::doCombat() {
 
 			case Common::KEYCODE_a:
 				// Attack
-				combat.attack(*combat._combatParty[combat._whosTurn], RT_0);
+				combat.attack(*combat._combatParty[combat._whosTurn], RT_CLOSE);
 				nextChar();
 				break;
 

@@ -57,7 +57,7 @@ enum ElementalCategory {
 };
 
 enum RangeType {
-	RT_0 = 0, RT_1 = 1, RT_2 = 2, RT_3 = 3
+	RT_CLOSE = 0, RT_1 = 1, RT_2 = 2, RT_3 = 3
 };
 
 class XeenEngine;
