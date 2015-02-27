@@ -531,7 +531,7 @@ void Interface::perform() {
 			spells._lastCaster >= (int)party._activeParty.size()) ?
 			(int)party._activeParty.size() - 1 : spells._lastCaster];
 		do {
-			int spellId = CastSpell::show(_vm, c, _vm->_mode);
+			int spellId = CastSpell::show(_vm, c);
 			if (spellId == -1 || c == nullptr)
 				break;
 
@@ -1975,10 +1975,13 @@ void Interface::doCombat() {
 				
 			case Common::KEYCODE_c: {
 				// Cast spell
-				int spellId = CastSpell::show(_vm, _vm->_mode);
+				int spellId = CastSpell::show(_vm);
 				if (spellId != -1) {
 					Character *c = combat._combatParty[combat._whosTurn];
 					spells.castSpell(c, spellId);
+					nextChar();
+				} else {
+					highlightChar(combat._combatParty[combat._whosTurn]->_rosterId);
 				}
 				break;
 			}

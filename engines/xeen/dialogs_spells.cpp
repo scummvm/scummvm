@@ -435,7 +435,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 
 /*------------------------------------------------------------------------*/
 
-int CastSpell::show(XeenEngine *vm, int mode) {
+int CastSpell::show(XeenEngine *vm) {
 	Combat &combat = *vm->_combat;
 	Interface &intf = *vm->_interface;
 	Party &party = *vm->_party;
@@ -443,7 +443,7 @@ int CastSpell::show(XeenEngine *vm, int mode) {
 	int charNum;
 
 	// Get which character is doing the casting
-	if (mode == MODE_COMBAT) {
+	if (vm->_mode == MODE_COMBAT) {
 		charNum = combat._whosTurn;
 	} else if (spells._lastCaster >= 0 && spells._lastCaster < (int)party._activeParty.size()) {
 		charNum = spells._lastCaster;
@@ -460,21 +460,21 @@ int CastSpell::show(XeenEngine *vm, int mode) {
 	intf.highlightChar(charNum);
 
 	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(c, mode);
+	int spellId = dlg->execute(c);
 	delete dlg;
 
 	return spellId;
 }
 
-int CastSpell::show(XeenEngine *vm, Character *&c, int mode) {
+int CastSpell::show(XeenEngine *vm, Character *&c) {
 	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(c, mode);
+	int spellId = dlg->execute(c);
 	delete dlg;
 
 	return spellId;
 }
 
-int CastSpell::execute(Character *&c, int mode) {
+int CastSpell::execute(Character *&c) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
@@ -482,7 +482,8 @@ int CastSpell::execute(Character *&c, int mode) {
 	Spells &spells = *_vm->_spells;
 	Window &w = screen._windows[10];
 
-	Mode oldMode = (Mode)mode;
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_3;
 
 	w.open();
 	loadButtons();
@@ -503,7 +504,6 @@ int CastSpell::execute(Character *&c, int mode) {
 			drawButtons(&screen);
 			w.update();
 
-			_vm->_mode = MODE_3;
 			redrawFlag = false;
 		}
 
@@ -565,6 +565,7 @@ int CastSpell::execute(Character *&c, int mode) {
 	if (_vm->shouldQuit())
 		spellId = -1;
 
+	_vm->_mode = oldMode;
 	return spellId;
 }
 
