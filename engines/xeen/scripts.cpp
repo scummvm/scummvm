@@ -207,12 +207,63 @@ int Scripts::checkEvents() {
 	return _scriptResult;
 }
 
-void Scripts::giveTreasure() {
-	// TODO
-}
+void Scripts::openGrate(int wallVal, int action) {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	bool isDarkCc = _vm->_files->_isDarkCc;
 
-void Scripts::openGrate(int v1, int v2) {
-	// TODO
+	if ((wallVal != 13 || map._currentIsGrate) && (!isDarkCc || wallVal != 9 ||
+			map.mazeData()._wallKind != 2)) {
+		if (wallVal != 9 && !map._currentIsGrate) {
+			int charIndex = WhoWill::show(_vm, 13, action, false) - 1;
+			if (charIndex >= 0) {
+				// There is a 1 in 4 chance the character will receive damage
+				if (_vm->getRandomNumber(1, 4) == 1) {
+					combat.giveCharDamage(map.mazeData()._trapDamage,
+						(DamageType)_vm->getRandomNumber(0, 6), charIndex);
+				}
+
+				// Check whether character can unlock the door
+				Character &c = party._activeParty[charIndex];
+				if ((c.getThievery() + _vm->getRandomNumber(1, 20)) <
+						map.mazeData()._difficulties._unlockDoor)
+					return;
+
+				c._experience += map.mazeData()._difficulties._unlockDoor * c.getCurrentLevel();
+			}
+
+			// Set the wall state for the wall party is facing
+			map.setCellSurfaceFlags(party._mazePosition, 0x80);
+			map.setWall(party._mazePosition, party._mazeDirection, wallVal);
+
+			// Set the wall state for the reverse wall in the next cell over
+			Common::Point pt = party._mazePosition;
+			Direction dir = (Direction)((int)party._mazeDirection ^ 2);
+			switch (party._mazeDirection) {
+			case DIR_NORTH:
+				pt.y++;
+				break;
+			case DIR_EAST:
+				pt.x++;
+				break;
+			case DIR_SOUTH:
+				pt.y--;
+				break;
+			case DIR_WEST:
+				pt.x--;
+				break;
+			}
+
+			map.setCellSurfaceFlags(pt, 0x80);
+			map.setWall(pt, dir, wallVal);
+			sound.playFX(10);
+		}
+
+		intf.draw3d(true);
+	}
 }
 
 typedef void(Scripts::*ScriptMethodPtr)(Common::Array<byte> &);

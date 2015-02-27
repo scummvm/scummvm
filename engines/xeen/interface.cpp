@@ -269,22 +269,24 @@ void Interface::perform() {
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
 	Spells &spells = *_vm->_spells;
-	const Common::Rect waitBounds(8, 8, 224, 140);
+	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 
 	events.updateGameCounter();
 	draw3d(true);
 
-	// Wait for a frame
+	// Wait for a frame or a user event
 	do {
 		events.pollEventsAndWait();
 		checkEvents(_vm);
+
+		if (events._leftButton && WAIT_BOUNDS.contains(events._mousePos))
+			_buttonValue = Common::KEYCODE_SPACE;
 	} while (!_buttonValue && events.timeElapsed() < 1 && !_vm->_party->_partyDead);
 
 	if (!_buttonValue && !_vm->_party->_partyDead)
 		return;
 
-	if (_buttonValue == Common::KEYCODE_SPACE ||
-			(events._leftButton && waitBounds.contains(events._mousePos))) {
+	if (_buttonValue == Common::KEYCODE_SPACE) {
 		int lookupId = map.mazeLookup(party._mazePosition, 
 			WALL_SHIFTS[party._mazeDirection][2]);
 

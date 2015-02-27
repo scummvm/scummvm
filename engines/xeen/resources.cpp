@@ -107,10 +107,10 @@ const char *const SURFACE_NAMES[16] = {
 };
 
 const char *const WHO_ACTIONS[32] = {
-	"aSearch", "aOpen", "aDrink", "aMine", "aTouch", "aRead", "aLearn", "aTake",
-	"aBang", "aSteal", "aBribe", "aPay", "aSit", "aTry", "aTurn", "aBathe",
-	"aDestroy", "aPull", "aDescend", "aTossACoin", "aPray", "aJoin", "aAct",
-	"aPlay", "aPush", "aRub", "aPick", "aEat", "aSign", "aClose", "aLook", "aTry"
+	"search", "open", "drink", "mine", "touch", "read", "learn", "take",
+	"bang", "steal", "bribe", "pay", "sit", "try", "turn", "bathe",
+	"destroy", "pull", "descend", "toss a coin", "pray", "join", "act",
+	"play", "push", "rub", "pick", "eat", "sign", "close", "look", "try"
 };
 
 const char *const WHO_WILL_ACTIONS[4] = {

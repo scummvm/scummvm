@@ -233,9 +233,7 @@ public:
 
 	int checkEvents();
 
-	void giveTreasure();
-
-	void openGrate(int v1, int v2);
+	void openGrate(int v1, int action);
 };
 
 } // End of namespace Xeen

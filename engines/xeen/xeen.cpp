@@ -333,7 +333,7 @@ void XeenEngine::gameLoop() {
 			if (shouldQuit() || _quitMode)
 				return;
 		}
-		_scripts->giveTreasure();
+		_party->giveTreasure();
 
 		// Main user interface handler for waiting for and processing user input
 		_interface->perform();
