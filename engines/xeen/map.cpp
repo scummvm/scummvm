@@ -1395,7 +1395,8 @@ void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
 	mazeLookup(pt, 0);
 
 	Common::Point mapPos(pt.x & 15, pt.y & 15);
-	_mazeData[_mazeDataIndex]._cells[mapPos.y][mapPos.x]._surfaceId |= bits;
+	MazeCell &cell = _mazeData[_mazeDataIndex]._cells[mapPos.y][mapPos.x];
+	cell._flags |= bits & 0xF8;
 }
 
 void Map::setWall(const Common::Point &pt, Direction dir, int v) {
@@ -1453,7 +1454,7 @@ int Map::getCell(int idx) {
 				if (_vm->_files->_isDarkCc) {
 					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
 						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
-						_currentSurfaceId = SURFTYPE_DESERT;
+						_currentSurfaceId = 6;
 					} else {
 						_currentSurfaceId = 0;
 					}
@@ -1489,7 +1490,7 @@ int Map::getCell(int idx) {
 				if (_vm->_files->_isDarkCc) {
 					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
 						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
-						_currentSurfaceId = SURFTYPE_DESERT;
+						_currentSurfaceId = 6;
 					} else {
 						_currentSurfaceId = 0;
 					}
@@ -1524,7 +1525,7 @@ int Map::getCell(int idx) {
 			return 0;
 
 		if (pt.x > 31 || pt.y > 31)
-			_currentSurfaceId = SURFTYPE_ROAD;
+			_currentSurfaceId = 7;
 		else
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 
