@@ -167,14 +167,16 @@ void StarkEngine::mainLoop() {
 						_console->attach();
 						_console->onFrame();
 					}
+				} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_userInterface->skipCurrentSpeeches();
+					// Quick-hack for now.
+					_ui->stopPlayingFMV();
 				} else {
 					//handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
 
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
-				_userInterface->skipCurrentSpeeches();
-				// Quick-hack for now.
-				_ui->stopPlayingFMV();
+				// Do nothing for now
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
 				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);
