@@ -299,12 +299,14 @@ void Interface::perform() {
 			}
 
 		case 6:
+			// Open grate being closed
 			if (!map._isOutdoors) {
 				scripts.openGrate(9, 0);
 				eventsFlag = _buttonValue != 0;
 			}
 			break;
 		case 9:
+			// Closed grate being opened
 			if (!map._isOutdoors) {
 				scripts.openGrate(6, 0);
 				eventsFlag = _buttonValue != 0;

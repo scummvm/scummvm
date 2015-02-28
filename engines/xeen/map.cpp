@@ -891,7 +891,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_currentSurfaceId = 0;
 	_currentWall = 0;
 	_currentTile = 0;
-	_currentIsGrate = false;
+	_currentGrateUnlocked = false;
 	_currentCantRest = false;
 	_currentIsDrain = false;
 	_currentIsEvent = false;
@@ -1383,7 +1383,7 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 
 	// Get the cell flags
 	const MazeCell &cell = _mazeData[_mazeDataIndex]._cells[pos.y][pos.x];
-	_currentIsGrate = cell._flags & OUTFLAG_GRATE;
+	_currentGrateUnlocked = cell._flags & OUTFLAG_GRATE;
 	_currentCantRest = cell._flags & RESTRICTION_REST;
 	_currentIsDrain = cell._flags & OUTFLAG_DRAIN;
 	_currentIsEvent = cell._flags & FLAG_AUTOEXECUTE_EVENT;
@@ -1393,14 +1393,17 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 
 void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
 	mazeLookup(pt, 0);
-	_mazeData[0]._cells[pt.y][pt.x]._surfaceId |= bits;
+
+	Common::Point mapPos(pt.x & 15, pt.y & 15);
+	_mazeData[_mazeDataIndex]._cells[mapPos.y][mapPos.x]._surfaceId |= bits;
 }
 
 void Map::setWall(const Common::Point &pt, Direction dir, int v) {
 	const int XOR_MASKS[4] = { 0xFFF, 0xF0FF, 0xFF0F, 0xFFF0 };
 	mazeLookup(pt, 0, 0);
 	
-	MazeWallLayers &wallLayer = _mazeData[0]._wallData[pt.y][pt.x];
+	Common::Point mapPos(pt.x & 15, pt.y & 15);
+	MazeWallLayers &wallLayer = _mazeData[_mazeDataIndex]._wallData[mapPos.y][mapPos.x];
 	wallLayer._data &= XOR_MASKS[dir];
 	wallLayer._data |= v << WALL_SHIFTS[dir][2];
 }

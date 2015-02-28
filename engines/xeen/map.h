@@ -376,7 +376,7 @@ public:
 	SpriteResource _tileSprites;
 	SpriteResource _surfaceSprites[TOTAL_SURFACES];
 	WallSprites _wallSprites;
-	bool _currentIsGrate;
+	bool _currentGrateUnlocked;
 	bool _currentCantRest;
 	bool _currentIsDrain;
 	bool _currentIsEvent;

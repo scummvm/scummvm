@@ -233,7 +233,7 @@ public:
 
 	int checkEvents();
 
-	void openGrate(int v1, int action);
+	void openGrate(int wallVal, int action);
 };
 
 } // End of namespace Xeen
