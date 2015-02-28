@@ -131,7 +131,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::NB_NOR,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_NO_FLAGS,
 		GUIO_NONE
 	},
 	
