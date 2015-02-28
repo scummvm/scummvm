@@ -572,18 +572,15 @@ void InterfaceMap::drawMap() {
 				}
 			}
 		} else if (_charsShooting) {
-			for (int idx = 0; idx < 96; ++idx) {
-				if (_indoorList[162 + idx]._sprites != nullptr) {
-					_indoorList[162 + idx]._frame = 0;
-				}
-				else if (_indoorList[135 + idx]._sprites != nullptr) {
-					_indoorList[135 + idx]._frame = 1;
-				}
-				else if (_indoorList[111 + idx]._sprites != nullptr) {
-					_indoorList[111 + idx]._frame = 2;
-				}
-				else if (_indoorList[79 + idx]._sprites != nullptr) {
-					_indoorList[79 + idx]._frame = 0;
+			for (int idx = 0; idx < 8; ++idx) {
+				if (_indoorList._attackImgs1[idx]._sprites != nullptr) {
+					_indoorList._attackImgs1[idx]._frame = 0;
+				} else if (_indoorList._attackImgs2[idx]._sprites != nullptr) {
+					_indoorList._attackImgs2[idx]._frame = 1;
+				} else if (_indoorList._attackImgs3[idx]._sprites != nullptr) {
+					_indoorList._attackImgs3[idx]._frame = 2;
+				} else if (_indoorList._attackImgs4[idx]._sprites != nullptr) {
+					_indoorList._attackImgs4[idx]._frame = 0;
 				}
 			}
 		}
