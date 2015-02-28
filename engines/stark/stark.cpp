@@ -137,7 +137,11 @@ Common::Error StarkEngine::run() {
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);
-	_resourceProvider->requestLocationChange(0x45, 0x00);
+	if (isDemo()) {
+		_resourceProvider->requestLocationChange(0x4f, 0x00);
+	} else {
+		_resourceProvider->requestLocationChange(0x45, 0x00);
+	}
 
 	// Start running
 	mainLoop();
@@ -334,6 +338,10 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	delete save;
 
 	return Common::kNoError;
+}
+
+bool StarkEngine::isDemo() {
+	return _gameDescription->flags & ADGF_DEMO;
 }
 
 } // End of namespace Stark

@@ -66,6 +66,7 @@ protected:
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
+	bool isDemo();
 
 private:
 	void mainLoop();
