@@ -149,11 +149,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
 							lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
 								arr[idx], idx + 1,
-								c->_items[category].getFullDescription(idx, arr[idx])));
+								c->_items[category].getFullDescription(idx, arr[idx]).c_str()));
 						} else {
 							lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
 								arr[idx], idx + 1,
-								c->_items[category].getFullDescription(idx, arr[idx]),
+								c->_items[category].getFullDescription(idx, arr[idx]).c_str(),
 								calcItemCost(c, idx, mode,
 									mode == ITEMMODE_TO_GOLD ? 1 : startingChar->_skills[MERCHANT],
 									category)
@@ -194,7 +194,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
 							arr[idx], idx + 1,
-							c->_items[category].getFullDescription(idx, arr[idx]),
+							c->_items[category].getFullDescription(idx, arr[idx]).c_str(),
 							calcItemCost(c, idx, tempMode, skill, category)
 						));
 					}
@@ -1002,7 +1002,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
 				Common::String msg = Common::String::format(FIX_IDENTIFY_GOLD,
 					FIX_IDENTIFY[0],
-					c._items[category].getFullDescription(itemIndex),
+					c._items[category].getFullDescription(itemIndex).c_str(),
 					cost);
 
 				if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
@@ -1015,7 +1015,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
 			Common::String msg = Common::String::format(FIX_IDENTIFY_GOLD,
 				FIX_IDENTIFY[1],
-				c._items[category].getFullDescription(itemIndex),
+				c._items[category].getFullDescription(itemIndex).c_str(),
 				cost);
 
 			if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {

@@ -67,7 +67,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 			Common::String title = Common::String::format(BUY_SPELLS, c->_name.c_str());
 			Common::String msg = Common::String::format(GUILD_OPTIONS,
-				title.c_str(), XeenEngine::printMil(party._gold));
+				title.c_str(), XeenEngine::printMil(party._gold).c_str());
 			screen._windows[10].writeString(msg);
 
 			warning("TODO: Sprite draw using previously used button sprites");
@@ -353,7 +353,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[SPELLS_ALLOWED[category][idx]], cost), 
+								spells._spellNames[SPELLS_ALLOWED[category][idx]].c_str(), cost), 
 								idx, spellId));
 						}
 					}
@@ -370,7 +370,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[SPELLS_ALLOWED[category][idx]], cost), 
+								spells._spellNames[SPELLS_ALLOWED[category][idx]].c_str(), cost), 
 								idx, spellId));
 						}
 					}
@@ -385,7 +385,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
-								spells._spellNames[SPELLS_ALLOWED[category][idx]], cost), 
+								spells._spellNames[SPELLS_ALLOWED[category][idx]].c_str(), cost), 
 								idx, spellId));
 						}
 					}

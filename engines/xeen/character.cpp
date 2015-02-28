@@ -300,7 +300,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
-		!i._bonusFlags ? res._maeNames[i._material] : "",
+		!i._bonusFlags ? res._maeNames[i._material].c_str() : "",
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		WEAPON_NAMES[i._id],
@@ -466,7 +466,7 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : res._maeNames[i._material],
+		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		ARMOR_NAMES[i._id],
@@ -589,7 +589,7 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : res._maeNames[i._material],
+		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		ARMOR_NAMES[i._id],
@@ -638,7 +638,7 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	Resources &res = *vm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._bonusFlags ? "" : res._maeNames[i._material],
+		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
 		ARMOR_NAMES[i._id],

@@ -151,7 +151,7 @@ int Spells::castSpell(Character *c, int spellId) {
 				// Return the spell costs and flag that another spell can be selected
 				addSpellCost(*c, spellId);
 				ErrorDialog::show(_vm, Common::String::format(CANT_CAST_WHILE_ENGAGED,
-					_spellNames[spellId]));
+					_spellNames[spellId].c_str()));
 				result = -1;
 			}
 			break;
