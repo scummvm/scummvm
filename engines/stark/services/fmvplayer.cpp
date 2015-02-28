@@ -70,7 +70,7 @@ void FMVPlayer::render() {
 		}
 	}
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->drawSurface(_texture, Common::Point(0, 0));
+	gfx->drawSurface(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
 }
 
 bool FMVPlayer::isPlaying() {
