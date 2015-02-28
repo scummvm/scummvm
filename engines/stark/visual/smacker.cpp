@@ -38,7 +38,8 @@ VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_texture(nullptr),
-		_smacker(nullptr) {
+		_smacker(nullptr),
+		_position(0, 0) {
 }
 
 VisualSmacker::~VisualSmacker() {
@@ -60,7 +61,8 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 }
 
 void VisualSmacker::render(const Common::Point &position) {
-	_gfx->drawSurface(_texture, position);
+	// TODO: Do we actually use the position argument in any case?
+	_gfx->drawSurface(_texture, _position);
 }
 
 void VisualSmacker::update(uint32 delta) {
@@ -103,6 +105,13 @@ void VisualSmacker::update(uint32 delta) {
 		delete convertedSurface;
 
 	}
+}
+
+int VisualSmacker::getFrameNumber() const {
+	if (_smacker && _smacker->isPlaying()) {
+		return _smacker->getCurFrame();
+	}
+	return -1;
 }
 
 bool VisualSmacker::isDone() {

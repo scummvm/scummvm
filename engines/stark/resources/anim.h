@@ -171,6 +171,9 @@ protected:
 
 	void printData() override;
 
+	/** Update the position of the video for the current frame */
+	void updateSmackerPosition();
+
 	Common::String _smackerFile;
 	Common::String _archiveName;
 

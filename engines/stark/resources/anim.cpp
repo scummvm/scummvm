@@ -200,6 +200,7 @@ void AnimVideo::onAllLoaded() {
 
 		_smacker = new VisualSmacker(StarkGfx);
 		_smacker->load(stream);
+		updateSmackerPosition();
 	}
 }
 
@@ -213,10 +214,18 @@ void AnimVideo::onGameLoop() {
 	}
 
 	_smacker->update(StarkGlobal->getMillisecondsPerGameloop());
+	updateSmackerPosition();
 }
 
 Visual *AnimVideo::getVisual() {
 	return _smacker;
+}
+
+void AnimVideo::updateSmackerPosition() {
+	int frame = _smacker->getFrameNumber();
+	if (frame != -1 && frame < _positions.size()) {
+		_smacker->setPosition(_positions[frame]);
+	}
 }
 
 void AnimVideo::printData() {

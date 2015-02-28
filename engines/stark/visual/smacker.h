@@ -47,9 +47,13 @@ public:
 
 	int getWidth() const;
 	int getHeight() const;
+
+	int getFrameNumber() const;
+	void setPosition(Common::Point pos) { _position = pos; }
 private:
 	Video::SmackerDecoder *_smacker;
 
+	Common::Point _position;
 	Gfx::Driver *_gfx;
 	Gfx::Texture *_texture;
 };
