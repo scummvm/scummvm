@@ -39,7 +39,7 @@ enum DamageType {
 	DT_FINGEROFDEATH = 8, DT_HOLYWORD = 9, DT_MASS_DISTORTION = 10,
 	DT_UNDEAD = 11, DT_BEASTMASTER = 12, DT_DRAGONSLEEP = 13,
 	DT_GOLEMSTOPPER = 14, DT_HYPNOTIZE = 15, DT_INSECT_SPRAY = 16,
-	DT_POISON_VALLEY = 17, DT_MAGIC_ARROW = 18
+	DT_POISON_VOLLEY = 17, DT_MAGIC_ARROW = 18
 };
 
 enum SpecialAttack {
@@ -57,7 +57,11 @@ enum ElementalCategory {
 };
 
 enum RangeType {
-	RT_CLOSE = 0, RT_1 = 1, RT_2 = 2, RT_3 = 3
+	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_3 = 3
+};
+
+enum ShootType {
+	ST_0 = 0, ST_1 = 1
 };
 
 class XeenEngine;
@@ -110,7 +114,6 @@ public:
 	int _whosSpeed;
 	DamageType _damageType;
 	Character *_oldCharacter;
-	int _shootType;
 	int _monsterDamage;
 	int _weaponDamage;
 	int _weaponDie, _weaponDice;
@@ -120,6 +123,8 @@ public:
 	int _hitChanceBonus;
 	bool _dangerPresent;
 	bool _moveMonsters;
+	RangeType _rangeType;
+	ShootType _shootType;
 public:
 	Combat(XeenEngine *vm);
 
@@ -165,6 +170,8 @@ public:
 	void monsterOvercome();
 
 	int stopAttack(const Common::Point &diffPt);
+
+	void multiAttack(int powNum);
 };
 
 } // End of namespace Xeen

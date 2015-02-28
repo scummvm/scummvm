@@ -116,7 +116,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_whosSpeed = 0;
 	_damageType = DT_PHYSICAL;
 	_oldCharacter = nullptr;
-	_shootType = 0;
+	_shootType = ST_0;
 	_monsterDamage = 0;
 	_weaponDamage = 0;
 	_weaponDie = _weaponDice = 0;
@@ -125,6 +125,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_hitChanceBonus = 0;
 	_dangerPresent = false;
 	_moveMonsters = false;
+	_rangeType = RT_SINGLE;
 }
 
 void Combat::clear() {
@@ -1198,7 +1199,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
 	if (rangeType) {
-		if (_shootType != 1 || _damageType == DT_MAGIC_ARROW) {
+		if (_shootType != ST_1 || _damageType == DT_MAGIC_ARROW) {
 			if (!monsterData._magicResistence || monsterData._magicResistence <=
 					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
 				if (_monsterDamage != 0) {
@@ -1216,25 +1217,25 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
 							&& !monsterSavingThrow(monsterDataIndex)) {
 							damage = MIN(monster._hp, 50);
-							attack2(damage, RT_2);
+							attack2(damage, RT_ALL);
 							setSpeedTable();
 						}
 						break;
 					case DT_HOLYWORD:
 						if (monsterData._monsterType == MONSTER_UNDEAD) {
-							attack2(monster._hp, RT_2);
+							attack2(monster._hp, RT_ALL);
 							setSpeedTable();
 						}
 						break;
 					case DT_MASS_DISTORTION:
-						attack2(MAX(monster._hp / 2, 1), RT_2);
+						attack2(MAX(monster._hp / 2, 1), RT_ALL);
 						setSpeedTable();
 						break;
 					case DT_UNDEAD:
 						if (monsterData._monsterType == MONSTER_UNDEAD)
 							damage = 25;
 						else
-							rangeType = RT_2;
+							rangeType = RT_ALL;
 						attack2(damage, rangeType);
 						setSpeedTable();
 						break;
@@ -1346,7 +1347,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 		damage = 0;
 
 		while (numberOfAttacks-- > 0) {
-			if (hitMonster(c, RT_CLOSE))
+			if (hitMonster(c, RT_SINGLE))
 				damage += getMonsterDamage(c);
 		}
 
@@ -1593,7 +1594,7 @@ void Combat::quickFight() {
 
 	switch (c->_quickOption) {
 	case QUICK_ATTACK:
-		attack(*c, RT_CLOSE);
+		attack(*c, RT_SINGLE);
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
@@ -1739,7 +1740,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	int resistence = 0, damage = 0;
 
-	if (rangeType != RT_CLOSE && rangeType != RT_3) {
+	if (rangeType != RT_SINGLE && rangeType != RT_3) {
 		switch (_damageType) {
 		case DT_PHYSICAL:
 			resistence = monsterData._phsyicalResistence;
@@ -1823,6 +1824,263 @@ void Combat::giveExperience(int experience) {
 			}
 		}
 	}
+}
+
+void Combat::multiAttack(int powNum) {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	if (_damageType == DT_POISON_VOLLEY) {
+		_damageType = DT_POISON;
+		_shootType = ST_1;
+		Common::fill(&_shooting[0], &_shooting[6], 1);
+	} else if (powNum == 11) {
+		_shootType = ST_1;
+		bool flag = false;
+
+		if (_damageType == DT_PHYSICAL) {
+			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+				Character &c = party._activeParty[idx];
+				if (c.hasMissileWeapon()) {
+					_shooting[idx] = 1;
+					flag = true;
+				}
+			}
+		} else {
+			_shooting[0] = 1;
+			flag = true;
+		}
+
+		if (!flag) {
+			sound.playFX(21);
+			return;
+		}
+	} else {
+		_shooting[0] = 1;
+		_shootType = ST_0;
+	}
+
+	intf._charsShooting = true;
+	_powSprites.load(Common::String::format("pow%d.icn", powNum));
+	int monsterIndex = _monsterIndex;
+	int monster2Attack = _monster2Attack;
+	bool attackedFlag = false;
+	
+	Common::Array<int> attackMonsters;
+	for (int idx = 0; idx < 3; ++idx) {
+		if (_attackMonsters[idx] != -1)
+			attackMonsters.push_back(_attackMonsters[idx]);
+	}
+
+	_monsterIndex = -1;
+	if (_monster2Attack != -1) {
+		_monsterIndex--;
+		if (attackMonsters.empty())
+			attackMonsters.resize(1);
+		attackMonsters[0] = monster2Attack;
+	}
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		Character &c = party._activeParty[idx];
+		if (_shooting[idx]) {
+			if (map._isOutdoors) {
+				intf._outdoorList._attackImgs1[idx]._scale = 0;
+				intf._outdoorList._attackImgs2[idx]._scale = 4;
+				intf._outdoorList._attackImgs3[idx]._scale = 8;
+				intf._outdoorList._attackImgs4[idx]._scale = 12;
+				intf._outdoorList._attackImgs1[idx]._sprites = &_powSprites;
+				intf._outdoorList._attackImgs2[idx]._sprites = nullptr;
+				intf._outdoorList._attackImgs3[idx]._sprites = nullptr;
+				intf._outdoorList._attackImgs4[idx]._sprites = nullptr;
+			} else {
+				intf._indoorList._attackImgs1[idx]._scale = 0;
+				intf._indoorList._attackImgs2[idx]._scale = 4;
+				intf._indoorList._attackImgs3[idx]._scale = 8;
+				intf._indoorList._attackImgs4[idx]._scale = 12;
+				intf._indoorList._attackImgs1[idx]._sprites = &_powSprites;
+				intf._indoorList._attackImgs2[idx]._sprites = nullptr;
+				intf._indoorList._attackImgs3[idx]._sprites = nullptr;
+				intf._indoorList._attackImgs4[idx]._sprites = nullptr;
+			}
+		}
+	}
+
+	intf.draw3d(true);
+
+	++_monsterIndex;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+		Common::fill(&_missedShot[0], &_missedShot[8], false);
+		_monster2Attack = attackMonsters[monIdx];
+		attack(*_oldCharacter, RT_GROUP);
+		attackedFlag = true;
+
+		if (_rangeType == RT_SINGLE)
+			// Only single shot, so exit now that the attack is done
+			goto finished;
+	}
+
+	if (attackedFlag && _rangeType == RT_GROUP)
+		// Finished group attack, so exit
+		goto finished;
+
+	if (map._isOutdoors) {
+		map.getCell(7);
+		switch (map._currentWall) {
+		case 1:
+		case 3:
+		case 6:
+		case 7:
+		case 9:
+		case 10:
+		case 12:
+			sound.playFX(46);
+			goto finished;
+		default:
+			break;
+		}
+	} else {
+		int cell = map.getCell(2);
+		if (cell < map.mazeData()._difficulties._wallNoPass) {
+			sound.playFX(46);
+			goto finished;
+		}
+	}
+	if (!intf._isAttacking)
+		goto finished;
+
+	intf.draw3d(true);
+
+	// Start handling second teir of monsters in the back
+	attackMonsters.clear();
+	for (uint idx = 3; idx < 6; ++idx) {
+		if (_attackMonsters[idx] != -1)
+			attackMonsters.push_back(_attackMonsters[idx]);
+	}
+
+	++_monsterIndex;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+		Common::fill(&_missedShot[0], &_missedShot[8], false);
+		_monster2Attack = attackMonsters[monIdx];
+		attack(*_oldCharacter, RT_GROUP);
+		attackedFlag = true;
+
+		if (_rangeType == RT_SINGLE)
+			// Only single shot, so exit now that the attack is done
+			goto finished;
+	}
+
+	if (attackedFlag && _rangeType == RT_GROUP)
+		// Finished group attack, so exit
+		goto finished;
+
+	if (map._isOutdoors) {
+		map.getCell(14);
+		switch (map._currentWall) {
+		case 1:
+		case 3:
+		case 6:
+		case 7:
+		case 9:
+		case 10:
+		case 12:
+			sound.playFX(46);
+			goto finished;
+		default:
+			break;
+		}
+	} else {
+		int cell = map.getCell(7);
+		if (cell < map.mazeData()._difficulties._wallNoPass) {
+			sound.playFX(46);
+			goto finished;
+		}
+	}
+	if (!intf._isAttacking)
+		goto finished;
+
+	intf.draw3d(true);
+
+	// Start handling third teir of monsters in the back
+	attackMonsters.clear();
+	for (uint idx = 6; idx < 9; ++idx) {
+		if (_attackMonsters[idx] != -1)
+			attackMonsters.push_back(_attackMonsters[idx]);
+	}
+
+	++_monsterIndex;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+		Common::fill(&_missedShot[0], &_missedShot[8], false);
+		_monster2Attack = attackMonsters[monIdx];
+		attack(*_oldCharacter, RT_GROUP);
+		attackedFlag = true;
+
+		if (_rangeType == RT_SINGLE)
+			// Only single shot, so exit now that the attack is done
+			goto finished;
+	}
+
+	if (attackedFlag && _rangeType == RT_GROUP)
+		// Finished group attack, so exit
+		goto finished;
+
+	if (map._isOutdoors) {
+		map.getCell(27);
+		switch (map._currentWall) {
+		case 1:
+		case 3:
+		case 6:
+		case 7:
+		case 9:
+		case 10:
+		case 12:
+			sound.playFX(46);
+			goto finished;
+		default:
+			break;
+		}
+	} else {
+		int cell = map.getCell(14);
+		if (cell < map.mazeData()._difficulties._wallNoPass) {
+			sound.playFX(46);
+			goto finished;
+		}
+	}
+	if (!intf._isAttacking)
+		goto finished;
+
+	intf.draw3d(true);
+
+	// Fourth tier
+	attackMonsters.clear();
+	for (uint idx = 9; idx < 12; ++idx) {
+		if (_attackMonsters[idx] != -1)
+			attackMonsters.push_back(_attackMonsters[idx]);
+	}
+
+	++_monsterIndex;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+		Common::fill(&_missedShot[0], &_missedShot[8], false);
+		_monster2Attack = attackMonsters[monIdx];
+		attack(*_oldCharacter, RT_GROUP);
+		attackedFlag = true;
+
+		if (_rangeType == RT_SINGLE)
+			// Only single shot, so exit now that the attack is done
+			goto finished;
+	}
+
+	if (!(attackedFlag && _rangeType == RT_GROUP))
+		goto done;
+
+finished:
+	endAttack();
+done:
+	Common::fill(&_shooting[0], &_shooting[MAX_PARTY_COUNT], 0);
+	_monster2Attack = monster2Attack;
+	_monsterIndex = monsterIndex;
+	party.giveTreasure();
 }
 
 } // End of namespace Xeen

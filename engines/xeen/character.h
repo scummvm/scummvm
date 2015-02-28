@@ -326,6 +326,8 @@ public:
 
 	bool hasSpecialItem() const;
 
+	bool hasMissileWeapon() const;
+
 	int getClassCategory() const;
 };
 

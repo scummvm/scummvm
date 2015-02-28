@@ -198,10 +198,41 @@ void Spells::addSpellCost(Character &c, int spellId) {
 	party._gems += gemCost;
 }
 
+void Spells::light() { 
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::light() { error("TODO: spell"); }
-void Spells::awaken() { error("TODO: spell"); }
-void Spells::magicArrow() { error("TODO: spell"); }
+	++party._lightCount;
+	if (intf._intrIndex1)
+		party._stepped = true;
+	sound.playFX(39);
+}
+
+void Spells::awaken() { 
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		Character &c = party._activeParty[idx];
+		c._conditions[ASLEEP] = 0;
+		if (c._currentHp > 0)
+			c._conditions[UNCONSCIOUS] = 0;
+	}
+
+	intf.drawParty(true);
+	sound.playFX(30);
+}
+
+void Spells::magicArrow() { 
+	Combat &combat = *_vm->_combat;
+	combat._monsterDamage = 0;
+	combat._damageType = DT_MAGIC_ARROW;
+	combat._rangeType = RT_SINGLE;
+	combat.multiAttack(11);
+}
+
 void Spells::firstAid() { error("TODO: spell"); }
 void Spells::flyingFist() { error("TODO: spell"); }
 void Spells::energyBlast() { error("TODO: spell"); }

@@ -1848,6 +1848,16 @@ bool Character::hasSpecialItem() const {
 	return false;
 }
 
+bool Character::hasMissileWeapon() const {
+	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		if (_weapons[idx]._frame == 4) {
+			return !isDisabledOrDead();
+		}
+	}
+
+	return false;
+}
+
 int Character::getClassCategory() const {
 	switch (_class) {
 	case CLASS_ARCHER:
