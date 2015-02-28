@@ -577,4 +577,71 @@ void CastSpell::loadButtons() {
 	addPartyButtons(_vm);
 }
 
+/*------------------------------------------------------------------------*/
+
+int SpellOnWho::show(XeenEngine *vm, int spellId) {
+	SpellOnWho *dlg = new SpellOnWho(vm);
+	int result = dlg->execute(spellId);
+	delete dlg;
+
+	return result;
+}
+
+int SpellOnWho::execute(int spellId) {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Spells &spells = *_vm->_spells;
+	Window &w = screen._windows[16];
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_3;
+	int result = 999;
+
+	w.open();
+	w.writeString(ON_WHO);
+	w.update();
+	addPartyButtons(_vm);
+
+	while (result == 999) {
+		do {
+			events.updateGameCounter();
+			intf.draw3d(true);
+
+			do {
+				events.pollEventsAndWait();
+				if (_vm->shouldQuit())
+					return -1;
+
+				checkEvents(_vm);
+			} while (!_buttonValue && events.timeElapsed() < 1);
+		} while (!_buttonValue);
+
+		switch (_buttonValue) {
+		case Common::KEYCODE_ESCAPE:
+			result = -1;
+			spells.addSpellCost(*combat._oldCharacter, spellId);
+			break;
+
+		case Common::KEYCODE_F1:
+		case Common::KEYCODE_F2:
+		case Common::KEYCODE_F3:
+		case Common::KEYCODE_F4:
+		case Common::KEYCODE_F5:
+		case Common::KEYCODE_F6:
+			_buttonValue -= Common::KEYCODE_F1;
+			if (_buttonValue < (int)(combat._combatMode == 2 ? combat._combatParty.size() :
+					party._activeParty.size())) {
+				result = _buttonValue;
+			}
+			break;
+		}
+	}
+
+	w.close();
+	_vm->_mode = oldMode;
+	return result;
+}
+
 } // End of namespace Xeen

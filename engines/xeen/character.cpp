@@ -876,6 +876,15 @@ bool Character::isDisabledOrDead() const {
 }
 
 /**
+ * Returns whether the given character has a dead condition
+ */
+bool Character::isDead() const {
+	Condition condition = worstCondition();
+
+	return condition >= DEAD && condition <= ERADICATED;
+}
+
+/**
  * Get the character's age
  */
 int Character::getAge(bool ignoreTemp) const {
@@ -1810,6 +1819,32 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 	return category;
 }
 
+/**
+ * Add hit points to a character
+ */
+void Character::addHitPoints(int amount) {
+	Interface &intf = *Party::_vm->_interface;
+	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
+	
+	if (!isDead()) {
+		int maxHp = getMaxHP();
+		if (_currentHp <= maxHp) {
+			_currentHp = MIN(_currentHp + amount, maxHp);
+			intf.spellFX(this);
+		}
+
+		if (_currentHp > 0)
+			_conditions[UNCONSCIOUS] = 0;
+
+		intf.drawParty(true);
+	}
+
+	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
+}
+
+/**
+ * Remove hit points fromo the character
+ */
 void Character::subtractHitPoints(int amount) {
 	SoundManager &sound = *Party::_vm->_sound;
 	_currentHp -= amount;

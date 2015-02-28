@@ -69,6 +69,8 @@ private:
 
 	void executeSpell(int spellId);
 
+	void spellFailed();
+
 	// Spell list
 	void light();
 	void awaken();

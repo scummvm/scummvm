@@ -73,6 +73,17 @@ public:
 	static int show(XeenEngine *vm, Character *&c);
 };
 
+class SpellOnWho : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+
+	SpellOnWho(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	int execute(int spellId);
+public:
+	static int show(XeenEngine *vm, int spellId);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_SPELLS_H */

@@ -1528,4 +1528,6 @@ const char *const GIVE_TREASURE_FORMATTING =
 
 const char *const X_FOUND_Y = "\v060\t000\x03c%s found: %s";
 
+const char *const ON_WHO = "\x3""c\v009On Who?";
+
 } // End of namespace Xeen

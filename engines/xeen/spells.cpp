@@ -21,6 +21,7 @@
  */
 
 #include "xeen/spells.h"
+#include "xeen/dialogs_spells.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -95,6 +96,16 @@ void Spells::executeSpell(int spellId) {
 	(this->*SPELL_LIST[spellId])();
 }
 
+/**
+ * Spell being cast failed
+ */
+void Spells::spellFailed() {
+	ErrorScroll::show(_vm, SPELL_FAILED, WT_NONFREEZED_WAIT);
+}
+
+/**
+ * Cast a spell associated with an item
+ */
 void Spells::castItemSpell(int spellId) {
 	if (_vm->_mode == MODE_COMBAT) {
 		if (spellId == 15 || spellId == 20 || spellId == 27 || spellId == 41
@@ -233,7 +244,26 @@ void Spells::magicArrow() {
 	combat.multiAttack(11);
 }
 
-void Spells::firstAid() { error("TODO: spell"); }
+void Spells::firstAid() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_FirstAid);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	if (c.isDead()) {
+		spellFailed();
+	} else {
+		sound.playFX(30);
+		c.addHitPoints(6);
+	}
+}
+
 void Spells::flyingFist() { error("TODO: spell"); }
 void Spells::energyBlast() { error("TODO: spell"); }
 void Spells::sleep() { error("TODO: spell"); }

@@ -149,6 +149,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm),
 	_face1State = _face2State = 0;
 	_upDoorText = false;
 	_tillMove = 0;
+	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
 
 	initDrawStructs();
 }
@@ -1891,7 +1892,7 @@ void Interface::doCombat() {
 	bool reloadMap = false;
 	
 	_upDoorText = false;
-	combat._combatMode = 2;
+	combat._combatMode = COMBATMODE_2;
 	_vm->_mode = MODE_COMBAT;
 
 	_iconSprites.load("combat.icn");
@@ -2182,7 +2183,7 @@ void Interface::doCombat() {
 			DIR_EAST : DIR_SOUTH;
 	}
 
-	combat._combatMode = 1;
+	combat._combatMode = COMBATMODE_1;
 }
 
 /**
@@ -2261,5 +2262,54 @@ void Interface::nextChar() {
 		}
 	}
 }
+
+void Interface::spellFX(Character *c) {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+
+	// Ensure there's no alraedy running effect for the given character
+	uint charIndex;
+	for (charIndex = 0; charIndex < party._activeParty.size(); ++charIndex) {
+		if (&party._activeParty[charIndex] == c)
+			break;
+	}
+	if (charIndex == party._activeParty.size() || _charFX[charIndex])
+		return;
+
+	if (screen._windows[12]._enabled)
+		screen._windows[12].close();
+
+	if (combat._combatMode == COMBATMODE_2) {
+		for (uint idx = 0; idx < combat._combatParty.size(); ++idx) {
+			if (combat._combatParty[idx]->_rosterId == c->_rosterId) {
+				charIndex = idx;
+				break;
+			}
+		}
+	}
+
+	int tillMove = _tillMove;
+	_tillMove = 0;
+	sound.playFX(20);
+
+	for (int frameNum = 0; frameNum < 4; ++frameNum) {
+		events.updateGameCounter();
+		_spellFxSprites.draw(screen, frameNum, Common::Point(
+			CHAR_FACES_X[charIndex], 150));
+
+		if (!screen._windows[11]._enabled)
+			draw3d(false);
+
+		screen._windows[0].update();
+		events.wait(screen._windows[11]._enabled ? 2 : 1);
+	}
+
+	drawParty(true);
+	_tillMove = tillMove;
+}
+
 
 } // End of namespace Xeen

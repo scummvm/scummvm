@@ -278,6 +278,8 @@ public:
 
 	bool isDisabledOrDead() const;
 
+	bool isDead() const;
+
 	int getAge(bool ignoreTemp = false) const;
 
 	int getMaxHP() const;
@@ -321,6 +323,8 @@ public:
 	int getNumAwards() const;
 
 	int makeItem(int p1, int itemIndex, int p3);
+
+	void addHitPoints(int amount);
 
 	void subtractHitPoints(int amount);
 

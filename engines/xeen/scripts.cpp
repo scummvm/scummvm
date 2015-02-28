@@ -88,7 +88,6 @@ bool MirrorEntry::synchronize(Common::SeekableReadStream &s) {
 /*------------------------------------------------------------------------*/
 
 Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
-	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
 	_whoWill = 0;
 	_itemType = 0;
 	_treasureItems = 0;
@@ -120,7 +119,7 @@ int Scripts::checkEvents() {
 	_var50 = false;
 	_whoWill = 0;
 	Mode oldMode = _vm->_mode;
-	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
+	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
 	//int items = _treasureItems;
 	
 	if (party._treasure._gold & party._treasure._gems) {
@@ -202,7 +201,7 @@ int Scripts::checkEvents() {
 	}
 
 	_v2 = 1;
-	Common::fill(&_charFX[0], &_charFX[6], 0);
+	Common::fill(&intf._charFX[0], &intf._charFX[6], 0);
 
 	return _scriptResult;
 }

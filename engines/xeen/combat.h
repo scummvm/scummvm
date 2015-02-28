@@ -64,6 +64,10 @@ enum ShootType {
 	ST_0 = 0, ST_1 = 1
 };
 
+enum CombatMode {
+	COMBATMODE_0 = 0, COMBATMODE_1 = 1, COMBATMODE_2 = 2
+};
+
 class XeenEngine;
 class Character;
 class XeenItem;
@@ -108,7 +112,7 @@ public:
 	bool _rangeAttacking[MAX_NUM_MONSTERS];
 	int _gmonHit[36];
 	bool _monstersAttacking;
-	int _combatMode;
+	CombatMode _combatMode;
 	int _monsterIndex;
 	bool _partyRan;
 	int _whosSpeed;

@@ -539,6 +539,8 @@ extern const char *const GIVE_TREASURE_FORMATTING;
 
 extern const char *const X_FOUND_Y;
 
+extern const char *const ON_WHO;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

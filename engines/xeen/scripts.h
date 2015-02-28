@@ -139,7 +139,6 @@ struct MirrorEntry {
 class Scripts {
 private:
 	XeenEngine *_vm;
-	int _charFX[6];
 	int _treasureItems;
 	int _lineNum;
 	int _charIndex;

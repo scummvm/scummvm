@@ -109,7 +109,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_whosTurn = -1;
 	_itemFlag = false;
 	_monstersAttacking = false;
-	_combatMode = 0;
+	_combatMode = COMBATMODE_0;
 	_monsterIndex = 0;
 	_partyRan = false;
 	_monster2Attack = -1;
@@ -1883,7 +1883,6 @@ void Combat::multiAttack(int powNum) {
 	}
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-		Character &c = party._activeParty[idx];
 		if (_shooting[idx]) {
 			if (map._isOutdoors) {
 				intf._outdoorList._attackImgs1[idx]._scale = 0;

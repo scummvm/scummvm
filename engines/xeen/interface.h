@@ -119,6 +119,7 @@ public:
 	bool _upDoorText;
 	Common::String _screenText;
 	byte _tillMove;
+	int _charFX[6];
 public:
 	Interface(XeenEngine *vm);
 
@@ -145,6 +146,8 @@ public:
 	void assembleBorder();
 
 	void doCombat();
+
+	void spellFX(Character *c);
 };
 
 } // End of namespace Xeen
