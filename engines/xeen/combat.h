@@ -172,6 +172,8 @@ public:
 	int stopAttack(const Common::Point &diffPt);
 
 	void multiAttack(int powNum);
+
+	void shootRangedWeapon();
 };
 
 } // End of namespace Xeen

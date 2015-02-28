@@ -268,6 +268,7 @@ void Interface::perform() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
+	SoundManager &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 
@@ -569,6 +570,30 @@ void Interface::perform() {
 	case Common::KEYCODE_r:
 		// Rest
 		rest();
+		break;
+
+	case Common::KEYCODE_s:
+		// Shoot
+		if (!party.canShoot()) {
+			sound.playFX(21);
+		} else {
+			if (_tillMove) {
+				combat.moveMonsters();
+				draw3d(true);
+			}
+
+			if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
+					|| combat._attackMonsters[2] != -1) {
+				if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING)
+						&& !combat._monstersAttacking && !_charsShooting) {
+					doCombat();
+				}
+			}
+
+			combat.shootRangedWeapon();
+			chargeStep();
+			doStepCode();
+		}
 		break;
 
 	case Common::KEYCODE_v:

@@ -173,6 +173,8 @@ public:
 	void giveTreasure();
 
 	bool arePacksFull() const;
+
+	bool canShoot() const;
 };
 
 } // End of namespace Xeen

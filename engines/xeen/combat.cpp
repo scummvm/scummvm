@@ -2083,4 +2083,13 @@ done:
 	party.giveTreasure();
 }
 
+/**
+ * Fires off a ranged attack at all oncoming monsters
+ */
+void Combat::shootRangedWeapon() {
+	_rangeType = RT_ALL;
+	_damageType = DT_PHYSICAL;
+	multiAttack(11);
+}
+
 } // End of namespace Xeen

@@ -735,4 +735,13 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	events.ipause(5);
 }
 
+bool Party::canShoot() const {
+	for (uint idx = 0; idx < _activeParty.size(); ++idx) {
+		if (_activeParty[idx].hasMissileWeapon())
+			return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Xeen
