@@ -51,6 +51,9 @@ void DialogPlayer::run(Resources::Dialog *dialog) {
 }
 
 void DialogPlayer::playSingle(Resources::Speech *speech) {
+	if (_singleSpeech && _singleSpeech->isPlaying()) {
+		_singleSpeech->stop();
+	}
 	if (speech) {
 		_singleSpeech = speech;
 		speech->playSound();
