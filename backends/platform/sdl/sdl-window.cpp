@@ -30,14 +30,13 @@
 
 SdlWindow::SdlWindow()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM"), _windowIcon(nullptr)
+	: _window(nullptr), _inputGrabState(false), _windowCaption("ScummVM")
 #endif
 	{
 }
 
 SdlWindow::~SdlWindow() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_FreeSurface(_windowIcon);
 	destroyWindow();
 #endif
 }
@@ -100,16 +99,14 @@ void SdlWindow::setupIcon() {
 	}
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_FreeSurface(_windowIcon);
-	_windowIcon = sdl_surf;
 	if (_window) {
 		SDL_SetWindowIcon(_window, sdl_surf);
 	}
 #else
 	SDL_WM_SetIcon(sdl_surf, NULL);
-	SDL_FreeSurface(sdl_surf);
 #endif
 
+	SDL_FreeSurface(sdl_surf);
 	free(icon);
 }
 
@@ -214,7 +211,7 @@ bool SdlWindow::createWindow(int width, int height, uint32 flags) {
 	if (!_window) {
 		return false;
 	}
-	SDL_SetWindowIcon(_window, _windowIcon);
+	setupIcon();
 
 	return true;
 }

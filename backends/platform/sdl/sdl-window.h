@@ -101,7 +101,6 @@ protected:
 private:
 	bool _inputGrabState;
 	Common::String _windowCaption;
-	SDL_Surface *_windowIcon;
 #endif
 };
 
