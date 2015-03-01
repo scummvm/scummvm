@@ -396,6 +396,13 @@ void DrasculaEngine::increaseFrameNum() {
 		curHeight = (int)newHeight;
 		curWidth = (int)newWidth;
 	}
+
+	if ((currentChapter == 5) && (_roomNumber == 45)) {
+		curY = 0;
+		curX = 0;
+		curHeight = 0;
+		curWidth = 0;
+	}
 }
 
 void DrasculaEngine::walkDown() {
