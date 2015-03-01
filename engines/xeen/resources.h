@@ -541,6 +541,9 @@ extern const char *const X_FOUND_Y;
 
 extern const char *const ON_WHO;
 
+extern const char *const WHICH_ELEMENT1;
+extern const char *const WHICH_ELEMENT2;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

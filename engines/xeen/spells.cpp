@@ -388,7 +388,35 @@ void Spells::suppressPoison() {
 }
 
 void Spells::protectionFromElements() {
-	error("TODO: spell");
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	Character &c = *combat._oldCharacter;
+	int resist = MIN(c.getCurrentLevel() * 2 + 5, (uint)200);
+	
+	int elementType = SelectElement::show(_vm, MS_ProtFromElements);
+	if (elementType != -1) {
+		switch (elementType) {
+		case DT_FIRE:
+			party._fireResistence = resist;
+			break;
+		case DT_ELECTRICAL:
+			party._fireResistence = resist;
+			break;
+		case DT_COLD:
+			party._coldResistence = resist;
+			break;
+		case DT_POISON:
+			party._poisonResistence = resist;
+			break;
+		default:
+			break;
+		}
+
+		sound.playFX(20);
+		intf.drawParty(true);
+	}
 }
 
 void Spells::pain() {

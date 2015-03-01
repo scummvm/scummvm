@@ -644,4 +644,87 @@ int SpellOnWho::execute(int spellId) {
 	return result;
 }
 
+/*------------------------------------------------------------------------*/
+
+int SelectElement::show(XeenEngine *vm, int spellId) {
+	SelectElement *dlg = new SelectElement(vm);
+	int result = dlg->execute(spellId);
+	delete dlg;
+
+	return result;
+}
+
+int SelectElement::execute(int spellId) {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Spells &spells = *_vm->_spells;
+	Window &w = screen._windows[15];
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_3;
+	int result = 999;
+
+	loadButtons();
+
+	w.open();
+	w.writeString(WHICH_ELEMENT1);
+	drawButtons(&screen);
+	w.update();
+
+	while (result == 999) {
+		do {
+			events.updateGameCounter();
+			intf.draw3d(true);
+			w.frame();
+			w.writeString(WHICH_ELEMENT2);
+			drawButtons(&screen);
+			w.update();
+
+			do {
+				events.pollEventsAndWait();
+				if (_vm->shouldQuit())
+					return -1;
+
+				checkEvents(_vm);
+			} while (!_buttonValue && events.timeElapsed() < 1);
+		} while (!_buttonValue);
+
+		switch (_buttonValue) {
+		case Common::KEYCODE_ESCAPE:
+			result = -1;
+			spells.addSpellCost(*combat._oldCharacter, spellId);
+			break;
+
+		case Common::KEYCODE_a:
+			result = DT_POISON;
+			break;
+		case Common::KEYCODE_c:
+			result = DT_COLD;
+			break;
+		case Common::KEYCODE_e:
+			result = DT_ELECTRICAL;
+			break;
+		case Common::KEYCODE_f:
+			result = DT_FIRE;
+			break;
+		default:
+			break;
+		}
+	}
+
+	w.close();
+	_vm->_mode = oldMode;
+	return result;
+}
+
+void SelectElement::loadButtons() {
+	_iconSprites.load("element.icn");
+	addButton(Common::Rect(60, 92, 84, 112), Common::KEYCODE_f, &_iconSprites);
+	addButton(Common::Rect(90, 92, 114, 112), Common::KEYCODE_e, &_iconSprites);
+	addButton(Common::Rect(120, 92, 144, 112), Common::KEYCODE_c, &_iconSprites);
+	addButton(Common::Rect(150, 92, 174, 112), Common::KEYCODE_a, &_iconSprites);
+}
+
 } // End of namespace Xeen

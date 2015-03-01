@@ -1530,4 +1530,14 @@ const char *const X_FOUND_Y = "\v060\t000\x03c%s found: %s";
 
 const char *const ON_WHO = "\x3""c\v009On Who?";
 
+const char *const WHICH_ELEMENT = "";
+
+const char *const WHICH_ELEMENT1 =
+	"\r\x3""c\x1Which Element?\x2\v034\t014\f15F\fdire\t044"
+	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
+
+const char *const WHICH_ELEMENT2 =
+	"\r\x3""cWhich Element?', 2, 0Bh, '034\t014\f15F\fdire\t044"
+	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
+
 } // End of namespace Xeen

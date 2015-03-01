@@ -84,6 +84,20 @@ public:
 	static int show(XeenEngine *vm, int spellId);
 };
 
+class SelectElement : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+
+	SelectElement(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	int execute(int spellId);
+
+	void loadButtons();
+public:
+	static int show(XeenEngine *vm, int spellId);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_SPELLS_H */
