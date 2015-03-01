@@ -550,6 +550,12 @@ extern const char *const DETECT_MONSTERS;
 
 extern const char *const LLOYDS_BEACON;
 
+extern const char *const HOW_MANY_SQUARES;
+
+extern const char *const TOWN_PORTAL;
+
+extern const int TOWN_MAP_NUMBERS[2][5];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

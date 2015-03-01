@@ -356,7 +356,6 @@ private:
 	XeenEngine *_vm;
 	MazeData _mazeData[9];
 	SpriteResource _wallPicSprites;
-	int _sideTownPortal;
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
@@ -387,6 +386,7 @@ public:
 	int _currentSurfaceId;
 	bool _currentSteppedOn;
 	bool _loadDarkSide;
+	int _sideTownPortal;
 public:
 	Map(XeenEngine *vm);
 

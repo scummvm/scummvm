@@ -1554,4 +1554,22 @@ const char *const LLOYDS_BEACON =
 	"%s\x3l\n"
 	"x = %d\x3r\t000y = %d\x3""c\x2\v122\t021\f15S\fdet\t060\f15R\fdeturn\x1";
 
+const char *const HOW_MANY_SQUARES = "\x03cTeleport\nHow many squares %s (1-9)";
+
+const char *const TOWN_PORTAL =
+	"\x3""cTown Portal\x3l\n"
+	"\n"
+	"\t0101. %s\n"
+	"\t0102. %s\n"
+	"\t0103. %s\n"
+	"\t0104. %s\n"
+	"\t0105. %s\x3""c\n"
+	"\n"
+	"To which Town (1-5)\n"
+	"\n";
+
+const int TOWN_MAP_NUMBERS[2][5] = {
+	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }
+};
+
 } // End of namespace Xeen

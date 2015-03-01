@@ -21,6 +21,7 @@
  */
 
 #include "xeen/dialogs_spells.h"
+#include "xeen/dialogs_input.h"
 #include "xeen/dialogs_query.h"
 #include "xeen/resources.h"
 #include "xeen/spells.h"
@@ -579,12 +580,18 @@ void CastSpell::loadButtons() {
 
 /*------------------------------------------------------------------------*/
 
-int SpellOnWho::show(XeenEngine *vm, int spellId) {
+Character *SpellOnWho::show(XeenEngine *vm, int spellId) {
 	SpellOnWho *dlg = new SpellOnWho(vm);
 	int result = dlg->execute(spellId);
 	delete dlg;
 
-	return result;
+	if (result == -1)
+		return nullptr;
+	
+	Combat &combat = *vm->_combat;
+	Party &party = *vm->_party;
+	return combat._combatMode == 2 ? combat._combatParty[result] :
+		&party._activeParty[result];
 }
 
 int SpellOnWho::execute(int spellId) {
@@ -773,7 +780,6 @@ bool LloydsBeacon::execute() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	SoundManager &sound = *_vm->_sound;
-	Spells &spells = *_vm->_spells;
 	Window &w = screen._windows[10];
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	Character &c = *combat._oldCharacter;
@@ -861,6 +867,110 @@ void LloydsBeacon::loadButtons() {
 
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_r, &_iconSprites);
 	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_iconSprites);
+}
+
+/*------------------------------------------------------------------------*/
+
+int Teleport::show(XeenEngine *vm) {
+	Teleport *dlg = new Teleport(vm);
+	int result = dlg->execute();
+	delete dlg;
+
+	return result;
+}
+
+int Teleport::execute() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[6];
+	Common::String num;
+
+	w.open();
+	w.writeString(Common::String::format(HOW_MANY_SQUARES,
+		DIRECTION_TEXT[party._mazeDirection]));
+	w.update();
+	int lineSize = Input::show(_vm, &w, num, 1, 200, true);
+	w.close();
+
+	if (!lineSize)
+		return -1;
+	int numSquares = atoi(num.c_str());
+	Common::Point pt = party._mazePosition;
+	int v;
+
+	switch (party._mazeDirection) {
+	case DIR_NORTH:
+		pt.y += numSquares;
+		break;
+	case DIR_EAST:
+		pt.x += numSquares;
+		break;
+	case DIR_SOUTH:
+		pt.y -= numSquares;
+		break;
+	case DIR_WEST:
+		pt.x -= numSquares;
+		break;
+	}
+
+	v = map.mazeLookup(pt, map._isOutdoors ? 0xF : 0xFFFF, 0);
+
+	if ((v != (map._isOutdoors ? 0 : INVALID_CELL)) &&
+		(!map._isOutdoors || v == SURFTYPE_DWATER)) {
+		party._mazePosition = pt;
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+int TownPortal::show(XeenEngine *vm) {
+	TownPortal *dlg = new TownPortal(vm);
+	int townNumber = dlg->execute();
+	delete dlg;
+
+	return townNumber;
+}
+
+int TownPortal::execute() {
+	Map &map = *_vm->_map;
+	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[20];
+	Common::String townNames[5];
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_FF;
+
+	// Build up a lsit of the names of the towns on the current side of Xeen
+	for (int idx = 0; idx < 5; ++idx) {
+		File f(Common::String::format("%s%04d.txt",
+			map._sideTownPortal ? "dark" : "xeen",
+			TOWN_MAP_NUMBERS[map._sideTownPortal][idx]));
+		townNames[idx] = f.readString();
+		f.close();
+	}
+
+	w.open();
+	w.writeString(Common::String::format(TOWN_PORTAL,
+		townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
+		townNames[3].c_str(), townNames[4].c_str()
+	));
+	w.update();
+	
+	// Get the town number
+	int townNumber;
+	Common::String num;
+	do {
+		int result = Input::show(_vm, &w, num, 1, 160, true);
+		townNumber = !result ? 0 : atoi(num.c_str());
+	} while (townNumber > 5);
+
+	w.close();
+	_vm->_mode = oldMode;
+
+	return townNumber;
 }
 
 } // End of namespace Xeen

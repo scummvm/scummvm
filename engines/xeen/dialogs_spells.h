@@ -81,7 +81,7 @@ private:
 
 	int execute(int spellId);
 public:
-	static int show(XeenEngine *vm, int spellId);
+	static Character *show(XeenEngine *vm, int spellId);
 };
 
 class SelectElement : public ButtonContainer {
@@ -121,6 +121,29 @@ private:
 	void loadButtons();
 public:
 	static bool show(XeenEngine *vm);
+};
+
+class Teleport : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+
+	Teleport(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	int execute();
+public:
+	static int show(XeenEngine *vm);
+};
+
+class TownPortal : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+
+	TownPortal(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	int execute();
+public:
+	static int show(XeenEngine *vm);
 };
 
 } // End of namespace Xeen

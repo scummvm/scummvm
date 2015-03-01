@@ -331,79 +331,59 @@ void Spells::createFood() {
 }
 
 void Spells::cureDisease() {
-	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_CureDisease);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-
 	sound.playFX(30);
-	c.addHitPoints(0);
-	c._conditions[DISEASED] = 0;
+	c->addHitPoints(0);
+	c->_conditions[DISEASED] = 0;
 	intf.drawParty(true);
 }
 
 void Spells::cureParalysis() {
-	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_CureParalysis);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-
 	sound.playFX(30);
-	c.addHitPoints(0);
-	c._conditions[PARALYZED] = 0;
+	c->addHitPoints(0);
+	c->_conditions[PARALYZED] = 0;
 	intf.drawParty(true);
 }
 
 void Spells::curePoison() {
-	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_CurePoison);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-
 	sound.playFX(30);
-	c.addHitPoints(0);
-	c._conditions[POISONED] = 0;
+	c->addHitPoints(0);
+	c->_conditions[POISONED] = 0;
 	intf.drawParty(true);
 }
 
 void Spells::cureWounds() {
-	Combat &combat = *_vm->_combat;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_CureWounds);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-
-	if (c.isDead()) {
+	if (c->isDead()) {
 		spellFailed();
 	} else {
 		sound.playFX(30);
-		c.addHitPoints(15);
+		c->addHitPoints(15);
 	}
 }
 
@@ -559,17 +539,13 @@ void Spells::elementalStorm() {
 }
 
 void Spells::enchantItem() {
-	Combat &combat = *_vm->_combat;
-	Party &party = *_vm->_party;
 	Mode oldMode = _vm->_mode;
 
-	int charIndex = SpellOnWho::show(_vm, MS_FirstAid);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_EnchantItem);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-	ItemsDialog::show(_vm, &c, ITEMMODE_ENCHANT);
+	ItemsDialog::show(_vm, c, ITEMMODE_ENCHANT);
 
 	_vm->_mode = oldMode;
 }
@@ -648,23 +624,17 @@ void Spells::fireball() {
 }
 
 void Spells::firstAid() {
-	Combat &combat = *_vm->_combat;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_FirstAid);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_FirstAid);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-
-	if (c.isDead()) {
+	if (c->isDead()) {
 		spellFailed();
-	}
-	else {
+	} else {
 		sound.playFX(30);
-		c.addHitPoints(6);
+		c->addHitPoints(6);
 	}
 }
 
@@ -788,20 +758,15 @@ void Spells::insectSpray() {
 }
 
 void Spells::itemToGold() {
-	Combat &combat = *_vm->_combat;
-	Party &party = *_vm->_party;
-
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_ItemToGold);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
 
 	_vm->_screen->_windows[11].close();
-	ItemsDialog::show(_vm, &c, ITEMMODE_TO_GOLD);
+	ItemsDialog::show(_vm, c, ITEMMODE_TO_GOLD);
 
 	_vm->_mode = oldMode;
 }
@@ -931,23 +896,17 @@ void Spells::moonRay() {
 }
 
 void Spells::naturesCure() {
-	Combat &combat = *_vm->_combat;
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_NaturesCure);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
-
-	if (c.isDead()) {
+	if (c->isDead()) {
 		spellFailed();
 	} else {
 		sound.playFX(30);
-		c.addHitPoints(25);
+		c->addHitPoints(25);
 	}
 }
 
@@ -974,12 +933,39 @@ void Spells::poisonVolley() {
 }
 
 void Spells::powerCure() {
-	
+	SoundManager &sound = *_vm->_sound;
+
+	Character *c = SpellOnWho::show(_vm, MS_PowerCure);
+	if (!c)
+		return;
+
+	if (c->isDead()) {
+		spellFailed();
+	} else {
+		sound.playFX(30);
+		c->addHitPoints(_vm->getRandomNumber(2, 12) * _vm->_combat->_oldCharacter->getCurrentLevel());
+	}
 }
 
-void Spells::powerShield() { error("TODO: spell"); }
+void Spells::powerShield() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::prismaticLight() { error("TODO: spell"); }
+	sound.playFX(20);
+	party._powerShield = combat._oldCharacter->getCurrentLevel();
+}
+
+void Spells::prismaticLight() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 80;
+	combat._damageType = (DamageType)_vm->getRandomNumber(DT_PHYSICAL, DT_ENERGY);
+	combat._rangeType = RT_ALL;
+	sound.playFX(18);
+	combat.multiAttack(14);
+}
 
 void Spells::protectionFromElements() {
 	Combat &combat = *_vm->_combat;
@@ -1013,32 +999,91 @@ void Spells::protectionFromElements() {
 	}
 }
 
-void Spells::raiseDead() { error("TODO: spell"); }
-
-void Spells::rechargeItem() { error("TODO: spell"); }
-
-void Spells::resurrection() { error("TODO: spell"); }
-
-void Spells::revitalize() {
-	Combat &combat = *_vm->_combat;
+void Spells::raiseDead() {
 	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
-	if (charIndex == -1)
+	Character *c = SpellOnWho::show(_vm, MS_RaiseDead);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
+	if (!c->_conditions[DEAD]) {
+		spellFailed();
+	} else {
+		c->_conditions[DEAD] = 0;
+		c->_conditions[UNCONSCIOUS] = 0;
+		c->_currentHp = 0;
+		sound.playFX(30);
+		c->addHitPoints(1);
+		if (--c->_endurance._permanent < 1)
+			c->_endurance._permanent = 1;
+
+		intf.drawParty(true);
+	}
+}
+
+void Spells::rechargeItem() {
+	Mode oldMode = _vm->_mode;
+
+	Character *c = SpellOnWho::show(_vm, MS_RechargeItem);
+	if (!c)
+		return;
+
+	ItemsDialog::show(_vm, c, ITEMMODE_RECHARGE);
+	_vm->_mode = oldMode;
+}
+
+void Spells::resurrection() {
+	Interface &intf = *_vm->_interface;
+	SoundManager &sound = *_vm->_sound;
+
+	Character *c = SpellOnWho::show(_vm, MS_RaiseDead);
+	if (!c)
+		return;
+
+	if (!c->_conditions[ERADICATED]) {
+		spellFailed();
+		sound.playFX(30);
+	} else {
+		sound.playFX(30);
+		c->addHitPoints(0);
+		c->_conditions[ERADICATED] = 0;
+		
+		if (--c->_endurance._permanent < 1)
+			c->_endurance._permanent = 1;
+		if ((c->_tempAge + 5) >= 250)
+			c->_tempAge = 250;
+		else
+			c->_tempAge += 5;
+
+		intf.drawParty(true);
+	}
+}
+
+void Spells::revitalize() {
+	Interface &intf = *_vm->_interface;
+	SoundManager &sound = *_vm->_sound;
+
+	Character *c = SpellOnWho::show(_vm, MS_Revitalize);
+	if (!c)
+		return;
 
 	sound.playFX(30);
-	c.addHitPoints(0);
-	c._conditions[WEAK] = 0;
+	c->addHitPoints(0);
+	c->_conditions[WEAK] = 0;
 	intf.drawParty(true);
 }
 
-void Spells::shrapMetal() { error("TODO: spell"); }
+void Spells::shrapMetal() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = combat._oldCharacter->getCurrentLevel() * 2;
+	combat._damageType = DT_PHYSICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(16);
+	combat.multiAttack(15);
+}
 
 void Spells::sleep() {
 	Combat &combat = *_vm->_combat;
@@ -1062,47 +1107,182 @@ void Spells::sparks() {
 	combat.multiAttack(5);
 }
 
-void Spells::starBurst() { error("TODO: spell"); }
-
-void Spells::stoneToFlesh() { error("TODO: spell"); }
-
-void Spells::sunRay() { error("TODO: spell"); }
-
-void Spells::superShelter() { error("TODO: spell"); }
-
-void Spells::suppressDisease() { error("TODO: spell"); }
-
-void Spells::suppressPoison() {
+void Spells::starBurst() {
 	Combat &combat = *_vm->_combat;
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
 
-	int charIndex = SpellOnWho::show(_vm, MS_FirstAid);
-	if (charIndex == -1)
+	combat._monsterDamage = 500;
+	combat._damageType = DT_FIRE;
+	combat._rangeType = RT_ALL;
+	sound.playFX(13);
+	combat.multiAttack(15);
+}
+
+void Spells::stoneToFlesh() {
+	Interface &intf = *_vm->_interface;
+	SoundManager &sound = *_vm->_sound;
+
+	Character *c = SpellOnWho::show(_vm, MS_StoneToFlesh);
+	if (!c)
 		return;
 
-	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
-		party._activeParty[charIndex];
+	sound.playFX(30);
+	c->addHitPoints(0);
+	c->_conditions[STONED] = 0;
+	intf.drawParty(true);
+}
 
-	if (c._conditions[POISONED]) {
-		if (c._conditions[POISONED] >= 4) {
-			c._conditions[POISONED] -= 2;
+void Spells::sunRay() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 200;
+	combat._damageType = DT_ENERGY;
+	combat._rangeType = RT_ALL;
+	sound.playFX(16);
+	combat.multiAttack(13);
+}
+
+void Spells::superShelter() {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	SoundManager &sound = *_vm->_sound;
+
+	if (map.mazeData()._mazeFlags & RESTRICTION_SUPER_SHELTER) {
+		spellFailed();
+	} else {
+		Mode oldMode = _vm->_mode;
+		_vm->_mode = MODE_12;
+		sound.playFX(30);
+		intf.rest();
+		_vm->_mode = oldMode;
+	}
+}
+
+void Spells::suppressDisease() {
+	Interface &intf = *_vm->_interface;
+	SoundManager &sound = *_vm->_sound;
+
+	Character *c = SpellOnWho::show(_vm, MS_SuppressDisease);
+	if (!c)
+		return;
+
+	if (c->_conditions[DISEASED]) {
+		if (c->_conditions[DISEASED] >= 4)
+			c->_conditions[DISEASED] -= 3;
+		else
+			c->_conditions[DISEASED] = 1;
+
+		sound.playFX(20);
+		c->addHitPoints(0);
+		intf.drawParty(true);
+	}
+}
+
+void Spells::suppressPoison() {
+	Interface &intf = *_vm->_interface;
+	SoundManager &sound = *_vm->_sound;
+
+	Character *c = SpellOnWho::show(_vm, MS_FirstAid);
+	if (!c)
+		return;
+
+	if (c->_conditions[POISONED]) {
+		if (c->_conditions[POISONED] >= 4) {
+			c->_conditions[POISONED] -= 2;
 		} else {
-			c._conditions[POISONED] = 1;
+			c->_conditions[POISONED] = 1;
 		}
 	}
 
 	sound.playFX(20);
-	c.addHitPoints(0);
+	c->addHitPoints(0);
 	intf.drawParty(1);
 }
 
-void Spells::teleport() { error("TODO: spell"); }		// Not while engaged
+void Spells::teleport() {
+	Map &map = *_vm->_map;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::timeDistortion() { error("TODO: spell"); }
+	if (map.mazeData()._mazeFlags & RESTRICTION_TELPORT) {
+		spellFailed();
+	} else {
+		switch (Teleport::show(_vm)) {
+		case 0:
+			spellFailed();
+			break;
+		case 1:
+			sound.playFX(51);
+			break;
+		default:
+			break;
+		}
+	}
+}
 
-void Spells::townPortal() { error("TODO: spell"); }		// Not while engaged
+void Spells::timeDistortion() {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	if (map.mazeData()._mazeFlags & RESTRICTION_TIME_DISTORTION) {
+		spellFailed();
+	} else {
+		party.moveToRunLocation();
+		sound.playFX(51);
+		intf.draw3d(true);
+	}
+}
+
+void Spells::townPortal() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	if (map.mazeData()._mazeFlags & RESTRICTION_TOWN_PORTAL) {
+		spellFailed();
+		return;
+	} 
+
+	int townNumber = TownPortal::show(_vm);
+	if (!townNumber)
+		return;
+	
+	sound.playFX(51);
+	map._loadDarkSide = map._sideTownPortal;
+	_vm->_files->_isDarkCc = map._sideTownPortal > 0;
+	map.load(TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
+
+	if (!_vm->_files->_isDarkCc) {
+		party.moveToRunLocation();
+	} else {
+		switch (townNumber) {
+		case 1:
+			party._mazePosition = Common::Point(14, 11);
+			party._mazeDirection = DIR_SOUTH;
+			break;
+		case 2:
+			party._mazePosition = Common::Point(5, 12);
+			party._mazeDirection = DIR_WEST;
+			break;
+		case 3:
+			party._mazePosition = Common::Point(2, 15);
+			party._mazeDirection = DIR_EAST;
+			break;
+		case 4:
+			party._mazePosition = Common::Point(8, 11);
+			party._mazeDirection = DIR_NORTH;
+			break;
+		case 5:
+			party._mazePosition = Common::Point(2, 6);
+			party._mazeDirection = DIR_NORTH;
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 void Spells::toxicCloud() {
 	Combat &combat = *_vm->_combat;
@@ -1126,9 +1306,22 @@ void Spells::turnUndead() {
 	combat.multiAttack(13);
 }
 
-void Spells::walkOnWater() { error("TODO: spell"); }
+void Spells::walkOnWater() {
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::wizardEye() { error("TODO: spell"); }		// Not while engaged
+	party._walkOnWaterActive = true;
+	sound.playFX(20);
+}
+
+void Spells::wizardEye() {
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	party._wizardEyeActive = true;
+	party._automapOn = false;
+	sound.playFX(20);
+}
 
 void Spells::frostbite2() {
 	Combat &combat = *_vm->_combat;
