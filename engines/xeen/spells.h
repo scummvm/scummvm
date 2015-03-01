@@ -116,7 +116,7 @@ private:
 	void timeDistortion();
 	void dragonSleep();
 
-	void cureDisease();
+	void suppressPoison();
 	void teleport();		// Not while engaged
 	void  fingerOfDeath();
 	void cureParalysis();

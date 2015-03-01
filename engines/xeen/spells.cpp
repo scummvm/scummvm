@@ -75,7 +75,7 @@ void Spells::executeSpell(int spellId) {
 		&Spells::curePoison, &Spells::acidSpray, &Spells::timeDistortion,
 		&Spells::dragonSleep,
 
-		&Spells::cureDisease, &Spells::teleport, &Spells::fingerOfDeath,
+		&Spells::suppressPoison, &Spells::teleport, &Spells::fingerOfDeath,
 		&Spells::cureParalysis, &Spells::golemStopper, &Spells::poisonVolley,
 		&Spells::deadlySwarm, &Spells::superShelter, &Spells::dayOfProtection,
 		&Spells::dayOfSorcery,
@@ -264,18 +264,144 @@ void Spells::firstAid() {
 	}
 }
 
-void Spells::flyingFist() { error("TODO: spell"); }
-void Spells::energyBlast() { error("TODO: spell"); }
-void Spells::sleep() { error("TODO: spell"); }
-void Spells::revitalize() { error("TODO: spell"); }
-void Spells::cureWounds() { error("TODO: spell"); }
-void Spells::sparks() { error("TODO: spell"); }
+void Spells::flyingFist() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 6;
+	combat._damageType = DT_PHYSICAL;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(18);
+	combat.multiAttack(14);
+}
+
+void Spells::energyBlast() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = combat._oldCharacter->getCurrentLevel() * 2;
+	combat._damageType = DT_ENERGY;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(16);
+	combat.multiAttack(13);
+}
+
+void Spells::sleep() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_SLEEP;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(7);
+}
+
+void Spells::revitalize() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	sound.playFX(30);
+	c.addHitPoints(0);
+	c._conditions[WEAK] = 0;
+	intf.drawParty(true);
+}
+
+void Spells::cureWounds() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	if (c.isDead()) {
+		spellFailed();
+	} else {
+		sound.playFX(30);
+		c.addHitPoints(15);
+	}
+}
+
+void Spells::sparks() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = combat._oldCharacter->getCurrentLevel() * 2;
+	combat._damageType = DT_ELECTRICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(14);
+	combat.multiAttack(5);
+}
 
 void Spells::shrapMetal() { error("TODO: spell"); }
 void Spells::insectSpray() { error("TODO: spell"); }
-void Spells::toxicCloud() { error("TODO: spell"); }
-void Spells::protectionFromElements() { error("TODO: spell"); }
-void Spells::pain() { error("TODO: spell"); }
+
+void Spells::toxicCloud() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 10;
+	combat._damageType = DT_POISON;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(17);
+	combat.multiAttack(10);
+}
+
+void Spells::suppressPoison() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_FirstAid);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	if (c._conditions[POISONED]) {
+		if (c._conditions[POISONED] >= 4) {
+			c._conditions[POISONED] -= 2;
+		} else {
+			c._conditions[POISONED] = 1;
+		}
+	}
+
+	sound.playFX(20);
+	c.addHitPoints(0);
+	intf.drawParty(1);
+}
+
+void Spells::protectionFromElements() {
+	error("TODO: spell");
+}
+
+void Spells::pain() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_PHYSICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(14);
+}
+
 void Spells::jump() { error("TODO: spell"); }			// Not while engaged
 void Spells::beastMaster() { error("TODO: spell"); }
 void Spells::clairvoyance() { error("TODO: spell"); }
@@ -304,7 +430,6 @@ void Spells::acidSpray() { error("TODO: spell"); }
 void Spells::timeDistortion() { error("TODO: spell"); }
 void Spells::dragonSleep() { error("TODO: spell"); }
 
-void Spells::cureDisease() { error("TODO: spell"); }
 void Spells::teleport() { error("TODO: spell"); }		// Not while engaged
 void Spells:: fingerOfDeath() { error("TODO: spell"); }
 void Spells::cureParalysis() { error("TODO: spell"); }
