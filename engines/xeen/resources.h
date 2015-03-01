@@ -556,6 +556,12 @@ extern const char *const TOWN_PORTAL;
 
 extern const int TOWN_MAP_NUMBERS[2][5];
 
+extern const char *const MONSTER_DETAILS;
+
+extern const char *const MONSTER_SPECIAL_ATTACKS[23];
+
+extern const char *const IDENTIFY_MONSTERS;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

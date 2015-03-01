@@ -711,7 +711,16 @@ void Spells::hypnotize() {
 	combat.multiAttack(7);
 }
 
-void Spells::identifyMonster() { error("TODO: spell"); }
+void Spells::identifyMonster() {
+	Combat &combat = *_vm->_combat;
+
+	if (combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1
+		&& combat._attackMonsters[2] == -1) {
+		spellFailed();
+	} else {
+		IdentifyMonster::show(_vm);
+	}
+}
 
 void Spells::implosion() {
 	Combat &combat = *_vm->_combat;

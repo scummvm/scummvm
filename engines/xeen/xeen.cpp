@@ -350,4 +350,9 @@ Common::String XeenEngine::printK(uint value) {
 		Common::String::format("%u", value);
 }
 
+Common::String XeenEngine::printK2(uint value) {
+	return (value > 999) ? Common::String::format("%uk", value / 1000) :
+		Common::String::format("%u", value);
+}
+
 } // End of namespace Xeen

@@ -973,4 +973,56 @@ int TownPortal::execute() {
 	return townNumber;
 }
 
+/*------------------------------------------------------------------------*/
+
+void IdentifyMonster::show(XeenEngine *vm) {
+	IdentifyMonster *dlg = new IdentifyMonster(vm);
+	dlg->execute();
+	delete dlg;
+}
+
+void IdentifyMonster::execute() {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	Spells &spells = *_vm->_spells;
+	Window &w = screen._windows[17];
+	Common::String monsterDesc[3];
+
+	for (int monIndex = 0; monIndex < 3; ++monIndex) {
+		if (combat._attackMonsters[monIndex] == -1)
+			continue;
+
+		MazeMonster &monster = map._mobData._monsters[combat._attackMonsters[monIndex]];
+		MonsterStruct &monsterData = *monster._monsterData;
+
+		monsterDesc[monIndex] = Common::String::format(MONSTER_DETAILS,
+			monsterData._name.c_str(),
+			_vm->printK2(monster._hp).c_str(),
+			monsterData._accuracy, monsterData._numberOfAttacks,
+			MONSTER_SPECIAL_ATTACKS[monsterData._specialAttack]
+		);
+	}
+
+	sound.playFX(20);
+	w.open();
+	w.writeString(Common::String::format(IDENTIFY_MONSTERS,
+		monsterDesc[0].c_str(), monsterDesc[1].c_str(), monsterDesc[2].c_str()));
+	w.update();
+
+	do {
+		events.updateGameCounter();
+		intf.draw3d(false);
+		w.frame();
+		screen._windows[3].update();
+
+		events.wait(1);
+	} while (!events.isKeyMousePressed());
+
+	w.close();
+}
+
 } // End of namespace Xeen

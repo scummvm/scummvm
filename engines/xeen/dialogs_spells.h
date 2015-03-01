@@ -146,6 +146,17 @@ public:
 	static int show(XeenEngine *vm);
 };
 
+class IdentifyMonster : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+
+	IdentifyMonster(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	void execute();
+public:
+	static void show(XeenEngine *vm);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_SPELLS_H */

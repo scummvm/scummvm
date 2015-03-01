@@ -203,6 +203,8 @@ public:
 	static Common::String printMil(uint value);
 
 	static Common::String printK(uint value);
+
+	static Common::String printK2(uint value);
 };
 
 } // End of namespace Xeen

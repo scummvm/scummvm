@@ -1572,4 +1572,17 @@ const int TOWN_MAP_NUMBERS[2][5] = {
 	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }
 };
 
+const char *const MONSTER_DETAILS = 
+	"\x3l\n"
+	"%s\x3""c\t100%s\t140%u\t180%u\x3r\t000%s";
+
+const char *const MONSTER_SPECIAL_ATTACKS[23] = {
+	"None", "Magic", "Fire", "Elec", "Cold", "Poison", "Energy", "Disease",
+	"Insane", "Asleep", "CurseItm", "InLove", "DrnSPts", "Curse", "Paralys",
+	"Uncons", "Confuse", "BrkWpn", "Weak", "Erad", "Age+5", "Dead", "Stone"
+};
+
+const char *const IDENTIFY_MONSTERS =
+	"Name\x3""c\t100HP\t140AC\t177#Atks\x3r\t000Special%s%s%s";
+
 } // End of namespace Xeen
