@@ -379,6 +379,10 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 
 	int y_mask_talk = 170;
 	int face;
+	
+	// Fix bug #5903 DRASCULA-IT: Crash/graphic glitch at castle towers
+	// Chapter 5 Room 45 is the castle tower part
+	// We use this variable as a condition below because at the castle towers we don't want to draw out the head 
 	bool notTowers = !((currentChapter == 5) && (_roomNumber == 45));
 
 	if (currentChapter == 6) {
