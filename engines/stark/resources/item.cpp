@@ -520,7 +520,12 @@ Gfx::RenderEntry *FloorPositionedImageItem::getRenderEntry(const Common::Point &
 		Visual *visual = getVisual();
 
 		_renderEntry->setVisual(visual);
-		_renderEntry->setPosition(_position - positionOffset);
+		if (getAnim() && getAnim()->getSubType() == Anim::kAnimVideo) {
+			// AnimVideos override the _position, but still need to move according to scroll-offsets
+			_renderEntry->setPosition(positionOffset);
+		} else {
+			_renderEntry->setPosition(_position - positionOffset);
+		}
 		_renderEntry->setSortKey(getSortKey());
 	} else {
 		_renderEntry->setVisual(nullptr);
