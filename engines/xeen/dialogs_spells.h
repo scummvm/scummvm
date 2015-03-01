@@ -109,6 +109,19 @@ public:
 	static void show(XeenEngine *vm, int spellId);
 };
 
+class LloydsBeacon : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+
+	LloydsBeacon(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	bool execute();
+
+	void loadButtons();
+public:
+	static bool show(XeenEngine *vm);
+};
 
 } // End of namespace Xeen
 

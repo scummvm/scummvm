@@ -1544,4 +1544,14 @@ const char *const WHICH_ELEMENT2 =
 	"\r\x3""cWhich Element?', 2, 0Bh, '034\t014\f15F\fdire\t044"
 	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
 
+const char *const DETECT_MONSTERS = "\x3""cDetect Monsters";
+
+const char *const LLOYDS_BEACON =
+	"\r\x3""c\v000\t000\x1Lloyd's Beacon\n"
+	"\n"
+	"Last Location\n"
+	"\n"
+	"%s\x3l\n"
+	"x = %d\x3r\t000y = %d\x3""c\x2\v122\t021\f15S\fdet\t060\f15R\fdeturn\x1";
+
 } // End of namespace Xeen

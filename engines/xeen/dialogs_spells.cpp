@@ -755,5 +755,112 @@ void NotWhileEngaged::execute(int spellId) {
 	_vm->_mode = oldMode;
 }
 
+/*------------------------------------------------------------------------*/
+
+bool LloydsBeacon::show(XeenEngine *vm) {
+	LloydsBeacon *dlg = new LloydsBeacon(vm);
+	bool result = dlg->execute();
+	delete dlg;
+
+	return result;
+}
+
+bool LloydsBeacon::execute() {
+	Combat &combat = *_vm->_combat;
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	Spells &spells = *_vm->_spells;
+	Window &w = screen._windows[10];
+	bool isDarkCc = _vm->_files->_isDarkCc;
+	Character &c = *combat._oldCharacter;
+
+	loadButtons();
+
+	if (!c._lloydMap) {
+		// No destination previously set, so have a default ready
+		if (isDarkCc) {
+			c._lloydSide = 1;
+			c._lloydPosition = Common::Point(25, 21);
+			c._lloydMap = 29;
+		} else {
+			c._lloydSide = 0;
+			c._lloydPosition = Common::Point(18, 4);
+			c._lloydMap = 28;
+		}
+	}
+
+	// Open up the text file for the destination map and read in it's name
+	File textFile(Common::String::format("%s%c%03d.txt",
+		c._lloydSide == 0 ? "xeen" : "dark",
+		c._lloydMap >= 100 ? 'x' : '0',
+		c._lloydMap));
+	Common::String mapName = textFile.readString();
+	textFile.close();
+
+	// Display the dialog
+	w.open();
+	w.writeString(Common::String::format(LLOYDS_BEACON,
+		mapName.c_str(), c._lloydPosition.x, c._lloydPosition.y));
+	drawButtons(&screen);
+	w.update();
+
+	bool result = true;
+	do {
+		do {
+			events.updateGameCounter();
+			intf.draw3d(true);
+
+			do {
+				events.pollEventsAndWait();
+				if (_vm->shouldQuit())
+					return true;
+
+				checkEvents(_vm);
+			} while (!_buttonValue && events.timeElapsed() < 1);
+		} while (!_buttonValue);
+
+		switch (_buttonValue) {
+		case Common::KEYCODE_r:
+			if (!isDarkCc && c._lloydMap >= 75 && c._lloydMap <= 78 && !party._cloudsEnd) {
+				result = false;
+			} else {
+				sound.playFX(51);
+				map._loadDarkSide = isDarkCc;
+				if (c._lloydMap != party._mazeId || c._lloydSide != (isDarkCc ? 1 : 0)) {
+					map.load(c._lloydMap);
+				}
+
+				party._mazePosition = c._lloydPosition;
+			}
+
+			_buttonValue = Common::KEYCODE_ESCAPE;
+			break;
+
+		case Common::KEYCODE_s:
+		case Common::KEYCODE_t:
+			sound.playFX(20);
+			c._lloydMap = party._mazeId;
+			c._lloydPosition = party._mazePosition;
+			c._lloydSide = isDarkCc ? 1 : 0;
+			
+			_buttonValue = Common::KEYCODE_ESCAPE;
+			break;
+		}
+	} while (_buttonValue != Common::KEYCODE_ESCAPE);
+
+	w.close();
+	return result;
+}
+
+void LloydsBeacon::loadButtons() {
+	_iconSprites.load("lloyds.icn");
+
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_r, &_iconSprites);
+	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_iconSprites);
+}
 
 } // End of namespace Xeen

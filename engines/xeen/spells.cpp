@@ -21,6 +21,7 @@
  */
 
 #include "xeen/spells.h"
+#include "xeen/dialogs_items.h"
 #include "xeen/dialogs_spells.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
@@ -258,7 +259,16 @@ void Spells::addSpellCost(Character &c, int spellId) {
 	party._gems += gemCost;
 }
 
-void Spells::acidSpray() { error("TODO: spell"); }
+void Spells::acidSpray() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 15;
+	combat._damageType = DT_POISON;
+	combat._rangeType = RT_ALL;
+	sound.playFX(17);
+	combat.multiAttack(10);
+}
 
 void Spells::awaken() {
 	Interface &intf = *_vm->_interface;
@@ -276,21 +286,106 @@ void Spells::awaken() {
 	sound.playFX(30);
 }
 
-void Spells::beastMaster() { error("TODO: spell"); }
+void Spells::beastMaster() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::bless() { error("TODO: spell"); }
+	combat._monsterDamage = 0;
+	combat._damageType = DT_BEASTMASTER;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(7);
+}
 
-void Spells::clairvoyance() { error("TODO: spell"); }
+void Spells::bless() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::coldRay() { error("TODO: spell"); }
+	sound.playFX(30);
+	party._blessed = combat._oldCharacter->getCurrentLevel();
+}
 
-void Spells::createFood() { error("TODO: spell"); }
+void Spells::clairvoyance() {
+	_vm->_party->_clairvoyanceActive = true;
+	_vm->_sound->playFX(20);
+}
 
-void Spells::cureDisease() { error("TODO: spell"); }
+void Spells::coldRay() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::cureParalysis() { error("TODO: spell"); }
+	combat._monsterDamage = _vm->getRandomNumber(2, 4) * combat._oldCharacter->getCurrentLevel();
+	combat._damageType = DT_COLD;
+	combat._rangeType = RT_ALL;
+	sound.playFX(15);
+	combat.multiAttack(8);
+}
 
-void Spells::curePoison() { error("TODO: spell"); }
+void Spells::createFood() { 
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	party._food += party._activeParty.size();
+	sound.playFX(20);
+}
+
+void Spells::cureDisease() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	sound.playFX(30);
+	c.addHitPoints(0);
+	c._conditions[DISEASED] = 0;
+	intf.drawParty(true);
+}
+
+void Spells::cureParalysis() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	sound.playFX(30);
+	c.addHitPoints(0);
+	c._conditions[PARALYZED] = 0;
+	intf.drawParty(true);
+}
+
+void Spells::curePoison() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	sound.playFX(30);
+	c.addHitPoints(0);
+	c._conditions[POISONED] = 0;
+	intf.drawParty(true);
+}
 
 void Spells::cureWounds() {
 	Combat &combat = *_vm->_combat;
@@ -306,30 +401,178 @@ void Spells::cureWounds() {
 
 	if (c.isDead()) {
 		spellFailed();
-	}
-	else {
+	} else {
 		sound.playFX(30);
 		c.addHitPoints(15);
 	}
 }
 
-void Spells::dancingSword() { error("TODO: spell"); }
+void Spells::dancingSword() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::dayOfProtection() { error("TODO: spell"); }
+	combat._monsterDamage = _vm->getRandomNumber(6, 14) * combat._oldCharacter->getCurrentLevel();
+	combat._damageType = DT_PHYSICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(14);
+}
 
-void Spells::dayOfSorcery() { error("TODO: spell"); }
+void Spells::dayOfProtection() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::deadlySwarm() { error("TODO: spell"); }
+	int lvl = combat._oldCharacter->getCurrentLevel();
+	party._walkOnWaterActive = true;
+	party._heroism = lvl;
+	party._holyBonus = lvl;
+	party._blessed = lvl;
+	party._poisonResistence = lvl;
+	party._coldResistence = lvl;
+	party._electricityResistence = lvl;
+	party._fireResistence = lvl;
+	party._lightCount = lvl;
+	sound.playFX(20);
+}
 
-void Spells::detectMonster() { error("TODO: spell"); }
+void Spells::dayOfSorcery() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::divineIntervention() { error("TODO: spell"); }
+	int lvl = combat._oldCharacter->getCurrentLevel();
+	party._powerShield = lvl;
+	party._clairvoyanceActive = true;
+	party._wizardEyeActive = true;
+	party._levitateActive = true;
+	party._lightCount = lvl;
+	party._automapOn = false;
+	sound.playFX(20);
+}
 
-void Spells::dragonSleep() { error("TODO: spell"); }
+void Spells::deadlySwarm() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::elementalStorm() { error("TODO: spell"); }
+	combat._monsterDamage = 40;
+	combat._damageType = DT_PHYSICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(13);
+	combat.multiAttack(15);
+}
 
-void Spells::enchantItem() { error("TODO: spell"); }
+void Spells::detectMonster() {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+	Window &w = screen._windows[19];
+	bool isDarkCc = _vm->_files->_isDarkCc;
+	int grid[7][7];
+
+	SpriteResource sprites(isDarkCc ? "detectmn.icn" : "detctmon.icn");
+	Common::fill(&grid[0][0], &grid[7][7], 0);
+
+	w.open();
+	w.writeString(DETECT_MONSTERS);
+	sprites.draw(w, 0, Common::Point(243, 80));
+
+	for (int yDiff = 3; yDiff >= -3; --yDiff) {
+		for (int xDiff = -3; xDiff <= 3; ++xDiff) {
+			for (uint monIndex = 0; monIndex < map._mobData._monsters.size(); ++monIndex) {
+				MazeMonster &monster = map._mobData._monsters[monIndex];
+				Common::Point pt = party._mazePosition + Common::Point(xDiff, yDiff);
+				if (monster._position == pt) {
+					if (++grid[yDiff][xDiff] > 3)
+						grid[yDiff][xDiff] = 3;
+				
+					sprites.draw(w, grid[yDiff][xDiff], Common::Point(xDiff * 9 + 244,
+						yDiff * 7 + 81));
+				}
+			}
+		}
+	}
+
+	sprites.draw(w, party._mazeDirection + 1, Common::Point(270, 101));
+	sound.playFX(20);
+	w.update();
+
+	do {
+		events.updateGameCounter();
+		intf.draw3d(true);
+
+		events.wait(1);
+	} while (!events.isKeyMousePressed());
+
+	w.close();
+}
+
+void Spells::divineIntervention() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	Character &castChar = *combat._oldCharacter;
+
+	if ((castChar._tempAge + 5) > 250) {
+		castChar._tempAge = 250;
+	} else {
+		castChar._tempAge += 5;
+	}
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		Character &c = party._activeParty[idx];
+		Common::fill(&c._conditions[CURSED], &c._conditions[ERADICATED], 0);
+		if (!c._conditions[ERADICATED])
+			c._currentHp = c.getMaxHP();
+	}
+
+	sound.playFX(20);
+	intf.drawParty(true);
+}
+
+void Spells::dragonSleep() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_DRAGONSLEEP;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(18);
+	combat.multiAttack(7);
+}
+
+void Spells::elementalStorm() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+	static const int STORM_FX_LIST[4] = { 13, 14, 15, 17 };
+	static const int STORM_MA_LIST[4] = { 0, 5, 9, 10 };
+
+	combat._monsterDamage = 150;
+	combat._damageType = (DamageType)_vm->getRandomNumber(DT_FIRE, DT_POISON);
+	combat._rangeType = RT_ALL;
+	sound.playFX(STORM_FX_LIST[combat._damageType]);
+	combat.multiAttack(STORM_MA_LIST[combat._damageType]);
+}
+
+void Spells::enchantItem() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	Mode oldMode = _vm->_mode;
+
+	int charIndex = SpellOnWho::show(_vm, MS_FirstAid);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+	ItemsDialog::show(_vm, &c, ITEMMODE_ENCHANT);
+
+	_vm->_mode = oldMode;
+}
 
 void Spells::energyBlast() {
 	Combat &combat = *_vm->_combat;
@@ -342,15 +585,67 @@ void Spells::energyBlast() {
 	combat.multiAttack(13);
 }
 
-void Spells::etherialize() { error("TODO: spell"); }		// Not while engaged
+void Spells::etherialize() {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+	Common::Point pt = party._mazePosition + Common::Point(
+		SCREEN_POSITIONING_X[party._mazeDirection][7],
+		SCREEN_POSITIONING_Y[party._mazeDirection][7]
+	);
 
-void Spells::fantasticFreeze() { error("TODO: spell"); }
+	if ((map.mazeData()._mazeFlags & RESTRICTION_ETHERIALIZE) ||
+			map.mazeLookup(pt, 0, 0xffff) == INVALID_CELL) {
+		spellFailed();
+	} else {
+		party._mazePosition = pt;
+		sound.playFX(51);
+	}
+}
 
-void Spells::fieryFlail() { error("TODO: spell"); }
+void Spells::fantasticFreeze() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::fingerOfDeath() { error("TODO: spell"); }
+	combat._monsterDamage = 40;
+	combat._damageType = DT_COLD;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(15);
+	combat.multiAttack(8);
+}
 
-void Spells::fireball() { error("TODO: spell"); }
+void Spells::fieryFlail() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 100;
+	combat._damageType = DT_FIRE;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(13);
+	combat.multiAttack(2);
+}
+
+void Spells::fingerOfDeath() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_FINGEROFDEATH;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(14);
+}
+
+void Spells::fireball() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = _vm->getRandomNumber(3, 7) * combat._oldCharacter->getCurrentLevel();
+	combat._damageType = DT_FIRE;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(13);
+	combat.multiAttack(0);
+}
 
 void Spells::firstAid() {
 	Combat &combat = *_vm->_combat;
@@ -384,29 +679,132 @@ void Spells::flyingFist() {
 	combat.multiAttack(14);
 }
 
-void Spells::frostbite() { error("TODO: spell"); }
+void Spells::frostbite() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::golemStopper() { error("TODO: spell"); }
+	combat._monsterDamage = 35;
+	combat._damageType = DT_COLD;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(8);
+	combat.multiAttack(8);
+}
 
-void Spells::heroism() { error("TODO: spell"); }
+void Spells::golemStopper() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::holyBonus() { error("TODO: spell"); }
+	combat._monsterDamage = 0;
+	combat._damageType = DT_GOLEMSTOPPER;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(16);
+	combat.multiAttack(6);
+}
 
-void Spells::holyWord() { error("TODO: spell"); }
+void Spells::heroism() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::hypnotize() { error("TODO: spell"); }
+	sound.playFX(30);
+	party._heroism = combat._oldCharacter->getCurrentLevel();
+}
+
+void Spells::holyBonus() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	sound.playFX(30);
+	party._holyBonus = combat._oldCharacter->getCurrentLevel();
+}
+
+void Spells::holyWord() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_HOLYWORD;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(13);
+}
+
+void Spells::hypnotize() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_HYPNOTIZE;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(7);
+}
 
 void Spells::identifyMonster() { error("TODO: spell"); }
 
-void Spells::implosion() { error("TODO: spell"); }
+void Spells::implosion() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::incinerate() { error("TODO: spell"); }
+	combat._monsterDamage = 1000;
+	combat._damageType = DT_ENERGY;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(18);
+	combat.multiAttack(6);
+}
 
-void Spells::inferno() { error("TODO: spell"); }
+void Spells::incinerate() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::insectSpray() { error("TODO: spell"); }
+	combat._monsterDamage = 250;
+	combat._damageType = DT_FIRE;
+	combat._rangeType = RT_SINGLE;
+	sound.playFX(22);
+	combat.multiAttack(1);
+}
 
-void Spells::itemToGold() { error("TODO: spell"); }
+void Spells::inferno() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 250;
+	combat._damageType = DT_FIRE;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(13);
+	combat.multiAttack(1);
+}
+
+void Spells::insectSpray() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 0;
+	combat._damageType = DT_INSECT_SPRAY;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(17);
+	combat.multiAttack(10);
+}
+
+void Spells::itemToGold() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_FF;
+
+	_vm->_screen->_windows[11].close();
+	ItemsDialog::show(_vm, &c, ITEMMODE_TO_GOLD);
+
+	_vm->_mode = oldMode;
+}
 
 void Spells::jump() {
 	Map &map = *_vm->_map;
@@ -446,7 +844,10 @@ void Spells::jump() {
 	spellFailed();
 }
 
-void Spells::levitate() { error("TODO: spell"); }
+void Spells::levitate() {
+	_vm->_party->_levitateActive = true;
+	_vm->_sound->playFX(20);
+}
 
 void Spells::light() { 
 	Interface &intf = *_vm->_interface;
@@ -459,9 +860,25 @@ void Spells::light() {
 	sound.playFX(39);
 }
 
-void Spells::lightningBolt() { error("TODO: spell"); }
+void Spells::lightningBolt() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::lloydsBeacon() { error("TODO: spell"); }	// Not while engaged
+	combat._monsterDamage = _vm->getRandomNumber(4, 6) * combat._oldCharacter->getCurrentLevel();
+	combat._damageType = DT_ELECTRICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(14);
+	combat.multiAttack(3);
+}
+
+void Spells::lloydsBeacon() {
+	if (_vm->_map->mazeData()._mazeFlags & RESTRICTION_LLOYDS_BEACON) {
+		spellFailed();
+	} else {
+		if (!LloydsBeacon::show(_vm))
+			spellFailed();
+	}
+}
 
 void Spells::magicArrow() { 
 	Combat &combat = *_vm->_combat;
@@ -471,13 +888,68 @@ void Spells::magicArrow() {
 	combat.multiAttack(11);
 }
 
-void Spells::massDistortion() { error("TODO: spell"); }
+void Spells::massDistortion() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::megaVolts() { error("TODO: spell"); }
+	combat._monsterDamage = 0;
+	combat._damageType = DT_MASS_DISTORTION;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(18);
+	combat.multiAttack(6);
+}
 
-void Spells::moonRay() { error("TODO: spell"); }
+void Spells::megaVolts() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::naturesCure() { error("TODO: spell"); }
+	combat._monsterDamage = 150;
+	combat._damageType = DT_ELECTRICAL;
+	combat._rangeType = RT_GROUP;
+	sound.playFX(14);
+	combat.multiAttack(4);
+}
+
+void Spells::moonRay() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	combat._monsterDamage = 30;
+	combat._damageType = DT_ENERGY;
+	combat._rangeType = RT_ALL;
+	sound.playFX(16);
+	combat.multiAttack(13);
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		sound.playFX(30);
+		party._activeParty[idx].addHitPoints(_vm->getRandomNumber(1, 30));
+	}
+
+	intf.drawParty(true);
+}
+
+void Spells::naturesCure() {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+	Party &party = *_vm->_party;
+	SoundManager &sound = *_vm->_sound;
+
+	int charIndex = SpellOnWho::show(_vm, MS_Revitalize);
+	if (charIndex == -1)
+		return;
+
+	Character &c = combat._combatMode == 2 ? *combat._combatParty[charIndex] :
+		party._activeParty[charIndex];
+
+	if (c.isDead()) {
+		spellFailed();
+	} else {
+		sound.playFX(30);
+		c.addHitPoints(25);
+	}
+}
 
 void Spells::pain() {
 	Combat &combat = *_vm->_combat;
@@ -490,9 +962,20 @@ void Spells::pain() {
 	combat.multiAttack(14);
 }
 
-void Spells::poisonVolley() { error("TODO: spell"); }
+void Spells::poisonVolley() {
+	Combat &combat = *_vm->_combat;
+	SoundManager &sound = *_vm->_sound;
 
-void Spells::powerCure() { error("TODO: spell"); }
+	combat._monsterDamage = 10;
+	combat._damageType = DT_POISON_VOLLEY;
+	combat._rangeType = RT_ALL;
+	sound.playFX(49);
+	combat.multiAttack(11);
+}
+
+void Spells::powerCure() {
+	
+}
 
 void Spells::powerShield() { error("TODO: spell"); }
 
