@@ -64,10 +64,6 @@ static const int MONSTER_GRID_BITINDEX2[48] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static const int MONSTER_GRID_BITMASK[12] = {
-	0xC, 8, 4, 0, 0xF, 0xF000, 0xF00, 0xF0, 0xF00, 0xF0, 0x0F, 0xF000
-};
-
 static const int ATTACK_TYPE_FX[23] = {
 	49, 18, 13, 14, 15, 17, 16, 0, 6, 1, 2, 3,
 	4, 5, 4, 9, 27, 29, 44, 51, 53, 61, 71
@@ -1598,7 +1594,7 @@ void Combat::quickFight() {
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
-			spells.castSpell(c, SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
+			spells.castSpell(c, (MagicSpell)SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
 		}
 		break;
 	case QUICK_BLOCK:

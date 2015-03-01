@@ -541,7 +541,7 @@ void Interface::perform() {
 			if (spellId == -1 || c == nullptr)
 				break;
 
-			result = spells.castSpell(c, spellId);
+			result = spells.castSpell(c, (MagicSpell)spellId);
 		} while (result != -1);
 
 		if (result == 1) {
@@ -2008,7 +2008,7 @@ void Interface::doCombat() {
 				int spellId = CastSpell::show(_vm);
 				if (spellId != -1) {
 					Character *c = combat._combatParty[combat._whosTurn];
-					spells.castSpell(c, spellId);
+					spells.castSpell(c, (MagicSpell)spellId);
 					nextChar();
 				} else {
 					highlightChar(combat._combatParty[combat._whosTurn]->_rosterId);

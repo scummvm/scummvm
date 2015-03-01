@@ -98,6 +98,18 @@ public:
 	static int show(XeenEngine *vm, int spellId);
 };
 
+class NotWhileEngaged : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+
+	NotWhileEngaged(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	void execute(int spellId);
+public:
+	static void show(XeenEngine *vm, int spellId);
+};
+
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_SPELLS_H */

@@ -438,6 +438,10 @@ const int8 SCREEN_POSITIONING_Y[4][48] = {
 	}
 };
 
+const int MONSTER_GRID_BITMASK[12] = {
+	0xC, 8, 4, 0, 0xF, 0xF000, 0xF00, 0xF0, 0xF00, 0xF0, 0x0F, 0xF000
+};
+
 const int INDOOR_OBJECT_X[2][12] = {
 	{ 5, -7, -112, 98, -8, -65, 49, -9, -34, 16, -58, 40 },
 	{ -35, -35, -142, 68, -35, -95, 19, -35, -62, -14, -98, 16 }
@@ -827,7 +831,7 @@ const int MISC_SPELL_INDEX[74] = {
 	MS_Levitate, MS_WizardEye, MS_Bless, MS_IdentifyMonster,
 	MS_LightningBolt, MS_HolyBonus, MS_PowerCure, MS_NaturesCure,
 	MS_LloydsBeacon, MS_PowerShield, MS_Heroism, MS_Hynotize,
-	MS_WalkOnWater, MS_FrostBite, MS_DetectMonster, MS_FireBall,
+	MS_WalkOnWater, MS_FrostBite, MS_DetectMonster, MS_Fireball,
 	MS_ColdRay, MS_CurePoison, MS_AcidSpray, MS_TimeDistortion,
 	MS_DragonSleep, MS_CureDisease, MS_Teleport, MS_FingerOfDeath,
 	MS_CureParalysis, MS_GolemStopper, MS_PoisonVolley, MS_DeadlySwarm,

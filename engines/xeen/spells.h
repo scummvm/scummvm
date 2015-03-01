@@ -42,7 +42,7 @@ enum MagicSpell {
 	MS_DivineIntervention = 16, MS_DragonSleep = 17, MS_ElementalStorm = 18,
 	MS_EnchantItem = 19, MS_EnergyBlast = 20, MS_Etheralize = 21,
 	MS_FantasticFreeze = 22, MS_FieryFlail = 23, MS_FingerOfDeath = 24,
-	MS_FireBall = 25, MS_FirstAid = 26, MS_FlyingFist = 27,
+	MS_Fireball = 25, MS_FirstAid = 26, MS_FlyingFist = 27,
 	MS_FrostBite = 28, MS_GolemStopper = 29, MS_Heroism = 30,
 	MS_HolyBonus = 31, MS_HolyWord = 32, MS_Hynotize = 33,
 	MS_IdentifyMonster = 34, MS_Implosion = 35, MS_Incinerate = 36,
@@ -67,91 +67,89 @@ private:
 
 	void load();
 
-	void executeSpell(int spellId);
+	void executeSpell(MagicSpell spellId);
 
 	void spellFailed();
 
 	// Spell list
-	void light();
-	void awaken();
-	void magicArrow();
-	void firstAid();
-	void flyingFist();
-	void energyBlast();
-	void sleep();
-	void revitalize();
-	void cureWounds();
-	void sparks();
-
-	void shrapMetal();
-	void insectSpray();
-	void toxicCloud();
-	void protectionFromElements();
-	void pain();
-	void jump();			// Not while engaged
-	void beastMaster();
-	void clairvoyance();
-	void turnUndead();
-	void levitate();
-
-	void wizardEye();		// Not while engaged
-	void bless();
-	void identifyMonster();
-	void lightningBolt();
-	void holyBonus();
-	void powerCure();
-	void naturesCure();
-	void lloydsBeacon();	// Not while engaged
-	void powerShield();
-	void heroism();
-
-	void hypnotize();
-	void walkOnWater();
-	void frostByte();
-	void detectMonster();
-	void fireball();
-	void coldRay();
-	void curePoison();
 	void acidSpray();
-	void timeDistortion();
-	void dragonSleep();
-
-	void suppressPoison();
-	void teleport();		// Not while engaged
-	void  fingerOfDeath();
+	void awaken();
+	void beastMaster();
+	void bless();
+	void clairvoyance();
+	void coldRay();
+	void createFood();
+	void cureDisease();
 	void cureParalysis();
-	void golemStopper();
-	void poisonVolley();
-	void deadlySwarm();
-	void superShelter();	// Not while engaged
+	void curePoison();
+	void cureWounds();
+	void dancingSword();
 	void dayOfProtection();
 	void dayOfSorcery();
-
-	void createFood();
-	void fieryFlail();
-	void rechargeItem();
-	void fantasticFreeze();
-	void townPortal();		// Not while engaged
-	void stoneToFlesh();
-	void raiseDead();
-	void etherialize();		// Not while engaged
-	void dancingSword();
-	void moonRay();
-
-	void massDistortion();
-	void prismaticLight();
-	void enchantItem();
-	void incinerate();
-	void holyWord();
-	void resurrection();
-	void elementalStorm();
-	void megaVolts();
-	void inferno();
-	void sunRay();
-
-	void implosion();
-	void starBurst();
+	void deadlySwarm();
+	void detectMonster();
 	void divineIntervention();
+	void dragonSleep();
+	void elementalStorm();
+	void enchantItem();
+	void energyBlast();
+	void etherialize();
+	void fantasticFreeze();
+	void fieryFlail();
+	void fingerOfDeath();
+	void fireball();
+	void firstAid();
+	void flyingFist();
+	void frostbite();
+	void golemStopper();
+	void heroism();
+	void holyBonus();
+	void holyWord();
+	void hypnotize();
+	void identifyMonster();
+	void implosion();
+	void incinerate();
+	void inferno();
+	void insectSpray();
+	void itemToGold();
+	void jump();
+	void levitate();
+	void light();
+	void lightningBolt();
+	void lloydsBeacon();
+	void magicArrow();
+	void massDistortion();
+	void megaVolts();
+	void moonRay();
+	void naturesCure();
+	void pain();
+	void poisonVolley();
+	void powerCure();
+	void powerShield();
+	void prismaticLight();
+	void protectionFromElements();
+	void raiseDead();
+	void rechargeItem();
+	void resurrection();
+	void revitalize();
+	void shrapMetal();
+	void sleep();
+	void sparks();
+	void starBurst();
+	void stoneToFlesh();
+	void sunRay();
+	void superShelter();
+	void suppressDisease();
+	void suppressPoison();
+	void teleport();
+	void timeDistortion();
+	void townPortal();
+	void toxicCloud();
+	void turnUndead();
+	void walkOnWater();
+	void wizardEye();
+
+	void frostbite2();
 public:
 	Common::StringArray _spellNames;
 	int _lastCaster;
@@ -162,9 +160,9 @@ public:
 
 	int calcSpellPoints(int spellId, int expenseFactor) const;
 
-	void castItemSpell(int spellId);
+	void castItemSpell(int itemSpellId);
 
-	int castSpell(Character *c, int spellId);
+	int castSpell(Character *c, MagicSpell spellId);
 
 	int subSpellCost(Character &c, int spellId);
 

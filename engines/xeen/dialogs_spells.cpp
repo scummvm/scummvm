@@ -658,7 +658,6 @@ int SelectElement::execute(int spellId) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
 	Window &w = screen._windows[15];
@@ -726,5 +725,35 @@ void SelectElement::loadButtons() {
 	addButton(Common::Rect(120, 92, 144, 112), Common::KEYCODE_c, &_iconSprites);
 	addButton(Common::Rect(150, 92, 174, 112), Common::KEYCODE_a, &_iconSprites);
 }
+
+/*------------------------------------------------------------------------*/
+
+void NotWhileEngaged::show(XeenEngine *vm, int spellId) {
+	NotWhileEngaged *dlg = new NotWhileEngaged(vm);
+	dlg->execute(spellId);
+	delete dlg;
+}
+
+void NotWhileEngaged::execute(int spellId) {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Spells &spells = *_vm->_spells;
+	Window &w = screen._windows[6];
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_3;
+
+	w.open();
+	w.writeString(Common::String::format(CANT_CAST_WHILE_ENGAGED,
+		spells._spellNames[spellId].c_str()));
+	w.update();
+
+	while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+		events.pollEventsAndWait();
+	events.clearEvents();
+
+	w.close();
+	_vm->_mode = oldMode;
+}
+
 
 } // End of namespace Xeen
