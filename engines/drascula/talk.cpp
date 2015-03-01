@@ -478,6 +478,8 @@ void DrasculaEngine::talk(const char *said, const char *filename) {
 			updateRefresh();
 		}
 
+		// Fix bug #5903 DRASCULA-IT: Crash/graphic glitch at castle towers
+		// Without the head we have to fix the subtitle's coordinates(upper-center) at the tower section
 		if (!_subtitlesDisabled) {
 			if (notTowers) {
 				centerText(said, curX, curY);
