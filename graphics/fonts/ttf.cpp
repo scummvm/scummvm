@@ -474,11 +474,11 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 
 	switch (bitmap.pixel_mode) {
 	case FT_PIXEL_MODE_MONO:
-		for (int y = 0; y < bitmap.rows; ++y) {
+		for (uint y = 0; y < bitmap.rows; ++y) {
 			const uint8 *curSrc = src;
 			uint8 mask = 0;
 
-			for (int x = 0; x < bitmap.width; ++x) {
+			for (uint x = 0; x < bitmap.width; ++x) {
 				if ((x % 8) == 0)
 					mask = *curSrc++;
 
@@ -494,7 +494,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 		break;
 
 	case FT_PIXEL_MODE_GRAY:
-		for (int y = 0; y < bitmap.rows; ++y) {
+		for (uint y = 0; y < bitmap.rows; ++y) {
 			memcpy(dst, src, bitmap.width);
 			dst += glyph.image.pitch;
 			src += srcPitch;
