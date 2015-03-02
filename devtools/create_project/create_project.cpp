@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 	setup.features = getAllFeatures();
 
 	ProjectType projectType = kProjectNone;
-	int msvcVersion = 9;
+	int msvcVersion = 12;
 	bool useSDL2 = false;
 
 	// Parse command line arguments
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12) {
+			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
@@ -449,6 +449,9 @@ int main(int argc, char *argv[]) {
 		// 4250 ('class1' : inherits 'class2::member' via dominance)
 		//   two or more members have the same name. Should be harmless
 		//
+		// 4267 ('var' : conversion from 'size_t' to 'type', possible loss of data)
+		//   throws tons and tons of warnings (no immediate plan to fix all usages)
+		//
 		// 4310 (cast truncates constant value)
 		//   used in some engines
 		//
@@ -460,6 +463,8 @@ int main(int argc, char *argv[]) {
 		//
 		// 4351 (new behavior: elements of array 'array' will be default initialized)
 		//   a change in behavior in Visual Studio 2005. We want the new behavior, so it can be disabled
+		//
+		// 4458 (declaration of 'variable' hides class member)
 		//
 		// 4512 ('class' : assignment operator could not be generated)
 		//   some classes use const items and the default assignment operator cannot be generated
@@ -506,9 +511,11 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4127");
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
+		globalWarnings.push_back("4267");
 		globalWarnings.push_back("4310");
 		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
+		globalWarnings.push_back("4458");
 		globalWarnings.push_back("4512");
 		globalWarnings.push_back("4702");
 		globalWarnings.push_back("4706");
@@ -632,6 +639,7 @@ void displayHelp(const char *exe) {
 	        "                           10 stands for \"Visual Studio 2010\"\n"
 	        "                           11 stands for \"Visual Studio 2012\"\n"
 	        "                           12 stands for \"Visual Studio 2013\"\n"
+	        "                           14 stands for \"Visual Studio 2015\"\n"
 	        "                           The default is \"9\", thus \"Visual Studio 2008\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
@@ -654,9 +662,9 @@ void displayHelp(const char *exe) {
 	        "Optional features settings:\n"
 	        " --enable-<name>          enable inclusion of the feature \"name\"\n"
 	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
-			"\n"
-			"SDL settings:\n"
-			" --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
+	        "\n"
+	        "SDL settings:\n"
+	        " --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
@@ -917,7 +925,7 @@ const Feature s_features[] = {
 	{    "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
 	{     "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
 	{  "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", true, "Ogg Vorbis support" },
-	{    "flac",        "USE_FLAC", "libFLAC_static",   true, "FLAC support" },
+	{    "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   true, "FLAC support" },
 	{     "png",         "USE_PNG", "libpng",           true, "libpng support" },
 	{    "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
 	{   "mpeg2",       "USE_MPEG2", "libmpeg2",         false, "MPEG-2 support" },
@@ -1046,7 +1054,7 @@ bool producesObjectFile(const std::string &fileName) {
 }
 
 std::string toString(int num) {
-    return static_cast<std::ostringstream*>(&(std::ostringstream() << num))->str();
+	return static_cast<std::ostringstream*>(&(std::ostringstream() << num))->str();
 }
 
 /**
