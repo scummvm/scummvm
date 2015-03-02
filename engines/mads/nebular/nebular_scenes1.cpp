@@ -134,7 +134,7 @@ void Scene101::sayDang() {
 	switch (_game._trigger) {
 	case 0:
 		_scene->_sequences.remove(_globals._sequenceIndexes[11]);
-		_globals._sequenceIndexes[11] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[11], false, 3, 6, 0, 0);
+		_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 6, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[11], 17, 21);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 		_vm->_sound->command(17);
@@ -696,7 +696,7 @@ void Scene102::enter() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMRC_8");
 	_globals._spriteIndexes[13] = _scene->_sprites.addSprites(formAnimName('x', 0));
 
-	_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
+	_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 8, 0, 0, 0);
 	_globals._sequenceIndexes[2] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[2], false, 170, 0, 1, 6);
 	_globals._sequenceIndexes[3] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[3], false, 11, 0, 2, 3);
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 4, 0, 1, 0);
@@ -1201,7 +1201,7 @@ void Scene102::actions() {
 	if (_action.isAction(VERB_TAKE, NOUN_BINOCULARS) && _game._objects.isInRoom(OBJ_BINOCULARS)) {
 		switch (_game._trigger) {
 		case 0:
-			_globals._sequenceIndexes[11] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
+			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 1, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[11]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[11], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			_game._player._visible = false;
@@ -1433,7 +1433,7 @@ void Scene103::actions() {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);
-			_globals._sequenceIndexes[13] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[13], false, 3, 2);
+			_globals._sequenceIndexes[13] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[13], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[13]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_SPRITE, 7, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -1463,7 +1463,7 @@ void Scene103::actions() {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);
-			_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 3, 2);
+			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -2010,7 +2010,7 @@ void Scene106::enter() {
 	}
 
 	_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('G', -1));
-	_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 21, 0, 0, 0);
+	_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 21, 0, 0, 0);
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites(formAnimName('I', -1));
 	_globals._sequenceIndexes[4] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[4], false, 6, 0, 32, 47);
 
@@ -2503,7 +2503,7 @@ void Scene109::enter() {
 		_globals._spriteIndexes[10] = _scene->_sprites.addSprites(Resources::formatName(105, 'F', 1, EXT_SS, ""));
 		_globals._spriteIndexes[9] = _scene->_sprites.addSprites(formAnimName('H', 1));
 
-		_globals._sequenceIndexes[10] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[10], true, 4, 0, 0, 0);
+		_globals._sequenceIndexes[10] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[10], true, 4, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 5);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[10], Common::Point(126, 39));
 		_scene->_sequences.setMotion(_globals._sequenceIndexes[10], 0, 200, 0);
@@ -2676,7 +2676,7 @@ void Scene109::actions() {
 
 					case 2:
 						if (_hoovicDifficultFl)
-							_globals._sequenceIndexes[8] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[8], false, 4, 2, 0, 0);
+							_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 4, 2, 0, 0);
 						else
 							_globals._sequenceIndexes[8] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[8], false, 4, 1, 0, 0);
 

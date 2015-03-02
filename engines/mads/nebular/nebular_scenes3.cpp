@@ -370,7 +370,7 @@ void Scene304::enter() {
 		_globals._spriteIndexes[2] = _scene->_sprites.addSprites(formAnimName('a', 1));
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('b', 0));
 
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 150, 0, 3, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 150, 0, 3, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 2);
 		_vm->_palette->setEntry(252, 45, 63, 45);
 		_vm->_palette->setEntry(253, 20, 45, 20);
@@ -953,7 +953,7 @@ void Scene307::actions() {
 
 		case 2: {
 			int oldIdx = _globals._sequenceIndexes[5];
-			_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 12, 6, 0, 0);
+			_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 12, 6, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 2, 3);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldIdx);
@@ -1245,7 +1245,7 @@ void Scene308::step() {
 	switch (_game._trigger) {
 	case 70: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 18, 9, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 18, 9, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_kernelMessages.reset();
@@ -1266,7 +1266,7 @@ void Scene308::step() {
 
 	case 72:
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 20, 5, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 20, 5, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 3, 4);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_kernelMessages.reset();
@@ -1284,7 +1284,7 @@ void Scene308::step() {
 
 	case 74: {
 		_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 20, 8, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 20, 8, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 6, 7);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_kernelMessages.reset();
@@ -1306,7 +1306,7 @@ void Scene308::step() {
 
 	case 76: {
 		int seqIdx = _globals._sequenceIndexes[3];
-		_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 26, 0, 0, 0);
+		_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 26, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 9);
 		_scene->_kernelMessages.reset();
@@ -1441,7 +1441,7 @@ void Scene309::step() {
 		case 70: {
 			int idx = _scene->_dynamicHotspots.add(689, 690, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 			_scene->_dynamicHotspots.setPosition(idx, Common::Point(142, 146), FACING_NORTHEAST);
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 4, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 4, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 2, 3);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
@@ -1462,7 +1462,7 @@ void Scene309::step() {
 
 		case 72: {
 			int _oldIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 8, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 8, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 8, 11);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
@@ -1484,7 +1484,7 @@ void Scene309::step() {
 
 		case 74: {
 			int _oldIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 7, 6, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 7, 6, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 21, 23);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
@@ -1494,7 +1494,7 @@ void Scene309::step() {
 
 		case 75: {
 			int _oldIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 6, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 6, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 24, 25);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], _oldIdx);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
@@ -1513,7 +1513,7 @@ void Scene309::step() {
 			break;
 
 		case 77: {
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 90, 0, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 90, 0, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 29, 30);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 11);
 			int idx = _scene->_kernelMessages.add(Common::Point(15, 46), 0xFDFC, 0, 0, 120, _game.getQuote(247));
@@ -1965,7 +1965,7 @@ void Scene316::handleRexInGrate() {
 
 	case 1:
 		_scene->_sequences.setDone(_globals._sequenceIndexes[4]);
-		_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 12, 3, 0, 0);
+		_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 12, 3, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 2, 3);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -2085,7 +2085,7 @@ void Scene316::handleRoxInGrate() {
 
 	case 1:
 		_scene->_sequences.setDone(_globals._sequenceIndexes[5]);
-		_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 17, 3, 0, 0);
+		_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 17, 3, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 2, 3);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -2523,7 +2523,7 @@ void Scene318::handleDialog() {
 		case 0x19C:
 		case 0x19D:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
@@ -2883,7 +2883,7 @@ void Scene318::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 8, 2, 0, 80);
+			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 2, 0, 80);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 2, 5);
@@ -3588,7 +3588,7 @@ void Scene320::setLeftView(int view) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 
 	if (view != 10) {
-		_globals._sequenceIndexes[0] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
+		_globals._sequenceIndexes[0] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 0);
 		if (!_blinkFl)
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 2, 2);
@@ -3752,7 +3752,7 @@ void Scene320::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			handleButtons();
-			_globals._sequenceIndexes[18] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[18], _flippedFl, 4, 2, 0, 0);
+			_globals._sequenceIndexes[18] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[18], _flippedFl, 4, 2, 0, 0);
 			_scene->_sequences.setScale(_globals._sequenceIndexes[18], 60);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[18], Common::Point(_posX, 170));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[18], 0);
@@ -4053,12 +4053,12 @@ void Scene351::actions() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE) {
-					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 5, 2, 0, 0);
+					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
+					_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -4160,12 +4160,12 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 		_game._player._stepEnabled = false;
 		_game._player._visible = false;
 		if (_globals[kSexOfRex] == REX_FEMALE) {
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 5, 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 		} else {
-			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 5, 2, 0, 0);
+			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 5, 2, 0, 0);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 3);
@@ -4305,7 +4305,7 @@ void Scene352::preActions() {
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(_commonSequenceIdx);
 				_vm->_sound->command(20);
-				_commonSequenceIdx = _scene->_sequences.startReverseCycle(_commonSpriteIndex, false, 6, 1, 0, 0);
+				_commonSequenceIdx = _scene->_sequences.startPingPongCycle(_commonSpriteIndex, false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_scene->_sequences.setDepth(_commonSequenceIdx, 15);
 			}
@@ -4364,7 +4364,7 @@ void Scene352::actions() {
 
 			case 1: {
 				_vm->_sound->command(21);
-				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
+				_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], FACING_NORTH);
 				int oldIdx = _commonSequenceIdx;
 				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
@@ -4376,7 +4376,7 @@ void Scene352::actions() {
 			case 2:
 				_vm->_sound->command(22);
 				_scene->_sequences.remove(_commonSequenceIdx);
-				_commonSequenceIdx = _scene->_sequences.startReverseCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
+				_commonSequenceIdx = _scene->_sequences.startPingPongCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_commonSequenceIdx, 1, 3);
 				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
@@ -4431,12 +4431,12 @@ void Scene352::actions() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_FEMALE) {
-					_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
+					_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 5, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 5, 2, 0, 0);
+					_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 5, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -4478,7 +4478,7 @@ void Scene352::actions() {
 
 			case 1: {
 				_vm->_sound->command(21);
-				_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
+				_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 7, 2, 20, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[12], 8);
 				int oldIdx = _commonSequenceIdx;
 				_commonSequenceIdx = _scene->_sequences.startCycle(_commonSpriteIndex, false, -2);
@@ -4490,7 +4490,7 @@ void Scene352::actions() {
 			case 2:
 				_vm->_sound->command(23);
 				_scene->_sequences.remove(_commonSequenceIdx);
-				_commonSequenceIdx = _scene->_sequences.startReverseCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
+				_commonSequenceIdx = _scene->_sequences.startPingPongCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_commonSequenceIdx, 1, 4);
 				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
@@ -4545,13 +4545,13 @@ void Scene352::actions() {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			if (_globals[kSexOfRex] == REX_MALE) {
-				_globals._sequenceIndexes[14] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[14], false, 8, 1, 0, 0);
+				_globals._sequenceIndexes[14] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[14], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[14], 1, 2);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[14]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[14], SEQUENCE_TRIGGER_SPRITE, 2, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[14], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			} else {
-				_globals._sequenceIndexes[15] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[15], false, 8, 1, 0, 0);
+				_globals._sequenceIndexes[15] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[15], false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[15], 1, 2);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[15]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[15], SEQUENCE_TRIGGER_SPRITE, 2, 1);
@@ -4592,12 +4592,12 @@ void Scene352::actions() {
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			if (_globals[kSexOfRex] == REX_MALE) {
-				_globals._sequenceIndexes[6] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], true, 6, 2, 0, 0);
+				_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], true, 6, 2, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			} else {
-				_globals._sequenceIndexes[7] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[7], true, 6, 2, 0, 0);
+				_globals._sequenceIndexes[7] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[7], true, 6, 2, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[7]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[7], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -4980,12 +4980,12 @@ void Scene359::actions() {
 				_game._player._visible = false;
 				_vm->_dialogs->show(35920);
 				if (_globals[kSexOfRex] == REX_MALE) {
-					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 4, 2, 0, 0);
+					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 4, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 6, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], true, 7, 2, 0, 0);
+					_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], true, 7, 2, 0, 0);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 					_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(106, 110));
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_SPRITE, 6, 1);

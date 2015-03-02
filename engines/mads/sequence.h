@@ -38,7 +38,7 @@ enum SequenceTrigger {
 	SEQUENCE_TRIGGER_SPRITE = 2		// Trigger when sequence reaches specific sprite
 };
 
-enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2 };
+enum SpriteAnimType { ANIMTYPE_NONE = 0, ANIMTYPE_CYCLED = 1, ANIMTYPE_PING_PONG = 2 };
 
 #define SEQUENCE_ENTRY_SUBSET_MAX 5
 
@@ -117,7 +117,7 @@ public:
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
-	int startReverseCycle(int srcSpriteIndex, bool flipped, int numTicks,
+	int startPingPongCycle(int srcSpriteIndex, bool flipped, int numTicks,
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
 	void updateTimeout(int spriteIdx, int seqIndex);
 	void setScale(int spriteIdx, int scale);
