@@ -40,25 +40,34 @@ int Input::show(XeenEngine *vm, Window *window, Common::String &line,
  */
 int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric) {
 	_vm->_noDirectionSense = true;
-	Common::String msg = Common::String::format("\x03""l\t000\x04%03d\x03""c", maxWidth);
+	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x0""c", maxWidth);
 	_window->writeString(msg);
 	_window->update();
 
 	while (!_vm->shouldQuit()) {
 		Common::KeyCode keyCode = doCursor(msg);
 
+		bool refresh = false;
 		if ((keyCode == Common::KEYCODE_BACKSPACE || keyCode == Common::KEYCODE_DELETE)
-			&& line.size() > 0)
+				&& line.size() > 0) {
 			line.deleteLastChar();
-		else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
+			refresh = true;
+		} else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
 				&& ((isNumeric && keyCode >= Common::KEYCODE_0 && keyCode < Common::KEYCODE_9) ||
 				   (!isNumeric && keyCode >= Common::KEYCODE_SPACE && keyCode < Common::KEYCODE_DELETE))) {
 			line += (char)keyCode;
+			refresh = true;
 		} else if (keyCode == Common::KEYCODE_RETURN || keyCode == Common::KEYCODE_KP_ENTER) {
 			break;
 		} else if (keyCode == Common::KEYCODE_ESCAPE) {
 			line = "";
 			break;
+		}
+
+		if (refresh) {
+			msg = Common::String::format("\x3""l\t000\x4%03d\x3""c%s", maxWidth, line.c_str());
+			_window->writeString(msg);
+			_window->update();
 		}
 	}
 
