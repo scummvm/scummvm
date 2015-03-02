@@ -463,7 +463,7 @@ IMPLEMENT_FUNCTION(19, Kronos, startConcert)
 			RESET_ENTITY_STATE(kEntitySophie, Sophie, setup_chaptersHandler);
 			RESET_ENTITY_STATE(kEntityAugust, August,  setup_function50);
 			RESET_ENTITY_STATE(kEntityAnna, Anna, setup_concert);
-			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_function35);
+			RESET_ENTITY_STATE(kEntityTatiana, Tatiana, setup_concert);
 
 			setup_duringConcert();
 			break;
