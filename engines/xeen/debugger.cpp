@@ -25,7 +25,7 @@
 #include "xeen/debugger.h"
 
 namespace Xeen {
-/*
+
 static int strToInt(const char *s) {
 	if (!*s)
 		// No string at all
@@ -41,16 +41,43 @@ static int strToInt(const char *s) {
 		error("strToInt failed on string \"%s\"", s);
 	return (int)tmp;
 }
-*/
 
 /*------------------------------------------------------------------------*/
 
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
+	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
+
+	_spellId = -1;
 }
 
-bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
+void Debugger::update() {
+	Combat &combat = *_vm->_combat;
+	Party &party = *_vm->_party;
+	Spells &spells = *_vm->_spells;
+
+	if (_spellId != -1) {
+		// Cast any specified spell
+		MagicSpell spellId = (MagicSpell)_spellId;
+		_spellId = -1;
+		spells.castSpell(&party._activeParty[0], spellId);
+	}
+
+	onFrame();
+}
+
+bool Debugger::cmdSpell(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: spell <spell-id>");
+		return true;
+	} else {
+		int spellId = strToInt(argv[1]);
+		if (spellId >= MS_AcidSpray && spellId <= MS_WizardEye) {
+			_spellId = spellId;
+			return false;
+		}
+	}
+
 	return true;
 }
 

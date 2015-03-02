@@ -93,6 +93,7 @@ void CantCast::show(XeenEngine *vm, int spellId, int componentNum) {
 void CantCast::execute(int spellId, int componentNum) {
 	EventsManager &events = *_vm->_events;
 	SoundManager &sound = *_vm->_sound;
+	Spells &spells = *_vm->_spells;
 	Window &w = _vm->_screen->_windows[6];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
@@ -100,7 +101,9 @@ void CantCast::execute(int spellId, int componentNum) {
 	sound.playFX(21);
 	w.open();
 	w.writeString(Common::String::format(NOT_ENOUGH_TO_CAST,
-		SPELL_CAST_COMPONENTS[componentNum - 1]));
+		SPELL_CAST_COMPONENTS[componentNum - 1],
+		spells._spellNames[spellId].c_str()
+	));
 	w.update();
 
 	do {

@@ -31,12 +31,15 @@ namespace Xeen {
 class XeenEngine;
 
 class Debugger : public GUI::Debugger {
-protected:
+private:
 	XeenEngine *_vm;
+	int _spellId;
 
-	bool Cmd_LoadScene(int argc, const char **argv);
+	bool cmdSpell(int argc, const char **argv);
 public:
 	Debugger(XeenEngine *vm);
+
+	void update();
 };
 
 } // End of namespace Xeen

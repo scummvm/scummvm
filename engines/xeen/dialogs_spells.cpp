@@ -988,7 +988,6 @@ void IdentifyMonster::execute() {
 	Map &map = *_vm->_map;
 	Screen &screen = *_vm->_screen;
 	SoundManager &sound = *_vm->_sound;
-	Spells &spells = *_vm->_spells;
 	Window &w = screen._windows[17];
 	Common::String monsterDesc[3];
 

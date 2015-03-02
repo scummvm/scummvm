@@ -94,7 +94,14 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RTL:
 			return;
 		case Common::EVENT_KEYDOWN:
-			_keyCode = event.kbd.keycode;
+			// Check for debugger
+			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
+				// Attach to the debugger
+				_vm->_debugger->attach();
+				_vm->_debugger->onFrame();
+			} else {
+				_keyCode = event.kbd.keycode;
+			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -181,6 +188,11 @@ void EventsManager::ipause(uint amount) {
  */
 void EventsManager::nextFrame() {
 	++_frameCounter;
+
+	// Allow debugger to update
+	_vm->_debugger->update();
+
+	// Update the screen
 	_vm->_screen->update();
 }
 

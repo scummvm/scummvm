@@ -1315,7 +1315,7 @@ const char *const USE_ITEM_IN_COMBAT =
 
 const char *const NO_SPECIAL_ABILITIES = "\v005\x3""c%s\fdhas no special abilities!";
 
-const char *const CANT_CAST_WHILE_ENGAGED = "\x03c\v007Can't cast %s while engaged!";
+const char *const CANT_CAST_WHILE_ENGAGED = "\x3""c\v007Can't cast %s while engaged!";
 
 const char *const EQUIPPED_ALL_YOU_CAN = "\x3""c\v007You have equipped all the %ss you can!";
 const char *const REMOVE_X_TO_EQUIP_Y = "\x3""c\v007You must remove %sto equip %s\x8!";
@@ -1328,7 +1328,7 @@ const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x""cYou cannot discard a curse
 
 const char *const PERMANENTLY_DISCARD = "\v000\t000\x03lPermanently discard %s\fd?";
 
-const char *const BACKPACK_IS_FULL = "\v005\x03c\fd%s's backpack is full.";
+const char *const BACKPACK_IS_FULL = "\v005\x3""c\fd%s's backpack is full.";
 
 const char *const CATEGORY_BACKPACK_IS_FULL[4] = {
 	"\v010\t000\x3""c%s's weapons backpack is full.",
@@ -1341,11 +1341,11 @@ const char *const BUY_X_FOR_Y_GOLD = "\x3l\v000\t000\fdBuy %s\fd for %lu gold?";
 
 const char *const SELL_X_FOR_Y_GOLD = "\x3l\v000\t000\fdSell %s\fd for %lu gold?";
 
-const char *const NO_NEED_OF_THIS = "\v005\x03c\fdWe have no need of this %s\f!";
+const char *const NO_NEED_OF_THIS = "\v005\x3""c\fdWe have no need of this %s\f!";
 
-const char *const NOT_RECHARGABLE = "\v012\x03c\fdNot Rechargeable.  %s";
+const char *const NOT_RECHARGABLE = "\v012\x3""c\fdNot Rechargeable.  %s";
 
-const char *const NOT_ENCHANTABLE = "\v012\t000\x03cNot Enchantable.  %s";
+const char *const NOT_ENCHANTABLE = "\v012\t000\x3""cNot Enchantable.  %s";
 
 const char *const SPELL_FAILED = "Spell Failed!";
 
@@ -1495,7 +1495,7 @@ const int NEW_CHARACTER_SPELLS[10][4] = {
 
 const char *const COMBAT_DETAILS = "\r\f00\x3""c\v000\t000\x2""Combat%s%s%s\x1";
 
-const char *NOT_ENOUGH_TO_CAST = "\x03c\v010Not enough %s to Cast %s";
+const char *NOT_ENOUGH_TO_CAST = "\x3""c\v010Not enough %s to Cast %s";
 const char *SPELL_CAST_COMPONENTS[2] = { "Spell Points", "Gems" };
 
 const char *const CAST_SPELL_DETAILS = 
@@ -1530,7 +1530,7 @@ const char *const GIVE_TREASURE_FORMATTING =
 	"\x4""077\n"
 	"\x4""077";
 
-const char *const X_FOUND_Y = "\v060\t000\x03c%s found: %s";
+const char *const X_FOUND_Y = "\v060\t000\x3""c%s found: %s";
 
 const char *const ON_WHO = "\x3""c\v009On Who?";
 
@@ -1554,7 +1554,7 @@ const char *const LLOYDS_BEACON =
 	"%s\x3l\n"
 	"x = %d\x3r\t000y = %d\x3""c\x2\v122\t021\f15S\fdet\t060\f15R\fdeturn\x1";
 
-const char *const HOW_MANY_SQUARES = "\x03cTeleport\nHow many squares %s (1-9)";
+const char *const HOW_MANY_SQUARES = "\x3""cTeleport\nHow many squares %s (1-9)";
 
 const char *const TOWN_PORTAL =
 	"\x3""cTown Portal\x3l\n"
