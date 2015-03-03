@@ -65,7 +65,7 @@ void FontSurface::writeSymbol(int symbolId) {
  * @remarks		Note that bounds is just used for wrapping purposes. Unless
  *		justification is set, the message will be written at _writePos
  */
-Common::String FontSurface::writeString(const Common::String &s, const Common::Rect &bounds) {
+const char *FontSurface::writeString(const Common::String &s, const Common::Rect &bounds) {
 	_displayString = s.c_str();
 	assert(_fontData);
 
@@ -250,7 +250,7 @@ Common::String FontSurface::writeString(const Common::String &s, const Common::R
 			break;
 	}
 
-	return Common::String(_displayString);
+	return _displayString;
 }
 
 /**

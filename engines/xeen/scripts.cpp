@@ -368,7 +368,11 @@ void Scripts::cmdSignText(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdNPC(Common::Array<byte> &params) {
-	error("TODO: cmdNPC");
+	Map &map = *_vm->_map;
+
+	if (TownMessage::show(_vm, params[2], _message, map._events._text[params[1]],
+			params[3]))
+		_lineNum = params[4];
 }
 
 /**

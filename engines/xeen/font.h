@@ -63,7 +63,7 @@ public:
 
 	void writeSymbol(int symbolId);
 
-	Common::String writeString(const Common::String &s, const Common::Rect &clipRect);
+	const char *writeString(const Common::String &s, const Common::Rect &clipRect);
 };
 
 } // End of namespace Xeen

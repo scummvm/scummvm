@@ -32,8 +32,10 @@
 namespace Xeen {
 
 class XeenEngine;
+class TownMessage;
 
 class Town: public ButtonContainer {
+	friend class TownMessage;
 private:
 	XeenEngine *_vm;
 	SpriteResource _icons1, _icons2;
@@ -103,6 +105,22 @@ public:
 	void drawTownAnim(bool flag);
 
 	bool isActive() const;
+};
+
+class TownMessage : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+
+	TownMessage(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	bool execute(int portrait, const Common::String &name, 
+		const Common::String &text, int confirm);
+
+	void loadButtons();
+public:
+	static bool show(XeenEngine *vm, int portrait, const Common::String &name,
+		const Common::String &text, int confirm);
 };
 
 } // End of namespace Xeen

@@ -92,7 +92,7 @@ public:
 
 	void fill();
 
-	Common::String writeString(const Common::String &s);
+	const char *writeString(const Common::String &s);
 
 	void drawList(DrawStruct *items, int count);
 

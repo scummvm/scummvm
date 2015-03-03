@@ -183,7 +183,7 @@ void Window::fill() {
 	fillRect(_innerBounds, _vm->_screen->_bgColor);
 }
 
-Common::String Window::writeString(const Common::String &s) {
+const char *Window::writeString(const Common::String &s) {
 	return _vm->_screen->writeString(s, _innerBounds);
 }
 

@@ -1192,4 +1192,119 @@ bool Town::isActive() const {
 	return _townSprites.size() > 0 && !_townSprites[0].empty();
 }
 
+/*------------------------------------------------------------------------*/
+
+bool TownMessage::show(XeenEngine *vm, int portrait, const Common::String &name,
+		const Common::String &text, int confirm) {
+	TownMessage *dlg = new TownMessage(vm);
+	bool result = dlg->execute(portrait, name, text, confirm);
+	delete dlg;
+
+	return result;
+}
+
+bool TownMessage::execute(int portrait, const Common::String &name, const Common::String &text,
+		int confirm) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Screen &screen = *_vm->_screen;
+	Town &town = *_vm->_town;
+	Window &w = screen._windows[11];
+
+	town._townMaxId = 4;
+	town._townActionId = 7;
+	town._drawFrameIndex = 0;
+	town._townPos = Common::Point(23, 22);
+
+	if (!confirm)
+		loadButtons();
+
+	if (town._townSprites[0].empty()) {
+		town._townSprites[0].load(Common::String::format("face%02d.fac", portrait));
+		town._townSprites[1].load("frame.fac");
+	}
+
+	if (!w._enabled)
+		w.open();
+
+	int result = -1;
+	Common::String msgText = text;
+	for (;;) {
+		Common::String msg = Common::String::format("\r\v014\x03c\t125%s\t000\v054%s",
+			name.c_str(), msgText.c_str());
+		const char *msgEnd = w.writeString(msg.c_str());
+		int wordCount = 0;
+
+		for (const char *msgP = msg.c_str(); msgP < msgEnd; ++msgP) {
+			if (*msgP == ' ')
+				++wordCount;
+		}
+
+		town._drawCtr2 = wordCount * 2;
+		town._townSprites[1].draw(screen, 0, Common::Point(16, 16));
+		town._townSprites[0].draw(screen, town._drawFrameIndex, Common::Point(23, 22));
+		w.update();
+
+		if (!msgEnd) {
+			// Doesn't look like the code here in original can ever be reached
+			assert(0);
+		}
+
+		if (confirm == 2) {
+			intf._face1State = intf._face2State = 2;
+			return false;
+		}
+
+		do {
+			events.clearEvents();
+			events.updateGameCounter();
+			if (msgEnd)
+				clearButtons();
+
+			do {
+				events.wait(3, true);
+				checkEvents(_vm);
+				if (_vm->shouldQuit())
+					return false;
+
+				town.drawTownAnim(false);
+				events.updateGameCounter();
+			} while (!_buttonValue);
+
+			if (msgEnd)
+				break;
+
+			if (!msgEnd) {
+				if (confirm || _buttonValue == Common::KEYCODE_ESCAPE || 
+						_buttonValue == Common::KEYCODE_n)
+					result = 0;
+				else if (_buttonValue == Common::KEYCODE_y)
+					result = 1;
+			}
+		} while (result == -1);
+
+		if (msgEnd) {
+			msgText = Common::String(msgEnd);
+			town._drawCtr2 = wordCount;
+			continue;
+		}
+	} while (result == -1);
+
+	intf._face1State = intf._face2State = 2;
+	if (!confirm)
+		intf.mainIconsPrint();
+
+	town._townSprites[0].clear();
+	town._townSprites[1].clear();
+	return result == 1;
+}
+
+void TownMessage::loadButtons() {
+	_iconSprites.load("confirm.icn");
+
+	addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_y, &_iconSprites);
+	addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_n, &_iconSprites);
+	addButton(Common::Rect(), Common::KEYCODE_ESCAPE);
+}
+
 } // End of namespace Xeen
