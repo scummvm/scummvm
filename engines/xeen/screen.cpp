@@ -183,8 +183,8 @@ void Window::fill() {
 	fillRect(_innerBounds, _vm->_screen->_bgColor);
 }
 
-void Window::writeString(const Common::String &s) {
-	_vm->_screen->writeString(s, _innerBounds);
+Common::String Window::writeString(const Common::String &s) {
+	return _vm->_screen->writeString(s, _innerBounds);
 }
 
 void Window::drawList(DrawStruct *items, int count) {

@@ -102,6 +102,8 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_scriptResult = false;
 	_scriptExecuted = false;
 	_var50 = false;
+	_redrawDone = false;
+	_windowIndex = -1;
 }
 
 int Scripts::checkEvents() {
@@ -132,7 +134,7 @@ int Scripts::checkEvents() {
 		_lineNum = 0;
 		_scriptResult = false;
 		_animCounter = 0;
-//		int var4E = 0;
+		_redrawDone = false;
 		_currentPos = party._mazePosition;
 		_charIndex = 1;
 		_v2 = 1;
@@ -366,7 +368,7 @@ void Scripts::cmdSignText(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdNPC(Common::Array<byte> &params) {
-	warning("TODO: cmdNPC");
+	error("TODO: cmdNPC");
 }
 
 /**
@@ -800,18 +802,123 @@ void Scripts::cmdWhoWill(Common::Array<byte> &params) {
 		cmdNoAction(params);
 }
 
-void Scripts::cmdRndDamage(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdMoveWallObj(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdAlterCellFlag(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdAlterHed(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdDisplayStat(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdSeatTextSml(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdDisplayBottom(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdIfMapFlag(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdSelRndChar(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdItemType(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdRndDamage(Common::Array<byte> &params) { 
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+
+	if (!_redrawDone) {
+		intf.draw3d(true);
+		_redrawDone = true;
+	}
+
+	combat.giveCharDamage(_vm->getRandomNumber(1, params[1]), (DamageType)params[0], _charIndex);
+	cmdNoAction(params);
+}
+
+void Scripts::cmdMoveWallObj(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+
+	map._mobData._wallItems[params[0]]._position = Common::Point(params[1], params[2]);
+	cmdNoAction(params);
+}
+
+void Scripts::cmdAlterCellFlag(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+	Common::Point pt(params[0], params[1]);
+	map.cellFlagLookup(pt);
+
+	if (map._isOutdoors) {
+		MazeWallLayers &wallData = map.mazeDataCurrent()._wallData[pt.y][pt.x];
+		wallData._data = (wallData._data & 0xFFF0) | params[2];
+	} else {
+		pt.x &= 0xF; 
+		pt.y &= 0xF;
+		MazeCell &cell = map.mazeDataCurrent()._cells[pt.y][pt.x];
+		cell._surfaceId = params[2];
+	}
+
+	cmdNoAction(params);
+}
+
+void Scripts::cmdAlterHed(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+
+	HeadData::HeadEntry &he = map._headData[party._mazePosition.y][party._mazePosition.x];
+	he._left = params[0];
+	he._right = params[1];
+
+	cmdNoAction(params);
+}
+
+void Scripts::cmdDisplayStat(Common::Array<byte> &params) {
+	Party &party = *_vm->_party;
+	Window &w = _vm->_screen->_windows[12];
+	Character &c = party._activeParty[_charIndex - 1];
+
+	if (!w._enabled)
+		w.open();
+	w.writeString(Common::String::format(_message.c_str(), c._name.c_str()));
+	w.update();
+
+	cmdNoAction(params);
+}
+
+void Scripts::cmdSeatTextSml(Common::Array<byte> &params) { 
+	Interface &intf = *_vm->_interface;
+
+	intf._screenText = Common::String::format("\x2\f08\x3""c\t116\v090%s\x3l\fd\x1",
+		_message);
+	intf._upDoorText = true;
+	intf.draw3d(true);
+
+	cmdNoAction(params);
+}
+
+void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {
+	SoundManager &sound = *_vm->_sound;
+	sound.playSample(nullptr, 0);
+	File f(EVENT_SAMPLES[params[0]]);
+	sound.playSample(&f, 1);
+
+	cmdNoAction(params);
+}
+
+void Scripts::cmdDisplayBottom(Common::Array<byte> &params) {
+	_windowIndex = 12;
+
+	display(false, 0);
+	cmdNoAction(params);
+}
+
+void Scripts::cmdIfMapFlag(Common::Array<byte> &params) {
+	Map &map = *_vm->_map;
+	MazeMonster &monster = map._mobData._monsters[params[0]];
+
+	if (monster._position.x >= 32 || monster._position.y >= 32) {
+		_lineNum = params[1] - 1;
+	}
+
+	cmdNoAction(params);
+}
+
+void Scripts::cmdSelRndChar(Common::Array<byte> &params) {
+	_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
+	cmdNoAction(params);
+}
+
+void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
+	if (params[0] < 35) {
+
+	}
+	error("TODO");
+}
+
+void Scripts::cmdItemType(Common::Array<byte> &params) {
+	_itemType = params[0];
+
+	cmdNoAction(params);
+}
 
 /**
  * Disable all the scripts at the party's current position
@@ -840,7 +947,13 @@ void Scripts::cmdCheckProtection(Common::Array<byte> &params) {
 
 void Scripts::cmdChooseNumeric(Common::Array<byte> &params) { error("TODO"); }
 void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }
-void Scripts::cmdDisplayLarge(Common::Array<byte> &params) { error("TODO"); }
+
+void Scripts::cmdDisplayLarge(Common::Array<byte> &params) {
+	error("TODO: Implement event text loading");
+
+	display(true, 0);
+	cmdNoAction(params);
+}
 
 /**
  * Exchange the positions of two objects in the maze
@@ -868,7 +981,8 @@ void Scripts::cmdFallToMap(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdDisplayMain(Common::Array<byte> &params) { 
-	error("TODO"); 
+	display(false, 0);
+	cmdNoAction(params);
 }
 
 /**
@@ -1331,6 +1445,42 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 bool Scripts::copyProtectionCheck() {
 	// Currentl not implemented
 	return true;
+}
+
+void Scripts::display(bool justifyFlag, int var46) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Screen &screen = *_vm->_screen;
+	Window &w = screen._windows[_windowIndex];
+
+	if (!_redrawDone) {
+		intf.draw3d(true);
+		_redrawDone = true;
+	}
+	screen._windows[38].close();
+
+	if (!justifyFlag)
+		_displayMessage = Common::String::format("\r\x3""c%s", _message.c_str());
+
+	if (!w._enabled)
+		w.open();
+
+	while (!_vm->shouldQuit()) {
+		_displayMessage = w.writeString(_displayMessage);
+		w.update();
+		if (_displayMessage.empty())
+			break;
+		events.clearEvents();
+
+		do {
+			events.updateGameCounter();
+			intf.draw3d(true);
+
+			events.wait(1, true);
+		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+
+		w.writeString(justifyFlag ? "\r" : "\r\x3""c");
+	}
 }
 
 } // End of namespace Xeen

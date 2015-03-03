@@ -52,7 +52,6 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 }
 
 void Debugger::update() {
-	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
 
@@ -60,7 +59,9 @@ void Debugger::update() {
 		// Cast any specified spell
 		MagicSpell spellId = (MagicSpell)_spellId;
 		_spellId = -1;
-		spells.castSpell(&party._activeParty[0], spellId);
+		Character *c = &party._activeParty[0];
+		c->_currentSp = 99;
+		spells.castSpell(c, spellId);
 	}
 
 	onFrame();

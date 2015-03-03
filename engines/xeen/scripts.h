@@ -147,9 +147,13 @@ private:
 	int _scriptResult;
 	bool _scriptExecuted;
 	bool _var50;
+	int _windowIndex;
+	bool _redrawDone;
 	MazeEvent *_event;
 	Common::Point _currentPos;
 	Common::Stack<StackEntry> _stack;
+	Common::String _message;
+	Common::String _displayMessage;
 
 	void doOpcode(MazeEvent &event);
 	void cmdDisplay1(Common::Array<byte> &params);
@@ -219,6 +223,8 @@ private:
 	bool ifProc(int action, uint32 mask, int mode, int charIndex);
 
 	bool copyProtectionCheck();
+
+	void display(bool justifyFlag, int var46);
 public:
 	int _animCounter;
 	bool _eventSkipped;

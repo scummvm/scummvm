@@ -562,6 +562,8 @@ extern const char *const MONSTER_SPECIAL_ATTACKS[23];
 
 extern const char *const IDENTIFY_MONSTERS;
 
+extern const char *const EVENT_SAMPLES[6];
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

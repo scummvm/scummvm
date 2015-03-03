@@ -1585,4 +1585,8 @@ const char *const MONSTER_SPECIAL_ATTACKS[23] = {
 const char *const IDENTIFY_MONSTERS =
 	"Name\x3""c\t100HP\t140AC\t177#Atks\x3r\t000Special%s%s%s";
 
+const char *const EVENT_SAMPLES[6] = {
+	"ahh.voc", "whereto.voc", "gulp.voc", "null.voc", "scream.voc", "laff1.voc"
+};
+
 } // End of namespace Xeen
