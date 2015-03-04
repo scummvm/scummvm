@@ -1120,10 +1120,67 @@ void Scripts::cmdSelRndChar(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
-	if (params[0] < 35) {
+	Party &party = *_vm->_party;
+	bool isDarkCc = _vm->_files->_isDarkCc;
 
+	if (params[0] >= 35) {
+		if (params[0] < 49) {
+			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+				XeenItem &item = party._treasure._armor[idx];
+				if (!item.empty()) {
+					item._id = params[0] - 35;
+					item._material = params[1];
+					item._bonusFlags = params[2];
+					party._treasure._hasItems = true;
+					break;
+				}
+			}
+
+			cmdNoAction(params);
+			return;
+		} else if (params[0] < 60) {
+			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+				XeenItem &item = party._treasure._accessories[idx];
+				if (!item.empty()) {
+					item._id = params[0] - 49;
+					item._material = params[1];
+					item._bonusFlags = params[2];
+					party._treasure._hasItems = true;
+					break;
+				}
+			}
+
+			cmdNoAction(params);
+			return;
+		} else if (params[0] < 82) {
+			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+				XeenItem &item = party._treasure._misc[idx];
+				if (!item.empty()) {
+					item._id = params[0];
+					item._material = params[1];
+					item._bonusFlags = params[2];
+					party._treasure._hasItems = true;
+					break;
+				}
+			}
+
+			cmdNoAction(params);
+			return;
+		} else {
+			party._gameFlags[6 + params[0]]++;
+		}
 	}
-	error("TODO");
+
+	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+		XeenItem &item = party._treasure._weapons[idx];
+		if (!item.empty()) {
+			item._id = params[0];
+			item._material = params[1];
+			item._bonusFlags = params[2];
+			party._treasure._hasItems = true;
+			break;
+		}
+	}
 }
 
 void Scripts::cmdItemType(Common::Array<byte> &params) {
@@ -1161,7 +1218,21 @@ void Scripts::cmdChooseNumeric(Common::Array<byte> &params) {
 	error("TODO");
 }
 
-void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) {
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Window &w = _vm->_screen->_windows[12];
+
+	Common::String msg = Common::String::format("\r\x03c\t000\v007%s\n\n%s",
+		map._events._text[params[1]].c_str());
+	w.close();
+	w.open();
+	w.writeString(msg);
+	w.update();
+
+	YesNo::show(_vm, true);
+	_lineNum = -1;
+}
 
 void Scripts::cmdDisplayLarge(Common::Array<byte> &params) {
 	error("TODO: Implement event text loading");
