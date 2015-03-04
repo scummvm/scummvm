@@ -141,6 +141,7 @@ public:
 	DamageType _damageType;
 	bool _dead;
 	Treasure _treasure;
+	Treasure _savedTreasure;
 public:
 	Party(XeenEngine *vm);
 

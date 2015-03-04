@@ -105,6 +105,8 @@ public:
 	void drawTownAnim(bool flag);
 
 	bool isActive() const;
+
+	void clearSprites();
 };
 
 class TownMessage : public ButtonContainer {

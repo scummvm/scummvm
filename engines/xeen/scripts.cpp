@@ -114,6 +114,8 @@ int Scripts::checkEvents() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	SoundManager &sound = *_vm->_sound;
+	Town &town = *_vm->_town;
+	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	_refreshIcons = false;
 	_itemType = 0;
@@ -125,9 +127,15 @@ int Scripts::checkEvents() {
 	//int items = _treasureItems;
 	
 	if (party._treasure._gold & party._treasure._gems) {
-		// TODO
+		// Backup any current treasure data
+		party._savedTreasure = party._treasure;
+		party._treasure._hasItems = false;
+		party._treasure._gold = 0;
+		party._treasure._gems = 0;
 	} else {
-		// TODO
+		party._savedTreasure._hasItems = false;
+		party._savedTreasure._gold = 0;
+		party._savedTreasure._gems = 0;
 	}
 
 	do {
@@ -176,7 +184,33 @@ int Scripts::checkEvents() {
 		intf.drawParty(true);
 	}
 
-	// TODO
+	party.checkPartyDead();
+	if (party._treasure._hasItems || party._treasure._gold || party._treasure._gems)
+		party.giveTreasure();
+
+	if (_animCounter > 0 && intf._objNumber) {
+		MazeObject &selectedObj = map._mobData._objects[intf._objNumber - 1];
+
+		if (selectedObj._spriteId == (isDarkCc ? 15 : 16)) {
+			for (uint idx = 0; idx < 16; ++idx) {
+				MazeObject &obj = map._mobData._objects[idx];
+				if (obj._spriteId == (isDarkCc ? 62 : 57)) {
+					selectedObj._id = idx;
+					selectedObj._spriteId = isDarkCc ? 62 : 57;
+					break;
+				}
+			}
+		} else if (selectedObj._spriteId == 73) {
+			for (uint idx = 0; idx < 16; ++idx) {
+				MazeObject &obj = map._mobData._objects[idx];
+				if (obj._spriteId == 119) {
+					selectedObj._id = idx;
+					selectedObj._spriteId = 119;
+					break;
+				}
+			}
+		}
+	}
 
 	_animCounter = 0;
 	_vm->_mode = oldMode;
@@ -201,6 +235,15 @@ int Scripts::checkEvents() {
 
 		w.close();
 	}
+
+	// Restore saved treasure
+	if (party._savedTreasure._hasItems || party._savedTreasure._gold ||
+			party._savedTreasure._gems) {
+		party._treasure = party._savedTreasure;
+	}
+
+	// Clear any town loaded sprites
+	town.clearSprites();
 
 	_v2 = 1;
 	Common::fill(&intf._charFX[0], &intf._charFX[6], 0);

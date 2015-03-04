@@ -1192,6 +1192,10 @@ bool Town::isActive() const {
 	return _townSprites.size() > 0 && !_townSprites[0].empty();
 }
 
+void Town::clearSprites() {
+	_townSprites.clear();
+}
+
 /*------------------------------------------------------------------------*/
 
 bool TownMessage::show(XeenEngine *vm, int portrait, const Common::String &name,
