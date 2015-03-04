@@ -152,6 +152,8 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 	int32 frameEnd = 0;
 	int32 currentSubtitle = 0;
 
+	_smkDecoder->start();
+
 	while (!_done && !Engine::shouldQuit() && !_smkDecoder->endOfVideo()) {
 		_vm->handleEvents();
 
@@ -168,7 +170,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 
 			if (showSubtitles) {
 				int32 currentFrame = _smkDecoder->getCurFrame() + 1;
-
+				debugC(kDebugLevelVideo, "[Video] {%s} Playing Frame %d", filename.c_str(), currentFrame);
 				// Check for next frame
 				if (currentFrame > frameEnd) {
 					if (index < _subtitles.size()) {
