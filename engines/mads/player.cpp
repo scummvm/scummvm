@@ -790,9 +790,7 @@ void Player::removePlayerSprites() {
 		}
 	}
 
-	if (scene._activeAnimation != nullptr)
-		scene._activeAnimation->resetSpriteSetsCount();
-
+	scene._spriteSlots.clear();
 	scene._spriteSlots.fullRefresh();
 	_visible = false;
 }
