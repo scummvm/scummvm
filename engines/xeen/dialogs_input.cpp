@@ -201,5 +201,79 @@ int NumericInput::execute(int maxLength, int maxWidth) {
 		return 0;
 }
 
+/*------------------------------------------------------------------------*/
+
+int Choose123::show(XeenEngine *vm, int numOptions) {
+	assert(numOptions <= 3);
+	Choose123 *dlg = new Choose123(vm);
+	int result = dlg->execute(numOptions);
+	delete dlg;
+
+	return result;
+}
+
+int Choose123::execute(int numOptions) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Screen &screen = *_vm->_screen;
+	Town &town = *_vm->_town;
+	
+	Mode oldMode = _vm->_mode;
+	_vm->_mode = MODE_DIALOG_123;
+
+	loadButtons(numOptions);
+	_iconSprites.draw(screen, 7, Common::Point(232, 74));
+	drawButtons(&screen);
+	screen._windows[34].update();
+
+	int result = -1;
+	while (result == -1) {
+		do {
+			events.updateGameCounter();
+			int delay;
+			if (town.isActive()) {
+				town.drawTownAnim(true);
+				delay = 3;
+			} else {
+				intf.draw3d(true);
+				delay = 1;
+			}
+
+			events.wait(delay, true);
+			if (_vm->shouldQuit())
+				return 0;
+		} while (!_buttonValue);
+
+		switch (_buttonValue) {
+		case Common::KEYCODE_ESCAPE:
+			result = 0;
+			break;
+		case Common::KEYCODE_1:
+		case Common::KEYCODE_2:
+		case Common::KEYCODE_3: {
+			int v = _buttonValue - Common::KEYCODE_1 + 1;
+			if (v <= numOptions)
+				result = v;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	_vm->_mode = oldMode;
+	intf.mainIconsPrint();
+}
+
+void Choose123::loadButtons(int numOptions) {
+	_iconSprites.load("choose.icn");
+
+	if (numOptions >= 1)
+		addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_1, &_iconSprites);
+	if (numOptions >= 2)
+		addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_2, &_iconSprites);
+	if (numOptions >= 3)
+		addButton(Common::Rect(286, 75, 311, 95), Common::KEYCODE_3, &_iconSprites);
+}
 
 } // End of namespace Xeen

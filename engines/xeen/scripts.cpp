@@ -954,7 +954,20 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdDamage(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdDamage(Common::Array<byte> &params) {
+	Combat &combat = *_vm->_combat;
+	Interface &intf = *_vm->_interface;
+
+	if (!_redrawDone) {
+		intf.draw3d(true);
+		_redrawDone = true;
+	}
+
+	int damage = (params[1] << 8) | params[0];
+	combat.giveCharDamage(damage, (DamageType)params[2], _charIndex);
+
+	cmdNoAction(params);
+}
 
 /**
  * Jump if a random number matches a given value
@@ -1164,7 +1177,6 @@ void Scripts::cmdSelRndChar(Common::Array<byte> &params) {
 
 void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
 	Party &party = *_vm->_party;
-	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (params[0] >= 35) {
 		if (params[0] < 49) {
@@ -1257,12 +1269,20 @@ void Scripts::cmdCheckProtection(Common::Array<byte> &params) {
 		cmdExit(params);
 }
 
+/**
+ * Given a number of options, and a list of line numbers associated with
+ * those options, jumps to whichever line for the option the user selects
+ */
 void Scripts::cmdChooseNumeric(Common::Array<byte> &params) {
-	error("TODO");
+	int choice = Choose123::show(_vm, params[0]);
+	if (choice) {
+		_lineNum = params[choice] - 1;
+	}
+
+	cmdNoAction(params);
 }
 
 void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) {
-	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Window &w = _vm->_screen->_windows[12];
 

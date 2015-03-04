@@ -64,6 +64,20 @@ public:
 	static int show(XeenEngine *vm, int window, int maxLength, int maxWidth);
 };
 
+class Choose123 : public ButtonContainer {
+private:
+	XeenEngine *_vm;
+	SpriteResource _iconSprites;
+
+	Choose123(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+
+	int execute(int numOptions);
+
+	void loadButtons(int numOptions);
+public:
+	static int show(XeenEngine *vm, int numOptions);
+};
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_STRING_INPUT_H */

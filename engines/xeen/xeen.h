@@ -88,6 +88,7 @@ enum Mode {
 	MODE_9 = 9,
 	MODE_CHARACTER_INFO = 10,
 	MODE_12 = 12,
+	MODE_DIALOG_123 = 13,
 	MODE_17 = 17,
 	MODE_86 = 86
 };
