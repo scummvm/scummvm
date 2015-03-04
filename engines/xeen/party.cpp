@@ -744,4 +744,9 @@ bool Party::canShoot() const {
 	return false;
 }
 
+bool Party::giveTake(int mode1, uint32 mask1, int mode2, int mask2, int charIdx) {
+	error("TODO");
+}
+
+
 } // End of namespace Xeen

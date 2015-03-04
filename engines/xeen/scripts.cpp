@@ -372,7 +372,9 @@ void Scripts::cmdNPC(Common::Array<byte> &params) {
 
 	if (TownMessage::show(_vm, params[2], _message, map._events._text[params[1]],
 			params[3]))
-		_lineNum = params[4];
+		_lineNum = params[4] - 1;
+
+	cmdNoAction(params);
 }
 
 /**
@@ -484,7 +486,7 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 	} else {
 		result = false;
 		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && idx != _v2)) {
+			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
 				result = ifProc(params[0], mask, _event->_opcode - 8, idx);
 			}
 		}
@@ -511,7 +513,213 @@ void Scripts::cmdMoveObj(Common::Array<byte> &params) {
 	}
 }
 
-void Scripts::cmdTakeOrGive(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
+	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
+	int mode1, mode2, mode3;
+	uint32 mask1, mask2, mask3;
+	byte *extraP;
+	// TODO: See if this needs to maintain values set in other opcodes
+	int param2 = 0;
+
+	mode1 = params[0];
+	switch (mode1) {
+	case 16:
+	case 34:
+	case 100:
+		mask1 = (params[4] << 24) | (params[3] << 16) | (params[2] << 8) | params[1];
+		extraP = &params[5];
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		mask1 = (params[2] << 8) | params[1];
+		extraP = &params[3];
+		break;
+	default:
+		mask1 = params[1];
+		extraP = &params[2];
+		break;
+	}
+
+	mode2 = *extraP++;
+	switch (mode2) {
+	case 16:
+	case 34:
+	case 100:
+		mask2 = (extraP[3] << 24) | (extraP[2] << 16) | (extraP[1] << 8) | extraP[0];
+		extraP += 4;
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		mask2 = (extraP[1] << 8) | extraP[0];
+		extraP += 2;
+		break;
+	default:
+		mask2 = extraP[0];
+		extraP++;
+		break;
+	}
+
+	mode3 = *extraP++;
+	switch (mode3) {
+	case 16:
+	case 34:
+	case 100:
+		mask3 = (extraP[3] << 24) | (extraP[2] << 16) | (extraP[1] << 8) | extraP[0];
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		mask3 = (extraP[1] << 8) | extraP[0];
+		break;
+	default:
+		mask3 = extraP[0];
+		break;
+	}
+
+	if (mode2)
+		screen.closeWindows();
+
+	switch (_event->_opcode) {
+	case OP_TakeOrGive_2:
+		if (_charIndex == 0 || _charIndex == 8) {
+			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+					if (ifProc(params[0], mask1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
+						party.giveTake(0, 0, mode2, mask2, idx);
+						if (mode2 == 82)
+							break;
+					}
+				}
+			}
+		} else if (ifProc(params[0], mask1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, _charIndex - 1)) {
+			party.giveTake(0, 0, mode2, mask2, _charIndex - 1);
+		}
+		break;
+
+	case OP_TakeOrGive_3:
+		if (_charIndex == 0 || _charIndex == 8) {
+			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+					if (ifProc(params[0], mask1, 1, idx) && ifProc(mode2, mask2, 1, idx)) {
+						party.giveTake(0, 0, mode2, mask3, idx);
+						if (mode2 == 82)
+							break;
+					}
+				}
+			}
+		} else if (ifProc(params[0], mask1, 1, _charIndex - 1) &&
+				ifProc(mode2, mask2, 1, _charIndex - 1)) {
+			party.giveTake(0, 0, mode2, mask3, _charIndex - 1);
+		}
+		break;
+
+	case OP_TakeOrGive_4:
+		if (_charIndex == 0 || _charIndex == 8) {
+			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+					if (ifProc(params[0], mask1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
+						party.giveTake(0, 0, mode2, mask2, idx);
+						if (mode2 == 82)
+							break;
+					}
+				}
+			}
+		} else if (ifProc(params[0], mask1, 1, _charIndex - 1)) {
+			party.giveTake(0, 0, mode2, mask2, _charIndex - 1);
+		}
+		break;
+
+	default:
+		if (_charIndex == 0 || _charIndex == 8) {
+			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+					party.giveTake(mode1, mask1, mode1, mask2, idx);
+					
+					switch (mode1) {
+					case 8:
+						mode1 = 0;
+						// Deliberate fall-through
+					case 21:
+					case 66:
+						if (param2) {
+							switch (mode2) {
+							case 82:
+								mode1 = 0;
+								// Deliberate fall-through
+							case 21:
+							case 34:
+							case 35:
+							case 65:
+							case 66:
+							case 100:
+							case 101:
+							case 106:
+								if (param2)
+									continue;
+								
+								// Break out of character loop
+								idx = party._activeParty.size();
+								break;
+							}
+						}
+						break;
+
+					case 34:
+					case 35:
+					case 65:
+					case 100:
+					case 101:
+					case 106:
+						if (param2) {
+							_lineNum = -1;
+							return;
+						}
+
+						// Break out of character loop
+						idx = party._activeParty.size();
+						break;
+
+					default:
+						switch (mode2) {
+						case 82:
+							mode1 = 0;
+							// Deliberate fall-through
+						case 21:
+						case 34:
+						case 35:
+						case 65:
+						case 66:
+						case 100:
+						case 101:
+						case 106:
+							if (param2)
+								continue;
+
+							// Break out of character loop
+							idx = party._activeParty.size();
+							break;
+						}
+						break;
+					}
+				}
+			}
+		} else {
+			if (!party.giveTake(mode1, mask1, mode2, mask2, _charIndex - 1)) {
+				if (mode2 == 79)
+					screen.closeWindows();
+			}
+		}
+		break;
+	}
+
+	cmdNoAction(params);
+}
 
 /**
  * Move to the next line of the script
@@ -949,7 +1157,10 @@ void Scripts::cmdCheckProtection(Common::Array<byte> &params) {
 		cmdExit(params);
 }
 
-void Scripts::cmdChooseNumeric(Common::Array<byte> &params) { error("TODO"); }
+void Scripts::cmdChooseNumeric(Common::Array<byte> &params) {
+	error("TODO");
+}
+
 void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) { error("TODO"); }
 
 void Scripts::cmdDisplayLarge(Common::Array<byte> &params) {

@@ -175,6 +175,8 @@ public:
 	bool arePacksFull() const;
 
 	bool canShoot() const;
+
+	bool giveTake(int mode1, uint32 mask1, int mode2, int mask2, int charIdx);
 };
 
 } // End of namespace Xeen
