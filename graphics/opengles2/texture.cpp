@@ -41,7 +41,7 @@ static T nextHigher2(T k) {
 	return k + 1;
 }
 
-Texture::Texture(const Surface& srf) :
+Texture::Texture(const Surface &srf) :
 		_managedTexture(true), _width(srf.w), _height(srf.h),
 		_texWidth(nextHigher2(_width)), _texHeight(nextHigher2(_height)) {
 	glGenTextures(1, &_texture);

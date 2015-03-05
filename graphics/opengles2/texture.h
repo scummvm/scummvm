@@ -31,7 +31,7 @@ namespace Graphics {
 
 class Texture {
 public:
-	Texture(const Surface& srf);
+	Texture(const Surface &srf);
 	Texture(uint width, uint height);
 	Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
 	~Texture();

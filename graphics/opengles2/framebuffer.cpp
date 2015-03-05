@@ -98,17 +98,6 @@ static void grabFramebufferObjectPointers() {
 }
 #endif // defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
 
-template<class T>
-static T nextHigher2(T k) {
-	if (k == 0)
-		return 1;
-	--k;
-
-	for (uint i = 1; i < sizeof(T) * 8; i <<= 1)
-		k = k | k >> i;
-
-	return k + 1;
-}
 
 
 static bool usePackedBuffer() {
@@ -122,8 +111,7 @@ static bool usePackedBuffer() {
 }
 
 FrameBuffer::FrameBuffer(uint width, uint height) :
-		_managedTexture(true), _width(width), _height(height),
-		_texWidth(nextHigher2(width)), _texHeight(nextHigher2(height)) {
+		Texture(width, height) {
 #ifdef SDL_BACKEND
 	if (!Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
 		error("GL_EXT_framebuffer_object extension is not supported!");
@@ -132,28 +120,18 @@ FrameBuffer::FrameBuffer(uint width, uint height) :
 #if defined(SDL_BACKEND) && !defined(USE_GLEW)
 	grabFramebufferObjectPointers();
 #endif
-	glGenTextures(1, &_colorTexture);
-	glBindTexture(GL_TEXTURE_2D, _colorTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
 	init();
 }
 
 FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height) :
-		_managedTexture(false), _colorTexture(texture_name), _width(width), _height(height),
-		_texWidth(texture_width), _texHeight(texture_height) {
+		Texture(texture_name, width, height, texture_width, texture_height) {
 	init();
 }
 
 FrameBuffer::~FrameBuffer() {
 	glDeleteRenderbuffers(2, _renderBuffers);
 	glDeleteFramebuffers(1, &_frameBuffer);
-	if (_managedTexture)
-		glDeleteTextures(1, &_colorTexture);
 }
 
 void FrameBuffer::init() {
@@ -161,7 +139,7 @@ void FrameBuffer::init() {
 	glGenRenderbuffers(2, _renderBuffers);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture, 0);
 
 	if (usePackedBuffer()) {
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
