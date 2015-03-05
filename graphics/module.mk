@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	opengles2/extensions.o \
 	opengles2/shader.o \
 	opengles2/framebuffer.o \
+	opengles2/texture.o \
 	opengles2/box_shaders.o \
 	opengles2/control_shaders.o \
 	opengles2/compat_shaders.o \
