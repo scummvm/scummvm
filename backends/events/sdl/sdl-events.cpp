@@ -850,10 +850,19 @@ uint32 SdlEventSource::obtainUnicode(const SDL_keysym keySym) {
 	int n = SDL_PeepEvents(events, 2, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_TEXTINPUT);
 	// Make sure that the TEXTINPUT event belongs to this KEYDOWN
 	// event and not another pending one.
-	if (n > 0 && events[0].type == SDL_TEXTINPUT) {
-		return convUTF8ToUTF32(events[0].text.text);
-	} else if (n > 1 && events[0].type != SDL_KEYDOWN && events[1].type == SDL_TEXTINPUT) {
-		return convUTF8ToUTF32(events[1].text.text);
+	if ((n > 0 && events[0].type == SDL_TEXTINPUT)
+	    || (n > 1 && events[0].type != SDL_KEYDOWN && events[1].type == SDL_TEXTINPUT)) {
+		// Remove the text input event we associate with the key press. This
+		// makes sure we never get any SDL_TEXTINPUT events which do "belong"
+		// to SDL_KEYDOWN events.
+		n = SDL_PeepEvents(events, 1, SDL_GETEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT);
+		// This is basically a paranoia safety check because we know there
+		// must be a text input event in the queue.
+		if (n > 0) {
+			return convUTF8ToUTF32(events[0].text.text);
+		} else {
+			return 0;
+		}
 	} else {
 		return 0;
 	}
