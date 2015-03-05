@@ -3253,6 +3253,8 @@ void Scene611::handleSubDialog1() {
 		handleTalking(500);
 		displayHermitQuestions(17);
 		_dialog1.write(0x290, false);
+		_dialog1.write(0x28e, false);
+
 		if (!_dialog1.read(0x28F))
 			_dialog1.write(0x291, true);
 
@@ -3271,8 +3273,10 @@ void Scene611::handleSubDialog1() {
 		if ((_game._objects.isInInventory(OBJ_DURAFAIL_CELLS)) || (_game._objects.isInInventory(OBJ_PHONE_CELLS)))
 			_dialog1.write(0x294, true);
 
-		if (!_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && !_game._objects.isInInventory(OBJ_PHONE_CELLS))
-			_globals[kExecuted_1_11] = true;
+		// WORKAROUND: Fix bug in the original where the option to give Hermit batteries
+		// would be given before the player even has any batteries
+		//if (!_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && !_game._objects.isInInventory(OBJ_PHONE_CELLS))
+		//	_globals[kExecuted_1_11] = true;
 
 		setDialogNode(1);
 		break;
@@ -3921,14 +3925,14 @@ void Scene611::enter() {
 		0x2D9, 0x2DA, 0x2DB, 0x2DC, 0x2DD, 0x2DE, 0x2DF, 0x2E0, 0x2E1, 0x2E2, 0x2E3, 0x2E4, 0x2E5, 0x2E6,
 		0x323, 0x324, 0);
 
-	_dialog1.setup(0x82, 0x287, 0x288, 0x289, 0x28A, 0x28B, 0x28C, 0x28D, 0x28E, 0x28F, 0x290,
+	_dialog1.setup(kConvHermit1, 0x287, 0x288, 0x289, 0x28A, 0x28B, 0x28C, 0x28D, 0x28E, 0x28F, 0x290, 
 		0x291, 0x292, 0x293, 0x294, 0x295, 0x296, 0);
 
-	_dialog2.setup(0x83, 0x29C, 0x29D, 0x29E, 0x29F, 0);
+	_dialog2.setup(kConvHermit2, 0x29C, 0x29D, 0x29E, 0x29F, 0);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		_dialog1.set(0x82, 0x287, 0x288, 0x296, 0);
-		_dialog2.set(0x83, 0x29F, 0);
+		_dialog1.set(kConvHermit1, 0x287, 0x288, 0x296, 0);
+		_dialog2.set(kConvHermit2, 0x29F, 0);
 	}
 
 	_vm->_palette->setEntry(252, 51, 51, 47);
@@ -3964,12 +3968,14 @@ void Scene611::enter() {
 		_scene->_hotspots.activate(NOUN_HERMIT, false);
 	}
 
-	// CHECKME: The last line of the block looks extremely useless
+	/* WORKAROUND: Pretty sure this is a debugging code fragment that should be ignored
 	if (_globals[kExecuted_1_11]) {
 		_dialog1.write(0x294, true);
 		_dialog1.write(0x292, false);
 		_globals[kExecuted_1_11] = true;
-	}
+	}*/
+	if ((_game._objects.isInInventory(OBJ_DURAFAIL_CELLS)) || (_game._objects.isInInventory(OBJ_PHONE_CELLS)))
+		_dialog1.write(0x294, true);
 
 	if (_duringDialogFl) {
 		_game._player._playerPos = Common::Point(237, 129);

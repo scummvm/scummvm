@@ -148,7 +148,7 @@ enum GlobalId {
 
 	/* Section #6 Variables */
 	kConvHermit1			= 130,
-	kconvHermit2			= 131,
+	kConvHermit2			= 131,
 	kHasTalkedToHermit		= 132,
 	kExecuted_1_11			= 133,
 	kHandsetCellStatus		= 134,
