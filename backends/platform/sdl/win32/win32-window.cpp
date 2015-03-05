@@ -23,48 +23,37 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/scummsys.h"
-
 #ifdef WIN32
 
-// Fix for bug #2895217 "MSVC compilation broken with r47595":
-// We need to keep this on top of the "common/scummsys.h"(base/main.h) include,
-// otherwise we will get errors about the windows headers redefining
-// "ARRAYSIZE" for example.
+#include "backends/platform/sdl/win32/win32-window.h"
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
-#include "backends/platform/sdl/win32/win32.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
-
-int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_SetModuleHandle(GetModuleHandle(NULL));
-#endif
-	return main(__argc, __argv);
-}
-
-int main(int argc, char *argv[]) {
-	// Create our OSystem instance
-	g_system = new OSystem_Win32();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_Win32 *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+void SdlWindow_Win32::setupIcon() {
+	HMODULE handle = GetModuleHandle(NULL);
+	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
+	if (ico) {
+		SDL_SysWMinfo wminfo;
+		if (getSDLWMInformation(&wminfo)) {
+			// Replace the handle to the icon associated with the window class by our custom icon
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
+#else
+			SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
 #endif
 
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
+			// Since there wasn't any default icon, we can't use the return value from SetClassLong
+			// to check for errors (it would be 0 in both cases: error or no previous value for the
+			// icon handle). Instead we check for the last-error code value.
+			if (GetLastError() == ERROR_SUCCESS)
+				return;
+		}
+	}
 
-	// Free OSystem
-	delete (OSystem_Win32 *)g_system;
-
-	return res;
+	// If no icon has been set, fallback to default path
+	SdlWindow::setupIcon();
 }
 
 #endif

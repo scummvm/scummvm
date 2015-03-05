@@ -45,8 +45,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource)
- : SurfaceSdlGraphicsManager(sdlEventSource) {
+LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+ : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -134,7 +134,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
 	if	(w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_eventSource->toggleMouseGrab();
+		_window->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;

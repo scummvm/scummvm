@@ -49,11 +49,6 @@ public:
 	 */
 	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
 
-	/**
-	 * Toggles mouse input grab
-	 */
-	virtual void toggleMouseGrab();
-
 protected:
 	/** @name Keyboard mouse emulation
 	 * Disabled by fingolfin 2004-12-18.
@@ -130,7 +125,7 @@ protected:
 	/**
 	 * Maps the ASCII value of key
 	 */
-	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
 
 	/**
 	 * Configures the key modifiers flags status
@@ -141,6 +136,17 @@ protected:
 	 * Translates SDL key codes to OSystem key codes
 	 */
 	Common::KeyCode SDLToOSystemKeycode(const SDLKey key);
+
+	/**
+	 * Notify graphics manager of a resize request.
+	 */
+	bool handleResizeEvent(Common::Event &event, int w, int h);
+
+	/**
+	 * Extracts unicode information for the specific key sym.
+	 * May only be used for key down events.
+	 */
+	uint32 obtainUnicode(const SDL_keysym keySym);
 };
 
 #endif

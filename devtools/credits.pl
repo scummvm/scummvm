@@ -1133,6 +1133,7 @@ begin_credits("Credits");
 				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
 				add_person("Keith Kaisershot", "blitter", "Several Pegasus Prime patches");
 				add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
+				add_person("Stefan Kristiansson", "skristiansson", "Initial work on SDL2 support");
 				add_person("Claudio Matsuoka", "", "Daily Linux builds");
 				add_person("Thomas Mayer", "", "PSP port contributions");
 				add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
