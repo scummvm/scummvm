@@ -159,7 +159,7 @@ RLFDecoder::RLFVideoTrack::Frame RLFDecoder::RLFVideoTrack::readNextFrame() {
 
 bool RLFDecoder::RLFVideoTrack::seek(const Audio::Timestamp &time) {
 	uint frame = getFrameAtTime(time);
-	assert(frame < (int)_frameCount);
+	assert(frame < _frameCount);
 
 	if ((uint)_displayedFrame == frame)
 		return true;
