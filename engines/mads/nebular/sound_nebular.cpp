@@ -36,6 +36,7 @@ namespace Nebular {
 bool AdlibChannel::_channelsEnabled;
 
 AdlibChannel::AdlibChannel() {
+	_owner = nullptr;
 	_activeCount = 0;
 	_field1 = 0;
 	_field2 = 0;
@@ -55,6 +56,7 @@ AdlibChannel::AdlibChannel() {
 	_pSrc = nullptr;
 	_ptr3 = nullptr;
 	_ptr4 = nullptr;
+	_ptrEnd = nullptr;
 	_field17 = 0;
 	_field19 = 0;
 	_soundData = nullptr;
@@ -108,6 +110,9 @@ void AdlibChannel::load(byte *pData) {
 	_fieldB = 0;
 	_field17 = 0;
 	_field19 = 0;
+
+	CachedDataEntry &cacheEntry = _owner->getCachedData(pData);
+	_ptrEnd = cacheEntry._dataEnd;
 }
 
 void AdlibChannel::check(byte *nullPtr) {
@@ -192,6 +197,9 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 		_channelData[i]._freqBase = 0;
 		_channelData[i]._field6 = 0;
 	}
+	
+	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
+		_channels[i]._owner = this;
 
 	AdlibChannel::_channelsEnabled = false;
 
@@ -283,6 +291,17 @@ void ASound::noise() {
 	}
 }
 
+CachedDataEntry &ASound::getCachedData(byte *pData) {
+	Common::List<CachedDataEntry>::iterator i;
+	for (i = _dataCache.begin(); i != _dataCache.end(); ++i) {
+		CachedDataEntry &e = *i;
+		if (e._data == pData)
+			return e;
+	}
+
+	error("Could not find previously loaded data");
+}
+
 void ASound::write(int reg, int val) {
 	_queue.push(RegisterValue(reg, val));
 }
@@ -331,6 +350,7 @@ byte *ASound::loadData(int offset, int size) {
 	CachedDataEntry rec;
 	rec._offset = offset;
 	rec._data = new byte[size];
+	rec._dataEnd = rec._data + size - 1;
 	_soundFile.seek(_dataOffset + offset);
 	_soundFile.read(rec._data, size);
 	_dataCache.push_back(rec);
@@ -449,6 +469,10 @@ void ASound::pollActiveChannel() {
 					warning("pollActiveChannel(): No data found for sound channel");
 					break;
 				}
+				if (pSrc > chan->_ptrEnd) {
+					warning("Read beyond end of loaded sound data");
+				}
+
 				if (!(*pSrc & 0x80) || (*pSrc <= 0xF0)) {
 					if (updateFlag)
 						updateActiveChannel();

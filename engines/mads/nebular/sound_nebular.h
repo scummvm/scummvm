@@ -37,11 +37,15 @@ class SoundManager;
 
 namespace Nebular {
 
+class ASound;
+
 /**
  * Represents the data for a channel on the Adlib
  */
 class AdlibChannel {
 public:
+	ASound *_owner;
+
 	int _activeCount;
 	int _field1;
 	int _field2;
@@ -61,6 +65,7 @@ public:
 	byte *_pSrc;
 	byte *_ptr3;
 	byte *_ptr4;
+	byte *_ptrEnd;
 	int _field17;
 	int _field19;
 	byte *_soundData;
@@ -128,15 +133,17 @@ struct RegisterValue {
 #define ADLIB_CHANNEL_MIDWAY 5
 #define CALLBACKS_PER_SECOND 60
 
+struct CachedDataEntry {
+	int _offset;
+	byte *_data;
+	byte *_dataEnd;
+};
+
 /**
  * Base class for the sound player resource files
  */
 class ASound : public Audio::AudioStream {
 private:
-	struct CachedDataEntry {
-		int _offset;
-		byte *_data;
-	};
 	Common::List<CachedDataEntry> _dataCache;
 	uint16 _randomSeed;
 
@@ -349,6 +356,11 @@ public:
 	 * Return the current frame counter
 	 */
 	int getFrameCounter() { return _frameCounter; }
+
+	/**
+	 * Return the cached data block record for previously loaded sound data
+	 */
+	CachedDataEntry &getCachedData(byte *pData);
 
 	// AudioStream interface
 	/**
