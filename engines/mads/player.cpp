@@ -785,8 +785,10 @@ void Player::removePlayerSprites() {
 	int heroSpriteId = _spritesStart;
 	for (int i = 0; i < 8; i++) {
 		if (_spriteSetsPresent[i]) {
-			scene._sprites.remove(heroSpriteId++);
+			delete scene._sprites[heroSpriteId];
+			scene._sprites[heroSpriteId] = nullptr;
 			_spriteSetsPresent[i] = false;
+			++heroSpriteId;
 		}
 	}
 
