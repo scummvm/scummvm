@@ -569,7 +569,7 @@ void ScreenSurface::init() {
 }
 
 ScreenSurface::~ScreenSurface() {
-	delete[] _surfacePixels;
+	::free(_surfacePixels);
 }
 
 void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {
