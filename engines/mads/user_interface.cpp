@@ -843,10 +843,11 @@ void UserInterface::emptyConversationList() {
 }
 
 void UserInterface::addConversationMessage(int vocabId, const Common::String &msg) {
-	assert(_talkStrings.size() < 5);
-
-	_talkStrings.push_back(msg);
-	_talkIds.push_back(vocabId);
+	// Only allow a maximum of 5 talk entries to be displayed
+	if (_talkStrings.size() < 5) {
+		_talkStrings.push_back(msg);
+		_talkIds.push_back(vocabId);
+	}
 }
 
 void UserInterface::loadInventoryAnim(int objectId) {
