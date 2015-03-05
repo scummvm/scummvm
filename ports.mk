@@ -329,7 +329,7 @@ endif
 	@echo
 	@echo All is done.
 	@echo Now run
-	@echo "\tgit commit 'DISTS: Generated Code::Blocks and MSVC project files'"
+	@echo "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap win32dist install uninstall
