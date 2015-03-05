@@ -694,6 +694,8 @@ static const char *credits[] = {
 "C2""Several Pegasus Prime patches",
 "C0""Andreas Karlsson",
 "C2""Initial port for SymbianOS",
+"C0""Stefan Kristiansson",
+"C2""Initial work on SDL2 support",
 "C0""Claudio Matsuoka",
 "C2""Daily Linux builds",
 "C0""Thomas Mayer",

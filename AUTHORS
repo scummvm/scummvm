@@ -565,6 +565,7 @@ Other contributions
      Jeroen Janssen               - Numerous readability and bugfix patches
      Keith Kaisershot             - Several Pegasus Prime patches
      Andreas Karlsson             - Initial port for SymbianOS
+     Stefan Kristiansson          - Initial work on SDL2 support
      Claudio Matsuoka             - Daily Linux builds
      Thomas Mayer                 - PSP port contributions
      Sean Murray                  - ScummVM tools GUI application (GSoC 2007
