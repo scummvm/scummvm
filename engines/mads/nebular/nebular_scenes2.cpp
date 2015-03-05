@@ -1152,8 +1152,9 @@ void Scene205::setup() {
 }
 
 Scene205::Scene205(MADSEngine *vm) : Scene2xx(vm) {
-	_lastFishTime = 0;
-	_chickenTime = 0;
+	_lastFishTime = _scene->_frameStartTime;
+	_chickenTime = _scene->_frameStartTime;
+
 	_beingKicked = false;
 	_kernelMessage = -1;
 }
@@ -1161,8 +1162,6 @@ Scene205::Scene205(MADSEngine *vm) : Scene2xx(vm) {
 void Scene205::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
 
-	s.syncAsUint32LE(_lastFishTime);
-	s.syncAsUint32LE(_chickenTime);
 	s.syncAsByte(_beingKicked);
 	s.syncAsSint16LE(_kernelMessage);
 }
@@ -1191,7 +1190,6 @@ void Scene205::enter() {
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 11);
 
 	if (!_game._visitedScenes._sceneRevisited) {
-		_lastFishTime = _scene->_frameStartTime;
 		_globals._sequenceIndexes[6] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 7, 1, 0, 0);
 		idx = _scene->_dynamicHotspots.add(269, 13, _globals._sequenceIndexes[6], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(49, 86), FACING_NORTH);
@@ -1455,7 +1453,6 @@ Scene207::Scene207(MADSEngine *vm) : Scene2xx(vm) {
 
 void Scene207::synchronize(Common::Serializer &s) {
 	Scene2xx::synchronize(s);
-	uint32 unused;
 
 	s.syncAsByte(_vultureFl);
 	s.syncAsByte(_spiderFl);
@@ -1463,8 +1460,6 @@ void Scene207::synchronize(Common::Serializer &s) {
 
 	s.syncAsSint32LE(_spiderHotspotId);
 	s.syncAsSint32LE(_vultureHotspotId);
-	s.syncAsSint32LE(unused);
-	s.syncAsSint32LE(unused);
 }
 
 void Scene207::setup() {
