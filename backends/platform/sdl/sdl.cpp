@@ -46,7 +46,11 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
+#ifdef USE_SDL20
+#include "backends/graphics/surfacesdl/surfacesdl20-graphics.h"
+#else
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#endif
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
@@ -126,8 +130,10 @@ void OSystem_SDL::init() {
 	// Initialize SDL
 	initSDL();
 
+#ifndef USE_SDL20
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
+#endif
 
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
@@ -158,6 +164,7 @@ void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
+#ifndef USE_SDL20
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
 	sdlDriverName[0] = '\0';
@@ -165,6 +172,7 @@ void OSystem_SDL::initBackend() {
 	// Using printf rather than debug() here as debug()/logging
 	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
+#endif
 
 	// Create the default event source, in case a custom backend
 	// manager didn't provide one yet.
@@ -205,7 +213,11 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
+#ifdef USE_SDL20
+			_graphicsManager = new SurfaceSdl20GraphicsManager(_eventSource);
+#else
 			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+#endif
 		}
 	}
 
@@ -314,7 +326,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 		}
 	}
 
-	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
+	dynamic_cast<SurfaceSdlGraphicsManager *>(_graphicsManager)->setWindowCaption(cap.c_str(), cap.c_str());
 }
 
 void OSystem_SDL::quit() {
@@ -477,7 +489,9 @@ void OSystem_SDL::setupIcon() {
 	if (!sdl_surf) {
 		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
 	}
+#ifndef USE_SDL20
 	SDL_WM_SetIcon(sdl_surf, NULL);
+#endif
 	SDL_FreeSurface(sdl_surf);
 	free(icon);
 }

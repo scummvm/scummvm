@@ -146,6 +146,8 @@ public:
 	virtual void transformMouseCoordinates(Common::Point &point);
 	virtual void notifyMousePos(Common::Point mouse);
 
+	virtual void setWindowCaption(const char *title, const char *icon);
+
 protected:
 #ifdef USE_OSD
 	/** Surface containing the OSD message */
@@ -339,6 +341,15 @@ protected:
 	virtual void setMousePos(int x, int y);
 	virtual void toggleFullScreen();
 	virtual bool saveScreenshot(const char *filename);
+
+	// SDL 1.2 / SDL 2.0 incompatibility abstraction methods
+	virtual void setColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
+	virtual void setAlpha(SDL_Surface *surface,  Uint32 flag, Uint8 alpha);
+	virtual void setColorKey(SDL_Surface *surface,  int flag, Uint32 key);
+	virtual void iconifyWindow();
+	virtual void createHwScreen();
+	virtual void destroyHwScreen();
+	virtual void blitToHwScreen();
 };
 
 #endif

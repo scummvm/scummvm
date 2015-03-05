@@ -77,17 +77,21 @@ SdlEventSource::~SdlEventSource() {
 }
 
 int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + Common::ASCII_F1;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
+	return mapKey(SDLToOSystemKeycode(key), mod, unicode);
+}
+
+int SdlEventSource::mapKey(Common::KeyCode key, SDLMod mod, Uint16 unicode) {
+	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
+		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
+	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		return key - Common::KEYCODE_KP0 + '0';
+	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
+	} else if (key >= Common::KEYCODE_NUMLOCK && key <= Common::KEYCODE_EURO) {
 		return 0;
 	}
 	return key;
@@ -173,7 +177,12 @@ void SdlEventSource::handleKbdMouse() {
 				_km.y_down_count = 1;
 			}
 
+#ifndef USE_SDL20
 			SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
+#else
+			if (_graphicsManager)
+				_graphicsManager->warpMouse((Uint16)_km.x, (Uint16)_km.y);
+#endif
 		}
 	}
 }
@@ -340,7 +349,9 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 	case SDLK_HELP: return Common::KEYCODE_HELP;
 	case SDLK_PRINT: return Common::KEYCODE_PRINT;
 	case SDLK_SYSREQ: return Common::KEYCODE_SYSREQ;
+#ifndef USE_SDL20
 	case SDLK_BREAK: return Common::KEYCODE_BREAK;
+#endif
 	case SDLK_MENU: return Common::KEYCODE_MENU;
 	case SDLK_POWER: return Common::KEYCODE_POWER;
 	case SDLK_UNDO: return Common::KEYCODE_UNDO;
@@ -387,6 +398,7 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	case SDL_JOYAXISMOTION:
 		return handleJoyAxisMotion(ev, event);
 
+#ifndef USE_SDL20
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)
 			_graphicsManager->notifyVideoExpose();
@@ -405,6 +417,29 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 			}
 		}
 		return false;
+#else
+	case SDL_WINDOWEVENT:
+		switch (ev.window.event) {
+		case SDL_WINDOWEVENT_EXPOSED:
+			if (_graphicsManager)
+				_graphicsManager->notifyVideoExpose();
+			return false;
+		case SDL_WINDOWEVENT_RESIZED:
+			if (_graphicsManager) {
+				_graphicsManager->notifyResize(ev.window.data1, ev.window.data2);
+
+				// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
+				int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+				if (screenID != _lastScreenID) {
+					_lastScreenID = screenID;
+					event.type = Common::EVENT_SCREEN_CHANGED;
+					return true;
+				}
+			}
+			return false;
+		}
+		return false;
+#endif
 
 	case SDL_QUIT:
 		event.type = Common::EVENT_QUIT;
@@ -415,6 +450,25 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
+#ifdef USE_SDL20
+static Uint16 convUTF8ToUCS2(const char *src) {
+	Uint16 ucs2 = 0;
+	char *dst = SDL_iconv_string(
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		"UCS-2BE",
+#else
+		"UCS-2LE",
+#endif
+		"UTF-8", src, SDL_strlen(src)+1);
+
+	if (dst) {
+		ucs2 = *((Uint16 *)dst);
+		SDL_free(dst);
+	}
+
+	return ucs2;
+}
+#endif
 
 bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
@@ -470,9 +524,28 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
+#ifndef USE_SDL20
+	Uint16 unicode = (Uint16)ev.key.keysym.unicode;
+#else
+	Uint16 unicode = 0;
+	SDL_Event events[2];
+
+	// In SDL2, the unicode field has been removed from the keysym struct.
+	// Instead a SDL_TEXTINPUT event is generated on key combinations that
+	// generates unicode.
+	// Here we peek into the event queue for the event to see if it exists.
+	int n = SDL_PeepEvents(events, 2, SDL_PEEKEVENT, SDL_KEYDOWN, SDL_TEXTINPUT);
+	// Make sure that the TEXTINPUT event belongs to this KEYDOWN
+	// event and not another pending one.
+	if (n > 0 && events[0].type == SDL_TEXTINPUT)
+		unicode = convUTF8ToUCS2(events[0].text.text);
+	else if (n > 1 && events[0].type != SDL_KEYDOWN && events[1].type == SDL_TEXTINPUT)
+		unicode = convUTF8ToUCS2(events[1].text.text);
+#endif
+
 	event.type = Common::EVENT_KEYDOWN;
 	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, unicode);
 
 	return true;
 }
@@ -516,7 +589,12 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 	event.type = Common::EVENT_KEYUP;
 	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod,
+#ifndef USE_SDL20
+		(Uint16)ev.key.keysym.unicode);
+#else
+		0);
+#endif
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
@@ -753,10 +831,17 @@ bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 }
 
 void SdlEventSource::toggleMouseGrab() {
+#ifndef USE_SDL20
 	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	else
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
+#else
+	if (SDL_GetRelativeMouseMode() == SDL_FALSE)
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+	else
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+#endif
 }
 
 void SdlEventSource::resetKeyboadEmulation(int16 x_max, int16 y_max) {
