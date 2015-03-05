@@ -147,6 +147,19 @@ protected:
 	 * May only be used for key down events.
 	 */
 	uint32 obtainUnicode(const SDL_keysym keySym);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/**
+	 * Whether _fakeKeyUp contains an event we need to send.
+	 */
+	bool _queuedFakeKeyUp;
+
+	/**
+	 * A fake key up event when we receive a TEXTINPUT without any previous
+	 * KEYDOWN event.
+	 */
+	Common::Event _fakeKeyUp;
+#endif
 };
 
 #endif

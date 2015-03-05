@@ -49,8 +49,33 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static uint32 convUTF8ToUTF32(const char *src) {
+	uint32 utf32 = 0;
+
+	char *dst = SDL_iconv_string(
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	                             "UTF-32BE",
+#else
+	                             "UTF-32LE",
+#endif
+                                 "UTF-8", src, SDL_strlen(src) + 1);
+
+	if (dst) {
+		utf32 = *((uint32 *)dst);
+		SDL_free(dst);
+	}
+
+	return utf32;
+}
+#endif
+
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0) {
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      , _queuedFakeKeyUp(false), _fakeKeyUp()
+#endif
+      {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
 
@@ -364,6 +389,16 @@ Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
 bool SdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// In case we still need to send a key up event for a key down from a
+	// TEXTINPUT event we do this immediately.
+	if (_queuedFakeKeyUp) {
+		event = _fakeKeyUp;
+		_queuedFakeKeyUp = false;
+		return true;
+	}
+#endif
+
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
 	if (screenID != _lastScreenID) {
@@ -422,6 +457,27 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		} else {
 			return false;
 		}
+		}
+
+	case SDL_TEXTINPUT: {
+		// When we get a TEXTINPUT event it means we got some user input for
+		// which no KEYDOWN exists. SDL 1.2 introduces a "fake" key down+up
+		// in such cases. We will do the same to mimic it's behavior.
+		event.type = Common::EVENT_KEYDOWN;
+
+		event.kbd = Common::KeyState(Common::KEYCODE_INVALID, convUTF8ToUTF32(ev.text.text), 0);
+
+		SDLModToOSystemKeyFlags(SDL_GetModState(), event);
+		// Set the scroll lock sticky flag
+		if (_scrollLock)
+			event.kbd.flags |= Common::KBD_SCRL;
+
+		// Fake a key up when we have a proper ascii value.
+		_queuedFakeKeyUp = (event.kbd.ascii != 0);
+		_fakeKeyUp = event;
+		_fakeKeyUp.type = Common::EVENT_KEYUP;
+
+		return _queuedFakeKeyUp;
 		}
 
 	case SDL_WINDOWEVENT:
@@ -817,27 +873,6 @@ bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 
 	return false;
 }
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-static uint32 convUTF8ToUTF32(const char *src) {
-	uint32 utf32 = 0;
-
-	char *dst = SDL_iconv_string(
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	                             "UTF-32BE",
-#else
-	                             "UTF-32LE",
-#endif
-                                 "UTF-8", src, SDL_strlen(src) + 1);
-
-	if (dst) {
-		utf32 = *((uint32 *)dst);
-		SDL_free(dst);
-	}
-
-	return utf32;
-}
-#endif
 
 uint32 SdlEventSource::obtainUnicode(const SDL_keysym keySym) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
