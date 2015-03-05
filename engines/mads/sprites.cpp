@@ -406,7 +406,7 @@ void SpriteSets::remove(int idx) {
 			} while (size() > 0 && (*this)[size() - 1] == nullptr);
 		}
 
-		if (_assetCount > 0)
+		if (idx < 50 && _assetCount > 0)
 			--_assetCount;
 	}
 }
