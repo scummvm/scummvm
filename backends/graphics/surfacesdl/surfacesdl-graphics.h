@@ -113,6 +113,9 @@ public:
 	virtual int16 getOverlayHeight() { return _overlayHeight; }
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
 	void closeOverlay(); // ResidualVM specific method
+#ifdef USE_OPENGL
+	virtual void setSideTextures(Graphics::Texture *left, Graphics::Texture *right);
+#endif
 
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
@@ -172,6 +175,8 @@ protected:
 	int _overlayNumTex;
 	GLuint *_overlayTexIds;
 	GLenum _overlayScreenGLFormat;
+
+	Graphics::Texture *_sideTextures[2];
 
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();

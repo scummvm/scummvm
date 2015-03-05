@@ -78,6 +78,7 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 		_desktopW = vi->current_w;
 		_desktopH = vi->current_h;
+		_sideTextures[0] = _sideTextures[1] = nullptr;
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -573,7 +574,7 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGL() {
 	glPopAttrib();
 }
 
-void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture& tex, const Math::Rect2d& rect) {
+void SurfaceSdlGraphicsManager::drawTexture(const Graphics::Texture &tex, const Math::Rect2d &rect) {
 #ifndef USE_OPENGL_SHADERS
 	// Save current state
 	glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT);
@@ -708,6 +709,10 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			if (_fullscreen && _gameRect.getTopLeft().getX() != 0 && _sideTextures[0] != nullptr) {
+				drawTexture(*_sideTextures[0], Math::Rect2d(Math::Vector2d(0,0), _gameRect.getBottomLeft()));
+				drawTexture(*_sideTextures[1], Math::Rect2d(_gameRect.getTopRight(), Math::Vector2d(1.0, 1.0)));
+			}
 			drawTexture(*_frameBuffer, _gameRect);
 		}
 
@@ -886,6 +891,13 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
+void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Texture *left, Graphics::Texture *right) {
+	delete _sideTextures[0];
+	delete _sideTextures[1];
+	_sideTextures[0] = left;
+	_sideTextures[1] = right;
+}
+
 void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
 	if (_overlayscreen == NULL)
 		return;
@@ -949,6 +961,11 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 }
 
 void SurfaceSdlGraphicsManager::closeOverlay() {
+#ifdef USE_OPENGL
+	delete _sideTextures[0];
+	delete _sideTextures[1];
+	_sideTextures[0] = _sideTextures[1] = nullptr;
+#endif
 	if (_overlayscreen) {
 		SDL_FreeSurface(_overlayscreen);
 		_overlayscreen = NULL;
