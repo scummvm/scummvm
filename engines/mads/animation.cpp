@@ -598,8 +598,6 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 	_oldFrameEntry = 0;
 	_freeFlag = false;
-
-	_nextScrollTimer = _nextFrameTimer = _vm->_game->_scene._frameStartTime;
 }
 
 void Animation::setNextFrameTimer(int frameNumber) {
