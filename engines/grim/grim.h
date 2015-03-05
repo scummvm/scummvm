@@ -188,6 +188,10 @@ public:
 	virtual void openMainMenuDialog() override;
 	void debugLua(const Common::String &str);
 
+#ifdef SDL_BACKEND
+	void setSideTextures(const Common::String &setup);
+#endif
+
 protected:
 	virtual void pauseEngineIntern(bool pause) override;
 

@@ -69,6 +69,13 @@
 
 #include "engines/grim/lua/lua.h"
 
+#ifdef SDL_BACKEND
+#include "image/png.h"
+#include "backends/platform/sdl/sdl.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
+#endif
+
 namespace Grim {
 
 GrimEngine *g_grim = nullptr;
@@ -314,6 +321,7 @@ Common::Error GrimEngine::run() {
 	createRenderer();
 	g_driver->setupScreen(640, 480, fullscreen);
 	g_driver->loadEmergFont();
+
 
 	if (getGameType() == GType_MONKEY4 && SearchMan.hasFile("AMWI.m4b")) {
 		// Play EMI Mac Aspyr logo
@@ -667,6 +675,10 @@ void GrimEngine::drawNormalMode() {
 	if (_setupChanged) {
 		cameraPostChangeHandle(_currSet->getSetup());
 		_setupChanged = false;
+#ifdef SDL_BACKEND
+		warning("Looking for side texture for '%s'", _currSet->getCurrSetup()->_name.c_str());
+		setSideTextures(_currSet->getCurrSetup()->_name.c_str());
+#endif
 	}
 
 	// Draw actors
@@ -1373,6 +1385,33 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 		_frameStart += _system->getMillis() - _pauseStartTime;
 	}
 }
+
+
+#ifdef SDL_BACKEND
+Graphics::Texture *loadPNG(const Common::String &filename) {
+	Image::PNGDecoder d;
+	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
+	if (!s)
+		return nullptr;
+	d.loadStream(*s);
+	delete s;
+
+	Graphics::Surface *srf = d.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+	Graphics::Texture *ret = new Graphics::Texture(*srf);
+	srf->free();
+	delete srf;
+	return ret;
+}
+
+void GrimEngine::setSideTextures(const Common::String &setup) {
+	Graphics::Texture *t1 = loadPNG(Common::String::format("%s_left.png", setup.c_str()));
+	Graphics::Texture *t2 = loadPNG(Common::String::format("%s_right.png", setup.c_str()));
+	OSystem_SDL *sys = (OSystem_SDL *) g_system;
+	SurfaceSdlGraphicsManager *ssgm = dynamic_cast<SurfaceSdlGraphicsManager *>(sys->getGraphicsManager());
+	ssgm->setSideTextures(t1, t2);
+}
+#endif
+
 
 void GrimEngine::debugLua(const Common::String &str) {
 	lua_dostring(str.c_str());
