@@ -104,8 +104,6 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 	}
 }
 
-}
-
 bool OSystem_MacOSX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile)
 		return true;
