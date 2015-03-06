@@ -65,10 +65,12 @@ private:
 	bool cmdListActors(int32 argc, const char **argv);
 	bool cmdListFlags(int32 argc, const char **argv);
 	bool cmdShowObject(int32 argc, const char **argv);
+	bool cmdShowAction(int32 argc, const char **argv);
 	bool cmdListObjects(int32 argc, const char **argv);
 	bool cmdShowWorldStats(int32 argc, const char **argv);
 
 	bool cmdPlayVideo(int32 argc, const char **argv);
+	bool cmdShowScript(int32 argc, const char **argv);
 	bool cmdRunScript(int32 argc, const char **argv);
 	bool cmdChangeScene(int32 argc, const char **argv);
 	bool cmdRunEncounter(int32 argc, const char **argv);

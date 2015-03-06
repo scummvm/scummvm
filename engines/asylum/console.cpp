@@ -162,6 +162,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 
     registerCmd("ls",             WRAP_METHOD(Console, cmdListFiles));
 
+    registerCmd("action",         WRAP_METHOD(Console, cmdShowAction));
     registerCmd("actions",        WRAP_METHOD(Console, cmdListActions));
     registerCmd("actors",         WRAP_METHOD(Console, cmdListActors));
     registerCmd("flags",          WRAP_METHOD(Console, cmdListFlags));
@@ -171,6 +172,8 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 
     registerCmd("video",          WRAP_METHOD(Console, cmdPlayVideo));
     registerCmd("script",         WRAP_METHOD(Console, cmdRunScript));
+    registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
+
     registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
     registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
     registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
@@ -205,18 +208,20 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" debugflag_list    - Lists the available debug flags and their status\n");
     debugPrintf(" debugflag_enable  - Enables a debug flag\n");
     debugPrintf(" debugflag_disable - Disables a debug flag\n");
+    debugPrintf("\n");
     debugPrintf(" show_actors       - Show actors\n");
     debugPrintf(" show_objects      - Show objects\n");
     debugPrintf(" show_polygons     - Show polygons\n");
-    debugPrintf(" show_drawrects    - Show drawing rects\n");;
-    debugPrintf(" use_scrolling     - Use scrolling\n");
+    debugPrintf(" show_drawrects    - Show drawing rects\n");
+    debugPrintf(" use_scrolling     - Scroll scene using the mouse\n");
     debugPrintf("\n");
     debugPrintf("Commands\n");
     debugPrintf("--------\n");
     debugPrintf(" ls          - list engine files\n");
     debugPrintf("\n");
     debugPrintf(" actors      - show actors information\n");
-    debugPrintf(" actions     - show action information\n");
+    debugPrintf(" action      - show action information\n");
+    debugPrintf(" actions     - list actions information\n");
     debugPrintf(" flags       - show flags\n");
     debugPrintf(" object      - inspect a particular object\n");
     debugPrintf(" objects     - show objects information\n");
@@ -225,6 +230,7 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" video       - play a video\n");
     debugPrintf(" script      - run a script\n");
     debugPrintf(" scene       - change the scene\n");
+    debugPrintf(" show_script - Show script commands\n");
     debugPrintf(" encounter   - run an encounter\n");
     debugPrintf(" puzzle      - run an puzzle\n");
     debugPrintf("\n");
@@ -405,6 +411,39 @@ bool Console::cmdShowObject(int32 argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdShowAction(int32 argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Syntax: %s [id|idx] <target>\n", argv[0]);
+		return true;
+	}
+
+	if (Common::String(argv[1]) == "id") {
+		int id = atoi(argv[2]);
+		for (uint32 i = 0; i < getWorld()->actions.size(); i++) {
+			if (getWorld()->actions[i]->id == id) {
+				debugPrintf("%s", getWorld()->actions[i]->toString().c_str());
+				return true;
+			}
+		}
+		debugPrintf("No action with id %d found\n", id);
+	} else if (Common::String(argv[1]) == "idx") {
+		int index = atoi(argv[2]);
+		int maxIndex = getWorld()->actions.size() - 1;
+
+		if (index < 0 || index > maxIndex) {
+			debugPrintf("[error] index should be between 0 and %d\n", maxIndex);
+			return true;
+		}
+
+		debugPrintf("%s", getWorld()->actions[index]->toString().c_str());
+
+	} else {
+		debugPrintf("[error] valid options are 'id' and 'idx'\n");
+	}
+
+	return true;
+}
+
 bool Console::cmdListObjects(int32 argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s [onscreen|*]\n", argv[0]);
@@ -459,6 +498,33 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 	return false;
 }
 
+bool Console::cmdShowScript(int32 argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Syntax: %s <script index>\n", argv[0]);
+		return true;
+	}
+
+	int32 index = atoi(argv[1]);
+
+	// Check parameters
+	if (index < 0 || index >= (int32)getScript()->_scripts.size()) {
+		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, getScript()->_scripts.size() - 1);
+		return true;
+	}
+
+	int32 lines = getScript()->_scripts[index].commands[0].numLines;
+	for (uint8 i = 0; i <= lines; i++) {
+		Asylum::ScriptManager::ScriptEntry *cmd = &getScript()->_scripts[index].commands[i];
+
+		debugPrintf("%02d: [0x%02X] %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)\n",
+			i, cmd->opcode, getScript()->_opcodes[cmd->opcode]->name,
+			cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
+			cmd->param6, cmd->param7, cmd->param8, cmd->param9);
+	}
+
+	return true;
+}
+
 bool Console::cmdRunScript(int32 argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Syntax: %s <script index> <actor index>\n", argv[0]);
@@ -470,7 +536,7 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 
 	// Check parameters
 	if (index < 0 || index >= (int32)getScript()->_scripts.size()) {
-		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, _vm->encounter()->items()->size() - 1);
+		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, (int32)getScript()->_scripts.size() - 1);
 		return true;
 	}
 
