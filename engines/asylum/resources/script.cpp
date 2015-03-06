@@ -365,17 +365,19 @@ void ScriptManager::updateQueue(uint32 entryIndex) {
 }
 
 bool ScriptManager::process() {
-	_exit          = false;
+	_exit = false;
 
 	_vm->setGameFlag(kGameFlagScriptProcessing);
 
 	// Setup queue entry
 	if (_queue.currentEntry) {
-		uint32 entryIndex = _queue.currentEntry;
-		uint32 nextIndex = _queue.entries[entryIndex].field_C;
-		int32 scriptIndex = _queue.entries[entryIndex].scriptIndex;
+		uint32 entryIndex  = _queue.currentEntry;
+		uint32 nextIndex   = _queue.entries[entryIndex].field_C;
+		int32  scriptIndex = _queue.entries[entryIndex].scriptIndex;
 
 		if (scriptIndex != -1) {
+
+			debugC(kDebugLevelScripts, "[Script] Running Script (entry: %d, idx: %d, nextIdx: %d)", entryIndex, scriptIndex, nextIndex);
 
 			// Setup script
 			for (;;) {
@@ -401,6 +403,7 @@ bool ScriptManager::process() {
 					// Check script opcode
 					if (cmd->opcode >= (int32)_opcodes.size())
 						error("[ScriptManager::process] Invalid opcode index (was: %d, max: %d)", cmd->opcode, _opcodes.size() - 1);
+
 
 					debugC(kDebugLevelScripts, "[Script] 0x%02X: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 						cmd->opcode, _opcodes[cmd->opcode]->name,
