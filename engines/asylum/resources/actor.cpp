@@ -3299,8 +3299,12 @@ void Actor::updateFinish() {
 
 	ActionArea *area = getWorld()->actions[areaIndex];
 	ActionArea *actorArea = getWorld()->actions[_actionIdx3];
+
 	if ((area->flags & 1) && !getSharedData()->getFlag(kFlagSkipScriptProcessing)) {
+		debugC(kDebugLevelScripts, "[Script] Entered ActionArea (idx: %d, name: %s)", areaIndex, area->name);
+		debugC(kDebugLevelScripts, "[Script] Queuing Script #1 (idx: %d) for Actor (idx: %d)", actorArea->scriptIndex2, _index);
 		getScript()->queueScript(actorArea->scriptIndex2, _index);
+		debugC(kDebugLevelScripts, "[Script] Queuing Script #2 (idx: %d) for Actor (idx: %d)", actorArea->scriptIndex, _index);
 		getScript()->queueScript(area->scriptIndex, _index);
 	}
 
