@@ -331,7 +331,7 @@ private:
 	bool              _done;
 	bool              _exit;
 	bool              _processNextEntry;
-
+	ScriptEntry		 *_lastProcessedCmd; // DEBUGGING
 	Script           *_currentScript;
 	ScriptQueueEntry *_currentQueueEntry;
 
