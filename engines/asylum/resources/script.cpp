@@ -377,8 +377,6 @@ bool ScriptManager::process() {
 
 		if (scriptIndex != -1) {
 
-			debugC(kDebugLevelScripts, "[Script] Running Script (entry: %d, idx: %d, nextIdx: %d)", entryIndex, scriptIndex, nextIndex);
-
 			// Setup script
 			for (;;) {
 				_processNextEntry = false;
@@ -404,11 +402,13 @@ bool ScriptManager::process() {
 					if (cmd->opcode >= (int32)_opcodes.size())
 						error("[ScriptManager::process] Invalid opcode index (was: %d, max: %d)", cmd->opcode, _opcodes.size() - 1);
 
+					if (_lastProcessedCmd != cmd)
+						debugC(kDebugLevelScripts, "[Script idx: %d] 0x%02X: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+							scriptIndex, cmd->opcode, _opcodes[cmd->opcode]->name,
+							cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
+							cmd->param6, cmd->param7, cmd->param8, cmd->param9);
 
-					debugC(kDebugLevelScripts, "[Script] 0x%02X: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-						cmd->opcode, _opcodes[cmd->opcode]->name,
-						cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
-						cmd->param6, cmd->param7, cmd->param8, cmd->param9);
+					_lastProcessedCmd = cmd; // DEBUGGING
 
 					// Execute opcode
 					_currentQueueEntry = &_queue.entries[entryIndex];
@@ -695,8 +695,8 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpActorSpeech)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->process(Common::Point((int16)cmd->param2, (int16)cmd->param3)))
-		return;
+//	if (actor->process(Common::Point((int16)cmd->param2, (int16)cmd->param3)))
+//		return;
 
 	_currentQueueEntry->currentLine = cmd->param4;
 
@@ -742,7 +742,8 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfActorCoordinates)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 || (actor->getPoint1()->y + actor->getPoint2()->y) != cmd->param3)
+	if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 ||
+		(actor->getPoint1()->y + actor->getPoint2()->y) != cmd->param3)
 		_currentQueueEntry->currentLine = cmd->param4;
 END_OPCODE
 
