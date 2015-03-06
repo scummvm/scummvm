@@ -60,6 +60,25 @@ typedef struct { int FAKE; } FAKE_FILE;
 #undef ARRAYSIZE
 #endif
 
+// HACK to fix compilation with SDL 2.0 in MSVC.
+// In SDL 2.0, intrin.h is now included in SDL_cpuinfo.h, which includes
+// setjmp.h. SDL_cpuinfo.h is included from SDL.h and SDL_syswm.h.
+// Thus, we remove the exceptions for setjmp and longjmp before these two
+// includes. Unfortunately, we can't use SDL_VERSION_ATLEAST here, as SDL.h
+// hasn't been included yet at this point.
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && defined(_MSC_VER)
+// We unset any fake definitions of setjmp/longjmp here
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#undef setjmp
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+#undef longjmp
+#endif
+
+#endif
+
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
 #else
@@ -67,6 +86,22 @@ typedef struct { int FAKE; } FAKE_FILE;
 #endif
 
 #include <SDL_syswm.h>
+
+// Restore the forbidden exceptions from the hack above
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && defined(_MSC_VER)
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
+#undef setjmp
+#define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+#undef longjmp
+#define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#endif
+
 // SDL_syswm.h will include windows.h on Win32. We need to undefine its
 // ARRAYSIZE definition because we supply our own.
 #undef ARRAYSIZE
