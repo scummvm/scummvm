@@ -551,6 +551,7 @@ Common::String Object::toString(bool shortString) {
 
 	if (!shortString) {
 		output += Common::String::format("    resourceId:      %u (0x%X) - (pack %d - index %d)\n", _resourceId, _resourceId, RESOURCE_PACK(_resourceId), RESOURCE_INDEX(_resourceId));
+		output += Common::String::format("    name:            %s\n", _name);
 		output += Common::String::format("    x:               %d\n", x);
 		output += Common::String::format("    y:               %d\n", y);
 		output += Common::String::format("    flags:           %d\n", flags);

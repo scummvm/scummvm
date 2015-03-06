@@ -154,7 +154,7 @@ public:
 	 */
 	bool checkFlags() const;
 
-	uint8 *getName() { return _name; }
+	char *getName() { return _name; }
 	/**
 	 * Convert this object into a string representation.
 	 *
@@ -187,7 +187,7 @@ private:
 	int32          _field_34;
 	// flags
 	int32          _field_3C;
-	uint8          _name[52];
+	char           _name[52];
 	Common::Rect   _rect;
 	uint32         _polygonIndex;
 	// actionType
