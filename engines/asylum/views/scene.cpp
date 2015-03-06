@@ -1565,8 +1565,11 @@ void Scene::handleHit(int32 index, HitType type) {
 		break;
 
 	case kHitActionArea:
-		if (!getScript()->isInQueue(_ws->actions[index]->scriptIndex))
+		if (!getScript()->isInQueue(_ws->actions[index]->scriptIndex)) {
+			debugC(kDebugLevelScripts, "[Script] Queuing Script idx: %d from kHitActionArea (idx: %d, name: '%s')",
+					_ws->actions[index]->scriptIndex, index, _ws->actions[index]->name);
 			getScript()->queueScript(_ws->actions[index]->scriptIndex, getSharedData()->getPlayerIndex());
+		}
 
 		switch (_ws->chapter) {
 		default:
@@ -1596,8 +1599,12 @@ void Scene::handleHit(int32 index, HitType type) {
 			}
 		}
 
-		if (!getScript()->isInQueue(object->getScriptIndex()))
+		if (!getScript()->isInQueue(object->getScriptIndex())) {
+			debugC(kDebugLevelScripts, "[Script] Queuing Script idx: %d from kHitObject (id: %d, name: '%s')",
+								object->getScriptIndex(), object->getId(), object->getName());
+
 			getScript()->queueScript(object->getScriptIndex(), getSharedData()->getPlayerIndex());
+		}
 
 		// Original executes special script hit functions, but since there is none defined, we can skip this part
 		}
@@ -1608,8 +1615,11 @@ void Scene::handleHit(int32 index, HitType type) {
 
 		if (actor->actionType & (kActionTypeFind | kActionType16)) {
 
-			if (getScript()->isInQueue(actor->getScriptIndex()))
+			if (getScript()->isInQueue(actor->getScriptIndex())) {
+				debugC(kDebugLevelScripts, "[Script] Queuing Script idx: %d from kHitActor (id: %d, name: '%s')",
+						actor->getScriptIndex(), index, actor->getName());
 				getScript()->queueScript(actor->getScriptIndex(), getSharedData()->getPlayerIndex());
+			}
 
 		} else if (actor->actionType & kActionTypeTalk) {
 
@@ -1621,8 +1631,11 @@ void Scene::handleHit(int32 index, HitType type) {
 				actor->setSoundResourceId(kResourceNone);
 			}
 
-			if (getScript()->isInQueue(actor->getScriptIndex()))
+			if (getScript()->isInQueue(actor->getScriptIndex())) {
+				debugC(kDebugLevelScripts, "[Script] Queuing Script idx: %d from kActionTypeTalk (actor idx: %d)",
+										actor->getScriptIndex(), getSharedData()->getPlayerIndex());
 				getScript()->queueScript(actor->getScriptIndex(), getSharedData()->getPlayerIndex());
+			}
 		}
 
 		switch (_ws->chapter) {
