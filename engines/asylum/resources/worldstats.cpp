@@ -517,6 +517,7 @@ void WorldStats::setWheelObjects() {
 Common::String WorldStats::toString() {
 	Common::String output;
 
+	output += Common::String::format("Chapter         %d\n", chapter);
 	output += Common::String::format("xLeft:          %d\n", xLeft);
 	output += Common::String::format("yTop:           %d\n", yTop);
 	output += Common::String::format("boundingRect:   top[%d] left[%d] right[%d] bottom[%d]: \n", boundingRect.top, boundingRect.left, boundingRect.right, boundingRect.bottom);
