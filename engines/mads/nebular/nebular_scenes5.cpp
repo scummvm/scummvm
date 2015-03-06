@@ -1317,7 +1317,7 @@ void Scene506::handleDoorSequences() {
 
 	case 82:
 		_scene->_sequences.remove(_doorSequenceIdx);
-		_doorSequenceIdx = _scene->_sequences.startPingPongCycle(_doorSpriteIdx, false, 7, 1, 0, 0);
+		_doorSequenceIdx = _scene->_sequences.addReverseSpriteCycle(_doorSpriteIdx, false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_doorSequenceIdx, _doorDepth);
 		if (_actionFl)
 			_scene->_sequences.addSubEntry(_doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 84);
