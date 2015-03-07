@@ -996,7 +996,7 @@ void Scene505::step() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-					_globals._sequenceIndexes[13] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
+					_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 					_vm->_sound->command(18);
 				}
