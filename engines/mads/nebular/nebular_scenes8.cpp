@@ -283,7 +283,7 @@ void Scene801::actions() {
 		_globals[kBetweenRooms] = true;
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 4, 1, 0, 0);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 90);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 13);
@@ -726,7 +726,7 @@ void Scene803::step() {
 	if (_game._trigger == 150) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[6]);
 		_vm->_sound->command(18);
-		_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 8, 1, 0, 0);
+		_globals._sequenceIndexes[6] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[6], false, 8, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 19);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_EXPIRE, 0, 151);
@@ -778,7 +778,7 @@ void Scene803::actions() {
 
 		case 162:
 			_scene->_sequences.remove(_globals._sequenceIndexes[9]);
-			_globals._sequenceIndexes[9] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
+			_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[9], 1, 4);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[9]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 163);
@@ -1277,14 +1277,14 @@ void Scene805::actions() {
 	} else if (_action.isAction(VERB_REMOVE, NOUN_SHIELD_MODULATOR) && _globals[kShieldModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-		_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
+		_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
 		_game._player._stepEnabled = false;
 	} else if (_action.isAction(VERB_REMOVE, NOUN_TARGET_MODULE) && _globals[kTargetModInstalled]) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-		_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], -1, -2);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
 		_game._player._stepEnabled = false;
