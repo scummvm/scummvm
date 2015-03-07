@@ -1218,6 +1218,8 @@ void Scene805::enter() {
 }
 
 void Scene805::step() {
+	UserInterface &userInterface = _vm->_game->_scene._userInterface;
+
 	if (_game._trigger == 70) {
 		_scene->_hotspots.activate(OBJ_SHIELD_MODULATOR, false);
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 25);
@@ -1225,6 +1227,7 @@ void Scene805::step() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
 		_globals[kShieldModInstalled] = true;
 		_game._objects.setRoom(OBJ_SHIELD_MODULATOR, NOWHERE);
+		userInterface._selectedInvIndex = -1;
 		_game._player._stepEnabled = true;
 		_vm->_sound->command(24);
 	}
@@ -1236,6 +1239,7 @@ void Scene805::step() {
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(0, 0), FACING_DUMMY);
 		_globals[kTargetModInstalled] = true;
 		_game._objects.setRoom(OBJ_TARGET_MODULE, NOWHERE);
+		userInterface._selectedInvIndex = -1;
 		_game._player._stepEnabled = true;
 		_vm->_sound->command(24);
 	}
