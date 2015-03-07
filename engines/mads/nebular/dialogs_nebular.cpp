@@ -328,7 +328,7 @@ void DialogsNebular::showDialog() {
 			TextView *dlg = new RexTextView(_vm);
 			dlg->show();
 			delete dlg;
-			break;
+			return;
 		}
 		case DIALOG_ANIMVIEW: {
 			AnimationView *dlg = new RexAnimationView(_vm);

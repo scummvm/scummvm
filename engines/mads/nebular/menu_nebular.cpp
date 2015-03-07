@@ -136,14 +136,12 @@ void MainMenu::doFrame() {
 			addSpriteSlot();
 		}
 
-		_vm->_events->setCursor(CURSOR_ARROW);
 		_vm->_events->showCursor();
 	} else {
 		if ((_menuItemIndex == -1) || (_frameIndex == 0)) {
 			if (++_menuItemIndex == 6) {
 
 				// Reached end of display animation
-				_vm->_events->setCursor(CURSOR_ARROW);
 				_vm->_events->showCursor();
 				return;
 			} else if (_menuItemIndex == 4 && !shouldShowQuotes()) {

@@ -110,7 +110,9 @@ void GameNebular::startGame() {
 	}
 	*/
 
+	_sectionNumber = 1;
 	initSection(_sectionNumber);
+	_vm->_events->setCursor(CURSOR_ARROW);
 	_statusFlag = true;
 
 	// Show the main menu
