@@ -719,7 +719,7 @@ void Scene803::step() {
 			else
 				_game._winStatus = 3;
 
-			_vm->quitGame();
+			return;
 		}
 	}
 
@@ -957,7 +957,7 @@ void Scene804::step() {
 
 				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
-				_vm->quitGame();
+				return;
 			}
 			break;
 
@@ -969,7 +969,7 @@ void Scene804::step() {
 
 				assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
-				_vm->quitGame();
+				return;
 			}
 		}
 

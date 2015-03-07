@@ -105,8 +105,6 @@ Game::~Game() {
 }
 
 void Game::run() {
-	initializeGlobals();
-
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -116,15 +114,19 @@ void Game::run() {
 
 	_statusFlag = true;
 
-	if (_loadGameSlot == -1) {
-		startGame();
+	while (!_vm->shouldQuit()) {
+		initializeGlobals();
+
+		if (_loadGameSlot == -1) {
+			startGame();
+		}
+
+		// Get the initial starting time for the first scene
+		_scene._frameStartTime = _vm->_events->getFrameCounter();
+
+		if (!_vm->shouldQuit())
+			gameLoop();
 	}
-
-	// Get the initial starting time for the first scene
-	_scene._frameStartTime = _vm->_events->getFrameCounter();
-
-	if (!_vm->shouldQuit())
-		gameLoop();
 }
 
 void Game::splitQuote(const Common::String &source, Common::String &line1, Common::String &line2) {
@@ -140,7 +142,7 @@ void Game::splitQuote(const Common::String &source, Common::String &line1, Commo
 }
 
 void Game::gameLoop() {
-	while (!_vm->shouldQuit() && _statusFlag) {
+	while (!_vm->shouldQuit() && _statusFlag && !_winStatus) {
 		if (_loadGameSlot != -1) {
 			loadGame(_loadGameSlot);
 			_loadGameSlot = -1;
@@ -168,7 +170,8 @@ void Game::gameLoop() {
 }
 
 void Game::sectionLoop() {
-	while (!_vm->shouldQuit() && _statusFlag && (_sectionNumber == _currentSectionNumber)) {
+	while (!_vm->shouldQuit() && _statusFlag && !_winStatus &&
+			(_sectionNumber == _currentSectionNumber)) {
 		_kernelMode = KERNEL_ROOM_PRELOAD;
 		_player._spritesChanged = true;
 		_quoteEmergency = false;

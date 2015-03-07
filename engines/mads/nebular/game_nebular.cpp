@@ -61,6 +61,35 @@ ProtectionResult GameNebular::checkCopyProtection() {
 }
 
 void GameNebular::startGame() {
+	// First handle any ending credits from a just finished game session.
+	// Note that, with the exception of the decompression ending, which doesn't
+	// use animations, the remaining animations will automatically launch their
+	// own text view credits when the animation is completed
+	switch (_winStatus) {
+	case 1:
+		// No shields failure ending
+		AnimationView::execute(_vm, "rexend1");
+		break;
+	case 2:
+		// Shields, but no targetting failure ending
+		AnimationView::execute(_vm, "rexend2");
+		break;
+	case 3:
+		// Completed game successfully, so activate quotes item on the main menu
+		ConfMan.setBool("ShowQuotes", true);
+		ConfMan.flushToDisk();
+
+		AnimationView::execute(_vm, "rexend3");
+		break;
+	case 4:
+		// Decompression ending
+		TextView::execute(_vm, "ending4");
+		break;
+	}
+
+	checkShowDialog();
+	_winStatus = 0;
+
 	/*
 	// Check copy protection
 	ProtectionResult protectionResult = checkCopyProtection();
@@ -310,32 +339,9 @@ void GameNebular::setSectionHandler() {
 }
 
 void GameNebular::checkShowDialog() {
-	// Handling to start endgame sequences if the win/lose type has been set
-	switch (_winStatus) {
-	case 1:
-		// No shields failure ending
-		AnimationView::execute(_vm, "rexend1");
-		break;
-	case 2:
-		// Shields, but no targetting failure ending
-		AnimationView::execute(_vm, "rexend2");
-		break;
-	case 3:
-		// Completed game successfully, so activate quotes item on the main menu
-		ConfMan.setBool("ShowQuotes", true);
-		ConfMan.flushToDisk();
-
-		AnimationView::execute(_vm, "rexend3");
-		break;
-	case 4:
-		// Decompression ending
-		TextView::execute(_vm, "ending4");
-		break;
-	}
-	_winStatus = 0;
-
 	// Loop for showing dialogs, if any need to be shown
-	if (_vm->_dialogs->_pendingDialog && _player._stepEnabled && !_globals[kCopyProtectFailed]) {
+	if (_vm->_dialogs->_pendingDialog && (_player._stepEnabled || _winStatus) 
+			&& !_globals[kCopyProtectFailed]) {
 		_player.releasePlayerSprites();
 
 		// Make a thumbnail in case it's needed for making a savegame
