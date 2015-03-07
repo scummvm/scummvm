@@ -556,7 +556,7 @@ void Scene202::step() {
 	case 90:
 		_vm->_sound->command(41);
 		_scene->_sequences.remove(_globals._sequenceIndexes[10]);
-		_globals._sequenceIndexes[9] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
+		_globals._sequenceIndexes[9] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[9], true, 6, 1, 0, 0);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[9], Common::Point(247, 82));
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[9], 1);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[9], SEQUENCE_TRIGGER_EXPIRE, 0, 91);

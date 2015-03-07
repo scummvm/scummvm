@@ -1459,7 +1459,7 @@ void Scene103::actions() {
 		default:
 			break;
 		}
-	} else if (_action.isAction(VERB_TAKE, 289, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
+	} else if (_action.isAction(VERB_TAKE, NOUN_REBREATHER, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
 			_scene->changeVariant(1);

@@ -2523,7 +2523,7 @@ void Scene318::handleDialog() {
 		case 0x19C:
 		case 0x19D:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[2], Common::Point(142, 121));
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
@@ -3588,7 +3588,7 @@ void Scene320::setLeftView(int view) {
 		_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 
 	if (view != 10) {
-		_globals._sequenceIndexes[0] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
+		_globals._sequenceIndexes[0] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[view], false, 6, 0, 0, 18);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[0], 0);
 		if (!_blinkFl)
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[0], 2, 2);
@@ -4305,7 +4305,7 @@ void Scene352::preActions() {
 				_game._player._stepEnabled = false;
 				_scene->_sequences.remove(_commonSequenceIdx);
 				_vm->_sound->command(20);
-				_commonSequenceIdx = _scene->_sequences.startPingPongCycle(_commonSpriteIndex, false, 6, 1, 0, 0);
+				_commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(_commonSpriteIndex, false, 6, 1, 0, 0);
 				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 				_scene->_sequences.setDepth(_commonSequenceIdx, 15);
 			}
