@@ -1604,7 +1604,8 @@ void Scene810::enter() {
 }
 
 void Scene810::step() {
-	if ((_scene->_activeAnimation->getCurrentFrame() == 200) && _moveAllowed) {
+	if (_scene->_activeAnimation && (_scene->_activeAnimation->getCurrentFrame() == 200) 
+			&& _moveAllowed) {
 		_scene->_sequences.addTimer(100, 70);
 		_moveAllowed = false;
 	}
