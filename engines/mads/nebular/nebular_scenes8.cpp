@@ -145,10 +145,10 @@ void Scene801::enter() {
 		case 2:
 			_game._player._playerPos = Common::Point(8, 117);
 			_globals[kTeleporterUnderstood] = true;
-			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
+			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 8, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 13);
 			_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
-			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 8090);
+			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 80);
 			_vm->_sound->command(30);
 			break;
 
