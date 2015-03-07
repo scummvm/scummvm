@@ -4078,7 +4078,7 @@ void Scene413::enter() {
 		case 1:
 			_vm->_sound->command(30);
 			_game._player._visible = false;
-			_globals._sequenceIndexes[1] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
+			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[1], 1, 19);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 8);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 76);
