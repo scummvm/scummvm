@@ -87,38 +87,39 @@ void GameNebular::startGame() {
 		break;
 	}
 
-	checkShowDialog();
-	_winStatus = 0;
+	do {
+		checkShowDialog();
+		_winStatus = 0;
 
-	/*
-	// Check copy protection
-	ProtectionResult protectionResult = checkCopyProtection();
-	switch (protectionResult) {
-	case PROTECTION_FAIL:
+		/*
+		// Check copy protection
+		ProtectionResult protectionResult = checkCopyProtection();
+		switch (protectionResult) {
+		case PROTECTION_FAIL:
 		// Copy protection failed
 		_scene._nextSceneId = 804;
 		initializeGlobals();
 		_globals[kCopyProtectFailed] = true;
 		return;
-	case PROTECTION_ESCAPE:
+		case PROTECTION_ESCAPE:
 		// User escaped out of copy protection dialog
 		_vm->quitGame();
 		return;
-	default:
+		default:
 		// Copy protection check succeeded
 		break;
-	}
-	*/
+		}
+		*/
 
-	_sectionNumber = 1;
-	initSection(_sectionNumber);
-	_vm->_events->setCursor(CURSOR_ARROW);
-	_statusFlag = true;
+		_sectionNumber = 1;
+		initSection(_sectionNumber);
+		_vm->_events->setCursor(CURSOR_ARROW);
+		_statusFlag = true;
 
-	// Show the main menu
-	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
-	_vm->_dialogs->showDialog();
-	_vm->_dialogs->_pendingDialog = DIALOG_NONE;
+		// Show the main menu
+		_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
+		_vm->_dialogs->showDialog();
+	} while (!_vm->shouldQuit() && _vm->_dialogs->_pendingDialog != DIALOG_NONE);
 
 	_priorSectionNumber = 0;
 	_priorSectionNumber = -1;
