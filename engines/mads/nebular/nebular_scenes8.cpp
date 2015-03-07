@@ -1437,7 +1437,7 @@ void Scene808::actions() {
 				_vm->_sound->command(20);
 				_vm->_sound->command(25);
 			}
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
+			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 211));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
@@ -1472,7 +1472,7 @@ void Scene808::actions() {
 				_vm->_sound->command(20);
 			}
 			_globals[kTopButtonPushed] = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
+			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 186));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 91);
@@ -1503,7 +1503,7 @@ void Scene808::actions() {
 				_vm->_sound->command(20);
 			 }
 			_globals[kTopButtonPushed] = true;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
+			_globals._sequenceIndexes[4] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[4], false, 4, 1, 0, 0);
 			_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(248, 163));
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 2);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
