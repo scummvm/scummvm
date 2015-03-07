@@ -2427,7 +2427,8 @@ void Scene512::actions() {
 		_vm->_dialogs->show(51225);
 	else if (_action.isAction(VERB_LOOK, NOUN_PADLOCK_KEY) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
 		_vm->_dialogs->show(51215);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (_scene->_activeAnimation->getCurrentFrame() == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (!_scene->_activeAnimation ||
+			_scene->_activeAnimation->getCurrentFrame() == 4))
 		_vm->_dialogs->show(51216);
 	else if (_action.isAction(VERB_LOOK, NOUN_SHIPS_WHEEL))
 		_vm->_dialogs->show(51218);
