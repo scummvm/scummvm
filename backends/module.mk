@@ -123,8 +123,7 @@ MODULE_OBJS += \
 	fs/posix/posix-fs.o \
 	fs/posix/posix-fs-factory.o \
 	fs/ps3/ps3-fs-factory.o \
-	events/ps3sdl/ps3sdl-events.o \
-	mixer/sdl2/sdl2-mixer.o
+	events/ps3sdl/ps3sdl-events.o
 endif
 
 ifeq ($(BACKEND),tizen)
