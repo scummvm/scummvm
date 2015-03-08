@@ -163,11 +163,9 @@ void DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
 }
 
 void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
-	stream->seek(offset);
-
 	_mainArchive = new RIFXArchive();
 
-	if (!_mainArchive->openStream(stream))
+	if (!_mainArchive->openStream(stream, offset))
 		error("Failed to load RIFX from EXE");
 }
 
@@ -191,16 +189,17 @@ void DirectorEngine::loadMac() {
 		// First we need to detect PPC vs. 68k
 
 		uint32 tag = dataFork->readUint32BE();
+		uint32 startOffset;
 
 		if (SWAP_BYTES_32(tag) == MKTAG('P', 'J', '9', '3') || tag == MKTAG('P', 'J', '9', '5') || tag == MKTAG('P', 'J', '0', '0')) {
 			// PPC: The RIFX shares the data fork with the binary
-			dataFork->seek(dataFork->readUint32BE());
+			startOffset = dataFork->readUint32BE();
 		} else {
 			// 68k: The RIFX is the only thing in the data fork
-			dataFork->seek(0);
+			startOffset = 0;
 		}
 
-		if (!_mainArchive->openStream(dataFork))
+		if (!_mainArchive->openStream(dataFork, startOffset))
 			error("Failed to load RIFX from Mac binary");
 	}
 }

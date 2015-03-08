@@ -44,7 +44,7 @@ public:
 	virtual ~Archive();
 
 	virtual bool openFile(const Common::String &fileName);
-	virtual bool openStream(Common::SeekableReadStream *stream) = 0;
+	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
 	virtual void close();
 
 	bool isOpen() const { return _stream != 0; }
@@ -70,20 +70,8 @@ protected:
 		Common::String name;
 	};
 
-	// Have separate hash/equals functions for tags to make them
-	// case-insensitive.
-	struct HashTag : public Common::UnaryFunction<uint32, uint> { // Insert Twitter joke
-		uint operator()(uint32 val) const { return (uint)Archive::convertTagToUppercase(val); }
-	};
-
-	struct EqualsTag : public Common::BinaryFunction<uint32, uint32, uint> {
-		bool operator()(const uint32 &val1, const uint32 &val2) const {
-			return Archive::convertTagToUppercase(val1) == Archive::convertTagToUppercase(val2);
-		}
-	};
-
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
-	typedef Common::HashMap<uint32, ResourceMap, HashTag, EqualsTag> TypeMap;
+	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
 	TypeMap _types;
 };
 
@@ -94,7 +82,7 @@ public:
 
 	void close();
 	bool openFile(const Common::String &fileName);
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 
 private:
@@ -106,16 +94,19 @@ public:
 	RIFFArchive() : Archive() {}
 	~RIFFArchive() {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
 };
 
 class RIFXArchive : public Archive {
 public:
-	RIFXArchive() : Archive() {}
+	RIFXArchive() : Archive(), _isBigEndian(true) {}
 	~RIFXArchive() {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
+
+private:
+	bool _isBigEndian;
 };
 
 } // End of namespace Director

@@ -204,7 +204,7 @@ bool MacArchive::openFile(const Common::String &fileName) {
 	return true;
 }
 
-bool MacArchive::openStream(Common::SeekableReadStream *stream) {
+bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
 	// TODO: Add support for this (v4 Windows games)
 	return false;
 }
@@ -216,8 +216,10 @@ Common::SeekableReadStream *MacArchive::getResource(uint32 tag, uint16 id) {
 
 // RIFF Archive code
 
-bool RIFFArchive::openStream(Common::SeekableReadStream *stream) {
+bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
 	close();
+
+	stream->seek(startOffset);
 
 	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F'))
 		return false;
@@ -235,7 +237,7 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream) {
 	stream->readUint32LE(); // unknown (always 0?)
 
 	while ((uint32)stream->pos() < startPos + cftcSize) {
-		uint32 tag = stream->readUint32BE();
+		uint32 tag = convertTagToUppercase(stream->readUint32BE());
 		uint32 size = stream->readUint32LE();
 		uint32 id = stream->readUint32LE();
 		uint32 offset = stream->readUint32LE();
@@ -288,27 +290,26 @@ Common::SeekableReadStream *RIFFArchive::getResource(uint32 tag, uint16 id) {
 
 // RIFX Archive code
 
-bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
+bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
 	close();
 
-	uint32 startPos = stream->pos();
+	stream->seek(startOffset);
 
-	uint32 tag = stream->readUint32BE();
-	bool isBigEndian;
+	uint32 headerTag = stream->readUint32BE();
 
-	if (tag == MKTAG('R', 'I', 'F', 'X'))
-		isBigEndian = true;
-	else if (SWAP_BYTES_32(tag) == MKTAG('R', 'I', 'F', 'X'))
-		isBigEndian = false;
+	if (headerTag == MKTAG('R', 'I', 'F', 'X'))
+		_isBigEndian = true;
+	else if (SWAP_BYTES_32(headerTag) == MKTAG('R', 'I', 'F', 'X'))
+		_isBigEndian = false;
 	else
 		return false;
 
-	Common::SeekableSubReadStreamEndian subStream(stream, startPos + 4, stream->size(), isBigEndian, DisposeAfterUse::NO);
+	Common::SeekableSubReadStreamEndian subStream(stream, startOffset + 4, stream->size(), _isBigEndian, DisposeAfterUse::NO);
 
 	subStream.readUint32(); // size
 
-	uint32 type = subStream.readUint32();
-	if (type != MKTAG('M', 'V', '9', '3') && type != MKTAG('A', 'P', 'P', 'L'))
+	uint32 rifxType = subStream.readUint32();
+	if (rifxType != MKTAG('M', 'V', '9', '3') && rifxType != MKTAG('A', 'P', 'P', 'L'))
 		return false;
 
 	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
@@ -316,7 +317,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
 
 	subStream.readUint32(); // imap length
 	subStream.readUint32(); // unknown
-	uint32 mmapOffset = subStream.readUint32() - startPos - 4;
+	uint32 mmapOffset = subStream.readUint32() - startOffset - 4;
 
 	subStream.seek(mmapOffset);
 
@@ -331,18 +332,84 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream) {
 	subStream.skip(8); // all 0xFF
 	subStream.readUint32(); // unknown
 
+	Common::Array<Resource> resources;
+
+	// Need to look for these two resources
+	const Resource *keyRes = 0;
+	const Resource *casRes = 0;
+
 	for (uint32 i = 0; i < resCount; i++) {
-		tag = subStream.readUint32();
+		uint32 tag = subStream.readUint32();
 		uint32 size = subStream.readUint32();
 		uint32 offset = subStream.readUint32();
-		subStream.skip(8); // always 0?
+		/*uint16 flags = */ subStream.readUint16();
+		/*uint16 unk1 = */ subStream.readUint16();
+		/*uint32 unk2 = */ subStream.readUint32();
 
-		debug(0, "Found RIFX resource %d: '%s', %d @ 0x%08x", i, tag2str(tag), size, offset);
+		debug(0, "Found RIFX resource index %d: '%s', %d @ 0x%08x", i, tag2str(tag), size, offset);
 
-		ResourceMap &resMap = _types[tag];
-		Resource &res = resMap[i]; // FIXME: What is the ID? Is this setup even viable?
+		Resource res;
 		res.offset = offset;
 		res.size = size;
+		resources.push_back(res);
+
+		// APPL is a special case; it has an embedded "normal" archive
+		if (rifxType == MKTAG('A', 'P', 'P', 'L') && tag == MKTAG('F', 'i', 'l', 'e'))
+			return openStream(stream, offset);
+
+		// Looking for two types here
+		if (tag == MKTAG('K', 'E', 'Y', '*'))
+			keyRes = &resources[resources.size() - 1];
+		else if (tag == MKTAG('C', 'A', 'S', '*'))
+			casRes = &resources[resources.size() - 1];
+	}
+
+	// We need to have found the 'File' resource already
+	if (rifxType == MKTAG('A', 'P', 'P', 'L')) {
+		warning("No 'File' resource present in APPL archive");
+		return false;
+	}
+
+	// A KEY* must be present
+	if (!keyRes) {
+		warning("No 'KEY*' resource present");
+		return false;
+	}
+
+	// Parse the CAS*, if present
+	Common::Array<uint32> casEntries;
+	if (casRes) {
+		Common::SeekableSubReadStreamEndian casStream(stream, casRes->offset + 8, casRes->offset + 8 + casRes->size, _isBigEndian, DisposeAfterUse::NO);
+		casEntries.resize(casRes->size / 4);
+		for (uint32 i = 0; i < casEntries.size(); i++)
+			casEntries[i] = casStream.readUint32();
+	}
+
+	// Parse the KEY*
+	Common::SeekableSubReadStreamEndian keyStream(stream, keyRes->offset + 8, keyRes->offset + 8 + keyRes->size, _isBigEndian, DisposeAfterUse::NO);
+	/*uint16 unk1 = */ keyStream.readUint16();
+	/*uint16 unk2 = */ keyStream.readUint16();
+	/*uint32 unk3 = */ keyStream.readUint32();
+	uint32 keyCount = keyStream.readUint32();
+
+	for (uint32 i = 0; i < keyCount; i++) {
+		uint32 index = keyStream.readUint32();
+		uint32 id = keyStream.readUint32();
+		uint32 resTag = keyStream.readUint32();
+
+		// Handle CAS*/CASt nonsense
+		if (resTag == MKTAG('C', 'A', 'S', 't')) {
+			for (uint32 j = 0; j < casEntries.size(); j++) {
+				if (casEntries[j] == index) {
+					id += j + 1;
+					break;
+				}
+			}
+		}
+
+		const Resource &res = resources[index];
+		debug(0, "Found RIFX resource: '%s' 0x%04x, %d @ 0x%08x", tag2str(resTag), id, res.size, res.offset);
+		_types[resTag][id] = res;
 	}
 
 	_stream = stream;
