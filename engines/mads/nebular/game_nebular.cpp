@@ -280,7 +280,9 @@ void GameNebular::initializeGlobals() {
 		_objects.setRoom(OBJ_PLANT_STALK, NOWHERE);
 		_objects.setRoom(OBJ_PENLIGHT, NOWHERE);
 
-		_globals[kLeavesStatus] = LEAVES_ON_TRAP;
+		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
+		_globals[kDurafailRecharged] = 0;
+		_globals[kPenlightCellStatus] = FIRST_TIME_UNCHARGED_DURAFAIL;
 		break;
 
 	case DIFFICULTY_MEDIUM:
@@ -295,7 +297,7 @@ void GameNebular::initializeGlobals() {
 		_objects.setRoom(OBJ_BLOWGUN, NOWHERE);
 		_objects.setRoom(OBJ_NOTE, NOWHERE);
 
-		_globals[kLeavesStatus] = LEAVES_ON_GROUND;
+		_globals[kLeavesStatus] = LEAVES_ON_TRAP;
 		_globals[kPenlightCellStatus] = FIRST_TIME_UNCHARGED_DURAFAIL;
 		_globals[kDurafailRecharged] = 0;
 		break;

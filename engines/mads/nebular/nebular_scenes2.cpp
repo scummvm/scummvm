@@ -1686,14 +1686,14 @@ void Scene208::updateTrap() {
 	}
 
 	switch (_globals[kLeavesStatus]) {
-	case 0: {
+	case LEAVES_ON_GROUND: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, 1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 15);
 		int idx = _scene->_dynamicHotspots.add(NOUN_PILE_OF_LEAVES, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(60, 152), FACING_NORTH);
 		}
 		break;
-	case 2: {
+	case LEAVES_ON_TRAP: {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_hotspots.activate(NOUN_DEEP_PIT, false);
