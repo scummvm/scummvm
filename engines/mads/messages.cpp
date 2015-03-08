@@ -69,7 +69,7 @@ void KernelMessages::clear() {
 }
 
 int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
-		uint8 abortTimers, uint32 timeout, const Common::String &msg) {
+		int endTrigger, uint32 timeout, const Common::String &msg) {
 	Scene &scene = _vm->_game->_scene;
 
 	// Find a free slot
@@ -77,7 +77,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	while ((idx < _entries.size()) && ((_entries[idx]._flags & KMSG_ACTIVE) != 0))
 		++idx;
 	if (idx == _entries.size()) {
-		if (abortTimers == 0)
+		if (endTrigger == 0)
 			return -1;
 
 		error("KernelMessages overflow");
@@ -92,7 +92,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._textDisplayIndex = -1;
 	rec._timeout = timeout;
 	rec._frameTimer = _vm->_game->_priorFrameTimer;
-	rec._trigger = abortTimers;
+	rec._trigger = endTrigger;
 	rec._abortMode = _vm->_game->_triggerSetupMode;
 
 	rec._actionDetails = scene._action._activeAction;
@@ -104,10 +104,10 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	return idx;
 }
 
-int KernelMessages::addQuote(int quoteId, int abortTimers, uint32 timeout) {
+int KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {
 	Common::String quoteStr = _vm->_game->getQuote(quoteId);
 	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN,
-		abortTimers, timeout, quoteStr);
+		endTrigger, timeout, quoteStr);
 }
 
 void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {

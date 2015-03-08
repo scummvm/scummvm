@@ -99,9 +99,9 @@ public:
 	~KernelMessages();
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColor, uint8 flags, uint8 abortTimers,
+	int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 		uint32 timeout, const Common::String &msg);
-	int addQuote(int quoteId, int abortTimers, uint32 timeout);
+	int addQuote(int quoteId, int endTrigger, uint32 timeout);
 	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
 	void remove(int msgIndex);

@@ -165,16 +165,16 @@ void Scene201::enter() {
 		int sepChar = (_globals[kSexOfRex] == SEX_MALE) ? 't' : 'u';
 		// Guess values. What is the default value used by the compiler?
 		int suffixNum = -1;
-		int abortTimers = -1;
+		int endTrigger = -1;
 		switch(_globals[kTeleporterCommand]) {
 		case 1:
 			suffixNum = 3;
-			abortTimers = 76;
+			endTrigger = 76;
 			_globals[kTeleporterUnderstood] = true;
 			break;
 		case 2:
 			suffixNum = 1;
-			abortTimers = 77;
+			endTrigger = 77;
 			break;
 		case 3:
 			_game._player._visible = true;
@@ -183,12 +183,12 @@ void Scene201::enter() {
 			break;
 		case 4:
 			suffixNum = 2;
-			abortTimers = 78;
+			endTrigger = 78;
 			break;
 		}
 		_globals[kTeleporterCommand] = 0;
 		if (suffixNum >= 0)
-			_scene->loadAnimation(formAnimName(sepChar, suffixNum), abortTimers);
+			_scene->loadAnimation(formAnimName(sepChar, suffixNum), endTrigger);
 	}
 
 	if ((_scene->_priorSceneId == 202) && (_globals[kMeteorologistStatus] == METEOROLOGIST_PRESENT) && !_scene->_roomChanged) {
