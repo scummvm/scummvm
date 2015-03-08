@@ -5466,7 +5466,7 @@ void Scene361::actions() {
 		_vm->_dialogs->show(36119);
 	else if (_action.isAction(VERB_SIT_AT, NOUN_DESK)) {
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.addQuote(0xFC, 120, 0);
+		_scene->_kernelMessages.addQuote(252, 0, 120);
 	} else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
 		if (_globals[kSexOfRex] == REX_FEMALE)
 			handleRoxAction();
