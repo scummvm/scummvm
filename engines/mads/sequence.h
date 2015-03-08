@@ -119,7 +119,7 @@ public:
 	int startCycle(int srcSpriteIdx, bool flipped, int cycleIndex);
 	int startPingPongCycle(int srcSpriteIndex, bool flipped, int numTicks,
 		int triggerCountdown = 0, int timeoutTicks = 0, int extraTicks = 0);
-	void updateTimeout(int spriteIdx, int seqIndex);
+	void updateTimeout(int destSeqIndex, int srcSeqIndex);
 	void setScale(int spriteIdx, int scale);
 	void setMsgLayout(int seqIndex);
 	void setDone(int seqIndex);

@@ -1697,7 +1697,7 @@ void Scene208::updateTrap() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 15);
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_hotspots.activate(NOUN_DEEP_PIT, false);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LEAF_COVERED_PIT, VERB_WALKTO, _globals._sequenceIndexes[2], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_LEAF_COVERED_PIT, VERB_WALKTO, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(100, 146), FACING_NORTH);
 		_scene->_dynamicHotspots[idx]._articleNumber = PREP_ON;
 		}
@@ -1796,7 +1796,6 @@ void Scene208::preActions() {
 }
 
 void Scene208::subAction(int mode) {
-
 	switch (_game._trigger) {
 	case 0: {
 		_game._player._stepEnabled = false;
@@ -1804,21 +1803,21 @@ void Scene208::subAction(int mode) {
 		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 6, 1, 0, 0);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
 
-		int abortVal;
+		int endTrigger;
 		if ((mode == 1) || (mode == 2))
-			abortVal = 1;
+			endTrigger = 1;
 		else
-			abortVal = 2;
+			endTrigger = 2;
 
-		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, abortVal);
+		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
 		}
 		break;
 	case 1: {
-		int oldVal = _globals._sequenceIndexes[5];
-		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[6], false, 12, 3, 0, 0);
+		int oldSeq = _globals._sequenceIndexes[5];
+		_globals._sequenceIndexes[5] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[5], false, 12, 3, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[5], 3, 4);
 		_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[5]);
-		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldVal);
+		_scene->_sequences.updateTimeout(_globals._sequenceIndexes[5], oldSeq);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[5], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 		_vm->_sound->command(20);
 		}

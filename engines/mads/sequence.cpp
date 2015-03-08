@@ -95,8 +95,8 @@ bool SequenceList::addSubEntry(int index, SequenceTrigger mode, int frameIndex, 
 }
 
 int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks,
-	int msgX, int msgY, bool nonFixed, int scale, int depth, int frameInc, SpriteAnimType animType, int numSprites,
-	int frameStart) {
+		int msgX, int msgY, bool nonFixed, int scale, int depth, int frameInc, SpriteAnimType animType, int numSprites,
+		int frameStart) {
 	Scene &scene = _vm->_game->_scene;
 
 	// Find a free slot
@@ -477,17 +477,17 @@ int SequenceList::startPingPongCycle(int srcSpriteIndex, bool flipped, int numTi
 		extraTicks, numTicks, 0, 0, true, 100, depth - 1, 1, ANIMTYPE_PING_PONG, 0, 0);
 }
 
-void SequenceList::updateTimeout(int spriteIdx, int seqIndex) {
+void SequenceList::updateTimeout(int srcSeqIndex, int destSeqIndex) {
 	Player &player = _vm->_game->_player;
 	int timeout;
 
-	if (spriteIdx >= 0)
-		timeout = _entries[spriteIdx]._timeout;
+	if (srcSeqIndex >= 0)
+		timeout = _entries[srcSeqIndex]._timeout;
 	else
 		timeout = player._priorTimer + player._ticksAmount;
 
-	if (seqIndex >= 0)
-		_entries[seqIndex]._timeout = timeout;
+	if (destSeqIndex >= 0)
+		_entries[destSeqIndex]._timeout = timeout;
 	else
 		player._priorTimer = timeout - player._ticksAmount;
 
