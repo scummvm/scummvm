@@ -2463,7 +2463,9 @@ void Scene512::actions() {
 		_vm->_dialogs->show(51233);
 	else if (_action.isAction(VERB_LOOK, NOUN_LAMP))
 		_vm->_dialogs->show(51234);
-	else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
+	else if (_action.isAction(NOUN_WALK_BEHIND, NOUN_COUNTER)) {
+		// WORkAROUND: Empty handling to prevent default "can't do that" dialogs showing
+	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
 		_vm->_dialogs->show(51235);
 	else if (_action.isAction(VERB_LOOK, NOUN_ICE_CHESTS))
 		_vm->_dialogs->show(51237);
