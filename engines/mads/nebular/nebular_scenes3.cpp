@@ -3825,7 +3825,7 @@ void Scene320::actions() {
 	else if (_action.isAction(VERB_LOOK, NOUN_DOUGHNUT))
 		_vm->_dialogs->show(32006);
 	else if (_action.isAction(VERB_LOOK, NOUN_MAGAZINE))
-		_vm->_dialogs->show(32006);
+		_vm->_dialogs->show(32007);
 	else if (_action.isAction(VERB_LOOK, NOUN_PAPER_FOOTBALL))
 		_vm->_dialogs->show(32008);
 	else if (_action.isAction(VERB_LOOK, NOUN_NEWSPAPER))
