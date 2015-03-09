@@ -180,7 +180,7 @@ protected:
 
 	void updateOverlayTextures();
 	void drawOverlayOpenGL();
-	void drawTexture(const Graphics::Texture &tex, const Math::Rect2d &dst);
+	void drawTexture(const Graphics::Texture &tex, const Math::Vector2d &topLeft, const Math::Vector2d &bottomRight, bool flip = false);
 
 	Graphics::FrameBuffer *_frameBuffer;
 
