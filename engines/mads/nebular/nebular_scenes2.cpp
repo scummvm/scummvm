@@ -2838,6 +2838,7 @@ void Scene209::enter() {
 	_globals._spriteIndexes[5] = _scene->_sprites.addSprites(formAnimName('m', 3));
 	_globals._spriteIndexes[6] = _scene->_sprites.addSprites(formAnimName('m', 6));
 	_globals._spriteIndexes[7] = _scene->_sprites.addSprites(formAnimName('m', 8));
+	_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 
 	_game.loadQuoteSet(0x82, 0x83, 0x84, 0x9C, 0x97, 0x95, 0x99, 0x9E, 0x98, 0x9B, 0xA0, 0x96, 0x9F,
 		0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x91, 0x92, 0x93, 0x94, 0x89, 0x85, 0x8A, 0x86, 0x87, 0x88, 0);
@@ -3439,7 +3440,6 @@ void Scene209::actions() {
 	if (_action.isAction(VERB_TAKE, NOUN_PLANT_STALK) && (_game._trigger || _game._objects.isInRoom(OBJ_PLANT_STALK))) {
 		switch (_game._trigger) {
 		case 0:
-			_globals._spriteIndexes[11] = _scene->_sprites.addSprites("*RXMBD_2");
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
 			_globals._sequenceIndexes[11] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[11], false, 3, 2, 0, 0);
@@ -3461,8 +3461,6 @@ void Scene209::actions() {
 			break;
 
 		case 3:
-			_scene->_sprites.remove(_globals._spriteIndexes[11]);
-			_scene->_spriteSlots.fullRefresh(true);
 			break;
 		}
 		_action._inProgress = false;
