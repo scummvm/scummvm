@@ -430,6 +430,7 @@ void FullScreenDialog::display() {
 	if (_screenId > 0) {
 		SceneInfo *sceneInfo = SceneInfo::init(_vm);
 		sceneInfo->load(_screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
+		delete sceneInfo;
 	}
 
 	scene._priorSceneId = priorSceneId;
