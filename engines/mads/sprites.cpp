@@ -402,6 +402,7 @@ void SpriteSets::remove(int idx) {
 			(*this)[idx] = nullptr;
 		} else {
 			do {
+				delete (*this)[size() - 1];
 				remove_at(size() - 1);
 			} while (size() > 0 && (*this)[size() - 1] == nullptr);
 		}
