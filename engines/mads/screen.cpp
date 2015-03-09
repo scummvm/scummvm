@@ -685,7 +685,6 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 	int y1, y2;
 	int startX = 0;
 	int deltaX;
-	int sizeY;
 	int xAt;
 	int loopStart;
 //	uint32 baseTicks, currentTicks;
@@ -712,7 +711,7 @@ void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entryS
 
 	y1 = 0;
 	y2 = size.y - 1;
-	sizeY = y2 - y1 + 1;
+//	sizeY = y2 - y1 + 1;
 
 	if (throughBlack == THROUGH_BLACK2)
 		swapForeground(palData, &paletteMap[0]);
