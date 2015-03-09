@@ -3462,6 +3462,7 @@ void Scene209::actions() {
 
 		case 3:
 			_scene->_sprites.remove(_globals._spriteIndexes[11]);
+			_scene->_spriteSlots.fullRefresh(true);
 			break;
 		}
 		_action._inProgress = false;
