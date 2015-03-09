@@ -1749,7 +1749,7 @@ void Scene311::actions() {
 	else if (_checkGuardFl) {
 		_checkGuardFl = false;
 		_scene->_kernelMessages.reset();
-		_scene->_kernelMessages.addQuote(0xFA, 120, 0);
+		_scene->_kernelMessages.addQuote(250, 0, 240);
 	} else if (_action.isAction(VERB_SIT_AT, NOUN_DESK))
 		_scene->_nextSceneId = 320;
 	else if (_action.isAction(VERB_CLIMB_INTO, NOUN_AIR_VENT)) {
