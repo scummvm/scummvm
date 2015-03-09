@@ -410,13 +410,21 @@ void UserInterface::setup(InputMode inputMode) {
 }
 
 void UserInterface::drawTextElements() {
-	if (_vm->_game->_screenObjects._inputMode) {
-		drawConversationList();
-	} else {
+	switch (_vm->_game->_screenObjects._inputMode) {
+	case kInputBuildingSentences:
 		// Draw the actions
 		drawActions();
 		drawInventoryList();
 		drawItemVocabList();
+		break;
+
+	case kInputConversation:
+		drawConversationList();
+		break;
+
+	case kInputLimitedSentences:
+	default:
+		break;
 	}
 }
 
