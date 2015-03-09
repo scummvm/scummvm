@@ -1547,7 +1547,9 @@ void Scene507::actions() {
 		_vm->_dialogs->show(50724);
 	else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
 		_vm->_dialogs->show(50725);
-	else if (_action.isAction(VERB_LOOK, NOUN_COUNTER)) {
+	else if (_action.isAction(NOUN_WALK_BEHIND, NOUN_COUNTER)) {
+		// WORkAROUND: Empty handling to prevent default "can't do that" dialogs showing
+	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50728);
 		else
