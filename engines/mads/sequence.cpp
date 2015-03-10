@@ -182,9 +182,9 @@ void SequenceList::remove(int seqIndex) {
 }
 
 int SequenceList::findByTrigger(int trigger) {
-	for (int idx = 0; idx < _entries.size(); ++idx) {
+	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx]._active) {
-			for (uint subIdx = 0; subIdx < _entries[idx]._entries._count; ++subIdx) {
+			for (int subIdx = 0; subIdx < _entries[idx]._entries._count; ++subIdx) {
 				if (_entries[idx]._entries._trigger[subIdx] == trigger)
 					return idx;
 			}
