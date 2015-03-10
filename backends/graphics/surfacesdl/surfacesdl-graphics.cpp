@@ -711,9 +711,17 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 			_frameBuffer->detach();
 			glViewport(0, 0, _screen->w, _screen->h);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-			if (_fullscreen && _gameRect.getTopLeft().getX() != 0 && _sideTextures[0] != nullptr) {
-				drawTexture(*_sideTextures[0], Math::Vector2d(0.0,0.0), _gameRect.getBottomLeft(), true);
-				drawTexture(*_sideTextures[1], _gameRect.getTopRight(), Math::Vector2d(1.0, 1.0), true);
+			if (_fullscreen && _gameRect.getTopLeft().getX() != 0) {
+				const Math::Vector2d nudge(1.0/float(_screen->w), 0);
+				if (_sideTextures[0] != nullptr) {
+					float left = _gameRect.getBottomLeft().getX() - (float(_screen->h) / float(_sideTextures[0]->getHeight())) * _sideTextures[0]->getWidth() / float(_screen->w);
+					drawTexture(*_sideTextures[0], Math::Vector2d(left,0.0), _gameRect.getBottomLeft() + nudge, true);
+				}
+				
+				if (_sideTextures[1] != nullptr) {
+					float right = _gameRect.getTopRight().getX() + (float(_screen->h) / float(_sideTextures[1]->getHeight())) * _sideTextures[1]->getWidth() / float(_screen->w);
+					drawTexture(*_sideTextures[1], _gameRect.getTopRight() - nudge, Math::Vector2d(right, 1.0), true);
+				}
 			}
 			drawTexture(*_frameBuffer, _gameRect.getTopLeft(), _gameRect.getBottomRight());
 		}
