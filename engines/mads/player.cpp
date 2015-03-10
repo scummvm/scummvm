@@ -664,7 +664,7 @@ void Player::startMovement() {
 	_deltaDistance = (majorChange == 0) ? 0 : _totalDistance / majorChange;
 
 	if (_playerPos.x > _targetPos.x)
-		_pixelAccum = MAX(_posChange.x, _posChange.y);
+		_pixelAccum = MIN(_posChange.x, _posChange.y);
 	else
 		_pixelAccum = 0;
 

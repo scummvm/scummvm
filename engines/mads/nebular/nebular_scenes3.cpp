@@ -4152,7 +4152,7 @@ void Scene352::setup() {
 void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 	switch (_game._trigger) {
 	case 0:
-		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 60, _game.getQuote(0xFF));
+		_scene->_kernelMessages.add(Common::Point(0, 0), 0x1110, 34, 0, 120, _game.getQuote(0xFF));
 		_scene->_sequences.addTimer(48, 1);
 		break;
 
@@ -4197,7 +4197,6 @@ void Scene352::putArmDown(bool corridorExit, bool doorwayExit) {
 
 	case 4:
 		_game._player.walk(Common::Point(116, 107), FACING_NORTH);
-		_game._player._stepEnabled = true;
 		_mustPutArmDownFl = false;
 		_scene->_sequences.addTimer(180, 5);
 		_leaveRoomFl = true;
