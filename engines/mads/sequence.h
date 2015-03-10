@@ -101,8 +101,9 @@ public:
 		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, int scale, int depth,
 		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 
-	int addTimer(int timeout, int abortVal);
+	int addTimer(int timeout, int endTrigger);
 	void remove(int seqIndex);
+	int findByTrigger(int trigger);
 	void setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot);
 	bool loadSprites(int seqIndex);
 	void tick();

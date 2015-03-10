@@ -2581,6 +2581,12 @@ void Scene318::handleInternDialog(int quoteId, int quoteNum, uint32 timeout) {
 	_scene->_kernelMessages.reset();
 	_internTalkingFl = true;
 
+	// WORKAROUND: In case the player launches multiple talk selections with the
+	// intern before previous ones have finished, take care of removing any
+	int seqIndex;
+	while ((seqIndex = _scene->_sequences.findByTrigger(63)) != -1)
+		_scene->_sequences.remove(seqIndex);
+
 	for (int i = 0; i < quoteNum; i++) {
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_sequences.addTimer(180, 63);

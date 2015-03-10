@@ -144,7 +144,7 @@ int SequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int tri
 	return seqIndex;
 }
 
-int SequenceList::addTimer(int timeout, int abortVal) {
+int SequenceList::addTimer(int timeout, int endTrigger) {
 	Scene &scene = _vm->_game->_scene;
 	uint seqIndex;
 	for (seqIndex = 0; seqIndex < _entries.size(); ++seqIndex) {
@@ -164,7 +164,7 @@ int SequenceList::addTimer(int timeout, int abortVal) {
 	se._entries._count = 0;
 	se._triggerMode = _vm->_game->_triggerSetupMode;
 	se._actionNouns = _vm->_game->_scene._action._activeAction;
-	addSubEntry(seqIndex, SEQUENCE_TRIGGER_EXPIRE, 0, abortVal);
+	addSubEntry(seqIndex, SEQUENCE_TRIGGER_EXPIRE, 0, endTrigger);
 
 	return seqIndex;
 }
@@ -179,6 +179,19 @@ void SequenceList::remove(int seqIndex) {
 
 	_entries[seqIndex]._active = false;
 	scene._spriteSlots.deleteTimer(seqIndex);
+}
+
+int SequenceList::findByTrigger(int trigger) {
+	for (int idx = 0; idx < _entries.size(); ++idx) {
+		if (_entries[idx]._active) {
+			for (uint subIdx = 0; subIdx < _entries[idx]._entries._count; ++subIdx) {
+				if (_entries[idx]._entries._trigger[subIdx] == trigger)
+					return idx;
+			}
+		}
+	}
+
+	return -1;
 }
 
 void SequenceList::setSpriteSlot(int seqIndex, SpriteSlot &spriteSlot) {
