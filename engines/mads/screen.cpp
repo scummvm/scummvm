@@ -538,7 +538,7 @@ void ScreenObjects::elementHighlighted() {
 }
 
 void ScreenObjects::setActive(ScrCategory category, int descId, bool active) {
-	for (uint idx = 1; idx < size(); ++idx) {
+	for (uint idx = 1; idx <= size(); ++idx) {
 		ScreenObject &sObj = (*this)[idx];
 		if (sObj._category == category && sObj._descId == descId)
 			sObj._active = active;
