@@ -3829,29 +3829,29 @@ void Scene611::displayHermitQuestions(int question) {
 		Common::String curQuote = _game.getQuote(0x2D3);
 		int width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		int quotePosX = _defaultDialogPos.x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 3), 0xFDFC, 0, 0, 9999999, curQuote);
+		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 3), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = _game.getQuote(0x2D4);
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 17), 0xFDFC, 0, 0, 9999999, curQuote);
+		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 17), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = _game.getQuote(0x2D5);
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 31), 0xFDFC, 0, 0, 9999999, curQuote);
+		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 31), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = _game.getQuote(0x2D6);
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 45), 0xFDFC, 0, 0, 9999999, curQuote);
+		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 45), 0xFDFC, 0, 0, 800, curQuote);
 
 		curQuote = _game.getQuote(0x2D7);
 		width = _vm->_font->getWidth(curQuote, _scene->_textSpacing);
 		quotePosX = _defaultDialogPos.x - (width / 2);
-		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, 9999999, curQuote);
-		 }
-		 break;
+		_scene->_kernelMessages.add(Common::Point(quotePosX, _defaultDialogPos.y + 59), 0xFDFC, 0, 0, 800, curQuote);
+		}
+		break;
 
 	case 22: {
 		Common::String curQuote = _game.getQuote(0x2D8);
