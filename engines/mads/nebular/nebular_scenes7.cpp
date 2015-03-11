@@ -155,10 +155,13 @@ void Scene701::enter() {
 		_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 20, 0, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[6], 10);
 		break;
-	case BOAT_TIED:
+	case BOAT_TIED: {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -1);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
+		int idx = _scene->_dynamicHotspots.add(837, 759, _globals._sequenceIndexes[2], Common::Rect());
+		_scene->_dynamicHotspots.setPosition(idx, Common::Point(231, 127), FACING_NORTH);
 		break;
+	}
 	case BOAT_GONE:
 		_scene->_hotspots.activate(NOUN_BOAT, false);
 		break;
