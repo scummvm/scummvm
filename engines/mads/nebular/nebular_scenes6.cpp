@@ -2574,7 +2574,7 @@ void Scene609::step() {
 
 	case 62:
 		_scene->_sequences.remove( _globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_hotspots.activate(NOUN_VIDEO_STORE_DOOR, true);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 9);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
