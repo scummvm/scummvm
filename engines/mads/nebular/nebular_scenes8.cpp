@@ -904,10 +904,10 @@ void Scene804::enter() {
 			_game._player._stepEnabled = false;
 		}
 	} else {
-		if (_globals[kBeamIsUp] == 0)
+		if (_globals[kBeamIsUp])
 			_globals._sequenceIndexes[8] = _scene->_sequences.startCycle(_globals._spriteIndexes[8], false, 1);
 
-		if (_globals[kWindowFixed] == 0)
+		if (_globals[kWindowFixed])
 			_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, 1);
 
 		_globals._sequenceIndexes[1] = _scene->_sequences.startCycle(_globals._spriteIndexes[1], false, 1);
