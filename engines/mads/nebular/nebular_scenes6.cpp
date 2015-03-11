@@ -3275,8 +3275,7 @@ void Scene611::handleSubDialog1() {
 
 		// WORKAROUND: Fix bug in the original where the option to give Hermit batteries
 		// would be given before the player even has any batteries
-		//if (!_game._objects.isInInventory(OBJ_DURAFAIL_CELLS) && !_game._objects.isInInventory(OBJ_PHONE_CELLS))
-		//	_globals[kExecuted_1_11] = true;
+		_globals[kHermitWantsBatteries] = true;
 
 		setDialogNode(1);
 		break;
@@ -3968,14 +3967,11 @@ void Scene611::enter() {
 		_scene->_hotspots.activate(NOUN_HERMIT, false);
 	}
 
-	/* WORKAROUND: Pretty sure this is a debugging code fragment that should be ignored
-	if (_globals[kExecuted_1_11]) {
-		_dialog1.write(0x294, true);
-		_dialog1.write(0x292, false);
-		_globals[kExecuted_1_11] = true;
-	}*/
-	if ((_game._objects.isInInventory(OBJ_DURAFAIL_CELLS)) || (_game._objects.isInInventory(OBJ_PHONE_CELLS)))
-		_dialog1.write(0x294, true);
+	// WORKAROUND: Fix original adding 'give batteries' option even if you don't have them
+	if (_globals[kHermitWantsBatteries]) {
+		if ((_game._objects.isInInventory(OBJ_DURAFAIL_CELLS)) || (_game._objects.isInInventory(OBJ_PHONE_CELLS)))
+			_dialog1.write(0x294, true);
+	}
 
 	if (_duringDialogFl) {
 		_game._player._playerPos = Common::Point(237, 129);

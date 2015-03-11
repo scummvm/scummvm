@@ -150,7 +150,7 @@ enum GlobalId {
 	kConvHermit1			= 130,
 	kConvHermit2			= 131,
 	kHasTalkedToHermit		= 132,
-	kExecuted_1_11			= 133,
+	kHermitWantsBatteries	= 133,
 	kHandsetCellStatus		= 134,
 	kBeenInVideoStore		= 135,
 	kDurafailRecharged		= 136,
