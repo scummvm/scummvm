@@ -2641,7 +2641,7 @@ void Scene513::actions() {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
 			_game._player._visible = true;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
+			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 			_vm->_sound->command(24);
 			_scene->_kernelMessages.reset();
