@@ -436,8 +436,6 @@ void Animation::update() {
 	if (_vm->_game->_scene._frameStartTime < _nextFrameTimer)
 		return;
 
-	eraseSprites();
-
 	// Validate the current frame
 	if (_currentFrame >= (int)_miscEntries.size()) {
 		// Is the animation allowed to be repeated?
@@ -449,6 +447,8 @@ void Animation::update() {
 			return;
 		}
 	}
+
+	eraseSprites();
 
 	// Handle executing any sound command for this frame
 	AnimMiscEntry &misc = _miscEntries[_currentFrame];
