@@ -219,6 +219,11 @@ public:
 	 */
 	void update();
 
+	/**
+	 * Erases any sprites from the previous animation frame
+	 */
+	void eraseSprites();
+
 	void setNextFrameTimer(int frameNumber);
 	int getNextFrameTimer() const { return _nextFrameTimer; }
 	void setCurrentFrame(int frameNumber);

@@ -2066,6 +2066,7 @@ void Scene511::actions() {
 					if (_game._trigger == 0) {
 						_game._player._stepEnabled = false;
 						_game._player._visible = false;
+						_game._player.update();
 						_lineAnimationMode = 1;
 						_lineAnimationPosition = 1;
 						_lineMoving = true;
@@ -2088,7 +2089,8 @@ void Scene511::actions() {
 		} else {
 			_vm->_dialogs->show(51130);
 		}
-	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
+	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || 
+			_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
@@ -2106,7 +2108,6 @@ void Scene511::actions() {
 						_scene->_sequences.addTimer(1, 1);
 					else {
 						_game._player._visible = true;
-						_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 						_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 4);
 						int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
@@ -2116,6 +2117,10 @@ void Scene511::actions() {
 						_lineMoving = true;
 						_globals[kLineStatus] = 3;
 						_game._player._stepEnabled = true;
+
+						if (_scene->_activeAnimation)
+							_scene->_activeAnimation->eraseSprites();
+						_game._player.update();
 					}
 				}
 			}

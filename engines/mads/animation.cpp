@@ -436,10 +436,7 @@ void Animation::update() {
 	if (_vm->_game->_scene._frameStartTime < _nextFrameTimer)
 		return;
 
-	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
-		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
-			scene._spriteSlots[idx]._flags = IMG_ERASE;
-	}
+	eraseSprites();
 
 	// Validate the current frame
 	if (_currentFrame >= (int)_miscEntries.size()) {
@@ -602,6 +599,15 @@ void Animation::setCurrentFrame(int frameNumber) {
 
 void Animation::setNextFrameTimer(int frameNumber) {
 	_nextFrameTimer = frameNumber;
+}
+
+void Animation::eraseSprites() {
+	Scene &scene = _vm->_game->_scene;
+
+	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
+		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
+			scene._spriteSlots[idx]._flags = IMG_ERASE;
+	}
 }
 
 } // End of namespace MADS
