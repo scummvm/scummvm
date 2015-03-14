@@ -82,6 +82,8 @@ void MADSEngine::initialize() {
 	MSurface::setVm(this);
 	MSprite::setVm(this);
 
+	loadOptions();
+
 	Resources::init(this);
 	Conversation::init(this);
 	_debugger = new Debugger(this);
@@ -96,6 +98,23 @@ void MADSEngine::initialize() {
 	_game = Game::init(this);
 
 	_screen.empty();
+}
+
+void MADSEngine::loadOptions() {
+	if (ConfMan.hasKey("EasyMouse"))
+		_easyMouse = ConfMan.getBool("EasyMouse");
+	if (ConfMan.hasKey("InvObjectsAnimated"))
+		_invObjectsAnimated = ConfMan.getBool("InvObjectsAnimated");
+	if (ConfMan.hasKey("TextWindowStill"))
+		_textWindowStill = ConfMan.getBool("TextWindowStill");
+}
+
+void MADSEngine::saveOptions() {
+	ConfMan.setBool("EasyMouse", _easyMouse);
+	ConfMan.setBool("InvObjectsAnimated", _invObjectsAnimated);
+	ConfMan.setBool("TextWindowStill", _textWindowStill);
+
+	ConfMan.flushToDisk();
 }
 
 Common::Error MADSEngine::run() {

@@ -1117,12 +1117,15 @@ void OptionsDialog::show() {
 			break;
 		case 3:	// Interface
 			_vm->_easyMouse = !_vm->_easyMouse;
+			_vm->saveOptions();
 			break;
 		case 4:	// Inventory
 			_vm->_invObjectsAnimated = !_vm->_invObjectsAnimated;
+			_vm->saveOptions();
 			break;
 		case 5:	// Text window
 			_vm->_textWindowStill = !_vm->_textWindowStill;
+			_vm->saveOptions();
 			break;
 		case 6:	// Screen fade
 			if (_vm->_screenFade == SCREEN_FADE_FAST)

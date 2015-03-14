@@ -84,6 +84,8 @@ private:
 	 * Handles basic initialisation
 	 */
 	void initialize();
+
+	void loadOptions();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -145,6 +147,8 @@ public:
 	 * Handles saving the game via the GMM
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	void saveOptions();
 };
 
 } // End of namespace MADS
