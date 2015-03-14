@@ -2982,7 +2982,7 @@ case $_backend in
 		;;
 	raspberrypi)
 		_use_dispmanx=no
-		DISPMANX_CXXFLAGS="-I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s"
+		DISPMANX_CXXFLAGS="-I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads -mfpu=vfp -mfloat-abi=hard"
 		DISPMANX_LIBS="-L/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
 		cat > $TMPC << EOF
 #include <bcm_host.h>
