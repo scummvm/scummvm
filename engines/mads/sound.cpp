@@ -146,7 +146,10 @@ void SoundManager::command(int commandId, int param) {
 		if (_queuedCommands.size() < 8)
 			_queuedCommands.push(commandId);
 	} else if (_driver) {
-		_driver->command(commandId, param);
+		// Note: I don't know any way to identify music commands versus sfx
+		// commands, so if sfx is mute, then so is music
+		if (_vm->_soundFlag)
+			_driver->command(commandId, param);
 	}
 }
 

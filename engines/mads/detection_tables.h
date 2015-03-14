@@ -56,7 +56,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_RexNebular,
 		0
@@ -74,7 +74,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_RexNebular,
 		0

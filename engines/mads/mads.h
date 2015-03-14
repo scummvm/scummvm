@@ -106,6 +106,7 @@ public:
 	bool _textWindowStill;
 	ScreenFade _screenFade;
 	bool _musicFlag;
+	bool _soundFlag;
 	bool _dithering;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
@@ -147,6 +148,11 @@ public:
 	 * Handles saving the game via the GMM
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	/**
+	 * Handles updating sound settings after they're changed in the GMM dialog
+	 */
+	virtual void syncSoundSettings();
 
 	void saveOptions();
 };

@@ -44,6 +44,7 @@ MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 	_textWindowStill = false;
 	_screenFade = SCREEN_FADE_SMOOTH;
 	_musicFlag = true;
+	_soundFlag = true;
 	_dithering = false;
 
 	_debugger = nullptr;
@@ -107,12 +108,23 @@ void MADSEngine::loadOptions() {
 		_invObjectsAnimated = ConfMan.getBool("InvObjectsAnimated");
 	if (ConfMan.hasKey("TextWindowStill"))
 		_textWindowStill = ConfMan.getBool("TextWindowStill");
+
+	if (ConfMan.hasKey("mute") && ConfMan.getBool("mute")) {
+		_soundFlag = false;
+		_musicFlag = false;
+	} else {
+		_soundFlag = !ConfMan.hasKey("sfx_mute") || !ConfMan.getBool("sfx_mute");
+		_musicFlag = !ConfMan.hasGameDomain("music_mute") || !ConfMan.getBool("music_mute");
+	}
 }
 
 void MADSEngine::saveOptions() {
 	ConfMan.setBool("EasyMouse", _easyMouse);
 	ConfMan.setBool("InvObjectsAnimated", _invObjectsAnimated);
 	ConfMan.setBool("TextWindowStill", _textWindowStill);
+	ConfMan.setBool("mute", !_soundFlag && !_musicFlag);
+	ConfMan.setBool("sfx_mute", !_soundFlag && _musicFlag);
+	ConfMan.setBool("music_mute", _soundFlag && !_musicFlag);
 
 	ConfMan.flushToDisk();
 }
@@ -151,6 +163,12 @@ bool MADSEngine::canSaveGameStateCurrently() {
 	return !_game->_winStatus && !_game->globals()[5]
 		&& _dialogs->_pendingDialog == DIALOG_NONE
 		&& _events->_cursorId != CURSOR_WAIT;
+}
+
+void MADSEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	loadOptions();
 }
 
 /**
