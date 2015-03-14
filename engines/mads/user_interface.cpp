@@ -864,13 +864,13 @@ void UserInterface::loadInventoryAnim(int objectId) {
 	Scene &scene = _vm->_game->_scene;
 	noInventoryAnim();
 
-	if (_vm->_invObjectsAnimated) {
-		Common::String resName = Common::String::format("*OB%.3dI", objectId);
-		SpriteAsset *asset = new SpriteAsset(_vm, resName, ASSET_SPINNING_OBJECT);
-		_invSpritesIndex = scene._sprites.add(asset, 1);
-		if (_invSpritesIndex >= 0) {
-			_invFrameNumber = 1;
-		}
+	// WORKAROUND: Even in still mode, we now load the animation frames for the
+	// object, so we can show the first frame as a 'still'
+	Common::String resName = Common::String::format("*OB%.3dI", objectId);
+	SpriteAsset *asset = new SpriteAsset(_vm, resName, ASSET_SPINNING_OBJECT);
+	_invSpritesIndex = scene._sprites.add(asset, 1);
+	if (_invSpritesIndex >= 0) {
+		_invFrameNumber = 1;
 	}
 }
 
@@ -902,10 +902,13 @@ void UserInterface::inventoryAnim() {
 			_invSpritesIndex < 0)
 		return;
 
-	// Move to the next frame number in the sequence, resetting if at the end
-	SpriteAsset *asset = scene._sprites[_invSpritesIndex];
-	if (++_invFrameNumber > asset->getCount())
-		_invFrameNumber = 1;
+	// WORKAROUND: Fix still inventory display, which was broken in the original
+	if (_vm->_invObjectsAnimated) {
+		// Move to the next frame number in the sequence, resetting if at the end
+		SpriteAsset *asset = scene._sprites[_invSpritesIndex];
+		if (++_invFrameNumber > asset->getCount())
+			_invFrameNumber = 1;
+	}
 
 	// Loop through the slots list for inventory animation entry
 	for (uint i = 0; i < _uiSlots.size(); ++i) {
