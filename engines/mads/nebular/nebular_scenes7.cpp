@@ -194,7 +194,7 @@ void Scene701::enter() {
 		_game._player._stepEnabled = false;
 		_scene->loadAnimation(formAnimName('B', 1), 80);
 		_vm->_sound->command(28);
-	} else if (_scene->_priorSceneId != -2 && _scene->_priorSceneId != 620) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG && _scene->_priorSceneId != 620) {
 		_game._player._playerPos = Common::Point(22, 131);
 		_game._player._facing = FACING_EAST;
 		_game._player._stepEnabled = false;
@@ -463,7 +463,7 @@ void Scene702::enter() {
 	if (_scene->_priorSceneId == 701) {
 		_game._player._playerPos = Common::Point(13, 145);
 		_game._player._facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != -2 && _scene->_priorSceneId != 620) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG && _scene->_priorSceneId != 620) {
 		_game._player._playerPos = Common::Point(289, 138);
 		_game._player.walk(Common::Point(262, 148), FACING_WEST);
 		_game._player._facing = FACING_WEST;
@@ -697,7 +697,7 @@ void Scene703::enter() {
 		_monsterMode = 0;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(34);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
 		_boatDir = 1;
 		if (_globals[kMonsterAlive]) {
@@ -1244,7 +1244,7 @@ void Scene704::enter() {
 		_boatDirection = 2;
 		_scene->loadAnimation(formAnimName('A', -1));
 		_scene->_activeAnimation->setCurrentFrame(36);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
 		_boatDirection = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
@@ -1570,7 +1570,7 @@ void Scene705::enter() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 71);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._stepEnabled = false;
 		_scene->_sequences.addTimer(1, 80);
 		_vm->_sound->command(28);
@@ -1857,7 +1857,7 @@ void Scene706::enter() {
 	if (_scene->_priorSceneId == 707) {
 		_game._player._playerPos = Common::Point(277, 103);
 		_game._player._facing = FACING_SOUTHWEST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(167, 152);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -2216,7 +2216,7 @@ void Scene751::enter() {
 		_globals._sequenceIndexes[4] = _scene->_sequences.startCycle(_globals._spriteIndexes[4], false, -2);
 		_scene->_sequences.setPosition(_globals._sequenceIndexes[4], Common::Point(155, 129));
 		_scene->_sequences.addTimer(15, 70);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(22, 131);
 		_game._player._facing = FACING_EAST;
 		_game._player._stepEnabled = false;
@@ -2530,7 +2530,7 @@ void Scene752::enter() {
 	if (_scene->_priorSceneId == 751) {
 		_game._player._playerPos = Common::Point(13, 145);
 		_game._player._facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(289, 138);
 		_game._player.walk(Common::Point(262, 148), FACING_WEST);
 		_game._player._facing = FACING_WEST;

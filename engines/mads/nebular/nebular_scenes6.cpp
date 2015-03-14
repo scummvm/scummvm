@@ -112,7 +112,7 @@ void Scene601::enter() {
 		_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 3);
 		_scene->loadAnimation(formAnimName('R', 1), 70);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(229, 129);
 		_game._player._facing = FACING_SOUTHWEST;
 	}
@@ -293,7 +293,7 @@ void Scene602::enter() {
 	if (_scene->_priorSceneId == 603) {
 		_game._player._playerPos = Common::Point(228, 126);
 		_game._player._facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(50, 127);
 		_game._player._facing = FACING_EAST;
 	}
@@ -585,7 +585,7 @@ void Scene603::enter() {
 		_scene->_dynamicHotspots.setPosition(_noteHotspotId, Common::Point(242, 118), FACING_NORTHEAST);
 	}
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(113, 134);
 
 	sceneEntrySound();
@@ -750,7 +750,7 @@ void Scene604::enter() {
 	_vm->_palette->setEntry(253, 45, 24, 17);
 	_animationActiveFl = false;
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(72, 149);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
@@ -1106,7 +1106,7 @@ void Scene607::enter() {
 	if (_scene->_priorSceneId == 608) {
 		_game._player._playerPos = Common::Point(297, 50);
 		_game._player._facing = FACING_SOUTHEAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(40, 104);
 		_game._player._facing = FACING_SOUTHEAST;
 		_game._player._visible = false;
@@ -1778,7 +1778,7 @@ void Scene608::enter() {
 	_vm->_palette->setEntry(252, 63, 44, 30);
 	_vm->_palette->setEntry(253, 63, 20, 22);
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(46, 132);
 		_game._player._facing = FACING_EAST;
 		if (_game._difficulty == DIFFICULTY_HARD) {
@@ -2535,7 +2535,7 @@ void Scene609::enter() {
 		_game._player._facing = FACING_EAST;
 		_scene->_sequences.addTimer(60, 60);
 		_game._player._stepEnabled = false;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(86, 136);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
@@ -2884,7 +2884,7 @@ void Scene610::enter() {
 	if (_scene->_roomChanged && _game._difficulty != DIFFICULTY_EASY)
 		_game._objects.addToInventory(OBJ_PENLIGHT);
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(175, 152);
 		_game._player._facing = FACING_NORTHWEST;
 	}
@@ -3948,7 +3948,7 @@ void Scene611::enter() {
 	_alreadyTalkingFl = false;
 	_startTradingFl = false;
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(22, 132);
 		_game._player._facing = FACING_EAST;
 		_duringDialogFl = false;
@@ -4560,7 +4560,7 @@ void Scene612::enter() {
 	_globals._sequenceIndexes[2] = _scene->_sequences.startCycle(_globals._spriteIndexes[2], false, _cycleIndex);
 	_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 1);
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(280, 75);
 		_game._player._facing = FACING_SOUTHWEST;
 		_game._player._visible = false;

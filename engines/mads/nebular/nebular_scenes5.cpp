@@ -199,7 +199,7 @@ void Scene501::enter() {
 		_game._player._playerPos = Common::Point(317, 102);
 		_game._player._facing = FACING_SOUTHWEST;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != -2)
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(299, 131);
 
 	if (_scene->_roomChanged) {
@@ -563,7 +563,7 @@ void Scene503::enter() {
 		_scene->_dynamicHotspots.setPosition(_detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(191, 152);
 		_game._player._facing = FACING_NORTHWEST;
 	}
@@ -709,7 +709,7 @@ void Scene504::enter() {
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 3));
 		_carAnimationMode = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
-		if ((_scene->_priorSceneId != -2) && (_scene->_priorSceneId != 505))
+		if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && (_scene->_priorSceneId != 505))
 			_globals[kHoverCarLocation] = _scene->_priorSceneId;
 
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
@@ -912,7 +912,7 @@ void Scene505::enter() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('t', -1));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('e', -1));
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_globals._sequenceIndexes[12] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[12], false, 6, 1, 0, 0);
 
 	_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 120, 0);
@@ -934,7 +934,7 @@ void Scene505::enter() {
 	for (int i = 0; i < 9; i++) {
 		if (_globals[kHoverCarLocation] == _carLocations[i]) {
 			_homeSelectedId = i;
-			if (_scene->_priorSceneId != -2)
+			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 				_selectedId = i;
 		}
 	}
@@ -1222,7 +1222,7 @@ void Scene506::enter() {
 		_game._player._facing = FACING_SOUTHEAST;
 		_scene->_sequences.addTimer(60, 80);
 		_game._player._stepEnabled = false;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(138, 116);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
@@ -1471,7 +1471,7 @@ void Scene507::enter() {
 		_scene->_dynamicHotspots.setPosition(_penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(121, 147);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -1630,7 +1630,7 @@ void Scene508::enter() {
 	if (_scene->_priorSceneId == 515) {
 		_game._player._playerPos = Common::Point(57, 116);
 		_game._player._facing = FACING_NORTHEAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(289, 139);
 		_game._player._facing = FACING_WEST;
 	}
@@ -1868,7 +1868,7 @@ void Scene511::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_6");
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_handingLine = false;
 
 	if (_globals[kBoatRaised]) {
@@ -1923,7 +1923,7 @@ void Scene511::enter() {
 	if (_scene->_priorSceneId == 512) {
 		_game._player._playerPos = Common::Point(60, 112);
 		_game._player._facing = FACING_SOUTHEAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(55, 152);
 		_game._player._facing = FACING_NORTHWEST;
 		_game._player._visible = false;
@@ -2242,7 +2242,7 @@ void Scene512::enter() {
 	} else
 		_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(144, 152);
 		_game._player._facing = FACING_NORTHEAST;
 	}
@@ -2510,7 +2510,7 @@ void Scene513::enter() {
 		_game._player._facing = FACING_WEST;
 		_game._player._stepEnabled = false;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(63, 149);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
@@ -2744,7 +2744,7 @@ void Scene551::enter() {
 
 	if (_scene->_priorSceneId == 501)
 		_game._player._playerPos = Common::Point(18, 130);
-	else if (_scene->_priorSceneId != -2) {
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(124, 119);
 		_game._player._facing = FACING_NORTH;
 	}

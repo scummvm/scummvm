@@ -344,7 +344,7 @@ void DialogsNebular::showDialog() {
 
 void DialogsNebular::showScummVMSaveDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
-	Scene *scene = &(game._scene);
+	Scene &scene = game._scene;
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
 	int slot = dialog->runModalWithCurrentTarget();
@@ -356,24 +356,31 @@ void DialogsNebular::showScummVMSaveDialog() {
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 
-		scene->_spriteSlots.reset();
-		scene->loadScene(scene->_currentSceneId, game._aaName, true);
-		scene->_userInterface.noInventoryAnim();
+		scene._spriteSlots.reset();
+		scene.loadScene(scene._currentSceneId, game._aaName, true);
+		scene._userInterface.noInventoryAnim();
 		game._scene.drawElements(kTransitionFadeIn, false);
 
 		game.saveGame(slot, desc);
 	}
+
+	// Flag for scene loading that we're returning from a dialog
+	scene._currentSceneId = RETURNING_FROM_DIALOG;
 }
 
 void DialogsNebular::showScummVMRestoreDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	Scene &scene = game._scene;
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
 		game._loadGameSlot = slot;
-		game._scene._currentSceneId = -1;
+		game._scene._currentSceneId = RETURNING_FROM_LOADING;
 		game._currentSectionNumber = -1;
+	} else {
+		// Flag for scene loading that we're returning from a dialog
+		scene._currentSceneId = RETURNING_FROM_DIALOG;
 	}
 }
 
@@ -637,6 +644,7 @@ void GameDialog::display() {
 
 GameDialog::~GameDialog() {
 	_vm->_screen.resetClipBounds();
+	_vm->_game->_scene._currentSceneId = RETURNING_FROM_DIALOG;
 }
 
 void GameDialog::clearLines() {

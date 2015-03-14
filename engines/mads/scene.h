@@ -40,6 +40,8 @@
 
 namespace MADS {
 
+enum { RETURNING_FROM_DIALOG = -2, RETURNING_FROM_LOADING = -1 };
+
 class Scene {
 private:
 	/**

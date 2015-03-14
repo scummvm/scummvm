@@ -121,7 +121,7 @@ void Scene801::enter() {
 		_game._player._playerPos = Common::Point(307, 111);
 		_game._player.walk(Common::Point(270, 118), FACING_WEST);
 		_game._player._visible = true;
-	} else if ((_scene->_priorSceneId != -2) && !_globals[kTeleporterCommand]) {
+	} else if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && !_globals[kTeleporterCommand]) {
 		_game._player._playerPos = Common::Point(8, 117);
 		_game._player.walk(Common::Point(41, 115), FACING_EAST);
 		_game._player._visible = true;
@@ -346,7 +346,7 @@ void Scene802::enter() {
 		_game._player._playerPos = Common::Point(303, 119);
 		_game._player._facing = FACING_WEST;
 
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(15, 129);
 		_game._player._facing = FACING_EAST;
 	}
@@ -557,7 +557,7 @@ void Scene803::enter() {
 
 	if (!_globals[kFromCockpit]) {
 		if (!_globals[kReturnFromCut]) {
-			if (_scene->_priorSceneId != -2) {
+			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 				_game._player._playerPos = Common::Point(15, 130);
 				_game._player._facing = FACING_EAST;
 			}

@@ -538,7 +538,7 @@ void SceneTeleporter::teleporterEnter() {
 	_curMessageId        = -1;
 	_msgText = "_";
 
-	if (_scene->_priorSceneId == -2)
+	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
 		_scene->_priorSceneId = _globals[kTeleporterDestination];
 
 	if (_scene->_priorSceneId < 101)

@@ -152,7 +152,7 @@ void Scene201::enter() {
 	int idx = _scene->_dynamicHotspots.add(NOUN_BIRDS, 209, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 	_scene->_dynamicHotspots.setPosition(idx, Common::Point(186, 81), FACING_NORTH);
 
-	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == -1)) {
+	if ((_scene->_priorSceneId == 202) || (_scene->_priorSceneId == RETURNING_FROM_LOADING)) {
 		_game._player._playerPos = Common::Point(165, 152);
 	} else {
 		_game._player._playerPos = Common::Point(223, 149);
@@ -430,7 +430,7 @@ void Scene202::enter() {
 	if (_scene->_priorSceneId == 201) {
 		_game._player._playerPos = Common::Point(190, 91);
 		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(178, 152);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -446,7 +446,7 @@ void Scene202::enter() {
 	_game.loadQuoteSet(0x5C, 0x5D, 0x5E, 0x5F, 0x60, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0);
 	_activeMsgFl = false;
 
-	if (_scene->_priorSceneId == -2) {
+	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG) {
 		if (_waitingMeteoFl) {
 			_globals._sequenceIndexes[9] = _scene->_sequences.startCycle(_globals._spriteIndexes[9], false, 1);
 			_game._player._visible = false;
@@ -1044,7 +1044,7 @@ void Scene203::enter() {
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(308, 117);
 		_game._player._facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(155, 152);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -1222,7 +1222,7 @@ void Scene205::enter() {
 			Common::Rect(195, 99, 264, 134), 13, 2, 0xFDFC, 60,
 			108, 108, 109, 109, 110, 110, 111, 108, 0);
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(99, 152);
 
 	if (_globals[kSexOfRex] != SEX_MALE) {
@@ -1516,7 +1516,7 @@ void Scene207::enter() {
 	} else if (_scene->_priorSceneId == 214) {
 		_game._player._playerPos = Common::Point(164, 117);
 		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(305, 131);
 	}
 
@@ -1728,7 +1728,7 @@ void Scene208::enter() {
 	} else if (_scene->_priorSceneId == 209) {
 		_game._player._playerPos = Common::Point(307, 123);
 		_game._player._facing = FACING_WEST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(162, 149);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -2856,7 +2856,7 @@ void Scene209::enter() {
 	if (_scene->_priorSceneId == 208) {
 		_game._player._playerPos = Common::Point(11, 121);
 		_game._player._facing = FACING_EAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(28, 121);
 		_game._player._facing = FACING_SOUTH;
 	}
@@ -4173,7 +4173,7 @@ void Scene210::enter() {
 		_game._player._playerPos = Common::Point(168, 128);
 		_game._player._facing = FACING_SOUTH;
 		_globals[kCurtainOpen] = true;
-	} else if (_scene->_priorSceneId != -2)
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(308, 132);
 
 	if (!_globals[kCurtainOpen]) {
@@ -4210,7 +4210,7 @@ void Scene210::enter() {
 	_twinkleAnimationType = 0;
 	_twinklesCurrentFrame = 0;
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_shouldMoveHead = false;
 		_shouldFaceRex = false;
 		_shouldTalk = false;
@@ -4647,7 +4647,7 @@ void Scene211::enter() {
 		_game._player._visible = false;
 		_scene->loadAnimation(formAnimName('A', -1), 100);
 		_scene->_activeAnimation->setCurrentFrame(169);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(310, 31);
 		_game._player._facing = FACING_SOUTHWEST;
 	}
@@ -4905,7 +4905,7 @@ void Scene212::enter() {
 	if (_scene->_priorSceneId == 208) {
 		_game._player._playerPos = Common::Point(195, 85);
 		_game._player._facing = FACING_SOUTH;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(67, 117);
 		_game._player._facing = FACING_NORTHEAST;
 	}
@@ -5061,7 +5061,7 @@ void Scene214::enter() {
 		_scene->_hotspots.activate(NOUN_BLOWGUN, false);
 	}
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(191, 152);
 
 	sceneEntrySound();
@@ -5257,7 +5257,7 @@ void Scene215::enter() {
 		_game._player._stepEnabled = false;
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, 1);
 		_scene->_sequences.addTimer(120, 70);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(204, 152);
 		_game._player._facing = FACING_NORTH;
 	}
