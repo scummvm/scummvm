@@ -101,11 +101,8 @@ void DispmanXSdlGraphicsManager::DispmanXInit () {
 		_dispvars->pages[i].numpage = i;
 		_dispvars->pages[i].used = false;
 		_dispvars->pages[i].dispvars = _dispvars;
-	}
-	
-	for (i = 0; i < numpages; i++) {
 		pthread_mutex_init(&_dispvars->pages[i].pageUseMutex, NULL);
-	}	
+	}
 	
 	// Before we call any vc_* function, we need to call this one.
 	bcm_host_init();
@@ -216,9 +213,9 @@ void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void * arg){
 		
 	// We mark as free the page that was visible until now
 	if (page->dispvars->currentPage != NULL) {
-		pthread_mutex_lock(&page->pageUseMutex);
+		pthread_mutex_lock(&page->dispvars->currentPage->pageUseMutex);
 		page->dispvars->currentPage->used = false;
-		pthread_mutex_unlock(&page->pageUseMutex);
+		pthread_mutex_unlock(&page->dispvars->currentPage->pageUseMutex);
 	}
 	
 	// The page on which we just issued the flip that caused this callback becomes the visible one
