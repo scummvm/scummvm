@@ -3313,7 +3313,7 @@ void Scene319::step() {
 
 	switch (_game._trigger) {
 	case 70:
-	case 71:
+	case 71: {
 		_animMode = 1;
 		_nextAction1 = _nextAction2;
 		_animFrame = 0;
@@ -3336,7 +3336,14 @@ void Scene319::step() {
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[i], oldIdx);
 		}
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[0], SEQUENCE_TRIGGER_EXPIRE, 0, 74);
+
+		// WORKAROUND: This fixes the game sometimes going into an endless waiting
+		// loop even after the doctor has finished hitting Rex. Note sure if it's due
+		// to a bug in room script or in the engine, but this at least fixes it
+		int seqIndex = _scene->_sequences.findByTrigger(2);
+		_scene->_sequences[seqIndex]._doneFlag = false;
 		break;
+	}
 
 	case 72:
 		_vm->_palette->setColorFlags(0xFF, 0, 0);
