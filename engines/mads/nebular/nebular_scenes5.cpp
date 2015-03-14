@@ -1547,8 +1547,8 @@ void Scene507::actions() {
 		_vm->_dialogs->show(50724);
 	else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
 		_vm->_dialogs->show(50725);
-	else if (_action.isAction(NOUN_WALK_BEHIND, NOUN_COUNTER)) {
-		// WORkAROUND: Empty handling to prevent default "can't do that" dialogs showing
+	else if (_action.isAction(VERB_WALK_BEHIND, NOUN_COUNTER)) {
+		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
 	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50728);
@@ -2463,8 +2463,8 @@ void Scene512::actions() {
 		_vm->_dialogs->show(51233);
 	else if (_action.isAction(VERB_LOOK, NOUN_LAMP))
 		_vm->_dialogs->show(51234);
-	else if (_action.isAction(NOUN_WALK_BEHIND, NOUN_COUNTER)) {
-		// WORkAROUND: Empty handling to prevent default "can't do that" dialogs showing
+	else if (_action.isAction(VERB_WALK_BEHIND, NOUN_COUNTER)) {
+		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
 	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
 		_vm->_dialogs->show(51235);
 	else if (_action.isAction(VERB_LOOK, NOUN_ICE_CHESTS))

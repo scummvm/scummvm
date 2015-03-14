@@ -521,7 +521,7 @@ void Scene307::setup() {
 	setPlayerSpritesPrefix();
 	setAAName();
 	_scene->addActiveVocab(NOUN_AIR_VENT);
-	_scene->addActiveVocab(NOUN_CLIMB_INTO);
+	_scene->addActiveVocab(VERB_CLIMB_INTO);
 }
 
 void Scene307::handleRexDialog(int quote) {
@@ -992,7 +992,7 @@ void Scene307::actions() {
 			_scene->_sequences.remove(_globals._sequenceIndexes[5]);
 			_grateOpenedFl = true;
 			_scene->_hotspots.activate(17, false);
-			int idx = _scene->_dynamicHotspots.add(17, NOUN_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
+			int idx = _scene->_dynamicHotspots.add(17, VERB_CLIMB_INTO, -1, Common::Rect(117, 67, 117 + 19, 67 + 13));
 			int hotspotId = _scene->_dynamicHotspots.setPosition(idx, Common::Point(129, 104), FACING_NORTH);
 			_scene->_dynamicHotspots.setCursor(hotspotId, CURSOR_GO_UP);
 			_game._objects.removeFromInventory(OBJ_SCALPEL, NOWHERE);
