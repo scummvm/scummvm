@@ -1158,6 +1158,8 @@ void OptionsDialog::show() {
 		_vm->_textWindowStill = prevTextWindowStill;
 		_vm->_screenFade = prevScreenFade;
 		game._storyMode = prevStoryMode;
+
+		_vm->saveOptions();
 	}
 }
 
