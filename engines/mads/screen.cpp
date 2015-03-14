@@ -308,10 +308,10 @@ void ScreenObjects::check(bool scanFlag) {
 		}
 
 		//_released = _vm->_events->_mouseReleased;
-		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
+		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
 			scene._userInterface._category = _category;
 
-		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
+		if (_vm->_events->_mouseButtons || _vm->_easyMouse) {
 			if (userInterface._category >= CAT_COMMAND && userInterface._category <= CAT_TALK_ENTRY) {
 				elementHighlighted();
 			}
@@ -526,7 +526,7 @@ void ScreenObjects::elementHighlighted() {
 	action._pickedWord = newIndex;
 
 	if (_category == CAT_INV_LIST || _category == CAT_INV_ANIM) {
-		if (action._interAwaiting == 1 && newIndex >= 0 && _released &&
+		if (action._interAwaiting == AWAITING_COMMAND && newIndex >= 0 && _released &&
 				(!_vm->_events->_mouseReleased || !_vm->_easyMouse))
 			newIndex = -1;
 	}

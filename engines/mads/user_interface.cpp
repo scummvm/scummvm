@@ -522,7 +522,7 @@ void UserInterface::updateInventoryScroller() {
 				uint32 timeInc = _scrollbarQuickly ? 100 : 380;
 
 				if (_vm->_events->_mouseStatus && (_scrollbarMilliTime + timeInc) <= currentMilli) {
-					_scrollbarQuickly = _vm->_events->_vD2 < 1;
+					_scrollbarQuickly = _vm->_events->_strokeGoing < 1;
 					_scrollbarMilliTime = currentMilli;
 
 					// Change the scrollbar and visible inventory list

@@ -67,7 +67,7 @@ public:
 	byte _mouseButtons;
 	bool _rightMousePressed;
 	int _mouseStatus;
-	int _vD2;
+	int _strokeGoing;
 	int _mouseStatusCopy;
 	bool _mouseMoved;
 	Common::Stack<Common::KeyState> _pendingKeys;
