@@ -4496,7 +4496,7 @@ void Scene352::actions() {
 			case 2:
 				_vm->_sound->command(23);
 				_scene->_sequences.remove(_commonSequenceIdx);
-				_commonSequenceIdx = _scene->_sequences.startPingPongCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
+				_commonSequenceIdx = _scene->_sequences.addReverseSpriteCycle(_commonSpriteIndex, false, 8, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_commonSequenceIdx, 1, 4);
 				_scene->_sequences.addSubEntry(_commonSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 3);
 				break;
