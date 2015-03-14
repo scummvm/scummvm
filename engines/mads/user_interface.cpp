@@ -732,7 +732,9 @@ void UserInterface::loadElements() {
 		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
-			_vm->_game->_screenObjects.add(hs._bounds, SCREENMODE_VGA, CAT_HOTSPOT, hotspotIdx);
+			ScreenObject *so = _vm->_game->_screenObjects.add(hs._bounds, SCREENMODE_VGA, 
+				CAT_HOTSPOT, hotspotIdx);
+			so->_active = hs._active;
 		}
 	}
 

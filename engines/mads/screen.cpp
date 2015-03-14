@@ -265,7 +265,7 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_baseTime = 0;
 }
 
-void ScreenObjects::add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId) {
+ScreenObject *ScreenObjects::add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId) {
 	ScreenObject so;
 	so._bounds = bounds;
 	so._category = category;
@@ -274,6 +274,8 @@ void ScreenObjects::add(const Common::Rect &bounds, ScreenMode mode, ScrCategory
 	so._active = true;
 
 	push_back(so);
+
+	return &(*this)[size()];
 }
 
 void ScreenObjects::check(bool scanFlag) {

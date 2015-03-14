@@ -167,7 +167,7 @@ public:
 	/**
 	* Add a new item to the list
 	*/
-	void add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId);
+	ScreenObject *add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId);
 
 	/**
 	 * Check objects on the screen
