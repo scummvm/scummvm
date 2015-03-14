@@ -906,7 +906,7 @@ void Scene102::actions() {
 		_fridgeFirstOpenFl = false;
 		int quoteId = _vm->getRandomNumber(59, 63);
 		Common::String curQuote = _game.getQuote(quoteId);
-		int width = _vm->_font->getWidth(curQuote, -1);
+		int width = _scene->_kernelMessages._talkFont->getWidth(curQuote, -1);
 		_scene->_kernelMessages.reset();
 		_game._triggerSetupMode = SEQUENCE_TRIGGER_DAEMON;
 		_scene->_kernelMessages.add(Common::Point(210, 60), 0x1110, 0, 73, 120, curQuote);
