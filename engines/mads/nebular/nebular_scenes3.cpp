@@ -525,7 +525,7 @@ void Scene307::setup() {
 }
 
 void Scene307::handleRexDialog(int quote) {
-	Common::String curQuote = _game.getQuote(_action._activeAction._verbId);
+	Common::String curQuote = _game.getQuote(quote);
 	if (_vm->_font->getWidth(curQuote, _scene->_textSpacing) > 200) {
 		Common::String subQuote1;
 		_game.splitQuote(curQuote, subQuote1, _subQuote2);
