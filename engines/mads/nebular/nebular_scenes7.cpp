@@ -279,10 +279,8 @@ void Scene701::preActions() {
 }
 
 void Scene701::actions() {
-	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM))
-		return;
-
-	if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
+	if (_action.isAction(VERB_WALK_ALONG, NOUN_PLATFORM)) {
+	} else if (_action.isAction(VERB_LOOK, NOUN_BINOCULARS, NOUN_BUILDING) && _game._objects[OBJ_VASE]._roomNumber == 706) {
 		switch (_game._trigger) {
 		case 0:
 			_game._player._stepEnabled = false;
@@ -418,7 +416,7 @@ void Scene701::actions() {
 			_vm->_dialogs->show(70111);
 	} else if (_action.isAction(VERB_LOOK, NOUN_SUBMERGED_CITY))
 		_vm->_dialogs->show(70112);
-	else if (_action.isAction(VERB_LOOK, 0))
+	else if (_action.isAction(VERB_LOOK, NOUN_ELEVATOR))
 		_vm->_dialogs->show(70113);
 	else if (_action.isAction(VERB_LOOK, NOUN_PLATFORM))
 		_vm->_dialogs->show(70114);
