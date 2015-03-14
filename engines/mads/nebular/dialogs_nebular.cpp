@@ -1142,8 +1142,9 @@ void OptionsDialog::show() {
 		// Reload menu
 		_lineIndex = -1;
 		clearLines();
+		_vm->_game->_screenObjects.clear();
+		_vm->_game->_scene._spriteSlots.reset();
 		setLines();
-		setClickableLines();
 	} while (!_vm->shouldQuit() && _selectedLine != 0 && _selectedLine <= 7);
 
 	// If Done button not pressed, reset settings
