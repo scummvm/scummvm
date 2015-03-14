@@ -676,7 +676,7 @@ void Scene::freeCurrentScene() {
 }
 
 void Scene::removeSprites() {
-	for (int idx = _sprites._assetCount - 1; idx >= _spritesCount; --idx)
+	for (int idx = _sprites.size() - 1; idx >= _spritesCount; --idx)
 		_sprites.remove(idx);
 }
 

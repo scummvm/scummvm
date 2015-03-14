@@ -202,12 +202,12 @@ class SpriteSets : public Common::Array<SpriteAsset *> {
 private:
 	MADSEngine *_vm;
 public:
-	int _assetCount;
-
+	SpriteAsset *_uiSprites;
+public:
 	/**
 	 * Constructor
 	 */
-	SpriteSets(MADSEngine *vm) : _vm(vm), _assetCount(0) {}
+	SpriteSets(MADSEngine *vm) : _vm(vm), _uiSprites(nullptr) {}
 
 	/**
 	 * Destructor
@@ -233,6 +233,8 @@ public:
 	 * Remove an asset from the list
 	 */
 	void remove(int idx);
+
+	SpriteAsset *&operator[](int idx);
 };
 
 } // End of namespace MADS

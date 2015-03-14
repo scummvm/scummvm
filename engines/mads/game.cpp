@@ -160,7 +160,7 @@ void Game::gameLoop() {
 			sectionLoop();
 
 		_player.releasePlayerSprites();
-		assert(_scene._sprites._assetCount == 0);
+		assert(_scene._sprites.size() == 0);
 
 		_vm->_palette->unlock();
 		_vm->_events->waitCursor();

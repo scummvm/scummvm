@@ -368,19 +368,18 @@ SpriteSets::~SpriteSets() {
 }
 
 int SpriteSets::add(SpriteAsset *asset, int idx) {
-	if (idx)
-		idx = idx + 49;
-	else
-		idx = _assetCount++;
+	if (idx) {
+		assert(idx == 1);
+		delete _uiSprites;
+		_uiSprites = asset;
 
-	if (idx >= (int)size())
-		resize(idx + 1);
+		return SPRITE_SLOTS_MAX_SIZE;
+	} else {
+		assert(size() < SPRITE_SLOTS_MAX_SIZE);
+		push_back(asset);
 
-	if ((*this)[idx])
-		delete (*this)[idx];
-
-	(*this)[idx] = asset;
-	return idx;
+		return (int)size() - 1;
+	}
 }
 
 int SpriteSets::addSprites(const Common::String &resName, int flags) {
@@ -390,26 +389,29 @@ int SpriteSets::addSprites(const Common::String &resName, int flags) {
 void SpriteSets::clear() {
 	for (uint i = 0; i < size(); ++i)
 		delete (*this)[i];
-
-	_assetCount = 0;
 	Common::Array<SpriteAsset *>::clear();
+
+	delete _uiSprites;
+	_uiSprites = nullptr;
 }
 
 void SpriteSets::remove(int idx) {
-	if (idx >= 0) {
-		if (idx < ((int)size() - 1)) {
-			delete (*this)[idx];
-			(*this)[idx] = nullptr;
-		} else {
-			do {
-				delete (*this)[size() - 1];
-				remove_at(size() - 1);
-			} while (size() > 0 && (*this)[size() - 1] == nullptr);
-		}
+	if (idx == SPRITE_SLOTS_MAX_SIZE) {
+		delete _uiSprites;
+		_uiSprites = nullptr;
+	} else if (idx >= 0) {
+		delete (*this)[idx];
 
-		if (idx < 50 && _assetCount > 0)
-			--_assetCount;
+		if (idx == ((int)size() - 1))
+			remove_at(size() - 1);
+		else
+			(*this)[idx] = nullptr;
 	}
+}
+
+SpriteAsset *&SpriteSets::operator[](int idx) {
+	return (idx == SPRITE_SLOTS_MAX_SIZE) ? _uiSprites :
+		Common::Array<SpriteAsset *>::operator[](idx);
 }
 
 } // End of namespace MADS
