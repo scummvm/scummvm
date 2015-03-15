@@ -69,8 +69,6 @@ void SherlockEngine::initialize() {
 	_rooms = new Rooms();
 	_screen = new Screen(this);
 	_talk = new Talk();
-
-	initFlags();
 }
 
 Common::Error SherlockEngine::run() {

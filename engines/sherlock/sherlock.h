@@ -60,9 +60,8 @@ class Resource;
 
 class SherlockEngine : public Engine {
 private:
-	bool detectGame();
-
-	void initialize();
+protected:
+	virtual void initialize();
 public:
 	const SherlockGameDescription *_gameDescription;
 	Journal *_journal;
@@ -76,8 +75,6 @@ public:
 	virtual ~SherlockEngine();
 
 	virtual Common::Error run();
-
-	virtual void initFlags() = 0;
 
 	int getGameType() const;
 	uint32 getGameID() const;

@@ -30,12 +30,12 @@ namespace Sherlock {
 namespace Scalpel {
 
 class ScalpelEngine : public SherlockEngine {
+protected:
+	virtual void initialize();
 public:
 	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {}
 	virtual ~ScalpelEngine() {}
-
-	virtual void initFlags();
 };
 
 } // End of namespace Scalpel

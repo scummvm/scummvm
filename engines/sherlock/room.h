@@ -93,6 +93,7 @@ class Rooms {
 public:
 	bool _stats[ROOMS_COUNT][9];
 	bool _savedStats[ROOMS_COUNT][9];
+	int _goToRoom;
 public:
 	Rooms();
 };

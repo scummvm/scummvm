@@ -27,13 +27,17 @@ namespace Sherlock {
 namespace Scalpel {
 
 /**
- * Initialises game flags
+ * Game initialization
  */
-void ScalpelEngine::initFlags() {
+void ScalpelEngine::initialize() {
 	_flags.resize(100 * 8);
 	_flags[3] = true;		// Turn on Alley
 	_flags[39] = true;		// Turn on Baker Street
+
+	// Starting room
+	_rooms->_goToRoom = 4;
 }
+
 
 } // End of namespace Scalpel
 

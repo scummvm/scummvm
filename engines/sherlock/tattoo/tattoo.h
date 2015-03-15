@@ -34,8 +34,6 @@ public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {}
 	virtual ~TattooEngine() {}
-
-	virtual void initFlags();
 };
 
 } // End of namespace Tattoo

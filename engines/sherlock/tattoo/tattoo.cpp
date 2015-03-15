@@ -26,13 +26,6 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-/**
- * Initialises game flags
- */
-void TattooEngine::initFlags() {
-	_flags.resize(100 * 8);
-}
-
 } // End of namespace Tattoo
 
 } // End of namespace Scalpel
