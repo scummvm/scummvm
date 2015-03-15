@@ -21,6 +21,8 @@
  */
 
 #include "sherlock/graphics.h"
+#include "sherlock/sherlock.h"
+#include "common/system.h"
 
 namespace Sherlock {
 
@@ -41,5 +43,24 @@ void Surface::drawSprite(int x, int y, SpriteFrame *spriteFrame, bool flipped, b
 	
 }
 
+/*----------------------------------------------------------------*/
+
+Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), _vm(vm) {
+	setFont(1);
+}
+
+void Screen::setFont(int fontNumber) {
+	_fontNumber = fontNumber;
+	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber);
+	Common::SeekableReadStream *stream = _vm->_res->load(fname);
+
+	debug("TODO: Loading font %s, size - %d", fname.c_str(), stream->size());
+
+	delete stream;
+}
+
+void Screen::update() {
+	g_system->updateScreen();
+}
 
 } // End of namespace Sherlock

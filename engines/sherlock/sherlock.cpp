@@ -33,6 +33,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_journal = nullptr;
 	_res = nullptr;
 	_rooms = nullptr;
+	_screen = nullptr;
 	_talk = nullptr;
 }
 
@@ -41,6 +42,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _journal;
 	delete _res;
 	delete _rooms;
+	delete _screen;
 	delete _talk;
 }
 
@@ -65,6 +67,7 @@ void SherlockEngine::initialize() {
 	_journal = new Journal();
 	_res = new Resources();
 	_rooms = new Rooms();
+	_screen = new Screen(this);
 	_talk = new Talk();
 
 	initFlags();

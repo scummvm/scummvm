@@ -30,6 +30,7 @@
 #include "common/savefile.h"
 #include "common/hash-str.h"
 #include "engines/engine.h"
+#include "sherlock/graphics.h"
 #include "sherlock/journal.h"
 #include "sherlock/resources.h"
 #include "sherlock/room.h"
@@ -67,6 +68,7 @@ public:
 	Journal *_journal;
 	Resources *_res;
 	Rooms *_rooms;
+	Screen *_screen;
 	Talk *_talk;
 	Common::Array<bool> _flags;
 public:
