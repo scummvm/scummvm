@@ -948,8 +948,14 @@ void Scene604::actions() {
 		_bombMode = 1;
 		if ((_game._difficulty == DIFFICULTY_HARD) || _globals[kWarnedFloodCity])
 			handleBombActions();
-		else if ((_game._objects.isInInventory(OBJ_POLYCEMENT) && _game._objects.isInInventory(OBJ_CHICKEN))
-			 && ((_globals[kLineStatus] == LINE_TIED) || ((_game._difficulty == DIFFICULTY_EASY) && (!_globals[kBoatRaised]))))
+		else if (
+			(_game._objects.isInInventory(OBJ_POLYCEMENT) && (_game._objects.isInInventory(OBJ_CHICKEN) || _game._objects.isInInventory(OBJ_CHICKEN_BOMB)))
+			 && (_globals[kLineStatus] == LINE_TIED || (_game._difficulty == DIFFICULTY_EASY && !_globals[kBoatRaised]))
+			)
+			// The original can get in an impossible state at this point, if the player has
+			// combined the chicken with the bomb before placing the timer bomb on the ledge.
+			// Therefore, we also allow the player to place the bomb if the chicken bomb is
+			// in the inventory.
 			handleBombActions();
 		else if (_game._difficulty == DIFFICULTY_EASY)
 			_vm->_dialogs->show(60424);
