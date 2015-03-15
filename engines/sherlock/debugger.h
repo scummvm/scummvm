@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,34 +20,26 @@
  *
  */
 
-#include "sherlock/scalpel/scalpel.h"
+#ifndef SHERLOCK_DEBUGGER_H
+#define SHERLOCK_DEBUGGER_H
+
+#include "common/scummsys.h"
+#include "gui/debugger.h"
 
 namespace Sherlock {
 
-namespace Scalpel {
+class SherlockEngine;
 
-/**
- * Game initialization
- */
-void ScalpelEngine::initialize() {
-	SherlockEngine::initialize();
+class Debugger : public GUI::Debugger {
+private:
+	SherlockEngine *_vm;
+protected:
+	bool cmd_scene(int argc, const char **argv);
+public:
+	Debugger(SherlockEngine *vm);
+	virtual ~Debugger() {}
+};
 
-	_flags.resize(100 * 8);
-	_flags[3] = true;		// Turn on Alley
-	_flags[39] = true;		// Turn on Baker Street
+} // End of namespace Sherlock
 
-	// Starting room
-	_rooms->_goToRoom = 4;
-}
-
-/**
- * Show the opening sequence
- */
-void ScalpelEngine::showOpening() {
-	// TODO
-}
-
-
-} // End of namespace Scalpel
-
-} // End of namespace Scalpel
+#endif	/* SHERLOCK_DEBUGGER_H */

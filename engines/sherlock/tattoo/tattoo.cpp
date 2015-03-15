@@ -26,6 +26,10 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+void TattooEngine::showOpening() {
+	// TODO
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Scalpel

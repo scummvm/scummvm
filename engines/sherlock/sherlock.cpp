@@ -30,6 +30,7 @@ namespace Sherlock {
 
 SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc) {
+	_debugger = nullptr;
 	_journal = nullptr;
 	_res = nullptr;
 	_rooms = nullptr;
@@ -39,6 +40,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 
 
 SherlockEngine::~SherlockEngine() {
+	delete _debugger;
 	delete _journal;
 	delete _res;
 	delete _rooms;
@@ -64,6 +66,7 @@ void SherlockEngine::initialize() {
 	_midi->setNativeMT32(native_mt32);
 	*/
 
+	_debugger = new Debugger(this);
 	_journal = new Journal();
 	_res = new Resources();
 	_rooms = new Rooms();
@@ -74,7 +77,9 @@ void SherlockEngine::initialize() {
 Common::Error SherlockEngine::run() {
 	initialize();
 
-	// TODO: The rest of the game    
+	showOpening();
+
+	// TODO: Rest of game
 	
 	return Common::kNoError;
 }

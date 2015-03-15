@@ -30,6 +30,8 @@ namespace Sherlock {
 namespace Tattoo {
 
 class TattooEngine : public SherlockEngine {
+protected:
+	virtual void showOpening();
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {}

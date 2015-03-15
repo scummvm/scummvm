@@ -4,7 +4,9 @@ MODULE_OBJS = \
 	scalpel/scalpel.o \
 	tattoo/tattoo.o \
 	decompress.o \
+	debugger.o \
 	detection.o \
+	events.o \
 	graphics.o \
 	journal.o \
 	resources.o \

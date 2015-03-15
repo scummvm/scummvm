@@ -32,6 +32,8 @@ namespace Scalpel {
 class ScalpelEngine : public SherlockEngine {
 protected:
 	virtual void initialize();
+
+	virtual void showOpening();
 public:
 	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {}

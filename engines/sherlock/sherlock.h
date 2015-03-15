@@ -30,6 +30,7 @@
 #include "common/savefile.h"
 #include "common/hash-str.h"
 #include "engines/engine.h"
+#include "sherlock/debugger.h"
 #include "sherlock/graphics.h"
 #include "sherlock/journal.h"
 #include "sherlock/resources.h"
@@ -62,8 +63,11 @@ class SherlockEngine : public Engine {
 private:
 protected:
 	virtual void initialize();
+
+	virtual void showOpening() = 0;
 public:
 	const SherlockGameDescription *_gameDescription;
+	Debugger *_debugger;
 	Journal *_journal;
 	Resources *_res;
 	Rooms *_rooms;

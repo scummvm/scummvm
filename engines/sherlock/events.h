@@ -20,39 +20,63 @@
  *
  */
 
-#ifndef SHERLOCK_GRAPHICS_H
-#define SHERLOCK_GRAPHICS_H
+#ifndef SHERLOCK_EVENTS_H
+#define SHERLOCK_EVENTS_H
 
-#include "common/rect.h"
-#include "graphics/surface.h"
-
-#include "sherlock/sprite.h"
+#include "common/scummsys.h"
+#include "common/events.h"
+#include "common/stack.h"
 
 namespace Sherlock {
 
+enum CursorType { CURSOR_NONE = 0 };
+
+#define GAME_FRAME_RATE 50
+#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
+
 class SherlockEngine;
 
-class Surface : public Graphics::Surface {
-public:
-    Surface(uint16 width, uint16 height);
-    ~Surface();
-	void fillRect(int x1, int y1, int x2, int y2, byte color);
-	void drawSprite(int x, int y, SpriteFrame *spriteFrame, bool flipped = false, bool altFlag = false);
-};
-
-class Screen : public Surface {
+class EventsManager {
 private:
 	SherlockEngine *_vm;
-	int _fontNumber;
-	Surface _backBuffer1, _backBuffer2;
+	uint32 _frameCounter;
+	uint32 _priorFrameTime;
+	Common::Point _mousePos;
+
+	bool checkForNextFrameCounter();
 public:
-	Screen(SherlockEngine *vm);
+	CursorType _cursorId;
+	byte _mouseButtons;
+	bool _mouseClicked;
+	Common::Stack<Common::KeyState> _pendingKeys;
+public:
+	EventsManager(SherlockEngine *vm);
+	~EventsManager();
 
-	void setFont(int fontNumber);
+	void setCursor(CursorType cursorId);
 
-	void update();
+	void showCursor();
+
+	void hideCursor();
+
+	bool isCursorVisible();
+
+	void pollEvents();
+
+	Common::Point mousePos() const { return _mousePos; }
+
+	uint32 getFrameCounter() const { return _frameCounter; }
+
+	bool isKeyPressed() const { return !_pendingKeys.empty(); }
+
+	Common::KeyState getKey() { return _pendingKeys.pop(); }
+
+	void delay(int amount);
+
+	void waitForNextFrame();
+
 };
 
 } // End of namespace Sherlock
 
-#endif
+#endif /* SHERLOCK_EVENTS_H */
