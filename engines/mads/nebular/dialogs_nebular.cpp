@@ -1152,7 +1152,7 @@ void OptionsDialog::show() {
 		_vm->saveOptions();
 	} else if (_selectedLine == 9) {
 		// Cancel button, revert all options from the saved ones
-		_vm->_musicFlag = prevMusicFlag;
+		_vm->_musicFlag = _vm->_soundFlag = prevMusicFlag;
 		_vm->_easyMouse = prevEasyMouse;
 		_vm->_invObjectsAnimated = prevInvObjectsAnimated;
 		_vm->_textWindowStill = prevTextWindowStill;
