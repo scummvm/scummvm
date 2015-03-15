@@ -51,6 +51,9 @@
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "graphics/cursorman.h"
 #endif
+#ifdef USE_GLESRPI
+#include "backends/graphics/glesrpi/glesrpi.h"
+#endif
 
 #include <time.h>	// for getTimeAndDate()
 
@@ -220,6 +223,12 @@ void OSystem_SDL::initBackend() {
 				}
 			}
 		}
+#endif
+
+#ifdef USE_GLESRPI
+		printf ("Using GLESRPI graphics manager\n");
+		
+		_graphicsManager = new OpenGLRPIGraphicsManager(_eventSource);
 #endif
 
 		if (_graphicsManager == 0) {

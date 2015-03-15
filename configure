@@ -1511,6 +1511,15 @@ if test "$_release_build" = yes; then
 	DEFINES="$DEFINES -DRELEASE_BUILD"
 fi
 
+#
+# Detetect if we're running on a Raspberry Pi
+#
+if grep -q BCM2708 /proc/cpuinfo; then
+	echo "Raspberry Pi detected."
+	_use_glesrpi=yes
+	_optimization_level=-O3
+	CXXFLAGS="$CXXFLAGS -mfpu=vfp -mfloat-abi=hard -march=armv6zk -mtune=arm1176jzf-s"
+fi
 
 #
 # Determine extension used for executables
@@ -4066,6 +4075,17 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
+if test "$_use_glesrpi" = yes ; then
+	echo "\nActivating custom-context GLES RPI..."
+	_opengles=yes
+	CXXFLAGS="$CXXFLAGS -I/opt/vc/include -I/opt/vc/include/interface/vmcs_host/linux/ -I/opt/vc/include/interface/vcos/pthreads"
+	LIBS="$LIBS -L/opt/vc/lib -lGLESv1_CM -lEGL -lm -lbcm_host -lvcos -lvchiq_arm"
+	add_line_to_config_mk "USE_GLESRPI = 1"
+	add_line_to_config_h "#define USE_GLESRPI"
+	add_line_to_config_mk "USE_GLES = 1"
+	add_line_to_config_h "#define USE_GLES"
+	echo "$LIBS"
+fi
 
 #
 # Check for nasm
