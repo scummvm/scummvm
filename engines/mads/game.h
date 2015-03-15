@@ -195,6 +195,9 @@ public:
 	 */
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
+	virtual void setNaughtyMode(bool naughtyMode) {}
+	virtual bool getNaughtyMode() const { return true; }
+
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}
 	void loadQuoteRange(int startNum, int endNum) {}

@@ -1050,12 +1050,11 @@ OptionsDialog::OptionsDialog(MADSEngine *vm) : GameDialog(vm) {
 int OptionsDialog::getOptionQuote(int option) {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 
-	// TODO: Hook the rest of the options to the current config
 	switch (option) {
 	case 17:	// Music
-		return 24;	// 24: ON, 25: OFF
+		return _vm->_musicFlag ? 24 : 25;	// 24: ON, 25: OFF
 	case 18:	// Sound
-		return 26;	// 26: ON, 27: OFF
+		return _vm->_soundFlag ? 26 : 27;	// 26: ON, 27: OFF
 	case 19:	// Interface
 		return !_vm->_easyMouse ? 28 : 29;	// 28: Standard, 29: Easy
 	case 20:	// Inventory
@@ -1098,6 +1097,7 @@ void OptionsDialog::show() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 
 	// Previous options, restored when cancel is selected
+	bool prevMusicFlag = _vm->_musicFlag;
 	bool prevEasyMouse = _vm->_easyMouse;
 	bool prevInvObjectsAnimated = _vm->_invObjectsAnimated;
 	bool prevTextWindowStill = _vm->_textWindowStill;
@@ -1110,22 +1110,19 @@ void OptionsDialog::show() {
 
 		switch (_selectedLine) {
 		case 1:	// Music
-			warning("STUB: Music toggle");
+			_vm->_musicFlag = _vm->_soundFlag = !_vm->_musicFlag;
 			break;
 		case 2:	// Sound
-			warning("STUB: Sound toggle");
+			_vm->_musicFlag = _vm->_soundFlag = !_vm->_musicFlag;
 			break;
 		case 3:	// Interface
 			_vm->_easyMouse = !_vm->_easyMouse;
-			_vm->saveOptions();
 			break;
 		case 4:	// Inventory
 			_vm->_invObjectsAnimated = !_vm->_invObjectsAnimated;
-			_vm->saveOptions();
 			break;
 		case 5:	// Text window
 			_vm->_textWindowStill = !_vm->_textWindowStill;
-			_vm->saveOptions();
 			break;
 		case 6:	// Screen fade
 			if (_vm->_screenFade == SCREEN_FADE_FAST)
@@ -1150,16 +1147,17 @@ void OptionsDialog::show() {
 		setLines();
 	} while (!_vm->shouldQuit() && _selectedLine != 0 && _selectedLine <= 7);
 
-	// If Done button not pressed, reset settings
-	if (_selectedLine != 8) {
-		// Revert all options from the saved ones
+	if (_selectedLine == 8) {
+		// OK button, save settings
+		_vm->saveOptions();
+	} else if (_selectedLine == 9) {
+		// Cancel button, revert all options from the saved ones
+		_vm->_musicFlag = prevMusicFlag;
 		_vm->_easyMouse = prevEasyMouse;
 		_vm->_invObjectsAnimated = prevInvObjectsAnimated;
 		_vm->_textWindowStill = prevTextWindowStill;
 		_vm->_screenFade = prevScreenFade;
 		game._storyMode = prevStoryMode;
-
-		_vm->saveOptions();
 	}
 }
 

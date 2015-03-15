@@ -131,6 +131,9 @@ public:
 	virtual void step();
 
 	virtual void synchronize(Common::Serializer &s, bool phase1);
+
+	virtual void setNaughtyMode(bool naughtyMode) { _storyMode = naughtyMode ? STORYMODE_NAUGHTY : STORYMODE_NICE; }
+	virtual bool getNaughtyMode() const { return _storyMode == STORYMODE_NAUGHTY; }
 };
 
 // Section handlers aren't needed in ScummVM implementation
