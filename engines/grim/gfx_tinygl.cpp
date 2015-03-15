@@ -894,6 +894,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightDir[] = { 0.0f, 0.0f, -1.0f };
 	float cutoff = 180.0f;
+	float spot_exp = 0.0f;
 
 	float intensity = light->_intensity / 1.3f;
 	lightColor[0] = ((float)light->_color.getRed() / 15.0f) * intensity;
@@ -916,17 +917,15 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 		lightDir[0] = light->_dir.x();
 		lightDir[1] = light->_dir.y();
 		lightDir[2] = light->_dir.z();
-		/* FIXME: TGL_SPOT_CUTOFF should be light->_penumbraangle, but there
-		   seems to be a bug in tinygl as it renders differently from OpenGL.
-		   Reproducing: turn off all lights (comment out), go to scene "al",
-		   and walk along left wall under the lamp. */
-		cutoff = 90.0f;
+		spot_exp = 2.0f;
+		cutoff = light->_penumbraangle;
 	}
 
 	tglDisable(TGL_LIGHT0 + lightId);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_DIFFUSE, lightColor);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_POSITION, lightPos);
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
+	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, spot_exp);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, cutoff);
 	tglEnable(TGL_LIGHT0 + lightId);
 }
