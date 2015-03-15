@@ -99,8 +99,13 @@ void glInit(void *zbuffer1, int textureSize) {
 	for (int i = 0; i < T_MAX_LIGHTS; i++) {
 		GLLight *l = &c->lights[i];
 		l->ambient = Vector4(0, 0, 0, 1);
-		l->diffuse = Vector4(1, 1, 1, 1);
-		l->specular = Vector4(1, 1, 1, 1);
+		if (i == 0) {
+			l->diffuse = Vector4(1, 1, 1, 1);
+			l->specular = Vector4(1, 1, 1, 1);
+		} else {
+			l->diffuse = Vector4(0, 0, 0, 0);
+			l->specular = Vector4(0, 0, 0, 0);
+		}
 		l->position = Vector4(0, 0, 1, 0);
 		l->norm_position = Vector3(0, 0, 1);
 		l->spot_direction = Vector3(0, 0, -1);
