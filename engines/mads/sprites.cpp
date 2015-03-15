@@ -402,10 +402,13 @@ void SpriteSets::remove(int idx) {
 	} else if (idx >= 0) {
 		delete (*this)[idx];
 
-		if (idx == ((int)size() - 1))
-			remove_at(size() - 1);
-		else
+		if (idx < ((int)size() - 1)) {
 			(*this)[idx] = nullptr;
+		} else {
+			do {
+				remove_at(size() - 1);
+			} while (size() > 0 && (*this)[size() - 1] == nullptr);
+		}
 	}
 }
 
