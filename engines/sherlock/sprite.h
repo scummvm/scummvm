@@ -30,6 +30,8 @@
 
 namespace Sherlock {
 
+enum { RLE_ENCODED = 0x0100 };
+
 struct SpriteFrame {
 	uint32 _size;
 	uint16 _width, _height;
@@ -41,10 +43,10 @@ struct SpriteFrame {
 
 class Sprite: public Common::Array<SpriteFrame> {
 private:
-	void load(Common::SeekableReadStream &stream);
+	void load(Common::SeekableReadStream &stream, bool skipPal);
 	void decompressFrame(SpriteFrame  &frame, const byte *src);
 public:
-    Sprite(Common::SeekableReadStream &stream);
+    Sprite(Common::SeekableReadStream &stream, bool skipPal = false);
     ~Sprite();
 };
 

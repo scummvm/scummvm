@@ -91,7 +91,7 @@ void Animation::playPrologue(const Common::String &filename, int minDelay, int f
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
 	Common::SeekableReadStream *vdaStream = _vm->_res->load(vdaName);
-	Sprite sprite(*vdaStream);
+	Sprite sprite(*vdaStream, true);
 	
 	// TODO
 
