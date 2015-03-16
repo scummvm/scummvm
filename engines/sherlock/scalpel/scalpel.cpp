@@ -62,8 +62,8 @@ void ScalpelEngine::showCityCutscene() {
 	byte palette[PALETTE_SIZE];
 	
 	_sound->playMusic("prolog1.mus");
-	_animation->_titleOverride = "title.lib";
-	_animation->_soundOverride = "title.snd";
+	_titleOverride = "title.lib";
+	_soundOverride = "title.snd";
 	_animation->playPrologue("26open1", 1, 255, true, 2);
 
 	// TODO

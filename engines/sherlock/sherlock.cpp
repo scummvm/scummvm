@@ -39,6 +39,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_screen = nullptr;
 	_sound = nullptr;
 	_talk = nullptr;
+	_useEpilogue2 = false;
 }
 
 

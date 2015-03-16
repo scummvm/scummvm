@@ -212,7 +212,7 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
  * This will be used primarily when loading talk files, so the engine can
  * update the given conversation number in the journal
  */
-int Resources::resouceIndex() const {
+int Resources::resourceIndex() const {
 	return _resourceIndex;
 }
 

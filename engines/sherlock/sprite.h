@@ -23,32 +23,29 @@
 #ifndef SHERLOCK_SPRITE_H
 #define SHERLOCK_SPRITE_H
 
-#include "common/stream.h"
 #include "common/array.h"
+#include "common/rect.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 
 namespace Sherlock {
 
 struct SpriteFrame {
-	byte *data;
-	uint32 size;
-	uint16 width, height;
-	uint16 flags;
-	int xofs, yofs;
-	byte rleMarker;
-	Graphics::Surface *frame;
+	uint32 _size;
+	uint16 _width, _height;
+	int _flags;
+	Common::Point _offset;
+	byte _rleMarker;
+	Graphics::Surface _frame;
 };
 
-class Sprite {
+class Sprite: public Common::Array<SpriteFrame> {
+private:
+	void load(Common::SeekableReadStream &stream);
+	void decompressFrame(SpriteFrame  &frame, const byte *src);
 public:
     Sprite(Common::SeekableReadStream &stream);
     ~Sprite();
-	int getFrameCount();
-	SpriteFrame *getFrame(int index);
-protected:
-	Common::Array<SpriteFrame*> _frames;
-	void load(Common::SeekableReadStream &stream);
-	void decompressFrame(SpriteFrame *frame);
 };
 
 } // End of namespace Sherlock

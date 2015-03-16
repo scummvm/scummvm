@@ -22,6 +22,7 @@
 
 #include "sherlock/animation.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/sprite.h"
 #include "common/algorithm.h"
 
 namespace Sherlock {
@@ -62,7 +63,6 @@ static const int TITLE_FRAMES[7][9] = {
 static const int NO_FRAMES = FRAMES_END;
 
 Animation::Animation(SherlockEngine *vm): _vm(vm) {
-	_useEpilogue2 = false;
 }
 
 void Animation::playPrologue(const Common::String &filename, int minDelay, int fade, 
@@ -80,16 +80,19 @@ void Animation::playPrologue(const Common::String &filename, int minDelay, int f
 
 	// Load the animation
 	Common::SeekableReadStream *stream;
-	if (!_titleOverride.empty())
-		stream = _vm->_res->load(vdxName, _titleOverride);
-	else if (_useEpilogue2)
+	if (!_vm->_titleOverride.empty())
+		stream = _vm->_res->load(vdxName, _vm->_titleOverride);
+	else if (_vm->_useEpilogue2)
 		stream = _vm->_res->load(vdxName, "epilog2.lib");
 	else
 		stream = _vm->_res->load(vdxName, "epilogoue.lib");
-	int resoucreIndex = _vm->_res->resouceIndex();
+	int resourceIndex = _vm->_res->resourceIndex();
 
 	// Load initial image
-	//Common::String vdaName = baseName + ".vda";
+	Common::String vdaName = baseName + ".vda";
+	Common::SeekableReadStream *vdaStream = _vm->_res->load(vdaName);
+	Sprite sprite(*vdaStream);
+	
 	// TODO
 
 
@@ -102,7 +105,7 @@ void Animation::playPrologue(const Common::String &filename, int minDelay, int f
 const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 
-	if (!_soundOverride.empty()) {
+	if (!_vm->_soundOverride.empty()) {
 		for (int idx = 0; idx < PROLOGUE_NAMES_COUNT; ++idx) {
 			if (!scumm_stricmp(filename.c_str(), PROLOGUE_NAMES[idx])) {
 				frames = &PROLOGUE_FRAMES[idx][0];

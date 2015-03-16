@@ -36,9 +36,6 @@ private:
 
 	const int *checkForSoundFrames(const Common::String &filename);
 public:
-	Common::String _soundOverride;
-	Common::String _titleOverride;
-	bool _useEpilogue2;
 public:
 	Animation(SherlockEngine *vm);
 

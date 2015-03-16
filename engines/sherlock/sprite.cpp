@@ -25,101 +25,61 @@
 
 namespace Sherlock {
 
-/*
-struct SpriteFrame {
-	byte *data;
-	int width, height;
-	uint16 flags;
-	int xofs, yofs;
-	byte rleMarker;
-};
-*/
-
 Sprite::Sprite(Common::SeekableReadStream &stream) {
 	load(stream);
 }
 
 Sprite::~Sprite() {
+	for (uint idx = 0; idx < size(); ++idx)
+		(*this)[idx]._frame.free();
 }
 
-int Sprite::getFrameCount() {
-	return _frames.size();
-}
-
-SpriteFrame *Sprite::getFrame(int index) {
-	return _frames[index];
-}
-
+/**
+ * Load the data of the sprite
+ */
 void Sprite::load(Common::SeekableReadStream &stream) {
-
     while (!stream.eos()) {
-    
-        debug("frameNum = %d\n", _frames.size());
-    
-        SpriteFrame *spriteFrame = new SpriteFrame();
+		SpriteFrame frame;
 
-		uint32 startOfs = stream.pos();
-
-		debug("startOfs = %08X\n", startOfs);
-
-        spriteFrame->frame = NULL;
-        spriteFrame->width = stream.readUint16LE() + 1;
-        spriteFrame->height = stream.readUint16LE() + 1;
-        spriteFrame->flags = stream.readUint16LE();
+		frame._width = stream.readUint16LE() + 1;
+		frame._height = stream.readUint16LE() + 1;
+		frame._flags = stream.readUint16LE();
         stream.readUint16LE();
         
-        debug("width = %d; height = %d; flags = %04X\n", spriteFrame->width, spriteFrame->height, spriteFrame->flags);
-
-        if (spriteFrame->flags & 0xFF) {
-            spriteFrame->size = (spriteFrame->width * spriteFrame->height) / 2;
-        } else if (spriteFrame->flags & 0x0100) {
+		if (frame._flags & 0xFF) {
+			frame._size = (frame._width * frame._height) / 2;
+		} else if (frame._flags & 0x0100) {
             // this size includes the header size, which we subtract
-            spriteFrame->size = stream.readUint16LE() - 11;
-            spriteFrame->rleMarker = stream.readByte();
+			frame._size = stream.readUint16LE() - 11;
+			frame._rleMarker = stream.readByte();
         } else {
-            spriteFrame->size = spriteFrame->width * spriteFrame->height;
+			frame._size = frame._width * frame._height;
         }
 
-        spriteFrame->data = new byte[spriteFrame->size];
-        stream.read(spriteFrame->data, spriteFrame->size);
-        
-        decompressFrame(spriteFrame);
+		// Load data for frame and decompress it
+		byte *data = new byte[frame._size];
+		stream.read(data, frame._size);
+        decompressFrame(frame, data);		
+		delete data;
 
-		/*
-		debug("size = %d (%08X)\n", spriteFrame->size, spriteFrame->size);
-		if (spriteFrame->frame) {
-		    char fn[128];
-		    sndebug(fn, 128, "%04d.spr", _frames.size());
-		    FILE *x = fopen(fn, "wb");
-		    fwrite(spriteFrame->frame->pixels, spriteFrame->frame->w * spriteFrame->frame->h, 1, x);
-		    fclose(x);
-		}
-		*/
-
-		_frames.push_back(spriteFrame);
-		
+		push_back(frame);
     }
-    
-   // debug("Done: %08X\n", stream.pos()); fflush(stdout);
-
 }
 
-void Sprite::decompressFrame(SpriteFrame *frame) {
+/**
+ * Decompress a single frame for the sprite
+ */
+void Sprite::decompressFrame(SpriteFrame &frame, const byte *src) {
+	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
 
-    frame->frame = new Graphics::Surface();
-	frame->frame->create(frame->width, frame->height, Graphics::PixelFormat::createFormatCLUT8());
-
-	if (frame->flags & 0xFF) {
-	    debug("Sprite::decompressFrame() 4-bits/pixel\n");
-	    debug("TODO\n");
-	} else if (frame->flags & 0x0100) {
-	    debug("Sprite::decompressFrame() RLE-compressed; rleMarker = %02X\n", frame->rleMarker);
-	    const byte *src = frame->data;
-	    byte *dst = (byte *)frame->frame->getPixels();
-		for (uint16 h = 0; h < frame->height; h++) {
-			int16 w = frame->width;
+	if (frame._flags & 0xFF) {
+	    debug("TODO: Sprite::decompressFrame() 4-bits/pixel\n");
+	} else if (frame._flags & 0x0100) {
+	    byte *dst = (byte *)frame._frame.getPixels();
+		for (uint16 h = 0; h < frame._height; ++h) {
+			int16 w = frame._width;
 			while (w > 0) {
-			    if (*src == frame->rleMarker) {
+			    if (*src == frame._rleMarker) {
 			        byte rleColor = src[1];
 			        byte rleCount = src[2];
 			        src += 3;
@@ -133,10 +93,10 @@ void Sprite::decompressFrame(SpriteFrame *frame) {
 			}
 		}
 	} else {
-	    debug("Sprite::decompressFrame() Uncompressed\n");
-	    memcpy(frame->data, frame->frame->getPixels(), frame->width * frame->height);
+		// Uncompressed frame
+		Common::copy(src, src + frame._width * frame._height,
+			(byte *)frame._frame.getPixels());
 	}
-
 }
 
 } // End of namespace Sherlock

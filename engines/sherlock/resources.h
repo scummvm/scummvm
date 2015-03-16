@@ -77,7 +77,7 @@ public:
 
 	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile);
 
-	int resouceIndex() const;
+	int resourceIndex() const;
 };
 
 

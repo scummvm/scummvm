@@ -80,6 +80,9 @@ public:
 	Sound *_sound;
 	Talk *_talk;
 	Common::Array<bool> _flags;
+	Common::String _soundOverride;
+	Common::String _titleOverride;
+	bool _useEpilogue2;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();
