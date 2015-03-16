@@ -929,6 +929,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, spot_exp);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, cutoff);
+	tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, 1.0f);
 	tglEnable(TGL_LIGHT0 + lightId);
 }
 

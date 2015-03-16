@@ -1007,7 +1007,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, spot_exp);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
-	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 0.2f);
+	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 1.0f);
 	glEnable(GL_LIGHT0 + lightId);
 }
 
