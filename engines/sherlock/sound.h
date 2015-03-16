@@ -23,15 +23,26 @@
 #ifndef SHERLOCK_SOUND_H
 #define SHERLOCK_SOUND_H
 
+#include "common/scummsys.h"
+#include "common/str.h"
+
 namespace Sherlock {
 
+class SherlockEngine;
+
 class Sound {
-public
-	void playSound(const char *name);
-	void cacheSound(const char *name, int index);
+private:
+	SherlockEngine *_vm;
+public:
+	Sound(SherlockEngine *vm);
+
+	void playSound(const Common::String &name);
+	void cacheSound(const Common::String &name, int index);
 	void playCachedSound(int index);
 	void clearCache();
 	
+	void playMusic(const Common::String &name);
+	void stopMusic();
 };
 
 } // End of namespace Sherlock

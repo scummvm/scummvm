@@ -30,11 +30,14 @@
 #include "common/savefile.h"
 #include "common/hash-str.h"
 #include "engines/engine.h"
+#include "sherlock/animation.h"
 #include "sherlock/debugger.h"
+#include "sherlock/events.h"
 #include "sherlock/graphics.h"
 #include "sherlock/journal.h"
 #include "sherlock/resources.h"
 #include "sherlock/room.h"
+#include "sherlock/sound.h"
 #include "sherlock/talk.h"
 
 namespace Sherlock {
@@ -67,11 +70,14 @@ protected:
 	virtual void showOpening() = 0;
 public:
 	const SherlockGameDescription *_gameDescription;
+	Animation *_animation;
 	Debugger *_debugger;
+	EventsManager *_events;
 	Journal *_journal;
 	Resources *_res;
 	Rooms *_rooms;
 	Screen *_screen;
+	Sound *_sound;
 	Talk *_talk;
 	Common::Array<bool> _flags;
 public:

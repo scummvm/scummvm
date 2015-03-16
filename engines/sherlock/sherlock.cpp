@@ -30,21 +30,27 @@ namespace Sherlock {
 
 SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc) {
+	_animation = nullptr;
 	_debugger = nullptr;
+	_events = nullptr;
 	_journal = nullptr;
 	_res = nullptr;
 	_rooms = nullptr;
 	_screen = nullptr;
+	_sound = nullptr;
 	_talk = nullptr;
 }
 
 
 SherlockEngine::~SherlockEngine() {
+	delete _animation;
 	delete _debugger;
+	delete _events;
 	delete _journal;
 	delete _res;
 	delete _rooms;
 	delete _screen;
+	delete _sound;
 	delete _talk;
 }
 
@@ -66,7 +72,9 @@ void SherlockEngine::initialize() {
 	_midi->setNativeMT32(native_mt32);
 	*/
 
+	_animation = new Animation(this);
 	_debugger = new Debugger(this);
+	_events = new EventsManager(this);
 	_journal = new Journal();
 	_res = new Resources();
 	_rooms = new Rooms();

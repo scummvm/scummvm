@@ -71,6 +71,8 @@ public:
 
 	Common::KeyState getKey() { return _pendingKeys.pop(); }
 
+	void clearEvents();
+
 	void delay(int amount);
 
 	void waitForNextFrame();

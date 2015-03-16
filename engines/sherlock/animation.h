@@ -20,13 +20,29 @@
  *
  */
 
-#ifndef SHERLOCK_VDAPLAYER_H
-#define SHERLOCK_VDAPLAYER_H
+#ifndef SHERLOCK_ANIMATION_H
+#define SHERLOCK_ANIMATION_H
+
+#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Sherlock {
 
-class VdaPlayer {
+class SherlockEngine;
 
+class Animation {
+private:
+	SherlockEngine *_vm;
+
+	const int *checkForSoundFrames(const Common::String &filename);
+public:
+	Common::String _soundOverride;
+	Common::String _titleOverride;
+	bool _useEpilogue2;
+public:
+	Animation(SherlockEngine *vm);
+
+	void playPrologue(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
 };
 
 } // End of namespace Sherlock

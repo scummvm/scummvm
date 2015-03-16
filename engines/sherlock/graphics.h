@@ -30,6 +30,8 @@
 
 namespace Sherlock {
 
+#define PALETTE_SIZE 768
+
 class SherlockEngine;
 
 class Surface : public Graphics::Surface {

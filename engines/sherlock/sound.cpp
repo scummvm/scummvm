@@ -20,33 +20,36 @@
  *
  */
 
-#ifndef SHERLOCK_SCALPEL_H
-#define SHERLOCK_SCALPEL_H
-
-#include "sherlock/sherlock.h"
+#include "sherlock/sound.h"
 
 namespace Sherlock {
 
-namespace Scalpel {
+Sound::Sound(SherlockEngine *vm): _vm(vm) {
+}
 
-class ScalpelEngine : public SherlockEngine {
-private:
-	void showCityCutscene();
-	void showAlleyCutscene();
-	void showStreetCutscene();
-	void showOfficeCutscene();
-protected:
-	virtual void initialize();
+void Sound::playSound(const Common::String &name) {
+	// TODO
+}
 
-	virtual void showOpening();
-public:
-	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc) {}
-	virtual ~ScalpelEngine() {}
-};
+void Sound::cacheSound(const Common::String &name, int index) {
+	// TODO
+}
 
-} // End of namespace Scalpel
+void Sound::playCachedSound(int index) {
+	// TODO
+}
+
+void Sound::clearCache() {
+	// TODO
+}
+
+void Sound::playMusic(const Common::String &name) {
+	// TODO
+}
+
+void Sound::stopMusic() {
+	// TODO
+}
+
 
 } // End of namespace Sherlock
-
-#endif

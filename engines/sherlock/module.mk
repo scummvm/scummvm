@@ -3,6 +3,7 @@ MODULE := engines/sherlock
 MODULE_OBJS = \
 	scalpel/scalpel.o \
 	tattoo/tattoo.o \
+	animation.o \
 	decompress.o \
 	debugger.o \
 	detection.o \
@@ -12,6 +13,7 @@ MODULE_OBJS = \
 	resources.o \
 	room.o \
 	sherlock.o \
+	sound.o \
 	sprite.o \
 	talk.o
 

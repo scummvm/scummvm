@@ -72,6 +72,9 @@ bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
+/**
+ * Check for any pending events
+ */
 void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
 
@@ -112,6 +115,9 @@ void EventsManager::pollEvents() {
 	}
 }
 
+/**
+ * Check whether it's time to display the next screen frame
+ */
 bool EventsManager::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
@@ -134,6 +140,17 @@ bool EventsManager::checkForNextFrameCounter() {
 	return false;
 }
 
+/**
+ * Clear any current keypress or mouse click
+ */
+void EventsManager::clearEvents() {
+	_pendingKeys.clear();
+	_mouseClicked = false;
+}
+
+/**
+ * Delay for a given number of frames/cycles
+ */
 void EventsManager::delay(int cycles) {
 	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;
 	uint32 delayEnd = g_system->getMillis() + totalMilli;
@@ -145,6 +162,9 @@ void EventsManager::delay(int cycles) {
 	}
 }
 
+/**
+ * Wait for the next frame
+ */
 void EventsManager::waitForNextFrame() {
 	_mouseClicked = false;
 	_mouseButtons = 0;

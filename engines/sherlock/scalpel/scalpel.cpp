@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -44,7 +45,40 @@ void ScalpelEngine::initialize() {
  * Show the opening sequence
  */
 void ScalpelEngine::showOpening() {
+	if (!_events->isKeyPressed())
+		showCityCutscene();
+	if (!_events->isKeyPressed())
+		showAlleyCutscene();
+	if (!_events->isKeyPressed())
+		showStreetCutscene();
+	if (!_events->isKeyPressed())
+		showOfficeCutscene();
+
+	_events->clearEvents();
+	_sound->stopMusic();
+}
+
+void ScalpelEngine::showCityCutscene() {
+	byte palette[PALETTE_SIZE];
+	
+	_sound->playMusic("prolog1.mus");
+	_animation->_titleOverride = "title.lib";
+	_animation->_soundOverride = "title.snd";
+	_animation->playPrologue("26open1", 1, 255, true, 2);
+
 	// TODO
+}
+
+void ScalpelEngine::showAlleyCutscene() {
+
+}
+
+void ScalpelEngine::showStreetCutscene() {
+
+}
+
+void ScalpelEngine::showOfficeCutscene() {
+
 }
 
 
