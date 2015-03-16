@@ -103,6 +103,8 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	TGLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
+	TGLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	tglMaterialfv(TGL_FRONT, TGL_DIFFUSE, diffuseReflectance);
 
 	// we now generate a buffer (id 1), which we will use as a backing buffer, where the actors' clean buffers
 	// will blit to. everu frame this will be blitted to screen, but the actors' buffers will be blitted to

@@ -158,6 +158,8 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	GLfloat ambientSource[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
+	GLfloat diffuseReflectance[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseReflectance);
 
 	if (g_grim->getGameType() == GType_GRIM) {
 		glPolygonOffset(-6.0, -6.0);
