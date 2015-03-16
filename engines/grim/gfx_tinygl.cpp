@@ -897,6 +897,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	float lightDir[] = { 0.0f, 0.0f, -1.0f };
 	float cutoff = 180.0f;
 	float spot_exp = 0.0f;
+	float q_attenuation = 1.0f;
 
 	float intensity = light->_intensity / 15.0f;
 	lightColor[0] = (float)light->_color.getRed() * intensity;
@@ -921,6 +922,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 		lightDir[2] = light->_dir.z();
 		spot_exp = 2.0f;
 		cutoff = light->_penumbraangle;
+		q_attenuation = 0.0f;
 	}
 
 	tglDisable(TGL_LIGHT0 + lightId);
@@ -929,7 +931,7 @@ void GfxTinyGL::setupLight(Light *light, int lightId) {
 	tglLightfv(TGL_LIGHT0 + lightId, TGL_SPOT_DIRECTION, lightDir);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_EXPONENT, spot_exp);
 	tglLightf(TGL_LIGHT0 + lightId, TGL_SPOT_CUTOFF, cutoff);
-	tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, 1.0f);
+	tglLightf(TGL_LIGHT0 + lightId, TGL_QUADRATIC_ATTENUATION, q_attenuation);
 	tglEnable(TGL_LIGHT0 + lightId);
 }
 

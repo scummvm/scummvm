@@ -975,6 +975,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
 	GLfloat cutoff = 180.0f;
 	GLfloat spot_exp = 0.0f;
+	GLfloat q_attenuation = 1.0f;
 
 	GLfloat intensity = light->_intensity / 15.0f;
 	lightColor[0] = (GLfloat)light->_color.getRed() * intensity;
@@ -999,6 +1000,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 		lightDir[2] = light->_dir.z();
 		spot_exp = 2.0f;
 		cutoff = light->_penumbraangle;
+		q_attenuation = 0.0f;
 	}
 
 	glDisable(GL_LIGHT0 + lightId);
@@ -1007,7 +1009,7 @@ void GfxOpenGL::setupLight(Light *light, int lightId) {
 	glLightfv(GL_LIGHT0 + lightId, GL_SPOT_DIRECTION, lightDir);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_EXPONENT, spot_exp);
 	glLightf(GL_LIGHT0 + lightId, GL_SPOT_CUTOFF, cutoff);
-	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, 1.0f);
+	glLightf(GL_LIGHT0 + lightId, GL_QUADRATIC_ATTENUATION, q_attenuation);
 	glEnable(GL_LIGHT0 + lightId);
 }
 
