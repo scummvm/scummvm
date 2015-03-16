@@ -44,7 +44,10 @@ struct SpriteFrame {
 class Sprite: public Common::Array<SpriteFrame> {
 private:
 	void load(Common::SeekableReadStream &stream, bool skipPal);
+	void loadPalette(Common::SeekableReadStream &stream);
 	void decompressFrame(SpriteFrame  &frame, const byte *src);
+public:
+	byte _palette[256 * 3];
 public:
     Sprite(Common::SeekableReadStream &stream, bool skipPal = false);
     ~Sprite();

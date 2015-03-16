@@ -116,6 +116,15 @@ void EventsManager::pollEvents() {
 }
 
 /**
+ * Poll for events and introduce a small delay, to allow the system to
+ * yield to other running programs
+ */
+void EventsManager::pollEventsAndWait() {
+	pollEvents();
+	g_system->delayMillis(10);
+}
+
+/**
  * Check whether it's time to display the next screen frame
  */
 bool EventsManager::checkForNextFrameCounter() {
@@ -149,7 +158,7 @@ void EventsManager::clearEvents() {
 }
 
 /**
- * Delay for a given number of frames/cycles
+ * Delay for a given number of cycles, where each cycle is 1/60th of a second
  */
 void EventsManager::delay(int cycles) {
 	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;

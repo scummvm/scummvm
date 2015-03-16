@@ -67,6 +67,9 @@ Animation::Animation(SherlockEngine *vm): _vm(vm) {
 
 void Animation::playPrologue(const Common::String &filename, int minDelay, int fade, 
 		bool setPalette, int speed) {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename);
 
@@ -93,6 +96,15 @@ void Animation::playPrologue(const Common::String &filename, int minDelay, int f
 	Common::SeekableReadStream *vdaStream = _vm->_res->load(vdaName);
 	Sprite sprite(*vdaStream, true);
 	
+	events.delay(minDelay);
+	if (fade != 0 && fade != 255)
+		screen.fadeToBlack();
+
+	if (setPalette) {
+		if (fade != 255)
+			screen.setPalette(sprite._palette);
+	}
+
 	// TODO
 
 

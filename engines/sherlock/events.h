@@ -31,7 +31,7 @@ namespace Sherlock {
 
 enum CursorType { CURSOR_NONE = 0 };
 
-#define GAME_FRAME_RATE 50
+#define GAME_FRAME_RATE 60
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
 class SherlockEngine;
@@ -62,6 +62,8 @@ public:
 	bool isCursorVisible();
 
 	void pollEvents();
+
+	void pollEventsAndWait();
 
 	Common::Point mousePos() const { return _mousePos; }
 

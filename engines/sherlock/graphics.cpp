@@ -23,6 +23,7 @@
 #include "sherlock/graphics.h"
 #include "sherlock/sherlock.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 
 namespace Sherlock {
 
@@ -63,6 +64,37 @@ void Screen::setFont(int fontNumber) {
 
 void Screen::update() {
 	g_system->updateScreen();
+}
+
+void Screen::getPalette(byte palette[PALETTE_SIZE]) {
+	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
+}
+
+void Screen::setPalette(const byte palette[PALETTE_SIZE]) {
+	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
+}
+
+void Screen::fadeToBlack() {
+	const int FADE_AMOUNT = 2;
+	bool repeatFlag;
+	byte *srcP;
+	int count;
+	byte tempPalette[PALETTE_SIZE];
+
+	getPalette(tempPalette);
+	do {
+		repeatFlag = false;
+		for (srcP = &tempPalette[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
+			int v = *srcP;
+			if (v) {
+				repeatFlag = true;
+				*srcP = MAX(*srcP - FADE_AMOUNT, 0);
+			}
+		}
+
+		setPalette(tempPalette);
+		_vm->_events->pollEventsAndWait();
+	} while (repeatFlag && !_vm->shouldQuit());
 }
 
 } // End of namespace Sherlock

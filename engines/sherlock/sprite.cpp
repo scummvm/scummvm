@@ -21,11 +21,13 @@
  */
 
 #include "sherlock/sprite.h"
+#include "sherlock/graphics.h"
 #include "common/debug.h"
 
 namespace Sherlock {
 
 Sprite::Sprite(Common::SeekableReadStream &stream, bool skipPal) {
+	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
 	load(stream, skipPal);
 }
 
@@ -38,6 +40,8 @@ Sprite::~Sprite() {
  * Load the data of the sprite
  */
 void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
+	loadPalette(stream);
+
     while (stream.pos() < stream.size()) {
 		SpriteFrame frame;
 		frame._width = stream.readUint16LE() + 1;
@@ -68,6 +72,19 @@ void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
 
 		push_back(frame);
     }
+}
+
+/**
+ * Gets the palette at the start of the sprite file
+ */
+void Sprite::loadPalette(Common::SeekableReadStream &stream) {
+	int v1 = stream.readUint16LE() + 1;
+	int v2 = stream.readUint16LE() + 1;
+	int size = v1 * v2;
+	assert((size - 12) == PALETTE_SIZE);
+
+	stream.seek(4 + 12, SEEK_CUR);
+	stream.read(&_palette[0], PALETTE_SIZE);
 }
 
 /**

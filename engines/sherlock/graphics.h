@@ -31,6 +31,7 @@
 namespace Sherlock {
 
 #define PALETTE_SIZE 768
+#define PALETTE_COUNT 256
 
 class SherlockEngine;
 
@@ -53,6 +54,12 @@ public:
 	void setFont(int fontNumber);
 
 	void update();
+
+	void getPalette(byte palette[PALETTE_SIZE]);
+
+	void setPalette(const byte palette[PALETTE_SIZE]);
+
+	void fadeToBlack();
 };
 
 } // End of namespace Sherlock
