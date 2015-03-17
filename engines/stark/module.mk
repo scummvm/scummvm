@@ -65,6 +65,7 @@ MODULE_OBJS := \
 	ui/dialoginterface.o \
 	ui/inventoryinterface.o \
 	ui/topmenu.o \
+	ui/window.o \
 	visual/actor.o \
 	visual/image.o \
 	visual/smacker.o

@@ -28,16 +28,19 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
+#include "engines/stark/resources/pattable.h"
+
 namespace Stark {
 
 namespace Resources {
-class Object;
+class Item;
 }
 
 namespace Gfx {
 class Driver;
 }
 
+class ActionMenu;
 class DialogInterface;
 class InventoryInterface;
 class TopMenu;
@@ -45,31 +48,30 @@ class Cursor;
 class FMVPlayer;
 
 class UI {
+	ActionMenu *_actionMenu;
 	FMVPlayer *_fmvPlayer;
 	DialogInterface *_dialogInterface;
 	InventoryInterface *_inventoryInterface;
 	TopMenu *_topMenu;
-	Resources::Object *_currentObject;
-	Resources::Object *_objectUnderCursor;
+	Resources::Item *_objectUnderCursor;
 	int _selectedInventoryItem;
 	Common::String _selectedInventoryItemText; // Just a temp HACK untill we get cursors sorted.
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _hasClicked;
 	bool _exitGame;
-	bool _inventoryOpen;
 	void handleClick();
-	void setCursorDependingOnActionsAvailable(int actionsAvailable);
+	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
 public:
 	UI(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~UI();
 	void init();
-	void update(Gfx::RenderEntryArray renderEntries, bool keepExisting = false);
+	void update(Gfx::RenderEntryArray renderEntries);
 	void render();
 	void notifyClick();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
-	void notifySelectedInventoryItem(Resources::Object *selectedItem);
+	void notifySelectedInventoryItem(Resources::Item *selectedItem);
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
 	void notifyFMVRequest(const Common::String &name);

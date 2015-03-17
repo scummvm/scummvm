@@ -36,7 +36,8 @@ Global::Global() :
 	_level(nullptr),
 	_current(nullptr),
 	_debug(false),
-	_fastForward(false) {
+	_fastForward(false),
+	_inventory(nullptr) {
 }
 
 int32 Global::getCurrentChapter() {
@@ -52,8 +53,7 @@ void Global::setCurrentChapter(int32 value) {
 }
 
 void Global::printInventory(bool printAll) {
-	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
-	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
 	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
 	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
 		if (printAll || (*it)->isEnabled()) {
@@ -63,25 +63,8 @@ void Global::printInventory(bool printAll) {
 }
 
 void Global::enableInventoryItem(int32 num) {
-	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
-	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
 	inventoryItems[num]->setEnabled(true);
-}
-
-Common::Array<Resources::Item*> Global::getInventoryContents() {
-	Resources::KnowledgeSet *inventory = _level->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory);
-	Common::Array<Resources::Item*> inventoryItems = inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
-	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
-	Common::Array<Resources::Item*> result;
-
-	int i = 0;
-	for (; it != inventoryItems.end(); ++it, ++i) {
-		if (i < 4) continue; 	// HACK: The first 4 elements are UI elements, so skip them for now.
-		if ((*it)->isEnabled()) {
-			result.push_back(*it);
-		}
-	}
-	return result;
 }
 
 } // End of namespace Stark

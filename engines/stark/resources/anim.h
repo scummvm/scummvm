@@ -60,6 +60,23 @@ public:
 		kAnimSkeleton = 4
 	};
 
+	enum ActionUsage {
+		kActionUsagePassive = 1,
+		kActionUsageActive  = 2
+	};
+
+	enum UIUsage {
+		kUIUsageInventory = 1,
+		kUIUsageUseCursor = 4
+	};
+
+	enum ActorUsage {
+		kActorUsageIdle = 1,
+		kActorUsageWalk = 2,
+		kActorUsageTalk = 3,
+		kActorUsageRun  = 6
+	};
+
 	/** Anim factory */
 	static Object *construct(Object *parent, byte subType, uint16 index, const Common::String &name);
 
@@ -84,12 +101,15 @@ public:
 	/** Check is the animation is being used by an item */
 	bool isInUse();
 
+	/** Obtain the purpose of this anim */
+	uint32 getUsage() const;
+
 	virtual bool containsPoint(Common::Point point) { return false; }
 	virtual int indexForPoint(Common::Point point) { return -1; }
 protected:
 	virtual void printData() override;
 
-	uint32 _field_30;
+	uint32 _usage;
 	uint32 _currentFrame;
 	uint32 _numFrames;
 	int32 _refCount;

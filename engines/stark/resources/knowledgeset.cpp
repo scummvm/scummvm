@@ -23,6 +23,7 @@
 #include "engines/stark/resources/knowledgeset.h"
 
 #include "engines/stark/formats/xrc.h"
+#include "engines/stark/resources/item.h"
 
 namespace Stark {
 namespace Resources {
@@ -36,6 +37,23 @@ KnowledgeSet::KnowledgeSet(Object *parent, byte subType, uint16 index, const Com
 }
 
 void KnowledgeSet::printData() {
+}
+
+Gfx::RenderEntryArray KnowledgeSet::getInventoryRenderEntries() {
+	// TODO: Keep and persist inventory items order
+	Common::Array<Resources::Item *> inventoryItems = listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item *>::iterator it = inventoryItems.begin();
+	Gfx::RenderEntryArray result;
+
+	int i = 0;
+	for (; it != inventoryItems.end(); ++it, ++i) {
+		if (i < 4) continue; 	// HACK: The first 4 elements are UI elements, so skip them for now.
+		if ((*it)->isEnabled()) {
+			result.push_back((*it)->getRenderEntry(Common::Point(0, 0)));
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Resources

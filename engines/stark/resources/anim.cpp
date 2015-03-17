@@ -60,7 +60,7 @@ Anim::~Anim() {
 
 Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_field_30(0),
+				_usage(0),
 				_currentFrame(0),
 				_numFrames(0),
 				_refCount(0) {
@@ -68,7 +68,7 @@ Anim::Anim(Object *parent, byte subType, uint16 index, const Common::String &nam
 }
 
 void Anim::readData(Formats::XRCReadStream *stream) {
-	_field_30 = stream->readUint32LE();
+	_usage = stream->readUint32LE();
 	_numFrames = stream->readUint32LE();
 }
 
@@ -77,6 +77,10 @@ void Anim::selectFrame(uint32 frameIndex) {
 
 Visual *Anim::getVisual() {
 	return nullptr;
+}
+
+uint32 Anim::getUsage() const {
+	return _usage;
 }
 
 void Anim::applyToItem(Item *item) {
@@ -91,7 +95,7 @@ bool Anim::isInUse() {
 }
 
 void Anim::printData() {
-	debug("field_30: %d", _field_30);
+	debug("usage: %d", _usage);
 	debug("numFrames: %d", _numFrames);
 }
 

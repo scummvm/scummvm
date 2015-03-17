@@ -25,6 +25,7 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
 
 #include "engines/stark/services/global.h"
@@ -33,63 +34,54 @@
 
 #include "engines/stark/visual/image.h"
 
-#include "engines/stark/scene.h"
-
 namespace Stark {
 
-InventoryInterface::InventoryInterface() {
+InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor) :
+	Window(gfx, cursor){
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	_backgroundTexture = staticProvider->getUIItem(StaticProvider::kInventoryBg);
-	_position = Common::Point(40, 50);
+
+	_position = Common::Rect(526, 315);
+	_position.translate(40, 50);
 }
 
-void InventoryInterface::render() {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->setScreenViewport(false);
+void InventoryInterface::open() {
+	_visible = true;
 
-	_backgroundTexture->getVisual()->get<VisualImageXMG>()->render(_position);
-	
-	Scene *scene = StarkServices::instance().scene;
-	scene->render(_renderEntries);
-}
-
-void InventoryInterface::update() {
 	Global *global = StarkServices::instance().global;
-	_items = global->getInventoryContents();
+	_renderEntries = global->getInventory()->getInventoryRenderEntries();
+}
 
-	Common::Array<Resources::Item*>::iterator it = _items.begin();
+void InventoryInterface::close() {
+	_visible = false;
+}
+
+void InventoryInterface::onRender() {
+	_backgroundTexture->getVisual()->get<VisualImageXMG>()->render(Common::Point(0, 0));
+	
+	Gfx::RenderEntryArray::iterator it = _renderEntries.begin();
 	// TODO: Unhardcode positions
-	Common::Point pos = _position;
+	Common::Point pos;
 	int width =_backgroundTexture->getVisual()->get<VisualImageXMG>()->getWidth();
 	pos.x += 40;
-	for (;it != _items.end(); ++it) {
-		_renderEntries.push_back((*it)->getRenderEntry(pos));
-		pos.x += 40;
-		if (pos.x > _position.x + width - 40) {
-			pos.x = _position.x + 20;
-			pos.y+= 40;
+	for (;it != _renderEntries.end(); ++it) {
+		(*it)->setPosition(pos);
+		(*it)->render(_gfx);
+
+		pos.x += 36;
+		if (pos.x > width - 40) {
+			pos.x = 20;
+			pos.y+= 36;
 		}
 	}
 }
 
-bool InventoryInterface::containsPoint(Common::Point point) {
-	Common::Rect r;
-	r.left = _position.x;
-	r.top = _position.y;
-	r.setWidth(_backgroundTexture->getVisual()->get<VisualImageXMG>()->getWidth());
-	r.setHeight(_backgroundTexture->getVisual()->get<VisualImageXMG>()->getHeight());
-	return r.contains(point);
+void InventoryInterface::onMouseMove(const Common::Point &pos) {
+
 }
 
-Common::String InventoryInterface::getMouseHintAtPosition(Common::Point point) {
-	for (int i = 0; i < _renderEntries.size(); i++) {
-		int index = _renderEntries[i]->indexForPoint(point);
-		if (index != -1) {
-			// TODO: Care about index
-			return _renderEntries[i]->getOwner()->getName();
-		}
-	}
-	return "";
+void InventoryInterface::onClick(const Common::Point &pos) {
+
 }
 
 } // End of namespace Stark

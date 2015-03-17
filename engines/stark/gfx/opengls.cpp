@@ -89,6 +89,27 @@ void OpenGLSDriver::setScreenViewport(bool noScaling) {
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
+void OpenGLSDriver::setViewport(Common::Rect rect, bool noScaling) {
+	if (noScaling) {
+		_viewport = rect;
+		_unscaledViewport = rect;
+	} else {
+		_viewport = Common::Rect(
+				_screenViewport.width() * rect.width() / kOriginalWidth,
+				_screenViewport.height() * rect.height() / kOriginalHeight
+				);
+
+		_viewport.translate(
+				_screenViewport.left + _screenViewport.width() * rect.left / kOriginalWidth,
+				_screenViewport.top + _screenViewport.height() * rect.top / kOriginalHeight
+				);
+
+		_unscaledViewport = rect;
+	}
+
+	glViewport(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
+}
+
 Math::Vector2d OpenGLSDriver::scaled(float x, float y) const {
 	return Math::Vector2d(x / (float) _unscaledViewport.width(), y / (float) _unscaledViewport.height());
 }

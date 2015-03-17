@@ -24,12 +24,14 @@
 
 #include "engines/stark/gfx/driver.h"
 
-#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/anim.h"
-#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledgeset.h"
+#include "engines/stark/resources/level.h"
+#include "engines/stark/resources/pattable.h"
 
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/global.h"
 
@@ -39,81 +41,107 @@
 
 namespace Stark {
  
-ActionMenu::ActionMenu(Gfx::Driver *gfx) : _gfx(gfx) {
-	Global *global = StarkServices::instance().global;
-	Resources::Object *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
-	_hand = inventory->findChildWithIndex<Resources::ItemSub2>(1);
-	_eye = inventory->findChildWithIndex<Resources::ItemSub2>(2);
-	_mouth = inventory->findChildWithIndex<Resources::ItemSub2>(3);
-
-	// TODO: Should these be hardcoded?
-	_hand->setPosition(Common::Point(90, -21));
-	_eye->setPosition(Common::Point(5, 40));
-	_mouth->setPosition(Common::Point(43, 0));
-
-	_renderEntries.push_back(_hand->getRenderEntry(Common::Point(0, 0)));
-	_renderEntries.push_back(_eye->getRenderEntry(Common::Point(0, 0)));
-	_renderEntries.push_back(_mouth->getRenderEntry(Common::Point(0, 0)));
-
+ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
+		Window(gfx, cursor) {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: Shouldn't use a function called getCursorImage for this, also unhardcode
 	_background = staticProvider->getCursorImage(5);
+
+	_unscaled = true;
+	_item = nullptr;
+
+	_buttons[kActionHand].action = Resources::PATTable::kActionUse;
+	_buttons[kActionHand].rect = Common::Rect(90, 15, 126, 63);
+	_buttons[kActionEye].action = Resources::PATTable::kActionLook;
+	_buttons[kActionEye].rect = Common::Rect(5, 77, 51, 110);
+	_buttons[kActionMouth].action = Resources::PATTable::kActionTalk;
+	_buttons[kActionMouth].rect = Common::Rect(42, 35, 83, 74);
+
+	clearActions();
 }
 
 ActionMenu::~ActionMenu() {
-	_renderEntries.clear();
 }
 
-void ActionMenu::render(Common::Point pos) {
-	_gfx->setScreenViewport(true); // Drawn unscaled
-	_renderEntries.clear();
+void ActionMenu::open(Resources::Item *item, const Common::Point &itemClickPos) {
+	UserInterface *ui = StarkServices::instance().userInterface;
 
-	if (_handEnabled) {
-		_renderEntries.push_back(_hand->getRenderEntry(pos));
-	}
-	if (_eyeEnabled) {
-		_renderEntries.push_back(_eye->getRenderEntry(pos));
-	}
-	if (_mouthEnabled) {
-		_renderEntries.push_back(_mouth->getRenderEntry(pos));
-	}
+	_visible = true;
 
-	Scene *scene = StarkServices::instance().scene;
-	_background->render(pos);
-	scene->render(_renderEntries);
+	Common::Point screenMousePos = getScreenMousePosition();
+	_position = Common::Rect::center(screenMousePos.x, screenMousePos.y, 160, 111);
+
+	_itemClickPos = itemClickPos;
+	_item = item;
+
+	clearActions();
+
+	Resources::ActionArray possible = ui->getActionsPossibleForObject(_item, _itemClickPos);
+
+	for (uint i = 0; i < possible.size(); i++) {
+		for (uint j = 0; j < ARRAYSIZE(_buttons); j++) {
+			if (_buttons[j].action == possible[i]) {
+				_buttons[j].enabled = true;
+				break;
+			}
+		}
+	}
+}
+
+void ActionMenu::close() {
+	_visible = false;
+	_item = nullptr;
+}
+
+void ActionMenu::onRender() {
+	UserInterface *ui = StarkServices::instance().userInterface;
+	Common::Point mousePos = getMousePosition();
+
+	_background->render(Common::Point(0, 0));
+
+	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
+		if (_buttons[i].enabled) {
+			bool active = _buttons[i].rect.contains(mousePos);
+			VisualImageXMG *visual = ui->getActionImage(_buttons[i].action, active);
+			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top));
+		}
+	}
 }
 
 void ActionMenu::clearActions() {
-	_handEnabled = _mouthEnabled = _eyeEnabled = false;
+	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
+		_buttons[i].enabled = false;
+	}
 }
 
 void ActionMenu::enableAction(ActionMenuType action) {
-	switch (action) {
-		case kActionHand:
-			_handEnabled = true;
-			break;
-		case kActionMouth:
-			_mouthEnabled = true;
-			break;
-		case kActionEye:
-			_eyeEnabled = true;
-			break;
-		default:
-			error("Invalid action type in ActionMenu::enableAction");
+	_buttons[action].enabled = true;
+}
+
+void ActionMenu::onMouseMove(const Common::Point &pos) {
+	bool hoveringAction = false;
+	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
+		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
+			hoveringAction = true;
+		}
+	}
+
+	if (hoveringAction) {
+		setCursor(Cursor::kActive);
+	} else {
+		setCursor(Cursor::kDefault);
 	}
 }
 
-int ActionMenu::isThisYourButton(Resources::Object *object) {
-	Resources::Item *item = object->findParent<Resources::Item>();
-	if (item == _mouth) {
-		return kActionMouth;
-	} else if (item == _eye) {
-		return kActionEye;
-	} else if (item == _hand) {
-		return kActionHand;
-	} else {
-		return -1;
+void ActionMenu::onClick(const Common::Point &pos) {
+	UserInterface *ui = StarkServices::instance().userInterface;
+
+	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
+		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
+			ui->itemDoActionAt(_item, _buttons[i].action, _itemClickPos);
+			close();
+		}
 	}
 }
- 
+
 } // End of namespace Stark

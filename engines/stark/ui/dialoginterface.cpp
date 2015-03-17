@@ -47,7 +47,7 @@ DialogInterface::~DialogInterface() {
 }
 
 void DialogInterface::clearOptions() {
-	for (int i = 0; i < _options.size(); i++) {
+	for (uint i = 0; i < _options.size(); i++) {
 		delete _options[i];
 	}
 	_options.clear();
@@ -55,7 +55,7 @@ void DialogInterface::clearOptions() {
 }
 
 void DialogInterface::renderOptions() {
-	for (int i = 0; i < _options.size(); i++) {
+	for (uint i = 0; i < _options.size(); i++) {
 		_options[i]->render();
 	}
 }
@@ -91,7 +91,7 @@ void DialogInterface::notifyDialogOptions(const Common::StringArray &options) {
 	_texture = nullptr;
 
 	int pos = 401;
-	for (int i = 0; i < options.size(); i++) {
+	for (uint i = 0; i < options.size(); i++) {
 		ClickText *text = new ClickText(options[i], Common::Point(0, pos));
 		_options.push_back(text);
 		pos += text->getHeight();
@@ -105,7 +105,7 @@ void DialogInterface::notifyDialogOptions(const Common::StringArray &options) {
 
 bool DialogInterface::containsPoint(Common::Point point) {
 	if (_hasOptions && _options.size() > 0) {
-		for (int i = 0; i < _options.size(); i++) {
+		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(point)) {
 				return true;
 			}
@@ -116,7 +116,7 @@ bool DialogInterface::containsPoint(Common::Point point) {
 
 void DialogInterface::handleMouseOver(Common::Point point) {
 	if (_hasOptions && _options.size() > 0) {
-		for (int i = 0; i < _options.size(); i++) {
+		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(point)) {
 				_options[i]->handleMouseOver();
 			} else {
@@ -128,7 +128,7 @@ void DialogInterface::handleMouseOver(Common::Point point) {
 
 void DialogInterface::handleClick(Common::Point point) {
 	if (_hasOptions && _options.size() > 0) {
-		for (int i = 0; i < _options.size(); i++) {
+		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(point)) {
 				DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 				dialogPlayer->selectOption(i);

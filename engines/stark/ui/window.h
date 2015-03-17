@@ -20,60 +20,53 @@
  *
  */
 
-#ifndef STARK_RESOURCES_PAT_TABLE_H
-#define STARK_RESOURCES_PAT_TABLE_H
+#ifndef STARK_UI_WINDOW_H
+#define STARK_UI_WINDOW_H
 
-#include "common/str.h"
+#include "common/rect.h"
 
-#include "engines/stark/resources/object.h"
+#include "engines/stark/cursor.h"
 
 namespace Stark {
 
-namespace Formats {
-class XRCReadStream;
+class Cursor;
+
+namespace Gfx {
+class Driver;
 }
 
-namespace Resources {
-
-class Script;
-
-typedef Common::Array<uint32> ActionArray;
-
-class PATTable : public Object {
+class Window {
 public:
-	static const Type::ResourceType TYPE = Type::kPATTable;
+	Window(Gfx::Driver *gfx, Cursor *cursor);
+	virtual ~Window();
 
-	enum ActionType {
-		kActionUse  = 1,
-		kActionLook = 2,
-		kActionTalk = 3,
-		kActionExit = 7
-	};
+	void handleMouseMove();
+	void handleClick();
 
-	PATTable(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~PATTable();
+	void render();
 
-	ActionArray listPossibleActions() const;
-
-	bool runScriptForAction(uint32 action);
-
-	bool canPerformAction(uint32 action) const;
-	// Resource API
-	void readData(Formats::XRCReadStream *stream) override;
+	bool isMouseInside() const;
+	bool isVisible() const;
 
 protected:
-	struct Entry {
-		uint32 _actionType;
-		int32 _scriptIndex;
-	};
+	virtual void onMouseMove(const Common::Point &pos) = 0;
+	virtual void onClick(const Common::Point &pos) = 0;
+	virtual void onRender() = 0;
 
-	void printData() override;
+	void setCursor(Cursor::CursorType type);
+	Common::Point getMousePosition() const;
+	Common::Point getScreenMousePosition() const;
 
-	Common::Array<Entry> _entries;
-	int32 _field_2C;
+	Gfx::Driver *_gfx;
+
+	Common::Rect _position;
+	bool _unscaled;
+	bool _visible;
+
+private:
+	Cursor *_cursor;
 };
 
-} // End of namespace Resources
 } // End of namespace Stark
 
-#endif // STARK_RESOURCES_PAT_TABLE_H
+ #endif // STARK_UI_WINDOW_H

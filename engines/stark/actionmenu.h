@@ -25,38 +25,52 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
+#include "engines/stark/ui/window.h"
+
 namespace Stark {
 
+class Cursor;
 class VisualImageXMG;
 
 namespace Resources {
-class ItemSub2;
-class Object;
+class Item;
 }
 
-class ActionMenu {
-	Resources::ItemSub2 *_eye;
-	Resources::ItemSub2 *_hand;
-	Resources::ItemSub2 *_mouth;
-	VisualImageXMG *_background;
-	bool _eyeEnabled;
-	bool _handEnabled;
-	bool _mouthEnabled;
-	Gfx::RenderEntryArray _renderEntries;
-	Gfx::Driver *_gfx;
+class ActionMenu : public Window {
 public:
-	enum ActionMenuType {
-		kActionHand,
-		kActionMouth,
-		kActionEye
-	};
-	ActionMenu(Gfx::Driver *gfx);
+	ActionMenu(Gfx::Driver *gfx, Cursor *cursor);
 	~ActionMenu();
-	void render(Common::Point pos);
+
+	void open(Resources::Item *item, const Common::Point &itemClickPos);
+	void close();
+
+protected:
+	void onMouseMove(const Common::Point &pos) override;
+	void onClick(const Common::Point &pos) override;
+	void onRender() override;
+
+private:
+	enum ActionMenuType {
+		kActionHand  = 0,
+		kActionEye   = 1,
+		kActionMouth = 2
+	};
+
+	struct ActionButton {
+		bool enabled;
+		uint32 action;
+		Common::Rect rect;
+	};
+
+	ActionButton _buttons[3];
+
+	VisualImageXMG *_background;
+
+	Common::Point _itemClickPos;
+	Resources::Item *_item;
+
 	void clearActions();
 	void enableAction(ActionMenuType action);
-	Gfx::RenderEntryArray getRenderEntries() { return _renderEntries; }
-	int isThisYourButton(Resources::Object *object);
 };
 
 

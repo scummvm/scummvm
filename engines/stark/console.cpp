@@ -157,7 +157,7 @@ bool Console::Cmd_DumpKnowledge(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ChangeKnowledge(int argc, const char **argv) {
-	int index = 0;
+	uint index = 0;
 	char type = 0;
 
 	if (argc >= 4) {
@@ -211,7 +211,7 @@ bool Console::Cmd_ListScripts(int argc, const char **argv) {
 }
 
 bool Console::Cmd_EnableScript(int argc, const char **argv) {
-	int index = 0;
+	uint index = 0;
 
 	if (argc >= 2) {
 		index = atoi(argv[1]);
@@ -243,7 +243,7 @@ bool Console::Cmd_EnableScript(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ForceScript(int argc, const char **argv) {
-	int index = 0;
+	uint index = 0;
 
 	if (argc >= 2) {
 		index = atoi(argv[1]);

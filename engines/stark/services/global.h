@@ -34,6 +34,7 @@ class Floor;
 class Item; // TODO: Should be ItemSub2
 class ItemSub1;
 class ItemSub10;
+class KnowledgeSet;
 class Level;
 class Location;
 class Root;
@@ -86,6 +87,7 @@ public:
 	bool isFastForward() const { return _fastForward; }
 	uint getMillisecondsPerGameloop() const { return _millisecondsPerGameloop; }
 	Resources::ItemSub1 *getApril() const { return _april; }
+	Resources::KnowledgeSet *getInventory() const { return _inventory; }
 
 	void setRoot(Resources::Root *root) { _root = root; }
 	void setLevel(Resources::Level *level) { _level = level; }
@@ -94,13 +96,13 @@ public:
 	void setFastForward(bool fastForward) { _fastForward = fastForward; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
 	void setApril(Resources::ItemSub1 *april) { _april = april; }
+	void setInventory(Resources::KnowledgeSet * inventory) { _inventory = inventory; }
 
 	/** Retrieve the current chapter number from the global resource tree */
 	int32 getCurrentChapter();
 
 	/** Temporary HACK to allow us to query the inventory */
 	void printInventory(bool printAll);
-	Common::Array<Resources::Item*> getInventoryContents(); // TODO: Create a class for the inventory instead
 	void enableInventoryItem(int32 num);
 
 	/** Change the current chapter */
@@ -109,7 +111,7 @@ private:
     uint _millisecondsPerGameloop;
     Resources::Root *_root;
     Resources::Level *_level;
-    /* Inventory *_inventory; */
+    Resources::KnowledgeSet *_inventory;
     Resources::ItemSub1 *_april;
     Current *_current;
     bool _debug;

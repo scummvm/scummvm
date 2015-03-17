@@ -25,8 +25,10 @@
 
 #include "engines/stark/ui.h"
 
+#include "engines/stark/actionmenu.h"
 #include "engines/stark/cursor.h"
 
+#include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
 #include "engines/stark/resources/object.h"
@@ -45,20 +47,20 @@ namespace Stark {
 UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_gfx(gfx),
 	_cursor(cursor),
-	_currentObject(nullptr),
 	_objectUnderCursor(nullptr),
 	_hasClicked(false),
-	_inventoryOpen(false),
 	_topMenu(nullptr),
 	_dialogInterface(nullptr),
 	_inventoryInterface(nullptr),
 	_selectedInventoryItem(-1),
 	_exitGame(false),
-	_fmvPlayer(nullptr)
+	_fmvPlayer(nullptr),
+	_actionMenu(nullptr)
 	{
 }
 
 UI::~UI() {
+	delete _actionMenu;
 	delete _topMenu;
 	delete _dialogInterface;
 	delete _inventoryInterface;
@@ -68,15 +70,21 @@ UI::~UI() {
 void UI::init() {
 	_topMenu = new TopMenu();
 	_dialogInterface = new DialogInterface();
-	_inventoryInterface = new InventoryInterface();
+	_inventoryInterface = new InventoryInterface(_gfx, _cursor);
 	_fmvPlayer = new FMVPlayer();
+	_actionMenu = new ActionMenu(_gfx, _cursor);
 }
 
-void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
+void UI::update(Gfx::RenderEntryArray renderEntries) {
 	Common::Point pos = _cursor->getMousePosition();
 
+	if (_actionMenu->isVisible() && _actionMenu->isMouseInside()) {
+		_actionMenu->handleMouseMove();
+		return;
+	}
+
 	// Check for inventory to avoid mouse-overs from the world poking through.
-	if (_inventoryOpen && _inventoryInterface->containsPoint(pos) && keepExisting == false) {
+	if (_inventoryInterface->isVisible() && _inventoryInterface->isMouseInside()) {
 		renderEntries = _inventoryInterface->getRenderEntries();
 	}
 
@@ -92,21 +100,17 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 		return;
 	}
 
+	pos -= Common::Point(0, Gfx::Driver::kTopBorderHeight);
+
 	// Check for game world mouse overs
 	UserInterface *ui = StarkServices::instance().userInterface;
-	Gfx::RenderEntry *currentEntry = ui->getEntryAtPosition(pos, renderEntries);
-	Resources::Object *object = ui->getObjectForRenderEntryAtPosition(pos, currentEntry);
-	// So that we can run update multiple times, without resetting (i.e. after drawing the action menu)
-	if (!object && keepExisting) {
-		return;
-	} else {
-		// Subsequent runs ignore sort order of items drawn earlier.
-		_objectUnderCursor = object;
-	}
-	Common::String mouseHint = ui->getMouseHintForObject(_objectUnderCursor);
+
+	_objectUnderCursor = ui->getItemAtPosition(pos, renderEntries);
+
+	Common::String mouseHint = ui->getMouseHintForItem(_objectUnderCursor);
 
 	if (_objectUnderCursor) {
-		int actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor);
+		Resources::ActionArray actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, pos);
 		setCursorDependingOnActionsAvailable(actionsPossible);
 	} else {
 		// Not an object
@@ -115,60 +119,99 @@ void UI::update(Gfx::RenderEntryArray renderEntries, bool keepExisting) {
 	_cursor->setMouseHint(_selectedInventoryItemText + mouseHint);
 }
 
-void UI::setCursorDependingOnActionsAvailable(int actionsAvailable) {
-	bool moreThanOneActionPossible = false;
-	switch (actionsAvailable) {
-		case UserInterface::kActionLookPossible:
-			_cursor->setCursorType(Cursor::kEye);
-			break;
-		case UserInterface::kActionTalkPossible:
-			_cursor->setCursorType(Cursor::kMouth);
-			break;
-		case UserInterface::kActionUsePossible:
-			_cursor->setCursorType(Cursor::kHand);
-			break;
-		case UserInterface::kActionExitPossible:
-			_cursor->setCursorType(Cursor::kDefault); // TODO
-			break;
-		default:
-			if (actionsAvailable != 0) {
-				_cursor->setCursorType(Cursor::kPassive);
-				moreThanOneActionPossible = true;
-			}
-			break;
+void UI::setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable) {
+	if (actionsAvailable.empty()) {
+		_cursor->setCursorType(Cursor::kPassive);
+		return;
 	}
-	if (moreThanOneActionPossible) {
+
+	uint32 count = 0;
+	Cursor::CursorType cursorType;
+	for (uint i = 0; i < actionsAvailable.size(); i++) {
+		switch (actionsAvailable[i]) {
+			case Resources::PATTable::kActionLook:
+				cursorType = Cursor::kEye;
+				count++;
+				break;
+			case Resources::PATTable::kActionTalk:
+				cursorType = Cursor::kMouth;
+				count++;
+				break;
+			case Resources::PATTable::kActionUse:
+				cursorType = Cursor::kHand;
+				count++;
+				break;
+		}
+	}
+
+	if (count == 1) {
+		_cursor->setCursorType(cursorType);
+	} else {
 		_cursor->setCursorType(Cursor::kActive);
 	}
 }
 
 void UI::handleClick() {
 	UserInterface *ui = StarkServices::instance().userInterface;
-	if (_objectUnderCursor) {
-		if (!ui->performActionOnObject(_objectUnderCursor, _currentObject, _selectedInventoryItem)) {
-			_currentObject = _objectUnderCursor;
-			ui->activateActionMenuOn(_cursor->getMousePosition(), _currentObject);
-		// This currently potentially allows for click-through
+
+	if (_actionMenu->isVisible()) {
+		if (_actionMenu->isMouseInside()) {
+			_actionMenu->handleClick();
 		} else {
-			if (ui->isActionMenuOpen()) {
-				// If the click resulted in a multi-action possibility, then it was outside the action menu.
-				ui->deactivateActionMenu();
-				_currentObject = nullptr;
-				// If we were in the action menu, then retain the selected item.
-			} else if (_selectedInventoryItem != -1) {
-				_inventoryInterface->update();
-				_selectedInventoryItem = -1;
-				_selectedInventoryItemText = "";
+			_actionMenu->close();
+		}
+	} else if (_objectUnderCursor) {
+		Common::Point pos = _cursor->getMousePosition();
+		pos -= Common::Point(0, Gfx::Driver::kTopBorderHeight);
+
+		// Possibilites:
+		// * Click on something that doesn't take an action
+		// * Click on something that takes exactly 1 action.
+		// * Click on something that takes more than 1 action (open action menu)
+		// * Click in the action menu, which has 0 available actions (TODO)
+		if (_selectedInventoryItem != -1) {
+			if (!ui->itemDoActionAt(_objectUnderCursor, _selectedInventoryItem, pos)) {
+				warning("Could not perform action %d on %s", _selectedInventoryItem, _objectUnderCursor->getName().c_str());
+			}
+		} else {
+			Resources::ActionArray actions = ui->getStockActionsPossibleForObject(_objectUnderCursor, pos);
+			if (actions.size() == 1) {
+				for (uint i = 0; i < actions.size(); i++) {
+					if (actions[i] == Resources::PATTable::kActionLook) {
+						ui->itemDoActionAt(_objectUnderCursor, Resources::PATTable::kActionLook, pos);
+						break;
+					} else if (actions[i] == Resources::PATTable::kActionTalk) {
+						ui->itemDoActionAt(_objectUnderCursor, Resources::PATTable::kActionTalk, pos);
+						break;
+					} else if (actions[i] == Resources::PATTable::kActionUse) {
+						ui->itemDoActionAt(_objectUnderCursor, Resources::PATTable::kActionUse, pos);
+						break;
+					}
+				}
+			} else if (actions.size() > 1) {
+				_actionMenu->open(_objectUnderCursor, pos);
 			}
 		}
 	} else {
 		ui->walkTo(g_system->getEventManager()->getMousePos());
+
+//		// Assume all inventory objects need action menu.
+//		if (isInventoryObject(item)) {
+//			return false;
+//		}
+
+//		{
+//			if (_selectedInventoryItem != -1) {
+//				_inventoryInterface->update();
+//				_selectedInventoryItem = -1;
+//				_selectedInventoryItemText = "";
+//			}
+//		}
 	}
 
-
 	// Check this before handling the menu clicks, otherwise it closes again on the same event.
-	if (_inventoryOpen && !_inventoryInterface->containsPoint(_cursor->getMousePosition())) {
-		_inventoryOpen = false;
+	if (_inventoryInterface->isVisible() && !_inventoryInterface->isMouseInside()) {
+		_inventoryInterface->close();
 	}
 	if (_topMenu->containsPoint(_cursor->getMousePosition())) {
 		_topMenu->handleClick(_cursor->getMousePosition());
@@ -192,18 +235,17 @@ void UI::notifyDialogOptions(const Common::StringArray &options) {
 }
 
 void UI::notifyShouldOpenInventory() {
-	_inventoryOpen = true;
 	// Make the inventory update it's contents.
-	_inventoryInterface->update();
+	_inventoryInterface->open();
 }
 
 void UI::notifyFMVRequest(const Common::String &name) {
 	_fmvPlayer->play(name);
 }
 
-void UI::notifySelectedInventoryItem(Resources::Object *selectedItem) {
-	_selectedInventoryItem = selectedItem->findParent<Resources::ItemSub2>()->getIndex();
-	_selectedInventoryItemText = selectedItem->findParent<Resources::ItemSub2>()->getName() + " -> ";
+void UI::notifySelectedInventoryItem(Resources::Item *selectedItem) {
+	_selectedInventoryItem = selectedItem->getIndex();
+	_selectedInventoryItemText = selectedItem->getName() + " -> ";
 }
 
 bool UI::isPlayingFMV() const {
@@ -219,8 +261,7 @@ void UI::render() {
 		_fmvPlayer->render();
 		return;
 	}
-	UserInterface *ui = StarkServices::instance().userInterface;
-	update(ui->getRenderEntries(), true);
+
 	// Can't handle clicks before this point, since we need to have updated the mouse-over state to include the UI.
 	if (_hasClicked) {
 		handleClick();
@@ -231,12 +272,10 @@ void UI::render() {
 		_topMenu->render();
 	}
 
-	if (_inventoryOpen) {
-		_inventoryInterface->render();
-	}
+	_inventoryInterface->render();
 
 	_dialogInterface->render();
-	ui->render();
+	_actionMenu->render();
 }
 
 } // End of namespace Stark

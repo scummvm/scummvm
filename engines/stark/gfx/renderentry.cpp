@@ -28,15 +28,10 @@
 #include "engines/stark/visual/smacker.h"
 #include "engines/stark/visual/visual.h"
 
-// TODO: Refactor this logic elsewhere
-#include "engines/stark/resources/item.h"
-#include "engines/stark/resources/anim.h"
-#include "engines/stark/resources/pattable.h"
-
 namespace Stark {
 namespace Gfx {
 
-RenderEntry::RenderEntry(Resources::Object *owner, const Common::String &name) :
+RenderEntry::RenderEntry(Resources::Item *owner, const Common::String &name) :
 	_visual(nullptr),
 	_name(name),
 	_owner(owner),
@@ -85,52 +80,6 @@ void RenderEntry::setSortKey(float sortKey) {
 
 bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 	return x->_sortKey < y->_sortKey;
-}
-
-bool RenderEntry::containsPoint(Common::Point point) {
-	return indexForPoint(point) != -1;
-}
-
-int RenderEntry::indexForPoint(Common::Point point) {
-	// TODO: This doesn't consider 3D at all.
-	// TODO: This is just a quick fix, we still need to calculate the position, after any scaling and 3D transforms.
-	// TODO: We more or less ignore Y for now, since all we consider is the position-point.
-
-	// HACK: Since we lack Subtype2
-	if (getOwner() && (getOwner()->getType() == Resources::Type::kItem || getOwner()->getType() == Resources::Type::kAnim)) {
-		point.x -= _position.x;
-		point.y -= _position.y;
-		point.y -= Gfx::Driver::kTopBorderHeight; // Adjust for the top part.
-		if (getOwner()->getType() == Resources::Type::kItem) {
-			Resources::Item *item = (Resources::Item*)getOwner();
-			int index = item->indexForPoint(point);
-			// HACK For subtype 2, we get a PAT-index that is NOT inside the item.
-			if (getOwner()->getSubType() == Resources::Item::kItemSub2) {
-				return index;
-			}
-			if (index == -1) {
-				return -1;
-			} else {
-				Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(index);
-				// Ignore any uninteractable Items
-				// this should not be done when handling UI-buttons, as they have 0 actions.
-				// For now that special case is handled in the Owner == Anim type below,
-				// but in practice it should be done by way of checking for ItemSub2
-				if (!table) {
-					warning("Item %s has no PAT Table", item->getName().c_str());
-				}
-				if (!table || table->getNumActions() == 0) {
-					return -1;
-				}
-			}
-			return index;
-		// TODO: This is probably not necessary after introducing SubType2, but we keep it for the statics for now.
-		} else if (getOwner()->getType() == Resources::Type::kAnim) { // HACK Until we get Subtype2
-			Resources::Anim *anim = (Resources::Anim*)getOwner();
-			return anim->indexForPoint(point);
-		}
-	}
-	return -1;
 }
 
 } // End of namespace Gfx

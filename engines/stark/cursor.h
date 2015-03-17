@@ -54,7 +54,7 @@ public:
 	/** Update the mouse position */
 	void setMousePosition(Common::Point pos);
 
-	Common::Point getMousePosition() const;
+	Common::Point getMousePosition(bool unscaled = false) const;
 
 	enum CursorType {
 		kNone = -1,

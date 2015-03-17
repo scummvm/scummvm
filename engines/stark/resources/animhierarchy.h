@@ -29,6 +29,9 @@
 #include "engines/stark/resourcereference.h"
 
 namespace Stark {
+
+class Visual;
+
 namespace Formats {
 class XRCReadStream;
 }
@@ -57,8 +60,8 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
-	/** Set and apply the current animation for an item */
-	void setItemAnim(ItemVisual *item, int32 index);
+	/** Set and apply the current animation kind for an item */
+	void setItemAnim(ItemVisual *item, int32 usage);
 
 	/** Unselect the current animation and remove it from an item */
 	void unselectItemAnim(ItemVisual *item);
@@ -78,7 +81,10 @@ public:
 	 */
 	TextureSet *findTextureSet(uint32 textureType);
 
+	Visual *getVisualForUsage(uint32 usage);
+
 protected:
+	Anim *getAnimForUsage(uint32 usage);
 	void printData() override;
 
 	Common::Array<ResourceReference> _animationReferences;
@@ -88,7 +94,7 @@ protected:
 	AnimHierarchy * _animHierarchy;
 
 	float _field_5C;
-	int32 _animIndex;
+	uint32 _animUsage;
 	Anim *_currentAnim;
 };
 

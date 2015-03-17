@@ -44,8 +44,10 @@ public:
 
 	virtual void init() = 0;
 
-	virtual void setGameViewport() = 0;
-	virtual void setScreenViewport(bool noScaling) = 0;
+	virtual void setGameViewport() = 0; // deprecated
+	virtual void setScreenViewport(bool noScaling) = 0; // deprecated
+
+	virtual void setViewport(Common::Rect rect, bool noScaling) = 0;
 
 	/** Get the screen viewport in actual resolution */
 	Common::Rect getScreenViewport() { return _screenViewport; }

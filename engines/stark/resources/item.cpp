@@ -26,12 +26,15 @@
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/renderentry.h"
+
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/animhierarchy.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/floor.h"
+#include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/textureset.h"
+
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
@@ -44,7 +47,7 @@ Object *Item::construct(Object *parent, byte subType, uint16 index, const Common
 	case kItemSub1:
 		return new ItemSub1(parent, subType, index, name);
 	case kItemSub2:
-		return new ItemSub2(parent, subType, index, name); // TODO
+		return new ItemSub2(parent, subType, index, name);
 	case kItemSub3:
 		return new ItemSub3(parent, subType, index, name);
 	case kItemSub5:
@@ -91,6 +94,10 @@ Item *Item::getSceneInstance() {
 	return this;
 }
 
+bool Item::isClickable() const {
+	return false;
+}
+
 void Item::printData() {
 	debug("enabled: %d", _enabled);
 	debug("field_38: %d", _field_38);
@@ -103,6 +110,19 @@ void Item::saveLoad(ResourceSerializer *serializer) {
 	serializer->syncAsSint32LE(_enabled);
 }
 
+bool Item::doAction(uint32 action, uint32 hotspotIndex) {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table && table->canPerformAction(action)) {
+		return table->runScriptForAction(action);
+	}
+
+	return false;
+}
+
+bool Item::containsPoint(Common::Point point) {
+	return indexForPoint(point) != -1;
+}
+
 ItemVisual::~ItemVisual() {
 	delete _renderEntry;
 }
@@ -111,15 +131,15 @@ ItemVisual::ItemVisual(Object *parent, byte subType, uint16 index, const Common:
 				Item(parent, subType, index, name),
 				_renderEntry(nullptr),
 				_animHierarchy(nullptr),
-				_currentAnimIndex(-1),
-				_field_44(1) {
+				_currentAnimKind(-1),
+				_clickable(true) {
 	_renderEntry = new Gfx::RenderEntry(this, getName());
 }
 
 void ItemVisual::readData(Formats::XRCReadStream *stream) {
 	Item::readData(stream);
 
-	_field_44 = stream->readUint32LE();
+	_clickable = stream->readBool();
 }
 
 void ItemVisual::onAllLoaded() {
@@ -128,7 +148,7 @@ void ItemVisual::onAllLoaded() {
 	_animHierarchy = findChild<AnimHierarchy>(false);
 
 	if (_subType != kItemSub10) {
-		setAnim(1);
+		setAnimKind(Anim::kActionUsagePassive);
 	}
 
 	if (!_enabled) {
@@ -146,19 +166,23 @@ void ItemVisual::setEnabled(bool enabled) {
 	}
 }
 
-void ItemVisual::setAnim(int32 index) {
-	bool animNeedsUpdate = index != _currentAnimIndex;
+bool ItemVisual::isClickable() const {
+	return _clickable;
+}
 
-	_currentAnimIndex = index;
+void ItemVisual::setAnimKind(int32 usage) {
+	bool animNeedsUpdate = usage != _currentAnimKind;
+
+	_currentAnimKind = usage;
 	if (animNeedsUpdate && _animHierarchy) {
-		_animHierarchy->setItemAnim(this, index);
+		_animHierarchy->setItemAnim(this, usage);
 	}
 }
 
 void ItemVisual::printData() {
 	Item::printData();
 
-	debug("field_44: %d", _field_44);
+	debug("clickable: %d", _clickable);
 }
 
 Anim *ItemVisual::getAnim() {
@@ -173,37 +197,6 @@ Visual *ItemVisual::getVisual() {
 	}
 
 	return anim->getVisual();
-}
-
-bool ItemVisual::containsPoint(Common::Point point) {
-	Anim *anim = getAnim();
-	if (anim) {
-		return anim->containsPoint(point);
-	}
-	return false;
-}
-
-int ItemVisual::indexForPoint(Common::Point point) {
-	// TODO: This breaks rather weirdly on subtype 6 and 10
-	Anim *anim = getAnim();
-	if (anim) {
-		return anim->indexForPoint(point);
-	}
-	return -1;
-}
-
-Gfx::RenderEntry *ItemSub2::getRenderEntry(const Common::Point &positionOffset) {
-	if (_enabled) {
-		Visual *visual = getVisual();
-
-		_renderEntry->setVisual(visual);
-		_renderEntry->setPosition(_position + positionOffset);
-//		_renderEntry->setSortKey(getSortKey());
-	} else {
-		_renderEntry->setVisual(nullptr);
-	}
-
-	return _renderEntry;
 }
 
 ItemSub13::~ItemSub13() {
@@ -289,6 +282,36 @@ AnimHierarchy *ItemSub1::findStockAnimHierarchy() {
 		return nullptr;
 	} else {
 		return findChildWithIndex<AnimHierarchy>(_animHierarchyIndex);
+	}
+}
+
+ItemSub2::~ItemSub2() {
+}
+
+ItemSub2::ItemSub2(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		ItemVisual(parent, subType, index, name) {
+}
+
+Gfx::RenderEntry *ItemSub2::getRenderEntry(const Common::Point &positionOffset) {
+	if (_enabled) {
+		setAnimKind(Anim::kUIUsageInventory);
+
+		Visual *visual = getVisual();
+
+		_renderEntry->setVisual(visual);
+		_renderEntry->setPosition(Common::Point());
+	} else {
+		_renderEntry->setVisual(nullptr);
+	}
+
+	return _renderEntry;
+}
+
+Visual *ItemSub2::getActionVisual(bool active) {
+	if (active) {
+		return _animHierarchy->getVisualForUsage(Anim::kActionUsageActive);
+	} else {
+		return _animHierarchy->getVisualForUsage(Anim::kActionUsagePassive);
 	}
 }
 
@@ -401,7 +424,7 @@ float ItemSub5610::getSortKey() const {
 	Floor *floor = global->getCurrent()->getFloor();
 
 	if (_floorFaceIndex == -1) {
-		warning("Undefined floor face index for item '%s'", getName().c_str());
+//		warning("Undefined floor face index for item '%s'", getName().c_str());
 		return floor->getDistanceFromCamera(0);
 	}
 
@@ -436,6 +459,15 @@ Gfx::RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset)
 	return _renderEntry;
 }
 
+int ItemSub56::indexForPoint(Common::Point point) {
+	// TODO: This breaks rather weirdly on subtype 6 and 10
+	Anim *anim = getAnim();
+	if (anim) {
+		return anim->indexForPoint(point - _position);
+	}
+	return -1;
+}
+
 void ItemSub56::printData() {
 	ItemSub5610::printData();
 
@@ -468,6 +500,15 @@ Gfx::RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset)
 	}
 
 	return _renderEntry;
+}
+
+int ItemSub78::indexForPoint(Common::Point point) {
+	// TODO: This breaks rather weirdly on subtype 6 and 10
+	Anim *anim = getAnim();
+	if (anim) {
+		return anim->indexForPoint(point - _position);
+	}
+	return -1;
 }
 
 void ItemSub78::printData() {
@@ -525,7 +566,7 @@ void ItemSub10::onEnterLocation() {
 		_animHierarchy = _referencedItem->findStockAnimHierarchy();
 	}
 
-	setAnim(1);
+	setAnimKind(Anim::kActorUsageIdle);
 }
 
 BonesMesh *ItemSub10::findBonesMesh() {

@@ -80,9 +80,13 @@ void Cursor::render() {
 	}
 }
 
-Common::Point Cursor::getMousePosition() const {
-	// The rest of the engine expects 640x480 coordinates
-	return _gfx->scalePoint(_mousePos);
+Common::Point Cursor::getMousePosition(bool unscaled) const {
+	if (unscaled) {
+		return _mousePos;
+	} else {
+		// Most of the engine expects 640x480 coordinates
+		return _gfx->scalePoint(_mousePos);
+	}
 }
 
 void Cursor::setMouseHint(const Common::String &hint) {

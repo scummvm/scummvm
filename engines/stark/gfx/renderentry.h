@@ -34,7 +34,7 @@ namespace Stark {
 class Visual;
 
 namespace Resources {
-class Object;
+class Item;
 }
 
 namespace Gfx {
@@ -43,7 +43,7 @@ class Driver;
 
 class RenderEntry {
 public:
-	RenderEntry(Resources::Object *owner, const Common::String &name);
+	RenderEntry(Resources::Item *owner, const Common::String &name);
 	virtual ~RenderEntry() {};
 
 	void render(Driver *gfx);
@@ -53,17 +53,15 @@ public:
 	void setPosition3D(const Math::Vector3d &position, float direction);
 	void setSortKey(float sortKey);
 
-	/** Checks whether the render entry will draw anything to a specific point */
-	bool containsPoint(Common::Point point);
-	int indexForPoint(Common::Point point);
 	/** Gets the owner-object */
-	Resources::Object *getOwner() { return _owner; }
+	Resources::Item *getOwner() const { return _owner; }
+
 	/** Compare two render entries by their sort keys */
 	static bool compare(const RenderEntry *x, const RenderEntry *y);
 
 protected:
 	Common::String _name;
-	Resources::Object *_owner;
+	Resources::Item *_owner;
 
 	Visual *_visual;
 	Common::Point _position;

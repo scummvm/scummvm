@@ -26,6 +26,7 @@
 #include "engines/stark/resources/camera.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/layer.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
@@ -72,7 +73,7 @@ void ResourceProvider::initGlobal() {
 	// Resources lifecycle update
 	global->onAllLoaded();
 
-	//TODO: Retrieve the inventory from the global tree
+	_global->setInventory(global->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory));
 	_global->setApril(global->findChildWithSubtype<Resources::ItemSub1>(Resources::Item::kItemSub1));
 }
 
@@ -336,6 +337,8 @@ void ResourceProvider::shutdown() {
 	_global->setLevel(nullptr);
 	_global->setRoot(nullptr);
 	_global->setCurrent(nullptr);
+	_global->setInventory(nullptr);
+	_global->setApril(nullptr);
 
 	_archiveLoader->unloadUnused();
 }

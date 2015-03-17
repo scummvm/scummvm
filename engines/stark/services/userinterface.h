@@ -25,6 +25,8 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
+#include "engines/stark/resources/pattable.h"
+
 #include "common/scummsys.h"
 #include "common/rect.h"
 
@@ -32,6 +34,7 @@ namespace Stark {
 
 class ActionMenu;
 class Cursor;
+class VisualImageXMG;
 
 namespace Resources {
 class Item;
@@ -49,10 +52,8 @@ class RenderEntry;
  */
 class UserInterface {
 public:
-	UserInterface(Gfx::Driver *driver, const Cursor *cursor);
+	UserInterface();
 	~UserInterface();
-
-	void init();
 
 	/** Skip currently playing speeches */
 	void skipCurrentSpeeches();
@@ -63,44 +64,18 @@ public:
 	/** Make April try to go to the location under the cursor */
 	void walkTo(const Common::Point &mouse);
 
-	/** Draw the mouse pointer, and any additional currently active UI */
-	void render();
+	VisualImageXMG *getActionImage(uint32 itemIndex, bool active);
+
+	bool itemDoActionAt(Resources::Item *item, uint32 action, const Common::Point &position);
+
+	Resources::Item *getItemAtPosition(Common::Point, Gfx::RenderEntryArray entries);
 	
-	/** Update the current state of the user interface */
-	void update();
+	Common::String getMouseHintForItem(Resources::Item *object);
 
-	Gfx::RenderEntry *getEntryAtPosition(Common::Point, Gfx::RenderEntryArray entries);
-	
-	Resources::Object *getObjectForRenderEntryAtPosition(Common::Point pos, Gfx::RenderEntry *entry);
+	Resources::ActionArray getActionsPossibleForObject(Resources::Item *item, const Common::Point &pos);
+	Resources::ActionArray getStockActionsPossibleForObject(Resources::Item *item, const Common::Point &pos);
 
-	Common::String getMouseHintForObject(Resources::Object *object);
-
-	enum ActionFlags {
-		kActionNonePossible = 0,
-		kActionUsePossible = 1,
-		kActionLookPossible = 2,
-		kActionTalkPossible = 4,
-		kActionExitPossible = 8
-	};
-
-	int getActionsPossibleForObject(Resources::Object *object);
-	/** Attempt to run the relevant action on the object, returns true if action menu is needed, false if no action is possible */
-	bool performActionOnObject(Resources::Object *object, Resources::Object *activeObject, int action = -1);
-	void activateActionMenuOn(Common::Point pos, Resources::Object *activeObject);
-	bool isActionMenuOpen() const { return _actionMenuActive; }
-	void deactivateActionMenu() { _actionMenuActive = false; }
-	bool isInventoryObject(Resources::Object *object);
-
-	Gfx::RenderEntryArray getRenderEntries();
-private:
-
-	int _indexForCurrentObject;
-	Resources::Object *_object;
-	bool _actionMenuActive;
-	Common::Point _actionMenuPos;
-	const Cursor *_cursor;
-	ActionMenu *_actionMenu;
-	Gfx::Driver *_gfx;
+	bool isInventoryObject(Resources::Item *item);
 };
 
 } // End of namespace Stark

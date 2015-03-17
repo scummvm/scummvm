@@ -59,18 +59,21 @@ void PATTable::printData() {
 	debug("field_2C: %d", _field_2C);
 }
 
-int PATTable::getNumActions() const {
-	int count = 0;
-	for (int i = 0; i < _entries.size(); i++) {
+ActionArray PATTable::listPossibleActions() const {
+	ActionArray actions;
+
+	for (uint i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._scriptIndex != -1) {
-			count++;
+			// TODO: More rules
+			actions.push_back(_entries[i]._actionType);
 		}
 	}
-	return count;
+
+	return actions;
 }
 
-bool PATTable::canPerformAction(ActionType action) const {
-	for (int i = 0; i < _entries.size(); i++) {
+bool PATTable::canPerformAction(uint32 action) const {
+	for (uint i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._actionType == action && _entries[i]._scriptIndex != -1) {
 			return true;
 		}
@@ -78,22 +81,14 @@ bool PATTable::canPerformAction(ActionType action) const {
 	return false;
 }
 
-Script *PATTable::getScriptForAction(int action) {
-	switch (action) {
-		case kActionUse:
-		case kActionLook:
-		case kActionTalk:
-		case kActionExit:
-			break;
-		default:
-			break; // Not one of the 4 basic ones.
-	}
-	for (int i = 0; i < _entries.size(); i++) {
+bool PATTable::runScriptForAction(uint32 action) {
+	for (uint i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._actionType == action) {
 			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
-			return script;
+			script->execute(Resources::Script::kCallModePlayerAction);
 		}
 	}
+
 	return nullptr;
 }
 

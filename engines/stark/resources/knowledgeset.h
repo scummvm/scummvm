@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 
+#include "engines/stark/gfx/renderentry.h"
 #include "engines/stark/resources/object.h"
 
 namespace Stark {
@@ -34,6 +35,8 @@ class XRCReadStream;
 }
 
 namespace Resources {
+
+class Item;
 
 /**
  * A typed collection of Knowledge resources
@@ -52,6 +55,8 @@ public:
 
 	KnowledgeSet(Object *parent, byte subType, uint16 index, const Common::String &name);
 	virtual ~KnowledgeSet();
+
+	Gfx::RenderEntryArray getInventoryRenderEntries();
 
 protected:
 	void printData() override;

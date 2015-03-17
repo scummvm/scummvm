@@ -40,7 +40,6 @@ Button::Button(const Common::String &text, Resources::Anim *image, Common::Point
 }
 
 void Button::render() {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
 	_image->getVisual()->get<VisualImageXMG>()->render(_position);
 }
 

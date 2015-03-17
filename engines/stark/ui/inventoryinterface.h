@@ -25,6 +25,8 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
+#include "engines/stark/ui/window.h"
+
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/array.h"
@@ -43,19 +45,22 @@ namespace Gfx {
 class Texture;
 }
 
-class InventoryInterface {
+class InventoryInterface : public Window {
 	Resources::Anim *_backgroundTexture;
-	Common::Point _position;
-	Common::Array<Resources::Item*> _items;
 	Gfx::RenderEntryArray _renderEntries;
 public:
-	InventoryInterface();
+	InventoryInterface(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~InventoryInterface() {}
-	void render();
-	void update();
-	bool containsPoint(Common::Point point);
-	Common::String getMouseHintAtPosition(Common::Point point);
+
+	void open();
+	void close();
+
 	Gfx::RenderEntryArray getRenderEntries() { return _renderEntries; }
+
+protected:
+	void onMouseMove(const Common::Point &pos) override;
+	void onClick(const Common::Point &pos) override;
+	void onRender() override;
 };
 
 } // End of namespace Stark

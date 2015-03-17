@@ -38,7 +38,7 @@ AnimHierarchy::~AnimHierarchy() {
 
 AnimHierarchy::AnimHierarchy(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_animIndex(0),
+				_animUsage(0),
 				_currentAnim(nullptr),
 				_animHierarchy(nullptr),
 				_field_5C(0) {
@@ -76,9 +76,9 @@ void AnimHierarchy::onAllLoaded() {
 	}
 }
 
-void AnimHierarchy::setItemAnim(ItemVisual *item, int32 index) {
+void AnimHierarchy::setItemAnim(ItemVisual *item, int32 usage) {
 	unselectItemAnim(item);
-	_animIndex = index;
+	_animUsage = usage;
 	selectItemAnim(item);
 }
 
@@ -93,7 +93,7 @@ void AnimHierarchy::unselectItemAnim(ItemVisual *item) {
 void AnimHierarchy::selectItemAnim(ItemVisual *item) {
 	// Search for an animation with the appropriate index
 	for (uint i = 0; i < _animations.size(); i++) {
-		if (_animations[i]->getIndex() == _animIndex) {
+		if (_animations[i]->getUsage() == _animUsage) {
 			_currentAnim = _animations[i];
 			break;
 		}
@@ -123,6 +123,22 @@ BonesMesh *AnimHierarchy::findBonesMesh() {
 
 TextureSet *AnimHierarchy::findTextureSet(uint32 textureType) {
 	return findChildWithSubtype<TextureSet>(textureType);
+}
+
+Anim *AnimHierarchy::getAnimForUsage(uint32 usage) {
+	// Search for an animation with the appropriate use
+	for (uint i = 0; i < _animations.size(); i++) {
+		if (_animations[i]->getUsage() == usage) {
+			return _animations[i];
+		}
+	}
+
+	error("No anim found for use '%d' in '%s'", usage, getName().c_str());
+}
+
+Visual *AnimHierarchy::getVisualForUsage(uint32 usage) {
+	Anim *anim = getAnimForUsage(usage);
+	return anim->getVisual();
 }
 
 void AnimHierarchy::printData() {

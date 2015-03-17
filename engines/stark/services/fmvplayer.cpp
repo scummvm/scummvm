@@ -47,7 +47,6 @@ FMVPlayer::~FMVPlayer() {
 void FMVPlayer::play(const Common::String &name) {
 	// TODO: Clear existing
 	ArchiveLoader *archiveLoader = StarkServices::instance().archiveLoader;
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
 
 	Common::SeekableReadStream *stream = archiveLoader->getExternalFile(name, "Global/");
 	if (!stream) {
