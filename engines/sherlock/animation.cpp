@@ -101,7 +101,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 	events.delay(minDelay);
 	if (fade != 0 && fade != 255)
 		screen.fadeToBlack();
-	fade = 0; //***DEBUG****
+
 	if (setPalette) {
 		if (fade != 255)
 			screen.setPalette(sprite._palette);
@@ -112,19 +112,26 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 	Common::Point pt;
 	bool skipped = false;
 	while (!_vm->shouldQuit()) {
+		// Get the next sprite to display
 		spriteFrame = stream->readSint16LE();
-		if (spriteFrame != -1) {
+
+		if (spriteFrame == -2) {
+			// End of animation reached
+			break;
+		} else if (spriteFrame != -1) {
+			// Read position from either animation stream or the sprite frame itself
 			if (spriteFrame < 0) {
-				spriteFrame = ABS(spriteFrame);
+				spriteFrame += 32769;
 				pt.x = stream->readUint16LE();
 				pt.y = stream->readUint16LE();
 			} else {
 				pt = sprite[spriteFrame]._position;
 			}
 
-			screen.copyFrom(sprite[spriteFrame]._frame);
-			events.pollEventsAndWait();
+			// Draw the sprite
+			screen.copyFrom(sprite[spriteFrame]._frame, pt);
 		} else {
+			// No sprite to show for this animation frame
 			if (fade == 255) {
 				// Gradual fade in
 				if (screen.equalizePalette(sprite._palette) == 0)
@@ -144,11 +151,6 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 			}
 
 			events.delay(speed);
-
-			if (stream->readSint16LE() == -2)
-				// End of animation
-				break;
-			stream->seek(-2, SEEK_CUR);
 		}
 
 		if (events.isKeyPressed()) {

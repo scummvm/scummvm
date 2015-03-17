@@ -36,9 +36,15 @@ namespace Sherlock {
 class SherlockEngine;
 
 class Surface : public Graphics::Surface {
+protected:
+	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
     Surface(uint16 width, uint16 height);
     ~Surface();
+
+	void copyFrom(const Graphics::Surface &src);
+	void copyFrom(const Graphics::Surface &src, const Common::Point &pt);
+
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void drawSprite(int x, int y, SpriteFrame *spriteFrame, bool flipped = false, bool altFlag = false);
 };

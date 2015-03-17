@@ -35,6 +35,44 @@ Surface::~Surface() {
     free();
 }
 
+/**
+ * Draws a surface into another
+ */
+void Surface::copyFrom(const Graphics::Surface &src) {
+	copyFrom(src, Common::Point());
+}
+
+/**
+ * Draws a surface at a given position within this surface
+ */
+void Surface::copyFrom(const Graphics::Surface &src, const Common::Point &pt) {
+	Common::Rect drawRect(0, 0, src.w, src.h);
+	Common::Point destPt = pt;
+	
+	if (destPt.x < 0) {
+		drawRect.left += -destPt.x;
+		destPt.x = 0;
+	}
+	if (destPt.y < 0) {
+		drawRect.top += -destPt.y;
+		destPt.y = 0;
+	}
+	int right = destPt.x + src.w;
+	if (right > this->w) {
+		drawRect.right -= (right - this->w);
+	}
+	int bottom = destPt.y + src.h;
+	if (bottom > this->h) {
+		drawRect.bottom -= (bottom - this->h);
+	}
+
+	if (drawRect.isValidRect()) {
+		addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
+			destPt.y + drawRect.height()));
+		copyRectToSurface(src, destPt.x, destPt.y, drawRect);
+	}
+}
+
 void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
     Graphics::Surface::fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
