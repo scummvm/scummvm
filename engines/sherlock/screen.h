@@ -23,6 +23,7 @@
 #ifndef SHERLOCK_SCREEN_H
 #define SHERLOCK_SCREEN_H
 
+#include "common/list.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
 
@@ -40,6 +41,13 @@ private:
 	SherlockEngine *_vm;
 	int _fontNumber;
 	Surface _backBuffer1, _backBuffer2;
+	Common::List<Common::Rect> _dirtyRects;
+
+	void mergeDirtyRects();
+
+	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
+protected:
+	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Screen(SherlockEngine *vm);
 
