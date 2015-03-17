@@ -233,7 +233,7 @@ void OPL::writeReg(int r, int v) {
 		writeOplReg(1, r, v);
 		break;
 	case Config::kOpl3:
-		writeOplReg(r >= 100, r & 0xff, v);
+		writeOplReg(r >= 0x100, r & 0xff, v);
 	}
 }
 
