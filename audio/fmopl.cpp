@@ -34,12 +34,21 @@
 
 namespace OPL {
 
+// Factory functions
+
+#ifdef USE_ALSA
+namespace ALSA {
+	OPL *create(Config::OplType type);
+} // End of namespace ALSA
+#endif // USE_ALSA
+
 // Config implementation
 
 enum OplEmulator {
 	kAuto = 0,
 	kMame = 1,
-	kDOSBox = 2
+	kDOSBox = 2,
+	kALSA = 3
 };
 
 OPL::OPL() {
@@ -53,6 +62,9 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#endif
+#ifdef USE_ALSA
+	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 },
 #endif
 	{ 0, 0, 0, 0 }
 };
@@ -164,6 +176,11 @@ OPL *Config::create(DriverId driver, OplType type) {
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
 		return new DOSBox::OPL(type);
+#endif
+
+#ifdef USE_ALSA
+	case kALSA:
+		return ALSA::create(type);
 #endif
 
 	default:

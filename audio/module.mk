@@ -58,6 +58,11 @@ MODULE_OBJS := \
 	softsynth/sid.o \
 	softsynth/wave6581.o
 
+ifdef USE_ALSA
+MODULE_OBJS += \
+	softsynth/opl/alsa.o
+endif
+
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \
 	rate.o
