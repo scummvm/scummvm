@@ -33,10 +33,10 @@
 #include "sherlock/animation.h"
 #include "sherlock/debugger.h"
 #include "sherlock/events.h"
-#include "sherlock/graphics.h"
 #include "sherlock/journal.h"
 #include "sherlock/resources.h"
 #include "sherlock/room.h"
+#include "sherlock/screen.h"
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
 

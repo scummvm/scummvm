@@ -20,25 +20,40 @@
  *
  */
 
-#ifndef SHERLOCK_GRAPHICS_H
-#define SHERLOCK_GRAPHICS_H
+#ifndef SHERLOCK_SCREEN_H
+#define SHERLOCK_SCREEN_H
 
 #include "common/rect.h"
 #include "graphics/surface.h"
 
+#include "sherlock/graphics.h"
+
 namespace Sherlock {
 
-class Surface : public Graphics::Surface {
-protected:
-	virtual void addDirtyRect(const Common::Rect &r) {}
+#define PALETTE_SIZE 768
+#define PALETTE_COUNT 256
+
+class SherlockEngine;
+
+class Screen : public Surface {
+private:
+	SherlockEngine *_vm;
+	int _fontNumber;
+	Surface _backBuffer1, _backBuffer2;
 public:
-    Surface(uint16 width, uint16 height);
-    ~Surface();
+	Screen(SherlockEngine *vm);
 
-	void copyFrom(const Graphics::Surface &src);
-	void copyFrom(const Graphics::Surface &src, const Common::Point &pt);
+	void setFont(int fontNumber);
 
-	void fillRect(int x1, int y1, int x2, int y2, byte color);
+	void update();
+
+	void getPalette(byte palette[PALETTE_SIZE]);
+
+	void setPalette(const byte palette[PALETTE_SIZE]);
+
+	int equalizePalette(const byte palette[PALETTE_SIZE]);
+
+	void fadeToBlack();
 };
 
 } // End of namespace Sherlock

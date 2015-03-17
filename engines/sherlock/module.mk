@@ -12,6 +12,7 @@ MODULE_OBJS = \
 	journal.o \
 	resources.o \
 	room.o \
+	screen.o \
 	sherlock.o \
 	sound.o \
 	sprite.o \

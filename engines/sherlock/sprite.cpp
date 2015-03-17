@@ -21,7 +21,7 @@
  */
 
 #include "sherlock/sprite.h"
-#include "sherlock/graphics.h"
+#include "sherlock/screen.h"
 #include "common/debug.h"
 
 namespace Sherlock {
