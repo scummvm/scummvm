@@ -85,7 +85,8 @@ void Sprite::loadPalette(Common::SeekableReadStream &stream) {
 	assert((size - 12) == PALETTE_SIZE);
 
 	stream.seek(4 + 12, SEEK_CUR);
-	stream.read(&_palette[0], PALETTE_SIZE);
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+		_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
 }
 
 /**

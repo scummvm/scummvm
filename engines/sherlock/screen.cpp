@@ -79,10 +79,10 @@ int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx) {
 		if (tempPalette[idx] > palette[idx])
 		{
-			--tempPalette[idx];
+			tempPalette[idx] = MAX((int)palette[idx], (int)tempPalette[idx] - 4);
 			++total;
 		} else if (tempPalette[idx] < palette[idx]) {
-			++tempPalette[idx];
+			tempPalette[idx] = MIN((int)palette[idx], (int)tempPalette[idx] + 4);
 			++total;
 		}
 	}
