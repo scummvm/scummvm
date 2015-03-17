@@ -35,8 +35,8 @@ public:
     Surface(uint16 width, uint16 height);
     ~Surface();
 
-	void copyFrom(const Graphics::Surface &src);
-	void copyFrom(const Graphics::Surface &src, const Common::Point &pt);
+	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
+	void transBlitFrom(const Graphics::Surface &src, const Common::Point &pt);
 
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 };

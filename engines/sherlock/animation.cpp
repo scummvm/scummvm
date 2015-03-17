@@ -129,7 +129,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 			}
 
 			// Draw the sprite
-			screen.copyFrom(sprite[spriteFrame]._frame, pt);
+			screen.transBlitFrom(sprite[spriteFrame]._frame, pt);
 		} else {
 			// No sprite to show for this animation frame
 			if (fade == 255) {
