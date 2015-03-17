@@ -64,7 +64,7 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 #ifdef USE_ALSA
-	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 },
+	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 	{ 0, 0, 0, 0 }
 };
