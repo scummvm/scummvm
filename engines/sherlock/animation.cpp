@@ -65,10 +65,13 @@ static const int NO_FRAMES = FRAMES_END;
 Animation::Animation(SherlockEngine *vm): _vm(vm) {
 }
 
-void Animation::playPrologue(const Common::String &filename, int minDelay, int fade, 
+bool Animation::playPrologue(const Common::String &filename, int minDelay, int fade, 
 		bool setPalette, int speed) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	int soundNumber = 0;
+	sound._playingEpilogue = true;
 
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename);
@@ -89,7 +92,6 @@ void Animation::playPrologue(const Common::String &filename, int minDelay, int f
 		stream = _vm->_res->load(vdxName, "epilog2.lib");
 	else
 		stream = _vm->_res->load(vdxName, "epilogoue.lib");
-	int resourceIndex = _vm->_res->resourceIndex();
 
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
@@ -99,16 +101,75 @@ void Animation::playPrologue(const Common::String &filename, int minDelay, int f
 	events.delay(minDelay);
 	if (fade != 0 && fade != 255)
 		screen.fadeToBlack();
-
+	fade = 0; //***DEBUG****
 	if (setPalette) {
 		if (fade != 255)
 			screen.setPalette(sprite._palette);
 	}
 
-	// TODO
+	int frameNumber = 0;
+	int spriteFrame;
+	Common::Point pt;
+	bool skipped = false;
+	while (!_vm->shouldQuit()) {
+		spriteFrame = stream->readSint16LE();
+		if (spriteFrame != -1) {
+			if (spriteFrame < 0) {
+				spriteFrame = ABS(spriteFrame);
+				pt.x = stream->readUint16LE();
+				pt.y = stream->readUint16LE();
+			} else {
+				pt = sprite[spriteFrame]._position;
+			}
 
+			screen.copyFrom(sprite[spriteFrame]._frame);
+			events.pollEventsAndWait();
+		} else {
+			if (fade == 255) {
+				// Gradual fade in
+				if (screen.equalizePalette(sprite._palette) == 0)
+					fade = 0;
+			}
 
+			// Check if we've reached a frame with sound
+			if (frameNumber++ == *soundFrames) {
+				++soundNumber;
+				++soundFrames;
+				Common::String fname = _vm->_soundOverride.empty() ?
+					Common::String::format("%s%01d", baseName.c_str(), soundNumber) :
+					Common::String::format("%s%02d", baseName.c_str(), soundNumber);
+
+				if (sound._voicesEnabled)
+					sound.playSound(fname);
+			}
+
+			events.delay(speed);
+
+			if (stream->readSint16LE() == -2)
+				// End of animation
+				break;
+			stream->seek(-2, SEEK_CUR);
+		}
+
+		if (events.isKeyPressed()) {
+			Common::KeyState keyState = events.getKey();
+			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
+				keyState.keycode == Common::KEYCODE_SPACE) {
+				skipped = true;
+				break;
+			}
+		} else if (events._mouseClicked) {
+			skipped = true;
+			break;
+		}
+	}
+	
+	events.clearEvents();
+	sound.stopSound();
 	delete stream;
+	sound._playingEpilogue = false;
+
+	return !skipped && !_vm->shouldQuit();
 }
 
 /**

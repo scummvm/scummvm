@@ -30,16 +30,26 @@ namespace Sherlock {
 
 class SherlockEngine;
 
+enum WaitType {
+	WAIT_RETURN_IMMEDIATELY = 0, WAIT_FINISH = 1, WAIT_KBD_OR_FINISH = 2
+};
+
 class Sound {
 private:
 	SherlockEngine *_vm;
 public:
+	bool _sfxEnabled;
+	bool _musicEnabled;
+	bool _voicesEnabled;
+	bool _playingEpilogue;
+public:
 	Sound(SherlockEngine *vm);
 
-	void playSound(const Common::String &name);
+	void playSound(const Common::String &name, WaitType waitType = WAIT_RETURN_IMMEDIATELY);
 	void cacheSound(const Common::String &name, int index);
 	void playCachedSound(int index);
 	void clearCache();
+	void stopSound();
 	
 	void playMusic(const Common::String &name);
 	void stopMusic();

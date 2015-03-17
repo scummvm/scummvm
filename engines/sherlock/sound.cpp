@@ -25,9 +25,13 @@
 namespace Sherlock {
 
 Sound::Sound(SherlockEngine *vm): _vm(vm) {
+	_sfxEnabled = true;
+	_musicEnabled = true;
+	_voicesEnabled = true;
+	_playingEpilogue = false;
 }
 
-void Sound::playSound(const Common::String &name) {
+void Sound::playSound(const Common::String &name, WaitType waitType) {
 	// TODO
 }
 
@@ -40,6 +44,10 @@ void Sound::playCachedSound(int index) {
 }
 
 void Sound::clearCache() {
+	// TODO
+}
+
+void Sound::stopSound() {
 	// TODO
 }
 

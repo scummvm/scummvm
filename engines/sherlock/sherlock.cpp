@@ -80,6 +80,7 @@ void SherlockEngine::initialize() {
 	_res = new Resources();
 	_rooms = new Rooms();
 	_screen = new Screen(this);
+	_sound = new Sound(this);
 	_talk = new Talk();
 }
 

@@ -45,21 +45,21 @@ void ScalpelEngine::initialize() {
  * Show the opening sequence
  */
 void ScalpelEngine::showOpening() {
-	if (!_events->isKeyPressed())
-		showCityCutscene();
-	if (!_events->isKeyPressed())
-		showAlleyCutscene();
-	if (!_events->isKeyPressed())
-		showStreetCutscene();
-	if (!_events->isKeyPressed())
-		showOfficeCutscene();
+	if (!showCityCutscene())
+		return;
+	if (!showAlleyCutscene())
+		return;
+	if (!showStreetCutscene())
+		return;
+	if (!showOfficeCutscene())
+		return;
 
 	_events->clearEvents();
 	_sound->stopMusic();
 }
 
-void ScalpelEngine::showCityCutscene() {
-	byte palette[PALETTE_SIZE];
+bool ScalpelEngine::showCityCutscene() {
+//	byte palette[PALETTE_SIZE];
 	
 	_sound->playMusic("prolog1.mus");
 	_titleOverride = "title.lib";
@@ -67,20 +67,20 @@ void ScalpelEngine::showCityCutscene() {
 	_animation->playPrologue("26open1", 1, 255, true, 2);
 
 	// TODO
+	return true;
 }
 
-void ScalpelEngine::showAlleyCutscene() {
-
+bool ScalpelEngine::showAlleyCutscene() {
+	return true;
 }
 
-void ScalpelEngine::showStreetCutscene() {
-
+bool ScalpelEngine::showStreetCutscene() {
+	return true;
 }
 
-void ScalpelEngine::showOfficeCutscene() {
-
+bool ScalpelEngine::showOfficeCutscene() {
+	return true;
 }
-
 
 } // End of namespace Scalpel
 

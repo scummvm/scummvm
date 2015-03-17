@@ -30,13 +30,12 @@
 
 namespace Sherlock {
 
-enum { RLE_ENCODED = 0x0100 };
-
 struct SpriteFrame {
 	uint32 _size;
 	uint16 _width, _height;
 	int _flags;
-	Common::Point _offset;
+	bool _rleEncoded;
+	Common::Point _position;
 	byte _rleMarker;
 	Graphics::Surface _frame;
 };

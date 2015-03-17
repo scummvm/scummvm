@@ -46,16 +46,16 @@ void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
 		SpriteFrame frame;
 		frame._width = stream.readUint16LE() + 1;
 		frame._height = stream.readUint16LE() + 1;
-		frame._flags = stream.readUint16LE();
-        stream.readUint16LE();
+		frame._flags = stream.readByte();
+		frame._position.x = stream.readUint16LE();
+		frame._position.y = stream.readByte();
         
-		if (skipPal)
-			frame._flags = 0;
+		frame._rleEncoded = !skipPal && (frame._position.x == 1);
 
 		if (frame._flags & 0xFF) {
 			// Nibble packed frame data
 			frame._size = (frame._width * frame._height) / 2;
-		} else if (frame._flags & RLE_ENCODED) {
+		} else if (frame._rleEncoded) {
             // this size includes the header size, which we subtract
 			frame._size = stream.readUint16LE() - 11;
 			frame._rleMarker = stream.readByte();
@@ -78,6 +78,7 @@ void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
  * Gets the palette at the start of the sprite file
  */
 void Sprite::loadPalette(Common::SeekableReadStream &stream) {
+	// Read in the palette
 	int v1 = stream.readUint16LE() + 1;
 	int v2 = stream.readUint16LE() + 1;
 	int size = v1 * v2;
@@ -95,7 +96,7 @@ void Sprite::decompressFrame(SpriteFrame &frame, const byte *src) {
 
 	if (frame._flags & 0xFF) {
 	    debug("TODO: Sprite::decompressFrame() 4-bits/pixel\n");
-	} else if (frame._flags & RLE_ENCODED) {
+	} else if (frame._rleEncoded) {
 		// RLE encoded
 	    byte *dst = (byte *)frame._frame.getPixels();
 

@@ -63,6 +63,7 @@ void Screen::setFont(int fontNumber) {
 }
 
 void Screen::update() {
+	g_system->copyRectToScreen(getPixels(), this->w, 0, 0, this->w, this->h);
 	g_system->updateScreen();
 }
 
@@ -72,6 +73,31 @@ void Screen::getPalette(byte palette[PALETTE_SIZE]) {
 
 void Screen::setPalette(const byte palette[PALETTE_SIZE]) {
 	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
+}
+
+int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
+	int total = 0;
+	byte tempPalette[PALETTE_SIZE];
+	getPalette(tempPalette);
+
+	// For any palette component that doesn't already match the given destination
+	// palette, change by 1 towards the reference palette component
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx) {
+		if (tempPalette[idx] > palette[idx])
+		{
+			--tempPalette[idx];
+			++total;
+		} else if (tempPalette[idx] < palette[idx]) {
+			++tempPalette[idx];
+			++total;
+		}
+	}
+
+	if (total > 0)
+		// Palette changed, so reload it
+		setPalette(tempPalette);
+
+	return total;
 }
 
 void Screen::fadeToBlack() {

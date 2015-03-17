@@ -59,6 +59,8 @@ public:
 
 	void setPalette(const byte palette[PALETTE_SIZE]);
 
+	int equalizePalette(const byte palette[PALETTE_SIZE]);
+
 	void fadeToBlack();
 };
 

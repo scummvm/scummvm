@@ -31,10 +31,10 @@ namespace Scalpel {
 
 class ScalpelEngine : public SherlockEngine {
 private:
-	void showCityCutscene();
-	void showAlleyCutscene();
-	void showStreetCutscene();
-	void showOfficeCutscene();
+	bool showCityCutscene();
+	bool showAlleyCutscene();
+	bool showStreetCutscene();
+	bool showOfficeCutscene();
 protected:
 	virtual void initialize();
 
