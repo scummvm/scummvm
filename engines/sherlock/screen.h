@@ -42,6 +42,7 @@ private:
 	SherlockEngine *_vm;
 	int _fontNumber;
 	Common::List<Common::Rect> _dirtyRects;
+	uint32 _transitionSeed;
 
 	void mergeDirtyRects();
 

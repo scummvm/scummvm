@@ -30,6 +30,7 @@ namespace Sherlock {
 Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), _vm(vm),
 		_backBuffer(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
 		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT) {
+	_transitionSeed = 1;
 	setFont(1);
 }
 
@@ -178,15 +179,23 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
  */
 void Screen::randomTransition() {
 	EventsManager &events = *_vm->_events;
+	const int TRANSITION_MULTIPLIER = 0x15a4e35;
+	_dirtyRects.clear();
 
 	for (int idx = 0; idx <= 65535; ++idx) {
-		int offset = _vm->getRandomNumber(this->w * this->h);
-		*((byte *)getPixels() + offset) = *((const byte *)_backBuffer.getPixels() + offset);
+		_transitionSeed = _transitionSeed * TRANSITION_MULTIPLIER + 1;
+		int offset = _transitionSeed & 65535;
+
+		if (offset < (SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT))
+			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer.getPixels() + offset);
 	
 		if (idx != 0 && (idx % 100) == 0) {
-			_dirtyRects.clear();
-			addDirtyRect(Common::Rect(0, 0, this->w, this->h));
-			events.delay(5);
+			// Ensure there's a full screen dirty rect for the next frame update
+			if (_dirtyRects.empty())
+				addDirtyRect(Common::Rect(0, 0, this->w, this->h));
+			
+			events.pollEvents();
+			events.delay(1);
 		}
 	}
 

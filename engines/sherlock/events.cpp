@@ -166,18 +166,32 @@ void EventsManager::wait(int numFrames) {
 }
 
 bool EventsManager::delay(uint32 time, bool interruptable) {
-	uint32 delayEnd = g_system->getMillis() + time;
+	// Different handling for really short versus extended times
+	if (time < 10) {
+		// For really short periods, simply delay by the desired amount
+		pollEvents();
+		g_system->delayMillis(time);
+		bool result = !(interruptable && (isKeyPressed() || _mouseClicked));
 
-	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
-		pollEventsAndWait();
+		clearEvents();
+		return result;
+	} else {
+		// For long periods go into a loop where we delay by 10ms at a time and then
+		// check for events. This ensures for longer delays that responsiveness is
+		// maintained
+		uint32 delayEnd = g_system->getMillis() + time;
 
-		if (interruptable && (isKeyPressed() || _mouseClicked)) {
-			clearEvents();
-			return false;
+		while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
+			pollEventsAndWait();
+
+			if (interruptable && (isKeyPressed() || _mouseClicked)) {
+				clearEvents();
+				return false;
+			}
 		}
-	}
 
-	return true;
+		return true;
+	}
 }
 
 /**
