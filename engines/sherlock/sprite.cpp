@@ -22,9 +22,25 @@
 
 #include "sherlock/sprite.h"
 #include "sherlock/screen.h"
+#include "sherlock/sherlock.h"
 #include "common/debug.h"
 
 namespace Sherlock {
+
+SherlockEngine *Sprite::_vm;
+
+void Sprite::setVm(SherlockEngine *vm) {
+	_vm = vm;
+}
+
+Sprite::Sprite(const Common::String &name, bool skipPal) {
+	Common::SeekableReadStream *stream = _vm->_res->load(name);
+	
+	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+	load(*stream, skipPal);
+	
+	delete stream;
+}
 
 Sprite::Sprite(Common::SeekableReadStream &stream, bool skipPal) {
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
@@ -39,7 +55,7 @@ Sprite::~Sprite() {
 /**
  * Load the data of the sprite
  */
-void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
+void Sprite::load(Common::SeekableReadStream &stream, bool skipPalette) {
 	loadPalette(stream);
 
     while (stream.pos() < stream.size()) {
@@ -50,7 +66,7 @@ void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
 		frame._position.x = stream.readUint16LE();
 		frame._position.y = stream.readByte();
         
-		frame._rleEncoded = !skipPal && (frame._position.x == 1);
+		frame._rleEncoded = !skipPalette && (frame._position.x == 1);
 
 		if (frame._flags & 0xFF) {
 			// Nibble packed frame data
@@ -78,15 +94,20 @@ void Sprite::load(Common::SeekableReadStream &stream, bool skipPal) {
  * Gets the palette at the start of the sprite file
  */
 void Sprite::loadPalette(Common::SeekableReadStream &stream) {
-	// Read in the palette
+	// Check for palette
 	int v1 = stream.readUint16LE() + 1;
 	int v2 = stream.readUint16LE() + 1;
 	int size = v1 * v2;
-	assert((size - 12) == PALETTE_SIZE);
-
-	stream.seek(4 + 12, SEEK_CUR);
-	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
-		_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
+	
+	if ((size - 12) == PALETTE_SIZE) {
+		// Found palette, so read it in
+		stream.seek(4 + 12, SEEK_CUR);
+		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+			_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
+	} else {
+		// Not a palette, so rewind to start of frame data for normal frame processing
+		stream.seek(-4, SEEK_CUR);
+	}
 }
 
 /**

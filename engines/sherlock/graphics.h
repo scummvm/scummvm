@@ -35,8 +35,12 @@ public:
     Surface(uint16 width, uint16 height);
     ~Surface();
 
+	void blitFrom(const Graphics::Surface &src);
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
-	void transBlitFrom(const Graphics::Surface &src, const Common::Point &pt);
+	void blitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		const Common::Rect &srcBounds);
+	void transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		bool flipped = false, int overrideColor = 0);
 
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 };

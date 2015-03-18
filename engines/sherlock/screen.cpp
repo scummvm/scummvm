@@ -28,7 +28,7 @@
 namespace Sherlock {
 
 Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), _vm(vm),
-		_backBuffer1(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
+		_backBuffer(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
 		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT) {
 	setFont(1);
 }
@@ -94,27 +94,30 @@ int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 	return total;
 }
 
-void Screen::fadeToBlack() {
-	const int FADE_AMOUNT = 2;
-	bool repeatFlag;
-	byte *srcP;
-	int count;
+/**
+ * Fade out the palette to black
+ */
+void Screen::fadeToBlack(int speed) {
 	byte tempPalette[PALETTE_SIZE];
+	Common::fill(&tempPalette[0], &tempPalette[PALETTE_SIZE], 0);
 
-	getPalette(tempPalette);
-	do {
-		repeatFlag = false;
-		for (srcP = &tempPalette[0], count = 0; count < PALETTE_SIZE; ++count, ++srcP) {
-			int v = *srcP;
-			if (v) {
-				repeatFlag = true;
-				*srcP = MAX(*srcP - FADE_AMOUNT, 0);
-			}
-		}
+	while (equalizePalette(tempPalette)) {
+		_vm->_events->delay(15 * speed);
+	}
 
-		setPalette(tempPalette);
-		_vm->_events->pollEventsAndWait();
-	} while (repeatFlag && !_vm->shouldQuit());
+	setPalette(tempPalette);
+}
+
+/**
+ * Fade in a given palette
+ */
+void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
+	int count = 50;
+	while (equalizePalette(palette) && --count) {
+		_vm->_events->delay(15 * speed);
+	}
+
+	setPalette(palette);
 }
 
 /**
@@ -168,6 +171,52 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
 	destRect.extend(src2);
 
 	return !destRect.isEmpty();
+}
+
+/**
+ * Do a random pixel transition in from _backBuffer surface to the screen
+ */
+void Screen::randomTransition() {
+	EventsManager &events = *_vm->_events;
+
+	for (int idx = 0; idx <= 65535; ++idx) {
+		int offset = _vm->getRandomNumber(this->w * this->h);
+		*((byte *)getPixels() + offset) = *((const byte *)_backBuffer.getPixels() + offset);
+	
+		if (idx != 0 && (idx % 100) == 0) {
+			_dirtyRects.clear();
+			addDirtyRect(Common::Rect(0, 0, this->w, this->h));
+			events.delay(5);
+		}
+	}
+
+	// Make sure everything has been transferred
+	blitFrom(_backBuffer);
+}
+
+/**
+ * Transition to the surface from _backBuffer using a vertical transition
+ */
+void Screen::verticalTransition() {
+	EventsManager &events = *_vm->_events;
+
+	byte table[SHERLOCK_SCREEN_WIDTH];
+	Common::fill(&table[0], &table[SHERLOCK_SCREEN_WIDTH], 0);
+	
+	for (int yp = 0; yp < SHERLOCK_SCREEN_HEIGHT; ++yp) {		
+		for (int xp = 0; xp < SHERLOCK_SCREEN_WIDTH; ++xp) {
+			int temp = (table[xp] >= 197) ? SHERLOCK_SCREEN_HEIGHT - table[xp] : 
+				_vm->getRandomNumber(3) + 1;
+
+			if (temp) {
+				blitFrom(_backBuffer, Common::Point(xp, table[xp]),
+					Common::Rect(xp, table[xp], xp + 1, table[xp] + temp));
+				table[xp] += temp;
+			}
+		}
+
+		events.delay(10);
+	}
 }
 
 } // End of namespace Sherlock

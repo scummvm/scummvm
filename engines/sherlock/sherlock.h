@@ -26,9 +26,10 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/endian.h"
-#include "common/util.h"
-#include "common/savefile.h"
 #include "common/hash-str.h"
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/util.h"
 #include "engines/engine.h"
 #include "sherlock/animation.h"
 #include "sherlock/debugger.h"
@@ -79,6 +80,7 @@ public:
 	Screen *_screen;
 	Sound *_sound;
 	Talk *_talk;
+	Common::RandomSource _randomSource;
 	Common::Array<bool> _flags;
 	Common::String _soundOverride;
 	Common::String _titleOverride;
@@ -96,6 +98,8 @@ public:
 	Common::Platform getPlatform() const;
 
 	Common::String getGameFile(int fileType);
+
+	int getRandomNumber(int limit) { return _randomSource.getRandomNumber(limit - 1); }
 };
 
 } // End of namespace Sherlock

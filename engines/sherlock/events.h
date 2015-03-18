@@ -75,7 +75,9 @@ public:
 
 	void clearEvents();
 
-	void delay(int amount);
+	void wait(int numFrames);
+
+	bool delay(uint32 time, bool interruptable = false);
 
 	void waitForNextFrame();
 

@@ -158,17 +158,26 @@ void EventsManager::clearEvents() {
 }
 
 /**
- * Delay for a given number of cycles, where each cycle is 1/60th of a second
+ * Delay for a given number of game frames, where each frame is 1/60th of a second
  */
-void EventsManager::delay(int cycles) {
-	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;
-	uint32 delayEnd = g_system->getMillis() + totalMilli;
+void EventsManager::wait(int numFrames) {
+	uint32 totalMilli = numFrames * 1000 / GAME_FRAME_RATE;
+	delay(totalMilli);
+}
+
+bool EventsManager::delay(uint32 time, bool interruptable) {
+	uint32 delayEnd = g_system->getMillis() + time;
 
 	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
-		g_system->delayMillis(10);
+		pollEventsAndWait();
 
-		pollEvents();
+		if (interruptable && (isKeyPressed() || _mouseClicked)) {
+			clearEvents();
+			return false;
+		}
 	}
+
+	return true;
 }
 
 /**
@@ -183,7 +192,7 @@ void EventsManager::waitForNextFrame() {
 
 	uint32 frameCtr = getFrameCounter();
 	while (!_vm->shouldQuit() && frameCtr == _frameCounter) {
-		delay(1);
+		pollEventsAndWait();
 
 		mouseClicked |= _mouseClicked;
 		mouseButtons |= _mouseButtons;

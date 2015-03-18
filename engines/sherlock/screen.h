@@ -41,7 +41,6 @@ class Screen : public Surface {
 private:
 	SherlockEngine *_vm;
 	int _fontNumber;
-	Surface _backBuffer1, _backBuffer2;
 	Common::List<Common::Rect> _dirtyRects;
 
 	void mergeDirtyRects();
@@ -49,6 +48,8 @@ private:
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 protected:
 	virtual void addDirtyRect(const Common::Rect &r);
+public:
+	Surface _backBuffer, _backBuffer2;
 public:
 	Screen(SherlockEngine *vm);
 
@@ -62,7 +63,13 @@ public:
 
 	int equalizePalette(const byte palette[PALETTE_SIZE]);
 
-	void fadeToBlack();
+	void fadeToBlack(int speed = 2);
+
+	void fadeIn(const byte palette[PALETTE_SIZE], int speed = 2);
+
+	void randomTransition();
+
+	void verticalTransition();
 };
 
 } // End of namespace Sherlock

@@ -36,6 +36,13 @@ Surface::~Surface() {
 }
 
 /**
+ * Copy a surface into this one
+ */
+void Surface::blitFrom(const Graphics::Surface &src) {
+	blitFrom(src, Common::Point(0, 0));
+}
+
+/**
  * Draws a surface at a given position within this surface
  */
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
@@ -59,18 +66,25 @@ void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
 		drawRect.bottom -= (bottom - this->h);
 	}
 
-	if (drawRect.isValidRect()) {
-		addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
-			destPt.y + drawRect.height()));
-		copyRectToSurface(src, destPt.x, destPt.y, drawRect);
-	}
+	if (drawRect.isValidRect())
+		blitFrom(src, destPt, drawRect);
 }
 
+/**
+ * Draws a sub-section of a surface at a given position within this surface
+ */
+void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		const Common::Rect &srcBounds) {
+	addDirtyRect(Common::Rect(pt.x, pt.y, pt.x + srcBounds.width(),
+		pt.y + srcBounds.height()));
+	copyRectToSurface(src, pt.x, pt.y, srcBounds);
+}
 
 /**
 * Draws a surface at a given position within this surface with transparency
 */
-void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt) {
+void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
+		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Point destPt = pt;
 
@@ -94,18 +108,25 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	if (!drawRect.isValidRect())
 		return;
 
+	if (flipped)
+		drawRect = Common::Rect(src.w - drawRect.right, src.h - drawRect.bottom,
+			src.w - drawRect.left, src.h - drawRect.top);
+
 	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
 		destPt.y + drawRect.height()));
 
 	// Draw loop
 	const int TRANSPARENCY = 0xFF;
 	for (int yp = 0; yp < drawRect.height(); ++yp) {
-		const byte *srcP = (const byte *)src.getBasePtr(drawRect.left, drawRect.top + yp);
+		const byte *srcP = (const byte *)src.getBasePtr(
+			flipped ? drawRect.right : drawRect.left, drawRect.top + yp);
 		byte *destP = (byte *)getBasePtr(destPt.x, destPt.y + yp);
 
-		for (int xp = 0; xp < drawRect.width(); ++xp, ++srcP, ++destP) {
+		for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
 			if (*srcP != TRANSPARENCY)
-				*destP = *srcP;
+				*destP = overrideColor ? overrideColor : *srcP;
+
+			srcP = flipped ? srcP - 1 : srcP + 1;
 		}
 	}
 }

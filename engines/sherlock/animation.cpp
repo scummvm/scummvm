@@ -95,10 +95,9 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
-	Common::SeekableReadStream *vdaStream = _vm->_res->load(vdaName);
-	Sprite sprite(*vdaStream, true);
+	Sprite sprite(vdaName, true);
 	
-	events.delay(minDelay);
+	events.wait(minDelay);
 	if (fade != 0 && fade != 255)
 		screen.fadeToBlack();
 
@@ -150,7 +149,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 					sound.playSound(fname);
 			}
 
-			events.delay(speed);
+			events.wait(speed);
 		}
 
 		if (events.isKeyPressed()) {

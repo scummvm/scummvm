@@ -30,6 +30,8 @@
 
 namespace Sherlock {
 
+class SherlockEngine;
+
 struct SpriteFrame {
 	uint32 _size;
 	uint16 _width, _height;
@@ -38,18 +40,24 @@ struct SpriteFrame {
 	Common::Point _position;
 	byte _rleMarker;
 	Graphics::Surface _frame;
+
+	operator Graphics::Surface &() { return _frame; }
 };
 
 class Sprite: public Common::Array<SpriteFrame> {
 private:
-	void load(Common::SeekableReadStream &stream, bool skipPal);
+	static SherlockEngine *_vm;
+
+	void load(Common::SeekableReadStream &stream, bool skipPalette);
 	void loadPalette(Common::SeekableReadStream &stream);
 	void decompressFrame(SpriteFrame  &frame, const byte *src);
 public:
 	byte _palette[256 * 3];
 public:
-    Sprite(Common::SeekableReadStream &stream, bool skipPal = false);
+	Sprite(const Common::String &name, bool skipPal = false);
+	Sprite(Common::SeekableReadStream &stream, bool skipPal = false);
     ~Sprite();
+	static void setVm(SherlockEngine *vm);
 };
 
 } // End of namespace Sherlock

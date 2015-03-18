@@ -29,7 +29,7 @@
 namespace Sherlock {
 
 SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc) {
+		Engine(syst), _gameDescription(gameDesc), _randomSource("Sherlock") {
 	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
@@ -82,6 +82,7 @@ void SherlockEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new Sound(this);
 	_talk = new Talk();
+	Sprite::setVm(this);
 }
 
 Common::Error SherlockEngine::run() {
