@@ -44,6 +44,7 @@ AdlibChannel::AdlibChannel() {
 	_field4 = 0;
 	_sampleIndex = 0;
 	_volume = 0;
+	_volumeOffset = 0;
 	_field7 = 0;
 	_field8 = 0;
 	_field9 = 0;
@@ -61,7 +62,6 @@ AdlibChannel::AdlibChannel() {
 	_field19 = 0;
 	_soundData = nullptr;
 	_field1D = 0;
-	_field1E = 0;
 	_field1F = 0;
 
 	_field20 = 0;
@@ -97,6 +97,7 @@ void AdlibChannel::setPtr2(byte *pData) {
 void AdlibChannel::load(byte *pData) {
 	_ptr1 = _pSrc = _ptr3 = pData;
 	_ptr4 = _soundData = pData;
+	_volumeOffset = 0;
 	_fieldA = 0xFF;
 	_activeCount = 1;
 	_fieldD = 64;
@@ -104,7 +105,7 @@ void AdlibChannel::load(byte *pData) {
 	_field1F = 0;
 	_field2 = _field3 = 0;
 	_volume = _field7 = 0;
-	_field1D = _field1E = 0;
+	_field1D = 0;
 	_fieldE = 0;
 	_field9 = 0;
 	_fieldB = 0;
@@ -117,7 +118,7 @@ void AdlibChannel::load(byte *pData) {
 
 void AdlibChannel::check(byte *nullPtr) {
 	if (_activeCount && _fieldE) {
-		if (!_field1E) {
+		if (!_volumeOffset) {
 			_pSrc = nullPtr;
 			_fieldE = 0;
 		} else {
@@ -166,6 +167,7 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 	_samplePtr = nullptr;
 	_frameCounter = 0;
 	_isDisabled = false;
+	_masterVolume = 255;
 	_v1 = 0;
 	_v2 = 0;
 	_activeChannelNumber = 0;
@@ -540,7 +542,7 @@ void ASound::pollActiveChannel() {
 						chan->_field1 = 0;
 						chan->_field2 = chan->_field3 = 0;
 						chan->_volume = chan->_field7 = 0;
-						chan->_field1D = chan->_field1E = 0;
+						chan->_field1D = chan->_volumeOffset = 0;
 						chan->_field8 = 0;
 						chan->_field9 = 0;
 						chan->_fieldB = 0;
@@ -615,7 +617,7 @@ void ASound::pollActiveChannel() {
 						if (chan->_fieldE) {
 							chan->_pSrc += 2;
 						} else {
-							chan->_field1E = *pSrc >> 1;
+							chan->_volumeOffset = *pSrc >> 1;
 							updateFlag = true;
 							chan->_pSrc += 2;
 						}
@@ -659,7 +661,7 @@ void ASound::pollActiveChannel() {
 			if (!--chan->_field9) {
 				chan->_field9 = chan->_fieldA;
 				if (chan->_field2) {
-					int8 newVal = (int8)chan->_field2 + (int8)chan->_field1E;
+					int8 newVal = (int8)chan->_field2 + (int8)chan->_volumeOffset;
 					if (newVal < 0) {
 						chan->_field9 = 0;
 						newVal = 0;
@@ -668,7 +670,7 @@ void ASound::pollActiveChannel() {
 						newVal = 63;
 					}
 
-					chan->_field1E = newVal;
+					chan->_volumeOffset = newVal;
 					updateFlag = true;
 				}
 			}
@@ -755,7 +757,8 @@ static const int outputChannels[] = {
 void ASound::updateActiveChannel() {
 	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2 + 1]];
 	int portVal = _ports[reg] & 0xFFC0;
-	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_field1E, 0, 63);
+	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_volumeOffset, 0, 63);
+	newVolume = newVolume * _masterVolume / 255;
 
 	// Note: Original had a whole block not seeming to be used, since the initialisation
 	// sets a variable to 5660h, and doesn't change it, so the branch is never taken
@@ -855,6 +858,12 @@ int ASound::readBuffer(int16 *buffer, const int numSamples) {
 		buffer += render;
 	}
 	return numSamples;
+}
+
+void ASound::setVolume(int volume) {
+	_masterVolume = volume;
+	if (!volume)
+		command0();
 }
 
 int ASound::command0() {
@@ -1014,22 +1023,22 @@ int ASound1::command10() {
 
 int ASound1::command11() {
 	command111213();
-	_channels[0]._field1E = 0;
-	_channels[1]._field1E = 0;
+	_channels[0]._volumeOffset = 0;
+	_channels[1]._volumeOffset = 0;
 	return 0;
 }
 
 int ASound1::command12() {
 	command111213();
-	_channels[0]._field1E = 40;
-	_channels[1]._field1E = 0;
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 0;
 	return 0;
 }
 
 int ASound1::command13() {
 	command111213();
-	_channels[0]._field1E = 40;
-	_channels[1]._field1E = 50;
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 50;
 	return 0;
 }
 

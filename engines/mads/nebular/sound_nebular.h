@@ -70,7 +70,7 @@ public:
 	int _field19;
 	byte *_soundData;
 	int _field1D;
-	int _field1E;
+	int _volumeOffset;
 	int _field1F;
 
 	// TODO: Only used by asound.003. Figure out usage
@@ -146,6 +146,7 @@ class ASound : public Audio::AudioStream {
 private:
 	Common::List<CachedDataEntry> _dataCache;
 	uint16 _randomSeed;
+	int _masterVolume;
 
 	/**
 	 * Does the initial Adlib initialisation
@@ -382,6 +383,11 @@ public:
 	 * Return sample rate
 	 */
 	virtual int getRate() const { return 11025; }
+
+	/**
+	 * Set the volume
+	 */
+	void setVolume(int volume);
 };
 
 class ASound1 : public ASound {
