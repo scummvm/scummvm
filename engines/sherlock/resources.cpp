@@ -41,43 +41,57 @@ bool Cache::isCached(const Common::String &filename) const {
  * If the file is LZW compressed, automatically decompresses it and loads
  * the uncompressed version into memory
  */
-void Cache::load(const Common::String &filename) {
+void Cache::load(const Common::String &name) {
 	// First check if the entry already exists
-	if (_resources.contains(filename))
+	if (_resources.contains(name))
 		return;
-
-	// Allocate a new cache entry
-	_resources[filename] = CacheEntry();
-	CacheEntry &cacheEntry = _resources[filename];
 
 	// Open the file for reading
 	Common::File f;
-	if (!f.open(filename))
-		error("Could not read file - %s", filename.c_str());
+	if (!f.open(name))
+		error("Could not read file - %s", name.c_str());
+
+	load(name, f);
+
+	f.close();
+}
+
+/**
+ * Load a cache entry based on a passed stream
+ */
+void Cache::load(const Common::String &name, Common::SeekableReadStream &stream) {
+	// First check if the entry already exists
+	if (_resources.contains(name))
+		return;
 
 	// Check whether the file is compressed
 	const char LZW_HEADER[5] = { "LZV\x1a" };
 	char header[5];
-	f.read(header, 5);
+	stream.read(header, 5);
 	bool isCompressed = !strncmp(header, LZW_HEADER, 5);
-	f.seek(0);
+	stream.seek(0);
+
+	// Allocate a new cache entry
+	_resources[name] = CacheEntry();
+	CacheEntry &cacheEntry = _resources[name];
 
 	if (isCompressed) {
 		// It's compressed, so decompress the file and store it's data in the cache entry
-		Common::SeekableReadStream *decompressed = decompressLZ(f);
+		Common::SeekableReadStream *decompressed = decompressLZ(stream);
 		cacheEntry.resize(decompressed->size());
 		decompressed->read(&cacheEntry[0], decompressed->size());
 
 		delete decompressed;
 	} else {
 		// It's not, so read the raw data of the file into the cache entry
-		cacheEntry.resize(f.size());
-		f.read(&cacheEntry[0], f.size());
+		cacheEntry.resize(stream.size());
+		stream.read(&cacheEntry[0], stream.size());
 	}
-
-	f.close();
 }
 
+/**
+ * Get a file from the cache
+ */
 Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 	// Return a memory stream that encapsulates the data
 	const CacheEntry &cacheEntry = _resources[filename];
@@ -96,7 +110,6 @@ Resources::Resources() {
 	addToCache("portrait.lib");
 }
 
-
 /**
  * Adds the specified file to the cache. If it's a library file, takes care of
  * loading it's index for future use
@@ -109,6 +122,18 @@ void Resources::addToCache(const Common::String &filename) {
 	uint32 header = stream->readUint32BE();
 	if (header == MKTAG('L', 'I', 'B', 26))
 		loadLibraryIndex(filename, stream);
+
+	delete stream;
+}
+
+/**
+ * Adds a resource from a library file tot he cache
+ */
+void Resources::addToCache(const Common::String &filename, const Common::String &libFilename) {
+	// Get the resource
+	Common::SeekableReadStream *stream = load(filename, libFilename);
+
+	_cache.load(filename, *stream);
 
 	delete stream;
 }

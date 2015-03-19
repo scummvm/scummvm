@@ -27,8 +27,8 @@ namespace Sherlock {
 Rooms::Rooms() {
 	for (int roomNum = 0; roomNum < ROOMS_COUNT; ++roomNum)
 		Common::fill(&_stats[roomNum][0], &_stats[roomNum][9], false);
-
 	_goToRoom = -1;
+	_oldCharPoint = 0;
 }
 
 } // End of namespace Sherlock

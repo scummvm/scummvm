@@ -51,6 +51,7 @@ protected:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Surface _backBuffer, _backBuffer2;
+	bool _fadeStyle;
 public:
 	Screen(SherlockEngine *vm);
 

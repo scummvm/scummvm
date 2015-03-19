@@ -40,8 +40,9 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_sound = nullptr;
 	_talk = nullptr;
 	_useEpilogue2 = false;
+	_hsavedPos = Common::Point(-1, -1);
+	_hsavedFs = -1;
 }
-
 
 SherlockEngine::~SherlockEngine() {
 	delete _animation;
@@ -73,11 +74,11 @@ void SherlockEngine::initialize() {
 	_midi->setNativeMT32(native_mt32);
 	*/
 
+	_res = new Resources();
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_journal = new Journal();
-	_res = new Resources();
 	_rooms = new Rooms();
 	_screen = new Screen(this);
 	_sound = new Sound(this);
@@ -90,8 +91,15 @@ Common::Error SherlockEngine::run() {
 
 	showOpening();
 
-	// TODO: Rest of game
-	
+	while (!shouldQuit()) {
+		// Prepare for scene, and handle any game-specific scenes
+		startScene();
+
+		// TODO: Implement game and remove this dummy loop
+		while (!shouldQuit())
+			_events->pollEventsAndWait();
+	}
+
 	return Common::kNoError;
 }
 

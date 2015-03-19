@@ -31,6 +31,7 @@ Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCR
 		_backBuffer(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
 		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT) {
 	_transitionSeed = 1;
+	_fadeStyle = false;
 	setFont(1);
 }
 

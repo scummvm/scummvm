@@ -57,6 +57,7 @@ public:
 	bool isCached(const Common::String &filename) const;
 
 	void load(const Common::String &name);
+	void load(const Common::String &name, Common::SeekableReadStream &stream);
 
 	Common::SeekableReadStream *get(const Common::String &filename) const;
 };
@@ -72,6 +73,8 @@ public:
 	Resources();
 
 	void addToCache(const Common::String &filename);
+	void addToCache(const Common::String &filename, const Common::String &libFilename);
+	bool isInCache(const Common::String &filename) const { return _cache.isCached(filename); }
 
 	Common::SeekableReadStream *load(const Common::String &filename);
 

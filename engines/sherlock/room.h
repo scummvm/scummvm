@@ -94,6 +94,9 @@ public:
 	bool _stats[ROOMS_COUNT][9];
 	bool _savedStats[ROOMS_COUNT][9];
 	int _goToRoom;
+	Common::Point _bigPos;
+	Common::Point _overPos;
+	int _oldCharPoint;
 public:
 	Rooms();
 };

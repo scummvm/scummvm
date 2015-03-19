@@ -26,10 +26,9 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/stack.h"
+#include "sherlock/sprite.h"
 
 namespace Sherlock {
-
-enum CursorType { CURSOR_NONE = 0 };
 
 #define GAME_FRAME_RATE 60
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
@@ -42,10 +41,11 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
+	Sprite *_cursorSprites;
 
 	bool checkForNextFrameCounter();
 public:
-	CursorType _cursorId;
+	int _cursorIndex;
 	byte _mouseButtons;
 	bool _mouseClicked;
 	Common::Stack<Common::KeyState> _pendingKeys;
@@ -53,7 +53,9 @@ public:
 	EventsManager(SherlockEngine *vm);
 	~EventsManager();
 
-	void setCursor(CursorType cursorId);
+	void loadCursors(const Common::String &filename);
+
+	void changeCursor(int cursorIndex);
 
 	void showCursor();
 

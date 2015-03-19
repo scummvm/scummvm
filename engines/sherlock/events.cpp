@@ -32,7 +32,8 @@ namespace Sherlock {
 
 EventsManager::EventsManager(SherlockEngine *vm) {
 	_vm = vm;
-	_cursorId = CURSOR_NONE;
+	_cursorSprites = nullptr;
+	_cursorIndex = -1;
 	_frameCounter = 1;
 	_priorFrameTime = 0;
 	_mouseClicked = false;
@@ -40,15 +41,30 @@ EventsManager::EventsManager(SherlockEngine *vm) {
 }
 
 EventsManager::~EventsManager() {
+	delete _cursorSprites;
+}
+
+/**
+ * Load a set of cursors from the specified file
+ */
+void EventsManager::loadCursors(const Common::String &filename) {
+	hideCursor();
+	delete _cursorSprites;
+
+	_cursorSprites = new Sprite(filename);
 }
 
 /**
  * Set the cursor to show
  */
-void EventsManager::setCursor(CursorType cursorId) {
-	_cursorId = cursorId;
+void EventsManager::changeCursor(int cursorIndex) {
+	_cursorIndex = cursorIndex;
 
-	// TODO: Cursor handling
+	// Set the cursor data
+	Graphics::Surface &s = (*_cursorSprites)[cursorIndex];
+	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, s.w / 2, s.h / 2, 0xff);
+
+	showCursor();
 }
 
 /**

@@ -69,6 +69,8 @@ protected:
 	virtual void initialize();
 
 	virtual void showOpening() = 0;
+
+	virtual void startScene() {}
 public:
 	const SherlockGameDescription *_gameDescription;
 	Animation *_animation;
@@ -85,6 +87,8 @@ public:
 	Common::String _soundOverride;
 	Common::String _titleOverride;
 	bool _useEpilogue2;
+	Common::Point _hsavedPos;
+	int _hsavedFs;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

@@ -29,6 +29,7 @@ Sound::Sound(SherlockEngine *vm): _vm(vm) {
 	_musicEnabled = true;
 	_voicesEnabled = true;
 	_playingEpilogue = false;
+	_music = false;
 }
 
 void Sound::playSound(const Common::String &name, WaitType waitType) {
@@ -56,6 +57,19 @@ void Sound::playMusic(const Common::String &name) {
 }
 
 void Sound::stopMusic() {
+	// TODO
+}
+
+int Sound::loadSong(int songNumber) {
+	// TODO
+	return 0;
+}
+
+void Sound::startSong() {
+	// TODO
+}
+
+void Sound::freeSong() {
 	// TODO
 }
 

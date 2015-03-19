@@ -42,6 +42,7 @@ public:
 	bool _musicEnabled;
 	bool _voicesEnabled;
 	bool _playingEpilogue;
+	bool _music;
 public:
 	Sound(SherlockEngine *vm);
 
@@ -50,6 +51,9 @@ public:
 	void playCachedSound(int index);
 	void clearCache();
 	void stopSound();
+	int loadSong(int songNumber);
+	void startSong();
+	void freeSong();
 	
 	void playMusic(const Common::String &name);
 	void stopMusic();

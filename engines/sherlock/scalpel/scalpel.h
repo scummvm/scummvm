@@ -31,17 +31,25 @@ namespace Scalpel {
 
 class ScalpelEngine : public SherlockEngine {
 private:
+	int _tempFadeStyle;
+	int _chessResult;
+
 	bool showCityCutscene();
 	bool showAlleyCutscene();
 	bool showStreetCutscene();
 	bool showOfficeCutscene();
+
+	int doChessBoard();
+
+	void playDarts();
 protected:
 	virtual void initialize();
 
 	virtual void showOpening();
+
+	virtual void startScene();
 public:
-	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc) {}
+	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~ScalpelEngine() {}
 };
 
