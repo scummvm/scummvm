@@ -24,6 +24,8 @@
 #define SHERLOCK_SCALPEL_H
 
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/chess.h"
+#include "sherlock/scalpel/darts.h"
 
 namespace Sherlock {
 
@@ -31,6 +33,8 @@ namespace Scalpel {
 
 class ScalpelEngine : public SherlockEngine {
 private:
+	Chess *_chess;
+	Darts *_darts;
 	int _tempFadeStyle;
 	int _chessResult;
 
@@ -38,10 +42,6 @@ private:
 	bool showAlleyCutscene();
 	bool showStreetCutscene();
 	bool showOfficeCutscene();
-
-	int doChessBoard();
-
-	void playDarts();
 protected:
 	virtual void initialize();
 
@@ -50,7 +50,7 @@ protected:
 	virtual void startScene();
 public:
 	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~ScalpelEngine() {}
+	virtual ~ScalpelEngine();
 };
 
 } // End of namespace Scalpel

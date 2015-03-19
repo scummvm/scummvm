@@ -35,7 +35,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_events = nullptr;
 	_journal = nullptr;
 	_res = nullptr;
-	_rooms = nullptr;
+	_scene = nullptr;
 	_screen = nullptr;
 	_sound = nullptr;
 	_talk = nullptr;
@@ -50,7 +50,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _events;
 	delete _journal;
 	delete _res;
-	delete _rooms;
+	delete _scene;
 	delete _screen;
 	delete _sound;
 	delete _talk;
@@ -79,7 +79,7 @@ void SherlockEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_journal = new Journal();
-	_rooms = new Rooms();
+	_scene = new Scene(this);
 	_screen = new Screen(this);
 	_sound = new Sound(this);
 	_talk = new Talk();
@@ -94,6 +94,8 @@ Common::Error SherlockEngine::run() {
 	while (!shouldQuit()) {
 		// Prepare for scene, and handle any game-specific scenes
 		startScene();
+		if (shouldQuit())
+			break;
 
 		// TODO: Implement game and remove this dummy loop
 		while (!shouldQuit())

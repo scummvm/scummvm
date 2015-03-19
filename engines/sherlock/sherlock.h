@@ -36,7 +36,7 @@
 #include "sherlock/events.h"
 #include "sherlock/journal.h"
 #include "sherlock/resources.h"
-#include "sherlock/room.h"
+#include "sherlock/scene.h"
 #include "sherlock/screen.h"
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
@@ -78,7 +78,7 @@ public:
 	EventsManager *_events;
 	Journal *_journal;
 	Resources *_res;
-	Rooms *_rooms;
+	Scene *_scene;
 	Screen *_screen;
 	Sound *_sound;
 	Talk *_talk;

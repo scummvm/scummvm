@@ -20,15 +20,26 @@
  *
  */
 
-#include "sherlock/room.h"
+#ifndef SHERLOCK_DARTS_H
+#define SHERLOCK_DARTS_H
 
 namespace Sherlock {
 
-Rooms::Rooms() {
-	for (int roomNum = 0; roomNum < ROOMS_COUNT; ++roomNum)
-		Common::fill(&_stats[roomNum][0], &_stats[roomNum][9], false);
-	_goToRoom = -1;
-	_oldCharPoint = 0;
-}
+namespace Scalpel {
+
+class ScalpelEngine;
+
+class Darts {
+private:
+	ScalpelEngine *_vm;
+public:
+	Darts(ScalpelEngine *vm) : _vm(vm) {}
+
+	void playDarts();
+};
+
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
+
+#endif

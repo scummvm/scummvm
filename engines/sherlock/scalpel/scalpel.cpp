@@ -29,8 +29,15 @@ namespace Scalpel {
 
 ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {
+	_chess = nullptr;
+	_darts = nullptr;
 	_tempFadeStyle = 0;
 	_chessResult = 0;
+}
+
+ScalpelEngine::~ScalpelEngine() {
+	delete _chess;
+	delete _darts;
 }
 
 /**
@@ -39,12 +46,15 @@ ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameD
 void ScalpelEngine::initialize() {
 	SherlockEngine::initialize();
 
+	_chess = new Chess(this);
+	_darts = new Darts(this);
+
 	_flags.resize(100 * 8);
 	_flags[3] = true;		// Turn on Alley
 	_flags[39] = true;		// Turn on Baker Street
 
-	// Starting room
-	_rooms->_goToRoom = 4;
+	// Starting scene
+	_scene->_goToRoom = 4;
 }
 
 /**
@@ -151,20 +161,11 @@ bool ScalpelEngine::showOfficeCutscene() {
 	return true;
 }
 
-int ScalpelEngine::doChessBoard() {
-	// TODO
-	return 0;
-}
-
-void ScalpelEngine::playDarts() {
-	// TODO
-}
-
 /**
  * Starting a scene within the game
  */
 void ScalpelEngine::startScene() {
-	if (_rooms->_goToRoom == 100 || _rooms->_goToRoom == 98) {
+	if (_scene->_goToRoom == 100 || _scene->_goToRoom == 98) {
 		// Chessboard selection
 		if (_sound->_musicEnabled) {
 			if (_sound->loadSong(100)) {
@@ -173,7 +174,7 @@ void ScalpelEngine::startScene() {
 			}
 		}
 
-		_rooms->_goToRoom = doChessBoard();
+		_scene->_goToRoom = _chess->doChessBoard();
 
 		_sound->freeSong();
 		_hsavedPos = Common::Point(-1, -1);
@@ -186,17 +187,17 @@ void ScalpelEngine::startScene() {
 	// 53: Moorehead's death / subway train
 	// 55: Fade out and exit 
 	// 70: Brumwell suicide
-	switch (_rooms->_goToRoom) {
+	switch (_scene->_goToRoom) {
 	case 2:
 	case 52:
 	case 53:
 	case 70:
-		if (_sound->_musicEnabled && _sound->loadSong(_rooms->_goToRoom)) {
+		if (_sound->_musicEnabled && _sound->loadSong(_scene->_goToRoom)) {
 			if (_sound->_music)
 				_sound->startSong();
 		}
 
-		switch (_rooms->_goToRoom) {
+		switch (_scene->_goToRoom) {
 		case 2:
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
@@ -265,31 +266,31 @@ void ScalpelEngine::startScene() {
 		}
 
 		// Except for the Moorehead Murder scene, fade to black first
-		if (_rooms->_goToRoom != 53) {
+		if (_scene->_goToRoom != 53) {
 			_events->wait(40);
 			_screen->fadeToBlack(3);
 		}
 
-		switch (_rooms->_goToRoom) {
+		switch (_scene->_goToRoom) {
 		case 52:
-			_rooms->_goToRoom = 27;			// Go to the Lawyer's Office
-			_rooms->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_rooms->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
-			_rooms->_oldCharPoint = 27;
+			_scene->_goToRoom = 27;			// Go to the Lawyer's Office
+			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
+			_scene->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
+			_scene->_oldCharPoint = 27;
 			break;
 
 		case 53:
-			_rooms->_goToRoom = 17;			// Go to St. Pancras Station
-			_rooms->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_rooms->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
-			_rooms->_oldCharPoint = 17;
+			_scene->_goToRoom = 17;			// Go to St. Pancras Station
+			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
+			_scene->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
+			_scene->_oldCharPoint = 17;
 			break;
 
 		default:
-			_rooms->_goToRoom = 4;			// Back to Baker st.
-			_rooms->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_rooms->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
-			_rooms->_oldCharPoint = 4;
+			_scene->_goToRoom = 4;			// Back to Baker st.
+			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
+			_scene->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
+			_scene->_oldCharPoint = 4;
 			break;
 		}
 
@@ -310,13 +311,13 @@ void ScalpelEngine::startScene() {
 	_events->loadCursors("rmouse.vgs");
 	_events->changeCursor(0);
 
-	if (_rooms->_goToRoom == 99) {
+	if (_scene->_goToRoom == 99) {
 		// Chess Board
-		playDarts();
-		_chessResult = _rooms->_goToRoom = 19;	// Go back to the bar
+		_darts->playDarts();
+		_chessResult = _scene->_goToRoom = 19;	// Go back to the bar
 	}
 
-	_chessResult = _rooms->_goToRoom;
+	_chessResult = _scene->_goToRoom;
 }
 
 } // End of namespace Scalpel

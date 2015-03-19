@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,40 +20,17 @@
  *
  */
 
-#include "sherlock/debugger.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/darts.h"
+#include "sherlock/scalpel/scalpel.h"
 
 namespace Sherlock {
 
-Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, cmd_scene));
+namespace Scalpel {
+
+void Darts::playDarts() {
+	// TODO
 }
 
-static int strToInt(const char *s) {
-	if (!*s)
-		// No string at all
-		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
-		// Standard decimal string
-		return atoi(s);
+} // End of namespace Scalpel
 
-	// Hexadecimal string
-	uint tmp = 0;
-	int read = sscanf(s, "%xh", &tmp);
-	if (read < 1)
-		error("strToInt failed on string \"%s\"", s);
-	return (int)tmp;
-}
-
-bool Debugger::cmd_scene(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Format: scene <room>\n");
-		return true;
-	} else {
-		_vm->_scene->_goToRoom = strToInt(argv[1]);
-		return false;
-	}
-}
-
-} // End of namespace Sherlock
+} // End of namespace Scalpel
