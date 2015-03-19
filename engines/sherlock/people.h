@@ -20,44 +20,36 @@
  *
  */
 
-#ifndef SHERLOCK_SPRITE_H
-#define SHERLOCK_SPRITE_H
+#ifndef SHERLOCK_PEOPLE_H
+#define SHERLOCK_PEOPLE_H
 
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/stream.h"
-#include "graphics/surface.h"
+#include "common/scummsys.h"
+#include "sherlock/sprites.h"
 
 namespace Sherlock {
 
-class SherlockEngine;
+#define MAX_PEOPLE 2
+#define PLAYER 0
 
-struct SpriteFrame {
-	uint32 _size;
-	uint16 _width, _height;
-	int _flags;
-	bool _rleEncoded;
-	Common::Point _position;
-	byte _rleMarker;
-	Graphics::Surface _frame;
-
-	operator Graphics::Surface &() { return _frame; }
+// Animation sequence identifiers for characters
+enum {
+	WALK_RIGHT = 0, WALK_DOWN = 1, WALK_LEFT = 2, WALK_UP = 3, STOP_LEFT = 4,
+	STOP_DOWN  = 5, STOP_RIGHT = 6, STOP_UP = 7, WALK_UPRIGHT = 8,
+	WALK_DOWNRIGHT = 9, WALK_UPLEFT = 10, WALK_DOWNLEFT = 11,
+	STOP_UPRIGHT = 12, STOP_UPLEFT = 13, STOP_DOWNRIGHT = 14,
+	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4
 };
 
-class Sprite: public Common::Array<SpriteFrame> {
-private:
-	static SherlockEngine *_vm;
+class SherlockEngine;
 
-	void load(Common::SeekableReadStream &stream, bool skipPalette);
-	void loadPalette(Common::SeekableReadStream &stream);
-	void decompressFrame(SpriteFrame  &frame, const byte *src);
+class People {
+private:
+	SherlockEngine *_vm;
+	Sprite _data[MAX_PEOPLE];
 public:
-	byte _palette[256 * 3];
-public:
-	Sprite(const Common::String &name, bool skipPal = false);
-	Sprite(Common::SeekableReadStream &stream, bool skipPal = false);
-    ~Sprite();
-	static void setVm(SherlockEngine *vm);
+	People(SherlockEngine *vm);
+
+	void reset();
 };
 
 } // End of namespace Sherlock

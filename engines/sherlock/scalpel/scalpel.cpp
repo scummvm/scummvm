@@ -83,18 +83,18 @@ bool ScalpelEngine::showCityCutscene() {
 	bool finished = _animation->playPrologue("26open1", 1, 255, true, 2);
 
 	if (finished) {
-		Sprite titleSprites("title2.vgs", true);
+		ImageFile titleImages("title2.vgs", true);
 		_screen->_backBuffer.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 
 		// London, England
-		_screen->_backBuffer.transBlitFrom(titleSprites[0], Common::Point(10, 11));
+		_screen->_backBuffer.transBlitFrom(titleImages[0], Common::Point(10, 11));
 		_screen->randomTransition();
 		finished = _events->delay(1000, true);
 
 		// November, 1888
 		if (finished) {
-			_screen->_backBuffer.transBlitFrom(titleSprites[1], Common::Point(101, 102));
+			_screen->_backBuffer.transBlitFrom(titleImages[1], Common::Point(101, 102));
 			_screen->randomTransition();
 			finished = _events->delay(5000, true);
 		}
@@ -108,16 +108,16 @@ bool ScalpelEngine::showCityCutscene() {
 		finished = _animation->playPrologue("26open2", 1, 0, false, 2);
 
 	if (finished) {
-		Sprite titleSprites("title.vgs", true);
+		ImageFile titleImages("title.vgs", true);
 		_screen->_backBuffer.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 		
 		// The Lost Files of
-		_screen->_backBuffer.transBlitFrom(titleSprites[0], Common::Point(75, 6));
+		_screen->_backBuffer.transBlitFrom(titleImages[0], Common::Point(75, 6));
 		// Sherlock Holmes
-		_screen->_backBuffer.transBlitFrom(titleSprites[1], Common::Point(34, 21));
+		_screen->_backBuffer.transBlitFrom(titleImages[1], Common::Point(34, 21));
 		// copyright
-		_screen->_backBuffer.transBlitFrom(titleSprites[2], Common::Point(4, 190));
+		_screen->_backBuffer.transBlitFrom(titleImages[2], Common::Point(4, 190));
 
 		_screen->verticalTransition();
 		finished = _events->delay(4000, true);
@@ -135,7 +135,7 @@ bool ScalpelEngine::showCityCutscene() {
 
 		if (finished) {
 			// In the alley...
-			_screen->transBlitFrom(titleSprites[3], Common::Point(72, 51));
+			_screen->transBlitFrom(titleImages[3], Common::Point(72, 51));
 			_screen->fadeIn(palette, 3);
 			finished = _events->delay(3000, true);
 		}

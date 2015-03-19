@@ -22,7 +22,6 @@
 
 #include "sherlock/animation.h"
 #include "sherlock/sherlock.h"
-#include "sherlock/sprite.h"
 #include "common/algorithm.h"
 
 namespace Sherlock {
@@ -95,7 +94,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
-	Sprite sprite(vdaName, true);
+	ImageFile images(vdaName, true);
 	
 	events.wait(minDelay);
 	if (fade != 0 && fade != 255)
@@ -103,37 +102,37 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 
 	if (setPalette) {
 		if (fade != 255)
-			screen.setPalette(sprite._palette);
+			screen.setPalette(images._palette);
 	}
 
 	int frameNumber = 0;
-	int spriteFrame;
+	int imageFrame;
 	Common::Point pt;
 	bool skipped = false;
 	while (!_vm->shouldQuit()) {
 		// Get the next sprite to display
-		spriteFrame = stream->readSint16LE();
+		imageFrame = stream->readSint16LE();
 
-		if (spriteFrame == -2) {
+		if (imageFrame == -2) {
 			// End of animation reached
 			break;
-		} else if (spriteFrame != -1) {
+		} else if (imageFrame != -1) {
 			// Read position from either animation stream or the sprite frame itself
-			if (spriteFrame < 0) {
-				spriteFrame += 32769;
+			if (imageFrame < 0) {
+				imageFrame += 32769;
 				pt.x = stream->readUint16LE();
 				pt.y = stream->readUint16LE();
 			} else {
-				pt = sprite[spriteFrame]._position;
+				pt = images[imageFrame]._position;
 			}
 
 			// Draw the sprite
-			screen.transBlitFrom(sprite[spriteFrame]._frame, pt);
+			screen.transBlitFrom(images[imageFrame]._frame, pt);
 		} else {
 			// No sprite to show for this animation frame
 			if (fade == 255) {
 				// Gradual fade in
-				if (screen.equalizePalette(sprite._palette) == 0)
+				if (screen.equalizePalette(images._palette) == 0)
 					fade = 0;
 			}
 

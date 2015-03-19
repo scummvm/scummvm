@@ -12,12 +12,13 @@ MODULE_OBJS = \
 	events.o \
 	graphics.o \
 	journal.o \
+	people.o \
 	resources.o \
 	scene.o \
 	screen.o \
 	sherlock.o \
 	sound.o \
-	sprite.o \
+	sprites.o \
 	talk.o
 
 # This module can be built as a plugin

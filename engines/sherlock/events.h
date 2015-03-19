@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/stack.h"
-#include "sherlock/sprite.h"
+#include "sherlock/resources.h"
 
 namespace Sherlock {
 
@@ -41,7 +41,7 @@ private:
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
-	Sprite *_cursorSprites;
+	ImageFile *_cursorImages;
 
 	bool checkForNextFrameCounter();
 public:

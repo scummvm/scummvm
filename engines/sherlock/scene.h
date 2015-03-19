@@ -24,7 +24,7 @@
 #define SHERLOCK_SCENE_H
 
 #include "common/scummsys.h"
-#include "sherlock/sprite.h"
+#include "sherlock/resources.h"
 
 namespace Sherlock {
 
@@ -35,6 +35,8 @@ class SherlockEngine;
 class Scene {
 private:
 	SherlockEngine *_vm;
+
+	void loadScene();
 public:
 	bool _stats[SCENES_COUNT][9];
 	bool _savedStats[SCENES_COUNT][9];
@@ -42,12 +44,17 @@ public:
 	Common::Point _bigPos;
 	Common::Point _overPos;
 	int _oldCharPoint;
-	Sprite *_controlSprites;
+	ImageFile *_controls;
 	int _numExits;
+	bool _windowOpen, _infoFlag;
+	int _menuMode, _keyboardInput;
+	int _oldKey, _help, _oldHelp;
+	int _oldTemp, _temp;
 public:
 	Scene(SherlockEngine *vm);
-
 	~Scene();
+
+	void selectScene();
 };
 
 } // End of namespace Sherlock

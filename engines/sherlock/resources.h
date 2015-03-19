@@ -27,8 +27,10 @@
 #include "common/file.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "graphics/surface.h"
 
 namespace Sherlock {
 
@@ -83,6 +85,33 @@ public:
 	int resourceIndex() const;
 };
 
+struct ImageFrame {
+	uint32 _size;
+	uint16 _width, _height;
+	int _flags;
+	bool _rleEncoded;
+	Common::Point _position;
+	byte _rleMarker;
+	Graphics::Surface _frame;
+
+	operator Graphics::Surface &() { return _frame; }
+};
+
+class ImageFile : public Common::Array<ImageFrame> {
+private:
+	static SherlockEngine *_vm;
+
+	void load(Common::SeekableReadStream &stream, bool skipPalette);
+	void loadPalette(Common::SeekableReadStream &stream);
+	void decompressFrame(ImageFrame  &frame, const byte *src);
+public:
+	byte _palette[256 * 3];
+public:
+	ImageFile(const Common::String &name, bool skipPal = false);
+	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
+	~ImageFile();
+	static void setVm(SherlockEngine *vm);
+};
 
 } // End of namespace Sherlock
 

@@ -35,6 +35,7 @@
 #include "sherlock/debugger.h"
 #include "sherlock/events.h"
 #include "sherlock/journal.h"
+#include "sherlock/people.h"
 #include "sherlock/resources.h"
 #include "sherlock/scene.h"
 #include "sherlock/screen.h"
@@ -77,6 +78,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_events;
 	Journal *_journal;
+	People *_people;
 	Resources *_res;
 	Scene *_scene;
 	Screen *_screen;

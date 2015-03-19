@@ -74,6 +74,7 @@ void SherlockEngine::initialize() {
 	_midi->setNativeMT32(native_mt32);
 	*/
 
+	ImageFile::setVm(this);
 	_res = new Resources();
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
@@ -83,7 +84,6 @@ void SherlockEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new Sound(this);
 	_talk = new Talk();
-	Sprite::setVm(this);
 }
 
 Common::Error SherlockEngine::run() {
@@ -96,6 +96,9 @@ Common::Error SherlockEngine::run() {
 		startScene();
 		if (shouldQuit())
 			break;
+
+		// Initialize the scene
+		_scene->selectScene();
 
 		// TODO: Implement game and remove this dummy loop
 		while (!shouldQuit())

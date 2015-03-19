@@ -20,37 +20,8 @@
  *
  */
 
-#include "sherlock/scene.h"
+#include "sherlock/sprites.h"
 
 namespace Sherlock {
-
-Scene::Scene(SherlockEngine *vm): _vm(vm) {
-	for (int idx = 0; idx < SCENES_COUNT; ++idx)
-		Common::fill(&_stats[idx][0], &_stats[idx][9], false);
-	_goToRoom = -1;
-	_oldCharPoint = 0;
-	_numExits = 0;
-	_windowOpen = _infoFlag = false;
-	_menuMode = _keyboardInput = 0;
-
-	_controls = nullptr; // new ImageFile("menu.all");
-}
-
-Scene::~Scene() {
-	delete _controls;
-}
-
-void Scene::selectScene() {
-	// Reset fields
-	_numExits = 0;
-	_windowOpen = _infoFlag = false;
-	_menuMode = _keyboardInput = 0;
-	_oldKey = _help = _oldHelp = 0;
-	_oldTemp = _temp = 0;
-
-	// Set up player
-
-
-}
 
 } // End of namespace Sherlock

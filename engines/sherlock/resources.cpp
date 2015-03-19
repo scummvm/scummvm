@@ -22,6 +22,8 @@
 
 #include "sherlock/resources.h"
 #include "sherlock/decompress.h"
+#include "sherlock/screen.h"
+#include "sherlock/sherlock.h"
 #include "common/debug.h"
 
 namespace Sherlock {
@@ -239,6 +241,125 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
  */
 int Resources::resourceIndex() const {
 	return _resourceIndex;
+}
+
+/*----------------------------------------------------------------*/
+
+SherlockEngine *ImageFile::_vm;
+
+void ImageFile::setVm(SherlockEngine *vm) {
+	_vm = vm;
+}
+
+ImageFile::ImageFile(const Common::String &name, bool skipPal) {
+	Common::SeekableReadStream *stream = _vm->_res->load(name);
+	
+	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+	load(*stream, skipPal);
+	
+	delete stream;
+}
+
+ImageFile::ImageFile(Common::SeekableReadStream &stream, bool skipPal) {
+	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+	load(stream, skipPal);
+}
+
+ImageFile::~ImageFile() {
+	for (uint idx = 0; idx < size(); ++idx)
+		(*this)[idx]._frame.free();
+}
+
+/**
+ * Load the data of the sprite
+ */
+void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette) {
+	loadPalette(stream);
+
+    while (stream.pos() < stream.size()) {
+		ImageFrame frame;
+		frame._width = stream.readUint16LE() + 1;
+		frame._height = stream.readUint16LE() + 1;
+		frame._flags = stream.readByte();
+		frame._position.x = stream.readUint16LE();
+		frame._position.y = stream.readByte();
+        
+		frame._rleEncoded = !skipPalette && (frame._position.x == 1);
+
+		if (frame._flags & 0xFF) {
+			// Nibble packed frame data
+			frame._size = (frame._width * frame._height) / 2;
+		} else if (frame._rleEncoded) {
+            // this size includes the header size, which we subtract
+			frame._size = stream.readUint16LE() - 11;
+			frame._rleMarker = stream.readByte();
+        } else {
+			// Uncompressed data
+			frame._size = frame._width * frame._height;
+        }
+
+		// Load data for frame and decompress it
+		byte *data = new byte[frame._size];
+		stream.read(data, frame._size);
+        decompressFrame(frame, data);		
+		delete data;
+
+		push_back(frame);
+    }
+}
+
+/**
+ * Gets the palette at the start of the sprite file
+ */
+void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
+	// Check for palette
+	int v1 = stream.readUint16LE() + 1;
+	int v2 = stream.readUint16LE() + 1;
+	int size = v1 * v2;
+	
+	if ((size - 12) == PALETTE_SIZE) {
+		// Found palette, so read it in
+		stream.seek(4 + 12, SEEK_CUR);
+		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+			_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
+	} else {
+		// Not a palette, so rewind to start of frame data for normal frame processing
+		stream.seek(-4, SEEK_CUR);
+	}
+}
+
+/**
+ * Decompress a single frame for the sprite
+ */
+void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
+	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
+
+	if (frame._flags & 0xFF) {
+	    error("TODO: ImageFile::decompressFrame() 4-bits/pixel\n");
+	} else if (frame._rleEncoded) {
+		// RLE encoded
+	    byte *dst = (byte *)frame._frame.getPixels();
+
+		int size = frame._width * frame._height;
+		while (size > 0) {
+			if (*src == frame._rleMarker) {
+			    byte rleColor = src[1];
+			    byte rleCount = src[2];
+			    src += 3;
+			    size -= rleCount;
+			    while (rleCount--)
+			        *dst++ = rleColor;
+			} else {
+				*dst++ = *src++;
+				--size;
+			}
+		}
+		assert(size == 0);
+	} else {
+		// Uncompressed frame
+		Common::copy(src, src + frame._width * frame._height,
+			(byte *)frame._frame.getPixels());
+	}
 }
 
 } // End of namespace Sherlock
