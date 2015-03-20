@@ -2501,6 +2501,29 @@ static const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
 	PATCH_END
 };
 
+// In Ulence Flats, there is a space ship, that you will use at some point.
+//  Near that space ship are 2 force field generators.
+//  When you look at the top of those generators, the game will crash.
+//  This happens also in Sierra SCI. It's caused by a jump, that goes out of bounds.
+//  We currently do not know if this was caused by a compiler glitch or if it was a developer error.
+//  Anyway we patch this glitchy code, so that the game won't crash anymore.
+//
+// Applies to at least: English Floppy
+// Responsible method: radar1::doVerb
+// Fixes bug: #6816
+static const uint16 sq1vgaSignatureUlenceFlatsGeneratorGlitch[] = {
+	SIG_MAGICDWORD, 0x1a,               // eq?
+	0x30, SIG_UINT16(0xcdf4),           // bnt absolute 0xf000
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchUlenceFlatsGeneratorGlitch[] = {
+	PATCH_ADDTOOFFSET(+1),
+	0x32, PATCH_UINT16(0x0000),         // jmp 0x0000 (waste bytes)
+	PATCH_END
+};
+
+// No documentation for this patch (TODO)
 static const uint16 sq1vgaSignatureEgoShowsCard[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(timesShownID), // push "timesShownID"
@@ -2625,6 +2648,7 @@ static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
+	{  true,    45, "Ulence Flats: force field generator glitch",  1, sq1vgaSignatureUlenceFlatsGeneratorGlitch,  sq1vgaPatchUlenceFlatsGeneratorGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
 	SCI_SIGNATUREENTRY_TERMINATOR
