@@ -49,8 +49,30 @@ enum SpriteType {
 	HIDE_SHAPE = 8				// Object needs to be hidden
 };
 
+enum AType {
+	OBJECT		= 0,
+	PERSON		= 1,
+	SOLID		= 2,
+	TALK		= 3,  // Standard talk zone
+	FLAG_SET	= 4,
+	DELTA		= 5,
+	WALK_AROUND	= 6,
+	TALK_EVERY	= 7,  // Talk zone that turns on every room visit
+	TALK_MOVE	= 8,  // Talk zone that only activates when Holmes moves
+	PAL_CHANGE	= 9,  // Changes the palette down so that it gets darker
+	PAL_CHANGE2	= 10, // Same as PAL_CHANGE, except that it goes up
+	SCRIPT_ZONE	= 11, // If this is clicked in, it is activated
+	BLANK_ZONE	= 12, // This masks out other objects when entered
+	NOWALK_ZONE = 13  // Player cannot walk here
+};
+
 #define MAX_HOLMES_SEQUENCE 16
 #define MAX_FRAME 30
+
+// code put into sequences to defines 1-10 type seqs
+#define SEQ_TO_CODE 67			
+#define FLIP_CODE (64 + 128)
+#define SOUND_CODE (34 + 128)
 
 struct Sprite {
 	Common::String _name;				// Name
@@ -131,7 +153,7 @@ struct Object {
 	int _maxFrames;					// Number of frames
 	int _flags;						// Tells if object can be walked behind
 	ActionType _aOpen;				// Holds data for moving object
-	int _aType;						// Tells if this is an object, person, talk, etc.
+	AType _aType;					// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
 	int _seqCounter;				// How many times this sequence has been executed
 	Common::Point _lookPosition;	// Where to walk when examining object
@@ -147,6 +169,8 @@ struct Object {
 	UseType _use[4];
 
 	void synchronize(Common::SeekableReadStream &s);
+
+	void toggleHidden();
 };
 
 struct CAnim {

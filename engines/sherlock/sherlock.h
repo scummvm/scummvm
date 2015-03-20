@@ -59,6 +59,7 @@ enum {
 
 #define SHERLOCK_SCREEN_WIDTH 320
 #define SHERLOCK_SCREEN_HEIGHT 200
+#define SHERLOCK_SCENE_HEIGHT 138
 
 struct SherlockGameDescription;
 
@@ -91,6 +92,7 @@ public:
 	bool _useEpilogue2;
 	Common::Point _hsavedPos;
 	int _hsavedFs;
+	bool _justLoaded;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

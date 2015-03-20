@@ -34,6 +34,7 @@ namespace Sherlock {
 #define PALETTE_SIZE 768
 #define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define INFO_BLACK 1
 
 class SherlockEngine;
 
@@ -52,6 +53,8 @@ protected:
 public:
 	Surface _backBuffer, _backBuffer2;
 	bool _fadeStyle;
+	byte _cMap[PALETTE_SIZE];
+	byte _sMap[PALETTE_SIZE];
 public:
 	Screen(SherlockEngine *vm);
 

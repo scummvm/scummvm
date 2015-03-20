@@ -46,18 +46,47 @@ void BgfileheaderInfo::synchronize(Common::SeekableReadStream &s) {
 	_filename = Common::String(buffer);
 }
 
-int _fSize;					// How long images are
-int _maxFrames;				// How many unique frames in object
-Common::String _filename;	// Filename of object
+/*----------------------------------------------------------------*/
+
+void Exit::synchronize(Common::SeekableReadStream &s) {
+	_position.x = s.readSint16LE();
+	_position.y = s.readSint16LE();
+	_size.x = s.readSint16LE();
+	_size.y = s.readSint16LE();
+	_scene = s.readSint16LE();
+	_allow = s.readSint16LE();
+	_people.x = s.readSint16LE();
+	_people.y = s.readSint16LE();
+	_peopleDir = s.readUint16LE();
+}
+
+/*----------------------------------------------------------------*/
+
+void SceneEntry::synchronize(Common::SeekableReadStream &s) {
+	_startPosition.x = s.readSint16LE();
+	_startPosition.y = s.readSint16LE();
+	_startDir = s.readByte();
+	_allow = s.readByte();
+}
+
+void SceneSound::synchronize(Common::SeekableReadStream &s) {
+	char buffer[9];
+	s.read(buffer, 8);
+	buffer[8] = '\0';
+
+	_name = Common::String(buffer);
+	_priority = s.readByte();
+}
 
 /*----------------------------------------------------------------*/
 
 Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
 		Common::fill(&_stats[idx][0], &_stats[idx][9], false);
+	_currentScene = -1;
 	_goToRoom = -1;
+	_changes = false;
 	_oldCharPoint = 0;
-	_numExits = 0;
 	_windowOpen = _infoFlag = false;
 	_menuMode = _keyboardInput = 0;
 	_walkedInScene = false;
@@ -66,10 +95,12 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_lzwMode = false;
 	_invGraphicItems = 0;
 
+	_controlPanel = new ImageFile("controls.vgs");
 	_controls = nullptr; // new ImageFile("menu.all");
 }
 
 Scene::~Scene() {
+	delete _controlPanel;
 	delete _controls;
 	clear();
 }
@@ -78,13 +109,10 @@ Scene::~Scene() {
  * Takes care of clearing any scene data
  */
 void Scene::clear() {
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx)
-		delete _bgShapes[idx]._images;
 }
 
 void Scene::selectScene() {
 	// Reset fields
-	_numExits = 0;
 	_windowOpen = _infoFlag = false;
 	_menuMode = _keyboardInput = 0;
 	_oldKey = _help = _oldHelp = 0;
@@ -93,6 +121,7 @@ void Scene::selectScene() {
 	// Load the scene
 	Common::String sceneFile = Common::String::format("res%02d", _goToRoom);
 	Common::String roomName = Common::String::format("res%02d.rrm", _goToRoom);
+	_currentScene = _goToRoom;
 	_goToRoom = -1;
 
 	loadScene(sceneFile);
@@ -108,6 +137,8 @@ void Scene::selectScene() {
  * that it should point to after loading; _misc is then set to 0.
  */
 void Scene::loadScene(const Common::String &filename) {
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
 	bool flag;
 
 	_walkedInScene = false;
@@ -240,10 +271,159 @@ void Scene::loadScene(const Common::String &filename) {
 		// Back at version byte, so skip over it
 		rrmStream->skip(1);
 
-		// TODO
+		// Load the walk directory
+		for (int idx1 = 0; idx1 < MAX_ZONES; ++idx1) {
+			for (int idx2 = 0; idx2 < MAX_ZONES; ++idx2)
+				_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
+		}
+
+		// Read in the walk data
+		size = rrmStream->readUint16LE();
+		Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
+			decompressLZ(*rrmStream, size);
+
+		_walkData.resize(size);
+		walkStream->read(&_walkData[0], size);
+
+		if (_lzwMode)
+			delete walkStream;
+
+		// Read in the exits
+		int numExits = rrmStream->readByte();
+		_exits.resize(numExits);
+
+		for (int idx = 0; idx < numExits; ++idx)
+			_exits[idx].synchronize(*rrmStream);
+
+		// Read in the entrance
+		_entrance.synchronize(*rrmStream);
+
+		// Initialize sound list
+		int numSounds = rrmStream->readByte();
+		_sounds.resize(numSounds);
+
+		for (int idx = 0; idx < numSounds; ++idx)
+			_sounds[idx].synchronize(*rrmStream);
+
+		// If sound is turned on, load the sounds into memory
+		if (sound._sfxEnabled) {
+			for (int idx = 0; idx < numSounds; ++idx) {
+				sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
+				_sounds[idx]._name = "";
+			}
+		}
+
+		// Read in palette
+		rrmStream->read(screen._cMap, PALETTE_SIZE);
+		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+			screen._cMap[idx] = VGA_COLOR_TRANS(screen._cMap[idx]);
+		
+		Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
+
+		// Read in the background
+		Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
+			decompressLZ(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+
+		bgStream->read(screen._backBuffer.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+
+		if (_lzwMode)
+			delete bgStream;
+
+		// Set the palette
+		screen._backBuffer2.blitFrom(screen._backBuffer);
+		screen.setPalette(screen._cMap);
 
 		delete rrmStream;
 	}
+
+	// Clear user interface area and draw controls
+	screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
+	screen._backBuffer.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+	screen._backBuffer2.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+
+	_changes = false;
+	checkSceneStatus();
+
+	if (!_vm->_justLoaded) {
+		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+			if (_bgShapes[idx]._type == HIDDEN && _bgShapes[idx]._aType == TALK_EVERY)
+				_bgShapes[idx].toggleHidden();
+		}
+
+		// Check for TURNON objects
+		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+			if (_bgShapes[idx]._type == HIDDEN && (_bgShapes[idx]._flags & 0x20))
+				_bgShapes[idx].toggleHidden();
+		}
+
+		// Check for TURNOFF objects
+		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & 0x40) &&
+					_bgShapes[idx]._type != INVALID)
+				_bgShapes[idx].toggleHidden();
+		}
+	}
+
+	checkSceneFlags(false);
+	checkInventory();
+
+	// TODO
+}
+
+/**
+ * Set objects to their current persistent state. This includes things such as
+ * opening or moving them
+ */
+void Scene::checkSceneStatus() {
+	if (_stats[_currentScene][8]) {
+		for (int idx = 0; idx < 8; ++idx) {
+			int val = _stats[_currentScene][idx];
+
+			for (int bit = 0; bit < 8; ++bit) {
+				uint objNumber = idx * 8 + bit;
+				if (objNumber < _bgShapes.size()) {
+					Object &obj = _bgShapes[objNumber];
+
+					if (val & 1) {
+						// No shape to erase, so flag as hidden
+						obj._type = HIDDEN;
+					} else if (obj._images == nullptr || obj._images->size() == 0) {
+						// No shape
+						obj._type = NO_SHAPE;
+					} else {
+						obj._type = ACTIVE_BG_SHAPE;
+					}
+				} else {
+					// Finished checks
+					return;
+				}
+
+				val >>= 1;
+			}
+		}
+	}
+}
+
+/**
+ * Check the scene's objects against the game flags. If false is passed,
+ * it means the scene has just been loaded. A value of true means that the scene
+ * is in use (ie. not just loaded)
+ */
+void Scene::checkSceneFlags(bool flag) {
+	int mode = mode ? HIDE_SHAPE : HIDDEN;
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &o = _bgShapes[idx];
+		// TODO: read_flags calls
+	}
+}
+
+/**
+ * Checks scene objects against the player's inventory items. If there are any
+ * matching names, it means the given item has already been picked up, and should
+ * be hidden in the scene.
+ */
+void Scene::checkInventory() {
 
 }
 

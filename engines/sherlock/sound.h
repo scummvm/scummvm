@@ -46,6 +46,7 @@ public:
 public:
 	Sound(SherlockEngine *vm);
 
+	void loadSound(const Common::String &name, int priority);
 	void playSound(const Common::String &name, WaitType waitType = WAIT_RETURN_IMMEDIATELY);
 	void cacheSound(const Common::String &name, int index);
 	void playCachedSound(int index);

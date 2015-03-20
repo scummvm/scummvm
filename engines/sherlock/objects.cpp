@@ -134,7 +134,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_maxFrames = s.readUint16LE();
 	_flags = s.readByte();	
 	_aOpen.synchronize(s);
-	_aType = s.readByte();
+	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
 	_seqCounter = s.readByte();
 	_lookPosition.x = s.readUint16LE();
@@ -153,6 +153,41 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	
 	for (int idx = 0; idx < 4; ++idx)
 		_use[idx].synchronize(s);
+}
+
+void Object::toggleHidden() {
+	if (_type != HIDDEN && _type != HIDE_SHAPE && _type != INVALID) {
+		if (_seqTo != 0)
+			_sequences[_frameNumber] = _seqTo + SEQ_TO_CODE + 128;
+		_seqTo = 0;
+
+		if (_images == nullptr || _images->size() == 0)
+			// No shape to erase, so flag as hidden
+			_type = HIDDEN;
+		else
+			// Otherwise, flag it to be hidden after it gets erased
+			_type = HIDE_SHAPE;
+	} else if (_type != INVALID) {
+		if (_seqTo != 0)
+			_sequences[_frameNumber] = _seqTo + SEQ_TO_CODE + 128;
+		_seqTo = 0;
+
+		_seqCounter = _seqcounter2 = 0;
+		_seqStack = 0;
+		_frameNumber = -1;
+
+		if (_images == nullptr || _images->size() == 0) {
+			_type = NO_SHAPE;
+		} else {
+			_type = ACTIVE_BG_SHAPE;
+			int idx = _sequences[0];
+			if (idx >= _maxFrames)
+				// Turn on: set up first frame
+				idx = 0;
+
+			_imageFrame = &(*_images)[idx];
+		}
+	}
 }
 
 /*----------------------------------------------------------------*/

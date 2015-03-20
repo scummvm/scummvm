@@ -32,6 +32,10 @@
 namespace Sherlock {
 
 #define SCENES_COUNT 63
+#define MAX_ZONES    40
+#define INFO_LINE   140
+#define CONTROLS_Y  138
+#define CONTROLS_Y1 151
 
 class SherlockEngine;
 
@@ -54,6 +58,33 @@ struct BgfileheaderInfo {
 	void synchronize(Common::SeekableReadStream &s);
 };
 
+struct Exit {
+	Common::Point _position;
+	Common::Point _size;
+
+	int _scene;
+	int _allow;
+	Common::Point _people;
+	int _peopleDir;
+
+	void synchronize(Common::SeekableReadStream &s);
+};
+
+struct SceneEntry {
+	Common::Point _startPosition;
+	int _startDir;
+	int _allow;
+
+	void synchronize(Common::SeekableReadStream &s);
+};
+
+struct SceneSound {
+	Common::String _name;
+	int _priority;
+
+	void synchronize(Common::SeekableReadStream &s);
+};
+
 class Scene {
 private:
 	SherlockEngine *_vm;
@@ -61,15 +92,23 @@ private:
 	void loadScene();
 
 	void loadScene(const Common::String &filename);
+
+	void checkSceneStatus();
+
+	void checkSceneFlags(bool mode);
+
+	void checkInventory();
 public:
+	int _currentScene;
+	int _goToRoom;
+	bool _changes;
 	bool _stats[SCENES_COUNT][9];
 	bool _savedStats[SCENES_COUNT][9];
-	int _goToRoom;
 	Common::Point _bigPos;
 	Common::Point _overPos;
 	int _oldCharPoint;
 	ImageFile *_controls;
-	int _numExits;
+	ImageFile *_controlPanel;
 	bool _windowOpen, _infoFlag;
 	int _menuMode, _keyboardInput;
 	int _oldKey, _help, _oldHelp;
@@ -86,6 +125,11 @@ public:
 	Common::Array<CAnim> _cAnim;
 	Common::Array<byte> _sequenceBuffer;
 	Common::Array<InvGraphicType> _inv;
+	int _walkDirectory[MAX_ZONES][MAX_ZONES];
+	Common::Array<byte> _walkData;
+	Common::Array<Exit> _exits;
+	SceneEntry _entrance;
+	Common::Array<SceneSound> _sounds;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();

@@ -32,6 +32,10 @@ Sound::Sound(SherlockEngine *vm): _vm(vm) {
 	_music = false;
 }
 
+void Sound::loadSound(const Common::String &name, int priority) {
+	// TODO
+}
+
 void Sound::playSound(const Common::String &name, WaitType waitType) {
 	// TODO
 }

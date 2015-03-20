@@ -43,6 +43,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_useEpilogue2 = false;
 	_hsavedPos = Common::Point(-1, -1);
 	_hsavedFs = -1;
+	_justLoaded = false;
 }
 
 SherlockEngine::~SherlockEngine() {
