@@ -104,8 +104,9 @@ struct UseType {
 struct Object {
 	Common::String _name;			// Name
 	Common::String _description;	// Description
-	Common::StringArray _examine;	// Examine in-depth description
-	uint8 (*_sequences)[MAX_HOLMES_SEQUENCE][MAX_FRAME];  // Holds animation sequences
+	Common::String _examine;		// Examine in-depth description
+	int _sequenceOffset;
+	uint8 *_sequences;				// Holds animation sequences
 	ImageFile *_images;				// Sprite images
 	ImageFrame *_imageFrame;		// Pointer to shape in the images
 	int _walkCount;					// Character walk counter
@@ -132,14 +133,14 @@ struct Object {
 	ActionType _aOpen;				// Holds data for moving object
 	int _aType;						// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
-	int _seqcounter;				// How many times this sequence has been executed
+	int _seqCounter;				// How many times this sequence has been executed
 	Common::Point _lookPosition;	// Where to walk when examining object
 	int _lookFacing;				// Direction to face when examining object
 	int _lookcAnim;
 	ActionType _aClose;
 	int _seqStack;					// Allows gosubs to return to calling frame
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
-	uint _descOfs;					// Tells where description starts in DescText
+	uint _descOffset;					// Tells where description starts in DescText
 	int _seqcounter2;				// Counter of calling frame sequence
 	uint _seqSize;					// Tells where description starts 
 	ActionType _aMove;
@@ -159,7 +160,17 @@ struct CAnim {
 	int _sequenceNumber;
 	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
 	int _teleportS;					// playing canim
+
+	void synchronize(Common::SeekableReadStream &s);
 };
+
+struct InvGraphicType {
+	ImageFile *_images;				// Object images
+	int _maxFrames;					// How many frames in object
+	int _filesize;					// File size
+
+	InvGraphicType();
+} ;
 
 } // End of namespace Sherlock
 

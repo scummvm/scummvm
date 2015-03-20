@@ -101,7 +101,10 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_sequences = nullptr;
 	_images = nullptr;
 	_imageFrame = nullptr;
-	s.seek(16, SEEK_CUR);
+
+	s.skip(4);
+	_sequenceOffset = s.readUint32LE();
+	s.seek(8, SEEK_CUR);
 
 	_walkCount = s.readByte();
 	_allow = s.readByte();
@@ -133,7 +136,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_aOpen.synchronize(s);
 	_aType = s.readByte();
 	_lookFrames = s.readByte();
-	_seqcounter = s.readByte();
+	_seqCounter = s.readByte();
 	_lookPosition.x = s.readUint16LE();
 	_lookPosition.y = s.readByte();
 	_lookFacing = s.readByte();
@@ -141,7 +144,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_aClose.synchronize(s);
 	_seqStack = s.readByte();
 	_seqTo = s.readByte();
-	_descOfs = s.readUint16LE();
+	_descOffset = s.readUint16LE();
 	_seqcounter2 = s.readByte();
 	_seqSize = s.readUint16LE();
 	s.skip(1);
@@ -150,6 +153,35 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	
 	for (int idx = 0; idx < 4; ++idx)
 		_use[idx].synchronize(s);
+}
+
+/*----------------------------------------------------------------*/
+
+void CAnim::synchronize(Common::SeekableReadStream &s) {
+	char buffer[12];
+	s.read(buffer, 12);
+	_name = Common::String(buffer);
+
+	s.read(_sequences, 30);
+	_position.x = s.readSint16LE();
+	_position.y = s.readSint16LE();
+	_size = s.readUint32LE();
+	_type = (SpriteType)s.readUint16LE();
+	_flags = s.readByte();
+	_goto.x = s.readSint16LE();
+	_goto.y = s.readSint16LE();
+	_sequenceNumber = s.readSint16LE();
+	_teleportPos.x = s.readSint16LE();
+	_teleportPos.y = s.readSint16LE();
+	_teleportS = s.readSint16LE();
+}
+
+/*----------------------------------------------------------------*/
+
+InvGraphicType::InvGraphicType() {
+	_images = nullptr;
+	_maxFrames = 0;
+	_filesize = 0;
 }
 
 } // End of namespace Sherlock

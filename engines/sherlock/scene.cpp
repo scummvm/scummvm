@@ -38,7 +38,7 @@ void BgFileHeader::synchronize(Common::SeekableReadStream &s) {
 /*----------------------------------------------------------------*/
 
 void BgfileheaderInfo::synchronize(Common::SeekableReadStream &s) {
-	_fSize = s.readUint32LE();
+	_filesize = s.readUint32LE();
 	_maxFrames = s.readByte();
 
 	char buffer[9];
@@ -71,6 +71,15 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 
 Scene::~Scene() {
 	delete _controls;
+	clear();
+}
+
+/**
+ * Takes care of clearing any scene data
+ */
+void Scene::clear() {
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx)
+		delete _bgShapes[idx]._images;
 }
 
 void Scene::selectScene() {
@@ -108,6 +117,7 @@ void Scene::loadScene(const Common::String &filename) {
 	_roomBounds.clear();
 	_roomBounds.push_back(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
+	clear();
 	_descText.clear();
 	_comments = "";
 	_bgShapes.clear();
@@ -131,8 +141,6 @@ void Scene::loadScene(const Common::String &filename) {
 		rrmStream->seek(rrmStream->readUint32LE());
 		BgFileHeader bgHeader;
 		bgHeader.synchronize(*rrmStream);
-
-		_cAnim.resize(bgHeader._numcAnimations);
 		_invGraphicItems = bgHeader._numImages + 1;
 
 		// Read in the shapes header info
@@ -142,20 +150,13 @@ void Scene::loadScene(const Common::String &filename) {
 		for (uint idx = 0; idx < bgInfo.size(); ++idx)
 			bgInfo[idx].synchronize(*rrmStream);
 
-		// Initialize the cAnim
-		for (uint idx = 0; idx < _cAnim.size(); ++idx) {
-			_cAnim[idx]._position.x = -1;
-			_cAnim[idx]._goto.x = -1;
-			_cAnim[idx]._teleportPos.x = -1;
-		}
-
 		// Read information
 		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
 			decompressLZ(*rrmStream, bgHeader._numImages * 569 + 
 				bgHeader._descSize + bgHeader._seqSize);
 
-		_bgShapes.resize(bgHeader._numStructs);
-		for (uint idx = 0; idx < _bgShapes.size(); ++idx)
+		_bgShapes.resize(bgHeader._numStructs + 1);
+		for (int idx = 0; idx < bgHeader._numStructs; ++idx)
 			_bgShapes[idx].synchronize(*infoStream);
 
 		if (bgHeader._descSize) {
@@ -171,11 +172,79 @@ void Scene::loadScene(const Common::String &filename) {
 		if (_lzwMode)
 			delete infoStream;
 
-		// Load shapes
+		// Set up inv list
+		_inv.resize(bgHeader._numImages + 1);
+		for (int idx = 0; idx < bgHeader._numImages; ++idx) {
+			_inv[idx + 1]._filesize = bgInfo[idx]._filesize;
+			_inv[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
+
+			// Read in the image data
+			Common::SeekableReadStream *imageStream = !_lzwMode ? rrmStream :
+				decompressLZ(*rrmStream, bgInfo[idx]._filesize);
+
+			_inv[idx + 1]._images = new ImageFile(*imageStream);
+
+			if (_lzwMode)
+				delete imageStream;
+		}
+
+		// Set up the bgShapes
+		for (int idx = 0; idx < bgHeader._numStructs; ++idx) {
+			_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
+			_bgShapes[idx]._sequences = &_sequenceBuffer[_bgShapes[idx]._sequenceOffset];
+			_bgShapes[idx]._misc = 0;
+			_bgShapes[idx]._seqCounter = 0;
+			_bgShapes[idx]._seqcounter2 = 0;
+			_bgShapes[idx]._seqStack = 0;
+			_bgShapes[idx]._frameNumber = -1;
+			_bgShapes[idx]._position = Common::Point(0, 0);
+			_bgShapes[idx]._oldSize = Common::Point(1, 1);
+
+			_bgShapes[idx]._images = _inv[_bgShapes[idx]._misc]._images;
+			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
+				&(*_bgShapes[idx]._images)[0];
+		}
+
+		// Set up end of list
+		_bgShapes[bgHeader._numStructs]._sequences = &_sequenceBuffer[0] + bgHeader._seqSize;
+		_bgShapes[bgHeader._numStructs]._examine = nullptr;
+
+		// Load in cAnim list
+		Common::SeekableReadStream *canimStream = !_lzwMode ? rrmStream :
+			decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations);
+
+		_cAnim.resize(bgHeader._numcAnimations);
+		for (uint idx = 0; idx < _cAnim.size(); ++idx)
+			_cAnim[idx].synchronize(*canimStream);
+
+		if (_lzwMode)
+			delete canimStream;
+		
+		// Read in the room bounding areas
+		int size = rrmStream->readUint16LE();
+		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
+			decompressLZ(*rrmStream, size);
+
+		_roomBounds.resize(size / 10);
+		for (uint idx = 0; idx < _roomBounds.size(); ++idx) {
+			_roomBounds[idx].left = boundsStream->readSint16LE();
+			_roomBounds[idx].top = boundsStream->readSint16LE();
+			_roomBounds[idx].setWidth(boundsStream->readSint16LE());
+			_roomBounds[idx].setHeight(boundsStream->readSint16LE());
+			boundsStream->skip(2);	// Skip unused scene number field
+		}
+
+		if (_lzwMode)
+			delete boundsStream;
+
+		// Back at version byte, so skip over it
+		rrmStream->skip(1);
+
 		// TODO
 
 		delete rrmStream;
 	}
+
 }
 
 } // End of namespace Sherlock

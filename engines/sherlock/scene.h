@@ -47,7 +47,7 @@ struct BgFileHeader {
 };
 
 struct BgfileheaderInfo {
-	int _fSize;					// How long images are
+	int _filesize;				// How long images are
 	int _maxFrames;				// How many unique frames in object
 	Common::String _filename;	// Filename of object
 
@@ -85,9 +85,12 @@ public:
 	Common::Array<Object> _bgShapes;
 	Common::Array<CAnim> _cAnim;
 	Common::Array<byte> _sequenceBuffer;
+	Common::Array<InvGraphicType> _inv;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
+
+	void clear();
 
 	void selectScene();
 };
