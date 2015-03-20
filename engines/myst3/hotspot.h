@@ -49,6 +49,8 @@ struct PolarRect {
 
 class HotSpot {
 public:
+	HotSpot();
+
 	int16 condition;
 	Common::Array<PolarRect> rects;
 	int16 cursor;

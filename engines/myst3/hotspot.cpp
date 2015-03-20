@@ -27,6 +27,11 @@
 
 namespace Myst3 {
 
+HotSpot::HotSpot() :
+		condition(0),
+		cursor(0) {
+}
+
 int32 HotSpot::isPointInRectsCube(float pitch, float heading) {
 	for (uint j = 0; j < rects.size(); j++) {
 		Common::Rect rect = Common::Rect(
