@@ -358,12 +358,15 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		SciTrackOriginReply originReply;
 		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
 		switch (solution.type) {
-		case WORKAROUND_NONE:
-			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s[%x]: signature mismatch via method %s::%s (room %d, script %d, localCall 0x%x)",
+		case WORKAROUND_NONE: {
+			Common::String signatureDetailsStr;
+			kernel->signatureDebug(signatureDetailsStr, kernelCall.signature, argc, argv);
+			error("\n%s[VM] k%s[%x]: signature mismatch in method %s::%s (room %d, script %d, localCall 0x%x)",
+				signatureDetailsStr.c_str(),
 				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(),
 				s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 			break;
+			}
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
 			return;
 		case WORKAROUND_STILLCALL: // call kernel anyway
@@ -408,15 +411,18 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
 			switch (solution.type) {
 			case WORKAROUND_NONE: {
-				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
+				Common::String signatureDetailsStr;
+				kernel->signatureDebug(signatureDetailsStr, kernelSubCall.signature, argc, argv);
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("[VM] k%s(%s): signature mismatch via method %s::%s (room %d, script %d, localCall %x)",
+					error("\n%s[VM] k%s(%s): signature mismatch in method %s::%s (room %d, script %d, localCall %x)",
+						signatureDetailsStr.c_str(),
 						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(),
 						s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 				}
-				error("[VM] k%s: signature mismatch via method %s::%s (room %d, script %d, localCall %x)",
+				error("\n%s[VM] k%s: signature mismatch in method %s::%s (room %d, script %d, localCall %x)",
+					signatureDetailsStr.c_str(),
 					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(),
 					s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
 				break;
