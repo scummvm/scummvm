@@ -2173,7 +2173,8 @@ static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 //  the relevant dialog boxes are closed.
 //
 // This delay causes problems in case the user quickly enters the inventory.
-// That's why we remove the code related to the delay completely.
+// That's why we change the amount of ticks to 1, so that the remaining states
+//  are executed right after the dialog boxes are closed.
 //
 // Applies to at least: English floppy
 // Responsible method: cueItScript::changeState
