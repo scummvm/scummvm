@@ -2140,6 +2140,7 @@ static const uint16 qfg1vgaPatchCheetaurDescription[] = {
 // Local 5 of that room is a timer, that closes the door (object door11).
 // Setting it to 1 during happyFace::changeState(0) stops door11::doit from
 //  calling goTo6::init, so the whole issue is stopped from happening.
+//
 // Applies to at least: English floppy
 // Responsible method: happyFace::changeState, door11::doit
 // Fixes bug #6181
@@ -2166,8 +2167,40 @@ static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_END
 };
 
+// The player is able to buy (and also steal) potions in the healer's hut
+//  Strangely Sierra delays the actual buy/get potion code for 60 ticks
+//  Why they did that is unknown. The code is triggered anyway only after
+//  the relevant dialog boxes are closed.
+//
+// This delay causes problems in case the user quickly enters the inventory.
+// That's why we remove the code related to the delay completely.
+//
+// Applies to at least: English floppy
+// Responsible method: cueItScript::changeState
+// Fixes bug #6706
+static const uint16 qfg1vgaSignatureHealerHutNoDelay[] = {
+	0x65, 0x14,                         // aTop 14 (state)
+	0x36,                               // push
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x07,                         // bnt 07 [-> next state]
+	SIG_MAGICDWORD,
+	0x35, 0x3c,                         // ldi 3c (60 ticks)
+	0x65, 0x20,                         // aTop ticks
+	0x32,                               // jmp [-> end of method]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchHealerHutNoDelay[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x35, 0x01,                         // ldi 01 (1 tick only, so that execution will resume as soon as dialog box is closed)
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
+	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
