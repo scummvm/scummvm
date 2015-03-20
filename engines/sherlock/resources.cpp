@@ -194,6 +194,13 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	return stream;
 }
 
+/**
+ * Returns true if the given file exists on disk or in the cache
+ */
+bool Resources::exists(const Common::String &filename) const {
+	Common::File f;
+	return f.exists(filename) || _cache.isCached(filename);
+}
 
 /**
  * Reads in the index from a library file, and caches it's index for later use

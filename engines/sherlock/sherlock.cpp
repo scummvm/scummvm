@@ -34,6 +34,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_debugger = nullptr;
 	_events = nullptr;
 	_journal = nullptr;
+	_people = nullptr;
 	_res = nullptr;
 	_scene = nullptr;
 	_screen = nullptr;
@@ -49,6 +50,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _debugger;
 	delete _events;
 	delete _journal;
+	delete _people;
 	delete _res;
 	delete _scene;
 	delete _screen;
@@ -80,6 +82,7 @@ void SherlockEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_journal = new Journal();
+	_people = new People(this);
 	_scene = new Scene(this);
 	_screen = new Screen(this);
 	_sound = new Sound(this);
@@ -92,12 +95,16 @@ Common::Error SherlockEngine::run() {
 	showOpening();
 
 	while (!shouldQuit()) {
-		// Prepare for scene, and handle any game-specific scenes
+		// Prepare for scene, and handle any game-specific scenes. This allows 
+		// for game specific cutscenes or mini-games that aren't standard scenes
 		startScene();
 		if (shouldQuit())
 			break;
 
-		// Initialize the scene
+		// Reset the active characters to initially just Sherlock
+		_people->reset();
+
+		// Initialize and load the scene. 
 		_scene->selectScene();
 
 		// TODO: Implement game and remove this dummy loop

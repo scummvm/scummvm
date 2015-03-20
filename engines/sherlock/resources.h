@@ -82,6 +82,8 @@ public:
 
 	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile);
 
+	bool exists(const Common::String &filename) const;
+
 	int resourceIndex() const;
 };
 

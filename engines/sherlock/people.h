@@ -24,7 +24,7 @@
 #define SHERLOCK_PEOPLE_H
 
 #include "common/scummsys.h"
-#include "sherlock/sprites.h"
+#include "sherlock/objects.h"
 
 namespace Sherlock {
 

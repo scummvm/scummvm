@@ -56,7 +56,7 @@ void People::reset() {
 	p._position = Common::Point(10000, 11000);
 	p._sequenceNumber = STOP_DOWNRIGHT;
 	p._sequences = &CHARACTER_SEQUENCES;
-	p._spriteFrame = nullptr;
+	p._imageFrame = nullptr;
 	p._frameNumber = 1;
 	p._movement = Common::Point(0, 0);
 	p._oldPosition = Common::Point(0, 0);
