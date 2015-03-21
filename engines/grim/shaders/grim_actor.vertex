@@ -1,4 +1,4 @@
-struct light {
+struct Light {
 	vec4 _position;
 	vec4 _direction;
 	vec4 _color;
@@ -26,7 +26,7 @@ uniform highp mat4 projMatrix;
 uniform highp mat4 extraMatrix;
 uniform highp vec2 texScale;
 uniform bool textured;
-uniform light lights[maxLights];
+uniform Light lights[maxLights];
 uniform shadow_info shadow;
 uniform bool lightsEnabled;
 
