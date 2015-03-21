@@ -44,8 +44,6 @@ protected:
 	void DispmanXSetup(int width, int height, int bpp);
 	void DispmanXInit();
 	void DispmanXUpdate();
-	void DispmanXFlip(struct dispmanxPage *page);
-	struct dispmanxPage *DispmanXGetFreePage();
 	void DispmanXFreeResources();
 	void DispmanXVideoQuit();
 	struct dispvarsStruct *_dispvars;

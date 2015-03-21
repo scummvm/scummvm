@@ -40,7 +40,6 @@ struct dispvarsStruct {
 	DISPMANX_DISPLAY_HANDLE_T display;
 	DISPMANX_MODEINFO_T amode;
 	DISPMANX_UPDATE_HANDLE_T update;
-	DISPMANX_RESOURCE_HANDLE_T resources[numpages];
 	DISPMANX_ELEMENT_HANDLE_T element;
 	VC_IMAGE_TYPE_T pixFormat;
 	VC_DISPMANX_ALPHA_T *alpha;    
@@ -50,26 +49,19 @@ struct dispvarsStruct {
 	uint vcImagePtr;
 	uint screen;
 	uint pitch;
-	uint flipPage;
 	bool aspectRatioCorrection;
 	void *pixmem;
 	
 	struct dispmanxPage *pages;
-	struct dispmanxPage *currentPage;
-	int pageflipPending;
+	struct dispmanxPage *nextPage;
+	bool pageflipPending;
 
 	pthread_cond_t vsyncCondition;	
 	pthread_mutex_t pendingMutex;
-
-	// Mutex to isolate the vsync condition signaling
-	pthread_mutex_t vsyncCondMutex;
 };
 
 struct dispmanxPage {
-	unsigned int numpage;
-	struct dispvarsStruct *dispvars;
-	pthread_mutex_t pageUseMutex;
-	bool used;
+   	DISPMANX_RESOURCE_HANDLE_T resource;
 };
 
 DispmanXSdlGraphicsManager::DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource)
@@ -89,20 +81,11 @@ void DispmanXSdlGraphicsManager::DispmanXInit () {
 	_dispvars->vcImagePtr = 0;
 	_dispvars->pages = (struct dispmanxPage*)calloc(numpages, sizeof(struct dispmanxPage));
 	_dispvars->pageflipPending = 0;	
-	_dispvars->currentPage = NULL;
+	_dispvars->nextPage = &_dispvars->pages[0];
 
 	// Initialize mutex and condition variable objects
 	pthread_mutex_init(&_dispvars->pendingMutex, NULL);
-	pthread_mutex_init(&_dispvars->vsyncCondMutex, NULL);
 	pthread_cond_init(&_dispvars->vsyncCondition, NULL);
-	
-	int i;
-	for (i = 0; i < numpages; i++) {
-		_dispvars->pages[i].numpage = i;
-		_dispvars->pages[i].used = false;
-		_dispvars->pages[i].dispvars = _dispvars;
-		pthread_mutex_init(&_dispvars->pages[i].pageUseMutex, NULL);
-	}
 	
 	// Before we call any vc_* function, we need to call this one.
 	bcm_host_init();
@@ -144,101 +127,64 @@ void DispmanXSdlGraphicsManager::DispmanXSetup (int width, int height, int bpp) 
 	vc_dispmanx_rect_set(&(_dispvars->bmpRect), 0, 0, width, height);	
 	vc_dispmanx_rect_set(&(_dispvars->srcRect), 0, 0, width << 16, height << 16);	
 
-	// We create the resources for multiple buffering
 	int i;
 	for (i = 0; i < numpages; i++)
-		_dispvars->resources[i] = vc_dispmanx_resource_create(_dispvars->pixFormat, width, height, 
+		_dispvars->pages[i].resource = vc_dispmanx_resource_create(_dispvars->pixFormat, width, height, 
 			&(_dispvars->vcImagePtr));
 	
 	// Add element
 	_dispvars->update = vc_dispmanx_update_start(0);
 	
 	_dispvars->element = vc_dispmanx_element_add(_dispvars->update, _dispvars->display, 0,
-		&(_dispvars->dstRect), _dispvars->resources[0], &(_dispvars->srcRect), 
+		&(_dispvars->dstRect), _dispvars->pages[0].resource, &(_dispvars->srcRect), 
 		DISPMANX_PROTECTION_NONE, _dispvars->alpha, 0, (DISPMANX_TRANSFORM_T)0);
 	
 	vc_dispmanx_update_submit_sync(_dispvars->update);		
 }
 
-// Find a free page, and return the page. If no free page is available when called, wait for a page flip.
-struct dispmanxPage *DispmanXSdlGraphicsManager::DispmanXGetFreePage()
-{
-	struct dispmanxPage *page = NULL;
-	unsigned i;
-	while (page == NULL) {
-		// Try to find a free page
-		for (i = 0; i < numpages; ++i) {
-			if (!_dispvars->pages[i].used) {
-				page = (_dispvars->pages) + i;
-				break;
-			}
-		}
-		// If no page is free ATM, wait until a free page is freed by vsync CB
-		if (page == NULL) {
-			pthread_mutex_lock(&_dispvars->vsyncCondMutex);
-			pthread_cond_wait(&_dispvars->vsyncCondition, &_dispvars->vsyncCondMutex);
-			pthread_mutex_unlock(&_dispvars->vsyncCondMutex);
-		}
-	}
-	pthread_mutex_lock(&page->pageUseMutex);
-	page->used = true;
-	pthread_mutex_unlock(&page->pageUseMutex);
-	return page;
+void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void * arg){
+	struct dispvarsStruct *_dispvars = (struct dispvarsStruct*) arg;
+
+	// Changing the page to write must be done before the signaling
+	// so we have the right page in nextPage when update_main continues
+	if (_dispvars->nextPage == &_dispvars->pages[0])	
+	   _dispvars->nextPage = &_dispvars->pages[1];
+	else 
+	   _dispvars->nextPage = &_dispvars->pages[0];
+
+	// These two things must be isolated "atomically" to avoid getting 
+        // a false positive in the pending_mutex test in update_main.
+	pthread_mutex_lock(&_dispvars->pendingMutex);
+	
+	pthread_cond_signal(&_dispvars->vsyncCondition);
+	_dispvars->pageflipPending = false;	
+	
+	pthread_mutex_unlock(&_dispvars->pendingMutex);
+		
 }
 
 void DispmanXSdlGraphicsManager::DispmanXUpdate() {	
-	// Triple buffer update function
-	struct dispmanxPage *page;
-      	page = DispmanXGetFreePage();
+	pthread_mutex_lock(&_dispvars->pendingMutex);
+
+	if (_dispvars->pageflipPending) {
+		pthread_cond_wait(&_dispvars->vsyncCondition, &_dispvars->pendingMutex);
+	}
 	
+	pthread_mutex_unlock(&_dispvars->pendingMutex);
+
 	// Frame blitting
-	vc_dispmanx_resource_write_data(_dispvars->resources[page->numpage], _dispvars->pixFormat,
+	vc_dispmanx_resource_write_data(_dispvars->nextPage->resource, _dispvars->pixFormat,
 		_dispvars->pitch, _dispvars->pixmem, &(_dispvars->bmpRect));
 	
-	// Page flipping: we send the page to the dispmanx API internal flipping FIFO stack. 
-	DispmanXFlip(page);
-}
-
-void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void * arg){
-	struct dispmanxPage *page = (struct dispmanxPage *) arg;
-
-	// We signal the vsync condition, just in case we're waiting for it somewhere (no free pages, etc)
-	pthread_mutex_lock(&page->dispvars->vsyncCondMutex);
-	pthread_cond_signal(&page->dispvars->vsyncCondition);
-	pthread_mutex_unlock(&page->dispvars->vsyncCondMutex);
-
-	pthread_mutex_lock(&page->dispvars->pendingMutex);
-	page->dispvars->pageflipPending--;	
-	pthread_mutex_unlock(&page->dispvars->pendingMutex);
-		
-	// We mark as free the page that was visible until now
-	if (page->dispvars->currentPage != NULL) {
-		pthread_mutex_lock(&page->dispvars->currentPage->pageUseMutex);
-		page->dispvars->currentPage->used = false;
-		pthread_mutex_unlock(&page->dispvars->currentPage->pageUseMutex);
-	}
-	
-	// The page on which we just issued the flip that caused this callback becomes the visible one
-	page->dispvars->currentPage = page;
-}
-
-void DispmanXSdlGraphicsManager::DispmanXFlip (struct dispmanxPage *page) {
-	// We don't queue multiple page flips because dispmanx doesn't support it.
-	if (_dispvars->pageflipPending > 0) {
-		pthread_mutex_lock(&_dispvars->vsyncCondMutex);
-		pthread_cond_wait(&_dispvars->vsyncCondition, &_dispvars->vsyncCondMutex);
-		pthread_mutex_unlock(&_dispvars->vsyncCondMutex);
-	}
-
 	// Issue a page flip at the next vblank interval (will be done at vsync anyway).
 	_dispvars->update = vc_dispmanx_update_start(0);
 
 	vc_dispmanx_element_change_source(_dispvars->update, _dispvars->element,
-		_dispvars->resources[page->numpage]);
-	vc_dispmanx_update_submit(_dispvars->update, &DispmanXVSyncCallback, page);
+		_dispvars->nextPage->resource);
+	vc_dispmanx_update_submit(_dispvars->update, &DispmanXVSyncCallback, _dispvars);
 	
 	pthread_mutex_lock(&_dispvars->pendingMutex);
-	_dispvars->pageflipPending++;	
+	_dispvars->pageflipPending = true;	
 	pthread_mutex_unlock(&_dispvars->pendingMutex);
 }
 
@@ -247,7 +193,7 @@ void DispmanXSdlGraphicsManager::DispmanXFreeResources(void) {
 	_dispvars->update = vc_dispmanx_update_start(0);
 		
     	for (i = 0; i < numpages; i++)
-		vc_dispmanx_resource_delete(_dispvars->resources[i]);
+		vc_dispmanx_resource_delete(_dispvars->pages[i].resource);
 	
 	vc_dispmanx_element_remove(_dispvars->update, _dispvars->element);
 	
@@ -262,13 +208,7 @@ void DispmanXSdlGraphicsManager::DispmanXVideoQuit() {
 
 	// Destroy mutexes and conditions	
 	pthread_mutex_destroy(&_dispvars->pendingMutex);
-	pthread_mutex_destroy(&_dispvars->vsyncCondMutex);
 	pthread_cond_destroy(&_dispvars->vsyncCondition);		
-
-	int i;
-	for (i = 0; i < numpages; i++) {
-		pthread_mutex_destroy(&_dispvars->pages[i].pageUseMutex);
-	}	
 
 	free(_dispvars->pages);
 }
