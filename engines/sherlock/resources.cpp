@@ -129,7 +129,7 @@ void Resources::addToCache(const Common::String &filename) {
 }
 
 /**
- * Adds a resource from a library file tot he cache
+ * Adds a resource from a library file to the cache
  */
 void Resources::addToCache(const Common::String &filename, const Common::String &libFilename) {
 	// Get the resource
@@ -140,6 +140,16 @@ void Resources::addToCache(const Common::String &filename, const Common::String 
 	delete stream;
 }
 
+/**
+ * Adds a given stream to the cache under the given name
+ */
+void Resources::addToCache(const Common::String &filename, Common::SeekableReadStream &stream) {
+	_cache.load(filename, stream);
+}
+
+/**
+ * Returns a stream for a given file
+ */
 Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 	// First check if the file is directly in the cache
 	if (_cache.isCached(filename))

@@ -144,7 +144,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 					Common::String::format("%s%01d", baseName.c_str(), soundNumber) :
 					Common::String::format("%s%02d", baseName.c_str(), soundNumber);
 
-				if (sound._voicesEnabled)
+				if (sound._voicesOn)
 					sound.playSound(fname);
 			}
 

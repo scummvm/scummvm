@@ -289,4 +289,9 @@ void People::gotoStand(Sprite &sprite) {
 	_allowWalkAbort = true;
 }
 
+void People::walkToCoords(const Common::Point &destPos, int destDir) {
+	// TODO
+	warning("TODO: walkToCoords");
+}
+
 } // End of namespace Sherlock

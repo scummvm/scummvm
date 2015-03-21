@@ -33,6 +33,8 @@ namespace Sherlock {
 #define GAME_FRAME_RATE 60
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
+enum CursorId { ARROW = 0, MAGNIFY = 1, WAIT = 2, INVALID_CURSOR = -1 };
+
 class SherlockEngine;
 
 class EventsManager {
@@ -45,7 +47,7 @@ private:
 
 	bool checkForNextFrameCounter();
 public:
-	int _cursorIndex;
+	CursorId _cursorId;
 	byte _mouseButtons;
 	bool _mouseClicked;
 	Common::Stack<Common::KeyState> _pendingKeys;
@@ -55,7 +57,7 @@ public:
 
 	void loadCursors(const Common::String &filename);
 
-	void changeCursor(int cursorIndex);
+	void changeCursor(CursorId cursorId);
 
 	void showCursor();
 

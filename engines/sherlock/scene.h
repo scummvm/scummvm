@@ -87,6 +87,9 @@ struct SceneSound {
 class Scene {
 private:
 	SherlockEngine *_vm;
+	Common::String _rrmName;
+	int _cAnimFramePause;
+	Common::String _cAnimStr;
 
 	bool loadScene(const Common::String &filename);
 
@@ -101,6 +104,10 @@ private:
 	void updateBackground();
 
 	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
+
+	int startCAnim(int cAnimNum, int playRate);
+
+	void doBgAnim();
 public:
 	int _currentScene;
 	int _goToRoom;
@@ -147,6 +154,8 @@ public:
 	void checkSceneFlags(bool mode);
 
 	Exit *checkForExit(const Common::Rect &r);
+
+	void printObjDesc(const Common::String &str, bool firstTime);
 };
 
 } // End of namespace Sherlock

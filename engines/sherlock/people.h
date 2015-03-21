@@ -79,6 +79,8 @@ public:
 	void setWalking();
 
 	void gotoStand(Sprite &sprite);
+
+	void walkToCoords(const Common::Point &destPos, int destDir);
 };
 
 } // End of namespace Sherlock

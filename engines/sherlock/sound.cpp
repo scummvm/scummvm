@@ -25,11 +25,12 @@
 namespace Sherlock {
 
 Sound::Sound(SherlockEngine *vm): _vm(vm) {
-	_sfxEnabled = true;
-	_musicEnabled = true;
-	_voicesEnabled = true;
+	_soundOn = true;
+	_musicOn = true;
+	_voicesOn = true;
 	_playingEpilogue = false;
 	_music = false;
+	_digitized = false;
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {
@@ -41,6 +42,10 @@ void Sound::playSound(const Common::String &name, WaitType waitType) {
 }
 
 void Sound::cacheSound(const Common::String &name, int index) {
+	// TODO
+}
+
+void Sound::playLoadedSound(int bufNum, int waitMode) {
 	// TODO
 }
 

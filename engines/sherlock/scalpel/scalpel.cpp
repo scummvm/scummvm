@@ -183,7 +183,7 @@ bool ScalpelEngine::showOfficeCutscene() {
 void ScalpelEngine::startScene() {
 	if (_scene->_goToRoom == 100 || _scene->_goToRoom == 98) {
 		// Chessboard selection
-		if (_sound->_musicEnabled) {
+		if (_sound->_musicOn) {
 			if (_sound->loadSong(100)) {
 				if (_sound->_music)
 					_sound->startSong();
@@ -208,7 +208,7 @@ void ScalpelEngine::startScene() {
 	case 52:
 	case 53:
 	case 70:
-		if (_sound->_musicEnabled && _sound->loadSong(_scene->_goToRoom)) {
+		if (_sound->_musicOn && _sound->loadSong(_scene->_goToRoom)) {
 			if (_sound->_music)
 				_sound->startSong();
 		}
@@ -325,7 +325,7 @@ void ScalpelEngine::startScene() {
 	}
 
 	_events->loadCursors("rmouse.vgs");
-	_events->changeCursor(0);
+	_events->changeCursor(ARROW);
 
 	if (_scene->_goToRoom == 99) {
 		// Chess Board

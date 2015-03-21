@@ -70,6 +70,7 @@ void SherlockEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugScript, "scripts", "Script debug level");
 
 	ImageFile::setVm(this);
+	Object::setVm(this);
 	Sprite::setVm(this);
 	_res = new Resources();
 	_animation = new Animation(this);

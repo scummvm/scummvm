@@ -137,7 +137,18 @@ struct UseType {
 	void synchronize(Common::SeekableReadStream &s);
 };
 
-struct Object {
+class Object {
+private:
+	static SherlockEngine *_vm;
+
+	bool checkEndOfSequence() const;
+
+	void setObjSequence(int seq, bool wait);
+public:
+	static bool _countCAnimFrames;
+
+	static void setVm(SherlockEngine *vm);
+public:
 	Common::String _name;			// Name
 	Common::String _description;	// Description
 	Common::String _examine;		// Examine in-depth description
@@ -151,7 +162,7 @@ struct Object {
 	int _sequenceNumber;			// Sequence being used
 	SpriteType _type;				// Object type
 	Common::Point _position;		// Current position
-	Common::Point _movement;		// Momvement amount
+	Common::Point _delta;			// Momvement amount
 	Common::Point _oldPosition;		// Old position
 	Common::Point _oldSize;			// Image's old size
 	Common::Point _goto;			// Walk destination
@@ -185,19 +196,23 @@ struct Object {
 	void synchronize(Common::SeekableReadStream &s);
 
 	void toggleHidden();
+
+	void checkObject(Object &o);
+
+	int checkNameForCodes(const Common::String &name, Common::StringArray *messages);
 };
 
 struct CAnim {
 	Common::String _name;			// Name
-	int _sequences[MAX_FRAME];		// Animation sequences
+	byte _sequences[MAX_FRAME];		// Animation sequences
 	Common::Point _position;		// Position
 	int _size;						// Size of uncompressed animation
 	SpriteType _type;
 	int _flags;						// Tells if can be walked behind
 	Common::Point _goto;			// coords holmes should walk to before starting canim
-	int _sequenceNumber;
+	int _gotoDir;
 	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
-	int _teleportS;					// playing canim
+	int _teleportDir;					// playing canim
 
 	void synchronize(Common::SeekableReadStream &s);
 };

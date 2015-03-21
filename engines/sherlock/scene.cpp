@@ -98,6 +98,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_invGraphicItems = 0;
 	_hsavedPos = Common::Point(-1, -1);
 	_hsavedFs = -1;
+	_cAnimFramePause = 0;
 
 	_controlPanel = new ImageFile("controls.vgs");
 	_controls = nullptr; // new ImageFile("menu.all");
@@ -124,7 +125,7 @@ void Scene::selectScene() {
 
 	// Load the scene
 	Common::String sceneFile = Common::String::format("res%02d", _goToRoom);
-	Common::String roomName = Common::String::format("res%02d.rrm", _goToRoom);
+	_rrmName = Common::String::format("res%02d.rrm", _goToRoom);
 	_currentScene = _goToRoom;
 	_goToRoom = -1;
 
@@ -312,7 +313,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			_sounds[idx].synchronize(*rrmStream);
 
 		// If sound is turned on, load the sounds into memory
-		if (sound._sfxEnabled) {
+		if (sound._soundOn) {
 			for (int idx = 0; idx < numSounds; ++idx) {
 				sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
 				_sounds[idx]._name = "";
@@ -374,7 +375,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	checkInventory();
 
 	// Handle starting any music for the scene
-	if (sound._musicEnabled && sound.loadSong(_currentScene)) {
+	if (sound._musicOn && sound.loadSong(_currentScene)) {
 		if (sound._music)
 			sound.startSong();
 	}
@@ -516,6 +517,7 @@ void Scene::transitionToScene() {
 		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT 
 	};
 	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
 
 	if (_hsavedPos.x < 1) {
 		// No exit information from last scene-check entrance info
@@ -539,7 +541,7 @@ void Scene::transitionToScene() {
 		}
 	}
 
-	int startcAnimNum = -1;
+	int cAnimNum = -1;
 
 	if (_hsavedFs < 101) {
 		// Standard info, so set it
@@ -547,7 +549,7 @@ void Scene::transitionToScene() {
 		people[PLAYER]._sequenceNumber = _hsavedFs;
 	} else {
 		// It's canimation information
-		startcAnimNum = _hsavedFs - 101;
+		cAnimNum = _hsavedFs - 101;
 
 		// Prevent Holmes from being drawn
 		people[PLAYER]._position = Common::Point(0, 0);
@@ -599,7 +601,22 @@ void Scene::transitionToScene() {
 	}
 
 	updateBackground();
-	// TODO
+
+	if (screen._fadeStyle)
+		screen.randomTransition();
+	else
+		screen.blitFrom(screen._backBuffer);
+
+	if (cAnimNum != -1) {
+		CAnim &c = _cAnim[cAnimNum];
+		Common::Point pt = c._position;
+
+		c._position = Common::Point(-1, -1);
+		people[AL]._position = Common::Point(0, 0);
+
+		startCAnim(cAnimNum, 1);
+		c._position = pt;
+	}
 }
 
 /**
@@ -722,9 +739,265 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
+/**
+ * Checks all the background shapes. If a background shape is animating,
+ * it will flag it as needing to be drawn. If a non-animating shape is
+ * colliding with another shape, it will also flag it as needing drawing
+ */
 void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
+	// Iterate through the shapes
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
+			if ((obj._flags & 5) == 1) {
+				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
+					NORMAL_FORWARD : NORMAL_BEHIND;
+			} else if (!(obj._flags & 1)) {
+				obj._misc = BEHIND;
+			} else if (obj._flags & 4) {
+				obj._misc = FORWARD;
+			}
+		}
+	}
+
+	// Iterate through the canimshapes
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		Object &obj = _canimShapes[idx];
+		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
+			if ((obj._flags & 5) == 1) {
+				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
+				NORMAL_FORWARD : NORMAL_BEHIND;
+			}
+			else if (!(obj._flags & 1)) {
+				obj._misc = BEHIND;
+			}
+			else if (obj._flags & 4) {
+				obj._misc = FORWARD;
+			}
+		}
+	}
+}
+
+/**
+ * Attempt to start a canimation sequence. It will load the requisite graphics, and
+ * then copy the canim object into the _canimShapes array to start the animation.
+ *
+ * @param cAnimNum		The canim object within the current scene
+ * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
+ *		A negative playRate can also be specified to play the animation in reverse
+ */
+int Scene::startCAnim(int cAnimNum, int playRate) {
+	EventsManager &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Resources &res = *_vm->_res;
+	Common::Point tpPos, walkPos;
+	int tpDir, walkDir;
+	int tFrames;
+	int gotoCode = -1;
+
+	// Validation
+	if (cAnimNum >= (int)_cAnim.size())
+		// number out of bounds
+		return -1;
+	if (_canimShapes.size() >= 3 || playRate == 0)
+		// Too many active animations, or invalid play rate
+		return 0;
+
+	CAnim &cAnim = _cAnim[cAnimNum];
+	if (playRate < 0) {
+		// Reverse direction
+		walkPos = cAnim._teleportPos;
+		walkDir = cAnim._teleportDir;
+		tpPos = cAnim._goto;
+		tpDir = cAnim._gotoDir;
+	} else {
+		// Forward direction
+		walkPos = cAnim._goto;
+		walkDir = cAnim._gotoDir;
+		tpPos = cAnim._teleportPos;
+		tpDir = cAnim._teleportDir;
+	}
+
+	events.changeCursor(WAIT);
+	_canimShapes.push_back(Object());
+	Object &cObj = _canimShapes[_canimShapes.size() - 1];
+
+	if (walkPos.x != -1) {
+		// Holmes must walk to the walk point before the cAnimation is started
+		if (people[AL]._position != walkPos)
+			people.walkToCoords(walkPos, walkDir);
+	}
+
+	if (_vm->_talkToAbort)
+		return 1;
+
+	// Copy the canimation into the bgShapes type canimation structure so it can be played
+	cObj._allow = cAnimNum + 1;				// Keep track of the parent structure
+	cObj._name = _cAnim[cAnimNum]._name;	// Copy name
+
+	// Remove any attempt to draw object frame
+	if (cAnim._type == NO_SHAPE && cAnim._sequences[0] < 100)
+		cAnim._sequences[0] = 0;
+
+	cObj._sequences = cAnim._sequences;
+	cObj._images = nullptr;
+	cObj._position = cAnim._position;
+	cObj._delta = Common::Point(0, 0);
+	cObj._type = cAnim._type;
+	cObj._flags = cAnim._flags;
+
+	cObj._maxFrames = 0;
+	cObj._frameNumber = -1;
+	cObj._sequenceNumber = cAnimNum;
+	cObj._oldPosition = Common::Point(0, 0);
+	cObj._oldPosition = Common::Point(0, 0);
+	cObj._goto = Common::Point(0, 0);
+	cObj._status = 0;
+	cObj._misc = 0;
+	cObj._imageFrame = nullptr;
+
+	if (cAnim._name.size() > 0 && cAnim._type != NO_SHAPE) {
+		if (tpPos.x != -1)
+			people[AL]._type = REMOVE;
+
+		Common::String fname = cAnim._name + ".vgs";
+		if (!res.isInCache(fname)) {
+			// Set up RRM scene data
+			Common::SeekableReadStream *rrmStream = res.load(_rrmName);
+			rrmStream->seek(44 + cAnimNum * 4);
+			rrmStream->seek(rrmStream->readUint32LE());
+
+			// Load the canimation into the cache
+			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream :
+				decompressLZ(*rrmStream, cAnim._size);
+			res.addToCache(fname, *imgStream);
+
+			if (_lzwMode)
+				delete imgStream;
+
+			delete rrmStream;
+		}
+
+		// Now load the resource as an image
+		cObj._maxFrames = cObj._images->size();
+		cObj._images = new ImageFile(fname);
+		cObj._imageFrame = &(*cObj._images)[0];
+
+		int frames = 0;
+		if (playRate < 0) {
+			// Reverse direction
+			// Count number of frames
+			while (cObj._sequences[frames] && frames < MAX_FRAME)
+				++frames;
+		}
+		else {
+			// Forward direction
+			Object::_countCAnimFrames = true;
+
+			while (cObj._type == ACTIVE_BG_SHAPE) {
+				cObj.checkObject(_bgShapes[0]);
+				++frames;
+
+				if (frames >= 1000)
+					error("CAnim has infinite loop sequence");
+			}
+
+			if (frames > 1)
+				--frames;
+
+			Object::_countCAnimFrames = false;
+
+			cObj._type = cAnim._type;
+			cObj._frameNumber = -1;
+			cObj._position = cAnim._position;
+			cObj._delta = Common::Point(0, 0);
+		}
+
+		// Return if animation has no frames in it
+		if (frames == 0)
+			return -2;
+
+		++frames;
+		int repeat = ABS(playRate);
+		int dir;
+
+		if (playRate < 0) {
+			// Play in reverse
+			dir = -2;
+			cObj._frameNumber = frames - 3;
+		} else {
+			dir = 0;
+		}
+
+		tFrames = frames - 1;
+		int pauseFrame = (_cAnimFramePause) ? frames - _cAnimFramePause : -1;
+
+		while (--frames) {
+			if (frames == pauseFrame)
+				printObjDesc(_cAnimStr, true);
+
+			doBgAnim();
+
+			// Repeat same frame
+			int temp = repeat;
+			while (--temp > 0) {
+				cObj._frameNumber--;
+				doBgAnim();
+			}
+
+			cObj._frameNumber += dir;
+		}
+
+		people[AL]._type = CHARACTER;
+	}
+
+	// Teleport to ending coordinates if necessary
+	if (tpPos.x != -1) {
+		people[AL]._position = tpPos;	// Place the player
+		people[AL]._sequenceNumber = tpDir;
+		people.gotoStand(people[AL]);
+	}
+
+	if (playRate < 0)
+		// Reverse direction - set to end sequence
+		cObj._frameNumber = tFrames - 1;
+	
+	if (cObj._frameNumber <= 26)
+		gotoCode = cObj._sequences[cObj._frameNumber + 3];
+
+	// Set canim to REMOVE type and free memory
+	cObj.checkObject(_bgShapes[0]);
+
+	if (gotoCode > 0 && !_vm->_talkToAbort) {
+		_goToRoom = gotoCode;
+
+		if (_goToRoom < 97 && _vm->_map[_goToRoom].x) {
+			_overPos = _vm->_map[_goToRoom];
+		}
+	}
+
+	people.loadWalk();
+
+	if (tpPos.x != -1 && !_vm->_talkToAbort) {
+		// Teleport to ending coordinates
+		people[AL]._position = tpPos;
+		people[AL]._sequenceNumber = tpDir;
+
+		people.gotoStand(people[AL]);
+	}
+
+	return 1;
+}
+
+void Scene::printObjDesc(const Common::String &str, bool firstTime) {
 	// TODO
 }
 
+/**
+ * Animate all objects and people.
+ */
+void Scene::doBgAnim() {
+	// TODO
+}
 
 } // End of namespace Sherlock

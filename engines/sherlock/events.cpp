@@ -33,7 +33,7 @@ namespace Sherlock {
 EventsManager::EventsManager(SherlockEngine *vm) {
 	_vm = vm;
 	_cursorImages = nullptr;
-	_cursorIndex = -1;
+	_cursorId = INVALID_CURSOR;
 	_frameCounter = 1;
 	_priorFrameTime = 0;
 	_mouseClicked = false;
@@ -57,11 +57,14 @@ void EventsManager::loadCursors(const Common::String &filename) {
 /**
  * Set the cursor to show
  */
-void EventsManager::changeCursor(int cursorIndex) {
-	_cursorIndex = cursorIndex;
+void EventsManager::changeCursor(CursorId cursorId) {
+	if (cursorId == _cursorId)
+		return;
+
+	_cursorId = cursorId;
 
 	// Set the cursor data
-	Graphics::Surface &s = (*_cursorImages)[cursorIndex];
+	Graphics::Surface &s = (*_cursorImages)[cursorId];
 	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, s.w / 2, s.h / 2, 0xff);
 
 	showCursor();

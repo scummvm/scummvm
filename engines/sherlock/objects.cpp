@@ -77,7 +77,6 @@ void Sprite::setImageFrame() {
 void Sprite::adjustSprite() {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
 
 	if (_type == INVALID || (_type == CHARACTER && _vm->_animating))
 		return;
@@ -202,6 +201,17 @@ void UseType::synchronize(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
+SherlockEngine *Object::_vm;
+bool Object::_countCAnimFrames;
+
+void Object::setVm(SherlockEngine *vm) {
+	_vm = vm;
+	_countCAnimFrames = false;
+}
+
+/**
+ * Load the object data from the passed stream
+ */
 void Object::synchronize(Common::SeekableReadStream &s) {
 	char buffer[50];
 
@@ -225,8 +235,8 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_sequenceNumber = s.readSint16LE();
 	_position.x = s.readSint16LE();
 	_position.y = s.readSint16LE();
-	_movement.x = s.readSint16LE();
-	_movement.y = s.readSint16LE();
+	_delta.x = s.readSint16LE();
+	_delta.y = s.readSint16LE();
 	_type = (SpriteType)s.readUint16LE();
 	_oldPosition.x = s.readSint16LE();
 	_oldPosition.y = s.readSint16LE();
@@ -268,6 +278,9 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 		_use[idx].synchronize(s);
 }
 
+/**
+ * Toggle the type of an object between hidden and active
+ */
 void Object::toggleHidden() {
 	if (_type != HIDDEN && _type != HIDE_SHAPE && _type != INVALID) {
 		if (_seqTo != 0)
@@ -303,6 +316,153 @@ void Object::toggleHidden() {
 	}
 }
 
+/**
+ * Check the state of the object
+ */
+void Object::checkObject(Object &o) {
+	Scene &scene = *_vm->_scene;
+	Sound &sound = *_vm->_sound;
+	int checkFrame = _allow ? MAX_FRAME : 32000;
+	bool codeFound;
+
+	if (_seqTo) {
+		byte *ptr = &_sequences[_frameNumber];
+		if (*ptr == _seqTo) {
+			// The sequence is completed
+			*ptr = _seqTo + SEQ_TO_CODE + 128;	// Reset to normal
+			_seqTo = 0;
+		} else {
+			// Continue doing sequence
+			if (*ptr > _seqTo)
+				*ptr--;
+			else
+				*ptr++;
+
+			return;
+		}
+	}
+
+	++_frameNumber;
+
+	do {
+		// Check for end of sequence
+		codeFound = checkEndOfSequence();
+
+		if (_sequences[_frameNumber] >= 128 && _frameNumber < checkFrame) {
+			codeFound = true;
+			int v = _sequences[_frameNumber];
+
+			if (v >= 228) {
+				// Goto code found
+				v -= 228;
+				_seqcounter2 = _seqCounter;
+				_seqStack = _frameNumber + 1;
+				setObjSequence(v, false);
+			} else if (v >= SOUND_CODE && (v <= (SOUND_CODE + 29))) {
+				codeFound = true;
+				++_frameNumber;
+				v -= SOUND_CODE;
+
+				if (sound._soundOn && !_countCAnimFrames) {
+					if (!scene._sounds[v - 1]._name.empty() && sound._digitized)
+						sound.playLoadedSound(v - 1, 0);
+				}
+			} else if (v >= FLIP_CODE && v <= (FLIP_CODE + 2)) {
+				// Flip code
+				codeFound = true;
+				++_frameNumber;
+				v -= FLIP_CODE;
+
+				// Alter the flipped status
+				switch (v) {
+				case 0:
+					// Clear the flag
+					_flags &= ~2;
+					break;
+				case 1:
+					// Set the flag
+					_flags |= 2;
+					break;
+				case 2:
+					// Toggle the flag
+					_flags ^= 2;
+					break;
+				default:
+					break;
+				}
+			} else {
+				v -= 128;
+
+				// 68-99 is a squence code
+				if (v > SEQ_TO_CODE) {
+					byte *p = &_sequences[_frameNumber];
+					v -= SEQ_TO_CODE;	// # from 1-32
+					_seqTo = v;
+					*p = *(p - 1);
+
+					if (*p > 128)
+						// If the high bit is set, convert to a real frame
+						*p -= (byte)(SEQ_TO_CODE - 128);
+
+					if (*p > _seqTo)
+						*p -= 1;
+					else
+						*p += 1;
+
+					// Will be incremented below to return back to original value
+					--_frameNumber;
+					v = 0;
+				} else if (v == 10) {
+					// Set delta for objects
+					Common::Point pt(_sequences[_frameNumber + 1], _sequences[_frameNumber + 2]);
+					if (pt.x > 128)
+						pt.x = (pt.x - 128) *  -1;
+					else
+						pt.x--;
+
+					if (pt.y > 128)
+						pt.y = (pt.y - 128) * -1;
+					else
+						pt.y;
+
+					_delta = pt;
+					_frameNumber += 2;
+				} else if (v < 4) {
+					for (int idx = 0; idx < 4; ++idx) {
+						o.checkNameForCodes(_use[v]._names[idx], nullptr);
+					}
+
+					if (_use[v]._useFlag)
+						_vm->setFlags(_use[v]._useFlag);
+				}
+
+				++_frameNumber;
+			}
+		}
+	} while (codeFound);
+}
+
+bool Object::checkEndOfSequence() const {
+	// TODO
+	return false;
+}
+
+void Object::setObjSequence(int seq, bool wait) {
+	// TODO
+}
+
+/**
+* Checks for codes
+* @param name		The name to check for codes
+* @param messages	If provided, any messages to be returned
+* @returns		0 if no codes are found, 1 if codes were found
+*/
+int Object::checkNameForCodes(const Common::String &name, Common::StringArray *messages) {
+
+	// TODO
+	return 0;
+}
+
 /*----------------------------------------------------------------*/
 
 void CAnim::synchronize(Common::SeekableReadStream &s) {
@@ -318,10 +478,10 @@ void CAnim::synchronize(Common::SeekableReadStream &s) {
 	_flags = s.readByte();
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
-	_sequenceNumber = s.readSint16LE();
+	_gotoDir = s.readSint16LE();
 	_teleportPos.x = s.readSint16LE();
 	_teleportPos.y = s.readSint16LE();
-	_teleportS = s.readSint16LE();
+	_teleportDir = s.readSint16LE();
 }
 
 /*----------------------------------------------------------------*/
