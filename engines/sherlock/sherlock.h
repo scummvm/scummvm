@@ -92,12 +92,11 @@ public:
 	Common::String _soundOverride;
 	Common::String _titleOverride;
 	bool _useEpilogue2;
-	Common::Point _hsavedPos;
-	int _hsavedFs;
 	bool _justLoaded;
 	int _oldCharPoint;					// Old scene
 	Common::Point _over;				// Old map position
 	Common::Array<Common::Point> _map;	// Map locations for each scene
+	bool _talkToAbort;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

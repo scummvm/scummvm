@@ -94,6 +94,8 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_version = 0;
 	_lzwMode = false;
 	_invGraphicItems = 0;
+	_hsavedPos = Common::Point(-1, -1);
+	_hsavedFs = -1;
 
 	_controlPanel = new ImageFile("controls.vgs");
 	_controls = nullptr; // new ImageFile("menu.all");
@@ -511,8 +513,123 @@ void Scene::transitionToScene() {
 		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, 
 		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT 
 	};
+	People &people = *_vm->_people;
 
+	if (_hsavedPos.x < 1) {
+		// No exit information from last scene-check entrance info
+		if (_entrance._startPosition.x < 1) {
+			// No entrance info either, so use defaults
+			_hsavedPos = Common::Point(16000, 10000);
+			_hsavedFs = 4;
+		} else {
+			// setup entrance info
+			_hsavedPos = _entrance._startPosition;
+			_hsavedFs = _entrance._startDir;
+		}
+	} else {
+		// Exit information exists, translate it to real sequence info
+		// Note: If a savegame was just loaded, then the data is already correct.
+		// Otherwise, this is a linked scene or entrance info, and must be translated
+		if (_hsavedFs < 8 && !_vm->_justLoaded) {
+			_hsavedFs = FS_TRANS[_hsavedFs];
+			_hsavedPos.x *= 100;
+			_hsavedPos.y *= 100;
+		}
+	}
+
+	int startcAnimNum = -1;
+
+	if (_hsavedFs < 101) {
+		// Standard info, so set it
+		people[PLAYER]._position = _hsavedPos;
+		people[PLAYER]._sequenceNumber = _hsavedFs;
+	} else {
+		// It's canimation information
+		startcAnimNum = _hsavedFs - 101;
+
+		// Prevent Holmes from being drawn
+		people[PLAYER]._position = Common::Point(0, 0);
+	}
+
+	for (uint objIdx = 0; objIdx < _bgShapes.size(); ++objIdx) {
+		Object &obj = _bgShapes[objIdx];
+
+		if (obj._aType > 1 && obj._type != INVALID && obj._type != HIDDEN) {
+			Common::Point topLeft = obj._position;
+			Common::Point bottomRight;
+
+			if (obj._type != NO_SHAPE) {
+				topLeft += obj._imageFrame->_position;
+				bottomRight.x = topLeft.x + obj._imageFrame->_frame.w;
+				bottomRight.y = topLeft.y + obj._imageFrame->_frame.h;			
+			} else {
+				bottomRight = topLeft + obj._noShapeSize;
+			}
+
+			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
+				Common::Point(people[PLAYER]._position.x / 100, people[PLAYER]._position.y / 100))) {
+				// Current point is already inside box - impact occurred on
+				// a previous call. So simply do nothing except talk until the
+				// player is clear of the box
+				switch (obj._aType) {
+				case FLAG_SET:
+					for (int useNum = 0; useNum < 4; ++useNum) {
+						if (obj._use[useNum]._useFlag) {
+							if (!_vm->readFlags(obj._use[useNum]._useFlag))
+								_vm->setFlags(obj._use[useNum]._useFlag);
+						}
+
+						if (!_vm->_talkToAbort) {
+							for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+								toggleObject(obj._use[useNum]._names[nameIdx]);
+							}
+						}
+					}
+
+					obj._type = HIDDEN;
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+	}
+
+	updateBackground();
 	// TODO
+}
+
+/**
+ * Scans through the object list to find one with a matching name, and will
+ * call toggleHidden with all matches found. Returns the numer of matches found
+ */
+int Scene::toggleObject(const Common::String &name) {
+	int count = 0;
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if (scumm_stricmp(name.c_str(), _bgShapes[idx]._name.c_str()) == 0) {
+			++count;
+			_bgShapes[idx].toggleHidden();
+		}
+	}
+
+	return count;
+}
+
+/**
+ * Update the screen back buffer with all of the scene objects which need
+ * to be drawn
+ */
+void Scene::updateBackground() {
+	People &people = *_vm->_people;
+	//setDisplayBounds(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT);
+
+	// Update Holmes if he's turned on
+	if (people._holmesOn)
+		people[AL].adjustSprite();
+
+
 }
 
 } // End of namespace Sherlock

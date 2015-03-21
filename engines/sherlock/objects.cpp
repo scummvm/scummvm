@@ -57,6 +57,18 @@ void Sprite::setImageFrame() {
 	_imageFrame = &(*_images)[imageNumber];
 }
 
+void Sprite::adjustSprite(bool onChessboard) {
+	// TODO
+}
+
+void Sprite::gotoStand() {
+	// TODO
+}
+
+void Sprite::setWalking() {
+	// TODO
+}
+
 /*----------------------------------------------------------------*/
 
 void ActionType::synchronize(Common::SeekableReadStream &s) {

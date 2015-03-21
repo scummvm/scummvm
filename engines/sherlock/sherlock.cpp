@@ -42,9 +42,8 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_sound = nullptr;
 	_talk = nullptr;
 	_useEpilogue2 = false;
-	_hsavedPos = Common::Point(-1, -1);
-	_hsavedFs = -1;
 	_justLoaded = false;
+	_talkToAbort = false;
 }
 
 SherlockEngine::~SherlockEngine() {

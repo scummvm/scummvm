@@ -96,6 +96,10 @@ private:
 	void checkInventory();
 
 	void transitionToScene();
+
+	int toggleObject(const Common::String &name);
+
+	void updateBackground();
 public:
 	int _currentScene;
 	int _goToRoom;
@@ -128,6 +132,8 @@ public:
 	Common::Array<Exit> _exits;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
+	Common::Point _hsavedPos;
+	int _hsavedFs;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();

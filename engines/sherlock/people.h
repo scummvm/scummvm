@@ -28,8 +28,13 @@
 
 namespace Sherlock {
 
-#define MAX_PEOPLE 2
-#define PLAYER 0
+// People definitions
+enum PeopleId {
+	PLAYER	= 0,
+	AL		= 0,
+	PEG		= 1,
+	MAX_PEOPLE = 2
+};
 
 // Animation sequence identifiers for characters
 enum {
@@ -48,12 +53,16 @@ private:
 	Sprite _data[MAX_PEOPLE];
 	bool _walkLoaded;
 public:
+	bool _holmesOn;
+public:
 	People(SherlockEngine *vm);
 	~People();
 
 	void reset();
 
 	bool loadWalk();
+
+	Sprite &operator[](PeopleId id) { return _data[id]; }
 };
 
 } // End of namespace Sherlock

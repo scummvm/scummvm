@@ -104,6 +104,12 @@ struct Sprite {
 	void clear();
 
 	void setImageFrame();
+
+	void adjustSprite(bool onChessboard = false);
+
+	void gotoStand();
+
+	void setWalking();
 };
 
 struct ActionType {

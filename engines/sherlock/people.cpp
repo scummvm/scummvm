@@ -47,6 +47,7 @@ static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 
 People::People(SherlockEngine *vm) : _vm(vm) {
 	_walkLoaded = false;
+	_holmesOn = true;
 }
 
 People::~People() {

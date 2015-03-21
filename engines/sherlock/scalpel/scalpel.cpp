@@ -193,8 +193,8 @@ void ScalpelEngine::startScene() {
 		_scene->_goToRoom = _chess->doChessBoard();
 
 		_sound->freeSong();
-		_hsavedPos = Common::Point(-1, -1);
-		_hsavedFs = -1;
+		_scene->_hsavedPos = Common::Point(-1, -1);
+		_scene->_hsavedFs = -1;
 	}
 
 	// Some rooms are prologue cutscenes, rather than normal game scenes. These are:
