@@ -1,18 +1,3 @@
-struct Light {
-	vec4 _position;
-	vec4 _direction;
-	vec4 _color;
-};
-
-struct shadow_info {
-	bool _active;
-	vec3 _color;
-	vec3 _light;
-	vec3 _point;
-	vec3 _normal;
-};
-
-const int maxLights = 8;
 const float DIFFUSE_FACTOR = 0.8;
 
 in vec3 position;
@@ -24,11 +9,27 @@ uniform highp mat4 modelMatrix;
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 uniform highp mat4 extraMatrix;
-uniform highp vec2 texScale;
 uniform bool textured;
-uniform Light lights[maxLights];
-uniform shadow_info shadow;
 uniform bool lightsEnabled;
+uniform highp vec2 texScale;
+
+struct Light {
+	vec4 _position;
+	vec4 _direction;
+	vec4 _color;
+};
+const int maxLights = 8;
+uniform Light lights[maxLights];
+
+struct shadow_info {
+	bool _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
 
 out vec2 Texcoord;
 out vec4 Color;
