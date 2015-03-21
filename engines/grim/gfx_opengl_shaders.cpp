@@ -1093,19 +1093,16 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 	Math::Vector4d &lightDir    = _lights[lightId]._direction;
 	Math::Vector4d &lightParams = _lights[lightId]._params;
 
+	float intensity = light->_intensity;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		float intensity = light->_intensity;
-		lightColor.x() = ((float)light->_color.getRed() / 255.0f) * intensity;
-		lightColor.y() = ((float)light->_color.getGreen() / 255.0f) * intensity;
-		lightColor.z() = ((float)light->_color.getBlue() / 255.0f) * intensity;
-		lightColor.w() = 1.0f;
+		intensity /= 255.0f;
 	} else {
-		float intensity = light->_intensity / 1.3f;
-		lightColor.x() = ((float)light->_color.getRed() / 15.0f) * intensity;
-		lightColor.y() = ((float)light->_color.getGreen() / 15.0f) * intensity;
-		lightColor.z() = ((float)light->_color.getBlue() / 15.0f) * intensity;
-		lightColor.w() = 1.0f;
+		intensity /= 15.0f;
 	}
+	lightColor.x() = (float)light->_color.getRed() * intensity;
+	lightColor.y() = (float)light->_color.getGreen() * intensity;
+	lightColor.z() = (float)light->_color.getBlue() * intensity;
+	lightColor.w() = 1.0f;
 
 	if (light->_type == Grim::Light::Omni) {
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
