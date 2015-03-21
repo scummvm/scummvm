@@ -1112,8 +1112,8 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 		lightPos = Math::Vector4d(-light->_dir.x(), -light->_dir.y(), -light->_dir.z(), 0.0f);
 		lightDir = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
 	} else if (light->_type == Grim::Light::Spot) {
-		float cosPenumbra = cos(light->_penumbraangle);
-		float cosUmbra = cos(light->_umbraangle);
+		float cosPenumbra = cosf(light->_penumbraangle * M_PI / 180.0f);
+		float cosUmbra = cosf(light->_umbraangle * M_PI / 180.0f);
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
 		lightDir = Math::Vector4d(light->_dir.x(), light->_dir.y(), light->_dir.z(), 1.0f);
 		lightParams = Math::Vector4d(light->_falloffNear, light->_falloffFar, cosPenumbra, cosUmbra);
