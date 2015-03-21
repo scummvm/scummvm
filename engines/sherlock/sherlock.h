@@ -98,6 +98,9 @@ public:
 	Common::Array<Common::Point> _map;	// Map locations for each scene
 	bool _talkToAbort;
 	bool _onChessboard;
+	bool _slowChess;
+	bool _animating;
+	int _talkCounter;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

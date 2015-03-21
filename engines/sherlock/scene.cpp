@@ -49,10 +49,12 @@ void BgfileheaderInfo::synchronize(Common::SeekableReadStream &s) {
 /*----------------------------------------------------------------*/
 
 void Exit::synchronize(Common::SeekableReadStream &s) {
-	_position.x = s.readSint16LE();
-	_position.y = s.readSint16LE();
-	_size.x = s.readSint16LE();
-	_size.y = s.readSint16LE();
+	int xp = s.readSint16LE();
+	int yp = s.readSint16LE();
+	int xSize = s.readSint16LE();
+	int ySize = s.readSint16LE();
+	_bounds = Common::Rect(xp, yp, xp + xSize, yp + ySize);
+
 	_scene = s.readSint16LE();
 	_allow = s.readSint16LE();
 	_people.x = s.readSint16LE();
@@ -623,13 +625,106 @@ int Scene::toggleObject(const Common::String &name) {
  */
 void Scene::updateBackground() {
 	People &people = *_vm->_people;
-	//setDisplayBounds(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT);
+	Screen &screen = *_vm->_screen;
+	Surface surface = screen._backBuffer.getSubArea(
+		Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+	Sprite &player = people[AL];
 
 	// Update Holmes if he's turned on
 	if (people._holmesOn)
-		people[AL].adjustSprite();
+		player.adjustSprite();
 
+	// Flag the bg shapes which need to be redrawn
+	checkBgShapes(player._imageFrame, Common::Point(player._position.x / 100,
+		player._position.y / 100));
 
+	// Draw all active shapes which are behind the person
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == BEHIND)
+			surface.transBlitFrom(_bgShapes[idx]._imageFrame->_frame,
+				_bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+	}
+
+	// Draw all canimations which are behind the person
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == BEHIND)
+			surface.transBlitFrom(_canimShapes[idx]._imageFrame->_frame,
+				_canimShapes[idx]._position, _canimShapes[idx]._flags & 2);
+	}
+
+	// Draw all active shapes which are normal and behind the person
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == NORMAL_BEHIND)
+			surface.transBlitFrom(_bgShapes[idx]._imageFrame->_frame,
+			_bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+	}
+
+	// Draw all canimations which are normal and behind the person
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
+			surface.transBlitFrom(_canimShapes[idx]._imageFrame->_frame,
+			_canimShapes[idx]._position, _canimShapes[idx]._flags & 2);
+	}
+
+	// Draw the player if he's active
+	if (player._type == CHARACTER && people.isHolmesActive()) {
+		bool flipped = player._sequenceNumber == WALK_LEFT || player._sequenceNumber == STOP_LEFT ||
+			player._sequenceNumber == WALK_UPLEFT || player._sequenceNumber == STOP_UPLEFT ||
+			player._sequenceNumber == WALK_DOWNRIGHT || player._sequenceNumber == STOP_DOWNRIGHT;
+
+		surface.transBlitFrom(player._imageFrame->_frame,
+			Common::Point(player._position.x / 100, player._position.y / 100), flipped);
+	}
+
+	// Draw all static and active shapes that are NORMAL and are in front of the player
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
+				_bgShapes[idx]._misc == NORMAL_FORWARD)
+			surface.transBlitFrom(_bgShapes[idx]._imageFrame->_frame,
+				_bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+	}
+
+	// Draw all static and active canimations that are NORMAL and are in front of the player
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
+				_canimShapes[idx]._misc == NORMAL_FORWARD)
+			surface.transBlitFrom(_canimShapes[idx]._imageFrame->_frame,
+				_canimShapes[idx]._position, _canimShapes[idx]._flags & 2);
+	}
+
+	// Draw all static and active shapes that are FORWARD
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		_bgShapes[idx]._oldPosition = _bgShapes[idx]._position;
+		_bgShapes[idx]._oldSize = Common::Point(_bgShapes[idx]._imageFrame->_frame.w, 
+			_bgShapes[idx]._imageFrame->_frame.h);
+
+		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
+				_bgShapes[idx]._misc == FORWARD)
+			surface.transBlitFrom(_bgShapes[idx]._imageFrame->_frame,
+				_bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+	}
+
+	// Draw all static and active canimations that are forward
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
+			_canimShapes[idx]._misc == FORWARD)
+			surface.transBlitFrom(_canimShapes[idx]._imageFrame->_frame,
+				_canimShapes[idx]._position, _canimShapes[idx]._flags & 2);
+	}
 }
+
+Exit *Scene::checkForExit(const Common::Rect &r) {
+	for (uint idx = 0; idx < _exits.size(); ++idx) {
+		if (_exits[idx]._bounds.intersects(r))
+			return &_exits[idx];
+	}
+
+	return nullptr;
+}
+
+void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
+	// TODO
+}
+
 
 } // End of namespace Sherlock

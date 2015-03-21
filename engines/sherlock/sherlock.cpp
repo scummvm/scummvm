@@ -45,6 +45,9 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_justLoaded = false;
 	_talkToAbort = false;
 	_onChessboard = false;
+	_slowChess = false;
+	_animating = false;
+	_talkCounter = 0;
 }
 
 SherlockEngine::~SherlockEngine() {

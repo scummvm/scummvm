@@ -70,6 +70,8 @@ public:
 
 	Sprite &operator[](PeopleId id) { return _data[id]; }
 
+	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }
+
 	void reset();
 
 	bool loadWalk();

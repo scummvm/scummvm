@@ -27,12 +27,22 @@
 
 namespace Sherlock {
 
-Surface::Surface(uint16 width, uint16 height) {
+Surface::Surface(uint16 width, uint16 height): _freePixels(true) {
 	create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 }
 
+Surface::Surface(Surface &src, const Common::Rect &r) : _freePixels(false) {
+	setPixels(src.getBasePtr(r.left, r.top));
+	w = r.width();
+	h = r.height();
+	pitch = src.pitch;
+	format = Graphics::PixelFormat::createFormatCLUT8();
+}
+
+
 Surface::~Surface() {
-    free();
+	if (_freePixels)
+		free();
 }
 
 /**
@@ -131,9 +141,19 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	}
 }
 
-
+/**
+ * Fill a given area of the surface with a given color
+ */
 void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
     Graphics::Surface::fillRect(Common::Rect(x1, y1, x2, y2), color);
+}
+
+/**
+ * Return a sub-area of the surface as a new surface object. The surfaces
+ * are shared in common, so changes in the sub-surface affects the original.
+ */
+Surface Surface::getSubArea(const Common::Rect &r) {
+	return Surface(*this, r);
 }
 
 } // End of namespace Sherlock

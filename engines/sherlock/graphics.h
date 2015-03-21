@@ -29,11 +29,15 @@
 namespace Sherlock {
 
 class Surface : public Graphics::Surface {
+private:
+	bool _freePixels;
 protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
+
+	Surface(Surface &src, const Common::Rect &r);
 public:
     Surface(uint16 width, uint16 height);
-    ~Surface();
+	~Surface();
 
 	void blitFrom(const Graphics::Surface &src);
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
@@ -43,6 +47,8 @@ public:
 		bool flipped = false, int overrideColor = 0);
 
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
+
+	Surface getSubArea(const Common::Rect &r);
 };
 
 } // End of namespace Sherlock

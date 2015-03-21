@@ -24,8 +24,14 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/people.h"
 #include "sherlock/scene.h"
+#include "common/util.h"
 
 namespace Sherlock {
+
+#define UPPER_LIMIT 0
+#define LOWER_LIMIT CONTROLS_Y
+#define LEFT_LIMIT 0
+#define RIGHT_LIMIT SHERLOCK_SCREEN_WIDTH
 
 SherlockEngine *Sprite::_vm;
 
@@ -56,14 +62,106 @@ void Sprite::clear() {
 	_numFrames = 0;
 }
 
+/**
+ * Updates the image frame poiner for the sprite
+ */
 void Sprite::setImageFrame() {
-	// TODO: check this
-	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber];
+	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] + 
+		(*_sequences)[_sequenceNumber][0] - 2;
 	_imageFrame = &(*_images)[imageNumber];
 }
 
+/**
+ * This adjusts the sprites position, as well as it's animation sequence:
+ */
 void Sprite::adjustSprite() {
-	// TODO
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	int checkFrame = _allow ? MAX_FRAME : 32000;
+
+	if (_type == INVALID || (_type == CHARACTER && _vm->_animating))
+		return;
+
+	if (!_vm->_talkCounter && _type == CHARACTER && _walkCount) {
+		// Handle active movement for the sprite
+		_position += _delta;
+		--_walkCount;
+
+		if (!_walkCount) {
+			// If there any points left for the character to walk to along the
+			// route to a destination, then move to the next point
+			if (!people._walkTo.empty()) {
+				people._walkDest = people._walkTo.pop();
+				people.setWalking();
+			} else {
+				people.gotoStand(*this);
+			}
+		}
+	}
+
+	if (_type == CHARACTER && !_vm->_onChessboard) {
+		if ((_position.y / 100) > LOWER_LIMIT) {
+			_position.y = LOWER_LIMIT * 100;
+			people.gotoStand(*this);
+		}
+
+		if ((_position.y / 100) < UPPER_LIMIT) {
+			_position.y = UPPER_LIMIT * 100;
+			people.gotoStand(*this);
+		}
+
+		if ((_position.x / 100) < LEFT_LIMIT) {
+			_position.x = LEFT_LIMIT * 100;
+			people.gotoStand(*this);
+		}
+	} else if (!_vm->_onChessboard) {
+		_position.y = CLIP((int)_position.y, UPPER_LIMIT, LOWER_LIMIT);
+		_position.x = CLIP((int)_position.x, LEFT_LIMIT, RIGHT_LIMIT);
+	}
+
+	if (!_vm->_onChessboard || (_vm->_slowChess = !_vm->_slowChess))
+		++_frameNumber;
+
+	if ((*_sequences)[_sequenceNumber][_frameNumber] == 0) {
+		switch (_sequenceNumber) {
+		case STOP_UP:
+		case STOP_DOWN:
+		case STOP_LEFT:
+		case STOP_RIGHT:
+		case STOP_UPRIGHT:
+		case STOP_UPLEFT:
+		case STOP_DOWNRIGHT:
+		case STOP_DOWNLEFT:
+			// We're in a stop sequence, so reset back to the last frame, so
+			// the character is shown as standing still
+			--_frameNumber;
+			break;
+
+		default:
+			// Move 1 past the first frame - we need to compensate, since we
+			// already passed the frame increment
+			_frameNumber = 1;
+			break;
+		}
+	}
+
+	// Update the _imageFrame to point to the new frame's image
+	setImageFrame();
+
+	// Check to see if character has entered an exit zone
+	if (!_walkCount && scene._walkedInScene && scene._goToRoom == -1) {
+		Common::Rect charRect(_position.x / 100 - 5, _position.y / 100 - 2,
+			_position.x / 100 + 5, _position.y / 100 + 2);
+		Exit *exit = scene.checkForExit(charRect);
+
+		if (exit) {
+			scene._hsavedPos = exit->_people;
+			scene._hsavedFs = exit->_peopleDir;
+
+			if (scene._hsavedFs > 100 && scene._hsavedPos.x < 1)
+				scene._hsavedPos.x = 100;
+		}		
+	}
 }
 
 /*----------------------------------------------------------------*/

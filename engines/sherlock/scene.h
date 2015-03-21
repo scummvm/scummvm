@@ -59,8 +59,7 @@ struct BgfileheaderInfo {
 };
 
 struct Exit {
-	Common::Point _position;
-	Common::Point _size;
+	Common::Rect _bounds;
 
 	int _scene;
 	int _allow;
@@ -100,6 +99,8 @@ private:
 	int toggleObject(const Common::String &name);
 
 	void updateBackground();
+
+	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
 public:
 	int _currentScene;
 	int _goToRoom;
@@ -134,6 +135,7 @@ public:
 	Common::Array<SceneSound> _sounds;
 	Common::Point _hsavedPos;
 	int _hsavedFs;
+	Common::Array<Object> _canimShapes;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
@@ -143,6 +145,8 @@ public:
 	void selectScene();
 
 	void checkSceneFlags(bool mode);
+
+	Exit *checkForExit(const Common::Rect &r);
 };
 
 } // End of namespace Sherlock

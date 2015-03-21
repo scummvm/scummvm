@@ -66,6 +66,11 @@ enum AType {
 	NOWALK_ZONE = 13  // Player cannot walk here
 };
 
+// Different levels for sprites to be at
+enum {
+	BEHIND = 0, NORMAL_BEHIND = 1, NORMAL_FORWARD = 2, FORWARD = 3
+};
+
 #define MAX_HOLMES_SEQUENCE 16
 #define MAX_FRAME 30
 
