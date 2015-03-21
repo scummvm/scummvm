@@ -34,6 +34,7 @@
 #include "sherlock/animation.h"
 #include "sherlock/debugger.h"
 #include "sherlock/events.h"
+#include "sherlock/inventory.h"
 #include "sherlock/journal.h"
 #include "sherlock/people.h"
 #include "sherlock/resources.h"
@@ -78,6 +79,7 @@ public:
 	Animation *_animation;
 	Debugger *_debugger;
 	EventsManager *_events;
+	Inventory *_inventory;
 	Journal *_journal;
 	People *_people;
 	Resources *_res;
@@ -93,6 +95,9 @@ public:
 	Common::Point _hsavedPos;
 	int _hsavedFs;
 	bool _justLoaded;
+	int _oldCharPoint;					// Old scene
+	Common::Point _over;				// Old map position
+	Common::Array<Common::Point> _map;	// Map locations for each scene
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();
@@ -108,6 +113,10 @@ public:
 	Common::String getGameFile(int fileType);
 
 	int getRandomNumber(int limit) { return _randomSource.getRandomNumber(limit - 1); }
+
+	bool readFlags(int flagNum);
+
+	void setFlags(int flagNum);
 };
 
 } // End of namespace Sherlock

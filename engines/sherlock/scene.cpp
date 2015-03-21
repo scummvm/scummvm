@@ -136,7 +136,9 @@ void Scene::selectScene() {
  * The _misc field of the structures contains the number of the graphic image
  * that it should point to after loading; _misc is then set to 0.
  */
-void Scene::loadScene(const Common::String &filename) {
+bool Scene::loadScene(const Common::String &filename) {
+	EventsManager &events = *_vm->_events;
+	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	bool flag;
@@ -367,7 +369,28 @@ void Scene::loadScene(const Common::String &filename) {
 	checkSceneFlags(false);
 	checkInventory();
 
-	// TODO
+	// Handle starting any music for the scene
+	if (sound._musicEnabled && sound.loadSong(_currentScene)) {
+		if (sound._music)
+			sound.startSong();
+	}
+
+	// Load walking images if not already loaded
+	people.loadWalk();
+
+	// Transition to the scene and setup entrance co-ordinates and animations
+	transitionToScene();
+
+	// Player has not yet walked in this scene
+	_walkedInScene = false;
+
+	// Reset the position on the overland map
+	_vm->_oldCharPoint = _currentScene;
+	_vm->_over.x = _vm->_map[_currentScene].x * 100 - 600;
+	_vm->_over.y = _vm->_map[_currentScene].y * 100 + 900;
+
+	events.clearEvents();
+	return flag;
 }
 
 /**
@@ -410,11 +433,55 @@ void Scene::checkSceneStatus() {
  * is in use (ie. not just loaded)
  */
 void Scene::checkSceneFlags(bool flag) {
-	int mode = mode ? HIDE_SHAPE : HIDDEN;
+	SpriteType mode = flag ? HIDE_SHAPE : HIDDEN;
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
-		// TODO: read_flags calls
+		
+		if (o._requiredFlag) {
+			if (!_vm->readFlags(_bgShapes[idx]._requiredFlag)) {
+				// Kill object
+				if (o._type != HIDDEN && o._type != INVALID) {
+					if (o._images == nullptr || o._images->size() == 0)
+						// No shape to erase, so flag as hidden
+						o._type = HIDDEN;
+					else
+						// Flag it as needing to be hidden after first erasing it
+						o._type = mode;
+				}
+			} else if (_bgShapes[idx]._requiredFlag) {
+				// Restore object
+				if (o._images == nullptr || o._images->size() == 0)
+					o._type = NO_SHAPE;
+				else
+					o._type = ACTIVE_BG_SHAPE;
+			}
+		}
+	}
+
+	// Check inventory
+	for (uint idx = 0; idx < _vm->_inventory->_holdings; ++idx) {
+		InventoryItem &ii = (*_vm->_inventory)[idx];
+		if (ii._requiredFlag && !_vm->readFlags(ii._requiredFlag)) {
+			// Kill object: move it after the active holdings
+			InventoryItem tempItem = (*_vm->_inventory)[idx];
+			_vm->_inventory->insert_at(_vm->_inventory->_holdings, tempItem);
+			_vm->_inventory->remove_at(idx);
+			_vm->_inventory->_holdings--;
+			break;
+		}
+	}
+
+	for (uint idx = _vm->_inventory->_holdings; idx < _vm->_inventory->size(); ++idx) {
+		InventoryItem &ii = (*_vm->_inventory)[idx];
+		if (ii._requiredFlag && _vm->readFlags(ii._requiredFlag)) {
+			// Restore object: move it after the active holdings
+			InventoryItem tempItem = (*_vm->_inventory)[idx];
+			_vm->_inventory->remove_at(idx);
+			_vm->_inventory->insert_at(_vm->_inventory->_holdings, tempItem);
+			_vm->_inventory->_holdings++;
+			break;
+		}
 	}
 }
 
@@ -424,7 +491,28 @@ void Scene::checkSceneFlags(bool flag) {
  * be hidden in the scene.
  */
 void Scene::checkInventory() {
+	for (uint shapeIdx = 0; shapeIdx < _bgShapes.size(); ++shapeIdx) {
+		for (uint invIdx = 0; invIdx < _vm->_inventory->size(); ++invIdx) {
+			if (scumm_stricmp(_bgShapes[shapeIdx]._name.c_str(),
+				(*_vm->_inventory)[invIdx]._name.c_str()) == 0) {
+				_bgShapes[shapeIdx]._type = INVALID;
+				break;
+			}
+		}
+	}
+}
 
+/**
+ * Set up any entrance co-ordinates or entrance canimations, and then transition
+ * in the scene
+ */
+void Scene::transitionToScene() {
+	const int FS_TRANS[8] = { 
+		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, 
+		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT 
+	};
+
+	// TODO
 }
 
 } // End of namespace Sherlock

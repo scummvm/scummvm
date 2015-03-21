@@ -51,6 +51,12 @@ void Sprite::clear() {
 	_numFrames = 0;
 }
 
+void Sprite::setImageFrame() {
+	// TODO: check this
+	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber];
+	_imageFrame = &(*_images)[imageNumber];
+}
+
 /*----------------------------------------------------------------*/
 
 void ActionType::synchronize(Common::SeekableReadStream &s) {

@@ -46,6 +46,12 @@ static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 
 
 People::People(SherlockEngine *vm) : _vm(vm) {
+	_walkLoaded = false;
+}
+
+People::~People() {
+	if (_walkLoaded)
+		delete _data[PLAYER]._images;
 }
 
 void People::reset() {
@@ -68,6 +74,18 @@ void People::reset() {
 	p._noShapeSize = Common::Point(0, 0);
 	p._goto = Common::Point(0, 0);
 	p._status = 0;
+}
+
+bool People::loadWalk() {
+	if (_walkLoaded) {
+		return false;
+	} else {
+		_data[PLAYER]._images = new ImageFile("walk.vgs");
+		_data[PLAYER].setImageFrame();
+		_walkLoaded = true;
+
+		return true;
+	}
 }
 
 } // End of namespace Sherlock

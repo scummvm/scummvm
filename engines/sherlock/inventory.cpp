@@ -20,42 +20,8 @@
  *
  */
 
-#ifndef SHERLOCK_PEOPLE_H
-#define SHERLOCK_PEOPLE_H
-
-#include "common/scummsys.h"
-#include "sherlock/objects.h"
+#include "sherlock/inventory.h"
 
 namespace Sherlock {
 
-#define MAX_PEOPLE 2
-#define PLAYER 0
-
-// Animation sequence identifiers for characters
-enum {
-	WALK_RIGHT = 0, WALK_DOWN = 1, WALK_LEFT = 2, WALK_UP = 3, STOP_LEFT = 4,
-	STOP_DOWN  = 5, STOP_RIGHT = 6, STOP_UP = 7, WALK_UPRIGHT = 8,
-	WALK_DOWNRIGHT = 9, WALK_UPLEFT = 10, WALK_DOWNLEFT = 11,
-	STOP_UPRIGHT = 12, STOP_UPLEFT = 13, STOP_DOWNRIGHT = 14,
-	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4
-};
-
-class SherlockEngine;
-
-class People {
-private:
-	SherlockEngine *_vm;
-	Sprite _data[MAX_PEOPLE];
-	bool _walkLoaded;
-public:
-	People(SherlockEngine *vm);
-	~People();
-
-	void reset();
-
-	bool loadWalk();
-};
-
 } // End of namespace Sherlock
-
-#endif

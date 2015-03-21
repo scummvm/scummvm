@@ -89,15 +89,13 @@ class Scene {
 private:
 	SherlockEngine *_vm;
 
-	void loadScene();
-
-	void loadScene(const Common::String &filename);
+	bool loadScene(const Common::String &filename);
 
 	void checkSceneStatus();
 
-	void checkSceneFlags(bool mode);
-
 	void checkInventory();
+
+	void transitionToScene();
 public:
 	int _currentScene;
 	int _goToRoom;
@@ -137,6 +135,8 @@ public:
 	void clear();
 
 	void selectScene();
+
+	void checkSceneFlags(bool mode);
 };
 
 } // End of namespace Sherlock

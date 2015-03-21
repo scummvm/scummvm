@@ -24,15 +24,23 @@
 #define SHERLOCK_INVENTORY_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Sherlock {
 
 struct InventoryItem {
-	int stringIndex;
-	char name[12];
-	char description[41];
-	char name2[9];
-	uint16 value;
+	int _requiredFlag;
+	Common::String _name;
+	Common::String _description;;
+	Common::String _examine;
+	int _lookFlag;
+};
+
+class Inventory : public Common::Array<InventoryItem> {
+public:
+	uint _holdings;
+
+	Inventory() : Common::Array<InventoryItem>(), _holdings(0) {}
 };
 
 } // End of namespace Sherlock

@@ -27,6 +27,18 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+#define NUM_PLACES 100
+const int MAP_X[NUM_PLACES] = { 
+	0, 368, 0, 219, 0, 282, 0, 43, 0, 0, 396, 408, 0, 0, 0, 568, 37, 325, 
+	28, 0, 263, 36, 148, 469, 342, 143, 443, 229, 298, 0, 157, 260, 432, 
+	174, 0, 351, 0, 528, 0, 136, 0, 0, 0, 555, 165, 0, 506, 0, 0, 344, 0, 0 
+};
+const int MAP_Y[NUM_PLACES] = { 
+	0, 147, 0, 166, 0, 109, 0, 61, 0, 0, 264, 70, 0, 0, 0, 266, 341, 30, 275,
+	0, 294, 146, 311, 230, 184, 268, 133, 94, 207, 0, 142, 142, 330, 255, 0, 
+	37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0 
+};
+
 ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {
 	_chess = nullptr;
@@ -52,6 +64,10 @@ void ScalpelEngine::initialize() {
 	_flags.resize(100 * 8);
 	_flags[3] = true;		// Turn on Alley
 	_flags[39] = true;		// Turn on Baker Street
+
+	// Load the map co-ordinates for each scene
+	for (int idx = 0; idx < NUM_PLACES; ++idx)
+		_map.push_back(Common::Point(MAP_X[idx], MAP_Y[idx]));
 
 	// Starting scene
 	_scene->_goToRoom = 4;

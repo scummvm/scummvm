@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	detection.o \
 	events.o \
 	graphics.o \
+	inventory.o \
 	journal.o \
 	objects.o \
 	people.o \

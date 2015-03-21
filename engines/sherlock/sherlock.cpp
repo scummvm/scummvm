@@ -33,6 +33,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
+	_inventory = nullptr;
 	_journal = nullptr;
 	_people = nullptr;
 	_res = nullptr;
@@ -50,6 +51,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _animation;
 	delete _debugger;
 	delete _events;
+	delete _inventory;
 	delete _journal;
 	delete _people;
 	delete _res;
@@ -82,6 +84,7 @@ void SherlockEngine::initialize() {
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
+	_inventory = new Inventory();
 	_journal = new Journal();
 	_people = new People(this);
 	_scene = new Scene(this);
@@ -114,6 +117,27 @@ Common::Error SherlockEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+/**
+ * Read the state of a global flag
+ */
+bool SherlockEngine::readFlags(int flagNum) {
+	bool value = _flags[ABS(flagNum)];
+	if (flagNum < 0)
+		value = !value;
+
+	return value;
+}
+
+/**
+ * Sets a global flag to either true or false depending on whether the specified
+ * flag is positive or negative
+ */
+void SherlockEngine::setFlags(int flagNum) {
+	_flags[ABS(flagNum)] = flagNum >= 0;
+
+	_scene->checkSceneFlags(true);
 }
 
 } // End of namespace Comet

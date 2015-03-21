@@ -100,7 +100,10 @@ struct Sprite {
 	int _numFrames;						// How many frames the object has
 
 	Sprite() { clear(); }
+	
 	void clear();
+
+	void setImageFrame();
 };
 
 struct ActionType {
