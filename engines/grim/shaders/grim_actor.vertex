@@ -17,6 +17,7 @@ struct Light {
 	vec4 _position;
 	vec4 _direction;
 	vec4 _color;
+	vec4 _params;
 };
 const int maxLights = 8;
 uniform Light lights[maxLights];

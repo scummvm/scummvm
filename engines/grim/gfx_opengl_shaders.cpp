@@ -779,10 +779,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 			uniform = Common::String::format("lights[%u]._color", i);
 			_actorProgram->setUniform(uniform.c_str(), l._color);
 
-			if (g_grim->getGameType() == GType_MONKEY4) {
-				uniform = Common::String::format("lights[%u]._params", i);
-				_actorProgram->setUniform(uniform.c_str(), l._params);
-			}
+			uniform = Common::String::format("lights[%u]._params", i);
+			_actorProgram->setUniform(uniform.c_str(), l._params);
 		}
 	}
 }
