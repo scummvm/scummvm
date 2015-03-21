@@ -97,6 +97,7 @@ public:
 	Common::Point _over;				// Old map position
 	Common::Array<Common::Point> _map;	// Map locations for each scene
 	bool _talkToAbort;
+	bool _onChessboard;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

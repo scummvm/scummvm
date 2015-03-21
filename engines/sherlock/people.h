@@ -24,6 +24,7 @@
 #define SHERLOCK_PEOPLE_H
 
 #include "common/scummsys.h"
+#include "common/stack.h"
 #include "sherlock/objects.h"
 
 namespace Sherlock {
@@ -39,10 +40,14 @@ enum PeopleId {
 // Animation sequence identifiers for characters
 enum {
 	WALK_RIGHT = 0, WALK_DOWN = 1, WALK_LEFT = 2, WALK_UP = 3, STOP_LEFT = 4,
-	STOP_DOWN  = 5, STOP_RIGHT = 6, STOP_UP = 7, WALK_UPRIGHT = 8,
+	STOP_DOWN = 5, STOP_RIGHT = 6, STOP_UP = 7, WALK_UPRIGHT = 8,
 	WALK_DOWNRIGHT = 9, WALK_UPLEFT = 10, WALK_DOWNLEFT = 11,
 	STOP_UPRIGHT = 12, STOP_UPLEFT = 13, STOP_DOWNRIGHT = 14,
-	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4
+	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4,
+};
+enum {
+	MAP_UP = 1, MAP_UPRIGHT = 2, MAP_RIGHT = 1, MAP_DOWNRIGHT = 4,
+	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
 };
 
 class SherlockEngine;
@@ -51,18 +56,27 @@ class People {
 private:
 	SherlockEngine *_vm;
 	Sprite _data[MAX_PEOPLE];
+	Sprite &_player;
 	bool _walkLoaded;
+	int _oldWalkSequence;
+	bool _allowWalkAbort;
 public:
+	Common::Point _walkDest;
+	Common::Stack<Common::Point> _walkTo;
 	bool _holmesOn;
 public:
 	People(SherlockEngine *vm);
 	~People();
 
+	Sprite &operator[](PeopleId id) { return _data[id]; }
+
 	void reset();
 
 	bool loadWalk();
 
-	Sprite &operator[](PeopleId id) { return _data[id]; }
+	void setWalking();
+
+	void gotoStand(Sprite &sprite);
 };
 
 } // End of namespace Sherlock

@@ -86,7 +86,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_currentScene = -1;
 	_goToRoom = -1;
 	_changes = false;
-	_oldCharPoint = 0;
+	_charPoint = _oldCharPoint = 0;
 	_windowOpen = _infoFlag = false;
 	_menuMode = _keyboardInput = 0;
 	_walkedInScene = false;

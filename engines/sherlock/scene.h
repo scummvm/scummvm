@@ -108,7 +108,7 @@ public:
 	bool _savedStats[SCENES_COUNT][9];
 	Common::Point _bigPos;
 	Common::Point _overPos;
-	int _oldCharPoint;
+	int _charPoint, _oldCharPoint;
 	ImageFile *_controls;
 	ImageFile *_controlPanel;
 	bool _windowOpen, _infoFlag;

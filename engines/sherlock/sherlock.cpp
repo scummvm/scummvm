@@ -44,6 +44,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_useEpilogue2 = false;
 	_justLoaded = false;
 	_talkToAbort = false;
+	_onChessboard = false;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -65,20 +66,8 @@ void SherlockEngine::initialize() {
 
 	DebugMan.addDebugChannel(kDebugScript, "scripts", "Script debug level");
 
-	/*
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_midi = new MidiPlayer(this, driver);
-	_midi->setGM(true);
-	_midi->setNativeMT32(native_mt32);
-	*/
-
 	ImageFile::setVm(this);
+	Sprite::setVm(this);
 	_res = new Resources();
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);

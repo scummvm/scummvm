@@ -74,7 +74,10 @@ enum AType {
 #define FLIP_CODE (64 + 128)
 #define SOUND_CODE (34 + 128)
 
-struct Sprite {
+class Sprite {
+private:
+	static SherlockEngine *_vm;
+public:
 	Common::String _name;				// Name
 	Common::String _description;		// Description
 	Common::StringArray _examine;		// Examine in-depth description
@@ -88,7 +91,7 @@ struct Sprite {
 	int _frameNumber;					// Frame number in rame sequence to draw
 	int _sequenceNumber;				// Sequence being used
 	Common::Point _position;			// Current position
-	Common::Point _movement;			// Momvement amount
+	Common::Point _delta;				// Momvement delta
 	Common::Point _oldPosition;			// Old position
 	Common::Point _oldSize;				// Image's old size
 	Common::Point _goto;				// Walk destination
@@ -98,18 +101,15 @@ struct Sprite {
 	int _status;						// Status: open/closed, moved/not moved
 	int8 _misc;							// Miscellaneous use
 	int _numFrames;						// How many frames the object has
-
+public:
 	Sprite() { clear(); }
-	
+	static void setVm(SherlockEngine *vm) { _vm = vm; }
+
 	void clear();
 
 	void setImageFrame();
 
-	void adjustSprite(bool onChessboard = false);
-
-	void gotoStand();
-
-	void setWalking();
+	void adjustSprite();
 };
 
 struct ActionType {

@@ -21,8 +21,13 @@
  */
 
 #include "sherlock/objects.h"
+#include "sherlock/sherlock.h"
+#include "sherlock/people.h"
+#include "sherlock/scene.h"
 
 namespace Sherlock {
+
+SherlockEngine *Sprite::_vm;
 
 /**
  * Reset the data for the sprite
@@ -39,7 +44,7 @@ void Sprite::clear() {
 	_allow = 0;
 	_frameNumber = _sequenceNumber = 0;
 	_position.x = _position.y = 0;
-	_movement.x = _movement.y = 0;
+	_delta.x = _delta.y = 0;
 	_oldPosition.x = _oldPosition.y = 0;
 	_oldSize.x = _oldSize.y = 0;
 	_goto.x = _goto.y = 0;
@@ -57,15 +62,7 @@ void Sprite::setImageFrame() {
 	_imageFrame = &(*_images)[imageNumber];
 }
 
-void Sprite::adjustSprite(bool onChessboard) {
-	// TODO
-}
-
-void Sprite::gotoStand() {
-	// TODO
-}
-
-void Sprite::setWalking() {
+void Sprite::adjustSprite() {
 	// TODO
 }
 
