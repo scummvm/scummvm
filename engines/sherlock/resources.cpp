@@ -301,7 +301,7 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette) {
 		frame._offset.x = stream.readUint16LE();
 		frame._offset.y = stream.readByte();
         
-		frame._rleEncoded = !skipPalette && (frame._offset.x == 1);
+		frame._rleEncoded = !skipPalette && (frame._offset.x & 0xff) == 1;
 
 		if (frame._paletteBase) {
 			// Nibble packed frame data
