@@ -152,7 +152,7 @@ public:
 	static void setVm(SherlockEngine *vm);
 public:
 	Common::String _name;			// Name
-	Common::String _description;	// Description
+	char _description[41];			// Description lines
 	Common::String _examine;		// Examine in-depth description
 	int _sequenceOffset;
 	uint8 *_sequences;				// Holds animation sequences

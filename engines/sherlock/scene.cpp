@@ -212,7 +212,7 @@ void Scene::freeScene() {
 	_walkData.clear();
 	_cAnim.clear();
 	_bgShapes.clear();
-	_roomBounds.clear();
+	_bounds.clear();
 	_canimShapes.clear();
 
 	for (uint idx = 0; idx < _images.size(); ++idx)
@@ -241,8 +241,8 @@ bool Scene::loadScene(const Common::String &filename) {
 	_ongoingCans = 0;
 
 	// Reset the list of walkable areas
-	_roomBounds.clear();
-	_roomBounds.push_back(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	_bounds.clear();
+	_bounds.push_back(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 	_descText.clear();
 	_comments = "";
@@ -281,7 +281,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			decompressLZ(*rrmStream, bgHeader._numImages * 569 + 
 				bgHeader._descSize + bgHeader._seqSize);
 
-		_bgShapes.resize(bgHeader._numStructs + 1);
+		_bgShapes.resize(bgHeader._numStructs);
 		for (int idx = 0; idx < bgHeader._numStructs; ++idx)
 			_bgShapes[idx].synchronize(*infoStream);
 
@@ -305,13 +305,13 @@ bool Scene::loadScene(const Common::String &filename) {
 			_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
 			// Read in the image data
-			Common::SeekableReadStream *imageStream = !_lzwMode ? rrmStream :
-				decompressLZ(*rrmStream, bgInfo[idx]._filesize);
+			Common::SeekableReadStream *imageStream = _lzwMode ?
+				decompressLZ(*rrmStream, bgInfo[idx]._filesize) :
+				rrmStream->readStream(bgInfo[idx]._filesize);
 
 			_images[idx + 1]._images = new ImageFile(*imageStream);
 
-			if (_lzwMode)
-				delete imageStream;
+			delete imageStream;
 		}
 
 		// Set up the bgShapes
@@ -331,44 +331,41 @@ bool Scene::loadScene(const Common::String &filename) {
 				&(*_bgShapes[idx]._images)[0];
 		}
 
-		// Set up end of list
-		_bgShapes[bgHeader._numStructs]._sequences = &_sequenceBuffer[0] + bgHeader._seqSize;
-		_bgShapes[bgHeader._numStructs]._examine = nullptr;
-
 		// Load in cAnim list
-		Common::SeekableReadStream *canimStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations);
+		Common::SeekableReadStream *canimStream = _lzwMode ?
+			decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
+			rrmStream->readStream(65 * bgHeader._numcAnimations);
 
 		_cAnim.resize(bgHeader._numcAnimations);
 		for (uint idx = 0; idx < _cAnim.size(); ++idx)
 			_cAnim[idx].synchronize(*canimStream);
 
-		if (_lzwMode)
-			delete canimStream;
+		delete canimStream;
 		
 		// Read in the room bounding areas
 		int size = rrmStream->readUint16LE();
 		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
 			decompressLZ(*rrmStream, size);
 
-		_roomBounds.resize(size / 10);
-		for (uint idx = 0; idx < _roomBounds.size(); ++idx) {
-			_roomBounds[idx].left = boundsStream->readSint16LE();
-			_roomBounds[idx].top = boundsStream->readSint16LE();
-			_roomBounds[idx].setWidth(boundsStream->readSint16LE());
-			_roomBounds[idx].setHeight(boundsStream->readSint16LE());
+		_bounds.resize(size / 10);
+		for (uint idx = 0; idx < _bounds.size(); ++idx) {
+			_bounds[idx].left = boundsStream->readSint16LE();
+			_bounds[idx].top = boundsStream->readSint16LE();
+			_bounds[idx].setWidth(boundsStream->readSint16LE());
+			_bounds[idx].setHeight(boundsStream->readSint16LE());
 			boundsStream->skip(2);	// Skip unused scene number field
 		}
 
 		if (_lzwMode)
 			delete boundsStream;
 
-		// Back at version byte, so skip over it
-		rrmStream->skip(1);
+		// Ensure we've reached the path version byte
+		if (rrmStream->readByte() != 254)
+			error("Invalid scene path data");
 
 		// Load the walk directory
-		for (int idx1 = 0; idx1 < MAX_ZONES; ++idx1) {
-			for (int idx2 = 0; idx2 < MAX_ZONES; ++idx2)
+		for (uint idx1 = 0; idx1 < _bounds.size(); ++idx1) {
+			for (uint idx2 = 0; idx2 < _bounds.size(); ++idx2)
 				_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
 		}
 

@@ -157,7 +157,7 @@ public:
 	int _invGraphicItems;
 	Common::String _comments;
 	Common::Array<char> _descText;
-	Common::Array<Common::Rect> _roomBounds;
+	Common::Array<Common::Rect> _bounds;
 	Common::Array<Object> _bgShapes;
 	Common::Array<CAnim> _cAnim;
 	Common::Array<byte> _sequenceBuffer;

@@ -408,12 +408,11 @@ void Object::setVm(SherlockEngine *vm) {
  * Load the object data from the passed stream
  */
 void Object::synchronize(Common::SeekableReadStream &s) {
-	char buffer[50];
-
+	char buffer[12];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
-	s.read(buffer, 41);
-	_description = Common::String(buffer);
+
+	s.read(_description, 41);
 
 	_examine.clear();
 	_sequences = nullptr;
@@ -421,8 +420,8 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_imageFrame = nullptr;
 
 	s.skip(4);
-	_sequenceOffset = s.readUint32LE();
-	s.seek(8, SEEK_CUR);
+	_sequenceOffset = s.readUint16LE();
+	s.seek(10, SEEK_CUR);
 
 	_walkCount = s.readByte();
 	_allow = s.readByte();

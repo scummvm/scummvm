@@ -297,13 +297,13 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette) {
 		ImageFrame frame;
 		frame._width = stream.readUint16LE() + 1;
 		frame._height = stream.readUint16LE() + 1;
-		frame._flags = stream.readByte();
+		frame._paletteBase = stream.readByte();
 		frame._offset.x = stream.readUint16LE();
 		frame._offset.y = stream.readByte();
         
 		frame._rleEncoded = !skipPalette && (frame._offset.x == 1);
 
-		if (frame._flags & 0xFF) {
+		if (frame._paletteBase) {
 			// Nibble packed frame data
 			frame._size = (frame._width * frame._height) / 2;
 		} else if (frame._rleEncoded) {
@@ -351,8 +351,13 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
 
-	if (frame._flags & 0xFF) {
-	    error("TODO: ImageFile::decompressFrame() 4-bits/pixel\n");
+	if (frame._paletteBase) {
+		// Nibble-packed
+		byte *pDest = (byte *)frame._frame.getPixels();
+		for (int idx = 0; idx < frame._size; ++idx, ++src) {
+			*pDest++ = *src & 0xF;
+			*pDest++ = (*src >> 4);
+		}
 	} else if (frame._rleEncoded) {
 		// RLE encoded
 	    byte *dst = (byte *)frame._frame.getPixels();

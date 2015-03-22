@@ -91,7 +91,7 @@ public:
 struct ImageFrame {
 	uint32 _size;
 	uint16 _width, _height;
-	int _flags;
+	int _paletteBase;
 	bool _rleEncoded;
 	Common::Point _offset;
 	byte _rleMarker;
