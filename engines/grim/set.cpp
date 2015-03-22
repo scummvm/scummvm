@@ -488,9 +488,10 @@ bool Set::Setup::restoreState(SaveGame *savedState) {
 	return true;
 }
 
-Light::Light() : _umbraangle(0.0f), _penumbraangle(0.0f),
-		_falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
+Light::Light() : _falloffNear(0.0f), _falloffFar(0.0f), _enabled(false), _id(0) {
 	setIntensity(0.0f);
+	setUmbra(0.0f);
+	setPenumbra(0.0f);
 }
 
 void Set::Setup::getRotation(float *x, float *y, float *z) {
@@ -541,6 +542,16 @@ void Set::Setup::setRoll(Math::Angle roll) {
 	}
 }
 
+void Light::setUmbra(float angle) {
+	_umbraangle = angle;
+	_cosumbraangle = cosf(angle * M_PI / 180.0f);
+}
+
+void Light::setPenumbra(float angle) {
+	_penumbraangle = angle;
+	_cospenumbraangle = cosf(angle * M_PI / 180.0f);
+}
+
 void Light::setIntensity(float intensity) {
 	_intensity = intensity;
 	if (g_grim->getGameType() == GType_MONKEY4) {
@@ -579,8 +590,10 @@ void Light::load(TextSplitter &ts) {
 	ts.scanString(" direction %f %f %f", 3, &_dir.x(), &_dir.y(), &_dir.z());
 	ts.scanString(" intensity %f", 1, &tmp);
 	setIntensity(tmp);
-	ts.scanString(" umbraangle %f", 1, &_umbraangle);
-	ts.scanString(" penumbraangle %f", 1, &_penumbraangle);
+	ts.scanString(" umbraangle %f", 1, &tmp);
+	setUmbra(tmp);
+	ts.scanString(" penumbraangle %f", 1, &tmp);
+	setPenumbra(tmp);
 
 	int r, g, b;
 	ts.scanString(" color %d %d %d", 3, &r, &g, &b);
@@ -627,8 +640,8 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(v, sizeof(float) * 4);
 	_falloffNear = get_float(v);
 	_falloffFar = get_float(v + 4);
-	_umbraangle = get_float(v + 8);
-	_penumbraangle = get_float(v + 12);
+	setUmbra(get_float(v + 8));
+	setPenumbra(get_float(v + 12));
 
 	_enabled = true;
 }
@@ -689,8 +702,8 @@ bool Light::restoreState(SaveGame *savedState) {
 	_color         = savedState->readColor();
 
 	setIntensity(    savedState->readFloat());
-	_umbraangle    = savedState->readFloat();
-	_penumbraangle = savedState->readFloat();
+	setUmbra(        savedState->readFloat());
+	setPenumbra(     savedState->readFloat());
 
 	if (savedState->saveMinorVersion() >= 20) {
 		_falloffNear = savedState->readFloat();

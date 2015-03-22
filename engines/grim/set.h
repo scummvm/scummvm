@@ -185,6 +185,8 @@ struct Light {
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
 	void setIntensity(float intensity);
+	void setUmbra(float angle);
+	void setPenumbra(float angle);
 
 	enum LightType {
 		Omni = 1,
@@ -198,7 +200,7 @@ struct Light {
 	Math::Vector3d _pos, _dir;
 	Color _color;
 	float _intensity, _umbraangle, _penumbraangle, _falloffNear, _falloffFar;
-	float _scaledintensity;
+	float _scaledintensity, _cosumbraangle, _cospenumbraangle;
 	bool _enabled;
 	// there may be more lights with the same position, so this is used to make the sort stable
 	int _id;
