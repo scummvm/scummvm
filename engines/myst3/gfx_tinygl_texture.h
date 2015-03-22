@@ -34,7 +34,7 @@ namespace Myst3 {
 
 class TinyGLTexture : public Texture {
 public:
-	TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport = false);
+	TinyGLTexture(const Graphics::Surface *surface);
 	virtual ~TinyGLTexture();
 
 	Graphics::BlitImage *getBlitTexture() const;
@@ -45,8 +45,6 @@ public:
 	TGLuint id;
 	TGLuint internalFormat;
 	TGLuint sourceFormat;
-	uint32 internalWidth;
-	uint32 internalHeight;
 private:
 	Graphics::BlitImage *_blitImage;
 };

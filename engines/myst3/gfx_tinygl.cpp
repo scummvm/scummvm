@@ -57,7 +57,6 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
 		BaseRenderer(system),
-		_nonPowerOfTwoTexSupport(false),
 		_fb(NULL) {
 }
 
@@ -65,7 +64,7 @@ TinyGLRenderer::~TinyGLRenderer() {
 }
 
 Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface) {
-	return new TinyGLTexture(surface, _nonPowerOfTwoTexSupport);
+	return new TinyGLTexture(surface);
 }
 
 void TinyGLRenderer::freeTexture(Texture *texture) {
@@ -79,8 +78,6 @@ void TinyGLRenderer::init() {
 	bool fullscreen = ConfMan.getBool("fullscreen");
 	Graphics::PixelBuffer screenBuffer = _system->setupScreen(kOriginalWidth, kOriginalHeight, fullscreen, false);
 	computeScreenViewport();
-
-	_nonPowerOfTwoTexSupport = true;
 
 	_fb = new TinyGL::FrameBuffer(kOriginalWidth, kOriginalHeight, screenBuffer);
 	TinyGL::glInit(_fb, 512);
@@ -215,14 +212,10 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 void TinyGLRenderer::drawFace(uint face, Texture *texture) {
 	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
 
-	// Used fragment of the texture
-	const float w = glTexture->width / (float)glTexture->internalWidth;
-	const float h = glTexture->height / (float)glTexture->internalHeight;
-
 	tglBindTexture(TGL_TEXTURE_2D, glTexture->id);
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
-		tglTexCoord2f(w * cubeVertices[5 * (4 * face + i) + 0], h * cubeVertices[5 * (4 * face + i) + 1]);
+		tglTexCoord2f(cubeVertices[5 * (4 * face + i) + 0], cubeVertices[5 * (4 * face + i) + 1]);
 		tglVertex3f(cubeVertices[5 * (4 * face + i) + 2], cubeVertices[5 * (4 * face + i) + 3], cubeVertices[5 * (4 * face + i) + 4]);
 	}
 	tglEnd();
@@ -244,9 +237,6 @@ void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
 	TinyGLTexture *glTexture = static_cast<TinyGLTexture *>(texture);
 
-	const float w = glTexture->width / (float)glTexture->internalWidth;
-	const float h = glTexture->height / (float)glTexture->internalHeight;
-
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	tglEnable(TGL_BLEND);
 	tglDepthMask(TGL_FALSE);
@@ -257,13 +247,13 @@ void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 		tglTexCoord2f(0, 0);
 		tglVertex3f(-topLeft.x(), topLeft.y(), topLeft.z());
 
-		tglTexCoord2f(0, h);
+		tglTexCoord2f(0, 1);
 		tglVertex3f(-bottomLeft.x(), bottomLeft.y(), bottomLeft.z());
 
-		tglTexCoord2f(w, 0);
+		tglTexCoord2f(1, 0);
 		tglVertex3f(-topRight.x(), topRight.y(), topRight.z());
 
-		tglTexCoord2f(w, h);
+		tglTexCoord2f(1, 1);
 		tglVertex3f(-bottomRight.x(), bottomRight.y(), bottomRight.z());
 	tglEnd();
 

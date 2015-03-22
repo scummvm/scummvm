@@ -63,8 +63,6 @@ private:
 	void drawFace(uint face, Texture *texture);
 
 	TinyGL::FrameBuffer *_fb;
-
-	bool _nonPowerOfTwoTexSupport;
 };
 
 } // End of namespace Myst3

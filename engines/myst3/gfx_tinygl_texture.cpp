@@ -25,32 +25,10 @@
 
 namespace Myst3 {
 
-// From Bit Twiddling Hacks
-static uint32 upperPowerOfTwo(uint32 v) {
-	v--;
-	v |= v >> 1;
-	v |= v >> 2;
-	v |= v >> 4;
-	v |= v >> 8;
-	v |= v >> 16;
-	v++;
-
-	return v;
-}
-
-TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
+TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
-
-	// Pad the textures if non power of two support is unavailable
-	if (nonPoTSupport) {
-		internalHeight = height;
-		internalWidth = width;
-	} else {
-		internalHeight = upperPowerOfTwo(height);
-		internalWidth = upperPowerOfTwo(width);
-	}
 
 	if (format.bytesPerPixel == 4) {
 		internalFormat = TGL_RGBA;
@@ -63,7 +41,7 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 
 	tglGenTextures(1, &id);
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, internalWidth, internalHeight, 0, internalFormat, sourceFormat, 0);
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, width, height, 0, internalFormat, sourceFormat, 0);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MIN_FILTER, TGL_LINEAR);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_MAG_FILTER, TGL_LINEAR);
 
@@ -82,7 +60,7 @@ TinyGLTexture::~TinyGLTexture() {
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
-	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, internalWidth, internalHeight, 0,
+	tglTexImage2D(TGL_TEXTURE_2D, 0, 3, width, height, 0,
 			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
 	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
 }
