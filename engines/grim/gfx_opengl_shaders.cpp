@@ -717,14 +717,11 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
 		modelMatrix.transpose();
-		_mvpMatrix = _viewMatrix * modelMatrix;
-		_mvpMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
 		_actorProgram->setUniform("viewMatrix", _viewMatrix);
 		_actorProgram->setUniform("projMatrix", _projMatrix);
 		_actorProgram->setUniform("extraMatrix", extraMatrix);
-		_actorProgram->setUniform("mvpMatrix", _mvpMatrix);
 		_actorProgram->setUniform("tex", 0);
 		_actorProgram->setUniform("texZBuf", 1);
 		_actorProgram->setUniform("hasZBuffer", hasZBuffer);
