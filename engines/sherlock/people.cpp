@@ -56,6 +56,8 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_holmesOn = true;
 	_oldWalkSequence = -1;
 	_allowWalkAbort = false;
+	_portraitLoaded = false;
+	_clearingThePortrait = false;
 }
 
 People::~People() {

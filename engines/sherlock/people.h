@@ -64,6 +64,9 @@ public:
 	Common::Point _walkDest;
 	Common::Stack<Common::Point> _walkTo;
 	bool _holmesOn;
+	bool _portraitLoaded;
+	Object _portrait;
+	bool _clearingThePortrait;
 public:
 	People(SherlockEngine *vm);
 	~People();

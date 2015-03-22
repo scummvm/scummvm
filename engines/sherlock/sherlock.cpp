@@ -45,7 +45,8 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_justLoaded = false;
 	_onChessboard = false;
 	_slowChess = false;
-	_animating = false;
+	_menuCounter = 0;
+	_scriptMoreFlag = 0;
 }
 
 SherlockEngine::~SherlockEngine() {

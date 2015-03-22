@@ -26,8 +26,8 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
-
 #include "sherlock/graphics.h"
+#include "sherlock/resources.h"
 
 namespace Sherlock {
 
@@ -75,6 +75,16 @@ public:
 	void randomTransition();
 
 	void verticalTransition();
+
+	void print(const Common::Point &pt, int fgColor, int bgColor, const char *format, ...);
+
+	void restoreBackground(const Common::Rect &r);
+
+	void slamArea(int16 xp, int16 yp, int16 w, int16 h);
+	void slamRect(const Common::Rect &r);
+
+	void flushImage(ImageFrame *frame, const Common::Point &pt,
+		int16 *xp, int16 *yp, int16 *w, int16 *h);
 };
 
 } // End of namespace Sherlock

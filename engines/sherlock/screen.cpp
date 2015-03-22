@@ -231,4 +231,67 @@ void Screen::verticalTransition() {
 	}
 }
 
+/**
+ * Prints the text passed onto the back buffer at the given position and color.
+ * The string is then blitted to the screen
+ */
+void Screen::print(const Common::Point &pt, int fgColor, int bgColor, const char *format, ...) {
+	// TODO
+}
+
+/**
+ * Copies a section of the second back buffer into the main back buffer
+ */
+void Screen::restoreBackground(const Common::Rect &r) {
+	Common::Rect tempRect = r;
+	tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+
+	if (tempRect.isValidRect())
+		_backBuffer.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
+}
+
+/**
+ * Copies a given area to the screen
+ */
+void Screen::slamArea(int16 xp, int16 yp, int16 w, int16 h) {
+	slamRect(Common::Rect(xp, yp, xp + w, yp + h));
+}
+
+/**
+ * Copies a given area to the screen
+ */
+void Screen::slamRect(const Common::Rect &r) {
+	Common::Rect tempRect = r;
+	tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+
+	if (tempRect.isValidRect())
+		blitFrom(_backBuffer, Common::Point(tempRect.left, tempRect.top), tempRect);
+}
+
+/**
+ * Copy an image from the back buffer to the screen, taking care of both the
+ * new area covered by the shape as well as the old area, which must be restored
+ */
+void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
+		int16 *xp, int16 *yp, int16 *w, int16 *h) {
+	Common::Point imgPos = pt + frame->_offset;
+	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->_frame.w, imgPos.y + frame->_frame.h);
+	Common::Rect oldBounds(*xp, *yp, *xp + *w, *yp + *h);
+
+	// See if the areas of the old and new overlap, and if so combine the areas
+	if (newBounds.intersects(oldBounds)) {
+		newBounds.extend(oldBounds);
+		slamRect(newBounds);
+	} else {
+		// The two areas are independent, so copy them both
+		slamRect(newBounds);
+		slamRect(oldBounds);
+	}
+
+	*xp = newBounds.left;
+	*yp = newBounds.top;
+	*w = newBounds.width();
+	*h = newBounds.height();
+}
+
 } // End of namespace Sherlock

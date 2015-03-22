@@ -143,7 +143,7 @@ class Object {
 private:
 	static SherlockEngine *_vm;
 
-	bool checkEndOfSequence() const;
+	bool checkEndOfSequence();
 
 	void setObjSequence(int seq, bool wait);
 public:
@@ -190,7 +190,7 @@ public:
 	int _seqStack;					// Allows gosubs to return to calling frame
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
 	uint _descOffset;					// Tells where description starts in DescText
-	int _seqcounter2;				// Counter of calling frame sequence
+	int _seqCounter2;				// Counter of calling frame sequence
 	uint _seqSize;					// Tells where description starts 
 	ActionType _aMove;
 	UseType _use[4];
@@ -204,6 +204,8 @@ public:
 	int checkNameForCodes(const Common::String &name, Common::StringArray *messages);
 
 	void setFlagsAndToggles();
+
+	void adjustObject();
 };
 
 struct CAnim {

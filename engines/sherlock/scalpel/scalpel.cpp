@@ -336,6 +336,27 @@ void ScalpelEngine::startScene() {
 	_chessResult = _scene->_goToRoom;
 }
 
+/**
+ * Takes care of clearing the mirror in scene 12, in case anything drew over it
+ */
+void ScalpelEngine::eraseMirror12() {
+	// TODO
+}
+
+/**
+ * Takes care of drawing Holme's reflection onto the mirror in scene 12
+ */
+void ScalpelEngine::doMirror12() {
+	// TODO
+}
+
+/**
+ * This clears the mirror  in scene 12 in case anything messed draw over it
+ */
+void ScalpelEngine::flushMirror12() {
+	// TODO
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Scalpel

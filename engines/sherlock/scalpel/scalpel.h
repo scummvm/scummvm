@@ -51,6 +51,10 @@ protected:
 public:
 	ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~ScalpelEngine();
+
+	void eraseMirror12();
+	void doMirror12();
+	void flushMirror12();
 };
 
 } // End of namespace Scalpel

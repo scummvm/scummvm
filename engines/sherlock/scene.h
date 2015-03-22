@@ -116,6 +116,10 @@ private:
 	Common::String _cAnimStr;
 	MenuMode _menuMode;
 	InvMode _invMode;
+	bool _lookScriptFlag;
+	int _selector;
+	bool _invLookFlag;
+	bool _lookHelp;
 
 	bool loadScene(const Common::String &filename);
 
@@ -125,15 +129,9 @@ private:
 
 	void transitionToScene();
 
-	int toggleObject(const Common::String &name);
-
 	void updateBackground();
 
 	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
-
-	int startCAnim(int cAnimNum, int playRate);
-
-	void doBgAnim();
 public:
 	int _currentScene;
 	int _goToRoom;
@@ -170,6 +168,8 @@ public:
 	int _hsavedFs;
 	Common::Array<Object> _canimShapes;
 	bool _restoreFlag;
+	int _animating;
+	bool _doBgAnimDone;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
@@ -183,6 +183,14 @@ public:
 	Exit *checkForExit(const Common::Rect &r);
 
 	void printObjDesc(const Common::String &str, bool firstTime);
+
+	int startCAnim(int cAnimNum, int playRate);
+
+	int toggleObject(const Common::String &name);
+
+	void doBgAnim();
+
+	void clearInfo();
 };
 
 } // End of namespace Sherlock

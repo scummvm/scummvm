@@ -28,6 +28,8 @@
 
 namespace Sherlock {
 
+#define START_FRAME 0
+
 #define UPPER_LIMIT 0
 #define LOWER_LIMIT CONTROLS_Y
 #define LEFT_LIMIT 0
@@ -36,6 +38,10 @@ namespace Sherlock {
 // Distance to walk around WALK_AROUND boxes
 #define CLEAR_DIST_X 5
 #define CLEAR_DIST_Y 0
+
+#define INFO_FOREGROUND 11
+#define INFO_BACKGROUND 1
+
 
 SherlockEngine *Sprite::_vm;
 
@@ -83,7 +89,7 @@ void Sprite::adjustSprite() {
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
 
-	if (_type == INVALID || (_type == CHARACTER && _vm->_animating))
+	if (_type == INVALID || (_type == CHARACTER && scene._animating))
 		return;
 
 	if (!talk._talkCounter && _type == CHARACTER && _walkCount) {
@@ -457,7 +463,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_seqStack = s.readByte();
 	_seqTo = s.readByte();
 	_descOffset = s.readUint16LE();
-	_seqcounter2 = s.readByte();
+	_seqCounter2 = s.readByte();
 	_seqSize = s.readUint16LE();
 	s.skip(1);
 	_aMove.synchronize(s);
@@ -487,7 +493,7 @@ void Object::toggleHidden() {
 			_sequences[_frameNumber] = _seqTo + SEQ_TO_CODE + 128;
 		_seqTo = 0;
 
-		_seqCounter = _seqcounter2 = 0;
+		_seqCounter = _seqCounter2 = 0;
 		_seqStack = 0;
 		_frameNumber = -1;
 
@@ -544,7 +550,7 @@ void Object::checkObject(Object &o) {
 			if (v >= 228) {
 				// Goto code found
 				v -= 228;
-				_seqcounter2 = _seqCounter;
+				_seqCounter2 = _seqCounter;
 				_seqStack = _frameNumber + 1;
 				setObjSequence(v, false);
 			} else if (v >= SOUND_CODE && (v <= (SOUND_CODE + 29))) {
@@ -631,29 +637,290 @@ void Object::checkObject(Object &o) {
 	} while (codeFound);
 }
 
-bool Object::checkEndOfSequence() const {
-	// TODO
-	return false;
+/**
+ * This will check to see if the object has reached the end of a sequence.
+ * If it has, it switch to whichever next sequence should be started.
+ * @returns		true if the end of a sequence was reached
+ */
+bool Object::checkEndOfSequence() {
+	Screen &screen = *_vm->_screen;
+	int checkFrame = _allow ? MAX_FRAME : 32000;
+	bool result = false;
+
+	if (_type == REMOVE || _type == INVALID)
+		return false;
+
+	if (_sequences[_frameNumber] == 0 || _frameNumber >= checkFrame) {
+		result = true;
+
+		if (_frameNumber >= (checkFrame - 1)) {
+			_frameNumber = START_FRAME;
+		}  else {
+			// Determine next sequence to use
+			int seq = _sequences[_frameNumber + 1];
+
+			if (seq == 99) {
+				--_frameNumber;
+				screen._backBuffer.transBlitFrom(_imageFrame->_frame, _position);
+				screen._backBuffer2.transBlitFrom(_imageFrame->_frame, _position);
+				_type = INVALID;
+			} else {
+				setObjSequence(seq, false);
+			}
+		}
+	}
+
+	if (_allow && _frameNumber == 0) {
+		// canimation just ended
+		if (_type != NO_SHAPE && _type != REMOVE) {
+			_type = REMOVE;
+
+			if (!_countCAnimFrames) {
+				// Save details before shape is removed
+				_delta.x = _imageFrame->_frame.w;
+				_delta.y = _imageFrame->_frame.h;
+				_position = _imageFrame->_offset;
+
+				// Free the images
+				delete _images;
+			}
+		} else {
+			_type = INVALID;
+		}
+	}
+
+	return result;
 }
 
+/**
+ * Scans through the sequences array and finds the designated sequence.
+ * It then sets the frame number of the start of that sequence
+ */
 void Object::setObjSequence(int seq, bool wait) {
-	// TODO
+	Scene &scene = *_vm->_scene;
+	int checkFrame = _allow ? MAX_FRAME : 32000;
+
+	if (seq >= 128) {
+		// Loop the sequence until the count exceeded
+		seq -= 128;
+
+		++_seqCounter;
+		if (_seqCounter >= seq) {
+			// Go to next sequence
+			if (_seqStack) {
+				_frameNumber = _seqStack;
+				_seqStack = 0;
+				_seqCounter = _seqCounter2;
+				_seqCounter2 = 0;
+				if (_frameNumber >= checkFrame)
+					_frameNumber = START_FRAME;
+
+				return;
+			}
+
+			_frameNumber += 2;
+			if (_frameNumber >= checkFrame)
+				_frameNumber = 0;
+
+			_seqCounter = 0;
+			if (_sequences[_frameNumber] == 0)
+				seq = _sequences[_frameNumber + 1];
+			else
+				return;
+		} else {
+			// Find beginning of sequence
+			do {
+				--_frameNumber;
+			} while (_frameNumber > 0 && _sequences[_frameNumber] != 0);
+
+			if (_frameNumber != 0)
+				_frameNumber += 2;
+
+			return;
+		}
+	} else {
+		// Reset sequence counter
+		_seqCounter = 0;
+	}
+
+	int idx = 0;
+	int seqCc = 0;
+
+	while (seqCc < seq && idx < checkFrame) {
+		++idx;
+		if (_sequences[idx] == 0) {
+			++seqCc;
+			idx += 2;
+		}
+	}
+
+	if (idx >= checkFrame)
+		idx = 0;
+	_frameNumber = idx;
+
+	if (wait) {
+		seqCc = idx;
+		while (_sequences[idx] != 0)
+			++idx;
+
+		idx = idx - seqCc + 2;
+		for (; idx > 0; --idx)
+			scene.doBgAnim();
+	}
 }
 
 /**
 * Checks for codes
 * @param name		The name to check for codes
-* @param messages	If provided, any messages to be returned
+* @param messages	Provides a lookup list of messages that can be printed
 * @returns		0 if no codes are found, 1 if codes were found
 */
 int Object::checkNameForCodes(const Common::String &name, Common::StringArray *messages) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	bool printed = false;
+	char ch;
+	const char *p;
 
-	// TODO
-	return 0;
+	scene.toggleObject(name);
+
+	if (name.hasPrefix("*")) {
+		// A code was found
+		printed = true;
+		ch = toupper(name[1]);
+
+		switch (ch) {
+		case 'C':
+			talk.talkTo(name.c_str() + 2);
+			break;
+
+		case 'T':
+		case 'B':
+		case 'F':
+		case 'W':
+			// Nothing: action was already done before canimation
+			break;
+
+		case 'G':
+		case 'A': {
+			// G: Have object go somewhere
+			// A: Add onto existing co-ordinates
+			Common::String sx(name.c_str() + 2, name.c_str() + 5);
+			Common::String sy(name.c_str() + 6, name.c_str() + 9);
+			
+			if (ch == 'G')			
+				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
+			else
+				_position += Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
+			break;
+		}
+
+		default:
+			if (ch >= '0' && ch <= '9') {
+				scene._goToRoom = atoi(name.c_str() + 1);
+
+				if (scene._goToRoom < 97 && _vm->_map[scene._goToRoom].x) {
+					_vm->_over.x = _vm->_map[scene._goToRoom].x * 100 - 600;
+					_vm->_over.y = _vm->_map[scene._goToRoom].y * 100 + 900;
+				}
+
+				if ((p = strchr(name.c_str(), ',')) != nullptr) {
+					++p;
+
+					Common::String s(p, p + 3);
+					scene._hsavedPos.x = atoi(s.c_str());
+
+					s = Common::String(p + 3, p + 6);
+					scene._hsavedPos.y = atoi(s.c_str());
+
+					s = Common::String(p + 6, p + 9);
+					scene._hsavedFs = atoi(s.c_str());
+					if (scene._hsavedFs == 0)
+						scene._hsavedFs = 10;
+				} else if ((p = strchr(name.c_str(), '/')) != nullptr) {
+					scene._hsavedPos = Common::Point(1, 0);
+					scene._hsavedFs = 100 + atoi(p + 1);
+				}
+			} else {
+				scene._goToRoom = 100;
+			}
+
+			people[AL]._position = Common::Point(0, 0);
+			break;
+		}
+	} else if (name.hasPrefix("!")) {
+		// Message attached to canimation
+		int messageNum = atoi(name.c_str() + 1);
+		scene._infoFlag++;
+		scene.clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, INFO_BACKGROUND,
+			(*messages)[messageNum].c_str());
+		_vm->_menuCounter = 25;
+	} else if (name.hasPrefix("@")) {
+		// Message attached to canimation
+		scene._infoFlag++;
+		scene.clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, INFO_BACKGROUND,
+			"%s", name.c_str() + 1);
+		printed = true;
+		_vm->_menuCounter = 25;
+	}
+
+	return printed;
 }
 
+/**
+ * Handle setting any flags associated with the object
+ */
 void Object::setFlagsAndToggles() {
-	// TODO
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+
+	for (int useIdx = 0; useIdx < 4; ++useIdx) {
+		if (_use[useIdx]._useFlag) {
+			if (!_vm->readFlags(_use[useIdx]._useFlag))
+				_vm->setFlags(_use[useIdx]._useFlag);
+		}
+
+		if (_use[useIdx]._cAnimSpeed) {
+			if (_use[useIdx]._cAnimNum == 0)
+				// 0 is really a 10
+				scene.startCAnim(_use[useIdx]._cAnimNum - 1, _use[useIdx]._cAnimSpeed);
+		}
+
+		if (!talk._talkToAbort) {
+			for (int idx = 0; idx < 4; ++idx)
+				scene.toggleObject(_use[useIdx]._names[idx]);
+		}
+	}
+}
+
+/**
+ * Adjusts the sprite's position and animation sequence, advancing by 1 frame.
+ * If the end of the sequence is reached, the appropriate action is taken.
+ */
+void Object::adjustObject() {
+	if (_type == REMOVE)
+		return;
+
+	_position += _delta;
+
+	if (_position.y > LOWER_LIMIT)
+		_position.y = LOWER_LIMIT;
+
+	if (_type != NO_SHAPE) {
+		int frame = _frameNumber;
+		if (frame == -1)
+			frame = 0;
+
+		int imgNum = _sequences[frame];
+		if (imgNum > _maxFrames)
+			imgNum = 1;
+
+		_imageFrame = &(*_images)[imgNum - 1];
+	}
 }
 
 /*----------------------------------------------------------------*/
