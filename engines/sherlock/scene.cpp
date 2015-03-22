@@ -327,7 +327,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			_bgShapes[idx]._seqCounter2 = 0;
 			_bgShapes[idx]._seqStack = 0;
 			_bgShapes[idx]._frameNumber = -1;
-			_bgShapes[idx]._position = Common::Point(0, 0);
+			_bgShapes[idx]._oldPosition = Common::Point(0, 0);
 			_bgShapes[idx]._oldSize = Common::Point(1, 1);
 		}
 
