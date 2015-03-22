@@ -84,40 +84,43 @@ void main()
 	}
 
 	if (lightsEnabled) {
-		vec3 light = vec3(0,0,0);
-		vec3 normalEye = (normalMatrix * vec4(normal, 1.0)).xyz;
+		vec3 light = vec3(0.0, 0.0, 0.0);
+		vec3 normalEye = normalize((normalMatrix * vec4(normal, 1.0)).xyz);
 
 		for (int i = 0; i < maxLights; ++i) {
-			if (lights[i]._color.w != 0.0) { // Enabled?
-				vec3 color = lights[i]._color.xyz;
-				if (lights[i]._position.w == 1.0) { // Omnidirectional or spotlight
-					vec3 vertexToLight = lights[i]._position.xyz - pos.xyz;
+			float intensity = lights[i]._color.w;
+			float light_type = lights[i]._position.w;
+			if (light_type >= 0.0) { // Not ambient
+				vec3 vertexToLight;
+				if (light_type > 0.0) { // positional light
 					float falloffNear = lights[i]._params.x;
-					float falloffFar = lights[i]._params.y;
+					float falloffFar = max(falloffNear, lights[i]._params.y);
+					vertexToLight = lights[i]._position.xyz - pos.xyz;
 					float dist = length(vertexToLight);
-
-					float attn = clamp(1.0 - (dist - falloffNear) / max(0.001, falloffFar - falloffNear), 0.0, 1.0);
-					color *= attn;
-
-					vertexToLight = normalize(vertexToLight);
-					float incidence = max(0.0, dot(normalEye, vertexToLight));
-					color *= incidence;
-
-					if (lights[i]._direction.w != -1.0) { // Spotlight
-						float cosAngle = max(0.0, dot(lights[i]._direction.xyz, vertexToLight));
-						float cosPenumbra = lights[i]._params.z;
-						float cosUmbra = lights[i]._params.w;
-						float cone = clamp((cosAngle - cosPenumbra) / max(0.001, cosUmbra - cosPenumbra), 0.0, 1.0);
-						color *= cone;
+					if (falloffFar == falloffNear) {
+						intensity = 0.0;
+					} else {
+						intensity *= clamp(1.0 - (dist - falloffNear) / (falloffFar - falloffNear), 0.0, 1.0);
 					}
-				} else if (lights[i]._direction.w == -1.0) { // Ambient or directional
-					if (lights[i]._position.w != -1.0) { // Directional
-						float incidence = max(0.0, dot(normalEye, -lights[i]._position.xyz));
-						color *= incidence;
+					if (lights[i]._direction.w > -1.0) { // Spotlight
+						// See DirectX spotlight documentation
+						float cosAngle = -dot(normalize(vertexToLight), normalize(lights[i]._direction.xyz)); // rho
+						float cosPenumbra = clamp(lights[i]._params.w, 0.0, 1.0); // cos(theta / 2)
+						float cosUmbra = clamp(lights[i]._params.z, 0.0, cosPenumbra); // cos(phi / 2)
+						if (cosAngle <= cosPenumbra) {
+							if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
+								intensity = 0.0;
+							} else {
+								intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+							}
+						}
 					}
+				} else { // directional light
+					vertexToLight = -lights[i]._position.xyz;
 				}
-				light += color;
+				intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
 			}
+			light += lights[i]._color.xyz * intensity;
 		}
 
 		if (!hasAmbient)

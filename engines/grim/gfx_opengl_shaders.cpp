@@ -1094,10 +1094,10 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 	} else {
 		intensity /= 15.0f;
 	}
-	lightColor.x() = (float)light->_color.getRed() * intensity;
-	lightColor.y() = (float)light->_color.getGreen() * intensity;
-	lightColor.z() = (float)light->_color.getBlue() * intensity;
-	lightColor.w() = 1.0f;
+	lightColor.x() = (float)light->_color.getRed();
+	lightColor.y() = (float)light->_color.getGreen();
+	lightColor.z() = (float)light->_color.getBlue();
+	lightColor.w() = intensity;
 
 	if (light->_type == Grim::Light::Omni) {
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
