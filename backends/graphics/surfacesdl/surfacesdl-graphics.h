@@ -193,12 +193,15 @@ protected:
 #endif
 #endif
 
+	SDL_Surface *_sideSurfaces[2];
+
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 
 	int _screenChangeCount;
 
 	void drawOverlay();
+	void drawSideTextures();
 };
 
 #endif

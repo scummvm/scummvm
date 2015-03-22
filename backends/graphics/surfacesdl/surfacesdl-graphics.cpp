@@ -78,7 +78,10 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
 		_desktopW = vi->current_w;
 		_desktopH = vi->current_h;
+		_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
+#ifdef USE_OPENGL
 		_sideTextures[0] = _sideTextures[1] = nullptr;
+#endif
 }
 
 SurfaceSdlGraphicsManager::~SurfaceSdlGraphicsManager() {
@@ -699,6 +702,27 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 #endif
 #endif
 
+void SurfaceSdlGraphicsManager::drawSideTextures() {
+	if (_fullscreen && _lockAspectRatio) {
+		if (_sideSurfaces[0]) {
+			SDL_Rect dstrect;
+			dstrect.x = _gameRect.getTopLeft().getX() - _sideSurfaces[0]->w;
+			dstrect.y = _gameRect.getTopLeft().getY();
+			dstrect.w = _sideSurfaces[0]->w;
+			dstrect.h = _sideSurfaces[0]->h;
+			SDL_BlitSurface(_sideSurfaces[0], NULL, _screen, &dstrect);
+		}
+		if (_sideSurfaces[1]) {
+			SDL_Rect dstrect;
+			dstrect.x = _gameRect.getTopRight().getX();
+			dstrect.y = _gameRect.getTopLeft().getY();
+			dstrect.w = _sideSurfaces[1]->w;
+			dstrect.h = _sideSurfaces[1]->h;
+			SDL_BlitSurface(_sideSurfaces[1], NULL, _screen, &dstrect);
+		}
+	}
+}
+
 void SurfaceSdlGraphicsManager::drawOverlay() {
 	if (!_overlayscreen)
 		return;
@@ -759,6 +783,7 @@ void SurfaceSdlGraphicsManager::updateScreen() {
 		if (_overlayVisible) {
 			drawOverlay();
 		}
+		drawSideTextures();
 		SDL_Flip(_screen);
 	}
 }
@@ -918,8 +943,22 @@ void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphic
 		if (right) {
 			_sideTextures[1] = new Graphics::Texture(*right);
 		}
-	}
+	} else
 #endif
+	{
+		delete _sideSurfaces[0];
+		_sideSurfaces[0] = nullptr;
+		delete _sideSurfaces[1];
+		_sideSurfaces[1] = nullptr;
+		if (left) {
+			_sideSurfaces[0] = SDL_CreateRGBSurface(SDL_SWSURFACE, left->w, left->h, 32, 0xff << left->format.rShift, 0xff << left->format.gShift, 0xff << left->format.bShift, 0xff << left->format.aShift);
+			memcpy(_sideSurfaces[0]->pixels, left->getPixels(), left->w * left->h * 4);
+		}
+		if (right) {
+			_sideSurfaces[1] = SDL_CreateRGBSurface(SDL_SWSURFACE, right->w, right->h, 32, 0xff << right->format.rShift, 0xff << right->format.gShift, 0xff << right->format.bShift, 0xff << right->format.aShift);
+			memcpy(_sideSurfaces[1]->pixels, right->getPixels(), right->w * right->h * 4);
+		}
+	}
 }
 
 void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {
@@ -985,6 +1024,9 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 }
 
 void SurfaceSdlGraphicsManager::closeOverlay() {
+	SDL_FreeSurface(_sideSurfaces[0]);
+	SDL_FreeSurface(_sideSurfaces[1]);
+	_sideSurfaces[0] = _sideSurfaces[1] = nullptr;
 #ifdef USE_OPENGL
 	delete _sideTextures[0];
 	delete _sideTextures[1];
