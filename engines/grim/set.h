@@ -184,6 +184,7 @@ struct Light {
 	void loadBinary(Common::SeekableReadStream *data);
 	void saveState(SaveGame *savedState) const;
 	bool restoreState(SaveGame *savedState);
+	void setIntensity(float intensity);
 
 	enum LightType {
 		Omni = 1,
@@ -197,6 +198,7 @@ struct Light {
 	Math::Vector3d _pos, _dir;
 	Color _color;
 	float _intensity, _umbraangle, _penumbraangle, _falloffNear, _falloffFar;
+	float _scaledintensity;
 	bool _enabled;
 	// there may be more lights with the same position, so this is used to make the sort stable
 	int _id;
