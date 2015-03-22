@@ -113,8 +113,8 @@ public:
 	virtual int16 getOverlayHeight() { return _overlayHeight; }
 	virtual int16 getOverlayWidth() { return _overlayWidth; }
 	void closeOverlay(); // ResidualVM specific method
-#ifdef USE_OPENGL
-	virtual void setSideTextures(Graphics::Texture *left, Graphics::Texture *right);
+#ifdef SDL_BACKEND
+	virtual void setSideTextures(Graphics::Surface *left, Graphics::Surface *right);
 #endif
 
 	virtual bool showMouse(bool visible);

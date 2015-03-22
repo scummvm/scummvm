@@ -901,11 +901,21 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Texture *left, Graphics::Texture *right) {
-	delete _sideTextures[0];
-	delete _sideTextures[1];
-	_sideTextures[0] = left;
-	_sideTextures[1] = right;
+void SurfaceSdlGraphicsManager::setSideTextures(Graphics::Surface *left, Graphics::Surface *right) {
+#ifdef USE_OPENGL
+	if (_opengl) {
+		delete _sideTextures[0];
+		_sideTextures[0] = nullptr;
+		delete _sideTextures[1];
+		_sideTextures[1] = nullptr;
+		if (left) {
+			_sideTextures[0] = new Graphics::Texture(*left);
+		}
+		if (right) {
+			_sideTextures[1] = new Graphics::Texture(*right);
+		}
+	}
+#endif
 }
 
 void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) {

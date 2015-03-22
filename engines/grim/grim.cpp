@@ -1388,7 +1388,7 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 
 
 #ifdef SDL_BACKEND
-Graphics::Texture *loadPNG(const Common::String &filename) {
+Graphics::Surface *loadPNG(const Common::String &filename) {
 	Image::PNGDecoder d;
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
 	if (!s)
@@ -1397,15 +1397,12 @@ Graphics::Texture *loadPNG(const Common::String &filename) {
 	delete s;
 
 	Graphics::Surface *srf = d.getSurface()->convertTo(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-	Graphics::Texture *ret = new Graphics::Texture(*srf);
-	srf->free();
-	delete srf;
-	return ret;
+	return srf;
 }
 
 void GrimEngine::setSideTextures(const Common::String &setup) {
-	Graphics::Texture *t1 = loadPNG(Common::String::format("%s_left.png", setup.c_str()));
-	Graphics::Texture *t2 = loadPNG(Common::String::format("%s_right.png", setup.c_str()));
+	Graphics::Surface *t1 = loadPNG(Common::String::format("%s_left.png", setup.c_str()));
+	Graphics::Surface *t2 = loadPNG(Common::String::format("%s_right.png", setup.c_str()));
 	OSystem_SDL *sys = (OSystem_SDL *) g_system;
 	SurfaceSdlGraphicsManager *ssgm = dynamic_cast<SurfaceSdlGraphicsManager *>(sys->getGraphicsManager());
 	ssgm->setSideTextures(t1, t2);
