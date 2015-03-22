@@ -210,17 +210,10 @@ void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
+	BaseRenderer::setupCameraPerspective(pitch, heading, fov);
+
 	Common::Rect frame = frameViewport();
 	glViewport(frame.left, frame.top, frame.width(), frame.height());
-
-	Math::Matrix4 proj = makeProjectionMatrix(fov);
-	proj.transpose();
-
-	Math::Matrix4 model(180.0f - heading, pitch, 0.0f, Math::EO_YXZ);
-	model.transpose();
-
-	_mvpMatrix = proj * model;
-	_mvpMatrix.transpose();
 }
 
 void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -435,37 +428,6 @@ Graphics::Surface *ShaderRenderer::getScreenshot() {
 	flipVertical(s);
 
 	return s;
-}
-
-void ShaderRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
-	double x, y, z;
-
-	x = screen.x;
-	y = _system->getHeight() - screen.y;
-	z = 0.9f;
-
-	Common::Rect frame = frameViewport();
-
-	x = 2 * double(x - frame.left) / frame.width() - 1.0f;
-	y = 2 * double(y - frame.top) / frame.height() - 1.0f;
-	z = 2 * z - 1.0f;
-
-	// Screen coords to 3D coords
-	Math::Vector4d point = Math::Vector4d(x, y, z, 1.0f);
-	point = _mvpMatrix * point;
-
-	// 3D coords to polar coords
-	Math::Vector3d v = Math::Vector3d(point.x(), point.y(), point.z());
-	v.normalize();
-
-	Math::Vector2d horizontalProjection = Math::Vector2d(v.x(), v.z());
-	horizontalProjection.normalize();
-
-	pitch = 90 - Math::Angle::arcCosine(v.y()).getDegrees();
-	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
-
-	if (horizontalProjection.getX() > 0.0)
-		heading = 360 - heading;
 }
 
 } // End of namespace Myst3

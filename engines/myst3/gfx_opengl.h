@@ -56,15 +56,10 @@ public:
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
 
 	virtual Graphics::Surface *getScreenshot() override;
-
-	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
-
 private:
 	void drawFace(uint face, Texture *texture);
 
-	int _cubeViewport[4];
-	double _cubeProjectionMatrix[16];
-	double _cubeModelViewMatrix[16];
+	Math::Matrix4 _mvpMatrix;
 
 	bool _nonPowerOfTwoTexSupport;
 };

@@ -58,8 +58,6 @@ public:
 
 	virtual Graphics::Surface *getScreenshot() override;
 
-	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
-
 private:
 	void setupQuadEBO();
 	Math::Vector2d scaled(float x, float y) const;
@@ -75,7 +73,6 @@ private:
 	GLuint _textVBO;
 	GLuint _quadEBO;
 
-	Math::Matrix4 _mvpMatrix;
 	Math::Rect2d _currentViewport;
 
 	Common::String _prevText;

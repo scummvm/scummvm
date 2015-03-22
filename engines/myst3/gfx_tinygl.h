@@ -58,16 +58,11 @@ public:
 
 	virtual Graphics::Surface *getScreenshot() override;
 
-	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
-
 	virtual void flipBuffer() override;
 private:
 	void drawFace(uint face, Texture *texture);
 
 	TinyGL::FrameBuffer *_fb;
-	int _cubeViewport[4];
-	float _cubeProjectionMatrix[16];
-	float _cubeModelViewMatrix[16];
 
 	bool _nonPowerOfTwoTexSupport;
 };

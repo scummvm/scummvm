@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "math/glmath.h"
+#include "math/vector2d.h"
 
 namespace Myst3 {
 
@@ -114,6 +115,37 @@ Math::Matrix4 BaseRenderer::makeProjectionMatrix(float fov) const {
 	float ymaxValue = xmaxValue / aspectRatio;
 
 	return Math::makeFrustumMatrix(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
+}
+
+void BaseRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
+	_projectionMatrix = makeProjectionMatrix(fov);
+	_modelViewMatrix = Math::Matrix4(180.0f - heading, pitch, 0.0f, Math::EO_YXZ);
+
+	Math::Matrix4 proj = _projectionMatrix;
+	Math::Matrix4 model = _modelViewMatrix;
+	proj.transpose();
+	model.transpose();
+
+	_mvpMatrix = proj * model;
+	_mvpMatrix.transpose();
+}
+
+void BaseRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
+	// Screen coords to 3D coords
+	Math::Vector3d obj;
+	Math::gluMathUnProject(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9f), _mvpMatrix, frameViewport(), obj);
+
+	// 3D coords to polar coords
+	obj.normalize();
+
+	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
+	horizontalProjection.normalize();
+
+	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
+	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
+
+	if (horizontalProjection.getX() > 0.0)
+		heading = 360 - heading;
 }
 
 void BaseRenderer::flipVertical(Graphics::Surface *s) {

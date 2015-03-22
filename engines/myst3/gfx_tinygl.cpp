@@ -145,23 +145,16 @@ void TinyGLRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
+	BaseRenderer::setupCameraPerspective(pitch, heading, fov);
+
 	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
 	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);
 
 	tglMatrixMode(TGL_PROJECTION);
-	tglLoadIdentity();
-	Math::Matrix4 proj = makeProjectionMatrix(fov);
-	tglMultMatrixf(proj.getData());
+	tglLoadMatrixf(_projectionMatrix.getData());
 
-	// Rotate the model to simulate the rotation of the camera
 	tglMatrixMode(TGL_MODELVIEW);
-	tglLoadIdentity();
-	tglRotatef(pitch, -1.0f, 0.0f, 0.0f);
-	tglRotatef(heading - 180.0f, 0.0f, 1.0f, 0.0f);
-
-	tglGetFloatv(TGL_MODELVIEW_MATRIX, _cubeModelViewMatrix);
-	tglGetFloatv(TGL_PROJECTION_MATRIX, _cubeProjectionMatrix);
-	tglGetIntegerv(TGL_VIEWPORT, (TGLint *)_cubeViewport);
+	tglLoadMatrixf(_modelViewMatrix.getData());
 }
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -317,25 +310,6 @@ Graphics::Surface *TinyGLRenderer::getScreenshot() {
 	Graphics::PixelBuffer buf(s->format, (byte *)s->getPixels());
 	_fb->copyToBuffer(buf);
 	return s;
-}
-
-void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
-	// Screen coords to 3D coords
-	Math::Vector3d obj;
-	Math::gluMathUnProject<float, int>(Math::Vector3d(screen.x, kOriginalHeight - screen.y, 0.9f),
-		_cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, obj);
-
-	// 3D coords to polar coords
-	obj.normalize();
-
-	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
-	horizontalProjection.normalize();
-
-	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
-	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
-
-	if (horizontalProjection.getX() > 0.0)
-		heading = 360 - heading;
 }
 
 void TinyGLRenderer::flipBuffer() {

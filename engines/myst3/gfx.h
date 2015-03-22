@@ -112,6 +112,8 @@ public:
 	Common::Point frameCenter() const override;
 
 	Math::Matrix4 makeProjectionMatrix(float fov) const override;
+	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
+	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
 
 	void flipVertical(Graphics::Surface *s) override;
 
@@ -120,6 +122,10 @@ protected:
 	Texture *_font;
 
 	Common::Rect _screenViewport;
+
+	Math::Matrix4 _projectionMatrix;
+	Math::Matrix4 _modelViewMatrix;
+	Math::Matrix4 _mvpMatrix;
 
 	Common::Rect getFontCharacterRect(uint8 character);
 	void computeScreenViewport();

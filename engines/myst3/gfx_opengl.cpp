@@ -36,9 +36,6 @@
 #include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
 
-#include "math/vector2d.h"
-#include "math/glmath.h"
-
 #include "engines/myst3/gfx.h"
 #include "engines/myst3/gfx_opengl.h"
 #include "engines/myst3/gfx_opengl_texture.h"
@@ -158,23 +155,16 @@ void OpenGLRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
+	BaseRenderer::setupCameraPerspective(pitch, heading, fov);
+
 	Common::Rect frame = frameViewport();
 	glViewport(frame.left, frame.top, frame.width(), frame.height());
 
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	Math::Matrix4 proj = makeProjectionMatrix(fov);
-	glMultMatrixf(proj.getData());
+	glLoadMatrixf(_projectionMatrix.getData());
 
-	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glRotatef(pitch, -1.0f, 0.0f, 0.0f);
-	glRotatef(heading - 180.0f, 0.0f, 1.0f, 0.0f);
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, _cubeModelViewMatrix);
-	glGetDoublev(GL_PROJECTION_MATRIX, _cubeProjectionMatrix);
-	glGetIntegerv(GL_VIEWPORT, (GLint *)_cubeViewport);
+	glLoadMatrixf(_modelViewMatrix.getData());
 }
 
 void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -367,25 +357,6 @@ Graphics::Surface *OpenGLRenderer::getScreenshot() {
 	flipVertical(s);
 
 	return s;
-}
-
-void OpenGLRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
-	// Screen coords to 3D coords
-	Math::Vector3d obj;
-	Math::gluMathUnProject<double, int>(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9f),
-		_cubeModelViewMatrix, _cubeProjectionMatrix, _cubeViewport, obj);
-
-	// 3D coords to polar coords
-	obj.normalize();
-
-	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
-	horizontalProjection.normalize();
-
-	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
-	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
-
-	if (horizontalProjection.getX() > 0.0)
-		heading = 360 - heading;
 }
 
 } // End of namespace Myst3
