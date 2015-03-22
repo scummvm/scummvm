@@ -316,6 +316,10 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Set up the bgShapes
 		for (int idx = 0; idx < bgHeader._numStructs; ++idx) {
+			_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
+			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
+				&(*_bgShapes[idx]._images)[0];
+
 			_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
 			_bgShapes[idx]._sequences = &_sequenceBuffer[_bgShapes[idx]._sequenceOffset];
 			_bgShapes[idx]._misc = 0;
@@ -325,10 +329,6 @@ bool Scene::loadScene(const Common::String &filename) {
 			_bgShapes[idx]._frameNumber = -1;
 			_bgShapes[idx]._position = Common::Point(0, 0);
 			_bgShapes[idx]._oldSize = Common::Point(1, 1);
-
-			_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
-			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
-				&(*_bgShapes[idx]._images)[0];
 		}
 
 		// Load in cAnim list
@@ -799,8 +799,8 @@ void Scene::updateBackground() {
 	// Draw all static and active shapes that are FORWARD
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		_bgShapes[idx]._oldPosition = _bgShapes[idx]._position;
-		_bgShapes[idx]._oldSize = Common::Point(_bgShapes[idx]._imageFrame->_frame.w, 
-			_bgShapes[idx]._imageFrame->_frame.h);
+		_bgShapes[idx]._oldSize = Common::Point(_bgShapes[idx].frameWidth(),
+			_bgShapes[idx].frameHeight());
 
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_bgShapes[idx]._misc == FORWARD)
@@ -837,7 +837,7 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 		Object &obj = _bgShapes[idx];
 		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
 			if ((obj._flags & 5) == 1) {
-				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
+				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
 					NORMAL_FORWARD : NORMAL_BEHIND;
 			} else if (!(obj._flags & 1)) {
 				obj._misc = BEHIND;

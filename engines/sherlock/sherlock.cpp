@@ -54,14 +54,14 @@ SherlockEngine::~SherlockEngine() {
 	delete _animation;
 	delete _debugger;
 	delete _events;
-	delete _inventory;
 	delete _journal;
 	delete _people;
-	delete _res;
 	delete _scene;
 	delete _screen;
 	delete _sound;
 	delete _talk;
+	delete _inventory;
+	delete _res;
 }
 
 void SherlockEngine::initialize() {
@@ -111,7 +111,7 @@ Common::Error SherlockEngine::run() {
 }
 
 void SherlockEngine::sceneLoop() {
-	while (!shouldQuit() && _scene->_goToScene != -1) {
+	while (!shouldQuit() && _scene->_goToScene == -1) {
 		// See if a script needs to be completed from either a goto room code,
 		// or a script that was interrupted by another script
 		if (_scriptMoreFlag == 1 || _scriptMoreFlag == 3)
@@ -133,6 +133,7 @@ void SherlockEngine::sceneLoop() {
 
 void SherlockEngine::handleInput() {
 	// TODO
+	_events->pollEventsAndWait();
 }
 
 
