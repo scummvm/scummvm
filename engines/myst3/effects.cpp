@@ -687,6 +687,7 @@ ShieldEffect *ShieldEffect::create(Myst3Engine *vm, uint32 id) {
 	ShieldEffect *s = new ShieldEffect(vm);
 
 	if (!s->loadPattern()) {
+		delete s;
 		return nullptr; // We don't have the effect file
 	}
 
