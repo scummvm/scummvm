@@ -1,7 +1,6 @@
 in vec3 position;
 in vec2 texcoord;
 
-uniform float verScale;
 uniform float texScale;
 uniform mat4 mvpMatrix;
 
@@ -11,5 +10,5 @@ void main()
 {
 	Texcoord = texcoord * texScale;
 	
-	gl_Position = mvpMatrix * vec4(verScale * position, 1.0);
+	gl_Position = mvpMatrix * vec4(position, 1.0);
 }

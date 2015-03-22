@@ -43,39 +43,6 @@
 
 namespace Myst3 {
 
-static const TGLfloat cubeFacesVertices[][12] = {
-//      X        Y        Z
-  { -320.0f, -320.0f, -320.0f,
-     320.0f, -320.0f, -320.0f,
-    -320.0f,  320.0f, -320.0f,
-     320.0f,  320.0f, -320.0f },
-
-  {  320.0f, -320.0f, -320.0f,
-    -320.0f, -320.0f, -320.0f,
-     320.0f, -320.0f,  320.0f,
-    -320.0f, -320.0f,  320.0f },
-
-  {  320.0f, -320.0f,  320.0f,
-    -320.0f, -320.0f,  320.0f,
-     320.0f,  320.0f,  320.0f,
-    -320.0f,  320.0f,  320.0f },
-
-  {  320.0f, -320.0f, -320.0f,
-     320.0f, -320.0f,  320.0f,
-     320.0f,  320.0f, -320.0f,
-     320.0f,  320.0f,  320.0f },
-
-  { -320.0f, -320.0f,  320.0f,
-    -320.0f, -320.0f, -320.0f,
-    -320.0f,  320.0f,  320.0f,
-    -320.0f,  320.0f, -320.0f },
-
-  {  320.0f,  320.0f,  320.0f,
-    -320.0f,  320.0f,  320.0f,
-     320.0f,  320.0f, -320.0f,
-    -320.0f,  320.0f, -320.0f }
-};
-
 static const TGLfloat faceTextureCoords[] = {
 	// S     T
 	0.0f, 1.0f,
@@ -255,8 +222,8 @@ void TinyGLRenderer::drawFace(uint face, Texture *texture) {
 	tglBindTexture(TGL_TEXTURE_2D, glTexture->id);
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
-		tglTexCoord2f(w * faceTextureCoords[2 * i + 0], h * faceTextureCoords[2 * i + 1]);
-		tglVertex3f(cubeFacesVertices[face][3 * i + 0], cubeFacesVertices[face][3 * i + 1], cubeFacesVertices[face][3 * i + 2]);
+		tglTexCoord2f(w * cubeVertices[5 * (4 * face + i) + 0], h * cubeVertices[5 * (4 * face + i) + 1]);
+		tglVertex3f(cubeVertices[5 * (4 * face + i) + 2], cubeVertices[5 * (4 * face + i) + 3], cubeVertices[5 * (4 * face + i) + 4]);
 	}
 	tglEnd();
 }

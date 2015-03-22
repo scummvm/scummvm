@@ -127,6 +127,8 @@ protected:
 	Math::Matrix4 _modelViewMatrix;
 	Math::Matrix4 _mvpMatrix;
 
+	static const float cubeVertices[5 * 6 * 4];
+
 	Common::Rect getFontCharacterRect(uint8 character);
 	void computeScreenViewport();
 };

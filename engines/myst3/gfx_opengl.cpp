@@ -42,47 +42,6 @@
 
 namespace Myst3 {
 
-static const GLfloat cubeFacesVertices[][12] = {
-//      X        Y        Z
-  { -320.0f, -320.0f, -320.0f,
-     320.0f, -320.0f, -320.0f,
-    -320.0f,  320.0f, -320.0f,
-     320.0f,  320.0f, -320.0f },
-
-  {  320.0f, -320.0f, -320.0f,
-    -320.0f, -320.0f, -320.0f,
-     320.0f, -320.0f,  320.0f,
-    -320.0f, -320.0f,  320.0f },
-
-  {  320.0f, -320.0f,  320.0f,
-    -320.0f, -320.0f,  320.0f,
-     320.0f,  320.0f,  320.0f,
-    -320.0f,  320.0f,  320.0f },
-
-  {  320.0f, -320.0f, -320.0f,
-     320.0f, -320.0f,  320.0f,
-     320.0f,  320.0f, -320.0f,
-     320.0f,  320.0f,  320.0f },
-
-  { -320.0f, -320.0f,  320.0f,
-    -320.0f, -320.0f, -320.0f,
-    -320.0f,  320.0f,  320.0f,
-    -320.0f,  320.0f, -320.0f },
-
-  {  320.0f,  320.0f,  320.0f,
-    -320.0f,  320.0f,  320.0f,
-     320.0f,  320.0f, -320.0f,
-    -320.0f,  320.0f, -320.0f }
-};
-
-static const GLfloat faceTextureCoords[] = {
-	// S     T
-	0.0f, 1.0f,
-	1.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-};
-
 Renderer *CreateGfxOpenGL(OSystem *system) {
 	return new OpenGLRenderer(system);
 }
@@ -180,10 +139,10 @@ void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 	}
 
 	glBegin(GL_TRIANGLE_STRIP);
-		glVertex3f( rect.left, rect.bottom, 0.0f);
-		glVertex3f( rect.right, rect.bottom, 0.0f);
-		glVertex3f( rect.left, rect.top, 0.0f);
-		glVertex3f( rect.right, rect.top, 0.0f);
+		glVertex3f(rect.left, rect.bottom, 0.0f);
+		glVertex3f(rect.right, rect.bottom, 0.0f);
+		glVertex3f(rect.left, rect.top, 0.0f);
+		glVertex3f(rect.right, rect.top, 0.0f);
 	glEnd();
 
 	glDisable(GL_BLEND);
@@ -297,8 +256,8 @@ void OpenGLRenderer::drawFace(uint face, Texture *texture) {
 	glBindTexture(GL_TEXTURE_2D, glTexture->id);
 	glBegin(GL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {
-		glTexCoord2f(w * faceTextureCoords[2 * i + 0], h * faceTextureCoords[2 * i + 1]);
-		glVertex3f(cubeFacesVertices[face][3 * i + 0], cubeFacesVertices[face][3 * i + 1], cubeFacesVertices[face][3 * i + 2]);
+		glTexCoord2f(w * cubeVertices[5 * (4 * face + i) + 0], h * cubeVertices[5 * (4 * face + i) + 1]);
+		glVertex3f(cubeVertices[5 * (4 * face + i) + 2], cubeVertices[5 * (4 * face + i) + 3], cubeVertices[5 * (4 * face + i) + 4]);
 	}
 	glEnd();
 }
