@@ -82,8 +82,15 @@ OpenGLTexture::~OpenGLTexture() {
 }
 
 void OpenGLTexture::update(const Graphics::Surface *surface) {
+	updatePartial(surface, Common::Rect(surface->w, surface->h));
+}
+
+void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+	const Graphics::Surface subArea = surface->getSubArea(rect);
+
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, internalFormat, sourceFormat, subArea.getPixels());
 }
 
 } // End of namespace Myst3

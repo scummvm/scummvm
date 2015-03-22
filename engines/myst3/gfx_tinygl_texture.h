@@ -40,6 +40,7 @@ public:
 	Graphics::BlitImage *getBlitTexture() const;
 
 	void update(const Graphics::Surface *surface) override;
+	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 
 	TGLuint id;
 	TGLuint internalFormat;

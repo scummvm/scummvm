@@ -43,7 +43,6 @@ NodeFrame::NodeFrame(Myst3Engine *vm, uint16 id) :
 
 	_faces[0] = new Face(_vm);
 	_faces[0]->setTextureFromJPEG(jpegDesc);
-	_faces[0]->markTextureDirty();
 }
 
 NodeFrame::~NodeFrame() {

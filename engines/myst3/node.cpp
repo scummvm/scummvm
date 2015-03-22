@@ -34,6 +34,9 @@ namespace Myst3 {
 void Face::setTextureFromJPEG(const DirectorySubEntry *jpegDesc) {
 	_bitmap = Myst3Engine::decodeJpeg(jpegDesc);
 	_texture = _vm->_gfx->createTexture(_bitmap);
+
+	// Set the whole texture as dirty
+	addTextureDirtyRect(Common::Rect(_bitmap->w, _bitmap->h));
 }
 
 Face::Face(Myst3Engine *vm) :
@@ -44,12 +47,22 @@ Face::Face(Myst3Engine *vm) :
 		_finalBitmap(0) {
 }
 
+void Face::addTextureDirtyRect(const Common::Rect &rect) {
+	if (!_textureDirty) {
+		_textureDirtyRect = rect;
+	} else {
+		_textureDirtyRect.extend(rect);
+	}
+
+	_textureDirty = true;
+}
+
 void Face::uploadTexture() {
 	if (_textureDirty) {
 		if (_finalBitmap)
-			_texture->update(_finalBitmap);
+			_texture->updatePartial(_finalBitmap, _textureDirtyRect);
 		else
-			_texture->update(_bitmap);
+			_texture->updatePartial(_bitmap, _textureDirtyRect);
 
 		_textureDirty = false;
 	}
@@ -239,7 +252,7 @@ void Node::update() {
 		if (effectsForFace == 1) {
 			_effects[0]->applyForFace(faceId, face->_bitmap, face->_finalBitmap);
 
-			face->markTextureDirty();
+			face->addTextureDirtyRect(_effects[0]->getUpdateRectForFace(faceId));
 		} else if (effectsForFace == 2) {
 			// TODO: Keep the same temp surface to avoid heap fragmentation ?
 			Graphics::Surface *tmp = new Graphics::Surface();
@@ -251,7 +264,8 @@ void Node::update() {
 			tmp->free();
 			delete tmp;
 
-			face->markTextureDirty();
+			face->addTextureDirtyRect(_effects[0]->getUpdateRectForFace(faceId));
+			face->addTextureDirtyRect(_effects[1]->getUpdateRectForFace(faceId));
 		} else {
 			error("Unable to render more than 2 effects per faceId (%d)", effectsForFace);
 		}
@@ -363,6 +377,14 @@ void SpotItemFace::initNotDrawn(uint16 width, uint16 height) {
 	}
 }
 
+Common::Rect SpotItemFace::getFaceRect() const {
+	assert(_bitmap);
+
+	Common::Rect r = Common::Rect(_bitmap->w, _bitmap->h);
+	r.translate(_posX, _posY);
+	return r;
+}
+
 void SpotItemFace::draw() {
 	for (uint i = 0; i < _bitmap->h; i++) {
 		memcpy(_face->_bitmap->getBasePtr(_posX, _posY + i),
@@ -371,7 +393,7 @@ void SpotItemFace::draw() {
 	}
 
 	_drawn = true;
-	_face->markTextureDirty();
+	_face->addTextureDirtyRect(getFaceRect());
 }
 
 void SpotItemFace::undraw() {
@@ -382,7 +404,7 @@ void SpotItemFace::undraw() {
 	}
 
 	_drawn = false;
-	_face->markTextureDirty();
+	_face->addTextureDirtyRect(getFaceRect());
 }
 
 void SpotItemFace::fadeDraw() {
@@ -412,7 +434,7 @@ void SpotItemFace::fadeDraw() {
 	}
 
 	_drawn = true;
-	_face->markTextureDirty();
+	_face->addTextureDirtyRect(getFaceRect());
 }
 
 } // end of namespace Myst3

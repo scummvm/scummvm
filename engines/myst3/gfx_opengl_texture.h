@@ -37,6 +37,7 @@ public:
 	virtual ~OpenGLTexture();
 
 	void update(const Graphics::Surface *surface) override;
+	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 
 	GLuint id;
 	GLuint internalFormat;

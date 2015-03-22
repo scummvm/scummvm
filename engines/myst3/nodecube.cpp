@@ -38,7 +38,6 @@ NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 
 		_faces[i] = new Face(_vm);
 		_faces[i]->setTextureFromJPEG(jpegDesc);
-		_faces[i]->markTextureDirty();
 	}
 }
 

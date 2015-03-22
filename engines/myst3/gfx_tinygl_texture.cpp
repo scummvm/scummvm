@@ -87,6 +87,11 @@ void TinyGLTexture::update(const Graphics::Surface *surface) {
 	Graphics::tglUploadBlitImage(_blitImage, *surface, 0, false);
 }
 
+void TinyGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+	// FIXME: TinyGL does not support partial texture update
+	update(surface);
+}
+
 Graphics::BlitImage *TinyGLTexture::getBlitTexture() const {
 	return _blitImage;
 }

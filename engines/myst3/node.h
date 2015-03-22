@@ -49,13 +49,15 @@ public:
 
 	void setTextureFromJPEG(const DirectorySubEntry *jpegDesc);
 
-	void markTextureDirty() { _textureDirty = true; }
+	void addTextureDirtyRect(const Common::Rect &rect);
 	bool isTextureDirty() { return _textureDirty; }
 
 	void uploadTexture();
 
 private:
 	bool _textureDirty;
+	Common::Rect _textureDirtyRect;
+
 	Myst3Engine *_vm;
 };
 
@@ -77,6 +79,8 @@ public:
 	void setDrawn(bool drawn) { _drawn = drawn; }
 	uint16 getFadeValue() { return _fadeValue; }
 	void setFadeValue(uint16 value) { _fadeValue = value; }
+
+	Common::Rect getFaceRect() const;
 
 private:
 	Face *_face;
