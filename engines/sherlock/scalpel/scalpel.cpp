@@ -43,7 +43,6 @@ ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameD
 		SherlockEngine(syst, gameDesc) {
 	_chess = nullptr;
 	_darts = nullptr;
-	_tempFadeStyle = 0;
 	_chessResult = 0;
 }
 
@@ -70,7 +69,7 @@ void ScalpelEngine::initialize() {
 		_map.push_back(Common::Point(MAP_X[idx], MAP_Y[idx]));
 
 	// Starting scene
-	_scene->_goToRoom = 4;
+	_scene->_goToScene = 4;
 }
 
 /**
@@ -181,7 +180,7 @@ bool ScalpelEngine::showOfficeCutscene() {
  * Starting a scene within the game
  */
 void ScalpelEngine::startScene() {
-	if (_scene->_goToRoom == 100 || _scene->_goToRoom == 98) {
+	if (_scene->_goToScene == 100 || _scene->_goToScene == 98) {
 		// Chessboard selection
 		if (_sound->_musicOn) {
 			if (_sound->loadSong(100)) {
@@ -190,7 +189,7 @@ void ScalpelEngine::startScene() {
 			}
 		}
 
-		_scene->_goToRoom = _chess->doChessBoard();
+		_scene->_goToScene = _chess->doChessBoard();
 
 		_sound->freeSong();
 		_scene->_hsavedPos = Common::Point(-1, -1);
@@ -203,17 +202,17 @@ void ScalpelEngine::startScene() {
 	// 53: Moorehead's death / subway train
 	// 55: Fade out and exit 
 	// 70: Brumwell suicide
-	switch (_scene->_goToRoom) {
+	switch (_scene->_goToScene) {
 	case 2:
 	case 52:
 	case 53:
 	case 70:
-		if (_sound->_musicOn && _sound->loadSong(_scene->_goToRoom)) {
+		if (_sound->_musicOn && _sound->loadSong(_scene->_goToScene)) {
 			if (_sound->_music)
 				_sound->startSong();
 		}
 
-		switch (_scene->_goToRoom) {
+		switch (_scene->_goToScene) {
 		case 2:
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
@@ -269,7 +268,7 @@ void ScalpelEngine::startScene() {
 			_animation->playPrologue("SUBWAY3", 1, 0, false, 4);
 
 			// Set fading to direct fade temporary so the transition goes quickly.
-			_tempFadeStyle = _screen->_fadeStyle ? 257 : 256;
+			_scene->_tempFadeStyle = _screen->_fadeStyle ? 257 : 256;
 			_screen->_fadeStyle = false;
 			break;
 
@@ -282,28 +281,28 @@ void ScalpelEngine::startScene() {
 		}
 
 		// Except for the Moorehead Murder scene, fade to black first
-		if (_scene->_goToRoom != 53) {
+		if (_scene->_goToScene != 53) {
 			_events->wait(40);
 			_screen->fadeToBlack(3);
 		}
 
-		switch (_scene->_goToRoom) {
+		switch (_scene->_goToScene) {
 		case 52:
-			_scene->_goToRoom = 27;			// Go to the Lawyer's Office
+			_scene->_goToScene = 27;			// Go to the Lawyer's Office
 			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
 			_scene->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
 			_scene->_oldCharPoint = 27;
 			break;
 
 		case 53:
-			_scene->_goToRoom = 17;			// Go to St. Pancras Station
+			_scene->_goToScene = 17;			// Go to St. Pancras Station
 			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
 			_scene->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
 			_scene->_oldCharPoint = 17;
 			break;
 
 		default:
-			_scene->_goToRoom = 4;			// Back to Baker st.
+			_scene->_goToScene = 4;			// Back to Baker st.
 			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
 			_scene->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
 			_scene->_oldCharPoint = 4;
@@ -327,13 +326,13 @@ void ScalpelEngine::startScene() {
 	_events->loadCursors("rmouse.vgs");
 	_events->setCursor(ARROW);
 
-	if (_scene->_goToRoom == 99) {
+	if (_scene->_goToScene == 99) {
 		// Chess Board
 		_darts->playDarts();
-		_chessResult = _scene->_goToRoom = 19;	// Go back to the bar
+		_chessResult = _scene->_goToScene = 19;	// Go back to the bar
 	}
 
-	_chessResult = _scene->_goToRoom;
+	_chessResult = _scene->_goToScene;
 }
 
 /**

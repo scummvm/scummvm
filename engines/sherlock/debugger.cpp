@@ -51,7 +51,7 @@ bool Debugger::cmd_scene(int argc, const char **argv) {
 		debugPrintf("Format: scene <room>\n");
 		return true;
 	} else {
-		_vm->_scene->_goToRoom = strToInt(argv[1]);
+		_vm->_scene->_goToScene = strToInt(argv[1]);
 		return false;
 	}
 }

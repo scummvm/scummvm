@@ -79,6 +79,8 @@ public:
 
 	bool loadWalk();
 
+	bool freeWalk();
+
 	void setWalking();
 
 	void gotoStand(Sprite &sprite);

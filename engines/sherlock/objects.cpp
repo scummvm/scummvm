@@ -159,7 +159,7 @@ void Sprite::adjustSprite() {
 	setImageFrame();
 
 	// Check to see if character has entered an exit zone
-	if (!_walkCount && scene._walkedInScene && scene._goToRoom == -1) {
+	if (!_walkCount && scene._walkedInScene && scene._goToScene == -1) {
 		Common::Rect charRect(_position.x / 100 - 5, _position.y / 100 - 2,
 			_position.x / 100 + 5, _position.y / 100 + 2);
 		Exit *exit = scene.checkForExit(charRect);
@@ -819,11 +819,11 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 
 		default:
 			if (ch >= '0' && ch <= '9') {
-				scene._goToRoom = atoi(name.c_str() + 1);
+				scene._goToScene = atoi(name.c_str() + 1);
 
-				if (scene._goToRoom < 97 && _vm->_map[scene._goToRoom].x) {
-					_vm->_over.x = _vm->_map[scene._goToRoom].x * 100 - 600;
-					_vm->_over.y = _vm->_map[scene._goToRoom].y * 100 + 900;
+				if (scene._goToScene < 97 && _vm->_map[scene._goToScene].x) {
+					_vm->_over.x = _vm->_map[scene._goToScene].x * 100 - 600;
+					_vm->_over.y = _vm->_map[scene._goToScene].y * 100 + 900;
 				}
 
 				if ((p = strchr(name.c_str(), ',')) != nullptr) {
@@ -844,7 +844,7 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 					scene._hsavedFs = 100 + atoi(p + 1);
 				}
 			} else {
-				scene._goToRoom = 100;
+				scene._goToScene = 100;
 			}
 
 			people[AL]._position = Common::Point(0, 0);

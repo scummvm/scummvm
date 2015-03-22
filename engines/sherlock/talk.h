@@ -43,13 +43,15 @@ class Talk {
 private:
 	SherlockEngine *_vm;
 public:
-	Common::Array<TalkHistoryEntry> _history;
+	Common::Array<TalkHistoryEntry> _statements;
 	bool _talkToAbort;
 	int _talkCounter;
 public:
 	Talk(SherlockEngine *vm);
 
 	void talkTo(const Common::String &name);
+
+	void freeTalkVars();
 };
 
 } // End of namespace Sherlock

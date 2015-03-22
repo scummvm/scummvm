@@ -100,6 +100,21 @@ bool People::loadWalk() {
 }
 
 /**
+ * If the walk data has been loaded, then it will be freed
+ */
+bool People::freeWalk() {
+	if (_walkLoaded) {
+		delete _player._images;
+		_player._images = nullptr;
+
+		_walkLoaded = false;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/**
 * Set the variables for moving a character from one poisition to another
 * in a straight line - goAllTheWay must have been previously called to
 * check for any obstacles in the path.

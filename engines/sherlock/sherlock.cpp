@@ -75,7 +75,7 @@ void SherlockEngine::initialize() {
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new Events(this);
-	_inventory = new Inventory();
+	_inventory = new Inventory(this);
 	_journal = new Journal();
 	_people = new People(this);
 	_scene = new Scene(this);
@@ -102,13 +102,39 @@ Common::Error SherlockEngine::run() {
 		// Initialize and load the scene. 
 		_scene->selectScene();
 
-		// TODO: Implement game and remove this dummy loop
-		while (!shouldQuit())
-			_events->pollEventsAndWait();
+		// Scene handling loop
+		sceneLoop();
 	}
 
 	return Common::kNoError;
 }
+
+void SherlockEngine::sceneLoop() {
+	while (!shouldQuit() && _scene->_goToScene != -1) {
+		// See if a script needs to be completed from either a goto room code,
+		// or a script that was interrupted by another script
+		if (_scriptMoreFlag == 1 || _scriptMoreFlag == 3)
+			_talk->talkTo(_scriptName);
+		else
+			_scriptMoreFlag = 0;
+
+		// Handle any input from the keyboard or mouse
+		handleInput();
+
+		if (_scene->_hsavedPos.x == -1)
+			_scene->doBgAnim();
+	}
+
+	_scene->freeScene();
+	_talk->freeTalkVars();
+	_people->freeWalk();
+
+}
+
+void SherlockEngine::handleInput() {
+	// TODO
+}
+
 
 /**
  * Read the state of a global flag

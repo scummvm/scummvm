@@ -68,6 +68,9 @@ class Resource;
 
 class SherlockEngine : public Engine {
 private:
+	void sceneLoop();
+
+	void handleInput();
 protected:
 	virtual void initialize();
 

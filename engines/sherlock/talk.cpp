@@ -34,4 +34,12 @@ void Talk::talkTo(const Common::String &name) {
 	// TODO
 }
 
+/**
+ * Clear loaded talk data
+ */
+void Talk::freeTalkVars() {
+	_statements.clear();
+}
+
+
 } // End of namespace Sherlock

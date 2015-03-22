@@ -145,7 +145,12 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
  * Fill a given area of the surface with a given color
  */
 void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
-    Graphics::Surface::fillRect(Common::Rect(x1, y1, x2, y2), color);
+	fillRect(Common::Rect(x1, y1, x2, y2), color);
+}
+
+void Surface::fillRect(const Common::Rect &r, byte color) {
+    Graphics::Surface::fillRect(r, color);
+	addDirtyRect(r);
 }
 
 /**

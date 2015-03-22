@@ -35,7 +35,6 @@ class ScalpelEngine : public SherlockEngine {
 private:
 	Chess *_chess;
 	Darts *_darts;
-	int _tempFadeStyle;
 	int _chessResult;
 
 	bool showCityCutscene();

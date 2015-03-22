@@ -118,7 +118,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
 		Common::fill(&_stats[idx][0], &_stats[idx][9], false);
 	_currentScene = -1;
-	_goToRoom = -1;
+	_goToScene = -1;
 	_changes = false;
 	_charPoint = _oldCharPoint = 0;
 	_windowOpen = false;
@@ -139,6 +139,8 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_lookHelp = false;
 	_animating = 0;
 	_doBgAnimDone = true;
+	_oldLook = 0;
+	_tempFadeStyle = 0;
 
 	_controlPanel = new ImageFile("controls.vgs");
 	_controls = nullptr; // new ImageFile("menu.all");
@@ -156,7 +158,14 @@ Scene::~Scene() {
 void Scene::clear() {
 }
 
+/**
+ * Handles loading the scene specified by _goToScene
+ */
 void Scene::selectScene() {
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+
 	// Reset fields
 	_windowOpen = _infoFlag = false;
 	_menuMode = STD_MODE;
@@ -165,12 +174,39 @@ void Scene::selectScene() {
 	_oldTemp = _temp = 0;
 
 	// Load the scene
-	Common::String sceneFile = Common::String::format("res%02d", _goToRoom);
-	_rrmName = Common::String::format("res%02d.rrm", _goToRoom);
-	_currentScene = _goToRoom;
-	_goToRoom = -1;
+	Common::String sceneFile = Common::String::format("res%02d", _goToScene);
+	_rrmName = Common::String::format("res%02d.rrm", _goToScene);
+	_currentScene = _goToScene;
+	_goToScene = -1;
 
 	loadScene(sceneFile);
+
+	// If the fade style was changed from running amovie, then reset it
+	if (_tempFadeStyle) {
+		screen._fadeStyle = _tempFadeStyle;
+		_tempFadeStyle = 0;
+	}
+
+	people._walkDest = Common::Point(people[AL]._position.x / 100,
+		people[AL]._position.y / 100);
+
+	_restoreFlag = true;
+	events.clearEvents();
+
+	// If there were any scripst waiting to be run, but were interrupt by a running
+	// canimation (probably the last scene's exit canim), clear the _scriptMoreFlag
+	if (_vm->_scriptMoreFlag == 3)
+		_vm->_scriptMoreFlag = 0;
+}
+
+/**
+ * Fres all the graphics and other dynamically allocated data for the scene
+ */
+void Scene::freeScene() {
+	_vm->_inventory->freeInventory();
+
+	_roomBounds.clear();
+	_canimShapes.clear();
 }
 
 /**
@@ -506,7 +542,7 @@ void Scene::checkSceneFlags(bool flag) {
 	}
 
 	// Check inventory
-	for (uint idx = 0; idx < _vm->_inventory->_holdings; ++idx) {
+	for (int idx = 0; idx < _vm->_inventory->_holdings; ++idx) {
 		InventoryItem &ii = (*_vm->_inventory)[idx];
 		if (ii._requiredFlag && !_vm->readFlags(ii._requiredFlag)) {
 			// Kill object: move it after the active holdings
@@ -1013,10 +1049,10 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	cObj.checkObject(_bgShapes[0]);
 
 	if (gotoCode > 0 && !talk._talkToAbort) {
-		_goToRoom = gotoCode;
+		_goToScene = gotoCode;
 
-		if (_goToRoom < 97 && _vm->_map[_goToRoom].x) {
-			_overPos = _vm->_map[_goToRoom];
+		if (_goToScene < 97 && _vm->_map[_goToScene].x) {
+			_overPos = _vm->_map[_goToScene];
 		}
 	}
 
@@ -1305,7 +1341,7 @@ void Scene::doBgAnim() {
 		_animating = 0;
 		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	} else {
-		if (people[AL]._type != INVALID && ((_goToRoom == -1 || _ongoingCans == 0))) {
+		if (people[AL]._type != INVALID && ((_goToScene == -1 || _ongoingCans == 0))) {
 			if (people[AL]._type == REMOVE) {
 				screen.slamRect(Common::Rect(
 					people[AL]._oldPosition.x, people[AL]._oldPosition.y,
@@ -1325,7 +1361,7 @@ void Scene::doBgAnim() {
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			Object &o = _bgShapes[idx];
-			if ((o._type == ACTIVE_BG_SHAPE || o._type == REMOVE) && _goToRoom == -1) {
+			if ((o._type == ACTIVE_BG_SHAPE || o._type == REMOVE) && _goToScene == -1) {
 				screen.flushImage(o._imageFrame, o._position,
 					&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);
 			}
@@ -1347,7 +1383,7 @@ void Scene::doBgAnim() {
 				people._portrait._type = INVALID;
 		}
 
-		if (_goToRoom == -1) {
+		if (_goToScene == -1) {
 			for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 				Object &o = _bgShapes[idx];
 				if (o._type == NO_SHAPE && (o._flags & 1) == 0) {
@@ -1363,7 +1399,7 @@ void Scene::doBgAnim() {
 		for (int idx = _canimShapes.size() - 1; idx >= 0; --idx) {
 			Object &o = _canimShapes[idx];
 			if (o._type == REMOVE) {
-				if (_goToRoom == -1)
+				if (_goToScene == -1)
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
 				_canimShapes.remove_at(idx);
@@ -1389,8 +1425,16 @@ void Scene::doBgAnim() {
 	}
 }
 
+/**
+ * Clears the info line of the screen
+ */
 void Scene::clearInfo() {
-	// TODO
+	if (_infoFlag) {
+		_vm->_screen->fillRect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 200, INFO_LINE + 9,
+			INFO_BLACK);
+		_infoFlag = false;
+		_oldLook = -1;
+	}
 }
 
 

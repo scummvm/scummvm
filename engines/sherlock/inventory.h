@@ -25,8 +25,12 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/str-array.h"
+#include "sherlock/resources.h"
 
 namespace Sherlock {
+
+#define MAX_VISIBLE_INVENTORY 6
 
 struct InventoryItem {
 	int _requiredFlag;
@@ -37,10 +41,26 @@ struct InventoryItem {
 };
 
 class Inventory : public Common::Array<InventoryItem> {
+private:
+	SherlockEngine *_vm;
 public:
-	uint _holdings;
+	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
+	Common::StringArray _names;
+	bool _invGraphicsLoaded;
+	int _invIndex;
+	int _holdings;
+	void freeGraphics();
+public:
+	Inventory(SherlockEngine *vm);
+	~Inventory();
 
-	Inventory() : Common::Array<InventoryItem>(), _holdings(0) {}
+	void freeInventory();
+
+	void loadInv();
+
+	void loadGraphics();
+
+	int findInv(const Common::String &name);
 };
 
 } // End of namespace Sherlock

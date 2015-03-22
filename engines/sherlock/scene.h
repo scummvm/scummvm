@@ -120,6 +120,7 @@ private:
 	int _selector;
 	bool _invLookFlag;
 	bool _lookHelp;
+	int _oldLook;
 
 	bool loadScene(const Common::String &filename);
 
@@ -134,7 +135,7 @@ private:
 	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
 public:
 	int _currentScene;
-	int _goToRoom;
+	int _goToScene;
 	bool _changes;
 	bool _stats[SCENES_COUNT][9];
 	bool _savedStats[SCENES_COUNT][9];
@@ -170,6 +171,7 @@ public:
 	bool _restoreFlag;
 	int _animating;
 	bool _doBgAnimDone;
+	int _tempFadeStyle;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
@@ -177,6 +179,8 @@ public:
 	void clear();
 
 	void selectScene();
+
+	void freeScene();
 
 	void checkSceneFlags(bool mode);
 
