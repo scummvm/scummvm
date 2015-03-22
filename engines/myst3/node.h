@@ -129,13 +129,6 @@ public:
 };
 
 class Node : Drawable {
-protected:
-	Myst3Engine *_vm;
-	Face *_faces[6];
-	Common::Array<SpotItem *> _spotItems;
-	Subtitles *_subtitles;
-	Common::Array<Effect *> _effects;
-
 public:
 	Node(Myst3Engine *vm, uint16 id);
 	virtual ~Node();
@@ -149,6 +142,15 @@ public:
 
 	void loadSubtitles(uint32 id);
 	bool hasSubtitlesToDraw();
+
+protected:
+	virtual bool isFaceVisible(uint faceId) = 0;
+
+	Myst3Engine *_vm;
+	Face *_faces[6];
+	Common::Array<SpotItem *> _spotItems;
+	Subtitles *_subtitles;
+	Common::Array<Effect *> _effects;
 };
 
 } // end of namespace Myst3

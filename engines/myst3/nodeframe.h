@@ -33,6 +33,9 @@ public:
 	virtual ~NodeFrame();
 
 	void draw();
+
+protected:
+	virtual bool isFaceVisible(uint faceId) override { return true; }
 };
 
 } // End of namespace Myst3

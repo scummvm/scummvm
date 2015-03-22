@@ -230,7 +230,11 @@ void Node::update() {
 		Face *face = _faces[faceId];
 
 		if (face == 0)
-			continue;
+			continue; // No such face in this node
+
+		if (!isFaceVisible(faceId)) {
+			continue; // This face is not currently visible
+		}
 
 		uint effectsForFace = 0;
 		for (uint i = 0; i < _effects.size(); i++) {

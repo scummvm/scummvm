@@ -64,7 +64,15 @@ const float BaseRenderer::cubeVertices[] = {
 };
 
 BaseRenderer::BaseRenderer(OSystem *system)
-		: _system(system), _font(NULL) { }
+		: _system(system), _font(NULL) {
+
+	// Compute the cube faces Axis Aligned Bounding Boxes
+	for (uint i = 0; i < ARRAYSIZE(_cubeFacesAABB); i++) {
+		for (uint j = 0; j < 4; j++) {
+			_cubeFacesAABB[i].expand(Math::Vector3d(cubeVertices[5 * (4 * i + j) + 2], cubeVertices[5 * (4 * i + j) + 3], cubeVertices[5 * (4 * i + j) + 4]));
+		}
+	}
+}
 
 BaseRenderer::~BaseRenderer() {
 }
@@ -155,6 +163,9 @@ void BaseRenderer::setupCameraPerspective(float pitch, float heading, float fov)
 	model.transpose();
 
 	_mvpMatrix = proj * model;
+
+	_frustum.setup(_mvpMatrix);
+
 	_mvpMatrix.transpose();
 }
 
@@ -174,6 +185,12 @@ void BaseRenderer::screenPosToDirection(const Common::Point screen, float &pitch
 
 	if (horizontalProjection.getX() > 0.0)
 		heading = 360 - heading;
+}
+
+bool BaseRenderer::isCubeFaceVisible(uint face) {
+	assert(face < 6);
+
+	return _frustum.isInside(_cubeFacesAABB[face]);
 }
 
 void BaseRenderer::flipVertical(Graphics::Surface *s) {

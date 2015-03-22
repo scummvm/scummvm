@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/system.h"
 
+#include "math/frustum.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
 
@@ -79,6 +80,8 @@ class Renderer {
 
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) = 0;
 
+	virtual bool isCubeFaceVisible(uint face) = 0;
+
 	virtual Common::Rect viewport() const = 0;
 	virtual Common::Rect frameViewport() const = 0;
 	virtual Common::Point frameCenter() const = 0;
@@ -115,6 +118,8 @@ public:
 	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
 	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
 
+	bool isCubeFaceVisible(uint face) override;
+
 	void flipVertical(Graphics::Surface *s) override;
 
 protected:
@@ -127,7 +132,10 @@ protected:
 	Math::Matrix4 _modelViewMatrix;
 	Math::Matrix4 _mvpMatrix;
 
+	Math::Frustum _frustum;
+
 	static const float cubeVertices[5 * 6 * 4];
+	Math::AABB _cubeFacesAABB[6];
 
 	Common::Rect getFontCharacterRect(uint8 character);
 	void computeScreenViewport();
