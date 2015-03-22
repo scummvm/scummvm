@@ -27,13 +27,30 @@
 
 namespace Myst3 {
 
+Effect::FaceMask::FaceMask() :
+		surface(nullptr) {
+
+	for (uint i = 0; i < 10; i++) {
+		for (uint j = 0; j < 10; j++) {
+			block[i][j] = false;
+		}
+	}
+}
+
+Effect::FaceMask::~FaceMask() {
+	if (surface) {
+		surface->free();
+	}
+
+	delete surface;
+}
+
 Effect::Effect(Myst3Engine *vm) :
 		_vm(vm) {
 }
 
 Effect::~Effect() {
 	for (FaceMaskMap::iterator it = _facesMasks.begin(); it != _facesMasks.end(); it++) {
-		it->_value->free();
 		delete it->_value;
 	}
 }
@@ -49,16 +66,12 @@ bool Effect::loadMasks(const char *room, uint32 id, DirectorySubEntry::ResourceT
 			Common::SeekableReadStream *data = desc->getData();
 
 			// Check if we are overriding an existing mask
-			if (_facesMasks.contains(i)) {
-				_facesMasks[i]->free();
-				delete _facesMasks[i];
-			}
-
+			delete _facesMasks[i];
 			_facesMasks[i] = loadMask(data);
 
 			// Frame masks are vertically flipped for some reason
 			if (isFrame) {
-				_vm->_gfx->flipVertical(_facesMasks[i]);
+				_vm->_gfx->flipVertical(_facesMasks[i]->surface);
 			}
 
 			delete data;
@@ -71,9 +84,10 @@ bool Effect::loadMasks(const char *room, uint32 id, DirectorySubEntry::ResourceT
 	return true;
 }
 
-Graphics::Surface *Effect::loadMask(Common::SeekableReadStream *maskStream) {
-	Graphics::Surface *s = new Graphics::Surface();
-	s->create(640, 640, Graphics::PixelFormat::createFormatCLUT8());
+Effect::FaceMask *Effect::loadMask(Common::SeekableReadStream *maskStream) {
+	FaceMask *mask = new FaceMask();
+	mask->surface = new Graphics::Surface();
+	mask->surface->create(640, 640, Graphics::PixelFormat::createFormatCLUT8());
 
 	uint32 headerOffset = 0;
 	uint32 dataOffset = 0;
@@ -96,15 +110,20 @@ Graphics::Surface *Effect::loadMask(Common::SeekableReadStream *maskStream) {
 					byte repeat = maskStream->readByte();
 					byte value = maskStream->readByte();
 					for (int k = 0; k < repeat; k++) {
-						((uint8*)s->getPixels())[((blockY * 64) + i) * 640 + blockX * 64 + x] = value;
+						((uint8*)mask->surface->getPixels())[((blockY * 64) + i) * 640 + blockX * 64 + x] = value;
 						x++;
+					}
+
+					// If a block has at least one non zero value, mark it as active
+					if (value != 0) {
+						mask->block[blockX][blockY] = true;
 					}
 				}
 			}
 		}
 	}
 
-	return s;
+	return mask;
 }
 
 WaterEffect::WaterEffect(Myst3Engine *vm) :
@@ -204,12 +223,12 @@ void WaterEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surf
 		return;
 	}
 
-	Graphics::Surface *mask = _facesMasks.getVal(face);
+	FaceMask *mask = _facesMasks.getVal(face);
 
 	if (!mask)
 		error("No mask for face %d", face);
 
-	apply(src, dst, mask, face == 1, _vm->_state->getWaterEffectAmpl());
+	apply(src, dst, mask->surface, face == 1, _vm->_state->getWaterEffectAmpl());
 }
 
 void WaterEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, bool bottomFace, int32 waterEffectAmpl) {
@@ -328,13 +347,13 @@ void LavaEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surfa
 		return;
 	}
 
-	Graphics::Surface *mask = _facesMasks.getVal(face);
+	FaceMask *mask = _facesMasks.getVal(face);
 
 	if (!mask)
 		error("No mask for face %d", face);
 
 	uint32 *dstPtr = (uint32 *)dst->getPixels();
-	byte *maskPtr = (byte *)mask->getPixels();
+	byte *maskPtr = (byte *)mask->surface->getPixels();
 
 	for (uint y = 0; y < dst->h; y++) {
 		for (uint x = 0; x < dst->w; x++) {
@@ -459,12 +478,12 @@ bool MagnetEffect::update() {
 }
 
 void MagnetEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Surface *dst) {
-	Graphics::Surface *mask = _facesMasks.getVal(face);
+	FaceMask *mask = _facesMasks.getVal(face);
 
 	if (!mask)
 		error("No mask for face %d", face);
 
-	apply(src, dst, mask, _position * 256.0);
+	apply(src, dst, mask->surface, _position * 256.0);
 }
 
 void MagnetEffect::apply(Graphics::Surface *src, Graphics::Surface *dst, Graphics::Surface *mask, int32 position) {
@@ -711,13 +730,13 @@ void ShieldEffect::applyForFace(uint face, Graphics::Surface *src, Graphics::Sur
 		return;
 	}
 
-	Graphics::Surface *mask = _facesMasks.getVal(face);
+	FaceMask *mask = _facesMasks.getVal(face);
 
 	if (!mask)
 		error("No mask for face %d", face);
 
 	uint32 *dstPtr = (uint32 *)dst->getPixels();
-	byte *maskPtr = (byte *)mask->getPixels();
+	byte *maskPtr = (byte *)mask->surface->getPixels();
 
 	for (uint y = 0; y < dst->h; y++) {
 		for (uint x = 0; x < dst->w; x++) {

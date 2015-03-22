@@ -388,16 +388,15 @@ bool Console::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceTy
 
 	Common::MemoryReadStream *maskStream = maskDesc->getData();
 
-	Graphics::Surface *mask = Effect::loadMask(maskStream);
+	Effect::FaceMask *mask = Effect::loadMask(maskStream);
 
 	delete maskStream;
 
 	Common::DumpFile outFile;
 	outFile.open(Common::String::format("dump/%d-%d.masku_%d", index, face, type));
-	outFile.write(mask->getPixels(), mask->pitch * mask->h);
+	outFile.write(mask->surface->getPixels(), mask->surface->pitch * mask->surface->h);
 	outFile.close();
 
-	mask->free();
 	delete mask;
 
 	return true;

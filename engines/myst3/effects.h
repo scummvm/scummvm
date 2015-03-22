@@ -37,6 +37,14 @@ class Myst3Engine;
 
 class Effect {
 public:
+	struct FaceMask {
+		FaceMask();
+		~FaceMask();
+
+		Graphics::Surface *surface;
+		bool block[10][10];
+	};
+
 	virtual ~Effect();
 
 	virtual bool update() = 0;
@@ -45,7 +53,7 @@ public:
 	bool hasFace(uint face) { return _facesMasks.contains(face); }
 
 	// Public and static for use by the debug console
-	static Graphics::Surface *loadMask(Common::SeekableReadStream *maskStream);
+	static FaceMask *loadMask(Common::SeekableReadStream *maskStream);
 
 protected:
 	Effect(Myst3Engine *vm);
@@ -54,7 +62,7 @@ protected:
 
 	Myst3Engine *_vm;
 
-	typedef Common::HashMap<uint, Graphics::Surface *> FaceMaskMap;
+	typedef Common::HashMap<uint, FaceMask *> FaceMaskMap;
 	FaceMaskMap _facesMasks;
 };
 
