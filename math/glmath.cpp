@@ -24,6 +24,30 @@
 
 namespace Math {
 
+// function based on gluUnProject from Mesa 5.0 glu GPLv2+ licensed sources
+bool gluMathUnProject(Vector3d win, const Matrix4 &mvpMatrix, const Common::Rect &viewport, Vector3d &obj) {
+	Matrix4 A;
+	Vector4d in, out;
+
+	in.x() = (win.x() - viewport.left) * 2 / viewport.width() - 1.0;
+	in.y() = (win.y() - viewport.top) * 2 / viewport.height() - 1.0;
+	in.z() = 2 * win.z() - 1.0;
+	in.w() = 1.0;
+
+	A = mvpMatrix;
+	A.inverse();
+
+	out = A.transform(in);
+	if (out.w() == 0.0)
+		return false;
+
+	obj.x() = out.x() / out.w();
+	obj.y() = out.y() / out.w();
+	obj.z() = out.z() / out.w();
+
+	return true;
+}
+
 // function based on gluPerspective from Mesa 5.0 glu GPLv2+ licensed sources
 Matrix4 makePerspectiveMatrix(double fovy, double aspect, double zNear, double zFar) {
 	double xmin, xmax, ymin, ymax;

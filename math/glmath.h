@@ -23,6 +23,8 @@
 #ifndef MATH_GLMATH_H
 #define MATH_GLMATH_H
 
+#include "common/rect.h"
+
 #include "math/vector4d.h"
 #include "math/matrix4.h"
 
@@ -63,42 +65,7 @@ bool gluMathProject(Vector3d obj, const T model[16], const T proj[16], const S v
 	return true;
 }
 
-// function based on gluUnProject from Mesa 5.0 glu GPLv2+ licensed sources
-template<typename T, typename S>
-bool gluMathUnProject(Vector3d win, const T model[16], const T proj[16], const S viewport[4], Vector3d &obj) {
-	Matrix4 A;
-	Matrix4 modelMatrix, projMatrix;
-	Vector4d in, out;
-
-	in.x() = (win.x() - viewport[0]) * 2 / viewport[2] - 1.0;
-	in.y() = (win.y() - viewport[1]) * 2 / viewport[3] - 1.0;
-	in.z() = 2 * win.z() - 1.0;
-	in.w() = 1.0;
-
-	for (int i = 0; i < 4; i++) {
-		modelMatrix(0, i) = model[0 * 4 + i];
-		modelMatrix(1, i) = model[1 * 4 + i];
-		modelMatrix(2, i) = model[2 * 4 + i];
-		modelMatrix(3, i) = model[3 * 4 + i];
-		projMatrix(0, i) = proj[0 * 4 + i];
-		projMatrix(1, i) = proj[1 * 4 + i];
-		projMatrix(2, i) = proj[2 * 4 + i];
-		projMatrix(3, i) = proj[3 * 4 + i];
-	}
-
-	A = modelMatrix * projMatrix;
-	A.inverse();
-
-	out = A.transform(in);
-	if (out.w() == 0.0)
-		return false;
-
-	obj.x() = out.x() / out.w();
-	obj.y() = out.y() / out.w();
-	obj.z() = out.z() / out.w();
-
-	return true;
-}
+bool gluMathUnProject(Vector3d win, const Matrix4 &mvpMatrix, const Common::Rect &viewport, Vector3d &obj);
 
 Matrix4 makePerspectiveMatrix(double fovy, double aspect, double zNear, double zFar);
 Matrix4 makeFrustumMatrix(double left, double right, double bottom, double top, double zNear, double zFar);
