@@ -96,6 +96,7 @@ public:
 	Common::String _titleOverride;
 	bool _useEpilogue2;
 	bool _justLoaded;
+	bool _loadingSavedGame;
 	int _oldCharPoint;					// Old scene
 	Common::Point _over;				// Old map position
 	Common::Array<Common::Point> _map;	// Map locations for each scene

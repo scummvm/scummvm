@@ -149,13 +149,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 Scene::~Scene() {
 	delete _controlPanel;
 	delete _controls;
-	clear();
-}
-
-/**
- * Takes care of clearing any scene data
- */
-void Scene::clear() {
+	freeScene();
 }
 
 /**
@@ -203,10 +197,27 @@ void Scene::selectScene() {
  * Fres all the graphics and other dynamically allocated data for the scene
  */
 void Scene::freeScene() {
+	_vm->_talk->freeTalkVars();
 	_vm->_inventory->freeInventory();
+	_vm->_sound->freeSong();
+	_vm->_sound->freeLoadedSounds();
 
+	if (!_vm->_loadingSavedGame)
+		saveSceneStatus();
+	else
+		_vm->_loadingSavedGame = false;
+
+	_sequenceBuffer.clear();
+	_descText.clear();
+	_walkData.clear();
+	_cAnim.clear();
+	_bgShapes.clear();
 	_roomBounds.clear();
 	_canimShapes.clear();
+
+	for (uint idx = 0; idx < _images.size(); ++idx)
+		delete _images[idx]._images;
+	_images.clear();
 }
 
 /**
@@ -225,6 +236,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	Sound &sound = *_vm->_sound;
 	bool flag;
 
+	freeScene();
 	_walkedInScene = false;
 	_ongoingCans = 0;
 
@@ -232,7 +244,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	_roomBounds.clear();
 	_roomBounds.push_back(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
-	clear();
 	_descText.clear();
 	_comments = "";
 	_bgShapes.clear();
@@ -287,17 +298,17 @@ bool Scene::loadScene(const Common::String &filename) {
 		if (_lzwMode)
 			delete infoStream;
 
-		// Set up inv list
-		_inv.resize(bgHeader._numImages + 1);
+		// Set up the list of images used by the scene
+		_images.resize(bgHeader._numImages + 1);
 		for (int idx = 0; idx < bgHeader._numImages; ++idx) {
-			_inv[idx + 1]._filesize = bgInfo[idx]._filesize;
-			_inv[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
+			_images[idx + 1]._filesize = bgInfo[idx]._filesize;
+			_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
 			// Read in the image data
 			Common::SeekableReadStream *imageStream = !_lzwMode ? rrmStream :
 				decompressLZ(*rrmStream, bgInfo[idx]._filesize);
 
-			_inv[idx + 1]._images = new ImageFile(*imageStream);
+			_images[idx + 1]._images = new ImageFile(*imageStream);
 
 			if (_lzwMode)
 				delete imageStream;
@@ -315,7 +326,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			_bgShapes[idx]._position = Common::Point(0, 0);
 			_bgShapes[idx]._oldSize = Common::Point(1, 1);
 
-			_bgShapes[idx]._images = _inv[_bgShapes[idx]._misc]._images;
+			_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
 			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
 				&(*_bgShapes[idx]._images)[0];
 		}
@@ -1437,5 +1448,8 @@ void Scene::clearInfo() {
 	}
 }
 
+void Scene::saveSceneStatus() {
+	// TODO
+}
 
 } // End of namespace Sherlock

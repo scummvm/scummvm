@@ -43,6 +43,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_talk = nullptr;
 	_useEpilogue2 = false;
 	_justLoaded = false;
+	_loadingSavedGame = false;
 	_onChessboard = false;
 	_slowChess = false;
 	_menuCounter = 0;
@@ -126,7 +127,6 @@ void SherlockEngine::sceneLoop() {
 	}
 
 	_scene->freeScene();
-	_talk->freeTalkVars();
 	_people->freeWalk();
 
 }

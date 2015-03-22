@@ -133,6 +133,8 @@ private:
 	void updateBackground();
 
 	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
+
+	void saveSceneStatus();
 public:
 	int _currentScene;
 	int _goToScene;
@@ -159,7 +161,7 @@ public:
 	Common::Array<Object> _bgShapes;
 	Common::Array<CAnim> _cAnim;
 	Common::Array<byte> _sequenceBuffer;
-	Common::Array<InvGraphicType> _inv;
+	Common::Array<SceneImage> _images;
 	int _walkDirectory[MAX_ZONES][MAX_ZONES];
 	Common::Array<byte> _walkData;
 	Common::Array<Exit> _exits;
@@ -175,8 +177,6 @@ public:
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
-
-	void clear();
 
 	void selectScene();
 

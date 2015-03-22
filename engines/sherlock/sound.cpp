@@ -56,6 +56,10 @@ void Sound::playCachedSound(int index) {
 	// TODO
 }
 
+void Sound::freeLoadedSounds() {
+	// TODO
+}
+
 void Sound::clearCache() {
 	// TODO
 }

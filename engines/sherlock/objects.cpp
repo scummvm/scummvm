@@ -946,7 +946,7 @@ void CAnim::synchronize(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-InvGraphicType::InvGraphicType() {
+SceneImage::SceneImage() {
 	_images = nullptr;
 	_maxFrames = 0;
 	_filesize = 0;

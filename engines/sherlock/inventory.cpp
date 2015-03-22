@@ -106,7 +106,7 @@ void Inventory::loadGraphics() {
 int Inventory::findInv(const Common::String &name) {
 	int result = -1;
 
-	for (uint idx = 0; (idx < _holdings) && result == -1; ++idx) {
+	for (int idx = 0; (idx < _holdings) && result == -1; ++idx) {
 		if (scumm_stricmp(name.c_str(), _names[idx].c_str()) == 0)
 			result = idx;
 	}

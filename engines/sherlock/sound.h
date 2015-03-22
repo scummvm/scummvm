@@ -55,6 +55,7 @@ public:
 	void cacheSound(const Common::String &name, int index);
 	void playLoadedSound(int bufNum, int waitMode);
 	void playCachedSound(int index);
+	void freeLoadedSounds();
 	void clearCache();
 	void stopSound();
 	int loadSong(int songNumber);

@@ -223,12 +223,12 @@ struct CAnim {
 	void synchronize(Common::SeekableReadStream &s);
 };
 
-struct InvGraphicType {
+struct SceneImage {
 	ImageFile *_images;				// Object images
 	int _maxFrames;					// How many frames in object
 	int _filesize;					// File size
 
-	InvGraphicType();
+	SceneImage();
 } ;
 
 } // End of namespace Sherlock
