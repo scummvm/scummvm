@@ -69,7 +69,7 @@ Renderer *CreateGfxOpenGLShader(OSystem *system) {
 	return new ShaderRenderer(system);
 }
 
-static const GLfloat box_vertices[] = {
+static const GLfloat boxVertices[] = {
 	// XS   YT
 	0.0, 0.0,
 	1.0, 0.0,
@@ -78,17 +78,17 @@ static const GLfloat box_vertices[] = {
 };
 
 void ShaderRenderer::setupQuadEBO() {
-	unsigned short quad_indices[6 * 100];
+	unsigned short quadIndices[6 * 100];
 
 	unsigned short start = 0;
-	for (unsigned short *p = quad_indices; p < &quad_indices[6 * 100]; p += 6) {
+	for (unsigned short *p = quadIndices; p < &quadIndices[6 * 100]; p += 6) {
 		p[0] = p[3] = start++;
 		p[1] = start++;
 		p[2] = p[4] = start++;
 		p[5] = start++;
 	}
 
-	_quadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_indices), quad_indices, GL_STATIC_DRAW);
+	_quadEBO = Graphics::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
 }
 
 Math::Vector2d ShaderRenderer::scaled(float x, float y) const {
@@ -100,10 +100,10 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 		_prevText(""),
 		_prevTextPosition(0,0),
 		_currentViewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)),
-		_box_shader(nullptr),
-		_cube_shader(nullptr),
-		_rect3d_shader(nullptr),
-		_text_shader(nullptr),
+		_boxShader(nullptr),
+		_cubeShader(nullptr),
+		_rect3dShader(nullptr),
+		_textShader(nullptr),
 		_boxVBO(0),
 		_cubeVBO(0),
 		_rect3dVBO(0),
@@ -118,10 +118,10 @@ ShaderRenderer::~ShaderRenderer() {
 	Graphics::Shader::freeBuffer(_textVBO);
 	Graphics::Shader::freeBuffer(_quadEBO);
 
-	delete _box_shader;
-	delete _cube_shader;
-	delete _rect3d_shader;
-	delete _text_shader;
+	delete _boxShader;
+	delete _cubeShader;
+	delete _rect3dShader;
+	delete _textShader;
 }
 
 Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
@@ -144,25 +144,25 @@ void ShaderRenderer::init() {
 	glEnable(GL_DEPTH_TEST);
 
 	static const char* attributes[] = { "position", "texcoord", NULL };
-	_box_shader = Graphics::Shader::fromFiles("myst3_box", attributes);
-	_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(box_vertices), box_vertices);
-	_box_shader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
-	_box_shader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	_boxShader = Graphics::Shader::fromFiles("myst3_box", attributes);
+	_boxVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices);
+	_boxShader->enableVertexAttribute("position", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	_boxShader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
-	_cube_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
+	_cubeShader = Graphics::Shader::fromFiles("myst3_cube", attributes);
 	_cubeVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices);
-	_cube_shader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
-	_cube_shader->enableVertexAttribute("position", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 2 * sizeof(float));
+	_cubeShader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
+	_cubeShader->enableVertexAttribute("position", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 2 * sizeof(float));
 
-	_rect3d_shader = Graphics::Shader::fromFiles("myst3_cube", attributes);
+	_rect3dShader = Graphics::Shader::fromFiles("myst3_cube", attributes);
 	_rect3dVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL);
-	_rect3d_shader->enableVertexAttribute("texcoord", _rect3dVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
-	_rect3d_shader->enableVertexAttribute("position", _rect3dVBO, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 2 * sizeof(float));
+	_rect3dShader->enableVertexAttribute("texcoord", _rect3dVBO, 2, GL_FLOAT, GL_TRUE, 5 * sizeof(float), 0);
+	_rect3dShader->enableVertexAttribute("position", _rect3dVBO, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 2 * sizeof(float));
 
-	_text_shader = Graphics::Shader::fromFiles("myst3_text", attributes);
+	_textShader = Graphics::Shader::fromFiles("myst3_text", attributes);
 	_textVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 100 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
-	_text_shader->enableVertexAttribute("texcoord", _textVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 0);
-	_text_shader->enableVertexAttribute("position", _textVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 2 * sizeof(float));
+	_textShader->enableVertexAttribute("texcoord", _textVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 0);
+	_textShader->enableVertexAttribute("position", _textVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 2 * sizeof(float));
 
 	setupQuadEBO();
 }
@@ -192,11 +192,11 @@ void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
 	uint8 a, r, g, b;
 	Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
 
-	_box_shader->use();
-	_box_shader->setUniform("textured", false);
-	_box_shader->setUniform("color", Math::Vector4d(r / 255.0, g / 255.0, b / 255.0, a / 255.0));
-	_box_shader->setUniform("verOffsetXY", scaled(rect.left, rect.top));
-	_box_shader->setUniform("verSizeWH", scaled(rect.width(), rect.height()));
+	_boxShader->use();
+	_boxShader->setUniform("textured", false);
+	_boxShader->setUniform("color", Math::Vector4d(r / 255.0, g / 255.0, b / 255.0, a / 255.0));
+	_boxShader->setUniform("verOffsetXY", scaled(rect.left, rect.top));
+	_boxShader->setUniform("verSizeWH", scaled(rect.width(), rect.height()));
 
 	glDisable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
@@ -238,13 +238,13 @@ void ShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 		transparency = 1.0;
 	}
 
-	_box_shader->use();
-	_box_shader->setUniform("textured", true);
-	_box_shader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, transparency));
-	_box_shader->setUniform("verOffsetXY", scaled(sLeft, sTop));
-	_box_shader->setUniform("verSizeWH", scaled(sWidth, sHeight));
-	_box_shader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
-	_box_shader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
+	_boxShader->use();
+	_boxShader->setUniform("textured", true);
+	_boxShader->setUniform("color", Math::Vector4d(1.0f, 1.0f, 1.0f, transparency));
+	_boxShader->setUniform("verOffsetXY", scaled(sLeft, sTop));
+	_boxShader->setUniform("verSizeWH", scaled(sWidth, sHeight));
+	_boxShader->setUniform("texOffsetXY", Math::Vector2d(tLeft, tTop));
+	_boxShader->setUniform("texSizeWH", Math::Vector2d(tWidth, tHeight));
 
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
@@ -309,7 +309,7 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
 		delete[] bufData;
 	}
 
-	_text_shader->use();
+	_textShader->use();
 	glBindTexture(GL_TEXTURE_2D, glFont->id);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
 	glDrawElements(GL_TRIANGLES, 6 * textToDraw.size(), GL_UNSIGNED_SHORT, 0);
@@ -327,10 +327,10 @@ void ShaderRenderer::drawCube(Texture **textures) {
 	glEnable(GL_TEXTURE_2D);
 	glDepthMask(GL_FALSE);
 
-	_cube_shader->use();
-	_cube_shader->setUniform1f("texScale", texture0->width / (float) texture0->internalWidth);
-	_cube_shader->setUniform1f("texClamp", (texture0->width - 1) / (float) texture0->internalWidth);
-	_cube_shader->setUniform("mvpMatrix", _mvpMatrix);
+	_cubeShader->use();
+	_cubeShader->setUniform1f("texScale", texture0->width / (float) texture0->internalWidth);
+	_cubeShader->setUniform1f("texClamp", (texture0->width - 1) / (float) texture0->internalWidth);
+	_cubeShader->setUniform("mvpMatrix", _mvpMatrix);
 
 	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[0])->id);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -374,10 +374,10 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 		   w,  h,  -bottomRight.x(),  bottomRight.y(),  bottomRight.z(),
 	};
 
-	_rect3d_shader->use();
-	_rect3d_shader->setUniform1f("texScale", 1.0f);
-	_rect3d_shader->setUniform1f("texClamp", 1.0f);
-	_rect3d_shader->setUniform("mvpMatrix", _mvpMatrix);
+	_rect3dShader->use();
+	_rect3dShader->setUniform1f("texScale", 1.0f);
+	_rect3dShader->setUniform1f("texClamp", 1.0f);
+	_rect3dShader->setUniform("mvpMatrix", _mvpMatrix);
 	glBindBuffer(GL_ARRAY_BUFFER, _rect3dVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 20 * sizeof(float), vertices);
 
