@@ -777,7 +777,8 @@ void Scene::updateBackground() {
 			player._sequenceNumber == WALK_DOWNRIGHT || player._sequenceNumber == STOP_DOWNRIGHT;
 
 		surface.transBlitFrom(player._imageFrame->_frame,
-			Common::Point(player._position.x / 100, player._position.y / 100), flipped);
+			Common::Point(player._position.x / 100, 
+				player._position.y / 100 - player.frameHeight()), flipped);
 	}
 
 	// Draw all static and active shapes that are NORMAL and are in front of the player
