@@ -125,7 +125,7 @@ ShaderRenderer::~ShaderRenderer() {
 }
 
 Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
-	return new OpenGLTexture(surface);
+	return new OpenGLTexture(surface, true);
 }
 
 void ShaderRenderer::freeTexture(Texture *texture) {
@@ -329,7 +329,6 @@ void ShaderRenderer::drawCube(Texture **textures) {
 
 	_cubeShader->use();
 	_cubeShader->setUniform1f("texScale", texture0->width / (float) texture0->internalWidth);
-	_cubeShader->setUniform1f("texClamp", (texture0->width - 1) / (float) texture0->internalWidth);
 	_cubeShader->setUniform("mvpMatrix", _mvpMatrix);
 
 	glBindTexture(GL_TEXTURE_2D, static_cast<OpenGLTexture *>(textures[0])->id);
@@ -376,7 +375,6 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 
 	_rect3dShader->use();
 	_rect3dShader->setUniform1f("texScale", 1.0f);
-	_rect3dShader->setUniform1f("texClamp", 1.0f);
 	_rect3dShader->setUniform("mvpMatrix", _mvpMatrix);
 	glBindBuffer(GL_ARRAY_BUFFER, _rect3dVBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 20 * sizeof(float), vertices);
