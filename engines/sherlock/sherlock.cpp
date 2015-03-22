@@ -88,7 +88,8 @@ void SherlockEngine::initialize() {
 Common::Error SherlockEngine::run() {
 	initialize();
 
-	showOpening();
+	// Temporarily disabled for now
+//	showOpening();
 
 	while (!shouldQuit()) {
 		// Prepare for scene, and handle any game-specific scenes. This allows 
