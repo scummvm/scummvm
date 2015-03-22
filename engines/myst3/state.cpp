@@ -175,8 +175,8 @@ GameState::GameState(Myst3Engine *vm):
 	VAR(140, CameraMinPitch, false)
 	VAR(141, CameraMaxPitch, false)
 
-	VAR(142, MovieOverrideStartFrame, false)
-	VAR(143, MovieOverrideEndFrame, false)
+	VAR(142, MovieStartFrame, false)
+	VAR(143, MovieEndFrame, false)
 	VAR(144, MovieVolume1, false)
 	VAR(145, MovieVolume2, false)
 	VAR(146, MovieOverrideSubtitles, false)
