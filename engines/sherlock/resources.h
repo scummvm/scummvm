@@ -93,7 +93,7 @@ struct ImageFrame {
 	uint16 _width, _height;
 	int _flags;
 	bool _rleEncoded;
-	Common::Point _position;
+	Common::Point _offset;
 	byte _rleMarker;
 	Graphics::Surface _frame;
 

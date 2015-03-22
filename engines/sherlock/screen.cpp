@@ -181,7 +181,7 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
  * Do a random pixel transition in from _backBuffer surface to the screen
  */
 void Screen::randomTransition() {
-	EventsManager &events = *_vm->_events;
+	Events &events = *_vm->_events;
 	const int TRANSITION_MULTIPLIER = 0x15a4e35;
 	_dirtyRects.clear();
 
@@ -210,7 +210,7 @@ void Screen::randomTransition() {
  * Transition to the surface from _backBuffer using a vertical transition
  */
 void Screen::verticalTransition() {
-	EventsManager &events = *_vm->_events;
+	Events &events = *_vm->_events;
 
 	byte table[SHERLOCK_SCREEN_WIDTH];
 	Common::fill(&table[0], &table[SHERLOCK_SCREEN_WIDTH], 0);

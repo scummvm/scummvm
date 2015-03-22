@@ -66,7 +66,7 @@ Animation::Animation(SherlockEngine *vm): _vm(vm) {
 
 bool Animation::playPrologue(const Common::String &filename, int minDelay, int fade, 
 		bool setPalette, int speed) {
-	EventsManager &events = *_vm->_events;
+	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	int soundNumber = 0;
@@ -123,7 +123,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 				pt.x = stream->readUint16LE();
 				pt.y = stream->readUint16LE();
 			} else {
-				pt = images[imageFrame]._position;
+				pt = images[imageFrame]._offset;
 			}
 
 			// Draw the sprite

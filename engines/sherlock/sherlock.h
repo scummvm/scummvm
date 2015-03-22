@@ -78,7 +78,7 @@ public:
 	const SherlockGameDescription *_gameDescription;
 	Animation *_animation;
 	Debugger *_debugger;
-	EventsManager *_events;
+	Events *_events;
 	Inventory *_inventory;
 	Journal *_journal;
 	People *_people;
@@ -96,11 +96,9 @@ public:
 	int _oldCharPoint;					// Old scene
 	Common::Point _over;				// Old map position
 	Common::Array<Common::Point> _map;	// Map locations for each scene
-	bool _talkToAbort;
 	bool _onChessboard;
 	bool _slowChess;
 	bool _animating;
-	int _talkCounter;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

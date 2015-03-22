@@ -33,6 +33,10 @@ namespace Sherlock {
 #define LEFT_LIMIT 0
 #define RIGHT_LIMIT SHERLOCK_SCREEN_WIDTH
 
+// Distance to walk around WALK_AROUND boxes
+#define CLEAR_DIST_X 5
+#define CLEAR_DIST_Y 0
+
 SherlockEngine *Sprite::_vm;
 
 /**
@@ -77,11 +81,12 @@ void Sprite::setImageFrame() {
 void Sprite::adjustSprite() {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
 
 	if (_type == INVALID || (_type == CHARACTER && _vm->_animating))
 		return;
 
-	if (!_vm->_talkCounter && _type == CHARACTER && _walkCount) {
+	if (!talk._talkCounter && _type == CHARACTER && _walkCount) {
 		// Handle active movement for the sprite
 		_position += _delta;
 		--_walkCount;
@@ -160,6 +165,190 @@ void Sprite::adjustSprite() {
 			if (scene._hsavedFs > 100 && scene._hsavedPos.x < 1)
 				scene._hsavedPos.x = 100;
 		}		
+	}
+}
+
+/**
+ * Checks the sprite's position to see if it's collided with any special objects
+ */
+void Sprite::checkSprite() {
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	Common::Point pt;
+	Common::Rect objBounds;
+	Common::Point spritePt(_position.x / 100, _position.y / 100);
+
+	if (!talk._talkCounter && _type == CHARACTER) {
+		pt = _walkCount ? _position + _delta : _position;
+		pt.x /= 100;
+		pt.y /= 100;
+
+		for (uint idx = 0; idx < scene._bgShapes.size() && !talk._talkToAbort; ++idx) {
+			Object &obj = scene._bgShapes[idx];
+
+			if (obj._aType > PERSON && _type != INVALID && _type != HIDDEN) {
+				if (_type == NO_SHAPE) {
+					objBounds = Common::Rect(_position.x, _position.y,
+						_position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
+				} else {
+					int xp = _position.x + _imageFrame->_offset.x;
+					int yp = _position.y + _imageFrame->_offset.y;
+					objBounds = Common::Rect(xp, yp,
+						xp + _imageFrame->_frame.w, yp + _imageFrame->_frame.h);
+				}
+			}
+
+			if (objBounds.contains(pt)) {
+				if (objBounds.contains(spritePt)) {
+					// Current point is already inside the the bounds, so impact occurred
+					// on a previous call. So simply do nothing until we're clear of the box
+					switch (obj._aType) {
+					case TALK_MOVE:
+						if (_walkCount) {
+							// Holmes is moving
+							obj._type = HIDDEN;
+							obj.setFlagsAndToggles();
+							talk.talkTo(obj._use[0]._target);
+						}
+						break;
+
+					case PAL_CHANGE:
+					case PAL_CHANGE2:
+						if (_walkCount) {
+							int palStart = atoi(obj._use[0]._names[0].c_str()) * 3;
+							int palLength = atoi(obj._use[0]._names[1].c_str()) * 3;
+							int templ = atoi(obj._use[0]._names[2].c_str()) * 3;
+							if (templ == 0)
+								templ = 100;
+
+							// Ensure only valid palette change data found
+							if (palLength > 0) {
+								// Figure out how far into the shape Holmes is so that we
+								// can figure out what percentage of the original palette
+								// to set the current palette to
+								int palPercent = (pt.x - objBounds.left) * 100 / objBounds.width();
+								palPercent = palPercent * templ / 100;
+								if (obj._aType == PAL_CHANGE)
+									// Invert percentage
+									palPercent = 100 - palPercent;
+								
+								for (int idx = palStart; idx < (palStart + palLength); ++idx)
+									screen._sMap[idx] = screen._cMap[idx] * palPercent / 100;
+
+								events.pollEvents();
+								screen.setPalette(screen._sMap);
+							}
+						}
+						break;
+
+					case TALK:
+					case TALK_EVERY:
+						_type = HIDDEN;
+						obj.setFlagsAndToggles();
+						talk.talkTo(obj._use[0]._target);
+						break;
+
+					default:
+						break;
+					}
+				} else {
+					// New impact just occurred
+					switch (obj._aType) {
+					case BLANK_ZONE:
+						// A blank zone masks out all other remaining zones underneath it.
+						// If this zone is hit, exit the outer loop so we do not check anymore
+						return;
+
+					case SOLID:
+					case TALK:
+						// Stop walking
+						if (obj._aType == TALK) {
+							obj.setFlagsAndToggles();
+							talk.talkTo(obj._use[0]._target);
+						} else {
+							people.gotoStand(*this);
+						}
+						break;
+
+					case TALK_EVERY:
+						if (obj._aType == TALK_EVERY) {
+							obj._type = HIDDEN;
+							obj.setFlagsAndToggles();
+							talk.talkTo(obj._use[0]._target);
+						} else {
+							people.gotoStand(*this);
+						}
+						break;
+
+					case FLAG_SET:
+						obj.setFlagsAndToggles();
+						obj._type = HIDDEN;
+						break;
+
+					case WALK_AROUND:
+						if (objBounds.contains(people._walkTo.top())) {
+							// Reached zone
+							people.gotoStand(*this);
+						} else {
+							// Destination not within box, walk to best corner
+							Common::Point walkPos;
+
+							if (spritePt.x >= objBounds.left && spritePt.x < objBounds.right) {
+								// Impact occurred due to vertical movement. Determine whether to
+								// travel to the left or right side
+								if (_delta.x > 0)
+									// Go to right side
+									walkPos.x = objBounds.right + CLEAR_DIST_X;
+								else if (_delta.x < 0)
+									// Go to left side
+									walkPos.x = objBounds.left - CLEAR_DIST_X;
+								else {
+									// Going straight up or down. So choose best side
+									if (spritePt.x >= (objBounds.left + objBounds.width() / 2))
+										walkPos.x = objBounds.right + CLEAR_DIST_X;
+									else
+										walkPos.x = objBounds.left - CLEAR_DIST_X;
+								}
+
+								walkPos.y = (_delta.y >= 0) ? objBounds.top - CLEAR_DIST_Y : 
+									objBounds.bottom + CLEAR_DIST_Y;
+							} else {
+								// Impact occurred due to horizontal movement
+								if (_delta.y > 0)
+									// Go to bottom of box
+									walkPos.y = objBounds.bottom + CLEAR_DIST_Y;
+								else if (_delta.y < 0)
+									// Go to top of box
+									walkPos.y = objBounds.top - CLEAR_DIST_Y;
+								else {
+									// Going straight horizontal, so choose best side
+									if (spritePt.y >= (objBounds.top + objBounds.height() / 2))
+										walkPos.y = objBounds.bottom + CLEAR_DIST_Y;
+									else
+										walkPos.y = objBounds.top - CLEAR_DIST_Y;
+								}
+
+								walkPos.x = (_delta.x >= 0) ? objBounds.left - CLEAR_DIST_X :
+									objBounds.right + CLEAR_DIST_X;
+							}
+
+							walkPos.x += people[AL]._imageFrame->_frame.w / 2;
+							people._walkDest = walkPos;
+							people._walkTo.push(walkPos);
+							people.setWalking();
+						}
+						break;
+
+					case DELTA:
+						_position.x += 200;
+						break;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -461,6 +650,10 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 
 	// TODO
 	return 0;
+}
+
+void Object::setFlagsAndToggles() {
+	// TODO
 }
 
 /*----------------------------------------------------------------*/

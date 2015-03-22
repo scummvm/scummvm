@@ -31,6 +31,9 @@ Sound::Sound(SherlockEngine *vm): _vm(vm) {
 	_playingEpilogue = false;
 	_music = false;
 	_digitized = false;
+	_diskSoundPlaying = false;
+	_soundIsOn = nullptr;
+	_digiBuf = nullptr;
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {

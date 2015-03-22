@@ -37,11 +37,19 @@ public:
 	int &operator[](int idx) { return _data[idx]; }
 };
 
+class SherlockEngine;
+
 class Talk {
+private:
+	SherlockEngine *_vm;
 public:
 	Common::Array<TalkHistoryEntry> _history;
+	bool _talkToAbort;
+	int _talkCounter;
 public:
-	Talk();
+	Talk(SherlockEngine *vm);
+
+	void talkTo(const Common::String &name);
 };
 
 } // End of namespace Sherlock

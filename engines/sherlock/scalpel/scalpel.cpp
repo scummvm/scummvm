@@ -325,7 +325,7 @@ void ScalpelEngine::startScene() {
 	}
 
 	_events->loadCursors("rmouse.vgs");
-	_events->changeCursor(ARROW);
+	_events->setCursor(ARROW);
 
 	if (_scene->_goToRoom == 99) {
 		// Chess Board

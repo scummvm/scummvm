@@ -43,11 +43,9 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_talk = nullptr;
 	_useEpilogue2 = false;
 	_justLoaded = false;
-	_talkToAbort = false;
 	_onChessboard = false;
 	_slowChess = false;
 	_animating = false;
-	_talkCounter = 0;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -75,14 +73,14 @@ void SherlockEngine::initialize() {
 	_res = new Resources();
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
-	_events = new EventsManager(this);
+	_events = new Events(this);
 	_inventory = new Inventory();
 	_journal = new Journal();
 	_people = new People(this);
 	_scene = new Scene(this);
 	_screen = new Screen(this);
 	_sound = new Sound(this);
-	_talk = new Talk();
+	_talk = new Talk(this);
 }
 
 Common::Error SherlockEngine::run() {

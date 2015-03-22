@@ -30,7 +30,7 @@
 
 namespace Sherlock {
 
-EventsManager::EventsManager(SherlockEngine *vm) {
+Events::Events(SherlockEngine *vm) {
 	_vm = vm;
 	_cursorImages = nullptr;
 	_cursorId = INVALID_CURSOR;
@@ -40,14 +40,14 @@ EventsManager::EventsManager(SherlockEngine *vm) {
 	_mouseButtons = 0;
 }
 
-EventsManager::~EventsManager() {
+Events::~Events() {
 	delete _cursorImages;
 }
 
 /**
  * Load a set of cursors from the specified file
  */
-void EventsManager::loadCursors(const Common::String &filename) {
+void Events::loadCursors(const Common::String &filename) {
 	hideCursor();
 	delete _cursorImages;
 
@@ -57,7 +57,7 @@ void EventsManager::loadCursors(const Common::String &filename) {
 /**
  * Set the cursor to show
  */
-void EventsManager::changeCursor(CursorId cursorId) {
+void Events::setCursor(CursorId cursorId) {
 	if (cursorId == _cursorId)
 		return;
 
@@ -73,28 +73,35 @@ void EventsManager::changeCursor(CursorId cursorId) {
 /**
  * Show the mouse cursor
  */
-void EventsManager::showCursor() {
+void Events::showCursor() {
 	CursorMan.showMouse(true);
 }
 
 /**
  * Hide the mouse cursor
  */
-void EventsManager::hideCursor() {
+void Events::hideCursor() {
 	CursorMan.showMouse(false);
+}
+
+/**
+ * Returns the cursor 
+ */
+CursorId Events::getCursor() const {
+	return _cursorId;
 }
 
 /**
  * Returns true if the mouse cursor is visible
  */
-bool EventsManager::isCursorVisible() {
+bool Events::isCursorVisible() const {
 	return CursorMan.isVisible();
 }
 
 /**
  * Check for any pending events
  */
-void EventsManager::pollEvents() {
+void Events::pollEvents() {
 	checkForNextFrameCounter();
 
 	Common::Event event;
@@ -138,7 +145,7 @@ void EventsManager::pollEvents() {
  * Poll for events and introduce a small delay, to allow the system to
  * yield to other running programs
  */
-void EventsManager::pollEventsAndWait() {
+void Events::pollEventsAndWait() {
 	pollEvents();
 	g_system->delayMillis(10);
 }
@@ -146,7 +153,7 @@ void EventsManager::pollEventsAndWait() {
 /**
  * Check whether it's time to display the next screen frame
  */
-bool EventsManager::checkForNextFrameCounter() {
+bool Events::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
@@ -171,7 +178,7 @@ bool EventsManager::checkForNextFrameCounter() {
 /**
  * Clear any current keypress or mouse click
  */
-void EventsManager::clearEvents() {
+void Events::clearEvents() {
 	_pendingKeys.clear();
 	_mouseClicked = false;
 }
@@ -179,12 +186,12 @@ void EventsManager::clearEvents() {
 /**
  * Delay for a given number of game frames, where each frame is 1/60th of a second
  */
-void EventsManager::wait(int numFrames) {
+void Events::wait(int numFrames) {
 	uint32 totalMilli = numFrames * 1000 / GAME_FRAME_RATE;
 	delay(totalMilli);
 }
 
-bool EventsManager::delay(uint32 time, bool interruptable) {
+bool Events::delay(uint32 time, bool interruptable) {
 	// Different handling for really short versus extended times
 	if (time < 10) {
 		// For really short periods, simply delay by the desired amount
@@ -216,7 +223,7 @@ bool EventsManager::delay(uint32 time, bool interruptable) {
 /**
  * Wait for the next frame
  */
-void EventsManager::waitForNextFrame() {
+void Events::waitForNextFrame() {
 	_mouseClicked = false;
 	_mouseButtons = 0;
 

@@ -90,7 +90,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_changes = false;
 	_charPoint = _oldCharPoint = 0;
 	_windowOpen = _infoFlag = false;
-	_menuMode = _keyboardInput = 0;
+	_keyboardInput = 0;
 	_walkedInScene = false;
 	_ongoingCans = 0;
 	_version = 0;
@@ -99,6 +99,9 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_hsavedPos = Common::Point(-1, -1);
 	_hsavedFs = -1;
 	_cAnimFramePause = 0;
+	_menuMode = STD_MODE;
+	_invMode = INVMODE_0;
+	_restoreFlag = false;
 
 	_controlPanel = new ImageFile("controls.vgs");
 	_controls = nullptr; // new ImageFile("menu.all");
@@ -119,7 +122,8 @@ void Scene::clear() {
 void Scene::selectScene() {
 	// Reset fields
 	_windowOpen = _infoFlag = false;
-	_menuMode = _keyboardInput = 0;
+	_menuMode = STD_MODE;
+	_keyboardInput = 0;
 	_oldKey = _help = _oldHelp = 0;
 	_oldTemp = _temp = 0;
 
@@ -142,7 +146,7 @@ void Scene::selectScene() {
  * that it should point to after loading; _misc is then set to 0.
  */
 bool Scene::loadScene(const Common::String &filename) {
-	EventsManager &events = *_vm->_events;
+	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -512,12 +516,14 @@ void Scene::checkInventory() {
  * in the scene
  */
 void Scene::transitionToScene() {
-	const int FS_TRANS[8] = { 
-		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN, 
-		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT 
-	};
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+
+	const int FS_TRANS[8] = {
+		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
+		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
+	};
 
 	if (_hsavedPos.x < 1) {
 		// No exit information from last scene-check entrance info
@@ -563,7 +569,7 @@ void Scene::transitionToScene() {
 			Common::Point bottomRight;
 
 			if (obj._type != NO_SHAPE) {
-				topLeft += obj._imageFrame->_position;
+				topLeft += obj._imageFrame->_offset;
 				bottomRight.x = topLeft.x + obj._imageFrame->_frame.w;
 				bottomRight.y = topLeft.y + obj._imageFrame->_frame.h;			
 			} else {
@@ -583,7 +589,7 @@ void Scene::transitionToScene() {
 								_vm->setFlags(obj._use[useNum]._useFlag);
 						}
 
-						if (!_vm->_talkToAbort) {
+						if (!talk._talkToAbort) {
 							for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
 								toggleObject(obj._use[useNum]._names[nameIdx]);
 							}
@@ -787,9 +793,10 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
  *		A negative playRate can also be specified to play the animation in reverse
  */
 int Scene::startCAnim(int cAnimNum, int playRate) {
-	EventsManager &events = *_vm->_events;
+	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
+	Talk &talk = *_vm->_talk;
 	Common::Point tpPos, walkPos;
 	int tpDir, walkDir;
 	int tFrames;
@@ -818,7 +825,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 		tpDir = cAnim._teleportDir;
 	}
 
-	events.changeCursor(WAIT);
+	events.setCursor(WAIT);
 	_canimShapes.push_back(Object());
 	Object &cObj = _canimShapes[_canimShapes.size() - 1];
 
@@ -828,7 +835,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 			people.walkToCoords(walkPos, walkDir);
 	}
 
-	if (_vm->_talkToAbort)
+	if (talk._talkToAbort)
 		return 1;
 
 	// Copy the canimation into the bgShapes type canimation structure so it can be played
@@ -968,7 +975,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	// Set canim to REMOVE type and free memory
 	cObj.checkObject(_bgShapes[0]);
 
-	if (gotoCode > 0 && !_vm->_talkToAbort) {
+	if (gotoCode > 0 && !talk._talkToAbort) {
 		_goToRoom = gotoCode;
 
 		if (_goToRoom < 97 && _vm->_map[_goToRoom].x) {
@@ -978,7 +985,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 	people.loadWalk();
 
-	if (tpPos.x != -1 && !_vm->_talkToAbort) {
+	if (tpPos.x != -1 && !talk._talkToAbort) {
 		// Teleport to ending coordinates
 		people[AL]._position = tpPos;
 		people[AL]._sequenceNumber = tpDir;
@@ -997,6 +1004,51 @@ void Scene::printObjDesc(const Common::String &str, bool firstTime) {
  * Animate all objects and people.
  */
 void Scene::doBgAnim() {
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
+	Surface surface = screen._backBuffer.getSubArea(Common::Rect(0, 0,
+		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+	int cursorId = events.getCursor();
+	Common::Point mousePos = events.mousePos();
+
+	talk._talkToAbort = false;
+	
+	// Animate the mouse cursor
+	if (cursorId >= WAIT) {
+		if (++cursorId > (WAIT + 2))
+			cursorId = WAIT;
+
+		events.setCursor((CursorId)cursorId);
+	}
+
+	// Check for setting magnifying glass cursor
+	if (_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) {
+		if (_invMode == INVMODE_1) {
+			// Only show Magnifying glass cursor if it's not on the inventory command line
+			if (mousePos.y < CONTROLS_Y || mousePos.y >(CONTROLS_Y1 + 13))
+				events.setCursor(MAGNIFY);
+			else
+				events.setCursor(ARROW);
+		} else {
+			events.setCursor(ARROW);
+		}
+	}
+
+	if (sound._diskSoundPlaying && !*sound._soundIsOn) {
+		// Loaded sound just finished playing
+		// TODO: This is horrible.. refactor into the Sound class
+		delete[] sound._digiBuf;
+		sound._diskSoundPlaying = false;
+	}
+
+	if (_restoreFlag) {
+		if (people[AL]._type == CHARACTER)
+			people[AL].checkSprite();
+	}
+
 	// TODO
 }
 

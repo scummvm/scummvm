@@ -37,7 +37,7 @@ enum CursorId { ARROW = 0, MAGNIFY = 1, WAIT = 2, INVALID_CURSOR = -1 };
 
 class SherlockEngine;
 
-class EventsManager {
+class Events {
 private:
 	SherlockEngine *_vm;
 	uint32 _frameCounter;
@@ -52,18 +52,20 @@ public:
 	bool _mouseClicked;
 	Common::Stack<Common::KeyState> _pendingKeys;
 public:
-	EventsManager(SherlockEngine *vm);
-	~EventsManager();
+	Events(SherlockEngine *vm);
+	~Events();
 
 	void loadCursors(const Common::String &filename);
 
-	void changeCursor(CursorId cursorId);
+	void setCursor(CursorId cursorId);
 
 	void showCursor();
 
 	void hideCursor();
 
-	bool isCursorVisible();
+	CursorId getCursor() const;
+
+	bool isCursorVisible() const;
 
 	void pollEvents();
 

@@ -115,6 +115,8 @@ public:
 	void setImageFrame();
 
 	void adjustSprite();
+
+	void checkSprite();
 };
 
 struct ActionType {
@@ -200,6 +202,8 @@ public:
 	void checkObject(Object &o);
 
 	int checkNameForCodes(const Common::String &name, Common::StringArray *messages);
+
+	void setFlagsAndToggles();
 };
 
 struct CAnim {

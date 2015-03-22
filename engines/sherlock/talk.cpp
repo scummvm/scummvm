@@ -21,10 +21,17 @@
  */
 
 #include "sherlock/talk.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
-Talk::Talk() {
+Talk::Talk(SherlockEngine *vm): _vm(vm) {
+	_talkCounter = 0;
+	_talkToAbort = false;
+}
+
+void Talk::talkTo(const Common::String &name) {
+	// TODO
 }
 
 } // End of namespace Sherlock
