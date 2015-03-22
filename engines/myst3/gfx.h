@@ -25,6 +25,8 @@
 
 #include "common/rect.h"
 #include "common/system.h"
+
+#include "math/matrix4.h"
 #include "math/vector3d.h"
 
 namespace Myst3 {
@@ -81,6 +83,8 @@ class Renderer {
 	virtual Common::Rect frameViewport() const = 0;
 	virtual Common::Point frameCenter() const = 0;
 
+	virtual Math::Matrix4 makeProjectionMatrix(float fov) const = 0;
+
 	virtual void flipVertical(Graphics::Surface *s) = 0;
 
 	/**
@@ -106,6 +110,8 @@ public:
 	Common::Rect viewport() const override;
 	Common::Rect frameViewport() const override;
 	Common::Point frameCenter() const override;
+
+	Math::Matrix4 makeProjectionMatrix(float fov) const override;
 
 	void flipVertical(Graphics::Surface *s) override;
 

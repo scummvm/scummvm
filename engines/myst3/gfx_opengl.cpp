@@ -158,19 +158,13 @@ void OpenGLRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	// TODO: Find a correct and exact formula for the FOV
-	GLfloat glFOV = 0.63 * fov; // Approximative and experimental formula
-	if (fov > 79.0 && fov < 81.0)
-		glFOV = 50.5; // Somewhat good value for fov == 80
-	else if (fov > 59.0 && fov < 61.0)
-		glFOV = 36.0; // Somewhat good value for fov == 60
-
 	Common::Rect frame = frameViewport();
 	glViewport(frame.left, frame.top, frame.width(), frame.height());
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	Math::Matrix4 m = Math::makePerspectiveMatrix(glFOV, (GLfloat)kOriginalWidth / (GLfloat)kFrameHeight, 1.0, 10000.0);
-	glMultMatrixf(m.getData());
+	Math::Matrix4 proj = makeProjectionMatrix(fov);
+	glMultMatrixf(proj.getData());
 
 	// Rotate the model to simulate the rotation of the camera
 	glMatrixMode(GL_MODELVIEW);

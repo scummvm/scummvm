@@ -210,17 +210,10 @@ void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	// TODO: Find a correct and exact formula for the FOV
-	GLfloat glFOV = 0.63 * fov; // Approximative and experimental formula
-	if (fov > 79.0 && fov < 81.0)
-		glFOV = 50.5; // Somewhat good value for fov == 80
-	else if (fov > 59.0 && fov < 61.0)
-		glFOV = 36.0; // Somewhat good value for fov == 60
-
 	Common::Rect frame = frameViewport();
 	glViewport(frame.left, frame.top, frame.width(), frame.height());
 
-	Math::Matrix4 proj = Math::makePerspectiveMatrix(glFOV, kOriginalWidth / (double)kFrameHeight, 1.0, 10000.0);
+	Math::Matrix4 proj = makeProjectionMatrix(fov);
 	proj.transpose();
 
 	Math::Matrix4 model(180.0f - heading, pitch, 0.0f, Math::EO_YXZ);

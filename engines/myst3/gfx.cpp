@@ -30,6 +30,8 @@
 
 #include "graphics/surface.h"
 
+#include "math/glmath.h"
+
 namespace Myst3 {
 
 BaseRenderer::BaseRenderer(OSystem *system)
@@ -100,6 +102,18 @@ Common::Point BaseRenderer::frameCenter() const {
 	Common::Rect screen = viewport();
 	Common::Rect frame = frameViewport();
 	return Common::Point((frame.left + frame.right) / 2, screen.top + screen.bottom - (frame.top + frame.bottom) / 2);
+}
+
+Math::Matrix4 BaseRenderer::makeProjectionMatrix(float fov) const {
+	static const float nearClipPlane = 1.0;
+	static const float farClipPlane = 10000.0;
+
+	float aspectRatio = kOriginalWidth / (float) kFrameHeight;
+
+	float xmaxValue = nearClipPlane * tan(fov * M_PI / 360.0);
+	float ymaxValue = xmaxValue / aspectRatio;
+
+	return Math::makeFrustumMatrix(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
 }
 
 void BaseRenderer::flipVertical(Graphics::Surface *s) {

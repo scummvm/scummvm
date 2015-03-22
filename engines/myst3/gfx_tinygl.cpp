@@ -145,19 +145,13 @@ void TinyGLRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	// TODO: Find a correct and exact formula for the FOV
-	TGLfloat glFOV = 0.63 * fov; // Approximative and experimental formula
-	if (fov > 79.0 && fov < 81.0)
-		glFOV = 50.5; // Somewhat good value for fov == 80
-	else if (fov > 59.0 && fov < 61.0)
-		glFOV = 36.0; // Somewhat good value for fov == 60
-
 	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
 	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);
+
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
-	Math::Matrix4 m = Math::makePerspectiveMatrix(glFOV, (TGLfloat)kOriginalWidth / (TGLfloat)kFrameHeight, 1.0, 10000.0);
-	tglMultMatrixf(m.getData());
+	Math::Matrix4 proj = makeProjectionMatrix(fov);
+	tglMultMatrixf(proj.getData());
 
 	// Rotate the model to simulate the rotation of the camera
 	tglMatrixMode(TGL_MODELVIEW);
