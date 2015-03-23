@@ -376,7 +376,7 @@ void GfxOpenGLS::setupShaders() {
 
 	static const char* actorAttributes[] = {"position", "texcoord", "color", "normal", NULL};
 	_actorProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
-	_spriteProgram = _actorProgram->clone();
+	_spriteProgram = Graphics::Shader::fromFiles(isEMI ? "emi_actor" : "grim_actor", actorAttributes);
 
 	static const char* primAttributes[] = { "position", NULL };
 	_shadowPlaneProgram = Graphics::Shader::fromFiles("shadowplane", primAttributes);
