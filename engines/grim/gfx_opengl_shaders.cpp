@@ -717,14 +717,11 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		modelMatrix.transpose();
 		modelMatrix.setPosition(pos);
 		modelMatrix.transpose();
-		_mvpMatrix = _viewMatrix * modelMatrix;
-		_mvpMatrix.transpose();
 
 		_actorProgram->setUniform("modelMatrix", modelMatrix);
 		_actorProgram->setUniform("viewMatrix", _viewMatrix);
 		_actorProgram->setUniform("projMatrix", _projMatrix);
 		_actorProgram->setUniform("extraMatrix", extraMatrix);
-		_actorProgram->setUniform("mvpMatrix", _mvpMatrix);
 		_actorProgram->setUniform("tex", 0);
 		_actorProgram->setUniform("texZBuf", 1);
 		_actorProgram->setUniform("hasZBuffer", hasZBuffer);
@@ -779,10 +776,8 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 			uniform = Common::String::format("lights[%u]._color", i);
 			_actorProgram->setUniform(uniform.c_str(), l._color);
 
-			if (g_grim->getGameType() == GType_MONKEY4) {
-				uniform = Common::String::format("lights[%u]._params", i);
-				_actorProgram->setUniform(uniform.c_str(), l._params);
-			}
+			uniform = Common::String::format("lights[%u]._params", i);
+			_actorProgram->setUniform(uniform.c_str(), l._params);
 		}
 	}
 }
@@ -1093,19 +1088,16 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 	Math::Vector4d &lightDir    = _lights[lightId]._direction;
 	Math::Vector4d &lightParams = _lights[lightId]._params;
 
+	float intensity = light->_intensity;
 	if (g_grim->getGameType() == GType_MONKEY4) {
-		float intensity = light->_intensity;
-		lightColor.x() = ((float)light->_color.getRed() / 255.0f) * intensity;
-		lightColor.y() = ((float)light->_color.getGreen() / 255.0f) * intensity;
-		lightColor.z() = ((float)light->_color.getBlue() / 255.0f) * intensity;
-		lightColor.w() = 1.0f;
+		intensity /= 255.0f;
 	} else {
-		float intensity = light->_intensity / 1.3f;
-		lightColor.x() = ((float)light->_color.getRed() / 15.0f) * intensity;
-		lightColor.y() = ((float)light->_color.getGreen() / 15.0f) * intensity;
-		lightColor.z() = ((float)light->_color.getBlue() / 15.0f) * intensity;
-		lightColor.w() = 1.0f;
+		intensity /= 15.0f;
 	}
+	lightColor.x() = (float)light->_color.getRed();
+	lightColor.y() = (float)light->_color.getGreen();
+	lightColor.z() = (float)light->_color.getBlue();
+	lightColor.w() = intensity;
 
 	if (light->_type == Grim::Light::Omni) {
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
@@ -1115,8 +1107,8 @@ void GfxOpenGLS::setupLight(Grim::Light *light, int lightId) {
 		lightPos = Math::Vector4d(-light->_dir.x(), -light->_dir.y(), -light->_dir.z(), 0.0f);
 		lightDir = Math::Vector4d(0.0f, 0.0f, 0.0f, -1.0f);
 	} else if (light->_type == Grim::Light::Spot) {
-		float cosPenumbra = cos(light->_penumbraangle);
-		float cosUmbra = cos(light->_umbraangle);
+		float cosPenumbra = cosf(light->_penumbraangle * M_PI / 180.0f);
+		float cosUmbra = cosf(light->_umbraangle * M_PI / 180.0f);
 		lightPos = Math::Vector4d(light->_pos.x(), light->_pos.y(), light->_pos.z(), 1.0f);
 		lightDir = Math::Vector4d(light->_dir.x(), light->_dir.y(), light->_dir.z(), 1.0f);
 		lightParams = Math::Vector4d(light->_falloffNear, light->_falloffFar, cosPenumbra, cosUmbra);

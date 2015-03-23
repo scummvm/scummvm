@@ -1,19 +1,6 @@
-struct light {
-	vec4 _position;
-	vec4 _direction;
-	vec4 _color;
-};
-
-struct shadow_info {
-	bool _active;
-	vec3 _color;
-	vec3 _light;
-	vec3 _point;
-	vec3 _normal;
-};
-
-const int maxLights = 8;
-const float DIFFUSE_FACTOR = 0.8;
+const float CONSTANT_ATTENUATION = 0.0;
+const float LINEAR_ATTENUATION = 0.0;
+const float QUADRATIC_ATTENUATION = 1.0;
 
 in vec3 position;
 in vec2 texcoord;
@@ -24,22 +11,35 @@ uniform highp mat4 modelMatrix;
 uniform highp mat4 viewMatrix;
 uniform highp mat4 projMatrix;
 uniform highp mat4 extraMatrix;
-uniform highp vec2 texScale;
 uniform bool textured;
-uniform light lights[maxLights];
-uniform shadow_info shadow;
 uniform bool lightsEnabled;
+uniform highp vec2 texScale;
+
+struct Light {
+	vec4 _position;
+	vec4 _direction;
+	vec4 _color;
+	vec4 _params;
+};
+const int maxLights = 8;
+uniform Light lights[maxLights];
+
+struct shadow_info {
+	bool _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
 
 out vec2 Texcoord;
 out vec4 Color;
 
 void main()
 {
-	vec4 pos = vec4(position, 1.0);
-
-	pos = modelMatrix *
-	      extraMatrix *
-	      pos;
+	vec4 pos = modelMatrix * extraMatrix * vec4(position, 1.0);
 
 	// See http://en.wikipedia.org/wiki/Line-plane_intersection
 	if (shadow._active) {
@@ -50,7 +50,8 @@ void main()
 		pos = vec4(p, 1.0);
 	}
 
-	gl_Position = projMatrix * viewMatrix * pos;
+	vec4 positionView = viewMatrix * pos;
+	gl_Position = projMatrix * positionView;
 
 	if (textured) {
 		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);
@@ -58,37 +59,39 @@ void main()
 		Texcoord = vec2(0.0, 0.0);
 	}
 
-/*
-	if (lightsEnabled) {
-		vec3 normal_eye = normalize((mvpMatrix * extraMatrix * vec4(normal, 0.0))).xyz;
+	if (shadow._active) {
+		Color = vec4(shadow._color, 1.0);
+	} else if (lightsEnabled) {
 		vec3 light = vec3(0.0, 0.0, 0.0);
+		vec3 normalEye = normalize((viewMatrix * (modelMatrix * extraMatrix * vec4(normal, 0.0))).xyz);
+
 		for (int i = 0; i < maxLights; ++i) {
-			if (lights[i]._color.w != 0.0) {
-				vec3 faceToLight = normalize(lights[i]._position - pos).xyz;
-				if (lights[i]._position.w == 1.0) {
-					float incidence = dot(normal_eye, faceToLight);
-					if (incidence > 0.0) {
-						if (lights[i]._direction.w == -1.0) {
-							light += incidence * DIFFUSE_FACTOR * lights[i]._color.rgb;
-						} else {
-							vec3 lightDir = normalize(lights[i]._direction.xyz);
-							float cos_angle = dot(lightDir, faceToLight);
-							float incidence2 = max(-cos_angle, 0.0);
-							light += incidence2 * DIFFUSE_FACTOR * lights[i]._color.rgb;
+			float intensity = lights[i]._color.w;
+			float light_type = lights[i]._position.w;
+			if (light_type >= 0.0) { // Not ambient
+				vec3 vertexToLight = lights[i]._position.xyz;
+				if (light_type > 0.0) { // positional light
+					vertexToLight -= positionView.xyz;
+					float dist = length(vertexToLight);
+					intensity /= CONSTANT_ATTENUATION + dist * (LINEAR_ATTENUATION + dist * QUADRATIC_ATTENUATION);
+					if (lights[i]._direction.w > -1.0) { // Spotlight
+						// See DirectX spotlight documentation
+						float cosAngle = -dot(normalize(vertexToLight), normalize(lights[i]._direction.xyz)); // rho
+						float cosPenumbra = clamp(lights[i]._params.w, 0.0, 1.0); // cos(theta / 2)
+						float cosUmbra = clamp(lights[i]._params.z, 0.0, cosPenumbra); // cos(phi / 2)
+						if (cosAngle <= cosPenumbra) {
+							if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
+								intensity = 0.0;
+							} else {
+								intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+							}
 						}
 					}
-				} else {
-					vec3 lightDir = normalize(lights[i]._position.xyz);
-					float incidence = dot(lightDir, faceToLight);
-					light += max(-incidence, 0.0) * DIFFUSE_FACTOR * lights[i]._color.rgb;
 				}
+				intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
 			}
+			light += lights[i]._color.xyz * intensity;
 		}
-		Color = color * vec4(light, 1.0);
-	} else */ {
-		Color = color;
-		if (shadow._active) {
-			Color = vec4(shadow._color, 1.0);
-		}
+		Color = clamp(vec4(color.xyz * light, color.w), 0.0, 1.0);
 	}
 }
