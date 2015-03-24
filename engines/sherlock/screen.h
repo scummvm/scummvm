@@ -48,10 +48,14 @@ private:
 	int _fontNumber;
 	Common::List<Common::Rect> _dirtyRects;
 	uint32 _transitionSeed;
+	ImageFile *_font;
+	int _fontHeight;
 
 	void mergeDirtyRects();
 
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
+
+	void writeString(const Common::String &str, const Common::Point &pt, int color);
 protected:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
@@ -61,6 +65,7 @@ public:
 	byte _sMap[PALETTE_SIZE];
 public:
 	Screen(SherlockEngine *vm);
+	~Screen();
 
 	void setFont(int fontNumber);
 
@@ -89,6 +94,10 @@ public:
 
 	void flushImage(ImageFrame *frame, const Common::Point &pt,
 		int16 *xp, int16 *yp, int16 *w, int16 *h);
+
+	int stringWidth(const Common::String &str);
+
+	int charWidth(char c);
 };
 
 } // End of namespace Sherlock

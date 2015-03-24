@@ -431,7 +431,7 @@ void UserInterface::toggleButton(int num) {
  */
 void UserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->fillRect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 200, INFO_LINE + 9,
+		_vm->_screen->fillRect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 20, INFO_LINE + 9,
 			INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;

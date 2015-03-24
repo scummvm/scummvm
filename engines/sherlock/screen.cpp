@@ -23,6 +23,7 @@
 #include "sherlock/screen.h"
 #include "sherlock/sherlock.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "graphics/palette.h"
 
 namespace Sherlock {
@@ -32,19 +33,29 @@ Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCR
 		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
+	_font = nullptr;
+	_fontHeight = 0;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
 	setFont(1);
 }
 
+Screen::~Screen() {
+	delete _font;
+}
+
 void Screen::setFont(int fontNumber) {
 	_fontNumber = fontNumber;
 	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber);
-	Common::SeekableReadStream *stream = _vm->_res->load(fname);
 
-	debug("TODO: Loading font %s, size - %d", fname.c_str(), stream->size());
+	// Discard any previous font and read in new one
+	delete _font;
+	_font = new ImageFile(fname);
 
-	delete stream;
+	// Iterate through the frames to find the tallest font character
+	_fontHeight = 0;
+	for (uint idx = 0; idx < _font->size(); ++idx)
+		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
 }
 
 void Screen::update() {
@@ -232,14 +243,6 @@ void Screen::verticalTransition() {
 }
 
 /**
- * Prints the text passed onto the back buffer at the given position and color.
- * The string is then blitted to the screen
- */
-void Screen::print(const Common::Point &pt, int fgColor, int bgColor, const char *format, ...) {
-	// TODO
-}
-
-/**
  * Copies a section of the second back buffer into the main back buffer
  */
 void Screen::restoreBackground(const Common::Rect &r) {
@@ -293,5 +296,85 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
 	*w = newBounds.width();
 	*h = newBounds.height();
 }
+
+/**
+ * Prints the text passed onto the back buffer at the given position and color.
+ * The string is then blitted to the screen
+ */
+void Screen::print(const Common::Point &pt, int fgColor, int bgColor, const char *format, ...) {
+	// Create the string to display
+	char buffer[100];
+	va_list args;
+
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
+	Common::String str(buffer);
+
+	// Figure out area to draw text in
+	Common::Point pos = pt;
+	int width = stringWidth(str);
+	pos.y--;		// Font is always drawing one line higher
+	if (!pos.x)
+		// Center text horizontally
+		pos.x = (SHERLOCK_SCREEN_WIDTH - width) / 2;
+
+	Common::Rect textBounds(pos.x, pos.y, pos.x + width, pos.y + _fontHeight);
+	if (textBounds.right > SHERLOCK_SCREEN_WIDTH)
+		textBounds.moveTo(SHERLOCK_SCREEN_WIDTH - width, textBounds.top);
+	if (textBounds.bottom > SHERLOCK_SCREEN_HEIGHT)
+		textBounds.moveTo(textBounds.left, SHERLOCK_SCREEN_HEIGHT - _fontHeight);
+
+	// Write out the string at the given position
+	writeString(str, Common::Point(textBounds.left, textBounds.top), fgColor);
+
+	// Copy the affected area to the screen
+	slamRect(textBounds);
+}
+
+/**
+ * Returns the width of a string in pixels
+ */
+int Screen::stringWidth(const Common::String &str) {
+	int width = 0;
+
+	for (const char *c = str.c_str(); *c; ++c) 
+		width += charWidth(*c);
+
+	return width;
+}
+
+/**
+ * Returns the width of a character in pixels
+ */
+int Screen::charWidth(char c) {
+	if (c == ' ')
+		return 5;
+	else if (c > ' ' && c <= '~')
+		return (*_font)[c - 33]._frame.w + 1;
+	else
+		return 0;
+}
+
+/**
+ * Draws the given string into the back buffer using the images stored in _font
+ */
+void Screen::writeString(const Common::String &str, const Common::Point &pt, int color) {
+	Common::Point charPos = pt;
+
+	for (const char *c = str.c_str(); *c; ++c) {
+		if (*c == ' ')
+			charPos.x += 5;
+		else {
+			assert(*c > ' ' && *c <= '~');
+			ImageFrame &frame = (*_font)[*c - 33];
+			_backBuffer.transBlitFrom(frame, charPos, false, color);
+			charPos.x += frame._frame.w + 1;
+		}
+	}
+
+	addDirtyRect(Common::Rect(pt.x, pt.y, charPos.x, pt.y + _fontHeight));
+}
+
 
 } // End of namespace Sherlock

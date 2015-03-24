@@ -25,6 +25,7 @@
 
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "sherlock/resources.h"
 
 namespace Sherlock {
 
@@ -43,6 +44,8 @@ public:
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		const Common::Rect &srcBounds);
+	void transBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		bool flipped = false, int overrideColor = 0);
 	void transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped = false, int overrideColor = 0);
 

@@ -91,6 +91,14 @@ void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 }
 
 /**
+* Draws an image frame at a given position within this surface with transparency
+*/
+void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
+		bool flipped, int overrideColor) {
+	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor);
+}
+
+/**
 * Draws a surface at a given position within this surface with transparency
 */
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
