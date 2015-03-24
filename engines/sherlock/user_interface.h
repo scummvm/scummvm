@@ -62,6 +62,8 @@ private:
 	ImageFile *_controls;
 	int _oldLook;
 	bool _keyboardInput;
+	int _invMode;
+	bool _pause;
 private:
 	void depressButton(int num);
 
@@ -70,6 +72,20 @@ private:
 	void pushButton(int num);
 
 	void toggleButton(int num);
+
+	void examine();
+
+	void lookScreen(const Common::Point &pt);
+
+	void lookInv();
+
+	void doEnvControl();
+	void doInvControl();
+	void doLookControl();
+	void doMainControl();
+	void doMiscControl(int allowed);
+	void doPickControl();
+	void doTalkControl();
 public:
 	MenuMode _menuMode;
 	int _menuCounter;

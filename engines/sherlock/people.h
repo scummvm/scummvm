@@ -59,7 +59,6 @@ private:
 	Sprite &_player;
 	bool _walkLoaded;
 	int _oldWalkSequence;
-	bool _allowWalkAbort;
 public:
 	Common::Point _walkDest;
 	Common::Stack<Common::Point> _walkTo;
@@ -67,6 +66,7 @@ public:
 	bool _portraitLoaded;
 	Object _portrait;
 	bool _clearingThePortrait;
+	bool _allowWalkAbort;
 public:
 	People(SherlockEngine *vm);
 	~People();
@@ -86,6 +86,8 @@ public:
 	void gotoStand(Sprite &sprite);
 
 	void walkToCoords(const Common::Point &destPos, int destDir);
+
+	void goAllTheWay();
 };
 
 } // End of namespace Sherlock

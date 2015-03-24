@@ -51,6 +51,8 @@ public:
 
 	void talkTo(const Common::String &name);
 
+	void talk(int objNum);
+
 	void freeTalkVars();
 };
 

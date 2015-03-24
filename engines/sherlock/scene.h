@@ -177,6 +177,8 @@ public:
 	void clearInfo();
 
 	int findBgShape(const Common::Rect &r);
+
+	int checkForZones(const Common::Point &pt, int zoneType);
 };
 
 } // End of namespace Sherlock

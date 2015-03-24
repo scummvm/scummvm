@@ -1427,5 +1427,27 @@ int Scene::findBgShape(const Common::Rect &r) {
 	return -1;
 }
 
+/**
+ * Checks to see if the given position in the scene belongs to a given zone type.
+ * If it is, the zone is activated and used just like a TAKL zone or aFLAG_SET zone.
+ */
+int Scene::checkForZones(const Common::Point &pt, int zoneType) {
+	int matches = 0;
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &o = _bgShapes[idx];
+		if ((o._aType == zoneType && o._type != INVALID) && o._type != HIDDEN) {
+			Common::Rect r = o._type == NO_SHAPE ? o.getNoShapeBounds() : o.getNewBounds();
+
+			if (r.contains(pt)) {
+				++matches;
+				o.setFlagsAndToggles();
+				_vm->_talk->talkTo(o._use[0]._target);
+			}
+		}
+	}
+
+	return matches;
+}
 
 } // End of namespace Sherlock

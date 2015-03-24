@@ -311,4 +311,8 @@ void People::walkToCoords(const Common::Point &destPos, int destDir) {
 	warning("TODO: walkToCoords");
 }
 
+void People::goAllTheWay() {
+	// TODO
+}
+
 } // End of namespace Sherlock

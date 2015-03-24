@@ -138,8 +138,6 @@ void SherlockEngine::sceneLoop() {
  * Handle all player input
  */
 void SherlockEngine::handleInput() {
-	bool personFound;
-
 	_events->pollEventsAndWait();
 
 	// See if a key or mouse button is pressed

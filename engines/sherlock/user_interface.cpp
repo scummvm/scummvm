@@ -72,6 +72,8 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_windowOpen = false;
 	_oldLook = false;
 	_keyboardInput = false;
+	_invMode = 0;
+	_pause = false;
 
 	_controls = nullptr; // new ImageFile("menu.all");
 }
@@ -82,8 +84,10 @@ UserInterface::~UserInterface() {
 
 void UserInterface::handleInput() {
 	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
 
 	if (_menuCounter)
 		whileMenuCounter();
@@ -190,7 +194,146 @@ void UserInterface::handleInput() {
 		}
 	}
 
-	// TODO
+	// Reset the old bgshape number if the mouse button is released, so that
+	// it can e re-highlighted when we come back here
+	if ((events._rightReleased && _helpStyle) || (events._released && !_helpStyle))
+		_oldBgFound = -1;
+
+	// Do routines that should be done before input processing
+	switch (_menuMode) {
+	case LOOK_MODE:
+		if (!_windowOpen) {
+			if (events._released && _bgFound >= 0 && _bgFound < 1000) {
+				if (!scene._bgShapes[_bgFound]._examine.empty())
+					examine();
+			} else {
+				lookScreen(pt);
+			}
+		}
+		break;
+
+	case MOVE_MODE:
+	case OPEN_MODE:
+	case CLOSE_MODE:
+	case PICKUP_MODE:
+		lookScreen(pt);
+		break;
+
+	case TALK_MODE:
+		if (!_windowOpen) {
+			bool personFound;
+
+			if (_bgFound >= 1000) {
+				personFound = false;
+				if (!events._released)
+					lookScreen(pt);
+			} else {
+				personFound = scene._bgShapes[_bgFound]._aType == PERSON && _bgFound != -1;
+			}
+
+			if (events._released && personFound)
+				talk.talk(_bgFound);
+			else if (personFound)
+				lookScreen(pt);
+			else if (_bgFound < 1000)
+				clearInfo();
+		}
+		break;
+
+	case USE_MODE:
+	case GIVE_MODE:
+	case INV_MODE:
+		if (_invMode == 1 || _invMode == 2 || _invMode == 3) {
+			if (pt.y < CONTROLS_Y)
+				lookInv();
+			else
+				lookScreen(pt);
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	//
+	// Do input processing
+	//
+	if (events._pressed || events._released || events._rightPressed || 
+			_keycode != Common::KEYCODE_INVALID || _pause) {
+		if (((events._released && (_helpStyle || _help == -1)) || (events._rightReleased && !_helpStyle)) &&
+				(pt.y <= CONTROLS_Y) && (_menuMode == STD_MODE)) {
+			// The mouse was clicked in the playing area with no action buttons down.
+			// Check if the mouse was clicked in a script zone. If it was,
+			// then execute the script. Otherwise, walk to the given position
+			if (scene.checkForZones(pt, SCRIPT_ZONE) != 0) {
+				// Mouse clicked in script zone
+				events._pressed = events._released = false;
+			} else {
+				people._walkDest = pt;
+				people._allowWalkAbort = false;
+				people.goAllTheWay();
+			}
+
+			if (_oldKey != -1) {
+				restoreButton(_oldTemp);
+				_oldKey = -1;
+			}
+		}
+
+		// Handle action depending on selected mode
+		switch (_menuMode) {
+		case LOOK_MODE:
+			if (_windowOpen)
+				doLookControl();
+			break;
+
+		case MOVE_MODE:
+			doMiscControl(ALLOW_MOVEMENT);
+			break;
+
+		case TALK_MODE:
+			if (_windowOpen)
+				doTalkControl();
+			break;
+
+		case OPEN_MODE:
+			doMiscControl(ALLOW_OPEN);
+			break;
+
+		case CLOSE_MODE:
+			doMiscControl(ALLOW_CLOSE);
+			break;
+
+		case PICKUP_MODE:
+			doPickControl();
+			break;
+
+		case USE_MODE:
+		case GIVE_MODE:
+		case INV_MODE:
+			doInvControl();
+			break;
+
+		case FILES_MODE:
+			doEnvControl();
+			break;
+
+		default:
+			break;
+		}
+
+		// As long as there isn't an open window, do main input processing.
+		// Windows are opened when in TALK, USE, INV, and GIVE modes
+		if ((!_windowOpen && !_menuCounter && pt.y > CONTROLS_Y) || 
+				_keycode != Common::KEYCODE_INVALID) {
+			if (events._pressed || events._released || _pause ||
+					_keycode != Common::KEYCODE_INVALID)
+				doMainControl();
+		}
+
+		if (pt.y < CONTROLS_Y && events._pressed && _oldTemp != (_menuMode - 1) && _oldKey != -1)
+			restoreButton(_oldTemp);
+	}
 }
 
 /**
@@ -301,6 +444,46 @@ void UserInterface::whileMenuCounter() {
 		++_infoFlag;
 		clearInfo();
 	}
+}
+
+void UserInterface::examine() {
+	// TODO
+}
+
+void UserInterface::lookScreen(const Common::Point &pt) {
+	// TODO
+}
+
+void UserInterface::lookInv() {
+	// TODO
+}
+
+void UserInterface::doEnvControl() {
+	// TODO
+}
+
+void UserInterface::doInvControl() {
+	// TODO
+}
+
+void UserInterface::doLookControl() {
+	// TODO
+}
+
+void UserInterface::doMainControl() {
+	// TODO
+}
+
+void UserInterface::doMiscControl(int allowed) {
+	// TODO
+}
+
+void UserInterface::doPickControl() {
+	// TODO
+}
+
+void UserInterface::doTalkControl() {
+	// TODO
 }
 
 } // End of namespace Sherlock

@@ -34,6 +34,10 @@ void Talk::talkTo(const Common::String &name) {
 	// TODO
 }
 
+void Talk::talk(int objNum) {
+	// TODO
+}
+
 /**
  * Clear loaded talk data
  */
