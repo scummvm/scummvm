@@ -75,13 +75,16 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_invMode = 0;
 	_pause = false;
 
-	_controls = nullptr; // new ImageFile("menu.all");
+	_controls = new ImageFile("menu.all");
 }
 
 UserInterface::~UserInterface() {
 	delete _controls;
 }
 
+/**
+ * Main input handler for the user interface
+ */
 void UserInterface::handleInput() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -355,12 +358,12 @@ void UserInterface::depressButton(int num) {
 void UserInterface::restoreButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+	Graphics::Surface &frame = (*_controls)[num]._frame;
 
 	screen._backBuffer.blitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen._backBuffer.blitFrom(screen._backBuffer, pt,
-		Common::Rect(pt.x, pt.y, pt.x + (*_controls)[num]._frame.w,
-			(*_controls)[num]._frame.h));
+		Common::Rect(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h));
 	
 	if (!_menuCounter) {
 		_infoFlag++;

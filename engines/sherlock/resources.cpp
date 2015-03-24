@@ -300,7 +300,7 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette) {
 		frame._paletteBase = stream.readByte();
 		frame._offset.x = stream.readUint16LE();
 		frame._offset.y = stream.readByte();
-        
+
 		frame._rleEncoded = !skipPalette && (frame._offset.x & 0xff) == 1;
 
 		if (frame._paletteBase) {
@@ -332,16 +332,18 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	// Check for palette
 	int v1 = stream.readUint16LE() + 1;
 	int v2 = stream.readUint16LE() + 1;
+	stream.skip(1);		// Skip paletteBase byte
+	bool rleEncoded = stream.readByte() == 1;
 	int size = v1 * v2;
 	
-	if ((size - 12) == PALETTE_SIZE) {
+	if ((size - 12) == PALETTE_SIZE && !rleEncoded) {
 		// Found palette, so read it in
-		stream.seek(4 + 12, SEEK_CUR);
+		stream.seek(2 + 12, SEEK_CUR);
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
 			_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
 	} else {
 		// Not a palette, so rewind to start of frame data for normal frame processing
-		stream.seek(-4, SEEK_CUR);
+		stream.seek(-6, SEEK_CUR);
 	}
 }
 
