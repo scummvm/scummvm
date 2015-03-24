@@ -292,6 +292,7 @@ void GrimEngine::handleControls(Common::EventType operation, const Common::KeySt
 	// Might also want to support keypad-enter?
 	if (key.hasFlags(Common::KBD_ALT) && key.keycode == Common::KEYCODE_RETURN && operation == Common::EVENT_KEYDOWN) {
 		_changeFullscreenState = true;
+		return;
 	}
 
 	if (key.hasFlags(Common::KBD_CTRL) && key.keycode == Common::KEYCODE_d && operation == Common::EVENT_KEYDOWN) {
