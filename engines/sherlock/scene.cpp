@@ -27,37 +27,6 @@
 
 namespace Sherlock {
 
-// Main Menu control locations
-const int MENU_POINTS[12][4] = { 
-	{ 13, 153, 72, 165 },
-	{ 13, 169, 72, 181 },
-	{ 13, 185, 72, 197 },
-	{ 88, 153, 152, 165 },
-	{ 88, 169, 152, 181 },
-	{ 88, 185, 152, 197 },
-	{ 165, 153, 232, 165 },
-	{ 165, 169, 232, 181 },
-	{ 165, 185, 233, 197 },
-	{ 249, 153, 305, 165 },
-	{ 249, 169, 305, 181 },
-	{ 249, 185, 305, 197 } 
-};
-
-// Inventory control locations */
-const int INVENTORY_POINTS[8][3] = { 
-	{ 4, 50, 28 },
-	{ 52, 99, 76 },
-	{ 101, 140, 122 },
-	{ 142, 187, 165 },
-	{ 189, 219, 197 },
-	{ 221, 251, 233 },
-	{ 253, 283, 265 },
-	{ 285, 315, 293 } 
-};
-
-/*----------------------------------------------------------------*/
-
-
 void BgFileHeader::synchronize(Common::SeekableReadStream &s) {
 	_numStructs = s.readUint16LE();
 	_numImages = s.readUint16LE();
@@ -121,8 +90,6 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_goToScene = -1;
 	_changes = false;
 	_charPoint = _oldCharPoint = 0;
-	_windowOpen = false;
-	_infoFlag = false;
 	_keyboardInput = 0;
 	_walkedInScene = false;
 	_ongoingCans = 0;
@@ -132,23 +99,19 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_hsavedPos = Common::Point(-1, -1);
 	_hsavedFs = -1;
 	_cAnimFramePause = 0;
-	_menuMode = STD_MODE;
 	_invMode = INVMODE_0;
 	_restoreFlag = false;
 	_invLookFlag = false;
 	_lookHelp = false;
 	_animating = 0;
 	_doBgAnimDone = true;
-	_oldLook = 0;
 	_tempFadeStyle = 0;
 
 	_controlPanel = new ImageFile("controls.vgs");
-	_controls = nullptr; // new ImageFile("menu.all");
 }
 
 Scene::~Scene() {
 	delete _controlPanel;
-	delete _controls;
 	freeScene();
 }
 
@@ -159,10 +122,11 @@ void Scene::selectScene() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
+	UserInterface &ui = *_vm->_ui;
 
 	// Reset fields
-	_windowOpen = _infoFlag = false;
-	_menuMode = STD_MODE;
+	ui._windowOpen = ui._infoFlag = false;
+	ui._menuMode = STD_MODE;
 	_keyboardInput = 0;
 	_oldKey = _help = _oldHelp = 0;
 	_oldTemp = _temp = 0;
@@ -1135,6 +1099,7 @@ void Scene::doBgAnim() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
 	Surface surface = screen._backBuffer.getSubArea(Common::Rect(0, 0,
 		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	int cursorId = events.getCursor();
@@ -1151,7 +1116,7 @@ void Scene::doBgAnim() {
 	}
 
 	// Check for setting magnifying glass cursor
-	if (_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) {
+	if (ui._menuMode == INV_MODE || ui._menuMode == USE_MODE || ui._menuMode == GIVE_MODE) {
 		if (_invMode == INVMODE_1) {
 			// Only show Magnifying glass cursor if it's not on the inventory command line
 			if (mousePos.y < CONTROLS_Y || mousePos.y >(CONTROLS_Y1 + 13))
@@ -1434,20 +1399,33 @@ void Scene::doBgAnim() {
 	}
 }
 
-/**
- * Clears the info line of the screen
- */
-void Scene::clearInfo() {
-	if (_infoFlag) {
-		_vm->_screen->fillRect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 200, INFO_LINE + 9,
-			INFO_BLACK);
-		_infoFlag = false;
-		_oldLook = -1;
-	}
-}
-
 void Scene::saveSceneStatus() {
 	// TODO
 }
+
+/**
+ * Attempts to find a background shape within the passed bounds. If found,
+ * it will return the shape number, or -1 on failure.
+ */
+int Scene::findBgShape(const Common::Rect &r) {
+	if (!_doBgAnimDone)
+		// New frame hasn't been drawn yet
+		return -1;
+
+	for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
+		Object &o = _bgShapes[idx];
+		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN
+			&& o._aType <= PERSON) {
+			if (r.intersects(o.getNewBounds()))
+				return idx;
+		} else if (o._type == NO_SHAPE) {
+			if (r.intersects(o.getNoShapeBounds()))
+				return idx;
+		}
+	}
+
+	return -1;
+}
+
 
 } // End of namespace Sherlock

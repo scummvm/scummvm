@@ -44,12 +44,17 @@ private:
 	uint32 _priorFrameTime;
 	Common::Point _mousePos;
 	ImageFile *_cursorImages;
+	int _mouseButtons;
 
 	bool checkForNextFrameCounter();
 public:
 	CursorId _cursorId;
-	byte _mouseButtons;
-	bool _mouseClicked;
+	bool _pressed;
+	bool _released;
+	bool _rightPressed;
+	bool _rightReleased;
+	bool _oldButtons;
+	bool _oldRightButton;
 	Common::Stack<Common::KeyState> _pendingKeys;
 public:
 	Events(SherlockEngine *vm);
@@ -75,7 +80,7 @@ public:
 
 	uint32 getFrameCounter() const { return _frameCounter; }
 
-	bool isKeyPressed() const { return !_pendingKeys.empty(); }
+	bool kbHit() const { return !_pendingKeys.empty(); }
 
 	Common::KeyState getKey() { return _pendingKeys.pop(); }
 
@@ -85,8 +90,9 @@ public:
 
 	bool delay(uint32 time, bool interruptable = false);
 
-	void waitForNextFrame();
+	void setButtonState();
 
+	bool checkInput();
 };
 
 } // End of namespace Sherlock

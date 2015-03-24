@@ -42,6 +42,7 @@
 #include "sherlock/screen.h"
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
+#include "sherlock/user_interface.h"
 
 namespace Sherlock {
 
@@ -90,6 +91,7 @@ public:
 	Screen *_screen;
 	Sound *_sound;
 	Talk *_talk;
+	UserInterface *_ui;
 	Common::RandomSource _randomSource;
 	Common::Array<bool> _flags;
 	Common::String _soundOverride;
@@ -102,7 +104,6 @@ public:
 	Common::Array<Common::Point> _map;	// Map locations for each scene
 	bool _onChessboard;
 	bool _slowChess;
-	int _menuCounter;
 	int _scriptMoreFlag;
 	Common::String _scriptName;
 public:

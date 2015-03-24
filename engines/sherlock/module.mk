@@ -20,7 +20,8 @@ MODULE_OBJS = \
 	screen.o \
 	sherlock.o \
 	sound.o \
-	talk.o
+	talk.o \
+	user_interface.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

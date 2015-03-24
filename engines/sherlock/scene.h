@@ -37,22 +37,6 @@ namespace Sherlock {
 #define CONTROLS_Y  138
 #define CONTROLS_Y1 151
 
-enum MenuMode {
-	STD_MODE		=  0,
-	LOOK_MODE		=  1,
-	MOVE_MODE		=  2,
-	TALK_MODE		=  3,
-	PICKUP_MODE		=  4,
-	OPEN_MODE		=  5,
-	CLOSE_MODE		=  6,
-	INV_MODE		=  7,
-	USE_MODE		=  8,
-	GIVE_MODE		=  9,
-	JOURNAL_MODE	= 10,
-	FILES_MODE		= 11,
-	SETUP_MODE		= 12
-};
-
 enum InvMode {
 	INVMODE_0	= 0,
 	INVMODE_1	= 1,
@@ -114,13 +98,11 @@ private:
 	Common::String _rrmName;
 	int _cAnimFramePause;
 	Common::String _cAnimStr;
-	MenuMode _menuMode;
 	InvMode _invMode;
 	bool _lookScriptFlag;
 	int _selector;
 	bool _invLookFlag;
 	bool _lookHelp;
-	int _oldLook;
 
 	bool loadScene(const Common::String &filename);
 
@@ -144,9 +126,7 @@ public:
 	Common::Point _bigPos;
 	Common::Point _overPos;
 	int _charPoint, _oldCharPoint;
-	ImageFile *_controls;
 	ImageFile *_controlPanel;
-	bool _windowOpen, _infoFlag;
 	int _keyboardInput;
 	int _oldKey, _help, _oldHelp;
 	int _oldTemp, _temp;
@@ -195,6 +175,8 @@ public:
 	void doBgAnim();
 
 	void clearInfo();
+
+	int findBgShape(const Common::Rect &r);
 };
 
 } // End of namespace Sherlock

@@ -34,7 +34,11 @@ namespace Sherlock {
 #define PALETTE_SIZE 768
 #define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+
 #define INFO_BLACK 1
+#define INFO_FOREGROUND 11
+#define INFO_BACKGROUND 1
+
 
 class SherlockEngine;
 

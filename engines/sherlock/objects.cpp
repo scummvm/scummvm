@@ -39,10 +39,6 @@ namespace Sherlock {
 #define CLEAR_DIST_X 5
 #define CLEAR_DIST_Y 0
 
-#define INFO_FOREGROUND 11
-#define INFO_BACKGROUND 1
-
-
 SherlockEngine *Sprite::_vm;
 
 /**
@@ -779,6 +775,7 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
 	bool printed = false;
 	char ch;
 	const char *p;
@@ -852,19 +849,19 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 	} else if (name.hasPrefix("!")) {
 		// Message attached to canimation
 		int messageNum = atoi(name.c_str() + 1);
-		scene._infoFlag++;
-		scene.clearInfo();
+		ui._infoFlag++;
+		ui.clearInfo();
 		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, INFO_BACKGROUND,
 			(*messages)[messageNum].c_str());
-		_vm->_menuCounter = 25;
+		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
-		scene._infoFlag++;
-		scene.clearInfo();
+		ui._infoFlag++;
+		ui.clearInfo();
 		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, INFO_BACKGROUND,
 			"%s", name.c_str() + 1);
 		printed = true;
-		_vm->_menuCounter = 25;
+		ui._menuCounter = 25;
 	}
 
 	return printed;
@@ -920,6 +917,33 @@ void Object::adjustObject() {
 
 		_imageFrame = &(*_images)[imgNum - 1];
 	}
+}
+
+/**
+ * Returns the current bounds for the sprite
+ */
+const Common::Rect Object::getNewBounds() const {
+	Common::Point pt = _position;
+	if (_imageFrame)
+		pt += _imageFrame->_offset;
+
+	return Common::Rect(pt.x, pt.y, pt.x + frameWidth(), pt.y + frameHeight());
+}
+
+/**
+ * Returns the bounds for a sprite without a shape
+ */
+const Common::Rect Object::getNoShapeBounds() const {
+	return Common::Rect(_position.x, _position.y,
+		_position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
+}
+
+/**
+ * Returns the old bounsd for the sprite from the previous frame
+ */
+const Common::Rect Object::getOldBounds() const {
+	return Common::Rect(_oldPosition.x, _oldPosition.y,
+		_oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
 }
 
 /*----------------------------------------------------------------*/

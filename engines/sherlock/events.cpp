@@ -36,8 +36,10 @@ Events::Events(SherlockEngine *vm) {
 	_cursorId = INVALID_CURSOR;
 	_frameCounter = 1;
 	_priorFrameTime = 0;
-	_mouseClicked = false;
 	_mouseButtons = 0;
+	_pressed = _released = false;
+	_rightPressed = _rightReleased = false;
+	_oldButtons = _oldRightButton = false;
 }
 
 Events::~Events() {
@@ -125,12 +127,16 @@ void Events::pollEvents() {
 		case Common::EVENT_KEYUP:
 			return;
 		case Common::EVENT_LBUTTONDOWN:
+			_mouseButtons |= 1;
+			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseClicked = true;
+			_mouseButtons |= 2;
 			return;
 		case Common::EVENT_LBUTTONUP:
+			_mouseButtons &= ~1;
+			return;
 		case Common::EVENT_RBUTTONUP:
-			_mouseClicked = false;
+			_mouseButtons &= ~2;
 			return;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
@@ -180,7 +186,9 @@ bool Events::checkForNextFrameCounter() {
  */
 void Events::clearEvents() {
 	_pendingKeys.clear();
-	_mouseClicked = false;
+	_pressed = _rightPressed = false;
+	_rightPressed = _rightReleased = false;
+	_oldButtons = _oldRightButton = false;
 }
 
 /**
@@ -197,7 +205,7 @@ bool Events::delay(uint32 time, bool interruptable) {
 		// For really short periods, simply delay by the desired amount
 		pollEvents();
 		g_system->delayMillis(time);
-		bool result = !(interruptable && (isKeyPressed() || _mouseClicked));
+		bool result = !(interruptable && (kbHit() || _pressed));
 
 		clearEvents();
 		return result;
@@ -210,7 +218,7 @@ bool Events::delay(uint32 time, bool interruptable) {
 		while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 			pollEventsAndWait();
 
-			if (interruptable && (isKeyPressed() || _mouseClicked)) {
+			if (interruptable && (kbHit() || _pressed)) {
 				clearEvents();
 				return false;
 			}
@@ -221,25 +229,33 @@ bool Events::delay(uint32 time, bool interruptable) {
 }
 
 /**
- * Wait for the next frame
+ * Sets the pressed and released button flags depending on the value passed
  */
-void Events::waitForNextFrame() {
-	_mouseClicked = false;
-	_mouseButtons = 0;
+void Events::setButtonState() {
+	_released = _rightReleased = false;
+	if (_mouseButtons & 1)
+		_pressed = _oldButtons = true;
 
-	bool mouseClicked = false;
-	int mouseButtons = 0;
-
-	uint32 frameCtr = getFrameCounter();
-	while (!_vm->shouldQuit() && frameCtr == _frameCounter) {
-		pollEventsAndWait();
-
-		mouseClicked |= _mouseClicked;
-		mouseButtons |= _mouseButtons;
+	if ((_mouseButtons & 1) == 0 && _oldButtons) {
+		_pressed = _oldButtons = false;
+		_released = true;
 	}
 
-	_mouseClicked = mouseClicked;
-	_mouseButtons = mouseButtons;
+	if (_mouseButtons & 2)
+		_rightPressed = _oldRightButton = true;
+
+	if ((_mouseButtons & 2) == 0 && _oldRightButton) {
+		_rightPressed = _oldRightButton = false;
+		_rightReleased = true;
+	}
+}
+
+/**
+ * Checks to see to see if a key or a mouse button is pressed.
+ */
+bool Events::checkInput() {
+	setButtonState();
+	return kbHit() || _pressed || _released || _rightPressed || _rightReleased;
 }
 
 } // End of namespace MADS

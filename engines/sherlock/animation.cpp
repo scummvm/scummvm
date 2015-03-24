@@ -151,14 +151,14 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 			events.wait(speed);
 		}
 
-		if (events.isKeyPressed()) {
+		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();
 			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
 				keyState.keycode == Common::KEYCODE_SPACE) {
 				skipped = true;
 				break;
 			}
-		} else if (events._mouseClicked) {
+		} else if (events._pressed) {
 			skipped = true;
 			break;
 		}

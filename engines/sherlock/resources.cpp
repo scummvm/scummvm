@@ -354,7 +354,7 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 	if (frame._paletteBase) {
 		// Nibble-packed
 		byte *pDest = (byte *)frame._frame.getPixels();
-		for (int idx = 0; idx < frame._size; ++idx, ++src) {
+		for (uint idx = 0; idx < frame._size; ++idx, ++src) {
 			*pDest++ = *src & 0xF;
 			*pDest++ = (*src >> 4);
 		}

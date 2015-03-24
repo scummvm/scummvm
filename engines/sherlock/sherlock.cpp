@@ -41,12 +41,12 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_screen = nullptr;
 	_sound = nullptr;
 	_talk = nullptr;
+	_ui = nullptr;
 	_useEpilogue2 = false;
 	_justLoaded = false;
 	_loadingSavedGame = false;
 	_onChessboard = false;
 	_slowChess = false;
-	_menuCounter = 0;
 	_scriptMoreFlag = 0;
 }
 
@@ -60,6 +60,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _screen;
 	delete _sound;
 	delete _talk;
+	delete _ui;
 	delete _inventory;
 	delete _res;
 }
@@ -83,6 +84,7 @@ void SherlockEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new Sound(this);
 	_talk = new Talk(this);
+	_ui = new UserInterface(this);
 }
 
 Common::Error SherlockEngine::run() {
@@ -132,9 +134,18 @@ void SherlockEngine::sceneLoop() {
 
 }
 
+/**
+ * Handle all player input
+ */
 void SherlockEngine::handleInput() {
-	// TODO
+	bool personFound;
+
 	_events->pollEventsAndWait();
+
+	// See if a key or mouse button is pressed
+	_events->setButtonState();
+
+	_ui->handleInput();
 }
 
 
