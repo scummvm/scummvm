@@ -1805,11 +1805,7 @@ void GfxOpenGLS::drawGenericPrimitive(const float *vertices, uint32 numVertices,
 
 	switch (primitive->getType()) {
 		case PrimitiveObject::RectangleType:
-			if (primitive->isFilled()) {
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			} else {
-				glDrawArrays(GL_LINE_LOOP, 0, 4);
-			}
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			break;
 		case PrimitiveObject::LineType:
 			glDrawArrays(GL_LINES, 0, 2);
@@ -1833,9 +1829,20 @@ void GfxOpenGLS::drawRectangle(const PrimitiveObject *primitive) {
 	float x2 = primitive->getP2().x * _scaleW;
 	float y2 = primitive->getP2().y * _scaleH;
 
-	float data[] = { x1, y1, x2, y1, x2, y2, x1, y2 };
+	if (primitive->isFilled()) {
+		float data[] = { x1, y1, x2 + 1, y1, x1, y2 + 1, x2 + 1, y2 + 1 };
+		drawGenericPrimitive(data, 8, primitive);
+	} else {
+		float top[] =    { x1, y1, x2 + 1, y1, x1, y1 + 1, x2 + 1, y1 + 1 };
+		float right[] =  { x2, y1, x2 + 1, y1, x2, y2 + 1, x2 + 1, y2 + 1 };
+		float bottom[] = { x1, y2, x2 + 1, y2, x1, y2 + 1, x2 + 1, y2 + 1 };
+		float left[] =   { x1, y1, x1 + 1, y1, x1, y2 + 1, x1 + 1, y2 + 1 };
+		drawGenericPrimitive(top, 8, primitive);
+		drawGenericPrimitive(right, 8, primitive);
+		drawGenericPrimitive(bottom, 8, primitive);
+		drawGenericPrimitive(left, 8, primitive);
+	}
 
-	drawGenericPrimitive(data, 8, primitive);
 }
 
 void GfxOpenGLS::drawLine(const PrimitiveObject *primitive) {
@@ -1859,7 +1866,7 @@ void GfxOpenGLS::drawPolygon(const PrimitiveObject *primitive) {
 	float x4 = primitive->getP4().x * _scaleW;
 	float y4 = primitive->getP4().y * _scaleH;
 
-	const float data[] = { x1, y1, x2, y2, x3, y3, x4, y4 };
+	const float data[] = { x1, y1, x2 + 1, y2 + 1, x3, y3 + 1, x4 + 1, y4 };
 
 	drawGenericPrimitive(data, 8, primitive);
 }
