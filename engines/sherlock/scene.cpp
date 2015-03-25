@@ -601,7 +601,13 @@ void Scene::transitionToScene() {
 	} else {
 		// It's canimation information
 		cAnimNum = _hsavedFs - 101;
+	}
 
+	// Reset positioning for next load
+	_hsavedPos = Common::Point(-1, -1);
+	_hsavedFs = -1;
+
+	if (cAnimNum != -1) {
 		// Prevent Holmes from being drawn
 		people[PLAYER]._position = Common::Point(0, 0);
 	}
@@ -1166,7 +1172,7 @@ void Scene::doBgAnim() {
 		else if (people[AL]._type == REMOVE)
 			screen._backBuffer.blitFrom(screen._backBuffer2, pt, bounds);
 
-		for (uint idx = 0; _bgShapes.size(); ++idx) {
+		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			Object &o = _bgShapes[idx];
 			if (o._type == ACTIVE_BG_SHAPE || o._type == HIDE_SHAPE || o._type == REMOVE)
 				screen.restoreBackground(bounds);

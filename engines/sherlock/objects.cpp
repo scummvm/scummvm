@@ -381,10 +381,10 @@ void UseType::synchronize(Common::SeekableReadStream &s) {
 		_names[idx] = Common::String(buffer);
 	}
 
-	_useFlag = s.readUint16LE();
-	_dFlag[0] = s.readUint16LE();
-	_lFlag[0] = s.readUint16LE();
-	_lFlag[1] = s.readUint16LE();
+	_useFlag = s.readSint16LE();
+	_dFlag[0] = s.readSint16LE();
+	_lFlag[0] = s.readSint16LE();
+	_lFlag[1] = s.readSint16LE();
 
 	s.read(buffer, 12);
 	_target = Common::String(buffer);

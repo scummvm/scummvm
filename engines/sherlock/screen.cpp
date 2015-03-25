@@ -246,11 +246,13 @@ void Screen::verticalTransition() {
  * Copies a section of the second back buffer into the main back buffer
  */
 void Screen::restoreBackground(const Common::Rect &r) {
-	Common::Rect tempRect = r;
-	tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+	if (r.width() > 0 && r.height() > 0) {
+		Common::Rect tempRect = r;
+		tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 
-	if (tempRect.isValidRect())
-		_backBuffer.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
+		if (tempRect.isValidRect())
+			_backBuffer.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
+	}
 }
 
 /**
@@ -264,11 +266,13 @@ void Screen::slamArea(int16 xp, int16 yp, int16 w, int16 h) {
  * Copies a given area to the screen
  */
 void Screen::slamRect(const Common::Rect &r) {
-	Common::Rect tempRect = r;
-	tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	if (r.width() && r.height() > 0) {
+		Common::Rect tempRect = r;
+		tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
-	if (tempRect.isValidRect())
-		blitFrom(_backBuffer, Common::Point(tempRect.left, tempRect.top), tempRect);
+		if (tempRect.isValidRect())
+			blitFrom(_backBuffer, Common::Point(tempRect.left, tempRect.top), tempRect);
+	}
 }
 
 /**
