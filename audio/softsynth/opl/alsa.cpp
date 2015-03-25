@@ -323,8 +323,8 @@ void OPL::writeOplReg(int c, int r, int v) {
 			_oper[opIdx].connection = _oper[opIdx + 3].connection = v & 0x1;
 			_oper[opIdx].feedback = _oper[opIdx + 3].feedback = (v >> 1) & 0x7;
 			if (_type == Config::kOpl3) {
-				_oper[opIdx].left = (v >> 4) & 0x1;
-				_oper[opIdx].right = (v >> 5) & 0x1;
+				_oper[opIdx].left = _oper[opIdx + 3].left = (v >> 4) & 0x1;
+				_oper[opIdx].right = _oper[opIdx + 3].right = (v >> 5) & 0x1;
 			}
 			snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_VOICE, (void *)&_oper[opIdx]);
 		}
