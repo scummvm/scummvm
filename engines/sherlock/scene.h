@@ -137,7 +137,7 @@ public:
 	int _invGraphicItems;
 	Common::String _comments;
 	Common::Array<char> _descText;
-	Common::Array<Common::Rect> _bounds;
+	Common::Array<Common::Rect> _zones;
 	Common::Array<Object> _bgShapes;
 	Common::Array<CAnim> _cAnim;
 	Common::Array<byte> _sequenceBuffer;
@@ -179,6 +179,10 @@ public:
 	int findBgShape(const Common::Rect &r);
 
 	int checkForZones(const Common::Point &pt, int zoneType);
+
+	int whichZone(const Common::Point &pt);
+
+	int closestZone(const Common::Point &pt);
 };
 
 } // End of namespace Sherlock

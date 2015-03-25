@@ -82,6 +82,12 @@ UserInterface::~UserInterface() {
 	delete _controls;
 }
 
+void UserInterface::reset() {
+	_oldKey = -1;
+	_help = _oldHelp = -1;
+	_oldTemp = _temp = -1;
+}
+
 /**
  * Main input handler for the user interface
  */

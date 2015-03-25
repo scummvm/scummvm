@@ -100,6 +100,9 @@ Common::Error SherlockEngine::run() {
 		if (shouldQuit())
 			break;
 
+		// Reset UI flags
+		_ui->reset();
+
 		// Reset the active characters to initially just Sherlock
 		_people->reset();
 

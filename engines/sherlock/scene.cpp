@@ -176,7 +176,7 @@ void Scene::freeScene() {
 	_walkData.clear();
 	_cAnim.clear();
 	_bgShapes.clear();
-	_bounds.clear();
+	_zones.clear();
 	_canimShapes.clear();
 
 	for (uint idx = 0; idx < _images.size(); ++idx)
@@ -205,8 +205,8 @@ bool Scene::loadScene(const Common::String &filename) {
 	_ongoingCans = 0;
 
 	// Reset the list of walkable areas
-	_bounds.clear();
-	_bounds.push_back(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	_zones.clear();
+	_zones.push_back(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 	_descText.clear();
 	_comments = "";
@@ -311,12 +311,12 @@ bool Scene::loadScene(const Common::String &filename) {
 		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
 			decompressLZ(*rrmStream, size);
 
-		_bounds.resize(size / 10);
-		for (uint idx = 0; idx < _bounds.size(); ++idx) {
-			_bounds[idx].left = boundsStream->readSint16LE();
-			_bounds[idx].top = boundsStream->readSint16LE();
-			_bounds[idx].setWidth(boundsStream->readSint16LE());
-			_bounds[idx].setHeight(boundsStream->readSint16LE());
+		_zones.resize(size / 10);
+		for (uint idx = 0; idx < _zones.size(); ++idx) {
+			_zones[idx].left = boundsStream->readSint16LE();
+			_zones[idx].top = boundsStream->readSint16LE();
+			_zones[idx].setWidth(boundsStream->readSint16LE());
+			_zones[idx].setHeight(boundsStream->readSint16LE());
 			boundsStream->skip(2);	// Skip unused scene number field
 		}
 
@@ -328,8 +328,8 @@ bool Scene::loadScene(const Common::String &filename) {
 			error("Invalid scene path data");
 
 		// Load the walk directory
-		for (uint idx1 = 0; idx1 < _bounds.size(); ++idx1) {
-			for (uint idx2 = 0; idx2 < _bounds.size(); ++idx2)
+		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
+			for (uint idx2 = 0; idx2 < _zones.size(); ++idx2)
 				_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
 		}
 
@@ -1448,6 +1448,40 @@ int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	}
 
 	return matches;
+}
+
+/**
+ * Check which zone the the given position is located in.
+ */
+int Scene::whichZone(const Common::Point &pt) {
+	for (uint idx = 0; idx < _zones.size(); ++idx) {
+		if (_zones[idx].contains(pt))
+			return idx;
+	}
+
+	return -1;
+}
+
+/**
+ * Returns the index of the closest zone to a given point.
+ */
+int Scene::closestZone(const Common::Point &pt) {
+	int dist = 1000;
+	int zone = -1;
+
+	for (uint idx = 0; idx < _zones.size(); ++idx) {
+		Common::Point zc((_zones[idx].left + _zones[idx].right) / 2,
+			(_zones[idx].top + _zones[idx].bottom) / 2);
+		int d = ABS(zc.x - pt.x) + ABS(zc.y - pt.y);
+
+		if (d < dist) {
+			// Found a closer zone
+			dist = d;
+			zone = idx;
+		}
+	}
+
+	return zone;
 }
 
 } // End of namespace Sherlock

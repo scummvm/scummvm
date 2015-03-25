@@ -95,6 +95,8 @@ public:
 	UserInterface(SherlockEngine *vm);
 	~UserInterface();
 
+	void reset();
+
 	void handleInput();
 
 	void clearInfo();

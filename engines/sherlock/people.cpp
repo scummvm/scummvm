@@ -58,6 +58,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_allowWalkAbort = false;
 	_portraitLoaded = false;
 	_clearingThePortrait = false;
+	_srcZone = _destZone = 0;
 }
 
 People::~People() {
@@ -143,7 +144,7 @@ void People::setWalking() {
 	// If the player is already close to the given destination that no
 	// walking is needed, move to the next straight line segment in the
 	// overall walking route, if there is one
-	for (;;) {
+	do {
 		// Since we want the player to be centered on the destination they
 		// clicked, but characters draw positions start at their left, move
 		// the destination half the character width to draw him centered
@@ -306,13 +307,131 @@ void People::gotoStand(Sprite &sprite) {
 	_allowWalkAbort = true;
 }
 
+/**
+ * Walk to the co-ordinates passed, and then face the given direction
+ */
 void People::walkToCoords(const Common::Point &destPos, int destDir) {
-	// TODO
-	warning("TODO: walkToCoords");
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+
+	CursorId oldCursor = events.getCursor();
+	events.setCursor(WAIT);
+
+	_walkDest = Common::Point(destPos.x / 100 + 10, destPos.y / 100);
+	_allowWalkAbort = true;
+	goAllTheWay();
+
+	// Keep calling doBgAnim until the walk is done
+	do {
+		events.pollEventsAndWait();
+		scene.doBgAnim();
+	} while (!_vm->shouldQuit() && _player._walkCount);
+
+	if (!talk._talkToAbort) {
+		// Put player exactly on destination position, and set direction
+		_player._position = destPos;
+		_player._sequenceNumber = destDir;
+		gotoStand(_player);
+
+		// Draw Holmes facing the new direction
+		scene.doBgAnim();
+
+		if (!talk._talkToAbort)
+			events.setCursor(oldCursor);
+	}
 }
 
+/**
+ * Called to set the character walking to the current cursor location.
+ * It uses the zones and the inter-zone points to determine a series
+ * of steps to walk to get to that position.
+ */
 void People::goAllTheWay() {
-	// TODO
+	Scene &scene = *_vm->_scene;
+	Common::Point srcPt(_player._position.x / 100 + _player.frameWidth() / 2, 
+		_player._position.y / 100);
+
+	// Get the zone the player is currently in
+	_srcZone = scene.whichZone(srcPt);
+	if (_srcZone == -1)
+		_srcZone = scene.closestZone(srcPt);
+
+	// Get the zone of the destination
+	_destZone = scene.whichZone(_walkDest);
+	if (_destZone == -1) {
+		_destZone = scene.closestZone(_walkDest);
+
+		// The destination isn't in a zone
+		if (_walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
+			_walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
+
+		// Trace a line between the centroid of the found closest zone to
+		// the destination, to find the point at which the zone will be left
+		const Common::Rect &destRect = scene._zones[_destZone];
+		const Common::Point destCenter((destRect.left + destRect.right) / 2,
+			(destRect.top + destRect.bottom) / 2);
+		const Common::Point delta = _walkDest - destCenter;
+		Common::Point pt(destCenter.x * 100, destCenter.y * 100);
+
+		// Move along the line until the zone is left
+		do {
+			pt += delta;
+		} while (destRect.contains(pt.x / 100, pt.y / 100));
+
+		// Set the new walk destination to the last point that was in the
+		// zone just before it was left
+		_walkDest = Common::Point((pt.x - delta.x * 2) / 100,
+			(pt.y - delta.y * 2) / 100);
+	}
+
+	// Only do a walk if both zones are acceptable
+	if (_srcZone == -2 || _destZone == -2)
+		return;
+
+	// If the start and dest zones are the same, walk directly to the dest point
+	if (_srcZone == _destZone) {
+		setWalking();
+	} else {
+		// Otherwise a path needs to be formed from the path information
+		int i = scene._walkDirectory[_srcZone][_destZone];
+
+		// See if we need to use a reverse path
+		if (i == -1)
+			i = scene._walkDirectory[_destZone][_srcZone];
+
+		int count = scene._walkData[i];
+		++i;
+
+		// See how many points there are between the src and dest zones
+		if (!count || count == 255) {
+			// There are none, so just walk to the new zone
+			setWalking();
+		} else {
+			// There are points, so set up a multi-step path between points
+			// to reach the given destination
+			_walkTo.clear();
+
+			if (scene._walkDirectory[_srcZone][_destZone] != -1) {
+				for (int idx = 0; idx < count; ++idx, i += 3) {
+					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]),
+						scene._walkData[i + 2]));
+				}
+			} else {
+				for (int idx = 0; idx < count; ++idx)
+					_walkTo.push(Common::Point());
+
+				for (int idx = count - 1; idx >= 0; --idx, i += 3) {
+					_walkTo[idx].x = READ_LE_UINT16(&scene._walkData[i]);
+					_walkTo[idx].y = scene._walkData[i + 2];
+				}
+			}
+
+			// Start walking
+			_walkDest = _walkTo.top();
+			setWalking();
+		}
+	}
 }
 
 } // End of namespace Sherlock

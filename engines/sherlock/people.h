@@ -59,6 +59,7 @@ private:
 	Sprite &_player;
 	bool _walkLoaded;
 	int _oldWalkSequence;
+	int _srcZone, _destZone;
 public:
 	Common::Point _walkDest;
 	Common::Stack<Common::Point> _walkTo;
