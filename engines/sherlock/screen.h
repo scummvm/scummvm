@@ -98,6 +98,8 @@ public:
 	int stringWidth(const Common::String &str);
 
 	int charWidth(char c);
+
+	void bar(const Common::Rect &r, int color);
 };
 
 } // End of namespace Sherlock

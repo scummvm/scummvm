@@ -46,7 +46,7 @@ Screen::~Screen() {
 
 void Screen::setFont(int fontNumber) {
 	_fontNumber = fontNumber;
-	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber);
+	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber + 1);
 
 	// Discard any previous font and read in new one
 	delete _font;
@@ -372,9 +372,14 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, int
 			charPos.x += frame._frame.w + 1;
 		}
 	}
-
-	addDirtyRect(Common::Rect(pt.x, pt.y, charPos.x, pt.y + _fontHeight));
 }
 
+/**
+ * Fills an area on the back buffer, and then copies it to the screen
+ */
+void Screen::bar(const Common::Rect &r, int color) {
+	_backBuffer.fillRect(r, color);
+	slamRect(r);
+}
 
 } // End of namespace Sherlock

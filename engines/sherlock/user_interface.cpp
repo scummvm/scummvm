@@ -268,7 +268,8 @@ void UserInterface::handleInput() {
 			// The mouse was clicked in the playing area with no action buttons down.
 			// Check if the mouse was clicked in a script zone. If it was,
 			// then execute the script. Otherwise, walk to the given position
-			if (scene.checkForZones(pt, SCRIPT_ZONE) != 0) {
+			if (scene.checkForZones(pt, SCRIPT_ZONE) != 0 ||
+					scene.checkForZones(pt, NOWALK_ZONE) != 0) {
 				// Mouse clicked in script zone
 				events._pressed = events._released = false;
 			} else {
@@ -431,8 +432,8 @@ void UserInterface::toggleButton(int num) {
  */
 void UserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->fillRect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 20, INFO_LINE + 9,
-			INFO_BLACK);
+		_vm->_screen->bar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 20, 
+			INFO_LINE + 9), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
 	}
