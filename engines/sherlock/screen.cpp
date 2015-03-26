@@ -287,8 +287,12 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
 
 	// See if the areas of the old and new overlap, and if so combine the areas
 	if (newBounds.intersects(oldBounds)) {
-		newBounds.extend(oldBounds);
-		slamRect(newBounds);
+		Common::Rect mergedBounds = newBounds;
+		mergedBounds.extend(oldBounds);
+		mergedBounds.right += 1;
+		mergedBounds.bottom += 1;
+
+		slamRect(mergedBounds);
 	} else {
 		// The two areas are independent, so copy them both
 		slamRect(newBounds);

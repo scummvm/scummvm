@@ -613,7 +613,7 @@ void Object::checkObject(Object &o) {
 					if (pt.y > 128)
 						pt.y = (pt.y - 128) * -1;
 					else
-						pt.y;
+						pt.y--;
 
 					_delta = pt;
 					_frameNumber += 2;

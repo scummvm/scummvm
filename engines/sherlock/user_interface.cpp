@@ -176,7 +176,7 @@ void UserInterface::handleInput() {
 					_help = _oldHelp;
 				}
 
-				if (_bgFound != _oldBgFound) {
+				if (_bgFound != _oldBgFound || _oldBgFound == -1) {
 					_infoFlag = true;
 					clearInfo();
 
@@ -438,8 +438,8 @@ void UserInterface::toggleButton(int num) {
  */
 void UserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->bar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 20, 
-			INFO_LINE + 9), INFO_BLACK);
+		_vm->_screen->bar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 19, 
+			INFO_LINE + 10), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
 	}

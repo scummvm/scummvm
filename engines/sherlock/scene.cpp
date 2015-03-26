@@ -1330,7 +1330,8 @@ void Scene::doBgAnim() {
 				));
 			} else {
 				screen.flushImage(people[AL]._imageFrame,
-					Common::Point(people[AL]._position.x / 100, people[AL]._position.y / 100),
+					Common::Point(people[AL]._position.x / 100, 
+						people[AL]._position.y / 100 - people[AL].frameHeight()),
 					&people[AL]._oldPosition.x, &people[AL]._oldPosition.y,
 					&people[AL]._oldSize.x, &people[AL]._oldSize.y);
 			}
@@ -1370,8 +1371,10 @@ void Scene::doBgAnim() {
 					screen.slamArea(o._position.x, o._position.y, o._oldSize.x, o._oldSize.y);
 					screen.slamArea(o._oldPosition.x, o._oldPosition.y, o._oldSize.x, o._oldSize.y);
 				} else if (o._type == HIDE_SHAPE) {
+					// Hiding shape, so flush it out and mark it as hidden
 					screen.flushImage(o._imageFrame, o._position,
 						&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);
+					o._type = HIDDEN;
 				}
 			}
 		}
