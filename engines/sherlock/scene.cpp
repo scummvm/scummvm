@@ -1175,7 +1175,7 @@ void Scene::doBgAnim() {
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			Object &o = _bgShapes[idx];
 			if (o._type == ACTIVE_BG_SHAPE || o._type == HIDE_SHAPE || o._type == REMOVE)
-				screen.restoreBackground(bounds);
+				screen.restoreBackground(o.getOldBounds());
 		}
 
 		if (people._portraitLoaded)
