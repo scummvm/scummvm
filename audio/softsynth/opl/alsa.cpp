@@ -179,9 +179,17 @@ bool OPL::init() {
 
 void OPL::reset() {
 	snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_RESET, nullptr);
-	if (_iface != SND_HWDEP_IFACE_OPL2)
+	if (_iface == SND_HWDEP_IFACE_OPL3)
 		snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_MODE, (void *)SNDRV_DM_FM_MODE_OPL3);
+
 	clear();
+
+	// Sync up with the hardware
+	snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_PARAMS, (void *)&_params);
+	for (uint i = 0; i < (_iface == SND_HWDEP_IFACE_OPL3 ? kVoices : kOpl2Voices); ++i)
+		snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_PLAY_NOTE, (void *)&_voice[i]);
+	for (uint i = 0; i < (_iface == SND_HWDEP_IFACE_OPL3 ? kOperators : kOpl2Operators); ++i)
+		snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_VOICE, (void *)&_oper[i]);
 }
 
 void OPL::write(int port, int val) {
