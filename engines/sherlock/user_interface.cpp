@@ -173,7 +173,7 @@ void UserInterface::handleInput() {
 					if (_help != -1)
 						depressButton(_help);
 
-					_help = _oldHelp;
+					_oldHelp = _help;
 				}
 
 				if (_bgFound != _oldBgFound || _oldBgFound == -1) {
@@ -185,6 +185,8 @@ void UserInterface::handleInput() {
 						screen.print(Common::Point(0, INFO_LINE + 1),
 						INFO_FOREGROUND, INFO_BACKGROUND, "%s",
 						scene._bgShapes[_bgFound]._description);
+
+					_oldBgFound = _bgFound;
 				}
 			} else {
 				// We're not in STD_MODE
