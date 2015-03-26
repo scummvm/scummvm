@@ -371,8 +371,7 @@ void UserInterface::restoreButton(int num) {
 
 	screen._backBuffer.blitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
-	screen._backBuffer.blitFrom(screen._backBuffer, pt,
-		Common::Rect(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h));
+	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
 	
 	if (!_menuCounter) {
 		_infoFlag++;
