@@ -295,7 +295,7 @@ void OPL::writeOplReg(int c, int r, int v) {
 			break;
 		case 0xe0:
 		case 0xf0:
-			_oper[idx].waveform = v & 0x7;
+			_oper[idx].waveform = v & (_type == Config::kOpl3 ? 0x7 : 0x3);
 			snd_hwdep_ioctl(_opl, SNDRV_DM_FM_IOCTL_SET_VOICE, (void *)&_oper[idx]);
 		}
 	} else {
