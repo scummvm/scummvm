@@ -649,6 +649,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	_windowBounds.top = CONTROLS_Y;
 	events.clearEvents();
 
+	// Loop through displaying up to five lines
 	bool endOfStr = false;
 	const char *msgP = str.c_str();
 	for (int lineNum = 0; lineNum < 5 && !endOfStr; ++lineNum) {
@@ -712,7 +713,8 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 			screen._backBuffer.blitFrom(screen._backBuffer2,
 				Common::Point(0, CONTROLS_Y), r);
 
-			summonWindow();
+			// Display the window
+			summonWindow(tempSurface);
 		}
 
 		_selector = _oldSelector = -1;
@@ -730,17 +732,98 @@ void UserInterface::printObjectDesc() {
 	printObjectDesc(_cAnimStr, true);
 }
 
-void UserInterface::banishWindow(bool flag) {
-	// TODO
-}
-
 void UserInterface::makeButton(const Common::Rect &bounds, int textX,
 		const Common::String &str) {
 	// TODO
 }
 
-void UserInterface::summonWindow() {
-	// TODO
+/**
+ * Displays a passed window by gradually displaying it up vertically
+ */
+void UserInterface::summonWindow(const Surface &bgSurface) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+
+	if (_windowOpen)
+		// A window is already open, so can't open another one
+		return;
+
+	// Gradually slide up the display of the window
+	for (int idx = 1; idx <= (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y); idx += 2) {
+		screen.blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+			Common::Rect(0, 0, bgSurface.w, idx));
+		screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
+			SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+
+		events.delay(10);
+	}
+
+	// Final display of the entire window
+	screen._backBuffer.blitFrom(bgSurface, Common::Point(0, CONTROLS_Y),
+		Common::Rect(0, 0, bgSurface.w, bgSurface.h));
+	screen.slamArea(0, CONTROLS_Y, bgSurface.w, bgSurface.h);
+
+	_windowOpen = true;
+}
+
+/**
+ * Close a currently open window
+ * @param flag	0 = slide old window down, 1 = slide old window up
+ */
+void UserInterface::banishWindow(bool flag) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+
+	if (_windowOpen) {
+		if (!flag || !_windowStyle) {
+			// Slide window up
+			// Only slide the window up if the window style allows it
+			if (_windowStyle) {
+				for (int idx = 2; idx < (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y); idx += 2) {
+					byte *pSrc = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y);
+					Common::copy(pSrc, pSrc + (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y + idx)
+						* SHERLOCK_SCREEN_WIDTH, pSrc - SHERLOCK_SCREEN_WIDTH * 2);
+					screen._backBuffer.blitFrom(screen._backBuffer2,
+						Common::Point(0, CONTROLS_Y),
+						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_HEIGHT, CONTROLS_Y + idx));
+
+					screen.slamArea(0, CONTROLS_Y + idx - 2, SHERLOCK_SCREEN_WIDTH, 
+						SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y - idx + 2);
+					events.delay(10);
+				}
+
+				// Restore final two old lines
+				screen._backBuffer.blitFrom(screen._backBuffer2,
+					Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 2),
+					Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2,
+						SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH, 2);
+			} else {
+				// Restore old area to completely erase window
+				screen._backBuffer.blitFrom(screen._backBuffer2,
+					Common::Point(0, CONTROLS_Y),
+					Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
+					SHERLOCK_SCREEN_HEIGHT));
+			}
+		} else {
+			for (int idx = SHERLOCK_SCREEN_HEIGHT - 1 - CONTROLS_Y1; idx >= 0; idx -= 2) {
+				byte *pSrc = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y1 + idx);
+				byte *pDest = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y1);
+
+				Common::copy(pSrc, pSrc + (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1 - idx)
+					* SHERLOCK_SCREEN_WIDTH, pDest);
+				screen.slamArea(0, CONTROLS_Y1 + idx, SHERLOCK_SCREEN_WIDTH,
+					SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1 - idx);
+				events.delay(10);
+			}
+		}
+
+		_infoFlag = false;
+		_windowOpen = false;
+	}
+
+	_menuMode = STD_MODE;
 }
 
 } // End of namespace Sherlock

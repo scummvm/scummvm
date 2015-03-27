@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "sherlock/graphics.h"
 #include "sherlock/resources.h"
 
 namespace Sherlock {
@@ -94,11 +95,7 @@ private:
 	void doPickControl();
 	void doTalkControl();
 
-	void banishWindow(bool flag);
-
 	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
-
-	void summonWindow();
 public:
 	MenuMode _menuMode;
 	int _menuCounter;
@@ -118,6 +115,9 @@ public:
 
 	void printObjectDesc(const Common::String &str, bool firstTime);
 	void printObjectDesc();
+
+	void summonWindow(const Surface &bgSurface);
+	void banishWindow(bool flag);
 };
 
 } // End of namespace Sherlock
