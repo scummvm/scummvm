@@ -63,6 +63,8 @@ public:
 	int findInv(const Common::String &name);
 
 	void putInv(int slamit);
+
+	void invent(int flag);
 };
 
 } // End of namespace Sherlock

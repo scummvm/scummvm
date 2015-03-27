@@ -120,4 +120,8 @@ void Inventory::putInv(int slamit) {
 	// TODO
 }
 
+void Inventory::invent(int flag) {
+	// TODO
+}
+
 } // End of namespace Sherlock

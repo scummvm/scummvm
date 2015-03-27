@@ -528,12 +528,188 @@ void UserInterface::doInvControl() {
 	// TODO
 }
 
+/**
+ * Handles waiting whilst an object's description window is open. 
+ */
 void UserInterface::doLookControl() {
-	// TODO
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Screen &screen = *_vm->_screen;
+
+	_key = _oldKey = -1;	
+	_keyboardInput = _keycode != Common::KEYCODE_INVALID;
+
+	if (events._released || events._rightReleased || _keyboardInput) {
+		// Is an inventory object being looked at?
+		if (!_invLookFlag) {
+			// Is there any remaining text to display?
+			if (!_descStr.empty()) {
+				printObjectDesc(_descStr, false);
+			} else if (!_lookHelp) {
+				// Need to close the window and depress the Look button 
+				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
+				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
+				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
+					Common::Rect(pt.x, pt.y, pt.x + (*_controls)[0]._frame.w,
+					pt.y + (*_controls)[1]._frame.h));
+
+				screen._backBuffer2.blitFrom((*_controls)[0]._frame, pt);
+				banishWindow(true);
+
+				_windowBounds.top = CONTROLS_Y1;
+				_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+				_temp = _oldTemp = 0;
+				_menuMode = LOOK_MODE;
+				events.clearEvents();
+
+				screen._backBuffer2.blitFrom(tempSurface, pt);
+			}
+		} else {
+			// Looking at an inventory object
+			// Backup the user interface
+			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
+			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
+				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+
+			inv.invent(128);
+			banishWindow(true);
+
+			// Restore the ui
+			screen._backBuffer2.blitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
+		}
+
+		_windowBounds.top = CONTROLS_Y1;
+		_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+		_temp = _oldTemp = 0;
+		events.clearEvents();
+		_invLookFlag = false;
+		_menuMode = INV_MODE;
+		_windowOpen = true;
+	}
 }
 
+/**
+ * Handles input until one of the user interface buttons/commands is selected
+ */
 void UserInterface::doMainControl() {
-	// TODO
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Common::Point pt = events.mousePos();
+
+	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
+		events.clearKeyboard();
+		_key = -1;
+
+		// Check whether the mouse is in any of the command areas
+		for (_temp = 0; (_temp < 12) && (_key == -1); ++_temp) {
+			Common::Rect r(MENU_POINTS[_temp][0], MENU_POINTS[_temp][1],
+				MENU_POINTS[_temp][2], MENU_POINTS[_temp][3]);
+			if (r.contains(pt))
+				_key = COMMANDS[_temp];
+		}
+		--_temp;
+	} else if (_keycode != Common::KEYCODE_INVALID) {
+		// Keyboard control
+		_keyboardInput = true;
+
+		if (_keycode >= Common::KEYCODE_a && _keycode <= Common::KEYCODE_z) {
+			const char *c = strchr(COMMANDS, _keycode);
+			_temp = !c ? 12 : c - COMMANDS;
+		} else {
+			_temp = 12;
+		}
+
+		if (_temp == 12)
+			_key = -1;
+		
+		if (events._rightPressed) {
+			_temp = 12;
+			_key = -1;
+		}
+	} else if (!events._released) {
+		_key = -1;
+	}
+	
+	// Check if the button being pointed to has changed
+	if (_oldKey != _key && !_windowOpen) {
+		// Clear the info line
+		_infoFlag++;
+		clearInfo();
+
+		// If there was an old button selected, restore it
+		if (_oldKey != -1) {
+			_menuMode = STD_MODE;
+			restoreButton(_oldTemp);
+		}
+
+		// If a new button is being pointed to, highlight it
+		if (_key != -1 && _temp < 12 && !_keyboardInput)
+			depressButton(_temp);
+
+		// Save the new button selection
+		_oldKey = _key;
+		_oldTemp = _temp;
+	}
+
+	if (!events._pressed && !_windowOpen) {
+		switch (_key) {
+		case 'L':
+			toggleButton(0);
+			break;
+		case 'M':
+			toggleButton(1);
+			break;
+		case 'T':
+			toggleButton(2);
+			break;
+		case 'P':
+			toggleButton(3);
+			break;
+		case 'O':
+			toggleButton(4);
+			break;
+		case 'C':
+			toggleButton(5);
+			break;
+		case 'I':
+			pushButton(6);
+			_selector = _oldSelector = -1;
+			_menuMode = INV_MODE;
+			inv.invent(1);
+			break;
+		case 'U':
+			pushButton(7);
+			_selector = _oldSelector = -1;
+			_menuMode = USE_MODE;
+			inv.invent(2);
+			break;
+		case 'G':
+			pushButton(8);
+			_selector = _oldSelector = -1;
+			_menuMode = GIVE_MODE;
+			inv.invent(3);
+			break;
+		case 'J':
+			pushButton(9);
+			_menuMode = JOURNAL_MODE;
+			journalControl();
+			break;
+		case 'F':
+			pushButton(10);
+			_menuMode = FILES_MODE;
+			environment();
+			break;
+		case 'S':
+			pushButton(11);
+			_menuMode = SETUP_MODE;
+			doControls();
+			break;
+		default:
+			break;
+		}
+
+		_help = _oldHelp = _oldBgFound = -1;
+	}
 }
 
 void UserInterface::doMiscControl(int allowed) {
@@ -548,6 +724,17 @@ void UserInterface::doTalkControl() {
 	// TODO
 }
 
+void UserInterface::journalControl() {
+	// TODO
+}
+
+void UserInterface::environment() {
+	// TODO
+}
+
+void UserInterface::doControls() {
+	// TODO
+}
 
 /**
 * Print the description of an object

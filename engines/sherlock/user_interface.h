@@ -94,6 +94,10 @@ private:
 	void doMiscControl(int allowed);
 	void doPickControl();
 	void doTalkControl();
+	void journalControl();
+
+	void environment();
+	void doControls();
 
 	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
 public:

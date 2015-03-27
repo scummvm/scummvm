@@ -192,6 +192,14 @@ void Events::clearEvents() {
 }
 
 /**
+ * Clear any pending keyboard inputs
+ */
+void Events::clearKeyboard() {
+	_pendingKeys.clear();
+}
+
+
+/**
  * Delay for a given number of game frames, where each frame is 1/60th of a second
  */
 void Events::wait(int numFrames) {

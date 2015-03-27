@@ -85,6 +85,7 @@ public:
 	Common::KeyState getKey() { return _pendingKeys.pop(); }
 
 	void clearEvents();
+	void clearKeyboard();
 
 	void wait(int numFrames);
 
