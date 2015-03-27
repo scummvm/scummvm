@@ -60,6 +60,8 @@ const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 /*----------------------------------------------------------------*/
 
 UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
+	_controls = new ImageFile("menu.all");
+	_controlPanel = new ImageFile("controls.vgs");
 	_bgFound = 0;
 	_oldBgFound = -1;
 	_keycode = Common::KEYCODE_INVALID;
@@ -81,18 +83,28 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1,
 		SHERLOCK_SCREEN_HEIGHT - 1);
 	_windowStyle = 0;
-
-	_controls = new ImageFile("menu.all");
 }
 
 UserInterface::~UserInterface() {
 	delete _controls;
+	delete _controlPanel;
 }
 
 void UserInterface::reset() {
 	_oldKey = -1;
 	_help = _oldHelp = -1;
 	_oldTemp = _temp = -1;
+}
+
+/**
+ * Draw the user interface onto the screen's back buffers
+ */
+void UserInterface::drawInterface() {
+	Screen &screen = *_vm->_screen;
+
+	screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
+	screen._backBuffer.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+	screen._backBuffer2.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
 }
 
 /**
@@ -137,7 +149,7 @@ void UserInterface::handleInput() {
 					(events._rightPressed || (!_helpStyle && !events._released)) &&
 					(_bgFound != -1) && (_bgFound < 1000) &&
 					(scene._bgShapes[_bgFound]._defaultCommand ||
-					scene._bgShapes[_bgFound]._description[0])) {
+					!scene._bgShapes[_bgFound]._description.empty())) {
 					// If there is no default command, so set it to Look
 					if (scene._bgShapes[_bgFound]._defaultCommand)
 						_help = scene._bgShapes[_bgFound]._defaultCommand - 1;
@@ -151,7 +163,7 @@ void UserInterface::handleInput() {
 					((events._rightReleased && _helpStyle) || (events._released && !_helpStyle)) &&
 					(_bgFound != -1 && _bgFound < 1000) &&
 					(scene._bgShapes[_bgFound]._defaultCommand || 
-					scene._bgShapes[_bgFound]._description[0])) {
+					!scene._bgShapes[_bgFound]._description.empty())) {
 					// If there is no default command, set it to Look
 					if (scene._bgShapes[_bgFound]._defaultCommand)
 						_menuMode = (MenuMode)scene._bgShapes[_bgFound]._defaultCommand;
@@ -491,7 +503,7 @@ void UserInterface::examine() {
 			people.walkToCoords(obj._lookPosition, obj._lookFacing);
 		}
 
-		if (talk._talkToAbort) {
+		if (!talk._talkToAbort) {
 			_cAnimStr = obj._examine;
 			if (obj._lookFlag)
 				_vm->setFlags(obj._lookFlag);
@@ -548,11 +560,6 @@ void UserInterface::doLookControl() {
 			} else if (!_lookHelp) {
 				// Need to close the window and depress the Look button 
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
-				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
-				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
-					Common::Rect(pt.x, pt.y, pt.x + (*_controls)[0]._frame.w,
-					pt.y + (*_controls)[1]._frame.h));
-
 				screen._backBuffer2.blitFrom((*_controls)[0]._frame, pt);
 				banishWindow(true);
 
@@ -562,7 +569,8 @@ void UserInterface::doLookControl() {
 				_menuMode = LOOK_MODE;
 				events.clearEvents();
 
-				screen._backBuffer2.blitFrom(tempSurface, pt);
+				// Restore UI
+				drawInterface();
 			}
 		} else {
 			// Looking at an inventory object
@@ -865,6 +873,10 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		Common::String line(lineStartP, msgP);
 		screen.gPrint(Common::Point(16, CONTROLS_Y + 12 + lineNum * 9),
 			INV_FOREGROUND, line.c_str());
+
+		if (!endOfStr)
+			// Start next line at start of the nxet word after space
+			++msgP;
 	}
 
 	// Handle display depending on whether all the message was shown
@@ -874,7 +886,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 			PRESS_KEY_FOR_MORE);
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
 			screen.stringWidth(PRESS_KEY_FOR_MORE)) / 2, CONTROLS_Y),
-			COM_FOREGROUND, "P");
+			COMMAND_FOREGROUND, "P");
 		_descStr = msgP;
 	} else {
 		makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
@@ -882,7 +894,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 			PRESS_KEY_FOR_MORE);
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
 			screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2, CONTROLS_Y),
-			COM_FOREGROUND, "P");
+			COMMAND_FOREGROUND, "P");
 		_descStr = "";
 	}
 
@@ -913,15 +925,28 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 }
 
 /**
-* Print the previously selected object's decription
-*/
+ * Print the previously selected object's decription
+ */
 void UserInterface::printObjectDesc() {
 	printObjectDesc(_cAnimStr, true);
 }
 
+/**
+ * Draws a button for use in the inventory, talk, and examine dialogs.
+ */
 void UserInterface::makeButton(const Common::Rect &bounds, int textX,
 		const Common::String &str) {
-	// TODO
+	Screen &screen = *_vm->_screen;
+
+	screen.bar(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
+	screen.bar(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
+	screen.bar(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
+	screen.bar(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
+	screen.bar(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
+
+	screen.gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
+	screen.gPrint(Common::Point(textX + screen.charWidth(str[0]), bounds.top), 
+		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
 }
 
 /**

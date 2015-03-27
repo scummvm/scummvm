@@ -123,7 +123,6 @@ public:
 	Common::Point _bigPos;
 	Common::Point _overPos;
 	int _charPoint, _oldCharPoint;
-	ImageFile *_controlPanel;
 	int _keyboardInput;
 	int _oldKey, _help, _oldHelp;
 	int _oldTemp, _temp;

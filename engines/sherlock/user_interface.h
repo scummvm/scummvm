@@ -51,6 +51,8 @@ class SherlockEngine;
 class UserInterface {
 private:
 	SherlockEngine *_vm;
+	ImageFile *_controlPanel;
+	ImageFile *_controls;
 	int _bgFound;
 	int _oldBgFound;
 	Common::KeyCode _keycode;
@@ -60,7 +62,6 @@ private:
 	int _key, _oldKey;
 	int _temp, _oldTemp;
 	int _invLookFlag;
-	ImageFile *_controls;
 	int _oldLook;
 	bool _keyboardInput;
 	int _invMode;
@@ -110,6 +111,8 @@ public:
 	~UserInterface();
 
 	void reset();
+
+	void drawInterface();
 
 	void handleInput();
 

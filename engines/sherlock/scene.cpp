@@ -106,12 +106,9 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_animating = 0;
 	_doBgAnimDone = true;
 	_tempFadeStyle = 0;
-
-	_controlPanel = new ImageFile("controls.vgs");
 }
 
 Scene::~Scene() {
-	delete _controlPanel;
 	freeScene();
 }
 
@@ -198,6 +195,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	UserInterface &ui = *_vm->_ui;
 	bool flag;
 
 	freeScene();
@@ -393,9 +391,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	}
 
 	// Clear user interface area and draw controls
-	screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
-	screen._backBuffer.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
-	screen._backBuffer2.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+	ui.drawInterface();
 
 	_changes = false;
 	checkSceneStatus();
@@ -1072,6 +1068,13 @@ void Scene::doBgAnim() {
 			cursorId = WAIT;
 
 		events.setCursor((CursorId)cursorId);
+	}
+
+	if (ui._menuMode == LOOK_MODE) {
+		if (mousePos.y > CONTROLS_Y1)
+			events.setCursor(ARROW);
+		else if (mousePos.y < CONTROLS_Y)
+			events.setCursor(MAGNIFY);
 	}
 
 	// Check for setting magnifying glass cursor

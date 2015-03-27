@@ -186,7 +186,7 @@ bool Events::checkForNextFrameCounter() {
  */
 void Events::clearEvents() {
 	_pendingKeys.clear();
-	_pressed = _rightPressed = false;
+	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
 }
