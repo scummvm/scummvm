@@ -404,11 +404,11 @@ void Object::setVm(SherlockEngine *vm) {
  * Load the object data from the passed stream
  */
 void Object::synchronize(Common::SeekableReadStream &s) {
-	char buffer[12];
+	char buffer[41];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
-
-	s.read(_description, 41);
+	s.read(buffer, 41);
+	_description = Common::String(buffer);
 
 	_examine.clear();
 	_sequences = nullptr;
@@ -851,14 +851,14 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 		int messageNum = atoi(name.c_str() + 1);
 		ui._infoFlag++;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, INFO_BACKGROUND,
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
 			(*messages)[messageNum].c_str());
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
 		ui._infoFlag++;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, INFO_BACKGROUND,
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
 			"%s", name.c_str() + 1);
 		printed = true;
 		ui._menuCounter = 25;

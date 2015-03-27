@@ -35,10 +35,15 @@ namespace Sherlock {
 #define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
-#define INFO_BLACK 1
-#define INFO_FOREGROUND 11
-#define INFO_BACKGROUND 1
-
+enum {
+	INFO_BLACK = 1,
+	INFO_FOREGROUND = 11,
+	INFO_BACKGROUND = 1,
+	BORDER_COLOR = 237,
+	INV_FOREGROUND = 14,
+	INV_BACKGROUND = 1,
+	COM_FOREGROUND = 15
+};
 
 class SherlockEngine;
 
@@ -85,7 +90,8 @@ public:
 
 	void verticalTransition();
 
-	void print(const Common::Point &pt, int fgColor, int bgColor, const char *format, ...);
+	void print(const Common::Point &pt, int color, const char *format, ...);
+	void gPrint(const Common::Point &pt, int color, const char *format, ...);
 
 	void restoreBackground(const Common::Rect &r);
 

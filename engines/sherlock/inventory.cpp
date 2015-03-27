@@ -36,7 +36,7 @@ Inventory::~Inventory() {
 	freeGraphics();
 }
 
-void Inventory::freeInventory() {
+void Inventory::freeInv() {
 	freeGraphics();
 
 	_names.clear();
@@ -114,6 +114,10 @@ int Inventory::findInv(const Common::String &name) {
 	if (result == -1)
 		result = 1;
 	return result;
+}
+
+void Inventory::putInv(int slamit) {
+	// TODO
 }
 
 } // End of namespace Sherlock

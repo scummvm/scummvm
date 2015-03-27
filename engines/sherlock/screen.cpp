@@ -309,7 +309,7 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
  * Prints the text passed onto the back buffer at the given position and color.
  * The string is then blitted to the screen
  */
-void Screen::print(const Common::Point &pt, int fgColor, int bgColor, const char *format, ...) {
+void Screen::print(const Common::Point &pt, int color, const char *format, ...) {
 	// Create the string to display
 	char buffer[100];
 	va_list args;
@@ -334,11 +334,29 @@ void Screen::print(const Common::Point &pt, int fgColor, int bgColor, const char
 		textBounds.moveTo(textBounds.left, SHERLOCK_SCREEN_HEIGHT - _fontHeight);
 
 	// Write out the string at the given position
-	writeString(str, Common::Point(textBounds.left, textBounds.top), fgColor);
+	writeString(str, Common::Point(textBounds.left, textBounds.top), color);
 
 	// Copy the affected area to the screen
 	slamRect(textBounds);
 }
+
+/**
+ * Print a strings onto the back buffer without blitting it to the screen
+ */
+void Screen::gPrint(const Common::Point &pt, int color, const char *format, ...) {
+	// Create the string to display
+	char buffer[100];
+	va_list args;
+
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
+	Common::String str(buffer);
+
+	// Print the text
+	writeString(str, pt, color);
+}
+
 
 /**
  * Returns the width of a string in pixels

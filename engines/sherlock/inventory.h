@@ -54,13 +54,15 @@ public:
 	Inventory(SherlockEngine *vm);
 	~Inventory();
 
-	void freeInventory();
+	void freeInv();
 
 	void loadInv();
 
 	void loadGraphics();
 
 	int findInv(const Common::String &name);
+
+	void putInv(int slamit);
 };
 
 } // End of namespace Sherlock

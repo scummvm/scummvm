@@ -123,8 +123,8 @@ public:
 };
 
 struct ActionType {
-	char _cAnimNum;
-	char _cAnimSpeed;				// if high bit set, play in reverse
+	int8 _cAnimNum;
+	uint8 _cAnimSpeed;				// if high bit set, play in reverse
 	Common::String _names[4];
 
 	void synchronize(Common::SeekableReadStream &s);
@@ -155,7 +155,7 @@ public:
 	static void setVm(SherlockEngine *vm);
 public:
 	Common::String _name;			// Name
-	char _description[41];			// Description lines
+	Common::String _description;	// Description lines
 	Common::String _examine;		// Examine in-depth description
 	int _sequenceOffset;
 	uint8 *_sequences;				// Holds animation sequences

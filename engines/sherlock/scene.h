@@ -96,10 +96,7 @@ class Scene {
 private:
 	SherlockEngine *_vm;
 	Common::String _rrmName;
-	int _cAnimFramePause;
-	Common::String _cAnimStr;
 	InvMode _invMode;
-	bool _lookScriptFlag;
 	int _selector;
 	bool _invLookFlag;
 	bool _lookHelp;
@@ -154,6 +151,7 @@ public:
 	int _animating;
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
+	int _cAnimFramePause;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
@@ -165,8 +163,6 @@ public:
 	void checkSceneFlags(bool mode);
 
 	Exit *checkForExit(const Common::Rect &r);
-
-	void printObjDesc(const Common::String &str, bool firstTime);
 
 	int startCAnim(int cAnimNum, int playRate);
 

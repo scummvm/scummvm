@@ -54,6 +54,8 @@ const int INVENTORY_POINTS[8][3] = {
 };
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
+const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
+const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
 /*----------------------------------------------------------------*/
 
@@ -74,6 +76,11 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_keyboardInput = false;
 	_invMode = 0;
 	_pause = false;
+	_cNum = 0;
+	_selector = _oldSelector = -1;
+	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1,
+		SHERLOCK_SCREEN_HEIGHT - 1);
+	_windowStyle = 0;
 
 	_controls = new ImageFile("menu.all");
 }
@@ -183,8 +190,7 @@ void UserInterface::handleInput() {
 					if (_help != -1 && (scene._bgShapes[_bgFound]._description[0] != 32 &&
 							scene._bgShapes[_bgFound]._description[0]))
 						screen.print(Common::Point(0, INFO_LINE + 1),
-						INFO_FOREGROUND, INFO_BACKGROUND, "%s",
-						scene._bgShapes[_bgFound]._description);
+						INFO_FOREGROUND, scene._bgShapes[_bgFound]._description.c_str());
 
 					_oldBgFound = _bgFound;
 				}
@@ -457,8 +463,53 @@ void UserInterface::whileMenuCounter() {
 	}
 }
 
+/**
+ * Creates a text window and uses it to display the in-depth description
+ * of the highlighted object
+ */
 void UserInterface::examine() {
-	// TODO
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+	Common::Point pt = events.mousePos();
+	int canimSpeed;
+
+	if (pt.y < (CONTROLS_Y + 9)) {
+		Object &obj = scene._bgShapes[_bgFound];
+		
+		if (obj._lookcAnim != 0) {
+			canimSpeed = ((obj._lookcAnim & 0xe0) >> 5) + 1;
+			scene._cAnimFramePause = obj._lookFrames;
+			_cAnimStr = obj._examine;
+			_cNum = (obj._lookcAnim & 0x1f) - 1;
+
+			scene.startCAnim(_cNum, canimSpeed);
+		} else if (obj._lookPosition.y != 0) {
+			// Need to walk to the object to be examined
+			people.walkToCoords(obj._lookPosition, obj._lookFacing);
+		}
+
+		if (talk._talkToAbort) {
+			_cAnimStr = obj._examine;
+			if (obj._lookFlag)
+				_vm->setFlags(obj._lookFlag);
+		}
+	} else {
+		// Looking at an inventory item
+		_cAnimStr = inv[_selector]._examine;
+		if (inv[_selector]._lookFlag)
+			_vm->setFlags(inv[_selector]._lookFlag);
+	}
+
+	if (!talk._talkToAbort) {
+		if (!scene._cAnimFramePause)
+			printObjectDesc(_cAnimStr, true);
+		else
+			// description was already printed in startCAnimation
+			scene._cAnimFramePause = 0;
+	}
 }
 
 void UserInterface::lookScreen(const Common::Point &pt) {
@@ -494,6 +545,201 @@ void UserInterface::doPickControl() {
 }
 
 void UserInterface::doTalkControl() {
+	// TODO
+}
+
+
+/**
+* Print the description of an object
+*/
+void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	int savedSelector;
+
+	if (str.hasPrefix("_")) {
+		_lookScriptFlag = true;
+		events.setCursor(MAGNIFY);
+		savedSelector = _selector;
+		talk.talkTo(str.c_str() + 1);
+		_lookScriptFlag = false;
+
+		if (talk._talkToAbort) {
+			events.setCursor(ARROW);
+			return;
+		}
+
+		// Check if looking at an inventory object
+		if (!_invLookFlag) {
+			// See if this look was called by a right button click or not
+			if (!_lookHelp) {
+				// If it wasn't a right button click, then we need depress 
+				// the look button before we close the window. So save a copy of the
+				// menu area, and draw the controls onto it
+				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
+				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
+
+				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
+					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w, pt.y + tempSurface.h));
+				screen._backBuffer2.transBlitFrom((*_controls)[0]._frame, pt);
+
+				banishWindow(1);
+				events.setCursor(MAGNIFY);
+				_windowBounds.top = CONTROLS_Y1;
+				_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+				_temp = _oldTemp = 0;
+				_menuMode = LOOK_MODE;
+				events.clearEvents();
+
+				screen._backBuffer2.blitFrom(tempSurface, pt);
+			} else {
+				events.setCursor(ARROW);
+				banishWindow(true);
+				_windowBounds.top = CONTROLS_Y1;
+				_key = _oldKey = -1;
+				_temp = _oldTemp = 0;
+				_menuMode = STD_MODE;
+				_lookHelp = 0;
+				events.clearEvents();
+			}
+		} else {
+			// Looking at an inventory object
+			_selector = _oldSelector = savedSelector;
+
+			// Reload the inventory graphics and draw the inventory
+			inv.loadInv();
+			inv.putInv(2);
+			inv.freeInv();
+			banishWindow(1);
+
+			_windowBounds.top = CONTROLS_Y1;
+			_key = _oldKey = COMMANDS[INV_MODE - 1];
+			_temp = _oldTemp = 0;
+			events.clearEvents();
+
+			_invLookFlag = 0;
+			_menuMode = INV_MODE;
+			_windowOpen = true;
+		}
+
+		return;
+	}
+
+	if (firstTime) {
+		// Only draw the border on the first call
+		_infoFlag = true;
+		clearInfo();
+
+		screen.bar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
+			CONTROLS_Y1 + 10), BORDER_COLOR);
+		screen.bar(Common::Rect(0, CONTROLS_Y + 10, 1, SHERLOCK_SCREEN_HEIGHT - 1),
+			BORDER_COLOR);
+		screen.bar(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 10, 
+			SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+		screen.bar(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH,
+			SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	}
+
+	// Clear background
+	screen.bar(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
+		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+
+	_windowBounds.top = CONTROLS_Y;
+	events.clearEvents();
+
+	bool endOfStr = false;
+	const char *msgP = str.c_str();
+	for (int lineNum = 0; lineNum < 5 && !endOfStr; ++lineNum) {
+		int width = 0;
+		const char *lineStartP = msgP;
+
+		// Determine how much can be displayed on the line
+		do {
+			width += screen.charWidth(*msgP++);
+		} while (width < 300 && *msgP);
+		
+		if (*msgP)
+			--msgP;
+		else
+			endOfStr = true;
+
+		// If the line needs to be wrapped, scan backwards to find
+		// the end of the previous word as a splitting point
+		if (width >= 300) {
+			while (*msgP != ' ')
+				--msgP;
+			endOfStr = false;
+		}
+
+		// Print out the line
+		Common::String line(lineStartP, msgP);
+		screen.gPrint(Common::Point(16, CONTROLS_Y + 12 + lineNum * 9),
+			INV_FOREGROUND, line.c_str());
+	}
+
+	// Handle display depending on whether all the message was shown
+	if (!endOfStr) {
+		makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
+			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_FOR_MORE)) / 2,
+			PRESS_KEY_FOR_MORE);
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
+			screen.stringWidth(PRESS_KEY_FOR_MORE)) / 2, CONTROLS_Y),
+			COM_FOREGROUND, "P");
+		_descStr = msgP;
+	} else {
+		makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
+			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2,
+			PRESS_KEY_FOR_MORE);
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
+			screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2, CONTROLS_Y),
+			COM_FOREGROUND, "P");
+		_descStr = "";
+	}
+
+	if (firstTime) {
+		if (!_windowStyle) {
+			screen.slamRect(Common::Rect(0, CONTROLS_Y,
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		}
+		else {
+			Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
+				(SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y) + 10);
+			Common::Rect r(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+			tempSurface.blitFrom(screen._backBuffer, Common::Point(0, CONTROLS_Y), r);
+			screen._backBuffer.blitFrom(screen._backBuffer2,
+				Common::Point(0, CONTROLS_Y), r);
+
+			summonWindow();
+		}
+
+		_selector = _oldSelector = -1;
+		_windowOpen = true;
+	} else {
+		screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
+			SHERLOCK_SCREEN_HEIGHT));
+	}
+}
+
+/**
+* Print the previously selected object's decription
+*/
+void UserInterface::printObjectDesc() {
+	printObjectDesc(_cAnimStr, true);
+}
+
+void UserInterface::banishWindow(bool flag) {
+	// TODO
+}
+
+void UserInterface::makeButton(const Common::Rect &bounds, int textX,
+		const Common::String &str) {
+	// TODO
+}
+
+void UserInterface::summonWindow() {
 	// TODO
 }
 

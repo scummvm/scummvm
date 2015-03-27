@@ -162,7 +162,7 @@ void Scene::selectScene() {
  */
 void Scene::freeScene() {
 	_vm->_talk->freeTalkVars();
-	_vm->_inventory->freeInventory();
+	_vm->_inventory->freeInv();
 	_vm->_sound->freeSong();
 	_vm->_sound->freeLoadedSounds();
 
@@ -849,6 +849,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
 	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
 	Common::Point tpPos, walkPos;
 	int tpDir, walkDir;
 	int tFrames = 0;
@@ -993,7 +994,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 		while (--frames) {
 			if (frames == pauseFrame)
-				printObjDesc(_cAnimStr, true);
+				ui.printObjectDesc();
 
 			doBgAnim();
 
@@ -1046,54 +1047,6 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	}
 
 	return 1;
-}
-
-/**
- * Print the description of an object
- */
-void Scene::printObjDesc(const Common::String &str, bool firstTime) {
-	/* TODO
-	
-	Events &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Talk &talk = *_vm->_talk;
-	int savedSelector;
-
-	if (str.hasPrefix("_")) {
-		_lookScriptFlag = true;
-		events.setCursor(MAGNIFY);
-		savedSelector = _selector;
-		talk.talkTo(str.c_str() + 1);
-		_lookScriptFlag = false;
-
-		if (talk._talkToAbort) {
-			events.setCursor(ARROW);
-			return;
-		}
-
-		// Check if looking at an inventory object
-		if (!_invLookFlag) {
-			// See if this look was called by a right button click or not
-			if (!_lookHelp) {
-				// If it wasn't a right button click, then we need depress 
-				// the look button before we close the window. So save a copy of the
-				// menu area, and draw the controls onto it
-				Surface tempSurface((*_controls)[0]._frame->w, (*_controls)[0]._frame->h);
-				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
-					Common::Rect(MENU_POINTS[0][0], MENU_POINTS[0][1],
-					MENU_POINTS[0][0] + tempSurface.w, MENU_POINTS[0][1] + tempSurface.h));
-				screen._backBuffer2.transBlitFrom((*_controls)[0]._frame,
-					Common::Point(MENU_POINTS[0][0], MENU_POINTS[0][1]));
-				
-				banishWindow(1);
-				events.setCursor(MAGNIFY);
-
-			}
-		}
-	}
-
-	// TODO
-	*/
 }
 
 /**

@@ -64,6 +64,13 @@ private:
 	bool _keyboardInput;
 	int _invMode;
 	bool _pause;
+	int _cNum;
+	int _selector, _oldSelector;
+	Common::String _cAnimStr;
+	bool _lookScriptFlag;
+	Common::Rect _windowBounds;
+	Common::String _descStr;
+	int _windowStyle;
 private:
 	void depressButton(int num);
 
@@ -86,6 +93,12 @@ private:
 	void doMiscControl(int allowed);
 	void doPickControl();
 	void doTalkControl();
+
+	void banishWindow(bool flag);
+
+	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
+
+	void summonWindow();
 public:
 	MenuMode _menuMode;
 	int _menuCounter;
@@ -102,6 +115,9 @@ public:
 	void clearInfo();
 
 	void whileMenuCounter();
+
+	void printObjectDesc(const Common::String &str, bool firstTime);
+	void printObjectDesc();
 };
 
 } // End of namespace Sherlock
