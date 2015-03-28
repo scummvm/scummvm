@@ -530,12 +530,147 @@ void UserInterface::examine() {
 	}
 }
 
+/**
+ * Print the name of an object in the scene
+ */
 void UserInterface::lookScreen(const Common::Point &pt) {
-	// TODO
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Common::Point mousePos = events.mousePos();
+	int temp;
+	Common::String tempStr;
+	int x, width, width1, width2 = 0;
+
+	// Don't display anything for right button command
+	if ((events._rightPressed || events._rightPressed) && !events._pressed)
+		return;
+
+	if (mousePos.y < CONTROLS_Y && (temp = _bgFound) != -1) {
+		if (temp != _oldLook) {
+			_infoFlag = true;
+			clearInfo();
+
+			if (temp < 1000)
+				tempStr = scene._bgShapes[temp]._description;
+			else
+				tempStr = scene._bgShapes[temp - 1000]._description;
+
+			_infoFlag = true;
+			clearInfo();
+
+			// Only print description if there is one
+			if (!tempStr.empty() && tempStr[0] != ' ') {
+				// If inventory is active and an item is selected for a Use or Give action
+				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
+						(_invMode == 2 || _invMode == 3)) {
+					width1 = screen.stringWidth(inv[_selector]._name);
+
+					if (_invMode == 2) {
+						// Using an object
+						x = width = screen.stringWidth("Use ");
+
+						if (temp < 1000 && scene._bgShapes[temp]._aType != PERSON)
+							// It's not a person, so make it lowercase
+							tempStr.setChar(tolower(tempStr[0]), 0);
+
+						x += screen.stringWidth(tempStr);
+
+						// If we're using an inventory object, add in the width
+						// of the object name and the " on "
+						if (_selector != -1) {
+							x += width1;
+							width2 = screen.stringWidth(" on ");
+							x += width2;
+						}
+
+						// If the line will be too long, keep cutting off characters
+						// until the string will fit
+						while (x > 280) {
+							x -= screen.charWidth(tempStr.lastChar());
+							tempStr.deleteLastChar();
+						}
+
+						int xStart = (SHERLOCK_SCREEN_HEIGHT - x) / 2;
+						screen.print(Common::Point(xStart, INFO_LINE + 1),
+							INFO_FOREGROUND, "Use ");
+
+						if (_selector != -1) {
+							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
+								TALK_FOREGROUND, inv[_selector]._name.c_str());
+							screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
+								INFO_FOREGROUND, " on ");
+							screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
+								INFO_FOREGROUND, tempStr.c_str());
+						} else {
+							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
+								INFO_FOREGROUND, tempStr.c_str());
+						}
+					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
+							scene._bgShapes[temp]._aType == PERSON) {
+						// Giving an object to a person
+						x = width = screen.stringWidth("Give ");
+						x += width1;
+						width2 = screen.stringWidth(" to ");
+						x += width2;
+						x += screen.stringWidth(tempStr);
+
+						// Ensure string will fit on-screen
+						while (x > 280) {
+							x -= screen.charWidth(tempStr.lastChar());
+							tempStr.deleteLastChar();
+						}
+
+						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
+						screen.print(Common::Point(xStart, INFO_LINE + 1), 
+							INFO_FOREGROUND, "Give ");
+						screen.print(Common::Point(xStart + width, INFO_LINE + 1), 
+							TALK_FOREGROUND, inv[_selector]._name.c_str());
+						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1), 
+							INFO_FOREGROUND, " to ");
+						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1), 
+							INFO_FOREGROUND, tempStr.c_str());
+					}
+				} else {
+					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, tempStr.c_str());
+				}
+
+				_infoFlag = true;
+				_oldLook = temp;
+			}
+		}
+	} else {
+		clearInfo();
+	}
 }
 
+/**
+ * Gets the item in the inventory the mouse is on and display's it's description
+ */
 void UserInterface::lookInv() {
-	// TODO
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Screen &screen = *_vm->_screen;
+	Common::Point mousePos = events.mousePos();
+
+	if (mousePos.x > 15 && mousePos.x < 314 && mousePos.y > (CONTROLS_Y1 + 11)
+			&& mousePos.y < (SHERLOCK_SCREEN_HEIGHT - 2)) {
+		int temp = (mousePos.x - 6) / 52 + _invIndex;
+		if (temp < inv._holdings) {
+			if (temp < inv._holdings) {
+				clearInfo();
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
+					inv[temp]._description.c_str());
+				_infoFlag = true;
+				_oldLook = temp;
+			}
+		} else {
+			clearInfo();
+		}
+	} else {
+		clearInfo();
+	}
 }
 
 void UserInterface::doEnvControl() {
