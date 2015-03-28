@@ -32,6 +32,8 @@ namespace Sherlock {
 class Surface : public Graphics::Surface {
 private:
 	bool _freePixels;
+
+	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
 protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 

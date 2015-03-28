@@ -257,7 +257,7 @@ void UserInterface::handleInput() {
 				if (!events._released)
 					lookScreen(pt);
 			} else {
-				personFound = scene._bgShapes[_bgFound]._aType == PERSON && _bgFound != -1;
+				personFound = _bgFound != -1 && scene._bgShapes[_bgFound]._aType == PERSON;
 			}
 
 			if (events._released && personFound)

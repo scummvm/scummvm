@@ -85,9 +85,15 @@ void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
  */
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		const Common::Rect &srcBounds) {
-	addDirtyRect(Common::Rect(pt.x, pt.y, pt.x + srcBounds.width(),
-		pt.y + srcBounds.height()));
-	copyRectToSurface(src, pt.x, pt.y, srcBounds);
+	Common::Rect destRect(pt.x, pt.y, pt.x + srcBounds.width(),
+		pt.y + srcBounds.height());
+	Common::Rect srcRect = srcBounds;
+
+	if (clip(srcRect, destRect)) {
+		// Surface is at least partially or completely on-screen
+		addDirtyRect(destRect);
+		copyRectToSurface(src, destRect.left, destRect.top, srcRect);
+	}
 }
 
 /**
@@ -104,32 +110,18 @@ void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
-	Common::Point destPt = pt;
-
-	if (destPt.x < 0) {
-		drawRect.left += -destPt.x;
-		destPt.x = 0;
-	}
-	if (destPt.y < 0) {
-		drawRect.top += -destPt.y;
-		destPt.y = 0;
-	}
-	int right = destPt.x + src.w;
-	if (right > this->w) {
-		drawRect.right -= (right - this->w);
-	}
-	int bottom = destPt.y + src.h;
-	if (bottom > this->h) {
-		drawRect.bottom -= (bottom - this->h);
-	}
-
-	if (!drawRect.isValidRect())
+	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
+	
+	// Clip the display area to on-screen
+	if (!clip(drawRect, destRect))
+		// It's completely off-screen
 		return;
 
 	if (flipped)
 		drawRect = Common::Rect(src.w - drawRect.right, src.h - drawRect.bottom,
 			src.w - drawRect.left, src.h - drawRect.top);
 
+	Common::Point destPt(destRect.left, destRect.top);
 	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
 		destPt.y + drawRect.height()));
 
@@ -168,5 +160,38 @@ void Surface::fillRect(const Common::Rect &r, byte color) {
 Surface Surface::getSubArea(const Common::Rect &r) {
 	return Surface(*this, r);
 }
+
+/**
+ * Clips the given source bounds so the passed destBounds will be entirely on-screen
+ */
+bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
+	if (destBounds.left >= this->w || destBounds.top >= this->h ||
+		destBounds.right <= 0 || destBounds.bottom <= 0)
+		return false;
+
+	// Clip the bounds if necessary to fit on-screen
+	if (destBounds.right > this->w) {
+		srcBounds.right -= destBounds.right - this->w;
+		destBounds.right = this->w;
+	}
+
+	if (destBounds.bottom > this->h) {
+		srcBounds.bottom -= destBounds.bottom - this->h;
+		destBounds.bottom = this->h;
+	}
+
+	if (destBounds.top < 0) {
+		srcBounds.top += -destBounds.top;
+		destBounds.top = 0;
+	}
+
+	if (destBounds.left < 0) {
+		srcBounds.left += -destBounds.left;
+		destBounds.left = 0;
+	}
+	
+	return true;
+}
+
 
 } // End of namespace Sherlock
