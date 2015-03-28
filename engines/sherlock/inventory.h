@@ -65,6 +65,12 @@ public:
 	void putInv(int slamit);
 
 	void invent(int flag);
+
+	void invCommands(bool slamIt);
+
+	void doInvLite(int index, byte color);
+
+	void doInvJF();
 };
 
 } // End of namespace Sherlock

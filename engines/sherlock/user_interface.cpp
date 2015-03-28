@@ -77,12 +77,14 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_oldLook = false;
 	_keyboardInput = false;
 	_invMode = 0;
+	_invIndex = 0;
 	_pause = false;
 	_cNum = 0;
 	_selector = _oldSelector = -1;
 	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1,
 		SHERLOCK_SCREEN_HEIGHT - 1);
 	_windowStyle = 1;	// Sliding windows
+	_find = 0;
 }
 
 UserInterface::~UserInterface() {
@@ -451,6 +453,10 @@ void UserInterface::toggleButton(int num) {
 	}
 }
 
+void UserInterface::buttonPrint(const Common::Point &pt, int color, bool slamIt,
+		const Common::String &str) {
+	// TODO
+}
 
 /**
  * Clears the info line of the screen
@@ -536,8 +542,235 @@ void UserInterface::doEnvControl() {
 	// TODO
 }
 
+/**
+ * Handle input whilst the inventory is active
+ */
 void UserInterface::doInvControl() {
-	// TODO
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
+	int colors[8];
+	Common::Point mousePos = events.mousePos();
+
+	_key = _oldKey = -1;
+	_keyboardInput = false;
+
+	// Check whether any inventory slot is highlighted
+	int found = -1;
+	Common::fill(&colors[0], &colors[8], (int)COMMAND_FOREGROUND);
+	for (int idx = 0; idx < 8; ++idx) {
+		Common::Rect r(INVENTORY_POINTS[idx][0], CONTROLS_Y1,
+			INVENTORY_POINTS[idx][1], CONTROLS_Y1 + 10);
+		if (r.contains(mousePos)) {
+			found = idx;
+			break;
+		}
+	}
+
+	if (events._pressed || events._released) {
+		events.clearKeyboard();
+
+		if (found != -1)
+			// If a slot highlighted, set it's color
+			colors[found] = COMMAND_HIGHLIGHTED;
+		buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
+			colors[0], true, "Exit");
+
+		if (found >= 0 && found <= 3) {
+			buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, "Look");
+			buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[1], true, "Use");
+			buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[1], true, "Give");
+			_invMode = found;
+			_selector = -1;
+		}
+
+		if (_invIndex) {
+			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
+				colors[4], "^^");
+			screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
+				colors[5], "^");
+		}
+
+		if ((inv._holdings - _invIndex) > 6) {
+			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
+				colors[6], "^^");
+			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
+				colors[7], "^");
+		}
+
+		bool flag = false;
+		if (_invMode == 1 || _invMode == 2 || _invMode == 3) {
+			Common::Rect r(15, CONTROLS_Y1 + 11, 314, SHERLOCK_SCREEN_HEIGHT - 2);
+			flag = (_selector < inv._holdings);
+		}
+
+		if (!flag && mousePos.y >(CONTROLS_Y1 + 11))
+			_selector = -1;
+	}
+
+	if (_keycode != Common::KEYCODE_INVALID) {
+		_key = toupper(_keycode);
+
+		if (_key == Common::KEYCODE_ESCAPE)
+			// Escape will also 'E'xit out of inventory display
+			_key = Common::KEYCODE_e;
+
+		if (_key == 'E' || _key == 'L' || _key == 'U' || _key == 'G'
+				|| _key == '-' || _key == '+') {
+			int temp = _invMode;
+
+			const char *chP = strchr(INVENTORY_COMMANDS, _key);
+			_invMode = !chP ? 8 : chP - INVENTORY_COMMANDS;
+			inv.invCommands(true);
+
+			_invMode = temp;
+			_keyboardInput = true;
+			if (_key == 'E')
+				_invMode = STD_MODE;
+			_selector = -1;
+		} else {
+			_selector = -1;
+		}
+	}
+
+	if (_selector != _oldSelector) {
+		if (_oldSelector != -1) {
+			// Un-highlight
+			if (_oldSelector >= _invIndex && _oldSelector < (_invIndex + 6))
+				inv.doInvLite(_oldSelector, BUTTON_MIDDLE);
+		}
+
+		if (_selector != -1)
+			inv.doInvLite(_selector, 235);
+
+		_oldSelector = _selector;
+	}
+
+	if (events._released || _keyboardInput) {
+		if ((!found && events._released) && _key == 'E') {
+			inv.freeInv();
+			_infoFlag = true;
+			clearInfo();
+			banishWindow(false);
+			_key = -1;
+			events.clearEvents();
+			events.setCursor(ARROW);
+		} else if ((found == 1 && events._released) || (_key == 'L')) {
+			_invMode = 1;
+		} else if ((found == 2 && events._released) || (_key == 'U')) {
+			_invMode = 2;
+		} else if ((found == 3 && events._released) || (_key == 'G')) {
+			_invMode = 3;
+		} else if (((found == 4 && events._released) || _key == ',') && _invIndex) {
+			if (_invIndex >= 6)
+				_invIndex -= 6;
+			else
+				_invIndex = 0;
+
+			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
+				COMMAND_HIGHLIGHTED, "^^");
+			inv.freeGraphics();
+			inv.loadGraphics();
+			inv.putInv(1);
+			inv.invCommands(true);
+		} else if (((found == 5 && events._released) || _key == '-') && _invIndex) {
+			--_invIndex;
+			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
+				COMMAND_HIGHLIGHTED, "^");
+			inv.freeGraphics();
+			inv.loadGraphics();
+			inv.putInv(1);
+			inv.invCommands(true);
+		} else if (((found == 6 && events._released) || _key == '+') && (inv._holdings - _invIndex) > 6) {
+			++_invIndex;
+			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
+				COMMAND_HIGHLIGHTED, "_");
+			inv.freeGraphics();
+			inv.loadGraphics();
+			inv.putInv(1);
+			inv.invCommands(true);
+		} else if (((found == 7 && events._released) || _key == '.') && (inv._holdings - _invIndex) > 6) {
+			_invIndex += 6;
+			if ((inv._holdings - 6) < _invIndex)
+				_invIndex = inv._holdings - 6;
+
+			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
+				COMMAND_HIGHLIGHTED, "_");
+			inv.freeGraphics();
+			inv.loadGraphics();
+			inv.putInv(1);
+			inv.invCommands(true);
+		} else {
+			// If something is being given, make sure it's to a person
+			if (_invMode == 3) {
+				if (_bgFound != -1 && scene._bgShapes[_bgFound]._aType == PERSON)
+					_find = _bgFound;
+				else
+					_find = -1;
+			} else {
+				_find = _bgFound;
+			}
+
+			if ((mousePos.y < CONTROLS_Y1) && (_invMode == 1) && (_find >= 0) && (_find < 1000)) {
+				if (!scene._bgShapes[_find]._examine.empty() &&
+						scene._bgShapes[_find]._examine[0] >= ' ')
+					inv.doInvJF();
+			} else if (_selector != -1 || _find >= 0) {
+				// Selector is the inventory object that was clicked on, or selected.
+				// If it's -1, then no inventory item is highlighted yet. Otherwise,
+				// an object in the scene has been clicked.
+
+				if (_selector != -1 && _invMode == 1 && mousePos.y >(CONTROLS_Y1 + 11))
+					inv.doInvJF();
+
+				if (talk._talkToAbort)
+					return;
+
+				// Now check for the Use and Give actions. If inv_mode is 3, 
+				// that means GIVE is in effect, _selector is the object being
+				// given, and _find is the target.
+				// The same applies to USE, except if _selector is -1, then USE
+				// is being tried on an object in the scene without an inventory
+				// object being highlighted first.
+
+				if ((_invMode == 2 || (_selector != -1 && _invMode == 3)) && _find >= 0) {
+					events._pressed = events._released = false;
+					_infoFlag = true;
+					clearInfo();
+
+					int temp = _selector;	// Save the selector
+					_selector = -1;
+
+					inv.putInv(1);
+					_selector = temp;		// Restore it
+					temp = _invMode;
+					_invMode = -1;
+					inv.invCommands(true);
+
+					_infoFlag = true;
+					clearInfo();
+					banishWindow(false);
+					_key = -1;
+
+					inv.freeInv();
+
+					if (_selector >= 0)
+						// Use/Give inv object with scene object
+						checkUseAction(scene._bgShapes[_find]._use[0], inv[_selector]._name,
+							_muse, _find, temp - 2);
+					else
+						// Now inv object has been highlighted
+						checkUseAction(scene._bgShapes[_find]._use[0], "*SELF", _muse,
+							_find, temp - 2);
+						
+					_selector = _oldSelector = -1;
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -1055,5 +1288,11 @@ void UserInterface::banishWindow(bool flag) {
 
 	_menuMode = STD_MODE;
 }
+
+void UserInterface::checkUseAction(UseType &use, const Common::String &invName,
+		const Common::String &msg, int objNum, int giveMode) {
+	// TODO
+}
+
 
 } // End of namespace Sherlock

@@ -124,4 +124,16 @@ void Inventory::invent(int flag) {
 	// TODO
 }
 
+void Inventory::invCommands(bool slamIt) {
+	// TODO
+}
+
+void Inventory::doInvLite(int index, byte color) {
+	// TODO
+}
+
+void Inventory::doInvJF() {
+	// TODO
+}
+
 } // End of namespace Sherlock

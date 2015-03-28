@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "sherlock/graphics.h"
+#include "sherlock/objects.h"
 #include "sherlock/resources.h"
 
 namespace Sherlock {
@@ -65,6 +66,7 @@ private:
 	int _oldLook;
 	bool _keyboardInput;
 	int _invMode;
+	int _invIndex;
 	bool _pause;
 	int _cNum;
 	int _selector, _oldSelector;
@@ -73,6 +75,8 @@ private:
 	Common::Rect _windowBounds;
 	Common::String _descStr;
 	int _windowStyle;
+	int _find;
+	Common::String _muse;
 private:
 	void depressButton(int num);
 
@@ -81,6 +85,8 @@ private:
 	void pushButton(int num);
 
 	void toggleButton(int num);
+
+	void buttonPrint(const Common::Point &pt, int color, bool slamIt, const Common::String &str);
 
 	void examine();
 
@@ -101,6 +107,9 @@ private:
 	void doControls();
 
 	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
+
+	void checkUseAction(UseType &use, const Common::String &invName, const Common::String &msg,
+		int objNum, int giveMode);
 public:
 	MenuMode _menuMode;
 	int _menuCounter;
