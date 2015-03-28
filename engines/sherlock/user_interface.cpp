@@ -571,6 +571,14 @@ void UserInterface::doLookControl() {
 
 				// Restore UI
 				drawInterface();
+			} else {
+				events.setCursor(ARROW);
+				banishWindow(true);
+				_windowBounds.top = CONTROLS_Y1;
+				_key = _oldKey = -1;
+				_temp = _oldTemp = 0;
+				_menuMode = STD_MODE;
+				events.clearEvents();
 			}
 		} else {
 			// Looking at an inventory object
@@ -984,24 +992,28 @@ void UserInterface::summonWindow(const Surface &bgSurface) {
 
 /**
  * Close a currently open window
- * @param flag	0 = slide old window down, 1 = slide old window up
+ * @param flag	0 = slide old window down, 1 = slide prior UI back up
  */
 void UserInterface::banishWindow(bool flag) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 
 	if (_windowOpen) {
-		if (!flag || !_windowStyle) {
-			// Slide window up
-			// Only slide the window up if the window style allows it
+		if (flag || !_windowStyle) {
+			// Slide window down
+			// Only slide the window if the window style allows it
 			if (_windowStyle) {
 				for (int idx = 2; idx < (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y); idx += 2) {
-					byte *pSrc = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y);
-					Common::copy(pSrc, pSrc + (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y + idx)
-						* SHERLOCK_SCREEN_WIDTH, pSrc - SHERLOCK_SCREEN_WIDTH * 2);
+					// Shift the window down by 2 lines
+					byte *pSrc = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y + idx - 2);
+					byte *pSrcEnd = (byte *)screen._backBuffer.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT - 2);
+					byte *pDest = (byte *)screen._backBuffer.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT);
+					Common::copy_backward(pSrc, pSrcEnd, pDest);
+
+					// Restore lines from the ui in the secondary back buffer
 					screen._backBuffer.blitFrom(screen._backBuffer2,
 						Common::Point(0, CONTROLS_Y),
-						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_HEIGHT, CONTROLS_Y + idx));
+						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + idx));
 
 					screen.slamArea(0, CONTROLS_Y + idx - 2, SHERLOCK_SCREEN_WIDTH, 
 						SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y - idx + 2);
@@ -1023,14 +1035,15 @@ void UserInterface::banishWindow(bool flag) {
 					SHERLOCK_SCREEN_HEIGHT));
 			}
 		} else {
-			for (int idx = SHERLOCK_SCREEN_HEIGHT - 1 - CONTROLS_Y1; idx >= 0; idx -= 2) {
-				byte *pSrc = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y1 + idx);
-				byte *pDest = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y1);
+			// Slide the original user interface up to cover the dialog
+			for (int idx = 1; idx < (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1); idx += 2) {
+				byte *pSrc = (byte *)screen._backBuffer2.getBasePtr(0, CONTROLS_Y1);
+				byte *pSrcEnd = (byte *)screen._backBuffer2.getBasePtr(0, CONTROLS_Y1 + idx);
+				byte *pDest = (byte *)screen._backBuffer.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT - idx);
+				Common::copy(pSrc, pSrcEnd, pDest);
 
-				Common::copy(pSrc, pSrc + (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1 - idx)
-					* SHERLOCK_SCREEN_WIDTH, pDest);
-				screen.slamArea(0, CONTROLS_Y1 + idx, SHERLOCK_SCREEN_WIDTH,
-					SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1 - idx);
+				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - idx, SHERLOCK_SCREEN_WIDTH,
+					SHERLOCK_SCREEN_HEIGHT);
 				events.delay(10);
 			}
 		}
