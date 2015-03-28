@@ -82,7 +82,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_selector = _oldSelector = -1;
 	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1,
 		SHERLOCK_SCREEN_HEIGHT - 1);
-	_windowStyle = 0;
+	_windowStyle = 1;	// Sliding windows
 }
 
 UserInterface::~UserInterface() {
@@ -457,7 +457,7 @@ void UserInterface::toggleButton(int num) {
  */
 void UserInterface::clearInfo() {
 	if (_infoFlag) {
-		_vm->_screen->bar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 19, 
+		_vm->_screen->vgaBar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 19,
 			INFO_LINE + 10), INFO_BLACK);
 		_infoFlag = false;
 		_oldLook = -1;
@@ -822,23 +822,24 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		return;
 	}
 
+	Surface &bb = screen._backBuffer;
 	if (firstTime) {
 		// Only draw the border on the first call
 		_infoFlag = true;
 		clearInfo();
 
-		screen.bar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
+		bb.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
 			CONTROLS_Y1 + 10), BORDER_COLOR);
-		screen.bar(Common::Rect(0, CONTROLS_Y + 10, 1, SHERLOCK_SCREEN_HEIGHT - 1),
+		bb.fillRect(Common::Rect(0, CONTROLS_Y + 10, 1, SHERLOCK_SCREEN_HEIGHT - 1),
 			BORDER_COLOR);
-		screen.bar(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 10, 
+		bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 10,
 			SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
-		screen.bar(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH,
+		bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH,
 			SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 	}
 
 	// Clear background
-	screen.bar(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
+	bb.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
 		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	_windowBounds.top = CONTROLS_Y;
@@ -904,15 +905,17 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		}
 		else {
+			// Extract the window that's been drawn on the back buffer
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
-				(SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y) + 10);
+				(SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y));
 			Common::Rect r(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			tempSurface.blitFrom(screen._backBuffer, Common::Point(0, 0), r);
 
-			tempSurface.blitFrom(screen._backBuffer, Common::Point(0, CONTROLS_Y), r);
+			// Remove drawn window with original user interface
 			screen._backBuffer.blitFrom(screen._backBuffer2,
 				Common::Point(0, CONTROLS_Y), r);
 
-			// Display the window
+			// Display the window gradually on-screen
 			summonWindow(tempSurface);
 		}
 
@@ -938,11 +941,12 @@ void UserInterface::makeButton(const Common::Rect &bounds, int textX,
 		const Common::String &str) {
 	Screen &screen = *_vm->_screen;
 
-	screen.bar(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
-	screen.bar(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
-	screen.bar(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
-	screen.bar(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
-	screen.bar(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
+	Surface &bb = screen._backBuffer;
+	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
+	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
+	bb.fillRect(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
+	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
+	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
 
 	screen.gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
 	screen.gPrint(Common::Point(textX + screen.charWidth(str[0]), bounds.top), 
@@ -950,7 +954,7 @@ void UserInterface::makeButton(const Common::Rect &bounds, int textX,
 }
 
 /**
- * Displays a passed window by gradually displaying it up vertically
+ * Displays a passed window by gradually scrolling it vertically on-screen
  */
 void UserInterface::summonWindow(const Surface &bgSurface) {
 	Events &events = *_vm->_events;
@@ -961,8 +965,8 @@ void UserInterface::summonWindow(const Surface &bgSurface) {
 		return;
 
 	// Gradually slide up the display of the window
-	for (int idx = 1; idx <= (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y); idx += 2) {
-		screen.blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+	for (int idx = 1; idx <= bgSurface.h; idx += 2) {
+		screen._backBuffer.blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
 			Common::Rect(0, 0, bgSurface.w, idx));
 		screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 			SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));

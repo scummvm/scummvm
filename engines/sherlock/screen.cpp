@@ -403,7 +403,7 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, int
 /**
  * Fills an area on the back buffer, and then copies it to the screen
  */
-void Screen::bar(const Common::Rect &r, int color) {
+void Screen::vgaBar(const Common::Rect &r, int color) {
 	_backBuffer.fillRect(r, color);
 	slamRect(r);
 }

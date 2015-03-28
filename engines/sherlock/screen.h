@@ -109,7 +109,7 @@ public:
 
 	int charWidth(char c);
 
-	void bar(const Common::Rect &r, int color);
+	void vgaBar(const Common::Rect &r, int color);
 };
 
 } // End of namespace Sherlock
