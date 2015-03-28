@@ -67,7 +67,7 @@ void Events::setCursor(CursorId cursorId) {
 
 	// Set the cursor data
 	Graphics::Surface &s = (*_cursorImages)[cursorId];
-	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, s.w / 2, s.h / 2, 0xff);
+	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, 0, 0, 0xff);
 
 	showCursor();
 }
