@@ -580,7 +580,8 @@ void UserInterface::doLookControl() {
 				_menuMode = STD_MODE;
 				events.clearEvents();
 			}
-		} else {
+		}
+		else {
 			// Looking at an inventory object
 			// Backup the user interface
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
@@ -592,15 +593,15 @@ void UserInterface::doLookControl() {
 
 			// Restore the ui
 			screen._backBuffer2.blitFrom(tempSurface, Common::Point(0, CONTROLS_Y1));
-		}
 
-		_windowBounds.top = CONTROLS_Y1;
-		_key = _oldKey = COMMANDS[LOOK_MODE - 1];
-		_temp = _oldTemp = 0;
-		events.clearEvents();
-		_invLookFlag = false;
-		_menuMode = INV_MODE;
-		_windowOpen = true;
+			_windowBounds.top = CONTROLS_Y1;
+			_key = _oldKey = COMMANDS[LOOK_MODE - 1];
+			_temp = _oldTemp = 0;
+			events.clearEvents();
+			_invLookFlag = false;
+			_menuMode = INV_MODE;
+			_windowOpen = true;
+		}
 	}
 }
 
@@ -900,7 +901,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	} else {
 		makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
 			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2,
-			PRESS_KEY_FOR_MORE);
+			PRESS_KEY_TO_CONTINUE);
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
 			screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2, CONTROLS_Y),
 			COMMAND_FOREGROUND, "P");
