@@ -39,7 +39,8 @@ struct BuriedGameDescription {
 enum {
 	GF_TRUECOLOR  = (1 << 1),
 	GF_WIN95      = (1 << 2),
-	GF_COMPRESSED = (1 << 3)
+	GF_COMPRESSED = (1 << 3),
+	GF_TRIAL      = (1 << 4)
 };
 
 bool BuriedEngine::hasFeature(EngineFeature f) const {
@@ -50,7 +51,12 @@ bool BuriedEngine::hasFeature(EngineFeature f) const {
 }
 
 bool BuriedEngine::isDemo() const {
-	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
+	// The trial is a demo for the user's sake, but not internally.
+	return (_gameDescription->desc.flags & ADGF_DEMO) != 0 && !isTrial();
+}
+
+bool BuriedEngine::isTrial() const {
+	return (_gameDescription->desc.flags & GF_TRIAL) != 0;
 }
 
 bool BuriedEngine::isTrueColor() const {
@@ -337,6 +343,42 @@ static const BuriedGameDescription gameDescriptions[] = {
 			Common::kPlatformWindows,
 			ADGF_DEMO | GF_TRUECOLOR,
 			GUIO1(GUIO_NOLAUNCHLOAD)
+		},
+	},
+
+	// English Windows 3.11 Trial 8BPP
+	// v1.1
+	{
+		{
+			"buried",
+			"Trial 8BPP",
+			{
+				{ "BTV816.EXE",  0, "a3551483329816d8ddc8fa877113762c", 1170432 },
+				{ "BIT8LIB.DLL", 0, "6b22f0b47efb29e45e9b2a336185d924", 2420608 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | GF_TRIAL,
+			GUIO0()
+		},
+	},
+
+	// English Windows 3.11 Trial 24BPP
+	// v1.1
+	{
+		{
+			"buried",
+			"Trial 24BPP",
+			{
+				{ "BTV2416.EXE",  0, "e0783c5eda09176d414d3df4ada8fe89", 1164288 },
+				{ "BIT24LIB.DLL", 0, "74ac9dae92f415fea8cdbd220ba8795c", 5211648 },
+				{ 0, 0, 0, 0 },
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | GF_TRUECOLOR | GF_TRIAL,
+			GUIO0()
 		},
 	},
 
