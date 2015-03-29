@@ -970,6 +970,9 @@ bool SceneViewWindow::startAgent3LairAmbient(int oldTimeZone, int oldEnvironment
 
 SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	switch (sceneStaticData.classID) {
+	case 0:
+		// Default scene
+		break;
 	case 1:
 		return new GenericItemAcquire(_vm, viewWindow, sceneStaticData, priorLocation, 177, 96, 231, 184, kItemGeneratorCore, 15, offsetof(GlobalFlags, alRDTakenLiveCore));
 	case 2:
@@ -996,9 +999,10 @@ SceneBase *SceneViewWindow::constructAgent3LairSceneObject(Window *viewWindow, c
 		return new CompleteTransport(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 31:
 		return new PlayTransporterClosing(_vm, viewWindow, sceneStaticData, priorLocation);
+	default:
+		warning("Unknown Agent 3 lair scene object %d", sceneStaticData.classID);
+		break;
 	}
-
-	warning("Unknown Agent 3 lair scene object %d", sceneStaticData.classID);
 
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }

@@ -3777,6 +3777,9 @@ bool SceneViewWindow::checkCustomSpaceStationAICommentDependencies(const Locatio
 
 SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	switch (sceneStaticData.classID) {
+	case 0:
+		// Default scene
+		break;
 	case 1:
 		return new UseCheeseGirlPropellant(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 3:
