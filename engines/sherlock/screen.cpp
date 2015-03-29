@@ -409,4 +409,22 @@ void Screen::vgaBar(const Common::Rect &r, int color) {
 	slamRect(r);
 }
 
+/**
+ * Draws a button for use in the inventory, talk, and examine dialogs.
+ */
+void Screen::makeButton(const Common::Rect &bounds, int textX,
+		const Common::String &str) {
+
+	Surface &bb = *_backBuffer;
+	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
+	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
+	bb.fillRect(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
+	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
+	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
+
+	gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
+	gPrint(Common::Point(textX + charWidth(str[0]), bounds.top), 
+		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
+}
+
 } // End of namespace Sherlock

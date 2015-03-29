@@ -54,6 +54,7 @@ const int INVENTORY_POINTS[8][3] = {
 };
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
+const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
@@ -85,6 +86,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 		SHERLOCK_SCREEN_HEIGHT - 1);
 	_windowStyle = 1;	// Sliding windows
 	_find = 0;
+	_oldUse = 0;
 }
 
 UserInterface::~UserInterface() {
@@ -686,7 +688,6 @@ void UserInterface::doInvControl() {
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 	int colors[8];
 	Common::Point mousePos = events.mousePos();
 
@@ -956,7 +957,7 @@ void UserInterface::doLookControl() {
 			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
-			inv.invent(128);
+			inv.drawInventory(128);
 			banishWindow(true);
 
 			// Restore the ui
@@ -1060,19 +1061,19 @@ void UserInterface::doMainControl() {
 			pushButton(6);
 			_selector = _oldSelector = -1;
 			_menuMode = INV_MODE;
-			inv.invent(1);
+			inv.drawInventory(1);
 			break;
 		case 'U':
 			pushButton(7);
 			_selector = _oldSelector = -1;
 			_menuMode = USE_MODE;
-			inv.invent(2);
+			inv.drawInventory(2);
 			break;
 		case 'G':
 			pushButton(8);
 			_selector = _oldSelector = -1;
 			_menuMode = GIVE_MODE;
-			inv.invent(3);
+			inv.drawInventory(3);
 			break;
 		case 'J':
 			pushButton(9);
@@ -1259,7 +1260,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 
 	// Handle display depending on whether all the message was shown
 	if (!endOfStr) {
-		makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
+		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
 			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_FOR_MORE)) / 2,
 			PRESS_KEY_FOR_MORE);
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
@@ -1267,7 +1268,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 			COMMAND_FOREGROUND, "P");
 		_descStr = msgP;
 	} else {
-		makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
+		screen.makeButton(Common::Rect(46, CONTROLS_Y, 272, CONTROLS_Y + 10),
 			(SHERLOCK_SCREEN_WIDTH - screen.stringWidth(PRESS_KEY_TO_CONTINUE)) / 2,
 			PRESS_KEY_TO_CONTINUE);
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH -
@@ -1280,20 +1281,9 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		if (!_windowStyle) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
-		}
-		else {
-			// Extract the window that's been drawn on the back buffer
-			Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
-				(SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y));
-			Common::Rect r(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-			tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
-
-			// Remove drawn window with original user interface
-			screen._backBuffer1.blitFrom(screen._backBuffer2,
-				Common::Point(0, CONTROLS_Y), r);
-
-			// Display the window gradually on-screen
-			summonWindow(tempSurface);
+		} else {
+			// Display the window
+			summonWindow();
 		}
 
 		_selector = _oldSelector = -1;
@@ -1312,28 +1302,9 @@ void UserInterface::printObjectDesc() {
 }
 
 /**
- * Draws a button for use in the inventory, talk, and examine dialogs.
- */
-void UserInterface::makeButton(const Common::Rect &bounds, int textX,
-		const Common::String &str) {
-	Screen &screen = *_vm->_screen;
-
-	Surface &bb = *screen._backBuffer;
-	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
-	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
-	bb.fillRect(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
-	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
-	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
-
-	screen.gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
-	screen.gPrint(Common::Point(textX + screen.charWidth(str[0]), bounds.top), 
-		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
-}
-
-/**
  * Displays a passed window by gradually scrolling it vertically on-screen
  */
-void UserInterface::summonWindow(const Surface &bgSurface) {
+void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 
@@ -1341,34 +1312,68 @@ void UserInterface::summonWindow(const Surface &bgSurface) {
 		// A window is already open, so can't open another one
 		return;
 
-	// Gradually slide up the display of the window
-	for (int idx = 1; idx <= bgSurface.h; idx += 2) {
-		screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
-			Common::Rect(0, 0, bgSurface.w, idx));
-		screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
-			SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	if (slideUp) {
+		// Gradually slide up the display of the window
+		for (int idx = 1; idx <= bgSurface.h; idx += 2) {
+			screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+				Common::Rect(0, 0, bgSurface.w, idx));
+			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
-		events.delay(10);
+			events.delay(10);
+		}
+	} else {
+		// Gradually slide down the display of the window
+		for (int idx = 1; idx <= bgSurface.h; idx += 2) {
+			screen._backBuffer->blitFrom(bgSurface, 
+				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h),
+				Common::Rect(0, bgSurface.h - idx, bgSurface.w, bgSurface.h));
+			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h,
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.h + idx));
+
+			events.delay(10);
+		}
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, CONTROLS_Y),
+	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, 
+		SHERLOCK_SCREEN_HEIGHT - bgSurface.h),
 		Common::Rect(0, 0, bgSurface.w, bgSurface.h));
-	screen.slamArea(0, CONTROLS_Y, bgSurface.w, bgSurface.h);
+	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h, bgSurface.w, bgSurface.h);
 
 	_windowOpen = true;
+}
+
+/**
+ * Slide the window stored in the back buffer onto the screen
+ */
+void UserInterface::summonWindow(bool slideUp, int height) {
+	Screen &screen = *_vm->_screen;
+
+	// Extract the window that's been drawn on the back buffer
+	Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
+		(SHERLOCK_SCREEN_HEIGHT - height));
+	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
+
+	// Remove drawn window with original user interface
+	screen._backBuffer1.blitFrom(screen._backBuffer2,
+		Common::Point(0, height), r);
+
+	// Display the window gradually on-screen
+	summonWindow(tempSurface, slideUp);
 }
 
 /**
  * Close a currently open window
  * @param flag	0 = slide old window down, 1 = slide prior UI back up
  */
-void UserInterface::banishWindow(bool flag) {
+void UserInterface::banishWindow(bool slideUp) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 
 	if (_windowOpen) {
-		if (flag || !_windowStyle) {
+		if (slideUp || !_windowStyle) {
 			// Slide window down
 			// Only slide the window if the window style allows it
 			if (_windowStyle) {

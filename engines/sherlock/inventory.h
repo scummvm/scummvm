@@ -51,6 +51,7 @@ public:
 	int _holdings;
 	void freeGraphics();
 	int _oldFlag;
+	int _invFlag;
 public:
 	Inventory(SherlockEngine *vm);
 	~Inventory();
@@ -65,7 +66,7 @@ public:
 
 	void putInv(int slamit);
 
-	void invent(int flag);
+	void drawInventory(int flag);
 
 	void invCommands(bool slamIt);
 

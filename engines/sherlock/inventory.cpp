@@ -31,6 +31,7 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_invIndex = 0;
 	_holdings = 0;
 	_oldFlag = 0;
+	_invFlag = 0;
 }
 
 Inventory::~Inventory() {
@@ -129,8 +130,11 @@ void Inventory::putInv(int slamit) {
  * 3   = give inventory mode
  * 128 = Draw window in the back buffer, but don't display it 
  */
-void Inventory::invent(int flag) {
+void Inventory::drawInventory(int flag) {
 	Screen &screen = *_vm->_screen;
+	UserInterface &ui = *_vm->_ui;
+	int tempFlag = flag;
+
 	_oldFlag = 7;
 	loadInv();
 
@@ -138,7 +142,64 @@ void Inventory::invent(int flag) {
 		screen._backBuffer = &screen._backBuffer2;
 	}
 
-	
+	// Draw the window background
+	Surface &bb = *screen._backBuffer;
+	bb.fillRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
+	bb.fillRect(Common::Rect(0, CONTROLS_Y1 + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y1 + 10, 
+		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH,
+		SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(2, CONTROLS_Y1 + 10, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT - 2),
+		INV_BACKGROUND);
+
+	// Draw the buttons
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[1][2] - screen.stringWidth("Look") / 2, "Look");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[2][2] - screen.stringWidth("Use") / 2, "Use");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[3][2] - screen.stringWidth("Give") / 2, "Give");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[4][2], "^^");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[5][2], "^");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[6][2], "_");
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1], 
+		CONTROLS_Y1 + 9), INVENTORY_POINTS[7][2], "__");
+
+	if (tempFlag == 128)
+		flag = 1;
+	ui._invMode = flag;
+
+	if (flag) {
+		ui._oldKey = INVENTORY_COMMANDS[flag];
+		_oldFlag = flag;
+	} else {
+		ui._oldKey = -1;
+		_invFlag = 6;
+	}
+
+	invCommands(0);
+	putInv(0);
+
+	if (tempFlag != 128) {
+		if (!ui._windowStyle) {
+			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		} else {
+			ui.summonWindow(false, CONTROLS_Y1);
+		}
+
+		ui._windowOpen = true;
+	} else {
+		// Reset the screen back buffer to the first buffer now that drawing is done
+		screen._backBuffer = &screen._backBuffer1;
+	}
+
+	ui._oldUse = -1;
 }
 
 void Inventory::invCommands(bool slamIt) {

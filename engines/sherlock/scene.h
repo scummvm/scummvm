@@ -34,8 +34,6 @@ namespace Sherlock {
 #define SCENES_COUNT 63
 #define MAX_ZONES    40
 #define INFO_LINE   140
-#define CONTROLS_Y  138
-#define CONTROLS_Y1 151
 
 enum InvMode {
 	INVMODE_0	= 0,

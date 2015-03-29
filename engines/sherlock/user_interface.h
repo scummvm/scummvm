@@ -31,6 +31,9 @@
 
 namespace Sherlock {
 
+#define CONTROLS_Y  138
+#define CONTROLS_Y1 151
+
 enum MenuMode {
 	STD_MODE		=  0,
 	LOOK_MODE		=  1,
@@ -47,9 +50,16 @@ enum MenuMode {
 	SETUP_MODE		= 12
 };
 
+extern const int MENU_POINTS[12][4];
+
+extern const int INVENTORY_POINTS[8][3];
+extern const char INVENTORY_COMMANDS[9];
+
 class SherlockEngine;
+class Inventory;
 
 class UserInterface {
+	friend class Inventory;
 private:
 	SherlockEngine *_vm;
 	ImageFile *_controlPanel;
@@ -77,6 +87,7 @@ private:
 	int _windowStyle;
 	int _find;
 	Common::String _muse;
+	int _oldUse;
 private:
 	void depressButton(int num);
 
@@ -106,8 +117,6 @@ private:
 	void environment();
 	void doControls();
 
-	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
-
 	void checkUseAction(UseType &use, const Common::String &invName, const Common::String &msg,
 		int objNum, int giveMode);
 public:
@@ -132,8 +141,9 @@ public:
 	void printObjectDesc(const Common::String &str, bool firstTime);
 	void printObjectDesc();
 
-	void summonWindow(const Surface &bgSurface);
-	void banishWindow(bool flag);
+	void summonWindow(const Surface &bgSurface, bool slideUp = true);
+	void summonWindow(bool slideUp = true, int height = CONTROLS_Y);
+	void banishWindow(bool slideUp = true);
 };
 
 } // End of namespace Sherlock
