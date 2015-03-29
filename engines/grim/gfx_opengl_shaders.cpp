@@ -727,6 +727,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("hasZBuffer", hasZBuffer);
 		_actorProgram->setUniform("texcropZBuf", _zBufTexCrop);
 		_actorProgram->setUniform("screenSize", Math::Vector2d(_screenWidth, _screenHeight));
+		_actorProgram->setUniform1f("alphaRef", 0.5f);
 	}
 
 	if (_currentShadowArray) {
