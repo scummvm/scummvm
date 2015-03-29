@@ -408,6 +408,12 @@ private:
 	int _flagOffset;
 };
 
+class TrialRecallScene : public SceneBase {
+public:
+	TrialRecallScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+};
+
 } // End of namespace Buried
 
 #endif

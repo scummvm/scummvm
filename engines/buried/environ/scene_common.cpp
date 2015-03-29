@@ -28,6 +28,7 @@
 #include "buried/gameui.h"
 #include "buried/graphics.h"
 #include "buried/inventory_window.h"
+#include "buried/message.h"
 #include "buried/navarrow.h"
 #include "buried/resources.h"
 #include "buried/sound.h"
@@ -35,6 +36,7 @@
 #include "buried/environ/scene_common.h"
 
 #include "common/stream.h"
+#include "common/system.h"
 #include "graphics/surface.h"
 
 namespace Buried {
@@ -1274,6 +1276,38 @@ int ClickPlaySoundSynchronous::specifyCursor(Window *viewWindow, const Common::P
 		return _cursorID;
 
 	return kCursorArrow;
+}
+
+TrialRecallScene::TrialRecallScene(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
+		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
+	// Disable all movement
+	_staticData.destUp.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destLeft.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destRight.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destDown.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+	_staticData.destForward.destinationScene = Location(-1, -1, -1, -1, -1, -1);
+}
+
+int TrialRecallScene::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
+	// Display the message
+	static const char *const message =
+		"This timezone is not available in this Trial Version.  "
+		"Call (800) 943-3664 to purchase the complete version of Buried in Time.\n"
+		"Initiating Auto-Recall to Future Apartment...";
+	((SceneViewWindow *)viewWindow)->displayLiveText(message, false);
+
+	// Wait about 10 seconds
+	Cursor oldCursor = _vm->_gfx->setCursor(kCursorWait);
+	uint32 start = g_system->getMillis();
+	while (g_system->getMillis() - start < 10000)
+		_vm->yield();
+	_vm->_gfx->setCursor(oldCursor);
+
+	// Force a recall
+	((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->changeCurrentBioChip(kItemBioChipJump);
+	((GameUIWindow *)viewWindow->getParent())->_bioChipRightWindow->sendMessage(new LButtonUpMessage(Common::Point(50, 150), 0));
+
+	return SC_TRUE;
 }
 
 } // End of namespace Buried
