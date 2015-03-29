@@ -3776,6 +3776,10 @@ bool SceneViewWindow::checkCustomSpaceStationAICommentDependencies(const Locatio
 }
 
 SceneBase *SceneViewWindow::constructAILabSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	// Special scene for the trial version
+	if (_vm->isTrial())
+		return new TrialRecallScene(_vm, viewWindow, sceneStaticData, priorLocation);
+
 	switch (sceneStaticData.classID) {
 	case 0:
 		// Default scene
