@@ -544,6 +544,7 @@ void AnimationView::doFrame() {
 			scriptDone();
 		} else {
 			scene._frameStartTime = 0;
+			scene._spriteSlots.clear();
 			loadNextResource();
 		}
 	} else if (_currentAnimation->getCurrentFrame() == 1) {
@@ -559,6 +560,10 @@ void AnimationView::doFrame() {
 		++scene._frameStartTime;
 		_currentAnimation->update();
 		_redrawFlag = true;
+
+		if (_currentAnimation->freeFlag())
+			// We don't want the sprites removed after the last animation frame
+			scene._spriteSlots.clear();
 	}
 }
 
