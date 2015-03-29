@@ -29,8 +29,9 @@
 namespace Sherlock {
 
 Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), _vm(vm),
-		_backBuffer(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
-		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT) {
+		_backBuffer1(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
+		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
+		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
 	_font = nullptr;
@@ -201,7 +202,7 @@ void Screen::randomTransition() {
 		int offset = _transitionSeed & 65535;
 
 		if (offset < (SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT))
-			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer.getPixels() + offset);
+			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer->getPixels() + offset);
 	
 		if (idx != 0 && (idx % 100) == 0) {
 			// Ensure there's a full screen dirty rect for the next frame update
@@ -214,7 +215,7 @@ void Screen::randomTransition() {
 	}
 
 	// Make sure everything has been transferred
-	blitFrom(_backBuffer);
+	blitFrom(_backBuffer1);
 }
 
 /**
@@ -232,7 +233,7 @@ void Screen::verticalTransition() {
 				_vm->getRandomNumber(3) + 1;
 
 			if (temp) {
-				blitFrom(_backBuffer, Common::Point(xp, table[xp]),
+				blitFrom(_backBuffer1, Common::Point(xp, table[xp]),
 					Common::Rect(xp, table[xp], xp + 1, table[xp] + temp));
 				table[xp] += temp;
 			}
@@ -251,7 +252,7 @@ void Screen::restoreBackground(const Common::Rect &r) {
 		tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 
 		if (tempRect.isValidRect())
-			_backBuffer.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
+			_backBuffer1.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
 	}
 }
 
@@ -271,7 +272,7 @@ void Screen::slamRect(const Common::Rect &r) {
 		tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 		if (tempRect.isValidRect())
-			blitFrom(_backBuffer, Common::Point(tempRect.left, tempRect.top), tempRect);
+			blitFrom(*_backBuffer, Common::Point(tempRect.left, tempRect.top), tempRect);
 	}
 }
 
@@ -394,7 +395,7 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, int
 		else {
 			assert(*c > ' ' && *c <= '~');
 			ImageFrame &frame = (*_font)[*c - 33];
-			_backBuffer.transBlitFrom(frame, charPos, false, color);
+			_backBuffer->transBlitFrom(frame, charPos, false, color);
 			charPos.x += frame._frame.w + 1;
 		}
 	}
@@ -404,7 +405,7 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, int
  * Fills an area on the back buffer, and then copies it to the screen
  */
 void Screen::vgaBar(const Common::Rect &r, int color) {
-	_backBuffer.fillRect(r, color);
+	_backBuffer->fillRect(r, color);
 	slamRect(r);
 }
 

@@ -656,7 +656,7 @@ bool Object::checkEndOfSequence() {
 
 			if (seq == 99) {
 				--_frameNumber;
-				screen._backBuffer.transBlitFrom(_imageFrame->_frame, _position);
+				screen._backBuffer1.transBlitFrom(_imageFrame->_frame, _position);
 				screen._backBuffer2.transBlitFrom(_imageFrame->_frame, _position);
 				_type = INVALID;
 			} else {

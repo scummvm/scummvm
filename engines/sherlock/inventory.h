@@ -50,6 +50,7 @@ public:
 	int _invIndex;
 	int _holdings;
 	void freeGraphics();
+	int _oldFlag;
 public:
 	Inventory(SherlockEngine *vm);
 	~Inventory();

@@ -378,13 +378,13 @@ bool Scene::loadScene(const Common::String &filename) {
 		Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
 			decompressLZ(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
-		bgStream->read(screen._backBuffer.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+		bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
 		if (_lzwMode)
 			delete bgStream;
 
-		// Set the palette
-		screen._backBuffer2.blitFrom(screen._backBuffer);
+		// Backup the image and set the palette
+		screen._backBuffer2.blitFrom(screen._backBuffer1);
 		screen.setPalette(screen._cMap);
 
 		delete rrmStream;
@@ -658,7 +658,7 @@ void Scene::transitionToScene() {
 	if (screen._fadeStyle)
 		screen.randomTransition();
 	else
-		screen.blitFrom(screen._backBuffer);
+		screen.blitFrom(screen._backBuffer1);
 
 	if (cAnimNum != -1) {
 		CAnim &c = _cAnim[cAnimNum];
@@ -696,7 +696,7 @@ int Scene::toggleObject(const Common::String &name) {
 void Scene::updateBackground() {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Surface surface = screen._backBuffer.getSubArea(
+	Surface surface = screen._backBuffer1.getSubArea(
 		Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	Sprite &player = people[AL];
 
@@ -1055,7 +1055,7 @@ void Scene::doBgAnim() {
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
-	Surface surface = screen._backBuffer.getSubArea(Common::Rect(0, 0,
+	Surface surface = screen._backBuffer1.getSubArea(Common::Rect(0, 0,
 		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	int cursorId = events.getCursor();
 	Common::Point mousePos = events.mousePos();
@@ -1126,7 +1126,7 @@ void Scene::doBgAnim() {
 		if (people[AL]._type == CHARACTER)
 			screen.restoreBackground(bounds);
 		else if (people[AL]._type == REMOVE)
-			screen._backBuffer.blitFrom(screen._backBuffer2, pt, bounds);
+			screen._backBuffer1.blitFrom(screen._backBuffer2, pt, bounds);
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			Object &o = _bgShapes[idx];
@@ -1145,7 +1145,7 @@ void Scene::doBgAnim() {
 			Object &o = _bgShapes[idx];
 			if (o._type == NO_SHAPE && ((o._flags & 1) == 0)) {
 				// Restore screen area
-				screen._backBuffer.blitFrom(screen._backBuffer2, o._position,
+				screen._backBuffer1.blitFrom(screen._backBuffer2, o._position,
 					Common::Rect(o._position.x, o._position.y,
 					o._position.x + o._noShapeSize.x, o._position.y + o._noShapeSize.y));
 
@@ -1191,14 +1191,14 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND)
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 	}
 	
 	// Draw all canimations which are behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND) {
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 		}
 	}
 
@@ -1206,14 +1206,14 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND)
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 	}
 
 	// Draw all canimations which are NORMAL and behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND) {
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 		}
 	}
 
@@ -1226,7 +1226,7 @@ void Scene::doBgAnim() {
 		bool flipped = people[AL]._frameNumber == WALK_LEFT || people[AL]._frameNumber == STOP_LEFT ||
 			people[AL]._frameNumber == WALK_UPLEFT || people[AL]._frameNumber == STOP_UPLEFT ||
 			people[AL]._frameNumber == WALK_DOWNRIGHT || people[AL]._frameNumber == STOP_DOWNRIGHT;
-		screen._backBuffer.transBlitFrom(people[AL]._imageFrame->_frame,
+		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame,
 			Common::Point(tempX, people[AL]._position.y / 100 - people[AL]._imageFrame->_frame.h), flipped);
 	}
 
@@ -1234,14 +1234,14 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD)
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_BEHIND) {
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 		}
 	}
 
@@ -1249,19 +1249,19 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD)
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 	}
 
 	// Draw any active portrait
 	if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
-		screen._backBuffer.transBlitFrom(people._portrait._imageFrame->_frame,
+		screen._backBuffer1.transBlitFrom(people._portrait._imageFrame->_frame,
 			people._portrait._position, people._portrait._flags & 2);
 
 	// Draw all static and active canimations that are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD) {
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 		}
 	}
 
@@ -1269,7 +1269,7 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == NO_SHAPE && (o._flags & 1) == 0)
-			screen._backBuffer.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
+			screen._backBuffer1.transBlitFrom(o._imageFrame->_frame, o._position, o._flags & 2);
 	}
 
 	// Bring the newly built picture to the screen

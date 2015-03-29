@@ -30,6 +30,7 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_invGraphicsLoaded = false;
 	_invIndex = 0;
 	_holdings = 0;
+	_oldFlag = 0;
 }
 
 Inventory::~Inventory() {
@@ -120,8 +121,24 @@ void Inventory::putInv(int slamit) {
 	// TODO
 }
 
+/**
+ * Put the game into inventory mode and open the interface window.
+ * The flag parameter specifies the mode:
+ * 0   = plain inventory mode
+ * 2   = use inventory mode
+ * 3   = give inventory mode
+ * 128 = Draw window in the back buffer, but don't display it 
+ */
 void Inventory::invent(int flag) {
-	// TODO
+	Screen &screen = *_vm->_screen;
+	_oldFlag = 7;
+	loadInv();
+
+	if (flag == 128) {
+		screen._backBuffer = &screen._backBuffer2;
+	}
+
+	
 }
 
 void Inventory::invCommands(bool slamIt) {

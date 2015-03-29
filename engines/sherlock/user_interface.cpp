@@ -105,7 +105,7 @@ void UserInterface::drawInterface() {
 	Screen &screen = *_vm->_screen;
 
 	screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
-	screen._backBuffer.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+	screen._backBuffer1.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
 	screen._backBuffer2.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
 }
 
@@ -376,7 +376,7 @@ void UserInterface::depressButton(int num) {
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 
 	Graphics::Surface &s = (*_controls)[num]._frame;
-	screen._backBuffer.transBlitFrom(s, pt);
+	screen._backBuffer1.transBlitFrom(s, pt);
 	screen.slamArea(pt.x, pt.y, pt.x + s.w, pt.y + s.h);
 }
 
@@ -389,7 +389,7 @@ void UserInterface::restoreButton(int num) {
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 	Graphics::Surface &frame = (*_controls)[num]._frame;
 
-	screen._backBuffer.blitFrom(screen._backBuffer2, pt,
+	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
 	
@@ -443,7 +443,7 @@ void UserInterface::toggleButton(int num) {
 
 			Graphics::Surface &s = (*_controls)[num]._frame;
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
-			screen._backBuffer.transBlitFrom(s, pt);
+			screen._backBuffer1.transBlitFrom(s, pt);
 			screen.slamArea(pt.x, pt.y, pt.x + s.w, pt.y + s.h);
 		}
 	} else {
@@ -1199,7 +1199,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		return;
 	}
 
-	Surface &bb = screen._backBuffer;
+	Surface &bb = *screen._backBuffer;
 	if (firstTime) {
 		// Only draw the border on the first call
 		_infoFlag = true;
@@ -1286,10 +1286,10 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
 				(SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y));
 			Common::Rect r(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-			tempSurface.blitFrom(screen._backBuffer, Common::Point(0, 0), r);
+			tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 
 			// Remove drawn window with original user interface
-			screen._backBuffer.blitFrom(screen._backBuffer2,
+			screen._backBuffer1.blitFrom(screen._backBuffer2,
 				Common::Point(0, CONTROLS_Y), r);
 
 			// Display the window gradually on-screen
@@ -1318,7 +1318,7 @@ void UserInterface::makeButton(const Common::Rect &bounds, int textX,
 		const Common::String &str) {
 	Screen &screen = *_vm->_screen;
 
-	Surface &bb = screen._backBuffer;
+	Surface &bb = *screen._backBuffer;
 	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
 	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
 	bb.fillRect(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
@@ -1343,7 +1343,7 @@ void UserInterface::summonWindow(const Surface &bgSurface) {
 
 	// Gradually slide up the display of the window
 	for (int idx = 1; idx <= bgSurface.h; idx += 2) {
-		screen._backBuffer.blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
+		screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
 			Common::Rect(0, 0, bgSurface.w, idx));
 		screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 			SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
@@ -1352,7 +1352,7 @@ void UserInterface::summonWindow(const Surface &bgSurface) {
 	}
 
 	// Final display of the entire window
-	screen._backBuffer.blitFrom(bgSurface, Common::Point(0, CONTROLS_Y),
+	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, CONTROLS_Y),
 		Common::Rect(0, 0, bgSurface.w, bgSurface.h));
 	screen.slamArea(0, CONTROLS_Y, bgSurface.w, bgSurface.h);
 
@@ -1374,13 +1374,13 @@ void UserInterface::banishWindow(bool flag) {
 			if (_windowStyle) {
 				for (int idx = 2; idx < (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y); idx += 2) {
 					// Shift the window down by 2 lines
-					byte *pSrc = (byte *)screen._backBuffer.getBasePtr(0, CONTROLS_Y + idx - 2);
-					byte *pSrcEnd = (byte *)screen._backBuffer.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT - 2);
-					byte *pDest = (byte *)screen._backBuffer.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT);
+					byte *pSrc = (byte *)screen._backBuffer1.getBasePtr(0, CONTROLS_Y + idx - 2);
+					byte *pSrcEnd = (byte *)screen._backBuffer1.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT - 2);
+					byte *pDest = (byte *)screen._backBuffer1.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT);
 					Common::copy_backward(pSrc, pSrcEnd, pDest);
 
 					// Restore lines from the ui in the secondary back buffer
-					screen._backBuffer.blitFrom(screen._backBuffer2,
+					screen._backBuffer1.blitFrom(screen._backBuffer2,
 						Common::Point(0, CONTROLS_Y),
 						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + idx));
 
@@ -1390,14 +1390,14 @@ void UserInterface::banishWindow(bool flag) {
 				}
 
 				// Restore final two old lines
-				screen._backBuffer.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.blitFrom(screen._backBuffer2,
 					Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 2),
 					Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2,
 						SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH, 2);
 			} else {
 				// Restore old area to completely erase window
-				screen._backBuffer.blitFrom(screen._backBuffer2,
+				screen._backBuffer1.blitFrom(screen._backBuffer2,
 					Common::Point(0, CONTROLS_Y),
 					Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
@@ -1408,7 +1408,7 @@ void UserInterface::banishWindow(bool flag) {
 			for (int idx = 1; idx < (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1); idx += 2) {
 				byte *pSrc = (byte *)screen._backBuffer2.getBasePtr(0, CONTROLS_Y1);
 				byte *pSrcEnd = (byte *)screen._backBuffer2.getBasePtr(0, CONTROLS_Y1 + idx);
-				byte *pDest = (byte *)screen._backBuffer.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT - idx);
+				byte *pDest = (byte *)screen._backBuffer1.getBasePtr(0, SHERLOCK_SCREEN_HEIGHT - idx);
 				Common::copy(pSrc, pSrcEnd, pDest);
 
 				screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - idx, SHERLOCK_SCREEN_WIDTH,

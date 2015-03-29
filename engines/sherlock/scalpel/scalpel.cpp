@@ -99,23 +99,23 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages("title2.vgs", true);
-		_screen->_backBuffer.blitFrom(*_screen);
+		_screen->_backBuffer1.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 
 		// London, England
-		_screen->_backBuffer.transBlitFrom(titleImages[0], Common::Point(10, 11));
+		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(10, 11));
 		_screen->randomTransition();
 		finished = _events->delay(1000, true);
 
 		// November, 1888
 		if (finished) {
-			_screen->_backBuffer.transBlitFrom(titleImages[1], Common::Point(101, 102));
+			_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(101, 102));
 			_screen->randomTransition();
 			finished = _events->delay(5000, true);
 		}
 
 		// Transition out the title
-		_screen->_backBuffer.blitFrom(_screen->_backBuffer2);
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2);
 		_screen->randomTransition();
 	}
 
@@ -124,21 +124,21 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages("title.vgs", true);
-		_screen->_backBuffer.blitFrom(*_screen);
+		_screen->_backBuffer1.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 		
 		// The Lost Files of
-		_screen->_backBuffer.transBlitFrom(titleImages[0], Common::Point(75, 6));
+		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(75, 6));
 		// Sherlock Holmes
-		_screen->_backBuffer.transBlitFrom(titleImages[1], Common::Point(34, 21));
+		_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(34, 21));
 		// copyright
-		_screen->_backBuffer.transBlitFrom(titleImages[2], Common::Point(4, 190));
+		_screen->_backBuffer1.transBlitFrom(titleImages[2], Common::Point(4, 190));
 
 		_screen->verticalTransition();
 		finished = _events->delay(4000, true);
 
 		if (finished) {
-			_screen->_backBuffer.blitFrom(_screen->_backBuffer2);
+			_screen->_backBuffer1.blitFrom(_screen->_backBuffer2);
 			_screen->randomTransition();
 			finished = _events->delay(2000);
 		}

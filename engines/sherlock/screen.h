@@ -69,7 +69,8 @@ private:
 protected:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
-	Surface _backBuffer, _backBuffer2;
+	Surface _backBuffer1, _backBuffer2;
+	Surface *_backBuffer;
 	bool _fadeStyle;
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
