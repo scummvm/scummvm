@@ -30,6 +30,7 @@
 #include "common/serializer.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "gui/message.h"
 #include "gui/saveload.h"
 
 #include "buried/buried.h"
@@ -70,8 +71,22 @@ Common::Error BuriedEngine::loadGameState(int slot) {
 		return Common::kUnknownError;
 	}
 
-	((FrameWindow *)_mainWindow)->loadFromState(location, flags, inventoryItems);
+	// Done with the file
 	delete loadFile;
+
+	if (isTrial() && location.timeZone != 4) {
+		// Display a message preventing the user from loading a non-apartment
+		// saved game in the trial version
+		GUI::MessageDialog dialog("ERROR: The location in this saved game is not included in this version of Buried in Time");
+		dialog.runModal();
+
+		// Don't return an error. It's an "error" that we can't load,
+		// but we're still in a valid state. The message above will
+		// be displayed instead of the usual GUI load error.
+		return Common::kNoError;
+	}
+
+	((FrameWindow *)_mainWindow)->loadFromState(location, flags, inventoryItems);
 	return Common::kNoError;
 }
 
