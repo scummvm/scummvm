@@ -1115,6 +1115,10 @@ bool SceneViewWindow::checkCustomCastleAICommentDependencies(const Location &com
 }
 
 SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
+	// Special scene for the trial version
+	if (_vm->isTrial())
+		return new TrialRecallScene(_vm, viewWindow, sceneStaticData, priorLocation);
+
 	switch (sceneStaticData.classID) {
 	case 0:
 		// Default scene
