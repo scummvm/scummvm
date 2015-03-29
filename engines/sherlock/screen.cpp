@@ -310,7 +310,7 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
  * Prints the text passed onto the back buffer at the given position and color.
  * The string is then blitted to the screen
  */
-void Screen::print(const Common::Point &pt, int color, const char *format, ...) {
+void Screen::print(const Common::Point &pt, byte color, const char *format, ...) {
 	// Create the string to display
 	char buffer[100];
 	va_list args;
@@ -344,7 +344,7 @@ void Screen::print(const Common::Point &pt, int color, const char *format, ...) 
 /**
  * Print a strings onto the back buffer without blitting it to the screen
  */
-void Screen::gPrint(const Common::Point &pt, int color, const char *format, ...) {
+void Screen::gPrint(const Common::Point &pt, byte color, const char *format, ...) {
 	// Create the string to display
 	char buffer[100];
 	va_list args;
@@ -386,7 +386,7 @@ int Screen::charWidth(char c) {
 /**
  * Draws the given string into the back buffer using the images stored in _font
  */
-void Screen::writeString(const Common::String &str, const Common::Point &pt, int color) {
+void Screen::writeString(const Common::String &str, const Common::Point &pt, byte color) {
 	Common::Point charPos = pt;
 
 	for (const char *c = str.c_str(); *c; ++c) {
@@ -425,6 +425,47 @@ void Screen::makeButton(const Common::Rect &bounds, int textX,
 	gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
 	gPrint(Common::Point(textX + charWidth(str[0]), bounds.top), 
 		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
+}
+
+/**
+ * Prints an interface command with the first letter highlighted to indicate
+ * what keyboard shortcut is associated with it
+ */
+void Screen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
+		const Common::String &str) {
+	int xStart = pt.x - stringWidth(str) / 2;
+
+	if (color == COMMAND_FOREGROUND) {
+		// First character needs to be highlighted
+		if (slamIt) {
+			print(Common::Point(xStart, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", str[0]);
+			print(Common::Point(xStart + charWidth(str[0]), pt.y + 1),
+				color, "%s", str.c_str() + 1);
+		} else {
+			print(Common::Point(xStart, pt.y), COMMAND_HIGHLIGHTED, "%c", str[0]);
+			print(Common::Point(xStart + charWidth(str[0]), pt.y),
+				color, "%s", str.c_str() + 1);
+		}
+	} else {
+		print(Common::Point(xStart, slamIt ? pt.y + 1 : pt.y), COMMAND_HIGHLIGHTED,
+			"%s", str.c_str());
+	}
+}
+
+/**
+ * Draw a panel in th eback buffer with a raised area effect around the edges
+ */
+void Screen::makePanel(const Common::Rect &r) {
+	_backBuffer->fillRect(r, BUTTON_MIDDLE);
+	_backBuffer->hLine(r.left, r.top, r.right - 2, BUTTON_TOP);
+	_backBuffer->hLine(r.left + 1, r.top + 1, r.right - 3, BUTTON_TOP);
+	_backBuffer->vLine(r.left, r.top, r.bottom - 1, BUTTON_TOP);
+	_backBuffer->vLine(r.left + 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
+	
+	_backBuffer->vLine(r.right - 1, r.top, r.bottom - 1, BUTTON_BOTTOM);
+	_backBuffer->vLine(r.right - 2, r.top + 1, r.bottom - 2, BUTTON_BOTTOM);
+	_backBuffer->hLine(r.left, r.bottom - 1, r.right - 1, BUTTON_BOTTOM);
+	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
 }
 
 } // End of namespace Sherlock

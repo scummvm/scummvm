@@ -68,6 +68,9 @@ void ScalpelEngine::initialize() {
 	for (int idx = 0; idx < NUM_PLACES; ++idx)
 		_map.push_back(Common::Point(MAP_X[idx], MAP_Y[idx]));
 
+	// Load the inventory
+	loadInventory();
+
 	// Starting scene
 	_scene->_goToScene = 4;
 }
@@ -175,6 +178,28 @@ bool ScalpelEngine::showOfficeCutscene() {
 	// TODO
 	return true;
 }
+
+void ScalpelEngine::loadInventory() {
+	Inventory &inv = *_inventory;
+
+	// Initial inventory
+	inv._holdings = 2;
+	inv.push_back(InventoryItem(0, "Message", "A message requesting help", "_ITEM03A"));
+	inv.push_back(InventoryItem(0, "Holmes Card", "A number of business cards", "_ITEM07A"));
+	
+	// Potential items
+	inv.push_back(InventoryItem(95, "Tickets", "Opera Tickets", "_ITEM10A"));
+	inv.push_back(InventoryItem(138, "Cuff Link", "Cuff Link", "_ITEM04A"));
+	inv.push_back(InventoryItem(138, "Wire Hook", "Wire Hook", "_ITEM06A"));
+	inv.push_back(InventoryItem(150, "Note", "Note", "_ITEM13A"));
+	inv.push_back(InventoryItem(481, "Open Watch", "An open pocket watch", "_ITEM62A"));
+	inv.push_back(InventoryItem(481, "Paper", "A piece of paper with numbers on it", "_ITEM44A"));
+	inv.push_back(InventoryItem(532, "Letter", "A letter folded many times", "_ITEM68A"));
+	inv.push_back(InventoryItem(544, "Tarot", "Tarot Cards", "_ITEM71A"));
+	inv.push_back(InventoryItem(544, "Ornate Key", "An ornate key", "_ITEM70A"));
+	inv.push_back(InventoryItem(586, "Pawn ticket", "A pawn ticket", "_ITEM16A"));
+};
+
 
 /**
  * Starting a scene within the game

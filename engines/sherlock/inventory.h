@@ -38,6 +38,9 @@ struct InventoryItem {
 	Common::String _description;;
 	Common::String _examine;
 	int _lookFlag;
+
+	InventoryItem(int requiredFlag, const Common::String &name,
+		const Common::String &description, const Common::String &examine);
 };
 
 class Inventory : public Common::Array<InventoryItem> {
@@ -47,6 +50,7 @@ public:
 	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
 	Common::StringArray _names;
 	bool _invGraphicsLoaded;
+	int _invMode;
 	int _invIndex;
 	int _holdings;
 	void freeGraphics();
@@ -64,7 +68,7 @@ public:
 
 	int findInv(const Common::String &name);
 
-	void putInv(int slamit);
+	void putInv(int slamIt);
 
 	void drawInventory(int flag);
 

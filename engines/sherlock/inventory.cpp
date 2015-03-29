@@ -25,6 +25,14 @@
 
 namespace Sherlock {
 
+InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
+		const Common::String &description, const Common::String &examine) : 
+		_requiredFlag(requiredFlag), _name(name), _description(description), 
+		_examine(examine), _lookFlag(0) {
+}
+
+/*----------------------------------------------------------------*/
+
 Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(vm) {
 	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
 	_invGraphicsLoaded = false;
@@ -32,6 +40,7 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_holdings = 0;
 	_oldFlag = 0;
 	_invFlag = 0;
+	_invMode = 0;
 }
 
 Inventory::~Inventory() {
@@ -77,6 +86,8 @@ void Inventory::loadInv() {
 	}
 	
 	delete stream;
+
+	loadGraphics();
 }
 
 /**
@@ -89,11 +100,11 @@ void Inventory::loadGraphics() {
 	// Default all inventory slots to empty
 	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
 
-	for (int idx = _invIndex; (idx < _holdings) && (idx - _invIndex) < 6; ++idx) {
+	for (int idx = _invIndex; (idx < _holdings) && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
 		// Get the name of the item to be dispalyed, figure out it's accompanying
 		// .VGS file with it's picture, and then load it
 		int invNum = findInv((*this)[idx]._name);
-		Common::String fName = Common::String::format("item%02d.vgs", invNum);
+		Common::String fName = Common::String::format("item%02d.vgs", invNum + 1);
 
 		_invShapes[idx] = new ImageFile(fName);
 	}
@@ -106,20 +117,73 @@ void Inventory::loadGraphics() {
  * and returns the numer that matches the passed name
  */
 int Inventory::findInv(const Common::String &name) {
-	int result = -1;
-
-	for (int idx = 0; (idx < _holdings) && result == -1; ++idx) {
+	for (int idx = 0; idx < size(); ++idx) {
 		if (scumm_stricmp(name.c_str(), _names[idx].c_str()) == 0)
-			result = idx;
+			return idx;
 	}
 
-	if (result == -1)
-		result = 1;
-	return result;
+	return 1;
 }
 
-void Inventory::putInv(int slamit) {
-	// TODO
+/**
+ * Display the character's inventory. The slamIt parameter specifies:
+ * 0 = Draw it on the back buffer, and don't display it
+ * 1 = Draw it on the back buffer, and then display it
+ * 2 = Draw it on the secondary back buffer, and don't display it
+ */
+void Inventory::putInv(int slamIt) {
+	Screen &screen = *_vm->_screen;
+	UserInterface &ui = *_vm->_ui;
+
+	// If an inventory item has disappeared (due to using it or giving it),
+	// a blank space slot may haave appeared. If so, adjust the inventory
+	if (_invIndex > 0 && _invIndex > (_holdings - 6)) {
+		--_invIndex;
+		freeGraphics();
+		loadGraphics();
+	}
+
+	if (slamIt != 2) {
+		screen.makePanel(Common::Rect(6, 163, 54, 197));
+		screen.makePanel(Common::Rect(58, 163, 106, 197));
+		screen.makePanel(Common::Rect(110, 163, 158, 197));
+		screen.makePanel(Common::Rect(162, 163, 210, 197));
+		screen.makePanel(Common::Rect(214, 163, 262, 197));
+		screen.makePanel(Common::Rect(266, 163, 314, 197));
+	}
+
+	// Iterate through displaying up to 6 objects at a time
+	for (int idx = _invIndex; idx < _holdings && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
+		int itemNum = idx - _invIndex;
+		Surface &bb = slamIt == 2 ? screen._backBuffer2 : screen._backBuffer1;
+		Common::Rect r(8 + itemNum * 52, 165, 51 + itemNum * 52, 194);
+
+		// Draw the background
+		if (idx == ui._selector) {
+			bb.fillRect(r, 235);
+		} else if (slamIt == 2) {
+			bb.fillRect(r, BUTTON_MIDDLE);
+		}
+
+		// Draw the item image
+		Graphics::Surface &img = (*_invShapes[itemNum])[0]._frame;
+		bb.transBlitFrom(img, Common::Point(6 + itemNum * 52 + ((47 - img.w) / 2), 
+			163 + ((33 - img.h) / 2)));
+	}
+
+	if (slamIt == 1)
+		screen.slamArea(6, 163, 308, 34);
+
+	if (slamIt != 2)
+		ui.clearInfo();
+
+	if (slamIt == 0) {
+		invCommands(0);
+	} else if (slamIt == 2) {
+		screen._backBuffer = &screen._backBuffer2;
+		invCommands(0);
+		screen._backBuffer = &screen._backBuffer1;
+	}
 }
 
 /**
@@ -173,7 +237,7 @@ void Inventory::drawInventory(int flag) {
 
 	if (tempFlag == 128)
 		flag = 1;
-	ui._invMode = flag;
+	_invMode = flag;
 
 	if (flag) {
 		ui._oldKey = INVENTORY_COMMANDS[flag];
@@ -202,8 +266,67 @@ void Inventory::drawInventory(int flag) {
 	ui._oldUse = -1;
 }
 
+/**
+ * Prints the line of inventory commands at the top of an inventory window with
+ * the correct highlighting
+ */
 void Inventory::invCommands(bool slamIt) {
-	// TODO
+	Screen &screen = *_vm->_screen;
+	UserInterface &ui = *_vm->_ui;
+
+	if (slamIt) {
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), 
+			_invMode == 0 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
+			true, "Exit");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), 
+			_invMode == 1 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
+			true, "Look");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), 
+			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			true, "Use");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), 
+			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			true, "Give");
+		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), 
+			_invMode == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"^^");
+		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1), 
+			_invMode == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"^");
+		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), 
+			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"_");
+		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1), 
+			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"__");
+		if (_invMode != 1)
+			ui.clearInfo();
+	} else {
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), 
+			_invMode == 0 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			false, "Exit");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), 
+			_invMode == 1 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			false, "Look");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), 
+			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			false, "Use");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), 
+			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			false, "Give");
+		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1), 
+			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"^^");
+		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1),
+			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"^");
+		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1), 
+			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"_");
+		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1), 
+			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
+			"__");
+	}
 }
 
 void Inventory::doInvLite(int index, byte color) {

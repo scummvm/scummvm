@@ -75,8 +75,6 @@ private:
 	int _invLookFlag;
 	int _oldLook;
 	bool _keyboardInput;
-	int _invMode;
-	int _invIndex;
 	bool _pause;
 	int _cNum;
 	int _selector, _oldSelector;
@@ -96,8 +94,6 @@ private:
 	void pushButton(int num);
 
 	void toggleButton(int num);
-
-	void buttonPrint(const Common::Point &pt, int color, bool slamIt, const Common::String &str);
 
 	void examine();
 

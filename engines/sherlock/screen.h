@@ -44,6 +44,8 @@ enum {
 	INV_BACKGROUND	= 1,
 	COMMAND_HIGHLIGHTED = 10,
 	COMMAND_FOREGROUND = 15,
+	COMMAND_BACKGROUND = 4,
+	COMMAND_NULL = 248,
 	BUTTON_TOP = 233,
 	BUTTON_MIDDLE	= 244,
 	BUTTON_BOTTOM	= 248,
@@ -65,7 +67,7 @@ private:
 
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 
-	void writeString(const Common::String &str, const Common::Point &pt, int color);
+	void writeString(const Common::String &str, const Common::Point &pt, byte color);
 protected:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
@@ -96,8 +98,8 @@ public:
 
 	void verticalTransition();
 
-	void print(const Common::Point &pt, int color, const char *format, ...);
-	void gPrint(const Common::Point &pt, int color, const char *format, ...);
+	void print(const Common::Point &pt, byte color, const char *format, ...);
+	void gPrint(const Common::Point &pt, byte color, const char *format, ...);
 
 	void restoreBackground(const Common::Rect &r);
 
@@ -114,6 +116,10 @@ public:
 	void vgaBar(const Common::Rect &r, int color);
 
 	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
+
+	void buttonPrint(const Common::Point &pt, byte color, bool slamIt, const Common::String &str);
+
+	void makePanel(const Common::Rect &r);
 };
 
 } // End of namespace Sherlock

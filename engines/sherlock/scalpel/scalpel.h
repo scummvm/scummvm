@@ -41,6 +41,8 @@ private:
 	bool showAlleyCutscene();
 	bool showStreetCutscene();
 	bool showOfficeCutscene();
+
+	void loadInventory();
 protected:
 	virtual void initialize();
 
