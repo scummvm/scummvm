@@ -135,6 +135,11 @@ Common::Error BuriedEngine::run() {
 		if (ConfMan.hasKey("save_slot")) {
 			uint32 gameToLoad = ConfMan.getInt("save_slot");
 			doIntro = (loadGameState(gameToLoad).getCode() != Common::kNoError);
+
+			// If the trial version tries to load a game without a time
+			// zone that's part of the trial version, force the intro.
+			if (isTrial() && !((FrameWindow *)_mainWindow)->getMainChildWindow())
+				doIntro = true;
 		}
 
 		// Play the intro only if we're starting from scratch
