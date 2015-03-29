@@ -1115,9 +1115,10 @@ bool SceneViewWindow::checkCustomCastleAICommentDependencies(const Location &com
 }
 
 SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// TODO
-
 	switch (sceneStaticData.classID) {
+	case 0:
+		// Default scene
+		break;
 	case 1:
 		return new TopOfTowerGuardEncounter(_vm, viewWindow, sceneStaticData, priorLocation);
 	case 3:
@@ -1266,7 +1267,7 @@ SceneBase *SceneViewWindow::constructCastleSceneObject(Window *viewWindow, const
 	case 77:
 		return new ClickPlaySound(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, cgTSTriedDoorB), 14, kCursorFinger, 72, 0, 372, 189);
 	default:
-		warning("TODO: Castle scene object %d", sceneStaticData.classID);
+		warning("Unknown Castle scene object %d", sceneStaticData.classID);
 		break;
 	}
 

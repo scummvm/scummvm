@@ -2583,6 +2583,9 @@ bool SceneViewWindow::checkCustomDaVinciAICommentDependencies(const Location &co
 
 SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
 	switch (sceneStaticData.classID) {
+	case 0:
+		// Default scene
+		break;
 	case 1:
 		return new SwapStillOnFlag(_vm, viewWindow, sceneStaticData, priorLocation, offsetof(GlobalFlags, dsPTElevatorPresent), 1);
 	case 2:
@@ -2737,9 +2740,11 @@ SceneBase *SceneViewWindow::constructDaVinciSceneObject(Window *viewWindow, cons
 		return new PlaySoundEnteringScene(_vm, viewWindow, sceneStaticData, priorLocation, 12, offsetof(GlobalFlags, dsCTPlayedBallistaFalling));
 	case 77:
 		return new CodexFormulaeNotify(_vm, viewWindow, sceneStaticData, priorLocation);
+	default:
+		warning("Unknown Da Vinci scene object %d", sceneStaticData.classID);
+		break;
 	}
 
-	warning("Unknown Da Vinci scene object %d", sceneStaticData.classID);
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
 }
 
