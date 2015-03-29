@@ -1,4 +1,4 @@
-const float CONSTANT_ATTENUATION = 0.0;
+const float CONSTANT_ATTENUATION = 1.0;
 const float LINEAR_ATTENUATION = 0.0;
 const float QUADRATIC_ATTENUATION = 1.0;
 
