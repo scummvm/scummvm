@@ -93,6 +93,38 @@ void FloorFace::computePointHeight(Math::Vector3d &point) const {
 	point.setValue(2, pointZ);
 }
 
+bool FloorFace::intersectRay(const Math::Vector3d &origin, const Math::Vector3d &direction, Math::Vector3d &intersection) const {
+	// Compute the triangle plane normal
+	Math::Vector3d n = Math::Vector3d::crossProduct(_vertices[1] - _vertices[0],  _vertices[2] - _vertices[0]);
+	if (n == Math::Vector3d()) {
+		return false; // We don't handle degenerate triangles
+	}
+
+	// Point on triangle plane: dot(P - _vertices[0], n) = 0
+	// Point on ray: P = origin + r * direction
+	// Point on both => r = - dot(n, origin - _vertices[0]) / dot(n, direction)
+
+	float num = -Math::Vector3d::dotProduct(n, origin - _vertices[0]);
+	float denom = Math::Vector3d::dotProduct(n, direction);
+
+	if (fabs(denom) < 0.00001) {
+		// The ray is parallel to the plane
+		return false;
+	}
+
+	float r = num / denom;
+	if (r < 0.0) {
+		// The ray goes away from the triangle
+		return false;
+	}
+
+	// Compute the intersection point between the triangle plane and the ray
+	intersection = origin + r * direction;
+
+	// Check the intersection point is inside the triangle
+	return isPointInside(intersection);
+}
+
 float FloorFace::getDistanceFromCamera() const {
 	return _distanceFromCamera;
 }

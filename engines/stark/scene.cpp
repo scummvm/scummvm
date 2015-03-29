@@ -25,6 +25,8 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
+#include "common/system.h"
+
 #include "math/glmath.h"
 
 namespace Stark {
@@ -88,6 +90,29 @@ void Scene::computeClippingRect(float *xmin, float *xmax, float *ymin, float *ym
 	if (xmax) *xmax = xmaxValue;
 	if (ymin) *ymin = yminValue;
 	if (ymax) *ymax = ymaxValue;
+}
+
+void Scene::makeRayFromMouse(const Common::Point &mouse, Math::Vector3d &origin, Math::Vector3d &direction) const {
+	Common::Rect gameViewport = _gfx->gameViewport();
+
+	Math::Vector4d in;
+	in.x() = (mouse.x - gameViewport.left) * 2 / (float) gameViewport.width() - 1.0;
+	in.y() = (g_system->getHeight() - mouse.y - gameViewport.top) * 2 / (float) gameViewport.height() - 1.0;
+	in.z() = 1.0;
+	in.w() = 1.0;
+
+	Math::Matrix4 view = _viewMatrix;
+	view.translate(_cameraPosition);
+
+	Math::Matrix4 A = _projectionMatrix * view;
+	A.transpose();
+	A.inverse();
+
+	Math::Vector4d out = A.transform(in);
+
+	origin = _cameraPosition;
+	direction.set(out.x(), out.y(), out.z());
+	direction.normalize();
 }
 
 void Scene::render(Gfx::RenderEntryArray renderEntries) {

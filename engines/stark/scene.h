@@ -64,6 +64,15 @@ public:
 	/** Get the projection matrix (Camera -> World) */
 	Math::Matrix4 getViewMatrix() const { return _viewMatrix; }
 
+	/**
+	 * Compute a ray in world coordinates going from the camera and through the mouse
+	 *
+	 * @param mouse Mouse position
+	 * @param origin Computed point of origin for the ray
+	 * @param direction Computed direction for the ray
+	 */
+	void makeRayFromMouse(const Common::Point &mouse, Math::Vector3d &origin, Math::Vector3d &direction) const;
+
 private:
 	void computeClippingRect(float *xmin, float *xmax, float *ymin, float *ymax);
 

@@ -70,6 +70,16 @@ public:
 	/** Fill the z coordinate of the point so that it is on the plane of a face */
 	void computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) const;
 
+	/**
+	 * Check if a ray is intersecting the floor
+	 *
+	 * @param origin The ray's origin
+	 * @param direction The ray's direction
+	 * @param intersection The intersection between the ray and the floor. Only valid when the return value is true.
+	 * @return -1 if no face contains the point, the hit face index otherwise
+	 */
+	int32 findFaceHitByRay(const Math::Vector3d &origin, const Math::Vector3d &direction, Math::Vector3d &intersection) const;
+
 	/** Obtain the distance to the camera for a face */
 	float getDistanceFromCamera(uint32 faceIndex) const;
 

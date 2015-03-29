@@ -31,6 +31,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 
+#include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/object.h"
 #include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
@@ -38,6 +39,7 @@
 
 #include "engines/stark/actionmenu.h"
 #include "engines/stark/cursor.h"
+#include "engines/stark/scene.h"
 #include "engines/stark/ui.h"
 
 namespace Stark {
@@ -92,6 +94,23 @@ void UserInterface::scrollLocation(int32 dX, int32 dY) {
 	scroll.x += dX;
 	scroll.y += dY;
 	location->setScrollPosition(scroll);
+}
+
+void UserInterface::walkTo(const Common::Point &mouse) {
+	Global *global = StarkServices::instance().global;
+	Scene *scene = StarkServices::instance().scene;
+
+	Resources::Floor *floor = global->getCurrent()->getFloor();
+	Resources::ItemSub10 *april = global->getCurrent()->getInteractive();
+
+	Math::Vector3d origin, direction, intersection;
+	scene->makeRayFromMouse(mouse, origin, direction);
+	int32 floorFace = floor->findFaceHitByRay(origin, direction, intersection);
+	if (april && floorFace >= 0) {
+		// TODO: Complete, for now we just teleport to the target location
+		april->setPosition3D(intersection);
+		april->setFloorFaceIndex(floorFace);
+	}
 }
 
 void UserInterface::update() {

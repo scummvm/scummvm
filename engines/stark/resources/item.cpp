@@ -367,6 +367,14 @@ ItemSub5610::ItemSub5610(Object *parent, byte subType, uint16 index, const Commo
 		_floorFaceIndex(-1) {
 }
 
+void ItemSub5610::setPosition3D(const Math::Vector3d &position) {
+	_position3D = position;
+}
+
+void ItemSub5610::setFloorFaceIndex(int32 faceIndex) {
+	_floorFaceIndex = faceIndex;
+}
+
 void ItemSub5610::placeOnBookmark(Bookmark *target) {
 	Global *global = StarkServices::instance().global;
 	Floor *floor = global->getCurrent()->getFloor();
@@ -374,7 +382,7 @@ void ItemSub5610::placeOnBookmark(Bookmark *target) {
 	_position3D = target->getPosition();
 
 	// Find the floor face index the item is on
-	_floorFaceIndex = floor->findFaceContainingPoint(_position3D);
+	setFloorFaceIndex(floor->findFaceContainingPoint(_position3D));
 
 	// Set the z coordinate using the floor height at that position
 	if (_floorFaceIndex >= 0) {
@@ -410,7 +418,7 @@ ItemSub56::ItemSub56(Object *parent, byte subType, uint16 index, const Common::S
 void ItemSub56::readData(Formats::XRCReadStream *stream) {
 	ItemSub5610::readData(stream);
 
-	_floorFaceIndex = stream->readSint32LE();
+	setFloorFaceIndex(stream->readSint32LE());
 	_position = stream->readPoint();
 }
 

@@ -50,6 +50,8 @@ public:
 	/** Get the screen viewport in actual resolution */
 	Common::Rect getScreenViewport() { return _screenViewport; }
 
+	Common::Rect gameViewport() const;
+
 	virtual void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) = 0;
 
 	virtual void clearScreen() = 0;
@@ -99,7 +101,6 @@ public:
 
 protected:
 	void computeScreenViewport();
-	Common::Rect gameViewport() const;
 
 	Common::Rect _screenViewport;
 };

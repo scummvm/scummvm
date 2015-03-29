@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/system.h"
+#include "common/events.h"
+
 #include "engines/stark/ui.h"
 
 #include "engines/stark/cursor.h"
@@ -140,8 +143,8 @@ void UI::setCursorDependingOnActionsAvailable(int actionsAvailable) {
 }
 
 void UI::handleClick() {
+	UserInterface *ui = StarkServices::instance().userInterface;
 	if (_objectUnderCursor) {
-		UserInterface *ui = StarkServices::instance().userInterface;
 		if (!ui->performActionOnObject(_objectUnderCursor, _currentObject, _selectedInventoryItem)) {
 			_currentObject = _objectUnderCursor;
 			ui->activateActionMenuOn(_cursor->getMousePosition(), _currentObject);
@@ -158,7 +161,11 @@ void UI::handleClick() {
 				_selectedInventoryItemText = "";
 			}
 		}
+	} else {
+		ui->walkTo(g_system->getEventManager()->getMousePos());
 	}
+
+
 	// Check this before handling the menu clicks, otherwise it closes again on the same event.
 	if (_inventoryOpen && !_inventoryInterface->containsPoint(_cursor->getMousePosition())) {
 		_inventoryOpen = false;
@@ -212,7 +219,6 @@ void UI::render() {
 		_fmvPlayer->render();
 		return;
 	}
-	Common::Point pos = _cursor->getMousePosition();
 	UserInterface *ui = StarkServices::instance().userInterface;
 	update(ui->getRenderEntries(), true);
 	// Can't handle clicks before this point, since we need to have updated the mouse-over state to include the UI.

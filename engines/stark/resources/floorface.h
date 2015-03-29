@@ -57,6 +57,16 @@ public:
 	/** Fill the z coordinate of the point so that it is on the plane */
 	void computePointHeight(Math::Vector3d &point) const;
 
+	/**
+	 * Check if a ray is intersecting this face
+	 *
+	 * @param origin The ray's origin
+	 * @param direction The ray's direction
+	 * @param intersection The intersection between the ray and the face. Only valid when the return value is true.
+	 * @return true if the ray intersects the face, false otherwise.
+	 */
+	bool intersectRay(const Math::Vector3d &origin, const Math::Vector3d &direction, Math::Vector3d &intersection) const;
+
 	/** Obtain the distance to the camera */
 	float getDistanceFromCamera() const;
 

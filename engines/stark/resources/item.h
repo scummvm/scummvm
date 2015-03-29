@@ -246,6 +246,12 @@ public:
 	/** Move the item to a bookmarked position */
 	void placeOnBookmark(Bookmark *target);
 
+	/** Move the item */
+	void setPosition3D(const Math::Vector3d &position);
+
+	/** Change the face the item is standing on */
+	void setFloorFaceIndex(int32 faceIndex);
+
 	/** Set the direction the item faces */
 	void setDirection(uint direction);
 

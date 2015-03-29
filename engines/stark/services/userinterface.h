@@ -60,6 +60,9 @@ public:
 	/** Scroll the current location by an offset */
 	void scrollLocation(int32 dX, int32 dY);
 
+	/** Make April try to go to the location under the cursor */
+	void walkTo(const Common::Point &mouse);
+
 	/** Draw the mouse pointer, and any additional currently active UI */
 	void render();
 	
