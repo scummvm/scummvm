@@ -63,6 +63,7 @@ public:
 	// Detection related functions
 	const BuriedGameDescription *_gameDescription;
 	bool isDemo() const;
+	bool isTrial() const;
 	bool isTrueColor() const;
 	bool isWin95() const;
 	bool isCompressed() const;
