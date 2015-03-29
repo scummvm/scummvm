@@ -113,10 +113,6 @@ bool SceneViewWindow::startEnvironmentAmbient(int oldTimeZone, int oldEnvironmen
 }
 
 SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) {
-	// If the class ID is zero, return the default base class
-	if (sceneStaticData.classID == 0)
-		return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
-
 	switch (sceneStaticData.location.timeZone) {
 	case 0: // Miscellaneous scenes
 		// This seems unused?
@@ -138,6 +134,8 @@ SceneBase *SceneViewWindow::constructSceneObject(Window *viewWindow, const Locat
 		return constructAlienSceneObject(viewWindow, sceneStaticData, priorLocation);
 	case 10: // Old Apartment
 		return new OldApartmentSuitCap(_vm, viewWindow, sceneStaticData, priorLocation);
+	default:
+		error("Unknown time zone %d", sceneStaticData.location.timeZone);
 	}
 
 	return new SceneBase(_vm, viewWindow, sceneStaticData, priorLocation);
