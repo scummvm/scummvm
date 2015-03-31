@@ -40,7 +40,7 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_holdings = 0;
 	_oldFlag = 0;
 	_invFlag = 0;
-	_invMode = 0;
+	_invMode = INVMODE_EXIT;
 }
 
 Inventory::~Inventory() {
@@ -117,7 +117,7 @@ void Inventory::loadGraphics() {
  * and returns the numer that matches the passed name
  */
 int Inventory::findInv(const Common::String &name) {
-	for (int idx = 0; idx < size(); ++idx) {
+	for (int idx = 0; idx < (int)size(); ++idx) {
 		if (scumm_stricmp(name.c_str(), _names[idx].c_str()) == 0)
 			return idx;
 	}
@@ -219,25 +219,25 @@ void Inventory::drawInventory(int flag) {
 
 	// Draw the buttons
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[1][2] - screen.stringWidth("Look") / 2, "Look");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2] - screen.stringWidth("Look") / 2, "Look");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[2][2] - screen.stringWidth("Use") / 2, "Use");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2] - screen.stringWidth("Use") / 2, "Use");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[3][2] - screen.stringWidth("Give") / 2, "Give");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2] - screen.stringWidth("Give") / 2, "Give");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[4][2], "^^");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2], "^^");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[5][2], "^");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2], "^");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[6][2], "_");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2], "_");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1], 
-		CONTROLS_Y1 + 9), INVENTORY_POINTS[7][2], "__");
+		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2], "__");
 
 	if (tempFlag == 128)
 		flag = 1;
-	_invMode = flag;
+	_invMode = (InvMode)flag;
 
 	if (flag) {
 		ui._oldKey = INVENTORY_COMMANDS[flag];
@@ -334,7 +334,25 @@ void Inventory::doInvLite(int index, byte color) {
 }
 
 void Inventory::doInvJF() {
-	// TODO
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
+
+	ui._invLookFlag = true;
+	freeInv();
+
+	ui._infoFlag = true;
+	ui.clearInfo();
+
+	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
+		Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	ui.examine();
+
+	if (!talk._talkToAbort) {
+		screen._backBuffer2.blitFrom((*ui._controlPanel)[0]._frame,
+			Common::Point(0, CONTROLS_Y));
+		loadInv();
+	}
 }
 
 } // End of namespace Sherlock

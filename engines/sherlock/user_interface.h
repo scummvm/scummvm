@@ -57,9 +57,11 @@ extern const char INVENTORY_COMMANDS[9];
 
 class SherlockEngine;
 class Inventory;
+class Talk;
 
 class UserInterface {
 	friend class Inventory;
+	friend class Talk;
 private:
 	SherlockEngine *_vm;
 	ImageFile *_controlPanel;
@@ -72,7 +74,6 @@ private:
 	int _help, _oldHelp;
 	int _key, _oldKey;
 	int _temp, _oldTemp;
-	int _invLookFlag;
 	int _oldLook;
 	bool _keyboardInput;
 	bool _pause;
@@ -88,8 +89,6 @@ private:
 	int _oldUse;
 private:
 	void depressButton(int num);
-
-	void restoreButton(int num);
 
 	void pushButton(int num);
 
@@ -120,13 +119,15 @@ public:
 	int _menuCounter;
 	bool _infoFlag;
 	bool _windowOpen;
+	bool _endKeyActive;
+	int _invLookFlag;
 public:
 	UserInterface(SherlockEngine *vm);
 	~UserInterface();
 
 	void reset();
 
-	void drawInterface();
+	void drawInterface(int bufferNum = 3);
 
 	void handleInput();
 
@@ -140,6 +141,8 @@ public:
 	void summonWindow(const Surface &bgSurface, bool slideUp = true);
 	void summonWindow(bool slideUp = true, int height = CONTROLS_Y);
 	void banishWindow(bool slideUp = true);
+
+	void restoreButton(int num);
 };
 
 } // End of namespace Sherlock

@@ -468,4 +468,15 @@ void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
 }
 
+void Screen::setDisplayBounds(const Common::Rect &r) {
+	// TODO: See if needed
+}
+void Screen::resetDisplayBounds() {
+	setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+}
+
+Common::Rect Screen::getDisplayBounds() {
+	return Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+}
+
 } // End of namespace Sherlock

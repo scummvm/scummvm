@@ -20,67 +20,27 @@
  *
  */
 
-#ifndef SHERLOCK_TALK_H
-#define SHERLOCK_TALK_H
+#ifndef SHERLOCK_SCRIPTS_H
+#define SHERLOCK_SCRIPTS_H
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "common/stream.h"
-#include "common/stack.h"
 
 namespace Sherlock {
 
-struct SavedSequence {
-	int _objNum;
-	Common::Array<byte> _sequences;
-};
-
-struct Statement {
-	Common::String _statement;
-	Common::String _reply;
-	Common::String _linkFile;
-	Common::String _voiceFile;
-	Common::Array<int> _required;
-	Common::Array<int> _modified;
-	int _portraitSide;
-	int _quotient;
-	int _talkMap;
-
-	void synchronize(Common::SeekableReadStream &s, bool voices);
-};
-
 class SherlockEngine;
 
-class Talk {
-
+class Scripts {
 private:
 	SherlockEngine *_vm;
-	int _saveSeqNum;
-	Common::Array<SavedSequence> _savedSequences;
-	Common::Stack<int> _sequenceStack;
-	Common::Array<Statement> _statements;
-	int _speaker;
-	int _talkIndex;
-	int _talkTo;
-
-	void pullSequence();
-
-	void loadTalkFile(const Common::String &filename);
-
-	void clearTalking();
-
-	void setTalkMap();
 public:
-	bool _talkToAbort;
-	int _talkCounter;
+	int _scriptMoreFlag;
+	Common::String _scriptName;
+	int _scriptSaveIndex;
+	int _scriptSelect;
+	bool _abortFlag;
 public:
-	Talk(SherlockEngine *vm);
-
-	void talkTo(const Common::String &filename);
-
-	void talk(int objNum);
-
-	void freeTalkVars();
+	Scripts(SherlockEngine *vm);
 };
 
 } // End of namespace Sherlock

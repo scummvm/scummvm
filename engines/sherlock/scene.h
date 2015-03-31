@@ -35,14 +35,6 @@ namespace Sherlock {
 #define MAX_ZONES    40
 #define INFO_LINE   140
 
-enum InvMode {
-	INVMODE_0	= 0,
-	INVMODE_1	= 1,
-	INVMODE_2	= 2,
-	INVMODE_3	= 3,
-	INVMODE_255 = 255
-};
-
 class SherlockEngine;
 
 struct BgFileHeader {
@@ -94,9 +86,7 @@ class Scene {
 private:
 	SherlockEngine *_vm;
 	Common::String _rrmName;
-	InvMode _invMode;
 	int _selector;
-	bool _invLookFlag;
 	bool _lookHelp;
 
 	bool loadScene(const Common::String &filename);
@@ -149,6 +139,7 @@ public:
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
 	int _cAnimFramePause;
+	bool _invLookFlag;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();

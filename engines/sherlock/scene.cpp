@@ -99,7 +99,6 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_hsavedPos = Common::Point(-1, -1);
 	_hsavedFs = -1;
 	_cAnimFramePause = 0;
-	_invMode = INVMODE_0;
 	_restoreFlag = false;
 	_invLookFlag = false;
 	_lookHelp = false;
@@ -119,6 +118,7 @@ void Scene::selectScene() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
 	UserInterface &ui = *_vm->_ui;
 
 	// Reset fields
@@ -150,8 +150,8 @@ void Scene::selectScene() {
 
 	// If there were any scripst waiting to be run, but were interrupt by a running
 	// canimation (probably the last scene's exit canim), clear the _scriptMoreFlag
-	if (_vm->_scriptMoreFlag == 3)
-		_vm->_scriptMoreFlag = 0;
+	if (scripts._scriptMoreFlag == 3)
+		scripts._scriptMoreFlag = 0;
 }
 
 /**
@@ -1050,8 +1050,10 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
  */
 void Scene::doBgAnim() {
 	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
@@ -1079,7 +1081,7 @@ void Scene::doBgAnim() {
 
 	// Check for setting magnifying glass cursor
 	if (ui._menuMode == INV_MODE || ui._menuMode == USE_MODE || ui._menuMode == GIVE_MODE) {
-		if (_invMode == INVMODE_1) {
+		if (inv._invMode == INVMODE_LOOK) {
 			// Only show Magnifying glass cursor if it's not on the inventory command line
 			if (mousePos.y < CONTROLS_Y || mousePos.y >(CONTROLS_Y1 + 13))
 				events.setCursor(MAGNIFY);
@@ -1357,10 +1359,10 @@ void Scene::doBgAnim() {
 	// Check if the method was called for calling a portrait, and a talk was
 	// interrupting it. This talk file would not have been executed at the time, 
 	// since we needed to finish the 'doBgAnim' to finish clearing the portrait
-	if (people._clearingThePortrait && _vm->_scriptMoreFlag == 3) {
+	if (people._clearingThePortrait && scripts._scriptMoreFlag == 3) {
 		// Reset the flags and call to talk
-		people._clearingThePortrait = _vm->_scriptMoreFlag = 0;
-		talk.talkTo(_vm->_scriptName);
+		people._clearingThePortrait = scripts._scriptMoreFlag = 0;
+		talk.talkTo(scripts._scriptName);
 	}
 }
 

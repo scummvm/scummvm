@@ -52,17 +52,24 @@ enum {
 
 class SherlockEngine;
 
+class Person: public Sprite {
+public:
+	Person() : Sprite() {}
+
+	Common::String _portrait;
+};
+
 class People {
 private:
 	SherlockEngine *_vm;
-	Sprite _data[MAX_PEOPLE];
-	Sprite &_player;
+	Person _data[MAX_PEOPLE];
 	bool _walkLoaded;
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
 public:
 	Common::Point _walkDest;
 	Common::Stack<Common::Point> _walkTo;
+	Person &_player;
 	bool _holmesOn;
 	bool _portraitLoaded;
 	Object _portrait;
@@ -72,7 +79,7 @@ public:
 	People(SherlockEngine *vm);
 	~People();
 
-	Sprite &operator[](PeopleId id) { return _data[id]; }
+	Person &operator[](PeopleId id) { return _data[id]; }
 
 	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }
 

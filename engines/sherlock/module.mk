@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	resources.o \
 	scene.o \
 	screen.o \
+	scripts.o \
 	sherlock.o \
 	sound.o \
 	talk.o \

@@ -120,6 +120,10 @@ public:
 	void buttonPrint(const Common::Point &pt, byte color, bool slamIt, const Common::String &str);
 
 	void makePanel(const Common::Rect &r);
+
+	void setDisplayBounds(const Common::Rect &r);
+	void resetDisplayBounds();
+	Common::Rect getDisplayBounds();
 };
 
 } // End of namespace Sherlock

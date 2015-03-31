@@ -32,6 +32,19 @@ namespace Sherlock {
 
 #define MAX_VISIBLE_INVENTORY 6
 
+enum InvMode {
+	INVMODE_EXIT = 0,
+	INVMODE_LOOK = 1,
+	INVMODE_USE = 2,
+	INVMODE_GIVE = 3,
+	INVMODE_FIRST = 4,
+	INVMODE_PREVIOUS = 5,
+	INVMODE_NEXT = 6,
+	INVMODE_LAST = 7,
+	INVMODE_INVALID = 8,
+	INVMODE_USE55 = 255
+};
+
 struct InventoryItem {
 	int _requiredFlag;
 	Common::String _name;
@@ -50,7 +63,7 @@ public:
 	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
 	Common::StringArray _names;
 	bool _invGraphicsLoaded;
-	int _invMode;
+	InvMode _invMode;
 	int _invIndex;
 	int _holdings;
 	void freeGraphics();

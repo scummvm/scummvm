@@ -40,6 +40,7 @@
 #include "sherlock/resources.h"
 #include "sherlock/scene.h"
 #include "sherlock/screen.h"
+#include "sherlock/scripts.h"
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
 #include "sherlock/user_interface.h"
@@ -89,6 +90,7 @@ public:
 	Resources *_res;
 	Scene *_scene;
 	Screen *_screen;
+	Scripts *_scripts;
 	Sound *_sound;
 	Talk *_talk;
 	UserInterface *_ui;
@@ -104,8 +106,6 @@ public:
 	Common::Array<Common::Point> _map;	// Map locations for each scene
 	bool _onChessboard;
 	bool _slowChess;
-	int _scriptMoreFlag;
-	Common::String _scriptName;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();
@@ -125,6 +125,8 @@ public:
 	bool readFlags(int flagNum);
 
 	void setFlags(int flagNum);
+
+	void freeSaveGameList();
 };
 
 } // End of namespace Sherlock

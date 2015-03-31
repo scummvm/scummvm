@@ -39,6 +39,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_res = nullptr;
 	_scene = nullptr;
 	_screen = nullptr;
+	_scripts = nullptr;
 	_sound = nullptr;
 	_talk = nullptr;
 	_ui = nullptr;
@@ -47,7 +48,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_loadingSavedGame = false;
 	_onChessboard = false;
 	_slowChess = false;
-	_scriptMoreFlag = 0;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -58,6 +58,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _people;
 	delete _scene;
 	delete _screen;
+	delete _scripts;
 	delete _sound;
 	delete _talk;
 	delete _ui;
@@ -82,6 +83,7 @@ void SherlockEngine::initialize() {
 	_people = new People(this);
 	_scene = new Scene(this);
 	_screen = new Screen(this);
+	_scripts = new Scripts(this);
 	_sound = new Sound(this);
 	_talk = new Talk(this);
 	_ui = new UserInterface(this);
@@ -120,10 +122,10 @@ void SherlockEngine::sceneLoop() {
 	while (!shouldQuit() && _scene->_goToScene == -1) {
 		// See if a script needs to be completed from either a goto room code,
 		// or a script that was interrupted by another script
-		if (_scriptMoreFlag == 1 || _scriptMoreFlag == 3)
-			_talk->talkTo(_scriptName);
+		if (_scripts->_scriptMoreFlag == 1 || _scripts->_scriptMoreFlag == 3)
+			_talk->talkTo(_scripts->_scriptName);
 		else
-			_scriptMoreFlag = 0;
+			_scripts->_scriptMoreFlag = 0;
 
 		// Handle any input from the keyboard or mouse
 		handleInput();
@@ -169,6 +171,10 @@ void SherlockEngine::setFlags(int flagNum) {
 	_flags[ABS(flagNum)] = flagNum >= 0;
 
 	_scene->checkSceneFlags(true);
+}
+
+void SherlockEngine::freeSaveGameList() {
+	// TODO
 }
 
 } // End of namespace Comet
