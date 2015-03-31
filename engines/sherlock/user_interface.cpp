@@ -472,6 +472,16 @@ void UserInterface::clearInfo() {
 }
 
 /**
+ * Clear any active text window
+ */
+void UserInterface::clearWindow() {
+	if (_windowOpen) {
+		_vm->_screen->vgaBar(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
+			SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+	}
+}
+
+/**
  * Handles counting down whilst checking for input, then clears the info line.
  */
 void UserInterface::whileMenuCounter() {

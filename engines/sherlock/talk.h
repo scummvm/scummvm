@@ -46,7 +46,14 @@ struct Statement {
 	int _quotient;
 	int _talkMap;
 
-	void synchronize(Common::SeekableReadStream &s, bool voices);
+	void synchronize(Common::SeekableReadStream &s);
+};
+
+struct TalkHistoryEntry {
+	bool _data[16];
+
+	TalkHistoryEntry();
+	bool &operator[](int index) { return _data[index]; }
 };
 
 class SherlockEngine;
@@ -59,9 +66,14 @@ private:
 	Common::Array<SavedSequence> _savedSequences;
 	Common::Stack<int> _sequenceStack;
 	Common::Array<Statement> _statements;
+	TalkHistoryEntry _talkHistory[500];
 	int _speaker;
 	int _talkIndex;
 	int _talkTo;
+	int _scriptSelect;
+	int _converseNum;
+	int _talkStealth;
+	int _talkToFlag;
 
 	void pullSequence();
 
@@ -69,7 +81,10 @@ private:
 
 	void clearTalking();
 
+	void stripVoiceCommands();
 	void setTalkMap();
+
+	void displayTalk(bool slamIt);
 public:
 	bool _talkToAbort;
 	int _talkCounter;
@@ -81,6 +96,8 @@ public:
 	void talk(int objNum);
 
 	void freeTalkVars();
+
+	void drawInterface();
 };
 
 } // End of namespace Sherlock

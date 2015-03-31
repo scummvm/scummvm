@@ -39,6 +39,8 @@ public:
 	int _page;
 public:
 	Journal();
+
+	void record(int converseNum, int statementNum);
 };
 
 } // End of namespace Sherlock

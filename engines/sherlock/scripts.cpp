@@ -29,7 +29,31 @@ Scripts::Scripts(SherlockEngine *vm): _vm(vm) {
 	_scriptMoreFlag = 0;
 	_scriptSaveIndex = 0;
 	_scriptSelect = 0;
-	_abortFlag = false;
 }
+
+void Scripts::doScript(const Common::String &str) {
+	// TODO
+}
+
+void Scripts::pullSeq() {
+	// TODO
+}
+
+void Scripts::pushSeq(int speak) {
+	// TODO
+}
+
+void Scripts::setStillSeq(int speak) {
+	// TODO
+}
+
+void Scripts::popStack() {
+	ScriptEntry script = _scriptStack.pop();
+	_scriptName = script._name;
+	_scriptSaveIndex = script._index;
+	_scriptSelect = script._select;
+	_scriptMoreFlag = true;
+}
+
 
 } // End of namespace Sherlock

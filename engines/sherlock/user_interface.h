@@ -50,6 +50,7 @@ enum MenuMode {
 	SETUP_MODE		= 12
 };
 
+extern const char COMMANDS[13];
 extern const int MENU_POINTS[12][4];
 
 extern const int INVENTORY_POINTS[8][3];
@@ -132,6 +133,7 @@ public:
 	void handleInput();
 
 	void clearInfo();
+	void clearWindow();
 
 	void whileMenuCounter();
 

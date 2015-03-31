@@ -25,10 +25,14 @@
 
 namespace Sherlock {
 
+#define SFX_COMMAND 140
+
+/*----------------------------------------------------------------*/
+
 /**
  * Load the data for a single statement within a talk file
  */
-void Statement::synchronize(Common::SeekableReadStream &s, bool voices) {
+void Statement::synchronize(Common::SeekableReadStream &s) {
 	int length;
 
 	length = s.readUint16LE();
@@ -38,25 +42,6 @@ void Statement::synchronize(Common::SeekableReadStream &s, bool voices) {
 	length = s.readUint16LE();
 	for (int idx = 0; idx < length; ++idx)
 		_reply += (char)s.readByte();
-
-	// If we don't have digital sound, we'll need to strip out voice commands from reply
-	if (!voices) {
-		// Scan for a 140 byte, which indicates playing a sound
-		for (uint idx = 0; idx < _reply.size(); ++idx) {
-			if (_reply[idx] == 140) {
-				// Replace instruction character with a space, and delete the
-				// rest of the name following it
-				_reply = Common::String(_reply.c_str(), _reply.c_str() + idx) + " " +
-					Common::String(_reply.c_str() + 9);
-			}
-		}
-
-		// Ensure the last character of the reply is not a space from the prior
-		// conversion loop, to avoid any issues with the space ever causing a page
-		// wrap, and ending up displaying another empty page
-		while (_reply.lastChar() == ' ')
-			_reply.deleteLastChar();
-	}
 
 	length = s.readUint16LE();
 	for (int idx = 0; idx < length; ++idx)
@@ -81,6 +66,12 @@ void Statement::synchronize(Common::SeekableReadStream &s, bool voices) {
 
 /*----------------------------------------------------------------*/
 
+TalkHistoryEntry::TalkHistoryEntry() {
+	Common::fill(&_data[0], &_data[16], false);
+}
+
+/*----------------------------------------------------------------*/
+
 Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
@@ -88,6 +79,10 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_speaker = 0;
 	_talkIndex = 0;
 	_talkTo = 0;
+	_scriptSelect = 0;
+	_converseNum = -1;
+	_talkStealth = 0;
+	_talkToFlag = -1;
 }
 
 /**
@@ -98,6 +93,7 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
+	Journal &journal = *_vm->_journal;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -105,6 +101,7 @@ void Talk::talkTo(const Common::String &filename) {
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	Common::Rect savedBounds = screen.getDisplayBounds();
+	bool abortFlag = false;
 
 	if (filename.empty())
 		// No filename passed, so exit
@@ -137,7 +134,7 @@ void Talk::talkTo(const Common::String &filename) {
 		// Only interrupt if an action if trying to do an action, and not just
 		// if the player is walking around the scene
 		if (people._allowWalkAbort)
-			scripts._abortFlag = true;
+			abortFlag = true;
 
 		people.gotoStand(people._player);
 	}
@@ -206,7 +203,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 			ui.banishWindow();
 			ui._windowBounds.top = CONTROLS_Y1;
-			scripts._abortFlag = true;
+			abortFlag = true;
 			break;
 
 		case INV_MODE:
@@ -228,7 +225,7 @@ void Talk::talkTo(const Common::String &filename) {
 		case FILES_MODE:
 			ui.banishWindow(true);
 			ui._windowBounds.top = CONTROLS_Y1;
-			scripts._abortFlag = true;
+			abortFlag = true;
 			break;
 
 		case SETUP_MODE:
@@ -237,7 +234,7 @@ void Talk::talkTo(const Common::String &filename) {
 			ui._temp = ui._oldTemp = ui._lookHelp = ui._invLookFlag = false;
 			ui._menuMode = STD_MODE;
 			events._pressed = events._released = events._oldButtons = 0;
-			scripts._abortFlag = true;
+			abortFlag = true;
 			break;
 		}
 	}
@@ -250,13 +247,161 @@ void Talk::talkTo(const Common::String &filename) {
 	// Find the first statement that has the correct flags
 	int select = -1;
 	for (uint idx = 0; idx < _statements.size() && select == -1; ++idx) {
-		/*
-		if (!_talkMap[idx])
+		if (_statements[idx]._talkMap == 0)
 			select = _talkIndex = idx;
-		*/
 	}
 
-	// TODOa
+	if (scripts._scriptMoreFlag && _scriptSelect != 0)
+		select = _scriptSelect;
+
+	if (select == -1)
+		error("Couldn't find statement to display");
+
+	// Add the statement into the journal and talk history
+	if (_talkTo != -1 && !_talkHistory[_converseNum][select])
+		journal.record(_converseNum | 2048, select);
+	_talkHistory[_converseNum][select] = true;
+
+	// Check if the talk file is meant to be a non-seen comment
+	if (filename[7] != '*') {
+		// Should we start in stealth mode?
+		if (_statements[select]._statement.hasPrefix("^")) {
+			_talkStealth = 2;
+		} else {
+			// Not in stealth mode, so bring up the ui window
+			_talkStealth = 0;
+			++_talkToFlag;
+			events.setCursor(WAIT);
+
+			ui._windowBounds.top = CONTROLS_Y;
+			ui._infoFlag = true;
+			ui.clearInfo();
+		}
+
+		// Handle replies until there's no further linked file, 
+		// or the link file isn't a reply first cnversation
+		for (;;) {
+			_sequenceStack.clear();
+			_scriptSelect = select;
+			_speaker = _talkTo;
+
+			Statement &statement = _statements[select];
+			scripts.doScript(_statements[select]._reply);
+
+			if (_talkToAbort)
+				return;
+
+			if (!_talkStealth)
+				ui.clearWindow();
+
+			if (statement._modified.size() > 0) {
+				for (uint idx = 0; idx < statement._modified.size(); ++idx)
+					_vm->setFlags(statement._modified[idx]);
+
+				setTalkMap();
+			}
+			
+			// Check for a linked file
+			if (!statement._linkFile.empty() && !scripts._scriptMoreFlag) {
+				freeTalkVars();
+				loadTalkFile(statement._linkFile);
+
+				// Scan for the first valid statement in the newly loaded file
+				select = -1;
+				for (uint idx = 0; idx < _statements.size(); ++idx) {
+					if (_statements[idx]._talkMap == 0) {
+						select = idx;
+						break;
+					}
+				}
+
+				if (_talkToFlag == 1)
+					scripts.pullSeq();
+
+				// Set the stealth mode for the new talk file
+				Statement &newStatement = _statements[select];
+				_talkStealth = newStatement._statement.hasPrefix("^") ? 2 : 0;
+
+				// If the new conversion is a reply first, then we don't need
+				// to display any choices, since the reply needs to be shown
+				if (!newStatement._statement.hasPrefix("*") &&
+						!newStatement._statement.hasPrefix("^")) {
+					_sequenceStack.clear();
+					scripts.pushSeq(_talkTo);
+					scripts.setStillSeq(_talkTo);
+					_talkIndex = select;
+					ui._selector = ui._oldSelector = -1;
+
+					if (!ui._windowOpen) {
+						// Draw the talk interface on the back buffer
+						drawInterface();
+						displayTalk(false);
+					} else {
+						displayTalk(true);
+					}
+
+					byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
+
+					// If the window is alraedy open, simply draw. Otherwise, do it
+					// to the back buffer and then summon the window
+					if (ui._windowOpen) {
+						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, "Exit");
+					} else {
+						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, "Exit");
+					
+						if (!ui._windowStyle) {
+							screen.slamRect(Common::Rect(0, CONTROLS_Y,
+								SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+						} else {
+							ui.summonWindow();
+						}
+
+						ui._windowOpen = true;
+					}
+
+					// Break out of loop now that we're waiting for player input
+					events.setCursor(ARROW);
+					break;
+				} else {
+					// Add the statement into the journal and talk history
+					if (_talkTo != -1 && !_talkHistory[_converseNum][select])
+						journal.record(_converseNum | 2048, select);
+					_talkHistory[_converseNum][select] = true;
+
+				}
+
+				ui._key = ui._oldKey = COMMANDS[TALK_MODE - 1];
+				ui._temp = ui._oldTemp = 0;
+				ui._menuMode = TALK_MODE;
+				_talkToFlag = 2;
+			} else {
+				freeTalkVars();
+
+				if (!ui._lookScriptFlag) {
+					ui.banishWindow();
+					ui._windowBounds.top = CONTROLS_Y1;
+					ui._menuMode = STD_MODE;
+				}
+
+				break;
+			}
+		}
+	}
+
+	_talkStealth = 0;
+	events._pressed = events._released = events._oldButtons = 0;
+	events.clearKeyboard();
+
+	screen.setDisplayBounds(savedBounds);
+	_talkToAbort = abortFlag;
+
+	// If a script was added to the script stack, restore state so that the
+	// previous script can continue
+	if (!scripts._scriptStack.empty()) {
+		scripts.popStack();
+	}
+
+	events.setCursor(ARROW);
 }
 
 void Talk::talk(int objNum) {
@@ -302,9 +447,12 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	_statements.resize(talkStream->readByte());
 	for (uint idx = 0; idx < _statements.size(); ++idx)
-		_statements[idx].synchronize(*talkStream, sound._voicesOn);
+		_statements[idx].synchronize(*talkStream);
 	
 	delete talkStream;
+
+	if (!sound._voicesOn)
+		stripVoiceCommands();
 	setTalkMap();
 }
 
@@ -313,7 +461,33 @@ void Talk::clearTalking() {
 }
 
 /**
- * Form a translate table from the loaded statements from a talk file
+ * Remove any voice commands from a loaded statement list
+ */
+void Talk::stripVoiceCommands() {
+	for (uint sIdx = 0; sIdx < _statements.size(); ++sIdx) {
+		Statement &statement = _statements[sIdx];
+
+		// Scan for an sound effect byte, which indicates to play a sound
+		for (uint idx = 0; idx < statement._reply.size(); ++idx) {
+			if (statement._reply[idx] == SFX_COMMAND) {
+				// Replace instruction character with a space, and delete the
+				// rest of the name following it
+				statement._reply = Common::String(statement._reply.c_str(), 
+					statement._reply.c_str() + idx) + " " +
+					Common::String(statement._reply.c_str() + 9);
+			}
+		}
+
+		// Ensure the last character of the reply is not a space from the prior
+		// conversion loop, to avoid any issues with the space ever causing a page
+		// wrap, and ending up displaying another empty page
+		while (statement._reply.lastChar() == ' ')
+			statement._reply.deleteLastChar();
+	}
+}
+
+/**
+ * Form a table of the display indexes for statements
  */
 void Talk::setTalkMap() {
 	int statementNum = 0;
@@ -332,5 +506,12 @@ void Talk::setTalkMap() {
 	}
 }
 
+void Talk::drawInterface() {
+	// TODO
+}
+
+void Talk::displayTalk(bool slamIt) {
+	// TODO
+}
 
 } // End of namespace Sherlock

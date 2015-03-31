@@ -24,23 +24,39 @@
 #define SHERLOCK_SCRIPTS_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
+#include "common/stack.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
+struct ScriptEntry {
+	Common::String _name;
+	int _index;
+	int _select;
+};
+
 class Scripts {
 private:
 	SherlockEngine *_vm;
 public:
+	Common::Stack<ScriptEntry> _scriptStack;
 	int _scriptMoreFlag;
 	Common::String _scriptName;
 	int _scriptSaveIndex;
 	int _scriptSelect;
-	bool _abortFlag;
 public:
 	Scripts(SherlockEngine *vm);
+
+	void doScript(const Common::String &str);
+
+	void pullSeq();
+
+	void pushSeq(int speak);
+
+	void setStillSeq(int speak);
+
+	void popStack();
 };
 
 } // End of namespace Sherlock

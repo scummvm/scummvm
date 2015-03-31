@@ -37,4 +37,8 @@ Journal::Journal() {
 	_page = 0;
 }
 
+void Journal::record(int converseNum, int statementNum) {
+	// TODO
+}
+
 } // End of namespace Sherlock
