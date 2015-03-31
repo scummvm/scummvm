@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/stream.h"
 #include "common/stack.h"
 
@@ -45,6 +46,7 @@ struct Statement {
 	int _portraitSide;
 	int _quotient;
 	int _talkMap;
+	Common::Rect _talkPos;
 
 	void synchronize(Common::SeekableReadStream &s);
 };
@@ -59,7 +61,6 @@ struct TalkHistoryEntry {
 class SherlockEngine;
 
 class Talk {
-
 private:
 	SherlockEngine *_vm;
 	int _saveSeqNum;
@@ -74,6 +75,7 @@ private:
 	int _converseNum;
 	int _talkStealth;
 	int _talkToFlag;
+	bool _moreTalkUp, _moreTalkDown;
 
 	void pullSequence();
 
@@ -84,7 +86,9 @@ private:
 	void stripVoiceCommands();
 	void setTalkMap();
 
-	void displayTalk(bool slamIt);
+	bool displayTalk(bool slamIt);
+
+	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
 public:
 	bool _talkToAbort;
 	int _talkCounter;

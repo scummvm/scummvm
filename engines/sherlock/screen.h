@@ -49,7 +49,8 @@ enum {
 	BUTTON_TOP = 233,
 	BUTTON_MIDDLE	= 244,
 	BUTTON_BOTTOM	= 248,
-	TALK_FOREGROUND = 12
+	TALK_FOREGROUND = 12,
+	TALK_NULL		= 16
 };
 
 class SherlockEngine;

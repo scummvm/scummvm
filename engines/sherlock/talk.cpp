@@ -22,6 +22,7 @@
 
 #include "sherlock/talk.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/screen.h"
 
 namespace Sherlock {
 
@@ -83,6 +84,7 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_converseNum = -1;
 	_talkStealth = 0;
 	_talkToFlag = -1;
+	_moreTalkDown = _moreTalkUp = false;
 }
 
 /**
@@ -405,6 +407,7 @@ void Talk::talkTo(const Common::String &filename) {
 }
 
 void Talk::talk(int objNum) {
+
 	// TODO
 }
 
@@ -510,8 +513,98 @@ void Talk::drawInterface() {
 	// TODO
 }
 
-void Talk::displayTalk(bool slamIt) {
-	// TODO
+/**
+ * Display a list of statements in a window at the bottom of the scren that the 
+ * player can select from.
+ */
+bool Talk::displayTalk(bool slamIt) {
+	Screen &screen = *_vm->_screen;
+	int yp = CONTROLS_Y + 14;
+	int lineY = -1;
+	_moreTalkDown = _moreTalkUp = false;
+	
+	for (uint idx = 0; idx < _statements.size(); ++idx) {
+		_statements[idx]._talkPos.top = _statements[idx]._talkPos.bottom = -1;
+	}
+
+	if (_talkIndex) {
+		for (uint idx = 0; idx < _statements.size(); ++idx) {
+			if (_statements[idx]._talkMap != -1)
+				_moreTalkUp = true;
+		}
+	}
+
+	// Display the up arrow if the first option is scrolled off-screen
+	if (_moreTalkUp) {
+		if (slamIt) {
+			screen.print(Common::Point(5, CONTROLS_Y + 13), INV_FOREGROUND, "~");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
+		} else {
+			screen.gPrint(Common::Point(5, CONTROLS_Y + 12), INV_FOREGROUND, "~");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, "Up");
+		}
+	} else {
+		if (slamIt) {
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, "Up");
+			screen.vgaBar(Common::Rect(5, CONTROLS_Y + 11, 15, CONTROLS_Y + 22), INV_BACKGROUND);
+		} else {
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
+			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, 
+				15, CONTROLS_Y + 22), INV_BACKGROUND);
+		}
+	}
+
+	// Loop through the statements
+	bool done = false;
+	for (uint idx = _talkIndex; idx < _statements.size() && !done; ++idx) {
+		Statement &statement = _statements[idx];
+
+		if (statement._talkMap != -1) {
+			bool flag = _talkHistory[_converseNum][idx];
+			lineY = talkLine(idx, statement._talkMap, flag ? TALK_NULL : INV_FOREGROUND, 
+				yp, slamIt);
+		
+			if (lineY != -1) {
+				statement._talkPos.top = yp;
+				yp = lineY;
+				statement._talkPos.bottom = yp;
+
+				if (yp == SHERLOCK_SCREEN_HEIGHT)
+					done = true;
+			} else {
+				done = true;
+			}
+		}
+	}
+
+	// Display the down arrow if there are more statements available
+	if (lineY == -1 || lineY == SHERLOCK_SCREEN_HEIGHT) {
+		_moreTalkDown = true;
+
+		if (slamIt) {
+			screen.print(Common::Point(5, 190), INV_FOREGROUND, "|");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
+		} else {
+			screen.gPrint(Common::Point(5, 189), INV_FOREGROUND, "|");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, "Down");
+		}
+	} else {
+		if (slamIt) {
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, "Down");
+			screen.vgaBar(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
+		} else {
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, "Down");
+			screen._backBuffer1.fillRect(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
+		}
+	}
+
+	return done;
 }
+
+int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) {
+	// TODO
+	return 0;
+}
+
 
 } // End of namespace Sherlock
