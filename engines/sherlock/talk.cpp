@@ -190,7 +190,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 		case TALK_MODE:
 			if (_speaker < 128)
-				clearTalking();
+				people.clearTalking();
 			if (_talkCounter)
 				return;
 
@@ -554,10 +554,6 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	setTalkMap();
 }
 
-void Talk::clearTalking() {
-	// TODO
-}
-
 /**
  * Remove any voice commands from a loaded statement list
  */
@@ -604,8 +600,35 @@ void Talk::setTalkMap() {
 	}
 }
 
+/**
+ * Draws the interface for conversation display
+ */
 void Talk::drawInterface() {
-	// TODO
+	Screen &screen = *_vm->_screen;
+	Surface &bb = *screen._backBuffer;
+
+	bb.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
+	bb.fillRect(Common::Rect(0, CONTROLS_Y + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 10,
+		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH - 2,
+		SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
+		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+
+	if (_talkTo != -1) {
+		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
+			119 - screen.stringWidth("Exit") / 2, "Exit");
+		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
+			159 - screen.stringWidth("Up"), "Up");
+		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
+			200 - screen.stringWidth("Down") / 2, "Down");
+	} else {
+		int strWidth = screen.stringWidth(PRESS_KEY_TO_CONTINUE);
+		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
+			160 - strWidth, PRESS_KEY_TO_CONTINUE);
+		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, false, "P");
+	}
 }
 
 /**

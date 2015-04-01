@@ -57,13 +57,16 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_oldWalkSequence = -1;
 	_allowWalkAbort = false;
 	_portraitLoaded = false;
+	_portraitsOn = false;
 	_clearingThePortrait = false;
 	_srcZone = _destZone = 0;
+	_talkPics = nullptr;
 }
 
 People::~People() {
 	if (_walkLoaded)
 		delete _data[PLAYER]._images;
+	delete _talkPics;
 }
 
 void People::reset() {
@@ -431,6 +434,39 @@ void People::goAllTheWay() {
 			_walkDest = _walkTo.top();
 			setWalking();
 		}
+	}
+}
+
+/**
+ * Turn off any currently active portraits, and removes them from being drawn
+ */
+void People::clearTalking() {
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+
+	if (_portraitsOn) {
+		Common::Point pt = _portrait._position;
+		int width, height;
+		_portrait._imageFrame = _talkPics ? &(*_talkPics)[0] : (ImageFrame *)nullptr;
+
+		// Flag portrait for removal, and save the size of the frame to use erasing it
+		_portrait._type = REMOVE;
+		_portrait._delta.x = width = _portrait.frameWidth();
+		_portrait._delta.y = height = _portrait.frameHeight();
+
+		delete _talkPics;
+		_talkPics = nullptr;
+
+		// Flag to let the talk code know not to interrupt on the next doBgAnim
+		_clearingThePortrait = true;
+		scene.doBgAnim();
+		_clearingThePortrait = false;
+
+		screen.slamArea(pt.x, pt.y, width, height);
+
+		if (!talk._talkToAbort)
+			_portraitLoaded = false;
 	}
 }
 

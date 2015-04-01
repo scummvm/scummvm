@@ -66,12 +66,14 @@ private:
 	bool _walkLoaded;
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
+	ImageFile *_talkPics;
 public:
 	Common::Point _walkDest;
 	Common::Stack<Common::Point> _walkTo;
 	Person &_player;
 	bool _holmesOn;
 	bool _portraitLoaded;
+	bool _portraitsOn;
 	Object _portrait;
 	bool _clearingThePortrait;
 	bool _allowWalkAbort;
@@ -96,6 +98,8 @@ public:
 	void walkToCoords(const Common::Point &destPos, int destDir);
 
 	void goAllTheWay();
+
+	void clearTalking();
 };
 
 } // End of namespace Sherlock

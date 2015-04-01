@@ -81,8 +81,6 @@ private:
 
 	void loadTalkFile(const Common::String &filename);
 
-	void clearTalking();
-
 	void stripVoiceCommands();
 	void setTalkMap();
 
