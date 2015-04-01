@@ -601,10 +601,95 @@ bool Talk::displayTalk(bool slamIt) {
 	return done;
 }
 
+/**
+ * Prints a single conversation option in the interface window
+ */
 int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) {
-	// TODO
-	return 0;
-}
+	Screen &screen = *_vm->_screen;
+	int idx = lineNum;
+	Common::String msg, number;
+	bool numberFlag = false;
 
+	// Get the statement to display as well as optional number prefix
+	if (idx < 128) {
+		number = Common::String::format("%d.", stateNum + 1);
+		numberFlag = true;
+	} else {
+		idx -= 128;
+	}
+	msg = _statements[idx]._statement;
+
+	// Handle potentially multiple lines needed to display entire statement
+	const char *lineStartP = msg.c_str();
+	int maxWidth = 298 - numberFlag ? 18 : 0;
+	for (;;) {
+		// Get as much of the statement as possible will fit on the
+		Common::String sLine;
+		const char *lineEndP = lineStartP;
+		int width = 0;
+		do {
+			width += screen.charWidth(*lineEndP);
+		} while (*++lineEndP && width < maxWidth);
+
+		// Check if we need to wrap the line
+		if (width >= maxWidth) {
+			// Work backwards to the prior word's end
+			while (*--lineEndP != ' ')
+				;
+
+			sLine = Common::String(lineStartP, lineEndP++);
+		} else {
+			// Can display remainder of the statement on the current line
+			sLine = Common::String(lineStartP);
+		}
+
+
+		if (lineY <= (SHERLOCK_SCREEN_HEIGHT - 10)) {
+			// Need to directly display on-screen?
+			if (slamIt) {
+				// See if a numer prefix is needed or not
+				if (numberFlag) {
+					// Are we drawing the first line?
+					if (lineStartP == msg.c_str()) {
+						// We are, so print the number and then the text
+						screen.print(Common::Point(16, lineY), color, number.c_str());
+					}
+
+					// Draw the line with an indent
+					screen.print(Common::Point(30, lineY), color, sLine.c_str());
+				} else {
+					screen.print(Common::Point(16, lineY), color, sLine.c_str());
+				}
+			} else {
+				if (numberFlag) {
+					if (lineStartP == msg.c_str()) {
+						screen.gPrint(Common::Point(16, lineY - 1), color, number.c_str());
+					}
+
+					screen.gPrint(Common::Point(30, lineY - 1), color, sLine.c_str());
+				} else {
+					screen.gPrint(Common::Point(16, lineY - 1), color, sLine.c_str());
+				}
+			}
+
+			// Move to next line, if any
+			lineY += 9;
+			lineStartP = lineEndP;
+			
+			if (!*lineEndP)
+				break;
+		} else {
+			// We're close to the bottom of the screen, so stop display
+			lineY = -1;
+			break;
+		}
+	}
+
+	if (lineY == -1 && lineStartP != msg.c_str())
+		lineY = SHERLOCK_SCREEN_HEIGHT;
+
+	// Return the Y position of the next line to follow this one
+	return lineY;
+}
 
 } // End of namespace Sherlock
