@@ -406,9 +406,104 @@ void Talk::talkTo(const Common::String &filename) {
 	events.setCursor(ARROW);
 }
 
+/**
+ * Main method for handling conversations when a character to talk to has been
+ * selected. It will make Holmes walk to the person to talk to, draws the 
+ * interface window for the conversation and passes on control to give the
+ * player a list of options to make a selection from
+ */
 void Talk::talk(int objNum) {
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Scripts &scripts = *_vm->_scripts;
+	UserInterface &ui = *_vm->_ui;
+	Object &obj = scene._bgShapes[objNum];
 
-	// TODO
+	ui._windowBounds.top = CONTROLS_Y;
+	ui._infoFlag = true;
+	_speaker = 128;
+	loadTalkFile(scene._bgShapes[objNum]._name);
+
+	// Find the first statement with the correct flags
+	int select = -1;
+	for (uint idx = 0; idx < _statements.size(); ++idx) {
+		if (_statements[idx]._talkMap == 0) {
+			select = idx;
+			break;
+		}
+	}
+	if (select == -1)
+		error("No entry matched all required flags");
+
+	// See if the statement is a stealth mode reply
+	Statement &statement = _statements[select];
+	if (statement._statement.hasPrefix("^")) {
+		_sequenceStack.clear();
+
+		// Start talk in stealth mode
+		_talkStealth = 2;
+
+		talkTo(obj._name);
+	} else if (statement._statement.hasPrefix("*")) {
+		// Character being spoken to will speak first
+		_sequenceStack.clear();
+		scripts.pushSeq(_talkTo);
+		scripts.setStillSeq(_talkTo);
+
+		events.setCursor(WAIT);
+		if (obj._lookPosition.y != 0)
+			// Need to walk to character first
+			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100), 
+				obj._lookFacing);
+		events.setCursor(ARROW);
+
+		if (_talkToAbort)
+			talkTo(obj._name);
+	} else {
+		// Holmes will be speaking first
+		_sequenceStack.clear();
+		scripts.pushSeq(_talkTo);
+		scripts.setStillSeq(_talkTo);
+
+		_talkToFlag = false;
+		events.setCursor(WAIT);
+		if (obj._lookPosition.y != 0)
+			// Walk over to person to talk to
+			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100),
+			obj._lookFacing);
+		events.setCursor(ARROW);
+
+		if (!_talkToAbort) {
+			// See if walking over triggered a conversation
+			if (_talkToFlag) {
+				if (_talkToFlag == 1) {
+					events.setCursor(ARROW);
+					// _sequenceStack._count = 1;
+					scripts.pullSeq();
+				}
+			} else {
+				drawInterface();
+
+				events._pressed = events._released = false;
+				_talkIndex = select;
+				displayTalk(false);
+				ui._selector = ui._oldSelector = -1;
+
+				if (!ui._windowStyle) {
+					screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
+						SHERLOCK_SCREEN_HEIGHT));
+				} else {
+					ui.summonWindow();
+				}
+
+				ui._windowOpen = true;
+			}
+
+			_talkToFlag = -1;
+		}
+	}
 }
 
 /**
