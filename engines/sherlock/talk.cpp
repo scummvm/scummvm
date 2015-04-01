@@ -831,37 +831,83 @@ void Talk::clearSequences() {
 	_sequenceStack.clear();
 }
 
+/**
+ * Pulls a background object sequence from the sequence stack and restore's the
+ * object's sequence
+ */
 void Talk::pullSequence() {
-	// TODO
+	Scene &scene = *_vm->_scene;
+
+	SequenceEntry seq = _sequenceStack.pop();
+	if (seq._objNum != -1) {
+		Object &obj = scene._bgShapes[seq._objNum];
+
+		if (obj._seqSize < MAX_TALK_SEQUENCES) {
+			warning("Tried to restore too few frames");
+		} else {
+			for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
+				obj._sequences[idx] = seq._sequences[idx];
+
+			obj._frameNumber = seq._frameNumber;
+			obj._seqTo = seq._seqTo;
+		}
+	}
 }
 
-void Talk::pushSequence(int speak) {
-	// TODO
+/**
+ * Push the sequence of a background object that's an NPC that needs to be
+ * saved onto the sequence stack.
+ */
+void Talk::pushSequence(int speaker) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+
+	// Only proceed if a speaker is specified
+	if (speaker == -1)
+		return;
+
+	SequenceEntry seqEntry;
+	if (!speaker) {
+		seqEntry._objNum = -1;
+	} else {
+		seqEntry._objNum = people.findSpeaker(speaker);
+
+		Object &obj = scene._bgShapes[seqEntry._objNum];
+		for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
+			seqEntry._sequences.push_back(obj._sequences[idx]);
+
+		seqEntry._frameNumber = obj._frameNumber;
+		seqEntry._seqTo = obj._seqTo;
+	}
+	
+	_sequenceStack.push(seqEntry);
+	if (_sequenceStack.size() >= 5)
+		error("sequence stack overflow");
 }
 
 /**
  * Change the sequence of a background object corresponding to a given speaker.
  * The new sequence will display the character as "listening"
  */
-void Talk::setStillSeq(int speak) {
+void Talk::setStillSeq(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 
 	// Don't bother doing anything if no specific speaker is specified
-	if (speak == -1)
+	if (speaker == -1)
 		return;
 
-	if (speak) {
-		int objNum = people.findSpeaker(speak);
+	if (speaker) {
+		int objNum = people.findSpeaker(speaker);
 		if (objNum != -1) {
 			Object &obj = scene._bgShapes[objNum];
 			
 			if (obj._seqSize < MAX_TALK_SEQUENCES) {
-				warning("Tried to copy too many still frames");
+				warning("Tried to copy too few still frames");
 			} else {
 				for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = STILL_SEQUENCES[speak][idx];
-					if (idx > 0 && !TALK_SEQUENCES[speak][idx] && !TALK_SEQUENCES[speak][idx - 1])
+					obj._sequences[idx] = STILL_SEQUENCES[speaker][idx];
+					if (idx > 0 && !TALK_SEQUENCES[speaker][idx] && !TALK_SEQUENCES[speaker][idx - 1])
 						break;
 				}
 

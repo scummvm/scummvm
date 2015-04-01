@@ -38,6 +38,11 @@ struct SavedSequence {
 	Common::Array<byte> _sequences;
 };
 
+struct SequenceEntry : public SavedSequence {
+	int _frameNumber;
+	int _seqTo;
+};
+
 struct Statement {
 	Common::String _statement;
 	Common::String _reply;
@@ -80,8 +85,8 @@ private:
 	SherlockEngine *_vm;
 	int _saveSeqNum;
 	Common::Array<SavedSequence> _savedSequences;
+	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Array<Statement> _statements;
-	Common::Stack<int> _sequenceStack;
 	TalkHistoryEntry _talkHistory[500];
 	int _speaker;
 	int _talkIndex;
@@ -116,10 +121,10 @@ public:
 
 	void drawInterface();
 
-	void setStillSeq(int speak);
+	void setStillSeq(int speaker);
 	void clearSequences();
 	void pullSequence();
-	void pushSequence(int speak);
+	void pushSequence(int speaker);
 	bool isSequencesEmpty() const { return _sequenceStack.empty(); }
 };
 
