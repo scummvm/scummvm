@@ -470,4 +470,9 @@ void People::clearTalking() {
 	}
 }
 
+int People::findSpeaker(int speaker) {
+	// TODO
+	return -1;
+}
+
 } // End of namespace Sherlock

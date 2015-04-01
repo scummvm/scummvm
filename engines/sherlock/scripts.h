@@ -50,12 +50,6 @@ public:
 
 	void doScript(const Common::String &str);
 
-	void pullSeq();
-
-	void pushSeq(int speak);
-
-	void setStillSeq(int speak);
-
 	void popStack();
 };
 

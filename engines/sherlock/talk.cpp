@@ -73,6 +73,16 @@ TalkHistoryEntry::TalkHistoryEntry() {
 
 /*----------------------------------------------------------------*/
 
+TalkSequences::TalkSequences(const byte *data) {
+	Common::copy(data, data + MAX_TALK_SEQUENCES, _data);
+}
+
+void TalkSequences::clear() {
+	Common::fill(&_data[0], &_data[MAX_TALK_SEQUENCES], 0); 
+}
+
+/*----------------------------------------------------------------*/
+
 Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
@@ -85,6 +95,15 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_talkStealth = 0;
 	_talkToFlag = -1;
 	_moreTalkDown = _moreTalkUp = false;
+}
+
+void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, int maxPeople) {
+	for (int idx = 0; idx < maxPeople; ++idx) {
+		STILL_SEQUENCES.push_back(TalkSequences(stillSequences));
+		TALK_SEQUENCES.push_back(TalkSequences(talkSequences));
+		stillSequences += MAX_TALK_SEQUENCES;
+		talkSequences += MAX_TALK_SEQUENCES;
+	}
 }
 
 /**
@@ -158,7 +177,7 @@ void Talk::talkTo(const Common::String &filename) {
 		}
 	}
 
-	while (_sequenceStack.empty())
+	while (!_sequenceStack.empty())
 		pullSequence();
 
 	// Restore any pressed button
@@ -283,7 +302,7 @@ void Talk::talkTo(const Common::String &filename) {
 		// Handle replies until there's no further linked file, 
 		// or the link file isn't a reply first cnversation
 		for (;;) {
-			_sequenceStack.clear();
+			clearSequences();
 			_scriptSelect = select;
 			_speaker = _talkTo;
 
@@ -318,7 +337,7 @@ void Talk::talkTo(const Common::String &filename) {
 				}
 
 				if (_talkToFlag == 1)
-					scripts.pullSeq();
+					pullSequence();
 
 				// Set the stealth mode for the new talk file
 				Statement &newStatement = _statements[select];
@@ -328,9 +347,9 @@ void Talk::talkTo(const Common::String &filename) {
 				// to display any choices, since the reply needs to be shown
 				if (!newStatement._statement.hasPrefix("*") &&
 						!newStatement._statement.hasPrefix("^")) {
-					_sequenceStack.clear();
-					scripts.pushSeq(_talkTo);
-					scripts.setStillSeq(_talkTo);
+					clearSequences();
+					pushSequence(_talkTo);
+					setStillSeq(_talkTo);
 					_talkIndex = select;
 					ui._selector = ui._oldSelector = -1;
 
@@ -417,7 +436,6 @@ void Talk::talk(int objNum) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	Scripts &scripts = *_vm->_scripts;
 	UserInterface &ui = *_vm->_ui;
 	Object &obj = scene._bgShapes[objNum];
 
@@ -440,7 +458,7 @@ void Talk::talk(int objNum) {
 	// See if the statement is a stealth mode reply
 	Statement &statement = _statements[select];
 	if (statement._statement.hasPrefix("^")) {
-		_sequenceStack.clear();
+		clearSequences();
 
 		// Start talk in stealth mode
 		_talkStealth = 2;
@@ -448,9 +466,9 @@ void Talk::talk(int objNum) {
 		talkTo(obj._name);
 	} else if (statement._statement.hasPrefix("*")) {
 		// Character being spoken to will speak first
-		_sequenceStack.clear();
-		scripts.pushSeq(_talkTo);
-		scripts.setStillSeq(_talkTo);
+		clearSequences();
+		pushSequence(_talkTo);
+		setStillSeq(_talkTo);
 
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
@@ -463,9 +481,9 @@ void Talk::talk(int objNum) {
 			talkTo(obj._name);
 	} else {
 		// Holmes will be speaking first
-		_sequenceStack.clear();
-		scripts.pushSeq(_talkTo);
-		scripts.setStillSeq(_talkTo);
+		clearSequences();
+		pushSequence(_talkTo);
+		setStillSeq(_talkTo);
 
 		_talkToFlag = false;
 		events.setCursor(WAIT);
@@ -481,7 +499,7 @@ void Talk::talk(int objNum) {
 				if (_talkToFlag == 1) {
 					events.setCursor(ARROW);
 					// _sequenceStack._count = 1;
-					scripts.pullSeq();
+					pullSequence();
 				}
 			} else {
 				drawInterface();
@@ -511,10 +529,6 @@ void Talk::talk(int objNum) {
  */
 void Talk::freeTalkVars() {
 	_statements.clear();
-}
-
-void Talk::pullSequence() {
-	// TODO
 }
 
 /**
@@ -808,6 +822,54 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 
 	// Return the Y position of the next line to follow this one
 	return lineY;
+}
+
+/**
+ * Clears the stack of pending object sequences associated with speakers in the scene
+ */
+void Talk::clearSequences() {
+	_sequenceStack.clear();
+}
+
+void Talk::pullSequence() {
+	// TODO
+}
+
+void Talk::pushSequence(int speak) {
+	// TODO
+}
+
+/**
+ * Change the sequence of a background object corresponding to a given speaker.
+ * The new sequence will display the character as "listening"
+ */
+void Talk::setStillSeq(int speak) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+
+	// Don't bother doing anything if no specific speaker is specified
+	if (speak == -1)
+		return;
+
+	if (speak) {
+		int objNum = people.findSpeaker(speak);
+		if (objNum != -1) {
+			Object &obj = scene._bgShapes[objNum];
+			
+			if (obj._seqSize < MAX_TALK_SEQUENCES) {
+				warning("Tried to copy too many still frames");
+			} else {
+				for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
+					obj._sequences[idx] = STILL_SEQUENCES[speak][idx];
+					if (idx > 0 && !TALK_SEQUENCES[speak][idx] && !TALK_SEQUENCES[speak][idx - 1])
+						break;
+				}
+
+				obj._frameNumber = 0;
+				obj._seqTo = 0;
+			}
+		}
+	}
 }
 
 } // End of namespace Sherlock

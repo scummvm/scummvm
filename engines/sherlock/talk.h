@@ -31,6 +31,8 @@
 
 namespace Sherlock {
 
+#define MAX_TALK_SEQUENCES 11
+
 struct SavedSequence {
 	int _objNum;
 	Common::Array<byte> _sequences;
@@ -58,15 +60,28 @@ struct TalkHistoryEntry {
 	bool &operator[](int index) { return _data[index]; }
 };
 
+struct TalkSequences {
+	byte _data[MAX_TALK_SEQUENCES];
+
+	TalkSequences() { clear(); }
+	TalkSequences(const byte *data);
+
+	byte &operator[](int idx) { return _data[idx]; }
+	void clear();
+};
+
 class SherlockEngine;
 
 class Talk {
 private:
+	Common::Array<TalkSequences> STILL_SEQUENCES;
+	Common::Array<TalkSequences> TALK_SEQUENCES;
+private:
 	SherlockEngine *_vm;
 	int _saveSeqNum;
 	Common::Array<SavedSequence> _savedSequences;
-	Common::Stack<int> _sequenceStack;
 	Common::Array<Statement> _statements;
+	Common::Stack<int> _sequenceStack;
 	TalkHistoryEntry _talkHistory[500];
 	int _speaker;
 	int _talkIndex;
@@ -76,8 +91,6 @@ private:
 	int _talkStealth;
 	int _talkToFlag;
 	bool _moreTalkUp, _moreTalkDown;
-
-	void pullSequence();
 
 	void loadTalkFile(const Common::String &filename);
 
@@ -92,6 +105,8 @@ public:
 	int _talkCounter;
 public:
 	Talk(SherlockEngine *vm);
+	void setSequences(const byte *talkSequences, const byte *stillSequences,
+		int maxPeople);
 
 	void talkTo(const Common::String &filename);
 
@@ -100,6 +115,12 @@ public:
 	void freeTalkVars();
 
 	void drawInterface();
+
+	void setStillSeq(int speak);
+	void clearSequences();
+	void pullSequence();
+	void pushSequence(int speak);
+	bool isSequencesEmpty() const { return _sequenceStack.empty(); }
 };
 
 } // End of namespace Sherlock

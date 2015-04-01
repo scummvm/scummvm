@@ -100,6 +100,8 @@ public:
 	void goAllTheWay();
 
 	void clearTalking();
+
+	int findSpeaker(int speaker);
 };
 
 } // End of namespace Sherlock
