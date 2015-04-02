@@ -193,7 +193,7 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 		std::string id = "FileReference_" + node->name;
 		FileProperty property = FileProperty(node->name, node->name, node->name, "<group>");
 
-		ADD_SETTING_ORDER_NOVALUE(children, getHash(id), node->name, order++);
+		ADD_SETTING_ORDER_NOVALUE(children, getHash(node->name), node->name, order++);
 		ADD_BUILD_FILE(id, node->name, node->name + " in Sources");
 		ADD_FILE_REFERENCE(node->name, property);
 
