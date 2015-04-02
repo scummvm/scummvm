@@ -329,8 +329,19 @@ void Inventory::invCommands(bool slamIt) {
 	}
 }
 
-void Inventory::doInvLite(int index, byte color) {
-	// TODO
+/**
+ * Set the highlighting color of a given inventory item
+ */
+void Inventory::highlight(int index, byte color) {
+	Screen &screen = *_vm->_screen;
+	Surface &bb = *screen._backBuffer;
+	int slot = index - _invIndex;
+	Graphics::Surface &img = (*_invShapes[slot])[0]._frame;
+
+	bb.fillRect(Common::Rect(8 + slot * 52, 165, (slot + 1) * 52, 194), color);
+	bb.transBlitFrom(img, Common::Point(6 + slot * 52 + ((47 - img.w) / 2),
+		163 + ((33 - img.h) / 2)));
+	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
 
 void Inventory::doInvJF() {

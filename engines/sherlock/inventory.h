@@ -87,7 +87,7 @@ public:
 
 	void invCommands(bool slamIt);
 
-	void doInvLite(int index, byte color);
+	void highlight(int index, byte color);
 
 	void doInvJF();
 };

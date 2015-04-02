@@ -789,11 +789,11 @@ void UserInterface::doInvControl() {
 		if (_oldSelector != -1) {
 			// Un-highlight
 			if (_oldSelector >= inv._invIndex && _oldSelector < (inv._invIndex + 6))
-				inv.doInvLite(_oldSelector, BUTTON_MIDDLE);
+				inv.highlight(_oldSelector, BUTTON_MIDDLE);
 		}
 
 		if (_selector != -1)
-			inv.doInvLite(_selector, 235);
+			inv.highlight(_selector, 235);
 
 		_oldSelector = _selector;
 	}
