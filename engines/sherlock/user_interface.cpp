@@ -1127,6 +1127,10 @@ void UserInterface::doTalkControl() {
 }
 
 void UserInterface::journalControl() {
+	Journal &journal = *_vm->_journal;
+	
+	journal.drawInterface();
+
 	// TODO
 }
 

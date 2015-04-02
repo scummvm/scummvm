@@ -25,6 +25,23 @@
 
 namespace Sherlock {
 
+#define JOURNAL_BUTTONS_Y 178
+
+// Positioning of buttons in the journal view
+const int JOURNAL_POINTS[9][3] = { 
+	{ 6, 68, 37 },
+	{ 69, 131, 100 },
+	{ 132, 192, 162 },
+	{ 193, 250, 221 },
+	{ 251, 313, 281 },
+	{ 6, 82, 44 },
+	{ 83, 159, 121 },
+	{ 160, 236, 198 },
+	{ 237, 313, 275 } 
+};
+
+/*----------------------------------------------------------------*/
+
 Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	// Allow up to 1000 statements
 	_journal.resize(1000);
@@ -430,5 +447,69 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 	return _lines.size();
 }
 
+void Journal::drawInterface() {
+	Resources &res = *_vm->_res;
+	Screen &screen = *_vm->_screen;
+	byte palette[PALETTE_SIZE];
+
+	// Load in the journal background
+	Common::SeekableReadStream *bg = res.load("journal.lbv");
+	bg->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+	bg->read(palette, PALETTE_SIZE);
+	delete bg;
+
+	// Set the palette and print the title
+	screen.setPalette(palette);
+	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, "Watson's Journal");
+	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "Watson's Journal");
+
+	// Draw the buttons
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y, 
+		JOURNAL_POINTS[0][1], JOURNAL_BUTTONS_Y + 10), 
+		JOURNAL_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[1][0], JOURNAL_BUTTONS_Y, 
+		JOURNAL_POINTS[1][1], JOURNAL_BUTTONS_Y + 10), 
+		JOURNAL_POINTS[1][2] - screen.stringWidth("Back 10") / 2, "Back 10");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[2][0], JOURNAL_BUTTONS_Y, 
+		JOURNAL_POINTS[2][1], JOURNAL_BUTTONS_Y + 10), 
+		JOURNAL_POINTS[2][2] - screen.stringWidth("Up") / 2, "Up");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[3][0], JOURNAL_BUTTONS_Y, 
+		JOURNAL_POINTS[3][1], JOURNAL_BUTTONS_Y + 10), 
+		JOURNAL_POINTS[3][2] - screen.stringWidth("Down") / 2, "Down");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[4][0], JOURNAL_BUTTONS_Y, 
+		JOURNAL_POINTS[4][1], JOURNAL_BUTTONS_Y + 10),
+		JOURNAL_POINTS[4][2] - screen.stringWidth("Ahead 10") / 2, "Ahead 10");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[5][0], JOURNAL_BUTTONS_Y + 11, 
+		JOURNAL_POINTS[5][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[5][2] - screen.stringWidth("Search") / 2, "Search");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[6][0], JOURNAL_BUTTONS_Y + 11, 
+		JOURNAL_POINTS[6][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[6][2] - screen.stringWidth("First Page") / 2, "First Page");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11, 
+		JOURNAL_POINTS[7][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[7][2] - screen.stringWidth("Last Page") / 2, "Last Page");
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11, 
+		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[8][2] - screen.stringWidth("Print Text") / 2, "Print Text");
+
+	if (_journal.size() == 0) {
+		_up = _down = 0;
+	} else {
+		doJournal(0, 0);
+	}
+
+	doArrows();
+		
+	// Show the entire screen
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+}
+
+void Journal::doArrows() {
+	// TODO
+}
+
+void Journal::doJournal(int direction, int howFar) {
+	// TODO
+}
 
 } // End of namespace Sherlock

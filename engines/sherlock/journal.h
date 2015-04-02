@@ -60,11 +60,17 @@ private:
 	void loadJournalLocations();
 
 	bool loadJournalFile(bool alreadyLoaded);
+
+	void doArrows();
+
+	void doJournal(int direction, int howFar);
 public:
 public:
 	Journal(SherlockEngine *vm);
 
 	void record(int converseNum, int statementNum);
+
+	void drawInterface();
 };
 
 } // End of namespace Sherlock
