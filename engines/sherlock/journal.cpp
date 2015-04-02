@@ -51,7 +51,7 @@ Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	_maxPage = 0;
 	_index = 0;
 	_sub = 0;
-	_up = _down = 0;
+	_up = _down = false;
 	_page = 0;
 	_converseNum = -1;
 
@@ -504,8 +504,28 @@ void Journal::drawInterface() {
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
+/**
+ * Display the arrows that can be used to scroll up and down pages
+ */
 void Journal::doArrows() {
-	// TODO
+	Screen &screen = *_vm->_screen;
+	byte color;
+
+	color = (_page > 1) ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, false, "Back 10");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), color, false, "Up");
+
+	color = _down ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), color, false, "Down");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), color, false, "Ahead 10");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, false, "Last Page");
+
+	color = _journal.size() > 0 ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, "Search");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), color, false, "Print Text");
+
+	color = _page > 1 ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, "First Page");
 }
 
 void Journal::doJournal(int direction, int howFar) {

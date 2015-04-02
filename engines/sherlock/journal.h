@@ -53,7 +53,7 @@ private:
 	int _maxPage;
 	int _index;
 	int _sub;
-	int _up, _down;
+	bool _up, _down;
 	int _page;
 	int _converseNum;
 
