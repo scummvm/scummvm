@@ -1975,10 +1975,12 @@ int DeathGodPuzzleBox::specifyCursor(Window *viewWindow, const Common::Point &po
 
 bool DeathGodPuzzleBox::isPuzzleSolved() const {
 	// TODO: Ask players for solutions for other languages
-	// clone2727 only has the English, French, and Japanese source
+	// clone2727 has the English, French, and Japanese source.
+	// clone2727 has the Italian version and solved the puzzle manually.
 
 	switch (_vm->getLanguage()) {
 	case Common::DE_DEU:
+	case Common::IT_ITA:
 		return _puzzleIndexes[0] == 12 && _puzzleIndexes[1] == 18 && _puzzleIndexes[2] == 30 && _puzzleIndexes[3] == 24;
 	case Common::EN_ANY:
 		return _puzzleIndexes[0] == 18 && _puzzleIndexes[1] == 36 && _puzzleIndexes[2] == 12 && _puzzleIndexes[3] == 24;
