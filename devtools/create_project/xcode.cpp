@@ -64,9 +64,9 @@ namespace CreateProjectTool {
 #define ADD_FILE_REFERENCE(name, properties) { \
 	Object *fileRef = new Object(this, name, name, "PBXFileReference", "PBXFileReference", name); \
 	if (!properties.fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties.fileEncoding, "", SettingsNoValue); \
-	if (!properties.lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties.lastKnownFileType, "", SettingsNoValue); \
-	if (!properties.fileName.empty()) fileRef->addProperty("name", properties.fileName, "", SettingsNoValue); \
-	if (!properties.filePath.empty()) fileRef->addProperty("path", properties.filePath, "", SettingsNoValue); \
+	if (!properties.lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties.lastKnownFileType, "", SettingsNoValue|SettingsQuoteVariable); \
+	if (!properties.fileName.empty()) fileRef->addProperty("name", properties.fileName, "", SettingsNoValue|SettingsQuoteVariable); \
+	if (!properties.filePath.empty()) fileRef->addProperty("path", properties.filePath, "", SettingsNoValue|SettingsQuoteVariable); \
 	if (!properties.sourceTree.empty()) fileRef->addProperty("sourceTree", properties.sourceTree, "", SettingsNoValue); \
 	_fileReference.add(fileRef); \
 	_fileReference.flags = SettingsSingleItem; \
