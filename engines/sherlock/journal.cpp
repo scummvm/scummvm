@@ -27,7 +27,7 @@ namespace Sherlock {
 
 Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	// Allow up to 1000 statements
-	_data.resize(1000);
+	_journal.resize(1000);
 
 	// Initialize fields
 	_count = 0;
@@ -51,8 +51,8 @@ void Journal::record(int converseNum, int statementNum) {
 	int saveSub = _sub;
 
 	// Record the entry into the list
-	_data.push_back(JournalEntry(converseNum, statementNum));
-	_index = _data.size() - 1;
+	_journal.push_back(JournalEntry(converseNum, statementNum));
+	_index = _journal.size() - 1;
 
 	// Load the text for the new entry to get the number of lines it will have
 	int newLines = loadJournalFile(true);
@@ -67,7 +67,7 @@ void Journal::record(int converseNum, int statementNum) {
 		_maxPage += newLines;
 	} else {
 		// No lines in entry, so remove the new entry from the journal
-		_data.remove_at(_data.size() - 1);
+		_journal.remove_at(_journal.size() - 1);
 	}
 }
 
@@ -118,7 +118,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	JournalEntry &journalEntry = _data[_index];
+	JournalEntry &journalEntry = _journal[_index];
 	Statement &statement = talk[journalEntry._statementNum];
 
 	Common::String dirFilename = _directory[journalEntry._converseNum];
@@ -158,7 +158,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 	int oldLocation = -1;
 	if (_index != 0) {
 		// Get the scene number of the prior journal entry
-		Common::String priorEntry = _directory[_data[_index - 1]._converseNum];
+		Common::String priorEntry = _directory[_journal[_index - 1]._converseNum];
 		oldLocation = atoi(Common::String(priorEntry.c_str() + 4, priorEntry.c_str() + 6).c_str());
 	}
 
@@ -390,8 +390,8 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 
 	// Finally finished building the journal text. Need to process the text to
 	// word wrap it to fit on-screen. The resulting lines are stored in the
-	// _entries array
-	_entries.clear();
+	// _lines array
+	_lines.clear();
 
 	while (!journalString.empty()) {
 		const char *startP = journalString.c_str();
@@ -414,7 +414,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 		}
 
 		// Add in the line
-		_entries.push_back(Common::String(startP, endP));
+		_lines.push_back(Common::String(startP, endP));
 
 		// Strip line off from string being processed
 		journalString = *endP ? Common::String(endP + 1) : "";
@@ -422,12 +422,12 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 
 	// Add a blank line at the end of the text as long as text was present
 	if (!startOfReply) {
-		_entries.push_back("");
+		_lines.push_back("");
 	} else {
-		_entries.clear();
+		_lines.clear();
 	}
 
-	return _entries.size();
+	return _lines.size();
 }
 
 

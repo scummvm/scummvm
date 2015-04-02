@@ -45,10 +45,10 @@ class SherlockEngine;
 class Journal {
 private:
 	SherlockEngine *_vm;
-	Common::Array<JournalEntry> _data;
+	Common::Array<JournalEntry> _journal;
 	Common::StringArray _directory;
 	Common::StringArray _locations;
-	Common::StringArray _entries;
+	Common::StringArray _lines;
 	int _count;
 	int _maxPage;
 	int _index;
