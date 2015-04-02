@@ -25,20 +25,44 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/str-array.h"
+#include "common/stream.h"
 
 namespace Sherlock {
 
+struct JournalEntry {
+	int _converseNum;
+	bool _replyOnly;
+	int _statementNum;
+
+	JournalEntry() : _converseNum(0), _replyOnly(false), _statementNum(0) {}
+	JournalEntry(int converseNum, int statementNum, bool replyOnly = false) :
+		_converseNum(converseNum), _statementNum(statementNum), _replyOnly(replyOnly) {}
+};
+
+class SherlockEngine;
+
 class Journal {
-public:
-	Common::Array<int> _data;
+private:
+	SherlockEngine *_vm;
+	Common::Array<JournalEntry> _data;
+	Common::StringArray _directory;
+	Common::StringArray _locations;
+	Common::StringArray _entries;
 	int _count;
 	int _maxPage;
 	int _index;
 	int _sub;
 	int _up, _down;
 	int _page;
+	int _converseNum;
+
+	void loadJournalLocations();
+
+	bool loadJournalFile(bool alreadyLoaded);
 public:
-	Journal();
+public:
+	Journal(SherlockEngine *vm);
 
 	void record(int converseNum, int statementNum);
 };

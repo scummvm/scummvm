@@ -79,7 +79,7 @@ void SherlockEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new Events(this);
 	_inventory = new Inventory(this);
-	_journal = new Journal();
+	_journal = new Journal(this);
 	_people = new People(this);
 	_scene = new Scene(this);
 	_screen = new Screen(this);

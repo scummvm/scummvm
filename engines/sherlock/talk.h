@@ -90,14 +90,11 @@ private:
 	TalkHistoryEntry _talkHistory[500];
 	int _speaker;
 	int _talkIndex;
-	int _talkTo;
 	int _scriptSelect;
 	int _converseNum;
 	int _talkStealth;
 	int _talkToFlag;
 	bool _moreTalkUp, _moreTalkDown;
-
-	void loadTalkFile(const Common::String &filename);
 
 	void stripVoiceCommands();
 	void setTalkMap();
@@ -108,10 +105,13 @@ private:
 public:
 	bool _talkToAbort;
 	int _talkCounter;
+	int _talkTo;
 public:
 	Talk(SherlockEngine *vm);
 	void setSequences(const byte *talkSequences, const byte *stillSequences,
 		int maxPeople);
+
+	Statement &operator[](int idx) { return _statements[idx]; }
 
 	void talkTo(const Common::String &filename);
 
@@ -120,6 +120,8 @@ public:
 	void freeTalkVars();
 
 	void drawInterface();
+
+	void loadTalkFile(const Common::String &filename);
 
 	void setStillSeq(int speaker);
 	void clearSequences();

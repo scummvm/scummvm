@@ -82,6 +82,7 @@ public:
 	~People();
 
 	Person &operator[](PeopleId id) { return _data[id]; }
+	Person &operator[](int idx) { return _data[idx]; }
 
 	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }
 
