@@ -52,10 +52,23 @@ void Journal::record(int converseNum, int statementNum) {
 
 	// Record the entry into the list
 	_data.push_back(JournalEntry(converseNum, statementNum));
+	_index = _data.size() - 1;
 
-	bool newLines = loadJournalFile(true);
+	// Load the text for the new entry to get the number of lines it will have
+	int newLines = loadJournalFile(true);
 
-	// TODO
+	// Restore old state
+	_index = saveIndex;
+	_sub = saveSub;
+
+	// If new lines were added to the ournal, update the total number of lines
+	// the journal continues
+	if (newLines) {
+		_maxPage += newLines;
+	} else {
+		// No lines in entry, so remove the new entry from the journal
+		_data.remove_at(_data.size() - 1);
+	}
 }
 
 void Journal::loadJournalLocations() {
