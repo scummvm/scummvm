@@ -61,11 +61,15 @@ public:
 	MidiChannel *getPercussionChannel() { return NULL; }
 
 	// AudioStream
+	int readBuffer(int16 *data, const int numSamples);
 	bool isStereo() const { return _stereo; }
 	int getRate() const { return _mixer->getOutputRate(); }
 
 	// MidiDriver_Emulated
 	void generateSamples(int16 *buf, int len);
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
+
+	void onTimer();
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
@@ -139,6 +143,9 @@ private:
 	AdLibVoice _voices[kVoices];
 	byte *_rhythmKeyMap;
 	Common::Array<AdLibPatch> _patches;
+
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
 
 	void loadInstrument(const byte *ins);
 	void voiceOn(int voice, int note, int velocity);
@@ -239,6 +246,7 @@ int MidiDriver_AdLib::openAdLib(bool isSCI0) {
 
 	MidiDriver_Emulated::open();
 
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_AdLib>(this, &MidiDriver_AdLib::onTimer));
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	return 0;
@@ -323,10 +331,22 @@ void MidiDriver_AdLib::send(uint32 b) {
 	}
 }
 
+int MidiDriver_AdLib::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
+}
+
 void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
-	if (isStereo())
-		len <<= 1;
-	_opl->readBuffer(data, len);
+	// Dummy implementation
+}
+
+void MidiDriver_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
+}
+
+void MidiDriver_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 
 	// Increase the age of the notes
 	for (int i = 0; i < kVoices; i++) {
