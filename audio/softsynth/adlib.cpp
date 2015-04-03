@@ -948,8 +948,11 @@ public:
 
 
 	// AudioStream API
+	int readBuffer(int16 *data, const int numSamples);
 	bool isStereo() const { return _opl->isStereo(); }
 	int getRate() const { return _mixer->getOutputRate(); }
+
+	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 private:
 	bool _scummSmallHeader; // FIXME: This flag controls a special mode for SCUMM V3 games
@@ -962,6 +965,9 @@ private:
 #ifdef ENABLE_OPL3
 	byte *_regCacheSecondary;
 #endif
+
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
 
 	int _timerCounter;
 
@@ -1403,6 +1409,8 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
 	_timerIncrease = 0xD69;
 	_timerThreshold = 0x411B;
 	_opl = 0;
+	_adlibTimerProc = 0;
+        _adlibTimerParam = 0;
 }
 
 int MidiDriver_ADLIB::open() {
@@ -1452,6 +1460,7 @@ int MidiDriver_ADLIB::open() {
 	}
 #endif
 
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_ADLIB>(this, &MidiDriver_ADLIB::onTimer));
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return 0;
@@ -1617,13 +1626,17 @@ void MidiDriver_ADLIB::adlibWriteSecondary(byte reg, byte value) {
 #endif
 
 void MidiDriver_ADLIB::generateSamples(int16 *data, int len) {
-	if (_opl->isStereo()) {
-		len *= 2;
-	}
-	_opl->readBuffer(data, len);
+	// Dummy implementation until we no longer inherit from MidiDriver_Emulated
+}
+
+int MidiDriver_ADLIB::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
 }
 
 void MidiDriver_ADLIB::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
+
 	_timerCounter += _timerIncrease;
 	while (_timerCounter >= _timerThreshold) {
 		_timerCounter -= _timerThreshold;
@@ -1653,6 +1666,11 @@ void MidiDriver_ADLIB::onTimer() {
 		}
 #endif
 	}
+}
+
+void MidiDriver_ADLIB::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
 }
 
 void MidiDriver_ADLIB::mcOff(AdLibVoice *voice) {
