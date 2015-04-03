@@ -42,18 +42,11 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 		error("Could not initialize OPL2 emulator");
 	}
 
-	_samplesPerCallback = _rate / AD_CALLBACK_FREQUENCY;
-	_samplesPerCallbackRemainder = _rate % AD_CALLBACK_FREQUENCY;
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-
 	memset(_registerBackUpTable, 0, sizeof(_registerBackUpTable));
 	writeReg(0x01, 0x00);
 	writeReg(0xBD, 0x00);
 	writeReg(0x08, 0x00);
 	writeReg(0x01, 0x20);
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_engineMusicTimer = 0;
 	_soundPlaying = -1;
@@ -78,6 +71,9 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 
 	_musicVolume = _sfxVolume = 255;
 	_isSeeking = false;
+
+	_opl2->start(new Common::Functor0Mem<void, Player_AD>(this, &Player_AD::onTimer), AD_CALLBACK_FREQUENCY);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_AD::~Player_AD() {
@@ -244,36 +240,18 @@ void Player_AD::saveLoadWithSerializer(Serializer *ser) {
 	}
 }
 
-int Player_AD::readBuffer(int16 *buffer, const int numSamples) {
+void Player_AD::onTimer() {
 	Common::StackLock lock(_mutex);
 
-	int len = numSamples;
-
-	while (len > 0) {
-		if (!_samplesTillCallback) {
-			if (_curOffset) {
-				updateMusic();
-			}
-
-			updateSfx();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= AD_CALLBACK_FREQUENCY) {
-				++_samplesTillCallback;
-				_samplesTillCallbackRemainder -= AD_CALLBACK_FREQUENCY;
-			}
-		}
-
-		const int samplesToRead = MIN(len, _samplesTillCallback);
-		_opl2->readBuffer(buffer, samplesToRead);
-
-		buffer += samplesToRead;
-		len -= samplesToRead;
-		_samplesTillCallback -= samplesToRead;
+	if (_curOffset) {
+		updateMusic();
 	}
 
-	return numSamples;
+	updateSfx();
+}
+
+int Player_AD::readBuffer(int16 *buffer, const int numSamples) {
+	return _opl2->readBuffer(buffer, numSamples);
 }
 
 void Player_AD::setupVolume() {

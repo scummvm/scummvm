@@ -62,6 +62,9 @@ public:
 	virtual bool endOfData() const { return false; }
 	virtual int getRate() const { return _rate; }
 
+	// Timer callback
+	void onTimer();
+
 private:
 	ScummEngine *const _vm;
 	Common::Mutex _mutex;
@@ -74,11 +77,6 @@ private:
 	int _sfxVolume;
 
 	OPL::OPL *_opl2;
-
-	int _samplesPerCallback;
-	int _samplesPerCallbackRemainder;
-	int _samplesTillCallback;
-	int _samplesTillCallbackRemainder;
 
 	int _soundPlaying;
 	int32 _engineMusicTimer;
