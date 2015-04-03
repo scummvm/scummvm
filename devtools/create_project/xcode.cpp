@@ -609,7 +609,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
 	ADD_SETTING(scummvm_Debug, "PREBINDING", "NO");
-	ADD_SETTING(scummvm_Debug, "SDKROOT", "macosx10.6");
+	ADD_SETTING(scummvm_Debug, "SDKROOT", "macosx");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", SettingsNoValue);
 	scummvm_Debug_Object->properties["buildSettings"] = scummvm_Debug;
