@@ -69,7 +69,7 @@ namespace DBOPL {
 struct Chip;
 } // end of namespace DBOPL
 
-class OPL : public ::OPL::OPL {
+class OPL : public ::OPL::EmulatedOPL {
 private:
 	Config::OplType _type;
 	uint _rate;
@@ -95,8 +95,10 @@ public:
 
 	void writeReg(int r, int v);
 
-	void readBuffer(int16 *buffer, int length);
 	bool isStereo() const { return _type != Config::kOpl2; }
+
+protected:
+	void generateSamples(int16 *buffer, int length);
 };
 
 } // End of namespace DOSBox

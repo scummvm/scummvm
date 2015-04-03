@@ -23,6 +23,8 @@
 #ifndef AUDIO_FMOPL_H
 #define AUDIO_FMOPL_H
 
+#include "common/func.h"
+#include "common/ptr.h"
 #include "common/scummsys.h"
 
 namespace Common {
@@ -98,6 +100,8 @@ private:
 	static const EmulatorDescription _drivers[];
 };
 
+typedef Common::Functor0<void> TimerCallback;
+
 class OPL {
 private:
 	static bool _hasInstance;
@@ -154,12 +158,83 @@ public:
 	 * So if you request 4 samples from a stereo OPL, you will get
 	 * a total of two left channel and two right channel samples.
 	 */
-	virtual void readBuffer(int16 *buffer, int length) = 0;
+	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
 	/**
 	 * Returns whether the setup OPL mode is stereo or not
 	 */
 	virtual bool isStereo() const = 0;
+
+	/**
+	 * Start the OPL with callbacks.
+	 */
+	void start(TimerCallback *callback, int timerFrequency = kDefaultCallbackFrequency);
+
+	/**
+	 * Stop the OPL
+	 */
+	void stop();
+
+	enum {
+		/**
+		 * The default callback frequency that start() uses
+		 */
+		kDefaultCallbackFrequency = 250
+	};
+
+protected:
+	/**
+	 * Start the callbacks.
+	 */
+	virtual void startCallbacks(int timerFrequency) = 0;
+
+	/**
+	 * Stop the callbacks.
+	 */
+	virtual void stopCallbacks() = 0;
+
+	/**
+	 * The functor for callbacks.
+	 */
+	Common::ScopedPtr<TimerCallback> _callback;
+};
+
+class EmulatedOPL : public OPL {
+public:
+	EmulatedOPL();
+	virtual ~EmulatedOPL();
+
+	// OPL API
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	int getRate() const;
+
+protected:
+	// OPL API
+	void startCallbacks(int timerFrequency);
+	void stopCallbacks();
+
+	/**
+	 * Read up to 'length' samples.
+	 *
+	 * Data will be in native endianess, 16 bit per sample, signed.
+	 * For stereo OPL, buffer will be filled with interleaved
+	 * left and right channel samples, starting with a left sample.
+	 * Furthermore, the samples in the left and right are summed up.
+	 * So if you request 4 samples from a stereo OPL, you will get
+	 * a total of two left channel and two right channel samples.
+	 */
+	virtual void generateSamples(int16 *buffer, int numSamples) = 0;
+
+private:
+	int _baseFreq;
+
+	enum {
+		FIXP_SHIFT = 16
+	};
+
+	int _nextTick;
+	int _samplesPerTick;
 };
 
 } // End of namespace OPL

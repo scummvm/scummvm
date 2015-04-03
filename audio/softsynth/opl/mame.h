@@ -174,7 +174,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 FM_OPL *makeAdLibOPL(int rate);
 
 // OPL API implementation
-class OPL : public ::OPL::OPL {
+class OPL : public ::OPL::EmulatedOPL {
 private:
 	FM_OPL *_opl;
 public:
@@ -189,8 +189,10 @@ public:
 
 	void writeReg(int r, int v);
 
-	void readBuffer(int16 *buffer, int length);
 	bool isStereo() const { return false; }
+
+protected:
+	void generateSamples(int16 *buffer, int length);
 };
 
 } // End of namespace MAME

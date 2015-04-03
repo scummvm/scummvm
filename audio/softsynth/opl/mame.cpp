@@ -48,15 +48,22 @@ namespace OPL {
 namespace MAME {
 
 OPL::~OPL() {
+	stopCallbacks();
 	MAME::OPLDestroy(_opl);
 	_opl = 0;
 }
 
 bool OPL::init() {
-	if (_opl)
+	if (_opl) {
+		stopCallbacks();
 		MAME::OPLDestroy(_opl);
+	}
 
 	_opl = MAME::makeAdLibOPL(g_system->getMixer()->getOutputRate());
+
+	// FIXME: Remove this once EmulatedOPL is actually controlling playback
+	start(0);
+
 	return (_opl != 0);
 }
 
@@ -76,7 +83,7 @@ void OPL::writeReg(int r, int v) {
 	MAME::OPLWriteReg(_opl, r, v);
 }
 
-void OPL::readBuffer(int16 *buffer, int length) {
+void OPL::generateSamples(int16 *buffer, int length) {
 	MAME::YM3812UpdateOne(_opl, buffer, length);
 }
 

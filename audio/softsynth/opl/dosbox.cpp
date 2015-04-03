@@ -153,6 +153,7 @@ OPL::~OPL() {
 }
 
 void OPL::free() {
+	stopCallbacks();
 	delete _emulator;
 	_emulator = 0;
 }
@@ -175,6 +176,9 @@ bool OPL::init() {
 		// Setup opl3 mode in the hander
 		_emulator->WriteReg(0x105, 1);
 	}
+
+	// FIXME: Remove this once EmulatedOPL is actually controlling playback
+	start(0);
 
 	return true;
 }
@@ -308,7 +312,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	_emulator->WriteReg(fullReg, val);
 }
 
-void OPL::readBuffer(int16 *buffer, int length) {
+void OPL::generateSamples(int16 *buffer, int length) {
 	// For stereo OPL cards, we divide the sample count by 2,
 	// to match stereo AudioStream behavior.
 	if (_type != Config::kOpl2)

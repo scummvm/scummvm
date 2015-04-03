@@ -22,10 +22,12 @@
 
 #include "audio/fmopl.h"
 
+#include "audio/mixer.h"
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 
@@ -171,6 +173,80 @@ OPL *Config::create(DriverId driver, OplType type) {
 	}
 }
 
+void OPL::start(TimerCallback *callback, int timerFrequency) {
+	_callback.reset(callback);
+	startCallbacks(timerFrequency);
+}
+
+void OPL::stop() {
+	stopCallbacks();
+	_callback.reset();
+}
+
 bool OPL::_hasInstance = false;
+
+EmulatedOPL::EmulatedOPL() :
+	_nextTick(0),
+	_samplesPerTick(0),
+	_baseFreq(0) {
+}
+
+EmulatedOPL::~EmulatedOPL() {
+	// Stop callbacks, just in case. If it's still playing at this
+	// point, there's probably a bigger issue, though.
+	stopCallbacks();
+}
+
+int EmulatedOPL::readBuffer(int16 *buffer, const int numSamples) {
+	const int stereoFactor = isStereo() ? 2 : 1;
+	int len = numSamples / stereoFactor;
+	int step;
+
+	do {
+		step = len;
+		if (step > (_nextTick >> FIXP_SHIFT))
+			step = (_nextTick >> FIXP_SHIFT);
+
+		generateSamples(buffer, step * stereoFactor);
+
+		_nextTick -= step << FIXP_SHIFT;
+		if (!(_nextTick >> FIXP_SHIFT)) {
+			if (_callback && _callback->isValid())
+				(*_callback)();
+
+			_nextTick += _samplesPerTick;
+		}
+
+		buffer += step * stereoFactor;
+		len -= step;
+	} while (len);
+
+	return numSamples;
+}
+
+int EmulatedOPL::getRate() const {
+	return g_system->getMixer()->getOutputRate();
+}
+
+void EmulatedOPL::startCallbacks(int timerFrequency) {
+	_baseFreq = timerFrequency;
+	assert(_baseFreq != 0);
+
+	int d = getRate() / _baseFreq;
+	int r = getRate() % _baseFreq;
+
+	// This is equivalent to (getRate() << FIXP_SHIFT) / BASE_FREQ
+	// but less prone to arithmetic overflow.
+
+	_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
+
+	// TODO: Eventually start mixer playback here
+	//g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+}
+
+void EmulatedOPL::stopCallbacks() {
+	// TODO: Eventually stop mixer playback here
+	//g_system->getMixer()->stopHandle(*_handle);
+}
 
 } // End of namespace OPL
