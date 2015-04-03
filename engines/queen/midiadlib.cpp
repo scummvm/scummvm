@@ -81,7 +81,7 @@ private:
 	void adlibSetChannel0x20(int channel);
 	void adlibSetChannel0xE0(int channel);
 
-	FM_OPL *_opl;
+	OPL::OPL *_opl;
 	int _midiNumberOfChannels;
 	int _adlibNoteMul;
 	int _adlibWaveformSelect;
@@ -121,7 +121,10 @@ private:
 
 int AdLibMidiDriver::open() {
 	MidiDriver_Emulated::open();
-	_opl = makeAdLibOPL(getRate());
+	_opl = OPL::Config::create();
+	if (!_opl || !_opl->init(getRate()))
+		error("Failed to create OPL");
+
 	adlibSetupCard();
 	for (int i = 0; i < 11; ++i) {
 		_adlibChannelsVolume[i] = 0;
@@ -134,7 +137,7 @@ int AdLibMidiDriver::open() {
 
 void AdLibMidiDriver::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
-	OPLDestroy(_opl);
+	delete _opl;
 }
 
 void AdLibMidiDriver::send(uint32 b) {
@@ -194,7 +197,7 @@ void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 
 void AdLibMidiDriver::generateSamples(int16 *data, int len) {
 	memset(data, 0, sizeof(int16) * len);
-	YM3812UpdateOne(_opl, data, len);
+	_opl->readBuffer(data, len);
 }
 
 void AdLibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8 *data) {
@@ -238,7 +241,7 @@ void AdLibMidiDriver::handleMidiEvent0x90_NoteOn(int channel, int param1, int pa
 }
 
 void AdLibMidiDriver::adlibWrite(uint8 port, uint8 value) {
-	OPLWriteReg(_opl, port, value);
+	_opl->writeReg(port, value);
 }
 
 void AdLibMidiDriver::adlibSetupCard() {

@@ -29,7 +29,7 @@
 
 namespace Sky {
 
-AdLibChannel::AdLibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
+AdLibChannel::AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_opl = opl;
 	_musicData = pMusicData;
 	_channelData.loopPoint = startOfData;
@@ -95,7 +95,7 @@ void AdLibChannel::updateVolume(uint16 pVolume) {
 */
 void AdLibChannel::setRegister(uint8 regNum, uint8 value) {
 	if (_adlibRegMirror[regNum] != value) {
-		OPLWriteReg (_opl, regNum, value);
+		_opl->writeReg(regNum, value);
 		_adlibRegMirror[regNum] = value;
 	}
 }

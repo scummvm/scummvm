@@ -165,23 +165,4 @@ public:
 
 } // End of namespace OPL
 
-// Legacy API
-// !You should not write any new code using the legacy API!
-typedef OPL::OPL FM_OPL;
-
-void OPLDestroy(FM_OPL *OPL);
-
-void OPLResetChip(FM_OPL *OPL);
-void OPLWrite(FM_OPL *OPL, int a, int v);
-unsigned char OPLRead(FM_OPL *OPL, int a);
-void OPLWriteReg(FM_OPL *OPL, int r, int v);
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
-
-/**
- * Legacy factory to create an AdLib (OPL2) chip.
- *
- * !You should not write any new code using the legacy API!
- */
-FM_OPL *makeAdLibOPL(int rate);
-
 #endif

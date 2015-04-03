@@ -88,7 +88,7 @@ public:
 			int32 render = MIN(samplesLeft, _samplesTillCallback);
 			samplesLeft -= render;
 			_samplesTillCallback -= render;
-			YM3812UpdateOne(_adlib, buffer, render);
+			_adlib->readBuffer(buffer, render);
 			buffer += render;
 		}
 		return numSamples;
@@ -365,7 +365,7 @@ private:
 	uint8 _unkValue19;
 	uint8 _unkValue20;
 
-	FM_OPL *_adlib;
+	OPL::OPL *_adlib;
 
 	uint8 *_soundData;
 	uint32 _soundDataSize;
@@ -427,8 +427,9 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	_mixer = mixer;
 
-	_adlib = makeAdLibOPL(getRate());
-	assert(_adlib);
+	_adlib = OPL::Config::create();
+	if (!_adlib || !_adlib->init(getRate()))
+		error("Failed to create OPL");
 
 	memset(_channels, 0, sizeof(_channels));
 	_soundData = 0;
@@ -471,7 +472,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 AdLibDriver::~AdLibDriver() {
 	_mixer->stopHandle(_soundHandle);
-	OPLDestroy(_adlib);
+	delete _adlib;
 	_adlib = 0;
 }
 
@@ -877,7 +878,7 @@ void AdLibDriver::resetAdLibState() {
 // New calling style: writeOPL(0xAB, 0xCD)
 
 void AdLibDriver::writeOPL(byte reg, byte val) {
-	OPLWriteReg(_adlib, reg, val);
+	_adlib->writeReg(reg, val);
 }
 
 void AdLibDriver::initChannel(Channel &channel) {

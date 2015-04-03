@@ -21,6 +21,7 @@
  */
 
 #include "audio/audiostream.h"
+#include "audio/fmopl.h"
 #include "audio/decoders/raw.h"
 #include "common/memstream.h"
 #include "mads/sound.h"

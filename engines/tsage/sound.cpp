@@ -20,9 +20,9 @@
  *
  */
 
+#include "audio/fmopl.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
-#include "audio/decoders/raw.h"
 #include "audio/audiostream.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"

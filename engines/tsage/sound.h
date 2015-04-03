@@ -27,11 +27,14 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "audio/audiostream.h"
-#include "audio/fmopl.h"
 #include "audio/mixer.h"
 #include "common/list.h"
 #include "tsage/saveload.h"
 #include "tsage/core.h"
+
+namespace OPL {
+class OPL;
+}
 
 namespace TsAGE {
 
@@ -450,7 +453,7 @@ class AdlibSoundDriver: public SoundDriver, Audio::AudioStream {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
-	FM_OPL *_opl;
+	OPL::OPL *_opl;
 	Audio::SoundHandle _soundHandle;
 	int _sampleRate;
 	byte _portContents[256];

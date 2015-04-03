@@ -21,6 +21,7 @@
  */
 
 #include "audio/audiostream.h"
+#include "audio/fmopl.h"
 #include "audio/decoders/raw.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
@@ -156,7 +157,7 @@ AdlibSample::AdlibSample(Common::SeekableReadStream &s) {
 
 /*-----------------------------------------------------------------------*/
 
-ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename, int dataOffset) {
+ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filename, int dataOffset) {
 	// Open up the appropriate sound file
 	if (!_soundFile.open(filename))
 		error("Could not open file - %s", filename.c_str());
@@ -984,7 +985,7 @@ const ASound1::CommandPtr ASound1::_commandList[42] = {
 	&ASound1::command40, &ASound1::command41
 };
 
-ASound1::ASound1(Audio::Mixer *mixer, FM_OPL *opl)
+ASound1::ASound1(Audio::Mixer *mixer, OPL::OPL *opl)
 	: ASound(mixer, opl, "asound.001", 0x1520) {
 	_cmd23Toggle = false;
 
@@ -1285,7 +1286,7 @@ const ASound2::CommandPtr ASound2::_commandList[44] = {
 	&ASound2::command40, &ASound2::command41, &ASound2::command42, &ASound2::command43
 };
 
-ASound2::ASound2(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
+ASound2::ASound2(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
 	_command12Param = 0xFD;
 
 	// Load sound samples
@@ -1656,7 +1657,7 @@ const ASound3::CommandPtr ASound3::_commandList[61] = {
 	&ASound3::command60
 };
 
-ASound3::ASound3(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.003", 0x15B0) {
+ASound3::ASound3(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.003", 0x15B0) {
 	_command39Flag = false;
 
 	// Load sound samples
@@ -2060,7 +2061,7 @@ const ASound4::CommandPtr ASound4::_commandList[61] = {
 	&ASound4::command60
 };
 
-ASound4::ASound4(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.004", 0x14F0) {
+ASound4::ASound4(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.004", 0x14F0) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 210; ++i)
@@ -2316,7 +2317,7 @@ const ASound5::CommandPtr ASound5::_commandList[42] = {
 	&ASound5::command40, &ASound5::command41
 };
 
-ASound5::ASound5(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
+ASound5::ASound5(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x144);
 	for (int i = 0; i < 164; ++i)
@@ -2557,7 +2558,7 @@ const ASound6::CommandPtr ASound6::_commandList[30] = {
 	&ASound6::nullCommand, &ASound6::command29
 };
 
-ASound6::ASound6(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.006", 0x1390) {
+ASound6::ASound6(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.006", 0x1390) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 200; ++i)
@@ -2713,7 +2714,7 @@ const ASound7::CommandPtr ASound7::_commandList[38] = {
 	&ASound7::command36, &ASound7::command37
 };
 
-ASound7::ASound7(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.007", 0x1460) {
+ASound7::ASound7(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.007", 0x1460) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 214; ++i)
@@ -2919,7 +2920,7 @@ const ASound8::CommandPtr ASound8::_commandList[38] = {
 	&ASound8::command36, &ASound8::command37
 };
 
-ASound8::ASound8(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.008", 0x1490) {
+ASound8::ASound8(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.008", 0x1490) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 174; ++i)
@@ -3175,7 +3176,7 @@ const ASound9::CommandPtr ASound9::_commandList[52] = {
 	&ASound9::command48, &ASound9::command49, &ASound9::command50, &ASound9::command51
 };
 
-ASound9::ASound9(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.009", 0x16F0) {
+ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.009", 0x16F0) {
 	_v1 = _v2 = 0;
 	_soundPtr = nullptr;
 

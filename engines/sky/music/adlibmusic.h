@@ -25,7 +25,10 @@
 
 #include "sky/music/musicbase.h"
 #include "audio/audiostream.h"
-#include "audio/fmopl.h"
+
+namespace OPL {
+class OPL;
+}
 
 namespace Sky {
 
@@ -42,7 +45,7 @@ public:
 	virtual void setVolume(uint16 param);
 
 private:
-	FM_OPL *_opl;
+	OPL::OPL *_opl;
 	Audio::SoundHandle _soundHandle;
 	uint8 *_initSequence;
 	uint32 _sampleRate, _nextMusicPoll;

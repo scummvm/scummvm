@@ -22,6 +22,7 @@
 
 
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "sky/music/adlibmusic.h"
 #include "sky/music/adlibchannel.h"
@@ -34,14 +35,16 @@ AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pD
 	_driverFileBase = 60202;
 	_sampleRate = pMixer->getOutputRate();
 
-	_opl = makeAdLibOPL(_sampleRate);
+	_opl = OPL::Config::create();
+	if (!_opl || !_opl->init(_sampleRate))
+		error("Failed to create OPL");
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibMusic::~AdLibMusic() {
-	OPLDestroy(_opl);
 	_mixer->stopHandle(_soundHandle);
+	delete _opl;
 }
 
 int AdLibMusic::readBuffer(int16 *data, const int numSamples) {
@@ -61,7 +64,7 @@ int AdLibMusic::readBuffer(int16 *data, const int numSamples) {
 			render = (remaining > _nextMusicPoll) ? _nextMusicPoll : remaining;
 			remaining -= render;
 			_nextMusicPoll -= render;
-			YM3812UpdateOne(_opl, data, render);
+			_opl->readBuffer(data, render);
 			data += render;
 			if (_nextMusicPoll == 0) {
 				pollMusic();
@@ -102,7 +105,7 @@ void AdLibMusic::setupChannels(uint8 *channelData) {
 void AdLibMusic::startDriver() {
 	uint16 cnt = 0;
 	while (_initSequence[cnt] || _initSequence[cnt + 1]) {
-		OPLWriteReg (_opl, _initSequence[cnt], _initSequence[cnt + 1]);
+		_opl->writeReg(_initSequence[cnt], _initSequence[cnt + 1]);
 		cnt += 2;
 	}
 }
