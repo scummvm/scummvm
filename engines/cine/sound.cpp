@@ -285,7 +285,7 @@ AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 
 	_sampleRate = _mixer->getOutputRate();
 	_opl = OPL::Config::create();
-	if (!_opl || !_opl->init(_sampleRate))
+	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
 
 	memset(_channelsVolumeTable, 0, sizeof(_channelsVolumeTable));

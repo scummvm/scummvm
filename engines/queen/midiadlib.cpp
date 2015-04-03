@@ -122,7 +122,7 @@ private:
 int AdLibMidiDriver::open() {
 	MidiDriver_Emulated::open();
 	_opl = OPL::Config::create();
-	if (!_opl || !_opl->init(getRate()))
+	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
 
 	adlibSetupCard();

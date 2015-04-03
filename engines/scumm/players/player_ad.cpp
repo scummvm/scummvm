@@ -38,7 +38,7 @@ namespace Scumm {
 Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	: _vm(scumm), _mixer(mixer), _rate(mixer->getOutputRate()) {
 	_opl2 = OPL::Config::create();
-	if (!_opl2->init(_rate)) {
+	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
 	}
 

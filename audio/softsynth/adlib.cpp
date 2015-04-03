@@ -1434,7 +1434,7 @@ int MidiDriver_ADLIB::open() {
 		_opl3Mode = false;
 	}
 #endif
-	_opl->init(getRate());
+	_opl->init();
 
 	_regCache = (byte *)calloc(256, 1);
 

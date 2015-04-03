@@ -31,6 +31,8 @@
 
 #include "mame.h"
 
+#include "audio/mixer.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -50,11 +52,11 @@ OPL::~OPL() {
 	_opl = 0;
 }
 
-bool OPL::init(int rate) {
+bool OPL::init() {
 	if (_opl)
 		MAME::OPLDestroy(_opl);
 
-	_opl = MAME::makeAdLibOPL(rate);
+	_opl = MAME::makeAdLibOPL(g_system->getMixer()->getOutputRate());
 	return (_opl != 0);
 }
 

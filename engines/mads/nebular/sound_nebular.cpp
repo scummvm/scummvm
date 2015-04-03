@@ -211,7 +211,7 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 	_mixer = mixer;
 	_opl = opl;
 
-	_opl->init(getRate());
+	_opl->init();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
 		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
@@ -859,6 +859,10 @@ int ASound::readBuffer(int16 *buffer, const int numSamples) {
 		buffer += render;
 	}
 	return numSamples;
+}
+
+int ASound::getRate() const {
+	return g_system->getMixer()->getOutputRate();
 }
 
 void ASound::setVolume(int volume) {

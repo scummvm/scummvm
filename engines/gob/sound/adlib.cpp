@@ -136,7 +136,7 @@ void AdLib::createOPL() {
 	}
 
 	_opl = OPL::Config::create(OPL::Config::parse(oplDriver), OPL::Config::kOpl2);
-	if (!_opl || !_opl->init(_rate)) {
+	if (!_opl || !_opl->init()) {
 		delete _opl;
 
 		error("Could not create an AdLib emulator");

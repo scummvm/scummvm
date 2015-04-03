@@ -385,7 +385,7 @@ public:
 	/**
 	 * Return sample rate
 	 */
-	virtual int getRate() const { return 11025; }
+	virtual int getRate() const;
 
 	/**
 	 * Set the volume

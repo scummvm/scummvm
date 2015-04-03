@@ -87,7 +87,7 @@ public:
 	OPL(Config::OplType type);
 	~OPL();
 
-	bool init(int rate);
+	bool init();
 	void reset();
 
 	void write(int a, int v);

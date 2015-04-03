@@ -36,7 +36,7 @@ AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pD
 	_sampleRate = pMixer->getOutputRate();
 
 	_opl = OPL::Config::create();
-	if (!_opl || !_opl->init(_sampleRate))
+	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);

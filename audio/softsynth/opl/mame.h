@@ -181,7 +181,7 @@ public:
 	OPL() : _opl(0) {}
 	~OPL();
 
-	bool init(int rate);
+	bool init();
 	void reset();
 
 	void write(int a, int v);

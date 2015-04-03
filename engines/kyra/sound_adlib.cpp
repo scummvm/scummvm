@@ -428,7 +428,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 	_mixer = mixer;
 
 	_adlib = OPL::Config::create();
-	if (!_adlib || !_adlib->init(getRate()))
+	if (!_adlib || !_adlib->init())
 		error("Failed to create OPL");
 
 	memset(_channels, 0, sizeof(_channels));

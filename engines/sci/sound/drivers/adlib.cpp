@@ -215,8 +215,6 @@ static const int ym3812_note[13] = {
 };
 
 int MidiDriver_AdLib::openAdLib(bool isSCI0) {
-	int rate = _mixer->getOutputRate();
-
 	_stereo = STEREO;
 
 	debug(3, "ADLIB: Starting driver in %s mode", (isSCI0 ? "SCI0" : "SCI1"));
@@ -233,7 +231,7 @@ int MidiDriver_AdLib::openAdLib(bool isSCI0) {
 	if (!_opl)
 		return -1;
 
-	_opl->init(rate);
+	_opl->init();
 
 	setRegister(0xBD, 0);
 	setRegister(0x08, 0);

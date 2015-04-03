@@ -2746,7 +2746,7 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_sampleRate = _mixer->getOutputRate();
 	_opl = OPL::Config::create();
 	assert(_opl);
-	_opl->init(_sampleRate);
+	_opl->init();
 
 	_samplesTillCallback = 0;
 	_samplesTillCallbackRemainder = 0;

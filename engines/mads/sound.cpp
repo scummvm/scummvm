@@ -40,7 +40,7 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 	_masterVolume = 255;
 
 	_opl = OPL::Config::create();
-	_opl->init(11025);
+	_opl->init();
 
 	// Validate sound files
 	switch (_vm->getGameID()) {

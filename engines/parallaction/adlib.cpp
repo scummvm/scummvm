@@ -351,7 +351,7 @@ int AdLibDriver::open() {
 	MidiDriver_Emulated::open();
 
 	_opl = OPL::Config::create();
-	_opl->init(getRate());
+	_opl->init();
 	_opl->writeReg(0x1, 0x20); // set bit 5 (enable all waveforms)
 
 	// Reset the OPL registers.

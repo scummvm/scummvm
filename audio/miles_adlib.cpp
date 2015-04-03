@@ -298,8 +298,6 @@ MidiDriver_Miles_AdLib::~MidiDriver_Miles_AdLib() {
 }
 
 int MidiDriver_Miles_AdLib::open() {
-	int rate = _mixer->getOutputRate();
-
 	if (_modeOPL3) {
 		// Try to create OPL3 first
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
@@ -319,7 +317,7 @@ int MidiDriver_Miles_AdLib::open() {
 		return -1;
 	}
 
-	_opl->init(rate);
+	_opl->init();
 
 	MidiDriver_Emulated::open();
 

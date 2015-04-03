@@ -213,8 +213,6 @@ MidiDriver_Accolade_AdLib::~MidiDriver_Accolade_AdLib() {
 }
 
 int MidiDriver_Accolade_AdLib::open() {
-	int rate = _mixer->getOutputRate();
-
 //	debugC(kDebugLevelAdLibDriver, "AdLib: starting driver");
 
 	_opl = OPL::Config::create(OPL::Config::kOpl2);
@@ -222,7 +220,7 @@ int MidiDriver_Accolade_AdLib::open() {
 	if (!_opl)
 		return -1;
 
-	_opl->init(rate);
+	_opl->init();
 
 	MidiDriver_Emulated::open();
 

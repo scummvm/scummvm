@@ -108,10 +108,9 @@ public:
 	/**
 	 * Initializes the OPL emulator.
 	 *
-	 * @param rate	output sample rate
 	 * @return		true on success, false on failure
 	 */
-	virtual bool init(int rate) = 0;
+	virtual bool init() = 0;
 
 	/**
 	 * Reinitializes the OPL emulator
