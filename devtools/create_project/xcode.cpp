@@ -660,7 +660,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvmOSX_HeaderPaths.push_back("../../engines/");
 	scummvmOSX_HeaderPaths.push_back("../../");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, SettingsNoQuote|SettingsAsList, 5);
-	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/../macosx/Info.plist");
+	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/macosx/Info.plist");
 	ValueList scummvmOSX_LibPaths;
 	scummvmOSX_LibPaths.push_back("/sw/lib");
 	scummvmOSX_LibPaths.push_back("/opt/local/lib");
