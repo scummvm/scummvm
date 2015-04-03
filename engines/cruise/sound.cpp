@@ -125,7 +125,7 @@ public:
 	virtual int getRate() const { return _sampleRate; }
 
 	void initCard();
-	void update(int16 *buf, int len);
+	void onTimer();
 	void setupInstrument(const byte *data, int channel);
 	void setupInstrument(const AdLibSoundInstrument *ins, int channel);
 	void loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg);
@@ -313,10 +313,12 @@ AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 	}
 	memset(_instrumentsTable, 0, sizeof(_instrumentsTable));
 	initCard();
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
 	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+
+	_opl->start(new Common::Functor0Mem<void, AdLibSoundDriver>(this, &AdLibSoundDriver::onTimer), 50);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibSoundDriver::~AdLibSoundDriver() {
@@ -389,8 +391,7 @@ void AdLibSoundDriver::stopAll() {
 }
 
 int AdLibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	update(buffer, numSamples);
-	return numSamples;
+	return _opl->readBuffer(buffer, numSamples);
 }
 
 void AdLibSoundDriver::initCard() {
@@ -417,23 +418,9 @@ void AdLibSoundDriver::initCard() {
 	_opl->writeReg(1, 0);
 }
 
-void AdLibSoundDriver::update(int16 *buf, int len) {
-	static int samplesLeft = 0;
-	while (len != 0) {
-		int count = samplesLeft;
-		if (count > len) {
-			count = len;
-		}
-		samplesLeft -= count;
-		len -= count;
-		_opl->readBuffer(buf, count);
-		if (samplesLeft == 0) {
-			if (_upCb) {
-				(*_upCb)(_upRef);
-			}
-			samplesLeft = _sampleRate / 50;
-		}
-		buf += count;
+void AdLibSoundDriver::onTimer() {
+	if (_upCb) {
+		(*_upCb)(_upRef);
 	}
 }
 
