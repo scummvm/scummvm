@@ -285,8 +285,13 @@ public:
 
 	bool isStereo() const { return false; }
 	int getRate() const { return _mixer->getOutputRate(); }
+	int readBuffer(int16 *data, const int numSamples);
 
-	void generateSamples(int16 *buf, int len);
+	void generateSamples(int16 *buf, int len) {}
+	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+		_adlibTimerProc = timerProc;
+		_adlibTimerParam = timerParam;
+	}
 
 protected:
 	OPL::OPL *_opl;
@@ -320,6 +325,12 @@ protected:
 	void muteMelodicVoice(uint8 voice);
 
 	void initVoices();
+
+private:
+	void onTimer();
+
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
 };
 
 MidiDriver *createAdLibDriver() {
@@ -364,6 +375,7 @@ int AdLibDriver::open() {
 
 	initVoices();
 
+	_opl->start(new Common::Functor0Mem<void, AdLibDriver>(this, &AdLibDriver::onTimer));
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
@@ -777,9 +789,13 @@ MidiChannel *AdLibDriver::allocateChannel() {
 	return NULL;
 }
 
-void AdLibDriver::generateSamples(int16 *buf, int len) {
-	memset(buf, 0, sizeof(int16) * len);
-	_opl->readBuffer(buf, len);
+int AdLibDriver::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
+}
+
+void AdLibDriver::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 }
 
 void AdLibDriver::initVoices() {
