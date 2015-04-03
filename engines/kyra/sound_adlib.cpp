@@ -72,27 +72,9 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
-		int32 samplesLeft = numSamples;
-		memset(buffer, 0, sizeof(int16) * numSamples);
-		while (samplesLeft) {
-			if (!_samplesTillCallback) {
-				callback();
-				_samplesTillCallback = _samplesPerCallback;
-				_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-				if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
-					_samplesTillCallback++;
-					_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
-				}
-			}
-
-			int32 render = MIN(samplesLeft, _samplesTillCallback);
-			samplesLeft -= render;
-			_samplesTillCallback -= render;
-			_adlib->readBuffer(buffer, render);
-			buffer += render;
-		}
-		return numSamples;
+		return _adlib->readBuffer(buffer, numSamples);
 	}
+
 
 	bool isStereo() const { return false; }
 	bool endOfData() const { return false; }
@@ -334,11 +316,6 @@ private:
 	// _unkTable2_2[]  - One of the tables in _unkTable2[]
 	// _unkTable2_3[]  - One of the tables in _unkTable2[]
 
-	int32 _samplesPerCallback;
-	int32 _samplesPerCallbackRemainder;
-	int32 _samplesTillCallback;
-	int32 _samplesTillCallbackRemainder;
-
 	int _curChannel;
 	uint8 _soundTrigger;
 
@@ -452,13 +429,6 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	_tablePtr1 = _tablePtr2 = 0;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
-	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-
 	_syncJumpMask = 0;
 
 	_musicVolume = 0;
@@ -468,6 +438,9 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 
 	_programQueueStart = _programQueueEnd = 0;
 	_retrySounds = false;
+
+	_adlib->start(new Common::Functor0Mem<void, AdLibDriver>(this, &AdLibDriver::callback), CALLBACKS_PER_SECOND);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibDriver::~AdLibDriver() {
