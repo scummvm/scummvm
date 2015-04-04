@@ -231,7 +231,11 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 		if (!node->children.empty())
 			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
 	}
-
+	if (order == 1) {
+		// Force children to use () even when there is only 1 child.
+		// Also this enforces the use of "," after the single item, instead of ; (see writeProperty)
+		children.flags |= SettingsSingleItem;
+	}
 	group->properties["children"] = children;
 
 	_groups.add(group);
@@ -877,7 +881,9 @@ std::string XCodeProvider::writeProperty(const std::string &variable, Property &
 
 		output += writeSetting((*setting).first, (*setting).second);
 
-		if ((prop.flags & SettingsAsList) && prop.settings.size() > 1) {
+		// The combination of SettingsAsList, and SettingsSingleItem should use "," and not ";" (i.e children
+		// in PBXGroup, so we special case that case here.
+		if ((prop.flags & SettingsAsList) && (prop.settings.size() > 1 || (prop.flags & SettingsSingleItem))) {
 			output += (prop.settings.size() > 0) ? ",\n" : "\n";
 		} else {
 			output += ";";
