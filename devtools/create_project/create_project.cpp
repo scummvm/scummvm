@@ -338,6 +338,9 @@ int main(int argc, char *argv[]) {
 	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
 	if (projectType != kProjectXcode) {
 		setup.defines.push_back("WIN32");
+	} else {
+		setup.defines.push_back("POSIX");
+		setup.defines.push_back("MACOSX"); // This will break iOS, but allows OS X to catch up on browser_osx.
 	}
 	setup.defines.push_back("SDL_BACKEND");
 	if (!useSDL2) {
