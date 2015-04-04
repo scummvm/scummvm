@@ -41,8 +41,10 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 	// AudioStream
+	int readBuffer(int16 *data, const int numSamples);
 	bool isStereo() const { return false; }
 	int getRate() const { return _mixer->getOutputRate(); }
 
@@ -81,6 +83,8 @@ private:
 	void adlibSetChannel0x20(int channel);
 	void adlibSetChannel0xE0(int channel);
 
+	void onTimer();
+
 	OPL::OPL *_opl;
 	int _midiNumberOfChannels;
 	int _adlibNoteMul;
@@ -99,6 +103,9 @@ private:
 	uint8 _midiChannelsOctTable[9];
 	uint16 _adlibChannelsVolume[11];
 	uint16 _adlibMetaSequenceData[28];
+
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
 
 	static const uint8 _adlibChannelsMappingTable1[];
 	static const uint8 _adlibChannelsNoFeedback[];
@@ -131,6 +138,8 @@ int AdLibMidiDriver::open() {
 		adlibSetNoteVolume(i, 0);
 		adlibTurnNoteOff(i);
 	}
+
+	_opl->start(new Common::Functor0Mem<void, AdLibMidiDriver>(this, &AdLibMidiDriver::onTimer));
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
@@ -196,8 +205,21 @@ void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 }
 
 void AdLibMidiDriver::generateSamples(int16 *data, int len) {
-	memset(data, 0, sizeof(int16) * len);
-	_opl->readBuffer(data, len);
+	// Dummy implementation
+}
+
+int AdLibMidiDriver::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
+}
+
+void AdLibMidiDriver::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
+}
+
+void AdLibMidiDriver::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 }
 
 void AdLibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8 *data) {
