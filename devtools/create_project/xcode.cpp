@@ -719,6 +719,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	ValueList scummvmOSX_HeaderPaths;
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
+	scummvmOSX_HeaderPaths.push_back("/opt/local/include/freetype2");
 	scummvmOSX_HeaderPaths.push_back("include/");
 	scummvmOSX_HeaderPaths.push_back("../../engines/");
 	scummvmOSX_HeaderPaths.push_back("../../");
