@@ -173,11 +173,27 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 
 	// Init root group
 	_groups.comment = "PBXGroup";
-
+	
+	// We use only the last path component for paths, as every folder gets its own group,
+	// and subfolders then only need to specify their path relative to their parent folder.
+	std::string path = getLastPathComponent(dir.name);
+	std::string name = path;
+	// We need to use the prefix-name to make sure that the hashes become unique for folders
+	// that have the same name.
+	std::string prefixName = objPrefix;
+	std::string groupName;
+	// Special case handling for the root-node
+	if (indentation == 0) { // Indentation level 0 is the root
+		// Hard-code the name, so that we can use it as mainGroup
+		name = "CustomTemplate";
+		// Should already be "", but lets make sure.
+		assert(prefixName == "");
+		groupName = "PBXGroup_" + name;
+	} else {
+		groupName = "PBXGroup_" + prefixName;
+	}
 	// Create group
-	std::string name = getLastPathComponent(dir.name);
-	Object *group = new Object(this, "PBXGroup_" + name , "PBXGroup", "PBXGroup", "", name);
-
+	Object *group = new Object(this, groupName , "PBXGroup", "PBXGroup", "", name);
 	// List of children
 	Property children;
 	children.hasOrder = true;
@@ -185,18 +201,32 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 
 	group->addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
 	group->addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
-
+	// Sub-groups below the root need to have their relative path set (relative to their parent group)
+	if (indentation != 0) {
+		group->addProperty("path", path, "", SettingsNoValue|SettingsQuoteVariable);
+	}
 	int order = 0;
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;
 
 		std::string id = "FileReference_" + node->name;
 		FileProperty property = FileProperty(node->name, node->name, node->name, "\"<group>\"");
-
-		ADD_SETTING_ORDER_NOVALUE(children, getHash(node->name), node->name, order++);
-		ADD_BUILD_FILE(id, node->name, node->name + " in Sources");
-		ADD_FILE_REFERENCE(node->name, property);
-
+		
+		// If it is a folder, create a group with a hash made from the concatenated name of the node and
+		// all its parents, this way, the various folders with the same name (i.e. sdl a bunch of places
+		// in backends) gets unique hashes, instead of the same hash becoming the child of multiple groups.
+		if (!node->children.empty()) {
+			ADD_SETTING_ORDER_NOVALUE(children, getHash("PBXGroup_" + prefixName + node->name + "_"), node->name, order++);
+		} else {
+			// Otherwise, simply hash the filename, and hope that we don't get conflicts on those. (Seems to work so far)
+			ADD_SETTING_ORDER_NOVALUE(children, getHash(node->name), node->name, order++);
+		}
+		// Iff it is a file, then add (build) file references. Since we're using Groups and not File References
+		// for folders, we shouldn't add folders as file references, obviously.
+		if (node->children.empty()) {
+			ADD_BUILD_FILE(id, node->name, node->name + " in Sources");
+			ADD_FILE_REFERENCE(node->name, property);
+		}
 		// Process child nodes
 		if (!node->children.empty())
 			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
