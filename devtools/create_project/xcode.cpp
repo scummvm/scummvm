@@ -538,7 +538,36 @@ void XCodeProvider::setupResourcesBuildPhase() {
 }
 
 void XCodeProvider::setupSourcesBuildPhase() {
-	// TODO
+	_sourcesBuildPhase.comment = "PBXSourcesBuildPhase";
+
+	// Setup source file properties
+	std::map<std::string, FileProperty> properties;
+
+	// Same as for containers: a rule for each native target
+	for (unsigned int i = 0; i < _targets.size(); i++) {
+		Object *source = new Object(this, "PBXSourcesBuildPhase_" + _targets[i], "PBXSourcesBuildPhase", "PBXSourcesBuildPhase", "", "Sources");
+
+		source->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
+
+		Property files;
+		files.hasOrder = true;
+		files.flags = SettingsAsList;
+
+		int order = 0;
+		for (std::vector<Object*>::iterator file = _buildFile.objects.begin(); file !=_buildFile.objects.end(); ++file) {
+			if (!producesObjectFile((*file)->name)) {
+				continue;
+			}
+			std::string comment = (*file)->name + " in Sources";
+			ADD_SETTING_ORDER_NOVALUE(files, getHash((*file)->id), comment, order++);
+		}
+
+		source->properties["files"] = files;
+
+		source->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
+
+		_sourcesBuildPhase.add(source);
+	}
 }
 
 // Setup all build configurations
