@@ -45,7 +45,8 @@ protected:
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
-
+	// Disable multi-project creation on ProjectProvider
+	bool createOneProjectPerEngine() const { return false; }
 private:
 	enum {
 		SettingsAsList        = 0x01,
