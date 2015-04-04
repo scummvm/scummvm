@@ -128,6 +128,22 @@ static const TonyGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Tony Tough Italian (PC Action magazine)
+		{
+			"tony",
+			0,
+			{
+				{ "data1.cab", 0, "42344827407b974af11d60fadbd021b4", 3811 },
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
+	{
 		// Tony Tough Italian provided by Giovanni Bajo
 		{
 			"tony",
