@@ -20,7 +20,7 @@
  *
  */
 
-//#define ENABLE_XCODE
+#define ENABLE_XCODE
 
 // HACK to allow building with the SDL backend on MinGW
 // see bug #1800764 "TOOLS: MinGW tools building broken"
