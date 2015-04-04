@@ -56,6 +56,7 @@ private:
 	bool _up, _down;
 	int _page;
 	int _converseNum;
+	Common::String _find;
 
 	void loadJournalLocations();
 
@@ -63,7 +64,9 @@ private:
 
 	void doArrows();
 
-	void doJournal(int direction, int howFar);
+	bool doJournal(int direction, int howFar);
+
+	void clearPage();
 public:
 public:
 	Journal(SherlockEngine *vm);

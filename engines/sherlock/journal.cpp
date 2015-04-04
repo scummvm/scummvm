@@ -26,6 +26,7 @@
 namespace Sherlock {
 
 #define JOURNAL_BUTTONS_Y 178
+#define LINES_PER_PAGE 11
 
 // Positioning of buttons in the journal view
 const int JOURNAL_POINTS[9][3] = { 
@@ -528,8 +529,262 @@ void Journal::doArrows() {
 	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, "First Page");
 }
 
-void Journal::doJournal(int direction, int howFar) {
-	// TODO
+/**
+ * Displays a page of the journal at the current index
+ */
+bool Journal::doJournal(int direction, int howFar) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	int yp = 37;
+	int startPage = _page;
+	bool endJournal = false;
+	bool firstOccurance = false;
+	bool searchSuccessful = false;
+	bool endFlag = false;
+	int lineNum = 0;
+	int maxLines;
+	int savedIndex;
+	int savedSub;
+	int temp;
+	bool inc;
+	const char *matchP;
+	int width;
+
+	_converseNum = -1;
+	_down = true;
+
+	do {
+		// Get the number of lines for the current journal entry
+		maxLines = loadJournalFile(false);
+		if (!maxLines) {
+			// Entry has no text, so it must be a stealth eny. Move onto further journal entries
+			// until an entry with text is found
+			if (++_index == (int)_journal.size()) {
+				endJournal = true;
+			} else {
+				_sub = 0;
+				maxLines = loadJournalFile(false);
+			}
+		}
+	} while (!endJournal && !maxLines);
+
+	// Check if there no further pages with text until the end of the journal
+	if (endJournal) {
+		// If moving forward or backwards, clear the page before printing
+		if (direction)
+			clearPage();
+
+		screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
+		return false;
+	}
+
+	// If the journal page is being changed, set the wait cursor
+	if (direction)
+		events.setCursor(WAIT);
+
+	switch (direction) {
+	case 1:
+	case 4:
+		// Move backwards howFar number of lines unless either the start of the journal is reached,
+		// or a searched for keyword is found
+		do {
+			// Animate the glass mouse cursor
+			int cursorNum = (int)events.getCursor() + 1;
+			if (cursorNum > (WAIT + 2))
+				cursorNum = WAIT;
+			events.setCursor((CursorId)cursorNum);
+
+			// Move backwards through the journal file a line at a time
+			if (--_sub < 0) {
+				do {
+					if (--_index < 0) {
+						_index = 0;
+						_sub = 0;
+						endJournal = true;
+					}
+					else {
+						maxLines = loadJournalFile(false);
+						_sub = maxLines - 1;
+					}
+				} while (!endJournal && !maxLines);
+			}
+
+			// If it's search mode, check each line for the given keyword
+			if (direction >= 3 && maxLines && !endJournal && !searchSuccessful) {
+				Common::String line = _lines[_sub];
+				line.toUppercase();
+				if (strstr(line.c_str(), _find.c_str()) != nullptr) {
+					// Found a match. Reset howFar so that the start of page that the match
+					// was found on will be displayed
+					searchSuccessful = true;
+					howFar = ((lineNum / LINES_PER_PAGE) + 1) * LINES_PER_PAGE;
+				}
+			}
+
+			++lineNum;
+		} while (lineNum < howFar && !endJournal);
+
+		if (!_index && !_sub)
+			_page = 1;
+		else
+			_page -= howFar / LINES_PER_PAGE;
+		break;
+
+	case 2:
+	case 3:
+		// Move howFar lines ahead unless the end of the journal is reached, 
+		// or a searched for keyword is found
+		for (temp = 0; (temp < (howFar / LINES_PER_PAGE)) && !endJournal && !searchSuccessful; ++temp) {
+			// Handle animating mouse cursor
+			int cursorNum = (int)events.getCursor() + 1;
+			if (cursorNum >(WAIT + 2))
+				cursorNum = WAIT;
+			events.setCursor((CursorId)cursorNum);
+
+			lineNum = 0;
+			savedIndex = _index;
+			savedSub = _sub;
+
+			// Move a single page ahead
+			do {
+				// If in search mode, check for keyword
+				if (direction >= 3 && _page != startPage) {
+					Common::String line = _lines[_sub];
+					line.toUppercase();
+					if (strstr(line.c_str(), _find.c_str()) != nullptr)
+						searchSuccessful = true;
+				}
+
+				// Move forwards a line at a time, unless search word was found
+				if (!searchSuccessful) {
+					if (++_sub == maxLines) {
+						// Reached end of page
+						do {
+							if (++_index == (int)_lines.size()) {
+								_index = savedIndex;
+								_sub = savedSub;
+								maxLines = loadJournalFile(false);
+								endJournal = true;
+							} else {
+								_sub = 0;
+								maxLines = loadJournalFile(false);
+							}
+						} while (!endJournal && !maxLines);						
+					}
+
+					++lineNum;
+				}
+			} while ((lineNum < LINES_PER_PAGE) && !endJournal && !searchSuccessful);
+
+			if (!endJournal && !searchSuccessful)
+				// Move to next page
+				++_page;
+
+			if (searchSuccessful) {
+				// Search found, so show top of the page it was found on
+				_index = savedIndex;
+				_sub = savedSub;
+				maxLines = loadJournalFile(false);
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (direction) {
+		events.setCursor(ARROW);
+		clearPage();
+	}
+
+	screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
+
+	temp = _sub;
+	savedIndex = _index;
+	lineNum = 0;
+
+	do {
+		inc = true;
+
+		// If there wasn't any line to print at the top of the page, we won't need to
+		// increment the y position
+		if (_lines[temp].empty() && yp == 37)
+			inc = false;
+
+		// If there's a searched for keyword in the line, it will need to be highlighted
+		if (searchSuccessful && firstOccurance) {
+			// Check if line has the keyword
+			Common::String line = _lines[temp];
+			line.toUppercase();
+			if ((matchP = strstr(line.c_str(), _find.c_str())) != nullptr) {
+				matchP = _lines[temp].c_str() + (matchP - line.c_str());
+				firstOccurance = false;
+
+				// Print out the start of the line before the matching keyword
+				Common::String lineStart(_lines[temp].c_str(), matchP);
+				if (lineStart.hasPrefix("@")) {
+					width = screen.stringWidth(lineStart.c_str() + 1);
+					screen.gPrint(Common::Point(53, yp), 15, "%s", lineStart.c_str() + 1);
+				} else {
+					width = screen.stringWidth(lineStart.c_str());
+					screen.gPrint(Common::Point(53, yp), PEN_COLOR, lineStart.c_str());
+				}
+
+				// Print out the found keyword
+				Common::String lineMatch(matchP, matchP + _find.size());
+				screen.gPrint(Common::Point(53 + width, yp), INV_FOREGROUND, lineMatch.c_str());
+				width += screen.stringWidth(lineMatch.c_str());
+
+				// Print remainder of line
+				screen.gPrint(Common::Point(53 + width, yp), PEN_COLOR, matchP + _find.size());
+			} else if (_lines[temp].hasPrefix("@")) {
+				screen.gPrint(Common::Point(53, yp), 15, _lines[temp].c_str() + 1);
+			} else {
+				screen.gPrint(Common::Point(53, yp), PEN_COLOR, _lines[temp].c_str());
+			}
+		} else {
+			if (_lines[temp].hasPrefix("@")) {
+				screen.gPrint(Common::Point(53, yp), 15, _lines[temp].c_str() + 1);
+			} else {
+				screen.gPrint(Common::Point(53, yp), PEN_COLOR, _lines[temp].c_str());
+			}
+		}
+
+		if (++temp == maxLines) {
+			// Move to next page
+			do {
+				if (_index < (_journal.size() - 1) && lineNum < (LINES_PER_PAGE - 1)) {
+					++_index;
+					maxLines = loadJournalFile(false);
+					temp = 0;
+				} else {
+					if (_index == (_journal.size() - 1))
+						_down = false;
+					endFlag = true;
+				}
+			} while (!endFlag && !maxLines);
+		}
+
+		if (inc) {
+			// Move to next line
+			++lineNum;
+			yp += 13;
+		}
+	} while (lineNum < LINES_PER_PAGE && !endFlag);
+
+	_index = savedIndex;
+	_up = _index || _sub;
+
+	return direction >= 3 && searchSuccessful;
+}
+
+/**
+ * Clears the journal page
+ */
+void Journal::clearPage() {
+	// Clear the journal page by redrawing it from scratch
+	drawInterface();
 }
 
 } // End of namespace Sherlock
