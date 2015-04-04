@@ -336,7 +336,9 @@ int main(int argc, char *argv[]) {
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
 	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
-	setup.defines.push_back("WIN32");
+	if (projectType != kProjectXcode) {
+		setup.defines.push_back("WIN32");
+	}
 	setup.defines.push_back("SDL_BACKEND");
 	if (!useSDL2) {
 		cout << "\nLinking to SDL 1.2\n\n";
