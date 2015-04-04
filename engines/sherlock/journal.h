@@ -67,13 +67,16 @@ private:
 	bool doJournal(int direction, int howFar);
 
 	void clearPage();
-public:
+
+	int getFindName(bool printError);
 public:
 	Journal(SherlockEngine *vm);
 
 	void record(int converseNum, int statementNum);
 
 	void drawInterface();
+
+	bool handleEvents(int key);
 };
 
 } // End of namespace Sherlock

@@ -41,6 +41,12 @@ const int JOURNAL_POINTS[9][3] = {
 	{ 237, 313, 275 } 
 };
 
+const int SEARCH_POINTS[3][3] = {
+	{ 51, 123, 86 },
+	{ 124, 196, 159 },
+	{ 197, 269, 232 }
+};
+
 /*----------------------------------------------------------------*/
 
 Journal::Journal(SherlockEngine *vm): _vm(vm) {
@@ -754,12 +760,12 @@ bool Journal::doJournal(int direction, int howFar) {
 		if (++temp == maxLines) {
 			// Move to next page
 			do {
-				if (_index < (_journal.size() - 1) && lineNum < (LINES_PER_PAGE - 1)) {
+				if (_index < ((int)_journal.size() - 1) && lineNum < (LINES_PER_PAGE - 1)) {
 					++_index;
 					maxLines = loadJournalFile(false);
 					temp = 0;
 				} else {
-					if (_index == (_journal.size() - 1))
+					if (_index == ((int)_journal.size() - 1))
 						_down = false;
 					endFlag = true;
 				}
@@ -785,6 +791,388 @@ bool Journal::doJournal(int direction, int howFar) {
 void Journal::clearPage() {
 	// Clear the journal page by redrawing it from scratch
 	drawInterface();
+}
+
+/**
+ * Handle events whilst the journal is being displayed
+ */
+bool Journal::handleEvents(int key) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	bool doneFlag = false;
+	Common::Point pt = events.mousePos();
+	byte color;
+	enum Button {
+		BTN_NONE, BTN_EXIT, BTN_BACK10, BTN_UP, BTN_DOWN, BTN_AHEAD110, BTN_SEARCH,
+		BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT
+	};
+	Button found = BTN_NONE;
+
+	if (events._pressed || events._released) {
+		// Exit button
+		if (pt.x > JOURNAL_POINTS[0][0] && pt.x < JOURNAL_POINTS[0][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+				pt.y < (JOURNAL_BUTTONS_Y + 10)) {
+			found = BTN_EXIT;
+			color = COMMAND_HIGHLIGHTED;
+		} else {
+			color = COMMAND_FOREGROUND;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, true, "Exit");
+
+		// Back 10 button
+		if (pt.x > JOURNAL_POINTS[1][0] && pt.x < JOURNAL_POINTS[1][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+				pt.y < (JOURNAL_BUTTONS_Y + 10) && _page > 1) {
+			found = BTN_BACK10;
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Back 10");
+		} else if (_page > 1) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Back 10");
+		}
+
+		// Up button
+		if (pt.x > JOURNAL_POINTS[2][0] && pt.x < JOURNAL_POINTS[2][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+				pt.y < (JOURNAL_BUTTONS_Y + 10) && _up) {
+			found = BTN_UP;
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Up");
+		} else if (_up) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Up");
+		}
+
+		// Down button
+		if (pt.x > JOURNAL_POINTS[3][0] && pt.x < JOURNAL_POINTS[3][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+				pt.y < (JOURNAL_BUTTONS_Y + 10) && _down) {
+			found = BTN_DOWN;
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Down");
+		} else if (_down) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Down");
+		}
+
+		// Ahead 10 button
+		if (pt.x > JOURNAL_POINTS[4][0] && pt.x < JOURNAL_POINTS[4][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+				pt.y < (JOURNAL_BUTTONS_Y + 10) && _down) {
+			found = BTN_AHEAD110;
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Ahead 10");
+		} else if (_down) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Ahead 10");
+		}
+
+		// Search button
+		if (pt.x > JOURNAL_POINTS[5][0] && pt.x < JOURNAL_POINTS[5][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+				pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty()) {
+			found = BTN_SEARCH;
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_journal.empty()) {
+			color = COMMAND_NULL;
+		} else {
+			color = COMMAND_FOREGROUND;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, "Search");
+
+		// First Page button
+		if (pt.x > JOURNAL_POINTS[6][0] && pt.x < JOURNAL_POINTS[6][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+				pt.y < (JOURNAL_BUTTONS_Y + 20) && _up) {
+			found = BTN_FIRST_PAGE;
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_up) {
+			color = COMMAND_FOREGROUND;
+		} else {
+			color = COMMAND_NULL;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, "First Page");
+
+		// Last Page button
+		if (pt.x > JOURNAL_POINTS[7][0] && pt.x < JOURNAL_POINTS[7][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+				pt.y < (JOURNAL_BUTTONS_Y + 20) && _down) {
+			found = BTN_LAST_PAGE;
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_down) {
+			color = COMMAND_FOREGROUND;
+		} else {
+			color = COMMAND_NULL;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, "Last Page");
+
+
+		// Print Text button
+		if (pt.x > JOURNAL_POINTS[8][0] && pt.x < JOURNAL_POINTS[8][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+				pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty()) {
+			found = BTN_PRINT_TEXT;
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_journal.empty()) {
+			color = COMMAND_NULL;
+		} else {
+			color = COMMAND_FOREGROUND;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), color, true, "Print Text");
+	}
+
+	if (found == BTN_EXIT && events._released)
+		// Exit button pressed
+		doneFlag = true;
+
+	if (((found == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
+		// Scrolll up 10 pages
+		if (_page < 11)
+			doJournal(1, (_page - 1) * LINES_PER_PAGE);
+		else
+			doJournal(1, 10 * LINES_PER_PAGE);
+	
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	if (((found == BTN_UP && events._released) || key =='U') && _up) {
+		// Scroll up
+		doJournal(1, LINES_PER_PAGE);
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	if (((found == BTN_DOWN && events._released) || key =='D') && _down) {
+		// Scroll down
+		doJournal(2, LINES_PER_PAGE);
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	if (((found == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
+		// Scroll down 10 pages
+		if ((_page + 10) > _maxPage)
+			doJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+		else
+			doJournal(2, 10 * LINES_PER_PAGE);
+
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	if (((found == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
+		bool notFound = false;
+	
+		int dir;
+
+		do {
+			if ((dir = getFindName(notFound)) != 0) {
+				int savedIndex = _index;
+				int savedSub = _sub;
+				int savedPage = _page;
+
+				if (doJournal(dir + 2, 1000 * LINES_PER_PAGE) == 0) {
+					_index = savedIndex;
+					_sub = savedSub;
+					_page = savedPage;
+
+					clearPage();
+					doJournal(0, 0);
+					notFound = true;
+				} else {
+					doneFlag = true;
+				}
+
+				doArrows();
+				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			} else {
+				doneFlag = true;
+			}
+		} while (!doneFlag);
+		doneFlag = false;
+	}
+
+	if (((found == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
+		// First page
+		_index = _sub = 0;
+		_up = _down = false;
+		_page = 1;
+
+		clearPage();
+		doJournal(0, 0);
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	if (((found == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
+		// Last page
+		if ((_page + 10) > _maxPage)
+			doJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+		else
+			doJournal(2, 1000 * LINES_PER_PAGE);
+
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	events.wait(2);
+
+	return doneFlag;
+}
+
+/**
+ * Show the search submenu
+ */
+int Journal::getFindName(bool printError) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	int xp;
+	int yp = 174;
+	bool flag = false;
+	Common::String name;
+	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
+	Button found = BTN_NONE;
+	int done = 0;
+	byte color;
+
+	// Draw search panel
+	screen.makePanel(Common::Rect(6, 171, 313, 199));
+	screen.makeButton(Common::Rect(SEARCH_POINTS[0][0], yp, SEARCH_POINTS[0][1], yp + 10),
+		SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+	screen.makeButton(Common::Rect(SEARCH_POINTS[1][0], yp, SEARCH_POINTS[1][1], yp + 10),
+		SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, "Backward");
+	screen.makeButton(Common::Rect(SEARCH_POINTS[2][0], yp, SEARCH_POINTS[2][1], yp + 10),
+		SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, "Forward");
+
+	screen.gPrint(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, yp), COMMAND_FOREGROUND, "E");
+	screen.gPrint(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, yp), COMMAND_FOREGROUND, "B");
+	screen.gPrint(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, yp), COMMAND_FOREGROUND, "F");
+
+	screen.fillRect(Common::Rect(12, 185, 307, 186), BUTTON_BOTTOM);
+	screen.vLine(12, 185, 195, BUTTON_BOTTOM);
+	screen.hLine(13, 195, 306, BUTTON_TOP);
+	screen.hLine(306, 186, 195, BUTTON_TOP);
+
+	if (printError) {
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth("Text Not Found !")) / 2, 185),
+			INV_FOREGROUND, "Text Not Found !");
+	} else if (!_find.empty()) {
+		// There's already a search term, display it already
+		screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, _find.c_str());
+		name = _find;
+	}
+
+	screen.slamArea(6, 171, 307, 28);
+
+	if (printError) {
+		// Give time for user to see the message
+		for (int idx = 0; idx < 40 && !_vm->shouldQuit() && !events.kbHit() && !events._released; ++idx) {
+			events.pollEvents();
+			events.setButtonState();
+
+			events.wait(2);
+		}
+
+		events.clearKeyboard();
+		screen.fillRect(Common::Rect(13, 186, 306, 195), BUTTON_MIDDLE);
+
+		if (!_find.empty()) {
+			screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, _find.c_str());
+			name = _find;
+		}
+
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	xp = 15 + screen.stringWidth(name);
+	yp = 186;
+	
+	do {
+		events._released = false;
+		found = BTN_NONE;
+
+		while (!_vm->shouldQuit() && !events.kbHit() && !events._released) {
+			found = BTN_NONE;
+			if (talk._talkToAbort)
+				return 0;
+
+			// Check if key or mouse button press has occurred
+			events.setButtonState();
+			Common::Point pt = events.mousePos();
+
+			flag = !flag;
+			screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), flag ? INV_FOREGROUND : BUTTON_MIDDLE);
+
+			if (events._pressed || events._released) {
+				if (pt.x > SEARCH_POINTS[0][0] && pt.x < SEARCH_POINTS[0][1] && pt.y > 174 && pt.y < 183) {
+					found = BTN_EXIT;
+					color = COMMAND_HIGHLIGHTED;
+				} else {
+					color = COMMAND_FOREGROUND;
+				}
+				screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, 175), color, "Exit");
+
+				if (pt.x > SEARCH_POINTS[1][0] && pt.x < SEARCH_POINTS[1][1] && pt.y > 174 && pt.y < 183) {
+					found = BTN_BACKWARD;
+					color = COMMAND_HIGHLIGHTED;
+				} else {
+					color = COMMAND_FOREGROUND;
+				}
+				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, 175), color, "Backward");
+
+				if (pt.x > SEARCH_POINTS[2][0] && pt.x < SEARCH_POINTS[2][1] && pt.y > 174 && pt.y < 183) {
+					found = BTN_FORWARD;
+					color = COMMAND_HIGHLIGHTED;
+				} else {
+					color = COMMAND_FOREGROUND;
+				}
+				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Forward") / 2, 175), color, "Forward");
+			}
+
+			events.wait(2);
+		}
+
+		if (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+
+			if (keyState.keycode == Common::KEYCODE_BACKSPACE && name.c_str() > 0) {
+				screen.vgaBar(Common::Rect(xp - screen.charWidth(name.lastChar()), yp, xp + 8, yp + 9), BUTTON_MIDDLE);
+				xp -= screen.charWidth(name.lastChar());
+				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), INV_FOREGROUND);
+				name.deleteLastChar();
+			}
+
+			if (keyState.keycode == Common::KEYCODE_RETURN)
+				done = 1;
+
+			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
+				done = -1;
+			}
+
+			if (keyState.keycode >= Common::KEYCODE_SPACE && keyState.keycode <= Common::KEYCODE_z
+					&& keyState.keycode != Common::KEYCODE_AT && name.size() < 50 
+					&& (xp + screen.charWidth(keyState.keycode)) < 296) {
+				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
+				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", (char)keyState.keycode);
+				xp += screen.charWidth((char)keyState.keycode);
+				name += (char)keyState.keycode;
+			}
+		}
+
+		if (events._released) {
+			switch (found) {
+			case BTN_EXIT:
+				done = -1; break;
+			case BTN_BACKWARD:
+				done = 2; break;
+			case BTN_FORWARD:
+				done = 1; break;
+			default:
+				break;
+			}
+		}
+	} while (!done);
+
+	if (done != -1) {
+		_find = name;
+	} else {
+		done = 0;
+	}
+
+	// Redisplay the journal screen
+	clearPage();
+	doJournal(0, 0);
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	return done;
 }
 
 } // End of namespace Sherlock

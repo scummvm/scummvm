@@ -97,8 +97,6 @@ private:
 
 	void transitionToScene();
 
-	void updateBackground();
-
 	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
 
 	void saveSceneStatus();
@@ -167,6 +165,8 @@ public:
 	int whichZone(const Common::Point &pt);
 
 	int closestZone(const Common::Point &pt);
+
+	void updateBackground();
 };
 
 } // End of namespace Sherlock

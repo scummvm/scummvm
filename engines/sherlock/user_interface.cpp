@@ -1127,10 +1127,51 @@ void UserInterface::doTalkControl() {
 }
 
 void UserInterface::journalControl() {
+	Events &events = *_vm->_events;
 	Journal &journal = *_vm->_journal;
-	
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	int found;
+	bool doneFlag = false;
+
+	// Draw the journal screen
 	journal.drawInterface();
 
+	// Handle journal events
+	do {
+		found = _key = -1;
+		events.setButtonState();
+		
+		// Handle keypresses
+		if (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+			if (keyState.keycode == Common::KEYCODE_x && (keyState.flags & Common::KBD_ALT)) {
+				_vm->quitGame();
+				return;
+			} else if (keyState.keycode == Common::KEYCODE_e || keyState.keycode == Common::KEYCODE_ESCAPE) {
+				doneFlag = true;
+			} else {
+				_key = toupper(keyState.keycode);
+			}
+		}
+
+		if (!doneFlag)
+			doneFlag = journal.handleEvents(_key);
+	} while (!_vm->shouldQuit() && !doneFlag);
+
+	// Finish up
+	_infoFlag = _keyboardInput = false;
+	_keycode = Common::KEYCODE_INVALID;
+	_windowOpen = false;
+	_windowBounds.top = CONTROLS_Y1;
+	_key = -1;
+
+	// Reset the palette
+	screen.setPalette(screen._cMap);
+
+	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	scene.updateBackground();
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	// TODO
 }
 
