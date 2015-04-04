@@ -236,6 +236,12 @@ void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 		// Also this enforces the use of "," after the single item, instead of ; (see writeProperty)
 		children.flags |= SettingsSingleItem;
 	}
+	if (indentation == 0) {
+		// Add any root-groups to the very bottom (Frameworks-etc)
+		for (std::vector<Object*>::iterator it = _rootGroups.objects.begin(); it != _rootGroups.objects.end(); ++it) {
+			ADD_SETTING_ORDER_NOVALUE(children, getHash((*it)->id), (*it)->id, order++);
+		}
+	}
 	group->properties["children"] = children;
 
 	_groups.add(group);
@@ -248,6 +254,9 @@ void XCodeProvider::setupCopyFilesBuildPhase() {
 	// Nothing to do here
 }
 
+#define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
+	
 /**
  * Sets up the frameworks build phase.
  *
@@ -256,24 +265,38 @@ void XCodeProvider::setupCopyFilesBuildPhase() {
 void XCodeProvider::setupFrameworksBuildPhase() {
 	_frameworksBuildPhase.comment = "PBXFrameworksBuildPhase";
 
+	// Just use a hardcoded id for the Frameworks-group
+	Object *frameworksGroup = new Object(this, "PBXGroup_CustomTemplate_Frameworks_" , "PBXGroup", "PBXGroup", "", "CustomTemplate_Frameworks_");
+	frameworksGroup->addProperty("name", "Frameworks", "", SettingsNoValue|SettingsQuoteVariable);
+	frameworksGroup->addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
+
+	Property children;
+	children.hasOrder = true;
+	children.flags = SettingsAsList;
+
 	// Setup framework file properties
 	std::map<std::string, FileProperty> properties;
-
+	int fwOrder = 0;
 	// Frameworks
-	properties["ApplicationServices.framework"] = FileProperty("wrapper.framework", "ApplicationServices.framework", "System/Library/Frameworks/ApplicationServices.framework", "SDKROOT");
-	properties["AudioToolbox.framework"]        = FileProperty("wrapper.framework", "AudioToolbox.framework", "System/Library/Frameworks/AudioToolbox.framework", "SDKROOT");
-	properties["AudioUnit.framework"]           = FileProperty("wrapper.framework", "AudioUnit.framework", "System/Library/Frameworks/AudioUnit.framework", "SDKROOT");
-	properties["Carbon.framework"]              = FileProperty("wrapper.framework", "Carbon.framework", "System/Library/Frameworks/Carbon.framework", "SDKROOT");
-	properties["Cocoa.framework"]               = FileProperty("wrapper.framework", "Cocoa.framework", "System/Library/Frameworks/Cocoa.framework", "SDKROOT");
-	properties["CoreAudio.framework"]           = FileProperty("wrapper.framework", "CoreAudio.framework", "System/Library/Frameworks/CoreAudio.framework", "SDKROOT");
-	properties["CoreFoundation.framework"]      = FileProperty("wrapper.framework", "CoreFoundation.framework", "System/Library/Frameworks/CoreFoundation.framework", "SDKROOT");
-	properties["CoreMIDI.framework"]            = FileProperty("wrapper.framework", "CoreMIDI.framework", "System/Library/Frameworks/CoreMIDI.framework", "SDKROOT");
-	properties["Foundation.framework"]          = FileProperty("wrapper.framework", "Foundation.framework", "System/Library/Frameworks/Foundation.framework", "SDKROOT");
-	properties["IOKit.framework"]               = FileProperty("wrapper.framework", "IOKit.framework", "System/Library/Frameworks/IOKit.framework", "SDKROOT");
-	properties["OpenGLES.framework"]            = FileProperty("wrapper.framework", "OpenGLES.framework", "System/Library/Frameworks/OpenGLES.framework", "SDKROOT");
-	properties["QuartzCore.framework"]          = FileProperty("wrapper.framework", "QuartzCore.framework", "System/Library/Frameworks/QuartzCore.framework", "SDKROOT");
-	properties["QuickTime.framework"]           = FileProperty("wrapper.framework", "QuickTime.framework", "System/Library/Frameworks/QuickTime.framework", "SDKROOT");
-	properties["UIKit.framework"]               = FileProperty("wrapper.framework", "UIKit.framework", "System/Library/Frameworks/UIKit.framework", "SDKROOT");
+	DEF_SYSFRAMEWORK("ApplicationServices");
+	DEF_SYSFRAMEWORK("AudioToolbox");
+	DEF_SYSFRAMEWORK("AudioUnit");
+	DEF_SYSFRAMEWORK("Carbon");
+	DEF_SYSFRAMEWORK("Cocoa");
+	DEF_SYSFRAMEWORK("CoreAudio");
+	DEF_SYSFRAMEWORK("CoreFoundation");
+	DEF_SYSFRAMEWORK("CoreMIDI");
+	DEF_SYSFRAMEWORK("Foundation");
+	DEF_SYSFRAMEWORK("IOKit");
+	DEF_SYSFRAMEWORK("OpenGLES");
+	DEF_SYSFRAMEWORK("QuartzCore");
+	DEF_SYSFRAMEWORK("QuickTime");
+	DEF_SYSFRAMEWORK("UIKit");
+
+	frameworksGroup->properties["children"] = children;
+	_groups.add(frameworksGroup);
+	// Force this to be added as a sub-group in the root.
+	_rootGroups.add(frameworksGroup);
 
 	// Local libraries
 	properties["libFLAC.a"]                     = FileProperty("archive.ar", "libFLAC.a", "lib/libFLAC.a", "\"<group>\"");
