@@ -560,6 +560,18 @@ void XCodeProvider::setupResourcesBuildPhase() {
 	}
 }
 
+bool producesObjectFileOnOSX(const std::string &fileName) {
+	std::string n, ext;
+	splitFilename(fileName, n, ext);
+
+	// Note that the difference between this and the general producesObjectFile is that
+	// this one adds Objective-C(++), and removes asm-support.
+	if (ext == "cpp" || ext == "c" || ext == "m" || ext == "mm")
+		return true;
+	else
+		return false;
+}
+
 void XCodeProvider::setupSourcesBuildPhase() {
 	_sourcesBuildPhase.comment = "PBXSourcesBuildPhase";
 
@@ -578,7 +590,7 @@ void XCodeProvider::setupSourcesBuildPhase() {
 
 		int order = 0;
 		for (std::vector<Object*>::iterator file = _buildFile.objects.begin(); file !=_buildFile.objects.end(); ++file) {
-			if (!producesObjectFile((*file)->name)) {
+			if (!producesObjectFileOnOSX((*file)->name)) {
 				continue;
 			}
 			std::string comment = (*file)->name + " in Sources";
