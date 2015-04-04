@@ -39,6 +39,7 @@ AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pD
 	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
 
+	_opl->start(new Common::Functor0Mem<void, AdLibMusic>(this, &AdLibMusic::onTimer), 50);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
@@ -48,31 +49,12 @@ AdLibMusic::~AdLibMusic() {
 }
 
 int AdLibMusic::readBuffer(int16 *data, const int numSamples) {
-	if (_musicData == NULL) {
-		// no music loaded
-		memset(data, 0, numSamples * sizeof(int16));
-	} else if ((_currentMusic == 0) || (_numberOfChannels == 0)) {
-		// music loaded but not played as of yet
-		memset(data, 0, numSamples * sizeof(int16));
-		// poll anyways as pollMusic() can activate the music
+	return _opl->readBuffer(data, numSamples);
+}
+
+void AdLibMusic::onTimer() {
+	if (_musicData != NULL)
 		pollMusic();
-		_nextMusicPoll = _sampleRate / 50;
-	} else {
-		uint32 render;
-		uint remaining = numSamples;
-		while (remaining) {
-			render = (remaining > _nextMusicPoll) ? _nextMusicPoll : remaining;
-			remaining -= render;
-			_nextMusicPoll -= render;
-			_opl->readBuffer(data, render);
-			data += render;
-			if (_nextMusicPoll == 0) {
-				pollMusic();
-				_nextMusicPoll = _sampleRate / 50;
-			}
-		}
-	}
-	return numSamples;
 }
 
 void AdLibMusic::setupPointers() {
@@ -90,7 +72,6 @@ void AdLibMusic::setupPointers() {
 		_musicDataLoc = READ_LE_UINT16(_musicData + 0x1201);
 		_initSequence = _musicData + 0xE91;
 	}
-	_nextMusicPoll = 0;
 }
 
 void AdLibMusic::setupChannels(uint8 *channelData) {
@@ -112,6 +93,7 @@ void AdLibMusic::startDriver() {
 
 void AdLibMusic::setVolume(uint16 param) {
 	_musicVolume = param;
+	// FIXME: This is bad. There's no real volume control here.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 2 * param);
 }
 

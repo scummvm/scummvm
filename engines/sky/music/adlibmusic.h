@@ -48,12 +48,14 @@ private:
 	OPL::OPL *_opl;
 	Audio::SoundHandle _soundHandle;
 	uint8 *_initSequence;
-	uint32 _sampleRate, _nextMusicPoll;
+	uint32 _sampleRate;
 	virtual void setupPointers();
 	virtual void setupChannels(uint8 *channelData);
 	virtual void startDriver();
 
 	void premixerCall(int16 *buf, uint len);
+
+	void onTimer();
 };
 
 } // End of namespace Sky
