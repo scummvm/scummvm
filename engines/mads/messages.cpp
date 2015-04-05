@@ -91,7 +91,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._position = pt;
 	rec._textDisplayIndex = -1;
 	rec._timeout = timeout;
-	rec._frameTimer = _vm->_game->_priorFrameTimer;
+	rec._frameTimer = scene._frameStartTime;
 	rec._trigger = endTrigger;
 	rec._abortMode = _vm->_game->_triggerSetupMode;
 
@@ -162,8 +162,10 @@ void KernelMessages::update() {
 	uint32 currentTimer = _vm->_game->_scene._frameStartTime;
 
 	for (uint i = 0; i < _entries.size() && !_vm->_game->_trigger; ++i) {
-		KernelMessage &msg = _entries[i];
+		if (_vm->_game->_trigger)
+			break;
 
+		KernelMessage &msg = _entries[i];
 		if (((msg._flags & KMSG_ACTIVE) != 0) && (currentTimer >= msg._frameTimer))
 			processText(i);
 	}
@@ -172,7 +174,7 @@ void KernelMessages::update() {
 void KernelMessages::processText(int msgIndex) {
 	Scene &scene = _vm->_game->_scene;
 	KernelMessage &msg = _entries[msgIndex];
-	uint32 currentTimer = _vm->_game->_priorFrameTimer;
+	uint32 currentTimer = scene._frameStartTime;
 	bool flag = false;
 
 	if ((msg._flags & KMSG_EXPIRE) != 0) {

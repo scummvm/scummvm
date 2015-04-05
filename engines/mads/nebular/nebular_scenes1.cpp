@@ -2112,9 +2112,9 @@ void Scene106::step() {
 		}
 
 		if (msgId >= 0) {
-			int nextAbortVal = _game._trigger + 1;
+			int nextTrigger = _game._trigger + 1;
 			_scene->_kernelMessages.add(Common::Point(15, _positionY), 0x1110, 0, 0, 360, _game.getQuote(msgId));
-			_scene->_sequences.addTimer(150, nextAbortVal);
+			_scene->_sequences.addTimer(150, nextTrigger);
 			_positionY += 14;
 		}
 	}
