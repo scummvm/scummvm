@@ -1462,7 +1462,6 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_TAKE, NOUN_REBREATHER, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
-			_scene->changeVariant(1);
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
