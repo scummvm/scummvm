@@ -189,11 +189,6 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 	_randomSeed = 1234;
 	_amDep = _vibDep = _splitPoint = true;
 
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
-
 	for (int i = 0; i < 11; ++i) {
 		_channelData[i]._field0 = 0;
 		_channelData[i]._freqMask = 0;
@@ -211,15 +206,15 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 	_mixer = mixer;
 	_opl = opl;
 
-	_opl->init();
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
-		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
 	// Initialize the Adlib
 	adlibInit();
 
 	// Reset the adlib
 	command0();
+
+	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
+		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 ASound::~ASound() {
@@ -833,32 +828,14 @@ void ASound::updateFNumber() {
 	write2(8, hiReg, val2);
 }
 
-int ASound::readBuffer(int16 *buffer, const int numSamples) {
+int ASound::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
+}
+
+void ASound::onTimer() {
 	Common::StackLock slock(_driverMutex);
-
-	int32 samplesLeft = numSamples;
-	memset(buffer, 0, sizeof(int16) * numSamples);
-	while (samplesLeft) {
-		if (!_samplesTillCallback) {
-			poll();
-			flush();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
-				_samplesTillCallback++;
-				_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
-			}
-		}
-
-		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
-		samplesLeft -= render;
-		_samplesTillCallback -= render;
-
-		_opl->readBuffer(buffer, render);
-		buffer += render;
-	}
-	return numSamples;
+	poll();
+	flush();
 }
 
 int ASound::getRate() const {

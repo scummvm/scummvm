@@ -195,6 +195,11 @@ private:
 	void processSample();
 
 	void updateFNumber();
+
+	/**
+	 * Timer function for OPL
+	 */
+	void onTimer();
 protected:
 	int _commandParam;
 
@@ -309,10 +314,6 @@ public:
 	int _activeChannelReg;
 	int _v11;
 	bool _amDep, _vibDep, _splitPoint;
-	int _samplesPerCallback;
-	int _samplesPerCallbackRemainder;
-	int _samplesTillCallback;
-	int _samplesTillCallbackRemainder;
 public:
 	/**
 	 * Constructor
