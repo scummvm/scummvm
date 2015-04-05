@@ -2589,8 +2589,8 @@ void Scene109::preActions() {
 		_game._player._walkOffScreenSceneId = 108;
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
-	&& (_action.isObject(NOUN_SMALL_HOLE) || _action.isObject(NOUN_TUNNEL))
-	&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
+			&& (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))
+			&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
