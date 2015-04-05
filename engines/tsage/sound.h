@@ -460,10 +460,6 @@ private:
 	const byte *_patchData;
 	int _masterVolume;
 	Common::Queue<RegisterValue> _queue;
-	int _samplesTillCallback;
-	int _samplesTillCallbackRemainder;
-	int _samplesPerCallback;
-	int _samplesPerCallbackRemainder;
 
 	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
 	int _channelVolume[ADLIB_CHANNEL_COUNT];
@@ -499,12 +495,13 @@ public:
 	virtual void setPitch(int channel, int pitchBlend);
 
 	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual int readBuffer(int16 *data, const int numSamples);
 	virtual bool isStereo() const { return false; }
 	virtual bool endOfData() const { return false; }
 	virtual int getRate() const { return _sampleRate; }
 
-	void update(int16 *buf, int len);
+private:
+	void onTimer();
 };
 
 class SoundBlasterDriver: public SoundDriver {

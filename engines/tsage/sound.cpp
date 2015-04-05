@@ -2748,13 +2748,6 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	assert(_opl);
 	_opl->init();
 
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
 	Common::fill(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
 	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	memset(_v4405E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
@@ -2772,6 +2765,9 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 		_channelVoiced[i] = false;
 		_pitchBlend[i] = 0;
 	}
+
+	_opl->start(new Common::Functor0Mem<void, AdlibSoundDriver>(this, &AdlibSoundDriver::onTimer), CALLBACKS_PER_SECOND);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdlibSoundDriver::~AdlibSoundDriver() {
@@ -3019,33 +3015,16 @@ void AdlibSoundDriver::setFrequency(int channel) {
 		((dataWord >> 8) & 3) | (var2 << 2));
 }
 
-int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
+int AdlibSoundDriver::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
+}
+
+void AdlibSoundDriver::onTimer() {
 	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
 	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
 
-	int32 samplesLeft = numSamples;
-	memset(buffer, 0, sizeof(int16) * numSamples);
-	while (samplesLeft) {
-		if (!_samplesTillCallback) {
-			SoundManager::sfUpdateCallback(NULL);
-			flush();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
-				_samplesTillCallback++;
-				_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
-			}
-		}
-
-		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
-		samplesLeft -= render;
-		_samplesTillCallback -= render;
-
-		_opl->readBuffer(buffer, render);
-		buffer += render;
-	}
-	return numSamples;
+	SoundManager::sfUpdateCallback(NULL);
+	flush();
 }
 
 /*--------------------------------------------------------------------------*/
