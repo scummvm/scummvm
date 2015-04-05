@@ -191,15 +191,15 @@ void Sprite::checkSprite() {
 		for (uint idx = 0; idx < scene._bgShapes.size() && !talk._talkToAbort; ++idx) {
 			Object &obj = scene._bgShapes[idx];
 
-			if (obj._aType > PERSON && _type != INVALID && _type != HIDDEN) {
-				if (_type == NO_SHAPE) {
-					objBounds = Common::Rect(_position.x, _position.y,
-						_position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
+			if (obj._aType > PERSON && obj._type != INVALID && obj._type != HIDDEN) {
+				if (obj._type == NO_SHAPE) {
+					objBounds = Common::Rect(obj._position.x, obj._position.y,
+						obj._position.x + obj._noShapeSize.x, obj._position.y + obj._noShapeSize.y);
 				} else {
-					int xp = _position.x + _imageFrame->_offset.x;
-					int yp = _position.y + _imageFrame->_offset.y;
+					int xp = obj._position.x + obj._imageFrame->_offset.x;
+					int yp = obj._position.y + obj._imageFrame->_offset.y;
 					objBounds = Common::Rect(xp, yp,
-						xp + _imageFrame->_frame.w, yp + _imageFrame->_frame.h);
+						xp + obj._imageFrame->_frame.w, yp + obj._imageFrame->_frame.h);
 				}
 			}
 

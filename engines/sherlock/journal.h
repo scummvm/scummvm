@@ -60,7 +60,7 @@ private:
 
 	void loadJournalLocations();
 
-	bool loadJournalFile(bool alreadyLoaded);
+	int loadJournalFile(bool alreadyLoaded);
 
 	void doArrows();
 
@@ -72,7 +72,7 @@ private:
 public:
 	Journal(SherlockEngine *vm);
 
-	void record(int converseNum, int statementNum);
+	void record(int converseNum, int statementNum, bool replyOnly = false);
 
 	void drawInterface();
 

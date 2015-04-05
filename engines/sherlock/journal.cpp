@@ -50,9 +50,6 @@ const int SEARCH_POINTS[3][3] = {
 /*----------------------------------------------------------------*/
 
 Journal::Journal(SherlockEngine *vm): _vm(vm) {
-	// Allow up to 1000 statements
-	_journal.resize(1000);
-
 	// Initialize fields
 	_count = 0;
 	_maxPage = 0;
@@ -70,12 +67,12 @@ Journal::Journal(SherlockEngine *vm): _vm(vm) {
  * Records statements that are said, in the order which they are said. The player
  * can then read the journal to review them
  */
-void Journal::record(int converseNum, int statementNum) {
+void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	int saveIndex = _index;
 	int saveSub = _sub;
 
 	// Record the entry into the list
-	_journal.push_back(JournalEntry(converseNum, statementNum));
+	_journal.push_back(JournalEntry(converseNum, statementNum, replyOnly));
 	_index = _journal.size() - 1;
 
 	// Load the text for the new entry to get the number of lines it will have
@@ -108,12 +105,12 @@ void Journal::loadJournalLocations() {
 	_directory.resize(dir->readUint16LE());
 
 	// Read in each entry
+	char buffer[17];
 	for (uint idx = 0; idx < _directory.size(); ++idx) {
-		Common::String line;
-		while ((c = dir->readByte()) != 0)
-			line += c;
+		dir->read(buffer, 17);
+		buffer[16] = '\0';
 
-		_directory.push_back(line);
+		_directory[idx] = Common::String(buffer);
 	}
 
 	delete dir;
@@ -124,7 +121,7 @@ void Journal::loadJournalLocations() {
 	_locations.clear();
 	while (loc->pos() < loc->size()) {
 		Common::String line;
-		while ((c = loc->readByte()) != '\0')
+		while ((c = loc->readByte()) != 0)
 			line += c;
 
 		_locations.push_back(line);
@@ -137,7 +134,7 @@ void Journal::loadJournalLocations() {
  * Loads the description for the current display index in the journal, and then
  * word wraps the result to prepare it for being displayed
  */
-bool Journal::loadJournalFile(bool alreadyLoaded) {
+int Journal::loadJournalFile(bool alreadyLoaded) {
 	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -147,7 +144,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 
 	Common::String dirFilename = _directory[journalEntry._converseNum];
 	bool replyOnly = journalEntry._replyOnly;
-	Common::String locStr(dirFilename.c_str(), dirFilename.c_str() + 4);
+	Common::String locStr(dirFilename.c_str() + 4, dirFilename.c_str() + 6);
 	int newLocation = atoi(locStr.c_str());
 
 	// If not flagged as alrady loaded, load the conversation into script variables
@@ -246,7 +243,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 	const char *replyP = statement._reply.c_str();
 
 	while (*replyP) {
-		char c = *replyP;
+		char c = *replyP++;
 
 		// Is it a control character?
 		if (c < 128) {
@@ -264,7 +261,8 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 				// a comment (which would have added a line), add a carriage return
 				if (!startOfReply && ((!commentJustPrinted && c == '{') || c == '}'))
 					journalString += '"';
-			
+				startOfReply = false;
+
 				// Handle setting or clearing comment state
 				if (c == '{') {
 					commentFlag = true;
@@ -290,7 +288,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 						else
 							journalString += inv._names[talk._talkTo];
 
-						const char *strP = replyP + 1;
+						const char *strP = replyP;
 						char v;
 						do {
 							v = *strP++;						
@@ -307,12 +305,11 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 
 				// Copy text from the place until either the reply ends, a comment
 				// {} block is started, or a control character is encountered
+				journalString += c;
 				do {
 					journalString += *replyP++;
 				} while (*replyP && *replyP < 128 && *replyP != '{' && *replyP != '}');
 
-				// Move pointer back, since the outer for loop will increment it again
-				--replyP;
 				commentJustPrinted = false;
 			}
 		} else if (c == 128) {
@@ -327,7 +324,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 			}
 
 			startOfReply = false;
-			c = *++replyP;
+			c = *replyP++;
 
 			if ((c - 1) == 0)
 				journalString += "Holmes";
@@ -338,7 +335,7 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 			else
 				journalString += inv._names[c - 1];
 
-			const char *strP = replyP + 1;
+			const char *strP = replyP;
 			char v;
 			do {
 				v = *strP++;
@@ -350,7 +347,6 @@ bool Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += " said, \"";
 		} else {
 			// Control code, so move past it and any parameters
-			++replyP;
 			switch (c) {
 			case 129:		// Run canim
 			case 130:		// Assign side

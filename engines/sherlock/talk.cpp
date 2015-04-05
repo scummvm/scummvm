@@ -37,20 +37,24 @@ void Statement::synchronize(Common::SeekableReadStream &s) {
 	int length;
 
 	length = s.readUint16LE();
-	for (int idx = 0; idx < length; ++idx)
+	for (int idx = 0; idx < length - 1; ++idx)
 		_statement += (char)s.readByte();
+	s.readByte();	// Null ending
 
 	length = s.readUint16LE();
-	for (int idx = 0; idx < length; ++idx)
+	for (int idx = 0; idx < length - 1; ++idx)
 		_reply += (char)s.readByte();
+	s.readByte();	// Null ending
 
 	length = s.readUint16LE();
-	for (int idx = 0; idx < length; ++idx)
+	for (int idx = 0; idx < length - 1; ++idx)
 		_linkFile += (char)s.readByte();
+	s.readByte();	// Null ending
 
 	length = s.readUint16LE();
-	for (int idx = 0; idx < length; ++idx)
+	for (int idx = 0; idx < length - 1; ++idx)
 		_voiceFile += (char)s.readByte();
+	s.readByte();	// Null ending
 
 	_required.resize(s.readByte());
 	_modified.resize(s.readByte());
@@ -280,7 +284,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 	// Add the statement into the journal and talk history
 	if (_talkTo != -1 && !_talkHistory[_converseNum][select])
-		journal.record(_converseNum | 2048, select);
+		journal.record(_converseNum, select, true);
 	_talkHistory[_converseNum][select] = true;
 
 	// Check if the talk file is meant to be a non-seen comment
@@ -555,6 +559,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	// Open the talk file for reading
 	Common::SeekableReadStream *talkStream = res.load(talkFile);
+	_converseNum = res.resourceIndex();
 	talkStream->skip(2);	// Skip talk file version num
 
 	_statements.resize(talkStream->readByte());
