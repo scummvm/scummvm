@@ -2637,7 +2637,7 @@ void Scene109::actions() {
 							break;
 
 						case OBJ_BURGER:
-							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_EASY);
+							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_HARD);
 							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (_hoovicDifficultFl ? 3 : 1)));
 							break;
 						}
