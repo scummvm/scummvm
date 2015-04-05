@@ -36,7 +36,8 @@ RenderEntry::RenderEntry(Resources::Item *owner, const Common::String &name) :
 	_name(name),
 	_owner(owner),
 	_direction3D(0.0),
-	_sortKey(0.0) {
+	_sortKey(0.0),
+	_clickable(true) {
 }
 
 void RenderEntry::render(Driver *gfx) {
@@ -78,8 +79,44 @@ void RenderEntry::setSortKey(float sortKey) {
 	_sortKey = sortKey;
 }
 
+void RenderEntry::setClickable(bool clickable) {
+	_clickable = clickable;
+}
+
 bool RenderEntry::compare(const RenderEntry *x, const RenderEntry *y) {
 	return x->_sortKey < y->_sortKey;
+}
+
+bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &relativePosition) const {
+	if (!_visual || !_clickable) {
+		return false;
+	}
+
+	VisualImageXMG *image = _visual->get<VisualImageXMG>();
+	if (image) {
+		Common::Rect imageRect = Common::Rect(image->getWidth(), image->getHeight());
+		imageRect.translate(_position.x, _position.y);
+
+		if (imageRect.contains(position)) {
+			relativePosition.x = position.x - imageRect.left - image->getHotspot().x;
+			relativePosition.y = position.y - imageRect.top - image->getHotspot().y;
+			return true;
+		}
+	}
+
+	VisualSmacker *smacker = _visual->get<VisualSmacker>();
+	if (smacker) {
+		Common::Rect imageRect = Common::Rect(smacker->getWidth(), smacker->getHeight());
+		imageRect.translate(_position.x, _position.y);
+
+		if (imageRect.contains(position)) {
+			relativePosition.x = position.x - imageRect.left;
+			relativePosition.y = position.y - imageRect.top;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Gfx

@@ -45,6 +45,8 @@ public:
 	void render(const Common::Point &position);
 	bool isDone();
 
+	int getWidth() const;
+	int getHeight() const;
 private:
 	Video::SmackerDecoder *_smacker;
 

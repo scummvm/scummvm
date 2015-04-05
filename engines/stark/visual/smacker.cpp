@@ -109,4 +109,12 @@ bool VisualSmacker::isDone() {
 	return _smacker->endOfVideo();
 }
 
+int VisualSmacker::getWidth() const {
+	return _smacker->getWidth();
+}
+
+int VisualSmacker::getHeight() const {
+	return _smacker->getHeight();
+}
+
 } // End of namespace Stark

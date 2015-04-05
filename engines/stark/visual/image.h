@@ -43,6 +43,7 @@ public:
 
 	/** Set an offset used when rendering */
 	void setHotSpot(const Common::Point &hotspot);
+	Common::Point getHotspot() const { return _hotspot; }
 
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }

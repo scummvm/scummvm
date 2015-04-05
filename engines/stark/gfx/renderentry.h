@@ -52,9 +52,12 @@ public:
 	void setPosition(const Common::Point &position);
 	void setPosition3D(const Math::Vector3d &position, float direction);
 	void setSortKey(float sortKey);
+	void setClickable(bool clickable);
 
 	/** Gets the owner-object */
 	Resources::Item *getOwner() const { return _owner; }
+
+	bool containsPoint(const Common::Point &position, Common::Point &relativePosition) const;
 
 	/** Compare two render entries by their sort keys */
 	static bool compare(const RenderEntry *x, const RenderEntry *y);
@@ -68,6 +71,7 @@ protected:
 	Math::Vector3d _position3D;
 	float _direction3D;
 	float _sortKey;
+	bool _clickable;
 };
 
 typedef Common::Array<RenderEntry *> RenderEntryArray;

@@ -93,13 +93,12 @@ public:
 	/** Obtain the concrete instance of an item template */
 	virtual Item *getSceneInstance();
 
-	/** If this is false, the item is click through */
-	virtual bool isClickable() const;
-
 	bool doAction(uint32 action, uint32 hotspotIndex);
 
 	bool containsPoint(Common::Point point);
 	virtual int indexForPoint(Common::Point point) { return -1; };
+
+	Common::String getHotspotTitle(uint32 hotspotIndex);
 protected:
 	void printData() override;
 
@@ -123,7 +122,6 @@ public:
 
 	// Item API
 	void setEnabled(bool enabled) override;
-	bool isClickable() const override;
 
 	/** Define the current animation kind for the item */
 	void setAnimKind(int32 usage);

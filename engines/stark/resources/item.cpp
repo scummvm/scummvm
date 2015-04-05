@@ -94,10 +94,6 @@ Item *Item::getSceneInstance() {
 	return this;
 }
 
-bool Item::isClickable() const {
-	return false;
-}
-
 void Item::printData() {
 	debug("enabled: %d", _enabled);
 	debug("field_38: %d", _field_38);
@@ -117,6 +113,15 @@ bool Item::doAction(uint32 action, uint32 hotspotIndex) {
 	}
 
 	return false;
+}
+
+Common::String Item::getHotspotTitle(uint32 hotspotIndex) {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table) {
+		return table->getName();
+	} else {
+		return getName();
+	}
 }
 
 bool Item::containsPoint(Common::Point point) {
@@ -147,6 +152,8 @@ void ItemVisual::onAllLoaded() {
 
 	_animHierarchy = findChild<AnimHierarchy>(false);
 
+	_renderEntry->setClickable(_clickable);
+
 	if (_subType != kItemSub10) {
 		setAnimKind(Anim::kActionUsagePassive);
 	}
@@ -164,10 +171,6 @@ void ItemVisual::setEnabled(bool enabled) {
 	} else {
 		_animHierarchy->unselectItemAnim(this);
 	}
-}
-
-bool ItemVisual::isClickable() const {
-	return _clickable;
 }
 
 void ItemVisual::setAnimKind(int32 usage) {
@@ -463,7 +466,7 @@ int ItemSub56::indexForPoint(Common::Point point) {
 	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
-		return anim->indexForPoint(point - _position);
+		return anim->indexForPoint(point);
 	}
 	return -1;
 }
@@ -506,7 +509,7 @@ int ItemSub78::indexForPoint(Common::Point point) {
 	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
-		return anim->indexForPoint(point - _position);
+		return anim->indexForPoint(point);
 	}
 	return -1;
 }

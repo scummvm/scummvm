@@ -126,27 +126,13 @@ bool UserInterface::itemDoActionAt(Resources::Item *item, uint32 action, const C
 	return item->doAction(action, hotspotIndex);
 }
 
-Resources::Item *UserInterface::getItemAtPosition(Common::Point pos, Gfx::RenderEntryArray entries) {
-	// Render entries are sorted from the farthest to the camera to the nearest
-	// Loop in reverse order
-	for (int i = entries.size() - 1; i >= 0; i--) {
-		Resources::Item *item = entries[i]->getOwner();
-
-		if (item->isClickable() && item->containsPoint(pos)) {
-			return item;
-		}
+Common::String UserInterface::getItemTitle(Resources::Item *item, bool local, const Common::Point &pos) {
+	int32 hotspotIndex = 0;
+	if (local) {
+		hotspotIndex = item->indexForPoint(pos);
 	}
 
-	return nullptr;
-}
-
-Common::String UserInterface::getMouseHintForItem(Resources::Item *item) {
-	if (item) {
-		//TODO: Items with multiple hotspots
-		return item->getName();
-	}
-
-	return "";
+	return item->getHotspotTitle(hotspotIndex);
 }
 
 Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Item *item, const Common::Point &pos) {
@@ -156,7 +142,8 @@ Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Ite
 
 	int index = item->indexForPoint(pos);
 	if (index < 0) {
-		error("Position is outside of item '%s'", item->getName().c_str());
+		warning("Position is outside of item '%s'", item->getName().c_str());
+		return Resources::ActionArray();
 	}
 
 	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(index);

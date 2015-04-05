@@ -105,13 +105,24 @@ void UI::update(Gfx::RenderEntryArray renderEntries) {
 	// Check for game world mouse overs
 	UserInterface *ui = StarkServices::instance().userInterface;
 
-	_objectUnderCursor = ui->getItemAtPosition(pos, renderEntries);
+	_objectUnderCursor = nullptr;
 
-	Common::String mouseHint = ui->getMouseHintForItem(_objectUnderCursor);
+	// Render entries are sorted from the farthest to the camera to the nearest
+	// Loop in reverse order
+	Common::Point relativePosition;
+	for (int i = renderEntries.size() - 1; i >= 0; i--) {
+		if (renderEntries[i]->containsPoint(pos, relativePosition)) {
+			_objectUnderCursor = renderEntries[i]->getOwner();
+			break;
+		}
+	}
 
+	Common::String mouseHint;
 	if (_objectUnderCursor) {
-		Resources::ActionArray actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, pos);
+		Resources::ActionArray actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, relativePosition);
 		setCursorDependingOnActionsAvailable(actionsPossible);
+
+		mouseHint = ui->getItemTitle(_objectUnderCursor, true, relativePosition);
 	} else {
 		// Not an object
 		_cursor->setCursorType(Cursor::kPassive);

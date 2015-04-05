@@ -68,9 +68,7 @@ public:
 
 	bool itemDoActionAt(Resources::Item *item, uint32 action, const Common::Point &position);
 
-	Resources::Item *getItemAtPosition(Common::Point, Gfx::RenderEntryArray entries);
-	
-	Common::String getMouseHintForItem(Resources::Item *object);
+	Common::String getItemTitle(Resources::Item *object, bool local, const Common::Point &pos);
 
 	Resources::ActionArray getActionsPossibleForObject(Resources::Item *item, const Common::Point &pos);
 	Resources::ActionArray getStockActionsPossibleForObject(Resources::Item *item, const Common::Point &pos);
