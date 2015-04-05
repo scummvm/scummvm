@@ -115,8 +115,6 @@ void Game::run() {
 	_statusFlag = true;
 
 	while (!_vm->shouldQuit()) {
-		initializeGlobals();
-
 		if (_loadGameSlot == -1) {
 			startGame();
 		}
