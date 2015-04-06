@@ -736,6 +736,7 @@ IMPLEMENT_OPCODE(JumpAndSetDirection)
 		if (cmd->param5 == 2)
 			_processNextEntry = true;
 	}
+	
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
@@ -743,9 +744,17 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfActorCoordinates)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 ||
+	// FIXME: the script is wrongly jumping to the currentLine = cmd->param4 giving a wrong behaviour
+    // actor->canMoveCheckActors (called from canMove) seems to be the cause of the issue
+	// this script fails because the position is never met for few pixels (3 to 5 pixels)
+	// usually the X coordinate but sometimes also happens with the Y coordinate
+	debugC(kDebugLevelScripts, "COMMENTED JumpIfActorCoordinates %d x: %d y: %d",
+			(actor->getPoint1()->x + actor->getPoint2()->x), 
+			(actor->getPoint1()->y + actor->getPoint2()->y));
+
+	/*if ((actor->getPoint1()->x + actor->getPoint2()->x) != cmd->param2 ||
 		(actor->getPoint1()->y + actor->getPoint2()->y) != cmd->param3)
-		_currentQueueEntry->currentLine = cmd->param4;
+		_currentQueueEntry->currentLine = cmd->param4;*/
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
