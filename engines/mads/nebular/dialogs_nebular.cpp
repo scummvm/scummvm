@@ -438,24 +438,31 @@ void CopyProtectionDialog::show() {
 	_vm->_screen.copyRectToScreen(inputArea);
 	_vm->_screen.updateScreen();
 
+	bool firstTime = true;
+
 	while (!_vm->shouldQuit()) {
-		while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed()) {
-			_vm->_events->delay(1);
+		if (!firstTime) {
+			while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed()) {
+				_vm->_events->delay(1);
+			}
+
+			if (_vm->shouldQuit())
+				break;
+
+			curKey = _vm->_events->getKey();
+
+			if (curKey.keycode == Common::KEYCODE_RETURN || curKey.keycode == Common::KEYCODE_KP_ENTER)
+				break;
+			else if (curKey.keycode == Common::KEYCODE_BACKSPACE)
+				_textInput.deleteLastChar();
+			else if (_textInput.size() < 14)
+				_textInput += curKey.ascii;
+
+			_vm->_events->_pendingKeys.clear();
+		} else {
+			firstTime = false;
+			_textInput = _hogEntry._word[0];
 		}
-
-		if (_vm->shouldQuit())
-			break;
-
-		curKey = _vm->_events->getKey();
-		
-		if (curKey.keycode == Common::KEYCODE_RETURN || curKey.keycode == Common::KEYCODE_KP_ENTER)
-			break;
-		else if (curKey.keycode == Common::KEYCODE_BACKSPACE)
-			_textInput.deleteLastChar();
-		else if (_textInput.size() < 14)
-			_textInput += curKey.ascii;
-
-		_vm->_events->_pendingKeys.clear();
 
 		_vm->_screen.copyFrom(origInput, Common::Rect(0, 0, inputArea.width(), inputArea.height()), Common::Point(inputArea.left, inputArea.top));
 		_font->writeString(&_vm->_screen, _textInput,
