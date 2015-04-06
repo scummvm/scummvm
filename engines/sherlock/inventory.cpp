@@ -314,16 +314,16 @@ void Inventory::invCommands(bool slamIt) {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), 
 			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Give");
-		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1), 
+		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^");
-		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1),
+		screen.gPrint(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^");
-		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1), 
+		screen.gPrint(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"_");
-		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1), 
+		screen.gPrint(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"__");
 	}
