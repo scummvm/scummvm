@@ -122,6 +122,7 @@ public:
 
 	// Item API
 	void setEnabled(bool enabled) override;
+	int indexForPoint(Common::Point point) override;
 
 	/** Define the current animation kind for the item */
 	void setAnimKind(int32 usage);
@@ -286,7 +287,6 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
-	int indexForPoint(Common::Point point) override;
 
 protected:
 	void printData() override;
@@ -341,7 +341,6 @@ public:
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
-	int indexForPoint(Common::Point point) override;
 
 protected:
 	void printData() override;

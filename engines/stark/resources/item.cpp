@@ -202,6 +202,15 @@ Visual *ItemVisual::getVisual() {
 	return anim->getVisual();
 }
 
+int ItemVisual::indexForPoint(Common::Point point) {
+	// TODO: This breaks rather weirdly on subtype 6 and 10
+	Anim *anim = getAnim();
+	if (anim) {
+		return anim->indexForPoint(point);
+	}
+	return -1;
+}
+
 ItemSub13::~ItemSub13() {
 }
 
@@ -462,15 +471,6 @@ Gfx::RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset)
 	return _renderEntry;
 }
 
-int ItemSub56::indexForPoint(Common::Point point) {
-	// TODO: This breaks rather weirdly on subtype 6 and 10
-	Anim *anim = getAnim();
-	if (anim) {
-		return anim->indexForPoint(point);
-	}
-	return -1;
-}
-
 void ItemSub56::printData() {
 	ItemSub5610::printData();
 
@@ -503,15 +503,6 @@ Gfx::RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset)
 	}
 
 	return _renderEntry;
-}
-
-int ItemSub78::indexForPoint(Common::Point point) {
-	// TODO: This breaks rather weirdly on subtype 6 and 10
-	Anim *anim = getAnim();
-	if (anim) {
-		return anim->indexForPoint(point);
-	}
-	return -1;
 }
 
 void ItemSub78::printData() {
