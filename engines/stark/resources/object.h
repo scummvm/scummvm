@@ -221,7 +221,7 @@ public:
 	T *findParent();
 
 	/** Find a child resource matching the specified type, index and subtype */
-	Object *findChildWithIndex(Type type, uint16 index, int subType = -1);
+	Object *findChildWithIndex(Type type, uint16 index, int subType = -1) const;
 
 	/** Find a child matching the template parameter type */
 	template<class T>
@@ -233,7 +233,7 @@ public:
 
 	/** Find a child matching the template parameter type and the specified index */
 	template<class T>
-	T *findChildWithIndex(uint16 index, int subType = -1);
+	T *findChildWithIndex(uint16 index, int subType = -1) const;
 
 	/** List children matching the template parameter type and the specified subtype */
 	template<class T>
@@ -363,7 +363,7 @@ T *Object::findChildWithSubtype(int subType, bool mustBeUnique) {
 }
 
 template <class T>
-T *Object::findChildWithIndex(uint16 index, int subType) {
+T *Object::findChildWithIndex(uint16 index, int subType) const {
 	return Object::cast<T>(findChildWithIndex(T::TYPE, index, subType));
 }
 

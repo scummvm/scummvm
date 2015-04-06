@@ -193,7 +193,7 @@ void Object::print(uint depth) {
 	}
 }
 
-Object *Object::findChildWithIndex(Type type, uint16 index, int subType) {
+Object *Object::findChildWithIndex(Type type, uint16 index, int subType) const {
 	for (uint i = 0; i < _children.size(); i++) {
 		if (_children[i]->getType() == type
 				&& (_children[i]->getSubType() == subType || subType == -1)
