@@ -45,19 +45,25 @@ GameNebular::GameNebular(MADSEngine *vm)
 }
 
 ProtectionResult GameNebular::checkCopyProtection() {
-	/*
-	// DEBUG: Flag copy protection failure
-	_globals[kCopyProtectFailed] = -1;
+	//if (!ConfMan.getBool("copy_protection"))
+	//	return PROTECTION_SUCCEED;
 
-	if (!ConfMan.getBool("copy_protection"))
-	return true;
+	CopyProtectionDialog *dlg;
+	bool correctAnswer;
 
-	* DEBUG: Disabled for now
-	CopyProtectionDialog *dlg = new CopyProtectionDialog(_vm, false);
+	dlg = new CopyProtectionDialog(_vm, false);
 	dlg->show();
+	correctAnswer = dlg->isCorrectAnswer();
 	delete dlg;
-	*/
-	return PROTECTION_SUCCEED;
+
+	if (!correctAnswer) {
+		dlg = new CopyProtectionDialog(_vm, true);
+		dlg->show();
+		correctAnswer = dlg->isCorrectAnswer();
+		delete dlg;
+	}
+
+	return correctAnswer ? PROTECTION_SUCCEED : PROTECTION_FAIL;
 }
 
 void GameNebular::startGame() {
@@ -91,26 +97,6 @@ void GameNebular::startGame() {
 		checkShowDialog();
 		_winStatus = 0;
 
-		/*
-		// Check copy protection
-		ProtectionResult protectionResult = checkCopyProtection();
-		switch (protectionResult) {
-		case PROTECTION_FAIL:
-		// Copy protection failed
-		_scene._nextSceneId = 804;
-		initializeGlobals();
-		_globals[kCopyProtectFailed] = true;
-		return;
-		case PROTECTION_ESCAPE:
-		// User escaped out of copy protection dialog
-		_vm->quitGame();
-		return;
-		default:
-		// Copy protection check succeeded
-		break;
-		}
-		*/
-
 		_sectionNumber = 1;
 		initSection(_sectionNumber);
 		_vm->_events->setCursor(CURSOR_ARROW);
@@ -128,6 +114,24 @@ void GameNebular::startGame() {
 	_scene._nextSceneId = 101;
 
 	initializeGlobals();
+
+	// Check copy protection
+	ProtectionResult protectionResult = checkCopyProtection();
+
+	switch (protectionResult) {
+	case PROTECTION_FAIL:
+		// Copy protection failed
+		_scene._nextSceneId = 804;
+		_globals[kCopyProtectFailed] = true;
+		return;
+	case PROTECTION_ESCAPE:
+		// User escaped out of copy protection dialog
+		_vm->quitGame();
+		return;
+	default:
+		// Copy protection check succeeded
+		break;
+	}
 }
 
 void GameNebular::initializeGlobals() {

@@ -957,7 +957,7 @@ void Scene804::step() {
 				_globals[kInSpace] = false;
 				_globals[kBeamIsUp] = true;
 
-				assert(!_globals[kCopyProtectFailed]);
+				//assert(!_globals[kCopyProtectFailed]);
 				_game._winStatus = 4;
 				return;
 			}
