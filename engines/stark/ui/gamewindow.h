@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_INVENTORYINTERFACE_H
-#define STARK_INVENTORYINTERFACE_H
+#ifndef STARK_GAME_WINDOW_H
+#define STARK_GAME_WINDOW_H
 
 #include "engines/stark/gfx/renderentry.h"
 
@@ -33,35 +33,21 @@
 
 namespace Stark {
 
-class VisualImageXMG;
-class ClickText;
+class ActionMenu;
 
-namespace Resources {
-class Anim;
-class Item;
-}
-
-namespace Gfx {
-class Texture;
-}
-
-class InventoryInterface : public Window {
+class GameWindow : public Window {
 public:
-	InventoryInterface(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~InventoryInterface() {}
-
-	void open();
-	void close();
+	GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu);
+	virtual ~GameWindow() {}
 
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
 	void onRender() override;
 
-private:
-	Resources::Anim *_backgroundTexture;
+	ActionMenu *_actionMenu;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_INVENTORYINTERFACE_H
+#endif // STARK_GAME_WINDOW_H

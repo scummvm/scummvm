@@ -50,7 +50,7 @@ public:
 	/**
 	 * Render the scene
 	 */
-	void render(Gfx::RenderEntryArray renderEntries);
+	void render();
 
 	void initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
 			float fov, Common::Rect viewSize, float nearClipPlane, float farClipPlane);

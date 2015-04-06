@@ -63,6 +63,7 @@ MODULE_OBJS := \
 	ui/button.o \
 	ui/clicktext.o \
 	ui/dialoginterface.o \
+	ui/gamewindow.o \
 	ui/inventoryinterface.o \
 	ui/topmenu.o \
 	ui/window.o \

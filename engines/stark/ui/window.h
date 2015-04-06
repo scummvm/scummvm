@@ -35,6 +35,10 @@ namespace Gfx {
 class Driver;
 }
 
+namespace Resources {
+	typedef Common::Array<uint32> ActionArray;
+}
+
 class Window {
 public:
 	Window(Gfx::Driver *gfx, Cursor *cursor);
@@ -62,6 +66,15 @@ protected:
 	Common::Rect _position;
 	bool _unscaled;
 	bool _visible;
+
+
+	// Item handling
+	void updateItems();
+	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
+
+	Gfx::RenderEntryArray _renderEntries;
+	Resources::Item *_objectUnderCursor;
+	Common::Point _objectRelativePosition;
 
 private:
 	Cursor *_cursor;

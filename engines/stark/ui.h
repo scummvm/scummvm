@@ -46,6 +46,7 @@ class InventoryInterface;
 class TopMenu;
 class Cursor;
 class FMVPlayer;
+class GameWindow;
 
 class UI {
 	ActionMenu *_actionMenu;
@@ -53,7 +54,9 @@ class UI {
 	DialogInterface *_dialogInterface;
 	InventoryInterface *_inventoryInterface;
 	TopMenu *_topMenu;
-	Resources::Item *_objectUnderCursor;
+	GameWindow *_gameWindow;
+
+
 	int _selectedInventoryItem;
 	Common::String _selectedInventoryItemText; // Just a temp HACK untill we get cursors sorted.
 	Gfx::Driver *_gfx;
@@ -61,12 +64,11 @@ class UI {
 	bool _hasClicked;
 	bool _exitGame;
 	void handleClick();
-	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
 public:
 	UI(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~UI();
 	void init();
-	void update(Gfx::RenderEntryArray renderEntries);
+	void update();
 	void render();
 	void notifyClick();
 	void notifySubtitle(const Common::String &subtitle);

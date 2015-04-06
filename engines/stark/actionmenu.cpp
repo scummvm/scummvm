@@ -63,7 +63,7 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 ActionMenu::~ActionMenu() {
 }
 
-void ActionMenu::open(Resources::Item *item, const Common::Point &itemClickPos) {
+void ActionMenu::open(Resources::Item *item, const Common::Point &itemRelativePos) {
 	UserInterface *ui = StarkServices::instance().userInterface;
 
 	_visible = true;
@@ -71,12 +71,12 @@ void ActionMenu::open(Resources::Item *item, const Common::Point &itemClickPos) 
 	Common::Point screenMousePos = getScreenMousePosition();
 	_position = Common::Rect::center(screenMousePos.x, screenMousePos.y, 160, 111);
 
-	_itemClickPos = itemClickPos;
+	_itemRelativePos = itemRelativePos;
 	_item = item;
 
 	clearActions();
 
-	Resources::ActionArray possible = ui->getActionsPossibleForObject(_item, _itemClickPos);
+	Resources::ActionArray possible = ui->getActionsPossibleForObject(_item, _itemRelativePos);
 
 	for (uint i = 0; i < possible.size(); i++) {
 		for (uint j = 0; j < ARRAYSIZE(_buttons); j++) {
@@ -138,7 +138,7 @@ void ActionMenu::onClick(const Common::Point &pos) {
 
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
-			ui->itemDoActionAt(_item, _buttons[i].action, _itemClickPos);
+			ui->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
 			close();
 		}
 	}

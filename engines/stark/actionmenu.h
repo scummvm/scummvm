@@ -41,7 +41,7 @@ public:
 	ActionMenu(Gfx::Driver *gfx, Cursor *cursor);
 	~ActionMenu();
 
-	void open(Resources::Item *item, const Common::Point &itemClickPos);
+	void open(Resources::Item *item, const Common::Point &itemRelativePos);
 	void close();
 
 protected:
@@ -66,7 +66,7 @@ private:
 
 	VisualImageXMG *_background;
 
-	Common::Point _itemClickPos;
+	Common::Point _itemRelativePos;
 	Resources::Item *_item;
 
 	void clearActions();

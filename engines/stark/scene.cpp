@@ -115,7 +115,7 @@ void Scene::makeRayFromMouse(const Common::Point &mouse, Math::Vector3d &origin,
 	direction.normalize();
 }
 
-void Scene::render(Gfx::RenderEntryArray renderEntries) {
+void Scene::render() {
 	// setup cam
 	_gfx->setGameViewport();
 	_gfx->setupCamera(_projectionMatrix, _viewMatrix);
@@ -125,16 +125,6 @@ void Scene::render(Gfx::RenderEntryArray renderEntries) {
 	// Draw other things
 
 	// Render all the scene elements
-	Gfx::RenderEntryArray::iterator element = renderEntries.begin();
-	while (element != renderEntries.end()) {
-		// Draw the current element
-		(*element)->render(_gfx);
-
-		// Go for the next one
-		element++;
-	}
-
-	//_gfx->set3DMode();
 
 	// setup lights
 
