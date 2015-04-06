@@ -92,13 +92,6 @@ public:
 
 	/** Obtain the concrete instance of an item template */
 	virtual Item *getSceneInstance();
-
-	bool doAction(uint32 action, uint32 hotspotIndex);
-
-	bool containsPoint(Common::Point point);
-	virtual int indexForPoint(Common::Point point) { return -1; };
-
-	Common::String getHotspotTitle(uint32 hotspotIndex);
 protected:
 	void printData() override;
 
@@ -122,7 +115,15 @@ public:
 
 	// Item API
 	void setEnabled(bool enabled) override;
-	int indexForPoint(Common::Point point) override;
+
+	/** Get the hotspot index for an item relative position */
+	int getHotspotIndexForPoint(Common::Point point);
+
+	/** Obtain the title for one of the item's hotspots */
+	Common::String getHotspotTitle(uint32 hotspotIndex);
+
+	/** Perform an action on one of the item's hotspots */
+	bool doAction(uint32 action, uint32 hotspotIndex);
 
 	/** Define the current animation kind for the item */
 	void setAnimKind(int32 usage);

@@ -63,7 +63,7 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 ActionMenu::~ActionMenu() {
 }
 
-void ActionMenu::open(Resources::Item *item, const Common::Point &itemRelativePos) {
+void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRelativePos) {
 	UserInterface *ui = StarkServices::instance().userInterface;
 
 	_visible = true;

@@ -106,28 +106,6 @@ void Item::saveLoad(ResourceSerializer *serializer) {
 	serializer->syncAsSint32LE(_enabled);
 }
 
-bool Item::doAction(uint32 action, uint32 hotspotIndex) {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
-	if (table && table->canPerformAction(action)) {
-		return table->runScriptForAction(action);
-	}
-
-	return false;
-}
-
-Common::String Item::getHotspotTitle(uint32 hotspotIndex) {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
-	if (table) {
-		return table->getName();
-	} else {
-		return getName();
-	}
-}
-
-bool Item::containsPoint(Common::Point point) {
-	return indexForPoint(point) != -1;
-}
-
 ItemVisual::~ItemVisual() {
 	delete _renderEntry;
 }
@@ -202,13 +180,31 @@ Visual *ItemVisual::getVisual() {
 	return anim->getVisual();
 }
 
-int ItemVisual::indexForPoint(Common::Point point) {
+int ItemVisual::getHotspotIndexForPoint(Common::Point point) {
 	// TODO: This breaks rather weirdly on subtype 6 and 10
 	Anim *anim = getAnim();
 	if (anim) {
 		return anim->indexForPoint(point);
 	}
 	return -1;
+}
+
+bool ItemVisual::doAction(uint32 action, uint32 hotspotIndex) {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table && table->canPerformAction(action)) {
+		return table->runScriptForAction(action);
+	}
+
+	return false;
+}
+
+Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table) {
+		return table->getName();
+	} else {
+		return getName();
+	}
 }
 
 ItemSub13::~ItemSub13() {

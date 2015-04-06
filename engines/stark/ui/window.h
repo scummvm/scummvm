@@ -73,7 +73,7 @@ protected:
 	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
 
 	Gfx::RenderEntryArray _renderEntries;
-	Resources::Item *_objectUnderCursor;
+	Resources::ItemVisual *_objectUnderCursor;
 	Common::Point _objectRelativePosition;
 
 private:

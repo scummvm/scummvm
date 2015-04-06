@@ -34,7 +34,7 @@ namespace Stark {
 class Visual;
 
 namespace Resources {
-class Item;
+class ItemVisual;
 }
 
 namespace Gfx {
@@ -43,7 +43,7 @@ class Driver;
 
 class RenderEntry {
 public:
-	RenderEntry(Resources::Item *owner, const Common::String &name);
+	RenderEntry(Resources::ItemVisual *owner, const Common::String &name);
 	virtual ~RenderEntry() {};
 
 	void render(Driver *gfx);
@@ -55,7 +55,7 @@ public:
 	void setClickable(bool clickable);
 
 	/** Gets the owner-object */
-	Resources::Item *getOwner() const { return _owner; }
+	Resources::ItemVisual *getOwner() const { return _owner; }
 
 	bool containsPoint(const Common::Point &position, Common::Point &relativePosition) const;
 
@@ -64,7 +64,7 @@ public:
 
 protected:
 	Common::String _name;
-	Resources::Item *_owner;
+	Resources::ItemVisual *_owner;
 
 	Visual *_visual;
 	Common::Point _position;

@@ -31,7 +31,7 @@
 namespace Stark {
 namespace Gfx {
 
-RenderEntry::RenderEntry(Resources::Item *owner, const Common::String &name) :
+RenderEntry::RenderEntry(Resources::ItemVisual *owner, const Common::String &name) :
 	_visual(nullptr),
 	_name(name),
 	_owner(owner),

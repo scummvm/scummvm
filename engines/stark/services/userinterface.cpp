@@ -121,26 +121,26 @@ VisualImageXMG *UserInterface::getActionImage(uint32 itemIndex, bool active) {
 	return visual->get<VisualImageXMG>();
 }
 
-bool UserInterface::itemDoActionAt(Resources::Item *item, uint32 action, const Common::Point &position) {
-	int32 hotspotIndex = item->indexForPoint(position);
+bool UserInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
+	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	return item->doAction(action, hotspotIndex);
 }
 
-Common::String UserInterface::getItemTitle(Resources::Item *item, bool local, const Common::Point &pos) {
+Common::String UserInterface::getItemTitle(Resources::ItemVisual *item, bool local, const Common::Point &pos) {
 	int32 hotspotIndex = 0;
 	if (local) {
-		hotspotIndex = item->indexForPoint(pos);
+		hotspotIndex = item->getHotspotIndexForPoint(pos);
 	}
 
 	return item->getHotspotTitle(hotspotIndex);
 }
 
-Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Item *item, const Common::Point &pos) {
+Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
 	if (item == nullptr) {
 		return Resources::ActionArray();
 	}
 
-	int index = item->indexForPoint(pos);
+	int index = item->getHotspotIndexForPoint(pos);
 	if (index < 0) {
 		warning("Position is outside of item '%s'", item->getName().c_str());
 		return Resources::ActionArray();
@@ -150,7 +150,7 @@ Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Ite
 	return table->listPossibleActions();
 }
 
-Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources::Item *item, const Common::Point &pos) {
+Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
 	Resources::ActionArray actions = getActionsPossibleForObject(item, pos);
 
 	Resources::ActionArray stockActions;
@@ -163,7 +163,7 @@ Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources
 	return stockActions;
 }
 
-bool UserInterface::isInventoryObject(Resources::Item *item) {
+bool UserInterface::isInventoryObject(Resources::ItemVisual *item) {
 	if (item->getIndex() < 4 || item->getSubType() != Resources::Item::kItemSub2) {
 		// Do not explicitly add use on action-menu buttons.
 		item = nullptr;

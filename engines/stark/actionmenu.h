@@ -33,7 +33,7 @@ class Cursor;
 class VisualImageXMG;
 
 namespace Resources {
-class Item;
+class ItemVisual;
 }
 
 class ActionMenu : public Window {
@@ -41,7 +41,7 @@ public:
 	ActionMenu(Gfx::Driver *gfx, Cursor *cursor);
 	~ActionMenu();
 
-	void open(Resources::Item *item, const Common::Point &itemRelativePos);
+	void open(Resources::ItemVisual *item, const Common::Point &itemRelativePos);
 	void close();
 
 protected:
@@ -67,7 +67,7 @@ private:
 	VisualImageXMG *_background;
 
 	Common::Point _itemRelativePos;
-	Resources::Item *_item;
+	Resources::ItemVisual *_item;
 
 	void clearActions();
 	void enableAction(ActionMenuType action);

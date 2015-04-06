@@ -66,14 +66,14 @@ public:
 
 	VisualImageXMG *getActionImage(uint32 itemIndex, bool active);
 
-	bool itemDoActionAt(Resources::Item *item, uint32 action, const Common::Point &position);
+	bool itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position);
 
-	Common::String getItemTitle(Resources::Item *object, bool local, const Common::Point &pos);
+	Common::String getItemTitle(Resources::ItemVisual *object, bool local, const Common::Point &pos);
 
-	Resources::ActionArray getActionsPossibleForObject(Resources::Item *item, const Common::Point &pos);
-	Resources::ActionArray getStockActionsPossibleForObject(Resources::Item *item, const Common::Point &pos);
+	Resources::ActionArray getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
+	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
 
-	bool isInventoryObject(Resources::Item *item);
+	bool isInventoryObject(Resources::ItemVisual *item);
 };
 
 } // End of namespace Stark
