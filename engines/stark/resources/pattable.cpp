@@ -64,8 +64,11 @@ ActionArray PATTable::listPossibleActions() const {
 
 	for (uint i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._scriptIndex != -1) {
-			// TODO: More rules
-			actions.push_back(_entries[i]._actionType);
+			// Check the script can be launched
+			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
+			if (script->shouldExecute(Script::kCallModePlayerAction)) {
+				actions.push_back(_entries[i]._actionType);
+			}
 		}
 	}
 
@@ -85,7 +88,7 @@ bool PATTable::runScriptForAction(uint32 action) {
 	for (uint i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._actionType == action) {
 			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
-			script->execute(Resources::Script::kCallModePlayerAction);
+			script->execute(Script::kCallModePlayerAction);
 		}
 	}
 

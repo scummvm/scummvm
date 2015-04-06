@@ -89,8 +89,9 @@ public:
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
-	void onAllLoaded();
-	void onGameLoop();
+	void saveLoad(ResourceSerializer *serializer) override;
+	void onAllLoaded() override;
+	void onGameLoop() override;
 
 	/** Reset the script so that it can be executed again from the beginning */
 	void reset();
@@ -116,11 +117,10 @@ public:
 	/** Suspend the script while the specified resource is running */
 	void suspend(Object *cause);
 
-	void saveLoad(ResourceSerializer *serializer) override;
+	/** Returns true if the script is enabled and valid for this call mode */
+	bool shouldExecute(uint32 callMode);
 protected:
 	void printData() override;
-
-	bool shouldExecute(uint32 callMode);
 
 	bool isSuspended();
 	void updateSuspended();
