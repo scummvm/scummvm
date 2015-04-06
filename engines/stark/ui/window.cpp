@@ -117,9 +117,18 @@ void Window::updateItems() {
 		}
 	}
 
+	Resources::ActionArray actionsPossible;
+	if (_objectUnderCursor) {
+		actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+	}
+
+	if (actionsPossible.empty()) {
+		// Only consider items with runnable scripts
+		_objectUnderCursor = nullptr;
+	}
+
 	Common::String mouseHint;
 	if (_objectUnderCursor) {
-		Resources::ActionArray actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
 		setCursorDependingOnActionsAvailable(actionsPossible);
 
 		mouseHint = ui->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
