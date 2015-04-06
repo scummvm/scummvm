@@ -56,7 +56,7 @@ Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	_index = 0;
 	_sub = 0;
 	_up = _down = false;
-	_page = 0;
+	_page = 1;
 	_converseNum = -1;
 
 	// Load the journal directory and location names
@@ -140,7 +140,6 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
-	Statement &statement = talk[journalEntry._statementNum];
 
 	Common::String dirFilename = _directory[journalEntry._converseNum];
 	bool replyOnly = journalEntry._replyOnly;
@@ -184,6 +183,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	}
 
 	// Start building journal string
+	Statement &statement = talk[journalEntry._statementNum];
 	Common::String journalString;
 
 	if (newLocation != oldLocation) {
@@ -260,7 +260,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				// If a reply isn't just being started, and we didn't just end
 				// a comment (which would have added a line), add a carriage return
 				if (!startOfReply && ((!commentJustPrinted && c == '{') || c == '}'))
-					journalString += '"';
+					journalString += '\n';
 				startOfReply = false;
 
 				// Handle setting or clearing comment state
@@ -434,7 +434,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 		}
 
 		// Add in the line
-		_lines.push_back(Common::String(startP, endP));
+		_lines.push_back(Common::String(journalString.c_str(), endP));
 
 		// Strip line off from string being processed
 		journalString = *endP ? Common::String(endP + 1) : "";
@@ -460,6 +460,10 @@ void Journal::drawInterface() {
 	bg->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
 	bg->read(palette, PALETTE_SIZE);
 	delete bg;
+
+	// Translate the palette for display
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
 
 	// Set the palette and print the title
 	screen.setPalette(palette);
