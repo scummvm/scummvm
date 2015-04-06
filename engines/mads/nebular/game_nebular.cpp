@@ -56,7 +56,7 @@ ProtectionResult GameNebular::checkCopyProtection() {
 	correctAnswer = dlg->isCorrectAnswer();
 	delete dlg;
 
-	if (!correctAnswer) {
+	if (!correctAnswer && !_vm->shouldQuit()) {
 		dlg = new CopyProtectionDialog(_vm, true);
 		dlg->show();
 		correctAnswer = dlg->isCorrectAnswer();

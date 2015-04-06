@@ -439,9 +439,12 @@ void CopyProtectionDialog::show() {
 	_vm->_screen.updateScreen();
 
 	while (!_vm->shouldQuit()) {
-		while (!_vm->_events->isKeyPressed()) {
+		while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed()) {
 			_vm->_events->delay(1);
 		}
+
+		if (_vm->shouldQuit())
+			break;
 
 		curKey = _vm->_events->getKey();
 		
