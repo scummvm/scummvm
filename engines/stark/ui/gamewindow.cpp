@@ -102,7 +102,7 @@ void GameWindow::onClick(const Common::Point &pos) {
 			}
 		}
 	} else {
-		ui->walkTo(pos);
+		ui->walkTo(getScreenMousePosition());
 	}
 }
 
