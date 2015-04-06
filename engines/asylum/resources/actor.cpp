@@ -1941,7 +1941,7 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 				// Fallback to next case
 
 			case kDirectionN:
-				if (x4 >= y)
+				if (y4 >= y)
 					break;
 
 				return false;
