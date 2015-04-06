@@ -86,6 +86,16 @@ void UI::update() {
 		return;
 	}
 
+	if (_inventoryInterface->isVisible()) {
+		_inventoryInterface->handleMouseMove();
+		return;
+	}
+
+	if (_gameWindow->isVisible() && _gameWindow->isMouseInside()) {
+		_gameWindow->handleMouseMove();
+		return;
+	}
+
 	// TODO: Refactor update for Windows ?
 
 	// Check for UI mouse overs
@@ -102,29 +112,35 @@ void UI::update() {
 }
 
 void UI::handleClick() {
+	_hasClicked = false;
+
 	if (_actionMenu->isVisible()) {
 		if (_actionMenu->isMouseInside()) {
 			_actionMenu->handleClick();
 		} else {
 			_actionMenu->close();
 		}
+		return;
+	}
+
+	if (_inventoryInterface->isVisible() && !_inventoryInterface->isMouseInside()) {
+		_inventoryInterface->close();
+		return;
 	}
 
 	if (_gameWindow->isMouseInside()) {
 		_gameWindow->handleClick();
+		return;
 	}
 
-	// Check this before handling the menu clicks, otherwise it closes again on the same event.
-	if (_inventoryInterface->isVisible() && !_inventoryInterface->isMouseInside()) {
-		_inventoryInterface->close();
-	}
 	if (_topMenu->containsPoint(_cursor->getMousePosition())) {
 		_topMenu->handleClick(_cursor->getMousePosition());
+		return;
 	}
 	if (_dialogInterface->containsPoint(_cursor->getMousePosition())) {
 		_dialogInterface->handleClick(_cursor->getMousePosition());
+		return;
 	}
-	_hasClicked = false;
 }
 
 void UI::notifyClick() {

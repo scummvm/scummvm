@@ -57,8 +57,6 @@ void InventoryInterface::close() {
 }
 
 void InventoryInterface::onRender() {
-	updateItems();
-
 	_backgroundTexture->getVisual()->get<VisualImageXMG>()->render(Common::Point(0, 0));
 	
 	Gfx::RenderEntryArray::iterator it = _renderEntries.begin();
@@ -79,7 +77,7 @@ void InventoryInterface::onRender() {
 }
 
 void InventoryInterface::onMouseMove(const Common::Point &pos) {
-
+	updateItems();
 }
 
 void InventoryInterface::onClick(const Common::Point &pos) {

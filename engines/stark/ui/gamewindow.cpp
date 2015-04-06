@@ -52,8 +52,6 @@ void GameWindow::onRender() {
 	Global *global = StarkServices::instance().global;
 	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
 
-	updateItems();
-
 	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
 	while (element != _renderEntries.end()) {
 		// Draw the current element
@@ -65,7 +63,10 @@ void GameWindow::onRender() {
 }
 
 void GameWindow::onMouseMove(const Common::Point &pos) {
+	Global *global = StarkServices::instance().global;
+	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
 
+	updateItems();
 }
 
 void GameWindow::onClick(const Common::Point &pos) {
