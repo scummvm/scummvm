@@ -1445,11 +1445,11 @@ bool Encounter::updateScreen() {
 }
 
 void Encounter::updatePalette1() {
-	error("[Encounter::updatePalette1] Not implemented!");
+	debugC(kDebugLevelEncounter, "[Encounter::updatePalette1] Not implemented!");
 }
 
 void Encounter::updatePalette2() {
-	error("[Encounter::updatePalette2] Not implemented!");
+	debugC(kDebugLevelEncounter, "[Encounter::updatePalette2] Not implemented!");
 }
 
 //////////////////////////////////////////////////////////////////////////

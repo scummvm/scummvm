@@ -322,7 +322,7 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 void Screen::updatePalette() {
 	// FIXME: This is used to replace all the inline code to setup the palette before calls to setupPalette/paletteFade
 	// See if all that code can really be factorized into a single function or not
-	error("[Screen::updatePalette] Not implemented!");
+	debugC(kDebugLevelScene, "[Screen::updatePalette] Not implemented!");
 }
 
 void Screen::updatePalette(int32 param) {
