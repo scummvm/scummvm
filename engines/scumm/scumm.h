@@ -235,6 +235,9 @@ enum ScummGameId {
 	GID_TENTACLE,
 	GID_ZAK,
 
+	GID_SCUMMC6,
+	GID_SCUMMC7,
+
 	GID_HEGAME,      // Generic name for all HE games with default behavior
 	GID_PUTTDEMO,
 	GID_FBEAR,

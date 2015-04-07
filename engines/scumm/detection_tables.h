@@ -71,6 +71,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "monkey2", "Monkey Island 2: LeChuck's Revenge" },
 	{ "pass", "Passport to Adventure" },
 	{ "samnmax", "Sam & Max Hit the Road" },
+	{ "scummc6", "ScummC games for v6" },
 	{ "tentacle", "Day of the Tentacle" },
 	{ "zak", "Zak McKracken and the Alien Mindbenders" },
 	{ "indyloom", "Indiana Jones and the Last Crusade & Loom" },
@@ -80,6 +81,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 #ifdef ENABLE_SCUMM_7_8
 	{ "ft", "Full Throttle" },
 	{ "dig", "The Dig" },
+	{ "scummc7", "ScummC games for v7" },
 	{ "comi", "The Curse of Monkey Island" },
 #endif
 
@@ -260,6 +262,8 @@ static const GameSettings gameVariantsTable[] = {
 	{"samnmax",  "", 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO0()},
 	{"samnmax",  "Floppy", 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, GF_USE_KEY, UNK, GUIO1(GUIO_NOSPEECH)},
 
+	{"scummc6", "", 0, GID_SCUMMC6, 6, 0, MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM, 0, UNK, GUIO0()},
+
 #ifdef ENABLE_SCUMM_7_8
 	{"ft",   "", 0, GID_FT,  7, 0, MDT_NONE, 0, UNK, GUIO1(GUIO_NOMIDI)},
 	{"ft",   "Demo", 0, GID_FT,  7, 0, MDT_NONE, GF_DEMO, UNK, GUIO1(GUIO_NOMIDI)},
@@ -267,6 +271,8 @@ static const GameSettings gameVariantsTable[] = {
 	{"dig",  "", 0, GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO1(GUIO_NOMIDI)},
 	{"dig",  "Demo", 0, GID_DIG, 7, 0, MDT_NONE, GF_DEMO, UNK, GUIO1(GUIO_NOMIDI)},
 	{"dig",  "Steam", "steam", GID_DIG, 7, 0, MDT_NONE, 0, UNK, GUIO1(GUIO_NOMIDI)},
+
+	{"scummc7", "", 0, GID_SCUMMC7, 7, 0, MDT_NONE, 0, UNK, GUIO0()},
 
 	{"comi", "", 0, GID_CMI, 8, 0, MDT_NONE, 0, Common::kPlatformWindows, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)},
 	{"comi", "Demo", 0, GID_CMI, 8, 0, MDT_NONE, GF_DEMO, Common::kPlatformWindows, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)},
@@ -509,6 +515,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "samnmax", "snmidemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "samnmax", "sdemo.sm%d", kGenDiskNum, Common::DE_DEU, UNK, 0 },
 
+	{ "scummc6", "scummc.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+	{ "scummc6", "scummc6.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
+
 #ifdef ENABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "dig", "dig.la%d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformWindows, "Steam" },
@@ -524,6 +533,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "ft", "Full Throttle Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
 	{ "ft", "Vollgas Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "ft", "Vollgas Demo Data", kGenUnchanged, Common::DE_DEU, Common::kPlatformMacintosh, "Demo" },
+
+	{ "scummc7", "scummc7.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 #endif
