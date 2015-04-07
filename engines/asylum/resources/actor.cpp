@@ -3310,7 +3310,7 @@ void Actor::updateFinish() {
 
 	if (!area->paletteResourceId || area->paletteResourceId == actorArea->paletteResourceId || _index) {
 		if (area->paletteResourceId != actorArea->paletteResourceId && !_index)
-			_vm->screen()->startPaletteFade(area->paletteResourceId, 50, 3);
+			_vm->screen()->startPaletteFade(getWorld()->currentPaletteId, 100, 3);
 
 		_actionIdx3 = areaIndex;
 	} else {
