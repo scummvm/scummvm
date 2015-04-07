@@ -737,8 +737,8 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		break;
 
 	case kActorStatusDisabled:
-		updateGraphicData(15);
-		_resourceId = _graphicResourceIds[(_direction > kDirectionS ? kDirection8 - _direction : _direction) + 15];
+		updateGraphicData(5);
+		_resourceId = _graphicResourceIds[(_direction > kDirectionS ? kDirection8 - _direction : _direction) + 5];
 
 		getScreen()->setFlag(-1);
 		break;
