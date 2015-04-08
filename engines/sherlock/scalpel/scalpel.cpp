@@ -310,8 +310,42 @@ bool ScalpelEngine::showCityCutscene() {
 }
 
 bool ScalpelEngine::showAlleyCutscene() {
-	// TODO
-	return true;
+	byte palette[PALETTE_SIZE];
+	_sound->playMusic("prolog2.mus");
+
+	_titleOverride = "TITLE.LIB";
+	_soundOverride = "TITLE.SND";
+
+	bool finished = _animation->playPrologue("27PRO1", 1, 3, true, 2);
+	if (finished)
+		_animation->playPrologue("27PRO2", 1, 0, false, 2);
+
+	if (finished) {
+		ImageFile screamImages("SCREAM.LBV", false);
+		_screen->_backBuffer1.transBlitFrom(screamImages[0], Common::Point(0, 0));
+		_screen->_backBuffer2.blitFrom(_screen->_backBuffer1);
+		finished = _events->delay(6000);
+	}
+
+	if (finished)
+		_animation->playPrologue("27PRO3", 1, 0, true, 2);
+
+	if(finished) {
+		_screen->getPalette(palette);
+		_screen->fadeToBlack(2);
+	}
+
+	if(finished) {
+		ImageFile titleImages("title3.vgs", true);
+		// "Early the following morning on Baker Street..."
+		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(35, 51), false, 0);
+		_screen->fadeIn(palette, 3);
+		finished = _events->delay(1000);
+	}
+
+	_titleOverride = "";
+	_soundOverride = "";
+	return finished;
 }
 
 bool ScalpelEngine::showStreetCutscene() {
