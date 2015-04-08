@@ -399,7 +399,7 @@ void SpriteSets::remove(int idx) {
 	if (idx == SPRITE_SLOTS_MAX_SIZE) {
 		delete _uiSprites;
 		_uiSprites = nullptr;
-	} else if (idx >= 0) {
+	} else if (idx >= 0 && idx < (int)size()) {
 		delete (*this)[idx];
 
 		if (idx < ((int)size() - 1)) {
