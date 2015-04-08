@@ -748,7 +748,7 @@ IMPLEMENT_OPCODE(JumpIfActorCoordinates)
     // actor->canMoveCheckActors (called from canMove) seems to be the cause of the issue
 	// this script fails because the position is never met for few pixels (3 to 5 pixels)
 	// usually the X coordinate but sometimes also happens with the Y coordinate
-	debugC(kDebugLevelScripts, "COMMENTED JumpIfActorCoordinates %d x: %d y: %d",
+	debugC(kDebugLevelScripts, "COMMENTED JumpIfActorCoordinates x: %d y: %d",
 			(actor->getPoint1()->x + actor->getPoint2()->x), 
 			(actor->getPoint1()->y + actor->getPoint2()->y));
 
