@@ -2456,9 +2456,11 @@ debug messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
     * Type "./configure" in the ScummVM directory.
     * You can now type 'make' to create a command line binary.
     * To get a version you can run from Finder, type 'make bundle' which
-      will create ScummVM.app (this only works out of the box if you
-      installed SDL into /sw (as happens if you are using Fink). If you
-      have installed SDL in another way, you will have to edit ports.mk).
+      will create ScummVM.app (this tries to detect where the static libraries
+      are installed, which should work in most cases, but if it doesn't you
+      will need to specify this path with --with-staticlib-prefix= when calling
+      configure - for example "./configure --with-staticlib-prefix=/Users/foo"
+      if the libraries are in /Users/foo/lib).
     * For more information refer to:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MacOS_X_Crosscompiling
 
