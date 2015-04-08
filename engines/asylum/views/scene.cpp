@@ -132,8 +132,7 @@ void Scene::enter(ResourcePackId packId) {
 	// Adjust scene bounding rect
 	_ws->boundingRect = Common::Rect(195, 115, 445 - boundingRect->right, 345 - boundingRect->bottom);
 
-	// Hide actor
-	player->hide();
+	player->show(); // flag |= 1 (show actor)
 	player->enable();
 
 	// Update current player coordinates
