@@ -970,7 +970,6 @@ void XCodeProvider::setupDefines(const BuildSetup &setup) {
 	ADD_DEFINE(_defines, "SCUMM_LITTLE_ENDIAN");
 	ADD_DEFINE(_defines, "UNIX");
 	ADD_DEFINE(_defines, "SCUMMVM");
-	ADD_DEFINE(_defines, "USE_TREMOR");
 }
 
 //////////////////////////////////////////////////////////////////////////
