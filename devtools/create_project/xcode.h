@@ -286,6 +286,7 @@ private:
 	Group *touchGroupsForPath(const std::string &path);
 	// Functionality for adding file-refs and build-files, as Group-objects need to be able to do this.
 	void addFileReference(const std::string &id, const std::string &name, FileProperty properties);
+	void addProductFileReference(const std::string &id, const std::string &name);
 	void addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment);
 	// All objects
 	std::map<std::string, std::string> _hashDictionnary;

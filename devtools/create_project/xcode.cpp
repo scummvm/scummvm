@@ -189,6 +189,16 @@ void XCodeProvider::addFileReference(const std::string &id, const std::string &n
 	_fileReference.flags = SettingsSingleItem;
 }
 
+void XCodeProvider::addProductFileReference(const std::string &id, const std::string &name) {
+	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
+	fileRef->addProperty("explicitFileType", "compiled.mach-o.executable", "", SettingsNoValue|SettingsQuoteVariable);
+	fileRef->addProperty("includeInIndex", "0", "", SettingsNoValue);
+	fileRef->addProperty("path", name, "", SettingsNoValue|SettingsQuoteVariable);
+	fileRef->addProperty("sourceTree", "BUILT_PRODUCTS_DIR", "", SettingsNoValue);
+	_fileReference.add(fileRef);
+	_fileReference.flags = SettingsSingleItem;
+}
+
 void XCodeProvider::addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment) {
 
 	Object *buildFile = new Object(this, id, name, "PBXBuildFile", "PBXBuildFile", comment);
@@ -499,6 +509,8 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 void XCodeProvider::setupNativeTarget() {
 	_nativeTarget.comment = "PBXNativeTarget";
 
+	// Just use a hardcoded id for the Products-group
+	Group *productsGroup = new Group(this, "Products", "PBXGroup_CustomTemplate_Products_" , "");
 	// Output native target section
 	for (unsigned int i = 0; i < _targets.size(); i++) {
 #ifndef ENABLE_IOS
@@ -524,11 +536,15 @@ void XCodeProvider::setupNativeTarget() {
 
 		target->addProperty("name", _targets[i], "", SettingsNoValue|SettingsQuoteVariable);
 		target->addProperty("productName", PROJECT_NAME, "", SettingsNoValue);
+		addProductFileReference("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i], PROJECT_DESCRIPTION ".app");
+		productsGroup->addChildByHash(getHash("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i]), PROJECT_DESCRIPTION ".app");
 		target->addProperty("productReference", getHash("PBXFileReference_" PROJECT_DESCRIPTION ".app_" + _targets[i]), PROJECT_DESCRIPTION ".app", SettingsNoValue);
 		target->addProperty("productType", "com.apple.product-type.application", "", SettingsNoValue|SettingsQuoteVariable);
 
 		_nativeTarget.add(target);
 	}
+	_rootSourceGroup->addChildGroup(productsGroup);
+	_groups.add(productsGroup);
 }
 
 void XCodeProvider::setupProject() {
