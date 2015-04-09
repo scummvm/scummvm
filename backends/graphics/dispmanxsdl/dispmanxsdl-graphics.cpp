@@ -34,7 +34,7 @@
 
 #include <bcm_host.h>
 
-#define numpages 2
+#define NUMPAGES 2
 
 struct dispvarsStruct { 
 	DISPMANX_DISPLAY_HANDLE_T display;
@@ -70,16 +70,15 @@ DispmanXSdlGraphicsManager::DispmanXSdlGraphicsManager(SdlEventSource *sdlEventS
 	DispmanXInit();
 }
 
-DispmanXSdlGraphicsManager::~DispmanXSdlGraphicsManager() 
-{
+DispmanXSdlGraphicsManager::~DispmanXSdlGraphicsManager() {
 	DispmanXVideoQuit();
 	delete _dispvars;
 }
 
-void DispmanXSdlGraphicsManager::DispmanXInit () {
+void DispmanXSdlGraphicsManager::DispmanXInit() {
 	_dispvars->screen = 0;
 	_dispvars->vcImagePtr = 0;
-	_dispvars->pages = (struct dispmanxPage*)calloc(numpages, sizeof(struct dispmanxPage));
+	_dispvars->pages = (struct dispmanxPage *)calloc(NUMPAGES, sizeof(struct dispmanxPage));
 	_dispvars->pageflipPending = 0;	
 	_dispvars->nextPage = &_dispvars->pages[0];
 
@@ -93,11 +92,11 @@ void DispmanXSdlGraphicsManager::DispmanXInit () {
 	_dispvars->display = vc_dispmanx_display_open(_dispvars->screen);
 }
 
-void DispmanXSdlGraphicsManager::DispmanXSetup (int width, int height, int bpp) {
+void DispmanXSdlGraphicsManager::DispmanXSetup(int width, int height, int bpp) {
 	DispmanXFreeResources();
-	vc_dispmanx_display_get_info(_dispvars->display, &(_dispvars->amode));
+	vc_dispmanx_display_get_info(_dispvars->display, &_dispvars->amode);
 
-        _dispvars->pitch = width * (bpp/8);
+	_dispvars->pitch = width * (bpp / 8);
 	_dispvars->pixFormat = VC_IMAGE_RGB565;	       
 
 	// Transparency disabled
@@ -127,8 +126,7 @@ void DispmanXSdlGraphicsManager::DispmanXSetup (int width, int height, int bpp) 
 	vc_dispmanx_rect_set(&(_dispvars->bmpRect), 0, 0, width, height);	
 	vc_dispmanx_rect_set(&(_dispvars->srcRect), 0, 0, width << 16, height << 16);	
 
-	int i;
-	for (i = 0; i < numpages; i++)
+	for (int i = 0; i < NUMPAGES; i++)
 		_dispvars->pages[i].resource = vc_dispmanx_resource_create(_dispvars->pixFormat, width, height, 
 			&(_dispvars->vcImagePtr));
 	
@@ -142,8 +140,8 @@ void DispmanXSdlGraphicsManager::DispmanXSetup (int width, int height, int bpp) 
 	vc_dispmanx_update_submit_sync(_dispvars->update);		
 }
 
-void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void * arg){
-	struct dispvarsStruct *_dispvars = (struct dispvarsStruct*) arg;
+void DispmanXVSyncCallback (DISPMANX_UPDATE_HANDLE_T u, void *arg) {
+	struct dispvarsStruct *_dispvars = (struct dispvarsStruct*)arg;
 
 	// Changing the page to write must be done before the signaling
 	// so we have the right page in nextPage when update_main continues
@@ -189,10 +187,9 @@ void DispmanXSdlGraphicsManager::DispmanXUpdate() {
 }
 
 void DispmanXSdlGraphicsManager::DispmanXFreeResources(void) {
-	int i;
 	_dispvars->update = vc_dispmanx_update_start(0);
 		
-    	for (i = 0; i < numpages; i++)
+    	for (int i = 0; i < NUMPAGES; i++)
 		vc_dispmanx_resource_delete(_dispvars->pages[i].resource);
 	
 	vc_dispmanx_element_remove(_dispvars->update, _dispvars->element);
@@ -227,24 +224,18 @@ bool DispmanXSdlGraphicsManager::loadGFXMode() {
 	//
 	// Create the surface that contains the 8 bit game data
 	//
-#ifdef USE_RGB_COLOR
-	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
-						_screenFormat.bytesPerPixel << 3,
-						((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
-						((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
-						((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,
-						((1 << _screenFormat.aBits()) - 1) << _screenFormat.aShift );
-	if (_screen == NULL)
-		error("allocating _screen failed");
 
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
+		_screenFormat.bytesPerPixel << 3,
+		((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
+		((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
+		((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,
+		((1 << _screenFormat.aBits()) - 1) << _screenFormat.aShift );
+		if (_screen == NULL)
+			error("allocating _screen failed");
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
 	SDL_SetAlpha(_screen, 0, 255);
-#else
-	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
-	if (_screen == NULL)
-		error("allocating _screen failed");
-#endif
-
+	
 	// SDL 1.2 palettes default to all black,
 	// SDL 1.3 palettes default to all white,
 	// Thus set our own default palette to all black.
@@ -269,9 +260,7 @@ bool DispmanXSdlGraphicsManager::loadGFXMode() {
 	// for mouse pointer adjustment to work correctly.
 	SDL_SetVideoMode(_videoMode.screenWidth, _videoMode.screenHeight, 16, SDL_FULLSCREEN);
 
-#ifdef USE_RGB_COLOR
 	detectSupportedFormats();
-#endif
 
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
@@ -538,7 +527,6 @@ bool DispmanXSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 
 void DispmanXSdlGraphicsManager::setFullscreenMode(bool enable) {
 	_videoMode.fullscreen = enable;
-	return;
 }
 
 void DispmanXSdlGraphicsManager::setAspectRatioCorrection(bool enable) {

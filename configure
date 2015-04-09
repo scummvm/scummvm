@@ -2987,6 +2987,7 @@ case $_backend in
 		LIBS="$LIBS -Wl,-Map,mapfile.txt"
 		;;
 	raspberrypi)
+		echocheck "DispmanX graphics "
 		_use_dispmanx=no
 		DISPMANX_CXXFLAGS="-I$RPI_ROOTDIR/opt/vc/include -I$RPI_ROOTDIR/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOTDIR/opt/vc/include/interface/vcos/pthreads -mfpu=vfp -mfloat-abi=hard -I$RPI_ROOTDIR/opt/rpi_root/usr/include/SDL"
 		DISPMANX_LIBS="--sysroot=$RPI_ROOTDIR -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
@@ -2999,7 +3000,6 @@ case $_backend in
 EOF
 		cc_check $DISPMANX_CXXFLAGS $DISPMANX_LIBS && _use_dispmanx=yes
 		if test "$_use_dispmanx" = "yes"; then
-			echo "Activating Raspberry Pi DispmanX graphics backend"
 			CXXFLAGS="$CXXFLAGS $DISPMANX_CXXFLAGS"
 			LIBS="$LIBS $DISPMANX_LIBS"
 			MODULES="$MODULES backends/platform/sdl"
@@ -3009,8 +3009,7 @@ EOF
 			_build_hq_scalers=no	
 			_opengl=no
 			_default_optimization_level=-O3
-		else
-			echo "Can't activate DispmanX context (missing headers?)."		
+			echo $_use_dispmanx
 		fi
 		;;
 	samsungtv)
@@ -3157,6 +3156,9 @@ case $_backend in
 		LIBS="$LIBS -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/usr/lib/arm-linux-gnueabihf -lSDL"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
+		_16bit=yes
+		_savegame_timestamp=no
+		_eventrec=no
 esac
 		
 #

@@ -1,0 +1,100 @@
+ScummVM-RASPBERRYPI README
+==============================================================================
+
+Notes
+============
+
+This version of ScummVM is specially tailored to use DispmanX, the native 2D
+API on the Raspberry Pi. The idea is that scaling and drawing on a double
+buffer with a non-blocking vsync wait is all done using the on-board VideoCore
+hardware, thus using only a small fraction of the CPU ScummVM uses when ran
+on a clunky, software-scaled and desynced X11 enviroment using the X11 API.
+Thus, running this version under an X11 session is not supported.
+
+Requirements
+============
+- Raspberry Pi 1 or 2 microcomputer.
+- Raspbian (Debian) installed on SD card. Other distros may be supported if 
+  they include the VideoCore runtime libraries that Raspbian includes.
+-An attached keyboard and mouse, or alternatively joystick.
+
+Controls
+============
+
+The standard ScummVM keyboard and mouse controls are used as in any other 
+GNU/Linux based system.
+Use the --joystick parameter if you want to use a joystick instead of the
+intended mouse for playing the games (not recommended).
+
+Installation from binaries
+==============================
+
+We have at least three methods to get the binaries into the Raspbian SD:
+
+1) Since Debian (Raspbian) includes an ssh service by default, I recommend 
+keeping the SD card on the Raspberry Pi, and using scp to copy the package over 
+to your home directory in the Debian filesystem.
+
+scp scummvm-rpi_<version>.zip pi@<raspberrypi_ip>:/home/pi
+
+2) If your RaspberryPi has internet access, you can simply use wget to 
+download the package to your home folder:
+
+cd ~/
+wget <package_link>
+
+3) You could also connect the Raspbian SD card to your main PC and, after
+mounting it (or being automounted as it would be in most desktop GNU/Linux 
+systems), copy the package file manually to your home directory.
+How to mount an SD and copy files to it is beyond the scope of this README.
+
+Once we have the package file in our home directory using one of the three 
+aforementioned methods, we would need to uncompress it:
+
+unzip scummvm-rpi_<version>.zip
+
+As a result, a directory containing the scummvm along with this README will be
+created. 
+We can run it by simply changing to our scummvm directory and executing the 
+scummvm file.
+
+cd scummvm-rpi
+./scummvm
+
+I recommend copying the games to /home/pi/scummvm-rpi. Adding the games via the menu
+works as in any other system ScummVM runs on.
+
+Building from sources
+==============================
+
+We have two options to build once we have the sources in our main GNU/Linux desktop
+class PC or in our Raspberry Pi:
+
+1) Building on the Raspberry Pi itself, although possible, is an SLOW task for the
+little computer unless you use distributed gcc (or distcc for short).
+
+Local compilation would simply consist of the "standard" GNU/Linux building process:
+
+cd <sources_dir>
+
+./configure ./configure --backend=raspberrypi -disable-debug --enable-release 
+--enable-optimizations --disable-mt32emu --disable-flac --disable-mad --disable-vorbis 
+--disable-tremor --disable-fluidsynth --disable-taskbar --disable-timidity --disable-alsa
+
+make
+
+¡¡It will be an SLOW process, taking several hours to complete, unless you
+are running distcc against a fast compilation server!!
+
+2) If we wandt to build by cross-compiling on a GNU/Linux X86-based computer,
+we can find concise instructions for this can be found on the ScummVM wiki:
+
+http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI 
+
+NOTE: Distcc is my preferred method as it does cross-compiling totally transparent
+(we build ON the Pi but the actual CPU-intensive compilation is made on an external 
+server), but it involves building a custom gcc version on the compilation server and 
+configuring a server and client in both the Raspberry Pi and the server.
+More info here: http://elinux.org/RPi_Linaro_GCC_Compilation#Build_GCC_Linaro
+
+Enjoy!

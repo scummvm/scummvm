@@ -28,8 +28,6 @@
 struct dispvarsStruct;
 struct dispmanxPage;
 
-typedef uint32_t DISPMANX_UPDATE_HANDLE_T;
-
 class DispmanXSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	DispmanXSdlGraphicsManager(SdlEventSource *sdlEventSource);
@@ -41,7 +39,7 @@ public:
 	void setAspectRatioCorrection(bool enable);
 protected:	
 	// Raspberry Pi Dispmanx API
-	void DispmanXSetup(int width, int height, int bpp);
+	void DispmanXSetup(int dwidth, int dheight, int dbpp);
 	void DispmanXInit();
 	void DispmanXUpdate();
 	void DispmanXFreeResources();
