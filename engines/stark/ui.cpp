@@ -72,9 +72,9 @@ UI::~UI() {
 void UI::init() {
 	_topMenu = new TopMenu();
 	_dialogInterface = new DialogInterface();
-	_inventoryInterface = new InventoryInterface(_gfx, _cursor);
 	_fmvPlayer = new FMVPlayer();
 	_actionMenu = new ActionMenu(_gfx, _cursor);
+	_inventoryInterface = new InventoryInterface(_gfx, _cursor, _actionMenu);
 	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu);
 }
 
@@ -123,8 +123,12 @@ void UI::handleClick() {
 		return;
 	}
 
-	if (_inventoryInterface->isVisible() && !_inventoryInterface->isMouseInside()) {
-		_inventoryInterface->close();
+	if (_inventoryInterface->isVisible()) {
+		if (_inventoryInterface->isMouseInside()) {
+			_inventoryInterface->handleClick();
+		} else {
+			_inventoryInterface->close();
+		}
 		return;
 	}
 

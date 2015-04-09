@@ -62,6 +62,7 @@ private:
 		Common::Rect rect;
 	};
 
+	bool _fromInventory;
 	ActionButton _buttons[3];
 
 	VisualImageXMG *_background;
@@ -70,7 +71,7 @@ private:
 	Resources::ItemVisual *_item;
 
 	void clearActions();
-	void enableAction(ActionMenuType action);
+	void enableAction(uint32 action);
 };
 
 

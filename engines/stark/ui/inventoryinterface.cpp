@@ -22,22 +22,27 @@
 
 #include "engines/stark/ui/inventoryinterface.h"
 
+#include "engines/stark/actionmenu.h"
+
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/pattable.h"
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/visual/image.h"
 
 namespace Stark {
 
-InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor) :
-	Window(gfx, cursor){
+InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
+	Window(gfx, cursor),
+	_actionMenu(actionMenu) {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	_backgroundTexture = staticProvider->getUIItem(StaticProvider::kInventoryBg);
 
@@ -81,7 +86,22 @@ void InventoryInterface::onMouseMove(const Common::Point &pos) {
 }
 
 void InventoryInterface::onClick(const Common::Point &pos) {
-
+	if (_objectUnderCursor) {
+		// Possibilites:
+		// * Click on something that doesn't take an action
+		// * Click on something that takes exactly 1 action.
+		// * Click on something that takes more than 1 action (open action menu)
+		// * Click in the action menu, which has 0 available actions (TODO)
+//			if (_selectedInventoryItem != -1) {
+//				if (!ui->itemDoActionAt(_objectUnderCursor, _selectedInventoryItem, pos)) {
+//					warning("Could not perform action %d on %s", _selectedInventoryItem, _objectUnderCursor->getName().c_str());
+//				}
+//			} else
+		{
+			// TODO: Is it safe to always open the action menu?
+			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
+		}
+	}
 }
 
 } // End of namespace Stark

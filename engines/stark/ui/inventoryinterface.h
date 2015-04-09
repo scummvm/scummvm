@@ -33,21 +33,15 @@
 
 namespace Stark {
 
-class VisualImageXMG;
-class ClickText;
+class ActionMenu;
 
 namespace Resources {
 class Anim;
-class Item;
-}
-
-namespace Gfx {
-class Texture;
 }
 
 class InventoryInterface : public Window {
 public:
-	InventoryInterface(Gfx::Driver *gfx, Cursor *cursor);
+	InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu);
 	virtual ~InventoryInterface() {}
 
 	void open();
@@ -60,6 +54,7 @@ protected:
 
 private:
 	Resources::Anim *_backgroundTexture;
+	ActionMenu *_actionMenu;
 };
 
 } // End of namespace Stark

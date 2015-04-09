@@ -73,18 +73,19 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	_itemRelativePos = itemRelativePos;
 	_item = item;
+	_fromInventory = item->getSubType() == Resources::Item::kItemSub2;
 
 	clearActions();
 
 	Resources::ActionArray possible = ui->getActionsPossibleForObject(_item, _itemRelativePos);
 
 	for (uint i = 0; i < possible.size(); i++) {
-		for (uint j = 0; j < ARRAYSIZE(_buttons); j++) {
-			if (_buttons[j].action == possible[i]) {
-				_buttons[j].enabled = true;
-				break;
-			}
-		}
+		enableAction(possible[i]);
+	}
+
+	if (_fromInventory) {
+		// All inventory items can be picked up
+		enableAction(Resources::PATTable::kActionUse);
 	}
 }
 
@@ -114,8 +115,13 @@ void ActionMenu::clearActions() {
 	}
 }
 
-void ActionMenu::enableAction(ActionMenuType action) {
-	_buttons[action].enabled = true;
+void ActionMenu::enableAction(uint32 action) {
+	for (uint j = 0; j < ARRAYSIZE(_buttons); j++) {
+		if (_buttons[j].action == action) {
+			_buttons[j].enabled = true;
+			break;
+		}
+	}
 }
 
 void ActionMenu::onMouseMove(const Common::Point &pos) {
