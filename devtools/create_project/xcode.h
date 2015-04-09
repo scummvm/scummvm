@@ -301,7 +301,6 @@ private:
 	ObjectList _fileReference;
 	ObjectList _frameworksBuildPhase;
 	ObjectList _groups;
-	ObjectList _rootGroups;
 	ObjectList _nativeTarget;
 	ObjectList _project;
 	ObjectList _resourcesBuildPhase;
