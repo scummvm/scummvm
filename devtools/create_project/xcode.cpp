@@ -80,15 +80,135 @@ namespace CreateProjectTool {
 	_fileReference.flags = SettingsSingleItem; \
 }
 
+bool producesObjectFileOnOSX(const std::string &fileName) {
+	std::string n, ext;
+	splitFilename(fileName, n, ext);
+
+	// Note that the difference between this and the general producesObjectFile is that
+	// this one adds Objective-C(++), and removes asm-support.
+	if (ext == "cpp" || ext == "c" || ext == "m" || ext == "mm")
+		return true;
+	else
+		return false;
+}
+
+XCodeProvider::Group::Group(XCodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path) : Object(objectParent, uniqueName, groupName, "PBXGroup", "", groupName) {
+	addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
+	addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
+	
+	if (path != "") {
+		addProperty("path", path, "", SettingsNoValue|SettingsQuoteVariable);
+	}
+	_childOrder = 0;
+	_treeName = uniqueName;
+}
+
+void XCodeProvider::Group::ensureChildExists(const std::string &name) {
+	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
+	if (it == _childGroups.end()) {
+		Group *child = new Group(parent, name, this->_treeName + '/' + name, name);
+		_childGroups[name] = child;
+		addChildGroup(child);
+		parent->_groups.add(child);
+	}
+}
+
+void XCodeProvider::Group::addChildInternal(const std::string &id, const std::string &comment) {
+	if (properties.find("children") == properties.end()) {
+		Property children;
+		children.hasOrder = true;
+		children.flags = SettingsAsList;
+		properties["children"] = children;
+	}
+	properties["children"].settings[id] = Setting("", comment + " in Sources", SettingsNoValue, 0, _childOrder++);
+	if (_childOrder == 1) {
+		// Force children to use () even when there is only 1 child.
+		// Also this enforces the use of "," after the single item, instead of ; (see writeProperty)
+		properties["children"].flags |= SettingsSingleItem;
+	} else {
+		properties["children"].flags ^= SettingsSingleItem;
+	}
+
+}
+
+void XCodeProvider::Group::addChildGroup(const Group* group) {
+	addChildInternal(parent->getHash(group->_treeName), group->_treeName);
+}
+
+void XCodeProvider::Group::addChildFile(const std::string &name) {
+	std::string id = "FileReference_" + _treeName + "/" + name;
+	addChildInternal(parent->getHash(id), name);
+	FileProperty property = FileProperty(name, name, name, "\"<group>\"");
+
+	parent->addFileReference(id, name, property);
+	if (producesObjectFileOnOSX(name)) {
+		parent->addBuildFile(_treeName + "/" + name, name, parent->getHash(id), name + " in Sources");
+	}
+}
+
+void XCodeProvider::Group::addChildByHash(const std::string &hash, const std::string &name) {
+	addChildInternal(hash, name);
+}
+
+XCodeProvider::Group *XCodeProvider::Group::getChildGroup(const std::string &name) {
+	std::map<std::string, Group*>::iterator it = _childGroups.find(name);
+	assert(it != _childGroups.end());
+	return it->second;
+}
+
+XCodeProvider::Group *XCodeProvider::touchGroupsForPath(const std::string &path) {
+	if (_rootSourceGroup == nullptr) {
+		assert (path == _projectRoot);
+		_rootSourceGroup = new Group(this, "Sources", path, path);
+		_groups.add(_rootSourceGroup);
+		return _rootSourceGroup;
+	} else {
+		assert(path.find(_projectRoot) == 0);
+		std::string subPath = path.substr(_projectRoot.size() + 1);
+		Group *currentGroup = _rootSourceGroup;
+		size_t firstPathComponent = subPath.find_first_of('/');
+		// We assume here that all paths have trailing '/', otherwise this breaks.
+		while (firstPathComponent != std::string::npos) {
+			currentGroup->ensureChildExists(subPath.substr(0, firstPathComponent));
+			currentGroup = currentGroup->getChildGroup(subPath.substr(0, firstPathComponent));
+			subPath = subPath.substr(firstPathComponent + 1);
+			firstPathComponent = subPath.find_first_of('/');
+		}
+		return currentGroup;
+	}
+}
+
+void XCodeProvider::addFileReference(const std::string &id, const std::string &name, FileProperty properties) {
+	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name);
+	if (!properties.fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties.fileEncoding, "", SettingsNoValue);
+	if (!properties.lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties.lastKnownFileType, "", SettingsNoValue|SettingsQuoteVariable);
+	if (!properties.fileName.empty()) fileRef->addProperty("name", properties.fileName, "", SettingsNoValue|SettingsQuoteVariable);
+	if (!properties.filePath.empty()) fileRef->addProperty("path", properties.filePath, "", SettingsNoValue|SettingsQuoteVariable);
+	if (!properties.sourceTree.empty()) fileRef->addProperty("sourceTree", properties.sourceTree, "", SettingsNoValue);
+	_fileReference.add(fileRef);
+	_fileReference.flags = SettingsSingleItem;
+}
+
+void XCodeProvider::addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment) {
+
+	Object *buildFile = new Object(this, id, name, "PBXBuildFile", "PBXBuildFile", comment);
+	buildFile->addProperty("fileRef", fileRefId, name, SettingsNoValue);
+	_buildFile.add(buildFile);
+	_buildFile.flags = SettingsSingleItem;
+}
+
 XCodeProvider::XCodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
 	: ProjectProvider(global_warnings, project_warnings, version) {
+	_rootSourceGroup = NULL;
 }
 
 void XCodeProvider::createWorkspace(const BuildSetup &setup) {
 	// Create project folder
 	std::string workspace = setup.outputDir + '/' + PROJECT_NAME ".xcodeproj";
 	createDirectory(workspace);
-
+	_projectRoot = setup.srcDir;
+	touchGroupsForPath(_projectRoot);
+	
 	// Setup global objects
 	setupDefines(setup);
 #ifdef ENABLE_IOS
@@ -178,84 +298,20 @@ void XCodeProvider::ouputMainProjectFile(const BuildSetup &setup) {
 void XCodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
                                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
 
-	// Add comments for shared lists
-	_buildFile.comment = "PBXBuildFile";
-	_fileReference.comment = "PBXFileReference";
-
-	// Init root group
-	_groups.comment = "PBXGroup";
-	
-	// We use only the last path component for paths, as every folder gets its own group,
-	// and subfolders then only need to specify their path relative to their parent folder.
-	std::string path = getLastPathComponent(dir.name);
-	std::string name = path;
-	// We need to use the prefix-name to make sure that the hashes become unique for folders
-	// that have the same name.
-	std::string prefixName = objPrefix;
-	std::string groupName;
-	// Special case handling for the root-node
-	if (indentation == 0) { // Indentation level 0 is the root
-		// Hard-code the name, so that we can use it as mainGroup
-		name = "CustomTemplate";
-		// Should already be "", but lets make sure.
-		assert(prefixName == "");
-		groupName = "PBXGroup_" + name;
-	} else {
-		groupName = "PBXGroup_" + prefixName;
-	}
-	// Create group
-	Object *group = new Object(this, groupName , "PBXGroup", "PBXGroup", "", name);
-	// List of children
-	Property children;
-	children.hasOrder = true;
-	children.flags = SettingsAsList;
-
-	group->addProperty("name", name, "", SettingsNoValue|SettingsQuoteVariable);
-	group->addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
-	// Sub-groups below the root need to have their relative path set (relative to their parent group)
-	if (indentation != 0) {
-		group->addProperty("path", path, "", SettingsNoValue|SettingsQuoteVariable);
-	}
-	int order = 0;
+	// Ensure that top-level groups are generated for i.e. engines/
+	Group *group = touchGroupsForPath(filePrefix);
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;
 
-		std::string id = "FileReference_" + node->name;
-		FileProperty property = FileProperty(node->name, node->name, node->name, "\"<group>\"");
-		
-		// If it is a folder, create a group with a hash made from the concatenated name of the node and
-		// all its parents, this way, the various folders with the same name (i.e. sdl a bunch of places
-		// in backends) gets unique hashes, instead of the same hash becoming the child of multiple groups.
-		if (!node->children.empty()) {
-			ADD_SETTING_ORDER_NOVALUE(children, getHash("PBXGroup_" + prefixName + node->name + "_"), node->name, order++);
-		} else {
-			// Otherwise, simply hash the filename, and hope that we don't get conflicts on those. (Seems to work so far)
-			ADD_SETTING_ORDER_NOVALUE(children, getHash(node->name), node->name, order++);
-		}
 		// Iff it is a file, then add (build) file references. Since we're using Groups and not File References
 		// for folders, we shouldn't add folders as file references, obviously.
 		if (node->children.empty()) {
-			ADD_BUILD_FILE(id, node->name, node->name + " in Sources");
-			ADD_FILE_REFERENCE(node->name, property);
+			group->addChildFile(node->name);
 		}
 		// Process child nodes
 		if (!node->children.empty())
 			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
 	}
-	if (order == 1) {
-		// Force children to use () even when there is only 1 child.
-		// Also this enforces the use of "," after the single item, instead of ; (see writeProperty)
-		children.flags |= SettingsSingleItem;
-	}
-	if (indentation == 0) {
-		// Add any root-groups to the very bottom (Frameworks-etc)
-		for (std::vector<Object*>::iterator it = _rootGroups.objects.begin(); it != _rootGroups.objects.end(); ++it) {
-			ADD_SETTING_ORDER_NOVALUE(children, getHash((*it)->id), (*it)->id, order++);
-		}
-	}
-	group->properties["children"] = children;
-
-	_groups.add(group);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -487,7 +543,7 @@ void XCodeProvider::setupProject() {
 	ADD_SETTING_ORDER_NOVALUE(regions, "German", "", 3);
 	project->properties["knownRegions"] = regions;
 
-	project->addProperty("mainGroup", getHash("PBXGroup_CustomTemplate"), "CustomTemplate", SettingsNoValue);
+	project->addProperty("mainGroup", _rootSourceGroup->getHashRef(), "CustomTemplate", SettingsNoValue);
 	project->addProperty("projectDirPath", "", "", SettingsNoValue|SettingsQuoteVariable);
 	project->addProperty("projectRoot", "", "", SettingsNoValue|SettingsQuoteVariable);
 
@@ -585,18 +641,6 @@ void XCodeProvider::setupResourcesBuildPhase() {
 
 		_resourcesBuildPhase.add(resource);
 	}
-}
-
-bool producesObjectFileOnOSX(const std::string &fileName) {
-	std::string n, ext;
-	splitFilename(fileName, n, ext);
-
-	// Note that the difference between this and the general producesObjectFile is that
-	// this one adds Objective-C(++), and removes asm-support.
-	if (ext == "cpp" || ext == "c" || ext == "m" || ext == "mm")
-		return true;
-	else
-		return false;
 }
 
 void XCodeProvider::setupSourcesBuildPhase() {
