@@ -62,15 +62,15 @@ namespace CreateProjectTool {
 #define REMOVE_SETTING(config, key) \
 	config.settings.erase(key);
 
-#define ADD_BUILD_FILE(id, name, comment) { \
+#define ADD_BUILD_FILE(id, name, fileRefId, comment) { \
 	Object *buildFile = new Object(this, id, name, "PBXBuildFile", "PBXBuildFile", comment); \
-	buildFile->addProperty("fileRef", getHash(name), name, SettingsNoValue); \
+	buildFile->addProperty("fileRef", fileRefId, name, SettingsNoValue); \
 	_buildFile.add(buildFile); \
 	_buildFile.flags = SettingsSingleItem; \
 }
 
-#define ADD_FILE_REFERENCE(name, properties) { \
-	Object *fileRef = new Object(this, name, name, "PBXFileReference", "PBXFileReference", name); \
+#define ADD_FILE_REFERENCE(id, name, properties) { \
+	Object *fileRef = new Object(this, id, name, "PBXFileReference", "PBXFileReference", name); \
 	if (!properties.fileEncoding.empty()) fileRef->addProperty("fileEncoding", properties.fileEncoding, "", SettingsNoValue); \
 	if (!properties.lastKnownFileType.empty()) fileRef->addProperty("lastKnownFileType", properties.lastKnownFileType, "", SettingsNoValue|SettingsQuoteVariable); \
 	if (!properties.fileName.empty()) fileRef->addProperty("name", properties.fileName, "", SettingsNoValue|SettingsQuoteVariable); \
@@ -324,6 +324,9 @@ void XCodeProvider::setupCopyFilesBuildPhase() {
 #define DEF_SYSFRAMEWORK(framework) properties[framework".framework"] = FileProperty("wrapper.framework", framework".framework", "System/Library/Frameworks/" framework ".framework", "SDKROOT"); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(framework".framework"), framework".framework", fwOrder++);
 	
+#define DEF_LOCALLIB_STATIC(lib) properties[lib".a"] = FileProperty("archive.ar", lib".a", "/opt/local/lib/" lib ".a", "\"<group>\""); \
+	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
+
 /**
  * Sets up the frameworks build phase.
  *
@@ -333,9 +336,7 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	_frameworksBuildPhase.comment = "PBXFrameworksBuildPhase";
 
 	// Just use a hardcoded id for the Frameworks-group
-	Object *frameworksGroup = new Object(this, "PBXGroup_CustomTemplate_Frameworks_" , "PBXGroup", "PBXGroup", "", "CustomTemplate_Frameworks_");
-	frameworksGroup->addProperty("name", "Frameworks", "", SettingsNoValue|SettingsQuoteVariable);
-	frameworksGroup->addProperty("sourceTree", "<group>", "", SettingsNoValue|SettingsQuoteVariable);
+	Group *frameworksGroup = new Group(this, "Frameworks", "PBXGroup_CustomTemplate_Frameworks_", "");
 
 	Property children;
 	children.hasOrder = true;
@@ -359,17 +360,21 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	DEF_SYSFRAMEWORK("QuartzCore");
 	DEF_SYSFRAMEWORK("QuickTime");
 	DEF_SYSFRAMEWORK("UIKit");
+	// Optionals:
+	DEF_SYSFRAMEWORK("OpenGL");
+
+	// Local libraries
+	DEF_LOCALLIB_STATIC("libFLAC");
+	DEF_LOCALLIB_STATIC("libmad");
+	DEF_LOCALLIB_STATIC("libvorbisidec");
+	DEF_LOCALLIB_STATIC("libfreetype");
+//	DEF_LOCALLIB_STATIC("libmpeg2");
 
 	frameworksGroup->properties["children"] = children;
 	_groups.add(frameworksGroup);
 	// Force this to be added as a sub-group in the root.
-	_rootGroups.add(frameworksGroup);
+	_rootSourceGroup->addChildGroup(frameworksGroup);
 
-	// Local libraries
-	properties["libFLAC.a"]                     = FileProperty("archive.ar", "libFLAC.a", "lib/libFLAC.a", "\"<group>\"");
-	properties["libmad.a"]                      = FileProperty("archive.ar", "libmad.a", "lib/libmad.a", "\"<group>\"");
-	//properties["libmpeg2.a"]                    = FileProperty("archive.ar", "libmpeg2.a", "lib/libmpeg2.a", "\"<group>\"");
-	properties["libvorbisidec.a"]               = FileProperty("archive.ar", "libvorbisidec.a", "lib/libvorbisidec.a", "\"<group>\"");
 
 	// Declare this here, as it's used across the three targets
 	int order = 0;
@@ -404,8 +409,8 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 		std::string comment = *framework + " in Frameworks";
 
 		ADD_SETTING_ORDER_NOVALUE(iPhone_files, getHash(id), comment, order++);
-		ADD_BUILD_FILE(id, *framework, comment);
-		ADD_FILE_REFERENCE(*framework, properties[*framework]);
+		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
+		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
 	}
 
 	framework_iPhone->properties["files"] = iPhone_files;
@@ -437,6 +442,8 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	frameworks_osx.push_back("IOKit.framework");
 	frameworks_osx.push_back("Cocoa.framework");
 	frameworks_osx.push_back("AudioUnit.framework");
+	// Optionals:
+	frameworks_osx.push_back("OpenGL.framework");
 
 	order = 0;
 	for (ValueList::iterator framework = frameworks_osx.begin(); framework != frameworks_osx.end(); framework++) {
@@ -444,8 +451,8 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 		std::string comment = *framework + " in Frameworks";
 
 		ADD_SETTING_ORDER_NOVALUE(osx_files, getHash(id), comment, order++);
-		ADD_BUILD_FILE(id, *framework, comment);
-		ADD_FILE_REFERENCE(*framework, properties[*framework]);
+		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
+		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
 	}
 
 	framework_OSX->properties["files"] = osx_files;
@@ -479,8 +486,8 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 		std::string comment = *framework + " in Frameworks";
 
 		ADD_SETTING_ORDER_NOVALUE(simulator_files, getHash(id), comment, order++);
-		ADD_BUILD_FILE(id, *framework, comment);
-		ADD_FILE_REFERENCE(*framework, properties[*framework]);
+		ADD_BUILD_FILE(id, *framework, getHash(*framework), comment);
+		ADD_FILE_REFERENCE(*framework, *framework, properties[*framework]);
 	}
 
 	framework_simulator->properties["files"] = simulator_files;
@@ -623,7 +630,7 @@ void XCodeProvider::setupResourcesBuildPhase() {
 			ADD_SETTING_ORDER_NOVALUE(files, getHash(id), comment, order++);
 			// TODO Fix crash when adding build file for data
 			//ADD_BUILD_FILE(id, *file, comment);
-			ADD_FILE_REFERENCE(*file, properties[*file]);
+			ADD_FILE_REFERENCE(*file, *file, properties[*file]);
 		}
 
 		// Add custom files depending on the target
