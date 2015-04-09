@@ -30,6 +30,14 @@ namespace CreateProjectTool {
 
 #define DEBUG_XCODE_HASH 0
 
+#ifdef ENABLE_IOS
+#define IOS_TARGET 0
+#define OSX_TARGET 1
+#define SIM_TARGET 2
+#else
+#define OSX_TARGET 0
+#endif
+
 #define ADD_DEFINE(defines, name) \
 	defines.push_back(name);
 
@@ -83,10 +91,13 @@ void XCodeProvider::createWorkspace(const BuildSetup &setup) {
 
 	// Setup global objects
 	setupDefines(setup);
+#ifdef ENABLE_IOS
 	_targets.push_back(PROJECT_DESCRIPTION "-iPhone");
+#endif
 	_targets.push_back(PROJECT_DESCRIPTION "-OS X");
+#ifdef ENABLE_IOS
 	_targets.push_back(PROJECT_DESCRIPTION "-Simulator");
-
+#endif
 	setupCopyFilesBuildPhase();
 	setupFrameworksBuildPhase();
 	setupNativeTarget();
@@ -304,9 +315,12 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	//properties["libmpeg2.a"]                    = FileProperty("archive.ar", "libmpeg2.a", "lib/libmpeg2.a", "\"<group>\"");
 	properties["libvorbisidec.a"]               = FileProperty("archive.ar", "libvorbisidec.a", "lib/libvorbisidec.a", "\"<group>\"");
 
+	// Declare this here, as it's used across the three targets
+	int order = 0;
+#ifdef ENABLE_IOS
 	//////////////////////////////////////////////////////////////////////////
 	// iPhone
-	Object *framework_iPhone = new Object(this, "PBXFrameworksBuildPhase_" + _targets[0], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+	Object *framework_iPhone = new Object(this, "PBXFrameworksBuildPhase_" + _targets[IOS_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
 
 	framework_iPhone->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
 	framework_iPhone->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
@@ -329,7 +343,6 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	frameworks_iPhone.push_back("libvorbisidec.a");
 	frameworks_iPhone.push_back("OpenGLES.framework");
 
-	int order = 0;
 	for (ValueList::iterator framework = frameworks_iPhone.begin(); framework != frameworks_iPhone.end(); framework++) {
 		std::string id = "Frameworks_" + *framework + "_iphone";
 		std::string comment = *framework + " in Frameworks";
@@ -342,10 +355,10 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	framework_iPhone->properties["files"] = iPhone_files;
 
 	_frameworksBuildPhase.add(framework_iPhone);
-
+#endif
 	//////////////////////////////////////////////////////////////////////////
 	// ScummVM-OS X
-	Object *framework_OSX = new Object(this, "PBXFrameworksBuildPhase_" + _targets[1], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+	Object *framework_OSX = new Object(this, "PBXFrameworksBuildPhase_" + _targets[OSX_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
 
 	framework_OSX->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
 	framework_OSX->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
@@ -382,10 +395,10 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	framework_OSX->properties["files"] = osx_files;
 
 	_frameworksBuildPhase.add(framework_OSX);
-
+#ifdef ENABLE_IOS
 	//////////////////////////////////////////////////////////////////////////
 	// Simulator
-	Object *framework_simulator = new Object(this, "PBXFrameworksBuildPhase_" + _targets[2], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
+	Object *framework_simulator = new Object(this, "PBXFrameworksBuildPhase_" + _targets[SIM_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
 
 	framework_simulator->addProperty("buildActionMask", "2147483647", "", SettingsNoValue);
 	framework_simulator->addProperty("runOnlyForDeploymentPostprocessing", "0", "", SettingsNoValue);
@@ -417,6 +430,7 @@ void XCodeProvider::setupFrameworksBuildPhase() {
 	framework_simulator->properties["files"] = simulator_files;
 
 	_frameworksBuildPhase.add(framework_simulator);
+#endif
 }
 
 void XCodeProvider::setupNativeTarget() {
@@ -424,6 +438,11 @@ void XCodeProvider::setupNativeTarget() {
 
 	// Output native target section
 	for (unsigned int i = 0; i < _targets.size(); i++) {
+#ifndef ENABLE_IOS
+		if (i != OSX_TARGET) { // TODO: Fix iOS-targets, for now just disable them.
+			continue;
+		}
+#endif
 		Object *target = new Object(this, "PBXNativeTarget_" + _targets[i], "PBXNativeTarget", "PBXNativeTarget", "", _targets[i]);
 
 		target->addProperty("buildConfigurationList", getHash("XCConfigurationList_" + _targets[i]), "Build configuration list for PBXNativeTarget \"" + _targets[i] + "\"", SettingsNoValue);
@@ -475,10 +494,18 @@ void XCodeProvider::setupProject() {
 	// List of targets
 	Property targets;
 	targets.flags = SettingsAsList;
-	targets.settings[getHash("PBXNativeTarget_" + _targets[0])] = Setting("", _targets[0], SettingsNoValue, 0, 0);
-	targets.settings[getHash("PBXNativeTarget_" + _targets[1])] = Setting("", _targets[1], SettingsNoValue, 0, 1);
-	targets.settings[getHash("PBXNativeTarget_" + _targets[2])] = Setting("", _targets[2], SettingsNoValue, 0, 2);
+#ifdef ENABLE_IOS
+	targets.settings[getHash("PBXNativeTarget_" + _targets[IOS_TARGET])] = Setting("", _targets[IOS_TARGET], SettingsNoValue, 0, 0);
+#endif
+	targets.settings[getHash("PBXNativeTarget_" + _targets[OSX_TARGET])] = Setting("", _targets[OSX_TARGET], SettingsNoValue, 0, 1);
+#ifdef ENABLE_IOS
+	targets.settings[getHash("PBXNativeTarget_" + _targets[SIM_TARGET])] = Setting("", _targets[SIM_TARGET], SettingsNoValue, 0, 2);
+#endif
 	project->properties["targets"] = targets;
+#ifndef ENABLE_IOS
+	// Force list even when there is only a single target
+	project->properties["targets"].flags |= SettingsSingleItem;
+#endif
 
 	_project.add(project);
 }
@@ -614,9 +641,9 @@ void XCodeProvider::setupBuildConfiguration() {
 	///****************************************
 	// * iPhone
 	// ****************************************/
-
+#ifdef ENABLE_IOS
 	// Debug
-	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *iPhone_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Debug", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property iPhone_Debug;
 	ADD_SETTING_QUOTE(iPhone_Debug, "ARCHS", "$(ARCHS_UNIVERSAL_IPHONE_OS)");
 	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
@@ -658,7 +685,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	iPhone_Debug_Object->properties["buildSettings"] = iPhone_Debug;
 
 	// Release
-	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Release", _targets[0] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *iPhone_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-iPhone_Release", _targets[IOS_TARGET] /* ScummVM-iPhone */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property iPhone_Release(iPhone_Debug);
 	ADD_SETTING(iPhone_Release, "GCC_OPTIMIZATION_LEVEL", "3");
 	ADD_SETTING(iPhone_Release, "COPY_PHASE_STRIP", "YES");
@@ -670,7 +697,7 @@ void XCodeProvider::setupBuildConfiguration() {
 
 	_buildConfiguration.add(iPhone_Debug_Object);
 	_buildConfiguration.add(iPhone_Release_Object);
-
+#endif
 	/****************************************
 	 * scummvm
 	 ****************************************/
@@ -731,7 +758,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	 ****************************************/
 
 	// Debug
-	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "ARCHS", "$(NATIVE_ARCH)");
 	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
@@ -784,7 +811,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvmOSX_Debug_Object->properties["buildSettings"] = scummvmOSX_Debug;
 
 	// Release
-	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Release", _targets[1] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Release", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmOSX_Release(scummvmOSX_Debug);
 	ADD_SETTING(scummvmOSX_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_DYNAMIC_NO_PIC");
@@ -796,13 +823,13 @@ void XCodeProvider::setupBuildConfiguration() {
 
 	_buildConfiguration.add(scummvmOSX_Debug_Object);
 	_buildConfiguration.add(scummvmOSX_Release_Object);
-
+#ifdef ENABLE_IOS
 	/****************************************
 	 * ScummVM-Simulator
 	 ****************************************/
 
 	// Debug
-	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Debug", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *scummvmSimulator_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Debug", _targets[SIM_TARGET] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmSimulator_Debug(iPhone_Debug);
 	ADD_SETTING_QUOTE(scummvmSimulator_Debug, "FRAMEWORK_SEARCH_PATHS", "$(inherited)");
 	ADD_SETTING_LIST(scummvmSimulator_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, SettingsNoQuote|SettingsAsList, 5);
@@ -814,7 +841,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvmSimulator_Debug_Object->properties["buildSettings"] = scummvmSimulator_Debug;
 
 	// Release
-	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Release", _targets[2] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *scummvmSimulator_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-Simulator_Release", _targets[SIM_TARGET] /* ScummVM-Simulator */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmSimulator_Release(scummvmSimulator_Debug);
 	ADD_SETTING(scummvmSimulator_Release, "COPY_PHASE_STRIP", "YES");
 	ADD_SETTING(scummvmSimulator_Release, "GCC_OPTIMIZATION_LEVEL", "3");
@@ -831,7 +858,7 @@ void XCodeProvider::setupBuildConfiguration() {
 	// Configuration List
 	_configurationList.comment = "XCConfigurationList";
 	_configurationList.flags = SettingsAsList;
-
+#endif
 	// Warning: This assumes we have all configurations with a Debug & Release pair
 	for (std::vector<Object *>::iterator config = _buildConfiguration.objects.begin(); config != _buildConfiguration.objects.end(); config++) {
 
