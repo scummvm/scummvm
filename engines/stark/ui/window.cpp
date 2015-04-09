@@ -80,6 +80,10 @@ void Window::setCursor(Cursor::CursorType type) {
 	_cursor->setCursorType(type);
 }
 
+void Window::setCursorHint(const Common::String &hint) {
+	_cursor->setMouseHint(hint);
+}
+
 void Window::handleMouseMove() {
 	if (!_visible) {
 		return;

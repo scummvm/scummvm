@@ -33,7 +33,13 @@
 
 namespace Stark {
 
-TopMenu::TopMenu() {
+TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
+	Window(gfx, cursor),
+	_widgetsVisible(false) {
+
+	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
+	_visible = true;
+
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: The animations on these should be driven by the engine internally, so we probably shouldn't be holding
 	// image references here?
@@ -49,33 +55,36 @@ TopMenu::~TopMenu() {
 	delete _diaryButton;
 }
 
-void TopMenu::render() {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->setScreenViewport(false);
+void TopMenu::onRender() {
+	if (!_widgetsVisible) {
+		return;
+	}
+
 	_inventoryButton->render();
 	_exitButton->render();
 	_diaryButton->render();
 }
 
-bool TopMenu::containsPoint(Common::Point point) {
-	if (_exitButton->containsPoint(point)) {
-		return true;
+void TopMenu::onMouseMove(const Common::Point &pos) {
+	_widgetsVisible = isMouseInside();
+
+	if (_widgetsVisible) {
+		setCursor(Cursor::kActive);
+		setCursorHint(getMouseHintAtPosition(pos));
 	}
-	if (_inventoryButton->containsPoint(point)) {
-		return true;
-	}
-	if (_diaryButton->containsPoint(point)) {
-		return true;
-	}
-	return false;
 }
 
-void TopMenu::handleClick(Common::Point point) {
-	if (_exitButton->containsPoint(point)) {
+void TopMenu::onClick(const Common::Point &pos) {
+	if (!_widgetsVisible) {
+		return;
+	}
+
+	if (_exitButton->containsPoint(pos)) {
 		// TODO: Ask
 		StarkServices::instance().ui->notifyShouldExit();
 	}
-	if (_inventoryButton->containsPoint(point)) {
+
+	if (_inventoryButton->containsPoint(pos)) {
 		StarkServices::instance().ui->notifyShouldOpenInventory();
 	}
 }

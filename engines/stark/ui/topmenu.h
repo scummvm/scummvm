@@ -26,21 +26,31 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 
+#include "engines/stark/ui/window.h"
+
 namespace Stark {
 
 class VisualImageXMG;
 class Button;
-class TopMenu {
+
+class TopMenu : public Window {
+public:
+	TopMenu(Gfx::Driver *gfx, Cursor *cursor);
+	~TopMenu();
+
+	// Window API
+	void onRender() override;
+	void onMouseMove(const Common::Point &pos) override;
+	void onClick(const Common::Point &pos) override;
+
+private:
+	Common::String getMouseHintAtPosition(Common::Point point);
+
+	bool _widgetsVisible;
+
 	Button *_inventoryButton;
 	Button *_exitButton;
 	Button *_diaryButton;
-public:
-	TopMenu();
-	~TopMenu();
-	void render();
-	bool containsPoint(Common::Point point);
-	void handleClick(Common::Point point);
-	Common::String getMouseHintAtPosition(Common::Point point);
 };
 
 } // End of namespace Stark

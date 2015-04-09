@@ -70,7 +70,7 @@ UI::~UI() {
 }
 
 void UI::init() {
-	_topMenu = new TopMenu();
+	_topMenu = new TopMenu(_gfx, _cursor);
 	_dialogInterface = new DialogInterface();
 	_fmvPlayer = new FMVPlayer();
 	_actionMenu = new ActionMenu(_gfx, _cursor);
@@ -79,7 +79,8 @@ void UI::init() {
 }
 
 void UI::update() {
-	Common::Point pos = _cursor->getMousePosition();
+	// Check for UI mouse overs
+	_topMenu->handleMouseMove();
 
 	if (_actionMenu->isVisible() && _actionMenu->isMouseInside()) {
 		_actionMenu->handleMouseMove();
@@ -96,15 +97,7 @@ void UI::update() {
 		return;
 	}
 
-	// TODO: Refactor update for Windows ?
-
-	// Check for UI mouse overs
-	if (_topMenu->containsPoint(pos)) {
-		_cursor->setCursorType(Cursor::kActive);
-		_cursor->setMouseHint(_selectedInventoryItemText + _topMenu->getMouseHintAtPosition(pos));
-		return;
-	}
-
+	Common::Point pos = _cursor->getMousePosition();
 	if (_dialogInterface->containsPoint(pos)) {
 		_dialogInterface->handleMouseOver(pos);
 		return;
@@ -137,8 +130,8 @@ void UI::handleClick() {
 		return;
 	}
 
-	if (_topMenu->containsPoint(_cursor->getMousePosition())) {
-		_topMenu->handleClick(_cursor->getMousePosition());
+	if (_topMenu->isMouseInside()) {
+		_topMenu->handleClick();
 		return;
 	}
 	if (_dialogInterface->containsPoint(_cursor->getMousePosition())) {

@@ -58,6 +58,8 @@ protected:
 	virtual void onRender() = 0;
 
 	void setCursor(Cursor::CursorType type);
+	void setCursorHint(const Common::String &hint);
+
 	Common::Point getMousePosition() const;
 	Common::Point getScreenMousePosition() const;
 
