@@ -107,6 +107,9 @@ void GameNebular::startGame() {
 		_vm->_dialogs->showDialog();
 	} while (!_vm->shouldQuit() && _vm->_dialogs->_pendingDialog != DIALOG_NONE);
 
+	if (_vm->shouldQuit())
+		return;
+
 	_priorSectionNumber = 0;
 	_priorSectionNumber = -1;
 	_scene._priorSceneId = 0;
