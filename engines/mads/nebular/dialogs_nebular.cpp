@@ -430,7 +430,7 @@ void CopyProtectionDialog::show() {
 	draw();
 
 	Common::KeyState curKey;
-	Common::Rect inputArea(110, 165, 210, 175);
+	const Common::Rect inputArea(110, 165, 210, 175);
 	MSurface *origInput = new MSurface(inputArea.width(), inputArea.height());
 	_vm->_screen.frameRect(inputArea, TEXTDIALOG_BLACK);
 	_vm->_screen.copyTo(origInput, inputArea, Common::Point(0, 0));
@@ -471,6 +471,7 @@ void CopyProtectionDialog::show() {
 		_vm->_screen.updateScreen();
 	}
 
+	origInput->free();
 	delete origInput;
 }
 
@@ -592,6 +593,7 @@ void PictureDialog::save() {
 void PictureDialog::restore() {
 	if (_savedSurface) {
 		_savedSurface->copyTo(&_vm->_screen);
+		_savedSurface->free();
 		delete _savedSurface;
 		_savedSurface = nullptr;
 

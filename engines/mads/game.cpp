@@ -100,6 +100,7 @@ Game::~Game() {
 	}
 
 	delete _saveFile;
+	_surface->free();
 	delete _surface;
 	delete _sectionHandler;
 }
