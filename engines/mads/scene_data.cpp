@@ -451,8 +451,6 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 
 		fab.decompress(compressedTileData, compressedTileDataSize, (byte*)newTile->getPixels(), tileWidth * tileHeight);
 		tileSet.push_back(TileSetList::value_type(newTile));
-		newTile->free();
-		delete newTile;
 		delete[] compressedTileData;
 	}
 
@@ -471,6 +469,7 @@ void SceneInfo::loadMadsV2Background(int sceneId, const Common::String &resName,
 			for (int i = 0; i < tileIndex; i++)
 				++tile;
 			((*tile).get())->copyTo(&bgSurface, Common::Point(x * tileWidth, y * tileHeight));
+			((*tile).get())->free();
 		}
 	}
 	tileSet.clear();
