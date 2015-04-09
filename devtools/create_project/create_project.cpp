@@ -1044,7 +1044,7 @@ bool producesObjectFile(const std::string &fileName) {
 	std::string n, ext;
 	splitFilename(fileName, n, ext);
 
-	if (ext == "cpp" || ext == "c" || ext == "asm")
+	if (ext == "cpp" || ext == "c" || ext == "asm" || ext == "m" || ext == "mm")
 		return true;
 	else
 		return false;
