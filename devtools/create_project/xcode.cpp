@@ -866,6 +866,8 @@ void XCodeProvider::setupBuildConfiguration() {
 	scummvmOSX_LdFlags.push_back("-lSDLmain");
 	scummvmOSX_LdFlags.push_back("-logg");
 	scummvmOSX_LdFlags.push_back("-lpng");
+	scummvmOSX_LdFlags.push_back("-ljpeg");
+	scummvmOSX_LdFlags.push_back("-ltheora");
 	scummvmOSX_LdFlags.push_back("-lfreetype");
 	scummvmOSX_LdFlags.push_back("-lvorbisfile");
 	scummvmOSX_LdFlags.push_back("-lvorbis");
