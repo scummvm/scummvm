@@ -1445,12 +1445,16 @@ uint32 Special::getCounter(ActorIndex index) const {
 }
 
 void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId) {
-	if (object->getFrameIndex() == 15) {
+	if (objectId != kObjectInvalid && object->getFrameIndex() == 15) {
+		Object *otherObject = getWorld()->getObjectById(objectId);
+		debugC(kDebugLevelObjects, "[checkObject] %s -> %s (flags: set %d, clear %d)",
+				object->getName(), otherObject->getName(), flagToSet, flagToClear);
+
 		_vm->setGameFlag(flagToSet);
 		_vm->clearGameFlag(flagToClear);
 
 		if (objectId != kObjectNone)
-			getWorld()->getObjectById(objectId)->setFrameIndex(0);
+			otherObject->setFrameIndex(0);
 		else
 			object->setFrameIndex(0);
 	}
@@ -1458,6 +1462,9 @@ void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToCle
 
 void Special::checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag flagToClear, GameFlag flagToSet) {
 	Object *otherObject = getWorld()->getObjectById(otherObjectId);
+
+	debugC(kDebugLevelObjects, "[checkOtherObject] %s -> %s (flags: set %d, clear %d)",
+			object->getName(), otherObject->getName(), flagToSet, flagToClear);
 
 	if (!otherObject->getFrameIndex() && !object->getFrameIndex()) {
 		_vm->clearGameFlag(flagToClear);
