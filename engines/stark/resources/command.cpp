@@ -28,6 +28,7 @@
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
 #include "engines/stark/resources/dialog.h"
+#include "engines/stark/resources/floorfield.h"
 #include "engines/stark/resources/fmv.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledge.h"
@@ -136,7 +137,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kSpeakWithoutTalking:
 		return opSpeakWithoutTalking(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kIsOnFloorField:
-		return opIsOnFloorField(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
+		return opIsOnFloorField(_arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsItemEnabled:
 		return opIsItemEnabled(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsSet:
@@ -548,12 +549,14 @@ Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference 
 	}
 }
 
-Command *Command::opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef) {
-	Object *itemObj = itemRef.resolve<Object>();
-	Object *floorFieldObj = floorFieldRef.resolve<Object>();
-	warning("(TODO: Implement) opIsOnFloorField(%d, %d, %s, %s) : %s , %s", branch1, branch2, itemObj->getName().c_str(), floorFieldObj->getName().c_str(), itemRef.describe().c_str(), floorFieldRef.describe().c_str());
-	// TODO: Actually implement the logic
-	return nextCommandIf(false);
+Command *Command::opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef) {
+	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
+	FloorField *floorField = floorFieldRef.resolve<FloorField>();
+
+	int32 itemFaceIndex = item->getFloorFaceIndex();
+	bool itemOnFloorField = floorField->hasFace(itemFaceIndex);
+
+	return nextCommandIf(itemOnFloorField);
 }
 
 Command *Command::opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef) {

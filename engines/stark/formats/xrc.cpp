@@ -37,6 +37,7 @@
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/floor.h"
 #include "engines/stark/resources/floorface.h"
+#include "engines/stark/resources/floorfield.h"
 #include "engines/stark/resources/knowledge.h"
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/layer.h"
@@ -232,6 +233,9 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kSoundItem:
 		resource = new Resources::Sound(parent, subType, index, name);
+		break;
+	case Resources::Type::kFloorField:
+		resource = new Resources::FloorField(parent, subType, index, name);
 		break;
 	case Resources::Type::kBookmark:
 		resource = new Resources::Bookmark(parent, subType, index, name);

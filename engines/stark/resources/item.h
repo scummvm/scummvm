@@ -258,6 +258,8 @@ public:
 	/** Move the item */
 	void setPosition3D(const Math::Vector3d &position);
 
+	/** Get the floor face index the item is standing on */
+	int32 getFloorFaceIndex() const;
 	/** Change the face the item is standing on */
 	void setFloorFaceIndex(int32 faceIndex);
 

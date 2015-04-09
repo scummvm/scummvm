@@ -402,6 +402,10 @@ void ItemSub5610::setPosition3D(const Math::Vector3d &position) {
 	_position3D = position;
 }
 
+int32 ItemSub5610::getFloorFaceIndex() const {
+	return _floorFaceIndex;
+}
+
 void ItemSub5610::setFloorFaceIndex(int32 faceIndex) {
 	_floorFaceIndex = faceIndex;
 }

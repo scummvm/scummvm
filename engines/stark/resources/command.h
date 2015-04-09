@@ -205,7 +205,7 @@ protected:
 	Command *opActivateMesh(const ResourceReference &meshRef);
 	Command *opSetTarget(const ResourceReference &itemRef1, const ResourceReference &itemRef2);
 	Command *opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 unknown);
-	Command *opIsOnFloorField(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
+	Command *opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef);
 	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
 	Command *opIsIntegerInRange(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 min, int32 max);
