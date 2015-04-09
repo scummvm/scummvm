@@ -1285,22 +1285,17 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		if (i->first == setup.projectName)
 			continue;
 		// Retain the files between engines if we're creating a single project
-		if (createOneProjectPerEngine()) {
-			in.clear(); ex.clear();
-		}
+		in.clear(); ex.clear();
+
 		const std::string moduleDir = setup.srcDir + targetFolder + i->first;
 
 		createModuleList(moduleDir, setup.defines, setup.testDirs, in, ex);
-		if (createOneProjectPerEngine()) {
-			createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
-		}
+		createProjectFile(i->first, i->second, setup, moduleDir, in, ex);
 	}
 
 	if (setup.tests) {
 		// Create the main project file.
-		if (createOneProjectPerEngine()) {
-			in.clear(); ex.clear();
-		}
+		in.clear(); ex.clear();
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/base", setup.defines, setup.testDirs, in, ex);
@@ -1314,9 +1309,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		createProjectFile(setup.projectName, svmUUID, setup, setup.srcDir, in, ex);
 	} else if (!setup.devTools) {
 		// Last but not least create the main project file.
-		if (createOneProjectPerEngine()) {
-			in.clear(); ex.clear();
-		}
+		in.clear(); ex.clear();
 		// File list for the Project file
 		createModuleList(setup.srcDir + "/backends", setup.defines, setup.testDirs, in, ex);
 		createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, setup.testDirs, in, ex);

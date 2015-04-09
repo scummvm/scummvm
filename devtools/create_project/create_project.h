@@ -459,13 +459,6 @@ protected:
 	virtual const char *getProjectExtension() { return ""; }
 
 	/**
-	 * Returns whether the provider produces one project per engine
-	 * allowing providers such as the XCode-project provider to disable
-	 * the logic for this in the super-class, thus merging the engine-files
-	 * into the main project instead.
-	 */
-	virtual bool createOneProjectPerEngine() const { return true; }
-	/**
 	 * Adds files of the specified directory recursively to given project file.
 	 *
 	 * @param dir Path to the directory.
