@@ -567,7 +567,7 @@ void XCodeProvider::setupProject() {
 	project->properties["knownRegions"] = regions;
 
 	project->addProperty("mainGroup", _rootSourceGroup->getHashRef(), "CustomTemplate", SettingsNoValue);
-	project->addProperty("projectDirPath", "", "", SettingsNoValue|SettingsQuoteVariable);
+	project->addProperty("projectDirPath", _projectRoot, "", SettingsNoValue|SettingsQuoteVariable);
 	project->addProperty("projectRoot", "", "", SettingsNoValue|SettingsQuoteVariable);
 
 	// List of targets
