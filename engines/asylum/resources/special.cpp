@@ -1453,7 +1453,7 @@ void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToCle
 		_vm->setGameFlag(flagToSet);
 		_vm->clearGameFlag(flagToClear);
 
-		if (objectId != kObjectNone)
+		if (objectId == kObjectNone)
 			otherObject->setFrameIndex(0);
 		else
 			object->setFrameIndex(0);
