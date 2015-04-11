@@ -86,6 +86,8 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_find = 0;
 	_oldUse = 0;
 	_endKeyActive = true;
+	_lookScriptFlag = false;
+	_infoFlag = false;
 }
 
 UserInterface::~UserInterface() {

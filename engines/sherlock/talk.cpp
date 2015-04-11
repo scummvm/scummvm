@@ -134,7 +134,7 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_talkStealth = 0;
 	_talkToFlag = -1;
 	_moreTalkDown = _moreTalkUp = false;
-	_scriptMoreFlag = 1;
+	_scriptMoreFlag = false;
 	_scriptSaveIndex = -1;
 	_scriptCurrentIndex = -1;
 }
@@ -683,7 +683,7 @@ void Talk::drawInterface() {
 		int strWidth = screen.stringWidth(PRESS_KEY_TO_CONTINUE);
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
 			160 - strWidth, PRESS_KEY_TO_CONTINUE);
-		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, false, "P");
+		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, "P");
 	}
 }
 
@@ -879,6 +879,9 @@ void Talk::clearSequences() {
  */
 void Talk::pullSequence() {
 	Scene &scene = *_vm->_scene;
+
+	if (_scriptStack.empty())
+		return;
 
 	SequenceEntry seq = _scriptStack.pop();
 	if (seq._objNum != -1) {
@@ -1518,6 +1521,8 @@ void Talk::doScript(const Common::String &script) {
 			int width = 0, idx = 0;
 			do {
 				width += screen.charWidth(str[idx]);
+				++idx;
+				++charCount;
 			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < 128);
 
 			if (str[idx] || width >= 298) {
