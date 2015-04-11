@@ -512,7 +512,19 @@ Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 d
 
 Command *Command::opActivateTexture(const ResourceReference &textureRef) {
 	TextureSet *texture = textureRef.resolve<TextureSet>();
-	warning("(TODO: Implement) opActivateTexture(%s) : %s", texture->getName().c_str(), textureRef.describe().c_str());
+	Item *item = texture->findParent<Item>();
+
+	if (!item || (item->getSubType() != Item::kItemSub1 && item->getSubType() != Item::kItemSub3 && item->getSubType() != Item::kItemSub10)) {
+		return nextCommand();
+	}
+
+	if (item->getSubType() == Item::kItemSub10) {
+		ItemSub10 *item10 = Object::cast<ItemSub10>(item);
+		item10->setTexture(texture->getIndex(), texture->getSubType());
+	} else {
+		ItemSub13 *item13 = Object::cast<ItemSub13>(item);
+		item13->setTexture(texture->getIndex(), texture->getSubType());
+	}
 
 	return nextCommand();
 }

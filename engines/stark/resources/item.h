@@ -167,6 +167,9 @@ public:
 	/** Obtain the animation hierarchy to fetch animations from */
 	virtual AnimHierarchy *findStockAnimHierarchy() = 0;
 
+	/** Set the mesh main or face texture */
+	void setTexture(int32 index, uint32 textureType);
+
 	/** Set the scene instanciation for this template */
 	void setInstanciatedItem(Item *instance);
 
@@ -315,8 +318,17 @@ public:
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
+	/** Set the mesh main or face texture */
+	void setTexture(int32 index, uint32 textureType);
+
+	/** Obtain the bone mesh to use to render the item */
 	BonesMesh *findBonesMesh();
+
+	/** Obtain the texture to use to render the item */
 	TextureSet *findTextureSet(uint32 textureType);
+
+	/** Update the item's animation after a texture / mesh change */
+	void updateAnim();
 
 protected:
 	void printData() override;

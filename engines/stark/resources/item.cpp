@@ -251,6 +251,20 @@ Item *ItemSub13::getSceneInstance() {
 	return nullptr;
 }
 
+void ItemSub13::setTexture(int32 index, uint32 textureType) {
+	if (textureType == TextureSet::kTextureNormal) {
+		_textureNormalIndex = index;
+	} else if (textureType == TextureSet::kTextureFace) {
+		_textureFaceIndex = index;
+	} else {
+		error("Unknown texture type %d", textureType);
+	}
+
+	// Reset the animation to apply the changes
+	ItemSub10 *sceneInstance = Resources::Object::cast<Resources::ItemSub10>(getSceneInstance());
+	sceneInstance->updateAnim();
+}
+
 ItemSub1::~ItemSub1() {
 }
 
@@ -579,6 +593,16 @@ BonesMesh *ItemSub10::findBonesMesh() {
 	return bonesMesh;
 }
 
+void ItemSub10::setTexture(int32 index, uint32 textureType) {
+	if (textureType == TextureSet::kTextureNormal) {
+		_textureNormalIndex = index;
+	} else if (textureType == TextureSet::kTextureFace) {
+		_textureFaceIndex = index;
+	} else {
+		error("Unknown texture type %d", textureType);
+	}
+}
+
 TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	// Prefer retrieving the mesh from the anim hierarchy
 	TextureSet *textureSet = _animHierarchy->findTextureSet(textureType);
@@ -591,7 +615,7 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 			} else {
 				textureSet = findChildWithIndex<TextureSet>(_textureNormalIndex);
 			}
-		} else if (textureType == TextureSet::kTextureNormal) {
+		} else if (textureType == TextureSet::kTextureFace) {
 			if (_textureFaceIndex == -1) {
 				textureSet = _referencedItem->findTextureSet(textureType);
 			} else {
@@ -603,6 +627,14 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	}
 
 	return textureSet;
+}
+
+void ItemSub10::updateAnim() {
+	Anim *anim = getAnim();
+	if (anim && anim->getSubType() == Anim::kAnimSkeleton) {
+		anim->removeFromItem(this);
+		anim->applyToItem(this);
+	}
 }
 
 Gfx::RenderEntry *ItemSub10::getRenderEntry(const Common::Point &positionOffset) {
