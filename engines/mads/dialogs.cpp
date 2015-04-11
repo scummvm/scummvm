@@ -43,6 +43,7 @@ Dialog::Dialog(MADSEngine *vm)
 }
 
 Dialog::~Dialog() {
+	delete _savedSurface;
 }
 
 void Dialog::save() {
