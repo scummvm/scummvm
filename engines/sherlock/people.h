@@ -34,7 +34,7 @@ enum PeopleId {
 	PLAYER	= 0,
 	AL		= 0,
 	PEG		= 1,
-	MAX_PEOPLE = 2
+	MAX_PEOPLE = 66
 };
 
 // Animation sequence identifiers for characters
@@ -66,8 +66,8 @@ private:
 	bool _walkLoaded;
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
-	ImageFile *_talkPics;
 public:
+	ImageFile *_talkPics;
 	Common::Point _walkDest;
 	Common::Stack<Common::Point> _walkTo;
 	Person &_player;
@@ -79,6 +79,7 @@ public:
 	bool _allowWalkAbort;
 	int _portraitSide;
 	bool _speakerFlip;
+	bool _holmesFlip;
 public:
 	People(SherlockEngine *vm);
 	~People();
@@ -102,9 +103,10 @@ public:
 
 	void goAllTheWay();
 
-	void clearTalking();
-
 	int findSpeaker(int speaker);
+
+	void clearTalking();
+	void setTalking(int speaker);
 };
 
 } // End of namespace Sherlock

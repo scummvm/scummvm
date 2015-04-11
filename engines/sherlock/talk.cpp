@@ -161,7 +161,6 @@ void Talk::talkTo(const Common::String &filename) {
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
-	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	Common::Rect savedBounds = screen.getDisplayBounds();
 	bool abortFlag = false;
@@ -202,10 +201,10 @@ void Talk::talkTo(const Common::String &filename) {
 		people.gotoStand(people._player);
 	}
 
-	if (talk._talkToAbort)
+	if (_talkToAbort)
 		return;
 
-	talk.freeTalkVars();
+	freeTalkVars();
 
 	// If any sequences have changed in the prior talk file, restore them
 	if (_savedSequences.size() > 0) {
@@ -928,8 +927,36 @@ void Talk::pushSequence(int speaker) {
 		error("script stack overflow");
 }
 
+/**
+ * Change the sequence of the scene background object associated with the current speaker.
+ */
 void Talk::setSequence(int speaker) {
-	// TODO
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	
+	// If no speaker is specified, then nothing needs to be done
+	if (speaker != -1)
+		return;
+
+	if (speaker) {
+		int objNum = people.findSpeaker(speaker);
+		if (objNum != -1) {
+			Object &obj = scene._bgShapes[objNum];
+
+			if (obj._seqSize < MAX_TALK_SEQUENCES) {
+				warning("Tried to copy too many talk frames");
+			} else {
+				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
+					obj._sequences[idx] = TALK_SEQUENCES[speaker][idx];
+					if (idx > 0 && !TALK_SEQUENCES[speaker][idx] && !TALK_SEQUENCES[speaker][idx - 1])
+						return;
+
+					obj._frameNumber = 0;
+					obj._sequenceNumber = 0;
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -1045,7 +1072,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 		else {
 			// Nope, so set the first speaker
-			setTalking(_speaker);
+			people.setTalking(_speaker);
 		}
 	}
 
@@ -1068,7 +1095,7 @@ void Talk::doScript(const Common::String &script) {
 				_scriptCurrentIndex = str - script.c_str();
 
 				if (!(_speaker & 128))
-					clearTalking();
+					people.clearTalking();
 				if (_talkToAbort)
 					return;
 
@@ -1077,7 +1104,7 @@ void Talk::doScript(const Common::String &script) {
 				charCount = line = 0;
 
 				_speaker = *++str - 1;
-				setTalking(_speaker);
+				people.setTalking(_speaker);
 				pullSequence();
 				pushSequence(_speaker);
 				setSequence(_speaker);
@@ -1128,7 +1155,7 @@ void Talk::doScript(const Common::String &script) {
 				_scriptCurrentIndex = str - script.c_str();
 
 				if (_speaker < 128)
-					clearTalking();
+					people.clearTalking();
 				pullSequence();
 				if (_talkToAbort)
 					return;
@@ -1214,7 +1241,7 @@ void Talk::doScript(const Common::String &script) {
 				_scriptCurrentIndex = str - script.c_str();
 
 				if (!(_speaker & 128))
-					clearTalking();
+					people.clearTalking();
 				pullSequence();
 
 				if (_talkToAbort)
@@ -1426,11 +1453,13 @@ void Talk::doScript(const Common::String &script) {
 
 			case WALK_TO_CANIMATION: {
 				++str;
-				int animIndex = str[0] - 1;
+				CAnim &anim = scene._cAnim[str[0] - 1];
 
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				_scriptCurrentIndex = (str + 1) - script.c_str();
+
+				people.walkToCoords(anim._goto, anim._gotoDir);
 				if (_talkToAbort)
 					return;
 				break;
@@ -1616,16 +1645,8 @@ void Talk::doScript(const Common::String &script) {
 
 		pullSequence();
 		if (_speaker < 128)
-			clearTalking();
+			people.clearTalking();
 	}
-}
-
-void Talk::clearTalking() {
-	// TODO
-}
-
-void Talk::setTalking(int speaker) {
-	// TODO
 }
 
 /**

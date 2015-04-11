@@ -110,9 +110,6 @@ private:
 
 	void doScript(const Common::String &script);
 
-	void clearTalking();
-	void setTalking(int speaker);
-
 	int waitForMore(int delay);
 public:
 	bool _talkToAbort;

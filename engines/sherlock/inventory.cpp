@@ -453,7 +453,15 @@ int Inventory::putItemInInventory(Object &obj) {
  * Copy the passed object into the inventory
  */
 void Inventory::copyToInventory(Object &obj) {
-	// TODO
+	InventoryItem invItem;
+	invItem._name = obj._name;
+	invItem._description = obj._description;
+	invItem._examine = obj._examine;
+	invItem._lookFlag = obj._lookFlag;
+	invItem._requiredFlag = obj._requiredFlag;
+
+	insert_at(_holdings, invItem);
+	++_holdings;
 }
 
 /**
