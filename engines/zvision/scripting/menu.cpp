@@ -50,9 +50,9 @@ MenuZGI::MenuZGI(ZVision *engine) :
 	scrolled[0] = false;
 	scrolled[1] = false;
 	scrolled[2] = false;
-	scrollPos[0] = 0.0;
-	scrollPos[1] = 0.0;
-	scrollPos[2] = 0.0;
+	scrollPos[0] = 0;
+	scrollPos[1] = 0;
+	scrollPos[2] = 0;
 	mouseOnItem = -1;
 	redraw = false;
 	clean = false;
@@ -361,11 +361,11 @@ void MenuZGI::process(uint32 deltatime) {
 				if (scrl == 0)
 					scrl = 1.0;
 
-				scrollPos [kMenuItem] += scrl;
+				scrollPos[kMenuItem] += (int)scrl;
 
 				if (scrollPos[kMenuItem] >= 0) {
 					scrolled[kMenuItem] = true;
-					scrollPos [kMenuItem] = 0;
+					scrollPos[kMenuItem] = 0;
 				}
 			}
 		if (redraw) {
@@ -430,11 +430,11 @@ void MenuZGI::process(uint32 deltatime) {
 				if (scrl == 0)
 					scrl = 1.0;
 
-				scrollPos [kMenuMagic] += scrl;
+				scrollPos[kMenuMagic] += (int)scrl;
 
 				if (scrollPos[kMenuMagic] >= 600) {
 					scrolled[kMenuMagic] = true;
-					scrollPos [kMenuMagic] = 600;
+					scrollPos[kMenuMagic] = 600;
 				}
 			}
 		if (redraw) {
@@ -495,11 +495,11 @@ void MenuZGI::process(uint32 deltatime) {
 			if (scrl == 0)
 				scrl = 1.0;
 
-			scrollPos [kMenuMain] += scrl;
+			scrollPos[kMenuMain] += (int)scrl;
 
 			if (scrollPos[kMenuMain] >= 0) {
 				scrolled[kMenuMain] = true;
-				scrollPos [kMenuMain] = 0;
+				scrollPos[kMenuMain] = 0;
 			}
 		}
 		if (redraw) {
@@ -553,7 +553,7 @@ MenuNemesis::MenuNemesis(ZVision *engine) :
 	MenuHandler(engine) {
 	inmenu = false;
 	scrolled = false;
-	scrollPos = 0.0;
+	scrollPos = 0;
 	mouseOnItem = -1;
 	redraw = false;
 	delay = 0;
@@ -696,7 +696,7 @@ void MenuNemesis::process(uint32 deltatime) {
 			if (scrl == 0)
 				scrl = 1.0;
 
-			scrollPos += scrl;
+			scrollPos += (int)scrl;
 			redraw = true;
 		}
 
@@ -743,10 +743,10 @@ void MenuNemesis::process(uint32 deltatime) {
 			if (scrl == 0)
 				scrl = 1.0;
 
-			Common::Rect cl(64, 32 + scrollPos - scrl, 64 + 512, 32 + scrollPos + 1);
+			Common::Rect cl(64, (int16)(32 + scrollPos - scrl), 64 + 512, 32 + scrollPos + 1);
 			_engine->getRenderManager()->clearMenuSurface(cl);
 
-			scrollPos -= scrl;
+			scrollPos -= (int)scrl;
 			redraw = true;
 		} else
 			scrollPos = -32;

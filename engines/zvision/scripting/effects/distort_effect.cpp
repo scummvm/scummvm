@@ -52,7 +52,7 @@ DistortNode::DistortNode(ZVision *engine, uint32 key, int16 speed, float startAn
 	_diffLinScale = endLineScale - startLineScale;
 
 	_frmSpeed = (float)speed / 15.0;
-	_frames = ceil((5.0 - _frmSpeed * 2.0) / _frmSpeed);
+	_frames = (int)ceil((5.0 - _frmSpeed * 2.0) / _frmSpeed);
 	if (_frames <= 0)
 		_frames = 1;
 
