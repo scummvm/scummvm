@@ -167,6 +167,9 @@ public:
 	/** Obtain the animation hierarchy to fetch animations from */
 	virtual AnimHierarchy *findStockAnimHierarchy() = 0;
 
+	/** Change the item's mesh */
+	void setBonesMesh(int32 index);
+
 	/** Set the mesh main or face texture */
 	void setTexture(int32 index, uint32 textureType);
 
@@ -320,6 +323,9 @@ public:
 
 	/** Set the mesh main or face texture */
 	void setTexture(int32 index, uint32 textureType);
+
+	/** Change the item's mesh */
+	void setBonesMesh(int32 index);
 
 	/** Obtain the bone mesh to use to render the item */
 	BonesMesh *findBonesMesh();

@@ -251,6 +251,10 @@ Item *ItemSub13::getSceneInstance() {
 	return nullptr;
 }
 
+void ItemSub13::setBonesMesh(int32 index) {
+	_meshIndex = index;
+}
+
 void ItemSub13::setTexture(int32 index, uint32 textureType) {
 	if (textureType == TextureSet::kTextureNormal) {
 		_textureNormalIndex = index;
@@ -575,6 +579,14 @@ void ItemSub10::onEnterLocation() {
 	}
 
 	setAnimKind(Anim::kActorUsageIdle);
+}
+
+void ItemSub10::setBonesMesh(int32 index) {
+	_meshIndex = index;
+
+	if (_meshIndex != -1) {
+		updateAnim();
+	}
 }
 
 BonesMesh *ItemSub10::findBonesMesh() {

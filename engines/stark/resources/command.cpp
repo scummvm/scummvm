@@ -531,7 +531,19 @@ Command *Command::opActivateTexture(const ResourceReference &textureRef) {
 
 Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	BonesMesh *mesh = meshRef.resolve<BonesMesh>();
-	warning("(TODO: Implement) opActivateMesh(%s) : %s", mesh->getName().c_str(), meshRef.describe().c_str());
+	Item *item = mesh->findParent<Item>();
+
+	if (!item || (item->getSubType() != Item::kItemSub1 && item->getSubType() != Item::kItemSub3 && item->getSubType() != Item::kItemSub10)) {
+		return nextCommand();
+	}
+
+	if (item->getSubType() == Item::kItemSub10) {
+		ItemSub10 *item10 = Object::cast<ItemSub10>(item);
+		item10->setBonesMesh(mesh->getIndex());
+	} else {
+		ItemSub13 *item13 = Object::cast<ItemSub13>(item);
+		item13->setBonesMesh(mesh->getIndex());
+	}
 
 	return nextCommand();
 }
