@@ -40,11 +40,7 @@ class Scripts {
 private:
 	SherlockEngine *_vm;
 public:
-	Common::Stack<ScriptEntry> _scriptStack;
-	int _scriptMoreFlag;
-	Common::String _scriptName;
-	int _scriptSaveIndex;
-	int _scriptSelect;
+
 public:
 	Scripts(SherlockEngine *vm);
 

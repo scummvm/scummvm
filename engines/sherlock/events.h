@@ -72,6 +72,8 @@ public:
 
 	bool isCursorVisible() const;
 
+	void moveMouse(const Common::Point &pt);
+
 	void pollEvents();
 
 	void pollEventsAndWait();

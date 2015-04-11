@@ -122,7 +122,6 @@ void UserInterface::handleInput() {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	Scripts &scripts = *_vm->_scripts;
 	Talk &talk = *_vm->_talk;
 
 	if (_menuCounter)
@@ -148,7 +147,7 @@ void UserInterface::handleInput() {
 	}
 
 	// Do button highlighting check
-	if (!scripts._scriptMoreFlag) {	// Don't if scripts are running
+	if (!talk._scriptMoreFlag) {	// Don't if scripts are running
 		if (((events._rightPressed || events._rightReleased) && _helpStyle) ||
 				(!_helpStyle && !_menuCounter)) {
 			// Handle any default commands if we're in STD_MODE
@@ -530,6 +529,13 @@ void UserInterface::examine() {
 		_cAnimStr = inv[_selector]._examine;
 		if (inv[_selector]._lookFlag)
 			_vm->setFlags(inv[_selector]._lookFlag);
+	}
+
+	if (_invLookFlag) {
+		// Dont close the inventory window when starting an examine display, since it's
+		// window will slide up to replace the inventory display
+		_windowOpen = false;
+		_menuMode = LOOK_MODE;
 	}
 
 	if (!talk._talkToAbort) {

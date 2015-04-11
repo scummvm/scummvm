@@ -61,6 +61,8 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_clearingThePortrait = false;
 	_srcZone = _destZone = 0;
 	_talkPics = nullptr;
+	_portraitSide = 0;
+	_speakerFlip = false;
 }
 
 People::~People() {

@@ -101,6 +101,14 @@ bool Events::isCursorVisible() const {
 }
 
 /**
+ * Move the mouse
+ */
+void Events::moveMouse(const Common::Point &pt) {
+	g_system->warpMouse(pt.x, pt.y);
+}
+
+
+/**
  * Check for any pending events
  */
 void Events::pollEvents() {

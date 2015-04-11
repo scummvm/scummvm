@@ -27,7 +27,8 @@ namespace Sherlock {
 Sound::Sound(SherlockEngine *vm): _vm(vm) {
 	_soundOn = true;
 	_musicOn = true;
-	_voicesOn = true;
+	_speechOn = true;
+	_voices = 0;
 	_playingEpilogue = false;
 	_music = false;
 	_digitized = false;
@@ -86,6 +87,10 @@ void Sound::startSong() {
 }
 
 void Sound::freeSong() {
+	// TODO
+}
+
+void Sound::stopSndFuncPtr(int v1, int v2) {
 	// TODO
 }
 

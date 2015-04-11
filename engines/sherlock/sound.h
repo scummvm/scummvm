@@ -40,7 +40,8 @@ private:
 public:
 	bool _soundOn;
 	bool _musicOn;
-	bool _voicesOn;
+	bool _speechOn;
+	int _voices;
 	bool _playingEpilogue;
 	bool _music;
 	bool _digitized;
@@ -64,6 +65,7 @@ public:
 	
 	void playMusic(const Common::String &name);
 	void stopMusic();
+	void stopSndFuncPtr(int v1, int v2);
 };
 
 } // End of namespace Sherlock

@@ -366,4 +366,116 @@ void Inventory::doInvJF() {
 	}
 }
 
+/**
+ * Adds a shape from the scene to the player's inventory
+ */
+int Inventory::putNameInInventory(const Common::String &name) {
+	Scene &scene = *_vm->_scene;
+	int matches = 0;
+
+	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
+		Object &o = scene._bgShapes[idx];
+		if (scumm_stricmp(name.c_str(), o._name.c_str()) == 0 && o._type != INVALID) {
+			putItemInInventory(o);
+			++matches;
+		}
+	}
+
+	return matches;
+}
+
+/**
+ * Moves a specified item into the player's inventory If the item has a *PICKUP* use action,
+ * then the item in the use action are added to the inventory.
+ */
+int Inventory::putItemInInventory(Object &obj) {
+	Scene &scene = *_vm->_scene;
+	int matches = 0;
+	bool pickupFound = false;
+
+	if (obj._pickupFlag)
+		_vm->setFlags(obj._pickupFlag);
+
+	for (int useNum = 0; useNum < 4; ++useNum) {
+		if (scumm_stricmp(obj._use[useNum]._target.c_str(), "*PICKUP*") == 0) {
+			pickupFound = true;
+
+			for (int namesNum = 0; namesNum < 4; ++namesNum) {
+				for (uint bgNum = 0; bgNum < scene._bgShapes.size(); ++bgNum) {
+					Object &bgObj = scene._bgShapes[bgNum];
+					if (scumm_stricmp(obj._use[useNum]._names[namesNum].c_str(), bgObj._name.c_str()) == 0) {
+						copyToInventory(bgObj);
+						if (bgObj._pickupFlag)
+							_vm->setFlags(bgObj._pickupFlag);
+
+						if (bgObj._type == ACTIVE_BG_SHAPE || bgObj._type == NO_SHAPE || bgObj._type == HIDE_SHAPE) {
+							if (bgObj._imageFrame == nullptr || bgObj._frameNumber < 0)
+								// No shape to erase, so flag as hidden
+								bgObj._type = INVALID;
+							else
+								bgObj._type = REMOVE;
+						} else if (bgObj._type == HIDDEN) {
+							bgObj._type = INVALID;
+						}
+
+						++matches;
+					}
+				}
+			}
+		}
+	}
+
+	if (!pickupFound) {
+		// No pickup item found, so add the passed item
+		copyToInventory(obj);
+		matches = 0;
+	}
+
+	if (matches == 0) {
+		if (!pickupFound)
+			matches = 1;
+
+		if (obj._type == ACTIVE_BG_SHAPE || obj._type == NO_SHAPE || obj._type == HIDE_SHAPE) {
+			if (obj._imageFrame == nullptr || obj._frameNumber < 0)
+				// No shape to erase, so flag as hidden
+				obj._type = INVALID;
+			else
+				obj._type = REMOVE;
+		} else if (obj._type == HIDDEN) {
+			obj._type = INVALID;
+		}
+	}
+
+	return matches;
+}
+
+/**
+ * Copy the passed object into the inventory
+ */
+void Inventory::copyToInventory(Object &obj) {
+	// TODO
+}
+
+/**
+ * Deletes a specified item from the player's inventory
+ */
+int Inventory::deleteItemFromInventory(const Common::String &name) {
+	int invNum = -1;
+
+	for (int idx = 0; idx < (int)size() && invNum == -1; ++idx) {
+		if (scumm_stricmp(name.c_str(), (*this)[idx]._name.c_str()) == 0)
+			invNum = idx;
+	}
+
+	if (invNum == -1)
+		// Item not present
+		return 0;
+
+	// Item found, so delete it
+	remove_at(invNum);
+	--_holdings;
+
+	return 1;
+}
+
 } // End of namespace Sherlock

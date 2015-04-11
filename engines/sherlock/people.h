@@ -77,6 +77,8 @@ public:
 	Object _portrait;
 	bool _clearingThePortrait;
 	bool _allowWalkAbort;
+	int _portraitSide;
+	bool _speakerFlip;
 public:
 	People(SherlockEngine *vm);
 	~People();

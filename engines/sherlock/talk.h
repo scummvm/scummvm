@@ -33,14 +33,17 @@ namespace Sherlock {
 
 #define MAX_TALK_SEQUENCES 11
 
-struct SavedSequence {
+struct SequenceEntry {
 	int _objNum;
 	Common::Array<byte> _sequences;
-};
-
-struct SequenceEntry : public SavedSequence {
 	int _frameNumber;
 	int _seqTo;
+};
+
+struct ScriptStackEntry : public SequenceEntry {
+	Common::String _name;
+	int _currentIndex;
+	int _select;
 };
 
 struct Statement {
@@ -84,8 +87,8 @@ private:
 private:
 	SherlockEngine *_vm;
 	int _saveSeqNum;
-	Common::Array<SavedSequence> _savedSequences;
-	Common::Stack<SequenceEntry> _sequenceStack;
+	Common::Stack<SequenceEntry> _savedSequences;
+	Common::Stack<ScriptStackEntry> _scriptStack;
 	Common::Array<Statement> _statements;
 	TalkHistoryEntry _talkHistory[500];
 	int _speaker;
@@ -95,17 +98,28 @@ private:
 	int _talkStealth;
 	int _talkToFlag;
 	bool _moreTalkUp, _moreTalkDown;
-
+	int _scriptSaveIndex;
+	int _scriptCurrentIndex;
+private:
 	void stripVoiceCommands();
 	void setTalkMap();
 
 	bool displayTalk(bool slamIt);
 
 	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
+
+	void doScript(const Common::String &script);
+
+	void clearTalking();
+	void setTalking(int speaker);
+
+	int waitForMore(int delay);
 public:
 	bool _talkToAbort;
 	int _talkCounter;
 	int _talkTo;
+	int _scriptMoreFlag;
+	Common::String _scriptName;
 public:
 	Talk(SherlockEngine *vm);
 	void setSequences(const byte *talkSequences, const byte *stillSequences,
@@ -127,7 +141,8 @@ public:
 	void clearSequences();
 	void pullSequence();
 	void pushSequence(int speaker);
-	bool isSequencesEmpty() const { return _sequenceStack.empty(); }
+	void setSequence(int speaker);
+	bool isSequencesEmpty() const { return _scriptStack.empty(); }
 };
 
 } // End of namespace Sherlock

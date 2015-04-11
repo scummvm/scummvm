@@ -89,7 +89,8 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_currentScene = -1;
 	_goToScene = -1;
 	_changes = false;
-	_charPoint = _oldCharPoint = 0;
+	_charPoint = 0;
+	_oldCharPoint = 39;
 	_keyboardInput = 0;
 	_walkedInScene = false;
 	_ongoingCans = 0;
@@ -118,7 +119,7 @@ void Scene::selectScene() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Scripts &scripts = *_vm->_scripts;
+	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 
 	// Reset fields
@@ -150,8 +151,8 @@ void Scene::selectScene() {
 
 	// If there were any scripst waiting to be run, but were interrupt by a running
 	// canimation (probably the last scene's exit canim), clear the _scriptMoreFlag
-	if (scripts._scriptMoreFlag == 3)
-		scripts._scriptMoreFlag = 0;
+	if (talk._scriptMoreFlag == 3)
+		talk._scriptMoreFlag = 0;
 }
 
 /**
@@ -1053,7 +1054,6 @@ void Scene::doBgAnim() {
 	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
@@ -1359,10 +1359,10 @@ void Scene::doBgAnim() {
 	// Check if the method was called for calling a portrait, and a talk was
 	// interrupting it. This talk file would not have been executed at the time, 
 	// since we needed to finish the 'doBgAnim' to finish clearing the portrait
-	if (people._clearingThePortrait && scripts._scriptMoreFlag == 3) {
+	if (people._clearingThePortrait && talk._scriptMoreFlag == 3) {
 		// Reset the flags and call to talk
-		people._clearingThePortrait = scripts._scriptMoreFlag = 0;
-		talk.talkTo(scripts._scriptName);
+		people._clearingThePortrait = talk._scriptMoreFlag = 0;
+		talk.talkTo(talk._scriptName);
 	}
 }
 

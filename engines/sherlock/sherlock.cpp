@@ -122,10 +122,10 @@ void SherlockEngine::sceneLoop() {
 	while (!shouldQuit() && _scene->_goToScene == -1) {
 		// See if a script needs to be completed from either a goto room code,
 		// or a script that was interrupted by another script
-		if (_scripts->_scriptMoreFlag == 1 || _scripts->_scriptMoreFlag == 3)
-			_talk->talkTo(_scripts->_scriptName);
+		if (_talk->_scriptMoreFlag == 1 || _talk->_scriptMoreFlag == 3)
+			_talk->talkTo(_talk->_scriptName);
 		else
-			_scripts->_scriptMoreFlag = 0;
+			_talk->_scriptMoreFlag = 0;
 
 		// Handle any input from the keyboard or mouse
 		handleInput();

@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/str-array.h"
+#include "sherlock/objects.h"
 #include "sherlock/resources.h"
 
 namespace Sherlock {
@@ -59,6 +60,10 @@ struct InventoryItem {
 class Inventory : public Common::Array<InventoryItem> {
 private:
 	SherlockEngine *_vm;
+
+	int putItemInInventory(Object &obj);
+
+	void copyToInventory(Object &obj);
 public:
 	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
 	Common::StringArray _names;
@@ -90,6 +95,10 @@ public:
 	void highlight(int index, byte color);
 
 	void doInvJF();
+
+	int putNameInInventory(const Common::String &name);
+
+	int deleteItemFromInventory(const Common::String &name);
 };
 
 } // End of namespace Sherlock
