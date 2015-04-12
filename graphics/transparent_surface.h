@@ -154,6 +154,13 @@ struct TransparentSurface : public Graphics::Surface {
 
 	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
 
+	float getRatio() {
+		if (!w)
+			return 0;
+
+		return h / (float)w;
+	}
+
 	AlphaType getAlphaMode() const;
 	void setAlphaMode(AlphaType);
 private:

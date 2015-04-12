@@ -24,6 +24,9 @@ MODULE_OBJS := \
 	ThemeLayout.o \
 	ThemeParser.o \
 	Tooltip.o \
+	animation/Animation.o \
+	animation/RepeatAnimationWrapper.o \
+	animation/SequenceAnimationComposite.o \
 	widget.o \
 	widgets/editable.o \
 	widgets/edittext.o \
