@@ -948,6 +948,97 @@ void Object::adjustObject() {
 }
 
 /**
+ * Handles trying to pick up an object. If allowed, plays an y necessary animation for picking
+ * up the item, and then adds it to the player's inventory
+ */
+int Object::pickUpObject(const char *const messages[]) {
+	Inventory &inv = *_vm->_inventory;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
+	int pickup = _pickup & 0x7f;
+	bool printed = false;
+	bool takeFlag = true;
+	int numObjects = 0;
+	int message;
+
+	if (pickup == 99) {
+		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
+				if (!talk._talkToAbort)
+					printed = true;
+			}
+		}
+
+		return 0;
+	}
+
+	if (!pickup || (pickup > 50 && pickup <= 80)) {
+		int message = _pickup;
+		if (message > 50)
+			message -= 50;
+
+		++ui._infoFlag;
+		ui.clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_LINE, messages[message]);
+		ui._menuCounter = 30;
+	} else {
+		// Pick it up
+		if ((_pickup & 0x80) == 0) {
+			// Play an animation
+			if (pickup > 80) {
+				takeFlag = false;		// Don't pick it up
+				scene.startCAnim(pickup - 81, 1);
+				if (_pickupFlag)
+					_vm->setFlags(_pickupFlag);
+			} else {
+				scene.startCAnim(pickup - 1, 1);
+				if (!talk._talkToAbort) {
+					// Erase the shape
+					_type = _type == NO_SHAPE ? INVALID : REMOVE;
+				}
+			}
+
+			if (talk._talkToAbort)
+				return 0;
+		} else {
+			// Play generic pickup sequence
+			// Original moved cursor position here
+			people.goAllTheWay();
+			ui._menuCounter = 25;
+			ui._temp1 = 1;
+		}
+
+		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
+				if (!talk._talkToAbort)
+					printed = true;
+			}
+		}
+		if (talk._talkToAbort)
+			return 0;
+
+		// Add the item to the player's inventory
+		if (takeFlag)
+			numObjects = inv.putItemInInventory(*this);
+
+		if (!printed) {
+			ui._infoFlag++;
+			ui.clearInfo();
+			
+			Common::String itemName = _description;
+			itemName.setChar(tolower(itemName[0]), 0);
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+			ui._menuCounter = 25;
+		}
+	}
+
+	return numObjects;
+}
+
+/**
  * Returns the current bounds for the sprite
  */
 const Common::Rect Object::getNewBounds() const {

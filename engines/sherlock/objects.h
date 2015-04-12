@@ -214,6 +214,8 @@ public:
 
 	void adjustObject();
 
+	int pickUpObject(const char *const messages[]);
+
 	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
 	const Common::Rect getNewBounds() const;

@@ -62,8 +62,6 @@ class Inventory : public Common::Array<InventoryItem> {
 private:
 	SherlockEngine *_vm;
 
-	int putItemInInventory(Object &obj);
-
 	void copyToInventory(Object &obj);
 public:
 	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
@@ -98,6 +96,7 @@ public:
 	void doInvJF();
 
 	int putNameInInventory(const Common::String &name);
+	int putItemInInventory(Object &obj);
 
 	int deleteItemFromInventory(const Common::String &name);
 };

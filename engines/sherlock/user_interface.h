@@ -125,6 +125,7 @@ public:
 	bool _windowOpen;
 	bool _endKeyActive;
 	int _invLookFlag;
+	int _temp1;
 public:
 	UserInterface(SherlockEngine *vm);
 	~UserInterface();

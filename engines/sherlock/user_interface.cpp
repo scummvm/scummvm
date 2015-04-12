@@ -92,6 +92,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_lookHelp = 0;
 	_key = _oldKey = 0;
 	_temp = _oldTemp = 0;
+	_temp1 = 0;
 	_invLookFlag = 0;
 	_windowOpen = false;
 	_oldLook = false;
@@ -711,6 +712,9 @@ void UserInterface::lookInv() {
 	}
 }
 
+/**
+ * Handles input when the file list window is being displayed
+ */
 void UserInterface::doEnvControl() {
 	// TODO
 }
@@ -1193,8 +1197,29 @@ void UserInterface::doMiscControl(int allowed) {
 	}
 }
 
+/**
+ * Handles input for picking up items
+ */
 void UserInterface::doPickControl() {
-	// TODO
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+
+	if (events._released) {
+		if ((_temp = _bgFound) != -1) {
+			events.clearEvents();
+
+			// Don't allow characters to be picked up
+			if (_bgFound < 1000) {
+				scene._bgShapes[_bgFound].pickUpObject(MPICK);
+
+				if (_menuMode != TALK_MODE) {
+					_key = _oldKey = -1;
+					_menuMode = STD_MODE;
+					restoreButton(PICKUP_MODE - 1);
+				}
+			}
+		}
+	}
 }
 
 void UserInterface::doTalkControl() {
