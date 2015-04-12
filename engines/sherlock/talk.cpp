@@ -583,7 +583,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	// Check for an existing person being talked to
 	_talkTo = -1;
-	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
+	for (int idx = 0; idx < NUM_OF_PEOPLE; ++idx) {
 		if (!scumm_strnicmp(filename.c_str(), people[(PeopleId)idx]._portrait.c_str(), 4)) {
 			_talkTo = idx;
 			break;

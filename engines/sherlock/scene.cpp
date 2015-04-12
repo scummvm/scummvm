@@ -314,8 +314,8 @@ bool Scene::loadScene(const Common::String &filename) {
 		for (uint idx = 0; idx < _zones.size(); ++idx) {
 			_zones[idx].left = boundsStream->readSint16LE();
 			_zones[idx].top = boundsStream->readSint16LE();
-			_zones[idx].setWidth(boundsStream->readSint16LE());
-			_zones[idx].setHeight(boundsStream->readSint16LE());
+			_zones[idx].setWidth(boundsStream->readSint16LE() + 1);
+			_zones[idx].setHeight(boundsStream->readSint16LE() + 1);
 			boundsStream->skip(2);	// Skip unused scene number field
 		}
 
@@ -925,20 +925,18 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 			rrmStream->seek(rrmStream->readUint32LE());
 
 			// Load the canimation into the cache
-			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream :
+			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream->readStream(cAnim._size) : 
 				decompressLZ(*rrmStream, cAnim._size);
 			res.addToCache(fname, *imgStream);
 
-			if (_lzwMode)
-				delete imgStream;
-
+			delete imgStream;
 			delete rrmStream;
 		}
 
 		// Now load the resource as an image
-		cObj._maxFrames = cObj._images->size();
 		cObj._images = new ImageFile(fname);
 		cObj._imageFrame = &(*cObj._images)[0];
+		cObj._maxFrames = cObj._images->size();
 
 		int frames = 0;
 		if (playRate < 0) {
@@ -946,8 +944,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 			// Count number of frames
 			while (cObj._sequences[frames] && frames < MAX_FRAME)
 				++frames;
-		}
-		else {
+		} else {
 			// Forward direction
 			Object::_countCAnimFrames = true;
 

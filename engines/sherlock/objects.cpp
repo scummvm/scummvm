@@ -248,7 +248,7 @@ void Sprite::checkSprite() {
 
 					case TALK:
 					case TALK_EVERY:
-						_type = HIDDEN;
+						obj._type = HIDDEN;
 						obj.setFlagsAndToggles();
 						talk.talkTo(obj._use[0]._target);
 						break;
@@ -398,6 +398,36 @@ bool Object::_countCAnimFrames;
 void Object::setVm(SherlockEngine *vm) {
 	_vm = vm;
 	_countCAnimFrames = false;
+}
+
+Object::Object() {
+	_sequenceOffset = 0;
+	_sequences = nullptr;
+	_images = nullptr;
+	_imageFrame = nullptr;
+	_walkCount = 0;
+	_allow = 0;
+	_frameNumber = 0;
+	_sequenceNumber = 0;
+	_type = INVALID;
+	_pickup = 0;
+	_defaultCommand = 0;
+	_lookFlag = 0;
+	_pickupFlag = 0;
+	_requiredFlag = 0;
+	_status = 0;
+	_misc = 0;
+	_maxFrames = 0;
+	_flags = 0;
+	_lookFrames = 0;
+	_seqCounter = 0;
+	_lookFacing = 0;
+	_lookcAnim = 0;
+	_seqStack = 0;
+	_seqTo = 0;
+	_descOffset = 0;
+	_seqCounter2 = 0;
+	_seqSize = 0;
 }
 
 /**
@@ -770,7 +800,7 @@ void Object::setObjSequence(int seq, bool wait) {
 * @param messages	Provides a lookup list of messages that can be printed
 * @returns		0 if no codes are found, 1 if codes were found
 */
-int Object::checkNameForCodes(const Common::String &name, Common::StringArray *messages) {
+int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -851,15 +881,13 @@ int Object::checkNameForCodes(const Common::String &name, Common::StringArray *m
 		int messageNum = atoi(name.c_str() + 1);
 		ui._infoFlag++;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
-			(*messages)[messageNum].c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[messageNum]);
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
 		ui._infoFlag++;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
-			"%s", name.c_str() + 1);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, name.c_str() + 1);
 		printed = true;
 		ui._menuCounter = 25;
 	}

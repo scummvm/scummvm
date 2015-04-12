@@ -58,6 +58,25 @@ const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
+const char *const MOPEN[] = { 
+	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "." 
+};
+const char *const MCLOSE[] = { 
+	"This cannot be closed", "It is already closed", "The safe door is in the way" 
+};
+const char *const MMOVE[] = { 
+	"This cannot be moved", "It is bolted to the floor", "It is too heavy", "The other crate is in the way"
+};
+const char *const MPICK[] = {
+	"Nothing of interest here", "It is bolted down", "It is too big to carry", "It is too heavy",
+	"I think a girl would be more your type", "Those flowers belong to Penny", "She's far too young for you!", 
+	"I think a girl would be more your type!", "Government property for official use only" 
+};
+const char *const MUSE[] = { 
+	"You can't do that", "It had no effect", "You can't reach it", "OK, the door looks bigger! Happy?", 
+	"Doors don't smoke" 
+};
+
 /*----------------------------------------------------------------*/
 
 UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
@@ -327,7 +346,7 @@ void UserInterface::handleInput() {
 			break;
 
 		case MOVE_MODE:
-			doMiscControl(ALLOW_MOVEMENT);
+			doMiscControl(ALLOW_MOVE);
 			break;
 
 		case TALK_MODE:
@@ -1122,8 +1141,56 @@ void UserInterface::doMainControl() {
 	}
 }
 
+/**
+ * Handles the input for the MOVE, OPEN, and CLOSE commands
+ */
 void UserInterface::doMiscControl(int allowed) {
-	// TODO
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+
+	if (events._released) {
+		_temp = _bgFound;
+		if (_bgFound != -1) {
+			// Only allow pointing to objects, not people
+			if (_bgFound < 1000) {
+				events.clearEvents();
+				Object &obj = scene._bgShapes[_bgFound];
+
+				switch (allowed) {
+				case ALLOW_OPEN:
+					checkAction(obj._aOpen, MOPEN, _temp);
+					if (_menuMode && !talk._talkToAbort) {
+						_menuMode = STD_MODE;
+						restoreButton(OPEN_MODE - 1);
+						_key = _oldKey = -1;
+					}
+					break;
+
+				case ALLOW_CLOSE:
+					checkAction(obj._aClose, MCLOSE, _temp);
+					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
+						_menuMode = STD_MODE;
+						restoreButton(CLOSE_MODE - 1);
+						_key = _oldKey = -1;
+					}
+					break;
+
+				case ALLOW_MOVE:
+					checkAction(obj._aMove, MMOVE, _temp);
+					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
+						_menuMode = STD_MODE;
+						restoreButton(MOVE_MODE - 1);
+						_key = _oldKey = -1;
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+	}
 }
 
 void UserInterface::doPickControl() {
@@ -1501,6 +1568,132 @@ void UserInterface::banishWindow(bool slideUp) {
 void UserInterface::checkUseAction(UseType &use, const Common::String &invName,
 		const Common::String &msg, int objNum, int giveMode) {
 	// TODO
+}
+
+/**
+ * Called for OPEN, CLOSE, and MOVE actions are being done
+ */
+void UserInterface::checkAction(ActionType &action, const char *const messages[], int objNum) {
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	bool printed = false;
+	bool doCAnim = true;
+	int cAnimNum;
+	Common::Point pt(-1, -1);
+	int dir = -1;
+
+	if (objNum >= 1000)
+		// Ignore actions done on characters
+		return;
+	Object &obj = scene._bgShapes[objNum];
+
+	if (action._cAnimNum == 0)
+		// Really a 10
+		cAnimNum = 9;
+	else
+		cAnimNum = action._cAnimNum - 1;
+	CAnim &anim = scene._cAnim[cAnimNum];
+
+	if (action._cAnimNum != 99) {
+		if (action._cAnimSpeed & REVERSE_DIRECTION) {
+			pt = anim._teleportPos;
+			dir = anim._teleportDir;
+		} else {
+			pt = anim._goto;
+			dir = anim._gotoDir;
+		}
+	}
+
+	if (action._cAnimSpeed) {
+		// Has a value, so do action
+		// Show wait cursor whilst walking to object and doing action
+		events.setCursor(WAIT);
+
+		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+			if (action._names[nameIdx].hasPrefix("*") && toupper(action._names[nameIdx][1]) == 'W') {
+				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), messages)) {
+					if (!talk._talkToAbort)
+						printed = true;
+				}
+			}
+		}
+
+		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+			if (action._names[nameIdx].hasPrefix("*")) {
+				char ch = toupper(action._names[nameIdx][1]);
+
+				if (ch == 'T' || ch == 'B') {
+					printed = true;
+					if (pt.x != -1)
+						// Holmes needs to walk to object before the action is done
+						people.walkToCoords(pt, dir);
+
+					if (!talk._talkToAbort) {
+						// Ensure Holmes is on the exact intended location
+						people[AL]._position = pt;
+						people[AL]._sequenceNumber = dir;
+						people.gotoStand(people[AL]);
+
+						talk.talkTo(action._names[nameIdx] + 2);
+						if (ch == 'T')
+							doCAnim = false;
+					}
+				}
+			}
+		}
+
+		if (doCAnim && !talk._talkToAbort) {
+			if (pt.x != -1)
+				// Holmes needs to walk to object before the action is done
+				people.walkToCoords(pt, dir);
+		}
+
+		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+			if (action._names[nameIdx].hasPrefix("*") && toupper(action._names[nameIdx][1]) == 'F') {
+				if (obj.checkNameForCodes(action._names[nameIdx].c_str() + 2, messages)) {
+					if (!talk._talkToAbort)
+						printed = true;
+				}
+			}
+		}
+
+		if (doCAnim && !talk._talkToAbort && action._cAnimNum != 99)
+			scene.startCAnim(cAnimNum, action._cAnimSpeed);
+
+		if (!talk._talkToAbort) {
+			for (int nameIdx = 0; nameIdx < 4 && !talk._talkToAbort; ++nameIdx) {
+				if (obj.checkNameForCodes(action._names[nameIdx], messages)) {
+					if (!talk._talkToAbort)
+						printed = true;
+				}
+			}
+
+			// Unless we're leaving the scene, print a "Done" message unless the printed flag has been set
+			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
+				_infoFlag = true;
+				clearInfo();
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[action._cAnimNum]);
+
+				// Set how long to show the message
+				_menuCounter = 30;	
+			}
+		}
+	} else {
+		// Invalid action, to print error message
+		_infoFlag = true;
+		clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[action._cAnimNum]);
+		_infoFlag = true;
+
+		// Set how long to show the message
+		_menuCounter = 30;
+	}
+
+	// Reset cursor back to arrow
+	events.setCursor(ARROW);
 }
 
 

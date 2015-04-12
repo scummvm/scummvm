@@ -34,7 +34,7 @@ namespace Sherlock {
 class SherlockEngine;
 
 enum ObjectAllow {
-	ALLOW_MOVEMENT = 1, ALLOW_OPEN = 2, ALLOW_CLOSE = 4
+	ALLOW_MOVE = 1, ALLOW_OPEN = 2, ALLOW_CLOSE = 4
 };
 
 enum SpriteType {
@@ -122,6 +122,8 @@ public:
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
 };
 
+enum { REVERSE_DIRECTION = 0x80 };
+
 struct ActionType {
 	int8 _cAnimNum;
 	uint8 _cAnimSpeed;				// if high bit set, play in reverse
@@ -198,13 +200,15 @@ public:
 	ActionType _aMove;
 	UseType _use[4];
 
+	Object();
+
 	void synchronize(Common::SeekableReadStream &s);
 
 	void toggleHidden();
 
 	void checkObject(Object &o);
 
-	int checkNameForCodes(const Common::String &name, Common::StringArray *messages);
+	int checkNameForCodes(const Common::String &name, const char *const messages[]);
 
 	void setFlagsAndToggles();
 

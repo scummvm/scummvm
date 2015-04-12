@@ -117,6 +117,7 @@ private:
 
 	void checkUseAction(UseType &use, const Common::String &invName, const Common::String &msg,
 		int objNum, int giveMode);
+	void checkAction(ActionType &action, const char *const messages[], int objNum);
 public:
 	MenuMode _menuMode;
 	int _menuCounter;
