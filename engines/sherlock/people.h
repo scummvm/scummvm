@@ -81,6 +81,7 @@ public:
 	int _portraitSide;
 	bool _speakerFlip;
 	bool _holmesFlip;
+	int _homesQuotient;
 public:
 	People(SherlockEngine *vm);
 	~People();

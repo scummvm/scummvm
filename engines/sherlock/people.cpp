@@ -203,6 +203,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_portraitSide = 0;
 	_speakerFlip = false;
 	_holmesFlip = false;
+	_homesQuotient = 0;
 }
 
 People::~People() {

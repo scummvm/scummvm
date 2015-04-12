@@ -79,8 +79,10 @@ struct TalkSequences {
 };
 
 class SherlockEngine;
+class UserInterface;
 
 class Talk {
+	friend class UserInterface;
 private:
 	Common::Array<TalkSequences> STILL_SEQUENCES;
 	Common::Array<TalkSequences> TALK_SEQUENCES;
@@ -97,7 +99,6 @@ private:
 	int _converseNum;
 	int _talkStealth;
 	int _talkToFlag;
-	bool _moreTalkUp, _moreTalkDown;
 	int _scriptSaveIndex;
 	int _scriptCurrentIndex;
 private:
@@ -117,6 +118,7 @@ public:
 	int _talkTo;
 	int _scriptMoreFlag;
 	Common::String _scriptName;
+	bool _moreTalkUp, _moreTalkDown;
 public:
 	Talk(SherlockEngine *vm);
 	void setSequences(const byte *talkSequences, const byte *stillSequences,

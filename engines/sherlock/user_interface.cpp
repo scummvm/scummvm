@@ -1222,8 +1222,260 @@ void UserInterface::doPickControl() {
 	}
 }
 
+/**
+ * Handles input when in talk mode. It highlights the buttons and available statements,
+ * and handles allowing the user to click on them
+ */
 void UserInterface::doTalkControl() {
-	// TODO
+	Events &events = *_vm->_events;
+	Journal &journal = *_vm->_journal;
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+	int select;
+
+	_key = _oldKey = -1;
+	_keyboardInput = false;
+
+	if (events._pressed || events._released) {
+		events.clearKeyboard();
+
+		// Handle button printing
+		if (mousePos.x > 99 && mousePos.x < 138 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && !_endKeyActive)
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Exit");
+		else if (_endKeyActive)
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
+		
+		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Up");
+		else if (talk._moreTalkUp)
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
+
+		if (mousePos.x > 181&& mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkDown)
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Down");
+		else if (talk._moreTalkDown)
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
+
+		bool found = false;
+		for (_selector = talk._talkIndex; _selector < (int)talk._statements.size() && !found; ++_selector) {
+			if (mousePos.y > talk._statements[_selector]._talkPos.top &&
+					mousePos.y < talk._statements[_selector]._talkPos.bottom)
+				found = true;
+		}
+		--_selector;
+		if (!found)
+			_selector = -1;
+	}
+
+	if (_keycode != Common::KEYCODE_INVALID) {
+		_key = toupper(_keycode);
+		if (_key == Common::KEYCODE_ESCAPE)
+			_key = 'E';
+
+		// Check for number press indicating reply line
+		if (_key >= '1' && _key <= ('1' + (int)talk._statements.size() - 1)) {
+			for (uint idx = 0; idx < talk._statements.size(); ++idx) {
+				if (talk._statements[idx]._talkMap == (_key - '1')) {
+					// Found the given statement
+					_selector = idx;
+					_key = -1;
+					_keyboardInput = true;
+					break;
+				}
+			}
+		} else if (_key == 'E' || _key == 'U' || _key == 'D') {
+			_keyboardInput = true;
+		} else {
+			_selector = -1;
+		}
+	}
+
+	if (_selector != _oldSelector) {
+		// Remove highlighting from previous line, if any
+		if (_oldSelector != -1) {
+			if (!((talk._talkHistory[talk._converseNum][_oldSelector] >> (_oldSelector & 7)) & 1))
+				talk.talkLine(_oldSelector, talk._statements[_oldSelector]._talkMap, INV_FOREGROUND,
+					talk._statements[_oldSelector]._talkPos.top, true);
+			else
+				talk.talkLine(_oldSelector, talk._statements[_oldSelector]._talkMap, TALK_NULL,
+					talk._statements[_oldSelector]._talkPos.top, true);
+		}
+
+		// Add highlighting to new line, if any
+		if (_selector != -1)
+			talk.talkLine(_selector, talk._statements[_selector]._talkMap, TALK_FOREGROUND,
+				talk._statements[_selector]._talkPos.top, true);
+	}
+
+	if (events._released || _keyboardInput) {
+		if (_endKeyActive && ((mousePos.x > 99 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10)
+				&& talk._moreTalkUp && events._released) || _key == 'E')) {
+			talk.freeTalkVars();
+			talk.pullSequence();
+			banishWindow();
+			_windowBounds.top = CONTROLS_Y1;
+		} else if ((mousePos.x > 140 && mousePos.x < 179 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10)
+				&& talk._moreTalkUp && events._released) || (talk._moreTalkUp && _key == 'U')) { 
+			while (talk._statements[--talk._talkIndex]._talkMap == -1)
+				;
+			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
+				SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
+			talk.displayTalk(false);
+
+			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
+		} else if ((mousePos.x > 181 && mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10)
+				&& talk._moreTalkDown && events._released) || (talk._moreTalkDown && _key == 'D')) { 
+			do {
+				++talk._talkIndex;
+			} while (talk._talkIndex < (int)talk._statements.size() && talk._statements[talk._talkIndex]._talkMap == -1);
+
+			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
+				SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
+			talk.displayTalk(false);
+
+			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
+		} else if (_selector != -1) {
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, "Exit");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, "Up");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, "Down");
+
+			// If the reply is new, add it to the journal
+			if (!talk._talkHistory[talk._converseNum][_selector]) {
+				journal.record(talk._converseNum, _selector);
+
+				// Add any Holmes point to Holmes' total, if any
+				if (talk._statements[_selector]._quotient)
+					people._homesQuotient += talk._statements[_selector]._quotient;
+			}
+
+			// Flag the response as having been used
+			talk._talkHistory[talk._converseNum][_selector] = true;
+		
+			clearWindow();
+			screen.print(Common::Point(16, CONTROLS_Y + 12), TALK_FOREGROUND, "Sherlock Holmes");
+			talk.talkLine(_selector + 128, talk._statements[_selector]._talkMap, COMMAND_FOREGROUND, CONTROLS_Y + 21, true);
+
+			switch (talk._statements[_selector]._portraitSide & 3) {
+			case 0:
+			case 1:
+				people._portraitSide = 20;
+				break;
+			case 2:
+				people._portraitSide = 220;
+				break;
+			case 3:
+				people._portraitSide = 120;
+				break;
+			}
+
+			// Check for flipping Holmes
+			if (talk._statements[_selector]._portraitSide & REVERSE_DIRECTION)
+				people._holmesFlip = true;
+
+			talk._speaker = 0;
+			people.setTalking(0);
+
+			if (!talk._statements[_selector]._voiceFile.empty() && sound._voices) {
+				sound.playSound(talk._statements[_selector]._voiceFile);
+
+				// Set voices as an indicator for waiting
+				sound._voices = 2;
+				sound._speechOn = *sound._soundIsOn;
+			} else {
+				sound._speechOn = false;
+			}
+
+			// Set the _scriptCurrentIndex so if the statement is irrupted, the entire
+			// reply will be shown when it's restarted
+			talk._scriptCurrentIndex = 0;
+			talk.waitForMore(talk._statements[_selector]._statement.size());
+			if (talk._talkToAbort)
+				return;
+
+			people.clearTalking();
+			if (talk._talkToAbort)
+				return;
+
+			while (!_vm->shouldQuit()) {
+				talk._scriptSelect = _selector;
+				talk._speaker = talk._talkTo;
+				talk.doScript(talk._statements[_selector]._reply);
+
+				if (!talk._talkToAbort) {
+					if (!talk._talkStealth)
+						clearWindow();
+
+					if (!talk._statements[_selector]._modified.empty()) {
+						for (uint idx = 0; idx < talk._statements[_selector]._modified.size(); ++idx) {
+							_vm->setFlags(talk._statements[_selector]._modified[idx]);
+						}
+
+						talk.setTalkMap();
+					}
+
+					// Check for another linked talk file
+					Common::String linkFilename = talk._statements[_selector]._linkFile;
+					if (!linkFilename.empty() && !talk._scriptMoreFlag) {
+						talk.freeTalkVars();
+						talk.loadTalkFile(linkFilename);
+
+						// Find the first new statement
+						select = _selector = _oldSelector = -1;
+						for (uint idx = 0; idx < talk._statements.size() && select == -1; ++idx) {
+							if (!talk._statements[idx]._talkMap)
+								select = talk._talkIndex = idx;
+						}
+
+						// See if the new statement is a stealth reply
+						talk._talkStealth = talk._statements[select]._statement.hasPrefix("^") ? 2 : 0;
+
+						// Is the new talk file a standard file, reply first file, or a stealth file
+						if (!talk._statements[select]._statement.hasPrefix("*") &&
+								!talk._statements[select]._statement.hasPrefix("^")) {
+							// Not a reply first file, so display the new selections
+							if (_endKeyActive)
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
+							else
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, "Exit");
+
+							talk.displayTalk(true);
+							events.setCursor(ARROW);
+							break;
+						} else {
+							_selector = select;
+
+							if (!talk._talkHistory[talk._converseNum][_selector])
+								journal.record(talk._converseNum, _selector);
+
+							talk._talkHistory[talk._converseNum][_selector] = true;
+						}
+					} else {
+						talk.freeTalkVars();
+						talk.pullSequence();
+						banishWindow();
+						_windowBounds.top = CONTROLS_Y1;
+						break;
+					}
+				} else {
+					break;
+				}
+			}
+
+			events._pressed = events._released = false;
+			events._oldButtons = 0;
+			talk._talkStealth = 0;
+
+			// If a script was pushed onto the script stack, restore it
+			if (!talk._scriptStack.empty()) {
+				SequenceEntry seqEntry = talk._scriptStack.pop();
+//				talk._scriptName = seqEntry.
+				// TODO
+			}
+		}
+	}
 }
 
 void UserInterface::journalControl() {
