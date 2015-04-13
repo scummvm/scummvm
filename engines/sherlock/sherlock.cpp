@@ -48,6 +48,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_loadingSavedGame = false;
 	_onChessboard = false;
 	_slowChess = false;
+	_keyPadSpeed = 0;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -174,6 +175,10 @@ void SherlockEngine::setFlags(int flagNum) {
 }
 
 void SherlockEngine::freeSaveGameList() {
+	// TODO
+}
+
+void SherlockEngine::saveConfig() {
 	// TODO
 }
 

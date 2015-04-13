@@ -126,6 +126,8 @@ public:
 	void setDisplayBounds(const Common::Rect &r);
 	void resetDisplayBounds();
 	Common::Rect getDisplayBounds();
+
+	int fontNumber() const { return _fontNumber; }
 };
 
 } // End of namespace Sherlock

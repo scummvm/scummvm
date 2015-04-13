@@ -106,6 +106,8 @@ public:
 	Common::Array<Common::Point> _map;	// Map locations for each scene
 	bool _onChessboard;
 	bool _slowChess;
+	bool _joystick;
+	int _keyPadSpeed;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();
@@ -127,6 +129,8 @@ public:
 	void setFlags(int flagNum);
 
 	void freeSaveGameList();
+
+	void saveConfig();
 };
 
 } // End of namespace Sherlock

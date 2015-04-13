@@ -61,9 +61,22 @@ extern const char *const PRESS_KEY_TO_CONTINUE;
 class SherlockEngine;
 class Inventory;
 class Talk;
+class UserInterface;
+
+class Settings {
+private:
+	SherlockEngine *_vm;
+public:
+	Settings(SherlockEngine *vm) : _vm() {}
+
+	void drawInteface(bool flag);
+
+	int drawButtons(const Common::Point &pt, int key);
+};
 
 class UserInterface {
 	friend class Inventory;
+	friend class Settings;
 	friend class Talk;
 private:
 	SherlockEngine *_vm;
