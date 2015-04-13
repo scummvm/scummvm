@@ -2344,12 +2344,76 @@ static const uint16 qfg3PatchWooDialogAlt[] = {
 	PATCH_END
 };
 
+// When exporting characters at the end of Quest for Glory 3, the underlying
+//  code has issues with values, that are above 9999.
+//  For further study: https://github.com/Blazingstix/QFGImporter/blob/master/QFGImporter/QFGImporter/QFG3.txt
+//
+// If a value is above 9999, parts or even the whole character file will get corrupted.
+//
+// We are fixing the code because of that. We are patching code, that is calculating the checksum
+//  and add extra code to lower such values to 9999.
+//
+// Applies to at least: English, French, German, Italian, Spanish floppy
+// Responsible method: saveHero::changeState
+// Fixes bug #6807
+static const uint16 qfg3SignatureExportChar[] = {
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi  00 / ldi 01 (2 loops, we patch both)
+	0xa5, 0x00,                         // sat  temp[0] [contains index to data]
+	0x8d, 0x00,                         // lst  temp[0]
+	SIG_MAGICDWORD,
+	0x35, 0x2c,                         // ldi  2c
+	0x22,                               // lt?  [index above or equal 2Ch (44d)?
+	0x31, 0x23,                         // bnt  [exit loop]
+	// from this point it's actually useless code, maybe a sci compiler bug
+	0x8d, 0x00,                         // lst  temp[0]
+	0x35, 0x01,                         // ldi  01
+	0x02,                               // add
+	0x9b, 0x00,                         // lsli local[0] ---------- load local[0 + ACC] onto stack
+	0x8d, 0x00,                         // lst  temp[0]
+	0x35, 0x01,                         // ldi  01
+	0x02,                               // add
+	0xb3, 0x00,                         // sali local[0] ---------- save stack to local[0 + ACC]
+	// end of useless code
+	0x8b, SIG_ADDTOOFFSET(+1),          // lsl  local[36h/37h] ---- load local[36h/37h] onto stack
+	0x8d, 0x00,                         // lst  temp[0]
+	0x35, 0x01,                         // ldi  01
+	0x02,                               // add
+	0x93, 0x00,                         // lali local[0] ---------- load local[0 + ACC] into ACC
+	0x02,                               // add -------------------- add ACC + stack and put into ACC
+	0xa3, SIG_ADDTOOFFSET(+1),          // sal  local[36h/37h] ---- save ACC to local[36h/37h]
+	0x8d, 0x00,                         // lst temp[0] ------------ temp[0] to stack
+	0x35, 0x02,                         // ldi 02
+	0x02,                               // add -------------------- add 2 to stack
+	0xa5, 0x00,                         // sat temp[0] ------------ save ACC to temp[0]
+	0x33, 0xd6,                         // jmp [loop]
+	SIG_END
+};
+
+static const uint16 qfg3PatchExportChar[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x85, 0x00,                         // lat  temp[0]
+	0x9b, 0x01,                         // lsli local[0] + 1 ------ load local[ ACC + 1] onto stack
+	0x3c,                               // dup
+	0x34, PATCH_UINT16(0x2710),         // ldi  2710h (10000d)
+	0x2c,                               // ult? ------------------- is value smaller than 10000?
+	0x2f, 0x0a,                         // bt   [jump over]
+	0x3a,                               // toss
+	0x38, PATCH_UINT16(0x270f),         // pushi 270fh (9999d)
+	0x3c,                               // dup
+	0x85, 0x00,                         // lat  temp[0]
+	0xba, PATCH_UINT16(0x0001),         // ssli local[0] + 1 ------ save stack to local[ ACC + 1] (UINT16 to waste 1 byte)
+	// jump offset
+	0x83, PATCH_GETORIGINALBYTE(+26),   // lal  local[37h/36h] ---- load local[37h/36h] into ACC
+	0x02,                               // add -------------------- add local[37h/36h] + data value
+	PATCH_END
+};
 
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
 	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
 	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt, qfg3PatchWooDialogAlt },
+	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,   qfg3PatchExportChar },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
