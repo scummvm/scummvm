@@ -136,7 +136,7 @@ private:
 		int getFrameCount() const;
 		uint32 getNextFrameStartTime() const;
 		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _curPalette; }
+		const byte *getPalette() const;
 		bool hasDirtyPalette() const { return _curPalette; }
 		bool setReverse(bool reverse);
 		bool isReversed() const { return _reversed; }
@@ -157,6 +157,12 @@ private:
 		const byte *_curPalette;
 		mutable bool _dirtyPalette;
 		bool _reversed;
+
+		// Forced dithering of frames
+		byte *_forcedDitherPalette;
+		byte *_ditherTable;
+		Graphics::Surface *_ditherFrame;
+		const Graphics::Surface *forceDither(const Graphics::Surface &frame);
 
 		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 		uint32 getFrameDuration();
