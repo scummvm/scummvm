@@ -572,10 +572,6 @@ void VideoManager::checkEnableDither(VideoEntry &entry) {
 	if (!_enableDither)
 		return;
 
-	// Ignore any video which is already 8bpp
-	if (entry->getPixelFormat().bytesPerPixel == 1)
-		return;
-
 	// Set the palette
 	byte palette[256 * 3];
 	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
