@@ -883,7 +883,7 @@ void Talk::pullSequence() {
 	if (_scriptStack.empty())
 		return;
 
-	SequenceEntry seq = _scriptStack.pop();
+	SequenceEntry seq = _sequenceStack.pop();
 	if (seq._objNum != -1) {
 		Object &obj = scene._bgShapes[seq._objNum];
 
@@ -911,7 +911,7 @@ void Talk::pushSequence(int speaker) {
 	if (speaker == -1)
 		return;
 
-	ScriptStackEntry seqEntry;
+	SequenceEntry seqEntry;
 	if (!speaker) {
 		seqEntry._objNum = -1;
 	} else {
@@ -925,7 +925,7 @@ void Talk::pushSequence(int speaker) {
 		seqEntry._seqTo = obj._seqTo;
 	}
 	
-	_scriptStack.push(seqEntry);
+	_sequenceStack.push(seqEntry);
 	if (_scriptStack.size() >= 5)
 		error("script stack overflow");
 }

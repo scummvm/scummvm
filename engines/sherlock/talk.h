@@ -40,7 +40,7 @@ struct SequenceEntry {
 	int _seqTo;
 };
 
-struct ScriptStackEntry : public SequenceEntry {
+struct ScriptStackEntry {
 	Common::String _name;
 	int _currentIndex;
 	int _select;
@@ -90,6 +90,7 @@ private:
 	SherlockEngine *_vm;
 	int _saveSeqNum;
 	Common::Stack<SequenceEntry> _savedSequences;
+	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
 	Common::Array<Statement> _statements;
 	TalkHistoryEntry _talkHistory[500];

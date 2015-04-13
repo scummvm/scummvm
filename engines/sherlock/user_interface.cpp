@@ -1233,7 +1233,6 @@ void UserInterface::doTalkControl() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	int select;
 
@@ -1470,9 +1469,10 @@ void UserInterface::doTalkControl() {
 
 			// If a script was pushed onto the script stack, restore it
 			if (!talk._scriptStack.empty()) {
-				SequenceEntry seqEntry = talk._scriptStack.pop();
-//				talk._scriptName = seqEntry.
-				// TODO
+				ScriptStackEntry stackEntry = talk._scriptStack.pop();
+				talk._scriptName = stackEntry._name;
+				talk._scriptSaveIndex = stackEntry._currentIndex;
+				talk._scriptSelect = stackEntry._select;
 			}
 		}
 	}
