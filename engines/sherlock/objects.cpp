@@ -962,7 +962,6 @@ int Object::pickUpObject(const char *const messages[]) {
 	bool printed = false;
 	bool takeFlag = true;
 	int numObjects = 0;
-	int message;
 
 	if (pickup == 99) {
 		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {

@@ -25,9 +25,9 @@
 namespace Sherlock {
 
 Sound::Sound(SherlockEngine *vm): _vm(vm) {
-	_soundOn = true;
-	_musicOn = true;
-	_speechOn = true;
+	_soundOn = false;
+	_musicOn = false;
+	_speechOn = false;
 	_voices = 0;
 	_playingEpilogue = false;
 	_music = false;

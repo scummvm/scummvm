@@ -96,9 +96,9 @@ void Statement::synchronize(Common::SeekableReadStream &s) {
 
 	// Read in flag required/modified data
 	for (uint idx = 0; idx < _required.size(); ++idx)
-		_required[idx] = s.readUint16LE();
+		_required[idx] = s.readSint16LE();
 	for (uint idx = 0; idx < _modified.size(); ++idx)
-		_modified[idx] = s.readUint16LE();
+		_modified[idx] = s.readSint16LE();
 
 	_portraitSide = s.readByte();
 	_quotient = s.readUint16LE();
@@ -583,8 +583,8 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	// Check for an existing person being talked to
 	_talkTo = -1;
-	for (int idx = 0; idx < NUM_OF_PEOPLE; ++idx) {
-		if (!scumm_strnicmp(filename.c_str(), people[(PeopleId)idx]._portrait.c_str(), 4)) {
+	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
+		if (!scumm_strnicmp(filename.c_str(), PORTRAITS[idx], 4)) {
 			_talkTo = idx;
 			break;
 		}
@@ -1036,7 +1036,7 @@ void Talk::doScript(const Common::String &script) {
 		ui.clearWindow();
 
 		// Need to switch speakers?
-		if (str[0] == SWITCH_SPEAKER) {
+		if ((byte)str[0] == SWITCH_SPEAKER) {
 			_speaker = str[1] - 1;
 			str += 2;
 			pullSequence();
@@ -1048,7 +1048,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Assign portrait location?
-		if (str[0] == ASSIGN_PORTRAIT_LOCATION) {
+		if ((byte)str[0] == ASSIGN_PORTRAIT_LOCATION) {
 			switch (str[1] & 15) {
 			case 1:
 				people._portraitSide = 20;
@@ -1083,15 +1083,16 @@ void Talk::doScript(const Common::String &script) {
 		Common::String tempString;
 		wait = 0;
 
-		if (!str[0]) {
+		byte c = (byte)str[0];
+		if (!c) {
 			endStr = true;
-		} else if (str[0] == '{') {
+		} else if (c == '{') {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (str[0] >= 128) {
+		} else if (c >= 128) {
 			// Handle control code
-			switch (str[0]) {
+			switch (c) {
 			case SWITCH_SPEAKER:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
@@ -1157,7 +1158,7 @@ void Talk::doScript(const Common::String &script) {
 				// doing bg anims in the next call, so we need to know where to return to
 				_scriptCurrentIndex = str - script.c_str();
 
-				if (_speaker < 128)
+				if (_speaker >= 0 && _speaker < 128)
 					people.clearTalking();
 				pullSequence();
 				if (_talkToAbort)
@@ -1508,9 +1509,9 @@ void Talk::doScript(const Common::String &script) {
 				// If the window is open, display the name directly on-screen.
 				// Otherwise, simply draw it on the back buffer
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), TALK_FOREGROUND, inv._names[_speaker & 127].c_str());
+					screen.print(Common::Point(16, yp), TALK_FOREGROUND, NAMES[_speaker & 127]);
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, inv._names[_speaker & 127].c_str());
+					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, NAMES[_speaker & 127]);
 					openTalkWindow = true;
 				}
 
@@ -1523,10 +1524,10 @@ void Talk::doScript(const Common::String &script) {
 				width += screen.charWidth(str[idx]);
 				++idx;
 				++charCount;
-			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < 128);
+			} while (width < 298 && str[idx] && str[idx] != '{' && (byte)str[idx] < 128);
 
 			if (str[idx] || width >= 298) {
-				if (str[idx] < 128 && str[idx] != '{') {
+				if ((byte)str[idx] < 128 && str[idx] != '{') {
 					--idx;
 					--charCount;
 				}
@@ -1565,7 +1566,7 @@ void Talk::doScript(const Common::String &script) {
 			str += idx;
 
 			// If line wrap occurred, then move to after the separating space between the words
-			if (str[0] < 128 && str[0] != '{')
+			if ((byte)str[0] < 128 && str[0] != '{')
 				++str;
 
 			yp += 9;
@@ -1578,7 +1579,7 @@ void Talk::doScript(const Common::String &script) {
 				wait = 1;
 			}
 
-			switch (str[0]) {
+			switch ((byte)str[0]) {
 			case SWITCH_SPEAKER:
 			case ASSIGN_PORTRAIT_LOCATION:
 			case BANISH_WINDOW:

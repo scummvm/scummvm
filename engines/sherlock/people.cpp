@@ -196,7 +196,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_oldWalkSequence = -1;
 	_allowWalkAbort = false;
 	_portraitLoaded = false;
-	_portraitsOn = false;
+	_portraitsOn = true;
 	_clearingThePortrait = false;
 	_srcZone = _destZone = 0;
 	_talkPics = nullptr;
@@ -204,12 +204,15 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_speakerFlip = false;
 	_holmesFlip = false;
 	_homesQuotient = 0;
+
+	_portrait._sequences = new byte[32];
 }
 
 People::~People() {
 	if (_walkLoaded)
 		delete _data[PLAYER]._images;
 	delete _talkPics;
+	delete[] _portrait._sequences;
 }
 
 void People::reset() {
@@ -646,7 +649,8 @@ void People::setTalking(int speaker) {
 
 	if (_portraitsOn) {
 		delete _talkPics;
-		_talkPics = new ImageFile("portrait.lib");
+		Common::String filename = Common::String::format("%s.vgs", PORTRAITS[speaker]);
+		_talkPics = new ImageFile(filename);
 
 		// Load portrait sequences
 		Common::SeekableReadStream *stream = res.load("sequence.txt");

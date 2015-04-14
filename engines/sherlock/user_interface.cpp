@@ -2200,7 +2200,6 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 	if (targetNum != -1) {
 		// Found a target, so do the action
 		const UseType &action = use[targetNum];
-		int messageNum = action._cAnimNum;
 		
 		events.setCursor(WAIT);
 
@@ -2318,7 +2317,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 						people[AL]._sequenceNumber = dir;
 						people.gotoStand(people[AL]);
 
-						talk.talkTo(action._names[nameIdx] + 2);
+						talk.talkTo(action._names[nameIdx].c_str() + 2);
 						if (ch == 'T')
 							doCAnim = false;
 					}
