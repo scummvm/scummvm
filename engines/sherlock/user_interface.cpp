@@ -1115,12 +1115,10 @@ void UserInterface::doInvControl() {
 
 					if (_selector >= 0)
 						// Use/Give inv object with scene object
-						checkUseAction(scene._bgShapes[_find]._use[0], inv[_selector]._name,
-							_muse, _find, temp - 2);
+						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, MUSE, _find, temp - 2);
 					else
 						// Now inv object has been highlighted
-						checkUseAction(scene._bgShapes[_find]._use[0], "*SELF", _muse,
-							_find, temp - 2);
+						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF", MUSE, _find, temp - 2);
 						
 					_selector = _oldSelector = -1;
 				}
@@ -1716,7 +1714,6 @@ void UserInterface::doControls() {
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	int found;
-	byte color;
 	bool updateConfig = false;
 
 	Settings settings(_vm);
@@ -2157,9 +2154,101 @@ void UserInterface::banishWindow(bool slideUp) {
 	_menuMode = STD_MODE;
 }
 
-void UserInterface::checkUseAction(UseType &use, const Common::String &invName,
-		const Common::String &msg, int objNum, int giveMode) {
-	// TODO
+/**
+ * Checks to see whether a USE action is valid on the given object
+ */
+void UserInterface::checkUseAction(const UseType *use, const Common::String &invName,
+		const char *const messages[], int objNum, int giveMode) {
+	Events &events = *_vm->_events;
+	Inventory &inv = *_vm->_inventory;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	bool printed = messages == nullptr;
+
+	if (objNum >= 1000) {
+		// Holmes was specified, so do nothing
+		_infoFlag = true;
+		clearInfo();
+		_infoFlag = true;
+		
+		// Display error message
+		_menuCounter = 30;
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that to yourself.");
+		return;
+	}
+
+	// Scan for target item
+	int targetNum = -1;
+	if (giveMode) {
+		for (int idx = 0; idx < 4 && targetNum == -1; ++idx) {
+			if ((scumm_stricmp(use[idx]._target.c_str(), "*GIVE*") == 0 || scumm_stricmp(use[idx]._target.c_str(), "*GIVEP*") == 0)
+					&& scumm_stricmp(use[idx]._names[0].c_str(), invName.c_str()) == 0) {
+				// Found a match
+				targetNum = idx;
+				if (scumm_stricmp(use[idx]._target.c_str(), "*GIVE*") == 0)
+					inv.deleteItemFromInventory(invName);
+			}
+		}
+	} else {
+		for (int idx = 0; idx < 4 && targetNum == -1; ++idx) {
+			if (scumm_stricmp(use[idx]._target.c_str(), invName.c_str()) == 0)
+				targetNum = idx;
+		}
+	}
+
+	if (targetNum != -1) {
+		// Found a target, so do the action
+		const UseType &action = use[targetNum];
+		int messageNum = action._cAnimNum;
+		
+		events.setCursor(WAIT);
+
+		if (action._useFlag)
+			_vm->setFlags(action._useFlag);
+
+		if (action._cAnimNum != 99) {
+			if (action._cAnimNum == 0)
+				scene.startCAnim(9, action._cAnimSpeed);
+			else
+				scene.startCAnim(action._cAnimNum - 1, action._cAnimSpeed);
+		}
+
+		if (!talk._talkToAbort) {
+			Object &obj = scene._bgShapes[objNum];
+			for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+				if (obj.checkNameForCodes(action._names[idx], messages)) {
+					if (!talk._talkToAbort)
+						printed = true;
+				}
+			}
+
+			// Print "Done..." as an ending, unless flagged for leaving scene or otherwise flagged
+			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
+				_infoFlag++;
+				clearInfo();
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
+				_menuCounter = 25;
+			}
+		}
+	} else {
+		// Couldn't find target, so print error
+		_infoFlag = true;
+		clearInfo();
+
+		if (giveMode) {
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "No, thank you.");
+		} else if (messages == nullptr) {
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
+		} else {
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[0]);
+		}
+
+		_infoFlag = true;
+		_menuCounter = 30;
+	}
+
+	events.setCursor(ARROW);
 }
 
 /**

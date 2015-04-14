@@ -101,7 +101,6 @@ private:
 	Common::String _descStr;
 	int _windowStyle;
 	int _find;
-	Common::String _muse;
 	int _oldUse;
 private:
 	void depressButton(int num);
@@ -128,7 +127,7 @@ private:
 	void environment();
 	void doControls();
 
-	void checkUseAction(UseType &use, const Common::String &invName, const Common::String &msg,
+	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
 		int objNum, int giveMode);
 	void checkAction(ActionType &action, const char *const messages[], int objNum);
 public:
