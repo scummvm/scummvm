@@ -1171,6 +1171,9 @@ void Scene::doBgAnim() {
 			o.adjustObject();
 	}
 
+	if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
+		people._portrait.adjustObject();
+
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type != INVALID)
 			_canimShapes[idx].adjustObject();
