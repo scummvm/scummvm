@@ -96,6 +96,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #5665
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #5662
+	{ GID_HOYLE4,        800,   870,  0,     "EuchreStrategy", "thinkLead",      -1,    0, { WORKAROUND_FAKE,   0 } }, // while playing Euchre, happens at least on 2nd or 3rd turn - bug #6602
 	{ GID_HOYLE4,         -1,   937,  0,            "IconBar", "dispatchEvent",  -1,  408, { WORKAROUND_FAKE,   0 } }, // pressing ENTER on scoreboard while mouse is not on OK button, may not happen all the time - bug #6603
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",  -1,   58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
