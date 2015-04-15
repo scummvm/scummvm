@@ -795,7 +795,7 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 
 	// Handle potentially multiple lines needed to display entire statement
 	const char *lineStartP = msg.c_str();
-	int maxWidth = 298 - numberFlag ? 18 : 0;
+	int maxWidth = 298 - (numberFlag ? 18 : 0);
 	for (;;) {
 		// Get as much of the statement as possible will fit on the
 		Common::String sLine;
