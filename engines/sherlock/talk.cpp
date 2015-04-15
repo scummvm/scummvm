@@ -880,7 +880,7 @@ void Talk::clearSequences() {
 void Talk::pullSequence() {
 	Scene &scene = *_vm->_scene;
 
-	if (_scriptStack.empty())
+	if (_sequenceStack.empty())
 		return;
 
 	SequenceEntry seq = _sequenceStack.pop();

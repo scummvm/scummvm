@@ -597,7 +597,7 @@ int People::findSpeaker(int speaker) {
 
 			if (scumm_stricmp(PORTRAITS[speaker], name.c_str()) == 0
 				&& obj._name[4] >= '0' && obj._name[4] <= '9')
-				return idx - 1;
+				return idx;
 		}
 	}
 
