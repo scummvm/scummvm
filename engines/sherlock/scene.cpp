@@ -1229,9 +1229,9 @@ void Scene::doBgAnim() {
 		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[AL]._imageFrame->_frame.w;
 		int tempX = MIN(people[AL]._position.x / 100, xRight);
 
-		bool flipped = people[AL]._frameNumber == WALK_LEFT || people[AL]._frameNumber == STOP_LEFT ||
-			people[AL]._frameNumber == WALK_UPLEFT || people[AL]._frameNumber == STOP_UPLEFT ||
-			people[AL]._frameNumber == WALK_DOWNRIGHT || people[AL]._frameNumber == STOP_DOWNRIGHT;
+		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT ||
+			people[AL]._sequenceNumber == WALK_UPLEFT || people[AL]._sequenceNumber == STOP_UPLEFT ||
+			people[AL]._sequenceNumber == WALK_DOWNRIGHT || people[AL]._sequenceNumber == STOP_DOWNRIGHT;
 		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame,
 			Common::Point(tempX, people[AL]._position.y / 100 - people[AL]._imageFrame->_frame.h), flipped);
 	}
