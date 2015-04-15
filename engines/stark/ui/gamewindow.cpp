@@ -50,8 +50,11 @@ GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu)
 
 void GameWindow::onRender() {
 	Global *global = StarkServices::instance().global;
+
+	// List the items to render
 	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
 
+	// Render all the scene items
 	Gfx::RenderEntryArray::iterator element = _renderEntries.begin();
 	while (element != _renderEntries.end()) {
 		// Draw the current element

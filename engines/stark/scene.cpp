@@ -115,22 +115,4 @@ void Scene::makeRayFromMouse(const Common::Point &mouse, Math::Vector3d &origin,
 	direction.normalize();
 }
 
-void Scene::render() {
-	// setup cam
-	_gfx->setGameViewport();
-	_gfx->setupCamera(_projectionMatrix, _viewMatrix);
-
-	// Draw bg
-
-	// Draw other things
-
-	// Render all the scene elements
-
-	// setup lights
-
-	// draw actors
-
-	// draw overlay
-}
-
 } // End of namespace Stark

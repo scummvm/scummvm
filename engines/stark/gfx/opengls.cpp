@@ -69,14 +69,6 @@ void OpenGLSDriver::init() {
 	_boxShader->enableVertexAttribute("texcoord", _boxVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
-void OpenGLSDriver::setGameViewport() {
-	_viewport = gameViewport();
-	_unscaledViewport = Common::Rect(kGameViewportWidth, kGameViewportHeight);
-	_unscaledViewport.translate(0, kBottomBorderHeight);
-
-	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
-}
-
 void OpenGLSDriver::setScreenViewport(bool noScaling) {
 	if (noScaling) {
 		_viewport = Common::Rect(g_system->getWidth(), g_system->getHeight());
@@ -112,9 +104,6 @@ void OpenGLSDriver::setViewport(Common::Rect rect, bool noScaling) {
 
 Math::Vector2d OpenGLSDriver::scaled(float x, float y) const {
 	return Math::Vector2d(x / (float) _unscaledViewport.width(), y / (float) _unscaledViewport.height());
-}
-
-void OpenGLSDriver::setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) {
 }
 
 void OpenGLSDriver::clearScreen() {

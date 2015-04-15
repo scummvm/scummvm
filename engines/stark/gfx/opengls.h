@@ -47,11 +47,8 @@ public:
 
 	void init() override;
 
-	void setGameViewport() override;
 	void setScreenViewport(bool noScaling) override;
 	void setViewport(Common::Rect rect, bool noScaling) override;
-
-	void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) override;
 
 	void clearScreen();
 	void flipBuffer();

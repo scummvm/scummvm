@@ -44,7 +44,6 @@ public:
 
 	virtual void init() = 0;
 
-	virtual void setGameViewport() = 0; // deprecated
 	virtual void setScreenViewport(bool noScaling) = 0; // deprecated
 
 	virtual void setViewport(Common::Rect rect, bool noScaling) = 0;
@@ -53,8 +52,6 @@ public:
 	Common::Rect getScreenViewport() { return _screenViewport; }
 
 	Common::Rect gameViewport() const;
-
-	virtual void setupCamera(const Math::Matrix4 &projection, const Math::Matrix4 &view) = 0;
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;

@@ -47,11 +47,6 @@ public:
 	Scene(Gfx::Driver *gfx);
 	~Scene();
 
-	/**
-	 * Render the scene
-	 */
-	void render();
-
 	void initCamera(const Math::Vector3d &position, const Math::Vector3d &lookAt,
 			float fov, Common::Rect viewSize, float nearClipPlane, float farClipPlane);
 
