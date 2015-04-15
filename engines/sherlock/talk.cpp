@@ -160,7 +160,6 @@ void Talk::talkTo(const Common::String &filename) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	Scripts &scripts = *_vm->_scripts;
 	UserInterface &ui = *_vm->_ui;
 	Common::Rect savedBounds = screen.getDisplayBounds();
 	bool abortFlag = false;
@@ -459,9 +458,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 	// If a script was added to the script stack, restore state so that the
 	// previous script can continue
-	if (!_scriptStack.empty()) {
-		scripts.popStack();
-	}
+	popStack();
 
 	events.setCursor(ARROW);
 }
@@ -1738,5 +1735,14 @@ int Talk::waitForMore(int delay) {
 	return key2;
 }
 
+void Talk::popStack() {
+	if (!_scriptStack.empty()) {
+		ScriptStackEntry scriptEntry = _scriptStack.pop();
+		_scriptName = scriptEntry._name;
+		_scriptSaveIndex = scriptEntry._currentIndex;
+		_scriptSelect = scriptEntry._select;
+		_scriptMoreFlag = true;
+	}
+}
 
 } // End of namespace Sherlock

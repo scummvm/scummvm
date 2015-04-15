@@ -39,7 +39,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_res = nullptr;
 	_scene = nullptr;
 	_screen = nullptr;
-	_scripts = nullptr;
 	_sound = nullptr;
 	_talk = nullptr;
 	_ui = nullptr;
@@ -59,7 +58,6 @@ SherlockEngine::~SherlockEngine() {
 	delete _people;
 	delete _scene;
 	delete _screen;
-	delete _scripts;
 	delete _sound;
 	delete _talk;
 	delete _ui;
@@ -84,7 +82,6 @@ void SherlockEngine::initialize() {
 	_people = new People(this);
 	_scene = new Scene(this);
 	_screen = new Screen(this);
-	_scripts = new Scripts(this);
 	_sound = new Sound(this);
 	_talk = new Talk(this);
 	_ui = new UserInterface(this);

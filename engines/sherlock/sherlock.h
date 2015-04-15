@@ -40,7 +40,6 @@
 #include "sherlock/resources.h"
 #include "sherlock/scene.h"
 #include "sherlock/screen.h"
-#include "sherlock/scripts.h"
 #include "sherlock/sound.h"
 #include "sherlock/talk.h"
 #include "sherlock/user_interface.h"
@@ -90,7 +89,6 @@ public:
 	Resources *_res;
 	Scene *_scene;
 	Screen *_screen;
-	Scripts *_scripts;
 	Sound *_sound;
 	Talk *_talk;
 	UserInterface *_ui;

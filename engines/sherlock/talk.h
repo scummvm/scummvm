@@ -143,6 +143,8 @@ public:
 	void pushSequence(int speaker);
 	void setSequence(int speaker);
 	bool isSequencesEmpty() const { return _scriptStack.empty(); }
+
+	void popStack();
 };
 
 } // End of namespace Sherlock
