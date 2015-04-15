@@ -591,8 +591,8 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	}
 
 	const char *chP = strchr(filename.c_str(), '.');
-	Common::String talkFile = !chP ? filename + ".tlk" :
-		Common::String(filename.c_str(), chP) + ".tlk";
+	Common::String talkFile = chP ? Common::String(filename.c_str(), chP) + ".tlk" :
+		Common::String(filename.c_str(), filename.c_str() + 7) + ".tlk";
 
 	// Open the talk file for reading
 	Common::SeekableReadStream *talkStream = res.load(talkFile);
