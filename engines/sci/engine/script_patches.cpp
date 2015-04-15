@@ -2408,12 +2408,40 @@ static const uint16 qfg3PatchExportChar[] = {
 	PATCH_END
 };
 
+// The chief in his hut (room 640) is not drawn using the correct priority,
+//  which results in a graphical glitch. This is a game bug and also happens
+//  in Sierra's SCI. We adjust priority accordingly to fix it.
+//
+// Applies to at least: English, French, German, Italian, Spanish floppy
+// Responsible method: heap in script 640
+// Fixes bug #5173
+static const uint16 qfg3SignatureChiefPriority[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x0002),                 // yStep     0x0002
+	SIG_UINT16(0x0281),                 // view      0x0281
+	SIG_UINT16(0x0000),                 // loop      0x0000
+	SIG_UINT16(0x0000),                 // cel       0x0000
+	SIG_UINT16(0x0000),                 // priority  0x0000
+	SIG_UINT16(0x0000),                 // underbits 0x0000
+	SIG_UINT16(0x1000),                 // signal    0x1000
+	SIG_END
+};
+
+static const uint16 qfg3PatchChiefPriority[] = {
+	PATCH_ADDTOOFFSET(+8),
+	PATCH_UINT16(0x000A),               // new priority 0x000A (10d)
+	PATCH_ADDTOOFFSET(+2),
+	PATCH_UINT16(0x1010),               // signal       0x1010 (set fixed priority flag)
+	PATCH_END
+};
+
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog, qfg3PatchImportDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,    qfg3PatchWooDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt, qfg3PatchWooDialogAlt },
-	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,   qfg3PatchExportChar },
+	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog,  qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,     qfg3PatchWooDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt,  qfg3PatchWooDialogAlt },
+	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,    qfg3PatchExportChar },
+	{  true,   640, "chief in hut priority fix",                   1, qfg3SignatureChiefPriority, qfg3PatchChiefPriority },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

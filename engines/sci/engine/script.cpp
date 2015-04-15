@@ -136,9 +136,6 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	assert(_bufSize >= script->size);
 	memcpy(_buf, script->data, script->size);
 
-	// Check scripts for matching signatures and patch those, if found
-	scriptPatcher->processScript(_nr, _buf, script->size);
-
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
 		assert(heap != 0);
@@ -148,6 +145,9 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		assert(_bufSize - _scriptSize >= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
+
+	// Check scripts (+ possibly SCI 1.1 heap) for matching signatures and patch those, if found
+	scriptPatcher->processScript(_nr, _buf, _bufSize);
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
