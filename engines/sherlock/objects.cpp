@@ -801,6 +801,7 @@ void Object::setObjSequence(int seq, bool wait) {
 * @returns		0 if no codes are found, 1 if codes were found
 */
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
+	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -847,9 +848,9 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 			if (ch >= '0' && ch <= '9') {
 				scene._goToScene = atoi(name.c_str() + 1);
 
-				if (scene._goToScene < 97 && _vm->_map[scene._goToScene].x) {
-					_vm->_over.x = _vm->_map[scene._goToScene].x * 100 - 600;
-					_vm->_over.y = _vm->_map[scene._goToScene].y * 100 + 900;
+				if (scene._goToScene < 97 && map[scene._goToScene].x) {
+					_vm->_over.x = map[scene._goToScene].x * 100 - 600;
+					_vm->_over.y = map[scene._goToScene].y * 100 + 900;
 				}
 
 				if ((p = strchr(name.c_str(), ',')) != nullptr) {

@@ -20,18 +20,33 @@
  *
  */
 
-#include "sherlock/scalpel/chess.h"
-#include "sherlock/scalpel/scalpel.h"
+#ifndef SHERLOCK_MAP_H
+#define SHERLOCK_MAP_H
+
+#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/rect.h"
+#include "common/str.h"
 
 namespace Sherlock {
 
-namespace Scalpel {
+class SherlockEngine;
 
-int Chess::doChessBoard() {
-	// TODO
-	return 0;
-}
+class Map {
+private:
+	SherlockEngine *_vm;
+	Common::Array<Common::Point> _points;	// Map locations for each scene
+public:
+public:
+	Map(SherlockEngine *vm);
 
-} // End of namespace Scalpel
+	const Common::Point &operator[](int idx) { return _points[idx]; }
 
-} // End of namespace Scalpel
+	void loadPoints(int count, const int *xList, const int *yList);
+
+	int show();
+};
+
+} // End of namespace Sherlock
+
+#endif

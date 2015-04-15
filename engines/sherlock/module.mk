@@ -1,7 +1,6 @@
 MODULE := engines/sherlock
 
 MODULE_OBJS = \
-	scalpel/chess.o \
 	scalpel/darts.o \
 	scalpel/scalpel.o \
 	tattoo/tattoo.o \
@@ -13,6 +12,7 @@ MODULE_OBJS = \
 	graphics.o \
 	inventory.o \
 	journal.o \
+	map.o \
 	objects.o \
 	people.o \
 	resources.o \

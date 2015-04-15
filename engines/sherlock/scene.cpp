@@ -193,6 +193,7 @@ void Scene::freeScene() {
  */
 bool Scene::loadScene(const Common::String &filename) {
 	Events &events = *_vm->_events;
+	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -437,8 +438,8 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	// Reset the position on the overland map
 	_vm->_oldCharPoint = _currentScene;
-	_vm->_over.x = _vm->_map[_currentScene].x * 100 - 600;
-	_vm->_over.y = _vm->_map[_currentScene].y * 100 + 900;
+	_vm->_over.x = map[_currentScene].x * 100 - 600;
+	_vm->_over.y = map[_currentScene].y * 100 + 900;
 
 	events.clearEvents();
 	return flag;
@@ -843,6 +844,7 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
  */
 int Scene::startCAnim(int cAnimNum, int playRate) {
 	Events &events = *_vm->_events;
+	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
 	Talk &talk = *_vm->_talk;
@@ -1027,8 +1029,8 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	if (gotoCode > 0 && !talk._talkToAbort) {
 		_goToScene = gotoCode;
 
-		if (_goToScene < 97 && _vm->_map[_goToScene].x) {
-			_overPos = _vm->_map[_goToScene];
+		if (_goToScene < 97 && map[_goToScene].x) {
+			_overPos = map[_goToScene];
 		}
 	}
 

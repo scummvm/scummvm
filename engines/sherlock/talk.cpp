@@ -574,7 +574,6 @@ void Talk::freeTalkVars() {
  * conversation. If found, the data for that conversation is loaded
  */
 void Talk::loadTalkFile(const Common::String &filename) {
-	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
 	Sound &sound = *_vm->_sound;
 
@@ -1000,6 +999,7 @@ void Talk::doScript(const Common::String &script) {
 	Animation &anim = *_vm->_animation;
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
+	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -1351,8 +1351,8 @@ void Talk::doScript(const Common::String &script) {
 				if (scene._goToScene != 100) {
 					// Not going to the map overview
 					scene._oldCharPoint = scene._goToScene;
-					scene._overPos.x = _vm->_map[scene._goToScene].x * 100 - 600;
-					scene._overPos.y = _vm->_map[scene._goToScene].y * 100 + 900;
+					scene._overPos.x = map[scene._goToScene].x * 100 - 600;
+					scene._overPos.y = map[scene._goToScene].y * 100 + 900;
 
 					// Run a canimation?
 					if (str[2] > 100) {

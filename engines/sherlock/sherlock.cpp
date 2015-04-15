@@ -35,6 +35,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_events = nullptr;
 	_inventory = nullptr;
 	_journal = nullptr;
+	_map = nullptr;
 	_people = nullptr;
 	_res = nullptr;
 	_scene = nullptr;
@@ -55,6 +56,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _debugger;
 	delete _events;
 	delete _journal;
+	delete _map;
 	delete _people;
 	delete _scene;
 	delete _screen;
@@ -78,6 +80,7 @@ void SherlockEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new Events(this);
 	_inventory = new Inventory(this);
+	_map = new Map(this);
 	_journal = new Journal(this);
 	_people = new People(this);
 	_scene = new Scene(this);

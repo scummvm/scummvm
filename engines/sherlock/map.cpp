@@ -20,26 +20,27 @@
  *
  */
 
-#ifndef SHERLOCK_CHESS_H
-#define SHERLOCK_CHESS_H
+#include "sherlock/map.h"
 
 namespace Sherlock {
 
-namespace Scalpel {
+Map::Map(SherlockEngine *vm): _vm(vm) {
+}
 
-class ScalpelEngine;
+/**
+ * Loads the list of points for locations on the map for each scene
+ */
+void Map::loadPoints(int count, const int *xList, const int *yList) {
+	for (int idx = 0; idx < count; ++idx, ++xList, ++yList) {
+		_points.push_back(Common::Point(*xList, *yList));
+	}
+}
 
-class Chess {
-private:
-	ScalpelEngine *_vm;
-public:
-	Chess(ScalpelEngine *vm) : _vm(vm) {}
-
-	int doChessBoard();
-};
-
-} // End of namespace Scalpel
+/**
+ * Show the map
+ */
+int Map::show() {
+	return 0;
+}
 
 } // End of namespace Sherlock
-
-#endif

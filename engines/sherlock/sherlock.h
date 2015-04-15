@@ -36,6 +36,7 @@
 #include "sherlock/events.h"
 #include "sherlock/inventory.h"
 #include "sherlock/journal.h"
+#include "sherlock/map.h"
 #include "sherlock/people.h"
 #include "sherlock/resources.h"
 #include "sherlock/scene.h"
@@ -85,6 +86,7 @@ public:
 	Events *_events;
 	Inventory *_inventory;
 	Journal *_journal;
+	Map *_map;
 	People *_people;
 	Resources *_res;
 	Scene *_scene;
@@ -101,7 +103,6 @@ public:
 	bool _loadingSavedGame;
 	int _oldCharPoint;					// Old scene
 	Common::Point _over;				// Old map position
-	Common::Array<Common::Point> _map;	// Map locations for each scene
 	bool _onChessboard;
 	bool _slowChess;
 	bool _joystick;

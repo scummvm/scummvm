@@ -183,13 +183,11 @@ byte TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 
 ScalpelEngine::ScalpelEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {
-	_chess = nullptr;
 	_darts = nullptr;
-	_chessResult = 0;
+	_mapResult = 0;
 }
 
 ScalpelEngine::~ScalpelEngine() {
-	delete _chess;
 	delete _darts;
 }
 
@@ -199,7 +197,6 @@ ScalpelEngine::~ScalpelEngine() {
 void ScalpelEngine::initialize() {
 	SherlockEngine::initialize();
 
-	_chess = new Chess(this);
 	_darts = new Darts(this);
 
 	_flags.resize(100 * 8);
@@ -207,8 +204,7 @@ void ScalpelEngine::initialize() {
 	_flags[39] = true;		// Turn on Baker Street
 
 	// Load the map co-ordinates for each scene
-	for (int idx = 0; idx < NUM_PLACES; ++idx)
-		_map.push_back(Common::Point(MAP_X[idx], MAP_Y[idx]));
+	_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0]);
 
 	// Load the inventory
 	loadInventory();
@@ -393,7 +389,7 @@ void ScalpelEngine::startScene() {
 			}
 		}
 
-		_scene->_goToScene = _chess->doChessBoard();
+		_scene->_goToScene = _map->show();
 
 		_sound->freeSong();
 		_scene->_hsavedPos = Common::Point(-1, -1);
@@ -533,10 +529,10 @@ void ScalpelEngine::startScene() {
 	if (_scene->_goToScene == 99) {
 		// Chess Board
 		_darts->playDarts();
-		_chessResult = _scene->_goToScene = 19;	// Go back to the bar
+		_mapResult = _scene->_goToScene = 19;	// Go back to the bar
 	}
 
-	_chessResult = _scene->_goToScene;
+	_mapResult = _scene->_goToScene;
 }
 
 /**

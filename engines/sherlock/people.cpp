@@ -415,6 +415,7 @@ void People::setWalking() {
  * is being displayed, then the chraracter will always face down.
  */
 void People::gotoStand(Sprite &sprite) {
+	Map &map = *_vm->_map;
 	Scene &scene = *_vm->_scene;
 	_walkTo.clear();
 	sprite._walkCount = 0;
@@ -448,8 +449,8 @@ void People::gotoStand(Sprite &sprite) {
 
 	if (_vm->_onChessboard) {
 		sprite._sequenceNumber = 0;
-		_data[AL]._position.x = (_vm->_map[scene._charPoint].x -  6) * 100;
-		_data[AL]._position.y = (_vm->_map[scene._charPoint].x + 10) * 100;
+		_data[AL]._position.x = (map[scene._charPoint].x -  6) * 100;
+		_data[AL]._position.y = (map[scene._charPoint].x + 10) * 100;
 	}
 
 	_oldWalkSequence = -1;
