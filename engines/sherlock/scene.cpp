@@ -663,13 +663,13 @@ void Scene::transitionToScene() {
 
 	if (cAnimNum != -1) {
 		CAnim &c = _cAnim[cAnimNum];
-		Common::Point pt = c._position;
+		Common::Point pt = c._goto;
 
-		c._position = Common::Point(-1, -1);
+		c._goto = Common::Point(-1, -1);
 		people[AL]._position = Common::Point(0, 0);
 
 		startCAnim(cAnimNum, 1);
-		c._position = pt;
+		c._goto = pt;
 	}
 }
 
@@ -875,7 +875,9 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 		tpDir = cAnim._teleportDir;
 	}
 
+	CursorId oldCursor = events.getCursor();
 	events.setCursor(WAIT);
+
 	_canimShapes.push_back(Object());
 	Object &cObj = _canimShapes[_canimShapes.size() - 1];
 
@@ -1039,6 +1041,8 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 		people.gotoStand(people[AL]);
 	}
+
+	events.setCursor(oldCursor);
 
 	return 1;
 }

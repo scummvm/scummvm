@@ -693,24 +693,24 @@ bool Object::checkEndOfSequence() {
 				setObjSequence(seq, false);
 			}
 		}
-	}
 
-	if (_allow && _frameNumber == 0) {
-		// canimation just ended
-		if (_type != NO_SHAPE && _type != REMOVE) {
-			_type = REMOVE;
+		if (_allow && _frameNumber == 0) {
+			// canimation just ended
+			if (_type != NO_SHAPE && _type != REMOVE) {
+				_type = REMOVE;
 
-			if (!_countCAnimFrames) {
-				// Save details before shape is removed
-				_delta.x = _imageFrame->_frame.w;
-				_delta.y = _imageFrame->_frame.h;
-				_position = _imageFrame->_offset;
+				if (!_countCAnimFrames) {
+					// Save details before shape is removed
+					_delta.x = _imageFrame->_frame.w;
+					_delta.y = _imageFrame->_frame.h;
+					_position = _imageFrame->_offset;
 
-				// Free the images
-				delete _images;
+					// Free the images
+					delete _images;
+				}
+			} else {
+				_type = INVALID;
 			}
-		} else {
-			_type = INVALID;
 		}
 	}
 
