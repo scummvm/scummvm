@@ -67,9 +67,15 @@ void Events::setCursor(CursorId cursorId) {
 
 	// Set the cursor data
 	Graphics::Surface &s = (*_cursorImages)[cursorId];
-	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, 0, 0, 0xff);
 
-	showCursor();
+	setCursor(s);
+}
+
+/**
+ * Set the cursor to show from a passed frame
+ */
+void Events::setCursor(const Graphics::Surface &src) {
+	CursorMan.replaceCursor(src.getPixels(), src.w, src.h, 0, 0, 0xff);
 }
 
 /**

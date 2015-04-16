@@ -63,6 +63,7 @@ public:
 	void loadCursors(const Common::String &filename);
 
 	void setCursor(CursorId cursorId);
+	void setCursor(const Graphics::Surface &src);
 
 	void showCursor();
 

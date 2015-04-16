@@ -27,6 +27,9 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "common/str-array.h"
+#include "sherlock/graphics.h"
+#include "sherlock/objects.h"
 
 namespace Sherlock {
 
@@ -36,7 +39,34 @@ class Map {
 private:
 	SherlockEngine *_vm;
 	Common::Array<Common::Point> _points;	// Map locations for each scene
-public:
+	Common::StringArray _locationNames;
+	Common::Array< Common::Array<int> > _paths;
+	Common::Array<int> _pathPoints;
+	Common::Point _savedPos;
+	Common::Point _savedSize;
+	Surface _topLine;
+	ImageFile *_shapes;
+	ImageFile *_iconShapes;
+	byte _sequences[3][MAX_FRAME];
+	Common::Point _bigPos;
+	Common::Point _overPos;
+	Common::Point _lDrawnPos;
+	int _point;
+	bool _placesShown;
+	int _charPoint;
+private:
+	void loadData();
+
+	void setupSprites();
+	void freeSprites();
+
+	void showPlaces();
+
+	void saveTopLine();
+
+	void updateMap(bool flushScreen);
+
+	void walkTheStreets();
 public:
 	Map(SherlockEngine *vm);
 
