@@ -682,6 +682,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
+	83e7a9205567dceb456ee35eeaf26ffa	-1	it	All	-	-	-	Saleck
 	aefa244ea034b7cd2041f0a44be7d9ba	-1	en	Mac	-	-	-	pix_climber
 	06c3cf4f31daad8b1cd93153491db9e6	79382	nl	All	-	-	-	daniel9
 	7410a8ba9795020cd42f171c4320659e	-1	fr	Windows	-	-	-	gist974
@@ -724,6 +725,7 @@ socks	Pajama Sam's Sock Works
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
+	05d3143827ab4f5d2521a1a47dab8ff2	-1	it	All	HE 98	-	-	Saleck
 	1ed22f601f8b3695804a6583cc3083f1	-1	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	-1	fr	Windows	HE 98.5	-	-	gist974
 	b47be81e39a9710f6f595f7b527b60f8	-1	gb	Windows	HE 99	-	-	Reckless
@@ -887,6 +889,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
 	90e2f0af4f779629695c6394a65bb702	-1	fr	All	-	-	-	gist974, ThierryFR
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
+	3785fd25f7e02b5782bfc5072d8f77c8	-1	it	All	-	-	-	Saleck
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
 	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
 	71fe97c3108678cf604f14abe342341b	51286	nl	All	-	-	-	adutchguy
