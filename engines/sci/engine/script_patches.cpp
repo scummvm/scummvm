@@ -2245,9 +2245,57 @@ static const uint16 qfg2PatchImportDialog[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                  patch
+// Quest For Glory 2 character import doesn't properly set the character type
+//  in versions 1.102 and below, which makes all importerted characters a fighter.
+//
+// Sierra released an official patch. However the fix is really easy to
+//  implement on our side, so we also patch the flaw in here in case we find it.
+//
+// The version released on GOG is 1.102 without this patch applied, so us
+//  patching it is quite useful.
+//
+// Applies to at least: English Floppy
+// Responsible method: importHero::changeState
+// Fixes bug: inside versions 1.102 and below
+static const uint16 qfg2SignatureImportCharType[] = {
+	0x35, 0x04,                         // ldi 04
+	0x90, SIG_UINT16(0x023b),           // lagi global[23Bh]
+	0x02,                               // add
+	0x36,                               // push
+	0x35, 0x04,                         // ldi 04
+	0x08,                               // div
+	0x36,                               // push
+	0x35, 0x0d,                         // ldi 0D
+	0xb0, SIG_UINT16(0x023b),           // sagi global[023Bh]
+	0x8b, 0x1f,                         // lsl local[1Fh]
+	0x35, 0x05,                         // ldi 05
+	SIG_MAGICDWORD,
+	0xb0, SIG_UINT16(0x0150),           // sagi global[0150h]
+	0x8b, 0x02,                         // lsl local[02h]
+	SIG_END
+};
+
+static const uint16 qfg2PatchImportCharType[] = {
+	0x80, PATCH_UINT16(0x023f),         // lag global[23Fh] <-- patched to save 2 bytes
+	0x02,                               // add
+	0x36,                               // push
+	0x35, 0x04,                         // ldi 04
+	0x08,                               // div
+	0x36,                               // push
+	0xa8, SIG_UINT16(0x0248),           // ssg global[0248h] <-- patched to save 2 bytes
+	0x8b, 0x1f,                         // lsl local[1Fh]
+	0xa8, SIG_UINT16(0x0155),           // ssg global[0155h] <-- patched to save 2 bytes
+	// new code, directly from the official sierra patch file
+	0x83, 0x01,                         // lal local[01h]
+	0xa1, 0xbb,                         // sag global[BBh]
+	0xa1, 0x73,                         // sag global[73h]
+	PATCH_END
+};
+
+//          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog, qfg2PatchImportDialog },
+	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
+	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
