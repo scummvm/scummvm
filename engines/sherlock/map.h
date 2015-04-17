@@ -45,6 +45,7 @@ private:
 	Common::Point _savedPos;
 	Common::Point _savedSize;
 	Surface _topLine;
+	ImageFile *_mapCursors;
 	ImageFile *_shapes;
 	ImageFile *_iconShapes;
 	byte _sequences[3][MAX_FRAME];
@@ -54,6 +55,9 @@ private:
 	int _point;
 	bool _placesShown;
 	int _charPoint;
+	int _cursorIndex;
+	bool _drawMap;
+	Surface _iconSave;
 private:
 	void loadData();
 
@@ -67,6 +71,9 @@ private:
 	void updateMap(bool flushScreen);
 
 	void walkTheStreets();
+
+	void saveIcon(ImageFrame *src, const Common::Point &pt);
+	void restoreIcon();
 public:
 	Map(SherlockEngine *vm);
 

@@ -28,7 +28,7 @@
 namespace Sherlock {
 
 Surface::Surface(uint16 width, uint16 height): _freePixels(true) {
-	create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	create(width, height);
 }
 
 Surface::Surface(Surface &src, const Common::Rect &r) : _freePixels(false) {
@@ -39,11 +39,22 @@ Surface::Surface(Surface &src, const Common::Rect &r) : _freePixels(false) {
 	format = Graphics::PixelFormat::createFormatCLUT8();
 }
 
+Surface::Surface() : _freePixels(false) {
+}
 
 Surface::~Surface() {
 	if (_freePixels)
 		free();
 }
+
+void Surface::create(uint16 width, uint16 height) {
+	if (_freePixels)
+		free();
+
+	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_freePixels = true;
+}
+
 
 /**
  * Copy a surface into this one

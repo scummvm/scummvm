@@ -26,11 +26,14 @@
 namespace Sherlock {
 
 Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
+	_mapCursors = nullptr;
 	_shapes = nullptr;
 	_iconShapes = nullptr;
 	_point = 0;
 	_placesShown = false;
 	_charPoint = -1;
+	_cursorIndex = -1;
+	_drawMap = false;
 	for (int idx = 0; idx < 3; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
 
@@ -89,18 +92,13 @@ void Map::loadData() {
 int Map::show() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Common::Point lDrawn(-1, -1);
 	bool changed = false, exitFlag = false;
-	bool drawMap = true;
 
 	// Set font and custom cursor for the map
 	int oldFont = screen.fontNumber();
 	screen.setFont(0);
-
-	ImageFile mapCursors("omouse.vgs");
-	events.setCursor(mapCursors[0]);
 
 	// Load the entire map
 	ImageFile bigMap("bigmap.vgs");
@@ -113,6 +111,7 @@ int Map::show() {
 	screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
 	screen._backBuffer1.blitFrom(bigMap[4], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
 
+	_drawMap = true;
 	_point = -1;
 	people[AL]._position = _lDrawnPos = _overPos;
 
@@ -139,7 +138,7 @@ int Map::show() {
 		}
 
 		// Ignore scrolling attempts until the screen is drawn
-		if (!drawMap) {
+		if (!_drawMap) {
 			Common::Point pt = events.mousePos();
 			
 			// Check for vertical map scrolling
@@ -178,7 +177,7 @@ int Map::show() {
 			saveTopLine();
 			_savedPos.x = -1;
 			updateMap(true);
-		} else if (!drawMap) {
+		} else if (!_drawMap) {
 			if (!_placesShown) {
 				showPlaces();
 				_placesShown = true;
@@ -192,7 +191,8 @@ int Map::show() {
 				_charPoint = _point;
 				walkTheStreets();
 
-				events.setCursor(mapCursors[1]);
+				_cursorIndex = 1;
+				events.setCursor((*_mapCursors)[_cursorIndex]);
 			}
 		}
 
@@ -202,8 +202,8 @@ int Map::show() {
 				exitFlag = true;
 		}
 
-		if (drawMap) {
-			drawMap = false;
+		if (_drawMap) {
+			_drawMap = false;
 
 			if (screen._fadeStyle)
 				screen.randomTransition();
@@ -229,10 +229,15 @@ int Map::show() {
  * Load and initialize all the sprites that are needed for the map display
  */
 void Map::setupSprites() {
+	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	typedef byte Sequences[16][MAX_FRAME];
 	_savedPos.x = -1;
+
+	_mapCursors = new ImageFile("omouse.vgs");
+	_cursorIndex = 0;
+	events.setCursor((*_mapCursors)[_cursorIndex]);
 
 	_shapes = new ImageFile("mapicon.vgs");
 	_iconShapes = new ImageFile("overicon.vgs");
@@ -264,6 +269,7 @@ void Map::setupSprites() {
  * Free the sprites and data used by the map
  */
 void Map::freeSprites() {
+	delete _mapCursors;
 	delete _shapes;
 	delete _iconShapes;
 }
@@ -300,7 +306,49 @@ void Map::saveTopLine() {
  * Update all on-screen sprites to account for any scrolling of the map
  */
 void Map::updateMap(bool flushScreen) {
-	// TODO
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	Common::Point osPos = _savedPos;
+	Common::Point osSize = _savedSize;
+	Common::Point hPos;
+
+	if (_cursorIndex >= 1) {
+		if (++_cursorIndex > (1 + 8))
+			_cursorIndex = 1;
+
+		events.setCursor((*_mapCursors)[_cursorIndex]);
+	}
+
+	if (!_drawMap && !flushScreen)
+		restoreIcon();
+	else
+		_savedPos.x = -1;
+
+	people[AL].adjustSprite();
+
+	_lDrawnPos.x = hPos.x = people[AL]._position.x / 100 - _bigPos.x;
+	_lDrawnPos.y = hPos.y = people[AL]._position.y / 100 - people[AL].frameHeight() - _bigPos.y;
+
+	// Draw the person icon
+	saveIcon(people[AL]._imageFrame, hPos);
+	if (people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
+			|| people[AL]._sequenceNumber == MAP_UPLEFT)
+		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, hPos, true);
+	else
+		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, hPos, false);
+
+	if (flushScreen) {
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	} else if (!_drawMap) {
+		if (hPos.x > 0 && hPos.y >= 0 && hPos.x < SHERLOCK_SCREEN_WIDTH && hPos.y < SHERLOCK_SCREEN_HEIGHT)
+			screen.flushImage(people[AL]._imageFrame, Common::Point(people[AL]._position.x / 100 - _bigPos.x,
+			people[AL]._position.y / 100 - people[AL].frameHeight() - _bigPos.y),
+			&people[AL]._oldPosition.x, &people[AL]._oldPosition.y, &people[AL]._oldSize.x, &people[AL]._oldSize.y);
+
+		if (osPos.x != -1)
+			screen.slamArea(osPos.x, osPos.y, osSize.x, osSize.y);
+	}
 }
 
 /**
@@ -308,6 +356,52 @@ void Map::updateMap(bool flushScreen) {
  */
 void Map::walkTheStreets() {
 	// TODO
+}
+
+/**
+ * Save the area under the player's icon
+ */
+void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
+	Screen &screen = *_vm->_screen;
+	Common::Point size(src->_width, src->_height);
+	Common::Point pos = pt;
+
+	if (pos.x < 0) {
+		size.x += pos.x;
+		pos.x = 0;
+	}
+	
+	if (pos.y < 0) {
+		size.y += pos.y;
+		pos.y = 0;
+	}
+
+	if ((pos.x + size.x) > SHERLOCK_SCREEN_WIDTH)
+		size.x -= (pos.x + size.x) - SHERLOCK_SCREEN_WIDTH;
+
+	if ((pos.y + size.y) > SHERLOCK_SCREEN_HEIGHT)
+		size.y -= (pos.y + size.y) - SHERLOCK_SCREEN_HEIGHT;
+
+	if (size.x < 1 || size.y < 1 || pos.x >= SHERLOCK_SCREEN_WIDTH || pos.y >= SHERLOCK_SCREEN_HEIGHT || _drawMap) {
+		// Flag as the area not needing to be saved
+		_savedPos.x = -1;
+		return;
+	}
+
+	_iconSave.create(size.x, size.y);
+	_iconSave.blitFrom(screen._backBuffer1, Common::Point(0, 0),
+		Common::Rect(pos.x, pos.y, pos.x + size.x, pos.y + size.y));
+}
+
+/**
+ * Restore the area under the player's icon
+ */
+void Map::restoreIcon() {
+	Screen &screen = *_vm->_screen;
+
+	if (_savedPos.x >= 0 && _savedPos.y >= 0 && _savedPos.x <= SHERLOCK_SCREEN_WIDTH
+			&& _savedPos.y < SHERLOCK_SCREEN_HEIGHT)
+		screen._backBuffer1.blitFrom(_iconSave, _savedPos);
 }
 
 } // End of namespace Sherlock
