@@ -162,6 +162,10 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG2,           -1,   700,  0,                 NULL, "showSign",       -1,   10, { WORKAROUND_FAKE,   0 } }, // Occurs sometimes when reading a sign in Raseir, Shapeir et al - bugs #5627, #5635
 	{ GID_QFG3,          510,   510,  0,         "awardPrize", "changeState",    -1,    0, { WORKAROUND_FAKE,   1 } }, // Simbani warrior challenge, after throwing the spears and retrieving the ring - bug #5277. Must be non-zero, otherwise the prize is awarded twice - bug #6160
 	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x1008,    0, { WORKAROUND_FAKE,   0 } }, // when importing a character and selecting the previous profession - bug #5163
+	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x11e4,    0, { WORKAROUND_FAKE,   0 } }, // when importing ... in the French version
+	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x10f2,    0, { WORKAROUND_FAKE,   0 } }, // when importing ... in the German version
+	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x11e3,    0, { WORKAROUND_FAKE,   0 } }, // when importing ... in the Italian version
+	{ GID_QFG3,          140,   140,  0,              "rm140", "init",       0x123d,    0, { WORKAROUND_FAKE,   0 } }, // when importing ... in the Spanish version
 	{ GID_QFG3,          330,   330, -1,             "Teller", "doChild",        -1,   -1, { WORKAROUND_FAKE,   0 } }, // when talking to King Rajah about "Rajah" (bug #5033, temp 1) or "Tarna" (temp 0), or when clicking on yourself and saying "Greet" (bug #5148, temp 1)
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #5169
 	{ GID_QFG3,          470,   470, -1,              "rm470", "notify",         -1,    0, { WORKAROUND_FAKE,   0 } }, // closing the character screen in the Simbani village in the room with the bridge, bug #5165
