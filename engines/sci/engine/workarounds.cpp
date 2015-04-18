@@ -192,8 +192,11 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ4,            -1,   398,  0,            "showBox", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // CD: called when rummaging in Software Excess bargain bin
 	{ GID_SQ4,            -1,   928, -1,           "Narrator", "startText",      -1, 1000, { WORKAROUND_FAKE,   1 } }, // CD: happens in the options dialog and in-game when speech and subtitles are used simultaneously
 	{ GID_SQ4,            -1,   708, -1,            "exitBut", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "close" button in the sq4 hintbook - bug #6447
+	{ GID_SQ4,            -1,   708, -1,                   "", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "close" button... in Russian version - bug #5573
 	{ GID_SQ4,            -1,   708, -1,            "prevBut", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "previous" button in the sq4 hintbook - bug #6447
+	{ GID_SQ4,            -1,   708, -1, "\xA8\xE6\xE3 \xAD\xA0\xA7\xA0\xA4.", "doVerb", -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "previous" button... in Russian version - bug #5573
 	{ GID_SQ4,            -1,   708, -1,            "nextBut", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "next" button in the sq4 hintbook - bug #6447
+	{ GID_SQ4,            -1,   708, -1,                  ".", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "next" button... in Russian version - bug #5573
 	{ GID_SQ5,           201,   201,  0,        "buttonPanel", "doVerb",         -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking at the orange or red button - bug #5112
 	{ GID_SQ6,            -1,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // Demo and full version: called when the game starts (demo: room 0, full: room 100)
 	{ GID_SQ6,            -1, 64950, -1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu, when entering the Orion's Belt bar (room 300), and perhaps other places
@@ -277,6 +280,7 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_QFG1,           -1,    64,  0,               "rm64", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
 	{ GID_SQ4,           150,   151,  0,        "fightScript", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // during fight with Vohaul, parameter 0 is an object
 	{ GID_SQ4,           150,   152,  0,       "driveCloseUp", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object
+	{ GID_SQ4,           150,   152,  0,                   "", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download"... in Russian version - bug #5573
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -301,7 +305,7 @@ const SciWorkaroundEntry kGetAngle_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kFindKey_workarounds[] = {
 	{ GID_ECOQUEST2,     100,   999,  0,            "myList", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When Noah Greene gives Adam the Ecorder, and just before the game gives a demonstration, a null reference to a list is passed - bug #4987
-	{    GID_HOYLE4,     300,   999,  0,             "Piles", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When passing the three cards in Hearts, a null reference to a list is passed - bug #5664
+	{ GID_HOYLE4,        300,   999,  0,             "Piles", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When passing the three cards in Hearts, a null reference to a list is passed - bug #5664
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -346,12 +350,17 @@ const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_SQ4,           405,   405,  0,       "swimAfterEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           405,   405,  0,                   "", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
 	{ GID_SQ4,           406,   406,  0,        "egoFollowed", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // FLOPPY: when getting shot by the police - accidental additional parameter specified
 	{ GID_SQ4,           406,   406,  0,       "swimAndShoot", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           406,   406,  0,                   "", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573 (is for both egoFollowed and swimAndShoot)
 	{ GID_SQ4,           410,   410,  0,       "swimAfterEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           410,   410,  0,                   "", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
 	{ GID_SQ4,           411,   411,  0,       "swimAndShoot", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           411,   411,  0,                   "", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
 	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState",  0xb2,    0, { WORKAROUND_STILLCALL, 0 } }, // when visiting the pedestral where Roger Jr. is trapped, before trashing the brain icon in the programming chapter, accidental additional parameter specified - bug #5479
 	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState",  0x16,    0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the German version - bug #5527
+	{ GID_SQ4,           150,   150,  0,                   "", "changeState",  0x16,    0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version - bug #5573
 	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
 	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #5031
 	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
@@ -507,12 +516,6 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 			while (workaround->methodName) {
 				bool objectNameMatches = (workaround->objectName == NULL) ||
 										 (workaround->objectName == g_sci->getSciLanguageString(searchObjectName, K_LANG_ENGLISH));
-
-				// Special case: in the fanmade Russian translation of SQ4, all
-				// of the object names have been deleted or renamed to Russian,
-				// thus we disable checking of the object name. Fixes bug #5573.
-				if (g_sci->getLanguage() == Common::RU_RUS && g_sci->getGameId() == GID_SQ4)
-					objectNameMatches = true;
 
 				if (workaround->gameId == gameId
 						&& ((workaround->scriptNr == -1) || (workaround->scriptNr == curScriptNr))
