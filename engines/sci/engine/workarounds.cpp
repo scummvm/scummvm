@@ -59,6 +59,19 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Quest for Glory 2
+//      Calling method: abdulS::changeState, jabbarS::changeState
+//   Subroutine offset: English 0x2d22 (script 260)
+// Applies to at least: English PC floppy
+static const uint16 sig_uninitread_qfg2_1[] = {
+	0x3f, 0x03,                      // link 03
+	0x39, 0x3b,                      // pushi 3Bh
+	0x76,                            // push0
+	0x81, 0x00,                      // lag global[0]
+	0x4a, 0x04,                      // send 04
+	SIG_END
+};
+
 //                Game: Quest for Glory 3
 //      Calling method: rm140::init
 //   Subroutine offset: English 0x1008 (script 140)
@@ -176,8 +189,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,              NULL,     1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
 	{ GID_QFG2,           -1,   701, -1,              "Alley", "at",             -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // when walking inside the alleys in the town - bug #5019 & #5106
 	{ GID_QFG2,           -1,   990,  0,            "Restore", "doit",           -1,              NULL,   364, { WORKAROUND_FAKE,   0 } }, // when pressing enter in restore dialog w/o any saved games present
-	{ GID_QFG2,          260,   260,  0,             "abdulS", "changeState",0x2d22,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Abdul is about to enter the house (where you have to hide in the wardrobe), bug #5153, temps 1 and 2
-	{ GID_QFG2,          260,   260,  0,            "jabbarS", "changeState",0x2d22,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Jabbar is about to enter the house (where you have to hide in the wardrobe), bug #5164, temps 1 and 2
+	{ GID_QFG2,          260,   260,  0,             "abdulS", "changeState",-1, sig_uninitread_qfg2_1,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Abdul is about to enter the house (where you have to hide in the wardrobe), bug #5153, temps 1 and 2
+	{ GID_QFG2,          260,   260,  0,            "jabbarS", "changeState",-1, sig_uninitread_qfg2_1,    -1, { WORKAROUND_FAKE,   0 } }, // During the thief's first mission (in the house), just before Jabbar is about to enter the house (where you have to hide in the wardrobe), bug #5164, temps 1 and 2
 	{ GID_QFG2,          500,   500,  0,   "lightNextCandleS", "changeState",    -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // Inside the last room, while Ad Avis performs the ritual to summon the genie - bug #5566
 	{ GID_QFG2,           -1,   700,  0,                 NULL, "showSign",       -1,              NULL,    10, { WORKAROUND_FAKE,   0 } }, // Occurs sometimes when reading a sign in Raseir, Shapeir et al - bugs #5627, #5635
 	{ GID_QFG3,          510,   510,  0,         "awardPrize", "changeState",    -1,              NULL,     0, { WORKAROUND_FAKE,   1 } }, // Simbani warrior challenge, after throwing the spears and retrieving the ring - bug #5277. Must be non-zero, otherwise the prize is awarded twice - bug #6160
@@ -251,9 +264,9 @@ const SciWorkaroundEntry kCelWide_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
 const SciWorkaroundEntry kDeleteKey_workarounds[] = {
-	{    GID_HOYLE4,     300,   999,  0,     "handleEventList", "delete",        -1,    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // restarting hearts, while tray is shown - bug #6604
-	{    GID_HOYLE4,     500,   999,  0,     "handleEventList", "delete",        -1,    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // restarting cribbage, while tray is shown - bug #6604
-	{    GID_HOYLE4,     975,   999,  0,     "handleEventList", "delete",        -1,    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // going back to gamelist from hearts/cribbage, while tray is shown - bug #6604
+	{ GID_HOYLE4,        300,   999,  0,     "handleEventList", "delete",        -1,    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // restarting hearts, while tray is shown - bug #6604
+	{ GID_HOYLE4,        500,   999,  0,     "handleEventList", "delete",        -1,    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // restarting cribbage, while tray is shown - bug #6604
+	{ GID_HOYLE4,        975,   999,  0,     "handleEventList", "delete",        -1,    NULL,     0, { WORKAROUND_IGNORE, 0 } }, // going back to gamelist from hearts/cribbage, while tray is shown - bug #6604
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -484,9 +497,21 @@ const SciWorkaroundEntry kStrCpy_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
+//                Game: Quest for Glory 2
+//      Calling method: export 21 of script 2
+//   Subroutine offset: English 0x0deb (script 2)
+// Applies to at least: English PC floppy
+static const uint16 sig_kStrLen_qfg2_1[] = {
+	0x3f, 0x04,                      // link 04
+	0x78,                            // push1
+	0x8f, 0x02,                      // lsp param[2]
+	0x43,                            // callk StrLen
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,       callSig, index,                workaround
 const SciWorkaroundEntry kStrLen_workarounds[] = {
-	{ GID_QFG2,          210,     2,  0,                   "", "export 21",   0xdeb,    NULL,     0, { WORKAROUND_FAKE,      0 } }, // When saying something incorrect at the WIT, an integer is passed instead of a reference - bug #5489
+	{ GID_QFG2,          210,     2,  0,                   "", "export 21", -1, sig_kStrLen_qfg2_1,     0, { WORKAROUND_FAKE,      0 } }, // When saying something incorrect at the WIT, an integer is passed instead of a reference - bug #5489
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
