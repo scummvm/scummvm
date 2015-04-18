@@ -59,6 +59,21 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Quest for Glory 1 / Hero's Quest 1
+//      Calling method: Encounter::init
+//   Subroutine offset: English Hero's Quest 0x0bd0, English Quest for Glory 1 0x0be4 (script 210)
+// Applies to at least: English PC floppy (Hero's Quest, Quest For Glory 1), Japanese PC-9801 floppy
+static const uint16 sig_uninitread_qfg1_1[] = {
+	0x3f, 0x02,                      // link 02
+	0x87, 0x00,                      // lap param[0]
+	0x30, SIG_UINT16(0x000c),        // bnt [...]
+	0x87, 0x01,                      // lap param[1]
+	0x30, SIG_UINT16(0x0007),        // bnt [...]
+	0x87, 0x01,                      // lap param[1]
+	0xa5, 0x01,                      // sat temp[1]
+	SIG_END
+};
+
 //                Game: Quest for Glory 2
 //      Calling method: abdulS::changeState, jabbarS::changeState
 //   Subroutine offset: English 0x2d22 (script 260)
@@ -181,8 +196,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",      -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",         -1,              NULL,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
 	{ GID_PQSWAT,         -1, 64950,  0,               "View", "handleEvent",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // Using the menu in the beginning
-	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",        0xbd0,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // hq1: going to the brigands hideout
-	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",        0xbe4,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // qfg1: going to the brigands hideout
+	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",       -1, sig_uninitread_qfg1_1,     0, { WORKAROUND_FAKE,   0 } }, // qfg1/hq1: going to the brigands hideout
 	{ GID_QFG1VGA,        16,    16,  0,        "lassoFailed", "changeState",    -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // qfg1vga: casting the "fetch" spell in the screen with the flowers, temps 0 and 1 - bug #5309
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        0xcee,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to the brigands hideout - bug #5515
 	{ GID_QFG1VGA,        -1,   210,  0,          "Encounter", "init",        0xce7,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // qfg1vga: going to room 92
