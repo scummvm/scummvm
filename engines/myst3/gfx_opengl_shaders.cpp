@@ -94,7 +94,7 @@ Math::Vector2d ShaderRenderer::scaled(float x, float y) const {
 }
 
 ShaderRenderer::ShaderRenderer(OSystem *system) :
-		BaseRenderer(system),
+		Renderer(system),
 		_prevText(""),
 		_prevTextPosition(0,0),
 		_currentViewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)),
@@ -177,7 +177,7 @@ void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	BaseRenderer::setupCameraPerspective(pitch, heading, fov);
+	Renderer::setupCameraPerspective(pitch, heading, fov);
 
 	Common::Rect frame = frameViewport();
 	glViewport(frame.left, frame.top, frame.width(), frame.height());

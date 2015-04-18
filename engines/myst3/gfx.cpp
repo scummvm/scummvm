@@ -42,7 +42,7 @@
 
 namespace Myst3 {
 
-const float BaseRenderer::cubeVertices[] = {
+const float Renderer::cubeVertices[] = {
 	// S     T      X      Y      Z
 	0.0f, 1.0f, -320.0f, -320.0f, -320.0f,
 	1.0f, 1.0f,  320.0f, -320.0f, -320.0f,
@@ -70,7 +70,7 @@ const float BaseRenderer::cubeVertices[] = {
 	1.0f, 0.0f, -320.0f,  320.0f, -320.0f
 };
 
-BaseRenderer::BaseRenderer(OSystem *system)
+Renderer::Renderer(OSystem *system)
 		: _system(system), _font(NULL) {
 
 	// Compute the cube faces Axis Aligned Bounding Boxes
@@ -81,21 +81,21 @@ BaseRenderer::BaseRenderer(OSystem *system)
 	}
 }
 
-BaseRenderer::~BaseRenderer() {
+Renderer::~Renderer() {
 }
 
-void BaseRenderer::initFont(const Graphics::Surface *surface) {
+void Renderer::initFont(const Graphics::Surface *surface) {
 	_font = createTexture(surface);
 }
 
-void BaseRenderer::freeFont() {
+void Renderer::freeFont() {
 	if (_font) {
 		freeTexture(_font);
 		_font = nullptr;
 	}
 }
 
-Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
+Common::Rect Renderer::getFontCharacterRect(uint8 character) {
 	uint index = 0;
 
 	if (character == ' ')
@@ -114,11 +114,11 @@ Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
 	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
 }
 
-Common::Rect BaseRenderer::viewport() const {
+Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
 
-Common::Rect BaseRenderer::frameViewport() const {
+Common::Rect Renderer::frameViewport() const {
 	Common::Rect screen = viewport();
 
 	Common::Rect frame = Common::Rect(screen.width(), screen.height() * kFrameHeight / kOriginalHeight);
@@ -127,7 +127,7 @@ Common::Rect BaseRenderer::frameViewport() const {
 	return frame;
 }
 
-void BaseRenderer::computeScreenViewport() {
+void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
 
@@ -146,13 +146,13 @@ void BaseRenderer::computeScreenViewport() {
 	}
 }
 
-Common::Point BaseRenderer::frameCenter() const {
+Common::Point Renderer::frameCenter() const {
 	Common::Rect screen = viewport();
 	Common::Rect frame = frameViewport();
 	return Common::Point((frame.left + frame.right) / 2, screen.top + screen.bottom - (frame.top + frame.bottom) / 2);
 }
 
-Math::Matrix4 BaseRenderer::makeProjectionMatrix(float fov) const {
+Math::Matrix4 Renderer::makeProjectionMatrix(float fov) const {
 	static const float nearClipPlane = 1.0;
 	static const float farClipPlane = 10000.0;
 
@@ -164,7 +164,7 @@ Math::Matrix4 BaseRenderer::makeProjectionMatrix(float fov) const {
 	return Math::makeFrustumMatrix(-xmaxValue, xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
 }
 
-void BaseRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
+void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	_projectionMatrix = makeProjectionMatrix(fov);
 	_modelViewMatrix = Math::Matrix4(180.0f - heading, pitch, 0.0f, Math::EO_YXZ);
 
@@ -180,7 +180,7 @@ void BaseRenderer::setupCameraPerspective(float pitch, float heading, float fov)
 	_mvpMatrix.transpose();
 }
 
-void BaseRenderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
+void Renderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
 	// Screen coords to 3D coords
 	Math::Vector3d obj;
 	Math::gluMathUnProject(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9f), _mvpMatrix, frameViewport(), obj);
@@ -198,13 +198,13 @@ void BaseRenderer::screenPosToDirection(const Common::Point screen, float &pitch
 		heading = 360 - heading;
 }
 
-bool BaseRenderer::isCubeFaceVisible(uint face) {
+bool Renderer::isCubeFaceVisible(uint face) {
 	assert(face < 6);
 
 	return _frustum.isInside(_cubeFacesAABB[face]);
 }
 
-void BaseRenderer::flipVertical(Graphics::Surface *s) {
+void Renderer::flipVertical(Graphics::Surface *s) {
 	for (int y = 0; y < s->h / 2; ++y) {
 		// Flip the lines
 		byte *line1P = (byte *)s->getBasePtr(0, y);

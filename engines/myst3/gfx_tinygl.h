@@ -32,7 +32,7 @@
 
 namespace Myst3 {
 
-class TinyGLRenderer : public BaseRenderer {
+class TinyGLRenderer : public Renderer {
 public:
 	TinyGLRenderer(OSystem *_system);
 	virtual ~TinyGLRenderer();

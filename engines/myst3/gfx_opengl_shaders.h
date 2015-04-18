@@ -32,7 +32,7 @@
 
 namespace Myst3 {
 
-class ShaderRenderer : public BaseRenderer {
+class ShaderRenderer : public Renderer {
 public:
 	ShaderRenderer(OSystem *_system);
 	virtual ~ShaderRenderer();

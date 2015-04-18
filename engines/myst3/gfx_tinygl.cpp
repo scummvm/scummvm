@@ -47,7 +47,7 @@ Renderer *CreateGfxTinyGL(OSystem *system) {
 }
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system) :
-		BaseRenderer(system),
+		Renderer(system),
 		_fb(NULL) {
 }
 
@@ -99,7 +99,7 @@ void TinyGLRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	BaseRenderer::setupCameraPerspective(pitch, heading, fov);
+	Renderer::setupCameraPerspective(pitch, heading, fov);
 
 	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
 	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);

@@ -31,7 +31,7 @@
 
 namespace Myst3 {
 
-class OpenGLRenderer : public BaseRenderer {
+class OpenGLRenderer : public Renderer {
 public:
 	OpenGLRenderer(OSystem *_system);
 	virtual ~OpenGLRenderer();

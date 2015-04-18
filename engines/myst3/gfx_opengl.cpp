@@ -46,7 +46,7 @@ Renderer *CreateGfxOpenGL(OSystem *system) {
 }
 
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
-		BaseRenderer(system) {
+		Renderer(system) {
 }
 
 OpenGLRenderer::~OpenGLRenderer() {
@@ -108,7 +108,7 @@ void OpenGLRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	BaseRenderer::setupCameraPerspective(pitch, heading, fov);
+	Renderer::setupCameraPerspective(pitch, heading, fov);
 
 	Common::Rect frame = frameViewport();
 	glViewport(frame.left, frame.top, frame.width(), frame.height());

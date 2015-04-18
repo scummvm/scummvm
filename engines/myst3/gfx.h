@@ -53,74 +53,56 @@ protected:
 };
 
 class Renderer {
-	public:
-	virtual ~Renderer() {}
+public:
+	Renderer(OSystem *system);
+	virtual ~Renderer();
+
 	virtual void init() = 0;
-	virtual void initFont(const Graphics::Surface *surface) = 0;
-	virtual void freeFont() = 0;
-
 	virtual void clear() = 0;
-	virtual void setupCameraOrtho2D(bool noScaling) = 0;
-	virtual void setupCameraPerspective(float pitch, float heading, float fov) = 0;
-
-	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
-	virtual void freeTexture(Texture *texture) = 0;
-
-	virtual void drawRect2D(const Common::Rect &rect, uint32 color) = 0;
-	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
-	                                float transparency = -1.0, bool additiveBlending = false) = 0;
-	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
-	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
-	                                Texture *texture) = 0;
-
-	virtual void drawCube(Texture **textures) = 0;
-	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
-
-	virtual Graphics::Surface *getScreenshot() = 0;
-
-	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) = 0;
-
-	virtual bool isCubeFaceVisible(uint face) = 0;
-
-	virtual Common::Rect viewport() const = 0;
-	virtual Common::Rect frameViewport() const = 0;
-	virtual Common::Point frameCenter() const = 0;
-
-	virtual Math::Matrix4 makeProjectionMatrix(float fov) const = 0;
-
-	virtual void flipVertical(Graphics::Surface *s) = 0;
 
 	/**
 	 *  Swap the buffers, making the drawn screen visible
 	 */
 	virtual void flipBuffer() { }
 
+	virtual void initFont(const Graphics::Surface *surface);
+	virtual void freeFont();
+
+	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
+	virtual void freeTexture(Texture *texture) = 0;
+
+	virtual void drawRect2D(const Common::Rect &rect, uint32 color) = 0;
+	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
+									float transparency = -1.0, bool additiveBlending = false) = 0;
+	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
+									const Math::Vector3d &topRight, const Math::Vector3d &bottomRight,
+									Texture *texture) = 0;
+
+	virtual void drawCube(Texture **textures) = 0;
+	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
+
+	virtual Graphics::Surface *getScreenshot() = 0;
+
+	Common::Rect viewport() const;
+	Common::Rect frameViewport() const;
+	Common::Point frameCenter() const;
+
+	Math::Matrix4 makeProjectionMatrix(float fov) const;
+
+	virtual void setupCameraOrtho2D(bool noScaling) = 0;
+	virtual void setupCameraPerspective(float pitch, float heading, float fov);
+
+	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
+
+	bool isCubeFaceVisible(uint face);
+
+	void flipVertical(Graphics::Surface *s);
+
 	static const int kOriginalWidth = 640;
 	static const int kOriginalHeight = 480;
 	static const int kTopBorderHeight = 30;
 	static const int kBottomBorderHeight = 90;
 	static const int kFrameHeight = 360;
-};
-
-class BaseRenderer : public Renderer {
-public:
-	BaseRenderer(OSystem *system);
-	virtual ~BaseRenderer();
-
-	virtual void initFont(const Graphics::Surface *surface) override;
-	virtual void freeFont() override;
-
-	Common::Rect viewport() const override;
-	Common::Rect frameViewport() const override;
-	Common::Point frameCenter() const override;
-
-	Math::Matrix4 makeProjectionMatrix(float fov) const override;
-	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
-	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) override;
-
-	bool isCubeFaceVisible(uint face) override;
-
-	void flipVertical(Graphics::Surface *s) override;
 
 protected:
 	OSystem *_system;
