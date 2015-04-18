@@ -2456,6 +2456,31 @@ static const uint16 qfg3PatchExportChar[] = {
 	PATCH_END
 };
 
+// Quest for Glory 3 doesn't properly import the character type of Quest for Glory 1 character files.
+//  This issue was never addressed. It's caused by Sierra reading data directly from the local
+//  area, which is only set by Quest For Glory 2 import data, instead of reading the properly set global variable.
+//
+// We fix it, by also directly setting the local variable.
+//
+// Applies to at least: English, French, German, Italian, Spanish floppy
+// Responsible method: importHero::changeState(4)
+static const uint16 qfg3SignatureImportQfG1Char[] = {
+	SIG_MAGICDWORD,
+	0x82, SIG_UINT16(0x0238),           // lal local[0x0238]
+	0xa0, SIG_UINT16(0x016a),           // sag global[0x016a]
+	0xa1, 0x7d,                         // sag global[0x7d]
+	0x35, 0x01,                         // ldi 01
+	0x99, 0xfb,                         // lsgi global[0xfb]
+	SIG_END
+};
+
+static const uint16 qfg3PatchImportQfG1Char[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0xa3, 0x01,                         // sal 01           -> also set local[01]
+	0x89, 0xfc,                         // lsg global[0xFD] -> save 2 bytes
+	PATCH_END
+};
+
 // The chief in his hut (room 640) is not drawn using the correct priority,
 //  which results in a graphical glitch. This is a game bug and also happens
 //  in Sierra's SCI. We adjust priority accordingly to fix it.
@@ -2483,12 +2508,13 @@ static const uint16 qfg3PatchChiefPriority[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                  patch
+//          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
-	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog,  qfg3PatchImportDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,     qfg3PatchWooDialog },
-	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt,  qfg3PatchWooDialogAlt },
-	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,    qfg3PatchExportChar },
+	{  true,   944, "import dialog continuous calls",              1, qfg3SignatureImportDialog,   qfg3PatchImportDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialog,      qfg3PatchWooDialog },
+	{  true,   440, "dialog crash when asking about Woo",          1, qfg3SignatureWooDialogAlt,   qfg3PatchWooDialogAlt },
+	{  true,    52, "export character save bug",                   2, qfg3SignatureExportChar,     qfg3PatchExportChar },
+	{  true,    54, "import character from QfG1 bug",              1, qfg3SignatureImportQfG1Char, qfg3PatchImportQfG1Char },
 	{  true,   640, "chief in hut priority fix",                   1, qfg3SignatureChiefPriority, qfg3PatchChiefPriority },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
