@@ -2924,6 +2924,7 @@ ScriptPatcher::ScriptPatcher() {
 		_selectorIdTable[selectorNr] = -1;
 
 	_runtimeTable = NULL;
+	_isMacSci11 = false;
 }
 
 ScriptPatcher::~ScriptPatcher() {
@@ -2932,7 +2933,7 @@ ScriptPatcher::~ScriptPatcher() {
 }
 
 // will actually patch previously found signature area
-void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, const bool isMacSci11) {
+void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
 	const uint16 *patchData = patchEntry->patchData;
 	byte orgData[PATCH_VALUELIMIT];
 	int32 offset = signatureOffset;
@@ -2996,7 +2997,7 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 			default:
 				byte1 = 0; byte2 = 0;
 			}
-			if (!isMacSci11) {
+			if (!_isMacSci11) {
 				scriptData[offset++] = byte1;
 				scriptData[offset++] = byte2;
 			} else {
@@ -3023,8 +3024,94 @@ void ScriptPatcher::applyPatch(const SciScriptPatcherEntry *patchEntry, byte *sc
 	}
 }
 
+bool ScriptPatcher::verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const byte *scriptData, const uint32 scriptSize) {
+	uint16 sigSelector = 0;
+
+	uint16 sigWord = *signatureData;
+	while (sigWord != SIG_END) {
+		uint16 sigCommand = sigWord & SIG_COMMANDMASK;
+		uint16 sigValue = sigWord & SIG_VALUEMASK;
+		switch (sigCommand) {
+		case SIG_CODE_ADDTOOFFSET: {
+			// add value to offset
+			byteOffset += sigValue;
+			break;
+		}
+		case SIG_CODE_UINT16:
+		case SIG_CODE_SELECTOR16: {
+			if ((byteOffset + 1) < scriptSize) {
+				byte byte1;
+				byte byte2;
+
+				switch (sigCommand) {
+				case SIG_CODE_UINT16: {
+					byte1 = sigValue & SIG_BYTEMASK;
+					signatureData++; sigWord = *signatureData;
+					if (sigWord & SIG_COMMANDMASK)
+						error("Script-Patcher: signature inconsistent\nFaulty signature: '%s'", signatureDescription);
+					byte2 = sigWord & SIG_BYTEMASK;
+					break;
+				}
+				case SIG_CODE_SELECTOR16: {
+					sigSelector = _selectorIdTable[sigValue];
+					byte1 = sigSelector & 0xFF;
+					byte2 = sigSelector >> 8;
+					break;
+				}
+				default:
+					byte1 = 0; byte2 = 0;
+				}
+				if (!_isMacSci11) {
+					if ((scriptData[byteOffset] != byte1) || (scriptData[byteOffset + 1] != byte2))
+						sigWord = SIG_MISMATCH;
+				} else {
+					// SCI1.1+ on macintosh had uint16s in script in BE-order
+					if ((scriptData[byteOffset] != byte2) || (scriptData[byteOffset + 1] != byte1))
+						sigWord = SIG_MISMATCH;
+				}
+				byteOffset += 2;
+			} else {
+				sigWord = SIG_MISMATCH;
+			}
+			break;
+		}
+		case SIG_CODE_SELECTOR8: {
+			if (byteOffset < scriptSize) {
+				sigSelector = _selectorIdTable[sigValue];
+				if (sigSelector & 0xFF00)
+					error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty signature: '%s'", signatureDescription);
+				if (scriptData[byteOffset] != (sigSelector & 0xFF))
+					sigWord = SIG_MISMATCH;
+				byteOffset++;
+			} else {
+				sigWord = SIG_MISMATCH; // out of bounds
+			}
+			break;
+		}
+		case SIG_CODE_BYTE:
+			if (byteOffset < scriptSize) {
+				if (scriptData[byteOffset] != sigWord)
+					sigWord = SIG_MISMATCH;
+				byteOffset++;
+			} else {
+				sigWord = SIG_MISMATCH; // out of bounds
+			}
+		}
+
+		if (sigWord == SIG_MISMATCH)
+			break;
+
+		signatureData++;
+		sigWord = *signatureData;
+	}
+
+	if (sigWord == SIG_END) // signature fully matched?
+		return true;
+	return false;
+}
+
 // will return -1 if no match was found, otherwise an offset to the start of the signature match
-int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize, const bool isMacSci11) {
+int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize) {
 	if (scriptSize < 4) // we need to find a DWORD, so less than 4 bytes is not okay
 		return -1;
 
@@ -3036,89 +3123,8 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 		if (magicDWord == READ_UINT32(scriptData + DWordOffset)) {
 			// magic DWORD found, check if actual signature matches
 			uint32 offset = DWordOffset + runtimeEntry->magicOffset;
-			uint32 byteOffset = offset;
-			const uint16 *signatureData = patchEntry->signatureData;
-			uint16 sigSelector = 0;
 
-			uint16 sigWord = *signatureData;
-			while (sigWord != SIG_END) {
-				uint16 sigCommand = sigWord & SIG_COMMANDMASK;
-				uint16 sigValue = sigWord & SIG_VALUEMASK;
-				switch (sigCommand) {
-				case SIG_CODE_ADDTOOFFSET: {
-					// add value to offset
-					byteOffset += sigValue;
-					break;
-				}
-				case SIG_CODE_UINT16:
-				case SIG_CODE_SELECTOR16: {
-					if ((byteOffset + 1) < scriptSize) {
-						byte byte1;
-						byte byte2;
-
-						switch (sigCommand) {
-						case SIG_CODE_UINT16: {
-							byte1 = sigValue & SIG_BYTEMASK;
-							signatureData++; sigWord = *signatureData;
-							if (sigWord & SIG_COMMANDMASK)
-								error("Script-Patcher: signature inconsistent\nFaulty patch: '%s'", patchEntry->description);
-							byte2 = sigWord & SIG_BYTEMASK;
-							break;
-						}
-						case SIG_CODE_SELECTOR16: {
-							sigSelector = _selectorIdTable[sigValue];
-							byte1 = sigSelector & 0xFF;
-							byte2 = sigSelector >> 8;
-							break;
-						}
-						default:
-							byte1 = 0; byte2 = 0;
-						}
-						if (!isMacSci11) {
-							if ((scriptData[byteOffset] != byte1) || (scriptData[byteOffset + 1] != byte2))
-								sigWord = SIG_MISMATCH;
-						} else {
-							// SCI1.1+ on macintosh had uint16s in script in BE-order
-							if ((scriptData[byteOffset] != byte2) || (scriptData[byteOffset + 1] != byte1))
-								sigWord = SIG_MISMATCH;
-						}
-						byteOffset += 2;
-					} else {
-						sigWord = SIG_MISMATCH;
-					}
-					break;
-				}
-				case SIG_CODE_SELECTOR8: {
-					if (byteOffset < scriptSize) {
-						sigSelector = _selectorIdTable[sigValue];
-						if (sigSelector & 0xFF00)
-							error("Script-Patcher: 8 bit selector required, game uses 16 bit selector\nFaulty patch: '%s'", patchEntry->description);
-						if (scriptData[byteOffset] != (sigSelector & 0xFF))
-							sigWord = SIG_MISMATCH;
-						byteOffset++;
-					} else {
-						sigWord = SIG_MISMATCH; // out of bounds
-					}
-					break;
-				}
-				case SIG_CODE_BYTE:
-					if (byteOffset < scriptSize) {
-						if (scriptData[byteOffset] != sigWord)
-							sigWord = SIG_MISMATCH;
-						byteOffset++;
-					} else {
-						sigWord = SIG_MISMATCH; // out of bounds
-					}
-				}
-
-				if (sigWord == SIG_MISMATCH)
-					break;
-
-				signatureData++;
-				sigWord = *signatureData;
-			}
-
-			if (sigWord == SIG_END) // signature fully matched?
+			if (verifySignature(offset, patchEntry->signatureData, patchEntry->description, scriptData, scriptSize))
 				return offset;
 		}
 		DWordOffset++;
@@ -3129,7 +3135,7 @@ int32 ScriptPatcher::findSignature(const SciScriptPatcherEntry *patchEntry, SciS
 
 // This method calculates the magic DWORD for each entry in the signature table
 //  and it also initializes the selector table for selectors used in the signatures/patches of the current game
-void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool isMacSci11) {
+void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable) {
 	const SciScriptPatcherEntry *curEntry = patchTable;
 	SciScriptPatcherRuntimeEntry *curRuntimeEntry;
 	Selector curSelector = -1;
@@ -3197,7 +3203,7 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 						curData++; curWord = *curData;
 						if (curWord & SIG_COMMANDMASK)
 							error("Script-Patcher: signature entry inconsistent\nFaulty patch: '%s'", curEntry->description);
-						if (!isMacSci11) {
+						if (!_isMacSci11) {
 							byte1 = curValue;
 							byte2 = curWord & SIG_BYTEMASK;
 						} else {
@@ -3212,7 +3218,7 @@ void ScriptPatcher::initSignature(const SciScriptPatcherEntry *patchTable, bool 
 							curSelector = g_sci->getKernel()->findSelector(selectorNameTable[curValue]);
 							_selectorIdTable[curValue] = curSelector;
 						}
-						if (!isMacSci11) {
+						if (!_isMacSci11) {
 							byte1 = curSelector & 0x00FF;
 							byte2 = curSelector >> 8;
 						} else {
@@ -3374,7 +3380,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	}
 
 	if (signatureTable) {
-		bool isMacSci11 = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1);
+		_isMacSci11 = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1);
 
 		if (!_runtimeTable) {
 			// Abort, in case selectors are not yet initialized (happens for games w/o selector-dictionary)
@@ -3382,7 +3388,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 				return;
 
 			// signature table needs to get initialized (Magic DWORD set, selector table set)
-			initSignature(signatureTable, isMacSci11);
+			initSignature(signatureTable);
 
 			// Do additional game-specific initialization
 			switch (gameId) {
@@ -3417,11 +3423,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 				int32 foundOffset = 0;
 				int16 applyCount = curEntry->applyCount;
 				do {
-					foundOffset = findSignature(curEntry, curRuntimeEntry, scriptData, scriptSize, isMacSci11);
+					foundOffset = findSignature(curEntry, curRuntimeEntry, scriptData, scriptSize);
 					if (foundOffset != -1) {
 						// found, so apply the patch
 						debugC(kDebugLevelScriptPatcher, "Script-Patcher: '%s' on script %d offset %d", curEntry->description, scriptNr, foundOffset);
-						applyPatch(curEntry, scriptData, scriptSize, foundOffset, isMacSci11);
+						applyPatch(curEntry, scriptData, scriptSize, foundOffset);
 					}
 					applyCount--;
 				} while ((foundOffset != -1) && (applyCount));
