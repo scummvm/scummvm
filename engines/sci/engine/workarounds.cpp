@@ -59,7 +59,10 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-// QfG3: rm140::init subcall
+//                Game: Quest for Glory 3
+//      Calling method: rm140::init
+//   Subroutine offset: English 0x1008 (script 140)
+// Applies to at least: English, French, German, Italian, Spanish PC floppy
 static const uint16 sig_uninitread_qfg3_1[] = {
 	0x3f, 0x01,                      // link 01
 	0x89, 0x7d,                      // lsg global[7Dh]
@@ -331,13 +334,25 @@ const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
+//                Game: Island of Dr. Brain
+//      Calling method: upElevator::changeState, downElevator::changeState, correctElevator::changeState
+//   Subroutine offset: 0x201f (script 291)
+// Applies to at least: English PC floppy
+static const uint16 sig_kGraphSaveBox_ibrain_1[] = {
+	0x3f, 0x01,                      // link 01
+	0x87, 0x01,                      // lap param[1]
+	0x30, SIG_UINT16(0x0043),        // bnt [...]
+	0x76,                            // push0
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,                callSig, index,                workaround
 const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
-	{ GID_CASTLEBRAIN,   420,   427,  0,          "alienIcon", "select",         -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when selecting a card during the alien card game, gets called with 1 extra parameter
-	{ GID_ISLANDBRAIN,   290,   291,  0,         "upElevator", "changeState",0x201f,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when testing in the elevator puzzle, gets called with 1 argument less - 15 is on stack - bug #4943
-	{ GID_ISLANDBRAIN,   290,   291,  0,       "downElevator", "changeState",0x201f,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // see above
-	{ GID_ISLANDBRAIN,   290,   291,  0,    "correctElevator", "changeState",0x201f,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // see above (when testing the correct solution)
-	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",         -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #5099
+	{ GID_CASTLEBRAIN,   420,   427,  0,          "alienIcon", "select",         -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when selecting a card during the alien card game, gets called with 1 extra parameter
+	{ GID_ISLANDBRAIN,   290,   291,  0,         "upElevator", "changeState",-1, sig_kGraphSaveBox_ibrain_1,     0, { WORKAROUND_STILLCALL, 0 } }, // when testing in the elevator puzzle, gets called with 1 argument less - 15 is on stack - bug #4943
+	{ GID_ISLANDBRAIN,   290,   291,  0,       "downElevator", "changeState",-1, sig_kGraphSaveBox_ibrain_1,     0, { WORKAROUND_STILLCALL, 0 } }, // see above
+	{ GID_ISLANDBRAIN,   290,   291,  0,    "correctElevator", "changeState",-1, sig_kGraphSaveBox_ibrain_1,     0, { WORKAROUND_STILLCALL, 0 } }, // see above (when testing the correct solution)
+	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",         -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #5099
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -444,10 +459,22 @@ const SciWorkaroundEntry kSetPort_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
+//                Game: Island of Dr. Brain
+//      Calling method: childBreed::changeState
+//   Subroutine offset: 0x1c7c (script 310)
+// Applies to at least: English PC floppy
+static const uint16 sig_kStrAt_ibrain_1[] = {
+	0x3f, 0x16,                      // link 16
+	0x78,                            // push1
+	0x8f, 0x01,                      // lsp param[1]
+	0x43,                            // callk StrLen
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,         callSig, index,                workaround
 const SciWorkaroundEntry kStrAt_workarounds[] = {
-	{ GID_CASTLEBRAIN,   220,   220,  0,         "robotJokes", "animateOnce",    -1,    NULL,     0, { WORKAROUND_FAKE,      0 } }, // when trying to view the terminal at the end of the maze without having collected any robot jokes - bug #5127
-	{ GID_ISLANDBRAIN,   300,   310,  0,         "childBreed", "changeState",0x1c7c,    NULL,     0, { WORKAROUND_FAKE,      0 } }, // when clicking Breed to get the second-generation cyborg hybrid (Standard difficulty), the two parameters are swapped - bug #5088
+	{ GID_CASTLEBRAIN,   220,   220,  0,         "robotJokes", "animateOnce",    -1,            NULL,     0, { WORKAROUND_FAKE,      0 } }, // when trying to view the terminal at the end of the maze without having collected any robot jokes - bug #5127
+	{ GID_ISLANDBRAIN,   300,   310,  0,         "childBreed", "changeState",-1, sig_kStrAt_ibrain_1,     0, { WORKAROUND_FAKE,      0 } }, // when clicking Breed to get the second-generation cyborg hybrid (Standard difficulty), the two parameters are swapped - bug #5088
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
