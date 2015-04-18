@@ -114,6 +114,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
+	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");

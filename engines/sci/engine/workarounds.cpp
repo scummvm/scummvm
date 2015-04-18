@@ -555,6 +555,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		reg_t searchObject = lastCall->sendp;
 		const byte *curScriptPtr = NULL;
 		uint32 curScriptSize = 0;
+		bool matched = false;
 
 		do {
 			workaround = workaroundList;
@@ -595,7 +596,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 
 							// now actually check for signature match
 							if (g_sci->getScriptPatcher()->verifySignature(curLocalCallOffset, workaround->localCallSignature, "workaround signature", curScriptPtr, curScriptSize)) {
-								return workaround->newValue;
+								matched = true;
 							}
 
 						} else {
@@ -605,6 +606,10 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 						}
 					} else {
 						// no localcalls involved -> workaround matches
+						matched = true;
+					}
+					if (matched) {
+						debugC(kDebugLevelWorkarounds, "Workaround: '%s:%s' in script %d", workaround->objectName, workaround->methodName, curScriptNr);
 						return workaround->newValue;
 					}
 				}
