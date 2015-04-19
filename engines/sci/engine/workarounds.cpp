@@ -132,6 +132,21 @@ static const uint16 sig_uninitread_qfg3_1[] = {
 	SIG_END
 };
 
+//                Game: Quest for Glory 3
+//      Calling method: computersMove::changeState
+//   Subroutine offset: English/etc. 0x0f53 (script 490)
+// Applies to at least: English, French, German, Italian, Spanish PC floppy
+static const uint16 sig_uninitread_qfg3_2[] = {
+	0x3f, 0x1d,                      // link 1Dh
+	0x35, 0x01,                      // ldi 01
+	0xa5, 0x18,                      // sat temp[18h]
+	0x35, 0xce,                      // ldi CEh
+	0xa5, 0x19,                      // sat temp[19h]
+	0x35, 0x00,                      // ldi 00
+	0xa5, 0x00,                      // sat temp[0]
+	SIG_END
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,    call,           callSig, index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CAMELOT,        40,    40,  0,               "Rm40", "handleEvent",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // when looking at the ground at the pool of Siloam - bug #6401
@@ -246,7 +261,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          700,   700, -1,      "monsterIsDead", "changeState",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // in the jungle, after winning any fight, bug #5169
 	{ GID_QFG3,          470,   470, -1,              "rm470", "notify",         -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // closing the character screen in the Simbani village in the room with the bridge, bug #5165
 	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // when finishing awari game, bug #5167
-	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState", 0xf53,              NULL,     4, { WORKAROUND_FAKE,   0 } }, // also when finishing awari game
+	{ GID_QFG3,          490,   490, -1,      "computersMove", "changeState",-1, sig_uninitread_qfg3_2,     4, { WORKAROUND_FAKE,   0 } }, // also when finishing awari game
 	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",           -1,              NULL,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #5282
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",  -1,              NULL,     5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",      -1,              NULL,     3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
