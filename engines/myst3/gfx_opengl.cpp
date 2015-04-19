@@ -110,14 +110,15 @@ void OpenGLRenderer::setupCameraOrtho2D(bool noScaling) {
 void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	Renderer::setupCameraPerspective(pitch, heading, fov);
 
-	Common::Rect frame = frameViewport();
-	glViewport(frame.left, frame.top, frame.width(), frame.height());
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf(_projectionMatrix.getData());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(_modelViewMatrix.getData());
+}
+
+void OpenGLRenderer::setViewport(const Common::Rect &vp) {
+	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 }
 
 void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {

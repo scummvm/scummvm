@@ -49,6 +49,8 @@ public:
 
 	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading) const;
 
+	Common::Point screenPosToWindowPos(const Common::Point &screen) const;
+
 	void drawSunspotFlare(const SunSpot &s);
 	float distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch);
 };

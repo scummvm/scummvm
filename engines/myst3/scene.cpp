@@ -29,7 +29,6 @@
 
 #include "graphics/colormasks.h"
 
-#include "math/glmath.h"
 #include "math/vector2d.h"
 
 namespace Myst3 {
@@ -139,30 +138,49 @@ Common::Rect Scene::frameViewport() const {
 	Common::Rect screen = _vm->_gfx->viewport();
 
 	Common::Rect frame = Common::Rect(screen.width(), screen.height() * Renderer::kFrameHeight / Renderer::kOriginalHeight);
-	frame.translate(screen.left, screen.top + screen.height() * Renderer::kBottomBorderHeight / Renderer::kOriginalHeight);
+	frame.translate(screen.left, screen.top + screen.height() * Renderer::kTopBorderHeight / Renderer::kOriginalHeight);
 
 	return frame;
 }
 
 Common::Point Scene::frameCenter() const {
-	Common::Rect screen = _vm->_gfx->viewport();
 	Common::Rect frame = frameViewport();
 
-	return Common::Point((frame.left + frame.right) / 2, screen.top + screen.bottom - (frame.top + frame.bottom) / 2);
+	return Common::Point((frame.left + frame.right) / 2, (frame.top + frame.bottom) / 2);
+}
+
+Common::Point Scene::screenPosToWindowPos(const Common::Point &screen) const {
+	Common::Rect frame = frameViewport();
+
+	return Common::Point(screen.x - frame.left, screen.y - frame.top);
 }
 
 void Scene::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) const {
-	// Screen coords to 3D coords
-	Math::Vector3d obj;
-	Math::gluMathUnProject(Math::Vector3d(screen.x, g_system->getHeight() - screen.y, 0.9f), _vm->_gfx->getMvpMatrix(), frameViewport(), obj);
+	Common::Rect frame = frameViewport();
+
+	// Screen coords to window coords
+	Common::Point pos = screenPosToWindowPos(screen);
+
+	// Window coords to normalized coords
+	Math::Vector4d in;
+	in.x() = pos.x * 2 / (float) frame.width() - 1.0;
+	in.y() = 1.0 - pos.y * 2 / (float) frame.height();
+	in.z() = 1.0;
+	in.w() = 1.0;
+
+	// Normalized coords to direction
+	Math::Matrix4 A = _vm->_gfx->getMvpMatrix();
+	A.inverse();
+	Math::Vector4d out = A.transform(in);
+
+	Math::Vector3d direction(out.x(), out.y(), out.z());
+	direction.normalize();
 
 	// 3D coords to polar coords
-	obj.normalize();
-
-	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
+	Math::Vector2d horizontalProjection = Math::Vector2d(direction.x(), direction.z());
 	horizontalProjection.normalize();
 
-	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
+	pitch = 90 - Math::Angle::arcCosine(direction.y()).getDegrees();
 	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
 
 	if (horizontalProjection.getX() > 0.0)

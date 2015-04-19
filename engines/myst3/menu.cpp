@@ -397,14 +397,14 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 
 	// The portion of the screenshot to keep
 	Common::Rect frame = _vm->_scene->frameViewport();
-	Common::Rect screen = _vm->_gfx->viewport();
+	Graphics::Surface frameSurface = big->getSubArea(frame);
 
 	uint32 *dst = (uint32 *)small->getPixels();
 	for (uint i = 0; i < small->h; i++) {
 		for (uint j = 0; j < small->w; j++) {
-			uint32 srcX = big->w * j / small->w;
-			uint32 srcY = screen.bottom - frame.bottom + frame.height() * i / small->h;
-			uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
+			uint32 srcX = frameSurface.w * j / small->w;
+			uint32 srcY = frameSurface.h * i / small->h;
+			uint32 *src = (uint32 *)frameSurface.getBasePtr(srcX, srcY);
 
 			// Copy RGBA pixel
 			*dst++ = *src;

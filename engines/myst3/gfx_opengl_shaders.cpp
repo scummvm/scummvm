@@ -177,7 +177,7 @@ void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
 }
 
 void ShaderRenderer::setViewport(const Common::Rect &vp) {
-	glViewport(vp.left, vp.top, vp.width(), vp.height());
+	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 }
 
 void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
