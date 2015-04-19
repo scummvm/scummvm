@@ -41,8 +41,8 @@ namespace Sci {
 
 //                Game: Eco Quest 2
 //      Calling method: Rain::points
-//   Subroutine offset: English 0x0cc6, Spanish 0x0ce0 (script 0)
-// Applies to at least: English PC floppy, Spanish PC floppy
+//   Subroutine offset: English 0x0cc6, French/Spanish 0x0ce0 (script 0)
+// Applies to at least: English/French/Spanish PC floppy
 static const uint16 sig_arithmetic_ecoq2_1[] = {
 	0x8f, 0x01,                      // lsp param[1]
 	0x35, 0x10,                      // ldi 10h
@@ -50,6 +50,11 @@ static const uint16 sig_arithmetic_ecoq2_1[] = {
 	0x99, 0x6e,                      // lsgi global[6Eh]
 	0x38, SIG_UINT16(0x8000),        // pushi 8000h
 	0x8f, 0x01,                      // lsp param[1]
+	0x35, 0x10,                      // ldi 10h
+	0x0a,                            // mod
+	0x0c,                            // shr
+	0x14,                            // or
+	0x36,                            // push
 	SIG_END
 };
 
