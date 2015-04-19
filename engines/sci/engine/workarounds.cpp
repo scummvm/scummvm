@@ -39,23 +39,36 @@ namespace Sci {
 //  Those signatures are just like the script patcher signatures (for further study: engine\script_patches.cpp)
 //   However you may NOT use command SIG_SELECTOR8 nor SIG_SELECTOR16 atm. Proper support for those may be added later.
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,             workaround
+//                Game: Eco Quest 2
+//      Calling method: Rain::points
+//   Subroutine offset: English 0x0cc6, Spanish 0x0ce0 (script 0)
+// Applies to at least: English PC floppy, Spanish PC floppy
+static const uint16 sig_arithmetic_ecoq2_1[] = {
+	0x8f, 0x01,                      // lsp param[1]
+	0x35, 0x10,                      // ldi 10h
+	0x08,                            // div
+	0x99, 0x6e,                      // lsgi global[6Eh]
+	0x38, SIG_UINT16(0x8000),        // pushi 8000h
+	0x8f, 0x01,                      // lsp param[1]
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,         callSig, index,             workaround
 const SciWorkaroundEntry arithmeticWorkarounds[] = {
-	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #5237
-	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xcc6,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #4939
-	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xce0,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // Same as above, for the Spanish version - bug #5750
-	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #5124
-	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",           -1,    NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
-	{ GID_HOYLE4,         700,   -1,  1,               "Code", "doit",           -1,    NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_add: while bidding in Bridge, an object ("Bid") is added to an object in another segment ("hand3")
-	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",           -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
-	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",            -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
-	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",           -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #5101
-	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",         -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_ge: MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
-	{ GID_PHANTASMAGORIA, 902,    0,  0,                   "", "export 7",       -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_shr: when starting a chapter in Phantasmagoria
-	{ GID_QFG1VGA,        301,  928,  0,              "Blink", "init",           -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
-	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
-	{ GID_QFG3,           780,  999,  0,                   "", "export 6",       -1,    NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
-	{ GID_QFG4,           710,64941,  0,          "RandCycle", "doit",           -1,    NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when the tentacle appears in the third room of the caves
+	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #5237
+	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",  -1, sig_arithmetic_ecoq2_1,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #4939, Spanish version - bug #5750
+	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #5124
+	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",           -1,            NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
+	{ GID_HOYLE4,         700,   -1,  1,               "Code", "doit",           -1,            NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_add: while bidding in Bridge, an object ("Bid") is added to an object in another segment ("hand3")
+	{ GID_ICEMAN,         199,  977,  0,            "Grooper", "doit",           -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_add: While dancing with the girl
+	{ GID_MOTHERGOOSE256,  -1,  999,  0,              "Event", "new",            -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_and: constantly during the game (SCI1 version)
+	{ GID_MOTHERGOOSE256,  -1,    4,  0,              "rm004", "doit",           -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when going north and reaching the castle (rooms 4 and 37) - bug #5101
+	{ GID_MOTHERGOOSEHIRES,90,   90,  0,      "newGameButton", "select",         -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_ge: MUMG Deluxe, when selecting "New Game" in the main menu. It tries to compare an integer with a list. Needs to return false for the game to continue.
+	{ GID_PHANTASMAGORIA, 902,    0,  0,                   "", "export 7",       -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_shr: when starting a chapter in Phantasmagoria
+	{ GID_QFG1VGA,        301,  928,  0,              "Blink", "init",           -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_div: when entering the inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
+	{ GID_QFG2,           200,  200,  0,              "astro", "messages",       -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
+	{ GID_QFG3,           780,  999,  0,                   "", "export 6",       -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
+	{ GID_QFG4,           710,64941,  0,          "RandCycle", "doit",           -1,            NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when the tentacle appears in the third room of the caves
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -648,7 +661,7 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 						matched = true;
 					}
 					if (matched) {
-						debugC(kDebugLevelWorkarounds, "Workaround: '%s:%s' in script %d", workaround->objectName, workaround->methodName, curScriptNr);
+						debugC(kDebugLevelWorkarounds, "Workaround: '%s:%s' in script %d, localcall %x", workaround->objectName, workaround->methodName, curScriptNr, curLocalCallOffset);
 						return workaround->newValue;
 					}
 				}
