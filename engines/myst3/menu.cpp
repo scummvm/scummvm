@@ -396,7 +396,7 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	// The portion of the screenshot to keep
-	Common::Rect frame = _vm->_gfx->frameViewport();
+	Common::Rect frame = _vm->_scene->frameViewport();
 	Common::Rect screen = _vm->_gfx->viewport();
 
 	uint32 *dst = (uint32 *)small->getPixels();

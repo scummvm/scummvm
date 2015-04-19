@@ -101,14 +101,16 @@ void TinyGLRenderer::setupCameraOrtho2D(bool noScaling) {
 void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	Renderer::setupCameraPerspective(pitch, heading, fov);
 
-	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
-	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);
-
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadMatrixf(_projectionMatrix.getData());
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadMatrixf(_modelViewMatrix.getData());
+}
+
+void TinyGLRenderer::setViewport(const Common::Rect &vp) {
+	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
+	tglViewport(vp.left, vp.top, vp.width(), vp.height());
 }
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {

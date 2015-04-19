@@ -84,17 +84,16 @@ public:
 	virtual Graphics::Surface *getScreenshot() = 0;
 
 	Common::Rect viewport() const;
-	Common::Rect frameViewport() const;
-	Common::Point frameCenter() const;
 
 	Math::Matrix4 makeProjectionMatrix(float fov) const;
 
 	virtual void setupCameraOrtho2D(bool noScaling) = 0;
 	virtual void setupCameraPerspective(float pitch, float heading, float fov);
-
-	void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
+	virtual void setViewport(const Common::Rect &vp) = 0;
 
 	bool isCubeFaceVisible(uint face);
+
+	Math::Matrix4 getMvpMatrix() const { return _mvpMatrix; }
 
 	void flipVertical(Graphics::Surface *s);
 

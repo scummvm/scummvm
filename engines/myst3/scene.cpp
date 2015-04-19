@@ -29,6 +29,9 @@
 
 #include "graphics/colormasks.h"
 
+#include "math/glmath.h"
+#include "math/vector2d.h"
+
 namespace Myst3 {
 
 Scene::Scene(Myst3Engine *vm) :
@@ -130,6 +133,40 @@ float Scene::distanceToZone(float spotHeading, float spotPitch, float spotRadius
 
 void Scene::updateMouseSpeed() {
 	_mouseSpeed = ConfMan.getInt("mouse_speed");
+}
+
+Common::Rect Scene::frameViewport() const {
+	Common::Rect screen = _vm->_gfx->viewport();
+
+	Common::Rect frame = Common::Rect(screen.width(), screen.height() * Renderer::kFrameHeight / Renderer::kOriginalHeight);
+	frame.translate(screen.left, screen.top + screen.height() * Renderer::kBottomBorderHeight / Renderer::kOriginalHeight);
+
+	return frame;
+}
+
+Common::Point Scene::frameCenter() const {
+	Common::Rect screen = _vm->_gfx->viewport();
+	Common::Rect frame = frameViewport();
+
+	return Common::Point((frame.left + frame.right) / 2, screen.top + screen.bottom - (frame.top + frame.bottom) / 2);
+}
+
+void Scene::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) const {
+	// Screen coords to 3D coords
+	Math::Vector3d obj;
+	Math::gluMathUnProject(Math::Vector3d(screen.x, g_system->getHeight() - screen.y, 0.9f), _vm->_gfx->getMvpMatrix(), frameViewport(), obj);
+
+	// 3D coords to polar coords
+	obj.normalize();
+
+	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
+	horizontalProjection.normalize();
+
+	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
+	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
+
+	if (horizontalProjection.getX() > 0.0)
+		heading = 360 - heading;
 }
 
 } // end of namespace Myst3

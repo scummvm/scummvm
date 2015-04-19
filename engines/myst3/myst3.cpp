@@ -624,6 +624,7 @@ void Myst3Engine::drawFrame(bool noSwap) {
 		}
 
 		_gfx->setupCameraPerspective(pitch, heading, fov);
+		_gfx->setViewport(_scene->frameViewport());
 	} else {
 		_gfx->setupCameraOrtho2D(false);
 	}

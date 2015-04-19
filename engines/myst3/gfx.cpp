@@ -118,15 +118,6 @@ Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
 
-Common::Rect Renderer::frameViewport() const {
-	Common::Rect screen = viewport();
-
-	Common::Rect frame = Common::Rect(screen.width(), screen.height() * kFrameHeight / kOriginalHeight);
-	frame.translate(screen.left, screen.top + screen.height() * kBottomBorderHeight / kOriginalHeight);
-
-	return frame;
-}
-
 void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
@@ -144,12 +135,6 @@ void Renderer::computeScreenViewport() {
 		// Aspect ratio correction disabled, just stretch
 		_screenViewport = Common::Rect(screenWidth, screenHeight);
 	}
-}
-
-Common::Point Renderer::frameCenter() const {
-	Common::Rect screen = viewport();
-	Common::Rect frame = frameViewport();
-	return Common::Point((frame.left + frame.right) / 2, screen.top + screen.bottom - (frame.top + frame.bottom) / 2);
 }
 
 Math::Matrix4 Renderer::makeProjectionMatrix(float fov) const {
@@ -178,24 +163,6 @@ void Renderer::setupCameraPerspective(float pitch, float heading, float fov) {
 	_frustum.setup(_mvpMatrix);
 
 	_mvpMatrix.transpose();
-}
-
-void Renderer::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) {
-	// Screen coords to 3D coords
-	Math::Vector3d obj;
-	Math::gluMathUnProject(Math::Vector3d(screen.x, _system->getHeight() - screen.y, 0.9f), _mvpMatrix, frameViewport(), obj);
-
-	// 3D coords to polar coords
-	obj.normalize();
-
-	Math::Vector2d horizontalProjection = Math::Vector2d(obj.x(), obj.z());
-	horizontalProjection.normalize();
-
-	pitch = 90 - Math::Angle::arcCosine(obj.y()).getDegrees();
-	heading = Math::Angle::arcCosine(horizontalProjection.getY()).getDegrees();
-
-	if (horizontalProjection.getX() > 0.0)
-		heading = 360 - heading;
 }
 
 bool Renderer::isCubeFaceVisible(uint face) {

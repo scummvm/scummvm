@@ -176,11 +176,8 @@ void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
 	}
 }
 
-void ShaderRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
-	Renderer::setupCameraPerspective(pitch, heading, fov);
-
-	Common::Rect frame = frameViewport();
-	glViewport(frame.left, frame.top, frame.width(), frame.height());
+void ShaderRenderer::setViewport(const Common::Rect &vp) {
+	glViewport(vp.left, vp.top, vp.width(), vp.height());
 }
 
 void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {

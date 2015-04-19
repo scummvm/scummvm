@@ -57,7 +57,7 @@ static const CursorData availableCursors[] = {
 
 Cursor::Cursor(Myst3Engine *vm) :
 	_vm(vm),
-	_position(vm->_gfx->frameCenter()),
+	_position(vm->_scene->frameCenter()),
 	_hideLevel(0),
 	_lockedAtCenter(false) {
 
@@ -146,7 +146,7 @@ void Cursor::lockPosition(bool lock) {
 
 	g_system->lockMouse(lock);
 
-	Common::Point center = _vm->_gfx->frameCenter();
+	Common::Point center = _vm->_scene->frameCenter();
 	if (_lockedAtCenter) {
 		// Locking, just move the cursor at the center of the screen
 		_position = center;
@@ -223,7 +223,7 @@ void Cursor::getDirection(float &pitch, float &heading) {
 		pitch = _vm->_state->getLookAtPitch();
 		heading = _vm->_state->getLookAtHeading();
 	} else {
-		_vm->_gfx->screenPosToDirection(_position, pitch, heading);
+		_vm->_scene->screenPosToDirection(_position, pitch, heading);
 	}
 }
 
