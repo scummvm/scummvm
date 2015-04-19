@@ -91,6 +91,18 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Hoyle 1
+//      Calling method: export 0
+//   Subroutine offset: 0x037c (script 16)
+// Applies to at least: English PC floppy
+static const uint16 sig_uninitread_hoyle1_1[] = {
+	0x3f, 0x05,                      // link 05
+	0x78,                            // push1
+	0x76,                            // push0
+	0x40,                            // call [...]
+	SIG_END
+};
+
 //                Game: Hoyle 4
 //      Calling method: export 2
 //   Subroutine offset: 0x1d4d (script 300)
@@ -222,7 +234,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,              NULL,     4, { WORKAROUND_FAKE,   0 } }, // called during the game
 	{ GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,              NULL,     4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
 	{ GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,              NULL,     2, { WORKAROUND_FAKE,   0 } }, // Cribbage / during the game
-	{ GID_HOYLE1,          3,    16,  0,                   "", "export 0",    0x37c,              NULL,     3, { WORKAROUND_FAKE,   0 } }, // Hearts / during the game - bug #5299
+	{ GID_HOYLE1,          3,    16,  0,                   "", "export 0", -1, sig_uninitread_hoyle1_1,     3, { WORKAROUND_FAKE,   0 } }, // Hearts / during the game - bug #5299
 	{ GID_HOYLE1,         -1,   997,  0,            "MenuBar", "doit",           -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // When changing game speed settings - bug #5512
 	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something - temps 504 and 505
 	{ GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu
