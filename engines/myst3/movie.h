@@ -41,8 +41,8 @@ public:
 	Movie(Myst3Engine *vm, uint16 id);
 	virtual ~Movie();
 
-	virtual void draw();
-	virtual void drawOverlay();
+	virtual void draw() override;
+	virtual void drawOverlay() override;
 
 	uint16 getId() { return _id; }
 	bool isVideoLoaded() {return _bink.isVideoLoaded(); }
@@ -94,8 +94,8 @@ public:
 	ScriptedMovie(Myst3Engine *vm, uint16 id);
 	virtual ~ScriptedMovie();
 
-	void draw();
-	void drawOverlay();
+	void draw() override;
+	void drawOverlay() override;
 	virtual void update();
 
 	void setEndFrameVar(uint16 v) { _endFrameVar = v; }

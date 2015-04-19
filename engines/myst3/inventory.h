@@ -36,7 +36,7 @@ namespace Myst3 {
 class Myst3Engine;
 class Texture;
 
-class Inventory {
+class Inventory : public Drawable {
 public:
 	Inventory(Myst3Engine *vm);
 	virtual ~Inventory();
@@ -53,7 +53,7 @@ public:
 	uint16 hoveredItem();
 	void useItem(uint16 var);
 
-	void draw();
+	void draw() override;
 private:
 	struct InventoryItem {
 		uint16 var;
@@ -90,7 +90,7 @@ class DragItem : public Drawable {
 public:
 	DragItem(Myst3Engine *vm, uint id);
 	~DragItem();
-	void drawOverlay();
+	void drawOverlay() override;
 	void setFrame(uint16 frame);
 
 private:

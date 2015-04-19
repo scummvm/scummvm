@@ -38,7 +38,7 @@ public:
 	virtual ~Subtitles();
 
 	void setFrame(int32 frame);
-	void drawOverlay();
+	void drawOverlay() override;
 
 protected:
 	struct Phrase {
