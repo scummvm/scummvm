@@ -471,9 +471,6 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_WIDTH				106
 #define SCI_DISPLAY_SAVEUNDER			107
 #define SCI_DISPLAY_RESTOREUNDER		108
-#define SCI_DISPLAY_DUMMY1				114
-#define SCI_DISPLAY_DUMMY2				115
-#define SCI_DISPLAY_DUMMY3				117
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv) {
@@ -543,22 +540,6 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 			bRedraw = 0;
 			break;
 
-		// The following three dummy calls are not supported by the Sierra SCI
-		// interpreter, but are erroneously called in some game scripts.
-		case SCI_DISPLAY_DUMMY1:	// Longbow demo (all rooms) and QFG1 EGA demo (room 11)
-		case SCI_DISPLAY_DUMMY2:	// Longbow demo (all rooms)
-		case SCI_DISPLAY_DUMMY3:	// QFG1 EGA demo (room 11) and PQ2 (room 23)
-			if (!(g_sci->getGameId() == GID_LONGBOW && g_sci->isDemo()) &&
-				!(g_sci->getGameId() == GID_QFG1    && g_sci->isDemo()) &&
-				!(g_sci->getGameId() == GID_PQ2))
-				error("Unknown kDisplay argument %d", displayArg.getOffset());
-
-			if (displayArg.getOffset() == SCI_DISPLAY_DUMMY2) {
-				if (!argc)
-					error("No parameter left for kDisplay(115)");
-				argc--; argv++;
-			}
-			break;
 		default:
 			SciTrackOriginReply originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);

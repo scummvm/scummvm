@@ -346,15 +346,36 @@ const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Police Quest 2
+//      Calling method: rm23Script::elements
+//   Subroutine offset: English 1.001.000: 0x04ae, English 1.002.011: 0x04ca, Japanese: 0x04eb (script 23)
+// Applies to at least: English PC floppy, Japanese PC-9801
+static const uint16 sig_kDisplay_pq2_1[] = {
+	0x35, 0x00,                      // ldi 00
+	0xa3, 0x09,                      // sal local[9]
+	0x35, 0x01,                      // ldi 01
+	0xa3, 0x0a,                      // sal local[0Ah]
+	0x38, SIG_ADDTOOFFSET(+2),       // pushi selector[drawPic] TODO: implement selectors
+	0x7a,                            // push2
+	0x39, 0x5a,                      // pushi 5Ah
+	0x7a,                            // push2
+	0x81, 0x02,                      // lag global[2]
+	0x4a, 0x08,                      // send 08
+	SIG_END
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
-	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
-	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4ae,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id
-	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4c1,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id (another pq2 version, bug #5223)
-	{ GID_QFG1,           11,    11,  0,             "battle", "<noname90>",     -1,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
-	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store - bug #5227
-	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
-	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object
+	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
+	{ GID_LONGBOW,        95,    95,  0,          "countDown", "changeState",    -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during title screen "Robin Hood! Your bow is needed"
+	{ GID_LONGBOW,       220,   220,  0,             "moveOn", "changeState",    -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during second room "Outwit and outfight..."
+	{ GID_LONGBOW,       210,   210,  0,               "mama", "changeState",    -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during third room "Fall under the spell..."
+	{ GID_LONGBOW,       320,   320,  0,              "flyin", "changeState",    -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: during fourth room "Conspiracies, love..."
+	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements", -1, sig_kDisplay_pq2_1,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id - bug #5223
+	{ GID_QFG1,           11,    11,  0,             "battle", "init",           -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
+	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store - bug #5227
+	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
+	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
