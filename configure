@@ -35,6 +35,7 @@ SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_ASFLAGS=$ASFLAGS
 SAVED_WINDRESFLAGS=$WINDRESFLAGS
+SAVED_SDL_CONFIG=$SDL_CONFIG
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -361,7 +362,7 @@ define_in_config_if_yes() {
 # TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
-	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
 
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
@@ -2193,6 +2194,8 @@ case $_host_os in
 
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		# SDL2 doesn't seem to add Cocoa for us.
+		LIBS="$LIBS -framework Cocoa"
 		add_line_to_config_mk 'MACOSX = 1'
 
 		# Now we may have MacPorts or Fink installed
@@ -3067,6 +3070,9 @@ case $_backend in
 		case $_sdlversion in
 			1.3.*)
 				add_line_to_config_mk "USE_SDL13 = 1"
+				;;
+			2.0.*)
+				add_line_to_config_mk "USE_SDL2 = 1"
 				;;
 			*)
 				;;
@@ -4742,6 +4748,7 @@ SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
 SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
 SAVED_ASFLAGS      := $SAVED_ASFLAGS
 SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
+SAVED_SDL_CONFIG   := $SAVED_SDL_CONFIG
 EOF
 
 #

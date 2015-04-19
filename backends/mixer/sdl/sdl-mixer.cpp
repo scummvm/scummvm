@@ -57,10 +57,14 @@ void SdlMixerManager::init() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	const char *sdlDriverName = SDL_GetCurrentAudioDriver();
+#else
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
 	sdlDriverName[0] = '\0';
 	SDL_AudioDriverName(sdlDriverName, maxNameLen);
+#endif
 	debug(1, "Using SDL Audio Driver \"%s\"", sdlDriverName);
 
 	// Get the desired audio specs

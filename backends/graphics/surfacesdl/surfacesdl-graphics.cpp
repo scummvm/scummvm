@@ -52,9 +52,12 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource)
+SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
 	:
-	SdlGraphicsManager(sdlEventSource),
+	SdlGraphicsManager(sdlEventSource, window),
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_renderer(nullptr), _screenTexture(nullptr),
+#endif
 	_screen(0),
 	_subScreen(0),
 	_overlayVisible(false),
@@ -1119,5 +1122,17 @@ void SurfaceSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
 	// ResidualVM: not use that:
 	//setMousePos(mouse.x, mouse.y);
 }
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+void SurfaceSdlGraphicsManager::deinitializeRenderer() {
+	SDL_DestroyTexture(_screenTexture);
+	_screenTexture = nullptr;
+
+	SDL_DestroyRenderer(_renderer);
+	_renderer = nullptr;
+
+	_window->destroyWindow();
+}
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif

@@ -815,6 +815,30 @@ void AVIDecoder::AVIVideoTrack::forceTrackEnd() {
 	_curFrame = _frameCount - 1;
 }
 
+const byte *AVIDecoder::AVIVideoTrack::getPalette() const {
+	if (_videoCodec && _videoCodec->containsPalette())
+		return _videoCodec->getPalette();
+
+	_dirtyPalette = false;
+	return _palette;
+}
+
+bool AVIDecoder::AVIVideoTrack::hasDirtyPalette() const {
+	if (_videoCodec && _videoCodec->containsPalette())
+		return _videoCodec->hasDirtyPalette();
+
+	return _dirtyPalette;
+}
+
+bool AVIDecoder::AVIVideoTrack::canDither() const {
+	return _videoCodec && _videoCodec->canDither(Image::Codec::kDitherTypeVFW);
+}
+
+void AVIDecoder::AVIVideoTrack::setDither(const byte *palette) {
+	assert(_videoCodec);
+	_videoCodec->setDither(Image::Codec::kDitherTypeVFW, palette);
+}
+
 AVIDecoder::AVIAudioTrack::AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType)
 		: _audsHeader(streamHeader), _wvInfo(waveFormat), _soundType(soundType), _curChunk(0) {
 	_audStream = createAudioStream();

@@ -20,35 +20,18 @@
  *
  */
 
-#ifndef PLATFORM_SDL_WIN32_H
-#define PLATFORM_SDL_WIN32_H
+#ifndef BACKENDS_PLATFORM_SDL_WIN32_WIN32_WINDOW_H
+#define BACKENDS_PLATFORM_SDL_WIN32_WIN32_WINDOW_H
 
-#include "backends/platform/sdl/sdl.h"
+#ifdef WIN32
 
-class OSystem_Win32 : public OSystem_SDL {
+#include "backends/platform/sdl/sdl-window.h"
+
+class SdlWindow_Win32 : public SdlWindow {
 public:
-	virtual void init();
-	virtual void initBackend();
-
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
-	virtual bool hasFeature(Feature f);
-
-	virtual bool displayLogFile();
-
-protected:
-	/**
-	 * The path of the currently open log file, if any.
-	 *
-	 * @note This is currently a string and not an FSNode for simplicity;
-	 * e.g. we don't need to include fs.h here, and currently the
-	 * only use of this value is to use it to open the log file in an
-	 * editor; for that, we need it only as a string anyway.
-	 */
-	Common::String _logFilePath;
-
-	virtual Common::String getDefaultConfigFileName();
-	virtual Common::WriteStream *createLogFile();
+	virtual void setupIcon();
 };
+
+#endif
 
 #endif

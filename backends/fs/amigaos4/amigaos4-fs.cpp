@@ -381,15 +381,17 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 	dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList) {
 		if (dosList->dol_Type == DLT_VOLUME &&
-			dosList->dol_Name) {
+			dosList->dol_Name &&
+			dosList->dol_Port) {
 
 			// The original line was
 			//if (dosList->dol_Type == DLT_VOLUME &&
 			//dosList->dol_Name &&
 			//dosList->dol_Task) {
 			// which errored using SDK 53.24 with a 'struct dosList' has no member called 'dol_Task'
-			// I removed dol_Task because it's not used anywhere else
-			// and it neither brought up further errors nor crashes or regressions
+			// The reason for that was that
+			// 1) dol_Task wasn't a task pointer, it is a message port instead
+			// 2) It was redefined to be dol_Port in dos/obsolete.h in afore mentioned SDK
 
 			// Copy name to buffer
 			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);

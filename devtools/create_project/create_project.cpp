@@ -125,6 +125,7 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	int msvcVersion = 9;
+	bool useSDL2 = false;
 
 	// Parse command line arguments
 	using std::cout;
@@ -267,6 +268,8 @@ int main(int argc, char *argv[]) {
 			setup.devTools = true;
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
+		} else if (!std::strcmp(argv[i], "--sdl2")) {
+			useSDL2 = true;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -335,7 +338,13 @@ int main(int argc, char *argv[]) {
 	// Windows only has support for the SDL backend, so we hardcode it here (along with winmm)
 	setup.defines.push_back("WIN32");
 	setup.defines.push_back("SDL_BACKEND");
-	setup.libraries.push_back("sdl");
+	if (!useSDL2) {
+		cout << "\nLinking to SDL 1.2\n\n";
+		setup.libraries.push_back("sdl");
+	} else {
+		cout << "\nLinking to SDL 2.0\n\n";
+		setup.libraries.push_back("sdl2");
+	}
 	setup.libraries.push_back("winmm");
 
 	// Add additional project-specific library
@@ -645,6 +654,9 @@ void displayHelp(const char *exe) {
 	        "Optional features settings:\n"
 	        " --enable-<name>          enable inclusion of the feature \"name\"\n"
 	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
+			"\n"
+			"SDL settings:\n"
+			" --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";

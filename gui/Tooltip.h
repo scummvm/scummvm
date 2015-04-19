@@ -32,6 +32,9 @@ namespace GUI {
 class Widget;
 
 class Tooltip : public Dialog {
+private:
+	Dialog *_parent;
+
 public:
 	Tooltip();
 
@@ -39,12 +42,30 @@ public:
 
 	void drawDialog();
 protected:
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) { close(); }
-	virtual void handleMouseUp(int x, int y, int button, int clickCount) { close(); }
-	virtual void handleMouseWheel(int x, int y, int direction) { close(); }
-	virtual void handleKeyDown(Common::KeyState state) { close(); }
-	virtual void handleKeyUp(Common::KeyState state) { close(); }
-	virtual void handleMouseMoved(int x, int y, int button) { close(); }
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
+		close();
+		_parent->handleMouseDown(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
+	}
+	virtual void handleMouseUp(int x, int y, int button, int clickCount) {
+		close();
+		_parent->handleMouseUp(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
+	}
+	virtual void handleMouseWheel(int x, int y, int direction) {
+		close();
+		_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
+	}
+	virtual void handleKeyDown(Common::KeyState state) {
+		close();
+		_parent->handleKeyDown(state);
+	}
+	virtual void handleKeyUp(Common::KeyState state) {
+		close();
+		_parent->handleKeyUp(state);
+	}
+	virtual void handleMouseMoved(int x, int y, int button) {
+		close();
+		_parent->handleMouseMoved(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button);
+	}
 
 	int _maxWidth;
 	int _xdelta, _ydelta;

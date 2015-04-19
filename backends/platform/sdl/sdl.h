@@ -29,6 +29,7 @@
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/log/log.h"
+#include "backends/platform/sdl/sdl-window.h"
 
 #include "common/array.h"
 
@@ -91,17 +92,17 @@ protected:
 	 */
 	SdlEventSource *_eventSource;
 
+	/**
+	 * The SDL output window.
+	 */
+	SdlWindow *_window;
+
 	virtual Common::EventSource *getDefaultEventSource() { return _eventSource; }
 
 	/**
 	 * Initialze the SDL library.
 	 */
 	virtual void initSDL();
-
-	/**
-	 * Setup the window icon.
-	 */
-	virtual void setupIcon();
 
 	// Logging
 	virtual Common::WriteStream *createLogFile() { return 0; }

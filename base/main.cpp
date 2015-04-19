@@ -540,6 +540,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			PluginManager::instance().loadAllPlugins(); // only for cached manager
 		} else {
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
+
+			// Clear the active domain
+			ConfMan.setActiveDomain("");
 		}
 
 		// reset the graphics to default

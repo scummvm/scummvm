@@ -310,10 +310,12 @@ endif
 	@cd $(srcdir)/dists/msvc10 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 10 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo Creating MSVC11 project files...
 	@cd $(srcdir)/dists/msvc11 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 11 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo Creating MSVC12 project files...
+	@cd $(srcdir)/dists/msvc12 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 12 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run
-	@echo "\tgit commit 'DISTS: Generated Code::Blocks and MSVC project files'"
+	@echo "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
 # Special target to create a win32 snapshot binary under Debian Linux using cross mingw32 toolchain
 crosswin32dist: $(EXECUTABLE)

@@ -292,12 +292,23 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_curPalette = 0;
 	_dirtyPalette = false;
 	_reversed = false;
+	_forcedDitherPalette = 0;
+	_ditherTable = 0;
+	_ditherFrame = 0;
 }
 
 QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 	if (_scaledSurface) {
 		_scaledSurface->free();
 		delete _scaledSurface;
+	}
+
+	delete[] _forcedDitherPalette;
+	delete[] _ditherTable;
+
+	if (_ditherFrame) {
+		_ditherFrame->free();
+		delete _ditherFrame;
 	}
 }
 
@@ -382,6 +393,9 @@ uint16 QuickTimeDecoder::VideoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() const {
+	if (_forcedDitherPalette)
+		return Graphics::PixelFormat::createFormatCLUT8();
+
 	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
 }
 
@@ -463,6 +477,10 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 		}
 	}
 
+	// Handle forced dithering
+	if (frame && _forcedDitherPalette)
+		frame = forceDither(*frame);
+
 	if (frame && (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1)) {
 		if (!_scaledSurface) {
 			_scaledSurface = new Graphics::Surface();
@@ -474,6 +492,11 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	}
 
 	return frame;
+}
+
+const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
+	_dirtyPalette = false;
+	return _forcedDitherPalette ? _forcedDitherPalette : _curPalette;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
@@ -749,6 +772,103 @@ bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
 	// We're at the end of the edit once the next frame's time would
 	// bring us past the end of the edit.
 	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration();
+}
+
+bool QuickTimeDecoder::VideoTrackHandler::canDither() const {
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+
+		if (!desc || !desc->_videoCodec)
+			return false;
+	}
+
+	return true;
+}
+
+void QuickTimeDecoder::VideoTrackHandler::setDither(const byte *palette) {
+	assert(canDither());
+
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+
+		if (desc->_videoCodec->canDither(Image::Codec::kDitherTypeQT)) {
+			// Codec dither
+			desc->_videoCodec->setDither(Image::Codec::kDitherTypeQT, palette);
+		} else {
+			// Forced dither
+			_forcedDitherPalette = new byte[256 * 3];
+			memcpy(_forcedDitherPalette, palette, 256 * 3);
+			_ditherTable = Image::Codec::createQuickTimeDitherTable(_forcedDitherPalette, 256);
+			_dirtyPalette = true;
+		}
+	}
+}
+
+namespace {
+
+// Return a pixel in RGB554
+uint16 makeDitherColor(byte r, byte g, byte b) {
+	return ((r & 0xF8) << 6) | ((g & 0xF8) << 1) | (b >> 4);
+}
+
+// Default template to convert a dither color
+template<typename PixelInt>
+inline uint16 readDitherColor(PixelInt srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+	byte r, g, b;
+	format.colorToRGB(srcColor, r, g, b);
+	return makeDitherColor(r, g, b);
+}
+
+// Specialized version for 8bpp
+template<>
+inline uint16 readDitherColor(byte srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+	return makeDitherColor(palette[srcColor * 3], palette[srcColor * 3 + 1], palette[srcColor * 3 + 2]);
+}
+
+template<typename PixelInt>
+void ditherFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byte *ditherTable, const byte *palette = 0) {
+	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+
+	for (int y = 0; y < dst.h; y++) {
+		const PixelInt *srcPtr = (const PixelInt *)src.getBasePtr(0, y);
+		byte *dstPtr = (byte *)dst.getBasePtr(0, y);
+		uint16 colorTableOffset = colorTableOffsets[y & 3];
+
+		for (int x = 0; x < dst.w; x++) {
+			uint16 color = readDitherColor(*srcPtr++, src.format, palette);
+			*dstPtr++ = ditherTable[colorTableOffset + color];
+			colorTableOffset += 0x4000;
+		}
+	}
+}
+
+} // End of anonymous namespace
+
+const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const Graphics::Surface &frame) {
+	if (frame.format.bytesPerPixel == 1) {
+		// This should always be true, but this is for sanity
+		if (!_curPalette)
+			return &frame;
+
+		// If the palettes match, bail out
+		if (memcmp(_forcedDitherPalette, _curPalette, 256 * 3) == 0)
+			return &frame;
+	}
+
+	// Need to create a new one
+	if (!_ditherFrame) {
+		_ditherFrame = new Graphics::Surface();
+		_ditherFrame->create(frame.w, frame.h, Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	if (frame.format.bytesPerPixel == 1)
+		ditherFrame<byte>(frame, *_ditherFrame, _ditherTable, _curPalette);
+	else if (frame.format.bytesPerPixel == 2)
+		ditherFrame<uint16>(frame, *_ditherFrame, _ditherTable);
+	else if (frame.format.bytesPerPixel == 4)
+		ditherFrame<uint32>(frame, *_ditherFrame, _ditherTable);
+
+	return _ditherFrame;
 }
 
 } // End of namespace Video

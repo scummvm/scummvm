@@ -56,7 +56,7 @@
  */
 class SurfaceSdlGraphicsManager : public SdlGraphicsManager, public Common::EventObserver {
 public:
-	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~SurfaceSdlGraphicsManager();
 
 	virtual void activateManager();
@@ -133,6 +133,11 @@ public:
 
 protected:
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Renderer *_renderer;
+	SDL_Texture *_screenTexture;
+	void deinitializeRenderer();
+#endif
 
 	SDL_Surface *_screen;
 	SDL_Surface *_subScreen;
