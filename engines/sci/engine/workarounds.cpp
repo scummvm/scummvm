@@ -91,6 +91,16 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Fan-Made "Ocean Battle"
+//      Calling method: RoomScript::doit
+//   Subroutine offset: 0x1f17
+// Applies to at least: Ocean Battle
+static const uint16 sig_uninitread_fanmade_1[] = {
+	0x3f, 0x04,                      // link 04
+	0x88, SIG_UINT16(0x023b),        // lsg global[23Bh]
+	SIG_END
+};
+
 //                Game: Hoyle 1
 //      Calling method: export 0
 //   Subroutine offset: 0x037c (script 16)
@@ -237,7 +247,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,              NULL,    20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
 	{ GID_FANMADE,       528,   990,  0,            "GDialog", "doit",           -1,              NULL,     4, { WORKAROUND_FAKE,   0 } }, // Happens in Cascade Quest when closing the glossary - bug #5116
-	{ GID_FANMADE,       488,     1,  0,         "RoomScript", "doit",       0x1f17,              NULL,     1, { WORKAROUND_FAKE,   0 } }, // Happens in Ocean Battle while playing - bug #5335
+	{ GID_FANMADE,       488,     1,  0,         "RoomScript", "doit", -1,    sig_uninitread_fanmade_1,     1, { WORKAROUND_FAKE,   0 } }, // Happens in Ocean Battle while playing - bug #5335
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,              NULL,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,              NULL,     5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS, 540,   540,  0,          "WaverCode", "init",           -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // Gun pratice mini-game - bug #5232
