@@ -114,6 +114,18 @@ static const uint16 sig_uninitread_hoyle4_1[] = {
 	SIG_END
 };
 
+//                Game: Jones in the fast lane
+//      Calling method: weekendText::draw
+//   Subroutine offset: 0x03d3 (script 232)
+// Applies to at least: English PC CD
+static const uint16 sig_uninitread_jones_1[] = {
+	0x3f, 0x02,                      // link 02
+	0x8d, 0x00,                      // lst temp[0]
+	0x35, 0x01,                      // ldi 01
+	0x22,                            // lt?
+	SIG_END
+};
+
 //                Game: Conquests of the Longbow
 //      Calling method: letter::handleEvent
 //   Subroutine offset: English PC/Amiga 0x00a8 (script 213)
@@ -260,7 +272,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",  -1,              NULL,    58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #5241
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,              NULL,     3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
-	{ GID_JONES,           1,   232,  0,        "weekendText", "draw",        0x3d3,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // jones/cd only - gets called during the game
+	{ GID_JONES,           1,   232,  0,        "weekendText", "draw", -1,      sig_uninitread_jones_1,     0, { WORKAROUND_FAKE,   0 } }, // jones/cd only - gets called during the game
 	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends, temps 13 and 14
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts, temps 13 and 14
 	//{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,              NULL,     3, { WORKAROUND_FAKE,   0xf } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #4961
