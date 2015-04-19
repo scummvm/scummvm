@@ -39,6 +39,20 @@ namespace Sci {
 //  Those signatures are just like the script patcher signatures (for further study: engine\script_patches.cpp)
 //   However you may NOT use command SIG_SELECTOR8 nor SIG_SELECTOR16 atm. Proper support for those may be added later.
 
+//                Game: Conquests of Camelot
+//      Calling method: endingCartoon2::changeState
+//   Subroutine offset: English 0x020d (script 92)
+// Applies to at least: English PC floppy
+static const uint16 sig_arithmetic_camelot_1[] = {
+	0x83, 0x32,                      // lal local[32h]
+	0x30, SIG_UINT16(0x001d),        // bnt [...]
+	0x7a,                            // push2
+	0x39, 0x08,                      // pushi 08
+	0x36,                            // push
+	0x43,                            // callk Graph
+	SIG_END
+};
+
 //                Game: Eco Quest 2
 //      Calling method: Rain::points
 //   Subroutine offset: English 0x0cc6, French/Spanish 0x0ce0 (script 0)
@@ -60,7 +74,7 @@ static const uint16 sig_arithmetic_ecoq2_1[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,         callSig, index,             workaround
 const SciWorkaroundEntry arithmeticWorkarounds[] = {
-	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState", 0x20d,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #5237
+	{ GID_CAMELOT,         92,   92,  0,     "endingCartoon2", "changeState",-1,sig_arithmetic_camelot_1, 0, { WORKAROUND_FAKE,   0 } }, // op_lai: during the ending, sub gets called with no parameters, uses parameter 1 which is theGrail in this case - bug #5237
 	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",  -1, sig_arithmetic_ecoq2_1,     0, { WORKAROUND_FAKE,   0 } }, // op_or: when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #4939, Spanish version - bug #5750
 	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,            NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_mul: The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #5124
 	{ GID_GK1,            800,64992,  0,                "Fwd", "doit",           -1,            NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when Mosely finds Gabriel and Grace near the end of the game, compares the Grooper object with 7
@@ -79,7 +93,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 
 //                Game: Conquests of the Longbow
 //      Calling method: letter::handleEvent
-//   Subroutine offset: English 0x00a8 (script 213)
+//   Subroutine offset: English PC/Amiga 0x00a8 (script 213)
 // Applies to at least: English PC floppy, English Amiga floppy
 static const uint16 sig_uninitread_longbow_1[] = {
 	0x3f, 0x02,                      // link 02
