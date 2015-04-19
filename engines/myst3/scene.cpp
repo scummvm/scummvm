@@ -93,17 +93,6 @@ void Scene::updateCamera(Common::Point &mouse) {
 	_vm->_state->setCameraHeading((int32)heading);
 }
 
-void Scene::drawBlackBorders() {
-	Common::Rect top = Common::Rect(Renderer::kOriginalWidth, Renderer::kTopBorderHeight);
-
-	Common::Rect bottom = Common::Rect(Renderer::kOriginalWidth, Renderer::kBottomBorderHeight);
-	bottom.translate(0, Renderer::kTopBorderHeight + Renderer::kFrameHeight);
-
-	uint32 black = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(255, 0, 0, 0);
-	_vm->_gfx->drawRect2D(top, black);
-	_vm->_gfx->drawRect2D(bottom, black);
-}
-
 void Scene::drawSunspotFlare(const SunSpot &s) {
 	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, Renderer::kFrameHeight);
 	frame.translate(0, Renderer::kTopBorderHeight);

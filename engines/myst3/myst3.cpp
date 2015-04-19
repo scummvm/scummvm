@@ -652,8 +652,6 @@ void Myst3Engine::drawFrame(bool noSwap) {
 		SunSpot flare = computeSunspotsIntensity(pitch, heading);
 		if (flare.intensity >= 0)
 			_scene->drawSunspotFlare(flare);
-
-		_scene->drawBlackBorders();
 	}
 
 	if (isInventoryVisible())

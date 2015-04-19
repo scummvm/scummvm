@@ -44,7 +44,6 @@ public:
 
 	void updateMouseSpeed();
 
-	void drawBlackBorders();
 	void drawSunspotFlare(const SunSpot &s);
 	float distanceToZone(float spotHeading, float spotPitch, float spotRadius, float heading, float pitch);
 };
