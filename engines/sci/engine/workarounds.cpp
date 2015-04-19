@@ -390,6 +390,19 @@ static const uint16 sig_kDisplay_pq2_1[] = {
 	SIG_END
 };
 
+//                Game: Space Quest 4
+//      Calling method: doCatalog::mode
+//   Subroutine offset: English PC CD: 0x0084 (script 391)
+// Applies to at least: English PC CD
+static const uint16 sig_kDisplay_sq4_1[] = {
+	0x38, SIG_UINT16(0x0187),        // pushi 0187h (drawPic)
+	0x78,                            // push1
+	0x38, SIG_UINT16(0x0189),        // pushi 0189h (reflectPosn)
+	0x81, 0x02,                      // lag global[2]
+	0x4a, 0x06,                      // send 06
+	SIG_END
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
@@ -400,7 +413,7 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements", -1, sig_kDisplay_pq2_1,     0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id - bug #5223
 	{ GID_QFG1,           11,    11,  0,             "battle", "init",           -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
 	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store - bug #5227
-	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
+	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode", -1,     sig_kDisplay_sq4_1,     0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,         NULL,     0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -497,25 +510,36 @@ const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
+//                Game: Space Quest 4
+//      Calling method: laserScript::changeState
+//   Subroutine offset: English/German/French/Russian PC floppy, Japanese PC-9801: 0x0016, English PC CD: 0x00b2 (script 150)
+// Applies to at least: English/German/French/Russian PC floppy, English PC CD, Japanese PC-9801
+static const uint16 sig_kGraphRedrawBox_sq4_1[] = {
+	0x3f, 0x07,                      // link 07
+	0x39, SIG_ADDTOOFFSET(+1),       // pushi 2Ah for PC floppy, pushi 27h for PC CD
+	0x76,                            // push0
+	0x72,                            // lofsa laserSound
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,                callSig, index,                workaround
 const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
-	{ GID_SQ4,           405,   405,  0,       "swimAfterEgo", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
-	{ GID_SQ4,           405,   405,  0,                   "", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
-	{ GID_SQ4,           406,   406,  0,        "egoFollowed", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // FLOPPY: when getting shot by the police - accidental additional parameter specified
-	{ GID_SQ4,           406,   406,  0,       "swimAndShoot", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
-	{ GID_SQ4,           406,   406,  0,                   "", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573 (is for both egoFollowed and swimAndShoot)
-	{ GID_SQ4,           410,   410,  0,       "swimAfterEgo", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
-	{ GID_SQ4,           410,   410,  0,                   "", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
-	{ GID_SQ4,           411,   411,  0,       "swimAndShoot", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
-	{ GID_SQ4,           411,   411,  0,                   "", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
-	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState",  0xb2,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when visiting the pedestral where Roger Jr. is trapped, before trashing the brain icon in the programming chapter, accidental additional parameter specified - bug #5479
-	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState",  0x16,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the German version - bug #5527
-	{ GID_SQ4,           150,   150,  0,                   "", "changeState",  0x16,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version - bug #5573
-	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
-	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #5031
-	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
-	{ GID_KQ5,            -1,   995,  0,                   "",    "export 0",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when opening the gem pouch, accidental additional parameter specified - bug #5138
-	{ GID_KQ5,            -1,   403,  0,          "KQ5Window",     "dispose",    -1,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the FM Towns version when closing any dialog box, accidental additional parameter specified
+	{ GID_SQ4,           405,   405,  0,       "swimAfterEgo", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           405,   405,  0,                   "", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
+	{ GID_SQ4,           406,   406,  0,        "egoFollowed", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // FLOPPY: when getting shot by the police - accidental additional parameter specified
+	{ GID_SQ4,           406,   406,  0,       "swimAndShoot", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           406,   406,  0,                   "", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573 (is for both egoFollowed and swimAndShoot)
+	{ GID_SQ4,           410,   410,  0,       "swimAfterEgo", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           410,   410,  0,                   "", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
+	{ GID_SQ4,           411,   411,  0,       "swimAndShoot", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
+	{ GID_SQ4,           411,   411,  0,                   "", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air... Russian version - bug #5573
+	{ GID_SQ4,           150,   150,  0,        "laserScript", "changeState", -1, sig_kGraphRedrawBox_sq4_1,     0, { WORKAROUND_STILLCALL, 0 } }, // when visiting the pedestral where Roger Jr. is trapped, before trashing the brain icon in the programming chapter, accidental additional parameter specified - bug #5479, German - bug #5527
+	{ GID_SQ4,           150,   150,  0,                   "", "changeState", -1, sig_kGraphRedrawBox_sq4_1,     0, { WORKAROUND_STILLCALL, 0 } }, // same as above, for the Russian version - bug #5573
+	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
+	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #5031
+	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
+	{ GID_KQ5,            -1,   995,  0,                   "",    "export 0",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when opening the gem pouch, accidental additional parameter specified - bug #5138
+	{ GID_KQ5,            -1,   403,  0,          "KQ5Window",     "dispose",    -1,                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the FM Towns version when closing any dialog box, accidental additional parameter specified
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
