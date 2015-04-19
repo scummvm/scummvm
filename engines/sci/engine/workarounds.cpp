@@ -173,6 +173,19 @@ static const uint16 sig_uninitread_qfg3_2[] = {
 	SIG_END
 };
 
+//                Game: Space Quest 1
+//      Calling method: firePulsar::changeState
+//   Subroutine offset: English 0x018a (script 703)
+// Applies to at least: English PC floppy, English Amiga floppy
+static const uint16 sig_uninitread_sq1_1[] = {
+	0x3f, 0x01,                      // link 01
+	0x38, SIG_ADDTOOFFSET(+2),       // pushi 0242 (selector egoStatus)
+	0x76,                            // push0
+	0x72, SIG_ADDTOOFFSET(+2),       // lofsa DeltaurRegion
+	0x4a, 0x04,                      // send 04
+	SIG_END
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,    call,           callSig, index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CAMELOT,        40,    40,  0,               "Rm40", "handleEvent",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // when looking at the ground at the pool of Siloam - bug #6401
@@ -305,7 +318,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SHIVERS,     29260, 29260,  0,            "spVenus", "handleEvent",    -1,              NULL,     4, { WORKAROUND_FAKE,   0 } }, // When clicking venus after seeing fortune to align earth etc...
 	{ GID_SQ1,           103,   103,  0,               "hand", "internalEvent",  -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // Spanish (and maybe early versions?) only: when moving cursor over input pad, temps 1 and 2
 	{ GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
-	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
+	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState",-1,  sig_uninitread_sq1_1,     0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,            -1,   398,  0,            "showBox", "changeState",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // CD: called when rummaging in Software Excess bargain bin
 	{ GID_SQ4,            -1,   928, -1,           "Narrator", "startText",      -1,              NULL,  1000, { WORKAROUND_FAKE,   1 } }, // CD: happens in the options dialog and in-game when speech and subtitles are used simultaneously
 	{ GID_SQ4,            -1,   708, -1,            "exitBut", "doVerb",         -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // Floppy: happens, when looking at the "close" button in the sq4 hintbook - bug #6447
