@@ -77,6 +77,18 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Conquests of the Longbow
+//      Calling method: letter::handleEvent
+//   Subroutine offset: English 0x00a8 (script 213)
+// Applies to at least: English PC floppy, English Amiga floppy
+static const uint16 sig_uninitread_longbow_1[] = {
+	0x3f, 0x02,                      // link 02
+	0x35, 0x00,                      // ldi 00
+	0xa5, 0x00,                      // sat temp[0]
+	0x8d, 0x00,                      // lst temp[0]
+	SIG_END
+};
+
 //                Game: Quest for Glory 1 / Hero's Quest 1
 //      Calling method: Encounter::init
 //   Subroutine offset: English Hero's Quest 0x0bd0, English Quest for Glory 1 0x0be4 (script 210)
@@ -223,7 +235,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      -1,   928,  0,                 NULL, "startText",      -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // gets caused by Text+Audio support (see script patcher)
 	{ GID_LONGBOW,        -1,     0,  0,            "Longbow", "restart",        -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // When canceling a restart game - bug #5244
 	{ GID_LONGBOW,        -1,   213,  0,              "clear", "handleEvent",    -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // When giving an answer using the druid hand sign code in any room
-	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent",  0xa8,              NULL,     1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #5035
+	{ GID_LONGBOW,        -1,   213,  0,             "letter", "handleEvent",-1,sig_uninitread_longbow_1,   1, { WORKAROUND_FAKE,   0 } }, // When using the druid hand sign code in any room - bug #5035
 	{ GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,              NULL,     2, { WORKAROUND_FAKE,   0 } }, // casino, playing game, increasing bet
 	{ GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // age check room
 	{ GID_LSL2,           38,    38,  0,        "cloudScript", "changeState",    -1,              NULL,     1, { WORKAROUND_FAKE,   0 } }, // entering the room in the middle deck of the ship - bug #5034
