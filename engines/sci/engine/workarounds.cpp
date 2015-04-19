@@ -358,17 +358,34 @@ const SciWorkaroundEntry kDeleteKey_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, callSig, index,                workaround
+//                Game: Fan-Made games (SCI Studio)
+//      Calling method: Game::save, Game::restore
+//   Subroutine offset: Al Pond 2:          0x0e5c (ldi 0001)
+//                      Black Cauldron:     0x000a (ldi 01)
+//                      Cascade Quest:      0x0d1c (ldi 0001)
+//                      Demo Quest:         0x0e55 (ldi 0001)
+//                      I want my C64 back: 0x0e57 (ldi 0001)
+// Applies to at least: games listed above
+static const uint16 sig_kDeviceInfo_Fanmade_1[] = {
+	0x3f, 0x79,                      // link 79h
+	0x34, SIG_UINT16(0x0001),        // ldi 0001
+	0xa5, 0x00,                      // sat temp[0]
+	SIG_END
+};
+static const uint16 sig_kDeviceInfo_Fanmade_2[] = {
+	0x3f, 0x79,                      // link 79h
+	0x35, 0x01,                      // ldi 01
+	0xa5, 0x00,                      // sat temp[0]
+	SIG_END
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, call,                   callSig, index,   workaround
 const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xd1c,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe55,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe57,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
-	{ GID_FANMADE,        -1,   994,  0,              "Black", "save",          0xa,    NULL,     0, { WORKAROUND_IGNORE,    0 } }, // In fanmade games, this is called with one parameter for CurDevice (Black Cauldron Remake)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe5c,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xd1c,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe55,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe57,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
-	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe5c,    NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        -1, sig_kDeviceInfo_Fanmade_1,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games (SCI Studio), this is called with one parameter for CurDevice LDI 01 variant
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        -1, sig_kDeviceInfo_Fanmade_2,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games (SCI Studio), this is called with one parameter for CurDevice LDI 0001 variant
+	{ GID_FANMADE,        -1,   994,  0,              "Black", "save",        -1, sig_kDeviceInfo_Fanmade_1,     0, { WORKAROUND_IGNORE,    0 } }, // In fanmade games (SCI Studio), this is called with one parameter for CurDevice (Black Cauldron Remake)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     -1, sig_kDeviceInfo_Fanmade_1,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games (SCI Studio), this is called with one parameter for CurDevice LDI 01 variant
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     -1, sig_kDeviceInfo_Fanmade_2,     0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games (SCI Studio), this is called with one parameter for CurDevice LDI 0001 variant
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
