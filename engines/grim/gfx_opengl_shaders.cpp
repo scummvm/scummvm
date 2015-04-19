@@ -325,6 +325,9 @@ void GfxOpenGLS::setupPrimitives() {
 		glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
 	}
 
+	if (g_grim->getGameType() == GType_MONKEY4)
+		return;
+
 	glGenBuffers(1, &_irisVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, _irisVBO);
 	glBufferData(GL_ARRAY_BUFFER, 20 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
@@ -380,9 +383,9 @@ void GfxOpenGLS::setupShaders() {
 
 	static const char* primAttributes[] = { "position", NULL };
 	_shadowPlaneProgram = Graphics::Shader::fromFiles("shadowplane", primAttributes);
+	_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
 
 	if (!isEMI) {
-		_primitiveProgram = Graphics::Shader::fromFiles("grim_primitive", primAttributes);
 		_irisProgram = _primitiveProgram->clone();
 
 		_dimProgram = Graphics::Shader::fromFiles("dim", commonAttributes);
@@ -394,10 +397,9 @@ void GfxOpenGLS::setupShaders() {
 	setupQuadEBO();
 	setupTexturedQuad();
 	setupTexturedCenteredQuad();
+	setupPrimitives();
 
 	if (!isEMI) {
-		setupPrimitives();
-
 		_blastVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, 128 * 16 * sizeof(float), NULL, GL_DYNAMIC_DRAW);
 	}
 }
