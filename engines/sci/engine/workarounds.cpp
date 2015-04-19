@@ -91,6 +91,17 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//                Game: Hoyle 4
+//      Calling method: export 2
+//   Subroutine offset: 0x1d4d (script 300)
+// Applies to at least: English PC floppy
+static const uint16 sig_uninitread_hoyle4_1[] = {
+	0x3f, 0x01,                      // link 01
+	0x39, 0x40,                      // pushi 40h
+	0x78,                            // push1
+	SIG_END
+};
+
 //                Game: Conquests of the Longbow
 //      Calling method: letter::handleEvent
 //   Subroutine offset: English PC/Amiga 0x00a8 (script 213)
@@ -229,7 +240,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        700,    -1,  1,               "Code", "doit",           -1,              NULL,    -1, { WORKAROUND_FAKE,   0 } }, // when placing a bid in bridge (always), temp var 11, 24, 27, 46, 75, objects compete_tree, compwe_tree, other1_tree, b1 - bugs #5663 and #5794
 	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",        -1,              NULL,     0, { WORKAROUND_FAKE, 118 } }, // when saving the game (may also occur in other situations) - bug #6601, bug #6614
 	{ GID_HOYLE4,        700,   921,  0,              "Print", "addEdit",        -1,              NULL,     1, { WORKAROUND_FAKE,   1 } }, // see above, Text-control saves its coordinates to temp[0] and temp[1], Edit-control adjusts to those uninitialized temps, who by accident were left over from the Text-control
-	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
+	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2", -1, sig_uninitread_hoyle4_1,     0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,              NULL,     4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #5665
 	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,              NULL,   504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #5662
 	{ GID_HOYLE4,        800,   870,  0,     "EuchreStrategy", "thinkLead",      -1,              NULL,     0, { WORKAROUND_FAKE,   0 } }, // while playing Euchre, happens at least on 2nd or 3rd turn - bug #6602
