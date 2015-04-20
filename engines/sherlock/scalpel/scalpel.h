@@ -39,6 +39,7 @@ private:
 	bool showAlleyCutscene();
 	bool showStreetCutscene();
 	bool showOfficeCutscene();
+	bool scrollCredits();
 
 	void loadInventory();
 protected:

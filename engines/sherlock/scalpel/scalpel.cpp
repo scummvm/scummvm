@@ -249,8 +249,8 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages("title2.vgs", true);
-		_screen->_backBuffer1.blitFrom(*_screen);
-		_screen->_backBuffer2.blitFrom(*_screen);
+		_screen->_backBuffer1.copyFrom(*_screen);
+		_screen->_backBuffer2.copyFrom(*_screen);
 
 		// London, England
 		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(10, 11));
@@ -274,8 +274,8 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages("title.vgs", true);
-		_screen->_backBuffer1.blitFrom(*_screen);
-		_screen->_backBuffer2.blitFrom(*_screen);
+		_screen->_backBuffer1.copyFrom(*_screen);
+		_screen->_backBuffer2.copyFrom(*_screen);
 		
 		// The Lost Files of
 		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(75, 6));
@@ -320,7 +320,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 
 	bool finished = _animation->playPrologue("27PRO1", 1, 3, true, 2);
 	if (finished)
-		_animation->playPrologue("27PRO2", 1, 0, false, 2);
+		finished = _animation->playPrologue("27PRO2", 1, 0, false, 2);
 
 	if (finished) {
 		ImageFile screamImages("SCREAM.LBV", false);
@@ -330,7 +330,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 	}
 
 	if (finished)
-		_animation->playPrologue("27PRO3", 1, 0, true, 2);
+		finished = _animation->playPrologue("27PRO3", 1, 0, true, 2);
 
 	if(finished) {
 		_screen->getPalette(palette);
@@ -351,13 +351,87 @@ bool ScalpelEngine::showAlleyCutscene() {
 }
 
 bool ScalpelEngine::showStreetCutscene() {
-	// TODO
+	_titleOverride = "TITLE.LIB";
+	_soundOverride = "TITLE.SND";
+
+	_sound->playMusic("PROLOG3.MUS");
+
+	bool finished = _animation->playPrologue("14KICK", 1, 3, true, 2);
+
+	if (finished)
+		finished = _animation->playPrologue("14NOTE", 1, 0, false, 2);
+
+	_titleOverride = "";
+	_soundOverride = "";
+	return finished;
+}
+
+bool ScalpelEngine::scrollCredits() {
+	_titleOverride = "TITLE.LIB";
+	ImageFile creditsImages("credits.vgs", true);
+
+	_screen->_backBuffer1.copyFrom(*_screen->_backBuffer);
+
+	for(int i = 0; i < 600 && !_events->kbHit(); i++) {
+		_screen->_backBuffer1.copyFrom(*_screen->_backBuffer);
+		if (i < 200)
+			_screen->transBlitFrom(creditsImages[0], Common::Point(10, -i), false, 0); 
+		if (i > 0 && i < 400)
+			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 200 - i), false, 0);
+		if (i > 200)
+			_screen->transBlitFrom(creditsImages[2], Common::Point(10, 400 - i), false, 0);
+
+		warning("TODO: Use VideoBlockMove");
+//		videoblockmove(SCREEN, BACKBUFFER, 0, 0, 320, 10);
+//		videoblockmove(SCREEN, BACKBUFFER, 0, 190, 320, 10);
+
+		_events->delay(100);
+	}
+
+	_titleOverride = "";
 	return true;
 }
 
 bool ScalpelEngine::showOfficeCutscene() {
-	// TODO
-	return true;
+	_sound->playMusic("PROLOG4.MUS");
+	_titleOverride = "TITLE2.LIB";
+	_soundOverride = "TITLE.SND";
+
+	bool finished = _animation->playPrologue("COFF1", 1, 3, true, 3);
+	if (finished)
+		finished = _animation->playPrologue("COFF2", 1, 0, false, 3);
+	if (finished) {
+		warning("TODO: ShowLBV(""NOTE.LBV"");");
+		if (_sound->_voices) {
+			finished = _sound->playSound("NOTE1", WAIT_KBD_OR_FINISH);
+			if (finished)
+				finished = _sound->playSound("NOTE2", WAIT_KBD_OR_FINISH);
+			if (finished)
+				finished = _sound->playSound("NOTE3", WAIT_KBD_OR_FINISH);
+			if (finished)
+				finished = _sound->playSound("NOTE4", WAIT_KBD_OR_FINISH);
+		} else
+			finished = _events->delay(19000);
+
+		_events->clearEvents();
+		finished = _events->delay(500);
+	}
+
+	if (finished)
+		finished = _animation->playPrologue("COFF3", 1, 0, true, 3);
+
+	if (finished)
+		finished = _animation->playPrologue("COFF4", 1, 0, false, 3);
+
+	if (finished)
+		finished = scrollCredits();
+
+	if (finished)
+		_screen->fadeToBlack(3);
+
+	_titleOverride = "";
+	_soundOverride = "";
+	return finished;
 }
 
 void ScalpelEngine::loadInventory() {

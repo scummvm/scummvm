@@ -41,8 +41,9 @@ void Sound::loadSound(const Common::String &name, int priority) {
 	// TODO
 }
 
-void Sound::playSound(const Common::String &name, WaitType waitType) {
+bool Sound::playSound(const Common::String &name, WaitType waitType) {
 	// TODO
+	return true;
 }
 
 void Sound::cacheSound(const Common::String &name, int index) {
