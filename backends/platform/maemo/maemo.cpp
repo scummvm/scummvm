@@ -35,10 +35,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-
-#include <SDL/SDL_syswm.h>
-#include <X11/Xutil.h>
-
 namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
