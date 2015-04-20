@@ -39,6 +39,12 @@ const int MAP_Y[NUM_PLACES] = {
 	37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0 
 };
 
+int MAP_TRANSLATE[NUM_PLACES] = { 
+	0, 0, 0, 1, 0, 2, 0, 3, 4, 0, 4, 6, 0, 0, 0, 8, 9, 10, 11, 0, 12, 13, 14, 7,
+	15, 16, 17, 18, 19, 0, 20, 21, 22, 23, 0, 24, 0, 25, 0, 26, 0, 0, 0, 27,
+	28, 0, 29, 0, 0, 30, 0 
+};
+
 #define MAX_PEOPLE 66
 
 const byte STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
@@ -204,7 +210,7 @@ void ScalpelEngine::initialize() {
 	_flags[39] = true;		// Turn on Baker Street
 
 	// Load the map co-ordinates for each scene
-	_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0]);
+	_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
 
 	// Load the inventory
 	loadInventory();

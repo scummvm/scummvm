@@ -31,7 +31,7 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_iconShapes = nullptr;
 	_point = 0;
 	_placesShown = false;
-	_charPoint = -1;
+	_charPoint = _oldCharPoint = -1;
 	_cursorIndex = -1;
 	_drawMap = false;
 	for (int idx = 0; idx < 3; ++idx)
@@ -43,9 +43,9 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 /**
  * Loads the list of points for locations on the map for each scene
  */
-void Map::loadPoints(int count, const int *xList, const int *yList) {
-	for (int idx = 0; idx < count; ++idx, ++xList, ++yList) {
-		_points.push_back(Common::Point(*xList, *yList));
+void Map::loadPoints(int count, const int *xList, const int *yList, const int *transList) {
+	for (int idx = 0; idx < count; ++idx, ++xList, ++yList, ++transList) {
+		_points.push_back(MapEntry(*xList, *yList, *transList));
 	}
 }
 
@@ -79,9 +79,11 @@ void Map::loadData() {
 	}
 
 	// Load in the path point information
-	_pathPoints.resize(416);
-	for (uint idx = 0; idx < _pathPoints.size(); ++idx)
-		_pathPoints[idx] = pathStream->readSint16LE();
+	_pathPoints.resize(208);
+	for (uint idx = 0; idx < _pathPoints.size(); ++idx) {
+		_pathPoints[idx].x = pathStream->readSint16LE();
+		_pathPoints[idx].y = pathStream->readSint16LE();
+	}
 
 	delete pathStream;
 }
@@ -303,6 +305,14 @@ void Map::saveTopLine() {
 }
 
 /**
+ * Erases anything shown in the top line by restoring the previously saved original map background
+ */
+void Map::eraseTopLine() {
+	Screen &screen = *_vm->_screen;
+	screen.blitFrom(_topLine, Common::Point(0, 0));
+}
+
+/**
  * Update all on-screen sprites to account for any scrolling of the map
  */
 void Map::updateMap(bool flushScreen) {
@@ -355,7 +365,55 @@ void Map::updateMap(bool flushScreen) {
  * Handle moving icon for player from their previous location on the map to a destination location
  */
 void Map::walkTheStreets() {
-	// TODO
+	People &people = *_vm->_people;
+	bool reversePath = false;
+	Common::Array<Common::Point> tempPath;
+
+	// Get indexes into the path lists for the start and destination scenes
+	int start = _points[_oldCharPoint]._translate;
+	int dest = _points[_charPoint]._translate;
+
+	// Get pointer to start of path
+	const int *ptr = &_paths[start][dest];
+
+	// Check for any intermediate points between the two locations
+	if (*ptr || _charPoint > 50 || _oldCharPoint > 50) {
+		people[AL]._sequenceNumber = -1;
+
+		if (_charPoint == 51 || _oldCharPoint == 51) {
+			people.setWalking();
+		} else {
+			// Check for moving the path backwards or forwards
+			if (*ptr == 255) {
+				reversePath = true;
+				SWAP(start, dest);
+				ptr = &_paths[start][dest];
+			}
+
+			do {
+				int idx = *ptr++;
+				tempPath.push_back(_pathPoints[idx - 1] + Common::Point(4, 4));
+			} while (*ptr != 254);
+
+			// Load up the path to use
+			people._walkTo.clear();
+
+			if (!reversePath) {
+				people._walkTo = tempPath;
+				people._walkDest = tempPath[0];
+			} else {
+				for (int idx = 0; idx < ((int)tempPath.size() - 1); ++idx)
+					people._walkTo.push(tempPath[idx]);
+				people._walkDest = tempPath[tempPath.size() - 1];
+			}
+
+			people._walkDest.x += 12;
+			people._walkDest.y += 6;
+			people.setWalking();
+		}
+	} else {
+		people[AL]._walkCount = 0;
+	}
 }
 
 /**

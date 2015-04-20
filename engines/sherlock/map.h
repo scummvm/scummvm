@@ -35,13 +35,21 @@ namespace Sherlock {
 
 class SherlockEngine;
 
+struct MapEntry : Common::Point {
+	int _translate;
+
+	MapEntry() : Common::Point(), _translate(-1) {}
+
+	MapEntry(int x, int y, int translate) : Common::Point(x, y), _translate(translate) {}
+};
+
 class Map {
 private:
 	SherlockEngine *_vm;
-	Common::Array<Common::Point> _points;	// Map locations for each scene
+	Common::Array<MapEntry> _points;	// Map locations for each scene
 	Common::StringArray _locationNames;
 	Common::Array< Common::Array<int> > _paths;
-	Common::Array<int> _pathPoints;
+	Common::Array<Common::Point> _pathPoints;
 	Common::Point _savedPos;
 	Common::Point _savedSize;
 	Surface _topLine;
@@ -54,7 +62,7 @@ private:
 	Common::Point _lDrawnPos;
 	int _point;
 	bool _placesShown;
-	int _charPoint;
+	int _charPoint, _oldCharPoint;
 	int _cursorIndex;
 	bool _drawMap;
 	Surface _iconSave;
@@ -67,6 +75,7 @@ private:
 	void showPlaces();
 
 	void saveTopLine();
+	void eraseTopLine();
 
 	void updateMap(bool flushScreen);
 
@@ -77,9 +86,9 @@ private:
 public:
 	Map(SherlockEngine *vm);
 
-	const Common::Point &operator[](int idx) { return _points[idx]; }
+	const MapEntry &operator[](int idx) { return _points[idx]; }
 
-	void loadPoints(int count, const int *xList, const int *yList);
+	void loadPoints(int count, const int *xList, const int *yList, const int *transList);
 
 	int show();
 };

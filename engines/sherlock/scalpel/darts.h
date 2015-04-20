@@ -23,6 +23,8 @@
 #ifndef SHERLOCK_DARTS_H
 #define SHERLOCK_DARTS_H
 
+#include "sherlock/resources.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -32,8 +34,37 @@ class ScalpelEngine;
 class Darts {
 private:
 	ScalpelEngine *_vm;
+	ImageFile *_dartImages;
+	int _dartScore1, _dartScore2;
+	int _roundNumber;
+	int _level;
+	int _computerPlayer;
+	Common::String _opponent;
+	bool _playerDartMode;
+	int _roundScore;
+	int _oldDartButtons;
+
+	void loadDarts();
+	void initDarts();
+
+	void showNames(int playerNum);
+	void showStatus(int playerNum);
+
+	int throwDart(int dartNum, int computer);
+	void drawDartThrow(const Common::Point &pt);
+
+	void erasePowerBars();
+	int doPowerBar(const Common::Point &pt, byte color, int goToPower, int orientation);
+
+	bool dartHit();
+	int dartScore(const Common::Point &pt);
+
+	Common::Point getComputerDartDest(int playerNum);
+
+	bool findNumberOnBoard(int aim, Common::Point &pt);
+
 public:
-	Darts(ScalpelEngine *vm) : _vm(vm) {}
+	Darts(ScalpelEngine *vm);
 
 	void playDarts();
 };
