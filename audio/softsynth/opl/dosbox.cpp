@@ -178,7 +178,8 @@ bool OPL::init() {
 	}
 
 	// FIXME: Remove this once EmulatedOPL is actually controlling playback
-	start(0);
+	if (!_callback)
+		start(0);
 
 	return true;
 }
