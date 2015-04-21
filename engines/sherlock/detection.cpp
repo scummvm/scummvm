@@ -24,6 +24,7 @@
 #include "sherlock/saveload.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "common/system.h"
 #include "engines/advancedDetector.h"
 
 namespace Sherlock {
@@ -105,13 +106,33 @@ SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
 }
 
 int SherlockMetaEngine::getMaximumSaveSlot() const {
-	return NUM_SAVEGAME_SLOTS;
+	return MAX_SAVEGAME_SLOTS;
 }
 
 void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+
+	if (f) {
+		Sherlock::SherlockSavegameHeader header;
+		Sherlock::SaveManager::readSavegameHeader(f, header);
+		delete f;
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header._saveName);
+		desc.setThumbnail(header._thumbnail);
+		desc.setSaveDate(header._year, header._month, header._day);
+		desc.setSaveTime(header._hour, header._minute);
+		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
+
+		return desc;
+	}
+
 	return SaveStateDescriptor();
 }
 

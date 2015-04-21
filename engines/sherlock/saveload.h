@@ -31,8 +31,12 @@
 
 namespace Sherlock {
 
-#define NUM_SAVEGAME_SLOTS 99
+#define MAX_SAVEGAME_SLOTS 99
 #define SHERLOCK_SAVEGAME_VERSION 1
+
+enum SaveMode { SAVEMODE_NONE = 0, SAVEMODE_LOAD = 1, SAVEMODE_SAVE = 2 };
+
+extern const int ENV_POINTS[6][3];
 
 struct SherlockSavegameHeader {
 	uint8 _version;
@@ -49,15 +53,18 @@ class SaveManager {
 private:
 	SherlockEngine *_vm;
 	Common::String _target;
-	Common::StringArray _savegames;
 	Graphics::Surface *_saveThumb;
 
 	void createSavegameList();
 public:
+	Common::StringArray _savegames;
+	int _savegameIndex;
+	SaveMode _envMode;
+public:
 	SaveManager(SherlockEngine *vm, const Common::String &target);
 	~SaveManager();
 
-	void show();
+	void drawInterface();
 
 	void createThumbnail();
 
@@ -67,6 +74,16 @@ public:
 
 	static bool readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header);
 
+	int getHighlightedButton() const;
+
+	void highlightButtons(int btnIndex);
+
+	void loadGame(int slot);
+	void saveGame(int slot, const Common::String &name);
+
+	bool checkGameOnScreen(int slot);
+
+	bool getFilename(int slot);
 };
 
 } // End of namespace Sherlock

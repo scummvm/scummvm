@@ -39,6 +39,7 @@
 #include "sherlock/map.h"
 #include "sherlock/people.h"
 #include "sherlock/resources.h"
+#include "sherlock/saveload.h"
 #include "sherlock/scene.h"
 #include "sherlock/screen.h"
 #include "sherlock/sound.h"
@@ -89,6 +90,7 @@ public:
 	Map *_map;
 	People *_people;
 	Resources *_res;
+	SaveManager *_saves;
 	Scene *_scene;
 	Screen *_screen;
 	Sound *_sound;

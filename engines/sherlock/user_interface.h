@@ -99,7 +99,6 @@ private:
 	bool _lookScriptFlag;
 	Common::Rect _windowBounds;
 	Common::String _descStr;
-	int _windowStyle;
 	int _find;
 	int _oldUse;
 private:
@@ -124,7 +123,6 @@ private:
 	void doTalkControl();
 	void journalControl();
 
-	void environment();
 	void doControls();
 
 	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
@@ -138,6 +136,7 @@ public:
 	bool _endKeyActive;
 	int _invLookFlag;
 	int _temp1;
+	int _windowStyle;
 public:
 	UserInterface(SherlockEngine *vm);
 	~UserInterface();

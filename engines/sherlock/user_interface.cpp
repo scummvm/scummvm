@@ -65,15 +65,15 @@ const int SETUP_POINTS[12][4]  = {
 	{ 219, 176, 316, 268 },		// Fade Style
 	{ 103, 176, 217, 160 },		// Window Open Style
 	{ 4, 176, 101, 53 }, 		// Portraits Toggle
-	{ 219, 187, 316, 268 }		// Key Pad Accel. Toggle
+	{ 219, 187, 316, 268 }		// _key Pad Accel. Toggle
 };
 
 
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
 const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
-const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
-const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
+const char *const PRESS_KEY_FOR_MORE = "Press any _key for More.";
+const char *const PRESS_KEY_TO_CONTINUE = "Press any _key to Continue.";
 
 const char *const MOPEN[] = { 
 	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "." 
@@ -164,7 +164,7 @@ void Settings::drawInteface(bool flag) {
 	tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
 	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
 		SETUP_POINTS[10][3] - screen.stringWidth(tempStr) / 2, tempStr);
-	tempStr = Common::String::format("Key Pad %s", _vm->_keyPadSpeed ? "Fast" : "Slow");
+	tempStr = Common::String::format("_key Pad %s", _vm->_keyPadSpeed ? "Fast" : "Slow");
 
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
 		SETUP_POINTS[11][3] - screen.stringWidth(tempStr) / 2, tempStr);
@@ -183,7 +183,7 @@ void Settings::drawInteface(bool flag) {
 	}
 }
 
-int Settings::drawButtons(const Common::Point &pt, int key) {
+int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -196,7 +196,7 @@ int Settings::drawButtons(const Common::Point &pt, int key) {
 	for (int idx = 0; idx < 12; ++idx) {
 		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1]
 				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._released || events._released)) 
-				|| (key == SETUP_NAMES[idx][0])) {
+				|| (_key == SETUP_NAMES[idx][0])) {
 			found = idx;
 			color = COMMAND_HIGHLIGHTED;
 		} else {
@@ -238,7 +238,7 @@ int Settings::drawButtons(const Common::Point &pt, int key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 11: 
-			tempStr = Common::String::format("Key Pad %s", SETUP_STRS4[_vm->_keyPadSpeed]);
+			tempStr = Common::String::format("_key Pad %s", SETUP_STRS4[_vm->_keyPadSpeed]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		default: 
@@ -328,7 +328,7 @@ void UserInterface::handleInput() {
 	_keycode = Common::KEYCODE_INVALID;
 
 	// Check kbd and set the mouse released flag if Enter or space is pressed.
-	// Otherwise, the pressed key is stored for later use
+	// Otherwise, the pressed _key is stored for later use
 	if (events.kbHit()) {
 		Common::KeyState keyState = events.getKey();
 
@@ -890,7 +890,304 @@ void UserInterface::lookInv() {
  * Handles input when the file list window is being displayed
  */
 void UserInterface::doEnvControl() {
-	// TODO
+	Events &events = *_vm->_events;
+	SaveManager &saves = *_vm->_saves;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	Common::Point mousePos = events.mousePos();
+	static const char ENV_COMMANDS[7] = "ELSUDQ";
+	byte color;
+
+	_key = _oldKey = -1;
+	_keyboardInput = false;
+	int found = saves.getHighlightedButton();
+
+	if (events._pressed || events._released)
+	{
+		events.clearKeyboard();
+
+		// Check for a filename entry being highlighted
+		int found1 = 0;
+		if ((events._pressed || events._released) && mousePos.y > (CONTROLS_Y + 10))
+		{
+			for (_selector = 0; (_selector < 5) && !found1; ++_selector)
+				if (mousePos.y > (CONTROLS_Y + 11 + _selector * 10) && mousePos.y < (CONTROLS_Y + 21 + _selector * 10))
+					found1 = 1;
+
+			if (_selector + saves._savegameIndex - 1 < MAX_SAVEGAME_SLOTS + (saves._envMode != 1))
+				_selector = _selector + saves._savegameIndex - 1;
+			else
+				_selector = -1;
+
+			if (!found1)
+				_selector = -1;
+		}
+
+		// Handle selecting buttons, if any
+		saves.highlightButtons(found);
+
+		if (found == 0 || found == 5)
+			saves._envMode = SAVEMODE_NONE;
+	}
+
+	if (_keycode) {
+		_key = toupper(_keycode);
+
+		// Escape _key will close the dialog
+		if (_key == Common::KEYCODE_ESCAPE)
+			_key = 'E';
+
+		if (_key == 'E' || _key == 'L' || _key == 'S' || _key == 'U' || _key == 'D' || _key == 'Q') {
+			const char *chP = strchr(ENV_COMMANDS, _key);
+			int btnIndex = !chP ? -1 : chP - ENV_COMMANDS;
+			saves.highlightButtons(btnIndex);
+			_keyboardInput = true;
+
+			if (_key == 'E' || _key == 'Q') {
+				saves._envMode = SAVEMODE_NONE;
+			} else if (_key >= '1' && _key <= '9') {
+				_keyboardInput = true;
+				_selector = _key - '1';
+				if (_selector >= MAX_SAVEGAME_SLOTS + (saves._envMode == 1 ? 0 : 1))
+					_selector = -1;
+
+				if (saves.checkGameOnScreen(_selector))
+					_oldSelector = _selector;
+			} else {
+				_selector = -1;
+			}
+		}
+	}
+
+	if (_selector != _oldSelector)  {
+		if (_oldSelector != -1 && _oldSelector >= saves._savegameIndex && _oldSelector < (saves._savegameIndex + 5)) {
+			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
+				INV_FOREGROUND, 0, "%d.", _oldSelector + 1);
+			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
+				INV_FOREGROUND, 0, "%s", saves._savegames[_oldSelector]);
+		}
+
+		if (_selector != -1) {
+			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10), 
+				TALK_FOREGROUND, 0, "%d.", _selector + 1);
+			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10), 
+				TALK_FOREGROUND, 0, "%s", saves._savegames[_selector]);
+		}
+
+		_oldSelector = _selector;
+	}
+
+	if (events._released || _keyboardInput) {
+		if ((found == 0 && events._released) || _key == 'E') {
+			banishWindow();
+			_windowBounds.top = CONTROLS_Y1;
+			
+			events._pressed = events._released = _keyboardInput = false;
+			_keycode = Common::KEYCODE_INVALID;
+		} else if ((found == 1 && events._released) || _key == 'L') {
+			saves._envMode = SAVEMODE_LOAD;
+			if (_selector != -1) {
+				saves.loadGame(_selector + 1);
+			}
+		} else if ((found == 2 && events._released) || _key == 'S') {
+			saves._envMode = SAVEMODE_SAVE;
+			if (_selector != -1) {
+				if (saves.checkGameOnScreen(_selector))
+					_oldSelector = _selector;
+
+				if (saves.getFilename(_selector)) {
+					saves.saveGame(_selector + 1, saves._savegames[_selector]);
+
+					banishWindow(1);
+					_windowBounds.top = CONTROLS_Y1;
+					_key = _oldKey = -1;
+					_keycode = Common::KEYCODE_INVALID;
+					_keyboardInput = false;
+				} else {
+					if (!talk._talkToAbort) {
+						screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 
+							SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 20 + (_selector - saves._savegameIndex) * 10), INV_BACKGROUND);
+						screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND, 
+							"%d.", _selector + 1);
+						screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND, 
+							"%s", saves._savegames[_selector]);
+						
+						screen.slamArea(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 311, 10);
+						_selector = _oldSelector = -1;
+					}
+				}
+			}
+		} else if (((found == 3 && events._released) || _key == 'U') && saves._savegameIndex) {
+			bool moreKeys;
+			do {
+				saves._savegameIndex--;
+				screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
+					SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
+
+				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + 5); ++idx) {
+					color = INV_FOREGROUND;
+					if (idx == _selector && idx >= saves._savegameIndex && idx < (saves._savegameIndex + 5))
+						color = TALK_FOREGROUND;
+
+					screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, "%d.", idx + 1);
+					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, "%s", saves._savegames[idx]);
+				}
+
+				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
+
+				color = !saves._savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
+				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - 5) ? COMMAND_NULL : COMMAND_FOREGROUND;
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
+
+				// Check for there are more pending U keys pressed
+				moreKeys = false;
+				if (events.kbHit()) {
+					Common::KeyState keyState = events.getKey();
+
+					_key = toupper(keyState.keycode);
+					moreKeys = _key == 'U';
+				}
+			} while ((saves._savegameIndex) && moreKeys);
+		} else if (((found == 4 && events._released) || _key == 'D') && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - 5)) {
+			bool moreKeys;
+			do {
+				saves._savegameIndex++;
+				screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, 
+					SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
+
+				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + 5); ++idx) {
+					if (idx == _selector && idx >= saves._savegameIndex && idx < (saves._savegameIndex + 5))
+						color = TALK_FOREGROUND;
+					else
+						color = INV_FOREGROUND;
+
+					screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color,
+						"%d.", idx + 1);
+					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, 
+						"%s", saves._savegames[idx]);
+				}
+				
+				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
+
+				color = (!saves._savegameIndex) ? COMMAND_NULL : COMMAND_FOREGROUND;
+				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
+
+				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - 5) ? COMMAND_NULL : COMMAND_FOREGROUND;
+				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
+
+				// Check for there are more pending D keys pressed
+				moreKeys = false;
+				if (events.kbHit()) {
+					Common::KeyState keyState;
+					_key = toupper(keyState.keycode);
+
+					moreKeys = _key == 'D';
+				}
+			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - 5) && moreKeys);
+		} else if ((found == 5 && events._released) || _key == 'Q') {
+			clearWindow();
+			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
+			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
+
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 150, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
+			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184 - screen.stringWidth("No") / 2, "No");
+			screen.slamArea(112, CONTROLS_Y, 97, 10);
+
+			do {
+				scene.doBgAnim();
+
+				if (talk._talkToAbort)
+					return;
+
+				events.pollEventsAndWait();
+				events.setButtonState();
+				if (events.kbHit()) {
+					Common::KeyState keyState = events.getKey();
+					_key = toupper(keyState.keycode);
+
+					if (_key == 'X' && (keyState.flags & Common::KBD_ALT) != 0) {
+						_vm->quitGame();
+						events.pollEvents();
+						return;
+					}
+
+					if (_key == Common::KEYCODE_ESCAPE)
+						_key = 'N';
+
+					if (_key == Common::KEYCODE_RETURN || _key == Common::KEYCODE_SPACE) {
+						events._pressed = false;
+						events._released = true;
+						events._oldButtons = 0;
+						_keycode = Common::KEYCODE_INVALID;
+					}
+				}
+
+				if (events._pressed || events._released) {
+					if (mousePos.x > 112 && mousePos.x < 159 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9))
+						color = COMMAND_HIGHLIGHTED;
+					else
+						color = COMMAND_FOREGROUND;
+					screen.buttonPrint(Common::Point(136, CONTROLS_Y), color, true, "Yes");
+
+					if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9))
+						color = COMMAND_HIGHLIGHTED;
+					else
+						color = COMMAND_FOREGROUND;
+					screen.buttonPrint(Common::Point(184, CONTROLS_Y), color, true, "No");
+				}
+
+				if (mousePos.x > 112 && mousePos.x < 159 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
+					_key = 'Y';
+
+				if (mousePos.x > 161 && mousePos.x < 208 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 9) && events._released)
+					_key = 'N';
+			} while (!_vm->shouldQuit() && _key != 'Y' && _key != 'N');
+
+			if (_key == 'Y') {
+				_vm->quitGame();
+				events.pollEvents();
+				return;
+			} else {
+				screen.buttonPrint(Common::Point(184, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "No");
+				banishWindow(1);
+				_windowBounds.top = CONTROLS_Y1;
+				_key = -1;
+			}
+		} else {
+			if (_selector != -1) {
+				// Are we already in Load mode?
+				if (saves._envMode == SAVEMODE_LOAD) {
+					saves.loadGame(_selector + 1);
+				} else if (saves._envMode == SAVEMODE_SAVE || _selector == MAX_SAVEGAME_SLOTS) {
+					// We're alreaady in save mode, or pointed to an empty save slot
+					if (saves.checkGameOnScreen(_selector))
+						_oldSelector = _selector;
+
+					if (saves.getFilename(_selector)) {
+						saves.saveGame(_selector + 1, saves._savegames[_selector]);
+						banishWindow();
+						_windowBounds.top = CONTROLS_Y1;
+						_key = _oldKey = -1;
+						_keycode = Common::KEYCODE_INVALID;
+						_keyboardInput = false;
+					} else {
+						if (!talk._talkToAbort) {
+							screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 
+								317, CONTROLS_Y + 20 + (_selector - saves._savegameIndex) * 10), INV_BACKGROUND);
+							screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), 
+								INV_FOREGROUND, 0, "%d.", _selector + 1);
+							screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), 
+								INV_FOREGROUND, 0, "%s", saves._savegames[_selector]);
+							screen.slamArea(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 311, 10);
+							_selector = _oldSelector = -1;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -1199,6 +1496,7 @@ void UserInterface::doLookControl() {
 void UserInterface::doMainControl() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
+	SaveManager &saves = *_vm->_saves;
 	Common::Point pt = events.mousePos();
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
@@ -1302,7 +1600,10 @@ void UserInterface::doMainControl() {
 		case 'F':
 			pushButton(10);
 			_menuMode = FILES_MODE;
-			environment();
+			saves.drawInterface();
+			
+			_selector = _oldSelector = -1;
+			_windowOpen = true;
 			break;
 		case 'S':
 			pushButton(11);
@@ -1696,10 +1997,6 @@ void UserInterface::journalControl() {
 	screen._backBuffer1.blitFrom(screen._backBuffer2);
 	scene.updateBackground();
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	// TODO
-}
-
-void UserInterface::environment() {
 	// TODO
 }
 
