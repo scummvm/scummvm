@@ -183,6 +183,14 @@ void OPL::stop() {
 	_callback.reset();
 }
 
+void OPL::setCallbackFrequency(int timerFrequency) {
+	if (!isRunning())
+		return;
+
+	stopCallbacks();
+	startCallbacks(timerFrequency);
+}
+
 bool OPL::_hasInstance = false;
 
 EmulatedOPL::EmulatedOPL() :
@@ -247,6 +255,12 @@ void EmulatedOPL::startCallbacks(int timerFrequency) {
 void EmulatedOPL::stopCallbacks() {
 	// TODO: Eventually stop mixer playback here
 	//g_system->getMixer()->stopHandle(*_handle);
+}
+
+bool EmulatedOPL::isRunning() const {
+	// TODO
+	//return g_system->getMixer()->isSoundHandleActive(*_handle);
+	return true;
 }
 
 } // End of namespace OPL

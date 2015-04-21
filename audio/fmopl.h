@@ -175,6 +175,17 @@ public:
 	 */
 	void stop();
 
+	/**
+	 * Is the OPL running?
+	 */
+	virtual bool isRunning() const = 0;
+
+	/**
+	 * Change the callback frequency. This has no effect if start()
+	 * has not already been called.
+	 */
+	void setCallbackFrequency(int timerFrequency);
+
 	enum {
 		/**
 		 * The default callback frequency that start() uses
@@ -206,6 +217,7 @@ public:
 
 	// OPL API
 	int readBuffer(int16 *buffer, const int numSamples);
+	bool isRunning() const;
 
 	int getRate() const;
 
