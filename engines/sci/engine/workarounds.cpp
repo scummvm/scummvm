@@ -804,9 +804,9 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 						&& workaround->methodName == g_sci->getSciLanguageString(curMethodName, K_LANG_ENGLISH)
 						&& ((workaround->index == -1) || (workaround->index == index))) {
 					// Workaround found
-					if ((workaround->localCallSignature) || (curLocalCallOffset != -1)) {
+					if ((workaround->localCallSignature) || (curLocalCallOffset >= 0)) {
 						// local call signature found and/or subcall was made
-						if ((workaround->localCallSignature) && (lastCall->debugLocalCallOffset)) {
+						if ((workaround->localCallSignature) && (curLocalCallOffset >= 0)) {
 							// local call signature found and subcall was made -> check signature accordingly
 							if (!curScriptPtr) {
 								// get script data
