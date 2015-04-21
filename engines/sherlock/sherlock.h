@@ -105,7 +105,6 @@ public:
 	Common::Point _over;				// Old map position
 	bool _onChessboard;
 	bool _slowChess;
-	bool _joystick;
 	int _keyPadSpeed;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);

@@ -67,7 +67,7 @@ class Settings {
 private:
 	SherlockEngine *_vm;
 public:
-	Settings(SherlockEngine *vm) : _vm() {}
+	Settings(SherlockEngine *vm) : _vm(vm) {}
 
 	void drawInteface(bool flag);
 

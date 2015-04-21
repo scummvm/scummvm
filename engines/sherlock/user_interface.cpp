@@ -146,7 +146,8 @@ void Settings::drawInteface(bool flag) {
 		SETUP_POINTS[4][3] - screen.stringWidth(tempStr) / 2, tempStr);
 	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10), 
 		SETUP_POINTS[5][3] - screen.stringWidth("New Font Style") / 2, "New Font Style");
-	tempStr = Common::String::format("Joystick %s", SETUP_STRS0[_vm->_joystick ? 1 : 0]);
+
+	tempStr = Common::String::format("Joystick %s", SETUP_STRS0[0]);
 	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10), 
 		SETUP_POINTS[6][3] - screen.stringWidth(tempStr) / 2, tempStr);
 	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10), 
@@ -221,7 +222,7 @@ int Settings::drawButtons(const Common::Point &pt, int key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 6: 
-			tempStr = Common::String::format("Joystick %s", SETUP_STRS0[_vm->_joystick]);
+			tempStr = Common::String::format("Joystick %s", SETUP_STRS0[0]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 8: 
@@ -1793,14 +1794,17 @@ void UserInterface::doControls() {
 
 		if ((found == 5 && events._released) || _key == 'N') {
 			// New font style
-			screen.setFont((screen.fontNumber() + 1) & 3);
+			int fontNum = screen.fontNumber() + 1;
+			if (fontNum == 3)
+				fontNum = 0;
+
+			screen.setFont(fontNum);
+			updateConfig = true;
+			settings.drawInteface(true);
 		}
 
 		if ((found == 6 && events._released) || _key == 'J') {
-			// Toggle joystick
-			_vm->_joystick = !_vm->_joystick;
-			updateConfig = true;
-			settings.drawInteface(true);
+			// Toggle joystick - not implemented under ScummVM
 		}
 
 		if ((found == 7 && events._released) || _key == 'C') {
