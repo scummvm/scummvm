@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	objects.o \
 	people.o \
 	resources.o \
+	saveload.o \
 	scene.o \
 	screen.o \
 	sherlock.o \

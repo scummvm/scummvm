@@ -21,13 +21,12 @@
  */
 
 #include "sherlock/sherlock.h"
+#include "sherlock/saveload.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "engines/advancedDetector.h"
 
 namespace Sherlock {
-
-#define MAX_SAVES 99
 
 struct SherlockGameDescription {
 	ADGameDescription desc;
@@ -102,12 +101,11 @@ bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
-	SaveStateList saveList;
-	return saveList;
+	return Sherlock::SaveManager(nullptr, "").getSavegameList(target);
 }
 
 int SherlockMetaEngine::getMaximumSaveSlot() const {
-	return MAX_SAVES;
+	return NUM_SAVEGAME_SLOTS;
 }
 
 void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
