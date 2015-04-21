@@ -76,6 +76,7 @@ void Events::setCursor(CursorId cursorId) {
  */
 void Events::setCursor(const Graphics::Surface &src) {
 	CursorMan.replaceCursor(src.getPixels(), src.w, src.h, 0, 0, 0xff);
+	showCursor();
 }
 
 /**
