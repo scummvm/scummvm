@@ -37,7 +37,7 @@ namespace Gob {
 /** Base class for a player of an AdLib music format. */
 class AdLib : public Audio::AudioStream {
 public:
-	AdLib(Audio::Mixer &mixer);
+	AdLib(Audio::Mixer &mixer, int callbackFrequency);
 	virtual ~AdLib();
 
 	bool isPlaying() const;    ///< Are we currently playing?
@@ -120,8 +120,6 @@ protected:
 	static const int kOPLMidC      = 48; ///< A mid C for the OPL.
 
 
-	/** Return the number of samples per second. */
-	uint32 getSamplesPerSecond() const;
 
 	/** Write a value into an OPL register. */
 	void writeOPL(byte reg, byte val);
@@ -135,7 +133,7 @@ protected:
 	/** The callback function that's called for polling more AdLib commands.
 	 *
 	 *  @param  first Is this the first poll since the start of the song?
-	 *  @return The number of samples until the next poll.
+	 *  @return The number of ticks until the next poll.
 	 */
 	virtual uint32 pollMusic(bool first) = 0;
 
@@ -206,6 +204,11 @@ protected:
 
 	/** Switch a voice off. */
 	void noteOff(uint8 voice);
+
+	/**
+	 * Set the OPL timer frequency
+	 */
+	void setTimerFrequency(int timerFrequency);
 
 private:
 	static const uint8 kOperatorType  [kOperatorCount];
@@ -300,6 +303,11 @@ private:
 	void changePitch(uint8 voice, uint16 pitchBend);
 
 	void setFreq(uint8 voice, uint16 note, bool on);
+
+	/**
+	 * Callback function for OPL
+	 */
+	void onTimer();
 };
 
 } // End of namespace Gob

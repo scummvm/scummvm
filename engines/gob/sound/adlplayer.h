@@ -76,8 +76,6 @@ private:
 	bool readHeader  (Common::SeekableReadStream &adl, int &timbreCount);
 	bool readTimbres (Common::SeekableReadStream &adl, int  timbreCount);
 	bool readSongData(Common::SeekableReadStream &adl);
-
-	uint32 getSampleDelay(uint16 delay) const;
 };
 
 } // End of namespace Gob

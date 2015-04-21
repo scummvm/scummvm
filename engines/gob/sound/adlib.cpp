@@ -93,7 +93,7 @@ const uint16 AdLib::kHihatParams    [kParamCount] = {
 	  0,  1,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
 
 
-AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer), _opl(0),
+AdLib::AdLib(Audio::Mixer &mixer, int callbackFreq) : _mixer(&mixer), _opl(0),
 	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true) {
 
 	_rate = _mixer->getOutputRate();
@@ -103,6 +103,7 @@ AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer), _opl(0),
 	createOPL();
 	initOPL();
 
+	_opl->start(new Common::Functor0Mem<void, AdLib>(this, &AdLib::onTimer), callbackFreq);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
 			this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
@@ -144,38 +145,34 @@ void AdLib::createOPL() {
 }
 
 int AdLib::readBuffer(int16 *buffer, const int numSamples) {
+	return _opl->readBuffer(buffer, numSamples);
+}
+
+void AdLib::onTimer() {
 	Common::StackLock slock(_mutex);
 
-	// Nothing to do, fill with silence
-	if (!_playing) {
-		memset(buffer, 0, numSamples * sizeof(int16));
-		return numSamples;
+	// Nothing to do
+	if (!_playing)
+		return;
+
+	// Check if there's anything to do on this step
+	// If not, decrease the poll number and move on
+	if (_toPoll > 0) {
+		_toPoll--;
+		return;
 	}
 
-	// Read samples from the OPL, polling in more music when necessary
-	uint32 samples = numSamples;
-	while (samples && _playing) {
-		if (_toPoll) {
-			const uint32 render = MIN(samples, _toPoll);
-
-			_opl->readBuffer(buffer, render);
-
-			buffer  += render;
-			samples -= render;
-			_toPoll -= render;
-
-		} else {
-			// Song ended, fill the rest with silence
-			if (_ended) {
-				memset(buffer, 0, samples * sizeof(int16));
-				samples = 0;
-				break;
-			}
-
-			// Poll more music
-			_toPoll = pollMusic(_first);
-			_first  = false;
+	// Poll until we have to delay until the next poll
+	while (_toPoll == 0 && _playing) {
+		// Song ended, break out
+		if (_ended) {
+			_toPoll = 0;
+			break;
 		}
+
+		// Poll more music
+		_toPoll = pollMusic(_first);
+		_first  = false;
 	}
 
 	// Song ended, loop if requested
@@ -195,8 +192,6 @@ int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 		} else
 			_playing = false;
 	}
-
-	return numSamples;
 }
 
 bool AdLib::isStereo() const {
@@ -204,7 +199,7 @@ bool AdLib::isStereo() const {
 }
 
 bool AdLib::endOfData() const {
-	return !_playing;
+	return false;
 }
 
 bool AdLib::endOfStream() const {
@@ -229,10 +224,6 @@ void AdLib::setRepeating(int32 repCount) {
 	Common::StackLock slock(_mutex);
 
 	_repCount = repCount;
-}
-
-uint32 AdLib::getSamplesPerSecond() const {
-	return _rate * (isStereo() ? 2 : 1);
 }
 
 void AdLib::startPlay() {
@@ -637,6 +628,10 @@ void AdLib::setFreq(uint8 voice, uint16 note, bool on) {
 
 	writeOPL(0xA0 + voice, freq);
 	writeOPL(0xB0 + voice, value);
+}
+
+void AdLib::setTimerFrequency(int timerFrequency) {
+	_opl->setCallbackFrequency(timerFrequency);
 }
 
 } // End of namespace Gob
