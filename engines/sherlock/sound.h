@@ -66,6 +66,7 @@ public:
 	void playMusic(const Common::String &name);
 	void stopMusic();
 	void stopSndFuncPtr(int v1, int v2);
+	void waitTimerRoland(uint time);
 };
 
 } // End of namespace Sherlock

@@ -46,6 +46,7 @@ private:
 
 	void loadDarts();
 	void initDarts();
+	void closeDarts();
 
 	void showNames(int playerNum);
 	void showStatus(int playerNum);
@@ -54,15 +55,16 @@ private:
 	void drawDartThrow(const Common::Point &pt);
 
 	void erasePowerBars();
-	int doPowerBar(const Common::Point &pt, byte color, int goToPower, int orientation);
+	int doPowerBar(const Common::Point &pt, byte color, int goToPower, bool isVertical);
 
-	bool dartHit();
+	int dartHit();
 	int dartScore(const Common::Point &pt);
 
 	Common::Point getComputerDartDest(int playerNum);
 
 	bool findNumberOnBoard(int aim, Common::Point &pt);
 
+	void setFlagsForDarts(int flagNum);
 public:
 	Darts(ScalpelEngine *vm);
 

@@ -95,5 +95,8 @@ void Sound::stopSndFuncPtr(int v1, int v2) {
 	// TODO
 }
 
+void Sound::waitTimerRoland(uint time) {
+	// TODO
+}
 
 } // End of namespace Sherlock
