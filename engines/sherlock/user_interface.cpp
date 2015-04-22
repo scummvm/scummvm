@@ -1603,6 +1603,12 @@ void UserInterface::doMainControl() {
 		case 'F':
 			pushButton(10);
 			_menuMode = FILES_MODE;
+
+			// Create a thumbnail of the current screen before the files dialog is shown, in case
+			// the user saves the game
+			saves.createThumbnail();
+
+			// Display the dialog
 			saves.drawInterface();
 			
 			_selector = _oldSelector = -1;
