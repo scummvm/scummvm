@@ -34,7 +34,7 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_charPoint = _oldCharPoint = -1;
 	_cursorIndex = -1;
 	_drawMap = false;
-	for (int idx = 0; idx < 3; ++idx)
+	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
 
 	loadData();
@@ -48,6 +48,15 @@ void Map::loadPoints(int count, const int *xList, const int *yList, const int *t
 		_points.push_back(MapEntry(*xList, *yList, *transList));
 	}
 }
+
+/**
+ * Load the sequence data for player icon animations
+ */
+void Map::loadSequences(int count, const byte *seq) {
+	for (int idx = 0; idx < count; ++idx, seq += MAX_FRAME)
+		Common::copy(seq, seq + MAX_FRAME, &_sequences[idx][0]);
+}
+
 
 /**
  * Load data  needed for the map
@@ -108,10 +117,10 @@ int Map::show() {
 	// Load need sprites
 	setupSprites();
 
-	screen._backBuffer1.blitFrom(bigMap[1], Common::Point(-_bigPos.x, -_bigPos.y));
-	screen._backBuffer1.blitFrom(bigMap[2], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
-	screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
-	screen._backBuffer1.blitFrom(bigMap[4], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+	screen._backBuffer1.blitFrom(bigMap[0], Common::Point(-_bigPos.x, -_bigPos.y));
+	screen._backBuffer1.blitFrom(bigMap[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+	screen._backBuffer1.blitFrom(bigMap[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
+	screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
 
 	_drawMap = true;
 	_point = -1;
@@ -168,10 +177,10 @@ int Map::show() {
 			// Map has scrolled, so redraw new map view
 			changed = false;
 
-			screen._backBuffer1.blitFrom(bigMap[1], Common::Point(-_bigPos.x, -_bigPos.y));
-			screen._backBuffer1.blitFrom(bigMap[2], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
-			screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
-			screen._backBuffer1.blitFrom(bigMap[4], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+			screen._backBuffer1.blitFrom(bigMap[0], Common::Point(-_bigPos.x, -_bigPos.y));
+			screen._backBuffer1.blitFrom(bigMap[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+			screen._backBuffer1.blitFrom(bigMap[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
+			screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
 
 			showPlaces();
 			_placesShown = false;
@@ -249,7 +258,7 @@ void Map::setupSprites() {
 	p._type = CHARACTER;
 	p._position = Common::Point(12400, 5000);
 	p._sequenceNumber = 0;
-	p._sequences = (Sequences *)&_sequences;
+	p._sequences = &_sequences;
 	p._images = _shapes;
 	p._imageFrame = nullptr;
 	p._frameNumber = 0;
@@ -283,13 +292,13 @@ void Map::showPlaces() {
 	Screen &screen = *_vm->_screen;
 
 	for (uint idx = 0; idx < _points.size(); ++idx) {
-		const Common::Point &pt = _points[idx];
+		const MapEntry &pt = _points[idx];
 
 		if (pt.x != 0 && pt.y != 0) {
 			if (pt.x >= _bigPos.x && (pt.x - _bigPos.x) < SHERLOCK_SCREEN_WIDTH
 					&& pt.y >= _bigPos.y && (pt.y - _bigPos.y) < SHERLOCK_SCREEN_HEIGHT) {
 				if (_vm->readFlags(idx)) {
-					screen._backBuffer1.transBlitFrom((*_iconShapes)[idx], 
+					screen._backBuffer1.transBlitFrom((*_iconShapes)[pt._translate], 
 						Common::Point(pt.x - _bigPos.x - 6, pt.y - _bigPos.y - 12));
 				}
 			}

@@ -56,7 +56,7 @@ private:
 	ImageFile *_mapCursors;
 	ImageFile *_shapes;
 	ImageFile *_iconShapes;
-	byte _sequences[3][MAX_FRAME];
+	byte _sequences[MAX_HOLMES_SEQUENCE][MAX_FRAME];
 	Common::Point _bigPos;
 	Common::Point _overPos;
 	Common::Point _lDrawnPos;
@@ -89,6 +89,7 @@ public:
 	const MapEntry &operator[](int idx) { return _points[idx]; }
 
 	void loadPoints(int count, const int *xList, const int *yList, const int *transList);
+	void loadSequences(int count, const byte *seq);
 
 	int show();
 };
