@@ -161,11 +161,15 @@ void Sprite::adjustSprite() {
 		Exit *exit = scene.checkForExit(charRect);
 
 		if (exit) {
-			scene._hsavedPos = exit->_people;
-			scene._hsavedFs = exit->_peopleDir;
+			scene._goToScene = exit->_scene;
 
-			if (scene._hsavedFs > 100 && scene._hsavedPos.x < 1)
-				scene._hsavedPos.x = 100;
+			if (exit->_people.x != 0) {
+				scene._hsavedPos = exit->_people;
+				scene._hsavedFs = exit->_peopleDir;
+
+				if (scene._hsavedFs > 100 && scene._hsavedPos.x < 1)
+					scene._hsavedPos.x = 100;
+			}
 		}		
 	}
 }
