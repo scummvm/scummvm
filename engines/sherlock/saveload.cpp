@@ -45,6 +45,7 @@ SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
 	_saveThumb = nullptr;
 	_envMode = SAVEMODE_NONE;
 	_justLoaded = false;
+	_savegameIndex = 0;
 }
 
 SaveManager::~SaveManager() {
@@ -94,7 +95,7 @@ void SaveManager::drawInterface() {
 		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10), 
 			INV_FOREGROUND, "%d.", idx + 1);
 		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10), 
-			INV_FOREGROUND, "%s", _savegames[idx]);
+			INV_FOREGROUND, "%s", _savegames[idx].c_str());
 	}
 
 	if (!ui._windowStyle) {
@@ -114,7 +115,7 @@ void SaveManager::createSavegameList() {
 
 	_savegames.clear();
 	for (int idx = 0; idx < MAX_SAVEGAME_SLOTS; ++idx)
-		_savegames.push_back("-EMPTY");
+		_savegames.push_back("-EMPTY-");
 
 	SaveStateList saveList = getSavegameList(_target);
 	for (uint idx = 0; idx < saveList.size(); ++idx)
@@ -420,8 +421,95 @@ bool SaveManager::checkGameOnScreen(int slot) {
 }
 
 bool SaveManager::getFilename(int slot) {
-	// TODO
-	return false;
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	int xp, yp;
+	bool flag = false;
+	
+	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), COMMAND_NULL, true, "Exit");
+	screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_NULL, true, "Load");
+	screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_NULL, true, "Save");
+	screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, true, "Up");
+	screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, true, "Down");
+	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
+
+	Common::String saveName = _savegames[slot];
+	if (scumm_stricmp(saveName.c_str(), "-EMPTY-") == 0) {
+		// It's an empty slot, so start off with an empty save name
+		saveName = "";
+
+		yp = CONTROLS_Y + 12 + (slot - _savegameIndex) * 10;
+		screen.vgaBar(Common::Rect(24, yp, 85, yp + 9), INV_BACKGROUND);
+	}
+
+	screen.print(Common::Point(6, CONTROLS_Y + 12 + (slot - _savegameIndex) * 10), TALK_FOREGROUND, "%d.", slot + 1);
+	screen.print(Common::Point(24, CONTROLS_Y + 12 + (slot - _savegameIndex) * 10), TALK_FOREGROUND, "%s", saveName.c_str());
+	xp = 24 + screen.stringWidth(saveName);
+	yp = CONTROLS_Y + 12 + (slot - _savegameIndex) * 10;
+
+	int done = 0;
+	do {
+		while (!_vm->shouldQuit() && !events.kbHit()) {
+			scene.doBgAnim();
+
+			if (talk._talkToAbort)
+				return false;
+
+			// Allow event processing
+			events.pollEventsAndWait();
+			events.setButtonState();
+
+			flag = !flag;
+			if (flag)
+				screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
+			else
+				screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
+		}
+		if (_vm->shouldQuit())
+			return false;
+
+		// Get the next keypress
+		Common::KeyState keyState = events.getKey();
+
+		if (keyState.keycode == Common::KEYCODE_BACKSPACE && saveName.size() > 0) {
+			// Delete character of save name
+			screen.vgaBar(Common::Rect(xp - screen.charWidth(saveName.lastChar()), yp - 1, 
+				xp + 8, yp + 9), INV_BACKGROUND);
+			xp -= screen.charWidth(saveName.lastChar());
+			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
+			saveName.deleteLastChar();
+		}
+
+		if (keyState.keycode == Common::KEYCODE_RETURN)
+			done = 1;
+
+		if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
+			done = -1;
+		}
+
+		if (keyState.keycode >= ' ' && keyState.keycode <= 'z' && saveName.size() < 50
+				&& (xp + screen.charWidth(keyState.keycode)) < 308) {
+			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
+			screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", (char)keyState.keycode);
+			xp += screen.charWidth((char)keyState.keycode);
+			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
+			saveName += (char)keyState.keycode;
+		}
+	} while (!done);
+
+	if (done == 1) {
+		// Enter key perssed
+		_savegames[slot] = saveName;
+	} else {
+		done = 0;
+		_envMode = SAVEMODE_NONE;
+		highlightButtons(-1);
+	}
+
+	return done == 1;
 }
 
 } // End of namespace Sherlock

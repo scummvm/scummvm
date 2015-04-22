@@ -331,13 +331,16 @@ void UserInterface::handleInput() {
 	// Otherwise, the pressed _key is stored for later use
 	if (events.kbHit()) {
 		Common::KeyState keyState = events.getKey();
+		_keycode = keyState.keycode;
 
 		if (keyState.keycode == Common::KEYCODE_x && keyState.flags & Common::KBD_ALT) {
 			_vm->quitGame();
+			events.pollEvents();
 			return;
 		} else if (keyState.keycode == Common::KEYCODE_SPACE ||
 				keyState.keycode == Common::KEYCODE_RETURN) {
-			events._pressed = events._oldButtons = 0;
+			events._pressed = false;
+			events._oldButtons = 0;
 			_keycode = Common::KEYCODE_INVALID;
 		}
 	}
@@ -963,16 +966,16 @@ void UserInterface::doEnvControl() {
 	if (_selector != _oldSelector)  {
 		if (_oldSelector != -1 && _oldSelector >= saves._savegameIndex && _oldSelector < (saves._savegameIndex + 5)) {
 			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
-				INV_FOREGROUND, 0, "%d.", _oldSelector + 1);
+				INV_FOREGROUND, "%d.", _oldSelector + 1);
 			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
-				INV_FOREGROUND, 0, "%s", saves._savegames[_oldSelector]);
+				INV_FOREGROUND, "%s", saves._savegames[_oldSelector]);
 		}
 
 		if (_selector != -1) {
 			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10), 
-				TALK_FOREGROUND, 0, "%d.", _selector + 1);
+				TALK_FOREGROUND, "%d.", _selector + 1);
 			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10), 
-				TALK_FOREGROUND, 0, "%s", saves._savegames[_selector]);
+				TALK_FOREGROUND, "%s", saves._savegames[_selector].c_str());
 		}
 
 		_oldSelector = _selector;
@@ -1031,7 +1034,7 @@ void UserInterface::doEnvControl() {
 						color = TALK_FOREGROUND;
 
 					screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, "%d.", idx + 1);
-					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, "%s", saves._savegames[idx]);
+					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, "%s", saves._savegames[idx].c_str());
 				}
 
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
@@ -1066,7 +1069,7 @@ void UserInterface::doEnvControl() {
 					screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color,
 						"%d.", idx + 1);
 					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, 
-						"%s", saves._savegames[idx]);
+						"%s", saves._savegames[idx].c_str());
 				}
 				
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
