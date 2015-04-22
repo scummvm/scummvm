@@ -554,7 +554,7 @@ void People::goAllTheWay() {
 		++i;
 
 		// See how many points there are between the src and dest zones
-		if (!count || count == 255) {
+		if (!count || count == -1) {
 			// There are none, so just walk to the new zone
 			setWalking();
 		} else {
@@ -563,22 +563,22 @@ void People::goAllTheWay() {
 			_walkTo.clear();
 
 			if (scene._walkDirectory[_srcZone][_destZone] != -1) {
-				for (int idx = 0; idx < count; ++idx, i += 3) {
+				i += 3 * (count - 1);
+				for (int idx = 0; idx < count; ++idx, i -= 3) {
 					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]),
 						scene._walkData[i + 2]));
 				}
 			} else {
-				for (int idx = 0; idx < count; ++idx)
-					_walkTo.push(Common::Point());
-
-				for (int idx = count - 1; idx >= 0; --idx, i += 3) {
-					_walkTo[idx].x = READ_LE_UINT16(&scene._walkData[i]);
-					_walkTo[idx].y = scene._walkData[i + 2];
+				for (int idx = 0; idx < count; ++idx, i += 3) {
+					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]), scene._walkData[i + 2]));
 				}
 			}
 
+			// Final position
+			_walkTo.push(_walkDest);
+
 			// Start walking
-			_walkDest = _walkTo.top();
+			_walkDest = _walkTo.pop();
 			setWalking();
 		}
 	}

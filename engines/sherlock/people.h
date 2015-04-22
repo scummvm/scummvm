@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/stack.h"
+#include "common/queue.h"
 #include "sherlock/objects.h"
 
 namespace Sherlock {
@@ -74,7 +74,7 @@ private:
 public:
 	ImageFile *_talkPics;
 	Common::Point _walkDest;
-	Common::Stack<Common::Point> _walkTo;
+	Common::Queue<Common::Point> _walkTo;
 	Person &_player;
 	bool _holmesOn;
 	bool _portraitLoaded;

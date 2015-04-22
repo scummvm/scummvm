@@ -399,8 +399,10 @@ void Map::walkTheStreets() {
 			people._walkTo.clear();
 
 			if (!reversePath) {
-				people._walkTo = tempPath;
-				people._walkDest = tempPath[0];
+				for (int idx = 0; idx < (int)tempPath.size(); ++idx)
+					people._walkTo.push(tempPath[idx]);
+
+				people._walkDest = tempPath.front();
 			} else {
 				for (int idx = 0; idx < ((int)tempPath.size() - 1); ++idx)
 					people._walkTo.push(tempPath[idx]);

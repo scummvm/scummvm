@@ -291,7 +291,7 @@ void Sprite::checkSprite() {
 						break;
 
 					case WALK_AROUND:
-						if (objBounds.contains(people._walkTo.top())) {
+						if (objBounds.contains(people._walkTo.front())) {
 							// Reached zone
 							people.gotoStand(*this);
 						} else {
