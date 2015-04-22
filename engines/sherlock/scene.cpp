@@ -1463,7 +1463,11 @@ void Scene::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_overPos.x);
 	s.syncAsSint16LE(_overPos.y);
 	s.syncAsSint16LE(_oldCharPoint);
-	s.syncAsSint16LE(_goToScene);
+
+	if (s.isSaving())
+		s.syncAsSint16LE(_currentScene);
+	else
+		s.syncAsSint16LE(_goToScene);
 
 	for (int sceneNum = 0; sceneNum < SCENES_COUNT; ++sceneNum) {
 		for (int flag = 0; flag < 65; ++flag) {

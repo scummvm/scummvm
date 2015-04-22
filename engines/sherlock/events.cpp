@@ -54,6 +54,7 @@ void Events::loadCursors(const Common::String &filename) {
 	delete _cursorImages;
 
 	_cursorImages = new ImageFile(filename);
+	_cursorId = INVALID_CURSOR;
 }
 
 /**
