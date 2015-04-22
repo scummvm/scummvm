@@ -331,7 +331,7 @@ void UserInterface::handleInput() {
 	// Otherwise, the pressed _key is stored for later use
 	if (events.kbHit()) {
 		Common::KeyState keyState = events.getKey();
-		_keycode = keyState.keycode;
+		_keycode = keyState.ascii;
 
 		if (keyState.keycode == Common::KEYCODE_x && keyState.flags & Common::KBD_ALT) {
 			_vm->quitGame();
@@ -968,7 +968,7 @@ void UserInterface::doEnvControl() {
 			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
 				INV_FOREGROUND, "%d.", _oldSelector + 1);
 			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
-				INV_FOREGROUND, "%s", saves._savegames[_oldSelector]);
+				INV_FOREGROUND, "%s", saves._savegames[_oldSelector].c_str());
 		}
 
 		if (_selector != -1) {
@@ -1014,7 +1014,7 @@ void UserInterface::doEnvControl() {
 						screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND, 
 							"%d.", _selector + 1);
 						screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND, 
-							"%s", saves._savegames[_selector]);
+							"%s", saves._savegames[_selector].c_str());
 						
 						screen.slamArea(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 311, 10);
 						_selector = _oldSelector = -1;
@@ -1180,9 +1180,9 @@ void UserInterface::doEnvControl() {
 							screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 
 								317, CONTROLS_Y + 20 + (_selector - saves._savegameIndex) * 10), INV_BACKGROUND);
 							screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), 
-								INV_FOREGROUND, 0, "%d.", _selector + 1);
+								INV_FOREGROUND, "%d.", _selector + 1);
 							screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), 
-								INV_FOREGROUND, 0, "%s", saves._savegames[_selector]);
+								INV_FOREGROUND, "%s", saves._savegames[_selector].c_str());
 							screen.slamArea(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 311, 10);
 							_selector = _oldSelector = -1;
 						}

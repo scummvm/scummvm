@@ -118,8 +118,11 @@ void SaveManager::createSavegameList() {
 		_savegames.push_back("-EMPTY-");
 
 	SaveStateList saveList = getSavegameList(_target);
-	for (uint idx = 0; idx < saveList.size(); ++idx)
-		_savegames[saveList[idx].getSaveSlot()] = saveList[idx].getDescription();
+	for (uint idx = 0; idx < saveList.size(); ++idx) {
+		int slot = saveList[idx].getSaveSlot() - 1;
+		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS)
+			_savegames[slot] = saveList[idx].getDescription();
+	}
 
 	// Ensure the names will fit on the screen
 	for (uint idx = 0; idx < _savegames.size(); ++idx) {
@@ -312,6 +315,9 @@ void SaveManager::highlightButtons(int btnIndex) {
 void SaveManager::loadGame(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		generateSaveName(slot));
+	if (!saveFile)
+		return;
+	
 	Common::Serializer s(saveFile, nullptr);
 
 	// Load the savaegame header
@@ -492,11 +498,13 @@ bool SaveManager::getFilename(int slot) {
 
 		if (keyState.keycode >= ' ' && keyState.keycode <= 'z' && saveName.size() < 50
 				&& (xp + screen.charWidth(keyState.keycode)) < 308) {
+			char c = (char)keyState.ascii;
+
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
-			screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", (char)keyState.keycode);
-			xp += screen.charWidth((char)keyState.keycode);
+			screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", c);
+			xp += screen.charWidth(c);
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
-			saveName += (char)keyState.keycode;
+			saveName += c;
 		}
 	} while (!done);
 

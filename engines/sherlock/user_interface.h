@@ -84,7 +84,7 @@ private:
 	ImageFile *_controls;
 	int _bgFound;
 	int _oldBgFound;
-	Common::KeyCode _keycode;
+	int _keycode;
 	int _helpStyle;
 	int _lookHelp;
 	int _help, _oldHelp;

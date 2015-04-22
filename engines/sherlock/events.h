@@ -85,7 +85,7 @@ public:
 
 	bool kbHit() const { return !_pendingKeys.empty(); }
 
-	Common::KeyState getKey() { return _pendingKeys.pop(); }
+	Common::KeyState getKey();
 
 	void clearEvents();
 	void clearKeyboard();
