@@ -318,8 +318,6 @@ void SaveManager::loadGame(int slot) {
 	if (!saveFile)
 		return;
 	
-	Common::Serializer s(saveFile, nullptr);
-
 	// Load the savaegame header
 	SherlockSavegameHeader header;
 	if (!readSavegameHeader(saveFile, header))
@@ -331,6 +329,7 @@ void SaveManager::loadGame(int slot) {
 	}
 
 	// Synchronize the savegame data
+	Common::Serializer s(saveFile, nullptr);
 	synchronize(s);
 
 	delete saveFile;
@@ -347,6 +346,7 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 	header._saveName = name;
 	writeSavegameHeader(out, header);
 
+	// Synchronize the savegame data
 	Common::Serializer s(nullptr, out);
 	synchronize(s);
 

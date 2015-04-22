@@ -107,6 +107,7 @@ public:
 	bool _onChessboard;
 	bool _slowChess;
 	int _keyPadSpeed;
+	int _loadGameSlot;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

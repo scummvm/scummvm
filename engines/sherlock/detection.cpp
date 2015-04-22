@@ -98,7 +98,12 @@ bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 }
 
 bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
@@ -109,13 +114,13 @@ int SherlockMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVEGAME_SLOTS;
 }
 
-void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
+void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {	
+	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
+	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (f) {

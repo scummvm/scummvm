@@ -1194,6 +1194,7 @@ void Journal::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_maxPage);
 
 	int journalCount = _journal.size();
+	s.syncAsUint16LE(journalCount);
 	if (s.isLoading())
 		_journal.resize(journalCount);
 

@@ -23,6 +23,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/graphics.h"
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "engines/util.h"
 
@@ -49,6 +50,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_onChessboard = false;
 	_slowChess = false;
 	_keyPadSpeed = 0;
+	_loadGameSlot = -1;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -95,8 +97,20 @@ void SherlockEngine::initialize() {
 Common::Error SherlockEngine::run() {
 	initialize();
 
-	// Temporarily disabled for now
-//	showOpening();
+	// If requested, load a savegame instead of showing the intro
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 1 && saveSlot <= MAX_SAVEGAME_SLOTS)
+			_loadGameSlot = saveSlot;
+	}
+
+	if (_loadGameSlot != -1) {
+		_saves->loadGame(_loadGameSlot);
+		_loadGameSlot = -1;
+	} else {
+		// Temporarily disabled for now
+		//	showOpening();
+	}
 
 	while (!shouldQuit()) {
 		// Prepare for scene, and handle any game-specific scenes. This allows 

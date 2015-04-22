@@ -58,8 +58,6 @@ private:
 
 	void createSavegameList();
 
-	Common::String generateSaveName(int slot);
-
 	void synchronize(Common::Serializer &s);
 public:
 	Common::StringArray _savegames;
@@ -75,6 +73,8 @@ public:
 	void createThumbnail();
 
 	static SaveStateList getSavegameList(const Common::String &target);
+
+	Common::String generateSaveName(int slot);
 
 	void writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegameHeader &header);
 
