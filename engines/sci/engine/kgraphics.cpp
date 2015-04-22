@@ -686,7 +686,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVaryInit(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId paletteId = argv[0].toUint16();
 	uint16 ticks = argv[1].toUint16();
-	uint16 stepStop = argc >= 3 ? argv[2].toUint16() : 64;
+	uint16 stepStop = argc >= 3 ? argv[2].toUint16() : 100;
 	uint16 direction = argc >= 4 ? argv[3].toUint16() : 1;
 	if (g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction))
 		return SIGNAL_REG;

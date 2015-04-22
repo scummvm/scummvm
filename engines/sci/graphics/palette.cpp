@@ -871,8 +871,8 @@ int16 GfxPalette::kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direc
 	if (_palVaryResourceId == -1)
 		return 0;
 
-	if (_palVaryStep > 64)
-		_palVaryStep = 64;
+	if (_palVaryStep > 100)
+		_palVaryStep = 100;
 	if (ticks != -1)
 		_palVaryTicks = ticks;
 	_palVaryStepStop = stepStop;
