@@ -80,6 +80,8 @@ protected:
 	virtual void showOpening() = 0;
 
 	virtual void startScene() {}
+
+	virtual bool hasFeature(EngineFeature f) const;
 public:
 	const SherlockGameDescription *_gameDescription;
 	Animation *_animation;
@@ -108,11 +110,17 @@ public:
 	bool _slowChess;
 	int _keyPadSpeed;
 	int _loadGameSlot;
+	bool _canLoadSave;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();
 
 	virtual Common::Error run();
+
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	int getGameType() const;
 	uint32 getGameID() const;
@@ -127,8 +135,6 @@ public:
 	bool readFlags(int flagNum);
 
 	void setFlags(int flagNum);
-
-	void freeSaveGameList();
 
 	void saveConfig();
 

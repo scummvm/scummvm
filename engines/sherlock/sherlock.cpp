@@ -51,6 +51,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_slowChess = false;
 	_keyPadSpeed = 0;
 	_loadGameSlot = -1;
+	_canLoadSave = false;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -147,8 +148,11 @@ void SherlockEngine::sceneLoop() {
 		// Handle any input from the keyboard or mouse
 		handleInput();
 
-		if (_scene->_hsavedPos.x == -1)
+		if (_scene->_hsavedPos.x == -1) {
+			_canLoadSave = true;
 			_scene->doBgAnim();
+			_canLoadSave = false;
+		}
 	}
 
 	_scene->freeScene();
@@ -160,7 +164,9 @@ void SherlockEngine::sceneLoop() {
  * Handle all player input
  */
 void SherlockEngine::handleInput() {
+	_canLoadSave = true;
 	_events->pollEventsAndWait();
+	_canLoadSave = false;
 
 	// See if a key or mouse button is pressed
 	_events->setButtonState();
@@ -190,14 +196,9 @@ void SherlockEngine::setFlags(int flagNum) {
 	_scene->checkSceneFlags(true);
 }
 
-void SherlockEngine::freeSaveGameList() {
-	// TODO
-}
-
 void SherlockEngine::saveConfig() {
 	// TODO
 }
-
 
 /**
  * Synchronize the data for a savegame
@@ -205,6 +206,36 @@ void SherlockEngine::saveConfig() {
 void SherlockEngine::synchronize(Common::Serializer &s) {
 	for (uint idx = 0; idx < _flags.size(); ++idx)
 		s.syncAsByte(_flags[idx]);
+}
+
+/**
+ * Returns true if a savegame can be loaded
+ */
+bool SherlockEngine::canLoadGameStateCurrently() {
+	return _canLoadSave;
+}
+
+/**
+ * Returns true if the game can be saved
+ */
+bool SherlockEngine::canSaveGameStateCurrently() {
+	return _canLoadSave;
+}
+
+/**
+ * Called by the GMM to load a savegame
+ */
+Common::Error SherlockEngine::loadGameState(int slot) {
+	_saves->loadGame(slot);
+	return Common::kNoError;
+}
+
+/**
+ * Called by the GMM to save the game
+ */
+Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc) {
+	_saves->saveGame(slot, desc);
+	return Common::kNoError;
 }
 
 } // End of namespace Comet

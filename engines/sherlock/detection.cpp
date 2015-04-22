@@ -106,6 +106,13 @@ bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail);
 }
 
+bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
 	return Sherlock::SaveManager(nullptr, "").getSavegameList(target);
 }

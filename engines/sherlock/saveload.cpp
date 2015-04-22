@@ -383,10 +383,6 @@ void SaveManager::synchronize(Common::Serializer &s) {
 
 	if (screen.fontNumber() != oldFont)
 		journal.resetPosition();
-	/*
-	char room_flags[MAX_ROOMS * 9];
-
-		*/
 
 	_vm->_loadingSavedGame = true;
 	_justLoaded = true;
