@@ -24,6 +24,7 @@
 #define SHERLOCK_PEOPLE_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/stack.h"
 #include "sherlock/objects.h"
 
@@ -84,7 +85,7 @@ public:
 	int _portraitSide;
 	bool _speakerFlip;
 	bool _holmesFlip;
-	int _homesQuotient;
+	int _holmesQuotient;
 public:
 	People(SherlockEngine *vm);
 	~People();
@@ -118,6 +119,8 @@ public:
 
 	void clearTalking();
 	void setTalking(int speaker);
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

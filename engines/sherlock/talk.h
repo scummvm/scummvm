@@ -26,12 +26,14 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 #include "common/stack.h"
 
 namespace Sherlock {
 
 #define MAX_TALK_SEQUENCES 11
+#define MAX_TALK_FILES 500
 
 struct SequenceEntry {
 	int _objNum;
@@ -93,7 +95,7 @@ private:
 	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
 	Common::Array<Statement> _statements;
-	TalkHistoryEntry _talkHistory[500];
+	TalkHistoryEntry _talkHistory[MAX_TALK_FILES];
 	int _speaker;
 	int _talkIndex;
 	int _scriptSelect;
@@ -145,6 +147,8 @@ public:
 	bool isSequencesEmpty() const { return _scriptStack.empty(); }
 
 	void popStack();
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

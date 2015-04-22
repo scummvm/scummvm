@@ -101,7 +101,6 @@ public:
 	Common::String _soundOverride;
 	Common::String _titleOverride;
 	bool _useEpilogue2;
-	bool _justLoaded;
 	bool _loadingSavedGame;
 	int _oldCharPoint;					// Old scene
 	Common::Point _over;				// Old map position
@@ -131,6 +130,8 @@ public:
 	void freeSaveGameList();
 
 	void saveConfig();
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

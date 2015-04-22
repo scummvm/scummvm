@@ -1175,4 +1175,35 @@ int Journal::getFindName(bool printError) {
 	return done;
 }
 
+/**
+ * Reset viewing position to the start of the journal
+ */
+void Journal::resetPosition() {
+	_index = _sub = _up = _down = 0;
+	_page = 1;
+}
+
+/**
+ * Synchronize the data for a savegame
+ */
+void Journal::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_count);
+	s.syncAsSint16LE(_index);
+	s.syncAsSint16LE(_sub);
+	s.syncAsSint16LE(_page);
+	s.syncAsSint16LE(_maxPage);
+
+	int journalCount = _journal.size();
+	if (s.isLoading())
+		_journal.resize(journalCount);
+
+	for (uint idx = 0; idx < _journal.size(); ++idx) {
+		JournalEntry &je = _journal[idx];
+
+		s.syncAsSint16LE(je._converseNum);
+		s.syncAsByte(je._replyOnly);
+		s.syncAsSint16LE(je._statementNum);
+	}
+}
+
 } // End of namespace Sherlock

@@ -25,6 +25,7 @@
 
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "graphics/surface.h"
 #include "sherlock/graphics.h"
 #include "sherlock/resources.h"
@@ -128,6 +129,8 @@ public:
 	Common::Rect getDisplayBounds();
 
 	int fontNumber() const { return _fontNumber; }
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

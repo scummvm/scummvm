@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
 
@@ -104,7 +105,7 @@ public:
 	int _currentScene;
 	int _goToScene;
 	bool _changes;
-	bool _stats[SCENES_COUNT][9];
+	bool _sceneStats[SCENES_COUNT][65];
 	bool _savedStats[SCENES_COUNT][9];
 	Common::Point _bigPos;
 	Common::Point _overPos;
@@ -167,6 +168,8 @@ public:
 	int closestZone(const Common::Point &pt);
 
 	void updateBackground();
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

@@ -44,6 +44,7 @@ SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
 		_vm(vm), _target(target) {
 	_saveThumb = nullptr;
 	_envMode = SAVEMODE_NONE;
+	_justLoaded = false;
 }
 
 SaveManager::~SaveManager() {
@@ -308,14 +309,80 @@ void SaveManager::highlightButtons(int btnIndex) {
  * Load the game in the specified slot
  */
 void SaveManager::loadGame(int slot) {
-	// TODO
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		generateSaveName(slot));
+	Common::Serializer s(saveFile, nullptr);
+
+	// Load the savaegame header
+	SherlockSavegameHeader header;
+	if (!readSavegameHeader(saveFile, header))
+		error("Invalid savegame");
+
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
+	// Synchronize the savegame data
+	synchronize(s);
+
+	delete saveFile;
 }
 
 /**
  * Save the game in the specified slot with the given name
  */
 void SaveManager::saveGame(int slot, const Common::String &name) {
-	// TODO
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
+		generateSaveName(slot));
+
+	SherlockSavegameHeader header;
+	header._saveName = name;
+	writeSavegameHeader(out, header);
+
+	Common::Serializer s(nullptr, out);
+	synchronize(s);
+
+	out->finalize();
+	delete out;
+}
+
+/**
+ * Support method that generates a savegame name
+ * @param slot		Slot number
+ */
+Common::String SaveManager::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _target.c_str(), slot);
+}
+
+/**
+ * Synchronize the data for a savegame
+ */
+void SaveManager::synchronize(Common::Serializer &s) {
+	Journal &journal = *_vm->_journal;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+
+	int oldFont = screen.fontNumber();
+
+	journal.synchronize(s);
+	people.synchronize(s);
+	scene.synchronize(s);
+	screen.synchronize(s);
+	talk.synchronize(s);
+	_vm->synchronize(s);
+
+	if (screen.fontNumber() != oldFont)
+		journal.resetPosition();
+	/*
+	char room_flags[MAX_ROOMS * 9];
+
+		*/
+
+	_vm->_loadingSavedGame = true;
+	_justLoaded = true;
 }
 
 /**

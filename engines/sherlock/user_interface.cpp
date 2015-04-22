@@ -1820,7 +1820,7 @@ void UserInterface::doTalkControl() {
 
 				// Add any Holmes point to Holmes' total, if any
 				if (talk._statements[_selector]._quotient)
-					people._homesQuotient += talk._statements[_selector]._quotient;
+					people._holmesQuotient += talk._statements[_selector]._quotient;
 			}
 
 			// Flag the response as having been used

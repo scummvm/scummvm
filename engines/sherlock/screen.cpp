@@ -480,4 +480,14 @@ Common::Rect Screen::getDisplayBounds() {
 	return Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
+/**
+ * Synchronize the data for a savegame
+ */
+void Screen::synchronize(Common::Serializer &s) {
+	int fontNumber = _fontNumber;
+	s.syncAsByte(fontNumber);
+	if (s.isLoading())
+		setFont(fontNumber);
+}
+
 } // End of namespace Sherlock

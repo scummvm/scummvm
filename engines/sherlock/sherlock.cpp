@@ -45,7 +45,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_talk = nullptr;
 	_ui = nullptr;
 	_useEpilogue2 = false;
-	_justLoaded = false;
 	_loadingSavedGame = false;
 	_onChessboard = false;
 	_slowChess = false;
@@ -183,6 +182,15 @@ void SherlockEngine::freeSaveGameList() {
 
 void SherlockEngine::saveConfig() {
 	// TODO
+}
+
+
+/**
+ * Synchronize the data for a savegame
+ */
+void SherlockEngine::synchronize(Common::Serializer &s) {
+	for (uint idx = 0; idx < _flags.size(); ++idx)
+		s.syncAsByte(_flags[idx]);
 }
 
 } // End of namespace Comet

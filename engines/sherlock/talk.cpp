@@ -1745,4 +1745,16 @@ void Talk::popStack() {
 	}
 }
 
+/**
+ * Synchronize the data for a savegame
+ */
+void Talk::synchronize(Common::Serializer &s) {
+	for (int idx = 0; idx < MAX_TALK_FILES; ++idx) {
+		TalkHistoryEntry &he = _talkHistory[idx];
+		
+		for (int flag = 0; flag < 16; ++flag)
+			s.syncAsByte(he._data[flag]);
+	}
+}
+
 } // End of namespace Sherlock

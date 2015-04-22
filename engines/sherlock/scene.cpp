@@ -85,7 +85,7 @@ void SceneSound::synchronize(Common::SeekableReadStream &s) {
 
 Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
-		Common::fill(&_stats[idx][0], &_stats[idx][9], false);
+		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
 	_currentScene = -1;
 	_goToScene = -1;
 	_changes = false;
@@ -195,6 +195,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
+	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
@@ -398,7 +399,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	_changes = false;
 	checkSceneStatus();
 
-	if (!_vm->_justLoaded) {
+	if (!saves._justLoaded) {
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			if (_bgShapes[idx]._type == HIDDEN && _bgShapes[idx]._aType == TALK_EVERY)
 				_bgShapes[idx].toggleHidden();
@@ -450,30 +451,25 @@ bool Scene::loadScene(const Common::String &filename) {
  * opening or moving them
  */
 void Scene::checkSceneStatus() {
-	if (_stats[_currentScene][8]) {
-		for (int idx = 0; idx < 8; ++idx) {
-			int val = _stats[_currentScene][idx];
+	if (_sceneStats[_currentScene][65]) {
+		for (uint idx = 0; idx < 64; ++idx) {
+			int val = _sceneStats[_currentScene][idx];
 
-			for (int bit = 0; bit < 8; ++bit) {
-				uint objNumber = idx * 8 + bit;
-				if (objNumber < _bgShapes.size()) {
-					Object &obj = _bgShapes[objNumber];
+			if (idx < _bgShapes.size()) {
+				Object &obj = _bgShapes[idx];
 
-					if (val & 1) {
-						// No shape to erase, so flag as hidden
-						obj._type = HIDDEN;
-					} else if (obj._images == nullptr || obj._images->size() == 0) {
-						// No shape
-						obj._type = NO_SHAPE;
-					} else {
-						obj._type = ACTIVE_BG_SHAPE;
-					}
+				if (val & 1) {
+					// No shape to erase, so flag as hidden
+					obj._type = HIDDEN;
+				} else if (obj._images == nullptr || obj._images->size() == 0) {
+					// No shape
+					obj._type = NO_SHAPE;
 				} else {
-					// Finished checks
-					return;
+					obj._type = ACTIVE_BG_SHAPE;
 				}
-
-				val >>= 1;
+			} else {
+				// Finished checks
+				return;
 			}
 		}
 	}
@@ -560,6 +556,7 @@ void Scene::checkInventory() {
  */
 void Scene::transitionToScene() {
 	People &people = *_vm->_people;
+	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 
@@ -583,7 +580,7 @@ void Scene::transitionToScene() {
 		// Exit information exists, translate it to real sequence info
 		// Note: If a savegame was just loaded, then the data is already correct.
 		// Otherwise, this is a linked scene or entrance info, and must be translated
-		if (_hsavedFs < 8 && !_vm->_justLoaded) {
+		if (_hsavedFs < 8 && !saves._justLoaded) {
 			_hsavedFs = FS_TRANS[_hsavedFs];
 			_hsavedPos.x *= 100;
 			_hsavedPos.y *= 100;
@@ -1455,6 +1452,24 @@ int Scene::closestZone(const Common::Point &pt) {
 	}
 
 	return zone;
+}
+
+/**
+ * Synchronize the data for a savegame
+ */
+void Scene::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_bigPos.x);
+	s.syncAsSint16LE(_bigPos.y);
+	s.syncAsSint16LE(_overPos.x);
+	s.syncAsSint16LE(_overPos.y);
+	s.syncAsSint16LE(_oldCharPoint);
+	s.syncAsSint16LE(_goToScene);
+
+	for (int sceneNum = 0; sceneNum < SCENES_COUNT; ++sceneNum) {
+		for (int flag = 0; flag < 65; ++flag) {
+			s.syncAsByte(_sceneStats[sceneNum][flag]);
+		}
+	}
 }
 
 } // End of namespace Sherlock

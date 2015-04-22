@@ -203,7 +203,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_portraitSide = 0;
 	_speakerFlip = false;
 	_holmesFlip = false;
-	_homesQuotient = 0;
+	_holmesQuotient = 0;
 
 	_portrait._sequences = new byte[32];
 }
@@ -698,6 +698,17 @@ void People::setTalking(int speaker) {
 
 		_portraitLoaded = true;
 	}
+}
+
+/**
+ * Synchronize the data for a savegame
+ */
+void People::synchronize(Common::Serializer &s) {
+	s.syncAsByte(_holmesOn);
+	s.syncAsSint16LE(_data[AL]._position.x);
+	s.syncAsSint16LE(_data[AL]._position.y);
+	s.syncAsSint16LE(_data[AL]._sequenceNumber);
+	s.syncAsSint16LE(_holmesQuotient);
 }
 
 } // End of namespace Sherlock

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/str-array.h"
 #include "engines/savestate.h"
 #include "graphics/surface.h"
@@ -56,10 +57,15 @@ private:
 	Graphics::Surface *_saveThumb;
 
 	void createSavegameList();
+
+	Common::String generateSaveName(int slot);
+
+	void synchronize(Common::Serializer &s);
 public:
 	Common::StringArray _savegames;
 	int _savegameIndex;
 	SaveMode _envMode;
+	bool _justLoaded;
 public:
 	SaveManager(SherlockEngine *vm, const Common::String &target);
 	~SaveManager();

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 #include "common/str-array.h"
 #include "common/stream.h"
 
@@ -77,6 +78,10 @@ public:
 	void drawInterface();
 
 	bool handleEvents(int key);
+
+	void resetPosition();
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

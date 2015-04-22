@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/serializer.h"
 #include "common/str-array.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
@@ -99,6 +100,8 @@ public:
 	int putItemInInventory(Object &obj);
 
 	int deleteItemFromInventory(const Common::String &name);
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

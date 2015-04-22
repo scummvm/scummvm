@@ -486,4 +486,24 @@ int Inventory::deleteItemFromInventory(const Common::String &name) {
 	return 1;
 }
 
+/**
+ * Synchronize the data for a savegame
+ */
+void Inventory::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_holdings);
+
+	uint count = size();
+	s.syncAsUint16LE(count);
+	if (s.isLoading()) {
+		resize(count);
+
+		// Reset inventory back to start
+		_invIndex = 0;
+	}
+
+	for (uint idx = 0; idx < size(); ++idx) {
+		// TODO
+	}
+}
+
 } // End of namespace Sherlock
