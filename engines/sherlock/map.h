@@ -62,7 +62,6 @@ private:
 	Common::Point _lDrawnPos;
 	int _point;
 	bool _placesShown;
-	int _charPoint, _oldCharPoint;
 	int _cursorIndex;
 	bool _drawMap;
 	Surface _iconSave;
@@ -86,6 +85,8 @@ private:
 	void restoreIcon();
 
 	void highlightIcon(const Common::Point &pt);
+public:
+	bool _active;
 public:
 	Map(SherlockEngine *vm);
 

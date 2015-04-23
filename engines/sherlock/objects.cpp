@@ -81,6 +81,7 @@ void Sprite::setImageFrame() {
  * This adjusts the sprites position, as well as it's animation sequence:
  */
 void Sprite::adjustSprite() {
+	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
@@ -105,7 +106,7 @@ void Sprite::adjustSprite() {
 		}
 	}
 
-	if (_type == CHARACTER && !_vm->_onChessboard) {
+	if (_type == CHARACTER && !map._active) {
 		if ((_position.y / 100) > LOWER_LIMIT) {
 			_position.y = LOWER_LIMIT * 100;
 			people.gotoStand(*this);
@@ -120,12 +121,12 @@ void Sprite::adjustSprite() {
 			_position.x = LEFT_LIMIT * 100;
 			people.gotoStand(*this);
 		}
-	} else if (!_vm->_onChessboard) {
+	} else if (!map._active) {
 		_position.y = CLIP((int)_position.y, UPPER_LIMIT, LOWER_LIMIT);
 		_position.x = CLIP((int)_position.x, LEFT_LIMIT, RIGHT_LIMIT);
 	}
 
-	if (!_vm->_onChessboard || (_vm->_slowChess = !_vm->_slowChess))
+	if (!map._active || (_vm->_slowChess = !_vm->_slowChess))
 		++_frameNumber;
 
 	if ((*_sequences)[_sequenceNumber][_frameNumber] == 0) {

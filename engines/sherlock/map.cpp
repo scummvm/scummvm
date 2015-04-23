@@ -26,14 +26,15 @@
 namespace Sherlock {
 
 Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
+	_active = false;
 	_mapCursors = nullptr;
 	_shapes = nullptr;
 	_iconShapes = nullptr;
 	_point = 0;
 	_placesShown = false;
-	_charPoint = _oldCharPoint = -1;
 	_cursorIndex = -1;
 	_drawMap = false;
+	_overPos = Common::Point(13000, 12600);
 	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
 
@@ -103,9 +104,11 @@ void Map::loadData() {
 int Map::show() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Common::Point lDrawn(-1, -1);
 	bool changed = false, exitFlag = false;
+	_active = true;
 
 	// Set font and custom cursor for the map
 	int oldFont = screen.fontNumber();
@@ -204,7 +207,7 @@ int Map::show() {
 
 		if ((events._released || events._rightReleased) && _point != -1) {
 			if (people[AL]._walkCount == 0) {
-				_charPoint = _point;
+				scene._charPoint = _point;
 				walkTheStreets();
 
 				_cursorIndex = 1;
@@ -214,7 +217,7 @@ int Map::show() {
 
 		// Check if a scene has beeen selected and we've finished "moving" to it
 		if (people[AL]._walkCount == 0) {
-			if (_charPoint >= 1 && _charPoint < (int)_points.size())
+			if (scene._charPoint >= 1 && scene._charPoint < (int)_points.size())
 				exitFlag = true;
 		}
 
@@ -238,7 +241,8 @@ int Map::show() {
 	screen.setFont(oldFont);
 	events.setCursor(ARROW);
 
-	return _charPoint;
+	_active = false;
+	return scene._charPoint;
 }
 
 /**
@@ -350,7 +354,7 @@ void Map::showPlaceName(int idx, bool highlighted) {
 		screen.gPrint(Common::Point(xp + 1, 1), 0, name.c_str());
 		screen.gPrint(Common::Point(xp, 0), 12, name.c_str());
 
-		screen.slamArea(xp, 0, screen.stringWidth(name) + 2, 15);
+		screen.slamArea(xp, 0, width + 2, 15);
 	}
 }
 
@@ -408,21 +412,22 @@ void Map::updateMap(bool flushScreen) {
  */
 void Map::walkTheStreets() {
 	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
 	bool reversePath = false;
 	Common::Array<Common::Point> tempPath;
 
 	// Get indexes into the path lists for the start and destination scenes
-	int start = _points[_oldCharPoint]._translate;
-	int dest = _points[_charPoint]._translate;
+	int start = _points[scene._oldCharPoint]._translate;
+	int dest = _points[scene._charPoint]._translate;
 
 	// Get pointer to start of path
 	const int *ptr = &_paths[start][dest];
 
 	// Check for any intermediate points between the two locations
-	if (*ptr || _charPoint > 50 || _oldCharPoint > 50) {
+	if (*ptr || scene._charPoint > 50 || scene._oldCharPoint > 50) {
 		people[AL]._sequenceNumber = -1;
 
-		if (_charPoint == 51 || _oldCharPoint == 51) {
+		if (scene._charPoint == 51 || scene._oldCharPoint == 51) {
 			people.setWalking();
 		} else {
 			// Check for moving the path backwards or forwards
@@ -514,7 +519,7 @@ void Map::highlightIcon(const Common::Point &pt) {
 
 	// Iterate through the icon list
 	bool done = false;
-	for (uint idx = 0; idx < _points.size(); ++idx) {
+	for (int idx = 0; idx < (int)_points.size(); ++idx) {
 		const MapEntry &entry = _points[idx];
 
 		// Check whether the mouse is over a given icon

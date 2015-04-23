@@ -106,7 +106,6 @@ public:
 	bool _loadingSavedGame;
 	int _oldCharPoint;					// Old scene
 	Common::Point _over;				// Old map position
-	bool _onChessboard;
 	bool _slowChess;
 	int _keyPadSpeed;
 	int _loadGameSlot;

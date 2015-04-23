@@ -270,6 +270,7 @@ bool People::freeWalk() {
 * check for any obstacles in the path.
 */
 void People::setWalking() {
+	Map &map = *_vm->_map;
 	Scene &scene = *_vm->_scene;
 	int oldDirection, oldFrame;
 	Common::Point speed, delta;
@@ -284,7 +285,7 @@ void People::setWalking() {
 	oldFrame = _player._frameNumber;
 
 	// Set speed to use horizontal and vertical movement
-	if (_vm->_onChessboard) {
+	if (map._active) {
 		speed = Common::Point(MWALK_SPEED, MWALK_SPEED);
 	} else {
 		speed = Common::Point(XWALK_SPEED, YWALK_SPEED);
@@ -321,10 +322,10 @@ void People::setWalking() {
 			// Set the initial frame sequence for the left and right, as well
 			// as settting the delta x depending on direction
 			if (_walkDest.x < (_player._position.x / 100)) {
-				_player._sequenceNumber = _vm->_onChessboard ? MAP_LEFT : WALK_LEFT;
+				_player._sequenceNumber = map._active ? MAP_LEFT : WALK_LEFT;
 				_player._delta.x = speed.x * -100;
 			} else {
-				_player._sequenceNumber = _vm->_onChessboard ? MAP_RIGHT : WALK_RIGHT;
+				_player._sequenceNumber = map._active ? MAP_RIGHT : WALK_RIGHT;
 				_player._delta.x = speed.x * 100;
 			}
 
@@ -348,7 +349,7 @@ void People::setWalking() {
 
 			// See if the sequence needs to be changed for diagonal walking
 			if (_player._delta.y > 150) {
-				if (!_vm->_onChessboard) {
+				if (!map._active) {
 					switch (_player._sequenceNumber) {
 					case WALK_LEFT:
 						_player._sequenceNumber = WALK_DOWNLEFT;
@@ -359,7 +360,7 @@ void People::setWalking() {
 					}
 				}
 			} else if (_player._delta.y < -150) {
-				if (!_vm->_onChessboard) {
+				if (!map._active) {
 					switch (_player._sequenceNumber) {
 					case WALK_LEFT:
 						_player._sequenceNumber = WALK_UPLEFT;
@@ -447,7 +448,7 @@ void People::gotoStand(Sprite &sprite) {
 	if (_oldWalkSequence != -1 || sprite._sequenceNumber == STOP_UP)
 		sprite._frameNumber = 0;
 
-	if (_vm->_onChessboard) {
+	if (map._active) {
 		sprite._sequenceNumber = 0;
 		_data[AL]._position.x = (map[scene._charPoint].x -  6) * 100;
 		_data[AL]._position.y = (map[scene._charPoint].x + 10) * 100;
