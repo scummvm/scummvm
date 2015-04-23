@@ -474,7 +474,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_defaultCommand = s.readByte();
 	_lookFlag = s.readUint16LE();
 	_pickupFlag = s.readUint16LE();
-	_requiredFlag = s.readUint16LE();
+	_requiredFlag = s.readSint16LE();
 	_noShapeSize.x = s.readUint16LE();
 	_noShapeSize.y = s.readUint16LE();
 	_status = s.readUint16LE();

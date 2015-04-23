@@ -43,12 +43,22 @@ struct MapEntry : Common::Point {
 	MapEntry(int x, int y, int translate) : Common::Point(x, y), _translate(translate) {}
 };
 
+class MapPaths {
+private:
+	int _numLocations;
+	Common::Array< Common::Array<byte> > _paths;
+public:
+	void load(int numLocations, Common::SeekableReadStream &s);
+
+	const byte *getPath(int srcLocation, int destLocation);
+};
+
 class Map {
 private:
 	SherlockEngine *_vm;
 	Common::Array<MapEntry> _points;	// Map locations for each scene
 	Common::StringArray _locationNames;
-	Common::Array< Common::Array<int> > _paths;
+	MapPaths _paths;
 	Common::Array<Common::Point> _pathPoints;
 	Common::Point _savedPos;
 	Common::Point _savedSize;

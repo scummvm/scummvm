@@ -25,6 +25,33 @@
 
 namespace Sherlock {
 
+/**
+ * Load the data for the paths between locations on the map
+ */
+void MapPaths::load(int numLocations, Common::SeekableReadStream &s) {
+	_numLocations = numLocations;
+	_paths.resize(_numLocations * _numLocations);
+
+	for (int idx = 0; idx < (numLocations * numLocations); ++idx) {
+		Common::Array<byte> &path = _paths[idx];
+		int v;
+
+		do {
+			v = s.readByte();
+			path.push_back(v);
+		} while (v && v < 254);
+	}
+}
+
+/**
+ * Get the path between two locations on the map
+ */
+const byte *MapPaths::getPath(int srcLocation, int destLocation) {
+	return &_paths[srcLocation * _numLocations + destLocation][0];
+}
+
+/*----------------------------------------------------------------*/
+
 Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_active = false;
 	_mapCursors = nullptr;
@@ -80,15 +107,10 @@ void Map::loadData() {
 	// Load the path data
 	Common::SeekableReadStream *pathStream = _vm->_res->load("chess.pth");
 
-	_paths.resize(31);
-	for (uint idx = 0; idx < _paths.size(); ++idx) {
-		_paths[idx].resize(_paths.size());
+	// Get routes between different locations on the map
+	_paths.load(31, *pathStream);
 
-		for (uint idx2 = 0; idx2 < _paths.size(); ++idx2)
-			_paths[idx][idx2] = pathStream->readSint16LE();
-	}
-
-	// Load in the path point information
+	// Load in the co-ordinates that the paths refer to
 	_pathPoints.resize(208);
 	for (uint idx = 0; idx < _pathPoints.size(); ++idx) {
 		_pathPoints[idx].x = pathStream->readSint16LE();
@@ -207,9 +229,13 @@ int Map::show() {
 
 		if ((events._released || events._rightReleased) && _point != -1) {
 			if (people[AL]._walkCount == 0) {
+				people._walkDest = _points[_point] + Common::Point(4, 9);
 				scene._charPoint = _point;
+
+				// Start walking to selected location
 				walkTheStreets();
 
+				// Show wait cursor
 				_cursorIndex = 1;
 				events.setCursor((*_mapCursors)[_cursorIndex]);
 			}
@@ -373,7 +399,7 @@ void Map::updateMap(bool flushScreen) {
 		if (++_cursorIndex > (1 + 8))
 			_cursorIndex = 1;
 
-		events.setCursor((*_mapCursors)[_cursorIndex]);
+		events.setCursor((*_mapCursors)[(_cursorIndex + 1) / 2]);
 	}
 
 	if (!_drawMap && !flushScreen)
@@ -421,26 +447,30 @@ void Map::walkTheStreets() {
 	int dest = _points[scene._charPoint]._translate;
 
 	// Get pointer to start of path
-	const int *ptr = &_paths[start][dest];
+	const byte *path = _paths.getPath(start, dest);
+
+	// Add in destination position
+	people._walkTo.clear();
+	people._walkTo.push(people._walkDest);
 
 	// Check for any intermediate points between the two locations
-	if (*ptr || scene._charPoint > 50 || scene._oldCharPoint > 50) {
+	if (path[0] || scene._charPoint > 50 || scene._oldCharPoint > 50) {
 		people[AL]._sequenceNumber = -1;
 
 		if (scene._charPoint == 51 || scene._oldCharPoint == 51) {
 			people.setWalking();
 		} else {
 			// Check for moving the path backwards or forwards
-			if (*ptr == 255) {
+			if (path[0] == 255) {
 				reversePath = true;
 				SWAP(start, dest);
-				ptr = &_paths[start][dest];
+				path = _paths.getPath(start, dest);
 			}
 
 			do {
-				int idx = *ptr++;
+				int idx = *path++;
 				tempPath.push_back(_pathPoints[idx - 1] + Common::Point(4, 4));
-			} while (*ptr != 254);
+			} while (*path != 254);
 
 			// Load up the path to use
 			people._walkTo.clear();
