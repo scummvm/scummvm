@@ -772,10 +772,17 @@ void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
 				if (window->counterTillFree) {
 					_freeCounter++;
 				} else {
-					if (window->wndStyle & SCI_WINDOWMGR_STYLE_TOPMOST)
-						_windowList.push_front(window);
-					else
-						_windowList.push_back(window);
+					// we don't put the saved script windows into _windowList[], so that they aren't used
+					//  by kernel functions. This is important and would cause issues otherwise.
+					//  see Conquests of Camelot - bug #6744 - when saving on the map screen (room 103),
+					//                                restoring would result in a black window in place
+					//                                where the area name was displayed before
+					//                                In Sierra's SCI the behaviour is identical to us
+					//                                 Sierra's SCI won't show those windows after restoring
+					// If this should cause issues in another game, we would have to add a flag to simply
+					//  avoid any drawing operations for such windows
+					// We still have to restore script windows, because for example Conquests of Camelot
+					//  will immediately delete windows, that were created before saving the game.
 				}
 
 				windowCount--;
