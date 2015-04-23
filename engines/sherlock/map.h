@@ -76,6 +76,7 @@ private:
 
 	void saveTopLine();
 	void eraseTopLine();
+	void showPlaceName(int idx, bool highlighted);
 
 	void updateMap(bool flushScreen);
 
@@ -83,6 +84,8 @@ private:
 
 	void saveIcon(ImageFrame *src, const Common::Point &pt);
 	void restoreIcon();
+
+	void highlightIcon(const Common::Point &pt);
 public:
 	Map(SherlockEngine *vm);
 

@@ -113,6 +113,7 @@ int Map::show() {
 
 	// Load the entire map
 	ImageFile bigMap("bigmap.vgs");
+	screen.setPalette(bigMap._palette);
 
 	// Load need sprites
 	setupSprites();
@@ -194,6 +195,10 @@ int Map::show() {
 				_placesShown = true;
 			}
 
+			if (_cursorIndex == 0) {
+				Common::Point pt = events.mousePos();
+				highlightIcon(Common::Point(pt.x - 4 + _bigPos.x, pt.y + _bigPos.y));
+			}
 			updateMap(false);
 		}
 
@@ -319,6 +324,34 @@ void Map::saveTopLine() {
 void Map::eraseTopLine() {
 	Screen &screen = *_vm->_screen;
 	screen.blitFrom(_topLine, Common::Point(0, 0));
+}
+
+/**
+ * Prints the name of the specified icon
+ */
+void Map::showPlaceName(int idx, bool highlighted) {
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+
+	Common::String name = _locationNames[idx];
+	int width = screen.stringWidth(name);
+
+	if (!_cursorIndex) {
+		saveIcon(people[AL]._imageFrame, _lDrawnPos);
+		
+		bool flipped = people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
+			|| people[AL]._sequenceNumber == MAP_UPLEFT;
+		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, _lDrawnPos, flipped);
+	}
+
+	if (highlighted) {
+		int xp = (SHERLOCK_SCREEN_WIDTH - screen.stringWidth(name)) / 2;
+		screen.gPrint(Common::Point(xp + 2, 2), 0, name.c_str());
+		screen.gPrint(Common::Point(xp + 1, 1), 0, name.c_str());
+		screen.gPrint(Common::Point(xp, 0), 12, name.c_str());
+
+		screen.slamArea(xp, 0, screen.stringWidth(name) + 2, 15);
+	}
 }
 
 /**
@@ -471,6 +504,47 @@ void Map::restoreIcon() {
 	if (_savedPos.x >= 0 && _savedPos.y >= 0 && _savedPos.x <= SHERLOCK_SCREEN_WIDTH
 			&& _savedPos.y < SHERLOCK_SCREEN_HEIGHT)
 		screen._backBuffer1.blitFrom(_iconSave, _savedPos);
+}
+
+/**
+ * Handles highlighting map icons, showing their names
+ */
+void Map::highlightIcon(const Common::Point &pt) {
+	int oldPoint = _point;
+
+	// Iterate through the icon list
+	bool done = false;
+	for (uint idx = 0; idx < _points.size(); ++idx) {
+		const MapEntry &entry = _points[idx];
+
+		// Check whether the mouse is over a given icon
+		if (entry.x != 0 && entry.y != 0) {
+			if (Common::Rect(entry.x - 8, entry.y - 8, entry.x + 9, entry.y + 9).contains(pt)) {
+				done = true;
+
+				if (_point != idx && _vm->readFlags(idx)) {
+					// Changed to a new valid (visible) location
+					eraseTopLine();
+					showPlaceName(idx, true);
+					_point = idx;
+				}
+			}
+		}
+	}
+
+	if (!done) {
+		// No icon was highlighted
+		if (_point != -1) {
+			// No longer highlighting previously highlighted icon, so erase it
+			showPlaceName(_point, false);
+			eraseTopLine();
+		}
+
+		_point = -1;
+	} else if (oldPoint != -1 && oldPoint != _point) {
+		showPlaceName(oldPoint, false);
+		eraseTopLine();
+	}
 }
 
 } // End of namespace Sherlock
