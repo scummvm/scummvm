@@ -389,7 +389,9 @@ void People::setWalking() {
 			// Set the delta x
 			_player._delta.x = (delta.x * 100) / (delta.y / speed.y);
 			if (_walkDest.x < (_player._position.x / 100))
-				_player._delta.x = -_player._delta.x;
+				_player._delta.x = -_player._delta.x;;
+
+			_player._walkCount = delta.y / speed.y;
 		}
 	}
 

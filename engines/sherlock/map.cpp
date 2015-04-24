@@ -263,9 +263,8 @@ int Map::show() {
 	freeSprites();
 	_overPos = people[AL]._position;
 
-	// Reset font and cursor
+	// Reset font
 	screen.setFont(oldFont);
-	events.setCursor(ARROW);
 
 	_active = false;
 	return scene._charPoint;
@@ -451,7 +450,7 @@ void Map::walkTheStreets() {
 
 	// Add in destination position
 	people._walkTo.clear();
-	people._walkTo.push(people._walkDest);
+	Common::Point destPos = people._walkDest;
 
 	// Check for any intermediate points between the two locations
 	if (path[0] || scene._charPoint > 50 || scene._oldCharPoint > 50) {
@@ -475,24 +474,23 @@ void Map::walkTheStreets() {
 			// Load up the path to use
 			people._walkTo.clear();
 
-			if (!reversePath) {
+			if (reversePath) {
+				for (int idx = (int)tempPath.size() - 1; idx >= 0; --idx)
+					people._walkTo.push(tempPath[idx]);
+			} else {
 				for (int idx = 0; idx < (int)tempPath.size(); ++idx)
 					people._walkTo.push(tempPath[idx]);
-
-				people._walkDest = tempPath.front();
-			} else {
-				for (int idx = 0; idx < ((int)tempPath.size() - 1); ++idx)
-					people._walkTo.push(tempPath[idx]);
-				people._walkDest = tempPath[tempPath.size() - 1];
 			}
 
-			people._walkDest.x += 12;
-			people._walkDest.y += 6;
+			people._walkDest = people._walkTo.pop() + Common::Point(12, 6);
 			people.setWalking();
 		}
 	} else {
 		people[AL]._walkCount = 0;
 	}
+
+	// Store the final destination icon position
+	people._walkTo.push(destPos);
 }
 
 /**
