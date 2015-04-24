@@ -678,7 +678,7 @@ void Talk::drawInterface() {
 	} else {
 		int strWidth = screen.stringWidth(PRESS_KEY_TO_CONTINUE);
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160 - strWidth, PRESS_KEY_TO_CONTINUE);
+			160 - strWidth / 2, PRESS_KEY_TO_CONTINUE);
 		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, "P");
 	}
 }
@@ -913,12 +913,14 @@ void Talk::pushSequence(int speaker) {
 	} else {
 		seqEntry._objNum = people.findSpeaker(speaker);
 
-		Object &obj = scene._bgShapes[seqEntry._objNum];
-		for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
-			seqEntry._sequences.push_back(obj._sequences[idx]);
+		if (seqEntry._objNum != -1) {
+			Object &obj = scene._bgShapes[seqEntry._objNum];
+			for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx)
+				seqEntry._sequences.push_back(obj._sequences[idx]);
 
-		seqEntry._frameNumber = obj._frameNumber;
-		seqEntry._seqTo = obj._seqTo;
+			seqEntry._frameNumber = obj._frameNumber;
+			seqEntry._seqTo = obj._seqTo;
+		}
 	}
 	
 	_sequenceStack.push(seqEntry);
@@ -1549,13 +1551,14 @@ void Talk::doScript(const Common::String &script) {
 					screen.print(Common::Point(16, yp), INV_FOREGROUND, lineStr.c_str());
 				} else {
 					screen.gPrint(Common::Point(16, yp - 1), INV_FOREGROUND, lineStr.c_str());
+					openTalkWindow = true;
 				}
 			} else {
 				if (ui._windowOpen) {
 					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, lineStr.c_str());
-				}
-				else {
+				} else {
 					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, lineStr.c_str());
+					openTalkWindow = true;
 				}
 			}
 
