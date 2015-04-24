@@ -94,6 +94,7 @@ static const char *const selectorNameTable[] = {
 	"deskSarg",     // Gabriel Knight
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
+	"say",          // Quest For Glory 1 VGA
 	"solvePuzzle",  // Quest For Glory 3
 	"timesShownID", // Space Quest 1 VGA
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -119,6 +120,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_deskSarg,
 	SELECTOR_localize,
 	SELECTOR_put,
+	SELECTOR_say,
 	SELECTOR_solvePuzzle,
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
@@ -2116,7 +2118,7 @@ static const uint16 qfg1vgaSignatureCheetaurDescription[] = {
 	0x34, SIG_UINT16(0x01b8),           // ldi 01b8
 	0x1a,                               // eq?
 	0x31, 0x16,                         // bnt 16
-	0x38, SIG_UINT16(0x0127),           // pushi 0127
+	0x38, SIG_SELECTOR16(say),          // pushi 0127h (selector "say")
 	0x39, 0x06,                         // pushi 06
 	0x39, 0x03,                         // pushi 03
 	0x78,                               // push1
@@ -2199,17 +2201,87 @@ static const uint16 qfg1vgaPatchHealerHutNoDelay[] = {
 	PATCH_END
 };
 
+// When following the white stag, you can actually enter the 2nd room from the mushroom/fairy location,
+//  which results in ego entering from the top. When you then throw a dagger at the stag, one animation
+//  frame will stay on screen, because of a script bug.
+//
+// Applies to at least: English floppy, Mac floppy
+// Responsible method: stagHurt::changeState
+// Fixes bug #6135
+static const uint16 qfg1vgaSignatureWhiteStagDagger[] = {
+	0x87, 0x01,                         // lap param[1]
+	0x65, 0x14,                         // aTop state
+	0x36,                               // push
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 0
+	0x1a,                               // eq?
+	0x31, 0x16,                         // bnt [next parameter check]
+	0x76,                               // push0
+	0x45, 0x02, 0x00,                   // callb export 2 from script 0, 0
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(say),          // pushi 0127h (selector "say")
+	0x39, 0x05,                         // pushi 05
+	0x39, 0x03,                         // pushi 03
+	0x39, 0x51,                         // pushi 51h
+	0x76,                               // push0
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x5b,                         // lag global[5Bh] -> qg1Messager
+	0x4a, 0x0e,                         // send 0Eh -> qg1Messager::say(3, 51h, 0, 0, stagHurt)
+	0x33, 0x12,                         // jmp -> [ret]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 1
+	0x1a,                               // eq?
+	0x31, 0x0c,                         // bnt [ret]
+	0x38,                               // pushi...
+	SIG_ADDTOOFFSET(+11),
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchWhiteStagDagger[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x2f, 0x05,                         // bt [next check] (state != 0)
+	// state = 0 code
+	0x35, 0x01,                         // ldi 1
+	0x65, 0x1a,                         // aTop cycles
+	0x48,                               // ret
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 1
+	0x1a,                               // eq?
+	0x31, 0x16,                         // bnt [state = 2 code]
+	// state = 1 code
+	0x76,                               // push0
+	0x45, 0x02, 0x00,                   // callb export 2 from script 0, 0
+	0x38, PATCH_SELECTOR16(say),        // pushi 0127h (selector "say")
+	0x39, 0x05,                         // pushi 05
+	0x39, 0x03,                         // pushi 03
+	0x39, 0x51,                         // pushi 51h
+	0x76,                               // push0
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x5b,                         // lag global[5Bh] -> qg1Messager
+	0x4a, 0x0e,                         // send 0Eh -> qg1Messager::say(3, 51h, 0, 0, stagHurt)
+	0x48,                               // ret
+	// state = 2 code
+	PATCH_ADDTOOFFSET(+13),
+	0x48,                               // ret (remove toss)
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
+	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
+	{  true,    77, "white stag dagger throw animation glitch",    1, qfg1vgaSignatureWhiteStagDagger,     qfg1vgaPatchWhiteStagDagger },
+	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
+	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
+	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
-	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
-	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
-	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
-	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
