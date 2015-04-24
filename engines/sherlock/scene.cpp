@@ -451,7 +451,7 @@ bool Scene::loadScene(const Common::String &filename) {
  * opening or moving them
  */
 void Scene::checkSceneStatus() {
-	if (_sceneStats[_currentScene][65]) {
+	if (_sceneStats[_currentScene][64]) {
 		for (uint idx = 0; idx < 64; ++idx) {
 			int val = _sceneStats[_currentScene][idx];
 
@@ -473,6 +473,23 @@ void Scene::checkSceneStatus() {
 			}
 		}
 	}
+}
+
+/**
+ * Restores objects to the correct status. This ensures that things like being opened or moved
+ * will remain the same on future visits to the scene
+ */
+void Scene::saveSceneStatus() {
+	// Flag any objects for the scene that have been altered
+	int count = MIN((int)_bgShapes.size(), 64);
+	for (int idx = 0; idx < count; ++idx) {
+		Object &obj = _bgShapes[idx];
+		_sceneStats[_currentScene][idx] = obj._type == HIDDEN || obj._type == REMOVE
+			|| obj._type == HIDE_SHAPE || obj._type == INVALID;
+	}
+
+	// Flag scene as having been visited
+	_sceneStats[_currentScene][64] = true;
 }
 
 /**
@@ -1364,10 +1381,6 @@ void Scene::doBgAnim() {
 	}
 }
 
-void Scene::saveSceneStatus() {
-	// TODO
-}
-
 /**
  * Attempts to find a background shape within the passed bounds. If found,
  * it will return the shape number, or -1 on failure.
@@ -1453,6 +1466,9 @@ int Scene::closestZone(const Common::Point &pt) {
  * Synchronize the data for a savegame
  */
 void Scene::synchronize(Common::Serializer &s) {
+	if (s.isSaving())
+		saveSceneStatus();
+
 	s.syncAsSint16LE(_bigPos.x);
 	s.syncAsSint16LE(_bigPos.y);
 	s.syncAsSint16LE(_overPos.x);
