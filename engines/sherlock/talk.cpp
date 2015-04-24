@@ -1041,8 +1041,7 @@ void Talk::doScript(const Common::String &script) {
 			pullSequence();
 			pushSequence(_speaker);
 			setSequence(_speaker);
-		}
-		else {
+		} else {
 			setSequence(_speaker);
 		}
 
@@ -1071,8 +1070,7 @@ void Talk::doScript(const Common::String &script) {
 		// Remove portrait?
 		if (str[0] == REMOVE_PORTRAIT) {
 			_speaker = 255;
-		}
-		else {
+		} else {
 			// Nope, so set the first speaker
 			people.setTalking(_speaker);
 		}

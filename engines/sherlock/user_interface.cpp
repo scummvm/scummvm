@@ -1468,8 +1468,7 @@ void UserInterface::doLookControl() {
 				_menuMode = STD_MODE;
 				events.clearEvents();
 			}
-		}
-		else {
+		} else {
 			// Looking at an inventory object
 			// Backup the user interface
 			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);

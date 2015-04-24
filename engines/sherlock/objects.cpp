@@ -309,10 +309,10 @@ void Sprite::checkSprite() {
 								if (_delta.x > 0)
 									// Go to right side
 									walkPos.x = objBounds.right + CLEAR_DIST_X;
-								else if (_delta.x < 0)
+								else if (_delta.x < 0) {
 									// Go to left side
 									walkPos.x = objBounds.left - CLEAR_DIST_X;
-								else {
+								} else {
 									// Going straight up or down. So choose best side
 									if (spritePt.x >= (objBounds.left + objBounds.width() / 2))
 										walkPos.x = objBounds.right + CLEAR_DIST_X;
