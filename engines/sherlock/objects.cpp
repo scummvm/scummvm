@@ -195,17 +195,17 @@ void Sprite::checkSprite() {
 
 		for (uint idx = 0; idx < scene._bgShapes.size() && !talk._talkToAbort; ++idx) {
 			Object &obj = scene._bgShapes[idx];
+			if (obj._aType <= PERSON || obj._type == INVALID || obj._type == HIDDEN)
+				continue;
 
-			if (obj._aType > PERSON && obj._type != INVALID && obj._type != HIDDEN) {
-				if (obj._type == NO_SHAPE) {
-					objBounds = Common::Rect(obj._position.x, obj._position.y,
-						obj._position.x + obj._noShapeSize.x, obj._position.y + obj._noShapeSize.y);
-				} else {
-					int xp = obj._position.x + obj._imageFrame->_offset.x;
-					int yp = obj._position.y + obj._imageFrame->_offset.y;
-					objBounds = Common::Rect(xp, yp,
-						xp + obj._imageFrame->_frame.w, yp + obj._imageFrame->_frame.h);
-				}
+			if (obj._type == NO_SHAPE) {
+				objBounds = Common::Rect(obj._position.x, obj._position.y,
+					obj._position.x + obj._noShapeSize.x, obj._position.y + obj._noShapeSize.y);
+			} else {
+				int xp = obj._position.x + obj._imageFrame->_offset.x;
+				int yp = obj._position.y + obj._imageFrame->_offset.y;
+				objBounds = Common::Rect(xp, yp,
+					xp + obj._imageFrame->_frame.w, yp + obj._imageFrame->_frame.h);
 			}
 
 			if (objBounds.contains(pt)) {
