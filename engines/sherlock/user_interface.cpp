@@ -72,8 +72,8 @@ const int SETUP_POINTS[12][4]  = {
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
 const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
-const char *const PRESS_KEY_FOR_MORE = "Press any _key for More.";
-const char *const PRESS_KEY_TO_CONTINUE = "Press any _key to Continue.";
+const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
+const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
 const char *const MOPEN[] = { 
 	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "." 
