@@ -672,7 +672,7 @@ void Talk::drawInterface() {
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
 			119 - screen.stringWidth("Exit") / 2, "Exit");
 		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
-			159 - screen.stringWidth("Up"), "Up");
+			159 - screen.stringWidth("Up") / 2, "Up");
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
 			200 - screen.stringWidth("Down") / 2, "Down");
 	} else {
