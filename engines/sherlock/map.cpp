@@ -286,7 +286,7 @@ void Map::setupSprites() {
 
 	_shapes = new ImageFile("mapicon.vgs");
 	_iconShapes = new ImageFile("overicon.vgs");
-
+	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height);
 	Person &p = people[AL];
 	p._description = " ";
 	p._type = CHARACTER;
@@ -317,6 +317,7 @@ void Map::freeSprites() {
 	delete _mapCursors;
 	delete _shapes;
 	delete _iconShapes;
+	_iconSave.free();
 }
 
 /**
@@ -523,9 +524,11 @@ void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 		return;
 	}
 
-	_iconSave.create(size.x, size.y);
+	assert(size.x <= _iconSave.w && size.y <= _iconSave.h);
 	_iconSave.blitFrom(screen._backBuffer1, Common::Point(0, 0),
 		Common::Rect(pos.x, pos.y, pos.x + size.x, pos.y + size.y));
+	_savedPos = pos;
+	_savedSize = size;
 }
 
 /**
@@ -536,7 +539,7 @@ void Map::restoreIcon() {
 
 	if (_savedPos.x >= 0 && _savedPos.y >= 0 && _savedPos.x <= SHERLOCK_SCREEN_WIDTH
 			&& _savedPos.y < SHERLOCK_SCREEN_HEIGHT)
-		screen._backBuffer1.blitFrom(_iconSave, _savedPos);
+		screen._backBuffer1.blitFrom(_iconSave, _savedPos, Common::Rect(0, 0, _savedSize.x, _savedSize.y));
 }
 
 /**
