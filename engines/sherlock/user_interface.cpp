@@ -715,7 +715,7 @@ void UserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people.walkToCoords(obj._lookPosition, obj._lookFacing);
+			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100), obj._lookFacing);
 		}
 
 		if (!talk._talkToAbort) {
