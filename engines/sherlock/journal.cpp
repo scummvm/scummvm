@@ -136,7 +136,6 @@ void Journal::loadJournalLocations() {
  */
 int Journal::loadJournalFile(bool alreadyLoaded) {
 	Inventory &inv = *_vm->_inventory;
-	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
@@ -156,7 +155,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			// Find the person being talked to
 			talk._talkTo = -1;
 			for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
-				Common::String portrait = people[idx]._portrait;
+				Common::String portrait = PORTRAITS[idx];
 				Common::String numStr(portrait.c_str(), portrait.c_str() + 4);
 
 				if (locStr == numStr) {
@@ -243,7 +242,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	const char *replyP = statement._reply.c_str();
 
 	while (*replyP) {
-		char c = *replyP++;
+		byte c = *replyP++;
 
 		// Is it a control character?
 		if (c < 128) {
@@ -288,7 +287,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 						else
 							journalString += NAMES[talk._talkTo];
 
-						const char *strP = replyP;
+						const char *strP = replyP + 1;
 						char v;
 						do {
 							v = *strP++;						
@@ -354,6 +353,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			case 136:		// Pause without control
 			case 157:		// Walk to canimation
 				// These commands don't have any param
+				++replyP;
 				break;
 
 			case 134:		// Change sequence
@@ -450,7 +450,10 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	return _lines.size();
 }
 
-void Journal::drawInterface() {
+/**
+ * Draw the journal frame
+ */
+void Journal::drawJournal() {
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
 	byte palette[PALETTE_SIZE];
@@ -471,33 +474,42 @@ void Journal::drawInterface() {
 	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "Watson's Journal");
 
 	// Draw the buttons
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y, 
-		JOURNAL_POINTS[0][1], JOURNAL_BUTTONS_Y + 10), 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[0][1], JOURNAL_BUTTONS_Y + 10),
 		JOURNAL_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[1][0], JOURNAL_BUTTONS_Y, 
-		JOURNAL_POINTS[1][1], JOURNAL_BUTTONS_Y + 10), 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[1][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[1][1], JOURNAL_BUTTONS_Y + 10),
 		JOURNAL_POINTS[1][2] - screen.stringWidth("Back 10") / 2, "Back 10");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[2][0], JOURNAL_BUTTONS_Y, 
-		JOURNAL_POINTS[2][1], JOURNAL_BUTTONS_Y + 10), 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[2][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[2][1], JOURNAL_BUTTONS_Y + 10),
 		JOURNAL_POINTS[2][2] - screen.stringWidth("Up") / 2, "Up");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[3][0], JOURNAL_BUTTONS_Y, 
-		JOURNAL_POINTS[3][1], JOURNAL_BUTTONS_Y + 10), 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[3][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[3][1], JOURNAL_BUTTONS_Y + 10),
 		JOURNAL_POINTS[3][2] - screen.stringWidth("Down") / 2, "Down");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[4][0], JOURNAL_BUTTONS_Y, 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[4][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[4][1], JOURNAL_BUTTONS_Y + 10),
 		JOURNAL_POINTS[4][2] - screen.stringWidth("Ahead 10") / 2, "Ahead 10");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[5][0], JOURNAL_BUTTONS_Y + 11, 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[5][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[5][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[5][2] - screen.stringWidth("Search") / 2, "Search");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[6][0], JOURNAL_BUTTONS_Y + 11, 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[6][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[6][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[6][2] - screen.stringWidth("First Page") / 2, "First Page");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11, 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[7][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[7][2] - screen.stringWidth("Last Page") / 2, "Last Page");
-	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11, 
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[8][2] - screen.stringWidth("Print Text") / 2, "Print Text");
+}
+
+/**
+ * Display the journal
+ */
+void Journal::drawInterface() {
+	Screen &screen = *_vm->_screen;
+
+	drawJournal();
 
 	if (_journal.size() == 0) {
 		_up = _down = 0;
@@ -578,7 +590,7 @@ bool Journal::doJournal(int direction, int howFar) {
 	if (endJournal) {
 		// If moving forward or backwards, clear the page before printing
 		if (direction)
-			clearPage();
+			drawJournal();
 
 		screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
 		return false;
@@ -701,7 +713,7 @@ bool Journal::doJournal(int direction, int howFar) {
 
 	if (direction) {
 		events.setCursor(ARROW);
-		clearPage();
+		drawJournal();
 	}
 
 	screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
@@ -783,14 +795,6 @@ bool Journal::doJournal(int direction, int howFar) {
 	_up = _index || _sub;
 
 	return direction >= 3 && searchSuccessful;
-}
-
-/**
- * Clears the journal page
- */
-void Journal::clearPage() {
-	// Clear the journal page by redrawing it from scratch
-	drawInterface();
 }
 
 /**
@@ -962,7 +966,7 @@ bool Journal::handleEvents(int key) {
 					_sub = savedSub;
 					_page = savedPage;
 
-					clearPage();
+					drawJournal();
 					doJournal(0, 0);
 					notFound = true;
 				} else {
@@ -984,7 +988,7 @@ bool Journal::handleEvents(int key) {
 		_up = _down = false;
 		_page = 1;
 
-		clearPage();
+		drawJournal();
 		doJournal(0, 0);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -1168,7 +1172,7 @@ int Journal::getFindName(bool printError) {
 	}
 
 	// Redisplay the journal screen
-	clearPage();
+	drawJournal();
 	doJournal(0, 0);
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 

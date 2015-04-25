@@ -67,9 +67,9 @@ private:
 
 	bool doJournal(int direction, int howFar);
 
-	void clearPage();
-
 	int getFindName(bool printError);
+
+	void drawJournal();
 public:
 	Journal(SherlockEngine *vm);
 
