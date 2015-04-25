@@ -1304,7 +1304,7 @@ void UserInterface::doInvControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if ((!found && events._released) && _key == 'E') {
+		if ((found == 0 && events._released) || _key == 'E') {
 			inv.freeInv();
 			_infoFlag = true;
 			clearInfo();
@@ -2454,6 +2454,11 @@ void UserInterface::banishWindow(bool slideUp) {
 					SHERLOCK_SCREEN_HEIGHT);
 				events.delay(10);
 			}
+
+			// Show entire final area
+			screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(0, CONTROLS_Y1),
+				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		}
 
 		_infoFlag = false;
