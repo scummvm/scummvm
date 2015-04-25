@@ -711,6 +711,31 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		_actorProgram->setUniform("uniformColor", color);
 		_actorProgram->setUniform1f("alphaRef", 0.0f);
 		_actorProgram->setUniform1f("meshAlpha", 1.0f);
+
+		// set the uniform parameter for _spriteProgram
+		// since they are needed by emi_actor.{fragment,vertex}
+		// in drawSprite()
+		_spriteProgram->use();
+		_spriteProgram->setUniform("modelMatrix", modelMatrix);
+		if (actor->isInOverworld()) {
+			_spriteProgram->setUniform("viewMatrix", viewMatrix);
+			_spriteProgram->setUniform("projMatrix", _overworldProjMatrix);
+			_spriteProgram->setUniform("cameraPos", Math::Vector3d(0,0,0));
+		} else {
+			_spriteProgram->setUniform("viewMatrix", viewRot);
+			_spriteProgram->setUniform("projMatrix", _projMatrix);
+			_spriteProgram->setUniform("cameraPos", _currentPos);
+		}
+		_spriteProgram->setUniform("normalMatrix", normalMatrix);
+
+		_spriteProgram->setUniform("actorPos", pos);
+		_spriteProgram->setUniform("isBillboard", GL_FALSE);
+		_spriteProgram->setUniform("useVertexAlpha", GL_FALSE);
+		_spriteProgram->setUniform("uniformColor", color);
+		_spriteProgram->setUniform1f("alphaRef", 0.0f);
+		_spriteProgram->setUniform1f("meshAlpha", 1.0f);
+
+		_actorProgram->use();
 	} else {
 		Math::Matrix4 modelMatrix = quat.toMatrix();
 		bool hasZBuffer = g_grim->getCurrSet()->getCurrSetup()->_bkgndZBm;
