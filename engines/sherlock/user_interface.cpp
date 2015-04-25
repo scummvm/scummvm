@@ -147,11 +147,16 @@ void Settings::drawInteface(bool flag) {
 	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10), 
 		SETUP_POINTS[5][3] - screen.stringWidth("New Font Style") / 2, "New Font Style");
 
-	tempStr = Common::String::format("Joystick %s", SETUP_STRS0[0]);
+	// WORKAROUND: We don't support the joystick in ScummVM, so draw the next two buttons as disabled
+	tempStr = "Joystick Off";
 	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10), 
 		SETUP_POINTS[6][3] - screen.stringWidth(tempStr) / 2, tempStr);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr);
+
+	tempStr = "Calibrate Joystick";
 	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10), 
-		SETUP_POINTS[7][3] - screen.stringWidth("Calibrate Joystick") / 2, "Calibrate Joystick");
+		SETUP_POINTS[7][3] - screen.stringWidth(tempStr) / 2, tempStr);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr);
 
 	tempStr = Common::String::format("Fade %s", screen._fadeStyle ? "by Pixel" : "Directly");
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10), 
@@ -164,7 +169,7 @@ void Settings::drawInteface(bool flag) {
 	tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
 	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
 		SETUP_POINTS[10][3] - screen.stringWidth(tempStr) / 2, tempStr);
-	tempStr = Common::String::format("_key Pad %s", _vm->_keyPadSpeed ? "Fast" : "Slow");
+	tempStr = Common::String::format("Key Pad %s", _vm->_keyPadSpeed ? "Fast" : "Slow");
 
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
 		SETUP_POINTS[11][3] - screen.stringWidth(tempStr) / 2, tempStr);
@@ -222,8 +227,12 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 6: 
-			tempStr = Common::String::format("Joystick %s", SETUP_STRS0[0]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			tempStr = "Joystick Off";
+			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
+			break;
+		case 7:
+			tempStr = "Calibrate Joystick";
+			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
 			break;
 		case 8: 
 			tempStr = Common::String::format("Fade %s", SETUP_STRS1[screen._fadeStyle]);
@@ -238,7 +247,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 11: 
-			tempStr = Common::String::format("_key Pad %s", SETUP_STRS4[_vm->_keyPadSpeed]);
+			tempStr = Common::String::format("Key Pad %s", SETUP_STRS4[_vm->_keyPadSpeed]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		default: 
