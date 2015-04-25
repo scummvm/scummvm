@@ -95,6 +95,7 @@ static const char *const selectorNameTable[] = {
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
 	"say",          // Quest For Glory 1 VGA
+	"contains",     // Quest For Glory 2
 	"solvePuzzle",  // Quest For Glory 3
 	"timesShownID", // Space Quest 1 VGA
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -121,6 +122,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_localize,
 	SELECTOR_put,
 	SELECTOR_say,
+	SELECTOR_contains,
 	SELECTOR_solvePuzzle,
 	SELECTOR_timesShownID,
 	SELECTOR_startText,
@@ -2286,6 +2288,47 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 };
 
 // ===========================================================================
+
+// This is a very complicated bug.
+// When the player encounters an enemy in the desert while riding a saurus and later
+//  tries to get back on it by entering "ride", the game will not give control back
+//  to the player.
+//
+// This is caused by script mountSaurus getting triggered twice.
+//  Once by entering the command "ride" and then a second time by a proximity check.
+//
+// Both are calling mountSaurus::init() in script 20, this one disables controls
+//  then mountSaurus::changeState() from script 660 is triggered
+//  mountSaurus::changeState(5) finally calls mountSaurus::dispose(), which is also in script 20
+//  which finally re-enables controls
+//
+// A fix is difficult to implement. The code in script 20 is generic and used by multiple objects
+//  That's why I have decided to change the responsible globals (66h and A1h) during mountSaurus::changeState(5)
+//
+// This fix could cause issues in case there is a cutscene, that contains ego getting on a saurus and
+//  requires controls not getting re-enabled after getting back up on the saurus.
+//
+// Applies to at least: English PC Floppy, English Amiga Floppy
+// Responsible method: mountSaurus::changeState(), mountSaurus::init(), mountSaurus::dispose()
+// Fixes bug: #5156
+static const uint16 qfg2SignatureSaurusFreeze[] = {
+	0x3c,                               // dup
+	0x35, 0x05,                         // ldi 5
+	SIG_MAGICDWORD,
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x004e),           // bnt [ret]
+	0x39, SIG_SELECTOR8(contains),      // pushi [selector contains]
+	0x78,                               // push1
+	SIG_END
+};
+
+static const uint16 qfg2PatchSaurusFreeze[] = {
+	0x35, 0x01,                         // ldi 1
+	0xa1, 0x66,                         // sag 66h
+	0xa0, SIG_UINT16(0x00a1),           // sag 00A1h
+	PATCH_END
+};
+
 // Script 944 in QFG2 contains the FileSelector system class, used in the
 // character import screen. This gets incorrectly called constantly, whenever
 // the user clicks on a button in order to refresh the file list. This was
@@ -2366,6 +2409,7 @@ static const uint16 qfg2PatchImportCharType[] = {
 
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
+	{  true,   660, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
 	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
 	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
