@@ -366,6 +366,7 @@ Common::String SaveManager::generateSaveName(int slot) {
  * Synchronize the data for a savegame
  */
 void SaveManager::synchronize(Common::Serializer &s) {
+	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -374,6 +375,7 @@ void SaveManager::synchronize(Common::Serializer &s) {
 
 	int oldFont = screen.fontNumber();
 
+	inv.synchronize(s);
 	journal.synchronize(s);
 	people.synchronize(s);
 	scene.synchronize(s);

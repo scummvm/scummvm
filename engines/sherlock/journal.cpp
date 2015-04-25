@@ -134,7 +134,6 @@ void Journal::loadJournalLocations() {
  * word wraps the result to prepare it for being displayed
  */
 int Journal::loadJournalFile(bool alreadyLoaded) {
-	Inventory &inv = *_vm->_inventory;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
@@ -224,7 +223,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			journalString += "the Inspector";
 			break;
 		default:
-			journalString += inv._names[talk._talkTo];
+			journalString += NAMES[talk._talkTo];
 			break;
 		}
 		journalString += ", \"";

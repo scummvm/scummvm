@@ -57,16 +57,18 @@ struct InventoryItem {
 	InventoryItem() : _requiredFlag(0), _lookFlag(0) {}
 	InventoryItem(int requiredFlag, const Common::String &name,
 		const Common::String &description, const Common::String &examine);
+
+	void synchronize(Common::Serializer &s);
 };
 
 class Inventory : public Common::Array<InventoryItem> {
 private:
 	SherlockEngine *_vm;
+	Common::StringArray _names;
 
 	void copyToInventory(Object &obj);
 public:
 	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
-	Common::StringArray _names;
 	bool _invGraphicsLoaded;
 	InvMode _invMode;
 	int _invIndex;

@@ -31,6 +31,17 @@ InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
 		_examine(examine), _lookFlag(0) {
 }
 
+/**
+ * Synchronize the data for an inventory item
+ */
+void InventoryItem::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_requiredFlag);
+	s.syncAsSint16LE(_lookFlag);
+	s.syncString(_name);
+	s.syncString(_description);
+	s.syncString(_examine);
+}
+
 /*----------------------------------------------------------------*/
 
 Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(vm) {
@@ -47,6 +58,9 @@ Inventory::~Inventory() {
 	freeGraphics();
 }
 
+/**
+ * Free inventory data
+ */
 void Inventory::freeInv() {
 	freeGraphics();
 
@@ -117,7 +131,7 @@ void Inventory::loadGraphics() {
  * and returns the numer that matches the passed name
  */
 int Inventory::findInv(const Common::String &name) {
-	for (int idx = 0; idx < (int)size(); ++idx) {
+	for (int idx = 0; idx < (int)_names.size(); ++idx) {
 		if (scumm_stricmp(name.c_str(), _names[idx].c_str()) == 0)
 			return idx;
 	}
@@ -502,7 +516,8 @@ void Inventory::synchronize(Common::Serializer &s) {
 	}
 
 	for (uint idx = 0; idx < size(); ++idx) {
-		// TODO
+		(*this)[idx].synchronize(s);
+
 	}
 }
 
