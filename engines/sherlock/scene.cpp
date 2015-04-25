@@ -964,7 +964,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 			Object::_countCAnimFrames = true;
 
 			while (cObj._type == ACTIVE_BG_SHAPE) {
-				cObj.checkObject(_bgShapes[0]);
+				cObj.checkObject();
 				++frames;
 
 				if (frames >= 1000)
@@ -1035,7 +1035,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 		gotoCode = cObj._sequences[cObj._frameNumber + 3];
 
 	// Set canim to REMOVE type and free memory
-	cObj.checkObject(_bgShapes[0]);
+	cObj.checkObject();
 
 	if (gotoCode > 0 && !talk._talkToAbort) {
 		_goToScene = gotoCode;
@@ -1119,15 +1119,15 @@ void Scene::doBgAnim() {
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE)
-				_bgShapes[idx].checkObject(_bgShapes[idx]);
+				_bgShapes[idx].checkObject();
 		}
 
 		if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
-			people._portrait.checkObject(people._portrait);
+			people._portrait.checkObject();
 
 		for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 			if (_canimShapes[idx]._type != INVALID && _canimShapes[idx]._type != REMOVE)
-				_canimShapes[idx].checkObject(_bgShapes[0]);
+				_canimShapes[idx].checkObject();
 		}
 
 		if (_currentScene == 12 && _vm->getGameID() == GType_SerratedScalpel)

@@ -206,7 +206,7 @@ public:
 
 	void toggleHidden();
 
-	void checkObject(Object &o);
+	void checkObject();
 
 	int checkNameForCodes(const Common::String &name, const char *const messages[]);
 

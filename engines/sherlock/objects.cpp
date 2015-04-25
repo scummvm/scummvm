@@ -544,7 +544,7 @@ void Object::toggleHidden() {
 /**
  * Check the state of the object
  */
-void Object::checkObject(Object &o) {
+void Object::checkObject() {
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
 	int checkFrame = _allow ? MAX_FRAME : 32000;
@@ -559,9 +559,9 @@ void Object::checkObject(Object &o) {
 		} else {
 			// Continue doing sequence
 			if (*ptr > _seqTo)
-				*ptr--;
+				*ptr -= 1;
 			else
-				*ptr++;
+				*ptr += 1;
 
 			return;
 		}
@@ -654,7 +654,7 @@ void Object::checkObject(Object &o) {
 					_frameNumber += 2;
 				} else if (v < 4) {
 					for (int idx = 0; idx < 4; ++idx) {
-						o.checkNameForCodes(_use[v]._names[idx], nullptr);
+						checkNameForCodes(_use[v]._names[idx], nullptr);
 					}
 
 					if (_use[v]._useFlag)
