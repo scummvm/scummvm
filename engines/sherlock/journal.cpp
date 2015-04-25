@@ -248,6 +248,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 		if (c < 128) {
 			// Nope. Set flag for allowing control coes to insert spaces
 			ctrlSpace = true;
+			assert(c >= ' ');
 
 			// Check for embedded comments
 			if (c == '{' || c == '}') {
@@ -307,7 +308,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += c;
 				do {
 					journalString += *replyP++;
-				} while (*replyP && *replyP < 128 && *replyP != '{' && *replyP != '}');
+				} while (*replyP && (byte)*replyP < 128 && *replyP != '{' && *replyP != '}');
 
 				commentJustPrinted = false;
 			}
@@ -323,16 +324,16 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			}
 
 			startOfReply = false;
-			c = *replyP++;
+			c = *replyP++ - 1;
 
-			if ((c - 1) == 0)
+			if (c == 0)
 				journalString += "Holmes";
-			else if ((c - 1) == 1)
+			else if (c == 1)
 				journalString += "I";
-			else if ((c - 1) == 2)
+			else if (c == 2)
 				journalString += "the Inspector";
 			else
-				journalString += inv._names[c - 1];
+				journalString += NAMES[c];
 
 			const char *strP = replyP;
 			char v;
@@ -352,7 +353,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			case 131:		// Pause with control
 			case 136:		// Pause without control
 			case 157:		// Walk to canimation
-				// These commands don't have any param
+				// These commands have a single parameter
 				++replyP;
 				break;
 
@@ -821,7 +822,7 @@ bool Journal::handleEvents(int key) {
 		} else {
 			color = COMMAND_FOREGROUND;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, true, "Exit");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, "Exit");
 
 		// Back 10 button
 		if (pt.x > JOURNAL_POINTS[1][0] && pt.x < JOURNAL_POINTS[1][1] && pt.y >= JOURNAL_BUTTONS_Y &&
