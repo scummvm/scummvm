@@ -679,7 +679,7 @@ bool Journal::doJournal(int direction, int howFar) {
 					if (++_sub == maxLines) {
 						// Reached end of page
 						do {
-							if (++_index == (int)_lines.size()) {
+							if (++_index == _count) {
 								_index = savedIndex;
 								_sub = savedSub;
 								maxLines = loadJournalFile(false);
