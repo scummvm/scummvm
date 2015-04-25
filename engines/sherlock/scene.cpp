@@ -129,6 +129,9 @@ void Scene::selectScene() {
 	_oldKey = _help = _oldHelp = 0;
 	_oldTemp = _temp = 0;
 
+	// Free any previous scene
+	freeScene();
+
 	// Load the scene
 	Common::String sceneFile = Common::String::format("res%02d", _goToScene);
 	_rrmName = Common::String::format("res%02d.rrm", _goToScene);
@@ -201,7 +204,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
 
-	freeScene();
 	_walkedInScene = false;
 	_ongoingCans = 0;
 
@@ -453,12 +455,12 @@ bool Scene::loadScene(const Common::String &filename) {
 void Scene::checkSceneStatus() {
 	if (_sceneStats[_currentScene][64]) {
 		for (uint idx = 0; idx < 64; ++idx) {
-			int val = _sceneStats[_currentScene][idx];
+			bool flag = _sceneStats[_currentScene][idx];
 
 			if (idx < _bgShapes.size()) {
 				Object &obj = _bgShapes[idx];
 
-				if (val & 1) {
+				if (flag) {
 					// No shape to erase, so flag as hidden
 					obj._type = HIDDEN;
 				} else if (obj._images == nullptr || obj._images->size() == 0) {
