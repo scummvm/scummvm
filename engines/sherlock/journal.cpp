@@ -286,7 +286,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 						else if (talk._talkTo == 2)
 							journalString += "The Inspector";
 						else
-							journalString += inv._names[talk._talkTo];
+							journalString += NAMES[talk._talkTo];
 
 						const char *strP = replyP;
 						char v;
