@@ -51,7 +51,6 @@ const int SEARCH_POINTS[3][3] = {
 
 Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	// Initialize fields
-	_count = 0;
 	_maxPage = 0;
 	_index = 0;
 	_sub = 0;
@@ -679,7 +678,7 @@ bool Journal::doJournal(int direction, int howFar) {
 					if (++_sub == maxLines) {
 						// Reached end of page
 						do {
-							if (++_index == _count) {
+							if (++_index == (int)_journal.size()) {
 								_index = savedIndex;
 								_sub = savedSub;
 								maxLines = loadJournalFile(false);
@@ -1192,7 +1191,6 @@ void Journal::resetPosition() {
  * Synchronize the data for a savegame
  */
 void Journal::synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(_count);
 	s.syncAsSint16LE(_index);
 	s.syncAsSint16LE(_sub);
 	s.syncAsSint16LE(_page);

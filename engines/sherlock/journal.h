@@ -50,7 +50,6 @@ private:
 	Common::StringArray _directory;
 	Common::StringArray _locations;
 	Common::StringArray _lines;
-	int _count;
 	int _maxPage;
 	int _index;
 	int _sub;
