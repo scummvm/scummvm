@@ -834,16 +834,12 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 	return Common::kNoError;
 }
 
-// Before enabling the load option in the ScummVM menu, the main game loop must
-// have run at least once. When the game loop runs, kGameIsRestarting is invoked,
-// thus the speed throttler is initialized. Hopefully fixes bug #3565505.
-
 bool SciEngine::canLoadGameStateCurrently() {
-	return !_gamestate->executionStackBase && (_gamestate->_throttleLastTime > 0 || _gamestate->_throttleTrigger);
+	return !_gamestate->executionStackBase;
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->executionStackBase && (_gamestate->_throttleLastTime > 0 || _gamestate->_throttleTrigger);
+	return !_gamestate->executionStackBase;
 }
 
 } // End of namespace Sci
