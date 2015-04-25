@@ -2647,6 +2647,47 @@ static const uint16 sq4FloppyPatchThrowStuffAtSequelPoliceBug[] = {
 	PATCH_END
 };
 
+// Right at the start of Space Quest 4 CD, when walking up in the first room, ego will
+//  immediately walk down just after entering the upper room.
+//
+// This is caused by the scripts setting ego's vertical coordinate to 189 (BDh), which is the
+//  trigger in rooms to walk to the room below it. Sometimes this isn't triggered, because
+//  the scripts also initiate a motion to vertical coordinate 188 (BCh). When you lower the game's speed,
+//  this bug normally always triggers. And it triggers of course also in the original interpreter.
+//
+// It doesn't happen in PC floppy, because nsRect is not the same as in CD.
+//
+// We fix it by setting ego's vertical coordinate to 188 and we also initiate a motion to 187.
+//
+// Applies to at least: English PC CD
+// Responsible method: rm045::doit
+// Fixes bug: #5468
+static const uint16 sq4CdSignatureWalkInFromBelowRoom45[] = {
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x00bd),           // pushi 00BDh
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi [setMotion selector]
+	0x39, 0x03,                         // pushi 3
+	0x51, SIG_ADDTOOFFSET(+1),          // class [MoveTo]
+	0x36,                               // push
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x04,                         // send 04 -> get ego::x
+	0x36,                               // push
+	0x38, SIG_UINT16(0x00bc),           // pushi 00BCh
+	SIG_END
+};
+
+static const uint16 sq4CdPatchWalkInFromBelowRoom45[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x38, PATCH_UINT16(0x00bc),        // pushi 00BCh
+	PATCH_ADDTOOFFSET(+15),
+	0x38, PATCH_UINT16(0x00bb),        // pushi 00BBh
+	PATCH_END
+};
+
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
@@ -2741,8 +2782,9 @@ static const uint16 sq4CdPatchTextOptions[] = {
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
 	{  true,   700, "Floppy: throw stuff at sequel police bug",    1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
-	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
+	{  true,    45, "CD: walk in from below for room 45 fix",      1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
+	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
 	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
