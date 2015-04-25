@@ -74,6 +74,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
+	// Aborted during getSciEvent (e.g., due to loading a game from the
+	// ScummVM menu), so return immediately
+	if (s->abortScriptProcessing)
+		return NULL_REG;
+
 	// For a real event we use its associated mouse position
 	mousePos = curEvent.mousePos;
 #ifdef ENABLE_SCI32
