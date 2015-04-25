@@ -698,13 +698,13 @@ bool Talk::displayTalk(bool slamIt) {
 	}
 
 	if (_talkIndex) {
-		for (uint idx = 0; idx < _statements.size(); ++idx) {
+		for (int idx = 0; idx < _talkIndex && !_moreTalkUp; ++idx) {
 			if (_statements[idx]._talkMap != -1)
 				_moreTalkUp = true;
 		}
 	}
 
-	// Display the up arrow if the first option is scrolled off-screen
+	// Display the up arrow and enable Up button if the first option is scrolled off-screen
 	if (_moreTalkUp) {
 		if (slamIt) {
 			screen.print(Common::Point(5, CONTROLS_Y + 13), INV_FOREGROUND, "~");
@@ -747,7 +747,7 @@ bool Talk::displayTalk(bool slamIt) {
 		}
 	}
 
-	// Display the down arrow if there are more statements available
+	// Display the down arrow and enable down button if there are more statements available down off-screen
 	if (lineY == -1 || lineY == SHERLOCK_SCREEN_HEIGHT) {
 		_moreTalkDown = true;
 
@@ -763,7 +763,7 @@ bool Talk::displayTalk(bool slamIt) {
 			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, "Down");
 			screen.vgaBar(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
 			screen._backBuffer1.fillRect(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		}
 	}

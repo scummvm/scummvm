@@ -1791,14 +1791,14 @@ void UserInterface::doTalkControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if (_endKeyActive && ((mousePos.x > 99 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10)
-				&& talk._moreTalkUp && events._released) || _key == 'E')) {
+		if (((Common::Rect(99, CONTROLS_Y, 138, CONTROLS_Y + 10).contains(mousePos) && events._released) 
+				|| _key == 'E') && _endKeyActive) {
 			talk.freeTalkVars();
 			talk.pullSequence();
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
-		} else if ((mousePos.x > 140 && mousePos.x < 179 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10)
-				&& talk._moreTalkUp && events._released) || (talk._moreTalkUp && _key == 'U')) { 
+		} else if (((Common::Rect(140, CONTROLS_Y, 179, CONTROLS_Y + 10).contains(mousePos) && events._released) 
+				|| _key == 'U') && talk._moreTalkUp) {
 			while (talk._statements[--talk._talkIndex]._talkMap == -1)
 				;
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
@@ -1806,8 +1806,8 @@ void UserInterface::doTalkControl() {
 			talk.displayTalk(false);
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
-		} else if ((mousePos.x > 181 && mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10)
-				&& talk._moreTalkDown && events._released) || (talk._moreTalkDown && _key == 'D')) { 
+		} else if (((Common::Rect(181, CONTROLS_Y, 220, CONTROLS_Y + 10).contains(mousePos) && events._released)
+				|| _key == 'D') && talk._moreTalkDown) {
 			do {
 				++talk._talkIndex;
 			} while (talk._talkIndex < (int)talk._statements.size() && talk._statements[talk._talkIndex]._talkMap == -1);
