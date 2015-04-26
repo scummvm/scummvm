@@ -438,6 +438,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	// Player has not yet walked in this scene
 	_walkedInScene = false;
+	saves._justLoaded = false;
 
 	// Reset the position on the overland map
 	_vm->_oldCharPoint = _currentScene;
