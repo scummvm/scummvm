@@ -1114,7 +1114,8 @@ void Talk::doScript(const Common::String &script) {
 			case RUN_CANIMATION:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - script.c_str();
+				++str;
+				_scriptCurrentIndex = (str + 1) - script.c_str();
 				scene.startCAnim((str[0] - 1) & 127, 1 + (str[0] & 128));
 				if (_talkToAbort)
 					return;
