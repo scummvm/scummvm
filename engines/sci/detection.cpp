@@ -794,23 +794,6 @@ Common::Error SciEngine::loadGameState(int slot) {
 	_gamestate->_delayedRestoreGameId = slot;
 	_gamestate->_delayedRestoreGame = true;
 	return Common::kNoError;
-	
-	Common::String fileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::SeekableReadStream *in = saveFileMan->openForLoading(fileName);
-
-	if (in) {
-		// found a savegame file
-		gamestate_restore(_gamestate, in);
-		delete in;
-	}
-
-	if (_gamestate->r_acc != make_reg(0, 1)) {
-		return Common::kNoError;
-	} else {
-		warning("Restoring gamestate '%s' failed", fileName.c_str());
-		return Common::kUnknownError;
-	}
 }
 
 Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
