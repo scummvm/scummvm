@@ -251,6 +251,18 @@ GfxScreen::~GfxScreen() {
 	free(_displayScreen);
 }
 
+// should not used regulary, only meant for restore game
+void GfxScreen::clear() {
+	// reset all screen data
+	memset(_visualScreen, 0, _pixels);
+	memset(_priorityScreen, 0, _pixels);
+	memset(_controlScreen, 0, _pixels);
+	memset(_displayScreen, 0, _displayPixels);
+	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
+	_fontIsUpscaled = false;
+	copyToScreen();
+}
+
 void GfxScreen::copyToScreen() {
 	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }

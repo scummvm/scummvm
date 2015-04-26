@@ -41,6 +41,7 @@
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
 #include "sci/parser/vocabulary.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -923,11 +924,15 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// We don't need the thumbnail here, so just read it and discard it
 	Graphics::skipThumbnail(*fh);
 
-	// reset ports as one of the first things we do, because that may free() some hunk memory
+	// reset ports is one of the first things we do, because that may free() some hunk memory
 	//  and we don't want to do that after we read in the saved game hunk memory
 	if (ser.isLoading()) {
+		// reset ports
 		if (g_sci->_gfxPorts)
 			g_sci->_gfxPorts->reset();
+		// clear screen
+		if (g_sci->_gfxScreen)
+			g_sci->_gfxScreen->clear();
 	}
 
 	s->reset(true);
