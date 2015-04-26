@@ -2678,7 +2678,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[action._cAnimNum]);
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
 
 				// Set how long to show the message
 				_menuCounter = 30;	

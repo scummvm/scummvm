@@ -366,6 +366,8 @@ void ActionType::synchronize(Common::SeekableReadStream &s) {
 	
 	_cAnimNum = s.readByte();
 	_cAnimSpeed = s.readByte();
+	if (_cAnimSpeed & 0x80)
+		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
 
 	for (int idx = 0; idx < 4; ++idx) {
 		s.read(buffer, 12);
@@ -380,6 +382,8 @@ void UseType::synchronize(Common::SeekableReadStream &s) {
 
 	_cAnimNum = s.readByte();
 	_cAnimSpeed = s.readByte();
+	if (_cAnimSpeed & 0x80)
+		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
 
 	for (int idx = 0; idx < 4; ++idx) {
 		s.read(buffer, 12);

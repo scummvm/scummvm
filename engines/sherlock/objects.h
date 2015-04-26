@@ -125,8 +125,8 @@ public:
 enum { REVERSE_DIRECTION = 0x80 };
 
 struct ActionType {
-	int8 _cAnimNum;
-	uint8 _cAnimSpeed;				// if high bit set, play in reverse
+	int _cAnimNum;
+	int _cAnimSpeed;				// if high bit set, play in reverse
 	Common::String _names[4];
 
 	void synchronize(Common::SeekableReadStream &s);
