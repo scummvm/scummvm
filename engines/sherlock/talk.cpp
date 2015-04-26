@@ -1274,7 +1274,7 @@ void Talk::doScript(const Common::String &script) {
 			case SET_FLAG: {
 				++str;
 				int flag1 = ((byte)str[0] - 1) * 256 + (byte)str[1] - 1 - (str[1] == 1 ? 1 : 0);
-				int flag = (flag1 & 0x7fff) * (flag1 >= 0x8000 ? -1 : 1);
+				int flag = (flag1 & 0x3fff) * (flag1 >= 0x4000 ? -1 : 1);
 				_vm->setFlags(flag);
 				++str;
 				break;
