@@ -516,7 +516,7 @@ void Scene::checkSceneFlags(bool flag) {
 						// Flag it as needing to be hidden after first erasing it
 						o._type = mode;
 				}
-			} else if (_bgShapes[idx]._requiredFlag) {
+			} else if (_bgShapes[idx]._requiredFlag > 0) {
 				// Restore object
 				if (o._images == nullptr || o._images->size() == 0)
 					o._type = NO_SHAPE;
