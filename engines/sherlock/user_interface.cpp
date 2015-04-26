@@ -2609,7 +2609,8 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		events.setCursor(WAIT);
 
 		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*") && toupper(action._names[nameIdx][1]) == 'W') {
+			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2 
+					&& toupper(action._names[nameIdx][1]) == 'W') {
 				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), messages)) {
 					if (!talk._talkToAbort)
 						printed = true;
@@ -2618,7 +2619,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		}
 
 		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*")) {
+			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2) {
 				char ch = toupper(action._names[nameIdx][1]);
 
 				if (ch == 'T' || ch == 'B') {
@@ -2648,7 +2649,8 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		}
 
 		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*") && toupper(action._names[nameIdx][1]) == 'F') {
+			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
+					&& toupper(action._names[nameIdx][1]) == 'F') {
 				if (obj.checkNameForCodes(action._names[nameIdx].c_str() + 2, messages)) {
 					if (!talk._talkToAbort)
 						printed = true;

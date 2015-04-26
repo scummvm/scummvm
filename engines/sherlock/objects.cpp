@@ -828,7 +828,7 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 	if (name.hasPrefix("*")) {
 		// A code was found
 		printed = true;
-		ch = toupper(name[1]);
+		ch = (name == "*") ? 0 : toupper(name[1]);
 
 		switch (ch) {
 		case 'C':
