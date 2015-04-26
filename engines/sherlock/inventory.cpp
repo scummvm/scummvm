@@ -120,7 +120,7 @@ void Inventory::loadGraphics() {
 		int invNum = findInv((*this)[idx]._name);
 		Common::String fName = Common::String::format("item%02d.vgs", invNum + 1);
 
-		_invShapes[idx] = new ImageFile(fName);
+		_invShapes[idx - _invIndex] = new ImageFile(fName);
 	}
 
 	_invGraphicsLoaded = true;
@@ -302,10 +302,10 @@ void Inventory::invCommands(bool slamIt) {
 			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Give");
 		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), 
-			_invMode == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
+			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^");
 		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1), 
-			_invMode == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
+			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^");
 		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), 
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,

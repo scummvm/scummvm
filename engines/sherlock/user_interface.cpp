@@ -1247,17 +1247,13 @@ void UserInterface::doInvControl() {
 		}
 
 		if (inv._invIndex) {
-			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
-				colors[4], "^^");
-			screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
-				colors[5], "^");
+			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), colors[4], "^^");
+			screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1), colors[5], "^");
 		}
 
 		if ((inv._holdings - inv._invIndex) > 6) {
-			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
-				colors[6], "^^");
-			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
-				colors[7], "^");
+			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), colors[6], "_");
+			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1), colors[7], "__");
 		}
 
 		bool flag = false;
@@ -1339,31 +1335,28 @@ void UserInterface::doInvControl() {
 			inv.loadGraphics();
 			inv.putInv(1);
 			inv.invCommands(true);
-		} else if (((found == 5 && events._released) || _key == '-') && inv._invIndex) {
+		} else if (((found == 5 && events._released) || _key == Common::KEYCODE_MINUS
+				|| _key == Common::KEYCODE_KP_MINUS) && inv._invIndex > 0) {
 			--inv._invIndex;
-			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
-				COMMAND_HIGHLIGHTED, "^");
+			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "^");
 			inv.freeGraphics();
 			inv.loadGraphics();
 			inv.putInv(1);
 			inv.invCommands(true);
-		} else if (((found == 6 && events._released) || _key == '+') && 
-				(inv._holdings - inv._invIndex) > 6) {
+		} else if (((found == 6 && events._released) || _key == Common::KEYCODE_PLUS
+				|| _key == Common::KEYCODE_KP_PLUS) &&  (inv._holdings - inv._invIndex) > 6) {
 			++inv._invIndex;
-			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
-				COMMAND_HIGHLIGHTED, "_");
+			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "_");
 			inv.freeGraphics();
 			inv.loadGraphics();
 			inv.putInv(1);
 			inv.invCommands(true);
-		} else if (((found == 7 && events._released) || _key == '.') && 
-				(inv._holdings - inv._invIndex) > 6) {
+		} else if (((found == 7 && events._released) || _key == '.') && (inv._holdings - inv._invIndex) > 6) {
 			inv._invIndex += 6;
 			if ((inv._holdings - 6) < inv._invIndex)
 				inv._invIndex = inv._holdings - 6;
 
-			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
-				COMMAND_HIGHLIGHTED, "_");
+			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "_");
 			inv.freeGraphics();
 			inv.loadGraphics();
 			inv.putInv(1);
