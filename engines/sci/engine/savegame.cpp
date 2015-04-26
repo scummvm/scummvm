@@ -728,9 +728,7 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.isLoading())
-		reset();	// remove all script generated windows
-
+	// reset() is called directly way earlier in gamestate_restore()
 	if (s.getVersion() >= 27) {
 		uint windowCount = 0;
 		uint id = PORTS_FIRSTSCRIPTWINDOWID;
@@ -924,6 +922,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// We don't need the thumbnail here, so just read it and discard it
 	Graphics::skipThumbnail(*fh);
+
+	// reset ports as one of the first things we do, because that may free() some hunk memory
+	//  and we don't want to do that after we read in the saved game hunk memory
+	if (ser.isLoading()) {
+		if (g_sci->_gfxPorts)
+			g_sci->_gfxPorts->reset();
+	}
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
