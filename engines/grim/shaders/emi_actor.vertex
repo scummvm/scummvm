@@ -9,7 +9,6 @@ uniform highp mat4 projMatrix;
 uniform highp mat4 extraMatrix;
 uniform highp mat4 normalMatrix;
 uniform highp vec3 cameraPos;
-uniform highp vec3 actorPos;
 uniform bool textured;
 uniform bool isBillboard;
 uniform bool useVertexAlpha;

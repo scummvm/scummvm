@@ -705,7 +705,6 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		}
 		_actorProgram->setUniform("normalMatrix", normalMatrix);
 
-		_actorProgram->setUniform("actorPos", pos);
 		_actorProgram->setUniform("isBillboard", GL_FALSE);
 		_actorProgram->setUniform("useVertexAlpha", GL_FALSE);
 		_actorProgram->setUniform("uniformColor", color);
