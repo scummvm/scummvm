@@ -1294,6 +1294,7 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case TOGGLE_OBJECT:
+				++str;
 				for (int idx = 0; idx < str[0]; ++idx)
 					tempString += str[idx + 1];
 
