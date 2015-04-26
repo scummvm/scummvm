@@ -424,6 +424,9 @@ Object::Object() {
 	_misc = 0;
 	_maxFrames = 0;
 	_flags = 0;
+	_aOpen._cAnimNum = 0;
+	_aOpen._cAnimSpeed = 0;
+	_aType = OBJECT;
 	_lookFrames = 0;
 	_seqCounter = 0;
 	_lookFacing = 0;

@@ -892,9 +892,6 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	CursorId oldCursor = events.getCursor();
 	events.setCursor(WAIT);
 
-	_canimShapes.push_back(Object());
-	Object &cObj = _canimShapes[_canimShapes.size() - 1];
-
 	if (walkPos.x != -1) {
 		// Holmes must walk to the walk point before the cAnimation is started
 		if (people[AL]._position != walkPos)
@@ -903,6 +900,10 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 	if (talk._talkToAbort)
 		return 1;
+
+	// Add new anim shape entry for displaying the animationo
+	_canimShapes.push_back(Object());
+	Object &cObj = _canimShapes[_canimShapes.size() - 1];
 
 	// Copy the canimation into the bgShapes type canimation structure so it can be played
 	cObj._allow = cAnimNum + 1;				// Keep track of the parent structure
@@ -1304,6 +1305,7 @@ void Scene::doBgAnim() {
 					people[AL]._oldPosition.x + people[AL]._oldSize.x,
 					people[AL]._oldPosition.y + people[AL]._oldSize.y
 				));
+				people[AL]._type = INVALID;
 			} else {
 				screen.flushImage(people[AL]._imageFrame,
 					Common::Point(people[AL]._position.x / 100, 
