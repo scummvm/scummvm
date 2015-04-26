@@ -356,23 +356,23 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				break;
 
 			case 134:		// Change sequence
-				replyP += (replyP[0] & 127) + replyP[2] + 1;
+				replyP += (replyP[0] & 127) + replyP[2] + 2;
 				break;
 
 			case 135:       // Walk to co-ords
 			case 154:		// Move mouse
-				replyP += 3; 
+				replyP += 4; 
 				break;
 
 			case 139:		// Set flag
 			case 143:		// If statement 
-				++replyP;
+				replyP += 2;
 				break;
 
 			case 140:		// Play voice file
 			case 150:		// Play prologue
 			case 153:		// Call talk file 
-				replyP += 7;
+				replyP += 8;
 				break;
 
 			case 141:		// Toggle object
@@ -380,11 +380,11 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			case 152:		// Set object
 			case 155:		// Info line
 			case 158:		// Delete item from inventory
-				replyP += *replyP & 127;
+				replyP += (*replyP & 127) + 1;
 				break;
 
 			case 149:		// Goto scene
-				replyP += 4;
+				replyP += 5;
 				break;
 
 			case 161:		// End of line
