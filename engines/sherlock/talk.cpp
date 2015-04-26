@@ -1212,6 +1212,7 @@ void Talk::doScript(const Common::String &script) {
 			case WALK_TO_COORDS:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
+				++str;
 				_scriptCurrentIndex = str - script.c_str();
 
 				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100, str[2] * 100), str[3] - 1);
@@ -1224,6 +1225,7 @@ void Talk::doScript(const Common::String &script) {
 			case PAUSE_WITHOUT_CONTROL:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
+				++str;
 				_scriptCurrentIndex = str - script.c_str();
 
 				for (int idx = 0; idx < (str[0] - 1); ++idx) {
@@ -1433,6 +1435,7 @@ void Talk::doScript(const Common::String &script) {
 			case MOVE_MOUSE:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
+				++str;
 				_scriptCurrentIndex = str - script.c_str();
 				events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
 				if (_talkToAbort)
