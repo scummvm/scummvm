@@ -1027,7 +1027,7 @@ void Talk::doScript(const Common::String &script) {
 	}
 
 	// Check if the script begins with a Stealh Mode Active command
-	if (str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
+	if ((byte)str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
 		_talkStealth = 2;
 		_speaker |= 128;
 	} else {
@@ -1068,7 +1068,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Remove portrait?
-		if (str[0] == REMOVE_PORTRAIT) {
+		if ((byte)str[0] == REMOVE_PORTRAIT) {
 			_speaker = 255;
 		} else {
 			// Nope, so set the first speaker
@@ -1116,12 +1116,12 @@ void Talk::doScript(const Common::String &script) {
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
 				_scriptCurrentIndex = (str + 1) - script.c_str();
-				scene.startCAnim((str[0] - 1) & 127, 1 + (str[0] & 128));
+				scene.startCAnim(((byte)str[0] - 1) & 127, 1 + ((byte)str[0] & 128));
 				if (_talkToAbort)
 					return;
 
 				// Check if next character is changing side or changing portrait
-				if (charCount && (str[1] == SWITCH_SPEAKER || str[1] == ASSIGN_PORTRAIT_LOCATION))
+				if (charCount && ((byte)str[1] == SWITCH_SPEAKER || (byte)str[1] == ASSIGN_PORTRAIT_LOCATION))
 					wait = 1;
 				break;
 
@@ -1215,7 +1215,8 @@ void Talk::doScript(const Common::String &script) {
 				++str;
 				_scriptCurrentIndex = str - script.c_str();
 
-				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100, str[2] * 100), str[3] - 1);
+				people.walkToCoords(Common::Point((((byte)str[0] - 1) * 256 + (byte)str[1] - 1) * 100, 
+					(byte)str[2] * 100), str[3] - 1);
 				if (_talkToAbort)
 					return;
 
@@ -1272,7 +1273,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case SET_FLAG: {
 				++str;
-				int flag1 = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
+				int flag1 = ((byte)str[0] - 1) * 256 + (byte)str[1] - 1 - (str[1] == 1 ? 1 : 0);
 				int flag = (flag1 & 0x7fff) * (flag1 >= 0x8000 ? -1 : 1);
 				_vm->setFlags(flag);
 				++str;
@@ -1310,7 +1311,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case IF_STATEMENT: {
 				++str;
-				int flag = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
+				int flag = ((byte)str[0] - 1) * 256 + (byte)str[1] - 1 - (str[1] == 1 ? 1 : 0);
 				++str;
 				wait = 0;
 				
@@ -1396,7 +1397,7 @@ void Talk::doScript(const Common::String &script) {
 				str += str[0];
 
 				// Set comparison state according to if we want to hide or unhide
-				bool state = (str[0] >= 128);
+				bool state = ((byte)str[0] >= 128);
 
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 					Object &obj = scene._bgShapes[idx];
@@ -1437,7 +1438,7 @@ void Talk::doScript(const Common::String &script) {
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
 				_scriptCurrentIndex = str - script.c_str();
-				events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
+				events.moveMouse(Common::Point(((byte)str[0] - 1) * 256 + (byte)str[1] - 1, str[2]));
 				if (_talkToAbort)
 					return;
 				str += 3;
@@ -1599,7 +1600,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= 128 && str[0] != COMMAND_161)) {
+		if ((openTalkWindow && wait) || (openTalkWindow && (byte)str[0] >= 128 && (byte)str[0] != COMMAND_161)) {
 			if (!ui._windowStyle) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
@@ -1625,12 +1626,12 @@ void Talk::doScript(const Common::String &script) {
 
 			// If a key was pressed to finish the window, see if further voice files should be skipped
 			if (wait >= 0 && wait < 254) {
-				if (str[0] == SFX_COMMAND)
+				if ((byte)str[0] == SFX_COMMAND)
 					str += 9;
 			}
 
 			// Clear the window unless the wait was due to a PAUSE command
-			if (!pauseFlag && wait != -1 && str[0] != SFX_COMMAND) {
+			if (!pauseFlag && wait != -1 && (byte)str[0] != SFX_COMMAND) {
 				if (!_talkStealth)
 					ui.clearWindow();
 				yp = CONTROLS_Y + 12;
