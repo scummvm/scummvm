@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/func.h"
@@ -871,6 +872,22 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 }
 
 extern void showScummVMDialog(const Common::String &message);
+
+void gamestate_delayedrestore(EngineState *s) {
+	Common::String fileName = g_sci->getSavegameName(s->_delayedRestoreGameId);
+	Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
+
+	if (in) {
+		// found a savegame file
+		gamestate_restore(s, in);
+		delete in;
+		if (s->r_acc != make_reg(0, 1)) {
+			return;
+		}
+	}
+
+	error("Restoring gamestate '%s' failed", fileName.c_str());
+}
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	SavegameMetadata meta;

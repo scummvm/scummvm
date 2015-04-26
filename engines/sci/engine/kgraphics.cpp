@@ -32,6 +32,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/features.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -399,6 +400,12 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	int sleep_time = argv[0].toUint16();
 
 	s->wait(sleep_time);
+
+	if (s->_delayedRestoreGame) {
+		// delayed restore game from ScummVM menu got triggered
+		gamestate_delayedrestore(s);
+		return NULL_REG;
+	}
 
 	return s->r_acc;
 }

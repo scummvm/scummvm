@@ -791,6 +791,10 @@ void SciMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 Common::Error SciEngine::loadGameState(int slot) {
+	_gamestate->_delayedRestoreGameId = slot;
+	_gamestate->_delayedRestoreGame = true;
+	return Common::kNoError;
+	
 	Common::String fileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::SeekableReadStream *in = saveFileMan->openForLoading(fileName);
