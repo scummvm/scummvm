@@ -204,6 +204,8 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_speakerFlip = false;
 	_holmesFlip = false;
 	_holmesQuotient = 0;
+	_hSavedPos = Common::Point(-1, -1);
+	_hSavedFacing = -1;
 
 	_portrait._sequences = new byte[32];
 }
@@ -708,10 +710,15 @@ void People::setTalking(int speaker) {
  */
 void People::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_holmesOn);
-	s.syncAsSint16LE(_data[AL]._position.x);
-	s.syncAsSint16LE(_data[AL]._position.y);
-	s.syncAsSint16LE(_data[AL]._sequenceNumber);
+	s.syncAsSint16LE(_player._position.x);
+	s.syncAsSint16LE(_player._position.y);
+	s.syncAsSint16LE(_player._sequenceNumber);
 	s.syncAsSint16LE(_holmesQuotient);
+
+	if (s.isLoading()) {
+		_hSavedPos = _player._position;
+		_hSavedFacing = _player._sequenceNumber;
+	}
 }
 
 } // End of namespace Sherlock

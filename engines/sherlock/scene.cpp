@@ -97,8 +97,6 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_version = 0;
 	_lzwMode = false;
 	_invGraphicItems = 0;
-	_hsavedPos = Common::Point(-1, -1);
-	_hsavedFs = -1;
 	_cAnimFramePause = 0;
 	_restoreFlag = false;
 	_invLookFlag = false;
@@ -579,48 +577,50 @@ void Scene::transitionToScene() {
 	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
+	Common::Point &hSavedPos = people._hSavedPos;
+	int &hSavedFacing = people._hSavedFacing;
 
 	const int FS_TRANS[8] = {
 		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
 		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
 	};
 
-	if (_hsavedPos.x < 1) {
+	if (hSavedPos.x < 1) {
 		// No exit information from last scene-check entrance info
 		if (_entrance._startPosition.x < 1) {
 			// No entrance info either, so use defaults
-			_hsavedPos = Common::Point(16000, 10000);
-			_hsavedFs = 4;
+			hSavedPos = Common::Point(16000, 10000);
+			hSavedFacing = 4;
 		} else {
 			// setup entrance info
-			_hsavedPos = _entrance._startPosition;
-			_hsavedFs = _entrance._startDir;
+			hSavedPos = _entrance._startPosition;
+			hSavedFacing = _entrance._startDir;
 		}
 	} else {
 		// Exit information exists, translate it to real sequence info
 		// Note: If a savegame was just loaded, then the data is already correct.
 		// Otherwise, this is a linked scene or entrance info, and must be translated
-		if (_hsavedFs < 8 && !saves._justLoaded) {
-			_hsavedFs = FS_TRANS[_hsavedFs];
-			_hsavedPos.x *= 100;
-			_hsavedPos.y *= 100;
+		if (hSavedFacing < 8 && !saves._justLoaded) {
+			hSavedFacing = FS_TRANS[hSavedFacing];
+			hSavedPos.x *= 100;
+			hSavedPos.y *= 100;
 		}
 	}
 
 	int cAnimNum = -1;
 
-	if (_hsavedFs < 101) {
+	if (hSavedFacing < 101) {
 		// Standard info, so set it
-		people[PLAYER]._position = _hsavedPos;
-		people[PLAYER]._sequenceNumber = _hsavedFs;
+		people[PLAYER]._position = hSavedPos;
+		people[PLAYER]._sequenceNumber = hSavedFacing;
 	} else {
 		// It's canimation information
-		cAnimNum = _hsavedFs - 101;
+		cAnimNum = hSavedFacing - 101;
 	}
 
 	// Reset positioning for next load
-	_hsavedPos = Common::Point(-1, -1);
-	_hsavedFs = -1;
+	hSavedPos = Common::Point(-1, -1);
+	hSavedFacing = -1;
 
 	if (cAnimNum != -1) {
 		// Prevent Holmes from being drawn

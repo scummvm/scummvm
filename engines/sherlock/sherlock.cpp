@@ -147,7 +147,7 @@ void SherlockEngine::sceneLoop() {
 		// Handle any input from the keyboard or mouse
 		handleInput();
 
-		if (_scene->_hsavedPos.x == -1) {
+		if (_people->_hSavedPos.x == -1) {
 			_canLoadSave = true;
 			_scene->doBgAnim();
 			_canLoadSave = false;

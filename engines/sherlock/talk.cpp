@@ -1361,8 +1361,8 @@ void Talk::doScript(const Common::String &script) {
 
 					// Run a canimation?
 					if (str[2] > 100) {
-						scene._hsavedFs = str[2];
-						scene._hsavedPos = Common::Point(160, 100);
+						people._hSavedFacing = (byte)str[2];
+						people._hSavedPos = Common::Point(160, 100);
 					}
 				}
 				str += 6;

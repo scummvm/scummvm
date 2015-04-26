@@ -165,11 +165,11 @@ void Sprite::adjustSprite() {
 			scene._goToScene = exit->_scene;
 
 			if (exit->_people.x != 0) {
-				scene._hsavedPos = exit->_people;
-				scene._hsavedFs = exit->_peopleDir;
+				people._hSavedPos = exit->_people;
+				people._hSavedFacing = exit->_peopleDir;
 
-				if (scene._hsavedFs > 100 && scene._hsavedPos.x < 1)
-					scene._hsavedPos.x = 100;
+				if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
+					people._hSavedPos.x = 100;
 			}
 		}		
 	}
@@ -869,18 +869,18 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 					++p;
 
 					Common::String s(p, p + 3);
-					scene._hsavedPos.x = atoi(s.c_str());
+					people._hSavedPos.x = atoi(s.c_str());
 
 					s = Common::String(p + 3, p + 6);
-					scene._hsavedPos.y = atoi(s.c_str());
+					people._hSavedPos.y = atoi(s.c_str());
 
 					s = Common::String(p + 6, p + 9);
-					scene._hsavedFs = atoi(s.c_str());
-					if (scene._hsavedFs == 0)
-						scene._hsavedFs = 10;
+					people._hSavedFacing = atoi(s.c_str());
+					if (people._hSavedFacing == 0)
+						people._hSavedFacing = 10;
 				} else if ((p = strchr(name.c_str(), '/')) != nullptr) {
-					scene._hsavedPos = Common::Point(1, 0);
-					scene._hsavedFs = 100 + atoi(p + 1);
+					people._hSavedPos = Common::Point(1, 0);
+					people._hSavedFacing = 100 + atoi(p + 1);
 				}
 			} else {
 				scene._goToScene = 100;

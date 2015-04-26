@@ -130,8 +130,6 @@ public:
 	Common::Array<Exit> _exits;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
-	Common::Point _hsavedPos;
-	int _hsavedFs;
 	Common::Array<Object> _canimShapes;
 	bool _restoreFlag;
 	int _animating;

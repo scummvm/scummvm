@@ -74,6 +74,8 @@ private:
 public:
 	ImageFile *_talkPics;
 	Common::Point _walkDest;
+	Common::Point _hSavedPos;
+	int _hSavedFacing;
 	Common::Queue<Common::Point> _walkTo;
 	Person &_player;
 	bool _holmesOn;
