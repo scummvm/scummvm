@@ -62,6 +62,9 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_cursorIndex = -1;
 	_drawMap = false;
 	_overPos = Common::Point(13000, 12600);
+	_charPoint = 0;
+	_oldCharPoint = 39;
+
 	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
 
@@ -126,7 +129,6 @@ void Map::loadData() {
 int Map::show() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Common::Point lDrawn(-1, -1);
 	bool changed = false, exitFlag = false;
@@ -230,7 +232,7 @@ int Map::show() {
 		if ((events._released || events._rightReleased) && _point != -1) {
 			if (people[AL]._walkCount == 0) {
 				people._walkDest = _points[_point] + Common::Point(4, 9);
-				scene._charPoint = _point;
+				_charPoint = _point;
 
 				// Start walking to selected location
 				walkTheStreets();
@@ -243,7 +245,7 @@ int Map::show() {
 
 		// Check if a scene has beeen selected and we've finished "moving" to it
 		if (people[AL]._walkCount == 0) {
-			if (scene._charPoint >= 1 && scene._charPoint < (int)_points.size())
+			if (_charPoint >= 1 && _charPoint < (int)_points.size())
 				exitFlag = true;
 		}
 
@@ -267,7 +269,7 @@ int Map::show() {
 	screen.setFont(oldFont);
 
 	_active = false;
-	return scene._charPoint;
+	return _charPoint;
 }
 
 /**
@@ -443,8 +445,8 @@ void Map::walkTheStreets() {
 	Common::Array<Common::Point> tempPath;
 
 	// Get indexes into the path lists for the start and destination scenes
-	int start = _points[scene._oldCharPoint]._translate;
-	int dest = _points[scene._charPoint]._translate;
+	int start = _points[_oldCharPoint]._translate;
+	int dest = _points[_charPoint]._translate;
 
 	// Get pointer to start of path
 	const byte *path = _paths.getPath(start, dest);
@@ -454,10 +456,10 @@ void Map::walkTheStreets() {
 	Common::Point destPos = people._walkDest;
 
 	// Check for any intermediate points between the two locations
-	if (path[0] || scene._charPoint > 50 || scene._oldCharPoint > 50) {
+	if (path[0] || _charPoint > 50 || _oldCharPoint > 50) {
 		people[AL]._sequenceNumber = -1;
 
-		if (scene._charPoint == 51 || scene._oldCharPoint == 51) {
+		if (_charPoint == 51 || _oldCharPoint == 51) {
 			people.setWalking();
 		} else {
 			// Check for moving the path backwards or forwards
@@ -581,6 +583,17 @@ void Map::highlightIcon(const Common::Point &pt) {
 		showPlaceName(oldPoint, false);
 		eraseTopLine();
 	}
+}
+
+/**
+* Synchronize the data for a savegame
+*/
+void Map::synchronize(Common::Serializer &s) {
+	s.syncAsSint16LE(_bigPos.x);
+	s.syncAsSint16LE(_bigPos.y);
+	s.syncAsSint16LE(_overPos.x);
+	s.syncAsSint16LE(_overPos.y);
+	s.syncAsSint16LE(_oldCharPoint);
 }
 
 } // End of namespace Sherlock

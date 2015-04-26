@@ -1355,9 +1355,9 @@ void Talk::doScript(const Common::String &script) {
 
 				if (scene._goToScene != 100) {
 					// Not going to the map overview
-					scene._oldCharPoint = scene._goToScene;
-					scene._overPos.x = map[scene._goToScene].x * 100 - 600;
-					scene._overPos.y = map[scene._goToScene].y * 100 + 900;
+					map._oldCharPoint = scene._goToScene;
+					map._overPos.x = map[scene._goToScene].x * 100 - 600;
+					map._overPos.y = map[scene._goToScene].y * 100 + 900;
 
 					// Run a canimation?
 					if (str[2] > 100) {

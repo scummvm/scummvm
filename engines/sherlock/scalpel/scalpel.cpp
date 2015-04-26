@@ -576,23 +576,23 @@ void ScalpelEngine::startScene() {
 		switch (_scene->_goToScene) {
 		case 52:
 			_scene->_goToScene = 27;			// Go to the Lawyer's Office
-			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_scene->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
-			_scene->_oldCharPoint = 27;
+			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
+			_map->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
+			_map->_oldCharPoint = 27;
 			break;
 
 		case 53:
 			_scene->_goToScene = 17;			// Go to St. Pancras Station
-			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_scene->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
-			_scene->_oldCharPoint = 17;
+			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
+			_map->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
+			_map->_oldCharPoint = 17;
 			break;
 
 		default:
 			_scene->_goToScene = 4;			// Back to Baker st.
-			_scene->_bigPos = Common::Point(0, 0);	// Overland scroll position
-			_scene->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
-			_scene->_oldCharPoint = 4;
+			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
+			_map->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
+			_map->_oldCharPoint = 4;
 			break;
 		}
 

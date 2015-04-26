@@ -421,7 +421,6 @@ void People::setWalking() {
  */
 void People::gotoStand(Sprite &sprite) {
 	Map &map = *_vm->_map;
-	Scene &scene = *_vm->_scene;
 	_walkTo.clear();
 	sprite._walkCount = 0;
 
@@ -454,8 +453,8 @@ void People::gotoStand(Sprite &sprite) {
 
 	if (map._active) {
 		sprite._sequenceNumber = 0;
-		_data[AL]._position.x = (map[scene._charPoint].x -  6) * 100;
-		_data[AL]._position.y = (map[scene._charPoint].x + 10) * 100;
+		_player._position.x = (map[map._charPoint].x -  6) * 100;
+		_player._position.y = (map[map._charPoint].x + 10) * 100;
 	}
 
 	_oldWalkSequence = -1;

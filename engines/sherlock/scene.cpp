@@ -89,8 +89,6 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_currentScene = -1;
 	_goToScene = -1;
 	_changes = false;
-	_charPoint = 0;
-	_oldCharPoint = 39;
 	_keyboardInput = 0;
 	_walkedInScene = false;
 	_ongoingCans = 0;
@@ -438,10 +436,10 @@ bool Scene::loadScene(const Common::String &filename) {
 	_walkedInScene = false;
 	saves._justLoaded = false;
 
-	// Reset the position on the overland map
-	_vm->_oldCharPoint = _currentScene;
-	_vm->_over.x = map[_currentScene].x * 100 - 600;
-	_vm->_over.y = map[_currentScene].y * 100 + 900;
+	// Reset the previous map location and position on overhead map
+	map._oldCharPoint = _currentScene;
+	map._overPos.x = map[_currentScene].x * 100 - 600;
+	map._overPos.y = map[_currentScene].y * 100 + 900;
 
 	events.clearEvents();
 	return flag;
@@ -1043,7 +1041,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 		_goToScene = gotoCode;
 
 		if (_goToScene < 97 && map[_goToScene].x) {
-			_overPos = map[_goToScene];
+			map._overPos = map[_goToScene];
 		}
 	}
 
@@ -1473,12 +1471,6 @@ int Scene::closestZone(const Common::Point &pt) {
 void Scene::synchronize(Common::Serializer &s) {
 	if (s.isSaving())
 		saveSceneStatus();
-
-	s.syncAsSint16LE(_bigPos.x);
-	s.syncAsSint16LE(_bigPos.y);
-	s.syncAsSint16LE(_overPos.x);
-	s.syncAsSint16LE(_overPos.y);
-	s.syncAsSint16LE(_oldCharPoint);
 
 	if (s.isSaving())
 		s.syncAsSint16LE(_currentScene);

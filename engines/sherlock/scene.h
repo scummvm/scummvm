@@ -107,9 +107,6 @@ public:
 	bool _changes;
 	bool _sceneStats[SCENES_COUNT][65];
 	bool _savedStats[SCENES_COUNT][9];
-	Common::Point _bigPos;
-	Common::Point _overPos;
-	int _charPoint, _oldCharPoint;
 	int _keyboardInput;
 	int _oldKey, _help, _oldHelp;
 	int _oldTemp, _temp;

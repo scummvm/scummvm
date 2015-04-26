@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/str-array.h"
 #include "sherlock/graphics.h"
@@ -67,8 +68,6 @@ private:
 	ImageFile *_shapes;
 	ImageFile *_iconShapes;
 	byte _sequences[MAX_HOLMES_SEQUENCE][MAX_FRAME];
-	Common::Point _bigPos;
-	Common::Point _overPos;
 	Common::Point _lDrawnPos;
 	int _point;
 	bool _placesShown;
@@ -97,6 +96,9 @@ private:
 	void highlightIcon(const Common::Point &pt);
 public:
 	bool _active;
+	Common::Point _overPos;
+	Common::Point _bigPos;
+	int _charPoint, _oldCharPoint;
 public:
 	Map(SherlockEngine *vm);
 
@@ -106,6 +108,8 @@ public:
 	void loadSequences(int count, const byte *seq);
 
 	int show();
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Sherlock

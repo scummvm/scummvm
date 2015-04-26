@@ -104,8 +104,6 @@ public:
 	Common::String _titleOverride;
 	bool _useEpilogue2;
 	bool _loadingSavedGame;
-	int _oldCharPoint;					// Old scene
-	Common::Point _over;				// Old map position
 	bool _slowChess;
 	int _keyPadSpeed;
 	int _loadGameSlot;

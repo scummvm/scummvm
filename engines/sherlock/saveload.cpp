@@ -368,6 +368,7 @@ Common::String SaveManager::generateSaveName(int slot) {
 void SaveManager::synchronize(Common::Serializer &s) {
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
+	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -378,6 +379,7 @@ void SaveManager::synchronize(Common::Serializer &s) {
 	inv.synchronize(s);
 	journal.synchronize(s);
 	people.synchronize(s);
+	map.synchronize(s);
 	scene.synchronize(s);
 	screen.synchronize(s);
 	talk.synchronize(s);
