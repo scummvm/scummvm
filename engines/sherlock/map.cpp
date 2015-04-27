@@ -88,7 +88,6 @@ void Map::loadSequences(int count, const byte *seq) {
 		Common::copy(seq, seq + MAX_FRAME, &_sequences[idx][0]);
 }
 
-
 /**
  * Load data  needed for the map
  */
@@ -151,6 +150,7 @@ int Map::show() {
 	screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
 
 	_drawMap = true;
+	_charPoint = -1;
 	_point = -1;
 	people[AL]._position = _lDrawnPos = _overPos;
 
