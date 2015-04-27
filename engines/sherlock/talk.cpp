@@ -365,8 +365,9 @@ void Talk::talkTo(const Common::String &filename) {
 			
 			// Check for a linked file
 			if (!statement._linkFile.empty() && !_scriptMoreFlag) {
+				Common::String linkFilename = statement._linkFile;
 				freeTalkVars();
-				loadTalkFile(statement._linkFile);
+				loadTalkFile(linkFilename);
 
 				// Scan for the first valid statement in the newly loaded file
 				select = -1;
@@ -427,7 +428,7 @@ void Talk::talkTo(const Common::String &filename) {
 				} else {
 					// Add the statement into the journal and talk history
 					if (_talkTo != -1 && !_talkHistory[_converseNum][select])
-						journal.record(_converseNum | 2048, select);
+						journal.record(_converseNum, select, true);
 					_talkHistory[_converseNum][select] = true;
 
 				}
