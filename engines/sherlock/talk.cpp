@@ -134,7 +134,7 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_talkStealth = 0;
 	_talkToFlag = -1;
 	_moreTalkDown = _moreTalkUp = false;
-	_scriptMoreFlag = false;
+	_scriptMoreFlag = 0;
 	_scriptSaveIndex = -1;
 	_scriptCurrentIndex = -1;
 }
@@ -217,7 +217,7 @@ void Talk::talkTo(const Common::String &filename) {
 		}
 	}
 
-	while (!_scriptStack.empty())
+	while (!_sequenceStack.empty())
 		pullSequence();
 
 	// Restore any pressed button
@@ -578,6 +578,9 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	Resources &res = *_vm->_res;
 	Sound &sound = *_vm->_sound;
 
+	// Save a copy of the talk filename
+	_scriptName = filename;
+
 	// Check for an existing person being talked to
 	_talkTo = -1;
 	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
@@ -867,7 +870,7 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
  * Clears the stack of pending object sequences associated with speakers in the scene
  */
 void Talk::clearSequences() {
-	_scriptStack.clear();
+	_sequenceStack.clear();
 }
 
 /**
@@ -1385,7 +1388,7 @@ void Talk::doScript(const Common::String &script) {
 			case ADD_ITEM_TO_INVENTORY:
 				++str;
 				for (int idx = 0; idx < str[0]; ++idx)
-					tempString += str[idx];
+					tempString += str[idx + 1];
 				str += str[0];
 
 				inv.putNameInInventory(tempString);
@@ -1420,16 +1423,24 @@ void Talk::doScript(const Common::String &script) {
 				_scriptCurrentIndex = str - script.c_str();
 
 				// Save the current script position and new talk file
-				if (_scriptStack.size() < 10) {
-					ScriptStackEntry rec;
-					rec._name = _scriptName;
-					rec._currentIndex = _scriptCurrentIndex;
-					rec._select = _scriptSelect;
+				if (_scriptStack.size() < 9) {
+					ScriptStackEntry rec1;
+					rec1._name = _scriptName;
+					rec1._currentIndex = _scriptCurrentIndex;
+					rec1._select = _scriptSelect;
+					_scriptStack.push(rec1);
+
+					// Push the new talk file onto the stack
+					ScriptStackEntry rec2;
+					rec2._name = tempString;
+					rec2._currentIndex = 0;
+					rec2._select = 100;
+					_scriptStack.push(rec2);
 				} else {
 					error("Script stack overflow");
 				}
 
-				_scriptMoreFlag = true;
+				_scriptMoreFlag = 1;
 				endStr = true;
 				wait = 0;
 				break;
@@ -1655,7 +1666,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		pullSequence();
-		if (_speaker < 128)
+		if (_speaker >= 0 && _speaker < 128)
 			people.clearTalking();
 	}
 }
@@ -1749,7 +1760,7 @@ void Talk::popStack() {
 		_scriptName = scriptEntry._name;
 		_scriptSaveIndex = scriptEntry._currentIndex;
 		_scriptSelect = scriptEntry._select;
-		_scriptMoreFlag = true;
+		_scriptMoreFlag = 1;
 	}
 }
 
