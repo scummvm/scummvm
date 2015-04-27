@@ -766,7 +766,7 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 	Common::Point mousePos = events.mousePos();
 	int temp;
 	Common::String tempStr;
-	int x, width, width1, width2 = 0;
+	int x, width;
 
 	// Don't display anything for right button command
 	if ((events._rightPressed || events._rightPressed) && !events._pressed)
@@ -790,7 +790,7 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 				// If inventory is active and an item is selected for a Use or Give action
 				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
 						(inv._invMode == 2 || inv._invMode == 3)) {
-					width1 = screen.stringWidth(inv[_selector]._name);
+					int width1 = 0, width2 = 0;
 
 					if (inv._invMode == 2) {
 						// Using an object
@@ -805,6 +805,7 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 						// If we're using an inventory object, add in the width
 						// of the object name and the " on "
 						if (_selector != -1) {
+							width1 = screen.stringWidth(inv[_selector]._name);
 							x += width1;
 							width2 = screen.stringWidth(" on ");
 							x += width2;
@@ -835,6 +836,7 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
 							scene._bgShapes[temp]._aType == PERSON) {
 						// Giving an object to a person
+						width1 = screen.stringWidth(inv[_selector]._name);
 						x = width = screen.stringWidth("Give ");
 						x += width1;
 						width2 = screen.stringWidth(" to ");
@@ -1235,13 +1237,12 @@ void UserInterface::doInvControl() {
 		if (found != -1)
 			// If a slot highlighted, set it's color
 			colors[found] = COMMAND_HIGHLIGHTED;
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
-			colors[0], true, "Exit");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, "Exit");
 
 		if (found >= 0 && found <= 3) {
 			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, "Look");
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[1], true, "Use");
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[1], true, "Give");
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, "Use");
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, "Give");
 			inv._invMode = (InvMode)found;
 			_selector = -1;
 		}
