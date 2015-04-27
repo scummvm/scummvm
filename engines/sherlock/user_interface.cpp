@@ -1422,7 +1422,7 @@ void UserInterface::doInvControl() {
 						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, MUSE, _find, temp - 2);
 					else
 						// Now inv object has been highlighted
-						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF", MUSE, _find, temp - 2);
+						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", MUSE, _find, temp - 2);
 						
 					_selector = _oldSelector = -1;
 				}
