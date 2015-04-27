@@ -312,7 +312,8 @@ void Talk::talkTo(const Common::String &filename) {
 			select = _talkIndex = idx;
 	}
 
-	if (_scriptMoreFlag && _scriptSelect != 0)
+	// If there's a pending automatic selection to be made, then use it
+	if (_scriptMoreFlag && _scriptSelect != 100)
 		select = _scriptSelect;
 
 	if (select == -1)

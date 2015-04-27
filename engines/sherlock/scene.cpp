@@ -953,6 +953,8 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 		cObj._imageFrame = &(*cObj._images)[0];
 		cObj._maxFrames = cObj._images->size();
 
+		++_ongoingCans;
+
 		int frames = 0;
 		if (playRate < 0) {
 			// Reverse direction
@@ -1362,6 +1364,8 @@ void Scene::doBgAnim() {
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
 				_canimShapes.remove_at(idx);
+				if (_ongoingCans > 0)
+					--_ongoingCans;
 			} else if (o._type == ACTIVE_BG_SHAPE) {
 				screen.flushImage(o._imageFrame, o._position,
 					&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);

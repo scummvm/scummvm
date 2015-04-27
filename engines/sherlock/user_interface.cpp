@@ -818,7 +818,7 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 							tempStr.deleteLastChar();
 						}
 
-						int xStart = (SHERLOCK_SCREEN_HEIGHT - x) / 2;
+						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
 							INFO_FOREGROUND, "Use ");
 
