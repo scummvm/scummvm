@@ -134,13 +134,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
-
-#ifdef ENABLE_SCI32
-		// Clear any planes/screen items currently showing so they
-		// don't show up after the load.
-		if (getSciVersion() >= SCI_VERSION_2)
-			g_sci->_gfxFrameout->clear();
-#endif
 	}
 
 	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
@@ -926,14 +919,17 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// reset ports is one of the first things we do, because that may free() some hunk memory
 	//  and we don't want to do that after we read in the saved game hunk memory
-	if (ser.isLoading()) {
-		// reset ports
-		if (g_sci->_gfxPorts)
-			g_sci->_gfxPorts->reset();
-		// clear screen
-		if (g_sci->_gfxScreen)
-			g_sci->_gfxScreen->clear();
-	}
+	if (g_sci->_gfxPorts)
+		g_sci->_gfxPorts->reset();
+	// clear screen
+	if (g_sci->_gfxScreen)
+		g_sci->_gfxScreen->clear();
+#ifdef ENABLE_SCI32
+	// Also clear any SCI32 planes/screen items currently showing so they
+	// don't show up after the load.
+	if (getSciVersion() >= SCI_VERSION_2)
+		g_sci->_gfxFrameout->clear();
+#endif
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
