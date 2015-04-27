@@ -994,7 +994,7 @@ int Object::pickUpObject(const char *const messages[]) {
 
 		++ui._infoFlag;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_LINE, messages[message]);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[message]);
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up
