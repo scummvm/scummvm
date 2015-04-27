@@ -1117,7 +1117,7 @@ void Talk::doScript(const Common::String &script) {
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
 				_scriptCurrentIndex = (str + 1) - script.c_str();
-				scene.startCAnim(((byte)str[0] - 1) & 127, 1 + ((byte)str[0] & 128));
+				scene.startCAnim(((byte)str[0] - 1) & 127, ((byte)str[0] & 128) ? -1 : 1);
 				if (_talkToAbort)
 					return;
 

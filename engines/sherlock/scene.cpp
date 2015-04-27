@@ -1014,6 +1014,9 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 			while (--temp > 0) {
 				cObj._frameNumber--;
 				doBgAnim();
+
+				if (_vm->shouldQuit())
+					return 0;
 			}
 
 			cObj._frameNumber += dir;
