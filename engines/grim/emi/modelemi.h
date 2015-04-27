@@ -64,6 +64,7 @@ public:
 	EMIModel *_parent;
 
 	enum MeshFaceFlags {
+		kNoLighting = 0x20, // guessed, but distinctive for screen actors
 		kAlphaBlend = 0x10000,
 		kUnknownBlend = 0x40000 // used only in intro screen actors
 	};
