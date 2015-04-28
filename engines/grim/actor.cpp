@@ -2096,7 +2096,7 @@ bool Actor::getSphereInfo(bool adjustZ, float &size, Math::Vector3d &p) const {
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		EMICostume *costume = static_cast<EMICostume *>(getCurrentCostume());
 		if (!costume) {
-			warning("Actor::getSphereInfo: actor \"%s\" has no costume", getName().c_str());
+			Debug::warning(Debug::Actors, "Actor::getSphereInfo: actor \"%s\" has no costume", getName().c_str());
 			return false;
 		}
 		EMIModel *model = costume->getEMIModel();
