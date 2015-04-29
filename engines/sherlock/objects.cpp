@@ -184,7 +184,7 @@ void Sprite::checkSprite() {
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	Common::Point pt;
+	Point32 pt;
 	Common::Rect objBounds;
 	Common::Point spritePt(_position.x / 100, _position.y / 100);
 

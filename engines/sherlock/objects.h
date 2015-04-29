@@ -79,6 +79,25 @@ enum {
 #define FLIP_CODE (64 + 128)
 #define SOUND_CODE (34 + 128)
 
+class Point32 {
+public:
+	int x;
+	int y;
+
+	Point32() : x(0), y(0) {}
+	Point32(int x1, int y1) : x(x1), y(y1) {}
+	Point32(const Common::Point &pt) : x(pt.x), y(pt.y) {}
+
+	bool operator==(const Point32 &p) const { return x == p.x && y == p.y; }
+	bool operator!=(const Point32 &p) const { return x != p.x || y != p.y; }
+	Point32 operator+(const Point32 &delta) const { return Point32(x + delta.x, y + delta.y); }
+	Point32 operator-(const Point32 &delta) const { return Point32(x - delta.x, y - delta.y); }
+	operator Common::Point() { return Common::Point(x, y); }
+
+	void operator+=(const Point32 &delta) { x += delta.x; y += delta.y; }
+	void operator-=(const Point32 &delta) { x -= delta.x; y -= delta.y; }
+};
+
 class Sprite {
 private:
 	static SherlockEngine *_vm;
@@ -95,8 +114,8 @@ public:
 	int _allow;							// Allowed menu commands - ObjectAllow
 	int _frameNumber;					// Frame number in rame sequence to draw
 	int _sequenceNumber;				// Sequence being used
-	Common::Point _position;			// Current position
-	Common::Point _delta;				// Momvement delta
+	Point32 _position;					// Current position
+	Point32 _delta;						// Momvement delta
 	Common::Point _oldPosition;			// Old position
 	Common::Point _oldSize;				// Image's old size
 	Common::Point _goto;				// Walk destination

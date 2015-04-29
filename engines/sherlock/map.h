@@ -68,7 +68,7 @@ private:
 	ImageFile *_shapes;
 	ImageFile *_iconShapes;
 	byte _sequences[MAX_HOLMES_SEQUENCE][MAX_FRAME];
-	Common::Point _lDrawnPos;
+	Point32 _lDrawnPos;
 	int _point;
 	bool _placesShown;
 	int _cursorIndex;
@@ -96,8 +96,8 @@ private:
 	void highlightIcon(const Common::Point &pt);
 public:
 	bool _active;
-	Common::Point _overPos;
-	Common::Point _bigPos;
+	Point32 _overPos;
+	Point32 _bigPos;
 	int _charPoint, _oldCharPoint;
 public:
 	Map(SherlockEngine *vm);
