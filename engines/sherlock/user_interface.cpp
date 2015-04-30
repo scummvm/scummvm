@@ -2592,16 +2592,22 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		cAnimNum = 9;
 	else
 		cAnimNum = action._cAnimNum - 1;
-	CAnim &anim = scene._cAnim[cAnimNum];
-
+	
 	if (action._cAnimNum != 99) {
-		if (action._cAnimSpeed & REVERSE_DIRECTION) {
-			pt = anim._teleportPos;
-			dir = anim._teleportDir;
-		} else {
-			pt = anim._goto;
-			dir = anim._gotoDir;
+		CAnim &anim = scene._cAnim[cAnimNum];
+
+		if (action._cAnimNum != 99) {
+			if (action._cAnimSpeed & REVERSE_DIRECTION) {
+				pt = anim._teleportPos;
+				dir = anim._teleportDir;
+			} else {
+				pt = anim._goto;
+				dir = anim._gotoDir;
+			}
 		}
+	} else {
+		pt = Common::Point(-1, -1);
+		dir = -1;
 	}
 
 	if (action._cAnimSpeed) {
