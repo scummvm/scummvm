@@ -798,6 +798,8 @@ void Scene::updateBackground() {
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position, 
 				_canimShapes[idx]._flags & 2);
 	}
+
+	screen.resetDisplayBounds();
 }
 
 Exit *Scene::checkForExit(const Common::Rect &r) {
@@ -1082,6 +1084,7 @@ void Scene::doBgAnim() {
 	UserInterface &ui = *_vm->_ui;
 
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+
 	int cursorId = events.getCursor();
 	Common::Point mousePos = events.mousePos();
 
@@ -1384,6 +1387,7 @@ void Scene::doBgAnim() {
 
 	events.wait(1);
 	_doBgAnimDone = true;
+	screen.resetDisplayBounds();
 
 	// Check if the method was called for calling a portrait, and a talk was
 	// interrupting it. This talk file would not have been executed at the time, 

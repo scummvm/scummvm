@@ -455,7 +455,11 @@ void Talk::talkTo(const Common::String &filename) {
 	events._pressed = events._released = events._oldButtons = 0;
 	events.clearKeyboard();
 
-	screen.setDisplayBounds(savedBounds);
+	if (savedBounds.bottom == SHERLOCK_SCREEN_HEIGHT)
+		screen.resetDisplayBounds();
+	else
+		screen.setDisplayBounds(savedBounds);
+
 	_talkToAbort = abortFlag;
 
 	// If a script was added to the script stack, restore state so that the
