@@ -355,7 +355,8 @@ void Map::saveTopLine() {
  */
 void Map::eraseTopLine() {
 	Screen &screen = *_vm->_screen;
-	screen.blitFrom(_topLine, Common::Point(0, 0));
+	screen._backBuffer1.blitFrom(_topLine, Common::Point(0, 0));
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, _topLine.h);
 }
 
 /**
