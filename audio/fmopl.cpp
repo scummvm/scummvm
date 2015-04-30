@@ -183,14 +183,6 @@ void OPL::stop() {
 	_callback.reset();
 }
 
-void OPL::setCallbackFrequency(int timerFrequency) {
-	if (!isRunning())
-		return;
-
-	stopCallbacks();
-	startCallbacks(timerFrequency);
-}
-
 bool OPL::_hasInstance = false;
 
 EmulatedOPL::EmulatedOPL() :
@@ -239,6 +231,17 @@ int EmulatedOPL::getRate() const {
 }
 
 void EmulatedOPL::startCallbacks(int timerFrequency) {
+	setCallbackFrequency(timerFrequency);
+	// TODO: Eventually start mixer playback here
+	//g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+}
+
+void EmulatedOPL::stopCallbacks() {
+	// TODO: Eventually stop mixer playback here
+	//g_system->getMixer()->stopHandle(*_handle);
+}
+
+void EmulatedOPL::setCallbackFrequency(int timerFrequency) {
 	_baseFreq = timerFrequency;
 	assert(_baseFreq != 0);
 
@@ -249,20 +252,6 @@ void EmulatedOPL::startCallbacks(int timerFrequency) {
 	// but less prone to arithmetic overflow.
 
 	_samplesPerTick = (d << FIXP_SHIFT) + (r << FIXP_SHIFT) / _baseFreq;
-
-	// TODO: Eventually start mixer playback here
-	//g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-}
-
-void EmulatedOPL::stopCallbacks() {
-	// TODO: Eventually stop mixer playback here
-	//g_system->getMixer()->stopHandle(*_handle);
-}
-
-bool EmulatedOPL::isRunning() const {
-	// TODO
-	//return g_system->getMixer()->isSoundHandleActive(*_handle);
-	return true;
 }
 
 } // End of namespace OPL

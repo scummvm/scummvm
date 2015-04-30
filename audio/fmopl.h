@@ -176,15 +176,10 @@ public:
 	void stop();
 
 	/**
-	 * Is the OPL running?
+	 * Change the callback frequency. This must only be called from a
+	 * timer proc.
 	 */
-	virtual bool isRunning() const = 0;
-
-	/**
-	 * Change the callback frequency. This has no effect if start()
-	 * has not already been called.
-	 */
-	void setCallbackFrequency(int timerFrequency);
+	virtual void setCallbackFrequency(int timerFrequency) = 0;
 
 	enum {
 		/**
@@ -218,6 +213,7 @@ public:
 	// OPL API
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isRunning() const;
+	void setCallbackFrequency(int timerFrequency);
 
 	int getRate() const;
 
