@@ -614,7 +614,7 @@ void ScalpelEngine::startScene() {
 	_events->setCursor(ARROW);
 
 	if (_scene->_goToScene == 99) {
-		// Chess Board
+		// Darts Board minigame
 		_darts->playDarts();
 		_mapResult = _scene->_goToScene = 19;	// Go back to the bar
 	}

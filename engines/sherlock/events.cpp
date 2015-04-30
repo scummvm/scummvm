@@ -214,6 +214,7 @@ Common::KeyState Events::getKey() {
  */
 void Events::clearEvents() {
 	_pendingKeys.clear();
+	_mouseButtons = 0;
 	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;

@@ -42,7 +42,7 @@ private:
 	Common::String _opponent;
 	bool _playerDartMode;
 	int _roundScore;
-	int _oldDartButtons;
+	bool _oldDartButtons;
 
 	void loadDarts();
 	void initDarts();
@@ -57,7 +57,7 @@ private:
 	void erasePowerBars();
 	int doPowerBar(const Common::Point &pt, byte color, int goToPower, bool isVertical);
 
-	int dartHit();
+	bool dartHit();
 	int dartScore(const Common::Point &pt);
 
 	Common::Point getComputerDartDest(int playerNum);
