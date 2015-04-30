@@ -485,13 +485,14 @@ bool Darts::dartHit() {
  */
 int Darts::dartScore(const Common::Point &pt) {
 	Common::Point pos(pt.x - 37, pt.y - 33);
+	Graphics::Surface &scoreImg = (*_dartImages)[1]._frame;
 
-	if (pos.x < 0 || pos.y < 0 || pos.x >= 147 || pt.y >= 132)
+	if (pos.x < 0 || pos.y < 0 || pos.x >= scoreImg.w || pos.y >= scoreImg.h)
 		// Not on the board
 		return 0;
 
 	// On board, so get the score from the pixel at that position
-	int score = *(const byte *)(*_dartImages)[1]._frame.getBasePtr(pos.x, pos.y);
+	int score = *(const byte *)scoreImg.getBasePtr(pos.x, pos.y);
 	return score;
 }
 
