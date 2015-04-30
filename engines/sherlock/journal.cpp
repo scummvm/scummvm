@@ -356,7 +356,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				break;
 
 			case 134:		// Change sequence
-				replyP += ((byte)replyP[0] & 127) + (byte)replyP[2] + 2;
+				replyP += ((byte)replyP[0] & 127) + (byte)replyP[1] + 2;
 				break;
 
 			case 135:       // Walk to co-ords
