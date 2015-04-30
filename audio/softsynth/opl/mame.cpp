@@ -48,7 +48,7 @@ namespace OPL {
 namespace MAME {
 
 OPL::~OPL() {
-	stopCallbacks();
+	stop();
 	MAME::OPLDestroy(_opl);
 	_opl = 0;
 }

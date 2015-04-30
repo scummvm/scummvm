@@ -201,8 +201,10 @@ EmulatedOPL::EmulatedOPL() :
 
 EmulatedOPL::~EmulatedOPL() {
 	// Stop callbacks, just in case. If it's still playing at this
-	// point, there's probably a bigger issue, though.
-	stopCallbacks();
+	// point, there's probably a bigger issue, though. The subclass
+	// needs to call stop() or the pointer can still use be used in
+	// the mixer thread at the same time.
+	stop();
 }
 
 int EmulatedOPL::readBuffer(int16 *buffer, const int numSamples) {

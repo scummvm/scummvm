@@ -149,11 +149,11 @@ OPL::OPL(Config::OplType type) : _type(type), _rate(0), _emulator(0) {
 }
 
 OPL::~OPL() {
+	stop();
 	free();
 }
 
 void OPL::free() {
-	stopCallbacks();
 	delete _emulator;
 	_emulator = 0;
 }
