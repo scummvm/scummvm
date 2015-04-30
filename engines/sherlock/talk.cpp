@@ -1468,6 +1468,7 @@ void Talk::doScript(const Common::String &script) {
 				str += str[0];
 
 				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, tempString.c_str());
+				ui._menuCounter = 30;
 				break;
 
 			case CLEAR_INFO_LINE:
