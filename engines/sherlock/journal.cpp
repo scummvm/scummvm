@@ -240,7 +240,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	const char *replyP = statement._reply.c_str();
 
 	while (*replyP) {
-		byte c = *replyP++;
+		byte c = (byte)*replyP++;
 
 		// Is it a control character?
 		if (c < 128) {
@@ -289,7 +289,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 						const char *strP = replyP + 1;
 						char v;
 						do {
-							v = *strP++;						
+							v = (byte)*strP++;
 						} while (v && v < 128 && v != '.' && v != '!' && v != '?');
 
 						if (v == '?')
@@ -334,9 +334,9 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += NAMES[c];
 
 			const char *strP = replyP;
-			char v;
+			byte v;
 			do {
-				v = *strP++;
+				v = (byte)*strP++;
 			} while (v && v < 128 && v != '.' && v != '!' && v != '?');
 
 			if (v == '?')
@@ -356,7 +356,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				break;
 
 			case 134:		// Change sequence
-				replyP += (replyP[0] & 127) + replyP[2] + 2;
+				replyP += ((byte)replyP[0] & 127) + (byte)replyP[2] + 2;
 				break;
 
 			case 135:       // Walk to co-ords
@@ -380,7 +380,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			case 152:		// Set object
 			case 155:		// Info line
 			case 158:		// Delete item from inventory
-				replyP += (*replyP & 127) + 1;
+				replyP += ((byte)*replyP & 127) + 1;
 				break;
 
 			case 149:		// Goto scene
