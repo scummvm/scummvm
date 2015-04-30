@@ -99,6 +99,7 @@ public:
 	Point32 _overPos;
 	Point32 _bigPos;
 	int _charPoint, _oldCharPoint;
+	bool _frameChangeFlag;
 public:
 	Map(SherlockEngine *vm);
 

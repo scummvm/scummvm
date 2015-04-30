@@ -64,6 +64,7 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_overPos = Common::Point(13000, 12600);
 	_charPoint = 0;
 	_oldCharPoint = 39;
+	_frameChangeFlag = false;
 
 	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);

@@ -126,7 +126,7 @@ void Sprite::adjustSprite() {
 		_position.x = CLIP((int)_position.x, LEFT_LIMIT, RIGHT_LIMIT);
 	}
 
-	if (!map._active || (_vm->_slowChess = !_vm->_slowChess))
+	if (!map._active || (map._frameChangeFlag = !map._frameChangeFlag))
 		++_frameNumber;
 
 	if ((*_sequences)[_sequenceNumber][_frameNumber] == 0) {

@@ -104,7 +104,6 @@ public:
 	Common::String _titleOverride;
 	bool _useEpilogue2;
 	bool _loadingSavedGame;
-	bool _slowChess;
 	int _keyPadSpeed;
 	int _loadGameSlot;
 	bool _canLoadSave;

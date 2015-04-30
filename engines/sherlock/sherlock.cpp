@@ -47,7 +47,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_ui = nullptr;
 	_useEpilogue2 = false;
 	_loadingSavedGame = false;
-	_slowChess = false;
 	_keyPadSpeed = 0;
 	_loadGameSlot = -1;
 	_canLoadSave = false;
