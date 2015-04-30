@@ -386,7 +386,9 @@ void People::setWalking() {
 
 			// If we're on the overhead map, set the sequence so we keep moving
 			// in the same direction
-			_player._sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
+			if (map._active) {
+				_player._sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
+			}
 
 			// Set the delta x
 			_player._delta.x = (delta.x * 100) / (delta.y / speed.y);
