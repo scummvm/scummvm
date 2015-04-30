@@ -61,9 +61,6 @@ bool OPL::init() {
 
 	_opl = MAME::makeAdLibOPL(g_system->getMixer()->getOutputRate());
 
-	// FIXME: Remove this once EmulatedOPL is actually controlling playback
-	start(0);
-
 	return (_opl != 0);
 }
 

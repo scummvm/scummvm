@@ -55,7 +55,7 @@
 
 namespace Kyra {
 
-class AdLibDriver : public Audio::AudioStream {
+class AdLibDriver {
 public:
 	AdLibDriver(Audio::Mixer *mixer, int version);
 	~AdLibDriver();
@@ -69,16 +69,6 @@ public:
 	void resetSoundTrigger() { _soundTrigger = 0; }
 
 	void callback();
-
-	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		return _adlib->readBuffer(buffer, numSamples);
-	}
-
-
-	bool isStereo() const { return false; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
 
 	void setSyncJumpMask(uint16 mask) { _syncJumpMask = mask; }
 
@@ -388,7 +378,6 @@ private:
 
 	Common::Mutex _mutex;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
 
 	uint8 _musicVolume, _sfxVolume;
 
@@ -440,11 +429,9 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) {
 	_retrySounds = false;
 
 	_adlib->start(new Common::Functor0Mem<void, AdLibDriver>(this, &AdLibDriver::callback), CALLBACKS_PER_SECOND);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibDriver::~AdLibDriver() {
-	_mixer->stopHandle(_soundHandle);
 	delete _adlib;
 	_adlib = 0;
 }

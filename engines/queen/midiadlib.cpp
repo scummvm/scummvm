@@ -28,7 +28,7 @@
 namespace Queen {
 
 int AdLibMidiDriver::open() {
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
@@ -41,12 +41,10 @@ int AdLibMidiDriver::open() {
 	}
 
 	_opl->start(new Common::Functor0Mem<void, AdLibMidiDriver>(this, &AdLibMidiDriver::onTimer));
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 
 void AdLibMidiDriver::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
 	delete _opl;
 }
 
@@ -108,14 +106,6 @@ void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
 		}
 	}
 	warning("Unhandled meta event %d len %d", event, length);
-}
-
-void AdLibMidiDriver::generateSamples(int16 *data, int len) {
-	// Dummy implementation
-}
-
-int AdLibMidiDriver::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
 }
 
 void AdLibMidiDriver::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {

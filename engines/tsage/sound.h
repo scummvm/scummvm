@@ -449,13 +449,11 @@ public:
 
 #define ADLIB_CHANNEL_COUNT 9
 
-class AdlibSoundDriver: public SoundDriver, Audio::AudioStream {
+class AdlibSoundDriver: public SoundDriver {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
 	OPL::OPL *_opl;
-	Audio::SoundHandle _soundHandle;
-	int _sampleRate;
 	byte _portContents[256];
 	const byte *_patchData;
 	int _masterVolume;
@@ -493,12 +491,6 @@ public:
 	virtual void updateVoice(int channel);
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
-
-	// AudioStream interface
-	virtual int readBuffer(int16 *data, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
 
 private:
 	void onTimer();

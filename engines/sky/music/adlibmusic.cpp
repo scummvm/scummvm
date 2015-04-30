@@ -33,23 +33,16 @@ namespace Sky {
 
 AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {
 	_driverFileBase = 60202;
-	_sampleRate = pMixer->getOutputRate();
 
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
 
 	_opl->start(new Common::Functor0Mem<void, AdLibMusic>(this, &AdLibMusic::onTimer), 50);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibMusic::~AdLibMusic() {
-	_mixer->stopHandle(_soundHandle);
 	delete _opl;
-}
-
-int AdLibMusic::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
 }
 
 void AdLibMusic::onTimer() {
@@ -95,18 +88,6 @@ void AdLibMusic::setVolume(uint16 param) {
 	_musicVolume = param;
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		_channels[cnt]->updateVolume(_musicVolume);
-}
-
-bool AdLibMusic::isStereo() const {
-	return false;
-}
-
-bool AdLibMusic::endOfData() const {
-	return false;
-}
-
-int AdLibMusic::getRate() const {
-	return _sampleRate;
 }
 
 } // End of namespace Sky

@@ -118,8 +118,6 @@ const uint16 AdLib::kHihatParams    [kParamCount] = {
 AdLib::AdLib(Audio::Mixer &mixer, int callbackFreq) : _mixer(&mixer), _opl(0),
 	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true), _volume(0) {
 
-	_rate = _mixer->getOutputRate();
-
 	initFreqs();
 
 	createOPL();
@@ -128,13 +126,9 @@ AdLib::AdLib(Audio::Mixer &mixer, int callbackFreq) : _mixer(&mixer), _opl(0),
 	syncVolume();
 
 	_opl->start(new Common::Functor0Mem<void, AdLib>(this, &AdLib::onTimer), callbackFreq);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle,
-			this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLib::~AdLib() {
-	_mixer->stopHandle(_handle);
-
 	delete _opl;
 }
 
@@ -166,10 +160,6 @@ void AdLib::createOPL() {
 
 		error("Could not create an AdLib emulator");
 	}
-}
-
-int AdLib::readBuffer(int16 *buffer, const int numSamples) {
-	return _opl->readBuffer(buffer, numSamples);
 }
 
 void AdLib::onTimer() {
@@ -216,22 +206,6 @@ void AdLib::onTimer() {
 		} else
 			_playing = false;
 	}
-}
-
-bool AdLib::isStereo() const {
-	return _opl->isStereo();
-}
-
-bool AdLib::endOfData() const {
-	return false;
-}
-
-bool AdLib::endOfStream() const {
-	return false;
-}
-
-int AdLib::getRate() const {
-	return _rate;
 }
 
 bool AdLib::isPlaying() const {

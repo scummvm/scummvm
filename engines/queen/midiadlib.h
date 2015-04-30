@@ -22,14 +22,17 @@
 
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
-#include "audio/softsynth/emumidi.h"
 
 namespace Queen {
 
-class AdLibMidiDriver : public MidiDriver_Emulated {
+class AdLibMidiDriver : public MidiDriver {
 public:
 
-	AdLibMidiDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) { _adlibWaveformSelect = 0; }
+	AdLibMidiDriver() {
+		_adlibWaveformSelect = 0;
+		_isOpen = false;
+	}
+
 	~AdLibMidiDriver() {}
 
 	// MidiDriver
@@ -40,14 +43,8 @@ public:
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
-
-	// AudioStream
-	int readBuffer(int16 *data, const int numSamples);
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
-
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setVolume(uint32 volume);
 
@@ -74,8 +71,8 @@ private:
 	void adlibTurnNoteOn(int channel, int note);
 	void adlibSetupChannelFromSequence(int channel, const uint8 *src, int fl);
 	void adlibSetupChannel(int channel, const uint16 *src, int fl);
-	void adlibSetChannelVolume(int channel, uint8 volume);
 	void adlibSetNoteVolume(int channel, int volume);
+	void adlibSetChannelVolume(int channel, uint8 volume);
 	void adlibSetupChannelHelper(int channel);
 	void adlibSetChannel0x40(int channel);
 	void adlibSetChannel0xC0(int channel);
@@ -106,6 +103,7 @@ private:
 	uint16 _adlibMetaSequenceData[28];
 	uint8 _adlibChannelsVolumeTable[11];
 
+	bool _isOpen;
 	Common::TimerManager::TimerProc _adlibTimerProc;
 	void *_adlibTimerParam;
 

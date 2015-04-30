@@ -36,7 +36,7 @@ namespace Scumm {
 #define AD_CALLBACK_FREQUENCY 472
 
 Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer), _rate(mixer->getOutputRate()) {
+	: _vm(scumm), _mixer(mixer) {
 	_opl2 = OPL::Config::create();
 	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
@@ -73,12 +73,9 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	_isSeeking = false;
 
 	_opl2->start(new Common::Functor0Mem<void, Player_AD>(this, &Player_AD::onTimer), AD_CALLBACK_FREQUENCY);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_AD::~Player_AD() {
-	_mixer->stopHandle(_soundHandle);
-
 	stopAllSounds();
 	Common::StackLock lock(_mutex);
 	delete _opl2;
@@ -248,10 +245,6 @@ void Player_AD::onTimer() {
 	}
 
 	updateSfx();
-}
-
-int Player_AD::readBuffer(int16 *buffer, const int numSamples) {
-	return _opl2->readBuffer(buffer, numSamples);
 }
 
 void Player_AD::setupVolume() {

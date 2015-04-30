@@ -23,9 +23,15 @@
 #ifndef AUDIO_FMOPL_H
 #define AUDIO_FMOPL_H
 
+#include "audio/audiostream.h"
+
 #include "common/func.h"
 #include "common/ptr.h"
 #include "common/scummsys.h"
+
+namespace Audio {
+class SoundHandle;
+}
 
 namespace Common {
 class String;
@@ -149,23 +155,6 @@ public:
 	virtual void writeReg(int r, int v) = 0;
 
 	/**
-	 * Read up to 'length' samples.
-	 *
-	 * Data will be in native endianess, 16 bit per sample, signed.
-	 * For stereo OPL, buffer will be filled with interleaved
-	 * left and right channel samples, starting with a left sample.
-	 * Furthermore, the samples in the left and right are summed up.
-	 * So if you request 4 samples from a stereo OPL, you will get
-	 * a total of two left channel and two right channel samples.
-	 */
-	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
-
-	/**
-	 * Returns whether the setup OPL mode is stereo or not
-	 */
-	virtual bool isStereo() const = 0;
-
-	/**
 	 * Start the OPL with callbacks.
 	 */
 	void start(TimerCallback *callback, int timerFrequency = kDefaultCallbackFrequency);
@@ -205,17 +194,18 @@ protected:
 	Common::ScopedPtr<TimerCallback> _callback;
 };
 
-class EmulatedOPL : public OPL {
+class EmulatedOPL : public OPL, protected Audio::AudioStream {
 public:
 	EmulatedOPL();
 	virtual ~EmulatedOPL();
 
 	// OPL API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isRunning() const;
 	void setCallbackFrequency(int timerFrequency);
 
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples);
 	int getRate() const;
+	bool endOfData() const { return false; }
 
 protected:
 	// OPL API
@@ -243,6 +233,8 @@ private:
 
 	int _nextTick;
 	int _samplesPerTick;
+
+	Audio::SoundHandle *_handle;
 };
 
 } // End of namespace OPL

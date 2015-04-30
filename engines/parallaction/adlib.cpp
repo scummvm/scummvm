@@ -25,7 +25,7 @@
 
 #include "audio/fmopl.h"
 #include "audio/mpu401.h"
-#include "audio/softsynth/emumidi.h"
+#include "audio/mididrv.h"
 
 namespace Parallaction {
 
@@ -270,11 +270,13 @@ struct MelodicVoice {
 	int8 _octave;
 };
 
-class AdLibDriver : public MidiDriver_Emulated {
+class AdLibDriver : public MidiDriver {
 public:
-	AdLibDriver(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer) {
+	AdLibDriver(Audio::Mixer *mixer) {
 		for (uint i = 0; i < 16; ++i)
 			_channels[i].init(this, i);
+
+		_isOpen = false;
 	}
 
 	int open();
@@ -282,12 +284,9 @@ public:
 	void send(uint32 b);
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_channels[9]; }
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
-	int readBuffer(int16 *data, const int numSamples);
-
-	void generateSamples(int16 *buf, int len) {}
 	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
 		_adlibTimerProc = timerProc;
 		_adlibTimerParam = timerParam;
@@ -331,6 +330,7 @@ private:
 
 	Common::TimerManager::TimerProc _adlibTimerProc;
 	void *_adlibTimerParam;
+	bool _isOpen;
 };
 
 MidiDriver *createAdLibDriver() {
@@ -359,7 +359,7 @@ int AdLibDriver::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
 	_opl = OPL::Config::create();
 	_opl->init();
@@ -376,7 +376,6 @@ int AdLibDriver::open() {
 	initVoices();
 
 	_opl->start(new Common::Functor0Mem<void, AdLibDriver>(this, &AdLibDriver::onTimer));
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 
@@ -385,7 +384,6 @@ void AdLibDriver::close() {
 		return;
 
 	_isOpen = false;
-	_mixer->stopHandle(_mixerSoundHandle);
 
 	delete _opl;
 }
@@ -787,10 +785,6 @@ MidiChannel *AdLibDriver::allocateChannel() {
 	}
 
 	return NULL;
-}
-
-int AdLibDriver::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
 }
 
 void AdLibDriver::onTimer() {

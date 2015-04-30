@@ -32,21 +32,16 @@ class OPL;
 
 namespace Sky {
 
-class AdLibMusic : public Audio::AudioStream, public MusicBase {
+class AdLibMusic : public MusicBase {
 public:
 	AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk);
 	~AdLibMusic();
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const;
-	bool endOfData() const;
-	int getRate() const;
 	virtual void setVolume(uint16 param);
 
 private:
 	OPL::OPL *_opl;
-	Audio::SoundHandle _soundHandle;
 	uint8 *_initSequence;
 	uint32 _sampleRate;
 	virtual void setupPointers();

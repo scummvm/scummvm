@@ -927,30 +927,26 @@ static void createLookupTable() {
 //
 ////////////////////////////////////////
 
-class MidiDriver_ADLIB : public MidiDriver_Emulated {
+class MidiDriver_ADLIB : public MidiDriver {
 	friend class AdLibPart;
 	friend class AdLibPercussionChannel;
 
 public:
-	MidiDriver_ADLIB(Audio::Mixer *mixer);
+	MidiDriver_ADLIB();
 
 	int open();
 	void close();
 	void send(uint32 b);
 	void send(byte channel, uint32 b); // Supports higher than channel 15
 	uint32 property(int prop, uint32 param);
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setPitchBendRange(byte channel, uint range);
 	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr);
 
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_percussion; } // Percussion partially supported
-
-
-	// AudioStream API
-	int readBuffer(int16 *data, const int numSamples);
-	bool isStereo() const { return _opl->isStereo(); }
-	int getRate() const { return _mixer->getOutputRate(); }
 
 	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
@@ -980,7 +976,8 @@ private:
 	AdLibPart _parts[32];
 	AdLibPercussionChannel _percussion;
 
-	void generateSamples(int16 *buf, int len);
+	bool _isOpen;
+
 	void onTimer();
 	void partKeyOn(AdLibPart *part, const AdLibInstrument *instr, byte note, byte velocity, const AdLibInstrument *second, byte pan);
 	void partKeyOff(AdLibPart *part, byte note);
@@ -1382,8 +1379,7 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 
 // MidiDriver method implementations
 
-MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer) {
+MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	uint i;
 
 	_scummSmallHeader = false;
@@ -1411,13 +1407,14 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
 	_opl = 0;
 	_adlibTimerProc = 0;
         _adlibTimerParam = 0;
+	_isOpen = false;
 }
 
 int MidiDriver_ADLIB::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
 	int i;
 	AdLibVoice *voice;
@@ -1461,8 +1458,6 @@ int MidiDriver_ADLIB::open() {
 #endif
 
 	_opl->start(new Common::Functor0Mem<void, MidiDriver_ADLIB>(this, &MidiDriver_ADLIB::onTimer));
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
 	return 0;
 }
 
@@ -1471,7 +1466,8 @@ void MidiDriver_ADLIB::close() {
 		return;
 	_isOpen = false;
 
-	_mixer->stopHandle(_mixerSoundHandle);
+	// Stop the OPL timer
+	_opl->stop();
 
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_voices); ++i) {
@@ -1624,14 +1620,6 @@ void MidiDriver_ADLIB::adlibWriteSecondary(byte reg, byte value) {
 	_opl->writeReg(reg | 0x100, value);
 }
 #endif
-
-void MidiDriver_ADLIB::generateSamples(int16 *data, int len) {
-	// Dummy implementation until we no longer inherit from MidiDriver_Emulated
-}
-
-int MidiDriver_ADLIB::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
-}
 
 void MidiDriver_ADLIB::onTimer() {
 	if (_adlibTimerProc)
@@ -2318,7 +2306,7 @@ MusicDevices AdLibEmuMusicPlugin::getDevices() const {
 }
 
 Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_ADLIB(g_system->getMixer());
+	*mididriver = new MidiDriver_ADLIB();
 
 	return Common::kNoError;
 }

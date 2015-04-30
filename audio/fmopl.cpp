@@ -188,7 +188,8 @@ bool OPL::_hasInstance = false;
 EmulatedOPL::EmulatedOPL() :
 	_nextTick(0),
 	_samplesPerTick(0),
-	_baseFreq(0) {
+	_baseFreq(0),
+	_handle(new Audio::SoundHandle()) {
 }
 
 EmulatedOPL::~EmulatedOPL() {
@@ -197,6 +198,8 @@ EmulatedOPL::~EmulatedOPL() {
 	// needs to call stop() or the pointer can still use be used in
 	// the mixer thread at the same time.
 	stop();
+
+	delete _handle;
 }
 
 int EmulatedOPL::readBuffer(int16 *buffer, const int numSamples) {
@@ -232,13 +235,11 @@ int EmulatedOPL::getRate() const {
 
 void EmulatedOPL::startCallbacks(int timerFrequency) {
 	setCallbackFrequency(timerFrequency);
-	// TODO: Eventually start mixer playback here
-	//g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 void EmulatedOPL::stopCallbacks() {
-	// TODO: Eventually stop mixer playback here
-	//g_system->getMixer()->stopHandle(*_handle);
+	g_system->getMixer()->stopHandle(*_handle);
 }
 
 void EmulatedOPL::setCallbackFrequency(int timerFrequency) {

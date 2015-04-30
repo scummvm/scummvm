@@ -101,7 +101,7 @@ struct AdLibSoundInstrument {
 	byte amDepth;
 };
 
-class AdLibSoundDriver : public PCSoundDriver, Audio::AudioStream {
+class AdLibSoundDriver : public PCSoundDriver {
 public:
 	AdLibSoundDriver(Audio::Mixer *mixer);
 	virtual ~AdLibSoundDriver();
@@ -111,12 +111,6 @@ public:
 	virtual void setupChannel(int channel, const byte *data, int instrument, int volume);
 	virtual void stopChannel(int channel);
 	virtual void stopAll();
-
-	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
 
 	void initCard();
 	void onTimer();
@@ -129,9 +123,7 @@ protected:
 	void *_upRef;
 
 	OPL::OPL *_opl;
-	int _sampleRate;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
 
 	byte _vibrato;
 	int _channelsVolumeTable[4];
@@ -283,7 +275,6 @@ void PCSoundDriver::resetChannel(int channel) {
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 	: _upCb(0), _upRef(0), _mixer(mixer) {
 
-	_sampleRate = _mixer->getOutputRate();
 	_opl = OPL::Config::create();
 	if (!_opl || !_opl->init())
 		error("Failed to create OPL");
@@ -292,11 +283,9 @@ AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 	memset(_instrumentsTable, 0, sizeof(_instrumentsTable));
 	initCard();
 	_opl->start(new Common::Functor0Mem<void, AdLibSoundDriver>(this, &AdLibSoundDriver::onTimer), 50);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibSoundDriver::~AdLibSoundDriver() {
-	_mixer->stopHandle(_soundHandle);
 	delete _opl;
 }
 
@@ -344,10 +333,6 @@ void AdLibSoundDriver::stopAll() {
 		_opl->writeReg(0xB0 | i, 0);
 	}
 	_opl->writeReg(0xBD, 0);
-}
-
-int AdLibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	return _opl->readBuffer(buffer, numSamples);
 }
 
 void AdLibSoundDriver::initCard() {

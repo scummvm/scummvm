@@ -112,9 +112,9 @@ const uint16 frequencyLookUpTableMusicDrv[12] = {
 //
 // I have currently not implemented dynamic channel allocation.
 
-class MidiDriver_Accolade_AdLib : public MidiDriver_Emulated {
+class MidiDriver_Accolade_AdLib : public MidiDriver {
 public:
-	MidiDriver_Accolade_AdLib(Audio::Mixer *mixer);
+	MidiDriver_Accolade_AdLib();
 	virtual ~MidiDriver_Accolade_AdLib();
 
 	// MidiDriver
@@ -124,15 +124,8 @@ public:
 	MidiChannel *allocateChannel() { return NULL; }
 	MidiChannel *getPercussionChannel() { return NULL; }
 
-	// AudioStream
-	int readBuffer(int16 *data, const int numSamples);
-	bool isStereo() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
-	int getPolyphony() const { return AGOS_ADLIB_VOICES_COUNT; }
-	bool hasRhythmChannel() const { return false; }
-
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setVolume(byte volume);
 	virtual uint32 property(int prop, uint32 param);
@@ -176,6 +169,8 @@ private:
 	Common::TimerManager::TimerProc _adlibTimerProc;
 	void *_adlibTimerParam;
 
+	bool _isOpen;
+
 	// points to a MIDI channel for each of the new voice channels
 	byte _voiceChannelMapping[AGOS_ADLIB_VOICES_COUNT];
 
@@ -196,9 +191,9 @@ private:
 	void noteOff(byte FMvoiceChannel, byte note, bool dontCheckNote);
 };
 
-MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib(Audio::Mixer *mixer)
-		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0),
-		  _adlibTimerProc(0), _adlibTimerParam(0) {
+MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib()
+		: _masterVolume(15), _opl(0),
+		  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
 	memset(_channelMapping, 0, sizeof(_channelMapping));
 	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
 	memset(_instrumentVolumeAdjust, 0, sizeof(_instrumentVolumeAdjust));
@@ -227,10 +222,9 @@ int MidiDriver_Accolade_AdLib::open() {
 
 	_opl->init();
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
 	_opl->start(new Common::Functor0Mem<void, MidiDriver_Accolade_AdLib>(this, &MidiDriver_Accolade_AdLib::onTimer));
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	resetAdLib();
 
@@ -264,9 +258,8 @@ int MidiDriver_Accolade_AdLib::open() {
 }
 
 void MidiDriver_Accolade_AdLib::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
-
 	delete _opl;
+	_isOpen = false;
 }
 
 void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
@@ -372,14 +365,6 @@ void MidiDriver_Accolade_AdLib::send(uint32 b) {
 	default:
 		warning("ADLIB: Unknown event %02x", command);
 	}
-}
-
-void MidiDriver_Accolade_AdLib::generateSamples(int16 *data, int len) {
-	// Dummy implementation until we no longer inherit from MidiDriver_Emulated
-}
-
-int MidiDriver_Accolade_AdLib::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
 }
 
 void MidiDriver_Accolade_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
@@ -886,7 +871,7 @@ MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename) {
 	if (!driverData)
 		error("ACCOLADE-ADLIB: error during readDriver()");
 
-	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib(g_system->getMixer());
+	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib();
 	if (driver) {
 		if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
 			delete driver;

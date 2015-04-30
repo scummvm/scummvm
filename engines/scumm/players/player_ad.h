@@ -41,7 +41,7 @@ class ScummEngine;
 /**
  * Sound output for v3/v4 AdLib data.
  */
-class Player_AD : public MusicEngine, public Audio::AudioStream {
+class Player_AD : public MusicEngine {
 public:
 	Player_AD(ScummEngine *scumm, Audio::Mixer *mixer);
 	virtual ~Player_AD();
@@ -56,12 +56,6 @@ public:
 
 	virtual void saveLoadWithSerializer(Serializer *ser);
 
-	// AudioStream API
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _rate; }
-
 	// Timer callback
 	void onTimer();
 
@@ -69,8 +63,6 @@ private:
 	ScummEngine *const _vm;
 	Common::Mutex _mutex;
 	Audio::Mixer *const _mixer;
-	const int _rate;
-	Audio::SoundHandle _soundHandle;
 
 	void setupVolume();
 	int _musicVolume;

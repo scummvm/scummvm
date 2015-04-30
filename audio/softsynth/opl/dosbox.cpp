@@ -177,10 +177,6 @@ bool OPL::init() {
 		_emulator->WriteReg(0x105, 1);
 	}
 
-	// FIXME: Remove this once EmulatedOPL is actually controlling playback
-	if (!_callback)
-		start(0);
-
 	return true;
 }
 

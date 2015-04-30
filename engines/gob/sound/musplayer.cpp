@@ -57,8 +57,12 @@ uint32 MUSPlayer::pollMusic(bool first) {
 		return 0;
 	}
 
-	if (first)
+	if (first) {
+		// Set the timer frequency on first run.
+		// Do not set it in rewind() for thread safety reasons.
+		setTimerFrequency((_ticksPerBeat * _tempo) / 60);
 		return *_playPos++;
+	}
 
 	uint16 delay = 0;
 	while (delay == 0) {
@@ -185,8 +189,6 @@ void MUSPlayer::rewind() {
 
 	setPercussionMode(_soundMode != 0);
 	setPitchRange(_pitchBendRange);
-
-	setTimerFrequency((_ticksPerBeat * _tempo) / 60);
 }
 
 bool MUSPlayer::loadSND(Common::SeekableReadStream &snd) {

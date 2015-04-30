@@ -68,7 +68,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 //		if (READ_LE_UINT16(_musicData + 2) != infoOffset) {
 //			defaultAdLibVolume = _musicData[infoOffset];
 //		}
-		_driver = new AdLibMidiDriver(g_system->getMixer());
+		_driver = new AdLibMidiDriver();
 	} else {
 		_driver = MidiDriver::createMidi(dev);
 		if (_nativeMT32) {

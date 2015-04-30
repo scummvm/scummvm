@@ -35,7 +35,7 @@ namespace OPL {
 namespace Gob {
 
 /** Base class for a player of an AdLib music format. */
-class AdLib : public Audio::AudioStream {
+class AdLib {
 public:
 	AdLib(Audio::Mixer &mixer, int callbackFrequency);
 	virtual ~AdLib();
@@ -54,13 +54,6 @@ public:
 	void startPlay();
 	void stopPlay();
 	void syncVolume();
-
-// AudioStream API
-	int  readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo()    const;
-	bool endOfData()   const;
-	bool endOfStream() const;
-	int  getRate()     const;
 
 protected:
 	enum kVoice {
@@ -233,7 +226,6 @@ private:
 
 
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _handle;
 	OPL::OPL *_opl;
 
 	Common::Mutex _mutex;

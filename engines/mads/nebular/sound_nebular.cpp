@@ -213,16 +213,12 @@ ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filenam
 	command0();
 
 	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
-		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 ASound::~ASound() {
 	Common::List<CachedDataEntry>::iterator i;
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i)
 		delete[] (*i)._data;
-
-	_mixer->stopHandle(_soundHandle);
 }
 
 void ASound::validate() {
@@ -828,18 +824,10 @@ void ASound::updateFNumber() {
 	write2(8, hiReg, val2);
 }
 
-int ASound::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
-}
-
 void ASound::onTimer() {
 	Common::StackLock slock(_driverMutex);
 	poll();
 	flush();
-}
-
-int ASound::getRate() const {
-	return g_system->getMixer()->getOutputRate();
 }
 
 void ASound::setVolume(int volume) {

@@ -145,7 +145,7 @@ struct CachedDataEntry {
 /**
  * Base class for the sound player resource files
  */
-class ASound : public Audio::AudioStream {
+class ASound {
 private:
 	Common::List<CachedDataEntry> _dataCache;
 	uint16 _randomSeed;
@@ -282,7 +282,6 @@ protected:
 public:
 	Audio::Mixer *_mixer;
 	OPL::OPL *_opl;
-	Audio::SoundHandle _soundHandle;
 	AdlibChannel _channels[ADLIB_CHANNEL_COUNT];
 	AdlibChannel *_activeChannelPtr;
 	AdlibChannelData _channelData[11];
@@ -366,27 +365,6 @@ public:
 	 * Return the cached data block record for previously loaded sound data
 	 */
 	CachedDataEntry &getCachedData(byte *pData);
-
-	// AudioStream interface
-	/**
-	 * Main buffer read
-	 */
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-	/**
-	 * Mono sound only
-	 */
-	virtual bool isStereo() const { return false; }
-
-	/**
-	 * Data is continuously pushed, so definitive end
-	 */
-	virtual bool endOfData() const { return false; }
-
-	/**
-	 * Return sample rate
-	 */
-	virtual int getRate() const;
 
 	/**
 	 * Set the volume

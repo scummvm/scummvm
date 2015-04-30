@@ -2743,7 +2743,6 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_groupData._pData = &adlib_group_data[0];
 
 	_mixer = g_vm->_mixer;
-	_sampleRate = _mixer->getOutputRate();
 	_opl = OPL::Config::create();
 	assert(_opl);
 	_opl->init();
@@ -2767,12 +2766,10 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	}
 
 	_opl->start(new Common::Functor0Mem<void, AdlibSoundDriver>(this, &AdlibSoundDriver::onTimer), CALLBACKS_PER_SECOND);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdlibSoundDriver::~AdlibSoundDriver() {
 	DEALLOCATE(_patchData);
-	_mixer->stopHandle(_soundHandle);
 	delete _opl;
 }
 
@@ -3013,10 +3010,6 @@ void AdlibSoundDriver::setFrequency(int channel) {
 	write(0xA0 + channel, dataWord & 0xff);
 	write(0xB0 + channel, (_portContents[0xB0 + channel] & 0xE0) |
 		((dataWord >> 8) & 3) | (var2 << 2));
-}
-
-int AdlibSoundDriver::readBuffer(int16 *data, const int numSamples) {
-	return _opl->readBuffer(data, numSamples);
 }
 
 void AdlibSoundDriver::onTimer() {
