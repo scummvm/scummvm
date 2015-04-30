@@ -924,6 +924,8 @@ void Object::setFlagsAndToggles() {
 		if (_use[useIdx]._cAnimSpeed) {
 			if (_use[useIdx]._cAnimNum == 0)
 				// 0 is really a 10
+				scene.startCAnim(9, _use[useIdx]._cAnimSpeed);
+			else
 				scene.startCAnim(_use[useIdx]._cAnimNum - 1, _use[useIdx]._cAnimSpeed);
 		}
 
