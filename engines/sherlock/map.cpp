@@ -442,7 +442,6 @@ void Map::updateMap(bool flushScreen) {
  */
 void Map::walkTheStreets() {
 	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
 	bool reversePath = false;
 	Common::Array<Common::Point> tempPath;
 

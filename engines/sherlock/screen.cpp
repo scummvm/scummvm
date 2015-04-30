@@ -39,6 +39,10 @@ Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCR
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
 	setFont(1);
+
+	// Set dummy surface used for restricted scene drawing
+	_sceneSurface.format = Graphics::PixelFormat::createFormatCLUT8();
+	_sceneSurface.pitch = SHERLOCK_SCREEN_WIDTH;
 }
 
 Screen::~Screen() {
@@ -469,15 +473,31 @@ void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
 }
 
+/**
+ * Sets the active back buffer pointer to a restricted sub-area of the first back buffer
+ */
 void Screen::setDisplayBounds(const Common::Rect &r) {
-	// TODO: See if needed
-}
-void Screen::resetDisplayBounds() {
-	setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	assert(r.left == 0 && r.top == 0);
+	_sceneSurface.setPixels(_backBuffer1.getPixels());
+	_sceneSurface.w = r.width();
+	_sceneSurface.h = r.height();
+
+	_backBuffer = &_sceneSurface;
 }
 
+/**
+ * Resets the active buffer pointer to point back to the full first back buffer
+ */
+void Screen::resetDisplayBounds() {
+	_backBuffer = &_backBuffer1;
+}
+
+/**
+ * Return the size of the current display window
+ */
 Common::Rect Screen::getDisplayBounds() {
-	return Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	return (_backBuffer == &_sceneSurface) ? Common::Rect(0, 0, _sceneSurface.w, _sceneSurface.h) :
+		Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
 /**

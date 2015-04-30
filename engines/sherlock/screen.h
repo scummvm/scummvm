@@ -65,6 +65,7 @@ private:
 	uint32 _transitionSeed;
 	ImageFile *_font;
 	int _fontHeight;
+	Surface _sceneSurface;
 
 	void mergeDirtyRects();
 

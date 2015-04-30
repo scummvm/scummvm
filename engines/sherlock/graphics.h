@@ -55,8 +55,6 @@ public:
 
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void fillRect(const Common::Rect &r, byte color);
-
-	Surface getSubArea(const Common::Rect &r);
 };
 
 } // End of namespace Sherlock

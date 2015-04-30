@@ -165,14 +165,6 @@ void Surface::fillRect(const Common::Rect &r, byte color) {
 }
 
 /**
- * Return a sub-area of the surface as a new surface object. The surfaces
- * are shared in common, so changes in the sub-surface affects the original.
- */
-Surface Surface::getSubArea(const Common::Rect &r) {
-	return Surface(*this, r);
-}
-
-/**
  * Clips the given source bounds so the passed destBounds will be entirely on-screen
  */
 bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
