@@ -414,6 +414,9 @@ bool Scene::loadScene(const Common::String &filename) {
 			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & 0x40) &&
 					_bgShapes[idx]._type != INVALID)
 				_bgShapes[idx].toggleHidden();
+			if (_bgShapes[idx]._type == HIDE_SHAPE)
+				// Hiding isn't needed, since objects aren't drawn yet
+				_bgShapes[idx]._type = HIDDEN;
 		}
 	}
 
