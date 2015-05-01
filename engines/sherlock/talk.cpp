@@ -1573,9 +1573,9 @@ void Talk::doScript(const Common::String &script) {
 			// If the speaker indicates a description file, print it in yellow
 			if (_speaker != -1) {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), INV_FOREGROUND, lineStr.c_str());
+					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), INV_FOREGROUND, lineStr.c_str());
+					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, lineStr.c_str());
 					openTalkWindow = true;
 				}
 			} else {
