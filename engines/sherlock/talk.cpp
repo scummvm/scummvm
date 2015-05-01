@@ -1562,7 +1562,7 @@ void Talk::doScript(const Common::String &script) {
 
 			// Certain different conditions require a wait
 			if ((line == 4 && str[0] != SFX_COMMAND && str[0] != PAUSE && _speaker != -1) ||
-					(line == 5 && str[0] != PAUSE && _speaker != -1) ||
+					(line == 5 && str[0] != PAUSE && _speaker == -1) ||
 					endStr) {
 				wait = 1;
 			}
