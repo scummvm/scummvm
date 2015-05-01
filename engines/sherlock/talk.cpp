@@ -1403,7 +1403,7 @@ void Talk::doScript(const Common::String &script) {
 				++str;
 				for (int idx = 0; idx < (str[0] & 127); ++idx)
 					tempString += str[idx + 1];
-				str += str[0];
+				str += str[0] & 127;
 
 				// Set comparison state according to if we want to hide or unhide
 				bool state = ((byte)str[0] >= 128);
