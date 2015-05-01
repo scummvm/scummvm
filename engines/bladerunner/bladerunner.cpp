@@ -60,6 +60,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 {
 	_windowIsActive = true;
 	_gameIsRunning  = true;
+	_playerLosesControlCounter = 0;
 
 	_ambientSounds = new AmbientSounds(this);
 	_audioPlayer = new AudioPlayer(this);
@@ -335,13 +336,13 @@ void BladeRunnerEngine::loopActorSpeaking() {
 	if (!_audioSpeech->isPlaying())
 		return;
 
-	// playerLosesControl();
+	playerLosesControl();
 
 	do {
 		gameTick();
 	} while (_audioSpeech->isPlaying());
 
-	// playerGainsControl();
+	playerGainsControl();
 }
 
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
@@ -415,9 +416,34 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 	return 0;
 }
 
+bool BladeRunnerEngine::playerHasControl() {
+	return _playerLosesControlCounter == 0;
+}
+
+void BladeRunnerEngine::playerLosesControl() {
+	if (++_playerLosesControlCounter == 1) {
+		_mouse->disable();
+	}
+	debug("Player Lost Control (%d)", _playerLosesControlCounter);
+}
+
+void BladeRunnerEngine::playerGainsControl() {
+	if (_playerLosesControlCounter == 0) {
+		warning("Unbalanced call to BladeRunnerEngine::playerGainsControl");
+	}
+
+	if (_playerLosesControlCounter > 0)
+		--_playerLosesControlCounter;
+
+	debug("Player Gained Control (%d)", _playerLosesControlCounter);
+
+	if (_playerLosesControlCounter == 0) {
+		_mouse->enable();
+	}
+}
+
 void BladeRunnerEngine::ISez(const char *str) {
 	debug("\t%s", str);
 }
-
 
 } // End of namespace BladeRunner

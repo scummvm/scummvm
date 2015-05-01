@@ -56,6 +56,7 @@ class BladeRunnerEngine : public Engine {
 public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
+	int       _playerLosesControlCounter;
 
 	AmbientSounds   *_ambientSounds;
 	AudioPlayer     *_audioPlayer;
@@ -115,6 +116,10 @@ public:
 	bool isArchiveOpen(const Common::String &name);
 
 	Common::SeekableReadStream *getResourceStream(const Common::String &name);
+
+	bool playerHasControl();
+	void playerLosesControl();
+	void playerGainsControl();
 
 	void ISez(const char *str);
 };

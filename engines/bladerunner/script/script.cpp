@@ -172,8 +172,15 @@ void ScriptBase::Actor_Clue_Add_To_Database(int a0, int a1, int a2, int a3, int 
 // ScriptBase::Animation_Stop
 // ScriptBase::Animation_Skip_To_Frame
 // ScriptBase::Delay
-// ScriptBase::Player_Loses_Control
-// ScriptBase::Player_Gains_Control
+
+void ScriptBase::Player_Loses_Control() {
+		_vm->playerLosesControl();
+}
+
+void ScriptBase::Player_Gains_Control() {
+		_vm->playerGainsControl();
+}
+
 // ScriptBase::Player_Set_Combat_Mode
 // ScriptBase::Player_Query_Combat_Mode
 // ScriptBase::Player_Set_Combat_Mode_Access

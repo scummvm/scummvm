@@ -131,8 +131,8 @@ protected:
 	// Animation_Stop
 	// Animation_Skip_To_Frame
 	// Delay
-	// Player_Loses_Control
-	// Player_Gains_Control
+	void Player_Loses_Control();
+	void Player_Gains_Control();
 	// Player_Set_Combat_Mode
 	// Player_Query_Combat_Mode
 	// Player_Set_Combat_Mode_Access
