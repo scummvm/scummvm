@@ -1159,7 +1159,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case PAUSE:
 				// Pause
-				charCount = *++str;
+				charCount = (byte)*++str;
 				wait = pauseFlag = true;
 				break;
 
@@ -1598,8 +1598,8 @@ void Talk::doScript(const Common::String &script) {
 			++line;
 
 			// Certain different conditions require a wait
-			if ((line == 4 && str[0] != SFX_COMMAND && str[0] != PAUSE && _speaker != -1) ||
-					(line == 5 && str[0] != PAUSE && _speaker != -1) ||
+			if ((line == 4 && (byte)str[0] != SFX_COMMAND && (byte)str[0] != PAUSE && _speaker != -1) ||
+					(line == 5 && (byte)str[0] != PAUSE && _speaker != -1) ||
 					endStr) {
 				wait = 1;
 			}
