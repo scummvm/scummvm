@@ -1050,6 +1050,12 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 	// Set canim to REMOVE type and free memory
 	cObj.checkObject();
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if (&_canimShapes[idx] == &cObj) {
+			_canimShapes.remove_at(idx);
+			break;
+		}
+	}
 
 	if (gotoCode > 0 && !talk._talkToAbort) {
 		_goToScene = gotoCode;
@@ -1376,7 +1382,7 @@ void Scene::doBgAnim() {
 				if (_goToScene == -1)
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
-				_canimShapes.remove_at(idx);
+				_canimShapes[idx]._type = INVALID;
 				if (_ongoingCans > 0)
 					--_ongoingCans;
 			} else if (o._type == ACTIVE_BG_SHAPE) {

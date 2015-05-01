@@ -719,6 +719,8 @@ bool Object::checkEndOfSequence() {
 
 					// Free the images
 					delete _images;
+					_images = nullptr;
+					_imageFrame = nullptr;
 				}
 			} else {
 				_type = INVALID;
