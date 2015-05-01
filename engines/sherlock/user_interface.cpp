@@ -2585,32 +2585,42 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 	if (objNum >= 1000)
 		// Ignore actions done on characters
 		return;
-	Object &obj = scene._bgShapes[objNum];
 
-	if (action._cAnimNum == 0)
-		// Really a 10
-		cAnimNum = 9;
-	else
-		cAnimNum = action._cAnimNum - 1;
-	
-	if (action._cAnimNum != 99) {
-		CAnim &anim = scene._cAnim[cAnimNum];
+	if (!action._cAnimSpeed) {
+		// Invalid action, to print error message
+		_infoFlag = true;
+		clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[action._cAnimNum]);
+		_infoFlag = true;
 
-		if (action._cAnimNum != 99) {
-			if (action._cAnimSpeed & REVERSE_DIRECTION) {
-				pt = anim._teleportPos;
-				dir = anim._teleportDir;
-			} else {
-				pt = anim._goto;
-				dir = anim._gotoDir;
-			}
-		}
+		// Set how long to show the message
+		_menuCounter = 30;
 	} else {
-		pt = Common::Point(-1, -1);
-		dir = -1;
-	}
+		Object &obj = scene._bgShapes[objNum];
 
-	if (action._cAnimSpeed) {
+		if (action._cAnimNum == 0)
+			// Really a 10
+			cAnimNum = 9;
+		else
+			cAnimNum = action._cAnimNum - 1;
+	
+		if (action._cAnimNum != 99) {
+			CAnim &anim = scene._cAnim[cAnimNum];
+
+			if (action._cAnimNum != 99) {
+				if (action._cAnimSpeed & REVERSE_DIRECTION) {
+					pt = anim._teleportPos;
+					dir = anim._teleportDir;
+				} else {
+					pt = anim._goto;
+					dir = anim._gotoDir;
+				}
+			}
+		} else {
+			pt = Common::Point(-1, -1);
+			dir = -1;
+		}
+
 		// Has a value, so do action
 		// Show wait cursor whilst walking to object and doing action
 		events.setCursor(WAIT);
@@ -2686,15 +2696,6 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 				_menuCounter = 30;	
 			}
 		}
-	} else {
-		// Invalid action, to print error message
-		_infoFlag = true;
-		clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[action._cAnimNum]);
-		_infoFlag = true;
-
-		// Set how long to show the message
-		_menuCounter = 30;
 	}
 
 	// Reset cursor back to arrow
