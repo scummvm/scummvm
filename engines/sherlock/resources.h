@@ -104,13 +104,13 @@ class ImageFile : public Common::Array<ImageFrame> {
 private:
 	static SherlockEngine *_vm;
 
-	void load(Common::SeekableReadStream &stream, bool skipPalette);
+	void load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages);
 	void loadPalette(Common::SeekableReadStream &stream);
 	void decompressFrame(ImageFrame  &frame, const byte *src);
 public:
 	byte _palette[256 * 3];
 public:
-	ImageFile(const Common::String &name, bool skipPal = false);
+	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
 	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
 	~ImageFile();
 	static void setVm(SherlockEngine *vm);

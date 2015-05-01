@@ -268,18 +268,18 @@ void ImageFile::setVm(SherlockEngine *vm) {
 	_vm = vm;
 }
 
-ImageFile::ImageFile(const Common::String &name, bool skipPal) {
+ImageFile::ImageFile(const Common::String &name, bool skipPal, bool animImages) {
 	Common::SeekableReadStream *stream = _vm->_res->load(name);
 	
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
-	load(*stream, skipPal);
+	load(*stream, skipPal, animImages);
 	
 	delete stream;
 }
 
 ImageFile::ImageFile(Common::SeekableReadStream &stream, bool skipPal) {
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
-	load(stream, skipPal);
+	load(stream, skipPal, false);
 }
 
 ImageFile::~ImageFile() {
@@ -290,7 +290,7 @@ ImageFile::~ImageFile() {
 /**
  * Load the data of the sprite
  */
-void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette) {
+void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages) {
 	loadPalette(stream);
 
     while (stream.pos() < stream.size()) {
@@ -298,8 +298,16 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette) {
 		frame._width = stream.readUint16LE() + 1;
 		frame._height = stream.readUint16LE() + 1;
 		frame._paletteBase = stream.readByte();
-		frame._rleEncoded = stream.readByte() == 1;
-		frame._offset.x = stream.readByte();
+
+		if (animImages) {
+			// Animation cutscene image files use a 16-bit x offset
+			frame._offset.x = stream.readUint16LE();
+			frame._rleEncoded = (frame._offset.x & 0xff) == 1;
+		} else {
+			// Standard image files have a separate byte for the RLE flag, and an 8-bit X offset
+			frame._rleEncoded = stream.readByte() == 1;
+			frame._offset.x = stream.readByte();
+		}
 		frame._offset.y = stream.readByte();
 
 		frame._rleEncoded = !skipPalette && frame._rleEncoded;

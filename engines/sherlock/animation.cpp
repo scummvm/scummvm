@@ -94,7 +94,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
-	ImageFile images(vdaName, true);
+	ImageFile images(vdaName, true, true);
 	
 	events.wait(minDelay);
 	if (fade != 0 && fade != 255)
@@ -119,15 +119,16 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 		} else if (imageFrame != -1) {
 			// Read position from either animation stream or the sprite frame itself
 			if (imageFrame < 0) {
-				imageFrame += 32769;
+				imageFrame += 32768;
 				pt.x = stream->readUint16LE();
 				pt.y = stream->readUint16LE();
 			} else {
 				pt = images[imageFrame]._offset;
 			}
 
-			// Draw the sprite
-			screen.transBlitFrom(images[imageFrame], pt);
+			// Draw the sprite. Note that we explicitly use the raw frame below, rather than the ImageFrame,
+			// since we don't want the offsets in the image file to be used, just the explicit position we specify
+			screen.transBlitFrom(images[imageFrame]._frame, pt);
 		} else {
 			// No sprite to show for this animation frame
 			if (fade == 255) {
