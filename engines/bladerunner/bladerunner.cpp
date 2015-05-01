@@ -28,19 +28,22 @@
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/clues.h"
-#include "bladerunner/gameinfo.h"
 #include "bladerunner/gameflags.h"
+#include "bladerunner/gameinfo.h"
 #include "bladerunner/image.h"
+#include "bladerunner/mouse.h"
 #include "bladerunner/outtake.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/script/init.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/settings.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_decoder.h"
 
+#include "common/array.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -66,6 +69,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_gameInfo = nullptr;
 	_gameFlags = new GameFlags();
 	_gameVars = nullptr;
+	_mouse = new Mouse(this);
 	_scene = new Scene(this);
 	_script = new Script(this);
 	_settings = new Settings(this);
@@ -167,6 +171,13 @@ bool BladeRunnerEngine::startup() {
 	r = openArchive("SPCHSFX.TLK");
 	if (!r)
 		return false;
+
+	for (int i = 0; i != 43; ++i) {
+		Shape *shape = new Shape(this);
+		shape->readFromContainer("SHAPES.SHP", i);
+		_shapes.push_back(shape);
+	}
+	_mouse->setCursor(0);
 
 	r = _sliceAnimations->open("INDEX.DAT");
 	if (!r)
@@ -299,6 +310,10 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Draw item pickup (understood, drawing works in Replicant)
 			// TODO: Draw dialogue menu
 			// TODO: Draw mouse (understood)
+
+			Common::Point p = _eventMan->getMousePos();
+			_mouse->draw(_surface2, p.x, p.y);
+
 			// TODO: Process AUD (audio in Replicant)
 			// TODO: Footstep sound
 

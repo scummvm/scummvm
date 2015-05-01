@@ -43,9 +43,11 @@ class Chapters;
 class Clues;
 class GameInfo;
 class GameFlags;
+class Mouse;
 class Scene;
 class Script;
 class Settings;
+class Shape;
 class SliceAnimations;
 class SliceRenderer;
 class TextResource;
@@ -60,8 +62,9 @@ public:
 	AudioSpeech     *_audioSpeech;
 	Chapters        *_chapters;
 	Clues           *_clues;
-	GameInfo        *_gameInfo;
 	GameFlags       *_gameFlags;
+	GameInfo        *_gameInfo;
+	Mouse           *_mouse;
 	Scene           *_scene;
 	Script          *_script;
 	Settings        *_settings;
@@ -70,6 +73,7 @@ public:
 	int             *_gameVars;
 
 	TextResource    *_actorNames;
+	Common::Array<Shape*> _shapes;
 
 	int in_script_counter;
 

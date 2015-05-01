@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	gameinfo.o \
 	image.o \
 	matrix.o \
+	mouse.o \
 	outtake.o \
 	scene.o \
 	script/init.o \
@@ -25,6 +26,7 @@ MODULE_OBJS = \
 	script/script.o \
 	set.o \
 	settings.o \
+	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
 	text_resource.o \
