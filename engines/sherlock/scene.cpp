@@ -527,7 +527,7 @@ void Scene::checkSceneFlags(bool flag) {
 		}
 	}
 
-	// Check inventory
+	// Check inventory for items to remove based on flag changes
 	for (int idx = 0; idx < _vm->_inventory->_holdings; ++idx) {
 		InventoryItem &ii = (*_vm->_inventory)[idx];
 		if (ii._requiredFlag && !_vm->readFlags(ii._requiredFlag)) {
@@ -536,10 +536,10 @@ void Scene::checkSceneFlags(bool flag) {
 			_vm->_inventory->insert_at(_vm->_inventory->_holdings, tempItem);
 			_vm->_inventory->remove_at(idx);
 			_vm->_inventory->_holdings--;
-			break;
 		}
 	}
 
+	// Check inactive inventory items for ones to reactivate based on flag changes
 	for (uint idx = _vm->_inventory->_holdings; idx < _vm->_inventory->size(); ++idx) {
 		InventoryItem &ii = (*_vm->_inventory)[idx];
 		if (ii._requiredFlag && _vm->readFlags(ii._requiredFlag)) {
@@ -548,7 +548,6 @@ void Scene::checkSceneFlags(bool flag) {
 			_vm->_inventory->remove_at(idx);
 			_vm->_inventory->insert_at(_vm->_inventory->_holdings, tempItem);
 			_vm->_inventory->_holdings++;
-			break;
 		}
 	}
 }
