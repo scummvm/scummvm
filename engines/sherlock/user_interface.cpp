@@ -414,8 +414,8 @@ void UserInterface::handleInput() {
 					_infoFlag = true;
 					clearInfo();
 
-					if (_help != -1 && (scene._bgShapes[_bgFound]._description[0] != 32 &&
-							scene._bgShapes[_bgFound]._description[0]))
+					if (_help != -1 && !scene._bgShapes[_bgFound]._description.empty()
+							&& scene._bgShapes[_bgFound]._description[0] != ' ')
 						screen.print(Common::Point(0, INFO_LINE + 1),
 						INFO_FOREGROUND, scene._bgShapes[_bgFound]._description.c_str());
 
