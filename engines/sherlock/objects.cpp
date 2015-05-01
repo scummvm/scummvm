@@ -200,12 +200,12 @@ void Sprite::checkSprite() {
 
 			if (obj._type == NO_SHAPE) {
 				objBounds = Common::Rect(obj._position.x, obj._position.y,
-					obj._position.x + obj._noShapeSize.x, obj._position.y + obj._noShapeSize.y);
+					obj._position.x + obj._noShapeSize.x + 1, obj._position.y + obj._noShapeSize.y + 1);
 			} else {
 				int xp = obj._position.x + obj._imageFrame->_offset.x;
 				int yp = obj._position.y + obj._imageFrame->_offset.y;
 				objBounds = Common::Rect(xp, yp,
-					xp + obj._imageFrame->_frame.w, yp + obj._imageFrame->_frame.h);
+					xp + obj._imageFrame->_frame.w + 1, yp + obj._imageFrame->_frame.h + 1);
 			}
 
 			if (objBounds.contains(pt)) {
