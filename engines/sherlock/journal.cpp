@@ -346,48 +346,48 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 		} else {
 			// Control code, so move past it and any parameters
 			switch (c) {
-			case 129:		// Run canim
-			case 130:		// Assign side
-			case 131:		// Pause with control
-			case 136:		// Pause without control
-			case 157:		// Walk to canimation
+			case RUN_CANIMATION:
+			case ASSIGN_PORTRAIT_LOCATION:
+			case PAUSE:
+			case PAUSE_WITHOUT_CONTROL:
+			case WALK_TO_CANIMATION:
 				// These commands have a single parameter
 				++replyP;
 				break;
 
-			case 134:		// Change sequence
+			case ADJUST_OBJ_SEQUENCE:
 				replyP += ((byte)replyP[0] & 127) + (byte)replyP[1] + 2;
 				break;
 
-			case 135:       // Walk to co-ords
-			case 154:		// Move mouse
+			case WALK_TO_COORDS:
+			case MOVE_MOUSE:
 				replyP += 4; 
 				break;
 
-			case 139:		// Set flag
-			case 143:		// If statement 
+			case SET_FLAG:
+			case IF_STATEMENT:
 				replyP += 2;
 				break;
 
-			case 140:		// Play voice file
-			case 150:		// Play prologue
-			case 153:		// Call talk file 
+			case SFX_COMMAND:
+			case PLAY_PROLOGUE:
+			case CALL_TALK_FILE:
 				replyP += 8;
 				break;
 
-			case 141:		// Toggle object
-			case 151:		// Put item in inventory
-			case 152:		// Set object
-			case 155:		// Info line
-			case 158:		// Delete item from inventory
+			case TOGGLE_OBJECT:
+			case ADD_ITEM_TO_INVENTORY:
+			case SET_OBJECT:
+			case DISPLAY_INFO_LINE:
+			case REMOVE_ITEM_FROM_INVENTORY:
 				replyP += ((byte)*replyP & 127) + 1;
 				break;
 
-			case 149:		// Goto scene
+			case GOTO_SCENE:
 				replyP += 5;
 				break;
 
-			case 161:		// End of line
+			case CARRIAGE_RETURN:
 				journalString += "\n";
 				break;
 

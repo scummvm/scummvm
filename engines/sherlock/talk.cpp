@@ -26,45 +26,6 @@
 
 namespace Sherlock {
 
-enum {
-	SWITCH_SPEAKER				= 128,
-	RUN_CANIMATION				= 129,
-	ASSIGN_PORTRAIT_LOCATION	= 130,
-	PAUSE						= 131,
-	REMOVE_PORTRAIT				= 132,
-	CLEAR_WINDOW				= 133,
-	ADJUST_OBJ_SEQUENCE			= 134,
-	WALK_TO_COORDS				= 135,
-	PAUSE_WITHOUT_CONTROL		= 136,
-	BANISH_WINDOW				= 137,
-	SUMMON_WINDOW				= 138,
-	SET_FLAG					= 139,
-	SFX_COMMAND					= 140,
-	TOGGLE_OBJECT				= 141,
-	STEALTH_MODE_ACTIVE			= 142,
-	IF_STATEMENT				= 143,
-	ELSE_STATEMENT				= 144,
-	END_IF_STATEMENT			= 145,
-	STEALTH_MODE_DEACTIVATE		= 146,
-	TURN_HOLMES_OFF				= 147,
-	TURN_HOLMES_ON				= 148,
-	GOTO_SCENE					= 149,
-	PLAY_PROLOGUE				= 150,
-	ADD_ITEM_TO_INVENTORY		= 151,
-	SET_OBJECT					= 152,
-	CALL_TALK_FILE				= 153,
-	MOVE_MOUSE					= 154,
-	DISPLAY_INFO_LINE			= 155,
-	CLEAR_INFO_LINE				= 156,
-	WALK_TO_CANIMATION			= 157,
-	REMOVE_ITEM_FROM_INVENTORY	= 158,
-	ENABLE_END_KEY				= 159,
-	DISABLE_END_KEY				= 160,
-	COMMAND_161					= 161
-};
-
-/*----------------------------------------------------------------*/
-
 /**
  * Load the data for a single statement within a talk file
  */
@@ -1621,7 +1582,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && wait) || (openTalkWindow && (byte)str[0] >= 128 && (byte)str[0] != COMMAND_161)) {
+		if ((openTalkWindow && wait) || (openTalkWindow && (byte)str[0] >= 128 && (byte)str[0] != CARRIAGE_RETURN)) {
 			if (!ui._windowStyle) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
