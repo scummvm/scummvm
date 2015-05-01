@@ -295,16 +295,19 @@ bool Scene::loadScene(const Common::String &filename) {
 		}
 
 		// Load in cAnim list
-		Common::SeekableReadStream *canimStream = _lzwMode ?
-			decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
-			rrmStream->readStream(65 * bgHeader._numcAnimations);
+		_cAnim.clear();
+		if (bgHeader._numcAnimations) {
+			Common::SeekableReadStream *canimStream = _lzwMode ?
+				decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
+				rrmStream->readStream(65 * bgHeader._numcAnimations);
 
-		_cAnim.resize(bgHeader._numcAnimations);
-		for (uint idx = 0; idx < _cAnim.size(); ++idx)
-			_cAnim[idx].synchronize(*canimStream);
+			_cAnim.resize(bgHeader._numcAnimations);
+			for (uint idx = 0; idx < _cAnim.size(); ++idx)
+				_cAnim[idx].synchronize(*canimStream);
 
-		delete canimStream;
-		
+			delete canimStream;
+		}
+
 		// Read in the room bounding areas
 		int size = rrmStream->readUint16LE();
 		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
