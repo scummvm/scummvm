@@ -1271,7 +1271,7 @@ void Scene::doBgAnim() {
 	// Draw all static and active canimations that are NORMAL and are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
-		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_BEHIND) {
+		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD) {
 			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
 		}
 	}
