@@ -524,7 +524,7 @@ void Talk::talk(int objNum) {
 				obj._lookFacing);
 		events.setCursor(ARROW);
 
-		if (_talkToAbort)
+		if (!_talkToAbort)
 			talkTo(obj._name);
 	} else {
 		// Holmes will be speaking first
