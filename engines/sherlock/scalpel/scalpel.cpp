@@ -505,7 +505,7 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("final2.vda", "epilogue.lib");
 			_res->addToCache("final2.vdx", "epilogue.lib");
 			_animation->playPrologue("final1", 1, 3, true, 4);
-			_animation->playPrologue("final22", 1, 0, false, 4);
+			_animation->playPrologue("final2", 1, 0, false, 4);
 			break;
 
 		case 52:

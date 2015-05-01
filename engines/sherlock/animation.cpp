@@ -90,7 +90,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 	else if (_vm->_useEpilogue2)
 		stream = _vm->_res->load(vdxName, "epilog2.lib");
 	else
-		stream = _vm->_res->load(vdxName, "epilogoue.lib");
+		stream = _vm->_res->load(vdxName, "epilogue.lib");
 
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
@@ -127,7 +127,7 @@ bool Animation::playPrologue(const Common::String &filename, int minDelay, int f
 			}
 
 			// Draw the sprite
-			screen.transBlitFrom(images[imageFrame]._frame, pt);
+			screen.transBlitFrom(images[imageFrame], pt);
 		} else {
 			// No sprite to show for this animation frame
 			if (fade == 255) {
