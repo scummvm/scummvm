@@ -693,7 +693,7 @@ void ScalpelEngine::doMirror12() {
 		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT
 			|| people[AL]._sequenceNumber == WALK_UPRIGHT || people[AL]._sequenceNumber == STOP_UPRIGHT
 			|| people[AL]._sequenceNumber == WALK_DOWNLEFT || people[AL]._sequenceNumber == STOP_DOWNLEFT;
-		_screen->transBlitFrom(imageFrame, pt + Common::Point(38, imageFrame._frame.h - 25), flipped);
+		_screen->_backBuffer1.transBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
 
 		// Redraw the mirror borders to prevent the drawn image of Holmes from appearing outside of the mirror
 		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(114, 18), 
