@@ -134,7 +134,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 	// If there any canimations currently running, or a portrait is being cleared,
 	// save the filename for later executing when the canimation is done
-	if (scene._ongoingCans || people._clearingThePortrait) {
+	if (scene._canimShapes.size() > 0 || people._clearingThePortrait) {
 		// Make sure we're not in the middle of a script
 		if (!_scriptMoreFlag) {
 			_scriptName = filename;

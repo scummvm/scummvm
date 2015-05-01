@@ -111,7 +111,6 @@ public:
 	int _oldKey, _help, _oldHelp;
 	int _oldTemp, _temp;
 	bool _walkedInScene;
-	int _ongoingCans;
 	int _version;
 	bool _lzwMode;
 	int _invGraphicItems;

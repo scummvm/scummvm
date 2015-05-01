@@ -91,7 +91,6 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_changes = false;
 	_keyboardInput = 0;
 	_walkedInScene = false;
-	_ongoingCans = 0;
 	_version = 0;
 	_lzwMode = false;
 	_invGraphicItems = 0;
@@ -201,7 +200,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	bool flag;
 
 	_walkedInScene = false;
-	_ongoingCans = 0;
 
 	// Reset the list of walkable areas
 	_zones.clear();
@@ -962,8 +960,6 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 		cObj._imageFrame = &(*cObj._images)[0];
 		cObj._maxFrames = cObj._images->size();
 
-		++_ongoingCans;
-
 		int frames = 0;
 		if (playRate < 0) {
 			// Reverse direction
@@ -1317,7 +1313,7 @@ void Scene::doBgAnim() {
 		_animating = 0;
 		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	} else {
-		if (people[AL]._type != INVALID && ((_goToScene == -1 || _ongoingCans == 0))) {
+		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.size() == 0))) {
 			if (people[AL]._type == REMOVE) {
 				screen.slamRect(Common::Rect(
 					people[AL]._oldPosition.x, people[AL]._oldPosition.y,
@@ -1383,8 +1379,6 @@ void Scene::doBgAnim() {
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
 				_canimShapes[idx]._type = INVALID;
-				if (_ongoingCans > 0)
-					--_ongoingCans;
 			} else if (o._type == ACTIVE_BG_SHAPE) {
 				screen.flushImage(o._imageFrame, o._position,
 					&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);
