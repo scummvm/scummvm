@@ -993,14 +993,16 @@ void Talk::doScript(const Common::String &script) {
 
 	_saveSeqNum = 0;
 
-	const char *str = script.c_str();
+	const byte *scriptStart = (const byte *)script.c_str();
+	const byte *str = scriptStart;
+
 	if (_scriptMoreFlag) {
 		_scriptMoreFlag = 0;
-		str = script.c_str() + _scriptSaveIndex;
+		str = scriptStart + _scriptSaveIndex;
 	}
 
 	// Check if the script begins with a Stealh Mode Active command
-	if ((byte)str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
+	if (str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
 		_talkStealth = 2;
 		_speaker |= 128;
 	} else {
@@ -1008,7 +1010,7 @@ void Talk::doScript(const Common::String &script) {
 		ui.clearWindow();
 
 		// Need to switch speakers?
-		if ((byte)str[0] == SWITCH_SPEAKER) {
+		if (str[0] == SWITCH_SPEAKER) {
 			_speaker = str[1] - 1;
 			str += 2;
 			pullSequence();
@@ -1019,7 +1021,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Assign portrait location?
-		if ((byte)str[0] == ASSIGN_PORTRAIT_LOCATION) {
+		if (str[0] == ASSIGN_PORTRAIT_LOCATION) {
 			switch (str[1] & 15) {
 			case 1:
 				people._portraitSide = 20;
@@ -1041,7 +1043,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Remove portrait?
-		if ((byte)str[0] == REMOVE_PORTRAIT) {
+		if (str[0] == REMOVE_PORTRAIT) {
 			_speaker = 255;
 		} else {
 			// Nope, so set the first speaker
@@ -1053,7 +1055,7 @@ void Talk::doScript(const Common::String &script) {
 		Common::String tempString;
 		wait = 0;
 
-		byte c = (byte)str[0];
+		byte c = str[0];
 		if (!c) {
 			endStr = true;
 		} else if (c == '{') {
@@ -1066,7 +1068,7 @@ void Talk::doScript(const Common::String &script) {
 			case SWITCH_SPEAKER:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - script.c_str();
+				_scriptCurrentIndex = str - scriptStart;
 
 				if (!(_speaker & 128))
 					people.clearTalking();
@@ -1088,13 +1090,13 @@ void Talk::doScript(const Common::String &script) {
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = (str + 1) - script.c_str();
-				scene.startCAnim(((byte)str[0] - 1) & 127, ((byte)str[0] & 128) ? -1 : 1);
+				_scriptCurrentIndex = (str + 1) - scriptStart;
+				scene.startCAnim((str[0] - 1) & 127, (str[0] & 128) ? -1 : 1);
 				if (_talkToAbort)
 					return;
 
 				// Check if next character is changing side or changing portrait
-				if (charCount && ((byte)str[1] == SWITCH_SPEAKER || (byte)str[1] == ASSIGN_PORTRAIT_LOCATION))
+				if (charCount && (str[1] == SWITCH_SPEAKER || str[1] == ASSIGN_PORTRAIT_LOCATION))
 					wait = 1;
 				break;
 
@@ -1120,14 +1122,14 @@ void Talk::doScript(const Common::String &script) {
 
 			case PAUSE:
 				// Pause
-				charCount = (byte)*++str;
+				charCount = *++str;
 				wait = pauseFlag = true;
 				break;
 
 			case REMOVE_PORTRAIT:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - script.c_str();
+				_scriptCurrentIndex = str - scriptStart;
 
 				if (_speaker >= 0 && _speaker < 128)
 					people.clearTalking();
@@ -1186,10 +1188,10 @@ void Talk::doScript(const Common::String &script) {
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = str - script.c_str();
+				_scriptCurrentIndex = str - scriptStart;
 
-				people.walkToCoords(Common::Point((((byte)str[0] - 1) * 256 + (byte)str[1] - 1) * 100, 
-					(byte)str[2] * 100), str[3] - 1);
+				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100, 
+					str[2] * 100), str[3] - 1);
 				if (_talkToAbort)
 					return;
 
@@ -1200,7 +1202,7 @@ void Talk::doScript(const Common::String &script) {
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = str - script.c_str();
+				_scriptCurrentIndex = str - scriptStart;
 
 				for (int idx = 0; idx < (str[0] - 1); ++idx) {
 					scene.doBgAnim();
@@ -1216,7 +1218,7 @@ void Talk::doScript(const Common::String &script) {
 			case BANISH_WINDOW:
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - script.c_str();
+				_scriptCurrentIndex = str - scriptStart;
 
 				if (!(_speaker & 128))
 					people.clearTalking();
@@ -1246,7 +1248,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case SET_FLAG: {
 				++str;
-				int flag1 = ((byte)str[0] - 1) * 256 + (byte)str[1] - 1 - (str[1] == 1 ? 1 : 0);
+				int flag1 = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
 				int flag = (flag1 & 0x3fff) * (flag1 >= 0x4000 ? -1 : 1);
 				_vm->setFlags(flag);
 				++str;
@@ -1284,7 +1286,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case IF_STATEMENT: {
 				++str;
-				int flag = ((byte)str[0] - 1) * 256 + (byte)str[1] - 1 - (str[1] == 1 ? 1 : 0);
+				int flag = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
 				++str;
 				wait = 0;
 				
@@ -1334,14 +1336,14 @@ void Talk::doScript(const Common::String &script) {
 
 					// Run a canimation?
 					if (str[2] > 100) {
-						people._hSavedFacing = (byte)str[2];
+						people._hSavedFacing = str[2];
 						people._hSavedPos = Common::Point(160, 100);
 					}
 				}
 				str += 6;
 
 				_scriptMoreFlag = (scene._goToScene == 100) ? 2 : 1;
-				_scriptSaveIndex = str - script.c_str();
+				_scriptSaveIndex = str - scriptStart;
 				endStr = true;
 				wait = 0;
 				break;
@@ -1369,7 +1371,7 @@ void Talk::doScript(const Common::String &script) {
 					tempString += str[idx + 1];
 
 				// Set comparison state according to if we want to hide or unhide
-				bool state = ((byte)str[0] >= 128);
+				bool state = (str[0] >= 128);
 				str += str[0] & 127;
 
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
@@ -1389,7 +1391,7 @@ void Talk::doScript(const Common::String &script) {
 					tempString += str[idx];
 				str += 8;
 
-				_scriptCurrentIndex = str - script.c_str();
+				_scriptCurrentIndex = str - scriptStart;
 
 				// Save the current script position and new talk file
 				if (_scriptStack.size() < 9) {
@@ -1418,8 +1420,8 @@ void Talk::doScript(const Common::String &script) {
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = str - script.c_str();
-				events.moveMouse(Common::Point(((byte)str[0] - 1) * 256 + (byte)str[1] - 1, str[2]));
+				_scriptCurrentIndex = str - scriptStart;
+				events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
 				if (_talkToAbort)
 					return;
 				str += 3;
@@ -1446,7 +1448,7 @@ void Talk::doScript(const Common::String &script) {
 
 				// Save the current point in the script, since it might be intterupted by
 				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = (str + 1) - script.c_str();
+				_scriptCurrentIndex = (str + 1) - scriptStart;
 
 				people.walkToCoords(anim._goto, anim._gotoDir);
 				if (_talkToAbort)
@@ -1509,10 +1511,10 @@ void Talk::doScript(const Common::String &script) {
 				width += screen.charWidth(str[idx]);
 				++idx;
 				++charCount;
-			} while (width < 298 && str[idx] && str[idx] != '{' && (byte)str[idx] < 128);
+			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < 128);
 
 			if (str[idx] || width >= 298) {
-				if ((byte)str[idx] < 128 && str[idx] != '{') {
+				if (str[idx] < 128 && str[idx] != '{') {
 					--idx;
 					--charCount;
 				}
@@ -1529,7 +1531,7 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			// Print the line
-			Common::String lineStr(str, str + idx);
+			Common::String lineStr((const char *)str, (const char *)str + idx);
 
 			// If the speaker indicates a description file, print it in yellow
 			if (_speaker != -1) {
@@ -1552,20 +1554,20 @@ void Talk::doScript(const Common::String &script) {
 			str += idx;
 
 			// If line wrap occurred, then move to after the separating space between the words
-			if ((byte)str[0] < 128 && str[0] != '{')
+			if (str[0] < 128 && str[0] != '{')
 				++str;
 
 			yp += 9;
 			++line;
 
 			// Certain different conditions require a wait
-			if ((line == 4 && (byte)str[0] != SFX_COMMAND && (byte)str[0] != PAUSE && _speaker != -1) ||
-					(line == 5 && (byte)str[0] != PAUSE && _speaker != -1) ||
+			if ((line == 4 && str[0] != SFX_COMMAND && str[0] != PAUSE && _speaker != -1) ||
+					(line == 5 && str[0] != PAUSE && _speaker != -1) ||
 					endStr) {
 				wait = 1;
 			}
 
-			switch ((byte)str[0]) {
+			switch (str[0]) {
 			case SWITCH_SPEAKER:
 			case ASSIGN_PORTRAIT_LOCATION:
 			case BANISH_WINDOW:
@@ -1582,7 +1584,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && wait) || (openTalkWindow && (byte)str[0] >= 128 && (byte)str[0] != CARRIAGE_RETURN)) {
+		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= 128 && str[0] != CARRIAGE_RETURN)) {
 			if (!ui._windowStyle) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
@@ -1596,7 +1598,7 @@ void Talk::doScript(const Common::String &script) {
 		if (wait) {
 			// Save the current point in the script, since it might be intterupted by
 			// doing bg anims in the next call, so we need to know where to return to
-			_scriptCurrentIndex = str - script.c_str();
+			_scriptCurrentIndex = str - scriptStart;
 
 			// Handling pausing
 			if (!pauseFlag && charCount < 160)
@@ -1608,12 +1610,12 @@ void Talk::doScript(const Common::String &script) {
 
 			// If a key was pressed to finish the window, see if further voice files should be skipped
 			if (wait >= 0 && wait < 254) {
-				if ((byte)str[0] == SFX_COMMAND)
+				if (str[0] == SFX_COMMAND)
 					str += 9;
 			}
 
 			// Clear the window unless the wait was due to a PAUSE command
-			if (!pauseFlag && wait != -1 && (byte)str[0] != SFX_COMMAND) {
+			if (!pauseFlag && wait != -1 && str[0] != SFX_COMMAND) {
 				if (!_talkStealth)
 					ui.clearWindow();
 				yp = CONTROLS_Y + 12;

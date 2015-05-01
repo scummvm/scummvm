@@ -237,10 +237,10 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	bool ctrlSpace = false;
 	bool commentFlag = false;
 	bool commentJustPrinted = false;
-	const char *replyP = statement._reply.c_str();
+	const byte *replyP = (const byte *)statement._reply.c_str();
 
 	while (*replyP) {
-		byte c = (byte)*replyP++;
+		byte c = *replyP++;
 
 		// Is it a control character?
 		if (c < 128) {
@@ -286,10 +286,10 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 						else
 							journalString += NAMES[talk._talkTo];
 
-						const char *strP = replyP + 1;
+						const byte *strP = replyP + 1;
 						char v;
 						do {
-							v = (byte)*strP++;
+							v = *strP++;
 						} while (v && v < 128 && v != '.' && v != '!' && v != '?');
 
 						if (v == '?')
@@ -306,7 +306,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += c;
 				do {
 					journalString += *replyP++;
-				} while (*replyP && (byte)*replyP < 128 && *replyP != '{' && *replyP != '}');
+				} while (*replyP && *replyP < 128 && *replyP != '{' && *replyP != '}');
 
 				commentJustPrinted = false;
 			}
@@ -333,10 +333,10 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			else
 				journalString += NAMES[c];
 
-			const char *strP = replyP;
+			const byte *strP = replyP;
 			byte v;
 			do {
-				v = (byte)*strP++;
+				v = *strP++;
 			} while (v && v < 128 && v != '.' && v != '!' && v != '?');
 
 			if (v == '?')
@@ -356,7 +356,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 				break;
 
 			case ADJUST_OBJ_SEQUENCE:
-				replyP += ((byte)replyP[0] & 127) + (byte)replyP[1] + 2;
+				replyP += (replyP[0] & 127) + replyP[1] + 2;
 				break;
 
 			case WALK_TO_COORDS:
@@ -380,7 +380,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			case SET_OBJECT:
 			case DISPLAY_INFO_LINE:
 			case REMOVE_ITEM_FROM_INVENTORY:
-				replyP += ((byte)*replyP & 127) + 1;
+				replyP += (*replyP & 127) + 1;
 				break;
 
 			case GOTO_SCENE:
