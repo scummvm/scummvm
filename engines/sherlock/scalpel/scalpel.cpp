@@ -246,6 +246,9 @@ void ScalpelEngine::showOpening() {
 	_sound->stopMusic();
 }
 
+/**
+ * Show the starting city cutscene which shows the game title
+ */
 bool ScalpelEngine::showCityCutscene() {
 	byte palette[PALETTE_SIZE];
 	
@@ -318,6 +321,9 @@ bool ScalpelEngine::showCityCutscene() {
 	return finished;
 }
 
+/**
+ * Show the back alley where the initial murder takes place
+ */
 bool ScalpelEngine::showAlleyCutscene() {
 	byte palette[PALETTE_SIZE];
 	_sound->playMusic("prolog2.mus");
@@ -355,6 +361,9 @@ bool ScalpelEngine::showAlleyCutscene() {
 	return finished;
 }
 
+/**
+ * Show the Baker Street outside cutscene
+ */
 bool ScalpelEngine::showStreetCutscene() {
 	_titleOverride = "TITLE.LIB";
 	_soundOverride = "TITLE.SND";
@@ -408,6 +417,9 @@ bool ScalpelEngine::scrollCredits() {
 	return true;
 }
 
+/**
+ * Show Holmes and Watson at the breakfast table, lestrade's note, and then the scrolling credits
+ */
 bool ScalpelEngine::showOfficeCutscene() {
 	_sound->playMusic("PROLOG4.MUS");
 	_titleOverride = "TITLE2.LIB";
