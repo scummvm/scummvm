@@ -38,19 +38,20 @@ class Sound {
 private:
 	SherlockEngine *_vm;
 public:
+	bool _digitized;
+	bool _music;
+	int _voices;
 	bool _soundOn;
 	bool _musicOn;
 	bool _speechOn;
-	int _voices;
 	bool _playingEpilogue;
-	bool _music;
-	bool _digitized;
 	bool _diskSoundPlaying;
 	byte *_soundIsOn;
 	byte *_digiBuf;
 public:
 	Sound(SherlockEngine *vm);
 
+	void syncSoundSettings();
 	void loadSound(const Common::String &name, int priority);
 	bool playSound(const Common::String &name, WaitType waitType = WAIT_RETURN_IMMEDIATELY);
 	void cacheSound(const Common::String &name, int index);

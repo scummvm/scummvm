@@ -94,6 +94,9 @@ void SherlockEngine::initialize() {
 	_sound = new Sound(this);
 	_talk = new Talk(this);
 	_ui = new UserInterface(this);
+
+	// Load game settings
+	loadConfig();
 }
 
 /**
@@ -203,10 +206,47 @@ void SherlockEngine::setFlags(int flagNum) {
 }
 
 /**
+ * Load game configuration esttings
+ */
+void SherlockEngine::loadConfig() {
+	// Load sound settings
+	syncSoundSettings();
+
+	// Load other settings
+	if (ConfMan.hasKey("font"))
+		_screen->setFont(ConfMan.getInt("font"));
+	if (ConfMan.hasKey("help_style"))
+		_ui->_helpStyle = ConfMan.getInt("help_style");
+	if (ConfMan.hasKey("window_style"))
+		_ui->_windowStyle = ConfMan.getInt("window_style");
+	if (ConfMan.hasKey("portraits_on"))
+		_people->_portraitsOn = ConfMan.getBool("portraits_on");
+}
+
+/**
  * Saves game configuration information
  */
 void SherlockEngine::saveConfig() {
-	// TODO
+	ConfMan.setBool("mute", _sound->_digitized);
+	ConfMan.setBool("music_mute", _sound->_music);
+	ConfMan.setBool("speech_mute", _sound->_voices);
+
+	ConfMan.setInt("font", _screen->fontNumber());
+	ConfMan.setInt("help_style", _ui->_helpStyle);
+	ConfMan.setInt("window_style", _ui->_windowStyle);
+	ConfMan.setBool("portraits_on", _people->_portraitsOn);
+
+	ConfMan.flushToDisk();
+}
+
+/**
+ * Called by the engine when sound settings are updated
+ */
+void SherlockEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	// Load sound-related settings
+	_sound->syncSoundSettings();
 }
 
 /**

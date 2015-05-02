@@ -85,7 +85,6 @@ private:
 	int _bgFound;
 	int _oldBgFound;
 	int _keycode;
-	int _helpStyle;
 	int _lookHelp;
 	int _help, _oldHelp;
 	int _key, _oldKey;
@@ -137,6 +136,7 @@ public:
 	int _invLookFlag;
 	int _temp1;
 	int _windowStyle;
+	int _helpStyle;
 public:
 	UserInterface(SherlockEngine *vm);
 	~UserInterface();

@@ -74,6 +74,8 @@ private:
 	void sceneLoop();
 
 	void handleInput();
+
+	void loadConfig();
 protected:
 	virtual void initialize();
 
@@ -117,6 +119,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual void syncSoundSettings();
 
 	int getGameType() const;
 	uint32 getGameID() const;

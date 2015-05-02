@@ -21,20 +21,34 @@
  */
 
 #include "sherlock/sound.h"
+#include "common/config-manager.h"
 
 namespace Sherlock {
 
 Sound::Sound(SherlockEngine *vm): _vm(vm) {
+	_digitized = false;
+	_music = false;
+	_voices = 0;
 	_soundOn = false;
 	_musicOn = false;
 	_speechOn = false;
-	_voices = 0;
 	_playingEpilogue = false;
-	_music = false;
-	_digitized = false;
 	_diskSoundPlaying = false;
 	_soundIsOn = nullptr;
-	_digiBuf = nullptr;
+}
+
+/**
+ * Saves sound-related settings
+ */
+void Sound::syncSoundSettings() {
+	_digitized = !ConfMan.getBool("mute");
+	_music = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
+	_voices = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute") ? 1 : 0;
+
+	// TODO: For now, keep sound completely mute until sound is implemented
+	_digitized = false;
+	_music = false;
+	_voices = 0;
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {
