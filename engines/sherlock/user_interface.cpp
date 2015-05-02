@@ -86,7 +86,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_bgFound = 0;
 	_oldBgFound = -1;
 	_keycode = Common::KEYCODE_INVALID;
-	_helpStyle = 0;
+	_helpStyle = false;
 	_menuCounter = 0;
 	_menuMode = STD_MODE;
 	_help = _oldHelp = 0;

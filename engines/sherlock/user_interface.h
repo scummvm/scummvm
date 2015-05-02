@@ -123,7 +123,7 @@ public:
 	int _invLookFlag;
 	int _temp1;
 	int _windowStyle;
-	int _helpStyle;
+	bool _helpStyle;
 public:
 	UserInterface(SherlockEngine *vm);
 	~UserInterface();

@@ -298,7 +298,7 @@ void Settings::show(SherlockEngine *vm) {
 
 		if ((found == 4 && events._released) || ui._key == 'A') {
 			// Help button style
-			ui._helpStyle ^= 1;
+			ui._helpStyle = !ui._helpStyle;
 			updateConfig = true;
 			settings.drawInteface(true);
 		}
