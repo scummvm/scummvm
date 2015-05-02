@@ -64,7 +64,7 @@ static const int NO_FRAMES = FRAMES_END;
 Animation::Animation(SherlockEngine *vm): _vm(vm) {
 }
 
-bool Animation::playPrologue(const Common::String &filename, int minDelay, int fade, 
+bool Animation::play(const Common::String &filename, int minDelay, int fade, 
 		bool setPalette, int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;

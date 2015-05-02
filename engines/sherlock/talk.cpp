@@ -1353,7 +1353,7 @@ void Talk::doScript(const Common::String &script) {
 				for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 					tempString += str[idx];
 
-				anim.playPrologue(tempString, 1, 3, true, 4);
+				anim.play(tempString, 1, 3, true, 4);
 				break;
 
 			case ADD_ITEM_TO_INVENTORY:

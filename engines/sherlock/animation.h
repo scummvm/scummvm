@@ -39,7 +39,7 @@ public:
 public:
 	Animation(SherlockEngine *vm);
 
-	bool playPrologue(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
+	bool play(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
 };
 
 } // End of namespace Sherlock
