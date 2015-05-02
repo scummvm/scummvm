@@ -1425,6 +1425,37 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 
 // ===========================================================================
 // Leisure Suit Larry 5
+// In Miami the player can call the green card telephone number and get
+//  green card including limo at the same time in the English 1.000 PC release.
+// This results later in a broken game in case the player doesn't read
+//  the second telephone number for the actual limousine service, because
+//  in that case it's impossible for the player to get back to the airport.
+//
+// We disable the code, that is responsible to make the limo arrive.
+//
+// This bug was fixed in the European (dual language) versions of the game.
+//
+// Applies to at least: English PC floppy (1.000)
+// Responsible method: sPhone::changeState(40)
+static const uint16 larry5SignatureGreenCardLimoBug[] = {
+	0x7a,                               // push2
+	SIG_MAGICDWORD,
+	0x39, 0x07,                         // pushi 07
+	0x39, 0x0c,                         // pushi 0Ch
+	0x45, 0x0a, 0x04,                   // call export 10 of script 0
+	0x78,                               // push1
+	0x39, 0x26,                         // pushi 26h (limo arrived flag)
+	0x45, 0x07, 0x02,                   // call export 7 of script 0 (sets flag)
+	SIG_END
+};
+
+static const uint16 larry5PatchGreenCardLimoBug[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x34, PATCH_UINT16(0),              // ldi 0000 (dummy)
+	0x34, PATCH_UINT16(0),              // ldi 0000 (dummy)
+	PATCH_END
+};
+
 // In one of the conversations near the end (to be exact - room 380 and the text
 //  about using champagne on Reverse Biaz - only used when you actually did that
 //  in the game), the German text is too large, causing the textbox to get too large.
@@ -1448,6 +1479,7 @@ static const uint16 larry5PatchGermanEndingPattiTalker[] = {
 
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry larry5Signatures[] = {
+	{  true,   280, "English-only: fix green card limo bug",       1, larry5SignatureGreenCardLimoBug,        larry5PatchGreenCardLimoBug },
 	{  true,   380, "German-only: Enlarge Patti Textbox",          1, larry5SignatureGermanEndingPattiTalker, larry5PatchGermanEndingPattiTalker },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
