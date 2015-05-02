@@ -1127,9 +1127,7 @@ void Scene::doBgAnim() {
 
 	if (sound._diskSoundPlaying && !*sound._soundIsOn) {
 		// Loaded sound just finished playing
-		// TODO: This is horrible.. refactor into the Sound class
-		delete[] sound._digiBuf;
-		sound._diskSoundPlaying = false;
+		sound.freeDigiSound();
 	}
 
 	if (_restoreFlag) {

@@ -99,4 +99,10 @@ void Sound::waitTimerRoland(uint time) {
 	// TODO
 }
 
+void Sound::freeDigiSound() {
+	delete[] _digiBuf;
+	_digiBuf = nullptr;
+	_diskSoundPlaying = false;
+}
+
 } // End of namespace Sherlock

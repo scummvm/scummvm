@@ -67,6 +67,7 @@ public:
 	void stopMusic();
 	void stopSndFuncPtr(int v1, int v2);
 	void waitTimerRoland(uint time);
+	void freeDigiSound();
 };
 
 } // End of namespace Sherlock

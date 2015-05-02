@@ -2019,7 +2019,6 @@ void UserInterface::journalControl() {
 	screen._backBuffer1.blitFrom(screen._backBuffer2);
 	scene.updateBackground();
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	// TODO
 }
 
 /**
