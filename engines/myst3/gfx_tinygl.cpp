@@ -88,14 +88,50 @@ void TinyGLRenderer::clear() {
 	tglColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void TinyGLRenderer::setupCameraOrtho2D(bool noScaling) {
-	tglViewport(0, 0, kOriginalWidth, kOriginalHeight);
-	tglMatrixMode(TGL_PROJECTION);
-	tglLoadIdentity();
-	tglOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
+	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
 
-	tglMatrixMode(TGL_MODELVIEW);
-	tglLoadIdentity();
+	if (!window) {
+		// No window found ...
+		if (scaled) {
+			// ... in scaled mode draw in the original game screen area
+			Common::Rect vp = viewport();
+			tglViewport(vp.left, vp.top, vp.width(), vp.height());
+			//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+		} else {
+			// ... otherwise, draw on the whole screen
+			tglViewport(0, 0, _system->getWidth(), _system->getHeight());
+		}
+	} else {
+		// Found a window, draw inside it
+		Common::Rect vp = window->getPosition();
+		tglViewport(vp.left, vp.top, vp.width(), vp.height());
+		//tglViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+	}
+
+	if (!is3D) {
+		tglMatrixMode(TGL_PROJECTION);
+		tglLoadIdentity();
+
+		if (!window) {
+			if (scaled) {
+				tglOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+			} else {
+				tglOrtho(0.0, _system->getWidth(), _system->getHeight(), 0.0, -1.0, 1.0);
+			}
+		} else {
+			if (scaled) {
+				Common::Rect originalRect = window->getOriginalPosition();
+				tglOrtho(0.0, originalRect.width(), originalRect.height(), 0.0, -1.0, 1.0);
+			} else {
+				Common::Rect vp = window->getPosition();
+				tglOrtho(0.0, vp.width(), vp.height(), 0.0, -1.0, 1.0);
+			}
+		}
+
+		tglMatrixMode(TGL_MODELVIEW);
+		tglLoadIdentity();
+	}
 }
 
 void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
@@ -106,11 +142,6 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 
 	tglMatrixMode(TGL_MODELVIEW);
 	tglLoadMatrixf(_modelViewMatrix.getData());
-}
-
-void TinyGLRenderer::setViewport(const Common::Rect &vp) {
-	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
-	tglViewport(vp.left, vp.top, vp.width(), vp.height());
 }
 
 void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -153,10 +184,14 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 		transparency = 1.0;
 	}
 
+	// HACK: tglBlit is not affected by the viewport, so we offset the draw coordinates here
+	int viewport[4];
+	tglGetIntegerv(TGL_VIEWPORT, viewport);
+
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	Graphics::BlitTransform transform(sLeft, sTop);
+	Graphics::BlitTransform transform(sLeft + viewport[0], sTop + viewport[1]);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
 	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);

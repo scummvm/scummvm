@@ -51,7 +51,7 @@ public:
 	bool isVideoLoaded() {return _bink.isVideoLoaded(); }
 	void setPosU(int32 v) { _posU = v; }
 	void setPosV(int32 v) { _posV = v; }
-	void setForce2d(bool b) { _force2d = b; }
+	void setForce2d(bool b);
 	void setForceOpaque(bool b) { _forceOpaque = b; }
 	void setStartFrame(int32 v);
 	void setEndFrame(int32 v);

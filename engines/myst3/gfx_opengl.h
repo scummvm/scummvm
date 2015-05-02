@@ -39,9 +39,8 @@ public:
 	virtual void init() override;
 
 	virtual void clear() override;
-	virtual void setupCameraOrtho2D(bool noScaling) override;
+	virtual void selectTargetWindow(Window *window, bool is3D, bool scaled) override;
 	virtual void setupCameraPerspective(float pitch, float heading, float fov) override;
-	virtual void setViewport(const Common::Rect &vp) override;
 
 	Texture *createTexture(const Graphics::Surface *surface) override;
 	void freeTexture(Texture *texture) override;

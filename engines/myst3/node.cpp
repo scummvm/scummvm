@@ -207,7 +207,7 @@ void Node::drawOverlay() {
 	if (hasSubtitlesToDraw()) {
 		uint subId = _vm->_state->getSpotSubtitle();
 		_subtitles->setFrame(15 * subId + 1);
-		_subtitles->drawOverlay();
+		_vm->_gfx->renderWindowOverlay(_subtitles);
 	}
 }
 

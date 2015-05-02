@@ -56,7 +56,6 @@ void NodeFrame::draw() {
 		screenRect = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
 	} else {
 		screenRect = Common::Rect(Renderer::kOriginalWidth, Renderer::kFrameHeight);
-		screenRect.translate(0, Renderer::kTopBorderHeight);
 	}
 
 	// Used fragment of texture

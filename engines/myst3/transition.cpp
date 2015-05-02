@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/config-manager.h"
 
 #include "engines/myst3/transition.h"
@@ -97,9 +98,12 @@ void Transition::draw(TransitionType type) {
 	int startTick = _vm->_state->getTickCount();
 	uint endTick = startTick + durationTicks;
 
+	// Draw on the full screen
+	_vm->_gfx->selectTargetWindow(nullptr, false, false);
+
 	// Draw each step until completion
 	int completion = 0;
-	while (_vm->_state->getTickCount() <= endTick || completion < 100) {
+	while ((_vm->_state->getTickCount() <= endTick || completion < 100) && !_vm->shouldQuit()) {
 		_frameLimiter->startFrame();
 
 		completion = CLIP<int>(100 * (_vm->_state->getTickCount() - startTick) / durationTicks, 0, 100);
@@ -110,6 +114,12 @@ void Transition::draw(TransitionType type) {
 		_frameLimiter->delayBeforeSwap();
 		g_system->updateScreen();
 		_vm->_state->updateFrameCounters();
+
+		Common::Event event;
+		while (_vm->getEventManager()->pollEvent(event)) {
+			// Ignore all the events happening during transitions, so that the view does not move
+			// between the initial transition screen shoot and the first frame drawn after the transition.
+		}
 	}
 
 	_vm->_gfx->freeTexture(sourceTexture);

@@ -26,6 +26,7 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "graphics/scaler.h"
 
@@ -169,11 +170,27 @@ static const Myst3GameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
+#define GAMEOPTION_WIDESCREEN_MOD GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_WIDESCREEN_MOD,
+		{
+			_s("Widescreen mod"),
+			_s("Enable enable widescreen rendering in fullscreen mode."),
+			"widescreen_mod",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class Myst3MetaEngine : public AdvancedMetaEngine {
 public:
-	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games) {
+	Myst3MetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(Myst3GameDescription), myst3Games, optionsList) {
 		_singleid = "myst3";
-		_guioptions = GUIO4(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES);
+		_guioptions = GUIO5(GUIO_NOMIDI, GUIO_NOSFX, GUIO_NOSPEECH, GUIO_NOSUBTITLES, GAMEOPTION_WIDESCREEN_MOD);
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

@@ -34,6 +34,7 @@
 namespace Myst3 {
 
 Scene::Scene(Myst3Engine *vm) :
+		Window(),
 		_vm(vm),
 		_mouseSpeed(50) {
 	updateMouseSpeed();
@@ -97,13 +98,13 @@ void Scene::updateCamera(Common::Point &mouse) {
 
 void Scene::drawSunspotFlare(const SunSpot &s) {
 	Common::Rect frame = Common::Rect(Renderer::kOriginalWidth, Renderer::kFrameHeight);
-	frame.translate(0, Renderer::kTopBorderHeight);
 
 	uint8 a = (uint8)(s.intensity * s.radius);
 	uint8 r, g, b;
 	Graphics::colorToRGB< Graphics::ColorMasks<888> >(s.color, r, g, b);
 	uint32 color = Graphics::ARGBToColor< Graphics::ColorMasks<8888> >(a, r, g, b);
 
+	_vm->_gfx->selectTargetWindow(this, false, false);
 	_vm->_gfx->drawRect2D(frame, color);
 }
 
@@ -134,29 +135,62 @@ void Scene::updateMouseSpeed() {
 	_mouseSpeed = ConfMan.getInt("mouse_speed");
 }
 
-Common::Rect Scene::frameViewport() const {
+Common::Rect Scene::getPosition() const {
 	Common::Rect screen = _vm->_gfx->viewport();
 
-	Common::Rect frame = Common::Rect(screen.width(), screen.height() * Renderer::kFrameHeight / Renderer::kOriginalHeight);
-	frame.translate(screen.left, screen.top + screen.height() * Renderer::kTopBorderHeight / Renderer::kOriginalHeight);
+	Common::Rect frame;
+	if (_vm->isWideScreenModEnabled()) {
+		int32 viewportWidth = Renderer::kOriginalWidth;
+
+		int32 viewportHeight;
+		if (_vm->_state->getViewType() == kMenu) {
+			viewportHeight = Renderer::kOriginalHeight;
+		} else {
+			viewportHeight = Renderer::kFrameHeight;
+		}
+
+		// Aspect ratio correction
+		frame = Common::Rect(MIN<int32>(screen.width(), screen.height() * viewportWidth / viewportHeight),
+		                     MIN<int32>(screen.height(), screen.width() * viewportHeight / viewportWidth));
+
+		// Pillarboxing
+		uint left = (screen.width() - frame.width()) / 2;
+
+		uint top;
+		if (_vm->_state->getViewType() == kMenu) {
+			top = (screen.height() - frame.height()) / 2;
+		} else {
+			top = (screen.height() - frame.height()) * Renderer::kTopBorderHeight / (Renderer::kTopBorderHeight + Renderer::kBottomBorderHeight);
+		}
+
+		frame.translate(left, top);
+	} else {
+		if (_vm->_state->getViewType() != kMenu) {
+			frame = Common::Rect(screen.width(), screen.height() * Renderer::kFrameHeight / Renderer::kOriginalHeight);
+			frame.translate(screen.left, screen.top + screen.height() * Renderer::kTopBorderHeight / Renderer::kOriginalHeight);
+		} else {
+			frame = screen;
+		}
+	}
 
 	return frame;
 }
 
-Common::Point Scene::frameCenter() const {
-	Common::Rect frame = frameViewport();
+Common::Rect Scene::getOriginalPosition() const {
+	Common::Rect originalPosition;
 
-	return Common::Point((frame.left + frame.right) / 2, (frame.top + frame.bottom) / 2);
-}
+	if (_vm->_state->getViewType() != kMenu) {
+		originalPosition = Common::Rect(Renderer::kOriginalWidth, Renderer::kFrameHeight);
+		originalPosition.translate(0, Renderer::kTopBorderHeight);
+	} else {
+		originalPosition = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
+	}
 
-Common::Point Scene::screenPosToWindowPos(const Common::Point &screen) const {
-	Common::Rect frame = frameViewport();
-
-	return Common::Point(screen.x - frame.left, screen.y - frame.top);
+	return originalPosition;
 }
 
 void Scene::screenPosToDirection(const Common::Point screen, float &pitch, float &heading) const {
-	Common::Rect frame = frameViewport();
+	Common::Rect frame = getPosition();
 
 	// Screen coords to window coords
 	Common::Point pos = screenPosToWindowPos(screen);

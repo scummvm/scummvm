@@ -87,24 +87,46 @@ void OpenGLRenderer::clear() {
 	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
-void OpenGLRenderer::setupCameraOrtho2D(bool noScaling) {
-	if (noScaling) {
-		glViewport(0, 0, _system->getWidth(), _system->getHeight());
+void OpenGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
+	if (!window) {
+		// No window found ...
+		if (scaled) {
+			// ... in scaled mode draw in the original game screen area
+			Common::Rect vp = viewport();
+			glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+		} else {
+			// ... otherwise, draw on the whole screen
+			glViewport(0, 0, _system->getWidth(), _system->getHeight());
+		}
 	} else {
-		glViewport(_screenViewport.left, _screenViewport.top, _screenViewport.width(), _screenViewport.height());
+		// Found a window, draw inside it
+		Common::Rect vp = window->getPosition();
+		glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 	}
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	if (!is3D) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 
-	if (noScaling) {
-		glOrtho(0.0, _system->getWidth(), _system->getHeight(), 0.0, -1.0, 1.0);
-	} else {
-		glOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+		if (!window) {
+			if (scaled) {
+				glOrtho(0.0, kOriginalWidth, kOriginalHeight, 0.0, -1.0, 1.0);
+			} else {
+				glOrtho(0.0, _system->getWidth(), _system->getHeight(), 0.0, -1.0, 1.0);
+			}
+		} else {
+			if (scaled) {
+				Common::Rect originalRect = window->getOriginalPosition();
+				glOrtho(0.0, originalRect.width(), originalRect.height(), 0.0, -1.0, 1.0);
+			} else {
+				Common::Rect vp = window->getPosition();
+				glOrtho(0.0, vp.width(), vp.height(), 0.0, -1.0, 1.0);
+			}
+		}
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 }
 
 void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fov) {
@@ -115,10 +137,6 @@ void OpenGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(_modelViewMatrix.getData());
-}
-
-void OpenGLRenderer::setViewport(const Common::Rect &vp) {
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 }
 
 void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {

@@ -38,8 +38,10 @@ const Inventory::ItemData Inventory::_availableItems[8] = {
 };
 
 Inventory::Inventory(Myst3Engine *vm) :
+		Window(),
 		_vm(vm),
 		_texture(0) {
+	_scaled = !_vm->isWideScreenModEnabled();
 	initializeTexture();
 }
 
@@ -56,8 +58,19 @@ void Inventory::initializeTexture() {
 	delete s;
 }
 
+bool Inventory::isMouseInside() {
+	Common::Point mouse = _vm->_cursor->getPosition(false);
+	return getPosition().contains(mouse);
+}
+
 void Inventory::draw() {
-	Common::Point mouse = _vm->_cursor->getPosition();
+	if (_vm->isWideScreenModEnabled()) {
+		// Draw a black background to cover the main game frame
+		Common::Rect screen = _vm->_gfx->viewport();
+		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight), 0xFF000000);
+	}
+
+	uint16 hoveredItemVar = hoveredItem();
 
 	for (ItemList::const_iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		int32 state = _vm->_state->getVar(it->var);
@@ -72,7 +85,7 @@ void Inventory::draw() {
 				item.textureHeight);
 		textureRect.translate(item.textureX, 0);
 
-		bool itemHighlighted = it->rect.contains(mouse) || state == 2;
+		bool itemHighlighted = it->var == hoveredItemVar || state == 2;
 
 		if (itemHighlighted)
 			textureRect.translate(0, _texture->height / 2);
@@ -157,16 +170,20 @@ void Inventory::reflow() {
 	if (itemCount >= 2)
 		totalWidth += 9 * (itemCount - 1);
 
-	uint16 left = (Renderer::kOriginalWidth - totalWidth) / 2;
+	uint16 left;
+	if (_vm->isWideScreenModEnabled()) {
+		Common::Rect screen = _vm->_gfx->viewport();
+		left = (screen.width() - totalWidth) / 2;
+	} else {
+		left = (Renderer::kOriginalWidth - totalWidth) / 2;
+	}
 
 	for (ItemList::iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		const ItemData &item = getData(it->var);
 
-		uint16 top = Renderer::kTopBorderHeight + Renderer::kFrameHeight
-				+ (Renderer::kBottomBorderHeight - item.textureHeight) / 2;
+		uint16 top = (Renderer::kBottomBorderHeight - item.textureHeight) / 2;
 
-		it->rect = Common::Rect(item.textureWidth,
-				item.textureHeight);
+		it->rect = Common::Rect(item.textureWidth, item.textureHeight);
 		it->rect.translate(left, top);
 
 		left += item.textureWidth;
@@ -177,7 +194,8 @@ void Inventory::reflow() {
 }
 
 uint16 Inventory::hoveredItem() {
-	Common::Point mouse = _vm->_cursor->getPosition();
+	Common::Point mouse = _vm->_cursor->getPosition(false);
+	mouse = scalePoint(mouse);
 
 	for (ItemList::const_iterator it = _inventory.begin(); it != _inventory.end(); it++) {
 		if(it->rect.contains(mouse))
@@ -270,10 +288,44 @@ void Inventory::updateState() {
 	_vm->_state->updateInventory(items);
 }
 
+Common::Rect Inventory::getPosition() const {
+	Common::Rect screen = _vm->_gfx->viewport();
+
+	Common::Rect frame;
+	if (_vm->isWideScreenModEnabled()) {
+		frame = Common::Rect(screen.width(), Renderer::kBottomBorderHeight);
+		frame.translate(0, screen.height() - frame.height());
+	} else {
+		frame = Common::Rect(screen.width(), screen.height() * Renderer::kBottomBorderHeight / Renderer::kOriginalHeight);
+		frame.translate(screen.left, screen.top + screen.height() * (Renderer::kTopBorderHeight + Renderer::kFrameHeight) / Renderer::kOriginalHeight);
+	}
+
+	return frame;
+}
+
+Common::Rect Inventory::getOriginalPosition() const {
+	Common::Rect originalPosition = Common::Rect(Renderer::kOriginalWidth, Renderer::kBottomBorderHeight);
+	originalPosition.translate(0, Renderer::kTopBorderHeight + Renderer::kFrameHeight);
+	return originalPosition;
+}
+
+void Inventory::updateCursor() {
+	uint16 item = hoveredItem();
+	if (item > 0) {
+		_vm->_cursor->changeCursor(1);
+	} else {
+		_vm->_cursor->changeCursor(8);
+	}
+}
+
 DragItem::DragItem(Myst3Engine *vm, uint id):
 		_vm(vm),
 		_texture(0),
 		_frame(1) {
+	// Draw on the whole screen
+	_isConstrainedToWindow = false;
+	_scaled = !_vm->isWideScreenModEnabled();
+
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DRAG", id, 0, DirectorySubEntry::kStillMovie);
 
 	if (!movieDesc)
@@ -308,9 +360,19 @@ void DragItem::setFrame(uint16 frame) {
 }
 
 Common::Rect DragItem::getPosition() {
-	Common::Point mouse = _vm->_cursor->getPosition();
-	uint posX = CLIP<uint>(mouse.x, _texture->width / 2, Renderer::kOriginalWidth - _texture->width / 2);
-	uint posY = CLIP<uint>(mouse.y, _texture->height / 2, Renderer::kOriginalHeight - _texture->height / 2);
+	Common::Rect viewport;
+	Common::Point mouse;
+
+	if (_scaled) {
+		viewport = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
+		mouse = _vm->_cursor->getPosition(true);
+	} else {
+		viewport = _vm->_gfx->viewport();
+		mouse = _vm->_cursor->getPosition(false);
+	}
+
+	uint posX = CLIP<uint>(mouse.x, _texture->width / 2, viewport.width() - _texture->width / 2);
+	uint posY = CLIP<uint>(mouse.y, _texture->height / 2, viewport.height() - _texture->height / 2);
 
 	Common::Rect screenRect = Common::Rect::center(posX, posY, _texture->width, _texture->height);
 	return screenRect;

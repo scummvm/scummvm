@@ -49,12 +49,10 @@ enum DialogType {
 	kConfirmQuit
 };
 
-class Menu {
+class Menu : public Drawable {
 public:
 	Menu(Myst3Engine *vm);
 	virtual ~Menu();
-
-	virtual void draw() = 0;
 
 	/**
 	 * Handle an event for the menu
@@ -156,13 +154,13 @@ public:
 	virtual int16 update() = 0;
 
 protected:
+	Common::Rect getPosition() const;
+
 	Myst3Engine *_vm;
 	Video::BinkDecoder _bink;
 	Texture *_texture;
 
 	uint _buttonCount;
-
-	Common::Rect getPosition();
 };
 
 class ButtonsDialog : public Dialog {
@@ -174,6 +172,8 @@ public:
 	int16 update() override;
 
 private:
+	Common::Point getRelativeMousePosition() const;
+
 	uint16 _previousframe;
 	uint16 _frameToDisplay;
 

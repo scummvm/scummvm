@@ -32,10 +32,14 @@ namespace Myst3 {
 class Myst3Engine;
 class DirectorySubEntry;
 
-class Subtitles : public Drawable {
+class Subtitles : public Window {
 public:
 	static Subtitles *create(Myst3Engine *vm, uint32 id);
 	virtual ~Subtitles();
+
+	// Window API
+	Common::Rect getPosition() const override;
+	Common::Rect getOriginalPosition() const override;
 
 	void setFrame(int32 frame);
 	void drawOverlay() override;

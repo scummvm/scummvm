@@ -80,7 +80,7 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_inputEscapePressedNotConsumed(false),
 		_menuAction(0), _projectorBackground(0),
 		_shakeEffect(0), _rotationEffect(0), _backgroundSoundScriptLastRoomId(0),
-		_transition(0), _frameLimiter(0) {
+		_transition(0), _frameLimiter(0), _inventoryManualHide(false) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
@@ -371,12 +371,9 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 			}
 		}
 	} else {
-		Common::Point mouse = _cursor->getPosition();
-
-		if (_state->getViewType() == kFrame)  {
-			mouse.y -= Renderer::kTopBorderHeight;
-			mouse.y = CLIP<uint>(mouse.y, 0, Renderer::kFrameHeight);
-		}
+		// get the mouse position in original game window coordinates
+		Common::Point mouse = _cursor->getPosition(false);
+		mouse = _scene->scalePoint(mouse);
 
 		for (uint j = 0; j < nodeData->hotspots.size(); j++) {
 			int32 hitRect = nodeData->hotspots[j].isPointInRectsFrame(_state, mouse);
@@ -394,18 +391,23 @@ HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
 }
 
 void Myst3Engine::updateCursor() {
+	if (!_inventory->isMouseInside()) {
+		_inventoryManualHide = false;
+	}
+
+	if (isInventoryVisible() && _inventory->isMouseInside()) {
+		_inventory->updateCursor();
+		return;
+	}
+
 	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
 
 	_state->setHotspotIgnoreClick(true);
 	HotSpot *hovered = getHoveredHotspot(nodeData);
 	_state->setHotspotIgnoreClick(false);
 
-	uint16 hoveredInventory = _inventory->hoveredItem();
-
 	if (hovered) {
 		_cursor->changeCursor(hovered->cursor);
-	} else if (isInventoryVisible() && hoveredInventory > 0) {
-		_cursor->changeCursor(1);
 	} else {
 		_cursor->changeCursor(8);
 	}
@@ -581,9 +583,15 @@ void Myst3Engine::interactWithHoveredElement(bool lookOnly) {
 	if (lookOnly)
 		return;
 
-	uint16 hoveredInventory = _inventory->hoveredItem();
-	if (isInventoryVisible() && hoveredInventory > 0) {
-		_inventory->useItem(hoveredInventory);
+	if (isInventoryVisible() && _inventory->isMouseInside()) {
+		uint16 hoveredInventory = _inventory->hoveredItem();
+		if (hoveredInventory > 0) {
+			_inventory->useItem(hoveredInventory);
+		} else {
+			if (isWideScreenModEnabled()) {
+				_inventoryManualHide = true;
+			}
+		}
 		return;
 	}
 
@@ -624,31 +632,24 @@ void Myst3Engine::drawFrame(bool noSwap) {
 		}
 
 		_gfx->setupCameraPerspective(pitch, heading, fov);
-		_gfx->setViewport(_scene->frameViewport());
-	} else {
-		_gfx->setupCameraOrtho2D(false);
 	}
 
 	if (_node) {
 		_node->update();
-		_node->draw();
+		_gfx->renderDrawable(_node, _scene);
 	}
 
 	for (int i = _movies.size() - 1; i >= 0 ; i--) {
 		_movies[i]->update();
-		_movies[i]->draw();
+		_gfx->renderDrawable(_movies[i], _scene);
 	}
 
 	if (_state->getViewType() == kMenu) {
-		_menu->draw();
+		_gfx->renderDrawable(_menu, _scene);
 	}
 
 	for (uint i = 0; i < _drawables.size(); i++) {
-		_drawables[i]->draw();
-	}
-
-	if (_state->getViewType() == kCube) {
-		_gfx->setupCameraOrtho2D(false);
+		_gfx->renderDrawable(_drawables[i], _scene);
 	}
 
 	if (_state->getViewType() != kMenu) {
@@ -659,25 +660,23 @@ void Myst3Engine::drawFrame(bool noSwap) {
 			_scene->drawSunspotFlare(flare);
 	}
 
-	if (isInventoryVisible())
-		_inventory->draw();
+	if (isInventoryVisible()) {
+		_gfx->renderWindow(_inventory);
+	}
 
 	// Draw overlay 2D movies
 	for (int i = _movies.size() - 1; i >= 0 ; i--) {
-		_movies[i]->drawOverlay();
+		_gfx->renderDrawableOverlay(_movies[i], _scene);
 	}
 
 	for (uint i = 0; i < _drawables.size(); i++) {
-		_drawables[i]->drawOverlay();
+		_gfx->renderDrawableOverlay(_drawables[i], _scene);
 	}
 
 	// Draw spot subtitles
 	if (_node) {
-		_node->drawOverlay();
+		_gfx->renderDrawableOverlay(_node, _scene);
 	}
-
-	// The cursor is drawn unscaled
-	_gfx->setupCameraOrtho2D(true);
 
 	bool cursorVisible = _cursor->isVisible();
 
@@ -687,7 +686,7 @@ void Myst3Engine::drawFrame(bool noSwap) {
 	}
 
 	if (cursorVisible)
-		_cursor->draw();
+		_gfx->renderDrawable(_cursor, _scene);
 
 	_gfx->flipBuffer();
 
@@ -705,6 +704,15 @@ bool Myst3Engine::isInventoryVisible() {
 
 	if (_node && _node->hasSubtitlesToDraw())
 		return false;
+
+	if (_inventoryManualHide) {
+		return false;
+	}
+
+	// Only draw the inventory when the mouse is inside its area
+	if (isWideScreenModEnabled() && !_inventory->isMouseInside()) {
+		return false;
+	}
 
 	return true;
 }
@@ -1507,7 +1515,7 @@ void Myst3Engine::getMovieLookAt(uint16 id, bool start, float &pitch, float &hea
 	else
 		v = desc->getVideoData().v2;
 
-	Math::Vector2d horizontalProjection = Math::Vector2d(v.x(), v.z());
+	Math::Vector2d horizontalProjection(v.x(), v.z());
 	horizontalProjection.normalize();
 
 	pitch = 90 - Math::Angle::arcCosine(v.y()).getDegrees();
@@ -1733,6 +1741,10 @@ void Myst3Engine::syncSoundSettings() {
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundOverall);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic * soundOverall / 256);
+}
+
+bool Myst3Engine::isWideScreenModEnabled() const {
+	return ConfMan.getBool("widescreen_mod");
 }
 
 void Myst3Engine::pauseEngineIntern(bool pause) {

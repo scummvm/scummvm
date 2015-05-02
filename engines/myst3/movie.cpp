@@ -97,6 +97,8 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 void Movie::loadPosition(const VideoData &videoData) {
 	static const float scale = 50.0f;
 
+	_is3D = _vm->_state->getViewType() == kCube;
+
 	Math::Vector3d planeDirection = videoData.v1;
 	planeDirection.normalize();
 
@@ -132,9 +134,6 @@ void Movie::draw2d() {
 	Common::Rect screenRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
 	screenRect.translate(_posU, _posV);
 
-	if (_vm->_state->getViewType() != kMenu)
-		screenRect.translate(0, Renderer::kTopBorderHeight);
-
 	Common::Rect textureRect = Common::Rect(_bink.getWidth(), _bink.getHeight());
 
 	if (_forceOpaque)
@@ -151,10 +150,10 @@ void Movie::draw() {
 	if (_force2d)
 		return;
 
-	if (_vm->_state->getViewType() != kCube) {
-		draw2d();
-	} else {
+	if (_is3D) {
 		draw3d();
+	} else {
+		draw2d();
 	}
 }
 
@@ -164,7 +163,7 @@ void Movie::drawOverlay() {
 
 	if (_subtitles) {
 		_subtitles->setFrame(adjustFrameForRate(_bink.getCurFrame(), false));
-		_subtitles->drawOverlay();
+		_vm->_gfx->renderWindowOverlay(_subtitles);
 	}
 }
 
@@ -211,6 +210,13 @@ Movie::~Movie() {
 		_vm->_gfx->freeTexture(_texture);
 
 	delete _subtitles;
+}
+
+void Movie::setForce2d(bool b) {
+	_force2d = b;
+	if (_force2d) {
+		_is3D = false;
+	}
 }
 
 ScriptedMovie::ScriptedMovie(Myst3Engine *vm, uint16 id) :

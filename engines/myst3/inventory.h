@@ -36,10 +36,14 @@ namespace Myst3 {
 class Myst3Engine;
 class Texture;
 
-class Inventory : public Drawable {
+class Inventory : public Window {
 public:
 	Inventory(Myst3Engine *vm);
 	virtual ~Inventory();
+
+	// Window API
+	Common::Rect getPosition() const override;
+	Common::Rect getOriginalPosition() const override;
 
 	void loadFromState();
 	void updateState();
@@ -50,10 +54,17 @@ public:
 	void removeItem(uint16 var);
 	void reset();
 
+	/** Is the mouse inside the inventory area */
+	bool isMouseInside();
+
+	/** Change the cursor when it is hovering an item */
+	void updateCursor();
+
 	uint16 hoveredItem();
 	void useItem(uint16 var);
 
 	void draw() override;
+
 private:
 	struct InventoryItem {
 		uint16 var;

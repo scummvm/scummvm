@@ -23,10 +23,8 @@
 #include "engines/myst3/cursor.h"
 #include "engines/myst3/directorysubentry.h"
 #include "engines/myst3/myst3.h"
-#include "engines/myst3/scene.h"
 #include "engines/myst3/state.h"
 
-#include "graphics/surface.h"
 #include "image/bmp.h"
 
 namespace Myst3 {
@@ -57,9 +55,13 @@ static const CursorData availableCursors[] = {
 
 Cursor::Cursor(Myst3Engine *vm) :
 	_vm(vm),
-	_position(vm->_scene->frameCenter()),
+	_position(vm->_scene->getCenter()),
 	_hideLevel(0),
 	_lockedAtCenter(false) {
+
+	// The cursor is drawn unscaled
+	_scaled = false;
+	_isConstrainedToWindow = false;
 
 	// Load available cursors
 	loadAvailableCursors();
@@ -146,7 +148,7 @@ void Cursor::lockPosition(bool lock) {
 
 	g_system->lockMouse(lock);
 
-	Common::Point center = _vm->_scene->frameCenter();
+	Common::Point center = _vm->_scene->getCenter();
 	if (_lockedAtCenter) {
 		// Locking, just move the cursor at the center of the screen
 		_position = center;
@@ -162,19 +164,23 @@ void Cursor::updatePosition(Common::Point &mouse) {
 	}
 }
 
-Common::Point Cursor::getPosition() {
-	Common::Rect viewport = _vm->_gfx->viewport();
+Common::Point Cursor::getPosition(bool scaled) {
+	if (scaled) {
+		Common::Rect viewport = _vm->_gfx->viewport();
 
-	// The rest of the engine expects 640x480 coordinates
-	Common::Point scaledPosition = _position;
-	scaledPosition.x -= viewport.left;
-	scaledPosition.y -= viewport.top;
-	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, viewport.width());
-	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, viewport.height());
-	scaledPosition.x *= Renderer::kOriginalWidth / (float)viewport.width();
-	scaledPosition.y *= Renderer::kOriginalHeight / (float)viewport.height();
+		// The rest of the engine expects 640x480 coordinates
+		Common::Point scaledPosition = _position;
+		scaledPosition.x -= viewport.left;
+		scaledPosition.y -= viewport.top;
+		scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, viewport.width());
+		scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, viewport.height());
+		scaledPosition.x *= Renderer::kOriginalWidth / (float) viewport.width();
+		scaledPosition.y *= Renderer::kOriginalHeight / (float) viewport.height();
 
-	return scaledPosition;
+		return scaledPosition;
+	} else {
+		return _position;
+	}
 }
 
 void Cursor::draw() {

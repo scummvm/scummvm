@@ -38,7 +38,6 @@
 #endif
 
 #include "math/glmath.h"
-#include "math/vector2d.h"
 
 namespace Myst3 {
 
@@ -71,7 +70,8 @@ const float Renderer::cubeVertices[] = {
 };
 
 Renderer::Renderer(OSystem *system)
-		: _system(system), _font(NULL) {
+		: _system(system),
+		  _font(nullptr) {
 
 	// Compute the cube faces Axis Aligned Bounding Boxes
 	for (uint i = 0; i < ARRAYSIZE(_cubeFacesAABB); i++) {
@@ -122,7 +122,9 @@ void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
 
-	if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+	if (ConfMan.getBool("widescreen_mod")) {
+		_screenViewport = Common::Rect(screenWidth, screenHeight);
+	} else if (_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
 		// Aspect ratio correction
 		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * kOriginalWidth / kOriginalHeight);
 		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * kOriginalHeight / kOriginalWidth);
@@ -218,6 +220,69 @@ Renderer *createRenderer(OSystem *system) {
 	}
 
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
+}
+
+void Renderer::renderDrawable(Drawable *drawable, Window *window) {
+	if (drawable->isConstrainedToWindow()) {
+		selectTargetWindow(window, drawable->is3D(), drawable->isScaled());
+	} else {
+		selectTargetWindow(nullptr, drawable->is3D(), drawable->isScaled());
+	}
+	drawable->draw();
+}
+
+void Renderer::renderDrawableOverlay(Drawable *drawable, Window *window) {
+	// Overlays are always 2D
+	if (drawable->isConstrainedToWindow()) {
+		selectTargetWindow(window, drawable->is3D(), drawable->isScaled());
+	} else {
+		selectTargetWindow(nullptr, drawable->is3D(), drawable->isScaled());
+	}
+	drawable->drawOverlay();
+}
+
+void Renderer::renderWindow(Window *window) {
+	renderDrawable(window, window);
+}
+
+void Renderer::renderWindowOverlay(Window *window) {
+	renderDrawableOverlay(window, window);
+}
+
+Drawable::Drawable() :
+		_isConstrainedToWindow(true),
+		_is3D(false),
+		_scaled(true) {
+}
+
+Common::Point Window::getCenter() const {
+	Common::Rect frame = getPosition();
+
+	return Common::Point((frame.left + frame.right) / 2, (frame.top + frame.bottom) / 2);
+}
+
+Common::Point Window::screenPosToWindowPos(const Common::Point &screen) const {
+	Common::Rect frame = getPosition();
+
+	return Common::Point(screen.x - frame.left, screen.y - frame.top);
+}
+
+Common::Point Window::scalePoint(const Common::Point &screen) const {
+	Common::Rect viewport = getPosition();
+	Common::Rect originalViewport = getOriginalPosition();
+
+	Common::Point scaledPosition = screen;
+	scaledPosition.x -= viewport.left;
+	scaledPosition.y -= viewport.top;
+	scaledPosition.x = CLIP<int16>(scaledPosition.x, 0, viewport.width());
+	scaledPosition.y = CLIP<int16>(scaledPosition.y, 0, viewport.height());
+
+	if (_scaled) {
+		scaledPosition.x *= originalViewport.width() / (float) viewport.width();
+		scaledPosition.y *= originalViewport.height() / (float) viewport.height();
+	}
+
+	return scaledPosition;
 }
 
 FrameLimiter::FrameLimiter(OSystem *system, const uint framerate) :

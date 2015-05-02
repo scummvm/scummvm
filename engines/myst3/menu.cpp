@@ -37,6 +37,10 @@ namespace Myst3 {
 Dialog::Dialog(Myst3Engine *vm, uint id):
 	_vm(vm),
 	_texture(0) {
+	// Draw on the whole screen
+	_isConstrainedToWindow = false;
+	_scaled = !_vm->isWideScreenModEnabled();
+
 	const DirectorySubEntry *countDesc = _vm->getFileDescription("DLGI", id, 0, DirectorySubEntry::kNumMetadata);
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kDialogMovie);
 	if (!movieDesc) {
@@ -71,10 +75,17 @@ void Dialog::draw() {
 	_vm->_gfx->drawTexturedRect2D(getPosition(), textureRect, _texture);
 }
 
-Common::Rect Dialog::getPosition() {
+Common::Rect Dialog::getPosition() const {
+	Common::Rect viewport;
+	if (_scaled) {
+		viewport = Common::Rect(Renderer::kOriginalWidth, Renderer::kOriginalHeight);
+	} else {
+		viewport = _vm->_gfx->viewport();
+	}
+
 	Common::Rect screenRect = Common::Rect(_texture->width, _texture->height);
-	screenRect.translate((Renderer::kOriginalWidth - _texture->width) / 2,
-			(Renderer::kOriginalHeight - _texture->height) / 2);
+	screenRect.translate((viewport.width() - _texture->width) / 2,
+			(viewport.height() - _texture->height) / 2);
 	return screenRect;
 }
 
@@ -125,10 +136,7 @@ int16 ButtonsDialog::update() {
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			// Compute local mouse coordinates
 			_vm->_cursor->updatePosition(event.mouse);
-			Common::Rect position = getPosition();
-			Common::Point localMouse = _vm->_cursor->getPosition();
-			localMouse.x -= position.left;
-			localMouse.y -= position.top;
+			Common::Point localMouse = getRelativeMousePosition();
 
 			// No hovered button
 			_frameToDisplay = 0;
@@ -146,7 +154,6 @@ int16 ButtonsDialog::update() {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 				return -1;
-				break;
 			default:
 				break;
 			}
@@ -154,6 +161,14 @@ int16 ButtonsDialog::update() {
 	}
 
 	return -2;
+}
+
+Common::Point ButtonsDialog::getRelativeMousePosition() const {
+	Common::Rect position = getPosition();
+	Common::Point localMouse =_vm->_cursor->getPosition(_scaled);
+	localMouse.x -= position.left;
+	localMouse.y -= position.top;
+	return localMouse;
 }
 
 GamepadDialog::GamepadDialog(Myst3Engine *vm, uint id):
@@ -175,14 +190,12 @@ int16 GamepadDialog::update() {
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 				return 1;
-				break;
 			case Common::KEYCODE_ESCAPE:
 				if (_buttonCount == 2) {
 					return 2;
 				} else {
 					return 1;
 				}
-				break;
 			default:
 				break;
 			}
@@ -396,7 +409,7 @@ Graphics::Surface *Menu::createThumbnail(Graphics::Surface *big) {
 			Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
 	// The portion of the screenshot to keep
-	Common::Rect frame = _vm->_scene->frameViewport();
+	Common::Rect frame = _vm->_scene->getPosition();
 	Graphics::Surface frameSurface = big->getSubArea(frame);
 
 	uint32 *dst = (uint32 *)small->getPixels();

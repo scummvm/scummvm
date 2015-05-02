@@ -119,6 +119,7 @@ public:
 	int16 getGameLanguageCode() const;
 	bool isMonolingual() const;
 	bool isDVDVersion() const;
+	bool isWideScreenModEnabled() const;
 
 	bool canLoadGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
@@ -216,6 +217,14 @@ private:
 	bool _inputTildePressed;
 
 	uint32 _backgroundSoundScriptLastRoomId;
+
+	/**
+	 * When the widescreen mode is active, the user can manually hide
+	 * the inventory by clicking on an unused inventory space.
+	 * This allows interacting with the scene portion that is below
+	 * the inventory.
+	 */
+	bool _inventoryManualHide;
 
 	HotSpot *getHoveredHotspot(NodePtr nodeData, uint16 var = 0);
 	void updateCursor();

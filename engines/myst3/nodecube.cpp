@@ -30,6 +30,8 @@ namespace Myst3 {
 
 NodeCube::NodeCube(Myst3Engine *vm, uint16 id) :
 		Node(vm, id) {
+	_is3D = true;
+
 	for (int i = 0; i < 6; i++) {
 		const DirectorySubEntry *jpegDesc = _vm->getFileDescription("", id, i + 1, DirectorySubEntry::kCubeFace);
 

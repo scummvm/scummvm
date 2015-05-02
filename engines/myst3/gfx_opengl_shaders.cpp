@@ -90,14 +90,14 @@ void ShaderRenderer::setupQuadEBO() {
 }
 
 Math::Vector2d ShaderRenderer::scaled(float x, float y) const {
-	return Math::Vector2d(x / _currentViewport.getWidth(), y / _currentViewport.getHeight());
+	return Math::Vector2d(x / _currentViewport.width(), y / _currentViewport.height());
 }
 
 ShaderRenderer::ShaderRenderer(OSystem *system) :
 		Renderer(system),
 		_prevText(""),
 		_prevTextPosition(0,0),
-		_currentViewport(Math::Vector2d(0.0, 0.0), Math::Vector2d(kOriginalWidth, kOriginalHeight)),
+		_currentViewport(kOriginalWidth, kOriginalHeight),
 		_boxShader(nullptr),
 		_cubeShader(nullptr),
 		_rect3dShader(nullptr),
@@ -166,18 +166,30 @@ void ShaderRenderer::clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void ShaderRenderer::setupCameraOrtho2D(bool noScaling) {
-	if (noScaling) {
-		glViewport(0, 0, _system->getWidth(), _system->getHeight());
-		_currentViewport = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(_system->getWidth(), _system->getHeight()));
+void ShaderRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) {
+	if (!window) {
+		// No window found ...
+		if (scaled) {
+			// ... in scaled mode draw in the original game screen area
+			Common::Rect vp = viewport();
+			glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+			_currentViewport = Common::Rect(kOriginalWidth, kOriginalHeight);
+		} else {
+			// ... otherwise, draw on the whole screen
+			glViewport(0, 0, _system->getWidth(), _system->getHeight());
+			_currentViewport = Common::Rect(_system->getWidth(), _system->getHeight());
+		}
 	} else {
-		glViewport(_screenViewport.left, _screenViewport.top, _screenViewport.width(), _screenViewport.height());
-		_currentViewport = Math::Rect2d(Math::Vector2d(0, 0), Math::Vector2d(kOriginalWidth, kOriginalHeight));
-	}
-}
+		// Found a window, draw inside it
+		Common::Rect vp = window->getPosition();
+		glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
 
-void ShaderRenderer::setViewport(const Common::Rect &vp) {
-	glViewport(vp.left, _system->getHeight() - vp.top - vp.height(), vp.width(), vp.height());
+		if (scaled) {
+			_currentViewport = window->getOriginalPosition();
+		} else {
+			_currentViewport = vp;
+		}
+	}
 }
 
 void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
@@ -264,16 +276,16 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
 		_prevText = textToDraw;
 		_prevTextPosition = position;
 
-		float x = position.x / _currentViewport.getWidth();
-		float y = position.y / _currentViewport.getHeight();
+		float x = position.x / (float) _currentViewport.width();
+		float y = position.y / (float) _currentViewport.height();
 
 		float *bufData = new float[16 * textToDraw.size()];
 		float *cur = bufData;
 
 		for (uint i = 0; i < textToDraw.size(); i++) {
 			Common::Rect textureRect = getFontCharacterRect(textToDraw[i]);
-			float w = textureRect.width() / _currentViewport.getWidth();
-			float h = textureRect.height() / _currentViewport.getHeight();
+			float w = textureRect.width() / (float) _currentViewport.width();
+			float h = textureRect.height() / (float) _currentViewport.height();
 
 			float cw = textureRect.width() / (float)glFont->internalWidth;
 			float ch = textureRect.height() / (float)glFont->internalHeight;
@@ -290,7 +302,7 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
 			memcpy(cur, charData, 16 * sizeof(float));
 			cur += 16;
 
-			x += (textureRect.width() - 3) / _currentViewport.getWidth();
+			x += (textureRect.width() - 3) / (float) _currentViewport.width();
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, _textVBO);
