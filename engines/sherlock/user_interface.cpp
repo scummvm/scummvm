@@ -1469,7 +1469,7 @@ void UserInterface::doMiscControl(int allowed) {
 				switch (allowed) {
 				case ALLOW_OPEN:
 					checkAction(obj._aOpen, MOPEN, _temp);
-					if (_menuMode && !talk._talkToAbort) {
+					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(OPEN_MODE - 1);
 						_key = _oldKey = -1;
