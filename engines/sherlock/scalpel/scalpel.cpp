@@ -385,10 +385,10 @@ bool ScalpelEngine::showStreetCutscene() {
  */
 bool ScalpelEngine::scrollCredits() {
 	// Load the images for displaying credit text
-	_titleOverride = "TITLE.LIB";
-	ImageFile creditsImages("credits.vgs", true);
+	Common::SeekableReadStream *stream = _res->load("credits.vgs", "title.lib");
+	ImageFile creditsImages(*stream);
 	_screen->setPalette(creditsImages._palette);
-	_titleOverride = "";
+	delete stream;
 
 	// Save a copy of the screen background for use in drawing each credit frame
 	_screen->_backBuffer1.blitFrom(*_screen);
@@ -399,12 +399,10 @@ bool ScalpelEngine::scrollCredits() {
 		_screen->blitFrom(_screen->_backBuffer1);
 
 		// Write the text appropriate for the next frame
-		if (idx < 200)
-			_screen->transBlitFrom(creditsImages[0], Common::Point(10, -idx), false, 0); 
-		if (idx > 0 && idx < 400)
-			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 200 - idx), false, 0);
+		if (idx < 400)
+			_screen->transBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
 		if (idx > 200)
-			_screen->transBlitFrom(creditsImages[2], Common::Point(10, 400 - idx), false, 0);
+			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
 
 		// Don't show credit text on the top and bottom ten rows of the screen
 		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, 10));
