@@ -214,6 +214,8 @@ void SherlockEngine::loadConfig() {
 	// Load other settings
 	if (ConfMan.hasKey("font"))
 		_screen->setFont(ConfMan.getInt("font"));
+	if (ConfMan.hasKey("fade_style"))
+		_screen->_fadeStyle = ConfMan.getBool("fade_style");
 	if (ConfMan.hasKey("help_style"))
 		_ui->_helpStyle = ConfMan.getInt("help_style");
 	if (ConfMan.hasKey("window_style"))
@@ -231,6 +233,7 @@ void SherlockEngine::saveConfig() {
 	ConfMan.setBool("speech_mute", _sound->_voices);
 
 	ConfMan.setInt("font", _screen->fontNumber());
+	ConfMan.setBool("fade_style", _screen->_fadeStyle);
 	ConfMan.setInt("help_style", _ui->_helpStyle);
 	ConfMan.setInt("window_style", _ui->_windowStyle);
 	ConfMan.setBool("portraits_on", _people->_portraitsOn);

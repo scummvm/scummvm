@@ -28,16 +28,19 @@
 namespace Sherlock {
 
 class SherlockEngine;
+class UserInterface;
 
 class Settings {
 private:
 	SherlockEngine *_vm;
-public:
+
 	Settings(SherlockEngine *vm) : _vm(vm) {}
 
 	void drawInteface(bool flag);
 
 	int drawButtons(const Common::Point &pt, int key);
+public:
+	static void show(SherlockEngine *vm);
 };
 
 } // End of namespace Sherlock

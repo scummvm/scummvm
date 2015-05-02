@@ -111,8 +111,6 @@ private:
 	void doTalkControl();
 	void journalControl();
 
-	void doControls();
-
 	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
 		int objNum, int giveMode);
 	void checkAction(ActionType &action, const char *const messages[], int objNum);

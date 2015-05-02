@@ -209,4 +209,142 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	return found;
 }
 
+
+/**
+* Handles input when the settings window is being shown
+* @remarks		Whilst this would in theory be better in the Journal class, since it displays in
+*		the user interface, it uses so many internal UI fields, that it sort of made some sense
+*		to put it in the UserInterface class.
+*/
+void Settings::show(SherlockEngine *vm) {
+	Events &events = *vm->_events;
+	People &people = *vm->_people;
+	Scene &scene = *vm->_scene;
+	Screen &screen = *vm->_screen;
+	Sound &sound = *vm->_sound;
+	Talk &talk = *vm->_talk;
+	UserInterface &ui = *vm->_ui;
+	int found;
+	bool updateConfig = false;
+
+	Settings settings(vm);
+	settings.drawInteface(false);
+
+	do {
+		if (ui._menuCounter)
+			ui.whileMenuCounter();
+
+		found = -1;
+		ui._key = -1;
+
+		scene.doBgAnim();
+		if (talk._talkToAbort)
+			return;
+
+		events.setButtonState();
+		Common::Point pt = events.mousePos();
+
+		if (events._pressed || events._released || events.kbHit()) {
+			ui.clearInfo();
+			ui._key = -1;
+
+			if (events.kbHit()) {
+				Common::KeyState keyState = events.getKey();
+				ui._key = toupper(keyState.keycode);
+
+				if (ui._key == Common::KEYCODE_RETURN || ui._key == Common::KEYCODE_SPACE) {
+					events._pressed = false;
+					events._oldButtons = 0;
+					ui._keycode = Common::KEYCODE_INVALID;
+					events._released = true;
+				}
+			}
+
+			// Handle highlighting button under mouse
+			found = settings.drawButtons(pt, ui._key);
+		}
+
+		if ((found == 0 && events._released) || (ui._key == 'E' || ui._key == Common::KEYCODE_ESCAPE))
+			// Exit
+			break;
+
+		if ((found == 1 && events._released) || ui._key == 'M') {
+			// Toggle music
+			if (sound._music) {
+				sound.stopSound();
+				sound._music = false;
+			}
+			else {
+				sound._music = true;
+				sound.startSong();
+			}
+
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 2 && events._released) || ui._key == 'V') {
+			sound._voices = !sound._voices;
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 3 && events._released) || ui._key == 'S') {
+			// Toggle sound effects
+			sound._digitized = !sound._digitized;
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 4 && events._released) || ui._key == 'A') {
+			// Help button style
+			ui._helpStyle ^= 1;
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 5 && events._released) || ui._key == 'N') {
+			// New font style
+			int fontNum = screen.fontNumber() + 1;
+			if (fontNum == 3)
+				fontNum = 0;
+
+			screen.setFont(fontNum);
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 8 && events._released) || ui._key == 'F') {
+			// Toggle fade style
+			screen._fadeStyle = !screen._fadeStyle;
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 9 && events._released) || ui._key == 'W') {
+			// Window style
+			ui._windowStyle ^= 1;
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+
+		if ((found == 10 && events._released) || ui._key == 'P') {
+			// Toggle portraits being shown
+			people._portraitsOn = !people._portraitsOn;
+			updateConfig = true;
+			settings.drawInteface(true);
+		}
+	} while (!vm->shouldQuit());
+
+	ui.banishWindow();
+
+	if (updateConfig)
+		vm->saveConfig();
+
+	ui._keycode = Common::KEYCODE_INVALID;
+	ui._keyboardInput = false;
+	ui._windowBounds.top = CONTROLS_Y1;
+	ui._key = -1;
+}
+
 } // End of namespace Sherlock
