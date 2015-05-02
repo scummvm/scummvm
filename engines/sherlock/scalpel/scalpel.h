@@ -42,6 +42,8 @@ private:
 	bool scrollCredits();
 
 	void loadInventory();
+
+	void showLBV(const Common::String &filename);
 protected:
 	virtual void initialize();
 

@@ -330,9 +330,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 		finished = _animation->playPrologue("27PRO2", 1, 0, false, 2);
 
 	if (finished) {
-		ImageFile screamImages("SCREAM.LBV", false);
-		_screen->_backBuffer1.transBlitFrom(screamImages[0], Common::Point(0, 0));
-		_screen->_backBuffer2.blitFrom(_screen->_backBuffer1);
+		showLBV("scream.lbv");
 		finished = _events->delay(6000);
 	}
 
@@ -373,29 +371,40 @@ bool ScalpelEngine::showStreetCutscene() {
 	return finished;
 }
 
+/**
+ * Show the game credits
+ */
 bool ScalpelEngine::scrollCredits() {
+	// Load the images for displaying credit text
 	_titleOverride = "TITLE.LIB";
 	ImageFile creditsImages("credits.vgs", true);
+	_screen->setPalette(creditsImages._palette);
+	_titleOverride = "";
 
-	_screen->_backBuffer1.copyFrom(*_screen->_backBuffer);
+	// Save a copy of the screen background for use in drawing each credit frame
+	_screen->_backBuffer1.blitFrom(*_screen);
 
-	for(int i = 0; i < 600 && !_events->kbHit(); i++) {
-		_screen->_backBuffer1.copyFrom(*_screen->_backBuffer);
-		if (i < 200)
-			_screen->transBlitFrom(creditsImages[0], Common::Point(10, -i), false, 0); 
-		if (i > 0 && i < 400)
-			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 200 - i), false, 0);
-		if (i > 200)
-			_screen->transBlitFrom(creditsImages[2], Common::Point(10, 400 - i), false, 0);
+	// Loop for showing the credits
+	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
+		// Copy the entire screen background before writing text
+		_screen->blitFrom(_screen->_backBuffer1);
 
-		warning("TODO: Use VideoBlockMove");
-//		videoblockmove(SCREEN, BACKBUFFER, 0, 0, 320, 10);
-//		videoblockmove(SCREEN, BACKBUFFER, 0, 190, 320, 10);
+		// Write the text appropriate for the next frame
+		if (idx < 200)
+			_screen->transBlitFrom(creditsImages[0], Common::Point(10, -idx), false, 0); 
+		if (idx > 0 && idx < 400)
+			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 200 - idx), false, 0);
+		if (idx > 200)
+			_screen->transBlitFrom(creditsImages[2], Common::Point(10, 400 - idx), false, 0);
+
+		// Don't show credit text on the top and bottom ten rows of the screen
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, 10));
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 10),
+			Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 10, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 		_events->delay(100);
 	}
 
-	_titleOverride = "";
 	return true;
 }
 
@@ -408,7 +417,8 @@ bool ScalpelEngine::showOfficeCutscene() {
 	if (finished)
 		finished = _animation->playPrologue("COFF2", 1, 0, false, 3);
 	if (finished) {
-		warning("TODO: ShowLBV(""NOTE.LBV"");");
+		showLBV("note.lbv");
+
 		if (_sound->_voices) {
 			finished = _sound->playSound("NOTE1", WAIT_KBD_OR_FINISH);
 			if (finished)
@@ -441,6 +451,11 @@ bool ScalpelEngine::showOfficeCutscene() {
 	return finished;
 }
 
+/**
+ * Load the default inventory for the game, which includes both the initial active inventory,
+ * as well as special pending inventory items which can appear automatically in the player's
+ * inventory once given required flags are set
+ */
 void ScalpelEngine::loadInventory() {
 	Inventory &inv = *_inventory;
 
@@ -449,7 +464,7 @@ void ScalpelEngine::loadInventory() {
 	inv.push_back(InventoryItem(0, "Message", "A message requesting help", "_ITEM03A"));
 	inv.push_back(InventoryItem(0, "Holmes Card", "A number of business cards", "_ITEM07A"));
 	
-	// Potential items
+	// Hidden items
 	inv.push_back(InventoryItem(95, "Tickets", "Opera Tickets", "_ITEM10A"));
 	inv.push_back(InventoryItem(138, "Cuff Link", "Cuff Link", "_ITEM04A"));
 	inv.push_back(InventoryItem(138, "Wire Hook", "Wire Hook", "_ITEM06A"));
@@ -462,6 +477,18 @@ void ScalpelEngine::loadInventory() {
 	inv.push_back(InventoryItem(586, "Pawn ticket", "A pawn ticket", "_ITEM16A"));
 };
 
+/**
+ * Transition to show an image
+ */
+void ScalpelEngine::showLBV(const Common::String &filename) {
+	Common::SeekableReadStream *stream = _res->load(filename, "title.lib");
+	ImageFile images(*stream);
+	delete stream;
+
+	_screen->setPalette(images._palette);
+	_screen->_backBuffer1.blitFrom(images[0]._frame);
+	_screen->verticalTransition();
+}
 
 /**
  * Starting a scene within the game

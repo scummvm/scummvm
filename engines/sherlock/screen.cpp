@@ -35,6 +35,7 @@ Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCR
 	_transitionSeed = 1;
 	_fadeStyle = false;
 	_font = nullptr;
+	_backBuffer = nullptr;
 	_fontHeight = 0;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
