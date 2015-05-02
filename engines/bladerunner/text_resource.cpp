@@ -42,7 +42,7 @@ TextResource::TextResource(BladeRunnerEngine *vm)
 TextResource::~TextResource() {
 	delete[] _ids;
 	delete[] _offsets;
-	delete _strings;
+	delete[] _strings;
 }
 
 bool TextResource::open(const char *name) {
