@@ -23,6 +23,7 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
@@ -201,11 +202,15 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_zBuffer1 = new uint16[640 * 480];
 	_zBuffer2 = new uint16[640 * 480];
 
-	// TODO: Actors
+	int actorCount = (int)_gameInfo->getActorCount();
+	assert(actorCount < 99);
+	for (int i = 0; i != actorCount; ++i) {
+		_actors[i] = new Actor(this, i);
+	}
+	_voiceoverActor = new Actor(this, 99);
+	_playerActor = _actors[_gameInfo->getPlayerId()];
 
-	// TODO: Player 99 (VO actor)
-
-	// TODO: McCoy setup
+	// TODO: set _playerActor countdown timer 6
 
 	// TODO: Set actor ids (redundant?)
 
@@ -511,19 +516,13 @@ void BladeRunnerEngine::gameTick() {
 
 			// TODO: Tick and draw all actors in current set (drawing works in Replicant)
 
-			// Hardcode McCoy in place to test the slice renderer
-			Vector3 pos = _scene->_actorStartPosition;
-			Vector3 draw_pos(pos.x, -pos.z, pos.y + 2);
-			float facing = -1.570796f;
-
+			// HACK to draw McCoy
 			_sliceRenderer->setView(_scene->_view);
-			_sliceRenderer->setupFrame(19, 1, draw_pos, facing);
-			_sliceRenderer->drawFrame(_surface2, _zBuffer2);
+			_playerActor->draw();
 
 			// TODO: Draw items (drawing works in Replicant)
 			// TODO: Draw item pickup (understood, drawing works in Replicant)
 			// TODO: Draw dialogue menu
-			// TODO: Draw mouse (understood)
 
 			Common::Point p = _eventMan->getMousePos();
 			_mouse->draw(_surface2, p.x, p.y);

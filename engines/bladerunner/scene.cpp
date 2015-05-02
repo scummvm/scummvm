@@ -23,6 +23,8 @@
 #include "bladerunner/scene.h"
 
 #include "bladerunner/bladerunner.h"
+
+#include "bladerunner/actor.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/script/script.h"
@@ -81,9 +83,12 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	}
 
 	// TODO: set VQADecoder parameters
+
 	// TODO: Set actor position from scene info
+	_vm->_playerActor->set_at_xyz(_actorStartPosition, _actorStartFacing);
+
 	// TODO: Set actor set
-	// TODO: call SCRIPT_Scene_Loaded
+
 	_vm->_script->SceneLoaded();
 
 #if 0

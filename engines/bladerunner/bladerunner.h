@@ -36,6 +36,7 @@
 
 namespace BladeRunner {
 
+class Actor;
 class AmbientSounds;
 class AudioPlayer;
 class AudioSpeech;
@@ -82,6 +83,10 @@ public:
 	TextResource    *_textOptions;
 
 	Common::Array<Shape*> _shapes;
+
+	Actor *_actors[99];
+	Actor *_voiceoverActor;
+	Actor *_playerActor;
 
 	int in_script_counter;
 

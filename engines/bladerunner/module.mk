@@ -1,6 +1,7 @@
 MODULE := engines/bladerunner
 
 MODULE_OBJS = \
+	actor.o \
 	adpcm_decoder.o \
 	ambient_sounds.o \
 	archive.o \
