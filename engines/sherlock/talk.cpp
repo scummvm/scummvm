@@ -909,7 +909,7 @@ void Talk::setSequence(int speaker) {
 	Scene &scene = *_vm->_scene;
 	
 	// If no speaker is specified, then nothing needs to be done
-	if (speaker != -1)
+	if (speaker == -1)
 		return;
 
 	if (speaker) {
