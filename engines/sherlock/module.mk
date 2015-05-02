@@ -19,6 +19,7 @@ MODULE_OBJS = \
 	saveload.o \
 	scene.o \
 	screen.o \
+	settings.o \
 	sherlock.o \
 	sound.o \
 	talk.o \

@@ -63,17 +63,6 @@ class Inventory;
 class Talk;
 class UserInterface;
 
-class Settings {
-private:
-	SherlockEngine *_vm;
-public:
-	Settings(SherlockEngine *vm) : _vm(vm) {}
-
-	void drawInteface(bool flag);
-
-	int drawButtons(const Common::Point &pt, int key);
-};
-
 class UserInterface {
 	friend class Inventory;
 	friend class Settings;
