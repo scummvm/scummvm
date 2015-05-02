@@ -62,49 +62,33 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_gameIsRunning  = true;
 	_playerLosesControlCounter = 0;
 
-	_ambientSounds = new AmbientSounds(this);
-	_audioPlayer = new AudioPlayer(this);
-	_audioSpeech = new AudioSpeech(this);
-	_chapters = nullptr;
-	_clues = nullptr;
-	_gameInfo = nullptr;
-	_gameFlags = new GameFlags();
-	_gameVars = nullptr;
-	_mouse = new Mouse(this);
-	_scene = new Scene(this);
 	_script = new Script(this);
 	_settings = new Settings(this);
-	_sliceAnimations = new SliceAnimations(this);
-	_sliceRenderer = new SliceRenderer(this);
-
-	_zBuffer1 = nullptr;
-	_zBuffer2 = nullptr;
-
-	_actorNames = nullptr;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
-	delete _actorNames;
+	// delete _sliceRenderer;
+	// delete _sliceAnimations;
+	// delete _settings;
+	// delete _script;
+	// delete _scene;
+	// delete[] _gameVars;
+	// delete _gameFlags;
+	// delete _gameInfo;
+	// delete _clues;
+	// delete _chapters;
+	// delete _audioSpeech;
+	// delete _audioPlayer;
+	// delete _ambientSounds;
 
-	delete _sliceRenderer;
-	delete _sliceAnimations;
+	// _surface1.free();
+	// _surface2.free();
+
+	// delete[] _zBuffer1;
+	// delete[] _zBuffer2;
+
 	delete _settings;
 	delete _script;
-	delete _scene;
-	delete[] _gameVars;
-	delete _gameFlags;
-	delete _gameInfo;
-	delete _clues;
-	delete _chapters;
-	delete _audioSpeech;
-	delete _audioPlayer;
-	delete _ambientSounds;
-
-	_surface1.free();
-	_surface2.free();
-
-	delete[] _zBuffer1;
-	delete[] _zBuffer2;
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
@@ -134,7 +118,7 @@ Common::Error BladeRunnerEngine::run() {
 	return Common::kNoError;
 }
 
-bool BladeRunnerEngine::startup() {
+bool BladeRunnerEngine::startup(bool hasSavegames) {
 	bool r;
 
 	_surface1.create(640, 480, createRGB555());
@@ -143,7 +127,7 @@ bool BladeRunnerEngine::startup() {
 	if (!r)
 		return false;
 
-	loadSplash();
+	// TODO: Timer
 
 	_gameInfo = new GameInfo(this);
 	if (!_gameInfo)
@@ -153,34 +137,146 @@ bool BladeRunnerEngine::startup() {
 	if (!r)
 		return false;
 
-	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
+	// TODO: Create graphics surfaces 1-4
+
+	// TODO: Allocate audio cache
+
+	if (hasSavegames) {
+		if (!loadSplash()) {
+			return false;
+		}
+	}
+
+	// TODO: World waypoints
+
+	// TODO: Cover waypoints
+
+	// TODO: Flee waypoints
 
 	_gameVars = new int[_gameInfo->getGlobalVarCount()];
+
+	// TODO: Actor AI DLL init
+
+	// Seed rand
+
+	// TODO: Sine and cosine lookup tables for intervals of 1.0, 4.0, and 12.0
+
+	// TODO: View
+
+	// TODO: Screen Index
+
+	_gameFlags = new GameFlags();
+	_gameFlags->setFlagCount(_gameInfo->getFlagCount());
+
+	// TODO: Items
+
+	// Setup sound output
+
+	_audioPlayer = new AudioPlayer(this);
+
+	// TODO: Audio: Music
+
+	_audioSpeech = new AudioSpeech(this);
+
+	_ambientSounds = new AmbientSounds(this);
+
+	// TODO: Read BLADE.INI
 
 	_chapters = new Chapters(this);
 	if (!_chapters)
 		return false;
 
-	r = openArchive("MUSIC.MIX");
-	if (!r)
+	if (!openArchive("MUSIC.MIX"))
 		return false;
 
-	r = openArchive("SFX.MIX");
-	if (!r)
+	if (!openArchive("SFX.MIX"))
 		return false;
 
-	r = openArchive("SPCHSFX.TLK");
-	if (!r)
+	if (!openArchive("SPCHSFX.TLK"))
 		return false;
+
+	// TODO: Video overlays
+
+	// TODO: Proper ZBuf class
+	_zBuffer1 = new uint16[640 * 480];
+	_zBuffer2 = new uint16[640 * 480];
+
+	// TODO: Actors
+
+	// TODO: Player 99 (VO actor)
+
+	// TODO: McCoy setup
+
+	// TODO: Set actor ids (redundant?)
+
+	// TODO: Police Maze
+
+	_textActorNames = new TextResource(this);
+	if (!_textActorNames->open("ACTORS"))
+		return false;
+
+	_textCrimes = new TextResource(this);
+	if (!_textCrimes->open("CRIMES"))
+		return false;
+
+	_textCluetype = new TextResource(this);
+	if (!_textCluetype->open("CLUETYPE"))
+		return false;
+
+	_textKIA = new TextResource(this);
+	if (!_textKIA->open("KIA"))
+		return false;
+
+	_textSpindest = new TextResource(this);
+	if (!_textSpindest->open("SPINDEST"))
+		return false;
+
+	_textVK = new TextResource(this);
+	if (!_textVK->open("VK"))
+		return false;
+
+	_textOptions = new TextResource(this);
+	if (!_textOptions->open("OPTIONS"))
+		return false;
+
+	// TODO: Dialogue Menu (DLGMENU.TRE)
+
+	// TODO: SDB
+
+	// TODO: KIA
+
+	// TODO: Spinner Interface
+
+	// TODO: Elevators
+
+	// TODO: Scores
+
+	// TODO: Font
+
+	// TODO: KIA6PT.FON
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
 		shape->readFromContainer("SHAPES.SHP", i);
 		_shapes.push_back(shape);
 	}
+
+	// TODO: Esper
+
+	// TODO: VK
+
+	_mouse = new Mouse(this);
+	// _mouse->setCursorPosition(320, 240);
 	_mouse->setCursor(0);
 
+	_sliceAnimations = new SliceAnimations(this);
 	r = _sliceAnimations->open("INDEX.DAT");
+	if (!r)
+		return false;
+
+	// TODO: Support cdframes
+
+	r = _sliceAnimations->openHDFrames();
 	if (!r)
 		return false;
 
@@ -188,20 +284,18 @@ bool BladeRunnerEngine::startup() {
 	if (!r)
 		return false;
 
-	r = _sliceAnimations->openHDFrames();
-	if (!r)
-		return false;
-
-	_zBuffer1 = new uint16[640 * 480];
-	_zBuffer2 = new uint16[640 * 480];
-
-	_actorNames = new TextResource(this);
-	_actorNames->open("ACTORS");
+	_sliceRenderer = new SliceRenderer(this);
 
 	_clues = new Clues(this, "CLUES", _gameInfo->getClueCount());
 
+	// TODO: Scene
+	_scene = new Scene(this);
+
+	// Load INIT.DLL
 	ScriptInit initScript(this);
 	initScript.SCRIPT_Initialize_Game();
+
+	// TODO: Load AI-ACT1.DLL
 
 	initChapterAndScene();
 
@@ -218,12 +312,73 @@ void BladeRunnerEngine::initChapterAndScene() {
 void BladeRunnerEngine::shutdown() {
 	_mixer->stopAll();
 
+	// TODO: Write BLADE.INI
+
+	// TODO: Shutdown VK
+
+	// TODO: Shutdown Esper
+
+	delete _mouse;
+	_mouse = 0;
+
+	for (uint i = 0; i != _shapes.size(); ++i) {
+		delete _shapes[i];
+	}
+	_shapes.clear();
+
+	// TODO: Shutdown Scene
+	delete _scene;
+
 	if (_chapters) {
 		if (_chapters->hasOpenResources())
 			_chapters->closeResources();
 		delete _chapters;
 		_chapters = 0;
 	}
+
+	delete _clues;
+	_clues = 0;
+
+	delete _sliceRenderer;
+	_sliceRenderer = 0;
+
+	delete _sliceAnimations;
+	_sliceAnimations = 0;
+
+	delete _textActorNames;
+	_textActorNames = 0;
+
+	delete _textCrimes;
+	_textCrimes = 0;
+
+	delete _textCluetype;
+	_textCluetype = 0;
+
+	delete _textKIA;
+	_textKIA = 0;
+
+	delete _textSpindest;
+	_textSpindest = 0;
+
+	delete _textVK;
+	_textVK = 0;
+
+	delete _textOptions;
+	_textOptions = 0;
+
+	// TODO: Delete dialogue menu
+
+	delete _ambientSounds;
+
+	// TODO: Delete overlays
+
+	delete _audioSpeech;
+
+	// TODO: Delete Audio: Music
+
+	delete _audioPlayer;
+
+	// Shutdown sound output
 
 	if (isArchiveOpen("MUSIC.MIX"))
 		closeArchive("MUSIC.MIX");
@@ -234,19 +389,77 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("SPCHSFX.TLK"))
 		closeArchive("SPCHSFX.TLK");
 
+	// TODO: Delete KIA6PT.FON
+
+	// TODO: Delete Items
+
+	delete _gameFlags;
+	_gameFlags = 0;
+
+	// TODO: Delete View
+
+	// TODO: Delete Screen Index
+
+	// TODO: Delete sine and cosine lookup tables
+
+	// TODO: Unload AI dll
+
+	delete[] _gameVars;
+	_gameVars = 0;
+
+	// TODO: Delete World waypoints
+
+	// TODO: Delete Cover waypoints
+
+	// TODO: Delete Flee waypoints
+
+	// TODO: Delete Scores
+
+	// TODO: Delete Elevators
+
+	// TODO: Delete Spinner Interface
+
+	// TODO: Delete KIA
+
+	// TODO: Delete SDB
+
+	// TODO: Delete unknown stuff
+
+	// TODO: Delete actors
+
+	// TODO: Delete proper ZBuf class
+	delete[] _zBuffer1;
+	_zBuffer1 = 0;
+
+	delete[] _zBuffer2;
+	_zBuffer2 = 0;
+
+	delete _gameInfo;
+	_gameInfo = 0;
+
+	// TODO: Delete graphics surfaces here
+	_surface1.free();
+	_surface2.free();
+
 	if (isArchiveOpen("STARTUP.MIX"))
 		closeArchive("STARTUP.MIX");
+
+	// TODO: Delete MIXArchives here
+
+	// TODO: Delete Timer
 }
 
-void BladeRunnerEngine::loadSplash() {
+bool BladeRunnerEngine::loadSplash() {
 	Image img(this);
 	if (!img.open("SPLASH.IMG"))
-		return;
+		return false;
 
 	img.copyToSurface(&_surface1);
 
 	_system->copyRectToScreen(_surface1.getPixels(), _surface1.pitch, 0, 0, _surface1.w, _surface1.h);
 	_system->updateScreen();
+
+	return false;
 }
 
 bool BladeRunnerEngine::init2() {

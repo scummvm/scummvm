@@ -73,7 +73,14 @@ public:
 	SliceRenderer   *_sliceRenderer;
 	int             *_gameVars;
 
-	TextResource    *_actorNames;
+	TextResource    *_textActorNames;
+	TextResource    *_textCrimes;
+	TextResource    *_textCluetype;
+	TextResource    *_textKIA;
+	TextResource    *_textSpindest;
+	TextResource    *_textVK;
+	TextResource    *_textOptions;
+
 	Common::Array<Shape*> _shapes;
 
 	int in_script_counter;
@@ -97,11 +104,11 @@ public:
 
 	Common::Error run();
 
-	bool startup();
+	bool startup(bool hasSavegames = false);
 	void initChapterAndScene();
 	void shutdown();
 
-	void loadSplash();
+	bool loadSplash();
 	bool init2();
 
 	void gameLoop();
