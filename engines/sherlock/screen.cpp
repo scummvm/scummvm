@@ -216,7 +216,7 @@ void Screen::randomTransition() {
 	const int TRANSITION_MULTIPLIER = 0x15a4e35;
 	_dirtyRects.clear();
 
-	for (int idx = 0; idx <= 65535; ++idx) {
+	for (int idx = 0; idx <= 65535 && !_vm->shouldQuit(); ++idx) {
 		_transitionSeed = _transitionSeed * TRANSITION_MULTIPLIER + 1;
 		int offset = _transitionSeed & 65535;
 
