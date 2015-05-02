@@ -559,7 +559,7 @@ void Scene::checkSceneFlags(bool flag) {
  */
 void Scene::checkInventory() {
 	for (uint shapeIdx = 0; shapeIdx < _bgShapes.size(); ++shapeIdx) {
-		for (uint invIdx = 0; invIdx < _vm->_inventory->size(); ++invIdx) {
+		for (uint invIdx = 0; invIdx < _vm->_inventory->_holdings; ++invIdx) {
 			if (scumm_stricmp(_bgShapes[shapeIdx]._name.c_str(),
 				(*_vm->_inventory)[invIdx]._name.c_str()) == 0) {
 				_bgShapes[shapeIdx]._type = INVALID;
