@@ -160,6 +160,7 @@ struct UseType {
 	int _lFlag[2];
 	Common::String _target;
 
+	UseType();
 	void synchronize(Common::SeekableReadStream &s);
 };
 

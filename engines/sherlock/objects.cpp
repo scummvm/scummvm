@@ -377,6 +377,13 @@ void ActionType::synchronize(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
+UseType::UseType() {
+	_cAnimNum = _cAnimSpeed = 0;
+	_useFlag = 0;
+	_dFlag[0] = 0;
+	_lFlag[0] = _lFlag[1] = 0;
+}
+
 void UseType::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];
 
