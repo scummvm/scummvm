@@ -100,6 +100,9 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_scriptCurrentIndex = -1;
 }
 
+/**
+ * Sets talk sequences
+ */
 void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, int maxPeople) {
 	for (int idx = 0; idx < maxPeople; ++idx) {
 		STILL_SEQUENCES.push_back(TalkSequences(stillSequences));
@@ -1726,6 +1729,9 @@ int Talk::waitForMore(int delay) {
 	return key2;
 }
 
+/**
+ * Pops an entry off of the script stack
+ */
 void Talk::popStack() {
 	if (!_scriptStack.empty()) {
 		ScriptStackEntry scriptEntry = _scriptStack.pop();

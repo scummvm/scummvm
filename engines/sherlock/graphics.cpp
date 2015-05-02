@@ -47,6 +47,10 @@ Surface::~Surface() {
 		free();
 }
 
+/**
+ * Sets up an internal surface with the specified dimensions that will be automatically freed
+ * when the surface object is destroyed
+ */
 void Surface::create(uint16 width, uint16 height) {
 	if (_freePixels)
 		free();
@@ -54,7 +58,6 @@ void Surface::create(uint16 width, uint16 height) {
 	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_freePixels = true;
 }
-
 
 /**
  * Copy a surface into this one
@@ -159,6 +162,9 @@ void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
 	fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
+/**
+ * Fill a given area of the surface with a given color
+ */
 void Surface::fillRect(const Common::Rect &r, byte color) {
     Graphics::Surface::fillRect(r, color);
 	addDirtyRect(r);
@@ -195,6 +201,5 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	
 	return true;
 }
-
 
 } // End of namespace Sherlock

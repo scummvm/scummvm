@@ -208,7 +208,6 @@ Common::KeyState Events::getKey() {
 	return keyState;
 }
 
-
 /**
  * Clear any current keypress or mouse click
  */
@@ -227,7 +226,6 @@ void Events::clearKeyboard() {
 	_pendingKeys.clear();
 }
 
-
 /**
  * Delay for a given number of game frames, where each frame is 1/60th of a second
  */
@@ -236,6 +234,9 @@ void Events::wait(int numFrames) {
 	delay(totalMilli);
 }
 
+/**
+ * Does a delay of the specified number of milliseconds
+ */
 bool Events::delay(uint32 time, bool interruptable) {
 	// Different handling for really short versus extended times
 	if (time < 10) {

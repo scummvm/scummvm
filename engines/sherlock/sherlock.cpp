@@ -69,6 +69,9 @@ SherlockEngine::~SherlockEngine() {
 	delete _res;
 }
 
+/**
+ * Does basic initialization of the game engine
+ */
 void SherlockEngine::initialize() {
 	initGraphics(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, false);
 
@@ -93,7 +96,11 @@ void SherlockEngine::initialize() {
 	_ui = new UserInterface(this);
 }
 
+/**
+ * Main method for running the game
+ */
 Common::Error SherlockEngine::run() {
+	// Initialize the engine
 	initialize();
 
 	// If requested, load a savegame instead of showing the intro
@@ -133,6 +140,9 @@ Common::Error SherlockEngine::run() {
 	return Common::kNoError;
 }
 
+/**
+ * Main loop for displaying a scene and handling all that occurs within it
+ */
 void SherlockEngine::sceneLoop() {
 	while (!shouldQuit() && _scene->_goToScene == -1) {
 		// See if a script needs to be completed from either a goto room code,
@@ -171,7 +181,6 @@ void SherlockEngine::handleInput() {
 	_ui->handleInput();
 }
 
-
 /**
  * Read the state of a global flag
  */
@@ -193,6 +202,9 @@ void SherlockEngine::setFlags(int flagNum) {
 	_scene->checkSceneFlags(true);
 }
 
+/**
+ * Saves game configuration information
+ */
 void SherlockEngine::saveConfig() {
 	// TODO
 }

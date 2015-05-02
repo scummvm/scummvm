@@ -361,6 +361,9 @@ void Sprite::checkSprite() {
 
 /*----------------------------------------------------------------*/
 
+/**
+ * Synchronize the data for a savegame 
+ */
 void ActionType::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];
 	
@@ -384,6 +387,9 @@ UseType::UseType() {
 	_lFlag[0] = _lFlag[1] = 0;
 }
 
+/**
+ * Synchronize the data for a savegame 
+ */
 void UseType::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];
 
@@ -816,11 +822,11 @@ void Object::setObjSequence(int seq, bool wait) {
 }
 
 /**
-* Checks for codes
-* @param name		The name to check for codes
-* @param messages	Provides a lookup list of messages that can be printed
-* @returns		0 if no codes are found, 1 if codes were found
-*/
+ * Checks for codes
+ * @param name		The name to check for codes
+ * @param messages	Provides a lookup list of messages that can be printed
+ * @returns		0 if no codes are found, 1 if codes were found
+ */
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
@@ -1090,6 +1096,9 @@ const Common::Rect Object::getOldBounds() const {
 
 /*----------------------------------------------------------------*/
 
+/**
+ * Synchronize the data for a savegame 
+ */
 void CAnim::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];
 	s.read(buffer, 12);

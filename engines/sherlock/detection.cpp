@@ -36,14 +36,23 @@ struct SherlockGameDescription {
 	uint32 features;
 };
 
+/**
+ * Returns the Id of the game
+ */
 uint32 SherlockEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
 
+/**
+ * Returns the features the currently playing game has
+ */
 uint32 SherlockEngine::getGameFeatures() const {
 	return _gameDescription->features;
 }
 
+/**
+ * Return's the platform the game's datafiles are for
+ */
 Common::Platform SherlockEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
@@ -79,6 +88,9 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
+/**
+ * Creates an instance of the game engine
+ */
 bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Sherlock::SherlockGameDescription *gd = (const Sherlock::SherlockGameDescription *)desc;
 	if (gd) {
@@ -97,6 +109,9 @@ bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 	return gd != 0;
 }
 
+/**
+ * Returns a list of features the game's MetaEngine support
+ */
 bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
@@ -106,6 +121,9 @@ bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail);
 }
 
+/**
+ * Returns a list of features the game itself supports
+ */
 bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
@@ -113,19 +131,31 @@ bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
+/**
+ * Return a list of savegames
+ */
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
 	return Sherlock::SaveManager(nullptr, "").getSavegameList(target);
 }
 
+/**
+ * Returns the maximum number of allowed save slots
+ */
 int SherlockMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVEGAME_SLOTS;
 }
 
+/**
+ * Deletes a savegame in the specified slot
+ */
 void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {	
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
+/**
+ * Given a specified savegame slot, returns extended information for the save 
+ */
 SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);

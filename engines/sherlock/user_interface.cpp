@@ -188,6 +188,9 @@ void Settings::drawInteface(bool flag) {
 	}
 }
 
+/**
+ * Draws the buttons for the settings dialog
+ */
 int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -259,7 +262,6 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	return found;
 }
 
-
 /*----------------------------------------------------------------*/
 
 UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
@@ -298,6 +300,9 @@ UserInterface::~UserInterface() {
 	delete _controlPanel;
 }
 
+/**
+ * Resets the user interface
+ */
 void UserInterface::reset() {
 	_oldKey = -1;
 	_help = _oldHelp = -1;
@@ -1962,6 +1967,12 @@ void UserInterface::doTalkControl() {
 	}
 }
 
+/**
+ * Handles events when the Journal is active.
+ * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
+ *		the user interface, it uses so many internal UI fields, that it sort of made some sense 
+ *		to put it in the UserInterface class.
+ */
 void UserInterface::journalControl() {
 	Events &events = *_vm->_events;
 	Journal &journal = *_vm->_journal;
@@ -2013,6 +2024,9 @@ void UserInterface::journalControl() {
 
 /**
  * Handles input when the settings window is being shown
+ * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
+ *		the user interface, it uses so many internal UI fields, that it sort of made some sense
+ *		to put it in the UserInterface class.
  */
 void UserInterface::doControls() {
 	Events &events = *_vm->_events;
@@ -2701,6 +2715,5 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 	// Reset cursor back to arrow
 	events.setCursor(ARROW);
 }
-
 
 } // End of namespace Sherlock

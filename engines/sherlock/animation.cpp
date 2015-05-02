@@ -64,6 +64,9 @@ static const int NO_FRAMES = FRAMES_END;
 Animation::Animation(SherlockEngine *vm): _vm(vm) {
 }
 
+/**
+ * Play a full-screen animation
+ */
 bool Animation::play(const Common::String &filename, int minDelay, int fade, 
 		bool setPalette, int speed) {
 	Events &events = *_vm->_events;

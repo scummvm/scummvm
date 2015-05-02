@@ -217,6 +217,9 @@ People::~People() {
 	delete[] _portrait._sequences;
 }
 
+/**
+ * Reset the player data
+ */
 void People::reset() {
 	Sprite &p = _data[PLAYER];
 
@@ -239,6 +242,9 @@ void People::reset() {
 	p._status = 0;
 }
 
+/**
+ * Load the walking images for Sherlock
+ */
 bool People::loadWalk() {
 	if (_walkLoaded) {
 		return false;
@@ -267,10 +273,10 @@ bool People::freeWalk() {
 }
 
 /**
-* Set the variables for moving a character from one poisition to another
-* in a straight line - goAllTheWay must have been previously called to
-* check for any obstacles in the path.
-*/
+ * Set the variables for moving a character from one poisition to another
+ * in a straight line - goAllTheWay must have been previously called to
+ * check for any obstacles in the path.
+ */
 void People::setWalking() {
 	Map &map = *_vm->_map;
 	Scene &scene = *_vm->_scene;

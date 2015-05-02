@@ -91,6 +91,9 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	}
 }
 
+/**
+ * Load the list of location names that the journal will make reference to
+ */
 void Journal::loadJournalLocations() {
 	Resources &res = *_vm->_res;
 	char c;

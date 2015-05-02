@@ -50,6 +50,9 @@ Screen::~Screen() {
 	delete _font;
 }
 
+/**
+ * Set the font to use for writing text on the screen
+ */
 void Screen::setFont(int fontNumber) {
 	_fontNumber = fontNumber;
 	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber + 1);
@@ -64,6 +67,9 @@ void Screen::setFont(int fontNumber) {
 		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
 }
 
+/**
+ * Handles updating any dirty areas of the screen Surface object to the physical screen
+ */
 void Screen::update() {
 	// Merge the dirty rects
 	mergeDirtyRects();
@@ -82,14 +88,23 @@ void Screen::update() {
 	_dirtyRects.clear();
 }
 
+/**
+ * Return the currently active palette
+ */
 void Screen::getPalette(byte palette[PALETTE_SIZE]) {
 	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
 }
 
+/**
+ * Set the palette
+ */
 void Screen::setPalette(const byte palette[PALETTE_SIZE]) {
 	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
 }
 
+/**
+ * Fades from the currently active palette to the passed palette
+ */
 int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 	int total = 0;
 	byte tempPalette[PALETTE_SIZE];

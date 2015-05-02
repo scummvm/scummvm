@@ -358,6 +358,9 @@ void Inventory::highlight(int index, byte color) {
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
 
+/**
+ * Support method for updating the screen
+ */
 void Inventory::doInvJF() {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
