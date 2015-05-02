@@ -1387,9 +1387,9 @@ void Scene::doBgAnim() {
 	}
 
 	_restoreFlag = true;
-
-	events.wait(1);
 	_doBgAnimDone = true;
+
+	events.wait(3);
 	screen.resetDisplayBounds();
 
 	// Check if the method was called for calling a portrait, and a talk was
