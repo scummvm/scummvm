@@ -115,10 +115,11 @@ void Settings::drawInteface(bool flag) {
 	tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
 	screen.makeButton(Common::Rect(SETUP_POINTS[10][0], SETUP_POINTS[10][1], SETUP_POINTS[10][2], SETUP_POINTS[10][1] + 10),
 		SETUP_POINTS[10][3] - screen.stringWidth(tempStr) / 2, tempStr);
-	tempStr = Common::String::format("Key Pad %s", _vm->_keyPadSpeed ? "Fast" : "Slow");
 
+	tempStr = "Key Pad Slow";
 	screen.makeButton(Common::Rect(SETUP_POINTS[11][0], SETUP_POINTS[11][1], SETUP_POINTS[11][2], SETUP_POINTS[11][1] + 10),
 		SETUP_POINTS[11][3] - screen.stringWidth(tempStr) / 2, tempStr);
+	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr);
 
 	// Show the window immediately, or slide it on-screen 
 	if (!flag) {
@@ -196,8 +197,8 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 11: 
-			tempStr = Common::String::format("Key Pad %s", SETUP_STRS4[_vm->_keyPadSpeed]);
-			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
+			tempStr = "Key Pad Slow";
+			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
 			break;
 		default: 
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, SETUP_NAMES[idx]);

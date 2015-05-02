@@ -1968,13 +1968,6 @@ void UserInterface::doControls() {
 			updateConfig = true;
 			settings.drawInteface(true);
 		}
-
-		if ((found == 11 && events._released) || _key == 'K') {
-			// Toggle keypad acceleration speed
-			_vm->_keyPadSpeed ^= 1;
-			updateConfig = true;
-			settings.drawInteface(true);
-		}
 	} while (!_vm->shouldQuit());
 
 	banishWindow();
