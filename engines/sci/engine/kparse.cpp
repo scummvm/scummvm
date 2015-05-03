@@ -117,6 +117,8 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		}
 #endif
 
+		voc->replacePronouns(words);
+
 		int syntax_fail = voc->parseGNF(words);
 
 		if (syntax_fail) {
@@ -130,6 +132,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 
 		} else {
 			voc->parserIsValid = true;
+			voc->storePronounReference();
 			writeSelectorValue(segMan, event, SELECTOR(claimed), 0);
 
 #ifdef DEBUG_PARSER
