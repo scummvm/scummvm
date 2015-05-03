@@ -169,6 +169,9 @@ void Scene::selectScene() {
  * Fres all the graphics and other dynamically allocated data for the scene
  */
 void Scene::freeScene() {
+	if (_currentScene == -1)
+		return;
+
 	_vm->_talk->freeTalkVars();
 	_vm->_inventory->freeInv();
 	_vm->_sound->freeSong();
@@ -190,6 +193,8 @@ void Scene::freeScene() {
 	for (uint idx = 0; idx < _images.size(); ++idx)
 		delete _images[idx]._images;
 	_images.clear();
+
+	_currentScene = -1;
 }
 
 /**
