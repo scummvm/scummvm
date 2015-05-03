@@ -83,6 +83,17 @@ void SceneSound::synchronize(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
+int ObjectArray::indexOf(const Object &obj) const {
+	for (uint idx = 0; idx < size(); ++idx) {
+		if (&(*this)[idx] == &obj)
+			return idx;
+	}
+
+	return -1;
+}
+
+/*----------------------------------------------------------------*/
+
 Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
 		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
@@ -1047,18 +1058,9 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	if (cObj._frameNumber <= 26)
 		gotoCode = cObj._sequences[cObj._frameNumber + 3];
 
-	// Set canim to REMOVE type and free memory
-	cObj.checkObject();
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if (&_canimShapes[idx] == &cObj) {
-			// Do a final call to doBgAnim to erase the anim shape before it's erased
-			doBgAnim();
-
-			// Remove the completed sprite from the animation shapes array
-			_canimShapes.remove_at(idx);
-			break;
-		}
-	}
+	// Unless anim shape has already been freed, set it to REMOVE so doBgAnim can free it
+	if (_canimShapes.indexOf(cObj) != -1)
+		cObj.checkObject();
 
 	if (gotoCode > 0 && !talk._talkToAbort) {
 		_goToScene = gotoCode;
@@ -1377,13 +1379,14 @@ void Scene::doBgAnim() {
 			}
 		}
 
-		for (uint idx = 0; idx <  _canimShapes.size(); ++idx) {
+		for (int idx = _canimShapes.size() - 1; idx >= 0; --idx) {
 			Object &o = _canimShapes[idx];
 			if (o._type == REMOVE) {
 				if (_goToScene == -1)
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
-				_canimShapes[idx]._type = INVALID;
+				// Shape for an animation is no longer needed, so remove it completely
+				_canimShapes.remove_at(idx);
 			} else if (o._type == ACTIVE_BG_SHAPE) {
 				screen.flushImage(o._imageFrame, o._position,
 					&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);

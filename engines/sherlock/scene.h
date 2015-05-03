@@ -83,6 +83,11 @@ struct SceneSound {
 	void synchronize(Common::SeekableReadStream &s);
 };
 
+class ObjectArray: public Common::Array<Object> {
+public:
+	int indexOf(const Object &obj) const;
+};
+
 class Scene {
 private:
 	SherlockEngine *_vm;
@@ -127,7 +132,7 @@ public:
 	Common::Array<Exit> _exits;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
-	Common::Array<Object> _canimShapes;
+	ObjectArray _canimShapes;
 	bool _restoreFlag;
 	int _animating;
 	bool _doBgAnimDone;
