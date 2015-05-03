@@ -105,7 +105,6 @@ public:
 	Common::String _soundOverride;
 	Common::String _titleOverride;
 	bool _useEpilogue2;
-	bool _loadingSavedGame;
 	int _loadGameSlot;
 	bool _canLoadSave;
 public:

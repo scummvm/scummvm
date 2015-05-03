@@ -89,6 +89,7 @@ private:
 	Common::String _rrmName;
 	int _selector;
 	bool _lookHelp;
+	bool _loadingSavedGame;
 
 	bool loadScene(const Common::String &filename);
 

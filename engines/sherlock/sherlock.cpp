@@ -46,7 +46,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_talk = nullptr;
 	_ui = nullptr;
 	_useEpilogue2 = false;
-	_loadingSavedGame = false;
 	_loadGameSlot = -1;
 	_canLoadSave = false;
 }
@@ -164,7 +163,6 @@ void SherlockEngine::sceneLoop() {
 		}
 	}
 
-	_scene->freeScene();
 	_people->freeWalk();
 
 }

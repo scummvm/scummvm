@@ -88,6 +88,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
 	_currentScene = -1;
 	_goToScene = -1;
+	_loadingSavedGame = false;
 	_changes = false;
 	_keyboardInput = 0;
 	_walkedInScene = false;
@@ -162,10 +163,10 @@ void Scene::freeScene() {
 	_vm->_sound->freeSong();
 	_vm->_sound->freeLoadedSounds();
 
-	if (!_vm->_loadingSavedGame)
+	if (!_loadingSavedGame)
 		saveSceneStatus();
 	else
-		_vm->_loadingSavedGame = false;
+		_loadingSavedGame = false;
 
 	_sequenceBuffer.clear();
 	_descText.clear();
@@ -1494,10 +1495,12 @@ void Scene::synchronize(Common::Serializer &s) {
 	if (s.isSaving())
 		saveSceneStatus();
 
-	if (s.isSaving())
+	if (s.isSaving()) {
 		s.syncAsSint16LE(_currentScene);
-	else
+	} else {
 		s.syncAsSint16LE(_goToScene);
+		_loadingSavedGame = true;
+	}
 
 	for (int sceneNum = 0; sceneNum < SCENES_COUNT; ++sceneNum) {
 		for (int flag = 0; flag < 65; ++flag) {
