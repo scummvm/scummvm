@@ -931,7 +931,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	cObj._frameNumber = -1;
 	cObj._sequenceNumber = cAnimNum;
 	cObj._oldPosition = Common::Point(0, 0);
-	cObj._oldPosition = Common::Point(0, 0);
+	cObj._oldSize = Common::Point(0, 0);
 	cObj._goto = Common::Point(0, 0);
 	cObj._status = 0;
 	cObj._misc = 0;
@@ -1050,6 +1050,10 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	cObj.checkObject();
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (&_canimShapes[idx] == &cObj) {
+			// Do a final call to doBgAnim to erase the anim shape before it's erased
+			doBgAnim();
+
+			// Remove the completed sprite from the animation shapes array
 			_canimShapes.remove_at(idx);
 			break;
 		}
@@ -1372,7 +1376,7 @@ void Scene::doBgAnim() {
 			}
 		}
 
-		for (int idx = _canimShapes.size() - 1; idx >= 0; --idx) {
+		for (uint idx = 0; idx <  _canimShapes.size(); ++idx) {
 			Object &o = _canimShapes[idx];
 			if (o._type == REMOVE) {
 				if (_goToScene == -1)

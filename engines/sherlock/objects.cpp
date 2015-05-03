@@ -728,7 +728,7 @@ bool Object::checkEndOfSequence() {
 					// Save details before shape is removed
 					_delta.x = _imageFrame->_frame.w;
 					_delta.y = _imageFrame->_frame.h;
-					_position = _imageFrame->_offset;
+					_position += _imageFrame->_offset;
 
 					// Free the images
 					delete _images;
