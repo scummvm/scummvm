@@ -69,6 +69,7 @@ void EMIAnimComponent::setKey(int f) {
 		break;
 	case 3: // Loop
 		_animState->setLooping(true);
+		_animState->play();
 		break;
 	case 4: // No loop
 		_animState->setLooping(false);
