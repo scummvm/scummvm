@@ -251,8 +251,8 @@ GfxScreen::~GfxScreen() {
 	free(_displayScreen);
 }
 
-// should not used regulary, only meant for restore game
-void GfxScreen::clear() {
+// should not be used regularly; only meant for restore game
+void GfxScreen::clearForRestoreGame() {
 	// reset all screen data
 	memset(_visualScreen, 0, _pixels);
 	memset(_priorityScreen, 0, _pixels);

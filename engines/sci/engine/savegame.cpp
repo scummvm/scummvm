@@ -923,7 +923,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		g_sci->_gfxPorts->reset();
 	// clear screen
 	if (g_sci->_gfxScreen)
-		g_sci->_gfxScreen->clear();
+		g_sci->_gfxScreen->clearForRestoreGame();
 #ifdef ENABLE_SCI32
 	// Also clear any SCI32 planes/screen items currently showing so they
 	// don't show up after the load.
