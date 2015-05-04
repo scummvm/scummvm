@@ -1386,7 +1386,11 @@ void Scene::doBgAnim() {
 
 		for (int idx = _canimShapes.size() - 1; idx >= 0; --idx) {
 			Object &o = _canimShapes[idx];
-			if (o._type == REMOVE) {
+
+			if (o._type == INVALID) {
+				// Anim shape was invalidated by checkEndOfSequence, so at this point we can remove it
+				_canimShapes.remove_at(idx);
+			} else  if (o._type == REMOVE) {
 				if (_goToScene == -1)
 					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
 
