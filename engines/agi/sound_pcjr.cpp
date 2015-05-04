@@ -207,7 +207,7 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 				chan->attenuationCopy = attenuation;
 
 				attenuation &= 0x0F;
-				attenuation += _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 17;
+				attenuation += (16 - _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 17);
 				if (attenuation > 0x0F)
 					attenuation = 0x0F;
 			}
