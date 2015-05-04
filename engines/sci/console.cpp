@@ -209,6 +209,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
 	// VM
 	registerCmd("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
+	registerCmd("script_strings",   WRAP_METHOD(Console, cmdScriptStrings));
+	registerCmd("scrs",             WRAP_METHOD(Console, cmdScriptStrings));
 	registerCmd("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
 	registerCmd("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
 	registerCmd("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
@@ -2825,6 +2827,71 @@ bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 
 bool Console::cmdScriptSteps(int argc, const char **argv) {
 	debugPrintf("Number of executed SCI operations: %d\n", _engine->_gamestate->scriptStepCounter);
+	return true;
+}
+
+bool Console::cmdScriptStrings(int argc, const char **argv) {
+	SegManager *segMan = _engine->_gamestate->_segMan;
+	int curScriptNr = -1;
+	SegmentId curSegmentNr;
+	Common::List<SegmentId> segmentNrList;
+
+	SegmentType curSegmentType = SEG_TYPE_INVALID;
+	SegmentObj *curSegmentObj = NULL;
+	Script *curScriptObj = NULL;
+
+	if (argc < 2) {
+		debugPrintf("Shows the strings inside a specified script.\n");
+		debugPrintf("Usage: %s <script number>\n", argv[0]);
+		debugPrintf("Example: %s 999\n", argv[0]);
+		debugPrintf("<script number> may be * to show strings inside all loaded scripts\n");
+		return true;
+	}
+	
+	segmentNrList.clear();
+
+	if (strcmp(argv[1], "*") == 0) {
+		// get strings of all currently loaded scripts
+		for (curSegmentNr = 0; curSegmentNr < segMan->_heap.size(); curSegmentNr++) {
+			curSegmentObj = segMan->_heap[curSegmentNr];
+			if (curSegmentObj && curSegmentObj->getType() == SEG_TYPE_SCRIPT) {
+				segmentNrList.push_back(curSegmentNr);
+			}
+		}
+
+	} else {
+		curScriptNr = atoi(argv[1]);
+		curSegmentNr = segMan->getScriptSegment(curScriptNr);
+		if (!curSegmentNr) {
+			debugPrintf("Script %d is currently not loaded/available\n", curScriptNr);
+			return true;
+		}
+		segmentNrList.push_back(curSegmentNr);
+	}
+
+	Common::List<SegmentId>::iterator it;
+	const Common::List<SegmentId>::iterator end = segmentNrList.end();
+
+	for (it = segmentNrList.begin(); it != end; it++) {
+		curSegmentNr = *it;
+		// get object of this segment
+		curSegmentObj = segMan->getSegmentObj(curSegmentNr);
+		if (!curSegmentObj)
+			continue;
+
+		curSegmentType = curSegmentObj->getType();
+		if (curSegmentType != SEG_TYPE_SCRIPT) // safety check
+			continue;
+
+		curScriptObj = (Script *)curSegmentObj;
+		debugPrintf("=== SCRIPT %d from Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+		debugN("=== SCRIPT %d from Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+
+		// now print the string list
+		curScriptObj->debugPrintStrings(this);
+		debugPrintf("\n");
+		debugN("\n");
+	}
 	return true;
 }
 

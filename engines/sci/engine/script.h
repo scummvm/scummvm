@@ -49,6 +49,13 @@ enum ScriptObjectTypes {
 
 typedef Common::HashMap<uint16, Object> ObjMap;
 
+struct stringLookupListEntry {
+	uint16    ptrOffset;  // offset of the string
+	uint16    stringSize; // size of string, including terminating [NUL]
+};
+
+typedef Common::List<stringLookupListEntry> stringLookupListType;
+
 class Script : public SegmentObj {
 private:
 	int _nr; /**< Script number */
@@ -74,6 +81,8 @@ private:
 	LocalVariables *_localsBlock;
 
 	ObjMap _objects;	/**< Table for objects, contains property variables */
+
+	stringLookupListType _stringLookupList; // Table of string data, that is inside the currently loaded script
 
 public:
 	int getLocalsOffset() const { return _localsOffset; }
@@ -248,6 +257,11 @@ public:
 	 */
 	int getCodeBlockOffsetSci3() { return READ_SCI11ENDIAN_UINT32(_buf); }
 
+	/**
+	 * Print string lookup table (list) to debug console
+	 */
+	void debugPrintStrings(Console *con);
+
 private:
 	/**
 	 * Processes a relocation block within a SCI0-SCI2.1 script
@@ -294,6 +308,11 @@ private:
 	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
 
 	LocalVariables *allocLocalsSegment(SegManager *segMan);
+
+	/**
+	 * Identifies strings within script data and set up lookup-table
+	 */
+	void identifyStrings();
 };
 
 } // End of namespace Sci

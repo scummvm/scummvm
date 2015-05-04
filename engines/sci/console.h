@@ -147,6 +147,7 @@ private:
 	bool cmdBreakpointFunction(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
+	bool cmdScriptStrings(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdVMVars(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
