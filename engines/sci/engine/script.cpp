@@ -274,7 +274,7 @@ void Script::identifyStrings() {
 					listEntry.ptrOffset = stringStartPtr - _buf; // Calculate offset inside script data
 					// now look for terminating [NUL]
 					do {
-						stringDataByte = READ_SCI11ENDIAN_UINT16(stringDataPtr);
+						stringDataByte = *stringDataPtr;
 						stringDataPtr++;
 						stringDataLeft--;
 						if (!stringDataByte) // NUL found, exit this loop
@@ -356,7 +356,7 @@ void Script::identifyStrings() {
 			listEntry.ptrOffset = stringStartPtr - _buf; // Calculate offset inside script data
 			// now look for terminating [NUL]
 			do {
-				stringDataByte = READ_SCI11ENDIAN_UINT16(stringDataPtr);
+				stringDataByte = *stringDataPtr;
 				stringDataPtr++;
 				stringDataLeft--;
 				if (!stringDataByte) // NUL found, exit this loop
