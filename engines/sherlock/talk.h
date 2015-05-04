@@ -77,6 +77,8 @@ struct SequenceEntry {
 	Common::Array<byte> _sequences;
 	int _frameNumber;
 	int _seqTo;
+
+	SequenceEntry();
 };
 
 struct ScriptStackEntry {

@@ -26,6 +26,14 @@
 
 namespace Sherlock {
 
+SequenceEntry::SequenceEntry() {
+	_objNum = 0;
+	_frameNumber = 0;
+	_seqTo = 0;
+}
+
+/*----------------------------------------------------------------*/
+
 /**
  * Load the data for a single statement within a talk file
  */
