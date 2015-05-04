@@ -411,7 +411,7 @@ int SoundGenPCJr::chanGen(int chan, int16 *stream, int len) {
 		if (tpcm->noteCount <= 0) {
 			// get new tone data
 			if ((tpcm->avail) && (getNextNote(chan) == 0)) {
-				tpcm->atten = _channel[chan].attenuation;
+				tpcm->atten = volumeCalc(&_channel[chan]);
 				tpcm->freqCount = _channel[chan].freqCount;
 				tpcm->genType = _channel[chan].genType;
 
