@@ -184,7 +184,7 @@ void Talk::talkTo(const Common::String &filename) {
 	if (_savedSequences.size() > 0) {
 		for (uint idx = 0; idx < _savedSequences.size(); ++idx) {
 			SequenceEntry &ss = _savedSequences[idx];
-			for (uint idx2 = 0; idx2 < _savedSequences.size(); ++idx2)
+			for (uint idx2 = 0; idx2 < ss._sequences.size(); ++idx2)
 				scene._bgShapes[ss._objNum]._sequences[idx2] = ss._sequences[idx2];
 		
 			// Reset the object's frame to the beginning of the sequence
