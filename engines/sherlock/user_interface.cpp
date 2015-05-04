@@ -1508,6 +1508,7 @@ void UserInterface::doMiscControl(int allowed) {
 void UserInterface::doPickControl() {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
 
 	if (events._released) {
 		if ((_temp = _bgFound) != -1) {
@@ -1517,7 +1518,7 @@ void UserInterface::doPickControl() {
 			if (_bgFound < 1000) {
 				scene._bgShapes[_bgFound].pickUpObject(MPICK);
 
-				if (_menuMode != TALK_MODE) {
+				if (!talk._talkToAbort && _menuMode != TALK_MODE) {
 					_key = _oldKey = -1;
 					_menuMode = STD_MODE;
 					restoreButton(PICKUP_MODE - 1);
