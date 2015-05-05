@@ -676,11 +676,13 @@ void Lua_V2::SetLayerFrame() {
 void Lua_V2::SetLayerSortOrder() {
 	lua_Object param1 = lua_getparam(1);
 	lua_Object param2 = lua_getparam(2);
-	if (lua_isuserdata(param1) && lua_tag(param1) != MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
+	if (lua_isuserdata(param1) && lua_tag(param1) == MKTAG('L','A','Y','R') && lua_isnumber(param2)) {
 		int layer = (int)lua_getuserdata(param1);
 		int sortorder = (int)lua_getnumber(param2);
 		Layer *l = Layer::getPool().getObject(layer);
 		l->setSortOrder(sortorder);
+	} else {
+		warning("Lua_V2::SetLayerSortOrder: wrong parameters");
 	}
 }
 
