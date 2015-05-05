@@ -161,10 +161,20 @@ Shader *Shader::fromFiles(const char *vertex, const char *fragment, const char *
 }
 
 void Shader::use(bool forceReload) {
-	static Shader *previousShader = NULL;
+	static Shader *previousShader = nullptr;
+	static uint32 previousNumAttributes = 0;
 	if (this == previousShader && !forceReload)
 		return;
+
+	// The previous shader might have had more attributes. Disable any extra ones.
+	if (_attributes.size() < previousNumAttributes) {
+		for (uint32 i = _attributes.size(); i < previousNumAttributes; ++i) {
+			glDisableVertexAttribArray(i);
+		}
+	}
+
 	previousShader = this;
+	previousNumAttributes = _attributes.size();
 
 	glUseProgram(*_shaderNo);
 	for (uint32 i = 0; i < _attributes.size(); ++i) {
