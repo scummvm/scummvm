@@ -344,7 +344,11 @@ void SurfaceSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, boo
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
 	if (gameRenderTarget == kFramebuffer) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		_frameBuffer = new OpenGL::FrameBuffer(gameWidth, gameHeight);
+		if (_antialiasing) {
+			_frameBuffer = new OpenGL::MultiSampleFrameBuffer(gameWidth, gameHeight);
+		} else {
+			_frameBuffer = new OpenGL::FrameBuffer(gameWidth, gameHeight);
+		}
 		_frameBuffer->attach();
 	}
 #endif

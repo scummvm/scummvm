@@ -96,7 +96,7 @@ static void grabFramebufferObjectPointers() {
 	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorage");
 	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)u.func_ptr;
 }
-#endif // defined(SDL_BACKEND) && !defined(USE_GLES2)
+#endif // defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 
 
 
@@ -171,6 +171,65 @@ void FrameBuffer::attach() {
 void FrameBuffer::detach() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+#if !defined(USE_GLES2) && !defined(AMIGAOS)
+MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height)
+		: FrameBuffer(width,height) {
+	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
+		error("The current OpenGL context does not support multisample framebuffer objects!");
+	}
+
+	init();
+}
+
+MultiSampleFrameBuffer::~MultiSampleFrameBuffer() {
+	glDeleteRenderbuffers(1, &_msColorId);
+	glDeleteRenderbuffers(1, &_msDepthId);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &_msFrameBufferId);
+}
+
+//TODO: fallback to fewer samples
+void MultiSampleFrameBuffer::init() {
+	glGenFramebuffers(1, &_msFrameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, _msFrameBufferId);
+
+	glGenRenderbuffers(1, &_msColorId);
+	glBindRenderbuffer(GL_RENDERBUFFER, _msColorId);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_RGBA8, getTexWidth(), getTexHeight());
+
+	glGenRenderbuffers(1, &_msDepthId);
+	glBindRenderbuffer(GL_RENDERBUFFER, _msDepthId);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH24_STENCIL8, getTexWidth(), getTexHeight());
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _msColorId);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _msDepthId);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _msDepthId);
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+		error("Framebuffer is not complete! status: %d", status);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void MultiSampleFrameBuffer::attach() {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, getFrameBufferName());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _msFrameBufferId);
+	glViewport(0,0, getWidth(), getHeight());
+
+	glClearColor(0, 0, 0, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void MultiSampleFrameBuffer::detach() {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _msFrameBufferId);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFrameBufferName());
+	glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+#endif // !defined(USE_GLES2) && !defined(AMIGAOS)
 
 } // End of namespace OpenGL
 
