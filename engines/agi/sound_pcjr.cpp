@@ -120,8 +120,6 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	else
 		_dissolveMethod = 0;
 
-	_dissolveMethod = 3;
-
 	memset(_channel, 0, sizeof(_channel));
 	memset(_tchannel, 0, sizeof(_tchannel));
 
