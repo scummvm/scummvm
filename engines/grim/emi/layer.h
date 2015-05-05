@@ -44,7 +44,7 @@ public:
 	void setFrame(int frame);
 	void setSortOrder(int order);
 	void advanceFrame(int num);
-	int getSortOrder() { return _sortOrder; }
+	int getSortOrder() const { return _sortOrder; }
 
 	void saveState(SaveGame *state);
 	void restoreState(SaveGame *state);
