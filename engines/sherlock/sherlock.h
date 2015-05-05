@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/endian.h"
 #include "common/hash-str.h"
+#include "common/serializer.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/util.h"

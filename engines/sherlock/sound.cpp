@@ -20,6 +20,7 @@
  *
  */
 
+#include "sherlock/sherlock.h"
 #include "sherlock/sound.h"
 #include "common/config-manager.h"
 
@@ -29,12 +30,14 @@ Sound::Sound(SherlockEngine *vm): _vm(vm) {
 	_digitized = false;
 	_music = false;
 	_voices = 0;
-	_soundOn = false;
-	_musicOn = false;
-	_speechOn = false;
 	_playingEpilogue = false;
 	_diskSoundPlaying = false;
-	_soundIsOn = nullptr;
+	_soundPlaying = false;
+	_soundIsOn = &_soundPlaying;
+
+	_soundOn = true;
+	_musicOn = true;
+	_speechOn = true;
 }
 
 /**
@@ -44,79 +47,90 @@ void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
 	_music = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
 	_voices = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute") ? 1 : 0;
-
-	// TODO: For now, keep sound completely mute until sound is implemented
-	_digitized = false;
-	_music = false;
-	_voices = 0;
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {
 	// TODO
+	warning("TODO: Sound::loadSound");
 }
 
 bool Sound::playSound(const Common::String &name, WaitType waitType) {
 	// TODO
+	warning("TODO: Sound::playSound");
 	return true;
 }
 
 void Sound::cacheSound(const Common::String &name, int index) {
 	// TODO
+	warning("TODO: Sound::cacheSound");
 }
 
 void Sound::playLoadedSound(int bufNum, int waitMode) {
 	// TODO
+	warning("TODO: Sound::playLoadedSound");
 }
 
 void Sound::playCachedSound(int index) {
 	// TODO
+	warning("TODO: Sound::playCachedSound");
 }
 
 void Sound::freeLoadedSounds() {
 	// TODO
+	warning("TODO: Sound::clearLoadedSound");
 }
 
 void Sound::clearCache() {
 	// TODO
+	warning("TODO: Sound::clearCache");
 }
 
 void Sound::stopSound() {
 	// TODO
+	warning("TODO: Sound::stopSound");
 }
 
 void Sound::playMusic(const Common::String &name) {
 	// TODO
+	warning("TODO: Sound::playMusic");
 }
 
 void Sound::stopMusic() {
 	// TODO
+	warning("TODO: Sound::stopMusic");
 }
 
 int Sound::loadSong(int songNumber) {
 	// TODO
+	warning("TODO: Sound::loadSong");
 	return 0;
 }
 
 void Sound::startSong() {
 	// TODO
+	warning("TODO: Sound::startSong");
 }
 
 void Sound::freeSong() {
 	// TODO
+	warning("TODO: Sound::freeSong");
 }
 
 void Sound::stopSndFuncPtr(int v1, int v2) {
 	// TODO
+	warning("TODO: Sound::stopSndFuncPtr");
 }
 
 void Sound::waitTimerRoland(uint time) {
 	// TODO
+	warning("TODO: Sound::waitTimerRoland");
 }
 
 void Sound::freeDigiSound() {
 	delete[] _digiBuf;
 	_digiBuf = nullptr;
 	_diskSoundPlaying = false;
+	_soundPlaying = false;
 }
 
 } // End of namespace Sherlock

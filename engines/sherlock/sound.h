@@ -46,7 +46,8 @@ public:
 	bool _speechOn;
 	bool _playingEpilogue;
 	bool _diskSoundPlaying;
-	byte *_soundIsOn;
+	bool _soundPlaying;
+	bool *_soundIsOn;
 	byte *_digiBuf;
 public:
 	Sound(SherlockEngine *vm);

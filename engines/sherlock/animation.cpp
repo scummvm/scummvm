@@ -182,7 +182,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 
-	if (!_vm->_soundOverride.empty()) {
+	if (_vm->_soundOverride.empty()) {
 		for (int idx = 0; idx < PROLOGUE_NAMES_COUNT; ++idx) {
 			if (!scumm_stricmp(filename.c_str(), PROLOGUE_NAMES[idx])) {
 				frames = &PROLOGUE_FRAMES[idx][0];
