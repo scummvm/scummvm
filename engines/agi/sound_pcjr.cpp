@@ -120,8 +120,6 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	else
 		_dissolveMethod = 0;
 
-	_dissolveMethod = 3;
-
 	memset(_channel, 0, sizeof(_channel));
 	memset(_tchannel, 0, sizeof(_tchannel));
 
@@ -207,7 +205,7 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 				chan->attenuationCopy = attenuation;
 
 				attenuation &= 0x0F;
-				attenuation += (16 - _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 17);
+				attenuation += (16 - _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 17);
 				if (attenuation > 0x0F)
 					attenuation = 0x0F;
 			}
