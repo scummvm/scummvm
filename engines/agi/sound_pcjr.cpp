@@ -205,7 +205,6 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 				chan->attenuationCopy = attenuation;
 
 				attenuation &= 0x0F;
-				attenuation += (16 - _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 17);
 				if (attenuation > 0x0F)
 					attenuation = 0x0F;
 			}
@@ -475,8 +474,9 @@ int SoundGenPCJr::fillSquare(ToneChan *t, int16 *buf, int len) {
 
 	count = len;
 
+	int16 amp = (int16)(volTable[t->atten] * _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / Audio::Mixer::kMaxMixerVolume);
 	while (count > 0) {
-		*(buf++) = t->sign ? volTable[t->atten] : -volTable[t->atten];
+		*(buf++) = t->sign ? amp : -amp;
 		count--;
 
 		// get next sample
@@ -513,8 +513,9 @@ int SoundGenPCJr::fillNoise(ToneChan *t, int16 *buf, int len) {
 
 	count = len;
 
+	int16 amp = (int16)(volTable[t->atten] * _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / Audio::Mixer::kMaxMixerVolume);
 	while (count > 0) {
-		*(buf++) = t->sign ? volTable[t->atten] : -volTable[t->atten];
+		*(buf++) = t->sign ? amp : -amp;
 		count--;
 
 		// get next sample
