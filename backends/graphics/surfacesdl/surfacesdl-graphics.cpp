@@ -364,16 +364,17 @@ Graphics::PixelBuffer SurfaceSdlGraphicsManager::setupScreen(uint screenW, uint 
 		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
 		debug("INFO: OpenGL Stencil buffer bits: %d", glflag);
 
-#ifdef USE_OPENGL_SHADERS
-		debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		// GLEW needs to be initialized to use shaders
+#ifdef USE_GLEW
 		debug("INFO: GLEW Version: %s", glewGetString(GLEW_VERSION));
 		GLenum err = glewInit();
 		if (err != GLEW_OK) {
 			warning("Error: %s", glewGetErrorString(err));
 			g_system->quit();
 		}
+#endif
+
+#ifdef USE_OPENGL_SHADERS
+		debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 		const GLfloat vertices[] = {
 			0.0, 0.0,

@@ -127,6 +127,7 @@ _png=auto
 _theoradec=auto
 _faad=no
 _fluidsynth=no
+_glew=auto
 _opengl=auto
 _opengles=no
 _opengles2=no
@@ -1034,6 +1035,8 @@ for ac_option in $@; do
 	--disable-updates)        _updates=no     ;;
 	--enable-libunity)        _libunity=yes   ;;
 	--disable-libunity)       _libunity=no    ;;
+	--enable-glew)            _glew=yes       ;; #ResidualVM specific option
+	--disable-glew)           _glew=no        ;; #ResidualVM specific option
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
 	--enable-opengl-shaders)  _opengl_shaders=yes     ;; #ResidualVM specific option
@@ -3957,6 +3960,39 @@ echo "$_freetype2"
 
 define_in_config_if_yes "$_freetype2" "USE_FREETYPE2"
 
+
+# ResidualVM specific start ->
+#
+# Check for GLEW
+#
+if test "$_glew" != "no"; then
+	if test "$_opengl" = "no"; then
+		echo "Cannot use GLEW without OpenGL."
+		_glew=no
+	else
+		_glew=no
+		GLEW_LIBS=`pkg-config --libs glew 2>> $TMPLOG`
+		GLEW_INCLUDES=`pkg-config --cflags glew 2>> $TMPLOG`
+		cat > $TMPC << EOF
+#include <GL/glew.h>
+int main(void) {
+	glewInit();
+	return 0;
+}
+EOF
+		if cc_check $DEFINES $GLEW_LIBS $GLEW_INCLUDES
+		then
+			_glew=yes
+			LIBS="$LIBS $GLEW_LIBS"
+			INCLUDES="$INCLUDES $GLEW_INCLUDES"
+		fi
+	fi
+fi
+echocheck "GL Extension Wrangler (GLEW)"
+echo "$_glew"
+define_in_config_if_yes "$_glew" "USE_GLEW"
+# ResidualVM specific end <-
+
 #
 # Check for iconv
 #
@@ -4145,25 +4181,9 @@ EOF
 	if test "$_opengl" = yes ; then
 		LIBS="$LIBS $OPENGL_LIBS"
 		INCLUDES="$INCLUDES $OPENGL_CFLAGS"
-		if test "$_opengl_shaders" = yes ; then
-			if test "$_opengles2" = no ; then
-				_opengl_shaders=no
-				GLEW_LIBS=`pkg-config --libs glew 2>> $TMPLOG`
-				GLEW_INCLUDES=`pkg-config --cflags glew 2>> $TMPLOG`
-				cat > $TMPC << EOF
-#include <GL/glew.h>
-int main(void) {
-	glewInit();
-	return 0;
-}
-EOF
-				if cc_check_no_clean $DEFINES $GLEW_LIBS $GLEW_INCLUDES
-					then
-					_opengl_shaders=yes
-					LIBS="$LIBS $GLEW_LIBS"
-					INCLUDES="$INCLUDES $GLEW_INCLUDES"
-				fi
-			fi
+		if test "$_opengl_shaders" = yes && test "$_opengles2" = no && test "$_glew" = no; then
+			echo "WARNING: OpenGL Shader support requires GLEW!"
+			_opengl_shaders=no
 		fi
 	else
 		_opengl_shaders=no

@@ -41,7 +41,7 @@
 #	define GL_BGRA GL_BGRA_EXT
 #endif
 
-#elif defined(USE_OPENGL_SHADERS)
+#elif defined(USE_GLEW)
 #include <GL/glew.h>
 #elif defined(SDL_BACKEND) && defined(USE_OPENGL)
 #include <SDL_opengl.h>
