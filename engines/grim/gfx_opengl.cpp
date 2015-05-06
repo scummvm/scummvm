@@ -52,7 +52,7 @@
 #include "engines/grim/registry.h"
 
 
-#if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
+#if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program) && !defined(USE_GLEW)
 
 // We need SDL.h for SDL_GL_GetProcAddress.
 #include "backends/platform/sdl/sdl-sys.h"
@@ -177,6 +177,7 @@ void GfxOpenGL::initExtensions() {
 	}
 
 #if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
+#ifndef USE_GLEW
 	union {
 		void *obj_ptr;
 		void (APIENTRY *func_ptr)();
@@ -194,6 +195,7 @@ void GfxOpenGL::initExtensions() {
 	glDeleteProgramsARB = (PFNGLDELETEPROGRAMSARBPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glProgramLocalParameter4fARB");
 	glProgramLocalParameter4fARB = (PFNGLPROGRAMLOCALPARAMETER4FARBPROC)u.func_ptr;
+#endif
 
 	const char *extensions = (const char *)glGetString(GL_EXTENSIONS);
 	if (strstr(extensions, "ARB_fragment_program")) {

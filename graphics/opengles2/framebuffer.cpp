@@ -48,7 +48,7 @@
 
 namespace Graphics {
 
-#if defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
+#if defined(SDL_BACKEND) && !defined(USE_GLEW)
 static bool framebuffer_object_functions = false;
 static PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
 static PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
@@ -122,10 +122,12 @@ static bool usePackedBuffer() {
 FrameBuffer::FrameBuffer(uint width, uint height) :
 		_managedTexture(true), _width(width), _height(height),
 		_texWidth(nextHigher2(width)), _texHeight(nextHigher2(height)) {
-#if defined(SDL_BACKEND) && !defined(USE_OPENGL_SHADERS)
+#ifdef SDL_BACKEND
 	if (!Graphics::isExtensionSupported("GL_EXT_framebuffer_object")) {
 		error("GL_EXT_framebuffer_object extension is not supported!");
 	}
+#endif
+#if defined(SDL_BACKEND) && !defined(USE_GLEW)
 	grabFramebufferObjectPointers();
 #endif
 	glGenTextures(1, &_colorTexture);
