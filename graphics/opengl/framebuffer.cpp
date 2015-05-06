@@ -36,7 +36,9 @@
 #define GL_STENCIL_ATTACHMENT GL_STENCIL_ATTACHMENT_EXT
 #define GL_STENCIL_INDEX8 GL_STENCIL_INDEX8_EXT
 #define GL_DEPTH24_STENCIL8 0x88F0
-#endif
+#define GL_READ_FRAMEBUFFER 0x8CA8
+#define GL_DRAW_FRAMEBUFFER 0x8CA9
+#endif // defined(GL_ARB_framebuffer_object)
 #include "backends/platform/sdl/sdl-sys.h"
 #else
 #include "graphics/opengl/framebuffer.h"
@@ -62,6 +64,11 @@ static PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
 static PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffers;
 static PFNGLGENRENDERBUFFERSEXTPROC glGenRenderbuffers;
 static PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorage;
+typedef void (* PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
+static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glRenderbufferStorageMultisample;
+typedef void (* PFNGLBLITFRAMEBUFFEREXTPROC) (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+static PFNGLBLITFRAMEBUFFEREXTPROC glBlitFramebuffer;
+
 
 static void grabFramebufferObjectPointers() {
 	if (framebuffer_object_functions)
@@ -75,6 +82,8 @@ static void grabFramebufferObjectPointers() {
 	// We're casting from an object pointer to a function pointer, the
 	// sizes need to be the same for this to work.
 	assert(sizeof(u.obj_ptr) == sizeof(u.func_ptr));
+	u.obj_ptr = SDL_GL_GetProcAddress("glBlitFramebuffer");
+	glBlitFramebuffer = (PFNGLBLITFRAMEBUFFEREXTPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glBindFramebuffer");
 	glBindFramebuffer = (PFNGLBINDFRAMEBUFFEREXTPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glBindRenderbuffer");
@@ -95,6 +104,8 @@ static void grabFramebufferObjectPointers() {
 	glGenRenderbuffers = (PFNGLGENRENDERBUFFERSEXTPROC)u.func_ptr;
 	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorage");
 	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)u.func_ptr;
+	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorageMultisample");
+	glRenderbufferStorageMultisample = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)u.func_ptr;
 }
 #endif // defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
 
