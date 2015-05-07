@@ -240,6 +240,9 @@ void People::reset() {
 	p._noShapeSize = Common::Point(0, 0);
 	p._goto = Common::Point(0, 0);
 	p._status = 0;
+
+	// Reset any walk path in progress when Sherlock leaves scenes
+	_walkTo.clear();
 }
 
 /**
