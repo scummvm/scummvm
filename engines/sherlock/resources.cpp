@@ -328,7 +328,7 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		byte *data = new byte[frame._size];
 		stream.read(data, frame._size);
         decompressFrame(frame, data);		
-		delete data;
+		delete[] data;
 
 		push_back(frame);
     }
