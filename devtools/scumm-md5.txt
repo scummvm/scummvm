@@ -294,6 +294,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 
 	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	Floppy	Demo	-	
 	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	Floppy	Demo	-	Simon Krumrein, sev
+	12cdc256eae5a461bcc9a49975999841	-1	en	DOS	Floppy	Demo	-	Paulo Vicente
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive	
 	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
 
