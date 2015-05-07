@@ -128,7 +128,7 @@ Common::Error SherlockEngine::run() {
 		// Reset UI flags
 		_ui->reset();
 
-		// Reset the active characters to initially just Sherlock
+		// Reset the data for the player character (Sherlock)
 		_people->reset();
 
 		// Initialize and load the scene. 

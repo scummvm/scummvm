@@ -221,6 +221,8 @@ People::~People() {
  * Reset the player data
  */
 void People::reset() {
+	// Note: The engine has theoretical support for two player charactersm but only the first one is used.
+	// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
 	Sprite &p = _data[PLAYER];
 
 	p._description = "Sherlock Holmes!";
