@@ -300,6 +300,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?	
 	2723fea3dae0cb47768c424b145ae0e7	7932	en	DOS	Floppy	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci, Fingolfin
+	f0ccc12a8704bf57706b42a37f877128	-1	en	DOS	Floppy	Floppy	1.6	Paulo Vicente
 	92b078d9d6d9d751da9c26b8b3075779	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
 	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	Floppy	Floppy	alt?	Nicolas Joly
 	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	Floppy	Floppy	-	Andrej Sinicyn, Andrea Petrucci
