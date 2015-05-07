@@ -119,7 +119,7 @@ Common::Error SherlockEngine::run() {
 	}
 
 	while (!shouldQuit()) {
-		// Prepare for scene, and handle any game-specific scenes. This allows 
+		// Prepare for scene, and handle any game-specific scenes. This allows
 		// for game specific cutscenes or mini-games that aren't standard scenes
 		startScene();
 		if (shouldQuit())
@@ -131,7 +131,7 @@ Common::Error SherlockEngine::run() {
 		// Reset the data for the player character (Sherlock)
 		_people->reset();
 
-		// Initialize and load the scene. 
+		// Initialize and load the scene.
 		_scene->selectScene();
 
 		// Scene handling loop

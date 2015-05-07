@@ -45,8 +45,8 @@ enum {
 	PLAYER_COLOR = 11
 };
 
-const char *const OPPONENT_NAMES[5] = { 
-	"Skipper", "Willy", "Micky", "Tom", "Bartender" 
+const char *const OPPONENT_NAMES[5] = {
+	"Skipper", "Willy", "Micky", "Tom", "Bartender"
 };
 
 /*----------------------------------------------------------------*/
@@ -83,7 +83,7 @@ void Darts::playDarts() {
 	do {
 		int score, roundStartScore;
 		roundStartScore = score = playerNumber == 0 ? _dartScore1 : _dartScore2;
-		
+
 		// Show player details
 		showNames(playerNumber);
 		showStatus(playerNumber);
@@ -296,7 +296,7 @@ int Darts::throwDart(int dartNum, int computer) {
 	int width, height;
 
 	events.clearKeyboard();
-	
+
 	erasePowerBars();
 	screen.print(Common::Point(DART_INFO_X, DART_INFO_Y), DART_COL_FORE, "Dart # %d", dartNum);
 
@@ -322,10 +322,10 @@ int Darts::throwDart(int dartNum, int computer) {
 	// If it's a computer player, choose a dart destination
 	if (computer)
 		targetNum = getComputerDartDest(computer - 1);
-	
+
 	width = doPowerBar(Common::Point(DARTBARHX, DARTHORIZY), DART_BAR_FORE, targetNum.x, false);
 	height = 101 - doPowerBar(Common::Point(DARTBARVX, DARTHEIGHTY), DART_BAR_FORE, targetNum.y, true);
-	
+
 	// For human players, slight y adjustment
 	if (computer == 0)
 		height += 2;
@@ -429,7 +429,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 			// Reached target power for a computer player
 			done = true;
 		else if (goToPower == 0) {
-			// Check for pres 
+			// Check for pres
 			if (dartHit())
 				done = true;
 		}
@@ -472,7 +472,7 @@ bool Darts::dartHit() {
 		events.clearKeyboard();
 		return true;
 	}
-	
+
 	_oldDartButtons = events._pressed;
 	events.setButtonState();
 
@@ -497,7 +497,7 @@ int Darts::dartScore(const Common::Point &pt) {
 }
 
 /**
- * Calculates where a computer player is trying to throw their dart, and choose the actual 
+ * Calculates where a computer player is trying to throw their dart, and choose the actual
  * point that was hit with some margin of error
  */
 Common::Point Darts::getComputerDartDest(int playerNum) {

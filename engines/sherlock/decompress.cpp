@@ -36,47 +36,47 @@ Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int
 		outSize = source.readSint32LE();
 	}
 
-    byte lzWindow[4096];
-    uint16 lzWindowPos;
-    uint16 cmd;
-    
-    byte *outBuffer = new byte[outSize];
-    byte *outBufferEnd = outBuffer + outSize;
-    Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
-    
-    memset(lzWindow, 0xFF, 0xFEE);
-    lzWindowPos = 0xFEE;
-    cmd = 0;
+	byte lzWindow[4096];
+	uint16 lzWindowPos;
+	uint16 cmd;
 
-    while (1) {
-        cmd >>= 1;
-        if (!(cmd & 0x100)) {
-            cmd = source.readByte() | 0xFF00;
-        }
-        if (cmd & 1) {
-            byte literal = source.readByte();
-            *outBuffer++ = literal;
-            lzWindow[lzWindowPos] = literal;
-            lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-        } else {
-            int copyPos, copyLen;
-            copyPos = source.readByte();
-            copyLen = source.readByte();
-            copyPos = copyPos | ((copyLen & 0xF0) << 4);
-            copyLen = (copyLen & 0x0F) + 3;
-            while (copyLen--) {
-                byte literal = lzWindow[copyPos];
-                copyPos = (copyPos + 1) & 0x0FFF;
-                *outBuffer++ = literal;
-                lzWindow[lzWindowPos] = literal;
-                lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-            }
-        }
-        if (outBuffer >= outBufferEnd)
-            break;
-    }
+	byte *outBuffer = new byte[outSize];
+	byte *outBufferEnd = outBuffer + outSize;
+	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
 
-    return outS;
+	memset(lzWindow, 0xFF, 0xFEE);
+	lzWindowPos = 0xFEE;
+	cmd = 0;
+
+	while (1) {
+		cmd >>= 1;
+		if (!(cmd & 0x100))
+			cmd = source.readByte() | 0xFF00;
+
+		if (cmd & 1) {
+			byte literal = source.readByte();
+			*outBuffer++ = literal;
+			lzWindow[lzWindowPos] = literal;
+			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+		} else {
+			int copyPos, copyLen;
+			copyPos = source.readByte();
+			copyLen = source.readByte();
+			copyPos = copyPos | ((copyLen & 0xF0) << 4);
+			copyLen = (copyLen & 0x0F) + 3;
+			while (copyLen--) {
+				byte literal = lzWindow[copyPos];
+				copyPos = (copyPos + 1) & 0x0FFF;
+				*outBuffer++ = literal;
+				lzWindow[lzWindowPos] = literal;
+				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+			}
+		}
+		if (outBuffer >= outBufferEnd)
+			break;
+	}
+
+	return outS;
 }
 
 } // namespace Sherlock

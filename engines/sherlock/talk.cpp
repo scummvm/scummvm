@@ -86,7 +86,7 @@ TalkSequences::TalkSequences(const byte *data) {
 }
 
 void TalkSequences::clear() {
-	Common::fill(&_data[0], &_data[MAX_TALK_SEQUENCES], 0); 
+	Common::fill(&_data[0], &_data[MAX_TALK_SEQUENCES], 0);
 }
 
 /*----------------------------------------------------------------*/
@@ -121,10 +121,10 @@ void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, i
 
 /**
  * Called whenever a conversation or item script needs to be run. For standard conversations,
- * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly 
- * instead of waiting for a statement option. 
+ * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly
+ * instead of waiting for a statement option.
  * @remarks		It seems that at some point, all item scripts were set up to use this as well.
- *	In their case, the conversation display is simply suppressed, and control is passed on to 
+ *	In their case, the conversation display is simply suppressed, and control is passed on to
  *	doScript to implement whatever action is required.
  */
 void Talk::talkTo(const Common::String &filename) {
@@ -185,7 +185,7 @@ void Talk::talkTo(const Common::String &filename) {
 			SequenceEntry &ss = _savedSequences[idx];
 			for (uint idx2 = 0; idx2 < ss._sequences.size(); ++idx2)
 				scene._bgShapes[ss._objNum]._sequences[idx2] = ss._sequences[idx2];
-		
+
 			// Reset the object's frame to the beginning of the sequence
 			scene._bgShapes[ss._objNum]._frameNumber = 0;
 		}
@@ -314,7 +314,7 @@ void Talk::talkTo(const Common::String &filename) {
 			ui.clearInfo();
 		}
 
-		// Handle replies until there's no further linked file, 
+		// Handle replies until there's no further linked file,
 		// or the link file isn't a reply first cnversation
 		while (!_vm->shouldQuit()) {
 			clearSequences();
@@ -336,7 +336,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 				setTalkMap();
 			}
-			
+
 			// Check for a linked file
 			if (!statement._linkFile.empty() && !_scriptMoreFlag) {
 				Common::String linkFilename = statement._linkFile;
@@ -385,7 +385,7 @@ void Talk::talkTo(const Common::String &filename) {
 						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, "Exit");
 					} else {
 						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, "Exit");
-					
+
 						if (!ui._windowStyle) {
 							screen.slamRect(Common::Rect(0, CONTROLS_Y,
 								SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
@@ -451,7 +451,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 /**
  * Main method for handling conversations when a character to talk to has been
- * selected. It will make Holmes walk to the person to talk to, draws the 
+ * selected. It will make Holmes walk to the person to talk to, draws the
  * interface window for the conversation and passes on control to give the
  * player a list of options to make a selection from
  */
@@ -497,7 +497,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Need to walk to character first
-			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100), 
+			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100),
 				obj._lookFacing);
 		events.setCursor(ARROW);
 
@@ -587,7 +587,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	_statements.resize(talkStream->readByte());
 	for (uint idx = 0; idx < _statements.size(); ++idx)
 		_statements[idx].synchronize(*talkStream);
-	
+
 	delete talkStream;
 
 	if (!sound._voices)
@@ -607,7 +607,7 @@ void Talk::stripVoiceCommands() {
 			if (statement._reply[idx] == SFX_COMMAND) {
 				// Replace instruction character with a space, and delete the
 				// rest of the name following it
-				statement._reply = Common::String(statement._reply.c_str(), 
+				statement._reply = Common::String(statement._reply.c_str(),
 					statement._reply.c_str() + idx) + " " +
 					Common::String(statement._reply.c_str() + 9);
 			}
@@ -673,7 +673,7 @@ void Talk::drawInterface() {
 }
 
 /**
- * Display a list of statements in a window at the bottom of the scren that the 
+ * Display a list of statements in a window at the bottom of the scren that the
  * player can select from.
  */
 bool Talk::displayTalk(bool slamIt) {
@@ -681,7 +681,7 @@ bool Talk::displayTalk(bool slamIt) {
 	int yp = CONTROLS_Y + 14;
 	int lineY = -1;
 	_moreTalkDown = _moreTalkUp = false;
-	
+
 	for (uint idx = 0; idx < _statements.size(); ++idx) {
 		_statements[idx]._talkPos.top = _statements[idx]._talkPos.bottom = -1;
 	}
@@ -708,7 +708,7 @@ bool Talk::displayTalk(bool slamIt) {
 			screen.vgaBar(Common::Rect(5, CONTROLS_Y + 11, 15, CONTROLS_Y + 22), INV_BACKGROUND);
 		} else {
 			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
-			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11, 
+			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11,
 				15, CONTROLS_Y + 22), INV_BACKGROUND);
 		}
 	}
@@ -720,9 +720,9 @@ bool Talk::displayTalk(bool slamIt) {
 
 		if (statement._talkMap != -1) {
 			bool flag = _talkHistory[_converseNum][idx];
-			lineY = talkLine(idx, statement._talkMap, flag ? TALK_NULL : INV_FOREGROUND, 
+			lineY = talkLine(idx, statement._talkMap, flag ? TALK_NULL : INV_FOREGROUND,
 				yp, slamIt);
-		
+
 			if (lineY != -1) {
 				statement._talkPos.top = yp;
 				yp = lineY;
@@ -834,7 +834,7 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 			// Move to next line, if any
 			lineY += 9;
 			lineStartP = lineEndP;
-			
+
 			if (!*lineEndP)
 				break;
 		} else {
@@ -911,7 +911,7 @@ void Talk::pushSequence(int speaker) {
 			seqEntry._seqTo = obj._seqTo;
 		}
 	}
-	
+
 	_sequenceStack.push(seqEntry);
 	if (_scriptStack.size() >= 5)
 		error("script stack overflow");
@@ -923,7 +923,7 @@ void Talk::pushSequence(int speaker) {
 void Talk::setSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	
+
 	// If no speaker is specified, then nothing needs to be done
 	if (speaker == -1)
 		return;
@@ -965,7 +965,7 @@ void Talk::setStillSeq(int speaker) {
 		int objNum = people.findSpeaker(speaker);
 		if (objNum != -1) {
 			Object &obj = scene._bgShapes[objNum];
-			
+
 			if (obj._seqSize < MAX_TALK_SEQUENCES) {
 				warning("Tried to copy too few still frames");
 			} else {
@@ -1206,7 +1206,7 @@ void Talk::doScript(const Common::String &script) {
 				++str;
 				_scriptCurrentIndex = str - scriptStart;
 
-				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100, 
+				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100,
 					str[2] * 100), str[3] - 1);
 				if (_talkToAbort)
 					return;
@@ -1270,7 +1270,7 @@ void Talk::doScript(const Common::String &script) {
 				++str;
 				break;
 			}
-				
+
 			case SFX_COMMAND:
 				++str;
 				if (sound._voices) {
@@ -1305,7 +1305,7 @@ void Talk::doScript(const Common::String &script) {
 				int flag = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
 				++str;
 				wait = 0;
-				
+
 				bool result = flag < 0x8000;
 				if (_vm->readFlags(flag & 0x7fff) != result) {
 					do {
@@ -1761,7 +1761,7 @@ void Talk::popStack() {
 void Talk::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < MAX_TALK_FILES; ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];
-		
+
 		for (int flag = 0; flag < 16; ++flag)
 			s.syncAsByte(he._data[flag]);
 	}

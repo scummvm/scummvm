@@ -222,12 +222,12 @@ void Screen::randomTransition() {
 
 		if (offset < (SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT))
 			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer->getPixels() + offset);
-	
+
 		if (idx != 0 && (idx % 100) == 0) {
 			// Ensure there's a full screen dirty rect for the next frame update
 			if (_dirtyRects.empty())
 				addDirtyRect(Common::Rect(0, 0, this->w, this->h));
-			
+
 			events.pollEvents();
 			events.delay(1);
 		}
@@ -245,10 +245,10 @@ void Screen::verticalTransition() {
 
 	byte table[SHERLOCK_SCREEN_WIDTH];
 	Common::fill(&table[0], &table[SHERLOCK_SCREEN_WIDTH], 0);
-	
-	for (int yp = 0; yp < SHERLOCK_SCREEN_HEIGHT; ++yp) {		
+
+	for (int yp = 0; yp < SHERLOCK_SCREEN_HEIGHT; ++yp) {
 		for (int xp = 0; xp < SHERLOCK_SCREEN_WIDTH; ++xp) {
-			int temp = (table[xp] >= 197) ? SHERLOCK_SCREEN_HEIGHT - table[xp] : 
+			int temp = (table[xp] >= 197) ? SHERLOCK_SCREEN_HEIGHT - table[xp] :
 				_vm->getRandomNumber(3) + 1;
 
 			if (temp) {
@@ -384,7 +384,7 @@ void Screen::gPrint(const Common::Point &pt, byte color, const char *format, ...
 int Screen::stringWidth(const Common::String &str) {
 	int width = 0;
 
-	for (const char *c = str.c_str(); *c; ++c) 
+	for (const char *c = str.c_str(); *c; ++c)
 		width += charWidth(*c);
 
 	return width;
@@ -442,7 +442,7 @@ void Screen::makeButton(const Common::Rect &bounds, int textX,
 	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
 
 	gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
-	gPrint(Common::Point(textX + charWidth(str[0]), bounds.top), 
+	gPrint(Common::Point(textX + charWidth(str[0]), bounds.top),
 		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
 }
 
@@ -481,7 +481,7 @@ void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->hLine(r.left + 1, r.top + 1, r.right - 3, BUTTON_TOP);
 	_backBuffer->vLine(r.left, r.top, r.bottom - 1, BUTTON_TOP);
 	_backBuffer->vLine(r.left + 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
-	
+
 	_backBuffer->vLine(r.right - 1, r.top, r.bottom - 1, BUTTON_BOTTOM);
 	_backBuffer->vLine(r.right - 2, r.top + 1, r.bottom - 2, BUTTON_BOTTOM);
 	_backBuffer->hLine(r.left, r.bottom - 1, r.right - 1, BUTTON_BOTTOM);

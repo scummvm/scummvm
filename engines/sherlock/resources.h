@@ -42,7 +42,7 @@ struct LibraryEntry {
 	int _index;
 
 	LibraryEntry() : _index(0), _offset(0), _size(0) {}
-	LibraryEntry(int index, uint32 offset, uint32 size) : 
+	LibraryEntry(int index, uint32 offset, uint32 size) :
 		_index(index), _offset(offset), _size(size) {}
 };
 typedef Common::HashMap<Common::String, LibraryEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> LibraryIndex;

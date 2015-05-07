@@ -26,30 +26,30 @@
 
 namespace Sherlock {
 
-// The following are a list of filenames played in the prologue that have 
+// The following are a list of filenames played in the prologue that have
 // special effects associated with them at specific frames
 
 #define FRAMES_END 32000
 #define PROLOGUE_NAMES_COUNT 6
 #define TITLE_NAMES_COUNT 7
-static const char *const PROLOGUE_NAMES[6] = { 
-	"subway1", "subway2", "finale2", "suicid", "coff3", "coff4" 
+static const char *const PROLOGUE_NAMES[6] = {
+	"subway1", "subway2", "finale2", "suicid", "coff3", "coff4"
 };
-static const int PROLOGUE_FRAMES[6][9] = { 
+static const int PROLOGUE_FRAMES[6][9] = {
 	{ 4, 26, 54, 72, 92, 134, FRAMES_END },
 	{ 2, 80, 95, 117, 166, FRAMES_END },
 	{ 1, FRAMES_END },
 	{ 42, FRAMES_END },
 	{ FRAMES_END },
-	{ FRAMES_END } 
+	{ FRAMES_END }
 };
 
 // Title animations file list
-static const char *const TITLE_NAMES[7] = { 
-	"27pro1", "14note", "coff1", "coff2", "coff3", "coff4", "14kick" 
+static const char *const TITLE_NAMES[7] = {
+	"27pro1", "14note", "coff1", "coff2", "coff3", "coff4", "14kick"
 };
 
-static const int TITLE_FRAMES[7][9] = { 
+static const int TITLE_FRAMES[7][9] = {
 	{ 29, 131, FRAMES_END },
 	{ 55, 80, 95, 117, 166, FRAMES_END },
 	{ 15, FRAMES_END },
@@ -67,7 +67,7 @@ Animation::Animation(SherlockEngine *vm): _vm(vm) {
 /**
  * Play a full-screen animation
  */
-bool Animation::play(const Common::String &filename, int minDelay, int fade, 
+bool Animation::play(const Common::String &filename, int minDelay, int fade,
 		bool setPalette, int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -98,7 +98,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	// Load initial image
 	Common::String vdaName = baseName + ".vda";
 	ImageFile images(vdaName, true, true);
-	
+
 	events.wait(minDelay);
 	if (fade != 0 && fade != 255)
 		screen.fadeToBlack();
@@ -166,7 +166,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 			break;
 		}
 	}
-	
+
 	events.clearEvents();
 	sound.stopSound();
 	delete stream;

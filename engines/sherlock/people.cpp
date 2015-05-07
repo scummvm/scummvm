@@ -33,7 +33,7 @@ namespace Sherlock {
 // Characer animation sequences
 static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Right
-	{ 22, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Down 
+	{ 22, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Down
 	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Left
 	{ 15, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Up
 	{ 42, 1, 2, 3, 4, 5, 0 },			// Goto Stand Right
@@ -116,7 +116,7 @@ const char PORTRAITS[MAX_PEOPLE][5] = {
 	{ "NIGE" },			// Nigel Jameson
 	{ "JONA" },			// Jonas (newspaper seller)
 	{ "DUGA" },			// Constable Dugan
-	{ "INSP" }			// Inspector Lestrade (Scotland Yard) 
+	{ "INSP" }			// Inspector Lestrade (Scotland Yard)
 };
 
 const char  *const NAMES[MAX_PEOPLE] = {
@@ -421,7 +421,7 @@ void People::setWalking() {
 	if (!_player._walkCount)
 		gotoStand(_player);
 
-	// If the sequence is the same as when we started, then Holmes was 
+	// If the sequence is the same as when we started, then Holmes was
 	// standing still and we're trying to re-stand him, so reset Holmes'
 	// rame to the old frame number from before it was reset to 0
 	if (_player._sequenceNumber == oldDirection)
@@ -429,7 +429,7 @@ void People::setWalking() {
 }
 
 /**
- * Bring a moving character to a standing position. If the Scalpel chessboard 
+ * Bring a moving character to a standing position. If the Scalpel chessboard
  * is being displayed, then the chraracter will always face down.
  */
 void People::gotoStand(Sprite &sprite) {
@@ -516,7 +516,7 @@ void People::walkToCoords(const Common::Point &destPos, int destDir) {
  */
 void People::goAllTheWay() {
 	Scene &scene = *_vm->_scene;
-	Common::Point srcPt(_player._position.x / 100 + _player.frameWidth() / 2, 
+	Common::Point srcPt(_player._position.x / 100 + _player.frameWidth() / 2,
 		_player._position.y / 100);
 
 	// Get the zone the player is currently in

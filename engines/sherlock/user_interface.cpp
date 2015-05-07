@@ -27,7 +27,7 @@
 namespace Sherlock {
 
 // Main user interface menu control locations
-const int MENU_POINTS[12][4] = { 
+const int MENU_POINTS[12][4] = {
 	{ 13, 153, 72, 165 },
 	{ 13, 169, 72, 181 },
 	{ 13, 185, 72, 197 },
@@ -39,11 +39,11 @@ const int MENU_POINTS[12][4] = {
 	{ 165, 185, 233, 197 },
 	{ 249, 153, 305, 165 },
 	{ 249, 169, 305, 181 },
-	{ 249, 185, 305, 197 } 
+	{ 249, 185, 305, 197 }
 };
 
 // Inventory control locations */
-const int INVENTORY_POINTS[8][3] = { 
+const int INVENTORY_POINTS[8][3] = {
 	{ 4, 50, 29 },
 	{ 52, 99, 77 },
 	{ 101, 140, 123 },
@@ -51,7 +51,7 @@ const int INVENTORY_POINTS[8][3] = {
 	{ 189, 219, 198 },
 	{ 221, 251, 234 },
 	{ 253, 283, 266 },
-	{ 285, 315, 294 } 
+	{ 285, 315, 294 }
 };
 
 const char COMMANDS[13] = "LMTPOCIUGJFS";
@@ -59,23 +59,23 @@ const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
-const char *const MOPEN[] = { 
-	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "." 
+const char *const MOPEN[] = {
+	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "."
 };
-const char *const MCLOSE[] = { 
-	"This cannot be closed", "It is already closed", "The safe door is in the way" 
+const char *const MCLOSE[] = {
+	"This cannot be closed", "It is already closed", "The safe door is in the way"
 };
-const char *const MMOVE[] = { 
+const char *const MMOVE[] = {
 	"This cannot be moved", "It is bolted to the floor", "It is too heavy", "The other crate is in the way"
 };
 const char *const MPICK[] = {
 	"Nothing of interest here", "It is bolted down", "It is too big to carry", "It is too heavy",
-	"I think a girl would be more your type", "Those flowers belong to Penny", "She's far too young for you!", 
-	"I think a girl would be more your type!", "Government property for official use only" 
+	"I think a girl would be more your type", "Those flowers belong to Penny", "She's far too young for you!",
+	"I think a girl would be more your type!", "Government property for official use only"
 };
-const char *const MUSE[] = { 
-	"You can't do that", "It had no effect", "You can't reach it", "OK, the door looks bigger! Happy?", 
-	"Doors don't smoke" 
+const char *const MUSE[] = {
+	"You can't do that", "It had no effect", "You can't reach it", "OK, the door looks bigger! Happy?",
+	"Doors don't smoke"
 };
 
 /*----------------------------------------------------------------*/
@@ -198,7 +198,7 @@ void UserInterface::handleInput() {
 				} else if (pt.y < CONTROLS_Y &&
 					((events._rightReleased && _helpStyle) || (events._released && !_helpStyle)) &&
 					(_bgFound != -1 && _bgFound < 1000) &&
-					(scene._bgShapes[_bgFound]._defaultCommand || 
+					(scene._bgShapes[_bgFound]._defaultCommand ||
 					!scene._bgShapes[_bgFound]._description.empty())) {
 					// If there is no default command, set it to Look
 					if (scene._bgShapes[_bgFound]._defaultCommand)
@@ -208,7 +208,7 @@ void UserInterface::handleInput() {
 					events._released = true;
 					events._pressed = events._oldButtons = false;
 					_help = _oldHelp = -1;
-				
+
 					if (_menuMode == LOOK_MODE) {
 						// Set the flag to tell the game that this was a right-click
 						// call to look and should exit without the look button being pressed
@@ -323,7 +323,7 @@ void UserInterface::handleInput() {
 	//
 	// Do input processing
 	//
-	if (events._pressed || events._released || events._rightPressed || 
+	if (events._pressed || events._released || events._rightPressed ||
 			_keycode != Common::KEYCODE_INVALID || _pause) {
 		if (((events._released && (_helpStyle || _help == -1)) || (events._rightReleased && !_helpStyle)) &&
 				(pt.y <= CONTROLS_Y) && (_menuMode == STD_MODE)) {
@@ -390,7 +390,7 @@ void UserInterface::handleInput() {
 
 		// As long as there isn't an open window, do main input processing.
 		// Windows are opened when in TALK, USE, INV, and GIVE modes
-		if ((!_windowOpen && !_menuCounter && pt.y > CONTROLS_Y) || 
+		if ((!_windowOpen && !_menuCounter && pt.y > CONTROLS_Y) ||
 				_keycode != Common::KEYCODE_INVALID) {
 			if (events._pressed || events._released || _pause ||
 					_keycode != Common::KEYCODE_INVALID)
@@ -426,7 +426,7 @@ void UserInterface::restoreButton(int num) {
 	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
-	
+
 	if (!_menuCounter) {
 		_infoFlag++;
 		clearInfo();
@@ -461,7 +461,7 @@ void UserInterface::pushButton(int num) {
  */
 void UserInterface::toggleButton(int num) {
 	Screen &screen = *_vm->_screen;
-	
+
 	if (_menuMode != (num + 1)) {
 		_menuMode = (MenuMode)(num + 1);
 		_oldKey = COMMANDS[num];
@@ -534,7 +534,7 @@ void UserInterface::examine() {
 
 	if (pt.y < (CONTROLS_Y + 9)) {
 		Object &obj = scene._bgShapes[_bgFound];
-		
+
 		if (obj._lookcAnim != 0) {
 			int canimSpeed = ((obj._lookcAnim & 0xe0) >> 5) + 1;
 			scene._cAnimFramePause = obj._lookFrames;
@@ -669,13 +669,13 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 						}
 
 						int xStart = (SHERLOCK_SCREEN_WIDTH - x) / 2;
-						screen.print(Common::Point(xStart, INFO_LINE + 1), 
+						screen.print(Common::Point(xStart, INFO_LINE + 1),
 							INFO_FOREGROUND, "Give ");
-						screen.print(Common::Point(xStart + width, INFO_LINE + 1), 
+						screen.print(Common::Point(xStart + width, INFO_LINE + 1),
 							TALK_FOREGROUND, inv[_selector]._name.c_str());
-						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1), 
+						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
 							INFO_FOREGROUND, " to ");
-						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1), 
+						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
 							INFO_FOREGROUND, tempStr.c_str());
 					}
 				} else {
@@ -795,16 +795,16 @@ void UserInterface::doEnvControl() {
 
 	if (_selector != _oldSelector)  {
 		if (_oldSelector != -1 && _oldSelector >= saves._savegameIndex && _oldSelector < (saves._savegameIndex + 5)) {
-			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
+			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10),
 				INV_FOREGROUND, "%d.", _oldSelector + 1);
-			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10), 
+			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10),
 				INV_FOREGROUND, "%s", saves._savegames[_oldSelector].c_str());
 		}
 
 		if (_selector != -1) {
-			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10), 
+			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10),
 				TALK_FOREGROUND, "%d.", _selector + 1);
-			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10), 
+			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_selector - saves._savegameIndex) * 10),
 				TALK_FOREGROUND, "%s", saves._savegames[_selector].c_str());
 		}
 
@@ -815,7 +815,7 @@ void UserInterface::doEnvControl() {
 		if ((found == 0 && events._released) || _key == 'E') {
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
-			
+
 			events._pressed = events._released = _keyboardInput = false;
 			_keycode = Common::KEYCODE_INVALID;
 		} else if ((found == 1 && events._released) || _key == 'L') {
@@ -839,13 +839,13 @@ void UserInterface::doEnvControl() {
 					_keyboardInput = false;
 				} else {
 					if (!talk._talkToAbort) {
-						screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 
+						screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10,
 							SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 20 + (_selector - saves._savegameIndex) * 10), INV_BACKGROUND);
-						screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND, 
+						screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND,
 							"%d.", _selector + 1);
-						screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND, 
+						screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), INV_FOREGROUND,
 							"%s", saves._savegames[_selector].c_str());
-						
+
 						screen.slamArea(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 311, 10);
 						_selector = _oldSelector = -1;
 					}
@@ -887,7 +887,7 @@ void UserInterface::doEnvControl() {
 			bool moreKeys;
 			do {
 				saves._savegameIndex++;
-				screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, 
+				screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
 					SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 
 				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + 5); ++idx) {
@@ -898,10 +898,10 @@ void UserInterface::doEnvControl() {
 
 					screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color,
 						"%d.", idx + 1);
-					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, 
+					screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color,
 						"%s", saves._savegames[idx].c_str());
 				}
-				
+
 				screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT));
 
 				color = (!saves._savegameIndex) ? COMMAND_NULL : COMMAND_FOREGROUND;
@@ -1007,11 +1007,11 @@ void UserInterface::doEnvControl() {
 						_keyboardInput = false;
 					} else {
 						if (!talk._talkToAbort) {
-							screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 
+							screen._backBuffer1.fillRect(Common::Rect(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10,
 								317, CONTROLS_Y + 20 + (_selector - saves._savegameIndex) * 10), INV_BACKGROUND);
-							screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), 
+							screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10),
 								INV_FOREGROUND, "%d.", _selector + 1);
-							screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10), 
+							screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10),
 								INV_FOREGROUND, "%s", saves._savegames[_selector].c_str());
 							screen.slamArea(6, CONTROLS_Y + 11 + (_selector - saves._savegameIndex) * 10, 311, 10);
 							_selector = _oldSelector = -1;
@@ -1201,14 +1201,14 @@ void UserInterface::doInvControl() {
 				// If it's -1, then no inventory item is highlighted yet. Otherwise,
 				// an object in the scene has been clicked.
 
-				if (_selector != -1 && inv._invMode == INVMODE_LOOK 
+				if (_selector != -1 && inv._invMode == INVMODE_LOOK
 						&& mousePos.y >(CONTROLS_Y1 + 11))
 					inv.doInvJF();
 
 				if (talk._talkToAbort)
 					return;
 
-				// Now check for the Use and Give actions. If inv_mode is 3, 
+				// Now check for the Use and Give actions. If inv_mode is 3,
 				// that means GIVE is in effect, _selector is the object being
 				// given, and _find is the target.
 				// The same applies to USE, except if _selector is -1, then USE
@@ -1242,7 +1242,7 @@ void UserInterface::doInvControl() {
 					else
 						// Now inv object has been highlighted
 						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", MUSE, _find, temp - 2);
-						
+
 					_selector = _oldSelector = -1;
 				}
 			}
@@ -1251,14 +1251,14 @@ void UserInterface::doInvControl() {
 }
 
 /**
- * Handles waiting whilst an object's description window is open. 
+ * Handles waiting whilst an object's description window is open.
  */
 void UserInterface::doLookControl() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
 	Screen &screen = *_vm->_screen;
 
-	_key = _oldKey = -1;	
+	_key = _oldKey = -1;
 	_keyboardInput = _keycode != Common::KEYCODE_INVALID;
 
 	if (events._released || events._rightReleased || _keyboardInput) {
@@ -1268,7 +1268,7 @@ void UserInterface::doLookControl() {
 			if (!_descStr.empty()) {
 				printObjectDesc(_descStr, false);
 			} else if (!_lookHelp) {
-				// Need to close the window and depress the Look button 
+				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				screen._backBuffer2.blitFrom((*_controls)[0]._frame, pt);
 				banishWindow(true);
@@ -1348,7 +1348,7 @@ void UserInterface::doMainControl() {
 
 		if (_temp == 12)
 			_key = -1;
-		
+
 		if (events._rightPressed) {
 			_temp = 12;
 			_key = -1;
@@ -1356,7 +1356,7 @@ void UserInterface::doMainControl() {
 	} else if (!events._released) {
 		_key = -1;
 	}
-	
+
 	// Check if the button being pointed to has changed
 	if (_oldKey != _key && !_windowOpen) {
 		// Clear the info line
@@ -1431,7 +1431,7 @@ void UserInterface::doMainControl() {
 
 			// Display the dialog
 			saves.drawInterface();
-			
+
 			_selector = _oldSelector = -1;
 			_windowOpen = true;
 			break;
@@ -1550,7 +1550,7 @@ void UserInterface::doTalkControl() {
 			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Exit");
 		else if (_endKeyActive)
 			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
-		
+
 		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
 			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Up");
 		else if (talk._moreTalkUp)
@@ -1613,13 +1613,13 @@ void UserInterface::doTalkControl() {
 	}
 
 	if (events._released || _keyboardInput) {
-		if (((Common::Rect(99, CONTROLS_Y, 138, CONTROLS_Y + 10).contains(mousePos) && events._released) 
+		if (((Common::Rect(99, CONTROLS_Y, 138, CONTROLS_Y + 10).contains(mousePos) && events._released)
 				|| _key == 'E') && _endKeyActive) {
 			talk.freeTalkVars();
 			talk.pullSequence();
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
-		} else if (((Common::Rect(140, CONTROLS_Y, 179, CONTROLS_Y + 10).contains(mousePos) && events._released) 
+		} else if (((Common::Rect(140, CONTROLS_Y, 179, CONTROLS_Y + 10).contains(mousePos) && events._released)
 				|| _key == 'U') && talk._moreTalkUp) {
 			while (talk._statements[--talk._talkIndex]._talkMap == -1)
 				;
@@ -1655,7 +1655,7 @@ void UserInterface::doTalkControl() {
 
 			// Flag the response as having been used
 			talk._talkHistory[talk._converseNum][_selector] = true;
-		
+
 			clearWindow();
 			screen.print(Common::Point(16, CONTROLS_Y + 12), TALK_FOREGROUND, "Sherlock Holmes");
 			talk.talkLine(_selector + 128, talk._statements[_selector]._talkMap, COMMAND_FOREGROUND, CONTROLS_Y + 21, true);
@@ -1784,7 +1784,7 @@ void UserInterface::doTalkControl() {
 /**
  * Handles events when the Journal is active.
  * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
- *		the user interface, it uses so many internal UI fields, that it sort of made some sense 
+ *		the user interface, it uses so many internal UI fields, that it sort of made some sense
  *		to put it in the UserInterface class.
  */
 void UserInterface::journalControl() {
@@ -1801,7 +1801,7 @@ void UserInterface::journalControl() {
 	do {
 		_key = -1;
 		events.setButtonState();
-		
+
 		// Handle keypresses
 		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();
@@ -1859,7 +1859,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		if (!_invLookFlag) {
 			// See if this look was called by a right button click or not
 			if (!_lookHelp) {
-				// If it wasn't a right button click, then we need depress 
+				// If it wasn't a right button click, then we need depress
 				// the look button before we close the window. So save a copy of the
 				// menu area, and draw the controls onto it
 				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
@@ -1945,7 +1945,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		do {
 			width += screen.charWidth(*msgP++);
 		} while (width < 300 && *msgP);
-		
+
 		if (*msgP)
 			--msgP;
 		else
@@ -2036,7 +2036,7 @@ void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 	} else {
 		// Gradually slide down the display of the window
 		for (int idx = 1; idx <= bgSurface.h; idx += 2) {
-			screen._backBuffer->blitFrom(bgSurface, 
+			screen._backBuffer->blitFrom(bgSurface,
 				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h),
 				Common::Rect(0, bgSurface.h - idx, bgSurface.w, bgSurface.h));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h,
@@ -2047,7 +2047,7 @@ void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, 
+	screen._backBuffer->blitFrom(bgSurface, Common::Point(0,
 		SHERLOCK_SCREEN_HEIGHT - bgSurface.h),
 		Common::Rect(0, 0, bgSurface.w, bgSurface.h));
 	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h, bgSurface.w, bgSurface.h);
@@ -2100,7 +2100,7 @@ void UserInterface::banishWindow(bool slideUp) {
 						Common::Point(0, CONTROLS_Y),
 						Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + idx));
 
-					screen.slamArea(0, CONTROLS_Y + idx - 2, SHERLOCK_SCREEN_WIDTH, 
+					screen.slamArea(0, CONTROLS_Y + idx - 2, SHERLOCK_SCREEN_WIDTH,
 						SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y - idx + 2);
 					events.delay(10);
 				}
@@ -2162,7 +2162,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 		_infoFlag = true;
 		clearInfo();
 		_infoFlag = true;
-		
+
 		// Display error message
 		_menuCounter = 30;
 		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that to yourself.");
@@ -2191,7 +2191,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 	if (targetNum != -1) {
 		// Found a target, so do the action
 		const UseType &action = use[targetNum];
-		
+
 		events.setCursor(WAIT);
 
 		if (action._useFlag)
@@ -2274,7 +2274,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 			cAnimNum = 9;
 		else
 			cAnimNum = action._cAnimNum - 1;
-	
+
 		int dir = -1;
 		if (action._cAnimNum != 99) {
 			CAnim &anim = scene._cAnim[cAnimNum];
@@ -2299,7 +2299,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		bool printed = false;
 
 		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
-			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2 
+			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
 					&& toupper(action._names[nameIdx][1]) == 'W') {
 				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), messages)) {
 					if (!talk._talkToAbort)
@@ -2367,7 +2367,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
 
 				// Set how long to show the message
-				_menuCounter = 30;	
+				_menuCounter = 30;
 			}
 		}
 	}

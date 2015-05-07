@@ -25,7 +25,7 @@
 
 namespace Sherlock {
 
-const int SETUP_POINTS[12][4]  = { 
+const int SETUP_POINTS[12][4]  = {
 	{ 4, 154, 101, 53 },		// Exit
 	{ 4, 165, 101, 53 },		// Music Toggle
 	{ 219, 165, 316, 268 },		// Voice Toggle
@@ -76,40 +76,40 @@ void Settings::drawInteface(bool flag) {
 		SETUP_POINTS[0][3] - screen.stringWidth("Exit") / 2, "Exit");
 
 	tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._music]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
 		SETUP_POINTS[1][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
 	tempStr = Common::String::format("Voices %s", SETUP_STRS0[sound._voices]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[2][0], SETUP_POINTS[2][1], SETUP_POINTS[2][2], SETUP_POINTS[2][1] + 10),
 		SETUP_POINTS[2][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
 	tempStr = Common::String::format("Sound Effects %s", SETUP_STRS0[sound._digitized]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[3][0], SETUP_POINTS[3][1], SETUP_POINTS[3][2], SETUP_POINTS[3][1] + 10),
 		SETUP_POINTS[3][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
 	tempStr = Common::String::format("Auto Help %s", SETUP_STRS5[ui._helpStyle]);
-	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[4][0], SETUP_POINTS[4][1], SETUP_POINTS[4][2], SETUP_POINTS[4][1] + 10),
 		SETUP_POINTS[4][3] - screen.stringWidth(tempStr) / 2, tempStr);
-	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[5][0], SETUP_POINTS[5][1], SETUP_POINTS[5][2], SETUP_POINTS[5][1] + 10),
 		SETUP_POINTS[5][3] - screen.stringWidth("New Font Style") / 2, "New Font Style");
 
 	// WORKAROUND: We don't support the joystick in ScummVM, so draw the next two buttons as disabled
 	tempStr = "Joystick Off";
-	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[6][0], SETUP_POINTS[6][1], SETUP_POINTS[6][2], SETUP_POINTS[6][1] + 10),
 		SETUP_POINTS[6][3] - screen.stringWidth(tempStr) / 2, tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[6][3], SETUP_POINTS[6][1]), COMMAND_NULL, false, tempStr);
 
 	tempStr = "Calibrate Joystick";
-	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[7][0], SETUP_POINTS[7][1], SETUP_POINTS[7][2], SETUP_POINTS[7][1] + 10),
 		SETUP_POINTS[7][3] - screen.stringWidth(tempStr) / 2, tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[7][3], SETUP_POINTS[7][1]), COMMAND_NULL, false, tempStr);
 
 	tempStr = Common::String::format("Fade %s", screen._fadeStyle ? "by Pixel" : "Directly");
-	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
 		SETUP_POINTS[8][3] - screen.stringWidth(tempStr) / 2, tempStr);
-	
+
 	tempStr = Common::String::format("Windows %s", ui._windowStyle ? "Slide" : "Appear");
-	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10), 
+	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
 		SETUP_POINTS[9][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
 	tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
@@ -121,7 +121,7 @@ void Settings::drawInteface(bool flag) {
 		SETUP_POINTS[11][3] - screen.stringWidth(tempStr) / 2, tempStr);
 	screen.buttonPrint(Common::Point(SETUP_POINTS[11][3], SETUP_POINTS[11][1]), COMMAND_NULL, false, tempStr);
 
-	// Show the window immediately, or slide it on-screen 
+	// Show the window immediately, or slide it on-screen
 	if (!flag) {
 		if (!ui._windowStyle) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
@@ -150,7 +150,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 
 	for (int idx = 0; idx < 12; ++idx) {
 		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1]
-				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._released || events._released)) 
+				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._released || events._released))
 				|| (_key == SETUP_NAMES[idx][0])) {
 			found = idx;
 			color = COMMAND_HIGHLIGHTED;
@@ -160,23 +160,23 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 
 		// Print the button text
 		switch (idx) {
-		case 1: 
+		case 1:
 			tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._music]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 2: 
+		case 2:
 			tempStr = Common::String::format("Voices %s", SETUP_STRS0[sound._voices]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 3: 
+		case 3:
 			tempStr = Common::String::format("Sound Effects %s", SETUP_STRS0[sound._digitized]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 4: 
+		case 4:
 			tempStr = Common::String::format("Auto Help %s", SETUP_STRS2[ui._helpStyle]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 6: 
+		case 6:
 			tempStr = "Joystick Off";
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
 			break;
@@ -184,23 +184,23 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 			tempStr = "Calibrate Joystick";
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
 			break;
-		case 8: 
+		case 8:
 			tempStr = Common::String::format("Fade %s", SETUP_STRS1[screen._fadeStyle]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 9: 
+		case 9:
 			tempStr = Common::String::format("Windows %s", SETUP_STRS3[ui._windowStyle]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 10: 
+		case 10:
 			tempStr = Common::String::format("Portraits %s", SETUP_STRS0[people._portraitsOn]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
-		case 11: 
+		case 11:
 			tempStr = "Key Pad Slow";
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), COMMAND_NULL, true, tempStr);
 			break;
-		default: 
+		default:
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, SETUP_NAMES[idx]);
 			break;
 		}

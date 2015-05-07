@@ -64,7 +64,7 @@ public:
 	int loadSong(int songNumber);
 	void startSong();
 	void freeSong();
-	
+
 	void playMusic(const Common::String &name);
 	void stopMusic();
 	void stopSndFuncPtr(int v1, int v2);

@@ -72,7 +72,7 @@ void Sprite::clear() {
  * Updates the image frame poiner for the sprite
  */
 void Sprite::setImageFrame() {
-	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] + 
+	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] +
 		(*_sequences)[_sequenceNumber][0] - 2;
 	_imageFrame = &(*_images)[imageNumber];
 }
@@ -171,7 +171,7 @@ void Sprite::adjustSprite() {
 				if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
 					people._hSavedPos.x = 100;
 			}
-		}		
+		}
 	}
 }
 
@@ -241,7 +241,7 @@ void Sprite::checkSprite() {
 								if (obj._aType == PAL_CHANGE)
 									// Invert percentage
 									palPercent = 100 - palPercent;
-								
+
 								for (int idx = palStart; idx < (palStart + palLength); ++idx)
 									screen._sMap[idx] = screen._cMap[idx] * palPercent / 100;
 
@@ -320,7 +320,7 @@ void Sprite::checkSprite() {
 										walkPos.x = objBounds.left - CLEAR_DIST_X;
 								}
 
-								walkPos.y = (_delta.y >= 0) ? objBounds.top - CLEAR_DIST_Y : 
+								walkPos.y = (_delta.y >= 0) ? objBounds.top - CLEAR_DIST_Y :
 									objBounds.bottom + CLEAR_DIST_Y;
 							} else {
 								// Impact occurred due to horizontal movement
@@ -362,11 +362,11 @@ void Sprite::checkSprite() {
 /*----------------------------------------------------------------*/
 
 /**
- * Synchronize the data for a savegame 
+ * Synchronize the data for a savegame
  */
 void ActionType::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];
-	
+
 	_cAnimNum = s.readByte();
 	_cAnimSpeed = s.readByte();
 	if (_cAnimSpeed & 0x80)
@@ -388,7 +388,7 @@ UseType::UseType() {
 }
 
 /**
- * Synchronize the data for a savegame 
+ * Synchronize the data for a savegame
  */
 void UseType::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];
@@ -489,7 +489,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_oldSize.y = s.readUint16LE();
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
-	
+
 	_pickup = s.readByte();
 	_defaultCommand = s.readByte();
 	_lookFlag = s.readUint16LE();
@@ -500,7 +500,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_status = s.readUint16LE();
 	_misc = s.readByte();
 	_maxFrames = s.readUint16LE();
-	_flags = s.readByte();	
+	_flags = s.readByte();
 	_aOpen.synchronize(s);
 	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
@@ -518,7 +518,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	s.skip(1);
 	_aMove.synchronize(s);
 	s.skip(8);
-	
+
 	for (int idx = 0; idx < 4; ++idx)
 		_use[idx].synchronize(s);
 }
@@ -861,8 +861,8 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 			// A: Add onto existing co-ordinates
 			Common::String sx(name.c_str() + 2, name.c_str() + 5);
 			Common::String sy(name.c_str() + 6, name.c_str() + 9);
-			
-			if (ch == 'G')			
+
+			if (ch == 'G')
 				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
 			else
 				_position += Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
@@ -1055,7 +1055,7 @@ int Object::pickUpObject(const char *const messages[]) {
 		if (!printed) {
 			ui._infoFlag++;
 			ui.clearInfo();
-			
+
 			Common::String itemName = _description;
 			itemName.setChar(tolower(itemName[0]), 0);
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Picked up %s", itemName.c_str());
@@ -1096,7 +1096,7 @@ const Common::Rect Object::getOldBounds() const {
 /*----------------------------------------------------------------*/
 
 /**
- * Synchronize the data for a savegame 
+ * Synchronize the data for a savegame
  */
 void CAnim::synchronize(Common::SeekableReadStream &s) {
 	char buffer[12];

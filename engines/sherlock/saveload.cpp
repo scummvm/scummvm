@@ -40,7 +40,7 @@ const int ENV_POINTS[6][3] = {
 
 /*----------------------------------------------------------------*/
 
-SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) : 
+SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
 		_vm(vm), _target(target) {
 	_saveThumb = nullptr;
 	_envMode = SAVEMODE_NONE;
@@ -71,7 +71,7 @@ void SaveManager::drawInterface() {
 	screen._backBuffer1.fillRect(Common::Rect(0, 199, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 	screen._backBuffer1.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2, SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
-	screen.makeButton(Common::Rect(ENV_POINTS[0][0], CONTROLS_Y, ENV_POINTS[0][1], CONTROLS_Y + 10), 
+	screen.makeButton(Common::Rect(ENV_POINTS[0][0], CONTROLS_Y, ENV_POINTS[0][1], CONTROLS_Y + 10),
 		ENV_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
 	screen.makeButton(Common::Rect(ENV_POINTS[1][0], CONTROLS_Y, ENV_POINTS[1][1], CONTROLS_Y + 10),
 		ENV_POINTS[1][2] - screen.stringWidth("Load") / 2, "Load");
@@ -92,9 +92,9 @@ void SaveManager::drawInterface() {
 
 	for (int idx = _savegameIndex; idx < _savegameIndex + 5; ++idx)
 	{
-		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10), 
+		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 			INV_FOREGROUND, "%d.", idx + 1);
-		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10), 
+		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 			INV_FOREGROUND, "%s", _savegames[idx].c_str());
 	}
 
@@ -317,7 +317,7 @@ void SaveManager::loadGame(int slot) {
 		generateSaveName(slot));
 	if (!saveFile)
 		return;
-	
+
 	// Load the savaegame header
 	SherlockSavegameHeader header;
 	if (!readSavegameHeader(saveFile, header))
@@ -405,12 +405,12 @@ bool SaveManager::checkGameOnScreen(int slot) {
 			SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 
 		for (int idx = _savegameIndex; idx < (_savegameIndex + 5); ++idx) {
-			screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10), 
+			screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 				INV_FOREGROUND, "%d.", idx + 1);
 			screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 				INV_FOREGROUND, "%s", _savegames[idx].c_str());
 		}
-		
+
 		screen.slamRect(Common::Rect(3, CONTROLS_Y + 11, 318, SHERLOCK_SCREEN_HEIGHT));
 
 		byte color = !_savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
@@ -432,7 +432,7 @@ bool SaveManager::getFilename(int slot) {
 	Talk &talk = *_vm->_talk;
 	int xp, yp;
 	bool flag = false;
-	
+
 	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), COMMAND_NULL, true, "Exit");
 	screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_NULL, true, "Load");
 	screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_NULL, true, "Save");
@@ -480,7 +480,7 @@ bool SaveManager::getFilename(int slot) {
 
 		if (keyState.keycode == Common::KEYCODE_BACKSPACE && saveName.size() > 0) {
 			// Delete character of save name
-			screen.vgaBar(Common::Rect(xp - screen.charWidth(saveName.lastChar()), yp - 1, 
+			screen.vgaBar(Common::Rect(xp - screen.charWidth(saveName.lastChar()), yp - 1,
 				xp + 8, yp + 9), INV_BACKGROUND);
 			xp -= screen.charWidth(saveName.lastChar());
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);

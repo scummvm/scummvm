@@ -256,7 +256,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Read information
 		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, bgHeader._numImages * 569 + 
+			decompressLZ(*rrmStream, bgHeader._numImages * 569 +
 				bgHeader._descSize + bgHeader._seqSize);
 
 		_bgShapes.resize(bgHeader._numStructs);
@@ -271,7 +271,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		if (bgHeader._seqSize) {
 			_sequenceBuffer.resize(bgHeader._seqSize);
 			infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
-		}			
+		}
 
 		if (_lzwMode)
 			delete infoStream;
@@ -390,7 +390,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		rrmStream->read(screen._cMap, PALETTE_SIZE);
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
 			screen._cMap[idx] = VGA_COLOR_TRANS(screen._cMap[idx]);
-		
+
 		Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
 
 		// Read in the background
@@ -522,7 +522,7 @@ void Scene::checkSceneFlags(bool flag) {
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
-		
+
 		if (o._requiredFlag) {
 			if (!_vm->readFlags(_bgShapes[idx]._requiredFlag)) {
 				// Kill object
@@ -655,7 +655,7 @@ void Scene::transitionToScene() {
 			if (obj._type != NO_SHAPE) {
 				topLeft += obj._imageFrame->_offset;
 				bottomRight.x = topLeft.x + obj._imageFrame->_frame.w;
-				bottomRight.y = topLeft.y + obj._imageFrame->_frame.h;			
+				bottomRight.y = topLeft.y + obj._imageFrame->_frame.h;
 			} else {
 				bottomRight = topLeft + obj._noShapeSize;
 			}
@@ -768,7 +768,7 @@ void Scene::updateBackground() {
 	// Draw all canimations which are normal and behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position, 
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
 				_canimShapes[idx]._flags & 2);
 	}
 
@@ -778,7 +778,7 @@ void Scene::updateBackground() {
 			player._sequenceNumber == WALK_UPLEFT || player._sequenceNumber == STOP_UPLEFT ||
 			player._sequenceNumber == WALK_DOWNRIGHT || player._sequenceNumber == STOP_DOWNRIGHT;
 
-		screen._backBuffer->transBlitFrom(*player._imageFrame, Common::Point(player._position.x / 100, 
+		screen._backBuffer->transBlitFrom(*player._imageFrame, Common::Point(player._position.x / 100,
 			player._position.y / 100 - player.frameHeight()), flipped);
 	}
 
@@ -793,7 +793,7 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_canimShapes[idx]._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position, 
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
 				_canimShapes[idx]._flags & 2);
 	}
 
@@ -812,7 +812,7 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
 			_canimShapes[idx]._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position, 
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
 				_canimShapes[idx]._flags & 2);
 	}
 
@@ -966,7 +966,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 			rrmStream->seek(rrmStream->readUint32LE());
 
 			// Load the canimation into the cache
-			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream->readStream(cAnim._size) : 
+			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream->readStream(cAnim._size) :
 				decompressLZ(*rrmStream, cAnim._size);
 			res.addToCache(fname, *imgStream);
 
@@ -1059,7 +1059,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	if (playRate < 0)
 		// Reverse direction - set to end sequence
 		cObj._frameNumber = tFrames - 1;
-	
+
 	if (cObj._frameNumber <= 26)
 		gotoCode = cObj._sequences[cObj._frameNumber + 3];
 
@@ -1108,7 +1108,7 @@ void Scene::doBgAnim() {
 	Common::Point mousePos = events.mousePos();
 
 	talk._talkToAbort = false;
-	
+
 	// Animate the mouse cursor
 	if (cursorId >= WAIT) {
 		if (++cursorId > (WAIT + 2))
@@ -1229,7 +1229,7 @@ void Scene::doBgAnim() {
 		people[AL].adjustSprite();
 
 	// Flag the bg shapes which need to be redrawn
-	checkBgShapes(people[AL]._imageFrame, 
+	checkBgShapes(people[AL]._imageFrame,
 		Common::Point(people[AL]._position.x / 100, people[AL]._position.y / 100));
 
 	if (_currentScene == 12 && _vm->getGameID() == GType_SerratedScalpel)
@@ -1241,7 +1241,7 @@ void Scene::doBgAnim() {
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND)
 			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
 	}
-	
+
 	// Draw all canimations which are behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
@@ -1335,7 +1335,7 @@ void Scene::doBgAnim() {
 				people[AL]._type = INVALID;
 			} else {
 				screen.flushImage(people[AL]._imageFrame,
-					Common::Point(people[AL]._position.x / 100, 
+					Common::Point(people[AL]._position.x / 100,
 						people[AL]._position.y / 100 - people[AL].frameHeight()),
 					&people[AL]._oldPosition.x, &people[AL]._oldPosition.y,
 					&people[AL]._oldSize.x, &people[AL]._oldSize.y);
@@ -1364,7 +1364,7 @@ void Scene::doBgAnim() {
 				screen.flushImage(people._portrait._imageFrame, people._portrait._position,
 					&people._portrait._oldPosition.x, &people._portrait._oldPosition.y,
 					&people._portrait._oldSize.x, &people._portrait._oldSize.y);
-				
+
 			if (people._portrait._type == REMOVE)
 				people._portrait._type = INVALID;
 		}
@@ -1410,7 +1410,7 @@ void Scene::doBgAnim() {
 	screen.resetDisplayBounds();
 
 	// Check if the method was called for calling a portrait, and a talk was
-	// interrupting it. This talk file would not have been executed at the time, 
+	// interrupting it. This talk file would not have been executed at the time,
 	// since we needed to finish the 'doBgAnim' to finish clearing the portrait
 	if (people._clearingThePortrait && talk._scriptMoreFlag == 3) {
 		// Reset the flags and call to talk

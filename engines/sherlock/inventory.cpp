@@ -26,8 +26,8 @@
 namespace Sherlock {
 
 InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
-		const Common::String &description, const Common::String &examine) : 
-		_requiredFlag(requiredFlag), _name(name), _description(description), 
+		const Common::String &description, const Common::String &examine) :
+		_requiredFlag(requiredFlag), _name(name), _description(description),
 		_examine(examine), _lookFlag(0) {
 }
 
@@ -74,7 +74,7 @@ void Inventory::freeInv() {
 void Inventory::freeGraphics() {
 	for (uint idx = 0; idx < MAX_VISIBLE_INVENTORY; ++idx)
 		delete _invShapes[idx];
-	
+
 	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
 	_invGraphicsLoaded = false;
 }
@@ -98,7 +98,7 @@ void Inventory::loadInv() {
 
 		_names.push_back(name);
 	}
-	
+
 	delete stream;
 
 	loadGraphics();
@@ -181,7 +181,7 @@ void Inventory::putInv(int slamIt) {
 
 		// Draw the item image
 		Graphics::Surface &img = (*_invShapes[itemNum])[0]._frame;
-		bb.transBlitFrom(img, Common::Point(6 + itemNum * 52 + ((47 - img.w) / 2), 
+		bb.transBlitFrom(img, Common::Point(6 + itemNum * 52 + ((47 - img.w) / 2),
 			163 + ((33 - img.h) / 2)));
 	}
 
@@ -206,7 +206,7 @@ void Inventory::putInv(int slamIt) {
  * 0   = plain inventory mode
  * 2   = use inventory mode
  * 3   = give inventory mode
- * 128 = Draw window in the back buffer, but don't display it 
+ * 128 = Draw window in the back buffer, but don't display it
  */
 void Inventory::drawInventory(int flag) {
 	Screen &screen = *_vm->_screen;
@@ -224,7 +224,7 @@ void Inventory::drawInventory(int flag) {
 	Surface &bb = *screen._backBuffer;
 	bb.fillRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, CONTROLS_Y1 + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
-	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y1 + 10, 
+	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y1 + 10,
 		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
 	bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 2, SHERLOCK_SCREEN_WIDTH,
 		SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
@@ -232,21 +232,21 @@ void Inventory::drawInventory(int flag) {
 		INV_BACKGROUND);
 
 	// Draw the buttons
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2] - screen.stringWidth("Look") / 2, "Look");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2] - screen.stringWidth("Use") / 2, "Use");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2] - screen.stringWidth("Give") / 2, "Give");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2], "^^");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2], "^");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2], "_");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1], 
+	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2], "__");
 
 	if (tempFlag == 128)
@@ -289,43 +289,43 @@ void Inventory::invCommands(bool slamIt) {
 	UserInterface &ui = *_vm->_ui;
 
 	if (slamIt) {
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == 0 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Exit");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == 1 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Look");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Use");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Give");
-		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), 
+		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^");
-		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1), 
+		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^");
-		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), 
+		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"_");
-		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1), 
+		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"__");
 		if (_invMode != 1)
 			ui.clearInfo();
 	} else {
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == 0 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Exit");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == 1 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Look");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Use");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), 
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Give");
 		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),

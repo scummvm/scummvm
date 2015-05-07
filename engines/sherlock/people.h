@@ -32,11 +32,11 @@ namespace Sherlock {
 
 // People definitions
 enum PeopleId {
-	PLAYER	= 0,
-	AL		= 0,
-	PEG		= 1,
+	PLAYER        = 0,
+	AL            = 0,
+	PEG           = 1,
 	NUM_OF_PEOPLE = 2,		// Holmes and Watson
-	MAX_PEOPLE = 66			// Total of all NPCs
+	MAX_PEOPLE    = 66		// Total of all NPCs
 };
 
 // Animation sequence identifiers for characters
@@ -92,13 +92,13 @@ public:
 	People(SherlockEngine *vm);
 	~People();
 
-	Person &operator[](PeopleId id) { 
+	Person &operator[](PeopleId id) {
 		assert(id < NUM_OF_PEOPLE);
-		return _data[id]; 
+		return _data[id];
 	}
-	Person &operator[](int idx) { 
+	Person &operator[](int idx) {
 		assert(idx < NUM_OF_PEOPLE);
-		return _data[idx]; 
+		return _data[idx];
 	}
 
 	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }

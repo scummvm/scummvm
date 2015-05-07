@@ -180,7 +180,7 @@ int Map::show() {
 		// Ignore scrolling attempts until the screen is drawn
 		if (!_drawMap) {
 			Common::Point pt = events.mousePos();
-			
+
 			// Check for vertical map scrolling
 			if ((pt.y > (SHERLOCK_SCREEN_HEIGHT - 10) && _bigPos.y < 200) || (pt.y < 10 && _bigPos.y > 0)) {
 				if (pt.y > (SHERLOCK_SCREEN_HEIGHT - 10))
@@ -336,7 +336,7 @@ void Map::showPlaces() {
 			if (pt.x >= _bigPos.x && (pt.x - _bigPos.x) < SHERLOCK_SCREEN_WIDTH
 					&& pt.y >= _bigPos.y && (pt.y - _bigPos.y) < SHERLOCK_SCREEN_HEIGHT) {
 				if (_vm->readFlags(idx)) {
-					screen._backBuffer1.transBlitFrom((*_iconShapes)[pt._translate], 
+					screen._backBuffer1.transBlitFrom((*_iconShapes)[pt._translate],
 						Common::Point(pt.x - _bigPos.x - 6, pt.y - _bigPos.y - 12));
 				}
 			}
@@ -372,7 +372,7 @@ void Map::showPlaceName(int idx, bool highlighted) {
 
 	if (!_cursorIndex) {
 		saveIcon(people[AL]._imageFrame, _lDrawnPos);
-		
+
 		bool flipped = people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
 			|| people[AL]._sequenceNumber == MAP_UPLEFT;
 		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, _lDrawnPos, flipped);
@@ -510,7 +510,7 @@ void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 		size.x += pos.x;
 		pos.x = 0;
 	}
-	
+
 	if (pos.y < 0) {
 		size.y += pos.y;
 		pos.y = 0;

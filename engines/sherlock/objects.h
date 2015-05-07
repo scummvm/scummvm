@@ -75,7 +75,7 @@ enum {
 #define MAX_FRAME 30
 
 // code put into sequences to defines 1-10 type seqs
-#define SEQ_TO_CODE 67			
+#define SEQ_TO_CODE 67
 #define FLIP_CODE (64 + 128)
 #define SOUND_CODE (34 + 128)
 
@@ -216,7 +216,7 @@ public:
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
 	uint _descOffset;					// Tells where description starts in DescText
 	int _seqCounter2;				// Counter of calling frame sequence
-	uint _seqSize;					// Tells where description starts 
+	uint _seqSize;					// Tells where description starts
 	ActionType _aMove;
 	UseType _use[4];
 

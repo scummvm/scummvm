@@ -116,8 +116,8 @@ Resources::Resources() {
  * Adds the specified file to the cache. If it's a library file, takes care of
  * loading it's index for future use
  */
-void Resources::addToCache(const Common::String &filename) { 
-	_cache.load(filename); 
+void Resources::addToCache(const Common::String &filename) {
+	_cache.load(filename);
 
 	// Check to see if the file is a library
 	Common::SeekableReadStream *stream = load(filename);
@@ -270,10 +270,10 @@ void ImageFile::setVm(SherlockEngine *vm) {
 
 ImageFile::ImageFile(const Common::String &name, bool skipPal, bool animImages) {
 	Common::SeekableReadStream *stream = _vm->_res->load(name);
-	
+
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
 	load(*stream, skipPal, animImages);
-	
+
 	delete stream;
 }
 
@@ -327,7 +327,7 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		// Load data for frame and decompress it
 		byte *data = new byte[frame._size];
 		stream.read(data, frame._size);
-        decompressFrame(frame, data);		
+        decompressFrame(frame, data);
 		delete[] data;
 
 		push_back(frame);
@@ -344,7 +344,7 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	stream.skip(1);		// Skip paletteBase byte
 	bool rleEncoded = stream.readByte() == 1;
 	int size = v1 * v2;
-	
+
 	if ((size - 12) == PALETTE_SIZE && !rleEncoded) {
 		// Found palette, so read it in
 		stream.seek(2 + 12, SEEK_CUR);

@@ -29,7 +29,7 @@ namespace Sherlock {
 #define LINES_PER_PAGE 11
 
 // Positioning of buttons in the journal view
-const int JOURNAL_POINTS[9][3] = { 
+const int JOURNAL_POINTS[9][3] = {
 	{ 6, 68, 37 },
 	{ 69, 131, 100 },
 	{ 132, 192, 162 },
@@ -38,7 +38,7 @@ const int JOURNAL_POINTS[9][3] = {
 	{ 6, 82, 44 },
 	{ 83, 159, 121 },
 	{ 160, 236, 198 },
-	{ 237, 313, 275 } 
+	{ 237, 313, 275 }
 };
 
 const int SEARCH_POINTS[3][3] = {
@@ -101,7 +101,7 @@ void Journal::loadJournalLocations() {
 
 	Common::SeekableReadStream *dir = res.load("talk.lib");
 	dir->skip(4);		// Skip header
-	
+
 	// Get the numer of entries
 	_directory.resize(dir->readUint16LE());
 
@@ -198,8 +198,8 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			const char *lineP = journalString.c_str() + journalString.size() - 1;
 			while (width > 230 || *lineP != ' ')
 				width -= screen.charWidth(*lineP--);
-			
-			// Split the header into two lines, and add a '@' prefix 
+
+			// Split the header into two lines, and add a '@' prefix
 			// to the second line as well
 			journalString = Common::String(journalString.c_str(), lineP) + "\n@" +
 				Common::String(lineP + 1);
@@ -217,7 +217,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 			journalString += "asked ";
 		else
 			journalString += "said to ";
-	
+
 		switch (talk._talkTo) {
 		case 1:
 			journalString += "me";
@@ -364,7 +364,7 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 
 			case WALK_TO_COORDS:
 			case MOVE_MOUSE:
-				replyP += 4; 
+				replyP += 4;
 				break;
 
 			case SET_FLAG:
@@ -422,13 +422,13 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 		// past it, so the @ won't be included in the line width calculation
 		if (*startP == '@')
 			++startP;
-	
+
 		// Build up chacters until a full line is found
 		int width = 0;
 		const char *endP = startP;
 		while (width < 230 && *endP && *endP != '\n' && (endP - startP) < 79)
 			width += screen.charWidth(*endP++);
-		
+
 		// If word wrapping, move back to end of prior word
 		if (width >= 230 || (endP - startP) >= 79) {
 			while (*--endP != ' ')
@@ -520,7 +520,7 @@ void Journal::drawInterface() {
 	}
 
 	doArrows();
-		
+
 	// Show the entire screen
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
@@ -650,7 +650,7 @@ bool Journal::doJournal(int direction, int howFar) {
 
 	case 2:
 	case 3:
-		// Move howFar lines ahead unless the end of the journal is reached, 
+		// Move howFar lines ahead unless the end of the journal is reached,
 		// or a searched for keyword is found
 		for (temp = 0; (temp < (howFar / LINES_PER_PAGE)) && !endJournal && !searchSuccessful; ++temp) {
 			// Handle animating mouse cursor
@@ -687,7 +687,7 @@ bool Journal::doJournal(int direction, int howFar) {
 								_sub = 0;
 								maxLines = loadJournalFile(false);
 							}
-						} while (!endJournal && !maxLines);						
+						} while (!endJournal && !maxLines);
 					}
 
 					++lineNum;
@@ -919,7 +919,7 @@ bool Journal::handleEvents(int key) {
 			doJournal(1, (_page - 1) * LINES_PER_PAGE);
 		else
 			doJournal(1, 10 * LINES_PER_PAGE);
-	
+
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
@@ -952,7 +952,7 @@ bool Journal::handleEvents(int key) {
 	if (((found == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
 		bool notFound = false;
-	
+
 
 		do {
 			int dir;
@@ -1076,7 +1076,7 @@ int Journal::getFindName(bool printError) {
 
 	xp = 15 + screen.stringWidth(name);
 	yp = 186;
-	
+
 	do {
 		events._released = false;
 		Button found = BTN_NONE;
@@ -1141,7 +1141,7 @@ int Journal::getFindName(bool printError) {
 			}
 
 			if (keyState.keycode >= Common::KEYCODE_SPACE && keyState.keycode <= Common::KEYCODE_z
-					&& keyState.keycode != Common::KEYCODE_AT && name.size() < 50 
+					&& keyState.keycode != Common::KEYCODE_AT && name.size() < 50
 					&& (xp + screen.charWidth(keyState.keycode)) < 296) {
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", (char)keyState.keycode);

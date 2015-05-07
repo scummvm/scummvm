@@ -72,7 +72,7 @@ void Surface::blitFrom(const Graphics::Surface &src) {
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Point destPt = pt;
-	
+
 	if (destPt.x < 0) {
 		drawRect.left += -destPt.x;
 		destPt.x = 0;
@@ -125,7 +125,7 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
-	
+
 	// Clip the display area to on-screen
 	if (!clip(drawRect, destRect))
 		// It's completely off-screen
@@ -166,7 +166,7 @@ void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
  * Fill a given area of the surface with a given color
  */
 void Surface::fillRect(const Common::Rect &r, byte color) {
-    Graphics::Surface::fillRect(r, color);
+	Graphics::Surface::fillRect(r, color);
 	addDirtyRect(r);
 }
 
@@ -198,7 +198,7 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 		srcBounds.left += -destBounds.left;
 		destBounds.left = 0;
 	}
-	
+
 	return true;
 }
 

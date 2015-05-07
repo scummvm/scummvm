@@ -28,21 +28,21 @@ namespace Sherlock {
 namespace Scalpel {
 
 #define NUM_PLACES 100
-const int MAP_X[NUM_PLACES] = { 
-	0, 368, 0, 219, 0, 282, 0, 43, 0, 0, 396, 408, 0, 0, 0, 568, 37, 325, 
-	28, 0, 263, 36, 148, 469, 342, 143, 443, 229, 298, 0, 157, 260, 432, 
-	174, 0, 351, 0, 528, 0, 136, 0, 0, 0, 555, 165, 0, 506, 0, 0, 344, 0, 0 
+const int MAP_X[NUM_PLACES] = {
+	0, 368, 0, 219, 0, 282, 0, 43, 0, 0, 396, 408, 0, 0, 0, 568, 37, 325,
+	28, 0, 263, 36, 148, 469, 342, 143, 443, 229, 298, 0, 157, 260, 432,
+	174, 0, 351, 0, 528, 0, 136, 0, 0, 0, 555, 165, 0, 506, 0, 0, 344, 0, 0
 };
-const int MAP_Y[NUM_PLACES] = { 
+const int MAP_Y[NUM_PLACES] = {
 	0, 147, 0, 166, 0, 109, 0, 61, 0, 0, 264, 70, 0, 0, 0, 266, 341, 30, 275,
-	0, 294, 146, 311, 230, 184, 268, 133, 94, 207, 0, 142, 142, 330, 255, 0, 
-	37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0 
+	0, 294, 146, 311, 230, 184, 268, 133, 94, 207, 0, 142, 142, 330, 255, 0,
+	37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0
 };
 
 const int MAP_TRANSLATE[NUM_PLACES] = {
 	0, 0, 0, 1, 0, 2, 0, 3, 4, 0, 4, 6, 0, 0, 0, 8, 9, 10, 11, 0, 12, 13, 14, 7,
 	15, 16, 17, 18, 19, 0, 20, 21, 22, 23, 0, 24, 0, 25, 0, 26, 0, 0, 0, 27,
-	28, 0, 29, 0, 0, 30, 0 
+	28, 0, 29, 0, 0, 30, 0
 };
 
 const byte MAP_SEQUENCES[3][MAX_FRAME] = {
@@ -251,7 +251,7 @@ void ScalpelEngine::showOpening() {
  */
 bool ScalpelEngine::showCityCutscene() {
 	byte palette[PALETTE_SIZE];
-	
+
 	_sound->playMusic("prolog1.mus");
 	_titleOverride = "title.lib";
 	_soundOverride = "title.snd";
@@ -286,7 +286,7 @@ bool ScalpelEngine::showCityCutscene() {
 		ImageFile titleImages("title.vgs", true);
 		_screen->_backBuffer1.copyFrom(*_screen);
 		_screen->_backBuffer2.copyFrom(*_screen);
-		
+
 		// The Lost Files of
 		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(75, 6));
 		// Sherlock Holmes
@@ -473,7 +473,7 @@ void ScalpelEngine::loadInventory() {
 	inv._holdings = 2;
 	inv.push_back(InventoryItem(0, "Message", "A message requesting help", "_ITEM03A"));
 	inv.push_back(InventoryItem(0, "Holmes Card", "A number of business cards", "_ITEM07A"));
-	
+
 	// Hidden items
 	inv.push_back(InventoryItem(95, "Tickets", "Opera Tickets", "_ITEM10A"));
 	inv.push_back(InventoryItem(138, "Cuff Link", "Cuff Link", "_ITEM04A"));
@@ -524,7 +524,7 @@ void ScalpelEngine::startScene() {
 	//  2: Blackwood's capture
 	// 52: Rescuing Anna
 	// 53: Moorehead's death / subway train
-	// 55: Fade out and exit 
+	// 55: Fade out and exit
 	// 70: Brumwell suicide
 	switch (_scene->_goToScene) {
 	case 2:
@@ -678,7 +678,7 @@ void ScalpelEngine::eraseMirror12() {
 void ScalpelEngine::doMirror12() {
 	People &people = *_people;
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
-	int frameNum = (*people[AL]._sequences)[people[AL]._sequenceNumber][people[AL]._frameNumber] + 
+	int frameNum = (*people[AL]._sequences)[people[AL]._sequenceNumber][people[AL]._frameNumber] +
 		(*people[AL]._sequences)[people[AL]._sequenceNumber][0] - 2;
 
 	switch ((*_people)[AL]._sequenceNumber) {
@@ -733,17 +733,17 @@ void ScalpelEngine::doMirror12() {
 		_screen->_backBuffer1.transBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
 
 		// Redraw the mirror borders to prevent the drawn image of Holmes from appearing outside of the mirror
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(114, 18), 
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(114, 18),
 			Common::Rect(114, 18, 137, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(137, 70), 
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(137, 70),
 			Common::Rect(137, 70, 142, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(142, 71), 
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(142, 71),
 			Common::Rect(142, 71, 159, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(159, 72), 
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(159, 72),
 			Common::Rect(159, 72, 170, 116));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(170, 73), 
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(170, 73),
 			Common::Rect(170, 73, 184, 114));
-		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(184, 18), 
+		_screen->_backBuffer1.blitFrom(_screen->_backBuffer2, Common::Point(184, 18),
 			Common::Rect(184, 18, 212, 114));
 	}
 }
