@@ -129,7 +129,6 @@ private:
 	Common::Array<TalkSequences> TALK_SEQUENCES;
 private:
 	SherlockEngine *_vm;
-	int _saveSeqNum;
 	Common::Stack<SequenceEntry> _savedSequences;
 	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;

@@ -94,7 +94,6 @@ void TalkSequences::clear() {
 Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
-	_saveSeqNum = 0;
 	_speaker = 0;
 	_talkIndex = 0;
 	_talkTo = 0;
@@ -1008,7 +1007,7 @@ void Talk::doScript(const Common::String &script) {
 	int obj;
 	int seqCount;
 
-	_saveSeqNum = 0;
+	_savedSequences.clear();
 
 	const byte *scriptStart = (const byte *)script.c_str();
 	const byte *str = scriptStart;
