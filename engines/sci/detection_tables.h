@@ -1552,6 +1552,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 6 - English DOS Playable CD "Sneak Peaks" Demo (first island fully playable)
+	//  (supplied by KQ5 G5 in bug report #6824)
+	// Executable scanning reports "1.cfs.158 Not a release version", VERSION file reports "1.000.000"
+	// SCI interpreter version ???
+	{"kq6", "Demo/CD", {
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8345598},
+		{"resource.map", 0, "eb9e177281b7cde188dc0d83194cd365", 8960},
+		{"resource.msg", 0, "3cf5de44de36191f109d425b8450efc8", 259510},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 6 - English DOS Floppy
 	// SCI interpreter version 1.001.054
 	{"kq6", "", {

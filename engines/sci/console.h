@@ -68,6 +68,7 @@ private:
 	bool cmdSaid(int argc, const char **argv);
 	// Resources
 	bool cmdDiskDump(int argc, const char **argv);
+	void cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, uint32 resourceTuple);
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdResourceId(int argc, const char **argv);
 	bool cmdResourceInfo(int argc, const char **argv);
@@ -146,6 +147,7 @@ private:
 	bool cmdBreakpointFunction(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
+	bool cmdScriptStrings(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdVMVars(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
@@ -157,6 +159,7 @@ private:
 	bool cmdViewAccumulatorObject(int argc, const char **argv);
 
 	bool parseInteger(const char *argument, int &result);
+	bool parseResourceNumber36(const char *userParameter, uint16 &resourceNumber, uint32 &resourceTuple);
 
 	void printBasicVarInfo(reg_t variable);
 

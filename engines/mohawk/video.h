@@ -124,6 +124,10 @@ private:
 
 	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop, uint16 volume = 0xff);
 	VideoHandle createVideoHandle(const Common::String &filename, uint16 x, uint16 y, bool loop, byte volume = 0xff);
+
+	// Dithering control
+	bool _enableDither;
+	void checkEnableDither(VideoEntry &entry);
 };
 
 } // End of namespace Mohawk

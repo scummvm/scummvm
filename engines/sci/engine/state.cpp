@@ -92,6 +92,10 @@ void EngineState::reset(bool isRestoring) {
 		abortScriptProcessing = kAbortNone;
 	}
 
+	// reset delayed restore game functionality
+	_delayedRestoreGame = false;
+	_delayedRestoreGameId = 0;
+
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
 	stack_base = 0;

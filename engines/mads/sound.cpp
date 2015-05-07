@@ -36,6 +36,7 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 	_pollSoundEnabled = false;
 	_soundPollFlag = false;
 	_newSoundsPaused = false;
+	_masterVolume = 255;
 
 	_opl = OPL::Config::create();
 	_opl->init(11025);
@@ -97,15 +98,18 @@ void SoundManager::init(int sectionNumber) {
 			break;
 		default:
 			_driver = nullptr;
-			break;
+			return;
 		}
 		break;
 
 	default:
 		warning("SoundManager: Unknown game");
 		_driver = nullptr;
-		break;
+		return;
 	}
+
+	// Set volume for newly loaded driver
+	_driver->setVolume(_masterVolume);
 }
 
 void SoundManager::closeDriver() {
@@ -139,6 +143,13 @@ void SoundManager::startQueuedCommands() {
 		int commandId = _queuedCommands.pop();
 		command(commandId);
 	}
+}
+
+void SoundManager::setVolume(int volume) {
+	_masterVolume = volume;
+
+	if (_driver)
+		_driver->setVolume(volume);
 }
 
 void SoundManager::command(int commandId, int param) {

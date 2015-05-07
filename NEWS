@@ -3,6 +3,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 1.8.0 (????-??-??)
  New Games:
+   - Added support for Rex Nebular and the Cosmic Gender Bender.
    - Added support for Sfinx.
    - Added support for Zork Nemesis: The Forbidden Lands.
    - Added support for Zork: Grand Inquisitor.
@@ -17,7 +18,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      head scene (bug #6728). It may have been happening in other scenes as
      well.
 
-SCUMM:
+ SCI:
+   - Handling of music priority has been greatly improved.
+   - A lot of fixes for original game script bugs, which are too numerous to
+     mention here.
+
+ SCUMM:
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
 

@@ -74,7 +74,6 @@ struct SavegameMetadata {
 	uint16 script0Size;
 };
 
-
 /**
  * Saves a game state to the hard disk in a portable way.
  * @param s			The state to save
@@ -83,6 +82,9 @@ struct SavegameMetadata {
  * @return 0 on success, 1 otherwise
  */
 bool gamestate_save(EngineState *s, Common::WriteStream *save, const Common::String &savename, const Common::String &version);
+
+// does a delayed saved game restore, used by ScummVM game menu - see detection.cpp / SciEngine::loadGameState()
+void gamestate_delayedrestore(EngineState *s);
 
 /**
  * Restores a game state from a directory.

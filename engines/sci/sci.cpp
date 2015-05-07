@@ -114,6 +114,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
+	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
@@ -281,25 +282,13 @@ Common::Error SciEngine::run() {
 	// Check whether loading a savestate was requested
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
-		// call GameObject::play (like normally)
-		initStackBaseWithSelector(SELECTOR(play));
-		// We set this, so that the game automatically quit right after init
-		_gamestate->variables[VAR_GLOBAL][4] = TRUE_REG;
+		_gamestate->_delayedRestoreGame = true;
+		_gamestate->_delayedRestoreGameId = directSaveSlotLoading;
 
 		// Jones only initializes its menus when restarting/restoring, thus set
 		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
 		if (g_sci->getGameId() == GID_JONES)
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTORE;
-
-		_gamestate->_executionStackPosChanged = false;
-		run_vm(_gamestate);
-
-		// As soon as we get control again, actually restore the game
-		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, directSaveSlotLoading) };	// special call (argv[0] is NULL)
-		kRestoreGame(_gamestate, 2, restoreArgv);
-
-		// this indirectly calls GameObject::init, which will setup menu, text font/color codes etc.
-		//  without this games would be pretty badly broken
 	}
 
 	// Show any special warnings for buggy scripts with severe game bugs,

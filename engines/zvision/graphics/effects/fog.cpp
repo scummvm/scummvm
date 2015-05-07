@@ -142,9 +142,9 @@ void FogFx::update() {
 
 		for (uint8 i = 0; i < 31; i++) {
 			float perc = (float)i / 31.0;
-			uint8 cr = (float)_r * perc;
-			uint8 cg = (float)_g * perc;
-			uint8 cb = (float)_b * perc;
+			uint8 cr = (uint8)((float)_r * perc);
+			uint8 cg = (uint8)((float)_g * perc);
+			uint8 cb = (uint8)((float)_b * perc);
 			_colorMap[i] = _engine->_resourcePixelFormat.RGBToColor(cr << 3, cg << 3, cb << 3);
 		}
 	}

@@ -100,6 +100,7 @@ Game::~Game() {
 	}
 
 	delete _saveFile;
+	_surface->free();
 	delete _surface;
 	delete _sectionHandler;
 }
@@ -115,8 +116,6 @@ void Game::run() {
 	_statusFlag = true;
 
 	while (!_vm->shouldQuit()) {
-		initializeGlobals();
-
 		if (_loadGameSlot == -1) {
 			startGame();
 		}

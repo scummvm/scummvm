@@ -20,6 +20,7 @@
  *
  */
 
+#include "sci/console.h"
 #include "sci/sci.h"
 #include "sci/resource.h"
 #include "sci/util.h"
@@ -64,6 +65,7 @@ void Script::freeScript() {
 	_lockers = 1;
 	_markedAsDeleted = false;
 	_objects.clear();
+	_stringLookupList.clear();
 }
 
 void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
@@ -136,9 +138,6 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	assert(_bufSize >= script->size);
 	memcpy(_buf, script->data, script->size);
 
-	// Check scripts for matching signatures and patch those, if found
-	scriptPatcher->processScript(_nr, _buf, script->size);
-
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
 		assert(heap != 0);
@@ -148,6 +147,9 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		assert(_bufSize - _scriptSize >= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
+
+	// Check scripts (+ possibly SCI 1.1 heap) for matching signatures and patch those, if found
+	scriptPatcher->processScript(_nr, _buf, _bufSize);
 
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
 		_exportTable = (const uint16 *)findBlockSCI0(SCI_OBJ_EXPORTS);
@@ -203,6 +205,191 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_bufSize);
 			//_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
+	}
+
+	// find all strings of this script
+	identifyStrings();
+}
+
+void Script::identifyStrings() {
+	stringLookupListEntry listEntry;
+	byte *scriptDataPtr  = NULL;
+	byte *stringStartPtr = NULL;
+	byte *stringDataPtr  = NULL;
+	int scriptDataLeft   = 0;
+	int stringDataLeft   = 0;
+	byte stringDataByte  = 0;
+
+	_stringLookupList.clear();
+	//stringLookupListType _stringLookupList; // Table of string data, that is inside the currently loaded script
+
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		scriptDataPtr  = _buf;
+		scriptDataLeft = _bufSize;
+
+		// Go through all SCI_OBJ_STRINGS blocks
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			if (scriptDataLeft < 2)
+				error("Script::identifyStrings(): unexpected end of script");
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+		}
+		
+		uint16 blockType;
+		uint16 blockSize;
+
+		do {
+			if (scriptDataLeft < 2)
+				error("Script::identifyStrings(): unexpected end of script");
+
+			blockType = READ_LE_UINT16(scriptDataPtr);
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+			if (blockType == 0) // end of blocks detected
+				break;
+
+			if (scriptDataLeft < 2)
+				error("Script::identifyStrings(): unexpected end of script");
+
+			blockSize = READ_LE_UINT16(scriptDataPtr);
+			if (blockSize < 4)
+				error("Script::identifyStrings(): invalid block size");
+			blockSize      -= 4; // block size includes block-type UINT16 and block-size UINT16
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+
+			if (scriptDataLeft < blockSize)
+				error("Script::identifyStrings(): invalid block size");
+			
+			if (blockType == SCI_OBJ_STRINGS) {
+				// string block detected, we now grab all NUL terminated strings out of this block
+				stringDataPtr  = scriptDataPtr;
+				stringDataLeft = blockSize;
+
+				do {
+					if (stringDataLeft < 1) // no more bytes left
+						break;
+
+					stringStartPtr = stringDataPtr;
+					listEntry.ptrOffset = stringStartPtr - _buf; // Calculate offset inside script data
+					// now look for terminating [NUL]
+					do {
+						stringDataByte = *stringDataPtr;
+						stringDataPtr++;
+						stringDataLeft--;
+						if (!stringDataByte) // NUL found, exit this loop
+							break;
+						if (stringDataLeft < 1) // no more bytes left
+							error("Script::identifyStrings(): string without terminating NUL");
+					} while (1);
+
+					listEntry.stringSize = stringDataPtr - stringStartPtr;
+					_stringLookupList.push_back(listEntry);
+				} while (1);
+			}
+
+			scriptDataPtr  += blockSize;
+			scriptDataLeft -= blockSize;
+		} while (1);
+
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
+		// Strings in SCI1.1 come after the object instances
+		scriptDataPtr = _heapStart;
+		scriptDataLeft = _heapSize;
+
+		if (scriptDataLeft < 4)
+			error("Script::identifyStrings(): unexpected end of script");
+
+		uint16 endOfStringOffset = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+		uint16 objectStartOffset = READ_SCI11ENDIAN_UINT16(scriptDataPtr + 2) * 2 + 4;
+
+		if (scriptDataLeft < objectStartOffset)
+			error("Script::identifyStrings(): object start is beyond heap size");
+		if (scriptDataLeft < endOfStringOffset)
+			error("Script::identifyStrings(): end of string is beyond heap size");
+
+		byte  *endOfStringPtr    = scriptDataPtr + endOfStringOffset;
+
+		scriptDataPtr  += objectStartOffset;
+		scriptDataLeft -= objectStartOffset;
+
+		uint16 blockType;
+		uint16 blockSize;
+
+		// skip all objects
+		do {
+			if (scriptDataLeft < 2)
+				error("Script::identifyStrings(): unexpected end of script");
+
+			blockType = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+			if (blockType != SCRIPT_OBJECT_MAGIC_NUMBER)
+				break;
+
+			if (scriptDataLeft < 2)
+				error("Script::identifyStrings(): unexpected end of script");
+
+			blockSize = READ_SCI11ENDIAN_UINT16(scriptDataPtr) * 2;
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
+			if (scriptDataLeft < blockSize)
+				error("Script::identifyStrings(): invalid block size");
+
+			scriptDataPtr  += blockSize;
+			scriptDataLeft -= blockSize;
+		} while (1);
+
+		// now scriptDataPtr points to right at the start of the strings
+		if (scriptDataPtr > endOfStringPtr)
+			error("Script::identifyStrings(): string block / end-of-string block mismatch");
+
+		stringDataPtr  = scriptDataPtr;
+		stringDataLeft = endOfStringPtr - scriptDataPtr; // Calculate byte count within string-block
+
+		do {
+			if (stringDataLeft < 1) // no more bytes left
+				break;
+
+			stringStartPtr = stringDataPtr;
+			listEntry.ptrOffset = stringStartPtr - _buf; // Calculate offset inside script data
+			// now look for terminating [NUL]
+			do {
+				stringDataByte = *stringDataPtr;
+				stringDataPtr++;
+				stringDataLeft--;
+				if (!stringDataByte) // NUL found, exit this loop
+					break;
+				if (stringDataLeft < 1) // no more bytes left
+					error("Script::identifyStrings(): string without terminating NUL");
+			} while (1);
+
+			listEntry.stringSize = stringDataPtr - stringStartPtr;
+			_stringLookupList.push_back(listEntry);
+		} while (1);
+
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		warning("TODO: identifyStrings(): Implement SCI3 variant");
+		return;
+	}
+}
+
+void Script::debugPrintStrings(Console *con) {
+	stringLookupListType::iterator it;
+	const stringLookupListType::iterator end = _stringLookupList.end();
+	byte *stringPtr;
+
+	if (!_stringLookupList.size()) {
+		con->debugPrintf(" no strings\n");
+		debugN(" no strings\n");
+		return;
+	}
+
+	for (it = _stringLookupList.begin(); it != end; ++it) {
+		stringPtr = _buf + it->ptrOffset;
+		con->debugPrintf(" %04x: '%s' (size %d)\n", it->ptrOffset, stringPtr, it->stringSize);
+		debugN(" %04x: '%s' (size %d)\n", it->ptrOffset, stringPtr, it->stringSize);
 	}
 }
 

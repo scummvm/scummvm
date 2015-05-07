@@ -140,7 +140,7 @@ bool MusicNode::process(uint32 deltaTimeInMillis) {
 			if (_crossfadeTime > 0) {
 				if ((int32)deltaTimeInMillis > _crossfadeTime)
 					deltaTimeInMillis = _crossfadeTime;
-				_newvol += floor(((float)(_crossfadeTarget - _newvol) / (float)_crossfadeTime)) * (float)deltaTimeInMillis;
+				_newvol += (int)(floor(((float)(_crossfadeTarget - _newvol) / (float)_crossfadeTime)) * (float)deltaTimeInMillis);
 				_crossfadeTime -= deltaTimeInMillis;
 			} else {
 				_crossfade = false;

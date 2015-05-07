@@ -1462,7 +1462,6 @@ void Scene103::actions() {
 	} else if (_action.isAction(VERB_TAKE, NOUN_REBREATHER, 0) && _game._objects.isInRoom(OBJ_REBREATHER)) {
 		switch (_vm->_game->_trigger) {
 		case 0:
-			_scene->changeVariant(1);
 			_globals._sequenceIndexes[12] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[12], false, 3, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[12]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[12], SEQUENCE_TRIGGER_SPRITE, 6, 1);
@@ -2113,9 +2112,9 @@ void Scene106::step() {
 		}
 
 		if (msgId >= 0) {
-			int nextAbortVal = _game._trigger + 1;
+			int nextTrigger = _game._trigger + 1;
 			_scene->_kernelMessages.add(Common::Point(15, _positionY), 0x1110, 0, 0, 360, _game.getQuote(msgId));
-			_scene->_sequences.addTimer(150, nextAbortVal);
+			_scene->_sequences.addTimer(150, nextTrigger);
 			_positionY += 14;
 		}
 	}
@@ -2590,8 +2589,8 @@ void Scene109::preActions() {
 		_game._player._walkOffScreenSceneId = 108;
 
 	if ((_action.isAction(VERB_THROW) || _action.isAction(VERB_GIVE) || _action.isAction(VERB_PUT))
-	&& (_action.isObject(NOUN_SMALL_HOLE) || _action.isObject(NOUN_TUNNEL))
-	&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
+			&& (_action.isTarget(NOUN_SMALL_HOLE) || _action.isTarget(NOUN_TUNNEL))
+			&& (_action.isObject(NOUN_DEAD_FISH) || _action.isObject(NOUN_STUFFED_FISH) || _action.isObject(NOUN_BURGER))) {
 		int idx = _game._objects.getIdFromDesc(_action._activeAction._objectNameId);
 		if ((idx >= 0) && _game._objects.isInInventory(idx)) {
 			_game._player._prepareWalkPos = Common::Point(106, 38);
@@ -2638,7 +2637,7 @@ void Scene109::actions() {
 							break;
 
 						case OBJ_BURGER:
-							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_EASY);
+							_hoovicDifficultFl = (_game._difficulty == DIFFICULTY_HARD);
 							_globals._spriteIndexes[8] = _scene->_sprites.addSprites(formAnimName('H', (_hoovicDifficultFl ? 3 : 1)));
 							break;
 						}

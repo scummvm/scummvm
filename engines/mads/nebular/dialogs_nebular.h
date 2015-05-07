@@ -69,6 +69,7 @@ struct HOGANUS {
 class CopyProtectionDialog : public TextDialog {
 private:
 	HOGANUS _hogEntry;
+	Common::String _textInput;
 
 	/**
 	 * Get a random copy protection entry from the HOGANUS resource
@@ -84,6 +85,8 @@ public:
 	 * Show the dialog
 	 */
 	virtual void show();
+
+	bool isCorrectAnswer();
 };
 
 class PictureDialog : public TextDialog {

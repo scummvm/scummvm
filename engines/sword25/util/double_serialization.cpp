@@ -33,7 +33,7 @@ SerializedDouble encodeDouble(double value) {
 	double significand = frexp(value, &exponent);
 
 	// Shift the the first part of the significand into the integer range
-	double shiftedsignificandPart = ldexp(abs(significand), 32);
+	double shiftedsignificandPart = ldexp(fabs(significand), 32);
 	uint32 significandOne = uint32(floor(shiftedsignificandPart));
 
 	// Shift the remainder of the significand into the integer range

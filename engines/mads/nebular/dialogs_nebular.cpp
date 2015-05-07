@@ -417,7 +417,7 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 		_hogEntry._pageNum, _hogEntry._lineNum, _hogEntry._wordNum);
 	wordWrap(line);
 
-	wordWrap("and type it on the line below (we',27h,'ve even given you");
+	wordWrap("and type it on the line below (we've even given you");
 	wordWrap("first letter as a hint).  As soon as you do that, we can get");
 	wordWrap("right into this really COOL adventure game!\n");
 	wordWrap("\n");
@@ -428,16 +428,57 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 
 void CopyProtectionDialog::show() {
 	draw();
-	_vm->_events->showCursor();
 
-	// TODO: Replace with text input
-	while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed() &&
-		!_vm->_events->_mouseClicked) {
-		_vm->_events->delay(1);
+	Common::KeyState curKey;
+	const Common::Rect inputArea(110, 165, 210, 175);
+	MSurface *origInput = new MSurface(inputArea.width(), inputArea.height());
+	_vm->_screen.frameRect(inputArea, TEXTDIALOG_BLACK);
+	_vm->_screen.copyTo(origInput, inputArea, Common::Point(0, 0));
+	_font->setColors(TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE);
+	_vm->_screen.copyRectToScreen(inputArea);
+	_vm->_screen.updateScreen();
+
+	bool firstTime = true;
+
+	while (!_vm->shouldQuit()) {
+		if (!firstTime) {
+			while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed()) {
+				_vm->_events->delay(1);
+			}
+
+			if (_vm->shouldQuit())
+				break;
+
+			curKey = _vm->_events->getKey();
+
+			if (curKey.keycode == Common::KEYCODE_RETURN || curKey.keycode == Common::KEYCODE_KP_ENTER)
+				break;
+			else if (curKey.keycode == Common::KEYCODE_BACKSPACE)
+				_textInput.deleteLastChar();
+			else if (_textInput.size() < 14)
+				_textInput += curKey.ascii;
+
+			_vm->_events->_pendingKeys.clear();
+		} else {
+			firstTime = false;
+			_textInput = _hogEntry._word[0];
+		}
+
+		_vm->_screen.copyFrom(origInput, Common::Rect(0, 0, inputArea.width(), inputArea.height()), Common::Point(inputArea.left, inputArea.top));
+		_font->writeString(&_vm->_screen, _textInput,
+			Common::Point(inputArea.left + 2, inputArea.top + 1), 1);
+		_vm->_screen.copyRectToScreen(inputArea);
+		_vm->_screen.updateScreen();
 	}
 
-	_vm->_events->_pendingKeys.clear();
+	origInput->free();
+	delete origInput;
 }
+
+bool CopyProtectionDialog::isCorrectAnswer() {
+	return _hogEntry._word == _textInput;
+}
+
 
 bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 	File f;
@@ -552,6 +593,7 @@ void PictureDialog::save() {
 void PictureDialog::restore() {
 	if (_savedSurface) {
 		_savedSurface->copyTo(&_vm->_screen);
+		_savedSurface->free();
 		delete _savedSurface;
 		_savedSurface = nullptr;
 

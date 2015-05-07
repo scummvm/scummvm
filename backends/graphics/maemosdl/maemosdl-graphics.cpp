@@ -21,8 +21,6 @@
  */
 #if defined(MAEMO)
 
-#include "SDL_syswm.h"
-
 #include "common/scummsys.h"
 
 #include "backends/platform/maemo/maemo.h"

@@ -256,7 +256,7 @@ bool ScummDebugger::Cmd_Hide(int argc, const char **argv) {
 bool ScummDebugger::Cmd_Script(int argc, const char** argv) {
 	int scriptnum;
 
-	if (argc < 2) {
+	if (argc < 3) {
 		debugPrintf("Syntax: script <scriptnum> <command>\n");
 		return true;
 	}

@@ -186,7 +186,7 @@ public:
 	bool signatureMatch(const uint16 *sig, int argc, const reg_t *argv);
 
 	// Prints out debug information in case a signature check fails
-	void signatureDebug(const uint16 *sig, int argc, const reg_t *argv);
+	void signatureDebug(Common::String &signatureDetails, const uint16 *sig, int argc, const reg_t *argv);
 
 	/**
 	 * Determines the type of the object indicated by reg.

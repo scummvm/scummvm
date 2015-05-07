@@ -347,8 +347,10 @@ void SpriteSlots::drawSprites(MSurface *s) {
 				spr->copyTo(s, Common::Point(xp, yp), sprite->getTransparencyIndex());
 
 				// Free sprite if it was a flipped one
-				if (flipped)
+				if (flipped) {
+					spr->free();
 					delete spr;
+				}
 			}
 		}
 	}
@@ -399,7 +401,7 @@ void SpriteSets::remove(int idx) {
 	if (idx == SPRITE_SLOTS_MAX_SIZE) {
 		delete _uiSprites;
 		_uiSprites = nullptr;
-	} else if (idx >= 0) {
+	} else if (idx >= 0 && idx < (int)size()) {
 		delete (*this)[idx];
 
 		if (idx < ((int)size() - 1)) {

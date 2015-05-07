@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/list.h"
 #include "common/scummsys.h"
 
 #include "image/codecs/codec.h"
@@ -43,6 +44,153 @@
 #include "common/textconsole.h"
 
 namespace Image {
+
+namespace {
+
+/**
+ * Add a color to the QuickTime dither table check queue if it hasn't already been found.
+ */
+inline void addColorToQueue(uint16 color, uint16 index, byte *checkBuffer, Common::List<uint16> &checkQueue) {
+	if ((READ_UINT16(checkBuffer + color * 2) & 0xFF) == 0) {
+		// Previously unfound color
+		WRITE_UINT16(checkBuffer + color * 2, index);
+		checkQueue.push_back(color);
+	}
+}
+
+inline byte adjustColorRange(byte currentColor, byte correctColor, byte palColor) {
+	return CLIP<int>(currentColor - palColor + correctColor, 0, 255);
+}
+
+inline uint16 makeQuickTimeDitherColor(byte r, byte g, byte b) {
+	// RGB554
+	return ((r & 0xF8) << 6) | ((g & 0xF8) << 1) | (b >> 4);
+}
+
+} // End of anonymous namespace
+
+byte *Codec::createQuickTimeDitherTable(const byte *palette, uint colorCount) {
+	byte *buf = new byte[0x10000];
+	memset(buf, 0, 0x10000);
+
+	Common::List<uint16> checkQueue;
+
+	bool foundBlack = false;
+	bool foundWhite = false;
+
+	const byte *palPtr = palette;
+
+	// See what colors we have, and add them to the queue to check
+	for (uint i = 0; i < colorCount; i++) {
+		byte r = *palPtr++;
+		byte g = *palPtr++;
+		byte b = *palPtr++;
+		uint16 n = (i << 8) | 1;
+		uint16 col = makeQuickTimeDitherColor(r, g, b);
+
+		if (col == 0) {
+			// Special case for close-to-black
+			// The original did more here, but it effectively discarded the value
+			// due to a poor if-check (whole 16-bit value instead of lower 8-bits).
+			WRITE_UINT16(buf, n);
+			foundBlack = true;
+		} else if (col == 0x3FFF) {
+			// Special case for close-to-white
+			// The original did more here, but it effectively discarded the value
+			// due to a poor if-check (whole 16-bit value instead of lower 8-bits).
+			WRITE_UINT16(buf + 0x7FFE, n);
+			foundWhite = true;
+		} else {
+			// Previously unfound color
+			addColorToQueue(col, n, buf, checkQueue);
+		}
+	}
+
+	// More special handling for white
+	if (foundWhite)
+		checkQueue.push_front(0x3FFF);
+
+	// More special handling for black
+	if (foundBlack)
+		checkQueue.push_front(0);
+
+	// Go through the list of colors we have and match up similar colors
+	// to fill in the table as best as we can.
+	while (!checkQueue.empty()) {
+		uint16 col = checkQueue.front();
+		checkQueue.pop_front();
+		uint16 index = READ_UINT16(buf + col * 2);
+
+		uint32 x = col << 4;
+		if ((x & 0xFF) < 0xF0)
+			addColorToQueue((x + 0x10) >> 4, index, buf, checkQueue);
+		if ((x & 0xFF) >= 0x10)
+			addColorToQueue((x - 0x10) >> 4, index, buf, checkQueue);
+
+		uint32 y = col << 7;
+		if ((y & 0xFF00) < 0xF800)
+			addColorToQueue((y + 0x800) >> 7, index, buf, checkQueue);
+		if ((y & 0xFF00) >= 0x800)
+			addColorToQueue((y - 0x800) >> 7, index, buf, checkQueue);
+
+		uint32 z = col << 2;
+		if ((z & 0xFF00) < 0xF800)
+			addColorToQueue((z + 0x800) >> 2, index, buf, checkQueue);
+		if ((z & 0xFF00) >= 0x800)
+			addColorToQueue((z - 0x800) >> 2, index, buf, checkQueue);
+	}
+
+	// Contract the table back to just palette entries
+	for (int i = 0; i < 0x4000; i++)
+		buf[i] = READ_UINT16(buf + i * 2) >> 8;
+
+	// Now go through and distribute the error to three more pixels
+	byte *bufPtr = buf;
+	for (uint realR = 0; realR < 0x100; realR += 8) {
+		for (uint realG = 0; realG < 0x100; realG += 8) {
+			for (uint realB = 0; realB < 0x100; realB += 16) {
+				byte palIndex = *bufPtr;
+				byte r = realR;
+				byte g = realG;
+				byte b = realB;
+
+				byte palR = palette[palIndex * 3] & 0xF8;
+				byte palG = palette[palIndex * 3 + 1] & 0xF8;
+				byte palB = palette[palIndex * 3 + 2] & 0xF0;
+
+				r = adjustColorRange(r, realR, palR);
+				g = adjustColorRange(g, realG, palG);
+				b = adjustColorRange(b, realB, palB);
+				palIndex = buf[makeQuickTimeDitherColor(r, g, b)];
+				bufPtr[0x4000] = palIndex;
+
+				palR = palette[palIndex * 3] & 0xF8;
+				palG = palette[palIndex * 3 + 1] & 0xF8;
+				palB = palette[palIndex * 3 + 2] & 0xF0;
+
+				r = adjustColorRange(r, realR, palR);
+				g = adjustColorRange(g, realG, palG);
+				b = adjustColorRange(b, realB, palB);
+				palIndex = buf[makeQuickTimeDitherColor(r, g, b)];
+				bufPtr[0x8000] = palIndex;
+
+				palR = palette[palIndex * 3] & 0xF8;
+				palG = palette[palIndex * 3 + 1] & 0xF8;
+				palB = palette[palIndex * 3 + 2] & 0xF0;
+
+				r = adjustColorRange(r, realR, palR);
+				g = adjustColorRange(g, realG, palG);
+				b = adjustColorRange(b, realB, palB);
+				palIndex = buf[makeQuickTimeDitherColor(r, g, b)];
+				bufPtr[0xC000] = palIndex;
+
+				bufPtr++;
+			}
+		}
+	}
+
+	return buf;
+}
 
 Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 	switch (tag) {

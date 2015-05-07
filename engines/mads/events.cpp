@@ -84,8 +84,8 @@ void EventsManager::waitCursor() {
 	CursorType cursorId = (CursorType)MIN(_cursorSprites->getCount(), (int)CURSOR_WAIT);
 	_newCursorId = cursorId;
 	if (_cursorId != _newCursorId) {
-		changeCursor();
 		_cursorId = _newCursorId;
+		changeCursor();
 	}
 }
 

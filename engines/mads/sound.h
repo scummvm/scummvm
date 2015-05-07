@@ -43,6 +43,7 @@ private:
 	bool _soundPollFlag;
 	bool _newSoundsPaused;
 	Common::Queue<int> _queuedCommands;
+	int _masterVolume;
 public:
 	SoundManager(MADSEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
@@ -77,6 +78,11 @@ public:
 	 * Stop queueing sound commands, and execute any previously queued ones
 	 */
 	void startQueuedCommands();
+
+	/**
+	 * Set the master volume
+	 */
+	void setVolume(int volume);
 
 	//@{
 	/**
