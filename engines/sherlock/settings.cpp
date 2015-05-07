@@ -224,7 +224,6 @@ void Settings::show(SherlockEngine *vm) {
 	Sound &sound = *vm->_sound;
 	Talk &talk = *vm->_talk;
 	UserInterface &ui = *vm->_ui;
-	int found;
 	bool updateConfig = false;
 
 	Settings settings(vm);
@@ -234,7 +233,7 @@ void Settings::show(SherlockEngine *vm) {
 		if (ui._menuCounter)
 			ui.whileMenuCounter();
 
-		found = -1;
+		int found = -1;
 		ui._key = -1;
 
 		scene.doBgAnim();

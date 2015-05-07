@@ -531,13 +531,12 @@ void UserInterface::examine() {
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
 	Common::Point pt = events.mousePos();
-	int canimSpeed;
 
 	if (pt.y < (CONTROLS_Y + 9)) {
 		Object &obj = scene._bgShapes[_bgFound];
 		
 		if (obj._lookcAnim != 0) {
-			canimSpeed = ((obj._lookcAnim & 0xe0) >> 5) + 1;
+			int canimSpeed = ((obj._lookcAnim & 0xe0) >> 5) + 1;
 			scene._cAnimFramePause = obj._lookFrames;
 			_cAnimStr = obj._examine;
 			_cNum = (obj._lookcAnim & 0x1f) - 1;
@@ -587,7 +586,6 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 	Common::Point mousePos = events.mousePos();
 	int temp;
 	Common::String tempStr;
-	int x, width;
 
 	// Don't display anything for right button command
 	if ((events._rightPressed || events._rightPressed) && !events._pressed)
@@ -612,7 +610,7 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
 						(inv._invMode == 2 || inv._invMode == 3)) {
 					int width1 = 0, width2 = 0;
-
+					int x, width;
 					if (inv._invMode == 2) {
 						// Using an object
 						x = width = screen.stringWidth("Use ");
@@ -743,9 +741,9 @@ void UserInterface::doEnvControl() {
 		events.clearKeyboard();
 
 		// Check for a filename entry being highlighted
-		int found1 = 0;
 		if ((events._pressed || events._released) && mousePos.y > (CONTROLS_Y + 10))
 		{
+			int found1 = 0;
 			for (_selector = 0; (_selector < 5) && !found1; ++_selector)
 				if (mousePos.y > (CONTROLS_Y + 11 + _selector * 10) && mousePos.y < (CONTROLS_Y + 21 + _selector * 10))
 					found1 = 1;
@@ -1540,7 +1538,6 @@ void UserInterface::doTalkControl() {
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
-	int select;
 
 	_key = _oldKey = -1;
 	_keyboardInput = false;
@@ -1728,7 +1725,7 @@ void UserInterface::doTalkControl() {
 						talk.loadTalkFile(linkFilename);
 
 						// Find the first new statement
-						select = _selector = _oldSelector = -1;
+						int select = _selector = _oldSelector = -1;
 						for (uint idx = 0; idx < talk._statements.size() && select == -1; ++idx) {
 							if (!talk._statements[idx]._talkMap)
 								select = talk._talkIndex = idx;
@@ -1795,7 +1792,6 @@ void UserInterface::journalControl() {
 	Journal &journal = *_vm->_journal;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	int found;
 	bool doneFlag = false;
 
 	// Draw the journal screen
@@ -1803,7 +1799,7 @@ void UserInterface::journalControl() {
 
 	// Handle journal events
 	do {
-		found = _key = -1;
+		_key = -1;
 		events.setButtonState();
 		
 		// Handle keypresses
@@ -1846,12 +1842,11 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	Inventory &inv = *_vm->_inventory;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	int savedSelector;
 
 	if (str.hasPrefix("_")) {
 		_lookScriptFlag = true;
 		events.setCursor(MAGNIFY);
-		savedSelector = _selector;
+		int savedSelector = _selector;
 		talk.talkTo(str.c_str() + 1);
 		_lookScriptFlag = false;
 
@@ -2255,11 +2250,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	bool printed = false;
-	bool doCAnim = true;
-	int cAnimNum;
 	Common::Point pt(-1, -1);
-	int dir = -1;
 
 	if (objNum >= 1000)
 		// Ignore actions done on characters
@@ -2277,12 +2268,14 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 	} else {
 		Object &obj = scene._bgShapes[objNum];
 
+		int cAnimNum;
 		if (action._cAnimNum == 0)
 			// Really a 10
 			cAnimNum = 9;
 		else
 			cAnimNum = action._cAnimNum - 1;
 	
+		int dir = -1;
 		if (action._cAnimNum != 99) {
 			CAnim &anim = scene._cAnim[cAnimNum];
 
@@ -2303,6 +2296,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		// Has a value, so do action
 		// Show wait cursor whilst walking to object and doing action
 		events.setCursor(WAIT);
+		bool printed = false;
 
 		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2 
@@ -2314,6 +2308,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 			}
 		}
 
+		bool doCAnim = true;
 		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2) {
 				char ch = toupper(action._names[nameIdx][1]);

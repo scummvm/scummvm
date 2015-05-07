@@ -989,7 +989,6 @@ int Object::pickUpObject(const char *const messages[]) {
 	UserInterface &ui = *_vm->_ui;
 	int pickup = _pickup & 0x7f;
 	bool printed = false;
-	bool takeFlag = true;
 	int numObjects = 0;
 
 	if (pickup == 99) {
@@ -1014,6 +1013,7 @@ int Object::pickUpObject(const char *const messages[]) {
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up
+		bool takeFlag = true;
 		if ((_pickup & 0x80) == 0) {
 			// Play an animation
 			if (pickup > 80) {

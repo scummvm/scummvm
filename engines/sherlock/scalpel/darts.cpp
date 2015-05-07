@@ -69,7 +69,6 @@ Darts::Darts(ScalpelEngine *vm) : _vm(vm) {
 void Darts::playDarts() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	int score, roundStartScore;
 	int playerNumber = 0;
 	int lastDart;
 
@@ -82,6 +81,7 @@ void Darts::playDarts() {
 
 	bool done = false;
 	do {
+		int score, roundStartScore;
 		roundStartScore = score = playerNumber == 0 ? _dartScore1 : _dartScore2;
 		
 		// Show player details
@@ -502,7 +502,6 @@ int Darts::dartScore(const Common::Point &pt) {
  */
 Common::Point Darts::getComputerDartDest(int playerNum) {
 	Common::Point target;
-	int aim;
 	int score = playerNum == 0 ? _dartScore1 : _dartScore2;
 
 	if (score > 50) {
@@ -515,7 +514,7 @@ Common::Point Darts::getComputerDartDest(int playerNum) {
 			target.y += _vm->getRandomNumber(21) - 10;
 		}
 	} else {
-		aim = score;
+		int aim = score;
 
 		bool done;
 		Common::Point pt;
