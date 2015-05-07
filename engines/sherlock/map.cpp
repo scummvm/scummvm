@@ -95,10 +95,10 @@ void Map::loadSequences(int count, const byte *seq) {
 void Map::loadData() {
 	// Load the list of location names
 	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
-	char c;
 
 	while (txtStream->pos() < txtStream->size()) {
 		Common::String line;
+		char c;
 		while ((c = txtStream->readByte()) != '\0')
 			line += c;
 
@@ -442,7 +442,6 @@ void Map::updateMap(bool flushScreen) {
  */
 void Map::walkTheStreets() {
 	People &people = *_vm->_people;
-	bool reversePath = false;
 	Common::Array<Common::Point> tempPath;
 
 	// Get indexes into the path lists for the start and destination scenes
@@ -463,6 +462,8 @@ void Map::walkTheStreets() {
 		if (_charPoint == 51 || _oldCharPoint == 51) {
 			people.setWalking();
 		} else {
+			bool reversePath = false;
+
 			// Check for moving the path backwards or forwards
 			if (path[0] == 255) {
 				reversePath = true;

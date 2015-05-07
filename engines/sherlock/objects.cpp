@@ -835,15 +835,13 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	bool printed = false;
-	char ch;
-	const char *p;
 
 	scene.toggleObject(name);
 
 	if (name.hasPrefix("*")) {
 		// A code was found
 		printed = true;
-		ch = (name == "*") ? 0 : toupper(name[1]);
+		char ch = (name == "*") ? 0 : toupper(name[1]);
 
 		switch (ch) {
 		case 'C':
@@ -880,6 +878,7 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 					map._overPos.y = map[scene._goToScene].y * 100 + 900;
 				}
 
+				const char *p;
 				if ((p = strchr(name.c_str(), ',')) != nullptr) {
 					++p;
 

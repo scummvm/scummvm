@@ -96,7 +96,6 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
  */
 void Journal::loadJournalLocations() {
 	Resources &res = *_vm->_res;
-	char c;
 
 	_directory.clear();
 
@@ -123,6 +122,7 @@ void Journal::loadJournalLocations() {
 	_locations.clear();
 	while (loc->pos() < loc->size()) {
 		Common::String line;
+		char c;
 		while ((c = loc->readByte()) != 0)
 			line += c;
 
@@ -564,9 +564,7 @@ bool Journal::doJournal(int direction, int howFar) {
 	int lineNum = 0;
 	int maxLines;
 	int savedIndex;
-	int savedSub;
 	int temp;
-	bool inc;
 	const char *matchP;
 	int width;
 
@@ -663,7 +661,7 @@ bool Journal::doJournal(int direction, int howFar) {
 
 			lineNum = 0;
 			savedIndex = _index;
-			savedSub = _sub;
+			int savedSub = _sub;
 
 			// Move a single page ahead
 			do {
@@ -725,7 +723,7 @@ bool Journal::doJournal(int direction, int howFar) {
 	lineNum = 0;
 
 	do {
-		inc = true;
+		bool inc = true;
 
 		// If there wasn't any line to print at the top of the page, we won't need to
 		// increment the y position
@@ -955,9 +953,9 @@ bool Journal::handleEvents(int key) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
 		bool notFound = false;
 	
-		int dir;
 
 		do {
+			int dir;
 			if ((dir = getFindName(notFound)) != 0) {
 				int savedIndex = _index;
 				int savedSub = _sub;
@@ -1016,6 +1014,8 @@ bool Journal::handleEvents(int key) {
  * Show the search submenu
  */
 int Journal::getFindName(bool printError) {
+	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
+
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
@@ -1023,8 +1023,6 @@ int Journal::getFindName(bool printError) {
 	int yp = 174;
 	bool flag = false;
 	Common::String name;
-	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
-	Button found = BTN_NONE;
 	int done = 0;
 	byte color;
 
@@ -1062,7 +1060,6 @@ int Journal::getFindName(bool printError) {
 		for (int idx = 0; idx < 40 && !_vm->shouldQuit() && !events.kbHit() && !events._released; ++idx) {
 			events.pollEvents();
 			events.setButtonState();
-
 			events.wait(2);
 		}
 
@@ -1082,7 +1079,7 @@ int Journal::getFindName(bool printError) {
 	
 	do {
 		events._released = false;
-		found = BTN_NONE;
+		Button found = BTN_NONE;
 
 		while (!_vm->shouldQuit() && !events.kbHit() && !events._released) {
 			found = BTN_NONE;

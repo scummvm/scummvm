@@ -109,12 +109,11 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	}
 
 	int frameNumber = 0;
-	int imageFrame;
 	Common::Point pt;
 	bool skipped = false;
 	while (!_vm->shouldQuit()) {
 		// Get the next sprite to display
-		imageFrame = stream->readSint16LE();
+		int imageFrame = stream->readSint16LE();
 
 		if (imageFrame == -2) {
 			// End of animation reached

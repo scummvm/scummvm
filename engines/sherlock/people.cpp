@@ -287,7 +287,6 @@ void People::setWalking() {
 	Scene &scene = *_vm->_scene;
 	int oldDirection, oldFrame;
 	Common::Point speed, delta;
-	int temp;
 
 	// Flag that player has now walked in the scene
 	scene._walkedInScene = true;
@@ -311,6 +310,7 @@ void People::setWalking() {
 		// Since we want the player to be centered on the destination they
 		// clicked, but characters draw positions start at their left, move
 		// the destination half the character width to draw him centered
+		int temp;
 		if (_walkDest.x >= (temp = _player._imageFrame->_frame.w / 2))
 			_walkDest.x -= temp;
 
