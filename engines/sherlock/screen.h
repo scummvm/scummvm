@@ -82,7 +82,7 @@ public:
 	byte _sMap[PALETTE_SIZE];
 public:
 	Screen(SherlockEngine *vm);
-	~Screen();
+	virtual ~Screen();
 
 	void setFont(int fontNumber);
 

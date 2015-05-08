@@ -41,7 +41,7 @@ struct MapEntry : Common::Point {
 
 	MapEntry() : Common::Point(), _translate(-1) {}
 
-	MapEntry(int x, int y, int translate) : Common::Point(x, y), _translate(translate) {}
+	MapEntry(int posX, int posY, int translate) : Common::Point(posX, posY), _translate(translate) {}
 };
 
 class MapPaths {
