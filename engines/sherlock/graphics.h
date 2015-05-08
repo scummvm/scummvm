@@ -41,7 +41,7 @@ protected:
 public:
     Surface(uint16 width, uint16 height);
 	Surface();
-	~Surface();
+	virtual ~Surface();
 
 	void create(uint16 width, uint16 height);
 	void blitFrom(const Graphics::Surface &src);
