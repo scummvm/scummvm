@@ -329,13 +329,13 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
  * Prints the text passed onto the back buffer at the given position and color.
  * The string is then blitted to the screen
  */
-void Screen::print(const Common::Point &pt, byte color, const char *format, ...) {
+void Screen::print(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
 	char buffer[100];
 	va_list args;
 
-	va_start(args, format);
-	vsprintf(buffer, format, args);
+	va_start(args, formatStr);
+	vsprintf(buffer, formatStr, args);
 	va_end(args);
 	Common::String str(buffer);
 
@@ -363,13 +363,13 @@ void Screen::print(const Common::Point &pt, byte color, const char *format, ...)
 /**
  * Print a strings onto the back buffer without blitting it to the screen
  */
-void Screen::gPrint(const Common::Point &pt, byte color, const char *format, ...) {
+void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
 	char buffer[100];
 	va_list args;
 
-	va_start(args, format);
-	vsprintf(buffer, format, args);
+	va_start(args, formatStr);
+	vsprintf(buffer, formatStr, args);
 	va_end(args);
 	Common::String str(buffer);
 
@@ -519,10 +519,10 @@ Common::Rect Screen::getDisplayBounds() {
  * Synchronize the data for a savegame
  */
 void Screen::synchronize(Common::Serializer &s) {
-	int fontNumber = _fontNumber;
-	s.syncAsByte(fontNumber);
+	int fontNumb = _fontNumber;
+	s.syncAsByte(fontNumb);
 	if (s.isLoading())
-		setFont(fontNumber);
+		setFont(fontNumb);
 }
 
 } // End of namespace Sherlock

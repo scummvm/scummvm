@@ -102,8 +102,8 @@ public:
 
 	void verticalTransition();
 
-	void print(const Common::Point &pt, byte color, const char *format, ...);
-	void gPrint(const Common::Point &pt, byte color, const char *format, ...);
+	void print(const Common::Point &pt, byte color, const char *formatStr, ...);
+	void gPrint(const Common::Point &pt, byte color, const char *formatStr, ...);
 
 	void restoreBackground(const Common::Rect &r);
 

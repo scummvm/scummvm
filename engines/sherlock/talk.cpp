@@ -604,7 +604,7 @@ void Talk::stripVoiceCommands() {
 
 		// Scan for an sound effect byte, which indicates to play a sound
 		for (uint idx = 0; idx < statement._reply.size(); ++idx) {
-			if (statement._reply[idx] == SFX_COMMAND) {
+			if (statement._reply[idx] == (int)SFX_COMMAND) {
 				// Replace instruction character with a space, and delete the
 				// rest of the name following it
 				statement._reply = Common::String(statement._reply.c_str(),
@@ -1391,11 +1391,11 @@ void Talk::doScript(const Common::String &script) {
 				str += str[0] & 127;
 
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
-					Object &obj = scene._bgShapes[idx];
-					if (scumm_stricmp(tempString.c_str(), obj._name.c_str()) == 0) {
+					Object &object = scene._bgShapes[idx];
+					if (scumm_stricmp(tempString.c_str(), object._name.c_str()) == 0) {
 						// Only toggle the object if it's not in the desired state already
-						if ((obj._type == HIDDEN && state) || (obj._type != HIDDEN && !state))
-							obj.toggleHidden();
+						if ((object._type == HIDDEN && state) || (object._type != HIDDEN && !state))
+							object.toggleHidden();
 					}
 				}
 				break;
@@ -1460,13 +1460,13 @@ void Talk::doScript(const Common::String &script) {
 
 			case WALK_TO_CANIMATION: {
 				++str;
-				CAnim &anim = scene._cAnim[str[0] - 1];
+				CAnim &animation = scene._cAnim[str[0] - 1];
 
-				// Save the current point in the script, since it might be intterupted by
+				// Save the current point in the script, since it might be interrupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				_scriptCurrentIndex = (str + 1) - scriptStart;
 
-				people.walkToCoords(anim._goto, anim._gotoDir);
+				people.walkToCoords(animation._goto, animation._gotoDir);
 				if (_talkToAbort)
 					return;
 				break;
