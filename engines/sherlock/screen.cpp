@@ -52,9 +52,9 @@ Screen::~Screen() {
 /**
  * Set the font to use for writing text on the screen
  */
-void Screen::setFont(int fontNumber) {
-	_fontNumber = fontNumber;
-	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber + 1);
+void Screen::setFont(int fontNumb) {
+	_fontNumber = fontNumb;
+	Common::String fname = Common::String::format("FONT%d.VGS", fontNumb + 1);
 
 	// Discard any previous font and read in new one
 	delete _font;
@@ -278,8 +278,8 @@ void Screen::restoreBackground(const Common::Rect &r) {
 /**
  * Copies a given area to the screen
  */
-void Screen::slamArea(int16 xp, int16 yp, int16 w, int16 h) {
-	slamRect(Common::Rect(xp, yp, xp + w, yp + h));
+void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
+	slamRect(Common::Rect(xp, yp, xp + width, yp + height));
 }
 
 /**
@@ -300,10 +300,10 @@ void Screen::slamRect(const Common::Rect &r) {
  * new area covered by the shape as well as the old area, which must be restored
  */
 void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
-		int16 *xp, int16 *yp, int16 *w, int16 *h) {
+		int16 *xp, int16 *yp, int16 *width, int16 *height) {
 	Common::Point imgPos = pt + frame->_offset;
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->_frame.w, imgPos.y + frame->_frame.h);
-	Common::Rect oldBounds(*xp, *yp, *xp + *w, *yp + *h);
+	Common::Rect oldBounds(*xp, *yp, *xp + *width, *yp + *height);
 
 	// See if the areas of the old and new overlap, and if so combine the areas
 	if (newBounds.intersects(oldBounds)) {
@@ -321,8 +321,8 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
 
 	*xp = newBounds.left;
 	*yp = newBounds.top;
-	*w = newBounds.width();
-	*h = newBounds.height();
+	*width = newBounds.width();
+	*height = newBounds.height();
 }
 
 /**

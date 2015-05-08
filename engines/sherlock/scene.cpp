@@ -1414,7 +1414,8 @@ void Scene::doBgAnim() {
 	// since we needed to finish the 'doBgAnim' to finish clearing the portrait
 	if (people._clearingThePortrait && talk._scriptMoreFlag == 3) {
 		// Reset the flags and call to talk
-		people._clearingThePortrait = talk._scriptMoreFlag = 0;
+		people._clearingThePortrait = false;
+		talk._scriptMoreFlag = 0;
 		talk.talkTo(talk._scriptName);
 	}
 }

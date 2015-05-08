@@ -107,11 +107,11 @@ public:
 
 	void restoreBackground(const Common::Rect &r);
 
-	void slamArea(int16 xp, int16 yp, int16 w, int16 h);
+	void slamArea(int16 xp, int16 yp, int16 width, int16 height);
 	void slamRect(const Common::Rect &r);
 
 	void flushImage(ImageFrame *frame, const Common::Point &pt,
-		int16 *xp, int16 *yp, int16 *w, int16 *h);
+		int16 *xp, int16 *yp, int16 *width, int16 *height);
 
 	int stringWidth(const Common::String &str);
 
