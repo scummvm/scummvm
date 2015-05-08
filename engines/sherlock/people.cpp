@@ -333,12 +333,12 @@ void People::setWalking() {
 		// See whether the major movement is horizontal or vertical
 		if (delta.x >= delta.y) {
 			// Set the initial frame sequence for the left and right, as well
-			// as settting the delta x depending on direction
+			// as setting the delta x depending on direction
 			if (_walkDest.x < (_player._position.x / 100)) {
-				_player._sequenceNumber = map._active ? MAP_LEFT : WALK_LEFT;
+				_player._sequenceNumber = (int) (map._active ? MAP_LEFT : WALK_LEFT);
 				_player._delta.x = speed.x * -100;
 			} else {
-				_player._sequenceNumber = map._active ? MAP_RIGHT : WALK_RIGHT;
+				_player._sequenceNumber = (int) (map._active ? MAP_RIGHT : WALK_RIGHT);
 				_player._delta.x = speed.x * 100;
 			}
 

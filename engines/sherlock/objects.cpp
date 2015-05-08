@@ -242,8 +242,8 @@ void Sprite::checkSprite() {
 									// Invert percentage
 									palPercent = 100 - palPercent;
 
-								for (int idx = palStart; idx < (palStart + palLength); ++idx)
-									screen._sMap[idx] = screen._cMap[idx] * palPercent / 100;
+								for (int i = palStart; i < (palStart + palLength); ++i)
+									screen._sMap[i] = screen._cMap[i] * palPercent / 100;
 
 								events.pollEvents();
 								screen.setPalette(screen._sMap);
@@ -351,6 +351,9 @@ void Sprite::checkSprite() {
 
 					case DELTA:
 						_position.x += 200;
+						break;
+
+					default:
 						break;
 					}
 				}
