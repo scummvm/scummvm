@@ -143,7 +143,7 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	const int TRANSPARENCY = 0xFF;
 	for (int yp = 0; yp < drawRect.height(); ++yp) {
 		const byte *srcP = (const byte *)src.getBasePtr(
-			flipped ? drawRect.right : drawRect.left, drawRect.top + yp);
+			flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
 		byte *destP = (byte *)getBasePtr(destPt.x, destPt.y + yp);
 
 		for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
