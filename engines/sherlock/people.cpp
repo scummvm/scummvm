@@ -397,14 +397,13 @@ void People::setWalking() {
 
 			// If we're on the overhead map, set the sequence so we keep moving
 			// in the same direction
-			if (map._active) {
+			if (map._active)
 				_player._sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
-			}
 
 			// Set the delta x
 			_player._delta.x = (delta.x * 100) / (delta.y / speed.y);
 			if (_walkDest.x < (_player._position.x / 100))
-				_player._delta.x = -_player._delta.x;;
+				_player._delta.x = -_player._delta.x;
 
 			_player._walkCount = delta.y / speed.y;
 		}
@@ -439,23 +438,31 @@ void People::gotoStand(Sprite &sprite) {
 
 	switch (sprite._sequenceNumber) {
 	case WALK_UP:
-		sprite._sequenceNumber = STOP_UP; break;
+		sprite._sequenceNumber = STOP_UP;
+		break;
 	case WALK_DOWN:
-		sprite._sequenceNumber = STOP_DOWN; break;
+		sprite._sequenceNumber = STOP_DOWN;
+		break;
 	case TALK_LEFT:
 	case WALK_LEFT:
-		sprite._sequenceNumber = STOP_LEFT; break;
+		sprite._sequenceNumber = STOP_LEFT;
+		break;
 	case TALK_RIGHT:
 	case WALK_RIGHT:
-		sprite._sequenceNumber = STOP_RIGHT; break;
+		sprite._sequenceNumber = STOP_RIGHT;
+		break;
 	case WALK_UPRIGHT:
-		sprite._sequenceNumber = STOP_UPRIGHT; break;
+		sprite._sequenceNumber = STOP_UPRIGHT;
+		break;
 	case WALK_UPLEFT:
-		sprite._sequenceNumber = STOP_UPLEFT; break;
+		sprite._sequenceNumber = STOP_UPLEFT;
+		break;
 	case WALK_DOWNRIGHT:
-		sprite._sequenceNumber = STOP_DOWNRIGHT; break;
+		sprite._sequenceNumber = STOP_DOWNRIGHT;
+		break;
 	case WALK_DOWNLEFT:
-		sprite._sequenceNumber = STOP_DOWNLEFT; break;
+		sprite._sequenceNumber = STOP_DOWNLEFT;
+		break;
 	default:
 		break;
 	}

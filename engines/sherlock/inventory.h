@@ -50,7 +50,7 @@ enum InvMode {
 struct InventoryItem {
 	int _requiredFlag;
 	Common::String _name;
-	Common::String _description;;
+	Common::String _description;
 	Common::String _examine;
 	int _lookFlag;
 
