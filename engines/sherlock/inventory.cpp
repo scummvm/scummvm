@@ -79,7 +79,9 @@ void Inventory::freeGraphics() {
 	_invGraphicsLoaded = false;
 }
 
-/** Load the list of names the inventory items correspond to.
+/**
+ * Load the list of names the inventory items correspond to, if not already loaded, 
+ * and then calls loadGraphics to load the associated graphics
  */
 void Inventory::loadInv() {
 	// Exit if the inventory names are already loaded
@@ -88,9 +90,9 @@ void Inventory::loadInv() {
 
 	// Load the inventory names
 	Common::SeekableReadStream *stream = _vm->_res->load("invent.txt");
-	_names.clear();
 
-	while (stream->pos() < stream->size()) {
+	int streamSize = stream->size();
+	while (stream->pos() < streamSize) {
 		Common::String name;
 		char c;
 		while ((c = stream->readByte()) != 0)

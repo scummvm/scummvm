@@ -72,7 +72,8 @@ public:
 	bool _invGraphicsLoaded;
 	InvMode _invMode;
 	int _invIndex;
-	int _holdings;
+	int _holdings;		// Used to hold number of visible items in active inventory.
+						// Since Inventory array also contains some special hidden items
 	void freeGraphics();
 	int _oldFlag;
 	int _invFlag;
