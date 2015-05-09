@@ -57,7 +57,7 @@ enum {
 	kDebugScript = 1 << 0
 };
 
-enum {
+enum GameType {
 	GType_SerratedScalpel = 0,
 	GType_RoseTattoo = 1
 };
@@ -121,7 +121,7 @@ public:
 	virtual void syncSoundSettings();
 
 	int getGameType() const;
-	uint32 getGameID() const;
+	GameType getGameID() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 

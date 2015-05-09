@@ -32,18 +32,18 @@ namespace Sherlock {
 struct SherlockGameDescription {
 	ADGameDescription desc;
 
-	int gameID;
+	GameType gameID;
 };
 
 /**
  * Returns the Id of the game
  */
-uint32 SherlockEngine::getGameID() const {
+GameType SherlockEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
 
 /**
- * Return's the platform the game's datafiles are for
+ * Returns the platform the game's datafiles are for
  */
 Common::Platform SherlockEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
