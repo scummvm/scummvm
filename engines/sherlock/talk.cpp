@@ -604,7 +604,7 @@ void Talk::stripVoiceCommands() {
 
 		// Scan for an sound effect byte, which indicates to play a sound
 		for (uint idx = 0; idx < statement._reply.size(); ++idx) {
-			if (statement._reply[idx] == (int)SFX_COMMAND) {
+			if (statement._reply[idx] == (char)SFX_COMMAND) {
 				// Replace instruction character with a space, and delete the
 				// rest of the name following it
 				statement._reply = Common::String(statement._reply.c_str(),
@@ -1004,7 +1004,6 @@ void Talk::doScript(const Common::String &script) {
 	int line = 0;
 	bool noTextYet = true;
 	bool openTalkWindow = false;
-	int obj;
 	int seqCount;
 
 	_savedSequences.clear();
@@ -1164,18 +1163,19 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case ADJUST_OBJ_SEQUENCE:
+				{
 				// Get the name of the object to adjust
 				++str;
 				for (int idx = 0; idx < (str[0] & 127); ++idx)
 					tempString += str[idx + 2];
 
 				// Scan for object
-				obj = -1;
+				int objId = -1;
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 					if (scumm_stricmp(tempString.c_str(), scene._bgShapes[idx]._name.c_str()) == 0)
-						obj = idx;
+						objId = idx;
 				}
-				if (obj == -1)
+				if (objId == -1)
 					error("Could not find object %s to change", tempString.c_str());
 
 				// Should the script be overwritten?
@@ -1183,10 +1183,10 @@ void Talk::doScript(const Common::String &script) {
 					// Save the current sequence
 					_savedSequences.push(SequenceEntry());
 					SequenceEntry &seqEntry = _savedSequences.top();
-					seqEntry._objNum = obj;
-					seqEntry._seqTo = scene._bgShapes[obj]._seqTo;
-					for (uint idx = 0; idx < scene._bgShapes[obj]._seqSize; ++idx)
-						seqEntry._sequences.push_back(scene._bgShapes[obj]._sequences[idx]);
+					seqEntry._objNum = objId;
+					seqEntry._seqTo = scene._bgShapes[objId]._seqTo;
+					for (uint idx = 0; idx < scene._bgShapes[objId]._seqSize; ++idx)
+						seqEntry._sequences.push_back(scene._bgShapes[objId]._sequences[idx]);
 				}
 
 				// Get number of bytes to change
@@ -1195,14 +1195,15 @@ void Talk::doScript(const Common::String &script) {
 
 				// Copy in the new sequence
 				for (int idx = 0; idx < seqCount; ++idx, ++str)
-					scene._bgShapes[obj]._sequences[idx] = str[0] - 1;
+					scene._bgShapes[objId]._sequences[idx] = str[0] - 1;
 
 				// Reset object back to beginning of new sequence
-				scene._bgShapes[obj]._frameNumber = 0;
+				scene._bgShapes[objId]._frameNumber = 0;
 				continue;
+				}
 
 			case WALK_TO_COORDS:
-				// Save the current point in the script, since it might be intterupted by
+				// Save the current point in the script, since it might be interrupted by
 				// doing bg anims in the next call, so we need to know where to return to
 				++str;
 				_scriptCurrentIndex = str - scriptStart;
@@ -1646,12 +1647,12 @@ void Talk::doScript(const Common::String &script) {
 	if (wait != -1) {
 		for (int ssIndex = 0; ssIndex < (int)_savedSequences.size(); ++ssIndex) {
 			SequenceEntry &seq = _savedSequences[ssIndex];
-			Object &obj = scene._bgShapes[seq._objNum];
+			Object &object = scene._bgShapes[seq._objNum];
 
 			for (uint idx = 0; idx < seq._sequences.size(); ++idx)
-				obj._sequences[idx] = seq._sequences[idx];
-			obj._frameNumber = seq._frameNumber;
-			obj._seqTo = seq._seqTo;
+				object._sequences[idx] = seq._sequences[idx];
+			object._frameNumber = seq._frameNumber;
+			object._seqTo = seq._seqTo;
 		}
 
 		pullSequence();

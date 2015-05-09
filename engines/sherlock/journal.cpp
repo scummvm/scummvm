@@ -1125,7 +1125,7 @@ int Journal::getFindName(bool printError) {
 		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();
 
-			if ((keyState.keycode == Common::KEYCODE_BACKSPACE) && (name.c_str() > 0)) {
+			if ((keyState.keycode == Common::KEYCODE_BACKSPACE) && (name.size() > 0)) {
 				screen.vgaBar(Common::Rect(xp - screen.charWidth(name.lastChar()), yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				xp -= screen.charWidth(name.lastChar());
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), INV_FOREGROUND);

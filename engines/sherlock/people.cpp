@@ -335,10 +335,10 @@ void People::setWalking() {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
 			if (_walkDest.x < (_player._position.x / 100)) {
-				_player._sequenceNumber = (int) (map._active ? MAP_LEFT : WALK_LEFT);
+				_player._sequenceNumber = (map._active ? (int)MAP_LEFT : (int)WALK_LEFT);
 				_player._delta.x = speed.x * -100;
 			} else {
-				_player._sequenceNumber = (int) (map._active ? MAP_RIGHT : WALK_RIGHT);
+				_player._sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)WALK_RIGHT);
 				_player._delta.x = speed.x * 100;
 			}
 
