@@ -64,11 +64,11 @@ private:
 
 	void doArrows();
 
-	bool doJournal(int direction, int howFar);
+	bool drawJournal(int direction, int howFar);
 
 	int getFindName(bool printError);
 
-	void drawJournal();
+	void drawJournalFrame();
 public:
 	Journal(SherlockEngine *vm);
 

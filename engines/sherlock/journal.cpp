@@ -453,9 +453,9 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 }
 
 /**
- * Draw the journal frame
+ * Draw the journal background, frame, and interface buttons
  */
-void Journal::drawJournal() {
+void Journal::drawJournalFrame() {
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
 	byte palette[PALETTE_SIZE];
@@ -511,12 +511,12 @@ void Journal::drawJournal() {
 void Journal::drawInterface() {
 	Screen &screen = *_vm->_screen;
 
-	drawJournal();
+	drawJournalFrame();
 
 	if (_journal.size() == 0) {
 		_up = _down = 0;
 	} else {
-		doJournal(0, 0);
+		drawJournal(0, 0);
 	}
 
 	doArrows();
@@ -552,7 +552,7 @@ void Journal::doArrows() {
 /**
  * Displays a page of the journal at the current index
  */
-bool Journal::doJournal(int direction, int howFar) {
+bool Journal::drawJournal(int direction, int howFar) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	int yp = 37;
@@ -589,7 +589,7 @@ bool Journal::doJournal(int direction, int howFar) {
 	if (endJournal) {
 		// If moving forward or backwards, clear the page before printing
 		if (direction)
-			drawJournal();
+			drawJournalFrame();
 
 		screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
 		return false;
@@ -712,7 +712,7 @@ bool Journal::doJournal(int direction, int howFar) {
 
 	if (direction) {
 		events.setCursor(ARROW);
-		drawJournal();
+		drawJournalFrame();
 	}
 
 	screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
@@ -915,9 +915,9 @@ bool Journal::handleEvents(int key) {
 	if (((found == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
 		// Scrolll up 10 pages
 		if (_page < 11)
-			doJournal(1, (_page - 1) * LINES_PER_PAGE);
+			drawJournal(1, (_page - 1) * LINES_PER_PAGE);
 		else
-			doJournal(1, 10 * LINES_PER_PAGE);
+			drawJournal(1, 10 * LINES_PER_PAGE);
 
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -925,14 +925,14 @@ bool Journal::handleEvents(int key) {
 
 	if (((found == BTN_UP && events._released) || key =='U') && _up) {
 		// Scroll up
-		doJournal(1, LINES_PER_PAGE);
+		drawJournal(1, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
 
 	if (((found == BTN_DOWN && events._released) || key =='D') && _down) {
 		// Scroll down
-		doJournal(2, LINES_PER_PAGE);
+		drawJournal(2, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
@@ -940,9 +940,9 @@ bool Journal::handleEvents(int key) {
 	if (((found == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
 		// Scroll down 10 pages
 		if ((_page + 10) > _maxPage)
-			doJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
 		else
-			doJournal(2, 10 * LINES_PER_PAGE);
+			drawJournal(2, 10 * LINES_PER_PAGE);
 
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -960,13 +960,13 @@ bool Journal::handleEvents(int key) {
 				int savedSub = _sub;
 				int savedPage = _page;
 
-				if (doJournal(dir + 2, 1000 * LINES_PER_PAGE) == 0) {
+				if (drawJournal(dir + 2, 1000 * LINES_PER_PAGE) == 0) {
 					_index = savedIndex;
 					_sub = savedSub;
 					_page = savedPage;
 
-					drawJournal();
-					doJournal(0, 0);
+					drawJournalFrame();
+					drawJournal(0, 0);
 					notFound = true;
 				} else {
 					doneFlag = true;
@@ -987,8 +987,8 @@ bool Journal::handleEvents(int key) {
 		_up = _down = false;
 		_page = 1;
 
-		drawJournal();
-		doJournal(0, 0);
+		drawJournalFrame();
+		drawJournal(0, 0);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
@@ -996,9 +996,9 @@ bool Journal::handleEvents(int key) {
 	if (((found == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
 		// Last page
 		if ((_page + 10) > _maxPage)
-			doJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
 		else
-			doJournal(2, 1000 * LINES_PER_PAGE);
+			drawJournal(2, 1000 * LINES_PER_PAGE);
 
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -1170,8 +1170,8 @@ int Journal::getFindName(bool printError) {
 	}
 
 	// Redisplay the journal screen
-	drawJournal();
-	doJournal(0, 0);
+	drawJournalFrame();
+	drawJournal(0, 0);
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
 	return done;
