@@ -936,6 +936,8 @@ void UserInterface::doEnvControl() {
 
 				events.pollEventsAndWait();
 				events.setButtonState();
+				mousePos = events.mousePos();
+
 				if (events.kbHit()) {
 					Common::KeyState keyState = events.getKey();
 					_key = toupper(keyState.keycode);
