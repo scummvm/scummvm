@@ -1115,7 +1115,7 @@ int Journal::getFindName(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Forward") / 2, 175), color, "Forward");
+				screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, 175), color, "Forward");
 			}
 
 			events.wait(2);
