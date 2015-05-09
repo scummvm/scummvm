@@ -290,10 +290,10 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 							journalString += NAMES[talk._talkTo];
 
 						const byte *strP = replyP + 1;
-						char v;
+						byte v;
 						do {
 							v = *strP++;
-						} while (v && v < 128 && v != '.' && v != '!' && v != '?');
+						} while (v && (v < 128) && (v != '.') && (v != '!') && (v != '?'));
 
 						if (v == '?')
 							journalString += " asked, \"";

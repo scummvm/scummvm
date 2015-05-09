@@ -343,9 +343,9 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	int v2 = stream.readUint16LE() + 1;
 	stream.skip(1);		// Skip paletteBase byte
 	bool rleEncoded = stream.readByte() == 1;
-	int size = v1 * v2;
+	int palSize = v1 * v2;
 
-	if ((size - 12) == PALETTE_SIZE && !rleEncoded) {
+	if ((palSize - 12) == PALETTE_SIZE && !rleEncoded) {
 		// Found palette, so read it in
 		stream.seek(2 + 12, SEEK_CUR);
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
@@ -373,21 +373,21 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		// RLE encoded
 	    byte *dst = (byte *)frame._frame.getPixels();
 
-		int size = frame._width * frame._height;
-		while (size > 0) {
+		int frameSize = frame._width * frame._height;
+		while (frameSize > 0) {
 			if (*src == frame._rleMarker) {
 			    byte rleColor = src[1];
 			    byte rleCount = src[2];
 			    src += 3;
-			    size -= rleCount;
+			    frameSize -= rleCount;
 			    while (rleCount--)
 			        *dst++ = rleColor;
 			} else {
 				*dst++ = *src++;
-				--size;
+				--frameSize;
 			}
 		}
-		assert(size == 0);
+		assert(frameSize == 0);
 	} else {
 		// Uncompressed frame
 		Common::copy(src, src + frame._width * frame._height,

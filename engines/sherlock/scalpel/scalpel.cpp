@@ -485,7 +485,7 @@ void ScalpelEngine::loadInventory() {
 	inv.push_back(InventoryItem(544, "Tarot", "Tarot Cards", "_ITEM71A"));
 	inv.push_back(InventoryItem(544, "Ornate Key", "An ornate key", "_ITEM70A"));
 	inv.push_back(InventoryItem(586, "Pawn ticket", "A pawn ticket", "_ITEM16A"));
-};
+}
 
 /**
  * Transition to show an image
