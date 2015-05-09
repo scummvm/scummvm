@@ -37,7 +37,7 @@ static const SherlockGameDescription gameDescriptions[] = {
 		GType_SerratedScalpel,
 	},
 
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, (GameType)0 }
 };
 
 } // End of namespace MADS

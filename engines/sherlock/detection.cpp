@@ -52,7 +52,6 @@ Common::Platform SherlockEngine::getPlatform() const {
 } // End of namespace Sherlock
 
 static const PlainGameDescriptor sherlockGames[] = {
-	{"sherlock", "The Lost Files of Sherlock Holmes"},
 	{ "scalpel", "The Case of the Serrated Scalpel" },
 	{ "rosetattoo", "The Case of the Rose Tattoo" },
 	{0, 0}
@@ -127,7 +126,7 @@ bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
  * Return a list of savegames
  */
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
-	return Sherlock::SaveManager(nullptr, "").getSavegameList(target);
+	return Sherlock::SaveManager::getSavegameList(target);
 }
 
 /**
