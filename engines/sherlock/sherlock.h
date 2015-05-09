@@ -120,7 +120,6 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual void syncSoundSettings();
 
-	int getGameType() const;
 	GameType getGameID() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
