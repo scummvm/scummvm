@@ -296,4 +296,4 @@ bool Events::checkInput() {
 	return kbHit() || _pressed || _released || _rightPressed || _rightReleased;
 }
 
-} // End of namespace MADS
+} // End of namespace Sherlock

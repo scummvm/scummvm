@@ -40,4 +40,4 @@ static const SherlockGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, (GameType)0 }
 };
 
-} // End of namespace MADS
+} // End of namespace Sherlock

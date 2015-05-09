@@ -145,7 +145,7 @@ enum { REVERSE_DIRECTION = 0x80 };
 
 struct ActionType {
 	int _cAnimNum;
-	int _cAnimSpeed;				// if high bit set, play in reverse
+	int _cAnimSpeed;
 	Common::String _names[4];
 
 	void synchronize(Common::SeekableReadStream &s);
@@ -153,7 +153,7 @@ struct ActionType {
 
 struct UseType {
 	int _cAnimNum;
-	int _cAnimSpeed;				// if high bit set, play in reverse
+	int _cAnimSpeed;
 	Common::String _names[4];
 	int _useFlag;					// Which flag USE will set (if any)
 	int _dFlag[1];
