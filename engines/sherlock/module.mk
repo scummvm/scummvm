@@ -26,7 +26,7 @@ MODULE_OBJS = \
 	user_interface.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_SHERLOCK), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
