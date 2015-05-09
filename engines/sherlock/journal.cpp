@@ -56,7 +56,6 @@ Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	_sub = 0;
 	_up = _down = false;
 	_page = 1;
-	_converseNum = -1;
 
 	// Load the journal directory and location names
 	loadJournalLocations();
@@ -151,11 +150,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	// If not flagged as alrady loaded, load the conversation into script variables
 	if (!alreadyLoaded) {
 		// See if the file to be used is already loaded
-		if (journalEntry._converseNum != _converseNum) {
+		if (journalEntry._converseNum != talk._converseNum) {
 			// Nope. Free any previously loaded talk
 			talk.freeTalkVars();
 
-			// Find the person being talked to
+			// Find the person being referred to
 			talk._talkTo = -1;
 			for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
 				Common::String portrait = PORTRAITS[idx];
@@ -167,7 +166,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				}
 			}
 
-			// Load the talk file
+			// Load their talk file
 			talk.loadTalkFile(dirFilename);
 		}
 	}
@@ -559,6 +558,7 @@ void Journal::doArrows() {
 bool Journal::drawJournal(int direction, int howFar) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
 	int yp = 37;
 	int startPage = _page;
 	bool endJournal = false;
@@ -571,7 +571,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 	const char *matchP;
 	int width;
 
-	_converseNum = -1;
+	talk._converseNum = -1;
 	_down = true;
 
 	do {

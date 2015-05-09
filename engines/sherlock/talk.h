@@ -137,7 +137,6 @@ private:
 	int _speaker;
 	int _talkIndex;
 	int _scriptSelect;
-	int _converseNum;
 	int _talkStealth;
 	int _talkToFlag;
 	int _scriptSaveIndex;
@@ -160,6 +159,7 @@ public:
 	int _scriptMoreFlag;
 	Common::String _scriptName;
 	bool _moreTalkUp, _moreTalkDown;
+	int _converseNum;
 public:
 	Talk(SherlockEngine *vm);
 	void setSequences(const byte *talkSequences, const byte *stillSequences,

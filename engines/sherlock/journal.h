@@ -55,7 +55,6 @@ private:
 	int _sub;
 	bool _up, _down;
 	int _page;
-	int _converseNum;
 	Common::String _find;
 
 	void loadJournalLocations();
