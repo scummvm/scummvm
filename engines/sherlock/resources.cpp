@@ -293,7 +293,8 @@ ImageFile::~ImageFile() {
 void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages) {
 	loadPalette(stream);
 
-    while (stream.pos() < stream.size()) {
+	int streamSize = stream.size();
+    while (stream.pos() < streamSize) {
 		ImageFrame frame;
 		frame._width = stream.readUint16LE() + 1;
 		frame._height = stream.readUint16LE() + 1;

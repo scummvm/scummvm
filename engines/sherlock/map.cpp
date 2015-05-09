@@ -96,7 +96,8 @@ void Map::loadData() {
 	// Load the list of location names
 	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
 
-	while (txtStream->pos() < txtStream->size()) {
+	int streamSize = txtStream->size();
+	while (txtStream->pos() < streamSize) {
 		Common::String line;
 		char c;
 		while ((c = txtStream->readByte()) != '\0')
