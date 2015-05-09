@@ -500,9 +500,13 @@ void Journal::drawJournalFrame() {
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[7][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[7][2] - screen.stringWidth("Last Page") / 2, "Last Page");
+
+	// WORKAROUND: Draw Print Text button as disabled, since we don't support it in ScummVM
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[8][2] - screen.stringWidth("Print Text") / 2, "Print Text");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), 
+		COMMAND_NULL, false, "Print Text");
 }
 
 /**
@@ -543,7 +547,7 @@ void Journal::doArrows() {
 
 	color = _journal.size() > 0 ? COMMAND_FOREGROUND : COMMAND_NULL;
 	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, "Search");
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), color, false, "Print Text");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, false, "Print Text");
 
 	color = _page > 1 ? COMMAND_FOREGROUND : COMMAND_NULL;
 	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, "First Page");
@@ -899,13 +903,8 @@ bool Journal::handleEvents(int key) {
 		if (pt.x > JOURNAL_POINTS[8][0] && pt.x < JOURNAL_POINTS[8][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
 				pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty()) {
 			found = BTN_PRINT_TEXT;
-			color = COMMAND_HIGHLIGHTED;
-		} else if (_journal.empty()) {
-			color = COMMAND_NULL;
-		} else {
-			color = COMMAND_FOREGROUND;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), color, true, "Print Text");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, "Print Text");
 	}
 
 	if (found == BTN_EXIT && events._released)
