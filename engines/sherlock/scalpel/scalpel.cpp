@@ -505,7 +505,7 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
  */
 void ScalpelEngine::startScene() {
 	if (_scene->_goToScene == 100 || _scene->_goToScene == 98) {
-		// Chessboard selection
+		// Show the map
 		if (_sound->_musicOn) {
 			if (_sound->loadSong(100)) {
 				if (_sound->_music)
