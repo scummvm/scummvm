@@ -33,8 +33,10 @@ class SherlockEngine;
 class Debugger : public GUI::Debugger {
 private:
 	SherlockEngine *_vm;
-protected:
-	bool cmd_scene(int argc, const char **argv);
+
+	int strToInt(const char *s);
+
+	bool cmdScene(int argc, const char **argv);
 public:
 	Debugger(SherlockEngine *vm);
 	virtual ~Debugger() {}

@@ -27,13 +27,13 @@ namespace Sherlock {
 
 Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, cmd_scene));
+	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 }
 
 /**
  * Converts a decimal or hexadecimal string into a number
  */
-static int strToInt(const char *s) {
+int Debugger::strToInt(const char *s) {
 	if (!*s)
 		// No string at all
 		return 0;
@@ -52,7 +52,7 @@ static int strToInt(const char *s) {
 /**
  * Switch to another scene
  */
-bool Debugger::cmd_scene(int argc, const char **argv) {
+bool Debugger::cmdScene(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Format: scene <room>\n");
 		return true;
