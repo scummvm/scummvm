@@ -25,6 +25,7 @@ namespace Sherlock {
 static const SherlockGameDescription gameDescriptions[] = {
 	{
 		// Case of the Serrated Scalpel - English 3.5" Floppy
+		// The HitSquad CD version has the same MD5
 		{
 			"scalpel",
 			0,
