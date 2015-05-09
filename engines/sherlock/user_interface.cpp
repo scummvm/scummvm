@@ -428,7 +428,7 @@ void UserInterface::restoreButton(int num) {
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
 
 	if (!_menuCounter) {
-		_infoFlag++;
+		_infoFlag = true;
 		clearInfo();
 	}
 }
@@ -515,7 +515,7 @@ void UserInterface::clearWindow() {
 void UserInterface::whileMenuCounter() {
 	if (!(--_menuCounter) || _vm->_events->checkInput()) {
 		_menuCounter = 0;
-		++_infoFlag;
+		_infoFlag = true;
 		clearInfo();
 	}
 }
@@ -1259,7 +1259,7 @@ void UserInterface::doLookControl() {
 	Screen &screen = *_vm->_screen;
 
 	_key = _oldKey = -1;
-	_keyboardInput = _keycode != Common::KEYCODE_INVALID;
+	_keyboardInput = (_keycode != Common::KEYCODE_INVALID);
 
 	if (events._released || events._rightReleased || _keyboardInput) {
 		// Is an inventory object being looked at?
@@ -1360,7 +1360,7 @@ void UserInterface::doMainControl() {
 	// Check if the button being pointed to has changed
 	if (_oldKey != _key && !_windowOpen) {
 		// Clear the info line
-		_infoFlag++;
+		_infoFlag = true;
 		clearInfo();
 
 		// If there was an old button selected, restore it
@@ -2215,7 +2215,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 
 			// Print "Done..." as an ending, unless flagged for leaving scene or otherwise flagged
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
-				_infoFlag++;
+				_infoFlag = true;
 				clearInfo();
 				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
 				_menuCounter = 25;
