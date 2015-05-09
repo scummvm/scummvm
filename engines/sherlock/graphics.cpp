@@ -31,14 +31,6 @@ Surface::Surface(uint16 width, uint16 height): _freePixels(true) {
 	create(width, height);
 }
 
-Surface::Surface(Surface &src, const Common::Rect &r) : _freePixels(false) {
-	setPixels(src.getBasePtr(r.left, r.top));
-	w = r.width();
-	h = r.height();
-	pitch = src.pitch;
-	format = Graphics::PixelFormat::createFormatCLUT8();
-}
-
 Surface::Surface() : _freePixels(false) {
 }
 

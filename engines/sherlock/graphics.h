@@ -36,8 +36,6 @@ private:
 	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
 protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
-
-	Surface(Surface &src, const Common::Rect &r);
 public:
     Surface(uint16 width, uint16 height);
 	Surface();
