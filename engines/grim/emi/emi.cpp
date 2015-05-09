@@ -268,7 +268,14 @@ void EMIEngine::invalidateSortOrder() {
 }
 
 bool EMIEngine::compareTextLayer(const TextObject *x, const TextObject *y) {
-	return x->getLayer() < y->getLayer();
+	int xl = x->getLayer();
+	int yl = y->getLayer();
+
+	if (xl == yl) {
+		return x->getId() < y->getId();
+	} else {
+		return xl < yl;
+	}
 }
 
 bool EMIEngine::compareLayer(const Layer *x, const Layer *y) {
