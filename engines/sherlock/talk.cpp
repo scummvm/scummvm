@@ -1010,6 +1010,7 @@ void Talk::doScript(const Common::String &script) {
 	_savedSequences.clear();
 
 	const byte *scriptStart = (const byte *)script.c_str();
+	const byte *scriptEnd = scriptStart + script.size();
 	const byte *str = scriptStart;
 
 	if (_scriptMoreFlag) {
@@ -1577,13 +1578,13 @@ void Talk::doScript(const Common::String &script) {
 			++line;
 
 			// Certain different conditions require a wait
-			if ((line == 4 && str[0] != SFX_COMMAND && str[0] != PAUSE && _speaker != -1) ||
-					(line == 5 && str[0] != PAUSE && _speaker == -1) ||
+			if ((line == 4 && str < scriptEnd && str[0] != SFX_COMMAND && str[0] != PAUSE && _speaker != -1) ||
+					(line == 5 && str < scriptEnd && str[0] != PAUSE && _speaker == -1) ||
 					endStr) {
 				wait = 1;
 			}
 
-			switch (str[0]) {
+			switch (str >= scriptEnd ? 0 : str[0]) {
 			case SWITCH_SPEAKER:
 			case ASSIGN_PORTRAIT_LOCATION:
 			case BANISH_WINDOW:
@@ -1631,7 +1632,7 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			// Clear the window unless the wait was due to a PAUSE command
-			if (!pauseFlag && wait != -1 && str[0] != SFX_COMMAND) {
+			if (!pauseFlag && wait != -1 && str < scriptEnd && str[0] != SFX_COMMAND) {
 				if (!_talkStealth)
 					ui.clearWindow();
 				yp = CONTROLS_Y + 12;
