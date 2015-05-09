@@ -60,7 +60,7 @@ private:
 
 	void loadJournalLocations();
 
-	int loadJournalFile(bool alreadyLoaded);
+	void loadJournalFile(bool alreadyLoaded);
 
 	void doArrows();
 

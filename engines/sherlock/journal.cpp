@@ -75,7 +75,7 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	_index = _journal.size() - 1;
 
 	// Load the text for the new entry to get the number of lines it will have
-	int newLines = loadJournalFile(true);
+	loadJournalFile(true);
 
 	// Restore old state
 	_index = saveIndex;
@@ -83,8 +83,8 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 
 	// If new lines were added to the ournal, update the total number of lines
 	// the journal continues
-	if (newLines) {
-		_maxPage += newLines;
+	if (!_lines.empty()) {
+		_maxPage += _lines.size();
 	} else {
 		// No lines in entry, so remove the new entry from the journal
 		_journal.remove_at(_journal.size() - 1);
@@ -135,8 +135,10 @@ void Journal::loadJournalLocations() {
 /**
  * Loads the description for the current display index in the journal, and then
  * word wraps the result to prepare it for being displayed
+ * @param alreadyLoaded		Indicates whether the journal file is being loaded for the
+ *		first time, or being reloaded
  */
-int Journal::loadJournalFile(bool alreadyLoaded) {
+void Journal::loadJournalFile(bool alreadyLoaded) {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
@@ -448,8 +450,6 @@ int Journal::loadJournalFile(bool alreadyLoaded) {
 	} else {
 		_lines.clear();
 	}
-
-	return _lines.size();
 }
 
 /**
@@ -562,7 +562,6 @@ bool Journal::doJournal(int direction, int howFar) {
 	bool searchSuccessful = false;
 	bool endFlag = false;
 	int lineNum = 0;
-	int maxLines;
 	int savedIndex;
 	int temp;
 	const char *matchP;
@@ -573,18 +572,18 @@ bool Journal::doJournal(int direction, int howFar) {
 
 	do {
 		// Get the number of lines for the current journal entry
-		maxLines = loadJournalFile(false);
-		if (!maxLines) {
+		loadJournalFile(false);
+		if (_lines.empty()) {
 			// Entry has no text, so it must be a stealth eny. Move onto further journal entries
 			// until an entry with text is found
 			if (++_index == (int)_journal.size()) {
 				endJournal = true;
 			} else {
 				_sub = 0;
-				maxLines = loadJournalFile(false);
+				loadJournalFile(false);
 			}
 		}
-	} while (!endJournal && !maxLines);
+	} while (!endJournal && _lines.empty());
 
 	// Check if there no further pages with text until the end of the journal
 	if (endJournal) {
@@ -621,14 +620,14 @@ bool Journal::doJournal(int direction, int howFar) {
 						endJournal = true;
 					}
 					else {
-						maxLines = loadJournalFile(false);
-						_sub = maxLines - 1;
+						loadJournalFile(false);
+						_sub = _lines.size() - 1;
 					}
-				} while (!endJournal && !maxLines);
+				} while (!endJournal && _lines.empty());
 			}
 
 			// If it's search mode, check each line for the given keyword
-			if (direction >= 3 && maxLines && !endJournal && !searchSuccessful) {
+			if (direction >= 3 && !_lines.empty() && !endJournal && !searchSuccessful) {
 				Common::String line = _lines[_sub];
 				line.toUppercase();
 				if (strstr(line.c_str(), _find.c_str()) != nullptr) {
@@ -675,19 +674,19 @@ bool Journal::doJournal(int direction, int howFar) {
 
 				// Move forwards a line at a time, unless search word was found
 				if (!searchSuccessful) {
-					if (++_sub == maxLines) {
+					if (++_sub == (int)_lines.size()) {
 						// Reached end of page
 						do {
 							if (++_index == (int)_journal.size()) {
 								_index = savedIndex;
 								_sub = savedSub;
-								maxLines = loadJournalFile(false);
+								loadJournalFile(false);
 								endJournal = true;
 							} else {
 								_sub = 0;
-								maxLines = loadJournalFile(false);
+								loadJournalFile(false);
 							}
-						} while (!endJournal && !maxLines);
+						} while (!endJournal && _lines.empty());
 					}
 
 					++lineNum;
@@ -702,7 +701,7 @@ bool Journal::doJournal(int direction, int howFar) {
 				// Search found, so show top of the page it was found on
 				_index = savedIndex;
 				_sub = savedSub;
-				maxLines = loadJournalFile(false);
+				loadJournalFile(false);
 			}
 		}
 		break;
@@ -769,19 +768,19 @@ bool Journal::doJournal(int direction, int howFar) {
 			}
 		}
 
-		if (++temp == maxLines) {
+		if (++temp == (int)_lines.size()) {
 			// Move to next page
 			do {
 				if (_index < ((int)_journal.size() - 1) && lineNum < (LINES_PER_PAGE - 1)) {
 					++_index;
-					maxLines = loadJournalFile(false);
+					loadJournalFile(false);
 					temp = 0;
 				} else {
 					if (_index == ((int)_journal.size() - 1))
 						_down = false;
 					endFlag = true;
 				}
-			} while (!endFlag && !maxLines);
+			} while (!endFlag && _lines.empty());
 		}
 
 		if (inc) {

@@ -1825,6 +1825,7 @@ void UserInterface::journalControl() {
 	_windowOpen = false;
 	_windowBounds.top = CONTROLS_Y1;
 	_key = -1;
+	_menuMode = STD_MODE;
 
 	// Reset the palette
 	screen.setPalette(screen._cMap);
