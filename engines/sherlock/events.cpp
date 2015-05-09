@@ -188,9 +188,6 @@ bool Events::checkForNextFrameCounter() {
 		// Display the frame
 		_vm->_screen->update();
 
-		// Signal the ScummVM debugger
-		_vm->_debugger->onFrame();
-
 		return true;
 	}
 
@@ -267,7 +264,10 @@ bool Events::delay(uint32 time, bool interruptable) {
 }
 
 /**
- * Sets the pressed and released button flags depending on the value passed
+ * Sets the pressed and released button flags on the raw button state previously set in pollEvents calls.
+ * @remarks		The events manager has separate variables for the raw immediate and old button state
+ *		versus the current buttons states for the frame. This method is expected to be called only once
+ *		per game frame
  */
 void Events::setButtonState() {
 	_released = _rightReleased = false;
