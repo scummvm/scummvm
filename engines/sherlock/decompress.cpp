@@ -48,7 +48,7 @@ Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int
 	lzWindowPos = 0xFEE;
 	cmd = 0;
 
-	while (1) {
+	do {
 		cmd >>= 1;
 		if (!(cmd & 0x100))
 			cmd = source.readByte() | 0xFF00;
@@ -72,9 +72,7 @@ Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int
 				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
 			}
 		}
-		if (outBuffer >= outBufferEnd)
-			break;
-	}
+	} while (outBuffer < outBufferEnd);
 
 	return outS;
 }
