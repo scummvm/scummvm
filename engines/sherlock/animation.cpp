@@ -179,14 +179,14 @@ const int *Animation::checkForSoundFrames(const Common::String &filename) {
 
 	if (_vm->_soundOverride.empty()) {
 		for (int idx = 0; idx < PROLOGUE_NAMES_COUNT; ++idx) {
-			if (!filename.equalsIgnoreCase(PROLOGUE_NAMES[idx])) {
+			if (filename.equalsIgnoreCase(PROLOGUE_NAMES[idx])) {
 				frames = &PROLOGUE_FRAMES[idx][0];
 				break;
 			}
 		}
 	} else {
 		for (int idx = 0; idx < TITLE_NAMES_COUNT; ++idx) {
-			if (!filename.equalsIgnoreCase(TITLE_NAMES[idx])) {
+			if (filename.equalsIgnoreCase(TITLE_NAMES[idx])) {
 				frames = &TITLE_FRAMES[idx][0];
 				break;
 			}
