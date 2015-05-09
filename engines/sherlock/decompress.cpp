@@ -27,8 +27,8 @@ namespace Sherlock {
 /**
  * Decompresses an LZW compressed resource. If no outSize is specified, it will
  * decompress the entire resource. If, however, an explicit size is specified,
- * it will decompress only up to that many bytes from the stream starting at
- * whatever position it was previously.
+ * then it means we're already within a resource, and only want to decompress
+ * part of it.
  */
 Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int32 outSize) {
 	if (outSize == -1) {
