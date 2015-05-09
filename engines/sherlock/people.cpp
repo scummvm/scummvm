@@ -306,7 +306,7 @@ void People::setWalking() {
 	// If the player is already close to the given destination that no
 	// walking is needed, move to the next straight line segment in the
 	// overall walking route, if there is one
-	do {
+	for (;;) {
 		// Since we want the player to be centered on the destination they
 		// clicked, but characters draw positions start at their left, move
 		// the destination half the character width to draw him centered
@@ -326,7 +326,7 @@ void People::setWalking() {
 
 		// Pop next walk segment off the walk route stack
 		_walkDest = _walkTo.pop();
-	} while (!_vm->shouldQuit());
+	}
 
 	// If a sufficient move is being done, then start the move
 	if (delta.x > 3 || delta.y) {
