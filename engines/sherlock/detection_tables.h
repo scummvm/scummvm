@@ -28,20 +28,16 @@ static const SherlockGameDescription gameDescriptions[] = {
 		{
 			"scalpel",
 			0,
-			{
-				{ "talk.lib", 0, "ad0c4d6865edf15da4e9204c08815875", 238928 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("talk.lib", "ad0c4d6865edf15da4e9204c08815875", 238928),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_SerratedScalpel,
-		0
 	},
 
-	{ AD_TABLE_END_MARKER, 0, 0 }
+	{ AD_TABLE_END_MARKER }
 };
 
 } // End of namespace MADS

@@ -122,7 +122,6 @@ public:
 
 	int getGameType() const;
 	uint32 getGameID() const;
-	uint32 getGameFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 

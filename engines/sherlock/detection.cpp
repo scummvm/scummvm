@@ -33,7 +33,6 @@ struct SherlockGameDescription {
 	ADGameDescription desc;
 
 	int gameID;
-	uint32 features;
 };
 
 /**
@@ -41,13 +40,6 @@ struct SherlockGameDescription {
  */
 uint32 SherlockEngine::getGameID() const {
 	return _gameDescription->gameID;
-}
-
-/**
- * Returns the features the currently playing game has
- */
-uint32 SherlockEngine::getGameFeatures() const {
-	return _gameDescription->features;
 }
 
 /**
