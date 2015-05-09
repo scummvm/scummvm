@@ -78,13 +78,8 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename);
 
-	// Strip any extension off of the passed filename and add .vdx suffix
-	Common::String baseName = filename;
-	const char *p = strchr(baseName.c_str(), '.');
-	if (p)
-		baseName = Common::String(filename.c_str(), MIN(p - 1, baseName.c_str() + 7));
-
-	Common::String vdxName = baseName + ".vdx";
+	// Add on the VDX extension
+	Common::String vdxName = filename + ".vdx";
 
 	// Load the animation
 	Common::SeekableReadStream *stream;
@@ -96,7 +91,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 		stream = _vm->_res->load(vdxName, "epilogue.lib");
 
 	// Load initial image
-	Common::String vdaName = baseName + ".vda";
+	Common::String vdaName = filename + ".vda";
 	ImageFile images(vdaName, true, true);
 
 	events.wait(minDelay);
@@ -144,8 +139,8 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 				++soundNumber;
 				++soundFrames;
 				Common::String fname = _vm->_soundOverride.empty() ?
-					Common::String::format("%s%01d", baseName.c_str(), soundNumber) :
-					Common::String::format("%s%02d", baseName.c_str(), soundNumber);
+					Common::String::format("%s%01d", filename.c_str(), soundNumber) :
+					Common::String::format("%s%02d", filename.c_str(), soundNumber);
 
 				if (sound._voices)
 					sound.playSound(fname);
