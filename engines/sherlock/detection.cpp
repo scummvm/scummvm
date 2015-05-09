@@ -62,7 +62,7 @@ static const PlainGameDescriptor sherlockGames[] = {
 
 class SherlockMetaEngine : public AdvancedMetaEngine {
 public:
-	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::gameDescriptions), sherlockGames) {}
+	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription), sherlockGames) {}
 
 	virtual const char *getName() const {
 		return "Sherlock Engine";
