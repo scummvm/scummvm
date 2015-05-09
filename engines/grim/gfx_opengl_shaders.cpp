@@ -1339,7 +1339,7 @@ void GfxOpenGLS::createBitmap(BitmapData *bitmap) {
 }
 
 void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
-	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data->_numImages > 1) {
+	if (g_grim->getGameType() == GType_MONKEY4 && bitmap->_data && bitmap->_data->_texc) {
 		BitmapData *data = bitmap->_data;
 		Graphics::Shader *shader = (Graphics::Shader *)data->_userData;
 		GLuint *textures = (GLuint *)bitmap->getTexIds();

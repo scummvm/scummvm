@@ -24,6 +24,7 @@
 #define EMI_ENGINE_H
 
 #include "engines/grim/grim.h"
+#include "engines/grim/emi/layer.h"
 
 namespace Grim {
 
@@ -56,8 +57,11 @@ private:
 	void drawTextObjects() override;
 	static bool compareActor(const Actor *x, const Actor *y);
 	void sortTextObjects();
+	static bool compareLayer(const Layer *x, const Layer *y);
+	void sortLayers();
 
 	Common::List<TextObject *> _textObjects;
+	Common::List<Layer *> _layers;
 
 	bool _textObjectsSortOrderInvalidated;
 	bool _sortOrderInvalidated;

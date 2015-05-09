@@ -143,25 +143,48 @@ void EMIEngine::drawNormalMode() {
 	// Draw actors
 	buildActiveActorsList();
 	sortActiveActorsList();
+	sortLayers();
 
 	Bitmap *background = _currSet->getCurrSetup()->_bkgndBm;
 	background->_data->load();
 	uint32 numLayers = background->_data->_numLayers;
+
+	Common::List<Layer *>::const_iterator nextLayer = _layers.begin();
+	Common::List<Actor *>::const_iterator nextActor = _activeActors.begin();
 	int32 currentLayer = numLayers - 1;
-	foreach (Actor *a, _activeActors) {
-		int sortorder = a->getEffectiveSortOrder();
-		if (sortorder < 0)
-			break;
 
-		while (sortorder <= currentLayer * 10 && currentLayer >= 0) {
-			background->drawLayer(currentLayer--);
+	int aso = (nextActor != _activeActors.end()) ? (*nextActor)->getEffectiveSortOrder() : -1;
+	int lso = (nextLayer != _layers.end()) ? (*nextLayer)->getSortOrder() : -1;
+	int bgso = currentLayer * 10;
+
+	// interleave actors, background layers and additional stand-alone layers based
+	// on their sortorder
+	//
+	// priority for same sort order:
+	//   background layers (highest priority)
+	//   stand-alone layers
+	//   actors
+	while (1) {
+		if (aso >= 0 && aso > bgso && aso > lso) {
+			if ((*nextActor)->isVisible() && ! (*nextActor)->isInOverworld())
+				(*nextActor)->draw();
+			nextActor++;
+			aso = (nextActor != _activeActors.end()) ? (*nextActor)->getEffectiveSortOrder() : -1;
+			continue;
 		}
-
-		if (a->isVisible() && ! a->isInOverworld())
-			a->draw();
-	}
-	while (currentLayer >= 0) {
-		background->drawLayer(currentLayer--);
+		if (bgso >= 0 && bgso >= lso && bgso >= aso) {
+			background->drawLayer(currentLayer);
+			currentLayer--;
+			bgso = currentLayer * 10;
+			continue;
+		}
+		if (lso >= 0 && lso > bgso && lso >= aso) {
+			(*nextLayer)->draw();
+			nextLayer++;
+			lso = (nextLayer != _layers.end()) ? (*nextLayer)->getSortOrder() : -1;
+			continue;
+		}
+		break;
 	}
 
 	/* Clear depth buffer before starting to draw the Overworld:
@@ -248,6 +271,10 @@ bool EMIEngine::compareTextLayer(const TextObject *x, const TextObject *y) {
 	return x->getLayer() < y->getLayer();
 }
 
+bool EMIEngine::compareLayer(const Layer *x, const Layer *y) {
+	return x->getSortOrder() > y->getSortOrder();
+}
+
 void EMIEngine::drawTextObjects() {
 	sortTextObjects();
 	foreach (TextObject *t, _textObjects) {
@@ -269,6 +296,15 @@ void EMIEngine::sortTextObjects() {
 	}
 
 	Common::sort(_textObjects.begin(), _textObjects.end(), compareTextLayer);
+}
+
+void EMIEngine::sortLayers() {
+	_layers.clear();
+	foreach (Layer *l, Layer::getPool()) {
+		_layers.push_back(l);
+	}
+
+	Common::sort(_layers.begin(), _layers.end(), compareLayer);
 }
 
 bool EMIEngine::compareActor(const Actor *x, const Actor *y) {

@@ -309,8 +309,6 @@ bool BitmapData::loadTile(Common::SeekableReadStream *o) {
 
 	o->seek(16, SEEK_CUR);
 	int numSubImages = o->readUint32LE();
-	if (numSubImages < 5)
-		error("Can not handle a tile with less than 5 sub images");
 
 	char **data = new char *[numSubImages];
 
