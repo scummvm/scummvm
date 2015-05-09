@@ -127,7 +127,8 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 			// since we don't want the offsets in the image file to be used, just the explicit position we specify
 			screen.transBlitFrom(images[imageFrame]._frame, pt);
 		} else {
-			// No sprite to show for this animation frame
+			// At this point, either the sprites for the frame has been complete, or there weren't any sprites
+			// at all to draw for the frame
 			if (fade == 255) {
 				// Gradual fade in
 				if (screen.equalizePalette(images._palette) == 0)
@@ -178,14 +179,14 @@ const int *Animation::checkForSoundFrames(const Common::String &filename) {
 
 	if (_vm->_soundOverride.empty()) {
 		for (int idx = 0; idx < PROLOGUE_NAMES_COUNT; ++idx) {
-			if (!scumm_stricmp(filename.c_str(), PROLOGUE_NAMES[idx])) {
+			if (!filename.equalsIgnoreCase(PROLOGUE_NAMES[idx])) {
 				frames = &PROLOGUE_FRAMES[idx][0];
 				break;
 			}
 		}
 	} else {
 		for (int idx = 0; idx < TITLE_NAMES_COUNT; ++idx) {
-			if (!scumm_stricmp(filename.c_str(), TITLE_NAMES[idx])) {
+			if (!filename.equalsIgnoreCase(TITLE_NAMES[idx])) {
 				frames = &TITLE_FRAMES[idx][0];
 				break;
 			}
