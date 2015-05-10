@@ -23,10 +23,14 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/sound.h"
 #include "common/config-manager.h"
+#include "audio/audiostream.h"
+#include "common/algorithm.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 
 namespace Sherlock {
 
-Sound::Sound(SherlockEngine *vm): _vm(vm) {
+Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_digitized = false;
 	_music = false;
 	_voices = 0;
@@ -38,6 +42,9 @@ Sound::Sound(SherlockEngine *vm): _vm(vm) {
 	_soundOn = true;
 	_musicOn = true;
 	_speechOn = true;
+
+	_vm->_res->addToCache("MUSIC.LIB");
+	_vm->_res->addToCache("SND.SND");
 }
 
 /**
@@ -54,10 +61,91 @@ void Sound::loadSound(const Common::String &name, int priority) {
 	warning("TODO: Sound::loadSound");
 }
 
+char Sound::decodeSample(char sample, byte& prediction, int& step) {
+	char diff = ((sample & 0x07) << step);
+
+	if (sample & 0x08) {
+		if (prediction > diff)
+			prediction = prediction - ((sample & 0x07) << step);
+		else
+			prediction = 0;
+	} else {
+		if (prediction < 0xff - diff)
+			prediction = prediction + ((sample&0x07) << step);
+		else
+			prediction = 0xff;
+	}
+
+
+	if ((sample & 0x07) >= 5 && step < 3) {
+		step ++;
+	} else if ((sample & 0x07) == 0 && step > 0) {
+		step --;
+	}
+
+	return prediction;
+}
+
 bool Sound::playSound(const Common::String &name, WaitType waitType) {
-	// TODO
-	warning("TODO: Sound::playSound");
-	return true;
+	_mixer->stopHandle(_effectsHandle);
+
+	Common::String filename = name;
+	if (!filename.contains('.'))
+		filename += ".SND";
+	Common::SeekableReadStream *stream = _vm->_res->load(filename, "TITLE.SND");
+
+	stream->skip(2);
+	int size = stream->readUint32BE();
+	int rate = stream->readUint16BE();
+	byte *data = (byte *)malloc(size);
+	byte *ptr = data;
+	stream->read(ptr, size);
+
+	byte *decoded = (byte *)malloc((size - 1) * 2);
+
+	// +127 to eliminate the pop when the sound starts (signed vs unsignded PCM). Still does not help with the pop at the end
+	byte prediction = (ptr[0] & 0x0f) + 127;
+	int step = 0;
+	int counter = 0;
+
+	for(int i = 1; i < size; i++) {
+		decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, prediction, step);
+		decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, prediction, step);
+	}
+
+	free(data);
+
+	Audio::AudioStream *audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
+	_soundPlaying = true;
+
+	if (waitType == WAIT_RETURN_IMMEDIATELY) {
+		_diskSoundPlaying = true;
+		return true;
+	}
+
+	bool retval = true;
+	do {
+		_vm->_events->pollEvents();
+		g_system->delayMillis(10);
+		if ((waitType == WAIT_KBD_OR_FINISH) && _vm->_events->kbHit()) {
+			retval = false;
+			break;
+		}
+	} while (!_vm->shouldQuit() && _mixer->isSoundHandleActive(_effectsHandle));
+	
+	_soundPlaying = false;
+	_mixer->stopHandle(_effectsHandle);
+
+#if 0
+	// Debug : used to dump files
+	Common::DumpFile outFile;
+	outFile.open(filename);
+	outFile.write(decoded, (size - 2) * 2);
+	outFile.flush();
+	outFile.close();
+#endif
+	return retval;
 }
 
 void Sound::cacheSound(const Common::String &name, int index) {
@@ -92,7 +180,21 @@ void Sound::stopSound() {
 
 void Sound::playMusic(const Common::String &name) {
 	// TODO
-	warning("TODO: Sound::playMusic");
+	warning("Sound::playMusic %s", name.c_str());
+	Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
+
+	byte *data = new byte[stream->size()];
+	byte *ptr = data;
+	stream->read(ptr, stream->size());
+	Common::DumpFile outFile;
+	outFile.open(name + ".RAW");
+	outFile.write(data, stream->size());
+	outFile.flush();
+	outFile.close();
+	delete[] data;
+
+	stopMusic();
+	startSong();
 }
 
 void Sound::stopMusic() {

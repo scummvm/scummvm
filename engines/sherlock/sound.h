@@ -25,6 +25,11 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "access/files.h"
+#include "audio/midiplayer.h"
+#include "audio/midiparser.h"
 
 namespace Sherlock {
 
@@ -37,6 +42,10 @@ enum WaitType {
 class Sound {
 private:
 	SherlockEngine *_vm;
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _effectsHandle;
+
+	char decodeSample(char sample, byte& prediction, int& step);
 public:
 	bool _digitized;
 	bool _music;
@@ -50,7 +59,7 @@ public:
 	bool *_soundIsOn;
 	byte *_digiBuf;
 public:
-	Sound(SherlockEngine *vm);
+	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 
 	void syncSoundSettings();
 	void loadSound(const Common::String &name, int priority);
@@ -64,7 +73,7 @@ public:
 	int loadSong(int songNumber);
 	void startSong();
 	void freeSong();
-
+	
 	void playMusic(const Common::String &name);
 	void stopMusic();
 	void stopSndFuncPtr(int v1, int v2);
