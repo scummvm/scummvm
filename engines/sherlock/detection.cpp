@@ -123,6 +123,13 @@ bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 }
 
 /**
+ * Returns whether the version is a demo
+ */
+bool Sherlock::SherlockEngine::getIsDemo() const {
+	return _gameDescription->desc.flags & ADGF_DEMO;
+}
+
+/**
  * Return a list of savegames
  */
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {

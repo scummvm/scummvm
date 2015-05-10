@@ -215,9 +215,11 @@ void ScalpelEngine::initialize() {
 	_flags[3] = true;		// Turn on Alley
 	_flags[39] = true;		// Turn on Baker Street
 
+	if (!getIsDemo()) {
 	// Load the map co-ordinates for each scene and sequence data
 	_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
 	_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
+	}
 
 	// Load the inventory
 	loadInventory();
@@ -226,13 +228,19 @@ void ScalpelEngine::initialize() {
 	_talk->setSequences(&TALK_SEQUENCES[0][0], &STILL_SEQUENCES[0][0], MAX_PEOPLE);
 
 	// Starting scene
-	_scene->_goToScene = 4;
+	if (getIsDemo())
+		_scene->_goToScene = 3;
+	else
+		_scene->_goToScene = 4;
 }
 
 /**
  * Show the opening sequence
  */
 void ScalpelEngine::showOpening() {
+	if (getIsDemo())
+		return;
+
 	if (!showCityCutscene())
 		return;
 	if (!showAlleyCutscene())

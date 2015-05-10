@@ -84,6 +84,7 @@ static const SherlockGameDescription gameDescriptions[] = {
 
 	{
 		// Case of the Rose Tattoo - English CD
+		// Provided by dreammaster
 		{
 			"rosetattoo",
 			"CD",

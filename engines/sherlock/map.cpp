@@ -69,7 +69,8 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
 
-	loadData();
+	if (!_vm->getIsDemo())
+		loadData();
 }
 
 /**

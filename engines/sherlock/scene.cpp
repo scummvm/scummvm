@@ -457,10 +457,12 @@ bool Scene::loadScene(const Common::String &filename) {
 	_walkedInScene = false;
 	saves._justLoaded = false;
 
-	// Reset the previous map location and position on overhead map
-	map._oldCharPoint = _currentScene;
-	map._overPos.x = map[_currentScene].x * 100 - 600;
-	map._overPos.y = map[_currentScene].y * 100 + 900;
+	if (!_vm->getIsDemo()) {
+		// Reset the previous map location and position on overhead map
+		map._oldCharPoint = _currentScene;
+		map._overPos.x = map[_currentScene].x * 100 - 600;
+		map._overPos.y = map[_currentScene].y * 100 + 900;
+	}
 
 	events.clearEvents();
 	return flag;
