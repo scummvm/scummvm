@@ -837,10 +837,10 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 	// We probably don't want "followers" to go into scene -1 , 0. At the very
 	// least we don't want garbage to be drawn that early in the ITE intro.
-	if (_sceneNumber > 0 && _sceneNumber != ITE_SCENE_PUZZLE)
+	if (_sceneNumber > 0 && !(_vm->getGameId() == GID_ITE && _sceneNumber == ITE_SCENE_PUZZLE))
 		_vm->_actor->updateActorsScene(loadSceneParams.actorsEntrance);
 
-	if (_sceneNumber == ITE_SCENE_PUZZLE)
+	if (_vm->getGameId() == GID_ITE && _sceneNumber == ITE_SCENE_PUZZLE)
 		_vm->_puzzle->execute();
 
 	if (getFlags() & kSceneFlagShowCursor) {
