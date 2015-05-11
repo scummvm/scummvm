@@ -25,8 +25,11 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/array.h"
 
 namespace Sherlock {
+
+#define FRAMES_END 32000
 
 class SherlockEngine;
 
@@ -34,10 +37,22 @@ class Animation {
 private:
 	SherlockEngine *_vm;
 
+	Common::Array<const char *> _prologueNames;
+	Common::Array<Common::Array<int>> _prologueFrames;
+
+	Common::Array<const char *> _titleNames;
+	Common::Array<Common::Array<int>> _titleFrames;
+
 	const int *checkForSoundFrames(const Common::String &filename);
 public:
 public:
 	Animation(SherlockEngine *vm);
+
+	void setPrologueNames(const char *const *names, int count);
+	void setPrologueFrames(const int *frames, int count, int maxFrames);
+
+	void setTitleNames(const char *const *names, int count);
+	void setTitleFrames(const int *frames, int count, int maxFrames);
 
 	bool play(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
 };

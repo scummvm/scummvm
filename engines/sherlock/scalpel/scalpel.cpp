@@ -22,10 +22,45 @@
 
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/animation.h"
 
 namespace Sherlock {
 
 namespace Scalpel {
+
+#define PROLOGUE_NAMES_COUNT 6
+
+// The following are a list of filenames played in the prologue that have
+// special effects associated with them at specific frames
+static const char *const PROLOGUE_NAMES[PROLOGUE_NAMES_COUNT] = {
+	"subway1", "subway2", "finale2", "suicid", "coff3", "coff4"
+};
+
+static const int PROLOGUE_FRAMES[6][9] = {
+	{ 4, 26, 54, 72, 92, 134, FRAMES_END },
+	{ 2, 80, 95, 117, 166, FRAMES_END },
+	{ 1, FRAMES_END },
+	{ 42, FRAMES_END },
+	{ FRAMES_END },
+	{ FRAMES_END }
+};
+
+#define TITLE_NAMES_COUNT 7
+
+// Title animations file list
+static const char *const TITLE_NAMES[TITLE_NAMES_COUNT] = {
+	"27pro1", "14note", "coff1", "coff2", "coff3", "coff4", "14kick"
+};
+
+static const int TITLE_FRAMES[7][9] = {
+	{ 29, 131, FRAMES_END },
+	{ 55, 80, 95, 117, 166, FRAMES_END },
+	{ 15, FRAMES_END },
+	{ 4, 37, 92, FRAMES_END },
+	{ 2, 43, FRAMES_END },
+	{ 2, FRAMES_END },
+	{ 10, 50, FRAMES_END }
+};
 
 #define NUM_PLACES 100
 const int MAP_X[NUM_PLACES] = {
@@ -226,6 +261,12 @@ void ScalpelEngine::initialize() {
 
 	// Set up constants used by the talk system
 	_talk->setSequences(&TALK_SEQUENCES[0][0], &STILL_SEQUENCES[0][0], MAX_PEOPLE);
+
+	_animation->setPrologueNames(&PROLOGUE_NAMES[0], PROLOGUE_NAMES_COUNT);
+	_animation->setPrologueFrames(&PROLOGUE_FRAMES[0][0], 6, 9);
+
+	_animation->setTitleNames(&TITLE_NAMES[0], TITLE_NAMES_COUNT);
+	_animation->setTitleFrames(&TITLE_FRAMES[0][0], 7, 9);
 
 	// Starting scene
 	if (getIsDemo())

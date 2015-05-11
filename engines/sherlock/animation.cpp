@@ -26,39 +26,6 @@
 
 namespace Sherlock {
 
-// The following are a list of filenames played in the prologue that have
-// special effects associated with them at specific frames
-
-#define FRAMES_END 32000
-#define PROLOGUE_NAMES_COUNT 6
-#define TITLE_NAMES_COUNT 7
-static const char *const PROLOGUE_NAMES[6] = {
-	"subway1", "subway2", "finale2", "suicid", "coff3", "coff4"
-};
-static const int PROLOGUE_FRAMES[6][9] = {
-	{ 4, 26, 54, 72, 92, 134, FRAMES_END },
-	{ 2, 80, 95, 117, 166, FRAMES_END },
-	{ 1, FRAMES_END },
-	{ 42, FRAMES_END },
-	{ FRAMES_END },
-	{ FRAMES_END }
-};
-
-// Title animations file list
-static const char *const TITLE_NAMES[7] = {
-	"27pro1", "14note", "coff1", "coff2", "coff3", "coff4", "14kick"
-};
-
-static const int TITLE_FRAMES[7][9] = {
-	{ 29, 131, FRAMES_END },
-	{ 55, 80, 95, 117, 166, FRAMES_END },
-	{ 15, FRAMES_END },
-	{ 4, 37, 92, FRAMES_END },
-	{ 2, 43, FRAMES_END },
-	{ 2, FRAMES_END },
-	{ 10, 50, FRAMES_END }
-};
-
 static const int NO_FRAMES = FRAMES_END;
 
 Animation::Animation(SherlockEngine *vm): _vm(vm) {
@@ -172,22 +139,64 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 }
 
 /**
+ * Load the prologue name array 
+ */
+void Animation::setPrologueNames(const char *const *names, int count) {
+	for (int idx = 0; idx < count; ++idx, names++) {
+		_prologueNames.push_back(*names);
+	}
+}
+
+/**
+ * Load the prologue frame array
+ */
+void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
+	_prologueFrames.resize(count);
+
+	for (int idx = 0; idx < count; ++idx, frames + maxFrames) {
+		_prologueFrames[idx].resize(maxFrames);
+		Common::copy(frames, frames + maxFrames, &_prologueFrames[idx][0]);
+	}
+}
+
+/**
+ * Load the title name array
+ */
+void Animation::setTitleNames(const char *const *names, int count) {
+	for (int idx = 0; idx < count; ++idx, names++) {
+		_titleNames.push_back(*names);
+	}
+}
+
+/**
+ * Load the title frame array
+ */
+void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
+	_titleFrames.resize(count);
+
+	for (int idx = 0; idx < count; ++idx, frames + maxFrames) {
+		_titleFrames[idx].resize(maxFrames);
+		Common::copy(frames, frames + maxFrames, &_titleFrames[idx][0]);
+	}
+}
+
+/**
  * Checks for whether an animation is being played that has associated sound
  */
 const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 
 	if (_vm->_soundOverride.empty()) {
-		for (int idx = 0; idx < PROLOGUE_NAMES_COUNT; ++idx) {
-			if (filename.equalsIgnoreCase(PROLOGUE_NAMES[idx])) {
-				frames = &PROLOGUE_FRAMES[idx][0];
+		for (Common::Array<const char *>::size_type idx = 0; idx < _prologueNames.size(); ++idx) {
+			if (filename.equalsIgnoreCase(_prologueNames[idx])) {
+				frames = &_prologueFrames[idx][0];
 				break;
 			}
 		}
 	} else {
-		for (int idx = 0; idx < TITLE_NAMES_COUNT; ++idx) {
-			if (filename.equalsIgnoreCase(TITLE_NAMES[idx])) {
-				frames = &TITLE_FRAMES[idx][0];
+		for (Common::Array<const char *>::size_type idx = 0; idx < _titleNames.size(); ++idx) {
+			if (filename.equalsIgnoreCase(_titleNames[idx])) {
+				frames = &_titleFrames[idx][0];
 				break;
 			}
 		}
