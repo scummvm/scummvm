@@ -205,8 +205,6 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 				chan->attenuationCopy = attenuation;
 
 				attenuation &= 0x0F;
-				if (attenuation > 0x0F)
-					attenuation = 0x0F;
 			}
 		}
 		//if (computer_type == 2) && (attenuation < 8)
