@@ -379,7 +379,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 					byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
 
-					// If the window is alraedy open, simply draw. Otherwise, do it
+					// If the window is already open, simply draw. Otherwise, do it
 					// to the back buffer and then summon the window
 					if (ui._windowOpen) {
 						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, "Exit");

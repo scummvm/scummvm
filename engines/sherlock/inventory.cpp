@@ -117,8 +117,8 @@ void Inventory::loadGraphics() {
 	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
 
 	for (int idx = _invIndex; (idx < _holdings) && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
-		// Get the name of the item to be dispalyed, figure out it's accompanying
-		// .VGS file with it's picture, and then load it
+		// Get the name of the item to be displayed, figure out its accompanying
+		// .VGS file with its picture, and then load it
 		int invNum = findInv((*this)[idx]._name);
 		Common::String fName = Common::String::format("item%02d.vgs", invNum + 1);
 
