@@ -261,7 +261,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		_bgShapes.resize(bgHeader._numStructs);
 		for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-			_bgShapes[idx].synchronize(*infoStream);
+			_bgShapes[idx].load(*infoStream);
 
 		if (bgHeader._descSize) {
 			_descText.resize(bgHeader._descSize);
@@ -318,7 +318,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			_cAnim.resize(bgHeader._numcAnimations);
 			for (uint idx = 0; idx < _cAnim.size(); ++idx)
-				_cAnim[idx].synchronize(*canimStream);
+				_cAnim[idx].load(*canimStream);
 
 			delete canimStream;
 		}

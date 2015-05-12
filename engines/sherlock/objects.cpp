@@ -365,9 +365,9 @@ void Sprite::checkSprite() {
 /*----------------------------------------------------------------*/
 
 /**
- * Synchronize the data for a savegame
+ * Load the data for the action
  */
-void ActionType::synchronize(Common::SeekableReadStream &s) {
+void ActionType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
 	_cAnimNum = s.readByte();
@@ -391,9 +391,9 @@ UseType::UseType() {
 }
 
 /**
- * Synchronize the data for a savegame
+ * Load the data for the UseType
  */
-void UseType::synchronize(Common::SeekableReadStream &s) {
+void UseType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
 	_cAnimNum = s.readByte();
@@ -459,9 +459,9 @@ Object::Object() {
 }
 
 /**
- * Load the object data from the passed stream
+ * Load the data for the object
  */
-void Object::synchronize(Common::SeekableReadStream &s) {
+void Object::load(Common::SeekableReadStream &s) {
 	char buffer[41];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
@@ -504,7 +504,7 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_misc = s.readByte();
 	_maxFrames = s.readUint16LE();
 	_flags = s.readByte();
-	_aOpen.synchronize(s);
+	_aOpen.load(s);
 	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
 	_seqCounter = s.readByte();
@@ -512,18 +512,18 @@ void Object::synchronize(Common::SeekableReadStream &s) {
 	_lookPosition.y = s.readByte();
 	_lookFacing = s.readByte();
 	_lookcAnim = s.readByte();
-	_aClose.synchronize(s);
+	_aClose.load(s);
 	_seqStack = s.readByte();
 	_seqTo = s.readByte();
 	_descOffset = s.readUint16LE();
 	_seqCounter2 = s.readByte();
 	_seqSize = s.readUint16LE();
 	s.skip(1);
-	_aMove.synchronize(s);
+	_aMove.load(s);
 	s.skip(8);
 
 	for (int idx = 0; idx < 4; ++idx)
-		_use[idx].synchronize(s);
+		_use[idx].load(s);
 }
 
 /**
@@ -1099,9 +1099,9 @@ const Common::Rect Object::getOldBounds() const {
 /*----------------------------------------------------------------*/
 
 /**
- * Synchronize the data for a savegame
+ * Load the data for the animation
  */
-void CAnim::synchronize(Common::SeekableReadStream &s) {
+void CAnim::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);

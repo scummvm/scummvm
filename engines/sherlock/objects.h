@@ -148,7 +148,7 @@ struct ActionType {
 	int _cAnimSpeed;
 	Common::String _names[4];
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct UseType {
@@ -161,7 +161,7 @@ struct UseType {
 	Common::String _target;
 
 	UseType();
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 class Object {
@@ -222,7 +222,7 @@ public:
 
 	Object();
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 
 	void toggleHidden();
 
@@ -255,7 +255,7 @@ struct CAnim {
 	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
 	int _teleportDir;					// playing canim
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct SceneImage {
