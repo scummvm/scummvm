@@ -38,10 +38,10 @@ private:
 	SherlockEngine *_vm;
 
 	Common::Array<const char *> _prologueNames;
-	Common::Array<Common::Array<int>> _prologueFrames;
+	Common::Array<Common::Array<int> > _prologueFrames;
 
 	Common::Array<const char *> _titleNames;
-	Common::Array<Common::Array<int>> _titleFrames;
+	Common::Array<Common::Array<int> > _titleFrames;
 
 	const int *checkForSoundFrames(const Common::String &filename);
 public:
