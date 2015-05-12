@@ -45,7 +45,7 @@
 #include "gui/EventRecorder.h"
 
 #ifdef USE_OPENGL
-#include "graphics/opengles2/extensions.h"
+#include "graphics/opengl/extensions.h"
 #endif
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {

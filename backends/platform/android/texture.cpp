@@ -42,7 +42,7 @@
 #include "base/main.h"
 #include "graphics/surface.h"
 #include "graphics/opengles2/shader.h"
-#include "graphics/opengles2/extensions.h"
+#include "graphics/opengl/extensions.h"
 
 #include "common/rect.h"
 #include "common/array.h"

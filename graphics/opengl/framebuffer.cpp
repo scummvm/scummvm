@@ -25,10 +25,10 @@
 #if defined(USE_OPENGL) && !defined(AMIGAOS)
 
 #ifdef USE_OPENGL_SHADERS
-#include "graphics/opengles2/framebuffer.h"
+#include "graphics/opengl/framebuffer.h"
 #elif defined(SDL_BACKEND)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
-#include "graphics/opengles2/framebuffer.h"
+#include "graphics/opengl/framebuffer.h"
 #ifndef GL_ARB_framebuffer_object
 #define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
 #define GL_DEPTH_ATTACHMENT GL_DEPTH_ATTACHMENT_EXT
@@ -42,7 +42,7 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #endif // defined(SDL_BACKEND)
 
-#include "graphics/opengles2/extensions.h"
+#include "graphics/opengl/extensions.h"
 
 #ifdef USE_GLES2
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES

@@ -24,7 +24,7 @@
 
 #if defined(USE_OPENGL)
 
-#include "graphics/opengles2/texture.h"
+#include "graphics/opengl/texture.h"
 
 
 namespace Graphics {

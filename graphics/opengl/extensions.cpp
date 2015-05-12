@@ -25,7 +25,7 @@
 #include "common/str.h"
 #include "common/tokenizer.h"
 
-#include "graphics/opengles2/system_headers.h"
+#include "graphics/opengl/system_headers.h"
 
 #ifdef USE_OPENGL
 

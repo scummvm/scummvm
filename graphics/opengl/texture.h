@@ -20,34 +20,33 @@
  *
  */
 
-#ifndef GRAPHICS_FRAMEBUFFER_H
-#define GRAPHICS_FRAMEBUFFER_H
+#ifndef GRAPHICS_TEXTURE_H
+#define GRAPHICS_TEXTURE_H
 
-#include "graphics/opengles2/system_headers.h"
-#include "graphics/opengles2/texture.h"
+#include "graphics/opengl/system_headers.h"
+
+#include "graphics/surface.h"
 
 namespace Graphics {
 
-class FrameBuffer : public Texture {
+class Texture {
 public:
-	FrameBuffer(uint width, uint height);
-	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
-#ifdef AMIGAOS
-	~FrameBuffer() {}
+	Texture(const Surface &srf);
+	Texture(uint width, uint height);
+	Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
+	~Texture();
 
-	void attach() {}
-	void detach() {}
-#else
-	~FrameBuffer();
+	GLuint getTextureName() const { return _texture; }
+	uint getWidth() const { return _width; }
+	uint getHeight() const { return _height; }
+	uint getTexWidth() const { return _texWidth; }
+	uint getTexHeight() const { return _texHeight; }
 
-	void attach();
-	void detach();
-#endif
-
-private:
-	void init();
-	GLuint _renderBuffers[2];
-	GLuint _frameBuffer;
+protected:
+	bool _managedTexture;
+	GLuint _texture;
+	uint _width, _height;
+	uint _texWidth, _texHeight;
 };
 
 }
