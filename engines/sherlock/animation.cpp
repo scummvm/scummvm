@@ -153,7 +153,7 @@ void Animation::setPrologueNames(const char *const *names, int count) {
 void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
 	_prologueFrames.resize(count);
 
-	for (int idx = 0; idx < count; ++idx, frames + maxFrames) {
+	for (int idx = 0; idx < count; ++idx, frames += maxFrames) {
 		_prologueFrames[idx].resize(maxFrames);
 		Common::copy(frames, frames + maxFrames, &_prologueFrames[idx][0]);
 	}
@@ -174,7 +174,7 @@ void Animation::setTitleNames(const char *const *names, int count) {
 void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 	_titleFrames.resize(count);
 
-	for (int idx = 0; idx < count; ++idx, frames + maxFrames) {
+	for (int idx = 0; idx < count; ++idx, frames += maxFrames) {
 		_titleFrames[idx].resize(maxFrames);
 		Common::copy(frames, frames + maxFrames, &_titleFrames[idx][0]);
 	}
