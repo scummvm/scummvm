@@ -29,6 +29,7 @@
 #elif defined(SDL_BACKEND)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
 #include "graphics/opengles2/framebuffer.h"
+#ifndef GL_ARB_framebuffer_object
 #define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
 #define GL_DEPTH_ATTACHMENT GL_DEPTH_ATTACHMENT_EXT
 #define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
@@ -37,6 +38,7 @@
 #define GL_STENCIL_ATTACHMENT GL_STENCIL_ATTACHMENT_EXT
 #define GL_STENCIL_INDEX8 GL_STENCIL_INDEX8_EXT
 #define GL_DEPTH24_STENCIL8 0x88F0
+#endif
 #include "backends/platform/sdl/sdl-sys.h"
 #endif // defined(SDL_BACKEND)
 
