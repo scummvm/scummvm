@@ -148,7 +148,7 @@ FrameBuffer::FrameBuffer(GLuint texture_name, uint width, uint height, uint text
 }
 
 FrameBuffer::~FrameBuffer() {
-	glDeleteRenderbuffers(2, &_renderBuffers[0]);
+	glDeleteRenderbuffers(2, _renderBuffers);
 	glDeleteFramebuffers(1, &_frameBuffer);
 	if (_managedTexture)
 		glDeleteTextures(1, &_colorTexture);
@@ -156,7 +156,7 @@ FrameBuffer::~FrameBuffer() {
 
 void FrameBuffer::init() {
 	glGenFramebuffers(1, &_frameBuffer);
-	glGenRenderbuffers(2, &_renderBuffers[0]);
+	glGenRenderbuffers(2, _renderBuffers);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _frameBuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture, 0);

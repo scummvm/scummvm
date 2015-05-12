@@ -219,7 +219,7 @@ Material::Material(const Common::String &filename, Common::SeekableReadStream *d
 }
 
 Material::Material() :
-		Object(), _currImage(0), _data(nullptr) {
+		Object(), _currImage(0), _data(nullptr), _clampTexture(false) {
 }
 
 void Material::reload(CMap *cmap) {

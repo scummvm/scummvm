@@ -38,7 +38,8 @@ Sector::Sector() :
  }
 
 Sector::Sector(const Sector &other) :
-		_vertices(nullptr), _origVertices(nullptr), _sortplanes(nullptr) {
+		_vertices(nullptr), _origVertices(nullptr), _sortplanes(nullptr),
+		_numSortplanes(0) {
 	*this = other;
 }
 

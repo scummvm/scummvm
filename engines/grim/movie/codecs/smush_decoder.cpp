@@ -476,6 +476,7 @@ SmushDecoder::SmushVideoTrack::SmushVideoTrack(int width, int height, int fps, i
 }
 
 SmushDecoder::SmushVideoTrack::~SmushVideoTrack() {
+	delete _codec48;
 	delete _blocky8;
 	delete _blocky16;
 	_surface.free();

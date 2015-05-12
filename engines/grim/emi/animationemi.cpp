@@ -99,7 +99,7 @@ Bone::~Bone() {
 }
 
 AnimationStateEmi::AnimationStateEmi(const Common::String &anim) :
-		_skel(nullptr), _looping(false), _active(false),
+		_skel(nullptr), _looping(false), _active(false), _paused(false),
 		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0), _startFade(1.0f),
 		_boneJoints(nullptr) {
 	_anim = g_resourceloader->getAnimationEmi(anim);

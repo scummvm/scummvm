@@ -197,6 +197,8 @@ void Set::loadText(TextSplitter &ts) {
 void Set::loadBinary(Common::SeekableReadStream *data) {
 	// yes, an array of size 0
 	_cmaps = nullptr;//new CMapPtr[0];
+	_numCmaps = 0;
+	_numObjectStates = 0;
 
 
 	_numSetups = data->readUint32LE();
