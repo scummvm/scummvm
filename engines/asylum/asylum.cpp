@@ -197,7 +197,9 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 
 	case kStartGamePlayIntro:
 		_scene->enter(sceneId);
+#ifndef DEBUG
 		playIntro();
+#endif
 		break;
 
 	case kStartGameLoad:
