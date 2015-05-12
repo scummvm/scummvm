@@ -170,13 +170,6 @@ void Screen::addDirtyRect(const Common::Rect &r) {
 void Screen::mergeDirtyRects() {
 	Common::List<Common::Rect>::iterator rOuter, rInner;
 
-	// Ensure dirty rect list has at least two entries
-	rOuter = _dirtyRects.begin();
-	for (int i = 0; i < 2; ++i, ++rOuter) {
-		if (rOuter == _dirtyRects.end())
-			return;
-	}
-
 	// Process the dirty rect list to find any rects to merge
 	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
 		rInner = rOuter;
