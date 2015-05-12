@@ -234,7 +234,7 @@ void Screen::randomTransition() {
 	}
 
 	// Make sure everything has been transferred
-	blitFrom(_backBuffer1);
+	blitFrom(*_backBuffer);
 }
 
 /**
