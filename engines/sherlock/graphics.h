@@ -37,7 +37,7 @@ private:
 protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
-    Surface(uint16 width, uint16 height);
+	Surface(uint16 width, uint16 height);
 	Surface();
 	virtual ~Surface();
 

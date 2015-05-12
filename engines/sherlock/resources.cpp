@@ -294,7 +294,7 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 	loadPalette(stream);
 
 	int streamSize = stream.size();
-    while (stream.pos() < streamSize) {
+	while (stream.pos() < streamSize) {
 		ImageFrame frame;
 		frame._width = stream.readUint16LE() + 1;
 		frame._height = stream.readUint16LE() + 1;
@@ -309,30 +309,30 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 			frame._rleEncoded = stream.readByte() == 1;
 			frame._offset.x = stream.readByte();
 		}
-		frame._offset.y = stream.readByte();
 
+		frame._offset.y = stream.readByte();
 		frame._rleEncoded = !skipPalette && frame._rleEncoded;
 
 		if (frame._paletteBase) {
 			// Nibble packed frame data
 			frame._size = (frame._width * frame._height) / 2;
 		} else if (frame._rleEncoded) {
-            // this size includes the header size, which we subtract
+			// This size includes the header size, which we subtract
 			frame._size = stream.readUint16LE() - 11;
 			frame._rleMarker = stream.readByte();
-        } else {
+		} else {
 			// Uncompressed data
 			frame._size = frame._width * frame._height;
-        }
+		}
 
 		// Load data for frame and decompress it
 		byte *data = new byte[frame._size];
 		stream.read(data, frame._size);
-        decompressFrame(frame, data);
+		decompressFrame(frame, data);
 		delete[] data;
 
 		push_back(frame);
-    }
+	}
 }
 
 /**
@@ -372,17 +372,17 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		}
 	} else if (frame._rleEncoded) {
 		// RLE encoded
-	    byte *dst = (byte *)frame._frame.getPixels();
+		byte *dst = (byte *)frame._frame.getPixels();
 
 		int frameSize = frame._width * frame._height;
 		while (frameSize > 0) {
 			if (*src == frame._rleMarker) {
-			    byte rleColor = src[1];
-			    byte rleCount = src[2];
-			    src += 3;
-			    frameSize -= rleCount;
-			    while (rleCount--)
-			        *dst++ = rleColor;
+				byte rleColor = src[1];
+				byte rleCount = src[2];
+				src += 3;
+				frameSize -= rleCount;
+				while (rleCount--)
+					*dst++ = rleColor;
 			} else {
 				*dst++ = *src++;
 				--frameSize;

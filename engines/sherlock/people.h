@@ -32,11 +32,11 @@ namespace Sherlock {
 
 // People definitions
 enum PeopleId {
-	PLAYER        = 0,
-	AL            = 0,
-	PEG           = 1,
-	NUM_OF_PEOPLE = 2,		// Holmes and Watson
-	MAX_PEOPLE    = 66		// Total of all NPCs
+	PLAYER			= 0,
+	AL				= 0,
+	PEG				= 1,
+	NUM_OF_PEOPLE	= 2,		// Holmes and Watson
+	MAX_PEOPLE		= 66		// Total of all NPCs
 };
 
 // Animation sequence identifiers for characters

@@ -81,7 +81,7 @@ const int MAP_TRANSLATE[NUM_PLACES] = {
 };
 
 const byte MAP_SEQUENCES[3][MAX_FRAME] = {
-	{ 1, 1, 2, 3, 4, 0 },     // Overview Still
+	{ 1, 1, 2, 3, 4, 0 },		// Overview Still
 	{ 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0 },
 	{ 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0 }
 };
