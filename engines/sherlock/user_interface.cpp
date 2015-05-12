@@ -1683,7 +1683,7 @@ void UserInterface::doTalkControl() {
 			people.setTalking(0);
 
 			if (!talk._statements[_selector]._voiceFile.empty() && sound._voices) {
-				sound.playSound(talk._statements[_selector]._voiceFile);
+				sound.playSound(talk._statements[_selector]._voiceFile, WAIT_RETURN_IMMEDIATELY);
 
 				// Set voices as an indicator for waiting
 				sound._voices = 2;

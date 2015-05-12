@@ -111,7 +111,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 					Common::String::format("%s%02d", filename.c_str(), soundNumber);
 
 				if (sound._voices)
-					sound.playSound(fname);
+					sound.playSound(fname, WAIT_RETURN_IMMEDIATELY);
 			}
 
 			events.wait(speed);

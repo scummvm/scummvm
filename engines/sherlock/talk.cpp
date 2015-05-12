@@ -1278,7 +1278,7 @@ void Talk::doScript(const Common::String &script) {
 				if (sound._voices) {
 					for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 						tempString += str[idx];
-					sound.playSound(tempString);
+					sound.playSound(tempString, WAIT_RETURN_IMMEDIATELY);
 
 					// Set voices to wait for more
 					sound._voices = 2;

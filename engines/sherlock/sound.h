@@ -44,6 +44,7 @@ private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _effectsHandle;
+	int _curPriority;
 
 	char decodeSample(char sample, byte& prediction, int& step);
 public:
@@ -63,13 +64,11 @@ public:
 
 	void syncSoundSettings();
 	void loadSound(const Common::String &name, int priority);
-	bool playSound(const Common::String &name, WaitType waitType = WAIT_RETURN_IMMEDIATELY);
-	void cacheSound(const Common::String &name, int index);
-	void playLoadedSound(int bufNum, int waitMode);
-	void playCachedSound(int index);
+	bool playSound(const Common::String &name, WaitType waitType, int priority = 100);
+	void playLoadedSound(int bufNum, WaitType waitType);
 	void freeLoadedSounds();
-	void clearCache();
 	void stopSound();
+
 	int loadSong(int songNumber);
 	void startSong();
 	void freeSong();

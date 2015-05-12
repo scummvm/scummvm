@@ -378,13 +378,8 @@ bool Scene::loadScene(const Common::String &filename) {
 		for (int idx = 0; idx < numSounds; ++idx)
 			_sounds[idx].synchronize(*rrmStream);
 
-		// If sound is turned on, load the sounds into memory
-		if (sound._soundOn) {
-			for (int idx = 0; idx < numSounds; ++idx) {
-				sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
-				_sounds[idx]._name = "";
-			}
-		}
+		for (int idx = 0; idx < numSounds; ++idx)
+			sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
 
 		// Read in palette
 		rrmStream->read(screen._cMap, PALETTE_SIZE);

@@ -613,7 +613,7 @@ void Object::checkObject() {
 
 				if (sound._soundOn && !_countCAnimFrames) {
 					if (!scene._sounds[v - 1]._name.empty() && sound._digitized)
-						sound.playLoadedSound(v - 1, 0);
+						sound.playLoadedSound(v - 1, WAIT_RETURN_IMMEDIATELY);
 				}
 			} else if (v >= FLIP_CODE && v <= (FLIP_CODE + 2)) {
 				// Flip code

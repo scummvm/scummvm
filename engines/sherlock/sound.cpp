@@ -38,6 +38,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
 	_soundIsOn = &_soundPlaying;
+	_curPriority = 0;
 
 	_soundOn = true;
 	_musicOn = true;
@@ -57,8 +58,7 @@ void Sound::syncSoundSettings() {
 }
 
 void Sound::loadSound(const Common::String &name, int priority) {
-	// TODO
-	warning("TODO: Sound::loadSound");
+	// No implementation required in ScummVM
 }
 
 char Sound::decodeSample(char sample, byte& prediction, int& step) {
@@ -86,8 +86,8 @@ char Sound::decodeSample(char sample, byte& prediction, int& step) {
 	return prediction;
 }
 
-bool Sound::playSound(const Common::String &name, WaitType waitType) {
-	_mixer->stopHandle(_effectsHandle);
+bool Sound::playSound(const Common::String &name, WaitType waitType, int priority) {
+	stopSound();
 
 	Common::String filename = name;
 	if (!filename.contains('.'))
@@ -103,7 +103,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType) {
 
 	byte *decoded = (byte *)malloc((size - 1) * 2);
 
-	// +127 to eliminate the pop when the sound starts (signed vs unsignded PCM). Still does not help with the pop at the end
+	// +127 to eliminate the pop when the sound starts (signed vs unsigned PCM). Still does not help with the pop at the end
 	byte prediction = (ptr[0] & 0x0f) + 127;
 	int step = 0;
 	int counter = 0;
@@ -118,6 +118,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType) {
 	Audio::AudioStream *audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
 	_soundPlaying = true;
+	_curPriority = priority;
 
 	if (waitType == WAIT_RETURN_IMMEDIATELY) {
 		_diskSoundPlaying = true;
@@ -148,34 +149,24 @@ bool Sound::playSound(const Common::String &name, WaitType waitType) {
 	return retval;
 }
 
-void Sound::cacheSound(const Common::String &name, int index) {
-	// TODO
-	warning("TODO: Sound::cacheSound");
-}
+void Sound::playLoadedSound(int bufNum, WaitType waitType) {
+	if (_mixer->isSoundHandleActive(_effectsHandle) && (_curPriority > _vm->_scene->_sounds[bufNum]._priority))
+		return;
 
-void Sound::playLoadedSound(int bufNum, int waitMode) {
-	// TODO
-	warning("TODO: Sound::playLoadedSound");
-}
+	stopSound();
+	playSound(_vm->_scene->_sounds[bufNum]._name, waitType, _vm->_scene->_sounds[bufNum]._priority);
 
-void Sound::playCachedSound(int index) {
-	// TODO
-	warning("TODO: Sound::playCachedSound");
+	return;
 }
 
 void Sound::freeLoadedSounds() {
-	// TODO
-	warning("TODO: Sound::clearLoadedSound");
-}
-
-void Sound::clearCache() {
-	// TODO
-	warning("TODO: Sound::clearCache");
+	// As sounds are played with DisposeAfterUse::YES, stopping the sounds also
+	// frees them
+	stopSound();
 }
 
 void Sound::stopSound() {
-	// TODO
-	warning("TODO: Sound::stopSound");
+	_mixer->stopHandle(_effectsHandle);
 }
 
 void Sound::playMusic(const Common::String &name) {
