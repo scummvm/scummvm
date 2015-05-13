@@ -159,9 +159,10 @@ struct UseType {
 	int _dFlag[1];
 	int _lFlag[2];
 	Common::String _target;
+	Common::String _verb;
 
 	UseType();
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 class Object {
@@ -197,32 +198,42 @@ public:
 	int _pickup;
 	int _defaultCommand;			// Default right-click command
 	int _lookFlag;					// Which flag LOOK   will set (if any)
-	int _pickupFlag;				// Which flag PICKUP will set (if any)
 	int _requiredFlag;				// Object will be hidden if not set
 	Common::Point _noShapeSize;		// Size of a NO_SHAPE
 	int _status;					// Status (open/closed, moved/not)
 	int8 _misc;						// Misc field -- use varies with type
 	int _maxFrames;					// Number of frames
 	int _flags;						// Tells if object can be walked behind
-	ActionType _aOpen;				// Holds data for moving object
 	AType _aType;					// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
 	int _seqCounter;				// How many times this sequence has been executed
 	Common::Point _lookPosition;	// Where to walk when examining object
 	int _lookFacing;				// Direction to face when examining object
 	int _lookcAnim;
-	ActionType _aClose;
 	int _seqStack;					// Allows gosubs to return to calling frame
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
 	uint _descOffset;					// Tells where description starts in DescText
 	int _seqCounter2;				// Counter of calling frame sequence
 	uint _seqSize;					// Tells where description starts
+	UseType _use[6];				// Serrated Scalpel uses 4, Rose Tattoo 6
+
+	// Serrated Scalpel fields
+	int _pickupFlag;				// Which flag PICKUP will set (if any)
+	ActionType _aOpen;				// Holds data for moving object
+	ActionType _aClose;
 	ActionType _aMove;
-	UseType _use[4];
+
+	// Rose Tattoo fields
+	int _quickDraw;
+	int _scaleVal;
+	int _requiredFlag1;
+	int _gotoSeq;
+	int _talkSeq;
+	int _restoreSlot;
 
 	Object();
 
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 
 	void toggleHidden();
 

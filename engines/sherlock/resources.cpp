@@ -107,9 +107,7 @@ Resources::Resources() {
 
 	addToCache("vgs.lib");
 	addToCache("talk.lib");
-	addToCache("sequence.txt");
 	addToCache("journal.txt");
-	addToCache("portrait.lib");
 }
 
 /**
@@ -122,8 +120,11 @@ void Resources::addToCache(const Common::String &filename) {
 	// Check to see if the file is a library
 	Common::SeekableReadStream *stream = load(filename);
 	uint32 header = stream->readUint32BE();
+
 	if (header == MKTAG('L', 'I', 'B', 26))
-		loadLibraryIndex(filename, stream);
+		loadLibraryIndex(filename, stream, false);
+	else if (header == MKTAG('L', 'I', 'C', 26))
+		loadLibraryIndex(filename, stream, true);
 
 	delete stream;
 }
@@ -193,7 +194,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 
 	// Check if the library has already had it's index read, and if not, load it
 	if (!_indexes.contains(libraryFile))
-		loadLibraryIndex(libraryFile, libStream);
+		loadLibraryIndex(libraryFile, libStream, false);
 
 	// Extract the data for the specified resource and return it
 	LibraryEntry &entry = _indexes[libraryFile][filename];
@@ -216,7 +217,7 @@ bool Resources::exists(const Common::String &filename) const {
  * Reads in the index from a library file, and caches it's index for later use
  */
 void Resources::loadLibraryIndex(const Common::String &libFilename,
-		Common::SeekableReadStream *stream) {
+		Common::SeekableReadStream *stream, bool isNewStyle) {
 	uint32 offset, nextOffset;
 
 	// Create an index entry
@@ -226,6 +227,9 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 	// Read in the number of resources
 	stream->seek(4);
 	int count = stream->readUint16LE();
+
+	if (isNewStyle)
+		stream->seek((count + 1) * 8, SEEK_CUR);
 
 	// Loop through reading in the entries
 	for (int idx = 0; idx < count; ++idx) {
@@ -304,10 +308,12 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 			// Animation cutscene image files use a 16-bit x offset
 			frame._offset.x = stream.readUint16LE();
 			frame._rleEncoded = (frame._offset.x & 0xff) == 1;
+			frame._offset.y = stream.readByte();
 		} else {
 			// Standard image files have a separate byte for the RLE flag, and an 8-bit X offset
 			frame._rleEncoded = stream.readByte() == 1;
 			frame._offset.x = stream.readByte();
+			frame._offset.y = stream.readByte();
 		}
 
 		frame._offset.y = stream.readByte();

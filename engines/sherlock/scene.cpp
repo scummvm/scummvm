@@ -24,16 +24,42 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/decompress.h"
+#include "sherlock/screen.h"
 
 namespace Sherlock {
 
-void BgFileHeader::synchronize(Common::SeekableReadStream &s) {
+BgFileHeader::BgFileHeader() {
+	_numStructs = -1;
+	_numImages = -1;
+	_numcAnimations = -1;
+	_descSize = -1;
+	_seqSize = -1;
+
+	// Serrated Scalpel
+	_fill = -1;
+
+	// Rose Tattoo
+	_scrollSize = -1;
+	_bytesWritten = -1;
+	_fadeStyle = -1;
+	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+}
+
+void BgFileHeader::synchronize(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_numStructs = s.readUint16LE();
 	_numImages = s.readUint16LE();
 	_numcAnimations = s.readUint16LE();
 	_descSize = s.readUint16LE();
 	_seqSize = s.readUint16LE();
-	_fill = s.readUint16LE();
+
+	if (isRoseTattoo) {
+		_scrollSize = s.readUint16LE();
+		_bytesWritten = s.readUint32LE();
+		_fadeStyle = s.readByte();
+	} else {
+		_fill = s.readUint16LE();
+
+	}
 }
 
 /*----------------------------------------------------------------*/
@@ -215,6 +241,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
+	Common::Array<BgfileheaderInfo> bgInfo;
 
 	_walkedInScene = false;
 
@@ -229,7 +256,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	_sequenceBuffer.clear();
 
 	//
-	// Load background shapes from <filename>.rrm
+	// Load the room resource file for the scene
 	//
 
 	Common::String rrmFile = filename + ".rrm";
@@ -238,30 +265,52 @@ bool Scene::loadScene(const Common::String &filename) {
 		Common::SeekableReadStream *rrmStream = _vm->_res->load(rrmFile);
 
 		rrmStream->seek(39);
-		_version = rrmStream->readByte();
-		_lzwMode = _version == 10;
+		if (_vm->getGameID() == GType_SerratedScalpel) {
+			_version = rrmStream->readByte();
+			_lzwMode = _version == 10;
+		} else {
+			_lzwMode = rrmStream->readByte() > 0;
+		}
 
 		// Go to header and read it in
 		rrmStream->seek(rrmStream->readUint32LE());
+
 		BgFileHeader bgHeader;
-		bgHeader.synchronize(*rrmStream);
+		bgHeader.synchronize(*rrmStream, _vm->getGameID() == GType_RoseTattoo);
 		_invGraphicItems = bgHeader._numImages + 1;
 
+		if (_vm->getGameID() == GType_RoseTattoo) {
+			screen.initPaletteFade(bgHeader._bytesWritten);
+			screen.fadeRead(*rrmStream, screen._cMap, PALETTE_SIZE);
+			screen.setupBGArea(screen._cMap);
+
+			screen.initScrollVars();
+
+			// Read in background
+			if (_lzwMode) {
+				Common::SeekableReadStream *stream = decompressLZ(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+				stream->read(screen._backBuffer1.getPixels(), stream->size());
+				delete stream;
+			} else {
+				rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+			}
+		} 
+
 		// Read in the shapes header info
-		Common::Array<BgfileheaderInfo> bgInfo;
 		bgInfo.resize(bgHeader._numStructs);
 
 		for (uint idx = 0; idx < bgInfo.size(); ++idx)
 			bgInfo[idx].synchronize(*rrmStream);
 
 		// Read information
+		int shapeSize = _vm->getGameID() == GType_SerratedScalpel ? 569 : 591;
 		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, bgHeader._numImages * 569 +
+			decompressLZ(*rrmStream, bgHeader._numImages * shapeSize +
 				bgHeader._descSize + bgHeader._seqSize);
 
 		_bgShapes.resize(bgHeader._numStructs);
 		for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-			_bgShapes[idx].load(*infoStream);
+			_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
 
 		if (bgHeader._descSize) {
 			_descText.resize(bgHeader._descSize);

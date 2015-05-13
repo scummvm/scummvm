@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo.h"
+#include "engines/util.h"
 
 namespace Sherlock {
 
@@ -29,6 +30,32 @@ namespace Tattoo {
 void TattooEngine::showOpening() {
 	// TODO
 }
+
+/**
+ * Initialize the engine
+ */
+void TattooEngine::initialize() {
+	initGraphics(640, 480, true);
+
+	// Initialize the base engine
+	SherlockEngine::initialize();
+
+	_flags.resize(100 * 8);
+
+	// Add some more files to the cache
+	_res->addToCache("walk.lib");
+
+	// Starting scene
+	_scene->_goToScene = 91;
+}
+
+/**
+ * Starting a scene within the game
+ */
+void TattooEngine::startScene() {
+	// TODO
+}
+
 
 } // End of namespace Tattoo
 

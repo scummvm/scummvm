@@ -70,7 +70,8 @@ private:
 	LibraryIndexes _indexes;
 	int _resourceIndex;
 
-	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream);
+	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream,
+		bool isNewStyle);
 public:
 	Resources();
 

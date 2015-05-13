@@ -81,8 +81,13 @@ const char *const MUSE[] = {
 /*----------------------------------------------------------------*/
 
 UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
-	_controls = new ImageFile("menu.all");
-	_controlPanel = new ImageFile("controls.vgs");
+	if (_vm->getGameID() == GType_SerratedScalpel) {
+		_controls = new ImageFile("menu.all");
+		_controlPanel = new ImageFile("controls.vgs");
+	} else {
+		_controls = nullptr;
+		_controlPanel = nullptr;
+	}
 	_bgFound = 0;
 	_oldBgFound = -1;
 	_keycode = Common::KEYCODE_INVALID;

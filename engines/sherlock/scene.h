@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
+#include "sherlock/screen.h"
 
 namespace Sherlock {
 
@@ -44,9 +45,19 @@ struct BgFileHeader {
 	int _numcAnimations;
 	int _descSize;
 	int _seqSize;
+
+	// Serrated Scalpel
 	int _fill;
 
-	void synchronize(Common::SeekableReadStream &s);
+	// Rose Tattoo
+	int _scrollSize;
+	int _bytesWritten;				// Size of the main body of the RRM
+	int _fadeStyle;					// Fade style
+	byte _palette[PALETTE_SIZE];	// Palette
+
+
+	BgFileHeader();
+	void synchronize(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct BgfileheaderInfo {

@@ -22,6 +22,7 @@
 
 #include "sherlock/map.h"
 #include "sherlock/sherlock.h"
+#include "common/system.h"
 
 namespace Sherlock {
 
@@ -52,7 +53,7 @@ const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 
 /*----------------------------------------------------------------*/
 
-Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
+Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12) {
 	_active = false;
 	_mapCursors = nullptr;
 	_shapes = nullptr;
@@ -94,8 +95,13 @@ void Map::loadSequences(int count, const byte *seq) {
  * Load data  needed for the map
  */
 void Map::loadData() {
+	// TODO: Remove this
+	if (_vm->getGameID() == GType_RoseTattoo)
+		return;
+
 	// Load the list of location names
-	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
+	Common::SeekableReadStream *txtStream = _vm->_res->load(
+		_vm->getGameID() == GType_SerratedScalpel ? "chess.txt" : "map.txt");
 
 	int streamSize = txtStream->size();
 	while (txtStream->pos() < streamSize) {

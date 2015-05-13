@@ -77,4 +77,52 @@ Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int
 	return outS;
 }
 
+
+/**
+ * Decompresses a Rose Tattoo resource
+ *
+Common::SeekableReadStream *decompress32(Common::SeekableReadStream &source, int32 outSize) {
+	if (outSize == -1) {
+		outSize = source.readSint32LE();
+	}
+
+	byte lzWindow[8192];
+	byte *outBuffer = new byte[outSize];
+	byte *outBufferEnd = outBuffer + outSize;
+	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+
+	memset(lzWindow, 0xFF, 8192);
+	int lzWindowPos = 0xFEE;
+	int cmd = 0;
+
+	do {
+		cmd >>= 1;
+		if (!(cmd & 0x100))
+			cmd = source.readByte() | 0xFF00;
+
+		if (cmd & 1) {
+			byte literal = source.readByte();
+			*outBuffer++ = literal;
+			lzWindow[lzWindowPos] = literal;
+			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+		} else {
+			int copyPos, copyLen;
+			copyPos = source.readByte();
+			copyLen = source.readByte();
+			copyPos = copyPos | ((copyLen & 0xF0) << 4);
+			copyLen = (copyLen & 0x0F) + 3;
+			while (copyLen--) {
+				byte literal = lzWindow[copyPos];
+				copyPos = (copyPos + 1) & 0x0FFF;
+				*outBuffer++ = literal;
+				lzWindow[lzWindowPos] = literal;
+				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+			}
+		}
+	} while (outBuffer < outBufferEnd);
+
+	return outS;
+}
+*/
+
 } // namespace Sherlock

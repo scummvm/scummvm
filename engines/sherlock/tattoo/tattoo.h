@@ -31,10 +31,15 @@ namespace Tattoo {
 
 class TattooEngine : public SherlockEngine {
 protected:
+	virtual void initialize();
+
 	virtual void showOpening();
+
+	virtual void startScene();
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {}
+
 	virtual ~TattooEngine() {}
 };
 

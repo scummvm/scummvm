@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "engines/util.h"
 
 namespace Sherlock {
 
@@ -71,8 +70,6 @@ SherlockEngine::~SherlockEngine() {
  * Does basic initialization of the game engine
  */
 void SherlockEngine::initialize() {
-	initGraphics(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, false);
-
 	DebugMan.addDebugChannel(kDebugScript, "scripts", "Script debug level");
 
 	ImageFile::setVm(this);

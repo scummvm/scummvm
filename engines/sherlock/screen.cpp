@@ -28,9 +28,9 @@
 
 namespace Sherlock {
 
-Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), _vm(vm),
-		_backBuffer1(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
-		_backBuffer2(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT),
+Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight()), _vm(vm),
+		_backBuffer1(g_system->getWidth(), g_system->getHeight()),
+		_backBuffer2(g_system->getWidth(), g_system->getHeight()),
 		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
@@ -38,11 +38,19 @@ Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCR
 	_fontHeight = 0;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
+	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
 	setFont(1);
 
 	// Set dummy surface used for restricted scene drawing
 	_sceneSurface.format = Graphics::PixelFormat::createFormatCLUT8();
-	_sceneSurface.pitch = SHERLOCK_SCREEN_WIDTH;
+	_sceneSurface.pitch = pitch;
+
+	// Rose Tattoo specific fields
+	_fadeBytesRead = _fadeBytesToRead = 0;
+	_oldFadePercent = 0;
+	_scrollSize = 0;
+	_currentScroll = 0;
+	_targetScroll = 0;
 }
 
 Screen::~Screen() {
@@ -213,7 +221,7 @@ void Screen::randomTransition() {
 		_transitionSeed = _transitionSeed * TRANSITION_MULTIPLIER + 1;
 		int offset = _transitionSeed & 65535;
 
-		if (offset < (SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT))
+		if (offset < (this->w * this->h))
 			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer->getPixels() + offset);
 
 		if (idx != 0 && (idx % 100) == 0) {
@@ -236,12 +244,12 @@ void Screen::randomTransition() {
 void Screen::verticalTransition() {
 	Events &events = *_vm->_events;
 
-	byte table[SHERLOCK_SCREEN_WIDTH];
-	Common::fill(&table[0], &table[SHERLOCK_SCREEN_WIDTH], 0);
+	byte table[640];
+	Common::fill(&table[0], &table[640], 0);
 
-	for (int yp = 0; yp < SHERLOCK_SCREEN_HEIGHT; ++yp) {
-		for (int xp = 0; xp < SHERLOCK_SCREEN_WIDTH; ++xp) {
-			int temp = (table[xp] >= 197) ? SHERLOCK_SCREEN_HEIGHT - table[xp] :
+	for (int yp = 0; yp < this->h; ++yp) {
+		for (int xp = 0; xp < this->w; ++xp) {
+			int temp = (table[xp] >= (this->h - 3)) ? this->h - table[xp] :
 				_vm->getRandomNumber(3) + 1;
 
 			if (temp) {
@@ -261,7 +269,7 @@ void Screen::verticalTransition() {
 void Screen::restoreBackground(const Common::Rect &r) {
 	if (r.width() > 0 && r.height() > 0) {
 		Common::Rect tempRect = r;
-		tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+		tempRect.clip(Common::Rect(0, 0, this->w, SHERLOCK_SCENE_HEIGHT));
 
 		if (tempRect.isValidRect())
 			_backBuffer1.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
@@ -281,7 +289,7 @@ void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
 void Screen::slamRect(const Common::Rect &r) {
 	if (r.width() && r.height() > 0) {
 		Common::Rect tempRect = r;
-		tempRect.clip(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		tempRect.clip(Common::Rect(0, 0, this->w, this->h));
 
 		if (tempRect.isValidRect())
 			blitFrom(*_backBuffer, Common::Point(tempRect.left, tempRect.top), tempRect);
@@ -338,13 +346,13 @@ void Screen::print(const Common::Point &pt, byte color, const char *formatStr, .
 	pos.y--;		// Font is always drawing one line higher
 	if (!pos.x)
 		// Center text horizontally
-		pos.x = (SHERLOCK_SCREEN_WIDTH - width) / 2;
+		pos.x = (this->w - width) / 2;
 
 	Common::Rect textBounds(pos.x, pos.y, pos.x + width, pos.y + _fontHeight);
-	if (textBounds.right > SHERLOCK_SCREEN_WIDTH)
-		textBounds.moveTo(SHERLOCK_SCREEN_WIDTH - width, textBounds.top);
-	if (textBounds.bottom > SHERLOCK_SCREEN_HEIGHT)
-		textBounds.moveTo(textBounds.left, SHERLOCK_SCREEN_HEIGHT - _fontHeight);
+	if (textBounds.right > this->w)
+		textBounds.moveTo(this->w - width, textBounds.top);
+	if (textBounds.bottom > this->h)
+		textBounds.moveTo(textBounds.left, this->h - _fontHeight);
 
 	// Write out the string at the given position
 	writeString(str, Common::Point(textBounds.left, textBounds.top), color);
@@ -505,7 +513,7 @@ void Screen::resetDisplayBounds() {
  */
 Common::Rect Screen::getDisplayBounds() {
 	return (_backBuffer == &_sceneSurface) ? Common::Rect(0, 0, _sceneSurface.w, _sceneSurface.h) :
-		Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+		Common::Rect(0, 0, this->w, this->h);
 }
 
 /**
@@ -516,6 +524,38 @@ void Screen::synchronize(Common::Serializer &s) {
 	s.syncAsByte(fontNumb);
 	if (s.isLoading())
 		setFont(fontNumb);
+}
+
+void Screen::initPaletteFade(int bytesToRead) {
+	Common::copy(&_cMap[0], &_cMap[PALETTE_SIZE], &_sMap[0]);
+	Common::copy(&_cMap[0], &_cMap[PALETTE_SIZE], &_tMap[0]);
+
+	// Set how many bytes need to be read / have been read
+	_fadeBytesRead = 0;
+	_fadeBytesToRead = bytesToRead;
+	_oldFadePercent = 0;
+}
+
+int Screen::fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSize) {
+	warning("TODO: fadeRead");
+	stream.read(buf, totalSize);
+	return totalSize;
+}
+
+/**
+ * Creates a grey-scale version of the passed palette
+ */
+void Screen::setupBGArea(const byte cMap[PALETTE_SIZE]) {
+	warning("TODO");
+}
+
+/**
+ * Initializes scroll variables
+ */
+void Screen::initScrollVars() {
+	_scrollSize = 0;
+	_currentScroll = 0;
+	_targetScroll = 0;
 }
 
 } // End of namespace Sherlock

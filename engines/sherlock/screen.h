@@ -67,6 +67,15 @@ private:
 	int _fontHeight;
 	Surface _sceneSurface;
 
+	// Rose Tattoo fields
+	int _fadeBytesRead, _fadeBytesToRead;
+	int _oldFadePercent;
+	byte _lookupTable[PALETTE_COUNT];
+	byte _lookupTable1[PALETTE_COUNT];
+	int _scrollSize;
+	int _currentScroll;
+	int _targetScroll;
+private:
 	void mergeDirtyRects();
 
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
@@ -80,6 +89,7 @@ public:
 	bool _fadeStyle;
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
+	byte _tMap[PALETTE_SIZE];
 public:
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
@@ -132,6 +142,15 @@ public:
 	int fontNumber() const { return _fontNumber; }
 
 	void synchronize(Common::Serializer &s);
+
+	// Rose Tattoo specific methods
+	void initPaletteFade(int bytesToRead);
+
+	int fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSize);
+
+	void setupBGArea(const byte cMap[PALETTE_SIZE]);
+
+	void initScrollVars();
 };
 
 } // End of namespace Sherlock

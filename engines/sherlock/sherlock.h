@@ -62,8 +62,8 @@ enum GameType {
 	GType_RoseTattoo = 1
 };
 
-#define SHERLOCK_SCREEN_WIDTH 320
-#define SHERLOCK_SCREEN_HEIGHT 200
+#define SHERLOCK_SCREEN_WIDTH _vm->_screen->w
+#define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h
 #define SHERLOCK_SCENE_HEIGHT 138
 
 struct SherlockGameDescription;

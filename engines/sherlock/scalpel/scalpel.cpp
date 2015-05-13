@@ -23,6 +23,7 @@
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/animation.h"
+#include "engines/util.h"
 
 namespace Sherlock {
 
@@ -242,6 +243,9 @@ ScalpelEngine::~ScalpelEngine() {
  * Game initialization
  */
 void ScalpelEngine::initialize() {
+	initGraphics(320, 200, false);
+
+	// Let the base engine intialize
 	SherlockEngine::initialize();
 
 	_darts = new Darts(this);
@@ -250,11 +254,13 @@ void ScalpelEngine::initialize() {
 	_flags[3] = true;		// Turn on Alley
 	_flags[39] = true;		// Turn on Baker Street
 
-	if (!getIsDemo()) {
+	// Add some more files to the cache
+	_res->addToCache("sequence.txt");
+	_res->addToCache("portrait.lib");
+
 	// Load the map co-ordinates for each scene and sequence data
 	_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
 	_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
-	}
 
 	// Load the inventory
 	loadInventory();
@@ -454,9 +460,9 @@ bool ScalpelEngine::scrollCredits() {
 			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
 
 		// Don't show credit text on the top and bottom ten rows of the screen
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, 10));
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 10),
-			Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 10, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->w, 10));
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, _screen->h - 10),
+			Common::Rect(0, _screen->h - 10, _screen->w, _screen->h));
 
 		_events->delay(100);
 	}
