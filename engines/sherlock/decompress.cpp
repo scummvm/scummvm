@@ -32,7 +32,7 @@ namespace Sherlock {
  */
 Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int32 outSize) {
 	if (outSize == -1) {
-		source.seek(5);
+		source.seek(4);
 		outSize = source.readSint32LE();
 	}
 
