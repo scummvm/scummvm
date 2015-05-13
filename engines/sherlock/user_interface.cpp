@@ -1612,6 +1612,8 @@ void UserInterface::doTalkControl() {
 		if (_selector != -1)
 			talk.talkLine(_selector, talk._statements[_selector]._talkMap, TALK_FOREGROUND,
 				talk._statements[_selector]._talkPos.top, true);
+
+		_oldSelector = _selector;
 	}
 
 	if (events._released || _keyboardInput) {
