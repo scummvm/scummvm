@@ -140,7 +140,6 @@ private:
 	int _talkStealth;
 	int _talkToFlag;
 	int _scriptSaveIndex;
-	int _scriptCurrentIndex;
 private:
 	void stripVoiceCommands();
 	void setTalkMap();

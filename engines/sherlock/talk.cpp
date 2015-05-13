@@ -104,7 +104,6 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_moreTalkDown = _moreTalkUp = false;
 	_scriptMoreFlag = 0;
 	_scriptSaveIndex = -1;
-	_scriptCurrentIndex = -1;
 }
 
 /**
@@ -1082,10 +1081,6 @@ void Talk::doScript(const Common::String &script) {
 			// Handle control code
 			switch (c) {
 			case SWITCH_SPEAKER:
-				// Save the current point in the script, since it might be intterupted by
-				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - scriptStart;
-
 				if (!(_speaker & 128))
 					people.clearTalking();
 				if (_talkToAbort)
@@ -1103,10 +1098,7 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case RUN_CANIMATION:
-				// Save the current point in the script, since it might be intterupted by
-				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = (str + 1) - scriptStart;
 				scene.startCAnim((str[0] - 1) & 127, (str[0] & 128) ? -1 : 1);
 				if (_talkToAbort)
 					return;
@@ -1143,10 +1135,6 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case REMOVE_PORTRAIT:
-				// Save the current point in the script, since it might be intterupted by
-				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - scriptStart;
-
 				if (_speaker >= 0 && _speaker < 128)
 					people.clearTalking();
 				pullSequence();
@@ -1203,10 +1191,7 @@ void Talk::doScript(const Common::String &script) {
 				}
 
 			case WALK_TO_COORDS:
-				// Save the current point in the script, since it might be interrupted by
-				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = str - scriptStart;
 
 				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100,
 					str[2] * 100), str[3] - 1);
@@ -1217,10 +1202,7 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case PAUSE_WITHOUT_CONTROL:
-				// Save the current point in the script, since it might be intterupted by
-				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = str - scriptStart;
 
 				for (int idx = 0; idx < (str[0] - 1); ++idx) {
 					scene.doBgAnim();
@@ -1234,10 +1216,6 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case BANISH_WINDOW:
-				// Save the current point in the script, since it might be intterupted by
-				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = str - scriptStart;
-
 				if (!(_speaker & 128))
 					people.clearTalking();
 				pullSequence();
@@ -1403,19 +1381,19 @@ void Talk::doScript(const Common::String &script) {
 				break;
 			}
 
-			case CALL_TALK_FILE:
+			case CALL_TALK_FILE: {
 				++str;
 				for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 					tempString += str[idx];
 				str += 8;
 
-				_scriptCurrentIndex = str - scriptStart;
+				int scriptCurrentIndex = str - scriptStart;
 
 				// Save the current script position and new talk file
 				if (_scriptStack.size() < 9) {
 					ScriptStackEntry rec1;
 					rec1._name = _scriptName;
-					rec1._currentIndex = _scriptCurrentIndex;
+					rec1._currentIndex = scriptCurrentIndex;
 					rec1._select = _scriptSelect;
 					_scriptStack.push(rec1);
 
@@ -1433,12 +1411,10 @@ void Talk::doScript(const Common::String &script) {
 				endStr = true;
 				wait = 0;
 				break;
+			}
 
 			case MOVE_MOUSE:
-				// Save the current point in the script, since it might be intterupted by
-				// doing bg anims in the next call, so we need to know where to return to
 				++str;
-				_scriptCurrentIndex = str - scriptStart;
 				events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
 				if (_talkToAbort)
 					return;
@@ -1463,10 +1439,6 @@ void Talk::doScript(const Common::String &script) {
 			case WALK_TO_CANIMATION: {
 				++str;
 				CAnim &animation = scene._cAnim[str[0] - 1];
-
-				// Save the current point in the script, since it might be interrupted by
-				// doing bg anims in the next call, so we need to know where to return to
-				_scriptCurrentIndex = (str + 1) - scriptStart;
 
 				people.walkToCoords(animation._goto, animation._gotoDir);
 				if (_talkToAbort)
@@ -1614,10 +1586,6 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		if (wait) {
-			// Save the current point in the script, since it might be intterupted by
-			// doing bg anims in the next call, so we need to know where to return to
-			_scriptCurrentIndex = str - scriptStart;
-
 			// Handling pausing
 			if (!pauseFlag && charCount < 160)
 				charCount = 160;

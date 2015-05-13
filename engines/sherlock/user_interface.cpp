@@ -1694,9 +1694,6 @@ void UserInterface::doTalkControl() {
 				sound._speechOn = false;
 			}
 
-			// Set the _scriptCurrentIndex so if the statement is irrupted, the entire
-			// reply will be shown when it's restarted
-			talk._scriptCurrentIndex = 0;
 			talk.waitForMore(talk._statements[_selector]._statement.size());
 			if (talk._talkToAbort)
 				return;
