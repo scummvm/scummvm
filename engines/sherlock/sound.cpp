@@ -45,6 +45,8 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_speechOn = true;
 
 	_vm->_res->addToCache("MUSIC.LIB");
+	_vm->_res->addToCache("TITLE.SND");
+	_vm->_res->addToCache("EPILOGUE.SND");
 	_vm->_res->addToCache("SND.SND");
 }
 
@@ -92,7 +94,18 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	Common::String filename = name;
 	if (!filename.contains('.'))
 		filename += ".SND";
-	Common::SeekableReadStream *stream = _vm->_res->load(filename, "TITLE.SND");
+	
+	Common::SeekableReadStream *stream = nullptr;
+
+	if (_vm->_res->exists(filename))
+		stream = _vm->_res->load(filename, "TITLE.SND");
+	else if (_vm->_res->exists(filename))
+		stream = _vm->_res->load(filename, "EPILOGUE.SND");
+	else if (_vm->_res->exists(filename))
+		stream = _vm->_res->load(filename, "SND.SND");
+
+	if (!stream)
+		error("Unable to find sound file %s", filename.c_str());
 
 	stream->skip(2);
 	int size = stream->readUint32BE();
