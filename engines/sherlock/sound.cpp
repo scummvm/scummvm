@@ -95,17 +95,10 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	if (!filename.contains('.'))
 		filename += ".SND";
 	
-	Common::SeekableReadStream *stream = nullptr;
-
-	if (_vm->_res->exists(filename))
-		stream = _vm->_res->load(filename, "TITLE.SND");
-	else if (_vm->_res->exists(filename))
-		stream = _vm->_res->load(filename, "EPILOGUE.SND");
-	else if (_vm->_res->exists(filename))
-		stream = _vm->_res->load(filename, "SND.SND");
+	Common::SeekableReadStream *stream = _vm->_res->load(filename);
 
 	if (!stream)
-		error("Unable to find sound file %s", filename.c_str());
+		error("Unable to find sound file '%s'", filename.c_str());
 
 	stream->skip(2);
 	int size = stream->readUint32BE();
@@ -127,6 +120,15 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	}
 
 	free(data);
+
+#if 0
+	// Debug : used to dump files
+	Common::DumpFile outFile;
+	outFile.open(filename);
+	outFile.write(decoded, (size - 2) * 2);
+	outFile.flush();
+	outFile.close();
+#endif
 
 	Audio::AudioStream *audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
@@ -151,14 +153,6 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	_soundPlaying = false;
 	_mixer->stopHandle(_effectsHandle);
 
-#if 0
-	// Debug : used to dump files
-	Common::DumpFile outFile;
-	outFile.open(filename);
-	outFile.write(decoded, (size - 2) * 2);
-	outFile.flush();
-	outFile.close();
-#endif
 	return retval;
 }
 
