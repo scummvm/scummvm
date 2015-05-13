@@ -114,7 +114,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 					sound.playSound(fname, WAIT_RETURN_IMMEDIATELY);
 			}
 
-			events.wait(speed);
+			events.wait(speed * 3);
 		}
 
 		if (events.kbHit()) {
