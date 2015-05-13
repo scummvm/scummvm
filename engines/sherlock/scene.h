@@ -46,7 +46,7 @@ struct BgFileHeader {
 	int _seqSize;
 	int _fill;
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct BgfileheaderInfo {
@@ -54,7 +54,7 @@ struct BgfileheaderInfo {
 	int _maxFrames;				// How many unique frames in object
 	Common::String _filename;	// Filename of object
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct Exit {
@@ -65,7 +65,7 @@ struct Exit {
 	Common::Point _people;
 	int _peopleDir;
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct SceneEntry {
@@ -73,14 +73,14 @@ struct SceneEntry {
 	int _startDir;
 	int _allow;
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 struct SceneSound {
 	Common::String _name;
 	int _priority;
 
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s);
 };
 
 class ObjectArray: public Common::Array<Object> {
