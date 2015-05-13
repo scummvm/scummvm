@@ -238,7 +238,7 @@ private:
 	void setupSpeechText();
 	void setupSpeechData(char val, EncounterGraphic *encounterGraphic) const;
 	void setupSpeech(ResourceId textResourceId, ResourceId fontResourceId);
-	bool setupSpeech(ResourceId id);
+	bool setupSpeechTest(ResourceId id);
 	bool isSpeaking();
 
 	//////////////////////////////////////////////////////////////////////////

@@ -456,6 +456,7 @@ bool Encounter::update() {
 		}
 
 		bool doScript = false;
+		//bool doScript = true; // TODO: fix this later - for now it doesn run the script so let make sure it runs
 		if ((getSpeech()->getSoundResourceId() && !getSound()->isPlaying(getSpeech()->getSoundResourceId()) && !_data_455BE0)
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
@@ -463,7 +464,7 @@ bool Encounter::update() {
 		if (doScript
 		 && !getSharedData()->getMatteBarHeight()
 		 && _isScriptRunning
-		 && !setupSpeech(id))
+		 && !setupSpeechTest(id))
 			runScript();
 	}
 
@@ -781,6 +782,7 @@ void Encounter::setupSpeechText() {
 		_portrait2.transTableMax = 3;
 
 		getSpeech()->setTextData(NULL);
+		getSpeech()->setTextDataPos(text);
 		if (*text == '/')
 			getSpeech()->setTextDataPos(text + 2);
 
@@ -816,7 +818,7 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId));
 }
 
-bool Encounter::setupSpeech(ResourceId id) {
+bool Encounter::setupSpeechTest(ResourceId id) {
 	getSpeech()->setTick(0);
 	getSpeech()->setSoundResourceId(kResourceNone);
 
