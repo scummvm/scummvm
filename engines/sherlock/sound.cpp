@@ -45,7 +45,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_speechOn = true;
 
 	_vm->_res->addToCache("MUSIC.LIB");
-	_vm->_res->addToCache("SND.SND");
+	_vm->_res->addToCache(_vm->getGameID() == GType_SerratedScalpel ? "SND.SND" : "SOUND.LIB");
 }
 
 /**
