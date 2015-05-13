@@ -66,18 +66,15 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	if (_resources.contains(name))
 		return;
 
-	// Check whether the file is compressed
-	const char LZW_HEADER[5] = { "LZV\x1a" };
-	char header[5];
-	stream.read(header, 5);
-	bool isCompressed = !strncmp(header, LZW_HEADER, 5);
+	int32 signature = stream.readUint32BE();
 	stream.seek(0);
 
 	// Allocate a new cache entry
 	_resources[name] = CacheEntry();
 	CacheEntry &cacheEntry = _resources[name];
 
-	if (isCompressed) {
+	// Check whether the file is compressed
+	if (signature == MKTAG('L', 'Z', 'V', 26)) {
 		// It's compressed, so decompress the file and store it's data in the cache entry
 		Common::SeekableReadStream *decompressed = decompressLZ(stream);
 		cacheEntry.resize(decompressed->size());
@@ -168,8 +165,19 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 			stream->seek(entry._offset);
 			Common::SeekableReadStream *resStream = stream->readStream(entry._size);
 
-			delete stream;
-			return resStream;
+			// Check whether the file is compressed
+			if (resStream->readUint32BE() == MKTAG('L', 'Z', 'V', 26)) {
+				resStream->seek(0);
+				// It's compressed, so decompress the sub-file and return it
+				Common::SeekableReadStream *decompressed = decompressLZ(*resStream);
+				delete stream;
+				delete resStream;
+				return decompressed;
+			} else {
+				resStream->seek(0);
+				delete stream;
+				return resStream;
+			}
 		}
 	}
 
