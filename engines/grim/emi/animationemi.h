@@ -99,7 +99,7 @@ private:
 	bool _looping;
 	bool _active;
 	bool _paused;
-	uint _time;
+	int _time;
 	float _fade;
 	float _startFade;
 	Animation::FadeMode _fadeMode;

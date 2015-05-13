@@ -100,7 +100,7 @@ Bone::~Bone() {
 
 AnimationStateEmi::AnimationStateEmi(const Common::String &anim) :
 		_skel(nullptr), _looping(false), _active(false), _paused(false),
-		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(0), _startFade(1.0f),
+		_fadeMode(Animation::None), _fade(1.0f), _fadeLength(0), _time(-1), _startFade(1.0f),
 		_boneJoints(nullptr) {
 	_anim = g_resourceloader->getAnimationEmi(anim);
 	if (_anim)
@@ -138,7 +138,7 @@ void AnimationStateEmi::update(uint time) {
 	}
 
 	if (!_paused) {
-		uint durationMs = (uint)_anim->_duration;
+		int durationMs = (int)_anim->_duration;
 		if (_time >= durationMs) {
 			if (_looping) {
 				_time = _time % durationMs;
@@ -147,7 +147,11 @@ void AnimationStateEmi::update(uint time) {
 					deactivate();
 			}
 		}
-		_time += time;
+		if (_time < 0) {
+			_time = 0;
+		} else {
+			_time += time;
+		}
 	}
 
 	if (_fadeMode != Animation::None) {
@@ -195,6 +199,9 @@ void AnimationStateEmi::computeWeights() {
 
 void AnimationStateEmi::animate() {
 	if (_fade <= 0.0f)
+		return;
+
+	if (_time < 0)
 		return;
 
 	for (int bone = 0; bone < _anim->_numBones; ++bone) {
@@ -285,7 +292,7 @@ void AnimationStateEmi::animate() {
 
 void AnimationStateEmi::play() {
 	if (!_active) {
-		_time = 0;
+		_time = -1;
 		if (_fadeMode == Animation::FadeOut)
 			_fadeMode = Animation::None;
 		if (_fadeMode == Animation::FadeIn || _fade > 0.f)
@@ -296,7 +303,7 @@ void AnimationStateEmi::play() {
 
 void AnimationStateEmi::stop() {
 	_fadeMode = Animation::None;
-	_time = 0;
+	_time = -1;
 	deactivate();
 }
 
@@ -336,14 +343,18 @@ void AnimationStateEmi::fade(Animation::FadeMode mode, int fadeLength) {
 }
 
 void AnimationStateEmi::advance(uint msecs) {
-	_time += msecs;
+	if (_time >= 0) {
+		_time += msecs;
+	} else {
+		_time = msecs;
+	}
 }
 
 void AnimationStateEmi::saveState(SaveGame *state) {
 	state->writeBool(_looping);
 	state->writeBool(_active);
 	state->writeBool(_paused);
-	state->writeLEUint32(_time);
+	state->writeLESint32(_time);
 	state->writeFloat(_fade);
 	state->writeFloat(_startFade);
 	state->writeLESint32((int)_fadeMode);
@@ -358,7 +369,7 @@ void AnimationStateEmi::restoreState(SaveGame *state) {
 		if (state->saveMinorVersion() < 22) {
 			_time = (uint)state->readFloat();
 		} else {
-			_time = state->readLEUint32();
+			_time = state->readLESint32();
 		}
 		_fade = state->readFloat();
 		_startFade = state->readFloat();
