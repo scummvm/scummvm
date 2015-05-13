@@ -161,7 +161,7 @@ void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
  */
 void Screen::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push_back(r);
-	assert(r.isValidRect() && r.width() > 0 && r.height() > 0);
+	assert(r.width() > 0 && r.height() > 0);
 }
 
 /**
