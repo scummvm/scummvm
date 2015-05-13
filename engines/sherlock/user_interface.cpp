@@ -167,11 +167,6 @@ void UserInterface::handleInput() {
 			_vm->quitGame();
 			events.pollEvents();
 			return;
-		} else if (keyState.keycode == Common::KEYCODE_SPACE ||
-				keyState.keycode == Common::KEYCODE_RETURN) {
-			events._pressed = false;
-			events._oldButtons = 0;
-			_keycode = Common::KEYCODE_INVALID;
 		}
 	}
 
