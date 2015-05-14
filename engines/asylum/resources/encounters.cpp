@@ -456,8 +456,7 @@ bool Encounter::update() {
 		}
 
 		bool doScript = false;
-		//bool doScript = true; // TODO: fix this later - for now it doesn run the script so let make sure it runs
-		if ((getSpeech()->getSoundResourceId() && !getSound()->isPlaying(getSpeech()->getSoundResourceId()) && !_data_455BE0)
+		if ((_soundResourceId/*getSpeech()->getSoundResourceId()*/ && !getSound()->isPlaying(_soundResourceId/*getSpeech()->getSoundResourceId()*/) && !_data_455BE0) // TODO replace with speech
 		 || (getSpeech()->getTick() && tick >= getSpeech()->getTick()))
 			doScript = true;
 
@@ -815,12 +814,15 @@ void Encounter::setupSpeech(ResourceId textResourceId, ResourceId fontResourceId
 	}
 
 	_data_455BE0 = true;
-	getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId));
+	_soundResourceId = MAKE_RESOURCE(kResourcePackSharedSound, textResourceId - _speechResourceId);
+	//_soundResourceId = MAKE_RESOURCE(kResourcePackSpeech, textResourceId - _speechResourceId); // todo replace with speech (this is being override by the actor speechs)
+	//getSpeech()->setSoundResourceId(MAKE_RESOURCE(kResourcePackSpeech, textResourceId - _speechResourceId)); 
 }
 
 bool Encounter::setupSpeechTest(ResourceId id) {
 	getSpeech()->setTick(0);
-	getSpeech()->setSoundResourceId(kResourceNone);
+	_soundResourceId = kResourceNone; // TODO replace with speech (this is being override by the actor speechs)
+	//getSpeech()->setSoundResourceId(kResourceNone);
 
 	setupEntities(false);
 
@@ -849,8 +851,8 @@ bool Encounter::isSpeaking() {
 	if (!_isScriptRunning)
 		return false;
 
-	if (getSpeech()->getSoundResourceId() != kResourceNone && getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
-		getSound()->stopAll(getSpeech()->getSoundResourceId());
+	if (_soundResourceId/*getSpeech()->getSoundResourceId()*/ != kResourceNone && getSound()->isPlaying(_soundResourceId/*getSpeech()->getSoundResourceId()*/)) { // TODO replace with speech
+		getSound()->stopAll(_soundResourceId);
 		return true;
 	}
 
@@ -1146,7 +1148,7 @@ void Encounter::drawSubtitle(char *text, ResourceId font, int16 y) {
 
 	if (_data_455BCC) {
 		if (_data_455B3C != 1 && _tick < _vm->getTick()) {
-			_tick = _vm->getTick() + 1000 * (getResource()->get(getSpeech()->getSoundResourceId())->size / 11025) / (uint16)_data_455B3C;
+			_tick = _vm->getTick() + 1000 * (getResource()->get(_soundResourceId/*getSpeech()->getSoundResourceId()*/)->size / 11025) / (uint16)_data_455B3C; // TODO replace with speech
 
 			if ((_data_455BF0 + 8) < _data_455B70)
 				_data_455BF0 += 8;
@@ -1156,7 +1158,7 @@ void Encounter::drawSubtitle(char *text, ResourceId font, int16 y) {
 		_data_455B70 = getText()->draw(kTextCalculate, Common::Point(x, y), 16, width, text);
 		_data_455B3C = _data_455B70 / 8 + 1;
 		_data_455BF0 = 0;
-		_tick = _vm->getTick() + 1000 * (getResource()->get(getSpeech()->getSoundResourceId())->size / 11025) / (uint16)_data_455B3C;
+		_tick = _vm->getTick() + 1000 * (getResource()->get(_soundResourceId/*getSpeech()->getSoundResourceId()*/)->size / 11025) / (uint16)_data_455B3C; // TODO replace with speech
 	}
 
 	getText()->draw(_data_455BF0, 7, kTextCenter, Common::Point(x, y), 16, width, text);
@@ -1429,7 +1431,7 @@ bool Encounter::updateScreen() {
 			if (!_data_455BDC && !_objectId1 && !_objectId2 && !_actorIndex)
 				error("[Encounter::updateScreen] Invalid encounter resources!");
 
-			getSound()->playSound(getSpeech()->getSoundResourceId(), false, Config.voiceVolume);
+			getSound()->playSound(_soundResourceId/*getSpeech()->getSoundResourceId()*/, false, Config.voiceVolume); // TODO replace with speech
 		}
 
 		return false;
