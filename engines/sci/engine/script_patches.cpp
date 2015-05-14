@@ -2335,29 +2335,37 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 //  which finally re-enables controls
 //
 // A fix is difficult to implement. The code in script 20 is generic and used by multiple objects
-//  That's why I have decided to change the responsible globals (66h and A1h) during mountSaurus::changeState(5)
 //
-// This fix could cause issues in case there is a cutscene, that contains ego getting on a saurus and
-//  requires controls not getting re-enabled after getting back up on the saurus.
+// Originally I decided to change the responsible globals (66h and A1h) during mountSaurus::changeState(5).
+//  This worked as far as for controls, but mountSaurus::init changes a few selectors of ego as well, which
+//  won't get restored in that situation, which then messes up room changes and other things.
+//
+// I have now decided to change sheepScript::changeState(2) in script 665 instead.
+//
+// This fix could cause issues in case there is a cutscene, where ego is supposed to get onto the saurus using
+//  sheepScript.
 //
 // Applies to at least: English PC Floppy, English Amiga Floppy
 // Responsible method: mountSaurus::changeState(), mountSaurus::init(), mountSaurus::dispose()
 // Fixes bug: #5156
 static const uint16 qfg2SignatureSaurusFreeze[] = {
 	0x3c,                               // dup
-	0x35, 0x05,                         // ldi 5
+	0x35, 0x02,                         // ldi 5
 	SIG_MAGICDWORD,
 	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x004e),           // bnt [ret]
-	0x39, SIG_SELECTOR8(contains),      // pushi [selector contains]
-	0x78,                               // push1
+	0x30, SIG_UINT16(0x0043),           // bnt [ret]
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+61),               // skip to dispose code
+	0x39, SIG_SELECTOR8(dispose),       // pushi "dispose"
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04
 	SIG_END
 };
 
 static const uint16 qfg2PatchSaurusFreeze[] = {
-	0x35, 0x01,                         // ldi 1
-	0xa1, 0x66,                         // sag 66h
-	0xa0, SIG_UINT16(0x00a1),           // sag 00A1h
+	0x81, 0x66,                         // lag 66h
+	0x2e, SIG_UINT16(0x0040),           // bt [to dispose code]
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
 	PATCH_END
 };
 
@@ -2441,7 +2449,7 @@ static const uint16 qfg2PatchImportCharType[] = {
 
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
-	{  true,   660, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
+	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
 	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
 	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
