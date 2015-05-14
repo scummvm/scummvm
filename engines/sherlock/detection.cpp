@@ -25,6 +25,7 @@
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 namespace Sherlock {
@@ -57,11 +58,29 @@ static const PlainGameDescriptor sherlockGames[] = {
 	{0, 0}
 };
 
+
+#define GAMEOPTION_ORIGINAL_SAVES	GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVES,
+		{
+			_s("Use original savegame dialog"),
+			_s("Files button in-game shows original savegame dialog rather than ScummVM menu"),
+			"OriginalSaves",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 #include "sherlock/detection_tables.h"
 
 class SherlockMetaEngine : public AdvancedMetaEngine {
 public:
-	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription), sherlockGames) {}
+	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription), 
+		sherlockGames, optionsList) {}
 
 	virtual const char *getName() const {
 		return "Sherlock Engine";

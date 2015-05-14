@@ -1420,17 +1420,24 @@ void UserInterface::doMainControl() {
 			break;
 		case 'F':
 			pushButton(10);
-			_menuMode = FILES_MODE;
 
 			// Create a thumbnail of the current screen before the files dialog is shown, in case
 			// the user saves the game
 			saves.createThumbnail();
 
-			// Display the dialog
-			saves.drawInterface();
-
 			_selector = _oldSelector = -1;
-			_windowOpen = true;
+
+			if (_vm->_showOriginalSavesDialog) {
+				// Show the original dialog
+				_menuMode = FILES_MODE;
+				saves.drawInterface();
+				_windowOpen = true;
+			} else {
+				// Show the ScummVM GMM instead
+				_vm->_canLoadSave = true;
+				_vm->openMainMenuDialog();
+				_vm->_canLoadSave = false;
+			}
 			break;
 		case 'S':
 			pushButton(11);

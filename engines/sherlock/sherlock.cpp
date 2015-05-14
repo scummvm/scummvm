@@ -48,6 +48,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_useEpilogue2 = false;
 	_loadGameSlot = -1;
 	_canLoadSave = false;
+	_showOriginalSavesDialog = false;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -103,6 +104,9 @@ void SherlockEngine::initialize() {
 Common::Error SherlockEngine::run() {
 	// Initialize the engine
 	initialize();
+
+	// Flag for whether to show original saves dialog rather than the ScummVM GMM
+	_showOriginalSavesDialog = ConfMan.hasKey("OriginalSaves") && ConfMan.getBool("OriginalSaves");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
