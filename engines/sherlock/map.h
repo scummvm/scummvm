@@ -29,7 +29,7 @@
 #include "common/serializer.h"
 #include "common/str.h"
 #include "common/str-array.h"
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "sherlock/objects.h"
 
 namespace Sherlock {

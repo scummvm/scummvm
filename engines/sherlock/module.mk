@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	debugger.o \
 	detection.o \
 	events.o \
-	graphics.o \
 	inventory.o \
 	journal.o \
 	map.o \
@@ -22,6 +21,7 @@ MODULE_OBJS = \
 	settings.o \
 	sherlock.o \
 	sound.o \
+	surface.o \
 	talk.o \
 	user_interface.o
 

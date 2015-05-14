@@ -21,7 +21,7 @@
  */
 
 #include "sherlock/sherlock.h"
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"

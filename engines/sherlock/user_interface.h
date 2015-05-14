@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
 

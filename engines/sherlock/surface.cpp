@@ -20,7 +20,7 @@
  *
  */
 
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "sherlock/sherlock.h"
 #include "common/system.h"
 #include "graphics/palette.h"

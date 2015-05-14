@@ -26,8 +26,7 @@
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/serializer.h"
-#include "graphics/surface.h"
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "sherlock/resources.h"
 
 namespace Sherlock {
