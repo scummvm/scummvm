@@ -213,15 +213,18 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 
 void Script::identifyOffsets() {
 	offsetLookupArrayEntry arrayEntry;
-	byte *scriptDataPtr  = NULL;
-	byte *stringStartPtr = NULL;
-	byte *stringDataPtr  = NULL;
+	const byte *scriptDataPtr  = NULL;
+	const byte *stringStartPtr = NULL;
+	const byte *stringDataPtr  = NULL;
 	int scriptDataLeft   = 0;
 	int stringDataLeft   = 0;
 	byte stringDataByte  = 0;
 	uint16 typeObject_id = 0;
 	uint16 typeString_id = 0;
 	uint16 typeSaid_id   = 0;
+
+	uint16 blockType = 0;
+	uint16 blockSize = 0;
 
 	_offsetLookupArray.clear();
 	if (getSciVersion() < SCI_VERSION_1_1) {
@@ -236,9 +239,6 @@ void Script::identifyOffsets() {
 			scriptDataPtr  += 2;
 			scriptDataLeft -= 2;
 		}
-
-		uint16 blockType;
-		uint16 blockSize;
 
 		do {
 			if (scriptDataLeft < 2)
@@ -392,13 +392,10 @@ void Script::identifyOffsets() {
 		if (scriptDataLeft < endOfStringOffset)
 			error("Script::identifyOffsets(): end of string is beyond heap size in script %d", _nr);
 
-		byte  *endOfStringPtr    = scriptDataPtr + endOfStringOffset;
+		const byte *endOfStringPtr    = scriptDataPtr + endOfStringOffset;
 
 		scriptDataPtr  += objectStartOffset;
 		scriptDataLeft -= objectStartOffset;
-
-		uint16 blockType;
-		uint16 blockSize;
 
 		// go through all objects
 		do {
@@ -423,6 +420,8 @@ void Script::identifyOffsets() {
 				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
 			blockSize = READ_SCI11ENDIAN_UINT16(scriptDataPtr) * 2;
+			if (blockSize < 4)
+				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 			scriptDataPtr  += 2;
 			scriptDataLeft -= 2;
 			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
@@ -484,6 +483,44 @@ void Script::identifyOffsets() {
 		if (sci3relocationOffset > _bufSize)
 			error("Script::identifyOffsets(): relocation offset is beyond end of script %d", _nr);
 
+		// First we get all the objects
+		scriptDataPtr = getSci3ObjectsPointer();
+		scriptDataLeft = _bufSize - (scriptDataPtr - _buf);
+		do {
+			if (scriptDataLeft < 2)
+				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
+
+			blockType = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+			if (blockType != SCRIPT_OBJECT_MAGIC_NUMBER)
+				break;
+
+			// Object found, add offset of object
+			typeObject_id++;
+			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
+			arrayEntry.id         = typeObject_id;
+			arrayEntry.offset     = scriptDataPtr - _buf - 2; // the VM uses a pointer to the Magic-Number
+			arrayEntry.stringSize = 0;
+			_offsetLookupArray.push_back(arrayEntry);
+
+			if (scriptDataLeft < 2)
+				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
+
+			blockSize = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
+			if (blockSize < 4)
+				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
+			scriptDataPtr  += 2;
+			scriptDataLeft -= 2;
+			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
+			if (scriptDataLeft < blockSize)
+				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
+
+			scriptDataPtr  += blockSize;
+			scriptDataLeft -= blockSize;
+		} while (1);
+
+		// And now we get all the strings
 		if (sci3stringOffset > 0) {
 			// string offset set, we expect strings
 			if (sci3stringOffset > _bufSize)
