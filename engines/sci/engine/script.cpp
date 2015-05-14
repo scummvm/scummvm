@@ -65,7 +65,7 @@ void Script::freeScript() {
 	_lockers = 1;
 	_markedAsDeleted = false;
 	_objects.clear();
-	_stringLookupList.clear();
+	_offsetLookupArray.clear();
 }
 
 void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
@@ -208,39 +208,41 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 	}
 
 	// find all strings of this script
-	identifyStrings();
+	identifyOffsets();
 }
 
-void Script::identifyStrings() {
-	stringLookupListEntry listEntry;
+void Script::identifyOffsets() {
+	offsetLookupArrayEntry arrayEntry;
 	byte *scriptDataPtr  = NULL;
 	byte *stringStartPtr = NULL;
 	byte *stringDataPtr  = NULL;
 	int scriptDataLeft   = 0;
 	int stringDataLeft   = 0;
 	byte stringDataByte  = 0;
+	uint16 typeObject_id = 0;
+	uint16 typeString_id = 0;
+	uint16 typeSaid_id   = 0;
 
-	_stringLookupList.clear();
-	//stringLookupListType _stringLookupList; // Table of string data, that is inside the currently loaded script
-
+	_offsetLookupArray.clear();
 	if (getSciVersion() < SCI_VERSION_1_1) {
+		// SCI0 + SCI1
 		scriptDataPtr  = _buf;
 		scriptDataLeft = _bufSize;
 
-		// Go through all SCI_OBJ_STRINGS blocks
+		// Go through all blocks
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			if (scriptDataLeft < 2)
-				error("Script::identifyStrings(): unexpected end of script");
+				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 			scriptDataPtr  += 2;
 			scriptDataLeft -= 2;
 		}
-		
+
 		uint16 blockType;
 		uint16 blockSize;
 
 		do {
 			if (scriptDataLeft < 2)
-				error("Script::identifyStrings(): unexpected end of script");
+				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
 			blockType = READ_LE_UINT16(scriptDataPtr);
 			scriptDataPtr  += 2;
@@ -249,29 +251,49 @@ void Script::identifyStrings() {
 				break;
 
 			if (scriptDataLeft < 2)
-				error("Script::identifyStrings(): unexpected end of script");
+				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
 			blockSize = READ_LE_UINT16(scriptDataPtr);
 			if (blockSize < 4)
-				error("Script::identifyStrings(): invalid block size");
+				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 			blockSize      -= 4; // block size includes block-type UINT16 and block-size UINT16
 			scriptDataPtr  += 2;
 			scriptDataLeft -= 2;
 
 			if (scriptDataLeft < blockSize)
-				error("Script::identifyStrings(): invalid block size");
-			
-			if (blockType == SCI_OBJ_STRINGS) {
+				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
+
+			switch (blockType) {
+			case SCI_OBJ_OBJECT:
+			case SCI_OBJ_CLASS:
+				typeObject_id++;
+				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
+				arrayEntry.id         = typeObject_id;
+				arrayEntry.offset     = scriptDataPtr - _buf + 8; // Calculate offset inside script data (VM uses +8)
+				arrayEntry.stringSize = 0;
+				_offsetLookupArray.push_back(arrayEntry);
+				break;
+
+			case SCI_OBJ_STRINGS:
 				// string block detected, we now grab all NUL terminated strings out of this block
 				stringDataPtr  = scriptDataPtr;
 				stringDataLeft = blockSize;
+
+				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
 
 				do {
 					if (stringDataLeft < 1) // no more bytes left
 						break;
 
 					stringStartPtr = stringDataPtr;
-					listEntry.ptrOffset = stringStartPtr - _buf; // Calculate offset inside script data
+
+					if (stringDataLeft == 1) {
+						// only 1 byte left and that byte is a [00], in that case we also exit
+						stringDataByte = *stringStartPtr;
+						if (stringDataByte == 0x00)
+							break;
+					}
+
 					// now look for terminating [NUL]
 					do {
 						stringDataByte = *stringDataPtr;
@@ -279,13 +301,75 @@ void Script::identifyStrings() {
 						stringDataLeft--;
 						if (!stringDataByte) // NUL found, exit this loop
 							break;
-						if (stringDataLeft < 1) // no more bytes left
-							error("Script::identifyStrings(): string without terminating NUL");
+						if (stringDataLeft < 1) {
+							// no more bytes left
+							warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
+							break;
+						}
 					} while (1);
 
-					listEntry.stringSize = stringDataPtr - stringStartPtr;
-					_stringLookupList.push_back(listEntry);
+					if (stringDataByte)
+						break;
+
+					typeString_id++;
+					arrayEntry.id         = typeString_id;
+					arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+					arrayEntry.stringSize = stringDataPtr - stringStartPtr;
+					_offsetLookupArray.push_back(arrayEntry);
 				} while (1);
+				break;
+
+			case SCI_OBJ_SAID:
+				// said block detected, we now try to find every single said "string" inside this block
+				// said strings are terminated with a 0xFF, the string itself may contain words (2 bytes), where
+				//  the second byte of a word may also be a 0xFF.
+				stringDataPtr  = scriptDataPtr;
+				stringDataLeft = blockSize;
+
+				arrayEntry.type       = SCI_SCR_OFFSET_TYPE_SAID;
+
+				do {
+					if (stringDataLeft < 1) // no more bytes left
+						break;
+
+					stringStartPtr = stringDataPtr;
+					if (stringDataLeft == 1) {
+						// only 1 byte left and that byte is a [00], in that case we also exit
+						// happens in some scripts, for example Conquests of Camelot, script 997
+						// may have been a bug in the compiler or just an intentional filler byte
+						stringDataByte = *stringStartPtr;
+						if (stringDataByte == 0x00)
+							break;
+					}
+
+					// now look for terminating 0xFF
+					do {
+						stringDataByte = *stringDataPtr;
+						stringDataPtr++;
+						stringDataLeft--;
+						if (stringDataByte == 0xFF) // Terminator found, exit this loop
+							break;
+						if (stringDataLeft < 1) // no more bytes left
+							error("Script::identifyOffsets(): said-string without terminator in script %d", _nr);
+						if (stringDataByte < 0xF0) {
+							// Part of a word, skip second byte
+							stringDataPtr++;
+							stringDataLeft--;
+							if (stringDataLeft < 1) // no more bytes left
+								error("Script::identifyOffsets(): said-string without terminator in script %d", _nr);
+						}
+					} while (1);
+
+					typeSaid_id++;
+					arrayEntry.id         = typeSaid_id;
+					arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+					arrayEntry.stringSize = 0;
+					_offsetLookupArray.push_back(arrayEntry);
+				} while (1);
+				break;
+
+			default:
+				break;
 			}
 
 			scriptDataPtr  += blockSize;
@@ -293,20 +377,20 @@ void Script::identifyStrings() {
 		} while (1);
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
-		// Strings in SCI1.1 come after the object instances
+		// Strings in SCI1.1 up to SCI2 come after the object instances
 		scriptDataPtr = _heapStart;
 		scriptDataLeft = _heapSize;
 
 		if (scriptDataLeft < 4)
-			error("Script::identifyStrings(): unexpected end of script");
+			error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
 		uint16 endOfStringOffset = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
 		uint16 objectStartOffset = READ_SCI11ENDIAN_UINT16(scriptDataPtr + 2) * 2 + 4;
 
 		if (scriptDataLeft < objectStartOffset)
-			error("Script::identifyStrings(): object start is beyond heap size");
+			error("Script::identifyOffsets(): object start is beyond heap size in script %d", _nr);
 		if (scriptDataLeft < endOfStringOffset)
-			error("Script::identifyStrings(): end of string is beyond heap size");
+			error("Script::identifyOffsets(): end of string is beyond heap size in script %d", _nr);
 
 		byte  *endOfStringPtr    = scriptDataPtr + endOfStringOffset;
 
@@ -316,10 +400,10 @@ void Script::identifyStrings() {
 		uint16 blockType;
 		uint16 blockSize;
 
-		// skip all objects
+		// go through all objects
 		do {
 			if (scriptDataLeft < 2)
-				error("Script::identifyStrings(): unexpected end of script");
+				error("Script::identifyOffsets(): unexpected end of script %d", _nr);
 
 			blockType = READ_SCI11ENDIAN_UINT16(scriptDataPtr);
 			scriptDataPtr  += 2;
@@ -327,15 +411,23 @@ void Script::identifyStrings() {
 			if (blockType != SCRIPT_OBJECT_MAGIC_NUMBER)
 				break;
 
+			// Object found, add offset of object
+			typeObject_id++;
+			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_OBJECT;
+			arrayEntry.id         = typeObject_id;
+			arrayEntry.offset     = scriptDataPtr - _buf - 2; // the VM uses a pointer to the Magic-Number
+			arrayEntry.stringSize = 0;
+			_offsetLookupArray.push_back(arrayEntry);
+
 			if (scriptDataLeft < 2)
-				error("Script::identifyStrings(): unexpected end of script");
+				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
 
 			blockSize = READ_SCI11ENDIAN_UINT16(scriptDataPtr) * 2;
 			scriptDataPtr  += 2;
 			scriptDataLeft -= 2;
 			blockSize -= 4; // blocksize contains UINT16 type and UINT16 size
 			if (scriptDataLeft < blockSize)
-				error("Script::identifyStrings(): invalid block size");
+				error("Script::identifyOffsets(): invalid block size in script %d", _nr);
 
 			scriptDataPtr  += blockSize;
 			scriptDataLeft -= blockSize;
@@ -343,17 +435,17 @@ void Script::identifyStrings() {
 
 		// now scriptDataPtr points to right at the start of the strings
 		if (scriptDataPtr > endOfStringPtr)
-			error("Script::identifyStrings(): string block / end-of-string block mismatch");
+			error("Script::identifyOffsets(): string block / end-of-string block mismatch in script %d", _nr);
 
 		stringDataPtr  = scriptDataPtr;
 		stringDataLeft = endOfStringPtr - scriptDataPtr; // Calculate byte count within string-block
 
+		arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
 		do {
 			if (stringDataLeft < 1) // no more bytes left
 				break;
 
 			stringStartPtr = stringDataPtr;
-			listEntry.ptrOffset = stringStartPtr - _buf; // Calculate offset inside script data
 			// now look for terminating [NUL]
 			do {
 				stringDataByte = *stringDataPtr;
@@ -361,35 +453,112 @@ void Script::identifyStrings() {
 				stringDataLeft--;
 				if (!stringDataByte) // NUL found, exit this loop
 					break;
-				if (stringDataLeft < 1) // no more bytes left
-					error("Script::identifyStrings(): string without terminating NUL");
+				if (stringDataLeft < 1) {
+				    // no more bytes left
+					warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
+					break;
+				}
 			} while (1);
 
-			listEntry.stringSize = stringDataPtr - stringStartPtr;
-			_stringLookupList.push_back(listEntry);
+			if (stringDataByte)
+				break;
+
+			typeString_id++;
+			arrayEntry.id         = typeString_id;
+			arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+			arrayEntry.stringSize = stringDataPtr - stringStartPtr;
+			_offsetLookupArray.push_back(arrayEntry);
 		} while (1);
 
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		warning("TODO: identifyStrings(): Implement SCI3 variant");
+		// SCI3
+		uint32 sci3stringOffset = 0;
+		uint32 sci3relocationOffset = 0;
+
+		if (_bufSize < 22)
+			error("Script::identifyOffsets(): script %d smaller than expected SCI3-header", _nr);
+
+		sci3stringOffset = READ_LE_UINT32(_buf + 4);
+		sci3relocationOffset = READ_LE_UINT32(_buf + 8);
+
+		if (sci3relocationOffset > _bufSize)
+			error("Script::identifyOffsets(): relocation offset is beyond end of script %d", _nr);
+
+		if (sci3stringOffset > 0) {
+			// string offset set, we expect strings
+			if (sci3stringOffset > _bufSize)
+				error("Script::identifyOffsets(): string offset is beyond end of script %d", _nr);
+
+			if (sci3relocationOffset < sci3stringOffset)
+				error("Script::identifyOffsets(): string offset points beyond relocation offset in script %d", _nr);
+
+			stringDataPtr  = _buf + sci3stringOffset;
+			stringDataLeft = sci3relocationOffset - sci3stringOffset;
+
+			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
+
+			do {
+				if (stringDataLeft < 1) // no more bytes left
+					break;
+
+				stringStartPtr = stringDataPtr;
+
+				if (stringDataLeft == 1) {
+					// only 1 byte left and that byte is a [00], in that case we also exit
+					stringDataByte = *stringStartPtr;
+					if (stringDataByte == 0x00)
+						break;
+				}
+
+				// now look for terminating [NUL]
+				do {
+					stringDataByte = *stringDataPtr;
+					stringDataPtr++;
+					stringDataLeft--;
+					if (!stringDataByte) // NUL found, exit this loop
+						break;
+					if (stringDataLeft < 1) {
+						// no more bytes left
+						warning("Script::identifyOffsets(): string without terminating NUL in script %d", _nr);
+						break;
+					}
+				} while (1);
+
+				if (stringDataByte)
+					break;
+
+				typeString_id++;
+				arrayEntry.id         = typeString_id;
+				arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
+				arrayEntry.stringSize = stringDataPtr - stringStartPtr;
+				_offsetLookupArray.push_back(arrayEntry);
+			} while (1);
+		}
+
+		// Figure out more stuff in SCI3 scripts
+		warning("TODO: identifyOffsets(): Implement SCI3 variant");
 		return;
 	}
 }
 
 void Script::debugPrintStrings(Console *con) {
-	stringLookupListType::iterator it;
-	const stringLookupListType::iterator end = _stringLookupList.end();
+	offsetLookupArrayType::iterator it;
+	const offsetLookupArrayType::iterator end = _offsetLookupArray.end();
 	byte *stringPtr;
+	int stringCount = 0;
 
-	if (!_stringLookupList.size()) {
-		con->debugPrintf(" no strings\n");
-		debugN(" no strings\n");
-		return;
+	for (it = _offsetLookupArray.begin(); it != end; ++it) {
+		if (it->type == SCI_SCR_OFFSET_TYPE_STRING) {
+			stringPtr = _buf + it->offset;
+			con->debugPrintf(" %03d:%04x: '%s' (size %d)\n", it->id, it->offset, stringPtr, it->stringSize);
+			debugN(" %03d:%04x: '%s' (size %d)\n", it->id, it->offset, stringPtr, it->stringSize);
+			stringCount++;
+		}
 	}
 
-	for (it = _stringLookupList.begin(); it != end; ++it) {
-		stringPtr = _buf + it->ptrOffset;
-		con->debugPrintf(" %04x: '%s' (size %d)\n", it->ptrOffset, stringPtr, it->stringSize);
-		debugN(" %04x: '%s' (size %d)\n", it->ptrOffset, stringPtr, it->stringSize);
+	if (stringCount == 0) {
+		con->debugPrintf(" no strings\n");
+		debugN(" no strings\n");
 	}
 }
 
