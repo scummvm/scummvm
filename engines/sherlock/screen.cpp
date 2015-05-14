@@ -141,6 +141,7 @@ void Screen::fadeToBlack(int speed) {
 	}
 
 	setPalette(tempPalette);
+	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
 }
 
 /**
