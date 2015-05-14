@@ -168,6 +168,7 @@ private:
 	// Running encounter data
 	int32 _index;
 	int32 _speechResourceId;
+	ResourceId _soundResourceId;
 	EncounterItem *_item;
 	ObjectId _objectId1;
 	ObjectId _objectId2;
