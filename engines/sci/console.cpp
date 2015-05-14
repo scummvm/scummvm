@@ -3374,6 +3374,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		// We call run_engine explictly so we can restore the value of r_acc
 		// after execution.
 		run_vm(_engine->_gamestate);
+		_engine->_gamestate->xs = old_xstack;
 
 	}
 
