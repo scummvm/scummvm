@@ -2901,6 +2901,7 @@ bool Console::cmdScriptSaid(int argc, const char **argv) {
 
 void Console::printOffsets(int scriptNr, uint16 showType) {
 	SegManager *segMan = _engine->_gamestate->_segMan;
+	Vocabulary *vocab = _engine->_vocabulary;
 	SegmentId curSegmentNr;
 	Common::List<SegmentId> segmentNrList;
 
@@ -2935,6 +2936,7 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 	reg_t objectPos;
 	const char *objectNamePtr = NULL;
 	const byte *stringPtr = NULL;
+	const byte *saidPtr = NULL;
 
 	Common::List<SegmentId>::iterator it;
 	const Common::List<SegmentId>::iterator end = segmentNrList.end();
@@ -2974,8 +2976,11 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 					debugN(" %03d:%04x: '%s' (size %d)\n", arrayIterator->id, arrayIterator->offset, stringPtr, arrayIterator->stringSize);
 					break;
 				case SCI_SCR_OFFSET_TYPE_SAID:
+					saidPtr = curScriptData + arrayIterator->offset;
 					debugPrintf(" %03d:%04x:\n", arrayIterator->id, arrayIterator->offset);
-					debugN(" %03d:%04x:\n", arrayIterator->id, arrayIterator->offset);
+					debugN(" %03d:%04x: ", arrayIterator->id, arrayIterator->offset);
+					vocab->debugDecipherSaidBlock(saidPtr);
+					debugN("\n");
 					break;
 				default:
 					break;

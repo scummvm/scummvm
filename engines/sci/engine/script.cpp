@@ -541,27 +541,6 @@ void Script::identifyOffsets() {
 	}
 }
 
-void Script::debugPrintStrings(Console *con) {
-	offsetLookupArrayType::iterator it;
-	const offsetLookupArrayType::iterator end = _offsetLookupArray.end();
-	byte *stringPtr;
-	int stringCount = 0;
-
-	for (it = _offsetLookupArray.begin(); it != end; ++it) {
-		if (it->type == SCI_SCR_OFFSET_TYPE_STRING) {
-			stringPtr = _buf + it->offset;
-			con->debugPrintf(" %03d:%04x: '%s' (size %d)\n", it->id, it->offset, stringPtr, it->stringSize);
-			debugN(" %03d:%04x: '%s' (size %d)\n", it->id, it->offset, stringPtr, it->stringSize);
-			stringCount++;
-		}
-	}
-
-	if (stringCount == 0) {
-		con->debugPrintf(" no strings\n");
-		debugN(" no strings\n");
-	}
-}
-
 const byte *Script::getSci3ObjectsPointer() {
 	const byte *ptr = 0;
 

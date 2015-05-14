@@ -271,11 +271,6 @@ public:
 	 */
 	const offsetLookupArrayType *getOffsetArray() { return &_offsetLookupArray; };
 
-	/**
-	 * Print string lookup table (list) to debug console
-	 */
-	void debugPrintStrings(Console *con);
-
 private:
 	/**
 	 * Processes a relocation block within a SCI0-SCI2.1 script
