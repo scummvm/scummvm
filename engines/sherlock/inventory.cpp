@@ -49,8 +49,6 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_invGraphicsLoaded = false;
 	_invIndex = 0;
 	_holdings = 0;
-	_oldFlag = 0;
-	_invFlag = 0;
 	_invMode = INVMODE_EXIT;
 }
 
@@ -215,7 +213,6 @@ void Inventory::drawInventory(int flag) {
 	UserInterface &ui = *_vm->_ui;
 	int tempFlag = flag;
 
-	_oldFlag = 7;
 	loadInv();
 
 	if (flag == 128) {
@@ -257,10 +254,8 @@ void Inventory::drawInventory(int flag) {
 
 	if (flag) {
 		ui._oldKey = INVENTORY_COMMANDS[flag];
-		_oldFlag = flag;
 	} else {
 		ui._oldKey = -1;
-		_invFlag = 6;
 	}
 
 	invCommands(0);
