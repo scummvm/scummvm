@@ -40,7 +40,7 @@ Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, int
 	uint16 lzWindowPos;
 	uint16 cmd;
 
-	byte *outBuffer = new byte[outSize];
+	byte *outBuffer = (byte *)malloc(outSize);
 	byte *outBufferEnd = outBuffer + outSize;
 	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
 
