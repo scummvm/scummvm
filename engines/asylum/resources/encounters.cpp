@@ -1544,7 +1544,7 @@ void Encounter::runScript() {
 
 		case kOpcodeSetCurrentItemOptions:
 			if (entry.param1)
-				_item->keywords[findKeyword(_item, entry.param2)] &= ~(kKeywordOptionsDisabled << 8);
+				_item->keywords[findKeyword(_item, entry.param2)] &= ~((kKeywordOptionsDisabled << 8) + 1);
 			else
 				_item->keywords[findKeyword(_item, entry.param2)] |= (kKeywordOptionsVisible << 8);
 			break;
@@ -1553,7 +1553,7 @@ void Encounter::runScript() {
 			if (entry.param1)
 				_item->keywords[findKeyword(_item, entry.param2)] |= (kKeywordOptionsDisabled << 8);
 			else
-				_item->keywords[findKeyword(_item, entry.param2)] &= ~(kKeywordOptionsVisible << 8);
+				_item->keywords[findKeyword(_item, entry.param2)] &= ~((kKeywordOptionsVisible << 8) + 1);
 			break;
 
 		case kOpcodeSetItemOptions:
@@ -1643,7 +1643,7 @@ void Encounter::runScript() {
 			break;
 
 		case kOpcodeSetCounterFromActorReactions:
-			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
+			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 1 : 0;
 			break;
 
 		case kOpcodePrepareMovie:
