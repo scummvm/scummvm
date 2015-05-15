@@ -643,6 +643,7 @@ struct AgiGame {
 	int simpleSave;					/**< select simple savegames */
 
 	Common::Rect mouseFence;		/**< rectangle set by fence.mouse command */
+	bool mouseEnabled;              /**< if mouse is supposed to be active */
 
 	// IF condition handling
 	int testResult;

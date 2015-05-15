@@ -97,50 +97,62 @@ void AgiEngine::processEvents() {
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			key = BUTTON_LEFT;
-			_mouse.button = kAgiMouseButtonLeft;
-			keyEnqueue(key);
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				key = BUTTON_LEFT;
+				_mouse.button = kAgiMouseButtonLeft;
+				keyEnqueue(key);
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
+			}
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			key = BUTTON_RIGHT;
-			_mouse.button = kAgiMouseButtonRight;
-			keyEnqueue(key);
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				key = BUTTON_RIGHT;
+				_mouse.button = kAgiMouseButtonRight;
+				keyEnqueue(key);
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
+			}
 			break;
 		case Common::EVENT_WHEELUP:
-			key = WHEEL_UP;
-			keyEnqueue(key);
+			if (_game.mouseEnabled) {
+				key = WHEEL_UP;
+				keyEnqueue(key);
+			}
 			break;
 		case Common::EVENT_WHEELDOWN:
-			key = WHEEL_DOWN;
-			keyEnqueue(key);
+			if (_game.mouseEnabled) {
+				key = WHEEL_DOWN;
+				keyEnqueue(key);
+			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
 
-			if (!_game.mouseFence.isEmpty()) {
-				if (_mouse.x < _game.mouseFence.left)
-					_mouse.x = _game.mouseFence.left;
-				if (_mouse.x > _game.mouseFence.right)
-					_mouse.x = _game.mouseFence.right;
-				if (_mouse.y < _game.mouseFence.top)
-					_mouse.y = _game.mouseFence.top;
-				if (_mouse.y > _game.mouseFence.bottom)
-					_mouse.y = _game.mouseFence.bottom;
+				if (!_game.mouseFence.isEmpty()) {
+					if (_mouse.x < _game.mouseFence.left)
+						_mouse.x = _game.mouseFence.left;
+					if (_mouse.x > _game.mouseFence.right)
+						_mouse.x = _game.mouseFence.right;
+					if (_mouse.y < _game.mouseFence.top)
+						_mouse.y = _game.mouseFence.top;
+					if (_mouse.y > _game.mouseFence.bottom)
+						_mouse.y = _game.mouseFence.bottom;
 
-				g_system->warpMouse(_mouse.x, _mouse.y);
+					g_system->warpMouse(_mouse.x, _mouse.y);
+				}
 			}
 
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_mouse.button = kAgiMouseButtonUp;
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				_mouse.button = kAgiMouseButtonUp;
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
+			}
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
@@ -496,6 +508,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("originalsaveload", "false");
 	ConfMan.registerDefault("altamigapalette", "false");
+	ConfMan.registerDefault("enablemouse", "true");
 
 	_noSaveLoadAllowed = false;
 
@@ -549,6 +562,13 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
 	memset(&_mouse, 0, sizeof(struct Mouse));
+
+	_game.mouseEnabled = true;
+	if (!ConfMan.getBool("enablemouse")) {
+		// we actually do disable mouse instead of enabling it in case the option is set
+		//  that's because we do not show the option at all for all Amiga games and certain fanmade games
+		_game.mouseEnabled = false;
+	}
 
 	_game._vm = this;
 
@@ -708,7 +728,9 @@ Common::Error AgiBase::init() {
 }
 
 Common::Error AgiEngine::go() {
-	CursorMan.showMouse(true);
+	if (_game.mouseEnabled) {
+		CursorMan.showMouse(true);
+	}
 	setTotalPlayTime(0);
 
 	if (_game.state < STATE_LOADED) {

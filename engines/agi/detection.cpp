@@ -152,7 +152,48 @@ static const ExtraGuiOption agiExtraGuiOptionAmiga = {
 	false
 };
 
+static const ExtraGuiOption agiExtraGuiOptionEnableMouse = {
+	_s("Enable mouse"),
+	_s("Enables mouse. Games, that require a mouse, will have mouse always enabled."),
+	"enablemouse",
+	true
+};
+
 #include "agi/detection_tables.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
+		{
+			_s("Use an alternative palette"),
+			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
+			"altamigapalette",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_DISABLE_MOUSE,
+		{
+			_s("Enable mouse"),
+			_s("Enables mouse. Games, that require a mouse, will have mouse always enabled."),
+			"enablemouse",
+			true
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 using namespace Agi;
 
@@ -161,7 +202,7 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 	mutable Common::String	_extra;
 
 public:
-	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
+	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
 		_singleid = "agi";
 		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
@@ -175,7 +216,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
+	//virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -234,6 +275,10 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	return res;
 }
 
+// TODO: original 2 gui engine options are not shown for games, that were detected before our change
+//        because gui-options from the detection-table are saved internally.
+//        I also can't set those 2 options manually in case they were not set by optionsList[]
+#if 0
 const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(agiExtraGuiOption);
@@ -241,6 +286,7 @@ const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &ta
 		options.push_back(agiExtraGuiOptionAmiga);
 	return options;
 }
+#endif
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	const uint32 AGIflag = MKTAG('A','G','I',':');
