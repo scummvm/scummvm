@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/timer.h"
 #include "common/translation.h"
 
 namespace OPL {
@@ -184,6 +185,63 @@ void OPL::stop() {
 }
 
 bool OPL::_hasInstance = false;
+
+RealOPL::RealOPL() : _baseFreq(0), _remainingTicks(0) {
+}
+
+RealOPL::~RealOPL() {
+	// Stop callbacks, just in case. If it's still playing at this
+	// point, there's probably a bigger issue, though. The subclass
+	// needs to call stop() or the pointer can still use be used in
+	// the mixer thread at the same time.
+	stop();
+}
+
+void RealOPL::setCallbackFrequency(int timerFrequency) {
+	stopCallbacks();
+	startCallbacks(timerFrequency);
+}
+
+void RealOPL::startCallbacks(int timerFrequency) {
+	_baseFreq = timerFrequency;
+	assert(_baseFreq > 0);
+
+	// We can't request more a timer faster than 100Hz. We'll handle this by calling
+	// the proc multiple times in onTimer() later on.
+	if (timerFrequency > kMaxFreq)
+		timerFrequency = kMaxFreq;
+
+	_remainingTicks = 0;
+	g_system->getTimerManager()->installTimerProc(timerProc, 1000000 / timerFrequency, this, "RealOPL");
+}
+
+void RealOPL::stopCallbacks() {
+	g_system->getTimerManager()->removeTimerProc(timerProc);
+	_baseFreq = 0;
+	_remainingTicks = 0;
+}
+
+void RealOPL::timerProc(void *refCon) {
+	static_cast<RealOPL *>(refCon)->onTimer();
+}
+
+void RealOPL::onTimer() {
+	uint callbacks = 1;
+
+	if (_baseFreq > kMaxFreq) {
+		// We run faster than our max, so run the callback multiple
+		// times to approximate the actual timer callback frequency.
+		uint totalTicks = _baseFreq + _remainingTicks;		
+		callbacks = totalTicks / kMaxFreq;
+		_remainingTicks = totalTicks % kMaxFreq;
+	}
+
+	// Call the callback multiple times. The if is on the inside of the
+	// loop in case the callback removes itself.
+	for (uint i = 0; i < callbacks; i++)
+		if (_callback && _callback->isValid())
+			(*_callback)();
+}
 
 EmulatedOPL::EmulatedOPL() :
 	_nextTick(0),

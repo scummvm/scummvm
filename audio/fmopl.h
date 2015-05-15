@@ -106,8 +106,14 @@ private:
 	static const EmulatorDescription _drivers[];
 };
 
+/**
+ * The type of the OPL timer callback functor.
+ */
 typedef Common::Functor0<void> TimerCallback;
 
+/**
+ * A representation of a Yamaha OPL chip.
+ */
 class OPL {
 private:
 	static bool _hasInstance;
@@ -194,6 +200,43 @@ protected:
 	Common::ScopedPtr<TimerCallback> _callback;
 };
 
+/**
+ * An OPL that represents a real OPL, as opposed to an emulated one.
+ *
+ * This will use an actual timer instead of using one calculated from
+ * the number of samples in an AudioStream::readBuffer call.
+ */
+class RealOPL : public OPL {
+public:
+	RealOPL();
+	virtual ~RealOPL();
+
+	// OPL API
+	void setCallbackFrequency(int timerFrequency);
+
+protected:
+	// OPL API
+	void startCallbacks(int timerFrequency);
+	void stopCallbacks();
+
+private:
+	static void timerProc(void *refCon);
+	void onTimer();
+
+	uint _baseFreq;
+	uint _remainingTicks;
+
+	enum {
+		kMaxFreq = 100
+	};
+};
+
+/**
+ * An OPL that represents an emulated OPL.
+ *
+ * This will send callbacks based on the number of samples
+ * decoded in readBuffer().
+ */
 class EmulatedOPL : public OPL, protected Audio::AudioStream {
 public:
 	EmulatedOPL();
