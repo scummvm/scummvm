@@ -3556,7 +3556,7 @@ if test "$_alsa" = yes ; then
 	LIBS="$LIBS $ALSA_LIBS -lasound"
 	INCLUDES="$INCLUDES $ALSA_CFLAGS"
 fi
-define_in_config_h_if_yes "$_alsa" 'USE_ALSA'
+define_in_config_if_yes "$_alsa" 'USE_ALSA'
 echo "$_alsa"
 
 #
