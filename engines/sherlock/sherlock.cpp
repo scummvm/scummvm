@@ -106,7 +106,7 @@ Common::Error SherlockEngine::run() {
 	initialize();
 
 	// Flag for whether to show original saves dialog rather than the ScummVM GMM
-	_showOriginalSavesDialog = ConfMan.hasKey("OriginalSaves") && ConfMan.getBool("OriginalSaves");
+	_showOriginalSavesDialog = ConfMan.hasKey("originalsaveload") && ConfMan.getBool("originalsaveload");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {

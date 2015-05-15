@@ -67,7 +67,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("Use original savegame dialog"),
 			_s("Files button in-game shows original savegame dialog rather than ScummVM menu"),
-			"OriginalSaves",
+			"originalsaveload",
 			false
 		}
 	},
