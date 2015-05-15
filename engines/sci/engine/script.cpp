@@ -216,8 +216,8 @@ void Script::identifyOffsets() {
 	const byte *scriptDataPtr  = NULL;
 	const byte *stringStartPtr = NULL;
 	const byte *stringDataPtr  = NULL;
-	int scriptDataLeft   = 0;
-	int stringDataLeft   = 0;
+	uint32 scriptDataLeft   = 0;
+	uint32 stringDataLeft   = 0;
 	byte stringDataByte  = 0;
 	uint16 typeObject_id = 0;
 	uint16 typeString_id = 0;
@@ -471,16 +471,17 @@ void Script::identifyOffsets() {
 
 	} else if (getSciVersion() == SCI_VERSION_3) {
 		// SCI3
-		uint32 sci3stringOffset = 0;
-		uint32 sci3relocationOffset = 0;
+		uint32 sci3StringOffset = 0;
+		uint32 sci3RelocationOffset = 0;
+		uint32 sci3BoundaryOffset = 0;
 
 		if (_bufSize < 22)
 			error("Script::identifyOffsets(): script %d smaller than expected SCI3-header", _nr);
 
-		sci3stringOffset = READ_LE_UINT32(_buf + 4);
-		sci3relocationOffset = READ_LE_UINT32(_buf + 8);
+		sci3StringOffset = READ_LE_UINT32(_buf + 4);
+		sci3RelocationOffset = READ_LE_UINT32(_buf + 8);
 
-		if (sci3relocationOffset > _bufSize)
+		if (sci3RelocationOffset > _bufSize)
 			error("Script::identifyOffsets(): relocation offset is beyond end of script %d", _nr);
 
 		// First we get all the objects
@@ -521,16 +522,16 @@ void Script::identifyOffsets() {
 		} while (1);
 
 		// And now we get all the strings
-		if (sci3stringOffset > 0) {
+		if (sci3StringOffset > 0) {
 			// string offset set, we expect strings
-			if (sci3stringOffset > _bufSize)
+			if (sci3StringOffset > _bufSize)
 				error("Script::identifyOffsets(): string offset is beyond end of script %d", _nr);
 
-			if (sci3relocationOffset < sci3stringOffset)
+			if (sci3RelocationOffset < sci3StringOffset)
 				error("Script::identifyOffsets(): string offset points beyond relocation offset in script %d", _nr);
 
-			stringDataPtr  = _buf + sci3stringOffset;
-			stringDataLeft = sci3relocationOffset - sci3stringOffset;
+			stringDataPtr  = _buf + sci3StringOffset;
+			stringDataLeft = sci3RelocationOffset - sci3StringOffset;
 
 			arrayEntry.type       = SCI_SCR_OFFSET_TYPE_STRING;
 
@@ -569,11 +570,20 @@ void Script::identifyOffsets() {
 				arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
 				arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 				_offsetLookupArray.push_back(arrayEntry);
+
+				// SCI3 seems to have aligned all string on DWORD boundaries
+				sci3BoundaryOffset = stringDataPtr - _buf; // Calculate current offset inside script data
+				sci3BoundaryOffset = sci3BoundaryOffset & 3; // Check boundary offset
+				if (sci3BoundaryOffset) {
+					// lower 2 bits are set? Then we have to adjust the offset
+					sci3BoundaryOffset = 4 - sci3BoundaryOffset;
+					if (stringDataLeft < sci3BoundaryOffset)
+						error("Script::identifyOffsets(): SCI3 string boundary adjustment goes beyond end of string block in script %d", _nr);
+					stringDataLeft -= sci3BoundaryOffset;
+					stringDataPtr += sci3BoundaryOffset;
+				}
 			} while (1);
 		}
-
-		// Figure out more stuff in SCI3 scripts
-		warning("TODO: identifyOffsets(): Implement SCI3 variant");
 		return;
 	}
 }
