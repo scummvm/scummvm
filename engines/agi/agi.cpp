@@ -508,7 +508,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("originalsaveload", "false");
 	ConfMan.registerDefault("altamigapalette", "false");
-	ConfMan.registerDefault("enablemouse", "true");
+	ConfMan.registerDefault("mousesupport", "true");
 
 	_noSaveLoadAllowed = false;
 
@@ -564,9 +564,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	memset(&_mouse, 0, sizeof(struct Mouse));
 
 	_game.mouseEnabled = true;
-	if (!ConfMan.getBool("enablemouse")) {
-		// we actually do disable mouse instead of enabling it in case the option is set
-		//  that's because we do not show the option at all for all Amiga games and certain fanmade games
+	if (!ConfMan.getBool("mousesupport")) {
+		// we effectively disable the mouse for games, that explicitly do not want mouse support to be enabled
 		_game.mouseEnabled = false;
 	}
 

@@ -138,27 +138,6 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
-static const ExtraGuiOption agiExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
-	"originalsaveload",
-	false
-};
-
-static const ExtraGuiOption agiExtraGuiOptionAmiga = {
-	_s("Use an alternative palette"),
-	_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
-	"altamigapalette",
-	false
-};
-
-static const ExtraGuiOption agiExtraGuiOptionEnableMouse = {
-	_s("Enable mouse"),
-	_s("Enables mouse. Games, that require a mouse, will have mouse always enabled."),
-	"enablemouse",
-	true
-};
-
 #include "agi/detection_tables.h"
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -185,9 +164,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_DISABLE_MOUSE,
 		{
-			_s("Enable mouse"),
-			_s("Enables mouse. Games, that require a mouse, will have mouse always enabled."),
-			"enablemouse",
+			_s("Mouse support"),
+			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
+			"mousesupport",
 			true
 		}
 	},
@@ -216,7 +195,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	//virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -274,19 +252,6 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 
 	return res;
 }
-
-// TODO: original 2 gui engine options are not shown for games, that were detected before our change
-//        because gui-options from the detection-table are saved internally.
-//        I also can't set those 2 options manually in case they were not set by optionsList[]
-#if 0
-const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(agiExtraGuiOption);
-	if (target.contains("-amiga"))
-		options.push_back(agiExtraGuiOptionAmiga);
-	return options;
-}
-#endif
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 	const uint32 AGIflag = MKTAG('A','G','I',':');
