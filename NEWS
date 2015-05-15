@@ -12,8 +12,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
  AGI:
-   - it is now possible to disable mouse support
-      (except for Amiga versions and fanmade games, that require a mouse)
+   - It is now possible to disable mouse support (except for Amiga versions
+     and fanmade games, that require a mouse).
 
  Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
