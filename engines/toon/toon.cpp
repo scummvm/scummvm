@@ -1785,7 +1785,7 @@ int32 ToonEngine::runEventScript(int32 x, int32 y, int32 mode, int32 id, int32 s
 	_currentScriptRegion++;
 
 	_script->start(status, 1);
-	while (_script->run(status))
+	while (_script->run(status) && !_shouldQuit)
 		waitForScriptStep();
 
 	_currentScriptRegion--;
