@@ -231,9 +231,9 @@ void SherlockEngine::loadConfig() {
  * Saves game configuration information
  */
 void SherlockEngine::saveConfig() {
-	ConfMan.setBool("mute", _sound->_digitized);
-	ConfMan.setBool("music_mute", _sound->_music);
-	ConfMan.setBool("speech_mute", _sound->_voices);
+	ConfMan.setBool("mute", !_sound->_digitized);
+	ConfMan.setBool("music_mute", !_sound->_music);
+	ConfMan.setBool("speech_mute", !_sound->_voices);
 
 	ConfMan.setInt("font", _screen->fontNumber());
 	ConfMan.setBool("fade_style", _screen->_fadeStyle);
