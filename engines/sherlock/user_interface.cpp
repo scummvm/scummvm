@@ -919,7 +919,7 @@ void UserInterface::doEnvControl() {
 			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
-			screen.makeButton(Common::Rect(112, CONTROLS_Y, 150, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
 			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184 - screen.stringWidth("No") / 2, "No");
 			screen.slamArea(112, CONTROLS_Y, 97, 10);
 
