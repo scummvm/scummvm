@@ -308,7 +308,7 @@ private:
 	};
 
 	struct ScriptData {
-		int32 vars[10];
+		int32 vars[40];
 		uint32 offset;
 		int32 counter;
 		ResourceId resourceId;
