@@ -236,6 +236,9 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
+	// Original BPP to restore the video mode on unload
+	uint8 _originalBitsPerPixel;
+
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 
