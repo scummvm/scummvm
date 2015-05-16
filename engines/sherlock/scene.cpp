@@ -316,27 +316,51 @@ bool Scene::loadScene(const Common::String &filename) {
 			bgInfo[idx].load(*rrmStream);
 
 		// Read information
-		int shapeSize = _vm->getGameID() == GType_SerratedScalpel ? 569 : 591;
-		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-			Resources::decompressLZ(*rrmStream, bgHeader._numImages * shapeSize +
-				bgHeader._descSize + bgHeader._seqSize);
+		if (_vm->getGameID() == GType_SerratedScalpel) {
+			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
+				res.decompress(*rrmStream, bgHeader._numImages * 569 + bgHeader._descSize + bgHeader._seqSize);
 
-		_bgShapes.resize(bgHeader._numStructs);
-		for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-			_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+			_bgShapes.resize(bgHeader._numStructs);
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
 
-		if (bgHeader._descSize) {
+			if (bgHeader._descSize) {
+				_descText.resize(bgHeader._descSize);
+				infoStream->read(&_descText[0], bgHeader._descSize);
+			}
+
+			if (bgHeader._seqSize) {
+				_sequenceBuffer.resize(bgHeader._seqSize);
+				infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+			}
+
+			if (_lzwMode)
+				delete infoStream;
+		} else {
+			// Load shapes
+			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numImages * 625);
+
+			_bgShapes.resize(bgHeader._numStructs);
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+
+			if (_lzwMode)
+				delete infoStream;
+
+			// Load description text
 			_descText.resize(bgHeader._descSize);
-			infoStream->read(&_descText[0], bgHeader._descSize);
-		}
+			if (_lzwMode)
+				res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
+			else
+				rrmStream->read(&_descText[0], bgHeader._descSize);
 
-		if (bgHeader._seqSize) {
+			// Load sequences
 			_sequenceBuffer.resize(bgHeader._seqSize);
-			infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+			if (_lzwMode)
+				res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
+			else
+				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
 		}
-
-		if (_lzwMode)
-			delete infoStream;
 
 		// Set up the list of images used by the scene
 		_images.resize(bgHeader._numImages + 1);

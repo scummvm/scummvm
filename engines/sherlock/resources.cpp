@@ -428,10 +428,22 @@ Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &so
 /**
  * Decompress an LZW compressed resource
  */
-void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
-	assert(_vm->getGameID() == GType_RoseTattoo);
+Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source, uint32 outSize) {
+	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+	byte *outBuffer = (byte *)malloc(outSize);
+	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
 
-	uint32 inputSize = source.readUint32LE();
+	decompressLZ(source, outBuffer, outSize, inSize);
+
+	return outStream;
+}
+
+/**
+ * Decompress an LZW compressed resource
+ */
+void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
+	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+
 	decompressLZ(source, buffer, outSize, inputSize);
 }
 
@@ -442,7 +454,7 @@ Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &
 	byte *outBuffer = (byte *)malloc(outSize);
 	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
 
-	decompressLZ(source, outSize);
+	decompressLZ(source, outBuffer, outSize, -1);
 	return outStream;
 }
 
@@ -451,7 +463,7 @@ void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer
 	uint16 lzWindowPos;
 	uint16 cmd;
 	byte *outBufferEnd = outBuffer + outSize;
-	uint32 endPos = source.pos() + inSize;
+	int32 endPos = source.pos() + inSize;
 
 	memset(lzWindow, 0xFF, 0xFEE);
 	lzWindowPos = 0xFEE;
