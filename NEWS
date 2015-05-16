@@ -25,11 +25,11 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Handling of music priority has been greatly improved.
-   - A lot of fixes for original game script bugs, that also occured when
+   - A lot of fixes for original game script bugs that also occurred when
      using the original interpreter.
      KQ6 (Dual Mode), LSL5, QfG1 (EGA), QfG1 (VGA), QfG2, QfG3, SQ1, SQ4 (CD)
-   - restoring from the ScummVM in-game menu should now work all the time
-   - improve support for Japanese PC-9801 games
+   - Restoring from the ScummVM in-game menu should now work all the time.
+   - Improve support for Japanese PC-9801 games.
 
  SCUMM:
    - It is now possible to play Maniac Mansion from within Day of the
