@@ -1351,6 +1351,7 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 
 		shader->use();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _quadEBO);
+		assert(layer < data->_numLayers);
 		uint32 offset = data->_layers[layer]._offset;
 		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
 			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);

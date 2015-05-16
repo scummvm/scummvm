@@ -44,6 +44,11 @@ void Layer::draw() {
 }
 
 void Layer::setFrame(int frame) {
+	int numframes = _bitmap->getNumLayers();
+	if (frame >= numframes || frame < 0) {
+		warning("Layer::setFrame: invalid frame number: %d, numLayers: %d", frame, numframes);
+		return;
+	}
 	_frame = frame;
 }
 
@@ -53,10 +58,8 @@ void Layer::setSortOrder(int order) {
 
 void Layer::advanceFrame(int num) {
 	_frame += num;
-	int numframes = _bitmap->getNumImages();
-	while (_frame >= numframes) {
-		_frame -= numframes;
-	}
+	int numframes = _bitmap->getNumLayers();
+	_frame %= numframes;
 }
 
 void Layer::saveState(SaveGame *state) {
