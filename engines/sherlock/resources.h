@@ -90,8 +90,10 @@ public:
 
 	int resourceIndex() const;
 
+	Common::SeekableReadStream *decompress(Common::SeekableReadStream &source);
+	void decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize);
+	static void decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize);
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, uint32 outSize);
-	Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source);
 };
 
 struct ImageFrame {

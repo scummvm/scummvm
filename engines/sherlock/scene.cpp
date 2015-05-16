@@ -303,9 +303,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in background
 			if (_lzwMode) {
-				Common::SeekableReadStream *stream = res.decompressLZ(*rrmStream);
-				stream->read(screen._backBuffer1.getPixels(), stream->size());
-				delete stream;
+				res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
 			} else {
 				rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
 			}

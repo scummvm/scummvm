@@ -76,7 +76,7 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	// Check whether the file is compressed
 	if (signature == MKTAG('L', 'Z', 'V', 26)) {
 		// It's compressed, so decompress the file and store it's data in the cache entry
-		Common::SeekableReadStream *decompressed = _vm->_res->decompressLZ(stream);
+		Common::SeekableReadStream *decompressed = _vm->_res->decompress(stream);
 		cacheEntry.resize(decompressed->size());
 		decompressed->read(&cacheEntry[0], decompressed->size());
 
@@ -170,7 +170,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 			if (resStream->readUint32BE() == MKTAG('L', 'Z', 'V', 26)) {
 				resStream->seek(0);
 				// It's compressed, so decompress the sub-file and return it
-				Common::SeekableReadStream *decompressed = decompressLZ(*resStream);
+				Common::SeekableReadStream *decompressed = decompress(*resStream);
 				delete stream;
 				delete resStream;
 				return decompressed;
@@ -413,27 +413,45 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 /**
  * Decompress an LZW compressed resource
  */
-Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source) {
-	if (_vm->getGameID() == GType_SerratedScalpel) {
-		uint32 id = source.readUint32BE();
-		assert(id == MKTAG('L', 'Z', 'V', 0x1A));
-	}
+Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source) {
+	// This variation can't be used by Rose Tattoo, since compressed resources include the input size,
+	// not the output size. Which means their decompression has to be done via passed buffers
+	assert(_vm->getGameID() == GType_SerratedScalpel);
 
-	uint32 size = source.readUint32LE();
-	return decompressLZ(source, size);
+	uint32 id = source.readUint32BE();
+	assert(id == MKTAG('L', 'Z', 'V', 0x1A));
+
+	uint32 outputSize = source.readUint32LE();
+	return decompressLZ(source, outputSize);
+}
+
+/**
+ * Decompress an LZW compressed resource
+ */
+void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
+	assert(_vm->getGameID() == GType_RoseTattoo);
+
+	uint32 inputSize = source.readUint32LE();
+	decompressLZ(source, buffer, outSize, inputSize);
 }
 
 /**
  * Decompresses an LZW block of data with a specified output size
  */
 Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
+	byte *outBuffer = (byte *)malloc(outSize);
+	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+
+	decompressLZ(source, outSize);
+	return outStream;
+}
+
+void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize) {
 	byte lzWindow[4096];
 	uint16 lzWindowPos;
 	uint16 cmd;
-
-	byte *outBuffer = (byte *)malloc(outSize);
 	byte *outBufferEnd = outBuffer + outSize;
-	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+	uint32 endPos = source.pos() + inSize;
 
 	memset(lzWindow, 0xFF, 0xFEE);
 	lzWindowPos = 0xFEE;
@@ -463,9 +481,7 @@ Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &
 				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
 			}
 		}
-	} while (outBuffer < outBufferEnd);
-
-	return outS;
+	} while ((!outSize || outBuffer < outBufferEnd) && (!inSize || source.pos() < endPos));
 }
 
 } // End of namespace Sherlock
