@@ -46,7 +46,7 @@
 
 	#if defined(WIN32)
 
-		#ifdef _MSC_VER
+		#if defined(_MSC_VER) && _MSC_VER <= 1800
 
 		// FIXME: The placement of the workaround functions for MSVC below
 		// require us to include stdio.h and stdarg.h for MSVC here. This
