@@ -47,7 +47,7 @@ Common::Language ZVision::getLanguage() const {
 } // End of namespace ZVision
 
 static const PlainGameDescriptor zVisionGames[] = {
-	{"zvision",  "ZVision Game"},
+	{"zvision",  "Z-Vision Game"},
 	{"znemesis", "Zork Nemesis: The Forbidden Lands"},
 	{"zgi",      "Zork: Grand Inquisitor"},
 	{0, 0}
@@ -302,11 +302,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "ZVision";
+		return "Z-Vision";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "ZVision Activision (C) 1996";
+		return "Z-Vision (C) 1996 Activision";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
