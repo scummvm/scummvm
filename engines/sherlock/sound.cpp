@@ -45,8 +45,6 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_speechOn = true;
 
 	_vm->_res->addToCache("MUSIC.LIB");
-	_vm->_res->addToCache("TITLE.SND");
-	_vm->_res->addToCache("EPILOGUE.SND");
 }
 
 /**
