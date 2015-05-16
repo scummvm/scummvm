@@ -218,7 +218,7 @@ void SherlockEngine::loadConfig() {
 	syncSoundSettings();
 
 	ConfMan.registerDefault("font", 1);
-	ConfMan.registerDefault("fade_style", false);
+	ConfMan.registerDefault("fade_style", true);
 	ConfMan.registerDefault("help_style", false);
 	ConfMan.registerDefault("window_style", 1);
 	ConfMan.registerDefault("portraits_on", true);
