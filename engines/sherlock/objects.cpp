@@ -477,7 +477,6 @@ Object::Object() {
  * Load the data for the object
  */
 void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
-	uint32 p = s.pos(); warning("%.4x", p);
 	char buffer[41];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
@@ -559,7 +558,6 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
-	warning("%.4x", s.pos() - p);
 }
 
 /**
