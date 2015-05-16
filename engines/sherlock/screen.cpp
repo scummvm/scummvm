@@ -217,7 +217,7 @@ void Screen::randomTransition() {
 		if (offset < (SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT))
 			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer->getPixels() + offset);
 
-		if (idx != 0 && (idx % 100) == 0) {
+		if (idx != 0 && (idx % 300) == 0) {
 			// Ensure there's a full screen dirty rect for the next frame update
 			if (_dirtyRects.empty())
 				addDirtyRect(Common::Rect(0, 0, this->w, this->h));

@@ -53,6 +53,8 @@ public:
 
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
 	void fillRect(const Common::Rect &r, byte color);
+
+	void clear();
 };
 
 } // End of namespace Sherlock

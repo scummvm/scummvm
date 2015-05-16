@@ -172,4 +172,11 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	return true;
 }
 
+/**
+ * Clear the screen
+ */
+void Surface::clear() {
+	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
+}
+
 } // End of namespace Sherlock

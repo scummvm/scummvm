@@ -129,6 +129,9 @@ Common::Error SherlockEngine::run() {
 		if (shouldQuit())
 			break;
 
+		// Clear the screen
+		_screen->clear();
+
 		// Reset UI flags
 		_ui->reset();
 
