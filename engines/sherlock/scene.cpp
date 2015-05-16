@@ -273,7 +273,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Read information
 		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-			Resources::decompressLZ(*rrmStream, bgHeader._numImages * 569 +
+			Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569 +
 				bgHeader._descSize + bgHeader._seqSize);
 
 		_bgShapes.resize(bgHeader._numStructs);
