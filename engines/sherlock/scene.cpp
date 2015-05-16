@@ -318,11 +318,11 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Read information
 		if (_vm->getGameID() == GType_SerratedScalpel) {
 			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-				res.decompress(*rrmStream, bgHeader._numImages * 569 + bgHeader._descSize + bgHeader._seqSize);
+				res.decompress(*rrmStream, bgHeader._numStructs * 569 + bgHeader._descSize + bgHeader._seqSize);
 
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+				_bgShapes[idx].load(*infoStream, false);
 
 			if (bgHeader._descSize) {
 				_descText.resize(bgHeader._descSize);
@@ -338,11 +338,11 @@ bool Scene::loadScene(const Common::String &filename) {
 				delete infoStream;
 		} else {
 			// Load shapes
-			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numImages * 625);
+			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
 
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+				_bgShapes[idx].load(*infoStream, true);
 
 			if (_lzwMode)
 				delete infoStream;

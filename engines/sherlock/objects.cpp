@@ -477,6 +477,7 @@ Object::Object() {
  * Load the data for the object
  */
 void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
+	uint32 p = s.pos(); warning("%.4x", p);
 	char buffer[41];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
@@ -508,11 +509,10 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
 
-	_pickup = s.readByte();
-	_defaultCommand = s.readByte();
-	_lookFlag = s.readUint16LE();
-	if (!isRoseTattoo)
-		_pickupFlag = s.readUint16LE();
+	_pickup = isRoseTattoo ? 0 : s.readByte();
+	_defaultCommand = isRoseTattoo ? 0 : s.readByte();
+	_lookFlag = s.readSint16LE();
+	_pickupFlag = isRoseTattoo ? 0 : s.readSint16LE();
 	_requiredFlag = s.readSint16LE();
 	_noShapeSize.x = s.readUint16LE();
 	_noShapeSize.y = s.readUint16LE();
@@ -547,7 +547,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
-		_requiredFlag1 = s.readUint16LE();
+		_requiredFlag1 = s.readSint16LE();
 		_gotoSeq = s.readByte();
 		_talkSeq = s.readByte();
 		_restoreSlot = s.readByte();
@@ -559,6 +559,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
+	warning("%.4x", s.pos() - p);
 }
 
 /**

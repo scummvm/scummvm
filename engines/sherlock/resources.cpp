@@ -324,7 +324,6 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 			frame._offset.y = stream.readByte();
 		}
 
-		frame._offset.y = stream.readByte();
 		frame._rleEncoded = !skipPalette && frame._rleEncoded;
 
 		if (frame._paletteBase) {
