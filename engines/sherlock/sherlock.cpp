@@ -106,7 +106,7 @@ Common::Error SherlockEngine::run() {
 	initialize();
 
 	// Flag for whether to show original saves dialog rather than the ScummVM GMM
-	_showOriginalSavesDialog = ConfMan.hasKey("originalsaveload") && ConfMan.getBool("originalsaveload");
+	_showOriginalSavesDialog = ConfMan.getBool("originalsaveload");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
@@ -214,17 +214,18 @@ void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
 
-	// Load other settings
-	if (ConfMan.hasKey("font"))
-		_screen->setFont(ConfMan.getInt("font"));
-	if (ConfMan.hasKey("fade_style"))
-		_screen->_fadeStyle = ConfMan.getBool("fade_style");
-	if (ConfMan.hasKey("help_style"))
-		_ui->_helpStyle = ConfMan.getBool("help_style");
-	if (ConfMan.hasKey("window_style"))
-		_ui->_windowStyle = ConfMan.getInt("window_style");
-	if (ConfMan.hasKey("portraits_on"))
-		_people->_portraitsOn = ConfMan.getBool("portraits_on");
+	ConfMan.registerDefault("font", 1);
+	ConfMan.registerDefault("fade_style", false);
+	ConfMan.registerDefault("help_style", false);
+	ConfMan.registerDefault("window_style", 1);
+	ConfMan.registerDefault("portraits_on", true);
+	ConfMan.registerDefault("originalsaveload", false);
+
+	_screen->setFont(ConfMan.getInt("font"));
+	_screen->_fadeStyle = ConfMan.getBool("fade_style");
+	_ui->_helpStyle = ConfMan.getBool("help_style");
+	_ui->_windowStyle = ConfMan.getInt("window_style");
+	_people->_portraitsOn = ConfMan.getBool("portraits_on");
 }
 
 /**
