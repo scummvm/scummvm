@@ -52,9 +52,10 @@ class SherlockEngine;
 
 class Cache {
 private:
+	SherlockEngine *_vm;
 	CacheHash _resources;
 public:
-	Cache();
+	Cache(SherlockEngine *_vm);
 
 	bool isCached(const Common::String &filename) const;
 
@@ -66,6 +67,7 @@ public:
 
 class Resources {
 private:
+	SherlockEngine *_vm;
 	Cache _cache;
 	LibraryIndexes _indexes;
 	int _resourceIndex;
@@ -73,7 +75,7 @@ private:
 	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream,
 		bool isNewStyle);
 public:
-	Resources();
+	Resources(SherlockEngine *vm);
 
 	void addToCache(const Common::String &filename);
 	void addToCache(const Common::String &filename, const Common::String &libFilename);
@@ -87,6 +89,9 @@ public:
 	bool exists(const Common::String &filename) const;
 
 	int resourceIndex() const;
+
+	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, uint32 outSize);
+	Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source);
 };
 
 struct ImageFrame {

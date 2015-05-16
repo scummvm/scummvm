@@ -21,7 +21,7 @@
  */
 
 #include "sherlock/sherlock.h"
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -47,6 +47,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_useEpilogue2 = false;
 	_loadGameSlot = -1;
 	_canLoadSave = false;
+	_showOriginalSavesDialog = false;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -75,7 +76,7 @@ void SherlockEngine::initialize() {
 	ImageFile::setVm(this);
 	Object::setVm(this);
 	Sprite::setVm(this);
-	_res = new Resources();
+	_res = new Resources(this);
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new Events(this);
@@ -101,6 +102,9 @@ Common::Error SherlockEngine::run() {
 	// Initialize the engine
 	initialize();
 
+	// Flag for whether to show original saves dialog rather than the ScummVM GMM
+	_showOriginalSavesDialog = ConfMan.getBool("originalsaveload");
+
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -121,6 +125,9 @@ Common::Error SherlockEngine::run() {
 		startScene();
 		if (shouldQuit())
 			break;
+
+		// Clear the screen
+		_screen->clear();
 
 		// Reset UI flags
 		_ui->reset();
@@ -207,26 +214,27 @@ void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
 
-	// Load other settings
-	if (ConfMan.hasKey("font"))
-		_screen->setFont(ConfMan.getInt("font"));
-	if (ConfMan.hasKey("fade_style"))
-		_screen->_fadeStyle = ConfMan.getBool("fade_style");
-	if (ConfMan.hasKey("help_style"))
-		_ui->_helpStyle = ConfMan.getBool("help_style");
-	if (ConfMan.hasKey("window_style"))
-		_ui->_windowStyle = ConfMan.getInt("window_style");
-	if (ConfMan.hasKey("portraits_on"))
-		_people->_portraitsOn = ConfMan.getBool("portraits_on");
+	ConfMan.registerDefault("font", 1);
+	ConfMan.registerDefault("fade_style", true);
+	ConfMan.registerDefault("help_style", false);
+	ConfMan.registerDefault("window_style", 1);
+	ConfMan.registerDefault("portraits_on", true);
+	ConfMan.registerDefault("originalsaveload", false);
+
+	_screen->setFont(ConfMan.getInt("font"));
+	_screen->_fadeStyle = ConfMan.getBool("fade_style");
+	_ui->_helpStyle = ConfMan.getBool("help_style");
+	_ui->_windowStyle = ConfMan.getInt("window_style");
+	_people->_portraitsOn = ConfMan.getBool("portraits_on");
 }
 
 /**
  * Saves game configuration information
  */
 void SherlockEngine::saveConfig() {
-	ConfMan.setBool("mute", _sound->_digitized);
-	ConfMan.setBool("music_mute", _sound->_music);
-	ConfMan.setBool("speech_mute", _sound->_voices);
+	ConfMan.setBool("mute", !_sound->_digitized);
+	ConfMan.setBool("music_mute", !_sound->_music);
+	ConfMan.setBool("speech_mute", !_sound->_voices);
 
 	ConfMan.setInt("font", _screen->fontNumber());
 	ConfMan.setBool("fade_style", _screen->_fadeStyle);

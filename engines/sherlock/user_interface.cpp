@@ -172,11 +172,6 @@ void UserInterface::handleInput() {
 			_vm->quitGame();
 			events.pollEvents();
 			return;
-		} else if (keyState.keycode == Common::KEYCODE_SPACE ||
-				keyState.keycode == Common::KEYCODE_RETURN) {
-			events._pressed = false;
-			events._oldButtons = 0;
-			_keycode = Common::KEYCODE_INVALID;
 		}
 	}
 
@@ -929,7 +924,7 @@ void UserInterface::doEnvControl() {
 			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
 
-			screen.makeButton(Common::Rect(112, CONTROLS_Y, 150, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
+			screen.makeButton(Common::Rect(112, CONTROLS_Y, 160, CONTROLS_Y + 10), 136 - screen.stringWidth("Yes") / 2, "Yes");
 			screen.makeButton(Common::Rect(161, CONTROLS_Y, 209, CONTROLS_Y + 10), 184 - screen.stringWidth("No") / 2, "No");
 			screen.slamArea(112, CONTROLS_Y, 97, 10);
 
@@ -1430,17 +1425,24 @@ void UserInterface::doMainControl() {
 			break;
 		case 'F':
 			pushButton(10);
-			_menuMode = FILES_MODE;
 
 			// Create a thumbnail of the current screen before the files dialog is shown, in case
 			// the user saves the game
 			saves.createThumbnail();
 
-			// Display the dialog
-			saves.drawInterface();
-
 			_selector = _oldSelector = -1;
-			_windowOpen = true;
+
+			if (_vm->_showOriginalSavesDialog) {
+				// Show the original dialog
+				_menuMode = FILES_MODE;
+				saves.drawInterface();
+				_windowOpen = true;
+			} else {
+				// Show the ScummVM GMM instead
+				_vm->_canLoadSave = true;
+				_vm->openMainMenuDialog();
+				_vm->_canLoadSave = false;
+			}
 			break;
 		case 'S':
 			pushButton(11);
@@ -1699,9 +1701,6 @@ void UserInterface::doTalkControl() {
 				sound._speechOn = false;
 			}
 
-			// Set the _scriptCurrentIndex so if the statement is irrupted, the entire
-			// reply will be shown when it's restarted
-			talk._scriptCurrentIndex = 0;
 			talk.waitForMore(talk._statements[_selector]._statement.size());
 			if (talk._talkToAbort)
 				return;

@@ -146,6 +146,10 @@ int Map::show() {
 	int oldFont = screen.fontNumber();
 	screen.setFont(0);
 
+	// Initial screen clear
+	screen._backBuffer1.clear();
+	screen.clear();
+
 	// Load the entire map
 	ImageFile bigMap("bigmap.vgs");
 	screen.setPalette(bigMap._palette);

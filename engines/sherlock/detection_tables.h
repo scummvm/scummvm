@@ -33,7 +33,7 @@ static const SherlockGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES)
 		},
 		GType_SerratedScalpel,
 	},

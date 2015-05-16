@@ -149,6 +149,7 @@ void Screen::fadeToBlack(int speed) {
 	}
 
 	setPalette(tempPalette);
+	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
 }
 
 /**
@@ -169,7 +170,7 @@ void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
  */
 void Screen::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push_back(r);
-	assert(r.isValidRect() && r.width() > 0 && r.height() > 0);
+	assert(r.width() > 0 && r.height() > 0);
 }
 
 /**
@@ -224,7 +225,7 @@ void Screen::randomTransition() {
 		if (offset < (this->w * this->h))
 			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer->getPixels() + offset);
 
-		if (idx != 0 && (idx % 100) == 0) {
+		if (idx != 0 && (idx % 300) == 0) {
 			// Ensure there's a full screen dirty rect for the next frame update
 			if (_dirtyRects.empty())
 				addDirtyRect(Common::Rect(0, 0, this->w, this->h));

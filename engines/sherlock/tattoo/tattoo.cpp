@@ -44,6 +44,7 @@ void TattooEngine::initialize() {
 
 	// Add some more files to the cache
 	_res->addToCache("walk.lib");
+	_res->addToCache("sound.lib");
 
 	// Starting scene
 	_scene->_goToScene = 91;

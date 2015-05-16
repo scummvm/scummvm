@@ -108,6 +108,7 @@ public:
 	bool _useEpilogue2;
 	int _loadGameSlot;
 	bool _canLoadSave;
+	bool _showOriginalSavesDialog;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();

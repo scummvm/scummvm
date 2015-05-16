@@ -5,11 +5,9 @@ MODULE_OBJS = \
 	scalpel/scalpel.o \
 	tattoo/tattoo.o \
 	animation.o \
-	decompress.o \
 	debugger.o \
 	detection.o \
 	events.o \
-	graphics.o \
 	inventory.o \
 	journal.o \
 	map.o \
@@ -22,6 +20,7 @@ MODULE_OBJS = \
 	settings.o \
 	sherlock.o \
 	sound.o \
+	surface.o \
 	talk.o \
 	user_interface.o
 

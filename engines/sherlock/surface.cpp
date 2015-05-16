@@ -20,7 +20,7 @@
  *
  */
 
-#include "sherlock/graphics.h"
+#include "sherlock/surface.h"
 #include "sherlock/sherlock.h"
 #include "common/system.h"
 #include "graphics/palette.h"
@@ -62,28 +62,7 @@ void Surface::blitFrom(const Graphics::Surface &src) {
  * Draws a surface at a given position within this surface
  */
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
-	Common::Rect drawRect(0, 0, src.w, src.h);
-	Common::Point destPt = pt;
-
-	if (destPt.x < 0) {
-		drawRect.left += -destPt.x;
-		destPt.x = 0;
-	}
-	if (destPt.y < 0) {
-		drawRect.top += -destPt.y;
-		destPt.y = 0;
-	}
-	int right = destPt.x + src.w;
-	if (right > this->w) {
-		drawRect.right -= (right - this->w);
-	}
-	int bottom = destPt.y + src.h;
-	if (bottom > this->h) {
-		drawRect.bottom -= (bottom - this->h);
-	}
-
-	if (drawRect.isValidRect())
-		blitFrom(src, destPt, drawRect);
+	blitFrom(src, pt, Common::Rect(0, 0, src.w, src.h));
 }
 
 /**
@@ -91,11 +70,10 @@ void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
  */
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		const Common::Rect &srcBounds) {
-	Common::Rect destRect(pt.x, pt.y, pt.x + srcBounds.width(),
-		pt.y + srcBounds.height());
 	Common::Rect srcRect = srcBounds;
+	Common::Rect destRect(pt.x, pt.y, pt.x + srcRect.width(), pt.y + srcRect.height());
 
-	if (clip(srcRect, destRect)) {
+	if (srcRect.isValidRect() && clip(srcRect, destRect)) {
 		// Surface is at least partially or completely on-screen
 		addDirtyRect(destRect);
 		copyRectToSurface(src, destRect.left, destRect.top, srcRect);
@@ -192,6 +170,13 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	}
 
 	return true;
+}
+
+/**
+ * Clear the screen
+ */
+void Surface::clear() {
+	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
 }
 
 } // End of namespace Sherlock
