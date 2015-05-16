@@ -79,7 +79,7 @@ void SherlockEngine::initialize() {
 	ImageFile::setVm(this);
 	Object::setVm(this);
 	Sprite::setVm(this);
-	_res = new Resources();
+	_res = new Resources(this);
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new Events(this);

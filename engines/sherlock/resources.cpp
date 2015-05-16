@@ -21,14 +21,14 @@
  */
 
 #include "sherlock/resources.h"
-#include "sherlock/decompress.h"
 #include "sherlock/screen.h"
 #include "sherlock/sherlock.h"
 #include "common/debug.h"
+#include "common/memstream.h"
 
 namespace Sherlock {
 
-Cache::Cache() {
+Cache::Cache(SherlockEngine *vm): _vm(vm) {
 }
 
 /**
@@ -76,7 +76,7 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	// Check whether the file is compressed
 	if (signature == MKTAG('L', 'Z', 'V', 26)) {
 		// It's compressed, so decompress the file and store it's data in the cache entry
-		Common::SeekableReadStream *decompressed = decompressLZ(stream);
+		Common::SeekableReadStream *decompressed = _vm->_res->decompressLZ(stream);
 		cacheEntry.resize(decompressed->size());
 		decompressed->read(&cacheEntry[0], decompressed->size());
 
@@ -99,7 +99,7 @@ Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 
 /*----------------------------------------------------------------*/
 
-Resources::Resources() {
+Resources::Resources(SherlockEngine *vm): _vm(vm), _cache(vm) {
 	_resourceIndex = -1;
 
 	addToCache("vgs.lib");
@@ -402,6 +402,64 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		Common::copy(src, src + frame._width * frame._height,
 			(byte *)frame._frame.getPixels());
 	}
+}
+
+/**
+ * Decompress an LZW compressed resource
+ */
+Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source) {
+	if (_vm->getGameID() == GType_SerratedScalpel) {
+		uint32 id = source.readUint32BE();
+		assert(id == MKTAG('L', 'Z', 'V', 0x1A));
+	}
+
+	uint32 size = source.readUint32LE();
+	return decompressLZ(source, size);
+}
+
+/**
+ * Decompresses an LZW block of data with a specified output size
+ */
+Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
+	byte lzWindow[4096];
+	uint16 lzWindowPos;
+	uint16 cmd;
+
+	byte *outBuffer = (byte *)malloc(outSize);
+	byte *outBufferEnd = outBuffer + outSize;
+	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+
+	memset(lzWindow, 0xFF, 0xFEE);
+	lzWindowPos = 0xFEE;
+	cmd = 0;
+
+	do {
+		cmd >>= 1;
+		if (!(cmd & 0x100))
+			cmd = source.readByte() | 0xFF00;
+
+		if (cmd & 1) {
+			byte literal = source.readByte();
+			*outBuffer++ = literal;
+			lzWindow[lzWindowPos] = literal;
+			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+		} else {
+			int copyPos, copyLen;
+			copyPos = source.readByte();
+			copyLen = source.readByte();
+			copyPos = copyPos | ((copyLen & 0xF0) << 4);
+			copyLen = (copyLen & 0x0F) + 3;
+			while (copyLen--) {
+				byte literal = lzWindow[copyPos];
+				copyPos = (copyPos + 1) & 0x0FFF;
+				*outBuffer++ = literal;
+				lzWindow[lzWindowPos] = literal;
+				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+			}
+		}
+	} while (outBuffer < outBufferEnd);
+
+	return outS;
 }
 
 } // End of namespace Sherlock

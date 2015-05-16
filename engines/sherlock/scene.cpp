@@ -23,7 +23,6 @@
 #include "sherlock/scene.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel.h"
-#include "sherlock/decompress.h"
 
 namespace Sherlock {
 
@@ -274,7 +273,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Read information
 		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, bgHeader._numImages * 569 +
+			Resources::decompressLZ(*rrmStream, bgHeader._numImages * 569 +
 				bgHeader._descSize + bgHeader._seqSize);
 
 		_bgShapes.resize(bgHeader._numStructs);
@@ -302,7 +301,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the image data
 			Common::SeekableReadStream *imageStream = _lzwMode ?
-				decompressLZ(*rrmStream, bgInfo[idx]._filesize) :
+				Resources::decompressLZ(*rrmStream, bgInfo[idx]._filesize) :
 				rrmStream->readStream(bgInfo[idx]._filesize);
 
 			_images[idx + 1]._images = new ImageFile(*imageStream);
@@ -331,7 +330,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		_cAnim.clear();
 		if (bgHeader._numcAnimations) {
 			Common::SeekableReadStream *canimStream = _lzwMode ?
-				decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
+				Resources::decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
 				rrmStream->readStream(65 * bgHeader._numcAnimations);
 
 			_cAnim.resize(bgHeader._numcAnimations);
@@ -344,7 +343,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Read in the room bounding areas
 		int size = rrmStream->readUint16LE();
 		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, size);
+			Resources::decompressLZ(*rrmStream, size);
 
 		_zones.resize(size / 10);
 		for (uint idx = 0; idx < _zones.size(); ++idx) {
@@ -371,7 +370,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Read in the walk data
 		size = rrmStream->readUint16LE();
 		Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, size);
+			Resources::decompressLZ(*rrmStream, size);
 
 		_walkData.resize(size);
 		walkStream->read(&_walkData[0], size);
@@ -408,7 +407,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Read in the background
 		Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
-			decompressLZ(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+			Resources::decompressLZ(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
 		bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
@@ -982,7 +981,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 			// Load the canimation into the cache
 			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream->readStream(cAnim._size) :
-				decompressLZ(*rrmStream, cAnim._size);
+				Resources::decompressLZ(*rrmStream, cAnim._size);
 			res.addToCache(fname, *imgStream);
 
 			delete imgStream;
