@@ -1139,10 +1139,11 @@ int Journal::getFindName(bool printError) {
 			if (keyState.keycode >= Common::KEYCODE_SPACE && keyState.keycode <= Common::KEYCODE_z
 					&& keyState.keycode != Common::KEYCODE_AT && name.size() < 50
 					&& (xp + screen.charWidth(keyState.keycode)) < 296) {
+				char ch = toupper(keyState.keycode);
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
-				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", (char)keyState.keycode);
-				xp += screen.charWidth((char)keyState.keycode);
-				name += (char)keyState.keycode;
+				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", ch);
+				xp += screen.charWidth(ch);
+				name += ch;
 			}
 		}
 
