@@ -68,15 +68,17 @@ struct BgfileheaderInfo {
 	void load(Common::SeekableReadStream &s);
 };
 
-struct Exit {
-	Common::Rect _bounds;
-
+class Exit: public Common::Rect {
+public:
 	int _scene;
 	int _allow;
 	Common::Point _people;
 	int _peopleDir;
 
-	void load(Common::SeekableReadStream &s);
+	Common::String _dest;
+	int _image;					// Arrow image to use
+
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct SceneEntry {
@@ -99,6 +101,14 @@ public:
 	int indexOf(const Object &obj) const;
 };
 
+class ScaleZone: public Common::Rect {
+public:
+	int _topNumber;		// Numerator of scale size at the top of the zone
+	int _bottomNumber;	// Numerator of scale size at the bottom of the zone
+
+	void load(Common::SeekableReadStream &s);
+};
+
 class Scene {
 private:
 	SherlockEngine *_vm;
@@ -109,6 +119,8 @@ private:
 
 	bool loadScene(const Common::String &filename);
 
+	void loadSceneSounds();
+
 	void checkSceneStatus();
 
 	void checkInventory();
@@ -118,6 +130,7 @@ private:
 	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
 
 	void saveSceneStatus();
+
 public:
 	int _currentScene;
 	int _goToScene;
@@ -141,9 +154,12 @@ public:
 	int _walkDirectory[MAX_ZONES][MAX_ZONES];
 	Common::Array<byte> _walkData;
 	Common::Array<Exit> _exits;
+	int _exitZone;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
 	ObjectArray _canimShapes;
+	Common::Array<ScaleZone> _scaleZones;
+	Common::StringArray _objSoundList;
 	bool _restoreFlag;
 	int _animating;
 	bool _doBgAnimDone;

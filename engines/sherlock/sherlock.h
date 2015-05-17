@@ -139,6 +139,9 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
+#define IS_ROSE_TATTOO (_vm->getGameID() == GType_RoseTattoo)
+#define IS_SERRATED_SCALPEL (_vm->getGameID() == GType_SerratedScalpel)
+
 } // End of namespace Sherlock
 
 #endif
