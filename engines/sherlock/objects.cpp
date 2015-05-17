@@ -1135,17 +1135,30 @@ const Common::Rect Object::getOldBounds() const {
 /**
  * Load the data for the animation
  */
-void CAnim::load(Common::SeekableReadStream &s) {
+void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[12];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
 
-	s.read(_sequences, 30);
+	if (isRoseTattoo) {
+		Common::fill(&_sequences[0], &_sequences[30], 0);
+		_size = s.readUint32LE();
+	} else {
+		s.read(_sequences, 30);
+	}
+
 	_position.x = s.readSint16LE();
 	_position.y = s.readSint16LE();
-	_size = s.readUint32LE();
-	_type = (SpriteType)s.readUint16LE();
-	_flags = s.readByte();
+	
+	if (isRoseTattoo) {
+		_flags = s.readByte();
+		_scaleVal = s.readSint16LE();
+	} else {
+		_size = s.readUint32LE();
+		_type = (SpriteType)s.readUint16LE();
+		_flags = s.readByte();
+	}
+
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
 	_gotoDir = s.readSint16LE();

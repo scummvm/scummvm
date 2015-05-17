@@ -398,13 +398,14 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Load in cAnim list
 		_cAnim.clear();
 		if (bgHeader._numcAnimations) {
+			int animSize = _vm->getGameID() == GType_SerratedScalpel ? 65 : 47;
 			Common::SeekableReadStream *canimStream = _lzwMode ?
-				Resources::decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
-				rrmStream->readStream(65 * bgHeader._numcAnimations);
+				res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
+				rrmStream->readStream(animSize * bgHeader._numcAnimations);
 
 			_cAnim.resize(bgHeader._numcAnimations);
 			for (uint idx = 0; idx < _cAnim.size(); ++idx)
-				_cAnim[idx].load(*canimStream);
+				_cAnim[idx].load(*canimStream, _vm->getGameID() == GType_RoseTattoo);
 
 			delete canimStream;
 		}

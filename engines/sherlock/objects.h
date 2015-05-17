@@ -256,17 +256,22 @@ public:
 
 struct CAnim {
 	Common::String _name;			// Name
-	byte _sequences[MAX_FRAME];		// Animation sequences
 	Common::Point _position;		// Position
 	int _size;						// Size of uncompressed animation
-	SpriteType _type;
 	int _flags;						// Tells if can be walked behind
 	Common::Point _goto;			// coords holmes should walk to before starting canim
 	int _gotoDir;
 	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
 	int _teleportDir;					// playing canim
 
-	void load(Common::SeekableReadStream &s);
+	// Scalpel specific
+	byte _sequences[MAX_FRAME];		// Animation sequences
+	SpriteType _type;
+
+	// Rose Tattoo specific
+	int _scaleVal;					// How much the canim is scaled
+
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct SceneImage {
