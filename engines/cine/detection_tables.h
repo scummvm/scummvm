@@ -379,6 +379,20 @@ static const CINEGameDescription gameDescriptions[] = {
 	{
 		{
 			"os",
+			"Demo",
+			AD_ENTRY1("demo_os", "043859e4cfe3977ad95b6efd00b21c62"),
+			Common::EN_GRB,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_OS,
+		GF_DEMO,
+	},
+
+	{
+		{
+			"os",
 			"",
 			AD_ENTRY1("procs0", "a9da5531ead0ebf9ad387fa588c0cbb0"),
 			Common::EN_GRB,
