@@ -2123,21 +2123,30 @@ static const uint16 qfg1vgaPatchMoveToCrusher[] = {
 
 // Same pathfinding bug as above, where Ego is set to move to an impossible
 // spot when sneaking. In GuardsTrumpet::changeState, we change the final
-// location where Ego is moved from 111, 111 to 114, 114.
+// location where Ego is moved from 111, 111 to 116, 116.
+// target coordinate is really problematic here.
+//
+// 114, 114 works when the speed slider is all the way up, but doesn't work
+// when the speed slider is not.
+//
+// It seems that this bug was fixed by Sierra for the Macintosh version.
+//
+// Applies to at least: English PC floppy
+// Responsible method: GuardsTrumpet::changeState(8)
 // Fixes bug: #6248
 static const uint16 qfg1vgaSignatureMoveToCastleGate[] = {
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
 	SIG_MAGICDWORD,
-	0x51, 0x1f,                         // class MoveTo
 	0x36,                               // push
-	0x39, 0x6f,                         // pushi 6f (111 - x)
-	0x3c,                               // dup (111 - y)
+	0x39, 0x6f,                         // pushi 6f (111d)
+	0x3c,                               // dup (111d) - coordinates 111, 111
 	0x7c,                               // pushSelf
 	SIG_END
 };
 
 static const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 	PATCH_ADDTOOFFSET(+3),
-	0x39, 0x72,                         // pushi 72 (114 - x)
+	0x39, 0x74,                         // pushi 74 (116d), changes coordinates to 116, 116
 	PATCH_END
 };
 
