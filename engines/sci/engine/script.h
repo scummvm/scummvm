@@ -93,6 +93,11 @@ private:
 protected:
 	offsetLookupArrayType _offsetLookupArray; // Table of all elements of currently loaded script, that may get pointed to
 
+private:
+	uint16 _offsetLookupObjectCount;
+	uint16 _offsetLookupStringCount;
+	uint16 _offsetLookupSaidCount;
+
 public:
 	int getLocalsOffset() const { return _localsOffset; }
 	uint16 getLocalsCount() const { return _localsCount; }
@@ -270,6 +275,9 @@ public:
 	 * Get the offset array
 	 */
 	const offsetLookupArrayType *getOffsetArray() { return &_offsetLookupArray; };
+	uint16 getOffsetObjectCount() { return _offsetLookupObjectCount; };
+	uint16 getOffsetStringCount() { return _offsetLookupStringCount; };
+	uint16 getOffsetSaidCount() { return _offsetLookupSaidCount; };
 
 private:
 	/**

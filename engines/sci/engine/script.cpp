@@ -65,7 +65,11 @@ void Script::freeScript() {
 	_lockers = 1;
 	_markedAsDeleted = false;
 	_objects.clear();
+
 	_offsetLookupArray.clear();
+	_offsetLookupObjectCount = 0;
+	_offsetLookupStringCount = 0;
+	_offsetLookupSaidCount = 0;
 }
 
 void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptPatcher) {
@@ -227,6 +231,10 @@ void Script::identifyOffsets() {
 	uint16 blockSize = 0;
 
 	_offsetLookupArray.clear();
+	_offsetLookupObjectCount = 0;
+	_offsetLookupStringCount = 0;
+	_offsetLookupSaidCount = 0;
+
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		// SCI0 + SCI1
 		scriptDataPtr  = _buf;
@@ -272,6 +280,7 @@ void Script::identifyOffsets() {
 				arrayEntry.offset     = scriptDataPtr - _buf + 8; // Calculate offset inside script data (VM uses +8)
 				arrayEntry.stringSize = 0;
 				_offsetLookupArray.push_back(arrayEntry);
+				_offsetLookupObjectCount++;
 				break;
 
 			case SCI_OBJ_STRINGS:
@@ -316,6 +325,7 @@ void Script::identifyOffsets() {
 					arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
 					arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 					_offsetLookupArray.push_back(arrayEntry);
+					_offsetLookupStringCount++;
 				} while (1);
 				break;
 
@@ -365,6 +375,7 @@ void Script::identifyOffsets() {
 					arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
 					arrayEntry.stringSize = 0;
 					_offsetLookupArray.push_back(arrayEntry);
+					_offsetLookupSaidCount++;
 				} while (1);
 				break;
 
@@ -415,6 +426,7 @@ void Script::identifyOffsets() {
 			arrayEntry.offset     = scriptDataPtr - _buf - 2; // the VM uses a pointer to the Magic-Number
 			arrayEntry.stringSize = 0;
 			_offsetLookupArray.push_back(arrayEntry);
+			_offsetLookupObjectCount++;
 
 			if (scriptDataLeft < 2)
 				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
@@ -467,6 +479,7 @@ void Script::identifyOffsets() {
 			arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
 			arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 			_offsetLookupArray.push_back(arrayEntry);
+			_offsetLookupStringCount++;
 		} while (1);
 
 	} else if (getSciVersion() == SCI_VERSION_3) {
@@ -504,6 +517,7 @@ void Script::identifyOffsets() {
 			arrayEntry.offset     = scriptDataPtr - _buf - 2; // the VM uses a pointer to the Magic-Number
 			arrayEntry.stringSize = 0;
 			_offsetLookupArray.push_back(arrayEntry);
+			_offsetLookupObjectCount++;
 
 			if (scriptDataLeft < 2)
 				error("Script::identifyOffsets(): unexpected end of script in script %d", _nr);
@@ -570,6 +584,7 @@ void Script::identifyOffsets() {
 				arrayEntry.offset     = stringStartPtr - _buf; // Calculate offset inside script data
 				arrayEntry.stringSize = stringDataPtr - stringStartPtr;
 				_offsetLookupArray.push_back(arrayEntry);
+				_offsetLookupStringCount++;
 
 				// SCI3 seems to have aligned all string on DWORD boundaries
 				sci3BoundaryOffset = stringDataPtr - _buf; // Calculate current offset inside script data
