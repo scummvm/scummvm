@@ -164,20 +164,10 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 
 			stream->seek(entry._offset);
 			Common::SeekableReadStream *resStream = stream->readStream(entry._size);
+			decompressIfNecessary(resStream);
 
-			// Check whether the file is compressed
-			if (resStream->readUint32BE() == MKTAG('L', 'Z', 'V', 26)) {
-				resStream->seek(0);
-				// It's compressed, so decompress the sub-file and return it
-				Common::SeekableReadStream *decompressed = decompressLZ(*resStream);
-				delete stream;
-				delete resStream;
-				return decompressed;
-			} else {
-				resStream->seek(0);
-				delete stream;
-				return resStream;
-			}
+			delete stream;
+			return resStream;
 		}
 	}
 
@@ -188,8 +178,23 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 
 	Common::SeekableReadStream *stream = f.readStream(f.size());
 	f.close();
+	decompressIfNecessary(stream);
 
 	return stream;
+}
+
+/**
+ * Checks the passed stream, and if is compressed, deletes it and replaces it with it's uncompressed data
+ */
+void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
+	bool isCompressed = stream->readUint32BE() == MKTAG('L', 'Z', 'V', 26);
+	stream->seek(-4, SEEK_CUR);
+
+	if (isCompressed) {
+		Common::SeekableReadStream *newStream = decompressLZ(*stream);
+		delete stream;
+		stream = newStream;
+	}
 }
 
 /**
@@ -207,6 +212,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	LibraryEntry &entry = _indexes[libraryFile][filename];
 	libStream->seek(entry._offset);
 	Common::SeekableReadStream *stream = libStream->readStream(entry._size);
+	decompressIfNecessary(stream);
 
 	delete libStream;
 	return stream;

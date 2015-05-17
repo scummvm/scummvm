@@ -81,6 +81,8 @@ public:
 	void addToCache(const Common::String &filename, Common::SeekableReadStream &stream);
 	bool isInCache(const Common::String &filename) const { return _cache.isCached(filename); }
 
+	void decompressIfNecessary(Common::SeekableReadStream *&stream);
+
 	Common::SeekableReadStream *load(const Common::String &filename);
 
 	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile);
