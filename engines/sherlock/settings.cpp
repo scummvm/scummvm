@@ -223,9 +223,10 @@ void Settings::show(SherlockEngine *vm) {
 	Screen &screen = *vm->_screen;
 	Sound &sound = *vm->_sound;
 	Talk &talk = *vm->_talk;
-	UserInterface &ui = *vm->_ui;
+	ScalpelUserInterface &ui = *(ScalpelUserInterface *)vm->_ui;
 	bool updateConfig = false;
 
+	assert(vm->getGameID() == GType_SerratedScalpel);
 	Settings settings(vm);
 	settings.drawInteface(false);
 

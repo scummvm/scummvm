@@ -274,7 +274,8 @@ void Inventory::drawInventory(int flag) {
 		screen._backBuffer = &screen._backBuffer1;
 	}
 
-	ui._oldUse = -1;
+	assert(IS_SERRATED_SCALPEL);
+	((ScalpelUserInterface *)_vm->_ui)->_oldUse = -1;
 }
 
 /**
@@ -353,31 +354,6 @@ void Inventory::highlight(int index, byte color) {
 	bb.transBlitFrom(img, Common::Point(6 + slot * 52 + ((47 - img.w) / 2),
 		163 + ((33 - img.h) / 2)));
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
-}
-
-/**
- * Support method for updating the screen
- */
-void Inventory::doInvJF() {
-	Screen &screen = *_vm->_screen;
-	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
-
-	ui._invLookFlag = true;
-	freeInv();
-
-	ui._infoFlag = true;
-	ui.clearInfo();
-
-	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
-		Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
-	ui.examine();
-
-	if (!talk._talkToAbort) {
-		screen._backBuffer2.blitFrom((*ui._controlPanel)[0]._frame,
-			Common::Point(0, CONTROLS_Y));
-		loadInv();
-	}
 }
 
 /**

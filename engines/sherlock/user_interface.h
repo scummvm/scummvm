@@ -61,31 +61,64 @@ extern const char *const PRESS_KEY_TO_CONTINUE;
 class SherlockEngine;
 class Inventory;
 class Talk;
-class UserInterface;
 
 class UserInterface {
+protected:
+	SherlockEngine *_vm;
+
+	UserInterface(SherlockEngine *vm);
+public:
+	MenuMode _menuMode;
+	int _menuCounter;
+	bool _infoFlag;
+	bool _windowOpen;
+	bool _endKeyActive;
+	int _invLookFlag;
+	int _windowStyle;
+	bool _helpStyle;
+	Common::Rect _windowBounds;
+	bool _lookScriptFlag;
+
+	// TODO: Not so sure these should be in the base class. May want to refactor them to SherlockEngine, or refactor
+	// various Scalpel dialogs to keep their own private state of key/selections
+	int _key, _oldKey;
+	int _selector, _oldSelector;
+	int _temp, _oldTemp;
+	int _temp1;
+	int _lookHelp;
+public:
+	static UserInterface *init(SherlockEngine *vm);
+
+	virtual void reset() {}
+	virtual void drawInterface(int bufferNum = 3) {}
+	virtual void handleInput() {}
+
+	virtual void doInvJF() {}
+	virtual void summonWindow(const Surface &bgSurface, bool slideUp = true) {}
+	virtual void summonWindow(bool slideUp = true, int height = CONTROLS_Y) {}
+	virtual void banishWindow(bool slideUp = true) {}
+	virtual void clearInfo() {}
+	virtual void clearWindow() {}
+
+	virtual void printObjectDesc() {}
+};
+
+class ScalpelUserInterface: public UserInterface {
 	friend class Inventory;
 	friend class Settings;
 	friend class Talk;
 private:
-	SherlockEngine *_vm;
 	ImageFile *_controlPanel;
 	ImageFile *_controls;
 	int _bgFound;
 	int _oldBgFound;
 	int _keycode;
-	int _lookHelp;
 	int _help, _oldHelp;
-	int _key, _oldKey;
-	int _temp, _oldTemp;
 	int _oldLook;
 	bool _keyboardInput;
 	bool _pause;
 	int _cNum;
-	int _selector, _oldSelector;
 	Common::String _cAnimStr;
-	bool _lookScriptFlag;
-	Common::Rect _windowBounds;
 	Common::String _descStr;
 	int _find;
 	int _oldUse;
@@ -114,39 +147,38 @@ private:
 	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
 		int objNum, int giveMode);
 	void checkAction(ActionType &action, const char *const messages[], int objNum);
+
+	void printObjectDesc(const Common::String &str, bool firstTime);
 public:
-	MenuMode _menuMode;
-	int _menuCounter;
-	bool _infoFlag;
-	bool _windowOpen;
-	bool _endKeyActive;
-	int _invLookFlag;
-	int _temp1;
-	int _windowStyle;
-	bool _helpStyle;
-public:
-	UserInterface(SherlockEngine *vm);
-	~UserInterface();
-
-	void reset();
-
-	void drawInterface(int bufferNum = 3);
-
-	void handleInput();
-
-	void clearInfo();
-	void clearWindow();
+	ScalpelUserInterface(SherlockEngine *vm);
+	~ScalpelUserInterface();
 
 	void whileMenuCounter();
 
-	void printObjectDesc(const Common::String &str, bool firstTime);
-	void printObjectDesc();
-
-	void summonWindow(const Surface &bgSurface, bool slideUp = true);
-	void summonWindow(bool slideUp = true, int height = CONTROLS_Y);
-	void banishWindow(bool slideUp = true);
-
 	void restoreButton(int num);
+public:
+	virtual void reset();
+
+	virtual void handleInput();
+
+	virtual void drawInterface(int bufferNum = 3);
+
+	virtual void doInvJF();
+
+	virtual void summonWindow(const Surface &bgSurface, bool slideUp = true);
+	virtual void summonWindow(bool slideUp = true, int height = CONTROLS_Y);
+	virtual void banishWindow(bool slideUp = true);
+	virtual void clearInfo();
+	virtual void clearWindow();
+
+	virtual void printObjectDesc();
+};
+
+class TattooUserInterface : public UserInterface {
+public:
+	TattooUserInterface(SherlockEngine *vm);
+public:
+	virtual void handleInput();
 };
 
 } // End of namespace Sherlock

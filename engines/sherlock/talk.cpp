@@ -193,9 +193,11 @@ void Talk::talkTo(const Common::String &filename) {
 	while (!_sequenceStack.empty())
 		pullSequence();
 
-	// Restore any pressed button
-	if (!ui._windowOpen && savedMode != STD_MODE)
-		ui.restoreButton(savedMode - 1);
+	if (IS_SERRATED_SCALPEL) {
+		// Restore any pressed button
+		if (!ui._windowOpen && savedMode != STD_MODE)
+			((ScalpelUserInterface *)_vm->_ui)->restoreButton(savedMode - 1);
+	}
 
 	// Clear the ui counter so that anything displayed on the info line
 	// before the window was opened isn't cleared

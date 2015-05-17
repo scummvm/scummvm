@@ -120,10 +120,10 @@ struct TalkSequences {
 };
 
 class SherlockEngine;
-class UserInterface;
+class ScalpelUserInterface;
 
 class Talk {
-	friend class UserInterface;
+	friend class ScalpelUserInterface;
 private:
 	Common::Array<TalkSequences> STILL_SEQUENCES;
 	Common::Array<TalkSequences> TALK_SEQUENCES;

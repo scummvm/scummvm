@@ -95,8 +95,6 @@ public:
 
 	void highlight(int index, byte color);
 
-	void doInvJF();
-
 	int putNameInInventory(const Common::String &name);
 	int putItemInInventory(Object &obj);
 
