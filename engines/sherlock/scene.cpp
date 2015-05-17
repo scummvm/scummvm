@@ -272,26 +272,52 @@ bool Scene::loadScene(const Common::String &filename) {
 			bgInfo[idx].load(*rrmStream);
 
 		// Read information
-		Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-			Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569 +
-				bgHeader._descSize + bgHeader._seqSize);
+		if (!_lzwMode) {
+			_bgShapes.resize(bgHeader._numStructs);
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+				_bgShapes[idx].load(*rrmStream);
 
-		_bgShapes.resize(bgHeader._numStructs);
-		for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-			_bgShapes[idx].load(*infoStream);
+			if (bgHeader._descSize) {
+				_descText.resize(bgHeader._descSize);
+				rrmStream->read(&_descText[0], bgHeader._descSize);
+			}
 
-		if (bgHeader._descSize) {
-			_descText.resize(bgHeader._descSize);
-			infoStream->read(&_descText[0], bgHeader._descSize);
-		}
+			if (bgHeader._seqSize) {
+				_sequenceBuffer.resize(bgHeader._seqSize);
+				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+			}
+		} else {
+			Common::SeekableReadStream *infoStream;
+			
+			// Read shapes
+			infoStream = Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569);
 
-		if (bgHeader._seqSize) {
-			_sequenceBuffer.resize(bgHeader._seqSize);
-			infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
-		}
+			_bgShapes.resize(bgHeader._numStructs);
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+				_bgShapes[idx].load(*infoStream);
 
-		if (_lzwMode)
 			delete infoStream;
+			
+			// Read description texts
+			if (bgHeader._descSize) {
+				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._descSize);
+
+				_descText.resize(bgHeader._descSize);
+				infoStream->read(&_descText[0], bgHeader._descSize);
+
+				delete infoStream;
+			}
+
+			// Read sequences
+			if (bgHeader._seqSize) {
+				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._seqSize);
+
+				_sequenceBuffer.resize(bgHeader._seqSize);
+				infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+
+				delete infoStream;
+			}
+		}
 
 		// Set up the list of images used by the scene
 		_images.resize(bgHeader._numImages + 1);
