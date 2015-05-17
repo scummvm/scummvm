@@ -1033,9 +1033,7 @@ int Journal::getFindName(bool printError) {
 	screen.makeButton(Common::Rect(SEARCH_POINTS[2][0], yp, SEARCH_POINTS[2][1], yp + 10),
 		SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, "Forward");
 
-	screen.gPrint(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, yp), COMMAND_FOREGROUND, "E");
-	screen.gPrint(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, yp), COMMAND_FOREGROUND, "B");
-	screen.gPrint(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, yp), COMMAND_FOREGROUND, "F");
+	screen.makeField(Common::Rect(12, 185, 307, 196));
 
 	screen.fillRect(Common::Rect(12, 185, 307, 186), BUTTON_BOTTOM);
 	screen.vLine(12, 185, 195, BUTTON_BOTTOM);
@@ -1160,7 +1158,7 @@ int Journal::getFindName(bool printError) {
 				break;
 			}
 		}
-	} while (!done);
+	} while (!done && !_vm->shouldQuit());
 
 	if (done != -1) {
 		_find = name;

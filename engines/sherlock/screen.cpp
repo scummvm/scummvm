@@ -467,7 +467,7 @@ void Screen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
 }
 
 /**
- * Draw a panel in th eback buffer with a raised area effect around the edges
+ * Draw a panel in the back buffer with a raised area effect around the edges
  */
 void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->fillRect(r, BUTTON_MIDDLE);
@@ -480,6 +480,18 @@ void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->vLine(r.right - 2, r.top + 1, r.bottom - 2, BUTTON_BOTTOM);
 	_backBuffer->hLine(r.left, r.bottom - 1, r.right - 1, BUTTON_BOTTOM);
 	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
+}
+
+/**
+ * Draw a field in the back buffer with a raised area effect around the edges,
+ * suitable for text input.
+ */
+void Screen::makeField(const Common::Rect &r) {
+	_backBuffer->fillRect(r, BUTTON_MIDDLE);
+	_backBuffer->hLine(r.left, r.top, r.right - 1, BUTTON_BOTTOM);
+	_backBuffer->hLine(r.left + 1, r.bottom - 1, r.right - 1, BUTTON_TOP);
+	_backBuffer->vLine(r.left, r.top + 1, r.bottom - 1, BUTTON_BOTTOM);
+	_backBuffer->vLine(r.right - 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
 }
 
 /**
