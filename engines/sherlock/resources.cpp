@@ -383,6 +383,28 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 			*pDest++ = *src & 0xF;
 			*pDest++ = (*src >> 4);
 		}
+	} else if (frame._rleEncoded && _vm->getGameID() == GType_RoseTattoo) {
+		// Rose Tattoo run length encoding doesn't use the RLE marker byte
+		byte *dst = (byte *)frame._frame.getPixels();
+
+		for (int yp = 0; yp < frame._height; ++yp) {
+			int xSize = frame._width;
+			while (xSize > 0) {
+				// Skip a given number of pixels
+				byte skip = *src++;
+				dst += skip;
+				xSize -= skip;
+				if (!xSize)
+					break;
+
+				// Get a run length, and copy the following number of pixels
+				int rleCount = *src++;
+				xSize -= rleCount;
+				while (rleCount-- > 0)
+					*dst++ = *src++;
+			}
+			assert(xSize == 0);
+		}
 	} else if (frame._rleEncoded) {
 		// RLE encoded
 		byte *dst = (byte *)frame._frame.getPixels();

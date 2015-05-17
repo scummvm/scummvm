@@ -370,7 +370,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the image data
 			Common::SeekableReadStream *imageStream = _lzwMode ?
-				Resources::decompressLZ(*rrmStream, bgInfo[idx]._filesize) :
+				res.decompress(*rrmStream, bgInfo[idx]._filesize) :
 				rrmStream->readStream(bgInfo[idx]._filesize);
 
 			_images[idx + 1]._images = new ImageFile(*imageStream);
