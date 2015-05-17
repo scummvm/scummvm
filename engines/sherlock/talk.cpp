@@ -1160,7 +1160,7 @@ void Talk::doScript(const Common::String &script) {
 				// Scan for object
 				int objId = -1;
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
-					if (scumm_stricmp(tempString.c_str(), scene._bgShapes[idx]._name.c_str()) == 0)
+					if (tempString.equalsIgnoreCase(scene._bgShapes[idx]._name))
 						objId = idx;
 				}
 				if (objId == -1)
@@ -1372,7 +1372,7 @@ void Talk::doScript(const Common::String &script) {
 
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 					Object &object = scene._bgShapes[idx];
-					if (scumm_stricmp(tempString.c_str(), object._name.c_str()) == 0) {
+					if (tempString.equalsIgnoreCase(object._name)) {
 						// Only toggle the object if it's not in the desired state already
 						if ((object._type == HIDDEN && state) || (object._type != HIDDEN && !state))
 							object.toggleHidden();

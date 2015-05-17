@@ -2177,17 +2177,17 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 	int targetNum = -1;
 	if (giveMode) {
 		for (int idx = 0; idx < 4 && targetNum == -1; ++idx) {
-			if ((scumm_stricmp(use[idx]._target.c_str(), "*GIVE*") == 0 || scumm_stricmp(use[idx]._target.c_str(), "*GIVEP*") == 0)
-					&& scumm_stricmp(use[idx]._names[0].c_str(), invName.c_str()) == 0) {
+			if ((use[idx]._target.equalsIgnoreCase("*GIVE*") || use[idx]._target.equalsIgnoreCase("*GIVEP*"))
+					&& use[idx]._names[0].equalsIgnoreCase(invName)) {
 				// Found a match
 				targetNum = idx;
-				if (scumm_stricmp(use[idx]._target.c_str(), "*GIVE*") == 0)
+				if (use[idx]._target.equalsIgnoreCase("*GIVE*"))
 					inv.deleteItemFromInventory(invName);
 			}
 		}
 	} else {
 		for (int idx = 0; idx < 4 && targetNum == -1; ++idx) {
-			if (scumm_stricmp(use[idx]._target.c_str(), invName.c_str()) == 0)
+			if (use[idx]._target.equalsIgnoreCase(invName))
 				targetNum = idx;
 		}
 	}

@@ -620,7 +620,7 @@ int People::findSpeaker(int speaker) {
 		if (obj._type == ACTIVE_BG_SHAPE) {
 			Common::String name(obj._name.c_str(), obj._name.c_str() + 4);
 
-			if (scumm_stricmp(PORTRAITS[speaker], name.c_str()) == 0
+			if (name.equalsIgnoreCase(PORTRAITS[speaker])
 				&& obj._name[4] >= '0' && obj._name[4] <= '9')
 				return idx;
 		}

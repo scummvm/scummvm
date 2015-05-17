@@ -132,7 +132,7 @@ void Inventory::loadGraphics() {
  */
 int Inventory::findInv(const Common::String &name) {
 	for (int idx = 0; idx < (int)_names.size(); ++idx) {
-		if (scumm_stricmp(name.c_str(), _names[idx].c_str()) == 0)
+		if (name.equalsIgnoreCase(_names[idx]))
 			return idx;
 	}
 
@@ -389,7 +389,7 @@ int Inventory::putNameInInventory(const Common::String &name) {
 
 	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 		Object &o = scene._bgShapes[idx];
-		if (scumm_stricmp(name.c_str(), o._name.c_str()) == 0 && o._type != INVALID) {
+		if (name.equalsIgnoreCase(o._name) && o._type != INVALID) {
 			putItemInInventory(o);
 			++matches;
 		}
@@ -411,13 +411,13 @@ int Inventory::putItemInInventory(Object &obj) {
 		_vm->setFlags(obj._pickupFlag);
 
 	for (int useNum = 0; useNum < 4; ++useNum) {
-		if (scumm_stricmp(obj._use[useNum]._target.c_str(), "*PICKUP*") == 0) {
+		if (obj._use[useNum]._target.equalsIgnoreCase("*PICKUP*")) {
 			pickupFound = true;
 
 			for (int namesNum = 0; namesNum < 4; ++namesNum) {
 				for (uint bgNum = 0; bgNum < scene._bgShapes.size(); ++bgNum) {
 					Object &bgObj = scene._bgShapes[bgNum];
-					if (scumm_stricmp(obj._use[useNum]._names[namesNum].c_str(), bgObj._name.c_str()) == 0) {
+					if (obj._use[useNum]._names[namesNum].equalsIgnoreCase(bgObj._name)) {
 						copyToInventory(bgObj);
 						if (bgObj._pickupFlag)
 							_vm->setFlags(bgObj._pickupFlag);
@@ -485,7 +485,7 @@ int Inventory::deleteItemFromInventory(const Common::String &name) {
 	int invNum = -1;
 
 	for (int idx = 0; idx < (int)size() && invNum == -1; ++idx) {
-		if (scumm_stricmp(name.c_str(), (*this)[idx]._name.c_str()) == 0)
+		if (name.equalsIgnoreCase((*this)[idx]._name))
 			invNum = idx;
 	}
 

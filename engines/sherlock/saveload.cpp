@@ -441,7 +441,7 @@ bool SaveManager::getFilename(int slot) {
 	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
 
 	Common::String saveName = _savegames[slot];
-	if (scumm_stricmp(saveName.c_str(), "-EMPTY-") == 0) {
+	if (saveName.equalsIgnoreCase("-EMPTY-")) {
 		// It's an empty slot, so start off with an empty save name
 		saveName = "";
 
