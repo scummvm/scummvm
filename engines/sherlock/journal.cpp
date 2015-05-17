@@ -562,7 +562,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 	int yp = 37;
 	int startPage = _page;
 	bool endJournal = false;
-	bool firstOccurance = false;
+	bool firstOccurance = true;
 	bool searchSuccessful = false;
 	bool endFlag = false;
 	int lineNum = 0;
