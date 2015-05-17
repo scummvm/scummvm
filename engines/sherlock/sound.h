@@ -46,7 +46,7 @@ private:
 	Audio::SoundHandle _effectsHandle;
 	int _curPriority;
 
-	char decodeSample(char sample, byte& prediction, int& step);
+	byte decodeSample(byte sample, byte& reference, int16& scale);
 public:
 	bool _digitized;
 	bool _music;
@@ -83,3 +83,4 @@ public:
 } // End of namespace Sherlock
 
 #endif
+
