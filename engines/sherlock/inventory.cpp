@@ -128,7 +128,7 @@ void Inventory::loadGraphics() {
 
 /**
  * Searches through the list of names that correspond to the inventory items
- * and returns the numer that matches the passed name
+ * and returns the number that matches the passed name
  */
 int Inventory::findInv(const Common::String &name) {
 	for (int idx = 0; idx < (int)_names.size(); ++idx) {
@@ -150,7 +150,7 @@ void Inventory::putInv(int slamIt) {
 	UserInterface &ui = *_vm->_ui;
 
 	// If an inventory item has disappeared (due to using it or giving it),
-	// a blank space slot may haave appeared. If so, adjust the inventory
+	// a blank space slot may have appeared. If so, adjust the inventory
 	if (_invIndex > 0 && _invIndex > (_holdings - 6)) {
 		--_invIndex;
 		freeGraphics();

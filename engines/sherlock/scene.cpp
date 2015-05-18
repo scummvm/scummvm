@@ -964,7 +964,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	if (talk._talkToAbort)
 		return 1;
 
-	// Add new anim shape entry for displaying the animationo
+	// Add new anim shape entry for displaying the animation
 	_canimShapes.push_back(Object());
 	Object &cObj = _canimShapes[_canimShapes.size() - 1];
 

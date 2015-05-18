@@ -66,7 +66,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_ORIGINAL_SAVES,
 		{
 			_s("Use original savegame dialog"),
-			_s("Files button in-game shows original savegame dialog rather than ScummVM menu"),
+			_s("Files button in-game shows original savegame dialog rather than the ScummVM menu"),
 			"originalsaveload",
 			false
 		}
@@ -197,7 +197,7 @@ SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, i
 
 
 #if PLUGIN_ENABLED_DYNAMIC(SHERLOCK)
-REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
+	REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #endif

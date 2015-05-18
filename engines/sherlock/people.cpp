@@ -119,7 +119,7 @@ const char PORTRAITS[MAX_PEOPLE][5] = {
 	{ "INSP" }			// Inspector Lestrade (Scotland Yard)
 };
 
-const char  *const NAMES[MAX_PEOPLE] = {
+const char *const NAMES[MAX_PEOPLE] = {
 	"Sherlock Holmes",
 	"Dr. Watson",
 	"Inspector Lestrade",
@@ -221,7 +221,7 @@ People::~People() {
  * Reset the player data
  */
 void People::reset() {
-	// Note: The engine has theoretical support for two player charactersm but only the first one is used.
+	// Note: The engine has theoretical support for two player characters but only the first one is used.
 	// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
 	Sprite &p = _data[PLAYER];
 
