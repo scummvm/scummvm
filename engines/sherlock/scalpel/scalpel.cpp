@@ -251,9 +251,9 @@ void ScalpelEngine::initialize() {
 	_flags[39] = true;		// Turn on Baker Street
 
 	if (!getIsDemo()) {
-	// Load the map co-ordinates for each scene and sequence data
-	_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
-	_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
+		// Load the map co-ordinates for each scene and sequence data
+		_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
+		_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
 	}
 
 	// Load the inventory
@@ -269,7 +269,7 @@ void ScalpelEngine::initialize() {
 	_animation->setTitleFrames(&TITLE_FRAMES[0][0], 7, 9);
 
 	// Starting scene
-	if (getIsDemo())
+	if (getIsDemo() && _interactiveFl)
 		_scene->_goToScene = 3;
 	else
 		_scene->_goToScene = 4;
@@ -279,7 +279,7 @@ void ScalpelEngine::initialize() {
  * Show the opening sequence
  */
 void ScalpelEngine::showOpening() {
-	if (getIsDemo())
+	if (getIsDemo() && _interactiveFl)
 		return;
 
 	if (!showCityCutscene())

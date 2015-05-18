@@ -44,12 +44,16 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_musicOn = true;
 	_speechOn = true;
 
-	_vm->_res->addToCache("MUSIC.LIB");
-	_vm->_res->addToCache("SND.SND");
-
-	if (!_vm->getIsDemo()) {
+	if (!_vm->_interactiveFl)
 		_vm->_res->addToCache("TITLE.SND");
-		_vm->_res->addToCache("EPILOGUE.SND");
+	else {
+		_vm->_res->addToCache("MUSIC.LIB");
+		_vm->_res->addToCache("SND.SND");
+
+		if (!_vm->getIsDemo()) {
+			_vm->_res->addToCache("TITLE.SND");
+			_vm->_res->addToCache("EPILOGUE.SND");
+		}
 	}
 }
 
@@ -64,6 +68,7 @@ void Sound::syncSoundSettings() {
 
 void Sound::loadSound(const Common::String &name, int priority) {
 	// No implementation required in ScummVM
+	warning("loadSound");
 }
 
 static int8 creativeADPCM_ScaleMap[64] = {

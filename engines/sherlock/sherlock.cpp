@@ -49,6 +49,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_loadGameSlot = -1;
 	_canLoadSave = false;
 	_showOriginalSavesDialog = false;
+	_interactiveFl = true;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -79,6 +80,15 @@ void SherlockEngine::initialize() {
 	ImageFile::setVm(this);
 	Object::setVm(this);
 	Sprite::setVm(this);
+
+	if (getIsDemo()) {
+		Common::File f;
+		// The interactive demo doesn't have an intro thus doesn't include TITLE.SND
+		// At the opposite, the non-interactive demo is only the intro.
+		if (f.exists("TITLE.SND"))
+			_interactiveFl = false;
+	}
+
 	_res = new Resources(this);
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);

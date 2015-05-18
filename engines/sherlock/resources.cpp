@@ -102,11 +102,13 @@ Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 Resources::Resources(SherlockEngine *vm): _vm(vm), _cache(vm) {
 	_resourceIndex = -1;
 
-	addToCache("vgs.lib");
-	addToCache("talk.lib");
-	addToCache("sequence.txt");
-	addToCache("journal.txt");
-	addToCache("portrait.lib");
+	if (_vm->_interactiveFl) {
+		addToCache("vgs.lib");
+		addToCache("talk.lib");
+		addToCache("sequence.txt");
+		addToCache("journal.txt");
+		addToCache("portrait.lib");
+	}
 }
 
 /**

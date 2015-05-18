@@ -53,6 +53,10 @@ Screen::~Screen() {
  * Set the font to use for writing text on the screen
  */
 void Screen::setFont(int fontNumb) {
+	// Interactive demo doesn't use fonts
+	if (!_vm->_interactiveFl)
+		return;
+
 	_fontNumber = fontNumb;
 	Common::String fname = Common::String::format("FONT%d.VGS", fontNumb + 1);
 

@@ -57,8 +57,10 @@ Journal::Journal(SherlockEngine *vm): _vm(vm) {
 	_up = _down = false;
 	_page = 1;
 
-	// Load the journal directory and location names
-	loadJournalLocations();
+	if (_vm->_interactiveFl) {
+		// Load the journal directory and location names
+		loadJournalLocations();
+	}
 }
 
 /**
