@@ -156,8 +156,6 @@ struct UseType {
 	int _cAnimSpeed;
 	Common::String _names[4];
 	int _useFlag;					// Which flag USE will set (if any)
-	int _dFlag[1];
-	int _lFlag[2];
 	Common::String _target;
 
 	UseType();

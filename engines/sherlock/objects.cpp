@@ -386,8 +386,6 @@ void ActionType::load(Common::SeekableReadStream &s) {
 UseType::UseType() {
 	_cAnimNum = _cAnimSpeed = 0;
 	_useFlag = 0;
-	_dFlag[0] = 0;
-	_lFlag[0] = _lFlag[1] = 0;
 }
 
 /**
@@ -407,9 +405,7 @@ void UseType::load(Common::SeekableReadStream &s) {
 	}
 
 	_useFlag = s.readSint16LE();
-	_dFlag[0] = s.readSint16LE();
-	_lFlag[0] = s.readSint16LE();
-	_lFlag[1] = s.readSint16LE();
+	s.skip(6);
 
 	s.read(buffer, 12);
 	_target = Common::String(buffer);
