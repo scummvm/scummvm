@@ -129,7 +129,9 @@ Common::Error SherlockEngine::run() {
 		_saves->loadGame(_loadGameSlot);
 		_loadGameSlot = -1;
 	} else {
-		showOpening();
+		do
+			showOpening();
+		while (!shouldQuit() && !_interactiveFl);
 	}
 
 	while (!shouldQuit()) {
