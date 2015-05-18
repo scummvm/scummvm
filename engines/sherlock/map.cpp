@@ -52,7 +52,7 @@ const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 
 /*----------------------------------------------------------------*/
 
-Map::Map(SherlockEngine *vm): _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
+Map::Map(SherlockEngine *vm) : _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_active = false;
 	_mapCursors = nullptr;
 	_shapes = nullptr;

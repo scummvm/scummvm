@@ -91,7 +91,7 @@ void TalkSequences::clear() {
 
 /*----------------------------------------------------------------*/
 
-Talk::Talk(SherlockEngine *vm): _vm(vm) {
+Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
 	_speaker = 0;

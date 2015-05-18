@@ -49,7 +49,7 @@ const int SEARCH_POINTS[3][3] = {
 
 /*----------------------------------------------------------------*/
 
-Journal::Journal(SherlockEngine *vm): _vm(vm) {
+Journal::Journal(SherlockEngine *vm) : _vm(vm) {
 	// Initialize fields
 	_maxPage = 0;
 	_index = 0;

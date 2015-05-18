@@ -28,7 +28,7 @@
 
 namespace Sherlock {
 
-Cache::Cache(SherlockEngine *vm): _vm(vm) {
+Cache::Cache(SherlockEngine *vm) : _vm(vm) {
 }
 
 /**
@@ -99,7 +99,7 @@ Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 
 /*----------------------------------------------------------------*/
 
-Resources::Resources(SherlockEngine *vm): _vm(vm), _cache(vm) {
+Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	_resourceIndex = -1;
 
 	if (_vm->_interactiveFl) {

@@ -111,7 +111,7 @@ int ObjectArray::indexOf(const Object &obj) const {
 
 /*----------------------------------------------------------------*/
 
-Scene::Scene(SherlockEngine *vm): _vm(vm) {
+Scene::Scene(SherlockEngine *vm) : _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
 		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
 	_currentScene = -1;

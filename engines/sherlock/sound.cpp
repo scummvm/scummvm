@@ -30,7 +30,7 @@
 
 namespace Sherlock {
 
-Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
+Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
 	_music = false;
 	_voices = 0;

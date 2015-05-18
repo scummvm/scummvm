@@ -27,7 +27,7 @@
 
 namespace Sherlock {
 
-Surface::Surface(uint16 width, uint16 height): _freePixels(true) {
+Surface::Surface(uint16 width, uint16 height) : _freePixels(true) {
 	create(width, height);
 }
 
