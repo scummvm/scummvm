@@ -89,7 +89,7 @@ static uint8 creativeADPCM_AdjustMap[64] = {
 	240, 0, 0, 0, 0,  0,  0,  0
 };
 
-byte Sound::decodeSample(byte sample, byte& reference, int16& scale) {
+byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 	int16 samp = sample + scale;
 	int16 ref = 0;
 

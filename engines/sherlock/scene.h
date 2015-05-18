@@ -49,7 +49,7 @@ struct BgFileHeader {
 	void load(Common::SeekableReadStream &s);
 };
 
-struct BgfileheaderInfo {
+struct BgFileHeaderInfo {
 	int _filesize;				// How long images are
 	int _maxFrames;				// How many unique frames in object
 	Common::String _filename;	// Filename of object
@@ -83,7 +83,7 @@ struct SceneSound {
 	void load(Common::SeekableReadStream &s);
 };
 
-class ObjectArray: public Common::Array<Object> {
+class ObjectArray : public Common::Array<Object> {
 public:
 	int indexOf(const Object &obj) const;
 };

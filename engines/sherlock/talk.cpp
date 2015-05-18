@@ -672,7 +672,7 @@ void Talk::drawInterface() {
 }
 
 /**
- * Display a list of statements in a window at the bottom of the scren that the
+ * Display a list of statements in a window at the bottom of the screen that the
  * player can select from.
  */
 bool Talk::displayTalk(bool slamIt) {

@@ -43,7 +43,7 @@ void BgFileHeader::load(Common::SeekableReadStream &s) {
 /**
  * Load the data for the object
  */
-void BgfileheaderInfo::load(Common::SeekableReadStream &s) {
+void BgFileHeaderInfo::load(Common::SeekableReadStream &s) {
 	_filesize = s.readUint32LE();
 	_maxFrames = s.readByte();
 
@@ -176,7 +176,7 @@ void Scene::selectScene() {
 	_restoreFlag = true;
 	events.clearEvents();
 
-	// If there were any scripst waiting to be run, but were interrupt by a running
+	// If there were any scripts waiting to be run, but were interrupt by a running
 	// canimation (probably the last scene's exit canim), clear the _scriptMoreFlag
 	if (talk._scriptMoreFlag == 3)
 		talk._scriptMoreFlag = 0;
@@ -265,7 +265,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		_invGraphicItems = bgHeader._numImages + 1;
 
 		// Read in the shapes header info
-		Common::Array<BgfileheaderInfo> bgInfo;
+		Common::Array<BgFileHeaderInfo> bgInfo;
 		bgInfo.resize(bgHeader._numStructs);
 
 		for (uint idx = 0; idx < bgInfo.size(); ++idx)
@@ -461,13 +461,13 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Check for TURNON objects
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			if (_bgShapes[idx]._type == HIDDEN && (_bgShapes[idx]._flags & 0x20))
+			if (_bgShapes[idx]._type == HIDDEN && (_bgShapes[idx]._flags & TURNON_OBJ))
 				_bgShapes[idx].toggleHidden();
 		}
 
 		// Check for TURNOFF objects
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & 0x40) &&
+			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & TURNOFF_OBJ) &&
 					_bgShapes[idx]._type != INVALID)
 				_bgShapes[idx].toggleHidden();
 			if (_bgShapes[idx]._type == HIDE_SHAPE)

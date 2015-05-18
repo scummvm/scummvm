@@ -116,8 +116,7 @@ int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 	// For any palette component that doesn't already match the given destination
 	// palette, change by 1 towards the reference palette component
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx) {
-		if (tempPalette[idx] > palette[idx])
-		{
+		if (tempPalette[idx] > palette[idx]) {
 			tempPalette[idx] = MAX((int)palette[idx], (int)tempPalette[idx] - 4);
 			++total;
 		} else if (tempPalette[idx] < palette[idx]) {
@@ -216,7 +215,7 @@ void Screen::randomTransition() {
 
 	for (int idx = 0; idx <= 65535 && !_vm->shouldQuit(); ++idx) {
 		_transitionSeed = _transitionSeed * TRANSITION_MULTIPLIER + 1;
-		int offset = _transitionSeed & 65535;
+		int offset = _transitionSeed & 0xFFFF;
 
 		if (offset < (SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT))
 			*((byte *)getPixels() + offset) = *((const byte *)_backBuffer->getPixels() + offset);

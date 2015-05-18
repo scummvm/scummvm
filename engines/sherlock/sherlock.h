@@ -50,10 +50,6 @@
 namespace Sherlock {
 
 enum {
-	kFileTypeHash
-};
-
-enum {
 	kDebugScript = 1 << 0
 };
 

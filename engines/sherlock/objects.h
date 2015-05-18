@@ -164,6 +164,7 @@ struct UseType {
 	void load(Common::SeekableReadStream &s);
 };
 
+enum { TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
 class Object {
 private:
 	static SherlockEngine *_vm;
