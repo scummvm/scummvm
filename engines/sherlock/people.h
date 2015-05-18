@@ -53,12 +53,12 @@ enum {
 	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
 };
 
-extern const char  *const NAMES[MAX_PEOPLE];
+extern const char *const NAMES[MAX_PEOPLE];
 extern const char PORTRAITS[MAX_PEOPLE][5];
 
 class SherlockEngine;
 
-class Person: public Sprite {
+class Person : public Sprite {
 public:
 	Person() : Sprite() {}
 

@@ -248,7 +248,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 		// Is it a control character?
 		if (c < 128) {
-			// Nope. Set flag for allowing control coes to insert spaces
+			// Nope. Set flag for allowing control codes to insert spaces
 			ctrlSpace = true;
 			assert(c >= ' ');
 
@@ -898,7 +898,6 @@ bool Journal::handleEvents(int key) {
 		}
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, "Last Page");
 
-
 		// Print Text button
 		if (pt.x > JOURNAL_POINTS[8][0] && pt.x < JOURNAL_POINTS[8][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
 				pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty()) {
@@ -922,14 +921,14 @@ bool Journal::handleEvents(int key) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
 
-	if (((found == BTN_UP && events._released) || key =='U') && _up) {
+	if (((found == BTN_UP && events._released) || key == 'U') && _up) {
 		// Scroll up
 		drawJournal(1, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
 
-	if (((found == BTN_DOWN && events._released) || key =='D') && _down) {
+	if (((found == BTN_DOWN && events._released) || key == 'D') && _down) {
 		// Scroll down
 		drawJournal(2, LINES_PER_PAGE);
 		doArrows();
@@ -950,7 +949,6 @@ bool Journal::handleEvents(int key) {
 	if (((found == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
 		bool notFound = false;
-
 
 		do {
 			int dir;

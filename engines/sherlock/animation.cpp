@@ -28,7 +28,7 @@ namespace Sherlock {
 
 static const int NO_FRAMES = FRAMES_END;
 
-Animation::Animation(SherlockEngine *vm): _vm(vm) {
+Animation::Animation(SherlockEngine *vm) : _vm(vm) {
 }
 
 /**
