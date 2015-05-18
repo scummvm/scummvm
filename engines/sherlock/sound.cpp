@@ -34,7 +34,6 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
 	_music = false;
 	_voices = 0;
-	_playingEpilogue = false;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
 	_soundIsOn = &_soundPlaying;

@@ -54,7 +54,6 @@ public:
 	bool _soundOn;
 	bool _musicOn;
 	bool _speechOn;
-	bool _playingEpilogue;
 	bool _diskSoundPlaying;
 	bool _soundPlaying;
 	bool *_soundIsOn;

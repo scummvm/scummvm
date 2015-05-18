@@ -40,7 +40,6 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	int soundNumber = 0;
-	sound._playingEpilogue = true;
 
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename);
@@ -133,7 +132,6 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	events.clearEvents();
 	sound.stopSound();
 	delete stream;
-	sound._playingEpilogue = false;
 
 	return !skipped && !_vm->shouldQuit();
 }
