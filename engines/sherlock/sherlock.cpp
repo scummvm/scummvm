@@ -81,7 +81,7 @@ void SherlockEngine::initialize() {
 	Object::setVm(this);
 	Sprite::setVm(this);
 
-	if (getIsDemo()) {
+	if (isDemo()) {
 		Common::File f;
 		// The interactive demo doesn't have an intro thus doesn't include TITLE.SND
 		// At the opposite, the non-interactive demo is only the intro.

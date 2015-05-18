@@ -495,7 +495,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	_walkedInScene = false;
 	saves._justLoaded = false;
 
-	if (!_vm->getIsDemo()) {
+	if (!_vm->isDemo()) {
 		// Reset the previous map location and position on overhead map
 		map._oldCharPoint = _currentScene;
 		map._overPos.x = map[_currentScene].x * 100 - 600;

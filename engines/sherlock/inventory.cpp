@@ -136,7 +136,8 @@ int Inventory::findInv(const Common::String &name) {
 			return idx;
 	}
 
-	return 1;
+	// Couldn't find the desired item
+	error("Couldn't find inventory item - %s", name.c_str());
 }
 
 /**

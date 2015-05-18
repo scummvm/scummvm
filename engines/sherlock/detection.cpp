@@ -144,7 +144,7 @@ bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 /**
  * Returns whether the version is a demo
  */
-bool Sherlock::SherlockEngine::getIsDemo() const {
+bool Sherlock::SherlockEngine::isDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 

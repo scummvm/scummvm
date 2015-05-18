@@ -32,7 +32,7 @@ static const SherlockGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("talk.lib", "ad0c4d6865edf15da4e9204c08815875", 238928),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES)
 		},
 		GType_SerratedScalpel,

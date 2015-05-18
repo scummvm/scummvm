@@ -140,7 +140,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
  * Load the prologue name array 
  */
 void Animation::setPrologueNames(const char *const *names, int count) {
-	for (int idx = 0; idx < count; ++idx, names++) {
+	for (int idx = 0; idx < count; ++idx, ++names) {
 		_prologueNames.push_back(*names);
 	}
 }
@@ -161,7 +161,7 @@ void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
  * Load the title name array
  */
 void Animation::setTitleNames(const char *const *names, int count) {
-	for (int idx = 0; idx < count; ++idx, names++) {
+	for (int idx = 0; idx < count; ++idx, ++names) {
 		_titleNames.push_back(*names);
 	}
 }
@@ -185,14 +185,14 @@ const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 
 	if (_vm->_soundOverride.empty()) {
-		for (Common::Array<const char *>::size_type idx = 0; idx < _prologueNames.size(); ++idx) {
+		for (uint idx = 0; idx < _prologueNames.size(); ++idx) {
 			if (filename.equalsIgnoreCase(_prologueNames[idx])) {
 				frames = &_prologueFrames[idx][0];
 				break;
 			}
 		}
 	} else {
-		for (Common::Array<const char *>::size_type idx = 0; idx < _titleNames.size(); ++idx) {
+		for (uint idx = 0; idx < _titleNames.size(); ++idx) {
 			if (filename.equalsIgnoreCase(_titleNames[idx])) {
 				frames = &_titleFrames[idx][0];
 				break;

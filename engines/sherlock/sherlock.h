@@ -117,7 +117,7 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual void syncSoundSettings();
-	virtual bool getIsDemo() const;
+	virtual bool isDemo() const;
 
 	GameType getGameID() const;
 	Common::Language getLanguage() const;
