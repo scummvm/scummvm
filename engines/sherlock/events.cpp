@@ -198,11 +198,7 @@ bool Events::checkForNextFrameCounter() {
  * Get a pending keypress
  */
 Common::KeyState Events::getKey() {
-	Common::KeyState keyState = _pendingKeys.pop();
-	if ((keyState.flags & Common::KBD_SHIFT) != 0)
-		keyState.ascii = toupper(keyState.ascii);
-
-	return keyState;
+	return _pendingKeys.pop();
 }
 
 /**
