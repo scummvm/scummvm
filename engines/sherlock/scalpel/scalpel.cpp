@@ -302,8 +302,8 @@ bool ScalpelEngine::showCityCutscene() {
 	byte palette[PALETTE_SIZE];
 
 	_sound->playMusic("prolog1.mus");
-	_titleOverride = "title.lib";
-	_soundOverride = "title.snd";
+	_animation->_gfxLibraryFilename = "title.lib";
+	_animation->_soundLibraryFilename = "title.snd";
 	bool finished = _animation->play("26open1", 1, 255, true, 2);
 
 	if (finished) {
@@ -365,8 +365,8 @@ bool ScalpelEngine::showCityCutscene() {
 		}
 	}
 
-	_titleOverride = "";
-	_soundOverride = "";
+	_animation->_gfxLibraryFilename = "";
+	_animation->_soundLibraryFilename = "";
 	return finished;
 }
 
@@ -377,8 +377,8 @@ bool ScalpelEngine::showAlleyCutscene() {
 	byte palette[PALETTE_SIZE];
 	_sound->playMusic("prolog2.mus");
 
-	_titleOverride = "TITLE.LIB";
-	_soundOverride = "TITLE.SND";
+	_animation->_gfxLibraryFilename = "TITLE.LIB";
+	_animation->_soundLibraryFilename = "TITLE.SND";
 
 	bool finished = _animation->play("27PRO1", 1, 3, true, 2);
 	if (finished)
@@ -405,8 +405,8 @@ bool ScalpelEngine::showAlleyCutscene() {
 		finished = _events->delay(1000);
 	}
 
-	_titleOverride = "";
-	_soundOverride = "";
+	_animation->_gfxLibraryFilename = "";
+	_animation->_soundLibraryFilename = "";
 	return finished;
 }
 
@@ -414,8 +414,8 @@ bool ScalpelEngine::showAlleyCutscene() {
  * Show the Baker Street outside cutscene
  */
 bool ScalpelEngine::showStreetCutscene() {
-	_titleOverride = "TITLE.LIB";
-	_soundOverride = "TITLE.SND";
+	_animation->_gfxLibraryFilename = "TITLE.LIB";
+	_animation->_soundLibraryFilename = "TITLE.SND";
 
 	_sound->playMusic("PROLOG3.MUS");
 
@@ -424,8 +424,8 @@ bool ScalpelEngine::showStreetCutscene() {
 	if (finished)
 		finished = _animation->play("14NOTE", 1, 0, false, 2);
 
-	_titleOverride = "";
-	_soundOverride = "";
+	_animation->_gfxLibraryFilename = "";
+	_animation->_soundLibraryFilename = "";
 	return finished;
 }
 
@@ -469,8 +469,8 @@ bool ScalpelEngine::scrollCredits() {
  */
 bool ScalpelEngine::showOfficeCutscene() {
 	_sound->playMusic("PROLOG4.MUS");
-	_titleOverride = "TITLE2.LIB";
-	_soundOverride = "TITLE.SND";
+	_animation->_gfxLibraryFilename = "TITLE2.LIB";
+	_animation->_soundLibraryFilename = "TITLE.SND";
 
 	bool finished = _animation->play("COFF1", 1, 3, true, 3);
 	if (finished)
@@ -505,8 +505,8 @@ bool ScalpelEngine::showOfficeCutscene() {
 	if (finished)
 		_screen->fadeToBlack(3);
 
-	_titleOverride = "";
-	_soundOverride = "";
+	_animation->_gfxLibraryFilename = "";
+	_animation->_soundLibraryFilename = "";
 	return finished;
 }
 

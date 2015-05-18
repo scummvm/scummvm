@@ -49,8 +49,8 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 
 	// Load the animation
 	Common::SeekableReadStream *stream;
-	if (!_vm->_titleOverride.empty())
-		stream = _vm->_res->load(vdxName, _vm->_titleOverride);
+	if (!_gfxLibraryFilename.empty())
+		stream = _vm->_res->load(vdxName, _gfxLibraryFilename);
 	else if (_vm->_useEpilogue2)
 		stream = _vm->_res->load(vdxName, "epilog2.lib");
 	else
@@ -105,12 +105,12 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 			if (frameNumber++ == *soundFrames) {
 				++soundNumber;
 				++soundFrames;
-				Common::String fname = _vm->_soundOverride.empty() ?
+				Common::String fname = _soundLibraryFilename.empty() ?
 					Common::String::format("%s%01d", filename.c_str(), soundNumber) :
 					Common::String::format("%s%02d", filename.c_str(), soundNumber);
 
 				if (sound._voices)
-					sound.playSound(fname, WAIT_RETURN_IMMEDIATELY);
+					sound.playSound(fname, WAIT_RETURN_IMMEDIATELY, 100, _soundLibraryFilename.c_str());
 			}
 
 			events.wait(speed * 3);
@@ -184,7 +184,7 @@ void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 
-	if (_vm->_soundOverride.empty()) {
+	if (_soundLibraryFilename.empty()) {
 		for (uint idx = 0; idx < _prologueNames.size(); ++idx) {
 			if (filename.equalsIgnoreCase(_prologueNames[idx])) {
 				frames = &_prologueFrames[idx][0];

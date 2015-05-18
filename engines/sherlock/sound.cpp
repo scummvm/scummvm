@@ -110,14 +110,16 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 	return reference;
 }
 
-bool Sound::playSound(const Common::String &name, WaitType waitType, int priority) {
+bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
+	Resources &res = *_vm->_res;
 	stopSound();
 
 	Common::String filename = name;
 	if (!filename.contains('.'))
 		filename += ".SND";
 
-	Common::SeekableReadStream *stream = _vm->_res->load(filename);
+	Common::String libFilename(libraryFilename);
+	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(filename) : res.load(filename, libFilename);
 
 	if (!stream)
 		error("Unable to find sound file '%s'", filename.c_str());

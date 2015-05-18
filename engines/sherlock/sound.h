@@ -63,7 +63,7 @@ public:
 
 	void syncSoundSettings();
 	void loadSound(const Common::String &name, int priority);
-	bool playSound(const Common::String &name, WaitType waitType, int priority = 100);
+	bool playSound(const Common::String &name, WaitType waitType, int priority = 100, const char *libraryFilename = nullptr);
 	void playLoadedSound(int bufNum, WaitType waitType);
 	void freeLoadedSounds();
 	void stopSound();

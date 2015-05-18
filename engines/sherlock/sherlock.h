@@ -99,8 +99,6 @@ public:
 	UserInterface *_ui;
 	Common::RandomSource _randomSource;
 	Common::Array<bool> _flags;
-	Common::String _soundOverride;
-	Common::String _titleOverride;
 	bool _useEpilogue2;
 	int _loadGameSlot;
 	bool _canLoadSave;

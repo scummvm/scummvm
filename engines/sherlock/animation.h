@@ -45,6 +45,9 @@ private:
 
 	const int *checkForSoundFrames(const Common::String &filename);
 public:
+	Common::String _soundLibraryFilename;
+	Common::String _gfxLibraryFilename;
+public:
 	Animation(SherlockEngine *vm);
 
 	void setPrologueNames(const char *const *names, int count);
