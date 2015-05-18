@@ -1156,7 +1156,7 @@ void UserInterface::doInvControl() {
 				COMMAND_HIGHLIGHTED, "^^");
 			inv.freeGraphics();
 			inv.loadGraphics();
-			inv.putInv(1);
+			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
 		} else if (((found == 5 && events._released) || _key == Common::KEYCODE_MINUS
 				|| _key == Common::KEYCODE_KP_MINUS) && inv._invIndex > 0) {
@@ -1164,7 +1164,7 @@ void UserInterface::doInvControl() {
 			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "^");
 			inv.freeGraphics();
 			inv.loadGraphics();
-			inv.putInv(1);
+			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
 		} else if (((found == 6 && events._released) || _key == Common::KEYCODE_PLUS
 				|| _key == Common::KEYCODE_KP_PLUS) &&  (inv._holdings - inv._invIndex) > 6) {
@@ -1172,7 +1172,7 @@ void UserInterface::doInvControl() {
 			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "_");
 			inv.freeGraphics();
 			inv.loadGraphics();
-			inv.putInv(1);
+			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
 		} else if (((found == 7 && events._released) || _key == '.') && (inv._holdings - inv._invIndex) > 6) {
 			inv._invIndex += 6;
@@ -1182,7 +1182,7 @@ void UserInterface::doInvControl() {
 			screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "_");
 			inv.freeGraphics();
 			inv.loadGraphics();
-			inv.putInv(1);
+			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
 		} else {
 			// If something is being given, make sure it's to a person
@@ -1226,7 +1226,7 @@ void UserInterface::doInvControl() {
 					int temp = _selector;	// Save the selector
 					_selector = -1;
 
-					inv.putInv(1);
+					inv.putInv(SLAM_DISPLAY);
 					_selector = temp;		// Restore it
 					temp = inv._invMode;
 					inv._invMode = INVMODE_USE55;
@@ -1300,7 +1300,7 @@ void UserInterface::doLookControl() {
 			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
-			inv.drawInventory(128);
+			inv.drawInventory(INVENTORY_DONT_DISPLAY);
 			banishWindow(true);
 
 			// Restore the ui
@@ -1405,19 +1405,19 @@ void UserInterface::doMainControl() {
 			pushButton(6);
 			_selector = _oldSelector = -1;
 			_menuMode = INV_MODE;
-			inv.drawInventory(1);
+			inv.drawInventory(PLAIN_INVENTORY);
 			break;
 		case 'U':
 			pushButton(7);
 			_selector = _oldSelector = -1;
 			_menuMode = USE_MODE;
-			inv.drawInventory(2);
+			inv.drawInventory(USE_INVENTORY_MODE);
 			break;
 		case 'G':
 			pushButton(8);
 			_selector = _oldSelector = -1;
 			_menuMode = GIVE_MODE;
-			inv.drawInventory(3);
+			inv.drawInventory(GIVE_INVENTORY_MODE);
 			break;
 		case 'J':
 			pushButton(9);
@@ -1904,7 +1904,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 
 			// Reload the inventory graphics and draw the inventory
 			inv.loadInv();
-			inv.putInv(2);
+			inv.putInv(SLAM_SECONDARY_BUFFER);
 			inv.freeInv();
 			banishWindow(1);
 
@@ -2182,7 +2182,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 	// Scan for target item
 	int targetNum = -1;
 	if (giveMode) {
-		for (int idx = 0; idx < 4 && targetNum == -1; ++idx) {
+		for (int idx = 0; idx < USE_COUNT && targetNum == -1; ++idx) {
 			if ((use[idx]._target.equalsIgnoreCase("*GIVE*") || use[idx]._target.equalsIgnoreCase("*GIVEP*"))
 					&& use[idx]._names[0].equalsIgnoreCase(invName)) {
 				// Found a match
@@ -2192,7 +2192,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 			}
 		}
 	} else {
-		for (int idx = 0; idx < 4 && targetNum == -1; ++idx) {
+		for (int idx = 0; idx < USE_COUNT && targetNum == -1; ++idx) {
 			if (use[idx]._target.equalsIgnoreCase(invName))
 				targetNum = idx;
 		}
@@ -2216,7 +2216,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 
 		if (!talk._talkToAbort) {
 			Object &obj = scene._bgShapes[objNum];
-			for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+			for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
 				if (obj.checkNameForCodes(action._names[idx], messages)) {
 					if (!talk._talkToAbort)
 						printed = true;
@@ -2308,7 +2308,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		events.setCursor(WAIT);
 		bool printed = false;
 
-		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
 					&& toupper(action._names[nameIdx][1]) == 'W') {
 				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), messages)) {
@@ -2319,7 +2319,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		}
 
 		bool doCAnim = true;
-		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2) {
 				char ch = toupper(action._names[nameIdx][1]);
 
@@ -2349,7 +2349,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 				people.walkToCoords(pt, dir);
 		}
 
-		for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
 					&& toupper(action._names[nameIdx][1]) == 'F') {
 				if (obj.checkNameForCodes(action._names[nameIdx].c_str() + 2, messages)) {
@@ -2363,7 +2363,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 			scene.startCAnim(cAnimNum, action._cAnimSpeed);
 
 		if (!talk._talkToAbort) {
-			for (int nameIdx = 0; nameIdx < 4 && !talk._talkToAbort; ++nameIdx) {
+			for (int nameIdx = 0; nameIdx < NAMES_COUNT && !talk._talkToAbort; ++nameIdx) {
 				if (obj.checkNameForCodes(action._names[nameIdx], messages)) {
 					if (!talk._talkToAbort)
 						printed = true;

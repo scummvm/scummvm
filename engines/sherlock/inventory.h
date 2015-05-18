@@ -47,6 +47,14 @@ enum InvMode {
 	INVMODE_USE55 = 255
 };
 
+enum InvNewMode {
+	PLAIN_INVENTORY = 0, LOOK_INVENTORY_MODE = 1, USE_INVENTORY_MODE = 2,
+	GIVE_INVENTORY_MODE = 3, INVENTORY_DONT_DISPLAY = 128
+};
+
+enum InvSlamMode { SLAM_DONT_DISPLAY, SLAM_DISPLAY = 1, SLAM_SECONDARY_BUFFER };
+
+
 struct InventoryItem {
 	int _requiredFlag;
 	Common::String _name;
@@ -87,9 +95,9 @@ public:
 
 	int findInv(const Common::String &name);
 
-	void putInv(int slamIt);
+	void putInv(InvSlamMode slamIt);
 
-	void drawInventory(int flag);
+	void drawInventory(InvNewMode flag);
 
 	void invCommands(bool slamIt);
 

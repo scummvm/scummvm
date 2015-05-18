@@ -375,7 +375,7 @@ void ActionType::load(Common::SeekableReadStream &s) {
 	if (_cAnimSpeed & 0x80)
 		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
 
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 		s.read(buffer, 12);
 		_names[idx] = Common::String(buffer);
 	}
@@ -399,7 +399,7 @@ void UseType::load(Common::SeekableReadStream &s) {
 	if (_cAnimSpeed & 0x80)
 		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
 
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 		s.read(buffer, 12);
 		_names[idx] = Common::String(buffer);
 	}
@@ -518,7 +518,7 @@ void Object::load(Common::SeekableReadStream &s) {
 	_aMove.load(s);
 	s.skip(8);
 
-	for (int idx = 0; idx < 4; ++idx)
+	for (int idx = 0; idx < USE_COUNT; ++idx)
 		_use[idx].load(s);
 }
 
@@ -671,8 +671,8 @@ void Object::checkObject() {
 
 					_delta = pt;
 					_frameNumber += 2;
-				} else if (v < 4) {
-					for (int idx = 0; idx < 4; ++idx) {
+				} else if (v < USE_COUNT) {
+					for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 						checkNameForCodes(_use[v]._names[idx], nullptr);
 					}
 
@@ -928,7 +928,7 @@ void Object::setFlagsAndToggles() {
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
 
-	for (int useIdx = 0; useIdx < 4; ++useIdx) {
+	for (int useIdx = 0; useIdx < USE_COUNT; ++useIdx) {
 		if (_use[useIdx]._useFlag) {
 			if (!_vm->readFlags(_use[useIdx]._useFlag))
 				_vm->setFlags(_use[useIdx]._useFlag);
@@ -943,7 +943,7 @@ void Object::setFlagsAndToggles() {
 		}
 
 		if (!talk._talkToAbort) {
-			for (int idx = 0; idx < 4; ++idx)
+			for (int idx = 0; idx < NAMES_COUNT; ++idx)
 				scene.toggleObject(_use[useIdx]._names[idx]);
 		}
 	}
@@ -991,7 +991,7 @@ int Object::pickUpObject(const char *const messages[]) {
 	int numObjects = 0;
 
 	if (pickup == 99) {
-		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+		for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
 			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
 				if (!talk._talkToAbort)
 					printed = true;
@@ -1038,7 +1038,7 @@ int Object::pickUpObject(const char *const messages[]) {
 			ui._temp1 = 1;
 		}
 
-		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+		for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
 			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
 				if (!talk._talkToAbort)
 					printed = true;

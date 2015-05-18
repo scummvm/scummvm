@@ -142,11 +142,8 @@ int Inventory::findInv(const Common::String &name) {
 
 /**
  * Display the character's inventory. The slamIt parameter specifies:
- * 0 = Draw it on the back buffer, and don't display it
- * 1 = Draw it on the back buffer, and then display it
- * 2 = Draw it on the secondary back buffer, and don't display it
  */
-void Inventory::putInv(int slamIt) {
+void Inventory::putInv(InvSlamMode slamIt) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
 
@@ -158,7 +155,7 @@ void Inventory::putInv(int slamIt) {
 		loadGraphics();
 	}
 
-	if (slamIt != 2) {
+	if (slamIt != SLAM_SECONDARY_BUFFER) {
 		screen.makePanel(Common::Rect(6, 163, 54, 197));
 		screen.makePanel(Common::Rect(58, 163, 106, 197));
 		screen.makePanel(Common::Rect(110, 163, 158, 197));
@@ -170,13 +167,13 @@ void Inventory::putInv(int slamIt) {
 	// Iterate through displaying up to 6 objects at a time
 	for (int idx = _invIndex; idx < _holdings && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
 		int itemNum = idx - _invIndex;
-		Surface &bb = slamIt == 2 ? screen._backBuffer2 : screen._backBuffer1;
+		Surface &bb = slamIt == SLAM_SECONDARY_BUFFER ? screen._backBuffer2 : screen._backBuffer1;
 		Common::Rect r(8 + itemNum * 52, 165, 51 + itemNum * 52, 194);
 
 		// Draw the background
 		if (idx == ui._selector) {
 			bb.fillRect(r, 235);
-		} else if (slamIt == 2) {
+		} else if (slamIt == SLAM_SECONDARY_BUFFER) {
 			bb.fillRect(r, BUTTON_MIDDLE);
 		}
 
@@ -186,15 +183,15 @@ void Inventory::putInv(int slamIt) {
 			163 + ((33 - img.h) / 2)));
 	}
 
-	if (slamIt == 1)
+	if (slamIt == SLAM_DISPLAY)
 		screen.slamArea(6, 163, 308, 34);
 
-	if (slamIt != 2)
+	if (slamIt != SLAM_SECONDARY_BUFFER)
 		ui.clearInfo();
 
 	if (slamIt == 0) {
 		invCommands(0);
-	} else if (slamIt == 2) {
+	} else if (slamIt == SLAM_SECONDARY_BUFFER) {
 		screen._backBuffer = &screen._backBuffer2;
 		invCommands(0);
 		screen._backBuffer = &screen._backBuffer1;
@@ -203,20 +200,15 @@ void Inventory::putInv(int slamIt) {
 
 /**
  * Put the game into inventory mode and open the interface window.
- * The flag parameter specifies the mode:
- * 0   = plain inventory mode
- * 2   = use inventory mode
- * 3   = give inventory mode
- * 128 = Draw window in the back buffer, but don't display it
  */
-void Inventory::drawInventory(int flag) {
+void Inventory::drawInventory(InvNewMode mode) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
-	int tempFlag = flag;
+	InvNewMode tempMode = mode;
 
 	loadInv();
 
-	if (flag == 128) {
+	if (mode == INVENTORY_DONT_DISPLAY) {
 		screen._backBuffer = &screen._backBuffer2;
 	}
 
@@ -249,20 +241,20 @@ void Inventory::drawInventory(int flag) {
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2], "__");
 
-	if (tempFlag == 128)
-		flag = 1;
-	_invMode = (InvMode)flag;
+	if (tempMode == INVENTORY_DONT_DISPLAY)
+		mode = LOOK_INVENTORY_MODE;
+	_invMode = (InvMode)mode;
 
-	if (flag) {
-		ui._oldKey = INVENTORY_COMMANDS[flag];
+	if (mode != PLAIN_INVENTORY) {
+		ui._oldKey = INVENTORY_COMMANDS[(int)mode];
 	} else {
 		ui._oldKey = -1;
 	}
 
 	invCommands(0);
-	putInv(0);
+	putInv(SLAM_DONT_DISPLAY);
 
-	if (tempFlag != 128) {
+	if (tempMode != INVENTORY_DONT_DISPLAY) {
 		if (!ui._windowStyle) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
@@ -411,11 +403,11 @@ int Inventory::putItemInInventory(Object &obj) {
 	if (obj._pickupFlag)
 		_vm->setFlags(obj._pickupFlag);
 
-	for (int useNum = 0; useNum < 4; ++useNum) {
+	for (int useNum = 0; useNum < USE_COUNT; ++useNum) {
 		if (obj._use[useNum]._target.equalsIgnoreCase("*PICKUP*")) {
 			pickupFound = true;
 
-			for (int namesNum = 0; namesNum < 4; ++namesNum) {
+			for (int namesNum = 0; namesNum < NAMES_COUNT; ++namesNum) {
 				for (uint bgNum = 0; bgNum < scene._bgShapes.size(); ++bgNum) {
 					Object &bgObj = scene._bgShapes[bgNum];
 					if (obj._use[useNum]._names[namesNum].equalsIgnoreCase(bgObj._name)) {

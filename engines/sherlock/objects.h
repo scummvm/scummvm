@@ -142,11 +142,12 @@ public:
 };
 
 enum { REVERSE_DIRECTION = 0x80 };
+#define NAMES_COUNT 4
 
 struct ActionType {
 	int _cAnimNum;
 	int _cAnimSpeed;
-	Common::String _names[4];
+	Common::String _names[NAMES_COUNT];
 
 	void load(Common::SeekableReadStream &s);
 };
@@ -154,7 +155,7 @@ struct ActionType {
 struct UseType {
 	int _cAnimNum;
 	int _cAnimSpeed;
-	Common::String _names[4];
+	Common::String _names[NAMES_COUNT];
 	int _useFlag;					// Which flag USE will set (if any)
 	Common::String _target;
 
@@ -163,6 +164,8 @@ struct UseType {
 };
 
 enum { TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
+#define USE_COUNT 4
+
 class Object {
 private:
 	static SherlockEngine *_vm;
@@ -217,7 +220,7 @@ public:
 	int _seqCounter2;				// Counter of calling frame sequence
 	uint _seqSize;					// Tells where description starts
 	ActionType _aMove;
-	UseType _use[4];
+	UseType _use[USE_COUNT];
 
 	Object();
 

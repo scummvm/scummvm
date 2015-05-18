@@ -706,14 +706,14 @@ void Scene::transitionToScene() {
 				// player is clear of the box
 				switch (obj._aType) {
 				case FLAG_SET:
-					for (int useNum = 0; useNum < 4; ++useNum) {
+					for (int useNum = 0; useNum < USE_COUNT; ++useNum) {
 						if (obj._use[useNum]._useFlag) {
 							if (!_vm->readFlags(obj._use[useNum]._useFlag))
 								_vm->setFlags(obj._use[useNum]._useFlag);
 						}
 
 						if (!talk._talkToAbort) {
-							for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+							for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 								toggleObject(obj._use[useNum]._names[nameIdx]);
 							}
 						}

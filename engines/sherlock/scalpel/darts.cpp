@@ -44,9 +44,10 @@ enum {
 	DART_COL_FORE = 5,
 	PLAYER_COLOR = 11
 };
+#define OPPONENTS_COUNT 4
 
-const char *const OPPONENT_NAMES[5] = {
-	"Skipper", "Willy", "Micky", "Tom", "Bartender"
+const char *const OPPONENT_NAMES[OPPONENTS_COUNT] = {
+	"Skipper", "Willy", "Micky", "Tom"
 };
 
 /*----------------------------------------------------------------*/
@@ -118,7 +119,7 @@ void Darts::playDarts() {
 
 				if (playerNumber == 0) {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "Holmes Wins!");
-					if (_level < 4)
+					if (_level < OPPONENTS_COUNT)
 						setFlagsForDarts(318 + _level);
 				} else {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "%s Wins!", _opponent.c_str());
@@ -210,7 +211,7 @@ void Darts::initDarts() {
 		_computerPlayer = 2;
 	} else {
 		// Check flags for opponents
-		for (int idx = 0; idx < 4; ++idx) {
+		for (int idx = 0; idx < OPPONENTS_COUNT; ++idx) {
 			if (_vm->readFlags(314 + idx))
 				_level = idx;
 		}
