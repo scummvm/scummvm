@@ -26,6 +26,8 @@
 
 namespace Sherlock {
 
+#define SPEAKER_REMOVE 0x80
+
 SequenceEntry::SequenceEntry() {
 	_objNum = 0;
 	_frameNumber = 0;
@@ -221,7 +223,7 @@ void Talk::talkTo(const Common::String &filename) {
 			break;
 
 		case TALK_MODE:
-			if (_speaker < 128)
+			if (_speaker < SPEAKER_REMOVE)
 				people.clearTalking();
 			if (_talkCounter)
 				return;
@@ -464,7 +466,7 @@ void Talk::talk(int objNum) {
 
 	ui._windowBounds.top = CONTROLS_Y;
 	ui._infoFlag = true;
-	_speaker = 128;
+	_speaker = SPEAKER_REMOVE;
 	loadTalkFile(scene._bgShapes[objNum]._name);
 
 	// Find the first statement with the correct flags
@@ -769,11 +771,11 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 	bool numberFlag = false;
 
 	// Get the statement to display as well as optional number prefix
-	if (idx < 128) {
+	if (idx < SPEAKER_REMOVE) {
 		number = Common::String::format("%d.", stateNum + 1);
 		numberFlag = true;
 	} else {
-		idx -= 128;
+		idx -= SPEAKER_REMOVE;
 	}
 	msg = _statements[idx]._statement;
 
@@ -1019,7 +1021,7 @@ void Talk::doScript(const Common::String &script) {
 	// Check if the script begins with a Stealh Mode Active command
 	if (str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
 		_talkStealth = 2;
-		_speaker |= 128;
+		_speaker |= SPEAKER_REMOVE;
 	} else {
 		pushSequence(_speaker);
 		ui.clearWindow();
@@ -1077,11 +1079,11 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (c >= 128) {
+		} else if (c >= SWITCH_SPEAKER) {
 			// Handle control code
 			switch (c) {
 			case SWITCH_SPEAKER:
-				if (!(_speaker & 128))
+				if (!(_speaker & SPEAKER_REMOVE))
 					people.clearTalking();
 				if (_talkToAbort)
 					return;
@@ -1099,7 +1101,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case RUN_CANIMATION:
 				++str;
-				scene.startCAnim((str[0] - 1) & 127, (str[0] & 128) ? -1 : 1);
+				scene.startCAnim((str[0] - 1) & 127, (str[0] & 0x80) ? -1 : 1);
 				if (_talkToAbort)
 					return;
 
@@ -1135,13 +1137,13 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case REMOVE_PORTRAIT:
-				if (_speaker >= 0 && _speaker < 128)
+				if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
 					people.clearTalking();
 				pullSequence();
 				if (_talkToAbort)
 					return;
 
-				_speaker |= 128;
+				_speaker |= SPEAKER_REMOVE;
 				break;
 
 			case CLEAR_WINDOW:
@@ -1167,7 +1169,7 @@ void Talk::doScript(const Common::String &script) {
 					error("Could not find object %s to change", tempString.c_str());
 
 				// Should the script be overwritten?
-				if (str[0] > 128) {
+				if (str[0] > 0x80) {
 					// Save the current sequence
 					_savedSequences.push(SequenceEntry());
 					SequenceEntry &seqEntry = _savedSequences.top();
@@ -1216,14 +1218,14 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case BANISH_WINDOW:
-				if (!(_speaker & 128))
+				if (!(_speaker & SPEAKER_REMOVE))
 					people.clearTalking();
 				pullSequence();
 
 				if (_talkToAbort)
 					return;
 
-				_speaker |= 128;
+				_speaker |= SPEAKER_REMOVE;
 				ui.banishWindow();
 				ui._menuMode = TALK_MODE;
 				noTextYet = true;
@@ -1367,7 +1369,7 @@ void Talk::doScript(const Common::String &script) {
 					tempString += str[idx + 1];
 
 				// Set comparison state according to if we want to hide or unhide
-				bool state = (str[0] >= 128);
+				bool state = (str[0] >= SPEAKER_REMOVE);
 				str += str[0] & 127;
 
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
@@ -1501,10 +1503,10 @@ void Talk::doScript(const Common::String &script) {
 				width += screen.charWidth(str[idx]);
 				++idx;
 				++charCount;
-			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < 128);
+			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < SWITCH_SPEAKER);
 
 			if (str[idx] || width >= 298) {
-				if (str[idx] < 128 && str[idx] != '{') {
+				if (str[idx] < SWITCH_SPEAKER && str[idx] != '{') {
 					--idx;
 					--charCount;
 				}
@@ -1544,7 +1546,7 @@ void Talk::doScript(const Common::String &script) {
 			str += idx;
 
 			// If line wrap occurred, then move to after the separating space between the words
-			if (str[0] < 128 && str[0] != '{')
+			if (str[0] < SWITCH_SPEAKER && str[0] != '{')
 				++str;
 
 			yp += 9;
@@ -1574,7 +1576,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= 128 && str[0] != CARRIAGE_RETURN)) {
+		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= SWITCH_SPEAKER && str[0] != CARRIAGE_RETURN)) {
 			if (!ui._windowStyle) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
@@ -1624,7 +1626,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		pullSequence();
-		if (_speaker >= 0 && _speaker < 128)
+		if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
 			people.clearTalking();
 	}
 }

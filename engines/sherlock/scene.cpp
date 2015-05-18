@@ -1364,7 +1364,7 @@ void Scene::doBgAnim() {
 		_animating = 0;
 		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	} else {
-		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.size() == 0))) {
+		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.empty()))) {
 			if (people[AL]._type == REMOVE) {
 				screen.slamRect(Common::Rect(
 					people[AL]._oldPosition.x, people[AL]._oldPosition.y,

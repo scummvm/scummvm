@@ -31,6 +31,9 @@
 
 namespace Sherlock {
 
+#define JOURNAL_MAX_WIDTH 230
+#define JOURNAL_MAX_CHARS 80
+
 struct JournalEntry {
 	int _converseNum;
 	bool _replyOnly;

@@ -29,7 +29,7 @@ namespace Sherlock {
 #define LINES_PER_PAGE 11
 
 // Positioning of buttons in the journal view
-const int JOURNAL_POINTS[9][3] = {
+static const int JOURNAL_POINTS[9][3] = {
 	{ 6, 68, 37 },
 	{ 69, 131, 100 },
 	{ 132, 192, 162 },
@@ -41,7 +41,7 @@ const int JOURNAL_POINTS[9][3] = {
 	{ 237, 313, 275 }
 };
 
-const int SEARCH_POINTS[3][3] = {
+static const int SEARCH_POINTS[3][3] = {
 	{ 51, 123, 86 },
 	{ 124, 196, 159 },
 	{ 197, 269, 232 }
@@ -146,6 +146,8 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 	Common::String dirFilename = _directory[journalEntry._converseNum];
 	bool replyOnly = journalEntry._replyOnly;
+
+	// Get the location number from within the filename
 	Common::String locStr(dirFilename.c_str() + 4, dirFilename.c_str() + 6);
 	int newLocation = atoi(locStr.c_str());
 
@@ -195,11 +197,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 		// See if title can fit into a single line, or requires splitting on 2 lines
 		int width = screen.stringWidth(journalString.c_str() + 1);
-		if (width > 230) {
+		if (width > JOURNAL_MAX_WIDTH) {
 			// Scan backwards from end of title to find a space between a word
 			// where the width is less than the maximum allowed for the line
 			const char *lineP = journalString.c_str() + journalString.size() - 1;
-			while (width > 230 || *lineP != ' ')
+			while (width > JOURNAL_MAX_WIDTH || *lineP != ' ')
 				width -= screen.charWidth(*lineP--);
 
 			// Split the header into two lines, and add a '@' prefix
@@ -249,7 +251,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 		byte c = *replyP++;
 
 		// Is it a control character?
-		if (c < 128) {
+		if (c < SWITCH_SPEAKER) {
 			// Nope. Set flag for allowing control codes to insert spaces
 			ctrlSpace = true;
 			assert(c >= ' ');
@@ -296,7 +298,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 						byte v;
 						do {
 							v = *strP++;
-						} while (v && (v < 128) && (v != '.') && (v != '!') && (v != '?'));
+						} while (v && (v < SWITCH_SPEAKER) && (v != '.') && (v != '!') && (v != '?'));
 
 						if (v == '?')
 							journalString += " asked, \"";
@@ -312,11 +314,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += c;
 				do {
 					journalString += *replyP++;
-				} while (*replyP && *replyP < 128 && *replyP != '{' && *replyP != '}');
+				} while (*replyP && *replyP < SWITCH_SPEAKER && *replyP != '{' && *replyP != '}');
 
 				commentJustPrinted = false;
 			}
-		} else if (c == 128) {
+		} else if (c == SWITCH_SPEAKER) {
 			if (!startOfReply) {
 				if (!commentFlag && !commentJustPrinted)
 					journalString += "\"\n";
@@ -343,7 +345,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			byte v;
 			do {
 				v = *strP++;
-			} while (v && v < 128 && v != '.' && v != '!' && v != '?');
+			} while (v && v < SWITCH_SPEAKER && v != '.' && v != '!' && v != '?');
 
 			if (v == '?')
 				journalString += " asked, \"";
@@ -403,7 +405,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 			// Put a space in the output for a control character, unless it's
 			// immediately coming after another control character
-			if (ctrlSpace && c != 130 && c != 161 && !commentJustPrinted) {
+			if (ctrlSpace && c != ASSIGN_PORTRAIT_LOCATION && c != CARRIAGE_RETURN && !commentJustPrinted) {
 				journalString += " ";
 				ctrlSpace = false;
 			}
@@ -429,11 +431,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 		// Build up chacters until a full line is found
 		int width = 0;
 		const char *endP = startP;
-		while (width < 230 && *endP && *endP != '\n' && (endP - startP) < 79)
+		while (width < JOURNAL_MAX_WIDTH && *endP && *endP != '\n' && (endP - startP) < (JOURNAL_MAX_CHARS - 1))
 			width += screen.charWidth(*endP++);
 
 		// If word wrapping, move back to end of prior word
-		if (width >= 230 || (endP - startP) >= 79) {
+		if (width >= JOURNAL_MAX_WIDTH || (endP - startP) >= (JOURNAL_MAX_CHARS - 1)) {
 			while (*--endP != ' ')
 				;
 		}
@@ -518,7 +520,7 @@ void Journal::drawInterface() {
 
 	drawJournalFrame();
 
-	if (_journal.size() == 0) {
+	if (_journal.empty()) {
 		_up = _down = 0;
 	} else {
 		drawJournal(0, 0);
