@@ -42,7 +42,6 @@ private:
 	SherlockEngine *_vm;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
-	Common::Point _mousePos;
 	ImageFile *_cursorImages;
 	int _mouseButtons;
 
@@ -79,7 +78,7 @@ public:
 
 	void pollEventsAndWait();
 
-	Common::Point mousePos() const { return _mousePos; }
+	Common::Point mousePos() const;
 
 	uint32 getFrameCounter() const { return _frameCounter; }
 

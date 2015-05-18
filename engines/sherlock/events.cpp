@@ -154,9 +154,6 @@ void Events::pollEvents() {
 		case Common::EVENT_RBUTTONUP:
 			_mouseButtons &= ~2;
 			return;
-		case Common::EVENT_MOUSEMOVE:
-			_mousePos = event.mouse;
-			break;
 		default:
  			break;
 		}
@@ -192,6 +189,13 @@ bool Events::checkForNextFrameCounter() {
 	}
 
 	return false;
+}
+
+/**
+ * Get the current mouse position 
+ */
+Common::Point Events::mousePos() const {
+	return g_system->getEventManager()->getMousePos();
 }
 
 /**
