@@ -63,7 +63,7 @@ Map::Map(SherlockEngine *vm) : _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_drawMap = false;
 	_overPos = Common::Point(13000, 12600);
 	_charPoint = 0;
-	_oldCharPoint = 39;
+	_oldCharPoint = 0;
 	_frameChangeFlag = false;
 
 	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)

@@ -254,6 +254,7 @@ void ScalpelEngine::initialize() {
 		// Load the map co-ordinates for each scene and sequence data
 		_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
 		_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
+		_map->_oldCharPoint = BAKER_ST_EXTERIOR;
 	}
 
 	// Load the inventory
@@ -553,7 +554,7 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
  * Starting a scene within the game
  */
 void ScalpelEngine::startScene() {
-	if (_scene->_goToScene == 100 || _scene->_goToScene == 98) {
+	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
 		// Show the map
 		if (_sound->_musicOn) {
 			if (_sound->loadSong(100)) {
@@ -576,17 +577,17 @@ void ScalpelEngine::startScene() {
 	// 55: Fade out and exit
 	// 70: Brumwell suicide
 	switch (_scene->_goToScene) {
-	case 2:
-	case 52:
-	case 53:
-	case 70:
+	case BLACKWOOD_CAPTURE:
+	case RESCUE_ANNA:
+	case MOOREHEAD_DEATH:
+	case BRUMWELL_SUICIDE:
 		if (_sound->_musicOn && _sound->loadSong(_scene->_goToScene)) {
 			if (_sound->_music)
 				_sound->startSong();
 		}
 
 		switch (_scene->_goToScene) {
-		case 2:
+		case BLACKWOOD_CAPTURE:
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
 			_res->addToCache("final2.vdx", "epilogue.lib");
@@ -594,7 +595,7 @@ void ScalpelEngine::startScene() {
 			_animation->play("final2", 1, 0, false, 4);
 			break;
 
-		case 52:
+		case RESCUE_ANNA:
 			// Rescuing Anna
 			_res->addToCache("finalr2.vda", "epilogue.lib");
 			_res->addToCache("finalr2.vdx", "epilogue.lib");
@@ -629,7 +630,7 @@ void ScalpelEngine::startScene() {
 			_useEpilogue2 = false;
 			break;
 
-		case 53:
+		case MOOREHEAD_DEATH:
 			// Moorehead's death / subway train
 			_res->addToCache("SUBWAY2.vda", "epilogue.lib");
 			_res->addToCache("SUBWAY2.vdx", "epilogue.lib");
@@ -645,7 +646,7 @@ void ScalpelEngine::startScene() {
 			_screen->_fadeStyle = false;
 			break;
 
-		case 70:
+		case BRUMWELL_SUICIDE:
 			// Brumwell suicide
 			_animation->play("suicid", 1, 3, true, 4);
 			break;
@@ -654,31 +655,31 @@ void ScalpelEngine::startScene() {
 		}
 
 		// Except for the Moorehead Murder scene, fade to black first
-		if (_scene->_goToScene != 53) {
+		if (_scene->_goToScene != MOOREHEAD_DEATH) {
 			_events->wait(40);
 			_screen->fadeToBlack(3);
 		}
 
 		switch (_scene->_goToScene) {
 		case 52:
-			_scene->_goToScene = 27;			// Go to the Lawyer's Office
+			_scene->_goToScene = LAWYER_OFFICE;		// Go to the Lawyer's Office
 			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
 			_map->_overPos = Common::Point(22900 - 600, 9400 + 900);	// Overland position
-			_map->_oldCharPoint = 27;
+			_map->_oldCharPoint = LAWYER_OFFICE;
 			break;
 
 		case 53:
-			_scene->_goToScene = 17;			// Go to St. Pancras Station
+			_scene->_goToScene = STATION;			// Go to St. Pancras Station
 			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
 			_map->_overPos = Common::Point(32500 - 600, 3000 + 900);	// Overland position
-			_map->_oldCharPoint = 17;
+			_map->_oldCharPoint = STATION;
 			break;
 
 		default:
-			_scene->_goToScene = 4;			// Back to Baker st.
+			_scene->_goToScene = BAKER_STREET;		// Back to Baker st.
 			_map->_bigPos = Common::Point(0, 0);	// Overland scroll position
 			_map->_overPos = Common::Point(14500 - 600, 8400 + 900);	// Overland position
-			_map->_oldCharPoint = 4;
+			_map->_oldCharPoint = BAKER_STREET;
 			break;
 		}
 
@@ -686,7 +687,7 @@ void ScalpelEngine::startScene() {
 		_sound->freeSong();
 		break;
 
-	case 55:
+	case EXIT_GAME:
 		// Exit game
 		_screen->fadeToBlack(3);
 		quitGame();
@@ -702,14 +703,14 @@ void ScalpelEngine::startScene() {
 	if (_scene->_goToScene == 99) {
 		// Darts Board minigame
 		_darts->playDarts();
-		_mapResult = _scene->_goToScene = 19;	// Go back to the bar
+		_mapResult = _scene->_goToScene = PUB_INTERIOR;
 	}
 
 	_mapResult = _scene->_goToScene;
 }
 
 /**
- * Takes care of clearing the mirror in scene 12, in case anything drew over it
+ * Takes care of clearing the mirror in scene 12 (mansion drawing room), in case anything drew over it
  */
 void ScalpelEngine::eraseMirror12() {
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
@@ -722,7 +723,7 @@ void ScalpelEngine::eraseMirror12() {
 }
 
 /**
- * Takes care of drawing Holme's reflection onto the mirror in scene 12
+ * Takes care of drawing Holme's reflection onto the mirror in scene 12 (mansion drawing room)
  */
 void ScalpelEngine::doMirror12() {
 	People &people = *_people;
@@ -798,7 +799,7 @@ void ScalpelEngine::doMirror12() {
 }
 
 /**
- * This clears the mirror  in scene 12 in case anything messed draw over it
+ * This clears the mirror in scene 12 (mansion drawing room) in case anything messed draw over it
  */
 void ScalpelEngine::flushMirror12() {
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
