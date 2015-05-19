@@ -809,71 +809,95 @@ bool Journal::drawJournal(int direction, int howFar) {
 }
 
 /**
+ * Returns the button, if any, that is under the specified position
+ */
+JournalButton Journal::getHighlightedButton(const Common::Point &pt) {
+	if (pt.x > JOURNAL_POINTS[0][0] && pt.x < JOURNAL_POINTS[0][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10))
+		return BTN_EXIT;
+
+	if (pt.x > JOURNAL_POINTS[1][0] && pt.x < JOURNAL_POINTS[1][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _page > 1)
+		return BTN_BACK10;
+
+	if (pt.x > JOURNAL_POINTS[2][0] && pt.x < JOURNAL_POINTS[2][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _up)
+		return BTN_UP;
+
+	if (pt.x > JOURNAL_POINTS[3][0] && pt.x < JOURNAL_POINTS[3][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _down)
+		return BTN_DOWN;
+
+	if (pt.x > JOURNAL_POINTS[4][0] && pt.x < JOURNAL_POINTS[4][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _down)
+		return BTN_AHEAD110;
+
+	if (pt.x > JOURNAL_POINTS[5][0] && pt.x < JOURNAL_POINTS[5][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty())
+		return BTN_SEARCH;
+
+	if (pt.x > JOURNAL_POINTS[6][0] && pt.x < JOURNAL_POINTS[6][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && _up)
+		return BTN_FIRST_PAGE;
+
+	if (pt.x > JOURNAL_POINTS[7][0] && pt.x < JOURNAL_POINTS[7][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && _down)
+		return BTN_LAST_PAGE;
+
+	if (pt.x > JOURNAL_POINTS[8][0] && pt.x < JOURNAL_POINTS[8][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty())
+		return BTN_PRINT_TEXT;
+
+	return BTN_NONE;
+}
+
+/**
  * Handle events whilst the journal is being displayed
  */
 bool Journal::handleEvents(int key) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	bool doneFlag = false;
+
 	Common::Point pt = events.mousePos();
+	JournalButton btn = getHighlightedButton(pt);
 	byte color;
-	enum Button {
-		BTN_NONE, BTN_EXIT, BTN_BACK10, BTN_UP, BTN_DOWN, BTN_AHEAD110, BTN_SEARCH,
-		BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT
-	};
-	Button found = BTN_NONE;
 
 	if (events._pressed || events._released) {
 		// Exit button
-		if (pt.x > JOURNAL_POINTS[0][0] && pt.x < JOURNAL_POINTS[0][1] && pt.y >= JOURNAL_BUTTONS_Y &&
-				pt.y < (JOURNAL_BUTTONS_Y + 10)) {
-			found = BTN_EXIT;
-			color = COMMAND_HIGHLIGHTED;
-		} else {
-			color = COMMAND_FOREGROUND;
-		}
+		color = (btn == BTN_EXIT) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, "Exit");
 
 		// Back 10 button
-		if (pt.x > JOURNAL_POINTS[1][0] && pt.x < JOURNAL_POINTS[1][1] && pt.y >= JOURNAL_BUTTONS_Y &&
-				pt.y < (JOURNAL_BUTTONS_Y + 10) && _page > 1) {
-			found = BTN_BACK10;
+		if (btn == BTN_BACK10) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Back 10");
 		} else if (_page > 1) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Back 10");
 		}
 
 		// Up button
-		if (pt.x > JOURNAL_POINTS[2][0] && pt.x < JOURNAL_POINTS[2][1] && pt.y >= JOURNAL_BUTTONS_Y &&
-				pt.y < (JOURNAL_BUTTONS_Y + 10) && _up) {
-			found = BTN_UP;
+		if (btn == BTN_UP) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Up");
 		} else if (_up) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Up");
 		}
 
 		// Down button
-		if (pt.x > JOURNAL_POINTS[3][0] && pt.x < JOURNAL_POINTS[3][1] && pt.y >= JOURNAL_BUTTONS_Y &&
-				pt.y < (JOURNAL_BUTTONS_Y + 10) && _down) {
-			found = BTN_DOWN;
+		if (btn == BTN_DOWN) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Down");
 		} else if (_down) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Down");
 		}
 
 		// Ahead 10 button
-		if (pt.x > JOURNAL_POINTS[4][0] && pt.x < JOURNAL_POINTS[4][1] && pt.y >= JOURNAL_BUTTONS_Y &&
-				pt.y < (JOURNAL_BUTTONS_Y + 10) && _down) {
-			found = BTN_AHEAD110;
+		if (btn == BTN_AHEAD110) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Ahead 10");
 		} else if (_down) {
 			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Ahead 10");
 		}
 
 		// Search button
-		if (pt.x > JOURNAL_POINTS[5][0] && pt.x < JOURNAL_POINTS[5][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
-				pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty()) {
-			found = BTN_SEARCH;
+		if (btn == BTN_SEARCH) {
 			color = COMMAND_HIGHLIGHTED;
 		} else if (_journal.empty()) {
 			color = COMMAND_NULL;
@@ -883,9 +907,7 @@ bool Journal::handleEvents(int key) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, "Search");
 
 		// First Page button
-		if (pt.x > JOURNAL_POINTS[6][0] && pt.x < JOURNAL_POINTS[6][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
-				pt.y < (JOURNAL_BUTTONS_Y + 20) && _up) {
-			found = BTN_FIRST_PAGE;
+		if (btn == BTN_FIRST_PAGE) {
 			color = COMMAND_HIGHLIGHTED;
 		} else if (_up) {
 			color = COMMAND_FOREGROUND;
@@ -895,9 +917,7 @@ bool Journal::handleEvents(int key) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, "First Page");
 
 		// Last Page button
-		if (pt.x > JOURNAL_POINTS[7][0] && pt.x < JOURNAL_POINTS[7][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
-				pt.y < (JOURNAL_BUTTONS_Y + 20) && _down) {
-			found = BTN_LAST_PAGE;
+		if (btn == BTN_LAST_PAGE) {
 			color = COMMAND_HIGHLIGHTED;
 		} else if (_down) {
 			color = COMMAND_FOREGROUND;
@@ -907,18 +927,14 @@ bool Journal::handleEvents(int key) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, "Last Page");
 
 		// Print Text button
-		if (pt.x > JOURNAL_POINTS[8][0] && pt.x < JOURNAL_POINTS[8][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
-				pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty()) {
-			found = BTN_PRINT_TEXT;
-		}
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, "Print Text");
 	}
 
-	if (found == BTN_EXIT && events._released) {
+	if (btn == BTN_EXIT && events._released) {
 		// Exit button pressed
 		doneFlag = true;
 
-	} else if (((found == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
+	} else if (((btn == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
 		// Scrolll up 10 pages
 		if (_page < 11)
 			drawJournal(1, (_page - 1) * LINES_PER_PAGE);
@@ -928,19 +944,19 @@ bool Journal::handleEvents(int key) {
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((found == BTN_UP && events._released) || key == 'U') && _up) {
+	} else if (((btn == BTN_UP && events._released) || key == 'U') && _up) {
 		// Scroll up
 		drawJournal(1, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	
-	} else if (((found == BTN_DOWN && events._released) || key == 'D') && _down) {
+	} else if (((btn == BTN_DOWN && events._released) || key == 'D') && _down) {
 		// Scroll down
 		drawJournal(2, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((found == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
+	} else if (((btn == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
 		// Scroll down 10 pages
 		if ((_page + 10) > _maxPage)
 			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
@@ -950,7 +966,7 @@ bool Journal::handleEvents(int key) {
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	
-	} else if (((found == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
+	} else if (((btn == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
 		bool notFound = false;
 
@@ -981,7 +997,7 @@ bool Journal::handleEvents(int key) {
 		} while (!doneFlag);
 		doneFlag = false;
 	
-	} else if (((found == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
+	} else if (((btn == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
 		// First page
 		_index = _sub = 0;
 		_up = _down = false;
@@ -992,7 +1008,7 @@ bool Journal::handleEvents(int key) {
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	
-	} else if (((found == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
+	} else if (((btn == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
 		// Last page
 		if ((_page + 10) > _maxPage)
 			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
