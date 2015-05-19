@@ -523,7 +523,7 @@ void UserInterface::examine() {
 	}
 
 	if (_invLookFlag) {
-		// Dont close the inventory window when starting an examine display, since it's
+		// Don't close the inventory window when starting an examine display, since its
 		// window will slide up to replace the inventory display
 		_windowOpen = false;
 		_menuMode = LOOK_MODE;
@@ -690,13 +690,11 @@ void UserInterface::doEnvControl() {
 	_keyboardInput = false;
 	int found = saves.getHighlightedButton();
 
-	if (events._pressed || events._released)
-	{
+	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
 		// Check for a filename entry being highlighted
-		if ((events._pressed || events._released) && mousePos.y > (CONTROLS_Y + 10))
-		{
+		if ((events._pressed || events._released) && mousePos.y > (CONTROLS_Y + 10)) {
 			int found1 = 0;
 			for (_selector = 0; (_selector < 5) && !found1; ++_selector)
 				if (mousePos.y > (CONTROLS_Y + 11 + _selector * 10) && mousePos.y < (CONTROLS_Y + 21 + _selector * 10))
@@ -828,7 +826,7 @@ void UserInterface::doEnvControl() {
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - 5) ? COMMAND_NULL : COMMAND_FOREGROUND;
 				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
 
-				// Check for there are more pending U keys pressed
+				// Check whether there are more pending U keys pressed
 				moreKeys = false;
 				if (events.kbHit()) {
 					Common::KeyState keyState = events.getKey();
@@ -864,7 +862,7 @@ void UserInterface::doEnvControl() {
 				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - 5) ? COMMAND_NULL : COMMAND_FOREGROUND;
 				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
 
-				// Check for there are more pending D keys pressed
+				// Check whether there are more pending D keys pressed
 				moreKeys = false;
 				if (events.kbHit()) {
 					Common::KeyState keyState;
@@ -950,7 +948,7 @@ void UserInterface::doEnvControl() {
 				if (saves._envMode == SAVEMODE_LOAD) {
 					saves.loadGame(_selector + 1);
 				} else if (saves._envMode == SAVEMODE_SAVE || _selector == MAX_SAVEGAME_SLOTS) {
-					// We're alreaady in save mode, or pointed to an empty save slot
+					// We're already in save mode, or pointing to an empty save slot
 					if (saves.checkGameOnScreen(_selector))
 						_oldSelector = _selector;
 
@@ -1007,7 +1005,7 @@ void UserInterface::doInvControl() {
 		events.clearKeyboard();
 
 		if (found != -1)
-			// If a slot highlighted, set it's color
+			// If a slot highlighted, set its color
 			colors[found] = COMMAND_HIGHLIGHTED;
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, "Exit");
 
@@ -1135,7 +1133,7 @@ void UserInterface::doInvControl() {
 			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
 		} else {
-			// If something is being given, make sure it's to a person
+			// If something is being given, make sure it's being given to a person
 			if (inv._invMode == 3) {
 				if (_bgFound != -1 && scene._bgShapes[_bgFound]._aType == PERSON)
 					_find = _bgFound;

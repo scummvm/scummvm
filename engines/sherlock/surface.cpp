@@ -179,10 +179,10 @@ void Surface::free() {
 	}
 }
 
-void Surface::setPixels(byte *pixels, int w, int h) {
+void Surface::setPixels(byte *pixels, int width, int height) {
 	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
-	_surface.w = _surface.pitch = w;
-	_surface.h = h;
+	_surface.w = _surface.pitch = width;
+	_surface.h = height;
 	_surface.setPixels(pixels);
 }
 

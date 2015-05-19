@@ -139,7 +139,7 @@ public:
 	/**
 	 * Set the pixels for the surface to an existing data block
 	 */
-	void setPixels(byte *pixels, int w, int h);
+	void setPixels(byte *pixels, int width, int height);
 
 	inline uint16 w() const { return _surface.w; }
 	inline uint16 h() const { return _surface.h; }
