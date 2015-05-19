@@ -25,7 +25,7 @@
 
 namespace Sherlock {
 
-const int SETUP_POINTS[12][4]  = {
+static const int SETUP_POINTS[12][4]  = {
 	{ 4, 154, 101, 53 },		// Exit
 	{ 4, 165, 101, 53 },		// Music Toggle
 	{ 219, 165, 316, 268 },		// Voice Toggle
@@ -40,13 +40,13 @@ const int SETUP_POINTS[12][4]  = {
 	{ 219, 187, 316, 268 }		// _key Pad Accel. Toggle
 };
 
-const char *const SETUP_STRS0[2] = { "off", "on" };
-const char *const SETUP_STRS1[2] = { "Directly", "by Pixel" };
-const char *const SETUP_STRS2[2] = { "Left", "Right" };
-const char *const SETUP_STRS3[2] = { "Appear", "Slide" };
-const char *const SETUP_STRS4[2] = { "Slow", "Fast" };
-const char *const SETUP_STRS5[2] = { "Left", "Right" };
-const char *const SETUP_NAMES[12] = {
+static const char *const SETUP_STRS0[2] = { "off", "on" };
+static const char *const SETUP_STRS1[2] = { "Directly", "by Pixel" };
+static const char *const SETUP_STRS2[2] = { "Left", "Right" };
+static const char *const SETUP_STRS3[2] = { "Appear", "Slide" };
+static const char *const SETUP_STRS4[2] = { "Slow", "Fast" };
+static const char *const SETUP_STRS5[2] = { "Left", "Right" };
+static const char *const SETUP_NAMES[12] = {
 	"Exit", "M", "V", "S", "B", "New Font Style", "J", "Calibrate Joystick", "F", "W", "P", "K"
 };
 

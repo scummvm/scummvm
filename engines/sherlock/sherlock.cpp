@@ -203,6 +203,8 @@ void SherlockEngine::handleInput() {
 
 /**
  * Read the state of a global flag
+ * @remarks		If a negative value is specified, it will return the inverse value
+ *		of the positive flag number
  */
 bool SherlockEngine::readFlags(int flagNum) {
 	bool value = _flags[ABS(flagNum)];

@@ -30,6 +30,26 @@
 
 namespace Sherlock {
 
+static const int8 creativeADPCM_ScaleMap[64] = {
+	0,  1,  2,  3,  4,  5,  6,  7,  0,  -1,  -2,  -3,  -4,  -5,  -6,  -7,
+	1,  3,  5,  7,  9, 11, 13, 15, -1,  -3,  -5,  -7,  -9, -11, -13, -15,
+	2,  6, 10, 14, 18, 22, 26, 30, -2,  -6, -10, -14, -18, -22, -26, -30,
+	4, 12, 20, 28, 36, 44, 52, 60, -4, -12, -20, -28, -36, -44, -52, -60
+};
+
+static const uint8 creativeADPCM_AdjustMap[64] = {
+	0, 0, 0, 0, 0, 16, 16, 16,
+	0, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0,  0,  0,  0,
+	240, 0, 0, 0, 0,  0,  0,  0
+};
+
+/*----------------------------------------------------------------*/
+
 Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
 	_music = false;
@@ -69,24 +89,6 @@ void Sound::loadSound(const Common::String &name, int priority) {
 	// No implementation required in ScummVM
 	warning("loadSound");
 }
-
-static int8 creativeADPCM_ScaleMap[64] = {
-	0,  1,  2,  3,  4,  5,  6,  7,  0,  -1,  -2,  -3,  -4,  -5,  -6,  -7,
-	1,  3,  5,  7,  9, 11, 13, 15, -1,  -3,  -5,  -7,  -9, -11, -13, -15,
-	2,  6, 10, 14, 18, 22, 26, 30, -2,  -6, -10, -14, -18, -22, -26, -30,
-	4, 12, 20, 28, 36, 44, 52, 60, -4, -12, -20, -28, -36, -44, -52, -60
-};
-
-static uint8 creativeADPCM_AdjustMap[64] = {
-	0, 0, 0, 0, 0, 16, 16, 16,
-	0, 0, 0, 0, 0, 16, 16, 16,
-	240, 0, 0, 0, 0, 16, 16, 16,
-	240, 0, 0, 0, 0, 16, 16, 16,
-	240, 0, 0, 0, 0, 16, 16, 16,
-	240, 0, 0, 0, 0, 16, 16, 16,
-	240, 0, 0, 0, 0,  0,  0,  0,
-	240, 0, 0, 0, 0,  0,  0,  0
-};
 
 byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 	int16 samp = sample + scale;

@@ -328,13 +328,10 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
  */
 void Screen::print(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
-	char buffer[100];
 	va_list args;
-
 	va_start(args, formatStr);
-	vsprintf(buffer, formatStr, args);
+	Common::String str = Common::String::vformat(formatStr, args);
 	va_end(args);
-	Common::String str(buffer);
 
 	// Figure out area to draw text in
 	Common::Point pos = pt;
@@ -362,13 +359,10 @@ void Screen::print(const Common::Point &pt, byte color, const char *formatStr, .
  */
 void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
-	char buffer[100];
 	va_list args;
-
 	va_start(args, formatStr);
-	vsprintf(buffer, formatStr, args);
+	Common::String str = Common::String::vformat(formatStr, args);
 	va_end(args);
-	Common::String str(buffer);
 
 	// Print the text
 	writeString(str, pt, color);

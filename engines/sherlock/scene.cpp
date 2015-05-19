@@ -26,6 +26,13 @@
 
 namespace Sherlock {
 
+static const int FS_TRANS[8] = {
+	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
+	STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
+};
+
+/*----------------------------------------------------------------*/
+
 /**
  * Load the data for the object
  */
@@ -636,11 +643,6 @@ void Scene::transitionToScene() {
 	Talk &talk = *_vm->_talk;
 	Common::Point &hSavedPos = people._hSavedPos;
 	int &hSavedFacing = people._hSavedFacing;
-
-	const int FS_TRANS[8] = {
-		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
-		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
-	};
 
 	if (hSavedPos.x < 1) {
 		// No exit information from last scene-check entrance info
