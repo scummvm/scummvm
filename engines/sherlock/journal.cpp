@@ -1121,8 +1121,8 @@ int Journal::getSearchString(bool printError) {
 			}  else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				done = -1;
-			} else if (keyState.ascii >= ' ' && keyState.keycode <= 'z' && keyState.keycode != Common::KEYCODE_AT && 
-				name.size() < JOURNAL_SEACRH_MAX_CHARS && (xp + screen.charWidth(keyState.keycode)) < JOURNAL_SEARCH_RIGHT) {
+			} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && keyState.keycode != Common::KEYCODE_AT && 
+				name.size() < JOURNAL_SEACRH_MAX_CHARS && (xp + screen.charWidth(keyState.ascii)) < JOURNAL_SEARCH_RIGHT) {
 				char ch = toupper(keyState.ascii);
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", ch);

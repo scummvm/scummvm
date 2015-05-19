@@ -133,7 +133,7 @@ public:
 	/**
 	 * Prompts the user to enter a filename in a given slot
 	 */
-	bool getFilename(int slot);
+	bool promptForFilename(int slot);
 };
 
 } // End of namespace Sherlock

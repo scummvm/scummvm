@@ -63,24 +63,25 @@ static const int TITLE_FRAMES[7][9] = {
 };
 
 #define NUM_PLACES 100
-const int MAP_X[NUM_PLACES] = {
+
+static const int MAP_X[NUM_PLACES] = {
 	0, 368, 0, 219, 0, 282, 0, 43, 0, 0, 396, 408, 0, 0, 0, 568, 37, 325,
 	28, 0, 263, 36, 148, 469, 342, 143, 443, 229, 298, 0, 157, 260, 432,
 	174, 0, 351, 0, 528, 0, 136, 0, 0, 0, 555, 165, 0, 506, 0, 0, 344, 0, 0
 };
-const int MAP_Y[NUM_PLACES] = {
+static const int MAP_Y[NUM_PLACES] = {
 	0, 147, 0, 166, 0, 109, 0, 61, 0, 0, 264, 70, 0, 0, 0, 266, 341, 30, 275,
 	0, 294, 146, 311, 230, 184, 268, 133, 94, 207, 0, 142, 142, 330, 255, 0,
 	37, 0, 70, 0, 116, 0, 0, 0, 50, 21, 0, 303, 0, 0, 229, 0, 0
 };
 
-const int MAP_TRANSLATE[NUM_PLACES] = {
+static const int MAP_TRANSLATE[NUM_PLACES] = {
 	0, 0, 0, 1, 0, 2, 0, 3, 4, 0, 4, 6, 0, 0, 0, 8, 9, 10, 11, 0, 12, 13, 14, 7,
 	15, 16, 17, 18, 19, 0, 20, 21, 22, 23, 0, 24, 0, 25, 0, 26, 0, 0, 0, 27,
 	28, 0, 29, 0, 0, 30, 0
 };
 
-const byte MAP_SEQUENCES[3][MAX_FRAME] = {
+static const byte MAP_SEQUENCES[3][MAX_FRAME] = {
 	{ 1, 1, 2, 3, 4, 0 },		// Overview Still
 	{ 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0 },
 	{ 5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 0 }
@@ -88,7 +89,7 @@ const byte MAP_SEQUENCES[3][MAX_FRAME] = {
 
 #define MAX_PEOPLE 66
 
-const byte STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
+static const byte STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 	{ 1, 0, 0 },	// Sherlock Holmes
 	{ 6, 0, 0 },	// Dr. Watson
 	{ 4, 0, 0 },	// Inspector Lestrade
@@ -157,7 +158,7 @@ const byte STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 	{ 4, 0, 0 }		// Inspector Lestrade (Yard)
 };
 
-byte TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
+static const byte TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 	{ 1, 0, 0 },					// Sherlock Holmes
 	{ 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 },	// Dr. Watson
 	{ 2, 0, 0 },					// Inspector Lestrade
@@ -381,12 +382,12 @@ bool ScalpelEngine::showAlleyCutscene() {
 	if (finished)
 		finished = _animation->play("27PRO3", 1, 0, true, 2);
 
-	if(finished) {
+	if (finished) {
 		_screen->getPalette(palette);
 		_screen->fadeToBlack(2);
 	}
 
-	if(finished) {
+	if (finished) {
 		ImageFile titleImages("title3.vgs", true);
 		// "Early the following morning on Baker Street..."
 		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(35, 51), false, 0);

@@ -385,7 +385,7 @@ bool SaveManager::checkGameOnScreen(int slot) {
 	return false;
 }
 
-bool SaveManager::getFilename(int slot) {
+bool SaveManager::promptForFilename(int slot) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -455,8 +455,8 @@ bool SaveManager::getFilename(int slot) {
 			done = -1;
 		}
 
-		if (keyState.keycode >= ' ' && keyState.keycode <= 'z' && saveName.size() < 50
-				&& (xp + screen.charWidth(keyState.keycode)) < 308) {
+		if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
+				&& (xp + screen.charWidth(keyState.ascii)) < 308) {
 			char c = (char)keyState.ascii;
 
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
