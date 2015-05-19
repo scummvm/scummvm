@@ -389,7 +389,7 @@ void UserInterface::handleInput() {
 				doMainControl();
 		}
 
-		if (pt.y < CONTROLS_Y && events._pressed && _oldTemp != (_menuMode - 1) && _oldKey != -1)
+		if (pt.y < CONTROLS_Y && events._pressed && _oldTemp != (int)(_menuMode - 1) && _oldKey != -1)
 			restoreButton(_oldTemp);
 	}
 }
@@ -438,7 +438,7 @@ void UserInterface::pushButton(int num) {
 void UserInterface::toggleButton(int num) {
 	Screen &screen = *_vm->_screen;
 
-	if (_menuMode != (num + 1)) {
+	if (_menuMode != (MenuMode)(num + 1)) {
 		_menuMode = (MenuMode)(num + 1);
 		_oldKey = COMMANDS[num];
 		_oldTemp = num;
@@ -700,7 +700,7 @@ void UserInterface::doEnvControl() {
 				if (mousePos.y > (CONTROLS_Y + 11 + _selector * 10) && mousePos.y < (CONTROLS_Y + 21 + _selector * 10))
 					found1 = 1;
 
-			if (_selector + saves._savegameIndex - 1 < MAX_SAVEGAME_SLOTS + (saves._envMode != 1))
+			if (_selector + saves._savegameIndex - 1 < MAX_SAVEGAME_SLOTS + (saves._envMode != SAVEMODE_LOAD))
 				_selector = _selector + saves._savegameIndex - 1;
 			else
 				_selector = -1;
@@ -734,7 +734,7 @@ void UserInterface::doEnvControl() {
 			} else if (_key >= '1' && _key <= '9') {
 				_keyboardInput = true;
 				_selector = _key - '1';
-				if (_selector >= MAX_SAVEGAME_SLOTS + (saves._envMode == 1 ? 0 : 1))
+				if (_selector >= MAX_SAVEGAME_SLOTS + (saves._envMode == SAVEMODE_LOAD ? 0 : 1))
 					_selector = -1;
 
 				if (saves.checkGameOnScreen(_selector))

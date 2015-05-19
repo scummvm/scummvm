@@ -260,12 +260,12 @@ void SaveManager::highlightButtons(int btnIndex) {
 
 	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), color, 1, "Exit");
 
-	if ((btnIndex == 1) || ((_envMode == 1) && (btnIndex != 2)))
+	if ((btnIndex == 1) || ((_envMode == SAVEMODE_LOAD) && (btnIndex != 2)))
 		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Load");
 	else
 		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Load");
 
-	if ((btnIndex == 2) || ((_envMode == 2) && (btnIndex != 1)))
+	if ((btnIndex == 2) || ((_envMode == SAVEMODE_SAVE) && (btnIndex != 1)))
 		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Save");
 	else
 		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Save");

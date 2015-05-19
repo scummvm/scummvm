@@ -150,7 +150,7 @@ void Scene::selectScene() {
 
 	loadScene(sceneFile);
 
-	// If the fade style was changed from running amovie, then reset it
+	// If the fade style was changed from running a movie, then reset it
 	if (_tempFadeStyle) {
 		screen._fadeStyle = _tempFadeStyle;
 		_tempFadeStyle = 0;

@@ -146,7 +146,7 @@ void Talk::talkTo(const Common::String &filename) {
 	}
 
 	// Save the ui mode temporarily and switch to talk mode
-	int savedMode = ui._menuMode;
+	MenuMode savedMode = ui._menuMode;
 	ui._menuMode = TALK_MODE;
 
 	// Turn on the Exit option
@@ -183,7 +183,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 	// Restore any pressed button
 	if (!ui._windowOpen && savedMode != STD_MODE)
-		ui.restoreButton(savedMode - 1);
+		ui.restoreButton((int)(savedMode - 1));
 
 	// Clear the ui counter so that anything displayed on the info line
 	// before the window was opened isn't cleared
@@ -257,6 +257,9 @@ void Talk::talkTo(const Common::String &filename) {
 			ui._menuMode = STD_MODE;
 			events._pressed = events._released = events._oldButtons = 0;
 			abortFlag = true;
+			break;
+
+		default:
 			break;
 		}
 	}
