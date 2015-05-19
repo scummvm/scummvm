@@ -158,8 +158,6 @@ struct ImageFrame {
 	Common::Point _offset;
 	byte _rleMarker;
 	Graphics::Surface _frame;
-
-	operator Graphics::Surface &() { return _frame; }
 };
 
 class ImageFile : public Common::Array<ImageFrame> {

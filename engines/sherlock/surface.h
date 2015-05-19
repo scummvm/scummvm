@@ -25,9 +25,10 @@
 
 #include "common/rect.h"
 #include "graphics/surface.h"
-#include "sherlock/resources.h"
 
 namespace Sherlock {
+
+struct ImageFrame;
 
 class Surface : public Graphics::Surface {
 private:
@@ -56,16 +57,30 @@ public:
 	void blitFrom(const Graphics::Surface &src);
 
 	/**
+	 * Copy an image frame into this surface
+	 */
+	void blitFrom(const ImageFrame &src);
+
+	/**
 	 * Draws a surface at a given position within this surface
 	 */
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
 
 	/**
+	 * Copy an image frame onto this surface at a given position
+	 */
+	void blitFrom(const ImageFrame &src, const Common::Point &pt);
+
+	/**
 	 * Draws a sub-section of a surface at a given position within this surface
 	 */
-	void blitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		const Common::Rect &srcBounds);
-	
+	void blitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds);
+
+	/**
+	 * Copy a sub-area of a source image frame into this surface at a given position
+	 */
+	void blitFrom(const ImageFrame &src, const Common::Point &pt, const Common::Rect &srcBounds);
+
 	/**
 	 * Draws an image frame at a given position within this surface with transparency
 	 */

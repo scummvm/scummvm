@@ -228,7 +228,7 @@ int Map::show() {
 
 				// Show wait cursor
 				_cursorIndex = 1;
-				events.setCursor((*_mapCursors)[_cursorIndex]);
+				events.setCursor((*_mapCursors)[_cursorIndex]._frame);
 			}
 		}
 
@@ -269,7 +269,7 @@ void Map::setupSprites() {
 
 	_mapCursors = new ImageFile("omouse.vgs");
 	_cursorIndex = 0;
-	events.setCursor((*_mapCursors)[_cursorIndex]);
+	events.setCursor((*_mapCursors)[_cursorIndex]._frame);
 
 	_shapes = new ImageFile("mapicon.vgs");
 	_iconShapes = new ImageFile("overicon.vgs");
@@ -369,7 +369,7 @@ void Map::updateMap(bool flushScreen) {
 		if (++_cursorIndex > (1 + 8))
 			_cursorIndex = 1;
 
-		events.setCursor((*_mapCursors)[(_cursorIndex + 1) / 2]);
+		events.setCursor((*_mapCursors)[(_cursorIndex + 1) / 2]._frame);
 	}
 
 	if (!_drawMap && !flushScreen)

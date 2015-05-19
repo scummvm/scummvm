@@ -63,7 +63,7 @@ void Events::setCursor(CursorId cursorId) {
 	_cursorId = cursorId;
 
 	// Set the cursor data
-	Graphics::Surface &s = (*_cursorImages)[cursorId];
+	Graphics::Surface &s = (*_cursorImages)[cursorId]._frame;
 
 	setCursor(s);
 }

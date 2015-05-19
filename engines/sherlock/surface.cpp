@@ -22,6 +22,7 @@
 
 #include "sherlock/surface.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/resources.h"
 #include "common/system.h"
 #include "graphics/palette.h"
 
@@ -51,8 +52,16 @@ void Surface::blitFrom(const Graphics::Surface &src) {
 	blitFrom(src, Common::Point(0, 0));
 }
 
+void Surface::blitFrom(const ImageFrame &src) {
+	blitFrom(src._frame, Common::Point(0, 0));
+}
+
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
 	blitFrom(src, pt, Common::Rect(0, 0, src.w, src.h));
+}
+
+void Surface::blitFrom(const ImageFrame &src, const Common::Point &pt) {
+	blitFrom(src._frame, pt, Common::Rect(0, 0, src._frame.w, src._frame.h));
 }
 
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
@@ -65,6 +74,10 @@ void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		addDirtyRect(destRect);
 		copyRectToSurface(src, destRect.left, destRect.top, srcRect);
 	}
+}
+
+void Surface::blitFrom(const ImageFrame &src, const Common::Point &pt, const Common::Rect &srcBounds) {
+	blitFrom(src._frame, pt, srcBounds);
 }
 
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
