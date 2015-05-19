@@ -1198,7 +1198,7 @@ void UserInterface::doInvControl() {
 			if ((mousePos.y < CONTROLS_Y1) && (inv._invMode == 1) && (_find >= 0) && (_find < 1000)) {
 				if (!scene._bgShapes[_find]._examine.empty() &&
 						scene._bgShapes[_find]._examine[0] >= ' ')
-					inv.doInvJF();
+					inv.refreshInv();
 			} else if (_selector != -1 || _find >= 0) {
 				// Selector is the inventory object that was clicked on, or selected.
 				// If it's -1, then no inventory item is highlighted yet. Otherwise,
@@ -1206,7 +1206,7 @@ void UserInterface::doInvControl() {
 
 				if (_selector != -1 && inv._invMode == INVMODE_LOOK
 						&& mousePos.y >(CONTROLS_Y1 + 11))
-					inv.doInvJF();
+					inv.refreshInv();
 
 				if (talk._talkToAbort)
 					return;

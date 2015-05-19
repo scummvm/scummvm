@@ -349,9 +349,9 @@ void Inventory::highlight(int index, byte color) {
 }
 
 /**
- * Support method for updating the screen
+ * Support method for refreshing the display of the inventory
  */
-void Inventory::doInvJF() {
+void Inventory::refreshInv() {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;

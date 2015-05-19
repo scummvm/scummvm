@@ -30,6 +30,8 @@
 
 namespace Sherlock {
 
+enum ButtonFlag { LEFT_BUTTON = 1, RIGHT_BUTTON = 2 };
+
 Events::Events(SherlockEngine *vm) {
 	_vm = vm;
 	_cursorImages = nullptr;
@@ -143,16 +145,16 @@ void Events::pollEvents() {
 		case Common::EVENT_KEYUP:
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseButtons |= 1;
+			_mouseButtons |= LEFT_BUTTON;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseButtons |= 2;
+			_mouseButtons |= RIGHT_BUTTON;
 			return;
 		case Common::EVENT_LBUTTONUP:
-			_mouseButtons &= ~1;
+			_mouseButtons &= ~LEFT_BUTTON;
 			return;
 		case Common::EVENT_RBUTTONUP:
-			_mouseButtons &= ~2;
+			_mouseButtons &= ~RIGHT_BUTTON;
 			return;
 		default:
  			break;
