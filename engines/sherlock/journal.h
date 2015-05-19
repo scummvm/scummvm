@@ -68,7 +68,7 @@ private:
 
 	bool drawJournal(int direction, int howFar);
 
-	int getFindName(bool printError);
+	int getSearchString(bool printError);
 
 	void drawJournalFrame();
 public:

@@ -102,8 +102,8 @@ class Sprite {
 private:
 	static SherlockEngine *_vm;
 public:
-	Common::String _name;				// Name
-	Common::String _description;		// Description
+	Common::String _name;				
+	Common::String _description;		
 	Common::StringArray _examine;		// Examine in-depth description
 	Common::String _pickUp;				// Message for if you can't pick up object
 

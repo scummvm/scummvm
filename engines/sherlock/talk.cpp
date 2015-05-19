@@ -1665,7 +1665,7 @@ int Talk::waitForMore(int delay) {
 
 			if (events.kbHit()) {
 				Common::KeyState keyState = events.getKey();
-				if (keyState.keycode >= ' ' && keyState.keycode < '~')
+				if (Common::isPrint(keyState.ascii))
 					key2 = keyState.keycode;
 			}
 

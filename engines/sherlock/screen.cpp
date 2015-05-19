@@ -387,7 +387,7 @@ int Screen::stringWidth(const Common::String &str) {
 int Screen::charWidth(char c) {
 	if (c == ' ')
 		return 5;
-	else if (c > ' ' && c <= '~')
+	else if (Common::isPrint(c))
 		return (*_font)[c - 33]._frame.w + 1;
 	else
 		return 0;
@@ -403,7 +403,7 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, byt
 		if (*c == ' ')
 			charPos.x += 5;
 		else {
-			assert(*c > ' ' && *c <= '~');
+			assert(Common::isPrint(*c));
 			ImageFrame &frame = (*_font)[*c - 33];
 			_backBuffer->transBlitFrom(frame, charPos, false, color);
 			charPos.x += frame._frame.w + 1;

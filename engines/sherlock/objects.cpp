@@ -566,7 +566,7 @@ void Object::toggleHidden() {
 void Object::checkObject() {
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 	bool codeFound;
 
 	if (_seqTo) {
@@ -693,7 +693,7 @@ void Object::checkObject() {
  */
 bool Object::checkEndOfSequence() {
 	Screen &screen = *_vm->_screen;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 	bool result = false;
 
 	if (_type == REMOVE || _type == INVALID)
@@ -749,7 +749,7 @@ bool Object::checkEndOfSequence() {
  */
 void Object::setObjSequence(int seq, bool wait) {
 	Scene &scene = *_vm->_scene;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 
 	if (seq >= 128) {
 		// Loop the sequence until the count exceeded

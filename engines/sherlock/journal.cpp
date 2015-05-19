@@ -27,6 +27,10 @@ namespace Sherlock {
 
 #define JOURNAL_BUTTONS_Y 178
 #define LINES_PER_PAGE 11
+#define JOURNAL_SEARCH_LEFT 15
+#define JOURNAL_SEARCH_TOP 186
+#define JOURNAL_SEARCH_RIGHT 296
+#define JOURNAL_SEACRH_MAX_CHARS 50
 
 // Positioning of buttons in the journal view
 static const int JOURNAL_POINTS[9][3] = {
@@ -910,11 +914,11 @@ bool Journal::handleEvents(int key) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, "Print Text");
 	}
 
-	if (found == BTN_EXIT && events._released)
+	if (found == BTN_EXIT && events._released) {
 		// Exit button pressed
 		doneFlag = true;
 
-	if (((found == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
+	} else if (((found == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
 		// Scrolll up 10 pages
 		if (_page < 11)
 			drawJournal(1, (_page - 1) * LINES_PER_PAGE);
@@ -923,23 +927,20 @@ bool Journal::handleEvents(int key) {
 
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	}
 
-	if (((found == BTN_UP && events._released) || key == 'U') && _up) {
+	} else if (((found == BTN_UP && events._released) || key == 'U') && _up) {
 		// Scroll up
 		drawJournal(1, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	}
-
-	if (((found == BTN_DOWN && events._released) || key == 'D') && _down) {
+	
+	} else if (((found == BTN_DOWN && events._released) || key == 'D') && _down) {
 		// Scroll down
 		drawJournal(2, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	}
 
-	if (((found == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
+	} else if (((found == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
 		// Scroll down 10 pages
 		if ((_page + 10) > _maxPage)
 			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
@@ -948,15 +949,14 @@ bool Journal::handleEvents(int key) {
 
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	}
-
-	if (((found == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
+	
+	} else if (((found == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
 		bool notFound = false;
 
 		do {
 			int dir;
-			if ((dir = getFindName(notFound)) != 0) {
+			if ((dir = getSearchString(notFound)) != 0) {
 				int savedIndex = _index;
 				int savedSub = _sub;
 				int savedPage = _page;
@@ -980,9 +980,8 @@ bool Journal::handleEvents(int key) {
 			}
 		} while (!doneFlag);
 		doneFlag = false;
-	}
-
-	if (((found == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
+	
+	} else if (((found == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
 		// First page
 		_index = _sub = 0;
 		_up = _down = false;
@@ -992,9 +991,8 @@ bool Journal::handleEvents(int key) {
 		drawJournal(0, 0);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	}
-
-	if (((found == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
+	
+	} else if (((found == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
 		// Last page
 		if ((_page + 10) > _maxPage)
 			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
@@ -1011,9 +1009,9 @@ bool Journal::handleEvents(int key) {
 }
 
 /**
- * Show the search submenu
+ * Show the search submenu and allow the player to enter a search string
  */
-int Journal::getFindName(bool printError) {
+int Journal::getSearchString(bool printError) {
 	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
 
 	Events &events = *_vm->_events;
@@ -1078,8 +1076,8 @@ int Journal::getFindName(bool printError) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	}
 
-	xp = 15 + screen.stringWidth(name);
-	yp = 186;
+	xp = JOURNAL_SEARCH_LEFT + screen.stringWidth(name);
+	yp = JOURNAL_SEARCH_TOP;
 
 	do {
 		events._released = false;
@@ -1136,18 +1134,14 @@ int Journal::getFindName(bool printError) {
 				name.deleteLastChar();
 			}
 
-			if (keyState.keycode == Common::KEYCODE_RETURN)
+			if (keyState.keycode == Common::KEYCODE_RETURN) {
 				done = 1;
-
-			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			}  else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				done = -1;
-			}
-
-			if (keyState.keycode >= Common::KEYCODE_SPACE && keyState.keycode <= Common::KEYCODE_z
-					&& keyState.keycode != Common::KEYCODE_AT && name.size() < 50
-					&& (xp + screen.charWidth(keyState.keycode)) < 296) {
-				char ch = toupper(keyState.keycode);
+			} else if (keyState.ascii >= ' ' && keyState.keycode <= 'z' && keyState.keycode != Common::KEYCODE_AT && 
+				name.size() < JOURNAL_SEACRH_MAX_CHARS && (xp + screen.charWidth(keyState.keycode)) < JOURNAL_SEARCH_RIGHT) {
+				char ch = toupper(keyState.ascii);
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", ch);
 				xp += screen.charWidth(ch);

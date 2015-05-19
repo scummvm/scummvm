@@ -156,12 +156,11 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 
 	// Secondly, iterate through any loaded library file looking for a resource
 	// that has the same name
-	LibraryIndexes::iterator i;
-	for (i = _indexes.begin(); i != _indexes.end(); ++i) {
-		if ((*i)._value.contains(filename)) {
+	for (LibraryIndexes::iterator i = _indexes.begin(); i != _indexes.end(); ++i) {
+		if (i->_value.contains(filename)) {
 			// Get a stream reference to the given library file
-			Common::SeekableReadStream *stream = load((*i)._key);
-			LibraryEntry &entry = (*i)._value[filename];
+			Common::SeekableReadStream *stream = load(i->_key);
+			LibraryEntry &entry = i->_value[filename];
 			_resourceIndex = entry._index;
 
 			stream->seek(entry._offset);
