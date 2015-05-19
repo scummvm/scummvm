@@ -156,6 +156,7 @@ public:
 	void setActiveImage(int n);
 
 	int getNumImages() const;
+	int getNumLayers() const;
 	int getActiveImage() const { return _currImage; }
 	bool getHasTransparency() const { return _data->_hasTransparency; }
 	int getFormat() const { return _data->_format; }

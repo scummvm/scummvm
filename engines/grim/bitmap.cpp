@@ -452,6 +452,11 @@ int Bitmap::getNumImages() const {
 	return _data->_numImages;
 }
 
+int Bitmap::getNumLayers() const {
+	_data->load();
+	return _data->_numLayers;
+}
+
 void Bitmap::freeData() {
 	--_data->_refCount;
 	if (_data->_refCount < 1) {

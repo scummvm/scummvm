@@ -996,6 +996,7 @@ void GfxTinyGL::drawBitmap(const Bitmap *bitmap, int x, int y, uint32 layer) {
 
 		Graphics::BlitImage **b = (Graphics::BlitImage **)bitmap->getTexIds();
 
+		assert(layer < data->_numLayers);
 		uint32 offset = data->_layers[layer]._offset;
 		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
 			const BitmapData::Vert &v = data->_verts[i];

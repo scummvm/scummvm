@@ -1163,6 +1163,7 @@ void GfxOpenGL::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) {
 		GLuint *textures = (GLuint *)bitmap->getTexIds();
 		float *texc = data->_texc;
 
+		assert(layer < data->_numLayers);
 		uint32 offset = data->_layers[layer]._offset;
 		for (uint32 i = offset; i < offset + data->_layers[layer]._numImages; ++i) {
 			glBindTexture(GL_TEXTURE_2D, textures[data->_verts[i]._texid]);
