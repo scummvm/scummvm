@@ -131,9 +131,9 @@ public:
 	bool checkGameOnScreen(int slot);
 
 	/**
-	 * Prompts the user to enter a filename in a given slot
+	 * Prompts the user to enter a description in a given slot
 	 */
-	bool promptForFilename(int slot);
+	bool promptForDescription(int slot);
 };
 
 } // End of namespace Sherlock

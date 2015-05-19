@@ -783,7 +783,7 @@ void UserInterface::doEnvControl() {
 				if (saves.checkGameOnScreen(_selector))
 					_oldSelector = _selector;
 
-				if (saves.promptForFilename(_selector)) {
+				if (saves.promptForDescription(_selector)) {
 					saves.saveGame(_selector + 1, saves._savegames[_selector]);
 
 					banishWindow(1);
@@ -954,7 +954,7 @@ void UserInterface::doEnvControl() {
 					if (saves.checkGameOnScreen(_selector))
 						_oldSelector = _selector;
 
-					if (saves.promptForFilename(_selector)) {
+					if (saves.promptForDescription(_selector)) {
 						saves.saveGame(_selector + 1, saves._savegames[_selector]);
 						banishWindow();
 						_windowBounds.top = CONTROLS_Y1;

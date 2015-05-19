@@ -386,7 +386,7 @@ bool SaveManager::checkGameOnScreen(int slot) {
 	return false;
 }
 
-bool SaveManager::promptForFilename(int slot) {
+bool SaveManager::promptForDescription(int slot) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
