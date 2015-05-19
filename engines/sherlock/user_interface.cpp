@@ -696,7 +696,7 @@ void UserInterface::doEnvControl() {
 		// Check for a filename entry being highlighted
 		if ((events._pressed || events._released) && mousePos.y > (CONTROLS_Y + 10)) {
 			int found1 = 0;
-			for (_selector = 0; (_selector < 5) && !found1; ++_selector)
+			for (_selector = 0; (_selector < ONSCREEN_FILES_COUNT) && !found1; ++_selector)
 				if (mousePos.y > (CONTROLS_Y + 11 + _selector * 10) && mousePos.y < (CONTROLS_Y + 21 + _selector * 10))
 					found1 = 1;
 
@@ -746,7 +746,7 @@ void UserInterface::doEnvControl() {
 	}
 
 	if (_selector != _oldSelector)  {
-		if (_oldSelector != -1 && _oldSelector >= saves._savegameIndex && _oldSelector < (saves._savegameIndex + 5)) {
+		if (_oldSelector != -1 && _oldSelector >= saves._savegameIndex && _oldSelector < (saves._savegameIndex + ONSCREEN_FILES_COUNT)) {
 			screen.print(Common::Point(6, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10),
 				INV_FOREGROUND, "%d.", _oldSelector + 1);
 			screen.print(Common::Point(24, CONTROLS_Y + 12 + (_oldSelector - saves._savegameIndex) * 10),
@@ -810,9 +810,9 @@ void UserInterface::doEnvControl() {
 				screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
 					SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 
-				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + 5); ++idx) {
+				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + ONSCREEN_FILES_COUNT); ++idx) {
 					color = INV_FOREGROUND;
-					if (idx == _selector && idx >= saves._savegameIndex && idx < (saves._savegameIndex + 5))
+					if (idx == _selector && idx >= saves._savegameIndex && idx < (saves._savegameIndex + ONSCREEN_FILES_COUNT))
 						color = TALK_FOREGROUND;
 
 					screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - saves._savegameIndex) * 10), color, "%d.", idx + 1);
@@ -823,7 +823,7 @@ void UserInterface::doEnvControl() {
 
 				color = !saves._savegameIndex ? COMMAND_NULL : COMMAND_FOREGROUND;
 				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
-				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - 5) ? COMMAND_NULL : COMMAND_FOREGROUND;
+				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
 				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
 
 				// Check whether there are more pending U keys pressed
@@ -835,15 +835,15 @@ void UserInterface::doEnvControl() {
 					moreKeys = _key == 'U';
 				}
 			} while ((saves._savegameIndex) && moreKeys);
-		} else if (((found == 4 && events._released) || _key == 'D') && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - 5)) {
+		} else if (((found == 4 && events._released) || _key == 'D') && saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)) {
 			bool moreKeys;
 			do {
 				saves._savegameIndex++;
 				screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
 					SHERLOCK_SCREEN_HEIGHT - 1), INV_BACKGROUND);
 
-				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + 5); ++idx) {
-					if (idx == _selector && idx >= saves._savegameIndex && idx < (saves._savegameIndex + 5))
+				for (int idx = saves._savegameIndex; idx < (saves._savegameIndex + ONSCREEN_FILES_COUNT); ++idx) {
+					if (idx == _selector && idx >= saves._savegameIndex && idx < (saves._savegameIndex + ONSCREEN_FILES_COUNT))
 						color = TALK_FOREGROUND;
 					else
 						color = INV_FOREGROUND;
@@ -859,7 +859,7 @@ void UserInterface::doEnvControl() {
 				color = (!saves._savegameIndex) ? COMMAND_NULL : COMMAND_FOREGROUND;
 				screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), color, true, "Up");
 
-				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - 5) ? COMMAND_NULL : COMMAND_FOREGROUND;
+				color = (saves._savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) ? COMMAND_NULL : COMMAND_FOREGROUND;
 				screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), color, true, "Down");
 
 				// Check whether there are more pending D keys pressed
@@ -870,8 +870,8 @@ void UserInterface::doEnvControl() {
 
 					moreKeys = _key == 'D';
 				}
-			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - 5) && moreKeys);
-		} else if ((found == 5 && events._released) || _key == 'Q') {
+			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) && moreKeys);
+		} else if ((found == ONSCREEN_FILES_COUNT && events._released) || _key == 'Q') {
 			clearWindow();
 			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
