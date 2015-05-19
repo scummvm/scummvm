@@ -172,7 +172,7 @@ private:
 	 * Checks to see whether a USE action is valid on the given object
 	 */
 	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
-		int objNum, int giveMode);
+		int objNum, bool giveMode);
 	
 	/**
 	 * Called for OPEN, CLOSE, and MOVE actions are being done

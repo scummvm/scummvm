@@ -250,16 +250,16 @@ void Inventory::invCommands(bool slamIt) {
 
 	if (slamIt) {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
-			_invMode == 0 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
+			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Exit");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
-			_invMode == 1 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
+			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Look");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
-			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Use");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
-			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Give");
 		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
@@ -273,20 +273,20 @@ void Inventory::invCommands(bool slamIt) {
 		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"__");
-		if (_invMode != 1)
+		if (_invMode != INVMODE_LOOK)
 			ui.clearInfo();
 	} else {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
-			_invMode == 0 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Exit");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
-			_invMode == 1 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Look");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
-			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Use");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
-			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Give");
 		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,

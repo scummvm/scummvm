@@ -300,7 +300,7 @@ void UserInterface::handleInput() {
 	case USE_MODE:
 	case GIVE_MODE:
 	case INV_MODE:
-		if (inv._invMode == 1 || inv._invMode == 2 || inv._invMode == 3) {
+		if (inv._invMode == INVMODE_LOOK || inv._invMode == INVMODE_USE || inv._invMode == INVMODE_GIVE) {
 			if (pt.y > CONTROLS_Y)
 				lookInv();
 			else
@@ -568,10 +568,10 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 			if (!tempStr.empty() && tempStr[0] != ' ') {
 				// If inventory is active and an item is selected for a Use or Give action
 				if ((_menuMode == INV_MODE || _menuMode == USE_MODE || _menuMode == GIVE_MODE) &&
-						(inv._invMode == 2 || inv._invMode == 3)) {
+						(inv._invMode == INVMODE_USE || inv._invMode == INVMODE_GIVE)) {
 					int width1 = 0, width2 = 0;
 					int x, width;
-					if (inv._invMode == 2) {
+					if (inv._invMode == INVMODE_USE) {
 						// Using an object
 						x = width = screen.stringWidth("Use ");
 
@@ -1028,7 +1028,7 @@ void UserInterface::doInvControl() {
 		}
 
 		bool flag = false;
-		if (inv._invMode == 1 || inv._invMode == 2 || inv._invMode == 3) {
+		if (inv._invMode == INVMODE_LOOK || inv._invMode == INVMODE_USE || inv._invMode == INVMODE_GIVE) {
 			Common::Rect r(15, CONTROLS_Y1 + 11, 314, SHERLOCK_SCREEN_HEIGHT - 2);
 			if (r.contains(mousePos)) {
 				_selector = (mousePos.x - 6) / 52 + inv._invIndex;
@@ -1050,13 +1050,13 @@ void UserInterface::doInvControl() {
 
 		if (_key == 'E' || _key == 'L' || _key == 'U' || _key == 'G'
 				|| _key == '-' || _key == '+') {
-			int temp = inv._invMode;
+			InvMode temp = inv._invMode;
 
 			const char *chP = strchr(INVENTORY_COMMANDS, _key);
 			inv._invMode = !chP ? INVMODE_INVALID : (InvMode)(chP - INVENTORY_COMMANDS);
 			inv.invCommands(true);
 
-			inv._invMode = (InvMode)temp;
+			inv._invMode = temp;
 			_keyboardInput = true;
 			if (_key == 'E')
 				inv._invMode = INVMODE_EXIT;
@@ -1134,7 +1134,7 @@ void UserInterface::doInvControl() {
 			inv.invCommands(true);
 		} else {
 			// If something is being given, make sure it's being given to a person
-			if (inv._invMode == 3) {
+			if (inv._invMode == INVMODE_GIVE) {
 				if (_bgFound != -1 && scene._bgShapes[_bgFound]._aType == PERSON)
 					_find = _bgFound;
 				else
@@ -1143,7 +1143,7 @@ void UserInterface::doInvControl() {
 				_find = _bgFound;
 			}
 
-			if ((mousePos.y < CONTROLS_Y1) && (inv._invMode == 1) && (_find >= 0) && (_find < 1000)) {
+			if ((mousePos.y < CONTROLS_Y1) && (inv._invMode == INVMODE_LOOK) && (_find >= 0) && (_find < 1000)) {
 				if (!scene._bgShapes[_find]._examine.empty() &&
 						scene._bgShapes[_find]._examine[0] >= ' ')
 					inv.refreshInv();
@@ -1166,17 +1166,17 @@ void UserInterface::doInvControl() {
 				// is being tried on an object in the scene without an inventory
 				// object being highlighted first.
 
-				if ((inv._invMode == 2 || (_selector != -1 && inv._invMode == 3)) && _find >= 0) {
+				if ((inv._invMode == INVMODE_USE || (_selector != -1 && inv._invMode == INVMODE_GIVE)) && _find >= 0) {
 					events._pressed = events._released = false;
 					_infoFlag = true;
 					clearInfo();
 
-					int temp = _selector;	// Save the selector
+					int tempSel = _selector;	// Save the selector
 					_selector = -1;
 
 					inv.putInv(SLAM_DISPLAY);
-					_selector = temp;		// Restore it
-					temp = inv._invMode;
+					_selector = tempSel;		// Restore it
+					InvMode tempMode = inv._invMode;
 					inv._invMode = INVMODE_USE55;
 					inv.invCommands(true);
 
@@ -1187,12 +1187,13 @@ void UserInterface::doInvControl() {
 
 					inv.freeInv();
 
+					bool giveFl = (tempMode >= INVMODE_GIVE);
 					if (_selector >= 0)
 						// Use/Give inv object with scene object
-						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, MUSE, _find, temp - 2);
+						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, MUSE, _find, giveFl);
 					else
 						// Now inv object has been highlighted
-						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", MUSE, _find, temp - 2);
+						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", MUSE, _find, giveFl);
 
 					_selector = _oldSelector = -1;
 				}
@@ -2065,7 +2066,7 @@ void UserInterface::banishWindow(bool slideUp) {
 }
 
 void UserInterface::checkUseAction(const UseType *use, const Common::String &invName,
-		const char *const messages[], int objNum, int giveMode) {
+		const char *const messages[], int objNum, bool giveMode) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
 	Scene &scene = *_vm->_scene;
