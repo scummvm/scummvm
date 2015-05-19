@@ -398,9 +398,9 @@ void UserInterface::depressButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 
-	Graphics::Surface &s = (*_controls)[num]._frame;
-	screen._backBuffer1.transBlitFrom(s, pt);
-	screen.slamArea(pt.x, pt.y, pt.x + s.w, pt.y + s.h);
+	ImageFrame &frame = (*_controls)[num];
+	screen._backBuffer1.transBlitFrom(frame, pt);
+	screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 }
 
 void UserInterface::restoreButton(int num) {
@@ -451,10 +451,10 @@ void UserInterface::toggleButton(int num) {
 
 			_keyboardInput = false;
 
-			Graphics::Surface &s = (*_controls)[num]._frame;
+			ImageFrame &frame = (*_controls)[num];
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
-			screen._backBuffer1.transBlitFrom(s, pt);
-			screen.slamArea(pt.x, pt.y, pt.x + s.w, pt.y + s.h);
+			screen._backBuffer1.transBlitFrom(frame, pt);
+			screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 		}
 	} else {
 		_menuMode = STD_MODE;
@@ -1220,7 +1220,7 @@ void UserInterface::doLookControl() {
 			} else if (!_lookHelp) {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
-				screen._backBuffer2.blitFrom((*_controls)[0]._frame, pt);
+				screen._backBuffer2.blitFrom((*_controls)[0], pt);
 				banishWindow(true);
 
 				_windowBounds.top = CONTROLS_Y1;
@@ -1801,8 +1801,8 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 
 				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
-					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w, pt.y + tempSurface.h));
-				screen._backBuffer2.transBlitFrom((*_controls)[0]._frame, pt);
+					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w(), pt.y + tempSurface.h()));
+				screen._backBuffer2.transBlitFrom((*_controls)[0], pt);
 
 				banishWindow(1);
 				events.setCursor(MAGNIFY);
@@ -1954,9 +1954,9 @@ void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 
 	if (slideUp) {
 		// Gradually slide up the display of the window
-		for (int idx = 1; idx <= bgSurface.h; idx += 2) {
+		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
 			screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - idx),
-				Common::Rect(0, 0, bgSurface.w, idx));
+				Common::Rect(0, 0, bgSurface.w(), idx));
 			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - idx,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -1964,22 +1964,21 @@ void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 		}
 	} else {
 		// Gradually slide down the display of the window
-		for (int idx = 1; idx <= bgSurface.h; idx += 2) {
+		for (int idx = 1; idx <= bgSurface.h(); idx += 2) {
 			screen._backBuffer->blitFrom(bgSurface,
-				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h),
-				Common::Rect(0, bgSurface.h - idx, bgSurface.w, bgSurface.h));
-			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h,
-				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.h + idx));
+				Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
+				Common::Rect(0, bgSurface.h() - idx, bgSurface.w(), bgSurface.h()));
+			screen.slamRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(),
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - bgSurface.h() + idx));
 
 			events.delay(10);
 		}
 	}
 
 	// Final display of the entire window
-	screen._backBuffer->blitFrom(bgSurface, Common::Point(0,
-		SHERLOCK_SCREEN_HEIGHT - bgSurface.h),
-		Common::Rect(0, 0, bgSurface.w, bgSurface.h));
-	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h, bgSurface.w, bgSurface.h);
+	screen._backBuffer->blitFrom(bgSurface, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h()),
+		Common::Rect(0, 0, bgSurface.w(), bgSurface.h()));
+	screen.slamArea(0, SHERLOCK_SCREEN_HEIGHT - bgSurface.h(), bgSurface.w(), bgSurface.h());
 
 	_windowOpen = true;
 }

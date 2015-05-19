@@ -155,9 +155,9 @@ void Inventory::putInv(InvSlamMode slamIt) {
 		}
 
 		// Draw the item image
-		Graphics::Surface &img = (*_invShapes[itemNum])[0]._frame;
-		bb.transBlitFrom(img, Common::Point(6 + itemNum * 52 + ((47 - img.w) / 2),
-			163 + ((33 - img.h) / 2)));
+		ImageFrame &frame = (*_invShapes[itemNum])[0];
+		bb.transBlitFrom(frame, Common::Point(6 + itemNum * 52 + ((47 - frame._width) / 2),
+			163 + ((33 - frame._height) / 2)));
 	}
 
 	if (slamIt == SLAM_DISPLAY)
@@ -307,11 +307,11 @@ void Inventory::highlight(int index, byte color) {
 	Screen &screen = *_vm->_screen;
 	Surface &bb = *screen._backBuffer;
 	int slot = index - _invIndex;
-	Graphics::Surface &img = (*_invShapes[slot])[0]._frame;
+	ImageFrame &frame = (*_invShapes[slot])[0];
 
 	bb.fillRect(Common::Rect(8 + slot * 52, 165, (slot + 1) * 52, 194), color);
-	bb.transBlitFrom(img, Common::Point(6 + slot * 52 + ((47 - img.w) / 2),
-		163 + ((33 - img.h) / 2)));
+	bb.transBlitFrom(frame, Common::Point(6 + slot * 52 + ((47 - frame._width) / 2),
+		163 + ((33 - frame._height) / 2)));
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
 
@@ -331,8 +331,7 @@ void Inventory::refreshInv() {
 	ui.examine();
 
 	if (!talk._talkToAbort) {
-		screen._backBuffer2.blitFrom((*ui._controlPanel)[0]._frame,
-			Common::Point(0, CONTROLS_Y));
+		screen._backBuffer2.blitFrom((*ui._controlPanel)[0], Common::Point(0, CONTROLS_Y));
 		loadInv();
 	}
 }

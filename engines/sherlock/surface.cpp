@@ -37,18 +37,18 @@ Surface::Surface() : _freePixels(false) {
 
 Surface::~Surface() {
 	if (_freePixels)
-		free();
+		_surface.free();
 }
 
 void Surface::create(uint16 width, uint16 height) {
 	if (_freePixels)
-		free();
+		_surface.free();
 
-	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_freePixels = true;
 }
 
-void Surface::blitFrom(const Graphics::Surface &src) {
+void Surface::blitFrom(const Surface &src) {
 	blitFrom(src, Common::Point(0, 0));
 }
 
@@ -56,28 +56,39 @@ void Surface::blitFrom(const ImageFrame &src) {
 	blitFrom(src._frame, Common::Point(0, 0));
 }
 
-void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
-	blitFrom(src, pt, Common::Rect(0, 0, src.w, src.h));
+void Surface::blitFrom(const Graphics::Surface &src) {
+	blitFrom(src, Common::Point(0, 0));
+}
+
+void Surface::blitFrom(const Surface &src, const Common::Point &pt) {
+	blitFrom(src, pt, Common::Rect(0, 0, src._surface.w, src._surface.h));
 }
 
 void Surface::blitFrom(const ImageFrame &src, const Common::Point &pt) {
 	blitFrom(src._frame, pt, Common::Rect(0, 0, src._frame.w, src._frame.h));
 }
 
-void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		const Common::Rect &srcBounds) {
+void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
+	blitFrom(src, pt, Common::Rect(0, 0, src.w, src.h));
+}
+
+void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {
 	Common::Rect srcRect = srcBounds;
 	Common::Rect destRect(pt.x, pt.y, pt.x + srcRect.width(), pt.y + srcRect.height());
 
 	if (srcRect.isValidRect() && clip(srcRect, destRect)) {
 		// Surface is at least partially or completely on-screen
 		addDirtyRect(destRect);
-		copyRectToSurface(src, destRect.left, destRect.top, srcRect);
+		_surface.copyRectToSurface(src, destRect.left, destRect.top, srcRect);
 	}
 }
 
 void Surface::blitFrom(const ImageFrame &src, const Common::Point &pt, const Common::Rect &srcBounds) {
 	blitFrom(src._frame, pt, srcBounds);
+}
+
+void Surface::blitFrom(const Surface &src, const Common::Point &pt, const Common::Rect &srcBounds) {
+	blitFrom(src._surface, pt, srcBounds);
 }
 
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
@@ -124,24 +135,24 @@ void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
 }
 
 void Surface::fillRect(const Common::Rect &r, byte color) {
-	Graphics::Surface::fillRect(r, color);
+	_surface.fillRect(r, color);
 	addDirtyRect(r);
 }
 
 bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
-	if (destBounds.left >= this->w || destBounds.top >= this->h ||
-		destBounds.right <= 0 || destBounds.bottom <= 0)
+	if (destBounds.left >= _surface.w || destBounds.top >= _surface.h ||
+			destBounds.right <= 0 || destBounds.bottom <= 0)
 		return false;
 
 	// Clip the bounds if necessary to fit on-screen
-	if (destBounds.right > this->w) {
-		srcBounds.right -= destBounds.right - this->w;
-		destBounds.right = this->w;
+	if (destBounds.right > _surface.w) {
+		srcBounds.right -= destBounds.right - _surface.w;
+		destBounds.right = _surface.w;
 	}
 
-	if (destBounds.bottom > this->h) {
-		srcBounds.bottom -= destBounds.bottom - this->h;
-		destBounds.bottom = this->h;
+	if (destBounds.bottom > _surface.h) {
+		srcBounds.bottom -= destBounds.bottom - _surface.h;
+		destBounds.bottom = _surface.h;
 	}
 
 	if (destBounds.top < 0) {
@@ -158,7 +169,21 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 }
 
 void Surface::clear() {
-	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
+	fillRect(Common::Rect(0, 0, _surface.w, _surface.h), 0);
+}
+
+void Surface::free() {
+	if (_freePixels) {
+		_surface.free();
+		_freePixels = false;
+	}
+}
+
+void Surface::setPixels(byte *pixels, int w, int h) {
+	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
+	_surface.w = _surface.pitch = w;
+	_surface.h = h;
+	_surface.setPixels(pixels);
 }
 
 } // End of namespace Sherlock

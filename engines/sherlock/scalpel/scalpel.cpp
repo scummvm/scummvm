@@ -301,8 +301,8 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages("title2.vgs", true);
-		_screen->_backBuffer1.copyFrom(*_screen);
-		_screen->_backBuffer2.copyFrom(*_screen);
+		_screen->_backBuffer1.blitFrom(*_screen);
+		_screen->_backBuffer2.blitFrom(*_screen);
 
 		// London, England
 		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(10, 11));
@@ -326,8 +326,8 @@ bool ScalpelEngine::showCityCutscene() {
 
 	if (finished) {
 		ImageFile titleImages("title.vgs", true);
-		_screen->_backBuffer1.copyFrom(*_screen);
-		_screen->_backBuffer2.copyFrom(*_screen);
+		_screen->_backBuffer1.blitFrom(*_screen);
+		_screen->_backBuffer2.blitFrom(*_screen);
 
 		// The Lost Files of
 		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(75, 6));
@@ -519,7 +519,7 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
 	delete stream;
 
 	_screen->setPalette(images._palette);
-	_screen->_backBuffer1.blitFrom(images[0]._frame);
+	_screen->_backBuffer1.blitFrom(images[0]);
 	_screen->verticalTransition();
 }
 

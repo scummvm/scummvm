@@ -39,10 +39,6 @@ Screen::Screen(SherlockEngine *vm) : Surface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCR
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
 	setFont(1);
-
-	// Set dummy surface used for restricted scene drawing
-	_sceneSurface.format = Graphics::PixelFormat::createFormatCLUT8();
-	_sceneSurface.pitch = SHERLOCK_SCREEN_WIDTH;
 }
 
 Screen::~Screen() {
@@ -76,7 +72,7 @@ void Screen::update() {
 	for (i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
 		const Common::Rect &r = *i;
 		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
-		g_system->copyRectToScreen(srcP, this->pitch, r.left, r.top,
+		g_system->copyRectToScreen(srcP, _surface.pitch, r.left, r.top,
 			r.width(), r.height());
 	}
 
@@ -126,7 +122,7 @@ void Screen::fadeToBlack(int speed) {
 	}
 
 	setPalette(tempPalette);
-	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
+	fillRect(Common::Rect(0, 0, _surface.w, _surface.h), 0);
 }
 
 void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
@@ -189,7 +185,7 @@ void Screen::randomTransition() {
 		if (idx != 0 && (idx % 300) == 0) {
 			// Ensure there's a full screen dirty rect for the next frame update
 			if (_dirtyRects.empty())
-				addDirtyRect(Common::Rect(0, 0, this->w, this->h));
+				addDirtyRect(Common::Rect(0, 0, _surface.w, _surface.h));
 
 			events.pollEvents();
 			events.delay(1);
@@ -409,9 +405,7 @@ void Screen::makeField(const Common::Rect &r) {
 
 void Screen::setDisplayBounds(const Common::Rect &r) {
 	assert(r.left == 0 && r.top == 0);
-	_sceneSurface.setPixels(_backBuffer1.getPixels());
-	_sceneSurface.w = r.width();
-	_sceneSurface.h = r.height();
+	_sceneSurface.setPixels(_backBuffer1.getPixels(), r.width(), r.height());
 
 	_backBuffer = &_sceneSurface;
 }
@@ -421,7 +415,7 @@ void Screen::resetDisplayBounds() {
 }
 
 Common::Rect Screen::getDisplayBounds() {
-	return (_backBuffer == &_sceneSurface) ? Common::Rect(0, 0, _sceneSurface.w, _sceneSurface.h) :
+	return (_backBuffer == &_sceneSurface) ? Common::Rect(0, 0, _sceneSurface.w(), _sceneSurface.h()) :
 		Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 

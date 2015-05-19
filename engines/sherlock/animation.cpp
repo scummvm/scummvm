@@ -88,7 +88,7 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 
 			// Draw the sprite. Note that we explicitly use the raw frame below, rather than the ImageFrame,
 			// since we don't want the offsets in the image file to be used, just the explicit position we specify
-			screen.transBlitFrom(images[imageFrame]._frame, pt);
+			screen.transBlitFrom(images[imageFrame], pt);
 		} else {
 			// At this point, either the sprites for the frame has been complete, or there weren't any sprites
 			// at all to draw for the frame

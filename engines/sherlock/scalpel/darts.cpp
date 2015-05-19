@@ -332,7 +332,7 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 	int delta = 9;
 
 	for (int idx = 4; idx < 23; ++idx) {
-		Graphics::Surface &frame = (*_dartImages)[idx]._frame;
+		ImageFrame &frame = (*_dartImages)[idx];
 
 		// Adjust draw position for animating dart
 		if (idx < 13)
@@ -343,15 +343,15 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 			pos.y += delta++;
 
 		// Draw the dart
-		Common::Point drawPos(pos.x - frame.w / 2, pos.y - frame.h);
+		Common::Point drawPos(pos.x - frame._width / 2, pos.y - frame._height);
 		screen._backBuffer1.transBlitFrom(frame, drawPos);
-		screen.slamArea(drawPos.x, drawPos.y, frame.w, frame.h);
+		screen.slamArea(drawPos.x, drawPos.y, frame._width, frame._height);
 
 		// Handle erasing old dart strs
 		if (!oldDrawBounds.isEmpty())
 			screen.slamRect(oldDrawBounds);
 
-		oldDrawBounds = Common::Rect(drawPos.x, drawPos.y, drawPos.x + frame.w, drawPos.y + frame.h);
+		oldDrawBounds = Common::Rect(drawPos.x, drawPos.y, drawPos.x + frame._width, drawPos.y + frame._height);
 		screen._backBuffer1.blitFrom(screen._backBuffer2, drawPos, oldDrawBounds);
 
 		events.wait(2);

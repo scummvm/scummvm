@@ -329,7 +329,7 @@ void Map::saveTopLine() {
 void Map::eraseTopLine() {
 	Screen &screen = *_vm->_screen;
 	screen._backBuffer1.blitFrom(_topLine, Common::Point(0, 0));
-	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, _topLine.h);
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, _topLine.h());
 }
 
 void Map::showPlaceName(int idx, bool highlighted) {
@@ -344,7 +344,7 @@ void Map::showPlaceName(int idx, bool highlighted) {
 
 		bool flipped = people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
 			|| people[AL]._sequenceNumber == MAP_UPLEFT;
-		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, _lDrawnPos, flipped);
+		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, _lDrawnPos, flipped);
 	}
 
 	if (highlighted) {
@@ -386,9 +386,9 @@ void Map::updateMap(bool flushScreen) {
 	saveIcon(people[AL]._imageFrame, hPos);
 	if (people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
 			|| people[AL]._sequenceNumber == MAP_UPLEFT)
-		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, hPos, true);
+		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, hPos, true);
 	else
-		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, hPos, false);
+		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, hPos, false);
 
 	if (flushScreen) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -488,7 +488,7 @@ void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 		return;
 	}
 
-	assert(size.x <= _iconSave.w && size.y <= _iconSave.h);
+	assert(size.x <= _iconSave.w() && size.y <= _iconSave.h());
 	_iconSave.blitFrom(screen._backBuffer1, Common::Point(0, 0),
 		Common::Rect(pos.x, pos.y, pos.x + size.x, pos.y + size.y));
 	_savedPos = pos;
