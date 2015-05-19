@@ -118,7 +118,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 class SherlockMetaEngine : public AdvancedMetaEngine {
 public:
-	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription), 
+	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
 	virtual const char *getName() const {

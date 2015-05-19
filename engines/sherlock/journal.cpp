@@ -496,7 +496,7 @@ void Journal::drawJournalFrame() {
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
 		JOURNAL_POINTS[8][2] - screen.stringWidth("Print Text") / 2, "Print Text");
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), 
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11),
 		COMMAND_NULL, false, "Print Text");
 }
 
@@ -918,7 +918,7 @@ bool Journal::handleEvents(int key) {
 		drawJournal(1, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	
+
 	} else if (((btn == BTN_DOWN && events._released) || key == 'D') && _down) {
 		// Scroll down
 		drawJournal(2, LINES_PER_PAGE);
@@ -934,7 +934,7 @@ bool Journal::handleEvents(int key) {
 
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	
+
 	} else if (((btn == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
 		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
 		bool notFound = false;
@@ -965,7 +965,7 @@ bool Journal::handleEvents(int key) {
 			}
 		} while (!doneFlag);
 		doneFlag = false;
-	
+
 	} else if (((btn == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
 		// First page
 		_index = _sub = 0;
@@ -976,7 +976,7 @@ bool Journal::handleEvents(int key) {
 		drawJournal(0, 0);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-	
+
 	} else if (((btn == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
 		// Last page
 		if ((_page + 10) > _maxPage)
@@ -1114,15 +1114,15 @@ int Journal::getSearchString(bool printError) {
 				xp -= screen.charWidth(name.lastChar());
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), INV_FOREGROUND);
 				name.deleteLastChar();
-			
+
 			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
 				done = 1;
-			
+
 			}  else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				done = -1;
-			
-			} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && keyState.keycode != Common::KEYCODE_AT && 
+
+			} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && keyState.keycode != Common::KEYCODE_AT &&
 				name.size() < JOURNAL_SEACRH_MAX_CHARS && (xp + screen.charWidth(keyState.ascii)) < JOURNAL_SEARCH_RIGHT) {
 				char ch = toupper(keyState.ascii);
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);

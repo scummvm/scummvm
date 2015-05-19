@@ -262,7 +262,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			}
 		} else {
 			Common::SeekableReadStream *infoStream;
-			
+
 			// Read shapes
 			infoStream = Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569);
 
@@ -271,7 +271,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				_bgShapes[idx].load(*infoStream);
 
 			delete infoStream;
-			
+
 			// Read description texts
 			if (bgHeader._descSize) {
 				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._descSize);
@@ -764,7 +764,7 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_bgShapes[idx]._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, 
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
 				_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
@@ -784,7 +784,7 @@ void Scene::updateBackground() {
 
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_bgShapes[idx]._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, 
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
 				_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 

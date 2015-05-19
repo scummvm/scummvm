@@ -413,11 +413,9 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 		if (sound._musicOn) {
 			if (!(idx % 3))
 				sound.waitTimerRoland(1);
-		} else {
-			if (!(idx % 8))
-				events.wait(1);
-		}
-
+		} else if (!(idx % 8))
+			events.wait(1);
+	
 		++idx;
 	} while (!done);
 
