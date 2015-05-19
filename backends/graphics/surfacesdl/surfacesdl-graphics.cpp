@@ -125,6 +125,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_hwscreen(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_renderer(nullptr), _screenTexture(nullptr),
+#else
+	_originalBitsPerPixel(0),
 #endif
 	_screen(0), _tmpscreen(0),
 #ifdef USE_RGB_COLOR
@@ -144,7 +146,6 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 #ifdef USE_SDL_DEBUG_FOCUSRECT
 	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
 #endif
-	_originalBitsPerPixel(0),
 	_transactionMode(kTransactionNone) {
 
 	// allocate palette storage
@@ -797,12 +798,14 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		_hwscreen = g_eventRec.getSurface(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	} else
 #endif
-		{
+	{
 		// Save the original bpp to be able to restore the video mode on unload
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 		if (_originalBitsPerPixel == 0) {
 			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 			_originalBitsPerPixel = videoInfo->vfmt->BitsPerPixel;
 		}
+#endif
 
 		_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
 			_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
@@ -937,10 +940,12 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 #endif
 	DestroyScalers();
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Reset video mode to original
 	// This will ensure that any new graphic manager will use the initial BPP when listing available modes
 	if (_originalBitsPerPixel != 0)
 		SDL_SetVideoMode(_videoMode.screenWidth, _videoMode.screenHeight, _originalBitsPerPixel, _videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_SWSURFACE) : SDL_SWSURFACE);
+#endif
 }
 
 bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
