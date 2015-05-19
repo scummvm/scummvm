@@ -616,6 +616,8 @@ void GfxMgr::putTextCharacter(int l, int x, int y, unsigned char c, int fg, int 
 	int x1, y1, xx, yy, cc;
 	const uint8 *p;
 
+	assert(font);
+
 	p = font + ((unsigned int)c * CHAR_LINES);
 	for (y1 = 0; y1 < CHAR_LINES; y1++) {
 		for (x1 = 0; x1 < CHAR_COLS; x1++) {
@@ -699,7 +701,7 @@ void GfxMgr::printCharacter(int x, int y, char c, int fg, int bg) {
 	x *= CHAR_COLS;
 	y *= CHAR_LINES;
 
-	putTextCharacter(0, x, y, c, fg, bg);
+	putTextCharacter(0, x, y, c, fg, bg, false, _vm->getFontData());
 	// redundant! already inside put_text_character!
 	// flush_block (x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
 }
@@ -754,7 +756,7 @@ void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor
 	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOR);
 
 	while (*s) {
-		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor);
+		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor, false, _vm->getFontData());
 		x += CHAR_COLS;
 	}
 

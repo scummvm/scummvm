@@ -781,6 +781,8 @@ protected:
 
 	void initRenderMode();
 
+	const uint8 *_fontData;
+
 public:
 	GfxMgr *_gfx;
 
@@ -840,6 +842,8 @@ public:
 
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
+
+	const uint8 *getFontData() { return _fontData; };
 };
 
 typedef void (*AgiCommand)(AgiGame *state, uint8 *p);

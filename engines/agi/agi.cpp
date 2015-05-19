@@ -515,6 +515,8 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	_rnd = new Common::RandomSource("agi");
 	_sound = 0;
 
+	_fontData = NULL;
+
 	initFeatures();
 	initVersion();
 }
@@ -567,6 +569,13 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	if (!ConfMan.getBool("mousesupport")) {
 		// we effectively disable the mouse for games, that explicitly do not want mouse support to be enabled
 		_game.mouseEnabled = false;
+	}
+
+	// We are currently using the custom font for all fanmade games
+	if (!(getFeatures() & (GF_FANMADE | GF_AGDS))) {
+		_fontData = fontData_Sierra; // original Sierra font
+	} else {
+		_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
 	}
 
 	_game._vm = this;
