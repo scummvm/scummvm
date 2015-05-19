@@ -286,7 +286,6 @@ void Map::setupSprites() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	typedef byte Sequences[16][MAX_FRAME];
 	_savedPos.x = -1;
 
 	_mapCursors = new ImageFile("omouse.vgs");
