@@ -38,7 +38,8 @@ const int ENV_POINTS[6][3] = {
 	{ 241, 280, 261 }	// Quit
 };
 
-const char *const SAVEGAME_STR = "SHLK";
+static const char *const EMPTY_SAVEGAME_SLOT = "-EMPTY-";
+static const char *const SAVEGAME_STR = "SHLK";
 #define SAVEGAME_STR_SIZE 4
 #define ONSCREEN_FILES_COUNT 5
 
@@ -112,7 +113,7 @@ void SaveManager::createSavegameList() {
 
 	_savegames.clear();
 	for (int idx = 0; idx < MAX_SAVEGAME_SLOTS; ++idx)
-		_savegames.push_back("-EMPTY-");
+		_savegames.push_back(EMPTY_SAVEGAME_SLOT);
 
 	SaveStateList saveList = getSavegameList(_target);
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
@@ -401,7 +402,7 @@ bool SaveManager::promptForFilename(int slot) {
 	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
 
 	Common::String saveName = _savegames[slot];
-	if (saveName.equalsIgnoreCase("-EMPTY-")) {
+	if (saveName.equalsIgnoreCase(EMPTY_SAVEGAME_SLOT)) {
 		// It's an empty slot, so start off with an empty save name
 		saveName = "";
 
@@ -445,17 +446,15 @@ bool SaveManager::promptForFilename(int slot) {
 			xp -= screen.charWidth(saveName.lastChar());
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
 			saveName.deleteLastChar();
-		}
-
-		if (keyState.keycode == Common::KEYCODE_RETURN)
+		
+		} else if (keyState.keycode == Common::KEYCODE_RETURN && saveName.compareToIgnoreCase(EMPTY_SAVEGAME_SLOT)) {
 			done = 1;
 
-		if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+		} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
 			done = -1;
-		}
-
-		if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
+		
+		} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
 				&& (xp + screen.charWidth(keyState.ascii)) < 308) {
 			char c = (char)keyState.ascii;
 
