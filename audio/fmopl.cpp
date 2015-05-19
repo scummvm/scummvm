@@ -63,6 +63,15 @@ Config::DriverId Config::parse(const Common::String &name) {
 	return -1;
 }
 
+const Config::EmulatorDescription *Config::findDriver(DriverId id) {
+	for (int i = 0; _drivers[i].name; ++i) {
+		if (_drivers[i].id == id)
+			return &_drivers[i];
+	}
+
+	return 0;
+}
+
 Config::DriverId Config::detect(OplType type) {
 	uint32 flags = 0;
 	switch (type) {
@@ -90,8 +99,11 @@ Config::DriverId Config::detect(OplType type) {
 	// When a valid driver is selected, check whether it supports
 	// the requested OPL chip.
 	if (drv != -1 && drv != kAuto) {
+		const EmulatorDescription *driverDesc = findDriver(drv);
 		// If the chip is supported, just use the driver.
-		if ((flags & _drivers[drv].flags)) {
+		if (!driverDesc) {
+			warning("The selected OPL driver %d could not be found", drv);
+		} else if ((flags & driverDesc->flags)) {
 			return drv;
 		} else {
 			// Else we will output a warning and just

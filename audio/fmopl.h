@@ -71,6 +71,12 @@ public:
 	static DriverId parse(const Common::String &name);
 
 	/**
+	 * @return The driver description for the given id or 0 in case it is not
+	 *         available.
+	 */
+	static const EmulatorDescription *findDriver(DriverId id);
+
+	/**
 	 * Detects a driver for the specific type.
 	 *
 	 * @return Returns a valid driver id on success, -1 otherwise.
