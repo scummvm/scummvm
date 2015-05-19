@@ -1293,8 +1293,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 					 for (uint16 z = minNum; z <= maxNum; z++) {
 						uint16 itemNum = z + 2;
-						Item *item = derefItem(itemNum);
-						item->parent = 0;
+						_itemArrayPtr[itemNum] = 0;
 					}
 				}
 			}
