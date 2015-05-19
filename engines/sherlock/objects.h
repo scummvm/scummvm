@@ -189,7 +189,7 @@ struct UseType {
 	void load(Common::SeekableReadStream &s);
 };
 
-enum { TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
+enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
 #define USE_COUNT 4
 
 class Object {

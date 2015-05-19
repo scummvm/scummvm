@@ -214,18 +214,18 @@ bool Events::delay(uint32 time, bool interruptable) {
 
 void Events::setButtonState() {
 	_released = _rightReleased = false;
-	if (_mouseButtons & 1)
+	if (_mouseButtons & LEFT_BUTTON)
 		_pressed = _oldButtons = true;
 
-	if ((_mouseButtons & 1) == 0 && _oldButtons) {
+	if ((_mouseButtons & LEFT_BUTTON) == 0 && _oldButtons) {
 		_pressed = _oldButtons = false;
 		_released = true;
 	}
 
-	if (_mouseButtons & 2)
+	if (_mouseButtons & RIGHT_BUTTON)
 		_rightPressed = _oldRightButton = true;
 
-	if ((_mouseButtons & 2) == 0 && _oldRightButton) {
+	if ((_mouseButtons & RIGHT_BUTTON) == 0 && _oldRightButton) {
 		_rightPressed = _oldRightButton = false;
 		_rightReleased = true;
 	}

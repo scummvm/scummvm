@@ -575,7 +575,7 @@ void Object::checkObject() {
 				_seqCounter2 = _seqCounter;
 				_seqStack = _frameNumber + 1;
 				setObjSequence(v, false);
-			} else if (v >= SOUND_CODE && (v <= (SOUND_CODE + 29))) {
+			} else if (v >= SOUND_CODE && (v < (SOUND_CODE + 30))) {
 				codeFound = true;
 				++_frameNumber;
 				v -= SOUND_CODE;
@@ -584,7 +584,7 @@ void Object::checkObject() {
 					if (!scene._sounds[v - 1]._name.empty() && sound._digitized)
 						sound.playLoadedSound(v - 1, WAIT_RETURN_IMMEDIATELY);
 				}
-			} else if (v >= FLIP_CODE && v <= (FLIP_CODE + 2)) {
+			} else if (v >= FLIP_CODE && v < (FLIP_CODE + 3)) {
 				// Flip code
 				codeFound = true;
 				++_frameNumber;
@@ -594,15 +594,15 @@ void Object::checkObject() {
 				switch (v) {
 				case 0:
 					// Clear the flag
-					_flags &= ~2;
+					_flags &= ~OBJ_FLIPPED;
 					break;
 				case 1:
 					// Set the flag
-					_flags |= 2;
+					_flags |= OBJ_FLIPPED;
 					break;
 				case 2:
 					// Toggle the flag
-					_flags ^= 2;
+					_flags ^= OBJ_FLIPPED;
 					break;
 				default:
 					break;
