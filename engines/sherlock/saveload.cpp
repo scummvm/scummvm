@@ -38,6 +38,10 @@ const int ENV_POINTS[6][3] = {
 	{ 241, 280, 261 }	// Quit
 };
 
+const char *const SAVEGAME_STR = "SHLK";
+#define SAVEGAME_STR_SIZE 4
+#define ONSCREEN_FILES_COUNT 5
+
 /*----------------------------------------------------------------*/
 
 SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
@@ -84,11 +88,10 @@ void SaveManager::drawInterface() {
 	if (!_savegameIndex)
 		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, "Up");
 
-	if (_savegameIndex == MAX_SAVEGAME_SLOTS - 5)
+	if (_savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)
 		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, 0, "Down");
 
-	for (int idx = _savegameIndex; idx < _savegameIndex + 5; ++idx)
-	{
+	for (int idx = _savegameIndex; idx < _savegameIndex + ONSCREEN_FILES_COUNT; ++idx) {
 		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 			INV_FOREGROUND, "%d.", idx + 1);
 		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
@@ -162,9 +165,6 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 
 	return saveList;
 }
-
-const char *const SAVEGAME_STR = "SHLK";
-#define SAVEGAME_STR_SIZE 4
 
 bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
