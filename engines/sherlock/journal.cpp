@@ -67,10 +67,6 @@ Journal::Journal(SherlockEngine *vm) : _vm(vm) {
 	}
 }
 
-/**
- * Records statements that are said, in the order which they are said. The player
- * can then read the journal to review them
- */
 void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	int saveIndex = _index;
 	int saveSub = _sub;
@@ -96,9 +92,6 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	}
 }
 
-/**
- * Load the list of location names that the journal will make reference to
- */
 void Journal::loadJournalLocations() {
 	Resources &res = *_vm->_res;
 
@@ -137,12 +130,6 @@ void Journal::loadJournalLocations() {
 	delete loc;
 }
 
-/**
- * Loads the description for the current display index in the journal, and then
- * word wraps the result to prepare it for being displayed
- * @param alreadyLoaded		Indicates whether the journal file is being loaded for the
- *		first time, or being reloaded
- */
 void Journal::loadJournalFile(bool alreadyLoaded) {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
@@ -459,9 +446,6 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	}
 }
 
-/**
- * Draw the journal background, frame, and interface buttons
- */
 void Journal::drawJournalFrame() {
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
@@ -516,9 +500,6 @@ void Journal::drawJournalFrame() {
 		COMMAND_NULL, false, "Print Text");
 }
 
-/**
- * Display the journal
- */
 void Journal::drawInterface() {
 	Screen &screen = *_vm->_screen;
 
@@ -536,9 +517,6 @@ void Journal::drawInterface() {
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
-/**
- * Display the arrows that can be used to scroll up and down pages
- */
 void Journal::doArrows() {
 	Screen &screen = *_vm->_screen;
 	byte color;
@@ -560,9 +538,6 @@ void Journal::doArrows() {
 	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, "First Page");
 }
 
-/**
- * Displays a page of the journal at the current index
- */
 bool Journal::drawJournal(int direction, int howFar) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -808,9 +783,6 @@ bool Journal::drawJournal(int direction, int howFar) {
 	return direction >= 3 && searchSuccessful;
 }
 
-/**
- * Returns the button, if any, that is under the specified position
- */
 JournalButton Journal::getHighlightedButton(const Common::Point &pt) {
 	if (pt.x > JOURNAL_POINTS[0][0] && pt.x < JOURNAL_POINTS[0][1] && pt.y >= JOURNAL_BUTTONS_Y &&
 			pt.y < (JOURNAL_BUTTONS_Y + 10))
@@ -851,9 +823,6 @@ JournalButton Journal::getHighlightedButton(const Common::Point &pt) {
 	return BTN_NONE;
 }
 
-/**
- * Handle events whilst the journal is being displayed
- */
 bool Journal::handleEvents(int key) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -1024,9 +993,6 @@ bool Journal::handleEvents(int key) {
 	return doneFlag;
 }
 
-/**
- * Show the search submenu and allow the player to enter a search string
- */
 int Journal::getSearchString(bool printError) {
 	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
 
@@ -1193,17 +1159,11 @@ int Journal::getSearchString(bool printError) {
 	return done;
 }
 
-/**
- * Reset viewing position to the start of the journal
- */
 void Journal::resetPosition() {
 	_index = _sub = _up = _down = 0;
 	_page = 1;
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Journal::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_index);
 	s.syncAsSint16LE(_sub);

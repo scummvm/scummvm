@@ -34,8 +34,14 @@ class Debugger : public GUI::Debugger {
 private:
 	SherlockEngine *_vm;
 
+	/**
+	 * Converts a decimal or hexadecimal string into a number
+	 */
 	int strToInt(const char *s);
 
+	/**
+	 * Switch to another scene
+	 */
 	bool cmdScene(int argc, const char **argv);
 public:
 	Debugger(SherlockEngine *vm);

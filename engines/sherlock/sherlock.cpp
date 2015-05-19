@@ -69,9 +69,6 @@ SherlockEngine::~SherlockEngine() {
 	delete _res;
 }
 
-/**
- * Does basic initialization of the game engine
- */
 void SherlockEngine::initialize() {
 	initGraphics(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, false);
 
@@ -108,9 +105,6 @@ void SherlockEngine::initialize() {
 	loadConfig();
 }
 
-/**
- * Main method for running the game
- */
 Common::Error SherlockEngine::run() {
 	// Initialize the engine
 	initialize();
@@ -160,9 +154,6 @@ Common::Error SherlockEngine::run() {
 	return Common::kNoError;
 }
 
-/**
- * Main loop for displaying a scene and handling all that occurs within it
- */
 void SherlockEngine::sceneLoop() {
 	while (!shouldQuit() && _scene->_goToScene == -1) {
 		// See if a script needs to be completed from either a goto room code,
@@ -187,9 +178,6 @@ void SherlockEngine::sceneLoop() {
 
 }
 
-/**
- * Handle all player input
- */
 void SherlockEngine::handleInput() {
 	_canLoadSave = true;
 	_events->pollEventsAndWait();
@@ -201,11 +189,6 @@ void SherlockEngine::handleInput() {
 	_ui->handleInput();
 }
 
-/**
- * Read the state of a global flag
- * @remarks		If a negative value is specified, it will return the inverse value
- *		of the positive flag number
- */
 bool SherlockEngine::readFlags(int flagNum) {
 	bool value = _flags[ABS(flagNum)];
 	if (flagNum < 0)
@@ -214,19 +197,12 @@ bool SherlockEngine::readFlags(int flagNum) {
 	return value;
 }
 
-/**
- * Sets a global flag to either true or false depending on whether the specified
- * flag is positive or negative
- */
 void SherlockEngine::setFlags(int flagNum) {
 	_flags[ABS(flagNum)] = flagNum >= 0;
 
 	_scene->checkSceneFlags(true);
 }
 
-/**
- * Load game configuration esttings
- */
 void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
@@ -240,9 +216,6 @@ void SherlockEngine::loadConfig() {
 	_people->_portraitsOn = ConfMan.getBool("portraits_on");
 }
 
-/**
- * Saves game configuration information
- */
 void SherlockEngine::saveConfig() {
 	ConfMan.setBool("mute", !_sound->_digitized);
 	ConfMan.setBool("music_mute", !_sound->_music);
@@ -257,9 +230,6 @@ void SherlockEngine::saveConfig() {
 	ConfMan.flushToDisk();
 }
 
-/**
- * Called by the engine when sound settings are updated
- */
 void SherlockEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
@@ -267,39 +237,24 @@ void SherlockEngine::syncSoundSettings() {
 	_sound->syncSoundSettings();
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void SherlockEngine::synchronize(Common::Serializer &s) {
 	for (uint idx = 0; idx < _flags.size(); ++idx)
 		s.syncAsByte(_flags[idx]);
 }
 
-/**
- * Returns true if a savegame can be loaded
- */
 bool SherlockEngine::canLoadGameStateCurrently() {
 	return _canLoadSave;
 }
 
-/**
- * Returns true if the game can be saved
- */
 bool SherlockEngine::canSaveGameStateCurrently() {
 	return _canLoadSave;
 }
 
-/**
- * Called by the GMM to load a savegame
- */
 Common::Error SherlockEngine::loadGameState(int slot) {
 	_saves->loadGame(slot);
 	return Common::kNoError;
 }
 
-/**
- * Called by the GMM to save the game
- */
 Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc) {
 	_saves->saveGame(slot, desc);
 	return Common::kNoError;

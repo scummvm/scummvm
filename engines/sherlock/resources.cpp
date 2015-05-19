@@ -31,18 +31,10 @@ namespace Sherlock {
 Cache::Cache(SherlockEngine *vm) : _vm(vm) {
 }
 
-/**
- * Returns true if a given file is currently being cached
- */
 bool Cache::isCached(const Common::String &filename) const {
 	return _resources.contains(filename);
 }
 
-/**
- * Loads a file into the cache if it's not already present, and returns it.
- * If the file is LZW compressed, automatically decompresses it and loads
- * the uncompressed version into memory
- */
 void Cache::load(const Common::String &name) {
 	// First check if the entry already exists
 	if (_resources.contains(name))
@@ -58,9 +50,6 @@ void Cache::load(const Common::String &name) {
 	f.close();
 }
 
-/**
- * Load a cache entry based on a passed stream
- */
 void Cache::load(const Common::String &name, Common::SeekableReadStream &stream) {
 	// First check if the entry already exists
 	if (_resources.contains(name))
@@ -88,9 +77,6 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	}
 }
 
-/**
- * Get a file from the cache
- */
 Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 	// Return a memory stream that encapsulates the data
 	const CacheEntry &cacheEntry = _resources[filename];
@@ -111,10 +97,6 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	}
 }
 
-/**
- * Adds the specified file to the cache. If it's a library file, takes care of
- * loading it's index for future use
- */
 void Resources::addToCache(const Common::String &filename) {
 	_cache.load(filename);
 
@@ -127,9 +109,6 @@ void Resources::addToCache(const Common::String &filename) {
 	delete stream;
 }
 
-/**
- * Adds a resource from a library file to the cache
- */
 void Resources::addToCache(const Common::String &filename, const Common::String &libFilename) {
 	// Get the resource
 	Common::SeekableReadStream *stream = load(filename, libFilename);
@@ -139,16 +118,10 @@ void Resources::addToCache(const Common::String &filename, const Common::String 
 	delete stream;
 }
 
-/**
- * Adds a given stream to the cache under the given name
- */
 void Resources::addToCache(const Common::String &filename, Common::SeekableReadStream &stream) {
 	_cache.load(filename, stream);
 }
 
-/**
- * Returns a stream for a given file
- */
 Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 	// First check if the file is directly in the cache
 	if (_cache.isCached(filename))
@@ -184,9 +157,6 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 	return stream;
 }
 
-/**
- * Checks the passed stream, and if is compressed, deletes it and replaces it with it's uncompressed data
- */
 void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
 	bool isCompressed = stream->readUint32BE() == MKTAG('L', 'Z', 'V', 26);
 	stream->seek(-4, SEEK_CUR);
@@ -198,9 +168,6 @@ void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
 	}
 }
 
-/**
- * Loads a specific resource from a given library file
- */
 Common::SeekableReadStream *Resources::load(const Common::String &filename, const Common::String &libraryFile) {
 	// Open up the library for access
 	Common::SeekableReadStream *libStream = load(libraryFile);
@@ -219,17 +186,11 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	return stream;
 }
 
-/**
- * Returns true if the given file exists on disk or in the cache
- */
 bool Resources::exists(const Common::String &filename) const {
 	Common::File f;
 	return f.exists(filename) || _cache.isCached(filename);
 }
 
-/**
- * Reads in the index from a library file, and caches it's index for later use
- */
 void Resources::loadLibraryIndex(const Common::String &libFilename,
 		Common::SeekableReadStream *stream) {
 	uint32 offset, nextOffset;
@@ -266,13 +227,61 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 	}
 }
 
-/**
- * Returns the index of the last loaded resource in it's given library file.
- * This will be used primarily when loading talk files, so the engine can
- * update the given conversation number in the journal
- */
 int Resources::resourceIndex() const {
 	return _resourceIndex;
+}
+
+Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source) {
+	if (_vm->getGameID() == GType_SerratedScalpel) {
+		uint32 id = source.readUint32BE();
+		assert(id == MKTAG('L', 'Z', 'V', 0x1A));
+	}
+
+	uint32 size = source.readUint32LE();
+	return decompressLZ(source, size);
+}
+
+Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
+	byte lzWindow[4096];
+	uint16 lzWindowPos;
+	uint16 cmd;
+
+	byte *outBuffer = (byte *)malloc(outSize);
+	byte *outBufferEnd = outBuffer + outSize;
+	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+
+	memset(lzWindow, 0xFF, 0xFEE);
+	lzWindowPos = 0xFEE;
+	cmd = 0;
+
+	do {
+		cmd >>= 1;
+		if (!(cmd & 0x100))
+			cmd = source.readByte() | 0xFF00;
+
+		if (cmd & 1) {
+			byte literal = source.readByte();
+			*outBuffer++ = literal;
+			lzWindow[lzWindowPos] = literal;
+			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+		}
+		else {
+			int copyPos, copyLen;
+			copyPos = source.readByte();
+			copyLen = source.readByte();
+			copyPos = copyPos | ((copyLen & 0xF0) << 4);
+			copyLen = (copyLen & 0x0F) + 3;
+			while (copyLen--) {
+				byte literal = lzWindow[copyPos];
+				copyPos = (copyPos + 1) & 0x0FFF;
+				*outBuffer++ = literal;
+				lzWindow[lzWindowPos] = literal;
+				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+			}
+		}
+	} while (outBuffer < outBufferEnd);
+
+	return outS;
 }
 
 /*----------------------------------------------------------------*/
@@ -302,9 +311,6 @@ ImageFile::~ImageFile() {
 		(*this)[idx]._frame.free();
 }
 
-/**
- * Load the data of the sprite
- */
 void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages) {
 	loadPalette(stream);
 
@@ -350,9 +356,6 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 	}
 }
 
-/**
- * Gets the palette at the start of the sprite file
- */
 void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	// Check for palette
 	int v1 = stream.readUint16LE() + 1;
@@ -372,9 +375,6 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	}
 }
 
-/**
- * Decompress a single frame for the sprite
- */
 void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -409,64 +409,6 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		Common::copy(src, src + frame._width * frame._height,
 			(byte *)frame._frame.getPixels());
 	}
-}
-
-/**
- * Decompress an LZW compressed resource
- */
-Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source) {
-	if (_vm->getGameID() == GType_SerratedScalpel) {
-		uint32 id = source.readUint32BE();
-		assert(id == MKTAG('L', 'Z', 'V', 0x1A));
-	}
-
-	uint32 size = source.readUint32LE();
-	return decompressLZ(source, size);
-}
-
-/**
- * Decompresses an LZW block of data with a specified output size
- */
-Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
-	byte lzWindow[4096];
-	uint16 lzWindowPos;
-	uint16 cmd;
-
-	byte *outBuffer = (byte *)malloc(outSize);
-	byte *outBufferEnd = outBuffer + outSize;
-	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
-
-	memset(lzWindow, 0xFF, 0xFEE);
-	lzWindowPos = 0xFEE;
-	cmd = 0;
-
-	do {
-		cmd >>= 1;
-		if (!(cmd & 0x100))
-			cmd = source.readByte() | 0xFF00;
-
-		if (cmd & 1) {
-			byte literal = source.readByte();
-			*outBuffer++ = literal;
-			lzWindow[lzWindowPos] = literal;
-			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-		} else {
-			int copyPos, copyLen;
-			copyPos = source.readByte();
-			copyLen = source.readByte();
-			copyPos = copyPos | ((copyLen & 0xF0) << 4);
-			copyLen = (copyLen & 0x0F) + 3;
-			while (copyLen--) {
-				byte literal = lzWindow[copyPos];
-				copyPos = (copyPos + 1) & 0x0FFF;
-				*outBuffer++ = literal;
-				lzWindow[lzWindowPos] = literal;
-				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-			}
-		}
-	} while (outBuffer < outBufferEnd);
-
-	return outS;
 }
 
 } // End of namespace Sherlock

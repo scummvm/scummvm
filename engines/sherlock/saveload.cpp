@@ -55,9 +55,6 @@ SaveManager::~SaveManager() {
 	}
 }
 
-/**
- * Shows the in-game dialog interface for loading and saving games
- */
 void SaveManager::drawInterface() {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -107,9 +104,6 @@ void SaveManager::drawInterface() {
 	_envMode = SAVEMODE_NONE;
 }
 
-/**
- * Build up a savegame list, with empty slots given an explicit Empty message
- */
 void SaveManager::createSavegameList() {
 	Screen &screen = *_vm->_screen;
 
@@ -137,9 +131,6 @@ void SaveManager::createSavegameList() {
 	}
 }
 
-/**
- * Load a list of savegames
- */
 SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
@@ -175,9 +166,6 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 const char *const SAVEGAME_STR = "SHLK";
 #define SAVEGAME_STR_SIZE 4
 
-/**
- * Read in the header information for a savegame
- */
 bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 	header._thumbnail = nullptr;
@@ -212,9 +200,6 @@ bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHea
 	return true;
 }
 
-/**
- * Write out the header information for a savegame
- */
 void SaveManager::writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegameHeader &header) {
 	// Write out a savegame header
 	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
@@ -245,9 +230,6 @@ void SaveManager::writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegame
 	out->writeUint32LE(_vm->_events->getFrameCounter());
 }
 
-/**
- * Creates a thumbnail for the current on-screen contents
- */
 void SaveManager::createThumbnail() {
 	if (_saveThumb) {
 		_saveThumb->free();
@@ -260,9 +242,6 @@ void SaveManager::createThumbnail() {
 	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
 }
 
-/**
- * Return the index of the button the mouse is over, if any
- */
 int SaveManager::getHighlightedButton() const {
 	Common::Point pt = _vm->_events->mousePos();
 
@@ -275,9 +254,6 @@ int SaveManager::getHighlightedButton() const {
 	return -1;
 }
 
-/**
- * Handle highlighting buttons
- */
 void SaveManager::highlightButtons(int btnIndex) {
 	Screen &screen = *_vm->_screen;
 	byte color = (btnIndex == 0) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
@@ -309,9 +285,6 @@ void SaveManager::highlightButtons(int btnIndex) {
 	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), color, 1, "Quit");
 }
 
-/**
- * Load the game in the specified slot
- */
 void SaveManager::loadGame(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		generateSaveName(slot));
@@ -335,9 +308,6 @@ void SaveManager::loadGame(int slot) {
 	delete saveFile;
 }
 
-/**
- * Save the game in the specified slot with the given name
- */
 void SaveManager::saveGame(int slot, const Common::String &name) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
@@ -354,17 +324,10 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 	delete out;
 }
 
-/**
- * Support method that generates a savegame name
- * @param slot		Slot number
- */
 Common::String SaveManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _target.c_str(), slot);
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void SaveManager::synchronize(Common::Serializer &s) {
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
@@ -391,9 +354,6 @@ void SaveManager::synchronize(Common::Serializer &s) {
 	_justLoaded = true;
 }
 
-/**
- * Make sure that the selected savegame is on-screen
- */
 bool SaveManager::checkGameOnScreen(int slot) {
 	Screen &screen = *_vm->_screen;
 

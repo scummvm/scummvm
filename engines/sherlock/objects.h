@@ -129,15 +129,34 @@ public:
 	Sprite() { clear(); }
 	static void setVm(SherlockEngine *vm) { _vm = vm; }
 
+	/**
+	 * Reset the data for the sprite
+	 */
 	void clear();
 
+	/**
+	 * Updates the image frame poiner for the sprite
+	 */
 	void setImageFrame();
 
+	/**
+	 * This adjusts the sprites position, as well as it's animation sequence:
+	 */
 	void adjustSprite();
 
+	/**
+	 * Checks the sprite's position to see if it's collided with any special objects
+	 */
 	void checkSprite();
 
+	/**
+	 * Return frame width
+	 */
 	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
+	
+	/**
+	 * Return frame height
+	 */
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
 };
 
@@ -149,6 +168,9 @@ struct ActionType {
 	int _cAnimSpeed;
 	Common::String _names[NAMES_COUNT];
 
+	/**
+	 * Load the data for the action
+	 */
 	void load(Common::SeekableReadStream &s);
 };
 
@@ -160,6 +182,10 @@ struct UseType {
 	Common::String _target;
 
 	UseType();
+
+	/**
+	 * Load the data for the UseType
+	 */
 	void load(Common::SeekableReadStream &s);
 };
 
@@ -170,8 +196,17 @@ class Object {
 private:
 	static SherlockEngine *_vm;
 
+	/**
+	 * This will check to see if the object has reached the end of a sequence.
+	 * If it has, it switch to whichever next sequence should be started.
+	 * @returns		true if the end of a sequence was reached
+	 */
 	bool checkEndOfSequence();
 
+	/**
+	 * Scans through the sequences array and finds the designated sequence.
+	 * It then sets the frame number of the start of that sequence
+	 */
 	void setObjSequence(int seq, bool wait);
 public:
 	static bool _countCAnimFrames;
@@ -224,24 +259,69 @@ public:
 
 	Object();
 
+	/**
+	 * Load the data for the object
+	 */
 	void load(Common::SeekableReadStream &s);
 
+	/**
+	 * Toggle the type of an object between hidden and active
+	 */
 	void toggleHidden();
 
+	/**
+	 * Check the state of the object
+	 */
 	void checkObject();
 
+	/**
+	 * Checks for codes
+	 * @param name		The name to check for codes
+	 * @param messages	Provides a lookup list of messages that can be printed
+	 * @returns		0 if no codes are found, 1 if codes were found
+	 */
 	int checkNameForCodes(const Common::String &name, const char *const messages[]);
 
+	/**
+	 * Handle setting any flags associated with the object
+	 */
 	void setFlagsAndToggles();
 
+	/**
+	 * Adjusts the sprite's position and animation sequence, advancing by 1 frame.
+	 * If the end of the sequence is reached, the appropriate action is taken.
+	 */
 	void adjustObject();
 
+	/**
+	 * Handles trying to pick up an object. If allowed, plays an y necessary animation for picking
+	 * up the item, and then adds it to the player's inventory
+	 */
 	int pickUpObject(const char *const messages[]);
 
+	/**
+	 * Return the frame width
+	 */
 	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
+	
+	/**
+	 * Return the frame height
+	 */
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
+
+	/**
+	 * Returns the current bounds for the sprite
+	 */
 	const Common::Rect getNewBounds() const;
+
+	/**
+	 * Returns the bounds for a sprite without a shape
+	 */
 	const Common::Rect getNoShapeBounds() const;
+
+	/**
+	 * Returns the old bounsd for the sprite from the previous frame
+	 */
 	const Common::Rect getOldBounds() const;
 };
 
@@ -257,6 +337,9 @@ struct CAnim {
 	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
 	int _teleportDir;					// playing canim
 
+	/**
+	 * Load the data for the animation
+	 */
 	void load(Common::SeekableReadStream &s);
 };
 

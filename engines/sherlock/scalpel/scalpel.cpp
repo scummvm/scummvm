@@ -238,9 +238,6 @@ ScalpelEngine::~ScalpelEngine() {
 	delete _darts;
 }
 
-/**
- * Game initialization
- */
 void ScalpelEngine::initialize() {
 	SherlockEngine::initialize();
 
@@ -276,9 +273,6 @@ void ScalpelEngine::initialize() {
 		_scene->_goToScene = 4;
 }
 
-/**
- * Show the opening sequence
- */
 void ScalpelEngine::showOpening() {
 	if (isDemo() && _interactiveFl)
 		return;
@@ -296,9 +290,6 @@ void ScalpelEngine::showOpening() {
 	_sound->stopMusic();
 }
 
-/**
- * Show the starting city cutscene which shows the game title
- */
 bool ScalpelEngine::showCityCutscene() {
 	byte palette[PALETTE_SIZE];
 
@@ -371,9 +362,6 @@ bool ScalpelEngine::showCityCutscene() {
 	return finished;
 }
 
-/**
- * Show the back alley where the initial murder takes place
- */
 bool ScalpelEngine::showAlleyCutscene() {
 	byte palette[PALETTE_SIZE];
 	_sound->playMusic("prolog2.mus");
@@ -411,9 +399,6 @@ bool ScalpelEngine::showAlleyCutscene() {
 	return finished;
 }
 
-/**
- * Show the Baker Street outside cutscene
- */
 bool ScalpelEngine::showStreetCutscene() {
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
@@ -430,9 +415,7 @@ bool ScalpelEngine::showStreetCutscene() {
 	return finished;
 }
 
-/**
- * Show the game credits
- */
+
 bool ScalpelEngine::scrollCredits() {
 	// Load the images for displaying credit text
 	Common::SeekableReadStream *stream = _res->load("credits.vgs", "title.lib");
@@ -465,9 +448,6 @@ bool ScalpelEngine::scrollCredits() {
 	return true;
 }
 
-/**
- * Show Holmes and Watson at the breakfast table, lestrade's note, and then the scrolling credits
- */
 bool ScalpelEngine::showOfficeCutscene() {
 	_sound->playMusic("PROLOG4.MUS");
 	_animation->_gfxLibraryFilename = "TITLE2.LIB";
@@ -511,11 +491,6 @@ bool ScalpelEngine::showOfficeCutscene() {
 	return finished;
 }
 
-/**
- * Load the default inventory for the game, which includes both the initial active inventory,
- * as well as special pending inventory items which can appear automatically in the player's
- * inventory once given required flags are set
- */
 void ScalpelEngine::loadInventory() {
 	Inventory &inv = *_inventory;
 
@@ -537,9 +512,6 @@ void ScalpelEngine::loadInventory() {
 	inv.push_back(InventoryItem(586, "Pawn ticket", "A pawn ticket", "_ITEM16A"));
 }
 
-/**
- * Transition to show an image
- */
 void ScalpelEngine::showLBV(const Common::String &filename) {
 	Common::SeekableReadStream *stream = _res->load(filename, "title.lib");
 	ImageFile images(*stream);
@@ -550,9 +522,6 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
 	_screen->verticalTransition();
 }
 
-/**
- * Starting a scene within the game
- */
 void ScalpelEngine::startScene() {
 	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
 		// Show the map
@@ -709,9 +678,6 @@ void ScalpelEngine::startScene() {
 	_mapResult = _scene->_goToScene;
 }
 
-/**
- * Takes care of clearing the mirror in scene 12 (mansion drawing room), in case anything drew over it
- */
 void ScalpelEngine::eraseMirror12() {
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
 
@@ -722,9 +688,6 @@ void ScalpelEngine::eraseMirror12() {
 	}
 }
 
-/**
- * Takes care of drawing Holme's reflection onto the mirror in scene 12 (mansion drawing room)
- */
 void ScalpelEngine::doMirror12() {
 	People &people = *_people;
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
@@ -798,9 +761,6 @@ void ScalpelEngine::doMirror12() {
 	}
 }
 
-/**
- * This clears the mirror in scene 12 (mansion drawing room) in case anything messed draw over it
- */
 void ScalpelEngine::flushMirror12() {
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
 

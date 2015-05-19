@@ -99,6 +99,9 @@ struct Statement {
 	int _talkMap;
 	Common::Rect _talkPos;
 
+	/**
+	 * Load the data for a single statement within a talk file
+	 */
 	void synchronize(Common::SeekableReadStream &s);
 };
 
@@ -141,15 +144,37 @@ private:
 	int _talkToFlag;
 	int _scriptSaveIndex;
 private:
+	/**
+	 * Remove any voice commands from a loaded statement list
+	 */
 	void stripVoiceCommands();
+	
+	/**
+	 * Form a table of the display indexes for statements
+	 */
 	void setTalkMap();
 
+	/**
+	 * Display a list of statements in a window at the bottom of the screen that the
+	 * player can select from.
+	 */
 	bool displayTalk(bool slamIt);
 
+	/**
+	 * Prints a single conversation option in the interface window
+	 */
 	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
 
+	/**
+	 * Parses a reply for control codes and display text. The found text is printed within
+	 * the text window, handles delays, animations, and animating portraits.
+	 */
 	void doScript(const Common::String &script);
 
+	/**
+	 * When the talk window has been displayed, waits a period of time proportional to
+	 * the amount of text that's been displayed
+	 */
 	int waitForMore(int delay);
 public:
 	bool _talkToAbort;
@@ -161,30 +186,90 @@ public:
 	int _converseNum;
 public:
 	Talk(SherlockEngine *vm);
+
+	/**
+	 * Sets talk sequences
+	 */
 	void setSequences(const byte *talkSequences, const byte *stillSequences,
 		int maxPeople);
 
 	Statement &operator[](int idx) { return _statements[idx]; }
 
+	/**
+	 * Called whenever a conversation or item script needs to be run. For standard conversations,
+	 * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly
+	 * instead of waiting for a statement option.
+	 * @remarks		It seems that at some point, all item scripts were set up to use this as well.
+	 *	In their case, the conversation display is simply suppressed, and control is passed on to
+	 *	doScript to implement whatever action is required.
+	 */
 	void talkTo(const Common::String &filename);
 
+	/**
+	 * Main method for handling conversations when a character to talk to has been
+	 * selected. It will make Holmes walk to the person to talk to, draws the
+	 * interface window for the conversation and passes on control to give the
+	 * player a list of options to make a selection from
+	 */
 	void talk(int objNum);
 
+	/**
+	 * Clear loaded talk data
+	 */
 	void freeTalkVars();
 
+	/**
+	 * Draws the interface for conversation display
+	 */
 	void drawInterface();
 
+	/**
+	 * Opens the talk file 'talk.tlk' and searches the index for the specified
+	 * conversation. If found, the data for that conversation is loaded
+	 */
 	void loadTalkFile(const Common::String &filename);
 
+	/**
+	 * Change the sequence of a background object corresponding to a given speaker.
+	 * The new sequence will display the character as "listening"
+	 */
 	void setStillSeq(int speaker);
+
+	/**
+	 * Clears the stack of pending object sequences associated with speakers in the scene
+	 */
 	void clearSequences();
+	
+	/**
+	 * Pulls a background object sequence from the sequence stack and restore's the
+	 * object's sequence
+	 */
 	void pullSequence();
+
+	/**
+	 * Push the sequence of a background object that's an NPC that needs to be
+	 * saved onto the sequence stack.
+	 */
 	void pushSequence(int speaker);
+	
+	/**
+	 * Change the sequence of the scene background object associated with the current speaker.
+	 */
 	void setSequence(int speaker);
+
+	/**
+	 * Returns true if the script stack is empty
+	 */
 	bool isSequencesEmpty() const { return _scriptStack.empty(); }
 
+	/**
+	 * Pops an entry off of the script stack
+	 */
 	void popStack();
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 };
 

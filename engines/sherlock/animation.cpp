@@ -31,9 +31,6 @@ static const int NO_FRAMES = FRAMES_END;
 Animation::Animation(SherlockEngine *vm) : _vm(vm) {
 }
 
-/**
- * Play a full-screen animation
- */
 bool Animation::play(const Common::String &filename, int minDelay, int fade,
 		bool setPalette, int speed) {
 	Events &events = *_vm->_events;
@@ -136,18 +133,12 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	return !skipped && !_vm->shouldQuit();
 }
 
-/**
- * Load the prologue name array 
- */
 void Animation::setPrologueNames(const char *const *names, int count) {
 	for (int idx = 0; idx < count; ++idx, ++names) {
 		_prologueNames.push_back(*names);
 	}
 }
 
-/**
- * Load the prologue frame array
- */
 void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
 	_prologueFrames.resize(count);
 
@@ -157,18 +148,12 @@ void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
 	}
 }
 
-/**
- * Load the title name array
- */
 void Animation::setTitleNames(const char *const *names, int count) {
 	for (int idx = 0; idx < count; ++idx, ++names) {
 		_titleNames.push_back(*names);
 	}
 }
 
-/**
- * Load the title frame array
- */
 void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 	_titleFrames.resize(count);
 
@@ -178,9 +163,6 @@ void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 	}
 }
 
-/**
- * Checks for whether an animation is being played that has associated sound
- */
 const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 

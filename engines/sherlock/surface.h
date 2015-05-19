@@ -33,6 +33,9 @@ class Surface : public Graphics::Surface {
 private:
 	bool _freePixels;
 
+	/**
+	 * Clips the given source bounds so the passed destBounds will be entirely on-screen
+	 */
 	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
 protected:
 	virtual void addDirtyRect(const Common::Rect &r) {}
@@ -41,19 +44,53 @@ public:
 	Surface();
 	virtual ~Surface();
 
+	/**
+	 * Sets up an internal surface with the specified dimensions that will be automatically freed
+	 * when the surface object is destroyed
+	 */
 	void create(uint16 width, uint16 height);
+
+	/**
+	 * Copy a surface into this one
+	 */
 	void blitFrom(const Graphics::Surface &src);
+
+	/**
+	 * Draws a surface at a given position within this surface
+	 */
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt);
+
+	/**
+	 * Draws a sub-section of a surface at a given position within this surface
+	 */
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		const Common::Rect &srcBounds);
+	
+	/**
+	 * Draws an image frame at a given position within this surface with transparency
+	 */
 	void transBlitFrom(const ImageFrame &src, const Common::Point &pt,
 		bool flipped = false, int overrideColor = 0);
+	
+	/**
+	 * Draws a surface at a given position within this surface with transparency
+	 */
 	void transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped = false, int overrideColor = 0);
 
+	/**
+	 * Fill a given area of the surface with a given color
+	 */
 	void fillRect(int x1, int y1, int x2, int y2, byte color);
+	
+	/**
+	 * Fill a given area of the surface with a given color
+	 */
 	void fillRect(const Common::Rect &r, byte color);
 
+	/**
+	 * Clear the screen
+	 */
 	void clear();
 };
 

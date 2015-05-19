@@ -76,9 +76,6 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	}
 }
 
-/**
- * Saves sound-related settings
- */
 void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
 	_music = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");

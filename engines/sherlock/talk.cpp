@@ -36,9 +36,6 @@ SequenceEntry::SequenceEntry() {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for a single statement within a talk file
- */
 void Statement::synchronize(Common::SeekableReadStream &s) {
 	int length;
 
@@ -108,9 +105,6 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_scriptSaveIndex = -1;
 }
 
-/**
- * Sets talk sequences
- */
 void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, int maxPeople) {
 	for (int idx = 0; idx < maxPeople; ++idx) {
 		STILL_SEQUENCES.push_back(TalkSequences(stillSequences));
@@ -120,14 +114,6 @@ void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, i
 	}
 }
 
-/**
- * Called whenever a conversation or item script needs to be run. For standard conversations,
- * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly
- * instead of waiting for a statement option.
- * @remarks		It seems that at some point, all item scripts were set up to use this as well.
- *	In their case, the conversation display is simply suppressed, and control is passed on to
- *	doScript to implement whatever action is required.
- */
 void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -450,12 +436,6 @@ void Talk::talkTo(const Common::String &filename) {
 	events.setCursor(ARROW);
 }
 
-/**
- * Main method for handling conversations when a character to talk to has been
- * selected. It will make Holmes walk to the person to talk to, draws the
- * interface window for the conversation and passes on control to give the
- * player a list of options to make a selection from
- */
 void Talk::talk(int objNum) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -549,17 +529,10 @@ void Talk::talk(int objNum) {
 	}
 }
 
-/**
- * Clear loaded talk data
- */
 void Talk::freeTalkVars() {
 	_statements.clear();
 }
 
-/**
- * Opens the talk file 'talk.tlk' and searches the index for the specified
- * conversation. If found, the data for that conversation is loaded
- */
 void Talk::loadTalkFile(const Common::String &filename) {
 	Resources &res = *_vm->_res;
 	Sound &sound = *_vm->_sound;
@@ -596,9 +569,6 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	setTalkMap();
 }
 
-/**
- * Remove any voice commands from a loaded statement list
- */
 void Talk::stripVoiceCommands() {
 	for (uint sIdx = 0; sIdx < _statements.size(); ++sIdx) {
 		Statement &statement = _statements[sIdx];
@@ -622,9 +592,6 @@ void Talk::stripVoiceCommands() {
 	}
 }
 
-/**
- * Form a table of the display indexes for statements
- */
 void Talk::setTalkMap() {
 	int statementNum = 0;
 
@@ -642,9 +609,6 @@ void Talk::setTalkMap() {
 	}
 }
 
-/**
- * Draws the interface for conversation display
- */
 void Talk::drawInterface() {
 	Screen &screen = *_vm->_screen;
 	Surface &bb = *screen._backBuffer;
@@ -673,10 +637,6 @@ void Talk::drawInterface() {
 	}
 }
 
-/**
- * Display a list of statements in a window at the bottom of the screen that the
- * player can select from.
- */
 bool Talk::displayTalk(bool slamIt) {
 	Screen &screen = *_vm->_screen;
 	int yp = CONTROLS_Y + 14;
@@ -761,9 +721,6 @@ bool Talk::displayTalk(bool slamIt) {
 	return done;
 }
 
-/**
- * Prints a single conversation option in the interface window
- */
 int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) {
 	Screen &screen = *_vm->_screen;
 	int idx = lineNum;
@@ -852,17 +809,10 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 	return lineY;
 }
 
-/**
- * Clears the stack of pending object sequences associated with speakers in the scene
- */
 void Talk::clearSequences() {
 	_sequenceStack.clear();
 }
 
-/**
- * Pulls a background object sequence from the sequence stack and restore's the
- * object's sequence
- */
 void Talk::pullSequence() {
 	Scene &scene = *_vm->_scene;
 
@@ -885,10 +835,6 @@ void Talk::pullSequence() {
 	}
 }
 
-/**
- * Push the sequence of a background object that's an NPC that needs to be
- * saved onto the sequence stack.
- */
 void Talk::pushSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -918,9 +864,6 @@ void Talk::pushSequence(int speaker) {
 		error("script stack overflow");
 }
 
-/**
- * Change the sequence of the scene background object associated with the current speaker.
- */
 void Talk::setSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -950,10 +893,6 @@ void Talk::setSequence(int speaker) {
 	}
 }
 
-/**
- * Change the sequence of a background object corresponding to a given speaker.
- * The new sequence will display the character as "listening"
- */
 void Talk::setStillSeq(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -983,10 +922,6 @@ void Talk::setStillSeq(int speaker) {
 	}
 }
 
-/**
- * Parses a reply for control codes and display text. The found text is printed within
- * the text window, handles delays, animations, and animating portraits.
- */
 void Talk::doScript(const Common::String &script) {
 	Animation &anim = *_vm->_animation;
 	Events &events = *_vm->_events;
@@ -1631,10 +1566,6 @@ void Talk::doScript(const Common::String &script) {
 	}
 }
 
-/**
- * When the talk window has been displayed, waits a period of time proportional to
- * the amount of text that's been displayed
- */
 int Talk::waitForMore(int delay) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -1714,9 +1645,6 @@ int Talk::waitForMore(int delay) {
 	return key2;
 }
 
-/**
- * Pops an entry off of the script stack
- */
 void Talk::popStack() {
 	if (!_scriptStack.empty()) {
 		ScriptStackEntry scriptEntry = _scriptStack.pop();
@@ -1727,9 +1655,6 @@ void Talk::popStack() {
 	}
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Talk::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < MAX_TALK_FILES; ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];

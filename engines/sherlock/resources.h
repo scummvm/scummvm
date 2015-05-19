@@ -57,11 +57,26 @@ private:
 public:
 	Cache(SherlockEngine *_vm);
 
+	/**
+	 * Returns true if a given file is currently being cached
+	 */
 	bool isCached(const Common::String &filename) const;
 
+	/**
+	 * Loads a file into the cache if it's not already present, and returns it.
+	 * If the file is LZW compressed, automatically decompresses it and loads
+	 * the uncompressed version into memory
+	 */
 	void load(const Common::String &name);
+
+	/**
+	 * Load a cache entry based on a passed stream
+	 */
 	void load(const Common::String &name, Common::SeekableReadStream &stream);
 
+	/**
+	 * Get a file from the cache
+	 */
 	Common::SeekableReadStream *get(const Common::String &filename) const;
 };
 
@@ -72,26 +87,66 @@ private:
 	LibraryIndexes _indexes;
 	int _resourceIndex;
 
+	/**
+	 * Reads in the index from a library file, and caches it's index for later use
+	 */
 	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream);
 public:
 	Resources(SherlockEngine *vm);
 
+	/**
+	 * Adds the specified file to the cache. If it's a library file, takes care of
+	 * loading it's index for future use
+	 */
 	void addToCache(const Common::String &filename);
+	
+	/**
+	 * Adds a resource from a library file to the cache
+	 */
 	void addToCache(const Common::String &filename, const Common::String &libFilename);
+	
+	/**
+	 * Adds a given stream to the cache under the given name
+	 */
 	void addToCache(const Common::String &filename, Common::SeekableReadStream &stream);
+
 	bool isInCache(const Common::String &filename) const { return _cache.isCached(filename); }
 
+	/**
+	 * Checks the passed stream, and if is compressed, deletes it and replaces it with it's uncompressed data
+	 */
 	void decompressIfNecessary(Common::SeekableReadStream *&stream);
 
+	/**
+	 * Returns a stream for a given file
+	 */
 	Common::SeekableReadStream *load(const Common::String &filename);
 
+	/**
+	 * Loads a specific resource from a given library file
+	 */
 	Common::SeekableReadStream *load(const Common::String &filename, const Common::String &libraryFile);
 
+	/**
+	 * Returns true if the given file exists on disk or in the cache
+	 */
 	bool exists(const Common::String &filename) const;
 
+	/**
+	 * Returns the index of the last loaded resource in it's given library file.
+	 * This will be used primarily when loading talk files, so the engine can
+	 * update the given conversation number in the journal
+	 */
 	int resourceIndex() const;
 
+	/**
+	 * Decompresses an LZW block of data with a specified output size
+	 */
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, uint32 outSize);
+	
+	/**
+	 * Decompress an LZW compressed resource
+	 */
 	Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source);
 };
 
@@ -111,8 +166,19 @@ class ImageFile : public Common::Array<ImageFrame> {
 private:
 	static SherlockEngine *_vm;
 
+	/**
+	 * Load the data of the sprite
+	 */
 	void load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages);
+
+	/**
+	 * Gets the palette at the start of the sprite file
+	 */
 	void loadPalette(Common::SeekableReadStream &stream);
+
+	/**
+	 * Decompress a single frame for the sprite
+	 */
 	void decompressFrame(ImageFrame  &frame, const byte *src);
 public:
 	byte _palette[256 * 3];

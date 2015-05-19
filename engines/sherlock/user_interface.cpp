@@ -122,18 +122,12 @@ UserInterface::~UserInterface() {
 	delete _controlPanel;
 }
 
-/**
- * Resets the user interface
- */
 void UserInterface::reset() {
 	_oldKey = -1;
 	_help = _oldHelp = -1;
 	_oldTemp = _temp = -1;
 }
 
-/**
- * Draw the user interface onto the screen's back buffers
- */
 void UserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
@@ -145,9 +139,6 @@ void UserInterface::drawInterface(int bufferNum) {
 		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
 }
 
-/**
- * Main input handler for the user interface
- */
 void UserInterface::handleInput() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -403,9 +394,6 @@ void UserInterface::handleInput() {
 	}
 }
 
-/**
- * Draws the image for a user interface button in the down/pressed state.
- */
 void UserInterface::depressButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
@@ -415,10 +403,6 @@ void UserInterface::depressButton(int num) {
 	screen.slamArea(pt.x, pt.y, pt.x + s.w, pt.y + s.h);
 }
 
-/**
- * Draws the image for the given user interface button in the up
- * (not selected) position
- */
 void UserInterface::restoreButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
@@ -434,10 +418,6 @@ void UserInterface::restoreButton(int num) {
 	}
 }
 
-/**
- * If he mouse button is pressed, then calls depressButton to draw the button
- * as pressed; if not, it will show it as released with a call to "restoreButton".
- */
 void UserInterface::pushButton(int num) {
 	Events &events = *_vm->_events;
 	_oldKey = -1;
@@ -455,11 +435,6 @@ void UserInterface::pushButton(int num) {
 	restoreButton(num);
 }
 
-/**
- * By the time this method has been called, the graphics for the button change
- * have already been drawn. This simply takes care of switching the mode around
- * accordingly
- */
 void UserInterface::toggleButton(int num) {
 	Screen &screen = *_vm->_screen;
 
@@ -488,9 +463,6 @@ void UserInterface::toggleButton(int num) {
 	}
 }
 
-/**
- * Clears the info line of the screen
- */
 void UserInterface::clearInfo() {
 	if (_infoFlag) {
 		_vm->_screen->vgaBar(Common::Rect(16, INFO_LINE, SHERLOCK_SCREEN_WIDTH - 19,
@@ -500,9 +472,6 @@ void UserInterface::clearInfo() {
 	}
 }
 
-/**
- * Clear any active text window
- */
 void UserInterface::clearWindow() {
 	if (_windowOpen) {
 		_vm->_screen->vgaBar(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
@@ -510,9 +479,6 @@ void UserInterface::clearWindow() {
 	}
 }
 
-/**
- * Handles counting down whilst checking for input, then clears the info line.
- */
 void UserInterface::whileMenuCounter() {
 	if (!(--_menuCounter) || _vm->_events->checkInput()) {
 		_menuCounter = 0;
@@ -521,10 +487,6 @@ void UserInterface::whileMenuCounter() {
 	}
 }
 
-/**
- * Creates a text window and uses it to display the in-depth description
- * of the highlighted object
- */
 void UserInterface::examine() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -576,9 +538,6 @@ void UserInterface::examine() {
 	}
 }
 
-/**
- * Print the name of an object in the scene
- */
 void UserInterface::lookScreen(const Common::Point &pt) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -692,9 +651,6 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 	}
 }
 
-/**
- * Gets the item in the inventory the mouse is on and display's it's description
- */
 void UserInterface::lookInv() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -720,9 +676,6 @@ void UserInterface::lookInv() {
 	}
 }
 
-/**
- * Handles input when the file list window is being displayed
- */
 void UserInterface::doEnvControl() {
 	Events &events = *_vm->_events;
 	SaveManager &saves = *_vm->_saves;
@@ -1026,9 +979,6 @@ void UserInterface::doEnvControl() {
 	}
 }
 
-/**
- * Handle input whilst the inventory is active
- */
 void UserInterface::doInvControl() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -1253,9 +1203,6 @@ void UserInterface::doInvControl() {
 	}
 }
 
-/**
- * Handles waiting whilst an object's description window is open.
- */
 void UserInterface::doLookControl() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -1317,9 +1264,6 @@ void UserInterface::doLookControl() {
 	}
 }
 
-/**
- * Handles input until one of the user interface buttons/commands is selected
- */
 void UserInterface::doMainControl() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -1458,9 +1402,6 @@ void UserInterface::doMainControl() {
 	}
 }
 
-/**
- * Handles the input for the MOVE, OPEN, and CLOSE commands
- */
 void UserInterface::doMiscControl(int allowed) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
@@ -1510,9 +1451,6 @@ void UserInterface::doMiscControl(int allowed) {
 	}
 }
 
-/**
- * Handles input for picking up items
- */
 void UserInterface::doPickControl() {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
@@ -1536,10 +1474,6 @@ void UserInterface::doPickControl() {
 	}
 }
 
-/**
- * Handles input when in talk mode. It highlights the buttons and available statements,
- * and handles allowing the user to click on them
- */
 void UserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
 	Journal &journal = *_vm->_journal;
@@ -1790,12 +1724,6 @@ void UserInterface::doTalkControl() {
 	}
 }
 
-/**
- * Handles events when the Journal is active.
- * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
- *		the user interface, it uses so many internal UI fields, that it sort of made some sense
- *		to put it in the UserInterface class.
- */
 void UserInterface::journalControl() {
 	Events &events = *_vm->_events;
 	Journal &journal = *_vm->_journal;
@@ -1844,9 +1772,6 @@ void UserInterface::journalControl() {
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
-/**
-* Print the description of an object
-*/
 void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -2015,16 +1940,10 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	}
 }
 
-/**
- * Print the previously selected object's decription
- */
 void UserInterface::printObjectDesc() {
 	printObjectDesc(_cAnimStr, true);
 }
 
-/**
- * Displays a passed window by gradually scrolling it vertically on-screen
- */
 void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -2065,9 +1984,6 @@ void UserInterface::summonWindow(const Surface &bgSurface, bool slideUp) {
 	_windowOpen = true;
 }
 
-/**
- * Slide the window stored in the back buffer onto the screen
- */
 void UserInterface::summonWindow(bool slideUp, int height) {
 	Screen &screen = *_vm->_screen;
 
@@ -2085,10 +2001,6 @@ void UserInterface::summonWindow(bool slideUp, int height) {
 	summonWindow(tempSurface, slideUp);
 }
 
-/**
- * Close a currently open window
- * @param flag	0 = slide old window down, 1 = slide prior UI back up
- */
 void UserInterface::banishWindow(bool slideUp) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -2155,9 +2067,6 @@ void UserInterface::banishWindow(bool slideUp) {
 	_menuMode = STD_MODE;
 }
 
-/**
- * Checks to see whether a USE action is valid on the given object
- */
 void UserInterface::checkUseAction(const UseType *use, const Common::String &invName,
 		const char *const messages[], int objNum, int giveMode) {
 	Events &events = *_vm->_events;
@@ -2251,9 +2160,6 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 	events.setCursor(ARROW);
 }
 
-/**
- * Called for OPEN, CLOSE, and MOVE actions are being done
- */
 void UserInterface::checkAction(ActionType &action, const char *const messages[], int objNum) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;

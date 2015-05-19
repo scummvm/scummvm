@@ -31,9 +31,6 @@ InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
 		_examine(examine), _lookFlag(0) {
 }
 
-/**
- * Synchronize the data for an inventory item
- */
 void InventoryItem::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_requiredFlag);
 	s.syncAsSint16LE(_lookFlag);
@@ -56,9 +53,6 @@ Inventory::~Inventory() {
 	freeGraphics();
 }
 
-/**
- * Free inventory data
- */
 void Inventory::freeInv() {
 	freeGraphics();
 
@@ -66,9 +60,6 @@ void Inventory::freeInv() {
 	_invGraphicsLoaded = false;
 }
 
-/**
- * Free any loaded inventory graphics
- */
 void Inventory::freeGraphics() {
 	for (uint idx = 0; idx < MAX_VISIBLE_INVENTORY; ++idx)
 		delete _invShapes[idx];
@@ -77,10 +68,6 @@ void Inventory::freeGraphics() {
 	_invGraphicsLoaded = false;
 }
 
-/**
- * Load the list of names the inventory items correspond to, if not already loaded, 
- * and then calls loadGraphics to load the associated graphics
- */
 void Inventory::loadInv() {
 	// Exit if the inventory names are already loaded
 	if (_names.size() > 0)
@@ -104,9 +91,6 @@ void Inventory::loadInv() {
 	loadGraphics();
 }
 
-/**
- * Load the list of names of graphics for the inventory
- */
 void Inventory::loadGraphics() {
 	if (_invGraphicsLoaded)
 		return;
@@ -126,10 +110,6 @@ void Inventory::loadGraphics() {
 	_invGraphicsLoaded = true;
 }
 
-/**
- * Searches through the list of names that correspond to the inventory items
- * and returns the number that matches the passed name
- */
 int Inventory::findInv(const Common::String &name) {
 	for (int idx = 0; idx < (int)_names.size(); ++idx) {
 		if (name.equalsIgnoreCase(_names[idx]))
@@ -140,9 +120,6 @@ int Inventory::findInv(const Common::String &name) {
 	error("Couldn't find inventory item - %s", name.c_str());
 }
 
-/**
- * Display the character's inventory. The slamIt parameter specifies:
- */
 void Inventory::putInv(InvSlamMode slamIt) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -198,9 +175,6 @@ void Inventory::putInv(InvSlamMode slamIt) {
 	}
 }
 
-/**
- * Put the game into inventory mode and open the interface window.
- */
 void Inventory::drawInventory(InvNewMode mode) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -270,10 +244,6 @@ void Inventory::drawInventory(InvNewMode mode) {
 	ui._oldUse = -1;
 }
 
-/**
- * Prints the line of inventory commands at the top of an inventory window with
- * the correct highlighting
- */
 void Inventory::invCommands(bool slamIt) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -333,9 +303,6 @@ void Inventory::invCommands(bool slamIt) {
 	}
 }
 
-/**
- * Set the highlighting color of a given inventory item
- */
 void Inventory::highlight(int index, byte color) {
 	Screen &screen = *_vm->_screen;
 	Surface &bb = *screen._backBuffer;
@@ -348,9 +315,6 @@ void Inventory::highlight(int index, byte color) {
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
 
-/**
- * Support method for refreshing the display of the inventory
- */
 void Inventory::refreshInv() {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
@@ -373,9 +337,6 @@ void Inventory::refreshInv() {
 	}
 }
 
-/**
- * Adds a shape from the scene to the player's inventory
- */
 int Inventory::putNameInInventory(const Common::String &name) {
 	Scene &scene = *_vm->_scene;
 	int matches = 0;
@@ -391,10 +352,6 @@ int Inventory::putNameInInventory(const Common::String &name) {
 	return matches;
 }
 
-/**
- * Moves a specified item into the player's inventory If the item has a *PICKUP* use action,
- * then the item in the use action are added to the inventory.
- */
 int Inventory::putItemInInventory(Object &obj) {
 	Scene &scene = *_vm->_scene;
 	int matches = 0;
@@ -456,9 +413,6 @@ int Inventory::putItemInInventory(Object &obj) {
 	return matches;
 }
 
-/**
- * Copy the passed object into the inventory
- */
 void Inventory::copyToInventory(Object &obj) {
 	InventoryItem invItem;
 	invItem._name = obj._name;
@@ -471,9 +425,6 @@ void Inventory::copyToInventory(Object &obj) {
 	++_holdings;
 }
 
-/**
- * Deletes a specified item from the player's inventory
- */
 int Inventory::deleteItemFromInventory(const Common::String &name) {
 	int invNum = -1;
 
@@ -493,9 +444,6 @@ int Inventory::deleteItemFromInventory(const Common::String &name) {
 	return 1;
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Inventory::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_holdings);
 

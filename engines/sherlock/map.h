@@ -49,8 +49,14 @@ private:
 	int _numLocations;
 	Common::Array< Common::Array<byte> > _paths;
 public:
+	/**
+	 * Load the data for the paths between locations on the map
+	 */
 	void load(int numLocations, Common::SeekableReadStream &s);
 
+	/**
+	 * Get the path between two locations on the map
+	 */
 	const byte *getPath(int srcLocation, int destLocation);
 };
 
@@ -75,24 +81,64 @@ private:
 	bool _drawMap;
 	Surface _iconSave;
 private:
+	/**
+	 * Load data  needed for the map
+	 */
 	void loadData();
 
+	/**
+	 * Load and initialize all the sprites that are needed for the map display
+	 */
 	void setupSprites();
+
+	/**
+	 * Free the sprites and data used by the map
+	 */
 	void freeSprites();
 
+	/**
+	 * Draws an icon for every place that's currently known
+	 */
 	void showPlaces();
 
+	/**
+	 * Makes a copy of the top rows of the screen that are used to display location names
+	 */
 	void saveTopLine();
+
+	/**
+	 * Erases anything shown in the top line by restoring the previously saved original map background
+	 */
 	void eraseTopLine();
+
+	/**
+	 * Prints the name of the specified icon
+	 */
 	void showPlaceName(int idx, bool highlighted);
 
+	/**
+	 * Update all on-screen sprites to account for any scrolling of the map
+	 */
 	void updateMap(bool flushScreen);
 
+	/**
+	 * Handle moving icon for player from their previous location on the map to a destination location
+	 */
 	void walkTheStreets();
 
+	/**
+	 * Save the area under the player's icon
+	 */
 	void saveIcon(ImageFrame *src, const Common::Point &pt);
+
+	/**
+	 * Restore the area under the player's icon
+	 */
 	void restoreIcon();
 
+	/**
+	 * Handles highlighting map icons, showing their names
+	 */
 	void highlightIcon(const Common::Point &pt);
 public:
 	bool _active;
@@ -105,11 +151,24 @@ public:
 
 	const MapEntry &operator[](int idx) { return _points[idx]; }
 
+	/**
+	 * Loads the list of points for locations on the map for each scene
+	 */
 	void loadPoints(int count, const int *xList, const int *yList, const int *transList);
+
+	/**
+	 * Load the sequence data for player icon animations
+	 */
 	void loadSequences(int count, const byte *seq);
 
+	/**
+	 * Show the map
+	 */
 	int show();
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 };
 

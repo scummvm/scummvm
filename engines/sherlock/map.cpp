@@ -25,9 +25,6 @@
 
 namespace Sherlock {
 
-/**
- * Load the data for the paths between locations on the map
- */
 void MapPaths::load(int numLocations, Common::SeekableReadStream &s) {
 	_numLocations = numLocations;
 	_paths.resize(_numLocations * _numLocations);
@@ -43,9 +40,6 @@ void MapPaths::load(int numLocations, Common::SeekableReadStream &s) {
 	}
 }
 
-/**
- * Get the path between two locations on the map
- */
 const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 	return &_paths[srcLocation * _numLocations + destLocation][0];
 }
@@ -73,26 +67,17 @@ Map::Map(SherlockEngine *vm) : _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 		loadData();
 }
 
-/**
- * Loads the list of points for locations on the map for each scene
- */
 void Map::loadPoints(int count, const int *xList, const int *yList, const int *transList) {
 	for (int idx = 0; idx < count; ++idx, ++xList, ++yList, ++transList) {
 		_points.push_back(MapEntry(*xList, *yList, *transList));
 	}
 }
 
-/**
- * Load the sequence data for player icon animations
- */
 void Map::loadSequences(int count, const byte *seq) {
 	for (int idx = 0; idx < count; ++idx, seq += MAX_FRAME)
 		Common::copy(seq, seq + MAX_FRAME, &_sequences[idx][0]);
 }
 
-/**
- * Load data  needed for the map
- */
 void Map::loadData() {
 	// Load the list of location names
 	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
@@ -125,9 +110,6 @@ void Map::loadData() {
 	delete pathStream;
 }
 
-/**
- * Show the map
- */
 int Map::show() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -279,9 +261,6 @@ int Map::show() {
 	return _charPoint;
 }
 
-/**
- * Load and initialize all the sprites that are needed for the map display
- */
 void Map::setupSprites() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -318,9 +297,6 @@ void Map::setupSprites() {
 	scene._bgShapes.clear();
 }
 
-/**
- * Free the sprites and data used by the map
- */
 void Map::freeSprites() {
 	delete _mapCursors;
 	delete _shapes;
@@ -328,9 +304,6 @@ void Map::freeSprites() {
 	_iconSave.free();
 }
 
-/**
- * Draws an icon for every place that's currently known
- */
 void Map::showPlaces() {
 	Screen &screen = *_vm->_screen;
 
@@ -349,25 +322,16 @@ void Map::showPlaces() {
 	}
 }
 
-/**
- * Makes a copy of the top rows of the screen that are used to display location names
- */
 void Map::saveTopLine() {
 	_topLine.blitFrom(_vm->_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, 12));
 }
 
-/**
- * Erases anything shown in the top line by restoring the previously saved original map background
- */
 void Map::eraseTopLine() {
 	Screen &screen = *_vm->_screen;
 	screen._backBuffer1.blitFrom(_topLine, Common::Point(0, 0));
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, _topLine.h);
 }
 
-/**
- * Prints the name of the specified icon
- */
 void Map::showPlaceName(int idx, bool highlighted) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -393,9 +357,6 @@ void Map::showPlaceName(int idx, bool highlighted) {
 	}
 }
 
-/**
- * Update all on-screen sprites to account for any scrolling of the map
- */
 void Map::updateMap(bool flushScreen) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -442,9 +403,6 @@ void Map::updateMap(bool flushScreen) {
 	}
 }
 
-/**
- * Handle moving icon for player from their previous location on the map to a destination location
- */
 void Map::walkTheStreets() {
 	People &people = *_vm->_people;
 	Common::Array<Common::Point> tempPath;
@@ -503,9 +461,6 @@ void Map::walkTheStreets() {
 	people._walkTo.push(destPos);
 }
 
-/**
- * Save the area under the player's icon
- */
 void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 	Screen &screen = *_vm->_screen;
 	Common::Point size(src->_width, src->_height);
@@ -540,9 +495,6 @@ void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 	_savedSize = size;
 }
 
-/**
- * Restore the area under the player's icon
- */
 void Map::restoreIcon() {
 	Screen &screen = *_vm->_screen;
 
@@ -551,9 +503,6 @@ void Map::restoreIcon() {
 		screen._backBuffer1.blitFrom(_iconSave, _savedPos, Common::Rect(0, 0, _savedSize.x, _savedSize.y));
 }
 
-/**
- * Handles highlighting map icons, showing their names
- */
 void Map::highlightIcon(const Common::Point &pt) {
 	int oldPoint = _point;
 
@@ -592,9 +541,6 @@ void Map::highlightIcon(const Common::Point &pt) {
 	}
 }
 
-/**
-* Synchronize the data for a savegame
-*/
 void Map::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_bigPos.x);
 	s.syncAsSint16LE(_bigPos.y);

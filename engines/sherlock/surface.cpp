@@ -39,10 +39,6 @@ Surface::~Surface() {
 		free();
 }
 
-/**
- * Sets up an internal surface with the specified dimensions that will be automatically freed
- * when the surface object is destroyed
- */
 void Surface::create(uint16 width, uint16 height) {
 	if (_freePixels)
 		free();
@@ -51,23 +47,14 @@ void Surface::create(uint16 width, uint16 height) {
 	_freePixels = true;
 }
 
-/**
- * Copy a surface into this one
- */
 void Surface::blitFrom(const Graphics::Surface &src) {
 	blitFrom(src, Common::Point(0, 0));
 }
 
-/**
- * Draws a surface at a given position within this surface
- */
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt) {
 	blitFrom(src, pt, Common::Rect(0, 0, src.w, src.h));
 }
 
-/**
- * Draws a sub-section of a surface at a given position within this surface
- */
 void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		const Common::Rect &srcBounds) {
 	Common::Rect srcRect = srcBounds;
@@ -80,17 +67,11 @@ void Surface::blitFrom(const Graphics::Surface &src, const Common::Point &pt,
 	}
 }
 
-/**
-* Draws an image frame at a given position within this surface with transparency
-*/
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
 		bool flipped, int overrideColor) {
 	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor);
 }
 
-/**
-* Draws a surface at a given position within this surface with transparency
-*/
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
@@ -125,24 +106,15 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 	}
 }
 
-/**
- * Fill a given area of the surface with a given color
- */
 void Surface::fillRect(int x1, int y1, int x2, int y2, byte color) {
 	fillRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
-/**
- * Fill a given area of the surface with a given color
- */
 void Surface::fillRect(const Common::Rect &r, byte color) {
 	Graphics::Surface::fillRect(r, color);
 	addDirtyRect(r);
 }
 
-/**
- * Clips the given source bounds so the passed destBounds will be entirely on-screen
- */
 bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	if (destBounds.left >= this->w || destBounds.top >= this->h ||
 		destBounds.right <= 0 || destBounds.bottom <= 0)
@@ -172,9 +144,6 @@ bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	return true;
 }
 
-/**
- * Clear the screen
- */
 void Surface::clear() {
 	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
 }

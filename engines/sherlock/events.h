@@ -45,6 +45,9 @@ private:
 	ImageFile *_cursorImages;
 	int _mouseButtons;
 
+	/**
+	 * Check whether it's time to display the next screen frame
+	 */
 	bool checkForNextFrameCounter();
 public:
 	CursorId _cursorId;
@@ -59,42 +62,102 @@ public:
 	Events(SherlockEngine *vm);
 	~Events();
 
+	/**
+	 * Load a set of cursors from the specified file
+	 */
 	void loadCursors(const Common::String &filename);
 
+	/**
+	 * Set the cursor to show
+	 */
 	void setCursor(CursorId cursorId);
+
+	/**
+	 * Set the cursor to show from a passed frame
+	 */
 	void setCursor(const Graphics::Surface &src);
 
+	/**
+	 * Show the mouse cursor
+	 */
 	void showCursor();
 
+	/**
+	 * Hide the mouse cursor
+	 */
 	void hideCursor();
 
+	/**
+	 * Returns the cursor
+	 */
 	CursorId getCursor() const;
 
+	/**
+	 * Returns true if the mouse cursor is visible
+	 */
 	bool isCursorVisible() const;
 
+	/**
+	 * Move the mouse
+	 */
 	void moveMouse(const Common::Point &pt);
 
+	/**
+	 * Check for any pending events
+	 */
 	void pollEvents();
 
+	/**
+	 * Poll for events and introduce a small delay, to allow the system to
+	 * yield to other running programs
+	 */
 	void pollEventsAndWait();
 
+	/**
+	 * Get the current mouse position
+	 */
 	Common::Point mousePos() const;
 
 	uint32 getFrameCounter() const { return _frameCounter; }
 
 	bool kbHit() const { return !_pendingKeys.empty(); }
 
+	/**
+	 * Get a pending keypress
+	 */
 	Common::KeyState getKey();
 
+	/**
+	 * Clear any current keypress or mouse click
+	 */
 	void clearEvents();
+
+	/**
+	 * Clear any pending keyboard inputs
+	 */
 	void clearKeyboard();
 
+	/**
+	 * Delay for a given number of game frames, where each frame is 1/60th of a second
+	 */
 	void wait(int numFrames);
 
+	/**
+	 * Does a delay of the specified number of milliseconds
+	 */
 	bool delay(uint32 time, bool interruptable = false);
 
+	/**
+	 * Sets the pressed and released button flags on the raw button state previously set in pollEvents calls.
+	 * @remarks		The events manager has separate variables for the raw immediate and old button state
+	 *		versus the current buttons states for the frame. This method is expected to be called only once
+	 *		per game frame
+	 */
 	void setButtonState();
 
+	/**
+	 * Checks to see to see if a key or a mouse button is pressed.
+	 */
 	bool checkInput();
 };
 

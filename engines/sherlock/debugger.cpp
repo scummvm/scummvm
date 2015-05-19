@@ -30,9 +30,6 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 }
 
-/**
- * Converts a decimal or hexadecimal string into a number
- */
 int Debugger::strToInt(const char *s) {
 	if (!*s)
 		// No string at all
@@ -49,9 +46,6 @@ int Debugger::strToInt(const char *s) {
 	return (int)tmp;
 }
 
-/**
- * Switch to another scene
- */
 bool Debugger::cmdScene(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Format: scene <room>\n");

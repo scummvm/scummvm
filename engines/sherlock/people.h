@@ -102,27 +102,69 @@ public:
 		return _data[idx];
 	}
 
+	/**
+	 * Returns true if Sherlock is visible on the screen and enabled
+	 */
 	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }
 
+	/**
+	 * Reset the player data
+	 */
 	void reset();
 
+	/**
+	 * Load the walking images for Sherlock
+	 */
 	bool loadWalk();
 
+	/**
+	 * If the walk data has been loaded, then it will be freed
+	 */
 	bool freeWalk();
 
+	/**
+	 * Set the variables for moving a character from one poisition to another
+	 * in a straight line - goAllTheWay must have been previously called to
+	 * check for any obstacles in the path.
+	 */
 	void setWalking();
 
+	/**
+	 * Bring a moving character to a standing position. If the Scalpel chessboard
+	 * is being displayed, then the chraracter will always face down.
+	 */
 	void gotoStand(Sprite &sprite);
 
+	/**
+	 * Walk to the co-ordinates passed, and then face the given direction
+	 */
 	void walkToCoords(const Common::Point &destPos, int destDir);
 
+	/**
+	 * Called to set the character walking to the current cursor location.
+	 * It uses the zones and the inter-zone points to determine a series
+	 * of steps to walk to get to that position.
+	 */
 	void goAllTheWay();
 
+	/**
+	 * Finds the scene background object corresponding to a specified speaker
+	 */
 	int findSpeaker(int speaker);
 
+	/**
+	 * Turn off any currently active portraits, and removes them from being drawn
+	 */
 	void clearTalking();
+
+	/**
+	 * Setup the data for an animating speaker portrait at the top of the screen
+	 */
 	void setTalking(int speaker);
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 };
 

@@ -33,9 +33,6 @@ static const int FS_TRANS[8] = {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void BgFileHeader::load(Common::SeekableReadStream &s) {
 	_numStructs = s.readUint16LE();
 	_numImages = s.readUint16LE();
@@ -47,9 +44,6 @@ void BgFileHeader::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void BgFileHeaderInfo::load(Common::SeekableReadStream &s) {
 	_filesize = s.readUint32LE();
 	_maxFrames = s.readByte();
@@ -61,9 +55,6 @@ void BgFileHeaderInfo::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void Exit::load(Common::SeekableReadStream &s) {
 	int xp = s.readSint16LE();
 	int yp = s.readSint16LE();
@@ -80,9 +71,6 @@ void Exit::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void SceneEntry::load(Common::SeekableReadStream &s) {
 	_startPosition.x = s.readSint16LE();
 	_startPosition.y = s.readSint16LE();
@@ -90,9 +78,6 @@ void SceneEntry::load(Common::SeekableReadStream &s) {
 	_allow = s.readByte();
 }
 
-/**
- * Load the data for the object
- */
 void SceneSound::load(Common::SeekableReadStream &s) {
 	char buffer[9];
 	s.read(buffer, 8);
@@ -104,9 +89,6 @@ void SceneSound::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Retuurn the index of the passed object in the array
- */
 int ObjectArray::indexOf(const Object &obj) const {
 	for (uint idx = 0; idx < size(); ++idx) {
 		if (&(*this)[idx] == &obj)
@@ -143,9 +125,6 @@ Scene::~Scene() {
 	freeScene();
 }
 
-/**
- * Handles loading the scene specified by _goToScene
- */
 void Scene::selectScene() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -189,9 +168,6 @@ void Scene::selectScene() {
 		talk._scriptMoreFlag = 0;
 }
 
-/**
- * Fres all the graphics and other dynamically allocated data for the scene
- */
 void Scene::freeScene() {
 	if (_currentScene == -1)
 		return;
@@ -221,15 +197,6 @@ void Scene::freeScene() {
 	_currentScene = -1;
 }
 
-/**
- * Loads the data associated for a given scene. The .BGD file's format is:
- * BGHEADER: Holds an index for the rest of the file
- * STRUCTS:  The objects for the scene
- * IMAGES:   The graphic information for the structures
- *
- * The _misc field of the structures contains the number of the graphic image
- * that it should point to after loading; _misc is then set to 0.
- */
 bool Scene::loadScene(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
@@ -513,10 +480,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	return flag;
 }
 
-/**
- * Set objects to their current persistent state. This includes things such as
- * opening or moving them
- */
 void Scene::checkSceneStatus() {
 	if (_sceneStats[_currentScene][64]) {
 		for (uint idx = 0; idx < 64; ++idx) {
@@ -542,10 +505,6 @@ void Scene::checkSceneStatus() {
 	}
 }
 
-/**
- * Restores objects to the correct status. This ensures that things like being opened or moved
- * will remain the same on future visits to the scene
- */
 void Scene::saveSceneStatus() {
 	// Flag any objects for the scene that have been altered
 	int count = MIN((int)_bgShapes.size(), 64);
@@ -559,11 +518,6 @@ void Scene::saveSceneStatus() {
 	_sceneStats[_currentScene][64] = true;
 }
 
-/**
- * Check the scene's objects against the game flags. If false is passed,
- * it means the scene has just been loaded. A value of true means that the scene
- * is in use (ie. not just loaded)
- */
 void Scene::checkSceneFlags(bool flag) {
 	SpriteType mode = flag ? HIDE_SHAPE : HIDDEN;
 
@@ -616,11 +570,6 @@ void Scene::checkSceneFlags(bool flag) {
 	}
 }
 
-/**
- * Checks scene objects against the player's inventory items. If there are any
- * matching names, it means the given item has already been picked up, and should
- * be hidden in the scene.
- */
 void Scene::checkInventory() {
 	for (uint shapeIdx = 0; shapeIdx < _bgShapes.size(); ++shapeIdx) {
 		for (int invIdx = 0; invIdx < _vm->_inventory->_holdings; ++invIdx) {
@@ -632,10 +581,6 @@ void Scene::checkInventory() {
 	}
 }
 
-/**
- * Set up any entrance co-ordinates or entrance canimations, and then transition
- * in the scene
- */
 void Scene::transitionToScene() {
 	People &people = *_vm->_people;
 	SaveManager &saves = *_vm->_saves;
@@ -750,10 +695,6 @@ void Scene::transitionToScene() {
 	}
 }
 
-/**
- * Scans through the object list to find one with a matching name, and will
- * call toggleHidden with all matches found. Returns the numer of matches found
- */
 int Scene::toggleObject(const Common::String &name) {
 	int count = 0;
 
@@ -767,10 +708,6 @@ int Scene::toggleObject(const Common::String &name) {
 	return count;
 }
 
-/**
- * Update the screen back buffer with all of the scene objects which need
- * to be drawn
- */
 void Scene::updateBackground() {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -860,9 +797,6 @@ void Scene::updateBackground() {
 	screen.resetDisplayBounds();
 }
 
-/**
- * Check whether the passed area intersects with one of the scene's exits
- */
 Exit *Scene::checkForExit(const Common::Rect &r) {
 	for (uint idx = 0; idx < _exits.size(); ++idx) {
 		if (_exits[idx]._bounds.intersects(r))
@@ -872,11 +806,6 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
-/**
- * Checks all the background shapes. If a background shape is animating,
- * it will flag it as needing to be drawn. If a non-animating shape is
- * colliding with another shape, it will also flag it as needing drawing
- */
 void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 	// Iterate through the shapes
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -911,14 +840,6 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 	}
 }
 
-/**
- * Attempt to start a canimation sequence. It will load the requisite graphics, and
- * then copy the canim object into the _canimShapes array to start the animation.
- *
- * @param cAnimNum		The canim object within the current scene
- * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
- *		A negative playRate can also be specified to play the animation in reverse
- */
 int Scene::startCAnim(int cAnimNum, int playRate) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
@@ -1131,9 +1052,6 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	return 1;
 }
 
-/**
- * Animate all objects and people.
- */
 void Scene::doBgAnim() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -1461,10 +1379,6 @@ void Scene::doBgAnim() {
 	}
 }
 
-/**
- * Attempts to find a background shape within the passed bounds. If found,
- * it will return the shape number, or -1 on failure.
- */
 int Scene::findBgShape(const Common::Rect &r) {
 	if (!_doBgAnimDone)
 		// New frame hasn't been drawn yet
@@ -1485,10 +1399,6 @@ int Scene::findBgShape(const Common::Rect &r) {
 	return -1;
 }
 
-/**
- * Checks to see if the given position in the scene belongs to a given zone type.
- * If it is, the zone is activated and used just like a TAKL zone or aFLAG_SET zone.
- */
 int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	int matches = 0;
 
@@ -1508,9 +1418,6 @@ int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	return matches;
 }
 
-/**
- * Check which zone the the given position is located in.
- */
 int Scene::whichZone(const Common::Point &pt) {
 	for (uint idx = 0; idx < _zones.size(); ++idx) {
 		if (_zones[idx].contains(pt))
@@ -1520,9 +1427,6 @@ int Scene::whichZone(const Common::Point &pt) {
 	return -1;
 }
 
-/**
- * Returns the index of the closest zone to a given point.
- */
 int Scene::closestZone(const Common::Point &pt) {
 	int dist = 1000;
 	int zone = -1;
@@ -1542,9 +1446,6 @@ int Scene::closestZone(const Common::Point &pt) {
 	return zone;
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Scene::synchronize(Common::Serializer &s) {
 	if (s.isSaving())
 		saveSceneStatus();

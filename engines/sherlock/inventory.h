@@ -66,6 +66,9 @@ struct InventoryItem {
 	InventoryItem(int requiredFlag, const Common::String &name,
 		const Common::String &description, const Common::String &examine);
 
+	/**
+	 * Synchronize the data for an inventory item
+	 */
 	void synchronize(Common::Serializer &s);
 };
 
@@ -74,6 +77,9 @@ private:
 	SherlockEngine *_vm;
 	Common::StringArray _names;
 
+	/**
+	 * Copy the passed object into the inventory
+	 */
 	void copyToInventory(Object &obj);
 public:
 	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
@@ -82,34 +88,81 @@ public:
 	int _invIndex;
 	int _holdings;		// Used to hold number of visible items in active inventory.
 						// Since Inventory array also contains some special hidden items
+	/**
+	 * Free any loaded inventory graphics
+	 */
 	void freeGraphics();
 public:
 	Inventory(SherlockEngine *vm);
 	~Inventory();
 
+	/**
+	 * Free inventory data
+	 */
 	void freeInv();
 
+	/**
+	 * Load the list of names the inventory items correspond to, if not already loaded,
+	 * and then calls loadGraphics to load the associated graphics
+	 */
 	void loadInv();
 
+	/**
+	 * Load the list of names of graphics for the inventory
+	 */
 	void loadGraphics();
 
+	/**
+	 * Searches through the list of names that correspond to the inventory items
+	 * and returns the number that matches the passed name
+	 */
 	int findInv(const Common::String &name);
 
+	/**
+	 * Display the character's inventory. The slamIt parameter specifies:
+	 */
 	void putInv(InvSlamMode slamIt);
 
+	/**
+	 * Put the game into inventory mode and open the interface window.
+	 */
 	void drawInventory(InvNewMode flag);
 
+	/**
+	 * Prints the line of inventory commands at the top of an inventory window with
+	 * the correct highlighting
+	 */
 	void invCommands(bool slamIt);
 
+	/**
+	 * Set the highlighting color of a given inventory item
+	 */
 	void highlight(int index, byte color);
 
+	/**
+	 * Support method for refreshing the display of the inventory
+	 */
 	void refreshInv();
 
+	/**
+	 * Adds a shape from the scene to the player's inventory
+	 */
 	int putNameInInventory(const Common::String &name);
+
+	/**
+	 * Moves a specified item into the player's inventory If the item has a *PICKUP* use action,
+	 * then the item in the use action are added to the inventory.
+	 */
 	int putItemInInventory(Object &obj);
 
+	/**
+	 * Deletes a specified item from the player's inventory
+	 */
 	int deleteItemFromInventory(const Common::String &name);
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 };
 

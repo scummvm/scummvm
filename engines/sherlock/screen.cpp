@@ -49,9 +49,6 @@ Screen::~Screen() {
 	delete _font;
 }
 
-/**
- * Set the font to use for writing text on the screen
- */
 void Screen::setFont(int fontNumb) {
 	// Interactive demo doesn't use fonts
 	if (!_vm->_interactiveFl)
@@ -70,9 +67,6 @@ void Screen::setFont(int fontNumb) {
 		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
 }
 
-/**
- * Handles updating any dirty areas of the screen Surface object to the physical screen
- */
 void Screen::update() {
 	// Merge the dirty rects
 	mergeDirtyRects();
@@ -91,23 +85,14 @@ void Screen::update() {
 	_dirtyRects.clear();
 }
 
-/**
- * Return the currently active palette
- */
 void Screen::getPalette(byte palette[PALETTE_SIZE]) {
 	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
 }
 
-/**
- * Set the palette
- */
 void Screen::setPalette(const byte palette[PALETTE_SIZE]) {
 	g_system->getPaletteManager()->setPalette(palette, 0, PALETTE_COUNT);
 }
 
-/**
- * Fades from the currently active palette to the passed palette
- */
 int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 	int total = 0;
 	byte tempPalette[PALETTE_SIZE];
@@ -132,9 +117,6 @@ int Screen::equalizePalette(const byte palette[PALETTE_SIZE]) {
 	return total;
 }
 
-/**
- * Fade out the palette to black
- */
 void Screen::fadeToBlack(int speed) {
 	byte tempPalette[PALETTE_SIZE];
 	Common::fill(&tempPalette[0], &tempPalette[PALETTE_SIZE], 0);
@@ -147,9 +129,6 @@ void Screen::fadeToBlack(int speed) {
 	fillRect(Common::Rect(0, 0, this->w, this->h), 0);
 }
 
-/**
- * Fade in a given palette
- */
 void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
 	int count = 50;
 	while (equalizePalette(palette) && --count) {
@@ -159,18 +138,11 @@ void Screen::fadeIn(const byte palette[PALETTE_SIZE], int speed) {
 	setPalette(palette);
 }
 
-/**
- * Adds a rectangle to the list of modified areas of the screen during the
- * current frame
- */
 void Screen::addDirtyRect(const Common::Rect &r) {
 	_dirtyRects.push_back(r);
 	assert(r.width() > 0 && r.height() > 0);
 }
 
-/**
- * Merges together overlapping dirty areas of the screen
- */
 void Screen::mergeDirtyRects() {
 	Common::List<Common::Rect>::iterator rOuter, rInner;
 
@@ -195,9 +167,6 @@ void Screen::mergeDirtyRects() {
 	}
 }
 
-/**
- * Returns the union of two dirty area rectangles
- */
 bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2) {
 	destRect = src1;
 	destRect.extend(src2);
@@ -205,9 +174,6 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
 	return !destRect.isEmpty();
 }
 
-/**
- * Do a random pixel transition in from _backBuffer surface to the screen
- */
 void Screen::randomTransition() {
 	Events &events = *_vm->_events;
 	const int TRANSITION_MULTIPLIER = 0x15a4e35;
@@ -234,9 +200,6 @@ void Screen::randomTransition() {
 	blitFrom(*_backBuffer);
 }
 
-/**
- * Transition to the surface from _backBuffer using a vertical transition
- */
 void Screen::verticalTransition() {
 	Events &events = *_vm->_events;
 
@@ -259,9 +222,6 @@ void Screen::verticalTransition() {
 	}
 }
 
-/**
- * Copies a section of the second back buffer into the main back buffer
- */
 void Screen::restoreBackground(const Common::Rect &r) {
 	if (r.width() > 0 && r.height() > 0) {
 		Common::Rect tempRect = r;
@@ -272,16 +232,10 @@ void Screen::restoreBackground(const Common::Rect &r) {
 	}
 }
 
-/**
- * Copies a given area to the screen
- */
 void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
 	slamRect(Common::Rect(xp, yp, xp + width, yp + height));
 }
 
-/**
- * Copies a given area to the screen
- */
 void Screen::slamRect(const Common::Rect &r) {
 	if (r.width() && r.height() > 0) {
 		Common::Rect tempRect = r;
@@ -292,10 +246,6 @@ void Screen::slamRect(const Common::Rect &r) {
 	}
 }
 
-/**
- * Copy an image from the back buffer to the screen, taking care of both the
- * new area covered by the shape as well as the old area, which must be restored
- */
 void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
 		int16 *xp, int16 *yp, int16 *width, int16 *height) {
 	Common::Point imgPos = pt + frame->_offset;
@@ -322,10 +272,6 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
 	*height = newBounds.height();
 }
 
-/**
- * Prints the text passed onto the back buffer at the given position and color.
- * The string is then blitted to the screen
- */
 void Screen::print(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
 	va_list args;
@@ -354,9 +300,6 @@ void Screen::print(const Common::Point &pt, byte color, const char *formatStr, .
 	slamRect(textBounds);
 }
 
-/**
- * Print a strings onto the back buffer without blitting it to the screen
- */
 void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
 	va_list args;
@@ -368,10 +311,6 @@ void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, 
 	writeString(str, pt, color);
 }
 
-
-/**
- * Returns the width of a string in pixels
- */
 int Screen::stringWidth(const Common::String &str) {
 	int width = 0;
 
@@ -381,9 +320,6 @@ int Screen::stringWidth(const Common::String &str) {
 	return width;
 }
 
-/**
- * Returns the width of a character in pixels
- */
 int Screen::charWidth(char c) {
 	if (c == ' ')
 		return 5;
@@ -393,9 +329,6 @@ int Screen::charWidth(char c) {
 		return 0;
 }
 
-/**
- * Draws the given string into the back buffer using the images stored in _font
- */
 void Screen::writeString(const Common::String &str, const Common::Point &pt, byte color) {
 	Common::Point charPos = pt;
 
@@ -411,17 +344,11 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, byt
 	}
 }
 
-/**
- * Fills an area on the back buffer, and then copies it to the screen
- */
 void Screen::vgaBar(const Common::Rect &r, int color) {
 	_backBuffer->fillRect(r, color);
 	slamRect(r);
 }
 
-/**
- * Draws a button for use in the inventory, talk, and examine dialogs.
- */
 void Screen::makeButton(const Common::Rect &bounds, int textX,
 		const Common::String &str) {
 
@@ -437,10 +364,6 @@ void Screen::makeButton(const Common::Rect &bounds, int textX,
 		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
 }
 
-/**
- * Prints an interface command with the first letter highlighted to indicate
- * what keyboard shortcut is associated with it
- */
 void Screen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
 		const Common::String &str) {
 	int xStart = pt.x - stringWidth(str) / 2;
@@ -463,9 +386,6 @@ void Screen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
 	}
 }
 
-/**
- * Draw a panel in the back buffer with a raised area effect around the edges
- */
 void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->fillRect(r, BUTTON_MIDDLE);
 	_backBuffer->hLine(r.left, r.top, r.right - 2, BUTTON_TOP);
@@ -479,10 +399,6 @@ void Screen::makePanel(const Common::Rect &r) {
 	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
 }
 
-/**
- * Draw a field in the back buffer with a raised area effect around the edges,
- * suitable for text input.
- */
 void Screen::makeField(const Common::Rect &r) {
 	_backBuffer->fillRect(r, BUTTON_MIDDLE);
 	_backBuffer->hLine(r.left, r.top, r.right - 1, BUTTON_BOTTOM);
@@ -491,9 +407,6 @@ void Screen::makeField(const Common::Rect &r) {
 	_backBuffer->vLine(r.right - 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
 }
 
-/**
- * Sets the active back buffer pointer to a restricted sub-area of the first back buffer
- */
 void Screen::setDisplayBounds(const Common::Rect &r) {
 	assert(r.left == 0 && r.top == 0);
 	_sceneSurface.setPixels(_backBuffer1.getPixels());
@@ -503,24 +416,15 @@ void Screen::setDisplayBounds(const Common::Rect &r) {
 	_backBuffer = &_sceneSurface;
 }
 
-/**
- * Resets the active buffer pointer to point back to the full first back buffer
- */
 void Screen::resetDisplayBounds() {
 	_backBuffer = &_backBuffer1;
 }
 
-/**
- * Return the size of the current display window
- */
 Common::Rect Screen::getDisplayBounds() {
 	return (_backBuffer == &_sceneSurface) ? Common::Rect(0, 0, _sceneSurface.w, _sceneSurface.h) :
 		Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Screen::synchronize(Common::Serializer &s) {
 	int fontNumb = _fontNumber;
 	s.syncAsByte(fontNumb);

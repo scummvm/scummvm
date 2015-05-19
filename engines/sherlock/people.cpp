@@ -217,9 +217,6 @@ People::~People() {
 	delete[] _portrait._sequences;
 }
 
-/**
- * Reset the player data
- */
 void People::reset() {
 	// Note: The engine has theoretical support for two player characters but only the first one is used.
 	// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
@@ -247,9 +244,6 @@ void People::reset() {
 	_walkTo.clear();
 }
 
-/**
- * Load the walking images for Sherlock
- */
 bool People::loadWalk() {
 	if (_walkLoaded) {
 		return false;
@@ -262,9 +256,6 @@ bool People::loadWalk() {
 	}
 }
 
-/**
- * If the walk data has been loaded, then it will be freed
- */
 bool People::freeWalk() {
 	if (_walkLoaded) {
 		delete _player._images;
@@ -277,11 +268,6 @@ bool People::freeWalk() {
 	}
 }
 
-/**
- * Set the variables for moving a character from one poisition to another
- * in a straight line - goAllTheWay must have been previously called to
- * check for any obstacles in the path.
- */
 void People::setWalking() {
 	Map &map = *_vm->_map;
 	Scene &scene = *_vm->_scene;
@@ -427,10 +413,6 @@ void People::setWalking() {
 		_player._frameNumber = oldFrame;
 }
 
-/**
- * Bring a moving character to a standing position. If the Scalpel chessboard
- * is being displayed, then the chraracter will always face down.
- */
 void People::gotoStand(Sprite &sprite) {
 	Map &map = *_vm->_map;
 	_walkTo.clear();
@@ -481,9 +463,6 @@ void People::gotoStand(Sprite &sprite) {
 	_allowWalkAbort = true;
 }
 
-/**
- * Walk to the co-ordinates passed, and then face the given direction
- */
 void People::walkToCoords(const Common::Point &destPos, int destDir) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
@@ -516,11 +495,6 @@ void People::walkToCoords(const Common::Point &destPos, int destDir) {
 	}
 }
 
-/**
- * Called to set the character walking to the current cursor location.
- * It uses the zones and the inter-zone points to determine a series
- * of steps to walk to get to that position.
- */
 void People::goAllTheWay() {
 	Scene &scene = *_vm->_scene;
 	Common::Point srcPt(_player._position.x / 100 + _player.frameWidth() / 2,
@@ -608,9 +582,6 @@ void People::goAllTheWay() {
 	}
 }
 
-/**
- * Finds the scene background object corresponding to a specified speaker
- */
 int People::findSpeaker(int speaker) {
 	Scene &scene = *_vm->_scene;
 
@@ -629,9 +600,6 @@ int People::findSpeaker(int speaker) {
 	return -1;
 }
 
-/**
- * Turn off any currently active portraits, and removes them from being drawn
- */
 void People::clearTalking() {
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -662,9 +630,6 @@ void People::clearTalking() {
 	}
 }
 
-/**
- * Setup the data for an animating speaker portrait at the top of the screen
- */
 void People::setTalking(int speaker) {
 	Resources &res = *_vm->_res;
 
@@ -724,9 +689,6 @@ void People::setTalking(int speaker) {
 	}
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void People::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_holmesOn);
 	s.syncAsSint16LE(_player._position.x);

@@ -52,9 +52,6 @@ static const char *const SETUP_NAMES[12] = {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Draws the interface for the settings window
- */
 void Settings::drawInteface(bool flag) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -135,9 +132,6 @@ void Settings::drawInteface(bool flag) {
 	}
 }
 
-/**
- * Draws the buttons for the settings dialog
- */
 int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -209,13 +203,6 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	return found;
 }
 
-
-/**
-* Handles input when the settings window is being shown
-* @remarks		Whilst this would in theory be better in the Journal class, since it displays in
-*		the user interface, it uses so many internal UI fields, that it sort of made some sense
-*		to put it in the UserInterface class.
-*/
 void Settings::show(SherlockEngine *vm) {
 	Events &events = *vm->_events;
 	People &people = *vm->_people;

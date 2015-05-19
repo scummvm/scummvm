@@ -41,9 +41,6 @@ namespace Sherlock {
 
 SherlockEngine *Sprite::_vm;
 
-/**
- * Reset the data for the sprite
- */
 void Sprite::clear() {
 	_name = "";
 	_description = "";
@@ -68,18 +65,12 @@ void Sprite::clear() {
 	_numFrames = 0;
 }
 
-/**
- * Updates the image frame poiner for the sprite
- */
 void Sprite::setImageFrame() {
 	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] +
 		(*_sequences)[_sequenceNumber][0] - 2;
 	_imageFrame = &(*_images)[imageNumber];
 }
 
-/**
- * This adjusts the sprites position, as well as it's animation sequence:
- */
 void Sprite::adjustSprite() {
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
@@ -175,9 +166,6 @@ void Sprite::adjustSprite() {
 	}
 }
 
-/**
- * Checks the sprite's position to see if it's collided with any special objects
- */
 void Sprite::checkSprite() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -364,9 +352,6 @@ void Sprite::checkSprite() {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the action
- */
 void ActionType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
@@ -388,9 +373,6 @@ UseType::UseType() {
 	_useFlag = 0;
 }
 
-/**
- * Load the data for the UseType
- */
 void UseType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
@@ -454,9 +436,6 @@ Object::Object() {
 	_seqSize = 0;
 }
 
-/**
- * Load the data for the object
- */
 void Object::load(Common::SeekableReadStream &s) {
 	char buffer[41];
 	s.read(buffer, 12);
@@ -522,9 +501,6 @@ void Object::load(Common::SeekableReadStream &s) {
 		_use[idx].load(s);
 }
 
-/**
- * Toggle the type of an object between hidden and active
- */
 void Object::toggleHidden() {
 	if (_type != HIDDEN && _type != HIDE_SHAPE && _type != INVALID) {
 		if (_seqTo != 0)
@@ -560,9 +536,6 @@ void Object::toggleHidden() {
 	}
 }
 
-/**
- * Check the state of the object
- */
 void Object::checkObject() {
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
@@ -686,11 +659,6 @@ void Object::checkObject() {
 	} while (codeFound);
 }
 
-/**
- * This will check to see if the object has reached the end of a sequence.
- * If it has, it switch to whichever next sequence should be started.
- * @returns		true if the end of a sequence was reached
- */
 bool Object::checkEndOfSequence() {
 	Screen &screen = *_vm->_screen;
 	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
@@ -743,10 +711,6 @@ bool Object::checkEndOfSequence() {
 	return result;
 }
 
-/**
- * Scans through the sequences array and finds the designated sequence.
- * It then sets the frame number of the start of that sequence
- */
 void Object::setObjSequence(int seq, bool wait) {
 	Scene &scene = *_vm->_scene;
 	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
@@ -820,12 +784,6 @@ void Object::setObjSequence(int seq, bool wait) {
 	}
 }
 
-/**
- * Checks for codes
- * @param name		The name to check for codes
- * @param messages	Provides a lookup list of messages that can be printed
- * @returns		0 if no codes are found, 1 if codes were found
- */
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
@@ -921,9 +879,6 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 	return printed;
 }
 
-/**
- * Handle setting any flags associated with the object
- */
 void Object::setFlagsAndToggles() {
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
@@ -949,10 +904,6 @@ void Object::setFlagsAndToggles() {
 	}
 }
 
-/**
- * Adjusts the sprite's position and animation sequence, advancing by 1 frame.
- * If the end of the sequence is reached, the appropriate action is taken.
- */
 void Object::adjustObject() {
 	if (_type == REMOVE)
 		return;
@@ -975,10 +926,6 @@ void Object::adjustObject() {
 	}
 }
 
-/**
- * Handles trying to pick up an object. If allowed, plays an y necessary animation for picking
- * up the item, and then adds it to the player's inventory
- */
 int Object::pickUpObject(const char *const messages[]) {
 	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
@@ -1065,9 +1012,6 @@ int Object::pickUpObject(const char *const messages[]) {
 	return numObjects;
 }
 
-/**
- * Returns the current bounds for the sprite
- */
 const Common::Rect Object::getNewBounds() const {
 	Common::Point pt = _position;
 	if (_imageFrame)
@@ -1076,17 +1020,11 @@ const Common::Rect Object::getNewBounds() const {
 	return Common::Rect(pt.x, pt.y, pt.x + frameWidth(), pt.y + frameHeight());
 }
 
-/**
- * Returns the bounds for a sprite without a shape
- */
 const Common::Rect Object::getNoShapeBounds() const {
 	return Common::Rect(_position.x, _position.y,
 		_position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
 }
 
-/**
- * Returns the old bounsd for the sprite from the previous frame
- */
 const Common::Rect Object::getOldBounds() const {
 	return Common::Rect(_oldPosition.x, _oldPosition.y,
 		_oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
@@ -1094,9 +1032,6 @@ const Common::Rect Object::getOldBounds() const {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the animation
- */
 void CAnim::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 	s.read(buffer, 12);
