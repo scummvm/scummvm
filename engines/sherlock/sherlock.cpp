@@ -230,16 +230,11 @@ void SherlockEngine::loadConfig() {
 	syncSoundSettings();
 
 	ConfMan.registerDefault("font", 1);
-	ConfMan.registerDefault("fade_style", true);
-	ConfMan.registerDefault("help_style", false);
-	ConfMan.registerDefault("window_style", 1);
-	ConfMan.registerDefault("portraits_on", true);
-	ConfMan.registerDefault("originalsaveload", false);
 
 	_screen->setFont(ConfMan.getInt("font"));
 	_screen->_fadeStyle = ConfMan.getBool("fade_style");
 	_ui->_helpStyle = ConfMan.getBool("help_style");
-	_ui->_windowStyle = ConfMan.getInt("window_style");
+	_ui->_slideWindows = ConfMan.getBool("window_style");
 	_people->_portraitsOn = ConfMan.getBool("portraits_on");
 }
 
@@ -254,7 +249,7 @@ void SherlockEngine::saveConfig() {
 	ConfMan.setInt("font", _screen->fontNumber());
 	ConfMan.setBool("fade_style", _screen->_fadeStyle);
 	ConfMan.setBool("help_style", _ui->_helpStyle);
-	ConfMan.setInt("window_style", _ui->_windowStyle);
+	ConfMan.setBool("window_style", _ui->_slideWindows);
 	ConfMan.setBool("portraits_on", _people->_portraitsOn);
 
 	ConfMan.flushToDisk();

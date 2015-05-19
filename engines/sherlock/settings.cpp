@@ -108,7 +108,7 @@ void Settings::drawInteface(bool flag) {
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
 		SETUP_POINTS[8][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
-	tempStr = Common::String::format("Windows %s", ui._windowStyle ? "Slide" : "Appear");
+	tempStr = Common::String::format("Windows %s", ui._slideWindows ? "Slide" : "Appear");
 	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
 		SETUP_POINTS[9][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
@@ -123,7 +123,7 @@ void Settings::drawInteface(bool flag) {
 
 	// Show the window immediately, or slide it on-screen
 	if (!flag) {
-		if (!ui._windowStyle) {
+		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
 			ui.summonWindow(true, CONTROLS_Y1);
@@ -189,7 +189,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 9:
-			tempStr = Common::String::format("Windows %s", SETUP_STRS3[ui._windowStyle]);
+			tempStr = Common::String::format("Windows %s", SETUP_STRS3[ui._slideWindows]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 10:
@@ -322,7 +322,7 @@ void Settings::show(SherlockEngine *vm) {
 
 		if ((found == 9 && events._released) || ui._key == 'W') {
 			// Window style
-			ui._windowStyle ^= 1;
+			ui._slideWindows = !ui._slideWindows;
 			updateConfig = true;
 			settings.drawInteface(true);
 		}

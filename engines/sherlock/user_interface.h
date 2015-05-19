@@ -122,7 +122,7 @@ public:
 	bool _endKeyActive;
 	int _invLookFlag;
 	int _temp1;
-	int _windowStyle;
+	bool _slideWindows;
 	bool _helpStyle;
 public:
 	UserInterface(SherlockEngine *vm);

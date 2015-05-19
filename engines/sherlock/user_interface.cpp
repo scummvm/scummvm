@@ -109,7 +109,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_selector = _oldSelector = -1;
 	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1,
 		SHERLOCK_SCREEN_HEIGHT - 1);
-	_windowStyle = 1;	// Sliding windows
+	_slideWindows = true;
 	_find = 0;
 	_oldUse = 0;
 	_endKeyActive = true;
@@ -1999,7 +1999,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	}
 
 	if (firstTime) {
-		if (!_windowStyle) {
+		if (!_slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y,
 				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
@@ -2094,10 +2094,10 @@ void UserInterface::banishWindow(bool slideUp) {
 	Screen &screen = *_vm->_screen;
 
 	if (_windowOpen) {
-		if (slideUp || !_windowStyle) {
+		if (slideUp || !_slideWindows) {
 			// Slide window down
 			// Only slide the window if the window style allows it
-			if (_windowStyle) {
+			if (_slideWindows) {
 				for (int idx = 2; idx < (SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y); idx += 2) {
 					// Shift the window down by 2 lines
 					byte *pSrc = (byte *)screen._backBuffer1.getBasePtr(0, CONTROLS_Y + idx - 2);

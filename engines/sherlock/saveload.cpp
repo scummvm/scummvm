@@ -98,7 +98,7 @@ void SaveManager::drawInterface() {
 			INV_FOREGROUND, "%s", _savegames[idx].c_str());
 	}
 
-	if (!ui._windowStyle) {
+	if (!ui._slideWindows) {
 		screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 	} else {
 		ui.summonWindow();

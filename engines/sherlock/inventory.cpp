@@ -255,7 +255,7 @@ void Inventory::drawInventory(InvNewMode mode) {
 	putInv(SLAM_DONT_DISPLAY);
 
 	if (tempMode != INVENTORY_DONT_DISPLAY) {
-		if (!ui._windowStyle) {
+		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
 			ui.summonWindow(false, CONTROLS_Y1);

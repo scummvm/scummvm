@@ -387,7 +387,7 @@ void Talk::talkTo(const Common::String &filename) {
 					} else {
 						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, "Exit");
 
-						if (!ui._windowStyle) {
+						if (!ui._slideWindows) {
 							screen.slamRect(Common::Rect(0, CONTROLS_Y,
 								SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 						} else {
@@ -534,7 +534,7 @@ void Talk::talk(int objNum) {
 				displayTalk(false);
 				ui._selector = ui._oldSelector = -1;
 
-				if (!ui._windowStyle) {
+				if (!ui._slideWindows) {
 					screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
 						SHERLOCK_SCREEN_HEIGHT));
 				} else {
@@ -1577,7 +1577,7 @@ void Talk::doScript(const Common::String &script) {
 
 		// Open window if it wasn't already open, and text has already been printed
 		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= SWITCH_SPEAKER && str[0] != CARRIAGE_RETURN)) {
-			if (!ui._windowStyle) {
+			if (!ui._slideWindows) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
 				ui.summonWindow();

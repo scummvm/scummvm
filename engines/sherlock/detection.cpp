@@ -60,6 +60,10 @@ static const PlainGameDescriptor sherlockGames[] = {
 
 
 #define GAMEOPTION_ORIGINAL_SAVES	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_FADE_STYLE		GUIO_GAMEOPTIONS2
+#define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
+#define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
+#define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -72,8 +76,49 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	{
+		GAMEOPTION_FADE_STYLE,
+		{
+			_s("Pixellated scene transitions"),
+			_s("When changing scenes, a randomized pixel transition is done"),
+			"fade_style",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_HELP_STYLE,
+		{
+			_s("Don't show hotspots when moving mouse"),
+			_s("Only show hotspot names after you actually click on a hotspot or action button"),
+			"help_style",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_PORTRAITS_ON,
+		{
+			_s("Show character portraits"),
+			_s("Show portraits for the characters when conversing"),
+			"portraits_on",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_WINDOW_STYLE,
+		{
+			_s("Slide dialogs into view"),
+			_s("Slide UI dialogs into view, rather than simply showing them immediately"),
+			"window_style",
+			true
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
+
 
 #include "sherlock/detection_tables.h"
 
