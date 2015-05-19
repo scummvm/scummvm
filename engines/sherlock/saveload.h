@@ -33,6 +33,7 @@
 namespace Sherlock {
 
 #define MAX_SAVEGAME_SLOTS 99
+#define ONSCREEN_FILES_COUNT 5
 #define SHERLOCK_SAVEGAME_VERSION 1
 
 enum SaveMode { SAVEMODE_NONE = 0, SAVEMODE_LOAD = 1, SAVEMODE_SAVE = 2 };

@@ -714,7 +714,7 @@ void UserInterface::doEnvControl() {
 		// Handle selecting buttons, if any
 		saves.highlightButtons(found);
 
-		if (found == 0 || found == 5)
+		if (found == 0 || found == ONSCREEN_FILES_COUNT)
 			saves._envMode = SAVEMODE_NONE;
 	}
 

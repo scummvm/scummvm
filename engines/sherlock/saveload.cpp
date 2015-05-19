@@ -41,7 +41,6 @@ const int ENV_POINTS[6][3] = {
 static const char *const EMPTY_SAVEGAME_SLOT = "-EMPTY-";
 static const char *const SAVEGAME_STR = "SHLK";
 #define SAVEGAME_STR_SIZE 4
-#define ONSCREEN_FILES_COUNT 5
 
 /*----------------------------------------------------------------*/
 

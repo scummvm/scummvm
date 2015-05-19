@@ -1114,13 +1114,14 @@ int Journal::getSearchString(bool printError) {
 				xp -= screen.charWidth(name.lastChar());
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), INV_FOREGROUND);
 				name.deleteLastChar();
-			}
-
-			if (keyState.keycode == Common::KEYCODE_RETURN) {
+			
+			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
 				done = 1;
+			
 			}  else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
 				done = -1;
+			
 			} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && keyState.keycode != Common::KEYCODE_AT && 
 				name.size() < JOURNAL_SEACRH_MAX_CHARS && (xp + screen.charWidth(keyState.ascii)) < JOURNAL_SEARCH_RIGHT) {
 				char ch = toupper(keyState.ascii);
