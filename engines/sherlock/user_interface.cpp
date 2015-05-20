@@ -1159,7 +1159,7 @@ void UserInterface::doInvControl() {
 				if (talk._talkToAbort)
 					return;
 
-				// Now check for the Use and Give actions. If inv_mode is 3,
+				// Now check for the Use and Give actions. If inv_mode is INVMODE_GIVE,
 				// that means GIVE is in effect, _selector is the object being
 				// given, and _find is the target.
 				// The same applies to USE, except if _selector is -1, then USE
