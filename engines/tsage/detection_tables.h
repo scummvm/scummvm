@@ -185,6 +185,22 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld2,
 		GF_CD | GF_ALT_REGIONS | GF_DEMO
 	},
+
+	// The Lost Files of Sherlock Holmes - The Case of the Serrated Scalpel (Logo)
+	{
+		{
+			"sherlock1",
+			"Logo",
+			AD_ENTRY1s("sf3.rlb", "c8e1a82c67c3caf57368eadde13dc15f", 0),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GType_Sherlock1,
+		GF_FLOPPY
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
