@@ -1201,6 +1201,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 	char ident[100];
 	Common::SeekableReadStream *f = NULL;
 	uint num, item_index, i, j;
+	uint16 room = _currentRoom;
 
 	_videoLockOut |= 0x100;
 
@@ -1259,50 +1260,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 		}
 		f->readUint16BE();
 
-		uint16 room = _currentRoom;
 		_currentRoom = f->readUint16BE();
-
-		if (_roomsListPtr) {
-			byte *p = _roomsListPtr;
-			if (room == _currentRoom) {
-				for (;;) {
-					uint16 minNum = READ_BE_UINT16(p); p += 2;
-					if (minNum == 0)
-						break;
-
-					uint16 maxNum = READ_BE_UINT16(p); p += 2;
-
-					 for (uint16 z = minNum; z <= maxNum; z++) {
-						uint16 itemNum = z + 2;
-						Item *item = derefItem(itemNum);
-
-						num = (itemNum - _itemArrayInited);
-						item->state = _roomStates[num].state;
-						item->classFlags = _roomStates[num].classFlags;
-						SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
-						subRoom->roomExitStates = _roomStates[num].roomExitStates;
-					}
-				}
-			} else {
-				for (;;) {
-					uint16 minNum = READ_BE_UINT16(p); p += 2;
-					if (minNum == 0)
-						break;
-
-					uint16 maxNum = READ_BE_UINT16(p); p += 2;
-
-					 for (uint16 z = minNum; z <= maxNum; z++) {
-						uint16 itemNum = z + 2;
-						_itemArrayPtr[itemNum] = 0;
-					}
-				}
-			}
-		}
-
-		if (room != _currentRoom) {
-			_roomsListPtr = 0;
-			loadRoomItems(_currentRoom);
-		}
 	}
 
 	item_index = 1;
@@ -1361,6 +1319,49 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 		}
 	}
 
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS) {
+		if (_roomsListPtr) {
+			byte *p = _roomsListPtr;
+			if (room == _currentRoom) {
+				for (;;) {
+					uint16 minNum = READ_BE_UINT16(p); p += 2;
+					if (minNum == 0)
+						break;
+
+					uint16 maxNum = READ_BE_UINT16(p); p += 2;
+
+					 for (uint16 z = minNum; z <= maxNum; z++) {
+						uint16 itemNum = z + 2;
+						Item *item = derefItem(itemNum);
+
+						num = (itemNum - _itemArrayInited);
+						item->state = _roomStates[num].state;
+						item->classFlags = _roomStates[num].classFlags;
+						SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
+						subRoom->roomExitStates = _roomStates[num].roomExitStates;
+					}
+				}
+			} else {
+				for (;;) {
+					uint16 minNum = READ_BE_UINT16(p); p += 2;
+					if (minNum == 0)
+						break;
+
+					uint16 maxNum = READ_BE_UINT16(p); p += 2;
+
+					 for (uint16 z = minNum; z <= maxNum; z++) {
+						uint16 itemNum = z + 2;
+						_itemArrayPtr[itemNum] = 0;
+					}
+				}
+			}
+		}
+
+		if (room != _currentRoom) {
+			_roomsListPtr = 0;
+			loadRoomItems(_currentRoom);
+		}
+	}
 	// read the variables
 	for (i = 0; i != _numVars; i++) {
 		writeVariable(i, f->readUint16BE());
