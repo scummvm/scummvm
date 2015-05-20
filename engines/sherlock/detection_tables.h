@@ -80,7 +80,8 @@ static const SherlockGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO0()
-		}
+		},
+		GType_RoseTattoo
 	},
 
 	{
