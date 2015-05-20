@@ -145,12 +145,12 @@ public:
 	 * Prints the text passed onto the back buffer at the given position and color.
 	 * The string is then blitted to the screen
 	 */
-	void print(const Common::Point &pt, byte color, const char *formatStr, ...);
+	void print(const Common::Point &pt, byte color, const char *formatStr, ...) GCC_PRINTF(4, 5);
 
 	/**
 	 * Print a strings onto the back buffer without blitting it to the screen
 	 */
-	void gPrint(const Common::Point &pt, byte color, const char *formatStr, ...);
+	void gPrint(const Common::Point &pt, byte color, const char *formatStr, ...) GCC_PRINTF(4, 5);
 
 	/**
 	 * Copies a section of the second back buffer into the main back buffer

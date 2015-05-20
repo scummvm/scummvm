@@ -369,16 +369,16 @@ void Screen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
 		if (slamIt) {
 			print(Common::Point(xStart, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", str[0]);
 			print(Common::Point(xStart + charWidth(str[0]), pt.y + 1),
-				COMMAND_FOREGROUND, str.c_str() + 1);
+				COMMAND_FOREGROUND, "%s", str.c_str() + 1);
 		} else {
 			gPrint(Common::Point(xStart, pt.y), COMMAND_HIGHLIGHTED, "%c", str[0]);
 			gPrint(Common::Point(xStart + charWidth(str[0]), pt.y),
-				COMMAND_FOREGROUND, str.c_str() + 1);
+				COMMAND_FOREGROUND, "%s", str.c_str() + 1);
 		}
 	} else if (slamIt) {
-		print(Common::Point(xStart, pt.y + 1), color, str.c_str());
+		print(Common::Point(xStart, pt.y + 1), color, "%s", str.c_str());
 	} else {
-		gPrint(Common::Point(xStart, pt.y), color, str.c_str());
+		gPrint(Common::Point(xStart, pt.y), color, "%s", str.c_str());
 	}
 }
 

@@ -732,26 +732,26 @@ bool Journal::drawJournal(int direction, int howFar) {
 					screen.gPrint(Common::Point(53, yp), 15, "%s", lineStart.c_str() + 1);
 				} else {
 					width = screen.stringWidth(lineStart.c_str());
-					screen.gPrint(Common::Point(53, yp), PEN_COLOR, lineStart.c_str());
-				}
+					screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", lineStart.c_str());
+				 }
 
 				// Print out the found keyword
 				Common::String lineMatch(matchP, matchP + _find.size());
-				screen.gPrint(Common::Point(53 + width, yp), INV_FOREGROUND, lineMatch.c_str());
+				screen.gPrint(Common::Point(53 + width, yp), INV_FOREGROUND, "%s", lineMatch.c_str());
 				width += screen.stringWidth(lineMatch.c_str());
 
 				// Print remainder of line
-				screen.gPrint(Common::Point(53 + width, yp), PEN_COLOR, matchP + _find.size());
+				screen.gPrint(Common::Point(53 + width, yp), PEN_COLOR, "%s", matchP + _find.size());
 			} else if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(53, yp), 15, _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(53, yp), PEN_COLOR, _lines[temp].c_str());
+				screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		} else {
 			if (_lines[temp].hasPrefix("@")) {
-				screen.gPrint(Common::Point(53, yp), 15, _lines[temp].c_str() + 1);
+				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(53, yp), PEN_COLOR, _lines[temp].c_str());
+				screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		}
 
@@ -1033,7 +1033,7 @@ int Journal::getSearchString(bool printError) {
 			INV_FOREGROUND, "Text Not Found !");
 	} else if (!_find.empty()) {
 		// There's already a search term, display it already
-		screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, _find.c_str());
+		screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
 		name = _find;
 	}
 
@@ -1051,7 +1051,7 @@ int Journal::getSearchString(bool printError) {
 		screen.fillRect(Common::Rect(13, 186, 306, 195), BUTTON_MIDDLE);
 
 		if (!_find.empty()) {
-			screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, _find.c_str());
+			screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
 			name = _find;
 		}
 

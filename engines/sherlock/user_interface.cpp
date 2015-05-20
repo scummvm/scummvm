@@ -230,7 +230,7 @@ void UserInterface::handleInput() {
 					if (_help != -1 && !scene._bgShapes[_bgFound]._description.empty()
 							&& scene._bgShapes[_bgFound]._description[0] != ' ')
 						screen.print(Common::Point(0, INFO_LINE + 1),
-						INFO_FOREGROUND, scene._bgShapes[_bgFound]._description.c_str());
+						INFO_FOREGROUND, "%s", scene._bgShapes[_bgFound]._description.c_str());
 
 					_oldBgFound = _bgFound;
 				}
@@ -603,14 +603,14 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 
 						if (_selector != -1) {
 							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								TALK_FOREGROUND, inv[_selector]._name.c_str());
+								TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
 							screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
 								INFO_FOREGROUND, " on ");
 							screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-								INFO_FOREGROUND, tempStr.c_str());
+								INFO_FOREGROUND, "%s", tempStr.c_str());
 						} else {
 							screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-								INFO_FOREGROUND, tempStr.c_str());
+								INFO_FOREGROUND, "%s", tempStr.c_str());
 						}
 					} else if (temp >= 0 && temp < 1000 && _selector != -1 &&
 							scene._bgShapes[temp]._aType == PERSON) {
@@ -632,14 +632,14 @@ void UserInterface::lookScreen(const Common::Point &pt) {
 						screen.print(Common::Point(xStart, INFO_LINE + 1),
 							INFO_FOREGROUND, "Give ");
 						screen.print(Common::Point(xStart + width, INFO_LINE + 1),
-							TALK_FOREGROUND, inv[_selector]._name.c_str());
+							TALK_FOREGROUND, "%s", inv[_selector]._name.c_str());
 						screen.print(Common::Point(xStart + width + width1, INFO_LINE + 1),
 							INFO_FOREGROUND, " to ");
 						screen.print(Common::Point(xStart + width + width1 + width2, INFO_LINE + 1),
-							INFO_FOREGROUND, tempStr.c_str());
+							INFO_FOREGROUND, "%s", tempStr.c_str());
 					}
 				} else {
-					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, tempStr.c_str());
+					screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempStr.c_str());
 				}
 
 				_infoFlag = true;
@@ -664,7 +664,7 @@ void UserInterface::lookInv() {
 			if (temp < inv._holdings) {
 				clearInfo();
 				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND,
-					inv[temp]._description.c_str());
+					"%s", inv[temp]._description.c_str());
 				_infoFlag = true;
 				_oldLook = temp;
 			}
@@ -1896,7 +1896,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 		// Print out the line
 		Common::String line(lineStartP, msgP);
 		screen.gPrint(Common::Point(16, CONTROLS_Y + 12 + lineNum * 9),
-			INV_FOREGROUND, line.c_str());
+			INV_FOREGROUND, "%s", line.c_str());
 
 		if (!endOfStr)
 			// Start next line at start of the nxet word after space
@@ -2148,7 +2148,7 @@ void UserInterface::checkUseAction(const UseType *use, const Common::String &inv
 		} else if (messages == nullptr) {
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
 		} else {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[0]);
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[0]);
 		}
 
 		_infoFlag = true;
@@ -2174,7 +2174,7 @@ void UserInterface::checkAction(ActionType &action, const char *const messages[]
 		// Invalid action, to print error message
 		_infoFlag = true;
 		clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[action._cAnimNum]);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[action._cAnimNum]);
 		_infoFlag = true;
 
 		// Set how long to show the message

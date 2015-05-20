@@ -865,13 +865,13 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 		int messageNum = atoi(name.c_str() + 1);
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[messageNum]);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[messageNum]);
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, name.c_str() + 1);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", name.c_str() + 1);
 		printed = true;
 		ui._menuCounter = 25;
 	}
@@ -955,7 +955,7 @@ int Object::pickUpObject(const char *const messages[]) {
 
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[message]);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[message]);
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up

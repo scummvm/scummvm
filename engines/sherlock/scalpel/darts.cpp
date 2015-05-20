@@ -235,10 +235,10 @@ void Darts::showNames(int playerNum) {
 
 	if (playerNum != 0)
 		screen.print(Common::Point(STATUS_INFO_X + 50, STATUS_INFO_Y), PLAYER_COLOR + 3,
-			_opponent.c_str());
+			"%s", _opponent.c_str());
 	else
 		screen.print(Common::Point(STATUS_INFO_X + 50, STATUS_INFO_Y), color,
-			_opponent.c_str());
+			"%s", _opponent.c_str());
 
 	screen._backBuffer1.fillRect(Common::Rect(STATUS_INFO_X + 50, STATUS_INFO_Y + 10,
 		STATUS_INFO_X + 81, STATUS_INFO_Y + 12), color);

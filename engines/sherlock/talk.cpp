@@ -772,23 +772,23 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 					// Are we drawing the first line?
 					if (lineStartP == msg.c_str()) {
 						// We are, so print the number and then the text
-						screen.print(Common::Point(16, lineY), color, number.c_str());
+						screen.print(Common::Point(16, lineY), color, "%s", number.c_str());
 					}
 
 					// Draw the line with an indent
-					screen.print(Common::Point(30, lineY), color, sLine.c_str());
+					screen.print(Common::Point(30, lineY), color, "%s", sLine.c_str());
 				} else {
-					screen.print(Common::Point(16, lineY), color, sLine.c_str());
+					screen.print(Common::Point(16, lineY), color, "%s", sLine.c_str());
 				}
 			} else {
 				if (numberFlag) {
 					if (lineStartP == msg.c_str()) {
-						screen.gPrint(Common::Point(16, lineY - 1), color, number.c_str());
+						screen.gPrint(Common::Point(16, lineY - 1), color, "%s", number.c_str());
 					}
 
-					screen.gPrint(Common::Point(30, lineY - 1), color, sLine.c_str());
+					screen.gPrint(Common::Point(30, lineY - 1), color, "%s", sLine.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, lineY - 1), color, sLine.c_str());
+					screen.gPrint(Common::Point(16, lineY - 1), color, "%s", sLine.c_str());
 				}
 			}
 
@@ -1367,7 +1367,7 @@ void Talk::doScript(const Common::String &script) {
 					tempString += str[idx + 1];
 				str += str[0];
 
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, tempString.c_str());
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempString.c_str());
 				ui._menuCounter = 30;
 				break;
 
@@ -1426,9 +1426,9 @@ void Talk::doScript(const Common::String &script) {
 				// If the window is open, display the name directly on-screen.
 				// Otherwise, simply draw it on the back buffer
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), TALK_FOREGROUND, NAMES[_speaker & 127]);
+					screen.print(Common::Point(16, yp), TALK_FOREGROUND, "%s", NAMES[_speaker & 127]);
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, NAMES[_speaker & 127]);
+					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, "%s", NAMES[_speaker & 127]);
 					openTalkWindow = true;
 				}
 
@@ -1466,16 +1466,16 @@ void Talk::doScript(const Common::String &script) {
 			// If the speaker indicates a description file, print it in yellow
 			if (_speaker != -1) {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 					openTalkWindow = true;
 				}
 			} else {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 					openTalkWindow = true;
 				}
 			}
