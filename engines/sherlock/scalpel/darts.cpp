@@ -347,7 +347,7 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 		screen._backBuffer1.transBlitFrom(frame, drawPos);
 		screen.slamArea(drawPos.x, drawPos.y, frame._width, frame._height);
 
-		// Handle erasing old dart strs
+		// Handle erasing old dart frame area
 		if (!oldDrawBounds.isEmpty())
 			screen.slamRect(oldDrawBounds);
 

@@ -1435,7 +1435,7 @@ void Talk::doScript(const Common::String &script) {
 				yp += 9;
 			}
 
-			// Find amound of text that will fit on the line
+			// Find amount of text that will fit on the line
 			int width = 0, idx = 0;
 			do {
 				width += screen.charWidth(str[idx]);
