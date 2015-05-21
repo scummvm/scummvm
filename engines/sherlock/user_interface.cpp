@@ -91,13 +91,13 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 
 	_bgFound = 0;
 	_oldBgFound = -1;
-	_keycode = Common::KEYCODE_INVALID;
+	_keyPress = '\0';
 	_helpStyle = false;
 	_menuCounter = 0;
 	_menuMode = STD_MODE;
 	_help = _oldHelp = 0;
 	_lookHelp = 0;
-	_key = _oldKey = 0;
+	_key = _oldKey = '\0';
 	_temp = _oldTemp = 0;
 	_temp1 = 0;
 	_invLookFlag = 0;
@@ -152,13 +152,13 @@ void UserInterface::handleInput() {
 
 	Common::Point pt = events.mousePos();
 	_bgFound = scene.findBgShape(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1));
-	_keycode = Common::KEYCODE_INVALID;
+	_keyPress = '\0';
 
 	// Check kbd and set the mouse released flag if Enter or space is pressed.
 	// Otherwise, the pressed _key is stored for later use
 	if (events.kbHit()) {
 		Common::KeyState keyState = events.getKey();
-		_keycode = keyState.ascii;
+		_keyPress = keyState.ascii;
 
 		if (keyState.keycode == Common::KEYCODE_x && keyState.flags & Common::KBD_ALT) {
 			_vm->quitGame();
@@ -315,8 +315,7 @@ void UserInterface::handleInput() {
 	//
 	// Do input processing
 	//
-	if (events._pressed || events._released || events._rightPressed ||
-			_keycode != Common::KEYCODE_INVALID || _pause) {
+	if (events._pressed || events._released || events._rightPressed || _keyPress || _pause) {
 		if (((events._released && (_helpStyle || _help == -1)) || (events._rightReleased && !_helpStyle)) &&
 				(pt.y <= CONTROLS_Y) && (_menuMode == STD_MODE)) {
 			// The mouse was clicked in the playing area with no action buttons down.
@@ -383,9 +382,8 @@ void UserInterface::handleInput() {
 		// As long as there isn't an open window, do main input processing.
 		// Windows are opened when in TALK, USE, INV, and GIVE modes
 		if ((!_windowOpen && !_menuCounter && pt.y > CONTROLS_Y) ||
-				_keycode != Common::KEYCODE_INVALID) {
-			if (events._pressed || events._released || _pause ||
-					_keycode != Common::KEYCODE_INVALID)
+				_keyPress) {
+			if (events._pressed || events._released || _pause || _keyPress)
 				doMainControl();
 		}
 
@@ -716,8 +714,8 @@ void UserInterface::doEnvControl() {
 			saves._envMode = SAVEMODE_NONE;
 	}
 
-	if (_keycode) {
-		_key = toupper(_keycode);
+	if (_keyPress) {
+		_key = toupper(_keyPress);
 
 		// Escape _key will close the dialog
 		if (_key == Common::KEYCODE_ESCAPE)
@@ -769,7 +767,7 @@ void UserInterface::doEnvControl() {
 			_windowBounds.top = CONTROLS_Y1;
 
 			events._pressed = events._released = _keyboardInput = false;
-			_keycode = Common::KEYCODE_INVALID;
+			_keyPress = '\0';
 		} else if ((found == 1 && events._released) || _key == 'L') {
 			saves._envMode = SAVEMODE_LOAD;
 			if (_selector != -1) {
@@ -787,7 +785,7 @@ void UserInterface::doEnvControl() {
 					banishWindow(1);
 					_windowBounds.top = CONTROLS_Y1;
 					_key = _oldKey = -1;
-					_keycode = Common::KEYCODE_INVALID;
+					_keyPress = '\0';
 					_keyboardInput = false;
 				} else {
 					if (!talk._talkToAbort) {
@@ -903,11 +901,11 @@ void UserInterface::doEnvControl() {
 					if (_key == Common::KEYCODE_ESCAPE)
 						_key = 'N';
 
-					if (_key == Common::KEYCODE_RETURN || _key == Common::KEYCODE_SPACE) {
+					if (_key == Common::KEYCODE_RETURN || _key == ' ') {
 						events._pressed = false;
 						events._released = true;
 						events._oldButtons = 0;
-						_keycode = Common::KEYCODE_INVALID;
+						_keyPress = '\0';
 					}
 				}
 
@@ -957,7 +955,7 @@ void UserInterface::doEnvControl() {
 						banishWindow();
 						_windowBounds.top = CONTROLS_Y1;
 						_key = _oldKey = -1;
-						_keycode = Common::KEYCODE_INVALID;
+						_keyPress = '\0';
 						_keyboardInput = false;
 					} else {
 						if (!talk._talkToAbort) {
@@ -1041,12 +1039,12 @@ void UserInterface::doInvControl() {
 			_selector = -1;
 	}
 
-	if (_keycode != Common::KEYCODE_INVALID) {
-		_key = toupper(_keycode);
+	if (_keyPress) {
+		_key = toupper(_keyPress);
 
 		if (_key == Common::KEYCODE_ESCAPE)
 			// Escape will also 'E'xit out of inventory display
-			_key = Common::KEYCODE_e;
+			_key = 'E';
 
 		if (_key == 'E' || _key == 'L' || _key == 'U' || _key == 'G'
 				|| _key == '-' || _key == '+') {
@@ -1106,16 +1104,14 @@ void UserInterface::doInvControl() {
 			inv.loadGraphics();
 			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
-		} else if (((found == 5 && events._released) || _key == Common::KEYCODE_MINUS
-				|| _key == Common::KEYCODE_KP_MINUS) && inv._invIndex > 0) {
+		} else if (((found == 5 && events._released) || _key == '-') && inv._invIndex > 0) {
 			--inv._invIndex;
 			screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "^");
 			inv.freeGraphics();
 			inv.loadGraphics();
 			inv.putInv(SLAM_DISPLAY);
 			inv.invCommands(true);
-		} else if (((found == 6 && events._released) || _key == Common::KEYCODE_PLUS
-				|| _key == Common::KEYCODE_KP_PLUS) &&  (inv._holdings - inv._invIndex) > 6) {
+		} else if (((found == 6 && events._released) || _key == '+') &&  (inv._holdings - inv._invIndex) > 6) {
 			++inv._invIndex;
 			screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1), COMMAND_HIGHLIGHTED, "_");
 			inv.freeGraphics();
@@ -1208,7 +1204,7 @@ void UserInterface::doLookControl() {
 	Screen &screen = *_vm->_screen;
 
 	_key = _oldKey = -1;
-	_keyboardInput = (_keycode != Common::KEYCODE_INVALID);
+	_keyboardInput = (_keyPress != '\0');
 
 	if (events._released || events._rightReleased || _keyboardInput) {
 		// Is an inventory object being looked at?
@@ -1281,12 +1277,12 @@ void UserInterface::doMainControl() {
 				_key = COMMANDS[_temp];
 		}
 		--_temp;
-	} else if (_keycode != Common::KEYCODE_INVALID) {
+	} else if (_keyPress) {
 		// Keyboard control
 		_keyboardInput = true;
 
-		if (_keycode >= Common::KEYCODE_a && _keycode <= Common::KEYCODE_z) {
-			const char *c = strchr(COMMANDS, _keycode);
+		if (_keyPress >= 'A' && _keyPress <= 'Z') {
+			const char *c = strchr(COMMANDS, _keyPress);
 			_temp = !c ? 12 : c - COMMANDS;
 		} else {
 			_temp = 12;
@@ -1515,8 +1511,8 @@ void UserInterface::doTalkControl() {
 			_selector = -1;
 	}
 
-	if (_keycode != Common::KEYCODE_INVALID) {
-		_key = toupper(_keycode);
+	if (_keyPress) {
+		_key = toupper(_keyPress);
 		if (_key == Common::KEYCODE_ESCAPE)
 			_key = 'E';
 
@@ -1757,7 +1753,7 @@ void UserInterface::journalControl() {
 
 	// Finish up
 	_infoFlag = _keyboardInput = false;
-	_keycode = Common::KEYCODE_INVALID;
+	_keyPress = '\0';
 	_windowOpen = false;
 	_windowBounds.top = CONTROLS_Y1;
 	_key = -1;

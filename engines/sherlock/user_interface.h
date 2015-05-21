@@ -73,10 +73,10 @@ private:
 	ImageFile *_controls;
 	int _bgFound;
 	int _oldBgFound;
-	int _keycode;
+	char _keyPress;
 	int _lookHelp;
 	int _help, _oldHelp;
-	int _key, _oldKey;
+	char _key, _oldKey;
 	int _temp, _oldTemp;
 	int _oldLook;
 	bool _keyboardInput;

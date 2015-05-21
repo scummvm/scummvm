@@ -241,7 +241,7 @@ void Settings::show(SherlockEngine *vm) {
 				if (ui._key == Common::KEYCODE_RETURN || ui._key == Common::KEYCODE_SPACE) {
 					events._pressed = false;
 					events._oldButtons = 0;
-					ui._keycode = Common::KEYCODE_INVALID;
+					ui._keyPress = '\0';
 					events._released = true;
 				}
 			}
@@ -327,7 +327,7 @@ void Settings::show(SherlockEngine *vm) {
 	if (updateConfig)
 		vm->saveConfig();
 
-	ui._keycode = Common::KEYCODE_INVALID;
+	ui._keyPress = '\0';
 	ui._keyboardInput = false;
 	ui._windowBounds.top = CONTROLS_Y1;
 	ui._key = -1;
