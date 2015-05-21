@@ -189,9 +189,9 @@ static const tSageGameDescription gameDescriptions[] = {
 	// The Lost Files of Sherlock Holmes - The Case of the Serrated Scalpel (Logo)
 	{
 		{
-			"sherlock1",
-			"Logo",
-			AD_ENTRY1s("sf3.rlb", "c8e1a82c67c3caf57368eadde13dc15f", 0),
+			"sherlock-logo",
+			"",
+			AD_ENTRY1s("sf3.rlb", "153f9b93eda4e95578e31be30e69b5e5", 50419),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,

@@ -60,6 +60,19 @@ void SherlockLogo::quitGame() {
 
 /*--------------------------------------------------------------------------*/
 
+void SherlockSceneHandler::postInit(SceneObjectList *OwnerList) {
+	_delayTicks = 2;
+
+	GLOBALS._soundManager.postInit();
+	GLOBALS._soundManager.buildDriverList(true);
+	GLOBALS._soundManager.installConfigDrivers();
+
+	GLOBALS._sceneManager.setNewScene(10);
+	GLOBALS._game->start();
+}
+
+/*--------------------------------------------------------------------------*/
+
 void SherlockLogoScene::Action1::signal() {
 	SherlockLogoScene &scene = *(SherlockLogoScene *)GLOBALS._sceneManager._scene;
 

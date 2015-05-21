@@ -51,6 +51,11 @@ public:
 	virtual bool canLoadGameStateCurrently();
 };
 
+class SherlockSceneHandler : public SceneHandler {
+public:
+	virtual void postInit(SceneObjectList *OwnerList);
+};
+
 class SherlockLogoScene: public Scene {
 	class Action1 : public Action {
 	public:

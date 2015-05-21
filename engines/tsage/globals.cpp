@@ -160,7 +160,7 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 
 	case GType_Sherlock1:
 		_inventory = nullptr;
-		_sceneHandler = new SceneHandler();
+		_sceneHandler = new Sherlock::SherlockSceneHandler();
 		_game = new Sherlock::SherlockLogo();
 		break;
 	}
