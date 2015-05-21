@@ -946,7 +946,7 @@ void UserInterface::doEnvControl() {
 				// Are we already in Load mode?
 				if (saves._envMode == SAVEMODE_LOAD) {
 					saves.loadGame(_selector + 1);
-				} else if (saves._envMode == SAVEMODE_SAVE || _selector == MAX_SAVEGAME_SLOTS) {
+				} else if (saves._envMode == SAVEMODE_SAVE || saves.isSlotEmpty(_selector)) {
 					// We're already in save mode, or pointing to an empty save slot
 					if (saves.checkGameOnScreen(_selector))
 						_oldSelector = _selector;

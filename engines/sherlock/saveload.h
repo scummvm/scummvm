@@ -135,6 +135,11 @@ public:
 	 * Prompts the user to enter a description in a given slot
 	 */
 	bool promptForDescription(int slot);
+
+	/**
+	 * Returns true if the given save slot is empty
+	 */
+	bool isSlotEmpty(int slot) const;
 };
 
 } // End of namespace Sherlock

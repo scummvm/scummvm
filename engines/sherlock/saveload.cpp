@@ -401,7 +401,7 @@ bool SaveManager::promptForDescription(int slot) {
 	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
 
 	Common::String saveName = _savegames[slot];
-	if (saveName.equalsIgnoreCase(EMPTY_SAVEGAME_SLOT)) {
+	if (isSlotEmpty(slot)) {
 		// It's an empty slot, so start off with an empty save name
 		saveName = "";
 
@@ -475,6 +475,10 @@ bool SaveManager::promptForDescription(int slot) {
 	}
 
 	return done == 1;
+}
+
+bool SaveManager::isSlotEmpty(int slot) const {
+	return _savegames[slot].equalsIgnoreCase(EMPTY_SAVEGAME_SLOT);
 }
 
 } // End of namespace Sherlock
