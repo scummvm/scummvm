@@ -1041,6 +1041,7 @@ int Journal::getSearchString(bool printError) {
 
 	if (printError) {
 		// Give time for user to see the message
+		events.setButtonState();
 		for (int idx = 0; idx < 40 && !_vm->shouldQuit() && !events.kbHit() && !events._released; ++idx) {
 			events.pollEvents();
 			events.setButtonState();
@@ -1048,7 +1049,7 @@ int Journal::getSearchString(bool printError) {
 		}
 
 		events.clearKeyboard();
-		screen.fillRect(Common::Rect(13, 186, 306, 195), BUTTON_MIDDLE);
+		screen._backBuffer1.fillRect(Common::Rect(13, 186, 306, 195), BUTTON_MIDDLE);
 
 		if (!_find.empty()) {
 			screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
