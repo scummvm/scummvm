@@ -64,6 +64,7 @@ public:
 	GfxManager _gfxManager2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
+	void finish();
 };
 
 } // End of namespace Sherlock

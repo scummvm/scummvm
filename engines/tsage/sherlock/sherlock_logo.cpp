@@ -103,18 +103,189 @@ void SherlockLogoScene::Action1::signal() {
 		scene._gfxManager2.fillRect(scene._rect1, 0);
 		scene._gfxManager2.deactivate();
 		//word_2B4AA = 3;
-
 		setDelay(10);
 		break;
 
 	case 6:
 		GLOBALS._scenePalette.loadPalette(12);
 		GLOBALS._scenePalette.refresh();
+		setDelay(1);
 		break;
 
-	// TODO
+	case 7:
+		scene._object1.setVisage("0012.vis");
+		scene._object1._strip = 1;
+		scene._object1._frame = 1;
+		scene._object1.changeZoom(100);
+		scene._object1.setPosition(Common::Point(170, 142));
+		scene._object1._numFrames = 7;
+		scene._object1.animate(ANIM_MODE_5, nullptr);
+		ADD_MOVER(scene._object1, 158, 71);
+		break;
+
+	case 8:
+		GLOBALS._scenePalette.addFader(scene._palette3._palette, 256, 40, this);
+		break;
+
+	case 9:
+		scene._object2.postInit(nullptr);
+		scene._object2.setVisage("0014.vis");
+		scene._object2._strip = 1;
+		scene._object2._frame = 1;
+		scene._object2.setPosition(Common::Point(152, 98));
+		scene._object2.changeZoom(100);
+		scene._object2.animate(ANIM_MODE_NONE, nullptr);
+		setDelay(120);
+		break;
+
+	case 10:
+		scene._object3.postInit();
+		scene._object2.setVisage("0018.vis");
+		scene._object2._strip = 1;
+		scene._object2._frame = 1;
+		scene._object2.setPosition(Common::Point(33, 91));
+		scene._object2.changeZoom(100);
+		scene._object2.animate(ANIM_MODE_NONE, nullptr);
+		setDelay(5);
+		break;
+
+	case 11:
+		scene._object3._frame = 2;
+		scene._object3.setPosition(Common::Point(44, 124));
+		setDelay(5);
+		break;
+
+	case 12:
+		scene._object3._frame = 3;
+		scene._object3.setPosition(Common::Point(64, 153));
+		setDelay(5);
+		break;
+
+	case 13:
+		scene._object3._frame = 4;
+		scene._object3.setPosition(Common::Point(87, 174));
+		setDelay(5);
+		break;
+
+	case 14:
+		scene._object3._frame = 5;
+		scene._object3.setPosition(Common::Point(114, 191));
+		setDelay(5);
+		break;
+
+	case 15:
+		scene._object3._frame = 6;
+		scene._object3.setPosition(Common::Point(125, 184));
+		setDelay(5);
+		break;
+
+	case 16:
+		scene._object3._frame = 7;
+		scene._object3.setPosition(Common::Point(154, 187));
+		setDelay(5);
+		break;
+
+	case 17:
+		scene._object3._frame = 8;
+		scene._object3.setPosition(Common::Point(181, 182));
+		setDelay(5);
+		break;
+
+	case 18:
+		scene._object3._frame = 9;
+		scene._object3.setPosition(Common::Point(191, 167));
+		setDelay(5);
+		break;
+
+	case 19:
+		scene._object3._frame = 10;
+		scene._object3.setPosition(Common::Point(190, 150));
+		setDelay(5);
+		break;
+
+	case 20:
+		scene._object3._frame = 11;
+		scene._object3.setPosition(Common::Point(182, 139));
+		setDelay(5);
+		break;
+
+	case 21:
+		scene._object3._frame = 11;
+		scene._object3.setPosition(Common::Point(170, 130));
+		setDelay(5);
+		break;
+
+	case 22:
+		scene._object3._frame = 11;
+		scene._object3.setPosition(Common::Point(158, 121));
+		setDelay(8);
+		break;
+
+	case 23:
+		scene._object3.hide();
+		scene._object4.show();
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+
+	case 24:
+		scene._object4._frame = 2;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+
+	case 25:
+		scene._object2.remove();
+		setDelay(1);
+		break;
+
+	case 26:
+		scene._object4._frame = 3;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+
+	case 27:
+		scene._object4._frame = 4;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+		break;
+
+	case 28:
+		scene._object4._frame = 5;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+		break;
+
+	case 29:
+		scene._object4._frame = 6;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+		break;
+
+	case 30:
+		scene._object4._frame = 7;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+		break;
+
+	case 31:
+		scene._object4._frame = 8;
+		scene._object4.setPosition(Common::Point(155, 94));
+		setDelay(8);
+		break;
+
+	case 32:
+		setDelay(180);
+		break;
 
 	default:
+		scene.finish();
+		remove();
 		break;
 	}
 }
@@ -143,6 +314,9 @@ void SherlockLogoScene::postInit(SceneObjectList *OwnerList) {
 	setAction(&_action1);
 }
 
+void SherlockLogoScene::finish() {
+	g_vm->quitGame();
+}
 
 } // End of namespace Sherlock
 
