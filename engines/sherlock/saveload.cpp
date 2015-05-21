@@ -358,7 +358,7 @@ bool SaveManager::checkGameOnScreen(int slot) {
 	Screen &screen = *_vm->_screen;
 
 	// Check if it's already on-screen
-	if (slot != -1 && (slot < _savegameIndex || slot >= (_savegameIndex + 5))) {
+	if (slot != -1 && (slot < _savegameIndex || slot >= (_savegameIndex + ONSCREEN_FILES_COUNT))) {
 		_savegameIndex = slot;
 
 		screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
