@@ -682,6 +682,7 @@ void UserInterface::doEnvControl() {
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	static const char ENV_COMMANDS[7] = "ELSUDQ";
+
 	byte color;
 
 	_key = _oldKey = -1;
@@ -710,7 +711,7 @@ void UserInterface::doEnvControl() {
 		// Handle selecting buttons, if any
 		saves.highlightButtons(found);
 
-		if (found == 0 || found == ONSCREEN_FILES_COUNT)
+		if (found == 0 || found == 5)
 			saves._envMode = SAVEMODE_NONE;
 	}
 
@@ -869,7 +870,7 @@ void UserInterface::doEnvControl() {
 					moreKeys = _key == 'D';
 				}
 			} while (saves._savegameIndex < (MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT) && moreKeys);
-		} else if ((found == ONSCREEN_FILES_COUNT && events._released) || _key == 'Q') {
+		} else if ((found == 5 && events._released) || _key == 'Q') {
 			clearWindow();
 			screen.print(Common::Point(0, CONTROLS_Y + 20), INV_FOREGROUND, "Are you sure you wish to Quit ?");
 			screen.vgaBar(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y + 10), BORDER_COLOR);
@@ -1867,7 +1868,7 @@ void UserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	// Loop through displaying up to five lines
 	bool endOfStr = false;
 	const char *msgP = str.c_str();
-	for (int lineNum = 0; lineNum < 5 && !endOfStr; ++lineNum) {
+	for (int lineNum = 0; lineNum < ONSCREEN_FILES_COUNT && !endOfStr; ++lineNum) {
 		int width = 0;
 		const char *lineStartP = msgP;
 
