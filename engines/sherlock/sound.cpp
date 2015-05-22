@@ -92,7 +92,7 @@ byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
 	int16 ref = 0;
 
 	// clip bad ADPCM-4 sample
-	CLIP<int16>(samp, 0, 63);
+	samp = CLIP<int16>(samp, 0, 63);
 
 	ref = reference + creativeADPCM_ScaleMap[samp];
 	if (ref > 0xff) {
