@@ -611,8 +611,10 @@ bool ScalpelEngine::showOfficeCutscene() {
 		} else
 			finished = _events->delay(19000);
 
-		_events->clearEvents();
-		finished = _events->delay(500);
+		if (finished) {
+			_events->clearEvents();
+			finished = _events->delay(500);
+		}
 	}
 
 	if (finished)
