@@ -99,6 +99,21 @@ static const SherlockGameDescription gameDescriptions[] = {
 		GType_RoseTattoo,
 	},
 
+	{
+		// Case of the Rose Tattoo - German CD
+		// Provided by m_kiewitz
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "5027aa72f0d263ed3b1c764a6c397911", 873864),
+  			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_RoseTattoo,
+	},
+
 	{ AD_TABLE_END_MARKER, (GameType)0 }
 };
 
