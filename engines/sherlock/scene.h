@@ -110,7 +110,6 @@ class Scene {
 private:
 	SherlockEngine *_vm;
 	Common::String _rrmName;
-	int _selector;
 	bool _lookHelp;
 	bool _loadingSavedGame;
 

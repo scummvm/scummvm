@@ -44,7 +44,6 @@ static const char *const SETUP_STRS0[2] = { "off", "on" };
 static const char *const SETUP_STRS1[2] = { "Directly", "by Pixel" };
 static const char *const SETUP_STRS2[2] = { "Left", "Right" };
 static const char *const SETUP_STRS3[2] = { "Appear", "Slide" };
-static const char *const SETUP_STRS4[2] = { "Slow", "Fast" };
 static const char *const SETUP_STRS5[2] = { "Left", "Right" };
 static const char *const SETUP_NAMES[12] = {
 	"Exit", "M", "V", "S", "B", "New Font Style", "J", "Calibrate Joystick", "F", "W", "P", "K"
