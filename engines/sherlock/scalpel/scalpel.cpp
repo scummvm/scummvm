@@ -668,12 +668,8 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
 void ScalpelEngine::startScene() {
 	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
 		// Show the map
-		if (_sound->_musicOn) {
-			if (_sound->loadSong(100)) {
-				if (_sound->_music)
-					_sound->startSong();
-			}
-		}
+		if (_sound->_musicOn && _sound->loadSong(100))
+			_sound->startSong();
 
 		_scene->_goToScene = _map->show();
 
@@ -693,10 +689,8 @@ void ScalpelEngine::startScene() {
 	case RESCUE_ANNA:
 	case MOOREHEAD_DEATH:
 	case BRUMWELL_SUICIDE:
-		if (_sound->_musicOn && _sound->loadSong(_scene->_goToScene)) {
-			if (_sound->_music)
-				_sound->startSong();
-		}
+		if (_sound->_musicOn && _sound->loadSong(_scene->_goToScene))
+			_sound->startSong();
 
 		switch (_scene->_goToScene) {
 		case BLACKWOOD_CAPTURE:

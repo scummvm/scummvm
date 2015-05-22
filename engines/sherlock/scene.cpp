@@ -446,10 +446,8 @@ bool Scene::loadScene(const Common::String &filename) {
 	checkInventory();
 
 	// Handle starting any music for the scene
-	if (sound._musicOn && sound.loadSong(_currentScene)) {
-		if (sound._music)
-			sound.startSong();
-	}
+	if (sound._musicOn && sound.loadSong(_currentScene))
+		sound.startSong();
 
 	// Load walking images if not already loaded
 	people.loadWalk();

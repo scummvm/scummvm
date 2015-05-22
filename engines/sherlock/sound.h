@@ -49,7 +49,7 @@ private:
 	byte decodeSample(byte sample, byte& reference, int16& scale);
 public:
 	bool _digitized;
-	bool _music;
+	bool _musicPlaying;
 	int _voices;
 	bool _soundOn;
 	bool _musicOn;

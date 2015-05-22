@@ -71,7 +71,7 @@ void Settings::drawInteface(bool flag) {
 	screen.makeButton(Common::Rect(SETUP_POINTS[0][0], SETUP_POINTS[0][1], SETUP_POINTS[0][2], SETUP_POINTS[0][1] + 10),
 		SETUP_POINTS[0][3] - screen.stringWidth("Exit") / 2, "Exit");
 
-	tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._music]);
+	tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._musicOn]);
 	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
 		SETUP_POINTS[1][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
@@ -154,7 +154,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 		// Print the button text
 		switch (idx) {
 		case 1:
-			tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._music]);
+			tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._musicOn]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 2:
@@ -255,14 +255,11 @@ void Settings::show(SherlockEngine *vm) {
 
 		if ((found == 1 && events._released) || ui._key == 'M') {
 			// Toggle music
-			if (sound._music) {
-				sound.stopSound();
-				sound._music = false;
-			}
-			else {
-				sound._music = true;
+			sound._musicOn = !sound._musicOn;
+			if (!sound._musicOn)
+				sound.stopMusic();
+			else
 				sound.startSong();
-			}
 
 			updateConfig = true;
 			settings.drawInteface(true);

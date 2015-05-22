@@ -52,7 +52,7 @@ static const uint8 creativeADPCM_AdjustMap[64] = {
 
 Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
-	_music = false;
+	_musicPlaying = false;
 	_voices = 0;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
@@ -78,7 +78,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
-	_music = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
+	_musicOn = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
 	_voices = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute") ? 1 : 0;
 }
 
@@ -202,6 +202,9 @@ void Sound::stopSound() {
 }
 
 void Sound::playMusic(const Common::String &name) {
+	if (!_musicOn)
+		return;
+
 	// TODO
 	warning("Sound::playMusic %s", name.c_str());
 	Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
@@ -223,6 +226,8 @@ void Sound::playMusic(const Common::String &name) {
 void Sound::stopMusic() {
 	// TODO
 	warning("TODO: Sound::stopMusic");
+
+	_musicPlaying = false;
 }
 
 int Sound::loadSong(int songNumber) {
@@ -232,8 +237,13 @@ int Sound::loadSong(int songNumber) {
 }
 
 void Sound::startSong() {
+	if (!_musicOn)
+		return;
+
 	// TODO
 	warning("TODO: Sound::startSong");
+
+	_musicPlaying = true;
 }
 
 void Sound::freeSong() {

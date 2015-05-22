@@ -218,7 +218,7 @@ void SherlockEngine::loadConfig() {
 
 void SherlockEngine::saveConfig() {
 	ConfMan.setBool("mute", !_sound->_digitized);
-	ConfMan.setBool("music_mute", !_sound->_music);
+	ConfMan.setBool("music_mute", !_sound->_musicOn);
 	ConfMan.setBool("speech_mute", !_sound->_voices);
 
 	ConfMan.setInt("font", _screen->fontNumber());
