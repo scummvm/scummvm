@@ -53,8 +53,15 @@ enum {
 	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
 };
 
-extern const char *const NAMES[MAX_PEOPLE];
-extern const char PORTRAITS[MAX_PEOPLE][5];
+struct PersonData {
+	const char *_name;
+	const char *_portrait;
+	const byte *_stillSequences;
+	const byte *_talkSequences;
+
+	PersonData(const char *name, const char *portrait, const byte *stillSequences, const byte *talkSequences) :
+		_name(name), _portrait(portrait), _stillSequences(stillSequences), _talkSequences(talkSequences) {}
+};
 
 class SherlockEngine;
 
@@ -73,6 +80,7 @@ private:
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
 public:
+	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
 	Common::Point _walkDest;
 	Common::Point _hSavedPos;

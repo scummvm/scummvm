@@ -131,6 +131,7 @@ void Journal::loadJournalLocations() {
 }
 
 void Journal::loadJournalFile(bool alreadyLoaded) {
+	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
@@ -152,7 +153,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			// Find the person being referred to
 			talk._talkTo = -1;
 			for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
-				Common::String portrait = PORTRAITS[idx];
+				Common::String portrait = people[idx]._portrait;
 				Common::String numStr(portrait.c_str(), portrait.c_str() + 4);
 
 				if (locStr == numStr) {
@@ -222,7 +223,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			journalString += "the Inspector";
 			break;
 		default:
-			journalString += NAMES[talk._talkTo];
+			journalString += people._characters[talk._talkTo]._name;
 			break;
 		}
 		journalString += ", \"";
@@ -283,7 +284,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 						else if (talk._talkTo == 2)
 							journalString += "The Inspector";
 						else
-							journalString += NAMES[talk._talkTo];
+							journalString += people._characters[talk._talkTo]._name;
 
 						const byte *strP = replyP + 1;
 						byte v;
@@ -330,7 +331,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			else if (c == 2)
 				journalString += "the Inspector";
 			else
-				journalString += NAMES[c];
+				journalString += people._characters[c]._name;
 
 			const byte *strP = replyP;
 			byte v;

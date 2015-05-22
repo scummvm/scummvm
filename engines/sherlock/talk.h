@@ -128,9 +128,6 @@ class UserInterface;
 class Talk {
 	friend class UserInterface;
 private:
-	Common::Array<TalkSequences> STILL_SEQUENCES;
-	Common::Array<TalkSequences> TALK_SEQUENCES;
-private:
 	SherlockEngine *_vm;
 	Common::Stack<SequenceEntry> _savedSequences;
 	Common::Stack<SequenceEntry> _sequenceStack;
@@ -188,11 +185,8 @@ public:
 	Talk(SherlockEngine *vm);
 
 	/**
-	 * Sets talk sequences
+	 * Return a given talk statement
 	 */
-	void setSequences(const byte *talkSequences, const byte *stillSequences,
-		int maxPeople);
-
 	Statement &operator[](int idx) { return _statements[idx]; }
 
 	/**

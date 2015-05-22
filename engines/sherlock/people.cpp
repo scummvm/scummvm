@@ -50,144 +50,6 @@ static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 	{ 52, 1, 2, 3, 4, 0 }				// Goto Stand Down Left
 };
 
-const char PORTRAITS[MAX_PEOPLE][5] = {
-	{ "HOLM" },			// Sherlock Holmes
-	{ "WATS" },			// Dr. Watson
-	{ "LEST" },			// Inspector Lestrade
-	{ "CON1" },			// Constable O'Brien
-	{ "CON2" },			// Constable Lewis
-	{ "SHEI" },			// Sheila Parker
-	{ "HENR" },			// Henry Carruthers
-	{ "LESL" },			// Lesley (flower girl)
-	{ "USH1" },			// Usher #1
-	{ "USH2" },			// Usher #2
-	{ "FRED" },			// Fredrick Epstein
-	{ "WORT" },			// Mrs. Worthington
-	{ "COAC" },			// Coach
-	{ "PLAY" },			// Player
-	{ "WBOY" },			// Tim (Waterboy)
-	{ "JAME" },			// James Sanders
-	{ "BELL" },			// Belle (perfumerie)
-	{ "GIRL" },			// Cleaning Girl (perfumerie)
-	{ "EPST" },			// Epstien in the Opera Balcony
-	{ "WIGG" },			// Wiggins
-	{ "PAUL" },			// Paul (Brumwell / Carroway)
-	{ "BART" },			// Bartender
-	{ "DIRT" },			// Dirty Drunk
-	{ "SHOU" },			// Shouting Drunk
-	{ "STAG" },			// Staggering Drunk
-	{ "BOUN" },			// Bouncer
-	{ "SAND" },			// James Sanders - At Home
-	{ "CORO" },			// The Coroner
-	{ "EQUE" },			// The Equestrian Shop Keeper
-	{ "GEOR" },			// George Blackwood
-	{ "LARS" },			// Lars
-	{ "PARK" },			// Sheila Parker (happy)
-	{ "CHEM" },			// Chemist
-	{ "GREG" },			// Inspector Gregson
-	{ "LAWY" },			// Jacob Farthington Lawyer
-	{ "MYCR" },			// Mycroft
-	{ "SHER" },			// Old Sherman
-	{ "CHMB" },			// Richard Chemist Stock boy
-	{ "BARM" },			// Barman
-	{ "DAND" },			// Dandy Player
-	{ "ROUG" },			// Rough-looking Player
-	{ "SPEC" },			// Spectator
-	{ "HUNT" },			// Robert Hunt
-	{ "VIOL" },			// Violet Secretary
-	{ "PETT" },			// Pettigrew
-	{ "APPL" },			// Augie (apple seller)
-	{ "ANNA" },			// Anna Carroway
-	{ "GUAR" },			// Guard
-	{ "ANTO" },			// Antonio Caruso
-	{ "TOBY" },			// Toby the Dog
-	{ "KING" },			// Simon Kingsley
-	{ "ALFR" },			// Alfred Tobacco Clerk
-	{ "LADY" },			// Lady Brumwell
-	{ "ROSA" },			// Madame Rosa
-	{ "LADB" },			// Lady Brumwell
-	{ "MOOR" },			// Joseph Moorehead
-	{ "BEAL" },			// Mrs. Beale
-	{ "LION" },			// Felix the Lion
-	{ "HOLL" },			// Hollingston
-	{ "CALL" },			// Constable Callaghan
-	{ "JERE" },			// Sergeant Jeremy Duncan
-	{ "LORD" },			// Lord Brumwell
-	{ "NIGE" },			// Nigel Jameson
-	{ "JONA" },			// Jonas (newspaper seller)
-	{ "DUGA" },			// Constable Dugan
-	{ "INSP" }			// Inspector Lestrade (Scotland Yard)
-};
-
-const char *const NAMES[MAX_PEOPLE] = {
-	"Sherlock Holmes",
-	"Dr. Watson",
-	"Inspector Lestrade",
-	"Constable O'Brien",
-	"Constable Lewis",
-	"Sheila Parker",
-	"Henry Carruthers",
-	"Lesley",
-	"An Usher",
-	"An Usher",
-	"Fredrick Epstein",
-	"Mrs. Worthington",
-	"The Coach",
-	"A Player",
-	"Tim",
-	"James Sanders",
-	"Belle",
-	"Cleaning Girl",
-	"Fredrick Epstein",
-	"Wiggins",
-	"Paul",
-	"The Bartender",
-	"A Dirty Drunk",
-	"A Shouting Drunk",
-	"A Staggering Drunk",
-	"The Bouncer",
-	"James Sanders",
-	"The Coroner",
-	"Reginald Snipes",
-	"George Blackwood",
-	"Lars",
-	"Sheila Parker",
-	"The Chemist",
-	"Inspector Gregson",
-	"Jacob Farthington",
-	"Mycroft",
-	"Old Sherman",
-	"Richard",
-	"The Barman",
-	"A Dandy Player",
-	"A Rough-looking Player",
-	"A Spectator",
-	"Robert Hunt",
-	"Violet",
-	"Pettigrew",
-	"Augie",
-	"Anna Carroway",
-	"A Guard",
-	"Antonio Caruso",
-	"Toby the Dog",
-	"Simon Kingsley",
-	"Alfred",
-	"Lady Brumwell",
-	"Madame Rosa",
-	"Lady Brumwell",
-	"Joseph Moorehead",
-	"Mrs. Beale",
-	"Felix",
-	"Hollingston",
-	"Constable Callaghan",
-	"Sergeant Duncan",
-	"Lord Brumwell",
-	"Nigel Jaimeson",
-	"Jonas",
-	"Constable Dugan",
-	"Inspector Lestrade"
-};
-
 /*----------------------------------------------------------------*/
 
 People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
@@ -591,7 +453,7 @@ int People::findSpeaker(int speaker) {
 		if (obj._type == ACTIVE_BG_SHAPE) {
 			Common::String name(obj._name.c_str(), obj._name.c_str() + 4);
 
-			if (name.equalsIgnoreCase(PORTRAITS[speaker])
+			if (name.equalsIgnoreCase(_characters[speaker]._portrait)
 				&& obj._name[4] >= '0' && obj._name[4] <= '9')
 				return idx;
 		}
@@ -639,7 +501,7 @@ void People::setTalking(int speaker) {
 
 	if (_portraitsOn) {
 		delete _talkPics;
-		Common::String filename = Common::String::format("%s.vgs", PORTRAITS[speaker]);
+		Common::String filename = Common::String::format("%s.vgs", _characters[speaker]._portrait);
 		_talkPics = new ImageFile(filename);
 
 		// Load portrait sequences

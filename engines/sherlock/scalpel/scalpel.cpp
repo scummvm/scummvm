@@ -89,7 +89,145 @@ static const byte MAP_SEQUENCES[3][MAX_FRAME] = {
 
 #define MAX_PEOPLE 66
 
-static const byte STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
+const char PEOPLE_PORTRAITS[MAX_PEOPLE][5] = {
+	{ "HOLM" },			// Sherlock Holmes
+	{ "WATS" },			// Dr. Watson
+	{ "LEST" },			// Inspector Lestrade
+	{ "CON1" },			// Constable O'Brien
+	{ "CON2" },			// Constable Lewis
+	{ "SHEI" },			// Sheila Parker
+	{ "HENR" },			// Henry Carruthers
+	{ "LESL" },			// Lesley (flower girl)
+	{ "USH1" },			// Usher #1
+	{ "USH2" },			// Usher #2
+	{ "FRED" },			// Fredrick Epstein
+	{ "WORT" },			// Mrs. Worthington
+	{ "COAC" },			// Coach
+	{ "PLAY" },			// Player
+	{ "WBOY" },			// Tim (Waterboy)
+	{ "JAME" },			// James Sanders
+	{ "BELL" },			// Belle (perfumerie)
+	{ "GIRL" },			// Cleaning Girl (perfumerie)
+	{ "EPST" },			// Epstien in the Opera Balcony
+	{ "WIGG" },			// Wiggins
+	{ "PAUL" },			// Paul (Brumwell / Carroway)
+	{ "BART" },			// Bartender
+	{ "DIRT" },			// Dirty Drunk
+	{ "SHOU" },			// Shouting Drunk
+	{ "STAG" },			// Staggering Drunk
+	{ "BOUN" },			// Bouncer
+	{ "SAND" },			// James Sanders - At Home
+	{ "CORO" },			// The Coroner
+	{ "EQUE" },			// The Equestrian Shop Keeper
+	{ "GEOR" },			// George Blackwood
+	{ "LARS" },			// Lars
+	{ "PARK" },			// Sheila Parker (happy)
+	{ "CHEM" },			// Chemist
+	{ "GREG" },			// Inspector Gregson
+	{ "LAWY" },			// Jacob Farthington Lawyer
+	{ "MYCR" },			// Mycroft
+	{ "SHER" },			// Old Sherman
+	{ "CHMB" },			// Richard Chemist Stock boy
+	{ "BARM" },			// Barman
+	{ "DAND" },			// Dandy Player
+	{ "ROUG" },			// Rough-looking Player
+	{ "SPEC" },			// Spectator
+	{ "HUNT" },			// Robert Hunt
+	{ "VIOL" },			// Violet Secretary
+	{ "PETT" },			// Pettigrew
+	{ "APPL" },			// Augie (apple seller)
+	{ "ANNA" },			// Anna Carroway
+	{ "GUAR" },			// Guard
+	{ "ANTO" },			// Antonio Caruso
+	{ "TOBY" },			// Toby the Dog
+	{ "KING" },			// Simon Kingsley
+	{ "ALFR" },			// Alfred Tobacco Clerk
+	{ "LADY" },			// Lady Brumwell
+	{ "ROSA" },			// Madame Rosa
+	{ "LADB" },			// Lady Brumwell
+	{ "MOOR" },			// Joseph Moorehead
+	{ "BEAL" },			// Mrs. Beale
+	{ "LION" },			// Felix the Lion
+	{ "HOLL" },			// Hollingston
+	{ "CALL" },			// Constable Callaghan
+	{ "JERE" },			// Sergeant Jeremy Duncan
+	{ "LORD" },			// Lord Brumwell
+	{ "NIGE" },			// Nigel Jameson
+	{ "JONA" },			// Jonas (newspaper seller)
+	{ "DUGA" },			// Constable Dugan
+	{ "INSP" }			// Inspector Lestrade (Scotland Yard)
+};
+
+const char *const PEOPLE_NAMES[MAX_PEOPLE] = {
+	"Sherlock Holmes",
+	"Dr. Watson",
+	"Inspector Lestrade",
+	"Constable O'Brien",
+	"Constable Lewis",
+	"Sheila Parker",
+	"Henry Carruthers",
+	"Lesley",
+	"An Usher",
+	"An Usher",
+	"Fredrick Epstein",
+	"Mrs. Worthington",
+	"The Coach",
+	"A Player",
+	"Tim",
+	"James Sanders",
+	"Belle",
+	"Cleaning Girl",
+	"Fredrick Epstein",
+	"Wiggins",
+	"Paul",
+	"The Bartender",
+	"A Dirty Drunk",
+	"A Shouting Drunk",
+	"A Staggering Drunk",
+	"The Bouncer",
+	"James Sanders",
+	"The Coroner",
+	"Reginald Snipes",
+	"George Blackwood",
+	"Lars",
+	"Sheila Parker",
+	"The Chemist",
+	"Inspector Gregson",
+	"Jacob Farthington",
+	"Mycroft",
+	"Old Sherman",
+	"Richard",
+	"The Barman",
+	"A Dandy Player",
+	"A Rough-looking Player",
+	"A Spectator",
+	"Robert Hunt",
+	"Violet",
+	"Pettigrew",
+	"Augie",
+	"Anna Carroway",
+	"A Guard",
+	"Antonio Caruso",
+	"Toby the Dog",
+	"Simon Kingsley",
+	"Alfred",
+	"Lady Brumwell",
+	"Madame Rosa",
+	"Lady Brumwell",
+	"Joseph Moorehead",
+	"Mrs. Beale",
+	"Felix",
+	"Hollingston",
+	"Constable Callaghan",
+	"Sergeant Duncan",
+	"Lord Brumwell",
+	"Nigel Jaimeson",
+	"Jonas",
+	"Constable Dugan",
+	"Inspector Lestrade"
+};
+
+static const byte PEOPLE_STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 	{ 1, 0, 0 },	// Sherlock Holmes
 	{ 6, 0, 0 },	// Dr. Watson
 	{ 4, 0, 0 },	// Inspector Lestrade
@@ -158,7 +296,7 @@ static const byte STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 	{ 4, 0, 0 }		// Inspector Lestrade (Yard)
 };
 
-static const byte TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
+static const byte PEOPLE_TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
 	{ 1, 0, 0 },					// Sherlock Holmes
 	{ 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 },	// Dr. Watson
 	{ 2, 0, 0 },					// Inspector Lestrade
@@ -258,8 +396,10 @@ void ScalpelEngine::initialize() {
 	// Load the inventory
 	loadInventory();
 
-	// Set up constants used by the talk system
-	_talk->setSequences(&TALK_SEQUENCES[0][0], &STILL_SEQUENCES[0][0], MAX_PEOPLE);
+	// Set up list of people
+	for (int idx = 0; idx < MAX_PEOPLE; ++idx)
+		_people->_characters.push_back(PersonData(PEOPLE_NAMES[idx], PEOPLE_PORTRAITS[idx],
+			PEOPLE_STILL_SEQUENCES[idx], PEOPLE_TALK_SEQUENCES[idx]));
 
 	_animation->setPrologueNames(&PROLOGUE_NAMES[0], PROLOGUE_NAMES_COUNT);
 	_animation->setPrologueFrames(&PROLOGUE_FRAMES[0][0], 6, 9);

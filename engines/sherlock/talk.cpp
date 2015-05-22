@@ -105,15 +105,6 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_scriptSaveIndex = -1;
 }
 
-void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, int maxPeople) {
-	for (int idx = 0; idx < maxPeople; ++idx) {
-		STILL_SEQUENCES.push_back(TalkSequences(stillSequences));
-		TALK_SEQUENCES.push_back(TalkSequences(talkSequences));
-		stillSequences += MAX_TALK_SEQUENCES;
-		talkSequences += MAX_TALK_SEQUENCES;
-	}
-}
-
 void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -537,6 +528,7 @@ void Talk::freeTalkVars() {
 }
 
 void Talk::loadTalkFile(const Common::String &filename) {
+	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
 	Sound &sound = *_vm->_sound;
 
@@ -546,7 +538,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	// Check for an existing person being talked to
 	_talkTo = -1;
 	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
-		if (!scumm_strnicmp(filename.c_str(), PORTRAITS[idx], 4)) {
+		if (!scumm_strnicmp(filename.c_str(), people._characters[idx]._portrait, 4)) {
 			_talkTo = idx;
 			break;
 		}
@@ -884,8 +876,8 @@ void Talk::setSequence(int speaker) {
 				warning("Tried to copy too many talk frames");
 			} else {
 				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = TALK_SEQUENCES[speaker][idx];
-					if (idx > 0 && !TALK_SEQUENCES[speaker][idx] && !TALK_SEQUENCES[speaker][idx - 1])
+					obj._sequences[idx] = people._characters[speaker]._talkSequences[idx];
+					if (idx > 0 && !obj._sequences[idx] && !obj._sequences[idx - 1])
 						return;
 
 					obj._frameNumber = 0;
@@ -913,8 +905,9 @@ void Talk::setStillSeq(int speaker) {
 				warning("Tried to copy too few still frames");
 			} else {
 				for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = STILL_SEQUENCES[speaker][idx];
-					if (idx > 0 && !TALK_SEQUENCES[speaker][idx] && !TALK_SEQUENCES[speaker][idx - 1])
+					obj._sequences[idx] = people._characters[speaker]._stillSequences[idx];
+					if (idx > 0 && !people._characters[speaker]._talkSequences[idx] &&
+							!people._characters[speaker]._talkSequences[idx - 1])
 						break;
 				}
 
@@ -1426,9 +1419,11 @@ void Talk::doScript(const Common::String &script) {
 				// If the window is open, display the name directly on-screen.
 				// Otherwise, simply draw it on the back buffer
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), TALK_FOREGROUND, "%s", NAMES[_speaker & 127]);
+					screen.print(Common::Point(16, yp), TALK_FOREGROUND, "%s",
+						people._characters[_speaker & 127]._name);
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, "%s", NAMES[_speaker & 127]);
+					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, "%s", 
+						people._characters[_speaker & 127]._name);
 					openTalkWindow = true;
 				}
 
