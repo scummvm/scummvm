@@ -30,12 +30,13 @@
 
 namespace Sherlock {
 
-// People definitions
+// Player definitions. The game has theoretical support for two player characters but only the first one is used.
+// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
 enum PeopleId {
 	PLAYER			= 0,
 	AL				= 0,
 	PEG				= 1,
-	NUM_OF_PEOPLE	= 2,		// Holmes and Watson
+	MAX_PLAYERS		= 2
 };
 
 // Animation sequence identifiers for characters
@@ -74,7 +75,7 @@ public:
 class People {
 private:
 	SherlockEngine *_vm;
-	Person _data[NUM_OF_PEOPLE];
+	Person _data[MAX_PLAYERS];
 	bool _walkLoaded;
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
@@ -101,11 +102,11 @@ public:
 	~People();
 
 	Person &operator[](PeopleId id) {
-		assert(id < NUM_OF_PEOPLE);
+		assert(id < MAX_PLAYERS);
 		return _data[id];
 	}
 	Person &operator[](int idx) {
-		assert(idx < NUM_OF_PEOPLE);
+		assert(idx < MAX_PLAYERS);
 		return _data[idx];
 	}
 
