@@ -1013,7 +1013,11 @@ site, please see the section on reporting bugs.
   Inherit the Earth: Quest for the Orb
     - Amiga versions aren't supported
 
-  Simon the Sorcerer 1:
+  Lure of the Temptress
+    - No Roland MT-32 support
+    - Sound support is incomplete and doesn't sound like original
+
+	Simon the Sorcerer 1:
     - Subtitles aren't available in the English and German CD versions
       as they are missing the majority of subtitles.
 
