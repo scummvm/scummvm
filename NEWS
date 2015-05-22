@@ -16,6 +16,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      and fanmade games, that require a mouse).
    - Fix incorrect volume attenuation in PCjr sound code (bug #6858).
 
+ AGOS:
+ - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
+ - Fixed loading and saving progress in the PC version of Waxworks.
+
  Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
      version (bug #6720).
