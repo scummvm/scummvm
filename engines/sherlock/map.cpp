@@ -25,6 +25,10 @@
 
 namespace Sherlock {
 
+MapPaths::MapPaths() {
+	_numLocations = 0;
+}
+
 void MapPaths::load(int numLocations, Common::SeekableReadStream &s) {
 	_numLocations = numLocations;
 	_paths.resize(_numLocations * _numLocations);

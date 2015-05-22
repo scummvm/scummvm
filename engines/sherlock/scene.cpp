@@ -106,16 +106,12 @@ Scene::Scene(SherlockEngine *vm) : _vm(vm) {
 	_currentScene = -1;
 	_goToScene = -1;
 	_loadingSavedGame = false;
-	_changes = false;
-	_keyboardInput = 0;
 	_walkedInScene = false;
 	_version = 0;
 	_lzwMode = false;
 	_invGraphicItems = 0;
 	_cAnimFramePause = 0;
 	_restoreFlag = false;
-	_invLookFlag = false;
-	_lookHelp = false;
 	_animating = 0;
 	_doBgAnimDone = true;
 	_tempFadeStyle = 0;
@@ -135,9 +131,6 @@ void Scene::selectScene() {
 	// Reset fields
 	ui._windowOpen = ui._infoFlag = false;
 	ui._menuMode = STD_MODE;
-	_keyboardInput = 0;
-	_oldKey = _help = _oldHelp = 0;
-	_oldTemp = _temp = 0;
 
 	// Free any previous scene
 	freeScene();
@@ -424,7 +417,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	// Clear user interface area and draw controls
 	ui.drawInterface();
 
-	_changes = false;
 	checkSceneStatus();
 
 	if (!saves._justLoaded) {

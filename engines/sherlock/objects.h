@@ -120,7 +120,6 @@ public:
 	Common::Point _oldSize;				// Image's old size
 	Common::Point _goto;				// Walk destination
 	SpriteType _type;					// Type of object
-	int _pickup;
 	Common::Point _noShapeSize;			// Size of a NO_SHAPE
 	int _status;						// Status: open/closed, moved/not moved
 	int8 _misc;							// Miscellaneous use

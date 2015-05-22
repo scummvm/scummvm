@@ -48,7 +48,10 @@ class MapPaths {
 private:
 	int _numLocations;
 	Common::Array< Common::Array<byte> > _paths;
+
 public:
+	MapPaths();
+
 	/**
 	 * Load the data for the paths between locations on the map
 	 */

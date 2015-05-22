@@ -47,6 +47,8 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_invIndex = 0;
 	_holdings = 0;
 	_invMode = INVMODE_EXIT;
+	for (int i = 0; i < 6; ++i)
+		_invShapes[i] = nullptr;
 }
 
 Inventory::~Inventory() {

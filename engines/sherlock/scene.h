@@ -110,7 +110,6 @@ class Scene {
 private:
 	SherlockEngine *_vm;
 	Common::String _rrmName;
-	bool _lookHelp;
 	bool _loadingSavedGame;
 
 	/**
@@ -158,12 +157,8 @@ private:
 public:
 	int _currentScene;
 	int _goToScene;
-	bool _changes;
 	bool _sceneStats[SCENES_COUNT][65];
 	bool _savedStats[SCENES_COUNT][9];
-	int _keyboardInput;
-	int _oldKey, _help, _oldHelp;
-	int _oldTemp, _temp;
 	bool _walkedInScene;
 	int _version;
 	bool _lzwMode;
@@ -186,7 +181,6 @@ public:
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
 	int _cAnimFramePause;
-	bool _invLookFlag;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();

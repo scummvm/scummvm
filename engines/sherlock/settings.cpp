@@ -143,7 +143,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 
 	for (int idx = 0; idx < 12; ++idx) {
 		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1]
-				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._presed || events._released))
+				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._pressed || events._released))
 				|| (_key == SETUP_NAMES[idx][0])) {
 			found = idx;
 			color = COMMAND_HIGHLIGHTED;
