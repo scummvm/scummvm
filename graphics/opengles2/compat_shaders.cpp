@@ -28,7 +28,7 @@ namespace Graphics {
 namespace BuiltinShaders {
 
 const char *compatVertex =
-#if defined(USE_OPENGL_SHADERS)
+#if defined(SDL_BACKEND)
 	"#if __VERSION__ < 130\n"
 		"float round(in float x) {\n"
 		"return sign(x) * floor(abs(x) + .5);\n"
@@ -49,7 +49,7 @@ const char *compatVertex =
 ;
 
 const char *compatFragment =
-#if defined(USE_OPENGL_SHADERS)
+#if defined(SDL_BACKEND)
 	"#if __VERSION__ < 130\n"
 		"#define in varying\n"
 		"#define OUTPUT\n"
