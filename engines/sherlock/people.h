@@ -36,7 +36,6 @@ enum PeopleId {
 	AL				= 0,
 	PEG				= 1,
 	NUM_OF_PEOPLE	= 2,		// Holmes and Watson
-	MAX_PEOPLE		= 66		// Total of all NPCs
 };
 
 // Animation sequence identifiers for characters

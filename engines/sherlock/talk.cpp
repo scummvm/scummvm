@@ -537,7 +537,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	// Check for an existing person being talked to
 	_talkTo = -1;
-	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
+	for (int idx = 0; idx < (int)people._characters.size(); ++idx) {
 		if (!scumm_strnicmp(filename.c_str(), people._characters[idx]._portrait, 4)) {
 			_talkTo = idx;
 			break;
@@ -1415,7 +1415,7 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			// If it's the first line, display the speaker
-			if (!line && _speaker >= 0 && _speaker < MAX_PEOPLE) {
+			if (!line && _speaker >= 0 && _speaker < (int)people._characters.size()) {
 				// If the window is open, display the name directly on-screen.
 				// Otherwise, simply draw it on the back buffer
 				if (ui._windowOpen) {
