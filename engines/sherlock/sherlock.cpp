@@ -48,6 +48,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_loadGameSlot = -1;
 	_canLoadSave = false;
 	_showOriginalSavesDialog = false;
+	_interactiveFl = true;
 }
 
 SherlockEngine::~SherlockEngine() {
@@ -67,15 +68,21 @@ SherlockEngine::~SherlockEngine() {
 	delete _res;
 }
 
-/**
- * Does basic initialization of the game engine
- */
 void SherlockEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugScript, "scripts", "Script debug level");
 
 	ImageFile::setVm(this);
 	Object::setVm(this);
 	Sprite::setVm(this);
+
+	if (isDemo()) {
+		Common::File f;
+		// The interactive demo doesn't have an intro thus doesn't include TITLE.SND
+		// At the opposite, the non-interactive demo is only the intro.
+		if (f.exists("TITLE.SND"))
+			_interactiveFl = false;
+	}
+
 	_res = new Resources(this);
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
@@ -95,9 +102,6 @@ void SherlockEngine::initialize() {
 	loadConfig();
 }
 
-/**
- * Main method for running the game
- */
 Common::Error SherlockEngine::run() {
 	// Initialize the engine
 	initialize();
@@ -116,7 +120,9 @@ Common::Error SherlockEngine::run() {
 		_saves->loadGame(_loadGameSlot);
 		_loadGameSlot = -1;
 	} else {
-		showOpening();
+		do
+			showOpening();
+		while (!shouldQuit() && !_interactiveFl);
 	}
 
 	while (!shouldQuit()) {
@@ -145,9 +151,6 @@ Common::Error SherlockEngine::run() {
 	return Common::kNoError;
 }
 
-/**
- * Main loop for displaying a scene and handling all that occurs within it
- */
 void SherlockEngine::sceneLoop() {
 	while (!shouldQuit() && _scene->_goToScene == -1) {
 		// See if a script needs to be completed from either a goto room code,
@@ -172,9 +175,6 @@ void SherlockEngine::sceneLoop() {
 
 }
 
-/**
- * Handle all player input
- */
 void SherlockEngine::handleInput() {
 	_canLoadSave = true;
 	_events->pollEventsAndWait();
@@ -186,9 +186,6 @@ void SherlockEngine::handleInput() {
 	_ui->handleInput();
 }
 
-/**
- * Read the state of a global flag
- */
 bool SherlockEngine::readFlags(int flagNum) {
 	bool value = _flags[ABS(flagNum)];
 	if (flagNum < 0)
@@ -197,40 +194,25 @@ bool SherlockEngine::readFlags(int flagNum) {
 	return value;
 }
 
-/**
- * Sets a global flag to either true or false depending on whether the specified
- * flag is positive or negative
- */
 void SherlockEngine::setFlags(int flagNum) {
 	_flags[ABS(flagNum)] = flagNum >= 0;
 
 	_scene->checkSceneFlags(true);
 }
 
-/**
- * Load game configuration esttings
- */
 void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
 
 	ConfMan.registerDefault("font", 1);
-	ConfMan.registerDefault("fade_style", true);
-	ConfMan.registerDefault("help_style", false);
-	ConfMan.registerDefault("window_style", 1);
-	ConfMan.registerDefault("portraits_on", true);
-	ConfMan.registerDefault("originalsaveload", false);
 
 	_screen->setFont(ConfMan.getInt("font"));
 	_screen->_fadeStyle = ConfMan.getBool("fade_style");
 	_ui->_helpStyle = ConfMan.getBool("help_style");
-	_ui->_windowStyle = ConfMan.getInt("window_style");
+	_ui->_slideWindows = ConfMan.getBool("window_style");
 	_people->_portraitsOn = ConfMan.getBool("portraits_on");
 }
 
-/**
- * Saves game configuration information
- */
 void SherlockEngine::saveConfig() {
 	ConfMan.setBool("mute", !_sound->_digitized);
 	ConfMan.setBool("music_mute", !_sound->_music);
@@ -239,15 +221,12 @@ void SherlockEngine::saveConfig() {
 	ConfMan.setInt("font", _screen->fontNumber());
 	ConfMan.setBool("fade_style", _screen->_fadeStyle);
 	ConfMan.setBool("help_style", _ui->_helpStyle);
-	ConfMan.setInt("window_style", _ui->_windowStyle);
+	ConfMan.setBool("window_style", _ui->_slideWindows);
 	ConfMan.setBool("portraits_on", _people->_portraitsOn);
 
 	ConfMan.flushToDisk();
 }
 
-/**
- * Called by the engine when sound settings are updated
- */
 void SherlockEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
@@ -255,39 +234,24 @@ void SherlockEngine::syncSoundSettings() {
 	_sound->syncSoundSettings();
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void SherlockEngine::synchronize(Common::Serializer &s) {
 	for (uint idx = 0; idx < _flags.size(); ++idx)
 		s.syncAsByte(_flags[idx]);
 }
 
-/**
- * Returns true if a savegame can be loaded
- */
 bool SherlockEngine::canLoadGameStateCurrently() {
 	return _canLoadSave;
 }
 
-/**
- * Returns true if the game can be saved
- */
 bool SherlockEngine::canSaveGameStateCurrently() {
 	return _canLoadSave;
 }
 
-/**
- * Called by the GMM to load a savegame
- */
 Common::Error SherlockEngine::loadGameState(int slot) {
 	_saves->loadGame(slot);
 	return Common::kNoError;
 }
 
-/**
- * Called by the GMM to save the game
- */
 Common::Error SherlockEngine::saveGameState(int slot, const Common::String &desc) {
 	_saves->saveGame(slot, desc);
 	return Common::kNoError;

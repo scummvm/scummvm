@@ -30,13 +30,13 @@
 
 namespace Sherlock {
 
-// People definitions
+// Player definitions. The game has theoretical support for two player characters but only the first one is used.
+// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
 enum PeopleId {
 	PLAYER			= 0,
 	AL				= 0,
 	PEG				= 1,
-	NUM_OF_PEOPLE	= 2,		// Holmes and Watson
-	MAX_PEOPLE		= 66		// Total of all NPCs
+	MAX_PLAYERS		= 2
 };
 
 // Animation sequence identifiers for characters
@@ -53,12 +53,19 @@ enum {
 	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
 };
 
-extern const char  *const NAMES[MAX_PEOPLE];
-extern const char PORTRAITS[MAX_PEOPLE][5];
+struct PersonData {
+	const char *_name;
+	const char *_portrait;
+	const byte *_stillSequences;
+	const byte *_talkSequences;
+
+	PersonData(const char *name, const char *portrait, const byte *stillSequences, const byte *talkSequences) :
+		_name(name), _portrait(portrait), _stillSequences(stillSequences), _talkSequences(talkSequences) {}
+};
 
 class SherlockEngine;
 
-class Person: public Sprite {
+class Person : public Sprite {
 public:
 	Person() : Sprite() {}
 
@@ -68,11 +75,12 @@ public:
 class People {
 private:
 	SherlockEngine *_vm;
-	Person _data[NUM_OF_PEOPLE];
+	Person _data[MAX_PLAYERS];
 	bool _walkLoaded;
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
 public:
+	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
 	Common::Point _walkDest;
 	Common::Point _hSavedPos;
@@ -94,35 +102,77 @@ public:
 	~People();
 
 	Person &operator[](PeopleId id) {
-		assert(id < NUM_OF_PEOPLE);
+		assert(id < MAX_PLAYERS);
 		return _data[id];
 	}
 	Person &operator[](int idx) {
-		assert(idx < NUM_OF_PEOPLE);
+		assert(idx < MAX_PLAYERS);
 		return _data[idx];
 	}
 
+	/**
+	 * Returns true if Sherlock is visible on the screen and enabled
+	 */
 	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }
 
+	/**
+	 * Reset the player data
+	 */
 	void reset();
 
+	/**
+	 * Load the walking images for Sherlock
+	 */
 	bool loadWalk();
 
+	/**
+	 * If the walk data has been loaded, then it will be freed
+	 */
 	bool freeWalk();
 
+	/**
+	 * Set the variables for moving a character from one poisition to another
+	 * in a straight line - goAllTheWay must have been previously called to
+	 * check for any obstacles in the path.
+	 */
 	void setWalking();
 
+	/**
+	 * Bring a moving character to a standing position. If the Scalpel chessboard
+	 * is being displayed, then the chraracter will always face down.
+	 */
 	void gotoStand(Sprite &sprite);
 
+	/**
+	 * Walk to the co-ordinates passed, and then face the given direction
+	 */
 	void walkToCoords(const Common::Point &destPos, int destDir);
 
+	/**
+	 * Called to set the character walking to the current cursor location.
+	 * It uses the zones and the inter-zone points to determine a series
+	 * of steps to walk to get to that position.
+	 */
 	void goAllTheWay();
 
+	/**
+	 * Finds the scene background object corresponding to a specified speaker
+	 */
 	int findSpeaker(int speaker);
 
+	/**
+	 * Turn off any currently active portraits, and removes them from being drawn
+	 */
 	void clearTalking();
+
+	/**
+	 * Setup the data for an animating speaker portrait at the top of the screen
+	 */
 	void setTalking(int speaker);
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 };
 

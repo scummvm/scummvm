@@ -36,16 +36,10 @@ struct SherlockGameDescription {
 	GameType gameID;
 };
 
-/**
- * Returns the Id of the game
- */
 GameType SherlockEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
 
-/**
- * Returns the platform the game's datafiles are for
- */
 Common::Platform SherlockEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
@@ -60,26 +54,71 @@ static const PlainGameDescriptor sherlockGames[] = {
 
 
 #define GAMEOPTION_ORIGINAL_SAVES	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_FADE_STYLE		GUIO_GAMEOPTIONS2
+#define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
+#define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
+#define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_ORIGINAL_SAVES,
 		{
 			_s("Use original savegame dialog"),
-			_s("Files button in-game shows original savegame dialog rather than ScummVM menu"),
+			_s("Files button in-game shows original savegame dialog rather than the ScummVM menu"),
 			"originalsaveload",
 			false
+		}
+	},
+
+	{
+		GAMEOPTION_FADE_STYLE,
+		{
+			_s("Pixellated scene transitions"),
+			_s("When changing scenes, a randomized pixel transition is done"),
+			"fade_style",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_HELP_STYLE,
+		{
+			_s("Don't show hotspots when moving mouse"),
+			_s("Only show hotspot names after you actually click on a hotspot or action button"),
+			"help_style",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_PORTRAITS_ON,
+		{
+			_s("Show character portraits"),
+			_s("Show portraits for the characters when conversing"),
+			"portraits_on",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_WINDOW_STYLE,
+		{
+			_s("Slide dialogs into view"),
+			_s("Slide UI dialogs into view, rather than simply showing them immediately"),
+			"window_style",
+			true
 		}
 	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
+
 #include "sherlock/detection_tables.h"
 
 class SherlockMetaEngine : public AdvancedMetaEngine {
 public:
-	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription), 
+	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
 	virtual const char *getName() const {
@@ -90,17 +129,37 @@ public:
 		return "Sherlock Engine (C) 1992-1996 Mythos Software, 1992-1996 (C) Electronic Arts";
 	}
 
+	/**
+	 * Creates an instance of the game engine
+	 */
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+
+	/**
+	 * Returns a list of features the game's MetaEngine support
+	 */
 	virtual bool hasFeature(MetaEngineFeature f) const;
+
+	/**
+	 * Return a list of savegames
+	 */
 	virtual SaveStateList listSaves(const char *target) const;
+
+	/**
+	 * Returns the maximum number of allowed save slots
+	 */
 	virtual int getMaximumSaveSlot() const;
+
+	/**
+	 * Deletes a savegame in the specified slot
+	 */
 	virtual void removeSaveState(const char *target, int slot) const;
+
+	/**
+	 * Given a specified savegame slot, returns extended information for the save
+	 */
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
-/**
- * Creates an instance of the game engine
- */
 bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Sherlock::SherlockGameDescription *gd = (const Sherlock::SherlockGameDescription *)desc;
 	if (gd) {
@@ -119,9 +178,6 @@ bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 	return gd != 0;
 }
 
-/**
- * Returns a list of features the game's MetaEngine support
- */
 bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
@@ -131,9 +187,6 @@ bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportThumbnail);
 }
 
-/**
- * Returns a list of features the game itself supports
- */
 bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
@@ -141,38 +194,23 @@ bool Sherlock::SherlockEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-/**
- * Returns whether the version is a demo
- */
-bool Sherlock::SherlockEngine::getIsDemo() const {
+bool Sherlock::SherlockEngine::isDemo() const {
 	return _gameDescription->desc.flags & ADGF_DEMO;
 }
 
-/**
- * Return a list of savegames
- */
 SaveStateList SherlockMetaEngine::listSaves(const char *target) const {
 	return Sherlock::SaveManager::getSavegameList(target);
 }
 
-/**
- * Returns the maximum number of allowed save slots
- */
 int SherlockMetaEngine::getMaximumSaveSlot() const {
 	return MAX_SAVEGAME_SLOTS;
 }
 
-/**
- * Deletes a savegame in the specified slot
- */
 void SherlockMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-/**
- * Given a specified savegame slot, returns extended information for the save
- */
 SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Sherlock::SaveManager(nullptr, target).generateSaveName(slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
@@ -197,7 +235,7 @@ SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, i
 
 
 #if PLUGIN_ENABLED_DYNAMIC(SHERLOCK)
-REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #else
-REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
+	REGISTER_PLUGIN_STATIC(SHERLOCK, PLUGIN_TYPE_ENGINE, SherlockMetaEngine);
 #endif

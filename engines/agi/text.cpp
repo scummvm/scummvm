@@ -50,7 +50,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 	// FR: strings with len == 1 were not printed
 	if (len == 1) {
-		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg, checkerboard);
+		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg, checkerboard, _fontData);
 		maxx = 1;
 		minx = 0;
 		ofoff = foff;
@@ -74,7 +74,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 					if (xpos >= GFX_WIDTH)
 						continue;
 
-					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard);
+					_gfx->putTextCharacter(l, xpos, ypos, *m, fg, bg, checkerboard, _fontData);
 
 					if (x1 > maxx)
 						maxx = x1;

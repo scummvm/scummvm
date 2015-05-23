@@ -41,9 +41,6 @@ namespace Sherlock {
 
 SherlockEngine *Sprite::_vm;
 
-/**
- * Reset the data for the sprite
- */
 void Sprite::clear() {
 	_name = "";
 	_description = "";
@@ -68,18 +65,12 @@ void Sprite::clear() {
 	_numFrames = 0;
 }
 
-/**
- * Updates the image frame poiner for the sprite
- */
 void Sprite::setImageFrame() {
 	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] +
 		(*_sequences)[_sequenceNumber][0] - 2;
 	_imageFrame = &(*_images)[imageNumber];
 }
 
-/**
- * This adjusts the sprites position, as well as it's animation sequence:
- */
 void Sprite::adjustSprite() {
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
@@ -175,9 +166,6 @@ void Sprite::adjustSprite() {
 	}
 }
 
-/**
- * Checks the sprite's position to see if it's collided with any special objects
- */
 void Sprite::checkSprite() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -364,9 +352,6 @@ void Sprite::checkSprite() {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the action
- */
 void ActionType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
@@ -375,7 +360,7 @@ void ActionType::load(Common::SeekableReadStream &s) {
 	if (_cAnimSpeed & 0x80)
 		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
 
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 		s.read(buffer, 12);
 		_names[idx] = Common::String(buffer);
 	}
@@ -386,13 +371,8 @@ void ActionType::load(Common::SeekableReadStream &s) {
 UseType::UseType() {
 	_cAnimNum = _cAnimSpeed = 0;
 	_useFlag = 0;
-	_dFlag[0] = 0;
-	_lFlag[0] = _lFlag[1] = 0;
 }
 
-/**
- * Load the data for the UseType
- */
 void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[12];
 
@@ -406,18 +386,15 @@ void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	if (_cAnimSpeed & 0x80)
 		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
 
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 		s.read(buffer, 12);
 		_names[idx] = Common::String(buffer);
 	}
 
 	_useFlag = s.readSint16LE();
 
-	if (!isRoseTattoo) {
-		_dFlag[0] = s.readSint16LE();
-		_lFlag[0] = s.readSint16LE();
-		_lFlag[1] = s.readSint16LE();
-	}
+	if (!isRoseTattoo)
+		s.skip(6);
 
 	s.read(buffer, 12);
 	_target = Common::String(buffer);
@@ -473,9 +450,6 @@ Object::Object() {
 	_restoreSlot = 0;
 }
 
-/**
- * Load the data for the object
- */
 void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[41];
 	s.read(buffer, 12);
@@ -560,9 +534,6 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	}
 }
 
-/**
- * Toggle the type of an object between hidden and active
- */
 void Object::toggleHidden() {
 	if (_type != HIDDEN && _type != HIDE_SHAPE && _type != INVALID) {
 		if (_seqTo != 0)
@@ -598,13 +569,10 @@ void Object::toggleHidden() {
 	}
 }
 
-/**
- * Check the state of the object
- */
 void Object::checkObject() {
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 	bool codeFound;
 
 	if (_seqTo) {
@@ -640,7 +608,7 @@ void Object::checkObject() {
 				_seqCounter2 = _seqCounter;
 				_seqStack = _frameNumber + 1;
 				setObjSequence(v, false);
-			} else if (v >= SOUND_CODE && (v <= (SOUND_CODE + 29))) {
+			} else if (v >= SOUND_CODE && (v < (SOUND_CODE + 30))) {
 				codeFound = true;
 				++_frameNumber;
 				v -= SOUND_CODE;
@@ -649,7 +617,7 @@ void Object::checkObject() {
 					if (!scene._sounds[v - 1]._name.empty() && sound._digitized)
 						sound.playLoadedSound(v - 1, WAIT_RETURN_IMMEDIATELY);
 				}
-			} else if (v >= FLIP_CODE && v <= (FLIP_CODE + 2)) {
+			} else if (v >= FLIP_CODE && v < (FLIP_CODE + 3)) {
 				// Flip code
 				codeFound = true;
 				++_frameNumber;
@@ -659,15 +627,15 @@ void Object::checkObject() {
 				switch (v) {
 				case 0:
 					// Clear the flag
-					_flags &= ~2;
+					_flags &= ~OBJ_FLIPPED;
 					break;
 				case 1:
 					// Set the flag
-					_flags |= 2;
+					_flags |= OBJ_FLIPPED;
 					break;
 				case 2:
 					// Toggle the flag
-					_flags ^= 2;
+					_flags ^= OBJ_FLIPPED;
 					break;
 				default:
 					break;
@@ -709,8 +677,8 @@ void Object::checkObject() {
 
 					_delta = pt;
 					_frameNumber += 2;
-				} else if (v < 4) {
-					for (int idx = 0; idx < 4; ++idx) {
+				} else if (v < USE_COUNT) {
+					for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 						checkNameForCodes(_use[v]._names[idx], nullptr);
 					}
 
@@ -724,14 +692,9 @@ void Object::checkObject() {
 	} while (codeFound);
 }
 
-/**
- * This will check to see if the object has reached the end of a sequence.
- * If it has, it switch to whichever next sequence should be started.
- * @returns		true if the end of a sequence was reached
- */
 bool Object::checkEndOfSequence() {
 	Screen &screen = *_vm->_screen;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 	bool result = false;
 
 	if (_type == REMOVE || _type == INVALID)
@@ -781,13 +744,9 @@ bool Object::checkEndOfSequence() {
 	return result;
 }
 
-/**
- * Scans through the sequences array and finds the designated sequence.
- * It then sets the frame number of the start of that sequence
- */
 void Object::setObjSequence(int seq, bool wait) {
 	Scene &scene = *_vm->_scene;
-	int checkFrame = _allow ? MAX_FRAME : 32000;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 
 	if (seq >= 128) {
 		// Loop the sequence until the count exceeded
@@ -858,12 +817,6 @@ void Object::setObjSequence(int seq, bool wait) {
 	}
 }
 
-/**
- * Checks for codes
- * @param name		The name to check for codes
- * @param messages	Provides a lookup list of messages that can be printed
- * @returns		0 if no codes are found, 1 if codes were found
- */
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
@@ -945,13 +898,13 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 		int messageNum = atoi(name.c_str() + 1);
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[messageNum]);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[messageNum]);
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, name.c_str() + 1);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", name.c_str() + 1);
 		printed = true;
 		ui._menuCounter = 25;
 	}
@@ -959,14 +912,11 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 	return printed;
 }
 
-/**
- * Handle setting any flags associated with the object
- */
 void Object::setFlagsAndToggles() {
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
 
-	for (int useIdx = 0; useIdx < 4; ++useIdx) {
+	for (int useIdx = 0; useIdx < USE_COUNT; ++useIdx) {
 		if (_use[useIdx]._useFlag) {
 			if (!_vm->readFlags(_use[useIdx]._useFlag))
 				_vm->setFlags(_use[useIdx]._useFlag);
@@ -981,16 +931,12 @@ void Object::setFlagsAndToggles() {
 		}
 
 		if (!talk._talkToAbort) {
-			for (int idx = 0; idx < 4; ++idx)
+			for (int idx = 0; idx < NAMES_COUNT; ++idx)
 				scene.toggleObject(_use[useIdx]._names[idx]);
 		}
 	}
 }
 
-/**
- * Adjusts the sprite's position and animation sequence, advancing by 1 frame.
- * If the end of the sequence is reached, the appropriate action is taken.
- */
 void Object::adjustObject() {
 	if (_type == REMOVE)
 		return;
@@ -1013,10 +959,6 @@ void Object::adjustObject() {
 	}
 }
 
-/**
- * Handles trying to pick up an object. If allowed, plays an y necessary animation for picking
- * up the item, and then adds it to the player's inventory
- */
 int Object::pickUpObject(const char *const messages[]) {
 	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
@@ -1029,7 +971,7 @@ int Object::pickUpObject(const char *const messages[]) {
 	int numObjects = 0;
 
 	if (pickup == 99) {
-		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+		for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
 			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
 				if (!talk._talkToAbort)
 					printed = true;
@@ -1046,7 +988,7 @@ int Object::pickUpObject(const char *const messages[]) {
 
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, messages[message]);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[message]);
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up
@@ -1076,7 +1018,7 @@ int Object::pickUpObject(const char *const messages[]) {
 			ui._temp1 = 1;
 		}
 
-		for (int idx = 0; idx < 4 && !talk._talkToAbort; ++idx) {
+		for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
 			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
 				if (!talk._talkToAbort)
 					printed = true;
@@ -1103,9 +1045,6 @@ int Object::pickUpObject(const char *const messages[]) {
 	return numObjects;
 }
 
-/**
- * Returns the current bounds for the sprite
- */
 const Common::Rect Object::getNewBounds() const {
 	Common::Point pt = _position;
 	if (_imageFrame)
@@ -1114,17 +1053,11 @@ const Common::Rect Object::getNewBounds() const {
 	return Common::Rect(pt.x, pt.y, pt.x + frameWidth(), pt.y + frameHeight());
 }
 
-/**
- * Returns the bounds for a sprite without a shape
- */
 const Common::Rect Object::getNoShapeBounds() const {
 	return Common::Rect(_position.x, _position.y,
 		_position.x + _noShapeSize.x, _position.y + _noShapeSize.y);
 }
 
-/**
- * Returns the old bounsd for the sprite from the previous frame
- */
 const Common::Rect Object::getOldBounds() const {
 	return Common::Rect(_oldPosition.x, _oldPosition.y,
 		_oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
@@ -1132,9 +1065,6 @@ const Common::Rect Object::getOldBounds() const {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the animation
- */
 void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[12];
 	s.read(buffer, 12);

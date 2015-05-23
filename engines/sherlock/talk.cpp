@@ -26,6 +26,8 @@
 
 namespace Sherlock {
 
+#define SPEAKER_REMOVE 0x80
+
 SequenceEntry::SequenceEntry() {
 	_objNum = 0;
 	_frameNumber = 0;
@@ -34,9 +36,6 @@ SequenceEntry::SequenceEntry() {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for a single statement within a talk file
- */
 void Statement::synchronize(Common::SeekableReadStream &s) {
 	int length;
 
@@ -91,7 +90,7 @@ void TalkSequences::clear() {
 
 /*----------------------------------------------------------------*/
 
-Talk::Talk(SherlockEngine *vm): _vm(vm) {
+Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
 	_speaker = 0;
@@ -106,26 +105,6 @@ Talk::Talk(SherlockEngine *vm): _vm(vm) {
 	_scriptSaveIndex = -1;
 }
 
-/**
- * Sets talk sequences
- */
-void Talk::setSequences(const byte *talkSequences, const byte *stillSequences, int maxPeople) {
-	for (int idx = 0; idx < maxPeople; ++idx) {
-		STILL_SEQUENCES.push_back(TalkSequences(stillSequences));
-		TALK_SEQUENCES.push_back(TalkSequences(talkSequences));
-		stillSequences += MAX_TALK_SEQUENCES;
-		talkSequences += MAX_TALK_SEQUENCES;
-	}
-}
-
-/**
- * Called whenever a conversation or item script needs to be run. For standard conversations,
- * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly
- * instead of waiting for a statement option.
- * @remarks		It seems that at some point, all item scripts were set up to use this as well.
- *	In their case, the conversation display is simply suppressed, and control is passed on to
- *	doScript to implement whatever action is required.
- */
 void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -158,7 +137,7 @@ void Talk::talkTo(const Common::String &filename) {
 	}
 
 	// Save the ui mode temporarily and switch to talk mode
-	int savedMode = ui._menuMode;
+	MenuMode savedMode = ui._menuMode;
 	ui._menuMode = TALK_MODE;
 
 	// Turn on the Exit option
@@ -196,7 +175,7 @@ void Talk::talkTo(const Common::String &filename) {
 	if (IS_SERRATED_SCALPEL) {
 		// Restore any pressed button
 		if (!ui._windowOpen && savedMode != STD_MODE)
-			((ScalpelUserInterface *)_vm->_ui)->restoreButton(savedMode - 1);
+			((ScalpelUserInterface *)_vm->_ui)->restoreButton((int)(savedMode - 1));
 	}
 
 	// Clear the ui counter so that anything displayed on the info line
@@ -223,7 +202,7 @@ void Talk::talkTo(const Common::String &filename) {
 			break;
 
 		case TALK_MODE:
-			if (_speaker < 128)
+			if (_speaker < SPEAKER_REMOVE)
 				people.clearTalking();
 			if (_talkCounter)
 				return;
@@ -271,6 +250,9 @@ void Talk::talkTo(const Common::String &filename) {
 			ui._menuMode = STD_MODE;
 			events._pressed = events._released = events._oldButtons = 0;
 			abortFlag = true;
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -387,7 +369,7 @@ void Talk::talkTo(const Common::String &filename) {
 					} else {
 						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, "Exit");
 
-						if (!ui._windowStyle) {
+						if (!ui._slideWindows) {
 							screen.slamRect(Common::Rect(0, CONTROLS_Y,
 								SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 						} else {
@@ -450,12 +432,6 @@ void Talk::talkTo(const Common::String &filename) {
 	events.setCursor(ARROW);
 }
 
-/**
- * Main method for handling conversations when a character to talk to has been
- * selected. It will make Holmes walk to the person to talk to, draws the
- * interface window for the conversation and passes on control to give the
- * player a list of options to make a selection from
- */
 void Talk::talk(int objNum) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -466,7 +442,7 @@ void Talk::talk(int objNum) {
 
 	ui._windowBounds.top = CONTROLS_Y;
 	ui._infoFlag = true;
-	_speaker = 128;
+	_speaker = SPEAKER_REMOVE;
 	loadTalkFile(scene._bgShapes[objNum]._name);
 
 	// Find the first statement with the correct flags
@@ -534,7 +510,7 @@ void Talk::talk(int objNum) {
 				displayTalk(false);
 				ui._selector = ui._oldSelector = -1;
 
-				if (!ui._windowStyle) {
+				if (!ui._slideWindows) {
 					screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
 						SHERLOCK_SCREEN_HEIGHT));
 				} else {
@@ -549,18 +525,12 @@ void Talk::talk(int objNum) {
 	}
 }
 
-/**
- * Clear loaded talk data
- */
 void Talk::freeTalkVars() {
 	_statements.clear();
 }
 
-/**
- * Opens the talk file 'talk.tlk' and searches the index for the specified
- * conversation. If found, the data for that conversation is loaded
- */
 void Talk::loadTalkFile(const Common::String &filename) {
+	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
 	Sound &sound = *_vm->_sound;
 
@@ -569,8 +539,8 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	// Check for an existing person being talked to
 	_talkTo = -1;
-	for (int idx = 0; idx < MAX_PEOPLE; ++idx) {
-		if (!scumm_strnicmp(filename.c_str(), PORTRAITS[idx], 4)) {
+	for (int idx = 0; idx < (int)people._characters.size(); ++idx) {
+		if (!scumm_strnicmp(filename.c_str(), people._characters[idx]._portrait, 4)) {
 			_talkTo = idx;
 			break;
 		}
@@ -596,9 +566,6 @@ void Talk::loadTalkFile(const Common::String &filename) {
 	setTalkMap();
 }
 
-/**
- * Remove any voice commands from a loaded statement list
- */
 void Talk::stripVoiceCommands() {
 	for (uint sIdx = 0; sIdx < _statements.size(); ++sIdx) {
 		Statement &statement = _statements[sIdx];
@@ -622,9 +589,6 @@ void Talk::stripVoiceCommands() {
 	}
 }
 
-/**
- * Form a table of the display indexes for statements
- */
 void Talk::setTalkMap() {
 	int statementNum = 0;
 
@@ -642,9 +606,6 @@ void Talk::setTalkMap() {
 	}
 }
 
-/**
- * Draws the interface for conversation display
- */
 void Talk::drawInterface() {
 	Screen &screen = *_vm->_screen;
 	Surface &bb = *screen._backBuffer;
@@ -673,10 +634,6 @@ void Talk::drawInterface() {
 	}
 }
 
-/**
- * Display a list of statements in a window at the bottom of the scren that the
- * player can select from.
- */
 bool Talk::displayTalk(bool slamIt) {
 	Screen &screen = *_vm->_screen;
 	int yp = CONTROLS_Y + 14;
@@ -761,9 +718,6 @@ bool Talk::displayTalk(bool slamIt) {
 	return done;
 }
 
-/**
- * Prints a single conversation option in the interface window
- */
 int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) {
 	Screen &screen = *_vm->_screen;
 	int idx = lineNum;
@@ -771,11 +725,11 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 	bool numberFlag = false;
 
 	// Get the statement to display as well as optional number prefix
-	if (idx < 128) {
+	if (idx < SPEAKER_REMOVE) {
 		number = Common::String::format("%d.", stateNum + 1);
 		numberFlag = true;
 	} else {
-		idx -= 128;
+		idx -= SPEAKER_REMOVE;
 	}
 	msg = _statements[idx]._statement;
 
@@ -812,23 +766,23 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 					// Are we drawing the first line?
 					if (lineStartP == msg.c_str()) {
 						// We are, so print the number and then the text
-						screen.print(Common::Point(16, lineY), color, number.c_str());
+						screen.print(Common::Point(16, lineY), color, "%s", number.c_str());
 					}
 
 					// Draw the line with an indent
-					screen.print(Common::Point(30, lineY), color, sLine.c_str());
+					screen.print(Common::Point(30, lineY), color, "%s", sLine.c_str());
 				} else {
-					screen.print(Common::Point(16, lineY), color, sLine.c_str());
+					screen.print(Common::Point(16, lineY), color, "%s", sLine.c_str());
 				}
 			} else {
 				if (numberFlag) {
 					if (lineStartP == msg.c_str()) {
-						screen.gPrint(Common::Point(16, lineY - 1), color, number.c_str());
+						screen.gPrint(Common::Point(16, lineY - 1), color, "%s", number.c_str());
 					}
 
-					screen.gPrint(Common::Point(30, lineY - 1), color, sLine.c_str());
+					screen.gPrint(Common::Point(30, lineY - 1), color, "%s", sLine.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, lineY - 1), color, sLine.c_str());
+					screen.gPrint(Common::Point(16, lineY - 1), color, "%s", sLine.c_str());
 				}
 			}
 
@@ -852,17 +806,10 @@ int Talk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt
 	return lineY;
 }
 
-/**
- * Clears the stack of pending object sequences associated with speakers in the scene
- */
 void Talk::clearSequences() {
 	_sequenceStack.clear();
 }
 
-/**
- * Pulls a background object sequence from the sequence stack and restore's the
- * object's sequence
- */
 void Talk::pullSequence() {
 	Scene &scene = *_vm->_scene;
 
@@ -885,10 +832,6 @@ void Talk::pullSequence() {
 	}
 }
 
-/**
- * Push the sequence of a background object that's an NPC that needs to be
- * saved onto the sequence stack.
- */
 void Talk::pushSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -918,9 +861,6 @@ void Talk::pushSequence(int speaker) {
 		error("script stack overflow");
 }
 
-/**
- * Change the sequence of the scene background object associated with the current speaker.
- */
 void Talk::setSequence(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -938,8 +878,8 @@ void Talk::setSequence(int speaker) {
 				warning("Tried to copy too many talk frames");
 			} else {
 				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = TALK_SEQUENCES[speaker][idx];
-					if (idx > 0 && !TALK_SEQUENCES[speaker][idx] && !TALK_SEQUENCES[speaker][idx - 1])
+					obj._sequences[idx] = people._characters[speaker]._talkSequences[idx];
+					if (idx > 0 && !obj._sequences[idx] && !obj._sequences[idx - 1])
 						return;
 
 					obj._frameNumber = 0;
@@ -950,10 +890,6 @@ void Talk::setSequence(int speaker) {
 	}
 }
 
-/**
- * Change the sequence of a background object corresponding to a given speaker.
- * The new sequence will display the character as "listening"
- */
 void Talk::setStillSeq(int speaker) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -971,8 +907,9 @@ void Talk::setStillSeq(int speaker) {
 				warning("Tried to copy too few still frames");
 			} else {
 				for (uint idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = STILL_SEQUENCES[speaker][idx];
-					if (idx > 0 && !TALK_SEQUENCES[speaker][idx] && !TALK_SEQUENCES[speaker][idx - 1])
+					obj._sequences[idx] = people._characters[speaker]._stillSequences[idx];
+					if (idx > 0 && !people._characters[speaker]._talkSequences[idx] &&
+							!people._characters[speaker]._talkSequences[idx - 1])
 						break;
 				}
 
@@ -983,10 +920,6 @@ void Talk::setStillSeq(int speaker) {
 	}
 }
 
-/**
- * Parses a reply for control codes and display text. The found text is printed within
- * the text window, handles delays, animations, and animating portraits.
- */
 void Talk::doScript(const Common::String &script) {
 	Animation &anim = *_vm->_animation;
 	Events &events = *_vm->_events;
@@ -1021,7 +954,7 @@ void Talk::doScript(const Common::String &script) {
 	// Check if the script begins with a Stealh Mode Active command
 	if (str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
 		_talkStealth = 2;
-		_speaker |= 128;
+		_speaker |= SPEAKER_REMOVE;
 	} else {
 		pushSequence(_speaker);
 		ui.clearWindow();
@@ -1079,11 +1012,11 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (c >= 128) {
+		} else if (c >= SWITCH_SPEAKER) {
 			// Handle control code
 			switch (c) {
 			case SWITCH_SPEAKER:
-				if (!(_speaker & 128))
+				if (!(_speaker & SPEAKER_REMOVE))
 					people.clearTalking();
 				if (_talkToAbort)
 					return;
@@ -1101,7 +1034,7 @@ void Talk::doScript(const Common::String &script) {
 
 			case RUN_CANIMATION:
 				++str;
-				scene.startCAnim((str[0] - 1) & 127, (str[0] & 128) ? -1 : 1);
+				scene.startCAnim((str[0] - 1) & 127, (str[0] & 0x80) ? -1 : 1);
 				if (_talkToAbort)
 					return;
 
@@ -1137,13 +1070,13 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case REMOVE_PORTRAIT:
-				if (_speaker >= 0 && _speaker < 128)
+				if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
 					people.clearTalking();
 				pullSequence();
 				if (_talkToAbort)
 					return;
 
-				_speaker |= 128;
+				_speaker |= SPEAKER_REMOVE;
 				break;
 
 			case CLEAR_WINDOW:
@@ -1162,14 +1095,14 @@ void Talk::doScript(const Common::String &script) {
 				// Scan for object
 				int objId = -1;
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
-					if (scumm_stricmp(tempString.c_str(), scene._bgShapes[idx]._name.c_str()) == 0)
+					if (tempString.equalsIgnoreCase(scene._bgShapes[idx]._name))
 						objId = idx;
 				}
 				if (objId == -1)
 					error("Could not find object %s to change", tempString.c_str());
 
 				// Should the script be overwritten?
-				if (str[0] > 128) {
+				if (str[0] > 0x80) {
 					// Save the current sequence
 					_savedSequences.push(SequenceEntry());
 					SequenceEntry &seqEntry = _savedSequences.top();
@@ -1218,14 +1151,14 @@ void Talk::doScript(const Common::String &script) {
 				break;
 
 			case BANISH_WINDOW:
-				if (!(_speaker & 128))
+				if (!(_speaker & SPEAKER_REMOVE))
 					people.clearTalking();
 				pullSequence();
 
 				if (_talkToAbort)
 					return;
 
-				_speaker |= 128;
+				_speaker |= SPEAKER_REMOVE;
 				ui.banishWindow();
 				ui._menuMode = TALK_MODE;
 				noTextYet = true;
@@ -1369,12 +1302,12 @@ void Talk::doScript(const Common::String &script) {
 					tempString += str[idx + 1];
 
 				// Set comparison state according to if we want to hide or unhide
-				bool state = (str[0] >= 128);
+				bool state = (str[0] >= SPEAKER_REMOVE);
 				str += str[0] & 127;
 
 				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 					Object &object = scene._bgShapes[idx];
-					if (scumm_stricmp(tempString.c_str(), object._name.c_str()) == 0) {
+					if (tempString.equalsIgnoreCase(object._name)) {
 						// Only toggle the object if it's not in the desired state already
 						if ((object._type == HIDDEN && state) || (object._type != HIDDEN && !state))
 							object.toggleHidden();
@@ -1429,7 +1362,7 @@ void Talk::doScript(const Common::String &script) {
 					tempString += str[idx + 1];
 				str += str[0];
 
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, tempString.c_str());
+				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempString.c_str());
 				ui._menuCounter = 30;
 				break;
 
@@ -1484,29 +1417,31 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			// If it's the first line, display the speaker
-			if (!line && _speaker >= 0 && _speaker < MAX_PEOPLE) {
+			if (!line && _speaker >= 0 && _speaker < (int)people._characters.size()) {
 				// If the window is open, display the name directly on-screen.
 				// Otherwise, simply draw it on the back buffer
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), TALK_FOREGROUND, NAMES[_speaker & 127]);
+					screen.print(Common::Point(16, yp), TALK_FOREGROUND, "%s",
+						people._characters[_speaker & 127]._name);
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, NAMES[_speaker & 127]);
+					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, "%s", 
+						people._characters[_speaker & 127]._name);
 					openTalkWindow = true;
 				}
 
 				yp += 9;
 			}
 
-			// Find amound of text that will fit on the line
+			// Find amount of text that will fit on the line
 			int width = 0, idx = 0;
 			do {
 				width += screen.charWidth(str[idx]);
 				++idx;
 				++charCount;
-			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < 128);
+			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < SWITCH_SPEAKER);
 
 			if (str[idx] || width >= 298) {
-				if (str[idx] < 128 && str[idx] != '{') {
+				if (str[idx] < SWITCH_SPEAKER && str[idx] != '{') {
 					--idx;
 					--charCount;
 				}
@@ -1528,16 +1463,16 @@ void Talk::doScript(const Common::String &script) {
 			// If the speaker indicates a description file, print it in yellow
 			if (_speaker != -1) {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 					openTalkWindow = true;
 				}
 			} else {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, lineStr.c_str());
+					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 					openTalkWindow = true;
 				}
 			}
@@ -1546,7 +1481,7 @@ void Talk::doScript(const Common::String &script) {
 			str += idx;
 
 			// If line wrap occurred, then move to after the separating space between the words
-			if (str[0] < 128 && str[0] != '{')
+			if (str[0] < SWITCH_SPEAKER && str[0] != '{')
 				++str;
 
 			yp += 9;
@@ -1576,8 +1511,8 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= 128 && str[0] != CARRIAGE_RETURN)) {
-			if (!ui._windowStyle) {
+		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= SWITCH_SPEAKER && str[0] != CARRIAGE_RETURN)) {
+			if (!ui._slideWindows) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
 				ui.summonWindow();
@@ -1626,15 +1561,11 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		pullSequence();
-		if (_speaker >= 0 && _speaker < 128)
+		if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
 			people.clearTalking();
 	}
 }
 
-/**
- * When the talk window has been displayed, waits a period of time proportional to
- * the amount of text that's been displayed
- */
 int Talk::waitForMore(int delay) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -1665,7 +1596,7 @@ int Talk::waitForMore(int delay) {
 
 			if (events.kbHit()) {
 				Common::KeyState keyState = events.getKey();
-				if (keyState.keycode >= 32 && keyState.keycode < 128)
+				if (Common::isPrint(keyState.ascii))
 					key2 = keyState.keycode;
 			}
 
@@ -1714,9 +1645,6 @@ int Talk::waitForMore(int delay) {
 	return key2;
 }
 
-/**
- * Pops an entry off of the script stack
- */
 void Talk::popStack() {
 	if (!_scriptStack.empty()) {
 		ScriptStackEntry scriptEntry = _scriptStack.pop();
@@ -1727,9 +1655,6 @@ void Talk::popStack() {
 	}
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Talk::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < MAX_TALK_FILES; ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];

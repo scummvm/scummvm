@@ -26,9 +26,10 @@
 
 namespace Sherlock {
 
-/**
- * Load the data for the paths between locations on the map
- */
+MapPaths::MapPaths() {
+	_numLocations = 0;
+}
+
 void MapPaths::load(int numLocations, Common::SeekableReadStream &s) {
 	_numLocations = numLocations;
 	_paths.resize(_numLocations * _numLocations);
@@ -44,9 +45,6 @@ void MapPaths::load(int numLocations, Common::SeekableReadStream &s) {
 	}
 }
 
-/**
- * Get the path between two locations on the map
- */
 const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 	return &_paths[srcLocation * _numLocations + destLocation][0];
 }
@@ -64,36 +62,27 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12) {
 	_drawMap = false;
 	_overPos = Common::Point(13000, 12600);
 	_charPoint = 0;
-	_oldCharPoint = 39;
+	_oldCharPoint = 0;
 	_frameChangeFlag = false;
 
 	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
 		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
 
-	if (!_vm->getIsDemo())
+	if (!_vm->isDemo())
 		loadData();
 }
 
-/**
- * Loads the list of points for locations on the map for each scene
- */
 void Map::loadPoints(int count, const int *xList, const int *yList, const int *transList) {
 	for (int idx = 0; idx < count; ++idx, ++xList, ++yList, ++transList) {
 		_points.push_back(MapEntry(*xList, *yList, *transList));
 	}
 }
 
-/**
- * Load the sequence data for player icon animations
- */
 void Map::loadSequences(int count, const byte *seq) {
 	for (int idx = 0; idx < count; ++idx, seq += MAX_FRAME)
 		Common::copy(seq, seq + MAX_FRAME, &_sequences[idx][0]);
 }
 
-/**
- * Load data  needed for the map
- */
 void Map::loadData() {
 	// TODO: Remove this
 	if (_vm->getGameID() == GType_RoseTattoo)
@@ -131,9 +120,6 @@ void Map::loadData() {
 	delete pathStream;
 }
 
-/**
- * Show the map
- */
 int Map::show() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -252,7 +238,7 @@ int Map::show() {
 
 				// Show wait cursor
 				_cursorIndex = 1;
-				events.setCursor((*_mapCursors)[_cursorIndex]);
+				events.setCursor((*_mapCursors)[_cursorIndex]._frame);
 			}
 		}
 
@@ -285,19 +271,15 @@ int Map::show() {
 	return _charPoint;
 }
 
-/**
- * Load and initialize all the sprites that are needed for the map display
- */
 void Map::setupSprites() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	typedef byte Sequences[16][MAX_FRAME];
 	_savedPos.x = -1;
 
 	_mapCursors = new ImageFile("omouse.vgs");
 	_cursorIndex = 0;
-	events.setCursor((*_mapCursors)[_cursorIndex]);
+	events.setCursor((*_mapCursors)[_cursorIndex]._frame);
 
 	_shapes = new ImageFile("mapicon.vgs");
 	_iconShapes = new ImageFile("overicon.vgs");
@@ -325,9 +307,6 @@ void Map::setupSprites() {
 	scene._bgShapes.clear();
 }
 
-/**
- * Free the sprites and data used by the map
- */
 void Map::freeSprites() {
 	delete _mapCursors;
 	delete _shapes;
@@ -335,9 +314,6 @@ void Map::freeSprites() {
 	_iconSave.free();
 }
 
-/**
- * Draws an icon for every place that's currently known
- */
 void Map::showPlaces() {
 	Screen &screen = *_vm->_screen;
 
@@ -356,25 +332,16 @@ void Map::showPlaces() {
 	}
 }
 
-/**
- * Makes a copy of the top rows of the screen that are used to display location names
- */
 void Map::saveTopLine() {
 	_topLine.blitFrom(_vm->_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, 12));
 }
 
-/**
- * Erases anything shown in the top line by restoring the previously saved original map background
- */
 void Map::eraseTopLine() {
 	Screen &screen = *_vm->_screen;
 	screen._backBuffer1.blitFrom(_topLine, Common::Point(0, 0));
-	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, _topLine.h);
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, _topLine.h());
 }
 
-/**
- * Prints the name of the specified icon
- */
 void Map::showPlaceName(int idx, bool highlighted) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -387,22 +354,19 @@ void Map::showPlaceName(int idx, bool highlighted) {
 
 		bool flipped = people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
 			|| people[AL]._sequenceNumber == MAP_UPLEFT;
-		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, _lDrawnPos, flipped);
+		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, _lDrawnPos, flipped);
 	}
 
 	if (highlighted) {
 		int xp = (SHERLOCK_SCREEN_WIDTH - screen.stringWidth(name)) / 2;
-		screen.gPrint(Common::Point(xp + 2, 2), 0, name.c_str());
-		screen.gPrint(Common::Point(xp + 1, 1), 0, name.c_str());
-		screen.gPrint(Common::Point(xp, 0), 12, name.c_str());
+		screen.gPrint(Common::Point(xp + 2, 2), 0, "%s", name.c_str());
+		screen.gPrint(Common::Point(xp + 1, 1), 0, "%s", name.c_str());
+		screen.gPrint(Common::Point(xp, 0), 12, "%s", name.c_str());
 
 		screen.slamArea(xp, 0, width + 2, 15);
 	}
 }
 
-/**
- * Update all on-screen sprites to account for any scrolling of the map
- */
 void Map::updateMap(bool flushScreen) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -415,7 +379,7 @@ void Map::updateMap(bool flushScreen) {
 		if (++_cursorIndex > (1 + 8))
 			_cursorIndex = 1;
 
-		events.setCursor((*_mapCursors)[(_cursorIndex + 1) / 2]);
+		events.setCursor((*_mapCursors)[(_cursorIndex + 1) / 2]._frame);
 	}
 
 	if (!_drawMap && !flushScreen)
@@ -432,9 +396,9 @@ void Map::updateMap(bool flushScreen) {
 	saveIcon(people[AL]._imageFrame, hPos);
 	if (people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
 			|| people[AL]._sequenceNumber == MAP_UPLEFT)
-		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, hPos, true);
+		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, hPos, true);
 	else
-		screen._backBuffer1.transBlitFrom(people[AL]._imageFrame->_frame, hPos, false);
+		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, hPos, false);
 
 	if (flushScreen) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -449,9 +413,6 @@ void Map::updateMap(bool flushScreen) {
 	}
 }
 
-/**
- * Handle moving icon for player from their previous location on the map to a destination location
- */
 void Map::walkTheStreets() {
 	People &people = *_vm->_people;
 	Common::Array<Common::Point> tempPath;
@@ -510,9 +471,6 @@ void Map::walkTheStreets() {
 	people._walkTo.push(destPos);
 }
 
-/**
- * Save the area under the player's icon
- */
 void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 	Screen &screen = *_vm->_screen;
 	Common::Point size(src->_width, src->_height);
@@ -540,16 +498,13 @@ void Map::saveIcon(ImageFrame *src, const Common::Point &pt) {
 		return;
 	}
 
-	assert(size.x <= _iconSave.w && size.y <= _iconSave.h);
+	assert(size.x <= _iconSave.w() && size.y <= _iconSave.h());
 	_iconSave.blitFrom(screen._backBuffer1, Common::Point(0, 0),
 		Common::Rect(pos.x, pos.y, pos.x + size.x, pos.y + size.y));
 	_savedPos = pos;
 	_savedSize = size;
 }
 
-/**
- * Restore the area under the player's icon
- */
 void Map::restoreIcon() {
 	Screen &screen = *_vm->_screen;
 
@@ -558,9 +513,6 @@ void Map::restoreIcon() {
 		screen._backBuffer1.blitFrom(_iconSave, _savedPos, Common::Rect(0, 0, _savedSize.x, _savedSize.y));
 }
 
-/**
- * Handles highlighting map icons, showing their names
- */
 void Map::highlightIcon(const Common::Point &pt) {
 	int oldPoint = _point;
 
@@ -599,9 +551,6 @@ void Map::highlightIcon(const Common::Point &pt) {
 	}
 }
 
-/**
-* Synchronize the data for a savegame
-*/
 void Map::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_bigPos.x);
 	s.syncAsSint16LE(_bigPos.y);

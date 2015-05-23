@@ -147,7 +147,9 @@ private:
 	bool cmdBreakpointFunction(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
+	bool cmdScriptObjects(int argc, const char **argv);
 	bool cmdScriptStrings(int argc, const char **argv);
+	bool cmdScriptSaid(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdVMVars(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
@@ -167,6 +169,7 @@ private:
 	void printList(List *list);
 	int printNode(reg_t addr);
 	void hexDumpReg(const reg_t *data, int len, int regsPerLine = 4, int startOffset = 0, bool isArray = false);
+	void printOffsets(int scriptNr, uint16 showType);
 
 private:
 	/**

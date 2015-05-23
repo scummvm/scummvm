@@ -28,19 +28,15 @@ namespace Sherlock {
 
 static const int NO_FRAMES = FRAMES_END;
 
-Animation::Animation(SherlockEngine *vm): _vm(vm) {
+Animation::Animation(SherlockEngine *vm) : _vm(vm) {
 }
 
-/**
- * Play a full-screen animation
- */
 bool Animation::play(const Common::String &filename, int minDelay, int fade,
 		bool setPalette, int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	int soundNumber = 0;
-	sound._playingEpilogue = true;
 
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename);
@@ -50,8 +46,8 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 
 	// Load the animation
 	Common::SeekableReadStream *stream;
-	if (!_vm->_titleOverride.empty())
-		stream = _vm->_res->load(vdxName, _vm->_titleOverride);
+	if (!_gfxLibraryFilename.empty())
+		stream = _vm->_res->load(vdxName, _gfxLibraryFilename);
 	else if (_vm->_useEpilogue2)
 		stream = _vm->_res->load(vdxName, "epilog2.lib");
 	else
@@ -106,12 +102,12 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 			if (frameNumber++ == *soundFrames) {
 				++soundNumber;
 				++soundFrames;
-				Common::String fname = _vm->_soundOverride.empty() ?
+				Common::String fname = _soundLibraryFilename.empty() ?
 					Common::String::format("%s%01d", filename.c_str(), soundNumber) :
 					Common::String::format("%s%02d", filename.c_str(), soundNumber);
 
 				if (sound._voices)
-					sound.playSound(fname, WAIT_RETURN_IMMEDIATELY);
+					sound.playSound(fname, WAIT_RETURN_IMMEDIATELY, 100, _soundLibraryFilename.c_str());
 			}
 
 			events.wait(speed * 3);
@@ -133,23 +129,16 @@ bool Animation::play(const Common::String &filename, int minDelay, int fade,
 	events.clearEvents();
 	sound.stopSound();
 	delete stream;
-	sound._playingEpilogue = false;
 
 	return !skipped && !_vm->shouldQuit();
 }
 
-/**
- * Load the prologue name array 
- */
 void Animation::setPrologueNames(const char *const *names, int count) {
-	for (int idx = 0; idx < count; ++idx, names++) {
+	for (int idx = 0; idx < count; ++idx, ++names) {
 		_prologueNames.push_back(*names);
 	}
 }
 
-/**
- * Load the prologue frame array
- */
 void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
 	_prologueFrames.resize(count);
 
@@ -159,18 +148,12 @@ void Animation::setPrologueFrames(const int *frames, int count, int maxFrames) {
 	}
 }
 
-/**
- * Load the title name array
- */
 void Animation::setTitleNames(const char *const *names, int count) {
-	for (int idx = 0; idx < count; ++idx, names++) {
+	for (int idx = 0; idx < count; ++idx, ++names) {
 		_titleNames.push_back(*names);
 	}
 }
 
-/**
- * Load the title frame array
- */
 void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 	_titleFrames.resize(count);
 
@@ -180,21 +163,18 @@ void Animation::setTitleFrames(const int *frames, int count, int maxFrames) {
 	}
 }
 
-/**
- * Checks for whether an animation is being played that has associated sound
- */
 const int *Animation::checkForSoundFrames(const Common::String &filename) {
 	const int *frames = &NO_FRAMES;
 
-	if (_vm->_soundOverride.empty()) {
-		for (Common::Array<const char *>::size_type idx = 0; idx < _prologueNames.size(); ++idx) {
+	if (_soundLibraryFilename.empty()) {
+		for (uint idx = 0; idx < _prologueNames.size(); ++idx) {
 			if (filename.equalsIgnoreCase(_prologueNames[idx])) {
 				frames = &_prologueFrames[idx][0];
 				break;
 			}
 		}
 	} else {
-		for (Common::Array<const char *>::size_type idx = 0; idx < _titleNames.size(); ++idx) {
+		for (uint idx = 0; idx < _titleNames.size(); ++idx) {
 			if (filename.equalsIgnoreCase(_titleNames[idx])) {
 				frames = &_titleFrames[idx][0];
 				break;

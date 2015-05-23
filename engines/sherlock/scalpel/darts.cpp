@@ -44,9 +44,10 @@ enum {
 	DART_COL_FORE = 5,
 	PLAYER_COLOR = 11
 };
+#define OPPONENTS_COUNT 4
 
-const char *const OPPONENT_NAMES[5] = {
-	"Skipper", "Willy", "Micky", "Tom", "Bartender"
+const char *const OPPONENT_NAMES[OPPONENTS_COUNT] = {
+	"Skipper", "Willy", "Micky", "Tom"
 };
 
 /*----------------------------------------------------------------*/
@@ -63,9 +64,6 @@ Darts::Darts(ScalpelEngine *vm) : _vm(vm) {
 	_oldDartButtons = false;
 }
 
-/**
- * Main method for playing darts game
- */
 void Darts::playDarts() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -118,7 +116,7 @@ void Darts::playDarts() {
 
 				if (playerNumber == 0) {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "Holmes Wins!");
-					if (_level < 4)
+					if (_level < OPPONENTS_COUNT)
 						setFlagsForDarts(318 + _level);
 				} else {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "%s Wins!", _opponent.c_str());
@@ -181,9 +179,6 @@ void Darts::playDarts() {
 	screen.setFont(oldFont);
 }
 
-/**
- * Load the graphics needed for the dart game
- */
 void Darts::loadDarts() {
 	Screen &screen = *_vm->_screen;
 
@@ -194,9 +189,6 @@ void Darts::loadDarts() {
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
-/**
- * Initializes the variables needed for the dart game
- */
 void Darts::initDarts() {
 	_dartScore1 = _dartScore2 = 301;
 	_roundNumber = 1;
@@ -210,7 +202,7 @@ void Darts::initDarts() {
 		_computerPlayer = 2;
 	} else {
 		// Check flags for opponents
-		for (int idx = 0; idx < 4; ++idx) {
+		for (int idx = 0; idx < OPPONENTS_COUNT; ++idx) {
 			if (_vm->readFlags(314 + idx))
 				_level = idx;
 		}
@@ -219,17 +211,11 @@ void Darts::initDarts() {
 	_opponent = OPPONENT_NAMES[_level];
 }
 
-/**
- * Frees the images used by the dart game
- */
 void Darts::closeDarts() {
 	delete _dartImages;
 	_dartImages = nullptr;
 }
 
-/**
- * Show the names of the people playing, Holmes and his opponent
- */
 void Darts::showNames(int playerNum) {
 	Screen &screen = *_vm->_screen;
 	byte color = playerNum == 0 ? PLAYER_COLOR : DART_COL_FORE;
@@ -249,10 +235,10 @@ void Darts::showNames(int playerNum) {
 
 	if (playerNum != 0)
 		screen.print(Common::Point(STATUS_INFO_X + 50, STATUS_INFO_Y), PLAYER_COLOR + 3,
-			_opponent.c_str());
+			"%s", _opponent.c_str());
 	else
 		screen.print(Common::Point(STATUS_INFO_X + 50, STATUS_INFO_Y), color,
-			_opponent.c_str());
+			"%s", _opponent.c_str());
 
 	screen._backBuffer1.fillRect(Common::Rect(STATUS_INFO_X + 50, STATUS_INFO_Y + 10,
 		STATUS_INFO_X + 81, STATUS_INFO_Y + 12), color);
@@ -262,9 +248,6 @@ void Darts::showNames(int playerNum) {
 	screen._backBuffer2.blitFrom(screen._backBuffer1);
 }
 
-/**
- * Show the player score and game status
- */
 void Darts::showStatus(int playerNum) {
 	Screen &screen = *_vm->_screen;
 	byte color;
@@ -283,12 +266,6 @@ void Darts::showStatus(int playerNum) {
 	screen.slamRect(Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, SHERLOCK_SCREEN_WIDTH, STATUS_INFO_Y + 48));
 }
 
-/**
- * Throws a single dart.
- * @param dartNum	Dart number
- * @param computer	0 = Player, 1 = 1st player computer, 2 = 2nd player computer
- * @returns			Score for what dart hit
- */
 int Darts::throwDart(int dartNum, int computer) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -347,9 +324,6 @@ int Darts::throwDart(int dartNum, int computer) {
 	return dartScore(dartPos);
 }
 
-/**
- * Draw a dart moving towards the board
- */
 void Darts::drawDartThrow(const Common::Point &pt) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -358,7 +332,7 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 	int delta = 9;
 
 	for (int idx = 4; idx < 23; ++idx) {
-		Graphics::Surface &frame = (*_dartImages)[idx]._frame;
+		ImageFrame &frame = (*_dartImages)[idx];
 
 		// Adjust draw position for animating dart
 		if (idx < 13)
@@ -369,15 +343,15 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 			pos.y += delta++;
 
 		// Draw the dart
-		Common::Point drawPos(pos.x - frame.w / 2, pos.y - frame.h);
+		Common::Point drawPos(pos.x - frame._width / 2, pos.y - frame._height);
 		screen._backBuffer1.transBlitFrom(frame, drawPos);
-		screen.slamArea(drawPos.x, drawPos.y, frame.w, frame.h);
+		screen.slamArea(drawPos.x, drawPos.y, frame._width, frame._height);
 
-		// Handle erasing old dart strs
+		// Handle erasing old dart frame area
 		if (!oldDrawBounds.isEmpty())
 			screen.slamRect(oldDrawBounds);
 
-		oldDrawBounds = Common::Rect(drawPos.x, drawPos.y, drawPos.x + frame.w, drawPos.y + frame.h);
+		oldDrawBounds = Common::Rect(drawPos.x, drawPos.y, drawPos.x + frame._width, drawPos.y + frame._height);
 		screen._backBuffer1.blitFrom(screen._backBuffer2, drawPos, oldDrawBounds);
 
 		events.wait(2);
@@ -389,9 +363,6 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 	screen.slamRect(oldDrawBounds);
 }
 
-/**
- * Erases the power bars
- */
 void Darts::erasePowerBars() {
 	Screen &screen = *_vm->_screen;
 
@@ -403,11 +374,6 @@ void Darts::erasePowerBars() {
 	screen.slamArea(DARTBARVX - 1, DARTHEIGHTY - 1, 11, DARTBARSIZE + 3);
 }
 
-/**
- * Show a gradually incrementing incrementing power that bar. If goToPower is provided, it will
- * increment to that power level ignoring all keyboard input (ie. for computer throws).
- * Otherwise, it will increment until either a key/mouse button is pressed, or it reaches the end
- */
 int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool isVertical) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -447,20 +413,15 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 		if (sound._musicOn) {
 			if (!(idx % 3))
 				sound.waitTimerRoland(1);
-		} else {
-			if (!(idx % 8))
-				events.wait(1);
-		}
-
+		} else if (!(idx % 8))
+			events.wait(1);
+	
 		++idx;
 	} while (!done);
 
 	return MIN(idx * 100 / DARTBARSIZE, 100);
 }
 
-/**
- * Returns true if a mouse button or key is pressed.
- */
 bool Darts::dartHit() {
 	Events &events = *_vm->_events;
 
@@ -480,9 +441,6 @@ bool Darts::dartHit() {
 	return (events._pressed && !_oldDartButtons) ? 1 : 0;
 }
 
-/**
- * Return the score of the given location on the dart-board
- */
 int Darts::dartScore(const Common::Point &pt) {
 	Common::Point pos(pt.x - 37, pt.y - 33);
 	Graphics::Surface &scoreImg = (*_dartImages)[1]._frame;
@@ -496,10 +454,6 @@ int Darts::dartScore(const Common::Point &pt) {
 	return score;
 }
 
-/**
- * Calculates where a computer player is trying to throw their dart, and choose the actual
- * point that was hit with some margin of error
- */
 Common::Point Darts::getComputerDartDest(int playerNum) {
 	Common::Point target;
 	int score = playerNum == 0 ? _dartScore1 : _dartScore2;
@@ -555,9 +509,6 @@ Common::Point Darts::getComputerDartDest(int playerNum) {
 	return target;
 }
 
-/**
- * Returns the center position for the area of the dartboard with a given number
- */
 bool Darts::findNumberOnBoard(int aim, Common::Point &pt) {
 	ImageFrame &board = (*_dartImages)[1];
 
@@ -597,10 +548,6 @@ bool Darts::findNumberOnBoard(int aim, Common::Point &pt) {
 	return done;
 }
 
-/**
- * Set a global flag to 0 or 1 depending on whether the passed flag is negative or positive.
- * @remarks		We don't use the global setFlags method because we don't want to check scene flags
- */
 void Darts::setFlagsForDarts(int flagNum) {
 	_vm->_flags[ABS(flagNum)] = flagNum >= 0;
 }

@@ -209,8 +209,11 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bpe",				WRAP_METHOD(Console, cmdBreakpointFunction));		// alias
 	// VM
 	registerCmd("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
+	registerCmd("script_objects",   WRAP_METHOD(Console, cmdScriptObjects));
+	registerCmd("scro",             WRAP_METHOD(Console, cmdScriptObjects));
 	registerCmd("script_strings",   WRAP_METHOD(Console, cmdScriptStrings));
 	registerCmd("scrs",             WRAP_METHOD(Console, cmdScriptStrings));
+	registerCmd("script_said",      WRAP_METHOD(Console, cmdScriptSaid));
 	registerCmd("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
 	registerCmd("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
 	registerCmd("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
@@ -2830,28 +2833,86 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdScriptStrings(int argc, const char **argv) {
-	SegManager *segMan = _engine->_gamestate->_segMan;
+bool Console::cmdScriptObjects(int argc, const char **argv) {
 	int curScriptNr = -1;
-	SegmentId curSegmentNr;
-	Common::List<SegmentId> segmentNrList;
-
-	SegmentType curSegmentType = SEG_TYPE_INVALID;
-	SegmentObj *curSegmentObj = NULL;
-	Script *curScriptObj = NULL;
 
 	if (argc < 2) {
-		debugPrintf("Shows the strings inside a specified script.\n");
+		debugPrintf("Shows all objects inside a specified script.\n");
+		debugPrintf("Usage: %s <script number>\n", argv[0]);
+		debugPrintf("Example: %s 999\n", argv[0]);
+		debugPrintf("<script number> may be * to show objects inside all loaded scripts\n");
+		return true;
+	}
+	
+	if (strcmp(argv[1], "*") == 0) {
+		// get said-strings of all currently loaded scripts
+		curScriptNr = -1;
+	} else {
+		curScriptNr = atoi(argv[1]);
+	}
+
+	printOffsets(curScriptNr, SCI_SCR_OFFSET_TYPE_OBJECT);
+	return true;
+}
+
+bool Console::cmdScriptStrings(int argc, const char **argv) {
+	int curScriptNr = -1;
+
+	if (argc < 2) {
+		debugPrintf("Shows all strings inside a specified script.\n");
 		debugPrintf("Usage: %s <script number>\n", argv[0]);
 		debugPrintf("Example: %s 999\n", argv[0]);
 		debugPrintf("<script number> may be * to show strings inside all loaded scripts\n");
 		return true;
 	}
 	
-	segmentNrList.clear();
-
 	if (strcmp(argv[1], "*") == 0) {
 		// get strings of all currently loaded scripts
+		curScriptNr = -1;
+	} else {
+		curScriptNr = atoi(argv[1]);
+	}
+
+	printOffsets(curScriptNr, SCI_SCR_OFFSET_TYPE_STRING);
+	return true;
+}
+
+bool Console::cmdScriptSaid(int argc, const char **argv) {
+	int curScriptNr = -1;
+
+	if (argc < 2) {
+		debugPrintf("Shows all said-strings inside a specified script.\n");
+		debugPrintf("Usage: %s <script number>\n", argv[0]);
+		debugPrintf("Example: %s 999\n", argv[0]);
+		debugPrintf("<script number> may be * to show said-strings inside all loaded scripts\n");
+		return true;
+	}
+	
+	if (strcmp(argv[1], "*") == 0) {
+		// get said-strings of all currently loaded scripts
+		curScriptNr = -1;
+	} else {
+		curScriptNr = atoi(argv[1]);
+	}
+
+	printOffsets(curScriptNr, SCI_SCR_OFFSET_TYPE_SAID);
+	return true;
+}
+
+void Console::printOffsets(int scriptNr, uint16 showType) {
+	SegManager *segMan = _engine->_gamestate->_segMan;
+	Vocabulary *vocab = _engine->_vocabulary;
+	SegmentId curSegmentNr;
+	Common::List<SegmentId> segmentNrList;
+
+	SegmentType curSegmentType = SEG_TYPE_INVALID;
+	SegmentObj *curSegmentObj = NULL;
+	Script *curScriptObj = NULL;
+	const byte *curScriptData = NULL;
+
+	segmentNrList.clear();
+	if (scriptNr < 0) {
+		// get offsets of all currently loaded scripts
 		for (curSegmentNr = 0; curSegmentNr < segMan->_heap.size(); curSegmentNr++) {
 			curSegmentObj = segMan->_heap[curSegmentNr];
 			if (curSegmentObj && curSegmentObj->getType() == SEG_TYPE_SCRIPT) {
@@ -2860,14 +2921,22 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 		}
 
 	} else {
-		curScriptNr = atoi(argv[1]);
-		curSegmentNr = segMan->getScriptSegment(curScriptNr);
+		curSegmentNr = segMan->getScriptSegment(scriptNr);
 		if (!curSegmentNr) {
-			debugPrintf("Script %d is currently not loaded/available\n", curScriptNr);
-			return true;
+			debugPrintf("Script %d is currently not loaded/available\n", scriptNr);
+			return;
 		}
 		segmentNrList.push_back(curSegmentNr);
 	}
+
+	const offsetLookupArrayType *scriptOffsetLookupArray;
+	offsetLookupArrayType::const_iterator arrayIterator;
+	int showTypeCount = 0;
+
+	reg_t objectPos;
+	const char *objectNamePtr = NULL;
+	const byte *stringPtr = NULL;
+	const byte *saidPtr = NULL;
 
 	Common::List<SegmentId>::iterator it;
 	const Common::List<SegmentId>::iterator end = segmentNrList.end();
@@ -2884,15 +2953,64 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 			continue;
 
 		curScriptObj = (Script *)curSegmentObj;
-		debugPrintf("=== SCRIPT %d from Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
-		debugN("=== SCRIPT %d from Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+		debugPrintf("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
+		debugN("=== SCRIPT %d inside Segment %d ===\n", curScriptObj->getScriptNumber(), curSegmentNr);
 
-		// now print the string list
-		curScriptObj->debugPrintStrings(this);
+		// now print the list
+		scriptOffsetLookupArray = curScriptObj->getOffsetArray();
+		curScriptData = curScriptObj->getBuf();
+		showTypeCount = 0;
+
+		for (arrayIterator = scriptOffsetLookupArray->begin(); arrayIterator != scriptOffsetLookupArray->end(); arrayIterator++) {
+			if (arrayIterator->type == showType) {
+				switch (showType) {
+				case SCI_SCR_OFFSET_TYPE_OBJECT:
+					objectPos = make_reg(curSegmentNr, arrayIterator->offset);
+					objectNamePtr = segMan->getObjectName(objectPos);
+					debugPrintf(" %03d:%04x: %s\n", arrayIterator->id, arrayIterator->offset, objectNamePtr);
+					debugN(" %03d:%04x: %s\n", arrayIterator->id, arrayIterator->offset, objectNamePtr);
+					break;
+				case SCI_SCR_OFFSET_TYPE_STRING:
+					stringPtr = curScriptData + arrayIterator->offset;
+					debugPrintf(" %03d:%04x: '%s' (size %d)\n", arrayIterator->id, arrayIterator->offset, stringPtr, arrayIterator->stringSize);
+					debugN(" %03d:%04x: '%s' (size %d)\n", arrayIterator->id, arrayIterator->offset, stringPtr, arrayIterator->stringSize);
+					break;
+				case SCI_SCR_OFFSET_TYPE_SAID:
+					saidPtr = curScriptData + arrayIterator->offset;
+					debugPrintf(" %03d:%04x:\n", arrayIterator->id, arrayIterator->offset);
+					debugN(" %03d:%04x: ", arrayIterator->id, arrayIterator->offset);
+					vocab->debugDecipherSaidBlock(saidPtr);
+					debugN("\n");
+					break;
+				default:
+					break;
+				}
+				showTypeCount++;
+			}
+		}
+
+		if (showTypeCount == 0) {
+			switch (showType) {
+			case SCI_SCR_OFFSET_TYPE_OBJECT:
+				debugPrintf(" no objects\n");
+				debugN(" no objects\n");
+				break;
+			case SCI_SCR_OFFSET_TYPE_STRING:
+				debugPrintf(" no strings\n");
+				debugN(" no strings\n");
+				break;
+			case SCI_SCR_OFFSET_TYPE_SAID:
+				debugPrintf(" no said-strings\n");
+				debugN(" no said-strings\n");
+				break;
+			default:
+				break;
+			}
+		}
+
 		debugPrintf("\n");
 		debugN("\n");
 	}
-	return true;
 }
 
 bool Console::cmdBacktrace(int argc, const char **argv) {
@@ -3374,6 +3492,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		// We call run_engine explictly so we can restore the value of r_acc
 		// after execution.
 		run_vm(_engine->_gamestate);
+		_engine->_gamestate->xs = old_xstack;
 
 	}
 

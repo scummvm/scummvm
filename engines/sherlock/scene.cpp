@@ -27,6 +27,13 @@
 
 namespace Sherlock {
 
+static const int FS_TRANS[8] = {
+	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
+	STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
+};
+
+/*----------------------------------------------------------------*/
+
 BgFileHeader::BgFileHeader() {
 	_numStructs = -1;
 	_numImages = -1;
@@ -44,7 +51,7 @@ BgFileHeader::BgFileHeader() {
 	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
 }
 
-void BgFileHeader::synchronize(Common::SeekableReadStream &s, bool isRoseTattoo) {
+void BgFileHeader::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_numStructs = s.readUint16LE();
 	_numImages = s.readUint16LE();
 	_numcAnimations = s.readUint16LE();
@@ -63,10 +70,7 @@ void BgFileHeader::synchronize(Common::SeekableReadStream &s, bool isRoseTattoo)
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
-void BgfileheaderInfo::load(Common::SeekableReadStream &s) {
+void BgFileHeaderInfo::load(Common::SeekableReadStream &s) {
 	_filesize = s.readUint32LE();
 	_maxFrames = s.readByte();
 
@@ -77,9 +81,6 @@ void BgfileheaderInfo::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void Exit::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	if (isRoseTattoo) {
 		char buffer[41];
@@ -108,9 +109,6 @@ void Exit::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void SceneEntry::load(Common::SeekableReadStream &s) {
 	_startPosition.x = s.readSint16LE();
 	_startPosition.y = s.readSint16LE();
@@ -118,9 +116,6 @@ void SceneEntry::load(Common::SeekableReadStream &s) {
 	_allow = s.readByte();
 }
 
-/**
- * Load the data for the object
- */
 void SceneSound::load(Common::SeekableReadStream &s) {
 	char buffer[9];
 	s.read(buffer, 8);
@@ -132,9 +127,6 @@ void SceneSound::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Retuurn the index of the passed object in the array
- */
 int ObjectArray::indexOf(const Object &obj) const {
 	for (uint idx = 0; idx < size(); ++idx) {
 		if (&(*this)[idx] == &obj)
@@ -146,9 +138,6 @@ int ObjectArray::indexOf(const Object &obj) const {
 
 /*----------------------------------------------------------------*/
 
-/**
- * Load the data for the object
- */
 void ScaleZone::load(Common::SeekableReadStream &s) {
 	left = s.readSint16LE();
 	top = s.readSint16LE();
@@ -167,16 +156,12 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_currentScene = -1;
 	_goToScene = -1;
 	_loadingSavedGame = false;
-	_changes = false;
-	_keyboardInput = 0;
 	_walkedInScene = false;
 	_version = 0;
 	_lzwMode = false;
 	_invGraphicItems = 0;
 	_cAnimFramePause = 0;
 	_restoreFlag = false;
-	_invLookFlag = false;
-	_lookHelp = false;
 	_animating = 0;
 	_doBgAnimDone = true;
 	_tempFadeStyle = 0;
@@ -187,9 +172,6 @@ Scene::~Scene() {
 	freeScene();
 }
 
-/**
- * Handles loading the scene specified by _goToScene
- */
 void Scene::selectScene() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -200,9 +182,6 @@ void Scene::selectScene() {
 	// Reset fields
 	ui._windowOpen = ui._infoFlag = false;
 	ui._menuMode = STD_MODE;
-	_keyboardInput = 0;
-	_oldKey = _help = _oldHelp = 0;
-	_oldTemp = _temp = 0;
 
 	// Free any previous scene
 	freeScene();
@@ -215,7 +194,7 @@ void Scene::selectScene() {
 
 	loadScene(sceneFile);
 
-	// If the fade style was changed from running amovie, then reset it
+	// If the fade style was changed from running a movie, then reset it
 	if (_tempFadeStyle) {
 		screen._fadeStyle = _tempFadeStyle;
 		_tempFadeStyle = 0;
@@ -227,15 +206,12 @@ void Scene::selectScene() {
 	_restoreFlag = true;
 	events.clearEvents();
 
-	// If there were any scripst waiting to be run, but were interrupt by a running
+	// If there were any scripts waiting to be run, but were interrupt by a running
 	// canimation (probably the last scene's exit canim), clear the _scriptMoreFlag
 	if (talk._scriptMoreFlag == 3)
 		talk._scriptMoreFlag = 0;
 }
 
-/**
- * Fres all the graphics and other dynamically allocated data for the scene
- */
 void Scene::freeScene() {
 	if (_currentScene == -1)
 		return;
@@ -265,15 +241,6 @@ void Scene::freeScene() {
 	_currentScene = -1;
 }
 
-/**
- * Loads the data associated for a given scene. The .BGD file's format is:
- * BGHEADER: Holds an index for the rest of the file
- * STRUCTS:  The objects for the scene
- * IMAGES:   The graphic information for the structures
- *
- * The _misc field of the structures contains the number of the graphic image
- * that it should point to after loading; _misc is then set to 0.
- */
 bool Scene::loadScene(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
@@ -284,7 +251,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
-	Common::Array<BgfileheaderInfo> bgInfo;
 
 	_walkedInScene = false;
 
@@ -319,7 +285,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		rrmStream->seek(rrmStream->readUint32LE());
 
 		BgFileHeader bgHeader;
-		bgHeader.synchronize(*rrmStream, IS_ROSE_TATTOO);
+		bgHeader.load(*rrmStream, IS_ROSE_TATTOO);
 		_invGraphicItems = bgHeader._numImages + 1;
 
 		if (IS_ROSE_TATTOO) {
@@ -338,6 +304,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		} 
 
 		// Read in the shapes header info
+		Common::Array<BgFileHeaderInfo> bgInfo;
 		bgInfo.resize(bgHeader._numStructs);
 
 		for (uint idx = 0; idx < bgInfo.size(); ++idx)
@@ -364,30 +331,51 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			if (_lzwMode)
 				delete infoStream;
+		} else if (!_lzwMode) {
+			_bgShapes.resize(bgHeader._numStructs);
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+				_bgShapes[idx].load(*rrmStream, false);
+
+			if (bgHeader._descSize) {
+				_descText.resize(bgHeader._descSize);
+				rrmStream->read(&_descText[0], bgHeader._descSize);
+			}
+
+			if (bgHeader._seqSize) {
+				_sequenceBuffer.resize(bgHeader._seqSize);
+				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+			}
 		} else {
-			// Load shapes
-			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
+			Common::SeekableReadStream *infoStream;
+
+			// Read shapes
+			infoStream = Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569);
 
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream, true);
+				_bgShapes[idx].load(*infoStream, false);
 
-			if (_lzwMode)
+			delete infoStream;
+
+			// Read description texts
+			if (bgHeader._descSize) {
+				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._descSize);
+
+				_descText.resize(bgHeader._descSize);
+				infoStream->read(&_descText[0], bgHeader._descSize);
+
 				delete infoStream;
+			}
 
-			// Load description text
-			_descText.resize(bgHeader._descSize);
-			if (_lzwMode)
-				res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
-			else
-				rrmStream->read(&_descText[0], bgHeader._descSize);
+			// Read sequences
+			if (bgHeader._seqSize) {
+				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._seqSize);
 
-			// Load sequences
-			_sequenceBuffer.resize(bgHeader._seqSize);
-			if (_lzwMode)
-				res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
-			else
-				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+				_sequenceBuffer.resize(bgHeader._seqSize);
+				infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+
+				delete infoStream;
+			}
 		}
 
 		// Set up the list of images used by the scene
@@ -545,7 +533,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	// Clear user interface area and draw controls
 	ui.drawInterface();
 
-	_changes = false;
 	checkSceneStatus();
 
 	if (!saves._justLoaded) {
@@ -556,13 +543,13 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// Check for TURNON objects
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			if (_bgShapes[idx]._type == HIDDEN && (_bgShapes[idx]._flags & 0x20))
+			if (_bgShapes[idx]._type == HIDDEN && (_bgShapes[idx]._flags & TURNON_OBJ))
 				_bgShapes[idx].toggleHidden();
 		}
 
 		// Check for TURNOFF objects
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & 0x40) &&
+			if (_bgShapes[idx]._type != HIDDEN && (_bgShapes[idx]._flags & TURNOFF_OBJ) &&
 					_bgShapes[idx]._type != INVALID)
 				_bgShapes[idx].toggleHidden();
 			if (_bgShapes[idx]._type == HIDE_SHAPE)
@@ -590,7 +577,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	_walkedInScene = false;
 	saves._justLoaded = false;
 
-	if (!_vm->getIsDemo()) {
+	if (!_vm->isDemo()) {
 		// Reset the previous map location and position on overhead map
 		map._oldCharPoint = _currentScene;
 		map._overPos.x = map[_currentScene].x * 100 - 600;
@@ -601,9 +588,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	return flag;
 }
 
-/**
- * Load all the sound effects specified for the current scene
- */
 void Scene::loadSceneSounds() {
 	Sound &sound = *_vm->_sound;
 
@@ -611,10 +595,6 @@ void Scene::loadSceneSounds() {
 		sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
 }
 
-/**
- * Set objects to their current persistent state. This includes things such as
- * opening or moving them
- */
 void Scene::checkSceneStatus() {
 	if (_sceneStats[_currentScene][64]) {
 		for (uint idx = 0; idx < 64; ++idx) {
@@ -640,10 +620,6 @@ void Scene::checkSceneStatus() {
 	}
 }
 
-/**
- * Restores objects to the correct status. This ensures that things like being opened or moved
- * will remain the same on future visits to the scene
- */
 void Scene::saveSceneStatus() {
 	// Flag any objects for the scene that have been altered
 	int count = MIN((int)_bgShapes.size(), 64);
@@ -657,11 +633,6 @@ void Scene::saveSceneStatus() {
 	_sceneStats[_currentScene][64] = true;
 }
 
-/**
- * Check the scene's objects against the game flags. If false is passed,
- * it means the scene has just been loaded. A value of true means that the scene
- * is in use (ie. not just loaded)
- */
 void Scene::checkSceneFlags(bool flag) {
 	SpriteType mode = flag ? HIDE_SHAPE : HIDDEN;
 
@@ -714,16 +685,10 @@ void Scene::checkSceneFlags(bool flag) {
 	}
 }
 
-/**
- * Checks scene objects against the player's inventory items. If there are any
- * matching names, it means the given item has already been picked up, and should
- * be hidden in the scene.
- */
 void Scene::checkInventory() {
 	for (uint shapeIdx = 0; shapeIdx < _bgShapes.size(); ++shapeIdx) {
 		for (int invIdx = 0; invIdx < _vm->_inventory->_holdings; ++invIdx) {
-			if (scumm_stricmp(_bgShapes[shapeIdx]._name.c_str(),
-				(*_vm->_inventory)[invIdx]._name.c_str()) == 0) {
+			if (_bgShapes[shapeIdx]._name.equalsIgnoreCase((*_vm->_inventory)[invIdx]._name)) {
 				_bgShapes[shapeIdx]._type = INVALID;
 				break;
 			}
@@ -731,10 +696,6 @@ void Scene::checkInventory() {
 	}
 }
 
-/**
- * Set up any entrance co-ordinates or entrance canimations, and then transition
- * in the scene
- */
 void Scene::transitionToScene() {
 	People &people = *_vm->_people;
 	SaveManager &saves = *_vm->_saves;
@@ -742,11 +703,6 @@ void Scene::transitionToScene() {
 	Talk &talk = *_vm->_talk;
 	Common::Point &hSavedPos = people._hSavedPos;
 	int &hSavedFacing = people._hSavedFacing;
-
-	const int FS_TRANS[8] = {
-		STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
-		STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
-	};
 
 	if (hSavedPos.x < 1) {
 		// No exit information from last scene-check entrance info
@@ -812,14 +768,14 @@ void Scene::transitionToScene() {
 				// player is clear of the box
 				switch (obj._aType) {
 				case FLAG_SET:
-					for (int useNum = 0; useNum < 4; ++useNum) {
+					for (int useNum = 0; useNum < USE_COUNT; ++useNum) {
 						if (obj._use[useNum]._useFlag) {
 							if (!_vm->readFlags(obj._use[useNum]._useFlag))
 								_vm->setFlags(obj._use[useNum]._useFlag);
 						}
 
 						if (!talk._talkToAbort) {
-							for (int nameIdx = 0; nameIdx < 4; ++nameIdx) {
+							for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 								toggleObject(obj._use[useNum]._names[nameIdx]);
 							}
 						}
@@ -854,15 +810,11 @@ void Scene::transitionToScene() {
 	}
 }
 
-/**
- * Scans through the object list to find one with a matching name, and will
- * call toggleHidden with all matches found. Returns the numer of matches found
- */
 int Scene::toggleObject(const Common::String &name) {
 	int count = 0;
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		if (scumm_stricmp(name.c_str(), _bgShapes[idx]._name.c_str()) == 0) {
+		if (name.equalsIgnoreCase(_bgShapes[idx]._name)) {
 			++count;
 			_bgShapes[idx].toggleHidden();
 		}
@@ -871,10 +823,6 @@ int Scene::toggleObject(const Common::String &name) {
 	return count;
 }
 
-/**
- * Update the screen back buffer with all of the scene objects which need
- * to be drawn
- */
 void Scene::updateBackground() {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -894,27 +842,27 @@ void Scene::updateBackground() {
 	// Draw all active shapes which are behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == BEHIND)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == BEHIND)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame,
-				_canimShapes[idx]._position, _canimShapes[idx]._flags & 2);
+				_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all active shapes which are normal and behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are normal and behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & 2);
+				_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw the player if he's active
@@ -931,7 +879,8 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_bgShapes[idx]._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
+				_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the player
@@ -939,7 +888,7 @@ void Scene::updateBackground() {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_canimShapes[idx]._misc == NORMAL_FORWARD)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & 2);
+				_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active shapes that are FORWARD
@@ -950,7 +899,8 @@ void Scene::updateBackground() {
 
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
 				_bgShapes[idx]._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & 2);
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
+				_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are forward
@@ -958,15 +908,12 @@ void Scene::updateBackground() {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
 			_canimShapes[idx]._misc == FORWARD)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & 2);
+				_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	screen.resetDisplayBounds();
 }
 
-/**
- * Check whether the passed area intersects with one of the scene's exits
- */
 Exit *Scene::checkForExit(const Common::Rect &r) {
 	for (uint idx = 0; idx < _exits.size(); ++idx) {
 		if (_exits[idx].intersects(r))
@@ -976,11 +923,6 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
-/**
- * Checks all the background shapes. If a background shape is animating,
- * it will flag it as needing to be drawn. If a non-animating shape is
- * colliding with another shape, it will also flag it as needing drawing
- */
 void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 	// Iterate through the shapes
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -989,9 +931,9 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 			if ((obj._flags & 5) == 1) {
 				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
 					NORMAL_FORWARD : NORMAL_BEHIND;
-			} else if (!(obj._flags & 1)) {
+			} else if (!(obj._flags & OBJ_BEHIND)) {
 				obj._misc = BEHIND;
-			} else if (obj._flags & 4) {
+			} else if (obj._flags & OBJ_FORWARD) {
 				obj._misc = FORWARD;
 			}
 		}
@@ -1015,14 +957,6 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 	}
 }
 
-/**
- * Attempt to start a canimation sequence. It will load the requisite graphics, and
- * then copy the canim object into the _canimShapes array to start the animation.
- *
- * @param cAnimNum		The canim object within the current scene
- * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
- *		A negative playRate can also be specified to play the animation in reverse
- */
 int Scene::startCAnim(int cAnimNum, int playRate) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
@@ -1070,7 +1004,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	if (talk._talkToAbort)
 		return 1;
 
-	// Add new anim shape entry for displaying the animationo
+	// Add new anim shape entry for displaying the animation
 	_canimShapes.push_back(Object());
 	Object &cObj = _canimShapes[_canimShapes.size() - 1];
 
@@ -1235,9 +1169,6 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	return 1;
 }
 
-/**
- * Animate all objects and people.
- */
 void Scene::doBgAnim() {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
@@ -1333,7 +1264,7 @@ void Scene::doBgAnim() {
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 			Object &o = _bgShapes[idx];
-			if (o._type == NO_SHAPE && ((o._flags & 1) == 0)) {
+			if (o._type == NO_SHAPE && ((o._flags & OBJ_BEHIND) == 0)) {
 				// Restore screen area
 				screen._backBuffer->blitFrom(screen._backBuffer2, o._position,
 					Common::Rect(o._position.x, o._position.y,
@@ -1384,14 +1315,14 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
@@ -1399,14 +1330,14 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all canimations which are NORMAL and behind the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
@@ -1427,14 +1358,14 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
@@ -1442,27 +1373,27 @@ void Scene::doBgAnim() {
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Draw any active portrait
 	if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
 		screen._backBuffer->transBlitFrom(*people._portrait._imageFrame,
-			people._portrait._position, people._portrait._flags & 2);
+			people._portrait._position, people._portrait._flags & OBJ_FLIPPED);
 
 	// Draw all static and active canimations that are in front of the person
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		Object &o = _canimShapes[idx];
 		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 		}
 	}
 
 	// Draw all NO_SHAPE shapes which have flag bit 0 clear
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
-		if (o._type == NO_SHAPE && (o._flags & 1) == 0)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & 2);
+		if (o._type == NO_SHAPE && (o._flags & OBJ_BEHIND) == 0)
+			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
 	}
 
 	// Bring the newly built picture to the screen
@@ -1470,7 +1401,7 @@ void Scene::doBgAnim() {
 		_animating = 0;
 		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	} else {
-		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.size() == 0))) {
+		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.empty()))) {
 			if (people[AL]._type == REMOVE) {
 				screen.slamRect(Common::Rect(
 					people[AL]._oldPosition.x, people[AL]._oldPosition.y,
@@ -1517,7 +1448,7 @@ void Scene::doBgAnim() {
 		if (_goToScene == -1) {
 			for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 				Object &o = _bgShapes[idx];
-				if (o._type == NO_SHAPE && (o._flags & 1) == 0) {
+				if (o._type == NO_SHAPE && (o._flags & OBJ_BEHIND) == 0) {
 					screen.slamArea(o._position.x, o._position.y, o._oldSize.x, o._oldSize.y);
 					screen.slamArea(o._oldPosition.x, o._oldPosition.y, o._oldSize.x, o._oldSize.y);
 				} else if (o._type == HIDE_SHAPE) {
@@ -1565,10 +1496,6 @@ void Scene::doBgAnim() {
 	}
 }
 
-/**
- * Attempts to find a background shape within the passed bounds. If found,
- * it will return the shape number, or -1 on failure.
- */
 int Scene::findBgShape(const Common::Rect &r) {
 	if (!_doBgAnimDone)
 		// New frame hasn't been drawn yet
@@ -1589,10 +1516,6 @@ int Scene::findBgShape(const Common::Rect &r) {
 	return -1;
 }
 
-/**
- * Checks to see if the given position in the scene belongs to a given zone type.
- * If it is, the zone is activated and used just like a TAKL zone or aFLAG_SET zone.
- */
 int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	int matches = 0;
 
@@ -1612,9 +1535,6 @@ int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	return matches;
 }
 
-/**
- * Check which zone the the given position is located in.
- */
 int Scene::whichZone(const Common::Point &pt) {
 	for (uint idx = 0; idx < _zones.size(); ++idx) {
 		if (_zones[idx].contains(pt))
@@ -1624,9 +1544,6 @@ int Scene::whichZone(const Common::Point &pt) {
 	return -1;
 }
 
-/**
- * Returns the index of the closest zone to a given point.
- */
 int Scene::closestZone(const Common::Point &pt) {
 	int dist = 1000;
 	int zone = -1;
@@ -1646,9 +1563,6 @@ int Scene::closestZone(const Common::Point &pt) {
 	return zone;
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Scene::synchronize(Common::Serializer &s) {
 	if (s.isSaving())
 		saveSceneStatus();

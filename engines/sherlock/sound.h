@@ -46,7 +46,7 @@ private:
 	Audio::SoundHandle _effectsHandle;
 	int _curPriority;
 
-	char decodeSample(char sample, byte& prediction, int& step);
+	byte decodeSample(byte sample, byte& reference, int16& scale);
 public:
 	bool _digitized;
 	bool _music;
@@ -54,7 +54,6 @@ public:
 	bool _soundOn;
 	bool _musicOn;
 	bool _speechOn;
-	bool _playingEpilogue;
 	bool _diskSoundPlaying;
 	bool _soundPlaying;
 	bool *_soundIsOn;
@@ -62,19 +61,61 @@ public:
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 
+	/**
+	 * Saves sound-related settings
+	 */
 	void syncSoundSettings();
+
+	/**
+	 * Load a sound
+	 */
 	void loadSound(const Common::String &name, int priority);
-	bool playSound(const Common::String &name, WaitType waitType, int priority = 100);
+	
+	/**
+	 * Play the sound in the specified resource
+	 */
+	bool playSound(const Common::String &name, WaitType waitType, int priority = 100, const char *libraryFilename = nullptr);
+	
+	/**
+	 * Play a previously loaded sound
+	 */
 	void playLoadedSound(int bufNum, WaitType waitType);
+	
+	/**
+	 * Free any previously loaded sounds
+	 */
 	void freeLoadedSounds();
+	
+	/**
+	 * Stop playing any active sound
+	 */
 	void stopSound();
 
+	/**
+	 * Load a specified song
+	 */
 	int loadSong(int songNumber);
+
+	/**
+	 * Start playing a song
+	 */
 	void startSong();
+	
+	/**
+	 * Free any currently loaded song
+	 */
 	void freeSong();
 	
+	/**
+	 * Play the specified music resource
+	 */
 	void playMusic(const Common::String &name);
+
+	/**
+	 * Stop playing the music
+	 */
 	void stopMusic();
+	
 	void stopSndFuncPtr(int v1, int v2);
 	void waitTimerRoland(uint time);
 	void freeDigiSound();
@@ -83,3 +124,4 @@ public:
 } // End of namespace Sherlock
 
 #endif
+

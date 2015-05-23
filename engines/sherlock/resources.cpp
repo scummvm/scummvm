@@ -28,21 +28,13 @@
 
 namespace Sherlock {
 
-Cache::Cache(SherlockEngine *vm): _vm(vm) {
+Cache::Cache(SherlockEngine *vm) : _vm(vm) {
 }
 
-/**
- * Returns true if a given file is currently being cached
- */
 bool Cache::isCached(const Common::String &filename) const {
 	return _resources.contains(filename);
 }
 
-/**
- * Loads a file into the cache if it's not already present, and returns it.
- * If the file is LZW compressed, automatically decompresses it and loads
- * the uncompressed version into memory
- */
 void Cache::load(const Common::String &name) {
 	// First check if the entry already exists
 	if (_resources.contains(name))
@@ -58,9 +50,6 @@ void Cache::load(const Common::String &name) {
 	f.close();
 }
 
-/**
- * Load a cache entry based on a passed stream
- */
 void Cache::load(const Common::String &name, Common::SeekableReadStream &stream) {
 	// First check if the entry already exists
 	if (_resources.contains(name))
@@ -88,9 +77,6 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	}
 }
 
-/**
- * Get a file from the cache
- */
 Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 	// Return a memory stream that encapsulates the data
 	const CacheEntry &cacheEntry = _resources[filename];
@@ -99,18 +85,18 @@ Common::SeekableReadStream *Cache::get(const Common::String &filename) const {
 
 /*----------------------------------------------------------------*/
 
-Resources::Resources(SherlockEngine *vm): _vm(vm), _cache(vm) {
+Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	_resourceIndex = -1;
 
-	addToCache("vgs.lib");
-	addToCache("talk.lib");
-	addToCache("journal.txt");
+	if (_vm->_interactiveFl) {
+		addToCache("vgs.lib");
+		addToCache("talk.lib");
+		addToCache("sequence.txt");
+		addToCache("journal.txt");
+		addToCache("portrait.lib");
+	}
 }
 
-/**
- * Adds the specified file to the cache. If it's a library file, takes care of
- * loading it's index for future use
- */
 void Resources::addToCache(const Common::String &filename) {
 	_cache.load(filename);
 
@@ -126,9 +112,6 @@ void Resources::addToCache(const Common::String &filename) {
 	delete stream;
 }
 
-/**
- * Adds a resource from a library file to the cache
- */
 void Resources::addToCache(const Common::String &filename, const Common::String &libFilename) {
 	// Get the resource
 	Common::SeekableReadStream *stream = load(filename, libFilename);
@@ -138,16 +121,10 @@ void Resources::addToCache(const Common::String &filename, const Common::String 
 	delete stream;
 }
 
-/**
- * Adds a given stream to the cache under the given name
- */
 void Resources::addToCache(const Common::String &filename, Common::SeekableReadStream &stream) {
 	_cache.load(filename, stream);
 }
 
-/**
- * Returns a stream for a given file
- */
 Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 	// First check if the file is directly in the cache
 	if (_cache.isCached(filename))
@@ -155,30 +132,19 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 
 	// Secondly, iterate through any loaded library file looking for a resource
 	// that has the same name
-	LibraryIndexes::iterator i;
-	for (i = _indexes.begin(); i != _indexes.end(); ++i) {
-		if ((*i)._value.contains(filename)) {
+	for (LibraryIndexes::iterator i = _indexes.begin(); i != _indexes.end(); ++i) {
+		if (i->_value.contains(filename)) {
 			// Get a stream reference to the given library file
-			Common::SeekableReadStream *stream = load((*i)._key);
-			LibraryEntry &entry = (*i)._value[filename];
+			Common::SeekableReadStream *stream = load(i->_key);
+			LibraryEntry &entry = i->_value[filename];
 			_resourceIndex = entry._index;
 
 			stream->seek(entry._offset);
 			Common::SeekableReadStream *resStream = stream->readStream(entry._size);
+			decompressIfNecessary(resStream);
 
-			// Check whether the file is compressed
-			if (resStream->readUint32BE() == MKTAG('L', 'Z', 'V', 26)) {
-				resStream->seek(0);
-				// It's compressed, so decompress the sub-file and return it
-				Common::SeekableReadStream *decompressed = decompress(*resStream);
-				delete stream;
-				delete resStream;
-				return decompressed;
-			} else {
-				resStream->seek(0);
-				delete stream;
-				return resStream;
-			}
+			delete stream;
+			return resStream;
 		}
 	}
 
@@ -189,13 +155,24 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 
 	Common::SeekableReadStream *stream = f.readStream(f.size());
 	f.close();
+	decompressIfNecessary(stream);
 
 	return stream;
 }
 
-/**
- * Loads a specific resource from a given library file
- */
+void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
+	bool isCompressed = stream->readUint32BE() == MKTAG('L', 'Z', 'V', 26);
+
+	if (isCompressed) {
+		int outSize = stream->readUint32LE();
+		Common::SeekableReadStream *newStream = decompressLZ(*stream, outSize);
+		delete stream;
+		stream = newStream;
+	} else {
+		stream->seek(-4, SEEK_CUR);
+	}
+}
+
 Common::SeekableReadStream *Resources::load(const Common::String &filename, const Common::String &libraryFile) {
 	// Open up the library for access
 	Common::SeekableReadStream *libStream = load(libraryFile);
@@ -208,22 +185,17 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 	LibraryEntry &entry = _indexes[libraryFile][filename];
 	libStream->seek(entry._offset);
 	Common::SeekableReadStream *stream = libStream->readStream(entry._size);
+	decompressIfNecessary(stream);
 
 	delete libStream;
 	return stream;
 }
 
-/**
- * Returns true if the given file exists on disk or in the cache
- */
 bool Resources::exists(const Common::String &filename) const {
 	Common::File f;
 	return f.exists(filename) || _cache.isCached(filename);
 }
 
-/**
- * Reads in the index from a library file, and caches it's index for later use
- */
 void Resources::loadLibraryIndex(const Common::String &libFilename,
 		Common::SeekableReadStream *stream, bool isNewStyle) {
 	uint32 offset, nextOffset;
@@ -263,13 +235,82 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 	}
 }
 
-/**
- * Returns the index of the last loaded resource in it's given library file.
- * This will be used primarily when loading talk files, so the engine can
- * update the given conversation number in the journal
- */
 int Resources::resourceIndex() const {
 	return _resourceIndex;
+}
+
+Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source) {
+	// This variation can't be used by Rose Tattoo, since compressed resources include the input size,
+	// not the output size. Which means their decompression has to be done via passed buffers
+	assert(_vm->getGameID() == GType_SerratedScalpel);
+
+	uint32 id = source.readUint32BE();
+	assert(id == MKTAG('L', 'Z', 'V', 0x1A));
+
+	uint32 outputSize = source.readUint32LE();
+	return decompressLZ(source, outputSize);
+}
+
+Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source, uint32 outSize) {
+	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+	byte *outBuffer = (byte *)malloc(outSize);
+	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+
+	decompressLZ(source, outBuffer, outSize, inSize);
+
+	return outStream;
+}
+
+void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
+	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+
+	decompressLZ(source, buffer, outSize, inputSize);
+}
+
+Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
+	byte *dataOut = (byte *)malloc(outSize);
+	decompressLZ(source, dataOut, outSize, -1);
+
+	return new Common::MemoryReadStream(dataOut, outSize, DisposeAfterUse::YES);
+}
+
+void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize) {
+	byte lzWindow[4096];
+	uint16 lzWindowPos;
+	uint16 cmd;
+
+	byte *outBufferEnd = outBuffer + outSize;
+	int endPos = source.pos() + inSize;
+
+	memset(lzWindow, 0xFF, 0xFEE);
+	lzWindowPos = 0xFEE;
+	cmd = 0;
+
+	do {
+		cmd >>= 1;
+		if (!(cmd & 0x100))
+			cmd = source.readByte() | 0xFF00;
+
+		if (cmd & 1) {
+			byte literal = source.readByte();
+			*outBuffer++ = literal;
+			lzWindow[lzWindowPos] = literal;
+			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+		} else {
+			int copyPos, copyLen;
+			copyPos = source.readByte();
+			copyLen = source.readByte();
+			copyPos = copyPos | ((copyLen & 0xF0) << 4);
+			copyLen = (copyLen & 0x0F) + 3;
+			while (copyLen--) {
+				byte literal = lzWindow[copyPos];
+				copyPos = (copyPos + 1) & 0x0FFF;
+				*outBuffer++ = literal;
+				lzWindow[lzWindowPos] = literal;
+				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
+			}
+		}
+	} while ((outSize == -1 || outBuffer < outBufferEnd) || (inSize == -1 || source.pos() < endPos));
 }
 
 /*----------------------------------------------------------------*/
@@ -299,9 +340,6 @@ ImageFile::~ImageFile() {
 		(*this)[idx]._frame.free();
 }
 
-/**
- * Load the data of the sprite
- */
 void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool animImages) {
 	loadPalette(stream);
 
@@ -348,9 +386,6 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 	}
 }
 
-/**
- * Gets the palette at the start of the sprite file
- */
 void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	// Check for palette
 	int v1 = stream.readUint16LE() + 1;
@@ -370,9 +405,6 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	}
 }
 
-/**
- * Decompress a single frame for the sprite
- */
 void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -429,92 +461,6 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		Common::copy(src, src + frame._width * frame._height,
 			(byte *)frame._frame.getPixels());
 	}
-}
-
-/**
- * Decompress an LZW compressed resource
- */
-Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source) {
-	// This variation can't be used by Rose Tattoo, since compressed resources include the input size,
-	// not the output size. Which means their decompression has to be done via passed buffers
-	assert(_vm->getGameID() == GType_SerratedScalpel);
-
-	uint32 id = source.readUint32BE();
-	assert(id == MKTAG('L', 'Z', 'V', 0x1A));
-
-	uint32 outputSize = source.readUint32LE();
-	return decompressLZ(source, outputSize);
-}
-
-/**
- * Decompress an LZW compressed resource
- */
-Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source, uint32 outSize) {
-	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
-	byte *outBuffer = (byte *)malloc(outSize);
-	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
-
-	decompressLZ(source, outBuffer, outSize, inSize);
-
-	return outStream;
-}
-
-/**
- * Decompress an LZW compressed resource
- */
-void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
-	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
-
-	decompressLZ(source, buffer, outSize, inputSize);
-}
-
-/**
- * Decompresses an LZW block of data with a specified output size
- */
-Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
-	byte *outBuffer = (byte *)malloc(outSize);
-	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
-
-	decompressLZ(source, outBuffer, outSize, -1);
-	return outStream;
-}
-
-void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize) {
-	byte lzWindow[4096];
-	uint16 lzWindowPos;
-	uint16 cmd;
-	byte *outBufferEnd = outBuffer + outSize;
-	int32 endPos = source.pos() + inSize;
-
-	memset(lzWindow, 0xFF, 0xFEE);
-	lzWindowPos = 0xFEE;
-	cmd = 0;
-
-	do {
-		cmd >>= 1;
-		if (!(cmd & 0x100))
-			cmd = source.readByte() | 0xFF00;
-
-		if (cmd & 1) {
-			byte literal = source.readByte();
-			*outBuffer++ = literal;
-			lzWindow[lzWindowPos] = literal;
-			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-		} else {
-			int copyPos, copyLen;
-			copyPos = source.readByte();
-			copyLen = source.readByte();
-			copyPos = copyPos | ((copyLen & 0xF0) << 4);
-			copyLen = (copyLen & 0x0F) + 3;
-			while (copyLen--) {
-				byte literal = lzWindow[copyPos];
-				copyPos = (copyPos + 1) & 0x0FFF;
-				*outBuffer++ = literal;
-				lzWindow[lzWindowPos] = literal;
-				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-			}
-		}
-	} while ((!outSize || outBuffer < outBufferEnd) && (!inSize || source.pos() < endPos));
 }
 
 } // End of namespace Sherlock

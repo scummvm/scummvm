@@ -120,8 +120,6 @@ SoundGenPCJr::SoundGenPCJr(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMi
 	else
 		_dissolveMethod = 0;
 
-	_dissolveMethod = 3;
-
 	memset(_channel, 0, sizeof(_channel));
 	memset(_tchannel, 0, sizeof(_tchannel));
 
@@ -207,9 +205,6 @@ int SoundGenPCJr::volumeCalc(SndGenChan *chan) {
 				chan->attenuationCopy = attenuation;
 
 				attenuation &= 0x0F;
-				attenuation += _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 17;
-				if (attenuation > 0x0F)
-					attenuation = 0x0F;
 			}
 		}
 		//if (computer_type == 2) && (attenuation < 8)
@@ -411,7 +406,7 @@ int SoundGenPCJr::chanGen(int chan, int16 *stream, int len) {
 		if (tpcm->noteCount <= 0) {
 			// get new tone data
 			if ((tpcm->avail) && (getNextNote(chan) == 0)) {
-				tpcm->atten = _channel[chan].attenuation;
+				tpcm->atten = volumeCalc(&_channel[chan]);
 				tpcm->freqCount = _channel[chan].freqCount;
 				tpcm->genType = _channel[chan].genType;
 
@@ -477,8 +472,9 @@ int SoundGenPCJr::fillSquare(ToneChan *t, int16 *buf, int len) {
 
 	count = len;
 
+	int16 amp = (int16)(volTable[t->atten] * _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / Audio::Mixer::kMaxMixerVolume);
 	while (count > 0) {
-		*(buf++) = t->sign ? volTable[t->atten] : -volTable[t->atten];
+		*(buf++) = t->sign ? amp : -amp;
 		count--;
 
 		// get next sample
@@ -515,8 +511,9 @@ int SoundGenPCJr::fillNoise(ToneChan *t, int16 *buf, int len) {
 
 	count = len;
 
+	int16 amp = (int16)(volTable[t->atten] * _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / Audio::Mixer::kMaxMixerVolume);
 	while (count > 0) {
-		*(buf++) = t->sign ? volTable[t->atten] : -volTable[t->atten];
+		*(buf++) = t->sign ? amp : -amp;
 		count--;
 
 		// get next sample

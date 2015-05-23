@@ -2123,21 +2123,30 @@ static const uint16 qfg1vgaPatchMoveToCrusher[] = {
 
 // Same pathfinding bug as above, where Ego is set to move to an impossible
 // spot when sneaking. In GuardsTrumpet::changeState, we change the final
-// location where Ego is moved from 111, 111 to 114, 114.
+// location where Ego is moved from 111, 111 to 116, 116.
+// target coordinate is really problematic here.
+//
+// 114, 114 works when the speed slider is all the way up, but doesn't work
+// when the speed slider is not.
+//
+// It seems that this bug was fixed by Sierra for the Macintosh version.
+//
+// Applies to at least: English PC floppy
+// Responsible method: GuardsTrumpet::changeState(8)
 // Fixes bug: #6248
 static const uint16 qfg1vgaSignatureMoveToCastleGate[] = {
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
 	SIG_MAGICDWORD,
-	0x51, 0x1f,                         // class MoveTo
 	0x36,                               // push
-	0x39, 0x6f,                         // pushi 6f (111 - x)
-	0x3c,                               // dup (111 - y)
+	0x39, 0x6f,                         // pushi 6f (111d)
+	0x3c,                               // dup (111d) - coordinates 111, 111
 	0x7c,                               // pushSelf
 	SIG_END
 };
 
 static const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 	PATCH_ADDTOOFFSET(+3),
-	0x39, 0x72,                         // pushi 72 (114 - x)
+	0x39, 0x74,                         // pushi 74 (116d), changes coordinates to 116, 116
 	PATCH_END
 };
 
@@ -2335,29 +2344,37 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 //  which finally re-enables controls
 //
 // A fix is difficult to implement. The code in script 20 is generic and used by multiple objects
-//  That's why I have decided to change the responsible globals (66h and A1h) during mountSaurus::changeState(5)
 //
-// This fix could cause issues in case there is a cutscene, that contains ego getting on a saurus and
-//  requires controls not getting re-enabled after getting back up on the saurus.
+// Originally I decided to change the responsible globals (66h and A1h) during mountSaurus::changeState(5).
+//  This worked as far as for controls, but mountSaurus::init changes a few selectors of ego as well, which
+//  won't get restored in that situation, which then messes up room changes and other things.
+//
+// I have now decided to change sheepScript::changeState(2) in script 665 instead.
+//
+// This fix could cause issues in case there is a cutscene, where ego is supposed to get onto the saurus using
+//  sheepScript.
 //
 // Applies to at least: English PC Floppy, English Amiga Floppy
 // Responsible method: mountSaurus::changeState(), mountSaurus::init(), mountSaurus::dispose()
 // Fixes bug: #5156
 static const uint16 qfg2SignatureSaurusFreeze[] = {
 	0x3c,                               // dup
-	0x35, 0x05,                         // ldi 5
+	0x35, 0x02,                         // ldi 5
 	SIG_MAGICDWORD,
 	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x004e),           // bnt [ret]
-	0x39, SIG_SELECTOR8(contains),      // pushi [selector contains]
-	0x78,                               // push1
+	0x30, SIG_UINT16(0x0043),           // bnt [ret]
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+61),               // skip to dispose code
+	0x39, SIG_SELECTOR8(dispose),       // pushi "dispose"
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04
 	SIG_END
 };
 
 static const uint16 qfg2PatchSaurusFreeze[] = {
-	0x35, 0x01,                         // ldi 1
-	0xa1, 0x66,                         // sag 66h
-	0xa0, SIG_UINT16(0x00a1),           // sag 00A1h
+	0x81, 0x66,                         // lag 66h
+	0x2e, SIG_UINT16(0x0040),           // bt [to dispose code]
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
 	PATCH_END
 };
 
@@ -2441,7 +2458,7 @@ static const uint16 qfg2PatchImportCharType[] = {
 
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
-	{  true,   660, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
+	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
 	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
 	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -2758,9 +2775,64 @@ static const uint16 sq4CdSignatureWalkInFromBelowRoom45[] = {
 
 static const uint16 sq4CdPatchWalkInFromBelowRoom45[] = {
 	PATCH_ADDTOOFFSET(+2),
-	0x38, PATCH_UINT16(0x00bc),        // pushi 00BCh
+	0x38, PATCH_UINT16(0x00bc),         // pushi 00BCh
 	PATCH_ADDTOOFFSET(+15),
-	0x38, PATCH_UINT16(0x00bb),        // pushi 00BBh
+	0x38, PATCH_UINT16(0x00bb),         // pushi 00BBh
+	PATCH_END
+};
+
+// It seems that Sierra forgot to set a script flag, when cleaning out the bank account
+// in Space Quest 4 CD. This was probably caused by the whole bank account interaction
+// getting a rewrite and polish in the CD version.
+//
+// Because of this bug, points for changing back clothes will not get awarded, which
+// makes it impossible to get a perfect point score in the CD version of the game.
+// The points are awarded by rm371::doit in script 371.
+//
+// We fix this. Bug also happened, when using the original interpreter.
+// Bug does not happen for PC floppy.
+//
+// Attention: Some Let's Plays on youtube show that points are in fact awarded. Which is true.
+//            But those Let's Plays were actually created by playing a hacked Space Quest 4 version
+//            (which is part Floppy, part CD version - we consider it to be effectively pirated)
+//            and not the actual CD version of Space Quest 4.
+//            It's easy to identify - talkie + store called "Radio Shack" -> is hacked version.
+//
+// Applies to at least: English PC CD
+// Responsible method: but2Script::changeState(2)
+// Fixes bug: #6866
+static const uint16 sq4CdSignatureGetPointsForChangingBackClothes[] = {
+	0x35, 0x02,                         // ldi 02
+	SIG_MAGICDWORD,
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x006a),           // bnt [state 3]
+	0x76,
+	SIG_ADDTOOFFSET(+46),               // jump over "withdraw funds" code
+	0x33, 0x33,                         // jmp [end of state 2, set cycles code]
+	SIG_ADDTOOFFSET(+51),               // jump over "clean bank account" code
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1a,                         // aTop cycles
+	0x33, 0x0b,                         // jmp [toss/ret]
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x05,                         // bnt [toss/ret]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchGetPointsForChangingBackClothes[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x30, PATCH_UINT16(0x0070),         // bnt [state 3]
+	PATCH_ADDTOOFFSET(+47),             // "withdraw funds" code
+	0x33, 0x39,                         // jmp [end of state 2, set cycles code]
+	PATCH_ADDTOOFFSET(+51),
+	0x78,                               // push1
+	0x39, 0x1d,                         // ldi 1Dh
+	0x45, 0x07, 0x02,                   // call export 7 of script 0 (set flag) -> effectively sets global 73h, bit 2
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1c,                         // aTop cycles
+	0x33, 0x05,                         // jmp [toss/ret]
+	// check for state 3 code removed to save 6 bytes
 	PATCH_END
 };
 
@@ -2859,6 +2931,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   298, "Floppy: endless flight",                      1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
 	{  true,   700, "Floppy: throw stuff at sequel police bug",    1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
 	{  true,    45, "CD: walk in from below for room 45 fix",      1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
+	{  true,   396, "CD: get points for changing back clothes fix",1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",    1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
 	{  true,   818, "CD: Speech and subtitles option",             1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
 	{  true,   818, "CD: Speech and subtitles option button",      1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },

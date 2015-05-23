@@ -30,11 +30,30 @@
 
 namespace Sherlock {
 
-Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
+static const int8 creativeADPCM_ScaleMap[64] = {
+	0,  1,  2,  3,  4,  5,  6,  7,  0,  -1,  -2,  -3,  -4,  -5,  -6,  -7,
+	1,  3,  5,  7,  9, 11, 13, 15, -1,  -3,  -5,  -7,  -9, -11, -13, -15,
+	2,  6, 10, 14, 18, 22, 26, 30, -2,  -6, -10, -14, -18, -22, -26, -30,
+	4, 12, 20, 28, 36, 44, 52, 60, -4, -12, -20, -28, -36, -44, -52, -60
+};
+
+static const uint8 creativeADPCM_AdjustMap[64] = {
+	0, 0, 0, 0, 0, 16, 16, 16,
+	0, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0, 16, 16, 16,
+	240, 0, 0, 0, 0,  0,  0,  0,
+	240, 0, 0, 0, 0,  0,  0,  0
+};
+
+/*----------------------------------------------------------------*/
+
+Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
 	_music = false;
 	_voices = 0;
-	_playingEpilogue = false;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
 	_soundIsOn = &_soundPlaying;
@@ -45,11 +64,19 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 	_speechOn = true;
 
 	_vm->_res->addToCache("MUSIC.LIB");
+	if (!_vm->_interactiveFl)
+		_vm->_res->addToCache("TITLE.SND");
+	else {
+		_vm->_res->addToCache("MUSIC.LIB");
+		_vm->_res->addToCache("SND.SND");
+
+		if (!_vm->isDemo()) {
+			_vm->_res->addToCache("TITLE.SND");
+			_vm->_res->addToCache("EPILOGUE.SND");
+		}
+	}
 }
 
-/**
- * Saves sound-related settings
- */
 void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
 	_music = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
@@ -58,41 +85,41 @@ void Sound::syncSoundSettings() {
 
 void Sound::loadSound(const Common::String &name, int priority) {
 	// No implementation required in ScummVM
+	warning("loadSound");
 }
 
-char Sound::decodeSample(char sample, byte& prediction, int& step) {
-	char diff = ((sample & 0x07) << step);
+byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
+	int16 samp = sample + scale;
+	int16 ref = 0;
 
-	if (sample & 0x08) {
-		if (prediction > diff)
-			prediction = prediction - ((sample & 0x07) << step);
-		else
-			prediction = 0;
+	// clip bad ADPCM-4 sample
+	samp = CLIP<int16>(samp, 0, 63);
+
+	ref = reference + creativeADPCM_ScaleMap[samp];
+	if (ref > 0xff) {
+		reference = 0xff;
 	} else {
-		if (prediction < 0xff - diff)
-			prediction = prediction + ((sample&0x07) << step);
-		else
-			prediction = 0xff;
+		if (ref < 0x00) {
+			reference = 0;
+		} else {
+			reference = (uint8)(ref & 0xff);
+		}
 	}
 
-
-	if ((sample & 0x07) >= 5 && step < 3) {
-		step ++;
-	} else if ((sample & 0x07) == 0 && step > 0) {
-		step --;
-	}
-
-	return prediction;
+	scale = (scale + creativeADPCM_AdjustMap[samp]) & 0xff;
+	return reference;
 }
 
-bool Sound::playSound(const Common::String &name, WaitType waitType, int priority) {
+bool Sound::playSound(const Common::String &name, WaitType waitType, int priority, const char *libraryFilename) {
+	Resources &res = *_vm->_res;
 	stopSound();
 
 	Common::String filename = name;
 	if (!filename.contains('.'))
 		filename += ".SND";
-	
-	Common::SeekableReadStream *stream = _vm->_res->load(filename);
+
+	Common::String libFilename(libraryFilename);
+	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(filename) : res.load(filename, libFilename);
 
 	if (!stream)
 		error("Unable to find sound file '%s'", filename.c_str());
@@ -104,16 +131,18 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	byte *ptr = data;
 	stream->read(ptr, size);
 
+	assert(size > 2);
+
 	byte *decoded = (byte *)malloc((size - 1) * 2);
 
-	// +127 to eliminate the pop when the sound starts (signed vs unsigned PCM). Still does not help with the pop at the end
-	byte prediction = (ptr[0] & 0x0f) + 127;
-	int step = 0;
+	// Holmes uses Creative ADPCM 4-bit data
 	int counter = 0;
+	byte reference = ptr[0];
+	int16 scale = 0;
 
 	for(int i = 1; i < size; i++) {
-		decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, prediction, step);
-		decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, prediction, step);
+		decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, reference, scale);
+		decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, reference, scale);
 	}
 
 	free(data);
@@ -146,7 +175,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 			break;
 		}
 	} while (!_vm->shouldQuit() && _mixer->isSoundHandleActive(_effectsHandle));
-	
+
 	_soundPlaying = false;
 	_mixer->stopHandle(_effectsHandle);
 
@@ -231,3 +260,4 @@ void Sound::freeDigiSound() {
 }
 
 } // End of namespace Sherlock
+

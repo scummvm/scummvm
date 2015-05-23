@@ -31,9 +31,6 @@ InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
 		_examine(examine), _lookFlag(0) {
 }
 
-/**
- * Synchronize the data for an inventory item
- */
 void InventoryItem::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_requiredFlag);
 	s.syncAsSint16LE(_lookFlag);
@@ -50,15 +47,14 @@ Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(v
 	_invIndex = 0;
 	_holdings = 0;
 	_invMode = INVMODE_EXIT;
+	for (int i = 0; i < 6; ++i)
+		_invShapes[i] = nullptr;
 }
 
 Inventory::~Inventory() {
 	freeGraphics();
 }
 
-/**
- * Free inventory data
- */
 void Inventory::freeInv() {
 	freeGraphics();
 
@@ -66,9 +62,6 @@ void Inventory::freeInv() {
 	_invGraphicsLoaded = false;
 }
 
-/**
- * Free any loaded inventory graphics
- */
 void Inventory::freeGraphics() {
 	for (uint idx = 0; idx < MAX_VISIBLE_INVENTORY; ++idx)
 		delete _invShapes[idx];
@@ -77,10 +70,6 @@ void Inventory::freeGraphics() {
 	_invGraphicsLoaded = false;
 }
 
-/**
- * Load the list of names the inventory items correspond to, if not already loaded, 
- * and then calls loadGraphics to load the associated graphics
- */
 void Inventory::loadInv() {
 	// Exit if the inventory names are already loaded
 	if (_names.size() > 0)
@@ -104,9 +93,6 @@ void Inventory::loadInv() {
 	loadGraphics();
 }
 
-/**
- * Load the list of names of graphics for the inventory
- */
 void Inventory::loadGraphics() {
 	if (_invGraphicsLoaded)
 		return;
@@ -126,38 +112,29 @@ void Inventory::loadGraphics() {
 	_invGraphicsLoaded = true;
 }
 
-/**
- * Searches through the list of names that correspond to the inventory items
- * and returns the numer that matches the passed name
- */
 int Inventory::findInv(const Common::String &name) {
 	for (int idx = 0; idx < (int)_names.size(); ++idx) {
-		if (scumm_stricmp(name.c_str(), _names[idx].c_str()) == 0)
+		if (name.equalsIgnoreCase(_names[idx]))
 			return idx;
 	}
 
-	return 1;
+	// Couldn't find the desired item
+	error("Couldn't find inventory item - %s", name.c_str());
 }
 
-/**
- * Display the character's inventory. The slamIt parameter specifies:
- * 0 = Draw it on the back buffer, and don't display it
- * 1 = Draw it on the back buffer, and then display it
- * 2 = Draw it on the secondary back buffer, and don't display it
- */
-void Inventory::putInv(int slamIt) {
+void Inventory::putInv(InvSlamMode slamIt) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
 
 	// If an inventory item has disappeared (due to using it or giving it),
-	// a blank space slot may haave appeared. If so, adjust the inventory
+	// a blank space slot may have appeared. If so, adjust the inventory
 	if (_invIndex > 0 && _invIndex > (_holdings - 6)) {
 		--_invIndex;
 		freeGraphics();
 		loadGraphics();
 	}
 
-	if (slamIt != 2) {
+	if (slamIt != SLAM_SECONDARY_BUFFER) {
 		screen.makePanel(Common::Rect(6, 163, 54, 197));
 		screen.makePanel(Common::Rect(58, 163, 106, 197));
 		screen.makePanel(Common::Rect(110, 163, 158, 197));
@@ -169,53 +146,45 @@ void Inventory::putInv(int slamIt) {
 	// Iterate through displaying up to 6 objects at a time
 	for (int idx = _invIndex; idx < _holdings && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
 		int itemNum = idx - _invIndex;
-		Surface &bb = slamIt == 2 ? screen._backBuffer2 : screen._backBuffer1;
+		Surface &bb = slamIt == SLAM_SECONDARY_BUFFER ? screen._backBuffer2 : screen._backBuffer1;
 		Common::Rect r(8 + itemNum * 52, 165, 51 + itemNum * 52, 194);
 
 		// Draw the background
 		if (idx == ui._selector) {
 			bb.fillRect(r, 235);
-		} else if (slamIt == 2) {
+		} else if (slamIt == SLAM_SECONDARY_BUFFER) {
 			bb.fillRect(r, BUTTON_MIDDLE);
 		}
 
 		// Draw the item image
-		Graphics::Surface &img = (*_invShapes[itemNum])[0]._frame;
-		bb.transBlitFrom(img, Common::Point(6 + itemNum * 52 + ((47 - img.w) / 2),
-			163 + ((33 - img.h) / 2)));
+		ImageFrame &frame = (*_invShapes[itemNum])[0];
+		bb.transBlitFrom(frame, Common::Point(6 + itemNum * 52 + ((47 - frame._width) / 2),
+			163 + ((33 - frame._height) / 2)));
 	}
 
-	if (slamIt == 1)
+	if (slamIt == SLAM_DISPLAY)
 		screen.slamArea(6, 163, 308, 34);
 
-	if (slamIt != 2)
+	if (slamIt != SLAM_SECONDARY_BUFFER)
 		ui.clearInfo();
 
 	if (slamIt == 0) {
 		invCommands(0);
-	} else if (slamIt == 2) {
+	} else if (slamIt == SLAM_SECONDARY_BUFFER) {
 		screen._backBuffer = &screen._backBuffer2;
 		invCommands(0);
 		screen._backBuffer = &screen._backBuffer1;
 	}
 }
 
-/**
- * Put the game into inventory mode and open the interface window.
- * The flag parameter specifies the mode:
- * 0   = plain inventory mode
- * 2   = use inventory mode
- * 3   = give inventory mode
- * 128 = Draw window in the back buffer, but don't display it
- */
-void Inventory::drawInventory(int flag) {
+void Inventory::drawInventory(InvNewMode mode) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
-	int tempFlag = flag;
+	InvNewMode tempMode = mode;
 
 	loadInv();
 
-	if (flag == 128) {
+	if (mode == INVENTORY_DONT_DISPLAY) {
 		screen._backBuffer = &screen._backBuffer2;
 	}
 
@@ -248,21 +217,21 @@ void Inventory::drawInventory(int flag) {
 	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1],
 		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2], "__");
 
-	if (tempFlag == 128)
-		flag = 1;
-	_invMode = (InvMode)flag;
+	if (tempMode == INVENTORY_DONT_DISPLAY)
+		mode = LOOK_INVENTORY_MODE;
+	_invMode = (InvMode)mode;
 
-	if (flag) {
-		ui._oldKey = INVENTORY_COMMANDS[flag];
+	if (mode != PLAIN_INVENTORY) {
+		ui._oldKey = INVENTORY_COMMANDS[(int)mode];
 	} else {
 		ui._oldKey = -1;
 	}
 
 	invCommands(0);
-	putInv(0);
+	putInv(SLAM_DONT_DISPLAY);
 
-	if (tempFlag != 128) {
-		if (!ui._windowStyle) {
+	if (tempMode != INVENTORY_DONT_DISPLAY) {
+		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
 			ui.summonWindow(false, CONTROLS_Y1);
@@ -278,26 +247,22 @@ void Inventory::drawInventory(int flag) {
 	((ScalpelUserInterface *)_vm->_ui)->_oldUse = -1;
 }
 
-/**
- * Prints the line of inventory commands at the top of an inventory window with
- * the correct highlighting
- */
 void Inventory::invCommands(bool slamIt) {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
 
 	if (slamIt) {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
-			_invMode == 0 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
+			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Exit");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
-			_invMode == 1 ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
+			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Look");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
-			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Use");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
-			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Give");
 		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
@@ -311,20 +276,20 @@ void Inventory::invCommands(bool slamIt) {
 		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"__");
-		if (_invMode != 1)
+		if (_invMode != INVMODE_LOOK)
 			ui.clearInfo();
 	} else {
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
-			_invMode == 0 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Exit");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
-			_invMode == 1 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Look");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
-			_invMode == 2 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Use");
 		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
-			_invMode == 3 ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
+			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Give");
 		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
@@ -341,31 +306,49 @@ void Inventory::invCommands(bool slamIt) {
 	}
 }
 
-/**
- * Set the highlighting color of a given inventory item
- */
 void Inventory::highlight(int index, byte color) {
 	Screen &screen = *_vm->_screen;
 	Surface &bb = *screen._backBuffer;
 	int slot = index - _invIndex;
-	Graphics::Surface &img = (*_invShapes[slot])[0]._frame;
+	ImageFrame &frame = (*_invShapes[slot])[0];
 
 	bb.fillRect(Common::Rect(8 + slot * 52, 165, (slot + 1) * 52, 194), color);
-	bb.transBlitFrom(img, Common::Point(6 + slot * 52 + ((47 - img.w) / 2),
-		163 + ((33 - img.h) / 2)));
+	bb.transBlitFrom(frame, Common::Point(6 + slot * 52 + ((47 - frame._width) / 2),
+		163 + ((33 - frame._height) / 2)));
 	screen.slamArea(8 + slot * 52, 165, 44, 30);
 }
 
-/**
- * Adds a shape from the scene to the player's inventory
- */
+void Inventory::refreshInv() {
+	if (IS_ROSE_TATTOO)
+		return;
+	
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
+
+	ui._invLookFlag = true;
+	freeInv();
+
+	ui._infoFlag = true;
+	ui.clearInfo();
+
+	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(0, CONTROLS_Y),
+		Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+	ui.examine();
+
+	if (!talk._talkToAbort) {
+		screen._backBuffer2.blitFrom((*ui._controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		loadInv();
+	}
+}
+
 int Inventory::putNameInInventory(const Common::String &name) {
 	Scene &scene = *_vm->_scene;
 	int matches = 0;
 
 	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 		Object &o = scene._bgShapes[idx];
-		if (scumm_stricmp(name.c_str(), o._name.c_str()) == 0 && o._type != INVALID) {
+		if (name.equalsIgnoreCase(o._name) && o._type != INVALID) {
 			putItemInInventory(o);
 			++matches;
 		}
@@ -374,10 +357,6 @@ int Inventory::putNameInInventory(const Common::String &name) {
 	return matches;
 }
 
-/**
- * Moves a specified item into the player's inventory If the item has a *PICKUP* use action,
- * then the item in the use action are added to the inventory.
- */
 int Inventory::putItemInInventory(Object &obj) {
 	Scene &scene = *_vm->_scene;
 	int matches = 0;
@@ -386,14 +365,14 @@ int Inventory::putItemInInventory(Object &obj) {
 	if (obj._pickupFlag)
 		_vm->setFlags(obj._pickupFlag);
 
-	for (int useNum = 0; useNum < 4; ++useNum) {
-		if (scumm_stricmp(obj._use[useNum]._target.c_str(), "*PICKUP*") == 0) {
+	for (int useNum = 0; useNum < USE_COUNT; ++useNum) {
+		if (obj._use[useNum]._target.equalsIgnoreCase("*PICKUP*")) {
 			pickupFound = true;
 
-			for (int namesNum = 0; namesNum < 4; ++namesNum) {
+			for (int namesNum = 0; namesNum < NAMES_COUNT; ++namesNum) {
 				for (uint bgNum = 0; bgNum < scene._bgShapes.size(); ++bgNum) {
 					Object &bgObj = scene._bgShapes[bgNum];
-					if (scumm_stricmp(obj._use[useNum]._names[namesNum].c_str(), bgObj._name.c_str()) == 0) {
+					if (obj._use[useNum]._names[namesNum].equalsIgnoreCase(bgObj._name)) {
 						copyToInventory(bgObj);
 						if (bgObj._pickupFlag)
 							_vm->setFlags(bgObj._pickupFlag);
@@ -439,9 +418,6 @@ int Inventory::putItemInInventory(Object &obj) {
 	return matches;
 }
 
-/**
- * Copy the passed object into the inventory
- */
 void Inventory::copyToInventory(Object &obj) {
 	InventoryItem invItem;
 	invItem._name = obj._name;
@@ -454,14 +430,11 @@ void Inventory::copyToInventory(Object &obj) {
 	++_holdings;
 }
 
-/**
- * Deletes a specified item from the player's inventory
- */
 int Inventory::deleteItemFromInventory(const Common::String &name) {
 	int invNum = -1;
 
 	for (int idx = 0; idx < (int)size() && invNum == -1; ++idx) {
-		if (scumm_stricmp(name.c_str(), (*this)[idx]._name.c_str()) == 0)
+		if (name.equalsIgnoreCase((*this)[idx]._name))
 			invNum = idx;
 	}
 
@@ -476,9 +449,6 @@ int Inventory::deleteItemFromInventory(const Common::String &name) {
 	return 1;
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void Inventory::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_holdings);
 

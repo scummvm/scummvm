@@ -33,6 +33,7 @@
 namespace Sherlock {
 
 #define MAX_SAVEGAME_SLOTS 99
+#define ONSCREEN_FILES_COUNT 5
 #define SHERLOCK_SAVEGAME_VERSION 1
 
 enum SaveMode { SAVEMODE_NONE = 0, SAVEMODE_LOAD = 1, SAVEMODE_SAVE = 2 };
@@ -56,8 +57,14 @@ private:
 	Common::String _target;
 	Graphics::Surface *_saveThumb;
 
+	/**
+	 * Build up a savegame list, with empty slots given an explicit Empty message
+	 */
 	void createSavegameList();
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 public:
 	Common::StringArray _savegames;
@@ -68,28 +75,71 @@ public:
 	SaveManager(SherlockEngine *vm, const Common::String &target);
 	~SaveManager();
 
+	/**
+	 * Shows the in-game dialog interface for loading and saving games
+	 */
 	void drawInterface();
 
+	/**
+	 * Creates a thumbnail for the current on-screen contents
+	 */
 	void createThumbnail();
 
+	/**
+	 * Load a list of savegames
+	 */
 	static SaveStateList getSavegameList(const Common::String &target);
 
+	/**
+	 * Support method that generates a savegame name
+	 * @param slot		Slot number
+	 */
 	Common::String generateSaveName(int slot);
 
+	/**
+	 * Write out the header information for a savegame
+	 */
 	void writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegameHeader &header);
 
+	/**
+	 * Read in the header information for a savegame
+	 */
 	static bool readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header);
 
+	/**
+	 * Return the index of the button the mouse is over, if any
+	 */
 	int getHighlightedButton() const;
 
+	/**
+	 * Handle highlighting buttons
+	 */
 	void highlightButtons(int btnIndex);
 
+	/**
+	 * Load the game in the specified slot
+	 */
 	void loadGame(int slot);
+	
+	/**
+	 * Save the game in the specified slot with the given name
+	 */
 	void saveGame(int slot, const Common::String &name);
 
+	/**
+	 * Make sure that the selected savegame is on-screen
+	 */
 	bool checkGameOnScreen(int slot);
 
-	bool getFilename(int slot);
+	/**
+	 * Prompts the user to enter a description in a given slot
+	 */
+	bool promptForDescription(int slot);
+
+	/**
+	 * Returns true if the given save slot is empty
+	 */
+	bool isSlotEmpty(int slot) const;
 };
 
 } // End of namespace Sherlock

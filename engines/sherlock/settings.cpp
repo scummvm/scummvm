@@ -25,7 +25,7 @@
 
 namespace Sherlock {
 
-const int SETUP_POINTS[12][4]  = {
+static const int SETUP_POINTS[12][4]  = {
 	{ 4, 154, 101, 53 },		// Exit
 	{ 4, 165, 101, 53 },		// Music Toggle
 	{ 219, 165, 316, 268 },		// Voice Toggle
@@ -40,21 +40,17 @@ const int SETUP_POINTS[12][4]  = {
 	{ 219, 187, 316, 268 }		// _key Pad Accel. Toggle
 };
 
-const char *const SETUP_STRS0[2] = { "off", "on" };
-const char *const SETUP_STRS1[2] = { "Directly", "by Pixel" };
-const char *const SETUP_STRS2[2] = { "Left", "Right" };
-const char *const SETUP_STRS3[2] = { "Appear", "Slide" };
-const char *const SETUP_STRS4[2] = { "Slow", "Fast" };
-const char *const SETUP_STRS5[2] = { "Left", "Right" };
-const char *const SETUP_NAMES[12] = {
+static const char *const SETUP_STRS0[2] = { "off", "on" };
+static const char *const SETUP_STRS1[2] = { "Directly", "by Pixel" };
+static const char *const SETUP_STRS2[2] = { "Left", "Right" };
+static const char *const SETUP_STRS3[2] = { "Appear", "Slide" };
+static const char *const SETUP_STRS5[2] = { "Left", "Right" };
+static const char *const SETUP_NAMES[12] = {
 	"Exit", "M", "V", "S", "B", "New Font Style", "J", "Calibrate Joystick", "F", "W", "P", "K"
 };
 
 /*----------------------------------------------------------------*/
 
-/**
- * Draws the interface for the settings window
- */
 void Settings::drawInteface(bool flag) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -108,7 +104,7 @@ void Settings::drawInteface(bool flag) {
 	screen.makeButton(Common::Rect(SETUP_POINTS[8][0], SETUP_POINTS[8][1], SETUP_POINTS[8][2], SETUP_POINTS[8][1] + 10),
 		SETUP_POINTS[8][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
-	tempStr = Common::String::format("Windows %s", ui._windowStyle ? "Slide" : "Appear");
+	tempStr = Common::String::format("Windows %s", ui._slideWindows ? "Slide" : "Appear");
 	screen.makeButton(Common::Rect(SETUP_POINTS[9][0], SETUP_POINTS[9][1], SETUP_POINTS[9][2], SETUP_POINTS[9][1] + 10),
 		SETUP_POINTS[9][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
@@ -123,7 +119,7 @@ void Settings::drawInteface(bool flag) {
 
 	// Show the window immediately, or slide it on-screen
 	if (!flag) {
-		if (!ui._windowStyle) {
+		if (!ui._slideWindows) {
 			screen.slamRect(Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		} else {
 			ui.summonWindow(true, CONTROLS_Y1);
@@ -135,9 +131,6 @@ void Settings::drawInteface(bool flag) {
 	}
 }
 
-/**
- * Draws the buttons for the settings dialog
- */
 int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -150,7 +143,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 
 	for (int idx = 0; idx < 12; ++idx) {
 		if ((pt.x > SETUP_POINTS[idx][0] && pt.x < SETUP_POINTS[idx][2] && pt.y > SETUP_POINTS[idx][1]
-				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._released || events._released))
+				&& pt.y < (SETUP_POINTS[idx][1] + 10) && (events._pressed || events._released))
 				|| (_key == SETUP_NAMES[idx][0])) {
 			found = idx;
 			color = COMMAND_HIGHLIGHTED;
@@ -189,7 +182,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 9:
-			tempStr = Common::String::format("Windows %s", SETUP_STRS3[ui._windowStyle]);
+			tempStr = Common::String::format("Windows %s", SETUP_STRS3[ui._slideWindows]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 10:
@@ -209,13 +202,6 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	return found;
 }
 
-
-/**
-* Handles input when the settings window is being shown
-* @remarks		Whilst this would in theory be better in the Journal class, since it displays in
-*		the user interface, it uses so many internal UI fields, that it sort of made some sense
-*		to put it in the UserInterface class.
-*/
 void Settings::show(SherlockEngine *vm) {
 	Events &events = *vm->_events;
 	People &people = *vm->_people;
@@ -255,7 +241,7 @@ void Settings::show(SherlockEngine *vm) {
 				if (ui._key == Common::KEYCODE_RETURN || ui._key == Common::KEYCODE_SPACE) {
 					events._pressed = false;
 					events._oldButtons = 0;
-					ui._keycode = Common::KEYCODE_INVALID;
+					ui._keyPress = '\0';
 					events._released = true;
 				}
 			}
@@ -323,7 +309,7 @@ void Settings::show(SherlockEngine *vm) {
 
 		if ((found == 9 && events._released) || ui._key == 'W') {
 			// Window style
-			ui._windowStyle ^= 1;
+			ui._slideWindows = !ui._slideWindows;
 			updateConfig = true;
 			settings.drawInteface(true);
 		}
@@ -341,7 +327,7 @@ void Settings::show(SherlockEngine *vm) {
 	if (updateConfig)
 		vm->saveConfig();
 
-	ui._keycode = Common::KEYCODE_INVALID;
+	ui._keyPress = '\0';
 	ui._keyboardInput = false;
 	ui._windowBounds.top = CONTROLS_Y1;
 	ui._key = -1;

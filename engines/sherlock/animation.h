@@ -39,21 +39,42 @@ private:
 
 	Common::Array<const char *> _prologueNames;
 	Common::Array<Common::Array<int> > _prologueFrames;
-
 	Common::Array<const char *> _titleNames;
 	Common::Array<Common::Array<int> > _titleFrames;
 
+	/**
+	 * Checks for whether an animation is being played that has associated sound
+	 */
 	const int *checkForSoundFrames(const Common::String &filename);
 public:
+	Common::String _soundLibraryFilename;
+	Common::String _gfxLibraryFilename;
 public:
 	Animation(SherlockEngine *vm);
 
+	/**
+	 * Load the prologue name array
+	 */
 	void setPrologueNames(const char *const *names, int count);
+	
+	/**
+	 * Load the prologue frame array
+	 */
 	void setPrologueFrames(const int *frames, int count, int maxFrames);
 
+	/**
+	 * Load the title name array
+	 */
 	void setTitleNames(const char *const *names, int count);
+	
+	/**
+	 * Load the title frame array
+	 */
 	void setTitleFrames(const int *frames, int count, int maxFrames);
 
+	/**
+	 * Play a full-screen animation
+	 */
 	bool play(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
 };
 

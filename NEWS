@@ -11,6 +11,15 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
+ AGI:
+   - It is now possible to disable mouse support (except for Amiga versions
+     and fanmade games, that require a mouse).
+   - Fix incorrect volume attenuation in PCjr sound code (bug #6858).
+
+ AGOS:
+   - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
+   - Fixed loading and saving progress in the PC version of Waxworks.
+
  Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
      version (bug #6720).
@@ -20,8 +29,11 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SCI:
    - Handling of music priority has been greatly improved.
-   - A lot of fixes for original game script bugs, which are too numerous to
-     mention here.
+   - A lot of fixes for original game script bugs that also occurred when
+     using the original interpreter.
+     KQ6 (Dual Mode), LSL5, QfG1 (EGA), QfG1 (VGA), QfG2, QfG3, SQ1, SQ4 (CD)
+   - Restoring from the ScummVM in-game menu should now work all the time.
+   - Improve support for Japanese PC-9801 games.
 
  SCUMM:
    - It is now possible to play Maniac Mansion from within Day of the

@@ -314,7 +314,7 @@ tentacle	Day of the Tentacle
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
 	883af4b0af4f77a92f1dcf1d0a283140	-1	es	All?	-	CD	-	Andrea Petrucci
 	cc04a076779379524ed4d9c5ee3c6fb1	282467632	en	Mac	-	CD	Mac bundle	Fingolfin, Joachim Eberhard
-	ede149fda3edfc1dbd7347e0737cb583	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
+	ede149fda3edfc1dbd7347e0737cb583	282830409	fr	Mac	-	CD	Mac bundle	ThierryFR, Thierry Crozat
 	f73883f13b5a302749a5bad31d909780	-1	de	Mac	-	CD	Mac bundle	morrissey
 
 	c83079157ec765a28de445aec9768d60	7477	en	All	-	Demo	-	Fingolfin
@@ -337,7 +337,7 @@ samnmax	Sam &amp; Max Hit the Road
 	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	-	CD	-	Andrea Petrucci
 	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	-	CD	-	
 	166553538ff320c69edafeee29525419	199195304	en	Mac	-	CD	Mac bundle	Joachim Eberhard
-	3a5d13675e9a23aedac0bac7730f0ac1	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
+	3a5d13675e9a23aedac0bac7730f0ac1	228446581	fr	Mac	-	CD	Mac bundle	ThierryFR, Thierry Crozat
 
 	c3196c5349e53e387aaff1533d95e53a	-1	en	DOS	Floppy	Demo	-	
 	0e4c5d54a0ad4b26132e78b5ea76642a	6485	en	DOS	Floppy	Demo	WIP	Fingolfin
@@ -358,6 +358,7 @@ ft	Full Throttle
 	e72bb4c2b613db2cf50f89ff6350e70a	-1	es	All?	-	-	-	
 	fe381e45117878b1e942cb876b050fd6	513243679	en	Mac	-	-	Mac bundle	Fingolfin
 	04401d747f1a2c1c4b388daff71ed378	535405461	de	Mac	-	-	Mac bundle	Fingolfin
+	403d2ec4d60d3cdae925e6cbf67716d6	489436643	fr	Mac	-	-	Mac bundle	Thierry Crozat
 
 	32a433dea56b86a55b59e4ff7d755711	-1	en	DOS	Demo	Demo	-	
 	9d7b67be003fea60be4dcbd193611936	11164	en	Mac	Demo	Demo	-	Fingolfin

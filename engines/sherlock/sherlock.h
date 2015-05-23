@@ -50,10 +50,6 @@
 namespace Sherlock {
 
 enum {
-	kFileTypeHash
-};
-
-enum {
 	kDebugScript = 1 << 0
 };
 
@@ -62,8 +58,8 @@ enum GameType {
 	GType_RoseTattoo = 1
 };
 
-#define SHERLOCK_SCREEN_WIDTH _vm->_screen->w
-#define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h
+#define SHERLOCK_SCREEN_WIDTH _vm->_screen->w()
+#define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h()
 #define SHERLOCK_SCENE_HEIGHT 138
 
 struct SherlockGameDescription;
@@ -72,18 +68,33 @@ class Resource;
 
 class SherlockEngine : public Engine {
 private:
+	/**
+	 * Main loop for displaying a scene and handling all that occurs within it
+	 */
 	void sceneLoop();
 
+	/**
+	 * Handle all player input
+	 */
 	void handleInput();
 
+	/**
+	 * Load game configuration esttings
+	 */
 	void loadConfig();
 protected:
+	/**
+	 * Does basic initialization of the game engine
+	 */
 	virtual void initialize();
 
 	virtual void showOpening() = 0;
 
 	virtual void startScene() {}
 
+	/**
+	 * Returns a list of features the game itself supports
+	 */
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	const SherlockGameDescription *_gameDescription;
@@ -103,39 +114,86 @@ public:
 	UserInterface *_ui;
 	Common::RandomSource _randomSource;
 	Common::Array<bool> _flags;
-	Common::String _soundOverride;
-	Common::String _titleOverride;
 	bool _useEpilogue2;
 	int _loadGameSlot;
 	bool _canLoadSave;
 	bool _showOriginalSavesDialog;
+	bool _interactiveFl;
 public:
 	SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~SherlockEngine();
 
+	/**
+	 * Main method for running the game
+	 */
 	virtual Common::Error run();
 
+	/**
+	 * Returns true if a savegame can be loaded
+	 */
 	virtual bool canLoadGameStateCurrently();
-	virtual bool canSaveGameStateCurrently();
-	virtual Common::Error loadGameState(int slot);
-	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-	virtual void syncSoundSettings();
-	virtual bool getIsDemo() const;
 
+	/**
+	 * Returns true if the game can be saved
+	 */
+	virtual bool canSaveGameStateCurrently();
+
+	/**
+	 * Called by the GMM to load a savegame
+	 */
+	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Called by the GMM to save the game
+	 */
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	/**
+	 * Called by the engine when sound settings are updated
+	 */
+	virtual void syncSoundSettings();
+
+	/**
+	 * Returns whether the version is a demo
+	 */
+	virtual bool isDemo() const;
+
+	/**
+	 * Returns the Id of the game
+	 */
 	GameType getGameID() const;
-	Common::Language getLanguage() const;
+
+	/**
+	 * Returns the platform the game's datafiles are for
+	 */
 	Common::Platform getPlatform() const;
 
-	Common::String getGameFile(int fileType);
-
+	/**
+	 * Return a random number
+	 */
 	int getRandomNumber(int limit) { return _randomSource.getRandomNumber(limit - 1); }
 
+	/**
+	 * Read the state of a global flag
+	 * @remarks		If a negative value is specified, it will return the inverse value
+	 *		of the positive flag number
+	 */
 	bool readFlags(int flagNum);
 
+	/**
+	 * Sets a global flag to either true or false depending on whether the specified
+	 * flag is positive or negative
+	 */
 	void setFlags(int flagNum);
 
+	/**
+	 * Saves game configuration information
+	 */
 	void saveConfig();
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
 	void synchronize(Common::Serializer &s);
 };
 

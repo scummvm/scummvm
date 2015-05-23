@@ -1261,7 +1261,6 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 		uint16 room = _currentRoom;
 		_currentRoom = f->readUint16BE();
-
 		if (_roomsListPtr) {
 			byte *p = _roomsListPtr;
 			if (room == _currentRoom) {
@@ -1293,8 +1292,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 					 for (uint16 z = minNum; z <= maxNum; z++) {
 						uint16 itemNum = z + 2;
-						Item *item = derefItem(itemNum);
-						item->parent = 0;
+						_itemArrayPtr[itemNum] = 0;
 					}
 				}
 			}
@@ -1318,6 +1316,9 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 			uint parent = f->readUint16BE();
 			uint next = f->readUint16BE();
 
+			if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS && derefItem(item->parent) == NULL)
+				item->parent = 0;
+						
 			parent_item = derefItem(parent);
 			setItemParent(item, parent_item);
 

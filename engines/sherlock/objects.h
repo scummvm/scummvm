@@ -102,8 +102,8 @@ class Sprite {
 private:
 	static SherlockEngine *_vm;
 public:
-	Common::String _name;				// Name
-	Common::String _description;		// Description
+	Common::String _name;				
+	Common::String _description;		
 	Common::StringArray _examine;		// Examine in-depth description
 	Common::String _pickUp;				// Message for if you can't pick up object
 
@@ -120,7 +120,6 @@ public:
 	Common::Point _oldSize;				// Image's old size
 	Common::Point _goto;				// Walk destination
 	SpriteType _type;					// Type of object
-	int _pickup;
 	Common::Point _noShapeSize;			// Size of a NO_SHAPE
 	int _status;						// Status: open/closed, moved/not moved
 	int8 _misc;							// Miscellaneous use
@@ -129,48 +128,85 @@ public:
 	Sprite() { clear(); }
 	static void setVm(SherlockEngine *vm) { _vm = vm; }
 
+	/**
+	 * Reset the data for the sprite
+	 */
 	void clear();
 
+	/**
+	 * Updates the image frame poiner for the sprite
+	 */
 	void setImageFrame();
 
+	/**
+	 * This adjusts the sprites position, as well as it's animation sequence:
+	 */
 	void adjustSprite();
 
+	/**
+	 * Checks the sprite's position to see if it's collided with any special objects
+	 */
 	void checkSprite();
 
+	/**
+	 * Return frame width
+	 */
 	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
+	
+	/**
+	 * Return frame height
+	 */
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
 };
 
 enum { REVERSE_DIRECTION = 0x80 };
+#define NAMES_COUNT 4
 
 struct ActionType {
 	int _cAnimNum;
 	int _cAnimSpeed;
-	Common::String _names[4];
+	Common::String _names[NAMES_COUNT];
 
+	/**
+	 * Load the data for the action
+	 */
 	void load(Common::SeekableReadStream &s);
 };
 
 struct UseType {
 	int _cAnimNum;
 	int _cAnimSpeed;
-	Common::String _names[4];
+	Common::String _names[NAMES_COUNT];
 	int _useFlag;					// Which flag USE will set (if any)
-	int _dFlag[1];
-	int _lFlag[2];
 	Common::String _target;
 	Common::String _verb;
 
 	UseType();
+
+	/**
+	 * Load the data for the UseType
+	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
+
+enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
+#define USE_COUNT 4
 
 class Object {
 private:
 	static SherlockEngine *_vm;
 
+	/**
+	 * This will check to see if the object has reached the end of a sequence.
+	 * If it has, it switch to whichever next sequence should be started.
+	 * @returns		true if the end of a sequence was reached
+	 */
 	bool checkEndOfSequence();
 
+	/**
+	 * Scans through the sequences array and finds the designated sequence.
+	 * It then sets the frame number of the start of that sequence
+	 */
 	void setObjSequence(int seq, bool wait);
 public:
 	static bool _countCAnimFrames;
@@ -233,24 +269,69 @@ public:
 
 	Object();
 
+	/**
+	 * Load the data for the object
+	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 
+	/**
+	 * Toggle the type of an object between hidden and active
+	 */
 	void toggleHidden();
 
+	/**
+	 * Check the state of the object
+	 */
 	void checkObject();
 
+	/**
+	 * Checks for codes
+	 * @param name		The name to check for codes
+	 * @param messages	Provides a lookup list of messages that can be printed
+	 * @returns		0 if no codes are found, 1 if codes were found
+	 */
 	int checkNameForCodes(const Common::String &name, const char *const messages[]);
 
+	/**
+	 * Handle setting any flags associated with the object
+	 */
 	void setFlagsAndToggles();
 
+	/**
+	 * Adjusts the sprite's position and animation sequence, advancing by 1 frame.
+	 * If the end of the sequence is reached, the appropriate action is taken.
+	 */
 	void adjustObject();
 
+	/**
+	 * Handles trying to pick up an object. If allowed, plays an y necessary animation for picking
+	 * up the item, and then adds it to the player's inventory
+	 */
 	int pickUpObject(const char *const messages[]);
 
+	/**
+	 * Return the frame width
+	 */
 	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
+	
+	/**
+	 * Return the frame height
+	 */
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
+
+	/**
+	 * Returns the current bounds for the sprite
+	 */
 	const Common::Rect getNewBounds() const;
+
+	/**
+	 * Returns the bounds for a sprite without a shape
+	 */
 	const Common::Rect getNoShapeBounds() const;
+
+	/**
+	 * Returns the old bounsd for the sprite from the previous frame
+	 */
 	const Common::Rect getOldBounds() const;
 };
 
@@ -271,6 +352,9 @@ struct CAnim {
 	// Rose Tattoo specific
 	int _scaleVal;					// How much the canim is scaled
 
+	/**
+	 * Load the data for the animation
+	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 

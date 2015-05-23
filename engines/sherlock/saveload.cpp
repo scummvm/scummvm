@@ -38,6 +38,10 @@ const int ENV_POINTS[6][3] = {
 	{ 241, 280, 261 }	// Quit
 };
 
+static const char *const EMPTY_SAVEGAME_SLOT = "-EMPTY-";
+static const char *const SAVEGAME_STR = "SHLK";
+#define SAVEGAME_STR_SIZE 4
+
 /*----------------------------------------------------------------*/
 
 SaveManager::SaveManager(SherlockEngine *vm, const Common::String &target) :
@@ -55,9 +59,6 @@ SaveManager::~SaveManager() {
 	}
 }
 
-/**
- * Shows the in-game dialog interface for loading and saving games
- */
 void SaveManager::drawInterface() {
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -87,18 +88,17 @@ void SaveManager::drawInterface() {
 	if (!_savegameIndex)
 		screen.buttonPrint(Common::Point(ENV_POINTS[3][2], CONTROLS_Y), COMMAND_NULL, 0, "Up");
 
-	if (_savegameIndex == MAX_SAVEGAME_SLOTS - 5)
+	if (_savegameIndex == MAX_SAVEGAME_SLOTS - ONSCREEN_FILES_COUNT)
 		screen.buttonPrint(Common::Point(ENV_POINTS[4][2], CONTROLS_Y), COMMAND_NULL, 0, "Down");
 
-	for (int idx = _savegameIndex; idx < _savegameIndex + 5; ++idx)
-	{
+	for (int idx = _savegameIndex; idx < _savegameIndex + ONSCREEN_FILES_COUNT; ++idx) {
 		screen.gPrint(Common::Point(6, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 			INV_FOREGROUND, "%d.", idx + 1);
 		screen.gPrint(Common::Point(24, CONTROLS_Y + 11 + (idx - _savegameIndex) * 10),
 			INV_FOREGROUND, "%s", _savegames[idx].c_str());
 	}
 
-	if (!ui._windowStyle) {
+	if (!ui._slideWindows) {
 		screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 	} else {
 		ui.summonWindow();
@@ -107,15 +107,12 @@ void SaveManager::drawInterface() {
 	_envMode = SAVEMODE_NONE;
 }
 
-/**
- * Build up a savegame list, with empty slots given an explicit Empty message
- */
 void SaveManager::createSavegameList() {
 	Screen &screen = *_vm->_screen;
 
 	_savegames.clear();
 	for (int idx = 0; idx < MAX_SAVEGAME_SLOTS; ++idx)
-		_savegames.push_back("-EMPTY-");
+		_savegames.push_back(EMPTY_SAVEGAME_SLOT);
 
 	SaveStateList saveList = getSavegameList(_target);
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
@@ -137,9 +134,6 @@ void SaveManager::createSavegameList() {
 	}
 }
 
-/**
- * Load a list of savegames
- */
 SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
@@ -172,12 +166,6 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 	return saveList;
 }
 
-const char *const SAVEGAME_STR = "SHLK";
-#define SAVEGAME_STR_SIZE 4
-
-/**
- * Read in the header information for a savegame
- */
 bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 	header._thumbnail = nullptr;
@@ -212,9 +200,6 @@ bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHea
 	return true;
 }
 
-/**
- * Write out the header information for a savegame
- */
 void SaveManager::writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegameHeader &header) {
 	// Write out a savegame header
 	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
@@ -245,9 +230,6 @@ void SaveManager::writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegame
 	out->writeUint32LE(_vm->_events->getFrameCounter());
 }
 
-/**
- * Creates a thumbnail for the current on-screen contents
- */
 void SaveManager::createThumbnail() {
 	if (_saveThumb) {
 		_saveThumb->free();
@@ -260,9 +242,6 @@ void SaveManager::createThumbnail() {
 	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
 }
 
-/**
- * Return the index of the button the mouse is over, if any
- */
 int SaveManager::getHighlightedButton() const {
 	Common::Point pt = _vm->_events->mousePos();
 
@@ -275,21 +254,18 @@ int SaveManager::getHighlightedButton() const {
 	return -1;
 }
 
-/**
- * Handle highlighting buttons
- */
 void SaveManager::highlightButtons(int btnIndex) {
 	Screen &screen = *_vm->_screen;
 	byte color = (btnIndex == 0) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
 
 	screen.buttonPrint(Common::Point(ENV_POINTS[0][2], CONTROLS_Y), color, 1, "Exit");
 
-	if ((btnIndex == 1) || ((_envMode == 1) && (btnIndex != 2)))
+	if ((btnIndex == 1) || ((_envMode == SAVEMODE_LOAD) && (btnIndex != 2)))
 		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Load");
 	else
 		screen.buttonPrint(Common::Point(ENV_POINTS[1][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Load");
 
-	if ((btnIndex == 2) || ((_envMode == 2) && (btnIndex != 1)))
+	if ((btnIndex == 2) || ((_envMode == SAVEMODE_SAVE) && (btnIndex != 1)))
 		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Save");
 	else
 		screen.buttonPrint(Common::Point(ENV_POINTS[2][2], CONTROLS_Y), COMMAND_FOREGROUND, true, "Save");
@@ -309,9 +285,6 @@ void SaveManager::highlightButtons(int btnIndex) {
 	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), color, 1, "Quit");
 }
 
-/**
- * Load the game in the specified slot
- */
 void SaveManager::loadGame(int slot) {
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		generateSaveName(slot));
@@ -335,9 +308,6 @@ void SaveManager::loadGame(int slot) {
 	delete saveFile;
 }
 
-/**
- * Save the game in the specified slot with the given name
- */
 void SaveManager::saveGame(int slot, const Common::String &name) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		generateSaveName(slot));
@@ -354,17 +324,10 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 	delete out;
 }
 
-/**
- * Support method that generates a savegame name
- * @param slot		Slot number
- */
 Common::String SaveManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _target.c_str(), slot);
 }
 
-/**
- * Synchronize the data for a savegame
- */
 void SaveManager::synchronize(Common::Serializer &s) {
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
@@ -391,14 +354,11 @@ void SaveManager::synchronize(Common::Serializer &s) {
 	_justLoaded = true;
 }
 
-/**
- * Make sure that the selected savegame is on-screen
- */
 bool SaveManager::checkGameOnScreen(int slot) {
 	Screen &screen = *_vm->_screen;
 
 	// Check if it's already on-screen
-	if (slot != -1 && (slot < _savegameIndex || slot >= (_savegameIndex + 5))) {
+	if (slot != -1 && (slot < _savegameIndex || slot >= (_savegameIndex + ONSCREEN_FILES_COUNT))) {
 		_savegameIndex = slot;
 
 		screen._backBuffer1.fillRect(Common::Rect(3, CONTROLS_Y + 11, SHERLOCK_SCREEN_WIDTH - 2,
@@ -425,7 +385,7 @@ bool SaveManager::checkGameOnScreen(int slot) {
 	return false;
 }
 
-bool SaveManager::getFilename(int slot) {
+bool SaveManager::promptForDescription(int slot) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -441,7 +401,7 @@ bool SaveManager::getFilename(int slot) {
 	screen.buttonPrint(Common::Point(ENV_POINTS[5][2], CONTROLS_Y), COMMAND_NULL, true, "Quit");
 
 	Common::String saveName = _savegames[slot];
-	if (scumm_stricmp(saveName.c_str(), "-EMPTY-") == 0) {
+	if (isSlotEmpty(slot)) {
 		// It's an empty slot, so start off with an empty save name
 		saveName = "";
 
@@ -485,18 +445,16 @@ bool SaveManager::getFilename(int slot) {
 			xp -= screen.charWidth(saveName.lastChar());
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_FOREGROUND);
 			saveName.deleteLastChar();
-		}
-
-		if (keyState.keycode == Common::KEYCODE_RETURN)
+		
+		} else if (keyState.keycode == Common::KEYCODE_RETURN && saveName.compareToIgnoreCase(EMPTY_SAVEGAME_SLOT)) {
 			done = 1;
 
-		if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+		} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
 			done = -1;
-		}
-
-		if (keyState.keycode >= ' ' && keyState.keycode <= 'z' && saveName.size() < 50
-				&& (xp + screen.charWidth(keyState.keycode)) < 308) {
+		
+		} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && saveName.size() < 50
+				&& (xp + screen.charWidth(keyState.ascii)) < 308) {
 			char c = (char)keyState.ascii;
 
 			screen.vgaBar(Common::Rect(xp, yp - 1, xp + 8, yp + 9), INV_BACKGROUND);
@@ -517,6 +475,10 @@ bool SaveManager::getFilename(int slot) {
 	}
 
 	return done == 1;
+}
+
+bool SaveManager::isSlotEmpty(int slot) const {
+	return _savegames[slot].equalsIgnoreCase(EMPTY_SAVEGAME_SLOT);
 }
 
 } // End of namespace Sherlock

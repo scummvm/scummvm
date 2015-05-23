@@ -30,6 +30,8 @@
 
 namespace Sherlock {
 
+enum ButtonFlag { LEFT_BUTTON = 1, RIGHT_BUTTON = 2 };
+
 Events::Events(SherlockEngine *vm) {
 	_vm = vm;
 	_cursorImages = nullptr;
@@ -46,9 +48,6 @@ Events::~Events() {
 	delete _cursorImages;
 }
 
-/**
- * Load a set of cursors from the specified file
- */
 void Events::loadCursors(const Common::String &filename) {
 	hideCursor();
 	delete _cursorImages;
@@ -57,9 +56,6 @@ void Events::loadCursors(const Common::String &filename) {
 	_cursorId = INVALID_CURSOR;
 }
 
-/**
- * Set the cursor to show
- */
 void Events::setCursor(CursorId cursorId) {
 	if (cursorId == _cursorId)
 		return;
@@ -67,58 +63,36 @@ void Events::setCursor(CursorId cursorId) {
 	_cursorId = cursorId;
 
 	// Set the cursor data
-	Graphics::Surface &s = (*_cursorImages)[cursorId];
+	Graphics::Surface &s = (*_cursorImages)[cursorId]._frame;
 
 	setCursor(s);
 }
 
-/**
- * Set the cursor to show from a passed frame
- */
 void Events::setCursor(const Graphics::Surface &src) {
 	CursorMan.replaceCursor(src.getPixels(), src.w, src.h, 0, 0, 0xff);
 	showCursor();
 }
 
-/**
- * Show the mouse cursor
- */
 void Events::showCursor() {
 	CursorMan.showMouse(true);
 }
 
-/**
- * Hide the mouse cursor
- */
 void Events::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-/**
- * Returns the cursor
- */
 CursorId Events::getCursor() const {
 	return _cursorId;
 }
 
-/**
- * Returns true if the mouse cursor is visible
- */
 bool Events::isCursorVisible() const {
 	return CursorMan.isVisible();
 }
 
-/**
- * Move the mouse
- */
 void Events::moveMouse(const Common::Point &pt) {
 	g_system->warpMouse(pt.x, pt.y);
 }
 
-
-/**
- * Check for any pending events
- */
 void Events::pollEvents() {
 	checkForNextFrameCounter();
 
@@ -143,38 +117,28 @@ void Events::pollEvents() {
 		case Common::EVENT_KEYUP:
 			return;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseButtons |= 1;
+			_mouseButtons |= LEFT_BUTTON;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseButtons |= 2;
+			_mouseButtons |= RIGHT_BUTTON;
 			return;
 		case Common::EVENT_LBUTTONUP:
-			_mouseButtons &= ~1;
+			_mouseButtons &= ~LEFT_BUTTON;
 			return;
 		case Common::EVENT_RBUTTONUP:
-			_mouseButtons &= ~2;
+			_mouseButtons &= ~RIGHT_BUTTON;
 			return;
-		case Common::EVENT_MOUSEMOVE:
-			_mousePos = event.mouse;
-			break;
 		default:
  			break;
 		}
 	}
 }
 
-/**
- * Poll for events and introduce a small delay, to allow the system to
- * yield to other running programs
- */
 void Events::pollEventsAndWait() {
 	pollEvents();
 	g_system->delayMillis(10);
 }
 
-/**
- * Check whether it's time to display the next screen frame
- */
 bool Events::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();
@@ -194,20 +158,14 @@ bool Events::checkForNextFrameCounter() {
 	return false;
 }
 
-/**
- * Get a pending keypress
- */
-Common::KeyState Events::getKey() {
-	Common::KeyState keyState = _pendingKeys.pop();
-	if ((keyState.flags & Common::KBD_SHIFT) != 0)
-		keyState.ascii = toupper(keyState.ascii);
-
-	return keyState;
+Common::Point Events::mousePos() const {
+	return g_system->getEventManager()->getMousePos();
 }
 
-/**
- * Clear any current keypress or mouse click
- */
+Common::KeyState Events::getKey() {
+	return _pendingKeys.pop();
+}
+
 void Events::clearEvents() {
 	_pendingKeys.clear();
 	_mouseButtons = 0;
@@ -216,24 +174,15 @@ void Events::clearEvents() {
 	_oldButtons = _oldRightButton = false;
 }
 
-/**
- * Clear any pending keyboard inputs
- */
 void Events::clearKeyboard() {
 	_pendingKeys.clear();
 }
 
-/**
- * Delay for a given number of game frames, where each frame is 1/60th of a second
- */
 void Events::wait(int numFrames) {
 	uint32 totalMilli = numFrames * 1000 / GAME_FRAME_RATE;
 	delay(totalMilli);
 }
 
-/**
- * Does a delay of the specified number of milliseconds
- */
 bool Events::delay(uint32 time, bool interruptable) {
 	// Different handling for really short versus extended times
 	if (time < 10) {
@@ -263,34 +212,25 @@ bool Events::delay(uint32 time, bool interruptable) {
 	}
 }
 
-/**
- * Sets the pressed and released button flags on the raw button state previously set in pollEvents calls.
- * @remarks		The events manager has separate variables for the raw immediate and old button state
- *		versus the current buttons states for the frame. This method is expected to be called only once
- *		per game frame
- */
 void Events::setButtonState() {
 	_released = _rightReleased = false;
-	if (_mouseButtons & 1)
+	if (_mouseButtons & LEFT_BUTTON)
 		_pressed = _oldButtons = true;
 
-	if ((_mouseButtons & 1) == 0 && _oldButtons) {
+	if ((_mouseButtons & LEFT_BUTTON) == 0 && _oldButtons) {
 		_pressed = _oldButtons = false;
 		_released = true;
 	}
 
-	if (_mouseButtons & 2)
+	if (_mouseButtons & RIGHT_BUTTON)
 		_rightPressed = _oldRightButton = true;
 
-	if ((_mouseButtons & 2) == 0 && _oldRightButton) {
+	if ((_mouseButtons & RIGHT_BUTTON) == 0 && _oldRightButton) {
 		_rightPressed = _oldRightButton = false;
 		_rightReleased = true;
 	}
 }
 
-/**
- * Checks to see to see if a key or a mouse button is pressed.
- */
 bool Events::checkInput() {
 	setButtonState();
 	return kbHit() || _pressed || _released || _rightPressed || _rightReleased;

@@ -57,7 +57,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	}
 #else
 	const SDL_Rect *const *availableModes = SDL_ListModes(NULL, SDL_OPENGL | SDL_FULLSCREEN);
-	if (availableModes != (void *)-1) {
+	// TODO: NULL means that there are no fullscreen modes supported. We
+	// should probably use this information and disable any fullscreen support
+	// in this case.
+	if (availableModes != NULL && availableModes != (void *)-1) {
 		for (;*availableModes; ++availableModes) {
 			const SDL_Rect *mode = *availableModes;
 

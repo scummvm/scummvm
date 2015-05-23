@@ -49,12 +49,20 @@ enum ScriptObjectTypes {
 
 typedef Common::HashMap<uint16, Object> ObjMap;
 
-struct stringLookupListEntry {
-	uint16    ptrOffset;  // offset of the string
+enum ScriptOffsetEntryTypes {
+	SCI_SCR_OFFSET_TYPE_OBJECT = 0, // classes are handled by this type as well
+	SCI_SCR_OFFSET_TYPE_STRING,
+	SCI_SCR_OFFSET_TYPE_SAID
+};
+
+struct offsetLookupArrayEntry {
+	uint16    type;       // type of entry
+	uint16    id;         // id of this type, first item inside script data is 1, second item is 2, etc.
+	uint32    offset;     // offset of entry within script resource data
 	uint16    stringSize; // size of string, including terminating [NUL]
 };
 
-typedef Common::List<stringLookupListEntry> stringLookupListType;
+typedef Common::Array<offsetLookupArrayEntry> offsetLookupArrayType;
 
 class Script : public SegmentObj {
 private:
@@ -82,7 +90,13 @@ private:
 
 	ObjMap _objects;	/**< Table for objects, contains property variables */
 
-	stringLookupListType _stringLookupList; // Table of string data, that is inside the currently loaded script
+protected:
+	offsetLookupArrayType _offsetLookupArray; // Table of all elements of currently loaded script, that may get pointed to
+
+private:
+	uint16 _offsetLookupObjectCount;
+	uint16 _offsetLookupStringCount;
+	uint16 _offsetLookupSaidCount;
 
 public:
 	int getLocalsOffset() const { return _localsOffset; }
@@ -258,9 +272,12 @@ public:
 	int getCodeBlockOffsetSci3() { return READ_SCI11ENDIAN_UINT32(_buf); }
 
 	/**
-	 * Print string lookup table (list) to debug console
+	 * Get the offset array
 	 */
-	void debugPrintStrings(Console *con);
+	const offsetLookupArrayType *getOffsetArray() { return &_offsetLookupArray; };
+	uint16 getOffsetObjectCount() { return _offsetLookupObjectCount; };
+	uint16 getOffsetStringCount() { return _offsetLookupStringCount; };
+	uint16 getOffsetSaidCount() { return _offsetLookupSaidCount; };
 
 private:
 	/**
@@ -310,9 +327,9 @@ private:
 	LocalVariables *allocLocalsSegment(SegManager *segMan);
 
 	/**
-	 * Identifies strings within script data and set up lookup-table
+	 * Identifies certain offsets within script data and set up lookup-table
 	 */
-	void identifyStrings();
+	void identifyOffsets();
 };
 
 } // End of namespace Sci

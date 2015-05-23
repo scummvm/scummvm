@@ -32,8 +32,9 @@ static const SherlockGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("talk.lib", "ad0c4d6865edf15da4e9204c08815875", 238928),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE | ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES)
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
 		},
 		GType_SerratedScalpel,
 	},
@@ -79,7 +80,8 @@ static const SherlockGameDescription gameDescriptions[] = {
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO0()
-		}
+		},
+		GType_RoseTattoo
 	},
 
 	{
@@ -90,6 +92,21 @@ static const SherlockGameDescription gameDescriptions[] = {
 			"CD",
 			AD_ENTRY1s("talk.lib", "9639a756b0993ebd71cb5f4d8b78b2dc", 765134),
 			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_RoseTattoo,
+	},
+
+	{
+		// Case of the Rose Tattoo - German CD
+		// Provided by m_kiewitz
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "5027aa72f0d263ed3b1c764a6c397911", 873864),
+  			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO0()
