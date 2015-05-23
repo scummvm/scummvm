@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	inventory.o \
 	journal.o \
 	map.o \
+	music.o \
 	objects.o \
 	people.o \
 	resources.o \

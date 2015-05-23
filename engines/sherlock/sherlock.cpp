@@ -37,6 +37,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_inventory = nullptr;
 	_journal = nullptr;
 	_map = nullptr;
+	_music = nullptr;
 	_people = nullptr;
 	_res = nullptr;
 	_saves = nullptr;
@@ -58,6 +59,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _events;
 	delete _journal;
 	delete _map;
+	delete _music;
 	delete _people;
 	delete _saves;
 	delete _scene;
@@ -92,6 +94,7 @@ void SherlockEngine::initialize() {
 	_events = new Events(this);
 	_inventory = new Inventory(this);
 	_map = new Map(this);
+	_music = new Music(this, _mixer);
 	_journal = new Journal(this);
 	_people = new People(this);
 	_saves = new SaveManager(this, _targetName);
@@ -218,7 +221,7 @@ void SherlockEngine::loadConfig() {
 
 void SherlockEngine::saveConfig() {
 	ConfMan.setBool("mute", !_sound->_digitized);
-	ConfMan.setBool("music_mute", !_sound->_musicOn);
+	ConfMan.setBool("music_mute", !_music->_musicOn);
 	ConfMan.setBool("speech_mute", !_sound->_voices);
 
 	ConfMan.setInt("font", _screen->fontNumber());
@@ -235,6 +238,7 @@ void SherlockEngine::syncSoundSettings() {
 
 	// Load sound-related settings
 	_sound->syncSoundSettings();
+	_music->syncMusicSettings();
 }
 
 void SherlockEngine::synchronize(Common::Serializer &s) {

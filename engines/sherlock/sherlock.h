@@ -38,6 +38,7 @@
 #include "sherlock/inventory.h"
 #include "sherlock/journal.h"
 #include "sherlock/map.h"
+#include "sherlock/music.h"
 #include "sherlock/people.h"
 #include "sherlock/resources.h"
 #include "sherlock/saveload.h"
@@ -104,6 +105,7 @@ public:
 	Inventory *_inventory;
 	Journal *_journal;
 	Map *_map;
+	Music *_music;
 	People *_people;
 	Resources *_res;
 	SaveManager *_saves;

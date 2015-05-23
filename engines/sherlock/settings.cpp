@@ -55,6 +55,7 @@ void Settings::drawInteface(bool flag) {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Music &music = *_vm->_music;
 	UserInterface &ui = *_vm->_ui;
 	Common::String tempStr;
 
@@ -71,7 +72,7 @@ void Settings::drawInteface(bool flag) {
 	screen.makeButton(Common::Rect(SETUP_POINTS[0][0], SETUP_POINTS[0][1], SETUP_POINTS[0][2], SETUP_POINTS[0][1] + 10),
 		SETUP_POINTS[0][3] - screen.stringWidth("Exit") / 2, "Exit");
 
-	tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._musicOn]);
+	tempStr = Common::String::format("Music %s", SETUP_STRS0[music._musicOn]);
 	screen.makeButton(Common::Rect(SETUP_POINTS[1][0], SETUP_POINTS[1][1], SETUP_POINTS[1][2], SETUP_POINTS[1][1] + 10),
 		SETUP_POINTS[1][3] - screen.stringWidth(tempStr) / 2, tempStr);
 
@@ -135,6 +136,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
+	Music &music = *_vm->_music;
 	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
 	int found = -1;
@@ -154,7 +156,7 @@ int Settings::drawButtons(const Common::Point &pt, int _key) {
 		// Print the button text
 		switch (idx) {
 		case 1:
-			tempStr = Common::String::format("Music %s", SETUP_STRS0[sound._musicOn]);
+			tempStr = Common::String::format("Music %s", SETUP_STRS0[music._musicOn]);
 			screen.buttonPrint(Common::Point(SETUP_POINTS[idx][3], SETUP_POINTS[idx][1]), color, true, tempStr);
 			break;
 		case 2:
@@ -208,6 +210,7 @@ void Settings::show(SherlockEngine *vm) {
 	Scene &scene = *vm->_scene;
 	Screen &screen = *vm->_screen;
 	Sound &sound = *vm->_sound;
+	Music &music = *vm->_music;
 	Talk &talk = *vm->_talk;
 	UserInterface &ui = *vm->_ui;
 	bool updateConfig = false;
@@ -255,11 +258,11 @@ void Settings::show(SherlockEngine *vm) {
 
 		if ((found == 1 && events._released) || ui._key == 'M') {
 			// Toggle music
-			sound._musicOn = !sound._musicOn;
-			if (!sound._musicOn)
-				sound.stopMusic();
+			music._musicOn = !music._musicOn;
+			if (!music._musicOn)
+				music.stopMusic();
 			else
-				sound.startSong();
+				music.startSong();
 
 			updateConfig = true;
 			settings.drawInteface(true);

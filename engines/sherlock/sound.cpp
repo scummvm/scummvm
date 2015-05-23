@@ -52,7 +52,6 @@ static const uint8 creativeADPCM_AdjustMap[64] = {
 
 Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_digitized = false;
-	_musicPlaying = false;
 	_voices = 0;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
@@ -60,13 +59,11 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_curPriority = 0;
 
 	_soundOn = true;
-	_musicOn = true;
 	_speechOn = true;
 
 	if (!_vm->_interactiveFl)
 		_vm->_res->addToCache("TITLE.SND");
 	else {
-		_vm->_res->addToCache("MUSIC.LIB");
 		_vm->_res->addToCache("SND.SND");
 
 		if (!_vm->isDemo()) {
@@ -78,7 +75,6 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 void Sound::syncSoundSettings() {
 	_digitized = !ConfMan.getBool("mute");
-	_musicOn = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
 	_voices = !ConfMan.getBool("mute") && !ConfMan.getBool("speech_mute") ? 1 : 0;
 }
 
@@ -201,64 +197,9 @@ void Sound::stopSound() {
 	_mixer->stopHandle(_effectsHandle);
 }
 
-void Sound::playMusic(const Common::String &name) {
-	if (!_musicOn)
-		return;
-
-	// TODO
-	warning("Sound::playMusic %s", name.c_str());
-	Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
-
-	byte *data = new byte[stream->size()];
-	byte *ptr = data;
-	stream->read(ptr, stream->size());
-	Common::DumpFile outFile;
-	outFile.open(name + ".RAW");
-	outFile.write(data, stream->size());
-	outFile.flush();
-	outFile.close();
-	delete[] data;
-
-	stopMusic();
-	startSong();
-}
-
-void Sound::stopMusic() {
-	// TODO
-	warning("TODO: Sound::stopMusic");
-
-	_musicPlaying = false;
-}
-
-int Sound::loadSong(int songNumber) {
-	// TODO
-	warning("TODO: Sound::loadSong");
-	return 0;
-}
-
-void Sound::startSong() {
-	if (!_musicOn)
-		return;
-
-	// TODO
-	warning("TODO: Sound::startSong");
-
-	_musicPlaying = true;
-}
-
-void Sound::freeSong() {
-	// TODO
-	warning("TODO: Sound::freeSong");
-}
-
 void Sound::stopSndFuncPtr(int v1, int v2) {
 	// TODO
 	warning("TODO: Sound::stopSndFuncPtr");
-}
-
-void Sound::waitTimerRoland(uint time) {
-	// TODO
-	warning("TODO: Sound::waitTimerRoland");
 }
 
 void Sound::freeDigiSound() {

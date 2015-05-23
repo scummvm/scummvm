@@ -167,7 +167,7 @@ void Scene::freeScene() {
 
 	_vm->_talk->freeTalkVars();
 	_vm->_inventory->freeInv();
-	_vm->_sound->freeSong();
+	_vm->_music->freeSong();
 	_vm->_sound->freeLoadedSounds();
 
 	if (!_loadingSavedGame)
@@ -197,6 +197,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Music &music = *_vm->_music;
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
 
@@ -446,8 +447,8 @@ bool Scene::loadScene(const Common::String &filename) {
 	checkInventory();
 
 	// Handle starting any music for the scene
-	if (sound._musicOn && sound.loadSong(_currentScene))
-		sound.startSong();
+	if (music._musicOn && music.loadSong(_currentScene))
+		music.startSong();
 
 	// Load walking images if not already loaded
 	people.loadWalk();

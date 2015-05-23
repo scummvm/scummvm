@@ -377,13 +377,13 @@ void Darts::erasePowerBars() {
 int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool isVertical) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	Music &music = *_vm->_music;
 	bool done;
 	int idx = 0;
 
 	events.clearEvents();
-	if (sound._musicOn)
-		sound.waitTimerRoland(10);
+	if (music._musicOn)
+		music.waitTimerRoland(10);
 	else
 		events.delay(100);
 
@@ -410,9 +410,9 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 			screen.slamArea(pt.x + idx, pt.y, 1, 8);
 		}
 
-		if (sound._musicOn) {
+		if (music._musicOn) {
 			if (!(idx % 3))
-				sound.waitTimerRoland(1);
+				music.waitTimerRoland(1);
 		} else if (!(idx % 8))
 			events.wait(1);
 	

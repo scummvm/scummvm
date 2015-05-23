@@ -22,6 +22,7 @@
 
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/music.h"
 #include "sherlock/animation.h"
 
 namespace Sherlock {
@@ -428,13 +429,13 @@ void ScalpelEngine::showOpening() {
 		return;
 
 	_events->clearEvents();
-	_sound->stopMusic();
+	_music->stopMusic();
 }
 
 bool ScalpelEngine::showCityCutscene() {
 	byte palette[PALETTE_SIZE];
 
-	_sound->playMusic("prolog1.mus");
+	_music->playMusic("prolog1.mus");
 	_animation->_gfxLibraryFilename = "title.lib";
 	_animation->_soundLibraryFilename = "title.snd";
 	bool finished = _animation->play("26open1", 1, 255, true, 2);
@@ -505,7 +506,7 @@ bool ScalpelEngine::showCityCutscene() {
 
 bool ScalpelEngine::showAlleyCutscene() {
 	byte palette[PALETTE_SIZE];
-	_sound->playMusic("prolog2.mus");
+	_music->playMusic("prolog2.mus");
 
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
@@ -544,7 +545,7 @@ bool ScalpelEngine::showStreetCutscene() {
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	_sound->playMusic("PROLOG3.MUS");
+	_music->playMusic("PROLOG3.MUS");
 
 	bool finished = _animation->play("14KICK", 1, 3, true, 2);
 
@@ -590,7 +591,7 @@ bool ScalpelEngine::scrollCredits() {
 }
 
 bool ScalpelEngine::showOfficeCutscene() {
-	_sound->playMusic("PROLOG4.MUS");
+	_music->playMusic("PROLOG4.MUS");
 	_animation->_gfxLibraryFilename = "TITLE2.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
@@ -668,12 +669,12 @@ void ScalpelEngine::showLBV(const Common::String &filename) {
 void ScalpelEngine::startScene() {
 	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
 		// Show the map
-		if (_sound->_musicOn && _sound->loadSong(100))
-			_sound->startSong();
+		if (_music->_musicOn && _music->loadSong(100))
+			_music->startSong();
 
 		_scene->_goToScene = _map->show();
 
-		_sound->freeSong();
+		_music->freeSong();
 		_people->_hSavedPos = Common::Point(-1, -1);
 		_people->_hSavedFacing = -1;
 	}
@@ -689,8 +690,8 @@ void ScalpelEngine::startScene() {
 	case RESCUE_ANNA:
 	case MOOREHEAD_DEATH:
 	case BRUMWELL_SUICIDE:
-		if (_sound->_musicOn && _sound->loadSong(_scene->_goToScene))
-			_sound->startSong();
+		if (_music->_musicOn && _music->loadSong(_scene->_goToScene))
+			_music->startSong();
 
 		switch (_scene->_goToScene) {
 		case BLACKWOOD_CAPTURE:
@@ -790,7 +791,7 @@ void ScalpelEngine::startScene() {
 		}
 
 		// Free any song from the previous scene
-		_sound->freeSong();
+		_music->freeSong();
 		break;
 
 	case EXIT_GAME:

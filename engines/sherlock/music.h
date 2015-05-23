@@ -20,77 +20,73 @@
  *
  */
 
-#ifndef SHERLOCK_SOUND_H
-#define SHERLOCK_SOUND_H
+#ifndef SHERLOCK_MUSIC_H
+#define SHERLOCK_MUSIC_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "access/files.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
+#include "audio/mididrv.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
-enum WaitType {
-	WAIT_RETURN_IMMEDIATELY = 0, WAIT_FINISH = 1, WAIT_KBD_OR_FINISH = 2
+class MidiParser_SH : public MidiParser {
+protected:
+	virtual void parseNextEvent(EventInfo &info);
+
+	uint8 _beats;
+	uint8 _lastEvent;
+	byte *_data;
+	byte *_trackEnd;
+public:
+	MidiParser_SH();
+	virtual bool loadMusic(byte *data, uint32 size);
 };
 
-class Sound {
+class Music : public Audio::MidiPlayer {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _effectsHandle;
-	int _curPriority;
+	MidiParser_SH _midiParser;
 
-	byte decodeSample(byte sample, byte& reference, int16& scale);
 public:
-	bool _digitized;
-	int _voices;
-	bool _soundOn;
-	bool _speechOn;
-	bool _diskSoundPlaying;
-	bool _soundPlaying;
-	bool *_soundIsOn;
-	byte *_digiBuf;
+	bool _musicPlaying;
+	bool _musicOn;
 public:
-	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
+	Music(SherlockEngine *vm, Audio::Mixer *mixer);
 
 	/**
 	 * Saves sound-related settings
 	 */
-	void syncSoundSettings();
+	void syncMusicSettings();
 
 	/**
-	 * Load a sound
+	 * Load a specified song
 	 */
-	void loadSound(const Common::String &name, int priority);
-	
-	/**
-	 * Play the sound in the specified resource
-	 */
-	bool playSound(const Common::String &name, WaitType waitType, int priority = 100, const char *libraryFilename = nullptr);
-	
-	/**
-	 * Play a previously loaded sound
-	 */
-	void playLoadedSound(int bufNum, WaitType waitType);
-	
-	/**
-	 * Free any previously loaded sounds
-	 */
-	void freeLoadedSounds();
-	
-	/**
-	 * Stop playing any active sound
-	 */
-	void stopSound();
+	bool loadSong(int songNumber);
 
-	void stopSndFuncPtr(int v1, int v2);
-	void freeDigiSound();
+	/**
+	 * Start playing a song
+	 */
+	void startSong();
+	
+	/**
+	 * Free any currently loaded song
+	 */
+	void freeSong();
+	
+	/**
+	 * Play the specified music resource
+	 */
+	bool playMusic(const Common::String &name);
+
+	/**
+	 * Stop playing the music
+	 */
+	void stopMusic();
+	
+	void waitTimerRoland(uint time);
 };
 
 } // End of namespace Sherlock
