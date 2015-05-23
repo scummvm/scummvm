@@ -311,27 +311,32 @@ bool Scene::loadScene(const Common::String &filename) {
 			bgInfo[idx].load(*rrmStream);
 
 		// Read information
-		if (IS_SERRATED_SCALPEL) {
-			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream :
-				res.decompress(*rrmStream, bgHeader._numStructs * 569 + bgHeader._descSize + bgHeader._seqSize);
+		if (IS_ROSE_TATTOO) {
+			// Load shapes
+			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
 
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream, false);
-
-			if (bgHeader._descSize) {
-				_descText.resize(bgHeader._descSize);
-				infoStream->read(&_descText[0], bgHeader._descSize);
-			}
-
-			if (bgHeader._seqSize) {
-				_sequenceBuffer.resize(bgHeader._seqSize);
-				infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
-			}
+				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
 
 			if (_lzwMode)
 				delete infoStream;
+
+			// Load description text
+			_descText.resize(bgHeader._descSize);
+			if (_lzwMode)
+				res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
+			else
+				rrmStream->read(&_descText[0], bgHeader._descSize);
+
+			// Load sequences
+			_sequenceBuffer.resize(bgHeader._seqSize);
+			if (_lzwMode)
+				res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
+			else
+				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
 		} else if (!_lzwMode) {
+			// Serrated Scalpel uncompressed info
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
 				_bgShapes[idx].load(*rrmStream, false);
@@ -346,6 +351,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
 			}
 		} else {
+			// Serrated Scalpel compressed info
 			Common::SeekableReadStream *infoStream;
 
 			// Read shapes

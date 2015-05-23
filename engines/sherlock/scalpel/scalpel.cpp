@@ -390,13 +390,6 @@ void ScalpelEngine::initialize() {
 	_flags[3] = true;		// Turn on Alley
 	_flags[39] = true;		// Turn on Baker Street
 
-	// Add some more files to the cache
-	_res->addToCache("portrait.lib");
-	_res->addToCache("sequence.txt");
-	_res->addToCache("EPILOGUE.SND");
-	_res->addToCache("snd.snd");
-	_res->addToCache("title.snd");
-
 	if (!isDemo()) {
 		// Load the map co-ordinates for each scene and sequence data
 		_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);

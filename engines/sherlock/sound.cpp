@@ -68,11 +68,16 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_vm->_res->addToCache("TITLE.SND");
 	else {
 		_vm->_res->addToCache("MUSIC.LIB");
-		_vm->_res->addToCache("SND.SND");
+		
+		if (IS_ROSE_TATTOO) {
+			_vm->_res->addToCache("SOUND.LIB");
+		} else {
+			_vm->_res->addToCache("SND.SND");
 
-		if (!_vm->isDemo()) {
-			_vm->_res->addToCache("TITLE.SND");
-			_vm->_res->addToCache("EPILOGUE.SND");
+			if (!_vm->isDemo()) {
+				_vm->_res->addToCache("TITLE.SND");
+				_vm->_res->addToCache("EPILOGUE.SND");
+			}
 		}
 	}
 }

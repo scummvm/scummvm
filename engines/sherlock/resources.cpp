@@ -91,9 +91,12 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	if (_vm->_interactiveFl) {
 		addToCache("vgs.lib");
 		addToCache("talk.lib");
-		addToCache("sequence.txt");
 		addToCache("journal.txt");
-		addToCache("portrait.lib");
+
+		if (IS_SERRATED_SCALPEL) {
+			addToCache("sequence.txt");
+			addToCache("portrait.lib");
+		}
 	}
 }
 
@@ -310,7 +313,7 @@ void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer
 				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
 			}
 		}
-	} while ((outSize == -1 || outBuffer < outBufferEnd) || (inSize == -1 || source.pos() < endPos));
+	} while ((outSize == -1 || outBuffer < outBufferEnd) && (inSize == -1 || source.pos() < endPos));
 }
 
 /*----------------------------------------------------------------*/
