@@ -46,7 +46,7 @@ void Sprite::clear() {
 	_description = "";
 	_examine.clear();
 	_pickUp = "";
-	_sequences = nullptr;
+	_walkSequences.clear();
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
@@ -63,12 +63,21 @@ void Sprite::clear() {
 	_status = 0;
 	_misc = 0;
 	_numFrames = 0;
+	_altImages = nullptr;
+	_altSequences = false;
+	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
 }
 
 void Sprite::setImageFrame() {
-	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] +
-		(*_sequences)[_sequenceNumber][0] - 2;
-	_imageFrame = &(*_images)[imageNumber];
+	int frameNum = MAX(_frameNumber, 0);
+	int imageNumber = _walkSequences[_sequenceNumber][frameNum];
+	
+	if (IS_SERRATED_SCALPEL)
+		imageNumber = imageNumber + +_walkSequences[_sequenceNumber][0] - 2;
+	else if (imageNumber > _numFrames)
+		imageNumber = 1;
+
+	_imageFrame = &(_altSequences ? *_altImages : *_images)[imageNumber];
 }
 
 void Sprite::adjustSprite() {
@@ -120,7 +129,7 @@ void Sprite::adjustSprite() {
 	if (!map._active || (map._frameChangeFlag = !map._frameChangeFlag))
 		++_frameNumber;
 
-	if ((*_sequences)[_sequenceNumber][_frameNumber] == 0) {
+	if (_walkSequences[_sequenceNumber][_frameNumber] == 0) {
 		switch (_sequenceNumber) {
 		case STOP_UP:
 		case STOP_DOWN:

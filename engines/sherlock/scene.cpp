@@ -536,7 +536,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		delete rrmStream;
 	}
 
-	// Clear user interface area and draw controls
+	// Handle drawing any on-screen interface
 	ui.drawInterface();
 
 	checkSceneStatus();
@@ -568,7 +568,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	checkInventory();
 
 	// Handle starting any music for the scene
-	if (sound._musicOn && sound.loadSong(_currentScene)) {
+	if (IS_SERRATED_SCALPEL && sound._musicOn && sound.loadSong(_currentScene)) {
 		if (sound._music)
 			sound.startSong();
 	}

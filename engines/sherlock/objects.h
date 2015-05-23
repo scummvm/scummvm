@@ -46,7 +46,10 @@ enum SpriteType {
 	REMOVE = 5,					// Object should be removed next frame
 	NO_SHAPE = 6,				// Background object with no shape
 	HIDDEN = 7,					// Hidden backgruond object
-	HIDE_SHAPE = 8				// Object needs to be hidden
+	HIDE_SHAPE = 8,				// Object needs to be hidden
+
+	// Rose Tattoo
+	HIDDEN_CHARACTER = 128
 };
 
 enum AType {
@@ -98,16 +101,31 @@ public:
 	void operator-=(const Point32 &delta) { x -= delta.x; y -= delta.y; }
 };
 
+
+struct WalkSequence {
+	Common::String _vgsName;
+	bool _horizFlip;
+	Common::Array<byte> _sequences;
+
+	WalkSequence() : _vgsName(nullptr), _horizFlip(false) {}
+	const byte &operator[](int idx) { return _sequences[idx]; }
+
+	/**
+	 * Load data for the sequence from a stream
+	 */
+	void load(Common::SeekableReadStream &s);
+};
+
 class Sprite {
 private:
 	static SherlockEngine *_vm;
 public:
 	Common::String _name;				
 	Common::String _description;		
-	Common::StringArray _examine;		// Examine in-depth description
+	Common::String _examine;			// Examine in-depth description
 	Common::String _pickUp;				// Message for if you can't pick up object
 
-	const uint8 (*_sequences)[MAX_HOLMES_SEQUENCE][MAX_FRAME];  // Holds animation sequences
+	Common::Array<WalkSequence> _walkSequences;	// Holds animation sequences
 	ImageFile *_images;					// Sprite images
 	ImageFrame *_imageFrame;			// Pointer to shape in the images
 	int _walkCount;						// Character walk counter
@@ -124,8 +142,12 @@ public:
 	int _status;						// Status: open/closed, moved/not moved
 	int8 _misc;							// Miscellaneous use
 	int _numFrames;						// How many frames the object has
+	ImageFile *_altImages;
+	bool _altSequences;
+	ImageFrame *_stopFrames[8];			// Stop/rest frame for each direction
 public:
 	Sprite() { clear(); }
+
 	static void setVm(SherlockEngine *vm) { _vm = vm; }
 
 	/**

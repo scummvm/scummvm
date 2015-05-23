@@ -837,9 +837,11 @@ void ScalpelEngine::eraseMirror12() {
 
 void ScalpelEngine::doMirror12() {
 	People &people = *_people;
+	Person &player = people._player;
+
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
-	int frameNum = (*people[AL]._sequences)[people[AL]._sequenceNumber][people[AL]._frameNumber] +
-		(*people[AL]._sequences)[people[AL]._sequenceNumber][0] - 2;
+	int frameNum = player._walkSequences[player._sequenceNumber][player._frameNumber] +
+		player._walkSequences[player._sequenceNumber][0] - 2;
 
 	switch ((*_people)[AL]._sequenceNumber) {
 	case WALK_DOWN:
