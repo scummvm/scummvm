@@ -135,6 +135,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	JournalEntry &journalEntry = _journal[_index];
+	const byte *opcodes = talk._opcodes;
 
 	Common::String dirFilename = _directory[journalEntry._converseNum];
 	bool replyOnly = journalEntry._replyOnly;
@@ -243,7 +244,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 		byte c = *replyP++;
 
 		// Is it a control character?
-		if (c < SWITCH_SPEAKER) {
+		if (c < opcodes[0]) {
 			// Nope. Set flag for allowing control codes to insert spaces
 			ctrlSpace = true;
 			assert(c >= ' ');
@@ -290,7 +291,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 						byte v;
 						do {
 							v = *strP++;
-						} while (v && (v < SWITCH_SPEAKER) && (v != '.') && (v != '!') && (v != '?'));
+						} while (v && (v < opcodes[0]) && (v != '.') && (v != '!') && (v != '?'));
 
 						if (v == '?')
 							journalString += " asked, \"";
@@ -306,11 +307,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += c;
 				do {
 					journalString += *replyP++;
-				} while (*replyP && *replyP < SWITCH_SPEAKER && *replyP != '{' && *replyP != '}');
+				} while (*replyP && *replyP < opcodes[0] && *replyP != '{' && *replyP != '}');
 
 				commentJustPrinted = false;
 			}
-		} else if (c == SWITCH_SPEAKER) {
+		} else if (c == opcodes[OP_SWITCH_SPEAKER]) {
 			if (!startOfReply) {
 				if (!commentFlag && !commentJustPrinted)
 					journalString += "\"\n";
@@ -337,7 +338,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			byte v;
 			do {
 				v = *strP++;
-			} while (v && v < SWITCH_SPEAKER && v != '.' && v != '!' && v != '?');
+			} while (v && v < opcodes[0] && v != '.' && v != '!' && v != '?');
 
 			if (v == '?')
 				journalString += " asked, \"";
@@ -345,59 +346,42 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += " said, \"";
 		} else {
 			// Control code, so move past it and any parameters
-			switch (c) {
-			case RUN_CANIMATION:
-			case ASSIGN_PORTRAIT_LOCATION:
-			case PAUSE:
-			case PAUSE_WITHOUT_CONTROL:
-			case WALK_TO_CANIMATION:
+			if (c == opcodes[OP_RUN_CANIMATION] || c == opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
+					c == opcodes[OP_PAUSE] || c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+					c == opcodes[OP_WALK_TO_CANIMATION]) {
 				// These commands have a single parameter
 				++replyP;
-				break;
 
-			case ADJUST_OBJ_SEQUENCE:
+			} else if (c == opcodes[OP_ADJUST_OBJ_SEQUENCE]) {
 				replyP += (replyP[0] & 127) + replyP[1] + 2;
-				break;
 
-			case WALK_TO_COORDS:
-			case MOVE_MOUSE:
+			} else if (c == opcodes[OP_WALK_TO_COORDS] || c == opcodes[OP_MOVE_MOUSE]) {
 				replyP += 4;
-				break;
-
-			case SET_FLAG:
-			case IF_STATEMENT:
+				
+			} else if (c == opcodes[OP_SET_FLAG] || c == opcodes[OP_IF_STATEMENT]) {
 				replyP += 2;
-				break;
 
-			case SFX_COMMAND:
-			case PLAY_PROLOGUE:
-			case CALL_TALK_FILE:
+			} else if (c == opcodes[OP_SFX_COMMAND] || c == opcodes[OP_PLAY_PROLOGUE] ||
+				c == opcodes[OP_CALL_TALK_FILE]) {
 				replyP += 8;
 				break;
 
-			case TOGGLE_OBJECT:
-			case ADD_ITEM_TO_INVENTORY:
-			case SET_OBJECT:
-			case DISPLAY_INFO_LINE:
-			case REMOVE_ITEM_FROM_INVENTORY:
+			} else if (c == opcodes[OP_TOGGLE_OBJECT] || c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+				c == opcodes[OP_SET_OBJECT] || c == opcodes[OP_DISPLAY_INFO_LINE] ||
+				c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
 				replyP += (*replyP & 127) + 1;
-				break;
 
-			case GOTO_SCENE:
+			} else if (c == opcodes[OP_GOTO_SCENE]) {
 				replyP += 5;
-				break;
 
-			case CARRIAGE_RETURN:
+			} else if (c == opcodes[OP_CARRIAGE_RETURN]) {
 				journalString += "\n";
-				break;
-
-			default:
-				break;
 			}
 
 			// Put a space in the output for a control character, unless it's
 			// immediately coming after another control character
-			if (ctrlSpace && c != ASSIGN_PORTRAIT_LOCATION && c != CARRIAGE_RETURN && !commentJustPrinted) {
+			if (ctrlSpace && c != opcodes[OP_ASSIGN_PORTRAIT_LOCATION] && c != opcodes[OP_CARRIAGE_RETURN] && 
+					!commentJustPrinted) {
 				journalString += " ";
 				ctrlSpace = false;
 			}
