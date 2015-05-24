@@ -88,6 +88,7 @@ public:
 	int _lookHelp;
 public:
 	static UserInterface *init(SherlockEngine *vm);
+	virtual ~UserInterface() {}
 
 	/**
 	 * Resets the user interface
@@ -253,7 +254,7 @@ private:
 	void printObjectDesc(const Common::String &str, bool firstTime);
 public:
 	ScalpelUserInterface(SherlockEngine *vm);
-	~ScalpelUserInterface();
+	virtual ~ScalpelUserInterface();
 
 	/**
 	 * Handles counting down whilst checking for input, then clears the info line.
@@ -317,6 +318,8 @@ class TattooUserInterface : public UserInterface {
 public:
 	TattooUserInterface(SherlockEngine *vm);
 public:
+	virtual ~TattooUserInterface() {}
+
 	/**
 	 * Main input handler for the user interface
 	 */
