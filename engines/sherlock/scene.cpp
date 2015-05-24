@@ -249,6 +249,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
 
@@ -263,6 +264,36 @@ bool Scene::loadScene(const Common::String &filename) {
 	_bgShapes.clear();
 	_cAnim.clear();
 	_sequenceBuffer.clear();
+
+	// Check if it's a scene we need to keep trakc track of how many times we've visited
+	for (int idx = (int)_sceneTripCounters.size() - 1; idx >= 0; --idx) {
+		if (_sceneTripCounters[idx]._sceneNumber == _currentScene) {
+			if (--_sceneTripCounters[idx]._numTimes == 0) {
+				_vm->setFlags(_sceneTripCounters[idx]._flag);
+				_sceneTripCounters.remove_at(idx);
+			}
+		}
+	}
+
+	if (IS_ROSE_TATTOO) {
+		// Set the NPC paths for the scene
+		setNPCPath(0);
+
+		// Handle loading music for the scene
+		if (sound._midiDrvLoaded) {
+			if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
+				sound._nextSongName = Common::String::format("res%02d", _currentScene);
+
+			// If it's a new song, then start it up
+			if (sound._currentSongName.compareToIgnoreCase(sound._nextSongName)) {
+				if (sound.loadSong(sound._nextSongName)) {
+					sound.setMIDIVolume(sound._musicVolume);
+					if (sound._musicOn)
+						sound.startSong();
+				}
+			}
+		}
+	}
 
 	//
 	// Load the room resource file for the scene
@@ -1584,5 +1615,27 @@ void Scene::synchronize(Common::Serializer &s) {
 		}
 	}
 }
+
+void Scene::setNPCPath(int npc) {
+	People &people = *_vm->_people;
+	Talk &talk = *_vm->_talk;
+	
+	people[npc].clearNPC();
+	people[npc]._name = Common::String::format("WATS%.2dA", _currentScene);
+
+	// If we're in the middle of a script that will continue once the scene is loaded,
+	// return without calling the path script
+	if (talk._scriptMoreFlag == 1 || talk._scriptMoreFlag == 3)
+		return;
+
+	// Turn off all the NPCs, since the talk script will turn them back on as needed
+	for (uint idx = 0; idx < MAX_NPC; ++idx)
+		people[idx + 1]._type = INVALID;
+
+	// Call the path script for the scene
+	Common::String pathFile = Common::String::format("PATH%.2dA", _currentScene);
+	talk.talkTo(pathFile);
+}
+
 
 } // End of namespace Sherlock

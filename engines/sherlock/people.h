@@ -34,7 +34,9 @@ enum PeopleId {
 	PLAYER			= 0,
 	AL				= 0,
 	PEG				= 1,
-	MAX_PLAYERS		= 6
+	MAX_PLAYERS		= 6,
+	MAX_NPC			= 5,
+	MAX_NPC_PATH	= 200
 };
 
 // Animation sequence identifiers for characters
@@ -66,11 +68,23 @@ public:
 	bool _walkLoaded;
 	Common::String _portrait;
 
+	// NPC related fields
+	int _npcIndex;
+	int _npcStack;
+	bool _npcPause;
+	byte _npcPath[MAX_NPC_PATH];
+	Common::String _npcName;
+
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using
 	Common::Array<WalkSequence> _walkSequences;
 public:
-	Person() : Sprite(), _walkLoaded(false) {}
+	Person();
+
+	/**
+	 * Clear the NPC related data
+	 */
+	void clearNPC();
 };
 
 class SherlockEngine;

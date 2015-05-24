@@ -128,6 +128,16 @@ public:
 	void load(Common::SeekableReadStream &s);
 };
 
+struct SceneTripEntry {
+	bool _flag;
+	int _sceneNumber;
+	int _numTimes;
+
+	SceneTripEntry() : _flag(false), _sceneNumber(0), _numTimes(0) {}
+	SceneTripEntry(bool flag, int sceneNumber, int numTimes) : _flag(flag),
+		_sceneNumber(sceneNumber), _numTimes(numTimes) {}
+};
+
 class Scene {
 private:
 	SherlockEngine *_vm;
@@ -212,6 +222,7 @@ public:
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
 	int _cAnimFramePause;
+	Common::Array<SceneTripEntry> _sceneTripCounters;
 public:
 	Scene(SherlockEngine *vm);
 	~Scene();
@@ -291,6 +302,13 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Resets the NPC path information when entering a new scene.
+	 * @remarks		The default talk file for the given NPC is set to WATS##A, where ## is
+	 *		the scene number being entered
+	 */
+	void setNPCPath(int npc);
 };
 
 } // End of namespace Sherlock

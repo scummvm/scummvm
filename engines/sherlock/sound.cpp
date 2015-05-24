@@ -58,6 +58,8 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_soundPlaying = false;
 	_soundIsOn = &_soundPlaying;
 	_curPriority = 0;
+	_midiDrvLoaded = false;
+	_musicVolume = 0;
 
 	_soundOn = true;
 	_musicOn = true;
@@ -231,11 +233,18 @@ void Sound::stopMusic() {
 	warning("TODO: Sound::stopMusic");
 }
 
-int Sound::loadSong(int songNumber) {
+bool Sound::loadSong(int songNumber) {
 	// TODO
 	warning("TODO: Sound::loadSong");
-	return 0;
+	return false;
 }
+
+bool Sound::loadSong(const Common::String &name) {
+	// TODO
+	warning("TODO: Sound::loadSong");
+	return false;
+}
+
 
 void Sound::startSong() {
 	// TODO
@@ -262,6 +271,10 @@ void Sound::freeDigiSound() {
 	_digiBuf = nullptr;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
+}
+
+void Sound::setMIDIVolume(int volume) {
+	// TODO
 }
 
 } // End of namespace Sherlock

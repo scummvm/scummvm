@@ -58,6 +58,9 @@ public:
 	bool _soundPlaying;
 	bool *_soundIsOn;
 	byte *_digiBuf;
+	bool _midiDrvLoaded;
+	Common::String _currentSongName, _nextSongName;
+	int _musicVolume;
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 
@@ -94,7 +97,8 @@ public:
 	/**
 	 * Load a specified song
 	 */
-	int loadSong(int songNumber);
+	bool loadSong(int songNumber);
+	bool loadSong(const Common::String &name);
 
 	/**
 	 * Start playing a song
@@ -119,6 +123,7 @@ public:
 	void stopSndFuncPtr(int v1, int v2);
 	void waitTimerRoland(uint time);
 	void freeDigiSound();
+	void setMIDIVolume(int volume);
 };
 
 } // End of namespace Sherlock

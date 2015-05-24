@@ -80,6 +80,18 @@ void WalkSequence::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
+Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _npcPause(false)  {
+	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
+}
+
+void Person::clearNPC() {
+	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
+	_npcIndex = _npcStack = 0;
+	_npcName = "";
+}
+
+/*----------------------------------------------------------------*/
+
 People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_holmesOn = true;
 	_oldWalkSequence = -1;

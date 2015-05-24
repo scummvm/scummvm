@@ -107,7 +107,7 @@ struct WalkSequence {
 	bool _horizFlip;
 	Common::Array<byte> _sequences;
 
-	WalkSequence() : _vgsName(nullptr), _horizFlip(false) {}
+	WalkSequence() : _horizFlip(false) {}
 	const byte &operator[](int idx) { return _sequences[idx]; }
 
 	/**
