@@ -95,7 +95,7 @@ void SherlockEngine::initialize() {
 	_scene = new Scene(this);
 	_screen = new Screen(this);
 	_sound = new Sound(this, _mixer);
-	_talk = new Talk(this);
+	_talk = Talk::init(this);
 	_ui = UserInterface::init(this);
 
 	// Load game settings
