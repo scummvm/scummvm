@@ -251,6 +251,12 @@ public:
 	void setupBGArea(const byte cMap[PALETTE_SIZE]);
 
 	void initScrollVars();
+
+	/**
+	 * Translate a palette from 6-bit RGB values to full 8-bit values suitable for passing
+	 * to the underlying palette manager
+	 */
+	static void translatePalette(byte palette[PALETTE_SIZE]);
 };
 
 } // End of namespace Sherlock

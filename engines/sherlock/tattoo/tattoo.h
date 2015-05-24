@@ -30,6 +30,11 @@ namespace Sherlock {
 namespace Tattoo {
 
 class TattooEngine : public SherlockEngine {
+private:
+	/**
+	 * Loads the initial palette for the game
+	 */
+	void loadInitialPalette();
 protected:
 	virtual void initialize();
 

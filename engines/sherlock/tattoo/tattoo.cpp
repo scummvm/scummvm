@@ -47,6 +47,9 @@ void TattooEngine::initialize() {
 
 	// Starting scene
 	_scene->_goToScene = 91;
+
+	// Load an initial palette
+	loadInitialPalette();
 }
 
 /**
@@ -56,6 +59,15 @@ void TattooEngine::startScene() {
 	// TODO
 }
 
+void TattooEngine::loadInitialPalette() {
+	byte palette[768];
+	Common::SeekableReadStream *stream = _res->load("room.pal");
+	stream->read(palette, PALETTE_SIZE);
+	_screen->translatePalette(palette);
+	_screen->setPalette(palette);
+
+	delete stream;
+}
 
 } // End of namespace Tattoo
 

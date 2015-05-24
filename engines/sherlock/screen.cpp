@@ -39,7 +39,7 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
 	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
-	setFont(1);
+	setFont(IS_SERRATED_SCALPEL ? 1 : 4);
 
 	// Rose Tattoo specific fields
 	_fadeBytesRead = _fadeBytesToRead = 0;
@@ -464,6 +464,11 @@ void Screen::initScrollVars() {
 	_scrollSize = 0;
 	_currentScroll = 0;
 	_targetScroll = 0;
+}
+
+void Screen::translatePalette(byte palette[PALETTE_SIZE]) {
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
 }
 
 } // End of namespace Sherlock

@@ -514,9 +514,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		} else {
 			// Read in palette
 			rrmStream->read(screen._cMap, PALETTE_SIZE);
-			for (int idx = 0; idx < PALETTE_SIZE; ++idx)
-				screen._cMap[idx] = VGA_COLOR_TRANS(screen._cMap[idx]);
-
+			screen.translatePalette(screen._cMap);
 			Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
 
 			// Read in the background
