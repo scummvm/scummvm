@@ -39,11 +39,20 @@ public:
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 
+	void setUnpackSubImageSupport(bool unpackSubImageSupport) { _unpackSubImageSupport = unpackSubImageSupport; }
+
+	static void byteswapSurface(Graphics::Surface *surface);
+
 	GLuint id;
 	GLuint internalFormat;
 	GLuint sourceFormat;
 	uint32 internalWidth;
 	uint32 internalHeight;
+
+private:
+	void updateTexture(const Graphics::Surface *surface, const Common::Rect &rect);
+
+	bool _unpackSubImageSupport;
 };
 
 } // End of namespace Myst3

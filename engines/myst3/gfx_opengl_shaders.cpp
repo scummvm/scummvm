@@ -57,6 +57,7 @@
 #include "math/rect2d.h"
 #include "math/quat.h"
 
+#include "graphics/opengles2/extensions.h"
 #include "graphics/opengles2/shader.h"
 
 #include "engines/myst3/gfx.h"
@@ -125,7 +126,13 @@ ShaderRenderer::~ShaderRenderer() {
 }
 
 Texture *ShaderRenderer::createTexture(const Graphics::Surface *surface) {
-	return new OpenGLTexture(surface, true);
+	OpenGLTexture *texture = new OpenGLTexture(surface, true);
+
+#if defined(USE_GLES2)
+	texture->setUnpackSubImageSupport(Graphics::isExtensionSupported("GL_EXT_unpack_subimage"));
+#endif
+
+	return texture;
 }
 
 void ShaderRenderer::freeTexture(Texture *texture) {
@@ -391,7 +398,18 @@ Graphics::Surface *ShaderRenderer::getScreenshot() {
 	Graphics::Surface *s = new Graphics::Surface();
 	s->create(screen.width(), screen.height(), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
 
-	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, GL_UNSIGNED_INT_8_8_8_8_REV, s->getPixels());
+#if defined(USE_GLES2)
+	GLenum format = GL_UNSIGNED_BYTE;
+#else
+	GLenum format = GL_UNSIGNED_INT_8_8_8_8_REV;
+#endif
+
+	glReadPixels(screen.left, screen.top, screen.width(), screen.height(), GL_RGBA, format, s->getPixels());
+
+#if defined(USE_GLES2) && defined(SCUMM_BIG_ENDIAN)
+	// OpenGL ES does not support the GL_UNSIGNED_INT_8_8_8_8_REV texture format, we need to byteswap the surface
+	OpenGLTexture::byteswapSurface(s);
+#endif
 
 	flipVertical(s);
 

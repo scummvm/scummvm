@@ -26,6 +26,11 @@
 
 #include "engines/myst3/gfx_opengl_texture.h"
 
+#if !defined(GL_UNPACK_ROW_LENGTH)
+// The Android SDK does not declare GL_UNPACK_ROW_LENGTH_EXT
+#define GL_UNPACK_ROW_LENGTH 0x0CF2
+#endif
+
 namespace Myst3 {
 
 // From Bit Twiddling Hacks
@@ -40,7 +45,9 @@ static uint32 upperPowerOfTwo(uint32 v) {
 	return v;
 }
 
-OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) {
+OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSupport) :
+	_unpackSubImageSupport(true) {
+
 	width = surface->w;
 	height = surface->h;
 	format = surface->format;
@@ -56,7 +63,12 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 
 	if (format.bytesPerPixel == 4) {
 		internalFormat = GL_RGBA;
+
+#if defined(USE_GLES2)
+		sourceFormat = GL_UNSIGNED_BYTE;
+#else
 		sourceFormat = GL_UNSIGNED_INT_8_8_8_8_REV;
+#endif
 	} else if (format.bytesPerPixel == 2) {
 		internalFormat = GL_RGB;
 		sourceFormat = GL_UNSIGNED_SHORT_5_6_5;
@@ -75,6 +87,7 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	update(surface);
+
 }
 
 OpenGLTexture::~OpenGLTexture() {
@@ -85,12 +98,50 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 	updatePartial(surface, Common::Rect(surface->w, surface->h));
 }
 
-void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
-	const Graphics::Surface subArea = surface->getSubArea(rect);
-
+void OpenGLTexture::updateTexture(const Graphics::Surface* surface, const Common::Rect& rect) {
 	glBindTexture(GL_TEXTURE_2D, id);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, internalFormat, sourceFormat, subArea.getPixels());
+
+	if (_unpackSubImageSupport) {
+		const Graphics::Surface subArea = surface->getSubArea(rect);
+
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, internalFormat, sourceFormat, subArea.getPixels());
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	} else {
+		// GL_UNPACK_ROW_LENGTH is not supported, don't bother and do a full texture update
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, internalFormat, sourceFormat, surface->getPixels());
+	}
+}
+
+void OpenGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {
+#if defined(USE_GLES2) && defined(SCUMM_BIG_ENDIAN)
+	// OpenGL ES does not support the GL_UNSIGNED_INT_8_8_8_8_REV texture format
+	// we need to byteswap before hand
+	Graphics::Surface swappedSurface;
+	swappedSurface.copyFrom(*surface);
+	byteswapSurface(&swappedSurface);
+	updateTexture(&swappedSurface, rect);
+	swappedSurface.free();
+#else
+	updateTexture(surface, rect);
+#endif
+
+}
+
+void OpenGLTexture::byteswapSurface(Graphics::Surface *surface) {
+	for (int y = 0; y < surface->h; y++) {
+		for (int x = 0; x < surface->w; x++) {
+			if (surface->format.bytesPerPixel == 4) {
+				uint32 *pixel = (uint32 *) (surface->getBasePtr(x, y));
+				*pixel = SWAP_BYTES_32(*pixel);
+			} else if (surface->format.bytesPerPixel == 2) {
+				uint16 *pixel = (uint16 *) (surface->getBasePtr(x, y));
+				*pixel = SWAP_BYTES_16(*pixel);
+			} else {
+				error("Unexpected bytes per pixedl %d", surface->format.bytesPerPixel);
+			}
+		}
+	}
 }
 
 } // End of namespace Myst3
