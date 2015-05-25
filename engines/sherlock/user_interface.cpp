@@ -2304,6 +2304,7 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) 
 
 void TattooUserInterface::handleInput() {
 	// TODO
+	_vm->_events->pollEventsAndWait();
 }
 
 } // End of namespace Sherlock

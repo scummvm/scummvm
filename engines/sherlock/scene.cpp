@@ -615,8 +615,12 @@ bool Scene::loadScene(const Common::String &filename) {
 	if (!_vm->isDemo()) {
 		// Reset the previous map location and position on overhead map
 		map._oldCharPoint = _currentScene;
-		map._overPos.x = map[_currentScene].x * 100 - 600;
-		map._overPos.y = map[_currentScene].y * 100 + 900;
+
+		if (IS_SERRATED_SCALPEL) {
+			map._overPos.x = map[_currentScene].x * 100 - 600;
+			map._overPos.y = map[_currentScene].y * 100 + 900;
+
+		}
 	}
 
 	events.clearEvents();

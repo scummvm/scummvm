@@ -182,6 +182,7 @@ void Screen::randomTransition() {
 	Events &events = *_vm->_events;
 	const int TRANSITION_MULTIPLIER = 0x15a4e35;
 	_dirtyRects.clear();
+	assert(IS_SERRATED_SCALPEL);
 
 	for (int idx = 0; idx <= 65535 && !_vm->shouldQuit(); ++idx) {
 		_transitionSeed = _transitionSeed * TRANSITION_MULTIPLIER + 1;

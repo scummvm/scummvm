@@ -207,7 +207,9 @@ void SherlockEngine::loadConfig() {
 	ConfMan.registerDefault("font", 1);
 
 	_screen->setFont(ConfMan.getInt("font"));
-	_screen->_fadeStyle = ConfMan.getBool("fade_style");
+	if (getGameID() == GType_SerratedScalpel)
+		_screen->_fadeStyle = ConfMan.getBool("fade_style");
+
 	_ui->_helpStyle = ConfMan.getBool("help_style");
 	_ui->_slideWindows = ConfMan.getBool("window_style");
 	_people->_portraitsOn = ConfMan.getBool("portraits_on");
