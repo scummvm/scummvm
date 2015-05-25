@@ -2051,7 +2051,24 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 }
 
 OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
+	Sound &sound = *_vm->_sound;
+
+	// Get the name of the next song to play
+	++str;
+	sound._nextSongName = "";
+	for (int idx = 0; idx < 8; ++idx) {
+		if (str[idx] != '~')
+			sound._nextSongName += str[idx];
+		else
+			break;
+	}
+	str += 7;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) { error("TODO: script opcode"); }
