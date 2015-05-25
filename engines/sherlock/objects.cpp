@@ -73,11 +73,16 @@ void Sprite::setImageFrame() {
 	int imageNumber = _walkSequences[_sequenceNumber][frameNum];
 	
 	if (IS_SERRATED_SCALPEL)
-		imageNumber = imageNumber + +_walkSequences[_sequenceNumber][0] - 2;
+		imageNumber = imageNumber + _walkSequences[_sequenceNumber][0] - 2;
 	else if (imageNumber > _numFrames)
 		imageNumber = 1;
 
-	_imageFrame = &(_altSequences ? *_altImages : *_images)[imageNumber];
+	// Get the images to use
+	ImageFile *images = _altSequences ? _altImages : _images;
+	assert(images);
+
+	// Set the frame pointer
+	_imageFrame = &(*images)[imageNumber];
 }
 
 void Sprite::adjustSprite() {

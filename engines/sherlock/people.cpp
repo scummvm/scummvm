@@ -164,14 +164,17 @@ void People::reset() {
 
 		// Load the default walk sequences
 		p._oldWalkSequence = -1;
-		p._walkSequences.resize(MAX_HOLMES_SEQUENCE);
-		for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx) {
-			p._walkSequences[idx]._sequences.clear();
+		
+		if (IS_SERRATED_SCALPEL) {
+			p._walkSequences.resize(MAX_HOLMES_SEQUENCE);
+			for (int seqIdx = 0; seqIdx < MAX_HOLMES_SEQUENCE; ++seqIdx) {
+				p._walkSequences[seqIdx]._sequences.clear();
 
-			const byte *pSrc = &CHARACTER_SEQUENCES[idx][0];
-			do {
-				p._walkSequences[idx]._sequences.push_back(*pSrc);
-			} while (*pSrc++);
+				const byte *pSrc = &CHARACTER_SEQUENCES[seqIdx][0];
+				do {
+					p._walkSequences[seqIdx]._sequences.push_back(*pSrc);
+				} while (*pSrc++);
+			}
 		}
 	}
 
@@ -259,6 +262,8 @@ bool People::freeWalk() {
 		if (_data[idx]._walkLoaded) {
 			delete _data[idx]._images;
 			_data[idx]._images = nullptr;
+			
+			_data[idx]._walkLoaded = false;
 			result = true;
 		}
 	}
