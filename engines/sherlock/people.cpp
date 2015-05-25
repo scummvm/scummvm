@@ -114,7 +114,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 }
 
 People::~People() {
-	for (int idx = 0; idx < MAX_PLAYERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (_data[idx]._walkLoaded)
 			delete _data[PLAYER]._images;
 	}
@@ -127,7 +127,7 @@ void People::reset() {
 	_data[0]._description = "Sherlock Holmes!";
 
 	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
-	int count = IS_SERRATED_SCALPEL ? 1 : MAX_PLAYERS;
+	int count = IS_SERRATED_SCALPEL ? 1 : MAX_CHARACTERS;
 	for (int idx = 0; idx < count; ++idx) {
 		Sprite &p = _data[idx];
 
@@ -197,7 +197,7 @@ bool People::loadWalk() {
 			result = true;
 		}
 	} else {
-		for (int idx = 0; idx < MAX_PLAYERS; ++idx) {
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 			if (!_data[idx]._walkLoaded && (_data[idx]._type == CHARACTER || _data[idx]._type == HIDDEN_CHARACTER)) {
 				if (_data[idx]._type == HIDDEN_CHARACTER)
 					_data[idx]._type = INVALID;
@@ -258,7 +258,7 @@ bool People::loadWalk() {
 bool People::freeWalk() {
 	bool result = false;
 
-	for (int idx = 0; idx < MAX_PLAYERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (_data[idx]._walkLoaded) {
 			delete _data[idx]._images;
 			_data[idx]._images = nullptr;
@@ -700,7 +700,7 @@ void People::synchronize(Common::Serializer &s) {
 		s.syncAsSint16LE(_player._position.y);
 		s.syncAsSint16LE(_player._sequenceNumber);
 	} else {
-		for (int idx = 0; idx < MAX_PLAYERS; ++idx) {
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 			Person &p = _data[idx];
 			s.syncAsSint16LE(p._position.x);
 			s.syncAsSint16LE(p._position.y);

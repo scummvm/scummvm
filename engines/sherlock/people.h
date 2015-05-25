@@ -34,7 +34,7 @@ enum PeopleId {
 	PLAYER			= 0,
 	AL				= 0,
 	PEG				= 1,
-	MAX_PLAYERS		= 6,
+	MAX_CHARACTERS		= 6,
 	MAX_NPC			= 5,
 	MAX_NPC_PATH	= 200
 };
@@ -92,7 +92,7 @@ class SherlockEngine;
 class People {
 private:
 	SherlockEngine *_vm;
-	Person _data[MAX_PLAYERS];
+	Person _data[MAX_CHARACTERS];
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
 public:
@@ -120,18 +120,13 @@ public:
 	~People();
 
 	Person &operator[](PeopleId id) {
-		assert(id < MAX_PLAYERS);
+		assert(id < MAX_CHARACTERS);
 		return _data[id];
 	}
 	Person &operator[](int idx) {
-		assert(idx < MAX_PLAYERS);
+		assert(idx < MAX_CHARACTERS);
 		return _data[idx];
 	}
-
-	/**
-	 * Returns true if Sherlock is visible on the screen and enabled
-	 */
-	bool isHolmesActive() const { return _data[0]._walkLoaded && _holmesOn; }
 
 	/**
 	 * Reset the player data

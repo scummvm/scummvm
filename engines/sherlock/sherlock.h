@@ -60,7 +60,7 @@ enum GameType {
 
 #define SHERLOCK_SCREEN_WIDTH _vm->_screen->w()
 #define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h()
-#define SHERLOCK_SCENE_HEIGHT 138
+#define SHERLOCK_SCENE_HEIGHT (IS_SERRATED_SCALPEL ? 138 : 480)
 
 struct SherlockGameDescription;
 

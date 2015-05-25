@@ -1578,18 +1578,14 @@ OpcodeReturn Talk::cmdGotoScene(const byte *&str) {
 
 OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 	People &people = *_vm->_people;
-	people._holmesOn = false;
-	if (IS_ROSE_TATTOO)
-		people[PLAYER]._type = REMOVE;
+	people[PLAYER]._type = REMOVE;
 
 	return RET_SUCCESS;
 }
 
 OpcodeReturn Talk::cmdHolmesOn(const byte *&str) {
 	People &people = *_vm->_people;
-	people._holmesOn = true;
-	if (IS_ROSE_TATTOO)
-		people[PLAYER]._type = CHARACTER;
+	people[PLAYER]._type = CHARACTER;
 
 	return RET_SUCCESS;
 }

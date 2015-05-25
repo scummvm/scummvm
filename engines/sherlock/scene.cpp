@@ -833,11 +833,14 @@ void Scene::transitionToScene() {
 
 	updateBackground();
 
+	// Actually do the transition
 	if (screen._fadeStyle)
 		screen.randomTransition();
 	else
 		screen.blitFrom(screen._backBuffer1);
+	screen.update();
 
+	// Start any initial animation for the scene
 	if (cAnimNum != -1) {
 		CAnim &c = _cAnim[cAnimNum];
 		Common::Point pt = c._goto;
@@ -865,19 +868,26 @@ int Scene::toggleObject(const Common::String &name) {
 
 void Scene::updateBackground() {
 	People &people = *_vm->_people;
+
+	// Update Holmes if he's turned on
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (people[idx]._type == CHARACTER)
+			people[idx].adjustSprite();
+	}
+
+	// Flag the bg shapes which need to be redrawn
+	checkBgShapes();
+
+	// Draw the shapes for the scene
+	drawAllShapes();
+}
+
+void Scene::drawAllShapes() {
+	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Sprite &player = people[AL];
 
 	// Restrict drawing window
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
-
-	// Update Holmes if he's turned on
-	if (people._holmesOn)
-		player.adjustSprite();
-
-	// Flag the bg shapes which need to be redrawn
-	checkBgShapes(player._imageFrame, Common::Point(player._position.x / 100,
-		player._position.y / 100));
 
 	// Draw all active shapes which are behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -889,7 +899,7 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == BEHIND)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame,
-				_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all active shapes which are normal and behind the person
@@ -902,33 +912,37 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
-	// Draw the player if he's active
-	if (player._type == CHARACTER && people.isHolmesActive()) {
-		bool flipped = player._sequenceNumber == WALK_LEFT || player._sequenceNumber == STOP_LEFT ||
-			player._sequenceNumber == WALK_UPLEFT || player._sequenceNumber == STOP_UPLEFT ||
-			player._sequenceNumber == WALK_DOWNRIGHT || player._sequenceNumber == STOP_DOWNRIGHT;
+	// Draw any active characters
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &p = people[idx];
+		if (p._type == CHARACTER && p._walkLoaded) {
+			bool flipped = IS_SERRATED_SCALPEL && (
+				p._sequenceNumber == WALK_LEFT || p._sequenceNumber == STOP_LEFT ||
+				p._sequenceNumber == WALK_UPLEFT || p._sequenceNumber == STOP_UPLEFT ||
+				p._sequenceNumber == WALK_DOWNRIGHT || p._sequenceNumber == STOP_DOWNRIGHT);
 
-		screen._backBuffer->transBlitFrom(*player._imageFrame, Common::Point(player._position.x / 100,
-			player._position.y / 100 - player.frameHeight()), flipped);
+			screen._backBuffer->transBlitFrom(*p._imageFrame, Common::Point(p._position.x / 100,
+				p._position.y / 100 - p.frameHeight()), flipped);
+		}
 	}
 
 	// Draw all static and active shapes that are NORMAL and are in front of the player
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
-				_bgShapes[idx]._misc == NORMAL_FORWARD)
+			_bgShapes[idx]._misc == NORMAL_FORWARD)
 			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
-				_bgShapes[idx]._flags & OBJ_FLIPPED);
+			_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the player
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
-				_canimShapes[idx]._misc == NORMAL_FORWARD)
+			_canimShapes[idx]._misc == NORMAL_FORWARD)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active shapes that are FORWARD
@@ -938,9 +952,9 @@ void Scene::updateBackground() {
 			_bgShapes[idx].frameHeight());
 
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
-				_bgShapes[idx]._misc == FORWARD)
+			_bgShapes[idx]._misc == FORWARD)
 			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
-				_bgShapes[idx]._flags & OBJ_FLIPPED);
+			_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are forward
@@ -948,7 +962,7 @@ void Scene::updateBackground() {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
 			_canimShapes[idx]._misc == FORWARD)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	screen.resetDisplayBounds();
@@ -963,7 +977,11 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
-void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
+void Scene::checkBgShapes() {
+	People &people = *_vm->_people;
+	Person &holmes = people._player;
+	Common::Point pt(holmes._position.x / 100, holmes._position.y / 100);
+
 	// Iterate through the shapes
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &obj = _bgShapes[idx];
@@ -986,11 +1004,9 @@ void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
 			if ((obj._flags & 5) == 1) {
 				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
 				NORMAL_FORWARD : NORMAL_BEHIND;
-			}
-			else if (!(obj._flags & 1)) {
+			} else if (!(obj._flags & 1)) {
 				obj._misc = BEHIND;
-			}
-			else if (obj._flags & 4) {
+			} else if (obj._flags & 4) {
 				obj._misc = FORWARD;
 			}
 		}
@@ -1345,8 +1361,7 @@ void Scene::doBgAnim() {
 		people[AL].adjustSprite();
 
 	// Flag the bg shapes which need to be redrawn
-	checkBgShapes(people[AL]._imageFrame,
-		Common::Point(people[AL]._position.x / 100, people[AL]._position.y / 100));
+	checkBgShapes();
 
 	if (_currentScene == 12 && IS_SERRATED_SCALPEL)
 		((Scalpel::ScalpelEngine *)_vm)->doMirror12();
@@ -1382,7 +1397,7 @@ void Scene::doBgAnim() {
 	}
 
 	// Draw the person if not animating
-	if (people[AL]._type == CHARACTER && people.isHolmesActive()) {
+	if (people[AL]._type == CHARACTER && people[AL]._walkLoaded) {
 		// If Holmes is too far to the right, move him back so he's on-screen
 		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[AL]._imageFrame->_frame.w;
 		int tempX = MIN(people[AL]._position.x / 100, xRight);

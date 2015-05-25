@@ -184,7 +184,7 @@ private:
 	 * it will flag it as needing to be drawn. If a non-animating shape is
 	 * colliding with another shape, it will also flag it as needing drawing
 	 */
-	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
+	void checkBgShapes();
 
 	/**
 	 * Restores objects to the correct status. This ensures that things like being opened or moved
@@ -192,6 +192,10 @@ private:
 	 */
 	void saveSceneStatus();
 
+	/**
+	 * Draw all the shapes, people and NPCs in the correct order
+	 */
+	void drawAllShapes();
 public:
 	int _currentScene;
 	int _goToScene;
