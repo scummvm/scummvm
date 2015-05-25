@@ -1502,6 +1502,42 @@ OpcodeReturn Talk::cmdBanishWindow(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+OpcodeReturn Talk::cmdCallTalkFile(const byte *&str) {
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
+		tempString += str[idx];
+	str += 8;
+
+	int scriptCurrentIndex = str - _scriptStart;
+
+	// Save the current script position and new talk file
+	if (_scriptStack.size() < 9) {
+		ScriptStackEntry rec1;
+		rec1._name = _scriptName;
+		rec1._currentIndex = scriptCurrentIndex;
+		rec1._select = _scriptSelect;
+		_scriptStack.push(rec1);
+
+		// Push the new talk file onto the stack
+		ScriptStackEntry rec2;
+		rec2._name = tempString;
+		rec2._currentIndex = 0;
+		rec2._select = 100;
+		_scriptStack.push(rec2);
+	}
+	else {
+		error("Script stack overflow");
+	}
+
+	_scriptMoreFlag = 1;
+	_endStr = true;
+	_wait = 0;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn Talk::cmdDisableEndKey(const byte *&str) {
 	_vm->_ui->_endKeyActive = false;
 	return RET_SUCCESS;
@@ -1783,41 +1819,6 @@ OpcodeReturn ScalpelTalk::cmdAssignPortraitLocation(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn ScalpelTalk::cmdCallTalkFile(const byte *&str) {
-	Common::String tempString;
-
-	++str;
-	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
-		tempString += str[idx];
-	str += 8;
-
-	int scriptCurrentIndex = str - _scriptStart;
-
-	// Save the current script position and new talk file
-	if (_scriptStack.size() < 9) {
-		ScriptStackEntry rec1;
-		rec1._name = _scriptName;
-		rec1._currentIndex = scriptCurrentIndex;
-		rec1._select = _scriptSelect;
-		_scriptStack.push(rec1);
-
-		// Push the new talk file onto the stack
-		ScriptStackEntry rec2;
-		rec2._name = tempString;
-		rec2._currentIndex = 0;
-		rec2._select = 100;
-		_scriptStack.push(rec2);
-	} else {
-		error("Script stack overflow");
-	}
-
-	_scriptMoreFlag = 1;
-	_endStr = true;
-	_wait = 0;
-
-	return RET_SUCCESS;
-}
-
 OpcodeReturn ScalpelTalk::cmdClearInfoLine(const byte *&str) {
 	UserInterface &ui = *_vm->_ui;
 
@@ -1975,11 +1976,105 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
+
 		(OpcodeMethod)&TattooTalk::cmdRunCAnimation,
-		// TODO: Implement opcode methods for new Tattoo opcodes
+		(OpcodeMethod)&TattooTalk::cmdCallTalkFile,
+		(OpcodeMethod)&TattooTalk::cmdPause,
+		(OpcodeMethod)&TattooTalk::cmdMouseOnOff,
+		(OpcodeMethod)&TattooTalk::cmdSetWalkControl,
+		(OpcodeMethod)&TattooTalk::cmdAdjustObjectSequence,
+		(OpcodeMethod)&TattooTalk::cmdWalkToCoords,
+		(OpcodeMethod)&TattooTalk::cmdPauseWithoutControl,
+		(OpcodeMethod)&TattooTalk::cmdBanishWindow,
+		(OpcodeMethod)&TattooTalk::cmdSetTalkSequence,
+
+		(OpcodeMethod)&TattooTalk::cmdSetFlag,
+		(OpcodeMethod)&TattooTalk::cmdPlaySong,
+		(OpcodeMethod)&TattooTalk::cmdToggleObject,
+		(OpcodeMethod)&TattooTalk::cmdStealthModeActivate,
+		(OpcodeMethod)&TattooTalk::cmdWalkNPCToCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdWalkNPCToCoords,
+		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
+		(OpcodeMethod)&TattooTalk::cmdStealthModeDeactivate,
+		(OpcodeMethod)&TattooTalk::cmdHolmesOff,
+		(OpcodeMethod)&TattooTalk::cmdHolmesOn,
+
+		(OpcodeMethod)&TattooTalk::cmdGotoScene,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathDest,
+		(OpcodeMethod)&TattooTalk::cmdAddItemToInventory,
+		(OpcodeMethod)&TattooTalk::cmdSetObject,
+		(OpcodeMethod)&TattooTalk::cmdNextSong,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPause,
+		(OpcodeMethod)&TattooTalk::cmdPassword,
+		(OpcodeMethod)&TattooTalk::cmdSetSceneEntryFlag,
+		(OpcodeMethod)&TattooTalk::cmdWalkToCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdRemoveItemFromInventory,
+
+		(OpcodeMethod)&TattooTalk::cmdEnableEndKey,
+		(OpcodeMethod)&TattooTalk::cmdDisableEndKey,
+		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCTalkFile,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCOff,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCOn,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCDescOnOff,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseTakingNotes,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseLookingHolmes,
+
+		(OpcodeMethod)&TattooTalk::cmdTalkInterruptsEnable,
+		(OpcodeMethod)&TattooTalk::cmdTalkInterruptsDisable,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCInfoLine,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPosition,
+		(OpcodeMethod)&TattooTalk::cmdNPCLabelSet,
+		(OpcodeMethod)&TattooTalk::cmdNPCLabelGoto,
+		(OpcodeMethod)&TattooTalk::cmdNPCLabelIfFlagGoto,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCWalkGraphics,
+		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerb,
+
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbScript,
+		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
+		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
 	};
 
 	_opcodeTable = OPCODE_METHODS;
 }
+
+OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerbCAnimation(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerbScript(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) { error("TODO: script opcode"); }
 
 } // End of namespace Sherlock

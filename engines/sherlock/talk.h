@@ -229,6 +229,7 @@ protected:
 	OpcodeReturn cmdAddItemToInventory(const byte *&str);
 	OpcodeReturn cmdAdjustObjectSequence(const byte *&str);
 	OpcodeReturn cmdBanishWindow(const byte *&str);
+	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdDisableEndKey(const byte *&str);
 	OpcodeReturn cmdEnableEndKey(const byte *&str);
 	OpcodeReturn cmdGotoScene(const byte *&str);
@@ -346,7 +347,6 @@ public:
 class ScalpelTalk : public Talk {
 protected:
 	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
-	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdClearInfoLine(const byte *&str);
 	OpcodeReturn cmdClearWindow(const byte *&str);
 	OpcodeReturn cmdDisplayInfoLine(const byte *&str);
@@ -364,6 +364,40 @@ public:
 };
 
 class TattooTalk : public Talk {
+protected:
+	OpcodeReturn cmdMouseOnOff(const byte *&str);
+	OpcodeReturn cmdNextSong(const byte *&str);
+	OpcodeReturn cmdPassword(const byte *&str);
+	OpcodeReturn cmdPlaySong(const byte *&str);
+	OpcodeReturn cmdRestorePeopleSequence(const byte *&str);
+	OpcodeReturn cmdSetNPCDescOnOff(const byte *&str);
+	OpcodeReturn cmdSetNPCInfoLine(const byte *&str);
+	OpcodeReturn cmdNPCLabelGoto(const byte *&str);
+	OpcodeReturn cmdNPCLabelIfFlagGoto(const byte *&str);
+	OpcodeReturn cmdNPCLabelSet(const byte *&str);
+	OpcodeReturn cmdSetNPCOff(const byte *&str);
+	OpcodeReturn cmdSetNPCOn(const byte *&str);
+	OpcodeReturn cmdSetNPCPathDest(const byte *&str);
+	OpcodeReturn cmdSetNPCPathPause(const byte *&str);
+	OpcodeReturn cmdSetNPCPathPauseTakingNotes(const byte *&str);
+	OpcodeReturn cmdSetNPCPathPauseLookingHolmes(const byte *&str);
+	OpcodeReturn cmdSetNPCPosition(const byte *&str);
+	OpcodeReturn cmdSetNPCTalkFile(const byte *&str);
+	OpcodeReturn cmdSetNPCVerb(const byte *&str);
+	OpcodeReturn cmdSetNPCVerbCAnimation(const byte *&str);
+	OpcodeReturn cmdSetNPCVerbScript(const byte *&str);
+	OpcodeReturn cmdSetNPCVerbTarget(const byte *&str);
+	OpcodeReturn cmdSetNPCWalkGraphics(const byte *&str);
+	OpcodeReturn cmdSetSceneEntryFlag(const byte *&str);
+	OpcodeReturn cmdSetTalkSequence(const byte *&str);
+	OpcodeReturn cmdSetWalkControl(const byte *&str);
+	OpcodeReturn cmdTalkInterruptsDisable(const byte *&str);
+	OpcodeReturn cmdTalkInterruptsEnable(const byte *&str);
+	OpcodeReturn cmdTurnSoundsOff(const byte *&str);
+	OpcodeReturn cmdWalkHolmesAndNPCToCAnimation(const byte *&str);
+	OpcodeReturn cmdWalkNPCToCAnimation(const byte *&str);
+	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
+	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
 public:
 	TattooTalk(SherlockEngine *vm);
 	virtual ~TattooTalk() {}
