@@ -116,71 +116,6 @@ struct WalkSequence {
 	void load(Common::SeekableReadStream &s);
 };
 
-class Sprite {
-private:
-	static SherlockEngine *_vm;
-public:
-	Common::String _name;				
-	Common::String _description;		
-	Common::String _examine;			// Examine in-depth description
-	Common::String _pickUp;				// Message for if you can't pick up object
-
-	Common::Array<WalkSequence> _walkSequences;	// Holds animation sequences
-	ImageFile *_images;					// Sprite images
-	ImageFrame *_imageFrame;			// Pointer to shape in the images
-	int _walkCount;						// Character walk counter
-	int _allow;							// Allowed menu commands - ObjectAllow
-	int _frameNumber;					// Frame number in rame sequence to draw
-	int _sequenceNumber;				// Sequence being used
-	Point32 _position;					// Current position
-	Point32 _delta;						// Momvement delta
-	Common::Point _oldPosition;			// Old position
-	Common::Point _oldSize;				// Image's old size
-	Common::Point _goto;				// Walk destination
-	SpriteType _type;					// Type of object
-	Common::Point _noShapeSize;			// Size of a NO_SHAPE
-	int _status;						// Status: open/closed, moved/not moved
-	int8 _misc;							// Miscellaneous use
-	int _numFrames;						// How many frames the object has
-	ImageFile *_altImages;
-	bool _altSequences;
-	ImageFrame *_stopFrames[8];			// Stop/rest frame for each direction
-public:
-	Sprite() { clear(); }
-
-	static void setVm(SherlockEngine *vm) { _vm = vm; }
-
-	/**
-	 * Reset the data for the sprite
-	 */
-	void clear();
-
-	/**
-	 * Updates the image frame poiner for the sprite
-	 */
-	void setImageFrame();
-
-	/**
-	 * This adjusts the sprites position, as well as it's animation sequence:
-	 */
-	void adjustSprite();
-
-	/**
-	 * Checks the sprite's position to see if it's collided with any special objects
-	 */
-	void checkSprite();
-
-	/**
-	 * Return frame width
-	 */
-	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
-	
-	/**
-	 * Return frame height
-	 */
-	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
-};
-
 enum { REVERSE_DIRECTION = 0x80 };
 #define NAMES_COUNT 4
 
@@ -209,6 +144,98 @@ struct UseType {
 	 * Load the data for the UseType
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+};
+
+
+class Sprite {
+private:
+	static SherlockEngine *_vm;
+public:
+	Common::String _name;
+	Common::String _description;
+	Common::String _examine;			// Examine in-depth description
+	Common::String _pickUp;				// Message for if you can't pick up object
+
+	Common::Array<WalkSequence> _walkSequences;	// Holds animation sequences
+	ImageFile *_images;					// Sprite images
+	ImageFrame *_imageFrame;			// Pointer to shape in the images
+	int _walkCount;						// Character walk counter
+	int _allow;							// Allowed menu commands - ObjectAllow
+	int _frameNumber;					// Frame number in rame sequence to draw
+	int _sequenceNumber;				// Sequence being used
+	Point32 _position;					// Current position
+	Point32 _delta;						// Momvement delta
+	Common::Point _oldPosition;			// Old position
+	Common::Point _oldSize;				// Image's old size
+	Common::Point _goto;				// Walk destination
+	SpriteType _type;					// Type of object
+	Common::Point _noShapeSize;			// Size of a NO_SHAPE
+	int _status;						// Status: open/closed, moved/not moved
+	int8 _misc;							// Miscellaneous use
+	int _numFrames;						// How many frames the object has
+
+	// Rose Tattoo fields
+	int _startSeq;						// Frame sequence starts at
+	int _flags;							// Flags for the sprite
+	int _aType;							// Tells if this is an object, person, talk, etc.
+	int _lookFrames;					// How many frames to play of a canim before pausing
+	int _seqCounter;					// How many times the sequence has been run
+	Common::Point _lookPosition;		// Where to look when examining object
+	int _lookFacing;					// Direction to face when examining object
+	int _lookCAnim;
+	int _seqStack;						// Allow gosubs to return to calling frame
+	int _seqTo;							// Allows 1-5, 8-3 type sequences encoded in 2 bytes
+	uint _descOffset;					// Tells where description starts in description text for scene
+	int _seqCounter2;					// Counter of calling frame sequence
+	uint _seqSize;						// Size of sequence
+	UseType _use[6];
+	int _quickDraw;						// Flag telling whether to use quick draw routine or not
+	int _scaleVal;						// Tells how to scale the sprite
+	int _requiredFlags1;				// This flag must also be set, or the sprite is hidden
+	int _gotoSeq;						// Used by Talk to tell which sequence to goto when able
+	int _talkSeq;						// Tells which talk sequence currently in use (Talk or Listen)
+	int _restoreSlot;					// Used when talk returns to the previous sequence
+
+	ImageFrame *_stopFrames[8];			// Stop/rest frame for each direction
+	ImageFile *_altImages;				// Images used for alternate NPC sequences
+	bool _altSequences;					// Which of the sequences the alt graphics apply to (0: main, 1=NPC seq)
+	int _centerWalk;					// Flag telling the walk code to offset the walk destination
+	Common::Point _adjust;				// Fine tuning adjustment to position when drawn
+	int _oldWalkSequence;
+public:
+	Sprite() { clear(); }
+
+	static void setVm(SherlockEngine *vm) { _vm = vm; }
+
+	/**
+	* Reset the data for the sprite
+	*/
+	void clear();
+
+	/**
+	* Updates the image frame poiner for the sprite
+	*/
+	void setImageFrame();
+
+	/**
+	* This adjusts the sprites position, as well as it's animation sequence:
+	*/
+	void adjustSprite();
+
+	/**
+	* Checks the sprite's position to see if it's collided with any special objects
+	*/
+	void checkSprite();
+
+	/**
+	* Return frame width
+	*/
+	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
+
+	/**
+	* Return frame height
+	*/
+	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
 };
 
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };

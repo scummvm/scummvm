@@ -42,6 +42,8 @@ Events::Events(SherlockEngine *vm) {
 	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
+
+	loadCursors("rmouse.vgs");
 }
 
 Events::~Events() {

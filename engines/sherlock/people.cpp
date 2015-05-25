@@ -124,36 +124,55 @@ People::~People() {
 }
 
 void People::reset() {
-	// Note: The engine has theoretical support for two player characters but only the first one is used.
-	// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
-	Sprite &p = _data[PLAYER];
+	_data[0]._description = "Sherlock Holmes!";
 
-	p._description = "Sherlock Holmes!";
-	p._type = CHARACTER;
-	p._position = Common::Point(10000, 11000);
-	p._sequenceNumber = STOP_DOWNRIGHT;
-	p._imageFrame = nullptr;
-	p._frameNumber = 1;
-	p._delta = Common::Point(0, 0);
-	p._oldPosition = Common::Point(0, 0);
-	p._oldSize = Common::Point(0, 0);
-	p._misc = 0;
-	p._walkCount = 0;
-	p._pickUp = "";
-	p._allow = 0;
-	p._noShapeSize = Common::Point(0, 0);
-	p._goto = Common::Point(0, 0);
-	p._status = 0;
+	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
+	int count = IS_SERRATED_SCALPEL ? 1 : MAX_PLAYERS;
+	for (int idx = 0; idx < count; ++idx) {
+		Sprite &p = _data[idx];
 
-	// Load the default walk sequences
-	p._walkSequences.resize(MAX_HOLMES_SEQUENCE);
-	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx) {
-		p._walkSequences[idx]._sequences.clear();
-		
-		const byte *pSrc = &CHARACTER_SEQUENCES[idx][0];
-		do {
-			p._walkSequences[idx]._sequences.push_back(*pSrc);
-		} while (*pSrc++);
+		p._type = (idx == 0) ? CHARACTER : INVALID;
+		if (IS_SERRATED_SCALPEL)
+			p._position = Point32(10000, 11000);
+		else
+			p._position = Point32(36000, 29000);
+
+		p._sequenceNumber = STOP_DOWNRIGHT;
+		p._imageFrame = nullptr;
+		p._frameNumber = 1;
+		p._delta = Common::Point(0, 0);
+		p._oldPosition = Common::Point(0, 0);
+		p._oldSize = Common::Point(0, 0);
+		p._misc = 0;
+		p._walkCount = 0;
+		p._pickUp = "";
+		p._allow = 0;
+		p._noShapeSize = Common::Point(0, 0);
+		p._goto = Common::Point(0, 0);
+		p._status = 0;
+		p._seqTo = 0;
+		p._seqCounter = p._seqCounter2 = 0;
+		p._seqStack = 0;
+		p._gotoSeq = p._talkSeq = 0;
+		p._restoreSlot = 0;
+		p._startSeq = 0;
+		p._walkSequences.clear();
+		p._altImages = nullptr;
+		p._altSequences = 0;
+		p._centerWalk = true;
+		p._adjust = Common::Point(0, 0);
+
+		// Load the default walk sequences
+		p._oldWalkSequence = -1;
+		p._walkSequences.resize(MAX_HOLMES_SEQUENCE);
+		for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx) {
+			p._walkSequences[idx]._sequences.clear();
+
+			const byte *pSrc = &CHARACTER_SEQUENCES[idx][0];
+			do {
+				p._walkSequences[idx]._sequences.push_back(*pSrc);
+			} while (*pSrc++);
+		}
 	}
 
 	// Reset any walk path in progress when Sherlock leaves scenes

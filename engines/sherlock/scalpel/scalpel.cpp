@@ -813,7 +813,6 @@ void ScalpelEngine::startScene() {
 		break;
 	}
 
-	_events->loadCursors("rmouse.vgs");
 	_events->setCursor(ARROW);
 
 	if (_scene->_goToScene == 99) {
