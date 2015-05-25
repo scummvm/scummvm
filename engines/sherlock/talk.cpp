@@ -1164,7 +1164,7 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (_opcodeTable[c - 128]) {
+		} else if (c >= 128 && c <= 227 && _opcodeTable[c - 128]) {
 			// Handle control code
 			switch ((this->*_opcodeTable[c - 128])(str)) {
 			case RET_EXIT:
@@ -1789,7 +1789,14 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
 		(OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
 		
-		(OpcodeMethod)&ScalpelTalk::cmdCarriageReturn
+		(OpcodeMethod)&ScalpelTalk::cmdCarriageReturn,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	};
 
 	_opcodeTable = OPCODE_METHODS;
@@ -2065,7 +2072,29 @@ OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) { error("TODO: script o
 OpcodeReturn TattooTalk::cmdSetNPCVerbCAnimation(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCVerbScript(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
+	++str;
+	int npc = *str - 1;
+	People &people = *_vm->_people;
+	Person &person = people[npc];
+
+	// Build up walk library name for the given NPC
+	person._walkVGSName = "";
+	for (int idx = 0; idx < 8; ++idx) {
+		if (str[idx + 1] != '~')
+			person._walkVGSName += str[idx + 1];
+		else
+			break;
+	}
+	person._walkVGSName += ".VGS";
+
+	people._forceWalkReload = true;
+	str += 8;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode"); }
