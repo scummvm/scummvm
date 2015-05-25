@@ -321,7 +321,8 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		if (IS_ROSE_TATTOO) {
 			screen.initPaletteFade(bgHeader._bytesWritten);
-			screen.fadeRead(*rrmStream, screen._cMap, PALETTE_SIZE);
+			rrmStream->read(screen._cMap, PALETTE_SIZE);
+			screen.translatePalette(screen._cMap);
 			screen.setupBGArea(screen._cMap);
 
 			screen.initScrollVars();
