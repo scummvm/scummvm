@@ -1164,7 +1164,7 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (_opcodeTable[c]) {
+		} else if (_opcodeTable[c - 128]) {
 			// Handle control code
 			switch ((this->*_opcodeTable[c - 128])(str)) {
 			case RET_EXIT:
