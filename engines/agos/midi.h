@@ -77,11 +77,15 @@ protected:
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
 
+	byte *_adlibPatches;
+
 protected:
 	static void onTimer(void *data);
 	void clearConstructs();
 	void clearConstructs(MusicInfo &info);
 	void resetVolumeTable();
+	void loadAdlibPatches();
+	void unloadAdlibPatches();
 
 public:
 	bool _enable_sfx;
