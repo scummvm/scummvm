@@ -99,6 +99,10 @@ Common::Rect BaseRenderer::getFontCharacterRect(uint8 character) {
 		index = 1 + 10 + character - 'A';
 	else if (character == '|')
 		index = 1 + 10 + 26;
+	else if (character == '/')
+		index = 2 + 10 + 26;
+	else if (character == ':')
+		index = 3 + 10 + 26;
 
 	return Common::Rect(16 * index, 0, 16 * (index + 1), 32);
 }

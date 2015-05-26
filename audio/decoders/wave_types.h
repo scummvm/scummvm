@@ -20,52 +20,19 @@
  *
  */
 
-#ifndef CURSOR_H_
-#define CURSOR_H_
+#ifndef AUDIO_DECODERS_WAVE_TYPES_H
+#define AUDIO_DECODERS_WAVE_TYPES_H
 
-#include "common/hashmap.h"
-#include "common/rect.h"
+namespace Audio {
 
-namespace Myst3 {
-
-class Myst3Engine;
-class Texture;
-
-class Cursor {
-public:
-	Cursor(Myst3Engine *vm);
-	virtual ~Cursor();
-
-	void changeCursor(uint32 index);
-	bool isPositionLocked() { return _lockedAtCenter; }
-	void lockPosition(bool lock);
-
-	Common::Point getPosition();
-	void updatePosition(Common::Point &mouse);
-
-	void getDirection(float &pitch, float &heading);
-
-	void draw();
-	void setVisible(bool show);
-	bool isVisible();
-private:
-	Myst3Engine *_vm;
-
-	uint32 _currentCursorID;
-	int32 _hideLevel;
-
-	/** Position of the cursor */
-	Common::Point _position;
-
-	typedef Common::HashMap<uint32, Texture *> TextureMap;
-	TextureMap _textures;
-
-	bool _lockedAtCenter;
-
-	void loadAvailableCursors();
-	double getTransparencyForId(uint32 cursorId);
+enum WaveCompressionType {
+	kWavePCM         = 0x0001,
+	kWaveMSADPCM     = 0x0002,
+	kWaveMSIMAADPCM  = 0x0011,
+	kWaveMSIMAADPCM2 = 0x0069,
+	kWaveWMAv2       = 0x0161
 };
 
-} // End of namespace Myst3
+} // End of namespace Audio
 
-#endif // CURSOR_H_
+#endif

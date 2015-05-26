@@ -64,6 +64,7 @@ private:
 	void weightDrag(uint16 var, uint16 movie);
 
 	void journalSaavedro(int16 move);
+	int16 _journalSaavedroLastPageLastChapterValue();
 	uint16 _journalSaavedroGetNode(uint16 chapter);
 	uint16 _journalSaavedroPageCount(uint16 chapter);
 	bool _journalSaavedroHasChapter(uint16 chapter);
@@ -71,7 +72,6 @@ private:
 
 	void journalAtrus(uint16 node, uint16 var);
 	void mainMenu(uint16 action);
-	void saveLoadMenu(uint16 action, uint16 item);
 	void projectorLoadBitmap(uint16 bitmap);
 	void projectorAddSpotItem(uint16 bitmap, uint16 x, uint16 y);
 	void projectorUpdateCoordinates();
@@ -88,6 +88,8 @@ private:
 	void settingsSave();
 
 	void updateSoundScriptTimer();
+
+	void checkCanSave();
 
 	void _drawForVarHelper(int16 var, int32 startValue, int32 endValue);
 	void _drawXFrames(uint16 frames);

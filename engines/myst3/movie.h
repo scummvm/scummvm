@@ -45,12 +45,13 @@ public:
 	virtual void drawOverlay();
 
 	uint16 getId() { return _id; }
+	bool isVideoLoaded() {return _bink.isVideoLoaded(); }
 	void setPosU(int32 v) { _posU = v; }
 	void setPosV(int32 v) { _posV = v; }
 	void setForce2d(bool b) { _force2d = b; }
 	void setForceOpaque(bool b) { _forceOpaque = b; }
-	void setStartFrame(int32 v) { _startFrame = v; }
-	void setEndFrame(int32 v) { _endFrame = v; }
+	void setStartFrame(int32 v);
+	void setEndFrame(int32 v);
 	void setVolume(int32 v) { _volume = v; }
 
 protected:
@@ -80,6 +81,7 @@ protected:
 	bool _additiveBlending;
 	int32 _transparency;
 
+	int32 adjustFrameForRate(int32 frame, bool dataToBink);
 	void loadPosition(const VideoData &videoData);
 	void drawNextFrameToTexture();
 

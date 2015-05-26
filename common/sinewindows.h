@@ -20,52 +20,15 @@
  *
  */
 
-#ifndef CURSOR_H_
-#define CURSOR_H_
+// Based on xoreos' SineWindow code
 
-#include "common/hashmap.h"
-#include "common/rect.h"
+#ifndef COMMON_SINEWINDOWS_H
+#define COMMON_SINEWINDOWS_H
 
-namespace Myst3 {
+namespace Common {
 
-class Myst3Engine;
-class Texture;
+const float *getSineWindow(int bits);
 
-class Cursor {
-public:
-	Cursor(Myst3Engine *vm);
-	virtual ~Cursor();
+} // End of namespace Common
 
-	void changeCursor(uint32 index);
-	bool isPositionLocked() { return _lockedAtCenter; }
-	void lockPosition(bool lock);
-
-	Common::Point getPosition();
-	void updatePosition(Common::Point &mouse);
-
-	void getDirection(float &pitch, float &heading);
-
-	void draw();
-	void setVisible(bool show);
-	bool isVisible();
-private:
-	Myst3Engine *_vm;
-
-	uint32 _currentCursorID;
-	int32 _hideLevel;
-
-	/** Position of the cursor */
-	Common::Point _position;
-
-	typedef Common::HashMap<uint32, Texture *> TextureMap;
-	TextureMap _textures;
-
-	bool _lockedAtCenter;
-
-	void loadAvailableCursors();
-	double getTransparencyForId(uint32 cursorId);
-};
-
-} // End of namespace Myst3
-
-#endif // CURSOR_H_
+#endif // COMMON_SINEWINDOWS_H

@@ -20,52 +20,34 @@
  *
  */
 
-#ifndef CURSOR_H_
-#define CURSOR_H_
+#ifndef AUDIO_DECODERS_UTIL_H
+#define AUDIO_DECODERS_UTIL_H
 
-#include "common/hashmap.h"
-#include "common/rect.h"
+#include "common/types.h"
+#include "common/util.h"
 
-namespace Myst3 {
+namespace Audio {
 
-class Myst3Engine;
-class Texture;
+// Convert one float sample into a int16 sample
+static inline int16 floatToInt16(float src) {
+	return (int16) CLIP<int>((int) floor(src + 0.5), -32768, 32767);
+}
 
-class Cursor {
-public:
-	Cursor(Myst3Engine *vm);
-	virtual ~Cursor();
+// Convert planar float samples into interleaved int16 samples
+static inline void floatToInt16Interleave(int16 *dst, const float **src,
+                                          uint32 length, uint8 channels) {
+	if (channels == 2) {
+		for (uint32 i = 0; i < length; i++) {
+			dst[2 * i    ] = floatToInt16(src[0][i]);
+			dst[2 * i + 1] = floatToInt16(src[1][i]);
+		}
+	} else {
+		for (uint8 c = 0; c < channels; c++)
+			for (uint32 i = 0, j = c; i < length; i++, j += channels)
+				dst[j] = floatToInt16(src[c][i]);
+	}
+}
 
-	void changeCursor(uint32 index);
-	bool isPositionLocked() { return _lockedAtCenter; }
-	void lockPosition(bool lock);
+} // End of namespace Audio
 
-	Common::Point getPosition();
-	void updatePosition(Common::Point &mouse);
-
-	void getDirection(float &pitch, float &heading);
-
-	void draw();
-	void setVisible(bool show);
-	bool isVisible();
-private:
-	Myst3Engine *_vm;
-
-	uint32 _currentCursorID;
-	int32 _hideLevel;
-
-	/** Position of the cursor */
-	Common::Point _position;
-
-	typedef Common::HashMap<uint32, Texture *> TextureMap;
-	TextureMap _textures;
-
-	bool _lockedAtCenter;
-
-	void loadAvailableCursors();
-	double getTransparencyForId(uint32 cursorId);
-};
-
-} // End of namespace Myst3
-
-#endif // CURSOR_H_
+#endif // AUDIO_DECODERS_UTIL_H

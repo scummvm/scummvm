@@ -22,9 +22,9 @@
 
 #include "engines/advancedDetector.h"
 
-#include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
 
+#include "common/config-manager.h"
 #include "common/savefile.h"
 
 #include "graphics/scaler.h"
@@ -45,6 +45,7 @@ static const char *directoryGlobs[] = {
 	"bin",
 	"M3Data",
 	"MYST3BIN",
+	"TEXT",
 	0
 };
 
@@ -71,6 +72,7 @@ static const ExecutableVersion v127xcd = { "1.27 Mac OS X",  kFlagNone,      "My
 static const ExecutableVersion v127osx = { "1.27 Mac OS X",  kFlagDVD,       "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10,  0x16E94, 0         };
 static const ExecutableVersion ps2ntsc = { "PS2 NTSC-U/C",   kFlagNone,      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0, 0,       0         };
 static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0, 0,       0         };
+static const ExecutableVersion xboxpal = { "Xbox PAL",       kFlagDVD,       "Default.xbe",                   0x2D20,   0xDF148,  0xDF070,  0xDF228,  0xE4740, 0         };
 
 #define MYST3ENTRY(platform, lang, extra, exe, md5exe, version) 				\
 {																				\
@@ -88,6 +90,24 @@ static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,      "SL
 	},																			\
 	version,																	\
 },
+
+#define MYST3ENTRY_XBOX(lang, langFile, md5lang) 								\
+{																				\
+	{																			\
+		"myst3",																\
+		0,																		\
+		{																		\
+			{ "RSRC.m3r", 0, "3de23eb5a036a62819186105478f9dde", 1226192 },		\
+			{ langFile, 0, md5lang, -1 },										\
+		},																		\
+		lang,																	\
+		Common::kPlatformXbox,													\
+		ADGF_UNSTABLE,															\
+		GUIO_NONE																\
+	},																			\
+	&xboxpal																	\
+},
+
 
 static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "f8ab52da2815c1342eeb42b1bcad5441", &v100win) // 1.0
@@ -132,6 +152,16 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::DE_DEU, "DVD", "Myst III Exile for Mac OS X",   "2f2682815504d94378ab82bac0e89b6b", &v127osx)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::IT_ITA, "DVD", "Myst III Exile for Mac OS X",   "1265e9ea6a6001a943b217ca92d83ee6", &v127osx)
 	MYST3ENTRY(Common::kPlatformMacintosh, Common::ES_ESP, "DVD", "Myst III Exile for Mac OS X",   "05f37c98a0378c57190da5a4687b7e41", &v127osx)
+
+	// Myst 3 Xbox (PAL)
+	MYST3ENTRY_XBOX(Common::EN_ANY, "ENGLISHX.m3t", "c4d012ab02b8ca7d0c7e79f4dbd4e676")
+	MYST3ENTRY_XBOX(Common::FR_FRA, "FRENCHX.m3t",  "94c9dcdec8794751e4d773776552751a")
+	MYST3ENTRY_XBOX(Common::DE_DEU, "GERMANX.m3t",  "b9b66fcd5d4fbb95ac2d7157577991a5")
+	MYST3ENTRY_XBOX(Common::IT_ITA, "ITALIANX.m3t", "3ca266019eba68123f6b7cae57cfc200")
+	MYST3ENTRY_XBOX(Common::ES_ESP, "SPANISHX.m3t", "a9aca36ccf6709164249f3fb6b1ef148")
+
+	// Myst 3 Xbox (RUS)
+	MYST3ENTRY_XBOX(Common::RU_RUS, "ENGLISHX.m3t", "18cb50f5c5317586a128ca9eb3e03279")
 
 	{
 		// Myst 3 PS2 (NTSC-U/C)
@@ -193,8 +223,11 @@ public:
 	}
 
 	virtual SaveStateList listSaves(const char *target) const {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+		Common::String searchPattern = buildSaveName("*", platform);
+
 		SaveStateList saveList;
-		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("*.m3s");
+		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(searchPattern);
 
 		for (uint32 i = 0; i < filenames.size(); i++)
 			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
@@ -202,20 +235,16 @@ public:
 		return saveList;
 	}
 
-	void resizeThumbnail(Graphics::Surface *big, Graphics::Surface *small) const {
-		assert(big->format.bytesPerPixel == 4 && small->format.bytesPerPixel == 4);
+	Common::String buildSaveName(const char *name, Common::Platform platform) const {
+		const char *format;
 
-		uint32 *dst = (uint32 *)small->getPixels();
-		for (uint i = 0; i < small->h; i++) {
-			for (uint j = 0; j < small->w; j++) {
-				uint32 srcX = big->w * j / small->w;
-				uint32 srcY = big->h * i / small->h;
-				uint32 *src = (uint32 *)big->getBasePtr(srcX, srcY);
-
-				// Copy RGBA pixel
-				*dst++ = *src;
-			}
+		if (platform == Common::kPlatformXbox) {
+			format = "%s.m3x";
+		} else {
+			format = "%s.m3s";
 		}
+
+		return Common::String::format(format, name);
 	}
 
 	SaveStateDescriptor getSaveDescription(const char *target, int slot) const {
@@ -250,7 +279,7 @@ public:
 		// Read and resize the thumbnail
 		Graphics::Surface *guiThumb = new Graphics::Surface();
 		guiThumb->create(kThumbnailWidth, kThumbnailHeight1, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-		resizeThumbnail(data.thumbnail.get(), guiThumb);
+		data.resizeThumbnail(guiThumb);
 
 		// Set metadata
 		saveInfos.setThumbnail(guiThumb);

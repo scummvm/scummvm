@@ -93,6 +93,8 @@ private:
 	const Common::String describeCommand(uint16 op);
 	const Common::String describeArgument(ArgumentType type, int16 value);
 
+	void shiftCommands(uint16 base, int32 value);
+
 	void runOp(Context &c, const Opcode &op);
 	void goToElse(Context &c);
 
@@ -122,6 +124,7 @@ private:
 	DECLARE_OPCODE(movieInitFrameVarPreload);
 	DECLARE_OPCODE(movieInitOverrridePosition);
 	DECLARE_OPCODE(movieInitScriptedPosition);
+	DECLARE_OPCODE(movieInitCondScriptedPosition);
 	DECLARE_OPCODE(movieRemove);
 	DECLARE_OPCODE(movieRemoveAll);
 	DECLARE_OPCODE(movieSetLooping);
@@ -174,6 +177,7 @@ private:
 	DECLARE_OPCODE(varAddValueMaxLooping);
 	DECLARE_OPCODE(varDecrement);
 	DECLARE_OPCODE(varDecrementMin);
+	DECLARE_OPCODE(varDecrementMinLooping);
 	DECLARE_OPCODE(varAddValueMax);
 	DECLARE_OPCODE(varSubValueMin);
 	DECLARE_OPCODE(varZeroRange);

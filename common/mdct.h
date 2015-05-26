@@ -20,52 +20,47 @@
  *
  */
 
-#ifndef CURSOR_H_
-#define CURSOR_H_
+// Based on xoreos' (I)RDFT code which is in turn
+// Based upon the (I)MDCT code in FFmpeg
+// Copyright (c) 2002 Fabrice Bellard
 
-#include "common/hashmap.h"
-#include "common/rect.h"
 
-namespace Myst3 {
+#ifndef COMMON_MDCT_H
+#define COMMON_MDCT_H
 
-class Myst3Engine;
-class Texture;
+#include "common/types.h"
 
-class Cursor {
+namespace Common {
+
+class FFT;
+
+/** (Inverse) Modified Discrete Cosine Transforms. */
+class MDCT {
 public:
-	Cursor(Myst3Engine *vm);
-	virtual ~Cursor();
+	MDCT(int bits, bool inverse, double scale);
+	~MDCT();
 
-	void changeCursor(uint32 index);
-	bool isPositionLocked() { return _lockedAtCenter; }
-	void lockPosition(bool lock);
+	/** Compute MDCT of size N = 2^nbits. */
+	void calcMDCT(float *output, const float *input);
 
-	Common::Point getPosition();
-	void updatePosition(Common::Point &mouse);
+	/** Compute inverse MDCT of size N = 2^nbits. */
+	void calcIMDCT(float *output, const float *input);
 
-	void getDirection(float &pitch, float &heading);
-
-	void draw();
-	void setVisible(bool show);
-	bool isVisible();
 private:
-	Myst3Engine *_vm;
+	int _bits;
+	int _size;
 
-	uint32 _currentCursorID;
-	int32 _hideLevel;
+	float *_tCos;
+	float *_tSin;
 
-	/** Position of the cursor */
-	Common::Point _position;
+	FFT *_fft;
 
-	typedef Common::HashMap<uint32, Texture *> TextureMap;
-	TextureMap _textures;
-
-	bool _lockedAtCenter;
-
-	void loadAvailableCursors();
-	double getTransparencyForId(uint32 cursorId);
+	/** Compute the middle half of the inverse MDCT of size N = 2^nbits,
+	 *  thus excluding the parts that can be derived by symmetry.
+	 */
+	void calcHalfIMDCT(float *output, const float *input);
 };
 
-} // End of namespace Myst3
+} // End of namespace Common
 
-#endif // CURSOR_H_
+#endif // COMMON_MDCT_H

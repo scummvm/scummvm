@@ -40,7 +40,8 @@ enum ViewType {
 
 #define DECLARE_VAR(name) \
 	void set##name(int32 value) { engineSet(#name, value); } \
-	int32 get##name() { return engineGet(#name); }
+	int32 get##name() { return engineGet(#name); } \
+	bool hasVar##name() { return _varDescriptions.contains(#name); }
 
 class GameState {
 public:
@@ -288,6 +289,22 @@ public:
 
 	DECLARE_VAR(ShieldEffectActive)
 
+	// Xbox specific variables
+	DECLARE_VAR(GamePadActionPressed)
+	DECLARE_VAR(GamePadDownPressed)
+	DECLARE_VAR(GamePadUpPressed)
+	DECLARE_VAR(GamePadLeftPressed)
+	DECLARE_VAR(GamePadRightPressed)
+	DECLARE_VAR(GamePadCancelPressed)
+
+	DECLARE_VAR(DragWithDirectionKeys)
+	DECLARE_VAR(MenuSavesAvailable)
+	DECLARE_VAR(MenuSelectedSave)
+	DECLARE_VAR(MenuAttractCountDown)
+	DECLARE_VAR(MovieOptional)
+	DECLARE_VAR(VibrationEnabled)
+	DECLARE_VAR(StateCanSave)
+
 	void updateFrameCounters();
 	uint getFrameCount() { return _data.currentFrame; }
 
@@ -313,6 +330,7 @@ public:
 
 	Graphics::Surface *getSaveThumbnail() const;
 	void setSaveThumbnail(Graphics::Surface *thumb);
+	Common::String formatSaveTime();
 	void setSaveDescription(const Common::String &description) { _data.saveDescription = description; }
 
 	Common::Array<uint16> getInventory();
@@ -362,6 +380,7 @@ public:
 
 		StateData();
 		void syncWithSaveGame(Common::Serializer &s);
+		void resizeThumbnail(Graphics::Surface *small) const;
 	};
 
 
@@ -390,6 +409,7 @@ private:
 
 	void checkRange(uint16 var);
 	const VarDescription findDescription(uint16 var);
+	void shiftVariables(uint16 base, int32 value);
 
 	int32 engineGet(const Common::String &varName);
 	void engineSet(const Common::String &varName, int32 value);

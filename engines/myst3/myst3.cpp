@@ -171,7 +171,11 @@ Common::Error Myst3Engine::run() {
 	_db = new Database(this);
 	_state = new GameState(this);
 	_scene = new Scene(this);
-	_menu = new Menu(this);
+	if (getPlatform() == Common::kPlatformXbox) {
+		_menu = new AlbumMenu(this);
+	} else {
+		_menu = new PagingMenu(this);
+	}
 	_archiveNode = new Archive();
 
 	_system->showMouse(false);
@@ -193,6 +197,11 @@ Common::Error Myst3Engine::run() {
 		// Load game from specified slot, if any
 		loadGameState(ConfMan.getInt("save_slot"));
 	} else {
+		if (getPlatform() == Common::kPlatformXbox) {
+			// Play the logo videos
+			loadNode(1, 1101, 11);
+		}
+
 		// Game init script, loads the menu
 		loadNode(1, 101, 1);
 	}
@@ -304,11 +313,21 @@ void Myst3Engine::openArchives() {
 		}
 	}
 
-	addArchive("OVERMainMenuLogo.m3o", false);
-	addArchive("OVER101.m3o", false);
+	if (getPlatform() == Common::kPlatformXbox) {
+		menuLanguage += "X";
+		textLanguage += "X";
+	}
+
+	// Load all the override files in the search path
+	Common::ArchiveMemberList overrides;
+	SearchMan.listMatchingMembers(overrides, "*.m3o");
+	for (Common::ArchiveMemberList::const_iterator it = overrides.begin(); it != overrides.end(); it++) {
+		addArchive(it->get()->getName(), false);
+	}
+
 	addArchive(textLanguage + ".m3t", true);
 
-	if (getExecutableVersion()->flags & kFlagDVD || !isMonolingual())
+	if ((getExecutableVersion()->flags & kFlagDVD) || !isMonolingual())
 		if (!addArchive("language.m3u", false))
 			addArchive(menuLanguage + ".m3u", true);
 
@@ -408,7 +427,20 @@ void Myst3Engine::processInput(bool lookOnly) {
 	// Process events
 	Common::Event event;
 
+	if (_state->hasVarGamePadUpPressed()) {
+		// Reset the gamepad directions once they had a chance to be read by the scripts
+		// This combined with keyboard repeat ensures the menu does not scroll too fast
+		_state->setGamePadUpPressed(false);
+		_state->setGamePadDownPressed(false);
+		_state->setGamePadLeftPressed(false);
+		_state->setGamePadRightPressed(false);
+	}
+
 	while (getEventManager()->pollEvent(event)) {
+		if (_state->hasVarGamePadUpPressed()) {
+			processEventForGamepad(event);
+		}
+
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_state->getViewType() == kCube
 					&& _cursor->isPositionLocked()) {
@@ -418,26 +450,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			_cursor->updatePosition(event.mouse);
 
 		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
-			// Skip the event when in look only mode
-			if (lookOnly)
-				continue;
-
-			uint16 hoveredInventory = _inventory->hoveredItem();
-			if (isInventoryVisible() && hoveredInventory > 0) {
-				_inventory->useItem(hoveredInventory);
-				continue;
-			}
-
-			NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
-			HotSpot *hovered = getHoveredHotspot(nodeData);
-
-			if (hovered) {
-				_scriptEngine->run(&hovered->script);
-				continue;
-			}
-
-			// Bad click
-			_sound->playEffect(697, 5);
+			interactWithHoveredElement(lookOnly);
 		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 			// Skip the event when in look only mode
 			if (lookOnly)
@@ -461,22 +474,32 @@ void Myst3Engine::processInput(bool lookOnly) {
 				_inputEscapePressed = true;
 
 				// Open main menu
-				if (_cursor->isVisible()) {
-					if (_state->getLocationRoom() != 901)
-						_menu->goToNode(100);
-					else
-						_state->setMenuEscapePressed(1);
+				if (_state->hasVarMenuEscapePressed()) {
+					if (_cursor->isVisible()) {
+						if (_state->getLocationRoom() != 901)
+							_menu->goToNode(100);
+						else
+							_state->setMenuEscapePressed(1);
+					}
 				}
 				break;
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 				_inputEnterPressed = true;
+				interactWithHoveredElement(lookOnly);
 				break;
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = true;
 				break;
 			case Common::KEYCODE_TILDE:
 				_inputTildePressed = true;
+				break;
+			case Common::KEYCODE_F5:
+				// Open main menu
+				if (_cursor->isVisible()) {
+					if (_state->getLocationRoom() != 901)
+						_menu->goToNode(100);
+				}
 				break;
 			case Common::KEYCODE_d:
 				if (event.kbd.flags & Common::KBD_CTRL) {
@@ -509,6 +532,73 @@ void Myst3Engine::processInput(bool lookOnly) {
 			}
 		}
 	}
+}
+
+void Myst3Engine::processEventForGamepad(const Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		_state->setGamePadActionPressed(true);
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
+		_state->setGamePadActionPressed(false);
+	} else if (event.type == Common::EVENT_KEYDOWN) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			_state->setGamePadActionPressed(true);
+			break;
+		case Common::KEYCODE_UP:
+			_state->setGamePadUpPressed(true);
+			break;
+		case Common::KEYCODE_DOWN:
+			_state->setGamePadDownPressed(true);
+			break;
+		case Common::KEYCODE_LEFT:
+			_state->setGamePadLeftPressed(true);
+			break;
+		case Common::KEYCODE_RIGHT:
+			_state->setGamePadRightPressed(true);
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_state->setGamePadCancelPressed(true);
+			break;
+		default:
+			break;
+		}
+	} else if (event.type == Common::EVENT_KEYUP) {
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+			_state->setGamePadActionPressed(false);
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_state->setGamePadCancelPressed(false);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void Myst3Engine::interactWithHoveredElement(bool lookOnly) {
+	// Skip the event when in look only mode
+	if (lookOnly)
+		return;
+
+	uint16 hoveredInventory = _inventory->hoveredItem();
+	if (isInventoryVisible() && hoveredInventory > 0) {
+		_inventory->useItem(hoveredInventory);
+		return;
+	}
+
+	NodePtr nodeData = _db->getNodeData(_state->getLocationNode(), _state->getLocationRoom());
+	HotSpot *hovered = getHoveredHotspot(nodeData);
+
+	if (hovered) {
+		_scriptEngine->run(&hovered->script);
+		return;
+	}
+
+	// Bad click
+	_sound->playEffect(697, 5);
 }
 
 void Myst3Engine::drawFrame(bool noSwap) {
@@ -591,7 +681,15 @@ void Myst3Engine::drawFrame(bool noSwap) {
 
 	// The cursor is drawn unscaled
 	_gfx->setupCameraOrtho2D(true);
-	if (_cursor->isVisible())
+
+	bool cursorVisible = _cursor->isVisible();
+
+	if (getPlatform() == Common::kPlatformXbox) {
+		// The cursor is not drawn in the Xbox version menus and journals
+		cursorVisible &= !(_state->getLocationRoom() == 901 || _state->getLocationRoom() == 902);
+	}
+
+	if (cursorVisible)
 		_cursor->draw();
 
 	_gfx->flipBuffer();
@@ -1013,6 +1111,11 @@ void Myst3Engine::loadMovie(uint16 id, uint16 condition, bool resetCond, bool lo
 void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 	SimpleMovie movie = SimpleMovie(this, id);
 
+	if (!movie.isVideoLoaded()) {
+		// The video was not loaded and it was optional, just do nothing
+		return;
+	}
+
 	if (_state->getMovieSynchronized()) {
 		movie.setSynchronized(_state->getMovieSynchronized());
 		_state->setMovieSynchronized(0);
@@ -1039,7 +1142,7 @@ void Myst3Engine::playSimpleMovie(uint16 id, bool fullframe) {
 		movie.setForce2d(_state->getViewType() == kCube);
 		movie.setForceOpaque(true);
 		movie.setPosU(0);
-		movie.setPosV(0);
+		movie.setPosV(_state->getViewType() == kMenu ? Renderer::kTopBorderHeight : 0);
 	}
 
 	movie.playStartupSound();
@@ -1116,8 +1219,7 @@ SpotItemFace *Myst3Engine::addMenuSpotItem(uint16 id, uint16 condition, const Co
 
 	SpotItemFace *face = _node->loadMenuSpotItem(condition, rect);
 
-	if (id == 1)
-		_menu->setSaveLoadSpotItem(face);
+	_menu->setSaveLoadSpotItem(id, face);
 
 	return face;
 }
@@ -1194,18 +1296,26 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 }
 
 int16 Myst3Engine::openDialog(uint16 id) {
-	Dialog dialog(this, id);
+	Dialog *dialog;
 
-	_drawables.push_back(&dialog);
+	if (getPlatform() == Common::kPlatformXbox) {
+		dialog = new GamepadDialog(this, id);
+	} else {
+		dialog = new ButtonsDialog(this, id);
+	}
 
-	int16 result = -1;
+	_drawables.push_back(dialog);
 
-	while (result == -1 && !shouldQuit()) {
-		result = dialog.update();
+	int16 result = -2;
+
+	while (result == -2 && !shouldQuit()) {
+		result = dialog->update();
 		drawFrame();
 	}
 
 	_drawables.pop_back();
+
+	delete dialog;
 
 	return result;
 }
@@ -1278,7 +1388,11 @@ bool Myst3Engine::canLoadGameStateCurrently() {
 }
 
 Common::Error Myst3Engine::loadGameState(int slot) {
-	if (_state->load(_saveFileMan->listSavefiles("*.M3S")[slot])) {
+	return loadGameState(_saveFileMan->listSavefiles("*.M3S")[slot], kTransitionNone);
+}
+
+Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType transition) {
+	if (_state->load(fileName)) {
 		_inventory->loadFromState();
 
 		_state->setLocationNextAge(_state->getMenuSavedAge());
@@ -1292,7 +1406,7 @@ Common::Error Myst3Engine::loadGameState(int slot) {
 		_state->setSoundScriptsSuspended(0);
 		_sound->playEffect(696, 60);
 
-		goToNode(0, kTransitionNone);
+		goToNode(0, transition);
 		return Common::kNoError;
 	}
 
@@ -1552,43 +1666,54 @@ void Myst3Engine::settingsInitDefaults() {
 	ConfMan.registerDefault("mouse_speed", 50);
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("subtitles", false);
+	ConfMan.registerDefault("vibrations", true); // Xbox specific
 }
 
 void Myst3Engine::settingsLoadToVars() {
-	_state->setOverallVolume(CLIP<uint>(ConfMan.getInt("overall_volume") * 100 / 256, 0, 100));
-	_state->setMusicVolume(CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100));
-	_state->setMusicFrequency(ConfMan.getInt("music_frequency"));
-	_state->setLanguageAudio(ConfMan.getInt("audio_language"));
-	_state->setLanguageText(ConfMan.getInt("text_language"));
 	_state->setWaterEffects(ConfMan.getBool("water_effects"));
 	_state->setTransitionSpeed(ConfMan.getInt("transition_speed"));
 	_state->setMouseSpeed(ConfMan.getInt("mouse_speed"));
 	_state->setZipModeEnabled(ConfMan.getBool("zip_mode"));
 	_state->setSubtitlesEnabled(ConfMan.getBool("subtitles"));
+
+	if (getPlatform() != Common::kPlatformXbox) {
+		_state->setOverallVolume(CLIP<uint>(ConfMan.getInt("overall_volume") * 100 / 256, 0, 100));
+		_state->setMusicVolume(CLIP<uint>(ConfMan.getInt("music_volume") * 100 / 256, 0, 100));
+		_state->setMusicFrequency(ConfMan.getInt("music_frequency"));
+		_state->setLanguageAudio(ConfMan.getInt("audio_language"));
+		_state->setLanguageText(ConfMan.getInt("text_language"));
+	} else {
+		_state->setVibrationEnabled(ConfMan.getBool("vibrations"));
+	}
 }
 
 void Myst3Engine::settingsApplyFromVars() {
 	int32 oldTextLanguage = ConfMan.getInt("text_language");
 
-	ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
-	ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
-	ConfMan.setInt("music_frequency", _state->getMusicFrequency());
-	ConfMan.setInt("audio_language", _state->getLanguageAudio());
-	ConfMan.setInt("text_language", _state->getLanguageText());
-	ConfMan.setBool("water_effects", _state->getWaterEffects());
 	ConfMan.setInt("transition_speed", _state->getTransitionSpeed());
 	ConfMan.setInt("mouse_speed", _state->getMouseSpeed());
 	ConfMan.setBool("zip_mode", _state->getZipModeEnabled());
 	ConfMan.setBool("subtitles", _state->getSubtitlesEnabled());
 
+	if (getPlatform() != Common::kPlatformXbox) {
+		ConfMan.setInt("overall_volume", _state->getOverallVolume() * 256 / 100);
+		ConfMan.setInt("music_volume", _state->getMusicVolume() * 256 / 100);
+		ConfMan.setInt("music_frequency", _state->getMusicFrequency());
+		ConfMan.setInt("audio_language", _state->getLanguageAudio());
+		ConfMan.setInt("text_language", _state->getLanguageText());
+		ConfMan.setBool("water_effects", _state->getWaterEffects());
+
+		// The language changed, reload the correct archives
+		if (_state->getLanguageText() != oldTextLanguage) {
+			closeArchives();
+			openArchives();
+		}
+	} else {
+		ConfMan.setBool("vibrations", _state->getVibrationEnabled());
+	}
+
 	// Mouse speed may have changed, refresh it
 	_scene->updateMouseSpeed();
-
-	// The language changed, reload the correct archives
-	if (_state->getLanguageText() != oldTextLanguage) {
-		closeArchives();
-		openArchives();
-	}
 
 	syncSoundSettings();
 }

@@ -21,12 +21,14 @@ MODULE_OBJS := \
 	macresman.o \
 	memorypool.o \
 	md5.o \
+	mdct.o \
 	mutex.o \
 	platform.o \
 	quicktime.o \
 	random.o \
 	rational.o \
 	rendermode.o \
+	sinewindows.o \
 	str.o \
 	stream.o \
 	streamdebug.o \

@@ -330,6 +330,13 @@ BinkDecoder::BinkVideoTrack::~BinkVideoTrack() {
 }
 
 // ResidualVM-specific function
+Common::Rational BinkDecoder::getFrameRate() {
+	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
+
+	return videoTrack->getFrameRate();
+}
+
+// ResidualVM-specific function
 bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	BinkVideoTrack *videoTrack = (BinkVideoTrack *)getTrack(0);
 
@@ -353,7 +360,11 @@ bool BinkDecoder::seekIntern(const Audio::Timestamp &time) {
 	// Skip decoded audio between the keyframe and the target frame
 	for (uint32 i = 0; i < _audioTracks.size(); i++) {
 		BinkAudioTrack *audioTrack = (BinkAudioTrack *)getTrack(i + 1);
-		Audio::Timestamp delay = videoTrack->getFrameTime(frame - 1) - videoTrack->getFrameTime(keyFrame);
+		int rate = audioTrack->getRate();
+
+		Audio::Timestamp delay = videoTrack->getFrameTime(frame - 1).convertToFramerate(rate)
+				- videoTrack->getFrameTime(keyFrame).convertToFramerate(rate);
+
 		audioTrack->skipSamples(delay);
 	}
 
@@ -374,8 +385,13 @@ uint32 BinkDecoder::findKeyFrame(uint32 frame) const {
 }
 
 // ResidualVM-specific function
+int BinkDecoder::BinkAudioTrack::getRate() {
+	return _audioStream->getRate();
+}
+
+// ResidualVM-specific function
 void BinkDecoder::BinkAudioTrack::skipSamples(const Audio::Timestamp &length) {
-	int32 sampleCount = length.convertToFramerate(_audioStream->getRate()).totalNumberOfFrames();
+	int32 sampleCount = length.totalNumberOfFrames();
 
 	if (sampleCount <= 0)
 		return;

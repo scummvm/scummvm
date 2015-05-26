@@ -27,6 +27,7 @@
 #include "engines/myst3/state.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/asf.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/wave.h"
 
@@ -464,13 +465,19 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(filename);
 
 	bool isMP3 = false;
+	bool isWMA = false;
 
 	if (!s)
 		s = SearchMan.createReadStreamForMember(filename + ".wav");
 
 	if (!s) {
 		s = SearchMan.createReadStreamForMember(filename + ".mp3");
-		isMP3 = true;
+		if (s) isMP3 = true;
+	}
+
+	if (!s) {
+		s = SearchMan.createReadStreamForMember(filename + ".wma");
+		if (s) isWMA = true;
 	}
 
 	if (!s)
@@ -484,6 +491,8 @@ Audio::RewindableAudioStream *SoundChannel::makeAudioStream(const Common::String
 		delete s;
 		return NULL;
 #endif
+	} else if (isWMA) {
+		return Audio::makeASFStream(s, DisposeAfterUse::YES);
 	} else {
 		return Audio::makeWAVStream(s, DisposeAfterUse::YES);
 	}
@@ -626,14 +635,20 @@ void SoundChannel::updateFading() {
 }
 
 uint32 SoundChannel::playedFrames() {
-	Audio::Timestamp elapsed = g_system->getMixer()->getElapsedTime(_handle);
-
-	// Don't count completed loops in
-	while (elapsed > _length) {
-		elapsed = elapsed - _length;
+	uint32 length = _length.msecs();
+	if (!length) {
+		warning("Unable to retrieve length for sound %d", _id);
+		return 0;
 	}
 
-	return elapsed.msecs() * 30 / 1000;
+	uint32 elapsed = g_system->getMixer()->getSoundElapsedTime(_handle);
+
+	// Don't count completed loops in
+	while (elapsed > length) {
+		elapsed -= length;
+	}
+
+	return elapsed * 30 / 1000;
 }
 
 } // End of namespace Myst3

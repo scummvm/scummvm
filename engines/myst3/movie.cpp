@@ -58,8 +58,19 @@ Movie::Movie(Myst3Engine *vm, uint16 id) :
 	if (!binkDesc)
 		binkDesc = _vm->getFileDescription(0, id, 0, DirectorySubEntry::kMovie);
 
-	if (!binkDesc)
-		error("Movie %d does not exist", id);
+	// Check whether the video is optional
+	bool optional = false;
+	if (_vm->_state->hasVarMovieOptional()) {
+		optional = _vm->_state->getMovieOptional();
+		_vm->_state->setMovieOptional(0);
+	}
+
+	if (!binkDesc) {
+		if (!optional)
+			error("Movie %d does not exist", id);
+		else
+			return;
+	}
 
 	loadPosition(binkDesc->getVideoData());
 
@@ -152,7 +163,7 @@ void Movie::drawOverlay() {
 		draw2d();
 
 	if (_subtitles) {
-		_subtitles->setFrame(_bink.getCurFrame());
+		_subtitles->setFrame(adjustFrameForRate(_bink.getCurFrame(), false));
 		_subtitles->drawOverlay();
 	}
 }
@@ -166,6 +177,29 @@ void Movie::drawNextFrameToTexture() {
 		else
 			_texture = _vm->_gfx->createTexture(frame);
 	}
+}
+
+int32 Movie::adjustFrameForRate(int32 frame, bool dataToBink) {
+	// The scripts give frame numbers for a framerate of 15 im/s
+	// adjust the frame number according to the actual framerate
+	if (_bink.getFrameRate().toInt() != 15) {
+		Common::Rational rational;
+		if (dataToBink) {
+			rational = _bink.getFrameRate() * frame / 15;
+		} else {
+			rational = 15 * frame / _bink.getFrameRate();
+		}
+		frame = rational.toInt();
+	}
+	return frame;
+}
+
+void Movie::setStartFrame(int32 v) {
+	_startFrame = adjustFrameForRate(v, true);
+}
+
+void Movie::setEndFrame(int32 v) {
+	_endFrame = adjustFrameForRate(v, true);
 }
 
 Movie::~Movie() {
