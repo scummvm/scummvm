@@ -76,7 +76,7 @@ private:
 	ImageFile *_mapCursors;
 	ImageFile *_shapes;
 	ImageFile *_iconShapes;
-	Common::Array<WalkSequence> _walkSequences;
+	WalkSequences _walkSequences;
 	Point32 _lDrawnPos;
 	int _point;
 	bool _placesShown;

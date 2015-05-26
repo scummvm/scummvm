@@ -117,6 +117,11 @@ struct WalkSequence {
 	void load(Common::SeekableReadStream &s);
 };
 
+class WalkSequences : public Common::Array < WalkSequence > {
+public:
+	WalkSequences &operator=(const WalkSequences &src);
+};
+
 enum { REVERSE_DIRECTION = 0x80 };
 #define NAMES_COUNT 4
 
@@ -157,7 +162,7 @@ public:
 	Common::String _examine;			// Examine in-depth description
 	Common::String _pickUp;				// Message for if you can't pick up object
 
-	Common::Array<WalkSequence> _walkSequences;	// Holds animation sequences
+	WalkSequences _walkSequences;		// Holds animation sequences
 	ImageFile *_images;					// Sprite images
 	ImageFrame *_imageFrame;			// Pointer to shape in the images
 	int _walkCount;						// Character walk counter

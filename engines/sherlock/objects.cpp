@@ -366,6 +366,34 @@ void Sprite::checkSprite() {
 
 /*----------------------------------------------------------------*/
 
+void WalkSequence::load(Common::SeekableReadStream &s) {
+	char buffer[9];
+	s.read(buffer, 9);
+	_vgsName = Common::String(buffer);
+	_horizFlip = s.readByte() != 0;
+
+	_sequences.resize(s.readUint16LE());
+	s.read(&_sequences[0], _sequences.size());
+}
+
+/*----------------------------------------------------------------*/
+
+WalkSequences &WalkSequences::operator=(const WalkSequences &src) {
+	resize(src.size());
+	for (uint idx = 0; idx < size(); ++idx) {
+		const WalkSequence &wSrc = src[idx];
+		WalkSequence &wDest = (*this)[idx];
+		wDest._horizFlip = wSrc._horizFlip;
+
+		wDest._sequences.resize(wSrc._sequences.size());
+		Common::copy(&wSrc._sequences[0], &wSrc._sequences[0] + wSrc._sequences.size(), &wDest._sequences[0]);
+	}
+
+	return *this;
+}
+
+/*----------------------------------------------------------------*/
+
 void ActionType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 

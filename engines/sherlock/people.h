@@ -77,7 +77,6 @@ public:
 
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using
-	Common::Array<WalkSequence> _walkSequences;
 public:
 	Person();
 

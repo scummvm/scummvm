@@ -68,18 +68,6 @@ const char *const WALK_LIB_NAMES[10] = {
 
 /*----------------------------------------------------------------*/
 
-void WalkSequence::load(Common::SeekableReadStream &s) {
-	char buffer[9];
-	s.read(buffer, 9);
-	_vgsName = Common::String(buffer);
-	_horizFlip = s.readByte() != 0;
-
-	_sequences.resize(s.readUint16LE());
-	s.read(&_sequences[0], _sequences.size());
-}
-
-/*----------------------------------------------------------------*/
-
 Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _npcPause(false)  {
 	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
 }
@@ -156,7 +144,6 @@ void People::reset() {
 		p._gotoSeq = p._talkSeq = 0;
 		p._restoreSlot = 0;
 		p._startSeq = 0;
-		p._walkSequences.clear();
 		p._altImages = nullptr;
 		p._altSequences = 0;
 		p._centerWalk = true;
@@ -164,7 +151,7 @@ void People::reset() {
 
 		// Load the default walk sequences
 		p._oldWalkSequence = -1;
-		
+		p._walkSequences.clear();
 		if (IS_SERRATED_SCALPEL) {
 			p._walkSequences.resize(MAX_HOLMES_SEQUENCE);
 			for (int seqIdx = 0; seqIdx < MAX_HOLMES_SEQUENCE; ++seqIdx) {

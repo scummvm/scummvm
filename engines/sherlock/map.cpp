@@ -293,7 +293,6 @@ void Map::setupSprites() {
 	p._type = CHARACTER;
 	p._position = Common::Point(12400, 5000);
 	p._sequenceNumber = 0;
-	p._walkSequences = _walkSequences;
 	p._images = _shapes;
 	p._imageFrame = nullptr;
 	p._frameNumber = 0;
@@ -306,8 +305,8 @@ void Map::setupSprites() {
 	p._noShapeSize = Common::Point(0, 0);
 	p._goto = Common::Point(28000, 15000);
 	p._status = 0;
+	p._walkSequences = _walkSequences;
 	p.setImageFrame();
-
 	scene._bgShapes.clear();
 }
 
