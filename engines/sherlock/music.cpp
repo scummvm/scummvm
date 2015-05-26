@@ -53,6 +53,9 @@ MidiParser_SH::MidiParser_SH() {
 	_ppqn = 1;
 	setTempo(16667);
 	_data = nullptr;
+	_beats = 0;
+	_lastEvent = 0;
+	_trackEnd = nullptr;
 }
 
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
@@ -197,6 +200,9 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	}
 	_midiParser.setMidiDriver(_driver);
 	_midiParser.setTimerRate(_driver->getBaseTempo());
+
+	_musicPlaying = false;
+	_musicOn = true;
 }
 
 bool Music::loadSong(int songNumber) {
