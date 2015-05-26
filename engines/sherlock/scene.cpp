@@ -200,8 +200,8 @@ void Scene::selectScene() {
 		_tempFadeStyle = 0;
 	}
 
-	people._walkDest = Common::Point(people[AL]._position.x / 100,
-		people[AL]._position.y / 100);
+	people._walkDest = Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER,
+		people[AL]._position.y / FIXED_INT_MULTIPLIER);
 
 	_restoreFlag = true;
 	events.clearEvents();
@@ -618,8 +618,8 @@ bool Scene::loadScene(const Common::String &filename) {
 		map._oldCharPoint = _currentScene;
 
 		if (IS_SERRATED_SCALPEL) {
-			map._overPos.x = map[_currentScene].x * 100 - 600;
-			map._overPos.y = map[_currentScene].y * 100 + 900;
+			map._overPos.x = (map[_currentScene].x - 6) * FIXED_INT_MULTIPLIER;
+			map._overPos.y = (map[_currentScene].y + 9) * FIXED_INT_MULTIPLIER;
 
 		}
 	}
@@ -761,8 +761,8 @@ void Scene::transitionToScene() {
 		// Otherwise, this is a linked scene or entrance info, and must be translated
 		if (hSavedFacing < 8 && !saves._justLoaded) {
 			hSavedFacing = FS_TRANS[hSavedFacing];
-			hSavedPos.x *= 100;
-			hSavedPos.y *= 100;
+			hSavedPos.x *= FIXED_INT_MULTIPLIER;
+			hSavedPos.y *= FIXED_INT_MULTIPLIER;
 		}
 	}
 
@@ -802,7 +802,8 @@ void Scene::transitionToScene() {
 			}
 
 			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
-				Common::Point(people[PLAYER]._position.x / 100, people[PLAYER]._position.y / 100))) {
+					Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER, 
+					people[PLAYER]._position.y / FIXED_INT_MULTIPLIER))) {
 				// Current point is already inside box - impact occurred on
 				// a previous call. So simply do nothing except talk until the
 				// player is clear of the box
@@ -924,8 +925,8 @@ void Scene::drawAllShapes() {
 				p._sequenceNumber == WALK_UPLEFT || p._sequenceNumber == STOP_UPLEFT ||
 				p._sequenceNumber == WALK_DOWNRIGHT || p._sequenceNumber == STOP_DOWNRIGHT);
 
-			screen._backBuffer->transBlitFrom(*p._imageFrame, Common::Point(p._position.x / 100,
-				p._position.y / 100 - p.frameHeight()), flipped);
+			screen._backBuffer->transBlitFrom(*p._imageFrame, Common::Point(p._position.x / FIXED_INT_MULTIPLIER,
+				p._position.y / FIXED_INT_MULTIPLIER - p.frameHeight()), flipped);
 		}
 	}
 
@@ -980,7 +981,7 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 void Scene::checkBgShapes() {
 	People &people = *_vm->_people;
 	Person &holmes = people._player;
-	Common::Point pt(holmes._position.x / 100, holmes._position.y / 100);
+	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
 
 	// Iterate through the shapes
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -1400,13 +1401,13 @@ void Scene::doBgAnim() {
 	if (people[AL]._type == CHARACTER && people[AL]._walkLoaded) {
 		// If Holmes is too far to the right, move him back so he's on-screen
 		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[AL]._imageFrame->_frame.w;
-		int tempX = MIN(people[AL]._position.x / 100, xRight);
+		int tempX = MIN(people[AL]._position.x / FIXED_INT_MULTIPLIER, xRight);
 
 		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT ||
 			people[AL]._sequenceNumber == WALK_UPLEFT || people[AL]._sequenceNumber == STOP_UPLEFT ||
 			people[AL]._sequenceNumber == WALK_DOWNRIGHT || people[AL]._sequenceNumber == STOP_DOWNRIGHT;
 		screen._backBuffer->transBlitFrom(*people[AL]._imageFrame,
-			Common::Point(tempX, people[AL]._position.y / 100 - people[AL]._imageFrame->_frame.h), flipped);
+			Common::Point(tempX, people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL]._imageFrame->_frame.h), flipped);
 	}
 
 	// Draw all static and active shapes are NORMAL and are in front of the person
@@ -1466,8 +1467,8 @@ void Scene::doBgAnim() {
 				people[AL]._type = INVALID;
 			} else {
 				screen.flushImage(people[AL]._imageFrame,
-					Common::Point(people[AL]._position.x / 100,
-						people[AL]._position.y / 100 - people[AL].frameHeight()),
+					Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER,
+						people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL].frameHeight()),
 					&people[AL]._oldPosition.x, &people[AL]._oldPosition.y,
 					&people[AL]._oldSize.x, &people[AL]._oldSize.y);
 			}

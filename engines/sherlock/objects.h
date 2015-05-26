@@ -76,6 +76,7 @@ enum {
 
 #define MAX_HOLMES_SEQUENCE 16
 #define MAX_FRAME 30
+#define FIXED_INT_MULTIPLIER 100
 
 // code put into sequences to defines 1-10 type seqs
 #define SEQ_TO_CODE 67
