@@ -92,7 +92,7 @@ void SherlockEngine::initialize() {
 	_journal = new Journal(this);
 	_people = new People(this);
 	_saves = new SaveManager(this, _targetName);
-	_scene = new Scene(this);
+	_scene = Scene::init(this);
 	_screen = new Screen(this);
 	_sound = new Sound(this, _mixer);
 	_talk = Talk::init(this);

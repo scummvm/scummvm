@@ -140,7 +140,6 @@ struct SceneTripEntry {
 
 class Scene {
 private:
-	SherlockEngine *_vm;
 	Common::String _rrmName;
 	bool _loadingSavedGame;
 
@@ -180,13 +179,6 @@ private:
 	void transitionToScene();
 
 	/**
-	 * Checks all the background shapes. If a background shape is animating,
-	 * it will flag it as needing to be drawn. If a non-animating shape is
-	 * colliding with another shape, it will also flag it as needing drawing
-	 */
-	void checkBgShapes();
-
-	/**
 	 * Restores objects to the correct status. This ensures that things like being opened or moved
 	 * will remain the same on future visits to the scene
 	 */
@@ -196,6 +188,17 @@ private:
 	 * Draw all the shapes, people and NPCs in the correct order
 	 */
 	void drawAllShapes();
+protected:
+	SherlockEngine *_vm;
+
+	/**
+	 * Checks all the background shapes. If a background shape is animating,
+	 * it will flag it as needing to be drawn. If a non-animating shape is
+	 * colliding with another shape, it will also flag it as needing drawing
+	 */
+	virtual void checkBgShapes();
+
+	Scene(SherlockEngine *vm);
 public:
 	int _currentScene;
 	int _goToScene;
@@ -228,8 +231,8 @@ public:
 	int _cAnimFramePause;
 	Common::Array<SceneTripEntry> _sceneTripCounters;
 public:
-	Scene(SherlockEngine *vm);
-	~Scene();
+	static Scene *init(SherlockEngine *vm);
+	virtual ~Scene();
 
 	/**
 	 * Handles loading the scene specified by _goToScene
@@ -313,6 +316,32 @@ public:
 	 *		the scene number being entered
 	 */
 	void setNPCPath(int npc);
+};
+
+class ScalpelScene : public Scene {
+protected:
+	/**
+	 * Checks all the background shapes. If a background shape is animating,
+	 * it will flag it as needing to be drawn. If a non-animating shape is
+	 * colliding with another shape, it will also flag it as needing drawing
+	 */
+	virtual void checkBgShapes();
+public:
+	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
+};
+
+class TattooScene : public Scene {
+private:
+	CAnimStream _activeCAnim;
+protected:
+	/**
+	 * Checks all the background shapes. If a background shape is animating,
+	 * it will flag it as needing to be drawn. If a non-animating shape is
+	 * colliding with another shape, it will also flag it as needing drawing
+	 */
+	virtual void checkBgShapes();
+public:
+	TattooScene(SherlockEngine *vm) : Scene(vm) {}
 };
 
 } // End of namespace Sherlock

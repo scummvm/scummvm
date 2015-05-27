@@ -150,6 +150,13 @@ void ScaleZone::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
+Scene *Scene::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new ScalpelScene(vm);
+	else
+		return new TattooScene(vm);
+}
+
 Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
 		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
@@ -978,42 +985,6 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
-void Scene::checkBgShapes() {
-	People &people = *_vm->_people;
-	Person &holmes = people._player;
-	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
-
-	// Iterate through the shapes
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &obj = _bgShapes[idx];
-		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
-			if ((obj._flags & 5) == 1) {
-				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
-					NORMAL_FORWARD : NORMAL_BEHIND;
-			} else if (!(obj._flags & OBJ_BEHIND)) {
-				obj._misc = BEHIND;
-			} else if (obj._flags & OBJ_FORWARD) {
-				obj._misc = FORWARD;
-			}
-		}
-	}
-
-	// Iterate through the canimshapes
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &obj = _canimShapes[idx];
-		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
-			if ((obj._flags & 5) == 1) {
-				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
-				NORMAL_FORWARD : NORMAL_BEHIND;
-			} else if (!(obj._flags & 1)) {
-				obj._misc = BEHIND;
-			} else if (obj._flags & 4) {
-				obj._misc = FORWARD;
-			}
-		}
-	}
-}
-
 int Scene::startCAnim(int cAnimNum, int playRate) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
@@ -1658,5 +1629,80 @@ void Scene::setNPCPath(int npc) {
 	talk.talkTo(pathFile);
 }
 
+void Scene::checkBgShapes() {
+	People &people = *_vm->_people;
+	Person &holmes = people._player;
+	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
+
+	// Iterate through the shapes
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+		if (obj._type == ACTIVE_BG_SHAPE || (IS_SERRATED_SCALPEL && obj._type == STATIC_BG_SHAPE)) {
+			if ((obj._flags & 5) == 1) {
+				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
+					NORMAL_FORWARD : NORMAL_BEHIND;
+			} else if (!(obj._flags & OBJ_BEHIND)) {
+				obj._misc = BEHIND;
+			} else if (obj._flags & OBJ_FORWARD) {
+				obj._misc = FORWARD;
+			}
+		}
+	}
+}
+
+/*----------------------------------------------------------------*/
+
+void ScalpelScene::checkBgShapes() {
+	People &people = *_vm->_people;
+	Person &holmes = people._player;
+	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
+
+	// Call the base scene method to handle bg shapes
+	Scene::checkBgShapes();
+
+	// Iterate through the canim list
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		Object &obj = _canimShapes[idx];
+		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
+			if ((obj._flags & 5) == 1) {
+				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
+				NORMAL_FORWARD : NORMAL_BEHIND;
+			} else if (!(obj._flags & 1)) {
+				obj._misc = BEHIND;
+			} else if (obj._flags & 4) {
+				obj._misc = FORWARD;
+			}
+		}
+	}
+}
+
+/*----------------------------------------------------------------*/
+
+void TattooScene::checkBgShapes() {
+	People &people = *_vm->_people;
+	Person &holmes = people._player;
+	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
+
+	// Call the base scene method to handle bg shapes
+	Scene::checkBgShapes();
+
+	// Check for any active playing animation
+	if (_activeCAnim._images && _activeCAnim._zPlacement != REMOVE) {
+		switch (_activeCAnim._flags & 3) {
+		case 0:
+			_activeCAnim._zPlacement = BEHIND;
+			break;
+		case 1:
+			_activeCAnim._zPlacement = ((_activeCAnim._position.y + _activeCAnim._imageFrame->_frame.h - 1)) ?
+				NORMAL_FORWARD : NORMAL_BEHIND;
+			break;
+		case 2:
+			_activeCAnim._zPlacement = FORWARD;
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 } // End of namespace Sherlock

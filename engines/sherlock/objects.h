@@ -413,6 +413,24 @@ struct CAnim {
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
+struct CAnimStream {
+	Common::SeekableReadStream *_stream;	// Stream to read frames from
+	int _frameSize;					// Temporary used to store the frame size
+
+	void *_images;					// TOOD: FIgure out hwo to hook up ImageFile with streaming support
+	ImageFrame *_imageFrame;
+
+	Common::Point _position;		// Animation position
+	Common::Rect _oldBounds;		// Bounds of previous frame
+	Common::Rect _removeBounds;		// Remove area for just drawn frame
+
+	int _flags;						// Flags
+	int _scaleVal;					// Specifies the scale amount
+	int _zPlacement;				// Used by doBgAnim for determining Z order
+
+	CAnimStream();
+};
+
 struct SceneImage {
 	ImageFile *_images;				// Object images
 	int _maxFrames;					// How many frames in object

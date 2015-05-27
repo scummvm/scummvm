@@ -1141,6 +1141,18 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 /*----------------------------------------------------------------*/
 
+CAnimStream::CAnimStream() {
+	_stream = nullptr;
+	_frameSize = 0;
+	_images = nullptr;
+	_imageFrame = nullptr;
+	_flags = 0;
+	_scaleVal = 0;
+	_zPlacement = 0;
+}
+
+/*----------------------------------------------------------------*/
+
 SceneImage::SceneImage() {
 	_images = nullptr;
 	_maxFrames = 0;
