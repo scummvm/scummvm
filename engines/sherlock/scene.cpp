@@ -1199,52 +1199,14 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 
 void Scene::doBgAnim() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+	events.animateCursorIfNeeded();
 
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
-
-	int cursorId = events.getCursor();
-	Common::Point mousePos = events.mousePos();
-
 	talk._talkToAbort = false;
-
-	// Animate the mouse cursor
-	if (cursorId >= WAIT) {
-		if (++cursorId > (WAIT + 2))
-			cursorId = WAIT;
-
-		events.setCursor((CursorId)cursorId);
-	}
-
-	if (ui._menuMode == LOOK_MODE) {
-		if (mousePos.y > CONTROLS_Y1)
-			events.setCursor(ARROW);
-		else if (mousePos.y < CONTROLS_Y)
-			events.setCursor(MAGNIFY);
-	}
-
-	// Check for setting magnifying glass cursor
-	if (ui._menuMode == INV_MODE || ui._menuMode == USE_MODE || ui._menuMode == GIVE_MODE) {
-		if (inv._invMode == INVMODE_LOOK) {
-			// Only show Magnifying glass cursor if it's not on the inventory command line
-			if (mousePos.y < CONTROLS_Y || mousePos.y >(CONTROLS_Y1 + 13))
-				events.setCursor(MAGNIFY);
-			else
-				events.setCursor(ARROW);
-		} else {
-			events.setCursor(ARROW);
-		}
-	}
-
-	if (sound._diskSoundPlaying && !*sound._soundIsOn) {
-		// Loaded sound just finished playing
-		sound.freeDigiSound();
-	}
 
 	if (_restoreFlag) {
 		if (people[AL]._type == CHARACTER)
@@ -1676,7 +1638,47 @@ void ScalpelScene::checkBgShapes() {
 	}
 }
 
+void ScalpelScene::doBgAnim() {
+	Inventory &inv = *_vm->_inventory;
+	Events &events = *_vm->_events;
+	Sound &sound = *_vm->_sound;
+	UserInterface &ui = *_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+
+	if (ui._menuMode == LOOK_MODE) {
+		if (mousePos.y > CONTROLS_Y1)
+			events.setCursor(ARROW);
+		else if (mousePos.y < CONTROLS_Y)
+			events.setCursor(MAGNIFY);
+	}
+
+	// Check for setting magnifying glass cursor
+	if (ui._menuMode == INV_MODE || ui._menuMode == USE_MODE || ui._menuMode == GIVE_MODE) {
+		if (inv._invMode == INVMODE_LOOK) {
+			// Only show Magnifying glass cursor if it's not on the inventory command line
+			if (mousePos.y < CONTROLS_Y || mousePos.y >(CONTROLS_Y1 + 13))
+				events.setCursor(MAGNIFY);
+			else
+				events.setCursor(ARROW);
+		} else {
+			events.setCursor(ARROW);
+		}
+	}
+
+	if (sound._diskSoundPlaying && !*sound._soundIsOn) {
+		// Loaded sound just finished playing
+		sound.freeDigiSound();
+	}
+
+	// Handle doing the actual drawing
+	Scene::doBgAnim();
+}
+
 /*----------------------------------------------------------------*/
+
+TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
+	_arrowZone = -1;
+}
 
 void TattooScene::checkBgShapes() {
 	People &people = *_vm->_people;
@@ -1703,6 +1705,36 @@ void TattooScene::checkBgShapes() {
 			break;
 		}
 	}
+}
+
+void TattooScene::doBgAnim() {
+	Events &events = *_vm->_events;
+	UserInterface &ui = *_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+
+	// If we're in Look Mode, make sure the cursor is the magnifying glass
+	if (ui._menuMode == LOOK_MODE && events.getCursor() != MAGNIFY)
+		events.setCursor(MAGNIFY);
+
+	// See if the mouse is over any of the arrow zones, and if so, change the cursor to the correct
+	// arrow cursor indicating the direcetion of the exit
+	if (events.getCursor() == ARROW || events.getCursor() >= EXIT_ZONES_START) {
+		CursorId cursorId = ARROW;
+
+		if (ui._menuMode == STD_MODE && _arrowZone != -1 && _currentScene != 90) {
+			for (uint idx = 0; idx < _exits.size(); ++idx) {
+				Exit &exit = _exits[idx];
+				if (exit.contains(mousePos))
+					cursorId = (CursorId)(exit._image + EXIT_ZONES_START);
+			}
+		}
+
+		events.setCursor(cursorId);
+	}
+
+	// Handle doing the actual drawing
+	_restoreFlag = true;
+	Scene::doBgAnim();
 }
 
 } // End of namespace Sherlock

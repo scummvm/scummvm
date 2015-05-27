@@ -273,9 +273,9 @@ public:
 	int toggleObject(const Common::String &name);
 
 	/**
-	 * Animate all objects and people.
+	 * Draw all objects and characters.
 	 */
-	void doBgAnim();
+	virtual void doBgAnim();
 
 	/**
 	 * Attempts to find a background shape within the passed bounds. If found,
@@ -328,11 +328,17 @@ protected:
 	virtual void checkBgShapes();
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
+
+	/**
+	 * Draw all objects and characters.
+	 */
+	virtual void doBgAnim();
 };
 
 class TattooScene : public Scene {
 private:
 	CAnimStream _activeCAnim;
+	int _arrowZone;
 protected:
 	/**
 	 * Checks all the background shapes. If a background shape is animating,
@@ -341,7 +347,12 @@ protected:
 	 */
 	virtual void checkBgShapes();
 public:
-	TattooScene(SherlockEngine *vm) : Scene(vm) {}
+	TattooScene(SherlockEngine *vm);
+
+	/**
+	 * Draw all objects and characters.
+	 */
+	virtual void doBgAnim();
 };
 
 } // End of namespace Sherlock

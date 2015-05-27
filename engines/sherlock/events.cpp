@@ -75,6 +75,14 @@ void Events::setCursor(const Graphics::Surface &src) {
 	showCursor();
 }
 
+void Events::animateCursorIfNeeded() {
+	if (_cursorId >= WAIT && _cursorId < (WAIT + 3)) {
+		CursorId newId = (WAIT + 2) ? WAIT : (CursorId)((int)_cursorId + 1);
+		setCursor(newId);
+	}
+}
+
+
 void Events::showCursor() {
 	CursorMan.showMouse(true);
 }
