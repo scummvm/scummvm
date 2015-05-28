@@ -33,6 +33,14 @@
 #include <GLES/gl.h>
 #include <EGL/egl.h>
 
+// This hacky define is needed since there is an struct member called "virtual" in xf86drm.h
+#define virtual __virtual
+#include <xf86drm.h>
+#undef virtual
+#include <xf86drmMode.h>
+#include <gbm.h>
+#include <fcntl.h>
+
 struct gbm_device;
 struct gbm_surface;
 struct gbm_bo;
@@ -138,6 +146,7 @@ private:
 	drmStruct _drm;
 	gbm_bo *_bo;
 	drmFBStruct *_fb;
+	drmEventContext _eventContext;
 
 	bool initGBM ();
 	bool initDRM ();

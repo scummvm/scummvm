@@ -27,17 +27,6 @@
 #include "common/translation.h"
 #endif
 
-#ifdef USE_EGL_KMS
-// This hacky define is needed since there is an struct member called "virtual" in xf86drm.h
-#define virtual __virtual
-#include <xf86drm.h>
-#undef virtual
-#include <xf86drmMode.h>
-#include <gbm.h>
-#include <fcntl.h>
-
-drmEventContext eventContext;
-
 void drmPageFlipHandler(int fd, uint frame, uint sec, uint usec, void *data) {
 	int *waiting_for_flip = (int *)data;
 	*waiting_for_flip = 0;
@@ -87,7 +76,7 @@ void EGLKMSGraphicsManager::drmPageFlip(void) {
 		FD_SET(0, &fds);
 		FD_SET(_drm.fd, &fds);
 		select(_drm.fd+1, &fds, NULL, NULL, NULL);
-		drmHandleEvent(_drm.fd, &eventContext);
+		drmHandleEvent(_drm.fd, &_eventContext);
 	}
 	
 	// release last buffer to render on again
@@ -96,9 +85,9 @@ void EGLKMSGraphicsManager::drmPageFlip(void) {
 }
 
 bool EGLKMSGraphicsManager::initDRM(void) {
-	// In plain C, we can just init eventContext at declare time, but it's now allowed in C++
-	eventContext.version = DRM_EVENT_CONTEXT_VERSION;
-	eventContext.page_flip_handler = drmPageFlipHandler;
+	// In plain C, we can just init _eventContext at declare time, but it's now allowed in C++
+	_eventContext.version = DRM_EVENT_CONTEXT_VERSION;
+	_eventContext.page_flip_handler = drmPageFlipHandler;
 
 	drmModeConnector *connector;
 	drmModeEncoder *encoder;
@@ -183,7 +172,6 @@ bool EGLKMSGraphicsManager::initGBM() {
 	
 	return true;
 }
-#endif
 
 void EGLKMSGraphicsManager::initEGL() {
 	static const EGLint attributeList[] = {
