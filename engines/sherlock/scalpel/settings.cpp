@@ -21,7 +21,8 @@
  */
 
 #include "sherlock/sherlock.h"
-#include "sherlock/settings.h"
+#include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel_user_interface.h"
 
 namespace Sherlock {
 

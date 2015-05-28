@@ -20,37 +20,46 @@
  *
  */
 
-#include "sherlock/user_interface.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/tattoo/tattoo_user_interface.h"
+#ifndef SHERLOCK_TATTOO_SCENE_H
+#define SHERLOCK_TATTOO_SCENE_H
+
+#include "common/scummsys.h"
+#include "sherlock/scene.h"
 
 namespace Sherlock {
 
-UserInterface *UserInterface::init(SherlockEngine *vm) {
-	if (vm->getGameID() == GType_SerratedScalpel)
-		return new Scalpel::ScalpelUserInterface(vm);
-	else
-		return new Tattoo::TattooUserInterface(vm);
-}
+namespace Tattoo {
 
-UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
-	_menuMode = STD_MODE;
-	_menuCounter = 0;
-	_infoFlag = false;
-	_windowOpen = false;
-	_endKeyActive = true;
-	_invLookFlag = 0;
-	_slideWindows = true;
-	_helpStyle = false;
-	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1, SHERLOCK_SCREEN_HEIGHT - 1);
-	_lookScriptFlag = false;
+class TattooScene : public Scene {
+private:
+	int _arrowZone;
+	int _maskCounter;
+	Common::Point _maskOffset;
+private:
+	void doBgAnimCheckCursor();
 
-	_key = _oldKey = '\0';
-	_selector = _oldSelector = -1;
-	_temp = _oldTemp = 0;
-	_temp1 = 0;
-	_lookHelp = 0;
-}
+	void doBgAnimEraseBackground();
+protected:
+	/**
+	 * Checks all the background shapes. If a background shape is animating,
+	 * it will flag it as needing to be drawn. If a non-animating shape is
+	 * colliding with another shape, it will also flag it as needing drawing
+	 */
+	virtual void checkBgShapes();
+public:
+	ImageFile *_mask, *_mask1;
+	CAnimStream _activeCAnim;
+public:
+	TattooScene(SherlockEngine *vm);
+
+	/**
+	 * Draw all objects and characters.
+	 */
+	virtual void doBgAnim();
+};
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
+
+#endif

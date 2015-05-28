@@ -318,61 +318,6 @@ public:
 	void setNPCPath(int npc);
 };
 
-namespace Scalpel {
-
-class ScalpelScene : public Scene {
-private:
-	void doBgAnimCheckCursor();
-protected:
-	/**
-	 * Checks all the background shapes. If a background shape is animating,
-	 * it will flag it as needing to be drawn. If a non-animating shape is
-	 * colliding with another shape, it will also flag it as needing drawing
-	 */
-	virtual void checkBgShapes();
-public:
-	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
-
-	/**
-	 * Draw all objects and characters.
-	 */
-	virtual void doBgAnim();
-};
-
-} // End of namespace Scalpel
-
-namespace Tattoo {
-
-class TattooScene : public Scene {
-private:
-	int _arrowZone;
-	int _maskCounter;
-	Common::Point _maskOffset;
-private:
-	void doBgAnimCheckCursor();
-
-	void doBgAnimEraseBackground();
-protected:
-	/**
-	 * Checks all the background shapes. If a background shape is animating,
-	 * it will flag it as needing to be drawn. If a non-animating shape is
-	 * colliding with another shape, it will also flag it as needing drawing
-	 */
-	virtual void checkBgShapes();
-public:
-	ImageFile *_mask, *_mask1;
-	CAnimStream _activeCAnim;
-public:
-	TattooScene(SherlockEngine *vm);
-
-	/**
-	 * Draw all objects and characters.
-	 */
-	virtual void doBgAnim();
-};
-
-} // End of namespace Tattoo
-
 } // End of namespace Sherlock
 
 #endif

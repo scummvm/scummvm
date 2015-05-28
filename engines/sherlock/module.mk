@@ -3,7 +3,12 @@ MODULE := engines/sherlock
 MODULE_OBJS = \
 	scalpel/darts.o \
 	scalpel/scalpel.o \
+	scalpel/scalpel_scene.o \
+	scalpel/scalpel_user_interface.o \
+	scalpel/settings.o \
 	tattoo/tattoo.o \
+	tattoo/tattoo_scene.o \
+	tattoo/tattoo_user_interface.o \
 	animation.o \
 	debugger.o \
 	detection.o \
@@ -17,7 +22,6 @@ MODULE_OBJS = \
 	saveload.o \
 	scene.o \
 	screen.o \
-	settings.o \
 	sherlock.o \
 	sound.o \
 	surface.o \

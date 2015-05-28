@@ -20,37 +20,49 @@
  *
  */
 
+#ifndef SHERLOCK_TATTOO_UI_H
+#define SHERLOCK_TATTOO_UI_H
+
+#include "common/scummsys.h"
 #include "sherlock/user_interface.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
-UserInterface *UserInterface::init(SherlockEngine *vm) {
-	if (vm->getGameID() == GType_SerratedScalpel)
-		return new Scalpel::ScalpelUserInterface(vm);
-	else
-		return new Tattoo::TattooUserInterface(vm);
-}
+namespace Tattoo {
 
-UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
-	_menuMode = STD_MODE;
-	_menuCounter = 0;
-	_infoFlag = false;
-	_windowOpen = false;
-	_endKeyActive = true;
-	_invLookFlag = 0;
-	_slideWindows = true;
-	_helpStyle = false;
-	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1, SHERLOCK_SCREEN_HEIGHT - 1);
-	_lookScriptFlag = false;
+class TattooUserInterface : public UserInterface {
+private:
+	Common::Rect _menuBounds;
+	Common::Rect _oldMenuBounds;
+	Common::Rect _invMenuBounds;
+	Common::Rect _oldInvMenuBounds;
+	Common::Rect _oldTagBounds;
+	Common::Rect _oldInvGraphicBounds;
+	Surface *_menuBuffer;
+	Surface *_invMenuBuffer;
+public:
+	TattooUserInterface(SherlockEngine *vm);
 
-	_key = _oldKey = '\0';
-	_selector = _oldSelector = -1;
-	_temp = _oldTemp = 0;
-	_temp1 = 0;
-	_lookHelp = 0;
-}
+	/**
+	 * Handles restoring any areas of the back buffer that were/are covered by UI elements
+	 */
+	void doBgAnimRestoreUI();
+
+	/**
+	 * Checks to see if the screen needs to be scrolled. If so, scrolls it towards the target position
+	 */
+	void doScroll();
+public:
+	virtual ~TattooUserInterface() {}
+
+	/**
+	 * Main input handler for the user interface
+	 */
+	virtual void handleInput();
+};
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
+
+#endif

@@ -23,6 +23,7 @@
 #include "sherlock/talk.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
+#include "sherlock/scalpel/scalpel_user_interface.h"
 
 namespace Sherlock {
 
@@ -547,7 +548,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 				}
 
-				ui._key = ui._oldKey = COMMANDS[TALK_MODE - 1];
+				ui._key = ui._oldKey = Scalpel::COMMANDS[TALK_MODE - 1];
 				ui._temp = ui._oldTemp = 0;
 				ui._menuMode = TALK_MODE;
 				_talkToFlag = 2;
@@ -784,9 +785,9 @@ void Talk::drawInterface() {
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
 			200 - screen.stringWidth("Down") / 2, "Down");
 	} else {
-		int strWidth = screen.stringWidth(PRESS_KEY_TO_CONTINUE);
+		int strWidth = screen.stringWidth(Scalpel::PRESS_KEY_TO_CONTINUE);
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160 - strWidth / 2, PRESS_KEY_TO_CONTINUE);
+			160 - strWidth / 2, Scalpel::PRESS_KEY_TO_CONTINUE);
 		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, "P");
 	}
 }
