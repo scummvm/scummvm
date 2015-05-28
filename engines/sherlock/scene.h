@@ -273,11 +273,6 @@ public:
 	int toggleObject(const Common::String &name);
 
 	/**
-	 * Draw all objects and characters.
-	 */
-	virtual void doBgAnim() = 0;
-
-	/**
 	 * Attempts to find a background shape within the passed bounds. If found,
 	 * it will return the shape number, or -1 on failure.
 	 */
@@ -300,12 +295,6 @@ public:
 	int closestZone(const Common::Point &pt);
 
 	/**
-	 * Update the screen back buffer with all of the scene objects which need
-	 * to be drawn
-	 */
-	void updateBackground();
-
-	/**
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Common::Serializer &s);
@@ -316,6 +305,17 @@ public:
 	 *		the scene number being entered
 	 */
 	void setNPCPath(int npc);
+public:
+	/**
+	 * Draw all objects and characters.
+	 */
+	virtual void doBgAnim() = 0;
+
+	/**
+	 * Update the screen back buffer with all of the scene objects which need
+	 * to be drawn
+	 */
+	virtual void updateBackground();
 };
 
 } // End of namespace Sherlock

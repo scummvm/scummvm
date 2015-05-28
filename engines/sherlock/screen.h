@@ -184,6 +184,9 @@ public:
 	void flushImage(ImageFrame *frame, const Common::Point &pt,
 		int16 *xp, int16 *yp, int16 *width, int16 *height);
 
+	void flushScaleImage(ImageFrame *frame, const Common::Point &pt,
+		int16 *xp, int16 *yp, int16 *width, int16 *height, int scaleVal);
+
 	/**
 	 * Returns the width of a string in pixels
 	 */

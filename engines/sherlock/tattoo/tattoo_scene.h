@@ -56,6 +56,13 @@ public:
 	 * Draw all objects and characters.
 	 */
 	virtual void doBgAnim();
+
+	/**
+	 * Update the screen back buffer with all of the scene objects which need
+	 * to be drawn
+	 */
+	virtual void updateBackground();
+
 };
 
 } // End of namespace Tattoo

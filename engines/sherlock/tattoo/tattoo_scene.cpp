@@ -222,6 +222,114 @@ void TattooScene::doBgAnim() {
 	doBgAnimEraseBackground();
 }
 
+void TattooScene::updateBackground() {
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+
+	Scene::updateBackground();
+
+	if (_mask != nullptr) {
+		switch (_currentScene) {
+		case 7:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), screen._currentScroll);
+			break;
+
+		case 8:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 180), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), screen._currentScroll);
+			if (!_vm->readFlags(880))
+				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(940, 300), screen._currentScroll);
+			break;
+
+		case 18:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(0, 203), screen._currentScroll);
+			if (!_vm->readFlags(189))
+				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124, 239), screen._currentScroll);
+			break;
+
+		case 53:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), screen._currentScroll);
+			break;
+
+		case 68:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(0, 203), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124, 239), screen._currentScroll);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	screen._flushScreen = true;
+
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &p = people[idx];
+
+		if (p._type != INVALID) {
+			if (_goToScene == -1 || _cAnim.size() == 0) {
+				if (p._type == REMOVE) {
+					screen.slamArea(p._oldPosition.x, p._oldPosition.y, p._oldSize.x, p._oldSize.y);
+					p._type = INVALID;
+				} else {
+					if (p._tempScaleVal == 256) {
+						screen.flushImage(p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
+							- p._imageFrame->_width), &p._oldPosition.x, &p._oldPosition.y, &p._oldSize.x, &p._oldSize.y);
+					}  else {
+						int ts = p._imageFrame->sDrawYSize(p._tempScaleVal);
+						int ty = p._position.y / FIXED_INT_MULTIPLIER - ts;
+						screen.flushScaleImage(p._imageFrame, Common::Point(p._tempX, ty),
+							&p._oldPosition.x, &p._oldPosition.y, &p._oldSize.x, &p._oldSize.y, p._tempScaleVal);
+					}
+				}
+			}
+		}
+	}
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (obj._type == ACTIVE_BG_SHAPE || obj._type == REMOVE) {
+			if (_goToScene == -1) {
+				if (obj._scaleVal == 256)
+					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
+						&obj._oldSize.x, &obj._oldSize.y);
+				else
+					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
+						&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+
+				if (obj._type == REMOVE)
+					obj._type = INVALID;
+			}
+		}
+	}
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (_goToScene == -1) {
+			if (obj._type == NO_SHAPE && (obj._flags & 1) == 0) {
+				screen.slamRect(obj.getNoShapeBounds());
+				screen.slamRect(obj.getOldBounds());
+			} else if (obj._type == HIDE_SHAPE) {
+				if (obj._scaleVal == 256)
+					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
+						&obj._oldSize.x, &obj._oldSize.y);
+				else
+					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
+						&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+				obj._type = HIDDEN;
+			}
+		}
+	}
+
+	screen._flushScreen = false;
+}
+
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

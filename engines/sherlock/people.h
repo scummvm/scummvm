@@ -74,6 +74,8 @@ public:
 	bool _npcPause;
 	byte _npcPath[MAX_NPC_PATH];
 	Common::String _npcName;
+	int _tempX;
+	int _tempScaleVal;
 
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using

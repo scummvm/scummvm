@@ -173,6 +173,10 @@ struct ImageFrame {
 	Common::Point _offset;
 	byte _rleMarker;
 	Graphics::Surface _frame;
+
+	int sDrawXSize(int scaleVal) const;
+
+	int sDrawYSize(int scaleVal) const;
 };
 
 class ImageFile : public Common::Array<ImageFrame> {

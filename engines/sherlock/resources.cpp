@@ -466,4 +466,14 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 	}
 }
 
+/*----------------------------------------------------------------*/
+
+int ImageFrame::sDrawXSize(int scaleVal) const {
+	error("TODO: sDrawXSize");
+}
+
+int ImageFrame::sDrawYSize(int scaleVal) const {
+	error("TODO: sDrawYSize");
+}
+
 } // End of namespace Sherlock

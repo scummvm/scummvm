@@ -126,6 +126,8 @@ public:
 	 */
 	void fillRect(const Common::Rect &r, byte color);
 
+	void maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX);
+
 	/**
 	 * Clear the screen
 	 */

@@ -253,30 +253,37 @@ void Screen::slamRect(const Common::Rect &r) {
 	}
 }
 
-void Screen::flushImage(ImageFrame *frame, const Common::Point &pt,
-		int16 *xp, int16 *yp, int16 *width, int16 *height) {
+void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
+		int16 *width, int16 *height) {
 	Common::Point imgPos = pt + frame->_offset;
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->_frame.w, imgPos.y + frame->_frame.h);
 	Common::Rect oldBounds(*xp, *yp, *xp + *width, *yp + *height);
 
-	// See if the areas of the old and new overlap, and if so combine the areas
-	if (newBounds.intersects(oldBounds)) {
-		Common::Rect mergedBounds = newBounds;
-		mergedBounds.extend(oldBounds);
-		mergedBounds.right += 1;
-		mergedBounds.bottom += 1;
+	if (!_flushScreen) {
+		// See if the areas of the old and new overlap, and if so combine the areas
+		if (newBounds.intersects(oldBounds)) {
+			Common::Rect mergedBounds = newBounds;
+			mergedBounds.extend(oldBounds);
+			mergedBounds.right += 1;
+			mergedBounds.bottom += 1;
 
-		slamRect(mergedBounds);
-	} else {
-		// The two areas are independent, so copy them both
-		slamRect(newBounds);
-		slamRect(oldBounds);
+			slamRect(mergedBounds);
+		} else {
+			// The two areas are independent, so copy them both
+			slamRect(newBounds);
+			slamRect(oldBounds);
+		}
 	}
 
 	*xp = newBounds.left;
 	*yp = newBounds.top;
 	*width = newBounds.width();
 	*height = newBounds.height();
+}
+
+void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
+		int16 *width, int16 *height, int scaleVal) {
+	error("TODO");
 }
 
 void Screen::print(const Common::Point &pt, byte color, const char *formatStr, ...) {

@@ -186,4 +186,10 @@ void Surface::setPixels(byte *pixels, int width, int height) {
 	_surface.setPixels(pixels);
 }
 
+void Surface::maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX) {
+	// TODO
+	error("TODO: maskArea");
+}
+
+
 } // End of namespace Sherlock
