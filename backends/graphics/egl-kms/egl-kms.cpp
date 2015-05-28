@@ -20,52 +20,38 @@
  *
  */
 
-// Needed so we don't get errors when including the Raspberry Pi headers
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-#include "backends/graphics/gles-custom/gles-custom.h"
+#include "backends/graphics/egl-kms/egl-kms.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
 #ifdef USE_OSD
 #include "common/translation.h"
 #endif
 
-#ifdef USE_GLES_RPI
-#include <bcm_host.h>
-#endif
-
-#ifdef USE_GLES_FBDEV
-// Includes for framebuffer size retrieval
-#include <sys/ioctl.h>
-#include <linux/fb.h>
-#include <linux/vt.h>
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-
-#ifdef USE_GLES_KMS
+#ifdef USE_EGL_KMS
 // This hacky define is needed since there is an struct member called "virtual" in xf86drm.h
 #define virtual __virtual
 #include <xf86drm.h>
 #undef virtual
 #include <xf86drmMode.h>
 #include <gbm.h>
+#include <fcntl.h>
 
-drmEventContext evctx;
+drmEventContext eventContext;
 
 void drmPageFlipHandler(int fd, uint frame, uint sec, uint usec, void *data) {
-	int *waiting_for_flip = (int*)data;
+	int *waiting_for_flip = (int *)data;
 	*waiting_for_flip = 0;
 }
 
-drm_fb *OpenGLCustomGraphicsManager::drm_fb_get_from_bo(gbm_bo *bob) {
-	drm_fb *fbu = (drm_fb*)gbm_bo_get_user_data(bob);
+drmFBStruct *EGLKMSGraphicsManager::drmFBGetFromBO(gbm_bo *bob) {
+	drmFBStruct *fbu = (drmFBStruct *)gbm_bo_get_user_data(bob);
 	uint32_t width, height, stride, handle;
 
 	if (fbu) {
 		return fbu;
 	}
 	
-	fbu = (drm_fb*)calloc(1, sizeof *fbu);
+	fbu = (drmFBStruct *)calloc(1, sizeof *fbu);
 	fbu->bo = bob;
 
 	width = gbm_bo_get_width(bob);
@@ -73,75 +59,59 @@ drm_fb *OpenGLCustomGraphicsManager::drm_fb_get_from_bo(gbm_bo *bob) {
 	stride = gbm_bo_get_stride(bob);
 	handle = gbm_bo_get_handle(bob).u32;
 
-	if (drmModeAddFB(drm.fd, width, height, 24, 32, stride, handle, &fbu->fb_id)) {
+	if (drmModeAddFB(_drm.fd, width, height, 24, 32, stride, handle, &fbu->fb_id)) {
 		debug("Could not add drm framebuffer\n");
 		free(fbu);
 		return NULL;
 	}
 
-	// We used to pass the destroy callback function here. Now it's done manually in deinit_egl()
+	// We used to pass the destroy callback function here. Now it's done manually in deinitEGL()
 	gbm_bo_set_user_data(bob, fbu, NULL);
 	return fbu;
 }
 
-void OpenGLCustomGraphicsManager::drmPageFlip(void) {
+void EGLKMSGraphicsManager::drmPageFlip(void) {
 	int waiting_for_flip = 1;
+	fd_set fds;
 
-	gbm_bo *next_bo = gbm_surface_lock_front_buffer(gbm.surface);
-	fb = drm_fb_get_from_bo(next_bo);
+	gbm_bo *next_bo = gbm_surface_lock_front_buffer(_gbm.surface);
+	_fb = drmFBGetFromBO(next_bo);
 
-	if (drmModePageFlip(drm.fd, drm.crtc_id, fb->fb_id,
-			DRM_MODE_PAGE_FLIP_EVENT, &waiting_for_flip)){
+	if (drmModePageFlip(_drm.fd, _drm.crtc_id, _fb->fb_id, DRM_MODE_PAGE_FLIP_EVENT, &waiting_for_flip)) {
 		debug ("Failed to queue pageflip\n");
 		return;
 	}
 
 	while (waiting_for_flip) {
 		FD_ZERO(&fds);
-		
 		FD_SET(0, &fds);
-		FD_SET(drm.fd, &fds);
-
-		select(drm.fd+1, &fds, NULL, NULL, NULL);
-		
-		drmHandleEvent(drm.fd, &evctx);
+		FD_SET(_drm.fd, &fds);
+		select(_drm.fd+1, &fds, NULL, NULL, NULL);
+		drmHandleEvent(_drm.fd, &eventContext);
 	}
 	
 	// release last buffer to render on again
-	gbm_surface_release_buffer(gbm.surface, bo);
-	bo = next_bo;
+	gbm_surface_release_buffer(_gbm.surface, _bo);
+	_bo = next_bo;
 }
 
-bool OpenGLCustomGraphicsManager::init_drm(void) {
-	static const char *modules[] = {
-			"i915", "radeon", "nouveau", "vmwgfx", "omapdrm", "exynos", "msm"
-	};
-	drmModeRes *resources;
-	drmModeConnector *connector = NULL;
-	drmModeEncoder *encoder = NULL;
+bool EGLKMSGraphicsManager::initDRM(void) {
+	// In plain C, we can just init eventContext at declare time, but it's now allowed in C++
+	eventContext.version = DRM_EVENT_CONTEXT_VERSION;
+	eventContext.page_flip_handler = drmPageFlipHandler;
+
+	drmModeConnector *connector;
+	drmModeEncoder *encoder;
 	uint i, area;
 
-	// In plain C, we can just init evctx at declare time, but it's now allowed in C++
-	evctx.version = DRM_EVENT_CONTEXT_VERSION;
-	evctx.page_flip_handler = drmPageFlipHandler;
+	_drm.fd = open("/dev/dri/card0", O_RDWR);
 
-	for (i = 0; i < ARRAYSIZE(modules); i++) {
-		debug("trying to load module %s...", modules[i]);
-		drm.fd = drmOpen(modules[i], NULL);
-		if (drm.fd < 0) {
-			debug("failed.");
-		} else {
-			debug("success.");
-			break;
-		}
-	}
-
-	if (drm.fd < 0) {
+	if (_drm.fd < 0) {
 		debug("could not open drm device\n");
 		return false;
 	}
 
-	resources = drmModeGetResources(drm.fd);
+	drmModeRes *resources = drmModeGetResources(_drm.fd);
 	if (!resources) {
 		debug("drmModeGetResources failed\n");
 		return false;
@@ -149,7 +119,7 @@ bool OpenGLCustomGraphicsManager::init_drm(void) {
 
 	// find a connected connector
 	for (i = 0; i < (uint)resources->count_connectors; i++) {
-		connector = drmModeGetConnector(drm.fd, resources->connectors[i]);
+		connector = drmModeGetConnector(_drm.fd, resources->connectors[i]);
 		if (connector->connection == DRM_MODE_CONNECTED) {
 			// it's connected, let's use this!
 			break;
@@ -169,19 +139,19 @@ bool OpenGLCustomGraphicsManager::init_drm(void) {
 		drmModeModeInfo *current_mode = &connector->modes[i];
 		uint current_area = current_mode->hdisplay * current_mode->vdisplay;
 		if (current_area > area) {
-			drm.mode = current_mode;
+			_drm.mode = current_mode;
 			area = current_area;
 		}
 	}
 
-	if (!drm.mode) {
+	if (!_drm.mode) {
 		debug("could not find mode\n");
 		return false;
 	}
 
 	// find encoder
 	for (i = 0; i < (uint)resources->count_encoders; i++) {
-		encoder = drmModeGetEncoder(drm.fd, resources->encoders[i]);
+		encoder = drmModeGetEncoder(_drm.fd, resources->encoders[i]);
 		if (encoder->encoder_id == connector->encoder_id)
 			break;
 		drmModeFreeEncoder(encoder);
@@ -193,30 +163,30 @@ bool OpenGLCustomGraphicsManager::init_drm(void) {
 		return false;
 	}
 
-	drm.crtc_id = encoder->crtc_id;
-	drm.connector_id = connector->connector_id;
+	_drm.crtc_id = encoder->crtc_id;
+	_drm.connector_id = connector->connector_id;
 
 	return true;
 }
 
-bool OpenGLCustomGraphicsManager::init_gbm() {
-	gbm.dev = gbm_create_device(drm.fd);
+bool EGLKMSGraphicsManager::initGBM() {
+	_gbm.dev = gbm_create_device(_drm.fd);
 
-	gbm.surface = gbm_surface_create(gbm.dev,
-			drm.mode->hdisplay, drm.mode->vdisplay,
+	_gbm.surface = gbm_surface_create(_gbm.dev,
+			_drm.mode->hdisplay, _drm.mode->vdisplay,
 			GBM_FORMAT_XRGB8888,
 			GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
-	if (!gbm.surface) {
+	if (!_gbm.surface) {
 		debug ("failed to create gbm surface\n");
 		return -1;
 	}
 	
 	return true;
 }
-#endif // USE_GLES_KMS
+#endif
 
-void OpenGLCustomGraphicsManager::init_egl() {
-	static const EGLint attribute_list[] = {
+void EGLKMSGraphicsManager::initEGL() {
+	static const EGLint attributeList[] = {
 	    EGL_RED_SIZE, 8,
 	    EGL_GREEN_SIZE, 8,
 	    EGL_BLUE_SIZE, 8,
@@ -226,157 +196,90 @@ void OpenGLCustomGraphicsManager::init_egl() {
 	};
 	
 	// create an EGL rendering context
-	static const EGLint context_attributes[] = {
+	static const EGLint contextAttributes[] = {
 	    EGL_CONTEXT_CLIENT_VERSION, 1,
 	    EGL_NONE
 	};
 
-	EGLint num_config;
+	EGLint numConfig;
 	
-#ifdef USE_GLES_RPI
-	bcm_host_init();
-	VC_RECT_T dst_rect;
-	VC_RECT_T src_rect;
-	
-	// create a Dispmanx EGL window surface
-	int32_t success = graphics_get_display_size(0, &eglInfo.width, &eglInfo.height);
-	assert(success >= 0);
-
-	vc_dispmanx_rect_set(&dst_rect, 0, 0, eglInfo.width, eglInfo.height);
-    
-	vc_dispmanx_rect_set(&src_rect, 0, 0, eglInfo.width << 16, eglInfo.height << 16);
-    
-	dispman_display = vc_dispmanx_display_open(0);
-	dispman_update = vc_dispmanx_update_start(0);
-	dispman_element = vc_dispmanx_element_add(dispman_update, dispman_display,
-                                              10, &dst_rect, 0, &src_rect,
-                                              DISPMANX_PROTECTION_NONE, NULL, NULL, DISPMANX_NO_ROTATE);
-    
-	nativewindow.element = dispman_element;
-	nativewindow.width = eglInfo.width;
-	nativewindow.height = eglInfo.height;
-    
-	vc_dispmanx_update_submit_sync(dispman_update);
-#endif // USE_GLES_RPI
-	
-#ifdef USE_GLES_FBDEV
-	fb_var_screeninfo vinfo;
-	int fb = open("/dev/fb0", O_RDWR, 0);
-	if (ioctl(fb, FBIOGET_VSCREENINFO, &vinfo) < 0) {
-		debug("Error obtainig framebuffer info\n");
-		return;
-	}
-	close (fb);
-
-	nativewindow.width = vinfo.xres;
-	nativewindow.height = vinfo.yres;
-#endif	
-
-#ifdef USE_GLES_KMS
-	if (!init_drm()) {
+	if (!initDRM()) {
 		debug("failed to initialize DRM\n");
 		return;
 	}
 
-	if (!init_gbm()) {
+	if (!initGBM()) {
 		debug("failed to initialize GBM\n");
 		return;
 	}
-#endif	
 	
-#ifdef USE_GLES_KMS
-	eglInfo.display = eglGetDisplay((NativeDisplayType)gbm.dev);
-#else
-	eglInfo.display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-#endif
-	assert(eglInfo.display != EGL_NO_DISPLAY);
+	_eglInfo.display = eglGetDisplay((NativeDisplayType)_gbm.dev);
+	assert(_eglInfo.display != EGL_NO_DISPLAY);
 
 	// initialize the EGL display connection
-	EGLBoolean result = eglInitialize(eglInfo.display, NULL, NULL);
+	EGLBoolean result = eglInitialize(_eglInfo.display, NULL, NULL);
 	assert(EGL_FALSE != result);
     
 	// get an appropriate EGL frame buffer configuration
-	result = eglChooseConfig(eglInfo.display, attribute_list, &eglInfo.config, 1, &num_config);
+	result = eglChooseConfig(_eglInfo.display, attributeList, &_eglInfo.config, 1, &numConfig);
 	assert(EGL_FALSE != result);
     
 	result = eglBindAPI(EGL_OPENGL_ES_API);
 	assert(EGL_FALSE != result);
 	
-	eglInfo.context = eglCreateContext(eglInfo.display, eglInfo.config, EGL_NO_CONTEXT, context_attributes);
-	assert(eglInfo.context != EGL_NO_CONTEXT);
+	_eglInfo.context = eglCreateContext(_eglInfo.display, _eglInfo.config, EGL_NO_CONTEXT, contextAttributes);
+	assert(_eglInfo.context != EGL_NO_CONTEXT);
 
-#ifdef USE_GLES_KMS
-        eglInfo.surface = eglCreateWindowSurface(eglInfo.display, eglInfo.config, 
-		(EGLNativeWindowType) gbm.surface, NULL);
-#else
-	eglInfo.surface = eglCreateWindowSurface(eglInfo.display, eglInfo.config, &nativewindow, NULL);
-#endif
-	assert(eglInfo.surface != EGL_NO_SURFACE);
+        _eglInfo.surface = eglCreateWindowSurface(_eglInfo.display, _eglInfo.config, 
+		(EGLNativeWindowType) _gbm.surface, NULL);
+	assert(_eglInfo.surface != EGL_NO_SURFACE);
 
 	// connect the context to the surface
-	result = eglMakeCurrent(eglInfo.display, eglInfo.surface, eglInfo.surface, eglInfo.context);
+	result = eglMakeCurrent(_eglInfo.display, _eglInfo.surface, _eglInfo.surface, _eglInfo.context);
 	assert(EGL_FALSE != result);
 
-	eglSwapInterval(eglInfo.display, 1);
+	eglSwapInterval(_eglInfo.display, 1);
 	
-#ifdef USE_GLES_KMS
-	eglSwapBuffers(eglInfo.display, eglInfo.surface);
-	bo = gbm_surface_lock_front_buffer(gbm.surface);
-        fb = drm_fb_get_from_bo(bo);
+	eglSwapBuffers(_eglInfo.display, _eglInfo.surface);
+	_bo = gbm_surface_lock_front_buffer(_gbm.surface);
+        _fb = drmFBGetFromBO(_bo);
 
         // set mode physical video mode
-        if (drmModeSetCrtc(drm.fd, drm.crtc_id, fb->fb_id, 0, 0, &drm.connector_id, 1, drm.mode)) {
+        if (drmModeSetCrtc(_drm.fd, _drm.crtc_id, _fb->fb_id, 0, 0, &_drm.connector_id, 1, _drm.mode)) {
                 debug ("failed to set mode\n");
                 return;
         }
 
-        eglInfo.width = drm.mode->hdisplay;
-        eglInfo.height = drm.mode->vdisplay;
-        eglInfo.refresh = drm.mode->vrefresh;
-#endif
+        _eglInfo.width = _drm.mode->hdisplay;
+        _eglInfo.height = _drm.mode->vdisplay;
+        _eglInfo.refresh = _drm.mode->vrefresh;
 }
 
-void OpenGLCustomGraphicsManager::deinit_egl() {
+void EGLKMSGraphicsManager::deinitEGL() {
 	// Release context resources
-	eglMakeCurrent(eglInfo.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-	eglDestroySurface(eglInfo.display, eglInfo.surface);
-	eglDestroyContext(eglInfo.display, eglInfo.context);
-	eglTerminate(eglInfo.display);
+	eglMakeCurrent(_eglInfo.display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	eglDestroySurface(_eglInfo.display, _eglInfo.surface);
+	eglDestroyContext(_eglInfo.display, _eglInfo.context);
+	eglTerminate(_eglInfo.display);
 
-#ifdef USE_GLES_RPI
-	dispman_update = vc_dispmanx_update_start(0);
-	vc_dispmanx_element_remove(dispman_update, dispman_element);
-	vc_dispmanx_update_submit_sync(dispman_update);
-	vc_dispmanx_display_close(dispman_display);
-#endif
-
-#ifdef USE_GLES_FBDEV
-	// Re-enable cursor blinking
-    	system("setterm -cursor on");
-#endif
-	
-#ifdef USE_GLES_KMS
-	if (fb->fb_id) {
-		drmModeRmFB(drm.fd, fb->fb_id);
+	if (_fb->fb_id) {
+		drmModeRmFB(_drm.fd, _fb->fb_id);
 	}
 	
-	free(fb);
-#endif
+	free(_fb);
 }
 
-OpenGLCustomGraphicsManager::OpenGLCustomGraphicsManager(SdlEventSource *eventSource)
-    : SdlGraphicsManager(eventSource), _lastVideoModeLoad(0), _hwScreen(nullptr), _lastRequestedWidth(0), _lastRequestedHeight(0),
-      _graphicsScale(0), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
-      _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
+EGLKMSGraphicsManager::EGLKMSGraphicsManager(SdlEventSource *eventSource)
+    : SdlGraphicsManager(eventSource), _hwScreen(nullptr) {
 
-	init_egl();	
+	initEGL();	
 }
 
-OpenGLCustomGraphicsManager::~OpenGLCustomGraphicsManager() {
-	deinit_egl();
+EGLKMSGraphicsManager::~EGLKMSGraphicsManager() {
+	deinitEGL();
 }
 
-void OpenGLCustomGraphicsManager::activateManager() {
+void EGLKMSGraphicsManager::activateManager() {
 	// We activate SDL manager here
 	SdlGraphicsManager::activateManager();
 
@@ -384,7 +287,7 @@ void OpenGLCustomGraphicsManager::activateManager() {
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
-void OpenGLCustomGraphicsManager::deactivateManager() {
+void EGLKMSGraphicsManager::deactivateManager() {
 	// Unregister the event observer
 	if (g_system->getEventManager()->getEventDispatcher()) {
 		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
@@ -393,7 +296,7 @@ void OpenGLCustomGraphicsManager::deactivateManager() {
 	SdlGraphicsManager::deactivateManager();
 }
 
-bool OpenGLCustomGraphicsManager::hasFeature(OSystem::Feature f) {
+bool EGLKMSGraphicsManager::hasFeature(OSystem::Feature f) {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 		return true;
@@ -405,39 +308,24 @@ bool OpenGLCustomGraphicsManager::hasFeature(OSystem::Feature f) {
 	}
 }
 
-void OpenGLCustomGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-		assert(getTransactionMode() != kTransactionNone);
-		_wantsFullScreen = enable;
-		break;
-
-	default:
-		OpenGLGraphicsManager::setFeatureState(f, enable);
-	}
+void EGLKMSGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	OpenGLGraphicsManager::setFeatureState(f, enable);
 }
 
-bool OpenGLCustomGraphicsManager::getFeatureState(OSystem::Feature f) {
-	switch (f) {
-	case OSystem::kFeatureFullscreenMode:
-		return _wantsFullScreen;
-	default:
-		return OpenGLGraphicsManager::getFeatureState(f);
-	}
+bool EGLKMSGraphicsManager::getFeatureState(OSystem::Feature f) {
+	return OpenGLGraphicsManager::getFeatureState(f);
 }
 
-bool OpenGLCustomGraphicsManager::setGraphicsMode(int mode) {
-	_graphicsScale = 1;
+bool EGLKMSGraphicsManager::setGraphicsMode(int mode) {
 	return OpenGLGraphicsManager::setGraphicsMode(mode);
 }
 
-void OpenGLCustomGraphicsManager::resetGraphicsScale() {
+void EGLKMSGraphicsManager::resetGraphicsScale() {
 	OpenGLGraphicsManager::resetGraphicsScale();
-	_graphicsScale = 1;
 }
 
 #ifdef USE_RGB_COLOR
-Common::List<Graphics::PixelFormat> OpenGLCustomGraphicsManager::getSupportedFormats() const {
+Common::List<Graphics::PixelFormat> EGLKMSGraphicsManager::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> formats;
 
 	// Our default mode is (memory layout wise) RGBA8888 which is a different
@@ -461,72 +349,42 @@ Common::List<Graphics::PixelFormat> OpenGLCustomGraphicsManager::getSupportedFor
 }
 #endif
 
-void OpenGLCustomGraphicsManager::updateScreen() {
-	if (_ignoreResizeEvents) {
-		--_ignoreResizeEvents;
-	}
-
+void EGLKMSGraphicsManager::updateScreen() {
 	OpenGLGraphicsManager::updateScreen();
-	eglSwapBuffers(eglInfo.display, eglInfo.surface);
+	eglSwapBuffers(_eglInfo.display, _eglInfo.surface);
 
-#ifdef USE_GLES_KMS 
-       OpenGLCustomGraphicsManager::drmPageFlip();
-#endif
+	EGLKMSGraphicsManager::drmPageFlip();
 }
 
-void OpenGLCustomGraphicsManager::notifyVideoExpose() {
+void EGLKMSGraphicsManager::notifyVideoExpose() {
 }
 
-void OpenGLCustomGraphicsManager::notifyResize(const uint width, const uint height) {
+void EGLKMSGraphicsManager::notifyResize(const uint width, const uint height) {
 }
 
-void OpenGLCustomGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+void EGLKMSGraphicsManager::transformMouseCoordinates(Common::Point &point) {
 	adjustMousePosition(point.x, point.y);
 }
 
-void OpenGLCustomGraphicsManager::notifyMousePos(Common::Point mouse) {
+void EGLKMSGraphicsManager::notifyMousePos(Common::Point mouse) {
 	setMousePosition(mouse.x, mouse.y);
 }
 
-void OpenGLCustomGraphicsManager::setInternalMousePosition(int x, int y) {
+void EGLKMSGraphicsManager::setInternalMousePosition(int x, int y) {
 	SDL_WarpMouse(x, y);
 }
 
-bool OpenGLCustomGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
-	// In some cases we might not want to load the requested video mode. This
-	// will assure that the window size is not altered.
-	if (_ignoreLoadVideoMode) {
-		_ignoreLoadVideoMode = false;
-		return true;
-	}
-
-	// This function should never be called from notifyResize thus we know
-	// that the requested size came from somewhere else.
-	_gotResize = false;
-
-	// Save the requested dimensions.
-	_lastRequestedWidth  = requestedWidth;
-	_lastRequestedHeight = requestedHeight;
-
-	// Apply the currently saved scale setting.
-	requestedWidth  *= _graphicsScale;
-	requestedHeight *= _graphicsScale;
-
-	// Set up the mode.
+bool EGLKMSGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
 	return setupMode(requestedWidth, requestedHeight);
 }
 
-bool OpenGLCustomGraphicsManager::setupMode(uint width, uint height) {
+bool EGLKMSGraphicsManager::setupMode(uint width, uint height) {
 	if (_hwScreen) {
 		//If we have a GLES context already, we have what we need and there's no need go any further
 		return(true);
 	}
 
-	#ifdef USE_GLES_RPI
-	_hwScreen = SDL_SetVideoMode(0, 0, 16, 0);
-	#else
 	_hwScreen = SDL_SetVideoMode(0, 0, 32, 0);
-	#endif	
 	
 	if (_hwScreen) {
 		// This is pretty confusing since RGBA8888 talks about the memory
@@ -543,7 +401,7 @@ bool OpenGLCustomGraphicsManager::setupMode(uint width, uint height) {
 	return _hwScreen != nullptr;
 }
 
-bool OpenGLCustomGraphicsManager::notifyEvent(const Common::Event &event) {
+bool EGLKMSGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_KEYUP:
 		return isHotkey(event);
@@ -573,10 +431,6 @@ bool OpenGLCustomGraphicsManager::notifyEvent(const Common::Event &event) {
 				beginGFXTransaction();
 					setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 				endGFXTransaction();
-
-				// Make sure we do not ignore the next resize. This
-				// effectively checks whether loadVideoMode has been called.
-				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
 				Common::String osdMsg = "Aspect ratio correction: ";
@@ -610,24 +464,14 @@ bool OpenGLCustomGraphicsManager::notifyEvent(const Common::Event &event) {
 					modeDesc = getSupportedGraphicsModes();
 				}
 
-				// Never ever try to resize the window when we simply want to
-				// switch the graphics mode. This assures that the window size
-				// does not change.
-				_ignoreLoadVideoMode = true;
-
 				beginGFXTransaction();
 					setGraphicsMode(modeDesc->id);
 				endGFXTransaction();
-
-				// Make sure we do not ignore the next resize. This
-				// effectively checks whether loadVideoMode has been called.
-				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
 				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
 				displayMessageOnOSD(osdMsg.c_str());
 #endif
-
 				return true;
 			}
 		}
@@ -638,7 +482,7 @@ bool OpenGLCustomGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 }
 
-bool OpenGLCustomGraphicsManager::isHotkey(const Common::Event &event) {
+bool EGLKMSGraphicsManager::isHotkey(const Common::Event &event) {
 	if (event.kbd.hasFlags(Common::KBD_ALT)) {
 		return    event.kbd.keycode == Common::KEYCODE_RETURN
 		       || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER

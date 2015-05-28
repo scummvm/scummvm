@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_GLES_CUSTOM_GRAPHICS_H
-#define BACKENDS_GRAPHICS_GLES_CUSTOM_GRAPHICS_H
+#ifndef BACKENDS_GRAPHICS_EGL_FBDEV_GRAPHICS_H
+#define BACKENDS_GRAPHICS_EGL_FBDEV_GRAPHICS_H
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
@@ -33,42 +33,17 @@
 #include <GLES/gl.h>
 #include <EGL/egl.h>
 
-#ifdef USE_GLES_KMS
-struct gbm_device;
-struct gbm_surface;
-struct gbm_bo;
-
-
-struct gbm_struct {
-	gbm_device *dev;
-	gbm_surface *surface;
-};
-
-struct _drmModeModeInfo;
-struct drm_struct {
-	int fd;
-	_drmModeModeInfo *mode;
-	uint crtc_id;
-	uint connector_id;
-};
-
-struct drm_fb {
-	gbm_bo *bo;
-	uint fb_id;
-};
-#endif
-
-class OpenGLCustomGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
+class EGLFBDEVGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
 public:
-	OpenGLCustomGraphicsManager(SdlEventSource *eventSource);
-	virtual ~OpenGLCustomGraphicsManager();
+	EGLFBDEVGraphicsManager(SdlEventSource *eventSource);
+	virtual ~EGLFBDEVGraphicsManager();
 
 	// GraphicsManager API
 	virtual void activateManager();
 	virtual void deactivateManager();
 
-	virtual void init_egl();
-	virtual void deinit_egl();
+	virtual void initEGL();
+	virtual void deinitEGL();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
@@ -99,17 +74,9 @@ protected:
 private:
 	bool setupMode(uint width, uint height);
 
-	uint32 _lastVideoModeLoad;
 	SDL_Surface *_hwScreen;
 
-	uint _lastRequestedWidth;
-	uint _lastRequestedHeight;
-	uint _graphicsScale;
-	bool _ignoreLoadVideoMode;
 	bool _gotResize;
-
-	bool _wantsFullScreen;
-	uint _ignoreResizeEvents;
 
 	struct VideoMode {
 		VideoMode() : width(0), height(0) {}
@@ -136,10 +103,6 @@ private:
 		uint width, height;
 	};
 	typedef Common::Array<VideoMode> VideoModeArray;
-	VideoModeArray _fullscreenVideoModes;
-
-	uint _desiredFullscreenWidth;
-	uint _desiredFullscreenHeight;
 
 	virtual bool isHotkey(const Common::Event &event);
 
@@ -149,31 +112,9 @@ private:
 		EGLContext context;
 		EGLSurface surface;
 		uint width, height, refresh;
-	} eglInfo;
+	} _eglInfo;
 
-#ifdef USE_GLES_RPI
-	DISPMANX_ELEMENT_HANDLE_T dispman_element;
-	DISPMANX_DISPLAY_HANDLE_T dispman_display;
-	DISPMANX_UPDATE_HANDLE_T dispman_update;
-	EGL_DISPMANX_WINDOW_T nativewindow;
-#endif
-
-#ifdef USE_GLES_FBDEV
-	fbdev_window nativewindow;
-#endif
-
-#ifdef USE_GLES_KMS
-	gbm_struct gbm;
-	drm_struct drm;
-	gbm_bo *bo;
-	drm_fb *fb;
-	fd_set fds;
-	bool init_gbm ();
-	bool init_drm ();
-	void drmPageFlip();
-	drm_fb *drm_fb_get_from_bo(gbm_bo *bob);
-#endif
-
+	fbdev_window _nativeWindow;
 };
 
 #endif
