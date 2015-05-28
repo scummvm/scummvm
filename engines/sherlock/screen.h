@@ -71,8 +71,6 @@ private:
 	int _oldFadePercent;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
-	int _scrollSize;
-	int _targetScroll;
 private:
 	/**
 	 * Merges together overlapping dirty areas of the screen
@@ -101,7 +99,9 @@ public:
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
 	byte _tMap[PALETTE_SIZE];
-	int _currentScroll;
+	int _currentScroll, _targetScroll;
+	int _scrollSize, _scrollSpeed;
+	bool _flushScreen;
 public:
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();

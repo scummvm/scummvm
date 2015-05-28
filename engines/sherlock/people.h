@@ -114,6 +114,8 @@ public:
 	int _holmesQuotient;
 	bool _forceWalkReload;
 	bool _useWalkLib;
+
+	int _walkControl;
 public:
 	People(SherlockEngine *vm);
 	~People();

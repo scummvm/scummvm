@@ -97,6 +97,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_hSavedFacing = -1;
 	_forceWalkReload = false;
 	_useWalkLib = false;
+	_walkControl = 0;
 
 	_portrait._sequences = new byte[32];
 }

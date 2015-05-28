@@ -45,8 +45,10 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 	_fadeBytesRead = _fadeBytesToRead = 0;
 	_oldFadePercent = 0;
 	_scrollSize = 0;
+	_scrollSpeed = 0;
 	_currentScroll = 0;
 	_targetScroll = 0;
+	_flushScreen = false;
 }
 
 Screen::~Screen() {

@@ -351,7 +351,7 @@ private:
 private:
 	void doBgAnimCheckCursor();
 
-	void doBgAnimHandleMask();
+	void doBgAnimEraseBackground();
 protected:
 	/**
 	 * Checks all the background shapes. If a background shape is animating,

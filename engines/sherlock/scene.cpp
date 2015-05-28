@@ -1740,7 +1740,7 @@ void TattooScene::doBgAnimCheckCursor() {
 	}
 }
 
-void TattooScene::doBgAnimHandleMask() {
+void TattooScene::doBgAnimEraseBackground() {
 	TattooEngine &vm = *((TattooEngine *)_vm);
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -1813,6 +1813,37 @@ void TattooScene::doBgAnimHandleMask() {
 		if (vm._creditsActive)
 			vm.eraseCredits();
 	}
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (obj._type == NO_SHAPE && (obj._flags & 1) == 0) {
+			screen._backBuffer1.blitFrom(screen._backBuffer2, obj._position, obj.getNoShapeBounds());
+
+			obj._oldPosition = obj._position;
+			obj._oldSize = obj._noShapeSize;
+		}
+	}
+
+	// Adjust the Target Scroll if needed
+	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - screen._currentScroll) < 
+			(SHERLOCK_SCREEN_WIDTH / 8) && people[people._walkControl]._delta.x < 0) {
+		
+		screen._targetScroll = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - 
+				SHERLOCK_SCREEN_WIDTH / 8 - 250);
+		if (screen._targetScroll < 0)
+			screen._targetScroll = 0;
+	}
+
+	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - screen._currentScroll) > (SHERLOCK_SCREEN_WIDTH / 4 * 3) 
+			&& people[people._walkControl]._delta.x > 0)
+		screen._targetScroll = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - 
+			SHERLOCK_SCREEN_WIDTH / 4 * 3 + 250);
+
+	if (screen._targetScroll > screen._scrollSize)
+		screen._targetScroll = screen._scrollSize;
+
+	ui.doScroll();
 }
 
 void TattooScene::doBgAnim() {
@@ -1827,6 +1858,7 @@ void TattooScene::doBgAnim() {
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	talk._talkToAbort = false;
 
+	// Check the characters and sprites for updates
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER)
 			people[idx].checkSprite();
@@ -1836,6 +1868,9 @@ void TattooScene::doBgAnim() {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE)
 			_bgShapes[idx].checkObject();
 	}
+
+	// Erase any affected background areas
+	doBgAnimEraseBackground();
 }
 
 } // End of namespace Tattoo

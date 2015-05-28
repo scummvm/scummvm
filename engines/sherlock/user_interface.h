@@ -333,7 +333,15 @@ private:
 public:
 	TattooUserInterface(SherlockEngine *vm);
 
+	/**
+	 * Handles restoring any areas of the back buffer that were/are covered by UI elements
+	 */
 	void doBgAnimRestoreUI();
+
+	/**
+	 * Checks to see if the screen needs to be scrolled. If so, scrolls it towards the target position
+	 */
+	void doScroll();
 public:
 	virtual ~TattooUserInterface() {}
 

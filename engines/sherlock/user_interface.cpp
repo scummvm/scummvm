@@ -2352,6 +2352,31 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 		screen.restoreBackground(scene._activeCAnim._removeBounds);
 }
 
+void TattooUserInterface::doScroll() {
+	Screen &screen = *_vm->_screen;
+	int oldScroll = screen._currentScroll;
+
+	// If we're already at the target scroll position, nothing needs to be done
+	if (screen._targetScroll == screen._currentScroll)
+		return;
+
+	screen._flushScreen = true;
+	if (screen._targetScroll > screen._currentScroll) {
+		screen._currentScroll += screen._scrollSpeed;
+		if (screen._currentScroll > screen._targetScroll)
+			screen._currentScroll = screen._targetScroll;
+	} else if (screen._targetScroll < screen._currentScroll) {
+		screen._currentScroll -= screen._scrollSpeed;
+		if (screen._currentScroll < screen._targetScroll)
+			screen._currentScroll = screen._targetScroll;
+	}
+
+	if (_menuBuffer != nullptr)
+		_menuBounds.translate(screen._currentScroll - oldScroll, 0);
+	if (_invMenuBuffer != nullptr)
+		_invMenuBounds.translate(screen._currentScroll - oldScroll, 0);
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
