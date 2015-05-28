@@ -275,7 +275,7 @@ public:
 	/**
 	 * Draw all objects and characters.
 	 */
-	virtual void doBgAnim();
+	virtual void doBgAnim() = 0;
 
 	/**
 	 * Attempts to find a background shape within the passed bounds. If found,
@@ -318,7 +318,11 @@ public:
 	void setNPCPath(int npc);
 };
 
+namespace Scalpel {
+
 class ScalpelScene : public Scene {
+private:
+	void doBgAnimCheckCursor();
 protected:
 	/**
 	 * Checks all the background shapes. If a background shape is animating,
@@ -335,10 +339,19 @@ public:
 	virtual void doBgAnim();
 };
 
+} // End of namespace Scalpel
+
+namespace Tattoo {
+
 class TattooScene : public Scene {
 private:
-	CAnimStream _activeCAnim;
 	int _arrowZone;
+	int _maskCounter;
+	Common::Point _maskOffset;
+private:
+	void doBgAnimCheckCursor();
+
+	void doBgAnimHandleMask();
 protected:
 	/**
 	 * Checks all the background shapes. If a background shape is animating,
@@ -347,6 +360,9 @@ protected:
 	 */
 	virtual void checkBgShapes();
 public:
+	ImageFile *_mask, *_mask1;
+	CAnimStream _activeCAnim;
+public:
 	TattooScene(SherlockEngine *vm);
 
 	/**
@@ -354,6 +370,8 @@ public:
 	 */
 	virtual void doBgAnim();
 };
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 

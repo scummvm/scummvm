@@ -36,16 +36,27 @@ private:
 	 */
 	void loadInitialPalette();
 protected:
+	/**
+	 * Initialize the engine
+	 */
 	virtual void initialize();
 
 	virtual void showOpening();
 
+	/**
+	 * Starting a scene within the game
+	 */
 	virtual void startScene();
 public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc) {}
-
+	bool _creditsActive;
+public:
+	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine() {}
+
+	/**
+	 * Erase any area of the screen covered by credits
+	 */
+	void eraseCredits();
 };
 
 } // End of namespace Tattoo

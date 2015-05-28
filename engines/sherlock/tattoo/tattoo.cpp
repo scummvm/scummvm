@@ -27,13 +27,15 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
+		SherlockEngine(syst, gameDesc) {
+	_creditsActive = false;
+}
+
 void TattooEngine::showOpening() {
 	// TODO
 }
 
-/**
- * Initialize the engine
- */
 void TattooEngine::initialize() {
 	initGraphics(640, 480, true);
 
@@ -52,9 +54,6 @@ void TattooEngine::initialize() {
 	loadInitialPalette();
 }
 
-/**
- * Starting a scene within the game
- */
 void TattooEngine::startScene() {
 	// TODO
 }
@@ -67,6 +66,10 @@ void TattooEngine::loadInitialPalette() {
 	_screen->setPalette(palette);
 
 	delete stream;
+}
+
+void TattooEngine::eraseCredits() {
+	// TODO
 }
 
 } // End of namespace Tattoo

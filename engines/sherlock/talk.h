@@ -108,8 +108,8 @@ enum {
 enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };
 
 class SherlockEngine;
-class ScalpelUserInterface;
 class Talk;
+namespace Scalpel { class ScalpelUserInterface; };
 
 typedef OpcodeReturn(Talk::*OpcodeMethod)(const byte *&str);
 
@@ -164,7 +164,7 @@ struct TalkSequences {
 };
 
 class Talk {
-	friend class ScalpelUserInterface;
+	friend class Scalpel::ScalpelUserInterface;
 private:
 	/**
 	 * Remove any voice commands from a loaded statement list

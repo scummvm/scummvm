@@ -137,6 +137,8 @@ public:
 	virtual void printObjectDesc() {}
 };
 
+namespace Scalpel {
+
 class ScalpelUserInterface: public UserInterface {
 	friend class Inventory;
 	friend class Settings;
@@ -314,9 +316,24 @@ public:
 	virtual void printObjectDesc();
 };
 
+} // End of namespace Scalpel
+
+namespace Tattoo {
+
 class TattooUserInterface : public UserInterface {
+private:
+	Common::Rect _menuBounds;
+	Common::Rect _oldMenuBounds;
+	Common::Rect _invMenuBounds;
+	Common::Rect _oldInvMenuBounds;
+	Common::Rect _oldTagBounds;
+	Common::Rect _oldInvGraphicBounds;
+	Surface *_menuBuffer;
+	Surface *_invMenuBuffer;
 public:
 	TattooUserInterface(SherlockEngine *vm);
+
+	void doBgAnimRestoreUI();
 public:
 	virtual ~TattooUserInterface() {}
 
@@ -325,6 +342,8 @@ public:
 	 */
 	virtual void handleInput();
 };
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 

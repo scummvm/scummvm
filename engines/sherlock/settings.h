@@ -28,7 +28,8 @@
 namespace Sherlock {
 
 class SherlockEngine;
-class UserInterface;
+
+namespace Scalpel {
 
 class Settings {
 private:
@@ -54,6 +55,8 @@ public:
 	 */
 	static void show(SherlockEngine *vm);
 };
+
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
 

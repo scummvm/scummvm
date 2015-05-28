@@ -25,6 +25,8 @@
 
 namespace Sherlock {
 
+namespace Scalpel {
+
 static const int SETUP_POINTS[12][4]  = {
 	{ 4, 154, 101, 53 },		// Exit
 	{ 4, 165, 101, 53 },		// Music Toggle
@@ -332,5 +334,7 @@ void Settings::show(SherlockEngine *vm) {
 	ui._windowBounds.top = CONTROLS_Y1;
 	ui._key = -1;
 }
+
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock

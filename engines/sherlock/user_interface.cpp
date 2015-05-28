@@ -82,9 +82,9 @@ const char *const MUSE[] = {
 
 UserInterface *UserInterface::init(SherlockEngine *vm) {
 	if (vm->getGameID() == GType_SerratedScalpel)
-		return new ScalpelUserInterface(vm);
+		return new Scalpel::ScalpelUserInterface(vm);
 	else
-		return new TattooUserInterface(vm);
+		return new Tattoo::TattooUserInterface(vm);
 }
 
 UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
@@ -107,6 +107,8 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 }
 
 /*----------------------------------------------------------------*/
+
+namespace Scalpel {
 
 ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm) {
 	_controls = new ImageFile("menu.all");
@@ -2296,15 +2298,60 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 	events.setCursor(ARROW);
 }
 
+}
+
 /*----------------------------------------------------------------*/
 
+namespace Tattoo {
+
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) {
-	//
+	_menuBuffer = nullptr;
+	_invMenuBuffer = nullptr;
 }
 
 void TattooUserInterface::handleInput() {
 	// TODO
 	_vm->_events->pollEventsAndWait();
 }
+
+void TattooUserInterface::doBgAnimRestoreUI() {
+	TattooScene &scene = *((TattooScene *)_vm->_scene);
+	Screen &screen = *_vm->_screen;
+
+	// If _oldMenuBounds was set, then either a new menu has been opened or the current menu has been closed.
+	// Either way, we need to restore the area where the menu was displayed
+	if (_oldMenuBounds.width() > 0)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldMenuBounds.left, _oldMenuBounds.top),
+			_oldMenuBounds);
+
+	if (_oldInvMenuBounds.width() > 0)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldInvMenuBounds.left, _oldInvMenuBounds.top),
+			_oldInvMenuBounds);
+
+	if (_menuBuffer != nullptr)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_menuBounds.left, _menuBounds.top), _menuBounds);
+	if (_invMenuBuffer != nullptr)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_invMenuBounds.left, _invMenuBounds.top), _invMenuBounds);
+
+	// If there is a Text Tag being display, restore the area underneath it
+	if (_oldTagBounds.width() > 0)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldTagBounds.left, _oldTagBounds.top), 
+			_oldTagBounds);
+
+	// If there is an Inventory being shown, restore the graphics underneath it
+	if (_oldInvGraphicBounds.width() > 0)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldInvGraphicBounds.left, _oldInvGraphicBounds.top), 
+			_oldInvGraphicBounds);
+
+	// If a canimation is active, restore the graphics underneath it
+	if (scene._activeCAnim._images != nullptr)
+		screen.restoreBackground(scene._activeCAnim._oldBounds);
+
+	// If a canimation just ended, remove it's graphics from the backbuffer
+	if (scene._activeCAnim._removeBounds.width() > 0)
+		screen.restoreBackground(scene._activeCAnim._removeBounds);
+}
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock

@@ -332,7 +332,7 @@ void Talk::talkTo(const Common::String &filename) {
 	if (IS_SERRATED_SCALPEL) {
 		// Restore any pressed button
 		if (!ui._windowOpen && savedMode != STD_MODE)
-			((ScalpelUserInterface *)_vm->_ui)->restoreButton((int)(savedMode - 1));
+			((Scalpel::ScalpelUserInterface *)_vm->_ui)->restoreButton((int)(savedMode - 1));
 	}
 
 	// Clear the ui counter so that anything displayed on the info line

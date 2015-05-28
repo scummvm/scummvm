@@ -244,7 +244,7 @@ void Inventory::drawInventory(InvNewMode mode) {
 	}
 
 	assert(IS_SERRATED_SCALPEL);
-	((ScalpelUserInterface *)_vm->_ui)->_oldUse = -1;
+	((Scalpel::ScalpelUserInterface *)_vm->_ui)->_oldUse = -1;
 }
 
 void Inventory::invCommands(bool slamIt) {
@@ -324,7 +324,7 @@ void Inventory::refreshInv() {
 	
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
+	Scalpel::ScalpelUserInterface &ui = *(Scalpel::ScalpelUserInterface *)_vm->_ui;
 
 	ui._invLookFlag = true;
 	freeInv();

@@ -72,7 +72,6 @@ private:
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
 	int _scrollSize;
-	int _currentScroll;
 	int _targetScroll;
 private:
 	/**
@@ -102,6 +101,7 @@ public:
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
 	byte _tMap[PALETTE_SIZE];
+	int _currentScroll;
 public:
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
