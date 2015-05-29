@@ -425,6 +425,16 @@ int32 Sound::adlibGetRepeating() const {
 	return false;
 }
 
+void Sound::adlibSyncVolume() {
+	if (!_hasAdLib)
+		return;
+
+	if (_adlPlayer)
+		_adlPlayer->syncVolume();
+	if (_mdyPlayer)
+		_mdyPlayer->syncVolume();
+}
+
 void Sound::adlibSetRepeating(int32 repCount) {
 	if (!_hasAdLib)
 		return;

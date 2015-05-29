@@ -96,6 +96,7 @@ public:
 	int32 adlibGetRepeating() const;
 
 	void adlibSetRepeating(int32 repCount);
+	void adlibSyncVolume();
 
 
 	// Infogrames

@@ -37,6 +37,28 @@ static const int kPitchTomToSnare =  7;
 static const int kPitchSnareDrum  = kPitchTom + kPitchTomToSnare;
 
 
+// Attenuation map for GUI volume slider
+// Note: no volume control in the original engine
+const uint8 AdLib::kVolumeTable[Audio::Mixer::kMaxMixerVolume + 1] = {
+	63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 62, 61, 59, 57, 56, 55,
+	53, 52, 51, 50, 49, 48, 47, 46, 46, 45, 44, 43, 43, 42, 41, 41,
+	40, 39, 39, 38, 38, 37, 37, 36, 36, 35, 35, 34, 34, 33, 33, 33,
+	32, 32, 31, 31, 31, 30, 30, 30, 29, 29, 29, 28, 28, 28, 27, 27,
+	27, 26, 26, 26, 26, 25, 25, 25, 24, 24, 24, 24, 23, 23, 23, 23,
+	22, 22, 22, 22, 21, 21, 21, 21, 21, 20, 20, 20, 20, 19, 19, 19,
+	19, 19, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 16, 16, 16,
+	16, 16, 16, 15, 15, 15, 15, 15, 15, 14, 14, 14, 14, 14, 14, 13,
+	13, 13, 13, 13, 13, 13, 12, 12, 12, 12, 12, 12, 12, 11, 11, 11,
+	11, 11, 11, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10,  9,  9,  9,
+	 9,  9,  9,  9,  9,  8,  8,  8,  8,  8,  8,  8,  8,  8,  7,  7,
+	 7,  7,  7,  7,  7,  7,  7,  6,  6,  6,  6,  6,  6,  6,  6,  6,
+	 6,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  4,  4,  4,  4,  4,
+	 4,  4,  4,  4,  4,  4,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,
+	 3,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  2,  1,  1,  1,
+	 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  0,  0,  0,  0,
+	 0
+};
+
 // Is the operator a modulator (0) or a carrier (1)?
 const uint8 AdLib::kOperatorType[kOperatorCount] = {
 	0, 0, 0, 1, 1, 1,
@@ -94,7 +116,7 @@ const uint16 AdLib::kHihatParams    [kParamCount] = {
 
 
 AdLib::AdLib(Audio::Mixer &mixer, int callbackFreq) : _mixer(&mixer), _opl(0),
-	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true) {
+	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true), _volume(0) {
 
 	_rate = _mixer->getOutputRate();
 
@@ -103,8 +125,10 @@ AdLib::AdLib(Audio::Mixer &mixer, int callbackFreq) : _mixer(&mixer), _opl(0),
 	createOPL();
 	initOPL();
 
+	syncVolume();
+
 	_opl->start(new Common::Functor0Mem<void, AdLib>(this, &AdLib::onTimer), callbackFreq);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle,
 			this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
@@ -433,6 +457,13 @@ void AdLib::writeKeyScaleLevelVolume(uint8 oper) {
 	volume = (63 - (_operatorParams[oper][kParamLevel] & 0x3F)) * _operatorVolume[oper];
 	volume = 63 - ((2 * volume + kMaxVolume) / (2 * kMaxVolume));
 
+	// Adjust carriers for GUI volume slider
+	if (kOperatorType[oper] == 1) {
+		volume += kVolumeTable[_volume];
+		if (volume > 63)
+			volume = 63;
+	}
+
 	uint8 keyScale = _operatorParams[oper][kParamKeyScaleLevel] << 6;
 
 	writeOPL(0x40 + kOperatorOffset[oper], volume | keyScale);
@@ -632,6 +663,21 @@ void AdLib::setFreq(uint8 voice, uint16 note, bool on) {
 
 void AdLib::setTimerFrequency(int timerFrequency) {
 	_opl->setCallbackFrequency(timerFrequency);
+}
+
+void AdLib::syncVolume() {
+	Common::StackLock slock(_mutex);
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_volume = (mute ? 0 : ConfMan.getInt("music_volume"));
+
+	if (_playing) {
+		for(int i = 0; i < kOperatorCount; i++)
+			writeKeyScaleLevelVolume(i);
+	}
 }
 
 } // End of namespace Gob

@@ -53,6 +53,7 @@ public:
 
 	void startPlay();
 	void stopPlay();
+	void syncVolume();
 
 // AudioStream API
 	int  readBuffer(int16 *buffer, const int numSamples);
@@ -211,6 +212,8 @@ protected:
 	void setTimerFrequency(int timerFrequency);
 
 private:
+	static const uint8 kVolumeTable[Audio::Mixer::kMaxMixerVolume + 1];
+
 	static const uint8 kOperatorType  [kOperatorCount];
 	static const uint8 kOperatorOffset[kOperatorCount];
 	static const uint8 kOperatorVoice [kOperatorCount];
@@ -234,6 +237,8 @@ private:
 	OPL::OPL *_opl;
 
 	Common::Mutex _mutex;
+
+	int _volume;
 
 	uint32 _rate;
 
