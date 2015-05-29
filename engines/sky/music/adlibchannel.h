@@ -68,6 +68,7 @@ public:
 private:
 	OPL::OPL *_opl;
 	uint8 *_musicData;
+	uint16 _musicVolume;
 	AdLibChannelType _channelData;
 
 	InstrumentStruct *_instruments;

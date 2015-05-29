@@ -40,7 +40,7 @@ AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pD
 		error("Failed to create OPL");
 
 	_opl->start(new Common::Functor0Mem<void, AdLibMusic>(this, &AdLibMusic::onTimer), 50);
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibMusic::~AdLibMusic() {
@@ -93,8 +93,8 @@ void AdLibMusic::startDriver() {
 
 void AdLibMusic::setVolume(uint16 param) {
 	_musicVolume = param;
-	// FIXME: This is bad. There's no real volume control here.
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 2 * param);
+	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
+		_channels[cnt]->updateVolume(_musicVolume);
 }
 
 bool AdLibMusic::isStereo() const {
