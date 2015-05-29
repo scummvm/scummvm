@@ -174,8 +174,14 @@ struct ImageFrame {
 	byte _rleMarker;
 	Graphics::Surface _frame;
 
+	/**
+	 * Return the frame width adjusted by a specified scale amount
+	 */
 	int sDrawXSize(int scaleVal) const;
 
+	/**
+	 * Return the frame height adjusted by a specified scale amount
+	 */
 	int sDrawYSize(int scaleVal) const;
 };
 

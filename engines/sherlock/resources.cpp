@@ -469,11 +469,31 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 /*----------------------------------------------------------------*/
 
 int ImageFrame::sDrawXSize(int scaleVal) const {
-	error("TODO: sDrawXSize");
+	int width = _width;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
+
+	if (scaleVal >= 256)
+		--width;
+
+	int result = width * 256 / scale;
+	if (scaleVal >= 256)
+		++result;
+
+	return result;
 }
 
 int ImageFrame::sDrawYSize(int scaleVal) const {
-	error("TODO: sDrawYSize");
+	int height = _height;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
+
+	if (scaleVal >= 256)
+		--height;
+
+	int result = height * 256 / scale;
+	if (scaleVal >= 256)
+		++result;
+
+	return result;
 }
 
 } // End of namespace Sherlock
