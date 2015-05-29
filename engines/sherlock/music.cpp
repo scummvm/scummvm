@@ -23,10 +23,13 @@
 #include "common/config-manager.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
+#include "sherlock/scalpel/drivers/mididriver.h"
 
 namespace Sherlock {
 
 #define NUM_SONGS 45
+
+#define USE_SCI_MIDI_PLAYER 1
 
 /* This tells which song to play in each room, 0 = no song played */
 static const char ROOM_SONG[62] = {
@@ -59,7 +62,7 @@ MidiParser_SH::MidiParser_SH() {
 }
 
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
-	warning("parseNextEvent");
+//	warning("parseNextEvent");
 
 	// An attempt to remap MT32 instruments to GMIDI. Only partially successful, it still
 	// does not sound even close to the real MT32. Oddly enough, on the actual hardware MT32
@@ -88,13 +91,15 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 	info.delta = 0;
 
 	info.event = *_position._playPos++;
-	warning("Event %x", info.event);
+	//warning("Event %x", info.event);
 	_position._runningStatus = info.event;
 
 	switch (info.command()) {
-	case 0xC: {
+	case 0xC: { // program change
 		int idx = *_position._playPos++;
-		info.basic.param1 = mt32Map[idx & 0x7f]; // remap MT32 to GM
+		info.basic.param1 = idx & 0x7f;
+		// don't do this here, it breaks adlib
+		//info.basic.param1 = mt32Map[idx & 0x7f]; // remap MT32 to GM
 		info.basic.param2 = 0;
 		}
 		break;
@@ -160,14 +165,12 @@ bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
 	warning("loadMusic");
 	unloadMusic();
 
-	byte *pos = data;
+	byte  *headerPtr  = data;
+	byte  *pos        = data;
+	uint16 headerSize = READ_LE_UINT16(headerPtr);
+	assert(headerSize == 0x7F);
 
-	if (memcmp("            ", pos, 12)) {
-		warning("Expected header not found in music file");
-		return false;
-	}
-	pos += 12;
-	byte headerSize = *pos;
+	// Skip over header
 	pos += headerSize;
 
 	_lastEvent = 0;
@@ -190,16 +193,49 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_vm->_res->addToCache("MUSIC.LIB");
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
-	assert(_driver);
 
-	int ret = _driver->open();
-	if (ret == 0) {
-		_driver->sendGMReset();
-		_driver->setTimerCallback(&_midiParser, &_midiParser.timerCallback);
+	_musicType = MidiDriver::getMusicType(dev);
+
+#if USE_SCI_MIDI_PLAYER
+	_pMidiDrv = NULL;
+#endif
+	_driver = NULL;
+
+	switch (_musicType) {
+	case MT_ADLIB:
+#if USE_SCI_MIDI_PLAYER
+		_pMidiDrv = MidiPlayer_AdLib_create();
+#else
+		_driver = MidiDriver_AdLib_create();
+#endif
+		break;
+	default:
+		_driver = MidiDriver::createMidi(dev);
+		break;
 	}
-	_midiParser.setMidiDriver(_driver);
-	_midiParser.setTimerRate(_driver->getBaseTempo());
+#if USE_SCI_MIDI_PLAYER
+	if (_pMidiDrv) {
+		assert(_pMidiDrv);
+		int ret = _pMidiDrv->open();
+		if (ret == 0) {
+			_pMidiDrv->setTimerCallback(&_midiParser, &_midiParser.timerCallback);
+		}
+		_midiParser.setMidiDriver(_pMidiDrv);
+		_midiParser.setTimerRate(_pMidiDrv->getBaseTempo());
+	}
+#endif
+
+	if (_driver) {
+		assert(_driver);
+
+		int ret = _driver->open();
+		if (ret == 0) {
+			_driver->sendGMReset();
+			_driver->setTimerCallback(&_midiParser, &_midiParser.timerCallback);
+		}
+		_midiParser.setMidiDriver(_driver);
+		_midiParser.setTimerRate(_driver->getBaseTempo());
+	}
 
 	_musicPlaying = false;
 	_musicOn = true;
@@ -248,17 +284,49 @@ bool Music::playMusic(const Common::String &name) {
 	Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
 
 	byte *data = new byte[stream->size()];
-	byte *ptr = data;
+	int32 dataSize = stream->size();
+	assert(data);
 
-	stream->read(ptr, stream->size());
+	stream->read(data, dataSize);
+
+	// for dumping the music tracks
+#if 0
 	Common::DumpFile outFile;
 	outFile.open(name + ".RAW");
 	outFile.write(data, stream->size());
 	outFile.flush();
 	outFile.close();
+#endif
 
-	_midiParser.loadMusic(data, stream->size());
+	if (dataSize < 14) {
+		warning("not enough data in music file");
+		return false;
+	}
 
+	byte *dataPos = data;
+	if (memcmp("            ", dataPos, 12)) {
+		warning("Expected header not found in music file");
+		return false;
+	}
+	dataPos += 12;
+	dataSize -= 12;
+
+	uint16 headerSize = READ_LE_UINT16(dataPos);
+	if (headerSize != 0x7F) {
+		warning("music header is not as expected");
+		return false;
+	}
+
+	if (_musicType == MT_ADLIB) {
+		if (_driver)
+			MidiDriver_AdLib_newMusicData(_driver, dataPos, dataSize);
+#if USE_SCI_MIDI_PLAYER
+		if (_pMidiDrv)
+			MidiPlayer_AdLib_newMusicData(_pMidiDrv, dataPos, dataSize);
+#endif
+	}
+
+	_midiParser.loadMusic(dataPos, dataSize);
 	return true;
 }
 

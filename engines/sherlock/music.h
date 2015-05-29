@@ -25,7 +25,8 @@
 
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
-#include "audio/mididrv.h"
+//#include "audio/mididrv.h"
+#include "sherlock/scalpel/drivers/mididriver.h"
 
 namespace Sherlock {
 
@@ -44,15 +45,21 @@ public:
 	virtual bool loadMusic(byte *data, uint32 size);
 };
 
-class Music : public Audio::MidiPlayer {
+class Music {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
 	MidiParser_SH _midiParser;
+	MidiPlayer *_pMidiDrv;
+	MidiDriver *_driver;
 
 public:
 	bool _musicPlaying;
 	bool _musicOn;
+
+private:
+	MusicType _musicType;
+
 public:
 	Music(SherlockEngine *vm, Audio::Mixer *mixer);
 
