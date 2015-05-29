@@ -3,6 +3,7 @@ MODULE := engines/sherlock
 MODULE_OBJS = \
 	scalpel/darts.o \
 	scalpel/scalpel.o \
+	scalpel/drivers/adlib.o \
 	tattoo/tattoo.o \
 	animation.o \
 	debugger.o \
