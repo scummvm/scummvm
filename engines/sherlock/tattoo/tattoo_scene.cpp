@@ -244,7 +244,7 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 			people[idx].adjustSprite();
 	}
 
-	if (_activeCAnim._images != nullptr != _activeCAnim._zPlacement != REMOVE) {
+	if (_activeCAnim._images != nullptr && _activeCAnim._zPlacement != REMOVE) {
 		_activeCAnim.getNextFrame();
 	}
 
