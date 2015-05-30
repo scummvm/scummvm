@@ -229,7 +229,6 @@ void TattooScene::doBgAnim() {
 }
 
 void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
-	TattooEngine &vm = *((TattooEngine *)_vm);
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 
@@ -244,7 +243,7 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 			people[idx].adjustSprite();
 	}
 
-	if (_activeCAnim._images != nullptr && _activeCAnim._zPlacement != REMOVE) {
+	if ((_activeCAnim._images != nullptr) && (_activeCAnim._zPlacement != REMOVE)) {
 		_activeCAnim.getNextFrame();
 	}
 

@@ -80,12 +80,6 @@ private:
 	void toggleButton(int num);
 
 	/**
-	 * Creates a text window and uses it to display the in-depth description
-	 * of the highlighted object
-	 */
-	void examine();
-
-	/**
 	 * Print the name of an object in the scene
 	 */
 	void lookScreen(const Common::Point &pt);
@@ -172,6 +166,12 @@ public:
 	 * (not selected) position
 	 */
 	void restoreButton(int num);
+
+	/**
+	 * Creates a text window and uses it to display the in-depth description
+	 * of the highlighted object
+	 */
+	void examine();
 public:
 	/**
 	 * Resets the user interface

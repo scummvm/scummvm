@@ -405,7 +405,7 @@ void MidiDriver_AdLib::send(uint32 b) {
 		pitchBendChange(channel, op1, op2);
 		break;
 	case 0xf0: // SysEx
-		warning("SysEx: %lx", b);
+		warning("SysEx: %x", b);
 		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
