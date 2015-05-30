@@ -1521,7 +1521,7 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	}
 
 	Rect tempRect = bounds;
-	if (g_vm->getGameID() != GType_Ringworld)
+	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1)
 		tempRect.setHeight(T2_GLOBALS._interfaceY);
 
 	g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface,
@@ -2806,7 +2806,7 @@ void SceneObject::updateScreen() {
 	srcRect.right = ((srcRect.right + 3) / 4) * 4;
 	srcRect.clip(g_globals->_sceneManager._scene->_sceneBounds);
 
-	if (g_vm->getGameID() != GType_Ringworld) {
+	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1) {
 		if (T2_GLOBALS._uiElements._visible)
 			srcRect.bottom = MIN<int16>(srcRect.bottom, T2_GLOBALS._interfaceY);
 	}

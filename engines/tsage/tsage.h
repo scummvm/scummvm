@@ -42,7 +42,8 @@ namespace TsAGE {
 enum {
 	GType_Ringworld = 0,
 	GType_BlueForce = 1,
-	GType_Ringworld2 = 2
+	GType_Ringworld2 = 2,
+	GType_Sherlock1 = 5
 };
 
 enum {
