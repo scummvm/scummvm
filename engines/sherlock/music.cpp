@@ -134,7 +134,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		break;
 	case 0xF:
 		if (info.event == 0xFF) {
-			warning("SysEx 0xFF");
+			error("SysEx META event 0xFF");
 
 			byte type = *(_position._playPos++);
 			switch(type) {
