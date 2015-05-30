@@ -74,6 +74,11 @@ public:
 	bool loadSong(int songNumber);
 
 	/**
+	 * Load a specified song
+	 */
+	bool loadSong(const Common::String &songName);
+
+	/**
 	 * Start playing a song
 	 */
 	void startSong();

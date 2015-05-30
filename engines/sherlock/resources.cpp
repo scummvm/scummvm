@@ -65,7 +65,7 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 	// Check whether the file is compressed
 	if (signature == MKTAG('L', 'Z', 'V', 26)) {
 		// It's compressed, so decompress the file and store it's data in the cache entry
-		Common::SeekableReadStream *decompressed = _vm->_res->decompressLZ(stream);
+		Common::SeekableReadStream *decompressed = _vm->_res->decompress(stream);
 		cacheEntry.resize(decompressed->size());
 		decompressed->read(&cacheEntry[0], decompressed->size());
 
@@ -91,9 +91,12 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	if (_vm->_interactiveFl) {
 		addToCache("vgs.lib");
 		addToCache("talk.lib");
-		addToCache("sequence.txt");
 		addToCache("journal.txt");
-		addToCache("portrait.lib");
+
+		if (IS_SERRATED_SCALPEL) {
+			addToCache("sequence.txt");
+			addToCache("portrait.lib");
+		}
 	}
 }
 
@@ -103,8 +106,11 @@ void Resources::addToCache(const Common::String &filename) {
 	// Check to see if the file is a library
 	Common::SeekableReadStream *stream = load(filename);
 	uint32 header = stream->readUint32BE();
+
 	if (header == MKTAG('L', 'I', 'B', 26))
-		loadLibraryIndex(filename, stream);
+		loadLibraryIndex(filename, stream, false);
+	else if (header == MKTAG('L', 'I', 'C', 26))
+		loadLibraryIndex(filename, stream, true);
 
 	delete stream;
 }
@@ -159,12 +165,14 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename) {
 
 void Resources::decompressIfNecessary(Common::SeekableReadStream *&stream) {
 	bool isCompressed = stream->readUint32BE() == MKTAG('L', 'Z', 'V', 26);
-	stream->seek(-4, SEEK_CUR);
 
 	if (isCompressed) {
-		Common::SeekableReadStream *newStream = decompressLZ(*stream);
+		int outSize = stream->readUint32LE();
+		Common::SeekableReadStream *newStream = decompressLZ(*stream, outSize);
 		delete stream;
 		stream = newStream;
+	} else {
+		stream->seek(-4, SEEK_CUR);
 	}
 }
 
@@ -174,7 +182,7 @@ Common::SeekableReadStream *Resources::load(const Common::String &filename, cons
 
 	// Check if the library has already had it's index read, and if not, load it
 	if (!_indexes.contains(libraryFile))
-		loadLibraryIndex(libraryFile, libStream);
+		loadLibraryIndex(libraryFile, libStream, false);
 
 	// Extract the data for the specified resource and return it
 	LibraryEntry &entry = _indexes[libraryFile][filename];
@@ -192,7 +200,7 @@ bool Resources::exists(const Common::String &filename) const {
 }
 
 void Resources::loadLibraryIndex(const Common::String &libFilename,
-		Common::SeekableReadStream *stream) {
+		Common::SeekableReadStream *stream, bool isNewStyle) {
 	uint32 offset, nextOffset;
 
 	// Create an index entry
@@ -202,6 +210,9 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 	// Read in the number of resources
 	stream->seek(4);
 	int count = stream->readUint16LE();
+
+	if (isNewStyle)
+		stream->seek((count + 1) * 8, SEEK_CUR);
 
 	// Loop through reading in the entries
 	for (int idx = 0; idx < count; ++idx) {
@@ -231,24 +242,48 @@ int Resources::resourceIndex() const {
 	return _resourceIndex;
 }
 
-Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source) {
-	if (_vm->getGameID() == GType_SerratedScalpel) {
-		uint32 id = source.readUint32BE();
-		assert(id == MKTAG('L', 'Z', 'V', 0x1A));
-	}
+Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source) {
+	// This variation can't be used by Rose Tattoo, since compressed resources include the input size,
+	// not the output size. Which means their decompression has to be done via passed buffers
+	assert(_vm->getGameID() == GType_SerratedScalpel);
 
-	uint32 size = source.readUint32LE();
-	return decompressLZ(source, size);
+	uint32 id = source.readUint32BE();
+	assert(id == MKTAG('L', 'Z', 'V', 0x1A));
+
+	uint32 outputSize = source.readUint32LE();
+	return decompressLZ(source, outputSize);
+}
+
+Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source, uint32 outSize) {
+	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+	byte *outBuffer = (byte *)malloc(outSize);
+	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+
+	decompressLZ(source, outBuffer, outSize, inSize);
+
+	return outStream;
+}
+
+void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
+	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+
+	decompressLZ(source, buffer, outSize, inputSize);
 }
 
 Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &source, uint32 outSize) {
+	byte *dataOut = (byte *)malloc(outSize);
+	decompressLZ(source, dataOut, outSize, -1);
+
+	return new Common::MemoryReadStream(dataOut, outSize, DisposeAfterUse::YES);
+}
+
+void Resources::decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize) {
 	byte lzWindow[4096];
 	uint16 lzWindowPos;
 	uint16 cmd;
 
-	byte *outBuffer = (byte *)malloc(outSize);
 	byte *outBufferEnd = outBuffer + outSize;
-	Common::MemoryReadStream *outS = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
+	int endPos = source.pos() + inSize;
 
 	memset(lzWindow, 0xFF, 0xFEE);
 	lzWindowPos = 0xFEE;
@@ -264,8 +299,7 @@ Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &
 			*outBuffer++ = literal;
 			lzWindow[lzWindowPos] = literal;
 			lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
-		}
-		else {
+		} else {
 			int copyPos, copyLen;
 			copyPos = source.readByte();
 			copyLen = source.readByte();
@@ -279,9 +313,7 @@ Common::SeekableReadStream *Resources::decompressLZ(Common::SeekableReadStream &
 				lzWindowPos = (lzWindowPos + 1) & 0x0FFF;
 			}
 		}
-	} while (outBuffer < outBufferEnd);
-
-	return outS;
+	} while ((outSize == -1 || outBuffer < outBufferEnd) && (inSize == -1 || source.pos() < endPos));
 }
 
 /*----------------------------------------------------------------*/
@@ -325,13 +357,14 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 			// Animation cutscene image files use a 16-bit x offset
 			frame._offset.x = stream.readUint16LE();
 			frame._rleEncoded = (frame._offset.x & 0xff) == 1;
+			frame._offset.y = stream.readByte();
 		} else {
 			// Standard image files have a separate byte for the RLE flag, and an 8-bit X offset
 			frame._rleEncoded = stream.readByte() == 1;
 			frame._offset.x = stream.readByte();
+			frame._offset.y = stream.readByte();
 		}
 
-		frame._offset.y = stream.readByte();
 		frame._rleEncoded = !skipPalette && frame._rleEncoded;
 
 		if (frame._paletteBase) {
@@ -385,6 +418,28 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 			*pDest++ = *src & 0xF;
 			*pDest++ = (*src >> 4);
 		}
+	} else if (frame._rleEncoded && _vm->getGameID() == GType_RoseTattoo) {
+		// Rose Tattoo run length encoding doesn't use the RLE marker byte
+		byte *dst = (byte *)frame._frame.getPixels();
+
+		for (int yp = 0; yp < frame._height; ++yp) {
+			int xSize = frame._width;
+			while (xSize > 0) {
+				// Skip a given number of pixels
+				byte skip = *src++;
+				dst += skip;
+				xSize -= skip;
+				if (!xSize)
+					break;
+
+				// Get a run length, and copy the following number of pixels
+				int rleCount = *src++;
+				xSize -= rleCount;
+				while (rleCount-- > 0)
+					*dst++ = *src++;
+			}
+			assert(xSize == 0);
+		}
 	} else if (frame._rleEncoded) {
 		// RLE encoded
 		byte *dst = (byte *)frame._frame.getPixels();
@@ -409,6 +464,36 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		Common::copy(src, src + frame._width * frame._height,
 			(byte *)frame._frame.getPixels());
 	}
+}
+
+/*----------------------------------------------------------------*/
+
+int ImageFrame::sDrawXSize(int scaleVal) const {
+	int width = _width;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
+
+	if (scaleVal >= 256)
+		--width;
+
+	int result = width * 256 / scale;
+	if (scaleVal >= 256)
+		++result;
+
+	return result;
+}
+
+int ImageFrame::sDrawYSize(int scaleVal) const {
+	int height = _height;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
+
+	if (scaleVal >= 256)
+		--height;
+
+	int result = height * 256 / scale;
+	if (scaleVal >= 256)
+		++result;
+
+	return result;
 }
 
 } // End of namespace Sherlock

@@ -20,37 +20,44 @@
  *
  */
 
-#include "sherlock/user_interface.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/tattoo/tattoo_user_interface.h"
+#ifndef SHERLOCK_SETTINGS_H
+#define SHERLOCK_SETTINGS_H
+
+#include "common/scummsys.h"
 
 namespace Sherlock {
 
-UserInterface *UserInterface::init(SherlockEngine *vm) {
-	if (vm->getGameID() == GType_SerratedScalpel)
-		return new Scalpel::ScalpelUserInterface(vm);
-	else
-		return new Tattoo::TattooUserInterface(vm);
-}
+class SherlockEngine;
 
-UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
-	_menuMode = STD_MODE;
-	_menuCounter = 0;
-	_infoFlag = false;
-	_windowOpen = false;
-	_endKeyActive = true;
-	_invLookFlag = 0;
-	_slideWindows = true;
-	_helpStyle = false;
-	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1, SHERLOCK_SCREEN_HEIGHT - 1);
-	_lookScriptFlag = false;
+namespace Scalpel {
 
-	_key = _oldKey = '\0';
-	_selector = _oldSelector = -1;
-	_temp = _oldTemp = 0;
-	_temp1 = 0;
-	_lookHelp = 0;
-}
+class Settings {
+private:
+	SherlockEngine *_vm;
+
+	Settings(SherlockEngine *vm) : _vm(vm) {}
+
+	/**
+	 * Draws the interface for the settings window
+	 */
+	void drawInteface(bool flag);
+
+	/**
+	 * Draws the buttons for the settings dialog
+	 */
+	int drawButtons(const Common::Point &pt, int key);
+public:
+	/**
+	 * Handles input when the settings window is being shown
+	 * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
+	 *		the user interface, it uses so many internal UI fields, that it sort of made some sense
+	 *		to put it in the UserInterface class.
+	 */
+	static void show(SherlockEngine *vm);
+};
+
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
+
+#endif

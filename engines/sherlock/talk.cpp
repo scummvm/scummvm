@@ -23,10 +23,152 @@
 #include "sherlock/talk.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
+#include "sherlock/scalpel/scalpel_user_interface.h"
 
 namespace Sherlock {
 
 #define SPEAKER_REMOVE 0x80
+
+const byte SCALPEL_OPCODES[] = {
+	128,	// OP_SWITCH_SPEAKER
+	129,	// OP_RUN_CANIMATION
+	130,	// OP_ASSIGN_PORTRAIT_LOCATION
+	131,	// OP_PAUSE
+	132,	// OP_REMOVE_PORTRAIT
+	133,	// OP_CLEAR_WINDOW
+	134,	// OP_ADJUST_OBJ_SEQUENCE
+	135,	// OP_WALK_TO_COORDS
+	136,	// OP_PAUSE_WITHOUT_CONTROL
+	137,	// OP_BANISH_WINDOW
+	138,	// OP_SUMMON_WINDOW
+	139,	// OP_SET_FLAG
+	140,	// OP_SFX_COMMAND
+	141,	// OP_TOGGLE_OBJECT
+	142,	// OP_STEALTH_MODE_ACTIVE
+	143,	// OP_IF_STATEMENT
+	144,	// OP_ELSE_STATEMENT
+	145,	// OP_END_IF_STATEMENT
+	146,	// OP_STEALTH_MODE_DEACTIVATE
+	147,	// OP_TURN_HOLMES_OFF
+	148,	// OP_TURN_HOLMES_ON
+	149,	// OP_GOTO_SCENE
+	150,	// OP_PLAY_PROLOGUE
+	151,	// OP_ADD_ITEM_TO_INVENTORY
+	152,	// OP_SET_OBJECT
+	153,	// OP_CALL_TALK_FILE
+	143,	// OP_MOVE_MOUSE
+	155,	// OP_DISPLAY_INFO_LINE
+	156,	// OP_CLEAR_INFO_LINE
+	157,	// OP_WALK_TO_CANIMATION
+	158,	// OP_REMOVE_ITEM_FROM_INVENTORY
+	159,	// OP_ENABLE_END_KEY
+	160,	// OP_DISABLE_END_KEY
+	161,	// OP_CARRIAGE_RETURN
+	0,		// OP_MOUSE_ON_OFF
+	0,		// OP_SET_WALK_CONTROL
+	0,		// OP_SET_TALK_SEQUENCE
+	0,		// OP_PLAY_SONG
+	0,		// OP_WALK_HOLMES_AND_NPC_TO_CANIM
+	0,		// OP_SET_NPC_PATH_DEST
+	0,		// OP_NEXT_SONG
+	0,		// OP_SET_NPC_PATH_PAUSE
+	0,		// OP_PASSWORD
+	0,		// OP_SET_SCENE_ENTRY_FLAG
+	0,		// OP_WALK_NPC_TO_CANIM
+	0,		// OP_WALK_HOLMES_AND_NPC_TO_COORDS
+	0,		// OP_WALK_HOLMES_AND_NPC_TO_COORDS
+	0,		// OP_SET_NPC_TALK_FILE
+	0,		// OP_TURN_NPC_OFF
+	0,		// OP_TURN_NPC_ON
+	0,		// OP_NPC_DESC_ON_OFF
+	0,		// OP_NPC_PATH_PAUSE_TAKING_NOTES
+	0,		// OP_NPC_PATH_PAUSE_LOOKING_HOLMES
+	0,		// OP_ENABLE_TALK_INTERRUPTS
+	0,		// OP_DISABLE_TALK_INTERRUPTS
+	0,		// OP_SET_NPC_INFO_LINE
+	0,		// OP_SET_NPC_POSITION
+	0,		// OP_NPC_PATH_LABEL
+	0,		// OP_PATH_GOTO_LABEL
+	0,		// OP_PATH_IF_FLAG_GOTO_LABEL
+	0,		// OP_NPC_WALK_GRAPHICS
+	0,		// OP_NPC_VERB
+	0,		// OP_NPC_VERB_CANIM
+	0,		// OP_NPC_VERB_SCRIPT
+	0,		// OP_RESTORE_PEOPLE_SEQUENCE
+	0,		// OP_NPC_VERB_TARGET
+	0		// OP_TURN_SOUNDS_OFF
+};
+
+const byte TATTOO_OPCODES[] = {
+	170,	// OP_SWITCH_SPEAKER
+	171,	// OP_RUN_CANIMATION
+	0,	// OP_ASSIGN_PORTRAIT_LOCATION
+	173,	// OP_PAUSE
+	0,	// OP_REMOVE_PORTRAIT
+	0,	// OP_CLEAR_WINDOW
+	176,	// OP_ADJUST_OBJ_SEQUENCE
+	177,	// OP_WALK_TO_COORDS
+	178,	// OP_PAUSE_WITHOUT_CONTROL
+	179,	// OP_BANISH_WINDOW
+	0,		// OP_SUMMON_WINDOW
+	181,	// OP_SET_FLAG
+	0,		// OP_SFX_COMMAND
+	183,	// OP_TOGGLE_OBJECT
+	184,	// OP_STEALTH_MODE_ACTIVE
+	0,		// OP_IF_STATEMENT
+	0,		// OP_ELSE_STATEMENT
+	0,		// OP_END_IF_STATEMENT
+	188,	// OP_STEALTH_MODE_DEACTIVATE
+	189,	// OP_TURN_HOLMES_OFF
+	190,	// OP_TURN_HOLMES_ON
+	191,	// OP_GOTO_SCENE
+	0,		// OP_PLAY_PROLOGUE
+	193,	// OP_ADD_ITEM_TO_INVENTORY
+	194,	// OP_SET_OBJECT
+	172,	// OP_CALL_TALK_FILE
+	0,		// OP_MOVE_MOUSE
+	0,		// OP_DISPLAY_INFO_LINE
+	0,		// OP_CLEAR_INFO_LINE
+	199,	// OP_WALK_TO_CANIMATION
+	200,	// OP_REMOVE_ITEM_FROM_INVENTORY
+	201,	// OP_ENABLE_END_KEY
+	202,	// OP_DISABLE_END_KEY
+	0,		// OP_CARRIAGE_RETURN
+	174,	// OP_MOUSE_ON_OFF
+	175,	// OP_SET_WALK_CONTROL
+	180,	// OP_SET_TALK_SEQUENCE
+	182,	// OP_PLAY_SONG
+	187,	// OP_WALK_HOLMES_AND_NPC_TO_CANIM
+	192,	// OP_SET_NPC_PATH_DEST
+	195,	// OP_NEXT_SONG
+	196,	// OP_SET_NPC_PATH_PAUSE
+	197,	// OP_PASSWORD
+	198,	// OP_SET_SCENE_ENTRY_FLAG
+	185,	// OP_WALK_NPC_TO_CANIM
+	204,	// OP_WALK_HOLMES_AND_NPC_TO_COORDS
+	205,	// OP_SET_NPC_TALK_FILE
+	206,	// OP_TURN_NPC_OFF
+	207,	// OP_TURN_NPC_ON
+	208,	// OP_NPC_DESC_ON_OFF
+	209,	// OP_NPC_PATH_PAUSE_TAKING_NOTES
+	210,	// OP_NPC_PATH_PAUSE_LOOKING_HOLMES
+	211,	// OP_ENABLE_TALK_INTERRUPTS
+	212,	// OP_DISABLE_TALK_INTERRUPTS
+	213,	// OP_SET_NPC_INFO_LINE
+	214,	// OP_SET_NPC_POSITION
+	215,	// OP_NPC_PATH_LABEL
+	216,	// OP_PATH_GOTO_LABEL
+	217,	// OP_PATH_IF_FLAG_GOTO_LABEL
+	218,	// OP_NPC_WALK_GRAPHICS
+	220,	// OP_NPC_VERB
+	221,	// OP_NPC_VERB_CANIM
+	222,	// OP_NPC_VERB_SCRIPT
+	224,	// OP_RESTORE_PEOPLE_SEQUENCE
+	226,	// OP_NPC_VERB_TARGET
+	227		// OP_TURN_SOUNDS_OFF
+};
+
+/*----------------------------------------------------------------*/
 
 SequenceEntry::SequenceEntry() {
 	_objNum = 0;
@@ -90,6 +232,13 @@ void TalkSequences::clear() {
 
 /*----------------------------------------------------------------*/
 
+Talk *Talk::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new ScalpelTalk(vm);
+	else
+		return new TattooTalk(vm);
+}
+
 Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
@@ -103,6 +252,15 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_moreTalkDown = _moreTalkUp = false;
 	_scriptMoreFlag = 0;
 	_scriptSaveIndex = -1;
+	_opcodes = IS_SERRATED_SCALPEL ? SCALPEL_OPCODES : TATTOO_OPCODES;
+
+	_charCount = 0;
+	_line = 0;
+	_yp = 0;
+	_wait = 0;
+	_pauseFlag = false;
+	_seqCount = 0;
+	_scriptStart = _scriptEnd = nullptr;
 }
 
 void Talk::talkTo(const Common::String &filename) {
@@ -172,9 +330,11 @@ void Talk::talkTo(const Common::String &filename) {
 	while (!_sequenceStack.empty())
 		pullSequence();
 
-	// Restore any pressed button
-	if (!ui._windowOpen && savedMode != STD_MODE)
-		ui.restoreButton((int)(savedMode - 1));
+	if (IS_SERRATED_SCALPEL) {
+		// Restore any pressed button
+		if (!ui._windowOpen && savedMode != STD_MODE)
+			((Scalpel::ScalpelUserInterface *)_vm->_ui)->restoreButton((int)(savedMode - 1));
+	}
 
 	// Clear the ui counter so that anything displayed on the info line
 	// before the window was opened isn't cleared
@@ -388,7 +548,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 				}
 
-				ui._key = ui._oldKey = COMMANDS[TALK_MODE - 1];
+				ui._key = ui._oldKey = Scalpel::COMMANDS[TALK_MODE - 1];
 				ui._temp = ui._oldTemp = 0;
 				ui._menuMode = TALK_MODE;
 				_talkToFlag = 2;
@@ -570,7 +730,7 @@ void Talk::stripVoiceCommands() {
 
 		// Scan for an sound effect byte, which indicates to play a sound
 		for (uint idx = 0; idx < statement._reply.size(); ++idx) {
-			if (statement._reply[idx] == (char)SFX_COMMAND) {
+			if (statement._reply[idx] == (char)_opcodes[OP_SFX_COMMAND]) {
 				// Replace instruction character with a space, and delete the
 				// rest of the name following it
 				statement._reply = Common::String(statement._reply.c_str(),
@@ -625,9 +785,9 @@ void Talk::drawInterface() {
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
 			200 - screen.stringWidth("Down") / 2, "Down");
 	} else {
-		int strWidth = screen.stringWidth(PRESS_KEY_TO_CONTINUE);
+		int strWidth = screen.stringWidth(Scalpel::PRESS_KEY_TO_CONTINUE);
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
-			160 - strWidth / 2, PRESS_KEY_TO_CONTINUE);
+			160 - strWidth / 2, Scalpel::PRESS_KEY_TO_CONTINUE);
 		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, "P");
 	}
 }
@@ -919,38 +1079,33 @@ void Talk::setStillSeq(int speaker) {
 }
 
 void Talk::doScript(const Common::String &script) {
-	Animation &anim = *_vm->_animation;
-	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
-	int wait = 0;
-	bool pauseFlag = false;
-	bool endStr = false;
-	int yp = CONTROLS_Y + 12;
-	int charCount = 0;
-	int line = 0;
-	bool noTextYet = true;
 	bool openTalkWindow = false;
-	int seqCount;
 
 	_savedSequences.clear();
 
-	const byte *scriptStart = (const byte *)script.c_str();
-	const byte *scriptEnd = scriptStart + script.size();
-	const byte *str = scriptStart;
+	_scriptStart = (const byte *)script.c_str();
+	_scriptEnd = _scriptStart + script.size();
+	const byte *str = _scriptStart;
+	_yp = CONTROLS_Y + 12;
+	_charCount = 0;
+	_line = 0;
+	_wait = 0;
+	_pauseFlag = false;
+	_seqCount = 0;
+	_noTextYet = true;
+	_endStr = false;
 
 	if (_scriptMoreFlag) {
 		_scriptMoreFlag = 0;
-		str = scriptStart + _scriptSaveIndex;
+		str = _scriptStart + _scriptSaveIndex;
 	}
 
 	// Check if the script begins with a Stealh Mode Active command
-	if (str[0] == STEALTH_MODE_ACTIVE || _talkStealth) {
+	if (str[0] == _opcodes[OP_STEALTH_MODE_ACTIVE] || _talkStealth) {
 		_talkStealth = 2;
 		_speaker |= SPEAKER_REMOVE;
 	} else {
@@ -958,7 +1113,7 @@ void Talk::doScript(const Common::String &script) {
 		ui.clearWindow();
 
 		// Need to switch speakers?
-		if (str[0] == SWITCH_SPEAKER) {
+		if (str[0] == _opcodes[OP_SWITCH_SPEAKER]) {
 			_speaker = str[1] - 1;
 			str += 2;
 			pullSequence();
@@ -969,7 +1124,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Assign portrait location?
-		if (str[0] == ASSIGN_PORTRAIT_LOCATION) {
+		if (str[0] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION]) {
 			switch (str[1] & 15) {
 			case 1:
 				people._portraitSide = 20;
@@ -991,7 +1146,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Remove portrait?
-		if (str[0] == REMOVE_PORTRAIT) {
+		if (str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
 			_speaker = 255;
 		} else {
 			// Nope, so set the first speaker
@@ -1001,401 +1156,22 @@ void Talk::doScript(const Common::String &script) {
 
 	do {
 		Common::String tempString;
-		wait = 0;
+		_wait = 0;
 
 		byte c = str[0];
 		if (!c) {
-			endStr = true;
+			_endStr = true;
 		} else if (c == '{') {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (c >= SWITCH_SPEAKER) {
+		} else if (c >= 128 && c <= 227 && _opcodeTable[c - 128]) {
 			// Handle control code
-			switch (c) {
-			case SWITCH_SPEAKER:
-				if (!(_speaker & SPEAKER_REMOVE))
-					people.clearTalking();
-				if (_talkToAbort)
-					return;
-
-				ui.clearWindow();
-				yp = CONTROLS_Y + 12;
-				charCount = line = 0;
-
-				_speaker = *++str - 1;
-				people.setTalking(_speaker);
-				pullSequence();
-				pushSequence(_speaker);
-				setSequence(_speaker);
-				break;
-
-			case RUN_CANIMATION:
-				++str;
-				scene.startCAnim((str[0] - 1) & 127, (str[0] & 0x80) ? -1 : 1);
-				if (_talkToAbort)
-					return;
-
-				// Check if next character is changing side or changing portrait
-				if (charCount && (str[1] == SWITCH_SPEAKER || str[1] == ASSIGN_PORTRAIT_LOCATION))
-					wait = 1;
-				break;
-
-			case ASSIGN_PORTRAIT_LOCATION:
-				++str;
-				switch (str[0] & 15) {
-				case 1:
-					people._portraitSide = 20;
-					break;
-				case 2:
-					people._portraitSide = 220;
-					break;
-				case 3:
-					people._portraitSide = 120;
-					break;
-				default:
-					break;
-				}
-
-				if (str[0] > 15)
-					people._speakerFlip = true;
-				break;
-
-			case PAUSE:
-				// Pause
-				charCount = *++str;
-				wait = pauseFlag = true;
-				break;
-
-			case REMOVE_PORTRAIT:
-				if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
-					people.clearTalking();
-				pullSequence();
-				if (_talkToAbort)
-					return;
-
-				_speaker |= SPEAKER_REMOVE;
-				break;
-
-			case CLEAR_WINDOW:
-				ui.clearWindow();
-				yp = CONTROLS_Y + 12;
-				charCount = line = 0;
-				break;
-
-			case ADJUST_OBJ_SEQUENCE:
-				{
-				// Get the name of the object to adjust
-				++str;
-				for (int idx = 0; idx < (str[0] & 127); ++idx)
-					tempString += str[idx + 2];
-
-				// Scan for object
-				int objId = -1;
-				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
-					if (tempString.equalsIgnoreCase(scene._bgShapes[idx]._name))
-						objId = idx;
-				}
-				if (objId == -1)
-					error("Could not find object %s to change", tempString.c_str());
-
-				// Should the script be overwritten?
-				if (str[0] > 0x80) {
-					// Save the current sequence
-					_savedSequences.push(SequenceEntry());
-					SequenceEntry &seqEntry = _savedSequences.top();
-					seqEntry._objNum = objId;
-					seqEntry._seqTo = scene._bgShapes[objId]._seqTo;
-					for (uint idx = 0; idx < scene._bgShapes[objId]._seqSize; ++idx)
-						seqEntry._sequences.push_back(scene._bgShapes[objId]._sequences[idx]);
-				}
-
-				// Get number of bytes to change
-				seqCount = str[1];
-				str += (str[0] & 127) + 2;
-
-				// Copy in the new sequence
-				for (int idx = 0; idx < seqCount; ++idx, ++str)
-					scene._bgShapes[objId]._sequences[idx] = str[0] - 1;
-
-				// Reset object back to beginning of new sequence
-				scene._bgShapes[objId]._frameNumber = 0;
+			switch ((this->*_opcodeTable[c - 128])(str)) {
+			case RET_EXIT:
+				return;
+			case RET_CONTINUE:
 				continue;
-				}
-
-			case WALK_TO_COORDS:
-				++str;
-
-				people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100,
-					str[2] * 100), str[3] - 1);
-				if (_talkToAbort)
-					return;
-
-				str += 3;
-				break;
-
-			case PAUSE_WITHOUT_CONTROL:
-				++str;
-
-				for (int idx = 0; idx < (str[0] - 1); ++idx) {
-					scene.doBgAnim();
-					if (_talkToAbort)
-						return;
-
-					// Check for button press
-					events.pollEvents();
-					events.setButtonState();
-				}
-				break;
-
-			case BANISH_WINDOW:
-				if (!(_speaker & SPEAKER_REMOVE))
-					people.clearTalking();
-				pullSequence();
-
-				if (_talkToAbort)
-					return;
-
-				_speaker |= SPEAKER_REMOVE;
-				ui.banishWindow();
-				ui._menuMode = TALK_MODE;
-				noTextYet = true;
-				break;
-
-			case SUMMON_WINDOW:
-				drawInterface();
-				events._pressed = events._released = false;
-				events.clearKeyboard();
-				noTextYet = false;
-
-				if (_speaker != -1) {
-					screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, "Exit");
-					screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
-					screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
-				}
-				break;
-
-			case SET_FLAG: {
-				++str;
-				int flag1 = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
-				int flag = (flag1 & 0x3fff) * (flag1 >= 0x4000 ? -1 : 1);
-				_vm->setFlags(flag);
-				++str;
-				break;
-			}
-
-			case SFX_COMMAND:
-				++str;
-				if (sound._voices) {
-					for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
-						tempString += str[idx];
-					sound.playSound(tempString, WAIT_RETURN_IMMEDIATELY);
-
-					// Set voices to wait for more
-					sound._voices = 2;
-					sound._speechOn = (*sound._soundIsOn);
-				}
-
-				wait = 1;
-				str += 7;
-				break;
-
-			case TOGGLE_OBJECT:
-				++str;
-				for (int idx = 0; idx < str[0]; ++idx)
-					tempString += str[idx + 1];
-
-				scene.toggleObject(tempString);
-				str += str[0];
-				break;
-
-			case STEALTH_MODE_ACTIVE:
-				_talkStealth = 2;
-				break;
-
-			case IF_STATEMENT: {
-				++str;
-				int flag = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
-				++str;
-				wait = 0;
-
-				bool result = flag < 0x8000;
-				if (_vm->readFlags(flag & 0x7fff) != result) {
-					do {
-						++str;
-					} while (str[0] && str[0] != ELSE_STATEMENT && str[0] != END_IF_STATEMENT);
-
-					if (!str[0])
-						endStr = true;
-				}
-				break;
-			}
-
-			case ELSE_STATEMENT:
-				// If this is encountered here, it means that a preceeding IF statement was found,
-				// and evaluated to true. Now all the statements for the true block are finished,
-				// so skip over the block of code that would have executed if the result was false
-				wait = 0;
-				do {
-					++str;
-				} while (str[0] && str[0] != END_IF_STATEMENT);
-				break;
-
-			case STEALTH_MODE_DEACTIVATE:
-				_talkStealth = 0;
-				events.clearKeyboard();
-				break;
-
-			case TURN_HOLMES_OFF:
-				people._holmesOn = false;
-				break;
-
-			case TURN_HOLMES_ON:
-				people._holmesOn = true;
-				break;
-
-			case GOTO_SCENE:
-				scene._goToScene = str[1] - 1;
-
-				if (scene._goToScene != 100) {
-					// Not going to the map overview
-					map._oldCharPoint = scene._goToScene;
-					map._overPos.x = map[scene._goToScene].x * 100 - 600;
-					map._overPos.y = map[scene._goToScene].y * 100 + 900;
-
-					// Run a canimation?
-					if (str[2] > 100) {
-						people._hSavedFacing = str[2];
-						people._hSavedPos = Common::Point(160, 100);
-					}
-				}
-				str += 6;
-
-				_scriptMoreFlag = (scene._goToScene == 100) ? 2 : 1;
-				_scriptSaveIndex = str - scriptStart;
-				endStr = true;
-				wait = 0;
-				break;
-
-			case PLAY_PROLOGUE:
-				++str;
-				for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
-					tempString += str[idx];
-
-				anim.play(tempString, 1, 3, true, 4);
-				break;
-
-			case ADD_ITEM_TO_INVENTORY:
-				++str;
-				for (int idx = 0; idx < str[0]; ++idx)
-					tempString += str[idx + 1];
-				str += str[0];
-
-				inv.putNameInInventory(tempString);
-				break;
-
-			case SET_OBJECT: {
-				++str;
-				for (int idx = 0; idx < (str[0] & 127); ++idx)
-					tempString += str[idx + 1];
-
-				// Set comparison state according to if we want to hide or unhide
-				bool state = (str[0] >= SPEAKER_REMOVE);
-				str += str[0] & 127;
-
-				for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
-					Object &object = scene._bgShapes[idx];
-					if (tempString.equalsIgnoreCase(object._name)) {
-						// Only toggle the object if it's not in the desired state already
-						if ((object._type == HIDDEN && state) || (object._type != HIDDEN && !state))
-							object.toggleHidden();
-					}
-				}
-				break;
-			}
-
-			case CALL_TALK_FILE: {
-				++str;
-				for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
-					tempString += str[idx];
-				str += 8;
-
-				int scriptCurrentIndex = str - scriptStart;
-
-				// Save the current script position and new talk file
-				if (_scriptStack.size() < 9) {
-					ScriptStackEntry rec1;
-					rec1._name = _scriptName;
-					rec1._currentIndex = scriptCurrentIndex;
-					rec1._select = _scriptSelect;
-					_scriptStack.push(rec1);
-
-					// Push the new talk file onto the stack
-					ScriptStackEntry rec2;
-					rec2._name = tempString;
-					rec2._currentIndex = 0;
-					rec2._select = 100;
-					_scriptStack.push(rec2);
-				} else {
-					error("Script stack overflow");
-				}
-
-				_scriptMoreFlag = 1;
-				endStr = true;
-				wait = 0;
-				break;
-			}
-
-			case MOVE_MOUSE:
-				++str;
-				events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
-				if (_talkToAbort)
-					return;
-				str += 3;
-				break;
-
-			case DISPLAY_INFO_LINE:
-				++str;
-				for (int idx = 0; idx < str[0]; ++idx)
-					tempString += str[idx + 1];
-				str += str[0];
-
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempString.c_str());
-				ui._menuCounter = 30;
-				break;
-
-			case CLEAR_INFO_LINE:
-				ui._infoFlag = true;
-				ui.clearInfo();
-				break;
-
-			case WALK_TO_CANIMATION: {
-				++str;
-				CAnim &animation = scene._cAnim[str[0] - 1];
-
-				people.walkToCoords(animation._goto, animation._gotoDir);
-				if (_talkToAbort)
-					return;
-				break;
-			}
-
-			case REMOVE_ITEM_FROM_INVENTORY:
-				++str;
-				for (int idx = 0; idx < str[0]; ++idx)
-					tempString += str[idx + 1];
-				str += str[0];
-
-				inv.deleteItemFromInventory(tempString);
-				break;
-
-			case ENABLE_END_KEY:
-				ui._endKeyActive = true;
-				break;
-
-			case DISABLE_END_KEY:
-				ui._endKeyActive = false;
-				break;
-
 			default:
 				break;
 			}
@@ -1403,8 +1179,8 @@ void Talk::doScript(const Common::String &script) {
 			++str;
 		} else {
 			// If the window isn't yet open, draw the window before printing starts
-			if (!ui._windowOpen && noTextYet) {
-				noTextYet = false;
+			if (!ui._windowOpen && _noTextYet) {
+				_noTextYet = false;
 				drawInterface();
 
 				if (_talkTo != -1) {
@@ -1415,19 +1191,19 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			// If it's the first line, display the speaker
-			if (!line && _speaker >= 0 && _speaker < (int)people._characters.size()) {
+			if (!_line && _speaker >= 0 && _speaker < (int)people._characters.size()) {
 				// If the window is open, display the name directly on-screen.
 				// Otherwise, simply draw it on the back buffer
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), TALK_FOREGROUND, "%s",
+					screen.print(Common::Point(16, _yp), TALK_FOREGROUND, "%s",
 						people._characters[_speaker & 127]._name);
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), TALK_FOREGROUND, "%s", 
+					screen.gPrint(Common::Point(16, _yp - 1), TALK_FOREGROUND, "%s", 
 						people._characters[_speaker & 127]._name);
 					openTalkWindow = true;
 				}
 
-				yp += 9;
+				_yp += 9;
 			}
 
 			// Find amount of text that will fit on the line
@@ -1435,23 +1211,23 @@ void Talk::doScript(const Common::String &script) {
 			do {
 				width += screen.charWidth(str[idx]);
 				++idx;
-				++charCount;
-			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < SWITCH_SPEAKER);
+				++_charCount;
+			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < _opcodes[0]);
 
 			if (str[idx] || width >= 298) {
-				if (str[idx] < SWITCH_SPEAKER && str[idx] != '{') {
+				if (str[idx] < _opcodes[0] && str[idx] != '{') {
 					--idx;
-					--charCount;
+					--_charCount;
 				}
 			} else {
-				endStr = true;
+				_endStr = true;
 			}
 
 			// If word wrap is needed, find the start of the current word
 			if (width >= 298) {
 				while (str[idx] != ' ') {
 					--idx;
-					--charCount;
+					--_charCount;
 				}
 			}
 
@@ -1461,16 +1237,16 @@ void Talk::doScript(const Common::String &script) {
 			// If the speaker indicates a description file, print it in yellow
 			if (_speaker != -1) {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
+					screen.print(Common::Point(16, _yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
+					screen.gPrint(Common::Point(16, _yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 					openTalkWindow = true;
 				}
 			} else {
 				if (ui._windowOpen) {
-					screen.print(Common::Point(16, yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
+					screen.print(Common::Point(16, _yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 				} else {
-					screen.gPrint(Common::Point(16, yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
+					screen.gPrint(Common::Point(16, _yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
 					openTalkWindow = true;
 				}
 			}
@@ -1479,37 +1255,27 @@ void Talk::doScript(const Common::String &script) {
 			str += idx;
 
 			// If line wrap occurred, then move to after the separating space between the words
-			if (str[0] < SWITCH_SPEAKER && str[0] != '{')
+			if (str[0] < _opcodes[0] && str[0] != '{')
 				++str;
 
-			yp += 9;
-			++line;
+			_yp += 9;
+			++_line;
 
 			// Certain different conditions require a wait
-			if ((line == 4 && str < scriptEnd && str[0] != SFX_COMMAND && str[0] != PAUSE && _speaker != -1) ||
-					(line == 5 && str < scriptEnd && str[0] != PAUSE && _speaker == -1) ||
-					endStr) {
-				wait = 1;
+			if ((_line == 4 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND] && str[0] != _opcodes[OP_PAUSE] && _speaker != -1) ||
+					(_line == 5 && str < _scriptEnd && str[0] != _opcodes[OP_PAUSE] && _speaker == -1) ||
+					_endStr) {
+				_wait = 1;
 			}
 
-			switch (str >= scriptEnd ? 0 : str[0]) {
-			case SWITCH_SPEAKER:
-			case ASSIGN_PORTRAIT_LOCATION:
-			case BANISH_WINDOW:
-			case IF_STATEMENT:
-			case ELSE_STATEMENT:
-			case END_IF_STATEMENT:
-			case GOTO_SCENE:
-			case CALL_TALK_FILE:
-				wait = 1;
-				break;
-			default:
-				break;
-			}
+			byte v = (str >= _scriptEnd ? 0 : str[0]);
+			_wait = v == _opcodes[OP_SWITCH_SPEAKER] || v == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
+				v == _opcodes[OP_BANISH_WINDOW] || _opcodes[OP_IF_STATEMENT] || v == _opcodes[OP_ELSE_STATEMENT] ||
+				v == _opcodes[OP_END_IF_STATEMENT] || v == _opcodes[OP_GOTO_SCENE] || v == _opcodes[OP_CALL_TALK_FILE];
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && wait) || (openTalkWindow && str[0] >= SWITCH_SPEAKER && str[0] != CARRIAGE_RETURN)) {
+		if ((openTalkWindow && _wait) || (openTalkWindow && str[0] >= _opcodes[0] && str[0] != _opcodes[OP_CARRIAGE_RETURN])) {
 			if (!ui._slideWindows) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
@@ -1520,34 +1286,34 @@ void Talk::doScript(const Common::String &script) {
 			openTalkWindow = false;
 		}
 
-		if (wait) {
+		if (_wait) {
 			// Handling pausing
-			if (!pauseFlag && charCount < 160)
-				charCount = 160;
+			if (!_pauseFlag && _charCount < 160)
+				_charCount = 160;
 
-			wait = waitForMore(charCount);
-			if (wait == -1)
-				endStr = true;
+			_wait = waitForMore(_charCount);
+			if (_wait == -1)
+				_endStr = true;
 
 			// If a key was pressed to finish the window, see if further voice files should be skipped
-			if (wait >= 0 && wait < 254) {
-				if (str[0] == SFX_COMMAND)
+			if (_wait >= 0 && _wait < 254) {
+				if (str[0] == _opcodes[OP_SFX_COMMAND])
 					str += 9;
 			}
 
 			// Clear the window unless the wait was due to a PAUSE command
-			if (!pauseFlag && wait != -1 && str < scriptEnd && str[0] != SFX_COMMAND) {
+			if (!_pauseFlag && _wait != -1 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND]) {
 				if (!_talkStealth)
 					ui.clearWindow();
-				yp = CONTROLS_Y + 12;
-				charCount = line = 0;
+				_yp = CONTROLS_Y + 12;
+				_charCount = _line = 0;
 			}
 
-			pauseFlag = false;
+			_pauseFlag = false;
 		}
-	} while (!_vm->shouldQuit() && !endStr);
+	} while (!_vm->shouldQuit() && !_endStr);
 
-	if (wait != -1) {
+	if (_wait != -1) {
 		for (int ssIndex = 0; ssIndex < (int)_savedSequences.size(); ++ssIndex) {
 			SequenceEntry &seq = _savedSequences[ssIndex];
 			Object &object = scene._bgShapes[seq._objNum];
@@ -1661,5 +1427,705 @@ void Talk::synchronize(Common::Serializer &s) {
 			s.syncAsByte(he._data[flag]);
 	}
 }
+
+OpcodeReturn Talk::cmdAddItemToInventory(const byte *&str) {
+	Inventory &inv = *_vm->_inventory;
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < str[0]; ++idx)
+		tempString += str[idx + 1];
+	str += str[0];
+
+	inv.putNameInInventory(tempString);
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdAdjustObjectSequence(const byte *&str) {
+	Scene &scene = *_vm->_scene;
+	Common::String tempString;
+
+	// Get the name of the object to adjust
+	++str;
+	for (int idx = 0; idx < (str[0] & 127); ++idx)
+		tempString += str[idx + 2];
+
+	// Scan for object
+	int objId = -1;
+	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
+		if (tempString.equalsIgnoreCase(scene._bgShapes[idx]._name))
+			objId = idx;
+	}
+	if (objId == -1)
+		error("Could not find object %s to change", tempString.c_str());
+
+	// Should the script be overwritten?
+	if (str[0] > 0x80) {
+		// Save the current sequence
+		_savedSequences.push(SequenceEntry());
+		SequenceEntry &seqEntry = _savedSequences.top();
+		seqEntry._objNum = objId;
+		seqEntry._seqTo = scene._bgShapes[objId]._seqTo;
+		for (uint idx = 0; idx < scene._bgShapes[objId]._seqSize; ++idx)
+			seqEntry._sequences.push_back(scene._bgShapes[objId]._sequences[idx]);
+	}
+
+	// Get number of bytes to change
+	_seqCount = str[1];
+	str += (str[0] & 127) + 2;
+
+	// Copy in the new sequence
+	for (int idx = 0; idx < _seqCount; ++idx, ++str)
+		scene._bgShapes[objId]._sequences[idx] = str[0] - 1;
+
+	// Reset object back to beginning of new sequence
+	scene._bgShapes[objId]._frameNumber = 0;
+
+	return RET_CONTINUE;
+}
+
+OpcodeReturn Talk::cmdBanishWindow(const byte *&str) {
+	People &people = *_vm->_people;
+	UserInterface &ui = *_vm->_ui;
+
+	if (!(_speaker & SPEAKER_REMOVE))
+		people.clearTalking();
+	pullSequence();
+
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	_speaker |= SPEAKER_REMOVE;
+	ui.banishWindow();
+	ui._menuMode = TALK_MODE;
+	_noTextYet = true;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdCallTalkFile(const byte *&str) {
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
+		tempString += str[idx];
+	str += 8;
+
+	int scriptCurrentIndex = str - _scriptStart;
+
+	// Save the current script position and new talk file
+	if (_scriptStack.size() < 9) {
+		ScriptStackEntry rec1;
+		rec1._name = _scriptName;
+		rec1._currentIndex = scriptCurrentIndex;
+		rec1._select = _scriptSelect;
+		_scriptStack.push(rec1);
+
+		// Push the new talk file onto the stack
+		ScriptStackEntry rec2;
+		rec2._name = tempString;
+		rec2._currentIndex = 0;
+		rec2._select = 100;
+		_scriptStack.push(rec2);
+	}
+	else {
+		error("Script stack overflow");
+	}
+
+	_scriptMoreFlag = 1;
+	_endStr = true;
+	_wait = 0;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdDisableEndKey(const byte *&str) {
+	_vm->_ui->_endKeyActive = false;
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdEnableEndKey(const byte *&str) {
+	_vm->_ui->_endKeyActive = true;
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdGotoScene(const byte *&str) {
+	Map &map = *_vm->_map;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	scene._goToScene = str[1] - 1;
+
+	if (scene._goToScene != 100) {
+		// Not going to the map overview
+		map._oldCharPoint = scene._goToScene;
+		map._overPos.x = map[scene._goToScene].x * 100 - 600;
+		map._overPos.y = map[scene._goToScene].y * 100 + 900;
+
+		// Run a canimation?
+		if (str[2] > 100) {
+			people._hSavedFacing = str[2];
+			people._hSavedPos = Common::Point(160, 100);
+		}
+	}
+	str += 6;
+
+	_scriptMoreFlag = (scene._goToScene == 100) ? 2 : 1;
+	_scriptSaveIndex = str - _scriptStart;
+	_endStr = true;
+	_wait = 0;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
+	People &people = *_vm->_people;
+	people[PLAYER]._type = REMOVE;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdHolmesOn(const byte *&str) {
+	People &people = *_vm->_people;
+	people[PLAYER]._type = CHARACTER;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdPause(const byte *&str) {
+	_charCount = *++str;
+	_wait = _pauseFlag = true;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdPauseWithoutControl(const byte *&str) {
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+	++str;
+
+	for (int idx = 0; idx < (str[0] - 1); ++idx) {
+		scene.doBgAnim();
+		if (_talkToAbort)
+			return RET_EXIT;
+
+		// Check for button press
+		events.pollEvents();
+		events.setButtonState();
+	}
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdRemoveItemFromInventory(const byte *&str) {
+	Inventory &inv = *_vm->_inventory;
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < str[0]; ++idx)
+		tempString += str[idx + 1];
+	str += str[0];
+
+	inv.deleteItemFromInventory(tempString);
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdRunCAnimation(const byte *&str) {
+	Scene &scene = *_vm->_scene;
+
+	++str;
+	scene.startCAnim((str[0] - 1) & 127, (str[0] & 0x80) ? -1 : 1);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	// Check if next character is changing side or changing portrait
+	if (_charCount && (str[1] == _opcodes[OP_SWITCH_SPEAKER] || str[1] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION]))
+		_wait = 1;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdSetFlag(const byte *&str) {
+	++str;
+	int flag1 = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
+	int flag = (flag1 & 0x3fff) * (flag1 >= 0x4000 ? -1 : 1);
+	_vm->setFlags(flag);
+	++str;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdSetObject(const byte *&str) {
+	Scene &scene = *_vm->_scene;
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < (str[0] & 127); ++idx)
+		tempString += str[idx + 1];
+
+	// Set comparison state according to if we want to hide or unhide
+	bool state = (str[0] >= SPEAKER_REMOVE);
+	str += str[0] & 127;
+
+	for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
+		Object &object = scene._bgShapes[idx];
+		if (tempString.equalsIgnoreCase(object._name)) {
+			// Only toggle the object if it's not in the desired state already
+			if ((object._type == HIDDEN && state) || (object._type != HIDDEN && !state))
+				object.toggleHidden();
+		}
+	}
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdStealthModeActivate(const byte *&str) {
+	_talkStealth = 2;
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdStealthModeDeactivate(const byte *&str) {
+	Events &events = *_vm->_events;
+
+	_talkStealth = 0;
+	events.clearKeyboard();
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdSwitchSpeaker(const byte *&str) {
+	People &people = *_vm->_people;
+	UserInterface &ui = *_vm->_ui;
+
+	if (!(_speaker & SPEAKER_REMOVE))
+		people.clearTalking();
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	ui.clearWindow();
+	_yp = CONTROLS_Y + 12;
+	_charCount = _line = 0;
+
+	_speaker = *++str - 1;
+	people.setTalking(_speaker);
+	pullSequence();
+	pushSequence(_speaker);
+	setSequence(_speaker);
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdToggleObject(const byte *&str) {
+	Scene &scene = *_vm->_scene;
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < str[0]; ++idx)
+		tempString += str[idx + 1];
+
+	scene.toggleObject(tempString);
+	str += str[0];
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+
+	++str;
+	CAnim &animation = scene._cAnim[str[0] - 1];
+	people.walkToCoords(animation._goto, animation._gotoDir);
+	
+	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdWalkToCoords(const byte *&str) {
+	People &people = *_vm->_people;
+	++str;
+
+	people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100,
+		str[2] * 100), str[3] - 1);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	str += 3;
+	return RET_SUCCESS;
+}
+
+/*----------------------------------------------------------------*/
+
+ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
+	static OpcodeMethod OPCODE_METHODS[] = {
+		(OpcodeMethod)&ScalpelTalk::cmdSwitchSpeaker,
+		(OpcodeMethod)&ScalpelTalk::cmdRunCAnimation,
+		(OpcodeMethod)&ScalpelTalk::cmdAssignPortraitLocation,
+
+		(OpcodeMethod)&ScalpelTalk::cmdPause,
+		(OpcodeMethod)&ScalpelTalk::cmdRemovePortrait,
+		(OpcodeMethod)&ScalpelTalk::cmdClearWindow,
+		(OpcodeMethod)&ScalpelTalk::cmdAdjustObjectSequence,
+		(OpcodeMethod)&ScalpelTalk::cmdWalkToCoords,
+		(OpcodeMethod)&ScalpelTalk::cmdPauseWithoutControl,
+		(OpcodeMethod)&ScalpelTalk::cmdBanishWindow,
+		(OpcodeMethod)&ScalpelTalk::cmdSummonWindow,
+		(OpcodeMethod)&ScalpelTalk::cmdSetFlag,
+		(OpcodeMethod)&ScalpelTalk::cmdSfxCommand,
+
+		(OpcodeMethod)&ScalpelTalk::cmdToggleObject,
+		(OpcodeMethod)&ScalpelTalk::cmdStealthModeActivate,
+		(OpcodeMethod)&ScalpelTalk::cmdIf,
+		(OpcodeMethod)&ScalpelTalk::cmdElse,
+		nullptr,
+		(OpcodeMethod)&ScalpelTalk::cmdStealthModeDeactivate,
+		(OpcodeMethod)&ScalpelTalk::cmdHolmesOff,
+		(OpcodeMethod)&ScalpelTalk::cmdHolmesOn,
+		(OpcodeMethod)&ScalpelTalk::cmdGotoScene,
+		(OpcodeMethod)&ScalpelTalk::cmdPlayPrologue,
+		
+		(OpcodeMethod)&ScalpelTalk::cmdAddItemToInventory,
+		(OpcodeMethod)&ScalpelTalk::cmdSetObject,
+		(OpcodeMethod)&ScalpelTalk::cmdCallTalkFile,
+		(OpcodeMethod)&ScalpelTalk::cmdMoveMouse,
+		(OpcodeMethod)&ScalpelTalk::cmdDisplayInfoLine,
+		(OpcodeMethod)&ScalpelTalk::cmdClearInfoLine,
+		(OpcodeMethod)&ScalpelTalk::cmdWalkToCAnimation,
+		(OpcodeMethod)&ScalpelTalk::cmdRemoveItemFromInventory,
+		(OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
+		(OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
+		
+		(OpcodeMethod)&ScalpelTalk::cmdCarriageReturn,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	};
+
+	_opcodeTable = OPCODE_METHODS;
+}
+
+OpcodeReturn ScalpelTalk::cmdAssignPortraitLocation(const byte *&str) {
+	People &people = *_vm->_people;
+
+	++str;
+	switch (str[0] & 15) {
+	case 1:
+		people._portraitSide = 20;
+		break;
+	case 2:
+		people._portraitSide = 220;
+		break;
+	case 3:
+		people._portraitSide = 120;
+		break;
+	default:
+		break;
+	}
+
+	if (str[0] > 15)
+		people._speakerFlip = true;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdClearInfoLine(const byte *&str) {
+	UserInterface &ui = *_vm->_ui;
+
+	ui._infoFlag = true;
+	ui.clearInfo();
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdClearWindow(const byte *&str) {
+	UserInterface &ui = *_vm->_ui;
+	
+	ui.clearWindow();
+	_yp = CONTROLS_Y + 12;
+	_charCount = _line = 0;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdDisplayInfoLine(const byte *&str) {
+	Screen &screen = *_vm->_screen;
+	UserInterface &ui = *_vm->_ui;
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < str[0]; ++idx)
+		tempString += str[idx + 1];
+	str += str[0];
+
+	screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", tempString.c_str());
+	ui._menuCounter = 30;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdElse(const byte *&str) {
+	// If this is encountered here, it means that a preceeding IF statement was found,
+	// and evaluated to true. Now all the statements for the true block are finished,
+	// so skip over the block of code that would have executed if the result was false
+	_wait = 0;
+	do {
+		++str;
+	} while (str[0] && str[0] != _opcodes[OP_END_IF_STATEMENT]);
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdIf(const byte *&str) {
+	++str;
+	int flag = (str[0] - 1) * 256 + str[1] - 1 - (str[1] == 1 ? 1 : 0);
+	++str;
+	_wait = 0;
+
+	bool result = flag < 0x8000;
+	if (_vm->readFlags(flag & 0x7fff) != result) {
+		do {
+			++str;
+		} while (str[0] && str[0] != _opcodes[OP_ELSE_STATEMENT] && str[0] != _opcodes[OP_END_IF_STATEMENT]);
+
+		if (!str[0])
+			_endStr = true;
+	}
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdMoveMouse(const byte *&str) {
+	Events &events = *_vm->_events;
+
+	++str;
+	events.moveMouse(Common::Point((str[0] - 1) * 256 + str[1] - 1, str[2]));
+	if (_talkToAbort)
+		return RET_EXIT;
+	str += 3;
+	
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdPlayPrologue(const byte *&str) {
+	Animation &anim = *_vm->_animation;
+	Common::String tempString;
+
+	++str;
+	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
+		tempString += str[idx];
+
+	anim.play(tempString, 1, 3, true, 4);
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdRemovePortrait(const byte *&str) {
+	People &people = *_vm->_people;
+
+	if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
+		people.clearTalking();
+	pullSequence();
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	_speaker |= SPEAKER_REMOVE;
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
+	Sound &sound = *_vm->_sound;
+	Common::String tempString;
+
+	++str;
+	if (sound._voices) {
+		for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
+			tempString += str[idx];
+		sound.playSound(tempString, WAIT_RETURN_IMMEDIATELY);
+
+		// Set voices to wait for more
+		sound._voices = 2;
+		sound._speechOn = (*sound._soundIsOn);
+	}
+
+	_wait = 1;
+	str += 7;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+
+	drawInterface();
+	events._pressed = events._released = false;
+	events.clearKeyboard();
+	_noTextYet = false;
+
+	if (_speaker != -1) {
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, "Exit");
+		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
+		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
+	}
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn ScalpelTalk::cmdCarriageReturn(const byte *&str) {
+	return RET_SUCCESS;
+}
+
+/*----------------------------------------------------------------*/
+
+TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
+	static OpcodeMethod OPCODE_METHODS[] = {
+		nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
+
+		(OpcodeMethod)&TattooTalk::cmdRunCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdCallTalkFile,
+		(OpcodeMethod)&TattooTalk::cmdPause,
+		(OpcodeMethod)&TattooTalk::cmdMouseOnOff,
+		(OpcodeMethod)&TattooTalk::cmdSetWalkControl,
+		(OpcodeMethod)&TattooTalk::cmdAdjustObjectSequence,
+		(OpcodeMethod)&TattooTalk::cmdWalkToCoords,
+		(OpcodeMethod)&TattooTalk::cmdPauseWithoutControl,
+		(OpcodeMethod)&TattooTalk::cmdBanishWindow,
+		(OpcodeMethod)&TattooTalk::cmdSetTalkSequence,
+
+		(OpcodeMethod)&TattooTalk::cmdSetFlag,
+		(OpcodeMethod)&TattooTalk::cmdPlaySong,
+		(OpcodeMethod)&TattooTalk::cmdToggleObject,
+		(OpcodeMethod)&TattooTalk::cmdStealthModeActivate,
+		(OpcodeMethod)&TattooTalk::cmdWalkNPCToCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdWalkNPCToCoords,
+		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
+		(OpcodeMethod)&TattooTalk::cmdStealthModeDeactivate,
+		(OpcodeMethod)&TattooTalk::cmdHolmesOff,
+		(OpcodeMethod)&TattooTalk::cmdHolmesOn,
+
+		(OpcodeMethod)&TattooTalk::cmdGotoScene,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathDest,
+		(OpcodeMethod)&TattooTalk::cmdAddItemToInventory,
+		(OpcodeMethod)&TattooTalk::cmdSetObject,
+		(OpcodeMethod)&TattooTalk::cmdNextSong,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPause,
+		(OpcodeMethod)&TattooTalk::cmdPassword,
+		(OpcodeMethod)&TattooTalk::cmdSetSceneEntryFlag,
+		(OpcodeMethod)&TattooTalk::cmdWalkToCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdRemoveItemFromInventory,
+
+		(OpcodeMethod)&TattooTalk::cmdEnableEndKey,
+		(OpcodeMethod)&TattooTalk::cmdDisableEndKey,
+		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCTalkFile,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCOff,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCOn,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCDescOnOff,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseTakingNotes,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPathPauseLookingHolmes,
+
+		(OpcodeMethod)&TattooTalk::cmdTalkInterruptsEnable,
+		(OpcodeMethod)&TattooTalk::cmdTalkInterruptsDisable,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCInfoLine,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCPosition,
+		(OpcodeMethod)&TattooTalk::cmdNPCLabelSet,
+		(OpcodeMethod)&TattooTalk::cmdNPCLabelGoto,
+		(OpcodeMethod)&TattooTalk::cmdNPCLabelIfFlagGoto,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCWalkGraphics,
+		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerb,
+
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbCAnimation,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbScript,
+		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
+		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
+		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
+	};
+
+	_opcodeTable = OPCODE_METHODS;
+}
+
+OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
+	Sound &sound = *_vm->_sound;
+
+	// Get the name of the next song to play
+	++str;
+	sound._nextSongName = "";
+	for (int idx = 0; idx < 8; ++idx) {
+		if (str[idx] != '~')
+			sound._nextSongName += str[idx];
+		else
+			break;
+	}
+	str += 7;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerbCAnimation(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerbScript(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
+	++str;
+	int npc = *str - 1;
+	People &people = *_vm->_people;
+	Person &person = people[npc];
+
+	// Build up walk library name for the given NPC
+	person._walkVGSName = "";
+	for (int idx = 0; idx < 8; ++idx) {
+		if (str[idx + 1] != '~')
+			person._walkVGSName += str[idx + 1];
+		else
+			break;
+	}
+	person._walkVGSName += ".VGS";
+
+	people._forceWalkReload = true;
+	str += 8;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) { error("TODO: script opcode"); }
 
 } // End of namespace Sherlock

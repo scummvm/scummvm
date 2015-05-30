@@ -23,6 +23,10 @@
 #include "sherlock/scene.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_scene.h"
+#include "sherlock/screen.h"
+#include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 
 namespace Sherlock {
 
@@ -33,13 +37,38 @@ static const int FS_TRANS[8] = {
 
 /*----------------------------------------------------------------*/
 
-void BgFileHeader::load(Common::SeekableReadStream &s) {
+BgFileHeader::BgFileHeader() {
+	_numStructs = -1;
+	_numImages = -1;
+	_numcAnimations = -1;
+	_descSize = -1;
+	_seqSize = -1;
+
+	// Serrated Scalpel
+	_fill = -1;
+
+	// Rose Tattoo
+	_scrollSize = -1;
+	_bytesWritten = -1;
+	_fadeStyle = -1;
+	Common::fill(&_palette[0], &_palette[PALETTE_SIZE], 0);
+}
+
+void BgFileHeader::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_numStructs = s.readUint16LE();
 	_numImages = s.readUint16LE();
 	_numcAnimations = s.readUint16LE();
 	_descSize = s.readUint16LE();
 	_seqSize = s.readUint16LE();
-	_fill = s.readUint16LE();
+
+	if (isRoseTattoo) {
+		_scrollSize = s.readUint16LE();
+		_bytesWritten = s.readUint32LE();
+		_fadeStyle = s.readByte();
+	} else {
+		_fill = s.readUint16LE();
+
+	}
 }
 
 /*----------------------------------------------------------------*/
@@ -55,18 +84,30 @@ void BgFileHeaderInfo::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-void Exit::load(Common::SeekableReadStream &s) {
-	int xp = s.readSint16LE();
-	int yp = s.readSint16LE();
-	int xSize = s.readSint16LE();
-	int ySize = s.readSint16LE();
-	_bounds = Common::Rect(xp, yp, xp + xSize, yp + ySize);
+void Exit::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
+	if (isRoseTattoo) {
+		char buffer[41];
+		s.read(buffer, 41);
+		_dest = Common::String(buffer);
+	}
 
+	left = s.readSint16LE();
+	top = s.readSint16LE();
+	setWidth(s.readUint16LE());
+	setHeight(s.readUint16LE());
+
+	_image = isRoseTattoo ? s.readByte() : 0;
 	_scene = s.readSint16LE();
-	_allow = s.readSint16LE();
+
+	if (!isRoseTattoo)
+		_allow = s.readSint16LE();
+
 	_people.x = s.readSint16LE();
 	_people.y = s.readSint16LE();
 	_peopleDir = s.readUint16LE();
+
+	if (isRoseTattoo)
+		_allow = s.readSint16LE();
 }
 
 /*----------------------------------------------------------------*/
@@ -100,7 +141,26 @@ int ObjectArray::indexOf(const Object &obj) const {
 
 /*----------------------------------------------------------------*/
 
-Scene::Scene(SherlockEngine *vm) : _vm(vm) {
+void ScaleZone::load(Common::SeekableReadStream &s) {
+	left = s.readSint16LE();
+	top = s.readSint16LE();
+	setWidth(s.readUint16LE());
+	setHeight(s.readUint16LE());
+
+	_topNumber = s.readByte();
+	_bottomNumber = s.readByte();
+}
+
+/*----------------------------------------------------------------*/
+
+Scene *Scene::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new Scalpel::ScalpelScene(vm);
+	else
+		return new Tattoo::TattooScene(vm);
+}
+
+Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	for (int idx = 0; idx < SCENES_COUNT; ++idx)
 		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
 	_currentScene = -1;
@@ -115,6 +175,7 @@ Scene::Scene(SherlockEngine *vm) : _vm(vm) {
 	_animating = 0;
 	_doBgAnimDone = true;
 	_tempFadeStyle = 0;
+	_exitZone = -1;
 }
 
 Scene::~Scene() {
@@ -149,8 +210,8 @@ void Scene::selectScene() {
 		_tempFadeStyle = 0;
 	}
 
-	people._walkDest = Common::Point(people[AL]._position.x / 100,
-		people[AL]._position.y / 100);
+	people._walkDest = Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER,
+		people[AL]._position.y / FIXED_INT_MULTIPLIER);
 
 	_restoreFlag = true;
 	events.clearEvents();
@@ -193,11 +254,13 @@ void Scene::freeScene() {
 bool Scene::loadScene(const Common::String &filename) {
 	Events &events = *_vm->_events;
 	Map &map = *_vm->_map;
+	Music &music = *_vm->_music;
 	People &people = *_vm->_people;
+	Resources &res = *_vm->_res;
 	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Music &music = *_vm->_music;
+	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
 
@@ -213,8 +276,38 @@ bool Scene::loadScene(const Common::String &filename) {
 	_cAnim.clear();
 	_sequenceBuffer.clear();
 
+	// Check if it's a scene we need to keep trakc track of how many times we've visited
+	for (int idx = (int)_sceneTripCounters.size() - 1; idx >= 0; --idx) {
+		if (_sceneTripCounters[idx]._sceneNumber == _currentScene) {
+			if (--_sceneTripCounters[idx]._numTimes == 0) {
+				_vm->setFlags(_sceneTripCounters[idx]._flag);
+				_sceneTripCounters.remove_at(idx);
+			}
+		}
+	}
+
+	if (IS_ROSE_TATTOO) {
+		// Set the NPC paths for the scene
+		setNPCPath(0);
+
+		// Handle loading music for the scene
+		if (sound._midiDrvLoaded) {
+			if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
+				sound._nextSongName = Common::String::format("res%02d", _currentScene);
+
+			// If it's a new song, then start it up
+			if (sound._currentSongName.compareToIgnoreCase(sound._nextSongName)) {
+				if (music.loadSong(sound._nextSongName)) {
+					sound.setMIDIVolume(sound._musicVolume);
+					if (music._musicOn)
+						music.startSong();
+				}
+			}
+		}
+	}
+
 	//
-	// Load background shapes from <filename>.rrm
+	// Load the room resource file for the scene
 	//
 
 	Common::String rrmFile = filename + ".rrm";
@@ -223,14 +316,35 @@ bool Scene::loadScene(const Common::String &filename) {
 		Common::SeekableReadStream *rrmStream = _vm->_res->load(rrmFile);
 
 		rrmStream->seek(39);
-		_version = rrmStream->readByte();
-		_lzwMode = _version == 10;
+		if (IS_SERRATED_SCALPEL) {
+			_version = rrmStream->readByte();
+			_lzwMode = _version == 10;
+		} else {
+			_lzwMode = rrmStream->readByte() > 0;
+		}
 
 		// Go to header and read it in
 		rrmStream->seek(rrmStream->readUint32LE());
+
 		BgFileHeader bgHeader;
-		bgHeader.load(*rrmStream);
+		bgHeader.load(*rrmStream, IS_ROSE_TATTOO);
 		_invGraphicItems = bgHeader._numImages + 1;
+
+		if (IS_ROSE_TATTOO) {
+			screen.initPaletteFade(bgHeader._bytesWritten);
+			rrmStream->read(screen._cMap, PALETTE_SIZE);
+			screen.translatePalette(screen._cMap);
+			screen.setupBGArea(screen._cMap);
+
+			screen.initScrollVars();
+
+			// Read in background
+			if (_lzwMode) {
+				res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+			} else {
+				rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+			}
+		} 
 
 		// Read in the shapes header info
 		Common::Array<BgFileHeaderInfo> bgInfo;
@@ -240,10 +354,35 @@ bool Scene::loadScene(const Common::String &filename) {
 			bgInfo[idx].load(*rrmStream);
 
 		// Read information
-		if (!_lzwMode) {
+		if (IS_ROSE_TATTOO) {
+			// Load shapes
+			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
+
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*rrmStream);
+				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+
+			if (_lzwMode)
+				delete infoStream;
+
+			// Load description text
+			_descText.resize(bgHeader._descSize);
+			if (_lzwMode)
+				res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
+			else
+				rrmStream->read(&_descText[0], bgHeader._descSize);
+
+			// Load sequences
+			_sequenceBuffer.resize(bgHeader._seqSize);
+			if (_lzwMode)
+				res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
+			else
+				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+		} else if (!_lzwMode) {
+			// Serrated Scalpel uncompressed info
+			_bgShapes.resize(bgHeader._numStructs);
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+				_bgShapes[idx].load(*rrmStream, false);
 
 			if (bgHeader._descSize) {
 				_descText.resize(bgHeader._descSize);
@@ -255,6 +394,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
 			}
 		} else {
+			// Serrated Scalpel compressed info
 			Common::SeekableReadStream *infoStream;
 
 			// Read shapes
@@ -262,7 +402,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			_bgShapes.resize(bgHeader._numStructs);
 			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream);
+				_bgShapes[idx].load(*infoStream, false);
 
 			delete infoStream;
 
@@ -295,7 +435,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the image data
 			Common::SeekableReadStream *imageStream = _lzwMode ?
-				Resources::decompressLZ(*rrmStream, bgInfo[idx]._filesize) :
+				res.decompress(*rrmStream, bgInfo[idx]._filesize) :
 				rrmStream->readStream(bgInfo[idx]._filesize);
 
 			_images[idx + 1]._images = new ImageFile(*imageStream);
@@ -323,13 +463,14 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Load in cAnim list
 		_cAnim.clear();
 		if (bgHeader._numcAnimations) {
+			int animSize = IS_SERRATED_SCALPEL ? 65 : 47;
 			Common::SeekableReadStream *canimStream = _lzwMode ?
-				Resources::decompressLZ(*rrmStream, 65 * bgHeader._numcAnimations) :
-				rrmStream->readStream(65 * bgHeader._numcAnimations);
+				res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
+				rrmStream->readStream(animSize * bgHeader._numcAnimations);
 
 			_cAnim.resize(bgHeader._numcAnimations);
 			for (uint idx = 0; idx < _cAnim.size(); ++idx)
-				_cAnim[idx].load(*canimStream);
+				_cAnim[idx].load(*canimStream, IS_ROSE_TATTOO);
 
 			delete canimStream;
 		}
@@ -337,7 +478,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Read in the room bounding areas
 		int size = rrmStream->readUint16LE();
 		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
-			Resources::decompressLZ(*rrmStream, size);
+			res.decompress(*rrmStream, size);
 
 		_zones.resize(size / 10);
 		for (uint idx = 0; idx < _zones.size(); ++idx) {
@@ -352,10 +493,11 @@ bool Scene::loadScene(const Common::String &filename) {
 			delete boundsStream;
 
 		// Ensure we've reached the path version byte
-		if (rrmStream->readByte() != 254)
+		if (rrmStream->readByte() != (IS_SERRATED_SCALPEL ? 254 : 251))
 			error("Invalid scene path data");
 
 		// Load the walk directory
+		assert(_zones.size() < MAX_ZONES);
 		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
 			for (uint idx2 = 0; idx2 < _zones.size(); ++idx2)
 				_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
@@ -364,7 +506,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		// Read in the walk data
 		size = rrmStream->readUint16LE();
 		Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
-			Resources::decompressLZ(*rrmStream, size);
+			res.decompress(*rrmStream, size);
 
 		_walkData.resize(size);
 		walkStream->read(&_walkData[0], size);
@@ -372,15 +514,27 @@ bool Scene::loadScene(const Common::String &filename) {
 		if (_lzwMode)
 			delete walkStream;
 
+		if (IS_ROSE_TATTOO) {
+			// Read in the entrance
+			_entrance.load(*rrmStream);
+
+			// Load scale zones
+			_scaleZones.resize(rrmStream->readByte());
+			for (uint idx = 0; idx < _scaleZones.size(); ++idx)
+				_scaleZones[idx].load(*rrmStream);
+		}
+
 		// Read in the exits
+		_exitZone = -1;
 		int numExits = rrmStream->readByte();
 		_exits.resize(numExits);
 
 		for (int idx = 0; idx < numExits; ++idx)
-			_exits[idx].load(*rrmStream);
+			_exits[idx].load(*rrmStream, IS_ROSE_TATTOO);
 
-		// Read in the entrance
-		_entrance.load(*rrmStream);
+		if (IS_SERRATED_SCALPEL)
+			// Read in the entrance
+			_entrance.load(*rrmStream);
 
 		// Initialize sound list
 		int numSounds = rrmStream->readByte();
@@ -389,24 +543,32 @@ bool Scene::loadScene(const Common::String &filename) {
 		for (int idx = 0; idx < numSounds; ++idx)
 			_sounds[idx].load(*rrmStream);
 
-		for (int idx = 0; idx < numSounds; ++idx)
-			sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
+		loadSceneSounds();
 
-		// Read in palette
-		rrmStream->read(screen._cMap, PALETTE_SIZE);
-		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
-			screen._cMap[idx] = VGA_COLOR_TRANS(screen._cMap[idx]);
+		if (IS_ROSE_TATTOO) {
+			// Load the object sound list
+			char buffer[27];
+			
+			_objSoundList.resize(rrmStream->readUint16LE());
+			for (uint idx = 0; idx < _objSoundList.size(); ++idx) {
+				rrmStream->read(buffer, 27);
+				_objSoundList[idx] = Common::String(buffer);
+			}
+		} else {
+			// Read in palette
+			rrmStream->read(screen._cMap, PALETTE_SIZE);
+			screen.translatePalette(screen._cMap);
+			Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
 
-		Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
+			// Read in the background
+			Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
+				res.decompress(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
-		// Read in the background
-		Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
-			Resources::decompressLZ(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+			bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
-		bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
-
-		if (_lzwMode)
-			delete bgStream;
+			if (_lzwMode)
+				delete bgStream;
+		}
 
 		// Backup the image and set the palette
 		screen._backBuffer2.blitFrom(screen._backBuffer1);
@@ -415,7 +577,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		delete rrmStream;
 	}
 
-	// Clear user interface area and draw controls
+	// Handle drawing any on-screen interface
 	ui.drawInterface();
 
 	checkSceneStatus();
@@ -447,7 +609,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	checkInventory();
 
 	// Handle starting any music for the scene
-	if (music._musicOn && music.loadSong(_currentScene))
+	if (IS_SERRATED_SCALPEL && music._musicOn && music.loadSong(_currentScene))
 		music.startSong();
 
 	// Load walking images if not already loaded
@@ -463,12 +625,23 @@ bool Scene::loadScene(const Common::String &filename) {
 	if (!_vm->isDemo()) {
 		// Reset the previous map location and position on overhead map
 		map._oldCharPoint = _currentScene;
-		map._overPos.x = map[_currentScene].x * 100 - 600;
-		map._overPos.y = map[_currentScene].y * 100 + 900;
+
+		if (IS_SERRATED_SCALPEL) {
+			map._overPos.x = (map[_currentScene].x - 6) * FIXED_INT_MULTIPLIER;
+			map._overPos.y = (map[_currentScene].y + 9) * FIXED_INT_MULTIPLIER;
+
+		}
 	}
 
 	events.clearEvents();
 	return flag;
+}
+
+void Scene::loadSceneSounds() {
+	Sound &sound = *_vm->_sound;
+
+	for (uint idx = 0; idx < _sounds.size(); ++idx)
+		sound.loadSound(_sounds[idx]._name, _sounds[idx]._priority);
 }
 
 void Scene::checkSceneStatus() {
@@ -597,8 +770,8 @@ void Scene::transitionToScene() {
 		// Otherwise, this is a linked scene or entrance info, and must be translated
 		if (hSavedFacing < 8 && !saves._justLoaded) {
 			hSavedFacing = FS_TRANS[hSavedFacing];
-			hSavedPos.x *= 100;
-			hSavedPos.y *= 100;
+			hSavedPos.x *= FIXED_INT_MULTIPLIER;
+			hSavedPos.y *= FIXED_INT_MULTIPLIER;
 		}
 	}
 
@@ -638,7 +811,8 @@ void Scene::transitionToScene() {
 			}
 
 			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
-				Common::Point(people[PLAYER]._position.x / 100, people[PLAYER]._position.y / 100))) {
+					Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER, 
+					people[PLAYER]._position.y / FIXED_INT_MULTIPLIER))) {
 				// Current point is already inside box - impact occurred on
 				// a previous call. So simply do nothing except talk until the
 				// player is clear of the box
@@ -669,11 +843,14 @@ void Scene::transitionToScene() {
 
 	updateBackground();
 
+	// Actually do the transition
 	if (screen._fadeStyle)
 		screen.randomTransition();
 	else
 		screen.blitFrom(screen._backBuffer1);
+	screen.update();
 
+	// Start any initial animation for the scene
 	if (cAnimNum != -1) {
 		CAnim &c = _cAnim[cAnimNum];
 		Common::Point pt = c._goto;
@@ -701,19 +878,26 @@ int Scene::toggleObject(const Common::String &name) {
 
 void Scene::updateBackground() {
 	People &people = *_vm->_people;
+
+	// Update Holmes if he's turned on
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (people[idx]._type == CHARACTER)
+			people[idx].adjustSprite();
+	}
+
+	// Flag the bg shapes which need to be redrawn
+	checkBgShapes();
+
+	// Draw the shapes for the scene
+	drawAllShapes();
+}
+
+void Scene::drawAllShapes() {
+	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Sprite &player = people[AL];
 
 	// Restrict drawing window
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
-
-	// Update Holmes if he's turned on
-	if (people._holmesOn)
-		player.adjustSprite();
-
-	// Flag the bg shapes which need to be redrawn
-	checkBgShapes(player._imageFrame, Common::Point(player._position.x / 100,
-		player._position.y / 100));
 
 	// Draw all active shapes which are behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -725,7 +909,7 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == BEHIND)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame,
-				_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all active shapes which are normal and behind the person
@@ -738,33 +922,37 @@ void Scene::updateBackground() {
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
-	// Draw the player if he's active
-	if (player._type == CHARACTER && people.isHolmesActive()) {
-		bool flipped = player._sequenceNumber == WALK_LEFT || player._sequenceNumber == STOP_LEFT ||
-			player._sequenceNumber == WALK_UPLEFT || player._sequenceNumber == STOP_UPLEFT ||
-			player._sequenceNumber == WALK_DOWNRIGHT || player._sequenceNumber == STOP_DOWNRIGHT;
+	// Draw any active characters
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &p = people[idx];
+		if (p._type == CHARACTER && p._walkLoaded) {
+			bool flipped = IS_SERRATED_SCALPEL && (
+				p._sequenceNumber == WALK_LEFT || p._sequenceNumber == STOP_LEFT ||
+				p._sequenceNumber == WALK_UPLEFT || p._sequenceNumber == STOP_UPLEFT ||
+				p._sequenceNumber == WALK_DOWNRIGHT || p._sequenceNumber == STOP_DOWNRIGHT);
 
-		screen._backBuffer->transBlitFrom(*player._imageFrame, Common::Point(player._position.x / 100,
-			player._position.y / 100 - player.frameHeight()), flipped);
+			screen._backBuffer->transBlitFrom(*p._imageFrame, Common::Point(p._position.x / FIXED_INT_MULTIPLIER,
+				p._position.y / FIXED_INT_MULTIPLIER - p.frameHeight()), flipped);
+		}
 	}
 
 	// Draw all static and active shapes that are NORMAL and are in front of the player
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
-				_bgShapes[idx]._misc == NORMAL_FORWARD)
+			_bgShapes[idx]._misc == NORMAL_FORWARD)
 			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
-				_bgShapes[idx]._flags & OBJ_FLIPPED);
+			_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are NORMAL and are in front of the player
 	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
-				_canimShapes[idx]._misc == NORMAL_FORWARD)
+			_canimShapes[idx]._misc == NORMAL_FORWARD)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active shapes that are FORWARD
@@ -774,9 +962,9 @@ void Scene::updateBackground() {
 			_bgShapes[idx].frameHeight());
 
 		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
-				_bgShapes[idx]._misc == FORWARD)
+			_bgShapes[idx]._misc == FORWARD)
 			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
-				_bgShapes[idx]._flags & OBJ_FLIPPED);
+			_bgShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	// Draw all static and active canimations that are forward
@@ -784,7 +972,7 @@ void Scene::updateBackground() {
 		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
 			_canimShapes[idx]._misc == FORWARD)
 			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
-				_canimShapes[idx]._flags & OBJ_FLIPPED);
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
 	}
 
 	screen.resetDisplayBounds();
@@ -792,45 +980,11 @@ void Scene::updateBackground() {
 
 Exit *Scene::checkForExit(const Common::Rect &r) {
 	for (uint idx = 0; idx < _exits.size(); ++idx) {
-		if (_exits[idx]._bounds.intersects(r))
+		if (_exits[idx].intersects(r))
 			return &_exits[idx];
 	}
 
 	return nullptr;
-}
-
-void Scene::checkBgShapes(ImageFrame *frame, const Common::Point &pt) {
-	// Iterate through the shapes
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &obj = _bgShapes[idx];
-		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
-			if ((obj._flags & 5) == 1) {
-				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
-					NORMAL_FORWARD : NORMAL_BEHIND;
-			} else if (!(obj._flags & OBJ_BEHIND)) {
-				obj._misc = BEHIND;
-			} else if (obj._flags & OBJ_FORWARD) {
-				obj._misc = FORWARD;
-			}
-		}
-	}
-
-	// Iterate through the canimshapes
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &obj = _canimShapes[idx];
-		if (obj._type == STATIC_BG_SHAPE || obj._type == ACTIVE_BG_SHAPE) {
-			if ((obj._flags & 5) == 1) {
-				obj._misc = (pt.y < (obj._position.y + obj._imageFrame->_frame.h - 1)) ?
-				NORMAL_FORWARD : NORMAL_BEHIND;
-			}
-			else if (!(obj._flags & 1)) {
-				obj._misc = BEHIND;
-			}
-			else if (obj._flags & 4) {
-				obj._misc = FORWARD;
-			}
-		}
-	}
 }
 
 int Scene::startCAnim(int cAnimNum, int playRate) {
@@ -1045,333 +1199,6 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	return 1;
 }
 
-void Scene::doBgAnim() {
-	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
-
-	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
-
-	int cursorId = events.getCursor();
-	Common::Point mousePos = events.mousePos();
-
-	talk._talkToAbort = false;
-
-	// Animate the mouse cursor
-	if (cursorId >= WAIT) {
-		if (++cursorId > (WAIT + 2))
-			cursorId = WAIT;
-
-		events.setCursor((CursorId)cursorId);
-	}
-
-	if (ui._menuMode == LOOK_MODE) {
-		if (mousePos.y > CONTROLS_Y1)
-			events.setCursor(ARROW);
-		else if (mousePos.y < CONTROLS_Y)
-			events.setCursor(MAGNIFY);
-	}
-
-	// Check for setting magnifying glass cursor
-	if (ui._menuMode == INV_MODE || ui._menuMode == USE_MODE || ui._menuMode == GIVE_MODE) {
-		if (inv._invMode == INVMODE_LOOK) {
-			// Only show Magnifying glass cursor if it's not on the inventory command line
-			if (mousePos.y < CONTROLS_Y || mousePos.y >(CONTROLS_Y1 + 13))
-				events.setCursor(MAGNIFY);
-			else
-				events.setCursor(ARROW);
-		} else {
-			events.setCursor(ARROW);
-		}
-	}
-
-	if (sound._diskSoundPlaying && !*sound._soundIsOn) {
-		// Loaded sound just finished playing
-		sound.freeDigiSound();
-	}
-
-	if (_restoreFlag) {
-		if (people[AL]._type == CHARACTER)
-			people[AL].checkSprite();
-
-		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE)
-				_bgShapes[idx].checkObject();
-		}
-
-		if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
-			people._portrait.checkObject();
-
-		for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-			if (_canimShapes[idx]._type != INVALID && _canimShapes[idx]._type != REMOVE)
-				_canimShapes[idx].checkObject();
-		}
-
-		if (_currentScene == 12 && _vm->getGameID() == GType_SerratedScalpel)
-			((Scalpel::ScalpelEngine *)_vm)->eraseMirror12();
-
-		// Restore the back buffer from the back buffer 2 in the changed area
-		Common::Rect bounds(people[AL]._oldPosition.x, people[AL]._oldPosition.y,
-			people[AL]._oldPosition.x + people[AL]._oldSize.x,
-			people[AL]._oldPosition.y + people[AL]._oldSize.y);
-		Common::Point pt(bounds.left, bounds.top);
-
-		if (people[AL]._type == CHARACTER)
-			screen.restoreBackground(bounds);
-		else if (people[AL]._type == REMOVE)
-			screen._backBuffer->blitFrom(screen._backBuffer2, pt, bounds);
-
-		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			Object &o = _bgShapes[idx];
-			if (o._type == ACTIVE_BG_SHAPE || o._type == HIDE_SHAPE || o._type == REMOVE)
-				screen.restoreBackground(o.getOldBounds());
-		}
-
-		if (people._portraitLoaded)
-			screen.restoreBackground(Common::Rect(
-				people._portrait._oldPosition.x, people._portrait._oldPosition.y,
-				people._portrait._oldPosition.x + people._portrait._oldSize.x,
-				people._portrait._oldPosition.y + people._portrait._oldSize.y
-			));
-
-		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			Object &o = _bgShapes[idx];
-			if (o._type == NO_SHAPE && ((o._flags & OBJ_BEHIND) == 0)) {
-				// Restore screen area
-				screen._backBuffer->blitFrom(screen._backBuffer2, o._position,
-					Common::Rect(o._position.x, o._position.y,
-					o._position.x + o._noShapeSize.x, o._position.y + o._noShapeSize.y));
-
-				o._oldPosition = o._position;
-				o._oldSize = o._noShapeSize;
-			}
-		}
-
-		for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-			Object &o = _canimShapes[idx];
-			if (o._type == ACTIVE_BG_SHAPE || o._type == HIDE_SHAPE || o._type == REMOVE)
-				screen.restoreBackground(Common::Rect(o._oldPosition.x, o._oldPosition.y,
-					o._oldPosition.x + o._oldSize.x, o._oldPosition.y + o._oldSize.y));
-		}
-	}
-
-	//
-	// Update the background objects and canimations
-	//
-
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &o = _bgShapes[idx];
-		if (o._type == ACTIVE_BG_SHAPE || o._type == NO_SHAPE)
-			o.adjustObject();
-	}
-
-	if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
-		people._portrait.adjustObject();
-
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		if (_canimShapes[idx]._type != INVALID)
-			_canimShapes[idx].adjustObject();
-	}
-
-	if (people[AL]._type == CHARACTER && people._holmesOn)
-		people[AL].adjustSprite();
-
-	// Flag the bg shapes which need to be redrawn
-	checkBgShapes(people[AL]._imageFrame,
-		Common::Point(people[AL]._position.x / 100, people[AL]._position.y / 100));
-
-	if (_currentScene == 12 && _vm->getGameID() == GType_SerratedScalpel)
-		((Scalpel::ScalpelEngine *)_vm)->doMirror12();
-
-	// Draw all active shapes which are behind the person
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &o = _bgShapes[idx];
-		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-	}
-
-	// Draw all canimations which are behind the person
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
-		if (o._type == ACTIVE_BG_SHAPE && o._misc == BEHIND) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-		}
-	}
-
-	// Draw all active shapes which are HAPPEN and behind the person
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &o = _bgShapes[idx];
-		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-	}
-
-	// Draw all canimations which are NORMAL and behind the person
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
-		if (o._type == ACTIVE_BG_SHAPE && o._misc == NORMAL_BEHIND) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-		}
-	}
-
-	// Draw the person if not animating
-	if (people[AL]._type == CHARACTER && people.isHolmesActive()) {
-		// If Holmes is too far to the right, move him back so he's on-screen
-		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[AL]._imageFrame->_frame.w;
-		int tempX = MIN(people[AL]._position.x / 100, xRight);
-
-		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT ||
-			people[AL]._sequenceNumber == WALK_UPLEFT || people[AL]._sequenceNumber == STOP_UPLEFT ||
-			people[AL]._sequenceNumber == WALK_DOWNRIGHT || people[AL]._sequenceNumber == STOP_DOWNRIGHT;
-		screen._backBuffer->transBlitFrom(*people[AL]._imageFrame,
-			Common::Point(tempX, people[AL]._position.y / 100 - people[AL]._imageFrame->_frame.h), flipped);
-	}
-
-	// Draw all static and active shapes are NORMAL and are in front of the person
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &o = _bgShapes[idx];
-		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-	}
-
-	// Draw all static and active canimations that are NORMAL and are in front of the person
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
-		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == NORMAL_FORWARD) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-		}
-	}
-
-	// Draw all static and active shapes that are in front of the person
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &o = _bgShapes[idx];
-		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-	}
-
-	// Draw any active portrait
-	if (people._portraitLoaded && people._portrait._type == ACTIVE_BG_SHAPE)
-		screen._backBuffer->transBlitFrom(*people._portrait._imageFrame,
-			people._portrait._position, people._portrait._flags & OBJ_FLIPPED);
-
-	// Draw all static and active canimations that are in front of the person
-	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
-		Object &o = _canimShapes[idx];
-		if ((o._type == ACTIVE_BG_SHAPE || o._type == STATIC_BG_SHAPE) && o._misc == FORWARD) {
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-		}
-	}
-
-	// Draw all NO_SHAPE shapes which have flag bit 0 clear
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &o = _bgShapes[idx];
-		if (o._type == NO_SHAPE && (o._flags & OBJ_BEHIND) == 0)
-			screen._backBuffer->transBlitFrom(*o._imageFrame, o._position, o._flags & OBJ_FLIPPED);
-	}
-
-	// Bring the newly built picture to the screen
-	if (_animating == 2) {
-		_animating = 0;
-		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
-	} else {
-		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.empty()))) {
-			if (people[AL]._type == REMOVE) {
-				screen.slamRect(Common::Rect(
-					people[AL]._oldPosition.x, people[AL]._oldPosition.y,
-					people[AL]._oldPosition.x + people[AL]._oldSize.x,
-					people[AL]._oldPosition.y + people[AL]._oldSize.y
-				));
-				people[AL]._type = INVALID;
-			} else {
-				screen.flushImage(people[AL]._imageFrame,
-					Common::Point(people[AL]._position.x / 100,
-						people[AL]._position.y / 100 - people[AL].frameHeight()),
-					&people[AL]._oldPosition.x, &people[AL]._oldPosition.y,
-					&people[AL]._oldSize.x, &people[AL]._oldSize.y);
-			}
-		}
-
-		if (_currentScene == 12 && _vm->getGameID() == GType_SerratedScalpel)
-			((Scalpel::ScalpelEngine *)_vm)->flushMirror12();
-
-		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			Object &o = _bgShapes[idx];
-			if ((o._type == ACTIVE_BG_SHAPE || o._type == REMOVE) && _goToScene == -1) {
-				screen.flushImage(o._imageFrame, o._position,
-					&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);
-			}
-		}
-
-		if (people._portraitLoaded) {
-			if (people._portrait._type == REMOVE)
-				screen.slamRect(Common::Rect(
-					people._portrait._position.x, people._portrait._position.y,
-					people._portrait._position.x + people._portrait._delta.x,
-					people._portrait._position.y + people._portrait._delta.y
-				));
-			else
-				screen.flushImage(people._portrait._imageFrame, people._portrait._position,
-					&people._portrait._oldPosition.x, &people._portrait._oldPosition.y,
-					&people._portrait._oldSize.x, &people._portrait._oldSize.y);
-
-			if (people._portrait._type == REMOVE)
-				people._portrait._type = INVALID;
-		}
-
-		if (_goToScene == -1) {
-			for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-				Object &o = _bgShapes[idx];
-				if (o._type == NO_SHAPE && (o._flags & OBJ_BEHIND) == 0) {
-					screen.slamArea(o._position.x, o._position.y, o._oldSize.x, o._oldSize.y);
-					screen.slamArea(o._oldPosition.x, o._oldPosition.y, o._oldSize.x, o._oldSize.y);
-				} else if (o._type == HIDE_SHAPE) {
-					// Hiding shape, so flush it out and mark it as hidden
-					screen.flushImage(o._imageFrame, o._position,
-						&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);
-					o._type = HIDDEN;
-				}
-			}
-		}
-
-		for (int idx = _canimShapes.size() - 1; idx >= 0; --idx) {
-			Object &o = _canimShapes[idx];
-
-			if (o._type == INVALID) {
-				// Anim shape was invalidated by checkEndOfSequence, so at this point we can remove it
-				_canimShapes.remove_at(idx);
-			} else  if (o._type == REMOVE) {
-				if (_goToScene == -1)
-					screen.slamArea(o._position.x, o._position.y, o._delta.x, o._delta.y);
-
-				// Shape for an animation is no longer needed, so remove it completely
-				_canimShapes.remove_at(idx);
-			} else if (o._type == ACTIVE_BG_SHAPE) {
-				screen.flushImage(o._imageFrame, o._position,
-					&o._oldPosition.x, &o._oldPosition.y, &o._oldSize.x, &o._oldSize.y);
-			}
-		}
-	}
-
-	_restoreFlag = true;
-	_doBgAnimDone = true;
-
-	events.wait(3);
-	screen.resetDisplayBounds();
-
-	// Check if the method was called for calling a portrait, and a talk was
-	// interrupting it. This talk file would not have been executed at the time,
-	// since we needed to finish the 'doBgAnim' to finish clearing the portrait
-	if (people._clearingThePortrait && talk._scriptMoreFlag == 3) {
-		// Reset the flags and call to talk
-		people._clearingThePortrait = false;
-		talk._scriptMoreFlag = 0;
-		talk.talkTo(talk._scriptName);
-	}
-}
-
 int Scene::findBgShape(const Common::Rect &r) {
 	if (!_doBgAnimDone)
 		// New frame hasn't been drawn yet
@@ -1453,6 +1280,48 @@ void Scene::synchronize(Common::Serializer &s) {
 	for (int sceneNum = 0; sceneNum < SCENES_COUNT; ++sceneNum) {
 		for (int flag = 0; flag < 65; ++flag) {
 			s.syncAsByte(_sceneStats[sceneNum][flag]);
+		}
+	}
+}
+
+void Scene::setNPCPath(int npc) {
+	People &people = *_vm->_people;
+	Talk &talk = *_vm->_talk;
+	
+	people[npc].clearNPC();
+	people[npc]._name = Common::String::format("WATS%.2dA", _currentScene);
+
+	// If we're in the middle of a script that will continue once the scene is loaded,
+	// return without calling the path script
+	if (talk._scriptMoreFlag == 1 || talk._scriptMoreFlag == 3)
+		return;
+
+	// Turn off all the NPCs, since the talk script will turn them back on as needed
+	for (uint idx = 0; idx < MAX_NPC; ++idx)
+		people[idx + 1]._type = INVALID;
+
+	// Call the path script for the scene
+	Common::String pathFile = Common::String::format("PATH%.2dA", _currentScene);
+	talk.talkTo(pathFile);
+}
+
+void Scene::checkBgShapes() {
+	People &people = *_vm->_people;
+	Person &holmes = people._player;
+	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
+
+	// Iterate through the shapes
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+		if (obj._type == ACTIVE_BG_SHAPE || (IS_SERRATED_SCALPEL && obj._type == STATIC_BG_SHAPE)) {
+			if ((obj._flags & 5) == 1) {
+				obj._misc = (pt.y < (obj._position.y + obj.frameHeight() - 1)) ?
+					NORMAL_FORWARD : NORMAL_BEHIND;
+			} else if (!(obj._flags & OBJ_BEHIND)) {
+				obj._misc = BEHIND;
+			} else if (obj._flags & OBJ_FORWARD) {
+				obj._misc = FORWARD;
+			}
 		}
 	}
 }

@@ -59,9 +59,9 @@ enum GameType {
 	GType_RoseTattoo = 1
 };
 
-#define SHERLOCK_SCREEN_WIDTH 320
-#define SHERLOCK_SCREEN_HEIGHT 200
-#define SHERLOCK_SCENE_HEIGHT 138
+#define SHERLOCK_SCREEN_WIDTH _vm->_screen->w()
+#define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h()
+#define SHERLOCK_SCENE_HEIGHT (IS_SERRATED_SCALPEL ? 138 : 480)
 
 struct SherlockGameDescription;
 
@@ -198,6 +198,9 @@ public:
 	 */
 	void synchronize(Common::Serializer &s);
 };
+
+#define IS_ROSE_TATTOO (_vm->getGameID() == GType_RoseTattoo)
+#define IS_SERRATED_SCALPEL (_vm->getGameID() == GType_SerratedScalpel)
 
 } // End of namespace Sherlock
 

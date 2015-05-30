@@ -20,40 +20,57 @@
  *
  */
 
-#ifndef SHERLOCK_SETTINGS_H
-#define SHERLOCK_SETTINGS_H
+#ifndef SHERLOCK_TATTOO_SCENE_H
+#define SHERLOCK_TATTOO_SCENE_H
 
 #include "common/scummsys.h"
+#include "sherlock/scene.h"
 
 namespace Sherlock {
 
-class SherlockEngine;
-class UserInterface;
+namespace Tattoo {
 
-class Settings {
+class TattooScene : public Scene {
 private:
-	SherlockEngine *_vm;
+	int _arrowZone;
+	int _maskCounter;
+	Common::Point _maskOffset;
+private:
+	void doBgAnimCheckCursor();
 
-	Settings(SherlockEngine *vm) : _vm(vm) {}
+	void doBgAnimEraseBackground();
 
 	/**
-	 * Draws the interface for the settings window
+	 * Update the background objects and canimations as part of doBgAnim
 	 */
-	void drawInteface(bool flag);
-
+	void doBgAnimUpdateBgObjectsAndAnim();
+protected:
 	/**
-	 * Draws the buttons for the settings dialog
+	 * Checks all the background shapes. If a background shape is animating,
+	 * it will flag it as needing to be drawn. If a non-animating shape is
+	 * colliding with another shape, it will also flag it as needing drawing
 	 */
-	int drawButtons(const Common::Point &pt, int key);
+	virtual void checkBgShapes();
 public:
+	ImageFile *_mask, *_mask1;
+	CAnimStream _activeCAnim;
+public:
+	TattooScene(SherlockEngine *vm);
+
 	/**
-	 * Handles input when the settings window is being shown
-	 * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
-	 *		the user interface, it uses so many internal UI fields, that it sort of made some sense
-	 *		to put it in the UserInterface class.
+	 * Draw all objects and characters.
 	 */
-	static void show(SherlockEngine *vm);
+	virtual void doBgAnim();
+
+	/**
+	 * Update the screen back buffer with all of the scene objects which need
+	 * to be drawn
+	 */
+	virtual void updateBackground();
+
 };
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 

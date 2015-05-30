@@ -21,9 +21,12 @@
  */
 
 #include "sherlock/sherlock.h"
-#include "sherlock/settings.h"
+#include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel_user_interface.h"
 
 namespace Sherlock {
+
+namespace Scalpel {
 
 static const int SETUP_POINTS[12][4]  = {
 	{ 4, 154, 101, 53 },		// Exit
@@ -212,9 +215,10 @@ void Settings::show(SherlockEngine *vm) {
 	Sound &sound = *vm->_sound;
 	Music &music = *vm->_music;
 	Talk &talk = *vm->_talk;
-	UserInterface &ui = *vm->_ui;
+	ScalpelUserInterface &ui = *(ScalpelUserInterface *)vm->_ui;
 	bool updateConfig = false;
 
+	assert(vm->getGameID() == GType_SerratedScalpel);
 	Settings settings(vm);
 	settings.drawInteface(false);
 
@@ -331,5 +335,7 @@ void Settings::show(SherlockEngine *vm) {
 	ui._windowBounds.top = CONTROLS_Y1;
 	ui._key = -1;
 }
+
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock

@@ -272,6 +272,11 @@ bool Music::loadSong(int songNumber) {
 	return true;
 }
 
+bool Music::loadSong(const Common::String &songName) {
+	warning("TODO: Music::loadSong");
+	return false;
+}
+
 void Music::syncMusicSettings() {
 	_musicOn = !ConfMan.getBool("mute") && !ConfMan.getBool("music_mute");
 }

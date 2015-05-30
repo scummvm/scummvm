@@ -66,6 +66,12 @@ private:
 	int _fontHeight;
 	Surface _sceneSurface;
 
+	// Rose Tattoo fields
+	int _fadeBytesRead, _fadeBytesToRead;
+	int _oldFadePercent;
+	byte _lookupTable[PALETTE_COUNT];
+	byte _lookupTable1[PALETTE_COUNT];
+private:
 	/**
 	 * Merges together overlapping dirty areas of the screen
 	 */
@@ -92,6 +98,10 @@ public:
 	bool _fadeStyle;
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
+	byte _tMap[PALETTE_SIZE];
+	int _currentScroll, _targetScroll;
+	int _scrollSize, _scrollSpeed;
+	bool _flushScreen;
 public:
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
@@ -171,8 +181,15 @@ public:
 	 * Copy an image from the back buffer to the screen, taking care of both the
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
-	void flushImage(ImageFrame *frame, const Common::Point &pt,
-		int16 *xp, int16 *yp, int16 *width, int16 *height);
+	void flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
+		int16 *width, int16 *height);
+
+	/**
+	 * Similar to flushImage, this method takes in an extra parameter for the scale proporation,
+	 * which affects the calculated bounds accordingly
+	 */
+	void flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
+		int16 *width, int16 *height, int scaleVal);
 
 	/**
 	 * Returns the width of a string in pixels
@@ -232,6 +249,21 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Common::Serializer &s);
+
+	// Rose Tattoo specific methods
+	void initPaletteFade(int bytesToRead);
+
+	int fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSize);
+
+	void setupBGArea(const byte cMap[PALETTE_SIZE]);
+
+	void initScrollVars();
+
+	/**
+	 * Translate a palette from 6-bit RGB values to full 8-bit values suitable for passing
+	 * to the underlying palette manager
+	 */
+	static void translatePalette(byte palette[PALETTE_SIZE]);
 };
 
 } // End of namespace Sherlock

@@ -90,7 +90,7 @@ private:
 	/**
 	 * Reads in the index from a library file, and caches it's index for later use
 	 */
-	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream);
+	void loadLibraryIndex(const Common::String &libFilename, Common::SeekableReadStream *stream, bool isNewStyle);
 public:
 	Resources(SherlockEngine *vm);
 
@@ -140,14 +140,29 @@ public:
 	int resourceIndex() const;
 
 	/**
-	 * Decompresses an LZW block of data with a specified output size
+	 * Decompresses LZW compressed data
+	 */
+	Common::SeekableReadStream *decompress(Common::SeekableReadStream &source);
+
+	/**
+	 * Decompresses LZW compressed data
+	 */
+	Common::SeekableReadStream *decompress(Common::SeekableReadStream &source, uint32 outSize);
+
+	/**
+	 * Decompresses LZW compressed data
+	 */
+	void decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize);
+
+	/**
+	 * Decompresses LZW compressed data
 	 */
 	static Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source, uint32 outSize);
-	
+
 	/**
-	 * Decompress an LZW compressed resource
+	 * Decompresses LZW compressed data
 	 */
-	Common::SeekableReadStream *decompressLZ(Common::SeekableReadStream &source);
+	static void decompressLZ(Common::SeekableReadStream &source, byte *outBuffer, int32 outSize, int32 inSize);
 };
 
 struct ImageFrame {
@@ -158,6 +173,16 @@ struct ImageFrame {
 	Common::Point _offset;
 	byte _rleMarker;
 	Graphics::Surface _frame;
+
+	/**
+	 * Return the frame width adjusted by a specified scale amount
+	 */
+	int sDrawXSize(int scaleVal) const;
+
+	/**
+	 * Return the frame height adjusted by a specified scale amount
+	 */
+	int sDrawYSize(int scaleVal) const;
 };
 
 class ImageFile : public Common::Array<ImageFrame> {

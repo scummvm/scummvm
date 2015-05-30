@@ -22,6 +22,7 @@
 
 #include "sherlock/map.h"
 #include "sherlock/sherlock.h"
+#include "common/system.h"
 
 namespace Sherlock {
 
@@ -50,7 +51,7 @@ const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 
 /*----------------------------------------------------------------*/
 
-Map::Map(SherlockEngine *vm) : _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
+Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12) {
 	_active = false;
 	_mapCursors = nullptr;
 	_shapes = nullptr;
@@ -64,8 +65,12 @@ Map::Map(SherlockEngine *vm) : _vm(vm), _topLine(SHERLOCK_SCREEN_WIDTH, 12) {
 	_oldCharPoint = 0;
 	_frameChangeFlag = false;
 
-	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx)
-		Common::fill(&_sequences[idx][0], &_sequences[idx][MAX_FRAME], 0);
+	// Initialise the initial walk sequence set
+	_walkSequences.resize(MAX_HOLMES_SEQUENCE);
+	for (int idx = 0; idx < MAX_HOLMES_SEQUENCE; ++idx) {
+		_walkSequences[idx]._sequences.resize(MAX_FRAME);
+		Common::fill(&_walkSequences[idx]._sequences[0], &_walkSequences[idx]._sequences[0] + MAX_FRAME, 0);
+	}
 
 	if (!_vm->isDemo())
 		loadData();
@@ -79,12 +84,17 @@ void Map::loadPoints(int count, const int *xList, const int *yList, const int *t
 
 void Map::loadSequences(int count, const byte *seq) {
 	for (int idx = 0; idx < count; ++idx, seq += MAX_FRAME)
-		Common::copy(seq, seq + MAX_FRAME, &_sequences[idx][0]);
+		Common::copy(seq, seq + MAX_FRAME, &_walkSequences[idx]._sequences[0]);
 }
 
 void Map::loadData() {
+	// TODO: Remove this
+	if (_vm->getGameID() == GType_RoseTattoo)
+		return;
+
 	// Load the list of location names
-	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
+	Common::SeekableReadStream *txtStream = _vm->_res->load(
+		_vm->getGameID() == GType_SerratedScalpel ? "chess.txt" : "map.txt");
 
 	int streamSize = txtStream->size();
 	while (txtStream->pos() < streamSize) {
@@ -283,7 +293,6 @@ void Map::setupSprites() {
 	p._type = CHARACTER;
 	p._position = Common::Point(12400, 5000);
 	p._sequenceNumber = 0;
-	p._sequences = &_sequences;
 	p._images = _shapes;
 	p._imageFrame = nullptr;
 	p._frameNumber = 0;
@@ -296,8 +305,8 @@ void Map::setupSprites() {
 	p._noShapeSize = Common::Point(0, 0);
 	p._goto = Common::Point(28000, 15000);
 	p._status = 0;
+	p._walkSequences = _walkSequences;
 	p.setImageFrame();
-
 	scene._bgShapes.clear();
 }
 

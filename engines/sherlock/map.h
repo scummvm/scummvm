@@ -76,7 +76,7 @@ private:
 	ImageFile *_mapCursors;
 	ImageFile *_shapes;
 	ImageFile *_iconShapes;
-	byte _sequences[MAX_HOLMES_SEQUENCE][MAX_FRAME];
+	WalkSequences _walkSequences;
 	Point32 _lDrawnPos;
 	int _point;
 	bool _placesShown;

@@ -30,13 +30,13 @@
 
 namespace Sherlock {
 
-// Player definitions. The game has theoretical support for two player characters but only the first one is used.
-// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
 enum PeopleId {
 	PLAYER			= 0,
 	AL				= 0,
 	PEG				= 1,
-	MAX_PLAYERS		= 2
+	MAX_CHARACTERS		= 6,
+	MAX_NPC			= 5,
+	MAX_NPC_PATH	= 200
 };
 
 // Animation sequence identifiers for characters
@@ -63,20 +63,37 @@ struct PersonData {
 		_name(name), _portrait(portrait), _stillSequences(stillSequences), _talkSequences(talkSequences) {}
 };
 
-class SherlockEngine;
-
 class Person : public Sprite {
 public:
-	Person() : Sprite() {}
-
+	bool _walkLoaded;
 	Common::String _portrait;
+
+	// NPC related fields
+	int _npcIndex;
+	int _npcStack;
+	bool _npcPause;
+	byte _npcPath[MAX_NPC_PATH];
+	Common::String _npcName;
+	int _tempX;
+	int _tempScaleVal;
+
+	// Rose Tattoo fields
+	Common::String _walkVGSName;		// Name of walk library person is using
+public:
+	Person();
+
+	/**
+	 * Clear the NPC related data
+	 */
+	void clearNPC();
 };
+
+class SherlockEngine;
 
 class People {
 private:
 	SherlockEngine *_vm;
-	Person _data[MAX_PLAYERS];
-	bool _walkLoaded;
+	Person _data[MAX_CHARACTERS];
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
 public:
@@ -97,23 +114,22 @@ public:
 	bool _speakerFlip;
 	bool _holmesFlip;
 	int _holmesQuotient;
+	bool _forceWalkReload;
+	bool _useWalkLib;
+
+	int _walkControl;
 public:
 	People(SherlockEngine *vm);
 	~People();
 
 	Person &operator[](PeopleId id) {
-		assert(id < MAX_PLAYERS);
+		assert(id < MAX_CHARACTERS);
 		return _data[id];
 	}
 	Person &operator[](int idx) {
-		assert(idx < MAX_PLAYERS);
+		assert(idx < MAX_CHARACTERS);
 		return _data[idx];
 	}
-
-	/**
-	 * Returns true if Sherlock is visible on the screen and enabled
-	 */
-	bool isHolmesActive() const { return _walkLoaded && _holmesOn; }
 
 	/**
 	 * Reset the player data

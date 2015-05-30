@@ -50,10 +50,38 @@ static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 	{ 52, 1, 2, 3, 4, 0 }				// Goto Stand Down Left
 };
 
+// Rose Tattoo walk image libraries
+// Walk resources within WALK.LIB
+#define NUM_IN_WALK_LIB 10            
+const char *const WALK_LIB_NAMES[10] = {
+	"SVGAWALK.VGS",
+	"COATWALK.VGS",
+	"WATSON.VGS",
+	"NOHAT.VGS",
+	"TUPRIGHT.VGS",
+	"TRIGHT.VGS",
+	"TDOWNRG.VGS",
+	"TWUPRIGH.VGS",
+	"TWRIGHT.VGS",
+	"TWDOWNRG.VGS"
+};
+
+/*----------------------------------------------------------------*/
+
+Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _npcPause(false)  {
+	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
+	_tempX = _tempScaleVal = 0;
+}
+
+void Person::clearNPC() {
+	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
+	_npcIndex = _npcStack = 0;
+	_npcName = "";
+}
+
 /*----------------------------------------------------------------*/
 
 People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
-	_walkLoaded = false;
 	_holmesOn = true;
 	_oldWalkSequence = -1;
 	_allowWalkAbort = false;
@@ -68,66 +96,168 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_holmesQuotient = 0;
 	_hSavedPos = Common::Point(-1, -1);
 	_hSavedFacing = -1;
+	_forceWalkReload = false;
+	_useWalkLib = false;
+	_walkControl = 0;
 
 	_portrait._sequences = new byte[32];
 }
 
 People::~People() {
-	if (_walkLoaded)
-		delete _data[PLAYER]._images;
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (_data[idx]._walkLoaded)
+			delete _data[PLAYER]._images;
+	}
+
 	delete _talkPics;
 	delete[] _portrait._sequences;
 }
 
 void People::reset() {
-	// Note: The engine has theoretical support for two player characters but only the first one is used.
-	// Watson is, instead, handled by a different sprite in each scene, with a very simple initial movement, if any
-	Sprite &p = _data[PLAYER];
+	_data[0]._description = "Sherlock Holmes!";
 
-	p._description = "Sherlock Holmes!";
-	p._type = CHARACTER;
-	p._position = Common::Point(10000, 11000);
-	p._sequenceNumber = STOP_DOWNRIGHT;
-	p._sequences = &CHARACTER_SEQUENCES;
-	p._imageFrame = nullptr;
-	p._frameNumber = 1;
-	p._delta = Common::Point(0, 0);
-	p._oldPosition = Common::Point(0, 0);
-	p._oldSize = Common::Point(0, 0);
-	p._misc = 0;
-	p._walkCount = 0;
-	p._pickUp = "";
-	p._allow = 0;
-	p._noShapeSize = Common::Point(0, 0);
-	p._goto = Common::Point(0, 0);
-	p._status = 0;
+	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
+	int count = IS_SERRATED_SCALPEL ? 1 : MAX_CHARACTERS;
+	for (int idx = 0; idx < count; ++idx) {
+		Sprite &p = _data[idx];
+
+		p._type = (idx == 0) ? CHARACTER : INVALID;
+		if (IS_SERRATED_SCALPEL)
+			p._position = Point32(10000, 11000);
+		else
+			p._position = Point32(36000, 29000);
+
+		p._sequenceNumber = STOP_DOWNRIGHT;
+		p._imageFrame = nullptr;
+		p._frameNumber = 1;
+		p._delta = Common::Point(0, 0);
+		p._oldPosition = Common::Point(0, 0);
+		p._oldSize = Common::Point(0, 0);
+		p._misc = 0;
+		p._walkCount = 0;
+		p._pickUp = "";
+		p._allow = 0;
+		p._noShapeSize = Common::Point(0, 0);
+		p._goto = Common::Point(0, 0);
+		p._status = 0;
+		p._seqTo = 0;
+		p._seqCounter = p._seqCounter2 = 0;
+		p._seqStack = 0;
+		p._gotoSeq = p._talkSeq = 0;
+		p._restoreSlot = 0;
+		p._startSeq = 0;
+		p._altImages = nullptr;
+		p._altSequences = 0;
+		p._centerWalk = true;
+		p._adjust = Common::Point(0, 0);
+
+		// Load the default walk sequences
+		p._oldWalkSequence = -1;
+		p._walkSequences.clear();
+		if (IS_SERRATED_SCALPEL) {
+			p._walkSequences.resize(MAX_HOLMES_SEQUENCE);
+			for (int seqIdx = 0; seqIdx < MAX_HOLMES_SEQUENCE; ++seqIdx) {
+				p._walkSequences[seqIdx]._sequences.clear();
+
+				const byte *pSrc = &CHARACTER_SEQUENCES[seqIdx][0];
+				do {
+					p._walkSequences[seqIdx]._sequences.push_back(*pSrc);
+				} while (*pSrc++);
+			}
+		}
+	}
 
 	// Reset any walk path in progress when Sherlock leaves scenes
 	_walkTo.clear();
 }
 
 bool People::loadWalk() {
-	if (_walkLoaded) {
-		return false;
-	} else {
-		_data[PLAYER]._images = new ImageFile("walk.vgs");
-		_data[PLAYER].setImageFrame();
-		_walkLoaded = true;
+	Resources &res = *_vm->_res;
+	bool result = false;
 
-		return true;
+	if (IS_SERRATED_SCALPEL) {
+		if (_data[PLAYER]._walkLoaded) {
+			return false;
+		} else {
+			_data[PLAYER]._images = new ImageFile("walk.vgs");
+			_data[PLAYER].setImageFrame();
+			_data[PLAYER]._walkLoaded = true;
+
+			result = true;
+		}
+	} else {
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+			if (!_data[idx]._walkLoaded && (_data[idx]._type == CHARACTER || _data[idx]._type == HIDDEN_CHARACTER)) {
+				if (_data[idx]._type == HIDDEN_CHARACTER)
+					_data[idx]._type = INVALID;
+
+				// See if this is one of the more used Walk Graphics stored in WALK.LIB
+				for (int libNum = 0; libNum < NUM_IN_WALK_LIB; ++libNum) {
+					if (!_data[0]._walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
+						_useWalkLib = true;
+						break;
+					}
+				}
+
+				// Load the images for the character
+				_data[idx]._images = new ImageFile(_data[idx]._walkVGSName, false);
+				_data[idx]._numFrames = _data[idx]._images->size();
+
+				// Load walk sequence data
+				Common::String fname = Common::String(_data[idx]._walkVGSName.c_str(), strchr(_data[idx]._walkVGSName.c_str(), '.'));
+				fname += ".SEQ";
+
+				// Load the walk sequence data
+				Common::SeekableReadStream *stream = res.load(fname, _useWalkLib ? "walk.lib" : "vgs.lib");
+				
+				_data[idx]._walkSequences.resize(stream->readByte());
+
+				for (uint seqNum = 0; seqNum < _data[idx]._walkSequences.size(); ++seqNum)
+					_data[idx]._walkSequences[seqNum].load(*stream);
+
+				// Close the sequences resource
+				delete stream;
+				_useWalkLib = false;
+
+				_data[idx]._frameNumber = 0;
+				_data[idx].setImageFrame();
+
+				// Set the stop Frames pointers
+				for (int dirNum = 0; dirNum < 8; ++dirNum) {
+					int count = 0;
+					while (_data[idx]._walkSequences[dirNum + 8][count] != 0)
+						++count;
+					count += 2;
+					count = _data[idx]._walkSequences[dirNum + 8][count] - 1;
+					_data[idx]._stopFrames[dirNum] = &(*_data[idx]._images)[count];
+				}
+
+				result = true;
+				_data[idx]._walkLoaded = true;
+			} else if (_data[idx]._type != CHARACTER) {
+				_data[idx]._walkLoaded = false;
+			}
+		}
 	}
+
+	_forceWalkReload = false;
+	return result;
 }
 
 bool People::freeWalk() {
-	if (_walkLoaded) {
-		delete _player._images;
-		_player._images = nullptr;
+	bool result = false;
 
-		_walkLoaded = false;
-		return true;
-	} else {
-		return false;
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (_data[idx]._walkLoaded) {
+			delete _data[idx]._images;
+			_data[idx]._images = nullptr;
+			
+			_data[idx]._walkLoaded = false;
+			result = true;
+		}
 	}
+
+	return result;
 }
 
 void People::setWalking() {
@@ -553,9 +683,24 @@ void People::setTalking(int speaker) {
 
 void People::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_holmesOn);
-	s.syncAsSint16LE(_player._position.x);
-	s.syncAsSint16LE(_player._position.y);
-	s.syncAsSint16LE(_player._sequenceNumber);
+
+	if (IS_SERRATED_SCALPEL) {
+		s.syncAsSint16LE(_player._position.x);
+		s.syncAsSint16LE(_player._position.y);
+		s.syncAsSint16LE(_player._sequenceNumber);
+	} else {
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+			Person &p = _data[idx];
+			s.syncAsSint16LE(p._position.x);
+			s.syncAsSint16LE(p._position.y);
+			s.syncAsSint16LE(p._sequenceNumber);
+			s.syncAsSint16LE(p._type);
+			s.syncString(p._walkVGSName);
+			s.syncString(p._description);
+			s.syncString(p._examine);
+		}
+	}
+
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {

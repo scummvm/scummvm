@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
+#include "sherlock/screen.h"
 
 namespace Sherlock {
 
@@ -44,12 +45,23 @@ struct BgFileHeader {
 	int _numcAnimations;
 	int _descSize;
 	int _seqSize;
+
+	// Serrated Scalpel
 	int _fill;
+
+	// Rose Tattoo
+	int _scrollSize;
+	int _bytesWritten;				// Size of the main body of the RRM
+	int _fadeStyle;					// Fade style
+	byte _palette[PALETTE_SIZE];	// Palette
+
+
+	BgFileHeader();
 
 	/**
 	 * Load the data for the object
 	 */
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct BgFileHeaderInfo {
@@ -63,18 +75,20 @@ struct BgFileHeaderInfo {
 	void load(Common::SeekableReadStream &s);
 };
 
-struct Exit {
-	Common::Rect _bounds;
-
+class Exit: public Common::Rect {
+public:
 	int _scene;
 	int _allow;
 	Common::Point _people;
 	int _peopleDir;
 
+	Common::String _dest;
+	int _image;					// Arrow image to use
+
 	/**
 	 * Load the data for the object
 	 */
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct SceneEntry {
@@ -106,9 +120,26 @@ public:
 	int indexOf(const Object &obj) const;
 };
 
+class ScaleZone: public Common::Rect {
+public:
+	int _topNumber;		// Numerator of scale size at the top of the zone
+	int _bottomNumber;	// Numerator of scale size at the bottom of the zone
+
+	void load(Common::SeekableReadStream &s);
+};
+
+struct SceneTripEntry {
+	bool _flag;
+	int _sceneNumber;
+	int _numTimes;
+
+	SceneTripEntry() : _flag(false), _sceneNumber(0), _numTimes(0) {}
+	SceneTripEntry(bool flag, int sceneNumber, int numTimes) : _flag(flag),
+		_sceneNumber(sceneNumber), _numTimes(numTimes) {}
+};
+
 class Scene {
 private:
-	SherlockEngine *_vm;
 	Common::String _rrmName;
 	bool _loadingSavedGame;
 
@@ -122,6 +153,11 @@ private:
 	 * that it should point to after loading; _misc is then set to 0.
 	 */
 	bool loadScene(const Common::String &filename);
+
+	/**
+	 * Loads sounds for the scene
+	 */
+	void loadSceneSounds();
 
 	/**
 	 * Set objects to their current persistent state. This includes things such as
@@ -143,17 +179,26 @@ private:
 	void transitionToScene();
 
 	/**
-	 * Checks all the background shapes. If a background shape is animating,
-	 * it will flag it as needing to be drawn. If a non-animating shape is
-	 * colliding with another shape, it will also flag it as needing drawing
-	 */
-	void checkBgShapes(ImageFrame *frame, const Common::Point &pt);
-
-	/**
 	 * Restores objects to the correct status. This ensures that things like being opened or moved
 	 * will remain the same on future visits to the scene
 	 */
 	void saveSceneStatus();
+protected:
+	SherlockEngine *_vm;
+
+	/**
+	 * Checks all the background shapes. If a background shape is animating,
+	 * it will flag it as needing to be drawn. If a non-animating shape is
+	 * colliding with another shape, it will also flag it as needing drawing
+	 */
+	virtual void checkBgShapes();
+
+	/**
+	 * Draw all the shapes, people and NPCs in the correct order
+	 */
+	void drawAllShapes();
+
+	Scene(SherlockEngine *vm);
 public:
 	int _currentScene;
 	int _goToScene;
@@ -173,17 +218,21 @@ public:
 	int _walkDirectory[MAX_ZONES][MAX_ZONES];
 	Common::Array<byte> _walkData;
 	Common::Array<Exit> _exits;
+	int _exitZone;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
 	ObjectArray _canimShapes;
+	Common::Array<ScaleZone> _scaleZones;
+	Common::StringArray _objSoundList;
 	bool _restoreFlag;
 	int _animating;
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
 	int _cAnimFramePause;
+	Common::Array<SceneTripEntry> _sceneTripCounters;
 public:
-	Scene(SherlockEngine *vm);
-	~Scene();
+	static Scene *init(SherlockEngine *vm);
+	virtual ~Scene();
 
 	/**
 	 * Handles loading the scene specified by _goToScene
@@ -224,11 +273,6 @@ public:
 	int toggleObject(const Common::String &name);
 
 	/**
-	 * Animate all objects and people.
-	 */
-	void doBgAnim();
-
-	/**
 	 * Attempts to find a background shape within the passed bounds. If found,
 	 * it will return the shape number, or -1 on failure.
 	 */
@@ -251,15 +295,27 @@ public:
 	int closestZone(const Common::Point &pt);
 
 	/**
-	 * Update the screen back buffer with all of the scene objects which need
-	 * to be drawn
-	 */
-	void updateBackground();
-
-	/**
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Resets the NPC path information when entering a new scene.
+	 * @remarks		The default talk file for the given NPC is set to WATS##A, where ## is
+	 *		the scene number being entered
+	 */
+	void setNPCPath(int npc);
+public:
+	/**
+	 * Draw all objects and characters.
+	 */
+	virtual void doBgAnim() = 0;
+
+	/**
+	 * Update the screen back buffer with all of the scene objects which need
+	 * to be drawn
+	 */
+	virtual void updateBackground();
 };
 
 } // End of namespace Sherlock

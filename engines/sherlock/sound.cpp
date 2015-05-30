@@ -58,18 +58,27 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_soundIsOn = &_soundPlaying;
 	_curPriority = 0;
 	_digiBuf = nullptr;
+	_midiDrvLoaded = false;
+	_musicVolume = 0;
 
 	_soundOn = true;
 	_speechOn = true;
 
+	_vm->_res->addToCache("MUSIC.LIB");
 	if (!_vm->_interactiveFl)
 		_vm->_res->addToCache("TITLE.SND");
 	else {
-		_vm->_res->addToCache("SND.SND");
+		_vm->_res->addToCache("MUSIC.LIB");
+		
+		if (IS_ROSE_TATTOO) {
+			_vm->_res->addToCache("SOUND.LIB");
+		} else {
+			_vm->_res->addToCache("SND.SND");
 
-		if (!_vm->isDemo()) {
-			_vm->_res->addToCache("TITLE.SND");
-			_vm->_res->addToCache("EPILOGUE.SND");
+			if (!_vm->isDemo()) {
+				_vm->_res->addToCache("TITLE.SND");
+				_vm->_res->addToCache("EPILOGUE.SND");
+			}
 		}
 	}
 }
@@ -208,6 +217,10 @@ void Sound::freeDigiSound() {
 	_digiBuf = nullptr;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
+}
+
+void Sound::setMIDIVolume(int volume) {
+	// TODO
 }
 
 } // End of namespace Sherlock

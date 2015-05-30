@@ -25,7 +25,6 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "engines/util.h"
 
 namespace Sherlock {
 
@@ -72,8 +71,6 @@ SherlockEngine::~SherlockEngine() {
 }
 
 void SherlockEngine::initialize() {
-	initGraphics(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, false);
-
 	DebugMan.addDebugChannel(kDebugScript, "scripts", "Script debug level");
 
 	ImageFile::setVm(this);
@@ -98,11 +95,11 @@ void SherlockEngine::initialize() {
 	_journal = new Journal(this);
 	_people = new People(this);
 	_saves = new SaveManager(this, _targetName);
-	_scene = new Scene(this);
+	_scene = Scene::init(this);
 	_screen = new Screen(this);
 	_sound = new Sound(this, _mixer);
-	_talk = new Talk(this);
-	_ui = new UserInterface(this);
+	_talk = Talk::init(this);
+	_ui = UserInterface::init(this);
 
 	// Load game settings
 	loadConfig();
@@ -213,7 +210,9 @@ void SherlockEngine::loadConfig() {
 	ConfMan.registerDefault("font", 1);
 
 	_screen->setFont(ConfMan.getInt("font"));
-	_screen->_fadeStyle = ConfMan.getBool("fade_style");
+	if (getGameID() == GType_SerratedScalpel)
+		_screen->_fadeStyle = ConfMan.getBool("fade_style");
+
 	_ui->_helpStyle = ConfMan.getBool("help_style");
 	_ui->_slideWindows = ConfMan.getBool("window_style");
 	_people->_portraitsOn = ConfMan.getBool("portraits_on");

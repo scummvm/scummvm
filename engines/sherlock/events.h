@@ -33,7 +33,7 @@ namespace Sherlock {
 #define GAME_FRAME_RATE 60
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 
-enum CursorId { ARROW = 0, MAGNIFY = 1, WAIT = 2, INVALID_CURSOR = -1 };
+enum CursorId { ARROW = 0, MAGNIFY = 1, WAIT = 2, EXIT_ZONES_START = 5, INVALID_CURSOR = -1 };
 
 class SherlockEngine;
 
@@ -76,6 +76,11 @@ public:
 	 * Set the cursor to show from a passed frame
 	 */
 	void setCursor(const Graphics::Surface &src);
+
+	/**
+	 * Animates the mouse cursor if the Wait cursor is showing
+	 */
+	void animateCursorIfNeeded();
 
 	/**
 	 * Show the mouse cursor

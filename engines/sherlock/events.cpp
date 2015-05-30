@@ -42,6 +42,8 @@ Events::Events(SherlockEngine *vm) {
 	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
+
+	loadCursors("rmouse.vgs");
 }
 
 Events::~Events() {
@@ -72,6 +74,14 @@ void Events::setCursor(const Graphics::Surface &src) {
 	CursorMan.replaceCursor(src.getPixels(), src.w, src.h, 0, 0, 0xff);
 	showCursor();
 }
+
+void Events::animateCursorIfNeeded() {
+	if (_cursorId >= WAIT && _cursorId < (WAIT + 3)) {
+		CursorId newId = (WAIT + 2) ? WAIT : (CursorId)((int)_cursorId + 1);
+		setCursor(newId);
+	}
+}
+
 
 void Events::showCursor() {
 	CursorMan.showMouse(true);

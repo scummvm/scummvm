@@ -24,6 +24,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/animation.h"
+#include "engines/util.h"
 
 namespace Sherlock {
 
@@ -379,6 +380,9 @@ ScalpelEngine::~ScalpelEngine() {
 }
 
 void ScalpelEngine::initialize() {
+	initGraphics(320, 200, false);
+
+	// Let the base engine intialize
 	SherlockEngine::initialize();
 
 	_darts = new Darts(this);
@@ -580,9 +584,9 @@ bool ScalpelEngine::scrollCredits() {
 			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
 
 		// Don't show credit text on the top and bottom ten rows of the screen
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, 10));
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, SHERLOCK_SCREEN_HEIGHT - 10),
-			Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 10, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->w(), 10));
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, _screen->h() - 10),
+			Common::Rect(0, _screen->h() - 10, _screen->w(), _screen->h()));
 
 		_events->delay(100);
 	}
@@ -804,7 +808,6 @@ void ScalpelEngine::startScene() {
 		break;
 	}
 
-	_events->loadCursors("rmouse.vgs");
 	_events->setCursor(ARROW);
 
 	if (_scene->_goToScene == 99) {
@@ -828,9 +831,11 @@ void ScalpelEngine::eraseMirror12() {
 
 void ScalpelEngine::doMirror12() {
 	People &people = *_people;
+	Person &player = people._player;
+
 	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
-	int frameNum = (*people[AL]._sequences)[people[AL]._sequenceNumber][people[AL]._frameNumber] +
-		(*people[AL]._sequences)[people[AL]._sequenceNumber][0] - 2;
+	int frameNum = player._walkSequences[player._sequenceNumber][player._frameNumber] +
+		player._walkSequences[player._sequenceNumber][0] - 2;
 
 	switch ((*_people)[AL]._sequenceNumber) {
 	case WALK_DOWN:

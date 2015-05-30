@@ -46,7 +46,10 @@ enum SpriteType {
 	REMOVE = 5,					// Object should be removed next frame
 	NO_SHAPE = 6,				// Background object with no shape
 	HIDDEN = 7,					// Hidden backgruond object
-	HIDE_SHAPE = 8				// Object needs to be hidden
+	HIDE_SHAPE = 8,				// Object needs to be hidden
+
+	// Rose Tattoo
+	HIDDEN_CHARACTER = 128
 };
 
 enum AType {
@@ -73,6 +76,7 @@ enum {
 
 #define MAX_HOLMES_SEQUENCE 16
 #define MAX_FRAME 30
+#define FIXED_INT_MULTIPLIER 100
 
 // code put into sequences to defines 1-10 type seqs
 #define SEQ_TO_CODE 67
@@ -98,65 +102,24 @@ public:
 	void operator-=(const Point32 &delta) { x -= delta.x; y -= delta.y; }
 };
 
-class Sprite {
-private:
-	static SherlockEngine *_vm;
+
+struct WalkSequence {
+	Common::String _vgsName;
+	bool _horizFlip;
+	Common::Array<byte> _sequences;
+
+	WalkSequence() : _horizFlip(false) {}
+	const byte &operator[](int idx) { return _sequences[idx]; }
+
+	/**
+	 * Load data for the sequence from a stream
+	 */
+	void load(Common::SeekableReadStream &s);
+};
+
+class WalkSequences : public Common::Array < WalkSequence > {
 public:
-	Common::String _name;				
-	Common::String _description;		
-	Common::StringArray _examine;		// Examine in-depth description
-	Common::String _pickUp;				// Message for if you can't pick up object
-
-	const uint8 (*_sequences)[MAX_HOLMES_SEQUENCE][MAX_FRAME];  // Holds animation sequences
-	ImageFile *_images;					// Sprite images
-	ImageFrame *_imageFrame;			// Pointer to shape in the images
-	int _walkCount;						// Character walk counter
-	int _allow;							// Allowed menu commands - ObjectAllow
-	int _frameNumber;					// Frame number in rame sequence to draw
-	int _sequenceNumber;				// Sequence being used
-	Point32 _position;					// Current position
-	Point32 _delta;						// Momvement delta
-	Common::Point _oldPosition;			// Old position
-	Common::Point _oldSize;				// Image's old size
-	Common::Point _goto;				// Walk destination
-	SpriteType _type;					// Type of object
-	Common::Point _noShapeSize;			// Size of a NO_SHAPE
-	int _status;						// Status: open/closed, moved/not moved
-	int8 _misc;							// Miscellaneous use
-	int _numFrames;						// How many frames the object has
-public:
-	Sprite() { clear(); }
-	static void setVm(SherlockEngine *vm) { _vm = vm; }
-
-	/**
-	 * Reset the data for the sprite
-	 */
-	void clear();
-
-	/**
-	 * Updates the image frame poiner for the sprite
-	 */
-	void setImageFrame();
-
-	/**
-	 * This adjusts the sprites position, as well as it's animation sequence:
-	 */
-	void adjustSprite();
-
-	/**
-	 * Checks the sprite's position to see if it's collided with any special objects
-	 */
-	void checkSprite();
-
-	/**
-	 * Return frame width
-	 */
-	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
-	
-	/**
-	 * Return frame height
-	 */
-	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
+	WalkSequences &operator=(const WalkSequences &src);
 };
 
 enum { REVERSE_DIRECTION = 0x80 };
@@ -179,13 +142,106 @@ struct UseType {
 	Common::String _names[NAMES_COUNT];
 	int _useFlag;					// Which flag USE will set (if any)
 	Common::String _target;
+	Common::String _verb;
 
 	UseType();
 
 	/**
 	 * Load the data for the UseType
 	 */
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+};
+
+
+class Sprite {
+private:
+	static SherlockEngine *_vm;
+public:
+	Common::String _name;
+	Common::String _description;
+	Common::String _examine;			// Examine in-depth description
+	Common::String _pickUp;				// Message for if you can't pick up object
+
+	WalkSequences _walkSequences;		// Holds animation sequences
+	ImageFile *_images;					// Sprite images
+	ImageFrame *_imageFrame;			// Pointer to shape in the images
+	int _walkCount;						// Character walk counter
+	int _allow;							// Allowed menu commands - ObjectAllow
+	int _frameNumber;					// Frame number in rame sequence to draw
+	int _sequenceNumber;				// Sequence being used
+	Point32 _position;					// Current position
+	Point32 _delta;						// Momvement delta
+	Common::Point _oldPosition;			// Old position
+	Common::Point _oldSize;				// Image's old size
+	Common::Point _goto;				// Walk destination
+	SpriteType _type;					// Type of object
+	Common::Point _noShapeSize;			// Size of a NO_SHAPE
+	int _status;						// Status: open/closed, moved/not moved
+	int8 _misc;							// Miscellaneous use
+	int _numFrames;						// How many frames the object has
+
+	// Rose Tattoo fields
+	int _startSeq;						// Frame sequence starts at
+	int _flags;							// Flags for the sprite
+	int _aType;							// Tells if this is an object, person, talk, etc.
+	int _lookFrames;					// How many frames to play of a canim before pausing
+	int _seqCounter;					// How many times the sequence has been run
+	Common::Point _lookPosition;		// Where to look when examining object
+	int _lookFacing;					// Direction to face when examining object
+	int _lookCAnim;
+	int _seqStack;						// Allow gosubs to return to calling frame
+	int _seqTo;							// Allows 1-5, 8-3 type sequences encoded in 2 bytes
+	uint _descOffset;					// Tells where description starts in description text for scene
+	int _seqCounter2;					// Counter of calling frame sequence
+	uint _seqSize;						// Size of sequence
+	UseType _use[6];
+	int _quickDraw;						// Flag telling whether to use quick draw routine or not
+	int _scaleVal;						// Tells how to scale the sprite
+	int _requiredFlags1;				// This flag must also be set, or the sprite is hidden
+	int _gotoSeq;						// Used by Talk to tell which sequence to goto when able
+	int _talkSeq;						// Tells which talk sequence currently in use (Talk or Listen)
+	int _restoreSlot;					// Used when talk returns to the previous sequence
+
+	ImageFrame *_stopFrames[8];			// Stop/rest frame for each direction
+	ImageFile *_altImages;				// Images used for alternate NPC sequences
+	bool _altSequences;					// Which of the sequences the alt graphics apply to (0: main, 1=NPC seq)
+	int _centerWalk;					// Flag telling the walk code to offset the walk destination
+	Common::Point _adjust;				// Fine tuning adjustment to position when drawn
+	int _oldWalkSequence;
+public:
+	Sprite() { clear(); }
+
+	static void setVm(SherlockEngine *vm) { _vm = vm; }
+
+	/**
+	* Reset the data for the sprite
+	*/
+	void clear();
+
+	/**
+	* Updates the image frame poiner for the sprite
+	*/
+	void setImageFrame();
+
+	/**
+	* This adjusts the sprites position, as well as it's animation sequence:
+	*/
+	void adjustSprite();
+
+	/**
+	* Checks the sprite's position to see if it's collided with any special objects
+	*/
+	void checkSprite();
+
+	/**
+	* Return frame width
+	*/
+	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
+
+	/**
+	* Return frame height
+	*/
+	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
 };
 
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
@@ -233,35 +289,45 @@ public:
 	int _pickup;
 	int _defaultCommand;			// Default right-click command
 	int _lookFlag;					// Which flag LOOK   will set (if any)
-	int _pickupFlag;				// Which flag PICKUP will set (if any)
 	int _requiredFlag;				// Object will be hidden if not set
 	Common::Point _noShapeSize;		// Size of a NO_SHAPE
 	int _status;					// Status (open/closed, moved/not)
 	int8 _misc;						// Misc field -- use varies with type
 	int _maxFrames;					// Number of frames
 	int _flags;						// Tells if object can be walked behind
-	ActionType _aOpen;				// Holds data for moving object
 	AType _aType;					// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
 	int _seqCounter;				// How many times this sequence has been executed
 	Common::Point _lookPosition;	// Where to walk when examining object
 	int _lookFacing;				// Direction to face when examining object
 	int _lookcAnim;
-	ActionType _aClose;
 	int _seqStack;					// Allows gosubs to return to calling frame
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
 	uint _descOffset;					// Tells where description starts in DescText
 	int _seqCounter2;				// Counter of calling frame sequence
 	uint _seqSize;					// Tells where description starts
+	UseType _use[6];				// Serrated Scalpel uses 4, Rose Tattoo 6
+
+	// Serrated Scalpel fields
+	int _pickupFlag;				// Which flag PICKUP will set (if any)
+	ActionType _aOpen;				// Holds data for moving object
+	ActionType _aClose;
 	ActionType _aMove;
-	UseType _use[USE_COUNT];
+
+	// Rose Tattoo fields
+	int _quickDraw;
+	int _scaleVal;
+	int _requiredFlag1;
+	int _gotoSeq;
+	int _talkSeq;
+	int _restoreSlot;
 
 	Object();
 
 	/**
 	 * Load the data for the object
 	 */
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 
 	/**
 	 * Toggle the type of an object between hidden and active
@@ -326,20 +392,45 @@ public:
 
 struct CAnim {
 	Common::String _name;			// Name
-	byte _sequences[MAX_FRAME];		// Animation sequences
 	Common::Point _position;		// Position
 	int _size;						// Size of uncompressed animation
-	SpriteType _type;
 	int _flags;						// Tells if can be walked behind
 	Common::Point _goto;			// coords holmes should walk to before starting canim
 	int _gotoDir;
 	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
 	int _teleportDir;					// playing canim
 
+	// Scalpel specific
+	byte _sequences[MAX_FRAME];		// Animation sequences
+	SpriteType _type;
+
+	// Rose Tattoo specific
+	int _scaleVal;					// How much the canim is scaled
+
 	/**
 	 * Load the data for the animation
 	 */
-	void load(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+};
+
+struct CAnimStream {
+	Common::SeekableReadStream *_stream;	// Stream to read frames from
+	int _frameSize;					// Temporary used to store the frame size
+
+	void *_images;					// TOOD: FIgure out hwo to hook up ImageFile with streaming support
+	ImageFrame *_imageFrame;
+
+	Common::Point _position;		// Animation position
+	Common::Rect _oldBounds;		// Bounds of previous frame
+	Common::Rect _removeBounds;		// Remove area for just drawn frame
+
+	int _flags;						// Flags
+	int _scaleVal;					// Specifies the scale amount
+	int _zPlacement;				// Used by doBgAnim for determining Z order
+
+	CAnimStream();
+
+	void getNextFrame();
 };
 
 struct SceneImage {

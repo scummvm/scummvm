@@ -21,12 +21,58 @@
  */
 
 #include "sherlock/tattoo/tattoo.h"
+#include "engines/util.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
+TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
+		SherlockEngine(syst, gameDesc) {
+	_creditsActive = false;
+}
+
 void TattooEngine::showOpening() {
+	// TODO
+}
+
+void TattooEngine::initialize() {
+	initGraphics(640, 480, true);
+
+	// Initialize the base engine
+	SherlockEngine::initialize();
+
+	_flags.resize(100 * 8);
+
+	// Add some more files to the cache
+	_res->addToCache("walk.lib");
+
+	// Starting scene
+	_scene->_goToScene = 91;
+
+	// Load an initial palette
+	loadInitialPalette();
+}
+
+void TattooEngine::startScene() {
+	// TODO
+}
+
+void TattooEngine::loadInitialPalette() {
+	byte palette[768];
+	Common::SeekableReadStream *stream = _res->load("room.pal");
+	stream->read(palette, PALETTE_SIZE);
+	_screen->translatePalette(palette);
+	_screen->setPalette(palette);
+
+	delete stream;
+}
+
+void TattooEngine::drawCredits() {
+	// TODO
+}
+
+void TattooEngine::eraseCredits() {
 	// TODO
 }
 

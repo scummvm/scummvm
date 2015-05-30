@@ -22,6 +22,7 @@
 
 #include "sherlock/inventory.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_user_interface.h"
 
 namespace Sherlock {
 
@@ -200,29 +201,29 @@ void Inventory::drawInventory(InvNewMode mode) {
 		INV_BACKGROUND);
 
 	// Draw the buttons
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[0][0], CONTROLS_Y1, INVENTORY_POINTS[0][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[1][0], CONTROLS_Y1, INVENTORY_POINTS[1][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[1][2] - screen.stringWidth("Look") / 2, "Look");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[2][0], CONTROLS_Y1, INVENTORY_POINTS[2][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[2][2] - screen.stringWidth("Use") / 2, "Use");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[3][0], CONTROLS_Y1, INVENTORY_POINTS[3][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[3][2] - screen.stringWidth("Give") / 2, "Give");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[4][0], CONTROLS_Y1, INVENTORY_POINTS[4][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[4][2], "^^");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[5][0], CONTROLS_Y1, INVENTORY_POINTS[5][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[5][2], "^");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[6][0], CONTROLS_Y1, INVENTORY_POINTS[6][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[6][2], "_");
-	screen.makeButton(Common::Rect(INVENTORY_POINTS[7][0], CONTROLS_Y1, INVENTORY_POINTS[7][1],
-		CONTROLS_Y1 + 10), INVENTORY_POINTS[7][2], "__");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[0][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[0][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[1][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[1][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[1][2] - screen.stringWidth("Look") / 2, "Look");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[2][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[2][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[2][2] - screen.stringWidth("Use") / 2, "Use");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[3][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[3][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[3][2] - screen.stringWidth("Give") / 2, "Give");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[4][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[4][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[4][2], "^^");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[5][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[5][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[5][2], "^");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[6][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[6][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[6][2], "_");
+	screen.makeButton(Common::Rect(Scalpel::INVENTORY_POINTS[7][0], CONTROLS_Y1, Scalpel::INVENTORY_POINTS[7][1],
+		CONTROLS_Y1 + 10), Scalpel::INVENTORY_POINTS[7][2], "__");
 
 	if (tempMode == INVENTORY_DONT_DISPLAY)
 		mode = LOOK_INVENTORY_MODE;
 	_invMode = (InvMode)mode;
 
 	if (mode != PLAIN_INVENTORY) {
-		ui._oldKey = INVENTORY_COMMANDS[(int)mode];
+		ui._oldKey = Scalpel::INVENTORY_COMMANDS[(int)mode];
 	} else {
 		ui._oldKey = -1;
 	}
@@ -243,7 +244,8 @@ void Inventory::drawInventory(InvNewMode mode) {
 		screen._backBuffer = &screen._backBuffer1;
 	}
 
-	ui._oldUse = -1;
+	assert(IS_SERRATED_SCALPEL);
+	((Scalpel::ScalpelUserInterface *)_vm->_ui)->_oldUse = -1;
 }
 
 void Inventory::invCommands(bool slamIt) {
@@ -251,55 +253,55 @@ void Inventory::invCommands(bool slamIt) {
 	UserInterface &ui = *_vm->_ui;
 
 	if (slamIt) {
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Exit");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED :COMMAND_FOREGROUND,
 			true, "Look");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Use");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			true, "Give");
-		screen.print(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
+		screen.print(Common::Point(Scalpel::INVENTORY_POINTS[4][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^");
-		screen.print(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
+		screen.print(Common::Point(Scalpel::INVENTORY_POINTS[5][2], CONTROLS_Y1 + 1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^");
-		screen.print(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
+		screen.print(Common::Point(Scalpel::INVENTORY_POINTS[6][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"_");
-		screen.print(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
+		screen.print(Common::Point(Scalpel::INVENTORY_POINTS[7][2], CONTROLS_Y1 + 1),
 			(_holdings - _invIndex <= 6) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"__");
 		if (_invMode != INVMODE_LOOK)
 			ui.clearInfo();
 	} else {
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[0][2], CONTROLS_Y1),
 			_invMode == INVMODE_EXIT ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Exit");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[1][2], CONTROLS_Y1),
 			_invMode == INVMODE_LOOK ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Look");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[2][2], CONTROLS_Y1),
 			_invMode == INVMODE_USE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Use");
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1),
+		screen.buttonPrint(Common::Point(Scalpel::INVENTORY_POINTS[3][2], CONTROLS_Y1),
 			_invMode == INVMODE_GIVE ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND,
 			false, "Give");
-		screen.gPrint(Common::Point(INVENTORY_POINTS[4][2], CONTROLS_Y1),
+		screen.gPrint(Common::Point(Scalpel::INVENTORY_POINTS[4][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^^");
-		screen.gPrint(Common::Point(INVENTORY_POINTS[5][2], CONTROLS_Y1),
+		screen.gPrint(Common::Point(Scalpel::INVENTORY_POINTS[5][2], CONTROLS_Y1),
 			_invIndex == 0 ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"^");
-		screen.gPrint(Common::Point(INVENTORY_POINTS[6][2], CONTROLS_Y1),
+		screen.gPrint(Common::Point(Scalpel::INVENTORY_POINTS[6][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"_");
-		screen.gPrint(Common::Point(INVENTORY_POINTS[7][2], CONTROLS_Y1),
+		screen.gPrint(Common::Point(Scalpel::INVENTORY_POINTS[7][2], CONTROLS_Y1),
 			(_holdings - _invIndex < 7) ? COMMAND_NULL : COMMAND_FOREGROUND,
 			"__");
 	}
@@ -318,9 +320,12 @@ void Inventory::highlight(int index, byte color) {
 }
 
 void Inventory::refreshInv() {
+	if (IS_ROSE_TATTOO)
+		return;
+	
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
+	Scalpel::ScalpelUserInterface &ui = *(Scalpel::ScalpelUserInterface *)_vm->_ui;
 
 	ui._invLookFlag = true;
 	freeInv();

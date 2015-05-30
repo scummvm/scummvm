@@ -46,7 +46,7 @@ void Sprite::clear() {
 	_description = "";
 	_examine.clear();
 	_pickUp = "";
-	_sequences = nullptr;
+	_walkSequences.clear();
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
@@ -63,12 +63,26 @@ void Sprite::clear() {
 	_status = 0;
 	_misc = 0;
 	_numFrames = 0;
+	_altImages = nullptr;
+	_altSequences = false;
+	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
 }
 
 void Sprite::setImageFrame() {
-	int imageNumber = (*_sequences)[_sequenceNumber][_frameNumber] +
-		(*_sequences)[_sequenceNumber][0] - 2;
-	_imageFrame = &(*_images)[imageNumber];
+	int frameNum = MAX(_frameNumber, 0);
+	int imageNumber = _walkSequences[_sequenceNumber][frameNum];
+	
+	if (IS_SERRATED_SCALPEL)
+		imageNumber = imageNumber + _walkSequences[_sequenceNumber][0] - 2;
+	else if (imageNumber > _numFrames)
+		imageNumber = 1;
+
+	// Get the images to use
+	ImageFile *images = _altSequences ? _altImages : _images;
+	assert(images);
+
+	// Set the frame pointer
+	_imageFrame = &(*images)[imageNumber];
 }
 
 void Sprite::adjustSprite() {
@@ -113,14 +127,14 @@ void Sprite::adjustSprite() {
 			people.gotoStand(*this);
 		}
 	} else if (!map._active) {
-		_position.y = CLIP((int)_position.y, UPPER_LIMIT, LOWER_LIMIT);
-		_position.x = CLIP((int)_position.x, LEFT_LIMIT, RIGHT_LIMIT);
+		_position.y = CLIP((int)_position.y, (int)UPPER_LIMIT, (int)LOWER_LIMIT);
+		_position.x = CLIP((int)_position.x, (int)LEFT_LIMIT, (int)RIGHT_LIMIT);
 	}
 
 	if (!map._active || (map._frameChangeFlag = !map._frameChangeFlag))
 		++_frameNumber;
 
-	if ((*_sequences)[_sequenceNumber][_frameNumber] == 0) {
+	if (_walkSequences[_sequenceNumber][_frameNumber] == 0) {
 		switch (_sequenceNumber) {
 		case STOP_UP:
 		case STOP_DOWN:
@@ -352,6 +366,34 @@ void Sprite::checkSprite() {
 
 /*----------------------------------------------------------------*/
 
+void WalkSequence::load(Common::SeekableReadStream &s) {
+	char buffer[9];
+	s.read(buffer, 9);
+	_vgsName = Common::String(buffer);
+	_horizFlip = s.readByte() != 0;
+
+	_sequences.resize(s.readUint16LE());
+	s.read(&_sequences[0], _sequences.size());
+}
+
+/*----------------------------------------------------------------*/
+
+WalkSequences &WalkSequences::operator=(const WalkSequences &src) {
+	resize(src.size());
+	for (uint idx = 0; idx < size(); ++idx) {
+		const WalkSequence &wSrc = src[idx];
+		WalkSequence &wDest = (*this)[idx];
+		wDest._horizFlip = wSrc._horizFlip;
+
+		wDest._sequences.resize(wSrc._sequences.size());
+		Common::copy(&wSrc._sequences[0], &wSrc._sequences[0] + wSrc._sequences.size(), &wDest._sequences[0]);
+	}
+
+	return *this;
+}
+
+/*----------------------------------------------------------------*/
+
 void ActionType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
@@ -373,8 +415,13 @@ UseType::UseType() {
 	_useFlag = 0;
 }
 
-void UseType::load(Common::SeekableReadStream &s) {
+void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[12];
+
+	if (isRoseTattoo) {
+		s.read(buffer, 12);
+		_verb = Common::String(buffer);
+	}
 
 	_cAnimNum = s.readByte();
 	_cAnimSpeed = s.readByte();
@@ -387,7 +434,9 @@ void UseType::load(Common::SeekableReadStream &s) {
 	}
 
 	_useFlag = s.readSint16LE();
-	s.skip(6);
+
+	if (!isRoseTattoo)
+		s.skip(6);
 
 	s.read(buffer, 12);
 	_target = Common::String(buffer);
@@ -434,9 +483,16 @@ Object::Object() {
 	_descOffset = 0;
 	_seqCounter2 = 0;
 	_seqSize = 0;
+
+	_quickDraw = 0;
+	_scaleVal = 0;
+	_requiredFlag1 = 0;
+	_gotoSeq = 0;
+	_talkSeq = 0;
+	_restoreSlot = 0;
 }
 
-void Object::load(Common::SeekableReadStream &s) {
+void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[41];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
@@ -468,10 +524,10 @@ void Object::load(Common::SeekableReadStream &s) {
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
 
-	_pickup = s.readByte();
-	_defaultCommand = s.readByte();
-	_lookFlag = s.readUint16LE();
-	_pickupFlag = s.readUint16LE();
+	_pickup = isRoseTattoo ? 0 : s.readByte();
+	_defaultCommand = isRoseTattoo ? 0 : s.readByte();
+	_lookFlag = s.readSint16LE();
+	_pickupFlag = isRoseTattoo ? 0 : s.readSint16LE();
 	_requiredFlag = s.readSint16LE();
 	_noShapeSize.x = s.readUint16LE();
 	_noShapeSize.y = s.readUint16LE();
@@ -479,26 +535,45 @@ void Object::load(Common::SeekableReadStream &s) {
 	_misc = s.readByte();
 	_maxFrames = s.readUint16LE();
 	_flags = s.readByte();
-	_aOpen.load(s);
+
+	if (!isRoseTattoo)
+		_aOpen.load(s);
+
 	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
 	_seqCounter = s.readByte();
 	_lookPosition.x = s.readUint16LE();
-	_lookPosition.y = s.readByte();
+	_lookPosition.y = isRoseTattoo ? s.readSint16LE() : s.readByte();
 	_lookFacing = s.readByte();
 	_lookcAnim = s.readByte();
-	_aClose.load(s);
+
+	if (!isRoseTattoo)
+		_aClose.load(s);
+
 	_seqStack = s.readByte();
 	_seqTo = s.readByte();
 	_descOffset = s.readUint16LE();
 	_seqCounter2 = s.readByte();
 	_seqSize = s.readUint16LE();
-	s.skip(1);
-	_aMove.load(s);
-	s.skip(8);
 
-	for (int idx = 0; idx < USE_COUNT; ++idx)
-		_use[idx].load(s);
+	if (isRoseTattoo) {
+		for (int idx = 0; idx < 6; ++idx)
+			_use[idx].load(s, true);
+
+		_quickDraw = s.readByte();
+		_scaleVal = s.readUint16LE();
+		_requiredFlag1 = s.readSint16LE();
+		_gotoSeq = s.readByte();
+		_talkSeq = s.readByte();
+		_restoreSlot = s.readByte();
+	} else {
+		s.skip(1);
+		_aMove.load(s);
+		s.skip(8);
+
+		for (int idx = 0; idx < 4; ++idx)
+			_use[idx].load(s, false);
+	}
 }
 
 void Object::toggleHidden() {
@@ -1032,23 +1107,52 @@ const Common::Rect Object::getOldBounds() const {
 
 /*----------------------------------------------------------------*/
 
-void CAnim::load(Common::SeekableReadStream &s) {
+void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	char buffer[12];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
 
-	s.read(_sequences, 30);
+	if (isRoseTattoo) {
+		Common::fill(&_sequences[0], &_sequences[30], 0);
+		_size = s.readUint32LE();
+	} else {
+		s.read(_sequences, 30);
+	}
+
 	_position.x = s.readSint16LE();
 	_position.y = s.readSint16LE();
-	_size = s.readUint32LE();
-	_type = (SpriteType)s.readUint16LE();
-	_flags = s.readByte();
+	
+	if (isRoseTattoo) {
+		_flags = s.readByte();
+		_scaleVal = s.readSint16LE();
+	} else {
+		_size = s.readUint32LE();
+		_type = (SpriteType)s.readUint16LE();
+		_flags = s.readByte();
+	}
+
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
 	_gotoDir = s.readSint16LE();
 	_teleportPos.x = s.readSint16LE();
 	_teleportPos.y = s.readSint16LE();
 	_teleportDir = s.readSint16LE();
+}
+
+/*----------------------------------------------------------------*/
+
+CAnimStream::CAnimStream() {
+	_stream = nullptr;
+	_frameSize = 0;
+	_images = nullptr;
+	_imageFrame = nullptr;
+	_flags = 0;
+	_scaleVal = 0;
+	_zPlacement = 0;
+}
+
+void CAnimStream::getNextFrame() {
+	// TODO
 }
 
 /*----------------------------------------------------------------*/
