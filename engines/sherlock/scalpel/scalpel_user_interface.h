@@ -44,7 +44,7 @@ extern const char *const PRESS_KEY_TO_CONTINUE;
 class Settings;
 
 class ScalpelUserInterface: public UserInterface {
-	friend class Inventory;
+	friend class Sherlock::Inventory;
 	friend class Settings;
 	friend class Talk;
 private:
