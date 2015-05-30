@@ -479,7 +479,9 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 		if (oldestInUseChannel >= 0) {
 			// channel found
 			warning("used In-Use channel");
-			voiceOnOff(oldestInUseChannel, false, 0, 0);
+			// original driver used note 0, we use the current note
+			// because using note 0 could create a bad note (out of index) and we check that. Original driver didn't.
+			voiceOnOff(oldestInUseChannel, false, _channels[oldestInUseChannel].currentNote, 0);
 
 			_channels[oldestInUseChannel].inUse       = true;
 			_channels[oldestInUseChannel].inUseTimer  = 0; // safety, original driver also did this
@@ -542,7 +544,8 @@ void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, by
 		frequencyOffset = note;
 	}
 	if (frequencyOffset >= SHERLOCK_ADLIB_NOTES_COUNT) {
-		error("bad note!");
+		warning("CRITICAL - bad note!!!");
+		return;
 	}
 	frequency = adlib_FrequencyLookUpTable[frequencyOffset];
 
