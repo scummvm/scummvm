@@ -32,8 +32,7 @@ namespace Sherlock {
 
 enum ButtonFlag { LEFT_BUTTON = 1, RIGHT_BUTTON = 2 };
 
-Events::Events(SherlockEngine *vm) {
-	_vm = vm;
+Events::Events(SherlockEngine *vm): _vm(vm) {
 	_cursorImages = nullptr;
 	_cursorId = INVALID_CURSOR;
 	_frameCounter = 1;
@@ -43,7 +42,8 @@ Events::Events(SherlockEngine *vm) {
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
 
-	loadCursors("rmouse.vgs");
+	if (_vm->_interactiveFl)
+		loadCursors("rmouse.vgs");
 }
 
 Events::~Events() {

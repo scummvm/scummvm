@@ -84,8 +84,14 @@ const char *const MUSE[] = {
 
 
 ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm) {
-	_controls = new ImageFile("menu.all");
-	_controlPanel = new ImageFile("controls.vgs");
+	if (_vm->_interactiveFl) {
+		_controls = new ImageFile("menu.all");
+		_controlPanel = new ImageFile("controls.vgs");
+	} else {
+		_controls = nullptr;
+		_controlPanel = nullptr;
+	}
+
 	_keyPress = '\0';
 	_lookHelp = 0;
 	_bgFound = 0;
