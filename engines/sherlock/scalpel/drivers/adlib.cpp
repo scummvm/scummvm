@@ -221,7 +221,7 @@ uint16 adlib_FrequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
 class MidiDriver_AdLib : public MidiDriver_Emulated {
 public:
 	MidiDriver_AdLib(Audio::Mixer *mixer)
-		: MidiDriver_Emulated(mixer), _masterVolume(15), _rhythmKeyMap(0), _opl(0) {
+		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0) {
 		memset(_voiceChannelMapping, 0, sizeof(_voiceChannelMapping));
 	}
 	virtual ~MidiDriver_AdLib() { }
@@ -245,31 +245,31 @@ public:
 	void setVolume(byte volume);
 	virtual uint32 property(int prop, uint32 param);
 
-	bool useRhythmChannel() const { return _rhythmKeyMap != NULL; }
-
 	void newMusicData(byte *musicData, int32 musicDataSize);
 
 private:
 	struct adlib_ChannelEntry {
-		bool inUse;
-		const adlib_InstrumentEntry *currentInstrumentPtr;
-		byte currentNote;
-		byte currentA0hReg;
-		byte currentB0hReg;
+		bool   inUse;
+		uint16 inUseTimer;
+		const  adlib_InstrumentEntry *currentInstrumentPtr;
+		byte   currentNote;
+		byte   currentA0hReg;
+		byte   currentB0hReg;
 
-		adlib_ChannelEntry() : inUse(false), currentInstrumentPtr(NULL), currentNote(0),
+		adlib_ChannelEntry() : inUse(false), inUseTimer(0), currentInstrumentPtr(NULL), currentNote(0),
 								currentA0hReg(0), currentB0hReg(0) { }
 	};
 
 	OPL::OPL *_opl;
 	int _masterVolume;
-	byte *_rhythmKeyMap;
 
 	// points to a MIDI channel for each of the new voice channels
 	byte _voiceChannelMapping[SHERLOCK_ADLIB_VOICES_COUNT];
 
 	// stores information about all FM voice channels
 	adlib_ChannelEntry _channels[SHERLOCK_ADLIB_VOICES_COUNT];
+
+	void updateChannelInUseTimers();
 
 	void resetAdLib();
 	void resetAdLib_OperatorRegisters(byte baseRegister, byte value);
@@ -330,12 +330,22 @@ void MidiDriver_AdLib::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	delete _opl;
-	delete[] _rhythmKeyMap;
 }
 
 void MidiDriver_AdLib::setVolume(byte volume) {
 	_masterVolume = volume;
 	//renewNotes(-1, true);
+}
+
+// this should normally get called per tick
+// but calling it per send() shouldn't be a problem
+// TODO: maybe change inUseTimer to a 32-bit integer to make sure there are no overruns?!?!
+void MidiDriver_AdLib::updateChannelInUseTimers() {
+	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
+		if (_channels[FMvoiceChannel].inUse) {
+			_channels[FMvoiceChannel].inUseTimer++;
+		}
+	}
 }
 
 // Called when a music track got loaded into memory
@@ -401,6 +411,8 @@ void MidiDriver_AdLib::send(uint32 b) {
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
 
+	updateChannelInUseTimers();
+
 	switch (command) {
 	case 0x80:
 		noteOff(channel, op1);
@@ -435,6 +447,9 @@ void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
 }
 
 void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
+	int16  oldestInUseChannel = -1;
+	uint16 oldestInUseTimer   = 0;
+
 	if (velocity == 0)
 		return noteOff(MIDIchannel, note);
 
@@ -451,7 +466,29 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 				}
 			}
 		}
+
+		// Look for oldest in-use channel
+		for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
+			if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
+				if (_channels[FMvoiceChannel].inUseTimer > oldestInUseTimer) {
+					oldestInUseTimer   = _channels[FMvoiceChannel].inUseTimer;
+					oldestInUseChannel = FMvoiceChannel;
+				}
+			}
+		}
+		if (oldestInUseChannel >= 0) {
+			// channel found
+			warning("used In-Use channel");
+			voiceOnOff(oldestInUseChannel, false, 0, 0);
+
+			_channels[oldestInUseChannel].inUse       = true;
+			_channels[oldestInUseChannel].inUseTimer  = 0; // safety, original driver also did this
+			_channels[oldestInUseChannel].currentNote = note;
+			voiceOnOff(oldestInUseChannel, true, note, velocity);
+			return;
+		}
 		warning("MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
+
 	} else {
 		// Percussion channel
 		warning("percussion!");
@@ -466,7 +503,6 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 				}
 			}
 		}
-		// TODO: driver does some extra things in case no channel is found
 		warning("percussion MIDI channel not mapped/all FM voice channels busy");
 	}
 }
@@ -476,6 +512,7 @@ void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
 		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 			if (_channels[FMvoiceChannel].currentNote == note) {
 				_channels[FMvoiceChannel].inUse = false;
+				_channels[FMvoiceChannel].inUseTimer  = 0;
 				_channels[FMvoiceChannel].currentNote = 0;
 
 				if (MIDIchannel != 9) {
