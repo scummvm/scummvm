@@ -219,7 +219,8 @@ uint16 frequencyLookUpTable[SHERLOCK_ADLIB_NOTES_COUNT] = {
 class MidiDriver_SH_AdLib : public MidiDriver_Emulated {
 public:
 	MidiDriver_SH_AdLib(Audio::Mixer *mixer)
-		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0) {
+		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0),
+		  _adlibTimerProc(0), _adlibTimerParam(0) {
 		memset(_voiceChannelMapping, 0, sizeof(_voiceChannelMapping));
 	}
 	virtual ~MidiDriver_SH_AdLib() { }
@@ -232,6 +233,7 @@ public:
 	MidiChannel *getPercussionChannel() { return NULL; }
 
 	// AudioStream
+	int readBuffer(int16 *data, const int numSamples);
 	bool isStereo() const { return false; }
 	int getRate() const { return _mixer->getOutputRate(); }
 	int getPolyphony() const { return SHERLOCK_ADLIB_VOICES_COUNT; }
@@ -239,6 +241,8 @@ public:
 
 	// MidiDriver_Emulated
 	void generateSamples(int16 *buf, int len);
+
+	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 	void setVolume(byte volume);
 	virtual uint32 property(int prop, uint32 param);
@@ -261,16 +265,17 @@ private:
 	OPL::OPL *_opl;
 	int _masterVolume;
 
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
+
 	// points to a MIDI channel for each of the new voice channels
 	byte _voiceChannelMapping[SHERLOCK_ADLIB_VOICES_COUNT];
 
 	// stores information about all FM voice channels
 	adlib_ChannelEntry _channels[SHERLOCK_ADLIB_VOICES_COUNT];
 
-protected:
 	void onTimer();
 
-private:
 	void resetAdLib();
 	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
 	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
@@ -296,6 +301,7 @@ int MidiDriver_SH_AdLib::open() {
 
 	MidiDriver_Emulated::open();
 
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_SH_AdLib>(this, &MidiDriver_SH_AdLib::onTimer));
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	return 0;
@@ -316,6 +322,12 @@ void MidiDriver_SH_AdLib::setVolume(byte volume) {
 // original driver did this before MIDI data processing on each tick
 // we do it atm after MIDI data processing
 void MidiDriver_SH_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
+
+	// this should/must get called per tick
+	// original driver did this before MIDI data processing on each tick
+	// we do it atm after MIDI data processing
 	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 		if (_channels[FMvoiceChannel].inUse) {
 			_channels[FMvoiceChannel].inUseTimer++;
@@ -416,7 +428,11 @@ void MidiDriver_SH_AdLib::send(uint32 b) {
 }
 
 void MidiDriver_SH_AdLib::generateSamples(int16 *data, int len) {
-	_opl->readBuffer(data, len);
+	// Dummy implementation until we no longer inherit from MidiDriver_Emulated
+}
+
+int MidiDriver_SH_AdLib::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
 }
 
 void MidiDriver_SH_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
@@ -623,6 +639,11 @@ void MidiDriver_SH_AdLib::setRegister(int reg, int value) {
 
 uint32 MidiDriver_SH_AdLib::property(int prop, uint32 param) {
 	return 0;
+}
+
+void MidiDriver_SH_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
 }
 
 MidiDriver *MidiDriver_SH_AdLib_create() {
