@@ -253,11 +253,17 @@ private:
 	// stores information about all FM voice channels
 	adlib_ChannelEntry _channels[SHERLOCK_ADLIB_VOICES_COUNT];
 
-	void programChange(byte channel, byte parameter);
+	void resetAdLib();
+	void resetAdLib_OperatorRegisters(byte baseRegister, byte value);
+	void resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value);
+
+	void programChange(byte MIDIchannel, byte parameter);
 	void setRegister(int reg, int value);
-	void noteOn(byte channel, byte note, byte velocity);
-	void noteOff(byte channel, byte note);
+	void noteOn(byte MIDIchannel, byte note, byte velocity);
+	void noteOff(byte MIDIchannel, byte note);
 	void voiceOnOff(byte FMVoiceChannel, bool KeyOn, byte note, byte velocity);
+
+	void pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2);
 };
 
 #if USE_SCI_MIDI_PLAYER
@@ -295,10 +301,6 @@ int MidiDriver_AdLib::open() {
 
 	_opl->init(rate);
 
-	setRegister(0xBD, 0);
-	setRegister(0x08, 0);
-	setRegister(0x01, 0x20);
-
 	MidiDriver_Emulated::open();
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
@@ -324,9 +326,54 @@ void MidiDriver_AdLib::newMusicData(byte *musicData, int32 musicDataSize) {
 	// MIDI Channel <-> FM Voice Channel mapping at offset 0x22 of music data
 	memcpy(&_voiceChannelMapping, musicData + 0x22, 9);
 
-	// reset OPL here?
+	// reset OPL
+	resetAdLib();
+
 	// reset current channel data
 	memset(&_channels, 0, sizeof(_channels));
+}
+
+void MidiDriver_AdLib::resetAdLib() {
+
+	setRegister(0x01, 0x20); // enable waveform control on both operators
+	setRegister(0x04, 0xE0); // Timer control
+
+	setRegister(0x08, 0); // select FM music mode
+	setRegister(0xBD, 0); // disable Rhythm
+
+	// reset FM voice instrument data
+	resetAdLib_OperatorRegisters(0x20, 0);
+	resetAdLib_OperatorRegisters(0x60, 0);
+	resetAdLib_OperatorRegisters(0x80, 0);
+	resetAdLib_FMVoiceChannelRegisters(0xA0, 0);
+	resetAdLib_FMVoiceChannelRegisters(0xB0, 0);
+	resetAdLib_FMVoiceChannelRegisters(0xC0, 0);
+	resetAdLib_OperatorRegisters(0xE0, 0);
+	resetAdLib_OperatorRegisters(0x40, 0x3F);
+}
+
+void MidiDriver_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byte value) {
+	byte operatorIndex;
+
+	for (operatorIndex = 0; operatorIndex < 0x16; operatorIndex++) {
+		switch (operatorIndex) {
+		case 0x06:
+		case 0x07:
+		case 0x0E:
+		case 0x0F:
+			break;
+		default:
+			setRegister(baseRegister + operatorIndex, value);
+		}
+	}
+}
+
+void MidiDriver_AdLib::resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value) {
+	byte FMvoiceChannel;
+
+	for (FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
+		setRegister(baseRegister + FMvoiceChannel, value);
+	}
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
@@ -354,8 +401,8 @@ void MidiDriver_AdLib::send(uint32 b) {
 		// Aftertouch doesn't seem to be implemented in the Sherlock Holmes adlib driver
 		break;
 	case 0xe0:
-		// TODO: Implement this, occurs right in the intro, second scene
 		warning("pitch bend change");
+		pitchBendChange(channel, op1, op2);
 		break;
 	case 0xf0: // SysEx
 		warning("SysEx: %lx", b);
@@ -395,6 +442,7 @@ void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
 		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 			if (_channels[FMvoiceChannel].currentNote == note) {
 				_channels[FMvoiceChannel].inUse = false;
+				_channels[FMvoiceChannel].currentNote = 0;
 
 				voiceOnOff(FMvoiceChannel, false, note, 0);
 				return;
@@ -442,6 +490,45 @@ void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, by
 	setRegister(0xB0 + FMvoiceChannel, regValueB0h);
 	_channels[FMvoiceChannel].currentA0hReg = regValueA0h;
 	_channels[FMvoiceChannel].currentB0hReg = regValueB0h;
+}
+
+void MidiDriver_AdLib::pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2) {
+	uint16 channelFrequency              = 0;
+	byte   channelRegB0hWithoutFrequency = 0;
+	uint16 parameter                     = 0;
+	byte   regValueA0h = 0;
+	byte   regValueB0h = 0;
+
+	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
+		if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
+			if (_channels[FMvoiceChannel].inUse) {
+				// FM voice channel found and it's currently in use -> apply pitch bend change
+
+				// Remove frequency bits from current channel B0h-register
+				channelFrequency              = ((_channels[FMvoiceChannel].currentB0hReg << 8) | (_channels[FMvoiceChannel].currentA0hReg)) & 0x3FF;
+				channelRegB0hWithoutFrequency = _channels[FMvoiceChannel].currentB0hReg & 0xFC;
+
+				if (parameter2 < 0x40) {
+					channelFrequency = channelFrequency / 2;
+				} else {
+					parameter2 = parameter2 - 0x40;
+				}
+				parameter1 = parameter1 * 2;
+				parameter = parameter1 | (parameter2 << 8);
+				parameter = parameter * 4;
+
+				parameter = (parameter >> 8) + 0xFF;
+				channelFrequency = channelFrequency * parameter;
+				channelFrequency = (channelFrequency >> 8) | (parameter << 8);
+
+				regValueA0h = channelFrequency & 0xFF;
+				regValueB0h = (channelFrequency >> 8) | channelRegB0hWithoutFrequency;
+
+				setRegister(0xA0 + FMvoiceChannel, regValueA0h);
+				setRegister(0xB0 + FMvoiceChannel, regValueB0h);
+			}
+		}
+	}
 }
 
 void MidiDriver_AdLib::programChange(byte MIDIchannel, byte op1) {
