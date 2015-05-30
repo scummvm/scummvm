@@ -269,8 +269,10 @@ private:
 	// stores information about all FM voice channels
 	adlib_ChannelEntry _channels[SHERLOCK_ADLIB_VOICES_COUNT];
 
-	void updateChannelInUseTimers();
+protected:
+	void onTimer();
 
+private:
 	void resetAdLib();
 	void resetAdLib_OperatorRegisters(byte baseRegister, byte value);
 	void resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value);
@@ -337,10 +339,10 @@ void MidiDriver_AdLib::setVolume(byte volume) {
 	//renewNotes(-1, true);
 }
 
-// this should normally get called per tick
-// but calling it per send() shouldn't be a problem
-// TODO: maybe change inUseTimer to a 32-bit integer to make sure there are no overruns?!?!
-void MidiDriver_AdLib::updateChannelInUseTimers() {
+// this should/must get called per tick
+// original driver did this before MIDI data processing on each tick
+// we do it atm after MIDI data processing
+void MidiDriver_AdLib::onTimer() {
 	for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 		if (_channels[FMvoiceChannel].inUse) {
 			_channels[FMvoiceChannel].inUseTimer++;
@@ -410,8 +412,6 @@ void MidiDriver_AdLib::send(uint32 b) {
 	byte channel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
-
-	updateChannelInUseTimers();
 
 	switch (command) {
 	case 0x80:
