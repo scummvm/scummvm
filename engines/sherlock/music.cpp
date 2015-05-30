@@ -313,6 +313,7 @@ bool Music::playMusic(const Common::String &name) {
 	assert(data);
 
 	stream->read(data, dataSize);
+	delete stream;
 
 	// for dumping the music tracks
 #if 0

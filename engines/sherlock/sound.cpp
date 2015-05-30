@@ -135,6 +135,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	byte *data = (byte *)malloc(size);
 	byte *ptr = data;
 	stream->read(ptr, size);
+	delete stream;
 
 	assert(size > 2);
 
