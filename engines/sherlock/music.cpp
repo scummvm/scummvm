@@ -153,21 +153,21 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 			}
 		} else if (info.event == 0xFC) {
 			// Official End-Of-Track signal
-			warning("SysEx 0xFC");
+			warning("System META event 0xFC");
 
 			byte type = *(_position._playPos++);
 			switch (type) {
 			case 0x80: // end of track, triggers looping
-				warning("SysEx triggered looping");
+				warning("META event triggered looping");
 				jumpToTick(0, true, true, false);
 				break;
 			case 0x81: // end of track, stop playing
-				warning("SysEx triggered music stop");
+				warning("META event triggered music stop");
 				stopPlaying();
 				unloadMusic();
 				break;
 			default:
-				error("MidiParser_SH::parseNextEvent: Unknown SysEx 0xFC type %x", type);
+				error("MidiParser_SH::parseNextEvent: Unknown META event 0xFC type %x", type);
 				break;
 			}
 		} else {
