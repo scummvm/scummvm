@@ -45,6 +45,24 @@ byte adlib_Operator2Register[SHERLOCK_ADLIB_VOICES_COUNT] = {
 	0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0x14, 0x15
 };
 
+struct adlib_percussionChannelEntry {
+	byte requiredNote;
+	byte replacementNote;
+};
+
+// hardcoded, dumped from ADHOM.DRV
+const adlib_percussionChannelEntry adlib_percussionChannelTable[SHERLOCK_ADLIB_VOICES_COUNT] = {
+	{ 0x00, 0x00 },
+	{ 0x00, 0x00 },
+	{ 0x00, 0x00 },
+	{ 0x00, 0x00 },
+	{ 0x00, 0x00 },
+	{ 0x00, 0x00 },
+	{ 0x24, 0x0C },
+	{ 0x38, 0x01 },
+	{ 0x26, 0x1E }
+};
+
 struct adlib_InstrumentEntry {
 	byte reg20op1;
 	byte reg40op1;
@@ -433,8 +451,24 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 				}
 			}
 		}
+		warning("MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
+	} else {
+		// Percussion channel
+		warning("percussion!");
+		for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
+			if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
+				if (note == adlib_percussionChannelTable[FMvoiceChannel].requiredNote) {
+					_channels[FMvoiceChannel].inUse = true;
+					_channels[FMvoiceChannel].currentNote = note;
+
+					voiceOnOff(FMvoiceChannel, true, adlib_percussionChannelTable[FMvoiceChannel].replacementNote, velocity);
+					return;
+				}
+			}
+		}
+		// TODO: driver does some extra things in case no channel is found
+		warning("percussion MIDI channel not mapped/all FM voice channels busy");
 	}
-	warning("MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
 }
 
 void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
@@ -444,7 +478,12 @@ void MidiDriver_AdLib::noteOff(byte MIDIchannel, byte note) {
 				_channels[FMvoiceChannel].inUse = false;
 				_channels[FMvoiceChannel].currentNote = 0;
 
-				voiceOnOff(FMvoiceChannel, false, note, 0);
+				if (MIDIchannel != 9) {
+					// not-percussion
+					voiceOnOff(FMvoiceChannel, false, note, 0);
+				} else {
+					voiceOnOff(FMvoiceChannel, false, adlib_percussionChannelTable[FMvoiceChannel].replacementNote, 0);
+				}
 				return;
 			}
 		}
