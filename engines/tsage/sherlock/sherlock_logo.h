@@ -65,7 +65,6 @@ public:
 	ScenePalette _palette1, _palette2, _palette3;
 	Object _object1, _object2, _object3, _object4;
 	Action1 _action1;
-	Rect _rect1;
 	GfxManager _gfxManager2;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

@@ -29,6 +29,9 @@ namespace TsAGE {
 namespace Sherlock {
 
 void SherlockLogo::start() {
+	GLOBALS._gfxFontNumber = -1;
+	GLOBALS.gfxManager().setDefaults();
+
 	// Start the demo's single scene
 	g_globals->_sceneManager.changeScene(1);
 
@@ -85,6 +88,7 @@ void SherlockLogoScene::Action1::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
+		// Load scene palette
 		GLOBALS._scenePalette.loadPalette(1111);
 		GLOBALS._scenePalette.loadPalette(1);
 		GLOBALS._scenePalette.refresh();
@@ -92,10 +96,12 @@ void SherlockLogoScene::Action1::signal() {
 		break;
 
 	case 1:
+		// Fade in the spotlight background
 		GLOBALS._scenePalette.addFader(scene._palette1._palette, 256, 6, this);
 		break;
 
 	case 2:
+		// First half of square, circle, and triangle bouncing
 		scene._object1.postInit();
 		scene._object1.setVisage("0016.vis");
 		scene._object1._strip = 1;
@@ -107,20 +113,22 @@ void SherlockLogoScene::Action1::signal() {
 		break;
 
 	case 3:
+		// Remainder of bouncing square, circle, and triangle coming to rest
 		scene._object1._strip = 2;
-		scene._object1._strip = 1;
+		scene._object1._frame = 1;
 		scene._object1.changeZoom(100);
-		scene._object1.animate(ANIM_MODE_4, 4, 11, 1, this);
+		scene._object1.animate(ANIM_MODE_4, 11, 1, this);
 		break;
 
 	case 4:
+		// Fade out background without fading out the shapes
 		GLOBALS._scenePalette.addFader(scene._palette2._palette, 256, 6, this);
 		break;
 
 	case 5:
-		scene._rect1 = Rect(0, 26, 312, 190);
+		scene._backSurface.fillRect(scene._sceneBounds, 0);
 		scene._gfxManager2.activate();
-		scene._gfxManager2.fillRect(scene._rect1, 0);
+		scene._gfxManager2.fillRect(scene._sceneBounds, 0);
 		scene._gfxManager2.deactivate();
 		//word_2B4AA = 3;
 		setDelay(10);
@@ -133,6 +141,7 @@ void SherlockLogoScene::Action1::signal() {
 		break;
 
 	case 7:
+		// Animation of shapes expanding upwards to form larger EA logo
 		scene._object1.setVisage("0012.vis");
 		scene._object1._strip = 1;
 		scene._object1._frame = 1;
@@ -148,6 +157,7 @@ void SherlockLogoScene::Action1::signal() {
 		break;
 
 	case 9:
+		// Show 'Electronic Arts' company name
 		scene._object2.postInit(nullptr);
 		scene._object2.setVisage("0014.vis");
 		scene._object2._strip = 1;
@@ -159,13 +169,14 @@ void SherlockLogoScene::Action1::signal() {
 		break;
 
 	case 10:
+		// Remainder of steps is positioning and sizing hand cursorin an arc
 		scene._object3.postInit();
-		scene._object2.setVisage("0018.vis");
-		scene._object2._strip = 1;
-		scene._object2._frame = 1;
-		scene._object2.setPosition(Common::Point(33, 91));
-		scene._object2.changeZoom(100);
-		scene._object2.animate(ANIM_MODE_NONE, nullptr);
+		scene._object3.setVisage("0018.vis");
+		scene._object3._strip = 1;
+		scene._object3._frame = 1;
+		scene._object3.setPosition(Common::Point(33, 91));
+		scene._object3.changeZoom(100);
+		scene._object3.animate(ANIM_MODE_NONE, nullptr);
 		setDelay(5);
 		break;
 
@@ -242,6 +253,7 @@ void SherlockLogoScene::Action1::signal() {
 		break;
 
 	case 23:
+		// Show a highlighting of the company name
 		scene._object3.hide();
 		scene._object4.show();
 		scene._object4.setPosition(Common::Point(155, 94));
@@ -316,6 +328,7 @@ void SherlockLogoScene::postInit(SceneObjectList *OwnerList) {
 	loadScene(10);
 	Scene::postInit(OwnerList);
 
+	_palette1.loadPalette(1111);
 	_palette1.loadPalette(10);
 	_palette2.loadPalette(1111);
 	_palette2.loadPalette(1);
