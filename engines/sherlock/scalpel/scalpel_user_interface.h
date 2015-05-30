@@ -44,12 +44,9 @@ extern const char *const PRESS_KEY_TO_CONTINUE;
 class Settings;
 
 class ScalpelUserInterface: public UserInterface {
-	friend class Sherlock::Inventory;
 	friend class Settings;
 	friend class Talk;
 private:
-	ImageFile *_controlPanel;
-	ImageFile *_controls;
 	char _keyPress;
 	int _lookHelp;
 	int _bgFound, _oldBgFound;
@@ -63,7 +60,6 @@ private:
 	Common::String _cAnimStr;
 	Common::String _descStr;
 	int _find;
-	int _oldUse;
 private:
 	/**
 	 * Draws the image for a user interface button in the down/pressed state.
@@ -158,6 +154,10 @@ private:
 	 * Print the previously selected object's decription
 	 */
 	void printObjectDesc(const Common::String &str, bool firstTime);
+public:
+	ImageFile *_controlPanel;
+        ImageFile *_controls;
+	int _oldUse;
 public:
 	ScalpelUserInterface(SherlockEngine *vm);
 	virtual ~ScalpelUserInterface();
