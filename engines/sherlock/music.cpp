@@ -86,9 +86,15 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		115, 112,  55, 124, 123,   0,  14, 117  /* 120-127 */
 	};
 
+	// there is no delta right at the start of the music data
+	// this order is essential, otherwise notes will get delayed or even go missing
+	if (_position._playPos != _tracks[0]) {
+		info.delta = *(_position._playPos++);
+	} else {
+		info.delta = 0;
+	}
 
 	info.start = _position._playPos;
-	info.delta = 0;
 
 	info.event = *_position._playPos++;
 	//warning("Event %x", info.event);
@@ -157,8 +163,6 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		warning("MidiParser_SH::parseNextEvent: Unsupported event code %x", info.event);
 		break;
 	}// switch (info.command())
-
-	info.delta = *(_position._playPos++);
 }
 
 bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
