@@ -109,7 +109,7 @@ enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };
 
 class SherlockEngine;
 class Talk;
-namespace Scalpel { class ScalpelUserInterface; };
+namespace Scalpel { class ScalpelUserInterface; }
 
 typedef OpcodeReturn(Talk::*OpcodeMethod)(const byte *&str);
 
