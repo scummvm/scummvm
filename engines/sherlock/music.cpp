@@ -134,6 +134,8 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 		break;
 	case 0xF:
 		if (info.event == 0xFF) {
+			warning("SysEx 0xFF");
+
 			byte type = *(_position._playPos++);
 			switch(type) {
 			case 0x2F:
@@ -150,10 +152,24 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 				break;
 			}
 		} else if (info.event == 0xFC) {
-			allNotesOff();
-			stopPlaying();
-			unloadMusic();
-			return;
+			// Official End-Of-Track signal
+			warning("SysEx 0xFC");
+
+			byte type = *(_position._playPos++);
+			switch (type) {
+			case 0x80: // end of track, triggers looping
+				warning("SysEx triggered looping");
+				jumpToTick(0, true, true, false);
+				break;
+			case 0x81: // end of track, stop playing
+				warning("SysEx triggered music stop");
+				stopPlaying();
+				unloadMusic();
+				break;
+			default:
+				error("MidiParser_SH::parseNextEvent: Unknown SysEx 0xFC type %x", type);
+				break;
+			}
 		} else {
 			warning("TODO: %x / Unknown", info.event);
 			break;
