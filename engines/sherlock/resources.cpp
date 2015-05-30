@@ -255,7 +255,7 @@ Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &so
 }
 
 Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source, uint32 outSize) {
-	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readSint32LE() : -1;
 	byte *outBuffer = (byte *)malloc(outSize);
 	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
 
@@ -265,7 +265,7 @@ Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &so
 }
 
 void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
-	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readUint32LE() : -1;
+	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readSint32LE() : -1;
 
 	decompressLZ(source, buffer, outSize, inputSize);
 }
