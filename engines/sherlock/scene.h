@@ -183,11 +183,6 @@ private:
 	 * will remain the same on future visits to the scene
 	 */
 	void saveSceneStatus();
-
-	/**
-	 * Draw all the shapes, people and NPCs in the correct order
-	 */
-	void drawAllShapes();
 protected:
 	SherlockEngine *_vm;
 
@@ -197,6 +192,11 @@ protected:
 	 * colliding with another shape, it will also flag it as needing drawing
 	 */
 	virtual void checkBgShapes();
+
+	/**
+	 * Draw all the shapes, people and NPCs in the correct order
+	 */
+	void drawAllShapes();
 
 	Scene(SherlockEngine *vm);
 public:

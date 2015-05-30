@@ -68,6 +68,10 @@ void TattooEngine::loadInitialPalette() {
 	delete stream;
 }
 
+void TattooEngine::drawCredits() {
+	// TODO
+}
+
 void TattooEngine::eraseCredits() {
 	// TODO
 }

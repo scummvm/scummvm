@@ -429,6 +429,8 @@ struct CAnimStream {
 	int _zPlacement;				// Used by doBgAnim for determining Z order
 
 	CAnimStream();
+
+	void getNextFrame();
 };
 
 struct SceneImage {

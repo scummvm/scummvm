@@ -39,6 +39,11 @@ private:
 	void doBgAnimCheckCursor();
 
 	void doBgAnimEraseBackground();
+
+	/**
+	 * Update the background objects and canimations as part of doBgAnim
+	 */
+	void doBgAnimUpdateBgObjectsAndAnim();
 protected:
 	/**
 	 * Checks all the background shapes. If a background shape is animating,

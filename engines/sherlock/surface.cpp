@@ -96,6 +96,12 @@ void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
 	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor);
 }
 
+void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
+		bool flipped, int overrideColor) {
+	const Graphics::Surface &s = src._surface;
+	transBlitFrom(s, pt, flipped, overrideColor);
+}
+
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);

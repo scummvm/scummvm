@@ -36,10 +36,20 @@ private:
 	Common::Rect _oldMenuBounds;
 	Common::Rect _invMenuBounds;
 	Common::Rect _oldInvMenuBounds;
+	Common::Rect _tagBounds;
 	Common::Rect _oldTagBounds;
+	Common::Rect _invGraphicBounds;
 	Common::Rect _oldInvGraphicBounds;
 	Surface *_menuBuffer;
 	Surface *_invMenuBuffer;
+	Surface *_tagBuffer;
+	Surface *_invGraphic;
+	Common::Array<Common::Rect> _grayAreas;
+private:
+	/**
+	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
+	 */
+	void drawGrayAreas();
 public:
 	TattooUserInterface(SherlockEngine *vm);
 
@@ -59,6 +69,11 @@ public:
 	 * Main input handler for the user interface
 	 */
 	virtual void handleInput();
+
+	/**
+	 * Draw the user interface onto the screen's back buffers
+	 */	
+	virtual void drawInterface(int bufferNum = 3);
 };
 
 } // End of namespace Tattoo

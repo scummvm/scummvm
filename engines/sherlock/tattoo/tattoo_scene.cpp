@@ -196,6 +196,8 @@ void TattooScene::doBgAnimEraseBackground() {
 }
 
 void TattooScene::doBgAnim() {
+	TattooUserInterface &ui = *((TattooUserInterface *)_vm->_ui);
+
 	doBgAnimCheckCursor();
 
 //	Events &events = *_vm->_events;
@@ -208,7 +210,7 @@ void TattooScene::doBgAnim() {
 	talk._talkToAbort = false;
 
 	// Check the characters and sprites for updates
-	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER)
 			people[idx].checkSprite();
 	}
@@ -220,7 +222,72 @@ void TattooScene::doBgAnim() {
 
 	// Erase any affected background areas
 	doBgAnimEraseBackground();
+
+	doBgAnimUpdateBgObjectsAndAnim();
+
+	ui.drawInterface();
 }
+
+void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
+	TattooEngine &vm = *((TattooEngine *)_vm);
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+		if (obj._type == ACTIVE_BG_SHAPE || obj._type == NO_SHAPE)
+			obj.adjustObject();
+	}
+
+	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (people[idx]._type == CHARACTER)
+			people[idx].adjustSprite();
+	}
+
+	if (_activeCAnim._images != nullptr != _activeCAnim._zPlacement != REMOVE) {
+		_activeCAnim.getNextFrame();
+	}
+
+	// Flag the bg shapes which need to be redrawn
+	checkBgShapes();
+	drawAllShapes();
+
+
+	if (_mask != nullptr) {
+		switch (_currentScene) {
+		case 7:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), screen._currentScroll);
+			break;
+
+		case 8:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 180), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), screen._currentScroll);
+			if (!_vm->readFlags(880))
+				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(940, 300), screen._currentScroll);
+			break;
+
+		case 18:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 203), screen._currentScroll);
+			if (!_vm->readFlags(189))
+				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124 + _maskOffset.x, 239), screen._currentScroll);
+			break;
+
+		case 53:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), screen._currentScroll);
+			break;
+
+		case 68:
+			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 203), screen._currentScroll);
+			screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124 + _maskOffset.x, 239), screen._currentScroll);
+			break;
+		}
+	}
+}
+
 
 void TattooScene::updateBackground() {
 	People &people = *_vm->_people;

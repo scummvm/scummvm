@@ -22,7 +22,7 @@
 
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo_scene.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -31,11 +31,51 @@ namespace Tattoo {
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) {
 	_menuBuffer = nullptr;
 	_invMenuBuffer = nullptr;
+	_tagBuffer = nullptr;
+	_invGraphic = nullptr;
 }
 
 void TattooUserInterface::handleInput() {
 	// TODO
 	_vm->_events->pollEventsAndWait();
+}
+
+void TattooUserInterface::drawInterface(int bufferNum) {
+	Screen &screen = *_vm->_screen;
+	TattooEngine &vm = *((TattooEngine *)_vm);
+	
+	if (_invMenuBuffer != nullptr) {
+		Common::Rect r = _invMenuBounds;
+		r.grow(-3);
+		r.translate(-screen._currentScroll, 0);
+		_grayAreas.clear();
+		_grayAreas.push_back(r);
+
+		drawGrayAreas();
+		screen._backBuffer1.transBlitFrom(*_invMenuBuffer, Common::Point(_invMenuBounds.left, _invMenuBounds.top));
+	}
+
+	if (_menuBuffer != nullptr) {
+		Common::Rect r = _menuBounds;
+		r.grow(-3);
+		r.translate(-screen._currentScroll, 0);
+		_grayAreas.clear();
+		_grayAreas.push_back(r);
+
+		drawGrayAreas();
+		screen._backBuffer1.transBlitFrom(*_menuBuffer, Common::Point(_invMenuBounds.left, _invMenuBounds.top));
+	}
+
+	// See if we need to draw a Text Tag floating with the cursor
+	if (_tagBuffer != nullptr)
+		screen._backBuffer1.transBlitFrom(*_tagBuffer, Common::Point(_tagBounds.left, _tagBounds.top));
+
+	// See if we need to draw an Inventory Item Graphic floating with the cursor
+	if (_invGraphic != nullptr)
+		screen._backBuffer1.transBlitFrom(*_invGraphic, Common::Point(_invGraphicBounds.left, _invGraphicBounds.top));
+
+	if (vm._creditsActive)
+		vm.drawCredits();
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {
@@ -99,6 +139,10 @@ void TattooUserInterface::doScroll() {
 		_menuBounds.translate(screen._currentScroll - oldScroll, 0);
 	if (_invMenuBuffer != nullptr)
 		_invMenuBounds.translate(screen._currentScroll - oldScroll, 0);
+}
+
+void TattooUserInterface::drawGrayAreas() {
+	// TODO
 }
 
 } // End of namespace Tattoo

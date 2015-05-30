@@ -1151,6 +1151,10 @@ CAnimStream::CAnimStream() {
 	_zPlacement = 0;
 }
 
+void CAnimStream::getNextFrame() {
+	// TODO
+}
+
 /*----------------------------------------------------------------*/
 
 SceneImage::SceneImage() {

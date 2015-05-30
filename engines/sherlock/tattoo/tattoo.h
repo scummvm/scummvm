@@ -54,6 +54,11 @@ public:
 	virtual ~TattooEngine() {}
 
 	/**
+	 * Draw credits on the screen
+	 */
+	void drawCredits();
+
+	/**
 	 * Erase any area of the screen covered by credits
 	 */
 	void eraseCredits();
