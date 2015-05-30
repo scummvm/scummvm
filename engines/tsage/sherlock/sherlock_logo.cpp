@@ -73,6 +73,13 @@ void SherlockSceneHandler::postInit(SceneObjectList *OwnerList) {
 
 /*--------------------------------------------------------------------------*/
 
+void Object::setVisage(const Common::String &name) {
+	int visageNum = atoi(name.c_str());
+	SceneObject::setVisage(visageNum);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void SherlockLogoScene::Action1::signal() {
 	SherlockLogoScene &scene = *(SherlockLogoScene *)GLOBALS._sceneManager._scene;
 

@@ -38,7 +38,7 @@ using namespace TsAGE;
 
 class Object : public SceneObject {
 public:
-	void setVisage(const Common::String &name) {}
+	void setVisage(const Common::String &name);
 };
 
 class SherlockLogo: public Game {
