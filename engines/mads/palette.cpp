@@ -497,7 +497,7 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 	int baseColor, int numColors, int baseGrey, int numGreys,
 	int tickDelay, int steps) {
 	GreyEntry map[PALETTE_COUNT];
-	byte tempPal[PALETTE_SIZE];;
+	byte tempPal[PALETTE_SIZE];
 	int8 signs[PALETTE_COUNT][3];
 	byte palIndex[PALETTE_COUNT][3];
 	int intensity;
