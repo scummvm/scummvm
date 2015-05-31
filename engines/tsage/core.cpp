@@ -1465,7 +1465,7 @@ void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
 			adjustData += 3;
 	}
 
-	// Set the altered pale4tte
+	// Set the altered palette
 	g_system->getPaletteManager()->setPalette((const byte *)&tempPalette[0], 0, 256);
 	GLOBALS._screenSurface.updateScreen();
 }
