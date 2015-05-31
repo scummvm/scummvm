@@ -76,7 +76,7 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	_leftClick = _rightClick = false;
 	_mouseClicked = _newMouseClicked = false;
-	_newLeftClick = _newRightClick = false;;
+	_newLeftClick = _newRightClick = false;
 
 	_videoDead = 0;
 
