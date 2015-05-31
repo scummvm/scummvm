@@ -304,7 +304,6 @@ bool Object::isMoving() const {
 void Object::move() {
 	Common::Point currPos = _position;
 	Common::Point moveDiff(5, 3);
-	int yDiff = 0;
 	int percent = 100;
 
 	if (dontMove())
