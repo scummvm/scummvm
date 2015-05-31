@@ -29,7 +29,7 @@
 #define REVISION_DEFINE "SCUMMVM_INTERNAL_REVISION"
 #define FIRST_ENGINE "grim"               // Name of the engine which should be sorted as first element
 
-#define ENABLE_LANGUAGE_EXTENSIONS "grim,myst3"    // Comma separated list of projects that need language extensions
+#define ENABLE_LANGUAGE_EXTENSIONS ""    // Comma separated list of projects that need language extensions, not used by ResidualVM
 #define DISABLE_EDIT_AND_CONTINUE ""     // Comma separated list of projects that need Edit&Continue to be disabled for co-routine support (the main project is automatically added)
 
 //#define ADDITIONAL_LIBRARY ""            // Add a single library to the list of externally linked libraries
