@@ -97,6 +97,12 @@ private:
 	uint32 _updateStartFrame;
 	bool _isAnimating;
 	bool _finished;
+	uint32 _walkStartFrame;
+	int _angle;
+	int _changeCtr;
+	int _majorDiff, _minorDiff;
+	Common::Point _moveDelta;
+	Common::Point _moveSign;
 
 	/**
 	 * Return the next frame when the object is animating
@@ -107,6 +113,26 @@ private:
 	 * Gets the next frame in the sequence
 	 */
 	int getNewFrame();
+
+	/**
+	 * Calculate the angle between the current position and a designated destination
+	 */
+	void calculateMoveAngle();
+
+	/**
+	 * Handle any object movement
+	 */
+	void move();
+
+	/**
+	 * Returns whether not to make any movement
+	 */
+	bool dontMove() const;
+
+	/**
+	 * Ends any current movement
+	 */
+	void endMove();
 public:
 	static ScalpelEngine *_vm;
 	Common::Point _position;
@@ -131,7 +157,7 @@ public:
 	/**
 	 * Starts an object moving to a given destination
 	 */
-	void setDestination(const Common::Point &pt) { _destination = pt; }
+	void setDestination(const Common::Point &pt);
 
 	/**
 	 * Returns true if an animation is ended

@@ -160,6 +160,7 @@ Object::Object() {
 	_frame = 0;
 	_numFrames = 0;
 	_frameChange = 0;
+	_angle = _changeCtr = 0;
 }
 
 void Object::setVisage(int visage, int strip) {
@@ -176,6 +177,39 @@ void Object::setAnimMode(bool isAnimating) {
 	_frameChange = 1;
 }
 
+void Object::setDestination(const Common::Point &pt) {
+	_destination = pt; 
+
+	int moveRate = 10;
+	_walkStartFrame = _vm->_events->getFrameCounter();
+	_walkStartFrame += 60 / moveRate;
+
+	calculateMoveAngle();
+
+	// Get the difference
+	int diffX = _destination.x - _position.x;
+	int diffY = _destination.y - _position.y;
+	int xSign = (diffX < 0) ? -1 : (diffX > 0 ? 1 : 0);
+	int ySign = (diffY < 0) ? -1 : (diffY > 0 ? 1 : 0);
+	diffX = ABS(diffX);
+	diffY = ABS(diffY);
+
+	if (diffX < diffY) {
+		_minorDiff = diffX / 2;
+		_majorDiff = diffY;
+	} else {
+		_minorDiff = diffY / 2;
+		_majorDiff = diffX;
+	}
+
+	// Set the destination position
+	_moveDelta = Common::Point(diffX, diffY);
+	_moveSign = Common::Point(xSign, ySign);
+	_changeCtr = 0;
+
+	assert(diffX || diffY);
+}
+
 void Object::erase() {
 	Screen &screen = *_vm->_screen;
 	
@@ -187,6 +221,9 @@ void Object::update() {
 	Screen &screen = *_vm->_screen;
 
 	if (_visage.isLoaded()) {
+		if (isMoving())
+			move();
+		
 		if (_isAnimating) {
 			if (_frame < _visage.getFrameCount())
 				_frame = changeFrame();
@@ -235,12 +272,109 @@ int Object::getNewFrame() {
 	return frameNum;
 }
 
+void Object::calculateMoveAngle() {
+	int xDiff = _destination.x - _position.x, yDiff = _position.y - _destination.y;
+
+	if (!xDiff && !yDiff)
+		_angle = 0;
+	else if (!xDiff)
+		_angle = (_destination.y >= _position.y) ? 180 : 0;
+	else if (!yDiff)
+		_angle = (_destination.x >= _position.x) ? 90 : 270;
+	else {
+		int result = (((xDiff * 100) / ((abs(xDiff) + abs(yDiff))) * 90) / 100);
+
+		if (yDiff < 0)
+			result = 180 - result;
+		else if (xDiff < 0)
+			result += 360;
+
+		_angle = result;
+	}
+}
+
 bool Object::isAnimEnded() const {
 	return _finished;
 }
 
 bool Object::isMoving() const {
 	return (_destination.x != 0) && (_destination != _position);
+}
+
+void Object::move() {
+	Common::Point currPos = _position;
+	Common::Point moveDiff(5, 3);
+	int yDiff = 0;
+	int percent = 100;
+
+	if (dontMove())
+		return;
+
+	if (_moveDelta.x >= _moveDelta.y) {
+		int xAmount = _moveSign.x * moveDiff.x * percent / 100;
+		if (!xAmount)
+			xAmount = _moveSign.x;
+		currPos.x += xAmount;
+
+		int yAmount = ABS(_destination.y - currPos.y);
+		int yChange = _majorDiff / ABS(xAmount);
+		int ySign;
+
+		if (!yChange)
+			ySign = _moveSign.y;
+		else {
+			int v = yAmount / yChange;
+			_changeCtr += yAmount % yChange;
+			if (_changeCtr >= yChange) {
+				++v;
+				_changeCtr -= yChange;
+			}
+
+			ySign = _moveSign.y * v;
+		}
+
+		currPos.y += ySign;
+		_majorDiff -= ABS(xAmount);
+
+	}
+	else {
+		int yAmount = _moveSign.y * moveDiff.y * percent / 100;
+		if (!yAmount)
+			yAmount = _moveSign.y;
+		currPos.y += yAmount;
+
+		int xAmount = ABS(_destination.x - currPos.x);
+		int xChange = _majorDiff / ABS(yAmount);
+		int xSign;
+
+		if (!xChange)
+			xSign = _moveSign.x;
+		else {
+			int v = xAmount / xChange;
+			_changeCtr += xAmount % xChange;
+			if (_changeCtr >= xChange) {
+				++v;
+				_changeCtr -= xChange;
+			}
+
+			xSign = _moveSign.x * v;
+		}
+
+		currPos.x += xSign;
+		_majorDiff -= ABS(yAmount);
+	}
+
+	_position = currPos;
+	if (dontMove())
+		_position = _destination;
+}
+
+bool Object::dontMove() const {
+	return (_majorDiff <= 0);
+}
+
+void Object::endMove() {
+	_position = _destination;
 }
 
 /*----------------------------------------------------------------*/
