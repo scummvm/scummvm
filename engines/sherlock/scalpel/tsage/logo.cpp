@@ -480,20 +480,18 @@ void Logo::nextFrame() {
 			// Fade out the background but keep the shapes visible
 			fade(_palette2);
 			screen._backBuffer1.clear();
-			screen.clear();
 		}
 		break;
 
-	case 13: {
+	case 14:
 		// Load the new palette
 		byte palette[PALETTE_SIZE];
 		Common::copy(&_palette2[0], &_palette2[PALETTE_SIZE], &palette[0]);
 		_lib.getPalette(palette, 12);
+		screen.clear();
 		screen.setPalette(palette);
-		break;
-	}
 
-	case 14:
+		// Morph into the EA logo
 		_objects[0].setVisage(12, 1);
 		_objects[0]._frame = 1;
 		_objects[0]._numFrames = 7;
