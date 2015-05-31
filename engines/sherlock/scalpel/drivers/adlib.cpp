@@ -287,7 +287,7 @@ private:
 int MidiDriver_AdLib::open() {
 	int rate = _mixer->getOutputRate();
 
-	debug(3, "ADLIB: Starting driver");
+	debugC(kDebugLevelAdLibDriver, "AdLib: starting driver");
 
 	_opl = OPL::Config::create(OPL::Config::kOpl2);
 
@@ -406,11 +406,11 @@ void MidiDriver_AdLib::send(uint32 b) {
 		// Aftertouch doesn't seem to be implemented in the Sherlock Holmes adlib driver
 		break;
 	case 0xe0:
-		warning("pitch bend change");
+		debugC(kDebugLevelAdLibDriver, "AdLib: pitch bend change");
 		pitchBendChange(channel, op1, op2);
 		break;
 	case 0xf0: // SysEx
-		warning("SysEx: %x", b);
+		warning("ADLIB: SysEx: %x", b);
 		break;
 	default:
 		warning("ADLIB: Unknown event %02x", command);
@@ -453,7 +453,7 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 		}
 		if (oldestInUseChannel >= 0) {
 			// channel found
-			warning("used In-Use channel");
+			debugC(kDebugLevelAdLibDriver, "AdLib: used In-Use channel");
 			// original driver used note 0, we use the current note
 			// because using note 0 could create a bad note (out of index) and we check that. Original driver didn't.
 			voiceOnOff(oldestInUseChannel, false, _channels[oldestInUseChannel].currentNote, 0);
@@ -464,11 +464,10 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 			voiceOnOff(oldestInUseChannel, true, note, velocity);
 			return;
 		}
-		warning("MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
+		debugC(kDebugLevelAdLibDriver, "AdLib: MIDI channel not mapped/all FM voice channels busy %d", MIDIchannel);
 
 	} else {
 		// Percussion channel
-		warning("percussion!");
 		for (byte FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
 			if (_voiceChannelMapping[FMvoiceChannel] == MIDIchannel) {
 				if (note == adlib_percussionChannelTable[FMvoiceChannel].requiredNote) {
@@ -480,7 +479,7 @@ void MidiDriver_AdLib::noteOn(byte MIDIchannel, byte note, byte velocity) {
 				}
 			}
 		}
-		warning("percussion MIDI channel not mapped/all FM voice channels busy");
+		debugC(kDebugLevelAdLibDriver, "AdLib: percussion MIDI channel not mapped/all FM voice channels busy");
 	}
 }
 
@@ -519,7 +518,7 @@ void MidiDriver_AdLib::voiceOnOff(byte FMvoiceChannel, bool keyOn, byte note, by
 		frequencyOffset = note;
 	}
 	if (frequencyOffset >= SHERLOCK_ADLIB_NOTES_COUNT) {
-		warning("CRITICAL - bad note!!!");
+		warning("CRITICAL - AdLib driver: bad note!!!");
 		return;
 	}
 	frequency = adlib_FrequencyLookUpTable[frequencyOffset];

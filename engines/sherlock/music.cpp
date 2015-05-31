@@ -151,16 +151,16 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 			}
 		} else if (info.event == 0xFC) {
 			// Official End-Of-Track signal
-			warning("System META event 0xFC");
+			debugC(kDebugLevelMusic, "Music: System META event 0xFC");
 
 			byte type = *(_position._playPos++);
 			switch (type) {
 			case 0x80: // end of track, triggers looping
-				warning("META event triggered looping");
+				debugC(kDebugLevelMusic, "Music: META event triggered looping");
 				jumpToTick(0, true, true, false);
 				break;
 			case 0x81: // end of track, stop playing
-				warning("META event triggered music stop");
+				debugC(kDebugLevelMusic, "Music: META event triggered music stop");
 				stopPlaying();
 				unloadMusic();
 				break;
@@ -180,7 +180,7 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 }
 
 bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
-	warning("loadMusic");
+	debugC(kDebugLevelMusic, "Music: loadMusic()");
 	unloadMusic();
 
 	byte  *headerPtr  = data;
@@ -242,7 +242,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 }
 
 bool Music::loadSong(int songNumber) {
-	warning("loadSong");
+	debugC(kDebugLevelMusic, "Music: loadSong()");
 
 	if(songNumber == 100)
 		songNumber = 55;
@@ -285,7 +285,7 @@ bool Music::playMusic(const Common::String &name) {
 	if (!_musicOn)
 		return false;
 
-	warning("Sound::playMusic %s", name.c_str());
+	debugC(kDebugLevelMusic, "Music: playMusic('%s')", name.c_str());
 	Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
 
 	byte *data = new byte[stream->size()];
@@ -305,13 +305,13 @@ bool Music::playMusic(const Common::String &name) {
 #endif
 
 	if (dataSize < 14) {
-		warning("not enough data in music file");
+		warning("Music: not enough data in music file");
 		return false;
 	}
 
 	byte *dataPos = data;
 	if (memcmp("            ", dataPos, 12)) {
-		warning("Expected header not found in music file");
+		warning("Music: expected header not found in music file");
 		return false;
 	}
 	dataPos += 12;
@@ -319,7 +319,7 @@ bool Music::playMusic(const Common::String &name) {
 
 	uint16 headerSize = READ_LE_UINT16(dataPos);
 	if (headerSize != 0x7F) {
-		warning("music header is not as expected");
+		warning("Music: header is not as expected");
 		return false;
 	}
 
