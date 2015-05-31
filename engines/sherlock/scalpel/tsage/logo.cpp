@@ -487,6 +487,7 @@ void Logo::nextFrame() {
 	case 13: {
 		// Load the new palette
 		byte palette[PALETTE_SIZE];
+		Common::copy(&_palette2[0], &_palette2[PALETTE_SIZE], &palette[0]);
 		_lib.getPalette(palette, 12);
 		screen.setPalette(palette);
 		break;
