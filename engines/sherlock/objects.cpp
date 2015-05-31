@@ -364,6 +364,10 @@ void Sprite::checkSprite() {
 	}
 }
 
+const Common::Rect Sprite::getOldBounds() const {
+	return Common::Rect(_oldPosition.x, _oldPosition.y, _oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
+}
+
 /*----------------------------------------------------------------*/
 
 void WalkSequence::load(Common::SeekableReadStream &s) {

@@ -53,6 +53,7 @@ private:
 public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;
+	bool _drawMenu;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 

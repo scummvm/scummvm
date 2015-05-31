@@ -306,6 +306,18 @@ void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *
 	*height = newBounds.height();
 }
 
+void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, Common::Rect &newBounds, int scaleVal) {
+	Common::Point newPos, newSize;
+
+	if (scaleVal == 256)
+		flushImage(frame, pt, &newPos.x, &newPos.y, &newSize.x, &newSize.y);
+	else
+		flushScaleImage(frame, pt, &newPos.x, &newPos.y, &newSize.x, &newSize.y, scaleVal);
+
+	// Transfer the pos and size amounts into a single bounds rect
+	newBounds = Common::Rect(newPos.x, newPos.y, newPos.x + newSize.x, newPos.y + newSize.y);
+}
+
 void Screen::blockMove(const Common::Rect &r, const Common::Point &scrollPos) {
 	Common::Rect bounds = r;
 	bounds.translate(scrollPos.x, scrollPos.y);

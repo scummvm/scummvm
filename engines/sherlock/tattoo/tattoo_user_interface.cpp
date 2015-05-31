@@ -34,6 +34,7 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) 
 	_tagBuffer = nullptr;
 	_invGraphic = nullptr;
 	_scrollSize = _scrollSpeed = 0;
+	_drawMenu = false;
 }
 
 void TattooUserInterface::initScrollVars() {

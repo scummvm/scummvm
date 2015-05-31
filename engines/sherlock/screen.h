@@ -190,6 +190,11 @@ public:
 		int16 *width, int16 *height, int scaleVal);
 
 	/**
+	 * Variation of flushImage/flushScaleImage that takes in and updates a rect
+	 */
+	void flushImage(ImageFrame *frame, const Common::Point &pt, Common::Rect &newBounds, int scaleVal);
+
+	/**
 	 * Copies data from the back buffer to the screen, taking into account scrolling position
 	 */
 	void blockMove(const Common::Rect &r, const Common::Point &scrollPos);

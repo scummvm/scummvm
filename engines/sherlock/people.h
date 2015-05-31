@@ -76,6 +76,7 @@ public:
 	Common::String _npcName;
 	int _tempX;
 	int _tempScaleVal;
+	bool _updateNPCPath;
 
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using
@@ -86,6 +87,11 @@ public:
 	 * Clear the NPC related data
 	 */
 	void clearNPC();
+
+	/**
+	 * Update the NPC
+	 */
+	void updateNPC();
 };
 
 class SherlockEngine;

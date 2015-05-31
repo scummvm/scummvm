@@ -79,6 +79,10 @@ void Person::clearNPC() {
 	_npcName = "";
 }
 
+void Person::updateNPC() {
+	// TODO
+}
+
 /*----------------------------------------------------------------*/
 
 People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {

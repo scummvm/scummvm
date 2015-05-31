@@ -242,6 +242,11 @@ public:
 	* Return frame height
 	*/
 	int frameHeight() const { return _imageFrame ? _imageFrame->_frame.h : 0; }
+
+	/**
+	 * Returns the old bounsd for the sprite from the previous frame
+	 */
+	const Common::Rect getOldBounds() const;
 };
 
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };

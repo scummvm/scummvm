@@ -59,6 +59,11 @@ public:
 	void drawCredits();
 
 	/**
+	 * Blit the drawn credits to the screen
+	 */
+	void blitCredits();
+
+	/**
 	 * Erase any area of the screen covered by credits
 	 */
 	void eraseCredits();

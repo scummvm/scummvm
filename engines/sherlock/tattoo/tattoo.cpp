@@ -72,6 +72,10 @@ void TattooEngine::drawCredits() {
 	// TODO
 }
 
+void TattooEngine::blitCredits() {
+	// TODO
+}
+
 void TattooEngine::eraseCredits() {
 	// TODO
 }

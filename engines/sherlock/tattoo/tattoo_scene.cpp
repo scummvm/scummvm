@@ -196,15 +196,15 @@ void TattooScene::doBgAnimEraseBackground() {
 }
 
 void TattooScene::doBgAnim() {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *((TattooUserInterface *)_vm->_ui);
 
 	doBgAnimCheckCursor();
 
-//	Events &events = *_vm->_events;
-	People &people = *_vm->_people;
-//	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
-	Talk &talk = *_vm->_talk;
 
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	talk._talkToAbort = false;
@@ -226,6 +226,23 @@ void TattooScene::doBgAnim() {
 	doBgAnimUpdateBgObjectsAndAnim();
 
 	ui.drawInterface();
+
+	doBgAnimDrawSprites();
+
+	if (vm._creditsActive)
+		vm.blitCredits();
+
+	if (!vm._fastMode)
+		events.wait(3);
+
+	screen._flushScreen = false;
+	_doBgAnimDone = false;
+	ui._drawMenu = false;
+
+	for (uint idx = 1; idx < MAX_CHARACTERS; ++idx) {
+		if (people[idx]._updateNPCPath)
+			people[idx].updateNPC();
+	}
 }
 
 void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
@@ -287,7 +304,6 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 		}
 	}
 }
-
 
 void TattooScene::updateBackground() {
 	People &people = *_vm->_people;
@@ -397,6 +413,83 @@ void TattooScene::updateBackground() {
 	screen._flushScreen = false;
 }
 
+void TattooScene::doBgAnimDrawSprites() {
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &person = people[idx];
+
+		if (person._type != INVALID) {
+			if (_goToScene == -1 || _cAnim.size() == 0) {
+				if (person._type == REMOVE) {
+					screen.slamRect(person.getOldBounds());
+					person._type = INVALID;
+				} else {
+					if (person._tempScaleVal == 256) {
+						screen.flushImage(person._imageFrame, Common::Point(person._tempX, person._position.y / FIXED_INT_MULTIPLIER
+							- person.frameHeight()), &person._oldPosition.x, &person._oldPosition.y, &person._oldSize.x, &person._oldSize.y);
+					}  else {
+						int ts = person._imageFrame->sDrawYSize(person._tempScaleVal);
+						int ty  = person._position.y / FIXED_INT_MULTIPLIER - ts;
+						screen.flushScaleImage(person._imageFrame, Common::Point(person._tempX, ty),
+							&person._oldPosition.x, &person._oldPosition.y, &person._oldSize.x, &person._oldSize.y, person._tempScaleVal);
+					}
+				}
+			}
+		}
+	}
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (obj._type == ACTIVE_BG_SHAPE || obj._type == REMOVE) {
+			if (_goToScene == -1) {
+				if (obj._scaleVal == 256)
+					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y, 
+					&obj._oldSize.x, &obj._oldSize.y);
+				else
+					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y, 
+					&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+
+				if (obj._type == REMOVE)
+					obj._type = INVALID;
+			}
+		}
+	}
+
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (_goToScene == -1) {
+			if (obj._type == NO_SHAPE && (obj._flags & 1) == 0) {
+				screen.slamRect(obj.getNoShapeBounds());
+				screen.slamRect(obj.getOldBounds());
+			} else if (obj._type == HIDE_SHAPE) {
+				if (obj._scaleVal == 256)
+					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
+						&obj._oldSize.x, &obj._oldSize.y);
+				else
+					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
+						&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
+				obj._type = HIDDEN;
+			}
+		}
+	}
+
+	if (_activeCAnim._images != nullptr || _activeCAnim._zPlacement == REMOVE) {
+		if (_activeCAnim._zPlacement != REMOVE) {
+			screen.flushImage(_activeCAnim._imageFrame, _activeCAnim._position, _activeCAnim._oldBounds, _activeCAnim._scaleVal);
+		} else {
+			screen.slamArea(_activeCAnim._removeBounds.left - ui._currentScroll.x, _activeCAnim._removeBounds.top, 
+				_activeCAnim._removeBounds.width(), _activeCAnim._removeBounds.height());
+			_activeCAnim._removeBounds.left = _activeCAnim._removeBounds.top = 0;
+			_activeCAnim._removeBounds.right = _activeCAnim._removeBounds.bottom = 0;
+			_activeCAnim._zPlacement = -1;		// Reset _zPlacement so we don't REMOVE again
+		}
+	}
+}
 
 } // End of namespace Tattoo
 
