@@ -41,17 +41,113 @@ class ScalpelEngine;
 
 namespace TsAGE {
 
+enum AnimationMode { ANIM_MODE_NONE = 0, ANIM_MODE_4 = 4, ANIM_MODE_5 = 5 };
+
+class ObjectSurface : public Surface {
+public:
+	Common::Point _centroid;
+public:
+	ObjectSurface() : Surface() {}
+	virtual ~ObjectSurface() {}
+};
+
+class Visage {
+private:
+	Common::SeekableReadStream *_stream;
+
+	/**
+	 * Translates a raw image resource into a graphics surface
+	 */
+	void surfaceFromRes(ObjectSurface &s);
+public:
+	static TLib *_tLib;
+	int _resNum;
+	int _rlbNum;
+public:
+	Visage();
+	~Visage();
+
+	/**
+	 * Set the visage number
+	 */
+	void setVisage(int resNum, int rlbNum = 9999);
+
+	/**
+	 * Get a frame from the visage
+	 */
+	void getFrame(ObjectSurface &s, int frameNum);
+	
+	/**
+	 * Return the number of frames
+	 */
+	int getFrameCount() const;
+
+	/**
+	 * Returns whether the visage is loaded
+	 */
+	bool isLoaded() const;
+};
+
+class Object {
+private:
+	Visage _visage;
+	uint32 _updateStartFrame;
+	int _animMode;
+	bool _finished;
+
+	/**
+	 * Return the next frame when the object is animating
+	 */
+	int changeFrame();
+
+	/**
+	 * Gets the next frame in the sequence
+	 */
+	int getNewFrame();
+public:
+	static ScalpelEngine *_vm;
+	Common::Point _position;
+	Common::Rect _oldBounds;
+	int _frame;
+	int _numFrames;
+	int _frameChange;
+public:
+	Object();
+
+	/**
+	 * Load the data for the object
+	 */
+	void setVisage(int visage, int strip);
+
+	/**
+	 * Sets the animation mode
+	 */
+	void setAnimMode(AnimationMode mode);
+
+	/**
+	 * Returns true if an animation is ended
+	 */
+	bool isAnimEnded() const;
+
+	/**
+	 * Update the frame
+	 */
+	void update();
+};
+
 class Logo {
 private:
 	ScalpelEngine *_vm;
 	TLib _lib;
-	Surface _surface;
 	int _counter;
+	byte _originalPalette[PALETTE_SIZE];
 	byte _palette1[PALETTE_SIZE];
 	byte _palette2[PALETTE_SIZE];
 	byte _palette3[PALETTE_SIZE];
+	Object _objects[4];
 
 	Logo(ScalpelEngine *vm);
+	~Logo();
 
 	void nextFrame();
 
