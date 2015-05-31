@@ -29,8 +29,6 @@ namespace Sherlock {
 
 #define NUM_SONGS 45
 
-#define USE_SCI_MIDI_PLAYER 1
-
 /* This tells which song to play in each room, 0 = no song played */
 static const char ROOM_SONG[62] = {
 	 0, 20, 43,  6, 11,  2,  8, 15,  6, 28,
@@ -216,34 +214,16 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 	_musicType = MidiDriver::getMusicType(dev);
 
-#if USE_SCI_MIDI_PLAYER
-	_pMidiDrv = NULL;
-#endif
 	_driver = NULL;
 
 	switch (_musicType) {
 	case MT_ADLIB:
-#if USE_SCI_MIDI_PLAYER
-		_pMidiDrv = MidiPlayer_AdLib_create();
-#else
 		_driver = MidiDriver_AdLib_create();
-#endif
 		break;
 	default:
 		_driver = MidiDriver::createMidi(dev);
 		break;
 	}
-#if USE_SCI_MIDI_PLAYER
-	if (_pMidiDrv) {
-		assert(_pMidiDrv);
-		int ret = _pMidiDrv->open();
-		if (ret == 0) {
-			_pMidiDrv->setTimerCallback(&_midiParser, &_midiParser.timerCallback);
-		}
-		_midiParser.setMidiDriver(_pMidiDrv);
-		_midiParser.setTimerRate(_pMidiDrv->getBaseTempo());
-	}
-#endif
 
 	if (_driver) {
 		assert(_driver);
@@ -346,10 +326,6 @@ bool Music::playMusic(const Common::String &name) {
 	if (_musicType == MT_ADLIB) {
 		if (_driver)
 			MidiDriver_AdLib_newMusicData(_driver, dataPos, dataSize);
-#if USE_SCI_MIDI_PLAYER
-		if (_pMidiDrv)
-			MidiPlayer_AdLib_newMusicData(_pMidiDrv, dataPos, dataSize);
-#endif
 	}
 
 	_midiParser.loadMusic(dataPos, dataSize);

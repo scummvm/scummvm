@@ -32,8 +32,6 @@
 
 namespace Sherlock {
 
-#define USE_SCI_MIDI_PLAYER 1
-
 #define SHERLOCK_ADLIB_VOICES_COUNT 9
 #define SHERLOCK_ADLIB_NOTES_COUNT 96
 
@@ -285,29 +283,6 @@ private:
 
 	void pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2);
 };
-
-#if USE_SCI_MIDI_PLAYER
-class MidiPlayer_AdLib : public MidiPlayer {
-public:
-	MidiPlayer_AdLib() : MidiPlayer() { _driver = new MidiDriver_AdLib(g_system->getMixer()); }
-	~MidiPlayer_AdLib() {
-		delete _driver;
-		_driver = 0;
-	}
-
-	int open();
-	void close();
-
-	byte getPlayId() const;
-	int getPolyphony() const { return SHERLOCK_ADLIB_VOICES_COUNT; }
-	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_AdLib *>(_driver)->setVolume(volume); }
-
-	//int getLastChannel() const { return (static_cast<const MidiDriver_AdLib *>(_driver)->useRhythmChannel() ? 8 : 15); }
-
-	void newMusicData(byte *musicData, int32 musicDataSize) { static_cast<MidiDriver_AdLib *>(_driver)->newMusicData(musicData, musicDataSize); }
-};
-#endif
 
 int MidiDriver_AdLib::open() {
 	int rate = _mixer->getOutputRate();
@@ -650,42 +625,8 @@ void MidiDriver_AdLib::setRegister(int reg, int value) {
 }
 
 uint32 MidiDriver_AdLib::property(int prop, uint32 param) {
-#if 0
-	switch(prop) {
-	case MIDI_PROP_MASTER_VOLUME:
-		if (param != 0xffff)
-			_masterVolume = param;
-		return _masterVolume;
-	default:
-		break;
-	}
-#endif
 	return 0;
 }
-
-#if USE_SCI_MIDI_PLAYER
-int MidiPlayer_AdLib::open() {
-	return static_cast<MidiDriver_AdLib *>(_driver)->open();
-}
-
-void MidiPlayer_AdLib::close() {
-	if (_driver) {
-		_driver->close();
-	}
-}
-
-byte MidiPlayer_AdLib::getPlayId() const {
-	return 0x00;
-}
-
-MidiPlayer *MidiPlayer_AdLib_create() {
-	return new MidiPlayer_AdLib();
-}
-
-void MidiPlayer_AdLib_newMusicData(MidiPlayer *driver, byte *musicData, int32 musicDataSize) {
-	static_cast<MidiPlayer_AdLib *>(driver)->newMusicData(musicData, musicDataSize);
-}
-#endif
 
 MidiDriver *MidiDriver_AdLib_create() {
 	return new MidiDriver_AdLib(g_system->getMixer());

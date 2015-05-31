@@ -50,7 +50,6 @@ private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
 	MidiParser_SH _midiParser;
-	MidiPlayer *_pMidiDrv;
 	MidiDriver *_driver;
 
 public:
