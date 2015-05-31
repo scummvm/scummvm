@@ -53,7 +53,7 @@ namespace Sherlock {
 enum {
 	kDebugLevelScript      = 1 << 0,
 	kDebugLevelAdLibDriver = 2 << 0,
-	kDebugLevelMusic       = 3 << 0,
+	kDebugLevelMusic       = 3 << 0
 };
 
 enum GameType {
