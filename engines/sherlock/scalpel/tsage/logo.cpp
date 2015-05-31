@@ -495,6 +495,7 @@ void Logo::nextFrame() {
 		_objects[0].setVisage(12, 1);
 		_objects[0]._frame = 1;
 		_objects[0]._numFrames = 7;
+		_objects[0].setAnimMode(true);
 		_objects[0]._position = Common::Point(170, 142);
 		_objects[0].setDestination(Common::Point(158, 71));
 		break;
