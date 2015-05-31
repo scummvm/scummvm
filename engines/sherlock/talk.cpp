@@ -1270,9 +1270,12 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			byte v = (str >= _scriptEnd ? 0 : str[0]);
-			_wait = v == _opcodes[OP_SWITCH_SPEAKER] || v == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
-				v == _opcodes[OP_BANISH_WINDOW] || _opcodes[OP_IF_STATEMENT] || v == _opcodes[OP_ELSE_STATEMENT] ||
-				v == _opcodes[OP_END_IF_STATEMENT] || v == _opcodes[OP_GOTO_SCENE] || v == _opcodes[OP_CALL_TALK_FILE];
+			if (v == _opcodes[OP_SWITCH_SPEAKER] || v == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
+					v == _opcodes[OP_BANISH_WINDOW] || v == _opcodes[OP_IF_STATEMENT] ||
+					v == _opcodes[OP_ELSE_STATEMENT] || v == _opcodes[OP_END_IF_STATEMENT] ||
+					v == _opcodes[OP_GOTO_SCENE] || v == _opcodes[OP_CALL_TALK_FILE]) {
+				_wait = 1;
+			}
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
