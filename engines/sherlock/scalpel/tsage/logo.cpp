@@ -334,9 +334,7 @@ void Object::move() {
 
 		currPos.y += ySign;
 		_majorDiff -= ABS(xAmount);
-
-	}
-	else {
+	} else {
 		int yAmount = _moveSign.y * moveDiff.y * percent / 100;
 		if (!yAmount)
 			yAmount = _moveSign.y;
