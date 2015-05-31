@@ -10,6 +10,18 @@ class EndianTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(MKTAG('A','B','C','D'), tag);
 	}
 
+	void test_READ_BE_UINT64() {
+		const byte data[8] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xFF};
+		uint64 value = READ_BE_UINT64(data);
+		TS_ASSERT_EQUALS(value, 0x123456789ABCDEFFULL);
+	}
+
+	void test_READ_LE_UINT64() {
+		const byte data[8] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xFF};
+		uint64 value = READ_LE_UINT64(data);
+		TS_ASSERT_EQUALS(value, 0xFFDEBC9A78563412ULL);
+	}
+
 	void test_READ_BE_UINT32() {
 		const char data[4] = { 0x12, 0x34, 0x56, 0x78 };
 		uint32 value = READ_BE_UINT32(data);

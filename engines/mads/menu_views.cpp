@@ -1,24 +1,24 @@
 /* ScummVM - Graphic Adventure Engine
- *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
- * file distributed with this source distribution.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
+*
+* ScummVM is the legal property of its developers, whose names
+* are too numerous to list here. Please refer to the COPYRIGHT
+* file distributed with this source distribution.
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+*
+*/
 
 #include "common/scummsys.h"
 #include "mads/game.h"
@@ -37,7 +37,7 @@ MenuView::MenuView(MADSEngine *vm) : FullScreenDialog(vm) {
 }
 
 void MenuView::show() {
- 	Scene &scene = _vm->_game->_scene;	
+ 	Scene &scene = _vm->_game->_scene;
 	EventsManager &events = *_vm->_events;
 	_vm->_screenFade = SCREEN_FADE_FAST;
 
@@ -80,6 +80,15 @@ bool MenuView::onEvent(Common::Event &event) {
 	return false;
 }
 
+Common::String MenuView::getResourceName() {
+	Common::String s(_filename);
+	s.toLowercase();
+	while (s.contains('.'))
+		s.deleteLastChar();
+
+	return s;
+}
+
 /*------------------------------------------------------------------------*/
 
 char TextView::_resourceName[100];
@@ -112,12 +121,17 @@ TextView::TextView(MADSEngine *vm) : MenuView(vm) {
 }
 
 TextView::~TextView() {
+	// Turn off palette cycling as well as any playing sound
+	Scene &scene = _vm->_game->_scene;
+	scene._cyclingActive = false;
+	_vm->_sound->stop();
 }
 
 void TextView::load() {
 	Common::String scriptName(_resourceName);
 	scriptName += ".txr";
 
+	_filename = scriptName;
 	if (!_script.open(scriptName))
 		error("Could not open resource %s", _resourceName);
 
@@ -181,7 +195,7 @@ void TextView::processCommand() {
 		paramP = commandStr + 10;
 		resetPalette();
 		int screenId = getParameter(&paramP);
-		
+
 		SceneInfo *sceneInfo = SceneInfo::init(_vm);
 		sceneInfo->load(screenId, 0, "", 0, scene._depthSurface, scene._backgroundSurface);
 		scene._spriteSlots.fullRefresh();
@@ -216,7 +230,7 @@ void TextView::processCommand() {
 		int soundId = getParameter(&paramP);
 		_vm->_sound->command(soundId);
 
-	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') || 
+	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') ||
 			(commandStr[5] == '1'))) {
 		// Set the text colors
 		int index = commandStr[5] - '0';
@@ -240,7 +254,8 @@ void TextView::processCommand() {
 		sceneInfo->_width = MADS_SCREEN_WIDTH;
 		sceneInfo->_height = MADS_SCENE_HEIGHT;
 		_spareScreens[spareIndex].setSize(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
-		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE, 
+
+		sceneInfo->loadMadsV1Background(screenId, "", SCENEFLAG_TRANSLATE,
 			_spareScreens[spareIndex]);
 		delete sceneInfo;
 
@@ -395,7 +410,7 @@ void TextView::doFrame() {
 				Common::copy(srcP, srcP + MADS_SCREEN_WIDTH, destP);
 			}
 
-			Common::copy(linesTemp, linesTemp + _pan.y * MADS_SCREEN_WIDTH, 
+			Common::copy(linesTemp, linesTemp + _pan.y * MADS_SCREEN_WIDTH,
 				(byte *)scene._backgroundSurface.getPixels());
 			delete[] linesTemp;
 		}
@@ -412,10 +427,10 @@ void TextView::doFrame() {
 			scene._textDisplay.expire(tl._textDisplayIndex);
 
 		tl._pos.y--;
-		if (tl._pos.y < 0) {
+		if (tl._pos.y + _font->getHeight() < 0) {
 			_textLines.remove_at(i);
 		} else {
-			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y, 
+			tl._textDisplayIndex = scene._textDisplay.add(tl._pos.x, tl._pos.y,
 				0x605, -1, tl._line, _font);
 		}
 	}
@@ -470,11 +485,19 @@ AnimationView::AnimationView(MADSEngine *vm) : MenuView(vm) {
 	_animFrameNumber = 0;
 	_nextCyclingActive = false;
 	_sceneInfo = SceneInfo::init(_vm);
+	_scrollFrameCtr = 0;
 
 	load();
 }
 
 AnimationView::~AnimationView() {
+	// Turn off palette cycling as well as any playing sound
+	Scene &scene = _vm->_game->_scene;
+	scene._cyclingActive = false;
+	_vm->_sound->stop();
+	_vm->_audio->stop();
+
+	// Delete data
 	delete _currentAnimation;
 	delete _sceneInfo;
 }
@@ -484,6 +507,7 @@ void AnimationView::load() {
 	if (!resName.hasSuffix("."))
 		resName += ".res";
 
+	_filename = resName;
 	if (!_script.open(resName))
 		error("Could not open resource %s", resName.c_str());
 
@@ -505,7 +529,7 @@ void AnimationView::display() {
 bool AnimationView::onEvent(Common::Event &event) {
 	// Wait for the Escape key or a mouse press
 	if (((event.type == Common::EVENT_KEYDOWN) && (event.kbd.keycode == Common::KEYCODE_ESCAPE)) ||
-			(event.type == Common::EVENT_RBUTTONUP)) {
+			(event.type == Common::EVENT_LBUTTONUP)) {
 		scriptDone();
 		return true;
 	}
@@ -515,22 +539,32 @@ bool AnimationView::onEvent(Common::Event &event) {
 
 void AnimationView::doFrame() {
 	Scene &scene = _vm->_game->_scene;
-	
+
 	if (_resourceIndex == -1 || _currentAnimation->freeFlag()) {
 		if (++_resourceIndex == (int)_resources.size()) {
 			scriptDone();
 		} else {
 			scene._frameStartTime = 0;
+			scene._spriteSlots.clear();
 			loadNextResource();
 		}
 	} else if (_currentAnimation->getCurrentFrame() == 1) {
 		scene._cyclingActive = _nextCyclingActive;
 	}
 
+	if (_currentAnimation && (++_scrollFrameCtr >= _currentAnimation->_header._scrollTicks)) {
+		_scrollFrameCtr = 0;
+		scroll();
+	}
+
 	if (_currentAnimation) {
 		++scene._frameStartTime;
 		_currentAnimation->update();
 		_redrawFlag = true;
+
+		if (_currentAnimation->freeFlag())
+			// We don't want the sprites removed after the last animation frame
+			scene._spriteSlots.clear();
 	}
 }
 
@@ -543,7 +577,7 @@ void AnimationView::loadNextResource() {
 	if (resEntry._bgFlag)
 		palette.resetGamePalette(1, 8);
 
-	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1] 
+	palette._mainPalette[253 * 3] = palette._mainPalette[253 * 3 + 1]
 		= palette._mainPalette[253 * 3 + 2] = 0xb4;
 	palette.setPalette(&palette._mainPalette[253 * 3], 253, 1);
 
@@ -565,7 +599,7 @@ void AnimationView::loadNextResource() {
 	delete _currentAnimation;
 	_currentAnimation = Animation::init(_vm, &scene);
 	int flags = ANIMFLAG_ANIMVIEW | (resEntry._bgFlag ? ANIMFLAG_LOAD_BACKGROUND : 0);
-	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface, 
+	_currentAnimation->load(scene._backgroundSurface, scene._depthSurface,
 		resEntry._resourceName, flags, &paletteCycles, _sceneInfo);
 
 	// Signal for a screen refresh
@@ -614,6 +648,21 @@ void AnimationView::loadNextResource() {
 	scene.initPaletteAnimation(paletteCycles, _nextCyclingActive && !_vm->_game->_fx);
 }
 
+void AnimationView::scroll() {
+	Scene &scene = _vm->_game->_scene;
+	Common::Point pt = _currentAnimation->_header._scrollPosition;
+
+	if (pt.x != 0) {
+		scene._backgroundSurface.scrollX(pt.x);
+		scene._spriteSlots.fullRefresh();
+	}
+
+	if (pt.y != 0) {
+		scene._backgroundSurface.scrollY(pt.y);
+		scene._spriteSlots.fullRefresh();
+	}
+}
+
 void AnimationView::scriptDone() {
 	_breakFlag = true;
 	_vm->_dialogs->_pendingDialog = DIALOG_MAIN_MENU;
@@ -634,7 +683,11 @@ void AnimationView::processLines() {
 			if (c != '\r' && c != '\0')
 				_currentLine += c;
 		}
-		
+
+		// Check for comment line
+		if (_currentLine.hasPrefix("#"))
+			continue;
+
 		// Process the line
 		while (!_currentLine.empty()) {
 			if (_currentLine.hasPrefix("-")) {
@@ -650,7 +703,7 @@ void AnimationView::processLines() {
 				}
 
 				// Add resource into list along with any set state information
-				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag, 
+				_resources.push_back(ResourceEntry(resName, _sfx, _soundFlag,
 					_bgLoadFlag, _showWhiteBars));
 
 				// Fx resets between resource entries
@@ -731,7 +784,7 @@ int AnimationView::getParameter() {
 
 	while (!_currentLine.empty()) {
 		char c = _currentLine[0];
-		
+
 		if (c >= '0' && c <= '9') {
 			_currentLine.deleteChar(0);
 			result = result * 10 + (c - '0');

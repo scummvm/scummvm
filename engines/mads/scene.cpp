@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,7 +31,7 @@
 namespace MADS {
 
 Scene::Scene(MADSEngine *vm)
-	: _vm(vm), _action(_vm), _depthSurface(vm),
+	: _vm(vm), _action(_vm), _depthSurface(),
 	  _dirtyAreas(_vm),  _dynamicHotspots(vm), _hotspots(vm),
 	  _kernelMessages(vm), _sequences(vm), _sprites(vm), _spriteSlots(vm),
 	  _textDisplay(vm), _userInterface(vm) {
@@ -52,7 +52,7 @@ Scene::Scene(MADSEngine *vm)
 	_activeAnimation = nullptr;
 	_textSpacing = -1;
 	_frameStartTime = 0;
-	_layer = LAYER_GUI;
+	_mode = SCREENMODE_VGA;
 	_lookFlag = false;
 	_bandsRange = 0;
 	_scaleRange = 0;
@@ -182,7 +182,7 @@ void Scene::loadScene(int sceneId, const Common::String &prefix, bool palFlag) {
 		flags |= ANIMFLAG_LOAD_BACKGROUND_ONLY;
 
 	_animationData = Animation::init(_vm, this);
-	DepthSurface depthSurface(_vm);
+	DepthSurface depthSurface;
 	_animationData->load(_userInterface, depthSurface, prefix, flags, nullptr, nullptr);
 
 	_vm->_palette->_paletteUsage.load(&_scenePaletteUsage);
@@ -360,6 +360,9 @@ void Scene::loop() {
 		if (_vm->_dialogs->_pendingDialog != DIALOG_NONE && !_vm->_game->_trigger
 			&& _vm->_game->_player._stepEnabled)
 			_reloadSceneFlag = true;
+
+		if (_vm->_game->_winStatus)
+			break;
 	}
 }
 
@@ -587,12 +590,14 @@ void Scene::doSceneStep() {
 }
 
 void Scene::checkKeyboard() {
-	if (_vm->_events->isKeyPressed()) {
-		Common::Event evt = _vm->_events->_pendingKeys.pop();
+	EventsManager &events = *_vm->_events;
+
+	if (events.isKeyPressed()) {
+		Common::KeyState evt = events.getKey();
 		_vm->_game->handleKeypress(evt);
 	}
 
-	if ((_vm->_events->_mouseStatus & 3) == 3 && _vm->_game->_player._stepEnabled) {
+	if ((events._mouseStatus & 3) == 3 && _vm->_game->_player._stepEnabled) {
 		_reloadSceneFlag = true;
 		_vm->_dialogs->_pendingDialog = DIALOG_GAME_MENU;
 		_action.clear();
@@ -606,7 +611,7 @@ void Scene::loadAnimation(const Common::String &resName, int trigger) {
 	if (_activeAnimation)
 		freeAnimation();
 
-	DepthSurface depthSurface(_vm);
+	DepthSurface depthSurface;
 	UserInterface interfaceSurface(_vm);
 
 	_activeAnimation = Animation::init(_vm, this);
@@ -659,6 +664,7 @@ void Scene::freeCurrentScene() {
 	}
 
 	_vm->_palette->_paletteUsage.load(nullptr);
+	_cyclingActive = false;
 	_hotspots.clear();
 	_backgroundSurface.free();
 	_depthSurface.free();

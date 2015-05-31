@@ -24,6 +24,7 @@
 #define BACKENDS_GRAPHICS_SDL_SDLGRAPHICS_H
 
 #include "backends/graphics/graphics.h"
+#include "backends/platform/sdl/sdl-window.h"
 
 #include "common/rect.h"
 
@@ -36,7 +37,7 @@ class SdlEventSource;
  */
 class SdlGraphicsManager : virtual public GraphicsManager {
 public:
-	SdlGraphicsManager(SdlEventSource *source);
+	SdlGraphicsManager(SdlEventSource *source, SdlWindow *window);
 	virtual ~SdlGraphicsManager();
 
 	/**
@@ -91,8 +92,39 @@ public:
 	 */
 	virtual void notifyMousePos(Common::Point mouse) = 0;
 
+	/**
+	 * A (subset) of the graphic manager's state. This is used when switching
+	 * between different SDL graphic managers on runtime.
+	 */
+	struct State {
+		int screenWidth, screenHeight;
+		bool aspectRatio;
+		bool fullscreen;
+		bool cursorPalette;
+
+#ifdef USE_RGB_COLOR
+		Graphics::PixelFormat pixelFormat;
+#endif
+	};
+
+	/**
+	 * Queries the current state of the graphic manager.
+	 */
+	State getState();
+
+	/**
+	 * Setup a basic state of the graphic manager.
+	 */
+	bool setState(const State &state);
+
+	/**
+	 * Queries the SDL window.
+	 */
+	SdlWindow *getWindow() const { return _window; }
+
 protected:
 	SdlEventSource *_eventSource;
+	SdlWindow *_window;
 };
 
 #endif

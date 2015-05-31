@@ -80,7 +80,7 @@ public:
 	void kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode);
 	void kernelGraphRedrawBox(Common::Rect rect);
 
-	reg_t kernelDisplay(const char *text, int argc, reg_t *argv);
+	reg_t kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv);
 
 	reg_t kernelPortraitLoad(const Common::String &resourceName);
 	void kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);

@@ -76,8 +76,8 @@ MODULE_OBJS := \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
 	video/seq_decoder.o
-	
-	
+
+
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	engine/kgraphics32.o \

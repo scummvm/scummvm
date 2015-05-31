@@ -108,7 +108,9 @@ MODULE_OBJS := \
 	utils/path_util.o \
 	utils/string_util.o \
 	utils/utils.o \
+	video/subtitle_card.o \
 	video/video_player.o \
+	video/video_subtitler.o \
 	video/video_theora_player.o \
 	debugger.o \
 	wintermute.o \

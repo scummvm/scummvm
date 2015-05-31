@@ -1289,7 +1289,8 @@ void GfxManager::setDefaults() {
 
 	_font._edgeSize = Common::Point(1, 1);
 	_font._colors = g_globals->_fontColors;
-	_font.setFontNumber(g_globals->_gfxFontNumber);
+	if (g_globals->_gfxFontNumber >= 0)
+		_font.setFontNumber(g_globals->_gfxFontNumber);
 }
 
 void GfxManager::activate() {

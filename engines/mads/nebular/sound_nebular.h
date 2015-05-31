@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,11 +37,15 @@ class SoundManager;
 
 namespace Nebular {
 
+class ASound;
+
 /**
  * Represents the data for a channel on the Adlib
  */
 class AdlibChannel {
 public:
+	ASound *_owner;
+
 	int _activeCount;
 	int _field1;
 	int _field2;
@@ -61,11 +65,12 @@ public:
 	byte *_pSrc;
 	byte *_ptr3;
 	byte *_ptr4;
+	byte *_ptrEnd;
 	int _field17;
 	int _field19;
 	byte *_soundData;
 	int _field1D;
-	int _field1E;
+	int _volumeOffset;
 	int _field1F;
 
 	// TODO: Only used by asound.003. Figure out usage
@@ -128,17 +133,20 @@ struct RegisterValue {
 #define ADLIB_CHANNEL_MIDWAY 5
 #define CALLBACKS_PER_SECOND 60
 
+struct CachedDataEntry {
+	int _offset;
+	byte *_data;
+	byte *_dataEnd;
+};
+
 /**
  * Base class for the sound player resource files
  */
 class ASound : public Audio::AudioStream {
 private:
-	struct CachedDataEntry {
-		int _offset;
-		byte *_data;
-	};
 	Common::List<CachedDataEntry> _dataCache;
 	uint16 _randomSeed;
+	int _masterVolume;
 
 	/**
 	 * Does the initial Adlib initialisation
@@ -318,6 +326,11 @@ public:
 	virtual ~ASound();
 
 	/**
+	 * Validates the Adlib sound files
+	 */
+	static void validate();
+
+	/**
 	 * Execute a player command. Most commands represent sounds to play, but some
 	 * low number commands also provide control operations.
 	 * @param commandId		Player ommand to execute.
@@ -345,6 +358,11 @@ public:
 	 */
 	int getFrameCounter() { return _frameCounter; }
 
+	/**
+	 * Return the cached data block record for previously loaded sound data
+	 */
+	CachedDataEntry &getCachedData(byte *pData);
+
 	// AudioStream interface
 	/**
 	 * Main buffer read
@@ -365,6 +383,11 @@ public:
 	 * Return sample rate
 	 */
 	virtual int getRate() const { return 11025; }
+
+	/**
+	 * Set the volume
+	 */
+	void setVolume(int volume);
 };
 
 class ASound1 : public ASound {

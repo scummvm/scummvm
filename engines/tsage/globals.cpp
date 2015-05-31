@@ -27,6 +27,7 @@
 #include "tsage/ringworld/ringworld_logic.h"
 #include "tsage/ringworld2/ringworld2_logic.h"
 #include "tsage/ringworld2/ringworld2_scenes0.h"
+#include "tsage/sherlock/sherlock_logo.h"
 #include "tsage/staticres.h"
 
 namespace TsAGE {
@@ -155,6 +156,12 @@ Globals::Globals() : _dialogCenter(160, 140), _gfxManagerInstance(_screenSurface
 		_inventory = new Ringworld2::Ringworld2InvObjectList();
 		_game = new Ringworld2::Ringworld2Game();
 		_sceneHandler = new Ringworld2::SceneHandlerExt();
+		break;
+
+	case GType_Sherlock1:
+		_inventory = nullptr;
+		_sceneHandler = new Sherlock::SherlockSceneHandler();
+		_game = new Sherlock::SherlockLogo();
 		break;
 	}
 

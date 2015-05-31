@@ -35,16 +35,19 @@ MODULE_OBJS := \
 	ringworld/ringworld_scenes8.o \
 	ringworld/ringworld_scenes10.o \
 	ringworld/ringworld_speakers.o \
+	ringworld2/ringworld2_airduct.o \
 	ringworld2/ringworld2_dialogs.o \
 	ringworld2/ringworld2_logic.o \
+	ringworld2/ringworld2_outpost.o \
 	ringworld2/ringworld2_scenes0.o \
 	ringworld2/ringworld2_scenes1.o \
 	ringworld2/ringworld2_scenes2.o \
 	ringworld2/ringworld2_scenes3.o \
-	ringworld2/ringworld2_outpost.o \
 	ringworld2/ringworld2_speakers.o \
+	ringworld2/ringworld2_vampire.o \
 	saveload.o \
 	scenes.o \
+	sherlock/sherlock_logo.o \
 	sound.o \
 	staticres.o \
 	tsage.o \

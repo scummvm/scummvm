@@ -16,13 +16,14 @@
  */
 
 //#include <cmath>
-//#include <cstdlib>
-//#include <cstring>
 
 #include "mt32emu.h"
 #include "mmath.h"
+#include "Tables.h"
 
 namespace MT32Emu {
+
+// UNUSED: const int MIDDLEC = 60;
 
 const Tables &Tables::getInstance() {
 	static const Tables instance;

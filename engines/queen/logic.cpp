@@ -2115,9 +2115,15 @@ void LogicInterview::setupSpecialMoveTable() {
 }
 
 void LogicGame::useJournal() {
+	_vm->input()->clearKeyVerb();
+	_vm->input()->clearMouseButton();
+
 	_vm->command()->clear(false);
 	_journal->use();
 	_vm->walk()->stopJoe();
+
+	_vm->input()->clearKeyVerb();
+	_vm->input()->clearMouseButton();
 }
 
 bool LogicGame::changeToSpecialRoom() {

@@ -47,6 +47,9 @@ OSystem_MacOSX::OSystem_MacOSX()
 }
 
 void OSystem_MacOSX::init() {
+	// Use an iconless window on OS X, as we use a nicer external icon there.
+	_window = new SdlIconlessWindow();
+
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
 	_taskbarManager = new MacOSXTaskbarManager();
@@ -99,10 +102,6 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 		}
 		CFRelease(fileUrl);
 	}
-}
-
-void OSystem_MacOSX::setupIcon() {
-	// Don't set icon on OS X, as we use a nicer external icon there.
 }
 
 bool OSystem_MacOSX::hasFeature(Feature f) {

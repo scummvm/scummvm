@@ -27,7 +27,7 @@
 
 class SymbianSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 public:
 	virtual bool hasFeature(OSystem::Feature f);

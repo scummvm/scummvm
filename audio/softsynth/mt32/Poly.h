@@ -21,6 +21,7 @@
 namespace MT32Emu {
 
 class Part;
+class Partial;
 
 enum PolyState {
 	POLY_Playing,

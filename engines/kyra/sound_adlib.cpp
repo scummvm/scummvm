@@ -947,15 +947,10 @@ void AdLibDriver::unkOutput2(uint8 chan) {
 	//
 	// This is very strange behavior, and causes problems with the ancient
 	// FMOPL code we borrowed from AdPlug. I've added a workaround. See
-	// fmopl.cpp for more details.
+	// audio/softsynth/opl/mame.cpp for more details.
 	//
-	// More recent versions of the MAME FMOPL don't seem to have this
-	// problem, but cannot currently be used because of licensing and
-	// performance issues.
-	//
-	// Ken Silverman's AdLib emulator (which can be found on his Web page -
-	// http://www.advsys.net/ken - and as part of AdPlug) also seems to be
-	// immune, but is apparently not as feature complete as MAME's.
+	// Fortunately, the more modern DOSBox FMOPL code does not seem to have
+	// any trouble with this.
 
 	writeOPL(0xB0 + chan, 0x20);
 }

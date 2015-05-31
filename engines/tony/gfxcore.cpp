@@ -422,11 +422,11 @@ uint16 *RMGfxTargetBuffer::_precalcTable = NULL;
  * called if the user selects the black & white option.
  */
 void RMGfxTargetBuffer::createBWPrecalcTable() {
-	_precalcTable = new uint16[0x8000];
+	_precalcTable = new uint16[0x10000];
 
-	for (int i = 0; i < 0x8000; i++) {
-		int r = (i >> 10) & 0x1F;
-		int g = (i >> 5) & 0x1F;
+	for (int i = 0; i < 0x10000; i++) {
+		int r = (i >> 11) & 0x1F;
+		int g = (i >> 6) & 0x1F;
 		int b = i & 0x1F;
 
 		int min = MIN(r, MIN(g, b));
@@ -434,11 +434,11 @@ void RMGfxTargetBuffer::createBWPrecalcTable() {
 
 		min = (min + max) / 2;
 
-		r = CLIP(min + 8 - 8, 0, 31);
-		g = CLIP(min + 5 - 8, 0, 31);
-		b = CLIP(min + 0 - 8, 0, 31);
+		r = CLIP(min + 8 - 8, 0, 0x1f);
+		g = CLIP(min + 5 - 8, 0, 0x1f);
+		b = CLIP(min + 0 - 8, 0, 0x1f);
 
-		_precalcTable[i] = (r << 10) | (g << 5) | b;
+		_precalcTable[i] = (r << 11) | (g << 6) | b;
 	}
 }
 
@@ -512,8 +512,9 @@ int RMGfxSourceBufferPal::loadPalette(const byte *buf) {
 
 void RMGfxSourceBufferPal::preparePalette() {
 	for (int i = 0; i < 256; i++) {
-		_palFinal[i] = (((int)_pal[i * 3 + 0] >> 3) <<  10) |
-		                (((int)_pal[i * 3 + 1] >> 3) <<  5) |
+		// we convert 555 to 565 here.
+		_palFinal[i] = (((int)_pal[i * 3 + 0] >> 3) <<  11) |
+		                (((int)_pal[i * 3 + 1] >> 3) <<  6) |
 		                (((int)_pal[i * 3 + 2] >> 3) <<  0);
 	}
 }
@@ -665,8 +666,8 @@ void RMGfxSourceBuffer8::create(int dimx, int dimy) {
 	RMGfxBuffer::create(dimx, dimy, 8);
 }
 
-#define GETRED(x)   (((x) >> 10) & 0x1F)
-#define GETGREEN(x) (((x) >> 5) & 0x1F)
+#define GETRED(x)   (((x) >> 11) & 0x1F)
+#define GETGREEN(x) (((x) >> 5) & 0x3F)
 #define GETBLUE(x)   ((x) & 0x1F)
 
 /****************************************************************************\
@@ -684,13 +685,13 @@ int RMGfxSourceBuffer8AB::calcTrasp(int fore, int back) {
 	if (r > 0x1F)
 		r = 0x1F;
 
-	if (g > 0x1F)
-		g = 0x1F;
+	if (g > 0x3F)
+		g = 0x3F;
 
 	if (b > 0x1F)
 		b = 0x1F;
 
-	return (r << 10) | (g << 5) | b;
+	return (r << 11) | (g << 5) | b;
 }
 
 void RMGfxSourceBuffer8AB::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {
@@ -802,8 +803,8 @@ void RMGfxSourceBuffer8RLE::preparePalette() {
 
 	// Handle RGB alpha blending
 	if (_alphaBlendColor != -1) {
-		_alphaR = (_palFinal[_alphaBlendColor] >> 10) & 0x1F;
-		_alphaG = (_palFinal[_alphaBlendColor] >> 5) & 0x1F;
+		_alphaR = (_palFinal[_alphaBlendColor] >> 11) & 0x1F;
+		_alphaG = (_palFinal[_alphaBlendColor] >> 5) & 0x3F;
 		_alphaB = (_palFinal[_alphaBlendColor]) & 0x1F;
 	}
 }
@@ -1054,15 +1055,15 @@ RLEByteDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 		for (int i = 0; i < n; i++) {
-			int r = (*dst >> 10) & 0x1F;
-			int g = (*dst >> 5) & 0x1F;
+			int r = (*dst >> 11) & 0x1F;
+			int g = (*dst >> 5) & 0x3F;
 			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
 			b = (b >> 2) + (_alphaB >> 1);
 
-			*dst ++ = (r << 10) | (g << 5) | b;
+			*dst ++ = (r << 11) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1158,15 +1159,15 @@ RLEByteFlippedDoAlpha2:
 		if (n > nLength)
 			n = nLength;
 		for (int i = 0; i < n; i++) {
-			int r = (*dst >> 10) & 0x1F;
-			int g = (*dst >> 5) & 0x1F;
+			int r = (*dst >> 11) & 0x1F;
+			int g = (*dst >> 5) & 0x3F;
 			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
 			b = (b >> 2) + (_alphaB >> 1);
 
-			*dst-- = (r << 10) | (g << 5) | b;
+			*dst-- = (r << 11) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1302,15 +1303,15 @@ RLEWordDoAlpha2:
 			n = nLength;
 
 		for (int i = 0; i < n; i++) {
-			int r = (*dst >> 10) & 0x1F;
-			int g = (*dst >> 5) & 0x1F;
+			int r = (*dst >> 11) & 0x1F;
+			int g = (*dst >> 5) & 0x3F;
 			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
 			b = (b >> 2) + (_alphaB >> 1);
 
-			*dst++ = (r << 10) | (g << 5) | b;
+			*dst++ = (r << 11) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1416,15 +1417,15 @@ RLEWordFlippedDoAlpha2:
 			n = nLength;
 
 		for (int i = 0; i < n; i++) {
-			int r = (*dst >> 10) & 0x1F;
-			int g = (*dst >> 5) & 0x1F;
+			int r = (*dst >> 11) & 0x1F;
+			int g = (*dst >> 5) & 0x3F;
 			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
 			b = (b >> 2) + (_alphaB >> 1);
 
-			*dst-- = (r << 10) | (g << 5) | b;
+			*dst-- = (r << 11) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1543,15 +1544,15 @@ RLEWordDoAlpha2:
 
 		// @@@ SHOULD NOT BE THERE !!!!!
 		for (int i = 0; i < n; i++) {
-			int r = (*dst >> 10) & 0x1F;
-			int g = (*dst >> 5) & 0x1F;
+			int r = (*dst >> 11) & 0x1F;
+			int g = (*dst >> 5) & 0x3F;
 			int b = *dst & 0x1F;
 
 			r = (r >> 2) + (_alphaR >> 1);
 			g = (g >> 2) + (_alphaG >> 1);
 			b = (b >> 2) + (_alphaB >> 1);
 
-			*dst++ = (r << 10) | (g << 5) | b;
+			*dst++ = (r << 11) | (g << 5) | b;
 		}
 
 		nLength -= n;
@@ -1570,19 +1571,19 @@ RLEWordDoCopy2:
 			n = nLength;
 
 		for (int i = 0; i < n; i++) {
-			int r = (*dst >> 10) & 0x1F;
-			int g = (*dst >> 5) & 0x1F;
+			int r = (*dst >> 11) & 0x1F;
+			int g = (*dst >> 5) & 0x3F;
 			int b = *dst & 0x1F;
 
-			int r2 = (_palFinal[*src] >> 10) & 0x1F;
-			int g2 = (_palFinal[*src] >> 5) & 0x1F;
+			int r2 = (_palFinal[*src] >> 11) & 0x1F;
+			int g2 = (_palFinal[*src] >> 5) & 0x3F;
 			int b2 = _palFinal[*src] & 0x1F;
 
 			r = (r >> 1) + (r2 >> 1);
 			g = (g >> 1) + (g2 >> 1);
 			b = (b >> 1) + (b2 >> 1);
 
-			*dst ++ = (r << 10) | (g << 5) | b;
+			*dst ++ = (r << 11) | (g << 5) | b;
 			src++;
 		}
 
@@ -1732,14 +1733,14 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				g /= 5;
 				b /= 5;
 
-				if (r > 31)
-					r = 31;
-				if (g > 31)
-					g = 31;
-				if (b > 31)
-					b = 31;
+				if (r > 0x1f)
+					r = 0x1f;
+				if (g > 0x3f)
+					g = 0x3f;
+				if (b > 0x1f)
+					b = 0x1f;
 
-				mybuf[0] = (r << 10) | (g << 5) | b;
+				mybuf[0] = (r << 11) | (g << 5) | b;
 			}
 		}
 
@@ -1773,14 +1774,14 @@ void RMGfxSourceBuffer8AA::drawAA(RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *pri
 				g /= 6;
 				b /= 6;
 
-				if (r > 31)
-					r = 31;
-				if (g > 31)
-					g = 31;
-				if (b > 31)
-					b = 31;
+				if (r > 0x1f)
+					r = 0x1f;
+				if (g > 0x3f)
+					g = 0x3f;
+				if (b > 0x1f)
+					b = 0x1f;
 
-				mybuf[0] = (r << 10) | (g << 5) | b;
+				mybuf[0] = (r << 11) | (g << 5) | b;
 			}
 		}
 
@@ -1948,8 +1949,17 @@ void RMGfxSourceBuffer16::prepareImage() {
 	// Color space conversion if necessary!
 	uint16 *buf = (uint16 *)_buf;
 
-	for (int i = 0; i < _dimx * _dimy; i++)
-		buf[i] = FROM_LE_16(buf[i]) & 0x7FFF;
+	// convert 555 to 565
+	for (int i = 0; i < _dimx * _dimy; i++) {
+		uint16 pixel = FROM_LE_16(buf[i]);
+		int r = (pixel >> 10) & 0x1F;
+		int g = (pixel >> 5) & 0x1F;
+		int b = pixel & 0x1F;
+
+		pixel = (r << 11) | (g << 6) | b;
+
+		buf[i] = pixel;
+	}
 }
 
 RMGfxSourceBuffer16::RMGfxSourceBuffer16(int dimx, int dimy)
@@ -1983,7 +1993,8 @@ void RMGfxBox::setColor(byte r, byte g, byte b) {
 	r >>= 3;
 	g >>= 3;
 	b >>= 3;
-	_wFillColor = (r << 10) | (g << 5) | b;
+	// These are hard-coded colors, so we convert 555 to 565.
+	_wFillColor = (r << 11) | (g << 6) | b;
 }
 
 void RMGfxBox::draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim) {

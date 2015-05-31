@@ -42,7 +42,7 @@ void BbvsEngine::playVideo(int videoNum) {
 		warning("Couldn't switch to a RGB color video mode to play a video.");
 		return;
 	}
-		
+
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile(videoFilename)) {
 		delete videoDecoder;
@@ -74,7 +74,7 @@ void BbvsEngine::playVideo(int videoNum) {
 	}
 
 	delete videoDecoder;
-	
+
 	initGraphics(320, 240, false);
 
 }

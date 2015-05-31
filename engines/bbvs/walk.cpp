@@ -46,7 +46,7 @@ static const int8 kWalkAnimTbl[32] = {
 void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
 	if (_buttheadObject != sceneObject && _beavisObject != sceneObject)
 		return;
-	
+
 	initWalkAreas(sceneObject);
 	_sourceWalkAreaPt.x = sceneObject->x >> 16;
 	_sourceWalkAreaPt.y = sceneObject->y >> 16;
@@ -60,7 +60,7 @@ void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
 	_destWalkArea = getWalkAreaAtPos(_destWalkAreaPt);
 	if (!_destWalkArea)
 		return;
-		
+
 	if (_sourceWalkArea != _destWalkArea) {
 		_currWalkDistance = kMaxDistance;
 		walkFindPath(_sourceWalkArea, 0);
@@ -68,12 +68,12 @@ void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
 	}
 
 	walkObject(sceneObject, _destWalkAreaPt, sceneObject->sceneObjectDef->walkSpeed);
-	
+
 }
 
 void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 	int animIndex;
-	
+
 	if (sceneObject->walkCount > 0 && (sceneObject->xIncr != 0 || sceneObject->yIncr != 0)) {
 		if (ABS(sceneObject->xIncr) <= ABS(sceneObject->yIncr))
 			sceneObject->turnValue = sceneObject->yIncr >= 0 ? 0 : 4;
@@ -89,7 +89,7 @@ void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 	Animation *anim = 0;
 	if (animIndex > 0)
 		anim = _gameModule->getAnimation(animIndex);
-	
+
 	if (sceneObject->anim != anim) {
 		if (anim) {
 			sceneObject->anim = anim;
@@ -305,12 +305,12 @@ bool BbvsEngine::canButtheadWalkToDest(const Common::Point &destPt) {
 }
 
 void BbvsEngine::canWalkToDest(WalkArea *walkArea, int infoCount) {
-	
+
 	if (_destWalkArea == walkArea) {
 		_walkReachedDestArea = true;
 		return;
 	}
-	
+
 	if (_gameModule->getFieldC() <= 320 || infoCount <= 20) {
 		walkArea->checked = true;
 		for (int linkIndex = 0; linkIndex < walkArea->linksCount; ++linkIndex) {
@@ -364,10 +364,10 @@ int BbvsEngine::calcDistance(const Common::Point &pt1, const Common::Point &pt2)
 
 void BbvsEngine::walkFoundPath(int count) {
 	debug(5, "BbvsEngine::walkFoundPath(%d)", count);
-	
+
 	Common::Point midPt = _sourceWalkAreaPt;
 	int totalMidPtDistance = 0;
-	
+
 	if (count > 0) {
 		Common::Point lastMidPt;
 		int halfCount = (count + 1) >> 1;
@@ -384,13 +384,13 @@ void BbvsEngine::walkFoundPath(int count) {
 
 	if (distance >= _currWalkDistance)
 		return;
-		
+
 	debug(5, "BbvsEngine::walkFoundPath() distance smaller");
 
 	_currWalkDistance = distance;
 
 	Common::Point destPt = _destWalkAreaPt, newDestPt;
-	
+
 	while (1) {
 
 		int index = 0;
@@ -408,7 +408,7 @@ void BbvsEngine::walkFoundPath(int count) {
 		WalkInfo *walkInfo = _walkInfoPtrs[--count];
 		destPt.x = walkInfo->x;
 		destPt.y = walkInfo->y;
-		
+
 		if (walkInfo->direction) {
 			newDestPt.x = walkInfo->x;
 			newDestPt.y = walkInfo->y + walkInfo->delta - 1;

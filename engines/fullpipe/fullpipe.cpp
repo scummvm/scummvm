@@ -163,7 +163,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	for (int i = 0; i < 11; i++)
 		_currSoundList1[i] = 0;
-	
+
 	for (int i = 0; i < 200; i++)
 		_mapTable[i] = 0;
 
@@ -285,7 +285,7 @@ Common::Error FullpipeEngine::run() {
 			freeGameLoader();
 			_currentScene = 0;
 			_updateTicks = 0;
-			
+
 			loadGam("fullpipe.gam");
 			_needRestart = false;
 		}

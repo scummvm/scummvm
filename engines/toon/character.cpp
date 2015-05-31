@@ -226,6 +226,11 @@ bool Character::walkTo(int16 newPosX, int16 newPosY) {
 					}
 
 					setFacing(getFacingFromDirection(smoothDx, smoothDy));
+					if (_currentWalkStamp != localWalkStamp) {
+						// another walkTo was started in setFacing, we need to cancel this one.
+						return false;
+					}
+
 					playWalkAnim(0, 0);
 				}
 
@@ -1059,7 +1064,7 @@ void Character::playAnim(int32 animId, int32 unused, int32 flags) {
 	_specialAnim->loadAnimation(animName);
 
 	_animSpecialId = animId;
-	
+
 	if (_animationInstance) {
 		_animationInstance->setAnimation(_specialAnim);
 		_animationInstance->setAnimationRange(0, _specialAnim->_numFrames - 1);

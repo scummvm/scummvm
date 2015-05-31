@@ -1,5 +1,5 @@
 # LANGUAGE translation for ScummVM.
-# Copyright (C) YEAR ScummVM Team
+# Copyright (C) YEAR The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #

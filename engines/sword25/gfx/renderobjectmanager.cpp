@@ -107,7 +107,7 @@ bool RenderObjectManager::render() {
 		if (!_currQueue->exists(*it))
 			_uta->addRect((*it)._bbox);
 	}
-	
+
 	// Add rectangles of objects which are different from the previous frame
 	for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it) {
 		if (!_prevQueue->exists(*it))

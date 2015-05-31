@@ -32,7 +32,7 @@ public:
 	MinigameBbTennis(BbvsEngine *vm) : Minigame(vm) {};
 	bool run(bool fromMainGame);
 public:
-	
+
 	struct Obj {
 		int kind;
 		int x, y;
@@ -51,20 +51,20 @@ public:
 		int ballStepCtr;
 		int netPlayDirection;
 	};
-	
+
 	enum {
 		kMaxObjectsCount = 256
 	};
-	
+
 	enum {
 		kGSTitleScreen      = 0,    // Title screen
 		kGSMainGame         = 1,    // Game when called as part of the main game
 		kGSStandaloneGame   = 2,    // Game when called as standalone game
 		kGSScoreCountUp     = 3     // Score countup and next level text
 	};
-	
+
 	Obj _objects[kMaxObjectsCount];
-	
+
 	int _numHearts;
 	int _squirrelDelay;
 	int _tennisPlayerDelay;
@@ -85,29 +85,29 @@ public:
 	bool _endSoundPlaying;
 
 	const ObjAnimation *getAnimation(int animIndex);
-	
+
 	void buildDrawList(DrawList &drawList);
 	void buildDrawList0(DrawList &drawList);
 	void buildDrawList1(DrawList &drawList);
 	void buildDrawList2(DrawList &drawList);
-	
+
 	void drawSprites();
-	
+
 	void initObjs();
 	Obj *getFreeObject();
 	Obj *findTennisBall(int startObjIndex);
 	bool isHit(Obj *obj1, Obj *obj2);
-	
+
 	void initObjects();
 	void initObjects0();
 	void initObjects1();
 	void initObjects2();
-	
+
 	void initVars();
 	void initVars0();
 	void initVars1();
 	void initVars2();
-	
+
 	bool updateStatus(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus0(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus1(int mouseX, int mouseY, uint mouseButtons);

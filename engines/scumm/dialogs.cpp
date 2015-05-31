@@ -180,9 +180,9 @@ static const ResString string_map_table_v345[] = {
 	// I18N: You may specify 'Yes' symbol at the end of the line, like this:
 	// "Moechten Sie wirklich neu starten?  (J/N)J"
 	// Will react to J as 'Yes'
-	{5, _s("Are you sure you want to restart?  (Y/N)")},
+	{5, _s("Are you sure you want to restart?  (Y/N)Y")},
 	// I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
-	{6, _s("Are you sure you want to quit?  (Y/N)")},
+	{6, _s("Are you sure you want to quit?  (Y/N)Y")},
 
 	// Added in SCUMM4
 	{7, _s("Save")},
@@ -460,7 +460,7 @@ const Common::String InfoDialog::queryResString(int stringno) {
 			tmp += chr;
 		}
 	}
-	return tmp;
+	return _(tmp);
 }
 
 #pragma mark -

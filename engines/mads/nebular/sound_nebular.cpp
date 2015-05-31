@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,6 +24,7 @@
 #include "audio/decoders/raw.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
+#include "common/md5.h"
 #include "common/memstream.h"
 #include "mads/sound.h"
 #include "mads/nebular/sound_nebular.h"
@@ -35,6 +36,7 @@ namespace Nebular {
 bool AdlibChannel::_channelsEnabled;
 
 AdlibChannel::AdlibChannel() {
+	_owner = nullptr;
 	_activeCount = 0;
 	_field1 = 0;
 	_field2 = 0;
@@ -42,6 +44,7 @@ AdlibChannel::AdlibChannel() {
 	_field4 = 0;
 	_sampleIndex = 0;
 	_volume = 0;
+	_volumeOffset = 0;
 	_field7 = 0;
 	_field8 = 0;
 	_field9 = 0;
@@ -54,11 +57,11 @@ AdlibChannel::AdlibChannel() {
 	_pSrc = nullptr;
 	_ptr3 = nullptr;
 	_ptr4 = nullptr;
+	_ptrEnd = nullptr;
 	_field17 = 0;
 	_field19 = 0;
 	_soundData = nullptr;
 	_field1D = 0;
-	_field1E = 0;
 	_field1F = 0;
 
 	_field20 = 0;
@@ -94,6 +97,7 @@ void AdlibChannel::setPtr2(byte *pData) {
 void AdlibChannel::load(byte *pData) {
 	_ptr1 = _pSrc = _ptr3 = pData;
 	_ptr4 = _soundData = pData;
+	_volumeOffset = 0;
 	_fieldA = 0xFF;
 	_activeCount = 1;
 	_fieldD = 64;
@@ -101,17 +105,20 @@ void AdlibChannel::load(byte *pData) {
 	_field1F = 0;
 	_field2 = _field3 = 0;
 	_volume = _field7 = 0;
-	_field1D = _field1E = 0;
+	_field1D = 0;
 	_fieldE = 0;
 	_field9 = 0;
 	_fieldB = 0;
 	_field17 = 0;
 	_field19 = 0;
+
+	CachedDataEntry &cacheEntry = _owner->getCachedData(pData);
+	_ptrEnd = cacheEntry._dataEnd;
 }
 
 void AdlibChannel::check(byte *nullPtr) {
 	if (_activeCount && _fieldE) {
-		if (!_field1E) {
+		if (!_volumeOffset) {
 			_pSrc = nullPtr;
 			_fieldE = 0;
 		} else {
@@ -160,6 +167,7 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 	_samplePtr = nullptr;
 	_frameCounter = 0;
 	_isDisabled = false;
+	_masterVolume = 255;
 	_v1 = 0;
 	_v2 = 0;
 	_activeChannelNumber = 0;
@@ -191,6 +199,9 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 		_channelData[i]._freqBase = 0;
 		_channelData[i]._field6 = 0;
 	}
+	
+	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
+		_channels[i]._owner = this;
 
 	AdlibChannel::_channelsEnabled = false;
 
@@ -216,6 +227,32 @@ ASound::~ASound() {
 		delete[] (*i)._data;
 
 	_mixer->stopHandle(_soundHandle);
+}
+
+void ASound::validate() {
+	Common::File f;
+	static const char *const MD5[] = {
+		"205398468de2c8873b7d4d73d5be8ddc",
+		"f9b2d944a2fb782b1af5c0ad592306d3",
+		"7431f8dad77d6ddfc24e6f3c0c4ac7df",
+		"eb1f3f5a4673d3e73d8ac1818c957cf4",
+		"f936dd853073fa44f3daac512e91c476",
+		"3dc139d3e02437a6d9b732072407c366",
+		"af0edab2934947982e9a405476702e03",
+		"8cbc25570b50ba41c9b5361cad4fbedc",
+		"a31e4783e098f633cbb6689adb41dd4f"
+	};
+
+	for (int i = 1; i <= 9; ++i) {
+		Common::String filename = Common::String::format("ASOUND.00%d", i);
+		if (!f.open(filename))
+			error("Could not process - %s", filename.c_str());
+		Common::String md5str = Common::computeStreamMD5AsString(f, 8192);
+		f.close();
+
+		if (md5str != MD5[i - 1])
+			error("Invalid sound file - %s", filename.c_str());
+	}
 }
 
 void ASound::adlibInit() {
@@ -254,6 +291,17 @@ void ASound::noise() {
 	if (_v2) {
 		setFrequency(_channelNum2, (randomVal & _freqMask2) + _freqBase2);
 	}
+}
+
+CachedDataEntry &ASound::getCachedData(byte *pData) {
+	Common::List<CachedDataEntry>::iterator i;
+	for (i = _dataCache.begin(); i != _dataCache.end(); ++i) {
+		CachedDataEntry &e = *i;
+		if (e._data == pData)
+			return e;
+	}
+
+	error("Could not find previously loaded data");
 }
 
 void ASound::write(int reg, int val) {
@@ -304,6 +352,7 @@ byte *ASound::loadData(int offset, int size) {
 	CachedDataEntry rec;
 	rec._offset = offset;
 	rec._data = new byte[size];
+	rec._dataEnd = rec._data + size - 1;
 	_soundFile.seek(_dataOffset + offset);
 	_soundFile.read(rec._data, size);
 	_dataCache.push_back(rec);
@@ -422,6 +471,10 @@ void ASound::pollActiveChannel() {
 					warning("pollActiveChannel(): No data found for sound channel");
 					break;
 				}
+				if (pSrc > chan->_ptrEnd) {
+					warning("Read beyond end of loaded sound data");
+				}
+
 				if (!(*pSrc & 0x80) || (*pSrc <= 0xF0)) {
 					if (updateFlag)
 						updateActiveChannel();
@@ -489,7 +542,7 @@ void ASound::pollActiveChannel() {
 						chan->_field1 = 0;
 						chan->_field2 = chan->_field3 = 0;
 						chan->_volume = chan->_field7 = 0;
-						chan->_field1D = chan->_field1E = 0;
+						chan->_field1D = chan->_volumeOffset = 0;
 						chan->_field8 = 0;
 						chan->_field9 = 0;
 						chan->_fieldB = 0;
@@ -543,7 +596,7 @@ void ASound::pollActiveChannel() {
 						break;
 
 					case 8:
-						chan->_field1D = *++pSrc;
+						chan->_field1D = (int8)*++pSrc;
 						chan->_pSrc += 2;
 						break;
 
@@ -564,7 +617,7 @@ void ASound::pollActiveChannel() {
 						if (chan->_fieldE) {
 							chan->_pSrc += 2;
 						} else {
-							chan->_field1E = *pSrc >> 1;
+							chan->_volumeOffset = *pSrc >> 1;
 							updateFlag = true;
 							chan->_pSrc += 2;
 						}
@@ -608,7 +661,7 @@ void ASound::pollActiveChannel() {
 			if (!--chan->_field9) {
 				chan->_field9 = chan->_fieldA;
 				if (chan->_field2) {
-					int8 newVal = (int8)chan->_field2 + (int8)chan->_field1E;
+					int8 newVal = (int8)chan->_field2 + (int8)chan->_volumeOffset;
 					if (newVal < 0) {
 						chan->_field9 = 0;
 						newVal = 0;
@@ -617,7 +670,7 @@ void ASound::pollActiveChannel() {
 						newVal = 63;
 					}
 
-					chan->_field1E = newVal;
+					chan->_volumeOffset = newVal;
 					updateFlag = true;
 				}
 			}
@@ -682,8 +735,8 @@ void ASound::updateChannelState() {
 		resultCheck();
 	} else {
 		int reg = 0xA0 + _activeChannelNumber;
-		int vTimes = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) / 12;
-		int vOffset = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) % 12;
+		int vTimes = (byte)(_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) / 12;
+		int vOffset = (byte)(_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) % 12;
 		int val = _vList1[vOffset] + _activeChannelPtr->_field1D;
 		write2(8, reg, val & 0xFF);
 
@@ -700,32 +753,18 @@ static const int outputIndexes[] = {
 static const int outputChannels[] = {
 	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21, 0
 };
-static const int volumeList[] = {
-	0x3F, 0x3F, 0x36, 0x31, 0x2D, 0x2A, 0x28, 0x26, 0x24, 0x22, 0x21, 0x20, 0x1F, 0x1E, 0x1D, 0x1C,
-	0x1B, 0x1A, 0x19, 0x19, 0x18, 0x17, 0x17, 0x16, 0x16, 0x15, 0x15, 0x14, 0x14, 0x13, 0x12, 0x12,
-	0x11, 0x11, 0x10, 0x10, 0x0F, 0x0F, 0x0E, 0x0E, 0x0D, 0x0D, 0x0C, 0x0C, 0x0B, 0x0B, 0x0A, 0x0A,
-	0x0A, 0x09, 0x09, 0x09, 0x09, 0x09, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07, 0x07, 0x07, 0x07,
-	0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04,
-	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-	0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-};
 
 void ASound::updateActiveChannel() {
 	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2 + 1]];
 	int portVal = _ports[reg] & 0xFFC0;
-	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_field1E, 0, 63);
+	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_volumeOffset, 0, 63);
+	newVolume = newVolume * _masterVolume / 255;
 
 	// Note: Original had a whole block not seeming to be used, since the initialisation
 	// sets a variable to 5660h, and doesn't change it, so the branch is never taken
-	int val = CLIP(newVolume - volumeList[_activeChannelPtr->_fieldD], 0, 63);
-	val = (63 - val) | portVal;
+	portVal |= 63 - newVolume;
 
-	int val2 = CLIP(newVolume - volumeList[-(_activeChannelPtr->_fieldD - 127)], 0, 63);
-	val2 = (63 - val2) | portVal;
-	write2(0, reg, val);
-	write2(2, reg, val2);
+	write2(8, reg, portVal);
 }
 
 void ASound::loadSample(int sampleIndex) {
@@ -819,6 +858,12 @@ int ASound::readBuffer(int16 *buffer, const int numSamples) {
 		buffer += render;
 	}
 	return numSamples;
+}
+
+void ASound::setVolume(int volume) {
+	_masterVolume = volume;
+	if (!volume)
+		command0();
 }
 
 int ASound::command0() {
@@ -978,22 +1023,22 @@ int ASound1::command10() {
 
 int ASound1::command11() {
 	command111213();
-	_channels[0]._field1E = 0;
-	_channels[1]._field1E = 0;
+	_channels[0]._volumeOffset = 0;
+	_channels[1]._volumeOffset = 0;
 	return 0;
 }
 
 int ASound1::command12() {
 	command111213();
-	_channels[0]._field1E = 40;
-	_channels[1]._field1E = 0;
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 0;
 	return 0;
 }
 
 int ASound1::command13() {
 	command111213();
-	_channels[0]._field1E = 40;
-	_channels[1]._field1E = 50;
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 50;
 	return 0;
 }
 

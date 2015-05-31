@@ -153,7 +153,7 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 
 	if (count > 0) {
 		GameObject *o = new GameObject();
-		
+
 		o->load(file);
 		_pictureObject2List->push_back(o);
 	}
@@ -286,9 +286,9 @@ bool GameObject::load(MfcArchive &file) {
 	_okeyCode = 0;
 	_flags = 0;
 	_field_20 = 0;
-	
+
 	_id = file.readUint16LE();
-	
+
 	_objectName = file.readPascalString();
 	_ox = file.readUint32LE();
 	_oy = file.readUint32LE();
@@ -498,7 +498,7 @@ bool Picture::load(MfcArchive &file) {
 	_x = file.readUint32LE();
 	_y = file.readUint32LE();
 	_field_44 = file.readUint16LE();
-	
+
 	assert(g_fp->_gameProjectVersion >= 2);
 
 	_width = file.readUint32LE();

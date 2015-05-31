@@ -132,7 +132,7 @@ Mouse::Mouse(CGE2Engine *vm) : Sprite(vm), _busy(nullptr), _hold(nullptr), _hx(0
 	_busy = nullptr;
 	_active = false;
 	_flags._kill = false;
-	
+
 	setSeq(_stdSeq8);
 
 	BitmapPtr MC = new Bitmap[2];
@@ -260,7 +260,7 @@ void EventManager::handleEvents() {
 			if (e._spritePtr) {
 				if (e._mask & kEventKeyb)
 					e._spritePtr->touch(e._mask, _vm->_mouse->_point, e._keyCode);
-				else 
+				else
 					e._spritePtr->touch(e._mask, _vm->_mouse->_point - e._spritePtr->_pos2D, e._keyCode);
 			} else if (_vm->_sys)
 				_vm->_sys->touch(e._mask, _vm->_mouse->_point, e._keyCode);

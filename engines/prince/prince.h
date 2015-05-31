@@ -242,7 +242,7 @@ struct DebugChannel {
 
 enum Type {
 	kScript,
-	kEngine 
+	kEngine
 };
 
 };
@@ -256,6 +256,7 @@ public:
 	virtual ~PrinceEngine();
 
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
@@ -285,6 +286,9 @@ public:
 	uint32 _talkTxtSize;
 	byte *_talkTxt;
 
+	uint32 _mobTranslationSize;
+	byte *_mobTranslationData;
+
 	bool loadLocation(uint16 locationNr);
 	bool loadAnim(uint16 animNr, bool loop);
 	bool loadVoice(uint32 textSlot, uint32 sampleSlot, const Common::String &name);
@@ -293,6 +297,9 @@ public:
 	bool loadShadow(byte *shadowBitmap, uint32 dataSize, const char *resourceName1, const char *resourceName2);
 	bool loadTrans(byte *transTable, const char *resourceName);
 	bool loadMobPriority(const char *resourceName);
+
+	void loadMobTranslationTexts();
+	void setMobTranslationTexts();
 
 	bool loadMusic(int musNumber);
 	void stopMusic();
@@ -365,7 +372,7 @@ public:
 	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
 	static const int16 kNormalWidth = 640;
 	static const int16 kNormalHeight = 480;
-	static const int32 kTransTableSize = 256 * 256;
+	static const uint32 kTransTableSize = 256 * 256;
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
@@ -401,7 +408,7 @@ public:
 	int _currentPointerNumber;
 
 	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
-	static const int16 kMaxItems = 30; // size of inventory
+	static const uint16 kMaxItems = 30; // size of inventory
 
 	uint32 _invTxtSize;
 	byte *_invTxt;
@@ -530,7 +537,7 @@ public:
 
 	// Pathfinding
 	static const int16 kPathGridStep = 2;
-	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
+	static const uint32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
 	static const int32 kTracePts = 8000;
 	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
 	static const int kMinDistance = 2500;
@@ -633,8 +640,7 @@ private:
 	static bool compareDrawNodes(DrawNode d1, DrawNode d2);
 	void runDrawNodes();
 	void makeShadowTable(int brightness);
-	void pause();
-	void pause2();
+	void pausePrinceEngine(int fps = kFPS);
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);
@@ -658,7 +664,7 @@ private:
 	Common::Array<Mob> _invMobList;
 
 	bool _flicLooped;
-	
+
 	void mainLoop();
 
 };

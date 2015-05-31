@@ -1040,11 +1040,11 @@ MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int 
 
 					if (!mq || !mq->getExCommandByIndex(0))
 						return 0;
-					
+
 					ExCommand *ex = mq->getExCommandByIndex(0);
 
-					if ((ex->_messageKind != 1 && ex->_messageKind != 20) || 
-						ex->_messageNum != subj->_movement->_id || 
+					if ((ex->_messageKind != 1 && ex->_messageKind != 20) ||
+						ex->_messageNum != subj->_movement->_id ||
 						(ex->_field_14 >= 1 && ex->_field_14 <= subj->_movement->_currDynamicPhaseIndex))
 						subj->playIdle();
 				}
@@ -1416,8 +1416,8 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 				movarr = new MovArr;
 
 				movarr->_link = lnk;
-				movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - point.y) + 
-								 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(point.x - lnk->_movGraphNode1->_x)) / 
+				movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - point.y) +
+								 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(point.x - lnk->_movGraphNode1->_x)) /
 					lnk->_distance / lnk->_distance;
 				movarr->_point = point;
 
@@ -1445,8 +1445,8 @@ Common::Array<MovArr *> *MovGraph::genMovArr(int x, int y, int *arrSize, int fla
 					} else {
 						movarr = new MovArr;
 						movarr->_link = lnk;
-						movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - y) + 
-										 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(x - lnk->_movGraphNode1->_x)) / 
+						movarr->_dist = ((double)(lnk->_movGraphNode1->_y - lnk->_movGraphNode2->_y) * (double)(lnk->_movGraphNode1->_y - y) +
+										 (double)(lnk->_movGraphNode2->_x - lnk->_movGraphNode1->_x) * (double)(x - lnk->_movGraphNode1->_x)) /
 							lnk->_distance / lnk->_distance;
 						movarr->_point.x = x;
 						movarr->_point.y = y;

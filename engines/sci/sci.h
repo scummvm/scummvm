@@ -105,7 +105,8 @@ enum kDebugLevels {
 	kDebugLevelResMan        = 1 << 19,
 	kDebugLevelOnStartup     = 1 << 20,
 	kDebugLevelDebugMode     = 1 << 21,
-	kDebugLevelScriptPatcher = 1 << 22
+	kDebugLevelScriptPatcher = 1 << 22,
+	kDebugLevelWorkarounds   = 1 << 23
 };
 
 enum SciGameId {
@@ -314,13 +315,16 @@ public:
 	 *					if NULL is passed no subtitle will be added to the returned string
 	 * @return processed string
 	 */
-	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
+	Common::String strSplitLanguage(const char *str, uint16 *splitLanguage, const char *sep = "\r----------\r");
+	Common::String strSplit(const char *str, const char *sep = "\r----------\r") {
+		return strSplitLanguage(str, NULL, sep);
+	}
 
 	kLanguage getSciLanguage();
 	void setSciLanguage(kLanguage lang);
 	void setSciLanguage();
 
-	Common::String getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2 = NULL) const;
+	Common::String getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2 = NULL, uint16 *languageSplitter = NULL) const;
 
 	// Check if vocabulary needs to get switched (in multilingual parser games)
 	void checkVocabularySwitch();
@@ -427,6 +431,12 @@ extern SciEngine *g_sci;
  * Convenience function to obtain the active SCI version.
  */
 SciVersion getSciVersion();
+
+/**
+ * Same as above, but this version doesn't assert on unknown SCI versions.
+ * Only used by the fallback detector
+ */
+SciVersion getSciVersionForDetection();
 
 /**
  * Convenience function converting an SCI version into a human-readable string.

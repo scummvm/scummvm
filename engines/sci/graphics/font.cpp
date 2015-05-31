@@ -48,8 +48,8 @@ GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *scr
 	// filling info for every char
 	for (int16 i = 0; i < _numChars; i++) {
 		_chars[i].offset = READ_SCI32ENDIAN_UINT16(_resourceData + 6 + i * 2);
-		_chars[i].w = _resourceData[_chars[i].offset];
-		_chars[i].h = _resourceData[_chars[i].offset + 1];
+		_chars[i].width = _resourceData[_chars[i].offset];
+		_chars[i].height = _resourceData[_chars[i].offset + 1];
 	}
 }
 
@@ -66,10 +66,10 @@ byte GfxFontFromResource::getHeight() {
 	return _fontHeight;
 }
 byte GfxFontFromResource::getCharWidth(uint16 chr) {
-	return chr < _numChars ? _chars[chr].w : 0;
+	return chr < _numChars ? _chars[chr].width : 0;
 }
 byte GfxFontFromResource::getCharHeight(uint16 chr) {
-	return chr < _numChars ? _chars[chr].h : 0;
+	return chr < _numChars ? _chars[chr].height : 0;
 }
 byte *GfxFontFromResource::getCharData(uint16 chr) {
 	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;

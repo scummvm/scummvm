@@ -9,8 +9,4 @@
 	android:keepScreenOn="true"
 	android:focusable="true"
 	android:focusableInTouchMode="true"
-	android:layout_marginTop="@dimen/verticalMargin"
-	android:layout_marginLeft="@dimen/horizontalMargin"
-	android:layout_marginBottom="@dimen/verticalMargin"
-	android:layout_marginRight="@dimen/horizontalMargin"
 />

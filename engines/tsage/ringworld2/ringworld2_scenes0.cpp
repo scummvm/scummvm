@@ -627,7 +627,7 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
 	_palette.loadPalette(0);
 
-	if (R2_GLOBALS._sceneManager._previousScene != 125)
+	if ((R2_GLOBALS._sceneManager._previousScene != 125) && (R2_GLOBALS._sceneManager._previousScene != 1337) && (R2_GLOBALS._sceneManager._previousScene != 1330))
 		// Save the prior scene to return to when the console is turned off
 		R2_GLOBALS._player._oldCharacterScene[R2_QUINN] = R2_GLOBALS._sceneManager._previousScene;
 

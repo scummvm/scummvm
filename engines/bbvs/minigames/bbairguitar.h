@@ -32,7 +32,7 @@ public:
 	MinigameBbAirGuitar(BbvsEngine *vm) : Minigame(vm) {};
 	bool run(bool fromMainGame);
 public:
-	
+
 	struct Obj {
 		int kind;
 		int x, y;
@@ -44,24 +44,24 @@ public:
 		int16 frameIndexAdd;
 		int16 unk2;
 	};
-	
+
 	enum {
 		kMaxObjectsCount = 256,
-		kMaxTracks = 2049
+		kMaxTracks = 2048
 	};
-	
+
 	struct PianoKeyInfo {
 		int x, y;
 		int frameIndex;
 	};
-	
+
 	struct TrackEvt {
 		int8 noteNum;
 		int16 ticks;
 	};
-	
+
 	Obj _objects[kMaxObjectsCount];
-	
+
 	int _playerMode;
 
 	bool _modified;
@@ -82,24 +82,24 @@ public:
 
 	int *_currFrameIndex;
 	int _btn3KindToggle;
-	
+
 	const BBPolygon *_currPianoKeyArea;
 	const Rect *_currPlayerButtonRect;
-	
+
 	bool _movingTrackBar;
 	int _trackBarMouseX;
 	int _trackBarX;
 	Rect _trackBarThumbRect;
-	
+
 	int _currTrackPos, _totalTrackLength;
 	int _ticksDelta;
-	
+
 	int _actionStartTrackPos, _actionTrackPos;
 	int _actionStartTime;
 
 	int _currNoteNum;
 	int _currPatchNum;
-	
+
 	const ObjAnimation *getAnimation(int animIndex);
 	bool ptInRect(const Rect *r, int x, int y);
 	bool ptInPoly(const BBPolygon *poly, int x, int y);
@@ -109,14 +109,14 @@ public:
 	void buildDrawList1(DrawList &drawList);
 
 	void drawSprites();
-	
+
 	void initObjs();
 	Obj *getFreeObject();
-	
+
 	void initObjects();
 	void initObjects0();
 	void initObjects1();
-	
+
 	bool updateStatus(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus0(int mouseX, int mouseY, uint mouseButtons);
 	bool updateStatus1(int mouseX, int mouseY, uint mouseButtons);
@@ -124,7 +124,7 @@ public:
 	void updateObjs();
 
 	void update();
-	
+
 	void play();
 	void record();
 	void setPlayerMode3();
@@ -136,10 +136,19 @@ public:
 	void noteOn(int noteNum);
 	void noteOff(int noteNum);
 	void resetObjs();
-	
+
 	void loadSounds();
-	void playNote(int noteNum);	
+	void playNote(int noteNum);
 	void stopNote(int noteNum);
+
+	bool getLoadFilename(Common::String &filename);
+	bool getSaveFilename(Common::String &filename);
+	bool querySaveModifiedDialog();
+	bool querySaveModifiedTracks();
+	bool loadTracks();
+	bool saveTracks();
+	bool loadFromStream(Common::ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
 
 };
 

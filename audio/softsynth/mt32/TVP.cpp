@@ -19,6 +19,7 @@
 //#include <cstdlib>
 
 #include "mt32emu.h"
+#include "internals.h"
 
 namespace MT32Emu {
 

@@ -122,7 +122,11 @@ void MystCursorManager::setCursor(uint16 id) {
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->format.bytesPerPixel == 1) {
 		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, 0);
-		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
+
+		// We're using the screen palette for the original game, but we need
+		// to use this for any 8bpp cursor in ME.
+		if (_vm->getFeatures() & GF_ME)
+			CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);

@@ -48,7 +48,7 @@ const int32 kDefaultHotspotX = 0;
 const int32 kDefaultHotspotY = 0;
 const int32 kDefaultOffsetX = 0;
 const int32 kDefaultOffsetY = 0;
-const int32 kDefaultAngle = 0;	
+const int32 kDefaultAngle = 0;
 
 struct TransformStruct {
 private:

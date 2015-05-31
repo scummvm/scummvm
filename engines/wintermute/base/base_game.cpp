@@ -3896,6 +3896,11 @@ void BaseGame::expandStringByStringTable(char **str) const {
 	_settings->expandStringByStringTable(str);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseGame::expandStringByStringTable(Common::String &str) const {
+	_settings->expandStringByStringTable(str);
+}
+
 char *BaseGame::getKeyFromStringTable(const char *str) const {
 	return _settings->getKeyFromStringTable(str);
 }

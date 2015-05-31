@@ -147,6 +147,15 @@ void BaseStringTable::expand(char **str) const {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseStringTable::expand(Common::String &str) const {
+	char *tmp = new char[str.size()+1];
+	strcpy(tmp, str.c_str());
+	expand(&tmp);
+	str = tmp;
+	delete[] tmp;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseStringTable::expandStatic(const char *string) const {

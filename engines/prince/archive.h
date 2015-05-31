@@ -35,6 +35,7 @@ public:
 	~PtcArchive();
 
 	bool open(const Common::String &filename);
+	bool openTranslation(const Common::String &filename);
 	void close();
 	bool isOpen() const { return _stream != 0; }
 

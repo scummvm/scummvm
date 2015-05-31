@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RING_RESOURCES_H
-#define RING_RESOURCES_H
+#ifndef TSAGE_RESOURCES_H
+#define TSAGE_RESOURCES_H
 
 #include "common/scummsys.h"
 #include "common/array.h"

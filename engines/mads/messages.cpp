@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -69,7 +69,7 @@ void KernelMessages::clear() {
 }
 
 int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
-		uint8 abortTimers, uint32 timeout, const Common::String &msg) {
+		int endTrigger, uint32 timeout, const Common::String &msg) {
 	Scene &scene = _vm->_game->_scene;
 
 	// Find a free slot
@@ -77,7 +77,7 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	while ((idx < _entries.size()) && ((_entries[idx]._flags & KMSG_ACTIVE) != 0))
 		++idx;
 	if (idx == _entries.size()) {
-		if (abortTimers == 0)
+		if (endTrigger == 0)
 			return -1;
 
 		error("KernelMessages overflow");
@@ -91,8 +91,8 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	rec._position = pt;
 	rec._textDisplayIndex = -1;
 	rec._timeout = timeout;
-	rec._frameTimer = _vm->_game->_priorFrameTimer;
-	rec._trigger = abortTimers;
+	rec._frameTimer = scene._frameStartTime;
+	rec._trigger = endTrigger;
 	rec._abortMode = _vm->_game->_triggerSetupMode;
 
 	rec._actionDetails = scene._action._activeAction;
@@ -104,10 +104,10 @@ int KernelMessages::add(const Common::Point &pt, uint fontColor, uint8 flags,
 	return idx;
 }
 
-int KernelMessages::addQuote(int quoteId, int abortTimers, uint32 timeout) {
+int KernelMessages::addQuote(int quoteId, int endTrigger, uint32 timeout) {
 	Common::String quoteStr = _vm->_game->getQuote(quoteId);
 	return add(Common::Point(), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN,
-		abortTimers, timeout, quoteStr);
+		endTrigger, timeout, quoteStr);
 }
 
 void KernelMessages::scrollMessage(int msgIndex, int numTicks, bool quoted) {
@@ -162,8 +162,10 @@ void KernelMessages::update() {
 	uint32 currentTimer = _vm->_game->_scene._frameStartTime;
 
 	for (uint i = 0; i < _entries.size() && !_vm->_game->_trigger; ++i) {
-		KernelMessage &msg = _entries[i];
+		if (_vm->_game->_trigger)
+			break;
 
+		KernelMessage &msg = _entries[i];
 		if (((msg._flags & KMSG_ACTIVE) != 0) && (currentTimer >= msg._frameTimer))
 			processText(i);
 	}
@@ -172,7 +174,7 @@ void KernelMessages::update() {
 void KernelMessages::processText(int msgIndex) {
 	Scene &scene = _vm->_game->_scene;
 	KernelMessage &msg = _entries[msgIndex];
-	uint32 currentTimer = _vm->_game->_priorFrameTimer;
+	uint32 currentTimer = scene._frameStartTime;
 	bool flag = false;
 
 	if ((msg._flags & KMSG_EXPIRE) != 0) {

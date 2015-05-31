@@ -46,6 +46,7 @@ protected:
 	};
 
 protected:
+	bool _drawDemo;
 	byte _currentMode;
 	byte _currentLights;
 
@@ -66,6 +67,8 @@ public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
 
 	virtual void resetScumm();
+
+	byte walkboxFindTarget(Actor *a, int destbox, Common::Point walkdest);
 
 protected:
 	virtual void resetRoomObject(ObjectData *od, const byte *room, const byte *searchptr = NULL);
@@ -99,6 +102,8 @@ protected:
 	virtual void handleMouseOver(bool updateInventory);
 	int verbPrepIdType(int verbid);
 	void resetVerbs();
+	void verbDemoMode();
+	void verbDrawDemoString(int VerbDemoNumber);
 
 	void clearSentenceLine();
 	void flushSentenceLine();
@@ -116,7 +121,7 @@ protected:
 
 	void resetSentence();
 
-	virtual bool areBoxesNeighbors(int box1nr, int box2nr);
+	bool areBoxesNeighbors(int box1nr, int box2nr);
 
 	bool ifEqualActiveObject2Common(bool checkType);
 
@@ -161,6 +166,7 @@ protected:
 	void o_cutscene();
 	void o_endCutscene();
 	void o_setOwnerOf();
+	void o_screenPrepare();
 
 	byte VAR_ACTIVE_OBJECT2;
 	byte VAR_IS_SOUND_RUNNING;

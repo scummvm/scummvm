@@ -39,11 +39,11 @@ GameModule::~GameModule() {
 
 void GameModule::load(const char *filename) {
 	debug(0, "GameModule::load()");
-	
+
 	unload();
 
 	Common::File fd;
-	
+
 	if (!fd.open(filename))
 		error("GameModule::load() Could not open %s", filename);
 
@@ -68,7 +68,7 @@ void GameModule::load(const char *filename) {
 
 	fd.seek(0x1A8);
 	_buttheadObjectIndex = fd.readUint32LE();
-	
+
 	fd.close();
 
 	debug(0, "GameModule::load() OK");
@@ -177,7 +177,7 @@ int GameModule::getBgSpritePriority(int index) {
 int GameModule::getSceneSoundsCount() {
 	return _sceneSoundsCount;
 }
- 
+
 SceneSound *GameModule::getSceneSound(int index) {
 	assert(index < _sceneSoundsCount);
 	return &_sceneSounds[index];
@@ -257,7 +257,7 @@ void GameModule::unload() {
 
 void GameModule::loadBgSprites(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadBgSprites()");
-	
+
 	s.seek(0x14);
 	_bgSpriteCount = s.readUint32LE();
 	uint32 bgSpriteIndicesOffs = s.readUint32LE();
@@ -275,7 +275,7 @@ void GameModule::loadBgSprites(Common::SeekableReadStream &s) {
 
 void GameModule::loadCameraInits(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadCameraInits()");
-	
+
 	s.seek(0x20);
 	for (int i = 0; i < kCameraInitsCount; ++i) {
 		CameraInit &cameraInit = _cameraInits[i];
@@ -283,13 +283,13 @@ void GameModule::loadCameraInits(Common::SeekableReadStream &s) {
 		for (int j = 0; j < 8; ++j)
 			cameraInit.cameraLinks[j] = s.readByte();
 		for (int j = 0; j < 8; ++j)
-			cameraInit.rects[j] = readRect(s); 
+			cameraInit.rects[j] = readRect(s);
 	}
 }
 
 void GameModule::loadWalkRects(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadWalkRects()");
-	
+
 	s.seek(0x150);
 	_walkRectsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
@@ -301,7 +301,7 @@ void GameModule::loadWalkRects(Common::SeekableReadStream &s) {
 
 void GameModule::loadSceneExits(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadSceneExits()");
-	
+
 	s.seek(0x158);
 	_sceneExitsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
@@ -329,13 +329,13 @@ void GameModule::loadBgObjects(Common::SeekableReadStream &s) {
 
 void GameModule::loadAnimations(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadAnimations()");
-	
+
 	s.seek(0x168);
 	_animationsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
 	_animations = new Animation[_animationsCount];
 	for (int i = 0; i < _animationsCount; ++i) {
-		Animation &anim = _animations[i];		
+		Animation &anim = _animations[i];
 		s.seek(offs + i * 20);
 		anim.frameCount = s.readUint32LE();
 		uint32 frameSpriteIndicesOffs = s.readUint32LE();
@@ -363,7 +363,7 @@ void GameModule::loadAnimations(Common::SeekableReadStream &s) {
 
 void GameModule::loadSceneObjectDefs(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadSceneObjectDefs()");
-	
+
 	s.seek(0x170);
 	_sceneObjectDefsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
@@ -379,7 +379,7 @@ void GameModule::loadSceneObjectDefs(Common::SeekableReadStream &s) {
 
 void GameModule::loadSceneObjectInits(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadSceneObjectInits()");
-	
+
 	s.seek(0x178);
 	_sceneObjectInitsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
@@ -396,7 +396,7 @@ void GameModule::loadSceneObjectInits(Common::SeekableReadStream &s) {
 
 void GameModule::loadActions(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadActions()");
-	
+
 	s.seek(0x180);
 	_actionsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
@@ -427,7 +427,7 @@ void GameModule::loadActions(Common::SeekableReadStream &s) {
 
 void GameModule::loadGuiSpriteIndices(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadGuiSpriteIndices()");
-	
+
 	s.seek(0x188);
 	uint32 offs = s.readUint32LE();
 	s.seek(offs);
@@ -437,7 +437,7 @@ void GameModule::loadGuiSpriteIndices(Common::SeekableReadStream &s) {
 
 void GameModule::loadInventoryItemSpriteIndices(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadInventoryItemSpriteIndices()");
-	
+
 	s.seek(0x18C);
 	uint32 offs = s.readUint32LE();
 	s.seek(offs);
@@ -447,7 +447,7 @@ void GameModule::loadInventoryItemSpriteIndices(Common::SeekableReadStream &s) {
 
 void GameModule::loadInventoryItemInfos(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadInventoryItemInfos()");
-	
+
 	s.seek(0x190);
 	uint32 offs = s.readUint32LE();
 	s.seek(offs);
@@ -462,7 +462,7 @@ void GameModule::loadInventoryItemInfos(Common::SeekableReadStream &s) {
 
 void GameModule::loadDialogItemSpriteIndices(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadDialogItemSpriteIndices()");
-	
+
 	s.seek(0x194);
 	uint32 offs = s.readUint32LE();
 	s.seek(offs);
@@ -473,7 +473,7 @@ void GameModule::loadDialogItemSpriteIndices(Common::SeekableReadStream &s) {
 
 void GameModule::loadSceneSounds(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadSceneSounds()");
-	
+
 	s.seek(0x1A0);
 	_sceneSoundsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();
@@ -487,7 +487,7 @@ void GameModule::loadSceneSounds(Common::SeekableReadStream &s) {
 
 void GameModule::loadPreloadSounds(Common::SeekableReadStream &s) {
 	debug(0, "GameModule::loadPreloadSounds()");
-	
+
 	s.seek(0x198);
 	_preloadSoundsCount = s.readUint32LE();
 	uint32 offs = s.readUint32LE();

@@ -269,7 +269,7 @@ public:
 	void snRoom(Sprite *spr, bool on);
 	void snGhost(Bitmap *bmp);
 	void snSay(Sprite *spr, int val);
-	
+
 	void hide1(Sprite *spr);
 	Sprite *expandSprite(Sprite *spr);
 	void qGame();

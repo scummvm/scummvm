@@ -52,8 +52,6 @@
 #include "graphics/cursorman.h"
 #endif
 
-#include "icons/scummvm.xpm"
-
 #include <time.h>	// for getTimeAndDate()
 
 #ifdef USE_DETECTLANG
@@ -77,7 +75,8 @@ OSystem_SDL::OSystem_SDL()
 	_initedSDL(false),
 	_logger(0),
 	_mixerManager(0),
-	_eventSource(0) {
+	_eventSource(0),
+	_window(0) {
 
 }
 
@@ -95,6 +94,8 @@ OSystem_SDL::~OSystem_SDL() {
 	}
 	delete _graphicsManager;
 	_graphicsManager = 0;
+	delete _window;
+	_window = 0;
 	delete _eventManager;
 	_eventManager = 0;
 	delete _eventSource;
@@ -126,8 +127,10 @@ void OSystem_SDL::init() {
 	// Initialize SDL
 	initSDL();
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
+#endif
 
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
@@ -147,6 +150,9 @@ void OSystem_SDL::init() {
 	if (_mutexManager == 0)
 		_mutexManager = new SdlMutexManager();
 
+	if (_window == 0)
+		_window = new SdlWindow();
+
 #if defined(USE_TASKBAR)
 	if (_taskbarManager == 0)
 		_taskbarManager = new Common::TaskbarManager();
@@ -158,10 +164,14 @@ void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
+#else
 	const int maxNameLen = 20;
 	char sdlDriverName[maxNameLen];
 	sdlDriverName[0] = '\0';
 	SDL_VideoDriverName(sdlDriverName, maxNameLen);
+#endif
 	// Using printf rather than debug() here as debug()/logging
 	// is not active by this point.
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
@@ -172,6 +182,13 @@ void OSystem_SDL::initBackend() {
 		_eventSource = new SdlEventSource();
 
 #ifdef USE_OPENGL
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_DisplayMode displayMode;
+	if (!SDL_GetDesktopDisplayMode(0, &displayMode)) {
+		_desktopWidth  = displayMode.w;
+		_desktopHeight = displayMode.h;
+	}
+#else
 	// Query the desktop resolution. We simply hope nothing tried to change
 	// the resolution so far.
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
@@ -179,6 +196,7 @@ void OSystem_SDL::initBackend() {
 		_desktopWidth  = videoInfo->current_w;
 		_desktopHeight = videoInfo->current_h;
 	}
+#endif
 #endif
 
 	if (_graphicsManager == 0) {
@@ -196,7 +214,7 @@ void OSystem_SDL::initBackend() {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {
 				if (!scumm_stricmp(_graphicsModes[i].name, gfxMode.c_str())) {
-					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+					_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
 					_graphicsMode = i;
 					break;
 				}
@@ -205,7 +223,7 @@ void OSystem_SDL::initBackend() {
 #endif
 
 		if (_graphicsManager == 0) {
-			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+			_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 		}
 	}
 
@@ -238,7 +256,7 @@ void OSystem_SDL::initBackend() {
 	}
 
 	// Setup a custom program icon.
-	setupIcon();
+	_window->setupIcon();
 
 	_inited = true;
 
@@ -314,7 +332,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 		}
 	}
 
-	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
+	_window->setWindowCaption(cap);
 }
 
 void OSystem_SDL::quit() {
@@ -390,7 +408,7 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 #else // WIN32
 	// Activating current locale settings
 	const Common::String locale = setlocale(LC_ALL, "");
- 
+
 	// Restore default C locale to prevent issues with
 	// portability of sscanf(), atof(), etc.
 	// See bug #3615148
@@ -420,68 +438,6 @@ Common::String OSystem_SDL::getSystemLanguage() const {
 	return ModularBackend::getSystemLanguage();
 #endif // USE_DETECTLANG
 }
-
-void OSystem_SDL::setupIcon() {
-	int x, y, w, h, ncols, nbytes, i;
-	unsigned int rgba[256];
-	unsigned int *icon;
-
-	if (sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes) != 4) {
-		warning("Wrong format of scummvm_icon[0] (%s)", scummvm_icon[0]);
-
-		return;
-	}
-	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
-		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
-		return;
-	}
-	icon = (unsigned int*)malloc(w*h*sizeof(unsigned int));
-	if (!icon) {
-		warning("Could not allocate temp storage for the built-in icon");
-		return;
-	}
-
-	for (i = 0; i < ncols; i++) {
-		unsigned char code;
-		char color[32];
-		memset(color, 0, sizeof(color));
-		unsigned int col;
-		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
-			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
-		}
-		if (!strcmp(color, "None"))
-			col = 0x00000000;
-		else if (!strcmp(color, "black"))
-			col = 0xFF000000;
-		else if (color[0] == '#') {
-			if (sscanf(color + 1, "%06x", &col) != 1) {
-				warning("Wrong format of color (%s)", color + 1);
-			}
-			col |= 0xFF000000;
-		} else {
-			warning("Could not load the built-in icon (%d %s - %s) ", code, color, scummvm_icon[1 + i]);
-			free(icon);
-			return;
-		}
-
-		rgba[code] = col;
-	}
-	for (y = 0; y < h; y++) {
-		const char *line = scummvm_icon[1 + ncols + y];
-		for (x = 0; x < w; x++) {
-			icon[x + w * y] = rgba[(int)line[x]];
-		}
-	}
-
-	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, w, h, 32, w * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
-	if (!sdl_surf) {
-		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
-	}
-	SDL_WM_SetIcon(sdl_surf, NULL);
-	SDL_FreeSurface(sdl_surf);
-	free(icon);
-}
-
 
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
@@ -572,14 +528,8 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	//
 	// This is a probably temporary workaround to fix bugs like #3368143
 	// "SDL/OpenGL: Crash when switching renderer backend".
-	const int screenWidth = _graphicsManager->getWidth();
-	const int screenHeight = _graphicsManager->getHeight();
-	const bool arState = _graphicsManager->getFeatureState(kFeatureAspectRatioCorrection);
-	const bool fullscreen = _graphicsManager->getFeatureState(kFeatureFullscreenMode);
-	const bool cursorPalette = _graphicsManager->getFeatureState(kFeatureCursorPalette);
-#ifdef USE_RGB_COLOR
-	const Graphics::PixelFormat pixelFormat = _graphicsManager->getScreenFormat();
-#endif
+	SdlGraphicsManager *sdlGraphicsManager = dynamic_cast<SdlGraphicsManager *>(_graphicsManager);
+	SdlGraphicsManager::State state = sdlGraphicsManager->getState();
 
 	bool switchedManager = false;
 
@@ -587,16 +537,16 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	// manager, delete and create the new mode graphics manager
 	if (_graphicsMode >= _firstGLMode && mode < _firstGLMode) {
 		debug(1, "switching to plain SDL graphics");
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
+		_graphicsManager = sdlGraphicsManager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 
 		switchedManager = true;
 	} else if (_graphicsMode < _firstGLMode && mode >= _firstGLMode) {
 		debug(1, "switching to OpenGL graphics");
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->deactivateManager();
+		sdlGraphicsManager->deactivateManager();
 		delete _graphicsManager;
-		_graphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+		_graphicsManager = sdlGraphicsManager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
 
 		switchedManager = true;
 	}
@@ -604,24 +554,10 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	_graphicsMode = mode;
 
 	if (switchedManager) {
-		dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->activateManager();
+		sdlGraphicsManager->activateManager();
 
-		_graphicsManager->beginGFXTransaction();
-#ifdef USE_RGB_COLOR
-		_graphicsManager->initSize(screenWidth, screenHeight, &pixelFormat);
-#else
-		_graphicsManager->initSize(screenWidth, screenHeight, 0);
-#endif
-		_graphicsManager->setFeatureState(kFeatureAspectRatioCorrection, arState);
-		_graphicsManager->setFeatureState(kFeatureFullscreenMode, fullscreen);
-		_graphicsManager->setFeatureState(kFeatureCursorPalette, cursorPalette);
-
-		// Worst part about this right now, tell the cursor manager to
-		// resetup the cursor + cursor palette if necessarily
-
-		// First we need to try to setup the old state on the new manager...
-		if (_graphicsManager->endGFXTransaction() != kTransactionSuccess) {
-			// Oh my god if this failed the client code might just explode.
+		// This failing will probably have bad consequences...
+		if (!sdlGraphicsManager->setState(state)) {
 			return false;
 		}
 
@@ -630,7 +566,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		CursorMan.popCursor();
 
 		// Next setup cursor palette if needed
-		if (cursorPalette) {
+		if (_graphicsManager->getFeatureState(kFeatureCursorPalette)) {
 			CursorMan.pushCursorPalette(0, 0, 0);
 			CursorMan.popCursorPalette();
 		}
@@ -660,7 +596,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	const OSystem::GraphicsMode *srcMode;
 	int defaultMode;
 
-	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource);
+	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
@@ -674,7 +610,7 @@ void OSystem_SDL::setupGraphicsModes() {
 	assert(_defaultSDLMode != -1);
 
 	_firstGLMode = _graphicsModes.size();
-	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource);
+	manager = new OpenGLSdlGraphicsManager(_desktopWidth, _desktopHeight, _eventSource, _window);
 	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
 	while (srcMode->name) {
@@ -702,5 +638,38 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode++;
 	}
 }
-
 #endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors) {
+	if (surface->format->palette) {
+		return !SDL_SetPaletteColors(surface->format->palette, colors, firstcolor, ncolors) ? 1 : 0;
+	} else {
+		return 0;
+	}
+}
+
+int SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha) {
+	if (SDL_SetSurfaceAlphaMod(surface, alpha)) {
+		return -1;
+	}
+
+	if (alpha == 255 || !flag) {
+		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE)) {
+			return -1;
+		}
+	} else {
+		if (SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND)) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+#undef SDL_SetColorKey
+int SDL_SetColorKey_replacement(SDL_Surface *surface, Uint32 flag, Uint32 key) {
+	return SDL_SetColorKey(surface, SDL_TRUE, key) ? -1 : 0;
+}
+#endif
+

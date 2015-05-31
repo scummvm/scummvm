@@ -53,7 +53,7 @@ WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_gameDescription = nullptr;
 }
 
-WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
+WintermuteEngine::WintermuteEngine(OSystem *syst, const WMEGameDescription *desc)
 	: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
@@ -133,7 +133,7 @@ Common::Error WintermuteEngine::run() {
 }
 
 int WintermuteEngine::init() {
-	BaseEngine::createInstance(_targetName, _gameDescription->gameid, _gameDescription->language);
+	BaseEngine::createInstance(_targetName, _gameDescription->adDesc.gameid, _gameDescription->adDesc.language, _gameDescription->targetExecutable);
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;

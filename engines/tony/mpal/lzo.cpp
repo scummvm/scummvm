@@ -116,7 +116,7 @@ int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) 
 		*op++ = *ip++;
 		*op++ = *ip++;
 		*op++ = *ip++;
-		do 
+		do
 			*op++ = *ip++;
 		while (--t > 0);
 

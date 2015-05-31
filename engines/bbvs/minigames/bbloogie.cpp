@@ -117,7 +117,7 @@ void MinigameBbLoogie::buildDrawList0(DrawList &drawList) {
 }
 
 void MinigameBbLoogie::buildDrawList1(DrawList &drawList) {
-	
+
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
 		switch (obj->kind) {
@@ -163,7 +163,7 @@ void MinigameBbLoogie::buildDrawList1(DrawList &drawList) {
 }
 
 void MinigameBbLoogie::buildDrawList2(DrawList &drawList) {
-	
+
 	buildDrawList1(drawList);
 
 	if (_level > 0 && (_bonusDisplayDelay1 > 0 || _bonusDisplayDelay2 > 0)) {
@@ -180,7 +180,7 @@ void MinigameBbLoogie::buildDrawList2(DrawList &drawList) {
 }
 
 void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
-	
+
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
 		if (obj->kind == 2)
@@ -191,7 +191,7 @@ void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
 
 	if (_backgroundSpriteIndex)
 		drawList.add(_backgroundSpriteIndex, 0, 0, 0);
-		
+
 	drawList.add(getAnimation(10)->frameIndices[0], 230, 2, 2000);
 
 	drawNumber(drawList, _levelTimeLeft, 280, 16);
@@ -201,7 +201,7 @@ void MinigameBbLoogie::buildDrawList3(DrawList &drawList) {
 	int numberX2 = drawNumber(drawList, _currScore, 68, 16);
 	drawList.add(getAnimation(9)->frameIndices[10], numberX2, 16, 2000);
 	drawNumber(drawList, _dispLevelScore, numberX2 + 10, 16);
-	
+
 	drawList.add(getAnimation(20)->frameIndices[0], 120, 70, 2000);
 	drawList.add(getAnimation(13)->frameIndices[0], 95, 95, 2000);
 
@@ -416,7 +416,7 @@ bool MinigameBbLoogie::updateStatus(int mouseX, int mouseY, uint mouseButtons) {
 }
 
 bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) {
-	
+
 	_objects[0].x = mouseX;
 	_objects[0].y = mouseY;
 
@@ -445,7 +445,7 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 		_objects[4].kind = 0;
 		_objects[2].kind = 1;
 	}
-	
+
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
 		if (obj->kind == 11) {
@@ -487,12 +487,12 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 		initVars();
 		_gameTicks = 0;
 	}
-	
+
 	return true;
 }
 
 bool MinigameBbLoogie::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
-	
+
 	if (--_levelTimeDelay == 0) {
 		_levelTimeDelay = 58;
 		--_levelTimeLeft;
@@ -568,9 +568,9 @@ bool MinigameBbLoogie::updateStatus2(int mouseX, int mouseY, uint mouseButtons) 
 }
 
 bool MinigameBbLoogie::updateStatus3(int mouseX, int mouseY, uint mouseButtons) {
-	
+
 	_objects[0].x = mouseX;
-		
+
 	for (int i = 0; i < kMaxObjectsCount; ++i) {
 		Obj *obj = &_objects[i];
 		if (obj->kind == 2) {
@@ -582,7 +582,7 @@ bool MinigameBbLoogie::updateStatus3(int mouseX, int mouseY, uint mouseButtons) 
 			}
 		}
 	}
-	
+
 	return true;
 }
 
@@ -620,7 +620,7 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 			break;
 		}
 	}
-	
+
 	if (--_carDelay == 0) {
 		// Car
 		Obj *obj = getFreeObject();
@@ -633,7 +633,7 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		obj->yIncr = 0;
 		_carDelay = _vm->getRandom(256) + 800;
 	}
-	
+
 	if (--_bikeDelay == 0) {
 		// Bike
 		Obj *obj = getFreeObject();
@@ -646,7 +646,7 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		obj->yIncr = 0;
 		_bikeDelay = _vm->getRandom(512) + 500;
 	}
-  
+
 	if (--_squirrelDelay == 0) {
 		// Squirrel
 		Obj *obj = getFreeObject();
@@ -662,7 +662,7 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 			playSound(9);
 		_squirrelDelay = _vm->getRandom(512) + 300;
 	}
-	
+
 	if (--_paperPlaneDelay == 0) {
 		// Paper plane
 		Obj *obj = getFreeObject();
@@ -685,7 +685,7 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		}
 		_paperPlaneDelay = 400;
 	}
-	
+
 	if (_principalDelay >= 0 && --_principalDelay == 0) {
 		// Principal
 		Obj *obj = getFreeObject();
@@ -703,13 +703,13 @@ void MinigameBbLoogie::updateObjs(uint mouseButtons) {
 		_principalFirstFrameIndex = 11;
 		_principalLastFrameIndex = 16;
 	}
-	
+
 }
 
 void MinigameBbLoogie::updatePlayer(int objIndex, uint mouseButtons) {
 
 	Obj *obj = &_objects[0];
-	
+
 	switch (obj->status) {
 
 	case 1:
@@ -817,7 +817,7 @@ void MinigameBbLoogie::updateLoogie(int objIndex) {
 		obj->y -= kLoogieOffY[obj->unk2 / 8];
 		--obj->unk2;
 	}
-	
+
 	if (obj->ticks-- == 0) {
 		obj->ticks = getAnimation(5)->frameTicks[0];
 		++obj->frameIndex;
@@ -832,9 +832,9 @@ void MinigameBbLoogie::updateLoogie(int objIndex) {
 
 void MinigameBbLoogie::updateCar(int objIndex) {
 	Obj *obj = &_objects[objIndex];
-	
+
 	obj->x += obj->xIncr;
-	
+
 	if (obj->ticks-- == 0) {
 		if (obj->frameIndex++ == 3 || obj->frameIndex == 6)
 			obj->frameIndex = 0;
@@ -867,7 +867,7 @@ void MinigameBbLoogie::updateCar(int objIndex) {
 
 void MinigameBbLoogie::updateBike(int objIndex) {
 	Obj *obj = &_objects[objIndex];
-	
+
 	obj->x += obj->xIncr;
 
 	if (obj->ticks-- == 0) {
@@ -965,7 +965,7 @@ void MinigameBbLoogie::updatePaperPlane(int objIndex) {
 			loogieObj = findLoogieObj(loogieObjIndex++);
 		}
 	}
-	
+
 }
 
 void MinigameBbLoogie::updateIndicator(int objIndex) {
@@ -995,7 +995,7 @@ void MinigameBbLoogie::updateIndicator(int objIndex) {
 		obj->kind = 0;
 		obj->anim = getAnimation(6);
 	}
-	
+
 }
 
 void MinigameBbLoogie::updatePrincipal(int objIndex) {
@@ -1281,22 +1281,22 @@ bool MinigameBbLoogie::run(bool fromMainGame) {
 	_gameDone = false;
 	initObjects();
 	initVars();
-	
+
 	_spriteModule = new SpriteModule();
 	_spriteModule->load("bbloogie/bbloogie.000");
 
 	Palette palette = _spriteModule->getPalette();
 	_vm->_screen->setPalette(palette);
-	
+
 	loadSounds();
 
 	playSound(32, true);
-	
+
 	while (!_vm->shouldQuit() &&!_gameDone) {
 		_vm->updateEvents();
 		update();
 	}
-	
+
 	_vm->_sound->unloadSounds();
 
 	if (!_fromMainGame)
@@ -1319,15 +1319,15 @@ void MinigameBbLoogie::update() {
 		inputTicks = 1;
 		_gameTicks = _vm->_system->getMillis();
 	}
-	
+
 	if (_vm->_keyCode == Common::KEYCODE_ESCAPE) {
 		_gameDone = true;
 		return;
 	}
-	
+
 	if (inputTicks == 0)
 		return;
-		
+
 	bool done;
 
 	do {
@@ -1336,9 +1336,9 @@ void MinigameBbLoogie::update() {
 		_vm->_mouseButtons &= ~kRightButtonClicked;
 		_vm->_keyCode = Common::KEYCODE_INVALID;
 	} while (--inputTicks && _gameTicks > 0 && !done);
-	
+
 	drawSprites();
-		
+
 	_vm->_system->delayMillis(10);
 
 }

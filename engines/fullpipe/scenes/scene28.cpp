@@ -46,7 +46,7 @@ void scene28_initScene(Scene *sc) {
 	g_vars->scene28_lift6inside = false;
 
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_28"));
-	
+
 	g_fp->initArcadeKeys("SC_28");
 }
 

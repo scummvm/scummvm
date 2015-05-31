@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -432,7 +432,7 @@ void SceneTeleporter::teleporterHandleKey() {
 	case 0: {
 		_game._player._stepEnabled = false;
 		Common::Point msgPos = teleporterComputeLocation();
-		_handSequenceId = _scene->_sequences.startReverseCycle(_handSpriteId, false, 4, 2, 0, 0);
+		_handSequenceId = _scene->_sequences.startPingPongCycle(_handSpriteId, false, 4, 2, 0, 0);
 		_scene->_sequences.setPosition(_handSequenceId, msgPos);
 		_scene->_sequences.setDepth(_handSequenceId, 2);
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
@@ -451,7 +451,10 @@ void SceneTeleporter::teleporterHandleKey() {
 				_curCode *= 10;
 				_curCode += _buttonTyped;
 				_digitCount++;
-				_msgText = Common::String::format("%d", _curCode);
+
+				Common::String format = "%01d";
+				format.setChar('0' + _digitCount, 2);
+				_msgText = Common::String::format(format.c_str(), _curCode);
 				if (_digitCount < 4)
 					_msgText += "_";
 
@@ -535,7 +538,7 @@ void SceneTeleporter::teleporterEnter() {
 	_curMessageId        = -1;
 	_msgText = "_";
 
-	if (_scene->_priorSceneId == -2)
+	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
 		_scene->_priorSceneId = _globals[kTeleporterDestination];
 
 	if (_scene->_priorSceneId < 101)

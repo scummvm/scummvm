@@ -79,7 +79,7 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 
 	_flags = stream.readUint16LE();
 	_z = stream.readUint16LE();
-	
+
 	stream.seek(pos + 16);
 
 	return true;

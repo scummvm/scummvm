@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -164,6 +164,7 @@ void UISlots::draw(bool updateFlag, bool delFlag) {
 						MSurface *spr = sprite->flipHorizontal();
 						userInterface.mergeFrom(spr, spr->getBounds(), slot._position,
 							sprite->getTransparencyIndex());
+						spr->free();
 						delete spr;
 					} else {
 						userInterface.mergeFrom(sprite, sprite->getBounds(), slot._position,
@@ -410,13 +411,21 @@ void UserInterface::setup(InputMode inputMode) {
 }
 
 void UserInterface::drawTextElements() {
-	if (_vm->_game->_screenObjects._inputMode) {
-		drawConversationList();
-	} else {
+	switch (_vm->_game->_screenObjects._inputMode) {
+	case kInputBuildingSentences:
 		// Draw the actions
 		drawActions();
 		drawInventoryList();
 		drawItemVocabList();
+		break;
+
+	case kInputConversation:
+		drawConversationList();
+		break;
+
+	case kInputLimitedSentences:
+	default:
+		break;
 	}
 }
 
@@ -495,7 +504,6 @@ void UserInterface::drawScroller() {
 
 void UserInterface::updateInventoryScroller() {
 	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
-	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
 
 	if (screenObjects._inputMode != kInputBuildingSentences)
 		return;
@@ -515,48 +523,11 @@ void UserInterface::updateInventoryScroller() {
 				uint32 timeInc = _scrollbarQuickly ? 100 : 380;
 
 				if (_vm->_events->_mouseStatus && (_scrollbarMilliTime + timeInc) <= currentMilli) {
-					_scrollbarQuickly = _vm->_events->_vD2 < 1;
+					_scrollbarQuickly = _vm->_events->_strokeGoing < 1;
 					_scrollbarMilliTime = currentMilli;
 
-					switch (_scrollbarStrokeType) {
-					case SCROLLBAR_UP:
-						// Scroll up
-						if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
-							--_inventoryTopIndex;
-							_inventoryChanged = true;
-						}
-						break;
-
-					case SCROLLBAR_DOWN:
-						// Scroll down
-						if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
-							++_inventoryTopIndex;
-							_inventoryChanged = true;
-						}
-						break;
-
-					case SCROLLBAR_ELEVATOR: {
-						// Inventory slider
-						int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
-							* inventoryList.size() / 10;
-						if (newIndex >= (int)inventoryList.size())
-							newIndex = inventoryList.size() - 1;
-
-						if (inventoryList.size() > 0) {
-							_inventoryChanged = newIndex != _inventoryTopIndex;
-							_inventoryTopIndex = newIndex;
-						}
-						break;
-					}
-
-					default:
-						break;
-					}
-
-					if (_inventoryChanged) {
-						int dummy;
-						updateSelection(CAT_INV_LIST, 0, &dummy);
-					}
+					// Change the scrollbar and visible inventory list
+					changeScrollBar();
 				}
 			}
 		}
@@ -567,6 +538,54 @@ void UserInterface::updateInventoryScroller() {
 
 	_scrollbarOldActive = _scrollbarActive;
 	_scrollbarOldElevator = _scrollbarElevator;
+}
+
+void UserInterface::changeScrollBar() {
+	Common::Array<int> &inventoryList = _vm->_game->_objects._inventoryList;
+	ScreenObjects &screenObjects = _vm->_game->_screenObjects;
+
+	if (screenObjects._inputMode != kInputBuildingSentences)
+		return;
+
+	switch (_scrollbarStrokeType) {
+	case SCROLLBAR_UP:
+		// Scroll up
+		if (_inventoryTopIndex > 0 && inventoryList.size() > 0) {
+			--_inventoryTopIndex;
+			_inventoryChanged = true;
+		}
+		break;
+
+	case SCROLLBAR_DOWN:
+		// Scroll down
+		if (_inventoryTopIndex < ((int)inventoryList.size() - 1) && inventoryList.size() > 1) {
+			++_inventoryTopIndex;
+			_inventoryChanged = true;
+		}
+		break;
+
+	case SCROLLBAR_ELEVATOR: {
+		// Inventory slider
+		int newIndex = CLIP((int)_vm->_events->currentPos().y - 170, 0, 17)
+			* inventoryList.size() / 10;
+		if (newIndex >= (int)inventoryList.size())
+			newIndex = inventoryList.size() - 1;
+
+		if (inventoryList.size() > 0) {
+			_inventoryChanged = newIndex != _inventoryTopIndex;
+			_inventoryTopIndex = newIndex;
+		}
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	if (_inventoryChanged) {
+		int dummy;
+		updateSelection(CAT_INV_LIST, 0, &dummy);
+	}
 }
 
 void UserInterface::scrollbarChanged() {
@@ -673,7 +692,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_SCROLLER, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_SCROLLER, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_INV_SCROLLER, idx);
 		}
 
 		// Set up actions
@@ -682,7 +701,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_COMMAND, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_COMMAND, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_COMMAND, idx);
 		}
 
 		// Set up inventory list
@@ -691,7 +710,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_LIST, _inventoryTopIndex + idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_LIST, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_INV_LIST, idx);
 		}
 
 		// Set up the inventory vocab list
@@ -700,12 +719,12 @@ void UserInterface::loadElements() {
 			getBounds(CAT_INV_VOCAB, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_INV_VOCAB, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_INV_VOCAB, idx);
 		}
 
 		// Set up the inventory item picture
 		_categoryIndexes[CAT_INV_ANIM - 1] = _vm->_game->_screenObjects.size() + 1;
-		_vm->_game->_screenObjects.add(Common::Rect(160, 159, 231, 194), LAYER_GUI,
+		_vm->_game->_screenObjects.add(Common::Rect(160, 159, 231, 194), SCREENMODE_VGA,
 			CAT_INV_ANIM, 0);
 	}
 
@@ -714,7 +733,9 @@ void UserInterface::loadElements() {
 		_categoryIndexes[CAT_HOTSPOT - 1] = _vm->_game->_screenObjects.size() + 1;
 		for (int hotspotIdx = scene._hotspots.size() - 1; hotspotIdx >= 0; --hotspotIdx) {
 			Hotspot &hs = scene._hotspots[hotspotIdx];
-			_vm->_game->_screenObjects.add(hs._bounds, LAYER_GUI, CAT_HOTSPOT, hotspotIdx);
+			ScreenObject *so = _vm->_game->_screenObjects.add(hs._bounds, SCREENMODE_VGA, 
+				CAT_HOTSPOT, hotspotIdx);
+			so->_active = hs._active;
 		}
 	}
 
@@ -725,7 +746,7 @@ void UserInterface::loadElements() {
 			getBounds(CAT_TALK_ENTRY, idx, bounds);
 			moveRect(bounds);
 
-			_vm->_game->_screenObjects.add(bounds, LAYER_GUI, CAT_TALK_ENTRY, idx);
+			_vm->_game->_screenObjects.add(bounds, SCREENMODE_VGA, CAT_TALK_ENTRY, idx);
 		}
 	}
 
@@ -833,23 +854,24 @@ void UserInterface::emptyConversationList() {
 }
 
 void UserInterface::addConversationMessage(int vocabId, const Common::String &msg) {
-	assert(_talkStrings.size() < 5);
-
-	_talkStrings.push_back(msg);
-	_talkIds.push_back(vocabId);
+	// Only allow a maximum of 5 talk entries to be displayed
+	if (_talkStrings.size() < 5) {
+		_talkStrings.push_back(msg);
+		_talkIds.push_back(vocabId);
+	}
 }
 
 void UserInterface::loadInventoryAnim(int objectId) {
 	Scene &scene = _vm->_game->_scene;
 	noInventoryAnim();
 
-	if (_vm->_invObjectsAnimated) {
-		Common::String resName = Common::String::format("*OB%.3dI", objectId);
-		SpriteAsset *asset = new SpriteAsset(_vm, resName, ASSET_SPINNING_OBJECT);
-		_invSpritesIndex = scene._sprites.add(asset, 1);
-		if (_invSpritesIndex >= 0) {
-			_invFrameNumber = 1;
-		}
+	// WORKAROUND: Even in still mode, we now load the animation frames for the
+	// object, so we can show the first frame as a 'still'
+	Common::String resName = Common::String::format("*OB%.3dI", objectId);
+	SpriteAsset *asset = new SpriteAsset(_vm, resName, ASSET_SPINNING_OBJECT);
+	_invSpritesIndex = scene._sprites.add(asset, 1);
+	if (_invSpritesIndex >= 0) {
+		_invFrameNumber = 1;
 	}
 }
 
@@ -881,10 +903,13 @@ void UserInterface::inventoryAnim() {
 			_invSpritesIndex < 0)
 		return;
 
-	// Move to the next frame number in the sequence, resetting if at the end
-	SpriteAsset *asset = scene._sprites[_invSpritesIndex];
-	if (++_invFrameNumber > asset->getCount())
-		_invFrameNumber = 1;
+	// WORKAROUND: Fix still inventory display, which was broken in the original
+	if (_vm->_invObjectsAnimated) {
+		// Move to the next frame number in the sequence, resetting if at the end
+		SpriteAsset *asset = scene._sprites[_invSpritesIndex];
+		if (++_invFrameNumber > asset->getCount())
+			_invFrameNumber = 1;
+	}
 
 	// Loop through the slots list for inventory animation entry
 	for (uint i = 0; i < _uiSlots.size(); ++i) {

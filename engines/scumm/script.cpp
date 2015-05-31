@@ -1164,8 +1164,10 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 	VAR(7) = y;
 
 	// actor must not move if frozen
-	if (a->_miscflags & kActorMiscFlagFreeze)
+	if (a->_miscflags & kActorMiscFlagFreeze) {
 		a->stopActorMoving();
+		a->_newWalkBoxEntered = false;
+	}
 }
 
 bool ScummEngine_v0::checkPendingWalkAction() {
@@ -1179,7 +1181,7 @@ bool ScummEngine_v0::checkPendingWalkAction() {
 	Actor_v0 *a = (Actor_v0 *)derefActor(actor, "checkPendingWalkAction");
 
 	// wait until walking or turning action is finished
-	if (a->_moving)
+	if (a->_moving != 2)
 		return true;
 
 	// after walking and turning finally execute the script

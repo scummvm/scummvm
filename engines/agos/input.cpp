@@ -460,7 +460,7 @@ void AGOSEngine_Simon1::handleMouseWheelUp() {
 				_saveLoadEdit = false;
 				listSaveGames();
 			}
-	} else {	
+	} else {
 		AGOSEngine::handleMouseWheelUp();
 	}
 }
@@ -472,11 +472,11 @@ void AGOSEngine_Simon1::handleMouseWheelDown() {
 				_saveLoadRowCurPos += 1;
 				if (_saveLoadRowCurPos >= _numSaveGameRows)
 					_saveLoadRowCurPos = _numSaveGameRows;
-			
+
 				_saveLoadEdit = false;
 				listSaveGames();
 			}
-	} else {	
+	} else {
 		AGOSEngine::handleMouseWheelDown();
 	}
 }
@@ -492,7 +492,7 @@ void AGOSEngine_Elvira2::handleMouseWheelUp() {
 				_saveLoadRowCurPos -= 3;
 
 			listSaveGames();
-	} else {	
+	} else {
 		AGOSEngine::handleMouseWheelUp();
 	}
 }
@@ -506,7 +506,7 @@ void AGOSEngine_Elvira2::handleMouseWheelDown() {
 				_saveLoadRowCurPos = 1;
 
 			listSaveGames();
-	} else {	
+	} else {
 		AGOSEngine::handleMouseWheelDown();
 	}
 }

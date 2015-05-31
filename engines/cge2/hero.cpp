@@ -205,7 +205,7 @@ Sprite *Hero::expand() {
 	int i = stepSize() / 2;
 	_maxDist = (int)sqrt(double(i * i * 2));
 	setCurrent();
-	
+
 	return this;
 }
 
@@ -558,9 +558,9 @@ int CGE2Engine::mapCross(const V2D &a, const V2D &b) {
 		if (p) {
 			if (cross(a, b, *n0, *n))
 				++cnt;
-		
+
 			if (*n == *p)
-				p = nullptr;	
+				p = nullptr;
 		} else {
 			p = n;
 		}
@@ -587,7 +587,7 @@ void Hero::operator--() {
 bool Sprite::works(Sprite *spr) {
 	if (!spr || !spr->_ext)
 		return false;
-	
+
 	bool ok = false;
 
 	Action a = _vm->_heroTab[_vm->_sex]->_ptr->action();
@@ -615,7 +615,7 @@ bool Sprite::works(Sprite *spr) {
 			}
 		}
 	}
-	
+
 	return ok;
 }
 

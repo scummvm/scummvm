@@ -1390,7 +1390,14 @@ void ScummEngine_v2::o2_loadRoomWithEgo() {
 
 	a = derefActor(VAR(VAR_EGO), "o2_loadRoomWithEgo");
 
-	a->putActor(0, 0, room);
+	// The original interpreter sets the actors new room X/Y to the last rooms X/Y
+	// This fixes a problem with MM: script 161 in room 12, the 'Oomph!' script
+	// This scripts runs before the actor position is set to the correct room entry location
+	if ((_game.id == GID_MANIAC) && (_game.platform != Common::kPlatformNES)) {
+		a->putActor(a->getPos().x, a->getPos().y, room);
+	} else {
+		a->putActor(0, 0, room);
+	}
 	_egoPositioned = false;
 
 	x = (int8)fetchScriptByte();

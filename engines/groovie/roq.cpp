@@ -28,6 +28,7 @@
 #include "groovie/groovie.h"
 
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/rect.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -46,6 +47,7 @@ namespace Groovie {
 
 ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	VideoPlayer(vm), _codingTypeCount(0),
+	_fg(&_vm->_graphicsMan->_foreground),
 	_bg(&_vm->_graphicsMan->_background),
 	_firstFrame(true) {
 
@@ -63,6 +65,22 @@ ROQPlayer::~ROQPlayer() {
 }
 
 uint16 ROQPlayer::loadInternal() {
+	if (DebugMan.isDebugChannelEnabled(kDebugVideo)) {
+		int8 i;
+		debugN(1, "Groovie::ROQ: New ROQ: bitflags are ");
+		for (i = 15; i >= 0; i--) {
+			debugN(1, "%d", _flags & (1 << i)? 1 : 0);
+			if (i % 4 == 0) {
+				debugN(1, " ");
+			}
+		}
+		debug(1, " <- 0 ");
+	}
+
+	// Flags:
+	// - 2 For overlay videos, show the whole video
+	_flagTwo =	((_flags & (1 << 2)) != 0);
+
 	// Begin reading the file
 	debugC(1, kDebugVideo, "Groovie::ROQ: Loading video");
 
@@ -106,13 +124,23 @@ uint16 ROQPlayer::loadInternal() {
 }
 
 void ROQPlayer::buildShowBuf() {
+	if (_alpha)
+		_fg->copyFrom(*_bg);
+
 	for (int line = 0; line < _bg->h; line++) {
-		uint32 *out = (uint32 *)_bg->getBasePtr(0, line);
+		uint32 *out = _alpha ? (uint32 *)_fg->getBasePtr(0, line) : (uint32 *)_bg->getBasePtr(0, line);
 		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, line / _scaleY);
 
 		for (int x = 0; x < _bg->w; x++) {
-			// Copy a pixel
-			*out++ = *in;
+			// Copy a pixel, checking the alpha channel first
+			if (_alpha && !(*in & 0xFF))
+				out++;
+			else if (_fg->h == 480 && *in == _vm->_pixelFormat.RGBToColor(255, 255, 255))
+				// Handle transparency in Gamepad videos
+				// TODO: For now, we detect these videos by checking for full screen
+				out++;
+			else
+				*out++ = *in;
 
 			// Skip to the next pixel
 			if (!(x % _scaleX))
@@ -145,19 +173,27 @@ bool ROQPlayer::playFrameInternal() {
 	}
 
 	// Wait until the current frame can be shown
-	waitFrame();
+	// Don't wait if we're just showing one frame
+	if (!playFirstFrame())
+		waitFrame();
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen(_bg->getPixels(), _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
+		void *src = (_alpha) ? _fg->getPixels() : _bg->getPixels();
+		_syst->copyRectToScreen(src, _bg->pitch, 0, (_syst->getHeight() - _bg->h) / 2, _bg->w, _bg->h);
 		_syst->updateScreen();
+
+		// For overlay videos, set the background buffer when the video ends
+		if (_alpha && (!_flagTwo || (_flagTwo && _file->eos())))
+			_bg->copyFrom(*_fg);
 
 		// Clear the dirty flag
 		_dirty = false;
 	}
 
-	// Return whether the video has ended
-	return _file->eos();
+	// Report the end of the video if we reached the end of the file or if we
+	// just wanted to play one frame.
+	return _file->eos() || playFirstFrame();
 }
 
 bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
@@ -277,9 +313,17 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_prevBuf->create(width, height, _vm->_pixelFormat);
 	}
 
+	// Switch from/to fullscreen, if needed
+	if (_bg->h != 480 && height == 480)
+		_vm->_graphicsMan->switchToFullScreen(true);
+	else if (_bg->h == 480 && height != 480)
+		_vm->_graphicsMan->switchToFullScreen(false);
+
 	// Clear the buffers with black
-	_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
-	_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+	if (!_alpha) {
+		_currBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+		_prevBuf->fillRect(Common::Rect(width, height), _vm->_pixelFormat.RGBToColor(0, 0, 0));
+	}
 
 	return true;
 }
@@ -448,7 +492,7 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 	}
 
 	// Initialize the audio stream if needed
-	if (!_audioStream) {
+	if (!_audioStream && !playFirstFrame()) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
@@ -477,7 +521,10 @@ bool ROQPlayer::processBlockSoundMono(ROQBlockHeader &blockHeader) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	if (!playFirstFrame())
+		_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	else
+		free(buffer);
 
 	return true;
 }
@@ -491,7 +538,7 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 	}
 
 	// Initialize the audio stream if needed
-	if (!_audioStream) {
+	if (!_audioStream && !playFirstFrame()) {
 		_audioStream = Audio::makeQueuingAudioStream(22050, true);
 		Audio::SoundHandle sound_handle;
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &sound_handle, _audioStream);
@@ -533,7 +580,10 @@ bool ROQPlayer::processBlockSoundStereo(ROQBlockHeader &blockHeader) {
 #ifdef SCUMM_LITTLE_ENDIAN
 	flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-	_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	if (!playFirstFrame())
+		_audioStream->queueBuffer((byte *)buffer, blockHeader.size * 2, DisposeAfterUse::YES, flags);
+	else
+		free(buffer);
 
 	return true;
 }

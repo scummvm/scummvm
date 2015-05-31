@@ -34,7 +34,7 @@ struct MenuButton {
 
 static const MenuButton kMenuButtons[] = {
 	// Main menu
-	{"New Game", kCmdNewGame},	
+	{"New Game", kCmdNewGame},
 	{"Continue", kCmdContinue},
 	{"Options", kCmdOptions},
 	{"Mini Games", kCmdMiniGames},
@@ -61,7 +61,7 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::init() {
-	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);	
+	_buttons[0] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
 	_buttons[1] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
 	_buttons[2] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
 	_buttons[3] = new GUI::ButtonWidget(this, 0, 0, 1, 1, "", 0, 0);
@@ -76,14 +76,14 @@ void MainMenu::reflowLayout() {
 	const int buttonWidth = screenW * 70 / 320;
 	const int buttonHeight = screenH * 14 / 240;
 	const int buttonPadding = screenW * 3 / 320;
-	
+
 	_w = 2 * buttonWidth  + buttonPadding;
 	_h = 3 * buttonHeight + 3 * buttonPadding;
 	_x = (screenW - _w) / 2;
 	_y = screenH - _h;
 
 	int x = 0, y = 0;
-	
+
 	x = 0;
 	y = 0;
 	_buttons[0]->resize(x, y, buttonWidth, buttonHeight);

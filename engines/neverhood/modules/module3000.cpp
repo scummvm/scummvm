@@ -666,18 +666,6 @@ static const uint32 kScene3010ButtonNameHashes[] = {
 	0x01180951
 };
 
-static const uint32 kScene3010DeadBoltButtonFileHashes1[] = {
-	0x301024C2,
-	0x20280580,
-	0x30200452
-};
-
-static const uint32 kScene3010DeadBoltButtonFileHashes2[] = {
-	0x50C025A8,
-	0x1020A0A0,
-	0x5000A7E8
-};
-
 Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
 

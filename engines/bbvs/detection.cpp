@@ -133,7 +133,7 @@ SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int s
 		Bbvs::BbvsEngine::kReadSaveHeaderError error;
 		error = Bbvs::BbvsEngine::readSaveHeader(in, true, header);
 		delete in;
-		if (error == Bbvs::BbvsEngine::kRSHENoError) {		
+		if (error == Bbvs::BbvsEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 			// Slot 0 is used for the "Continue" save
 			desc.setDeletableFlag(slot != 0);

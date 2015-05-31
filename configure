@@ -35,6 +35,7 @@ SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_ASFLAGS=$ASFLAGS
 SAVED_WINDRESFLAGS=$WINDRESFLAGS
+SAVED_SDL_CONFIG=$SDL_CONFIG
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -353,7 +354,7 @@ define_in_config_if_yes() {
 # TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
-	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
 
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
@@ -822,9 +823,9 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help              display this help and exit
-  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gph,
-                          iphone, linuxmoto, maemo, n64, null, openpandora, ps2,
-                          psp, samsungtv, sdl, webos, wii, wince) [sdl]
+  --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
+                          gph, iphone, linuxmoto, maemo, n64, null, openpandora,
+                          ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -859,6 +860,7 @@ Special configuration feature:
                                            dreamcast for Sega Dreamcast
                                            ds for Nintendo DS
                                            gamecube for Nintendo GameCube
+                                           gcw0 for GCW Zero
                                            gp2x for GP2X
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone
@@ -1298,7 +1300,7 @@ caanoo)
 	_host_cpu=arm
 	_host_alias=arm-none-linux-gnueabi
 	;;
-dingux)
+dingux | gcw0)
 	_host_os=linux
 	_host_cpu=mipsel
 	_host_alias=mipsel-linux
@@ -1317,7 +1319,7 @@ ds)
 	;;
 gamecube)
 	_host_os=gamecube
-	_host_cpu=ppc
+	_host_cpu=powerpc
 	_host_alias=powerpc-eabi
 	;;
 gp2x)
@@ -1385,7 +1387,7 @@ openpandora)
 	;;
 ppc-amigaos)
 	_host_os=amigaos
-	_host_cpu=ppc
+	_host_cpu=powerpc
 	;;
 ps2)
 	_host_os=ps2
@@ -1397,7 +1399,7 @@ ps2)
 	;;
 ps3)
 	_host_os=ps3
-	_host_cpu=ppc
+	_host_cpu=powerpc
 	_host_alias=powerpc64-ps3-elf
 
 	# The prefix is always the same on PS3 so we hardcode the default
@@ -1443,7 +1445,7 @@ webos)
 	;;
 wii)
 	_host_os=wii
-	_host_cpu=ppc
+	_host_cpu=powerpc
 	_host_alias=powerpc-eabi
 	;;
 wince)
@@ -2003,7 +2005,7 @@ cc_check_clean tmp_find_type_with_size.cpp
 # for the smaller sizes.
 echo_n "Alignment required... "
 case $_host_cpu in
-	i[3-6]86 | amd64 | x86_64 | ppc*)
+	i[3-6]86 | amd64 | x86_64 | powerpc*)
 		# Unaligned access should work
 		_need_memalign=no
 		;;
@@ -2046,7 +2048,7 @@ case $_host_cpu in
 		echo "MIPS"
 		DEFINES="$DEFINES -DMIPS_TARGET"
 		;;
-	ppc*)
+	powerpc*)
 		echo "PowerPC"
 		DEFINES="$DEFINES -DPPC_TARGET"
 		;;
@@ -2180,8 +2182,21 @@ case $_host_os in
 		exit 1
 		;;
 	darwin*)
+		# Pass -mlongcall to gcc so that it emits long calls
+		# which will allow for calls larger than 32MB. The linker
+		# will discard the calls if they are not needed, but we
+		# need to ensure the compiler emits them in the first place.
+		case $_host_cpu in
+		powerpc*)
+			CFLAGS="$CFLAGS -mlongcall"
+			CXXFLAGS="$CXXFLAGS -mlongcall"
+			;;
+		esac
+
 		DEFINES="$DEFINES -DMACOSX"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		# SDL2 doesn't seem to add Cocoa for us.
+		LIBS="$LIBS -framework Cocoa"
 		add_line_to_config_mk 'MACOSX = 1'
 
 		# Now we may have MacPorts or Fink installed
@@ -2588,6 +2603,25 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
 			;;
+               gcw0)
+			DEFINES="$DEFINES -DDINGUX -DGCW0"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			ASFLAGS="$ASFLAGS"
+			CXXFLAGS="$CXXFLAGS -mips32"
+			_backend="dingux"
+			_mt32emu=no
+			_optimization_level=-O3
+			# Disable alsa midi to get the port build on OpenDingux toolchain
+			_alsa=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_keymapper=yes
+			# Force disable vorbis on dingux, it has terrible performance compared to tremor
+			_vorbis=no
+			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
+			_seq_midi=no
+			_port_mk="backends/platform/dingux/dingux.mk"
+			;;
 		gp2x)
 			DEFINES="$DEFINES -DGP2X"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
@@ -2743,6 +2777,9 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
 		ppc-amigaos)
+			# PPC Linker requires this to fix relocation errors
+			CXXFLAGS="$CXXFLAGS -mlongcall"
+
 			# Only static builds link successfully on buildbot
 			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
 			LDFLAGS="$LDFLAGS -static"
@@ -3034,6 +3071,9 @@ case $_backend in
 		case $_sdlversion in
 			1.3.*)
 				add_line_to_config_mk "USE_SDL13 = 1"
+				;;
+			2.0.*)
+				add_line_to_config_mk "USE_SDL2 = 1"
 				;;
 			*)
 				;;
@@ -4481,6 +4521,7 @@ $_def_64bit_type_unsigned
 #else
 $_def_64bit_type_unsigned
 #endif
+#define HAVE_INT64
 EOF
 fi
 
@@ -4508,6 +4549,8 @@ STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
 STATICLIBPATH=$_staticlibpath
+
+ABI := $ABI
 
 BACKEND := $_backend
 MODULES += $MODULES
@@ -4544,6 +4587,7 @@ SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
 SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
 SAVED_ASFLAGS      := $SAVED_ASFLAGS
 SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
+SAVED_SDL_CONFIG   := $SAVED_SDL_CONFIG
 EOF
 
 #

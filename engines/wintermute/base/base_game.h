@@ -123,6 +123,7 @@ public:
 
 	inline BaseObject *getMainObject() { return _mainObject; }
 	inline BaseFont *getSystemFont() { return _systemFont; }
+	inline BaseFont *getVideoFont() { return _videoFont; }
 
 	bool initInput();
 	bool initLoop();
@@ -140,6 +141,7 @@ public:
 
 	// String Table
 	void expandStringByStringTable(char **str) const;
+	void expandStringByStringTable(Common::String &str) const;
 	char *getKeyFromStringTable(const char *str) const;
 
 	void LOG(bool res, const char *fmt, ...);

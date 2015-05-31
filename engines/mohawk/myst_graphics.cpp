@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "image/pict.h"
 
 namespace Mohawk {
@@ -37,16 +38,20 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 
 	_viewport = Common::Rect(544, 332);
 
-	// The original version of Myst could run in 8bpp color too.
-	// However, it dithered videos to 8bpp and they looked considerably
-	// worse (than they already did :P). So we're not even going to
-	// support 8bpp mode in Myst (Myst ME required >8bpp anyway).
-	initGraphics(_viewport.width(), _viewport.height(), true, NULL); // What an odd screen size!
+	if (_vm->getFeatures() & GF_ME) {
+		// High color
+		initGraphics(_viewport.width(), _viewport.height(), true, NULL);
+
+		if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
+			error("Myst ME requires greater than 256 colors to run");
+	} else {
+		// Paletted
+		initGraphics(_viewport.width(), _viewport.height(), true);
+		setBasePalette();
+		setPaletteToScreen();
+	}
 
 	_pixelFormat = _vm->_system->getScreenFormat();
-
-	if (_pixelFormat.bytesPerPixel == 1)
-		error("Myst requires greater than 256 colors to run");
 
 	// Initialize our buffer
 	_backBuffer = new Graphics::Surface();
@@ -101,7 +106,9 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		mhkSurface = new MohawkSurface(pict.getSurface()->convertTo(_pixelFormat));
 	} else {
 		mhkSurface = _bmpDecoder->decodeImage(dataStream);
-		mhkSurface->convertToTrueColor();
+
+		if (_vm->getFeatures() & GF_ME)
+			mhkSurface->convertToTrueColor();
 	}
 
 	assert(mhkSurface);
@@ -151,7 +158,8 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 }
 
 void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest) {
-	Graphics::Surface *surface = findImage(image)->getSurface();
+	MohawkSurface *mhkSurface = findImage(image);
+	Graphics::Surface *surface = mhkSurface->getSurface();
 
 	// Make sure the image is bottom aligned in the dest rect
 	dest.top = dest.bottom - MIN<int>(surface->h, dest.height());
@@ -190,6 +198,13 @@ void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, 
 
 	for (uint16 i = 0; i < height; i++)
 		memcpy(_backBuffer->getBasePtr(dest.left, i + dest.top), surface->getBasePtr(src.left, top + i), width * surface->format.bytesPerPixel);
+
+	if (!(_vm->getFeatures() & GF_ME)) {
+		// Make sure the palette is set
+		assert(mhkSurface->getPalette());
+		memcpy(_palette + 10 * 3, mhkSurface->getPalette() + 10 * 3, (256 - 10 * 2) * 3);
+		setPaletteToScreen();
+	}
 }
 
 void MystGraphics::copyImageToScreen(uint16 image, Common::Rect dest) {
@@ -419,12 +434,16 @@ void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
 
 		for (uint16 x = rect.left; x < rect.right; x++) {
 			if (linePattern[x % 4]) {
-				if (_pixelFormat.bytesPerPixel == 2) {
-					uint16 *dst = (uint16 *)screen->getBasePtr(x, y);
-					*dst = *(const uint16 *)_backBuffer->getBasePtr(x, y);
-				} else {
-					uint32 *dst = (uint32 *)screen->getBasePtr(x, y);
-					*dst = *(const uint32 *)_backBuffer->getBasePtr(x, y);
+				switch (_pixelFormat.bytesPerPixel) {
+				case 1:
+					*((byte *)screen->getBasePtr(x, y)) = *((const byte *)_backBuffer->getBasePtr(x, y));
+					break;
+				case 2:
+					*((uint16 *)screen->getBasePtr(x, y)) = *((const uint16 *)_backBuffer->getBasePtr(x, y));
+					break;
+				case 4:
+					*((uint32 *)screen->getBasePtr(x, y)) = *((const uint32 *)_backBuffer->getBasePtr(x, y));
+					break;
 				}
 			}
 		}
@@ -588,11 +607,11 @@ void MystGraphics::drawRect(Common::Rect rect, RectState state) {
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 
 	if (state == kRectEnabled)
-		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 255, 0));
+		screen->frameRect(rect, (_vm->getFeatures() & GF_ME) ? _pixelFormat.RGBToColor(0, 255, 0) : 250);
 	else if (state == kRectUnreachable)
-		screen->frameRect(rect, _pixelFormat.RGBToColor(0, 0, 255));
+		screen->frameRect(rect, (_vm->getFeatures() & GF_ME) ? _pixelFormat.RGBToColor(0, 0, 255) : 252);
 	else
-		screen->frameRect(rect, _pixelFormat.RGBToColor(255, 0, 0));
+		screen->frameRect(rect, (_vm->getFeatures() & GF_ME) ? _pixelFormat.RGBToColor(255, 0, 0) : 249);
 
 	_vm->_system->unlockScreen();
 }
@@ -629,50 +648,94 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
 }
 
-void MystGraphics::copyBackBufferToScreenWithSaturation(int16 saturation) {
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-
-	for (uint16 y = 0; y < _viewport.height(); y++)
-		for (uint16 x = 0; x < _viewport.width(); x++) {
-			uint32 color;
-			uint8 r, g, b;
-
-			if (_pixelFormat.bytesPerPixel == 2)
-				color = *(const uint16 *)_backBuffer->getBasePtr(x, y);
-			else
-				color = *(const uint32 *)_backBuffer->getBasePtr(x, y);
-
-			_pixelFormat.colorToRGB(color, r, g, b);
-
-			r = CLIP<int16>((int16)r - saturation, 0, 255);
-			g = CLIP<int16>((int16)g - saturation, 0, 255);
-			b = CLIP<int16>((int16)b - saturation, 0, 255);
-
-			color = _pixelFormat.RGBToColor(r, g, b);
-
-			if (_pixelFormat.bytesPerPixel == 2) {
-				uint16 *dst = (uint16 *)screen->getBasePtr(x, y);
-				*dst = color;
-			} else {
-				uint32 *dst = (uint32 *)screen->getBasePtr(x, y);
-				*dst = color;
-			}
-		}
-
-	_vm->_system->unlockScreen();
-	_vm->_system->updateScreen();
-}
-
 void MystGraphics::fadeToBlack() {
-	for (int16 i = 0; i < 256; i += 32) {
-		copyBackBufferToScreenWithSaturation(i);
+	// This is only for the demo
+	assert(!(_vm->getFeatures() & GF_ME));
+
+	// Linear fade in 64 steps
+	for (int i = 63; i >= 0; i--) {
+		byte palette[256 * 3];
+		byte *src = _palette;
+		byte *dst = palette;
+
+		for (uint j = 0; j < sizeof(palette); j++)
+			*dst++ = *src++ * i / 64;
+
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+		_vm->_system->updateScreen();
 	}
 }
 
 void MystGraphics::fadeFromBlack() {
-	for (int16 i = 256; i >= 0; i -= 32) {
-		copyBackBufferToScreenWithSaturation(i);
+	// This is only for the demo
+	assert(!(_vm->getFeatures() & GF_ME));
+
+	copyBackBufferToScreen(_viewport);
+
+	// Linear fade in 64 steps
+	for (int i = 0; i < 64; i++) {
+		byte palette[256 * 3];
+		byte *src = _palette;
+		byte *dst = palette;
+
+		for (uint j = 0; j < sizeof(palette); j++)
+			*dst++ = *src++ * i / 64;
+
+		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+		_vm->_system->updateScreen();
 	}
+
+	// Set the full palette
+	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
+	_vm->_system->updateScreen();
+}
+
+void MystGraphics::clearScreenPalette() {
+	// Set the palette to all black
+	byte palette[256 * 3];
+	memset(palette, 0, sizeof(palette));
+	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+}
+
+void MystGraphics::setBasePalette() {
+	// Entries [0, 9] of the palette
+	static const byte lowPalette[] = {
+		0xFF, 0xFF, 0xFF,
+		0x80, 0x00, 0x00,
+		0x00, 0x80, 0x00,
+		0x80, 0x80, 0x00,
+		0x00, 0x00, 0x80,
+		0x80, 0x00, 0x80,
+		0x00, 0x80, 0x80,
+		0xC0, 0xC0, 0xC0,
+		0xC0, 0xDC, 0xC0,
+		0xA6, 0xCA, 0xF0
+	};
+
+	// Entries [246, 255] of the palette
+	static const byte highPalette[] = {
+		0xFF, 0xFB, 0xF0,
+		0xA0, 0xA0, 0xA4,
+		0x80, 0x80, 0x80,
+		0xFF, 0x00, 0x00,
+		0x00, 0xFF, 0x00,
+		0xFF, 0xFF, 0x00,
+		0x00, 0x00, 0xFF,
+		0xFF, 0x00, 0xFF,
+		0x00, 0xFF, 0xFF,
+		0x00, 0x00, 0x00
+	};
+
+	// Note that 0 and 255 are different from normal Windows.
+	// Myst seems to hack that to white, resp. black (probably for Mac compat).
+
+	memcpy(_palette, lowPalette, sizeof(lowPalette));
+	memset(_palette + sizeof(lowPalette), 0, sizeof(_palette) - sizeof(lowPalette) - sizeof(highPalette));
+	memcpy(_palette + sizeof(_palette) - sizeof(highPalette), highPalette, sizeof(highPalette));
+}
+
+void MystGraphics::setPaletteToScreen() {
+	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
 }
 
 } // End of namespace Mohawk

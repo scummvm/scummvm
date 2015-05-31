@@ -3878,7 +3878,7 @@ void Scene3500::dispatch() {
 	Scene::dispatch();
 
 	// WORKAROUND: The _mazeUI wasn't originally added to the scene in postInit.
-	// This is only needed to fix old savegames 
+	// This is only needed to fix old savegames
 	if (!R2_GLOBALS._sceneObjects->contains(&_mazeUI))
 		_mazeUI.draw();
 

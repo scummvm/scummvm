@@ -30,7 +30,7 @@
 namespace Prince {
 
 class Cursor {
-public: 
+public:
 	Cursor();
 	~Cursor();
 

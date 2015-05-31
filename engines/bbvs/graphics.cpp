@@ -104,9 +104,9 @@ void Screen::drawSprite(Sprite &sprite, int x, int y) {
 	}
 	if (destX + width >= _surface->w)
 		width = _surface->w - destX;
-	
+
 	debug(0, "drawSprite() (%d, %d, %d, %d); skipX: %d; skipY: %d; %d", destX, destY, width, height, skipX, skipY, sprite.type);
-	
+
 	if (sprite.type == 1) {
 		for (int yc = 0; yc < height; ++yc) {
 			byte *source = sprite.getRow(skipY + yc);

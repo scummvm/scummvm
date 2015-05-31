@@ -31,6 +31,10 @@ namespace Sci {
 class ResourceManager;
 class GfxScreen;
 
+// Special flag implemented by us for optimization in palette merge
+#define SCI_PALETTE_MATCH_PERFECT 0x8000
+#define SCI_PALETTE_MATCH_COLORMASK 0xFF
+
 enum ColorRemappingType {
 	kRemappingNone = 0,
 	kRemappingByRange = 1,
@@ -46,6 +50,7 @@ public:
 	~GfxPalette();
 
 	bool isMerging();
+	bool isUsing16bitColorMatch();
 
 	void setDefault();
 	void createFromData(byte *data, int bytesLeft, Palette *paletteOut);
@@ -124,6 +129,7 @@ private:
 
 	bool _sysPaletteChanged;
 	bool _useMerging;
+	bool _use16bitColorMatch;
 
 	Common::Array<PalSchedule> _schedules;
 

@@ -786,10 +786,13 @@ begin_credits("Credits");
 
 			begin_section("Wintermute");
 				add_person("Einar Johan T. S&oslash;m&aring;en", "somaen", "");
+				add_person("Tobia Tesan", "t0by", "");
 			end_section();
             
 			begin_section("ZVision");
 				add_person("Adrian Astley", "RichieSams", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Anton Yarcev", "Zidane", "");
 			end_section();
 
 		end_section();
@@ -1091,6 +1094,12 @@ begin_credits("Credits");
 					add_person("V&iacute;ctor Gonz&aacute;lez", "IlDucci", "Soltys Spanish translation");
 					add_person("Alejandro G&oacute;mez de la Mu&ntilde;oza", "TheFireRed", "Soltys Spanish translation");
 				end_section();
+				begin_section("CGE2");
+					add_person("Arnaud Boutonn&eacute;", "Strangerke", "Sfinx English translation");
+					add_person("Thierry Crozat", "criezy", "Sfinx English translation");
+					add_person("Peter Bozs&oacute;", "uruk", "Sfinx English translation editor");
+					add_person("Ryan Clark", "", "Sfinx English translation editor");
+				end_section();
 				begin_section("Drascula");
 					add_person("Thierry Crozat", "criezy", "Improve French translation");
 				end_section();
@@ -1124,6 +1133,7 @@ begin_credits("Credits");
 				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
 				add_person("Keith Kaisershot", "blitter", "Several Pegasus Prime patches");
 				add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
+				add_person("Stefan Kristiansson", "skristiansson", "Initial work on SDL2 support");
 				add_person("Claudio Matsuoka", "", "Daily Linux builds");
 				add_person("Thomas Mayer", "", "PSP port contributions");
 				add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
@@ -1205,7 +1215,7 @@ begin_credits("Credits");
 			add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
 			add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
 			add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
-			add_person("Yusuke Kamiyamane", "", "For contributing some GUI icons ");
+			add_person("Yusuke Kamiyamane", "", "For contributing some GUI icons");
 			add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
 			add_person("", "Jezar", "For his freeverb filter implementation");
 			add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
@@ -1266,7 +1276,7 @@ begin_credits("Credits");
 
 	add_paragraph(
     "Janusz Wi&#347;niewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon ".
-    "for providing full source code for So&#322;tys and letting us redistribute the game.");
+    "for providing full source code for So&#322;tys and Sfinx and letting us redistribute the games.");
 
 	add_paragraph(
     "Jan Nedoma for providing the sources to the Wintermute-engine, and for his ".

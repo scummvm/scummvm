@@ -29,7 +29,7 @@
 
 class MaemoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	MaemoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 protected:
 	virtual bool loadGFXMode();

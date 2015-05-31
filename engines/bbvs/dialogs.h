@@ -67,13 +67,13 @@ protected:
 	BbvsEngine *_vm;
 
 	void init();
-	
+
 	GUI::ButtonWidget *_buttons[5];
-	
+
 	void gotoMenuScreen(int index);
 	bool canContinue();
 	void gotoScene(int sceneNum);
-	
+
 };
 
 }

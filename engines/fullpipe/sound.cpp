@@ -62,7 +62,7 @@ bool SoundList::load(MfcArchive &file, char *fname) {
 	}
 
 	return true;
-	
+
 }
 
 bool SoundList::loadFile(const char *fname, char *libname) {

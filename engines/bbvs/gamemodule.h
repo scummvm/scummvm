@@ -134,29 +134,29 @@ class GameModule {
 public:
 	GameModule();
 	~GameModule();
-	
+
 	void load(const char *filename);
-	
+
 	int getFieldC();
 	int getButtheadObjectIndex();
-	
+
 	int getGuiSpriteIndex(int index);
 	int getInventoryItemSpriteIndex(int index);
 	int getDialogItemSpriteIndex(int index);
-	
+
 	int getActionsCount();
 	Action *getAction(int index);
-	
+
 	InventoryItemInfo *getInventoryItemInfo(int index);
 
 	CameraInit *getCameraInit(int cameraNum);
-	
+
 	int getSceneExitsCount();
 	SceneExit *getSceneExit(int index);
-	
+
 	int getWalkRectsCount();
 	Common::Rect *getWalkRects();
-	
+
 	int getSceneObjectDefsCount();
 	SceneObjectDef *getSceneObjectDef(int index);
 
@@ -170,44 +170,44 @@ public:
 	int getBgSpriteIndex(int index);
 	int getBgSpritePriority(int index);
 
-	int getSceneSoundsCount(); 
+	int getSceneSoundsCount();
 	SceneSound *getSceneSound(int index);
-	uint getSceneSoundIndex(uint soundNum); 
-	
+	uint getSceneSoundIndex(uint soundNum);
+
 	uint getPreloadSoundsCount();
 	uint getPreloadSound(uint index);
 
 	Animation *getAnimation(int index);
-	
+
 protected:
-	
+
 	int _bgSpriteCount;
 	int *_bgSpriteIndices;
 	int16 *_bgSpritePriorities;
-	
+
 	CameraInit _cameraInits[kCameraInitsCount];
-	
+
 	int _walkRectsCount;
 	Common::Rect *_walkRects;
-	
+
 	int _sceneExitsCount;
 	SceneExit *_sceneExits;
-	
+
 	int _bgObjectsCount;
 	BgObject *_bgObjects;
-	
+
 	int _animationsCount;
 	Animation *_animations;
-	
+
 	int _sceneObjectDefsCount;
 	SceneObjectDef *_sceneObjectDefs;
-	
+
 	int _sceneObjectInitsCount;
 	SceneObjectInit *_sceneObjectInits;
 
 	int _actionsCount;
 	Action *_actions;
-	
+
 	int _sceneSoundsCount;
 	SceneSound *_sceneSounds;
 
@@ -218,16 +218,16 @@ protected:
 	int _inventoryItemSpriteIndices[kInventoryItemSpriteCount];
 	InventoryItemInfo _inventoryItemInfos[kInventoryItemCount];
 	int _dialogItemSpriteIndices[kDialogItemSpriteCount];
-	
+
 	int _fieldC;
 	int _buttheadObjectIndex;
 
 	Common::Point readPoint(Common::SeekableReadStream &s);
 	Common::Rect readRect(Common::SeekableReadStream &s);
 	Conditions readConditions(Common::SeekableReadStream &s);
-	
+
 	void unload();
-	
+
 	void loadBgSprites(Common::SeekableReadStream &s);
 	void loadCameraInits(Common::SeekableReadStream &s);
 	void loadWalkRects(Common::SeekableReadStream &s);
@@ -243,7 +243,7 @@ protected:
 	void loadDialogItemSpriteIndices(Common::SeekableReadStream &s);
 	void loadSceneSounds(Common::SeekableReadStream &s);
 	void loadPreloadSounds(Common::SeekableReadStream &s);
-	
+
 };
 
 } // End of namespace Bbvs

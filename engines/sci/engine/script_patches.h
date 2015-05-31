@@ -74,7 +74,6 @@ struct SciScriptPatcherEntry {
 	const uint16 *patchData;
 };
 
-//#define SCI_SIGNATUREENTRY_TERMINATOR { false, 0, NULL, 0, 0, 0, NULL, NULL }
 #define SCI_SIGNATUREENTRY_TERMINATOR { false, 0, NULL, 0, NULL, NULL }
 
 struct SciScriptPatcherRuntimeEntry {
@@ -92,15 +91,17 @@ public:
 	~ScriptPatcher();
 
 	void processScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
+	bool verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const byte *scriptData, const uint32 scriptSize);
 
 private:
-	void initSignature(const SciScriptPatcherEntry *patchTable, bool isMacSci11);
+	void initSignature(const SciScriptPatcherEntry *patchTable);
 	void enablePatch(const SciScriptPatcherEntry *patchTable, const char *searchDescription);
-	int32 findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize, bool isMacSci11);
-	void applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset, bool isMacSci11);
-	
+	int32 findSignature(const SciScriptPatcherEntry *patchEntry, SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize);
+	void applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
+
 	Selector *_selectorIdTable;
 	SciScriptPatcherRuntimeEntry *_runtimeTable;
+	bool _isMacSci11;
 };
 
 } // End of namespace Sci

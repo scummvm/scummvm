@@ -24,35 +24,60 @@
 #define ZVISION_INPUT_CONTROL_H
 
 #include "zvision/scripting/control.h"
-#include "zvision/strings/string_manager.h"
+#include "zvision/text/text.h"
+#include "zvision/text/string_manager.h"
 
 #include "common/rect.h"
 
+namespace Video {
+	class VideoDecoder;
+}
 
 namespace ZVision {
 
 class InputControl : public Control {
 public:
 	InputControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream);
+	~InputControl();
 
 private:
+	Graphics::Surface *_background;
 	Common::Rect _textRectangle;
 	Common::Rect _headerRectangle;
-	StringManager::TextStyle _textStyle;
+	TextStyleState _stringInit;
+	TextStyleState _stringChooserInit;
 	uint32 _nextTabstop;
-	Common::String _cursorAnimationFileName;
 	bool _focused;
 
 	Common::String _currentInputText;
 	bool _textChanged;
 	uint _cursorOffset;
+	bool _enterPressed;
+	bool _readOnly;
+
+	int16 _txtWidth;
+	int16 _maxTxtWidth;
+	Video::VideoDecoder *_animation;
+	int32 _frameDelay;
+	int16 _frame;
 
 public:
-	void focus() { _focused = true; }
-	void unfocus() { _focused = false; }
-	void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
-	void onKeyDown(Common::KeyState keyState);
+	void focus() {
+		_focused = true;
+		_textChanged = true;
+	}
+	void unfocus() {
+		_focused = false;
+		_textChanged = true;
+	}
+	bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos);
+	bool onKeyDown(Common::KeyState keyState);
 	bool process(uint32 deltaTimeInMillis);
+	void setText(const Common::String &_str);
+	const Common::String getText();
+	bool enterPress();
+	void setReadOnly(bool);
 };
 
 } // End of namespace ZVision

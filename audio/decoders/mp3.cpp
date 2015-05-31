@@ -246,6 +246,23 @@ void MP3Stream::initStream() {
 	_inStream->seek(0, SEEK_SET);
 	_curTime = mad_timer_zero;
 	_posInFrame = 0;
+	
+	// Skip ID3 TAG if any
+	// ID3v1 (beginning with with 'TAG') is located at the end of files. So we can ignore those.
+	// ID3v2 can be located at the start of files and begins with a 10 bytes header, the first 3 bytes being 'ID3'.
+	// The tag size is coded on the last 4 bytes of the 10 bytes header as a 32 bit synchsafe integer.
+	// See http://id3.org/id3v2.4.0-structure for details.
+	char data[10];
+	_inStream->read(data, 10);
+	if (data[0] == 'I' && data[1] == 'D' && data[2] == '3') {
+		uint32 size = data[9] + 128 * (data[8] + 128 * (data[7] + 128 * data[6]));
+		// This size does not include an optional 10 bytes footer. Check if it is present.
+		if (data[5] & 0x10)
+			size += 10;
+		debug("Skipping ID3 TAG (%d bytes)", size + 10);
+		_inStream->seek(size, SEEK_CUR);
+	} else
+		_inStream->seek(0, SEEK_SET);
 
 	// Update state
 	_state = MP3_STATE_READY;

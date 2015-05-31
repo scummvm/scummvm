@@ -53,7 +53,11 @@ void DoubleBufferSDLMixerManager::startAudio() {
 	_soundThreadIsRunning = true;
 
 	// Finally start the thread
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, "ScummVM Double Buffer Mixer", this);
+#else
 	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
+#endif
 
 	SdlMixerManager::startAudio();
 }

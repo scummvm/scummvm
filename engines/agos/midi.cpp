@@ -42,6 +42,8 @@ MidiPlayer::MidiPlayer() {
 	_driver = 0;
 	_map_mt32_to_gm = false;
 
+	_adlibPatches = NULL;
+
 	_enable_sfx = true;
 	_current = 0;
 
@@ -52,7 +54,7 @@ MidiPlayer::MidiPlayer() {
 	_paused = false;
 
 	_currentTrack = 255;
-	_loopTrack = 0;
+	_loopTrackDefault = false;
 	_queuedTrack = 255;
 	_loopQueuedTrack = 0;
 }
@@ -68,6 +70,7 @@ MidiPlayer::~MidiPlayer() {
 	}
 	_driver = NULL;
 	clearConstructs();
+	unloadAdlibPatches();
 }
 
 int MidiPlayer::open(int gameType) {
@@ -84,6 +87,12 @@ int MidiPlayer::open(int gameType) {
 
 	if (_nativeMT32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	/* Disabled due to not sounding right, and low volume level
+	if (gameType == GType_SIMON1 && MidiDriver::getMusicType(dev) == MT_ADLIB) {
+			loadAdlibPatches();
+	}
+	*/
 
 	_map_mt32_to_gm = (gameType != GType_SIMON2 && !_nativeMT32);
 
@@ -114,8 +123,10 @@ void MidiPlayer::send(uint32 b) {
 		else if (_current == &_music)
 			volume = volume * _musicVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && _map_mt32_to_gm) {
-		b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
+	} else if ((b & 0xF0) == 0xC0) {
+		if (_map_mt32_to_gm && !_adlibPatches) {
+			b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
+		}
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		// Only respond to an All Notes Off if this channel
 		// has already been allocated.
@@ -144,7 +155,16 @@ void MidiPlayer::send(uint32 b) {
 			else if (_current == &_music)
 				_current->channel[9]->volume(_current->volume[9] * _musicVolume / 255);
 		}
-		_current->channel[channel]->send(b);
+
+		if ((b & 0xF0) == 0xC0 && _adlibPatches) {
+			// NOTE: In the percussion channel, this function is a
+			//       no-op. Any percussion instruments you hear may
+			//       be the stock ones from adlib.cpp.
+			_driver->sysEx_customInstrument(_current->channel[channel]->getNumber(), 'ADL ', _adlibPatches + 30 * ((b >> 8) & 0xFF));
+		} else {
+			_current->channel[channel]->send(b);
+		}
+
 		if ((b & 0xFFF0) == 0x79B0) {
 			// We have received a "Reset All Controllers" message
 			// and passed it on to the MIDI driver. This may or may
@@ -166,13 +186,13 @@ void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
 		return;
 	} else if (_current == &_sfx) {
 		clearConstructs(_sfx);
-	} else if (_loopTrack) {
+	} else if (_current->loopTrack) {
 		_current->parser->jumpToTick(0);
 	} else if (_queuedTrack != 255) {
 		_currentTrack = 255;
 		byte destination = _queuedTrack;
 		_queuedTrack = 255;
-		_loopTrack = _loopQueuedTrack;
+		_current->loopTrack = _loopQueuedTrack;
 		_loopQueuedTrack = false;
 
 		// Remember, we're still inside the locked mutex.
@@ -300,7 +320,7 @@ void MidiPlayer::setVolume(int musicVol, int sfxVol) {
 void MidiPlayer::setLoop(bool loop) {
 	Common::StackLock lock(_mutex);
 
-	_loopTrack = loop;
+	_loopTrackDefault = loop;
 }
 
 void MidiPlayer::queueTrack(int track, bool loop) {
@@ -355,6 +375,47 @@ void MidiPlayer::resetVolumeTable() {
 	}
 }
 
+void MidiPlayer::loadAdlibPatches() {
+	Common::File ibk;
+
+	if (!ibk.open("mt_fm.ibk"))
+		return;
+
+	if (ibk.readUint32BE() == 0x49424b1a) {
+		_adlibPatches = new byte[128 * 30];
+		byte *ptr = _adlibPatches;
+
+		memset(_adlibPatches, 0, 128 * 30);
+
+		for (int i = 0; i < 128; i++) {
+			byte instr[16];
+
+			ibk.read(instr, 16);
+
+			ptr[0] = instr[0];   // Modulator Sound Characteristics
+			ptr[1] = instr[2];   // Modulator Scaling/Output Level
+			ptr[2] = ~instr[4];  // Modulator Attack/Decay
+			ptr[3] = ~instr[6];  // Modulator Sustain/Release
+			ptr[4] = instr[8];   // Modulator Wave Select
+			ptr[5] = instr[1];   // Carrier Sound Characteristics
+			ptr[6] = instr[3];   // Carrier Scaling/Output Level
+			ptr[7] = ~instr[5];  // Carrier Attack/Delay
+			ptr[8] = ~instr[7];  // Carrier Sustain/Release
+			ptr[9] = instr[9];   // Carrier Wave Select
+			ptr[10] = instr[10]; // Feedback/Connection
+
+			// The remaining six bytes are reserved for future use
+
+			ptr += 30;
+		}
+	}
+}
+
+void MidiPlayer::unloadAdlibPatches() {
+	delete[] _adlibPatches;
+	_adlibPatches = NULL;
+}
+
 static const int simon1_gmf_size[] = {
 	8900, 12166, 2848, 3442, 4034, 4508, 7064, 9730, 6014, 4742, 3138,
 	6570, 5384, 8909, 6457, 16321, 2742, 8968, 4804, 8442, 7717,
@@ -405,7 +466,7 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 
 	uint32 timerRate = _driver->getBaseTempo();
 
-	if (!memcmp(p->data, "GMF\x1", 4)) {
+	if (isGMF) {
 		// The GMF header
 		// 3 BYTES: 'GMF'
 		// 1 BYTE : Major version
@@ -426,11 +487,9 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 		// It seems that 4 corresponds to our base tempo, so
 		// this should be the right way to calculate it.
 		timerRate = (4 * _driver->getBaseTempo()) / p->data[5];
-
-		// According to bug #1004919 calling setLoop() from
-		// within a lock causes a lockup, though I have no
-		// idea when this actually happens.
-		_loopTrack = (p->data[6] != 0);
+		p->loopTrack = (p->data[6] != 0);
+	} else {
+		p->loopTrack = _loopTrackDefault;
 	}
 
 	MidiParser *parser = MidiParser::createParser_SMF();
@@ -500,6 +559,8 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 		p->song_sizes[i] = size;
 	}
 
+	p->loopTrack = _loopTrackDefault;
+
 	if (!sfx) {
 		_currentTrack = 255;
 		resetVolumeTable();
@@ -531,6 +592,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 		in->seek(pos, 0);
 		p->data = (byte *)calloc(size, 1);
 		in->read(p->data, size);
+		p->loopTrack = _loopTrackDefault;
 	} else {
 		error("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 	}
@@ -575,6 +637,7 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 		_currentTrack = 255;
 		resetVolumeTable();
 	}
+	p->loopTrack = _loopTrackDefault;
 	p->parser = parser; // That plugs the power cord into the wall
 }
 

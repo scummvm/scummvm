@@ -21,9 +21,6 @@
 #  - Source
 #    -> The source of the information, useful in case it has to be verified
 #
-# TODO: We really should have a separate target for "Misc FM-TOWNS demos", so
-#       that their description in the launcher doesn't start with "Zak McKracken"
-#
 #
 # Table of email addresse of contributors: Sometimes we need to add new
 #   information to this table, or need to verify the correctness of an
@@ -55,6 +52,7 @@
 maniac	Maniac Mansion
 	2d624d1b214f7faf0094daea65c6d1a6	-1	en	2gs	Apple II	-	-	
 
+	2cb46375dd5cdfd023e2f07e0a21b530	-1	en	C64	C64	Demo	-	Robert Crossfield
 	eea4d9ac2fb6f145945a308e8866915b	-1	en	C64	C64	-	-	
 	439a7f4adf510489981ac52308e7d7a2	-1	de	C64	C64	-	-	
 
@@ -129,6 +127,7 @@ indy3	Indiana Jones and the Last Crusade
 	66236cd1aec24e1d4aff4c4cc93b7e18	-1	fr	DOS	EGA	EGA	?? v1.3, 25 Aug 89	Andrea Petrucci, Peter Eckerlein
 	89cfc425566003ff74b7dc7b3e6fd469	-1	fr	DOS	EGA	EGA	?? v1.3, 25 Aug 89	Jorpho
 	69d70269fafc4445adbb0d223e4f9a3f	5361	en	DOS	EGA	EGA	v1.4, 11/07/89 (5.25\")	Petr Maruska
+	56e8c37a0a08c3a7076f82417461a877	-1	en	DOS	EGA	EGA	v1.4, 7 Nov 89 (3.5\")	Paulo Vicente		
 	6f6ef668c608c7f534fea6e6d3878dde	-1	de	DOS	EGA	EGA	v1.4 from 19 Oct 89	dhewg, Peter Eckerlein
 	eb700bb73ca1cc44a1ad5e4b1a4bdeaf	5361	de	DOS	EGA	EGA	PC-Spiele	a.borque
 	d62d248c3df6ec177405e2cb23d923b2	-1	it	DOS	EGA	EGA	v1.4 from 25 Nov 89	Andrea Petrucci, Peter Eckerlein
@@ -295,12 +294,14 @@ atlantis	Indiana Jones and the Fate of Atlantis
 
 	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	Floppy	Demo	-	
 	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	Floppy	Demo	-	Simon Krumrein, sev
+	12cdc256eae5a461bcc9a49975999841	-1	en	DOS	Floppy	Demo	-	Paulo Vicente
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive	
 	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?	
 	2723fea3dae0cb47768c424b145ae0e7	7932	en	DOS	Floppy	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci, Fingolfin
+	f0ccc12a8704bf57706b42a37f877128	-1	en	DOS	Floppy	Floppy	1.6	Paulo Vicente
 	92b078d9d6d9d751da9c26b8b3075779	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
 	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	Floppy	Floppy	alt?	Nicolas Joly
 	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	Floppy	Floppy	-	Andrej Sinicyn, Andrea Petrucci
@@ -313,7 +314,7 @@ tentacle	Day of the Tentacle
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
 	883af4b0af4f77a92f1dcf1d0a283140	-1	es	All?	-	CD	-	Andrea Petrucci
 	cc04a076779379524ed4d9c5ee3c6fb1	282467632	en	Mac	-	CD	Mac bundle	Fingolfin, Joachim Eberhard
-	ede149fda3edfc1dbd7347e0737cb583	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
+	ede149fda3edfc1dbd7347e0737cb583	282830409	fr	Mac	-	CD	Mac bundle	ThierryFR, Thierry Crozat
 	f73883f13b5a302749a5bad31d909780	-1	de	Mac	-	CD	Mac bundle	morrissey
 
 	c83079157ec765a28de445aec9768d60	7477	en	All	-	Demo	-	Fingolfin
@@ -336,7 +337,7 @@ samnmax	Sam &amp; Max Hit the Road
 	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	-	CD	-	Andrea Petrucci
 	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	-	CD	-	
 	166553538ff320c69edafeee29525419	199195304	en	Mac	-	CD	Mac bundle	Joachim Eberhard
-	3a5d13675e9a23aedac0bac7730f0ac1	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
+	3a5d13675e9a23aedac0bac7730f0ac1	228446581	fr	Mac	-	CD	Mac bundle	ThierryFR, Thierry Crozat
 
 	c3196c5349e53e387aaff1533d95e53a	-1	en	DOS	Floppy	Demo	-	
 	0e4c5d54a0ad4b26132e78b5ea76642a	6485	en	DOS	Floppy	Demo	WIP	Fingolfin
@@ -357,6 +358,7 @@ ft	Full Throttle
 	e72bb4c2b613db2cf50f89ff6350e70a	-1	es	All?	-	-	-	
 	fe381e45117878b1e942cb876b050fd6	513243679	en	Mac	-	-	Mac bundle	Fingolfin
 	04401d747f1a2c1c4b388daff71ed378	535405461	de	Mac	-	-	Mac bundle	Fingolfin
+	403d2ec4d60d3cdae925e6cbf67716d6	489436643	fr	Mac	-	-	Mac bundle	Thierry Crozat
 
 	32a433dea56b86a55b59e4ff7d755711	-1	en	DOS	Demo	Demo	-	
 	9d7b67be003fea60be4dcbd193611936	11164	en	Mac	Demo	Demo	-	Fingolfin
@@ -483,9 +485,9 @@ fbpack	Fatty Bear's Fun Pack
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
-	c0039ad982999c92d0de81910d640fa0	-1	nl	Windows	HE 71	-	-	adutchguy
+	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
-	6d1baa1065ac5f7b210be8ebe4235e49	-1	nl	Mac	HE 73	-	-	daniel9
+	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
@@ -516,7 +518,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	0a295b80f9a9edf818e8e161a0e83830	-1	fr	All	HE 80	-	-	gist974, ThierryFR
 	fce4b8010704b103acfeea9413788f32	-1	de	All	HE 80	-	-	Joachim Eberhard
-	8e9830a6f2702be5b22c8fa0a6aaf977	-1	nl	Mac	HE 80	-	-	daniel9
+	8e9830a6f2702be5b22c8fa0a6aaf977	65305	nl	All	HE 80	-	-	daniel9
 	5057fb0e99e5aa29df1836329232f101	-1	All	Windows	HE 80	-	-	sev
 	ac62d50e39492ee3738b4e83a5ac780f	-1	nl	Windows	HE 80	-	-	joostp
 	151071053a1d0021198216713939521d	-1	en	Windows	HE 80	-	-	vampir_raziel
@@ -564,7 +566,11 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	fa84cb1018103a4ee4e5fa8041c1d0d1	13609	de	Windows	-	Demo	-	George Kormendi
 	ebd324dcf06a4c49e1ba5c231eee1060	-1	us	All	HE 99	Demo	-	sev
 	688328c5bdc4c8ec4145688dfa077bf2	-1	de	All	HE 99	Demo	-	Joachim Eberhard
-	03d3b18ee3fd68114e2a687c871e38d5	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn
+	03d3b18ee3fd68114e2a687c871e38d5	13609	us	Windows	HE 99	Mini Game	-	eriktorbjorn
+	9340b552b0f2dffe6d4f3d13ebebe832	13609	nl	Windows	HE 99	Mini Game	-	Ben Castricum
+	c486e4cfa7bd6f8efcd0740f96f7dde3	13609	fr	Windows	HE 99	Mini Game	-	Ben Castricum
+	7a2b6d8e8a645c9d534c8c4edc38a9c9	13609	it	Windows	HE 99	Mini Game	-	Ben Castricum
+	09b0be55c16cd9e88b5080bf89ff281d	13609	de	Windows	HE 99	Mini Game	-	Ben Castricum
 	16effd200aa6b8abe9c569c3e578814d	-1	nl	All	HE 99	Demo	-	joostp
 	499c958affc394f2a3868f1eb568c3ee	-1	nl	All	HE 99	Demo	-	adutchguy
 	5fdb2ac2483908b065c6e77988338a54	-1	nl	Windows	HE 99	Demo	-	Ben
@@ -577,6 +583,7 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9
+	8f345db2f3f5a25ed6305001957e6f72	41182	nl	All	HE 100	-	-	Ben Castricum
 	b100abf7ff83146df50db78dbd5e9cfa	-1	fr	All	HE 100	-	-	alamaz, gist974
 	4ce2d5b355964bbcb5e5ce73236ef868	-1	ru	Windows	HE 100	-	-	sev
 
@@ -624,9 +631,11 @@ farm	Let's Explore the Farm with Buzzy
 	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	-	-	-	George Kormendi
 	a85856675429fe88051744f755b72f93	-1	en	Windows	-	-	-	Kirben
 	a2386da005672cbd5136f4f27a626c5f	87061	nl	Windows	-	-	-	George Kormendi
+	eeb606c2d2ec877a712a9f20c10bcdda	87034	nl	Mac	-	-	-	Ben Castricum
 	5dda73606533d66a4c3f4f9ea6e842af	87061	ru	Windows	-	-	-	sev
 
 	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
+	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	-	Demo	-	Kirben
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
 	0557df19f046a84c2fdc63507c6616cb	-1	nl	Windows	HE 72	Demo	-	adutchguy
 	8d479e36f35e80257dfc102cf4b8a912	34333	en	Windows	HE 72	Demo	-	khalek, sev
@@ -661,6 +670,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	d4e79c3d8645b8266cd78c325bc35154	60557	us	All	-	-	-	Kirben
 	6a60d395b78b205c93a956100b1bf5ae	-1	de	All	HE 98.5	-	-	EdDammer
 	513f91a9dbe8d5490b39e56a3ac5bbdf	-1	nl	All	HE 98.5	-	-	daniel9
+	2328be0317008ef047eed7912a4b0850	-1	gb	Windows	HE 98.5	-	-	Saleck
 	55f4e9402bec2bded383843123f37c5c	-1	de	Windows	HE 98.5	-	-	WindlePoons
 	e5563c8358443c4352fcddf7402a5e0a	-1	fr	Windows	HE 98.5	-	-	gist974
 	c6907d44f1166941d982864cd42cdc89	-1	de	All	HE 99	-	-	nachbarnebenan
@@ -677,8 +687,9 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
 	2e8a1f76ea33bc5e04347646feee173d	-1	de	All	-	-	-	Joachim Eberhard
+	83e7a9205567dceb456ee35eeaf26ffa	-1	it	All	-	-	-	Saleck
 	aefa244ea034b7cd2041f0a44be7d9ba	-1	en	Mac	-	-	-	pix_climber
-	06c3cf4f31daad8b1cd93153491db9e6	-1	nl	Mac	-	-	-	daniel9
+	06c3cf4f31daad8b1cd93153491db9e6	79382	nl	All	-	-	-	daniel9
 	7410a8ba9795020cd42f171c4320659e	-1	fr	Windows	-	-	-	gist974
 	20176076d708bf14407bcc9bdcd7a418	-1	ru	Windows	-	-	-	sev
 
@@ -686,7 +697,11 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	a654fb60c3b67d6317a7894ffd9f25c5	-1	us	All	-	Demo	-	sev
 	a9f2f04b1ecaab9495b59befffe9bf88	-1	us	All	-	Demo	-	sev
 	0c45eb4baff0c12c3d9dfa889c8070ab	13884	de	All	-	Demo	-	Joachim Eberhard
-	4fe6a2e8df3c4536b278fdd2fbcb181e	-1	en	Windows	-	Mini Game	-	Trekky
+	4fe6a2e8df3c4536b278fdd2fbcb181e	13911	en	Windows	-	Mini Game	-	Trekky
+	24942a4200d99bdb4bdb78f9c7e07027	13911	nl	Windows	-	Mini Game	-	Ben Castricum
+	faa89ab5e67ba4eebb4399f584f7490c	13911	fr	Windows	-	Mini Game	-	Ben Castricum
+	d1a73e87564477c7c2dcc2b8f616ad0b	13911	it	Windows	-	Mini Game	-	Ben Castricum
+	a8fcc3084ad5e3e569722755f205b1ef	13911	de	Windows	-	Mini Game	-	Ben Castricum
 	679855cf61932f9bf995c8f3677380ed	-1	fr	Windows	-	Demo	-	Mevi
 	c8c5baadcbfc8d0372ed4335abace8a7	-1	fr	Windows	-	Demo	-	Mevi
 	784b499c98d07260a30952685758636b	13911	de	Windows	-	Demo	-	George Kormendi
@@ -715,6 +730,7 @@ socks	Pajama Sam's Sock Works
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
+	05d3143827ab4f5d2521a1a47dab8ff2	-1	it	All	HE 98	-	-	Saleck
 	1ed22f601f8b3695804a6583cc3083f1	-1	nl	All	HE 98.5	-	-	daniel9
 	33e989f85da700e2014d00f345cab3d7	-1	fr	Windows	HE 98.5	-	-	gist974
 	b47be81e39a9710f6f595f7b527b60f8	-1	gb	Windows	HE 99	-	-	Reckless
@@ -723,6 +739,7 @@ puttrace	Putt-Putt Enters the Race
 	62050da376483d8edcbd98cd26b6cb57	-1	ru	Windows	HE 99	-	-	sev
 
 	0ac41e2e3d2174e5a042a6b565328dba	13110	us	All	HE 98	Demo	-	sev
+	ee8cfeb76e55d43a01c25e0865a9db76	13135	nl	Mac	HE 98	Demo	-	Ben Castricum
 	6af2419fe3db5c2fdb091ae4e5833770	-1	nl	All	HE 98.5	Demo	-	Kirben
 	663743c03ae0c007f3d665cf631c0e6b	13135	de	All	HE 99	Demo	-	Joachim Eberhard
 	aaa587701cde7e74692c68c1024b85eb	-1	nl	All	HE 99	Demo	-	joostp
@@ -812,7 +829,10 @@ PuttTime	Putt-Putt Travels Through Time
 	59d5cfcc5e672a6e07baae01328b918b	-1	fr	All	HE 90	Demo	-	Kirben
 	fbb697d89d2beca87360a145f467bdae	-1	de	All	HE 90	Demo	-	Joachim Eberhard
 	6b19d0e25cbf720d05822379b8b90ed9	-1	nl	All	HE 90	Demo	-	adutchguy
-	0a6d7b81b850ed4a77811c60c9b5c555	-1	us	Windows	HE 99	Mini Game	-	eriktorbjorn	
+	0a6d7b81b850ed4a77811c60c9b5c555	18458	us	Windows	HE 99	Mini Game	-	eriktorbjorn	
+	a71014c53a6d18c66ef2ea0ee42328e9	18458	nl	Windows	HE 99	Mini Game	-	Ben Castricum
+	8dd4d590685c19bf651b5016e749ead2	18458	fr	Windows	HE 99	Mini Game	-	Ben Castricum
+	aef415cc5dc063e3668359c2657169f3	18458	de	Windows	HE 99	Mini Game	-	Ben Castricum
 	0ab19be9e2a3f6938226638b2a3744fe	-1	us	All	HE 100	Demo	-	khalek
 
 balloon	Putt-Putt and Pep's Balloon-O-Rama
@@ -820,7 +840,7 @@ balloon	Putt-Putt and Pep's Balloon-O-Rama
 	bab0fb81dcb12b8930c5d850b8f2a7de	12800	de	Windows	HE 80	-	-	George Kormendi
 	145bd3373574feb668cc2eea2ec6cf86	-1	ru	Windows	HE 80	-	-	sev
 	27b2ef1653089fe5b897d9cc89ce784f	-1	ru	Windows	HE 80	-	-	George Kormendi
-	2232b0b9411575b1f9961713ebc9de61	-1	All	Windows	HE 80	-	ES and NL	exiltd (ES), Ben Castricum (NL)
+	2232b0b9411575b1f9961713ebc9de61	-1	nl	Windows	HE 80	-	-	Ben Castricum
 	a22af0ad0e3126d19d22707b0267a37d	-1	nl	Windows	HE 80	-	-	Ben Castricum
 	a56a05c6b865b9956639f8c51269e5ab	-1	nl	Mac	HE 80	-	-	Ben Castricum
 	d7b247c26bf1f01f8f7daf142be84de3	-1	en	Windows	HE 99	Updated	-	iziku
@@ -874,14 +894,19 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	f79e60c17cca601e411f1f75e8ee9b5a	51286	All	All	-	-	-	Kirben
 	90e2f0af4f779629695c6394a65bb702	-1	fr	All	-	-	-	gist974, ThierryFR
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
+	3785fd25f7e02b5782bfc5072d8f77c8	-1	it	All	-	-	-	Saleck
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
 	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
-	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
+	71fe97c3108678cf604f14abe342341b	51286	nl	All	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
 	7222f260253f325c21fcfa68b5bfab67	-1	us	All	-	Demo	-	Kirben
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
-	e62056ba675ad65d8854ab3c5ad4b3c0	-1	en	Windows	-	Mini Game	-	Trekky
+	e62056ba675ad65d8854ab3c5ad4b3c0	14689	en	Windows	-	Mini Game	-	Trekky
+	22c7432dc97a821fcfccd480e93e3911	14689	nl	Windows	-	Mini Game	-	Ben Castricum
+	6b10c9977cad9de503642059359792b1	14689	fr	Windows	-	Mini Game	-	Ben Castricum
+	9684c161258d68e0d464d6cab7024b9c	14689	it	Windows	-	Mini Game	-	Ben Castricum
+	7f2578d8d33a9ff525488a2d9ba617e4	14689	de	Windows	-	Mini Game	-	Ben Castricum
 	22de86b2f7ec6e5db745ed1123310b44	15832	fr	Windows	-	Demo	-	George Kormendi
 	204453e33456c4faa26e276229fe5b76	14689	de	Windows	-	Demo	-	George Kormendi
 	19bf6938a94698296bcb0c99c31c91a7	-1	gb	Windows	-	Demo	-	eriktorbjorn

@@ -642,7 +642,7 @@ protected:
 	byte _opcode;
 	byte _currentScript;
 	int _scummStackPos;
-	int _vmStack[150];
+	int _vmStack[256];
 
 	OpcodeEntry _opcodes[256];
 
@@ -654,7 +654,7 @@ protected:
 	int	getScriptSlot();
 
 	void startScene(int room, Actor *a, int b);
-	void startManiac();
+	bool startManiac();
 
 public:
 	void runScript(int script, bool freezeResistant, bool recursive, int *lvarptr, int cycle = 0);
@@ -1362,7 +1362,7 @@ public:
 
 	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
-	
+
 	byte VAR_QUIT_SCRIPT;			// Used in confirmExitDialog()
 
 	// Exists both in V7 and in V72HE:

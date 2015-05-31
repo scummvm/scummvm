@@ -60,7 +60,7 @@ static const BBPoint kInventorySlotPositions[] = {
 	{135,  93}, {134, 145}, { 96, 224}, {128, 224}, {160, 224},
 	{192, 224}, {224, 224}, {240, 224}, {256, 224}, {  0,   0}
 };
-	
+
 static const BBRect kVerbRects[6] = {
 	{-32,  -2, 19, 27}, {-33, -33, 19, 27}, { 12,  -2, 19, 27},
 	{ 13, -33, 19, 27}, {-10,   8, 19, 27}, {-11, -49, 19, 27}
@@ -77,7 +77,7 @@ bool WalkArea::contains(const Common::Point &pt) const {
 
 BbvsEngine::BbvsEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
-	
+
 	_random = new Common::RandomSource("bbvs");
 	_currActionCommandIndex = -1;
 	_buttheadObject = nullptr;
@@ -148,14 +148,14 @@ Common::Error BbvsEngine::run() {
 	_gameModule = new GameModule();
 	_spriteModule = new SpriteModule();
 	_sound = new SoundMan();
-	
+
 	allocSnapshot();
 	memset(_easterEggInput, 0, sizeof(_easterEggInput));
-	
+
 	_gameTicks = 0;
 	_playVideoNumber = 0;
 	_bootSaveSlot = -1;
-	
+
 	memset(_inventoryItemStatus, 0, sizeof(_inventoryItemStatus));
 	memset(_gameVars, 0, sizeof(_gameVars));
 	memset(_sceneVisited, 0, sizeof(_sceneVisited));
@@ -189,7 +189,7 @@ Common::Error BbvsEngine::run() {
 			_playVideoNumber = 0;
 		}
 	}
-	
+
 	writeContinueSavegame();
 
 	freeSnapshot();
@@ -282,20 +282,20 @@ void BbvsEngine::updateGame() {
 		inputTicks = 1;
 		_gameTicks = _system->getMillis();
 	}
-	
+
 	if (inputTicks > 20) {
 		inputTicks = 20;
 		_gameTicks = _system->getMillis();
 	}
-	
+
 	if (inputTicks == 0)
 		return;
-		
+
 	if (_mouseX >= 320 || _mouseY >= 240) {
 		_mouseY = -1;
 		_mouseX = -1;
 	}
-	
+
 	bool done;
 
 	do {
@@ -304,14 +304,14 @@ void BbvsEngine::updateGame() {
 		_mouseButtons &= ~kRightButtonClicked;
 		_keyCode = Common::KEYCODE_INVALID;
 	} while (--inputTicks && _playVideoNumber == 0 && _gameTicks > 0 && !done);
-	
+
 	if (!done && _playVideoNumber == 0 && _gameTicks > 0) {
 		DrawList drawList;
 		buildDrawList(drawList);
 		_screen->drawDrawList(drawList, _spriteModule);
 		drawScreen();
 	}
-	
+
 	_system->delayMillis(10);
 
 }
@@ -329,7 +329,7 @@ void BbvsEngine::updateBackgroundSounds() {
 			_backgroundSoundsActive[i] = 0;
 		}
 	}
-} 
+}
 
 bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCode keyCode) {
 
@@ -339,7 +339,7 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		_bootSaveSlot = -1;
 		return false;
 	}
-	
+
 	if (_newSceneNum != 0) {
 		_gameTicks = 0;
 		return changeScene();
@@ -413,7 +413,7 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		}
 		updateInventory(mouseButtons & kLeftButtonClicked);
 		break;
-	
+
 	case kGSVerbs:
 		_isSaveAllowed = false;
 		updateVerbs();
@@ -426,7 +426,7 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 			}
 		}
 		break;
-	
+
 	case kGSWait:
 	case kGSWaitDialog:
 		_isSaveAllowed = false;
@@ -438,14 +438,14 @@ bool BbvsEngine::update(int mouseX, int mouseY, uint mouseButtons, Common::KeyCo
 		else
 			updateCommon();
 		break;
-	
+
 	case kGSDialog:
 		_isSaveAllowed = true;
 		saveSnapshot();
 		updateDialog(mouseButtons & kLeftButtonClicked);
 		updateCommon();
 		break;
-	
+
 	}
 
 	return true;
@@ -503,7 +503,7 @@ void BbvsEngine::buildDrawList(DrawList &drawList) {
 			// Verbs background
 			drawList.add(_gameModule->getGuiSpriteIndex(13), _verbPos.x - _cameraPos.x,
 				_verbPos.y - _cameraPos.y, 500);
-			// Selected inventory item		
+			// Selected inventory item
 			if (_currInventoryItem >= 0) {
 				drawList.add(_gameModule->getInventoryItemSpriteIndex(2 * _currInventoryItem), _verbPos.x - _cameraPos.x,
 					_verbPos.y - _cameraPos.y + 27, 500);
@@ -538,7 +538,7 @@ void BbvsEngine::updateVerbs() {
 		_mouseCursorSpriteIndex = 0;
 		return;
 	}
-	
+
 	for (int i = 0; i < 6; ++i) {
 		const BBRect &verbRect = kVerbRects[i];
 		const int16 x = _verbPos.x + verbRect.x;
@@ -551,7 +551,7 @@ void BbvsEngine::updateVerbs() {
 			break;
 		}
 	}
-	
+
 	switch (_currVerbNum) {
 	case kVerbLook:
 	case kVerbUse:
@@ -585,7 +585,7 @@ void BbvsEngine::updateDialog(bool clicked) {
 			_gameState = kGSScene;
 		return;
 	}
-	
+
 	int slotX = (_mousePos.x - _cameraPos.x) / 32;
 
 	if (slotX >= _dialogSlotCount) {
@@ -597,7 +597,7 @@ void BbvsEngine::updateDialog(bool clicked) {
 
 	_mouseCursorSpriteIndex = _gameModule->getGuiSpriteIndex(5);
 	_activeItemType = kITDialog;
-	
+
 	// Find the selected dialog item index
 	for (int i = 0; i < 50 && slotX >= 0; ++i) {
 		if (_dialogItemStatus[i]) {
@@ -605,7 +605,7 @@ void BbvsEngine::updateDialog(bool clicked) {
 			_activeItemIndex = i;
 		}
 	}
-	
+
 	// Select the dialog item action if it was clicked
 	if (clicked) {
 		for (int i = 0; i < _gameModule->getActionsCount(); ++i) {
@@ -622,7 +622,7 @@ void BbvsEngine::updateDialog(bool clicked) {
 }
 
 void BbvsEngine::updateInventory(bool clicked) {
-	
+
 	Common::Rect kInvButtonRects[3] = {
 		Common::Rect(97, 13, 97 + 20, 13 + 26),
 		Common::Rect(135, 15, 135 + 46, 15 + 25),
@@ -636,10 +636,10 @@ void BbvsEngine::updateInventory(bool clicked) {
 
 	if (_currVerbNum != kVerbLook && _currVerbNum != kVerbUse && _currVerbNum != kVerbInvItem)
 		_currVerbNum = kVerbUse;
-	
+
 	const int16 mx = _mousePos.x - _cameraPos.x;
 	const int16 my = _mousePos.y - _cameraPos.y;
-	
+
 	// Check inventory exit left/right edge of screen
 	if (mx < 40 || mx > 280) {
 		_mouseCursorSpriteIndex = _gameModule->getGuiSpriteIndex(10);
@@ -652,7 +652,7 @@ void BbvsEngine::updateInventory(bool clicked) {
 		return;
 	}
 
-	// Check hovered/clicked inventory button	
+	// Check hovered/clicked inventory button
 	_inventoryButtonIndex = -1;
 	if (kInvButtonRects[0].contains(mx, my)) {
 		_inventoryButtonIndex = 0;
@@ -677,10 +677,10 @@ void BbvsEngine::updateInventory(bool clicked) {
 	// Find hovered/clicked inventory item
 
 	int currItem = -1;
-	
+
 	if (_currVerbNum == kVerbInvItem)
 		currItem = _currInventoryItem;
-		
+
 	_activeItemType = kITEmpty;
 
 	for (int i = 0; i < 50; ++i) {
@@ -769,7 +769,7 @@ void BbvsEngine::updateScene(bool clicked) {
 			}
 		}
 	}
-	
+
 	for (int i = 0; i < _gameModule->getBgObjectsCount(); ++i) {
 		BgObject *bgObject = _gameModule->getBgObject(i);
 		if (lastPriority <= bgObject->rect.bottom && bgObject->rect.contains(_mousePos)) {
@@ -921,7 +921,7 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 		return false;
 
 	case kActionCmdWalkObject:
-		{			
+		{
 			SceneObject *sceneObject = &_sceneObjects[actionCommand->sceneObjectIndex];
 			debug(5, "[%s] walks from (%d, %d) to (%d, %d)", sceneObject->sceneObjectDef->name,
 				sceneObject->x >> 16, sceneObject->y >> 16, actionCommand->walkDest.x, actionCommand->walkDest.y);
@@ -998,14 +998,14 @@ bool BbvsEngine::performActionCommand(ActionCommand *actionCommand) {
 
 bool BbvsEngine::processCurrAction() {
 	bool actionsFinished = false;
-	
+
 	if (_sceneObjectActions.size() == 0) {
-	
+
 		for (uint i = 0; i < _currAction->actionCommands.size(); ++i) {
 			ActionCommand *actionCommand = &_currAction->actionCommands[i];
 			if (actionCommand->timeStamp != 0)
 				break;
-				
+
 			if (actionCommand->cmd == kActionCmdMoveObject || actionCommand->cmd == kActionCmdAnimObject) {
 				SceneObjectAction *sceneObjectAction = 0;
 				// See if there's already an entry for the SceneObject
@@ -1027,14 +1027,14 @@ bool BbvsEngine::processCurrAction() {
 					sceneObjectAction->animationIndex = actionCommand->param;
 				}
 			}
-			
+
 			if (actionCommand->cmd == kActionCmdSetCameraPos) {
 				_currCameraNum = actionCommand->param;
 				_newCameraPos = _gameModule->getCameraInit(actionCommand->param)->cameraPos;
 			}
 
 		}
-		
+
 		// Delete entries for SceneObjects without anim
 		for (uint i = 0; i < _sceneObjectActions.size();) {
 			if (!_sceneObjects[_sceneObjectActions[i].sceneObjectIndex].anim)
@@ -1107,7 +1107,7 @@ void BbvsEngine::updateCommon() {
 		if (doActionCommands) {
 
 			ActionCommand *actionCommand = &_currAction->actionCommands[_currActionCommandIndex];
-			
+
 			while (actionCommand->timeStamp == _currActionCommandTimeStamp &&
 				_currActionCommandIndex < (int)_currAction->actionCommands.size()) {
 				if (!performActionCommand(actionCommand)) {
@@ -1161,7 +1161,7 @@ void BbvsEngine::updateCommon() {
 			}
 			updateWalkObject(sceneObject);
 		}
-		
+
 		if (sceneObject->walkCount > 0 && sceneObject->turnCount == 0) {
 			debug(5, "walk step, xIncr: %d, yIncr: %d", sceneObject->xIncr, sceneObject->yIncr);
 			sceneObject->x += sceneObject->xIncr;
@@ -1226,7 +1226,7 @@ void BbvsEngine::updateCommon() {
 			}
 		}
 	}
-	
+
 	if (_cameraPos.x < _newCameraPos.x)
 		++_cameraPos.x;
 	if (_cameraPos.x > _newCameraPos.x)
@@ -1235,7 +1235,7 @@ void BbvsEngine::updateCommon() {
 		++_cameraPos.y;
 	if (_cameraPos.y > _newCameraPos.y)
 		--_cameraPos.y;
-	
+
 	// Check if Butthead is inside a scene exit
 	if (_newSceneNum == 0 && !_currAction && _buttheadObject) {
 		int16 buttheadX = _buttheadObject->x >> 16;
@@ -1314,13 +1314,13 @@ void BbvsEngine::stopSounds() {
 
 bool BbvsEngine::runMinigame(int minigameNum) {
 	debug(0, "BbvsEngine::runMinigame() minigameNum: %d", minigameNum);
-	
+
 	bool fromMainGame = _currSceneNum != kMainMenu;
-	
+
 	_sound->unloadSounds();
-		
+
 	Minigame *minigame = 0;
-	
+
 	switch (minigameNum) {
 	case kMinigameBbLoogie:
 		minigame = new MinigameBbLoogie(this);
@@ -1338,9 +1338,9 @@ bool BbvsEngine::runMinigame(int minigameNum) {
 		error("Incorrect minigame number %d", minigameNum);
 		break;
 	}
-	
+
 	bool minigameResult = minigame->run(fromMainGame);
-	
+
 	delete minigame;
 
 	// Check if the principal was hit with a megaloogie in the loogie minigame
@@ -1370,11 +1370,11 @@ void BbvsEngine::checkEasterEgg(char key) {
 		"SKCUS",
 		"NAMTAH"
 	};
-	
+
 	static const int kEasterEggLengths[] = {
 		7, 5, 5, 6
 	};
-	
+
 	if (_currSceneNum == kCredits) {
 		memcpy(&_easterEggInput[1], &_easterEggInput[0], 6);
 		_easterEggInput[0] = key;

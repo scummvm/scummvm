@@ -32,6 +32,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/features.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
@@ -354,13 +355,16 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
+	
+	uint16 languageSplitter = 0;
+	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, sep);
 
 #ifdef ENABLE_SCI32
 	if (g_sci->_gfxText32)
-		g_sci->_gfxText32->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gfxText32->kernelTextSize(splitText.c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	else
 #endif
-		g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font_nr, maxwidth, &textWidth, &textHeight);
 
 	// One of the game texts in LB2 German contains loads of spaces in
 	// its end. We trim the text here, otherwise the graphics code will
@@ -376,7 +380,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 			// Copy over the trimmed string...
 			s->_segMan->strcpy(argv[1], text.c_str());
 			// ...and recalculate bounding box dimensions
-			g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+			g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font_nr, maxwidth, &textWidth, &textHeight);
 		}
 	}
 
@@ -396,6 +400,12 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	int sleep_time = argv[0].toUint16();
 
 	s->wait(sleep_time);
+
+	if (s->_delayedRestoreGame) {
+		// delayed restore game from ScummVM menu got triggered
+		gamestate_delayedrestore(s);
+		return NULL_REG;
+	}
 
 	return s->r_acc;
 }
@@ -818,16 +828,29 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
 
+	uint16 languageSplitter = 0;
+	Common::String splitText;
+	
+	switch (type) {
+	case SCI_CONTROLS_TYPE_BUTTON:
+	case SCI_CONTROLS_TYPE_TEXTEDIT:
+		splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, NULL);
+		break;
+	case SCI_CONTROLS_TYPE_TEXT:
+		splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
+		break;
+	}
+
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
 		debugC(kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
-		g_sci->_gfxControls16->kernelDrawButton(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
+		g_sci->_gfxControls16->kernelDrawButton(rect, controlObject, splitText.c_str(), languageSplitter, fontId, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
-		g_sci->_gfxControls16->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		g_sci->_gfxControls16->kernelDrawText(rect, controlObject, splitText.c_str(), languageSplitter, fontId, alignment, style, hilite);
 		s->r_acc = g_sci->_gfxText16->allocAndFillReferenceRectArray();
 		return;
 
@@ -841,7 +864,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			writeSelectorValue(s->_segMan, controlObject, SELECTOR(cursor), cursorPos);
 		}
 		debugC(kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
-		g_sci->_gfxControls16->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
+		g_sci->_gfxControls16->kernelDrawTextEdit(rect, controlObject, splitText.c_str(), languageSplitter, fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
@@ -939,8 +962,9 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 		if (!textReference.isNull()) {
 			Common::String text = s->_segMan->getString(textReference);
-			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav")) {
+			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav") || (text == "a:gloire3.sauv")) {
 				// Remove "a:" from hero quest / quest for glory export default filenames
+				// The french version of Quest For Glory 3 uses "gloire3.sauv". It seems a translator translated the filename.
 				text.deleteChar(0);
 				text.deleteChar(0);
 				s->_segMan->strcpy(textReference, text.c_str());
@@ -1165,8 +1189,11 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		argc--; argc--; argv++; argv++;
 		text = g_sci->getKernel()->lookupText(textp, index);
 	}
+	
+	uint16 languageSplitter = 0;
+	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 
-	return g_sci->_gfxPaint16->kernelDisplay(g_sci->strSplit(text.c_str()).c_str(), argc, argv);
+	return g_sci->_gfxPaint16->kernelDisplay(splitText.c_str(), languageSplitter, argc, argv);
 }
 
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {

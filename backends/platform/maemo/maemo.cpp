@@ -35,10 +35,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-
-#include <SDL/SDL_syswm.h>
-#include <X11/Xutil.h>
-
 namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
@@ -84,6 +80,15 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 }
 #endif
 
+void OSystem_SDL_Maemo::init() {
+	// Use an iconless window for Maemo
+	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
+	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
+	_window = new SdlIconlessWindow();
+
+	OSystem_POSIX::init();
+}
+
 void OSystem_SDL_Maemo::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
@@ -93,7 +98,7 @@ void OSystem_SDL_Maemo::initBackend() {
 		_eventSource = new MaemoSdlEventSource();
 
 	if (_graphicsManager == 0)
-		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource);
+		_graphicsManager = new MaemoSdlGraphicsManager(_eventSource, _window);
 
 	if (_eventObserver == 0)
 		_eventObserver = new MaemoSdlEventObserver((MaemoSdlEventSource *)_eventSource);
@@ -176,12 +181,6 @@ const Maemo::Model OSystem_SDL_Maemo::detectModel() {
 			return *model;
 	}
 	return *model;
-}
-
-void OSystem_SDL_Maemo::setupIcon() {
-	// no Maemo version needs setupIcon
-	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
-	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
 }
 
 #ifdef ENABLE_KEYMAPPER

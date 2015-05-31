@@ -452,8 +452,16 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
 	// F7 is used to skip cutscenes in the Commodote 64 version of Maniac Mansion
 	} else if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformC64) {
-		if (lastKeyHit.keycode == Common::KEYCODE_F7 && lastKeyHit.hasFlags(0))
-			lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+		// Demo always F7 to be pressed to restart
+		if (_game.features & GF_DEMO) {
+			if (_roomResource != 0x2D && lastKeyHit.keycode == Common::KEYCODE_F7 && lastKeyHit.hasFlags(0)) {
+				restart();
+				return;
+			}
+		} else {
+			if (lastKeyHit.keycode == Common::KEYCODE_F7 && lastKeyHit.hasFlags(0))
+				lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
+		}
 	// 'B' is used to skip cutscenes in the NES version of Maniac Mansion
 	} else if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
 		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_SHIFT))

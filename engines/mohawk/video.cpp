@@ -53,6 +53,8 @@ bool VideoEntry::endOfVideo() {
 }
 
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
+	// Set dithering enabled, if required
+	_enableDither = _vm->getGameType() == GType_MYST && !(_vm->getFeatures() & GF_ME);
 }
 
 VideoManager::~VideoManager() {
@@ -230,16 +232,23 @@ bool VideoManager::updateMovies() {
 				Graphics::PixelFormat pixelFormat = _vm->_system->getScreenFormat();
 
 				if (frame->format != pixelFormat) {
-					// We don't support downconverting to 8bpp
-					if (pixelFormat.bytesPerPixel == 1)
-						error("Cannot convert high color video frame to 8bpp");
+					// We don't support downconverting to 8bpp without having
+					// support in the codec. Set _enableDither if shows up.
+					if (pixelFormat.bytesPerPixel == 1) {
+						warning("Cannot convert high color video frame to 8bpp");
+						delete _videoStreams[i].video;
+						_videoStreams[i].clear();
+						continue;
+					}
 
 					// Convert to the current screen format
 					convertedFrame = frame->convertTo(pixelFormat, _videoStreams[i]->getPalette());
 					frame = convertedFrame;
 				} else if (pixelFormat.bytesPerPixel == 1 && _videoStreams[i]->hasDirtyPalette()) {
 					// Set the palette when running in 8bpp mode only
-					_vm->_system->getPaletteManager()->setPalette(_videoStreams[i]->getPalette(), 0, 256);
+					// Don't do this for Myst, which has its own per-stack handling
+					if (_vm->getGameType() != GType_MYST)
+						_vm->_system->getPaletteManager()->setPalette(_videoStreams[i]->getPalette(), 0, 256);
 				}
 
 				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
@@ -394,6 +403,9 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	entry.loop = loop;
 	entry.enabled = true;
 
+	// Enable dither if necessary
+	checkEnableDither(entry);
+
 	entry->start();
 
 	// Search for any deleted videos so we can take a formerly used slot
@@ -431,6 +443,10 @@ VideoHandle VideoManager::createVideoHandle(const Common::String &filename, uint
 	}
 
 	entry->loadStream(file);
+
+	// Enable dither if necessary
+	checkEnableDither(entry);
+
 	entry->setVolume(volume);
 	entry->start();
 
@@ -549,6 +565,24 @@ void VideoManager::setVideoRate(VideoHandle handle, const Common::Rational &rate
 void VideoManager::pauseMovie(VideoHandle handle, bool pause) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle]->pauseVideo(pause);
+}
+
+void VideoManager::checkEnableDither(VideoEntry &entry) {
+	// If we're not dithering, bail out
+	if (!_enableDither)
+		return;
+
+	// Set the palette
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	entry->setDitheringPalette(palette);
+
+	if (entry->getPixelFormat().bytesPerPixel != 1) {
+		if (entry.filename.empty())
+			error("Failed to set dither for video %d", entry.id);
+		else
+			error("Failed to set dither for video %s", entry.filename.c_str());
+	}
 }
 
 } // End of namespace Mohawk

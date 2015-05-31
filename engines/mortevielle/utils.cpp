@@ -234,6 +234,7 @@ void MortevielleEngine::setMousePos(const Common::Point &pt) {
 void MortevielleEngine::delay(int amount) {
 	uint32 endTime = g_system->getMillis() + amount;
 
+	g_system->showMouse(false);
 	while (g_system->getMillis() < endTime) {
 		if (g_system->getMillis() > (_lastGameFrame + GAME_FRAME_DELAY)) {
 			_lastGameFrame = g_system->getMillis();
@@ -244,6 +245,7 @@ void MortevielleEngine::delay(int amount) {
 
 		g_system->delayMillis(10);
 	}
+	g_system->showMouse(true);
 }
 
 /**
@@ -389,7 +391,7 @@ void MortevielleEngine::setTextColor(int col) {
  */
 void MortevielleEngine::prepareScreenType1() {
 	// Large drawing
-	_screenSurface->drawBox(0, 11, 512, 164, 15);
+	_screenSurface->drawBox(0, 11, 512, 163, 15);
 }
 
 /**
@@ -705,11 +707,11 @@ void MortevielleEngine::displayAloneText() {
 	Common::String sAlone = getEngineString(S_ALONE);
 
 	clearUpperRightPart();
-	_screenSurface->putxy(580 - (_screenSurface->getStringWidth(sYou) / 2), 30);
+	_screenSurface->putxy(560, 30);
 	_screenSurface->drawString(sYou, 4);
-	_screenSurface->putxy(580 - (_screenSurface->getStringWidth(sAre) / 2), 50);
+	_screenSurface->putxy(560, 50);
 	_screenSurface->drawString(sAre, 4);
-	_screenSurface->putxy(580 - (_screenSurface->getStringWidth(sAlone) / 2), 70);
+	_screenSurface->putxy(560, 70);
 	_screenSurface->drawString(sAlone, 4);
 
 	_currBitIndex = 0;
@@ -1357,6 +1359,7 @@ void MortevielleEngine::endSearch() {
 	_heroSearching = false;
 	_obpart = false;
 	_searchCount = 0;
+	_is = 0;
 	_menu->unsetSearchMenu();
 }
 
@@ -1379,7 +1382,7 @@ void MortevielleEngine::gotoDiningRoom() {
 		showPeoplePresent(_currBitIndex);
 		_caff = 77;
 		drawPictureWithText();
-		_screenSurface->drawBox(223, 47, 155, 92, 15);
+		_screenSurface->drawBox(223, 47, 155, 91, 15);
 		handleDescriptionText(2, 33);
 		testKey(false);
 		menuUp();
@@ -1467,6 +1470,7 @@ void MortevielleEngine::gameLoaded() {
 	_num = 0;
 	_startTime = 0;
 	_endTime = 0;
+	_is = 0;
 	_searchCount = 0;
 	_roomDoorId = OWN_ROOM;
 	_syn = true;
@@ -1653,11 +1657,11 @@ void MortevielleEngine::clearDescriptionBar() {
 	_mouse->hideMouse();
 	if (_largestClearScreen) {
 		_screenSurface->fillRect(0, Common::Rect(1, 176, 633, 199));
-		_screenSurface->drawBox(0, 176, 634, 23, 15);
+		_screenSurface->drawBox(0, 175, 634, 24, 15);
 		_largestClearScreen = false;
 	} else {
 		_screenSurface->fillRect(0, Common::Rect(1, 176, 633, 190));
-		_screenSurface->drawBox(0, 176, 634, 14, 15);
+		_screenSurface->drawBox(0, 175, 634, 15, 15);
 	}
 	_mouse->showMouse();
 }
@@ -1691,7 +1695,7 @@ void MortevielleEngine::clearUpperRightPart() {
 	else if (_coreVar._faithScore > 65)
 		st = getEngineString(S_MALSAINE);
 
-	int x1 = 580 - (_screenSurface->getStringWidth(st) / 2);
+	int x1 = 574 - (_screenSurface->getStringWidth(st) / 2);
 	_screenSurface->putxy(x1, 92);
 	_screenSurface->drawString(st, 4);
 
@@ -1722,6 +1726,22 @@ void MortevielleEngine::showMoveMenuAlert() {
  * @remarks	Originally called 'dialpre'
  */
 void MortevielleEngine::showConfigScreen() {
+	// FIXME: need a DOS palette, index 9 (light blue). Also we should show DOS font here
+	Common::String tmpStr;
+	int width, cy = 0;
+	clearScreen();
+ 	do {
+ 		++cy;
+ 		tmpStr = getString(cy + kStartingScreenStringIndex);
+ 		width = _screenSurface->getStringWidth(tmpStr);
+ 		_text->displayStr(tmpStr, 320 - width / 2, cy * 8, 80, 1, 2);
+ 	} while (cy != 20);
+
+ 	int ix = 0;
+ 	do {
+ 		++ix;
+ 	} while (!(keyPressed() || ix == 0x5e5));
+
 	_crep = 998;
 }
 
@@ -2124,9 +2144,11 @@ void MortevielleEngine::showTitleScreen() {
 	_caff = 51;
 	_text->taffich();
 	testKeyboard();
+	delay(DISK_ACCESS_DELAY);
 	clearScreen();
 	draw(0, 0);
 
+	// FIXME: should be a DOS font here
 	Common::String cpr = "COPYRIGHT 1989 : LANKHOR";
 	_screenSurface->putxy(104 + 72 * kResolutionScaler, 185);
 	_screenSurface->drawString(cpr, 0);
@@ -2521,6 +2543,18 @@ void MortevielleEngine::handleDescriptionText(int f, int mesgId) {
 				_coreVar._pctHintFound[10] = '*';
 			}
 			break;
+		case 7: {
+			prepareScreenType3();
+			Common::String tmpStr = getString(mesgId);
+			// CHECKME: original code seems to consider one extra character
+			// See text position in the 3rd intro screen
+			int size = tmpStr.size() + 1;
+			if (size < 40)
+				_text->displayStr(tmpStr, 252 - size * 3, 86, 50, 3, 5);
+			else
+				_text->displayStr(tmpStr, 144, 86, 50, 3, 5);
+			}
+			break;
 		default:
 			break;
 		}
@@ -2870,10 +2904,10 @@ void MortevielleEngine::drawPicture() {
 	clearUpperLeftPart();
 	if (_caff > 99) {
 		draw(60, 33);
-		_screenSurface->drawBox(118, 32, 291, 122, 15);         // Medium box
+		_screenSurface->drawBox(118, 32, 291, 121, 15);         // Medium box
 	} else if (_caff > 69) {
 		draw(112, 48);           // Heads
-		_screenSurface->drawBox(222, 47, 155, 92, 15);
+		_screenSurface->drawBox(222, 47, 155, 91, 15);
 	} else {
 		draw(0, 12);
 		prepareScreenType1();
@@ -2911,6 +2945,9 @@ void MortevielleEngine::drawPicture() {
 	}
 }
 
+/**
+ * @remarks	Originally called 'afdes'
+ */
 void MortevielleEngine::drawPictureWithText() {
 	_text->taffich();
 	drawPicture();
@@ -2968,6 +3005,26 @@ void MortevielleEngine::displayNarrativePicture(int af, int ob) {
 	_caff = af;
 	_currMenu = OPCODE_NONE;
 	_crep = 998;
+}
+
+/**
+ * Display a message switching from a screen to another.
+ * @remarks	Originally called 'messint'
+ */
+void MortevielleEngine::displayInterScreenMessage(int mesgId) {
+	clearUpperLeftPart();
+	clearDescriptionBar();
+	clearVerbBar();
+
+	GfxSurface surface;
+	surface.decode(_rightFramePict + 1008);
+	surface._offset.x = 80;
+	surface._offset.y = 40;
+	setPal(90);
+	_screenSurface->drawPicture(surface, 0, 0);
+	_screenSurface->drawPicture(surface, 0, 70);
+	handleDescriptionText(7, mesgId);
+	delay(DISK_ACCESS_DELAY);
 }
 
 /**
@@ -3072,7 +3129,7 @@ void MortevielleEngine::menuUp() {
  */
 void MortevielleEngine::drawDiscussionBox() {
 	draw(10, 80);
-	_screenSurface->drawBox(18, 79, 155, 92, 15);
+	_screenSurface->drawBox(18, 79, 155, 91, 15);
 }
 
 /**
@@ -3097,7 +3154,7 @@ void MortevielleEngine::putObject() {
  */
 void MortevielleEngine::addObjectToInventory(int objectId) {
 	int i;
-	
+
 	for (i = 1; (i <= 5) && (_coreVar._inventory[i] != 0); i++)
 		;
 
@@ -3178,6 +3235,7 @@ void MortevielleEngine::prepareNextObject() {
 	} while ((objId == 0) && (_searchCount <= 9));
 
 	if ((objId != 0) && (_searchCount < 11)) {
+		_is++;
 		_caff = objId;
 		_crep = _caff + 400;
 		if (_currBitIndex != 0)

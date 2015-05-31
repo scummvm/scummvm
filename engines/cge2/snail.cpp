@@ -92,7 +92,7 @@ void CommandHandler::runCommand() {
 				}
 				_textDelay = false;
 			}
-			
+
 			if (_vm->_talk && tailCmd._commandType != kCmdPause)
 				break;
 		}
@@ -332,7 +332,7 @@ void CGE2Engine::snRSeq(Sprite *spr, int val) {
 void CGE2Engine::snSend(Sprite *spr, int val) {
 	if (!spr)
 		return;
-	
+
 	// Sending", spr->_file
 	// from scene", spr->_scene
 	// to scene", val
@@ -691,7 +691,7 @@ Sprite *CGE2Engine::expandSprite(Sprite *spr) {
 void CGE2Engine::qGame() {
 	// Write out the user's progress
 	saveGame(0, Common::String("Automatic Savegame"));
-	
+
 	busy(false);
 	_vga->sunset();
 	_endGame = true;
@@ -853,13 +853,13 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 				if (s == spr)
 					break;
 			}
-			
+
 			_commandHandler->addCommand(c->_commandType, c->_ref, c->_val, spr);
 
 			++c;
 		}
 	}
-	
+
 }
 
 } // End of namespace CGE2.

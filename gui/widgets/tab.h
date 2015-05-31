@@ -28,7 +28,7 @@
 #include "common/array.h"
 
 namespace GUI {
-	
+
 enum {
 	kTabForwards = 1,
 	kTabBackwards = -1

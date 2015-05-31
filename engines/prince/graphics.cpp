@@ -194,7 +194,7 @@ void GraphicsMan::drawTransparentDrawNode(Graphics::Surface *screen, DrawNode *d
 /**
  * Similar to drawTransparentDrawNode but with additional anti-aliasing code for sprite drawing.
  * Edge smoothing is based on 256 x 256 table of colors transition.
- * Algorithm is checking if currently drawing pixel is located next to the edge of sprite and if it makes jagged line. 
+ * Algorithm is checking if currently drawing pixel is located next to the edge of sprite and if it makes jagged line.
  * If it does then this pixel is set with color from transition table calculated of original background pixel color
  * and sprite's edge pixel color.
  */

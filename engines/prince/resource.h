@@ -41,13 +41,13 @@ namespace Resource {
 	bool loadResource(T *resource, const char *resourceName, bool required) {
 		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
 		if (!stream) {
-			if (required) 
+			if (required)
 				error("Can't load %s", resourceName);
 			return false;
 		}
 
 		return loadFromStream(*resource, *stream);
-	} 
+	}
 
 	template <typename T>
 	bool loadResource(Common::Array<T> &array, Common::SeekableReadStream &stream, bool required = true) {
@@ -82,7 +82,7 @@ namespace Resource {
 		}
 
 		// FIXME: This is stupid. Maybe loadFromStream should be helper method that returns initiailzed object
-		while (true) {	
+		while (true) {
 			T* t = new T();
 			if (!t->loadFromStream(*stream)) {
 				delete t;

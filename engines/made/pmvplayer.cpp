@@ -37,16 +37,18 @@
 
 namespace Made {
 
-PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(NULL), _vm(vm), _mixer(mixer) {
+PmvPlayer::PmvPlayer(MadeEngine *vm, Audio::Mixer *mixer) : _fd(nullptr), _vm(vm), _mixer(mixer) {
+	_audioStream = nullptr;
+	_surface = nullptr;
+	_aborted = false;
 }
 
 PmvPlayer::~PmvPlayer() {
 }
 
 bool PmvPlayer::play(const char *filename) {
-
 	_aborted = false;
-	_surface = NULL;
+	_surface = nullptr;
 
 	_fd = new Common::File();
 	if (!_fd->open(filename)) {
@@ -81,8 +83,11 @@ bool PmvPlayer::play(const char *filename) {
 	// results to sound being choppy. Therefore, we set them to more
 	// "common" values here (11025 instead of 11127 and 22050 instead
 	// of 22254)
-	if (soundFreq == 11127) soundFreq = 11025;
-	if (soundFreq == 22254) soundFreq = 22050;
+	if (soundFreq == 11127)
+		soundFreq = 11025;
+
+	if (soundFreq == 22254)
+		soundFreq = 22050;
 
 	for (int i = 0; i < 22; i++) {
 		int unk = _fd->readUint16LE();

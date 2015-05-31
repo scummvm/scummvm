@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -37,6 +37,7 @@ AudioPlayer::AudioPlayer(Audio::Mixer *mixer, uint32 gameID) : _mixer(mixer), _g
 
 AudioPlayer::~AudioPlayer() {
 	_dsrEntries.clear();
+	_filename = "";
 }
 
 bool AudioPlayer::isPlaying() const {
@@ -65,25 +66,27 @@ void AudioPlayer::setDefaultSoundGroup() {
 }
 
 void AudioPlayer::setSoundGroup(const Common::String &filename) {
-	_dsrEntries.clear();
+	if (_filename != filename) {
+		_dsrEntries.clear();
 
-	_filename = filename;
-	_dsrFile.open(filename);
+		_filename = filename;
+		_dsrFile.open(filename);
 
-	// Read header
-	uint16 entryCount = _dsrFile.readUint16LE();
+		// Read header
+		uint16 entryCount = _dsrFile.readUint16LE();
 
-	for (uint16 i = 0; i < entryCount; i++) {
-		DSREntry newEntry;
-		newEntry.frequency = _dsrFile.readUint16LE();
-		newEntry.channels = _dsrFile.readUint32LE();
-		newEntry.compSize = _dsrFile.readUint32LE();
-		newEntry.uncompSize = _dsrFile.readUint32LE();
-		newEntry.offset = _dsrFile.readUint32LE();
-		_dsrEntries.push_back(newEntry);
+		for (uint16 i = 0; i < entryCount; i++) {
+			DSREntry newEntry;
+			newEntry.frequency = _dsrFile.readUint16LE();
+			newEntry.channels = _dsrFile.readUint32LE();
+			newEntry.compSize = _dsrFile.readUint32LE();
+			newEntry.uncompSize = _dsrFile.readUint32LE();
+			newEntry.offset = _dsrFile.readUint32LE();
+			_dsrEntries.push_back(newEntry);
+		}
+
+		_dsrFile.close();
 	}
-
-	_dsrFile.close();
 }
 
 void AudioPlayer::playSound(int soundIndex, bool loop) {
@@ -124,6 +127,10 @@ void AudioPlayer::playSound(int soundIndex, bool loop) {
 	fwrite(_dsrFile.dsrEntries[soundIndex]->data, _dsrFile.dsrEntries[soundIndex].uncompSize, 1, destFile);
 	fclose(destFile);
 	*/
+}
+
+void AudioPlayer::stop() {
+	_mixer->stopHandle(_handle);
 }
 
 } // End of namespace M4

@@ -51,30 +51,30 @@ public:
 	virtual ~Minigame();
 	virtual bool run(bool fromMainGame) = 0;
 protected:
-	BbvsEngine *_vm;	
+	BbvsEngine *_vm;
 	SpriteModule *_spriteModule;
-	
+
 	int _gameState;
 	int _gameTicks;
 	bool _gameResult;
 	bool _gameDone;
 	bool _fromMainGame;
 	int _hiScoreTable[kMinigameCount];
-	
+
 	int _backgroundSpriteIndex, _titleScreenSpriteIndex;
-	
+
 	const ObjAnimation *_numbersAnim;
-	
+
 	int drawNumber(DrawList &drawList, int number, int x, int y);
 
 	void playSound(uint index, bool loop = false);
 	void stopSound(uint index);
 	bool isSoundPlaying(uint index);
 	bool isAnySoundPlaying(const uint *indices, uint count);
-	
+
 	void saveHiscore(int minigameNum, int score);
 	int loadHiscore(int minigameNum);
-	
+
 };
 
 } // End of namespace Bbvs

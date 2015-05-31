@@ -147,7 +147,7 @@ void OSystem_OP::initBackend() {
 
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
-		_graphicsManager = new OPGraphicsManager(_eventSource);
+		_graphicsManager = new OPGraphicsManager(_eventSource, _window);
 	}
 
 	/* Pass to POSIX method to do the heavy lifting */

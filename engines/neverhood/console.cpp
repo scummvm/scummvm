@@ -55,7 +55,7 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 
 		const char *sceneTypes[] = { "normal", "smacker", "navigation" };
 
-		debugPrintf("Current module: %d, previous module: %d, scene %d (%s scene)\n", currentModule, previousModule, scenenNum, sceneTypes[sceneType]);	
+		debugPrintf("Current module: %d, previous module: %d, scene %d (%s scene)\n", currentModule, previousModule, scenenNum, sceneTypes[sceneType]);
 
 		if (sceneType == kSceneTypeNormal) {
 			Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;

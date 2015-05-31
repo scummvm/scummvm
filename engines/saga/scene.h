@@ -286,8 +286,6 @@ class Scene {
 	#endif
 		return _sceneLUT[sceneNumber];
 	}
-	int currentProtag() const { return _currentProtag; }
-	void setProtag(int pr) { _currentProtag = pr; }
 	int currentSceneNumber() const { return _sceneNumber; }
 	int currentChapterNumber() const { return _chapterNumber; }
 	void setChapterNumber(int ch) { _chapterNumber = ch; }
@@ -341,7 +339,6 @@ class Scene {
 	Common::Array<uint16> _sceneLUT;
 	SceneQueueList _sceneQueue;
 	bool _sceneLoaded;
-	int _currentProtag;
 	int _sceneNumber;
 	int _chapterNumber;
 	int _outsetSceneNumber;

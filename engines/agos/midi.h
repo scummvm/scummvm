@@ -36,6 +36,7 @@ namespace AGOS {
 struct MusicInfo {
 	MidiParser *parser;
 	byte *data;
+	bool loopTrack;
 	byte num_songs;           // For Type 1 SMF resources
 	byte *songs[16];          // For Type 1 SMF resources
 	uint32 song_sizes[16];    // For Type 1 SMF resources
@@ -46,6 +47,7 @@ struct MusicInfo {
 	MusicInfo() { clear(); }
 	void clear() {
 		parser = 0; data = 0; num_songs = 0;
+		loopTrack = false;
 		memset(songs, 0, sizeof(songs));
 		memset(song_sizes, 0, sizeof(song_sizes));
 		memset(channel, 0, sizeof(channel));
@@ -71,15 +73,19 @@ protected:
 
 	// These are only used for music.
 	byte _currentTrack;
-	bool _loopTrack;
+	bool _loopTrackDefault;
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
+
+	byte *_adlibPatches;
 
 protected:
 	static void onTimer(void *data);
 	void clearConstructs();
 	void clearConstructs(MusicInfo &info);
 	void resetVolumeTable();
+	void loadAdlibPatches();
+	void unloadAdlibPatches();
 
 public:
 	bool _enable_sfx;

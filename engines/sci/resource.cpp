@@ -55,6 +55,11 @@ SciVersion getSciVersion() {
 	return s_sciVersion;
 }
 
+SciVersion getSciVersionForDetection() {
+	assert(!g_sci);
+	return s_sciVersion;
+}
+
 const char *getSciVersionDesc(SciVersion version) {
 	switch (version) {
 	case SCI_VERSION_NONE:
@@ -87,9 +92,6 @@ const char *getSciVersionDesc(SciVersion version) {
 }
 
 //////////////////////////////////////////////////////////////////////
-
-
-#undef SCI_REQUIRE_RESOURCE_FILES
 
 //#define SCI_VERBOSE_RESMAN 1
 
@@ -639,7 +641,7 @@ int ResourceManager::addAppropriateSources() {
 	return 1;
 }
 
-int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
+int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fslist) {
 	ResourceSource *map = 0;
 	Common::Array<ResourceSource *> sci21Maps;
 
@@ -858,7 +860,7 @@ void ResourceManager::freeResourceSources() {
 ResourceManager::ResourceManager() {
 }
 
-void ResourceManager::init(bool initFromFallbackDetector) {
+void ResourceManager::init() {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
@@ -890,24 +892,23 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 	debugC(1, kDebugLevelResMan, "resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
 	if ((_mapVersion == kResVersionUnknown) && (_volVersion == kResVersionUnknown)) {
-		warning("Volume and map version not detected, assuming that this is not a sci game");
+		warning("Volume and map version not detected, assuming that this is not a SCI game");
 		_viewType = kViewUnknown;
 		return;
 	}
 
 	scanNewSources();
 
-	if (!initFromFallbackDetector) {
-		if (!addAudioSources()) {
-			// FIXME: This error message is not always correct.
-			// OTOH, it is nice to be able to detect missing files/sources
-			// So we should definitely fix addAudioSources so this error
-			// only pops up when necessary. Disabling for now.
-			//error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
-		}
-		addScriptChunkSources();
-		scanNewSources();
+	if (!addAudioSources()) {
+		// FIXME: This error message is not always correct.
+		// OTOH, it is nice to be able to detect missing files/sources
+		// So we should definitely fix addAudioSources so this error
+		// only pops up when necessary. Disabling for now.
+		//error("Somehow I can't seem to find the sound files I need (RESOURCE.AUD/RESOURCE.SFX), aborting");
 	}
+
+	addScriptChunkSources();
+	scanNewSources();
 
 	detectSciVersion();
 
@@ -941,6 +942,22 @@ void ResourceManager::init(bool initFromFallbackDetector) {
 		}
 #endif
 	}
+}
+
+void ResourceManager::initForDetection() {
+	assert(!g_sci);
+
+	_memoryLocked = 0;
+	_memoryLRU = 0;
+	_LRU.clear();
+	_resMap.clear();
+	_audioMapSCI1 = NULL;
+
+	_mapVersion = detectMapVersion();
+	_volVersion = detectVolVersion();
+
+	scanNewSources();
+	detectSciVersion();
 }
 
 ResourceManager::~ResourceManager() {
@@ -1645,6 +1662,9 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	do {
 		type = fileStream->readByte() & 0x1F;
 		resMap[type].wOffset = fileStream->readUint16LE();
+		if (fileStream->eos())
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+
 		resMap[prevtype].wSize = (resMap[type].wOffset
 		                          - resMap[prevtype].wOffset) / nEntrySize;
 		prevtype = type;
@@ -2329,6 +2349,9 @@ bool ResourceManager::detectPaletteMergingSci11() {
 		byte *data = res->data;
 		// Old palette format used in palette resource? -> it's merging
 		if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0))
+			return true;
+		// Hardcoded: Laura Bow 2 floppy uses new palette resource, but still palette merging + 16 bit color matching
+		if ((g_sci->getGameId() == GID_LAURABOW2) && (!g_sci->isCD()) && (!g_sci->isDemo()))
 			return true;
 		return false;
 	}

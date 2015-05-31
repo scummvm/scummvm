@@ -109,7 +109,12 @@ Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 bool ScummEngine::canSaveGameStateCurrently() {
-	// FIXME: For now always allow loading in V0-V3 games
+	// Disallow saving in v0-v3 games when a 'prequel' to a cutscene is shown.
+	// This is a blank screen with text, and while this is shown, saving should
+	// be disabled, as no room is set.
+	if (_game.version <= 3 && _currentScript == 0xFF && _roomResource == 0 && _currentRoom == 0)
+		return false;
+
 	// TODO: Should we disallow saving in some more places,
 	// e.g. when a SAN movie is playing? Not sure whether the
 	// original EXE allowed this.
@@ -144,7 +149,7 @@ void ScummEngine::requestSave(int slot, const Common::String &name) {
 
 void ScummEngine::requestLoad(int slot) {
 	_saveLoadSlot = slot;
-	_saveTemporaryState = false;
+	_saveTemporaryState = (slot == 100);
 	_saveLoadFlag = 2;		// 2 for load
 }
 

@@ -80,6 +80,12 @@ Config::DriverId Config::detect(OplType type) {
 	}
 
 	DriverId drv = parse(ConfMan.get("opl_driver"));
+	if (drv == kAuto) {
+		// Since the "auto" can be explicitly set for a game, and this
+		// driver shows up in the GUI as "<default>", check if there is
+		// a global setting for it before resorting to auto-detection.
+		drv = parse(ConfMan.get("opl_driver", Common::ConfigManager::kApplicationDomain));
+	}
 
 	// When a valid driver is selected, check whether it supports
 	// the requested OPL chip.

@@ -46,7 +46,7 @@ private:
 public:
 	CDDAStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 	virtual ~CDDAStream();
-	
+
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return true; }
 	int getRate() const { return 44100; }

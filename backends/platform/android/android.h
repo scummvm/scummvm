@@ -96,13 +96,6 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
-#ifdef DYNAMIC_MODULES
-class AndroidPluginProvider : public POSIXPluginProvider {
-protected:
-	virtual void addCustomDirectories(Common::FSList &dirs) const;
-};
-#endif
-
 class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
@@ -177,7 +170,6 @@ public:
 	virtual ~OSystem_Android();
 
 	virtual void initBackend();
-	void addPluginDirectories(Common::FSList &dirs) const;
 	void enableZoning(bool enable) { _enable_zoning = enable; }
 
 	virtual bool hasFeature(Feature f);

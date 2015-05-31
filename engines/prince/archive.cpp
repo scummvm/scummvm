@@ -64,7 +64,7 @@ bool PtcArchive::open(const Common::String &filename) {
 	byte *fileTableEnd = fileTable + fileTableSize;
 	_stream->read(fileTable, fileTableSize);
 	decrypt(fileTable, fileTableSize);
-	
+
 	for (byte *fileItem = fileTable; fileItem < fileTableEnd; fileItem += 32) {
 		FileEntry item;
 		Common::String name = (const char*)fileItem;
@@ -75,6 +75,28 @@ bool PtcArchive::open(const Common::String &filename) {
 	}
 
 	free(fileTable);
+
+	return true;
+}
+
+bool PtcArchive::openTranslation(const Common::String &filename) {
+	_stream = SearchMan.createReadStreamForMember(filename);
+	if (!_stream)
+		return false;
+
+	Common::Array<Common::String> translationNames;
+	Common::String translationFileName;
+	const int kTranslationFiles = 5;
+	for (int i = 0; i < kTranslationFiles; i++) {
+		translationFileName = _stream->readLine();
+		translationNames.push_back(translationFileName);
+	}
+	FileEntry item;
+	for (int i = 0; i < kTranslationFiles; i++) {
+		item._offset = _stream->readUint32LE();
+		item._size = _stream->readUint32LE();
+		_items[translationNames[i]] = item;
+	}
 
 	return true;
 }

@@ -48,7 +48,7 @@ void Map::load(int scene) {
 		return;
 
 	EncryptedStream file(_vm, fileName.c_str());
-	
+
 	Common::String line;
 	for (line = file.readLine(); !file.eos(); line = file.readLine()) {
 		if (line.empty())

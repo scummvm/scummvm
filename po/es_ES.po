@@ -1,5 +1,5 @@
 # Spanish translation for ScummVM.
-# Copyright (C) 2010-2014 ScummVM Team
+# Copyright (C) 2010-2015 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Tomás Maidagan, 2011.
 #

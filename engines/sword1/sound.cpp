@@ -144,7 +144,7 @@ void Sound::checkSpeechFileEndianness() {
 		debug(8, "Speech endianness heuristic: average = %f for BE and %f for LE (%d samples)", be_diff, le_diff, maxSamples);
 	}
 }
-											   
+
 double Sound::endiannessHeuristicValue(int16* data, uint32 dataSize, uint32 &maxSamples) {
 	if (!data)
 		return 50000.; // the heuristic value for the wrong endianess is about 21000 (1/3rd of the 16 bits range)

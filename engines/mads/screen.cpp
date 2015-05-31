@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -244,7 +244,7 @@ void DirtyAreas::reset() {
 ScreenObject::ScreenObject() {
 	_category = CAT_NONE;
 	_descId = 0;
-	_layer = 0;
+	_mode = 0;
 	_active = false;
 }
 
@@ -265,17 +265,17 @@ ScreenObjects::ScreenObjects(MADSEngine *vm) : _vm(vm) {
 	_baseTime = 0;
 }
 
-void ScreenObjects::add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId) {
-	//assert(size() < 100);
-
+ScreenObject *ScreenObjects::add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId) {
 	ScreenObject so;
 	so._bounds = bounds;
 	so._category = category;
 	so._descId = descId;
-	so._layer = layer;
+	so._mode = mode;
 	so._active = true;
 
 	push_back(so);
+
+	return &(*this)[size()];
 }
 
 void ScreenObjects::check(bool scanFlag) {
@@ -288,7 +288,7 @@ void ScreenObjects::check(bool scanFlag) {
 	if ((_vm->_events->_mouseMoved || userInterface._scrollbarActive
 			|| _v8332A || _forceRescan) && scanFlag) {
 		_category = CAT_NONE;
-		_selectedObject = scanBackwards(_vm->_events->currentPos(), LAYER_GUI);
+		_selectedObject = scanBackwards(_vm->_events->currentPos(), SCREENMODE_VGA);
 		if (_selectedObject > 0) {
 			ScreenObject &scrObject = (*this)[_selectedObject];
 			_category = (ScrCategory)(scrObject._category & 7);
@@ -308,10 +308,10 @@ void ScreenObjects::check(bool scanFlag) {
 		}
 
 		//_released = _vm->_events->_mouseReleased;
-		if (_vm->_events->_vD2 || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
+		if (_vm->_events->_mouseButtons || (_vm->_easyMouse && !_vm->_events->_mouseStatusCopy))
 			scene._userInterface._category = _category;
 
-		if (!_vm->_events->_mouseButtons || _vm->_easyMouse) {
+		if (_vm->_events->_mouseButtons || _vm->_easyMouse) {
 			if (userInterface._category >= CAT_COMMAND && userInterface._category <= CAT_TALK_ENTRY) {
 				elementHighlighted();
 			}
@@ -365,7 +365,7 @@ void ScreenObjects::check(bool scanFlag) {
 int ScreenObjects::scan(const Common::Point &pt, int layer) {
 	for (uint i = 1; i <= size(); ++i) {
 		ScreenObject &sObj = (*this)[i];
-		if (sObj._active && sObj._bounds.contains(pt) && sObj._layer == layer)
+		if (sObj._active && sObj._bounds.contains(pt) && sObj._mode == layer)
 			return i;
 	}
 
@@ -376,7 +376,7 @@ int ScreenObjects::scan(const Common::Point &pt, int layer) {
 int ScreenObjects::scanBackwards(const Common::Point &pt, int layer) {
 	for (int i = (int)size(); i >= 1; --i) {
 		ScreenObject &sObj = (*this)[i];
-		if (sObj._active && sObj._bounds.contains(pt) && sObj._layer == layer)
+		if (sObj._active && sObj._bounds.contains(pt) && sObj._mode == layer)
 			return i;
 	}
 
@@ -526,7 +526,7 @@ void ScreenObjects::elementHighlighted() {
 	action._pickedWord = newIndex;
 
 	if (_category == CAT_INV_LIST || _category == CAT_INV_ANIM) {
-		if (action._interAwaiting == 1 && newIndex >= 0 && _released &&
+		if (action._interAwaiting == AWAITING_COMMAND && newIndex >= 0 && _released &&
 				(!_vm->_events->_mouseReleased || !_vm->_easyMouse))
 			newIndex = -1;
 	}
@@ -540,7 +540,7 @@ void ScreenObjects::elementHighlighted() {
 }
 
 void ScreenObjects::setActive(ScrCategory category, int descId, bool active) {
-	for (uint idx = 1; idx < size(); ++idx) {
+	for (uint idx = 1; idx <= size(); ++idx) {
 		ScreenObject &sObj = (*this)[idx];
 		if (sObj._category == category && sObj._descId == descId)
 			sObj._active = active;
@@ -571,7 +571,7 @@ void ScreenSurface::init() {
 }
 
 ScreenSurface::~ScreenSurface() {
-	delete[] _surfacePixels;
+	::free(_surfacePixels);
 }
 
 void ScreenSurface::copyRectToScreen(const Common::Rect &bounds) {
@@ -609,9 +609,10 @@ void ScreenSurface::updateScreen() {
 
 void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag) {
 	Palette &pal = *_vm->_palette;
+	Scene &scene = _vm->_game->_scene;
 	byte palData[PALETTE_SIZE];
 
-	switch (transitionType) {
+ 	switch (transitionType) {
 	case kTransitionFadeIn:
 	case kTransitionFadeOutIn:
 		Common::fill(&pal._colorValues[0], &pal._colorValues[3], 0);
@@ -641,8 +642,9 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 
 	case kTransitionPanLeftToRight:
 	case kTransitionPanRightToLeft:
-		warning("TODO: pan transition");
-		transition(kTransitionFadeIn, surfaceFlag);
+		panTransition(scene._backgroundSurface, pal._mainPalette,
+			transitionType - kTransitionPanLeftToRight,
+			Common::Point(0, 0), scene._posAdjust, THROUGH_BLACK2, true, 1);
 		break;
 
 	case kTransitionCircleIn1:
@@ -653,8 +655,10 @@ void ScreenSurface::transition(ScreenTransition transitionType, bool surfaceFlag
 		transition(kTransitionFadeIn, surfaceFlag);
 		break;
 
-	case kCenterVertTransition:
-		warning("TODO: center vert transition");
+	case kNullPaletteCopy:
+		// Original temporarily set the palette to black, copied the scene to the
+		// screen, and then restored the palette. We can give a similiar effect
+		// by doing a standard quick palette fade in
 		transition(kTransitionFadeIn, surfaceFlag);
 		break;
 
@@ -672,6 +676,144 @@ void ScreenSurface::setClipBounds(const Common::Rect &r) {
 
 void ScreenSurface::resetClipBounds() {
 	setClipBounds(Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+}
+
+void ScreenSurface::panTransition(MSurface &newScreen, byte *palData, int entrySide,
+		const Common::Point &srcPos, const Common::Point &destPos,
+		ThroughBlack throughBlack, bool setPalette, int numTicks) {
+	EventsManager &events = *_vm->_events;
+	Palette &palette = *_vm->_palette;
+	Common::Point size;
+	int y1, y2;
+	int startX = 0;
+	int deltaX;
+	int xAt;
+	int loopStart;
+//	uint32 baseTicks, currentTicks;
+	byte paletteMap[256];
+
+	size.x = MIN(newScreen.w, (uint16)MADS_SCREEN_WIDTH);
+	size.y = newScreen.h;
+	if (newScreen.h >= MADS_SCREEN_HEIGHT)
+		size.y = MADS_SCENE_HEIGHT;
+
+	// Set starting position and direction delta for the transition
+	if (entrySide == 1)
+		// Right to left
+		startX = size.x - 1;
+	deltaX = startX ? -1 : 1;
+
+	if (setPalette & !throughBlack)
+		palette.setFullPalette(palData);
+
+	// TODO: Original uses a different frequency ticks counter. Need to
+	// confirm frequency and see whether we need to implement it, or
+	// if the current frame ticks can substitute for it
+//	baseTicks = events.getFrameCounter();
+
+	y1 = 0;
+	y2 = size.y - 1;
+//	sizeY = y2 - y1 + 1;
+
+	if (throughBlack == THROUGH_BLACK2)
+		swapForeground(palData, &paletteMap[0]);
+
+	loopStart = throughBlack == THROUGH_BLACK1 ? 0 : 1;
+	for (int loop = loopStart; loop < 2; ++loop) {
+		xAt = startX;
+		for (int xCtr = 0; xCtr < size.x; ++xCtr, xAt += deltaX) {
+			if (!loop) {
+				fillRect(Common::Rect(xAt + destPos.x, y1 + destPos.y,
+					xAt + destPos.x + 1, y2 + destPos.y), 0);
+			} else if (throughBlack == THROUGH_BLACK2) {
+				copyRectTranslate(newScreen, paletteMap,
+					Common::Point(xAt, destPos.y),
+					Common::Rect(srcPos.x + xAt, srcPos.y,
+					srcPos.x + xAt + 1, srcPos.y + size.y));
+			} else {
+				newScreen.copyRectToSurface(*this, xAt, destPos.y,
+					Common::Rect(srcPos.x + xAt, srcPos.y, 
+					srcPos.x + xAt + 1, srcPos.y + size.y));
+			}
+
+			copyRectToScreen(Common::Rect(xAt, destPos.y, xAt + 1, destPos.y + size.y));
+
+			// Slight delay
+			events.pollEvents();
+			g_system->delayMillis(1);
+		}
+
+		if ((setPalette && !loop) || throughBlack == THROUGH_BLACK2)
+			palette.setFullPalette(palData);
+	}
+
+	if (throughBlack == THROUGH_BLACK2) {
+		Common::Rect r(srcPos.x, srcPos.y, srcPos.x + size.x, srcPos.y + size.y);
+		copyRectToSurface(newScreen, destPos.x, destPos.y, r);
+		copyRectToScreen(r);
+	}
+}
+
+/**
+ * Translates the current screen from the old palette to the new palette
+ */
+void ScreenSurface::swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap) {
+	Palette &palette = *_vm->_palette;
+	byte oldPalette[PALETTE_SIZE];
+	byte oldMap[PALETTE_COUNT];
+
+	palette.getFullPalette(oldPalette);
+	swapPalette(oldPalette, oldMap, true);
+	swapPalette(newPalette, paletteMap, false);
+
+	// Transfer translated foreground colors. Since foregrounds are interleaved
+	// with background, we only copy over each alternate RGB tuplet
+	const byte *srcP = &newPalette[RGB_SIZE];
+	byte *destP = &oldPalette[RGB_SIZE];
+	while (destP < &oldPalette[PALETTE_SIZE]) {
+		Common::copy(srcP, srcP + RGB_SIZE, destP);
+		srcP += 2 * RGB_SIZE;
+		destP += 2 * RGB_SIZE;
+	}
+
+	Common::Rect oldClip = _clipBounds;
+	resetClipBounds();
+	
+	copyRectTranslate(*this, oldMap, Common::Point(0, 0), 
+		Common::Rect(0, 0, MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT));
+	palette.setFullPalette(oldPalette);
+
+	setClipBounds(oldClip);
+}
+
+/**
+ * Translates a given palette into a mapping table.
+ * Palettes consist of 128 RGB entries for the foreground and background
+ * respectively, with the two interleaved together. So the start 
+ */
+void ScreenSurface::swapPalette(const byte *palData, byte swapTable[PALETTE_COUNT], 
+		bool foreground) {
+	int start = foreground ? 1 : 0;
+	const byte *dynamicList = &palData[start * RGB_SIZE];
+	int staticStart = 1 - start;
+	const byte *staticList = &palData[staticStart * RGB_SIZE];
+	const int PALETTE_START = 1;
+	const int PALETTE_END = 252;
+
+	// Set initial index values
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+		swapTable[idx] = idx;
+
+	// Handle the 128 palette entries for the foreground or background
+	for (int idx = 0; idx < (PALETTE_COUNT / 2); ++idx) {
+		if (start >= PALETTE_START && start <= PALETTE_END) {
+			swapTable[start] = Palette::closestColor(dynamicList, staticList, 
+				2 * RGB_SIZE, PALETTE_COUNT / 2) * 2 + staticStart;
+		}
+
+		dynamicList += 2 * RGB_SIZE;
+		start += 2;
+	}
 }
 
 

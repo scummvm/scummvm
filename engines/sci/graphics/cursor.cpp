@@ -47,7 +47,7 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	_isVisible = true;
 
 	// center mouse cursor
-	setPosition(Common::Point(_screen->getWidth() / 2, _screen->getHeight() / 2));
+	setPosition(Common::Point(_screen->getScriptWidth() / 2, _screen->getScriptHeight() / 2));
 	_moveZoneActive = false;
 
 	_zoomZoneActive = false;
@@ -151,14 +151,14 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	colorMapping[0] = 0; // Black is hardcoded
 	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
-	colorMapping[3] = _palette->matchColor(170, 170, 170); // Grey
+	colorMapping[3] = _palette->matchColor(170, 170, 170) & SCI_PALETTE_MATCH_COLORMASK; // Grey
 	// TODO: Figure out if the grey color is hardcoded
 	// HACK for the magnifier cursor in LB1, fixes its color (bug #3487092)
 	if (g_sci->getGameId() == GID_LAURABOW && resourceId == 1)
 		colorMapping[3] = _screen->getColorWhite();
 	// HACK for Longbow cursors, fixes the shade of grey they're using (bug #3489101)
 	if (g_sci->getGameId() == GID_LONGBOW)
-		colorMapping[3] = _palette->matchColor(223, 223, 223); // Light Grey
+		colorMapping[3] = _palette->matchColor(223, 223, 223) & SCI_PALETTE_MATCH_COLORMASK; // Light Grey
 
 	// Seek to actual data
 	resourceData += 4;
@@ -481,7 +481,7 @@ void GfxCursor::kernelSetPos(Common::Point pos) {
 
 void GfxCursor::kernelMoveCursor(Common::Point pos) {
 	_coordAdjuster->moveCursor(pos);
-	if (pos.x > _screen->getWidth() || pos.y > _screen->getHeight()) {
+	if (pos.x > _screen->getScriptWidth() || pos.y > _screen->getScriptHeight()) {
 		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
 		return;
 	}

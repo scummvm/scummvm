@@ -68,7 +68,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
-	
+
 	switch (_vm->_globals->_language) {
 	case LANG_FR:
 		_answersFilename = _questionsFilename = "RUE.TXT";

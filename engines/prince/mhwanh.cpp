@@ -38,7 +38,7 @@ MhwanhDecoder::~MhwanhDecoder() {
 void MhwanhDecoder::destroy() {
 	if (_surface != nullptr) {
 		_surface->free();
-		delete _surface; 
+		delete _surface;
 		_surface = nullptr;
 	}
 	if (_palette != nullptr) {
@@ -57,7 +57,7 @@ bool MhwanhDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_palette[i * 3] = stream.readByte();
 		_palette[i * 3 + 1] = stream.readByte();
 		_palette[i * 3 + 2] = stream.readByte();
-	}  
+	}
 
 	_surface = new Graphics::Surface();
 	_surface->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());

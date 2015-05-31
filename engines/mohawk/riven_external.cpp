@@ -2513,7 +2513,7 @@ void RivenExternal::xthideinventory(uint16 argc, uint16 *argv) {
 static const uint32 kMarbleCount = 6;
 static const int kSmallMarbleWidth = 4;
 static const int kSmallMarbleHeight = 2;
-static const int kLargeMarbleSize = 8;
+//static const int kLargeMarbleSize = 8;
 static const int kMarbleHotspotSize = 13;
 static const char *s_marbleNames[] = { "tred", "torange", "tyellow", "tgreen", "tblue", "tviolet" };
 

@@ -8,12 +8,20 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+<<<<<<< HEAD
 
+=======
+ *
+>>>>>>> master
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+<<<<<<< HEAD
 
+=======
+ *
+>>>>>>> master
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -36,6 +44,7 @@ class MenuView: public FullScreenDialog {
 protected:
 	bool _breakFlag;
 	bool _redrawFlag;
+	Common::String _filename;
 
 	virtual void doFrame() = 0;
 
@@ -51,6 +60,8 @@ public:
 	virtual ~MenuView() {}
 
 	virtual void show();
+
+	Common::String getResourceName();
 };
 
 struct TextLine {
@@ -107,11 +118,6 @@ private:
 	int getParameter(const char **paramP);
 
 	/**
-	 * Called when the script is finished
-	 */
-	void scriptDone();
-
-	/**
 	 * Reset the game palette
 	 */
 	void resetPalette();
@@ -119,6 +125,11 @@ protected:
 	virtual void display();
 
 	virtual void doFrame();
+
+	/**
+	 * Called when the script is finished
+	 */
+	virtual void scriptDone();
 public:
 	/**
 	 * Queue the given text resource for display
@@ -193,6 +204,8 @@ private:
 
 	int scanResourceIndex(const Common::String &resourceName);
 
+	uint _scrollFrameCtr;
+private:
 	void load();
 
 	void processLines();
@@ -201,15 +214,17 @@ private:
 
 	int getParameter();
 
-	void scriptDone();
-
 	void loadNextResource();
+
+	void scroll();
 protected:
 	virtual void display();
 
 	virtual void doFrame();
 
 	virtual bool onEvent(Common::Event &event);
+
+	virtual void scriptDone();
 public:
 	/**
 	* Queue the given text resource for display

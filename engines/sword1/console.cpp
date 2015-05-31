@@ -36,7 +36,7 @@ SwordConsole::SwordConsole(SwordEngine *vm) : GUI::Debugger(), _vm(vm) {
 
 SwordConsole::~SwordConsole() {
 }
-	
+
 bool SwordConsole::Cmd_SpeechEndianness(int argc, const char **argv) {
 	if (argc == 1) {
 		debugPrintf("Using %s speech\n", _vm->_sound->_bigEndianSpeech ? "be" : "le");

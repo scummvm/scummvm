@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
 #include "mads/game.h"
 #include "mads/mads.h"
 #include "mads/menu_views.h"
@@ -47,7 +48,7 @@ MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
 	_highlightedIndex = -1;
 	_selectedIndex = -1;
 	_buttonDown = false;
-	
+
 	for (int i = 0; i < 7; ++i)
 		_menuItems[i] = nullptr;
 }
@@ -60,6 +61,10 @@ MainMenu::~MainMenu() {
 	}
 
 	scene._spriteSlots.reset();
+}
+
+bool MainMenu::shouldShowQuotes() {
+	return ConfMan.hasKey("ShowQuotes") && ConfMan.getBool("ShowQuotes");
 }
 
 void MainMenu::display() {
@@ -80,8 +85,8 @@ void MainMenu::display() {
 		Common::Point pt(frame0->_offset.x - (frame0->w / 2),
 			frame0->_offset.y - frame0->h);
 		screenObjects.add(
-			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w, 
-			pt.y + frame0->h + DIALOG_TOP), LAYER_GUI, CAT_COMMAND, i);
+			Common::Rect(pt.x, pt.y + DIALOG_TOP, pt.x + frame0->w,
+			pt.y + frame0->h + DIALOG_TOP), SCREENMODE_VGA, CAT_COMMAND, i);
 	}
 
 	// Set the cursor for when it's shown
@@ -101,6 +106,9 @@ void MainMenu::doFrame() {
 			handleAction((MADSGameAction)_selectedIndex);
 		} else {
 			for (_menuItemIndex = 0; _menuItemIndex < 6; ++_menuItemIndex) {
+				if (_menuItemIndex == 4 && !shouldShowQuotes())
+					continue;
+
 				if (_menuItemIndex != _selectedIndex) {
 					addSpriteSlot();
 				}
@@ -118,8 +126,11 @@ void MainMenu::doFrame() {
 
 	// If the user has chosen to skip the animation, show the full menu immediately
 	if (_skipFlag && _menuItemIndex >= 0) {
-		// Quickly loop through all the menu items to display each's final frame		
+		// Quickly loop through all the menu items to display each's final frame
 		for (; _menuItemIndex < 6; ++_menuItemIndex) {
+			if (_menuItemIndex == 4 && !shouldShowQuotes())
+				continue;
+
 			// Draw the final frame of the menuitem
 			_frameIndex = 0;
 			addSpriteSlot();
@@ -129,9 +140,12 @@ void MainMenu::doFrame() {
 	} else {
 		if ((_menuItemIndex == -1) || (_frameIndex == 0)) {
 			if (++_menuItemIndex == 6) {
+
 				// Reached end of display animation
 				_vm->_events->showCursor();
 				return;
+			} else if (_menuItemIndex == 4 && !shouldShowQuotes()) {
+				++_menuItemIndex;
 			}
 
 			_frameIndex = _menuItems[_menuItemIndex]->getCount() - 1;
@@ -147,7 +161,7 @@ void MainMenu::doFrame() {
 void MainMenu::addSpriteSlot() {
 	Scene &scene = _vm->_game->_scene;
 	SpriteSlots &spriteSlots = scene._spriteSlots;
-	
+
 	int seqIndex = (_menuItemIndex < 6) ? _menuItemIndex : _frameIndex;
 	spriteSlots.deleteTimer(seqIndex);
 
@@ -241,7 +255,7 @@ bool MainMenu::onEvent(Common::Event &event) {
 		}
 		return true;
 
-	case Common::EVENT_MOUSEMOVE: 
+	case Common::EVENT_MOUSEMOVE:
 		if (_buttonDown) {
 			int menuIndex = getHighlightedItem(event.mouse);
 			if (menuIndex != _highlightedIndex) {
@@ -273,12 +287,12 @@ bool MainMenu::onEvent(Common::Event &event) {
 	default:
 		break;
 	}
-	
+
 	return false;
 }
 
 int MainMenu::getHighlightedItem(const Common::Point &pt) {
-	return _vm->_game->_screenObjects.scan(pt, LAYER_GUI) - 1;
+	return _vm->_game->_screenObjects.scan(pt, SCREENMODE_VGA) - 1;
 }
 
 void MainMenu::unhighlightItem() {
@@ -303,7 +317,7 @@ void MainMenu::handleAction(MADSGameAction action) {
 		break;
 
 	case RESUME_GAME:
-		// The original resumed the most recently saved game. Instead, 
+		// The original resumed the most recently saved game. Instead,
 		// just show the load game scren
 		_vm->_dialogs->_pendingDialog = DIALOG_RESTORE;
 		return;
@@ -340,7 +354,7 @@ void AdvertView::show() {
 	uint32 expiryTime = g_system->getMillis() + 10 * 1000;
 
 	_vm->_palette->resetGamePalette(4, 8);
-	
+
 	// Load the advert background onto the screen
 	SceneInfo *sceneInfo = SceneInfo::init(_vm);
 	sceneInfo->load(screenId, 0, Common::String(), 0, _vm->_game->_scene._depthSurface,
@@ -373,6 +387,21 @@ bool AdvertView::onEvent(Common::Event &event) {
 	}
 
 	return false;
+}
+
+/*------------------------------------------------------------------------*/
+
+void RexAnimationView::scriptDone() {
+	AnimationView::scriptDone();
+
+	Common::String s = getResourceName();
+	if (s == "rexend1") {
+		TextView::execute(_vm, "ending1");
+	} else if (s == "rexend2") {
+		TextView::execute(_vm, "ending2");
+	} else if (s == "rexend3") {
+		TextView::execute(_vm, "credits");
+	}
 }
 
 } // End of namespace Nebular

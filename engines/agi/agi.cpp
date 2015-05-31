@@ -97,50 +97,62 @@ void AgiEngine::processEvents() {
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			key = BUTTON_LEFT;
-			_mouse.button = kAgiMouseButtonLeft;
-			keyEnqueue(key);
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				key = BUTTON_LEFT;
+				_mouse.button = kAgiMouseButtonLeft;
+				keyEnqueue(key);
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
+			}
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			key = BUTTON_RIGHT;
-			_mouse.button = kAgiMouseButtonRight;
-			keyEnqueue(key);
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				key = BUTTON_RIGHT;
+				_mouse.button = kAgiMouseButtonRight;
+				keyEnqueue(key);
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
+			}
 			break;
 		case Common::EVENT_WHEELUP:
-			key = WHEEL_UP;
-			keyEnqueue(key);
+			if (_game.mouseEnabled) {
+				key = WHEEL_UP;
+				keyEnqueue(key);
+			}
 			break;
 		case Common::EVENT_WHEELDOWN:
-			key = WHEEL_DOWN;
-			keyEnqueue(key);
+			if (_game.mouseEnabled) {
+				key = WHEEL_DOWN;
+				keyEnqueue(key);
+			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
 
-			if (!_game.mouseFence.isEmpty()) {
-				if (_mouse.x < _game.mouseFence.left)
-					_mouse.x = _game.mouseFence.left;
-				if (_mouse.x > _game.mouseFence.right)
-					_mouse.x = _game.mouseFence.right;
-				if (_mouse.y < _game.mouseFence.top)
-					_mouse.y = _game.mouseFence.top;
-				if (_mouse.y > _game.mouseFence.bottom)
-					_mouse.y = _game.mouseFence.bottom;
+				if (!_game.mouseFence.isEmpty()) {
+					if (_mouse.x < _game.mouseFence.left)
+						_mouse.x = _game.mouseFence.left;
+					if (_mouse.x > _game.mouseFence.right)
+						_mouse.x = _game.mouseFence.right;
+					if (_mouse.y < _game.mouseFence.top)
+						_mouse.y = _game.mouseFence.top;
+					if (_mouse.y > _game.mouseFence.bottom)
+						_mouse.y = _game.mouseFence.bottom;
 
-				g_system->warpMouse(_mouse.x, _mouse.y);
+					g_system->warpMouse(_mouse.x, _mouse.y);
+				}
 			}
 
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_mouse.button = kAgiMouseButtonUp;
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
+			if (_game.mouseEnabled) {
+				_mouse.button = kAgiMouseButtonUp;
+				_mouse.x = event.mouse.x;
+				_mouse.y = event.mouse.y;
+			}
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) {
@@ -492,19 +504,18 @@ struct GameSettings {
 	const char *detectname;
 };
 
-static const GameSettings agiSettings[] = {
-	{"agi", "AGI game", GID_AGI, MDT_ADLIB, "OBJECT"},
-	{NULL, NULL, 0, 0, NULL}
-};
-
 AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("originalsaveload", "false");
+	ConfMan.registerDefault("altamigapalette", "false");
+	ConfMan.registerDefault("mousesupport", "true");
 
 	_noSaveLoadAllowed = false;
 
 	_rnd = new Common::RandomSource("agi");
 	_sound = 0;
+
+	_fontData = NULL;
 
 	initFeatures();
 	initVersion();
@@ -553,6 +564,19 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
 	memset(&_mouse, 0, sizeof(struct Mouse));
+
+	_game.mouseEnabled = true;
+	if (!ConfMan.getBool("mousesupport")) {
+		// we effectively disable the mouse for games, that explicitly do not want mouse support to be enabled
+		_game.mouseEnabled = false;
+	}
+
+	// We are currently using the custom font for all fanmade games
+	if (!(getFeatures() & (GF_FANMADE | GF_AGDS))) {
+		_fontData = fontData_Sierra; // original Sierra font
+	} else {
+		_fontData = fontData_FanGames; // our (own?) custom font, that supports umlauts etc.
+	}
 
 	_game._vm = this;
 
@@ -712,7 +736,9 @@ Common::Error AgiBase::init() {
 }
 
 Common::Error AgiEngine::go() {
-	CursorMan.showMouse(true);
+	if (_game.mouseEnabled) {
+		CursorMan.showMouse(true);
+	}
 	setTotalPlayTime(0);
 
 	if (_game.state < STATE_LOADED) {

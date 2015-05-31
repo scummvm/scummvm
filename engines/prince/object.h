@@ -62,7 +62,7 @@ public:
 
 private:
 	void loadSurface(Common::SeekableReadStream &stream);
-	Graphics::Surface *_surface; 
+	Graphics::Surface *_surface;
 };
 
 } // End of namespace Prince

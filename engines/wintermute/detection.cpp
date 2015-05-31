@@ -74,7 +74,7 @@ static const char *directoryGlobs[] = {
 
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
-	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(ADGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
+	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
 		_singleid = "wintermute";
 		_guioptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS);
 		_maxScanDepth = 2;
@@ -127,8 +127,8 @@ public:
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		assert(syst);
 		assert(engine);
-
-		*engine = new Wintermute::WintermuteEngine(syst, desc);
+		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
+		*engine = new Wintermute::WintermuteEngine(syst, gd);
 		return true;
 	}
 

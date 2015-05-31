@@ -92,6 +92,10 @@ void EngineState::reset(bool isRestoring) {
 		abortScriptProcessing = kAbortNone;
 	}
 
+	// reset delayed restore game functionality
+	_delayedRestoreGame = false;
+	_delayedRestoreGameId = 0;
+
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
 	stack_base = 0;
@@ -203,59 +207,94 @@ static kLanguage charToLanguage(const char c) {
 	}
 }
 
-Common::String SciEngine::getSciLanguageString(const Common::String &str, kLanguage lang, kLanguage *lang2) const {
-	kLanguage secondLang = K_LANG_NONE;
+Common::String SciEngine::getSciLanguageString(const Common::String &str, kLanguage requestedLanguage, kLanguage *secondaryLanguage, uint16 *languageSplitter) const {
+	kLanguage foundLanguage = K_LANG_NONE;
+	const byte *textPtr = (const byte *)str.c_str();
+	byte curChar = 0;
+	byte curChar2 = 0;
+	
+	while (1) {
+		curChar = *textPtr;
+		if (!curChar)
+			break;
+		
+		if ((curChar == '%') || (curChar == '#')) {
+			curChar2 = *(textPtr + 1);
+			foundLanguage = charToLanguage(curChar2);
 
-	const char *seeker = str.c_str();
-	while (*seeker) {
-		if ((*seeker == '%') || (*seeker == '#')) {
-			secondLang = charToLanguage(*(seeker + 1));
-
-			if (secondLang != K_LANG_NONE)
+			if (foundLanguage != K_LANG_NONE) {
+				// Return language splitter
+				if (languageSplitter)
+					*languageSplitter = curChar | ( curChar2 << 8 );
+				// Return the secondary language found in the string
+				if (secondaryLanguage)
+					*secondaryLanguage = foundLanguage;
 				break;
+			}
 		}
-
-		++seeker;
+		textPtr++;
 	}
 
-	// Return the secondary language found in the string
-	if (lang2)
-		*lang2 = secondLang;
-
-	if (secondLang == lang) {
-		if (*(++seeker) == 'J') {
+	if (foundLanguage == requestedLanguage) {
+		if (curChar2 == 'J') {
 			// Japanese including Kanji, displayed with system font
 			// Convert half-width characters to full-width equivalents
 			Common::String fullWidth;
-			byte c;
+			uint16 mappedChar;
 
-			while ((c = *(++seeker))) {
-				uint16 mappedChar = s_halfWidthSJISMap[c];
+			textPtr += 2; // skip over language splitter
+
+			while (1) {
+				curChar = *textPtr;
+				
+				switch (curChar) {
+				case 0: // Terminator NUL
+					return fullWidth;
+				case '\\':
+					// "\n", "\N", "\r" and "\R" were overwritten with SPACE + 0x0D in PC-9801 SSCI
+					//  inside GetLongest() (text16). We do it here, because it's much cleaner and
+					//  we have to process the text here anyway.
+					//  Occurs for example in Police Quest 2 intro
+					curChar2 = *(textPtr + 1);
+					switch (curChar2) {
+					case 'n':
+					case 'N':
+					case 'r':
+					case 'R':
+						fullWidth += ' ';
+						fullWidth += 0x0D; // CR
+						textPtr += 2;
+						continue;
+					}
+				}
+				
+				textPtr++;
+
+				mappedChar = s_halfWidthSJISMap[curChar];
 				if (mappedChar) {
 					fullWidth += mappedChar >> 8;
 					fullWidth += mappedChar & 0xFF;
 				} else {
 					// Copy double-byte character
-					char c2 = *(++seeker);
-					if (!c2) {
-						error("SJIS character %02X is missing second byte", c);
+					curChar2 = *(textPtr++);
+					if (!curChar) {
+						error("SJIS character %02X is missing second byte", curChar);
 						break;
 					}
-					fullWidth += c;
-					fullWidth += c2;
+					fullWidth += curChar;
+					fullWidth += curChar2;
 				}
 			}
 
-			return fullWidth;
 		} else {
-			return Common::String(seeker + 1);
+			return Common::String((const char *)(textPtr + 2));
 		}
 	}
 
-	if (*seeker)
-		return Common::String(str.c_str(), seeker - str.c_str());
-	else
-		return str;
+	if (curChar)
+		return Common::String(str.c_str(), (const char *)textPtr - str.c_str());
+
+	return str;
 }
 
 kLanguage SciEngine::getSciLanguage() {
@@ -314,25 +353,25 @@ void SciEngine::setSciLanguage() {
 	setSciLanguage(getSciLanguage());
 }
 
-Common::String SciEngine::strSplit(const char *str, const char *sep) {
-	kLanguage lang = getSciLanguage();
-	kLanguage subLang = K_LANG_NONE;
+Common::String SciEngine::strSplitLanguage(const char *str, uint16 *languageSplitter, const char *sep) {
+	kLanguage activeLanguage = getSciLanguage();
+	kLanguage subtitleLanguage = K_LANG_NONE;
 
 	if (SELECTOR(subtitleLang) != -1)
-		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(subtitleLang));
+		subtitleLanguage = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObjectAddress, SELECTOR(subtitleLang));
 
-	kLanguage secondLang;
-	Common::String retval = getSciLanguageString(str, lang, &secondLang);
+	kLanguage foundLanguage;
+	Common::String retval = getSciLanguageString(str, activeLanguage, &foundLanguage, languageSplitter);
 
 	// Don't add subtitle when separator is not set, subtitle language is not set, or
 	// string contains only one language
-	if ((sep == NULL) || (subLang == K_LANG_NONE) || (secondLang == K_LANG_NONE))
+	if ((sep == NULL) || (subtitleLanguage == K_LANG_NONE) || (foundLanguage == K_LANG_NONE))
 		return retval;
 
 	// Add subtitle, unless the subtitle language doesn't match the languages in the string
-	if ((subLang == K_LANG_ENGLISH) || (subLang == secondLang)) {
+	if ((subtitleLanguage == K_LANG_ENGLISH) || (subtitleLanguage == foundLanguage)) {
 		retval += sep;
-		retval += getSciLanguageString(str, subLang);
+		retval += getSciLanguageString(str, subtitleLanguage);
 	}
 
 	return retval;

@@ -24,7 +24,7 @@
 #define ZVISION_RENDER_TABLE_H
 
 #include "common/rect.h"
-
+#include "graphics/surface.h"
 
 namespace ZVision {
 
@@ -49,6 +49,7 @@ private:
 		float fieldOfView;
 		float linearScale;
 		bool reverse;
+		uint16 zeroPoint;
 	} _panoramaOptions;
 
 	// TODO: See if tilt and panorama need to have separate options
@@ -56,24 +57,35 @@ private:
 		float fieldOfView;
 		float linearScale;
 		bool reverse;
+		float gap;
 	} _tiltOptions;
 
 public:
-	RenderState getRenderState() { return _renderState; }
+	RenderState getRenderState() {
+		return _renderState;
+	}
 	void setRenderState(RenderState newState);
 
 	const Common::Point convertWarpedCoordToFlatCoord(const Common::Point &point);
 
-	void mutateImage(uint16 *sourceBuffer, uint16* destBuffer, uint32 destWidth, const Common::Rect &subRect);
+	void mutateImage(uint16 *sourceBuffer, uint16 *destBuffer, uint32 destWidth, const Common::Rect &subRect);
+	void mutateImage(Graphics::Surface *dstBuf, Graphics::Surface *srcBuf);
 	void generateRenderTable();
 
 	void setPanoramaFoV(float fov);
 	void setPanoramaScale(float scale);
 	void setPanoramaReverse(bool reverse);
+	void setPanoramaZeroPoint(uint16 point);
+	uint16 getPanoramaZeroPoint();
+	bool getPanoramaReverse();
 
 	void setTiltFoV(float fov);
 	void setTiltScale(float scale);
 	void setTiltReverse(bool reverse);
+
+	float getTiltGap();
+	float getAngle();
+	float getLinscale();
 
 private:
 	void generatePanoramaLookupTable();

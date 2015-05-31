@@ -41,7 +41,7 @@ extern bool _hasSmartphoneResolution;
 
 class WINCESdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	WINCESdlGraphicsManager(SdlEventSource *sdlEventSource);
+	WINCESdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);

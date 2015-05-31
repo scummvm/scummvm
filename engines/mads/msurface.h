@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -220,11 +220,16 @@ public:
 	 * Create a new surface which is a flipped horizontal copy of the current one
 	 */
 	MSurface *flipHorizontal() const;
+
+	/**
+	 * Copy an area from one surface to another, translating it using a palette
+	 * map as it's done
+	 */
+	void copyRectTranslate(MSurface &srcSurface, const byte *paletteMap,
+		const Common::Point &destPos, const Common::Rect &srcRect);
 };
 
 class DepthSurface : public MSurface {
-private:
-	MADSEngine *_vm;
 public:
 	/**
 	 * Depth style
@@ -234,7 +239,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	DepthSurface(MADSEngine *vm) : _vm(vm), _depthStyle(0) {}
+	DepthSurface() : _depthStyle(0) {}
 
 	/**
 	 * Returns the depth at a given position

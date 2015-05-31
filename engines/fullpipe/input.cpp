@@ -70,7 +70,7 @@ void setInputDisabled(bool state) {
 void InputController::addCursor(CursorInfo *cursor) {
 	CursorInfo *newc = new CursorInfo(cursor);
 	Common::Point p;
-	
+
 	cursor->picture->getDimensions(&p);
 
 	newc->width = p.x;

@@ -43,7 +43,7 @@ Room::Room() {}
 bool Room::loadRoom(byte *roomData) {
 	int roomSize = 64;
 	Common::MemoryReadStream roomStream(roomData, roomSize);
-	
+
 	_mobs = roomStream.readSint32LE();
 	_backAnim = roomStream.readSint32LE();
 	_obj = roomStream.readSint32LE();
@@ -131,7 +131,7 @@ bool Script::loadStream(Common::SeekableReadStream &stream) {
 	_scriptInfo.invObjGive = scriptDataStream.readSint32LE();
 	_scriptInfo.stdGiveItem = scriptDataStream.readSint32LE();
 	_scriptInfo.goTester = scriptDataStream.readSint32LE();
-	
+
 	return true;
 }
 
@@ -391,10 +391,10 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 			debug("Can't load %s", msStreamName.c_str());
 			delete msStream;
 		} else {
-			uint32 dataSize = msStream->size();
+			int32 dataSize = msStream->size();
 			if (dataSize != -1) {
 				tempMask._data = (byte *)malloc(dataSize);
-				if (msStream->read(tempMask._data, dataSize) != dataSize) {
+				if (msStream->read(tempMask._data, dataSize) != (uint32)dataSize) {
 					free(tempMask._data);
 					delete msStream;
 					return false;
@@ -427,7 +427,7 @@ int32 InterpreterFlags::getFlagValue(Flags::Id flagId) {
 	return _flags[(uint32)flagId - kFlagMask];
 }
 
-Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) : 
+Interpreter::Interpreter(PrinceEngine *vm, Script *script, InterpreterFlags *flags) :
 	_vm(vm), _script(script), _flags(flags),
 	_stacktop(0), _opcodeNF(false), _opcodeEnd(false),
 	_waitFlag(0), _result(true) {
@@ -477,10 +477,10 @@ uint32 Interpreter::step(uint32 opcodePC) {
 		// Get the current opcode
 		_lastOpcode = readScript16();
 
-		if (_lastOpcode > kNumOpcodes)
+		if (_lastOpcode >= kNumOpcodes)
 			error(
-				"Trying to execute unknown opcode @0x%04X: %02d", 
-				_currentInstruction, 
+				"Trying to execute unknown opcode @0x%04X: %02d",
+				_currentInstruction,
 				_lastOpcode);
 
 		// Execute the current opcode
@@ -570,7 +570,7 @@ int32 Interpreter::readScriptFlagValue() {
 	return value;
 }
 
-Flags::Id Interpreter::readScriptFlagId() { 
+Flags::Id Interpreter::readScriptFlagId() {
 	return (Flags::Id)readScript16();
 }
 
@@ -722,6 +722,17 @@ void Interpreter::O_PUTBACKANIM() {
 		_vm->_script->installSingleBackAnim(_vm->_backAnimList, slot, room->_backAnim);
 	}
 	delete room;
+
+	// WALKAROUND: fix for turning on 'walking bird' background animation too soon,
+	// after completing 'throw a rock' mini-game in Silmaniona location.
+	// Second bird shouldn't appear when normal animation is still in use
+	// in script lines 13814 and 13848
+	if (_currentInstruction == kSecondBirdAnimationScriptFix) {
+		if (_vm->_normAnimList[1]._state == 0) {
+			_vm->_backAnimList[0].backAnims[0]._state = 1;
+		}
+	}
+
 	debugInterpreter("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
 }
 
@@ -1629,7 +1640,7 @@ void Interpreter::O_BACKANIMRANGE() {
 }
 
 void Interpreter::O_CLEARPATH() {
-	for (int i = 0; i < _vm->kPathBitmapLen; i++) {
+	for (uint i = 0; i < _vm->kPathBitmapLen; i++) {
 		_vm->_roomPathBitmap[i] = 255;
 	}
 	debugInterpreter("O_CLEARPATH");
@@ -1689,7 +1700,7 @@ void Interpreter::O_POPSTRING() {
 
 void Interpreter::O_SETFGCODE() {
 	int32 offset = readScript32();
-	_fgOpcodePC = _currentInstruction + offset - 4;	
+	_fgOpcodePC = _currentInstruction + offset - 4;
 	debugInterpreter("O_SETFGCODE next %08x, offset %08x", _fgOpcodePC, offset);
 }
 

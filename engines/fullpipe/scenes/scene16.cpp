@@ -57,9 +57,9 @@ void scene16_initScene(Scene *sc) {
 
 		boy[1] = new StaticANIObject(boy[0]);
 		sc->addStaticANIObject(boy[1], 1);
-		
+
 		int idx = 0;
-		
+
 		for (int i = 0; i < 3; i++) {
 			g_vars->scene16_figures.push_back(boy[idx]);
 
@@ -68,7 +68,7 @@ void scene16_initScene(Scene *sc) {
 			if (idx >= 2)
 				idx = 0;
 		}
-		
+
 		g_vars->scene16_figures.push_back(sc->getStaticANIObject1ById(ANI_GIRL, -1));
 
 		for (int i = 0; i < 4; i++) {
@@ -182,7 +182,7 @@ void sceneHandler16_fillMug() {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
 			mq->replaceKeyCode(-1, g_vars->scene16_walkingBoy->_okeyCode);
-			if (!mq || mq->chain(g_vars->scene16_walkingBoy))
+			if (mq->chain(g_vars->scene16_walkingBoy))
 				return;
 		} else {
 			if (!g_vars->scene16_walkingGirl)
@@ -259,7 +259,7 @@ void sceneHandler16_drink() {
 							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
 
 							mq->replaceKeyCode(-1, g_vars->scene16_walkingBoy->_okeyCode);
-							
+
 							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
 							ex->_field_14 = 384;

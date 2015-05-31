@@ -883,7 +883,7 @@ void ComputerManager::getScoreName() {
 	_vm->_graphicsMan->setColorPercentage(254, 0, 0, 0);
 	byte *ptr = _vm->_fileIO->loadFile("ALPHA.SPR");
 	_vm->_graphicsMan->fadeInBreakout();
-	
+
 	// Figure out the line to put the new high score on
 	int scoreLine = 0;
 	while (scoreLine < 5 && _breakoutScore < atol(_score[scoreLine]._score.c_str()))

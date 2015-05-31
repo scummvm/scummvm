@@ -244,7 +244,7 @@ static Common::String generateFilenameForDetection(const char *pattern, Filename
 	case kGenRoomNum:
 		result = Common::String::format(pattern, 0);
 		break;
-	
+
 	case kGenDiskNumSteam:
 	case kGenRoomNumSteam: {
 		const SteamIndexFile *indexFile = lookUpSteamIndexFile(pattern, platform);
@@ -323,6 +323,8 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 		gs.gameid = gfp->gameid;
 		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK);
 		gs.platform = gfp->platform;
+		if (strcmp(gfp->pattern, "maniacdemo.d64") == 0)
+			gs.features |= GF_DEMO;
 
 		// determine second disk file name
 		Common::String disk2(disk1);
@@ -502,6 +504,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 				// (since they have identical MD5):
 				if (dr.game.id == GID_MANIAC && !strcmp(gfp->pattern, "%02d.MAN")) {
 					dr.extra = "V1 Demo";
+					dr.game.features = GF_DEMO;
 				}
 
 				// HACK: Try to detect languages for translated games

@@ -640,7 +640,7 @@ Vga::Vga(CGEEngine *vm) : _frmCnt(0), _msg(NULL), _name(NULL), _setPal(false), _
 
 	if (ConfMan.getBool("enable_color_blind"))
 		_mono = 1;
-	
+
 
 	_oldColors = (Dac *)malloc(sizeof(Dac) * kPalCount);
 	_newColors = (Dac *)malloc(sizeof(Dac) * kPalCount);

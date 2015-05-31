@@ -420,7 +420,7 @@ void OSystem_WINCE3::initBackend() {
 	}
 
 	if (_graphicsManager == 0)
-		_graphicsManager = new WINCESdlGraphicsManager(_eventSource);
+		_graphicsManager = new WINCESdlGraphicsManager(_eventSource, _window);
 
 	((WINCESdlEventSource *)_eventSource)->init(dynamic_cast<WINCESdlGraphicsManager *>(_graphicsManager));
 

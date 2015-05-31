@@ -40,7 +40,7 @@ public:
 	Sprite *_blinkSprite;
 
 	System(CGE2Engine *vm);
-	
+
 	virtual void touch(uint16 mask, V2D pos, Common::KeyCode keyCode);
 	void tick();
 private:

@@ -46,6 +46,7 @@ public:
 	bool loadSettings(const char *filename);
 	bool loadStringTable(const char *filename, bool clearOld);
 	void expandStringByStringTable(char **str) const;
+	void expandStringByStringTable(Common::String &str) const;
 	char *getKeyFromStringTable(const char *str) const;
 
 	bool persist(BasePersistenceManager *persistMgr);

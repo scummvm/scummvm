@@ -58,7 +58,7 @@ void System::touch(uint16 mask, V2D pos, Common::KeyCode keyCode) {
 		if (_vm->_gamePhase != kPhaseInGame)
 			return;
 		_vm->_infoLine->setText(nullptr);
-		
+
 		if (mask & kMouseLeftUp) {
 			if (pos.y >= 0)	{ // world
 				if (!_vm->_talk && pos.y < _vm->_mouseTop)
@@ -184,7 +184,7 @@ Sprite *CGE2Engine::loadSprite(const char *fname, int ref, int scene, V3D &pos) 
 			if (line.empty())
 				continue;
 			Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-				
+
 			char *p = token(tmpStr);
 			if (*p == '@') {
 				if (label != kNoByte)
@@ -327,7 +327,7 @@ void CGE2Engine::loadScript(const char *fname, bool onlyToolbar) {
 
 		lcnt++;
 		Common::strlcpy(tmpStr, line.c_str(), sizeof(tmpStr));
-		
+
 		ok = false; // not OK if break
 
 		V3D P;
@@ -419,7 +419,7 @@ void CGE2Engine::sceneUp(int cav) {
 	_map->load(_now);
 	_spare->takeScene(_now);
 	openPocket();
-	
+
 	for (int i = 0; i < 2; i++) {
 		Hero *h = _heroTab[i]->_ptr;
 		if (h && h->_scene == _now) {
@@ -432,7 +432,7 @@ void CGE2Engine::sceneUp(int cav) {
 			h->setContact();
 		}
 	}
-	
+
 	_sound->stop();
 	_fx->clear();
 
@@ -596,7 +596,7 @@ void CGE2Engine::tick() {
 	for (Sprite *spr = _vga->_showQ->first(); spr; spr = spr->_next) {
 		if (spr->_time && (--spr->_time == 0))
 			spr->tick();
-		
+
 		if (_waitRef && (_waitRef == spr->_ref) && spr->seqTest(_waitSeq))
 			_waitRef = 0;
 	}
@@ -658,10 +658,10 @@ void CGE2Engine::loadUser() {
 
 void CGE2Engine::loadHeroes() { // Original name: loadGame()
 	// load sprites & pocket
-	
+
 	Sprite *s;
 	Hero *h = nullptr;
-	
+
 	// initialize Andzia/Anna
 	s = _spare->take(142);
 	if (s) {
@@ -698,7 +698,7 @@ void CGE2Engine::loadPos() {
 	if (_resman->exist("CGE.HXY")) {
 		for (int cav = 0; cav < kSceneMax; cav++)
 			_heroTab[1]->_posTab[cav] = new V2D(this, 180, 10);
-		
+
 		EncryptedStream file(this, "CGE.HXY");
 
 		for (int cav = 0; cav < kSceneMax; cav++) {
@@ -752,7 +752,7 @@ void CGE2Engine::cge2_main() {
 			runGame();
 			_gamePhase = kPhaseOver;
 		}
-		
+
 		_vga->sunset();
 	} else
 		_vga->sunset();
@@ -767,7 +767,7 @@ char *CGE2Engine::mergeExt(char *buf, const char *name, const char *ext) {
 	return buf;
 }
 
-void CGE2Engine::setEye(const V3D &e) { 
+void CGE2Engine::setEye(const V3D &e) {
 	*_eye = e;
 }
 
@@ -931,7 +931,7 @@ void CGE2Engine::offUse() {
 	// This fixes the issue of empty speech bubbles in the original.
 	// Now we only let this cycle pass if it randoms a valid value for getText().
 	int txt = 0;
-	do { 
+	do {
 		txt = kOffUseText + _sex * offUseCount + newRandom(offUseCount);
 	} while (_text->getText(txt) == nullptr);
 

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,11 +28,10 @@
 #include "common/list.h"
 #include "common/ptr.h"
 
-
 namespace ZVision {
 
 struct Puzzle {
-	Puzzle() : key(0) {}
+	Puzzle() : key(0), addedBySetState(false) {}
 
 	~Puzzle() {
 		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); ++iter) {
@@ -63,10 +62,17 @@ struct Puzzle {
 		bool argumentIsAKey;
 	};
 
+	enum StateFlags {
+		ONCE_PER_INST = 0x01,
+		DISABLED = 0x02,
+		DO_ME_NOW = 0x04
+	};
+
 	uint32 key;
 	Common::List<Common::List <CriteriaEntry> > criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
+	bool addedBySetState;
 };
 
 } // End of namespace ZVision

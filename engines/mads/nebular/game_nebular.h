@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -131,20 +131,21 @@ public:
 	virtual void step();
 
 	virtual void synchronize(Common::Serializer &s, bool phase1);
+
+	virtual void setNaughtyMode(bool naughtyMode) { _storyMode = naughtyMode ? STORYMODE_NAUGHTY : STORYMODE_NICE; }
+	virtual bool getNaughtyMode() const { return _storyMode == STORYMODE_NAUGHTY; }
 };
 
-
+// Section handlers aren't needed in ScummVM implementation
 class Section1Handler : public SectionHandler {
 public:
 	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
 
-	// TODO: Properly implement handler methods
 	virtual void preLoadSection() {}
 	virtual void sectionPtr2() {}
 	virtual void postLoadSection() {}
 };
 
-// TODO: Properly implement handler classes
 typedef Section1Handler Section2Handler;
 typedef Section1Handler Section3Handler;
 typedef Section1Handler Section4Handler;

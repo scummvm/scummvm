@@ -18,56 +18,7 @@
 #ifndef MT32EMU_MT32EMU_H
 #define MT32EMU_MT32EMU_H
 
-// Debugging
-
-// 0: Standard debug output is not stamped with the rendered sample count
-// 1: Standard debug output is stamped with the rendered sample count
-// NOTE: The "samplestamp" corresponds to the end of the last completed rendering run.
-//       This is important to bear in mind for debug output that occurs during a run.
-#define MT32EMU_DEBUG_SAMPLESTAMPS 0
-
-// 0: No debug output for initialisation progress
-// 1: Debug output for initialisation progress
-#define MT32EMU_MONITOR_INIT 0
-
-// 0: No debug output for MIDI events
-// 1: Debug output for weird MIDI events
-#define MT32EMU_MONITOR_MIDI 0
-
-// 0: No debug output for note on/off
-// 1: Basic debug output for note on/off
-// 2: Comprehensive debug output for note on/off
-#define MT32EMU_MONITOR_INSTRUMENTS 0
-
-// 0: No debug output for partial allocations
-// 1: Show partial stats when an allocation fails
-// 2: Show partial stats with every new poly
-// 3: Show individual partial allocations/deactivations
-#define MT32EMU_MONITOR_PARTIALS 0
-
-// 0: No debug output for sysex
-// 1: Basic debug output for sysex
-#define MT32EMU_MONITOR_SYSEX 0
-
-// 0: No debug output for sysex writes to the timbre areas
-// 1: Debug output with the name and location of newly-written timbres
-// 2: Complete dump of timbre parameters for newly-written timbres
-#define MT32EMU_MONITOR_TIMBRES 0
-
-// 0: No TVA/TVF-related debug output.
-// 1: Shows changes to TVA/TVF target, increment and phase.
-#define MT32EMU_MONITOR_TVA 0
-#define MT32EMU_MONITOR_TVF 0
-
 // Configuration
-
-// If non-zero, deletes reverb buffers that are not in use to save memory.
-// If zero, keeps reverb buffers for all modes around all the time to avoid allocating/freeing in the critical path.
-#define MT32EMU_REDUCE_REVERB_MEMORY 1
-
-// 0: Maximum speed at the cost of a bit lower emulation accuracy.
-// 1: Maximum achievable emulation accuracy.
-#define MT32EMU_BOSS_REVERB_PRECISE_MODE 0
 
 // 0: Use 16-bit signed samples and refined wave generator based on logarithmic fixed-point computations and LUTs. Maximum emulation accuracy and speed.
 // 1: Use float samples in the wave generator and renderer. Maximum output quality and minimum noise.
@@ -75,6 +26,12 @@
 
 namespace MT32Emu
 {
+// Sample rate to use in mixing. With the progress of development, we've found way too many thing dependent.
+// In order to achieve further advance in emulation accuracy, sample rate made fixed throughout the emulator,
+// except the emulation of analogue path.
+// The output from the synth is supposed to be resampled externally in order to convert to the desired sample rate.
+const unsigned int SAMPLE_RATE = 32000;
+
 // The default value for the maximum number of partials playing simultaneously.
 const unsigned int DEFAULT_MAX_PARTIALS = 32;
 
@@ -97,17 +54,7 @@ const unsigned int MAX_SAMPLES_PER_RUN = 4096;
 const unsigned int DEFAULT_MIDI_EVENT_QUEUE_SIZE = 1024;
 }
 
-#include "Structures.h"
-#include "common/file.h"
-#include "Tables.h"
-#include "Poly.h"
-#include "LA32Ramp.h"
-#include "LA32WaveGenerator.h"
-#include "TVA.h"
-#include "TVP.h"
-#include "TVF.h"
-#include "Partial.h"
-#include "Part.h"
+#include "Types.h"
 #include "ROMInfo.h"
 #include "Synth.h"
 

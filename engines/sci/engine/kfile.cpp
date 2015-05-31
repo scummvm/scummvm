@@ -37,6 +37,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/graphics/menu.h"
 #include "sci/sound/audio.h"
 #include "sci/console.h"
 
@@ -912,6 +913,25 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 				// We set the current savedgame-id directly and remove the script
 				//  code concerning this via script patch.
 				s->variables[VAR_GLOBAL][0xB3].setOffset(SAVEGAMEID_OFFICIALRANGE_START + savegameId);
+				break;
+			case GID_JONES:
+				// HACK: The code that enables certain menu items isn't called when a game is restored from the
+				// launcher, or the "Restore game" option in the game's main menu - bugs #6537 and #6723.
+				// These menu entries are disabled when the game is launched, and are enabled when a new game is
+				// started. The code for enabling these entries is is all in script 1, room1::init, but that code
+				// path is never followed in these two cases (restoring game from the menu, or restoring a game
+				// from the ScummVM launcher). Thus, we perform the calls to enable the menus ourselves here.
+				// These two are needed when restoring from the launcher
+				// FIXME: The original interpreter saves and restores the menu state, so these attributes
+				// are automatically reset there. We may want to do the same.
+				g_sci->_gfxMenu->kernelSetAttribute(257 >> 8, 257 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> About Jones
+				g_sci->_gfxMenu->kernelSetAttribute(258 >> 8, 258 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Sierra -> Help
+				// The rest are normally enabled from room1::init
+				g_sci->_gfxMenu->kernelSetAttribute(769 >> 8, 769 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Options -> Delete current player
+				g_sci->_gfxMenu->kernelSetAttribute(513 >> 8, 513 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Save Game
+				g_sci->_gfxMenu->kernelSetAttribute(515 >> 8, 515 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);    // Game -> Restore Game
+				g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
+				g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
 				break;
 			default:
 				break;

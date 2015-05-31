@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 #include "gui/debugger.h"
+#include "engines/wintermute/game_description.h"
 
 namespace Wintermute {
 
@@ -44,7 +45,7 @@ enum {
 
 class WintermuteEngine : public Engine {
 public:
-	WintermuteEngine(OSystem *syst, const ADGameDescription *desc);
+	WintermuteEngine(OSystem *syst, const WMEGameDescription *desc);
 	WintermuteEngine();
 	~WintermuteEngine();
 
@@ -67,7 +68,7 @@ private:
 	int messageLoop();
 	GUI::Debugger *_debugger;
 	BaseGame *_game;
-	const ADGameDescription *_gameDescription;
+	const WMEGameDescription *_gameDescription;
 
 	friend class Console;
 };

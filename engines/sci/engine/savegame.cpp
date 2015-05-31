@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/func.h"
@@ -40,6 +41,7 @@
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
 #include "sci/parser/vocabulary.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -132,13 +134,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
-
-#ifdef ENABLE_SCI32
-		// Clear any planes/screen items currently showing so they
-		// don't show up after the load.
-		if (getSciVersion() >= SCI_VERSION_2)
-			g_sci->_gfxFrameout->clear();
-#endif
 	}
 
 	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
@@ -617,6 +612,14 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(fadeTicker);
 	s.syncAsSint32LE(fadeTickerStep);
 	s.syncAsByte(status);
+	if (s.getVersion() >= 32)
+		s.syncAsByte(playBed);
+	else if (s.isLoading())
+		playBed = false;
+	if (s.getVersion() >= 33)
+		s.syncAsByte(overridePriority);
+	else if (s.isLoading())
+		overridePriority = false;
 
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()
@@ -635,20 +638,26 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 void SoundCommandParser::reconstructPlayList() {
 	Common::StackLock lock(_music->_mutex);
 
-	const MusicList::iterator end = _music->getPlayListEnd();
-	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
+	// We store all songs here because starting songs may re-shuffle their order
+	MusicList songs;
+	for (MusicList::iterator i = _music->getPlayListStart(); i != _music->getPlayListEnd(); ++i)
+		songs.push_back(*i);
+
+	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
 		initSoundResource(*i);
 
 		if ((*i)->status == kSoundPlaying) {
-			// Sync the sound object's selectors related to playing with the stored
-			// ones in the playlist, as they may have been invalidated when loading.
-			// Refer to bug #3104624.
+			// WORKAROUND: PQ3 (German?) scripts can set volume negative in the
+			// sound object directly without going through DoSound.
+			// Since we re-read this selector when re-playing the sound after loading,
+			// this will lead to unexpected behaviour. As a workaround we
+			// sync the sound object's selectors here. (See bug #5501)
 			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(loop), (*i)->loop);
 			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(priority), (*i)->priority);
 			if (_soundVersion >= SCI_VERSION_1_EARLY)
 				writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol), (*i)->volume);
 
-			processPlaySound((*i)->soundObj);
+			processPlaySound((*i)->soundObj, (*i)->playBed);
 		}
 	}
 }
@@ -713,9 +722,7 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.isLoading())
-		reset();	// remove all script generated windows
-
+	// reset() is called directly way earlier in gamestate_restore()
 	if (s.getVersion() >= 27) {
 		uint windowCount = 0;
 		uint id = PORTS_FIRSTSCRIPTWINDOWID;
@@ -758,10 +765,17 @@ void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
 				if (window->counterTillFree) {
 					_freeCounter++;
 				} else {
-					if (window->wndStyle & SCI_WINDOWMGR_STYLE_TOPMOST)
-						_windowList.push_front(window);
-					else
-						_windowList.push_back(window);
+					// we don't put the saved script windows into _windowList[], so that they aren't used
+					//  by kernel functions. This is important and would cause issues otherwise.
+					//  see Conquests of Camelot - bug #6744 - when saving on the map screen (room 103),
+					//                                restoring would result in a black window in place
+					//                                where the area name was displayed before
+					//                                In Sierra's SCI the behaviour is identical to us
+					//                                 Sierra's SCI won't show those windows after restoring
+					// If this should cause issues in another game, we would have to add a flag to simply
+					//  avoid any drawing operations for such windows
+					// We still have to restore script windows, because for example Conquests of Camelot
+					//  will immediately delete windows, that were created before saving the game.
 				}
 
 				windowCount--;
@@ -844,10 +858,28 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	if (voc)
 		voc->saveLoadWithSerializer(ser);
 
+	// TODO: SSCI (at least JonesCD, presumably more) also stores the Menu state
+
 	return true;
 }
 
 extern void showScummVMDialog(const Common::String &message);
+
+void gamestate_delayedrestore(EngineState *s) {
+	Common::String fileName = g_sci->getSavegameName(s->_delayedRestoreGameId);
+	Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
+
+	if (in) {
+		// found a savegame file
+		gamestate_restore(s, in);
+		delete in;
+		if (s->r_acc != make_reg(0, 1)) {
+			return;
+		}
+	}
+
+	error("Restoring gamestate '%s' failed", fileName.c_str());
+}
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	SavegameMetadata meta;
@@ -884,6 +916,20 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// We don't need the thumbnail here, so just read it and discard it
 	Graphics::skipThumbnail(*fh);
+
+	// reset ports is one of the first things we do, because that may free() some hunk memory
+	//  and we don't want to do that after we read in the saved game hunk memory
+	if (g_sci->_gfxPorts)
+		g_sci->_gfxPorts->reset();
+	// clear screen
+	if (g_sci->_gfxScreen)
+		g_sci->_gfxScreen->clearForRestoreGame();
+#ifdef ENABLE_SCI32
+	// Also clear any SCI32 planes/screen items currently showing so they
+	// don't show up after the load.
+	if (getSciVersion() >= SCI_VERSION_2)
+		g_sci->_gfxFrameout->clear();
+#endif
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?

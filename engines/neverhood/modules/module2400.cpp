@@ -168,11 +168,6 @@ static const uint32 kScene2401FileHashes2[] = {
 	0xD0910068, 0xD09100A8, 0
 };
 
-static const uint32 kScene2401FileHashes3[] = {
-	0xD0910020, 0xD0910038, 0xD0910008,
-	0xD0910068, 0xD09100A8, 0
-};
-
 static const NRect kScene2401Rects[] = {
 	{ 369, 331, 394, 389 },
 	{ 395, 331, 419, 389 },
@@ -264,11 +259,11 @@ void Scene2401::update() {
 		} else if (_pipeStatus >= 5) {
 			_ssWaterPipes[_pipeStatus]->setVisible(true);
 			_countdown1 = 8;
-			playPipeSound(kScene2401FileHashes3[getSubVar(VA_CURR_WATER_PIPES_LEVEL, _pipeStatus - 5)]);
+			playPipeSound(kScene2401FileHashes2[getSubVar(VA_CURR_WATER_PIPES_LEVEL, _pipeStatus - 5)]);
 		} else {
 			_ssWaterPipes[_pipeStatus]->setVisible(true);
 			_countdown1 = _pipeStatus == 4 ? 16 : 8;
-			playPipeSound(kScene2401FileHashes3[getSubVar(VA_GOOD_WATER_PIPES_LEVEL, _pipeStatus)]);
+			playPipeSound(kScene2401FileHashes2[getSubVar(VA_GOOD_WATER_PIPES_LEVEL, _pipeStatus)]);
 		}
 		_pipeStatus++;
 	}

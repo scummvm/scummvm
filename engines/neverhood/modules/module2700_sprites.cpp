@@ -24,62 +24,6 @@
 
 namespace Neverhood {
 
-static const NRect kScene2710ClipRect = { 0, 0, 626, 480 };
-
-static const uint32 kScene2710StaticSprites[] = {
-	0x0D2016C0,
-	0
-};
-
-static const NRect kScene2711ClipRect = { 0, 0, 521, 480 };
-
-static const uint32 kScene2711FileHashes1[] = {
-	0,
-	0x100801A1,
-	0x201081A0,
-	0x006800A4,
-	0x40390120,
-	0x000001B1,
-	0x001000A1,
-	0
-};
-
-static const uint32 kScene2711FileHashes2[] = {
-	0,
-	0x40403308,
-	0x71403168,
-	0x80423928,
-	0x224131A8,
-	0x50401328,
-	0x70423328,
-	0
-};
-
-static const uint32 kScene2711FileHashes3[] = {
-	0,
-	0x1088A021,
-	0x108120E5,
-	0x18A02321,
-	0x148221A9,
-	0x10082061,
-	0x188820E1,
-	0
-};
-
-static const NRect kScene2724ClipRect = { 0, 141, 640, 480 };
-
-static const uint32 kScene2724StaticSprites[] = {
-	0xC20D00A5,
-	0
-};
-
-static const NRect kScene2725ClipRect = { 0, 0, 640, 413 };
-
-static const uint32 kScene2725StaticSprites[] = {
-	0xC20E00A5,
-	0
-};
-
 static const NPoint kCarShadowOffsets[] = {
 	{-63,  3}, {-48, 40}, {-33, 58},
 	{  0, 65}, { 40, 53}, { 56, 27},
