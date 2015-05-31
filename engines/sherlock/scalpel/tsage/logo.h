@@ -41,8 +41,6 @@ class ScalpelEngine;
 
 namespace TsAGE {
 
-enum AnimationMode { ANIM_MODE_NONE = 0, ANIM_MODE_4 = 4, ANIM_MODE_5 = 5 };
-
 class ObjectSurface : public Surface {
 public:
 	Common::Point _centroid;
@@ -73,6 +71,11 @@ public:
 	void setVisage(int resNum, int rlbNum = 9999);
 
 	/**
+	 * Clear the visage
+	 */
+	void clear();
+
+	/**
 	 * Get a frame from the visage
 	 */
 	void getFrame(ObjectSurface &s, int frameNum);
@@ -92,7 +95,7 @@ class Object {
 private:
 	Visage _visage;
 	uint32 _updateStartFrame;
-	int _animMode;
+	bool _isAnimating;
 	bool _finished;
 
 	/**
@@ -107,6 +110,7 @@ private:
 public:
 	static ScalpelEngine *_vm;
 	Common::Point _position;
+	Common::Point _destination;
 	Common::Rect _oldBounds;
 	int _frame;
 	int _numFrames;
@@ -120,9 +124,14 @@ public:
 	void setVisage(int visage, int strip);
 
 	/**
-	 * Sets the animation mode
+	 * Sets whether the object is animating
 	 */
-	void setAnimMode(AnimationMode mode);
+	void setAnimMode(bool isAnimating);
+
+	/**
+	 * Starts an object moving to a given destination
+	 */
+	void setDestination(const Common::Point &pt) { _destination = pt; }
 
 	/**
 	 * Returns true if an animation is ended
@@ -130,9 +139,24 @@ public:
 	bool isAnimEnded() const;
 
 	/**
+	 * Return true if object is moving
+	 */
+	bool isMoving() const;
+
+	/**
+	 * Erase the area the object was previously drawn at, by restoring the background
+	 */
+	void erase();
+
+	/**
 	 * Update the frame
 	 */
 	void update();
+
+	/**
+	 * Remove an object from being displayed
+	 */
+	void remove() { _visage.clear(); }
 };
 
 class Logo {
@@ -161,7 +185,7 @@ private:
 	/**
 	 * Fade from the current palette to a new one
 	 */
-	void fade(const byte palette[PALETTE_SIZE]);
+	void fade(const byte palette[PALETTE_SIZE], int step = 6);
 public:
 	static bool show(ScalpelEngine *vm);
 };

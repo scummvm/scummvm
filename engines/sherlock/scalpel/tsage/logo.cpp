@@ -67,6 +67,11 @@ void Visage::setVisage(int resNum, int rlbNum) {
 	}
 }
 
+void Visage::clear() {
+	delete _stream;
+	_stream = nullptr;
+}
+
 Visage::~Visage() {
 	delete _stream;
 }
@@ -151,7 +156,7 @@ ScalpelEngine *Object::_vm;
 
 Object::Object() {
 	_vm = nullptr;
-	_animMode = ANIM_MODE_NONE;
+	_isAnimating = false;
 	_frame = 0;
 	_numFrames = 0;
 	_frameChange = 0;
@@ -161,8 +166,8 @@ void Object::setVisage(int visage, int strip) {
 	_visage.setVisage(visage, strip);
 }
 
-void Object::setAnimMode(AnimationMode mode) {
-	_animMode = mode;
+void Object::setAnimMode(bool isAnimating) {
+	_isAnimating = isAnimating;
 	_finished = false;
 
 	_updateStartFrame = _vm->_events->getFrameCounter();
@@ -171,25 +176,23 @@ void Object::setAnimMode(AnimationMode mode) {
 	_frameChange = 1;
 }
 
+void Object::erase() {
+	Screen &screen = *_vm->_screen;
+	
+	if (_visage.isLoaded() && !_oldBounds.isEmpty())
+		screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+}
+
 void Object::update() {
 	Screen &screen = *_vm->_screen;
 
 	if (_visage.isLoaded()) {
-		switch (_animMode) {
-		case ANIM_MODE_5:
+		if (_isAnimating) {
 			if (_frame < _visage.getFrameCount())
 				_frame = changeFrame();
 			else
 				_finished = true;
-			break;
-
-		default:
-			break;
 		}
-
-		// Erase previous frame, if any
-		if (!_oldBounds.isEmpty())
-			screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 
 		// Get the new frame
 		ObjectSurface s;
@@ -236,6 +239,10 @@ bool Object::isAnimEnded() const {
 	return _finished;
 }
 
+bool Object::isMoving() const {
+	return (_destination.x != 0) && (_destination != _position);
+}
+
 /*----------------------------------------------------------------*/
 
 bool Logo::show(ScalpelEngine *vm) {
@@ -249,11 +256,15 @@ bool Logo::show(ScalpelEngine *vm) {
 		events.wait(2);
 		events.setButtonState();
 
+		// Erase areas from previous frame, and update and re-draw objects
+		for (int idx = 0; idx < 4; ++idx)
+			logo->_objects[idx].erase();
 		for (int idx = 0; idx < 4; ++idx)
 			logo->_objects[idx].update();
 
 		interrupted = vm->shouldQuit() || events.kbHit() || events._pressed;
 		if (interrupted) {
+			// Keyboard or mouse button pressed, so break out of logo display
 			events.clearEvents();
 			break;
 		}
@@ -292,10 +303,12 @@ Logo::~Logo() {
 }
 
 bool Logo::finished() const {
-	return _counter >= 4;
+	return _counter >= 442;
 }
 
 void Logo::nextFrame() {
+	Screen &screen = *_vm->_screen;
+
 	switch (_counter++) {
 	case 0:
 		// Load the background and fade it in
@@ -309,18 +322,179 @@ void Logo::nextFrame() {
 		_objects[0]._frame = 1;
 		_objects[0]._position = Common::Point(169, 107);
 		_objects[0]._numFrames = 7;
-		_objects[0].setAnimMode(ANIM_MODE_5);
+		_objects[0].setAnimMode(true);
 		break;
 
 	case 2:
 		// Keep waiting until first animation ends
-		if (!_objects[0].isAnimEnded())
+		if (!_objects[0].isAnimEnded()) {
 			--_counter;
+		} else {
+			// Start second half of the shapes animation
+			_objects[0].setVisage(16, 2);
+			_objects[0]._frame = 1;
+			_objects[0]._numFrames = 11;
+			_objects[0].setAnimMode(true);
+		}
 		break;
 
 	case 3:
 		// Keep waiting until second animation of shapes ordering themselves ends
-		return;
+		if (!_objects[0].isAnimEnded()) {
+			--_counter;
+		} else {
+			// Fade out the background but keep the shapes visible
+			fade(_palette2);
+			screen._backBuffer1.clear();
+			screen.clear();
+		}
+		break;
+
+	case 13: {
+		// Load the new palette
+		byte palette[PALETTE_SIZE];
+		_lib.getPalette(palette, 12);
+		screen.setPalette(palette);
+		break;
+	}
+
+	case 14:
+		_objects[0].setVisage(12, 1);
+		_objects[0]._frame = 1;
+		_objects[0]._numFrames = 7;
+		_objects[0]._position = Common::Point(170, 142);
+		_objects[0].setDestination(Common::Point(158, 71));
+		break;
+
+	case 15:
+		// Wait until the logo has expanded upwards to form EA logo
+		if (_objects[0].isMoving())
+			--_counter;
+		break;
+
+	case 16:
+		fade(_palette3, 40);
+		break;
+
+	case 20:
+		// Show the 'Electronic Arts' company name
+		_objects[1].setVisage(14, 1);
+		_objects[1]._frame = 1;
+		_objects[1]._position = Common::Point(152, 98);
+		break;
+
+	case 140:
+		// Start sequence of positioning and size hand cursor in an arc
+		_objects[2].setVisage(18, 1);
+		_objects[2]._frame = 1;
+		_objects[2]._position = Common::Point(33, 91);
+		break;
+
+	case 145:
+		_objects[2]._frame = 2;
+		_objects[2]._position = Common::Point(44, 124);
+		break;
+
+	case 150:
+		_objects[2]._frame = 3;
+		_objects[2]._position = Common::Point(64, 153);
+		break;
+
+	case 155:
+		_objects[2]._frame = 4;
+		_objects[2]._position = Common::Point(87, 174);
+		break;
+
+	case 160:
+		_objects[2]._frame = 5;
+		_objects[2]._position = Common::Point(114, 191);
+		break;
+
+	case 165:
+		_objects[2]._frame = 6;
+		_objects[2]._position = Common::Point(125, 184);
+		break;
+
+	case 170:
+		_objects[2]._frame = 7;
+		_objects[2]._position = Common::Point(154, 187);
+		break;
+
+	case 175:
+		_objects[2]._frame = 8;
+		_objects[2]._position = Common::Point(181, 182);
+		break;
+
+	case 180:
+		_objects[2]._frame = 9;
+		_objects[2]._position = Common::Point(191, 167);
+		break;
+
+	case 185:
+		_objects[2]._frame = 10;
+		_objects[2]._position = Common::Point(190, 150);
+		break;
+
+	case 190:
+		_objects[2]._frame = 11;
+		_objects[2]._position = Common::Point(182, 139);
+		break;
+
+	case 195:
+		_objects[2]._frame = 11;
+		_objects[2]._position = Common::Point(170, 130);
+		break;
+
+	case 200:
+		_objects[2]._frame = 11;
+		_objects[2]._position = Common::Point(158, 121);
+		break;
+
+	case 205:
+		// Show a highlighting of the company name
+		_objects[2].remove();
+		_objects[3].setVisage(19, 1);
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 213:
+		_objects[3]._frame = 2;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 221:
+		_objects[1].remove();
+		break;
+
+	case 222:
+		_objects[3]._frame = 3;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 230:
+		_objects[3]._frame = 4;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 238:
+		_objects[3]._frame = 5;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 246:
+		_objects[3]._frame = 6;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 254:
+		_objects[3]._frame = 7;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
+
+	case 262:
+		_objects[3]._frame = 8;
+		_objects[3]._position = Common::Point(155, 94);
+		break;
 
 	default:
 		break;
@@ -354,18 +528,22 @@ void Logo::loadBackground() {
 	screen.blitFrom(screen._backBuffer1);
 }
 
-void Logo::fade(const byte palette[PALETTE_SIZE]) {
+void Logo::fade(const byte palette[PALETTE_SIZE], int step) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
+	byte startPalette[PALETTE_SIZE];
 	byte tempPalette[PALETTE_SIZE];
 
-	for (int percent = 0; percent < 100; percent += 6) {
+	screen.getPalette(startPalette);
+
+	for (int percent = 0; percent < 100; percent += step) {
 		for (int palIndex = 0; palIndex < 256; ++palIndex) {
-			const byte *palP = (const byte *)&palette[palIndex * 3];
+			const byte *pal1P = (const byte *)&startPalette[palIndex * 3];
+			const byte *pal2P = (const byte *)&palette[palIndex * 3];
 			byte *destP = &tempPalette[palIndex * 3];
 
-			for (int rgbIndex = 0; rgbIndex < 3; ++rgbIndex, ++palP, ++destP) {
-				*destP = (int)*palP * percent / 100;
+			for (int rgbIndex = 0; rgbIndex < 3; ++rgbIndex, ++pal1P, ++pal2P, ++destP) {
+				*destP = (int)*pal1P + ((int)*pal2P - (int)*pal1P) * percent / 100;
 			}
 		}
 
