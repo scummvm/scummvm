@@ -89,9 +89,53 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 	if (scene._mask != nullptr)
 		screen._flushScreen = true;
 
-	//if (screen._flushScreen)
-	//	screen.blockMove(_currentScroll.x);
+	if (screen._flushScreen)
+		screen.blockMove(_currentScroll);
 
+	// If there are UI widgets open, slam the areas they were drawn on to the physical screen
+	if (_menuBuffer != nullptr)
+		screen.slamArea(_menuBounds.left - _currentScroll.x, _menuBounds.top, _menuBounds.width(), _menuBounds.height());
+	
+	if (_invMenuBuffer != nullptr)
+		screen.slamArea(_invMenuBounds.left - _currentScroll.x, _invMenuBounds.top, _invMenuBounds.width(), _invMenuBounds.height());
+
+	// If therea re widgets being cleared, then restore that area of the screen
+	if (_oldMenuBounds.right) {
+		screen.slamArea(_oldMenuBounds.left - _currentScroll.x, _oldMenuBounds.top, _oldMenuBounds.width(), _oldMenuBounds.height());
+		_oldMenuBounds.left = _oldMenuBounds.top = _oldMenuBounds.right = _oldMenuBounds.bottom = 0;
+	}
+	
+	if (_oldInvMenuBounds.left) {
+		screen.slamArea(_oldInvMenuBounds.left - _currentScroll.x, _oldInvMenuBounds.top, _oldInvMenuBounds.width(), _oldInvMenuBounds.height());
+		_oldInvMenuBounds.left = _oldInvMenuBounds.top = _oldInvMenuBounds.right = _oldInvMenuBounds.bottom = 0;
+	}
+
+	// See if  need to clear any tags
+	if (_oldTagBounds.right) {
+		screen.slamArea(_oldTagBounds.left - _currentScroll.x, _oldTagBounds.top, _oldTagBounds.width(), _oldTagBounds.height());
+
+		// If there's no tag actually being displayed, then reset bounds so we don't keep restoring the area
+		if (_tagBuffer == nullptr) {
+			_tagBounds.left = _tagBounds.top = _tagBounds.right = _tagBounds.bottom = 0;
+			_oldTagBounds.left = _oldTagBounds.top = _oldTagBounds.right = _oldTagBounds.bottom = 0;
+		}
+	}
+	if (_tagBuffer != nullptr)
+		screen.slamArea(_tagBounds.left - _currentScroll.x, _tagBounds.top, _tagBounds.width(), _tagBounds.height());
+
+	// See if we need to flush areas assocaited with the inventory graphic
+	if (_oldInvGraphicBounds.right) {
+		screen.slamArea(_oldInvGraphicBounds.left - _currentScroll.x, _oldInvGraphicBounds.top,
+			_oldInvGraphicBounds.width(), _oldInvGraphicBounds.height());
+
+		// If there's no graphic actually being displayed, then reset bounds so we don't keep restoring the area
+		if (_invGraphic == nullptr) {
+			_invGraphicBounds.left = _invGraphicBounds.top = _invGraphicBounds.right = _invGraphicBounds.bottom = 0;
+			_oldInvGraphicBounds.left = _oldInvGraphicBounds.top = _oldInvGraphicBounds.right = _oldInvGraphicBounds.bottom = 0;
+		}
+	}
+	if (_invGraphic != nullptr)
+		screen.slamArea(_invGraphicBounds.left - _currentScroll.x, _invGraphicBounds.top, _invGraphicBounds.width(), _invGraphicBounds.height());
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {
