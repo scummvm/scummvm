@@ -1549,6 +1549,8 @@ void ScalpelUserInterface::doTalkControl() {
 				|| _key == 'E') && _endKeyActive) {
 			talk.freeTalkVars();
 			talk.pullSequence();
+
+			drawInterface(2);
 			banishWindow();
 			_windowBounds.top = CONTROLS_Y1;
 		} else if (((Common::Rect(140, CONTROLS_Y, 179, CONTROLS_Y + 10).contains(mousePos) && events._released)
