@@ -507,7 +507,7 @@ bool ScalpelEngine::showCityCutscene() {
 			// In the alley...
 			_screen->transBlitFrom(titleImages[3], Common::Point(72, 51));
 			_screen->fadeIn(palette, 3);
-			finished = _events->delay(3000, true);
+			finished = _events->delay(2500, true);
 		}
 	}
 
@@ -524,8 +524,16 @@ bool ScalpelEngine::showAlleyCutscene() {
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
 	bool finished = _animation->play("27PRO1", 1, 3, true, 2);
-	if (finished)
+	if (finished) {
+		_screen->getPalette(palette);
+		_screen->fadeToBlack(2);
+		finished = _events->delay(500);
+	}
+
+	if (finished) {
+		_screen->setPalette(palette);
 		finished = _animation->play("27PRO2", 1, 0, false, 2);
+	}
 
 	if (finished) {
 		showLBV("scream.lbv");
