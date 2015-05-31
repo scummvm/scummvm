@@ -44,10 +44,6 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 	// Rose Tattoo specific fields
 	_fadeBytesRead = _fadeBytesToRead = 0;
 	_oldFadePercent = 0;
-	_scrollSize = 0;
-	_scrollSpeed = 0;
-	_currentScroll = 0;
-	_targetScroll = 0;
 	_flushScreen = false;
 }
 
@@ -310,6 +306,16 @@ void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *
 	*height = newBounds.height();
 }
 
+void Screen::blockMove(const Common::Rect &r, const Common::Point &scrollPos) {
+	Common::Rect bounds = r;
+	bounds.translate(scrollPos.x, scrollPos.y);
+	slamRect(bounds);
+}
+
+void Screen::blockMove(const Common::Point &scrollPos) {
+	blockMove(Common::Rect(0, 0, w(), h()), scrollPos);
+}
+
 void Screen::print(const Common::Point &pt, byte color, const char *formatStr, ...) {
 	// Create the string to display
 	va_list args;
@@ -489,15 +495,6 @@ int Screen::fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSiz
  */
 void Screen::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	warning("TODO");
-}
-
-/**
- * Initializes scroll variables
- */
-void Screen::initScrollVars() {
-	_scrollSize = 0;
-	_currentScroll = 0;
-	_targetScroll = 0;
 }
 
 void Screen::translatePalette(byte palette[PALETTE_SIZE]) {

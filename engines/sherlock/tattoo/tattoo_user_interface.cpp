@@ -33,6 +33,13 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) 
 	_invMenuBuffer = nullptr;
 	_tagBuffer = nullptr;
 	_invGraphic = nullptr;
+	_scrollSize = _scrollSpeed = 0;
+}
+
+void TattooUserInterface::initScrollVars() {
+	_scrollSize = 0;
+	_currentScroll.x = _currentScroll.y = 0;
+	_targetScroll.x = _targetScroll.y = 0;
 }
 
 void TattooUserInterface::handleInput() {
@@ -41,13 +48,14 @@ void TattooUserInterface::handleInput() {
 }
 
 void TattooUserInterface::drawInterface(int bufferNum) {
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	TattooEngine &vm = *((TattooEngine *)_vm);
+	TattooEngine &vm = *(TattooEngine *)_vm;
 	
 	if (_invMenuBuffer != nullptr) {
 		Common::Rect r = _invMenuBounds;
 		r.grow(-3);
-		r.translate(-screen._currentScroll, 0);
+		r.translate(-_currentScroll.x, 0);
 		_grayAreas.clear();
 		_grayAreas.push_back(r);
 
@@ -58,7 +66,7 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 	if (_menuBuffer != nullptr) {
 		Common::Rect r = _menuBounds;
 		r.grow(-3);
-		r.translate(-screen._currentScroll, 0);
+		r.translate(-_currentScroll.x, 0);
 		_grayAreas.clear();
 		_grayAreas.push_back(r);
 
@@ -76,6 +84,14 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 
 	if (vm._creditsActive)
 		vm.drawCredits();
+
+	// Bring the widgets to the screen
+	if (scene._mask != nullptr)
+		screen._flushScreen = true;
+
+	//if (screen._flushScreen)
+	//	screen.blockMove(_currentScroll.x);
+
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {
@@ -118,27 +134,27 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 
 void TattooUserInterface::doScroll() {
 	Screen &screen = *_vm->_screen;
-	int oldScroll = screen._currentScroll;
+	int oldScroll = _currentScroll.x;
 
 	// If we're already at the target scroll position, nothing needs to be done
-	if (screen._targetScroll == screen._currentScroll)
+	if (_targetScroll.x == _currentScroll.x)
 		return;
 
 	screen._flushScreen = true;
-	if (screen._targetScroll > screen._currentScroll) {
-		screen._currentScroll += screen._scrollSpeed;
-		if (screen._currentScroll > screen._targetScroll)
-			screen._currentScroll = screen._targetScroll;
-	} else if (screen._targetScroll < screen._currentScroll) {
-		screen._currentScroll -= screen._scrollSpeed;
-		if (screen._currentScroll < screen._targetScroll)
-			screen._currentScroll = screen._targetScroll;
+	if (_targetScroll.x > _currentScroll.x) {
+		_currentScroll.x += _scrollSpeed;
+		if (_currentScroll.x > _targetScroll.x)
+			_currentScroll.x = _targetScroll.x;
+	} else if (_targetScroll.x < _currentScroll.x) {
+		_currentScroll.x -= _scrollSpeed;
+		if (_currentScroll.x < _targetScroll.x)
+			_currentScroll.x = _targetScroll.x;
 	}
 
 	if (_menuBuffer != nullptr)
-		_menuBounds.translate(screen._currentScroll - oldScroll, 0);
+		_menuBounds.translate(_currentScroll.x - oldScroll, 0);
 	if (_invMenuBuffer != nullptr)
-		_invMenuBounds.translate(screen._currentScroll - oldScroll, 0);
+		_invMenuBounds.translate(_currentScroll.x - oldScroll, 0);
 }
 
 void TattooUserInterface::drawGrayAreas() {

@@ -51,6 +51,9 @@ private:
 	 */
 	void drawGrayAreas();
 public:
+	Common::Point _currentScroll, _targetScroll;
+	int _scrollSize, _scrollSpeed;
+public:
 	TattooUserInterface(SherlockEngine *vm);
 
 	/**
@@ -74,6 +77,11 @@ public:
 	 * Draw the user interface onto the screen's back buffers
 	 */	
 	virtual void drawInterface(int bufferNum = 3);
+
+	/**
+	 * Initializes scroll variables
+	 */
+	virtual void initScrollVars();
 };
 
 } // End of namespace Tattoo

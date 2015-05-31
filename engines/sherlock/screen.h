@@ -99,8 +99,6 @@ public:
 	byte _cMap[PALETTE_SIZE];
 	byte _sMap[PALETTE_SIZE];
 	byte _tMap[PALETTE_SIZE];
-	int _currentScroll, _targetScroll;
-	int _scrollSize, _scrollSpeed;
 	bool _flushScreen;
 public:
 	Screen(SherlockEngine *vm);
@@ -192,6 +190,16 @@ public:
 		int16 *width, int16 *height, int scaleVal);
 
 	/**
+	 * Copies data from the back buffer to the screen, taking into account scrolling position
+	 */
+	void blockMove(const Common::Rect &r, const Common::Point &scrollPos);
+
+	/**
+	 * Copies the entire screen from the back buffer, taking into account scrolling position
+	 */
+	void blockMove(const Common::Point &scorllPos);
+
+	/**
 	 * Returns the width of a string in pixels
 	 */
 	int stringWidth(const Common::String &str);
@@ -256,8 +264,6 @@ public:
 	int fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSize);
 
 	void setupBGArea(const byte cMap[PALETTE_SIZE]);
-
-	void initScrollVars();
 
 	/**
 	 * Translate a palette from 6-bit RGB values to full 8-bit values suitable for passing

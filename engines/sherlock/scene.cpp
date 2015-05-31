@@ -336,7 +336,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			screen.translatePalette(screen._cMap);
 			screen.setupBGArea(screen._cMap);
 
-			screen.initScrollVars();
+			ui.initScrollVars();
 
 			// Read in background
 			if (_lzwMode) {
