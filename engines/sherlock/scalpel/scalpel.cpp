@@ -440,7 +440,12 @@ void ScalpelEngine::showOpening() {
 }
 
 bool ScalpelEngine::showCityCutscene() {
+	byte greyPalette[PALETTE_SIZE];
 	byte palette[PALETTE_SIZE];
+
+	// Demo fades from black into grey and then fades from grey into the scene
+	Common::fill(&greyPalette[0], &greyPalette[PALETTE_SIZE], 142);
+	_screen->fadeIn((const byte *)greyPalette, 3);
 
 	_music->playMusic("prolog1.mus");
 	_animation->_gfxLibraryFilename = "title.lib";
@@ -569,7 +574,10 @@ bool ScalpelEngine::scrollCredits() {
 	// Load the images for displaying credit text
 	Common::SeekableReadStream *stream = _res->load("credits.vgs", "title.lib");
 	ImageFile creditsImages(*stream);
-	_screen->setPalette(creditsImages._palette);
+
+	// Demo fades slowly from the scene into credits palette
+	_screen->fadeIn(creditsImages._palette, 3);
+
 	delete stream;
 
 	// Save a copy of the screen background for use in drawing each credit frame
