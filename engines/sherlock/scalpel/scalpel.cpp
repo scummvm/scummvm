@@ -404,6 +404,10 @@ bool ScalpelEngine::showStreetCutscene() {
 	if (finished)
 		finished = _animation->play("14NOTE", 1, 0, false, 2);
 
+	// Fade to black
+	if (finished)
+		_screen->fadeToBlack(1);
+
 	_animation->_gfxLibraryFilename = "";
 	_animation->_soundLibraryFilename = "";
 	return finished;
