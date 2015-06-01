@@ -224,14 +224,12 @@ void ScalpelEngine::showOpening() {
 	if (isDemo() && _interactiveFl)
 		return;
 
-#if 0
 	if (!TsAGE::Logo::show(this))
 		return;
 	if (!showCityCutscene())
 		return;
 	if (!showAlleyCutscene())
 		return;
-#endif
 	if (!showStreetCutscene())
 		return;
 	if (!showOfficeCutscene())
