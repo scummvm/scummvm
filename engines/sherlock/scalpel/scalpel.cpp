@@ -224,12 +224,14 @@ void ScalpelEngine::showOpening() {
 	if (isDemo() && _interactiveFl)
 		return;
 
+#if 0
 	if (!TsAGE::Logo::show(this))
 		return;
 	if (!showCityCutscene())
 		return;
 	if (!showAlleyCutscene())
 		return;
+#endif
 	if (!showStreetCutscene())
 		return;
 	if (!showOfficeCutscene())
@@ -401,8 +403,10 @@ bool ScalpelEngine::showStreetCutscene() {
 
 	finished = _animation->play("14KICK", 1, 3, true, 2);
 
+	// Constable animation plays slower than speed 2
+	// If we play it with speed 2, music gets obviously out of sync
 	if (finished)
-		finished = _animation->play("14NOTE", 1, 0, false, 2);
+		finished = _animation->play("14NOTE", 1, 0, false, 3);
 
 	// Fade to black
 	if (finished)
