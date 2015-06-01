@@ -384,14 +384,14 @@ bool Logo::show(ScalpelEngine *vm) {
 	while (!logo->finished()) {
 		logo->nextFrame();
 
-		events.wait(2);
-		events.setButtonState();
-
 		// Erase areas from previous frame, and update and re-draw objects
 		for (int idx = 0; idx < 4; ++idx)
 			logo->_objects[idx].erase();
 		for (int idx = 0; idx < 4; ++idx)
 			logo->_objects[idx].update();
+
+		events.wait(2);
+		events.setButtonState();
 
 		interrupted = vm->shouldQuit() || events.kbHit() || events._pressed;
 		if (interrupted) {
