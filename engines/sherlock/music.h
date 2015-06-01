@@ -98,6 +98,8 @@ public:
 	void stopMusic();
 	
 	void waitTimerRoland(uint time);
+
+	bool waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay);
 };
 
 } // End of namespace Sherlock

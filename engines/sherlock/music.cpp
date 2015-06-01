@@ -356,5 +356,39 @@ void Music::freeSong() {
 void Music::waitTimerRoland(uint time) {
 	// TODO
 	warning("TODO: Sound::waitTimerRoland");
-}} // End of namespace Sherlock
+}
+
+bool Music::waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay) {
+	uint32 currentTick = 0;
+
+	if (!_midiParser.isPlaying()) {
+		return _vm->_events->delay(noMusicDelay, true);
+	}
+	while (1) {
+		if (!_midiParser.isPlaying()) { // Music has stopped playing -> we are done
+			if (additionalDelay > 0) {
+				if (!_vm->_events->delay(additionalDelay, true))
+					return false;
+			}
+			return true;
+		}
+
+		currentTick = _midiParser.getTick();
+		//warning("waitUntilTick: %lx", currentTick);
+
+		if (currentTick <= maxTick) {
+			if (currentTick >= tick) {
+				if (additionalDelay > 0) {
+					if (!_vm->_events->delay(additionalDelay, true))
+						return false;
+				}
+				return true;
+			}
+		}
+		if (!_vm->_events->delay(10, true))
+			return false;
+	}
+}
+
+} // End of namespace Sherlock
 

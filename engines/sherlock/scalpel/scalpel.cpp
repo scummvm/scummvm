@@ -307,7 +307,9 @@ bool ScalpelEngine::showCityCutscene() {
 			// In the alley...
 			_screen->transBlitFrom(titleImages[3], Common::Point(72, 51));
 			_screen->fadeIn(palette, 3);
-			finished = _events->delay(2500, true);
+
+			// Wait until the track got looped and the first few notes were played
+			finished = _music->waitUntilTick(0x104, 0x500, 0, 2500);
 		}
 	}
 
@@ -323,11 +325,16 @@ bool ScalpelEngine::showAlleyCutscene() {
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
+	// Fade "In The Alley..." text to black
+	_screen->fadeToBlack(2);
+
 	bool finished = _animation->play("27PRO1", 1, 3, true, 2);
 	if (finished) {
 		_screen->getPalette(palette);
 		_screen->fadeToBlack(2);
-		finished = _events->delay(500);
+
+		// wait until second lower main note
+		finished = _music->waitUntilTick(0x64a, 0xFFFF, 0, 1000); // 652
 	}
 
 	if (finished) {
@@ -337,7 +344,17 @@ bool ScalpelEngine::showAlleyCutscene() {
 
 	if (finished) {
 		showLBV("scream.lbv");
-		finished = _events->delay(6000);
+
+		// wait until first "scream" in music happened
+		finished = _music->waitUntilTick(0xabe, 0xFFFF, 0, 6000);
+	}
+
+	if (finished) {
+		// quick fade out 
+		_screen->fadeToBlack(1);
+
+		// wait until after third "scream" in music happened
+		finished = _music->waitUntilTick(0xb80, 0xFFFF, 0, 2000);
 	}
 
 	if (finished)
@@ -351,9 +368,13 @@ bool ScalpelEngine::showAlleyCutscene() {
 	if (finished) {
 		ImageFile titleImages("title3.vgs", true);
 		// "Early the following morning on Baker Street..."
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(35, 51), false, 0);
-		_screen->fadeIn(palette, 3);
-		finished = _events->delay(1000);
+		_screen->transBlitFrom(titleImages[0], Common::Point(35, 51));
+
+		// fast fade-in
+		_screen->fadeIn(palette, 1);
+
+		// wait for music to end and wait an additional 2.5 seconds
+		finished = _music->waitUntilTick(0xFFFF, 0xFFFF, 2500, 3000);
 	}
 
 	_animation->_gfxLibraryFilename = "";
@@ -367,7 +388,18 @@ bool ScalpelEngine::showStreetCutscene() {
 
 	_music->playMusic("PROLOG3.MUS");
 
-	bool finished = _animation->play("14KICK", 1, 3, true, 2);
+	// wait a bit
+	bool finished = _events->delay(500);
+
+	if (finished) {
+		// fade out "Early the following morning..."
+		_screen->fadeToBlack(2);
+
+		// wait for music a bit
+		finished = _music->waitUntilTick(0xE4, 0xFFFF, 0, 1000);
+	}
+
+	finished = _animation->play("14KICK", 1, 3, true, 2);
 
 	if (finished)
 		finished = _animation->play("14NOTE", 1, 0, false, 2);
