@@ -591,7 +591,6 @@ void Logo::nextFrame() {
 
 	case 213:
 		_objects[3]._frame = 2;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	case 221:
@@ -600,32 +599,26 @@ void Logo::nextFrame() {
 
 	case 222:
 		_objects[3]._frame = 3;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	case 230:
 		_objects[3]._frame = 4;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	case 238:
 		_objects[3]._frame = 5;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	case 246:
 		_objects[3]._frame = 6;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	case 254:
 		_objects[3]._frame = 7;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	case 262:
 		_objects[3]._frame = 8;
-		_objects[3]._position = Common::Point(155, 94);
 		break;
 
 	default:
