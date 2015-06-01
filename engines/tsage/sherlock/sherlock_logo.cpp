@@ -148,7 +148,7 @@ void SherlockLogoScene::Action1::signal() {
 		scene._object1.changeZoom(100);
 		scene._object1.setPosition(Common::Point(170, 142));
 		scene._object1._numFrames = 7;
-		scene._object1.animate(ANIM_MODE_5, nullptr);
+		scene._object1.animate(ANIM_MODE_5, (const void *)nullptr);
 		ADD_MOVER(scene._object1, 158, 71);
 		break;
 
@@ -164,7 +164,7 @@ void SherlockLogoScene::Action1::signal() {
 		scene._object2._frame = 1;
 		scene._object2.setPosition(Common::Point(152, 98));
 		scene._object2.changeZoom(100);
-		scene._object2.animate(ANIM_MODE_NONE, nullptr);
+		scene._object2.animate(ANIM_MODE_NONE, (const void *)nullptr);
 		setDelay(120);
 		break;
 
@@ -176,7 +176,7 @@ void SherlockLogoScene::Action1::signal() {
 		scene._object3._frame = 1;
 		scene._object3.setPosition(Common::Point(33, 91));
 		scene._object3.changeZoom(100);
-		scene._object3.animate(ANIM_MODE_NONE, nullptr);
+		scene._object3.animate(ANIM_MODE_NONE, (const void *)nullptr);
 		setDelay(5);
 		break;
 
@@ -341,7 +341,7 @@ void SherlockLogoScene::postInit(SceneObjectList *OwnerList) {
 	_object4._frame = 1;
 	_object4.setPosition(Common::Point(155, 94));
 	_object4.changeZoom(100);
-	_object4.animate(ANIM_MODE_NONE, nullptr);
+	_object4.animate(ANIM_MODE_NONE, (const void *)nullptr);
 	_object4.hide();
 
 	setAction(&_action1);
