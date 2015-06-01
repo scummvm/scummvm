@@ -92,280 +92,80 @@ static const byte MAP_SEQUENCES[3][MAX_FRAME] = {
 
 #define MAX_PEOPLE 66
 
-const char PEOPLE_PORTRAITS[MAX_PEOPLE][5] = {
-	{ "HOLM" },			// Sherlock Holmes
-	{ "WATS" },			// Dr. Watson
-	{ "LEST" },			// Inspector Lestrade
-	{ "CON1" },			// Constable O'Brien
-	{ "CON2" },			// Constable Lewis
-	{ "SHEI" },			// Sheila Parker
-	{ "HENR" },			// Henry Carruthers
-	{ "LESL" },			// Lesley (flower girl)
-	{ "USH1" },			// Usher #1
-	{ "USH2" },			// Usher #2
-	{ "FRED" },			// Fredrick Epstein
-	{ "WORT" },			// Mrs. Worthington
-	{ "COAC" },			// Coach
-	{ "PLAY" },			// Player
-	{ "WBOY" },			// Tim (Waterboy)
-	{ "JAME" },			// James Sanders
-	{ "BELL" },			// Belle (perfumerie)
-	{ "GIRL" },			// Cleaning Girl (perfumerie)
-	{ "EPST" },			// Epstien in the Opera Balcony
-	{ "WIGG" },			// Wiggins
-	{ "PAUL" },			// Paul (Brumwell / Carroway)
-	{ "BART" },			// Bartender
-	{ "DIRT" },			// Dirty Drunk
-	{ "SHOU" },			// Shouting Drunk
-	{ "STAG" },			// Staggering Drunk
-	{ "BOUN" },			// Bouncer
-	{ "SAND" },			// James Sanders - At Home
-	{ "CORO" },			// The Coroner
-	{ "EQUE" },			// The Equestrian Shop Keeper
-	{ "GEOR" },			// George Blackwood
-	{ "LARS" },			// Lars
-	{ "PARK" },			// Sheila Parker (happy)
-	{ "CHEM" },			// Chemist
-	{ "GREG" },			// Inspector Gregson
-	{ "LAWY" },			// Jacob Farthington Lawyer
-	{ "MYCR" },			// Mycroft
-	{ "SHER" },			// Old Sherman
-	{ "CHMB" },			// Richard Chemist Stock boy
-	{ "BARM" },			// Barman
-	{ "DAND" },			// Dandy Player
-	{ "ROUG" },			// Rough-looking Player
-	{ "SPEC" },			// Spectator
-	{ "HUNT" },			// Robert Hunt
-	{ "VIOL" },			// Violet Secretary
-	{ "PETT" },			// Pettigrew
-	{ "APPL" },			// Augie (apple seller)
-	{ "ANNA" },			// Anna Carroway
-	{ "GUAR" },			// Guard
-	{ "ANTO" },			// Antonio Caruso
-	{ "TOBY" },			// Toby the Dog
-	{ "KING" },			// Simon Kingsley
-	{ "ALFR" },			// Alfred Tobacco Clerk
-	{ "LADY" },			// Lady Brumwell
-	{ "ROSA" },			// Madame Rosa
-	{ "LADB" },			// Lady Brumwell
-	{ "MOOR" },			// Joseph Moorehead
-	{ "BEAL" },			// Mrs. Beale
-	{ "LION" },			// Felix the Lion
-	{ "HOLL" },			// Hollingston
-	{ "CALL" },			// Constable Callaghan
-	{ "JERE" },			// Sergeant Jeremy Duncan
-	{ "LORD" },			// Lord Brumwell
-	{ "NIGE" },			// Nigel Jameson
-	{ "JONA" },			// Jonas (newspaper seller)
-	{ "DUGA" },			// Constable Dugan
-	{ "INSP" }			// Inspector Lestrade (Scotland Yard)
+struct PeopleData {
+	const char *portrait;
+	const char *name;
+	byte stillSequences[MAX_TALK_SEQUENCES];
+	byte talkSequences[MAX_TALK_SEQUENCES];
 };
 
-const char *const PEOPLE_NAMES[MAX_PEOPLE] = {
-	"Sherlock Holmes",
-	"Dr. Watson",
-	"Inspector Lestrade",
-	"Constable O'Brien",
-	"Constable Lewis",
-	"Sheila Parker",
-	"Henry Carruthers",
-	"Lesley",
-	"An Usher",
-	"An Usher",
-	"Fredrick Epstein",
-	"Mrs. Worthington",
-	"The Coach",
-	"A Player",
-	"Tim",
-	"James Sanders",
-	"Belle",
-	"Cleaning Girl",
-	"Fredrick Epstein",
-	"Wiggins",
-	"Paul",
-	"The Bartender",
-	"A Dirty Drunk",
-	"A Shouting Drunk",
-	"A Staggering Drunk",
-	"The Bouncer",
-	"James Sanders",
-	"The Coroner",
-	"Reginald Snipes",
-	"George Blackwood",
-	"Lars",
-	"Sheila Parker",
-	"The Chemist",
-	"Inspector Gregson",
-	"Jacob Farthington",
-	"Mycroft",
-	"Old Sherman",
-	"Richard",
-	"The Barman",
-	"A Dandy Player",
-	"A Rough-looking Player",
-	"A Spectator",
-	"Robert Hunt",
-	"Violet",
-	"Pettigrew",
-	"Augie",
-	"Anna Carroway",
-	"A Guard",
-	"Antonio Caruso",
-	"Toby the Dog",
-	"Simon Kingsley",
-	"Alfred",
-	"Lady Brumwell",
-	"Madame Rosa",
-	"Lady Brumwell",
-	"Joseph Moorehead",
-	"Mrs. Beale",
-	"Felix",
-	"Hollingston",
-	"Constable Callaghan",
-	"Sergeant Duncan",
-	"Lord Brumwell",
-	"Nigel Jaimeson",
-	"Jonas",
-	"Constable Dugan",
-	"Inspector Lestrade"
-};
-
-static const byte PEOPLE_STILL_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
-	{ 1, 0, 0 },	// Sherlock Holmes
-	{ 6, 0, 0 },	// Dr. Watson
-	{ 4, 0, 0 },	// Inspector Lestrade
-	{ 2, 0, 0 },	// Constable #1
-	{ 2, 0, 0 },	// Constable #2
-	{ 2, 0, 0 },	// Sheila Parker
-	{ 3, 0, 0 },	// Henry Carruthers
-	{ 9, 0, 0 },	// Lesly (flower girl)
-	{ 13, 0, 0 },	// Usher #1
-	{ 2, 0, 0 },	// Usher #2
-	{ 4, 0, 0 },	// Fredrick Epstein
-	{ 9, 0, 0 },	// Mrs.Worthington
-	{ 2, 0, 0 },	// Coach
-	{ 8, 0, 0 },	// Player
-	{ 13, 0, 0 },	// Waterboy
-	{ 6, 0, 0 },	// James Sanders
-	{ 1, 0, 0 },	// Belle (perfumerie)
-	{ 20, 0, 0 },	// Cleaning Girl (perfumerie)
-	{ 17, 0, 0 },	// Epstien in the Opera Balcony
-	{ 3, 0, 0 },	// Wiggins
-	{ 2, 0, 0 },	// Paul (Brumwell/Carroway)
-	{ 1, 0, 0 },	// Bartender
-	{ 1, 0, 0 },	// Dirty Drunk
-	{ 1, 0, 0 },	// Shouting Drunk
-	{ 1, 0, 0 },	// Staggering Drunk
-	{ 1, 0, 0 },	// Bouncer
-	{ 6, 0, 0 },	// James Sanders - At Home
-	{ 6, 0, 0 },	// The Coroner
-	{ 1, 0, 0 },	// The Equestrian Shop Keeper
-	{ 1, 0, 0 },	// George Blackwood
-	{ 7, 0, 0 },	// Lars
-	{ 1, 0, 0 },	// Sheila Parker
-	{ 8, 0, 0 },	// Chemist
-	{ 6, 0, 0 },	// Inspector Gregson
-	{ 1, 0, 0 },	// Lawyer
-	{ 1, 0, 0 },	// Mycroft
-	{ 7, 0, 0 },	// Old Sherman
-	{ 1, 0, 0 },	// Stock Boy in Chemist Shop
-	{ 1, 0, 0 },	// Barman
-	{ 1, 0, 0 },	// Dandy Player
-	{ 1, 0, 0 },	// Rough-looking Player
-	{ 1, 0, 0 },	// Spectator
-	{ 1, 0, 0 },	// Robert Hunt
-	{ 3, 0, 0 },	// Violet Secretary
-	{ 1, 0, 0 },	// Pettigrew
-	{ 8, 0, 0 },	// Augie (apple seller)
-	{ 16, 0, 0 },	// Anna Carroway
-	{ 1, 0, 0 },	// Guard
-	{ 8, 0, 0 },	// Antonio Caruso
-	{ 1, 0, 0 },	// Toby the Dog
-	{ 13, 0, 0 },	// Simon Kingsley
-	{ 2, 0, 0 },	// Alfred Tobacco Clerk
-	{ 1, 0, 0 },	// Lady Brumwell
-	{ 1, 0, 0 },	// Madame Rosa
-	{ 1, 0, 0 },	// Lady Brumwell
-	{ 1, 0, 0 },	// Joseph Moorehead
-	{ 5, 0, 0 },	// Mrs. Beale
-	{ 1, 0, 0 },	// Felix the Lion
-	{ 1, 0, 0 },	// Hollingston
-	{ 1, 0, 0 },	// Constable Callaghan
-	{ 2, 0, 0 },	// Sergeant Jeremy Duncan
-	{ 1, 0, 0 },	// Lord Brumwell
-	{ 1, 0, 0 },	// Nigel Jameson
-	{ 1, 0, 0 },	// Jonas (newspaper seller)
-	{ 1, 0, 0 },	// Constable Dugan
-	{ 4, 0, 0 }		// Inspector Lestrade (Yard)
-};
-
-static const byte PEOPLE_TALK_SEQUENCES[MAX_PEOPLE][MAX_TALK_SEQUENCES] = {
-	{ 1, 0, 0 },					// Sherlock Holmes
-	{ 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 },	// Dr. Watson
-	{ 2, 0, 0 },					// Inspector Lestrade
-	{ 1, 0, 0 },					// Constable #1
-	{ 1, 0, 0 },					// Constable #2
-	{ 2, 3, 0, 0 },					// Sheila Parker
-	{ 3, 0, 0 },					// Henry Carruthers
-	{ 1, 2, 3, 2, 1, 2, 3, 0, 0 },	// Lesly (flower girl)
-	{ 13, 14, 0, 0 },				// Usher #1
-	{ 2, 0, 0 },					// Usher #2
-	{ 1, 2, 3, 4, 3, 4, 3, 2, 0, 0 },	// Fredrick Epstein
-	{ 8, 0, 0 },						// Mrs.Worthington
-	{ 1, 2, 3, 4, 5, 4, 3, 2, 0, 0 },	// Coach
-	{ 7, 8, 0, 0 },						// Player
-	{ 12, 13, 0, 0 },					// Waterboy
-	{ 3, 4, 0, 0 },						// James Sanders
-	{ 4, 5, 0, 0 },						// Belle (perfumerie)
-	{ 14, 15, 16, 17, 18, 19, 20, 20, 20, 0, 0 },	// Cleaning Girl (perfumerie)
-	{ 16, 17, 18, 18, 18, 17, 17, 0, 0 },	// Epstien in the Opera Balcony
-	{ 2, 3, 0, 0 },					// Wiggins
-	{ 1, 2, 0, 0 },					// Paul (Brumwell/Carroway)
-	{ 1, 0, 0 },					// Bartender
-	{ 1, 0, 0 },					// Dirty Drunk
-	{ 1, 0, 0 },					// Shouting Drunk
-	{ 1, 0, 0 },					// Staggering Drunk
-	{ 1, 0, 0 },					// Bouncer
-	{ 5, 6, 0, 0 },					// James Sanders - At Home
-	{ 4, 5, 0, 0 },					// The Coroner
-	{ 1, 0, 0 },					// The Equestrian Shop Keeper
-	{ 1, 0, 0 },					// George Blackwood
-	{ 5, 6, 0, 0 },					// Lars
-	{ 1, 0, 0 },					// Sheila Parker
-	{ 8, 9, 0, 0 },					// Chemist
-	{ 5, 6, 0, 0 },					// Inspector Gregson
-	{ 1, 0, 0 },					// Lawyer
-	{ 1, 0, 0 },					// Mycroft
-	{ 7, 8, 0, 0 },					// Old Sherman
-	{ 1, 0, 0 },					// Stock Boy in Chemist Shop
-	{ 1, 0, 0 },					// Barman
-	{ 1, 0, 0 },					// Dandy Player
-	{ 1, 0, 0 },					// Rough-looking Player
-	{ 1, 0, 0 },					// Spectator
-	{ 1, 0, 0 },					// Robert Hunt
-	{ 3, 4, 0, 0 },					// Violet Secretary
-	{ 1, 0, 0 },					// Pettigrew
-	{ 14, 15, 0, 0 },				// Augie (apple seller)
-	{ 3, 4, 5, 6, 0, 0 },			// Anna Carroway
-	{ 4, 5, 6, 0, 0 },				// Guard
-	{ 7, 8, 0, 0 },					// Antonio Caruso
-	{ 1, 0, 0 },					// Toby the Dog
-	{ 13, 14, 0, 0 },				// Simon Kingsley
-	{ 2, 3, 0, 0 },					// Alfred Tobacco Clerk
-	{ 3, 4, 0, 0 },					// Lady Brumwell
-	{ 1, 30, 0, 0 },				// Madame Rosa
-	{ 3, 4, 0, 0 },					// Lady Brumwell
-	{ 1, 0, 0 },					// Joseph Moorehead
-	{ 14, 15, 16, 17, 18, 19, 20, 0, 0 },	// Mrs. Beale
-	{ 1, 0, 0 },					// Felix the Lion
-	{ 1, 0, 0 },					// Hollingston
-	{ 1, 0, 0 },					// Constable Callaghan
-	{ 1, 1, 2, 2, 0, 0 },			// Sergeant Jeremy Duncan
-	{ 9, 10, 0, 0 },				// Lord Brumwell
-	{ 1, 2, 0, 138, 3, 4, 0, 138, 0, 0 },	// Nigel Jameson
-	{ 1, 8, 0, 0 },					// Jonas (newspaper seller)
-	{ 1, 0, 0 },					// Constable Dugan
-	{ 2, 0, 0 }						// Inspector Lestrade (Yard)
+const PeopleData PEOPLE_DATA[MAX_PEOPLE] = {
+	{ "HOLM", "Sherlock Holmes", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "WATS", "Dr. Watson", { 6, 0, 0 }, { 5, 5, 6, 7, 8, 7, 8, 6, 0, 0 } },
+	{ "LEST", "Inspector Lestrade", { 4, 0, 0 }, { 2, 0, 0 } },
+	{ "CON1", "Constable O'Brien", { 2, 0, 0 }, { 1, 0, 0 } },
+	{ "CON2", "Constable Lewis", { 2, 0, 0 }, { 1, 0, 0 } },
+	{ "SHEI", "Sheila Parker", { 2, 0, 0 }, { 2, 3, 0, 0 } },
+	{ "HENR", "Henry Carruthers", { 3, 0, 0 }, { 3, 0, 0 } },
+	{ "LESL", "Lesley", { 9, 0, 0 }, { 1, 2, 3, 2, 1, 2, 3, 0, 0 } },
+	{ "USH1", "An Usher", { 13, 0, 0 }, { 13, 14, 0, 0 } },
+	{ "USH2", "An Usher", { 2, 0, 0 }, { 2, 0, 0 } },
+	{ "FRED", "Fredrick Epstein", { 4, 0, 0 }, { 1, 2, 3, 4, 3, 4, 3, 2, 0, 0 } },
+	{ "WORT", "Mrs. Worthington", { 9, 0, 0 }, { 8, 0, 0 } },
+	{ "COAC", "The Coach", { 2, 0, 0 }, { 1, 2, 3, 4, 5, 4, 3, 2, 0, 0 } },
+	{ "PLAY", "A Player", { 8, 0, 0 }, { 7, 8, 0, 0 } },
+	{ "WBOY", "Tim", { 13, 0, 0 }, { 12, 13, 0, 0 } },
+	{ "JAME", "James Sanders", { 6, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "BELL", "Belle", { 1, 0, 0 }, { 4, 5, 0, 0 } },
+	{ "GIRL", "Cleaning Girl", { 20, 0, 0 }, { 14, 15, 16, 17, 18, 19, 20, 20, 20, 0, 0 } },
+	{ "EPST", "Fredrick Epstein", { 17, 0, 0 }, { 16, 17, 18, 18, 18, 17, 17, 0, 0 } },
+	{ "WIGG", "Wiggins", { 3, 0, 0 }, { 2, 3, 0, 0 } },
+	{ "PAUL", "Paul", { 2, 0, 0 }, { 1, 2, 0, 0 } },
+	{ "BART", "The Bartender", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "DIRT", "A Dirty Drunk", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SHOU", "A Shouting Drunk", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "STAG", "A Staggering Drunk", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "BOUN", "The Bouncer", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SAND", "James Sanders", { 6, 0, 0 }, { 5, 6, 0, 0 } },
+	{ "CORO", "The Coroner", { 6, 0, 0 }, { 4, 5, 0, 0 } },
+	{ "EQUE", "Reginald Snipes", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "GEOR", "George Blackwood", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "LARS", "Lars", { 7, 0, 0 }, { 5, 6, 0, 0 } },
+	{ "PARK", "Sheila Parker", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "CHEM", "The Chemist", { 8, 0, 0 }, { 8, 9, 0, 0 } },
+	{ "GREG", "Inspector Gregson", { 6, 0, 0 }, { 5, 6, 0, 0 } },
+	{ "LAWY", "Jacob Farthington", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "MYCR", "Mycroft", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SHER", "Old Sherman", { 7, 0, 0 }, { 7, 8, 0, 0 } },
+	{ "CHMB", "Richard", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "BARM", "The Barman", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "DAND", "A Dandy Player", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "ROUG", "A Rough-looking Player", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "SPEC", "A Spectator", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "HUNT", "Robert Hunt", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "VIOL", "Violet", { 3, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "PETT", "Pettigrew", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "APPL", "Augie", { 8, 0, 0 }, { 14, 15, 0, 0 } },
+	{ "ANNA", "Anna Carroway", { 16, 0, 0 }, { 3, 4, 5, 6, 0, 0 } },
+	{ "GUAR", "A Guard", { 1, 0, 0 }, { 4, 5, 6, 0, 0 } },
+	{ "ANTO", "Antonio Caruso", { 8, 0, 0 }, { 7, 8, 0, 0 } },
+	{ "TOBY", "Toby the Dog", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "KING", "Simon Kingsley", { 13, 0, 0 }, { 13, 14, 0, 0 } },
+	{ "ALFR", "Alfred", { 2, 0, 0 }, { 2, 3, 0, 0 } },
+	{ "LADY", "Lady Brumwell", { 1, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "ROSA", "Madame Rosa", { 1, 0, 0 }, { 1, 30, 0, 0 } },
+	{ "LADB", "Lady Brumwell", { 1, 0, 0 }, { 3, 4, 0, 0 } },
+	{ "MOOR", "Joseph Moorehead", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "BEAL", "Mrs. Beale", { 5, 0, 0 }, { 14, 15, 16, 17, 18, 19, 20, 0, 0 } },
+	{ "LION", "Felix", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "HOLL", "Hollingston", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "CALL", "Constable Callaghan", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "JERE", "Sergeant Duncan", { 2, 0, 0 }, { 1, 1, 2, 2, 0, 0 } },
+	{ "LORD", "Lord Brumwell", { 1, 0, 0 }, { 9, 10, 0, 0 } },
+	{ "NIGE", "Nigel Jaimeson", { 1, 0, 0 }, { 1, 2, 0, 138, 3, 4, 0, 138, 0, 0 } },
+	{ "JONA", "Jonas", { 1, 0, 0 }, { 1, 8, 0, 0 } },
+	{ "DUGA", "Constable Dugan", { 1, 0, 0 }, { 1, 0, 0 } },
+	{ "INSP", "Inspector Lestrade", { 4, 0, 0 }, { 2, 0, 0 } }
 };
 
 /*----------------------------------------------------------------*/
@@ -404,8 +204,8 @@ void ScalpelEngine::initialize() {
 
 	// Set up list of people
 	for (int idx = 0; idx < MAX_PEOPLE; ++idx)
-		_people->_characters.push_back(PersonData(PEOPLE_NAMES[idx], PEOPLE_PORTRAITS[idx],
-			PEOPLE_STILL_SEQUENCES[idx], PEOPLE_TALK_SEQUENCES[idx]));
+		_people->_characters.push_back(PersonData(PEOPLE_DATA[idx].name, PEOPLE_DATA[idx].portrait,
+			PEOPLE_DATA[idx].stillSequences, PEOPLE_DATA[idx].talkSequences));
 
 	_animation->setPrologueNames(&PROLOGUE_NAMES[0], PROLOGUE_NAMES_COUNT);
 	_animation->setPrologueFrames(&PROLOGUE_FRAMES[0][0], 6, 9);
