@@ -154,7 +154,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			// Find the person being referred to
 			talk._talkTo = -1;
 			for (int idx = 0; idx < (int)people._characters.size(); ++idx) {
-				Common::String portrait = people[idx]._portrait;
+				Common::String portrait = people._characters[idx]._portrait;
 				Common::String numStr(portrait.c_str(), portrait.c_str() + 4);
 
 				if (locStr == numStr) {
