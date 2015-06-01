@@ -358,6 +358,9 @@ void Music::waitTimerRoland(uint time) {
 	warning("TODO: Sound::waitTimerRoland");
 }
 
+// This is used to wait for the music in certain situations like especially the intro
+// Note: the original game didn't do this, instead it just waited for certain amounts of time
+//       We do this, so that the intro graphics + music work together even on faster/slower hardware.
 bool Music::waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay) {
 	uint32 currentTick = 0;
 
