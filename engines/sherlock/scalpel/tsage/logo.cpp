@@ -583,6 +583,7 @@ void Logo::nextFrame() {
 
 	case 205:
 		// Show a highlighting of the company name
+		_objects[2].erase();
 		_objects[2].remove();
 		_objects[3].setVisage(19, 1);
 		_objects[3]._position = Common::Point(155, 94);
