@@ -82,4 +82,4 @@ void TattooEngine::eraseCredits() {
 
 } // End of namespace Tattoo
 
-} // End of namespace Scalpel
+} // End of namespace Sherlock

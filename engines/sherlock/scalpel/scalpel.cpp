@@ -733,4 +733,4 @@ void ScalpelEngine::flushMirror12() {
 
 } // End of namespace Scalpel
 
-} // End of namespace Scalpel
+} // End of namespace Sherlock

@@ -554,4 +554,4 @@ void Darts::setFlagsForDarts(int flagNum) {
 
 } // End of namespace Scalpel
 
-} // End of namespace Scalpel
+} // End of namespace Sherlock
