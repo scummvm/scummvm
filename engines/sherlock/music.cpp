@@ -201,11 +201,11 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_driver = MidiDriver_AdLib_create();
 		break;
 	case MT_MT32:
-		_driver = MidiDriver_MIDI_create();
+		_driver = MidiDriver_MT32_create();
 		break;
 	case MT_GM:
 		if (ConfMan.getBool("native_mt32")) {
-			_driver = MidiDriver_MIDI_create();
+			_driver = MidiDriver_MT32_create();
 			_musicType = MT_MT32;
 		}
 	default:
@@ -241,7 +241,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			byte *MT32driverDataPtr = MT32driverData + 12;
 			MT32driverDataSize -= 12;
 
-			MidiDriver_MIDI_uploadMT32Patches(_driver, MT32driverDataPtr, MT32driverDataSize);
+			MidiDriver_MT32_uploadPatches(_driver, MT32driverDataPtr, MT32driverDataSize);
 			delete[] MT32driverData;
 		}
 	} else {
@@ -339,7 +339,7 @@ bool Music::playMusic(const Common::String &name) {
 			break;
 
 		case MT_MT32:
-			MidiDriver_MIDI_newMusicData(_driver, dataPos, dataSize);
+			MidiDriver_MT32_newMusicData(_driver, dataPos, dataSize);
 			break;
 		}
 	}

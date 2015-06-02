@@ -4,7 +4,7 @@ MODULE_OBJS = \
 	scalpel/darts.o \
 	scalpel/scalpel.o \
 	scalpel/drivers/adlib.o \
-	scalpel/drivers/midi.o \
+	scalpel/drivers/mt32.o \
 	scalpel/tsage/logo.o \
 	scalpel/tsage/resources.o \
 	scalpel/scalpel_scene.o \

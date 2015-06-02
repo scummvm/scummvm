@@ -38,9 +38,9 @@ const byte mt32_reverbDataSysEx[] = {
 	0x10, 0x00, 0x01, 0x01, 0x05, 0x05, 0xFF
 };
 
-class MidiDriver_MIDI : public MidiDriver {
+class MidiDriver_MT32 : public MidiDriver {
 public:
-	MidiDriver_MIDI() {
+	MidiDriver_MT32() {
 		_driver = NULL;
 		_isOpen = false;
 		_MT32 = false;
@@ -49,7 +49,7 @@ public:
 
 		memset(_MIDIchannelActive, 1, sizeof(_MIDIchannelActive));
 	}
-	virtual ~MidiDriver_MIDI();
+	virtual ~MidiDriver_MT32();
 
 	// MidiDriver
 	int open();
@@ -106,7 +106,7 @@ public:
 	void MT32SysEx(const byte *&dataPtr, int32 &bytesLeft);
 };
 
-MidiDriver_MIDI::~MidiDriver_MIDI() {
+MidiDriver_MT32::~MidiDriver_MT32() {
 	Common::StackLock lock(_mutex);
 	if (_driver) {
 		_driver->setTimerCallback(0, 0);
@@ -116,7 +116,7 @@ MidiDriver_MIDI::~MidiDriver_MIDI() {
 	_driver = NULL;
 }
 
-int MidiDriver_MIDI::open() {
+int MidiDriver_MT32::open() {
 	assert(!_driver);
 
 	debugC(kDebugLevelMT32Driver, "MT32: starting driver");
@@ -159,14 +159,14 @@ int MidiDriver_MIDI::open() {
 	return 0;
 }
 
-void MidiDriver_MIDI::close() {
+void MidiDriver_MT32::close() {
 	if (_driver) {
 		_driver->close();
 	}
 }
 
 // Called when a music track got loaded into memory
-void MidiDriver_MIDI::newMusicData(byte *musicData, int32 musicDataSize) {
+void MidiDriver_MT32::newMusicData(byte *musicData, int32 musicDataSize) {
 	assert(musicDataSize >= 0x7F); // Security check
 
 	// MIDI Channel Enable/Disable bytes at offset 0x2 of music data
@@ -185,7 +185,7 @@ void MidiDriver_MIDI::newMusicData(byte *musicData, int32 musicDataSize) {
 	}
 }
 
-void MidiDriver_MIDI::uploadMT32Patches(byte *driverData, int32 driverSize) {
+void MidiDriver_MT32::uploadMT32Patches(byte *driverData, int32 driverSize) {
 	if (!_driver)
 		return;
 
@@ -208,9 +208,9 @@ void MidiDriver_MIDI::uploadMT32Patches(byte *driverData, int32 driverSize) {
 	}
 }
 
-void MidiDriver_MIDI::MT32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
+void MidiDriver_MT32::MT32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
 	byte   sysExMessage[270];
-	byte   sysExPos      = 0;
+	uint16 sysExPos      = 0;
 	byte   sysExByte     = 0;
 	uint16 sysExChecksum = 0;
 
@@ -231,12 +231,13 @@ void MidiDriver_MIDI::MT32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
 		if (sysExByte == 0xff)
 			break; // Message done
 
-		assert(sysExPos < 260);
+		assert(sysExPos < sizeof(sysExMessage));
 		sysExMessage[sysExPos++] = sysExByte;
 		sysExChecksum -= sysExByte;
 	}
 
 	// Calculate checksum
+	assert(sysExPos < sizeof(sysExMessage));
 	sysExMessage[sysExPos++] = sysExChecksum & 0x7f;
 
 	debugC(kDebugLevelMT32Driver, "MT32: uploading patch data, size %d", sysExPos);
@@ -255,7 +256,7 @@ void MidiDriver_MIDI::MT32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
-void MidiDriver_MIDI::send(uint32 b) {
+void MidiDriver_MT32::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;
 
@@ -274,16 +275,16 @@ void MidiDriver_MIDI::send(uint32 b) {
 	}
 }
 
-MidiDriver *MidiDriver_MIDI_create() {
-	return new MidiDriver_MIDI();
+MidiDriver *MidiDriver_MT32_create() {
+	return new MidiDriver_MT32();
 }
 
-void MidiDriver_MIDI_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize) {
-	static_cast<MidiDriver_MIDI *>(driver)->newMusicData(musicData, musicDataSize);
+void MidiDriver_MT32_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize) {
+	static_cast<MidiDriver_MT32 *>(driver)->newMusicData(musicData, musicDataSize);
 }
 
-void MidiDriver_MIDI_uploadMT32Patches(MidiDriver *driver, byte *driverData, int32 driverSize) {
-	static_cast<MidiDriver_MIDI *>(driver)->uploadMT32Patches(driverData, driverSize);
+void MidiDriver_MT32_uploadPatches(MidiDriver *driver, byte *driverData, int32 driverSize) {
+	static_cast<MidiDriver_MT32 *>(driver)->uploadMT32Patches(driverData, driverSize);
 }
 
 } // End of namespace Sci
