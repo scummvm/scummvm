@@ -74,6 +74,7 @@ SherlockEngine::~SherlockEngine() {
 void SherlockEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugLevelScript,      "scripts", "Script debug level");
 	DebugMan.addDebugChannel(kDebugLevelAdLibDriver, "AdLib",   "AdLib driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
 	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
 
 	ImageFile::setVm(this);

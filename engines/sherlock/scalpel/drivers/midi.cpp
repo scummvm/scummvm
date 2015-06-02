@@ -167,13 +167,15 @@ void MidiDriver_MIDI::close() {
 
 // Called when a music track got loaded into memory
 void MidiDriver_MIDI::newMusicData(byte *musicData, int32 musicDataSize) {
-	assert(musicDataSize >= 0x7F);
+	assert(musicDataSize >= 0x7F); // Security check
+
 	// MIDI Channel Enable/Disable bytes at offset 0x2 of music data
 	memcpy(&_MIDIchannelActive, musicData + 0x2, SHERLOCK_MT32_CHANNEL_COUNT);
 
 	// Send 16 bytes from offset 0x12 to MT32
-	// TODO
-	// Although at least the Prologue music doesn't use this at all
+	// All the music tracks of Sherlock seem to contain dummy data
+	// probably a feature, that was used in the game "Ski or Die"
+	// that's why we don't implement this
 
 	// Also send these bytes to MT32 (SysEx) - seems to be reverb configuration
 	if (_MT32) {
