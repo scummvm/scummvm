@@ -536,7 +536,7 @@ void ScalpelUserInterface::lookScreen(const Common::Point &pt) {
 	Common::String tempStr;
 
 	// Don't display anything for right button command
-	if ((events._rightPressed || events._rightPressed) && !events._pressed)
+	if ((events._rightPressed || events._rightReleased) && !events._pressed)
 		return;
 
 	if (mousePos.y < CONTROLS_Y && (temp = _bgFound) != -1) {
