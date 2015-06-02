@@ -60,6 +60,7 @@ void ScalpelScene::doBgAnimCheckCursor() {
 	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;
 	Common::Point mousePos = events.mousePos();
+	events.animateCursorIfNeeded();
 
 	if (ui._menuMode == LOOK_MODE) {
 		if (mousePos.y > CONTROLS_Y1)
@@ -93,6 +94,8 @@ void ScalpelScene::doBgAnim() {
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
+
+	doBgAnimCheckCursor();
 
 	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	talk._talkToAbort = false;

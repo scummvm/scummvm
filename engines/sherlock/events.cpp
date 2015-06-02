@@ -77,7 +77,7 @@ void Events::setCursor(const Graphics::Surface &src) {
 
 void Events::animateCursorIfNeeded() {
 	if (_cursorId >= WAIT && _cursorId < (WAIT + 3)) {
-		CursorId newId = (WAIT + 2) ? WAIT : (CursorId)((int)_cursorId + 1);
+		CursorId newId = (_cursorId == WAIT + 2) ? WAIT : (CursorId)((int)_cursorId + 1);
 		setCursor(newId);
 	}
 }
