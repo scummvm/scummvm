@@ -399,7 +399,8 @@ bool ScalpelEngine::showStreetCutscene() {
 		finished = _music->waitUntilTick(0xE4, 0xFFFF, 0, 1000);
 	}
 
-	finished = _animation->play("14KICK", 1, 3, true, 2);
+	if (finished)
+		finished = _animation->play("14KICK", 1, 3, true, 2);
 
 	// Constable animation plays slower than speed 2
 	// If we play it with speed 2, music gets obviously out of sync
