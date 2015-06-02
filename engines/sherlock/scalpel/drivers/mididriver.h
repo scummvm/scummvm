@@ -32,6 +32,10 @@ namespace Sherlock {
 extern MidiDriver *MidiDriver_AdLib_create();
 extern void MidiDriver_AdLib_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize);
 
+extern MidiDriver *MidiDriver_MIDI_create();
+extern void MidiDriver_MIDI_uploadMT32Patches(MidiDriver *driver, byte *driverData, int32 driverSize);
+extern void MidiDriver_MIDI_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize);
+
 } // End of namespace Sci
 
 #endif // SHERLOCK_SOFTSEQ_MIDIDRIVER_H

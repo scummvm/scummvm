@@ -62,28 +62,6 @@ MidiParser_SH::MidiParser_SH() {
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
 //	warning("parseNextEvent");
 
-	// An attempt to remap MT32 instruments to GMIDI. Only partially successful, it still
-	// does not sound even close to the real MT32. Oddly enough, on the actual hardware MT32
-	// and SB sound very differently.
-	static const byte mt32Map[128] = {
-		0,     1,   0,   2,   4,   4,   5,   3, /* 0-7 */
-		16,   17,  18,  16,  16,  19,  20,  21, /* 8-15 */
-		6,     6,   6,   7,   7,   7,   8, 112, /* 16-23 */
-		62,   62,  63,  63 , 38,  38,  39,  39, /* 24-31 */
-		88,   95,  52,  98,  97,  99,  14,  54, /* 32-39 */
-		102,  96,  53, 102,  81, 100,  14,  80, /* 40-47 */
-		48,   48,  49,  45,  41,  40,  42,  42, /* 48-55 */
-		43,   46,  45,  24,  25,  28,  27, 104, /* 56-63 */
-		32,   32,  34,  33,  36,  37,  35,  35, /* 64-71 */
-		79,   73,  72,  72,  74,  75,  64,  65, /* 72-79 */
-		66,   67,  71,  71,  68,  69,  70,  22, /* 80-87 */
-		56,   59,  57,  57,  60,  60,  58,  61, /* 88-95 */
-		61,   11,  11,  98,  14,   9,  14,  13, /* 96-103 */
-		12,  107, 107,  77,  78,  78,  76,  76, /* 104-111 */
-		47,  117, 127, 118, 118, 116, 115, 119, /* 112-119 */
-		115, 112,  55, 124, 123,   0,  14, 117  /* 120-127 */
-	};
-
 	// there is no delta right at the start of the music data
 	// this order is essential, otherwise notes will get delayed or even go missing
 	if (_position._playPos != _tracks[0]) {
@@ -207,11 +185,13 @@ bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
 /*----------------------------------------------------------------*/
 
 Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+	_musicPlaying = false;
+	_musicOn = true;
+
 	if (_vm->_interactiveFl)
 		_vm->_res->addToCache("MUSIC.LIB");
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_musicType = MidiDriver::getMusicType(dev);
 
 	_driver = NULL;
@@ -220,8 +200,18 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	case MT_ADLIB:
 		_driver = MidiDriver_AdLib_create();
 		break;
+	case MT_MT32:
+		_driver = MidiDriver_MIDI_create();
+		break;
+	case MT_GM:
+		if (ConfMan.getBool("native_mt32")) {
+			_driver = MidiDriver_MIDI_create();
+			_musicType = MT_MT32;
+		}
 	default:
-		_driver = MidiDriver::createMidi(dev);
+		// Create default one
+		// I guess we shouldn't do this anymore
+		//_driver = MidiDriver::createMidi(dev);
 		break;
 	}
 
@@ -230,15 +220,34 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 		int ret = _driver->open();
 		if (ret == 0) {
-			_driver->sendGMReset();
+			// Reset is done inside our MIDI driver
 			_driver->setTimerCallback(&_midiParser, &_midiParser.timerCallback);
 		}
 		_midiParser.setMidiDriver(_driver);
 		_midiParser.setTimerRate(_driver->getBaseTempo());
-	}
 
-	_musicPlaying = false;
-	_musicOn = true;
+		if (_musicType == MT_MT32) {
+			// Upload patches
+			Common::SeekableReadStream *MT32driverStream = _vm->_res->load("MTHOM.DRV", "MUSIC.LIB");
+
+			byte *MT32driverData = new byte[MT32driverStream->size()];
+			int32 MT32driverDataSize = MT32driverStream->size();
+			assert(MT32driverData);
+
+			MT32driverStream->read(MT32driverData, MT32driverDataSize);
+			delete MT32driverStream;
+
+			assert(MT32driverDataSize > 12);
+			byte *MT32driverDataPtr = MT32driverData + 12;
+			MT32driverDataSize -= 12;
+
+			MidiDriver_MIDI_uploadMT32Patches(_driver, MT32driverDataPtr, MT32driverDataSize);
+			delete[] MT32driverData;
+		}
+	} else {
+		// no driver, bye bye music
+		_musicOn = false;
+	}
 }
 
 bool Music::loadSong(int songNumber) {
@@ -323,9 +332,16 @@ bool Music::playMusic(const Common::String &name) {
 		return false;
 	}
 
-	if (_musicType == MT_ADLIB) {
-		if (_driver)
+	if (_driver) {
+		switch (_musicType) {
+		case MT_ADLIB:
 			MidiDriver_AdLib_newMusicData(_driver, dataPos, dataSize);
+			break;
+
+		case MT_MT32:
+			MidiDriver_MIDI_newMusicData(_driver, dataPos, dataSize);
+			break;
+		}
 	}
 
 	_midiParser.loadMusic(dataPos, dataSize);
