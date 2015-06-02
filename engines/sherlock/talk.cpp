@@ -252,7 +252,8 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_moreTalkDown = _moreTalkUp = false;
 	_scriptMoreFlag = 0;
 	_scriptSaveIndex = -1;
-	_opcodes = IS_SERRATED_SCALPEL ? SCALPEL_OPCODES : TATTOO_OPCODES;
+	_opcodes = nullptr;
+	_opcodeTable = nullptr;
 
 	_charCount = 0;
 	_line = 0;
@@ -261,6 +262,7 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_pauseFlag = false;
 	_seqCount = 0;
 	_scriptStart = _scriptEnd = nullptr;
+	_endStr = _noTextYet = false;
 }
 
 void Talk::talkTo(const Common::String &filename) {
@@ -1808,6 +1810,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	};
 
+	_opcodes = SCALPEL_OPCODES;
 	_opcodeTable = OPCODE_METHODS;
 }
 
@@ -2056,6 +2059,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
 	};
 
+	_opcodes = TATTOO_OPCODES;
 	_opcodeTable = OPCODE_METHODS;
 }
 

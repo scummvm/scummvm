@@ -156,11 +156,13 @@ ScalpelEngine *Object::_vm;
 
 Object::Object() {
 	_vm = nullptr;
-	_isAnimating = false;
+	_isAnimating = _finished = false;
 	_frame = 0;
 	_numFrames = 0;
 	_frameChange = 0;
 	_angle = _changeCtr = 0;
+	_walkStartFrame = 0;
+	_majorDiff = _minorDiff = 0;
 }
 
 void Object::setVisage(int visage, int strip) {
