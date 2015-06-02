@@ -59,6 +59,11 @@ MidiParser_SH::MidiParser_SH() {
 	_trackEnd = nullptr;
 }
 
+MidiParser_SH::~MidiParser_SH() {
+	unloadMusic();
+	_driver = NULL;
+}
+
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
 //	warning("parseNextEvent");
 
@@ -191,6 +196,8 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	if (_vm->_interactiveFl)
 		_vm->_res->addToCache("MUSIC.LIB");
 
+	_midiParser = new MidiParser_SH();
+
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -208,6 +215,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			_driver = MidiDriver_MT32_create();
 			_musicType = MT_MT32;
 		}
+		break;
 	default:
 		// Create default one
 		// I guess we shouldn't do this anymore
@@ -221,10 +229,10 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		int ret = _driver->open();
 		if (ret == 0) {
 			// Reset is done inside our MIDI driver
-			_driver->setTimerCallback(&_midiParser, &_midiParser.timerCallback);
+			_driver->setTimerCallback(_midiParser, &_midiParser->timerCallback);
 		}
-		_midiParser.setMidiDriver(_driver);
-		_midiParser.setTimerRate(_driver->getBaseTempo());
+		_midiParser->setMidiDriver(_driver);
+		_midiParser->setTimerRate(_driver->getBaseTempo());
 
 		if (_musicType == MT_MT32) {
 			// Upload patches
@@ -247,6 +255,18 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	} else {
 		// no driver, bye bye music
 		_musicOn = false;
+	}
+}
+
+Music::~Music() {
+	stopMusic();
+	if (_midiParser) {
+		_midiParser->stopPlaying();
+		delete _midiParser;
+	}
+	if (_driver) {
+		_driver->close();
+		delete _driver;
 	}
 }
 
@@ -341,10 +361,14 @@ bool Music::playMusic(const Common::String &name) {
 		case MT_MT32:
 			MidiDriver_MT32_newMusicData(_driver, dataPos, dataSize);
 			break;
+
+		default:
+			// should never happen
+			break;
 		}
 	}
 
-	_midiParser.loadMusic(dataPos, dataSize);
+	_midiParser->loadMusic(dataPos, dataSize);
 	return true;
 }
 
@@ -380,11 +404,11 @@ void Music::waitTimerRoland(uint time) {
 bool Music::waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay) {
 	uint32 currentTick = 0;
 
-	if (!_midiParser.isPlaying()) {
+	if (!_midiParser->isPlaying()) {
 		return _vm->_events->delay(noMusicDelay, true);
 	}
 	while (1) {
-		if (!_midiParser.isPlaying()) { // Music has stopped playing -> we are done
+		if (!_midiParser->isPlaying()) { // Music has stopped playing -> we are done
 			if (additionalDelay > 0) {
 				if (!_vm->_events->delay(additionalDelay, true))
 					return false;
@@ -392,7 +416,7 @@ bool Music::waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, u
 			return true;
 		}
 
-		currentTick = _midiParser.getTick();
+		currentTick = _midiParser->getTick();
 		//warning("waitUntilTick: %lx", currentTick);
 
 		if (currentTick <= maxTick) {

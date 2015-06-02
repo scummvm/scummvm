@@ -33,6 +33,10 @@ namespace Sherlock {
 class SherlockEngine;
 
 class MidiParser_SH : public MidiParser {
+public:
+	MidiParser_SH();
+	~MidiParser_SH();
+
 protected:
 	virtual void parseNextEvent(EventInfo &info);
 
@@ -40,16 +44,20 @@ protected:
 	uint8 _lastEvent;
 	byte *_data;
 	byte *_trackEnd;
+
 public:
-	MidiParser_SH();
 	virtual bool loadMusic(byte *data, uint32 size);
 };
 
 class Music {
+public:
+	Music(SherlockEngine *vm, Audio::Mixer *mixer);
+	~Music();
+
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	MidiParser_SH _midiParser;
+	MidiParser_SH *_midiParser;
 	MidiDriver *_driver;
 
 public:
@@ -60,8 +68,6 @@ private:
 	MusicType _musicType;
 
 public:
-	Music(SherlockEngine *vm, Audio::Mixer *mixer);
-
 	/**
 	 * Saves sound-related settings
 	 */
