@@ -86,7 +86,7 @@ bool Debugger::cmd3DO_PlayMovie(int argc, const char **argv) {
 
 bool Debugger::cmdSong(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Format: song <number>\n");
+		debugPrintf("Format: song <room>\n");
 		return true;
 	}
 
