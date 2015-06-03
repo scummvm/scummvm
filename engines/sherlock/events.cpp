@@ -64,14 +64,24 @@ void Events::setCursor(CursorId cursorId) {
 
 	_cursorId = cursorId;
 
+	int hotspotX, hotspotY;
+
+	if (cursorId == MAGNIFY) {
+		hotspotX = 8;
+		hotspotY = 8;
+	} else {
+		hotspotX = 0;
+		hotspotY = 0;
+	}
+
 	// Set the cursor data
 	Graphics::Surface &s = (*_cursorImages)[cursorId]._frame;
 
-	setCursor(s);
+	setCursor(s, hotspotX, hotspotY);
 }
 
-void Events::setCursor(const Graphics::Surface &src) {
-	CursorMan.replaceCursor(src.getPixels(), src.w, src.h, 0, 0, 0xff);
+void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY) {
+	CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
 	showCursor();
 }
 

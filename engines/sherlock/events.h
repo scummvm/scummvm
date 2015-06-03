@@ -75,7 +75,7 @@ public:
 	/**
 	 * Set the cursor to show from a passed frame
 	 */
-	void setCursor(const Graphics::Surface &src);
+	void setCursor(const Graphics::Surface &src, int hotspotX = 0, int hotspotY = 0);
 
 	/**
 	 * Animates the mouse cursor if the Wait cursor is showing
