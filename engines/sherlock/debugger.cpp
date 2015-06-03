@@ -22,6 +22,7 @@
 
 #include "sherlock/debugger.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/music.h"
 
 #include "sherlock/scalpel/3do/movie_decoder.h"
 
@@ -31,6 +32,7 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("3do_playmovie", WRAP_METHOD(Debugger, cmd3DO_PlayMovie));
+	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
 }
 
 void Debugger::postEnter() {
@@ -80,6 +82,19 @@ bool Debugger::cmd3DO_PlayMovie(int argc, const char **argv) {
 	_3doPlayMovieFile = filename;
 
 	return cmdExit(0, 0);
+}
+
+bool Debugger::cmdSong(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: song <number>\n");
+		return true;
+	}
+
+	if (!_vm->_music->loadSong(strToInt(argv[1]))) {
+		debugPrintf("Invalid song number.\n");
+		return true;
+	}
+	return false;
 }
 
 } // End of namespace Sherlock
