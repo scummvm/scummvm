@@ -648,9 +648,18 @@ void Object::checkObject() {
 			codeFound = true;
 			int v = _sequences[_frameNumber];
 
-			if (v >= 228) {
+			// Check for a Talk or Listen Sequence
+			if (IS_ROSE_TATTOO && v == ALLOW_TALK_CODE) {
+				if (_gotoSeq) {
+					setObjTalkSequence(_gotoSeq);
+				} else {
+					++_frameNumber;
+				}
+			} else if (IS_ROSE_TATTOO && (v == TALK_SEQ_CODE || v == TALK_LISTEN_CODE)) {
+				error("TODO");
+			} else  if (v >= GOTO_CODE) {
 				// Goto code found
-				v -= 228;
+				v -= GOTO_CODE;
 				_seqCounter2 = _seqCounter;
 				_seqStack = _frameNumber + 1;
 				setObjSequence(v, false);
@@ -686,6 +695,12 @@ void Object::checkObject() {
 				default:
 					break;
 				}
+			} else if (IS_ROSE_TATTOO && v == TELEPORT_CODE) {
+				error("TODO");
+			} else if (IS_ROSE_TATTOO && v == CALL_TALK_CODE) {
+				error("TODO");
+			} else if (IS_ROSE_TATTOO && v == HIDE_CODE) {
+				error("TODO");
 			} else {
 				v -= 128;
 
@@ -708,6 +723,14 @@ void Object::checkObject() {
 					// Will be incremented below to return back to original value
 					--_frameNumber;
 					v = 0;
+
+				} else if (IS_ROSE_TATTOO && v == 10) {
+					// Set delta for objects
+					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]), 
+						READ_LE_UINT16(&_sequences[_frameNumber + 3]));
+					_noShapeSize = Common::Point(0, 0);
+					_frameNumber += 4;
+
 				} else if (v == 10) {
 					// Set delta for objects
 					Common::Point pt(_sequences[_frameNumber + 1], _sequences[_frameNumber + 2]);
@@ -723,6 +746,7 @@ void Object::checkObject() {
 
 					_delta = pt;
 					_frameNumber += 2;
+
 				} else if (v < USE_COUNT) {
 					for (int idx = 0; idx < NAMES_COUNT; ++idx) {
 						checkNameForCodes(_use[v]._names[idx], nullptr);
@@ -861,6 +885,10 @@ void Object::setObjSequence(int seq, bool wait) {
 		for (; idx > 0; --idx)
 			scene.doBgAnim();
 	}
+}
+
+void Object::setObjTalkSequence(int seq) {
+	error("TODO: setObjTalkSequence");
 }
 
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {

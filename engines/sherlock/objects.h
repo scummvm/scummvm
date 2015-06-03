@@ -82,6 +82,15 @@ enum {
 #define SEQ_TO_CODE 67
 #define FLIP_CODE (64 + 128)
 #define SOUND_CODE (34 + 128)
+#define HIDE_CODE (7+128)		// Code for hiding/unhiding an object from a Sequence
+#define CALL_TALK_CODE (8+128)	// Code for call a Talk File from a Sequence
+#define TELEPORT_CODE (9+128)	// Code for setting Teleport Data (X,Y)
+#define MOVE_CODE (10+128)		// Code for setting Movement Delta (X,Y)
+
+#define GOTO_CODE 228
+#define TALK_SEQ_CODE 252		// Code specifying start of talk sequence frames in a Sequence
+#define TALK_LISTEN_CODE 251	// Code specifying start of talk listen frames in a Sequence
+#define ALLOW_TALK_CODE 250 
 
 class Point32 {
 public:
@@ -268,6 +277,15 @@ private:
 	 * It then sets the frame number of the start of that sequence
 	 */
 	void setObjSequence(int seq, bool wait);
+
+	/**
+	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
+	 * so that it points to the beginning of the sequence number's talk sequence in the object's
+	 * sequence buffer
+	 * @param seq	Which sequence to use (if there's more than 1)
+	 * @remarks		1: First talk seq, 2: second talk seq, etc.
+	 */
+	void setObjTalkSequence(int seq);
 public:
 	static bool _countCAnimFrames;
 
