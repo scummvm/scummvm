@@ -183,6 +183,16 @@ struct ImageFrame {
 	 * Return the frame height adjusted by a specified scale amount
 	 */
 	int sDrawYSize(int scaleVal) const;
+
+	/**
+	 * Return the frame offset x adjusted by a specified scale amount
+	 */
+	int sDrawXOffset(int scaleVal) const;
+
+	/**
+	 * Return the frame offset y adjusted by a specified scale amount
+	 */
+	int sDrawYOffset(int scaleVal) const;
 };
 
 class ImageFile : public Common::Array<ImageFrame> {

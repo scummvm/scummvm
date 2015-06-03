@@ -30,6 +30,93 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+void ScalpelScene::drawAllShapes() {
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+
+	// Restrict drawing window
+	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
+
+	// Draw all active shapes which are behind the person
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == BEHIND)
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw all canimations which are behind the person
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == BEHIND)
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame,
+			_canimShapes[idx]._position, _canimShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw all active shapes which are normal and behind the person
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE && _bgShapes[idx]._misc == NORMAL_BEHIND)
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position, _bgShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw all canimations which are normal and behind the person
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if (_canimShapes[idx]._type == ACTIVE_BG_SHAPE && _canimShapes[idx]._misc == NORMAL_BEHIND)
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw any active characters
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &p = people[idx];
+		if (p._type == CHARACTER && p._walkLoaded) {
+			bool flipped = IS_SERRATED_SCALPEL && (
+				p._sequenceNumber == WALK_LEFT || p._sequenceNumber == STOP_LEFT ||
+				p._sequenceNumber == WALK_UPLEFT || p._sequenceNumber == STOP_UPLEFT ||
+				p._sequenceNumber == WALK_DOWNRIGHT || p._sequenceNumber == STOP_DOWNRIGHT);
+
+			screen._backBuffer->transBlitFrom(*p._imageFrame, Common::Point(p._position.x / FIXED_INT_MULTIPLIER,
+				p._position.y / FIXED_INT_MULTIPLIER - p.frameHeight()), flipped);
+		}
+	}
+
+	// Draw all static and active shapes that are NORMAL and are in front of the player
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
+			_bgShapes[idx]._misc == NORMAL_FORWARD)
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
+			_bgShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw all static and active canimations that are NORMAL and are in front of the player
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
+			_canimShapes[idx]._misc == NORMAL_FORWARD)
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw all static and active shapes that are FORWARD
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		_bgShapes[idx]._oldPosition = _bgShapes[idx]._position;
+		_bgShapes[idx]._oldSize = Common::Point(_bgShapes[idx].frameWidth(),
+			_bgShapes[idx].frameHeight());
+
+		if ((_bgShapes[idx]._type == ACTIVE_BG_SHAPE || _bgShapes[idx]._type == STATIC_BG_SHAPE) &&
+			_bgShapes[idx]._misc == FORWARD)
+			screen._backBuffer->transBlitFrom(*_bgShapes[idx]._imageFrame, _bgShapes[idx]._position,
+			_bgShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	// Draw all static and active canimations that are forward
+	for (uint idx = 0; idx < _canimShapes.size(); ++idx) {
+		if ((_canimShapes[idx]._type == ACTIVE_BG_SHAPE || _canimShapes[idx]._type == STATIC_BG_SHAPE) &&
+			_canimShapes[idx]._misc == FORWARD)
+			screen._backBuffer->transBlitFrom(*_canimShapes[idx]._imageFrame, _canimShapes[idx]._position,
+			_canimShapes[idx]._flags & OBJ_FLIPPED);
+	}
+
+	screen.resetDisplayBounds();
+}
+
+
 void ScalpelScene::checkBgShapes() {
 	People &people = *_vm->_people;
 	Person &holmes = people._player;

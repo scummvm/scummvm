@@ -36,6 +36,172 @@ TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
 	_maskCounter = 0;
 }
 
+struct ShapeEntry {
+	Object *_shape;
+	Person *_person;
+	bool _isAnimation;
+	int _yp;
+
+	ShapeEntry(Person *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false) {}
+	ShapeEntry(Object *shape, int yp) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false) {}
+	ShapeEntry(int yp) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true) {}
+	int personNum;
+};
+typedef Common::List<ShapeEntry> ShapeList;
+
+static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
+	return s1._yp <= s2._yp;
+}
+
+void TattooScene::drawAllShapes() {
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ShapeList shapeList;
+
+	// Draw all objects and animations that are set to behind
+	screen.setDisplayBounds(Common::Rect(ui._currentScroll.x, 0, ui._currentScroll.x + SHERLOCK_SCREEN_WIDTH,  SHERLOCK_SCREEN_HEIGHT));
+
+	// Draw all active shapes which are behind the person
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (obj._type == ACTIVE_BG_SHAPE && obj._misc == BEHIND) {
+			if (obj._quickDraw && obj._scaleVal == 256)
+				screen._backBuffer1.blitFrom(*obj._imageFrame, obj._position);
+			else
+				screen._backBuffer1.transBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
+		}
+	}
+
+	// Draw the animation if it is behind the person
+	if (_activeCAnim._imageFrame != nullptr && _activeCAnim._zPlacement == BEHIND)
+		screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position,
+			(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+
+	screen.setDisplayBounds(Common::Rect(0, 0, screen._backBuffer1.w(), screen._backBuffer1.h()));
+
+	// Queue drawing of all objects that are set to NORMAL.
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (obj._type == ACTIVE_BG_SHAPE && (obj._misc == NORMAL_BEHIND || obj._misc == NORMAL_FORWARD)) {
+			if (obj._scaleVal == 256)
+				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->_offset.y +
+					obj._imageFrame->_height));
+			else
+				shapeList.push_back(ShapeEntry(&obj, obj._position.y + obj._imageFrame->sDrawYOffset(obj._scaleVal) +
+					obj._imageFrame->sDrawYSize(obj._scaleVal)));
+		}
+	}
+
+	// Queue drawing the animation if it is NORMAL and can fall in front of, or behind the people
+	if (_activeCAnim._imageFrame != nullptr && (_activeCAnim._zPlacement == NORMAL_BEHIND) || _activeCAnim._zPlacement == NORMAL_FORWARD) {
+		if (_activeCAnim._scaleVal == 256)
+			if (_activeCAnim._scaleVal == 256)
+				shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->_offset.y +
+					_activeCAnim._imageFrame->_height));
+			else
+				shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->sDrawYOffset(_activeCAnim._scaleVal) +
+					_activeCAnim._imageFrame->sDrawYSize(_activeCAnim._scaleVal)));
+	}
+
+	// Queue all active characters for drawing
+	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (people[idx]._type == CHARACTER && people[idx]._walkLoaded)
+			shapeList.push_back(ShapeEntry(&people[idx], people[idx]._position.y / FIXED_INT_MULTIPLIER));
+	}
+
+	// Sort the list
+	Common::sort(shapeList.begin(), shapeList.end(), sortImagesY);
+
+	// Draw the list of shapes in order
+	for (ShapeList::iterator i = shapeList.begin(); i != shapeList.end(); ++i) {
+		ShapeEntry &se = *i;
+
+		if (se._shape) {
+			// it's a bg shape
+			if (se._shape->_quickDraw && se._shape->_scaleVal == 256)
+				screen._backBuffer1.blitFrom(*se._shape->_imageFrame, se._shape->_position);
+			else
+				screen._backBuffer1.transBlitFrom(*se._shape->_imageFrame, se._shape->_position,
+					se._shape->_flags & OBJ_FLIPPED, 0, se._shape->_scaleVal);
+		} else if (se._isAnimation) {
+			// It's an active animation
+			screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position,
+				(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+		} else {
+			// Drawing person
+			Person &p = *se._person;
+
+			p._tempX = p._position.x / FIXED_INT_MULTIPLIER;
+			p._tempScaleVal = getScaleVal(p._position);
+			Common::Point adjust = p._adjust;
+
+			if (p._tempScaleVal == 256) {
+				p._tempX += adjust.x;
+				screen._backBuffer1.transBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
+					- p.frameHeight() - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
+			} else {
+				if (adjust.x) {
+					if (!p._tempScaleVal)
+						++p._tempScaleVal;
+
+					if (p._tempScaleVal >= 256 && adjust.x)
+						--adjust.x;
+
+					adjust.x = adjust.x * 256 / p._tempScaleVal;
+
+					if (p._tempScaleVal >= 256)
+						++adjust.x;
+					p._tempX += adjust.x;
+				}
+
+				if (adjust.y)
+				{
+					if (!p._tempScaleVal)
+						p._tempScaleVal++;
+
+					if (p._tempScaleVal >= 256 && adjust.y)
+						--adjust.y;
+
+					adjust.y = adjust.y * 256 / p._tempScaleVal;
+
+					if (p._tempScaleVal >= 256)
+						++adjust.y;
+				}
+
+				screen._backBuffer1.transBlitFrom(*p._imageFrame, Common::Point(p._tempX, p._position.y / FIXED_INT_MULTIPLIER
+					- p._imageFrame->sDrawYSize(p._tempScaleVal) - adjust.y), p._walkSequences[p._sequenceNumber]._horizFlip, 0, p._tempScaleVal);
+			}
+		}
+	}
+
+	// Draw all objects & canimations that are set to FORWARD.
+	// Draw all static and active shapes that are FORWARD
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+
+		if (obj._type == ACTIVE_BG_SHAPE && obj._misc == FORWARD) {
+			if (obj._quickDraw && obj._scaleVal == 256)
+				screen._backBuffer1.blitFrom(*obj._imageFrame, obj._position);
+			else
+				screen._backBuffer1.transBlitFrom(*obj._imageFrame, obj._position, obj._flags & OBJ_FLIPPED, 0, obj._scaleVal);
+		}
+	}
+
+	// Draw the canimation if it is set as FORWARD
+	if (_activeCAnim._imageFrame != nullptr && _activeCAnim._zPlacement == FORWARD)
+		screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+
+	// Draw all NO_SHAPE shapes which have their flag bits clear
+	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
+		Object &obj = _bgShapes[idx];
+		if (obj._type == NO_SHAPE && (obj._flags & 1) == 0)
+			screen._backBuffer1.fillRect(obj.getNoShapeBounds(), 15);
+	}
+}
+
 void TattooScene::checkBgShapes() {
 	People &people = *_vm->_people;
 	Person &holmes = people._player;
@@ -490,6 +656,11 @@ void TattooScene::doBgAnimDrawSprites() {
 		}
 	}
 }
+
+int TattooScene::getScaleVal(const Common::Point &pt) {
+	error("TODO: getScaleVal");
+}
+
 
 } // End of namespace Tattoo
 

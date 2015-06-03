@@ -92,18 +92,22 @@ void Surface::blitFrom(const Surface &src, const Common::Point &pt, const Common
 }
 
 void Surface::transBlitFrom(const ImageFrame &src, const Common::Point &pt,
-		bool flipped, int overrideColor) {
-	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor);
+		bool flipped, int overrideColor, int scaleVal) {
+	transBlitFrom(src._frame, pt + src._offset, flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor) {
+		bool flipped, int overrideColor, int scaleVal) {
 	const Graphics::Surface &s = src._surface;
-	transBlitFrom(s, pt, flipped, overrideColor);
+	transBlitFrom(s, pt, flipped, overrideColor, scaleVal);
 }
 
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
-		bool flipped, int overrideColor) {
+		bool flipped, int overrideColor, int scaleVal) {
+	if (scaleVal != 256) {
+		error("TODO: scaling for transBlitFrom");
+	}
+	
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
 

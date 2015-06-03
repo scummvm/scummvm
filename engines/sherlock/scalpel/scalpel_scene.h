@@ -45,6 +45,11 @@ protected:
 	 * colliding with another shape, it will also flag it as needing drawing
 	 */
 	virtual void checkBgShapes();
+
+	/**
+	 * Draw all the shapes, people and NPCs in the correct order
+	 */
+	virtual void drawAllShapes();
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
 

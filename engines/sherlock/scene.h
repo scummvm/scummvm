@@ -196,7 +196,7 @@ protected:
 	/**
 	 * Draw all the shapes, people and NPCs in the correct order
 	 */
-	void drawAllShapes();
+	virtual void drawAllShapes() = 0;
 
 	Scene(SherlockEngine *vm);
 public:

@@ -496,4 +496,32 @@ int ImageFrame::sDrawYSize(int scaleVal) const {
 	return result;
 }
 
+int ImageFrame::sDrawXOffset(int scaleVal) const {
+	int width = _offset.x;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
+
+	if (scaleVal >= 256)
+		--width;
+
+	int result = width * 256 / scale;
+	if (scaleVal >= 256)
+		++result;
+
+	return result;
+}
+
+int ImageFrame::sDrawYOffset(int scaleVal) const {
+	int height = _offset.y;
+	int scale = scaleVal == 0 ? 1 : scaleVal;
+
+	if (scaleVal >= 256)
+		--height;
+
+	int result = height * 256 / scale;
+	if (scaleVal >= 256)
+		++result;
+
+	return result;
+}
+
 } // End of namespace Sherlock

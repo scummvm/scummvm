@@ -46,6 +46,12 @@ private:
 	void doBgAnimUpdateBgObjectsAndAnim();
 
 	void doBgAnimDrawSprites();
+
+	/**
+	 * Returns the scale value for the passed co-ordinates. This is taken from the scene's
+	 * scale zones, interpolating inbetween the top and bottom values of the zones as needed
+	 */
+	int getScaleVal(const Common::Point &pt);
 protected:
 	/**
 	 * Checks all the background shapes. If a background shape is animating,
@@ -53,6 +59,11 @@ protected:
 	 * colliding with another shape, it will also flag it as needing drawing
 	 */
 	virtual void checkBgShapes();
+
+	/**
+	 * Draw all the shapes, people and NPCs in the correct order
+	 */
+	virtual void drawAllShapes();
 public:
 	ImageFile *_mask, *_mask1;
 	CAnimStream _activeCAnim;
