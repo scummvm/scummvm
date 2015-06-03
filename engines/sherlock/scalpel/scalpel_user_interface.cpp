@@ -392,10 +392,15 @@ void ScalpelUserInterface::depressButton(int num) {
 }
 
 void ScalpelUserInterface::restoreButton(int num) {
+	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 	Graphics::Surface &frame = (*_controls)[num]._frame;
 
+	// Reset the cursor
+	events.setCursor(ARROW);
+
+	// Restore the UI on the back buffer
 	screen._backBuffer1.blitFrom(screen._backBuffer2, pt,
 		Common::Rect(pt.x, pt.y, pt.x + 90, pt.y + 19));
 	screen.slamArea(pt.x, pt.y, pt.x + frame.w, pt.y + frame.h);
