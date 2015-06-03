@@ -51,15 +51,11 @@ Scalpel3DOMovieDecoder::~Scalpel3DOMovieDecoder() {
 }
 
 bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
-	bool   videoHeaderFound = false;
 	uint32 videoSubType    = 0;
-	uint32 videoTimeStamp  = 0;
 	uint32 videoCodecTag   = 0;
 	uint32 videoHeight     = 0;
 	uint32 videoWidth      = 0;
-	uint32 videoFrameRate  = 0;
 	uint32 videoFrameCount = 0;
-	uint32 videoFrameNr    = 0;
 	uint32 audioSubType    = 0;
 	uint32 audioCodecTag   = 0;
 	uint32 audioChannels   = 0;
@@ -93,14 +89,14 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		switch (tag) {
 		case MKTAG('F','I','L','M'): {
 			// See if this is a FILM header
-			videoTimeStamp = _stream->readUint32BE();
+			_stream->skip(4); // time stamp (based on 240 per second)
 			_stream->skip(4); // Unknown 0x00000000
 			videoSubType = _stream->readUint32BE();
 
 			switch (videoSubType) {
 			case MKTAG('F', 'H', 'D', 'R'):
 				// FILM header found
-				if (videoHeaderFound) {
+				if (_videoTrack) {
 					warning("Sherlock 3DO movie: Multiple FILM headers found");
 					close();
 					return false;
@@ -111,33 +107,12 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				videoWidth = _stream->readUint32BE();
 				_stream->skip(4); // time scale
 				videoFrameCount = _stream->readUint32BE();
-				videoHeaderFound = true;
+
+				_videoTrack = new StreamVideoTrack(videoWidth, videoHeight, videoCodecTag, videoFrameCount);
+				addTrack(_videoTrack);
 				break;
 
 			case MKTAG('F', 'R', 'M', 'E'):
-				if (!_videoTrack) {
-					if (!videoFrameNr) {
-						// first frame, we expect timestamp to be 0
-						assert(videoTimeStamp == 0);
-
-					} else {
-						// second frame found, we expect timestamp to be larger than 0
-						assert(videoTimeStamp);
-						// Framerate shouldn't be known at the moment
-						assert(videoFrameRate == 0);
-
-						if (!videoHeaderFound) {
-							error("Sherlock 3DO movie: no FILM header found before FILM frame");
-						}
-
-						// 3DO clock time for movies runs at 240Hz
-						videoFrameRate = 240 / videoTimeStamp;
-
-						_videoTrack = new StreamVideoTrack(videoWidth, videoHeight, videoCodecTag, videoFrameCount, videoFrameRate);
-						addTrack(_videoTrack);
-					}
-					videoFrameNr++;
-				}
 				break;
 
 			default:
@@ -228,6 +203,7 @@ void Scalpel3DOMovieDecoder::close() {
 
 void Scalpel3DOMovieDecoder::readNextPacket() {
 	uint32 videoSubType = 0;
+	uint32 videoTimeStamp = 0;
 	uint32 videoFrameSize = 0;
 	uint32 audioSubType = 0;
 	uint32 audioSampleBytes = 0;
@@ -246,7 +222,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 
 		switch (tag) {
 		case MKTAG('F','I','L','M'):
-			_stream->readUint32BE(); // looks like frame * 16?
+			videoTimeStamp = _stream->readUint32BE();
 			_stream->skip(4); // Unknown
 			videoSubType = _stream->readUint32BE();
 
@@ -261,7 +237,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 				// If we previously found one, this is just to get the time offset of the next one
 				/* uint32 frmeSize = */ _stream->readUint32BE();
 				videoFrameSize = _stream->readUint32BE();
-				_videoTrack->decodeFrame(_stream->readStream(videoFrameSize));
+				_videoTrack->decodeFrame(_stream->readStream(videoFrameSize), videoTimeStamp);
 				gotVideo = true;
 				break;
 
@@ -311,12 +287,12 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 	}
 }
 
-Scalpel3DOMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount, uint32 frameRate) {
+Scalpel3DOMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount) {
 	_width = width;
 	_height = height;
 	_frameCount = frameCount;
-	_frameRate = frameRate;
 	_curFrame = -1;
+	_nextFrameStartTime = 0;
 
 	// Create the Cinepak decoder, if we're using it
 	if (codecTag == MKTAG('c', 'v', 'i', 'd'))
@@ -329,13 +305,24 @@ Scalpel3DOMovieDecoder::StreamVideoTrack::~StreamVideoTrack() {
 	delete _codec;
 }
 
+bool Scalpel3DOMovieDecoder::StreamVideoTrack::endOfTrack() const {
+	return getCurFrame() >= getFrameCount() - 1;
+}
+
 Graphics::PixelFormat Scalpel3DOMovieDecoder::StreamVideoTrack::getPixelFormat() const {
 	return _codec->getPixelFormat();
 }
 
-void Scalpel3DOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStream *stream) {
+void Scalpel3DOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp) {
+	uint32 currentFrameStartTime = 0;
+
 	_surface = _codec->decodeFrame(*stream);
 	_curFrame++;
+
+	// Calculate next frame time
+	currentFrameStartTime = videoTimeStamp * 1000 / 240;
+	assert(currentFrameStartTime >= _nextFrameStartTime);
+	_nextFrameStartTime = currentFrameStartTime;
 }
 
 #define STREAMAUDIO_STEPSIZETABLE_MAX 88

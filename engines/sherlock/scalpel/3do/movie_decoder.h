@@ -51,31 +51,32 @@ protected:
 	void readNextPacket();
 
 private:
-	class StreamVideoTrack : public FixedRateVideoTrack  {
+	class StreamVideoTrack : public VideoTrack  {
 	public:
-		StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount, uint32 frameRate);
+		StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount);
 		~StreamVideoTrack();
+
+		bool endOfTrack() const;
 
 		uint16 getWidth() const { return _width; }
 		uint16 getHeight() const { return _height; }
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
+		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		const Graphics::Surface *decodeNextFrame() { return _surface; }
 
-		void decodeFrame(Common::SeekableReadStream *stream);
-
-	protected:
-		Common::Rational getFrameRate() const { return _frameRate; }
+		void decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp);
 
 	private:
 		const Graphics::Surface *_surface;
-		uint32 _frameRate;
 
+		int _curFrame;
 		uint32 _frameCount;
+		uint32 _nextFrameStartTime;
+
 		Image::Codec *_codec;
 		uint16 _width, _height;
-		int _curFrame;
 	};
 
 	class StreamAudioTrack : public AudioTrack {
