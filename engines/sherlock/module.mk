@@ -3,6 +3,7 @@ MODULE := engines/sherlock
 MODULE_OBJS = \
 	scalpel/darts.o \
 	scalpel/scalpel.o \
+	scalpel/3do/movie_decoder.o \
 	scalpel/drivers/adlib.o \
 	scalpel/drivers/mt32.o \
 	scalpel/tsage/logo.o \
