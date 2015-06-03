@@ -23,11 +23,22 @@
 #include "sherlock/debugger.h"
 #include "sherlock/sherlock.h"
 
+#include "sherlock/scalpel/3do/movie_decoder.h"
+
 namespace Sherlock {
 
 Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("continue",		WRAP_METHOD(Debugger, cmdExit));
-	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
+	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
+	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
+	registerCmd("3do_playmovie", WRAP_METHOD(Debugger, cmd3DO_PlayMovie));
+}
+
+void Debugger::postEnter() {
+	if (!_3doPlayMovieFile.empty()) {
+		Scalpel3DOMoviePlay(_3doPlayMovieFile.c_str());
+
+		_3doPlayMovieFile.clear();
+	}
 }
 
 int Debugger::strToInt(const char *s) {
@@ -54,6 +65,19 @@ bool Debugger::cmdScene(int argc, const char **argv) {
 		_vm->_scene->_goToScene = strToInt(argv[1]);
 		return false;
 	}
+}
+
+bool Debugger::cmd3DO_PlayMovie(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: 3do_playmovie <3do-movie-file>\n");
+		return true;
+	}
+
+	// play gets postboned until debugger is closed
+	Common::String filename = argv[1];
+	_3doPlayMovieFile = filename;
+
+	return cmdExit(0, 0);
 }
 
 } // End of namespace Sherlock

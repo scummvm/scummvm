@@ -31,6 +31,12 @@ namespace Sherlock {
 class SherlockEngine;
 
 class Debugger : public GUI::Debugger {
+public:
+	Debugger(SherlockEngine *vm);
+	virtual ~Debugger() {}
+
+	void postEnter();
+
 private:
 	SherlockEngine *_vm;
 
@@ -43,9 +49,14 @@ private:
 	 * Switch to another scene
 	 */
 	bool cmdScene(int argc, const char **argv);
-public:
-	Debugger(SherlockEngine *vm);
-	virtual ~Debugger() {}
+
+	/**
+	 * Plays a 3DO movie
+	 */
+	bool cmd3DO_PlayMovie(int argc, const char **argv);
+
+private:
+	Common::String _3doPlayMovieFile;
 };
 
 } // End of namespace Sherlock
