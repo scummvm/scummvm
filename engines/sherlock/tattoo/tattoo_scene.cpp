@@ -96,14 +96,13 @@ void TattooScene::drawAllShapes() {
 	}
 
 	// Queue drawing the animation if it is NORMAL and can fall in front of, or behind the people
-	if (_activeCAnim._imageFrame != nullptr && (_activeCAnim._zPlacement == NORMAL_BEHIND) || _activeCAnim._zPlacement == NORMAL_FORWARD) {
+	if (_activeCAnim._imageFrame != nullptr && (_activeCAnim._zPlacement == NORMAL_BEHIND || _activeCAnim._zPlacement == NORMAL_FORWARD)) {
 		if (_activeCAnim._scaleVal == 256)
-			if (_activeCAnim._scaleVal == 256)
-				shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->_offset.y +
-					_activeCAnim._imageFrame->_height));
-			else
-				shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->sDrawYOffset(_activeCAnim._scaleVal) +
-					_activeCAnim._imageFrame->sDrawYSize(_activeCAnim._scaleVal)));
+			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->_offset.y +
+				_activeCAnim._imageFrame->_height));
+		else
+			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->sDrawYOffset(_activeCAnim._scaleVal) +
+				_activeCAnim._imageFrame->sDrawYSize(_activeCAnim._scaleVal)));
 	}
 
 	// Queue all active characters for drawing
