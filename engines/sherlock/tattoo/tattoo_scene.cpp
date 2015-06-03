@@ -658,7 +658,31 @@ void TattooScene::doBgAnimDrawSprites() {
 }
 
 int TattooScene::getScaleVal(const Common::Point &pt) {
-	error("TODO: getScaleVal");
+	bool found = false;
+	int result = 256;
+	Common::Point pos(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER);
+
+	for (uint idx = 0; idx < _scaleZones.size() && !found; ++idx) {
+		ScaleZone &sz = _scaleZones[idx];
+		if (sz.contains(pos)) {
+			int n = (sz._bottomNumber - sz._topNumber) * 100 / sz.height() * (pos.y - sz.top) / 100 + sz._topNumber;
+			result = 25600L / n;
+		}
+	}
+
+	// If it wasn't found, we may be off screen to the left or right, so find the scale zone 
+	// that would apply to the y val passed in disregarding the x
+	if (!found) {
+		for (uint idx = 0; idx < _scaleZones.size() && !found; ++idx) {
+			ScaleZone &sz = _scaleZones[idx];
+			if (pos.y >= sz.top && pos.y < sz.bottom) {
+				int n = (sz._bottomNumber - sz._topNumber) * 100 / sz.height() * (pos.y - sz.top) / 100 + sz._topNumber;
+				result = 25600L / n;
+			}
+		}
+	}
+
+	return result;
 }
 
 
