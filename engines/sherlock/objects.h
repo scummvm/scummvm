@@ -418,11 +418,12 @@ struct CAnim {
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
-struct CAnimStream {
+class CAnimStream {
 	Common::SeekableReadStream *_stream;	// Stream to read frames from
 	int _frameSize;					// Temporary used to store the frame size
 
 	void *_images;					// TOOD: FIgure out hwo to hook up ImageFile with streaming support
+public:
 	ImageFrame *_imageFrame;
 
 	Common::Point _position;		// Animation position
@@ -432,7 +433,7 @@ struct CAnimStream {
 	int _flags;						// Flags
 	int _scaleVal;					// Specifies the scale amount
 	int _zPlacement;				// Used by doBgAnim for determining Z order
-
+public:
 	CAnimStream();
 
 	void getNextFrame();

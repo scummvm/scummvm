@@ -169,7 +169,7 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 			_oldInvGraphicBounds);
 
 	// If a canimation is active, restore the graphics underneath it
-	if (scene._activeCAnim._images != nullptr)
+	if (scene._activeCAnim._imageFrame != nullptr)
 		screen.restoreBackground(scene._activeCAnim._oldBounds);
 
 	// If a canimation just ended, remove it's graphics from the backbuffer

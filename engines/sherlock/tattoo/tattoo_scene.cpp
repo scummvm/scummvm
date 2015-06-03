@@ -211,7 +211,7 @@ void TattooScene::checkBgShapes() {
 	Scene::checkBgShapes();
 
 	// Check for any active playing animation
-	if (_activeCAnim._images && _activeCAnim._zPlacement != REMOVE) {
+	if (_activeCAnim._imageFrame && _activeCAnim._zPlacement != REMOVE) {
 		switch (_activeCAnim._flags & 3) {
 		case 0:
 			_activeCAnim._zPlacement = BEHIND;
@@ -427,7 +427,7 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 			people[idx].adjustSprite();
 	}
 
-	if ((_activeCAnim._images != nullptr) && (_activeCAnim._zPlacement != REMOVE)) {
+	if (_activeCAnim._imageFrame != nullptr && _activeCAnim._zPlacement != REMOVE) {
 		_activeCAnim.getNextFrame();
 	}
 
@@ -644,7 +644,7 @@ void TattooScene::doBgAnimDrawSprites() {
 		}
 	}
 
-	if (_activeCAnim._images != nullptr || _activeCAnim._zPlacement == REMOVE) {
+	if (_activeCAnim._imageFrame != nullptr || _activeCAnim._zPlacement == REMOVE) {
 		if (_activeCAnim._zPlacement != REMOVE) {
 			screen.flushImage(_activeCAnim._imageFrame, _activeCAnim._position, _activeCAnim._oldBounds, _activeCAnim._scaleVal);
 		} else {
