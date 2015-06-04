@@ -23,15 +23,22 @@
 /**
  * @file
  * Sound decoder used in engines:
+ *  - access
  *  - agos
+ *  - cge2
  *  - gob
+ *  - hopkins
  *  - mohawk
+ *  - prince
  *  - saga
  *  - sci
  *  - scumm
+ *  - sherlock
  *  - sword1
  *  - sword2
+ *  - tony
  *  - tucker
+ *  - zvision
  */
 
 #ifndef AUDIO_WAVE_H
