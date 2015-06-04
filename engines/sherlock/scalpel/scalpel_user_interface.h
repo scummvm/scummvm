@@ -51,7 +51,7 @@ private:
 	int _lookHelp;
 	int _bgFound, _oldBgFound;
 	int _help, _oldHelp;
-	char _key, _oldKey;
+	int _key, _oldKey;
 	int _temp, _oldTemp;
 	int _oldLook;
 	bool _keyboardInput;

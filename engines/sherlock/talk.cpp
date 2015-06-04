@@ -1026,7 +1026,7 @@ void Talk::pushSequence(int speaker) {
 void Talk::pushTalkSequence(Object *obj) {
 	// Check if the shape is already on the stack
 	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
-		if (_talkSequenceStack[idx]._obj = obj)
+		if (_talkSequenceStack[idx]._obj == obj)
 			return;
 	}
 
