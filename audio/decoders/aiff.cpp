@@ -30,6 +30,7 @@
 
 #include "common/endian.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 
 #include "audio/decoders/aiff.h"
@@ -159,7 +160,7 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse) {
 	int size, rate;
-	byte *data, flags;
+	byte flags;
 
 	if (!loadAIFFFromStream(*stream, size, rate, flags)) {
 		if (disposeAfterUse == DisposeAfterUse::YES)
@@ -167,15 +168,10 @@ SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream,
 		return 0;
 	}
 
-	data = (byte *)malloc(size);
-	assert(data);
-	stream->read(data, size);
+	Common::SeekableReadStream *dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
 
-	if (disposeAfterUse == DisposeAfterUse::YES)
-		delete stream;
-
-	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
-	return makeRawStream(data, size, rate, flags);
+	// Since we allocated our own stream for the data, we must specify DisposeAfterUse::YES.
+	return makeRawStream(dataStream, rate, flags);
 }
 
 } // End of namespace Audio
