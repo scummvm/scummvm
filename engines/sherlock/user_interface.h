@@ -47,7 +47,10 @@ enum MenuMode {
 	GIVE_MODE		=  9,
 	JOURNAL_MODE	= 10,
 	FILES_MODE		= 11,
-	SETUP_MODE		= 12
+	SETUP_MODE		= 12,
+
+	// Rose Tattoo specific
+	LAB_MODE		= 20
 };
 
 class UserInterface {

@@ -30,12 +30,6 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
-	_arrowZone = -1;
-	_mask = _mask1 = nullptr;
-	_maskCounter = 0;
-}
-
 struct ShapeEntry {
 	Object *_shape;
 	Person *_person;
@@ -51,6 +45,29 @@ typedef Common::List<ShapeEntry> ShapeList;
 
 static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
 	return s1._yp <= s2._yp;
+}
+
+/*----------------------------------------------------------------*/
+
+TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
+	_arrowZone = -1;
+	_mask = _mask1 = nullptr;
+	_maskCounter = 0;
+	_labTableScene = false;
+}
+
+bool TattooScene::loadScene(const Common::String &filename) {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	bool result = Scene::loadScene(filename);
+
+	if (_currentScene != STARTING_INTRO_SCENE) {
+		// Set the menu/ui mode and whether we're in a lab table close-up scene
+		_labTableScene = _currentScene > 91 && _currentScene < 100;
+		ui._menuMode = _labTableScene ? LAB_MODE : STD_MODE;
+	}
+
+	return result;
 }
 
 void TattooScene::drawAllShapes() {

@@ -144,17 +144,6 @@ private:
 	bool _loadingSavedGame;
 
 	/**
-	 * Loads the data associated for a given scene. The .BGD file's format is:
-	 * BGHEADER: Holds an index for the rest of the file
-	 * STRUCTS:  The objects for the scene
-	 * IMAGES:   The graphic information for the structures
-	 *
-	 * The _misc field of the structures contains the number of the graphic image
-	 * that it should point to after loading; _misc is then set to 0.
-	 */
-	bool loadScene(const Common::String &filename);
-
-	/**
 	 * Loads sounds for the scene
 	 */
 	void loadSceneSounds();
@@ -185,6 +174,17 @@ private:
 	void saveSceneStatus();
 protected:
 	SherlockEngine *_vm;
+
+	/**
+	 * Loads the data associated for a given scene. The room resource file's format is:
+	 * BGHEADER: Holds an index for the rest of the file
+	 * STRUCTS:  The objects for the scene
+	 * IMAGES:   The graphic information for the structures
+	 *
+	 * The _misc field of the structures contains the number of the graphic image
+	 * that it should point to after loading; _misc is then set to 0.
+	 */
+	virtual bool loadScene(const Common::String &filename);
 
 	/**
 	 * Checks all the background shapes. If a background shape is animating,

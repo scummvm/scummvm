@@ -20,8 +20,9 @@
  *
  */
 
-#include "sherlock/tattoo/tattoo.h"
 #include "engines/util.h"
+#include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 
 namespace Sherlock {
 
@@ -48,7 +49,7 @@ void TattooEngine::initialize() {
 	_res->addToCache("walk.lib");
 
 	// Starting scene
-	_scene->_goToScene = 91;
+	_scene->_goToScene = STARTING_INTRO_SCENE;
 
 	// Load an initial palette
 	loadInitialPalette();
