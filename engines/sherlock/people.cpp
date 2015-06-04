@@ -127,9 +127,9 @@ void People::reset() {
 
 		p._type = (idx == 0) ? CHARACTER : INVALID;
 		if (IS_SERRATED_SCALPEL)
-			p._position = Point32(10000, 11000);
+			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
 		else
-			p._position = Point32(36000, 29000);
+			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
 
 		p._sequenceNumber = STOP_DOWNRIGHT;
 		p._imageFrame = nullptr;

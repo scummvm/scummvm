@@ -757,8 +757,13 @@ void Scene::transitionToScene() {
 		// No exit information from last scene-check entrance info
 		if (_entrance._startPosition.x < 1) {
 			// No entrance info either, so use defaults
-			hSavedPos = Common::Point(16000, 10000);
-			hSavedFacing = 4;
+			if (IS_SERRATED_SCALPEL) {
+				hSavedPos = Common::Point(16000, 10000);
+				hSavedFacing = 4;
+			} else {
+				hSavedPos = people[PLAYER]._position;
+				hSavedFacing = people[PLAYER]._sequenceNumber;
+			}
 		} else {
 			// setup entrance info
 			hSavedPos = _entrance._startPosition;
