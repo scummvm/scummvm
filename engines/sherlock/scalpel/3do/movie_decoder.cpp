@@ -73,7 +73,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	// Look for packets that we care about
 	static const int maxPacketCheckCount = 20;
 	for (int i = 0; i < maxPacketCheckCount; i++) {
-		uint32 tag = _stream->readUint32BE();
+		uint32 chunkTag = _stream->readUint32BE();
 		uint32 chunkSize = _stream->readUint32BE() - 8;
 
 		// Bail out if done
@@ -82,7 +82,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 		uint32 dataStartOffset = _stream->pos();
 
-		switch (tag) {
+		switch (chunkTag) {
 		case MKTAG('F','I','L','M'): {
 			// See if this is a FILM header
 			_stream->skip(4); // time stamp (based on 240 per second)
@@ -163,8 +163,10 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 
 		case MKTAG('C','T','R','L'):
-		case MKTAG('F','I','L','L'):
-			// Ignore but also accept CTRL + FILL packets
+		case MKTAG('F','I','L','L'): // filler chunk, fills to certain boundary
+		case MKTAG('D','A','C','Q'):
+		case MKTAG('J','O','I','N'): // add cel data (not used in sherlock)
+			// Ignore these chunks
 			break;
 
 		case MKTAG('S','H','D','R'):
@@ -172,7 +174,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 			break;
 
 		default:
-			warning("Unknown header inside Sherlock 3DO movie");
+			warning("Unknown chunk-tag '%s' inside Sherlock 3DO movie", tag2str(chunkTag));
 			close();
 			return false;
 		}
@@ -337,8 +339,10 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			break;
 
 		case MKTAG('C','T','R','L'):
-		case MKTAG('F','I','L','L'):
-			// Ignore but also accept CTRL + FILL packets
+		case MKTAG('F','I','L','L'): // filler chunk, fills to certain boundary
+		case MKTAG('D','A','C','Q'):
+		case MKTAG('J','O','I','N'): // add cel data (not used in sherlock)
+			// Ignore these chunks
 			break;
 
 		case MKTAG('S','H','D','R'):
@@ -346,7 +350,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			break;
 
 		default:
-			error("Unknown header inside Sherlock 3DO movie");
+			error("Unknown chunk-tag '%s' inside Sherlock 3DO movie", tag2str(chunkTag));
 		}
 
 		// Always seek to end of chunk
@@ -452,7 +456,7 @@ Audio::AudioStream *Scalpel3DOMovieDecoder::StreamAudioTrack::getAudioStream() c
 // Code for showing a movie. Only meant for testing/debug purposes
 void Scalpel3DOMoviePlay(const char *filename) {
 	// HACK
-	initGraphics(320, 200, false, NULL);
+	initGraphics(320, 240, false, NULL);
 
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
 
