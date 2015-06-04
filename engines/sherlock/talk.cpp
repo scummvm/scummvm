@@ -222,12 +222,13 @@ TalkHistoryEntry::TalkHistoryEntry() {
 
 /*----------------------------------------------------------------*/
 
-TalkSequences::TalkSequences(const byte *data) {
-	Common::copy(data, data + MAX_TALK_SEQUENCES, _data);
-}
-
-void TalkSequences::clear() {
-	Common::fill(&_data[0], &_data[MAX_TALK_SEQUENCES], 0);
+TalkSequence::TalkSequence() {
+	_obj = nullptr;
+	_frameNumber = 0;
+	_sequenceNumber = 0;
+	_seqStack = 0;
+	_seqTo = 0;
+	_seqCounter = _seqCounter2 = 0;
 }
 
 /*----------------------------------------------------------------*/
@@ -1020,6 +1021,31 @@ void Talk::pushSequence(int speaker) {
 	_sequenceStack.push(seqEntry);
 	if (_scriptStack.size() >= 5)
 		error("script stack overflow");
+}
+
+void Talk::pushTalkSequence(Object *obj) {
+	// Check if the shape is already on the stack
+	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		if (_talkSequenceStack[idx]._obj = obj)
+			return;
+	}
+
+	// Find a free slot and save the details in it
+	for (uint idx = 0; idx < TALK_SEQUENCE_STACK_SIZE; ++idx) {
+		TalkSequence &ts = _talkSequenceStack[idx];
+		if (ts._obj == nullptr) {
+			ts._obj = obj;
+			ts._frameNumber = obj->_frameNumber;
+			ts._sequenceNumber = obj->_sequenceNumber;
+			ts._seqStack = obj->_seqStack;
+			ts._seqTo = obj->_seqTo;
+			ts._seqCounter = obj->_seqCounter;
+			ts._seqCounter2 = obj->_seqCounter2;
+			return;
+		}
+	}
+
+	error("Ran out of talk sequence stack space");
 }
 
 void Talk::setSequence(int speaker) {

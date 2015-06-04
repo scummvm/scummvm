@@ -368,6 +368,24 @@ const Common::Rect Sprite::getOldBounds() const {
 	return Common::Rect(_oldPosition.x, _oldPosition.y, _oldPosition.x + _oldSize.x, _oldPosition.y + _oldSize.y);
 }
 
+void Sprite::setObjTalkSequence(int seq) {
+	assert(seq != -1 && _type == CHARACTER);
+
+	if (_seqTo) {
+		// reset to previous value
+		_walkSequences[_sequenceNumber]._sequences[_frameNumber] = _seqTo;
+		_seqTo = 0;
+	}
+
+	_sequenceNumber = _gotoSeq;
+	_frameNumber = 0;
+	checkWalkGraphics();
+}
+
+void Sprite::checkWalkGraphics() {
+	error("TODO: checkWalkGraphics");
+}
+
 /*----------------------------------------------------------------*/
 
 void WalkSequence::load(Common::SeekableReadStream &s) {
@@ -493,7 +511,7 @@ Object::Object() {
 	_requiredFlag1 = 0;
 	_gotoSeq = 0;
 	_talkSeq = 0;
-	_restoreSlot = 0;
+	_restoreSlot = -1;
 }
 
 void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
@@ -888,7 +906,86 @@ void Object::setObjSequence(int seq, bool wait) {
 }
 
 void Object::setObjTalkSequence(int seq) {
-	error("TODO: setObjTalkSequence");
+	Talk &talk = *_vm->_talk;
+
+	// See if we're supposed to restore the object's sequence from the talk sequence stack
+	if (seq == -1) {
+		TalkSequence &ts = talk._talkSequenceStack[_restoreSlot];
+		if (_seqTo != 0)
+			_sequences[_frameNumber] = _seqTo;
+		_frameNumber = ts._frameNumber;
+		_sequenceNumber = ts._sequenceNumber;
+		_seqStack = ts._seqStack;
+		_seqTo = ts._seqTo;
+		_seqCounter = ts._seqCounter;
+		_seqCounter2 = ts._seqCounter2;
+		_talkSeq = 0;
+
+		// Flag this slot as free again
+		ts._obj = nullptr;
+
+		return;
+	}
+
+	assert(_type != CHARACTER);
+
+	// If the object passed in is an NPC, set it's sequence through the sequence number rather
+	// than adjusting the frame number to a specific sub-sequence
+	/*	
+		s = (SpriteType *)bg;
+		if (s->seqto)
+		{
+			// reset to previous value
+			s->WalkSeqs[s->fs]->Seq[s->fn] = s->seqto;
+			s->seqto = 0;
+		}
+		s->fs = s->GotoSeq;
+		s->fn = 0;
+		CheckWalkGraphics(s);
+	*/
+	
+	talk.pushTalkSequence(this);
+	int talkSeqNum = seq;
+
+	// Find where the talk sequence data begins in the object
+	int idx = 0;
+	for (;;) {
+		// Get the Frame value
+		byte f = _sequences[idx++];
+
+		// See if we've found the beginning of a Talk Sequence
+		if ((f == TALK_SEQ_CODE && seq < 128) || (f == TALK_LISTEN_CODE && seq > 128)) {
+			--seq;
+
+			// See if we're at the correct Talk Sequence Number
+			if (!(seq & 127))
+			{
+				// Correct Sequence, Start Talking Here
+				if (_seqTo != 0)
+					_sequences[_frameNumber] = _seqTo;
+				_frameNumber = idx;
+				_seqTo = 0;
+				_seqStack = 0;
+				_seqCounter = 0;
+				_seqCounter2 = 0;
+				_talkSeq = talkSeqNum;
+				break;
+			}
+		} else {
+			// Move ahead any extra because of special control codes
+			switch (f) {
+			case 0: idx++; break;
+			case MOVE_CODE:
+			case TELEPORT_CODE: idx += 4; break;
+			case CALL_TALK_CODE: idx += 8; break;
+			case HIDE_CODE: idx += 2; break;
+			}
+		}
+
+		// See if we're out of sequence data
+		if (idx >= (int)_seqSize)
+			break;
+	}
 }
 
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {

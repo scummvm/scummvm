@@ -165,6 +165,12 @@ struct UseType {
 class Sprite {
 private:
 	static SherlockEngine *_vm;
+
+	/**
+	 * Checks a sprite associated with an NPC to see if the frame sequence specified
+	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
+	 */
+	void checkWalkGraphics();
 public:
 	Common::String _name;
 	Common::String _description;
@@ -241,6 +247,15 @@ public:
 	* Checks the sprite's position to see if it's collided with any special objects
 	*/
 	void checkSprite();
+
+	/**
+	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
+	 * so that it points to the beginning of the sequence number's talk sequence in the object's
+	 * sequence buffer
+	 * @param seq	Which sequence to use (if there's more than 1)
+	 * @remarks		1: First talk seq, 2: second talk seq, etc.
+	 */
+	void setObjTalkSequence(int seq);
 
 	/**
 	* Return frame width

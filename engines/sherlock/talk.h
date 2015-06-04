@@ -29,11 +29,13 @@
 #include "common/serializer.h"
 #include "common/stream.h"
 #include "common/stack.h"
+#include "sherlock/objects.h"
 
 namespace Sherlock {
 
 #define MAX_TALK_SEQUENCES 11
 #define MAX_TALK_FILES 500
+#define TALK_SEQUENCE_STACK_SIZE 20
 
 enum {
 	OP_SWITCH_SPEAKER			= 0,
@@ -153,15 +155,18 @@ struct TalkHistoryEntry {
 	bool &operator[](int index) { return _data[index]; }
 };
 
-struct TalkSequences {
-	byte _data[MAX_TALK_SEQUENCES];
+struct TalkSequence {
+	Object *_obj;			// Pointer to the bgshape that these values go to
+	short _frameNumber;		// Frame number in frame sequence to draw
+	short _sequenceNumber;	// Start frame of sequences that are repeated
+	int _seqStack;			// Allows gosubs to return to calling frame
+	int _seqTo;				// Allows 1-5, 8-3 type sequences encoded 
+	int _seqCounter;		// How many times this sequence has been executed
+	int _seqCounter2;
 
-	TalkSequences() { clear(); }
-	TalkSequences(const byte *data);
-
-	byte &operator[](int idx) { return _data[idx]; }
-	void clear();
+	TalkSequence();
 };
+
 
 class Talk {
 	friend class Scalpel::ScalpelUserInterface;
@@ -248,6 +253,7 @@ protected:
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkToCoords(const byte *&str);
 public:
+	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
 	bool _talkToAbort;
 	int _talkCounter;
 	int _talkTo;
@@ -323,6 +329,11 @@ public:
 	 */
 	void pushSequence(int speaker);
 	
+	/**
+	 * Push a given shape's sequence data onto the Rose Tattoo talk sequence stack
+	 */
+	void pushTalkSequence(Object *obj);
+
 	/**
 	 * Change the sequence of the scene background object associated with the current speaker.
 	 */
