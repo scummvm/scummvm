@@ -27,6 +27,7 @@
 #include "common/algorithm.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/wave.h"
 
 namespace Sherlock {
 
@@ -128,8 +129,13 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	stopSound();
 
 	Common::String filename = name;
-	if (!filename.contains('.'))
-		filename += ".SND";
+	if (!filename.contains('.')) {
+		if (IS_SERRATED_SCALPEL) {
+			filename += ".SND";
+		} else {
+			filename += ".WAV";
+		}
+	}
 
 	Common::String libFilename(libraryFilename);
 	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(filename) : res.load(filename, libFilename);
@@ -137,40 +143,47 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 	if (!stream)
 		error("Unable to find sound file '%s'", filename.c_str());
 
-	stream->skip(2);
-	int size = stream->readUint32BE();
-	int rate = stream->readUint16BE();
-	byte *data = (byte *)malloc(size);
-	byte *ptr = data;
-	stream->read(ptr, size);
-	delete stream;
+	Audio::AudioStream *audioStream;
 
-	assert(size > 2);
+	if (IS_SERRATED_SCALPEL) {
+		stream->skip(2);
+		int size = stream->readUint32BE();
+		int rate = stream->readUint16BE();
+		byte *data = (byte *)malloc(size);
+		byte *ptr = data;
+		stream->read(ptr, size);
+		delete stream;
 
-	byte *decoded = (byte *)malloc((size - 1) * 2);
+		assert(size > 2);
 
-	// Holmes uses Creative ADPCM 4-bit data
-	int counter = 0;
-	byte reference = ptr[0];
-	int16 scale = 0;
+		byte *decoded = (byte *)malloc((size - 1) * 2);
 
-	for(int i = 1; i < size; i++) {
-		decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, reference, scale);
-		decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, reference, scale);
-	}
+		// Holmes uses Creative ADPCM 4-bit data
+		int counter = 0;
+		byte reference = ptr[0];
+		int16 scale = 0;
 
-	free(data);
+		for(int i = 1; i < size; i++) {
+			decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, reference, scale);
+			decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, reference, scale);
+		}
+
+		free(data);
 
 #if 0
-	// Debug : used to dump files
-	Common::DumpFile outFile;
-	outFile.open(filename);
-	outFile.write(decoded, (size - 2) * 2);
-	outFile.flush();
-	outFile.close();
+		// Debug : used to dump files
+		Common::DumpFile outFile;
+		outFile.open(filename);
+		outFile.write(decoded, (size - 2) * 2);
+		outFile.flush();
+		outFile.close();
 #endif
 
-	Audio::AudioStream *audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	} else {
+		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	}
+
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
 	_soundPlaying = true;
 	_curPriority = priority;
