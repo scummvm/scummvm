@@ -370,7 +370,7 @@ Scalpel3DOMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 
 	if (codecTag == MKTAG('c', 'v', 'i', 'd'))
 		_codec = new Image::CinepakDecoder();
 	else
-		error("Unknown Sherlock 3DO stream codec tag '%s'", tag2str(codecTag));
+		error("Unsupported Sherlock 3DO movie video codec tag '%s'", tag2str(codecTag));
 }
 
 Scalpel3DOMovieDecoder::StreamVideoTrack::~StreamVideoTrack() {
@@ -398,7 +398,7 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 		break;
 
 	default:
-		error("Sherlock 3DO stream audio is not using codec ADP4");
+		error("Unsupported Sherlock 3DO movie audio codec tag '%s'", tag2str(codecTag));
 	}
 
 	_totalAudioQueued = 0; // currently 0 milliseconds queued
