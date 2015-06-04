@@ -25,7 +25,9 @@
  * Sound decoder used in engines:
  *  - access
  *  - agos
+ *  - cge
  *  - cge2
+ *  - fullpipe
  *  - gob
  *  - hopkins
  *  - mohawk
@@ -38,6 +40,7 @@
  *  - sword2
  *  - tony
  *  - tucker
+ *  - wintermute
  *  - zvision
  */
 
