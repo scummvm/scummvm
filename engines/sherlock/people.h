@@ -53,6 +53,10 @@ enum {
 	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
 };
 
+#define NUM_IN_WALK_LIB 10
+extern const char *const WALK_LIB_NAMES[10];
+
+
 struct PersonData {
 	const char *_name;
 	const char *_portrait;

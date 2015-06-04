@@ -52,8 +52,7 @@ static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 
 // Rose Tattoo walk image libraries
 // Walk resources within WALK.LIB
-#define NUM_IN_WALK_LIB 10            
-const char *const WALK_LIB_NAMES[10] = {
+const char *const WALK_LIB_NAMES[NUM_IN_WALK_LIB] = {
 	"SVGAWALK.VGS",
 	"COATWALK.VGS",
 	"WATSON.VGS",
@@ -152,7 +151,7 @@ void People::reset() {
 		p._restoreSlot = 0;
 		p._startSeq = 0;
 		p._altImages = nullptr;
-		p._altSequences = 0;
+		p._altSeq = 0;
 		p._centerWalk = true;
 		p._adjust = Common::Point(0, 0);
 

@@ -171,6 +171,11 @@ private:
 	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
 	 */
 	void checkWalkGraphics();
+
+	/**
+	 * Free the alternate graphics used by NPCs
+	 */
+	void freeAltGraphics();
 public:
 	Common::String _name;
 	Common::String _description;
@@ -178,6 +183,7 @@ public:
 	Common::String _pickUp;				// Message for if you can't pick up object
 
 	WalkSequences _walkSequences;		// Holds animation sequences
+	byte *_seq;
 	ImageFile *_images;					// Sprite images
 	ImageFrame *_imageFrame;			// Pointer to shape in the images
 	int _walkCount;						// Character walk counter
@@ -219,7 +225,7 @@ public:
 
 	ImageFrame *_stopFrames[8];			// Stop/rest frame for each direction
 	ImageFile *_altImages;				// Images used for alternate NPC sequences
-	bool _altSequences;					// Which of the sequences the alt graphics apply to (0: main, 1=NPC seq)
+	int _altSeq;						// Which of the sequences the alt graphics apply to (0: main, 1=NPC seq)
 	int _centerWalk;					// Flag telling the walk code to offset the walk destination
 	Common::Point _adjust;				// Fine tuning adjustment to position when drawn
 	int _oldWalkSequence;

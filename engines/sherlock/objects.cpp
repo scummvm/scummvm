@@ -34,10 +34,43 @@ namespace Sherlock {
 #define LOWER_LIMIT CONTROLS_Y
 #define LEFT_LIMIT 0
 #define RIGHT_LIMIT SHERLOCK_SCREEN_WIDTH
+#define NUM_ADJUSTED_WALKS 21
 
 // Distance to walk around WALK_AROUND boxes
 #define CLEAR_DIST_X 5
 #define CLEAR_DIST_Y 0
+
+struct AdjustWalk {
+	char _vgsName[9];
+	int _xAdjust;
+	int _flipXAdjust;
+	int _yAdjust;
+} ;
+
+#define NUM_ADJUSTED_WALKS 21
+static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
+	{ "TUPRIGHT", -7, -19, 6 },
+	{ "TRIGHT", 8, -14, 0 },
+	{ "TDOWNRG", 14, -12, 0 },
+	{ "TWUPRIGH", 12, 4, 2 },
+	{ "TWRIGHT", 31, -14, 0 },
+	{ "TWDOWNRG", 6, -24, 0 },
+	{ "HTUPRIGH", 2, -20, 0 },
+	{ "HTRIGHT", 28, -20, 0 },
+	{ "HTDOWNRG", 8, -2, 0 },
+	{ "GTUPRIGH", 4, -12, 0 },
+	{ "GTRIGHT", 12, -16, 0 },
+	{ "GTDOWNRG", 10, -18, 0 },
+	{ "JTUPRIGH", 8, -10, 0 },
+	{ "JTRIGHT", 22, -6, 0 },
+	{ "JTDOWNRG", 4, -20, 0 },
+	{ "CTUPRIGH", 10, 0, 0 },
+	{ "CTRIGHT", 26, -22, 0 },
+	{ "CTDOWNRI", 16, 4, 0 },
+	{ "ITUPRIGH", 0, 0, 0 },
+	{ "ITRIGHT", 20, 0, 0 },
+	{ "ITDOWNRG", 8, 0, 0 }
+};
 
 SherlockEngine *Sprite::_vm;
 
@@ -47,6 +80,7 @@ void Sprite::clear() {
 	_examine.clear();
 	_pickUp = "";
 	_walkSequences.clear();
+	_seq = nullptr;
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
@@ -64,7 +98,7 @@ void Sprite::clear() {
 	_misc = 0;
 	_numFrames = 0;
 	_altImages = nullptr;
-	_altSequences = false;
+	_altSeq = 0;
 	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
 }
 
@@ -78,7 +112,7 @@ void Sprite::setImageFrame() {
 		imageNumber = 1;
 
 	// Get the images to use
-	ImageFile *images = _altSequences ? _altImages : _images;
+	ImageFile *images = _altSeq ? _altImages : _images;
 	assert(images);
 
 	// Set the frame pointer
@@ -383,7 +417,87 @@ void Sprite::setObjTalkSequence(int seq) {
 }
 
 void Sprite::checkWalkGraphics() {
-	error("TODO: checkWalkGraphics");
+	People &people = *_vm->_people;
+	int npcNum = -1;
+
+	if (_images == nullptr) {
+		freeAltGraphics();
+		return;
+	}
+
+	Common::String filename = Common::String::format("%s.vgs", _walkSequences[_sequenceNumber]._vgsName.c_str());
+
+	// Set the adjust depending on if we have to fine tune the x position of this particular graphic
+	_adjust.x = _adjust.y = 0;
+
+	for (int idx = 0; idx < NUM_ADJUSTED_WALKS; ++idx) {
+		if (!scumm_strnicmp(_walkSequences[_sequenceNumber]._vgsName.c_str(), ADJUST_WALKS[idx]._vgsName, 
+				strlen(ADJUST_WALKS[idx]._vgsName))) {
+			if (_walkSequences[_sequenceNumber]._horizFlip)
+				_adjust.x = ADJUST_WALKS[idx]._flipXAdjust;
+			else
+				_adjust.x = ADJUST_WALKS[idx]._xAdjust;
+
+			_adjust.y = ADJUST_WALKS[idx]._yAdjust;
+			break;
+		}
+	}
+
+	// See if we're already using Alternate Graphics
+	if (_altSeq) {
+		// See if the VGS file called for is different than the alternate graphics already loaded
+		if (!_walkSequences[_sequenceNumber]._vgsName.compareToIgnoreCase(_walkSequences[_altSeq - 1]._vgsName)) {
+			// Different AltGraphics, Free the old ones
+			freeAltGraphics();
+		}
+	}
+
+	// If there is no Alternate Sequence set, see if we need to load a new one
+	if (!_altSeq) {
+		// Find which NPC this is so we can check the name of the graphics loaded
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+			if (this == &people[idx]) {
+				npcNum = idx;
+				break;
+			}
+		}
+
+		if (npcNum != -1) {
+			// See if the VGS file called for is different than the main graphics which are already loaded
+			if (!filename.compareToIgnoreCase(people[npcNum]._walkVGSName)) {
+				// See if this is one of the more used Walk Graphics stored in WALK.LIB
+				for (int idx = 0; idx < NUM_IN_WALK_LIB; ++idx) {
+					if (!scumm_stricmp(filename.c_str(), WALK_LIB_NAMES[idx])) {
+						people._useWalkLib = true;
+						break;
+					}
+				}
+
+				_altImages = new ImageFile(filename);
+				people._useWalkLib = false;
+
+				_altSeq = _sequenceNumber + 1;
+			}
+		}
+	}
+
+	// If this is a different seqeunce from the current sequence, reset the appropriate variables
+	if (_seq != &_walkSequences[_sequenceNumber]._sequences[0]) {		
+		_seqTo = _seqCounter = _seqCounter2 = _seqStack = _startSeq = 0;
+		_seq = &_walkSequences[_sequenceNumber]._sequences[0];
+		_seqSize = _walkSequences[_sequenceNumber]._sequences.size();
+	}
+
+	setImageFrame();
+}
+
+void Sprite::freeAltGraphics() {
+	if (_altImages != nullptr) {
+		delete _altImages;
+		_altImages = nullptr;
+	}
+
+	_altSeq = 0;
 }
 
 /*----------------------------------------------------------------*/
