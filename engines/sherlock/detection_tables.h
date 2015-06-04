@@ -40,6 +40,21 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Serrated Scalpel - English 3DO
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "20f74a29f2db6475e85b029ac9fc03bc", 240610),
+			Common::EN_ANY,
+			Common::kPlatform3DO,
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
 		// Case of the Serrated Scalpel - Interactive English Demo
 		// Provided by Strangerke
 		{

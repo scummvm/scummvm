@@ -193,6 +193,15 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_musicPlaying = false;
 	_musicOn = true;
 
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
+		// 3DO - disable music
+		// TODO: Implement music support
+		_driver = NULL;
+		_musicType = MT_NULL;
+		_musicOn = false;
+		return;
+	}
+
 	if (_vm->_interactiveFl)
 		_vm->_res->addToCache("MUSIC.LIB");
 
@@ -311,6 +320,8 @@ void Music::syncMusicSettings() {
 }
 
 bool Music::playMusic(const Common::String &name) {
+	if (!_driver)
+		return false;
 	if (!_musicOn)
 		return false;
 

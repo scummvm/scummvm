@@ -115,7 +115,15 @@ void Journal::loadJournalLocations() {
 	delete dir;
 
 	// Load in the locations stored in journal.txt
-	Common::SeekableReadStream *loc = res.load("journal.txt");
+	Common::SeekableReadStream *loc = 0;
+
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// PC: journal.txt
+		loc = res.load("journal.txt");
+	} else {
+		// 3DO: seems to use chess.txt
+		loc = res.load("chess.txt");
+	}
 
 	_locations.clear();
 	while (loc->pos() < loc->size()) {

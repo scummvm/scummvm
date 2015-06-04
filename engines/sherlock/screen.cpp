@@ -56,6 +56,12 @@ void Screen::setFont(int fontNumb) {
 	if (!_vm->_interactiveFl)
 		return;
 
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
+		// 3DO seems to use 3DO fonts
+		// TODO
+		return;
+	}
+
 	_fontNumber = fontNumb;
 	Common::String fname = Common::String::format("FONT%d.VGS", fontNumb + 1);
 

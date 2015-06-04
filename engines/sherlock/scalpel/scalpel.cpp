@@ -224,6 +224,12 @@ void ScalpelEngine::showOpening() {
 	if (isDemo() && _interactiveFl)
 		return;
 
+	if (getPlatform() == Common::kPlatform3DO) {
+		// 3DO opening seems to be using completely different resources
+		// TODO
+		return;
+	}
+
 	if (!TsAGE::Logo::show(this))
 		return;
 	if (!showCityCutscene())

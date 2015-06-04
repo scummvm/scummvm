@@ -89,13 +89,21 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	_resourceIndex = -1;
 
 	if (_vm->_interactiveFl) {
-		addToCache("vgs.lib");
-		addToCache("talk.lib");
-		addToCache("journal.txt");
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			addToCache("vgs.lib");
+			addToCache("talk.lib");
+			addToCache("journal.txt");
 
-		if (IS_SERRATED_SCALPEL) {
-			addToCache("sequence.txt");
-			addToCache("portrait.lib");
+			if (IS_SERRATED_SCALPEL) {
+				addToCache("sequence.txt");
+				addToCache("portrait.lib");
+			}
+		} else {
+			// 3DO
+			addToCache("talk.lib");
+			addToCache("chess.txt"); // instead of journal.txt
+			// remaining files are missing
+			// portraits were replaced with FMV
 		}
 	}
 }
@@ -209,32 +217,63 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 
 	// Read in the number of resources
 	stream->seek(4);
-	int count = stream->readUint16LE();
+	int count = 0;
 
-	if (isNewStyle)
-		stream->seek((count + 1) * 8, SEEK_CUR);
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		count = stream->readUint16LE();
 
-	// Loop through reading in the entries
-	for (int idx = 0; idx < count; ++idx) {
-		// Read the name of the resource
-		char resName[13];
-		stream->read(resName, 13);
-		resName[12] = '\0';
+		if (isNewStyle)
+			stream->seek((count + 1) * 8, SEEK_CUR);
 
-		// Read the offset
-		offset = stream->readUint32LE();
+		// Loop through reading in the entries
+		for (int idx = 0; idx < count; ++idx) {
+			// Read the name of the resource
+			char resName[13];
+			stream->read(resName, 13);
+			resName[12] = '\0';
 
-		if (idx == (count - 1)) {
-			nextOffset = stream->size();
-		} else {
-			// Read the size by jumping forward to read the next entry's offset
-			stream->seek(13, SEEK_CUR);
-			nextOffset = stream->readUint32LE();
-			stream->seek(-17, SEEK_CUR);
+			// Read the offset
+			offset = stream->readUint32LE();
+
+			if (idx == (count - 1)) {
+				nextOffset = stream->size();
+			} else {
+				// Read the size by jumping forward to read the next entry's offset
+				stream->seek(13, SEEK_CUR);
+				nextOffset = stream->readUint32LE();
+				stream->seek(-17, SEEK_CUR);
+			}
+
+			// Add the entry to the index
+			index[resName] = LibraryEntry(idx, offset, nextOffset - offset);
 		}
 
-		// Add the entry to the index
-		index[resName] = LibraryEntry(idx, offset, nextOffset - offset);
+	} else {
+		count = stream->readUint16BE();
+
+		// 3DO header
+		// Loop through reading in the entries
+		for (int idx = 0; idx < count; ++idx) {
+			// Read the offset
+			offset = stream->readUint32BE();
+
+			// Read the name of the resource
+			char resName[13];
+			stream->read(resName, 13);
+			resName[12] = '\0';
+
+			if (idx == (count - 1)) {
+				nextOffset = stream->size();
+			} else {
+				// Read the size by jumping forward to read the next entry's offset
+				stream->seek(13, SEEK_CUR);
+				nextOffset = stream->readUint32BE();
+				stream->seek(-17, SEEK_CUR);
+			}
+
+			// Add the entry to the index
+			index[resName] = LibraryEntry(idx, offset, nextOffset - offset);
+		}
 	}
 }
 

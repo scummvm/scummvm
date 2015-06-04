@@ -64,6 +64,14 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_soundOn = true;
 	_speechOn = true;
 
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
+		// 3DO: disable sound for now
+		// TODO
+		_soundOn = false;
+		_speechOn = false;
+		return;
+	}
+
 	_vm->_res->addToCache("MUSIC.LIB");
 	if (!_vm->_interactiveFl)
 		_vm->_res->addToCache("TITLE.SND");
