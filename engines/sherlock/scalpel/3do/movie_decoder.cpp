@@ -268,9 +268,10 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			case MKTAG('F', 'R', 'M', 'E'):
 				// Found frame data
 				if (_streamVideoOffset <= chunkOffset) {
+					// We are at an offset that is still relevant to video decoding
 					if (!videoDone) {
 						if (!videoGotFrame) {
-							// If we previously found one, this is just to get the time offset of the next one
+							// We haven't decoded any frame yet, so do so now
 							_stream->readUint32BE();
 							videoFrameSize = _stream->readUint32BE();
 							_videoTrack->decodeFrame(_stream->readStream(videoFrameSize), videoTimeStamp);
@@ -279,7 +280,8 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 							videoGotFrame = true;
 
 						} else {
-							// Already decoded a frame, so seek back to current chunk and exit
+							// Already decoded a frame, so get timestamp of follow-up frame
+							// and then we are done with video
 
 							// Calculate next frame time
 							// 3DO clock time for movies runs at 240Hh, that's why timestamps are based on 240.
@@ -314,6 +316,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			case MKTAG('S', 'S', 'M', 'P'):
 				// Got audio chunk
 				if (_streamAudioOffset <= chunkOffset) {
+					// We are at an offset that is still relevant to audio decoding
 					if (!audioDone) {
 						audioBytes = _stream->readUint32BE();
 						_audioTrack->queueAudio(_stream, audioBytes);
