@@ -44,19 +44,8 @@ namespace Audio {
 class SeekableAudioStream;
 
 /**
- * Try to load an AIFF from the given seekable stream. Returns true if
- * successful. In that case, the stream's seek position will be set to the
- * start of the audio data, and size, rate and flags contain information
- * necessary for playback. Currently this function only supports uncompressed
- * raw PCM.
- */
-extern bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags);
-
-/**
  * Try to load an AIFF from the given seekable stream and create an AudioStream
  * from that data.
- *
- * This function uses loadAIFFFromStream() internally.
  *
  * @param stream			the SeekableReadStream from which to read the AIFF data
  * @param disposeAfterUse	whether to delete the stream after use
