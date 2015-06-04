@@ -26,6 +26,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/3do.h"
 
 #include "sherlock/scalpel/3do/movie_decoder.h"
 #include "image/codecs/cinepak.h"
@@ -44,6 +45,8 @@ namespace Sherlock {
 
 Scalpel3DOMovieDecoder::Scalpel3DOMovieDecoder()
 	: _stream(0), _videoTrack(0), _audioTrack(0) {
+	_streamVideoOffset = 0;
+	_streamAudioOffset = 0;
 }
 
 Scalpel3DOMovieDecoder::~Scalpel3DOMovieDecoder() {
@@ -64,18 +67,11 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
 	_stream = stream;
-
-	// CTRL Header
-	if (_stream->readUint32BE() != MKTAG('C', 'T', 'R', 'L')) {
-		close();
-		return false;
-	}
-
-	uint32 ctrlSize = _stream->readUint32BE() - 8;
-	_stream->skip(ctrlSize);
+	_streamVideoOffset = 0;
+	_streamAudioOffset = 0;
 
 	// Look for packets that we care about
-	static const int maxPacketCheckCount = 10;
+	static const int maxPacketCheckCount = 20;
 	for (int i = 0; i < maxPacketCheckCount; i++) {
 		uint32 tag = _stream->readUint32BE();
 		uint32 chunkSize = _stream->readUint32BE() - 8;
@@ -116,8 +112,9 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				break;
 
 			default:
-				error("Sherlock 3DO movie: Unknown subtype inside FILM packet");
-				break;
+				warning("Sherlock 3DO movie: Unknown subtype inside FILM packet");
+				close();
+				return false;
 			}
 			break;
 		}
@@ -158,8 +155,9 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				// Audio data
 				break;
 			default:
-				error("Sherlock 3DO movie: Unknown subtype inside FILM packet");
-				break;
+				warning("Sherlock 3DO movie: Unknown subtype inside FILM packet");
+				close();
+				return false;
 			}
 			break;
 		}
@@ -167,6 +165,10 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		case MKTAG('C','T','R','L'):
 		case MKTAG('F','I','L','L'):
 			// Ignore but also accept CTRL + FILL packets
+			break;
+
+		case MKTAG('S','H','D','R'):
+			// Happens for EA logo, seems to be garbage data right at the start of the file
 			break;
 
 		default:
@@ -201,26 +203,58 @@ void Scalpel3DOMovieDecoder::close() {
 	_videoTrack = 0;
 }
 
+// We try to at least decode 1 frame
+// and also try to get at least 0.5 seconds of audio queued up
 void Scalpel3DOMovieDecoder::readNextPacket() {
-	uint32 videoSubType = 0;
+	uint32 currentMovieTime = getTime();
+	uint32 wantedAudioQueued  = currentMovieTime + 500; // always try to be 0.500 seconds in front of movie time
+
+	int32 chunkOffset     = 0;
+	int32 dataStartOffset = 0;
+	int32 nextChunkOffset = 0;
+	uint32 chunkTag       = 0;
+	uint32 chunkSize      = 0;
+
+	uint32 videoSubType   = 0;
 	uint32 videoTimeStamp = 0;
 	uint32 videoFrameSize = 0;
-	uint32 audioSubType = 0;
-	uint32 audioSampleBytes = 0;
-	bool gotAudio = false;
-	bool gotVideo = false;
+	uint32 audioSubType   = 0;
+	uint32 audioBytes     = 0;
+	bool videoGotFrame = false;
+	bool videoDone     = false;
+	bool audioDone     = false;
 
-	while (!endOfVideoTracks()) {
-		uint32 tag = _stream->readUint32BE();
-		uint32 chunkSize = _stream->readUint32BE() - 8;
-		uint32 dataStartOffset = _stream->pos();
+	// Seek to smallest stream offset
+	if (_streamVideoOffset <= _streamAudioOffset) {
+		_stream->seek(_streamVideoOffset);
+	} else {
+		_stream->seek(_streamAudioOffset);
+	}
+
+	if (wantedAudioQueued <= _audioTrack->getTotalAudioQueued()) {
+		// already got enough audio queued up
+		audioDone = true;
+	}
+
+	while (1) {
+		chunkOffset = _stream->pos();
+		assert(chunkOffset >= 0);
+
+		// Read chunk header
+		chunkTag = _stream->readUint32BE();
+		chunkSize = _stream->readUint32BE() - 8;
+
+		// Calculate offsets
+		dataStartOffset = _stream->pos();
+		assert(dataStartOffset >= 0);
+		nextChunkOffset = dataStartOffset + chunkSize;
 
 		//warning("offset %lx - tag %lx", dataStartOffset, tag);
 
 		if (_stream->eos())
 			break;
 
-		switch (tag) {
+		switch (chunkTag) {
 		case MKTAG('F','I','L','M'):
 			videoTimeStamp = _stream->readUint32BE();
 			_stream->skip(4); // Unknown
@@ -232,13 +266,34 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 				break;
 
 			case MKTAG('F', 'R', 'M', 'E'):
-				// Have a frame!
+				// Found frame data
+				if (_streamVideoOffset <= chunkOffset) {
+					if (!videoDone) {
+						if (!videoGotFrame) {
+							// If we previously found one, this is just to get the time offset of the next one
+							_stream->readUint32BE();
+							videoFrameSize = _stream->readUint32BE();
+							_videoTrack->decodeFrame(_stream->readStream(videoFrameSize), videoTimeStamp);
 
-				// If we previously found one, this is just to get the time offset of the next one
-				/* uint32 frmeSize = */ _stream->readUint32BE();
-				videoFrameSize = _stream->readUint32BE();
-				_videoTrack->decodeFrame(_stream->readStream(videoFrameSize), videoTimeStamp);
-				gotVideo = true;
+							_streamVideoOffset = nextChunkOffset;
+							videoGotFrame = true;
+
+						} else {
+							// Already decoded a frame, so seek back to current chunk and exit
+
+							// Calculate next frame time
+							// 3DO clock time for movies runs at 240Hh, that's why timestamps are based on 240.
+							uint32 currentFrameStartTime = _videoTrack->getNextFrameStartTime();
+							uint32 nextFrameStartTime = videoTimeStamp * 1000 / 240;
+							assert(currentFrameStartTime <= nextFrameStartTime);
+							_videoTrack->setNextFrameStartTime(nextFrameStartTime);
+
+							// next time we want to start at the current chunk
+							_streamVideoOffset = chunkOffset;
+							videoDone = true;
+						}
+					}
+				}
 				break;
 
 			default:
@@ -258,9 +313,18 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 
 			case MKTAG('S', 'S', 'M', 'P'):
 				// Got audio chunk
-				audioSampleBytes = _stream->readUint32BE();
-				_audioTrack->queueAudio(_stream, audioSampleBytes);
-				gotAudio = true;
+				if (_streamAudioOffset <= chunkOffset) {
+					if (!audioDone) {
+						audioBytes = _stream->readUint32BE();
+						_audioTrack->queueAudio(_stream, audioBytes);
+
+						_streamAudioOffset = nextChunkOffset;
+						if (wantedAudioQueued <= _audioTrack->getTotalAudioQueued()) {
+							// Got enough audio
+							audioDone = true;
+						}
+					}
+				}
 				break;
 
 			default:
@@ -274,16 +338,21 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			// Ignore but also accept CTRL + FILL packets
 			break;
 
+		case MKTAG('S','H','D','R'):
+			// Happens for EA logo, seems to be garbage data right at the start of the file
+			break;
+
 		default:
 			error("Unknown header inside Sherlock 3DO movie");
 		}
 
 		// Always seek to end of chunk
 		// Sometimes not all of the chunk is filled with audio
-		_stream->seek(dataStartOffset + chunkSize);
+		_stream->seek(nextChunkOffset);
 
-		if (gotVideo)
+		if ((videoDone) && (audioDone)) {
 			return;
+		}
 	}
 }
 
@@ -314,101 +383,61 @@ Graphics::PixelFormat Scalpel3DOMovieDecoder::StreamVideoTrack::getPixelFormat()
 }
 
 void Scalpel3DOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp) {
-	uint32 currentFrameStartTime = 0;
-
 	_surface = _codec->decodeFrame(*stream);
 	_curFrame++;
-
-	// Calculate next frame time
-	currentFrameStartTime = videoTimeStamp * 1000 / 240;
-	assert(currentFrameStartTime >= _nextFrameStartTime);
-	_nextFrameStartTime = currentFrameStartTime;
 }
 
-#define STREAMAUDIO_STEPSIZETABLE_MAX 88
-
-static int16 streamAudio_stepSizeTable[STREAMAUDIO_STEPSIZETABLE_MAX + 1] = {
-        7,     8,     9,    10,    11,    12,    13,    14,    16,    17,
-	   19,    21,    23,    25,    28,    31,    34,    37,    41,    45,
-	   50,    55,    60,    66,    73,    80,    88,    97,   107,   118,
-	  130,   143,   157,   173,   190,   209,   230,   253,   279,   307,
-	  337,   371,   408,   449,   494,   544,   598,   658,   724,   796,
-	  876,   963,  1060,  1166,  1282,  1411,  1552,  1707,  1878,  2066,
-	 2272,  2499,  2749,  3024,  3327,  3660,  4026,  4428,  4871,  5358,
-	 5894,  6484,  7132,  7845,  8630,  9493, 10442, 11487, 12635, 13899,
-    15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
-};
-
-static int16 streamAudio_stepSizeIndex[] = {
-	-1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8 
-};
-
 Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels) {
-	if (channels != 1) {
-		error("Sherlock 3DO stream audio is not mono");
-	}
-	if (codecTag != MKTAG('A','D','P','4')) {
+	switch (codecTag) {
+	case MKTAG('A','D','P','4'):
+	case MKTAG('S','D','X','2'):
+		// ADP4 + SDX2 are both allowed
+		break;
+
+	default:
 		error("Sherlock 3DO stream audio is not using codec ADP4");
 	}
-	_audioStream = Audio::makeQueuingAudioStream(sampleRate, false);
 
-	// reset ADPCM decoding
-	_lastSample = 0;
-	_stepIndex = 0;
+	_totalAudioQueued = 0; // currently 0 milliseconds queued
+
+	_codecTag    = codecTag;
+	_sampleRate  = sampleRate;
+	_audioFlags  = Audio::FLAG_16BITS;
+	if (channels > 1)
+		_audioFlags |= Audio::FLAG_STEREO;
+
+	if (_audioFlags & Audio::FLAG_STEREO) {
+		_audioStream = Audio::makeQueuingAudioStream(sampleRate, true);
+	} else {
+		_audioStream = Audio::makeQueuingAudioStream(sampleRate, false);
+	}
+
+	// reset audio decoder persistant spaces
+	memset(&_ADP4_PersistentSpace, 0, sizeof(_ADP4_PersistentSpace));
+	memset(&_SDX2_PersistentSpace, 0, sizeof(_SDX2_PersistentSpace));
 }
 
 Scalpel3DOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 	delete _audioStream;
 }
 
-int16 Scalpel3DOMovieDecoder::StreamAudioTrack::decodeSample(uint8 dataNibble) {
-	int16 currentStep = streamAudio_stepSizeTable[_stepIndex];
-	int32 decodedSample = _lastSample;
-	int16 delta = currentStep >> 3;
+void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
+	Audio::SeekableAudioStream *audioStream = 0;
 
-	if (dataNibble & 1)
-		delta += currentStep >> 2;
-
-	if (dataNibble & 2)
-		delta += currentStep >> 1;
-
-	if (dataNibble & 4)
-		delta += currentStep;
-
-	if (dataNibble & 8) {
-		decodedSample -= delta;
-	} else {
-		decodedSample += delta;
+	switch(_codecTag) {
+	case MKTAG('A','D','P','4'):
+		audioStream = Audio::make3DO_ADP4Stream(stream, size, _sampleRate, _audioFlags, DisposeAfterUse::NO, &_ADP4_PersistentSpace);
+		break;
+	case MKTAG('S','D','X','2'):
+		audioStream = Audio::make3DO_SDX2Stream(stream, size, _sampleRate, _audioFlags, DisposeAfterUse::NO, &_SDX2_PersistentSpace);
+		break;
+	default:
+		break;
 	}
-
-	_lastSample = CLIP<int32>(decodedSample, -32768, 32767);
-
-	_stepIndex += streamAudio_stepSizeIndex[dataNibble & 0x07];
-	_stepIndex = CLIP<int16>(_stepIndex, 0, STREAMAUDIO_STEPSIZETABLE_MAX);
-
-   return _lastSample;
-}
-
-void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 length) {
-	uint32 decodedAudioSize = length * 4;
-	byte  *decodedAudioBuffer = NULL;
-	uint8  streamByte = 0;
-	uint32 streamPos = 0;
-	uint32 audioPos = 0;
-
-	decodedAudioBuffer = (byte *)malloc(decodedAudioSize);
-	assert(decodedAudioBuffer);
-
-	for (streamPos = 0; streamPos < length; streamPos++) {
-		streamByte = stream->readByte();
-		WRITE_BE_UINT16(decodedAudioBuffer + audioPos, decodeSample(streamByte >> 4));
-		audioPos += 2;
-		WRITE_BE_UINT16(decodedAudioBuffer + audioPos, decodeSample(streamByte & 0x0F));
-		audioPos += 2;
+	if (audioStream) {
+		_totalAudioQueued += audioStream->getLength().msecs();
+		_audioStream->queueAudioStream(audioStream, DisposeAfterUse::YES);
 	}
-
-	// Now the audio is loaded, so let's queue it
-	_audioStream->queueBuffer(decodedAudioBuffer, decodedAudioSize, DisposeAfterUse::YES, Audio::FLAG_16BITS);
 }
 
 Audio::AudioStream *Scalpel3DOMovieDecoder::StreamAudioTrack::getAudioStream() const {

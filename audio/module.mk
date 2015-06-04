@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	musicplugin.o \
 	null.o \
 	timestamp.o \
+	decoders/3do.o \
 	decoders/aac.o \
 	decoders/adpcm.o \
 	decoders/aiff.o \

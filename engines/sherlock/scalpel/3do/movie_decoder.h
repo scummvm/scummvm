@@ -24,6 +24,7 @@
 #define SHERLOCK_SCALPEL_3DO_MOVIE_DECODER_H
 
 #include "video/video_decoder.h"
+#include "audio/decoders/3do.h"
 
 namespace Audio {
 class QueuingAudioStream;
@@ -51,6 +52,10 @@ protected:
 	void readNextPacket();
 
 private:
+	int32 _streamVideoOffset; /* current stream offset for video decoding */
+	int32 _streamAudioOffset; /* current stream offset for audio decoding */
+
+private:
 	class StreamVideoTrack : public VideoTrack  {
 	public:
 		StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount);
@@ -63,6 +68,7 @@ private:
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
+		void setNextFrameStartTime(uint32 nextFrameStartTime) { _nextFrameStartTime = nextFrameStartTime; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		const Graphics::Surface *decodeNextFrame() { return _surface; }
 
@@ -84,19 +90,27 @@ private:
 		StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels);
 		~StreamAudioTrack();
 
-		void queueAudio(Common::SeekableReadStream *stream, uint32 length);
+		void queueAudio(Common::SeekableReadStream *stream, uint32 size);
 
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
 		Audio::QueuingAudioStream *_audioStream;
+		uint32 _totalAudioQueued; /* total amount of milliseconds of audio, that we queued up already */
+
+	public:
+		uint32 getTotalAudioQueued() const { return _totalAudioQueued; }
 
 	private:
 		int16 decodeSample(uint8 dataNibble);
 
-		int16 _lastSample;
-		int16 _stepIndex;
+		uint32 _codecTag;
+		uint16 _sampleRate;
+		byte   _audioFlags;
+
+		Audio::audio_3DO_ADP4_PersistentSpace _ADP4_PersistentSpace;
+		Audio::audio_3DO_SDX2_PersistentSpace _SDX2_PersistentSpace;
 	};
 
 	Common::SeekableReadStream *_stream;
