@@ -114,28 +114,24 @@ void Journal::loadJournalLocations() {
 
 	delete dir;
 
-	// Load in the locations stored in journal.txt
-	Common::SeekableReadStream *loc = 0;
-
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
-		// PC: journal.txt
-		loc = res.load("journal.txt");
-	} else {
-		// 3DO: seems to use chess.txt
-		loc = res.load("chess.txt");
-	}
-
 	_locations.clear();
-	while (loc->pos() < loc->size()) {
-		Common::String line;
-		char c;
-		while ((c = loc->readByte()) != 0)
-			line += c;
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// 3DO: storage of locations is currently unknown TODO
 
-		_locations.push_back(line);
+		// Load in the locations stored in journal.txt
+		Common::SeekableReadStream *loc = res.load("journal.txt");
+
+		while (loc->pos() < loc->size()) {
+			Common::String line;
+			char c;
+			while ((c = loc->readByte()) != 0)
+				line += c;
+
+			_locations.push_back(line);
+		}
+
+		delete loc;
 	}
-
-	delete loc;
 }
 
 void Journal::loadJournalFile(bool alreadyLoaded) {

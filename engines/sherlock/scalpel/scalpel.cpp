@@ -225,8 +225,11 @@ void ScalpelEngine::showOpening() {
 		return;
 
 	if (getPlatform() == Common::kPlatform3DO) {
-		// 3DO opening seems to be using completely different resources
+		// 3DO opening seems to be similar
 		// TODO
+		// 3DO animations are in directory Prologue/
+		// .3DX seem to be just like .VDX except that all INT16LE are INT16BE
+		// .3DA however seems to be completely different
 		return;
 	}
 

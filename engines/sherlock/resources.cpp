@@ -109,9 +109,6 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 			// talk.lib - resources themselves seem to be the same, although a few texts were slightly changed
 			addToCache("talk.lib");
 
-			// chess.txt - instead of journal.txt
-			addToCache("chess.txt");
-
 			// remaining files are missing
 			// portraits were replaced with FMV
 		}
