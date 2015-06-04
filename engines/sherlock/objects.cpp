@@ -750,6 +750,7 @@ void Object::toggleHidden() {
 void Object::checkObject() {
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
 	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
 	bool codeFound;
 
@@ -788,7 +789,10 @@ void Object::checkObject() {
 					++_frameNumber;
 				}
 			} else if (IS_ROSE_TATTOO && (v == TALK_SEQ_CODE || v == TALK_LISTEN_CODE)) {
-				error("TODO");
+				if (_talkSeq)
+					setObjTalkSequence(_talkSeq);
+				else
+					setObjSequence(0, false);
 			} else  if (v >= GOTO_CODE) {
 				// Goto code found
 				v -= GOTO_CODE;
@@ -828,11 +832,46 @@ void Object::checkObject() {
 					break;
 				}
 			} else if (IS_ROSE_TATTOO && v == TELEPORT_CODE) {
-				error("TODO");
+				_position.x = READ_LE_UINT16(&_sequences[_frameNumber + 1]);
+				_position.y = READ_LE_UINT16(&_sequences[_frameNumber + 3]);
+
+				_frameNumber += 5;
 			} else if (IS_ROSE_TATTOO && v == CALL_TALK_CODE) {
-				error("TODO");
+				Common::String filename;
+				for (int idx = 0; idx < 8; ++idx) {
+					if (_sequences[_frameNumber + 1 + idx] != 1)
+						filename += (char)_sequences[_frameNumber + 1 + idx];
+					else
+						break;
+				}
+
+				_frameNumber += 8;
+				talk.talkTo(filename);
+
 			} else if (IS_ROSE_TATTOO && v == HIDE_CODE) {
-				error("TODO");
+				switch (_sequences[_frameNumber + 2]) {
+				case 1:
+					// Hide Object
+					if (scene._bgShapes[_sequences[_frameNumber + 1] - 1]._type != HIDDEN)
+						scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
+					break;
+
+				case 2:
+					// Activate Object
+					if (scene._bgShapes[_sequences[_frameNumber + 1] - 1]._type == HIDDEN)
+						scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
+					break;
+
+				case 3:
+					// Toggle Object
+					scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
+					break;
+
+				default:
+					break;
+				}
+				_frameNumber += 3;
+			
 			} else {
 				v -= 128;
 
