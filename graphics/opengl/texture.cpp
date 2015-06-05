@@ -41,6 +41,14 @@ static T nextHigher2(T k) {
 	return k + 1;
 }
 
+static const Graphics::PixelFormat getRGBAPixelFormat() {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
+}
+
 Texture::Texture(const Surface &srf) :
 		_managedTexture(true), _width(srf.w), _height(srf.h),
 		_texWidth(nextHigher2(_width)), _texHeight(nextHigher2(_height)) {
@@ -50,9 +58,17 @@ Texture::Texture(const Surface &srf) :
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// FIXME: what if buffer is not RGBA?
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, srf.getPixels());
+
+	if (srf.format != getRGBAPixelFormat()) {
+		Graphics::Surface *srf2 = srf.convertTo(getRGBAPixelFormat());
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, srf2->getPixels());
+
+		srf2->free();
+		delete srf2;
+	} else {
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, srf.getPixels());
+	}
 }
 
 Texture::Texture(uint width, uint height) :
