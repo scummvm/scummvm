@@ -24,7 +24,7 @@
 #define GFX_OPENGL_TEXTURE_H
 
 #include "graphics/surface.h"
-#include "graphics/opengles2/system_headers.h"
+#include "graphics/opengl/system_headers.h"
 #include "common/textconsole.h"
 
 #include "engines/myst3/gfx.h"

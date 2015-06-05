@@ -43,7 +43,7 @@
 #include "common/tokenizer.h"
 #include "graphics/conversion.h"
 #include "graphics/opengles2/shader.h"
-#include "graphics/opengles2/extensions.h"
+#include "graphics/opengl/extensions.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"

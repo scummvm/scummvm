@@ -20,32 +20,34 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "common/list.h"
-#include "common/str.h"
-#include "common/tokenizer.h"
+#ifndef GRAPHICS_TEXTURE_H
+#define GRAPHICS_TEXTURE_H
 
-#include "graphics/opengles2/system_headers.h"
+#include "graphics/opengl/system_headers.h"
 
-#ifdef USE_OPENGL
+#include "graphics/surface.h"
 
 namespace Graphics {
 
-static Common::List<Common::String> g_extensions;
+class Texture {
+public:
+	Texture(const Surface &srf);
+	Texture(uint width, uint height);
+	Texture(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
+	~Texture();
 
-void initExtensions() {
-	g_extensions.clear();
+	GLuint getTextureName() const { return _texture; }
+	uint getWidth() const { return _width; }
+	uint getHeight() const { return _height; }
+	uint getTexWidth() const { return _texWidth; }
+	uint getTexHeight() const { return _texHeight; }
 
-	const char *exts = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
-	Common::StringTokenizer tokenizer(exts, " ");
-	while (!tokenizer.empty()) {
-		g_extensions.push_back(tokenizer.nextToken());
-	}
-}
-
-bool isExtensionSupported(const char *wanted) {
-	return g_extensions.end() != find(g_extensions.begin(), g_extensions.end(), wanted);
-}
+protected:
+	bool _managedTexture;
+	GLuint _texture;
+	uint _width, _height;
+	uint _texWidth, _texHeight;
+};
 
 }
 

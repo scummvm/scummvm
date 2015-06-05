@@ -20,44 +20,32 @@
  *
  */
 
-#ifndef GRAPHICS_FRAMEBUFFER_H
-#define GRAPHICS_FRAMEBUFFER_H
+#include "common/algorithm.h"
+#include "common/list.h"
+#include "common/str.h"
+#include "common/tokenizer.h"
 
-#include "graphics/opengles2/system_headers.h"
+#include "graphics/opengl/system_headers.h"
+
+#ifdef USE_OPENGL
 
 namespace Graphics {
 
-class FrameBuffer {
-public:
-	FrameBuffer(uint width, uint height);
-	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
-#ifdef AMIGAOS
-	~FrameBuffer() {}
+static Common::List<Common::String> g_extensions;
 
-	void attach() {}
-	void detach() {}
-#else
-	~FrameBuffer();
+void initExtensions() {
+	g_extensions.clear();
 
-	void attach();
-	void detach();
-#endif
+	const char *exts = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
+	Common::StringTokenizer tokenizer(exts, " ");
+	while (!tokenizer.empty()) {
+		g_extensions.push_back(tokenizer.nextToken());
+	}
+}
 
-	GLuint getColorTextureName() const { return _colorTexture; }
-	uint getWidth() const { return _width; }
-	uint getHeight() const { return _height; }
-	uint getTexWidth() const { return _texWidth; }
-	uint getTexHeight() const { return _texHeight; }
-
-private:
-	void init();
-	bool _managedTexture;
-	GLuint _colorTexture;
-	GLuint _renderBuffers[2];
-	GLuint _frameBuffer;
-	uint _width, _height;
-	uint _texWidth, _texHeight;
-};
+bool isExtensionSupported(const char *wanted) {
+	return g_extensions.end() != find(g_extensions.begin(), g_extensions.end(), wanted);
+}
 
 }
 

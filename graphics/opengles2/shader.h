@@ -33,7 +33,7 @@
 #include "math/vector3d.h"
 #include "math/vector4d.h"
 
-#include "graphics/opengles2/system_headers.h"
+#include "graphics/opengl/system_headers.h"
 
 namespace Graphics {
 

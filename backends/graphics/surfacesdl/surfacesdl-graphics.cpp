@@ -45,7 +45,7 @@
 #include "gui/EventRecorder.h"
 
 #ifdef USE_OPENGL
-#include "graphics/opengles2/extensions.h"
+#include "graphics/opengl/extensions.h"
 #endif
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
@@ -611,7 +611,7 @@ void SurfaceSdlGraphicsManager::drawFramebufferOpenGL() {
 
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
-	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getColorTextureName());
+	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getTextureName());
 	glBegin(GL_QUADS);
 	glTexCoord2f(0, texcropY);
 	glVertex2f(offsetX, offsetY);
@@ -667,7 +667,7 @@ void SurfaceSdlGraphicsManager::drawOverlayOpenGLShaders() {
 }
 
 void SurfaceSdlGraphicsManager::drawFramebufferOpenGLShaders() {
-	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getColorTextureName());
+	glBindTexture(GL_TEXTURE_2D, _frameBuffer->getTextureName());
 
 	_boxShader->use();
 	float texcropX = _frameBuffer->getWidth() / float(_frameBuffer->getTexWidth());

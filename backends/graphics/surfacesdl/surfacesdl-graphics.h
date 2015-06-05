@@ -24,8 +24,8 @@
 #define BACKENDS_GRAPHICS_SURFACESDL_GRAPHICS_H
 
 #ifdef USE_OPENGL
-#include "graphics/opengles2/system_headers.h"
-#include "graphics/opengles2/framebuffer.h"
+#include "graphics/opengl/system_headers.h"
+#include "graphics/opengl/framebuffer.h"
 #endif
 
 #undef ARRAYSIZE

@@ -57,7 +57,7 @@
 #include "math/rect2d.h"
 #include "math/quat.h"
 
-#include "graphics/opengles2/extensions.h"
+#include "graphics/opengl/extensions.h"
 #include "graphics/opengles2/shader.h"
 
 #include "engines/myst3/gfx.h"
