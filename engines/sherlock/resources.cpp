@@ -456,24 +456,23 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 
 void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
+	byte *dest = (byte *)frame._frame.getPixels();
+	Common::fill(dest, dest + frame._width * frame._height, 0xff);
 
 	if (frame._paletteBase) {
 		// Nibble-packed
-		byte *pDest = (byte *)frame._frame.getPixels();
 		for (uint idx = 0; idx < frame._size; ++idx, ++src) {
-			*pDest++ = *src & 0xF;
-			*pDest++ = (*src >> 4);
+			*dest++ = *src & 0xF;
+			*dest++ = (*src >> 4);
 		}
 	} else if (frame._rleEncoded && _vm->getGameID() == GType_RoseTattoo) {
 		// Rose Tattoo run length encoding doesn't use the RLE marker byte
-		byte *dst = (byte *)frame._frame.getPixels();
-
 		for (int yp = 0; yp < frame._height; ++yp) {
 			int xSize = frame._width;
 			while (xSize > 0) {
 				// Skip a given number of pixels
 				byte skip = *src++;
-				dst += skip;
+				dest += skip;
 				xSize -= skip;
 				if (!xSize)
 					break;
@@ -482,14 +481,12 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 				int rleCount = *src++;
 				xSize -= rleCount;
 				while (rleCount-- > 0)
-					*dst++ = *src++;
+					*dest++ = *src++;
 			}
 			assert(xSize == 0);
 		}
 	} else if (frame._rleEncoded) {
 		// RLE encoded
-		byte *dst = (byte *)frame._frame.getPixels();
-
 		int frameSize = frame._width * frame._height;
 		while (frameSize > 0) {
 			if (*src == frame._rleMarker) {
@@ -498,17 +495,16 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 				src += 3;
 				frameSize -= rleCount;
 				while (rleCount--)
-					*dst++ = rleColor;
+					*dest++ = rleColor;
 			} else {
-				*dst++ = *src++;
+				*dest++ = *src++;
 				--frameSize;
 			}
 		}
 		assert(frameSize == 0);
 	} else {
 		// Uncompressed frame
-		Common::copy(src, src + frame._width * frame._height,
-			(byte *)frame._frame.getPixels());
+		Common::copy(src, src + frame._width * frame._height, dest);
 	}
 }
 
