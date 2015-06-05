@@ -64,6 +64,9 @@ struct CinepakFrame {
  * Cinepak decoder.
  *
  * Used by BMP/AVI and PICT/QuickTime.
+ *
+ * Used in engines:
+ *  - sherlock
  */
 class CinepakDecoder : public Codec {
 public:
