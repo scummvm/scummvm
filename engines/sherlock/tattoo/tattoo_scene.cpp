@@ -335,7 +335,7 @@ void TattooScene::doBgAnimEraseBackground() {
 						
 			if ((obj._type == ACTIVE_BG_SHAPE && (obj._maxFrames > 1 || obj._delta.x != 0 || obj._delta.y != 0)) || 
 					obj._type == HIDE_SHAPE || obj._type == REMOVE)
-				screen._backBuffer1.blitFrom(*obj._imageFrame, obj._oldPosition, 
+				screen._backBuffer1.blitFrom(screen._backBuffer2, obj._oldPosition, 
 					Common::Rect(obj._oldPosition.x, obj._oldPosition.y, obj._oldPosition.x + obj._oldSize.x,
 						obj._oldPosition.y + obj._oldSize.y));
 		}
