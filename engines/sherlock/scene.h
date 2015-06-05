@@ -33,7 +33,6 @@
 
 namespace Sherlock {
 
-#define SCENES_COUNT 63
 #define MAX_ZONES	40
 #define INFO_LINE	140
 
@@ -202,8 +201,8 @@ protected:
 public:
 	int _currentScene;
 	int _goToScene;
-	bool _sceneStats[SCENES_COUNT][65];
-	bool _savedStats[SCENES_COUNT][9];
+	bool **_sceneStats;
+	bool **_savedStats;
 	bool _walkedInScene;
 	int _version;
 	bool _lzwMode;

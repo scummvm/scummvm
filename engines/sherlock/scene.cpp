@@ -161,8 +161,16 @@ Scene *Scene::init(SherlockEngine *vm) {
 }
 
 Scene::Scene(SherlockEngine *vm): _vm(vm) {
-	for (int idx = 0; idx < SCENES_COUNT; ++idx)
-		Common::fill(&_sceneStats[idx][0], &_sceneStats[idx][65], false);
+	// TODO: _savedStats isn't ever used?
+	_sceneStats = new bool *[SCENES_COUNT];
+	_savedStats = new bool *[SCENES_COUNT];
+	_sceneStats[0] = new bool[SCENES_COUNT * 65];
+	_savedStats[0] = new bool[SCENES_COUNT * 9];
+	Common::fill(&_sceneStats[0][0], &_sceneStats[0][SCENES_COUNT * 65], false);
+	for (int idx = 1; idx < SCENES_COUNT; ++idx) {
+		_sceneStats[idx] = _sceneStats[idx - 1] + 65;
+		_savedStats[idx] = _savedStats[idx - 1] + 9;
+	}
 	_currentScene = -1;
 	_goToScene = -1;
 	_loadingSavedGame = false;
@@ -180,6 +188,10 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 
 Scene::~Scene() {
 	freeScene();
+	delete[] _sceneStats[0];
+	delete[] _sceneStats;
+	delete[] _savedStats[0];
+	delete[] _savedStats;
 }
 
 void Scene::selectScene() {
