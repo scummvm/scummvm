@@ -758,7 +758,7 @@ void Scene::transitionToScene() {
 		if (_entrance._startPosition.x < 1) {
 			// No entrance info either, so use defaults
 			if (IS_SERRATED_SCALPEL) {
-				hSavedPos = Common::Point(16000, 10000);
+				hSavedPos = Common::Point(160 * FIXED_INT_MULTIPLIER, 100 * FIXED_INT_MULTIPLIER);
 				hSavedFacing = 4;
 			} else {
 				hSavedPos = people[PLAYER]._position;
