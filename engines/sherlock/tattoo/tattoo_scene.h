@@ -40,6 +40,8 @@ private:
 	int _maskCounter;
 	Common::Point _maskOffset;
 	bool _labTableScene;
+	byte _lookupTable[PALETTE_COUNT];
+	byte _lookupTable1[PALETTE_COUNT];
 private:
 	void doBgAnimCheckCursor();
 
@@ -57,6 +59,11 @@ private:
 	 * scale zones, interpolating inbetween the top and bottom values of the zones as needed
 	 */
 	int getScaleVal(const Common::Point &pt);
+
+	/**
+	 * Makes a greyscale translation table for each palette entry in the table
+	 */
+	void setupBGArea(const byte cMap[PALETTE_SIZE]);
 protected:
 	/**
 	 * Loads the data associated for a given scene. The room resource file's format is:
@@ -80,6 +87,11 @@ protected:
 	 * Draw all the shapes, people and NPCs in the correct order
 	 */
 	virtual void drawAllShapes();
+
+	/**
+	 * Called by loadScene when the palette is loaded for Rose Tattoo
+	 */
+	virtual void paletteLoaded();
 public:
 	ImageFile *_mask, *_mask1;
 	CAnimStream _activeCAnim;

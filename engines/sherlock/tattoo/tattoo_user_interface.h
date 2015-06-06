@@ -66,6 +66,11 @@ public:
 	 * Checks to see if the screen needs to be scrolled. If so, scrolls it towards the target position
 	 */
 	void doScroll();
+
+	/**
+	 * Initializes scroll variables
+	 */
+	void initScrollVars();
 public:
 	virtual ~TattooUserInterface() {}
 
@@ -78,11 +83,6 @@ public:
 	 * Draw the user interface onto the screen's back buffers
 	 */	
 	virtual void drawInterface(int bufferNum = 3);
-
-	/**
-	 * Initializes scroll variables
-	 */
-	virtual void initScrollVars();
 };
 
 } // End of namespace Tattoo

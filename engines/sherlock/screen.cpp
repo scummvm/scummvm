@@ -508,13 +508,6 @@ int Screen::fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSiz
 	return totalSize;
 }
 
-/**
- * Creates a grey-scale version of the passed palette
- */
-void Screen::setupBGArea(const byte cMap[PALETTE_SIZE]) {
-	warning("TODO");
-}
-
 void Screen::translatePalette(byte palette[PALETTE_SIZE]) {
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
 		palette[idx] = VGA_COLOR_TRANS(palette[idx]);

@@ -34,6 +34,7 @@ namespace Sherlock {
 #define PALETTE_SIZE 768
 #define PALETTE_COUNT 256
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+#define BG_GREYSCALE_RANGE_END 229
 
 enum {
 	INFO_BLACK			= 1,
@@ -69,8 +70,6 @@ private:
 	// Rose Tattoo fields
 	int _fadeBytesRead, _fadeBytesToRead;
 	int _oldFadePercent;
-	byte _lookupTable[PALETTE_COUNT];
-	byte _lookupTable1[PALETTE_COUNT];
 private:
 	/**
 	 * Merges together overlapping dirty areas of the screen
@@ -267,8 +266,6 @@ public:
 	void initPaletteFade(int bytesToRead);
 
 	int fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSize);
-
-	void setupBGArea(const byte cMap[PALETTE_SIZE]);
 
 	/**
 	 * Translate a palette from 6-bit RGB values to full 8-bit values suitable for passing

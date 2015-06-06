@@ -126,11 +126,6 @@ public:
 	 * Print the previously selected object's decription
 	 */
 	virtual void printObjectDesc() {}
-
-	/**
-	 * Initializes scroll variables
-	 */
-	virtual void initScrollVars() {}
 };
 
 } // End of namespace Sherlock

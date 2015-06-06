@@ -27,6 +27,7 @@
 #include "sherlock/screen.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
@@ -340,9 +341,8 @@ bool Scene::loadScene(const Common::String &filename) {
 			screen.initPaletteFade(bgHeader._bytesWritten);
 			rrmStream->read(screen._cMap, PALETTE_SIZE);
 			screen.translatePalette(screen._cMap);
-			screen.setupBGArea(screen._cMap);
 
-			ui.initScrollVars();
+			paletteLoaded();
 
 			// Read in background
 			if (_lzwMode) {

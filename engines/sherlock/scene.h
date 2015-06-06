@@ -197,6 +197,11 @@ protected:
 	 */
 	virtual void drawAllShapes() = 0;
 
+	/**
+	 * Called by loadScene when the palette is loaded for Rose Tattoo
+	 */
+	virtual void paletteLoaded() {}
+
 	Scene(SherlockEngine *vm);
 public:
 	int _currentScene;

@@ -50,6 +50,8 @@ static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
 /*----------------------------------------------------------------*/
 
 TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
+	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
+	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_arrowZone = -1;
 	_mask = _mask1 = nullptr;
 	_maskCounter = 0;
@@ -216,6 +218,14 @@ void TattooScene::drawAllShapes() {
 		if (obj._type == NO_SHAPE && (obj._flags & 1) == 0)
 			screen._backBuffer1.fillRect(obj.getNoShapeBounds(), 15);
 	}
+}
+
+void TattooScene::paletteLoaded() {
+	Screen &screen = *_vm->_screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	setupBGArea(screen._cMap);
+	ui.initScrollVars();
 }
 
 void TattooScene::checkBgShapes() {
@@ -703,6 +713,66 @@ int TattooScene::getScaleVal(const Common::Point &pt) {
 	return result;
 }
 
+void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
+	int r, g, b;
+	byte c;
+	int cd, d;
+
+	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter 
+	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
+	byte *p = &_lookupTable[0];
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+		*p++ = BG_GREYSCALE_RANGE_END - (cMap[idx * 3] * 30 + cMap[idx * 3 + 1] * 59 + cMap[idx * 3 + 2] * 11) / 480;
+
+	// If we're going to a scene with a haze special effect, initialize the translate table to lighten the colors
+	if (_mask != nullptr) {
+		p = &_lookupTable1[0];
+
+		for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
+			switch (_currentScene) {
+			case 8:
+				r = cMap[idx * 3] * 4 / 5;
+				g = cMap[idx * 3 + 1] * 3 / 4;
+				b = cMap[idx * 3 + 2] * 3 / 4;
+				break;
+
+			case 18:
+			case 68:
+				r = cMap[idx * 3] * 4 / 3;
+				g = cMap[idx * 3 + 1] * 4 / 3;
+				b = cMap[idx * 3 + 2] * 4 / 3;
+				break;
+
+			case 7:
+			case 53:
+				r = cMap[idx * 3] * 4 / 3;
+				g = cMap[idx * 3 + 1] * 4 / 3;
+				b = cMap[idx * 3 + 2] * 4 / 3;
+				break;
+			
+			default:
+				r = g = b = 0;
+				break;
+			}
+
+			c = 0;
+			cd = (r - cMap[0]) * (r - cMap[0]) + (g - cMap[1]) * (g - cMap[1]) + (b - cMap[2]) * (b - cMap[2]);
+
+			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
+				d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) 
+					+ (b - cMap[pal * 3 + 2])*(b - cMap[pal * 3 + 2]);
+
+				if (d < cd) {
+					c = pal;
+					cd = d;
+					if (!d)
+						break;
+				}
+			}
+			*p++ = c;
+		}
+	}
+}
 
 } // End of namespace Tattoo
 
