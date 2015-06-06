@@ -253,7 +253,7 @@ OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 	people[npc]._position = Point32(posX * 1000, posY * 1000);
 	if (person._seqTo && person._walkLoaded) {
 		person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
-		 person._seqTo = 0;
+		person._seqTo = 0;
 	}
 
 	assert(str[4] - 1 < 16);
