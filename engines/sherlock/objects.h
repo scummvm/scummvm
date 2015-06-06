@@ -167,12 +167,6 @@ private:
 	static SherlockEngine *_vm;
 
 	/**
-	 * Checks a sprite associated with an NPC to see if the frame sequence specified
-	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
-	 */
-	void checkWalkGraphics();
-
-	/**
 	 * Free the alternate graphics used by NPCs
 	 */
 	void freeAltGraphics();
@@ -277,6 +271,12 @@ public:
 	 * Returns the old bounsd for the sprite from the previous frame
 	 */
 	const Common::Rect getOldBounds() const;
+
+	/**
+	 * Checks a sprite associated with an NPC to see if the frame sequence specified
+	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
+	 */
+	void checkWalkGraphics();
 };
 
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };

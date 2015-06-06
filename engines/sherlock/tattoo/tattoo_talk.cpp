@@ -28,6 +28,12 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+static const uint8 DIRECTION_CONVERSION[] = {
+	WALK_RIGHT, WALK_DOWN, WALK_LEFT, WALK_UP,
+	STOP_RIGHT, STOP_DOWN, STOP_LEFT, STOP_UP,
+	WALK_UPRIGHT, WALK_DOWNRIGHT, WALK_UPLEFT, WALK_DOWNLEFT,
+	STOP_UPRIGHT, STOP_UPLEFT, STOP_DOWNRIGHT, STOP_DOWNLEFT
+};
 
 const byte TATTOO_OPCODES[] = {
 	170,	// OP_SWITCH_SPEAKER
@@ -232,7 +238,50 @@ OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) { error("TODO: scri
 OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
+	++str;
+	int npc = *str - 1;
+	++str;
+	People &people = *_vm->_people;
+	Person &person = people[npc];
+	int32 posX = (str[0] - 1) * 256 + str[1] - 1;
+	if (posX > 16384)
+		posX = -1 * (posX - 16384);
+	int32 posY = (str[2] - 1) * 256 + str[3] - 1;
+	
+	people[npc]._position = Point32(posX * 1000, posY * 1000);
+	if (person._seqTo && person._walkLoaded) {
+		person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
+		 person._seqTo = 0;
+	}
+
+	assert(str[4] - 1 < 16);
+	person._sequenceNumber = DIRECTION_CONVERSION[str[4] - 1];
+	person._frameNumber = 0;
+
+	if (person._walkLoaded)
+		person.checkWalkGraphics();
+
+	if (person._walkLoaded && person._type == CHARACTER &&
+		person._sequenceNumber >= STOP_UP && person._sequenceNumber <= STOP_UPLEFT) {
+		bool done = false;
+		do {
+			person.checkSprite();
+			for (int x = 0; x < person._frameNumber; x++) {
+				if (person._walkSequences[person._sequenceNumber]._sequences[x] == 0) {
+					done = true;
+					break;
+				}
+			}
+		} while(!done);
+	}
+
+	str += 4;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCVerbCAnimation(const byte *&str) { error("TODO: script opcode"); }
