@@ -1272,10 +1272,8 @@ void Object::adjustObject() {
 	if (_type == REMOVE)
 		return;
 
-	// Move the object's position
-	_position += _delta;
-
 	if (IS_ROSE_TATTOO && (_delta.x || _delta.y)) {
+		// The shape position is in pixels, and the delta is in fixed integer amounts
 		int t;
 		_noShapeSize.x += _delta.x;
 		t = _noShapeSize.x / (FIXED_INT_MULTIPLIER / 10);
@@ -1286,6 +1284,9 @@ void Object::adjustObject() {
 		t = _noShapeSize.y / (FIXED_INT_MULTIPLIER / 10);
 		_noShapeSize.y -= t * (FIXED_INT_MULTIPLIER / 10);
 		_position.y += t;
+	} else if (IS_SERRATED_SCALPEL) {
+		// The delta is in whole pixels, so simply adjust the position with it
+		_position += _delta;
 	}
 
 	if (_position.y > LOWER_LIMIT)
