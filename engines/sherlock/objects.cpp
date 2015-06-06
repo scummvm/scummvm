@@ -31,7 +31,7 @@ namespace Sherlock {
 #define START_FRAME 0
 
 #define UPPER_LIMIT 0
-#define LOWER_LIMIT CONTROLS_Y
+#define LOWER_LIMIT (IS_SERRATED_SCALPEL ? CONTROLS_Y : SHERLOCK_SCREEN_HEIGHT)
 #define LEFT_LIMIT 0
 #define RIGHT_LIMIT SHERLOCK_SCREEN_WIDTH
 #define NUM_ADJUSTED_WALKS 21
@@ -960,6 +960,8 @@ bool Object::checkEndOfSequence() {
 				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
 				screen._backBuffer2.transBlitFrom(*_imageFrame, _position);
 				_type = INVALID;
+			} else if (IS_ROSE_TATTOO && _talkSeq && seq == 0) {
+				setObjTalkSequence(_talkSeq);
 			} else {
 				setObjSequence(seq, false);
 			}
@@ -1270,7 +1272,21 @@ void Object::adjustObject() {
 	if (_type == REMOVE)
 		return;
 
+	// Move the object's position
 	_position += _delta;
+
+	if (IS_ROSE_TATTOO && (_delta.x || _delta.y)) {
+		int t;
+		_noShapeSize.x += _delta.x;
+		t = _noShapeSize.x / (FIXED_INT_MULTIPLIER / 10);
+		_noShapeSize.x -= t * (FIXED_INT_MULTIPLIER / 10);
+		_position.x += t;
+
+		_noShapeSize.y += _delta.y;
+		t = _noShapeSize.y / (FIXED_INT_MULTIPLIER / 10);
+		_noShapeSize.y -= t * (FIXED_INT_MULTIPLIER / 10);
+		_position.y += t;
+	}
 
 	if (_position.y > LOWER_LIMIT)
 		_position.y = LOWER_LIMIT;

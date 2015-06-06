@@ -387,8 +387,6 @@ void TattooScene::doBgAnim() {
 
 	doBgAnimCheckCursor();
 
-
-	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	talk._talkToAbort = false;
 
 	// Check the characters and sprites for updates
@@ -401,6 +399,10 @@ void TattooScene::doBgAnim() {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE)
 			_bgShapes[idx].checkObject();
 	}
+
+	// If one of the objects has signalled a call to a talk file, to go to another scene, exit immediately
+	if (_goToScene != -1)
+		return;
 
 	// Erase any affected background areas
 	doBgAnimEraseBackground();
