@@ -26,12 +26,18 @@
 
 #include "sherlock/scalpel/3do/movie_decoder.h"
 
+#include "audio/mixer.h"
+#include "audio/decoders/aiff.h"
+#include "audio/decoders/wave.h"
+#include "audio/decoders/3do.h"
+
 namespace Sherlock {
 
 Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("3do_playmovie", WRAP_METHOD(Debugger, cmd3DO_PlayMovie));
+	registerCmd("3do_playaudio", WRAP_METHOD(Debugger, cmd3DO_PlayAudio));
 	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
 }
 
@@ -82,6 +88,43 @@ bool Debugger::cmd3DO_PlayMovie(int argc, const char **argv) {
 	_3doPlayMovieFile = filename;
 
 	return cmdExit(0, 0);
+}
+
+bool Debugger::cmd3DO_PlayAudio(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: 3do_playaudio <3do-audio-file>\n");
+		return true;
+	}
+
+	Common::File *file = new Common::File();
+	if (!file->open(argv[1])) {
+		debugPrintf("can not open specified audio file\n");
+		return true;
+	}
+
+	Audio::AudioStream *testStream;
+	Audio::SoundHandle testHandle;
+
+	// Try to load the given file as AIFF/AIFC
+	testStream = Audio::makeAIFFAudioStream(file, DisposeAfterUse::YES);
+
+	if (testStream) {
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &testHandle, testStream);
+		_vm->_events->clearEvents();
+
+		while ((!_vm->shouldQuit()) && g_system->getMixer()->isSoundHandleActive(testHandle)) {
+			_vm->_events->pollEvents();
+			g_system->delayMillis(10);
+			if (_vm->_events->kbHit()) {
+				break;
+			}
+		}
+
+		debugPrintf("playing completed\n");
+		g_system->getMixer()->stopHandle(testHandle);
+	}
+
+	return true;
 }
 
 bool Debugger::cmdSong(int argc, const char **argv) {

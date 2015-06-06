@@ -56,6 +56,11 @@ private:
 	bool cmd3DO_PlayMovie(int argc, const char **argv);
 
 	/**
+	 * Plays a 3DO audio
+	 */
+	bool cmd3DO_PlayAudio(int argc, const char **argv);
+
+	/**
 	 * Plays a song
 	 */
 	bool cmdSong(int argc, const char **argv);

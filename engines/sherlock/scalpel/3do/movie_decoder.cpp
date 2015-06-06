@@ -409,40 +409,50 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 
 	_codecTag    = codecTag;
 	_sampleRate  = sampleRate;
-	_audioFlags  = Audio::FLAG_16BITS;
-	if (channels > 1)
-		_audioFlags |= Audio::FLAG_STEREO;
-
-	if (_audioFlags & Audio::FLAG_STEREO) {
-		_audioStream = Audio::makeQueuingAudioStream(sampleRate, true);
-	} else {
-		_audioStream = Audio::makeQueuingAudioStream(sampleRate, false);
+	switch (channels) {
+	case 1:
+		_stereo = false;
+		break;
+	case 2:
+		_stereo = true;
+		break;
+	default:
+		error("Unsupported Sherlock 3DO movie audio channels %d", channels);
 	}
 
-	// reset audio decoder persistant spaces
+	_audioStream = Audio::makeQueuingAudioStream(sampleRate, _stereo);
+
+	// reset audio decoder persistent spaces
 	memset(&_ADP4_PersistentSpace, 0, sizeof(_ADP4_PersistentSpace));
 	memset(&_SDX2_PersistentSpace, 0, sizeof(_SDX2_PersistentSpace));
 }
 
 Scalpel3DOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 	delete _audioStream;
+//	free(_ADP4_PersistentSpace);
+//	free(_SDX2_PersistentSpace);
 }
 
 void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
-	Audio::SeekableAudioStream *audioStream = 0;
+	Common::SeekableReadStream *compressedAudioStream = 0;
+	Audio::RewindableAudioStream *audioStream = 0;
+	uint32 audioLengthMSecs = 0;
+
+	// Read the specified chunk into memory
+	compressedAudioStream = stream->readStream(size);
 
 	switch(_codecTag) {
 	case MKTAG('A','D','P','4'):
-		audioStream = Audio::make3DO_ADP4Stream(stream, size, _sampleRate, _audioFlags, DisposeAfterUse::NO, &_ADP4_PersistentSpace);
+		audioStream = Audio::make3DO_ADP4AudioStream(compressedAudioStream, _sampleRate, _stereo, &audioLengthMSecs, DisposeAfterUse::YES, &_ADP4_PersistentSpace);
 		break;
 	case MKTAG('S','D','X','2'):
-		audioStream = Audio::make3DO_SDX2Stream(stream, size, _sampleRate, _audioFlags, DisposeAfterUse::NO, &_SDX2_PersistentSpace);
+		audioStream = Audio::make3DO_SDX2AudioStream(compressedAudioStream, _sampleRate, _stereo, &audioLengthMSecs, DisposeAfterUse::YES, &_SDX2_PersistentSpace);
 		break;
 	default:
 		break;
 	}
 	if (audioStream) {
-		_totalAudioQueued += audioStream->getLength().msecs();
+		_totalAudioQueued += audioLengthMSecs;
 		_audioStream->queueAudioStream(audioStream, DisposeAfterUse::YES);
 	}
 }

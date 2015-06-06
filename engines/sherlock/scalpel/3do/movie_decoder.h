@@ -107,7 +107,7 @@ private:
 
 		uint32 _codecTag;
 		uint16 _sampleRate;
-		byte   _audioFlags;
+		bool   _stereo;
 
 		Audio::audio_3DO_ADP4_PersistentSpace _ADP4_PersistentSpace;
 		Audio::audio_3DO_SDX2_PersistentSpace _SDX2_PersistentSpace;

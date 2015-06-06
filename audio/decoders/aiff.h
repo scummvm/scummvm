@@ -42,6 +42,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
+class AudioStream;
 class SeekableAudioStream;
 
 /**
@@ -53,6 +54,10 @@ class SeekableAudioStream;
  * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeAIFFStream(
+	Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse);
+
+AudioStream *makeAIFFAudioStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 
