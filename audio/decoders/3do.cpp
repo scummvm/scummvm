@@ -205,7 +205,7 @@ Audio3DO_SDX2_Stream::Audio3DO_SDX2_Stream(Common::SeekableReadStream *stream, u
 	_initialRead = true;
 
 	reset();
-};
+}
 
 void Audio3DO_SDX2_Stream::reset() {
 	memcpy(&_curDecoderData, &_initialDecoderData, sizeof(_curDecoderData));
