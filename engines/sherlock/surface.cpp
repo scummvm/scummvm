@@ -125,11 +125,11 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 
 			if (destY >= 0) {
 				// Handle drawing the line
-				const byte *pSrc = (const byte *)src.getBasePtr(0, yCtr);
+				const byte *pSrc = (const byte *)src.getBasePtr(flipped ? src.w - 1 : 0, yCtr);
 				byte *pDest = (byte *)getBasePtr(pt.x, destY);
 				scaleXCtr = 0;
 
-				for (int xCtr = 0, destX = pt.x; xCtr < src.w && destX < this->w(); ++xCtr, ++pSrc) {
+				for (int xCtr = 0, destX = pt.x; xCtr < src.w && destX < this->w(); ++xCtr) {
 					// Handle horizontal scaling
 					scaleXCtr += scaleX;
 
@@ -143,6 +143,8 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 						++pDest;
 						++destX;
 					}
+
+					pSrc = pSrc + (flipped ? -1 : 1);
 				}
 			}
 
