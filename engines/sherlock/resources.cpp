@@ -514,11 +514,11 @@ int ImageFrame::sDrawXSize(int scaleVal) const {
 	int width = _width;
 	int scale = scaleVal == 0 ? 1 : scaleVal;
 
-	if (scaleVal >= 256)
+	if (scaleVal >= SCALE_THRESHOLD)
 		--width;
 
-	int result = width * 256 / scale;
-	if (scaleVal >= 256)
+	int result = width * SCALE_THRESHOLD / scale;
+	if (scaleVal >= SCALE_THRESHOLD)
 		++result;
 
 	return result;
@@ -528,11 +528,11 @@ int ImageFrame::sDrawYSize(int scaleVal) const {
 	int height = _height;
 	int scale = scaleVal == 0 ? 1 : scaleVal;
 
-	if (scaleVal >= 256)
+	if (scaleVal >= SCALE_THRESHOLD)
 		--height;
 
-	int result = height * 256 / scale;
-	if (scaleVal >= 256)
+	int result = height * SCALE_THRESHOLD / scale;
+	if (scaleVal >= SCALE_THRESHOLD)
 		++result;
 
 	return result;
@@ -542,11 +542,11 @@ int ImageFrame::sDrawXOffset(int scaleVal) const {
 	int width = _offset.x;
 	int scale = scaleVal == 0 ? 1 : scaleVal;
 
-	if (scaleVal >= 256)
+	if (scaleVal >= SCALE_THRESHOLD)
 		--width;
 
-	int result = width * 256 / scale;
-	if (scaleVal >= 256)
+	int result = width * SCALE_THRESHOLD / scale;
+	if (scaleVal >= SCALE_THRESHOLD)
 		++result;
 
 	return result;
@@ -556,11 +556,11 @@ int ImageFrame::sDrawYOffset(int scaleVal) const {
 	int height = _offset.y;
 	int scale = scaleVal == 0 ? 1 : scaleVal;
 
-	if (scaleVal >= 256)
+	if (scaleVal >= SCALE_THRESHOLD)
 		--height;
 
-	int result = height * 256 / scale;
-	if (scaleVal >= 256)
+	int result = height * SCALE_THRESHOLD / scale;
+	if (scaleVal >= SCALE_THRESHOLD)
 		++result;
 
 	return result;

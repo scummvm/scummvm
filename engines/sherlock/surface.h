@@ -28,6 +28,8 @@
 
 namespace Sherlock {
 
+#define SCALE_THRESHOLD 0x100
+
 struct ImageFrame;
 
 class Surface {
