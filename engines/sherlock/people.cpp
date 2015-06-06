@@ -452,7 +452,7 @@ void People::gotoStand(Sprite &sprite) {
 	if (map._active) {
 		sprite._sequenceNumber = 0;
 		_player._position.x = (map[map._charPoint].x -  6) * 100;
-		_player._position.y = (map[map._charPoint].x + 10) * 100;
+		_player._position.y = (map[map._charPoint].y + 10) * 100;
 	}
 
 	_oldWalkSequence = -1;
