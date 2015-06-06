@@ -35,7 +35,6 @@ namespace Sherlock {
 
 #define SPEAKER_REMOVE 0x80
 #define MAX_TALK_SEQUENCES 11
-#define MAX_TALK_FILES 500
 #define TALK_SEQUENCE_STACK_SIZE 20
 
 enum {
@@ -211,7 +210,7 @@ protected:
 	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
 	Common::Array<Statement> _statements;
-	TalkHistoryEntry _talkHistory[MAX_TALK_FILES];
+	Common::Array<TalkHistoryEntry> _talkHistory;
 	int _speaker;
 	int _talkIndex;
 	int _scriptSelect;

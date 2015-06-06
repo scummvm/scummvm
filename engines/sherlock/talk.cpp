@@ -123,6 +123,8 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_seqCount = 0;
 	_scriptStart = _scriptEnd = nullptr;
 	_endStr = _noTextYet = false;
+
+	_talkHistory.resize(IS_ROSE_TATTOO ? 1500 : 500);
 }
 
 void Talk::talkTo(const Common::String &filename) {
@@ -1309,7 +1311,7 @@ void Talk::popStack() {
 }
 
 void Talk::synchronize(Common::Serializer &s) {
-	for (int idx = 0; idx < MAX_TALK_FILES; ++idx) {
+	for (uint idx = 0; idx < _talkHistory.size(); ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];
 
 		for (int flag = 0; flag < 16; ++flag)
