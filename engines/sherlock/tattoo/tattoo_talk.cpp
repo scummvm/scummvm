@@ -211,8 +211,23 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opc
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCOff(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdSetNPCOff(const byte *&str) {
+	People &people = *_vm->_people;
+	int npcNum = *++str;
+	people[npcNum]._type = REMOVE;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) { 
+	People &people = *_vm->_people;
+	int npcNum = *++str;
+	people[npcNum]._type = CHARACTER;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) { error("TODO: script opcode"); }
