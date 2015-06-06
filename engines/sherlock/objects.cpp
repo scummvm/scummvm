@@ -1194,9 +1194,9 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 			if (ch >= '0' && ch <= '9') {
 				scene._goToScene = atoi(name.c_str() + 1);
 
-				if (scene._goToScene < 97 && map[scene._goToScene].x) {
-					map._overPos.x = map[scene._goToScene].x * 100 - 600;
-					map._overPos.y = map[scene._goToScene].y * 100 + 900;
+				if (IS_SERRATED_SCALPEL && scene._goToScene < 97 && map[scene._goToScene].x) {
+					map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;
+					map._overPos.y = (map[scene._goToScene].y + 9) * FIXED_INT_MULTIPLIER;
 				}
 
 				const char *p;
