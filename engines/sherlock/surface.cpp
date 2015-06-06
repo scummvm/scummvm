@@ -28,6 +28,8 @@
 
 namespace Sherlock {
 
+const int TRANSPARENCY = 0xFF;
+
 Surface::Surface(uint16 width, uint16 height) : _freePixels(true) {
 	create(width, height);
 }
@@ -104,10 +106,53 @@ void Surface::transBlitFrom(const Surface &src, const Common::Point &pt,
 
 void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &pt,
 		bool flipped, int overrideColor, int scaleVal) {
-	if (scaleVal != 256) {
-		error("TODO: scaling for transBlitFrom");
+	if (scaleVal == 256) {
+		transBlitFromUnscaled(src, pt, flipped, overrideColor);
+		return;
 	}
-	
+
+	const int SCALE_LIMIT = 0x100;
+	int scaleX = scaleVal;
+	int scaleY = scaleVal;
+	int scaleXCtr = 0, scaleYCtr = 0;
+
+	for (int yCtr = 0, destY = pt.y; yCtr < src.h && destY < this->h(); ++yCtr) {
+		// Handle skipping lines if Y scaling
+		scaleYCtr += scaleY;
+		
+		while (scaleYCtr >= SCALE_LIMIT && destY < this->h()) {
+			scaleYCtr -= SCALE_LIMIT;
+
+			if (destY >= 0) {
+				// Handle drawing the line
+				const byte *pSrc = (const byte *)src.getBasePtr(0, yCtr);
+				byte *pDest = (byte *)getBasePtr(pt.x, destY);
+				scaleXCtr = 0;
+
+				for (int xCtr = 0, destX = pt.x; xCtr < src.w && destX < this->w(); ++xCtr, ++pSrc) {
+					// Handle horizontal scaling
+					scaleXCtr += scaleX;
+
+					while (scaleXCtr >= SCALE_LIMIT && destX < this->w()) {
+						scaleXCtr -= SCALE_LIMIT;
+
+						// Only handle on-screen pixels
+						if (destX >= 0 && *pSrc != TRANSPARENCY)
+							*pDest = *pSrc;
+
+						++pDest;
+						++destX;
+					}
+				}
+			}
+
+			++destY;
+		}
+	}
+}
+
+void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt,
+		bool flipped, int overrideColor) {
 	Common::Rect drawRect(0, 0, src.w, src.h);
 	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
 
@@ -125,7 +170,6 @@ void Surface::transBlitFrom(const Graphics::Surface &src, const Common::Point &p
 		destPt.y + drawRect.height()));
 
 	// Draw loop
-	const int TRANSPARENCY = 0xFF;
 	for (int yp = 0; yp < drawRect.height(); ++yp) {
 		const byte *srcP = (const byte *)src.getBasePtr(
 			flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);

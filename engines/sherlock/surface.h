@@ -53,6 +53,12 @@ private:
 	 * Draws a sub-section of a surface at a given position within this surface
 	 */
 	void blitFrom(const Graphics::Surface &src, const Common::Point &pt, const Common::Rect &srcBounds);
+
+	/**
+	 * Draws a surface at a given position within this surface with transparency
+	 */
+	void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped, 
+		int overrideColor);
 protected:
 	Graphics::Surface _surface;
 
