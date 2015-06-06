@@ -60,7 +60,7 @@ Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12) {
 	_placesShown = false;
 	_cursorIndex = -1;
 	_drawMap = false;
-	_overPos = Common::Point(13000, 12600);
+	_overPos = Point32(130 * FIXED_INT_MULTIPLIER, 126 * FIXED_INT_MULTIPLIER);
 	_charPoint = 0;
 	_oldCharPoint = 0;
 	_frameChangeFlag = false;
@@ -557,8 +557,15 @@ void Map::highlightIcon(const Common::Point &pt) {
 void Map::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_bigPos.x);
 	s.syncAsSint16LE(_bigPos.y);
-	s.syncAsSint16LE(_overPos.x);
-	s.syncAsSint16LE(_overPos.y);
+
+	Point32 overPos(_overPos.x / FIXED_INT_MULTIPLIER, _overPos.y / FIXED_INT_MULTIPLIER);
+	s.syncAsSint16LE(overPos.x);
+	s.syncAsSint16LE(overPos.y);
+	if (s.isLoading()) {
+		_overPos.x = overPos.x * FIXED_INT_MULTIPLIER;
+		_overPos.y = overPos.y * FIXED_INT_MULTIPLIER;
+	}
+
 	s.syncAsSint16LE(_oldCharPoint);
 }
 
