@@ -229,10 +229,6 @@ void TattooScene::paletteLoaded() {
 }
 
 void TattooScene::checkBgShapes() {
-	People &people = *_vm->_people;
-	Person &holmes = people._player;
-	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
-
 	// Call the base scene method to handle bg shapes
 	Scene::checkBgShapes();
 

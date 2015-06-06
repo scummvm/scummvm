@@ -44,6 +44,10 @@ Common::Platform SherlockEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+Common::Language SherlockEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 } // End of namespace Sherlock
 
 static const PlainGameDescriptor sherlockGames[] = {

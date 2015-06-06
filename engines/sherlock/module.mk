@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	scalpel/scalpel_user_interface.o \
 	scalpel/settings.o \
 	tattoo/tattoo.o \
+	tattoo/tattoo_resources.o \
 	tattoo/tattoo_scene.o \
 	tattoo/tattoo_talk.o \
 	tattoo/tattoo_user_interface.o \

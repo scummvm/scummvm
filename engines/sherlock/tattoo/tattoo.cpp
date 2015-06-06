@@ -22,7 +22,9 @@
 
 #include "engines/util.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_resources.h"
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/people.h"
 
 namespace Sherlock {
 
@@ -47,6 +49,13 @@ void TattooEngine::initialize() {
 
 	// Add some more files to the cache
 	_res->addToCache("walk.lib");
+	
+	// Set up list of people
+	for (int idx = 0; idx < TATTOO_MAX_PEOPLE; ++idx) {
+		_people->_characters.push_back(PersonData(
+			getLanguage() == Common::FR_FRA ? FRENCH_NAMES[idx] : ENGLISH_NAMES[idx],
+			PORTRAITS[idx], nullptr, nullptr));
+	}
 
 	// Starting scene
 	_scene->_goToScene = STARTING_INTRO_SCENE;

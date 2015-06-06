@@ -313,8 +313,13 @@ OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("TODO: script opcode"); }
+
+// Dummy opcode
+OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsDisable called"); }
+
+// Dummy opcode
+OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsEnable called"); }
+
 OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }

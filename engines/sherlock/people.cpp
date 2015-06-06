@@ -583,6 +583,7 @@ void People::goAllTheWay() {
 
 int People::findSpeaker(int speaker) {
 	Scene &scene = *_vm->_scene;
+	const char *portrait = _characters[speaker]._portrait;
 
 	for (int idx = 0; idx < (int)scene._bgShapes.size(); ++idx) {
 		Object &obj = scene._bgShapes[idx];
@@ -590,9 +591,26 @@ int People::findSpeaker(int speaker) {
 		if (obj._type == ACTIVE_BG_SHAPE) {
 			Common::String name(obj._name.c_str(), obj._name.c_str() + 4);
 
-			if (name.equalsIgnoreCase(_characters[speaker]._portrait)
+			if (name.equalsIgnoreCase(portrait)
 				&& obj._name[4] >= '0' && obj._name[4] <= '9')
 				return idx;
+		}
+	}
+
+	// Fallback in Rose Tattoo
+	if (IS_ROSE_TATTOO) {
+		bool flag = _vm->readFlags(76);
+		
+		if (_data[0]._type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
+			return -1;
+
+		for (uint idx = 1; idx < MAX_CHARACTERS; ++idx) {
+			if (_data[idx]._type == CHARACTER) {
+				Common::String name(_data[idx]._name.c_str(), _data[idx]._name.c_str() + 4);
+
+				if (name.equalsIgnoreCase(portrait) && _data[idx]._npcName[4] >= '0' && _data[idx]._npcName[4] <= '9')
+					return idx + 256;
+			}
 		}
 	}
 
