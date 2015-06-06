@@ -61,7 +61,7 @@ Audio3DO_ADP4_Stream::Audio3DO_ADP4_Stream(Common::SeekableReadStream *stream, u
 	_initialRead = true;
 
 	reset();
-};
+}
 
 void Audio3DO_ADP4_Stream::reset() {
 	memcpy(&_curDecoderData, &_initialDecoderData, sizeof(_curDecoderData));
