@@ -2087,7 +2087,15 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 	_opcodeTable = OPCODE_METHODS;
 }
 
-OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { 
+	Events &events = *_vm->_events;
+	bool mouseOn = *++str == 2;
+	if (mouseOn)
+		events.showCursor();
+	else
+		events.hideCursor();
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 	Sound &sound = *_vm->_sound;
