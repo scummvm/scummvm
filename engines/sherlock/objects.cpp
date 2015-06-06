@@ -146,18 +146,18 @@ void Sprite::adjustSprite() {
 	}
 
 	if (_type == CHARACTER && !map._active) {
-		if ((_position.y / 100) > LOWER_LIMIT) {
-			_position.y = LOWER_LIMIT * 100;
+		if ((_position.y / FIXED_INT_MULTIPLIER) > LOWER_LIMIT) {
+			_position.y = LOWER_LIMIT * FIXED_INT_MULTIPLIER;
 			people.gotoStand(*this);
 		}
 
-		if ((_position.y / 100) < UPPER_LIMIT) {
-			_position.y = UPPER_LIMIT * 100;
+		if ((_position.y / FIXED_INT_MULTIPLIER) < UPPER_LIMIT) {
+			_position.y = UPPER_LIMIT * FIXED_INT_MULTIPLIER;
 			people.gotoStand(*this);
 		}
 
-		if ((_position.x / 100) < LEFT_LIMIT) {
-			_position.x = LEFT_LIMIT * 100;
+		if ((_position.x / FIXED_INT_MULTIPLIER) < LEFT_LIMIT) {
+			_position.x = LEFT_LIMIT * FIXED_INT_MULTIPLIER;
 			people.gotoStand(*this);
 		}
 	} else if (!map._active) {
@@ -196,8 +196,8 @@ void Sprite::adjustSprite() {
 
 	// Check to see if character has entered an exit zone
 	if (!_walkCount && scene._walkedInScene && scene._goToScene == -1) {
-		Common::Rect charRect(_position.x / 100 - 5, _position.y / 100 - 2,
-			_position.x / 100 + 5, _position.y / 100 + 2);
+		Common::Rect charRect(_position.x / FIXED_INT_MULTIPLIER - 5, _position.y / FIXED_INT_MULTIPLIER - 2,
+			_position.x / FIXED_INT_MULTIPLIER + 5, _position.y / FIXED_INT_MULTIPLIER + 2);
 		Exit *exit = scene.checkForExit(charRect);
 
 		if (exit) {
@@ -222,7 +222,7 @@ void Sprite::checkSprite() {
 	Talk &talk = *_vm->_talk;
 	Point32 pt;
 	Common::Rect objBounds;
-	Common::Point spritePt(_position.x / 100, _position.y / 100);
+	Common::Point spritePt(_position.x / FIXED_INT_MULTIPLIER, _position.y / FIXED_INT_MULTIPLIER);
 
 	if (!talk._talkCounter && _type == CHARACTER) {
 		pt = _walkCount ? _position + _delta : _position;
@@ -657,8 +657,13 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_oldPosition.y = s.readSint16LE();
 	_oldSize.x = s.readUint16LE();
 	_oldSize.y = s.readUint16LE();
+	
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
+	if (!isRoseTattoo) {
+		_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
+		_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
+	}
 
 	_pickup = isRoseTattoo ? 0 : s.readByte();
 	_defaultCommand = isRoseTattoo ? 0 : s.readByte();
@@ -678,8 +683,8 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
 	_seqCounter = s.readByte();
-	_lookPosition.x = s.readUint16LE();
-	_lookPosition.y = isRoseTattoo ? s.readSint16LE() : s.readByte();
+	_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER / 100;
+	_lookPosition.y = (isRoseTattoo ? s.readSint16LE() : s.readByte()) * FIXED_INT_MULTIPLIER;
 	_lookFacing = s.readByte();
 	_lookcAnim = s.readByte();
 
@@ -1418,6 +1423,13 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_gotoDir = s.readSint16LE();
 	_teleportPos.x = s.readSint16LE();
 	_teleportPos.y = s.readSint16LE();
+	if (!isRoseTattoo) {
+		_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
+		_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
+		_teleportPos.x = _teleportPos.x * FIXED_INT_MULTIPLIER / 100;
+		_teleportPos.y = _teleportPos.y * FIXED_INT_MULTIPLIER / 100;
+	}
+
 	_teleportDir = s.readSint16LE();
 }
 

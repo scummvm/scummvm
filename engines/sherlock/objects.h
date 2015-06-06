@@ -76,7 +76,7 @@ enum {
 
 #define MAX_HOLMES_SEQUENCE 16
 #define MAX_FRAME 30
-#define FIXED_INT_MULTIPLIER 100
+#define FIXED_INT_MULTIPLIER 1000
 
 // code put into sequences to defines 1-10 type seqs
 #define SEQ_TO_CODE 67
@@ -328,7 +328,7 @@ public:
 	Common::Point _delta;			// Momvement amount
 	Common::Point _oldPosition;		// Old position
 	Common::Point _oldSize;			// Image's old size
-	Common::Point _goto;			// Walk destination
+	Point32 _goto;					// Walk destination
 
 	int _pickup;
 	int _defaultCommand;			// Default right-click command
@@ -342,7 +342,7 @@ public:
 	AType _aType;					// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
 	int _seqCounter;				// How many times this sequence has been executed
-	Common::Point _lookPosition;	// Where to walk when examining object
+	Point32 _lookPosition;			// Where to walk when examining object
 	int _lookFacing;				// Direction to face when examining object
 	int _lookcAnim;
 	int _seqStack;					// Allows gosubs to return to calling frame
@@ -439,9 +439,9 @@ struct CAnim {
 	Common::Point _position;		// Position
 	int _size;						// Size of uncompressed animation
 	int _flags;						// Tells if can be walked behind
-	Common::Point _goto;			// coords holmes should walk to before starting canim
+	Point32 _goto;			// coords holmes should walk to before starting canim
 	int _gotoDir;
-	Common::Point _teleportPos;		// Location Holmes shoul teleport to after
+	Point32 _teleportPos;		// Location Holmes shoul teleport to after
 	int _teleportDir;					// playing canim
 
 	// Scalpel specific

@@ -110,7 +110,7 @@ public:
 	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
 	Common::Point _walkDest;
-	Common::Point _hSavedPos;
+	Point32 _hSavedPos;
 	int _hSavedFacing;
 	Common::Queue<Common::Point> _walkTo;
 	Person &_player;
@@ -172,7 +172,7 @@ public:
 	/**
 	 * Walk to the co-ordinates passed, and then face the given direction
 	 */
-	void walkToCoords(const Common::Point &destPos, int destDir);
+	void walkToCoords(const Point32 &destPos, int destDir);
 
 	/**
 	 * Called to set the character walking to the current cursor location.

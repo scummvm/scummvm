@@ -687,7 +687,7 @@ void ScalpelEngine::startScene() {
 }
 
 void ScalpelEngine::eraseMirror12() {
-	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
+	Common::Point pt((*_people)[AL]._position.x / FIXED_INT_MULTIPLIER, (*_people)[AL]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then restore background from the secondary back buffer
 	if (Common::Rect(70, 100, 200, 200).contains(pt)) {
@@ -700,7 +700,7 @@ void ScalpelEngine::doMirror12() {
 	People &people = *_people;
 	Person &player = people._player;
 
-	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
+	Common::Point pt((*_people)[AL]._position.x / FIXED_INT_MULTIPLIER, (*_people)[AL]._position.y / FIXED_INT_MULTIPLIER);
 	int frameNum = player._walkSequences[player._sequenceNumber][player._frameNumber] +
 		player._walkSequences[player._sequenceNumber][0] - 2;
 
@@ -772,7 +772,7 @@ void ScalpelEngine::doMirror12() {
 }
 
 void ScalpelEngine::flushMirror12() {
-	Common::Point pt((*_people)[AL]._position.x / 100, (*_people)[AL]._position.y / 100);
+	Common::Point pt((*_people)[AL]._position.x / FIXED_INT_MULTIPLIER, (*_people)[AL]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then draw the entire mirror area to the screen
 	if (Common::Rect(70, 100, 200, 200).contains(pt))

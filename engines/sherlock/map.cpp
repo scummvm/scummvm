@@ -392,8 +392,8 @@ void Map::updateMap(bool flushScreen) {
 
 	people[AL].adjustSprite();
 
-	_lDrawnPos.x = hPos.x = people[AL]._position.x / 100 - _bigPos.x;
-	_lDrawnPos.y = hPos.y = people[AL]._position.y / 100 - people[AL].frameHeight() - _bigPos.y;
+	_lDrawnPos.x = hPos.x = people[AL]._position.x / FIXED_INT_MULTIPLIER - _bigPos.x;
+	_lDrawnPos.y = hPos.y = people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL].frameHeight() - _bigPos.y;
 
 	// Draw the person icon
 	saveIcon(people[AL]._imageFrame, hPos);
@@ -407,8 +407,8 @@ void Map::updateMap(bool flushScreen) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	} else if (!_drawMap) {
 		if (hPos.x > 0 && hPos.y >= 0 && hPos.x < SHERLOCK_SCREEN_WIDTH && hPos.y < SHERLOCK_SCREEN_HEIGHT)
-			screen.flushImage(people[AL]._imageFrame, Common::Point(people[AL]._position.x / 100 - _bigPos.x,
-			people[AL]._position.y / 100 - people[AL].frameHeight() - _bigPos.y),
+			screen.flushImage(people[AL]._imageFrame, Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER - _bigPos.x,
+			people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL].frameHeight() - _bigPos.y),
 			&people[AL]._oldPosition.x, &people[AL]._oldPosition.y, &people[AL]._oldSize.x, &people[AL]._oldSize.y);
 
 		if (osPos.x != -1)

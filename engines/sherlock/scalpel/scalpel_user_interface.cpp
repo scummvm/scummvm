@@ -500,7 +500,7 @@ void ScalpelUserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people.walkToCoords(Common::Point(obj._lookPosition.x, obj._lookPosition.y * 100), obj._lookFacing);
+			people.walkToCoords(obj._lookPosition, obj._lookFacing);
 		}
 
 		if (!talk._talkToAbort) {
@@ -2158,7 +2158,7 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	Common::Point pt(-1, -1);
+	Point32 pt(-1, -1);
 
 	if (objNum >= 1000)
 		// Ignore actions done on characters
@@ -2197,7 +2197,7 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 				}
 			}
 		} else {
-			pt = Common::Point(-1, -1);
+			pt = Point32(-1, -1);
 			dir = -1;
 		}
 

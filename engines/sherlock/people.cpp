@@ -98,7 +98,7 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_speakerFlip = false;
 	_holmesFlip = false;
 	_holmesQuotient = 0;
-	_hSavedPos = Common::Point(-1, -1);
+	_hSavedPos = Point32(-1, -1);
 	_hSavedFacing = -1;
 	_forceWalkReload = false;
 	_useWalkLib = false;
@@ -134,7 +134,7 @@ void People::reset() {
 		p._sequenceNumber = STOP_DOWNRIGHT;
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
-		p._delta = Common::Point(0, 0);
+		p._delta = Point32(0, 0);
 		p._oldPosition = Common::Point(0, 0);
 		p._oldSize = Common::Point(0, 0);
 		p._misc = 0;
@@ -297,8 +297,8 @@ void People::setWalking() {
 			_walkDest.x -= temp;
 
 		delta = Common::Point(
-			ABS(_player._position.x / 100 - _walkDest.x),
-			ABS(_player._position.y / 100 - _walkDest.y)
+			ABS(_player._position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
+			ABS(_player._position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
 		);
 
 		// If we're ready to move a sufficient distance, that's it. Otherwise,
@@ -316,20 +316,20 @@ void People::setWalking() {
 		if (delta.x >= delta.y) {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
-			if (_walkDest.x < (_player._position.x / 100)) {
+			if (_walkDest.x < (_player._position.x / FIXED_INT_MULTIPLIER)) {
 				_player._sequenceNumber = (map._active ? (int)MAP_LEFT : (int)WALK_LEFT);
-				_player._delta.x = speed.x * -100;
+				_player._delta.x = speed.x * -FIXED_INT_MULTIPLIER;
 			} else {
 				_player._sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)WALK_RIGHT);
-				_player._delta.x = speed.x * 100;
+				_player._delta.x = speed.x * FIXED_INT_MULTIPLIER;
 			}
 
 			// See if the x delta is too small to be divided by the speed, since
 			// this would cause a divide by zero error
 			if (delta.x >= speed.x) {
 				// Det the delta y
-				_player._delta.y = (delta.y * 100) / (delta.x / speed.x);
-				if (_walkDest.y < (_player._position.y / 100))
+				_player._delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
+				if (_walkDest.y < (_player._position.y / FIXED_INT_MULTIPLIER))
 					_player._delta.y = -_player._delta.y;
 
 				// Set how many times we should add the delta to the player's position
@@ -337,8 +337,9 @@ void People::setWalking() {
 			} else {
 				// The delta x was less than the speed (ie. we're really close to
 				// the destination). So set delta to 0 so the player won't move
-				_player._delta = Common::Point(0, 0);
-				_player._position = Common::Point(_walkDest.x * 100, _walkDest.y * 100);
+				_player._delta = Point32(0, 0);
+				_player._position = Point32(_walkDest.x * FIXED_INT_MULTIPLIER, _walkDest.y * FIXED_INT_MULTIPLIER);
+assert(_player._position.y >= 10000);/***DEBUG****/
 				_player._walkCount = 1;
 			}
 
@@ -369,12 +370,12 @@ void People::setWalking() {
 		} else {
 			// Major movement is vertical, so set the sequence for up and down,
 			// and set the delta Y depending on the direction
-			if (_walkDest.y < (_player._position.y / 100)) {
+			if (_walkDest.y < (_player._position.y / FIXED_INT_MULTIPLIER)) {
 				_player._sequenceNumber = WALK_UP;
-				_player._delta.y = speed.y * -100;
+				_player._delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
 				_player._sequenceNumber = WALK_DOWN;
-				_player._delta.y = speed.y * 100;
+				_player._delta.y = speed.y * FIXED_INT_MULTIPLIER;
 			}
 
 			// If we're on the overhead map, set the sequence so we keep moving
@@ -383,8 +384,8 @@ void People::setWalking() {
 				_player._sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
 
 			// Set the delta x
-			_player._delta.x = (delta.x * 100) / (delta.y / speed.y);
-			if (_walkDest.x < (_player._position.x / 100))
+			_player._delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
+			if (_walkDest.x < (_player._position.x / FIXED_INT_MULTIPLIER))
 				_player._delta.x = -_player._delta.x;
 
 			_player._walkCount = delta.y / speed.y;
@@ -451,15 +452,15 @@ void People::gotoStand(Sprite &sprite) {
 
 	if (map._active) {
 		sprite._sequenceNumber = 0;
-		_player._position.x = (map[map._charPoint].x -  6) * 100;
-		_player._position.y = (map[map._charPoint].y + 10) * 100;
+		_player._position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
+		_player._position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
 	}
 
 	_oldWalkSequence = -1;
 	_allowWalkAbort = true;
 }
 
-void People::walkToCoords(const Common::Point &destPos, int destDir) {
+void People::walkToCoords(const Point32 &destPos, int destDir) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
 	Talk &talk = *_vm->_talk;
@@ -467,7 +468,7 @@ void People::walkToCoords(const Common::Point &destPos, int destDir) {
 	CursorId oldCursor = events.getCursor();
 	events.setCursor(WAIT);
 
-	_walkDest = Common::Point(destPos.x / 100 + 10, destPos.y / 100);
+	_walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
 	_allowWalkAbort = true;
 	goAllTheWay();
 
@@ -480,6 +481,8 @@ void People::walkToCoords(const Common::Point &destPos, int destDir) {
 	if (!talk._talkToAbort) {
 		// Put player exactly on destination position, and set direction
 		_player._position = destPos;
+assert(_player._position.y >= 10000);/***DEBUG****/
+
 		_player._sequenceNumber = destDir;
 		gotoStand(_player);
 
@@ -493,8 +496,8 @@ void People::walkToCoords(const Common::Point &destPos, int destDir) {
 
 void People::goAllTheWay() {
 	Scene &scene = *_vm->_scene;
-	Common::Point srcPt(_player._position.x / 100 + _player.frameWidth() / 2,
-		_player._position.y / 100);
+	Common::Point srcPt(_player._position.x / FIXED_INT_MULTIPLIER + _player.frameWidth() / 2,
+		_player._position.y / FIXED_INT_MULTIPLIER);
 
 	// Get the zone the player is currently in
 	_srcZone = scene.whichZone(srcPt);
@@ -516,17 +519,17 @@ void People::goAllTheWay() {
 		const Common::Point destCenter((destRect.left + destRect.right) / 2,
 			(destRect.top + destRect.bottom) / 2);
 		const Common::Point delta = _walkDest - destCenter;
-		Common::Point pt(destCenter.x * 100, destCenter.y * 100);
+		Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
 
 		// Move along the line until the zone is left
 		do {
 			pt += delta;
-		} while (destRect.contains(pt.x / 100, pt.y / 100));
+		} while (destRect.contains(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER));
 
 		// Set the new walk destination to the last point that was in the
 		// zone just before it was left
-		_walkDest = Common::Point((pt.x - delta.x * 2) / 100,
-			(pt.y - delta.y * 2) / 100);
+		_walkDest = Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
+			(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
 	}
 
 	// Only do a walk if both zones are acceptable

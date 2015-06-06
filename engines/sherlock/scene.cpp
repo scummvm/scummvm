@@ -756,7 +756,7 @@ void Scene::transitionToScene() {
 	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	Common::Point &hSavedPos = people._hSavedPos;
+	Point32 &hSavedPos = people._hSavedPos;
 	int &hSavedFacing = people._hSavedFacing;
 
 	if (hSavedPos.x < 1) {
@@ -764,7 +764,7 @@ void Scene::transitionToScene() {
 		if (_entrance._startPosition.x < 1) {
 			// No entrance info either, so use defaults
 			if (IS_SERRATED_SCALPEL) {
-				hSavedPos = Common::Point(160 * FIXED_INT_MULTIPLIER, 100 * FIXED_INT_MULTIPLIER);
+				hSavedPos = Point32(160 * FIXED_INT_MULTIPLIER, 100 * FIXED_INT_MULTIPLIER);
 				hSavedFacing = 4;
 			} else {
 				hSavedPos = people[PLAYER]._position;
@@ -772,7 +772,8 @@ void Scene::transitionToScene() {
 			}
 		} else {
 			// setup entrance info
-			hSavedPos = _entrance._startPosition;
+			hSavedPos.x = _entrance._startPosition.x * FIXED_INT_MULTIPLIER / 100;
+			hSavedPos.y = _entrance._startPosition.y * FIXED_INT_MULTIPLIER / 100;
 			hSavedFacing = _entrance._startDir;
 		}
 	} else {
@@ -919,7 +920,7 @@ int Scene::startCAnim(int cAnimNum, int playRate) {
 	Resources &res = *_vm->_res;
 	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
-	Common::Point tpPos, walkPos;
+	Point32 tpPos, walkPos;
 	int tpDir, walkDir;
 	int tFrames = 0;
 	int gotoCode = -1;
