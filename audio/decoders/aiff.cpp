@@ -187,6 +187,9 @@ RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, Dispos
 		return 0;
 	}
 
+	// Seek to the start of dataStream, required for at least FileStream
+	dataStream->seek(0);
+
 	switch (codec) {
 	case kCodecPCM:
 	case MKTAG('t', 'w', 'o', 's'):
