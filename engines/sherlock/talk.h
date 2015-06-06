@@ -33,6 +33,7 @@
 
 namespace Sherlock {
 
+#define SPEAKER_REMOVE 0x80
 #define MAX_TALK_SEQUENCES 11
 #define MAX_TALK_FILES 500
 #define TALK_SEQUENCE_STACK_SIZE 20
@@ -353,65 +354,6 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Common::Serializer &s);
-};
-
-class ScalpelTalk : public Talk {
-protected:
-	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
-	OpcodeReturn cmdClearInfoLine(const byte *&str);
-	OpcodeReturn cmdClearWindow(const byte *&str);
-	OpcodeReturn cmdDisplayInfoLine(const byte *&str);
-	OpcodeReturn cmdElse(const byte *&str);
-	OpcodeReturn cmdIf(const byte *&str);
-	OpcodeReturn cmdMoveMouse(const byte *&str);
-	OpcodeReturn cmdPlayPrologue(const byte *&str);
-	OpcodeReturn cmdRemovePortrait(const byte *&str);
-	OpcodeReturn cmdSfxCommand(const byte *&str);
-	OpcodeReturn cmdSummonWindow(const byte *&str);
-	OpcodeReturn cmdCarriageReturn(const byte *&str);
-public:
-	ScalpelTalk(SherlockEngine *vm);
-	virtual ~ScalpelTalk() {}
-};
-
-class TattooTalk : public Talk {
-protected:
-	OpcodeReturn cmdMouseOnOff(const byte *&str);
-	OpcodeReturn cmdNextSong(const byte *&str);
-	OpcodeReturn cmdPassword(const byte *&str);
-	OpcodeReturn cmdPlaySong(const byte *&str);
-	OpcodeReturn cmdRestorePeopleSequence(const byte *&str);
-	OpcodeReturn cmdSetNPCDescOnOff(const byte *&str);
-	OpcodeReturn cmdSetNPCInfoLine(const byte *&str);
-	OpcodeReturn cmdNPCLabelGoto(const byte *&str);
-	OpcodeReturn cmdNPCLabelIfFlagGoto(const byte *&str);
-	OpcodeReturn cmdNPCLabelSet(const byte *&str);
-	OpcodeReturn cmdSetNPCOff(const byte *&str);
-	OpcodeReturn cmdSetNPCOn(const byte *&str);
-	OpcodeReturn cmdSetNPCPathDest(const byte *&str);
-	OpcodeReturn cmdSetNPCPathPause(const byte *&str);
-	OpcodeReturn cmdSetNPCPathPauseTakingNotes(const byte *&str);
-	OpcodeReturn cmdSetNPCPathPauseLookingHolmes(const byte *&str);
-	OpcodeReturn cmdSetNPCPosition(const byte *&str);
-	OpcodeReturn cmdSetNPCTalkFile(const byte *&str);
-	OpcodeReturn cmdSetNPCVerb(const byte *&str);
-	OpcodeReturn cmdSetNPCVerbCAnimation(const byte *&str);
-	OpcodeReturn cmdSetNPCVerbScript(const byte *&str);
-	OpcodeReturn cmdSetNPCVerbTarget(const byte *&str);
-	OpcodeReturn cmdSetNPCWalkGraphics(const byte *&str);
-	OpcodeReturn cmdSetSceneEntryFlag(const byte *&str);
-	OpcodeReturn cmdSetTalkSequence(const byte *&str);
-	OpcodeReturn cmdSetWalkControl(const byte *&str);
-	OpcodeReturn cmdTalkInterruptsDisable(const byte *&str);
-	OpcodeReturn cmdTalkInterruptsEnable(const byte *&str);
-	OpcodeReturn cmdTurnSoundsOff(const byte *&str);
-	OpcodeReturn cmdWalkHolmesAndNPCToCAnimation(const byte *&str);
-	OpcodeReturn cmdWalkNPCToCAnimation(const byte *&str);
-	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
-	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
-public:
-	TattooTalk(SherlockEngine *vm);
-	virtual ~TattooTalk() {}
 };
 
 } // End of namespace Sherlock

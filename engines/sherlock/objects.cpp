@@ -1221,7 +1221,7 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 				scene._goToScene = 100;
 			}
 
-			people[AL]._position = Common::Point(0, 0);
+			people[AL]._position = Point32(0, 0);
 			break;
 		}
 	} else if (name.hasPrefix("!")) {

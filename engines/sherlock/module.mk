@@ -9,10 +9,12 @@ MODULE_OBJS = \
 	scalpel/tsage/logo.o \
 	scalpel/tsage/resources.o \
 	scalpel/scalpel_scene.o \
+	scalpel/scalpel_talk.o \
 	scalpel/scalpel_user_interface.o \
 	scalpel/settings.o \
 	tattoo/tattoo.o \
 	tattoo/tattoo_scene.o \
+	tattoo/tattoo_talk.o \
 	tattoo/tattoo_user_interface.o \
 	animation.o \
 	debugger.o \
