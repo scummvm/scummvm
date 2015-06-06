@@ -106,7 +106,7 @@ bool Debugger::cmd3DO_PlayAudio(int argc, const char **argv) {
 	Audio::SoundHandle testHandle;
 
 	// Try to load the given file as AIFF/AIFC
-	testStream = Audio::makeAIFFAudioStream(file, DisposeAfterUse::YES);
+	testStream = Audio::makeAIFFStream(file, DisposeAfterUse::YES);
 
 	if (testStream) {
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &testHandle, testStream);

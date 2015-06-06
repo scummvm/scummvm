@@ -33,6 +33,7 @@
 #include "common/substream.h"
 #include "common/textconsole.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/aiff.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/3do.h"
@@ -71,13 +72,7 @@ static const uint32 kVersionAIFC = MKTAG('A', 'I', 'F', 'C');
 // Codecs
 static const uint32 kCodecPCM = MKTAG('N', 'O', 'N', 'E'); // very original
 
-// temporary Wrapper
-// TODO: adjust all calling code to use makeAIFFAudioStream() and dynamic_cast
-SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	return dynamic_cast<Audio::SeekableAudioStream *>(makeAIFFAudioStream(stream, disposeAfterUse));
-}
-
-AudioStream *makeAIFFAudioStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	if (stream->readUint32BE() != MKTAG('F', 'O', 'R', 'M')) {
 		warning("makeAIFFStream: No 'FORM' header");
 
@@ -192,8 +187,6 @@ AudioStream *makeAIFFAudioStream(Common::SeekableReadStream *stream, DisposeAfte
 		return 0;
 	}
 
-	bool stereo = channels > 1 ? true : false;
-
 	switch (codec) {
 	case kCodecPCM:
 	case MKTAG('t', 'w', 'o', 's'):
@@ -202,7 +195,7 @@ AudioStream *makeAIFFAudioStream(Common::SeekableReadStream *stream, DisposeAfte
 		byte rawFlags = 0;
 		if (bitsPerSample == 16)
 			rawFlags |= Audio::FLAG_16BITS;
-		if (stereo)
+		if (channels == 2)
 			rawFlags |= Audio::FLAG_STEREO;
 		if (codec == MKTAG('s', 'o', 'w', 't'))
 			rawFlags |= Audio::FLAG_LITTLE_ENDIAN;
@@ -210,9 +203,7 @@ AudioStream *makeAIFFAudioStream(Common::SeekableReadStream *stream, DisposeAfte
 		return makeRawStream(dataStream, rate, rawFlags); 
 	}
 	case MKTAG('i', 'm', 'a', '4'):
-		// TODO: QT IMA ADPCM is not Seekable
-		// Need to make this function return only an AudioStream and adapt
-		// calling code to use dynamic_cast.
+		// TODO: Use QT IMA ADPCM
 		warning("Unhandled AIFF-C QT IMA ADPCM compression");
 		break;
 	case MKTAG('Q', 'D', 'M', '2'):
@@ -222,10 +213,10 @@ AudioStream *makeAIFFAudioStream(Common::SeekableReadStream *stream, DisposeAfte
 		break;
 	case MKTAG('A', 'D', 'P', '4'):
 		// ADP4 on 3DO
-		return make3DO_ADP4AudioStream(dataStream, rate, stereo);
+		return make3DO_ADP4AudioStream(dataStream, rate, channels == 2);
 	case MKTAG('S', 'D', 'X', '2'):
 		// SDX2 on 3DO
-		return make3DO_SDX2AudioStream(dataStream, rate, stereo);
+		return make3DO_SDX2AudioStream(dataStream, rate, channels == 2);
 	default:
 		warning("Unhandled AIFF-C compression tag '%s'", tag2str(codec));
 	}

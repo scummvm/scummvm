@@ -42,8 +42,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class AudioStream;
-class SeekableAudioStream;
+class RewindableAudioStream;
 
 /**
  * Try to load an AIFF from the given seekable stream and create an AudioStream
@@ -53,11 +52,7 @@ class SeekableAudioStream;
  * @param disposeAfterUse	whether to delete the stream after use
  * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
-SeekableAudioStream *makeAIFFStream(
-	Common::SeekableReadStream *stream,
-	DisposeAfterUse::Flag disposeAfterUse);
-
-AudioStream *makeAIFFAudioStream(
+RewindableAudioStream *makeAIFFStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 

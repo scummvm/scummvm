@@ -391,7 +391,13 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('F','O','R','M')) {
 			// AIFF detected
 			Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
-			audioSeekStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
+			Audio::RewindableAudioStream *rewindStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
+			audioSeekStream = dynamic_cast<Audio::SeekableAudioStream *>(rewindStream);
+
+			if (!audioSeekStream) {
+				warning("AIFF file is not seekable");
+				delete rewindStream;
+			}
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
 			// Mac snd detected
