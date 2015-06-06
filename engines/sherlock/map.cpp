@@ -128,7 +128,6 @@ int Map::show() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
-	Common::Point lDrawn(-1, -1);
 	bool changed = false, exitFlag = false;
 	_active = true;
 
