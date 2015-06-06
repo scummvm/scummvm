@@ -177,6 +177,11 @@ public:
 	Common::Platform getPlatform() const;
 
 	/**
+	 * Return the game's language
+	 */
+	Common::Language getLanguage() const;
+
+	/**
 	 * Return a random number
 	 */
 	int getRandomNumber(int limit) { return _randomSource.getRandomNumber(limit - 1); }
