@@ -202,7 +202,6 @@ public:
 	int _currentScene;
 	int _goToScene;
 	bool **_sceneStats;
-	bool **_savedStats;
 	bool _walkedInScene;
 	int _version;
 	bool _lzwMode;
