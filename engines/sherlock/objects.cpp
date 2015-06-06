@@ -807,11 +807,11 @@ void Object::checkObject() {
 			} else if (v >= SOUND_CODE && (v < (SOUND_CODE + 30))) {
 				codeFound = true;
 				++_frameNumber;
-				v -= SOUND_CODE;
+				v -= SOUND_CODE + (IS_SERRATED_SCALPEL ? 1 : 0);
 
 				if (sound._soundOn && !_countCAnimFrames) {
-					if (!scene._sounds[v - 1]._name.empty() && sound._digitized)
-						sound.playLoadedSound(v - 1, WAIT_RETURN_IMMEDIATELY);
+					if (!scene._sounds[v]._name.empty() && sound._digitized)
+						sound.playLoadedSound(v, WAIT_RETURN_IMMEDIATELY);
 				}
 			} else if (v >= FLIP_CODE && v < (FLIP_CODE + 3)) {
 				// Flip code
