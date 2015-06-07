@@ -230,7 +230,10 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 	if (newLocation != oldLocation) {
 		// Add in scene title
-		journalString = "@" + _locations[newLocation - 1] + ":";
+		journalString = "@";
+		if (IS_SERRATED_SCALPEL || newLocation - 1 < 100)
+			journalString += _locations[newLocation - 1];
+		journalString += ":";
 
 		// See if title can fit into a single line, or requires splitting on 2 lines
 		int width = screen.stringWidth(journalString.c_str() + 1);
@@ -283,9 +286,20 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	bool commentFlag = false;
 	bool commentJustPrinted = false;
 	const byte *replyP = (const byte *)statement._reply.c_str();
+	const int inspectorId = (IS_SERRATED_SCALPEL) ? 2 : 18;
 
 	while (*replyP) {
 		byte c = *replyP++;
+
+		if (IS_ROSE_TATTOO) {
+			// Ignore commented out data
+			if (c == '/' && *(replyP + 1) == '*') {
+				replyP++;	// skip *
+				while (*replyP++ != '*') {}	// empty loop on purpose
+				replyP++;	// skip /
+				c = *replyP;
+			}
+		}
 
 		// Is it a control character?
 		if (c < opcodes[0]) {
@@ -326,7 +340,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 					} else {
 						if (talk._talkTo == 1)
 							journalString += "I";
-						else if (talk._talkTo == 2)
+						else if (talk._talkTo == inspectorId)
 							journalString += "The Inspector";
 						else
 							journalString += people._characters[talk._talkTo]._name;
@@ -373,7 +387,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 				journalString += "Holmes";
 			else if (c == 1)
 				journalString += "I";
-			else if (c == 2)
+			else if (c == inspectorId)
 				journalString += "the Inspector";
 			else
 				journalString += people._characters[c]._name;
