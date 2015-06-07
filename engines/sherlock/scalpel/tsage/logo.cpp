@@ -223,8 +223,15 @@ void Object::update() {
 	Screen &screen = *_vm->_screen;
 
 	if (_visage.isLoaded()) {
-		if (isMoving())
-			move();
+		if (isMoving()) {
+			uint32 currTime = _vm->_events->getFrameCounter();
+			if (_walkStartFrame <= currTime) {
+				int moveRate = 10;
+				int frameInc = 60 / moveRate;
+				_walkStartFrame = currTime + frameInc;
+				move();
+			}
+		}
 		
 		if (_isAnimating) {
 			if (_frame < _visage.getFrameCount())
