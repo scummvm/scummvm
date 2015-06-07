@@ -22,6 +22,8 @@
 
 #include "sherlock/people.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/tattoo/tattoo_people.h"
 
 namespace Sherlock {
 
@@ -91,6 +93,13 @@ void Person::updateNPC() {
 
 /*----------------------------------------------------------------*/
 
+People *People::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new Scalpel::ScalpelPeople(vm);
+	else
+		return new Tattoo::TattooPeople(vm);
+}
+
 People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 	_holmesOn = true;
 	_oldWalkSequence = -1;
@@ -137,7 +146,7 @@ void People::reset() {
 		else
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
 
-		p._sequenceNumber = STOP_DOWNRIGHT;
+		p._sequenceNumber = Scalpel::STOP_DOWNRIGHT;
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
 		p._delta = Point32(0, 0);
@@ -323,10 +332,10 @@ void People::setWalking() {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
 			if (_walkDest.x < (_player._position.x / FIXED_INT_MULTIPLIER)) {
-				_player._sequenceNumber = (map._active ? (int)MAP_LEFT : (int)WALK_LEFT);
+				_player._sequenceNumber = (map._active ? (int)MAP_LEFT : (int)Scalpel::WALK_LEFT);
 				_player._delta.x = speed.x * -FIXED_INT_MULTIPLIER;
 			} else {
-				_player._sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)WALK_RIGHT);
+				_player._sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)Scalpel::WALK_RIGHT);
 				_player._delta.x = speed.x * FIXED_INT_MULTIPLIER;
 			}
 
@@ -353,22 +362,22 @@ assert(_player._position.y >= 10000);/***DEBUG****/
 			if (_player._delta.y > 150) {
 				if (!map._active) {
 					switch (_player._sequenceNumber) {
-					case WALK_LEFT:
-						_player._sequenceNumber = WALK_DOWNLEFT;
+					case Scalpel::WALK_LEFT:
+						_player._sequenceNumber = Scalpel::WALK_DOWNLEFT;
 						break;
-					case WALK_RIGHT:
-						_player._sequenceNumber = WALK_DOWNRIGHT;
+					case Scalpel::WALK_RIGHT:
+						_player._sequenceNumber = Scalpel::WALK_DOWNRIGHT;
 						break;
 					}
 				}
 			} else if (_player._delta.y < -150) {
 				if (!map._active) {
 					switch (_player._sequenceNumber) {
-					case WALK_LEFT:
-						_player._sequenceNumber = WALK_UPLEFT;
+					case Scalpel::WALK_LEFT:
+						_player._sequenceNumber = Scalpel::WALK_UPLEFT;
 						break;
-					case WALK_RIGHT:
-						_player._sequenceNumber = WALK_UPRIGHT;
+					case Scalpel::WALK_RIGHT:
+						_player._sequenceNumber = Scalpel::WALK_UPRIGHT;
 						break;
 					}
 				}
@@ -377,10 +386,10 @@ assert(_player._position.y >= 10000);/***DEBUG****/
 			// Major movement is vertical, so set the sequence for up and down,
 			// and set the delta Y depending on the direction
 			if (_walkDest.y < (_player._position.y / FIXED_INT_MULTIPLIER)) {
-				_player._sequenceNumber = WALK_UP;
+				_player._sequenceNumber = Scalpel::WALK_UP;
 				_player._delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
-				_player._sequenceNumber = WALK_DOWN;
+				_player._sequenceNumber = Scalpel::WALK_DOWN;
 				_player._delta.y = speed.y * FIXED_INT_MULTIPLIER;
 			}
 
@@ -422,38 +431,38 @@ void People::gotoStand(Sprite &sprite) {
 	sprite._walkCount = 0;
 
 	switch (sprite._sequenceNumber) {
-	case WALK_UP:
-		sprite._sequenceNumber = STOP_UP;
+	case Scalpel::WALK_UP:
+		sprite._sequenceNumber = Scalpel::STOP_UP;
 		break;
-	case WALK_DOWN:
-		sprite._sequenceNumber = STOP_DOWN;
+	case Scalpel::WALK_DOWN:
+		sprite._sequenceNumber = Scalpel::STOP_DOWN;
 		break;
-	case TALK_LEFT:
-	case WALK_LEFT:
-		sprite._sequenceNumber = STOP_LEFT;
+	case Scalpel::TALK_LEFT:
+	case Scalpel::WALK_LEFT:
+		sprite._sequenceNumber = Scalpel::STOP_LEFT;
 		break;
-	case TALK_RIGHT:
-	case WALK_RIGHT:
-		sprite._sequenceNumber = STOP_RIGHT;
+	case Scalpel::TALK_RIGHT:
+	case Scalpel::WALK_RIGHT:
+		sprite._sequenceNumber = Scalpel::STOP_RIGHT;
 		break;
-	case WALK_UPRIGHT:
-		sprite._sequenceNumber = STOP_UPRIGHT;
+	case Scalpel::WALK_UPRIGHT:
+		sprite._sequenceNumber = Scalpel::STOP_UPRIGHT;
 		break;
-	case WALK_UPLEFT:
-		sprite._sequenceNumber = STOP_UPLEFT;
+	case Scalpel::WALK_UPLEFT:
+		sprite._sequenceNumber = Scalpel::STOP_UPLEFT;
 		break;
-	case WALK_DOWNRIGHT:
-		sprite._sequenceNumber = STOP_DOWNRIGHT;
+	case Scalpel::WALK_DOWNRIGHT:
+		sprite._sequenceNumber = Scalpel::STOP_DOWNRIGHT;
 		break;
-	case WALK_DOWNLEFT:
-		sprite._sequenceNumber = STOP_DOWNLEFT;
+	case Scalpel::WALK_DOWNLEFT:
+		sprite._sequenceNumber = Scalpel::STOP_DOWNLEFT;
 		break;
 	default:
 		break;
 	}
 
 	// Only restart frame at 0 if the sequence number has changed
-	if (_oldWalkSequence != -1 || sprite._sequenceNumber == STOP_UP)
+	if (_oldWalkSequence != -1 || sprite._sequenceNumber == Scalpel::STOP_UP)
 		sprite._frameNumber = 0;
 
 	if (map._active) {
@@ -650,65 +659,6 @@ void People::clearTalking() {
 
 		if (!talk._talkToAbort)
 			_portraitLoaded = false;
-	}
-}
-
-void People::setTalking(int speaker) {
-	Resources &res = *_vm->_res;
-
-	// If no speaker is specified, then we can exit immediately
-	if (speaker == -1)
-		return;
-
-	if (_portraitsOn) {
-		delete _talkPics;
-		Common::String filename = Common::String::format("%s.vgs", _characters[speaker]._portrait);
-		_talkPics = new ImageFile(filename);
-
-		// Load portrait sequences
-		Common::SeekableReadStream *stream = res.load("sequence.txt");
-		stream->seek(speaker * MAX_FRAME);
-
-		int idx = 0;
-		do {
-			_portrait._sequences[idx] = stream->readByte();
-			++idx;
-		} while (idx < 2 || _portrait._sequences[idx - 2] || _portrait._sequences[idx - 1]);
-
-		delete stream;
-
-		_portrait._maxFrames = idx;
-		_portrait._frameNumber = 0;
-		_portrait._sequenceNumber = 0;
-		_portrait._images = _talkPics;
-		_portrait._imageFrame = &(*_talkPics)[0];
-		_portrait._position = Common::Point(_portraitSide, 10);
-		_portrait._delta = Common::Point(0, 0);
-		_portrait._oldPosition = Common::Point(0, 0);
-		_portrait._goto = Common::Point(0, 0);
-		_portrait._flags = 5;
-		_portrait._status = 0;
-		_portrait._misc = 0;
-		_portrait._allow = 0;
-		_portrait._type = ACTIVE_BG_SHAPE;
-		_portrait._name = " ";
-		_portrait._description = " ";
-		_portrait._examine = " ";
-		_portrait._walkCount = 0;
-
-		if (_holmesFlip || _speakerFlip) {
-			_portrait._flags |= 2;
-
-			_holmesFlip = false;
-			_speakerFlip = false;
-		}
-
-		if (_portraitSide == 20)
-			_portraitSide = 220;
-		else
-			_portraitSide = 20;
-
-		_portraitLoaded = true;
 	}
 }
 

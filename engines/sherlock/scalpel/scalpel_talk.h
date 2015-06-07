@@ -37,6 +37,7 @@ namespace Scalpel {
 
 class ScalpelTalk : public Talk {
 private:
+	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
 	OpcodeReturn cmdClearInfoLine(const byte *&str);
 	OpcodeReturn cmdClearWindow(const byte *&str);

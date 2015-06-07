@@ -37,6 +37,7 @@ namespace Tattoo {
 
 class TattooTalk : public Talk {
 private:
+	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdMouseOnOff(const byte *&str);
 	OpcodeReturn cmdNextSong(const byte *&str);
 	OpcodeReturn cmdPassword(const byte *&str);

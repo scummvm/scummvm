@@ -39,53 +39,6 @@ enum PeopleId {
 	MAX_NPC_PATH	= 200
 };
 
-// Animation sequence identifiers for characters
-enum  {
-	WALK_RIGHT = 0, WALK_DOWN = 1, WALK_LEFT = 2, WALK_UP = 3, STOP_LEFT = 4,
-	STOP_DOWN = 5, STOP_RIGHT = 6, STOP_UP = 7, WALK_UPRIGHT = 8,
-	WALK_DOWNRIGHT = 9, WALK_UPLEFT = 10, WALK_DOWNLEFT = 11,
-	STOP_UPRIGHT = 12, STOP_UPLEFT = 13, STOP_DOWNRIGHT = 14,
-	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4,
-};
-
-enum TattooSequences {
-	// Walk Sequences Numbers for NPCs
-	RT_WALK_UP			= 0,
-	RT_WALK_UPRIGHT		= 1,
-	RT_WALK_RIGHT		= 2,
-	RT_WALK_DOWNRIGHT	= 3,
-	RT_WALK_DOWN		= 4,
-	RT_WALK_DOWNLEFT	= 5,
-	RT_WALK_LEFT		= 6,
-	RT_WALK_UPLEFT		= 7,
-
-	// Stop Sequences Numbers for NPCs
-	RT_STOP_UP			= 8,
-	RT_STOP_UPRIGHT		= 9,
-	RT_STOP_RIGHT		= 10,
-	RT_STOP_DOWNRIGHT	= 11,
-	RT_STOP_DOWN		= 12,
-	RT_STOP_DOWNLEFT	= 13,
-	RT_STOP_LEFT		= 14,
-	RT_STOP_UPLEFT		= 15,
-
-	// NPC Talk Sequence Numbers
-	RT_TALK_UPRIGHT		= 16,
-	RT_TALK_RIGHT		= 17,
-	RT_TALK_DOWNRIGHT	= 18,
-	RT_TALK_DOWNLEFT	= 19,
-	RT_TALK_LEFT		= 20,
-	RT_TALK_UPLEFT		= 21,
-
-	// NPC Listen Sequence Numbers
-	RT_LISTEN_UPRIGHT	= 22,      
-	RT_LISTEN_RIGHT		= 23,
-	RT_LISTEN_DOWNRIGHT	= 24,
-	RT_LISTEN_DOWNLEFT	= 25,
-	RT_LISTEN_LEFT		= 26,
-	RT_LISTEN_UPLEFT	= 27
-};
-
 enum {
 	MAP_UP = 1, MAP_UPRIGHT = 2, MAP_RIGHT = 1, MAP_DOWNRIGHT = 4,
 	MAP_DOWN = 5, MAP_DOWNLEFT = 6, MAP_LEFT = 2, MAP_UPLEFT = 8
@@ -142,10 +95,13 @@ class SherlockEngine;
 
 class People {
 private:
-	SherlockEngine *_vm;
 	Person _data[MAX_CHARACTERS];
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
+protected:
+	SherlockEngine *_vm;
+
+	People(SherlockEngine *vm);
 public:
 	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
@@ -169,8 +125,8 @@ public:
 
 	int _walkControl;
 public:
-	People(SherlockEngine *vm);
-	~People();
+	static People *init(SherlockEngine *vm);
+	virtual ~People();
 
 	Person &operator[](PeopleId id) {
 		assert(id < MAX_CHARACTERS);
@@ -230,11 +186,6 @@ public:
 	 * Turn off any currently active portraits, and removes them from being drawn
 	 */
 	void clearTalking();
-
-	/**
-	 * Setup the data for an animating speaker portrait at the top of the screen
-	 */
-	void setTalking(int speaker);
 
 	/**
 	 * Synchronize the data for a savegame

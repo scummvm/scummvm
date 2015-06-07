@@ -22,6 +22,7 @@
 
 #include "engines/util.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/tsage/logo.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"

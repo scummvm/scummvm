@@ -20,11 +20,12 @@
  *
  */
 
-#include "sherlock/objects.h"
+#include "common/util.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/objects.h"
 #include "sherlock/people.h"
 #include "sherlock/scene.h"
-#include "common/util.h"
+#include "sherlock/scalpel/scalpel_people.h"
 
 namespace Sherlock {
 
@@ -256,14 +257,14 @@ void Sprite::adjustSprite() {
 
 	if (_walkSequences[_sequenceNumber][_frameNumber] == 0) {
 		switch (_sequenceNumber) {
-		case STOP_UP:
-		case STOP_DOWN:
-		case STOP_LEFT:
-		case STOP_RIGHT:
-		case STOP_UPRIGHT:
-		case STOP_UPLEFT:
-		case STOP_DOWNRIGHT:
-		case STOP_DOWNLEFT:
+		case Scalpel::STOP_UP:
+		case Scalpel::STOP_DOWN:
+		case Scalpel::STOP_LEFT:
+		case Scalpel::STOP_RIGHT:
+		case Scalpel::STOP_UPRIGHT:
+		case Scalpel::STOP_UPLEFT:
+		case Scalpel::STOP_DOWNRIGHT:
+		case Scalpel::STOP_DOWNLEFT:
 			// We're in a stop sequence, so reset back to the last frame, so
 			// the character is shown as standing still
 			--_frameNumber;

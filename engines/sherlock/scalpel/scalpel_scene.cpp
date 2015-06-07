@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel_scene.h"
+#include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/events.h"
 #include "sherlock/people.h"

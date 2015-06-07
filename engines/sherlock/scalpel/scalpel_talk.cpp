@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel_talk.h"
+#include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
@@ -152,6 +153,28 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 
 	_opcodes = SCALPEL_OPCODES;
 	_opcodeTable = OPCODE_METHODS;
+}
+
+OpcodeReturn ScalpelTalk::cmdSwitchSpeaker(const byte *&str) {
+	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
+	UserInterface &ui = *_vm->_ui;
+
+	if (!(_speaker & SPEAKER_REMOVE))
+		people.clearTalking();
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	ui.clearWindow();
+	_yp = CONTROLS_Y + 12;
+	_charCount = _line = 0;
+
+	_speaker = *++str - 1;
+	people.setTalking(_speaker);
+	pullSequence();
+	pushSequence(_speaker);
+	setSequence(_speaker);
+
+	return RET_SUCCESS;
 }
 
 OpcodeReturn ScalpelTalk::cmdAssignPortraitLocation(const byte *&str) {

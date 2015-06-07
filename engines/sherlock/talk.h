@@ -248,7 +248,6 @@ protected:
 	OpcodeReturn cmdSetObject(const byte *&str);
 	OpcodeReturn cmdStealthModeActivate(const byte *&str);
 	OpcodeReturn cmdStealthModeDeactivate(const byte *&str);
-	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdToggleObject(const byte *&str);
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkToCoords(const byte *&str);

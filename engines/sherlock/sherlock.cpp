@@ -97,7 +97,7 @@ void SherlockEngine::initialize() {
 	_map = new Map(this);
 	_music = new Music(this, _mixer);
 	_journal = new Journal(this);
-	_people = new People(this);
+	_people = People::init(this);
 	_saves = new SaveManager(this, _targetName);
 	_scene = Scene::init(this);
 	_screen = new Screen(this);

@@ -214,6 +214,11 @@ public:
 	int charWidth(char c);
 
 	/**
+	 * Return the font height
+	 */
+	int fontHeight() const { return _fontHeight; }
+
+	/**
 	 * Fills an area on the back buffer, and then copies it to the screen
 	 */
 	void vgaBar(const Common::Rect &r, int color);

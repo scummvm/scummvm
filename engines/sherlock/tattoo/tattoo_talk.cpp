@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
 
@@ -29,10 +30,9 @@ namespace Sherlock {
 namespace Tattoo {
 
 static const uint8 DIRECTION_CONVERSION[] = {
-	WALK_RIGHT, WALK_DOWN, WALK_LEFT, WALK_UP,
-	STOP_RIGHT, STOP_DOWN, STOP_LEFT, STOP_UP,
-	WALK_UPRIGHT, WALK_DOWNRIGHT, WALK_UPLEFT, WALK_DOWNLEFT,
-	STOP_UPRIGHT, STOP_UPLEFT, STOP_DOWNRIGHT, STOP_DOWNLEFT
+	WALK_RIGHT, WALK_DOWN, WALK_LEFT, WALK_UP, STOP_RIGHT, STOP_DOWN, STOP_LEFT, STOP_UP,
+	WALK_UPRIGHT, WALK_DOWNRIGHT, WALK_UPLEFT, WALK_DOWNLEFT, STOP_UPRIGHT, STOP_UPLEFT, 
+	STOP_DOWNRIGHT, STOP_DOWNLEFT
 };
 
 const byte TATTOO_OPCODES[] = {
@@ -207,45 +207,45 @@ void TattooTalk::setSequence(int speaker, int sequenceNum) {
 		int newDir = person._sequenceNumber;
 
 		switch (newDir) {
-		case RT_WALK_UP:
-		case RT_STOP_UP:
-		case RT_WALK_UPRIGHT:
-		case RT_STOP_UPRIGHT:
-		case RT_TALK_UPRIGHT:
-		case RT_LISTEN_UPRIGHT:
-			newDir = RT_TALK_UPRIGHT;
+		case WALK_UP:
+		case STOP_UP:
+		case WALK_UPRIGHT:
+		case STOP_UPRIGHT:
+		case TALK_UPRIGHT:
+		case LISTEN_UPRIGHT:
+			newDir = TALK_UPRIGHT;
 			break;
-		case RT_WALK_RIGHT:
-		case RT_STOP_RIGHT:
-		case RT_TALK_RIGHT:
-		case RT_LISTEN_RIGHT:
-			newDir = RT_TALK_RIGHT;
+		case WALK_RIGHT:
+		case STOP_RIGHT:
+		case TALK_RIGHT:
+		case LISTEN_RIGHT:
+			newDir = TALK_RIGHT;
 			break;
-		case RT_WALK_DOWNRIGHT:
-		case RT_STOP_DOWNRIGHT:
-		case RT_TALK_DOWNRIGHT:
-		case RT_LISTEN_DOWNRIGHT:
-			newDir = RT_TALK_DOWNRIGHT;
+		case WALK_DOWNRIGHT:
+		case STOP_DOWNRIGHT:
+		case TALK_DOWNRIGHT:
+		case LISTEN_DOWNRIGHT:
+			newDir = TALK_DOWNRIGHT;
 			break;
-		case RT_WALK_DOWN:
-		case RT_STOP_DOWN:
-		case RT_WALK_DOWNLEFT:
-		case RT_STOP_DOWNLEFT:
-		case RT_TALK_DOWNLEFT:
-		case RT_LISTEN_DOWNLEFT:
-			newDir = RT_TALK_DOWNLEFT;
+		case WALK_DOWN:
+		case STOP_DOWN:
+		case WALK_DOWNLEFT:
+		case STOP_DOWNLEFT:
+		case TALK_DOWNLEFT:
+		case LISTEN_DOWNLEFT:
+			newDir = TALK_DOWNLEFT;
 			break;
-		case RT_WALK_LEFT:
-		case RT_STOP_LEFT:
-		case RT_TALK_LEFT:
-		case RT_LISTEN_LEFT:
-			newDir = RT_TALK_LEFT;
+		case WALK_LEFT:
+		case STOP_LEFT:
+		case TALK_LEFT:
+		case LISTEN_LEFT:
+			newDir = TALK_LEFT;
 			break;
-		case RT_WALK_UPLEFT:
-		case RT_STOP_UPLEFT:
-		case RT_TALK_UPLEFT:
-		case RT_LISTEN_UPLEFT:
-			newDir = RT_TALK_UPLEFT;
+		case WALK_UPLEFT:
+		case STOP_UPLEFT:
+		case TALK_UPLEFT:
+		case LISTEN_UPLEFT:
+			newDir = TALK_UPLEFT;
 			break;
 		default:
 			break;
@@ -266,6 +266,26 @@ void TattooTalk::setSequence(int speaker, int sequenceNum) {
 			person.checkWalkGraphics();
 		}
 	}
+}
+
+OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Screen &screen = *_vm->_screen;
+	UserInterface &ui = *_vm->_ui;
+
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	ui.clearWindow();
+	
+	_yp = screen.fontHeight() + 11;
+	_charCount = _line = 0;
+
+	people.setListenSequence(_speaker, 129);
+	_speaker = *++str - 1;
+	people.setTalkSequence(_speaker, 1);
+
+	return RET_SUCCESS;
 }
 
 OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { 

@@ -23,6 +23,7 @@
 #include "sherlock/talk.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
+#include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/tattoo/tattoo_talk.h"
@@ -949,7 +950,6 @@ void Talk::doScript(const Common::String &script) {
 	_scriptStart = (const byte *)script.c_str();
 	_scriptEnd = _scriptStart + script.size();
 	const byte *str = _scriptStart;
-	_yp = CONTROLS_Y + 12;
 	_charCount = 0;
 	_line = 0;
 	_wait = 0;
@@ -957,6 +957,11 @@ void Talk::doScript(const Common::String &script) {
 	_seqCount = 0;
 	_noTextYet = true;
 	_endStr = false;
+
+	if (IS_SERRATED_SCALPEL)
+		_yp = CONTROLS_Y + 12;
+	else
+		_yp = (_talkTo == -1) ? 5 : screen.fontHeight() + 11;
 
 	if (IS_ROSE_TATTOO) {
 		for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
@@ -1015,12 +1020,14 @@ void Talk::doScript(const Common::String &script) {
 				str += 2;
 			}
 
-			// Remove portrait?
-			if (str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
-				_speaker = -1;
-			} else {
-				// Nope, so set the first speaker
-				people.setTalking(_speaker);
+			if (IS_SERRATED_SCALPEL) {
+				// Remove portrait?
+				if ( str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
+					_speaker = -1;
+				} else {
+					// Nope, so set the first speaker
+					((Scalpel::ScalpelPeople *)_vm->_people)->setTalking(_speaker);
+				}
 			}
 		}
 	}
@@ -1563,28 +1570,6 @@ OpcodeReturn Talk::cmdStealthModeDeactivate(const byte *&str) {
 
 	_talkStealth = 0;
 	events.clearKeyboard();
-
-	return RET_SUCCESS;
-}
-
-OpcodeReturn Talk::cmdSwitchSpeaker(const byte *&str) {
-	People &people = *_vm->_people;
-	UserInterface &ui = *_vm->_ui;
-
-	if (!(_speaker & SPEAKER_REMOVE))
-		people.clearTalking();
-	if (_talkToAbort)
-		return RET_EXIT;
-
-	ui.clearWindow();
-	_yp = CONTROLS_Y + 12;
-	_charCount = _line = 0;
-
-	_speaker = *++str - 1;
-	people.setTalking(_speaker);
-	pullSequence();
-	pushSequence(_speaker);
-	setSequence(_speaker);
 
 	return RET_SUCCESS;
 }

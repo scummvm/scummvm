@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/settings.h"
 
@@ -1468,7 +1469,7 @@ void ScalpelUserInterface::doPickControl() {
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
 	Journal &journal = *_vm->_journal;
-	People &people = *_vm->_people;
+	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;

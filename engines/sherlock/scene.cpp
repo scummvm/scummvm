@@ -22,9 +22,10 @@
 
 #include "sherlock/scene.h"
 #include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel.h"
-#include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/screen.h"
+#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
@@ -32,8 +33,8 @@
 namespace Sherlock {
 
 static const int FS_TRANS[8] = {
-	STOP_UP, STOP_UPRIGHT, STOP_RIGHT, STOP_DOWNRIGHT, STOP_DOWN,
-	STOP_DOWNLEFT, STOP_LEFT, STOP_UPLEFT
+	Scalpel::STOP_UP, Scalpel::STOP_UPRIGHT, Scalpel::STOP_RIGHT, Scalpel::STOP_DOWNRIGHT, 
+	Scalpel::STOP_DOWN, Scalpel::STOP_DOWNLEFT, Scalpel::STOP_LEFT, Scalpel::STOP_UPLEFT
 };
 
 /*----------------------------------------------------------------*/
