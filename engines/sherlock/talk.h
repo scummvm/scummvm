@@ -238,7 +238,6 @@ protected:
 	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdDisableEndKey(const byte *&str);
 	OpcodeReturn cmdEnableEndKey(const byte *&str);
-	OpcodeReturn cmdGotoScene(const byte *&str);
 	OpcodeReturn cmdHolmesOff(const byte *&str);
 	OpcodeReturn cmdHolmesOn(const byte *&str);
 	OpcodeReturn cmdPause(const byte *&str);

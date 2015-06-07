@@ -230,6 +230,42 @@ OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+OpcodeReturn TattooTalk::cmdGotoScene(const byte *&str) {
+	Map &map = *_vm->_map;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	scene._goToScene = str[1] - 1;
+
+	if (scene._goToScene != 100) {
+		// Not going to the map overview
+		map._oldCharPoint = scene._goToScene;
+
+		// Run a canimation?
+		if (str[2] > 100) {
+			people._hSavedFacing = str[2];
+			people._hSavedPos = Point32(160, 100);
+		} else {
+			people._hSavedFacing = str[2] - 1;
+			int32 posX = (str[3] - 1) * 256 + str[4] - 1;
+			if (posX > 16384)
+				posX = -1 * (posX - 16384);
+			int32 posY = (str[5] - 1) * 256 + str[6] - 1;
+			people._hSavedPos = Point32(posX, posY);
+		}
+
+		_scriptMoreFlag = 1;
+	}	// if (scene._goToScene != 100)
+
+	str += 7;
+	if (scene._goToScene != 100)
+		_scriptSaveIndex = str - _scriptStart;
+
+	_endStr = true;
+	_wait = 0;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 	Sound &sound = *_vm->_sound;
 

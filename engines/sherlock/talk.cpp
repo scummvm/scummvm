@@ -1336,34 +1336,6 @@ OpcodeReturn Talk::cmdEnableEndKey(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn Talk::cmdGotoScene(const byte *&str) {
-	Map &map = *_vm->_map;
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-	scene._goToScene = str[1] - 1;
-
-	if (scene._goToScene != 100) {
-		// Not going to the map overview
-		map._oldCharPoint = scene._goToScene;
-		map._overPos.x = map[scene._goToScene].x * 100 - 600;
-		map._overPos.y = map[scene._goToScene].y * 100 + 900;
-
-		// Run a canimation?
-		if (str[2] > 100) {
-			people._hSavedFacing = str[2];
-			people._hSavedPos = Common::Point(160, 100);
-		}
-	}
-	str += 6;
-
-	_scriptMoreFlag = (scene._goToScene == 100) ? 2 : 1;
-	_scriptSaveIndex = str - _scriptStart;
-	_endStr = true;
-	_wait = 0;
-
-	return RET_SUCCESS;
-}
-
 OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 	People &people = *_vm->_people;
 	people[PLAYER]._type = REMOVE;

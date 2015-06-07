@@ -287,6 +287,40 @@ OpcodeReturn ScalpelTalk::cmdSwitchSpeaker(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+OpcodeReturn ScalpelTalk::cmdGotoScene(const byte *&str) {
+	Map &map = *_vm->_map;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	scene._goToScene = str[1] - 1;
+
+	if (scene._goToScene != 100) {
+		// Not going to the map overview
+		map._oldCharPoint = scene._goToScene;
+		map._overPos.x = map[scene._goToScene].x * 100 - 600;
+		map._overPos.y = map[scene._goToScene].y * 100 + 900;
+
+		// Run a canimation?
+		if (str[2] > 100) {
+			people._hSavedFacing = str[2];
+			people._hSavedPos = Point32(160, 100);
+		} else {
+			people._hSavedFacing = str[2] - 1;
+			int32 posX = (str[3] - 1) * 256 + str[4] - 1;
+			int32 posY = str[5] - 1;
+			people._hSavedPos = Point32(posX, posY);
+		}
+	}	// if (scene._goToScene != 100)
+
+	str += 6;
+
+	_scriptMoreFlag = (scene._goToScene == 100) ? 2 : 1;
+	_scriptSaveIndex = str - _scriptStart;
+	_endStr = true;
+	_wait = 0;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn ScalpelTalk::cmdAssignPortraitLocation(const byte *&str) {
 	People &people = *_vm->_people;
 
