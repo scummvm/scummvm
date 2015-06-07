@@ -277,7 +277,7 @@ bool ScalpelEngine::showCityCutscene() {
 	_music->playMusic("prolog1.mus");
 	_animation->_gfxLibraryFilename = "title.lib";
 	_animation->_soundLibraryFilename = "title.snd";
-	bool finished = _animation->play("26open1", 1, 255, true, 2);
+	bool finished = _animation->play("26open1", true, 1, 255, true, 2);
 
 	if (finished) {
 		ImageFile titleImages("title2.vgs", true);
@@ -302,7 +302,7 @@ bool ScalpelEngine::showCityCutscene() {
 	}
 
 	if (finished)
-		finished = _animation->play("26open2", 1, 0, false, 2);
+		finished = _animation->play("26open2", true, 1, 0, false, 2);
 
 	if (finished) {
 		ImageFile titleImages("title.vgs", true);
@@ -355,7 +355,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 	// Fade "In The Alley..." text to black
 	_screen->fadeToBlack(2);
 
-	bool finished = _animation->play("27PRO1", 1, 3, true, 2);
+	bool finished = _animation->play("27PRO1", true, 1, 3, true, 2);
 	if (finished) {
 		_screen->getPalette(palette);
 		_screen->fadeToBlack(2);
@@ -366,7 +366,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 
 	if (finished) {
 		_screen->setPalette(palette);
-		finished = _animation->play("27PRO2", 1, 0, false, 2);
+		finished = _animation->play("27PRO2", true, 1, 0, false, 2);
 	}
 
 	if (finished) {
@@ -385,7 +385,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 	}
 
 	if (finished)
-		finished = _animation->play("27PRO3", 1, 0, true, 2);
+		finished = _animation->play("27PRO3", true, 1, 0, true, 2);
 
 	if (finished) {
 		_screen->getPalette(palette);
@@ -427,12 +427,12 @@ bool ScalpelEngine::showStreetCutscene() {
 	}
 
 	if (finished)
-		finished = _animation->play("14KICK", 1, 3, true, 2);
+		finished = _animation->play("14KICK", true, 1, 3, true, 2);
 
 	// Constable animation plays slower than speed 2
 	// If we play it with speed 2, music gets obviously out of sync
 	if (finished)
-		finished = _animation->play("14NOTE", 1, 0, false, 3);
+		finished = _animation->play("14NOTE", true, 1, 0, false, 3);
 
 	// Fade to black
 	if (finished)
@@ -484,9 +484,9 @@ bool ScalpelEngine::showOfficeCutscene() {
 	_animation->_gfxLibraryFilename = "TITLE2.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	bool finished = _animation->play("COFF1", 1, 3, true, 3);
+	bool finished = _animation->play("COFF1", true, 1, 3, true, 3);
 	if (finished)
-		finished = _animation->play("COFF2", 1, 0, false, 3);
+		finished = _animation->play("COFF2", true, 1, 0, false, 3);
 	if (finished) {
 		showLBV("note.lbv");
 
@@ -508,10 +508,10 @@ bool ScalpelEngine::showOfficeCutscene() {
 	}
 
 	if (finished)
-		finished = _animation->play("COFF3", 1, 0, true, 3);
+		finished = _animation->play("COFF3", true, 1, 0, true, 3);
 
 	if (finished)
-		finished = _animation->play("COFF4", 1, 0, false, 3);
+		finished = _animation->play("COFF4", true, 1, 0, false, 3);
 
 	if (finished)
 		finished = scrollCredits();
@@ -526,47 +526,48 @@ bool ScalpelEngine::showOfficeCutscene() {
 
 // 3DO variant
 bool ScalpelEngine::showCityCutscene3DO() {
+	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	bool finished = _animation->play3DO("26open1", 1, 255, 2);
+	bool finished = _animation->play3DO("26open1", true, 1, 255, 2);
 
 	if (finished)
-		finished = _animation->play3DO("26open2", 1, 0, 2);
+		finished = _animation->play3DO("26open2", true, 1, 0, 2);
 
 	return finished;
 }
 
 bool ScalpelEngine::showAlleyCutscene3DO() {
-	bool finished = _animation->play3DO("27PRO1", 1, 3, 2);
+	bool finished = _animation->play3DO("27PRO1", true, 1, 3, 2);
 
 	if (finished)
-		finished = _animation->play3DO("27PRO2", 1, 0, 2);
+		finished = _animation->play3DO("27PRO2", true, 1, 0, 2);
 
 	if (finished)
-		finished = _animation->play3DO("27PRO3", 1, 0, 2);
+		finished = _animation->play3DO("27PRO3", true, 1, 0, 2);
 
 	return finished;
 }
 
 bool ScalpelEngine::showStreetCutscene3DO() {
-	bool finished = _animation->play3DO("14KICK", 1, 3, 2);
+	bool finished = _animation->play3DO("14KICK", true, 1, 3, 2);
 
 	if (finished)
-		finished = _animation->play3DO("14NOTE", 1, 0, 3);
+		finished = _animation->play3DO("14NOTE", true, 1, 0, 3);
 
 	return finished;
 }
 
 bool ScalpelEngine::showOfficeCutscene3DO() {
-	bool finished = _animation->play3DO("COFF1", 1, 3, 3);
+	bool finished = _animation->play3DO("COFF1", true, 1, 3, 3);
 
 	if (finished)
-		finished = _animation->play3DO("COFF2", 1, 0, 3);
+		finished = _animation->play3DO("COFF2", true, 1, 0, 3);
 
 	if (finished)
-		finished = _animation->play3DO("COFF3", 1, 0, 3);
+		finished = _animation->play3DO("COFF3", true, 1, 0, 3);
 
 	if (finished)
-		finished = _animation->play3DO("COFF4", 1, 0, 3);
+		finished = _animation->play3DO("COFF4", true, 1, 0, 3);
 
 	return finished;
 }
@@ -634,8 +635,8 @@ void ScalpelEngine::startScene() {
 			// Blackwood's capture
 			_res->addToCache("final2.vda", "epilogue.lib");
 			_res->addToCache("final2.vdx", "epilogue.lib");
-			_animation->play("final1", 1, 3, true, 4);
-			_animation->play("final2", 1, 0, false, 4);
+			_animation->play("final1", false, 1, 3, true, 4);
+			_animation->play("final2", false, 1, 0, false, 4);
 			break;
 
 		case RESCUE_ANNA:
@@ -651,8 +652,8 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("finale4.vda", "EPILOG2.lib");
 			_res->addToCache("finale4.vdx", "EPILOG2.lib");
 
-			_animation->play("finalr1", 1, 3, true, 4);
-			_animation->play("finalr2", 1, 0, false, 4);
+			_animation->play("finalr1", false, 1, 3, true, 4);
+			_animation->play("finalr2", false, 1, 0, false, 4);
 
 			if (!_res->isInCache("finale2.vda")) {
 				// Finale file isn't cached
@@ -664,12 +665,12 @@ void ScalpelEngine::startScene() {
 				_res->addToCache("finale4.vdx", "EPILOG2.lib");
 			}
 
-			_animation->play("finale1", 1, 0, false, 4);
-			_animation->play("finale2", 1, 0, false, 4);
-			_animation->play("finale3", 1, 0, false, 4);
+			_animation->play("finale1", false, 1, 0, false, 4);
+			_animation->play("finale2", false, 1, 0, false, 4);
+			_animation->play("finale3", false, 1, 0, false, 4);
 
 			_useEpilogue2 = true;
-			_animation->play("finale4", 1, 0, false, 4);
+			_animation->play("finale4", false, 1, 0, false, 4);
 			_useEpilogue2 = false;
 			break;
 
@@ -680,9 +681,9 @@ void ScalpelEngine::startScene() {
 			_res->addToCache("SUBWAY3.vda", "epilogue.lib");
 			_res->addToCache("SUBWAY3.vdx", "epilogue.lib");
 
-			_animation->play("SUBWAY1", 1, 3, true, 4);
-			_animation->play("SUBWAY2", 1, 0, false, 4);
-			_animation->play("SUBWAY3", 1, 0, false, 4);
+			_animation->play("SUBWAY1", false, 1, 3, true, 4);
+			_animation->play("SUBWAY2", false, 1, 0, false, 4);
+			_animation->play("SUBWAY3", false, 1, 0, false, 4);
 
 			// Set fading to direct fade temporary so the transition goes quickly.
 			_scene->_tempFadeStyle = _screen->_fadeStyle ? 257 : 256;
@@ -691,7 +692,7 @@ void ScalpelEngine::startScene() {
 
 		case BRUMWELL_SUICIDE:
 			// Brumwell suicide
-			_animation->play("suicid", 1, 3, true, 4);
+			_animation->play("suicid", false, 1, 3, true, 4);
 			break;
 		default:
 			break;

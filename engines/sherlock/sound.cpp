@@ -27,6 +27,7 @@
 #include "common/algorithm.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/aiff.h"
 #include "audio/decoders/wave.h"
 
 namespace Sherlock {
@@ -66,10 +67,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_speechOn = true;
 
 	if (_vm->getPlatform() == Common::kPlatform3DO) {
-		// 3DO: disable sound for now
-		// TODO
-		_soundOn = false;
-		_speechOn = false;
+		// 3DO: we don't need to prepare anything for sound
 		return;
 	}
 
@@ -130,58 +128,65 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 
 	Common::String filename = name;
 	if (!filename.contains('.')) {
-		if (IS_SERRATED_SCALPEL) {
-			filename += ".SND";
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			if (IS_SERRATED_SCALPEL) {
+				filename += ".SND";
+			} else {
+				filename += ".WAV";
+			}
 		} else {
-			filename += ".WAV";
+			// 3DO uses .aiff extension
+			filename += ".AIFF";
 		}
 	}
 
 	Common::String libFilename(libraryFilename);
 	Common::SeekableReadStream *stream = libFilename.empty() ? res.load(filename) : res.load(filename, libFilename);
 
-	if (!stream)
-		error("Unable to find sound file '%s'", filename.c_str());
-
 	Audio::AudioStream *audioStream;
 
-	if (IS_SERRATED_SCALPEL) {
-		stream->skip(2);
-		int size = stream->readUint32BE();
-		int rate = stream->readUint16BE();
-		byte *data = (byte *)malloc(size);
-		byte *ptr = data;
-		stream->read(ptr, size);
-		delete stream;
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (IS_SERRATED_SCALPEL) {
+			stream->skip(2);
+			int size = stream->readUint32BE();
+			int rate = stream->readUint16BE();
+			byte *data = (byte *)malloc(size);
+			byte *ptr = data;
+			stream->read(ptr, size);
+			delete stream;
 
-		assert(size > 2);
+			assert(size > 2);
 
-		byte *decoded = (byte *)malloc((size - 1) * 2);
+			byte *decoded = (byte *)malloc((size - 1) * 2);
 
-		// Holmes uses Creative ADPCM 4-bit data
-		int counter = 0;
-		byte reference = ptr[0];
-		int16 scale = 0;
+			// Holmes uses Creative ADPCM 4-bit data
+			int counter = 0;
+			byte reference = ptr[0];
+			int16 scale = 0;
 
-		for(int i = 1; i < size; i++) {
-			decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, reference, scale);
-			decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, reference, scale);
-		}
+			for(int i = 1; i < size; i++) {
+				decoded[counter++] = decodeSample((ptr[i]>>4)&0x0f, reference, scale);
+				decoded[counter++] = decodeSample((ptr[i]>>0)&0x0f, reference, scale);
+			}
 
-		free(data);
+			free(data);
 
 #if 0
-		// Debug : used to dump files
-		Common::DumpFile outFile;
-		outFile.open(filename);
-		outFile.write(decoded, (size - 2) * 2);
-		outFile.flush();
-		outFile.close();
+			// Debug : used to dump files
+			Common::DumpFile outFile;
+			outFile.open(filename);
+			outFile.write(decoded, (size - 2) * 2);
+			outFile.flush();
+			outFile.close();
 #endif
 
-		audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+			audioStream = Audio::makeRawStream(decoded, (size - 2) * 2, rate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		} else {
+			audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+		}
 	} else {
-		audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+		// 3DO: AIFF file
+		audioStream = Audio::makeAIFFStream(stream, DisposeAfterUse::YES);
 	}
 
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);

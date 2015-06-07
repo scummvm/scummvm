@@ -397,7 +397,7 @@ OpcodeReturn ScalpelTalk::cmdPlayPrologue(const byte *&str) {
 	for (int idx = 0; idx < 8 && str[idx] != '~'; ++idx)
 		tempString += str[idx];
 
-	anim.play(tempString, 1, 3, true, 4);
+	anim.play(tempString, false, 1, 3, true, 4);
 
 	return RET_SUCCESS;
 }
