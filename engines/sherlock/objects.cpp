@@ -596,6 +596,8 @@ void WalkSequence::load(Common::SeekableReadStream &s) {
 	_horizFlip = s.readByte() != 0;
 
 	_sequences.resize(s.readUint16LE());
+	s.skip(4);		// Skip over pointer field of structure
+
 	s.read(&_sequences[0], _sequences.size());
 }
 
