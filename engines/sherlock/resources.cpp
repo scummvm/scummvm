@@ -97,6 +97,8 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 			if (IS_SERRATED_SCALPEL) {
 				addToCache("sequence.txt");
 				addToCache("portrait.lib");
+			} else {
+				addToCache("walk.lib");
 			}
 		} else {
 			// 3DO
