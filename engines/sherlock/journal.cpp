@@ -403,37 +403,113 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			else
 				journalString += " said, \"";
 		} else {
-			// Control code, so move past it and any parameters
-			if (c == opcodes[OP_RUN_CANIMATION] || c == opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
-					c == opcodes[OP_PAUSE] || c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+			if (IS_SERRATED_SCALPEL) {
+				// Control code, so move past it and any parameters
+				if (c == opcodes[OP_RUN_CANIMATION] ||
+					c == opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
+					c == opcodes[OP_PAUSE] ||
+					c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
 					c == opcodes[OP_WALK_TO_CANIMATION]) {
-				// These commands have a single parameter
-				++replyP;
-
-			} else if (c == opcodes[OP_ADJUST_OBJ_SEQUENCE]) {
-				replyP += (replyP[0] & 127) + replyP[1] + 2;
-
-			} else if (c == opcodes[OP_WALK_TO_COORDS] || c == opcodes[OP_MOVE_MOUSE]) {
-				replyP += 4;
-				
-			} else if (c == opcodes[OP_SET_FLAG] || c == opcodes[OP_IF_STATEMENT]) {
-				replyP += 2;
-
-			} else if (c == opcodes[OP_SFX_COMMAND] || c == opcodes[OP_PLAY_PROLOGUE] ||
-				c == opcodes[OP_CALL_TALK_FILE]) {
-				replyP += 8;
-				break;
-
-			} else if (c == opcodes[OP_TOGGLE_OBJECT] || c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
-				c == opcodes[OP_SET_OBJECT] || c == opcodes[OP_DISPLAY_INFO_LINE] ||
-				c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
-				replyP += (*replyP & 127) + 1;
-
-			} else if (c == opcodes[OP_GOTO_SCENE]) {
-				replyP += 5;
-
-			} else if (c == opcodes[OP_CARRIAGE_RETURN]) {
-				journalString += "\n";
+					// These commands have a single parameter
+					++replyP;
+				} else if (c == opcodes[OP_ADJUST_OBJ_SEQUENCE]) {
+					replyP += (replyP[0] & 127) + replyP[1] + 2;
+				} else if (c == opcodes[OP_WALK_TO_COORDS] || c == opcodes[OP_MOVE_MOUSE]) {
+					replyP += 4;
+				} else if (c == opcodes[OP_SET_FLAG] || c == opcodes[OP_IF_STATEMENT]) {
+					replyP += 2;
+				} else if (c == opcodes[OP_SFX_COMMAND] || c == opcodes[OP_PLAY_PROLOGUE] ||
+					c == opcodes[OP_CALL_TALK_FILE]) {
+					replyP += 8;
+					break;
+				} else if (c == opcodes[OP_TOGGLE_OBJECT] || c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+					c == opcodes[OP_SET_OBJECT] || c == opcodes[OP_DISPLAY_INFO_LINE] ||
+					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
+					replyP += (*replyP & 127) + 1;
+				} else if (c == opcodes[OP_GOTO_SCENE]) {
+					replyP += 5;
+				} else if (c == opcodes[OP_CARRIAGE_RETURN]) {
+					journalString += "\n";
+				} else {
+					error("Unhandled opcode %d in loadJournalFile", c);
+				}
+			} else {
+				if (c == opcodes[OP_RUN_CANIMATION] ||
+					c == opcodes[OP_PAUSE] ||
+					c == opcodes[OP_MOUSE_OFF_ON] ||
+					c == opcodes[OP_SET_WALK_CONTROL] ||
+					c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+					c == opcodes[OP_WALK_TO_CANIMATION] ||
+					c == opcodes[OP_TURN_NPC_OFF] ||
+					c == opcodes[OP_TURN_NPC_ON] ||
+					c == opcodes[OP_RESTORE_PEOPLE_SEQUENCE])
+					++replyP;
+				else if (
+					c == opcodes[OP_SET_TALK_SEQUENCE] ||
+					c == opcodes[OP_SET_FLAG] ||
+					c == opcodes[OP_WALK_NPC_TO_CANIM] ||
+					c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_CANIM] ||
+					c == opcodes[OP_NPC_PATH_LABEL] ||
+					c == opcodes[OP_PATH_GOTO_LABEL])
+					replyP += 2;
+				else if (
+					c == opcodes[OP_SET_NPC_PATH_PAUSE] ||
+					c == opcodes[OP_NPC_PATH_PAUSE_TAKING_NOTES] ||
+					c == opcodes[OP_NPC_PATH_PAUSE_LOOKING_HOLMES] ||
+					c == opcodes[OP_NPC_VERB_CANIM])
+					replyP += 3;
+				else if (
+					c == opcodes[OP_SET_SCENE_ENTRY_FLAG] ||
+					c == opcodes[OP_PATH_IF_FLAG_GOTO_LABEL])
+					replyP += 4;
+				else if (
+					c == opcodes[OP_WALK_TO_COORDS])
+					replyP += 5;
+				else if (
+					c == opcodes[OP_SET_NPC_POSITION] ||
+					c == opcodes[OP_GOTO_SCENE] ||
+					c == opcodes[OP_SET_NPC_PATH_DEST] ||
+					c == opcodes[OP_SET_NPC_POSITION])
+					replyP += 6;
+				else if (
+					c == opcodes[OP_PLAY_SONG] ||
+					c == opcodes[OP_NEXT_SONG])
+					replyP += 8;
+				else if (
+					c == opcodes[OP_CALL_TALK_FILE] ||
+					c == opcodes[OP_SET_NPC_TALK_FILE] ||
+					c == opcodes[OP_NPC_WALK_GRAPHICS])
+					replyP += 9;
+				else if (
+					c == opcodes[OP_NPC_VERB_SCRIPT])
+					replyP += 10;
+				else if (
+					c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_COORDS])
+					replyP += 11;
+				else if (
+					c == opcodes[OP_NPC_VERB] ||
+					c == opcodes[OP_NPC_VERB_TARGET])
+					replyP += 14;
+				else if (
+					c == opcodes[OP_ADJUST_OBJ_SEQUENCE])
+					error("TODO: opcode %d in loadJournalFile", c);
+				else if (
+					c == opcodes[OP_TOGGLE_OBJECT] ||
+					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+					c == opcodes[OP_SET_OBJECT] ||
+					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY])
+					error("TODO: opcode %d in loadJournalFile", c);
+				else if (
+					c == opcodes[OP_BANISH_WINDOW]) {
+					error("TODO: opcode %d in loadJournalFile", c);
+				} else if (
+					c == opcodes[OP_NPC_DESC_ON_OFF]) {
+					error("TODO: opcode %d in loadJournalFile", c);
+				} else if (
+					c == opcodes[OP_SET_NPC_INFO_LINE])
+					error("TODO: opcode %d in loadJournalFile", c);
+				else
+					error("Unhandled opcode %d in loadJournalFile", c);
 			}
 
 			// Put a space in the output for a control character, unless it's
