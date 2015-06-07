@@ -1481,8 +1481,8 @@ OpcodeReturn Talk::cmdWalkToCoords(const byte *&str) {
 	People &people = *_vm->_people;
 	++str;
 
-	people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * 100,
-		str[2] * 100), str[3] - 1);
+	people.walkToCoords(Common::Point(((str[0] - 1) * 256 + str[1] - 1) * FIXED_INT_MULTIPLIER,
+		str[2] * FIXED_INT_MULTIPLIER), str[3] - 1);
 	if (_talkToAbort)
 		return RET_EXIT;
 

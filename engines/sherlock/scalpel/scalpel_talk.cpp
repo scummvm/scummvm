@@ -296,8 +296,8 @@ OpcodeReturn ScalpelTalk::cmdGotoScene(const byte *&str) {
 	if (scene._goToScene != 100) {
 		// Not going to the map overview
 		map._oldCharPoint = scene._goToScene;
-		map._overPos.x = map[scene._goToScene].x * 100 - 600;
-		map._overPos.y = map[scene._goToScene].y * 100 + 900;
+		map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;
+		map._overPos.y = (map[scene._goToScene].y + 9) * FIXED_INT_MULTIPLIER;
 
 		// Run a canimation?
 		if (str[2] > 100) {
