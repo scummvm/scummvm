@@ -185,6 +185,12 @@ public:
 	void remove() { _visage.clear(); }
 };
 
+struct AnimationFrame {
+	int	frame;
+	int	x;
+	int	y;
+};
+
 class Logo {
 private:
 	ScalpelEngine *_vm;
@@ -198,6 +204,11 @@ private:
 	Object _objects[4];
 	uint _waitFrames;
 	uint32 _waitStartFrame;
+	int _animateObject;
+	uint32 _animateStartFrame;
+	uint _animateFrameDelay;
+	const AnimationFrame *_animateFrames;
+	uint _animateFrame;
 
 	Logo(ScalpelEngine *vm);
 	~Logo();
@@ -211,6 +222,13 @@ private:
 	 * not the same as the number of calls to nextFrame().
 	 */
 	void waitFrames(uint frames);
+
+	/**
+	 * Start an animation sequence. Used for sequences that are described
+	 * one frame at a time because they do unusual things, or run at
+	 * unusual rates.
+	 */
+	void startAnimation(uint object, uint frameDelay, const AnimationFrame *frames);
 
 	/**
 	 * Load the background for the scene

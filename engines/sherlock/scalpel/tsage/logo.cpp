@@ -426,6 +426,13 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	// Initialize wait frame counters
 	_waitFrames = 0;
 	_waitStartFrame = 0;
+
+	// Initialize animation counters
+	_animateObject = 0;
+	_animateStartFrame = 0;
+	_animateFrameDelay = 0;
+	_animateFrames = NULL;
+	_animateFrame = 0;
 	
 	// Save a copy of the original palette
 	_vm->_screen->getPalette(_originalPalette);
@@ -452,6 +459,19 @@ bool Logo::finished() const {
 	return _finished;
 }
 
+const AnimationFrame handFrames[] = {
+	{  1,  33,  91 }, {  2,  44, 124 }, {  3,  64, 153 }, {  4,  87, 174 },
+	{  5, 114, 191 }, {  6, 125, 184 }, {  7, 154, 187 }, {  8, 181, 182 },
+	{  9, 191, 167 }, { 10, 190, 150 }, { 11, 182, 139 }, { 11, 170, 130 },
+	{ 11, 158, 121 }, {  0,   0,   0 }
+};
+
+const AnimationFrame companyFrames[] = {
+	{  1, 155,  94 }, {  2, 155,  94 }, {  3, 155,  94 }, {  4, 155,  94 },
+	{  5, 155,  94 }, {  6, 155,  94 }, {  7, 155,  94 }, {  8, 155,  94 },
+	{  0,   0,   0 }
+};
+
 void Logo::nextFrame() {
 	Screen &screen = *_vm->_screen;
 
@@ -462,6 +482,27 @@ void Logo::nextFrame() {
 		}
 		_waitStartFrame = 0;
 		_waitFrames = 0;
+	}
+
+	if (_animateFrames) {
+		uint32 currFrame = _vm->_events->getFrameCounter();
+		if (currFrame > _animateStartFrame + _animateFrameDelay) {
+			AnimationFrame animationFrame = _animateFrames[_animateFrame];
+			if (animationFrame.frame) {
+				_objects[_animateObject]._frame = animationFrame.frame;
+				_objects[_animateObject]._position = Common::Point(animationFrame.x, animationFrame.y);
+				_animateStartFrame += _animateFrameDelay;
+				_animateFrame++;
+			} else {
+				_animateObject = 0;
+				_animateFrameDelay = 0;
+				_animateFrames = NULL;
+				_animateStartFrame = 0;
+				_animateFrame = 0;
+			}
+		}
+		if (_animateFrames)
+			return;
 	}
 
 	switch (_counter++) {
@@ -543,130 +584,25 @@ void Logo::nextFrame() {
 	case 8:
 		// Start sequence of positioning and size hand cursor in an arc
 		_objects[2].setVisage(18, 1);
-		_objects[2]._frame = 1;
-		_objects[2]._position = Common::Point(33, 91);
-		waitFrames(5);
+		startAnimation(2, 5, &handFrames[0]);
 		break;
 
 	case 9:
-		_objects[2]._frame = 2;
-		_objects[2]._position = Common::Point(44, 124);
-		waitFrames(5);
-		break;
-
-	case 10:
-		_objects[2]._frame = 3;
-		_objects[2]._position = Common::Point(64, 153);
-		waitFrames(5);
-		break;
-
-	case 11:
-		_objects[2]._frame = 4;
-		_objects[2]._position = Common::Point(87, 174);
-		waitFrames(5);
-		break;
-
-	case 12:
-		_objects[2]._frame = 5;
-		_objects[2]._position = Common::Point(114, 191);
-		waitFrames(5);
-		break;
-
-	case 13:
-		_objects[2]._frame = 6;
-		_objects[2]._position = Common::Point(125, 184);
-		waitFrames(5);
-		break;
-
-	case 14:
-		_objects[2]._frame = 7;
-		_objects[2]._position = Common::Point(154, 187);
-		waitFrames(5);
-		break;
-
-	case 15:
-		_objects[2]._frame = 8;
-		_objects[2]._position = Common::Point(181, 182);
-		waitFrames(5);
-		break;
-
-	case 16:
-		_objects[2]._frame = 9;
-		_objects[2]._position = Common::Point(191, 167);
-		waitFrames(5);
-		break;
-
-	case 17:
-		_objects[2]._frame = 10;
-		_objects[2]._position = Common::Point(190, 150);
-		waitFrames(5);
-		break;
-
-	case 18:
-		_objects[2]._frame = 11;
-		_objects[2]._position = Common::Point(182, 139);
-		waitFrames(5);
-		break;
-
-	case 19:
-		_objects[2]._frame = 11;
-		_objects[2]._position = Common::Point(170, 130);
-		waitFrames(5);
-		break;
-
-	case 20:
-		_objects[2]._frame = 11;
-		_objects[2]._position = Common::Point(158, 121);
-		waitFrames(5);
-		break;
-
-	case 21:
 		// Show a highlighting of the company name
 		_objects[1].remove();
 		_objects[2].erase();
 		_objects[2].remove();
 		_objects[3].setVisage(19, 1);
-		_objects[3]._position = Common::Point(155, 94);
-		waitFrames(8);
+		startAnimation(3, 8, &companyFrames[0]);
 		break;
 
-	case 22:
-		_objects[3]._frame = 2;
-		waitFrames(8);
-		break;
-
-	case 23:
-		_objects[3]._frame = 3;
-		waitFrames(8);
-		break;
-
-	case 24:
-		_objects[3]._frame = 4;
-		waitFrames(8);
-		break;
-
-	case 25:
-		_objects[3]._frame = 5;
-		waitFrames(8);
-		break;
-
-	case 26:
-		_objects[3]._frame = 6;
-		waitFrames(8);
-		break;
-
-	case 27:
-		_objects[3]._frame = 7;
-		waitFrames(8);
-		break;
-
-	case 28:
-		_objects[3]._frame = 8;
+	case 10:
 		waitFrames(180);
 		break;
 
-	case 29:
+	case 11:
 		_finished = true;
+		break;
 
 	default:
 		break;
@@ -676,6 +612,17 @@ void Logo::nextFrame() {
 void Logo::waitFrames(uint frames) {
 	_waitFrames = frames;
 	_waitStartFrame = _vm->_events->getFrameCounter();
+}
+
+void Logo::startAnimation(uint object, uint frameDelay, const AnimationFrame *frames) {
+	_animateObject = object;
+	_animateFrameDelay = frameDelay;
+	_animateFrames = frames;
+	_animateStartFrame = _vm->_events->getFrameCounter();
+	_animateFrame = 1;
+
+	_objects[object]._frame = frames[0].frame;
+	_objects[object]._position = Common::Point(frames[0].x, frames[0].y);
 }
 
 void Logo::loadBackground() {
