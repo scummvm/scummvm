@@ -76,6 +76,8 @@ public:
 	 * Play a full-screen animation
 	 */
 	bool play(const Common::String &filename, int minDelay, int fade, bool setPalette, int speed);
+
+	bool play3DO(const Common::String &filename, int minDelay, int fade, int speed);
 };
 
 } // End of namespace Sherlock

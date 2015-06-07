@@ -28,9 +28,9 @@
 
 namespace Sherlock {
 
-Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight()), _vm(vm),
-		_backBuffer1(g_system->getWidth(), g_system->getHeight()),
-		_backBuffer2(g_system->getWidth(), g_system->getHeight()),
+Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()), _vm(vm),
+		_backBuffer1(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()),
+		_backBuffer2(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()),
 		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;

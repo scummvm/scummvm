@@ -51,7 +51,7 @@ const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 
 /*----------------------------------------------------------------*/
 
-Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12) {
+Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12, vm->getPlatform()) {
 	_active = false;
 	_mapCursors = nullptr;
 	_shapes = nullptr;
@@ -286,7 +286,7 @@ void Map::setupSprites() {
 
 	_shapes = new ImageFile("mapicon.vgs");
 	_iconShapes = new ImageFile("overicon.vgs");
-	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height);
+	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height, _vm->getPlatform());
 	Person &p = people[AL];
 	p._description = " ";
 	p._type = CHARACTER;

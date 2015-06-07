@@ -182,7 +182,16 @@ ScalpelEngine::~ScalpelEngine() {
 }
 
 void ScalpelEngine::initialize() {
-	initGraphics(320, 200, false);
+	// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
+	const Graphics::PixelFormat *pixelFormatRGB565 = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+	if (getPlatform() == Common::kPlatform3DO) {
+		// 320x200 16-bit RGB565 for 3DO support
+		initGraphics(320, 200, false, pixelFormatRGB565);
+	} else {
+		// 320x200 palettized
+		initGraphics(320, 200, false);
+	}
 
 	// Let the base engine intialize
 	SherlockEngine::initialize();
@@ -231,6 +240,14 @@ void ScalpelEngine::showOpening() {
 		// 3DO animations are in directory Prologue/
 		// .3DX seem to be just like .VDX except that all INT16LE are INT16BE
 		// .3DA however seems to be completely different
+		if (!showCityCutscene3DO())
+			return;
+		if (!showAlleyCutscene3DO())
+			return;
+		if (!showStreetCutscene3DO())
+			return;
+		if (!showOfficeCutscene3DO())
+			return;
 		return;
 	}
 
@@ -504,6 +521,53 @@ bool ScalpelEngine::showOfficeCutscene() {
 
 	_animation->_gfxLibraryFilename = "";
 	_animation->_soundLibraryFilename = "";
+	return finished;
+}
+
+// 3DO variant
+bool ScalpelEngine::showCityCutscene3DO() {
+
+	bool finished = _animation->play3DO("26open1", 1, 255, 2);
+
+	if (finished)
+		finished = _animation->play3DO("26open2", 1, 0, 2);
+
+	return finished;
+}
+
+bool ScalpelEngine::showAlleyCutscene3DO() {
+	bool finished = _animation->play3DO("27PRO1", 1, 3, 2);
+
+	if (finished)
+		finished = _animation->play3DO("27PRO2", 1, 0, 2);
+
+	if (finished)
+		finished = _animation->play3DO("27PRO3", 1, 0, 2);
+
+	return finished;
+}
+
+bool ScalpelEngine::showStreetCutscene3DO() {
+	bool finished = _animation->play3DO("14KICK", 1, 3, 2);
+
+	if (finished)
+		finished = _animation->play3DO("14NOTE", 1, 0, 3);
+
+	return finished;
+}
+
+bool ScalpelEngine::showOfficeCutscene3DO() {
+	bool finished = _animation->play3DO("COFF1", 1, 3, 3);
+
+	if (finished)
+		finished = _animation->play3DO("COFF2", 1, 0, 3);
+
+	if (finished)
+		finished = _animation->play3DO("COFF3", 1, 0, 3);
+
+	if (finished)
+		finished = _animation->play3DO("COFF4", 1, 0, 3);
+
 	return finished;
 }
 

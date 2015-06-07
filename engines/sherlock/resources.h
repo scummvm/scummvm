@@ -222,6 +222,29 @@ public:
 	static void setVm(SherlockEngine *vm);
 };
 
+class ImageFile3DO : public Common::Array<ImageFrame> {
+private:
+	static SherlockEngine *_vm;
+
+	/**
+	 * Load the data of the sprite
+	 */
+	void load(Common::SeekableReadStream &stream, bool animImages);
+
+	/**
+	 * Decompress a single frame for the sprite
+	 */
+	void decompressFrame(Common::SeekableReadStream *stream, ImageFrame  &frame, const byte *src);
+
+	inline uint16 convertPixel(uint16 pixel3DO);
+
+public:
+	ImageFile3DO(const Common::String &name, bool animImages = false);
+	ImageFile3DO(Common::SeekableReadStream &stream);
+	~ImageFile3DO();
+	static void setVm(SherlockEngine *vm);
+};
+
 } // End of namespace Sherlock
 
 #endif

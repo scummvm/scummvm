@@ -1235,7 +1235,7 @@ void ScalpelUserInterface::doLookControl() {
 		} else {
 			// Looking at an inventory object
 			// Backup the user interface
-			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
+			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1, _vm->getPlatform());
 			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -1791,7 +1791,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				// If it wasn't a right button click, then we need depress
 				// the look button before we close the window. So save a copy of the
 				// menu area, and draw the controls onto it
-				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
+				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h, _vm->getPlatform());
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 
 				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
@@ -1982,7 +1982,7 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 
 	// Extract the window that's been drawn on the back buffer
 	Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
-		(SHERLOCK_SCREEN_HEIGHT - height));
+		(SHERLOCK_SCREEN_HEIGHT - height), _vm->getPlatform());
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 

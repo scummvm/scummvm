@@ -43,21 +43,25 @@ private:
 	 * Show the starting city cutscene which shows the game title
 	 */
 	bool showCityCutscene();
+	bool showCityCutscene3DO();
 
 	/**
 	 * Show the back alley where the initial murder takes place
 	 */
 	bool showAlleyCutscene();
+	bool showAlleyCutscene3DO();
 
 	/**
 	 * Show the Baker Street outside cutscene
 	 */
 	bool showStreetCutscene();
+	bool showStreetCutscene3DO();
 
 	/**
 	 * Show Holmes and Watson at the breakfast table, lestrade's note, and then the scrolling credits
 	 */
 	bool showOfficeCutscene();
+	bool showOfficeCutscene3DO();
 
 	/**
 	 * Show the game credits

@@ -30,8 +30,8 @@ namespace Sherlock {
 
 const int TRANSPARENCY = 0xFF;
 
-Surface::Surface(uint16 width, uint16 height) : _freePixels(true) {
-	create(width, height);
+Surface::Surface(uint16 width, uint16 height, Common::Platform platform) : _freePixels(true) {
+	create(width, height, platform);
 }
 
 Surface::Surface() : _freePixels(false) {
@@ -42,11 +42,15 @@ Surface::~Surface() {
 		_surface.free();
 }
 
-void Surface::create(uint16 width, uint16 height) {
+void Surface::create(uint16 width, uint16 height, Common::Platform platform) {
 	if (_freePixels)
 		_surface.free();
 
-	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	if (platform == Common::kPlatform3DO) {
+		_surface.create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	} else {
+		_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	}
 	_freePixels = true;
 }
 
@@ -181,6 +185,34 @@ void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::
 				*destP = overrideColor ? overrideColor : *srcP;
 
 			srcP = flipped ? srcP - 1 : srcP + 1;
+		}
+	}
+}
+
+// TODO: Needs to get implemented properly
+void Surface::transBlitFromUnscaled3DO(const Graphics::Surface &src, const Common::Point &pt) {
+	Common::Rect drawRect(0, 0, src.w, src.h);
+	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
+
+	// Clip the display area to on-screen
+	if (!clip(drawRect, destRect))
+		// It's completely off-screen
+		return;
+
+	Common::Point destPt(destRect.left, destRect.top);
+	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
+		destPt.y + drawRect.height()));
+
+	// Draw loop
+	for (int yp = 0; yp < drawRect.height(); ++yp) {
+		const uint16 *srcP = (const uint16 *)src.getBasePtr(drawRect.left, drawRect.top + yp);
+		uint16 *destP = (uint16 *)getBasePtr(destPt.x, destPt.y + yp);
+
+		for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
+			if (*srcP) // 0 = transparent on 3DO
+				*destP = *srcP;
+
+			srcP = srcP + 1;
 		}
 	}
 }

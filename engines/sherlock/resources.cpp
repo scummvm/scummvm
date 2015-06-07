@@ -566,4 +566,158 @@ int ImageFrame::sDrawYOffset(int scaleVal) const {
 	return result;
 }
 
+// *******************************************************
+
+/*----------------------------------------------------------------*/
+
+SherlockEngine *ImageFile3DO::_vm;
+
+void ImageFile3DO::setVm(SherlockEngine *vm) {
+	_vm = vm;
+}
+
+ImageFile3DO::ImageFile3DO(const Common::String &name, bool animImages) {
+	Common::File *dataStream = new Common::File();
+
+	if (!dataStream->open(name)) {
+		error("unable to open %s\n", name);
+	}
+
+	load(*dataStream, animImages);
+
+	delete dataStream;
+}
+
+ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream) {
+	load(stream, false);
+}
+
+ImageFile3DO::~ImageFile3DO() {
+	for (uint idx = 0; idx < size(); ++idx)
+		(*this)[idx]._frame.free();
+}
+
+void ImageFile3DO::load(Common::SeekableReadStream &stream, bool animImages) {
+	int streamSize = stream.size();
+	uint32 compressedSize = 0;
+
+	while (stream.pos() < streamSize) {
+		ImageFrame frame;
+
+		compressedSize = stream.readUint16BE();
+
+		frame._width = stream.readUint16BE() + 1; // 2 bytes BE width
+		frame._height = stream.readByte() + 1; // 1 byte BE height
+		frame._paletteBase = 0;
+
+		if (animImages) {
+			// Animation cutscene image files use a 16-bit x offset
+			frame._offset.x = stream.readUint16BE();
+			frame._rleEncoded = true; // always compressed
+			if (frame._width & 0x8000) {
+				frame._width &= 0x7FFF;
+				compressedSize += 0x10000;
+			}
+			frame._offset.y = stream.readByte();
+		} else {
+			// Standard image files have a separate byte for the RLE flag, and an 8-bit X offset
+			//frame._rleEncoded = stream.readByte() == 1;
+			//frame._offset.x = stream.readByte();
+			//frame._offset.y = stream.readByte();
+		}
+
+		frame._size = 0;
+
+		//warning("getting frame %d from offset %d", this->size(), stream.pos());
+
+		// Load data for frame and decompress it
+		byte *data = new byte[compressedSize];
+		stream.read(data, compressedSize);
+		decompressFrame(&stream, frame, data);
+		delete[] data;
+
+		push_back(frame);
+	}
+}
+
+// 3DO uses RGB555, we use RGB565 internally so that more platforms are able to run us
+inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
+	byte red   = (pixel3DO >> 10) & 0x1F;
+	byte green = (pixel3DO >> 5) & 0x1F;
+	byte blue  = pixel3DO & 0x1F;;
+
+	return ((red << 11) | (green << 6) | (blue));
+}
+
+void ImageFile3DO::decompressFrame(Common::SeekableReadStream *stream, ImageFrame &frame, const byte *src) {
+	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+	uint16 *dest = (uint16 *)frame._frame.getPixels();
+	Common::fill(dest, dest + frame._width * frame._height, 0);
+
+	const byte *srcSeeker = src;
+
+	// CEL compression
+	int frameHeightLeft = frame._height;
+	int frameWidthLeft = frame._width;
+
+	while (frameHeightLeft > 0) {
+		frameWidthLeft = frame._width;
+
+		uint16 dwordSize = READ_BE_UINT16(srcSeeker);
+		dwordSize += 2;
+		uint16 lineByteSize = dwordSize * 4;
+
+		// debug
+		//warning("offset %d: decoding line, size %d, bytesize %d", srcSeeker - src, dwordSize, lineByteSize);
+
+		const byte *srcLine = srcSeeker + 2; // start at 3rd byte
+		while (frameWidthLeft > 0) {
+			byte compressionByte = *srcLine++;
+			byte compressionType = compressionByte >> 6; // upper 2 bits == type
+			byte compressionPixels = (compressionByte & 0x3F) + 1; // lower 6 bits == length (0 = 1 pixel)
+			uint16 pixelCount;
+			uint16 pixel;
+
+			if (!compressionType) // end of line
+				break;
+
+			switch(compressionType) {
+			case 1: // simple copy
+				for (pixelCount = 0; pixelCount < compressionPixels; pixelCount++) {
+					pixel = READ_BE_UINT16(srcLine); srcLine += 2;
+					*dest++ = convertPixel(pixel);
+				}
+				break;
+			case 2: // transparent
+				for (pixelCount = 0; pixelCount < compressionPixels; pixelCount++) {
+					*dest++ = 0;
+				}
+				break;
+			case 3: // duplicate pixels
+				pixel = READ_BE_UINT16(srcLine); srcLine += 2;
+				pixel = convertPixel(pixel);
+				for (pixelCount = 0; pixelCount < compressionPixels; pixelCount++) {
+					*dest++ = pixel;
+				}
+				break;
+			default:
+				break;
+			}
+			frameWidthLeft -= compressionPixels;
+		}
+
+		assert(frameWidthLeft >= 0);
+
+		if (frameWidthLeft > 0) {
+			// still pixels left? skip them
+			dest += frameWidthLeft;
+		}
+
+		frameHeightLeft--;
+
+		// Seek to next line start
+		srcSeeker += lineByteSize;
+	}
+}
+
 } // End of namespace Sherlock

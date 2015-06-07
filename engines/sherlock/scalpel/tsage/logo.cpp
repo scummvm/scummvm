@@ -104,7 +104,7 @@ void Visage::surfaceFromRes(ObjectSurface &s) {
 	int frameWidth = _stream->readUint16LE();
 	int frameHeight = _stream->readUint16LE();
 	Common::Rect r(0, 0, frameWidth, frameHeight);
-	s.create(r.width(), r.height());
+	s.create(r.width(), r.height(), Common::kPlatformDOS); // maybe change this to a bool later? TODO
 
 	s._centroid.x = _stream->readSint16LE();
 	s._centroid.y = _stream->readSint16LE();
