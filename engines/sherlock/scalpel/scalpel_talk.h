@@ -56,6 +56,11 @@ protected:
 	 * Display the talk interface window
 	 */
 	virtual void talkInterface(const byte *&str);
+
+	/**
+	 * Pause when displaying a talk dialog on-screen
+	 */
+	virtual void talkWait(const byte *&str);
 public:
 	ScalpelTalk(SherlockEngine *vm);
 	virtual ~ScalpelTalk() {}

@@ -492,6 +492,21 @@ OpcodeReturn ScalpelTalk::cmdCarriageReturn(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+void ScalpelTalk::talkWait(const byte *&str) {
+	UserInterface &ui = *_vm->_ui;
+	bool pauseFlag = _pauseFlag;
+
+	Talk::talkWait(str);
+
+	// Clear the window unless the wait was due to a PAUSE command
+	if (!pauseFlag && _wait != -1 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND]) {
+		if (!_talkStealth)
+			ui.clearWindow();
+		_yp = CONTROLS_Y + 12;
+		_charCount = _line = 0;
+	}
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

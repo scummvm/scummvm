@@ -186,8 +186,7 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 		// See if the NPC's sequence has to wait for an Abort Talk Code
 		if (person.hasAborts()) {
 			person._gotoSeq = newDir;
-		}
-		else {
+		} else {
 			if (person._seqTo) {
 				// Reset to previous value
 				person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;

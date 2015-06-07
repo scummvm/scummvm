@@ -1073,31 +1073,9 @@ void Talk::doScript(const Common::String &script) {
 			_openTalkWindow = false;
 		}
 
-		if (_wait) {
+		if (_wait)
 			// Handling pausing
-			if (!_pauseFlag && _charCount < 160)
-				_charCount = 160;
-
-			_wait = waitForMore(_charCount);
-			if (_wait == -1)
-				_endStr = true;
-
-			// If a key was pressed to finish the window, see if further voice files should be skipped
-			if (_wait >= 0 && _wait < 254) {
-				if (str[0] == _opcodes[OP_SFX_COMMAND])
-					str += 9;
-			}
-
-			// Clear the window unless the wait was due to a PAUSE command
-			if (!_pauseFlag && _wait != -1 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND]) {
-				if (!_talkStealth)
-					ui.clearWindow();
-				_yp = CONTROLS_Y + 12;
-				_charCount = _line = 0;
-			}
-
-			_pauseFlag = false;
-		}
+			talkWait(str);
 	} while (!_vm->shouldQuit() && !_endStr);
 
 	if (_wait != -1) {
@@ -1488,6 +1466,23 @@ OpcodeReturn Talk::cmdWalkToCoords(const byte *&str) {
 
 	str += 3;
 	return RET_SUCCESS;
+}
+
+void Talk::talkWait(const byte *&str) {
+	if (!_pauseFlag && _charCount < 160)
+		_charCount = 160;
+
+	_wait = waitForMore(_charCount);
+	if (_wait == -1)
+		_endStr = true;
+
+	// If a key was pressed to finish the window, see if further voice files should be skipped
+	if (_wait >= 0 && _wait < 254) {
+		if (str[0] == _opcodes[OP_SFX_COMMAND])
+			str += 9;
+	}
+
+	_pauseFlag = false;
 }
 
 } // End of namespace Sherlock

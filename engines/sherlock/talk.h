@@ -256,6 +256,11 @@ protected:
 	 * Display the talk interface window
 	 */
 	virtual void talkInterface(const byte *&str) = 0;
+
+	/**
+	 * Pause when displaying a talk dialog on-screen
+	 */
+	virtual void talkWait(const byte *&str);
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
 	bool _talkToAbort;

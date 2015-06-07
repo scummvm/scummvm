@@ -215,6 +215,8 @@ OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {
 
 	people.setListenSequence(_speaker, 129);
 	_speaker = *++str - 1;
+	++str;
+
 	people.setTalkSequence(_speaker, 1);
 
 	return RET_SUCCESS;
