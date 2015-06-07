@@ -65,6 +65,11 @@ private:
 	 */
 	bool cmdSong(int argc, const char **argv);
 
+	/**
+	 * Dumps a file to disk
+	 */
+	bool cmdDumpFile(int argc, const char **argv);
+
 private:
 	Common::String _3doPlayMovieFile;
 };

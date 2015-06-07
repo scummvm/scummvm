@@ -39,6 +39,7 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("3do_playmovie", WRAP_METHOD(Debugger, cmd3DO_PlayMovie));
 	registerCmd("3do_playaudio", WRAP_METHOD(Debugger, cmd3DO_PlayAudio));
 	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
+	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
 }
 
 void Debugger::postEnter() {
@@ -138,6 +139,35 @@ bool Debugger::cmdSong(int argc, const char **argv) {
 		return true;
 	}
 	return false;
+}
+
+bool Debugger::cmdDumpFile(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Format: dumpfile <resource name>\n");
+		return true;
+	}
+
+	Common::SeekableReadStream *s = _vm->_res->load(argv[1]);
+	if (!s) {
+		debugPrintf("Invalid resource.\n");
+		return true;
+	}
+
+	byte *buffer = new byte[s->size()];
+	s->read(buffer, s->size());
+
+	Common::DumpFile dumpFile;
+	dumpFile.open(argv[1]);
+
+	dumpFile.write(buffer, s->size());
+	dumpFile.flush();
+	dumpFile.close();
+
+	delete[] buffer;
+
+	debugPrintf("Resource %s has been dumped to disk.\n", argv[1]);
+
+	return true;
 }
 
 } // End of namespace Sherlock
