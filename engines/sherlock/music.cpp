@@ -197,6 +197,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		// 3DO - disable music
 		// TODO: Implement music support
 		_driver = NULL;
+		_midiParser = NULL;
 		_musicType = MT_NULL;
 		_musicOn = false;
 		return;
