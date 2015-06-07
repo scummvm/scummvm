@@ -580,7 +580,7 @@ ImageFile3DO::ImageFile3DO(const Common::String &name, bool animImages) {
 	Common::File *dataStream = new Common::File();
 
 	if (!dataStream->open(name)) {
-		error("unable to open %s\n", name);
+		error("unable to open %s\n", name.c_str());
 	}
 
 	load(*dataStream, animImages);

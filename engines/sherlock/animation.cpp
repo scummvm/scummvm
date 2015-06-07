@@ -150,7 +150,7 @@ bool Animation::play3DO(const Common::String &filename, int minDelay, int fade,
 	Common::File *indexStream = new Common::File();
 
 	if (!indexStream->open(indexName)) {
-		warning("unable to open %s\n", indexName);
+		warning("unable to open %s\n", indexName.c_str());
 		return false;
 	}
 
