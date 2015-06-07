@@ -72,7 +72,7 @@ public:
 
 	// TODO: Not so sure these should be in the base class. May want to refactor them to SherlockEngine, or refactor
 	// various Scalpel dialogs to keep their own private state of key/selections
-	char _key, _oldKey;
+	signed char _key, _oldKey;
 	int _selector, _oldSelector;
 	int _temp, _oldTemp;
 	int _temp1;
