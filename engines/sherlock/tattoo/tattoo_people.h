@@ -87,13 +87,11 @@ public:
 	 */
 	void setListenSequence(int speaker, int sequenceNum);
 
+
 	/**
-	 * If the specified speaker is a background object, this will set it so that it uses 
-	 * the Talk Sequence specified. If the current sequence has an Allow Talk Code in it,
-	 * _gotoSeq will be set so that the object begins talking as soon as it hits the 
-	 * Allow Talk Code. If there is no Abort Code, the Talk Sequence will begin immediately.                                  
+	 * Change the sequence of the scene background object associated with the specified speaker.
 	 */
-	void setTalkSequence(int speaker, int sequenceNum);
+	virtual void setTalkSequence(int speaker, int sequenceNum = 1);
 };
 
 } // End of namespace Scalpel

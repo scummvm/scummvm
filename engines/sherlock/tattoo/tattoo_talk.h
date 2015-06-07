@@ -71,12 +71,9 @@ private:
 	OpcodeReturn cmdWalkNPCToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
 	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
+private:
+	void drawTalk(const byte *str);
 protected:
-	/**
-	 * Change the sequence of the scene background object associated with the current speaker.
-	 */
-	virtual void setSequence(int speaker, int sequenceNum = 1);
-
 	/**
 	 * Display the talk interface window
 	 */

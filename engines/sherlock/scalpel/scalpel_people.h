@@ -50,6 +50,11 @@ public:
 	 * Setup the data for an animating speaker portrait at the top of the screen
 	 */
 	void setTalking(int speaker);
+
+	/**
+	 * Change the sequence of the scene background object associated with the specified speaker.
+	 */
+	virtual void setTalkSequence(int speaker, int sequenceNum = 1);
 };
 
 } // End of namespace Scalpel

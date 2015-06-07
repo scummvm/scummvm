@@ -21,17 +21,184 @@
  */
 
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
-	// TODO
+	Scene &scene = *_vm->_scene;
+
+	// If no speaker is specified, then nothing needs to be done
+	if (speaker == -1)
+		return;
+
+	int objNum = findSpeaker(speaker);
+	if (objNum < 256 && objNum != -1) {
+		// See if the Object has to wait for an Abort Talk Code
+		Object &obj = scene._bgShapes[objNum];
+		if (obj.hasAborts())
+			obj._gotoSeq = sequenceNum;
+		else
+			obj.setObjTalkSequence(sequenceNum);
+	} else if (objNum != -1) {
+		objNum -= 256;
+		Person &person = _data[objNum];
+
+		int newDir = person._sequenceNumber;
+		switch (person._sequenceNumber) {
+		case WALK_UP:
+		case STOP_UP:
+		case WALK_UPRIGHT:
+		case STOP_UPRIGHT:
+		case TALK_UPRIGHT:
+		case LISTEN_UPRIGHT:
+			newDir = LISTEN_UPRIGHT;
+			break;
+		case WALK_RIGHT:
+		case STOP_RIGHT:
+		case TALK_RIGHT:
+		case LISTEN_RIGHT:
+			newDir = LISTEN_RIGHT;
+			break;
+		case WALK_DOWNRIGHT:
+		case STOP_DOWNRIGHT:
+		case TALK_DOWNRIGHT:
+		case LISTEN_DOWNRIGHT:
+			newDir = LISTEN_DOWNRIGHT;
+			break;
+		case WALK_DOWN:
+		case STOP_DOWN:
+		case WALK_DOWNLEFT:
+		case STOP_DOWNLEFT:
+		case TALK_DOWNLEFT:
+		case LISTEN_DOWNLEFT:
+			newDir = LISTEN_DOWNLEFT;
+			break;
+		case WALK_LEFT:
+		case STOP_LEFT:
+		case TALK_LEFT:
+		case LISTEN_LEFT:
+			newDir = LISTEN_LEFT;
+			break;
+		case WALK_UPLEFT:
+		case STOP_UPLEFT:
+		case TALK_UPLEFT:
+		case LISTEN_UPLEFT:
+			newDir = LISTEN_UPLEFT;
+			break;
+
+		default:
+			break;
+		}
+
+		// See if the NPC's Seq has to wait for an Abort Talk Code
+		if (person.hasAborts()) {
+			person._gotoSeq = newDir;
+		}  else {
+			if (person._seqTo) {
+				// Reset to previous value
+				person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
+				person._seqTo = 0;
+			}
+
+			person._sequenceNumber = newDir;
+			person._frameNumber = 0;
+			person.checkWalkGraphics();
+		}
+	}
 }
 
 void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
-	// TODO
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
+
+	// If no speaker is specified, then nothing needs to be done
+	if (speaker == -1)
+		return;
+
+	int objNum = people.findSpeaker(speaker);
+	if (objNum != -1 && objNum < 256) {
+		Object &obj = scene._bgShapes[objNum];
+
+		// See if the Object has to wait for an Abort Talk Code
+		if (obj.hasAborts()) {
+			talk.pushTalkSequence(&obj);
+			obj._gotoSeq = sequenceNum;
+		}
+		else {
+			obj.setObjTalkSequence(sequenceNum);
+		}
+	}
+	else if (objNum != -1) {
+		objNum -= 256;
+		Person &person = people[objNum];
+		int newDir = person._sequenceNumber;
+
+		switch (newDir) {
+		case WALK_UP:
+		case STOP_UP:
+		case WALK_UPRIGHT:
+		case STOP_UPRIGHT:
+		case TALK_UPRIGHT:
+		case LISTEN_UPRIGHT:
+			newDir = TALK_UPRIGHT;
+			break;
+		case WALK_RIGHT:
+		case STOP_RIGHT:
+		case TALK_RIGHT:
+		case LISTEN_RIGHT:
+			newDir = TALK_RIGHT;
+			break;
+		case WALK_DOWNRIGHT:
+		case STOP_DOWNRIGHT:
+		case TALK_DOWNRIGHT:
+		case LISTEN_DOWNRIGHT:
+			newDir = TALK_DOWNRIGHT;
+			break;
+		case WALK_DOWN:
+		case STOP_DOWN:
+		case WALK_DOWNLEFT:
+		case STOP_DOWNLEFT:
+		case TALK_DOWNLEFT:
+		case LISTEN_DOWNLEFT:
+			newDir = TALK_DOWNLEFT;
+			break;
+		case WALK_LEFT:
+		case STOP_LEFT:
+		case TALK_LEFT:
+		case LISTEN_LEFT:
+			newDir = TALK_LEFT;
+			break;
+		case WALK_UPLEFT:
+		case STOP_UPLEFT:
+		case TALK_UPLEFT:
+		case LISTEN_UPLEFT:
+			newDir = TALK_UPLEFT;
+			break;
+		default:
+			break;
+		}
+
+		// See if the NPC's sequence has to wait for an Abort Talk Code
+		if (person.hasAborts()) {
+			person._gotoSeq = newDir;
+		}
+		else {
+			if (person._seqTo) {
+				// Reset to previous value
+				person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
+				person._seqTo = 0;
+			}
+
+			person._sequenceNumber = newDir;
+			person._frameNumber = 0;
+			person.checkWalkGraphics();
+		}
+	}
 }
 
 } // End of namespace Tattoo

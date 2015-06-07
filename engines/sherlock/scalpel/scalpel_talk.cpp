@@ -97,7 +97,8 @@ const byte SCALPEL_OPCODES[] = {
 	0,		// OP_NPC_VERB_SCRIPT
 	0,		// OP_RESTORE_PEOPLE_SEQUENCE
 	0,		// OP_NPC_VERB_TARGET
-	0		// OP_TURN_SOUNDS_OFF
+	0,		// OP_TURN_SOUNDS_OFF
+	0		// OP_NULL
 };
 
 /*----------------------------------------------------------------*/
@@ -281,7 +282,7 @@ OpcodeReturn ScalpelTalk::cmdSwitchSpeaker(const byte *&str) {
 	people.setTalking(_speaker);
 	pullSequence();
 	pushSequence(_speaker);
-	setSequence(_speaker);
+	people.setTalkSequence(_speaker);
 
 	return RET_SUCCESS;
 }
@@ -455,35 +456,6 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 
 OpcodeReturn ScalpelTalk::cmdCarriageReturn(const byte *&str) {
 	return RET_SUCCESS;
-}
-
-void ScalpelTalk::setSequence(int speaker, int sequenceNum) {
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-
-	// If no speaker is specified, then nothing needs to be done
-	if (speaker == -1)
-		return;
-
-	if (speaker) {
-		int objNum = people.findSpeaker(speaker);
-		if (objNum != -1) {
-			Object &obj = scene._bgShapes[objNum];
-
-			if (obj._seqSize < MAX_TALK_SEQUENCES) {
-				warning("Tried to copy too many talk frames");
-			} else {
-				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = people._characters[speaker]._talkSequences[idx];
-					if (idx > 0 && !obj._sequences[idx] && !obj._sequences[idx - 1])
-						return;
-
-					obj._frameNumber = 0;
-					obj._sequenceNumber = 0;
-				}
-			}
-		}
-	}
 }
 
 } // End of namespace Scalpel

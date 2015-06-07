@@ -94,12 +94,11 @@ public:
 class SherlockEngine;
 
 class People {
-private:
+protected:
+	SherlockEngine *_vm;
 	Person _data[MAX_CHARACTERS];
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
-protected:
-	SherlockEngine *_vm;
 
 	People(SherlockEngine *vm);
 public:
@@ -191,6 +190,11 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Change the sequence of the scene background object associated with the current speaker.
+	 */
+	virtual void setTalkSequence(int speaker, int sequenceNum = 1) = 0;
 };
 
 } // End of namespace Sherlock

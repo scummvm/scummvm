@@ -101,7 +101,8 @@ const byte TATTOO_OPCODES[] = {
 	222,	// OP_NPC_VERB_SCRIPT
 	224,	// OP_RESTORE_PEOPLE_SEQUENCE
 	226,	// OP_NPC_VERB_TARGET
-	227		// OP_TURN_SOUNDS_OFF
+	227,	// OP_TURN_SOUNDS_OFF
+	225		// OP_NULL
 };
 
 /*----------------------------------------------------------------*/
@@ -175,101 +176,28 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 		nullptr,
 		(OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
 		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
-		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
+		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff,
+		nullptr
 	};
 
 	_opcodes = TATTOO_OPCODES;
 	_opcodeTable = OPCODE_METHODS;
 }
 
-void TattooTalk::setSequence(int speaker, int sequenceNum) {
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
+void TattooTalk::talkInterface(const byte *&str) {
+	drawTalk(str);
 
-	// If no speaker is specified, then nothing needs to be done
-	if (speaker == -1)
-		return;
-
-	int objNum = people.findSpeaker(speaker);
-	if (objNum != -1 && objNum < 256) {
-		Object &obj = scene._bgShapes[objNum];
-
-		// See if the Object has to wait for an Abort Talk Code
-		if (obj.hasAborts()) {
-			pushTalkSequence(&obj);
-			obj._gotoSeq = sequenceNum;
-		} else {
-			obj.setObjTalkSequence(sequenceNum);
-		}
-	} else if (objNum != -1) {
-		objNum -= 256;
-		Person &person = people[objNum];
-		int newDir = person._sequenceNumber;
-
-		switch (newDir) {
-		case WALK_UP:
-		case STOP_UP:
-		case WALK_UPRIGHT:
-		case STOP_UPRIGHT:
-		case TALK_UPRIGHT:
-		case LISTEN_UPRIGHT:
-			newDir = TALK_UPRIGHT;
-			break;
-		case WALK_RIGHT:
-		case STOP_RIGHT:
-		case TALK_RIGHT:
-		case LISTEN_RIGHT:
-			newDir = TALK_RIGHT;
-			break;
-		case WALK_DOWNRIGHT:
-		case STOP_DOWNRIGHT:
-		case TALK_DOWNRIGHT:
-		case LISTEN_DOWNRIGHT:
-			newDir = TALK_DOWNRIGHT;
-			break;
-		case WALK_DOWN:
-		case STOP_DOWN:
-		case WALK_DOWNLEFT:
-		case STOP_DOWNLEFT:
-		case TALK_DOWNLEFT:
-		case LISTEN_DOWNLEFT:
-			newDir = TALK_DOWNLEFT;
-			break;
-		case WALK_LEFT:
-		case STOP_LEFT:
-		case TALK_LEFT:
-		case LISTEN_LEFT:
-			newDir = TALK_LEFT;
-			break;
-		case WALK_UPLEFT:
-		case STOP_UPLEFT:
-		case TALK_UPLEFT:
-		case LISTEN_UPLEFT:
-			newDir = TALK_UPLEFT;
-			break;
-		default:
-			break;
-		}
-
-		// See if the NPC's sequence has to wait for an Abort Talk Code
-		if (person.hasAborts()) {
-			person._gotoSeq = newDir;
-		} else {
-			if (person._seqTo) {
-				// Reset to previous value
-				person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
-				person._seqTo = 0;
-			}
-
-			person._sequenceNumber = newDir;
-			person._frameNumber = 0;
-			person.checkWalkGraphics();
-		}
+	_charCount = 0;
+	while ((*str < TATTOO_OPCODES[0] || *str == TATTOO_OPCODES[OP_NULL]) && *str) {
+		++_charCount;
+		++str;
 	}
+
+	_wait = true;
 }
 
-void TattooTalk::talkInterface(const byte *&str) {
-	warning("TODO: TattooTalk::talkInterface");
+void TattooTalk::drawTalk(const byte *str) {
+	// TODO
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {

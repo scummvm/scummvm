@@ -104,7 +104,8 @@ enum {
 	OP_NPC_VERB_SCRIPT			= 61,
 	OP_RESTORE_PEOPLE_SEQUENCE	= 62,
 	OP_NPC_VERB_TARGET			= 63,
-	OP_TURN_SOUNDS_OFF			= 64
+	OP_TURN_SOUNDS_OFF			= 64,
+	OP_NULL						= 65
 };
 
 enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };
@@ -252,11 +253,6 @@ protected:
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkToCoords(const byte *&str);
 protected:
-	/**
-	 * Change the sequence of the scene background object associated with the current speaker.
-	 */
-	virtual void setSequence(int speaker, int sequenceNum = 1) = 0;
-
 	/**
 	 * Display the talk interface window
 	 */

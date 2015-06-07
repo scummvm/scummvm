@@ -86,6 +86,36 @@ void ScalpelPeople::setTalking(int speaker) {
 	}
 }
 
+void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+
+	// If no speaker is specified, then nothing needs to be done
+	if (speaker == -1)
+		return;
+
+	if (speaker) {
+		int objNum = people.findSpeaker(speaker);
+		if (objNum != -1) {
+			Object &obj = scene._bgShapes[objNum];
+
+			if (obj._seqSize < MAX_TALK_SEQUENCES) {
+				warning("Tried to copy too many talk frames");
+			}
+			else {
+				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
+					obj._sequences[idx] = people._characters[speaker]._talkSequences[idx];
+					if (idx > 0 && !obj._sequences[idx] && !obj._sequences[idx - 1])
+						return;
+
+					obj._frameNumber = 0;
+					obj._sequenceNumber = 0;
+				}
+			}
+		}
+	}
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

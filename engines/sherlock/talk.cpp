@@ -993,9 +993,9 @@ void Talk::doScript(const Common::String &script) {
 
 			pullSequence();
 			pushSequence(_speaker);
-			setSequence(_speaker);
+			people.setTalkSequence(_speaker);
 		} else {
-			setSequence(_speaker);
+			people.setTalkSequence(_speaker);
 		}
 
 		if (IS_SERRATED_SCALPEL) {
