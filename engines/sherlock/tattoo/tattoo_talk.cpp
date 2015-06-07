@@ -268,6 +268,10 @@ void TattooTalk::setSequence(int speaker, int sequenceNum) {
 	}
 }
 
+void TattooTalk::talkInterface(const byte *&str) {
+	warning("TODO: TattooTalk::talkInterface");
+}
+
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;

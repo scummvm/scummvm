@@ -256,12 +256,18 @@ protected:
 	 * Change the sequence of the scene background object associated with the current speaker.
 	 */
 	virtual void setSequence(int speaker, int sequenceNum = 1) = 0;
+
+	/**
+	 * Display the talk interface window
+	 */
+	virtual void talkInterface(const byte *&str) = 0;
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
 	bool _talkToAbort;
 	int _talkCounter;
 	int _talkTo;
 	int _scriptMoreFlag;
+	bool _openTalkWindow;
 	Common::String _scriptName;
 	bool _moreTalkUp, _moreTalkDown;
 	int _converseNum;

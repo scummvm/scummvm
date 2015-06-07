@@ -55,6 +55,11 @@ protected:
 	 * Change the sequence of the scene background object associated with the current speaker.
 	 */
 	virtual void setSequence(int speaker, int sequenceNum = 1);
+
+	/**
+	 * Display the talk interface window
+	 */
+	virtual void talkInterface(const byte *&str);
 public:
 	ScalpelTalk(SherlockEngine *vm);
 	virtual ~ScalpelTalk() {}

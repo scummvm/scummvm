@@ -103,6 +103,7 @@ Talk *Talk::init(SherlockEngine *vm) {
 Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 	_talkCounter = 0;
 	_talkToAbort = false;
+	_openTalkWindow = false;
 	_speaker = 0;
 	_talkIndex = 0;
 	_talkTo = 0;
@@ -943,7 +944,6 @@ void Talk::doScript(const Common::String &script) {
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
-	bool openTalkWindow = false;
 
 	_savedSequences.clear();
 
@@ -957,6 +957,7 @@ void Talk::doScript(const Common::String &script) {
 	_seqCount = 0;
 	_noTextYet = true;
 	_endStr = false;
+	_openTalkWindow = false;
 
 	if (IS_SERRATED_SCALPEL)
 		_yp = CONTROLS_Y + 12;
@@ -1056,107 +1057,12 @@ void Talk::doScript(const Common::String &script) {
 
 			++str;
 		} else {
-			// If the window isn't yet open, draw the window before printing starts
-			if (!ui._windowOpen && _noTextYet) {
-				_noTextYet = false;
-				drawInterface();
-
-				if (_talkTo != -1) {
-					screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, "Exit");
-					screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
-					screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
-				}
-			}
-
-			// If it's the first line, display the speaker
-			if (!_line && _speaker >= 0 && _speaker < (int)people._characters.size()) {
-				// If the window is open, display the name directly on-screen.
-				// Otherwise, simply draw it on the back buffer
-				if (ui._windowOpen) {
-					screen.print(Common::Point(16, _yp), TALK_FOREGROUND, "%s",
-						people._characters[_speaker & 127]._name);
-				} else {
-					screen.gPrint(Common::Point(16, _yp - 1), TALK_FOREGROUND, "%s", 
-						people._characters[_speaker & 127]._name);
-					openTalkWindow = true;
-				}
-
-				_yp += 9;
-			}
-
-			// Find amount of text that will fit on the line
-			int width = 0, idx = 0;
-			do {
-				width += screen.charWidth(str[idx]);
-				++idx;
-				++_charCount;
-			} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < _opcodes[0]);
-
-			if (str[idx] || width >= 298) {
-				if (str[idx] < _opcodes[0] && str[idx] != '{') {
-					--idx;
-					--_charCount;
-				}
-			} else {
-				_endStr = true;
-			}
-
-			// If word wrap is needed, find the start of the current word
-			if (width >= 298) {
-				while (str[idx] != ' ') {
-					--idx;
-					--_charCount;
-				}
-			}
-
-			// Print the line
-			Common::String lineStr((const char *)str, (const char *)str + idx);
-
-			// If the speaker indicates a description file, print it in yellow
-			if (_speaker != -1) {
-				if (ui._windowOpen) {
-					screen.print(Common::Point(16, _yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
-				} else {
-					screen.gPrint(Common::Point(16, _yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
-					openTalkWindow = true;
-				}
-			} else {
-				if (ui._windowOpen) {
-					screen.print(Common::Point(16, _yp), COMMAND_FOREGROUND, "%s", lineStr.c_str());
-				} else {
-					screen.gPrint(Common::Point(16, _yp - 1), COMMAND_FOREGROUND, "%s", lineStr.c_str());
-					openTalkWindow = true;
-				}
-			}
-
-			// Move to end of displayed line
-			str += idx;
-
-			// If line wrap occurred, then move to after the separating space between the words
-			if (str[0] < _opcodes[0] && str[0] != '{')
-				++str;
-
-			_yp += 9;
-			++_line;
-
-			// Certain different conditions require a wait
-			if ((_line == 4 && str < _scriptEnd && str[0] != _opcodes[OP_SFX_COMMAND] && str[0] != _opcodes[OP_PAUSE] && _speaker != -1) ||
-					(_line == 5 && str < _scriptEnd && str[0] != _opcodes[OP_PAUSE] && _speaker == -1) ||
-					_endStr) {
-				_wait = 1;
-			}
-
-			byte v = (str >= _scriptEnd ? 0 : str[0]);
-			if (v == _opcodes[OP_SWITCH_SPEAKER] || v == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
-					v == _opcodes[OP_BANISH_WINDOW] || v == _opcodes[OP_IF_STATEMENT] ||
-					v == _opcodes[OP_ELSE_STATEMENT] || v == _opcodes[OP_END_IF_STATEMENT] ||
-					v == _opcodes[OP_GOTO_SCENE] || v == _opcodes[OP_CALL_TALK_FILE]) {
-				_wait = 1;
-			}
+			// Handle drawing the talk interface with the text
+			talkInterface(str);
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((openTalkWindow && _wait) || (openTalkWindow && str[0] >= _opcodes[0] && str[0] != _opcodes[OP_CARRIAGE_RETURN])) {
+		if ((_openTalkWindow && _wait) || (_openTalkWindow && str[0] >= _opcodes[0] && str[0] != _opcodes[OP_CARRIAGE_RETURN])) {
 			if (!ui._slideWindows) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
@@ -1164,7 +1070,7 @@ void Talk::doScript(const Common::String &script) {
 			}
 
 			ui._windowOpen = true;
-			openTalkWindow = false;
+			_openTalkWindow = false;
 		}
 
 		if (_wait) {
