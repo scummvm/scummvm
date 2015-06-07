@@ -36,7 +36,7 @@ namespace Sherlock {
 namespace Scalpel {
 
 class ScalpelTalk : public Talk {
-protected:
+private:
 	OpcodeReturn cmdAssignPortraitLocation(const byte *&str);
 	OpcodeReturn cmdClearInfoLine(const byte *&str);
 	OpcodeReturn cmdClearWindow(const byte *&str);
@@ -49,6 +49,11 @@ protected:
 	OpcodeReturn cmdSfxCommand(const byte *&str);
 	OpcodeReturn cmdSummonWindow(const byte *&str);
 	OpcodeReturn cmdCarriageReturn(const byte *&str);
+protected:
+	/**
+	 * Change the sequence of the scene background object associated with the current speaker.
+	 */
+	virtual void setSequence(int speaker, int sequenceNum = 1);
 public:
 	ScalpelTalk(SherlockEngine *vm);
 	virtual ~ScalpelTalk() {}

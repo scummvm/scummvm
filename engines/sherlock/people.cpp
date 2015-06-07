@@ -71,6 +71,12 @@ Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _np
 	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
 	_tempX = _tempScaleVal = 0;
 	_updateNPCPath = false;
+	_npcIndex = 0;
+	_npcStack = 0;
+	_savedNpcSequence = 0;
+	_savedNpcFrame = 0;
+	_updateNPCPath = false;
+	_npcPause = false;
 }
 
 void Person::clearNPC() {

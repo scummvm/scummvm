@@ -182,6 +182,92 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 	_opcodeTable = OPCODE_METHODS;
 }
 
+void TattooTalk::setSequence(int speaker, int sequenceNum) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+
+	// If no speaker is specified, then nothing needs to be done
+	if (speaker == -1)
+		return;
+
+	int objNum = people.findSpeaker(speaker);
+	if (objNum != -1 && objNum < 256) {
+		Object &obj = scene._bgShapes[objNum];
+
+		// See if the Object has to wait for an Abort Talk Code
+		if (obj.hasAborts()) {
+			pushTalkSequence(&obj);
+			obj._gotoSeq = sequenceNum;
+		} else {
+			obj.setObjTalkSequence(sequenceNum);
+		}
+	} else if (objNum != -1) {
+		objNum -= 256;
+		Person &person = people[objNum];
+		int newDir = person._sequenceNumber;
+
+		switch (newDir) {
+		case RT_WALK_UP:
+		case RT_STOP_UP:
+		case RT_WALK_UPRIGHT:
+		case RT_STOP_UPRIGHT:
+		case RT_TALK_UPRIGHT:
+		case RT_LISTEN_UPRIGHT:
+			newDir = RT_TALK_UPRIGHT;
+			break;
+		case RT_WALK_RIGHT:
+		case RT_STOP_RIGHT:
+		case RT_TALK_RIGHT:
+		case RT_LISTEN_RIGHT:
+			newDir = RT_TALK_RIGHT;
+			break;
+		case RT_WALK_DOWNRIGHT:
+		case RT_STOP_DOWNRIGHT:
+		case RT_TALK_DOWNRIGHT:
+		case RT_LISTEN_DOWNRIGHT:
+			newDir = RT_TALK_DOWNRIGHT;
+			break;
+		case RT_WALK_DOWN:
+		case RT_STOP_DOWN:
+		case RT_WALK_DOWNLEFT:
+		case RT_STOP_DOWNLEFT:
+		case RT_TALK_DOWNLEFT:
+		case RT_LISTEN_DOWNLEFT:
+			newDir = RT_TALK_DOWNLEFT;
+			break;
+		case RT_WALK_LEFT:
+		case RT_STOP_LEFT:
+		case RT_TALK_LEFT:
+		case RT_LISTEN_LEFT:
+			newDir = RT_TALK_LEFT;
+			break;
+		case RT_WALK_UPLEFT:
+		case RT_STOP_UPLEFT:
+		case RT_TALK_UPLEFT:
+		case RT_LISTEN_UPLEFT:
+			newDir = RT_TALK_UPLEFT;
+			break;
+		default:
+			break;
+		}
+
+		// See if the NPC's sequence has to wait for an Abort Talk Code
+		if (person.hasAborts()) {
+			person._gotoSeq = newDir;
+		} else {
+			if (person._seqTo) {
+				// Reset to previous value
+				person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
+				person._seqTo = 0;
+			}
+
+			person._sequenceNumber = newDir;
+			person._frameNumber = 0;
+			person.checkWalkGraphics();
+		}
+	}
+}
+
 OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) { 
 	Events &events = *_vm->_events;
 	bool mouseOn = *++str == 2;

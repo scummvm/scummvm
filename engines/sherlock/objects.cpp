@@ -74,13 +74,99 @@ static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
 
 SherlockEngine *Sprite::_vm;
 
+/*----------------------------------------------------------------*/
+
+BaseObject::BaseObject() {
+	_type = INVALID;
+	_sequences = nullptr;
+	_images = nullptr;
+	_imageFrame = nullptr;
+	_walkCount = 0;
+	_allow = 0;
+	_frameNumber = 0;
+	_lookFlag = 0;
+	_requiredFlag = 0;
+	_status = 0;
+	_misc = 0;
+	_maxFrames = 0;
+	_flags = 0;
+	_aType = OBJECT;
+	_lookFrames = 0;
+	_seqCounter = 0;
+	_lookFacing = 0;
+	_lookcAnim = 0;
+	_seqStack = 0;
+	_seqTo = 0;
+	_descOffset = 0;
+	_seqCounter2 = 0;
+	_seqSize = 0;
+	_quickDraw = 0;
+	_scaleVal = 0;
+	_requiredFlags1 = 0;
+	_gotoSeq = 0;
+	_talkSeq = 0;
+	_restoreSlot = 0;
+}
+
+bool BaseObject::hasAborts() const {
+	int seqNum = _talkSeq;
+
+	// See if the object is in it's regular sequence
+	bool startChecking = !seqNum || _type == CHARACTER;
+
+	uint idx = 0;
+	do
+	{
+		// Get the Frame value
+		int v = _sequences[idx++];
+
+		// See if we found an Allow Talk Interrupt Code
+		if (startChecking && v == ALLOW_TALK_CODE)
+			return true;
+
+		// If we've started checking and we've encountered another Talk or Listen Sequence Code,
+		// then we're done checking this sequence because this is where it would repeat
+		if (startChecking && (v == TALK_SEQ_CODE || v == TALK_LISTEN_CODE))
+			return false;
+
+		// See if we've found the beginning of a Talk Sequence
+		if ((v == TALK_SEQ_CODE && seqNum < 128) || (v == TALK_LISTEN_CODE && seqNum >= 128)) {
+			// If checking was already on and we came across one of these codes, then there couldn't
+			// have been an Allow Talk Interrupt code in the sequence we were checking, so we're done.
+			if (startChecking)
+				return false;
+
+			seqNum--;
+			// See if we're at the correct Talk Sequence Number
+			if (!(seqNum & 127))
+			{
+				// Correct Sequence, Start Checking Now
+				startChecking = true;
+			}
+		} else {
+			// Move ahead any extra because of special control codes
+			switch (v) {
+			case 0:				idx++; break;
+			case MOVE_CODE:
+			case TELEPORT_CODE:	idx += 4; break;
+			case CALL_TALK_CODE:idx += 8; break;
+			case HIDE_CODE:		idx += 2; break;
+			}
+		}
+	} while (idx < _seqSize);
+
+	return true;
+}
+
+/*----------------------------------------------------------------*/
+
 void Sprite::clear() {
 	_name = "";
 	_description = "";
 	_examine.clear();
 	_pickUp = "";
 	_walkSequences.clear();
-	_seq = nullptr;
+	_sequences = nullptr;
 	_images = nullptr;
 	_imageFrame = nullptr;
 	_walkCount = 0;
@@ -482,9 +568,9 @@ void Sprite::checkWalkGraphics() {
 	}
 
 	// If this is a different seqeunce from the current sequence, reset the appropriate variables
-	if (_seq != &_walkSequences[_sequenceNumber]._sequences[0]) {		
+	if (_sequences != &_walkSequences[_sequenceNumber]._sequences[0]) {		
 		_seqTo = _seqCounter = _seqCounter2 = _seqStack = _startSeq = 0;
-		_seq = &_walkSequences[_sequenceNumber]._sequences[0];
+		_sequences = &_walkSequences[_sequenceNumber]._sequences[0];
 		_seqSize = _walkSequences[_sequenceNumber]._sequences.size();
 	}
 
@@ -588,44 +674,12 @@ void Object::setVm(SherlockEngine *vm) {
 	_countCAnimFrames = false;
 }
 
-Object::Object() {
-	_sequenceOffset = 0;
-	_sequences = nullptr;
-	_images = nullptr;
-	_imageFrame = nullptr;
-	_walkCount = 0;
-	_allow = 0;
-	_frameNumber = 0;
+Object::Object(): BaseObject() {
 	_sequenceNumber = 0;
-	_type = INVALID;
+	_sequenceOffset = 0;
 	_pickup = 0;
 	_defaultCommand = 0;
-	_lookFlag = 0;
 	_pickupFlag = 0;
-	_requiredFlag = 0;
-	_status = 0;
-	_misc = 0;
-	_maxFrames = 0;
-	_flags = 0;
-	_aOpen._cAnimNum = 0;
-	_aOpen._cAnimSpeed = 0;
-	_aType = OBJECT;
-	_lookFrames = 0;
-	_seqCounter = 0;
-	_lookFacing = 0;
-	_lookcAnim = 0;
-	_seqStack = 0;
-	_seqTo = 0;
-	_descOffset = 0;
-	_seqCounter2 = 0;
-	_seqSize = 0;
-
-	_quickDraw = 0;
-	_scaleVal = 0;
-	_requiredFlag1 = 0;
-	_gotoSeq = 0;
-	_talkSeq = 0;
-	_restoreSlot = -1;
 }
 
 void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
@@ -703,7 +757,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
-		_requiredFlag1 = s.readSint16LE();
+		_requiredFlags1 = s.readSint16LE();
 		_gotoSeq = s.readByte();
 		_talkSeq = s.readByte();
 		_restoreSlot = s.readByte();
@@ -1392,7 +1446,7 @@ int Object::pickUpObject(const char *const messages[]) {
 }
 
 const Common::Rect Object::getNewBounds() const {
-	Common::Point pt = _position;
+	Point32 pt = _position;
 	if (_imageFrame)
 		pt += _imageFrame->_offset;
 

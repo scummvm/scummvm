@@ -252,6 +252,11 @@ protected:
 	OpcodeReturn cmdToggleObject(const byte *&str);
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkToCoords(const byte *&str);
+protected:
+	/**
+	 * Change the sequence of the scene background object associated with the current speaker.
+	 */
+	virtual void setSequence(int speaker, int sequenceNum = 1) = 0;
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
 	bool _talkToAbort;
@@ -333,11 +338,6 @@ public:
 	 * Push a given shape's sequence data onto the Rose Tattoo talk sequence stack
 	 */
 	void pushTalkSequence(Object *obj);
-
-	/**
-	 * Change the sequence of the scene background object associated with the current speaker.
-	 */
-	void setSequence(int speaker);
 
 	/**
 	 * Returns true if the script stack is empty

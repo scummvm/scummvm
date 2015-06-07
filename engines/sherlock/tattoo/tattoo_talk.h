@@ -36,7 +36,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 class TattooTalk : public Talk {
-protected:
+private:
 	OpcodeReturn cmdMouseOnOff(const byte *&str);
 	OpcodeReturn cmdNextSong(const byte *&str);
 	OpcodeReturn cmdPassword(const byte *&str);
@@ -70,6 +70,11 @@ protected:
 	OpcodeReturn cmdWalkNPCToCAnimation(const byte *&str);
 	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
 	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
+protected:
+	/**
+	 * Change the sequence of the scene background object associated with the current speaker.
+	 */
+	virtual void setSequence(int speaker, int sequenceNum = 1);
 public:
 	TattooTalk(SherlockEngine *vm);
 	virtual ~TattooTalk() {}

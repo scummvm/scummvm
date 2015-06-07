@@ -161,8 +161,61 @@ struct UseType {
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
+class BaseObject {
+public:
+	SpriteType _type;				// Type of object/sprite
+	Common::String _description;	// Description lines
+	byte *_sequences;				// Holds animation sequences
+	ImageFile *_images;				// Sprite images
+	ImageFrame *_imageFrame;		// Pointer to shape in the images
+	int _walkCount;					// Walk counter
+	int _allow;						// Allowed UI commands
+	int _frameNumber;				// Frame number in rame sequence to draw
+	Point32 _position;				// Current position
+	Point32 _delta;					// Momvement amount
+	Common::Point _oldPosition;		// Old position
+	Common::Point _oldSize;			// Image's old size
+	Point32 _goto;					// Walk destination
 
-class Sprite {
+	int _lookFlag;					// Which flag LOOK   will set (if any)
+	int _requiredFlag;				// Object will be hidden if not set
+	Common::Point _noShapeSize;		// Size of a NO_SHAPE
+	int _status;					// Status (open/closed, moved/not)
+	int8 _misc;						// Misc field -- use varies with type
+	int _maxFrames;					// Number of frames
+	int _flags;						// Tells if object can be walked behind
+	AType _aType;					// Tells if this is an object, person, talk, etc.
+	int _lookFrames;				// How many frames to play of the look anim before pausing
+	int _seqCounter;				// How many times this sequence has been executed
+	Point32 _lookPosition;			// Where to walk when examining object
+	int _lookFacing;				// Direction to face when examining object
+	int _lookcAnim;
+	int _seqStack;					// Allows gosubs to return to calling frame
+	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
+	uint _descOffset;					// Tells where description starts in DescText
+	int _seqCounter2;				// Counter of calling frame sequence
+	uint _seqSize;					// Tells where description starts
+	UseType _use[6];				// Serrated Scalpel uses 4, Rose Tattoo 6
+	int _quickDraw;					// Flag telling whether to use quick draw routine or not
+	int _scaleVal;					// Tells how to scale the sprite
+	int _requiredFlags1;			// This flag must also be set, or the sprite is hidden
+	int _gotoSeq;					// Used by Talk to tell which sequence to goto when able
+	int _talkSeq;					// Tells which talk sequence currently in use (Talk or Listen)
+	int _restoreSlot;				// Used when talk returns to the previous sequence
+public:
+	BaseObject();
+	virtual ~BaseObject() {}
+
+	/**
+	 * Returns true if the the object has an Allow Talk Code in the sequence that it's
+	 * currently running, specified by the _talkSeq field of the object. If it's 0,
+	 * then it's a regular sequence. If it's not 0 but below 128, then it's a Talk Sequence.
+	 * If it's above 128, then it's one of the Listen sequences.
+	 */
+	bool hasAborts() const;
+};
+
+class Sprite: public BaseObject {
 private:
 	static SherlockEngine *_vm;
 
@@ -172,24 +225,11 @@ private:
 	void freeAltGraphics();
 public:
 	Common::String _name;
-	Common::String _description;
 	Common::String _examine;			// Examine in-depth description
 	Common::String _pickUp;				// Message for if you can't pick up object
 
 	WalkSequences _walkSequences;		// Holds animation sequences
-	byte *_seq;
-	ImageFile *_images;					// Sprite images
-	ImageFrame *_imageFrame;			// Pointer to shape in the images
-	int _walkCount;						// Character walk counter
-	int _allow;							// Allowed menu commands - ObjectAllow
-	int _frameNumber;					// Frame number in rame sequence to draw
 	int _sequenceNumber;				// Sequence being used
-	Point32 _position;					// Current position
-	Point32 _delta;						// Momvement delta
-	Common::Point _oldPosition;			// Old position
-	Common::Point _oldSize;				// Image's old size
-	Common::Point _goto;				// Walk destination
-	SpriteType _type;					// Type of object
 	Common::Point _noShapeSize;			// Size of a NO_SHAPE
 	int _status;						// Status: open/closed, moved/not moved
 	int8 _misc;							// Miscellaneous use
@@ -197,26 +237,6 @@ public:
 
 	// Rose Tattoo fields
 	int _startSeq;						// Frame sequence starts at
-	int _flags;							// Flags for the sprite
-	int _aType;							// Tells if this is an object, person, talk, etc.
-	int _lookFrames;					// How many frames to play of a canim before pausing
-	int _seqCounter;					// How many times the sequence has been run
-	Common::Point _lookPosition;		// Where to look when examining object
-	int _lookFacing;					// Direction to face when examining object
-	int _lookCAnim;
-	int _seqStack;						// Allow gosubs to return to calling frame
-	int _seqTo;							// Allows 1-5, 8-3 type sequences encoded in 2 bytes
-	uint _descOffset;					// Tells where description starts in description text for scene
-	int _seqCounter2;					// Counter of calling frame sequence
-	uint _seqSize;						// Size of sequence
-	UseType _use[6];
-	int _quickDraw;						// Flag telling whether to use quick draw routine or not
-	int _scaleVal;						// Tells how to scale the sprite
-	int _requiredFlags1;				// This flag must also be set, or the sprite is hidden
-	int _gotoSeq;						// Used by Talk to tell which sequence to goto when able
-	int _talkSeq;						// Tells which talk sequence currently in use (Talk or Listen)
-	int _restoreSlot;					// Used when talk returns to the previous sequence
-
 	ImageFrame *_stopFrames[8];			// Stop/rest frame for each direction
 	ImageFile *_altImages;				// Images used for alternate NPC sequences
 	int _altSeq;						// Which of the sequences the alt graphics apply to (0: main, 1=NPC seq)
@@ -224,7 +244,8 @@ public:
 	Common::Point _adjust;				// Fine tuning adjustment to position when drawn
 	int _oldWalkSequence;
 public:
-	Sprite() { clear(); }
+	Sprite(): BaseObject() { clear(); }
+	virtual ~Sprite() {}
 
 	static void setVm(SherlockEngine *vm) { _vm = vm; }
 
@@ -282,7 +303,7 @@ public:
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };
 #define USE_COUNT 4
 
-class Object {
+class Object: public BaseObject {
 private:
 	static SherlockEngine *_vm;
 
@@ -298,59 +319,17 @@ private:
 	 * It then sets the frame number of the start of that sequence
 	 */
 	void setObjSequence(int seq, bool wait);
-
-	/**
-	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
-	 * so that it points to the beginning of the sequence number's talk sequence in the object's
-	 * sequence buffer
-	 * @param seq	Which sequence to use (if there's more than 1)
-	 * @remarks		1: First talk seq, 2: second talk seq, etc.
-	 */
-	void setObjTalkSequence(int seq);
 public:
 	static bool _countCAnimFrames;
 
 	static void setVm(SherlockEngine *vm);
 public:
 	Common::String _name;			// Name
-	Common::String _description;	// Description lines
 	Common::String _examine;		// Examine in-depth description
+	int _sequenceNumber;
 	int _sequenceOffset;
-	uint8 *_sequences;				// Holds animation sequences
-	ImageFile *_images;				// Sprite images
-	ImageFrame *_imageFrame;		// Pointer to shape in the images
-	int _walkCount;					// Character walk counter
-	int _allow;						// Allowed menu commands - ObjectAllow
-	int _frameNumber;				// Frame number in rame sequence to draw
-	int _sequenceNumber;			// Sequence being used
-	SpriteType _type;				// Object type
-	Common::Point _position;		// Current position
-	Common::Point _delta;			// Momvement amount
-	Common::Point _oldPosition;		// Old position
-	Common::Point _oldSize;			// Image's old size
-	Point32 _goto;					// Walk destination
-
 	int _pickup;
 	int _defaultCommand;			// Default right-click command
-	int _lookFlag;					// Which flag LOOK   will set (if any)
-	int _requiredFlag;				// Object will be hidden if not set
-	Common::Point _noShapeSize;		// Size of a NO_SHAPE
-	int _status;					// Status (open/closed, moved/not)
-	int8 _misc;						// Misc field -- use varies with type
-	int _maxFrames;					// Number of frames
-	int _flags;						// Tells if object can be walked behind
-	AType _aType;					// Tells if this is an object, person, talk, etc.
-	int _lookFrames;				// How many frames to play of the look anim before pausing
-	int _seqCounter;				// How many times this sequence has been executed
-	Point32 _lookPosition;			// Where to walk when examining object
-	int _lookFacing;				// Direction to face when examining object
-	int _lookcAnim;
-	int _seqStack;					// Allows gosubs to return to calling frame
-	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
-	uint _descOffset;					// Tells where description starts in DescText
-	int _seqCounter2;				// Counter of calling frame sequence
-	uint _seqSize;					// Tells where description starts
-	UseType _use[6];				// Serrated Scalpel uses 4, Rose Tattoo 6
 
 	// Serrated Scalpel fields
 	int _pickupFlag;				// Which flag PICKUP will set (if any)
@@ -358,15 +337,8 @@ public:
 	ActionType _aClose;
 	ActionType _aMove;
 
-	// Rose Tattoo fields
-	int _quickDraw;
-	int _scaleVal;
-	int _requiredFlag1;
-	int _gotoSeq;
-	int _talkSeq;
-	int _restoreSlot;
-
 	Object();
+	virtual ~Object() {}
 
 	/**
 	 * Load the data for the object
@@ -432,6 +404,15 @@ public:
 	 * Returns the old bounsd for the sprite from the previous frame
 	 */
 	const Common::Rect getOldBounds() const;
+
+	/**
+	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
+	 * so that it points to the beginning of the sequence number's talk sequence in the object's
+	 * sequence buffer
+	 * @param seq	Which sequence to use (if there's more than 1)
+	 * @remarks		1: First talk seq, 2: second talk seq, etc.
+	 */
+	void setObjTalkSequence(int seq);
 };
 
 struct CAnim {

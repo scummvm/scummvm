@@ -834,7 +834,7 @@ void Talk::clearSequences() {
 void Talk::pullSequence() {
 	Scene &scene = *_vm->_scene;
 
-	if (_sequenceStack.empty())
+	if (_sequenceStack.empty() || IS_ROSE_TATTOO)
 		return;
 
 	SequenceEntry seq = _sequenceStack.pop();
@@ -858,7 +858,7 @@ void Talk::pushSequence(int speaker) {
 	Scene &scene = *_vm->_scene;
 
 	// Only proceed if a speaker is specified
-	if (speaker == -1)
+	if (speaker == -1 || IS_ROSE_TATTOO)
 		return;
 
 	SequenceEntry seqEntry;
@@ -905,35 +905,6 @@ void Talk::pushTalkSequence(Object *obj) {
 	}
 
 	error("Ran out of talk sequence stack space");
-}
-
-void Talk::setSequence(int speaker) {
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-
-	// If no speaker is specified, then nothing needs to be done
-	if (speaker == -1)
-		return;
-
-	if (speaker) {
-		int objNum = people.findSpeaker(speaker);
-		if (objNum != -1) {
-			Object &obj = scene._bgShapes[objNum];
-
-			if (obj._seqSize < MAX_TALK_SEQUENCES) {
-				warning("Tried to copy too many talk frames");
-			} else {
-				for (int idx = 0; idx < MAX_TALK_SEQUENCES; ++idx) {
-					obj._sequences[idx] = people._characters[speaker]._talkSequences[idx];
-					if (idx > 0 && !obj._sequences[idx] && !obj._sequences[idx - 1])
-						return;
-
-					obj._frameNumber = 0;
-					obj._sequenceNumber = 0;
-				}
-			}
-		}
-	}
 }
 
 void Talk::setStillSeq(int speaker) {
@@ -987,6 +958,14 @@ void Talk::doScript(const Common::String &script) {
 	_noTextYet = true;
 	_endStr = false;
 
+	if (IS_ROSE_TATTOO) {
+		for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+			Person &p = people[idx];
+			p._savedNpcSequence = p._sequenceNumber;
+			p._savedNpcFrame = p._frameNumber;
+		}
+	}
+
 	if (_scriptMoreFlag) {
 		_scriptMoreFlag = 0;
 		str = _scriptStart + _scriptSaveIndex;
@@ -998,12 +977,14 @@ void Talk::doScript(const Common::String &script) {
 		_speaker |= SPEAKER_REMOVE;
 	} else {
 		pushSequence(_speaker);
-		ui.clearWindow();
+		if (IS_SERRATED_SCALPEL || ui._windowOpen)
+			ui.clearWindow();
 
 		// Need to switch speakers?
 		if (str[0] == _opcodes[OP_SWITCH_SPEAKER]) {
 			_speaker = str[1] - 1;
-			str += 2;
+			str += IS_SERRATED_SCALPEL ? 2 : 3;
+
 			pullSequence();
 			pushSequence(_speaker);
 			setSequence(_speaker);
@@ -1011,34 +992,36 @@ void Talk::doScript(const Common::String &script) {
 			setSequence(_speaker);
 		}
 
-		// Assign portrait location?
-		if (str[0] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION]) {
-			switch (str[1] & 15) {
-			case 1:
-				people._portraitSide = 20;
-				break;
-			case 2:
-				people._portraitSide = 220;
-				break;
-			case 3:
-				people._portraitSide = 120;
-				break;
-			default:
-				break;
+		if (IS_SERRATED_SCALPEL) {
+			// Assign portrait location?
+			if (str[0] == _opcodes[OP_ASSIGN_PORTRAIT_LOCATION]) {
+				switch (str[1] & 15) {
+				case 1:
+					people._portraitSide = 20;
+					break;
+				case 2:
+					people._portraitSide = 220;
+					break;
+				case 3:
+					people._portraitSide = 120;
+					break;
+				default:
+					break;
 
+				}
+
+				if (str[1] > 15)
+					people._speakerFlip = true;
+				str += 2;
 			}
 
-			if (str[1] > 15)
-				people._speakerFlip = true;
-			str += 2;
-		}
-
-		// Remove portrait?
-		if (str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
-			_speaker = 255;
-		} else {
-			// Nope, so set the first speaker
-			people.setTalking(_speaker);
+			// Remove portrait?
+			if (str[0] == _opcodes[OP_REMOVE_PORTRAIT]) {
+				_speaker = -1;
+			} else {
+				// Nope, so set the first speaker
+				people.setTalking(_speaker);
+			}
 		}
 	}
 
