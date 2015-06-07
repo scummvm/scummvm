@@ -260,7 +260,7 @@ void Sprite::adjustSprite() {
 	if (!map._active || (map._frameChangeFlag = !map._frameChangeFlag))
 		++_frameNumber;
 
-	if (_frameNumber >= _walkSequences[_sequenceNumber]._sequences.size() ||
+	if (_frameNumber >= (int)_walkSequences[_sequenceNumber]._sequences.size() ||
 			_walkSequences[_sequenceNumber][_frameNumber] == 0) {
 		switch (_sequenceNumber) {
 		case Scalpel::STOP_UP:
