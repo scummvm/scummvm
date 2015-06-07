@@ -106,7 +106,8 @@ enum {
 	OP_RESTORE_PEOPLE_SEQUENCE	= 64,
 	OP_NPC_VERB_TARGET			= 65,
 	OP_TURN_SOUNDS_OFF			= 66,
-	OP_NULL						= 67
+	OP_NULL						= 67,
+	OP_END_TEXT_WINDOW			= 68
 };
 
 enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };

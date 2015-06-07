@@ -98,7 +98,8 @@ const byte SCALPEL_OPCODES[] = {
 	0,		// OP_RESTORE_PEOPLE_SEQUENCE
 	0,		// OP_NPC_VERB_TARGET
 	0,		// OP_TURN_SOUNDS_OFF
-	0		// OP_NULL
+	0,		// OP_NULL
+	0		// OP_END_TEXT_WINDOW
 };
 
 /*----------------------------------------------------------------*/

@@ -103,7 +103,8 @@ const byte TATTOO_OPCODES[] = {
 	224,	// OP_RESTORE_PEOPLE_SEQUENCE
 	226,	// OP_NPC_VERB_TARGET
 	227,	// OP_TURN_SOUNDS_OFF
-	225		// OP_NULL
+	225,	// OP_NULL
+	203		// OP_END_TEXT_WINDOW
 };
 
 /*----------------------------------------------------------------*/
