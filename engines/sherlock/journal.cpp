@@ -309,6 +309,11 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 			// Check for embedded comments
 			if (c == '{' || c == '}') {
+
+				// TODO: Rose Tattoo checks if no text was added for the last
+				// comment here. In such a case, the last "XXX said" string is
+				// removed here.
+
 				// Comment characters. If we're starting a comment and there's
 				// already text displayed, add a closing quote
 				if (c == '{' && !startOfReply && !commentJustPrinted)
@@ -382,6 +387,8 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 			startOfReply = false;
 			c = *replyP++ - 1;
+			if (IS_ROSE_TATTOO)
+				replyP++;
 
 			if (c == 0)
 				journalString += "Holmes";
@@ -422,16 +429,17 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 					c == opcodes[OP_CALL_TALK_FILE]) {
 					replyP += 8;
 					break;
-				} else if (c == opcodes[OP_TOGGLE_OBJECT] || c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
-					c == opcodes[OP_SET_OBJECT] || c == opcodes[OP_DISPLAY_INFO_LINE] ||
+				} else if (
+					c == opcodes[OP_TOGGLE_OBJECT] ||
+					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+					c == opcodes[OP_SET_OBJECT] ||
+					c == opcodes[OP_DISPLAY_INFO_LINE] ||
 					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
 					replyP += (*replyP & 127) + 1;
 				} else if (c == opcodes[OP_GOTO_SCENE]) {
 					replyP += 5;
 				} else if (c == opcodes[OP_CARRIAGE_RETURN]) {
 					journalString += "\n";
-				} else {
-					error("Unhandled opcode %d in loadJournalFile", c);
 				}
 			} else {
 				if (c == opcodes[OP_RUN_CANIMATION] ||
@@ -466,7 +474,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 					c == opcodes[OP_WALK_TO_COORDS])
 					replyP += 5;
 				else if (
-					c == opcodes[OP_SET_NPC_POSITION] ||
+					c == opcodes[OP_WALK_NPC_TO_COORDS] ||
 					c == opcodes[OP_GOTO_SCENE] ||
 					c == opcodes[OP_SET_NPC_PATH_DEST] ||
 					c == opcodes[OP_SET_NPC_POSITION])
@@ -492,24 +500,25 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 					replyP += 14;
 				else if (
 					c == opcodes[OP_ADJUST_OBJ_SEQUENCE])
-					error("TODO: opcode %d in loadJournalFile", c);
+					replyP += (replyP[0] & 127) + replyP[1] + 2;
 				else if (
 					c == opcodes[OP_TOGGLE_OBJECT] ||
 					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
 					c == opcodes[OP_SET_OBJECT] ||
 					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY])
-					error("TODO: opcode %d in loadJournalFile", c);
+					replyP += (*replyP & 127) + 1;
 				else if (
-					c == opcodes[OP_BANISH_WINDOW]) {
-					error("TODO: opcode %d in loadJournalFile", c);
+					c == opcodes[OP_END_TEXT_WINDOW]) {
+					journalString += '\n';
 				} else if (
 					c == opcodes[OP_NPC_DESC_ON_OFF]) {
-					error("TODO: opcode %d in loadJournalFile", c);
+					replyP++;
+					while (replyP[0] && replyP[0] != opcodes[OP_NPC_DESC_ON_OFF])
+						replyP++;
+					replyP++;
 				} else if (
 					c == opcodes[OP_SET_NPC_INFO_LINE])
-					error("TODO: opcode %d in loadJournalFile", c);
-				else
-					error("Unhandled opcode %d in loadJournalFile", c);
+					replyP += replyP[1] + 2;
 			}
 
 			// Put a space in the output for a control character, unless it's
