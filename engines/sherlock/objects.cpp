@@ -247,6 +247,11 @@ void Sprite::adjustSprite() {
 			_position.x = LEFT_LIMIT * FIXED_INT_MULTIPLIER;
 			people.gotoStand(*this);
 		}
+
+		if ((_position.x / FIXED_INT_MULTIPLIER) > RIGHT_LIMIT) {
+			_position.x = RIGHT_LIMIT * FIXED_INT_MULTIPLIER;
+			people.gotoStand(*this);
+		}
 	} else if (!map._active) {
 		_position.y = CLIP((int)_position.y, (int)UPPER_LIMIT, (int)LOWER_LIMIT);
 		_position.x = CLIP((int)_position.x, (int)LEFT_LIMIT, (int)RIGHT_LIMIT);
