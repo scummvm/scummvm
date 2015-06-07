@@ -418,8 +418,14 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	Object::_vm = vm;
 	Visage::_tLib = &_lib;
 
+	_finished = false;
+
 	// Initialize counter
 	_counter = 0;
+
+	// Initialize wait frame counters
+	_waitFrames = 0;
+	_waitStartFrame = 0;
 	
 	// Save a copy of the original palette
 	_vm->_screen->getPalette(_originalPalette);
@@ -443,11 +449,20 @@ Logo::~Logo() {
 }
 
 bool Logo::finished() const {
-	return _counter >= 442;
+	return _finished;
 }
 
 void Logo::nextFrame() {
 	Screen &screen = *_vm->_screen;
+
+	if (_waitFrames) {
+		uint32 currFrame = _vm->_events->getFrameCounter();
+		if (currFrame - _waitStartFrame < _waitFrames) {
+			return;
+		}
+		_waitStartFrame = 0;
+		_waitFrames = 0;
+	}
 
 	switch (_counter++) {
 	case 0:
@@ -487,9 +502,10 @@ void Logo::nextFrame() {
 			fade(_palette2);
 			screen._backBuffer1.clear();
 		}
+		waitFrames(10);
 		break;
 
-	case 14:
+	case 4:
 		// Load the new palette
 		byte palette[PALETTE_SIZE];
 		Common::copy(&_palette2[0], &_palette2[PALETTE_SIZE], &palette[0]);
@@ -506,133 +522,160 @@ void Logo::nextFrame() {
 		_objects[0].setDestination(Common::Point(158, 71));
 		break;
 
-	case 15:
+	case 5:
 		// Wait until the logo has expanded upwards to form EA logo
 		if (_objects[0].isMoving())
 			--_counter;
 		break;
 
-	case 16:
+	case 6:
 		fade(_palette3, 40);
 		break;
 
-	case 20:
+	case 7:
 		// Show the 'Electronic Arts' company name
 		_objects[1].setVisage(14, 1);
 		_objects[1]._frame = 1;
 		_objects[1]._position = Common::Point(152, 98);
+		waitFrames(120);
 		break;
 
-	case 140:
+	case 8:
 		// Start sequence of positioning and size hand cursor in an arc
 		_objects[2].setVisage(18, 1);
 		_objects[2]._frame = 1;
 		_objects[2]._position = Common::Point(33, 91);
+		waitFrames(5);
 		break;
 
-	case 145:
+	case 9:
 		_objects[2]._frame = 2;
 		_objects[2]._position = Common::Point(44, 124);
+		waitFrames(5);
 		break;
 
-	case 150:
+	case 10:
 		_objects[2]._frame = 3;
 		_objects[2]._position = Common::Point(64, 153);
+		waitFrames(5);
 		break;
 
-	case 155:
+	case 11:
 		_objects[2]._frame = 4;
 		_objects[2]._position = Common::Point(87, 174);
+		waitFrames(5);
 		break;
 
-	case 160:
+	case 12:
 		_objects[2]._frame = 5;
 		_objects[2]._position = Common::Point(114, 191);
+		waitFrames(5);
 		break;
 
-	case 165:
+	case 13:
 		_objects[2]._frame = 6;
 		_objects[2]._position = Common::Point(125, 184);
+		waitFrames(5);
 		break;
 
-	case 170:
+	case 14:
 		_objects[2]._frame = 7;
 		_objects[2]._position = Common::Point(154, 187);
+		waitFrames(5);
 		break;
 
-	case 175:
+	case 15:
 		_objects[2]._frame = 8;
 		_objects[2]._position = Common::Point(181, 182);
+		waitFrames(5);
 		break;
 
-	case 180:
+	case 16:
 		_objects[2]._frame = 9;
 		_objects[2]._position = Common::Point(191, 167);
+		waitFrames(5);
 		break;
 
-	case 185:
+	case 17:
 		_objects[2]._frame = 10;
 		_objects[2]._position = Common::Point(190, 150);
+		waitFrames(5);
 		break;
 
-	case 190:
+	case 18:
 		_objects[2]._frame = 11;
 		_objects[2]._position = Common::Point(182, 139);
+		waitFrames(5);
 		break;
 
-	case 195:
+	case 19:
 		_objects[2]._frame = 11;
 		_objects[2]._position = Common::Point(170, 130);
+		waitFrames(5);
 		break;
 
-	case 200:
+	case 20:
 		_objects[2]._frame = 11;
 		_objects[2]._position = Common::Point(158, 121);
+		waitFrames(5);
 		break;
 
-	case 205:
+	case 21:
 		// Show a highlighting of the company name
+		_objects[1].remove();
 		_objects[2].erase();
 		_objects[2].remove();
 		_objects[3].setVisage(19, 1);
 		_objects[3]._position = Common::Point(155, 94);
+		waitFrames(8);
 		break;
 
-	case 213:
+	case 22:
 		_objects[3]._frame = 2;
+		waitFrames(8);
 		break;
 
-	case 221:
-		_objects[1].remove();
-		break;
-
-	case 222:
+	case 23:
 		_objects[3]._frame = 3;
+		waitFrames(8);
 		break;
 
-	case 230:
+	case 24:
 		_objects[3]._frame = 4;
+		waitFrames(8);
 		break;
 
-	case 238:
+	case 25:
 		_objects[3]._frame = 5;
+		waitFrames(8);
 		break;
 
-	case 246:
+	case 26:
 		_objects[3]._frame = 6;
+		waitFrames(8);
 		break;
 
-	case 254:
+	case 27:
 		_objects[3]._frame = 7;
+		waitFrames(8);
 		break;
 
-	case 262:
+	case 28:
 		_objects[3]._frame = 8;
+		waitFrames(180);
 		break;
+
+	case 29:
+		_finished = true;
 
 	default:
 		break;
 	}
+}
+
+void Logo::waitFrames(uint frames) {
+	_waitFrames = frames;
+	_waitStartFrame = _vm->_events->getFrameCounter();
 }
 
 void Logo::loadBackground() {

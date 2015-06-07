@@ -190,11 +190,14 @@ private:
 	ScalpelEngine *_vm;
 	TLib _lib;
 	int _counter;
+	bool _finished;
 	byte _originalPalette[PALETTE_SIZE];
 	byte _palette1[PALETTE_SIZE];
 	byte _palette2[PALETTE_SIZE];
 	byte _palette3[PALETTE_SIZE];
 	Object _objects[4];
+	uint _waitFrames;
+	uint32 _waitStartFrame;
 
 	Logo(ScalpelEngine *vm);
 	~Logo();
@@ -202,6 +205,12 @@ private:
 	void nextFrame();
 
 	bool finished() const;
+
+	/**
+	 * Wait for a number of frames. Note that the frame count in _events is
+	 * not the same as the number of calls to nextFrame().
+	 */
+	void waitFrames(uint frames);
 
 	/**
 	 * Load the background for the scene
