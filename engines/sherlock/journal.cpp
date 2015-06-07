@@ -102,6 +102,8 @@ void Journal::loadJournalLocations() {
 
 	// Get the numer of entries
 	_directory.resize(dir->readUint16LE());
+	if (IS_ROSE_TATTOO)
+		dir->seek((_directory.size() + 1) * 8, SEEK_CUR);
 
 	// Read in each entry
 	char buffer[17];
@@ -115,12 +117,16 @@ void Journal::loadJournalLocations() {
 	delete dir;
 
 	_locations.clear();
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
 		// 3DO: storage of locations is currently unknown TODO
+		return;
+	}
 
-		// Load in the locations stored in journal.txt
-		Common::SeekableReadStream *loc = res.load("journal.txt");
+	// Load in the locations stored in journal.txt
+	Common::SeekableReadStream *loc = res.load("journal.txt");
 
+	if (IS_SERRATED_SCALPEL) {
 		while (loc->pos() < loc->size()) {
 			Common::String line;
 			char c;
@@ -129,9 +135,43 @@ void Journal::loadJournalLocations() {
 
 			_locations.push_back(line);
 		}
+	} else {
+		// Initialize locations
+		_locations.resize(100);
+		for (int i = 0; i < 100; i++)
+			_locations[i] = "No Description";
 
-		delete loc;
+		while (loc->pos() < loc->size()) {
+			// In Rose Tattoo, each location line starts with the location
+			// number, followed by a dot, some spaces and its description
+			// in quotes
+			Common::String line = loc->readLine();
+			Common::String locNumStr;
+			int locNum = 0;
+			int i = 0;
+			Common::String locDesc;
+
+			// Get the location
+			while (Common::isDigit(line[i])) {
+				locNumStr += line[i];
+				i++;
+			}
+			locNum = atoi(locNumStr.c_str());
+
+			// Skip the dot, spaces and initial quotation mark
+			while (line[i] == ' ' || line[i] == '.' || line[i] == '\"')
+				i++;
+
+			do {
+				locDesc += line[i];
+				i++;
+			} while (line[i] != '\"');
+
+			_locations[locNum] = locDesc;
+		}
 	}
+
+	delete loc;
 }
 
 void Journal::loadJournalFile(bool alreadyLoaded) {
