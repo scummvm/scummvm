@@ -153,7 +153,9 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				readSavegameHeader(in, header);
+				if (!readSavegameHeader(in, header))
+					continue;
+
 				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				header._thumbnail->free();
@@ -176,7 +178,7 @@ bool SaveManager::readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHea
 		return false;
 
 	header._version = in->readByte();
-	if (header._version > SHERLOCK_SAVEGAME_VERSION)
+	if (header._version < MINIMUM_SAVEGAME_VERSION || header._version > CURRENT_SAVEGAME_VERSION)
 		return false;
 
 	// Read in the string
@@ -204,7 +206,7 @@ void SaveManager::writeSavegameHeader(Common::OutSaveFile *out, SherlockSavegame
 	// Write out a savegame header
 	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
 
-	out->writeByte(SHERLOCK_SAVEGAME_VERSION);
+	out->writeByte(CURRENT_SAVEGAME_VERSION);
 
 	// Write savegame name
 	out->write(header._saveName.c_str(), header._saveName.size());
@@ -302,7 +304,8 @@ void SaveManager::loadGame(int slot) {
 	}
 
 	// Synchronize the savegame data
-	Common::Serializer s(saveFile, nullptr);
+	Serializer s(saveFile, nullptr);
+	s.setSaveVersion(header._version);
 	synchronize(s);
 
 	delete saveFile;
@@ -317,7 +320,8 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 	writeSavegameHeader(out, header);
 
 	// Synchronize the savegame data
-	Common::Serializer s(nullptr, out);
+	Serializer s(nullptr, out);
+	s.setSaveVersion(CURRENT_SAVEGAME_VERSION);
 	synchronize(s);
 
 	out->finalize();
@@ -328,7 +332,7 @@ Common::String SaveManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _target.c_str(), slot);
 }
 
-void SaveManager::synchronize(Common::Serializer &s) {
+void SaveManager::synchronize(Serializer &s) {
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
 	Map &map = *_vm->_map;

@@ -662,7 +662,7 @@ void People::clearTalking() {
 	}
 }
 
-void People::synchronize(Common::Serializer &s) {
+void People::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
 
 	if (IS_SERRATED_SCALPEL) {

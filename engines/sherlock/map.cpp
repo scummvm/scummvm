@@ -553,18 +553,11 @@ void Map::highlightIcon(const Common::Point &pt) {
 	}
 }
 
-void Map::synchronize(Common::Serializer &s) {
-	s.syncAsSint16LE(_bigPos.x);
-	s.syncAsSint16LE(_bigPos.y);
-
-	Point32 overPos(_overPos.x / FIXED_INT_MULTIPLIER, _overPos.y / FIXED_INT_MULTIPLIER);
-	s.syncAsSint16LE(overPos.x);
-	s.syncAsSint16LE(overPos.y);
-	if (s.isLoading()) {
-		_overPos.x = overPos.x * FIXED_INT_MULTIPLIER;
-		_overPos.y = overPos.y * FIXED_INT_MULTIPLIER;
-	}
-
+void Map::synchronize(Serializer &s) {
+	s.syncAsSint32LE(_bigPos.x);
+	s.syncAsSint32LE(_bigPos.y);
+	s.syncAsSint32LE(_overPos.x);
+	s.syncAsSint16LE(_overPos.y);
 	s.syncAsSint16LE(_oldCharPoint);
 }
 

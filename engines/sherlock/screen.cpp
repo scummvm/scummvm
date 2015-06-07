@@ -485,7 +485,7 @@ Common::Rect Screen::getDisplayBounds() {
 		Common::Rect(0, 0, this->w(), this->h());
 }
 
-void Screen::synchronize(Common::Serializer &s) {
+void Screen::synchronize(Serializer &s) {
 	int fontNumb = _fontNumber;
 	s.syncAsByte(fontNumb);
 	if (s.isLoading())

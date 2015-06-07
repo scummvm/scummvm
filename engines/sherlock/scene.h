@@ -300,7 +300,7 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 
 	/**
 	 * Resets the NPC path information when entering a new scene.

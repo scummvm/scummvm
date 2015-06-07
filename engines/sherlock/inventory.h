@@ -25,10 +25,10 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "common/serializer.h"
 #include "common/str-array.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
@@ -69,7 +69,7 @@ struct InventoryItem {
 	/**
 	 * Synchronize the data for an inventory item
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 };
 
 class Inventory : public Common::Array<InventoryItem> {
@@ -163,7 +163,7 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 };
 
 } // End of namespace Sherlock

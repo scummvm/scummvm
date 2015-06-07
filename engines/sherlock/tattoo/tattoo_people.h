@@ -87,6 +87,10 @@ public:
 	 */
 	void setListenSequence(int speaker, int sequenceNum);
 
+	/**
+	 * Synchronize the data for a savegame
+	 */
+	virtual void synchronize(Serializer &s);
 
 	/**
 	 * Change the sequence of the scene background object associated with the specified speaker.

@@ -25,9 +25,9 @@
 
 #include "common/list.h"
 #include "common/rect.h"
-#include "common/serializer.h"
 #include "sherlock/surface.h"
 #include "sherlock/resources.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
@@ -265,7 +265,7 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 
 	// Rose Tattoo specific methods
 	void initPaletteFade(int bytesToRead);

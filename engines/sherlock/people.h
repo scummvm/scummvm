@@ -24,9 +24,9 @@
 #define SHERLOCK_PEOPLE_H
 
 #include "common/scummsys.h"
-#include "common/serializer.h"
 #include "common/queue.h"
 #include "sherlock/objects.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
@@ -189,7 +189,7 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	virtual void synchronize(Serializer &s) = 0;
 
 	/**
 	 * Change the sequence of the scene background object associated with the current speaker.

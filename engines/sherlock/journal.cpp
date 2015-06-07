@@ -1294,7 +1294,7 @@ void Journal::resetPosition() {
 	_page = 1;
 }
 
-void Journal::synchronize(Common::Serializer &s) {
+void Journal::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_index);
 	s.syncAsSint16LE(_sub);
 	s.syncAsSint16LE(_page);

@@ -207,7 +207,7 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 };
 
 #define IS_ROSE_TATTOO (_vm->getGameID() == GType_RoseTattoo)

@@ -200,6 +200,28 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 	}
 }
 
+void TattooPeople::synchronize(Serializer &s) {
+	s.syncAsByte(_holmesOn);
+
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		Person &p = _data[idx];
+		s.syncAsSint32LE(p._position.x);
+		s.syncAsSint32LE(p._position.y);
+		s.syncAsSint16LE(p._sequenceNumber);
+		s.syncAsSint16LE(p._type);
+		s.syncString(p._walkVGSName);
+		s.syncString(p._description);
+		s.syncString(p._examine);
+	}
+
+	s.syncAsSint16LE(_holmesQuotient);
+
+	if (s.isLoading()) {
+		_hSavedPos = _player._position;
+		_hSavedFacing = _player._sequenceNumber;
+	}
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

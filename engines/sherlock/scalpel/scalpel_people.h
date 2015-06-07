@@ -52,6 +52,11 @@ public:
 	void setTalking(int speaker);
 
 	/**
+	 * Synchronize the data for a savegame
+	 */
+	virtual void synchronize(Serializer &s);
+
+	/**
 	 * Change the sequence of the scene background object associated with the specified speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1);

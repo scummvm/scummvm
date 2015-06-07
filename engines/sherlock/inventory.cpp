@@ -32,7 +32,7 @@ InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
 		_examine(examine), _lookFlag(0) {
 }
 
-void InventoryItem::synchronize(Common::Serializer &s) {
+void InventoryItem::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_requiredFlag);
 	s.syncAsSint16LE(_lookFlag);
 	s.syncString(_name);
@@ -450,7 +450,7 @@ int Inventory::deleteItemFromInventory(const Common::String &name) {
 	return 1;
 }
 
-void Inventory::synchronize(Common::Serializer &s) {
+void Inventory::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holdings);
 
 	uint count = size();

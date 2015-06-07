@@ -1184,7 +1184,7 @@ void Talk::popStack() {
 	}
 }
 
-void Talk::synchronize(Common::Serializer &s) {
+void Talk::synchronize(Serializer &s) {
 	for (uint idx = 0; idx < _talkHistory.size(); ++idx) {
 		TalkHistoryEntry &he = _talkHistory[idx];
 

@@ -1193,7 +1193,7 @@ int Scene::closestZone(const Common::Point &pt) {
 	return zone;
 }
 
-void Scene::synchronize(Common::Serializer &s) {
+void Scene::synchronize(Serializer &s) {
 	if (s.isSaving())
 		saveSceneStatus();
 

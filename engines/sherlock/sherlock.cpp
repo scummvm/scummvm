@@ -244,7 +244,7 @@ void SherlockEngine::syncSoundSettings() {
 	_music->syncMusicSettings();
 }
 
-void SherlockEngine::synchronize(Common::Serializer &s) {
+void SherlockEngine::synchronize(Serializer &s) {
 	for (uint idx = 0; idx < _flags.size(); ++idx)
 		s.syncAsByte(_flags[idx]);
 }

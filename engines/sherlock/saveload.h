@@ -34,7 +34,11 @@ namespace Sherlock {
 
 #define MAX_SAVEGAME_SLOTS 99
 #define ONSCREEN_FILES_COUNT 5
-#define SHERLOCK_SAVEGAME_VERSION 1
+
+enum {
+	CURRENT_SAVEGAME_VERSION = 2,
+	MINIMUM_SAVEGAME_VERSION = 2
+};
 
 enum SaveMode { SAVEMODE_NONE = 0, SAVEMODE_LOAD = 1, SAVEMODE_SAVE = 2 };
 
@@ -51,6 +55,20 @@ struct SherlockSavegameHeader {
 
 class SherlockEngine;
 
+
+/**
+ * Derived serializer class with extra synchronization types
+ */
+class Serializer : public Common::Serializer {
+public:
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+
+	/**
+	 * New method to allow setting the version
+	 */
+	void setSaveVersion(byte version) { _version = version; }
+};
+
 class SaveManager {
 private:
 	SherlockEngine *_vm;
@@ -65,7 +83,7 @@ private:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Common::Serializer &s);
+	void synchronize(Serializer &s);
 public:
 	Common::StringArray _savegames;
 	int _savegameIndex;

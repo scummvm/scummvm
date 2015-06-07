@@ -86,6 +86,20 @@ void ScalpelPeople::setTalking(int speaker) {
 	}
 }
 
+
+void ScalpelPeople::synchronize(Serializer &s) {
+	s.syncAsByte(_holmesOn);
+	s.syncAsSint32LE(_player._position.x);
+	s.syncAsSint32LE(_player._position.y);
+	s.syncAsSint16LE(_player._sequenceNumber);
+	s.syncAsSint16LE(_holmesQuotient);
+
+	if (s.isLoading()) {
+		_hSavedPos = _player._position;
+		_hSavedFacing = _player._sequenceNumber;
+	}
+}
+
 void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
