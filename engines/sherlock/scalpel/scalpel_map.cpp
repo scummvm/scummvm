@@ -95,8 +95,7 @@ void ScalpelMap::loadData() {
 		return;
 
 	// Load the list of location names
-	Common::SeekableReadStream *txtStream = _vm->_res->load(
-		_vm->getGameID() == GType_SerratedScalpel ? "chess.txt" : "map.txt");
+	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
 
 	int streamSize = txtStream->size();
 	while (txtStream->pos() < streamSize) {
