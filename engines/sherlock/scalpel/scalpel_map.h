@@ -146,6 +146,7 @@ protected:
 	void highlightIcon(const Common::Point &pt);
 public:
 	ScalpelMap(SherlockEngine *vm);
+	virtual ~ScalpelMap() {}
 
 	const MapEntry &operator[](int idx) { return _points[idx]; }
 

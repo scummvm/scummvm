@@ -43,6 +43,7 @@ public:
 	bool _frameChangeFlag;
 public:
 	static Map *init(SherlockEngine *vm);
+	virtual ~Map() {}
 
 	/**
 	 * Show the map
