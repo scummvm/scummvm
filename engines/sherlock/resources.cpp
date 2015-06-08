@@ -775,6 +775,12 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			if (ccbFlags & 0x200) // bit 9
 				ccbFlags_compressed = true;
 
+			// bit 5 of ccbFlags defines how RGB-black (0, 0, 0) will get treated
+			// = false -> RGB-black is treated as transparent
+			// = true  -> RGB-black is treated as actual black
+			// atm we are always treating it as transparent
+			// it seems this bit is not set for any data of Sherlock Holmes
+
 			// PRE0 first 3 bits define how many bits per encoded pixel are used
 			ccbPRE0_bitsPerPixel = imagefile3DO_cel_bitsPerPixelLookupTable[ccbPRE0 & 0x07];
 			if (!ccbPRE0_bitsPerPixel)
