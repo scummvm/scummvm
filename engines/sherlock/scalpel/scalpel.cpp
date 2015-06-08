@@ -533,9 +533,48 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 	bool finished = _animation->play3DO("26open1", true, 1, 255, 2);
 
+	if (finished) {
+		// TODO: Both of these should actually fade into the screen
+		_screen->_backBuffer2.blitFrom(*_screen);
+
+		// "London, England"
+		ImageFile3DO titleImage_London("title2a.cel");
+
+		_screen->transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(10, 11));
+		finished = _events->delay(1000, true);
+
+		if (finished) {
+			// "November, 1888"
+			ImageFile3DO titleImage_November("title2b.cel");
+
+			_screen->transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 102));
+			finished = _events->delay(5000, true);
+
+			if (finished) {
+				_screen->blitFrom(_screen->_backBuffer2);
+			}
+		}
+	}
+
 	if (finished)
 		finished = _animation->play3DO("26open2", true, 1, 0, 2);
 
+	if (finished) {
+		// "Sherlock Holmes" (title)
+		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel");
+
+		_screen->transBlitFromUnscaled3DO(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 21));
+		finished = _events->delay(500, true);
+
+		// Title should fade in, Copyright should be displayed a bit after that
+		if (finished) {
+			//ImageFile3DO titleImage_Copyright("title1c.cel");
+
+			//_screen->transBlitFromUnscaled3DO(titleImage_Copyright[0]._frame, Common::Point(4, 190));
+			finished = _events->delay(3500, true);
+		}
+		// Title is supposed to get faded away after that
+	}
 	return finished;
 }
 

@@ -222,6 +222,10 @@ public:
 	static void setVm(SherlockEngine *vm);
 };
 
+struct ImageFile3DOPixelLookupTable {
+	uint16 pixelColor[256];
+};
+
 class ImageFile3DO : public Common::Array<ImageFrame> {
 private:
 	static SherlockEngine *_vm;
@@ -241,15 +245,17 @@ private:
 	 */
 	void load3DOCelFile(Common::SeekableReadStream &stream);
 
+	inline uint16 celGetBits(const byte *&dataPtr, byte bitCount, byte &dataBitsLeft);
+
+	/**
+	 * Decompress a single frame of a 3DO cel file
+	 */
+	void decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr, byte bitsPerPixel, ImageFile3DOPixelLookupTable *pixelLookupTable);
+
 	/**
 	 * Load animation graphics file
 	 */
 	void loadAnimationFile(Common::SeekableReadStream &stream, bool animImages);
-
-	/**
-	 * Decompress a single frame for the sprite
-	 */
-	void decompressAnimationFrame(Common::SeekableReadStream *stream, ImageFrame  &frame, const byte *src);
 
 public:
 	ImageFile3DO(const Common::String &name, bool animImages = false);
