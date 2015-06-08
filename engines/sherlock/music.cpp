@@ -24,6 +24,8 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+// for 3DO digital music
+#include "audio/decoders/aiff.h"
 
 namespace Sherlock {
 
@@ -190,16 +192,15 @@ bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
 /*----------------------------------------------------------------*/
 
 Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+	_midiDriver = NULL;
+	_midiParser = NULL;
+	_musicType = MT_NULL;
 	_musicPlaying = false;
-	_musicOn = true;
+	_musicOn = false;
 
 	if (_vm->getPlatform() == Common::kPlatform3DO) {
-		// 3DO - disable music
-		// TODO: Implement music support
-		_driver = NULL;
-		_midiParser = NULL;
-		_musicType = MT_NULL;
-		_musicOn = false;
+		// 3DO - uses digital samples for music
+		_musicOn = true;
 		return;
 	}
 
@@ -211,18 +212,16 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_musicType = MidiDriver::getMusicType(dev);
 
-	_driver = NULL;
-
 	switch (_musicType) {
 	case MT_ADLIB:
-		_driver = MidiDriver_AdLib_create();
+		_midiDriver = MidiDriver_AdLib_create();
 		break;
 	case MT_MT32:
-		_driver = MidiDriver_MT32_create();
+		_midiDriver = MidiDriver_MT32_create();
 		break;
 	case MT_GM:
 		if (ConfMan.getBool("native_mt32")) {
-			_driver = MidiDriver_MT32_create();
+			_midiDriver = MidiDriver_MT32_create();
 			_musicType = MT_MT32;
 		}
 		break;
@@ -233,16 +232,14 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		break;
 	}
 
-	if (_driver) {
-		assert(_driver);
-
-		int ret = _driver->open();
+	if (_midiDriver) {
+		int ret = _midiDriver->open();
 		if (ret == 0) {
 			// Reset is done inside our MIDI driver
-			_driver->setTimerCallback(_midiParser, &_midiParser->timerCallback);
+			_midiDriver->setTimerCallback(_midiParser, &_midiParser->timerCallback);
 		}
-		_midiParser->setMidiDriver(_driver);
-		_midiParser->setTimerRate(_driver->getBaseTempo());
+		_midiParser->setMidiDriver(_midiDriver);
+		_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 
 		if (_musicType == MT_MT32) {
 			// Upload patches
@@ -259,12 +256,11 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			byte *MT32driverDataPtr = MT32driverData + 12;
 			MT32driverDataSize -= 12;
 
-			MidiDriver_MT32_uploadPatches(_driver, MT32driverDataPtr, MT32driverDataSize);
+			MidiDriver_MT32_uploadPatches(_midiDriver, MT32driverDataPtr, MT32driverDataSize);
 			delete[] MT32driverData;
 		}
-	} else {
-		// no driver, bye bye music
-		_musicOn = false;
+
+		_musicOn = true;
 	}
 }
 
@@ -274,9 +270,9 @@ Music::~Music() {
 		_midiParser->stopPlaying();
 		delete _midiParser;
 	}
-	if (_driver) {
-		_driver->close();
-		delete _driver;
+	if (_midiDriver) {
+		_midiDriver->close();
+		delete _midiDriver;
 	}
 }
 
@@ -321,72 +317,107 @@ void Music::syncMusicSettings() {
 }
 
 bool Music::playMusic(const Common::String &name) {
-	if (!_driver)
-		return false;
 	if (!_musicOn)
 		return false;
 
 	debugC(kDebugLevelMusic, "Music: playMusic('%s')", name.c_str());
-	Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
 
-	byte *data = new byte[stream->size()];
-	int32 dataSize = stream->size();
-	assert(data);
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// MIDI based
+		if (!_midiDriver)
+			return false;
 
-	stream->read(data, dataSize);
-	delete stream;
+		Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
 
-	// for dumping the music tracks
+		byte *data = new byte[stream->size()];
+		int32 dataSize = stream->size();
+		assert(data);
+
+		stream->read(data, dataSize);
+		delete stream;
+
+		// for dumping the music tracks
 #if 0
-	Common::DumpFile outFile;
-	outFile.open(name + ".RAW");
-	outFile.write(data, stream->size());
-	outFile.flush();
-	outFile.close();
+		Common::DumpFile outFile;
+		outFile.open(name + ".RAW");
+		outFile.write(data, stream->size());
+		outFile.flush();
+		outFile.close();
 #endif
 
-	if (dataSize < 14) {
-		warning("Music: not enough data in music file");
-		return false;
-	}
+		if (dataSize < 14) {
+			warning("Music: not enough data in music file");
+			return false;
+		}
 
-	byte *dataPos = data;
-	if (memcmp("            ", dataPos, 12)) {
-		warning("Music: expected header not found in music file");
-		return false;
-	}
-	dataPos += 12;
-	dataSize -= 12;
+		byte *dataPos = data;
+		if (memcmp("            ", dataPos, 12)) {
+			warning("Music: expected header not found in music file");
+			return false;
+		}
+		dataPos += 12;
+		dataSize -= 12;
 
-	uint16 headerSize = READ_LE_UINT16(dataPos);
-	if (headerSize != 0x7F) {
-		warning("Music: header is not as expected");
-		return false;
-	}
+		uint16 headerSize = READ_LE_UINT16(dataPos);
+		if (headerSize != 0x7F) {
+			warning("Music: header is not as expected");
+			return false;
+		}
 
-	if (_driver) {
 		switch (_musicType) {
 		case MT_ADLIB:
-			MidiDriver_AdLib_newMusicData(_driver, dataPos, dataSize);
+			MidiDriver_AdLib_newMusicData(_midiDriver, dataPos, dataSize);
 			break;
 
 		case MT_MT32:
-			MidiDriver_MT32_newMusicData(_driver, dataPos, dataSize);
+			MidiDriver_MT32_newMusicData(_midiDriver, dataPos, dataSize);
 			break;
 
 		default:
 			// should never happen
 			break;
 		}
-	}
 
-	_midiParser->loadMusic(dataPos, dataSize);
+		_midiParser->loadMusic(dataPos, dataSize);
+
+	} else {
+		// 3DO: sample based
+		Audio::AudioStream *musicStream;
+		Common::String digitalMusicName = "music/" + name + "_MW22.aifc";
+
+		if (isPlaying()) {
+			_mixer->stopHandle(_digitalMusicHandle);
+		}
+
+		Common::File *digitalMusicFile = new Common::File();
+		if (!digitalMusicFile->open(digitalMusicName)) {
+			warning("playMusic: can not open 3DO music '%s'", digitalMusicName.c_str());
+			return false;
+		}
+
+		// Try to load the given file as AIFF/AIFC
+		musicStream = Audio::makeAIFFStream(digitalMusicFile, DisposeAfterUse::YES);
+		if (!musicStream) {
+			warning("playMusic: can not load 3DO music '%s'", digitalMusicName.c_str());
+			return false;
+		}
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_digitalMusicHandle, musicStream);
+	}
 	return true;
 }
 
 void Music::stopMusic() {
 	// TODO
 	warning("TODO: Sound::stopMusic");
+
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// TODO
+	} else {
+		// 3DO
+		if (isPlaying()) {
+			_mixer->stopHandle(_digitalMusicHandle);
+		}
+	}
 
 	_musicPlaying = false;
 }
@@ -408,6 +439,27 @@ void Music::freeSong() {
 void Music::waitTimerRoland(uint time) {
 	// TODO
 	warning("TODO: Sound::waitTimerRoland");
+}
+
+bool Music::isPlaying() {
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// MIDI based
+		return _midiParser->isPlaying();
+	} else {
+		// 3DO: sample based
+		return _mixer->isSoundHandleActive(_digitalMusicHandle);
+	}
+}
+
+// Returns the current music position in milliseconds
+uint32 Music::getCurrentPosition() {
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// MIDI based
+		return (_midiParser->getTick() * 1000) / 60; // translate tick to millisecond
+	} else {
+		// 3DO: sample based
+		return _mixer->getSoundElapsedTime(_digitalMusicHandle);
+	}
 }
 
 // This is used to wait for the music in certain situations like especially the intro
@@ -445,5 +497,39 @@ bool Music::waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, u
 	}
 }
 
-} // End of namespace Sherlock
+// This is used to wait for the music in certain situations like especially the intro
+// Note: the original game didn't do this, instead it just waited for certain amounts of time
+//       We do this, so that the intro graphics + music work together even on faster/slower hardware.
+bool Music::waitUntilMSec(uint32 msecTarget, uint32 msecMax, uint32 additionalDelay, uint32 noMusicDelay) {
+	uint32 msecCurrent = 0;
 
+	if (!isPlaying()) {
+		return _vm->_events->delay(noMusicDelay, true);
+	}
+	while (1) {
+		if (!isPlaying()) { // Music is not playing anymore -> we are done
+			if (additionalDelay > 0) {
+				if (!_vm->_events->delay(additionalDelay, true))
+					return false;
+			}
+			return true;
+		}
+
+		msecCurrent = getCurrentPosition();
+		//warning("waitUntilMSec: %lx", msecCurrent);
+
+		if ((!msecMax) || (msecCurrent <= msecMax)) {
+			if (msecCurrent >= msecTarget) {
+				if (additionalDelay > 0) {
+					if (!_vm->_events->delay(additionalDelay, true))
+						return false;
+				}
+				return true;
+			}
+		}
+		if (!_vm->_events->delay(10, true))
+			return false;
+	}
+}
+
+} // End of namespace Sherlock

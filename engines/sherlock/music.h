@@ -27,6 +27,9 @@
 #include "audio/midiparser.h"
 //#include "audio/mididrv.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+// for 3DO digital music
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace Sherlock {
 
@@ -58,7 +61,8 @@ private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
 	MidiParser_SH *_midiParser;
-	MidiDriver *_driver;
+	MidiDriver *_midiDriver;
+	Audio::SoundHandle _digitalMusicHandle;
 
 public:
 	bool _musicPlaying;
@@ -105,7 +109,12 @@ public:
 	
 	void waitTimerRoland(uint time);
 
+	bool isPlaying();
+	uint32 getCurrentPosition();
+
 	bool waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay);
+
+	bool waitUntilMSec(uint32 msecTarget, uint32 maxMSec, uint32 additionalDelay, uint32 noMusicDelay);
 };
 
 } // End of namespace Sherlock

@@ -531,6 +531,12 @@ bool ScalpelEngine::showOfficeCutscene() {
 bool ScalpelEngine::showCityCutscene3DO() {
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
+	// Play intro music
+	_music->playMusic("prolog");
+
+	// rain.aiff seems to be playing in an endless loop until
+	// sherlock logo fades away TODO
+
 	bool finished = _animation->play3DO("26open1", true, 1, 255, 2);
 
 	if (finished) {
@@ -548,8 +554,8 @@ bool ScalpelEngine::showCityCutscene3DO() {
 			ImageFile3DO titleImage_November("title2b.cel");
 
 			_screen->transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 100));
-			finished = _events->delay(5000, true);
 
+			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
 		}
 
 		if (finished) {
@@ -562,8 +568,6 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		finished = _animation->play3DO("26open2", true, 1, 0, 2);
 
 	if (finished) {
-		_screen->_backBuffer2.blitFrom(*_screen);
-
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel");
 
@@ -578,14 +582,10 @@ bool ScalpelEngine::showCityCutscene3DO() {
 			finished = _events->delay(3500, true);
 		}
 		// Title is supposed to get faded away after that
-		if (finished) {
-			// Restore screen
-			_screen->blitFrom(_screen->_backBuffer2);
-		}
 	}
 
 	if (finished)
-		finished = _events->delay(2000);
+		finished = _music->waitUntilMSec(33600, 0, 0, 2000);
 
 	if (finished) {
 		// TODO: fade to black
@@ -598,44 +598,56 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		_screen->transBlitFromUnscaled3DO(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
 		// TODO: Supposed to get faded in and out
-		finished = _events->delay(2500, true);
+		finished = _music->waitUntilMSec(39900, 0, 0, 2500);
 
 		// Fade out
+		_screen->clear();
 	}
 	return finished;
 }
 
 bool ScalpelEngine::showAlleyCutscene3DO() {
-	bool finished = _animation->play3DO("27PRO1", true, 1, 3, 2);
+	bool finished = _music->waitUntilMSec(44000, 0, 0, 1000);
+
+	if (finished)
+		finished = _animation->play3DO("27PRO1", true, 1, 3, 2);
 
 	if (finished) {
 		// Fade out...
 		_screen->clear();
 
-		finished = _events->delay(1000, true);
+		finished = _music->waitUntilMSec(66700, 0, 0, 1000);
 	}
 
 	if (finished)
 		finished = _animation->play3DO("27PRO2", true, 1, 0, 2);
 
 	if (finished) {
+		// Fade out
+		_screen->clear();
+
+		finished = _music->waitUntilMSec(76000, 0, 0, 1000);
+	}
+
+	if (finished) {
 		// Show screaming victim
 		ImageFile3DO titleImage_ScreamingVictim("scream.cel");
 
+		_screen->clear();
 		_screen->transBlitFromUnscaled3DO(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
 
 		// Play "scream.aiff"
 		if (_sound->_voices)
 			_sound->playSound("prologue/sounds/scream.aiff", WAIT_RETURN_IMMEDIATELY, 100);
 
-		finished = _events->delay(6000, true);
+		finished = _music->waitUntilMSec(81600, 0, 0, 6000);
 	}
 
 	if (finished) {
 		// TODO: quick fade out
 		_screen->clear();
 
-		finished = _events->delay(2000, true);
+		finished = _music->waitUntilMSec(84400, 0, 0, 2000);
 	}
 
 	if (finished)
@@ -653,22 +665,21 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 		_screen->transBlitFromUnscaled3DO(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
 		// TODO: Fade in
 
-		finished = _events->delay(3000, true);
+		finished = _music->waitUntilMSec(96700, 0, 0, 3000);
 	}
 
 	return finished;
 }
 
 bool ScalpelEngine::showStreetCutscene3DO() {
-	// wait a bit
-	bool finished = _events->delay(500);
+	bool finished = true;
 
 	if (finished) {
 		// fade out "Early the following morning..."
 		_screen->clear();
 
 		// wait for music a bit
-		finished = _events->delay(1000, true);
+		finished = _music->waitUntilMSec(100300, 0, 0, 1000);
 	}
 
 	finished = _animation->play3DO("14KICK", true, 1, 3, 2);
@@ -677,15 +688,24 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 		finished = _animation->play3DO("14NOTE", true, 1, 0, 3);
 
 	// TODO: fade out
+	_screen->clear();
 
 	return finished;
 }
 
 bool ScalpelEngine::showOfficeCutscene3DO() {
-	bool finished = _animation->play3DO("COFF1", true, 1, 3, 3);
+	bool finished = true;
+
+	finished = _music->waitUntilMSec(151000, 0, 0, 1000);
+
+	if (finished)
+		_animation->play3DO("COFF1", true, 1, 3, 3);
 
 	if (finished)
 		finished = _animation->play3DO("COFF2", true, 1, 0, 3);
+
+	if (finished)
+		finished = _music->waitUntilMSec(182400, 0, 0, 1000);
 
 	if (finished) {
 		// Show the note
@@ -699,11 +719,15 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		} else
 			finished = _events->delay(19000);
 
-		if (finished) {
-			_events->clearEvents();
-			finished = _events->delay(500);
-		}
+		if (finished)
+			finished = _music->waitUntilMSec(218800, 0, 0, 1000);
+
+		// Fade out
+		_screen->clear();
 	}
+
+	if (finished)
+		finished = _music->waitUntilMSec(222200, 0, 0, 1000);
 
 	if (finished)
 		finished = _animation->play3DO("COFF3", true, 1, 0, 3);
