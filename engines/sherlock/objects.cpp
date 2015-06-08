@@ -320,8 +320,8 @@ void Sprite::checkSprite() {
 
 	if (!talk._talkCounter && _type == CHARACTER) {
 		pt = _walkCount ? _position + _delta : _position;
-		pt.x /= 100;
-		pt.y /= 100;
+		pt.x /= FIXED_INT_MULTIPLIER;
+		pt.y /= FIXED_INT_MULTIPLIER;
 
 		for (uint idx = 0; idx < scene._bgShapes.size() && !talk._talkToAbort; ++idx) {
 			Object &obj = scene._bgShapes[idx];
