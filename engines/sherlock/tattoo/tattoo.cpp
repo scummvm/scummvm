@@ -65,6 +65,15 @@ void TattooEngine::initialize() {
 }
 
 void TattooEngine::startScene() {
+	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
+		// Show the map
+		_scene->_currentScene = OVERHEAD_MAP;
+		_scene->_goToScene = _map->show();
+
+		_people->_hSavedPos = Common::Point(-1, -1);
+		_people->_hSavedFacing = -1;
+	}
+
 	// TODO
 }
 

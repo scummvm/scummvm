@@ -94,7 +94,7 @@ void SherlockEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new Events(this);
 	_inventory = new Inventory(this);
-	_map = new Map(this);
+	_map = Map::init(this);
 	_music = new Music(this, _mixer);
 	_journal = new Journal(this);
 	_people = People::init(this);

@@ -20,9 +20,11 @@
  *
  */
 
+#include "common/system.h"
 #include "sherlock/map.h"
 #include "sherlock/sherlock.h"
-#include "common/system.h"
+#include "sherlock/scalpel/scalpel_map.h"
+#include "sherlock/tattoo/tattoo_map.h"
 
 namespace Sherlock {
 
@@ -50,6 +52,13 @@ const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 }
 
 /*----------------------------------------------------------------*/
+
+Map *Map::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new Scalpel::ScalpelMap(vm);
+	else
+		return new Tattoo::TattooMap(vm);
+}
 
 Map::Map(SherlockEngine *vm): _vm(vm), _topLine(g_system->getWidth(), 12, vm->getPlatform()) {
 	_active = false;

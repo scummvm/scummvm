@@ -64,7 +64,7 @@ public:
 };
 
 class Map {
-private:
+protected:
 	SherlockEngine *_vm;
 	Common::Array<MapEntry> _points;	// Map locations for each scene
 	Common::StringArray _locationNames;
@@ -83,7 +83,9 @@ private:
 	int _cursorIndex;
 	bool _drawMap;
 	Surface _iconSave;
-private:
+protected:
+	Map(SherlockEngine *vm);
+
 	/**
 	 * Load data  needed for the map
 	 */
@@ -150,7 +152,7 @@ public:
 	int _charPoint, _oldCharPoint;
 	bool _frameChangeFlag;
 public:
-	Map(SherlockEngine *vm);
+	static Map *init(SherlockEngine *vm);
 
 	const MapEntry &operator[](int idx) { return _points[idx]; }
 

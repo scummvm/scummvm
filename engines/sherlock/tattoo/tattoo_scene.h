@@ -31,7 +31,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 enum {
-	STARTING_INTRO_SCENE = 91
+	STARTING_INTRO_SCENE = 91, OVERHEAD_MAP2 = 99, OVERHEAD_MAP = 100
 };
 
 class TattooScene : public Scene {
