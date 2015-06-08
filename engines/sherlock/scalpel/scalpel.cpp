@@ -610,6 +610,8 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 
 	if (finished) {
 		// Fade out...
+		_screen->clear();
+
 		finished = _events->delay(1000, true);
 	}
 
