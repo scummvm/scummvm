@@ -540,19 +540,21 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		// "London, England"
 		ImageFile3DO titleImage_London("title2a.cel");
 
-		_screen->transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(10, 11));
+		_screen->transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(30, 50));
 		finished = _events->delay(1000, true);
 
 		if (finished) {
 			// "November, 1888"
 			ImageFile3DO titleImage_November("title2b.cel");
 
-			_screen->transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 102));
+			_screen->transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 100));
 			finished = _events->delay(5000, true);
 
-			if (finished) {
-				_screen->blitFrom(_screen->_backBuffer2);
-			}
+		}
+
+		if (finished) {
+			// Restore screen
+			_screen->blitFrom(_screen->_backBuffer2);
 		}
 	}
 
@@ -563,14 +565,14 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel");
 
-		_screen->transBlitFromUnscaled3DO(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 21));
+		_screen->transBlitFromUnscaled3DO(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
 		finished = _events->delay(500, true);
 
 		// Title should fade in, Copyright should be displayed a bit after that
 		if (finished) {
-			//ImageFile3DO titleImage_Copyright("title1c.cel");
+			ImageFile3DO titleImage_Copyright("title1c.cel");
 
-			//_screen->transBlitFromUnscaled3DO(titleImage_Copyright[0]._frame, Common::Point(4, 190));
+			_screen->transBlitFromUnscaled3DO(titleImage_Copyright[0]._frame, Common::Point(20, 190));
 			finished = _events->delay(3500, true);
 		}
 		// Title is supposed to get faded away after that

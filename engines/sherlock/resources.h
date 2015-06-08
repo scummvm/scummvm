@@ -250,7 +250,7 @@ private:
 	/**
 	 * Decompress a single frame of a 3DO cel file
 	 */
-	void decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr, byte bitsPerPixel, ImageFile3DOPixelLookupTable *pixelLookupTable);
+	void decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr, uint32 dataSize, byte bitsPerPixel, ImageFile3DOPixelLookupTable *pixelLookupTable);
 
 	/**
 	 * Load animation graphics file

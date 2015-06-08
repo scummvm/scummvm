@@ -667,11 +667,10 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream, bool an
 
 		// Load data for frame and decompress it
 		byte *data = new byte[compressedSize];
-		assert(data);
 		stream.read(data, compressedSize);
 
 		// always 16 bits per pixel (RGB555)
-		decompress3DOCelFrame(frame, data, 16, NULL);
+		decompress3DOCelFrame(frame, data, compressedSize, 16, NULL);
 
 		delete[] data;
 
@@ -822,7 +821,6 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			}
 			// read data into memory
 			chunkDataPtr = new byte[dataSize];
-			assert(chunkDataPtr);
 
 			stream.read(chunkDataPtr, dataSize);
 
@@ -837,9 +835,9 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 
 			// Decompress/copy this frame
 			if (!plutFound) {
-				decompress3DOCelFrame(imageFrame, chunkDataPtr, ccbPRE0_bitsPerPixel, NULL);
+				decompress3DOCelFrame(imageFrame, chunkDataPtr, dataSize, ccbPRE0_bitsPerPixel, NULL);
 			} else {
-				decompress3DOCelFrame(imageFrame, chunkDataPtr, ccbPRE0_bitsPerPixel, &plutRGBlookupTable);
+				decompress3DOCelFrame(imageFrame, chunkDataPtr, dataSize, ccbPRE0_bitsPerPixel, &plutRGBlookupTable);
 			}
 
 			delete[] chunkDataPtr;
@@ -894,7 +892,7 @@ inline uint16 ImageFile3DO::celGetBits(const byte *&dataPtr, byte bitCount, byte
 }
 
 // decompress/copy 3DO cel data
-void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr, byte bitsPerPixel, ImageFile3DOPixelLookupTable *pixelLookupTable) {
+void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr, uint32 dataSize, byte bitsPerPixel, ImageFile3DOPixelLookupTable *pixelLookupTable) {
 	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	uint16 *dest = (uint16 *)frame._frame.getPixels();
 	Common::fill(dest, dest + frame._width * frame._height, 0);
@@ -904,6 +902,12 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 	uint16 pixelCount = 0;
 	uint16 pixel = 0;
 
+	const  byte *srcLineStart = dataPtr;
+	const  byte *srcLineData = dataPtr;
+	byte   srcLineDataBitsLeft = 0;
+	uint16 lineDWordSize = 0;
+	uint16 lineByteSize = 0;
+
 	if (bitsPerPixel == 16) {
 		// Must not use pixel lookup table on 16-bits-per-pixel data
 		assert(!pixelLookupTable);
@@ -911,10 +915,6 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 
 	if (frame._rleEncoded) {
 		// compressed
-		const  byte *srcLineStart = dataPtr;
-		const  byte *srcLineData = dataPtr;
-		byte   srcLineDataBitsLeft = 0;
-		uint16 lineDWordSize = 0;
 		byte   compressionType = 0;
 		byte   compressionPixels = 0;
 
@@ -931,7 +931,7 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 			srcLineDataBitsLeft = 8;
 
 			lineDWordSize += 2;
-			uint16 lineByteSize = lineDWordSize * 4; // calculate compressed data size in bytes for current line
+			lineByteSize = lineDWordSize * 4; // calculate compressed data size in bytes for current line
 
 			// debug
 			//warning("offset %d: decoding line, size %d, bytesize %d", srcSeeker - src, dwordSize, lineByteSize);
@@ -991,12 +991,19 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 		}
 	} else {
 		// uncompressed
-		byte dataBitsLeft = 8;
+		srcLineDataBitsLeft = 8;
+		lineDWordSize = ((frame._width * bitsPerPixel) + 31) >> 5;
+		lineByteSize = lineDWordSize * 4;
+		uint32 totalExpectedSize = lineByteSize * frame._height;
+
+		assert(totalExpectedSize <= dataSize); // security check
 
 		while (frameHeightLeft > 0) {
+			srcLineData = srcLineStart;
 			frameWidthLeft = frame._width;
+
 			while (frameWidthLeft > 0) {
-				pixel = celGetBits(dataPtr, bitsPerPixel, dataBitsLeft);
+				pixel = celGetBits(srcLineData, bitsPerPixel, srcLineDataBitsLeft);
 				if (pixelLookupTable) {
 					pixel = pixelLookupTable->pixelColor[pixel];
 				}
@@ -1005,6 +1012,9 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 				frameWidthLeft--;
 			}
 			frameHeightLeft--;
+
+			// Seek to next line start
+			srcLineStart += lineByteSize;
 		}
 	}
 }
