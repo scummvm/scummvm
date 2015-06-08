@@ -188,7 +188,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	Common::String locStr(dirFilename.c_str() + 4, dirFilename.c_str() + 6);
 	int newLocation = atoi(locStr.c_str());
 
-	// If not flagged as alrady loaded, load the conversation into script variables
+	// If not flagged as already loaded, load the conversation into script variables
 	if (!alreadyLoaded) {
 		// See if the file to be used is already loaded
 		if (journalEntry._converseNum != talk._converseNum) {
