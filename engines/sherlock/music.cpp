@@ -295,7 +295,7 @@ bool Music::loadSong(int songNumber) {
 	if((songNumber > NUM_SONGS) || (songNumber < 1))
 		return false;
 
-	Common::String songName = Common::String(SONG_NAMES[songNumber - 1]) + ".MUS";
+	Common::String songName = Common::String(SONG_NAMES[songNumber - 1]);
 
 	freeSong();  // free any song that is currently loaded
 	
@@ -327,7 +327,8 @@ bool Music::playMusic(const Common::String &name) {
 		if (!_midiDriver)
 			return false;
 
-		Common::SeekableReadStream *stream = _vm->_res->load(name, "MUSIC.LIB");
+		Common::String midiMusicName = name + ".MUS";
+		Common::SeekableReadStream *stream = _vm->_res->load(midiMusicName, "MUSIC.LIB");
 
 		byte *data = new byte[stream->size()];
 		int32 dataSize = stream->size();

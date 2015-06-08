@@ -277,7 +277,7 @@ bool ScalpelEngine::showCityCutscene() {
 	Common::fill(&greyPalette[0], &greyPalette[PALETTE_SIZE], 142);
 	_screen->fadeIn((const byte *)greyPalette, 3);
 
-	_music->playMusic("prolog1.mus");
+	_music->playMusic("prolog1");
 	_animation->_gfxLibraryFilename = "title.lib";
 	_animation->_soundLibraryFilename = "title.snd";
 	bool finished = _animation->play("26open1", true, 1, 255, true, 2);
@@ -350,7 +350,7 @@ bool ScalpelEngine::showCityCutscene() {
 
 bool ScalpelEngine::showAlleyCutscene() {
 	byte palette[PALETTE_SIZE];
-	_music->playMusic("prolog2.mus");
+	_music->playMusic("prolog2");
 
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
@@ -416,7 +416,7 @@ bool ScalpelEngine::showStreetCutscene() {
 	_animation->_gfxLibraryFilename = "TITLE.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	_music->playMusic("PROLOG3.MUS");
+	_music->playMusic("prolog3");
 
 	// wait a bit
 	bool finished = _events->delay(500);
@@ -483,7 +483,7 @@ bool ScalpelEngine::scrollCredits() {
 }
 
 bool ScalpelEngine::showOfficeCutscene() {
-	_music->playMusic("PROLOG4.MUS");
+	_music->playMusic("prolog4");
 	_animation->_gfxLibraryFilename = "TITLE2.LIB";
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
