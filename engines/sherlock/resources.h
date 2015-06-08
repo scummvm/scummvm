@@ -232,11 +232,24 @@ private:
 	void load(Common::SeekableReadStream &stream, bool animImages);
 
 	/**
+	 * convert pixel RGB values from RGB555 to RGB565
+	 */
+	inline uint16 convertPixel(uint16 pixel3DO);
+
+	/**
+	 * Load 3DO cel file
+	 */
+	void load3DOCelFile(Common::SeekableReadStream &stream);
+
+	/**
+	 * Load animation graphics file
+	 */
+	void loadAnimationFile(Common::SeekableReadStream &stream, bool animImages);
+
+	/**
 	 * Decompress a single frame for the sprite
 	 */
-	void decompressFrame(Common::SeekableReadStream *stream, ImageFrame  &frame, const byte *src);
-
-	inline uint16 convertPixel(uint16 pixel3DO);
+	void decompressAnimationFrame(Common::SeekableReadStream *stream, ImageFrame  &frame, const byte *src);
 
 public:
 	ImageFile3DO(const Common::String &name, bool animImages = false);

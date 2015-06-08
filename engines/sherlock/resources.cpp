@@ -600,6 +600,39 @@ ImageFile3DO::~ImageFile3DO() {
 }
 
 void ImageFile3DO::load(Common::SeekableReadStream &stream, bool animImages) {
+	uint32 headerId = stream.readUint32BE();
+
+	// Sekk back to the start
+	stream.seek(0);
+
+	// Identify type of file
+	switch (headerId) {
+	case MKTAG('C', 'C', 'B', ' '):
+		// .cel file (title1a.cel etc.)
+		load3DOCelFile(stream);
+		break;
+
+	case MKTAG('A', 'N', 'I', 'M'):
+		// 3DO animation file (walk.anim)
+		break;
+
+	default:
+		// Sherlock animation file (.3da files)
+		loadAnimationFile(stream, animImages);
+		break;
+	}
+}
+
+// 3DO uses RGB555, we use RGB565 internally so that more platforms are able to run us
+inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
+	byte red   = (pixel3DO >> 10) & 0x1F;
+	byte green = (pixel3DO >> 5) & 0x1F;
+	byte blue  = pixel3DO & 0x1F;;
+
+	return ((red << 11) | (green << 6) | (blue));
+}
+
+void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream, bool animImages) {
 	int streamSize = stream.size();
 	uint32 compressedSize = 0;
 
@@ -635,23 +668,18 @@ void ImageFile3DO::load(Common::SeekableReadStream &stream, bool animImages) {
 		// Load data for frame and decompress it
 		byte *data = new byte[compressedSize];
 		stream.read(data, compressedSize);
-		decompressFrame(&stream, frame, data);
+		decompressAnimationFrame(&stream, frame, data);
 		delete[] data;
 
 		push_back(frame);
 	}
 }
 
-// 3DO uses RGB555, we use RGB565 internally so that more platforms are able to run us
-inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
-	byte red   = (pixel3DO >> 10) & 0x1F;
-	byte green = (pixel3DO >> 5) & 0x1F;
-	byte blue  = pixel3DO & 0x1F;;
-
-	return ((red << 11) | (green << 6) | (blue));
-}
-
-void ImageFile3DO::decompressFrame(Common::SeekableReadStream *stream, ImageFrame &frame, const byte *src) {
+// Decompresses an animation frame of a .3DA file
+// note: the .3DA files seem to use an "in memory" format, which uses the same compression technique
+// as regular 3DO cel files, but every scanline is started with a length UINT16 and each scanline
+// also starts on UINT32 boundaries
+void ImageFile3DO::decompressAnimationFrame(Common::SeekableReadStream *stream, ImageFrame &frame, const byte *src) {
 	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	uint16 *dest = (uint16 *)frame._frame.getPixels();
 	Common::fill(dest, dest + frame._width * frame._height, 0);
@@ -720,6 +748,10 @@ void ImageFile3DO::decompressFrame(Common::SeekableReadStream *stream, ImageFram
 		// Seek to next line start
 		srcSeeker += lineByteSize;
 	}
+}
+
+void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
+	warning("3DO-cel file loader currently missing");
 }
 
 } // End of namespace Sherlock
