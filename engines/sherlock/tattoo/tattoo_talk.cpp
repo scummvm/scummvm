@@ -297,15 +297,15 @@ OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) { error("TODO: scr
 
 OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) {
 	int npcNum = *++str;
-	int len = *++str;
 	People &people = *_vm->_people;
 	Person &person = people[npcNum];
 
-	for (int x = 0; x < len; x++)
-		person._description.setChar(str[x + 1], x);
-	person._description.setChar(0, len);
-	str += len;
+	person._description = "";
+	int len = *++str;
+	for (int idx = 0; idx < len; ++idx)
+		person._description += str[idx + 1];
 
+	str += len;
 	return RET_SUCCESS;
 }
 
