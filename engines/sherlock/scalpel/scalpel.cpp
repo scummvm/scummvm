@@ -537,7 +537,10 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	// rain.aiff seems to be playing in an endless loop until
 	// sherlock logo fades away TODO
 
-	bool finished = _animation->play3DO("26open1", true, 1, 255, 2);
+	bool finished = _music->waitUntilMSec(3400, 0, 0, 3400);
+
+	if (finished)
+		finished = _animation->play3DO("26open1", true, 1, 255, 2);
 
 	if (finished) {
 		// TODO: Both of these should actually fade into the screen
@@ -547,7 +550,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		ImageFile3DO titleImage_London("title2a.cel");
 
 		_screen->transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(30, 50));
-		finished = _events->delay(1000, true);
+		finished = _events->delay(2000, true);
 
 		if (finished) {
 			// "November, 1888"
