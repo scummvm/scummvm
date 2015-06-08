@@ -23,6 +23,7 @@
 #ifndef SHERLOCK_SCALPEL_3DO_MOVIE_DECODER_H
 #define SHERLOCK_SCALPEL_3DO_MOVIE_DECODER_H
 
+#include "common/rect.h"
 #include "video/video_decoder.h"
 #include "audio/decoders/3do.h"
 
@@ -119,7 +120,7 @@ private:
 };
 
 // Testing
-extern void Scalpel3DOMoviePlay(const char *filename);
+extern bool Scalpel3DOMoviePlay(const char *filename, Common::Point pos);
 
 } // End of namespace Sherlock
 

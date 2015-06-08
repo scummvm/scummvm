@@ -44,7 +44,7 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 
 void Debugger::postEnter() {
 	if (!_3doPlayMovieFile.empty()) {
-		Scalpel3DOMoviePlay(_3doPlayMovieFile.c_str());
+		Scalpel3DOMoviePlay(_3doPlayMovieFile.c_str(), Common::Point(0, 0));
 
 		_3doPlayMovieFile.clear();
 	}

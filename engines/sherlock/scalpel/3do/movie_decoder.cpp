@@ -464,16 +464,12 @@ Audio::AudioStream *Scalpel3DOMovieDecoder::StreamAudioTrack::getAudioStream() c
 // Test-code
 
 // Code for showing a movie. Only meant for testing/debug purposes
-void Scalpel3DOMoviePlay(const char *filename) {
-	// HACK
-	initGraphics(320, 240, false, NULL);
-
+bool Scalpel3DOMoviePlay(const char *filename, Common::Point pos) {
 	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
 
 	if (!videoDecoder->loadFile(filename)) {
-		// HACK
-		initGraphics(320, 200, false);
-		return;
+		warning("Scalpel3DOMoviePlay: could not open '%s'", filename);
+		return false;
 	}
 
 	bool skipVideo = false;
@@ -489,13 +485,7 @@ void Scalpel3DOMoviePlay(const char *filename) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 
 			if (frame) {
-				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, width, height);
-
-				if (videoDecoder->hasDirtyPalette()) {
-					const byte *palette = videoDecoder->getPalette();
-					g_system->getPaletteManager()->setPalette(palette, 0, 255);
-				}
-
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, pos.x, pos.y, width, height);
 				g_system->updateScreen();
 			}
 		}
@@ -508,9 +498,7 @@ void Scalpel3DOMoviePlay(const char *filename) {
 
 		g_system->delayMillis(10);
 	}
-
-	// HACK: switch back to 8bpp
-	initGraphics(320, 200, false);
+	return !skipVideo;
 }
 
 

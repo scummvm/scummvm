@@ -29,6 +29,8 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/animation.h"
+// for 3DO
+#include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
 
@@ -238,11 +240,9 @@ void ScalpelEngine::showOpening() {
 		return;
 
 	if (getPlatform() == Common::kPlatform3DO) {
-		// 3DO opening seems to be similar
-		// TODO
-		// 3DO animations are in directory Prologue/
-		// .3DX seem to be just like .VDX except that all INT16LE are INT16BE
-		// .3DA however seems to be completely different
+		// 3DO intro
+		Scalpel3DOMoviePlay("EAlogo.stream", Common::Point(20, 0));
+		_screen->clear();
 		if (!showCityCutscene3DO())
 			return;
 		if (!showAlleyCutscene3DO())
