@@ -210,7 +210,7 @@ bool Events::delay(uint32 time, bool interruptable) {
 		// For really short periods, simply delay by the desired amount
 		pollEvents();
 		g_system->delayMillis(time);
-		bool result = !(interruptable && (kbHit() || _pressed));
+		bool result = !(interruptable && (kbHit() || _pressed || _vm->shouldQuit()));
 
 		clearEvents();
 		return result;
@@ -229,7 +229,7 @@ bool Events::delay(uint32 time, bool interruptable) {
 			}
 		}
 
-		return true;
+		return !_vm->shouldQuit();
 	}
 }
 
