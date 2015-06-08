@@ -252,8 +252,7 @@ void ScalpelEngine::showOpening() {
 		return;
 	}
 
-	if (!TsAGE::Logo::show(this))
-		return;
+	TsAGE::Logo::show(this);
 	if (!showCityCutscene())
 		return;
 	if (!showAlleyCutscene())
