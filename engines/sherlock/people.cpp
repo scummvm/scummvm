@@ -212,7 +212,7 @@ bool People::loadWalk() {
 
 				// See if this is one of the more used Walk Graphics stored in WALK.LIB
 				for (int libNum = 0; libNum < NUM_IN_WALK_LIB; ++libNum) {
-					if (!_data[0]._walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
+					if (!_data[idx]._walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
 						_useWalkLib = true;
 						break;
 					}
