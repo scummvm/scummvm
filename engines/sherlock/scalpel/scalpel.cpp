@@ -240,9 +240,7 @@ void ScalpelEngine::showOpening() {
 		return;
 
 	if (getPlatform() == Common::kPlatform3DO) {
-		// 3DO intro
-		Scalpel3DOMoviePlay("EAlogo.stream", Common::Point(20, 0));
-		_screen->clear();
+		show3DOSplash();
 		if (!showCityCutscene3DO())
 			return;
 		if (!showAlleyCutscene3DO())
@@ -528,6 +526,27 @@ bool ScalpelEngine::showOfficeCutscene() {
 }
 
 // 3DO variant
+bool ScalpelEngine::show3DOSplash() {
+	// 3DO EA Splash screen
+	ImageFile3DO titleImage_3DOSplash("3DOSplash.cel");
+
+	_screen->transBlitFromUnscaled3DO(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
+	bool finished = _events->delay(3000, true);
+
+	if (finished) {
+		_screen->clear();
+		finished = _events->delay(500, true);
+	}
+
+	if (finished) {
+		// EA logo movie
+		Scalpel3DOMoviePlay("EAlogo.stream", Common::Point(20, 0));
+		_screen->clear();
+	}
+
+	return finished;
+}
+
 bool ScalpelEngine::showCityCutscene3DO() {
 	_animation->_soundLibraryFilename = "TITLE.SND";
 

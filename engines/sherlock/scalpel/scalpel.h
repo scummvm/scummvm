@@ -35,6 +35,8 @@ private:
 	Darts *_darts;
 	int _mapResult;
 
+	bool show3DOSplash();
+
 	/**
 	 * Show the starting city cutscene which shows the game title
 	 */
