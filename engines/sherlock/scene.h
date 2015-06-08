@@ -139,7 +139,6 @@ struct SceneTripEntry {
 
 class Scene {
 private:
-	Common::String _rrmName;
 	bool _loadingSavedGame;
 
 	/**
@@ -173,6 +172,7 @@ private:
 	void saveSceneStatus();
 protected:
 	SherlockEngine *_vm;
+	Common::String _rrmName;
 
 	/**
 	 * Loads the data associated for a given scene. The room resource file's format is:
@@ -260,16 +260,6 @@ public:
 	Exit *checkForExit(const Common::Rect &r);
 
 	/**
-	 * Attempt to start a canimation sequence. It will load the requisite graphics, and
-	 * then copy the canim object into the _canimShapes array to start the animation.
-	 *
-	 * @param cAnimNum		The canim object within the current scene
-	 * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
-	 *		A negative playRate can also be specified to play the animation in reverse
-	 */
-	int startCAnim(int cAnimNum, int playRate);
-
-	/**
 	 * Scans through the object list to find one with a matching name, and will
 	 * call toggleHidden with all matches found. Returns the numer of matches found
 	 */
@@ -319,6 +309,16 @@ public:
 	 * to be drawn
 	 */
 	virtual void updateBackground();
+
+	/**
+	 * Attempt to start a canimation sequence. It will load the requisite graphics, and
+	 * then copy the canim object into the _canimShapes array to start the animation.
+	 *
+	 * @param cAnimNum		The canim object within the current scene
+	 * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
+	 *		A negative playRate can also be specified to play the animation in reverse
+	 */
+	virtual int startCAnim(int cAnimNum, int playRate) = 0;
 };
 
 } // End of namespace Sherlock

@@ -25,6 +25,7 @@
 #include "sherlock/objects.h"
 #include "sherlock/people.h"
 #include "sherlock/scene.h"
+#include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 
 namespace Sherlock {
@@ -1212,7 +1213,6 @@ void Object::setObjTalkSequence(int seq) {
 }
 
 int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
-	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -1257,9 +1257,12 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 			if (ch >= '0' && ch <= '9') {
 				scene._goToScene = atoi(name.c_str() + 1);
 
-				if (IS_SERRATED_SCALPEL && scene._goToScene < 97 && map[scene._goToScene].x) {
-					map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;
-					map._overPos.y = (map[scene._goToScene].y + 9) * FIXED_INT_MULTIPLIER;
+				if (IS_SERRATED_SCALPEL && scene._goToScene < 97) {
+					Scalpel::ScalpelMap &map = *(Scalpel::ScalpelMap *)_vm->_map;
+					if (map[scene._goToScene].x) {
+						map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;
+						map._overPos.y = (map[scene._goToScene].y + 9) * FIXED_INT_MULTIPLIER;
+					}
 				}
 
 				const char *p;

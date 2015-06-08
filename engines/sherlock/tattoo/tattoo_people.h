@@ -96,6 +96,12 @@ public:
 	 * Change the sequence of the scene background object associated with the specified speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1);
+
+	/**
+	 * Bring a moving character to a standing position. If the Scalpel chessboard
+	 * is being displayed, then the chraracter will always face down.
+	 */
+	virtual void gotoStand(Sprite &sprite);
 };
 
 } // End of namespace Scalpel

@@ -21,7 +21,9 @@
  */
 
 #include "sherlock/scalpel/scalpel_talk.h"
+#include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
@@ -289,12 +291,12 @@ OpcodeReturn ScalpelTalk::cmdSwitchSpeaker(const byte *&str) {
 }
 
 OpcodeReturn ScalpelTalk::cmdGotoScene(const byte *&str) {
-	Map &map = *_vm->_map;
+	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	scene._goToScene = str[1] - 1;
 
-	if (scene._goToScene != 100) {
+	if (scene._goToScene != OVERHEAD_MAP) {
 		// Not going to the map overview
 		map._oldCharPoint = scene._goToScene;
 		map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;

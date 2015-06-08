@@ -159,12 +159,6 @@ public:
 	void setWalking();
 
 	/**
-	 * Bring a moving character to a standing position. If the Scalpel chessboard
-	 * is being displayed, then the chraracter will always face down.
-	 */
-	void gotoStand(Sprite &sprite);
-
-	/**
 	 * Walk to the co-ordinates passed, and then face the given direction
 	 */
 	void walkToCoords(const Point32 &destPos, int destDir);
@@ -195,6 +189,12 @@ public:
 	 * Change the sequence of the scene background object associated with the current speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1) = 0;
+
+	/**
+	 * Bring a moving character to a standing position. If the Scalpel chessboard
+	 * is being displayed, then the chraracter will always face down.
+	 */
+	virtual void gotoStand(Sprite &sprite) = 0;
 };
 
 } // End of namespace Sherlock

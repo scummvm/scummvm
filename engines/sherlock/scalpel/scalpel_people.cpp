@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/sherlock.h"
 
 namespace Sherlock {
@@ -86,7 +87,6 @@ void ScalpelPeople::setTalking(int speaker) {
 	}
 }
 
-
 void ScalpelPeople::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
 	s.syncAsSint32LE(_player._position.x);
@@ -129,6 +129,57 @@ void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
 		}
 	}
 }
+
+void ScalpelPeople::gotoStand(Sprite &sprite) {
+	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
+	_walkTo.clear();
+	sprite._walkCount = 0;
+
+	switch (sprite._sequenceNumber) {
+	case Scalpel::WALK_UP:
+		sprite._sequenceNumber = STOP_UP;
+		break;
+	case WALK_DOWN:
+		sprite._sequenceNumber = STOP_DOWN;
+		break;
+	case TALK_LEFT:
+	case WALK_LEFT:
+		sprite._sequenceNumber = STOP_LEFT;
+		break;
+	case TALK_RIGHT:
+	case WALK_RIGHT:
+		sprite._sequenceNumber = STOP_RIGHT;
+		break;
+	case WALK_UPRIGHT:
+		sprite._sequenceNumber = STOP_UPRIGHT;
+		break;
+	case WALK_UPLEFT:
+		sprite._sequenceNumber = STOP_UPLEFT;
+		break;
+	case WALK_DOWNRIGHT:
+		sprite._sequenceNumber = STOP_DOWNRIGHT;
+		break;
+	case WALK_DOWNLEFT:
+		sprite._sequenceNumber = STOP_DOWNLEFT;
+		break;
+	default:
+		break;
+	}
+
+	// Only restart frame at 0 if the sequence number has changed
+	if (_oldWalkSequence != -1 || sprite._sequenceNumber == Scalpel::STOP_UP)
+		sprite._frameNumber = 0;
+
+	if (map._active) {
+		sprite._sequenceNumber = 0;
+		_player._position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
+		_player._position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
+	}
+
+	_oldWalkSequence = -1;
+	_allowWalkAbort = true;
+}
+
 
 } // End of namespace Scalpel
 

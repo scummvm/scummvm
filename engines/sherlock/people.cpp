@@ -425,56 +425,6 @@ assert(_player._position.y >= 10000);/***DEBUG****/
 		_player._frameNumber = oldFrame;
 }
 
-void People::gotoStand(Sprite &sprite) {
-	Map &map = *_vm->_map;
-	_walkTo.clear();
-	sprite._walkCount = 0;
-
-	switch (sprite._sequenceNumber) {
-	case Scalpel::WALK_UP:
-		sprite._sequenceNumber = Scalpel::STOP_UP;
-		break;
-	case Scalpel::WALK_DOWN:
-		sprite._sequenceNumber = Scalpel::STOP_DOWN;
-		break;
-	case Scalpel::TALK_LEFT:
-	case Scalpel::WALK_LEFT:
-		sprite._sequenceNumber = Scalpel::STOP_LEFT;
-		break;
-	case Scalpel::TALK_RIGHT:
-	case Scalpel::WALK_RIGHT:
-		sprite._sequenceNumber = Scalpel::STOP_RIGHT;
-		break;
-	case Scalpel::WALK_UPRIGHT:
-		sprite._sequenceNumber = Scalpel::STOP_UPRIGHT;
-		break;
-	case Scalpel::WALK_UPLEFT:
-		sprite._sequenceNumber = Scalpel::STOP_UPLEFT;
-		break;
-	case Scalpel::WALK_DOWNRIGHT:
-		sprite._sequenceNumber = Scalpel::STOP_DOWNRIGHT;
-		break;
-	case Scalpel::WALK_DOWNLEFT:
-		sprite._sequenceNumber = Scalpel::STOP_DOWNLEFT;
-		break;
-	default:
-		break;
-	}
-
-	// Only restart frame at 0 if the sequence number has changed
-	if (_oldWalkSequence != -1 || sprite._sequenceNumber == Scalpel::STOP_UP)
-		sprite._frameNumber = 0;
-
-	if (map._active) {
-		sprite._sequenceNumber = 0;
-		_player._position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
-		_player._position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
-	}
-
-	_oldWalkSequence = -1;
-	_allowWalkAbort = true;
-}
-
 void People::walkToCoords(const Point32 &destPos, int destDir) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;

@@ -109,6 +109,15 @@ public:
 	 */
 	virtual void updateBackground();
 
+	/**
+	 * Attempt to start a canimation sequence. It will load the requisite graphics, and
+	 * then copy the canim object into the _canimShapes array to start the animation.
+	 *
+	 * @param cAnimNum		The canim object within the current scene
+	 * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
+	 *		A negative playRate can also be specified to play the animation in reverse
+	 */
+	virtual int startCAnim(int cAnimNum, int playRate);
 };
 
 } // End of namespace Tattoo

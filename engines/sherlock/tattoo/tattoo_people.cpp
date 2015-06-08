@@ -222,6 +222,10 @@ void TattooPeople::synchronize(Serializer &s) {
 	}
 }
 
+void TattooPeople::gotoStand(Sprite &sprite) {
+	error("TODO: gotoStand");
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

@@ -35,6 +35,11 @@ namespace Tattoo {
 class TattooMap : public Map {
 public:
 	TattooMap(SherlockEngine *vm) : Map(vm) {}
+
+	/**
+	 * Show the map
+	 */
+	virtual int show();
 };
 
 } // End of namespace Tattoo

@@ -770,6 +770,10 @@ void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	}
 }
 
+int TattooScene::startCAnim(int cAnimNum, int playRate) {
+	error("TODO: startCAnim");
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

@@ -22,6 +22,7 @@
 
 #include "engines/util.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/tsage/logo.h"
@@ -205,9 +206,10 @@ void ScalpelEngine::initialize() {
 
 	if (!isDemo()) {
 		// Load the map co-ordinates for each scene and sequence data
-		_map->loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
-		_map->loadSequences(3, &MAP_SEQUENCES[0][0]);
-		_map->_oldCharPoint = BAKER_ST_EXTERIOR;
+		ScalpelMap &map = *(ScalpelMap *)_map;
+		map.loadPoints(NUM_PLACES, &MAP_X[0], &MAP_Y[0], &MAP_TRANSLATE[0]);
+		map.loadSequences(3, &MAP_SEQUENCES[0][0]);
+		map._oldCharPoint = BAKER_ST_EXTERIOR;
 	}
 
 	// Load the inventory

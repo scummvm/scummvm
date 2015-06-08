@@ -26,6 +26,10 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+int TattooMap::show() {
+	// TODO
+	return 61;
+}
 
 } // End of namespace Tattoo
 
