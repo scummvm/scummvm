@@ -78,7 +78,7 @@ public:
 	 */
 	bool play(const Common::String &filename, bool intro, int minDelay, int fade, bool setPalette, int speed);
 
-	bool play3DO(const Common::String &filename, bool intro, int minDelay, int fade, int speed);
+	bool play3DO(const Common::String &filename, bool intro, int minDelay, bool fadeFromGrey, int speed);
 };
 
 } // End of namespace Sherlock

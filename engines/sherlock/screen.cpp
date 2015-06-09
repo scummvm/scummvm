@@ -233,7 +233,6 @@ void Screen::verticalTransition() {
 
 void Screen::fadeIntoScreen3DO(int speed) {
 	Events &events = *_vm->_events;
-	Common::Rect changedRect;
 	uint16 *currentScreenBasePtr = (uint16 *)getPixels();
 	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer->getPixels();
 	uint16 *currentScreenPtr = NULL;
@@ -313,6 +312,49 @@ void Screen::fadeIntoScreen3DO(int speed) {
 		events.pollEvents();
 		events.delay(10 * speed);
 	} while ((pixelsChanged) && (!_vm->shouldQuit()));
+}
+
+void Screen::blitFrom3DOcolorLimit(uint16 limitColor) {
+	uint16 *currentScreenPtr = (uint16 *)getPixels();
+	uint16 *targetScreenPtr = (uint16 *)_backBuffer->getPixels();
+	uint16  currentScreenPixel = 0;
+
+	uint16  screenWidth = this->w();
+	uint16  screenHeight = this->h();
+	uint16  screenX = 0;
+	uint16  screenY = 0;
+
+	uint16  currentScreenPixelRed = 0;
+	uint16  currentScreenPixelGreen = 0;
+	uint16  currentScreenPixelBlue = 0;
+
+	uint16  limitPixelRed = limitColor & 0xF800;
+	uint16  limitPixelGreen = limitColor & 0x07E0;
+	uint16  limitPixelBlue = limitColor & 0x001F;
+
+	for (screenY = 0; screenY < screenHeight; screenY++) {
+		for (screenX = 0; screenX < screenWidth; screenX++) {
+			currentScreenPixel = *targetScreenPtr;
+
+			currentScreenPixelRed   = currentScreenPixel & 0xF800;
+			currentScreenPixelGreen = currentScreenPixel & 0x07E0;
+			currentScreenPixelBlue  = currentScreenPixel & 0x001F;
+
+			if (currentScreenPixelRed < limitPixelRed)
+				currentScreenPixelRed = limitPixelRed;
+			if (currentScreenPixelGreen < limitPixelGreen)
+				currentScreenPixelGreen = limitPixelGreen;
+			if (currentScreenPixelBlue < limitPixelBlue)
+				currentScreenPixelBlue = limitPixelBlue;
+
+			*currentScreenPtr = currentScreenPixelRed | currentScreenPixelGreen | currentScreenPixelBlue;
+			currentScreenPtr++;
+			targetScreenPtr++;
+		}
+	}
+
+	// Too much considered dirty at the moment
+	addDirtyRect(Common::Rect(0, 0, screenWidth, screenHeight));
 }
 
 void Screen::restoreBackground(const Common::Rect &r) {

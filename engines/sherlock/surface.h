@@ -139,6 +139,8 @@ public:
 	 */
 	void fillRect(const Common::Rect &r, byte color);
 
+	void fill(uint16 color);
+
 	void maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX);
 
 	/**

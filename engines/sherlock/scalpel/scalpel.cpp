@@ -540,9 +540,10 @@ bool ScalpelEngine::show3DOSplash() {
 	if (finished) {
 		// EA logo movie
 		Scalpel3DOMoviePlay("EAlogo.stream", Common::Point(20, 0));
-		_screen->clear();
 	}
 
+	// Always clear screen
+	_screen->clear();
 	return finished;
 }
 
@@ -552,13 +553,17 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	// Play intro music
 	_music->playMusic("prolog");
 
+	// Fade screen to grey
+	_screen->_backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
+	_screen->fadeIntoScreen3DO(2);
+
 	// rain.aiff seems to be playing in an endless loop until
 	// sherlock logo fades away TODO
 
 	bool finished = _music->waitUntilMSec(3400, 0, 0, 3400);
 
 	if (finished)
-		finished = _animation->play3DO("26open1", true, 1, 255, 2);
+		finished = _animation->play3DO("26open1", true, 1, true, 2);
 
 	if (finished) {
 		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
@@ -587,7 +592,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	}
 
 	if (finished)
-		finished = _animation->play3DO("26open2", true, 1, 0, 2);
+		finished = _animation->play3DO("26open2", true, 1, false, 2);
 
 	if (finished) {
 		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
@@ -638,7 +643,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 	bool finished = _music->waitUntilMSec(43500, 0, 0, 1000);
 
 	if (finished)
-		finished = _animation->play3DO("27PRO1", true, 1, 3, 2);
+		finished = _animation->play3DO("27PRO1", true, 1, false, 2);
 
 	if (finished) {
 		// Fade out...
@@ -649,7 +654,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 	}
 
 	if (finished)
-		finished = _animation->play3DO("27PRO2", true, 1, 0, 2);
+		finished = _animation->play3DO("27PRO2", true, 1, false, 2);
 
 	if (finished)
 		finished = _music->waitUntilMSec(76000, 0, 0, 1000);
@@ -677,7 +682,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 	}
 
 	if (finished)
-		finished = _animation->play3DO("27PRO3", true, 1, 0, 2);
+		finished = _animation->play3DO("27PRO3", true, 1, false, 2);
 
 	if (finished) {
 		// Fade out
@@ -710,10 +715,10 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 		finished = _music->waitUntilMSec(100300, 0, 0, 1000);
 	}
 
-	finished = _animation->play3DO("14KICK", true, 1, 3, 2);
+	finished = _animation->play3DO("14KICK", true, 1, false, 2);
 
 	if (finished)
-		finished = _animation->play3DO("14NOTE", true, 1, 0, 3);
+		finished = _animation->play3DO("14NOTE", true, 1, false, 3);
 
 	if (finished) {
 		// Fade out
@@ -730,10 +735,10 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 	finished = _music->waitUntilMSec(151000, 0, 0, 1000);
 
 	if (finished)
-		_animation->play3DO("COFF1", true, 1, 3, 3);
+		_animation->play3DO("COFF1", true, 1, false, 3);
 
 	if (finished)
-		finished = _animation->play3DO("COFF2", true, 1, 0, 3);
+		finished = _animation->play3DO("COFF2", true, 1, false, 3);
 
 	if (finished)
 		finished = _music->waitUntilMSec(182400, 0, 0, 1000);
@@ -761,10 +766,10 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		finished = _music->waitUntilMSec(222200, 0, 0, 1000);
 
 	if (finished)
-		finished = _animation->play3DO("COFF3", true, 1, 0, 3);
+		finished = _animation->play3DO("COFF3", true, 1, false, 3);
 
 	if (finished)
-		finished = _animation->play3DO("COFF4", true, 1, 0, 3);
+		finished = _animation->play3DO("COFF4", true, 1, false, 3);
 
 	return finished;
 }

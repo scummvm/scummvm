@@ -153,6 +153,8 @@ public:
 	 */
 	void fadeIntoScreen3DO(int speed);
 
+	void blitFrom3DOcolorLimit(uint16 color);
+
 	/**
 	 * Prints the text passed onto the back buffer at the given position and color.
 	 * The string is then blitted to the screen

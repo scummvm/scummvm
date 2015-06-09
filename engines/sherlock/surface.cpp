@@ -226,6 +226,10 @@ void Surface::fillRect(const Common::Rect &r, byte color) {
 	addDirtyRect(r);
 }
 
+void Surface::fill(uint16 color) {
+	_surface.fillRect(Common::Rect(_surface.w, _surface.h), color);
+}
+
 bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	if (destBounds.left >= _surface.w || destBounds.top >= _surface.h ||
 			destBounds.right <= 0 || destBounds.bottom <= 0)

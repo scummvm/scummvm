@@ -140,17 +140,23 @@ bool Animation::play(const Common::String &filename, bool intro, int minDelay, i
 	return !skipped && !_vm->shouldQuit();
 }
 
-bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay, int fade,
+bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay, bool fadeFromGrey,
 		int speed) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	Sound  &sound  = *_vm->_sound;
 	int soundNumber = 0;
+
+	bool   fadeActive = false;
+	uint16 fadeLimitColor      = 0;
+	uint16 fadeLimitColorRed   = 0;
+	uint16 fadeLimitColorGreen = 0;
+	uint16 fadeLimitColorBlue  = 0;
 
 	// Check for any any sound frames for the given animation
 	const int *soundFrames = checkForSoundFrames(filename, intro);
 
-	// Add on the VDX extension
+	// Add the VDX extension
 	Common::String indexName = "prologue/" + filename + ".3dx";
 
 	// Load the animation
@@ -166,13 +172,11 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 	ImageFile3DO images(graphicsName, true);
 
 	events.wait(minDelay);
-//	if (fade != 0 && fade != 255)
-//		screen.fadeToBlack();
 
-//	if (setPalette) {
-//		if (fade != 255)
-//			screen.setPalette(images._palette);
-//	}
+	if (fadeFromGrey) {
+		fadeActive = true;
+		fadeLimitColor = 0xCE59; // RGB565: 25, 50, 25 -> "grey"
+	}
 
 	int frameNumber = 0;
 	Common::Point pt;
@@ -196,18 +200,36 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 
 			// Draw the sprite. Note that we explicitly use the raw frame below, rather than the ImageFrame,
 			// since we don't want the offsets in the image file to be used, just the explicit position we specify
-			screen.transBlitFromUnscaled3DO(images[imageFrame]._frame, pt);
-			//events.wait(1000);
+			if (!fadeActive) {
+				screen.transBlitFromUnscaled3DO(images[imageFrame]._frame, pt);
+			} else {
+				// Fade active, blit to backbuffer1
+				screen._backBuffer1.transBlitFromUnscaled3DO(images[imageFrame]._frame, pt);
+			}
 		} else {
-#if 0
 			// At this point, either the sprites for the frame has been complete, or there weren't any sprites
 			// at all to draw for the frame
-			//if (fade == 255) {
-			//	// Gradual fade in
-			//	if (screen.equalizePalette(images._palette) == 0)
-			//		fade = 0;
-			//}
-#endif
+
+			if (fadeActive) {
+				// process fading
+				screen.blitFrom3DOcolorLimit(fadeLimitColor);
+
+				if (!fadeLimitColor) {
+					// we are at the end, so stop
+					fadeActive = false;
+				} else {
+					// decrease limit color
+					fadeLimitColorRed = fadeLimitColor & 0xF800;
+					fadeLimitColorGreen = fadeLimitColor & 0x07E0;
+					fadeLimitColorBlue = fadeLimitColor & 0x001F;
+					if (fadeLimitColorRed)
+						fadeLimitColor -= 0x0800;
+					if (fadeLimitColorGreen)
+						fadeLimitColor -= 0x0040; // -2 because we are using RGB565, sherlock uses RGB555
+					if (fadeLimitColorBlue)
+						fadeLimitColor -= 0x0001;
+				}
+			}
 
 			// Check if we've reached a frame with sound
 			if (frameNumber++ == *soundFrames) {
