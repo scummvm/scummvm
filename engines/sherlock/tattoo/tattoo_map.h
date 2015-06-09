@@ -32,9 +32,25 @@ class SherlockEngine;
 
 namespace Tattoo {
 
+struct MapEntry : Common::Point {
+	int _iconNum;
+	Common::String _description;
+
+	MapEntry() : Common::Point(), _iconNum(-1) {}
+	MapEntry(int posX, int posY, int iconNum) : Common::Point(posX, posY), _iconNum(iconNum) {}
+	void clear();
+};
+
 class TattooMap : public Map {
+private:
+	Common::Array<MapEntry> _data;
+	
+	/**
+	 * Load data  needed for the map
+	 */
+	void loadData();
 public:
-	TattooMap(SherlockEngine *vm) : Map(vm) {}
+	TattooMap(SherlockEngine *vm);
 	virtual ~TattooMap() {}
 
 	/**
