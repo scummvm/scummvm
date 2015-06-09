@@ -395,7 +395,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 	if (finished) {
 		ImageFile titleImages("title3.vgs", true);
 		// "Early the following morning on Baker Street..."
-		_screen->transBlitFrom(titleImages[0], Common::Point(35, 51));
+		_screen->transBlitFrom(titleImages[0], Common::Point(35, 52));
 
 		// fast fade-in
 		_screen->fadeIn(palette, 1);
