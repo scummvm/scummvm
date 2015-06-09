@@ -1182,6 +1182,7 @@ protected:
 	byte _charsetBuffer[512];
 
 	bool _keepText;
+	byte _msgCount;
 
 	int _nextLeft, _nextTop;
 

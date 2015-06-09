@@ -283,6 +283,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 		switch (c) {
 		case 1:
 			c = 13; // new line
+			_msgCount = _screenWidth;
 			endLoop = true;
 			break;
 		case 2:
@@ -293,6 +294,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 		case 3:
 			_haveMsg = (_game.version >= 7) ? 1 : 0xFF;
 			_keepText = false;
+			_msgCount = 0;
 			endLoop = true;
 			break;
 		case 8:
@@ -573,6 +575,9 @@ void ScummEngine::CHARSET_1() {
 #endif
 				restoreCharsetBg();
 		}
+		_msgCount = 0;
+	} else if (_game.version <= 2) {
+		_talkDelay += _msgCount * _defaultTalkDelay;
 	}
 
 	if (_game.version > 3) {
@@ -600,6 +605,7 @@ void ScummEngine::CHARSET_1() {
 			// End of text reached, set _haveMsg accordingly
 			_haveMsg = (_game.version >= 7) ? 2 : 1;
 			_keepText = false;
+			_msgCount = 0;
 			break;
 		}
 
@@ -648,6 +654,7 @@ void ScummEngine::CHARSET_1() {
 			}
 			if (_game.version <= 3) {
 				_charset->printChar(c, false);
+				_msgCount += 1;
 			} else {
 				if (_game.features & GF_16BIT_COLOR) {
 					// HE games which use sprites for subtitles

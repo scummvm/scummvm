@@ -316,6 +316,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_NES_lastTalkingActor = 0;
 	_NES_talkColor = 0;
 	_keepText = false;
+	_msgCount = 0;
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
