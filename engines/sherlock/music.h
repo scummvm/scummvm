@@ -71,6 +71,9 @@ public:
 private:
 	MusicType _musicType;
 
+	byte *_midiMusicData;
+	int32 _midiMusicDataSize;
+
 public:
 	/**
 	 * Saves sound-related settings

@@ -198,6 +198,9 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_musicPlaying = false;
 	_musicOn = false;
 
+	_midiMusicData = NULL;
+	_midiMusicDataSize = 0;
+
 	if (_vm->getPlatform() == Common::kPlatform3DO) {
 		// 3DO - uses digital samples for music
 		_musicOn = true;
@@ -274,6 +277,7 @@ Music::~Music() {
 		_midiDriver->close();
 		delete _midiDriver;
 	}
+	freeSong();
 }
 
 bool Music::loadSong(int songNumber) {
@@ -330,11 +334,10 @@ bool Music::playMusic(const Common::String &name) {
 		Common::String midiMusicName = name + ".MUS";
 		Common::SeekableReadStream *stream = _vm->_res->load(midiMusicName, "MUSIC.LIB");
 
-		byte *data = new byte[stream->size()];
-		int32 dataSize = stream->size();
-		assert(data);
+		_midiMusicData = new byte[stream->size()];
+		_midiMusicDataSize = stream->size();
 
-		stream->read(data, dataSize);
+		stream->read(_midiMusicData, _midiMusicDataSize);
 		delete stream;
 
 		// for dumping the music tracks
@@ -346,12 +349,14 @@ bool Music::playMusic(const Common::String &name) {
 		outFile.close();
 #endif
 
-		if (dataSize < 14) {
+		if (_midiMusicDataSize < 14) {
 			warning("Music: not enough data in music file");
 			return false;
 		}
 
-		byte *dataPos = data;
+		byte *dataPos = _midiMusicData;
+		int32 dataSize = _midiMusicDataSize;
+
 		if (memcmp("            ", dataPos, 12)) {
 			warning("Music: expected header not found in music file");
 			return false;
@@ -435,6 +440,12 @@ void Music::startSong() {
 void Music::freeSong() {
 	// TODO
 	warning("TODO: Sound::freeSong");
+	if (_midiMusicData) {
+		// free midi data buffer
+		delete[] _midiMusicData;
+		_midiMusicData = NULL;
+		_midiMusicDataSize = 0;
+	}
 }
 
 void Music::waitTimerRoland(uint time) {
