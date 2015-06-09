@@ -187,11 +187,11 @@ ScalpelEngine::~ScalpelEngine() {
 
 void ScalpelEngine::initialize() {
 	// 3DO actually uses RGB555, but some platforms of ours only support RGB565, so we use that
-	const Graphics::PixelFormat *pixelFormatRGB565 = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
 	if (getPlatform() == Common::kPlatform3DO) {
+		const Graphics::PixelFormat pixelFormatRGB565 = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		// 320x200 16-bit RGB565 for 3DO support
-		initGraphics(320, 200, false, pixelFormatRGB565);
+		initGraphics(320, 200, false, &pixelFormatRGB565);
 	} else {
 		// 320x200 palettized
 		initGraphics(320, 200, false);
