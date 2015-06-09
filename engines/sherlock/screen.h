@@ -149,6 +149,11 @@ public:
 	void verticalTransition();
 
 	/**
+	 * Fade backbuffer 1 into screen (3DO RGB!)
+	 */
+	void fadeIntoScreen3DO(int speed);
+
+	/**
 	 * Prints the text passed onto the back buffer at the given position and color.
 	 * The string is then blitted to the screen
 	 */

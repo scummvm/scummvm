@@ -231,6 +231,90 @@ void Screen::verticalTransition() {
 	}
 }
 
+void Screen::fadeIntoScreen3DO(int speed) {
+	Events &events = *_vm->_events;
+	Common::Rect changedRect;
+	uint16 *currentScreenBasePtr = (uint16 *)getPixels();
+	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer->getPixels();
+	uint16 *currentScreenPtr = NULL;
+	uint16 *targetScreenPtr = NULL;
+	uint16  currentScreenPixel = 0;
+	uint16  targetScreenPixel = 0;
+
+	uint16  currentScreenPixelRed = 0;
+	uint16  currentScreenPixelGreen = 0;
+	uint16  currentScreenPixelBlue = 0;
+
+	uint16  targetScreenPixelRed = 0;
+	uint16  targetScreenPixelGreen = 0;
+	uint16  targetScreenPixelBlue = 0;
+
+	uint16  screenWidth = this->w();
+	uint16  screenHeight = this->h();
+	uint16  screenX = 0;
+	uint16  screenY = 0;
+	uint16  pixelsChanged = 0;
+
+	_dirtyRects.clear();
+
+	do {
+		pixelsChanged = 0;
+		currentScreenPtr = currentScreenBasePtr;
+		targetScreenPtr = targetScreenBasePtr;
+
+		for (screenY = 0; screenY < screenHeight; screenY++) {
+			for (screenX = 0; screenX < screenWidth; screenX++) {
+				currentScreenPixel = *currentScreenPtr;
+				targetScreenPixel  = *targetScreenPtr;
+
+				if (currentScreenPixel != targetScreenPixel) {
+					// pixel doesn't match, adjust accordingly
+					currentScreenPixelRed   = currentScreenPixel & 0xF800;
+					currentScreenPixelGreen = currentScreenPixel & 0x07E0;
+					currentScreenPixelBlue  = currentScreenPixel & 0x001F;
+					targetScreenPixelRed    = targetScreenPixel & 0xF800;
+					targetScreenPixelGreen  = targetScreenPixel & 0x07E0;
+					targetScreenPixelBlue   = targetScreenPixel & 0x001F;
+
+					if (currentScreenPixelRed != targetScreenPixelRed) {
+						if (currentScreenPixelRed < targetScreenPixelRed) {
+							currentScreenPixelRed += 0x0800;
+						} else {
+							currentScreenPixelRed -= 0x0800;
+						}
+					}
+					if (currentScreenPixelGreen != targetScreenPixelGreen) {
+						// Adjust +2/-2 because we are running RGB555 at RGB565
+						if (currentScreenPixelGreen < targetScreenPixelGreen) {
+							currentScreenPixelGreen += 0x0040;
+						} else {
+							currentScreenPixelGreen -= 0x0040;
+						}
+					}
+					if (currentScreenPixelBlue != targetScreenPixelBlue) {
+						if (currentScreenPixelBlue < targetScreenPixelBlue) {
+							currentScreenPixelBlue += 0x0001;
+						} else {
+							currentScreenPixelBlue -= 0x0001;
+						}
+					}
+					*currentScreenPtr = currentScreenPixelRed | currentScreenPixelGreen | currentScreenPixelBlue;
+					pixelsChanged++;
+				}
+
+				currentScreenPtr++;
+				targetScreenPtr++;
+			}
+		}
+
+		// Too much considered dirty at the moment
+		addDirtyRect(Common::Rect(0, 0, screenWidth, screenHeight));
+
+		events.pollEvents();
+		events.delay(10 * speed);
+	} while ((pixelsChanged) && (!_vm->shouldQuit()));
+}
+
 void Screen::restoreBackground(const Common::Rect &r) {
 	if (r.width() > 0 && r.height() > 0) {
 		Common::Rect tempRect = r;

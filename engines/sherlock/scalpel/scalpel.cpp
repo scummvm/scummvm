@@ -561,21 +561,22 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		finished = _animation->play3DO("26open1", true, 1, 255, 2);
 
 	if (finished) {
-		// TODO: Both of these should actually fade into the screen
-		_screen->_backBuffer2.blitFrom(*_screen);
+		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
+		_screen->_backBuffer2.blitFrom(*_screen); // save into backbuffer 2, for restoring later
 
 		// "London, England"
 		ImageFile3DO titleImage_London("title2a.cel");
+		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(30, 50));
 
-		_screen->transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(30, 50));
-		finished = _events->delay(2000, true);
+		_screen->fadeIntoScreen3DO(1);
+		finished = _events->delay(1500, true);
 
 		if (finished) {
 			// "November, 1888"
 			ImageFile3DO titleImage_November("title2b.cel");
+			_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 100));
 
-			_screen->transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 100));
-
+			_screen->fadeIntoScreen3DO(1);
 			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
 		}
 
@@ -589,10 +590,14 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		finished = _animation->play3DO("26open2", true, 1, 0, 2);
 
 	if (finished) {
+		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
+
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel");
+		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
 
-		_screen->transBlitFromUnscaled3DO(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
+		// Blend in
+		_screen->fadeIntoScreen3DO(2);
 		finished = _events->delay(500, true);
 
 		// Title should fade in, Copyright should be displayed a bit after that
@@ -602,53 +607,52 @@ bool ScalpelEngine::showCityCutscene3DO() {
 			_screen->transBlitFromUnscaled3DO(titleImage_Copyright[0]._frame, Common::Point(20, 190));
 			finished = _events->delay(3500, true);
 		}
-		// Title is supposed to get faded away after that
 	}
 
 	if (finished)
 		finished = _music->waitUntilMSec(33600, 0, 0, 2000);
 
 	if (finished) {
-		// TODO: fade to black
-		_screen->clear();
+		// Fade to black
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(3);
 	}
 
 	if (finished) {
 		// "In the alley behind the Regency Theatre..."
 		ImageFile3DO titleImage_InTheAlley("title1d.cel");
+		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
 
-		_screen->transBlitFromUnscaled3DO(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
-		// TODO: Supposed to get faded in and out
+		// Fade in
+		_screen->fadeIntoScreen3DO(4);
 		finished = _music->waitUntilMSec(39900, 0, 0, 2500);
 
 		// Fade out
-		_screen->clear();
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(4);
 	}
 	return finished;
 }
 
 bool ScalpelEngine::showAlleyCutscene3DO() {
-	bool finished = _music->waitUntilMSec(44000, 0, 0, 1000);
+	bool finished = _music->waitUntilMSec(43500, 0, 0, 1000);
 
 	if (finished)
 		finished = _animation->play3DO("27PRO1", true, 1, 3, 2);
 
 	if (finished) {
 		// Fade out...
-		_screen->clear();
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(3);
 
-		finished = _music->waitUntilMSec(66700, 0, 0, 1000);
+		finished = _music->waitUntilMSec(67100, 0, 0, 1000); // 66700
 	}
 
 	if (finished)
 		finished = _animation->play3DO("27PRO2", true, 1, 0, 2);
 
-	if (finished) {
-		// Fade out
-		_screen->clear();
-
+	if (finished)
 		finished = _music->waitUntilMSec(76000, 0, 0, 1000);
-	}
 
 	if (finished) {
 		// Show screaming victim
@@ -665,8 +669,9 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 	}
 
 	if (finished) {
-		// TODO: quick fade out
-		_screen->clear();
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(5);
 
 		finished = _music->waitUntilMSec(84400, 0, 0, 2000);
 	}
@@ -675,17 +680,18 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 		finished = _animation->play3DO("27PRO3", true, 1, 0, 2);
 
 	if (finished) {
-		// Fade to black
-		_screen->clear();
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(5);
 	}
 
 	if (finished) {
 		// "Early the following morning on Baker Street..."
 		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel");
+		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
 
-		_screen->transBlitFromUnscaled3DO(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
-		// TODO: Fade in
-
+		// Fade in
+		_screen->fadeIntoScreen3DO(4);
 		finished = _music->waitUntilMSec(96700, 0, 0, 3000);
 	}
 
@@ -697,7 +703,8 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 
 	if (finished) {
 		// fade out "Early the following morning..."
-		_screen->clear();
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(4);
 
 		// wait for music a bit
 		finished = _music->waitUntilMSec(100300, 0, 0, 1000);
@@ -708,8 +715,11 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 	if (finished)
 		finished = _animation->play3DO("14NOTE", true, 1, 0, 3);
 
-	// TODO: fade out
-	_screen->clear();
+	if (finished) {
+		// Fade out
+		_screen->_backBuffer1.clear();
+		_screen->fadeIntoScreen3DO(4);
+	}
 
 	return finished;
 }
