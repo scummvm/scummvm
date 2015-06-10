@@ -285,13 +285,13 @@ bool ScalpelEngine::showCityCutscene() {
 		_screen->_backBuffer2.blitFrom(*_screen);
 
 		// London, England
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(10, 11));
+		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(30, 50));
 		_screen->randomTransition();
 		finished = _events->delay(1000, true);
 
 		// November, 1888
 		if (finished) {
-			_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(101, 102));
+			_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(100, 100));
 			_screen->randomTransition();
 			finished = _events->delay(5000, true);
 		}
@@ -579,7 +579,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			// "November, 1888"
 			ImageFile3DO titleImage_November("title2b.cel");
-			_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(101, 100));
+			_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(100, 100));
 
 			_screen->fadeIntoScreen3DO(1);
 			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
