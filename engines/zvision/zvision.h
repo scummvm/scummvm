@@ -51,7 +51,6 @@ class VideoDecoder;
  * - Zork: Grand Inquisitor
  *
  */
-
 namespace ZVision {
 
 struct ZVisionGameDescription;
@@ -74,12 +73,12 @@ enum {
 	HIRES_WINDOW_WIDTH = 800,
 	HIRES_WINDOW_HEIGHT = 600,
 
-	// Zork nemesis working window sizes
-	ZNM_WORKING_WINDOW_WIDTH  = 512,
+	// Zork Nemesis working window sizes
+	ZNM_WORKING_WINDOW_WIDTH = 512,
 	ZNM_WORKING_WINDOW_HEIGHT = 320,
 
 	// ZGI working window sizes
-	ZGI_WORKING_WINDOW_WIDTH  = 640,
+	ZGI_WORKING_WINDOW_WIDTH = 640,
 	ZGI_WORKING_WINDOW_HEIGHT = 344,
 
 	ROTATION_SCREEN_EDGE_OFFSET = 60,
@@ -116,12 +115,12 @@ private:
 	ScriptManager *_scriptManager;
 	RenderManager *_renderManager;
 	CursorManager *_cursorManager;
-	SaveManager *_saveManager;
 	StringManager *_stringManager;
-	MenuHandler *_menu;
 	SearchManager *_searchManager;
 	TextRenderer *_textRenderer;
 	MidiManager *_midiManager;
+	SaveManager *_saveManager;
+	MenuHandler *_menu;
 
 	// Clock
 	Clock _clock;
@@ -141,6 +140,7 @@ private:
 	bool _videoIsPlaying;
 
 	uint8 _cheatBuffer[KEYBUF_SIZE];
+
 public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
@@ -236,6 +236,7 @@ public:
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
+
 private:
 	void initialize();
 	void initFonts();

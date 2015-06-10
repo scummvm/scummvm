@@ -59,7 +59,7 @@ public:
 
 public:
 	Common::String _fontname;
-	TextJustification _justification;  // 0 - center, 1-left, 2-right
+	TextJustification _justification;
 	int16 _size;
 	uint8 _red;     // 0-255
 	uint8 _green;   // 0-255
