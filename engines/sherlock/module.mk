@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	detection.o \
 	events.o \
 	fonts.o \
+	image_file.o \
 	inventory.o \
 	journal.o \
 	map.o \

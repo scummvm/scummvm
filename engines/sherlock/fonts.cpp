@@ -22,7 +22,7 @@
 
 #include "common/system.h"
 #include "sherlock/fonts.h"
-#include "sherlock/resources.h"
+#include "sherlock/image_file.h"
 #include "sherlock/surface.h"
 
 namespace Sherlock {

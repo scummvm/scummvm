@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/stack.h"
-#include "sherlock/resources.h"
+#include "sherlock/image_file.h"
 
 namespace Sherlock {
 

@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "common/str.h"
-#include "sherlock/resources.h"
+#include "sherlock/image_file.h"
 
 namespace Sherlock {
 

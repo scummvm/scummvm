@@ -23,7 +23,7 @@
 #ifndef SHERLOCK_DARTS_H
 #define SHERLOCK_DARTS_H
 
-#include "sherlock/resources.h"
+#include "sherlock/image_file.h"
 
 namespace Sherlock {
 
