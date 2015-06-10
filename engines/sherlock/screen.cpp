@@ -34,11 +34,12 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
-	_font = nullptr;
-	_fontHeight = 0;
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
 	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
+	
+	// Set up the initial font
+	Fonts::init();
 	setFont(IS_SERRATED_SCALPEL ? 1 : 4);
 
 	// Rose Tattoo specific fields
@@ -48,31 +49,7 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 }
 
 Screen::~Screen() {
-	delete _font;
-}
-
-void Screen::setFont(int fontNumb) {
-	// Interactive demo doesn't use fonts
-	if (!_vm->_interactiveFl)
-		return;
-
-	if (_vm->getPlatform() == Common::kPlatform3DO) {
-		// 3DO seems to use 3DO fonts
-		// TODO
-		return;
-	}
-
-	_fontNumber = fontNumb;
-	Common::String fname = Common::String::format("FONT%d.VGS", fontNumb + 1);
-
-	// Discard any previous font and read in new one
-	delete _font;
-	_font = new ImageFile(fname);
-
-	// Iterate through the frames to find the tallest font character
-	_fontHeight = 0;
-	for (uint idx = 0; idx < _font->size(); ++idx)
-		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
+	Fonts::free();
 }
 
 void Screen::update() {
@@ -499,37 +476,8 @@ void Screen::gPrint(const Common::Point &pt, byte color, const char *formatStr, 
 	writeString(str, pt, color);
 }
 
-int Screen::stringWidth(const Common::String &str) {
-	int width = 0;
-
-	for (const char *c = str.c_str(); *c; ++c)
-		width += charWidth(*c);
-
-	return width;
-}
-
-int Screen::charWidth(char c) {
-	if (c == ' ')
-		return 5;
-	else if (Common::isPrint(c))
-		return (*_font)[c - 33]._frame.w + 1;
-	else
-		return 0;
-}
-
-void Screen::writeString(const Common::String &str, const Common::Point &pt, byte color) {
-	Common::Point charPos = pt;
-
-	for (const char *c = str.c_str(); *c; ++c) {
-		if (*c == ' ')
-			charPos.x += 5;
-		else {
-			assert(Common::isPrint(*c));
-			ImageFrame &frame = (*_font)[*c - 33];
-			_backBuffer->transBlitFrom(frame, charPos, false, color);
-			charPos.x += frame._frame.w + 1;
-		}
-	}
+void Screen::writeString(const Common::String &str, const Common::Point &pt, byte overrideColor) {
+	Fonts::writeString(_backBuffer, str, pt, overrideColor);
 }
 
 void Screen::vgaBar(const Common::Rect &r, int color) {

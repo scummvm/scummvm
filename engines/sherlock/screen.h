@@ -60,11 +60,8 @@ class SherlockEngine;
 class Screen : public Surface {
 private:
 	SherlockEngine *_vm;
-	int _fontNumber;
 	Common::List<Common::Rect> _dirtyRects;
 	uint32 _transitionSeed;
-	ImageFile *_font;
-	int _fontHeight;
 	Surface _sceneSurface;
 
 	// Rose Tattoo fields
@@ -84,7 +81,7 @@ private:
 	/**
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
-	void writeString(const Common::String &str, const Common::Point &pt, byte color);
+	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
 protected:
 	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
@@ -102,11 +99,6 @@ public:
 public:
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
-
-	/**
-	 * Set the font to use for writing text on the screen
-	 */
-	void setFont(int fontNumber);
 
 	/**
 	 * Handles updating any dirty areas of the screen Surface object to the physical screen
@@ -209,21 +201,6 @@ public:
 	 * Copies the entire screen from the back buffer, taking into account scrolling position
 	 */
 	void blockMove(const Common::Point &scorllPos);
-
-	/**
-	 * Returns the width of a string in pixels
-	 */
-	int stringWidth(const Common::String &str);
-
-	/**
-	 * Returns the width of a character in pixels
-	 */
-	int charWidth(char c);
-
-	/**
-	 * Return the font height
-	 */
-	int fontHeight() const { return _fontHeight; }
 
 	/**
 	 * Fills an area on the back buffer, and then copies it to the screen

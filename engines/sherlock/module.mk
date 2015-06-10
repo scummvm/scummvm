@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	debugger.o \
 	detection.o \
 	events.o \
+	fonts.o \
 	inventory.o \
 	journal.o \
 	map.o \

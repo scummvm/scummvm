@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/platform.h"
 #include "graphics/surface.h"
+#include "sherlock/fonts.h"
 
 namespace Sherlock {
 
@@ -33,7 +34,7 @@ namespace Sherlock {
 
 struct ImageFrame;
 
-class Surface {
+class Surface: public Fonts {
 private:
 	bool _freePixels;
 
@@ -70,6 +71,11 @@ protected:
 	Graphics::Surface _surface;
 
 	virtual void addDirtyRect(const Common::Rect &r) {}
+
+	/**
+	 * Draws the given string into the back buffer using the images stored in _font
+	 */
+	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
 public:
 	Surface(uint16 width, uint16 height, Common::Platform platform);
 	Surface();

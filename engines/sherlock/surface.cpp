@@ -30,11 +30,11 @@ namespace Sherlock {
 
 const int TRANSPARENCY = 0xFF;
 
-Surface::Surface(uint16 width, uint16 height, Common::Platform platform) : _freePixels(true) {
+Surface::Surface(uint16 width, uint16 height, Common::Platform platform) : Fonts(), _freePixels(true) {
 	create(width, height, platform);
 }
 
-Surface::Surface() : _freePixels(false) {
+Surface::Surface() : Fonts(), _freePixels(false) {
 }
 
 Surface::~Surface() {
@@ -275,6 +275,10 @@ void Surface::setPixels(byte *pixels, int width, int height) {
 	_surface.w = _surface.pitch = width;
 	_surface.h = height;
 	_surface.setPixels(pixels);
+}
+
+void Surface::writeString(const Common::String &str, const Common::Point &pt, byte overrideColor) {
+	Fonts::writeString(this, str, pt, overrideColor);
 }
 
 void Surface::maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX) {
