@@ -24,7 +24,6 @@
 #ifndef ZVISION_TEXT_H
 #define ZVISION_TEXT_H
 
-#include "zvision/detection.h"
 #include "zvision/text/truetype_font.h"
 #include "zvision/zvision.h"
 

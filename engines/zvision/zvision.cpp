@@ -29,7 +29,6 @@
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/file/save_manager.h"
 #include "zvision/text/string_manager.h"
-#include "zvision/detection.h"
 #include "zvision/scripting/menu.h"
 #include "zvision/file/search_manager.h"
 #include "zvision/text/text.h"
@@ -184,10 +183,10 @@ void ZVision::initialize() {
 	_searchManager->addDir("FONTS");
 	_searchManager->addDir("addon");
 
-	if (_gameDescription->gameId == GID_GRANDINQUISITOR) {
+	if (getGameId() == GID_GRANDINQUISITOR) {
 		if (!_searchManager->loadZix("INQUIS.ZIX"))
 			error("Unable to load file INQUIS.ZIX");
-	} else if (_gameDescription->gameId == GID_NEMESIS) {
+	} else if (getGameId() == GID_NEMESIS) {
 		if (!_searchManager->loadZix("NEMESIS.ZIX")) {
 			// The game might not be installed, try MEDIUM.ZIX instead
 			if (!_searchManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
@@ -209,7 +208,7 @@ void ZVision::initialize() {
 	_textRenderer = new TextRenderer(this);
 	_midiManager = new MidiManager();
 
-	if (_gameDescription->gameId == GID_GRANDINQUISITOR)
+	if (getGameId() == GID_GRANDINQUISITOR)
 		_menu = new MenuZGI(this);
 	else
 		_menu = new MenuNemesis(this);
@@ -217,7 +216,7 @@ void ZVision::initialize() {
 	// Initialize the managers
 	_cursorManager->initialize();
 	_scriptManager->initialize();
-	_stringManager->initialize(_gameDescription->gameId);
+	_stringManager->initialize(getGameId());
 
 	registerDefaultSettings();
 
@@ -396,8 +395,8 @@ void ZVision::fpsTimer() {
 }
 
 void ZVision::initScreen() {
-	uint16 workingWindowWidth  = (_gameDescription->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH  : ZGI_WORKING_WINDOW_WIDTH;
-	uint16 workingWindowHeight = (_gameDescription->gameId == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
+	uint16 workingWindowWidth = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH : ZGI_WORKING_WINDOW_WIDTH;
+	uint16 workingWindowHeight = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
 	_workingWindow = Common::Rect(
 						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
 						 (WINDOW_HEIGHT - workingWindowHeight) / 2,

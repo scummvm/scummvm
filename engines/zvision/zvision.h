@@ -24,7 +24,6 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
-#include "zvision/detection.h"
 #include "zvision/core/clock.h"
 #include "zvision/file/search_manager.h"
 
@@ -87,6 +86,12 @@ enum {
 	KEYBUF_SIZE = 20
 };
 
+enum ZVisionGameId {
+	GID_NONE = 0,
+	GID_NEMESIS = 1,
+	GID_GRANDINQUISITOR = 2
+};
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -142,10 +147,12 @@ private:
 	uint8 _cheatBuffer[KEYBUF_SIZE];
 
 public:
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
 	Common::Error run();
 	void pauseEngineIntern(bool pause);
+
+	ZVisionGameId ZVision::getGameId() const;
+	Common::Language ZVision::getLanguage() const;
+	uint32 ZVision::getFeatures() const;
 
 	ScriptManager *getScriptManager() const {
 		return _scriptManager;
@@ -174,11 +181,9 @@ public:
 	MenuHandler *getMenuHandler() const {
 		return _menu;
 	}
+
 	Common::RandomSource *getRandomSource() const {
 		return _rnd;
-	}
-	ZVisionGameId getGameId() const {
-		return _gameDescription->gameId;
 	}
 	int16 getKeyboardVelocity() const {
 		return _keyboardVelocity;
