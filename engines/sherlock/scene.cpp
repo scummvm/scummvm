@@ -579,7 +579,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		Common::String roomFile = "rooms/" + filename + ".rrm";
 		flag = _vm->_res->exists(roomFile);
 		if (!flag)
-			error("loadScene: 3DO room file not found");
+			error("loadScene: 3DO room data file not found");
 
 		Common::SeekableReadStream *roomStream = _vm->_res->load(roomFile);
 
@@ -742,15 +742,53 @@ bool Scene::loadScene(const Common::String &filename) {
 		for (int idx = 0; idx < header3DO_soundList_count; ++idx)
 			_sounds[idx].load3DO(*roomStream);
 
+		delete roomStream;
+
 		// === BACKGROUND PICTURE ===
 		// load from file rooms\[filename].bg
 		// it's uncompressed 15-bit RGB555 data
 
+		Common::String roomBackgroundFilename = "rooms/" + filename + ".bg";
+		flag = _vm->_res->exists(roomBackgroundFilename);
+		if (!flag)
+			error("loadScene: 3DO room background file not found (%s)", roomBackgroundFilename.c_str());
 
+		Common::File roomBackgroundStream;
+		if (!roomBackgroundStream.open(roomBackgroundFilename))
+			error("Could not load file - %s", roomBackgroundFilename.c_str());
 
+		int totalPixelCount = SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT;
+		uint16 *roomBackgroundDataPtr = NULL;
+		uint16 *pixelSourcePtr = NULL;
+		uint16 *pixelDestPtr = (uint16 *)screen._backBuffer1.getPixels();
+		uint16  curPixel = 0;
 
+		roomBackgroundDataPtr = new uint16[totalPixelCount];
+		roomBackgroundStream.read(roomBackgroundDataPtr, totalPixelCount * 2);
+		roomBackgroundStream.close();
 
+		// Convert data from RGB555 to RGB565
+		pixelSourcePtr = roomBackgroundDataPtr;
+		for (int pixels = 0; pixels < totalPixelCount; pixels++) {
+			curPixel = READ_BE_UINT16(pixelSourcePtr++);
 
+			byte curPixelRed   = (curPixel >> 10) & 0x1F;
+			byte curPixelGreen = (curPixel >> 5) & 0x1F;
+			byte curPixelBlue  = curPixel & 0x1F;
+			*pixelDestPtr = ((curPixelRed << 11) | (curPixelGreen << 6) | (curPixelBlue));
+			pixelDestPtr++;
+		}
+
+		delete[] roomBackgroundDataPtr;
+
+#if 0
+		// code to show the background
+		screen.blitFrom(screen._backBuffer1);
+		_vm->_events->wait(10000);
+#endif
+
+		// Backup the image
+		screen._backBuffer2.blitFrom(screen._backBuffer1);
 	}
 
 	// Handle drawing any on-screen interface
