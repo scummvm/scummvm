@@ -96,7 +96,7 @@ void Sound::syncSoundSettings() {
 
 void Sound::loadSound(const Common::String &name, int priority) {
 	// No implementation required in ScummVM
-	warning("loadSound");
+	//warning("loadSound");
 }
 
 byte Sound::decodeSample(byte sample, byte &reference, int16 &scale) {
