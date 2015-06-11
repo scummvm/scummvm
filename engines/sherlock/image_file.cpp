@@ -34,6 +34,9 @@ void ImageFile::setVm(SherlockEngine *vm) {
 	_vm = vm;
 }
 
+ImageFile::ImageFile() {
+}
+
 ImageFile::ImageFile(const Common::String &name, bool skipPal, bool animImages) {
 	Common::SeekableReadStream *stream = _vm->_res->load(name);
 
@@ -240,28 +243,29 @@ void ImageFile3DO::setVm(SherlockEngine *vm) {
 	_vm = vm;
 }
 
-ImageFile3DO::ImageFile3DO(const Common::String &name, bool animImages) {
+ImageFile3DO::ImageFile3DO(const Common::String &name) {
 	Common::File *dataStream = new Common::File();
 
 	if (!dataStream->open(name)) {
 		error("unable to open %s\n", name.c_str());
 	}
 
-	load(*dataStream, animImages);
+	load(*dataStream, false); // this is never called for room data
 
 	delete dataStream;
 }
 
-ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream) {
+ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool roomData) {
 	load(stream, false);
 }
 
 ImageFile3DO::~ImageFile3DO() {
-	for (uint idx = 0; idx < size(); ++idx)
-		(*this)[idx]._frame.free();
+	// already done in ImageFile destructor
+	//for (uint idx = 0; idx < size(); ++idx)
+	//	(*this)[idx]._frame.free();
 }
 
-void ImageFile3DO::load(Common::SeekableReadStream &stream, bool animImages) {
+void ImageFile3DO::load(Common::SeekableReadStream &stream, bool roomData) {
 	uint32 headerId = stream.readUint32BE();
 
 	assert(!stream.eos());
@@ -280,7 +284,7 @@ void ImageFile3DO::load(Common::SeekableReadStream &stream, bool animImages) {
 
 	default:
 		// Sherlock animation file (.3da files)
-		loadAnimationFile(stream, animImages);
+		loadAnimationFile(stream);
 		break;
 	}
 }
@@ -294,7 +298,7 @@ inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
 	return ((red << 11) | (green << 6) | (blue));
 }
 
-void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream, bool animImages) {
+void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 	int streamSize = stream.size();
 	uint32 compressedSize = 0;
 
@@ -307,22 +311,14 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream, bool an
 		frame._height = stream.readByte() + 1; // 1 byte BE height
 		frame._paletteBase = 0;
 
-		if (animImages) {
-			// Animation cutscene image files use a 16-bit x offset
-			frame._offset.x = stream.readUint16BE();
-			frame._rleEncoded = true; // always compressed
-			if (frame._width & 0x8000) {
-				frame._width &= 0x7FFF;
-				compressedSize += 0x10000;
-			}
-			frame._offset.y = stream.readByte();
-		} else {
-			// Standard image files have a separate byte for the RLE flag, and an 8-bit X offset
-			//frame._rleEncoded = stream.readByte() == 1;
-			//frame._offset.x = stream.readByte();
-			//frame._offset.y = stream.readByte();
+		frame._rleEncoded = true; // always compressed
+		if (frame._width & 0x8000) {
+			frame._width &= 0x7FFF;
+			compressedSize += 0x10000;
 		}
 
+		frame._offset.x = stream.readUint16BE();
+		frame._offset.y = stream.readByte();
 		frame._size = 0;
 
 		//warning("getting frame %d from offset %d", this->size(), stream.pos());

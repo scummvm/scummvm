@@ -87,6 +87,7 @@ private:
 public:
 	byte _palette[256 * 3];
 public:
+	ImageFile();
 	ImageFile(const Common::String &name, bool skipPal = false, bool animImages = false);
 	ImageFile(Common::SeekableReadStream &stream, bool skipPal = false);
 	~ImageFile();
@@ -97,7 +98,7 @@ struct ImageFile3DOPixelLookupTable {
 	uint16 pixelColor[256];
 };
 
-class ImageFile3DO : public Common::Array<ImageFrame> {
+class ImageFile3DO : public ImageFile { // Common::Array<ImageFrame> {
 private:
 	static SherlockEngine *_vm;
 
@@ -126,11 +127,11 @@ private:
 	/**
 	 * Load animation graphics file
 	 */
-	void loadAnimationFile(Common::SeekableReadStream &stream, bool animImages);
+	void loadAnimationFile(Common::SeekableReadStream &stream);
 
 public:
-	ImageFile3DO(const Common::String &name, bool animImages = false);
-	ImageFile3DO(Common::SeekableReadStream &stream);
+	ImageFile3DO(const Common::String &name);
+	ImageFile3DO(Common::SeekableReadStream &stream, bool roomData = false);
 	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);
 };

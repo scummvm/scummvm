@@ -198,7 +198,12 @@ bool People::loadWalk() {
 		if (_data[PLAYER]._walkLoaded) {
 			return false;
 		} else {
-			_data[PLAYER]._images = new ImageFile("walk.vgs");
+			if (_vm->getPlatform() != Common::kPlatform3DO) {
+				_data[PLAYER]._images = new ImageFile("walk.vgs");
+			} else {
+				// Load walk.anim on 3DO, which is a cel animation file
+				_data[PLAYER]._images = new ImageFile3DO("walk.anim");
+			}
 			_data[PLAYER].setImageFrame();
 			_data[PLAYER]._walkLoaded = true;
 
