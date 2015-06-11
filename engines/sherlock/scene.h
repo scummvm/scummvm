@@ -72,6 +72,7 @@ struct BgFileHeaderInfo {
 	 * Load the data for the object
 	 */
 	void load(Common::SeekableReadStream &s);
+	void load3DO(Common::SeekableReadStream &s);
 };
 
 class Exit: public Common::Rect {
@@ -99,6 +100,7 @@ struct SceneEntry {
 	 * Load the data for the object
 	 */
 	void load(Common::SeekableReadStream &s);
+	void load3DO(Common::SeekableReadStream &s);
 };
 
 struct SceneSound {
@@ -109,6 +111,7 @@ struct SceneSound {
 	 * Load the data for the object
 	 */
 	void load(Common::SeekableReadStream &s);
+	void load3DO(Common::SeekableReadStream &s);
 };
 
 class ObjectArray : public Common::Array<Object> {

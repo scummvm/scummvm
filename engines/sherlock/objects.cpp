@@ -674,6 +674,27 @@ void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_target = Common::String(buffer);
 }
 
+void UseType::load3DO(Common::SeekableReadStream &s) {
+	char buffer[12];
+
+	_cAnimNum = s.readByte();
+	_cAnimSpeed = s.readByte();
+	if (_cAnimSpeed & 0x80)
+		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
+
+	for (int idx = 0; idx < NAMES_COUNT; ++idx) {
+		s.read(buffer, 12);
+		_names[idx] = Common::String(buffer);
+	}
+
+	_useFlag = s.readSint16BE();
+
+	s.skip(6);
+
+	s.read(buffer, 12);
+	_target = Common::String(buffer);
+}
+
 /*----------------------------------------------------------------*/
 
 SherlockEngine *Object::_vm;
@@ -779,6 +800,98 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
+}
+
+void Object::load3DO(Common::SeekableReadStream &s) {
+	char buffer[41];
+
+	_examine.clear();
+	_sequences = nullptr;
+	_images = nullptr;
+	_imageFrame = nullptr;
+
+	// on 3DO all of this data is reordered!!!
+	s.skip(4);
+	_sequenceOffset = s.readUint16LE(); // weird that this seems to be LE
+	s.seek(10, SEEK_CUR);
+
+	_walkCount = 0; // ??? s.readByte();
+	_allow = 0; // ??? s.readByte();
+	_frameNumber = s.readSint16BE();
+	_sequenceNumber = s.readSint16BE();
+	_position.x = s.readSint16BE();
+	_position.y = s.readSint16BE();
+	_delta.x = s.readSint16BE();
+	_delta.y = s.readSint16BE();
+	_type = (SpriteType)s.readUint16BE();
+	_oldPosition.x = s.readSint16BE();
+	_oldPosition.y = s.readSint16BE();
+	_oldSize.x = s.readUint16BE();
+	_oldSize.y = s.readUint16BE();
+	
+	_goto.x = s.readSint16BE();
+	_goto.y = s.readSint16BE();
+	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
+	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
+
+	s.skip(16); // Unknown
+
+#if 0
+	_pickup = s.readByte();
+	_defaultCommand = s.readByte();
+	_lookFlag = s.readSint16BE();
+	_pickupFlag = s.readSint16BE();
+	_requiredFlag = s.readSint16BE();
+	_noShapeSize.x = s.readUint16BE();
+	_noShapeSize.y = s.readUint16BE();
+	_status = s.readUint16BE();
+	_maxFrames = s.readUint16BE();
+
+	_aOpen.load(s);
+
+	_aType = (AType)s.readByte();
+	_lookFrames = s.readByte();
+	_seqCounter = s.readByte();
+	_lookPosition.x = s.readUint16BE() * FIXED_INT_MULTIPLIER / 100;
+	_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
+	_lookFacing = s.readByte();
+	_lookcAnim = s.readByte();
+
+	_aClose.load(s);
+
+	_seqStack = s.readByte();
+	_seqTo = s.readByte();
+#endif
+	warning("pos %d", s.pos());
+
+	_descOffset = s.readUint16BE();
+	_seqCounter2 = 0; // ???
+	_seqSize = s.readUint16BE();
+
+	s.skip(446);
+
+#if 0
+	s.skip(1);
+	_aMove.load(s);
+	s.skip(8);
+
+	for (int idx = 0; idx < 4; ++idx)
+		_use[idx].load(s, false);
+#endif
+
+	// 3DO: name is at the end
+	s.read(buffer, 12);
+	_name = Common::String(buffer);
+	s.read(buffer, 41);
+	_description = Common::String(buffer);
+
+	s.skip(4); // Unknown
+
+	// Probably those here?!?!
+	_misc = s.readByte();
+	_flags = s.readByte();
+
+	s.skip(21); // Unknown
 }
 
 void Object::toggleHidden() {
@@ -1514,6 +1627,33 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	}
 
 	_teleportDir = s.readSint16LE();
+}
+
+void CAnim::load3DO(Common::SeekableReadStream &s) {
+	char buffer[12];
+	s.read(buffer, 12);
+	_name = Common::String(buffer);
+
+	s.read(_sequences, 30);
+
+	_position.x = s.readSint16BE();
+	_position.y = s.readSint16BE();
+	
+	_size = s.readUint32BE();
+	_type = (SpriteType)s.readUint16BE();
+	_flags = s.readByte();
+
+	_goto.x = s.readSint16BE();
+	_goto.y = s.readSint16BE();
+	_gotoDir = s.readSint16BE();
+	_teleportPos.x = s.readSint16BE();
+	_teleportPos.y = s.readSint16BE();
+	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
+	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
+	_teleportPos.x = _teleportPos.x * FIXED_INT_MULTIPLIER / 100;
+	_teleportPos.y = _teleportPos.y * FIXED_INT_MULTIPLIER / 100;
+
+	_teleportDir = s.readSint16BE();
 }
 
 /*----------------------------------------------------------------*/

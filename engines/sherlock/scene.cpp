@@ -84,6 +84,16 @@ void BgFileHeaderInfo::load(Common::SeekableReadStream &s) {
 	_filename = Common::String(buffer);
 }
 
+void BgFileHeaderInfo::load3DO(Common::SeekableReadStream &s) {
+	_filesize = s.readUint32BE();
+	_maxFrames = s.readByte();
+
+	char buffer[9];
+	s.read(buffer, 9);
+	_filename = Common::String(buffer);
+	s.skip(2); // only on 3DO!
+}
+
 /*----------------------------------------------------------------*/
 
 void Exit::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
@@ -121,6 +131,13 @@ void SceneEntry::load(Common::SeekableReadStream &s) {
 	_allow = s.readByte();
 }
 
+void SceneEntry::load3DO(Common::SeekableReadStream &s) {
+	_startPosition.x = s.readSint16BE();
+	_startPosition.y = s.readSint16BE();
+	_startDir = s.readByte();
+	_allow = s.readByte();
+}
+
 void SceneSound::load(Common::SeekableReadStream &s) {
 	char buffer[9];
 	s.read(buffer, 8);
@@ -128,6 +145,10 @@ void SceneSound::load(Common::SeekableReadStream &s) {
 
 	_name = Common::String(buffer);
 	_priority = s.readByte();
+}
+
+void SceneSound::load3DO(Common::SeekableReadStream &s) {
+	load(s);
 }
 
 /*----------------------------------------------------------------*/
@@ -285,140 +306,376 @@ bool Scene::loadScene(const Common::String &filename) {
 	// Load the room resource file for the scene
 	//
 
-	Common::String rrmFile = filename + ".rrm";
-	flag = _vm->_res->exists(rrmFile);
-	if (flag) {
-		Common::SeekableReadStream *rrmStream = _vm->_res->load(rrmFile);
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// PC version
+		Common::String rrmFile = filename + ".rrm";
+		flag = _vm->_res->exists(rrmFile);
+		if (flag) {
+			Common::SeekableReadStream *rrmStream = _vm->_res->load(rrmFile);
 
-		rrmStream->seek(39);
-		if (IS_SERRATED_SCALPEL) {
-			_version = rrmStream->readByte();
-			_lzwMode = _version == 10;
-		} else {
-			_lzwMode = rrmStream->readByte() > 0;
-		}
-
-		// Go to header and read it in
-		rrmStream->seek(rrmStream->readUint32LE());
-
-		BgFileHeader bgHeader;
-		bgHeader.load(*rrmStream, IS_ROSE_TATTOO);
-		_invGraphicItems = bgHeader._numImages + 1;
-
-		if (IS_ROSE_TATTOO) {
-			screen.initPaletteFade(bgHeader._bytesWritten);
-			rrmStream->read(screen._cMap, PALETTE_SIZE);
-			screen.translatePalette(screen._cMap);
-
-			paletteLoaded();
-
-			// Read in background
-			if (_lzwMode) {
-				res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+			rrmStream->seek(39);
+			if (IS_SERRATED_SCALPEL) {
+				_version = rrmStream->readByte();
+				_lzwMode = _version == 10;
 			} else {
-				rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+				_lzwMode = rrmStream->readByte() > 0;
 			}
-		} 
 
-		// Read in the shapes header info
-		Common::Array<BgFileHeaderInfo> bgInfo;
-		bgInfo.resize(bgHeader._numStructs);
+			// Go to header and read it in
+			rrmStream->seek(rrmStream->readUint32LE());
 
-		for (uint idx = 0; idx < bgInfo.size(); ++idx)
-			bgInfo[idx].load(*rrmStream);
+			BgFileHeader bgHeader;
+			bgHeader.load(*rrmStream, IS_ROSE_TATTOO);
+			_invGraphicItems = bgHeader._numImages + 1;
 
-		// Read information
-		if (IS_ROSE_TATTOO) {
-			// Load shapes
-			Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
+			if (IS_ROSE_TATTOO) {
+				screen.initPaletteFade(bgHeader._bytesWritten);
+				rrmStream->read(screen._cMap, PALETTE_SIZE);
+				screen.translatePalette(screen._cMap);
 
-			_bgShapes.resize(bgHeader._numStructs);
-			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+				paletteLoaded();
 
-			if (_lzwMode)
-				delete infoStream;
+				// Read in background
+				if (_lzwMode) {
+					res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+				} else {
+					rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+				}
+			} 
 
-			// Load description text
-			_descText.resize(bgHeader._descSize);
-			if (_lzwMode)
-				res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
-			else
-				rrmStream->read(&_descText[0], bgHeader._descSize);
+			// Read in the shapes header info
+			Common::Array<BgFileHeaderInfo> bgInfo;
+			bgInfo.resize(bgHeader._numStructs);
 
-			// Load sequences
-			_sequenceBuffer.resize(bgHeader._seqSize);
-			if (_lzwMode)
-				res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
-			else
-				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
-		} else if (!_lzwMode) {
-			// Serrated Scalpel uncompressed info
-			_bgShapes.resize(bgHeader._numStructs);
-			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*rrmStream, false);
+			for (uint idx = 0; idx < bgInfo.size(); ++idx)
+				bgInfo[idx].load(*rrmStream);
 
-			if (bgHeader._descSize) {
+			// Read information
+			if (IS_ROSE_TATTOO) {
+				// Load shapes
+				Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
+
+				_bgShapes.resize(bgHeader._numStructs);
+				for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+					_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+
+				if (_lzwMode)
+					delete infoStream;
+
+				// Load description text
 				_descText.resize(bgHeader._descSize);
-				rrmStream->read(&_descText[0], bgHeader._descSize);
-			}
+				if (_lzwMode)
+					res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
+				else
+					rrmStream->read(&_descText[0], bgHeader._descSize);
 
-			if (bgHeader._seqSize) {
+				// Load sequences
 				_sequenceBuffer.resize(bgHeader._seqSize);
-				rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
-			}
-		} else {
-			// Serrated Scalpel compressed info
-			Common::SeekableReadStream *infoStream;
+				if (_lzwMode)
+					res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
+				else
+					rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+			} else if (!_lzwMode) {
+				// Serrated Scalpel uncompressed info
+				_bgShapes.resize(bgHeader._numStructs);
+				for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+					_bgShapes[idx].load(*rrmStream, false);
 
-			// Read shapes
-			infoStream = Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569);
+				if (bgHeader._descSize) {
+					_descText.resize(bgHeader._descSize);
+					rrmStream->read(&_descText[0], bgHeader._descSize);
+				}
 
-			_bgShapes.resize(bgHeader._numStructs);
-			for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-				_bgShapes[idx].load(*infoStream, false);
+				if (bgHeader._seqSize) {
+					_sequenceBuffer.resize(bgHeader._seqSize);
+					rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+				}
+			} else {
+				// Serrated Scalpel compressed info
+				Common::SeekableReadStream *infoStream;
 
-			delete infoStream;
+				// Read shapes
+				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._numStructs * 569);
 
-			// Read description texts
-			if (bgHeader._descSize) {
-				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._descSize);
-
-				_descText.resize(bgHeader._descSize);
-				infoStream->read(&_descText[0], bgHeader._descSize);
+				_bgShapes.resize(bgHeader._numStructs);
+				for (int idx = 0; idx < bgHeader._numStructs; ++idx)
+					_bgShapes[idx].load(*infoStream, false);
 
 				delete infoStream;
+
+				// Read description texts
+				if (bgHeader._descSize) {
+					infoStream = Resources::decompressLZ(*rrmStream, bgHeader._descSize);
+
+					_descText.resize(bgHeader._descSize);
+					infoStream->read(&_descText[0], bgHeader._descSize);
+
+					delete infoStream;
+				}
+
+				// Read sequences
+				if (bgHeader._seqSize) {
+					infoStream = Resources::decompressLZ(*rrmStream, bgHeader._seqSize);
+
+					_sequenceBuffer.resize(bgHeader._seqSize);
+					infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+
+					delete infoStream;
+				}
 			}
 
-			// Read sequences
-			if (bgHeader._seqSize) {
-				infoStream = Resources::decompressLZ(*rrmStream, bgHeader._seqSize);
+			// Set up the list of images used by the scene
+			_images.resize(bgHeader._numImages + 1);
+			for (int idx = 0; idx < bgHeader._numImages; ++idx) {
+				_images[idx + 1]._filesize = bgInfo[idx]._filesize;
+				_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
-				_sequenceBuffer.resize(bgHeader._seqSize);
-				infoStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
+				// Read in the image data
+				Common::SeekableReadStream *imageStream = _lzwMode ?
+					res.decompress(*rrmStream, bgInfo[idx]._filesize) :
+					rrmStream->readStream(bgInfo[idx]._filesize);
 
-				delete infoStream;
+				_images[idx + 1]._images = new ImageFile(*imageStream);
+
+				delete imageStream;
 			}
+
+			// Set up the bgShapes
+			for (int idx = 0; idx < bgHeader._numStructs; ++idx) {
+				_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
+				_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
+					&(*_bgShapes[idx]._images)[0];
+
+				_bgShapes[idx]._examine = Common::String(&_descText[_bgShapes[idx]._descOffset]);
+				_bgShapes[idx]._sequences = &_sequenceBuffer[_bgShapes[idx]._sequenceOffset];
+				_bgShapes[idx]._misc = 0;
+				_bgShapes[idx]._seqCounter = 0;
+				_bgShapes[idx]._seqCounter2 = 0;
+				_bgShapes[idx]._seqStack = 0;
+				_bgShapes[idx]._frameNumber = -1;
+				_bgShapes[idx]._oldPosition = Common::Point(0, 0);
+				_bgShapes[idx]._oldSize = Common::Point(1, 1);
+			}
+
+			// Load in cAnim list
+			_cAnim.clear();
+			if (bgHeader._numcAnimations) {
+				int animSize = IS_SERRATED_SCALPEL ? 65 : 47;
+				Common::SeekableReadStream *canimStream = _lzwMode ?
+					res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
+					rrmStream->readStream(animSize * bgHeader._numcAnimations);
+
+				_cAnim.resize(bgHeader._numcAnimations);
+				for (uint idx = 0; idx < _cAnim.size(); ++idx)
+					_cAnim[idx].load(*canimStream, IS_ROSE_TATTOO);
+
+				delete canimStream;
+			}
+
+			// Read in the room bounding areas
+			int size = rrmStream->readUint16LE();
+			Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
+				res.decompress(*rrmStream, size);
+
+			_zones.resize(size / 10);
+			for (uint idx = 0; idx < _zones.size(); ++idx) {
+				_zones[idx].left = boundsStream->readSint16LE();
+				_zones[idx].top = boundsStream->readSint16LE();
+				_zones[idx].setWidth(boundsStream->readSint16LE() + 1);
+				_zones[idx].setHeight(boundsStream->readSint16LE() + 1);
+				boundsStream->skip(2);	// Skip unused scene number field
+			}
+
+			if (_lzwMode)
+				delete boundsStream;
+
+			// Ensure we've reached the path version byte
+			if (rrmStream->readByte() != (IS_SERRATED_SCALPEL ? 254 : 251))
+				error("Invalid scene path data");
+
+			// Load the walk directory
+			assert(_zones.size() < MAX_ZONES);
+			for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
+				for (uint idx2 = 0; idx2 < _zones.size(); ++idx2)
+					_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
+			}
+
+			// Read in the walk data
+			size = rrmStream->readUint16LE();
+			Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
+				res.decompress(*rrmStream, size);
+
+			_walkData.resize(size);
+			walkStream->read(&_walkData[0], size);
+
+			if (_lzwMode)
+				delete walkStream;
+
+			if (IS_ROSE_TATTOO) {
+				// Read in the entrance
+				_entrance.load(*rrmStream);
+
+				// Load scale zones
+				_scaleZones.resize(rrmStream->readByte());
+				for (uint idx = 0; idx < _scaleZones.size(); ++idx)
+					_scaleZones[idx].load(*rrmStream);
+			}
+
+			// Read in the exits
+			_exitZone = -1;
+			int numExits = rrmStream->readByte();
+			_exits.resize(numExits);
+
+			for (int idx = 0; idx < numExits; ++idx)
+				_exits[idx].load(*rrmStream, IS_ROSE_TATTOO);
+
+			if (IS_SERRATED_SCALPEL)
+				// Read in the entrance
+				_entrance.load(*rrmStream);
+
+			// Initialize sound list
+			int numSounds = rrmStream->readByte();
+			_sounds.resize(numSounds);
+
+			for (int idx = 0; idx < numSounds; ++idx)
+				_sounds[idx].load(*rrmStream);
+
+			loadSceneSounds();
+
+			if (IS_ROSE_TATTOO) {
+				// Load the object sound list
+				char buffer[27];
+			
+				_objSoundList.resize(rrmStream->readUint16LE());
+				for (uint idx = 0; idx < _objSoundList.size(); ++idx) {
+					rrmStream->read(buffer, 27);
+					_objSoundList[idx] = Common::String(buffer);
+				}
+			} else {
+				// Read in palette
+				rrmStream->read(screen._cMap, PALETTE_SIZE);
+				screen.translatePalette(screen._cMap);
+				Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
+
+				// Read in the background
+				Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
+					res.decompress(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+
+				bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
+
+				if (_lzwMode)
+					delete bgStream;
+			}
+
+			// Backup the image and set the palette
+			screen._backBuffer2.blitFrom(screen._backBuffer1);
+			screen.setPalette(screen._cMap);
+
+			delete rrmStream;
 		}
 
-		// Set up the list of images used by the scene
-		_images.resize(bgHeader._numImages + 1);
-		for (int idx = 0; idx < bgHeader._numImages; ++idx) {
+	} else {
+		// === 3DO version ===
+		Common::String roomFile = "rooms/" + filename + ".rrm";
+		flag = _vm->_res->exists(roomFile);
+		if (!flag)
+			error("loadScene: 3DO room file not found");
+
+		Common::SeekableReadStream *roomStream = _vm->_res->load(roomFile);
+
+		// Read 3DO header
+		roomStream->skip(4); // UINT32: offset graphic data?
+		uint16 header3DO_numStructs = roomStream->readUint16BE();
+		uint16 header3DO_numImages = roomStream->readUint16BE();
+		uint16 header3DO_numAnimations = roomStream->readUint16BE();
+		roomStream->skip(6);
+
+		uint32 header3DO_bgInfo_offset        = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_bgInfo_size          = roomStream->readUint32BE();
+		uint32 header3DO_bgShapes_offset      = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_bgShapes_size        = roomStream->readUint32BE();
+		uint32 header3DO_descriptions_offset  = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_descriptions_size    = roomStream->readUint32BE();
+		uint32 header3DO_sequence_offset      = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_sequence_size        = roomStream->readUint32BE();
+		uint32 header3DO_cAnim_offset         = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_cAnim_size           = roomStream->readUint32BE();
+		uint32 header3DO_roomBounding_offset  = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_roomBounding_size    = roomStream->readUint32BE();
+		uint32 header3DO_walkDirectory_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_walkDirectory_size   = roomStream->readUint32BE();
+		uint32 header3DO_walkData_offset      = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_walkData_size        = roomStream->readUint32BE();
+		uint32 header3DO_exits_offset         = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_exits_size           = roomStream->readUint32BE();
+		uint32 header3DO_entranceData_offset  = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_entranceData_size    = roomStream->readUint32BE();
+		uint32 header3DO_soundList_offset     = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_soundList_size       = roomStream->readUint32BE();
+		uint32 header3DO_unknown_offset       = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_unknown_size         = roomStream->readUint32BE();
+		uint32 header3DO_bgGraphicData_offset = roomStream->readUint32BE() + 0x80;
+		uint32 header3DO_bgGraphicData_size   = roomStream->readUint32BE();
+
+		int32 header3DO_soundList_count       = header3DO_soundList_size / 9;
+
+		_invGraphicItems = header3DO_numImages + 1;
+
+		// === BGINFO === read in the shapes header info
+		Common::Array<BgFileHeaderInfo> bgInfo;
+
+		roomStream->seek(header3DO_bgInfo_offset);
+		bgInfo.resize(header3DO_numStructs);
+		for (uint idx = 0; idx < bgInfo.size(); ++idx)
+			bgInfo[idx].load3DO(*roomStream);
+
+		// === BGSHAPES === read in the shapes info
+		roomStream->seek(header3DO_bgShapes_offset);
+		_bgShapes.resize(header3DO_numStructs);
+		for (int idx = 0; idx < header3DO_numStructs; ++idx)
+			_bgShapes[idx].load3DO(*roomStream);
+
+		// === DESCRIPTION === read description text
+		if (header3DO_descriptions_size) {
+			roomStream->seek(header3DO_descriptions_offset);
+			_descText.resize(header3DO_descriptions_size);
+			roomStream->read(&_descText[0], header3DO_descriptions_size);
+		}
+
+		// === SEQUENCE === read sequence buffer
+		if (header3DO_sequence_size) {
+			roomStream->seek(header3DO_sequence_offset);
+			_sequenceBuffer.resize(header3DO_sequence_size);
+			roomStream->read(&_sequenceBuffer[0], header3DO_sequence_size);
+		}
+
+		// === IMAGES === set up the list of images used by the scene
+		roomStream->seek(header3DO_bgGraphicData_offset);
+		_images.resize(header3DO_numImages + 1);
+		for (int idx = 0; idx < header3DO_numImages; ++idx) {
 			_images[idx + 1]._filesize = bgInfo[idx]._filesize;
 			_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
+			// Read the image data
+			// It seems it's a 8 byte header per frame
+			// followed by a copy of the cel header
+			// which is then followed by cel data
+			// TODO
+			warning("image %d, maxFrames %d", idx, bgInfo[idx]._maxFrames);
+			warning("size %d", bgInfo[idx]._filesize);
+
 			// Read in the image data
-			Common::SeekableReadStream *imageStream = _lzwMode ?
-				res.decompress(*rrmStream, bgInfo[idx]._filesize) :
-				rrmStream->readStream(bgInfo[idx]._filesize);
+			//Common::SeekableReadStream *imageStream = roomStream->readStream(bgInfo[idx]._filesize);
 
-			_images[idx + 1]._images = new ImageFile(*imageStream);
+			//_images[idx + 1]._images = new ImageFile(*imageStream);
 
-			delete imageStream;
+			//delete imageStream;
+			warning("end");
 		}
 
-		// Set up the bgShapes
-		for (int idx = 0; idx < bgHeader._numStructs; ++idx) {
+		// === BGSHAPES === Set up the bgShapes
+		for (int idx = 0; idx < header3DO_numStructs; ++idx) {
+			warning("%d", _bgShapes[idx]._misc);
 			_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
 			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
 				&(*_bgShapes[idx]._images)[0];
@@ -434,121 +691,73 @@ bool Scene::loadScene(const Common::String &filename) {
 			_bgShapes[idx]._oldSize = Common::Point(1, 1);
 		}
 
-		// Load in cAnim list
+		// === CANIM === read cAnim list
 		_cAnim.clear();
-		if (bgHeader._numcAnimations) {
-			int animSize = IS_SERRATED_SCALPEL ? 65 : 47;
-			Common::SeekableReadStream *canimStream = _lzwMode ?
-				res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
-				rrmStream->readStream(animSize * bgHeader._numcAnimations);
+		if (header3DO_numAnimations) {
+			int animSize = 65;
 
-			_cAnim.resize(bgHeader._numcAnimations);
+			roomStream->seek(header3DO_cAnim_offset);
+			Common::SeekableReadStream *canimStream = roomStream->readStream(animSize * header3DO_numAnimations);
+
+			_cAnim.resize(header3DO_numAnimations);
 			for (uint idx = 0; idx < _cAnim.size(); ++idx)
-				_cAnim[idx].load(*canimStream, IS_ROSE_TATTOO);
+				_cAnim[idx].load3DO(*canimStream);
 
 			delete canimStream;
 		}
 
-		// Read in the room bounding areas
-		int size = rrmStream->readUint16LE();
-		Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
-			res.decompress(*rrmStream, size);
+		// === BOUNDING AREAS === Read in the room bounding areas
+		int roomBoundingCount = header3DO_roomBounding_size / 12;
 
-		_zones.resize(size / 10);
+		roomStream->seek(header3DO_roomBounding_offset);
+		_zones.resize(roomBoundingCount);
 		for (uint idx = 0; idx < _zones.size(); ++idx) {
-			_zones[idx].left = boundsStream->readSint16LE();
-			_zones[idx].top = boundsStream->readSint16LE();
-			_zones[idx].setWidth(boundsStream->readSint16LE() + 1);
-			_zones[idx].setHeight(boundsStream->readSint16LE() + 1);
-			boundsStream->skip(2);	// Skip unused scene number field
+			_zones[idx].left = roomStream->readSint16BE();
+			_zones[idx].top = roomStream->readSint16BE();
+			_zones[idx].setWidth(roomStream->readSint16BE() + 1);
+			_zones[idx].setHeight(roomStream->readSint16BE() + 1);
+			roomStream->skip(4); // skip UINT32
 		}
 
-		if (_lzwMode)
-			delete boundsStream;
-
-		// Ensure we've reached the path version byte
-		if (rrmStream->readByte() != (IS_SERRATED_SCALPEL ? 254 : 251))
-			error("Invalid scene path data");
-
-		// Load the walk directory
+		// === WALK DIRECTORY === Load the walk directory
+		roomStream->seek(header3DO_walkDirectory_offset);
 		assert(_zones.size() < MAX_ZONES);
 		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
 			for (uint idx2 = 0; idx2 < _zones.size(); ++idx2)
-				_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
+				_walkDirectory[idx1][idx2] = roomStream->readSint16BE();
 		}
 
-		// Read in the walk data
-		size = rrmStream->readUint16LE();
-		Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
-			res.decompress(*rrmStream, size);
+		// === WALK DATA === Read in the walk data
+		roomStream->seek(header3DO_walkData_offset);
+		_walkData.resize(header3DO_walkData_size);
+		roomStream->read(&_walkData[0], header3DO_walkData_size);
 
-		_walkData.resize(size);
-		walkStream->read(&_walkData[0], size);
-
-		if (_lzwMode)
-			delete walkStream;
-
-		if (IS_ROSE_TATTOO) {
-			// Read in the entrance
-			_entrance.load(*rrmStream);
-
-			// Load scale zones
-			_scaleZones.resize(rrmStream->readByte());
-			for (uint idx = 0; idx < _scaleZones.size(); ++idx)
-				_scaleZones[idx].load(*rrmStream);
-		}
-
-		// Read in the exits
+		// === EXITS === Read in the exits
 		_exitZone = -1;
-		int numExits = rrmStream->readByte();
-		_exits.resize(numExits);
+		_exits.resize(header3DO_exits_size); // TODO!!!!
 
-		for (int idx = 0; idx < numExits; ++idx)
-			_exits[idx].load(*rrmStream, IS_ROSE_TATTOO);
+		//for (int idx = 0; idx < numExits; ++idx)
+		//	_exits[idx].load(*rrmStream, IS_ROSE_TATTOO);
 
-		if (IS_SERRATED_SCALPEL)
-			// Read in the entrance
-			_entrance.load(*rrmStream);
+		// === ENTRANCE === Read in the entrance
+		roomStream->seek(header3DO_entranceData_offset);
+		_entrance.load(*roomStream);
 
-		// Initialize sound list
-		int numSounds = rrmStream->readByte();
-		_sounds.resize(numSounds);
+		// === SOUND LIST === Initialize sound list
+		roomStream->seek(header3DO_soundList_offset);
+		_sounds.resize(header3DO_soundList_count);
+		for (int idx = 0; idx < header3DO_soundList_count; ++idx)
+			_sounds[idx].load3DO(*roomStream);
 
-		for (int idx = 0; idx < numSounds; ++idx)
-			_sounds[idx].load(*rrmStream);
+		// === BACKGROUND PICTURE ===
+		// load from file rooms\[filename].bg
+		// it's uncompressed 15-bit RGB555 data
 
-		loadSceneSounds();
 
-		if (IS_ROSE_TATTOO) {
-			// Load the object sound list
-			char buffer[27];
-			
-			_objSoundList.resize(rrmStream->readUint16LE());
-			for (uint idx = 0; idx < _objSoundList.size(); ++idx) {
-				rrmStream->read(buffer, 27);
-				_objSoundList[idx] = Common::String(buffer);
-			}
-		} else {
-			// Read in palette
-			rrmStream->read(screen._cMap, PALETTE_SIZE);
-			screen.translatePalette(screen._cMap);
-			Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
 
-			// Read in the background
-			Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
-				res.decompress(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
-			bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
-			if (_lzwMode)
-				delete bgStream;
-		}
 
-		// Backup the image and set the palette
-		screen._backBuffer2.blitFrom(screen._backBuffer1);
-		screen.setPalette(screen._cMap);
-
-		delete rrmStream;
 	}
 
 	// Handle drawing any on-screen interface

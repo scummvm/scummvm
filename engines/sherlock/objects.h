@@ -159,6 +159,7 @@ struct UseType {
 	 * Load the data for the UseType
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+	void load3DO(Common::SeekableReadStream &s);
 };
 
 class BaseObject {
@@ -344,6 +345,7 @@ public:
 	 * Load the data for the object
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+	void load3DO(Common::SeekableReadStream &s);
 
 	/**
 	 * Toggle the type of an object between hidden and active
@@ -436,6 +438,7 @@ struct CAnim {
 	 * Load the data for the animation
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+	void load3DO(Common::SeekableReadStream &s);
 };
 
 class CAnimStream {
