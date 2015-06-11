@@ -656,21 +656,14 @@ bool Scene::loadScene(const Common::String &filename) {
 			_images[idx + 1]._filesize = bgInfo[idx]._filesize;
 			_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
-			// Read the image data
-			// It seems it's a 8 byte header per frame
-			// followed by a copy of the cel header
-			// which is then followed by cel data
-			// TODO
-			warning("image %d, maxFrames %d", idx, bgInfo[idx]._maxFrames);
-			warning("size %d", bgInfo[idx]._filesize);
+			// Read image data into memory
+			Common::SeekableReadStream *imageStream = roomStream->readStream(bgInfo[idx]._filesize);
 
-			// Read in the image data
-			//Common::SeekableReadStream *imageStream = roomStream->readStream(bgInfo[idx]._filesize);
+			// Load image data into an ImageFile array as room file data
+			// which is basically a fixed header, followed by a raw cel header, followed by regular cel data
+			_images[idx + 1]._images = new ImageFile3DO(*imageStream, true);
 
-			//_images[idx + 1]._images = new ImageFile(*imageStream);
-
-			//delete imageStream;
-			warning("end");
+			delete imageStream;
 		}
 
 		// === BGSHAPES === Set up the bgShapes

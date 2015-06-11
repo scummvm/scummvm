@@ -255,8 +255,8 @@ ImageFile3DO::ImageFile3DO(const Common::String &name) {
 	delete dataStream;
 }
 
-ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool roomData) {
-	load(stream, false);
+ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData) {
+	load(stream, isRoomData);
 }
 
 ImageFile3DO::~ImageFile3DO() {
@@ -265,9 +265,15 @@ ImageFile3DO::~ImageFile3DO() {
 	//	(*this)[idx]._frame.free();
 }
 
-void ImageFile3DO::load(Common::SeekableReadStream &stream, bool roomData) {
-	uint32 headerId = stream.readUint32BE();
+void ImageFile3DO::load(Common::SeekableReadStream &stream, bool isRoomData) {
+	uint32 headerId = 0;
 
+	if (isRoomData) {
+		load3DOCelRoomData(stream);
+		return;
+	}
+
+	headerId = stream.readUint32BE();
 	assert(!stream.eos());
 
 	// Seek back to the start
@@ -519,6 +525,87 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 
 		// Seek to end of chunk
 		stream.seek(chunkStartPos + chunkSize);
+	}
+}
+
+// Reads 3DO .cel data (room file format)
+void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
+	int    streamSize = stream.size();
+	uint16 roomDataHeader_size = 0;
+
+	ImageFrame imageFrame;
+
+	// CCB chunk (cel control block)
+	uint32 ccbFlags = 0;
+	bool   ccbFlags_compressed = false;
+	uint16 ccbPPMP0 = 0;
+	uint16 ccbPPMP1 = 0;
+	uint32 ccbPRE0 = 0;
+	byte   ccbPRE0_bitsPerPixel = 0;
+	uint32 ccbPRE1 = 0;
+	uint32 ccbWidth = 0;
+	uint32 ccbHeight = 0;
+	// cel data
+	uint32 celDataSize = 0;
+	byte  *celDataPtr = NULL;
+
+	while (stream.pos() < streamSize) {
+		ImageFrame frame;
+
+		// 3DO sherlock holmes room data header
+		stream.skip(4); // Possibly UINT16 width, UINT16 height?!?!
+		roomDataHeader_size = stream.readUint16BE();
+		stream.skip(2); // seems to be filler
+
+		// 3DO raw cel control block
+		ccbFlags   = stream.readUint32BE();
+		stream.skip(3 * 4); // skip over 3 pointer fields, which are used in memory only by 3DO hardware
+		stream.skip(8 * 4); // skip over 8 offset fields
+		ccbPPMP0   = stream.readUint16BE();
+		ccbPPMP1   = stream.readUint16BE();
+		ccbPRE0    = stream.readUint32BE();
+		ccbPRE1    = stream.readUint32BE();
+		ccbWidth   = stream.readUint32BE();
+		ccbHeight  = stream.readUint32BE();
+
+		if (ccbFlags & 0x200) // bit 9
+			ccbFlags_compressed = true;
+		
+		// PRE0 first 3 bits define how many bits per encoded pixel are used
+		ccbPRE0_bitsPerPixel = imagefile3DO_cel_bitsPerPixelLookupTable[ccbPRE0 & 0x07];
+		if (!ccbPRE0_bitsPerPixel)
+			error("load3DOCelRoomData: Invalid CCB PRE0 bits per pixel");
+
+		if (ccbPRE0_bitsPerPixel != 16) {
+			// We currently support 16-bits per pixel in here
+			error("load3DOCelRoomData: bits per pixel < 16?!?!?");
+		}
+
+		// cel data follows
+		assert(roomDataHeader_size > 68);
+		// size field does not include the 8 byte header
+		celDataSize = roomDataHeader_size - 68;
+
+		// read data into memory
+		celDataPtr = new byte[celDataSize];
+
+		stream.read(celDataPtr, celDataSize);
+		
+		// Set up frame
+		imageFrame._width = ccbWidth;
+		imageFrame._height = ccbHeight;
+		imageFrame._paletteBase = 0;
+		imageFrame._offset.x = 0;
+		imageFrame._offset.y = 0;
+		imageFrame._rleEncoded = ccbFlags_compressed;
+		imageFrame._size = 0;
+
+		// Decompress/copy this frame
+		decompress3DOCelFrame(imageFrame, celDataPtr, celDataSize, ccbPRE0_bitsPerPixel, NULL);
+
+		delete[] celDataPtr;
+
+		push_back(imageFrame);
 	}
 }
 

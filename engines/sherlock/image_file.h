@@ -105,7 +105,7 @@ private:
 	/**
 	 * Load the data of the sprite
 	 */
-	void load(Common::SeekableReadStream &stream, bool animImages);
+	void load(Common::SeekableReadStream &stream, bool isRoomData);
 
 	/**
 	 * convert pixel RGB values from RGB555 to RGB565
@@ -116,6 +116,11 @@ private:
 	 * Load 3DO cel file
 	 */
 	void load3DOCelFile(Common::SeekableReadStream &stream);
+
+	/**
+	 * Load 3DO cel data (room file format)
+	 */
+	void load3DOCelRoomData(Common::SeekableReadStream &stream);
 
 	inline uint16 celGetBits(const byte *&dataPtr, byte bitCount, byte &dataBitsLeft);
 
@@ -131,7 +136,7 @@ private:
 
 public:
 	ImageFile3DO(const Common::String &name);
-	ImageFile3DO(Common::SeekableReadStream &stream, bool roomData = false);
+	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
 	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);
 };
