@@ -289,7 +289,7 @@ void ImageFile3DO::load(Common::SeekableReadStream &stream, bool animImages) {
 inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
 	byte red   = (pixel3DO >> 10) & 0x1F;
 	byte green = (pixel3DO >> 5) & 0x1F;
-	byte blue  = pixel3DO & 0x1F;;
+	byte blue  = pixel3DO & 0x1F;
 
 	return ((red << 11) | (green << 6) | (blue));
 }
