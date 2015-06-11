@@ -287,9 +287,62 @@ OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 8;
+	person._npcPath[person._npcIndex + 1] = str[1];
+	person._npcIndex += 2;
+	str++;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 9;
+	for (int i = 1; i <= 3; i++)
+		person._npcPath[person._npcIndex + i] = str[i];
+
+	person._npcIndex += 4;
+	str += 3;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 7;
+	person._npcPath[person._npcIndex + 1] = str[1];
+	person._npcIndex += 2;
+	str++;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) { error("TODO: script opcode"); }
@@ -345,10 +398,86 @@ OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 1;
+	for (int i = 1; i <= 4; i++)
+		person._npcPath[person._npcIndex + i] = str[i];
+	person._npcPath[person._npcIndex + 5] = DIRECTION_CONVERSION[str[5] - 1] + 1;
+
+	person._npcIndex += 6;
+	str += 5;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 2;
+	for (int i = 1; i <= 2; i++)
+		person._npcPath[person._npcIndex + i] = str[i];
+
+	person._npcIndex += 3;
+	str += 2;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 5;
+	for (int i = 1; i <= 2; i++)
+		person._npcPath[person._npcIndex + i] = str[i];
+
+	person._npcIndex += 3;
+	str += 2;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 6;
+	for (int i = 1; i <= 2; i++)
+		person._npcPath[person._npcIndex + i] = str[i];
+
+	person._npcIndex += 3;
+	str += 2;
+
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 	int npcNum = *++str - 1;
@@ -392,7 +521,25 @@ OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) {
+	int npcNum = *++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	
+	if (person._resetNPCPath) {
+		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		memset(person._npcPath, 0, 100);
+	}
+
+	person._npcPath[person._npcIndex] = 3;
+	for (int i = 1; i <= 8; i++)
+		person._npcPath[person._npcIndex + i] = str[i];
+
+	person._npcIndex += 9;
+	str += 8;
+
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) {
 	int npcNum = *++str;

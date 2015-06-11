@@ -69,6 +69,8 @@ public:
 	bool _npcPause;
 	byte _npcPath[MAX_NPC_PATH];
 	Common::String _npcName;
+	bool _npcMoved;
+	bool _resetNPCPath;
 	int _savedNpcSequence;
 	int _savedNpcFrame;
 	int _tempX;
