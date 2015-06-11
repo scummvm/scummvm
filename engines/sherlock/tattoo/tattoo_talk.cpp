@@ -293,7 +293,27 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) { error("TODO: script 
 OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) {
+	int npcNum = *++str;
+	++str;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+
+	// Copy over the NPC examine text until we reach a stop marker, which is
+	// the same as a start marker, or we reach the end of the file
+	while (*str && *str != 208)
+		person._examine += *str++;
+
+	// Move past any leftover text till we reach a stop marker
+	while (*str && *str != 208)
+		str++;
+
+	if (!*str)
+		str--;
+
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) {
 	int npcNum = *++str;
