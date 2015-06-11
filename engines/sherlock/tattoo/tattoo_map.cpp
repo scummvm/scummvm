@@ -123,7 +123,8 @@ int TattooMap::show() {
 	// Set text display positioning and scroll position
 	_oldTextBounds.left = _oldTextBounds.top = _oldTextBounds.right = _oldTextBounds.bottom = 0;
 	_textBounds.left = _textBounds.top = _textBounds.right = _textBounds.bottom = 0;
-	_currentScroll = _targetScroll = _bigPos;
+	_targetScroll = _bigPos;
+	_currentScroll = Common::Point(-1, -1);
 
 	do {
 		// Allow for event processing and get the current mouse position
