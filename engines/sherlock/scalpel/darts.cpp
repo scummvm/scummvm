@@ -117,7 +117,7 @@ void Darts::playDarts() {
 				if (playerNumber == 0) {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "Holmes Wins!");
 					if (_level < OPPONENTS_COUNT)
-						setFlagsForDarts(318 + _level);
+						_vm->setFlagsDirect(318 + _level);
 				} else {
 					screen.print(Common::Point(DART_INFO_X, DART_INFO_Y + 30), PLAYER_COLOR, "%s Wins!", _opponent.c_str());
 				}
@@ -546,10 +546,6 @@ bool Darts::findNumberOnBoard(int aim, Common::Point &pt) {
 	pt.y = 132 - pt.y;
 
 	return done;
-}
-
-void Darts::setFlagsForDarts(int flagNum) {
-	_vm->_flags[ABS(flagNum)] = flagNum >= 0;
 }
 
 } // End of namespace Scalpel

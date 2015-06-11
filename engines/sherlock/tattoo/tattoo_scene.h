@@ -34,6 +34,16 @@ enum {
 	STARTING_INTRO_SCENE = 91, OVERHEAD_MAP2 = 99, OVERHEAD_MAP = 100
 };
 
+struct SceneTripEntry {
+	bool _flag;
+	int _sceneNumber;
+	int _numTimes;
+
+	SceneTripEntry() : _flag(false), _sceneNumber(0), _numTimes(0) {}
+	SceneTripEntry(bool flag, int sceneNumber, int numTimes) : _flag(flag),
+		_sceneNumber(sceneNumber), _numTimes(numTimes) {}
+};
+
 class TattooScene : public Scene {
 private:
 	int _arrowZone;
@@ -95,6 +105,7 @@ protected:
 public:
 	ImageFile *_mask, *_mask1;
 	CAnimStream _activeCAnim;
+	Common::Array<SceneTripEntry> _sceneTripCounters;
 public:
 	TattooScene(SherlockEngine *vm);
 

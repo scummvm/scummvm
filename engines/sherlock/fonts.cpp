@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
+ *F
  */
 
 #include "common/system.h"
@@ -42,13 +42,13 @@ void Fonts::free() {
 	delete _font;
 }
 
-void Fonts::setFont(int fontNumber) {
-	_fontNumber = fontNumber;
+void Fonts::setFont(int fontNum) {
+	_fontNumber = fontNum;
 
 	if (_platform == Common::kPlatform3DO)
 		return;
 
-	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber + 1);
+	Common::String fname = Common::String::format("FONT%d.VGS", fontNum + 1);
 
 	// Discard any previous font and read in new one
 	delete _font;

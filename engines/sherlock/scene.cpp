@@ -266,8 +266,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	Resources &res = *_vm->_res;
 	SaveManager &saves = *_vm->_saves;
 	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	Talk &talk = *_vm->_talk;
 	UserInterface &ui = *_vm->_ui;
 	bool flag;
 
@@ -282,36 +280,6 @@ bool Scene::loadScene(const Common::String &filename) {
 	_bgShapes.clear();
 	_cAnim.clear();
 	_sequenceBuffer.clear();
-
-	// Check if it's a scene we need to keep trakc track of how many times we've visited
-	for (int idx = (int)_sceneTripCounters.size() - 1; idx >= 0; --idx) {
-		if (_sceneTripCounters[idx]._sceneNumber == _currentScene) {
-			if (--_sceneTripCounters[idx]._numTimes == 0) {
-				_vm->setFlags(_sceneTripCounters[idx]._flag);
-				_sceneTripCounters.remove_at(idx);
-			}
-		}
-	}
-
-	if (IS_ROSE_TATTOO) {
-		// Set the NPC paths for the scene
-		setNPCPath(0);
-
-		// Handle loading music for the scene
-		if (sound._midiDrvLoaded) {
-			if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
-				sound._nextSongName = Common::String::format("res%02d", _currentScene);
-
-			// If it's a new song, then start it up
-			if (sound._currentSongName.compareToIgnoreCase(sound._nextSongName)) {
-				if (music.loadSong(sound._nextSongName)) {
-					sound.setMIDIVolume(sound._musicVolume);
-					if (music._musicOn)
-						music.startSong();
-				}
-			}
-		}
-	}
 
 	//
 	// Load the room resource file for the scene

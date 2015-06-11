@@ -56,7 +56,7 @@ public:
 	/**
 	 * Set the font to use for writing text on the screen
 	 */
-	void setFont(int fontNumber);
+	void setFont(int fontNum);
 
 	/**
 	 * Returns the width of a string in pixels

@@ -58,7 +58,6 @@ public:
 	byte *_digiBuf;
 	bool _midiDrvLoaded;
 	Common::String _currentSongName, _nextSongName;
-	int _musicVolume;
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 
@@ -94,7 +93,6 @@ public:
 
 	void stopSndFuncPtr(int v1, int v2);
 	void freeDigiSound();
-	void setMIDIVolume(int volume);
 };
 
 } // End of namespace Sherlock

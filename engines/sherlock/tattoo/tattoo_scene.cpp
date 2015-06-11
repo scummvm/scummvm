@@ -59,7 +59,39 @@ TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
 }
 
 bool TattooScene::loadScene(const Common::String &filename) {
+	Music &music = *_vm->_music;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
+
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	// Check if it's a scene we need to keep trakc track of how many times we've visited
+	for (int idx = (int)_sceneTripCounters.size() - 1; idx >= 0; --idx) {
+		if (_sceneTripCounters[idx]._sceneNumber == _currentScene) {
+			if (--_sceneTripCounters[idx]._numTimes == 0) {
+				_vm->setFlags(_sceneTripCounters[idx]._flag);
+				_sceneTripCounters.remove_at(idx);
+			}
+		}
+	}
+
+	// Set the NPC paths for the scene
+	setNPCPath(0);
+
+	// Handle loading music for the scene
+	if (sound._midiDrvLoaded) {
+		if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
+			sound._nextSongName = Common::String::format("res%02d", _currentScene);
+
+		// If it's a new song, then start it up
+		if (sound._currentSongName.compareToIgnoreCase(sound._nextSongName)) {
+			if (music.loadSong(sound._nextSongName)) {
+				music.setMIDIVolume(music._musicVolume);
+				if (music._musicOn)
+					music.startSong();
+			}
+		}
+	}
 
 	bool result = Scene::loadScene(filename);
 

@@ -53,28 +53,24 @@ public:
 };
 
 class Music {
-public:
-	Music(SherlockEngine *vm, Audio::Mixer *mixer);
-	~Music();
-
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
 	MidiParser_SH *_midiParser;
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
-
+	MusicType _musicType;
+	byte *_midiMusicData;
+	int32 _midiMusicDataSize;
 public:
 	bool _musicPlaying;
 	bool _musicOn;
-
-private:
-	MusicType _musicType;
-
-	byte *_midiMusicData;
-	int32 _midiMusicDataSize;
-
+	int _musicVolume;
+	bool _midiOption;
 public:
+	Music(SherlockEngine *vm, Audio::Mixer *mixer);
+	~Music();
+
 	/**
 	 * Saves sound-related settings
 	 */
@@ -118,6 +114,11 @@ public:
 	bool waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay);
 
 	bool waitUntilMSec(uint32 msecTarget, uint32 maxMSec, uint32 additionalDelay, uint32 noMusicDelay);
+
+	/**
+	 * Sets the volume of the MIDI music with a value ranging from 0 to 127
+	 */
+	void setMIDIVolume(int volume);
 };
 
 } // End of namespace Sherlock

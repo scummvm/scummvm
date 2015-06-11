@@ -61,7 +61,6 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_curPriority = 0;
 	_digiBuf = nullptr;
 	_midiDrvLoaded = false;
-	_musicVolume = 0;
 
 	_soundOn = true;
 	_speechOn = true;
@@ -244,10 +243,6 @@ void Sound::freeDigiSound() {
 	_digiBuf = nullptr;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
-}
-
-void Sound::setMIDIVolume(int volume) {
-	// TODO
 }
 
 } // End of namespace Sherlock

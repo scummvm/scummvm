@@ -59,11 +59,11 @@ SherlockEngine::~SherlockEngine() {
 	delete _events;
 	delete _journal;
 	delete _map;
-	delete _music;
 	delete _people;
 	delete _saves;
 	delete _scene;
 	delete _screen;
+	delete _music;
 	delete _sound;
 	delete _talk;
 	delete _ui;
@@ -205,6 +205,10 @@ void SherlockEngine::setFlags(int flagNum) {
 	_flags[ABS(flagNum)] = flagNum >= 0;
 
 	_scene->checkSceneFlags(true);
+}
+
+void SherlockEngine::setFlagsDirect(int flagNum) {
+	_flags[ABS(flagNum)] = flagNum >= 0;
 }
 
 void SherlockEngine::loadConfig() {

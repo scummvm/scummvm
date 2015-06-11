@@ -28,8 +28,6 @@
 
 namespace Sherlock {
 
-const int TRANSPARENCY = 0xFF;
-
 Surface::Surface(uint16 width, uint16 height, Common::Platform platform) : Fonts(), _freePixels(true) {
 	create(width, height, platform);
 }

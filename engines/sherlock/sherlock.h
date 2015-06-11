@@ -66,7 +66,7 @@ enum GameType {
 #define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h()
 #define SHERLOCK_SCENE_HEIGHT (IS_SERRATED_SCALPEL ? 138 : 480)
 // TODO: Is this the correct scene count for The Case of the Rose Tattoo?
-#define SCENES_COUNT (IS_SERRATED_SCALPEL ? 63 : 99)
+#define SCENES_COUNT (IS_SERRATED_SCALPEL ? 63 : 101)
 
 struct SherlockGameDescription;
 
@@ -198,6 +198,12 @@ public:
 	 * flag is positive or negative
 	 */
 	void setFlags(int flagNum);
+
+	/**
+	 * Set a global flag to 0 or 1 depending on whether the passed flag is negative or positive.
+	 * @remarks		We don't use the global setFlags method because we don't want to check scene flags
+	 */
+	void setFlagsDirect(int flagNum);
 
 	/**
 	 * Saves game configuration information

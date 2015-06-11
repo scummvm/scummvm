@@ -34,8 +34,6 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-#define CLOSEUP_STEPS 30
-
 struct MapEntry : Common::Point {
 	int _iconNum;
 	Common::String _description;
@@ -52,6 +50,7 @@ private:
 	int _bgFound, _oldBgFound;
 	Surface *_textBuffer;
 	Common::Rect _textBounds, _oldTextBounds;
+	Common::Point _currentScroll, _targetScroll;
 	
 	/**
 	 * Load data  needed for the map
@@ -61,7 +60,7 @@ private:
 	/**
 	 * Draws all available location icons onto the back buffer
 	 */
-	void drwaMapIcons();
+	void drawMapIcons();
 
 	/**
 	 * Draws the location names of whatever the mouse moves over on the map
@@ -77,6 +76,16 @@ private:
 	 * This will load a specified close up and zoom it up to the middle of the screen
 	 */
 	void showCloseUp(int closeUpNum);
+
+	/**
+	 * Set the display bounds for the textual description of a location
+	 */
+	void setTextBounds();
+
+	/**
+	 * Copies an area of the map to the screen, taking into account scrolling
+	 */
+	void slamRect(const Common::Rect &bounds);
 public:
 	TattooMap(SherlockEngine *vm);
 	virtual ~TattooMap() {}

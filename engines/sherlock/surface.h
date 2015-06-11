@@ -31,6 +31,7 @@
 namespace Sherlock {
 
 #define SCALE_THRESHOLD 0x100
+#define TRANSPARENCY 255
 
 struct ImageFrame;
 

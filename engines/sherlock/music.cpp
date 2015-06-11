@@ -197,6 +197,8 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_musicType = MT_NULL;
 	_musicPlaying = false;
 	_musicOn = false;
+	_midiOption = false;
+	_musicVolume = 0;
 
 	_midiMusicData = NULL;
 	_midiMusicDataSize = 0;
@@ -542,6 +544,10 @@ bool Music::waitUntilMSec(uint32 msecTarget, uint32 msecMax, uint32 additionalDe
 		if (!_vm->_events->delay(10, true))
 			return false;
 	}
+}
+
+void Music::setMIDIVolume(int volume) {
+	warning("TODO: Music::setMIDIVolume");
 }
 
 } // End of namespace Sherlock

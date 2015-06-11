@@ -127,16 +127,6 @@ public:
 	void load(Common::SeekableReadStream &s);
 };
 
-struct SceneTripEntry {
-	bool _flag;
-	int _sceneNumber;
-	int _numTimes;
-
-	SceneTripEntry() : _flag(false), _sceneNumber(0), _numTimes(0) {}
-	SceneTripEntry(bool flag, int sceneNumber, int numTimes) : _flag(flag),
-		_sceneNumber(sceneNumber), _numTimes(numTimes) {}
-};
-
 class Scene {
 private:
 	bool _loadingSavedGame;
@@ -232,7 +222,6 @@ public:
 	bool _doBgAnimDone;
 	int _tempFadeStyle;
 	int _cAnimFramePause;
-	Common::Array<SceneTripEntry> _sceneTripCounters;
 public:
 	static Scene *init(SherlockEngine *vm);
 	virtual ~Scene();
