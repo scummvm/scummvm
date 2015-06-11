@@ -71,11 +71,6 @@ protected:
 	Graphics::Surface _surface;
 
 	virtual void addDirtyRect(const Common::Rect &r) {}
-
-	/**
-	 * Draws the given string into the back buffer using the images stored in _font
-	 */
-	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
 public:
 	Surface(uint16 width, uint16 height, Common::Platform platform);
 	Surface();
@@ -163,6 +158,11 @@ public:
 	 * Set the pixels for the surface to an existing data block
 	 */
 	void setPixels(byte *pixels, int width, int height);
+
+	/**
+	 * Draws the given string into the back buffer using the images stored in _font
+	 */
+	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
 
 	inline uint16 w() const { return _surface.w; }
 	inline uint16 h() const { return _surface.h; }

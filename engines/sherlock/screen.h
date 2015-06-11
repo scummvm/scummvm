@@ -37,6 +37,7 @@ namespace Sherlock {
 #define BG_GREYSCALE_RANGE_END 229
 
 enum {
+	BLACK				= 0,
 	INFO_BLACK			= 1,
 	INFO_FOREGROUND		= 11,
 	INFO_BACKGROUND		= 1,
@@ -52,7 +53,8 @@ enum {
 	BUTTON_BOTTOM		= 248,
 	TALK_FOREGROUND		= 12,
 	TALK_NULL			= 16,
-	PEN_COLOR			= 250
+	PEN_COLOR			= 250,
+	MAP_NAME_COLOR		= 131
 };
 
 class SherlockEngine;
@@ -77,11 +79,6 @@ private:
 	 * Returns the union of two dirty area rectangles
 	 */
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
-
-	/**
-	 * Draws the given string into the back buffer using the images stored in _font
-	 */
-	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
 protected:
 	/**
 	 * Adds a rectangle to the list of modified areas of the screen during the
@@ -244,12 +241,16 @@ public:
 	 */
 	Common::Rect getDisplayBounds();
 
-	int fontNumber() const { return _fontNumber; }
-
 	/**
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
+
+	/**
+	 * Draws the given string into the back buffer using the images stored in _font
+	 */
+	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
+
 
 	// Rose Tattoo specific methods
 	void initPaletteFade(int bytesToRead);

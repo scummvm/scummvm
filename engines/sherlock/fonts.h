@@ -82,7 +82,7 @@ public:
 	 */
 	int fontHeight() const { return _fontHeight; }
 
-
+	int fontNumber() const { return _fontNumber; }
 };
 
 } // End of namespace Sherlock

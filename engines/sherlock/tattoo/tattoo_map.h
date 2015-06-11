@@ -25,12 +25,16 @@
 
 #include "common/scummsys.h"
 #include "sherlock/map.h"
+#include "sherlock/resources.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
 namespace Tattoo {
+
+#define CLOSEUP_STEPS 30
 
 struct MapEntry : Common::Point {
 	int _iconNum;
@@ -44,11 +48,35 @@ struct MapEntry : Common::Point {
 class TattooMap : public Map {
 private:
 	Common::Array<MapEntry> _data;
+	ImageFile *_iconImages;
+	int _bgFound, _oldBgFound;
+	Surface *_textBuffer;
+	Common::Rect _textBounds, _oldTextBounds;
 	
 	/**
 	 * Load data  needed for the map
 	 */
 	void loadData();
+
+	/**
+	 * Draws all available location icons onto the back buffer
+	 */
+	void drwaMapIcons();
+
+	/**
+	 * Draws the location names of whatever the mouse moves over on the map
+	 */
+	void checkMapNames(bool slamIt);
+
+	/**
+	 * Restores an area of the map background
+	 */
+	void restoreArea(const Common::Rect &bounds);
+
+	/**
+	 * This will load a specified close up and zoom it up to the middle of the screen
+	 */
+	void showCloseUp(int closeUpNum);
 public:
 	TattooMap(SherlockEngine *vm);
 	virtual ~TattooMap() {}
