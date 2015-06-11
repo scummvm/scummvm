@@ -130,7 +130,7 @@ void TattooScene::drawAllShapes() {
 		screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position,
 			(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 
-	screen.setDisplayBounds(Common::Rect(0, 0, screen._backBuffer1.w(), screen._backBuffer1.h()));
+	screen.resetDisplayBounds();
 
 	// Queue drawing of all objects that are set to NORMAL.
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
