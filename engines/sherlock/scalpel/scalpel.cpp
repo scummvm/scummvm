@@ -566,8 +566,10 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 	bool finished = _music->waitUntilMSec(3400, 0, 0, 3400);
 
-	if (finished)
+	if (finished) {
+		_screen->_backBuffer1.fill(0); // fill backbuffer with black to avoid issues during fade from white
 		finished = _animation->play3DO("26open1", true, 1, true, 2);
+	}
 
 	if (finished) {
 		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
