@@ -384,13 +384,13 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 		chunkTag = stream.readUint32BE();
 		chunkSize = stream.readUint32BE();
 
+		if (stream.eos() || stream.err())
+			break;
+
 		if (chunkSize < 8)
 			error("load3DOCelFile: Invalid chunk size");
 
 		uint32 dataSize = chunkSize - 8;
-
-		if (stream.eos() || stream.err())
-			break;
 
 		switch (chunkTag) {
 		case MKTAG('A', 'N', 'I', 'M'):
@@ -636,7 +636,10 @@ inline uint16 ImageFile3DO::celGetBits(const byte *&dataPtr, byte bitCount, byte
 
 			// Go to next byte
 			dataPtr++;
-			currentByte = *dataPtr; dataBitsLeft = 8;
+			dataBitsLeft = 8;
+			if (resultBitsLeft) {
+				currentByte = *dataPtr;
+			}
 		}
 	}
 	return result;
