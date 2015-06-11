@@ -296,6 +296,8 @@ void TattooMap::loadData() {
 
 		mapEntry._iconNum = atoi(iconStr.c_str()) - 1;
 	} while (stream->pos() < stream->size());
+
+	delete stream;
 }
 
 void TattooMap::drawMapIcons() {
