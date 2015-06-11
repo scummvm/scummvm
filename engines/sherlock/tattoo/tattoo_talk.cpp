@@ -345,7 +345,23 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode"); }
 OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) { error("TODO: script opcode"); }
+
+OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
+	int npcNum = *++str - 1;
+	People &people = *_vm->_people;
+	Person &person = people[npcNum];
+	person._misc = 0;
+
+	if (person._seqTo) {
+		person._walkSequences[person._sequenceNumber]._sequences[person._frameNumber] = person._seqTo;
+		person._seqTo = 0;
+	}
+	person._sequenceNumber = person._savedNpcSequence;
+	person._frameNumber = person._savedNpcFrame;
+	person.checkWalkGraphics();
+
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) {
 	int npcNum = *++str;
