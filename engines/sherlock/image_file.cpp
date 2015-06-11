@@ -348,6 +348,7 @@ static byte imagefile3DO_cel_bitsPerPixelLookupTable[8] = {
 
 // Reads a 3DO .cel/.anim file
 void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
+	int32  streamSize = stream.size();
 	int32  chunkStartPos = 0;
 	uint32 chunkTag = 0;
 	uint32 chunkSize = 0;
@@ -379,7 +380,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 
 	memset(&plutRGBlookupTable, 0, sizeof(plutRGBlookupTable));
 
-	while (!stream.err() && !stream.eos()) {
+	while (!stream.err() && (stream.pos() < streamSize)) {
 		chunkStartPos = stream.pos();
 		chunkTag = stream.readUint32BE();
 		chunkSize = stream.readUint32BE();
