@@ -236,31 +236,35 @@ void ScalpelEngine::initialize() {
 }
 
 void ScalpelEngine::showOpening() {
+	bool finished = true;
+
 	if (isDemo() && _interactiveFl)
 		return;
 
 	if (getPlatform() == Common::kPlatform3DO) {
 		show3DOSplash();
-		if (!showCityCutscene3DO())
-			return;
-		if (!showAlleyCutscene3DO())
-			return;
-		if (!showStreetCutscene3DO())
-			return;
-		if (!showOfficeCutscene3DO())
-			return;
+
+		finished = showCityCutscene3DO();
+		if (finished)
+			finished = showAlleyCutscene3DO();
+		if (finished)
+			finished = showStreetCutscene3DO();
+		if (finished)
+			finished = showOfficeCutscene3DO();
+
+		_events->clearEvents();
+		_music->stopMusic();
 		return;
 	}
 
 	TsAGE::Logo::show(this);
-	if (!showCityCutscene())
-		return;
-	if (!showAlleyCutscene())
-		return;
-	if (!showStreetCutscene())
-		return;
-	if (!showOfficeCutscene())
-		return;
+	finished = showCityCutscene();
+	if (finished)
+		finished = showAlleyCutscene();
+	if (finished)
+		finished = showStreetCutscene();
+	if (finished)
+		finished = showOfficeCutscene();
 
 	_events->clearEvents();
 	_music->stopMusic();
