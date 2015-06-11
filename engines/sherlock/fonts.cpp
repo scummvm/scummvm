@@ -21,18 +21,21 @@
  */
 
 #include "common/system.h"
+#include "common/platform.h"
 #include "sherlock/fonts.h"
 #include "sherlock/image_file.h"
 #include "sherlock/surface.h"
 
 namespace Sherlock {
 
+Common::Platform Fonts::_platform;
 ImageFile *Fonts::_font;
 int Fonts::_fontNumber;
 int Fonts::_fontHeight;
 
-void Fonts::init() {
+void Fonts::init(Common::Platform platform) {
 	_font = nullptr;
+	_platform = platform;
 }
 
 void Fonts::free() {
@@ -41,6 +44,10 @@ void Fonts::free() {
 
 void Fonts::setFont(int fontNumber) {
 	_fontNumber = fontNumber;
+
+	if (_platform == Common::kPlatform3DO)
+		return;
+
 	Common::String fname = Common::String::format("FONT%d.VGS", fontNumber + 1);
 
 	// Discard any previous font and read in new one

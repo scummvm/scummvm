@@ -34,6 +34,7 @@ class Surface;
 
 class Fonts {
 private:
+	static Common::Platform _platform;
 	static ImageFile *_font;
 protected:
 	static int _fontNumber;
@@ -45,7 +46,7 @@ public:
 	/**
 	 * Initialise the font manager
 	 */
-	static void init();
+	static void init(Common::Platform platform);
 
 	/**
 	 * Frees the font manager
