@@ -182,6 +182,22 @@ static const NancyGameDescription gameDescriptions[] = {
 		},
 		kGameTypeNancy1
 	},
+	{ // MD5 by clone2727
+		{
+			"nancy5", 0,
+			{
+				{"data1.hdr", 0, "258e27792fa7cc7a7125fd74d89f8487", 284091},
+				{"data1.cab", 0, "70433b30b6114031d54d0c991ad44577", 1446301},
+				{"data2.cab", 0, "66f47e4f5e6d431f815aa5250eb044bc", 145857937},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
 	{ // MD5 by Strangerke
 		{
 			"nancy6", 0,
