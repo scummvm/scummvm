@@ -733,7 +733,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// === ENTRANCE === Read in the entrance
 		roomStream->seek(header3DO_entranceData_offset);
-		_entrance.load(*roomStream);
+		_entrance.load3DO(*roomStream);
 
 		// === SOUND LIST === Initialize sound list
 		roomStream->seek(header3DO_soundList_offset);
