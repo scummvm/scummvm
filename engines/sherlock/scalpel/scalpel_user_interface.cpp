@@ -86,8 +86,15 @@ const char *const MUSE[] = {
 
 ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm) {
 	if (_vm->_interactiveFl) {
-		_controls = new ImageFile("menu.all");
-		_controlPanel = new ImageFile("controls.vgs");
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			// PC
+			_controls = new ImageFile("menu.all");
+			_controlPanel = new ImageFile("controls.vgs");
+		} else {
+			// 3DO
+			_controls = new ImageFile3DO("menu.all", true);
+			_controlPanel = new ImageFile3DO("controls.vgs", true);
+		}
 	} else {
 		_controls = nullptr;
 		_controlPanel = nullptr;
@@ -121,9 +128,6 @@ void ScalpelUserInterface::reset() {
 
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
-
-	if (_vm->getPlatform() == Common::kPlatform3DO)
-		return; // 3DO: don't do anything for now
 
 	if (bufferNum & 1)
 		screen._backBuffer1.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
