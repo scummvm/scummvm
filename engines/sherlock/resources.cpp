@@ -229,6 +229,7 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 	int count = 0;
 
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// PC
 		count = stream->readUint16LE();
 
 		if (isNewStyle)
@@ -258,30 +259,36 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 		}
 
 	} else {
+		// 3DO
 		count = stream->readUint16BE();
 
 		// 3DO header
 		// Loop through reading in the entries
+
+		// Read offset of first entry
+		offset = stream->readUint32BE();
+
 		for (int idx = 0; idx < count; ++idx) {
-			// Read the offset
-			offset = stream->readUint32BE();
 
 			// Read the name of the resource
 			char resName[13];
 			stream->read(resName, 13);
 			resName[12] = '\0';
 
+			stream->skip(3); // filler
+
 			if (idx == (count - 1)) {
 				nextOffset = stream->size();
 			} else {
-				// Read the size by jumping forward to read the next entry's offset
-				stream->seek(13, SEEK_CUR);
+				// Read the offset of the next entry
 				nextOffset = stream->readUint32BE();
-				stream->seek(-17, SEEK_CUR);
 			}
 
 			// Add the entry to the index
 			index[resName] = LibraryEntry(idx, offset, nextOffset - offset);
+
+			// use next offset as current offset
+			offset = nextOffset;
 		}
 	}
 }

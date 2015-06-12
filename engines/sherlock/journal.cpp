@@ -71,6 +71,11 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	int saveIndex = _index;
 	int saveSub = _sub;
 
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
+		// there seems to be no journal in the 3DO version
+		return;
+	}
+
 	// Record the entry into the list
 	_journal.push_back(JournalEntry(converseNum, statementNum, replyOnly));
 	_index = _journal.size() - 1;
