@@ -45,15 +45,35 @@ void Fonts::free() {
 void Fonts::setFont(int fontNum) {
 	_fontNumber = fontNum;
 
-	if (_platform == Common::kPlatform3DO)
-		return;
-
-	Common::String fname = Common::String::format("FONT%d.VGS", fontNum + 1);
-
-	// Discard any previous font and read in new one
+	// Discard previous font
 	delete _font;
-	_font = new ImageFile(fname);
 
+	Common::String fontFilename;
+
+	if (_platform != Common::kPlatform3DO) {
+		// PC
+		// use FONT[number].VGS, which is a regular sherlock graphic file
+		fontFilename = Common::String::format("FONT%d.VGS", fontNum + 1);
+
+		// load font data
+		_font = new ImageFile(fontFilename);
+	} else {
+		// 3DO
+		switch (fontNum) {
+		case 0:
+		case 1:
+			fontFilename = "helvetica14.font";
+			break;
+		case 2:
+			fontFilename = "darts.font";
+			break;
+		default:
+			error("setFont(): unsupported 3DO font number");
+		}
+		// load font data
+		_font = new ImageFile3DO(fontFilename, kImageFile3DOType_Font);
+	}
+		
 	// Iterate through the frames to find the tallest font character
 	_fontHeight = 0;
 	for (uint idx = 0; idx < _font->size(); ++idx)

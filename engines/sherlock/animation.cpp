@@ -169,7 +169,7 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 
 	// Load initial image
 	Common::String graphicsName = "prologue/" + filename + ".3da";
-	ImageFile3DO images(graphicsName);
+	ImageFile3DO images(graphicsName, kImageFile3DOType_Animation);
 
 	events.wait(minDelay);
 

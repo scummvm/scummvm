@@ -286,7 +286,7 @@ bool People::loadWalk() {
 				_data[PLAYER]->_images = new ImageFile("walk.vgs");
 			} else {
 				// Load walk.anim on 3DO, which is a cel animation file
-				_data[PLAYER]->_images = new ImageFile3DO("walk.anim");
+				_data[PLAYER]->_images = new ImageFile3DO("walk.anim", kImageFile3DOType_CelAnimation);
 			}
 			_data[PLAYER]->setImageFrame();
 			_data[PLAYER]->_walkLoaded = true;

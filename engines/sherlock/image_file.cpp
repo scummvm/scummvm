@@ -243,20 +243,41 @@ void ImageFile3DO::setVm(SherlockEngine *vm) {
 	_vm = vm;
 }
 
-ImageFile3DO::ImageFile3DO(const Common::String &name, bool isRoomDataFormat) {
+ImageFile3DO::ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType) {
 	Common::File *dataStream = new Common::File();
 
 	if (!dataStream->open(name)) {
 		error("unable to open %s\n", name.c_str());
 	}
 
-	load(*dataStream, isRoomDataFormat);
+	switch(imageFile3DOType) {
+	case kImageFile3DOType_Animation:
+		loadAnimationFile(*dataStream);
+		break;
+	case kImageFile3DOType_Cel:
+	case kImageFile3DOType_CelAnimation:
+		load3DOCelFile(*dataStream);
+		break;
+	case kImageFile3DOType_RoomFormat:
+		load3DOCelRoomData(*dataStream);
+		break;
+	case kImageFile3DOType_Font:
+		loadFont(*dataStream);
+		break;
+	default:
+		error("unknown Imagefile-3DO-Type");
+		break;
+	}
 
 	delete dataStream;
 }
 
 ImageFile3DO::ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData) {
-	load(stream, isRoomData);
+	if (!isRoomData) {
+		load(stream, isRoomData);
+	} else {
+		load3DOCelRoomData(stream);
+	}
 }
 
 ImageFile3DO::~ImageFile3DO() {
@@ -771,6 +792,108 @@ void ImageFile3DO::decompress3DOCelFrame(ImageFrame &frame, const byte *dataPtr,
 
 			// Seek to next line start
 			srcLineStart += lineByteSize;
+		}
+	}
+}
+
+// Reads Sherlock Holmes 3DO font file
+void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
+	uint32 streamSize = stream.size();
+	uint32 header_offsetWidthTable = 0;
+	uint32 header_offsetBitsTable = 0;
+	uint32 header_fontHeight = 0;
+	uint32 header_bytesPerLine = 0;
+	uint32 header_maxChar = 0;
+	uint32 header_charCount = 0;
+
+	byte  *widthTablePtr = NULL;
+	uint32 bitsTableSize = 0;
+	byte  *bitsTablePtr = NULL;
+
+	stream.skip(2); // Unknown bytes
+	stream.skip(2); // Unknown bytes (0x000E)
+	header_offsetWidthTable = stream.readUint32BE();
+	header_offsetBitsTable = stream.readUint32BE();
+	stream.skip(4); // Unknown bytes (0x00000004)
+	header_fontHeight = stream.readUint32BE();
+	header_bytesPerLine = stream.readUint32BE();
+	header_maxChar = stream.readUint32BE();
+
+	assert(header_maxChar <= 255);
+	header_charCount = header_maxChar + 1;
+
+	// Allocate memory for width table
+	widthTablePtr = new byte[header_charCount];
+
+	stream.seek(header_offsetWidthTable);
+	stream.read(widthTablePtr, header_charCount);
+
+	// Allocate memory for the bits
+	assert(header_offsetBitsTable < streamSize); // Security check
+	bitsTableSize = streamSize - header_offsetBitsTable;
+	bitsTablePtr  = new byte[bitsTableSize];
+	stream.read(bitsTablePtr, bitsTableSize);
+
+	// Now extract all characters
+	uint16       curChar = 0;
+	const byte  *curBitsLinePtr = bitsTablePtr;
+	const byte  *curBitsPtr = NULL;
+	byte         curBitsLeft = 0;
+	uint32       curCharHeightLeft = 0;
+	uint32       curCharWidthLeft = 0;
+	byte         curBits = 0;
+
+	for (curChar = 0; curChar < header_charCount; curChar++) {
+		// create frame
+		{
+			ImageFrame imageFrame;
+
+			imageFrame._width = widthTablePtr[curChar];
+			imageFrame._height = header_fontHeight;
+			imageFrame._paletteBase = 0;
+			imageFrame._offset.x = 0;
+			imageFrame._offset.y = 0;
+			imageFrame._rleEncoded = false;
+			imageFrame._size = 0;
+
+			// Extract pixels
+			imageFrame._frame.create(imageFrame._width, imageFrame._height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
+			uint16 *dest = (uint16 *)imageFrame._frame.getPixels();
+			Common::fill(dest, dest + imageFrame._width * imageFrame._height, 0);
+
+#if 0
+			curCharHeightLeft = header_fontHeight;
+			while (curCharHeightLeft) {
+				curCharWidthLeft = widthTablePtr[curChar];
+				curBitsPtr  = curBitsLinePtr;
+				curBitsLeft = 8;
+
+				while (curCharWidthLeft) {
+					curBits = celGetBits(curBitsPtr, 2, curBitsLeft);
+					switch (curBits) {
+					case 0: // Transparent
+						break;
+					case 1:	// regular color
+						*dest = 0xFFFF;
+						break;
+					case 2: // front
+						//*dest = 0xFFFF; //0x333;
+						break;
+					case 3: // shadow
+						//*dest = 0x1111;
+						break;
+					}
+					dest++;
+
+					curCharWidthLeft--;
+				}
+
+				curCharHeightLeft--;
+				curBitsLinePtr += header_bytesPerLine;
+			}
+#endif
+
+			push_back(imageFrame);
 		}
 	}
 }

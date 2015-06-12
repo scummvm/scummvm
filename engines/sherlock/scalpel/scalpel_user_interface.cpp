@@ -92,8 +92,8 @@ ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm
 			_controlPanel = new ImageFile("controls.vgs");
 		} else {
 			// 3DO
-			_controls = new ImageFile3DO("menu.all", true);
-			_controlPanel = new ImageFile3DO("controls.vgs", true);
+			_controls = new ImageFile3DO("menu.all", kImageFile3DOType_RoomFormat);
+			_controlPanel = new ImageFile3DO("controls.vgs", kImageFile3DOType_RoomFormat);
 		}
 	} else {
 		_controls = nullptr;

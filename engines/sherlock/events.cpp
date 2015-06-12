@@ -59,7 +59,7 @@ void Events::loadCursors(const Common::String &filename) {
 		_cursorImages = new ImageFile(filename);
 	} else {
 		// 3DO
-		_cursorImages = new ImageFile3DO(filename, true);
+		_cursorImages = new ImageFile3DO(filename, kImageFile3DOType_RoomFormat);
 	}
 	_cursorId = INVALID_CURSOR;
 }

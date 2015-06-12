@@ -94,6 +94,14 @@ public:
 	static void setVm(SherlockEngine *vm);
 };
 
+enum ImageFile3DOType {
+	kImageFile3DOType_Animation    = 0,
+	kImageFile3DOType_Cel          = 1,
+	kImageFile3DOType_CelAnimation = 2,
+	kImageFile3DOType_RoomFormat   = 3,
+	kImageFile3DOType_Font         = 4
+};
+
 struct ImageFile3DOPixelLookupTable {
 	uint16 pixelColor[256];
 };
@@ -134,8 +142,13 @@ private:
 	 */
 	void loadAnimationFile(Common::SeekableReadStream &stream);
 
+	/**
+	 * Load Sherlock Holmes 3DO font file
+	 */
+	void loadFont(Common::SeekableReadStream &stream);
+
 public:
-	ImageFile3DO(const Common::String &name, bool isRoomDataFormat = false);
+	ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType);
 	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
 	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);

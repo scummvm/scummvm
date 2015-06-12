@@ -531,7 +531,7 @@ bool ScalpelEngine::showOfficeCutscene() {
 // 3DO variant
 bool ScalpelEngine::show3DOSplash() {
 	// 3DO EA Splash screen
-	ImageFile3DO titleImage_3DOSplash("3DOSplash.cel");
+	ImageFile3DO titleImage_3DOSplash("3DOSplash.cel", kImageFile3DOType_Cel);
 
 	_screen->transBlitFrom(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
 	bool finished = _events->delay(3000, true);
@@ -576,7 +576,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		_screen->_backBuffer2.blitFrom(*_screen); // save into backbuffer 2, for restoring later
 
 		// "London, England"
-		ImageFile3DO titleImage_London("title2a.cel");
+		ImageFile3DO titleImage_London("title2a.cel", kImageFile3DOType_Cel);
 		_screen->_backBuffer1.transBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
 
 		_screen->fadeIntoScreen3DO(1);
@@ -584,7 +584,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		if (finished) {
 			// "November, 1888"
-			ImageFile3DO titleImage_November("title2b.cel");
+			ImageFile3DO titleImage_November("title2b.cel", kImageFile3DOType_Cel);
 			_screen->_backBuffer1.transBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
 
 			_screen->fadeIntoScreen3DO(1);
@@ -604,7 +604,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		_screen->_backBuffer1.blitFrom(*_screen); // save into backbuffer 1, used for fade
 
 		// "Sherlock Holmes" (title)
-		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel");
+		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel", kImageFile3DOType_Cel);
 		_screen->_backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
 
 		// Blend in
@@ -613,7 +613,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		// Title should fade in, Copyright should be displayed a bit after that
 		if (finished) {
-			ImageFile3DO titleImage_Copyright("title1c.cel");
+			ImageFile3DO titleImage_Copyright("title1c.cel", kImageFile3DOType_Cel);
 
 			_screen->transBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
 			finished = _events->delay(3500, true);
@@ -631,7 +631,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 	if (finished) {
 		// "In the alley behind the Regency Theatre..."
-		ImageFile3DO titleImage_InTheAlley("title1d.cel");
+		ImageFile3DO titleImage_InTheAlley("title1d.cel", kImageFile3DOType_Cel);
 		_screen->_backBuffer1.transBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
 
 		// Fade in
@@ -667,7 +667,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 
 	if (finished) {
 		// Show screaming victim
-		ImageFile3DO titleImage_ScreamingVictim("scream.cel");
+		ImageFile3DO titleImage_ScreamingVictim("scream.cel", kImageFile3DOType_Cel);
 
 		_screen->clear();
 		_screen->transBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
@@ -698,7 +698,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 
 	if (finished) {
 		// "Early the following morning on Baker Street..."
-		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel");
+		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel", kImageFile3DOType_Cel);
 		_screen->_backBuffer1.transBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
 
 		// Fade in
@@ -751,7 +751,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 
 	if (finished) {
 		// Show the note
-		ImageFile3DO titleImage_CoffeeNote("note.cel");
+		ImageFile3DO titleImage_CoffeeNote("note.cel", kImageFile3DOType_Cel);
 
 		_screen->clear();
 		_screen->transBlitFrom(titleImage_CoffeeNote[0]._frame, Common::Point(0, 0));
