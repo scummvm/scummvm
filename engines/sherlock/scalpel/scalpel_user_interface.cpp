@@ -2232,7 +2232,7 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 						// Ensure Holmes is on the exact intended location
 						people[PLAYER]._position = pt;
 						people[PLAYER]._sequenceNumber = dir;
-						people.gotoStand(people[PLAYER]);
+						people[PLAYER].gotoStand();
 
 						talk.talkTo(action._names[nameIdx].c_str() + 2);
 						if (ch == 'T')

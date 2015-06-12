@@ -157,7 +157,7 @@ void TattooScene::drawAllShapes() {
 	}
 
 	// Queue all active characters for drawing
-	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER && people[idx]._walkLoaded)
 			shapeList.push_back(ShapeEntry(&people[idx], people[idx]._position.y / FIXED_INT_MULTIPLIER));
 	}
@@ -364,7 +364,7 @@ void TattooScene::doBgAnimEraseBackground() {
 		ui.doBgAnimRestoreUI();
 		
 		// Restore background for any areas covered by characters and shapes
-		for (uint idx = 0; idx < MAX_CHARACTERS; ++idx)
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx)
 			screen.restoreBackground(Common::Rect(people[idx]._oldPosition.x, people[idx]._oldPosition.y,
 				people[idx]._oldPosition.x + people[idx]._oldSize.x, people[idx]._oldPosition.y + people[idx]._oldSize.y));
 
@@ -428,7 +428,7 @@ void TattooScene::doBgAnim() {
 	talk._talkToAbort = false;
 
 	// Check the characters and sprites for updates
-	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER)
 			people[idx].checkSprite();
 	}
@@ -461,7 +461,7 @@ void TattooScene::doBgAnim() {
 	_doBgAnimDone = false;
 	ui._drawMenu = false;
 
-	for (uint idx = 1; idx < MAX_CHARACTERS; ++idx) {
+	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._updateNPCPath)
 			people[idx].updateNPC();
 	}
@@ -478,7 +478,7 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 			obj.adjustObject();
 	}
 
-	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER)
 			people[idx].adjustSprite();
 	}
@@ -572,7 +572,7 @@ void TattooScene::updateBackground() {
 
 	screen._flushScreen = true;
 
-	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		Person &p = people[idx];
 
 		if (p._type != INVALID) {
@@ -640,7 +640,7 @@ void TattooScene::doBgAnimDrawSprites() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
-	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		Person &person = people[idx];
 
 		if (person._type != INVALID) {

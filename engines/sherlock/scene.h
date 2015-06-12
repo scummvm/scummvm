@@ -79,8 +79,8 @@ class Exit: public Common::Rect {
 public:
 	int _scene;
 	int _allow;
-	Common::Point _people;
-	int _peopleDir;
+	Common::Point _newPosition;
+	int _newFacing;
 
 	Common::String _dest;
 	int _image;					// Arrow image to use

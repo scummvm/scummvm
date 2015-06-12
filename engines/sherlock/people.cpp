@@ -423,7 +423,7 @@ assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
 	_oldWalkSequence = _data[PLAYER]->_sequenceNumber;
 
 	if (!_data[PLAYER]->_walkCount)
-		gotoStand(*_data[PLAYER]);
+		_data[PLAYER]->gotoStand();
 
 	// If the sequence is the same as when we started, then Holmes was
 	// standing still and we're trying to re-stand him, so reset Holmes'
@@ -456,7 +456,7 @@ void People::walkToCoords(const Point32 &destPos, int destDir) {
 assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
 
 		_data[PLAYER]->_sequenceNumber = destDir;
-		gotoStand(*_data[PLAYER]);
+		_data[PLAYER]->gotoStand();
 
 		// Draw Holmes facing the new direction
 		scene.doBgAnim();

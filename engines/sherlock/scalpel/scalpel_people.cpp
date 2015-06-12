@@ -49,7 +49,7 @@ void ScalpelPerson::adjustSprite() {
 				people._walkDest = people._walkTo.pop();
 				people.setWalking();
 			} else {
-				people.gotoStand(*this);
+				gotoStand();
 			}
 		}
 	}
@@ -57,22 +57,22 @@ void ScalpelPerson::adjustSprite() {
 	if (_type == CHARACTER && !map._active) {
 		if ((_position.y / FIXED_INT_MULTIPLIER) > LOWER_LIMIT) {
 			_position.y = LOWER_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
+			gotoStand();
 		}
 
 		if ((_position.y / FIXED_INT_MULTIPLIER) < UPPER_LIMIT) {
 			_position.y = UPPER_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
+			gotoStand();
 		}
 
 		if ((_position.x / FIXED_INT_MULTIPLIER) < LEFT_LIMIT) {
 			_position.x = LEFT_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
+			gotoStand();
 		}
 
 		if ((_position.x / FIXED_INT_MULTIPLIER) > RIGHT_LIMIT) {
 			_position.x = RIGHT_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
+			gotoStand();
 		}
 	} else if (!map._active) {
 		_position.y = CLIP((int)_position.y, (int)UPPER_LIMIT, (int)LOWER_LIMIT);
@@ -118,15 +118,67 @@ void ScalpelPerson::adjustSprite() {
 		if (exit) {
 			scene._goToScene = exit->_scene;
 
-			if (exit->_people.x != 0) {
-				people._hSavedPos = exit->_people;
-				people._hSavedFacing = exit->_peopleDir;
+			if (exit->_newPosition.x != 0) {
+				people._hSavedPos = exit->_newPosition;
+				people._hSavedFacing = exit->_newFacing;
 
 				if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
 					people._hSavedPos.x = 100;
 			}
 		}
 	}
+}
+
+
+void ScalpelPerson::gotoStand() {
+	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
+	People &people = *_vm->_people;
+	_walkTo.clear();
+	_walkCount = 0;
+
+	switch (_sequenceNumber) {
+	case Scalpel::WALK_UP:
+		_sequenceNumber = STOP_UP;
+		break;
+	case WALK_DOWN:
+		_sequenceNumber = STOP_DOWN;
+		break;
+	case TALK_LEFT:
+	case WALK_LEFT:
+		_sequenceNumber = STOP_LEFT;
+		break;
+	case TALK_RIGHT:
+	case WALK_RIGHT:
+		_sequenceNumber = STOP_RIGHT;
+		break;
+	case WALK_UPRIGHT:
+		_sequenceNumber = STOP_UPRIGHT;
+		break;
+	case WALK_UPLEFT:
+		_sequenceNumber = STOP_UPLEFT;
+		break;
+	case WALK_DOWNRIGHT:
+		_sequenceNumber = STOP_DOWNRIGHT;
+		break;
+	case WALK_DOWNLEFT:
+		_sequenceNumber = STOP_DOWNLEFT;
+		break;
+	default:
+		break;
+	}
+
+	// Only restart frame at 0 if the sequence number has changed
+	if (_oldWalkSequence != -1 || _sequenceNumber == Scalpel::STOP_UP)
+		_frameNumber = 0;
+
+	if (map._active) {
+		_sequenceNumber = 0;
+		people[PLAYER]._position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
+		people[PLAYER]._position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
+	}
+
+	_oldWalkSequence = -1;
+	people._allowWalkAbort = true;
 }
 
 /*----------------------------------------------------------------*/
@@ -236,57 +288,6 @@ void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
 		}
 	}
 }
-
-void ScalpelPeople::gotoStand(Sprite &sprite) {
-	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
-	_walkTo.clear();
-	sprite._walkCount = 0;
-
-	switch (sprite._sequenceNumber) {
-	case Scalpel::WALK_UP:
-		sprite._sequenceNumber = STOP_UP;
-		break;
-	case WALK_DOWN:
-		sprite._sequenceNumber = STOP_DOWN;
-		break;
-	case TALK_LEFT:
-	case WALK_LEFT:
-		sprite._sequenceNumber = STOP_LEFT;
-		break;
-	case TALK_RIGHT:
-	case WALK_RIGHT:
-		sprite._sequenceNumber = STOP_RIGHT;
-		break;
-	case WALK_UPRIGHT:
-		sprite._sequenceNumber = STOP_UPRIGHT;
-		break;
-	case WALK_UPLEFT:
-		sprite._sequenceNumber = STOP_UPLEFT;
-		break;
-	case WALK_DOWNRIGHT:
-		sprite._sequenceNumber = STOP_DOWNRIGHT;
-		break;
-	case WALK_DOWNLEFT:
-		sprite._sequenceNumber = STOP_DOWNLEFT;
-		break;
-	default:
-		break;
-	}
-
-	// Only restart frame at 0 if the sequence number has changed
-	if (_oldWalkSequence != -1 || sprite._sequenceNumber == Scalpel::STOP_UP)
-		sprite._frameNumber = 0;
-
-	if (map._active) {
-		sprite._sequenceNumber = 0;
-		_data[PLAYER]->_position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
-		_data[PLAYER]->_position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
-	}
-
-	_oldWalkSequence = -1;
-	_allowWalkAbort = true;
-}
-
 
 } // End of namespace Scalpel
 

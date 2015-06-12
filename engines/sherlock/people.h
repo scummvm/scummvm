@@ -58,6 +58,7 @@ struct PersonData {
 
 class Person : public Sprite {
 public:
+	Common::Queue<Common::Point> _walkTo;
 	bool _walkLoaded;
 	Common::String _portrait;
 
@@ -183,12 +184,6 @@ public:
 	 * Change the sequence of the scene background object associated with the current speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1) = 0;
-
-	/**
-	 * Bring a moving character to a standing position. If the Scalpel chessboard
-	 * is being displayed, then the chraracter will always face down.
-	 */
-	virtual void gotoStand(Sprite &sprite) = 0;
 };
 
 } // End of namespace Sherlock

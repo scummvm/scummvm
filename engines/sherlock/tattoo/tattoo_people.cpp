@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/sherlock.h"
 
@@ -29,8 +30,83 @@ namespace Sherlock {
 namespace Tattoo {
 
 void TattooPerson::adjustSprite() {
-	// TODO
-	warning("TODO: TattooPerson::adjustSprite");
+	People &people = *_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+
+	if (_type == INVALID)
+		return;
+
+	if (_type == CHARACTER && _status) {
+		// Sprite waiting to move, so restart walk
+		_walkCount = _status;
+		_status = 0;
+
+		people._walkDest = _walkTo.front();
+		setWalking();
+	} else if (_type == CHARACTER && _walkCount) {
+		if (_walkCount > 10) {
+			people._walkDest = _walkTo.front();
+			setWalking();
+		}
+
+		_position += _delta;
+		if (_walkCount)
+			--_walkCount;
+
+		if (!_walkCount) {
+			// If there are remaining points to walk, move to the next one
+			people._walkDest = _walkTo.pop();
+			setWalking();
+		} else {
+			gotoStand();
+		}
+	}
+
+	if (_type != CHARACTER) {
+		if (_position.y > SHERLOCK_SCREEN_HEIGHT)
+			_position.y = SHERLOCK_SCREEN_HEIGHT;
+
+		if (_position.y < UPPER_LIMIT)
+			_position.y = UPPER_LIMIT;
+
+		if (_position.x < LEFT_LIMIT)
+			_position.x = LEFT_LIMIT;
+
+		if (_position.x > RIGHT_LIMIT)
+			_position.x = RIGHT_LIMIT;
+	}
+
+	int frameNum = _frameNumber;
+	if (frameNum == -1)
+		frameNum = 0;
+	int idx = _walkSequences[_sequenceNumber][frameNum];
+	if (idx > _maxFrames)
+		idx = 1;
+
+	// Set the image frame
+	if (_altSeq)
+		_imageFrame = &(*_altImages)[idx - 1];
+	else
+		_imageFrame = &(*_images)[idx - 1];
+
+	// See if the player has come to a stop after clicking on an Arrow zone to leave the scene.
+	// If so, this will set up the exit information for the scene transition
+	if (!_walkCount && scene._exitZone != -1 && scene._walkedInScene && scene._goToScene != -1 &&
+			!_description.compareToIgnoreCase(people[PLAYER]._description)) { 
+		people._hSavedPos = scene._exits[scene._exitZone]._newPosition;
+		people._hSavedFacing = scene._exits[scene._exitZone]._newFacing;
+
+		if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
+			people._hSavedPos.x = 100;
+	}
+}
+
+void TattooPerson::gotoStand() {
+	error("TODO: gotoStand");
+}
+
+void TattooPerson::setWalking() {
+	error("TODO: setWalking");
 }
 
 /*----------------------------------------------------------------*/
@@ -234,10 +310,6 @@ void TattooPeople::synchronize(Serializer &s) {
 		_hSavedPos = _data[PLAYER]->_position;
 		_hSavedFacing = _data[PLAYER]->_sequenceNumber;
 	}
-}
-
-void TattooPeople::gotoStand(Sprite &sprite) {
-	error("TODO: gotoStand");
 }
 
 } // End of namespace Tattoo

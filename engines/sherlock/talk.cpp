@@ -173,7 +173,7 @@ void Talk::talkTo(const Common::String &filename) {
 		if (people._allowWalkAbort)
 			abortFlag = true;
 
-		people.gotoStand(people[PLAYER]);
+		people[PLAYER].gotoStand();
 	}
 
 	if (_talkToAbort)
@@ -965,7 +965,7 @@ void Talk::doScript(const Common::String &script) {
 		_yp = (_talkTo == -1) ? 5 : screen.fontHeight() + 11;
 
 	if (IS_ROSE_TATTOO) {
-		for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 			Person &p = people[idx];
 			p._savedNpcSequence = p._sequenceNumber;
 			p._savedNpcFrame = p._frameNumber;

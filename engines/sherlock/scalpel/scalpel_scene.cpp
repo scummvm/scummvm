@@ -660,7 +660,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 	if (tpPos.x != -1) {
 		people[PLAYER]._position = tpPos;	// Place the player
 		people[PLAYER]._sequenceNumber = tpDir;
-		people.gotoStand(people[PLAYER]);
+		people[PLAYER].gotoStand();
 	}
 
 	if (playRate < 0)
@@ -689,7 +689,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		people[PLAYER]._position = tpPos;
 		people[PLAYER]._sequenceNumber = tpDir;
 
-		people.gotoStand(people[PLAYER]);
+		people[PLAYER].gotoStand();
 	}
 
 	events.setCursor(oldCursor);

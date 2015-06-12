@@ -301,7 +301,7 @@ void Sprite::checkSprite() {
 							obj.setFlagsAndToggles();
 							talk.talkTo(obj._use[0]._target);
 						} else {
-							people.gotoStand(*this);
+							gotoStand();
 						}
 						break;
 
@@ -311,7 +311,7 @@ void Sprite::checkSprite() {
 							obj.setFlagsAndToggles();
 							talk.talkTo(obj._use[0]._target);
 						} else {
-							people.gotoStand(*this);
+							gotoStand();
 						}
 						break;
 
@@ -323,7 +323,7 @@ void Sprite::checkSprite() {
 					case WALK_AROUND:
 						if (objBounds.contains(people._walkTo.front())) {
 							// Reached zone
-							people.gotoStand(*this);
+							gotoStand();
 						} else {
 							// Destination not within box, walk to best corner
 							Common::Point walkPos;

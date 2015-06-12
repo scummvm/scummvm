@@ -114,9 +114,9 @@ void Exit::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	if (!isRoseTattoo)
 		_allow = s.readSint16LE();
 
-	_people.x = s.readSint16LE();
-	_people.y = s.readSint16LE();
-	_peopleDir = s.readUint16LE();
+	_newPosition.x = s.readSint16LE();
+	_newPosition.y = s.readSint16LE();
+	_newFacing = s.readUint16LE();
 
 	if (isRoseTattoo)
 		_allow = s.readSint16LE();

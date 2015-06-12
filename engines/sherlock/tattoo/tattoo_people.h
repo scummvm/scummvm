@@ -72,6 +72,8 @@ enum TattooSequences {
 };
 
 class TattooPerson: public Person {
+private:
+	bool checkCollision() const;
 public:
 	TattooPerson() : Person() {}
 	virtual ~TattooPerson() {}
@@ -80,6 +82,17 @@ public:
 	 * This adjusts the sprites position, as well as it's animation sequence:
 	 */
 	virtual void adjustSprite();
+
+	/**
+	 * Bring a moving character to a standing position
+	 */
+	virtual void gotoStand();
+
+	/**
+	 * Set the variables for moving a character from one poisition to another
+	 * in a straight line
+	 */
+	void setWalking();
 };
 
 class TattooPeople : public People {
@@ -107,12 +120,6 @@ public:
 	 * Change the sequence of the scene background object associated with the specified speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1);
-
-	/**
-	 * Bring a moving character to a standing position. If the Scalpel chessboard
-	 * is being displayed, then the chraracter will always face down.
-	 */
-	virtual void gotoStand(Sprite &sprite);
 };
 
 } // End of namespace Scalpel
