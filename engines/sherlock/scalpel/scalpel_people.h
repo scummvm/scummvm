@@ -41,9 +41,20 @@ enum ScalpelSequences {
 	STOP_DOWNLEFT = 15, TALK_RIGHT = 6, TALK_LEFT = 4
 };
 
+class ScalpelPerson : public Person {
+public:
+	ScalpelPerson() : Person() {}
+	virtual ~ScalpelPerson() {}
+
+	/**
+	* This adjusts the sprites position, as well as it's animation sequence:
+	*/
+	virtual void adjustSprite();
+};
+
 class ScalpelPeople : public People {
 public:
-	ScalpelPeople(SherlockEngine *vm) : People(vm) {}
+	ScalpelPeople(SherlockEngine *vm);
 	virtual ~ScalpelPeople() {}
 
 	/**

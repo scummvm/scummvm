@@ -92,6 +92,11 @@ enum {
 #define TALK_LISTEN_CODE 251	// Code specifying start of talk listen frames in a Sequence
 #define ALLOW_TALK_CODE 250 
 
+#define UPPER_LIMIT 0
+#define LOWER_LIMIT (IS_SERRATED_SCALPEL ? CONTROLS_Y : SHERLOCK_SCREEN_HEIGHT)
+#define LEFT_LIMIT 0
+#define RIGHT_LIMIT SHERLOCK_SCREEN_WIDTH
+
 class Point32 {
 public:
 	int x;
@@ -217,7 +222,7 @@ public:
 };
 
 class Sprite: public BaseObject {
-private:
+protected:
 	static SherlockEngine *_vm;
 
 	/**
@@ -261,11 +266,6 @@ public:
 	void setImageFrame();
 
 	/**
-	* This adjusts the sprites position, as well as it's animation sequence:
-	*/
-	void adjustSprite();
-
-	/**
 	* Checks the sprite's position to see if it's collided with any special objects
 	*/
 	void checkSprite();
@@ -299,6 +299,11 @@ public:
 	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
 	 */
 	void checkWalkGraphics();
+
+	/**
+	 * This adjusts the sprites position, as well as it's animation sequence:
+	 */
+	virtual void adjustSprite() = 0;
 };
 
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };

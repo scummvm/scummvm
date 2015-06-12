@@ -101,7 +101,7 @@ People *People::init(SherlockEngine *vm) {
 		return new Tattoo::TattooPeople(vm);
 }
 
-People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
+People::People(SherlockEngine *vm) : _vm(vm) {
 	_holmesOn = true;
 	_oldWalkSequence = -1;
 	_allowWalkAbort = false;
@@ -124,9 +124,10 @@ People::People(SherlockEngine *vm) : _vm(vm), _player(_data[0]) {
 }
 
 People::~People() {
-	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-		if (_data[idx]._walkLoaded)
-			delete _data[PLAYER]._images;
+	for (uint idx = 0; idx < _data.size(); ++idx) {
+		if (_data[idx]->_walkLoaded)
+			delete _data[idx]->_images;
+		delete _data[idx];
 	}
 
 	delete _talkPics;
@@ -134,12 +135,12 @@ People::~People() {
 }
 
 void People::reset() {
-	_data[0]._description = "Sherlock Holmes!";
+	_data[PLAYER]->_description = "Sherlock Holmes!";
 
 	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
 	int count = IS_SERRATED_SCALPEL ? 1 : MAX_CHARACTERS;
 	for (int idx = 0; idx < count; ++idx) {
-		Sprite &p = _data[idx];
+		Sprite &p = *_data[idx];
 
 		p._type = (idx == 0) ? CHARACTER : INVALID;
 		if (IS_SERRATED_SCALPEL)
@@ -196,71 +197,71 @@ bool People::loadWalk() {
 	bool result = false;
 
 	if (IS_SERRATED_SCALPEL) {
-		if (_data[PLAYER]._walkLoaded) {
+		if (_data[PLAYER]->_walkLoaded) {
 			return false;
 		} else {
 			if (_vm->getPlatform() != Common::kPlatform3DO) {
-				_data[PLAYER]._images = new ImageFile("walk.vgs");
+				_data[PLAYER]->_images = new ImageFile("walk.vgs");
 			} else {
 				// Load walk.anim on 3DO, which is a cel animation file
-				_data[PLAYER]._images = new ImageFile3DO("walk.anim");
+				_data[PLAYER]->_images = new ImageFile3DO("walk.anim");
 			}
-			_data[PLAYER].setImageFrame();
-			_data[PLAYER]._walkLoaded = true;
+			_data[PLAYER]->setImageFrame();
+			_data[PLAYER]->_walkLoaded = true;
 
 			result = true;
 		}
 	} else {
 		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-			if (!_data[idx]._walkLoaded && (_data[idx]._type == CHARACTER || _data[idx]._type == HIDDEN_CHARACTER)) {
-				if (_data[idx]._type == HIDDEN_CHARACTER)
-					_data[idx]._type = INVALID;
+			if (!_data[idx]->_walkLoaded && (_data[idx]->_type == CHARACTER || _data[idx]->_type == HIDDEN_CHARACTER)) {
+				if (_data[idx]->_type == HIDDEN_CHARACTER)
+					_data[idx]->_type = INVALID;
 
 				// See if this is one of the more used Walk Graphics stored in WALK.LIB
 				for (int libNum = 0; libNum < NUM_IN_WALK_LIB; ++libNum) {
-					if (!_data[idx]._walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
+					if (!_data[idx]->_walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
 						_useWalkLib = true;
 						break;
 					}
 				}
 
 				// Load the images for the character
-				_data[idx]._images = new ImageFile(_data[idx]._walkVGSName, false);
-				_data[idx]._numFrames = _data[idx]._images->size();
+				_data[idx]->_images = new ImageFile(_data[idx]->_walkVGSName, false);
+				_data[idx]->_numFrames = _data[idx]->_images->size();
 
 				// Load walk sequence data
-				Common::String fname = Common::String(_data[idx]._walkVGSName.c_str(), strchr(_data[idx]._walkVGSName.c_str(), '.'));
+				Common::String fname = Common::String(_data[idx]->_walkVGSName.c_str(), strchr(_data[idx]->_walkVGSName.c_str(), '.'));
 				fname += ".SEQ";
 
 				// Load the walk sequence data
 				Common::SeekableReadStream *stream = res.load(fname, _useWalkLib ? "walk.lib" : "vgs.lib");
 				
-				_data[idx]._walkSequences.resize(stream->readByte());
+				_data[idx]->_walkSequences.resize(stream->readByte());
 
-				for (uint seqNum = 0; seqNum < _data[idx]._walkSequences.size(); ++seqNum)
-					_data[idx]._walkSequences[seqNum].load(*stream);
+				for (uint seqNum = 0; seqNum < _data[idx]->_walkSequences.size(); ++seqNum)
+					_data[idx]->_walkSequences[seqNum].load(*stream);
 
 				// Close the sequences resource
 				delete stream;
 				_useWalkLib = false;
 
-				_data[idx]._frameNumber = 0;
-				_data[idx].setImageFrame();
+				_data[idx]->_frameNumber = 0;
+				_data[idx]->setImageFrame();
 
 				// Set the stop Frames pointers
 				for (int dirNum = 0; dirNum < 8; ++dirNum) {
 					int count = 0;
-					while (_data[idx]._walkSequences[dirNum + 8][count] != 0)
+					while (_data[idx]->_walkSequences[dirNum + 8][count] != 0)
 						++count;
 					count += 2;
-					count = _data[idx]._walkSequences[dirNum + 8][count] - 1;
-					_data[idx]._stopFrames[dirNum] = &(*_data[idx]._images)[count];
+					count = _data[idx]->_walkSequences[dirNum + 8][count] - 1;
+					_data[idx]->_stopFrames[dirNum] = &(*_data[idx]->_images)[count];
 				}
 
 				result = true;
-				_data[idx]._walkLoaded = true;
-			} else if (_data[idx]._type != CHARACTER) {
-				_data[idx]._walkLoaded = false;
+				_data[idx]->_walkLoaded = true;
+			} else if (_data[idx]->_type != CHARACTER) {
+				_data[idx]->_walkLoaded = false;
 			}
 		}
 	}
@@ -273,11 +274,11 @@ bool People::freeWalk() {
 	bool result = false;
 
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-		if (_data[idx]._walkLoaded) {
-			delete _data[idx]._images;
-			_data[idx]._images = nullptr;
+		if (_data[idx]->_walkLoaded) {
+			delete _data[idx]->_images;
+			_data[idx]->_images = nullptr;
 			
-			_data[idx]._walkLoaded = false;
+			_data[idx]->_walkLoaded = false;
 			result = true;
 		}
 	}
@@ -295,9 +296,9 @@ void People::setWalking() {
 	scene._walkedInScene = true;
 
 	// Stop any previous walking, since a new dest is being set
-	_player._walkCount = 0;
-	oldDirection = _player._sequenceNumber;
-	oldFrame = _player._frameNumber;
+	_data[PLAYER]->_walkCount = 0;
+	oldDirection = _data[PLAYER]->_sequenceNumber;
+	oldFrame = _data[PLAYER]->_frameNumber;
 
 	// Set speed to use horizontal and vertical movement
 	if (map._active) {
@@ -314,12 +315,12 @@ void People::setWalking() {
 		// clicked, but characters draw positions start at their left, move
 		// the destination half the character width to draw him centered
 		int temp;
-		if (_walkDest.x >= (temp = _player._imageFrame->_frame.w / 2))
+		if (_walkDest.x >= (temp = _data[PLAYER]->_imageFrame->_frame.w / 2))
 			_walkDest.x -= temp;
 
 		delta = Common::Point(
-			ABS(_player._position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
-			ABS(_player._position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
+			ABS(_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
+			ABS(_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
 		);
 
 		// If we're ready to move a sufficient distance, that's it. Otherwise,
@@ -337,53 +338,53 @@ void People::setWalking() {
 		if (delta.x >= delta.y) {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
-			if (_walkDest.x < (_player._position.x / FIXED_INT_MULTIPLIER)) {
-				_player._sequenceNumber = (map._active ? (int)MAP_LEFT : (int)Scalpel::WALK_LEFT);
-				_player._delta.x = speed.x * -FIXED_INT_MULTIPLIER;
+			if (_walkDest.x < (_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER)) {
+				_data[PLAYER]->_sequenceNumber = (map._active ? (int)MAP_LEFT : (int)Scalpel::WALK_LEFT);
+				_data[PLAYER]->_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
 			} else {
-				_player._sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)Scalpel::WALK_RIGHT);
-				_player._delta.x = speed.x * FIXED_INT_MULTIPLIER;
+				_data[PLAYER]->_sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)Scalpel::WALK_RIGHT);
+				_data[PLAYER]->_delta.x = speed.x * FIXED_INT_MULTIPLIER;
 			}
 
 			// See if the x delta is too small to be divided by the speed, since
 			// this would cause a divide by zero error
 			if (delta.x >= speed.x) {
 				// Det the delta y
-				_player._delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
-				if (_walkDest.y < (_player._position.y / FIXED_INT_MULTIPLIER))
-					_player._delta.y = -_player._delta.y;
+				_data[PLAYER]->_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
+				if (_walkDest.y < (_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER))
+					_data[PLAYER]->_delta.y = -_data[PLAYER]->_delta.y;
 
 				// Set how many times we should add the delta to the player's position
-				_player._walkCount = delta.x / speed.x;
+				_data[PLAYER]->_walkCount = delta.x / speed.x;
 			} else {
 				// The delta x was less than the speed (ie. we're really close to
 				// the destination). So set delta to 0 so the player won't move
-				_player._delta = Point32(0, 0);
-				_player._position = Point32(_walkDest.x * FIXED_INT_MULTIPLIER, _walkDest.y * FIXED_INT_MULTIPLIER);
-assert(_player._position.y >= 10000);/***DEBUG****/
-				_player._walkCount = 1;
+				_data[PLAYER]->_delta = Point32(0, 0);
+				_data[PLAYER]->_position = Point32(_walkDest.x * FIXED_INT_MULTIPLIER, _walkDest.y * FIXED_INT_MULTIPLIER);
+assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
+				_data[PLAYER]->_walkCount = 1;
 			}
 
 			// See if the sequence needs to be changed for diagonal walking
-			if (_player._delta.y > 150) {
+			if (_data[PLAYER]->_delta.y > 150) {
 				if (!map._active) {
-					switch (_player._sequenceNumber) {
+					switch (_data[PLAYER]->_sequenceNumber) {
 					case Scalpel::WALK_LEFT:
-						_player._sequenceNumber = Scalpel::WALK_DOWNLEFT;
+						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_DOWNLEFT;
 						break;
 					case Scalpel::WALK_RIGHT:
-						_player._sequenceNumber = Scalpel::WALK_DOWNRIGHT;
+						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_DOWNRIGHT;
 						break;
 					}
 				}
-			} else if (_player._delta.y < -150) {
+			} else if (_data[PLAYER]->_delta.y < -150) {
 				if (!map._active) {
-					switch (_player._sequenceNumber) {
+					switch (_data[PLAYER]->_sequenceNumber) {
 					case Scalpel::WALK_LEFT:
-						_player._sequenceNumber = Scalpel::WALK_UPLEFT;
+						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_UPLEFT;
 						break;
 					case Scalpel::WALK_RIGHT:
-						_player._sequenceNumber = Scalpel::WALK_UPRIGHT;
+						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_UPRIGHT;
 						break;
 					}
 				}
@@ -391,25 +392,25 @@ assert(_player._position.y >= 10000);/***DEBUG****/
 		} else {
 			// Major movement is vertical, so set the sequence for up and down,
 			// and set the delta Y depending on the direction
-			if (_walkDest.y < (_player._position.y / FIXED_INT_MULTIPLIER)) {
-				_player._sequenceNumber = Scalpel::WALK_UP;
-				_player._delta.y = speed.y * -FIXED_INT_MULTIPLIER;
+			if (_walkDest.y < (_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER)) {
+				_data[PLAYER]->_sequenceNumber = Scalpel::WALK_UP;
+				_data[PLAYER]->_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
-				_player._sequenceNumber = Scalpel::WALK_DOWN;
-				_player._delta.y = speed.y * FIXED_INT_MULTIPLIER;
+				_data[PLAYER]->_sequenceNumber = Scalpel::WALK_DOWN;
+				_data[PLAYER]->_delta.y = speed.y * FIXED_INT_MULTIPLIER;
 			}
 
 			// If we're on the overhead map, set the sequence so we keep moving
 			// in the same direction
 			if (map._active)
-				_player._sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
+				_data[PLAYER]->_sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
 
 			// Set the delta x
-			_player._delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
-			if (_walkDest.x < (_player._position.x / FIXED_INT_MULTIPLIER))
-				_player._delta.x = -_player._delta.x;
+			_data[PLAYER]->_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
+			if (_walkDest.x < (_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER))
+				_data[PLAYER]->_delta.x = -_data[PLAYER]->_delta.x;
 
-			_player._walkCount = delta.y / speed.y;
+			_data[PLAYER]->_walkCount = delta.y / speed.y;
 		}
 	}
 
@@ -417,18 +418,18 @@ assert(_player._position.y >= 10000);/***DEBUG****/
 	// we need to reset the frame number to zero so it's animation starts at
 	// it's beginning. Otherwise, if it's the same sequence, we can leave it
 	// as is, so it keeps the animation going at wherever it was up to
-	if (_player._sequenceNumber != _oldWalkSequence)
-		_player._frameNumber = 0;
-	_oldWalkSequence = _player._sequenceNumber;
+	if (_data[PLAYER]->_sequenceNumber != _oldWalkSequence)
+		_data[PLAYER]->_frameNumber = 0;
+	_oldWalkSequence = _data[PLAYER]->_sequenceNumber;
 
-	if (!_player._walkCount)
-		gotoStand(_player);
+	if (!_data[PLAYER]->_walkCount)
+		gotoStand(*_data[PLAYER]);
 
 	// If the sequence is the same as when we started, then Holmes was
 	// standing still and we're trying to re-stand him, so reset Holmes'
 	// rame to the old frame number from before it was reset to 0
-	if (_player._sequenceNumber == oldDirection)
-		_player._frameNumber = oldFrame;
+	if (_data[PLAYER]->_sequenceNumber == oldDirection)
+		_data[PLAYER]->_frameNumber = oldFrame;
 }
 
 void People::walkToCoords(const Point32 &destPos, int destDir) {
@@ -447,15 +448,15 @@ void People::walkToCoords(const Point32 &destPos, int destDir) {
 	do {
 		events.pollEventsAndWait();
 		scene.doBgAnim();
-	} while (!_vm->shouldQuit() && _player._walkCount);
+	} while (!_vm->shouldQuit() && _data[PLAYER]->_walkCount);
 
 	if (!talk._talkToAbort) {
 		// Put player exactly on destination position, and set direction
-		_player._position = destPos;
-assert(_player._position.y >= 10000);/***DEBUG****/
+		_data[PLAYER]->_position = destPos;
+assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
 
-		_player._sequenceNumber = destDir;
-		gotoStand(_player);
+		_data[PLAYER]->_sequenceNumber = destDir;
+		gotoStand(*_data[PLAYER]);
 
 		// Draw Holmes facing the new direction
 		scene.doBgAnim();
@@ -467,8 +468,8 @@ assert(_player._position.y >= 10000);/***DEBUG****/
 
 void People::goAllTheWay() {
 	Scene &scene = *_vm->_scene;
-	Common::Point srcPt(_player._position.x / FIXED_INT_MULTIPLIER + _player.frameWidth() / 2,
-		_player._position.y / FIXED_INT_MULTIPLIER);
+	Common::Point srcPt(_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER + _data[PLAYER]->frameWidth() / 2,
+		_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER);
 
 	// Get the zone the player is currently in
 	_srcZone = scene.whichZone(srcPt);
@@ -572,14 +573,14 @@ int People::findSpeaker(int speaker) {
 	if (IS_ROSE_TATTOO) {
 		bool flag = _vm->readFlags(76);
 		
-		if (_data[0]._type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
+		if (_data[PLAYER]->_type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
 			return -1;
 
-		for (uint idx = 1; idx < MAX_CHARACTERS; ++idx) {
-			if (_data[idx]._type == CHARACTER) {
-				Common::String name(_data[idx]._name.c_str(), _data[idx]._name.c_str() + 4);
+		for (uint idx = 1; idx < _data.size(); ++idx) {
+			if (_data[idx]->_type == CHARACTER) {
+				Common::String name(_data[idx]->_name.c_str(), _data[idx]->_name.c_str() + 4);
 
-				if (name.equalsIgnoreCase(portrait) && _data[idx]._npcName[4] >= '0' && _data[idx]._npcName[4] <= '9')
+				if (name.equalsIgnoreCase(portrait) && _data[idx]->_npcName[4] >= '0' && _data[idx]->_npcName[4] <= '9')
 					return idx + 256;
 			}
 		}
@@ -622,12 +623,12 @@ void People::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
 
 	if (IS_SERRATED_SCALPEL) {
-		s.syncAsSint16LE(_player._position.x);
-		s.syncAsSint16LE(_player._position.y);
-		s.syncAsSint16LE(_player._sequenceNumber);
+		s.syncAsSint16LE(_data[PLAYER]->_position.x);
+		s.syncAsSint16LE(_data[PLAYER]->_position.y);
+		s.syncAsSint16LE(_data[PLAYER]->_sequenceNumber);
 	} else {
-		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-			Person &p = _data[idx];
+		for (uint idx = 0; idx < _data.size(); ++idx) {
+			Person &p = *_data[idx];
 			s.syncAsSint16LE(p._position.x);
 			s.syncAsSint16LE(p._position.y);
 			s.syncAsSint16LE(p._sequenceNumber);
@@ -641,8 +642,8 @@ void People::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _player._position;
-		_hSavedFacing = _player._sequenceNumber;
+		_hSavedPos = _data[PLAYER]->_position;
+		_hSavedFacing = _data[PLAYER]->_sequenceNumber;
 	}
 }
 

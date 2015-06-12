@@ -572,7 +572,7 @@ void TattooScene::updateBackground() {
 
 	screen._flushScreen = true;
 
-	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+	for (uint idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		Person &p = people[idx];
 
 		if (p._type != INVALID) {

@@ -28,6 +28,20 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+void TattooPerson::adjustSprite() {
+	// TODO
+	warning("TODO: TattooPerson::adjustSprite");
+}
+
+/*----------------------------------------------------------------*/
+
+TattooPeople::TattooPeople(SherlockEngine *vm) : People(vm) {
+	for (int idx = 0; idx < 6; ++idx)
+		_data.push_back(new TattooPerson());
+}
+
+
+
 void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 	Scene &scene = *_vm->_scene;
 
@@ -45,7 +59,7 @@ void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 			obj.setObjTalkSequence(sequenceNum);
 	} else if (objNum != -1) {
 		objNum -= 256;
-		Person &person = _data[objNum];
+		Person &person = *_data[objNum];
 
 		int newDir = person._sequenceNumber;
 		switch (person._sequenceNumber) {
@@ -203,8 +217,8 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 void TattooPeople::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
 
-	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-		Person &p = _data[idx];
+	for (uint idx = 0; idx < _data.size(); ++idx) {
+		Person &p = *_data[idx];
 		s.syncAsSint32LE(p._position.x);
 		s.syncAsSint32LE(p._position.y);
 		s.syncAsSint16LE(p._sequenceNumber);
@@ -217,8 +231,8 @@ void TattooPeople::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _player._position;
-		_hSavedFacing = _player._sequenceNumber;
+		_hSavedPos = _data[PLAYER]->_position;
+		_hSavedFacing = _data[PLAYER]->_sequenceNumber;
 	}
 }
 

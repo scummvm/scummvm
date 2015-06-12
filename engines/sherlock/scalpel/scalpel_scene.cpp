@@ -138,7 +138,7 @@ void ScalpelScene::drawAllShapes() {
 
 void ScalpelScene::checkBgShapes() {
 	People &people = *_vm->_people;
-	Person &holmes = people._player;
+	Person &holmes = people[PLAYER];
 	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
 
 	// Call the base scene method to handle bg shapes
@@ -229,14 +229,14 @@ void ScalpelScene::doBgAnim() {
 			vm.eraseMirror12();
 
 		// Restore the back buffer from the back buffer 2 in the changed area
-		Common::Rect bounds(people[AL]._oldPosition.x, people[AL]._oldPosition.y,
-			people[AL]._oldPosition.x + people[AL]._oldSize.x,
-			people[AL]._oldPosition.y + people[AL]._oldSize.y);
+		Common::Rect bounds(people[PLAYER]._oldPosition.x, people[PLAYER]._oldPosition.y,
+			people[PLAYER]._oldPosition.x + people[PLAYER]._oldSize.x,
+			people[PLAYER]._oldPosition.y + people[PLAYER]._oldSize.y);
 		Common::Point pt(bounds.left, bounds.top);
 
-		if (people[AL]._type == CHARACTER)
+		if (people[PLAYER]._type == CHARACTER)
 			screen.restoreBackground(bounds);
-		else if (people[AL]._type == REMOVE)
+		else if (people[PLAYER]._type == REMOVE)
 			screen._backBuffer->blitFrom(screen._backBuffer2, pt, bounds);
 
 		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -291,8 +291,8 @@ void ScalpelScene::doBgAnim() {
 			_canimShapes[idx].adjustObject();
 	}
 
-	if (people[AL]._type == CHARACTER && people._holmesOn)
-		people[AL].adjustSprite();
+	if (people[PLAYER]._type == CHARACTER && people._holmesOn)
+		people[PLAYER].adjustSprite();
 
 	// Flag the bg shapes which need to be redrawn
 	checkBgShapes();
@@ -331,16 +331,16 @@ void ScalpelScene::doBgAnim() {
 	}
 
 	// Draw the person if not animating
-	if (people[AL]._type == CHARACTER && people[AL]._walkLoaded) {
+	if (people[PLAYER]._type == CHARACTER && people[PLAYER]._walkLoaded) {
 		// If Holmes is too far to the right, move him back so he's on-screen
-		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[AL]._imageFrame->_frame.w;
-		int tempX = MIN(people[AL]._position.x / FIXED_INT_MULTIPLIER, xRight);
+		int xRight = SHERLOCK_SCREEN_WIDTH - 2 - people[PLAYER]._imageFrame->_frame.w;
+		int tempX = MIN(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER, xRight);
 
-		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT ||
-			people[AL]._sequenceNumber == WALK_UPLEFT || people[AL]._sequenceNumber == STOP_UPLEFT ||
-			people[AL]._sequenceNumber == WALK_DOWNRIGHT || people[AL]._sequenceNumber == STOP_DOWNRIGHT;
-		screen._backBuffer->transBlitFrom(*people[AL]._imageFrame,
-			Common::Point(tempX, people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL]._imageFrame->_frame.h), flipped);
+		bool flipped = people[PLAYER]._sequenceNumber == WALK_LEFT || people[PLAYER]._sequenceNumber == STOP_LEFT ||
+			people[PLAYER]._sequenceNumber == WALK_UPLEFT || people[PLAYER]._sequenceNumber == STOP_UPLEFT ||
+			people[PLAYER]._sequenceNumber == WALK_DOWNRIGHT || people[PLAYER]._sequenceNumber == STOP_DOWNRIGHT;
+		screen._backBuffer->transBlitFrom(*people[PLAYER]._imageFrame,
+			Common::Point(tempX, people[PLAYER]._position.y / FIXED_INT_MULTIPLIER - people[PLAYER]._imageFrame->_frame.h), flipped);
 	}
 
 	// Draw all static and active shapes are NORMAL and are in front of the person
@@ -390,20 +390,20 @@ void ScalpelScene::doBgAnim() {
 		_animating = 0;
 		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCENE_HEIGHT));
 	} else {
-		if (people[AL]._type != INVALID && ((_goToScene == -1 || _canimShapes.empty()))) {
-			if (people[AL]._type == REMOVE) {
+		if (people[PLAYER]._type != INVALID && ((_goToScene == -1 || _canimShapes.empty()))) {
+			if (people[PLAYER]._type == REMOVE) {
 				screen.slamRect(Common::Rect(
-					people[AL]._oldPosition.x, people[AL]._oldPosition.y,
-					people[AL]._oldPosition.x + people[AL]._oldSize.x,
-					people[AL]._oldPosition.y + people[AL]._oldSize.y
+					people[PLAYER]._oldPosition.x, people[PLAYER]._oldPosition.y,
+					people[PLAYER]._oldPosition.x + people[PLAYER]._oldSize.x,
+					people[PLAYER]._oldPosition.y + people[PLAYER]._oldSize.y
 				));
-				people[AL]._type = INVALID;
+				people[PLAYER]._type = INVALID;
 			} else {
-				screen.flushImage(people[AL]._imageFrame,
-					Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER,
-						people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL].frameHeight()),
-					&people[AL]._oldPosition.x, &people[AL]._oldPosition.y,
-					&people[AL]._oldSize.x, &people[AL]._oldSize.y);
+				screen.flushImage(people[PLAYER]._imageFrame,
+					Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER,
+						people[PLAYER]._position.y / FIXED_INT_MULTIPLIER - people[PLAYER].frameHeight()),
+					&people[PLAYER]._oldPosition.x, &people[PLAYER]._oldPosition.y,
+					&people[PLAYER]._oldSize.x, &people[PLAYER]._oldSize.y);
 			}
 		}
 
@@ -525,7 +525,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 
 	if (walkPos.x != -1) {
 		// Holmes must walk to the walk point before the cAnimation is started
-		if (people[AL]._position != walkPos)
+		if (people[PLAYER]._position != walkPos)
 			people.walkToCoords(walkPos, walkDir);
 	}
 
@@ -563,7 +563,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 
 	if (cAnim._name.size() > 0 && cAnim._type != NO_SHAPE) {
 		if (tpPos.x != -1)
-			people[AL]._type = REMOVE;
+			people[PLAYER]._type = REMOVE;
 
 		Common::String fname = cAnim._name + ".vgs";
 		if (!res.isInCache(fname)) {
@@ -653,14 +653,14 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 			cObj._frameNumber += dir;
 		}
 
-		people[AL]._type = CHARACTER;
+		people[PLAYER]._type = CHARACTER;
 	}
 
 	// Teleport to ending coordinates if necessary
 	if (tpPos.x != -1) {
-		people[AL]._position = tpPos;	// Place the player
-		people[AL]._sequenceNumber = tpDir;
-		people.gotoStand(people[AL]);
+		people[PLAYER]._position = tpPos;	// Place the player
+		people[PLAYER]._sequenceNumber = tpDir;
+		people.gotoStand(people[PLAYER]);
 	}
 
 	if (playRate < 0)
@@ -686,10 +686,10 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 
 	if (tpPos.x != -1 && !talk._talkToAbort) {
 		// Teleport to ending coordinates
-		people[AL]._position = tpPos;
-		people[AL]._sequenceNumber = tpDir;
+		people[PLAYER]._position = tpPos;
+		people[PLAYER]._sequenceNumber = tpDir;
 
-		people.gotoStand(people[AL]);
+		people.gotoStand(people[PLAYER]);
 	}
 
 	events.setCursor(oldCursor);

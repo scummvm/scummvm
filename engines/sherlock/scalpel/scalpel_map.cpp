@@ -155,7 +155,7 @@ int ScalpelMap::show() {
 	_drawMap = true;
 	_charPoint = -1;
 	_point = -1;
-	people[AL]._position = _lDrawnPos = _overPos;
+	people[PLAYER]._position = _lDrawnPos = _overPos;
 
 	// Show place icons
 	showPlaces();
@@ -233,7 +233,7 @@ int ScalpelMap::show() {
 		}
 
 		if ((events._released || events._rightReleased) && _point != -1) {
-			if (people[AL]._walkCount == 0) {
+			if (people[PLAYER]._walkCount == 0) {
 				people._walkDest = _points[_point] + Common::Point(4, 9);
 				_charPoint = _point;
 
@@ -247,7 +247,7 @@ int ScalpelMap::show() {
 		}
 
 		// Check if a scene has beeen selected and we've finished "moving" to it
-		if (people[AL]._walkCount == 0) {
+		if (people[PLAYER]._walkCount == 0) {
 			if (_charPoint >= 1 && _charPoint < (int)_points.size())
 				exitFlag = true;
 		}
@@ -266,7 +266,7 @@ int ScalpelMap::show() {
 	}
 
 	freeSprites();
-	_overPos = people[AL]._position;
+	_overPos = people[PLAYER]._position;
 
 	// Reset font
 	screen.setFont(oldFont);
@@ -288,7 +288,7 @@ void ScalpelMap::setupSprites() {
 	_shapes = new ImageFile("mapicon.vgs");
 	_iconShapes = new ImageFile("overicon.vgs");
 	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height, _vm->getPlatform());
-	Person &p = people[AL];
+	Person &p = people[PLAYER];
 	p._description = " ";
 	p._type = CHARACTER;
 	p._position = Common::Point(12400, 5000);
@@ -353,11 +353,11 @@ void ScalpelMap::showPlaceName(int idx, bool highlighted) {
 	int width = screen.stringWidth(name);
 
 	if (!_cursorIndex) {
-		saveIcon(people[AL]._imageFrame, _lDrawnPos);
+		saveIcon(people[PLAYER]._imageFrame, _lDrawnPos);
 
-		bool flipped = people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
-			|| people[AL]._sequenceNumber == MAP_UPLEFT;
-		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, _lDrawnPos, flipped);
+		bool flipped = people[PLAYER]._sequenceNumber == MAP_DOWNLEFT || people[PLAYER]._sequenceNumber == MAP_LEFT
+			|| people[PLAYER]._sequenceNumber == MAP_UPLEFT;
+		screen._backBuffer1.transBlitFrom(*people[PLAYER]._imageFrame, _lDrawnPos, flipped);
 	}
 
 	if (highlighted) {
@@ -390,26 +390,26 @@ void ScalpelMap::updateMap(bool flushScreen) {
 	else
 		_savedPos.x = -1;
 
-	people[AL].adjustSprite();
+	people[PLAYER].adjustSprite();
 
-	_lDrawnPos.x = hPos.x = people[AL]._position.x / FIXED_INT_MULTIPLIER - _bigPos.x;
-	_lDrawnPos.y = hPos.y = people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL].frameHeight() - _bigPos.y;
+	_lDrawnPos.x = hPos.x = people[PLAYER]._position.x / FIXED_INT_MULTIPLIER - _bigPos.x;
+	_lDrawnPos.y = hPos.y = people[PLAYER]._position.y / FIXED_INT_MULTIPLIER - people[PLAYER].frameHeight() - _bigPos.y;
 
 	// Draw the person icon
-	saveIcon(people[AL]._imageFrame, hPos);
-	if (people[AL]._sequenceNumber == MAP_DOWNLEFT || people[AL]._sequenceNumber == MAP_LEFT
-			|| people[AL]._sequenceNumber == MAP_UPLEFT)
-		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, hPos, true);
+	saveIcon(people[PLAYER]._imageFrame, hPos);
+	if (people[PLAYER]._sequenceNumber == MAP_DOWNLEFT || people[PLAYER]._sequenceNumber == MAP_LEFT
+			|| people[PLAYER]._sequenceNumber == MAP_UPLEFT)
+		screen._backBuffer1.transBlitFrom(*people[PLAYER]._imageFrame, hPos, true);
 	else
-		screen._backBuffer1.transBlitFrom(*people[AL]._imageFrame, hPos, false);
+		screen._backBuffer1.transBlitFrom(*people[PLAYER]._imageFrame, hPos, false);
 
 	if (flushScreen) {
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	} else if (!_drawMap) {
 		if (hPos.x > 0 && hPos.y >= 0 && hPos.x < SHERLOCK_SCREEN_WIDTH && hPos.y < SHERLOCK_SCREEN_HEIGHT)
-			screen.flushImage(people[AL]._imageFrame, Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER - _bigPos.x,
-			people[AL]._position.y / FIXED_INT_MULTIPLIER - people[AL].frameHeight() - _bigPos.y),
-			&people[AL]._oldPosition.x, &people[AL]._oldPosition.y, &people[AL]._oldSize.x, &people[AL]._oldSize.y);
+			screen.flushImage(people[PLAYER]._imageFrame, Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER - _bigPos.x,
+			people[PLAYER]._position.y / FIXED_INT_MULTIPLIER - people[PLAYER].frameHeight() - _bigPos.y),
+			&people[PLAYER]._oldPosition.x, &people[PLAYER]._oldPosition.y, &people[PLAYER]._oldSize.x, &people[PLAYER]._oldSize.y);
 
 		if (osPos.x != -1)
 			screen.slamArea(osPos.x, osPos.y, osSize.x, osSize.y);
@@ -433,7 +433,7 @@ void ScalpelMap::walkTheStreets() {
 
 	// Check for any intermediate points between the two locations
 	if (path[0] || _charPoint > 50 || _oldCharPoint > 50) {
-		people[AL]._sequenceNumber = -1;
+		people[PLAYER]._sequenceNumber = -1;
 
 		if (_charPoint == 51 || _oldCharPoint == 51) {
 			people.setWalking();
@@ -467,7 +467,7 @@ void ScalpelMap::walkTheStreets() {
 			people.setWalking();
 		}
 	} else {
-		people[AL]._walkCount = 0;
+		people[PLAYER]._walkCount = 0;
 	}
 
 	// Store the final destination icon position

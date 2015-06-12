@@ -32,10 +32,6 @@ namespace Sherlock {
 
 #define START_FRAME 0
 
-#define UPPER_LIMIT 0
-#define LOWER_LIMIT (IS_SERRATED_SCALPEL ? CONTROLS_Y : SHERLOCK_SCREEN_HEIGHT)
-#define LEFT_LIMIT 0
-#define RIGHT_LIMIT SHERLOCK_SCREEN_WIDTH
 #define NUM_ADJUSTED_WALKS 21
 
 // Distance to walk around WALK_AROUND boxes
@@ -207,107 +203,6 @@ void Sprite::setImageFrame() {
 	_imageFrame = &(*images)[imageNumber];
 }
 
-void Sprite::adjustSprite() {
-	Map &map = *_vm->_map;
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-	Talk &talk = *_vm->_talk;
-
-	if (_type == INVALID || (_type == CHARACTER && scene._animating))
-		return;
-
-	if (!talk._talkCounter && _type == CHARACTER && _walkCount) {
-		// Handle active movement for the sprite
-		_position += _delta;
-		--_walkCount;
-
-		if (!_walkCount) {
-			// If there any points left for the character to walk to along the
-			// route to a destination, then move to the next point
-			if (!people._walkTo.empty()) {
-				people._walkDest = people._walkTo.pop();
-				people.setWalking();
-			} else {
-				people.gotoStand(*this);
-			}
-		}
-	}
-
-	if (_type == CHARACTER && !map._active) {
-		if ((_position.y / FIXED_INT_MULTIPLIER) > LOWER_LIMIT) {
-			_position.y = LOWER_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
-		}
-
-		if ((_position.y / FIXED_INT_MULTIPLIER) < UPPER_LIMIT) {
-			_position.y = UPPER_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
-		}
-
-		if ((_position.x / FIXED_INT_MULTIPLIER) < LEFT_LIMIT) {
-			_position.x = LEFT_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
-		}
-
-		if ((_position.x / FIXED_INT_MULTIPLIER) > RIGHT_LIMIT) {
-			_position.x = RIGHT_LIMIT * FIXED_INT_MULTIPLIER;
-			people.gotoStand(*this);
-		}
-	} else if (!map._active) {
-		_position.y = CLIP((int)_position.y, (int)UPPER_LIMIT, (int)LOWER_LIMIT);
-		_position.x = CLIP((int)_position.x, (int)LEFT_LIMIT, (int)RIGHT_LIMIT);
-	}
-
-	if (!map._active || (map._frameChangeFlag = !map._frameChangeFlag))
-		++_frameNumber;
-
-	if (_frameNumber >= (int)_walkSequences[_sequenceNumber]._sequences.size() ||
-			_walkSequences[_sequenceNumber][_frameNumber] == 0) {
-		switch (_sequenceNumber) {
-		case Scalpel::STOP_UP:
-		case Scalpel::STOP_DOWN:
-		case Scalpel::STOP_LEFT:
-		case Scalpel::STOP_RIGHT:
-		case Scalpel::STOP_UPRIGHT:
-		case Scalpel::STOP_UPLEFT:
-		case Scalpel::STOP_DOWNRIGHT:
-		case Scalpel::STOP_DOWNLEFT:
-			// We're in a stop sequence, so reset back to the last frame, so
-			// the character is shown as standing still
-			--_frameNumber;
-			break;
-
-		default:
-			// Move 1 past the first frame - we need to compensate, since we
-			// already passed the frame increment
-			_frameNumber = 1;
-			break;
-		}
-	}
-
-	// Update the _imageFrame to point to the new frame's image
-	setImageFrame();
-
-	// Check to see if character has entered an exit zone
-	if (!_walkCount && scene._walkedInScene && scene._goToScene == -1) {
-		Common::Rect charRect(_position.x / FIXED_INT_MULTIPLIER - 5, _position.y / FIXED_INT_MULTIPLIER - 2,
-			_position.x / FIXED_INT_MULTIPLIER + 5, _position.y / FIXED_INT_MULTIPLIER + 2);
-		Exit *exit = scene.checkForExit(charRect);
-
-		if (exit) {
-			scene._goToScene = exit->_scene;
-
-			if (exit->_people.x != 0) {
-				people._hSavedPos = exit->_people;
-				people._hSavedFacing = exit->_peopleDir;
-
-				if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
-					people._hSavedPos.x = 100;
-			}
-		}
-	}
-}
-
 void Sprite::checkSprite() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
@@ -472,7 +367,7 @@ void Sprite::checkSprite() {
 									objBounds.right + CLEAR_DIST_X;
 							}
 
-							walkPos.x += people[AL]._imageFrame->_frame.w / 2;
+							walkPos.x += people[PLAYER]._imageFrame->_frame.w / 2;
 							people._walkDest = walkPos;
 							people._walkTo.push(walkPos);
 							people.setWalking();
@@ -1400,7 +1295,7 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 				scene._goToScene = 100;
 			}
 
-			people[AL]._position = Point32(0, 0);
+			people[PLAYER]._position = Point32(0, 0);
 			break;
 		}
 	} else if (name.hasPrefix("!")) {

@@ -71,9 +71,20 @@ enum TattooSequences {
 	LISTEN_UPLEFT	= 27
 };
 
+class TattooPerson: public Person {
+public:
+	TattooPerson() : Person() {}
+	virtual ~TattooPerson() {}
+
+	/**
+	 * This adjusts the sprites position, as well as it's animation sequence:
+	 */
+	virtual void adjustSprite();
+};
+
 class TattooPeople : public People {
 public:
-	TattooPeople(SherlockEngine *vm) : People(vm) {}
+	TattooPeople(SherlockEngine *vm);
 	virtual ~TattooPeople() {}
 
 	/**

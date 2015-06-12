@@ -167,13 +167,13 @@ void Talk::talkTo(const Common::String &filename) {
 	// Turn on the Exit option
 	ui._endKeyActive = true;
 
-	if (people[AL]._walkCount || people._walkTo.size() > 0) {
+	if (people[PLAYER]._walkCount || people._walkTo.size() > 0) {
 		// Only interrupt if an action if trying to do an action, and not just
 		// if the player is walking around the scene
 		if (people._allowWalkAbort)
 			abortFlag = true;
 
-		people.gotoStand(people._player);
+		people.gotoStand(people[PLAYER]);
 	}
 
 	if (_talkToAbort)

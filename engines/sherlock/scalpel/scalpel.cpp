@@ -961,7 +961,7 @@ void ScalpelEngine::startScene() {
 }
 
 void ScalpelEngine::eraseMirror12() {
-	Common::Point pt((*_people)[AL]._position.x / FIXED_INT_MULTIPLIER, (*_people)[AL]._position.y / FIXED_INT_MULTIPLIER);
+	Common::Point pt((*_people)[PLAYER]._position.x / FIXED_INT_MULTIPLIER, (*_people)[PLAYER]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then restore background from the secondary back buffer
 	if (Common::Rect(70, 100, 200, 200).contains(pt)) {
@@ -972,13 +972,13 @@ void ScalpelEngine::eraseMirror12() {
 
 void ScalpelEngine::doMirror12() {
 	People &people = *_people;
-	Person &player = people._player;
+	Person &player = people[PLAYER];
 
-	Common::Point pt((*_people)[AL]._position.x / FIXED_INT_MULTIPLIER, (*_people)[AL]._position.y / FIXED_INT_MULTIPLIER);
+	Common::Point pt((*_people)[PLAYER]._position.x / FIXED_INT_MULTIPLIER, (*_people)[PLAYER]._position.y / FIXED_INT_MULTIPLIER);
 	int frameNum = player._walkSequences[player._sequenceNumber][player._frameNumber] +
 		player._walkSequences[player._sequenceNumber][0] - 2;
 
-	switch ((*_people)[AL]._sequenceNumber) {
+	switch ((*_people)[PLAYER]._sequenceNumber) {
 	case WALK_DOWN:
 		frameNum -= 7;
 		break;
@@ -1021,12 +1021,12 @@ void ScalpelEngine::doMirror12() {
 
 	if (Common::Rect(80, 100, 145, 138).contains(pt)) {
 		// Get the frame of Sherlock to draw
-		ImageFrame &imageFrame = (*people[AL]._images)[frameNum];
+		ImageFrame &imageFrame = (*people[PLAYER]._images)[frameNum];
 
 		// Draw the mirror image of Holmes
-		bool flipped = people[AL]._sequenceNumber == WALK_LEFT || people[AL]._sequenceNumber == STOP_LEFT
-			|| people[AL]._sequenceNumber == WALK_UPRIGHT || people[AL]._sequenceNumber == STOP_UPRIGHT
-			|| people[AL]._sequenceNumber == WALK_DOWNLEFT || people[AL]._sequenceNumber == STOP_DOWNLEFT;
+		bool flipped = people[PLAYER]._sequenceNumber == WALK_LEFT || people[PLAYER]._sequenceNumber == STOP_LEFT
+			|| people[PLAYER]._sequenceNumber == WALK_UPRIGHT || people[PLAYER]._sequenceNumber == STOP_UPRIGHT
+			|| people[PLAYER]._sequenceNumber == WALK_DOWNLEFT || people[PLAYER]._sequenceNumber == STOP_DOWNLEFT;
 		_screen->_backBuffer1.transBlitFrom(imageFrame, pt + Common::Point(38, -imageFrame._frame.h - 25), flipped);
 
 		// Redraw the mirror borders to prevent the drawn image of Holmes from appearing outside of the mirror
@@ -1046,7 +1046,7 @@ void ScalpelEngine::doMirror12() {
 }
 
 void ScalpelEngine::flushMirror12() {
-	Common::Point pt((*_people)[AL]._position.x / FIXED_INT_MULTIPLIER, (*_people)[AL]._position.y / FIXED_INT_MULTIPLIER);
+	Common::Point pt((*_people)[PLAYER]._position.x / FIXED_INT_MULTIPLIER, (*_people)[PLAYER]._position.y / FIXED_INT_MULTIPLIER);
 
 	// If player is in range of the mirror, then draw the entire mirror area to the screen
 	if (Common::Rect(70, 100, 200, 200).contains(pt))

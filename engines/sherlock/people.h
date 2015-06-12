@@ -32,9 +32,6 @@ namespace Sherlock {
 
 enum PeopleId {
 	PLAYER			= 0,
-	AL				= 0,
-	PEG				= 1,
-	MAX_CHARACTERS		= 6,
 	MAX_NPC			= 5,
 	MAX_NPC_PATH	= 200
 };
@@ -47,6 +44,7 @@ enum {
 #define NUM_IN_WALK_LIB 10
 extern const char *const WALK_LIB_NAMES[10];
 
+#define MAX_CHARACTERS (IS_SERRATED_SCALPEL ? 1 : 6)
 
 struct PersonData {
 	const char *_name;
@@ -81,6 +79,7 @@ public:
 	Common::String _walkVGSName;		// Name of walk library person is using
 public:
 	Person();
+	virtual ~Person() {}
 
 	/**
 	 * Clear the NPC related data
@@ -98,7 +97,7 @@ class SherlockEngine;
 class People {
 protected:
 	SherlockEngine *_vm;
-	Person _data[MAX_CHARACTERS];
+	Common::Array<Person *> _data;
 	int _oldWalkSequence;
 	int _srcZone, _destZone;
 
@@ -110,7 +109,6 @@ public:
 	Point32 _hSavedPos;
 	int _hSavedFacing;
 	Common::Queue<Common::Point> _walkTo;
-	Person &_player;
 	bool _holmesOn;
 	bool _portraitLoaded;
 	bool _portraitsOn;
@@ -129,14 +127,8 @@ public:
 	static People *init(SherlockEngine *vm);
 	virtual ~People();
 
-	Person &operator[](PeopleId id) {
-		assert(id < MAX_CHARACTERS);
-		return _data[id];
-	}
-	Person &operator[](int idx) {
-		assert(idx < MAX_CHARACTERS);
-		return _data[idx];
-	}
+	Person &operator[](PeopleId id) { return *_data[id]; }
+	Person &operator[](int idx) { return *_data[idx]; }
 
 	/**
 	 * Reset the player data

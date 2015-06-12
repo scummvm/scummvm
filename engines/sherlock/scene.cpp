@@ -239,8 +239,8 @@ void Scene::selectScene() {
 		_tempFadeStyle = 0;
 	}
 
-	people._walkDest = Common::Point(people[AL]._position.x / FIXED_INT_MULTIPLIER,
-		people[AL]._position.y / FIXED_INT_MULTIPLIER);
+	people._walkDest = Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER,
+		people[PLAYER]._position.y / FIXED_INT_MULTIPLIER);
 
 	_restoreFlag = true;
 	events.clearEvents();
@@ -1065,7 +1065,7 @@ void Scene::transitionToScene() {
 		Common::Point pt = c._goto;
 
 		c._goto = Common::Point(-1, -1);
-		people[AL]._position = Common::Point(0, 0);
+		people[PLAYER]._position = Common::Point(0, 0);
 
 		startCAnim(cAnimNum, 1);
 		c._goto = pt;
@@ -1218,7 +1218,7 @@ void Scene::setNPCPath(int npc) {
 
 void Scene::checkBgShapes() {
 	People &people = *_vm->_people;
-	Person &holmes = people._player;
+	Person &holmes = people[PLAYER];
 	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
 
 	// Iterate through the shapes
