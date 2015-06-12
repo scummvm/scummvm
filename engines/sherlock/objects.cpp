@@ -695,11 +695,11 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
-	//warning("object %s, defCmd %d", _name.c_str(), _defaultCommand);
+	//warning("object %s, aMove %d", _name.c_str(), _aClose._cAnimNum);
 }
 
 void Object::load3DO(Common::SeekableReadStream &s) {
-	int32 streamPos = s.pos();
+	int32 streamStartPos = s.pos();
 	char buffer[41];
 
 	_examine.clear();
@@ -709,6 +709,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 
 	// on 3DO all of this data is reordered!!!
 	// it seems that possibly the 3DO compiler reordered the global struct
+	// 3DO size for 1 object is 588 bytes
 	s.skip(4);
 	_sequenceOffset = s.readUint16LE(); // weird that this seems to be LE
 	s.seek(10, SEEK_CUR);
@@ -750,22 +751,21 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_descOffset = s.readUint16BE();
 	_seqSize = s.readUint16BE();
 
-	s.skip(446); // Unknown
+	s.skip(288); // Unknown
+	// 158 bytes
+	_aOpen.load(s); // 2 + 12*4 bytes = 50 bytes
+	s.skip(2); // Filler
+	s.skip(2); // Boundary filler
+	_aClose.load(s);
+	s.skip(2); // Filler
+	_aMove.load(s);
+	s.skip(2); // Filler
 
 	// missing:
-	// _aOpen.load(s);
-	// _aClose.load(s);
-	//  s.skip(1);
-	//  _aMove.load(s);
-	//  s.skip(8);
 	// for (int idx = 0; idx < 4; ++idx)
 	//  _use[idx].load(s, false);
 
 #if 0
-	s.skip(1);
-	_aMove.load(s);
-	s.skip(8);
-
 	for (int idx = 0; idx < 4; ++idx)
 		_use[idx].load(s, false);
 #endif
@@ -809,6 +809,8 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	//warning("object %s, offset %d", _name.c_str(), streamPos);
 	//warning("object %s, lookPosX %d, lookPosY %d", _name.c_str(), _lookPosition.x, _lookPosition.y);
 	//warning("object %s, defCmd %d", _name.c_str(), _defaultCommand);
+	int32 dataSize = s.pos() - streamStartPos;
+	assert(dataSize == 588);
 }
 
 void Object::toggleHidden() {
