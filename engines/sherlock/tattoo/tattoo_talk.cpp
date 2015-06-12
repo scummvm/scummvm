@@ -43,7 +43,7 @@ const byte TATTOO_OPCODES[] = {
 	0,	// OP_REMOVE_PORTRAIT
 	0,	// OP_CLEAR_WINDOW
 	176,	// OP_ADJUST_OBJ_SEQUENCE
-	177,	// OP_WALK_TO_COORDS
+	177,	// OP_WALK_HOlMES_TO_COORDS
 	178,	// OP_PAUSE_WITHOUT_CONTROL
 	179,	// OP_BANISH_WINDOW
 	0,		// OP_SUMMON_WINDOW
@@ -124,7 +124,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&TattooTalk::cmdMouseOnOff,
 		(OpcodeMethod)&TattooTalk::cmdSetWalkControl,
 		(OpcodeMethod)&TattooTalk::cmdAdjustObjectSequence,
-		(OpcodeMethod)&TattooTalk::cmdWalkToCoords,
+		(OpcodeMethod)&TattooTalk::cmdWalkHolmesToCoords,
 		(OpcodeMethod)&TattooTalk::cmdPauseWithoutControl,
 		(OpcodeMethod)&TattooTalk::cmdBanishWindow,
 		(OpcodeMethod)&TattooTalk::cmdSetTalkSequence,
@@ -231,6 +231,24 @@ OpcodeReturn TattooTalk::cmdMouseOnOff(const byte *&str) {
 		events.showCursor();
 	else
 		events.hideCursor();
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdWalkHolmesToCoords(const byte *&str) {
+	People &people = *_vm->_people;
+	++str;
+
+	int x = (str[0] - 1) * 256 + str[1] - 1;
+	if (x > 16384)
+		x = -1 * (x - 16384);
+	// TODO: The RT walkToCoords call has an extra parameter, person, which is 0 (Holmes) here
+	warning("TODO: cmdWalkHolmesToCoords - call RT walkToCoords variant");
+	people.walkToCoords(Point32(x * FIXED_INT_MULTIPLIER,
+		((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER), DIRECTION_CONVERSION[str[4] - 1]);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	str += 4;
 	return RET_SUCCESS;
 }
 

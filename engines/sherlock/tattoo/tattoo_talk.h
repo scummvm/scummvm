@@ -40,6 +40,7 @@ private:
 	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdMouseOnOff(const byte *&str);
 	OpcodeReturn cmdGotoScene(const byte *&str);
+	OpcodeReturn cmdWalkHolmesToCoords(const byte *&str);
 	OpcodeReturn cmdNextSong(const byte *&str);
 	OpcodeReturn cmdPassword(const byte *&str);
 	OpcodeReturn cmdPlaySong(const byte *&str);

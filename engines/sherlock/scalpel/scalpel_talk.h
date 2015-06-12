@@ -51,6 +51,7 @@ private:
 	OpcodeReturn cmdSfxCommand(const byte *&str);
 	OpcodeReturn cmdSummonWindow(const byte *&str);
 	OpcodeReturn cmdCarriageReturn(const byte *&str);
+	OpcodeReturn cmdWalkToCoords(const byte *&str);
 protected:
 	/**
 	 * Display the talk interface window

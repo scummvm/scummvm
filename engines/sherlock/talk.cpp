@@ -1455,19 +1455,6 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }
 
-OpcodeReturn Talk::cmdWalkToCoords(const byte *&str) {
-	People &people = *_vm->_people;
-	++str;
-
-	people.walkToCoords(Point32(((str[0] - 1) * 256 + str[1] - 1) * FIXED_INT_MULTIPLIER,
-		str[2] * FIXED_INT_MULTIPLIER), str[3] - 1);
-	if (_talkToAbort)
-		return RET_EXIT;
-
-	str += 3;
-	return RET_SUCCESS;
-}
-
 void Talk::talkWait(const byte *&str) {
 	if (!_pauseFlag && _charCount < 160)
 		_charCount = 160;

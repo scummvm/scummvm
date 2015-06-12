@@ -252,7 +252,6 @@ protected:
 	OpcodeReturn cmdStealthModeDeactivate(const byte *&str);
 	OpcodeReturn cmdToggleObject(const byte *&str);
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
-	OpcodeReturn cmdWalkToCoords(const byte *&str);
 protected:
 	/**
 	 * Display the talk interface window
