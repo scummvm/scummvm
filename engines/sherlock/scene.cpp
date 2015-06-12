@@ -227,7 +227,8 @@ void Scene::selectScene() {
 
 	// Load the scene
 	Common::String sceneFile = Common::String::format("res%02d", _goToScene);
-	_rrmName = Common::String::format("res%02d.rrm", _goToScene);
+	// _rrmName gets set during loadScene()
+	// _rrmName is for ScalpelScene::startCAnim
 	_currentScene = _goToScene;
 	_goToScene = -1;
 
@@ -308,10 +309,12 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// PC version
-		Common::String rrmFile = filename + ".rrm";
-		flag = _vm->_res->exists(rrmFile);
+		Common::String roomFilename = filename + ".rrm";
+		_rrmName = roomFilename;
+
+		flag = _vm->_res->exists(roomFilename);
 		if (flag) {
-			Common::SeekableReadStream *rrmStream = _vm->_res->load(rrmFile);
+			Common::SeekableReadStream *rrmStream = _vm->_res->load(roomFilename);
 
 			rrmStream->seek(39);
 			if (IS_SERRATED_SCALPEL) {
@@ -576,12 +579,12 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	} else {
 		// === 3DO version ===
-		Common::String roomFile = "rooms/" + filename + ".rrm";
-		flag = _vm->_res->exists(roomFile);
+		Common::String roomFilename = "rooms/" + filename + ".rrm";
+		flag = _vm->_res->exists(roomFilename);
 		if (!flag)
 			error("loadScene: 3DO room data file not found");
 
-		Common::SeekableReadStream *roomStream = _vm->_res->load(roomFile);
+		Common::SeekableReadStream *roomStream = _vm->_res->load(roomFilename);
 
 		// Read 3DO header
 		roomStream->skip(4); // UINT32: offset graphic data?
