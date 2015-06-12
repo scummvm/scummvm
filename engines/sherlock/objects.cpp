@@ -695,9 +695,11 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
+	//warning("object %s, lookPosX %d, lookPosY %d", _name.c_str(), _lookPosition.x, _lookPosition.y);
 }
 
 void Object::load3DO(Common::SeekableReadStream &s) {
+	int32 streamPos = s.pos();
 	char buffer[41];
 
 	_examine.clear();
@@ -712,6 +714,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 
 	_walkCount = 0; // ??? s.readByte();
 	_allow = 0; // ??? s.readByte();
+	// Offset 16
 	_frameNumber = s.readSint16BE();
 	_sequenceNumber = s.readSint16BE();
 	_position.x = s.readSint16BE();
@@ -729,6 +732,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
 	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
 
+	// Offset 42
 #if 0
 	_pickup = s.readByte();
 	_defaultCommand = s.readByte();
@@ -759,8 +763,9 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 
 	s.skip(13); // Unknown
 	_maxFrames = s.readByte();
-	s.skip(2); // Unknown
-
+	// offset 56
+	_lookPosition.x = s.readUint16BE() * FIXED_INT_MULTIPLIER / 100;
+	// offset 58
 	_descOffset = s.readUint16BE();
 	_seqCounter2 = 0; // ???
 	_seqSize = s.readUint16BE();
@@ -776,19 +781,27 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 		_use[idx].load(s, false);
 #endif
 
+	// offset 508
 	// 3DO: name is at the end
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
 	s.read(buffer, 41);
 	_description = Common::String(buffer);
 
-	s.skip(4); // Unknown
+	s.skip(4);
 
 	// Probably those here?!?!
 	_misc = s.readByte();
 	_flags = s.readByte();
 
-	s.skip(21); // Unknown
+	s.skip(3);
+	_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
+	_lookFacing = s.readByte();
+
+	s.skip(16); // Unknown
+
+warning("object %s, offset %d", _name.c_str(), streamPos);
+warning("object %s, lookPosX %d, lookPosY %d", _name.c_str(), _lookPosition.x, _lookPosition.y);
 }
 
 void Object::toggleHidden() {
