@@ -85,14 +85,14 @@ void ScalpelPerson::adjustSprite() {
 	if (_frameNumber >= (int)_walkSequences[_sequenceNumber]._sequences.size() ||
 			_walkSequences[_sequenceNumber][_frameNumber] == 0) {
 		switch (_sequenceNumber) {
-		case Scalpel::STOP_UP:
-		case Scalpel::STOP_DOWN:
-		case Scalpel::STOP_LEFT:
-		case Scalpel::STOP_RIGHT:
-		case Scalpel::STOP_UPRIGHT:
-		case Scalpel::STOP_UPLEFT:
-		case Scalpel::STOP_DOWNRIGHT:
-		case Scalpel::STOP_DOWNLEFT:
+		case STOP_UP:
+		case STOP_DOWN:
+		case STOP_LEFT:
+		case STOP_RIGHT:
+		case STOP_UPRIGHT:
+		case STOP_UPLEFT:
+		case STOP_DOWNRIGHT:
+		case STOP_DOWNLEFT:
 			// We're in a stop sequence, so reset back to the last frame, so
 			// the character is shown as standing still
 			--_frameNumber;
