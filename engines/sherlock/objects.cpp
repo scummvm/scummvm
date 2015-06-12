@@ -695,7 +695,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
-	//warning("object %s, lookPosX %d, lookPosY %d", _name.c_str(), _lookPosition.x, _lookPosition.y);
+	//warning("object %s, defCmd %d", _name.c_str(), _defaultCommand);
 }
 
 void Object::load3DO(Common::SeekableReadStream &s) {
@@ -708,12 +708,11 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_imageFrame = nullptr;
 
 	// on 3DO all of this data is reordered!!!
+	// it seems that possibly the 3DO compiler reordered the global struct
 	s.skip(4);
 	_sequenceOffset = s.readUint16LE(); // weird that this seems to be LE
 	s.seek(10, SEEK_CUR);
 
-	_walkCount = 0; // ??? s.readByte();
-	_allow = 0; // ??? s.readByte();
 	// Offset 16
 	_frameNumber = s.readSint16BE();
 	_sequenceNumber = s.readSint16BE();
@@ -733,44 +732,34 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
 
 	// Offset 42
-#if 0
-	_pickup = s.readByte();
-	_defaultCommand = s.readByte();
+	warning("pos %d", s.pos());
+
+	// Unverified
 	_lookFlag = s.readSint16BE();
 	_pickupFlag = s.readSint16BE();
 	_requiredFlag = s.readSint16BE();
 	_noShapeSize.x = s.readUint16BE();
 	_noShapeSize.y = s.readUint16BE();
 	_status = s.readUint16BE();
+	// Unverified END
+
 	_maxFrames = s.readUint16BE();
-
-	_aOpen.load(s);
-
-	_aType = (AType)s.readByte();
-	_lookFrames = s.readByte();
-	_seqCounter = s.readByte();
-	_lookPosition.x = s.readUint16BE() * FIXED_INT_MULTIPLIER / 100;
-	_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
-	_lookFacing = s.readByte();
-	_lookcAnim = s.readByte();
-
-	_aClose.load(s);
-
-	_seqStack = s.readByte();
-	_seqTo = s.readByte();
-#endif
-	warning("pos %d", s.pos());
-
-	s.skip(13); // Unknown
-	_maxFrames = s.readByte();
 	// offset 56
 	_lookPosition.x = s.readUint16BE() * FIXED_INT_MULTIPLIER / 100;
 	// offset 58
 	_descOffset = s.readUint16BE();
-	_seqCounter2 = 0; // ???
 	_seqSize = s.readUint16BE();
 
 	s.skip(446); // Unknown
+
+	// missing:
+	// _aOpen.load(s);
+	// _aClose.load(s);
+	//  s.skip(1);
+	//  _aMove.load(s);
+	//  s.skip(8);
+	// for (int idx = 0; idx < 4; ++idx)
+	//  _use[idx].load(s, false);
 
 #if 0
 	s.skip(1);
@@ -788,20 +777,38 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	s.read(buffer, 41);
 	_description = Common::String(buffer);
 
-	s.skip(4);
+	// Unverified
+	_walkCount = s.readByte();
+	_allow = s.readByte();
+	_pickup = s.readByte();
+	_defaultCommand = s.readByte();
+	// Unverified END
 
 	// Probably those here?!?!
 	_misc = s.readByte();
 	_flags = s.readByte();
 
-	s.skip(3);
+	// Unverified
+	_aType = (AType)s.readByte();
+	_lookFrames = s.readByte();
+	_seqCounter = s.readByte();
+	// Unverified END
+
 	_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
 	_lookFacing = s.readByte();
 
-	s.skip(16); // Unknown
+	// Unverified
+	_lookcAnim = s.readByte();
+	_seqStack = s.readByte();
+	_seqTo = s.readByte();
+	_seqCounter2 = s.readByte();
+	// Unverified END
 
-warning("object %s, offset %d", _name.c_str(), streamPos);
-warning("object %s, lookPosX %d, lookPosY %d", _name.c_str(), _lookPosition.x, _lookPosition.y);
+	s.skip(12); // Unknown
+
+	//warning("object %s, offset %d", _name.c_str(), streamPos);
+	//warning("object %s, lookPosX %d, lookPosY %d", _name.c_str(), _lookPosition.x, _lookPosition.y);
+	//warning("object %s, defCmd %d", _name.c_str(), _defaultCommand);
 }
 
 void Object::toggleHidden() {
