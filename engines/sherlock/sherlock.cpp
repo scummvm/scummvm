@@ -107,6 +107,12 @@ void SherlockEngine::initialize() {
 
 	// Load game settings
 	loadConfig();
+
+	if (getPlatform() == Common::kPlatform3DO) {
+		// Disable portraits on 3DO
+		// 3DO does not include portrait data
+		_people->_portraitsOn = false;
+	}
 }
 
 Common::Error SherlockEngine::run() {
