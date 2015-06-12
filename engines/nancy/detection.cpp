@@ -108,6 +108,22 @@ static const NancyGameDescription gameDescriptions[] = {
 	},
 	{ // MD5 by waltervn
 		{
+			"nancy3", 0,
+			{
+				{"data1.hdr", 0, "44906f3d2242f73f16feb8eb6a5161cb", 207327},
+				{"data1.cab", 0, "e258cc871e5de5ae004d03c4e31431c7", 1555916},
+				{"data2.cab", 0, "364dfd25677026da505f1fa6edd5571f", 137373135},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{ // MD5 by waltervn
+		{
 			"nancy4", 0,
 			{
 				{"ciftree.dat", 0, "e9d45f7db453b0d8f37d202fc979537c", 8742289},
@@ -122,9 +138,41 @@ static const NancyGameDescription gameDescriptions[] = {
 	},
 	{ // MD5 by waltervn
 		{
+			"nancy4", 0,
+			{
+				{"data1.hdr", 0, "fa4e7a1c411053557169a7731f287012", 263443},
+				{"data1.cab", 0, "8f689f92fcca443d6a03faa5de7e2f1c", 1568756},
+				{"data2.cab", 0, "5525aa428041f3f1421a6fb5d1b8dba1", 140518758},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{ // MD5 by waltervn
+		{
 			"nancy5", 0,
 			{
 				{"ciftree.dat", 0, "21fa81f322595c3100d8d58d100852d5", 8187692},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		kGameTypeNancy1
+	},
+	{ // MD5 by waltervn
+		{
+			"nancy5", 0,
+			{
+				{"data1.hdr", 0, "261105fba2a1226eedb090c2ce79fd35", 284091},
+				{"data1.cab", 0, "7d27bb947ef7305831f1faaf1512a598", 1446301},
+				{"data2.cab", 0, "00719c86cab733c1094b27079ce030f3", 145857935},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
