@@ -907,6 +907,9 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 			push_back(imageFrame);
 		}
 	}
+
+	delete[] bitsTablePtr;
+	delete[] widthTablePtr;
 }
 
 } // End of namespace Sherlock
