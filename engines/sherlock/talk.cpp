@@ -26,6 +26,7 @@
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_talk.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 
 namespace Sherlock {
@@ -966,7 +967,7 @@ void Talk::doScript(const Common::String &script) {
 
 	if (IS_ROSE_TATTOO) {
 		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-			Person &p = people[idx];
+			Tattoo::TattooPerson &p = (*(Tattoo::TattooPeople *)_vm->_people)[idx];
 			p._savedNpcSequence = p._sequenceNumber;
 			p._savedNpcFrame = p._frameNumber;
 		}

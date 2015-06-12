@@ -68,6 +68,9 @@ public:
 	ScalpelPeople(SherlockEngine *vm);
 	virtual ~ScalpelPeople() {}
 
+	ScalpelPerson &operator[](PeopleId id) { return *(ScalpelPerson  *)_data[id]; }
+	ScalpelPerson  &operator[](int idx) { return *(ScalpelPerson  *)_data[idx]; }
+
 	/**
 	 * Setup the data for an animating speaker portrait at the top of the screen
 	 */

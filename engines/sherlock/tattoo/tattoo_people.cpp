@@ -31,6 +31,20 @@ namespace Tattoo {
 
 #define FACING_PLAYER 16
 
+TattooPerson::TattooPerson() : Person() {
+	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
+	_tempX = _tempScaleVal = 0;
+	_npcIndex = 0;
+	_npcStack = 0;
+	_npcMoved = false;
+	_npcFacing = -1;
+	_resetNPCPath = true;
+	_savedNpcSequence = 0;
+	_savedNpcFrame = 0;
+	_updateNPCPath = false;
+	_npcPause = false;
+}
+
 void TattooPerson::adjustSprite() {
 	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
@@ -104,7 +118,7 @@ void TattooPerson::adjustSprite() {
 }
 
 void TattooPerson::gotoStand() {
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 
 	// If the misc field is set, then we're running a special talk sequence, so don't interrupt it.
 	if (_misc)
@@ -230,6 +244,16 @@ void TattooPerson::gotoStand() {
 
 void TattooPerson::setWalking() {
 	error("TODO: setWalking");
+}
+
+void TattooPerson::clearNPC() {
+	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
+	_npcIndex = _npcStack = 0;
+	_npcName = "";
+}
+
+void TattooPerson::updateNPC() {
+	// TODO
 }
 
 /*----------------------------------------------------------------*/
@@ -411,6 +435,33 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 			person.checkWalkGraphics();
 		}
 	}
+}
+
+
+int TattooPeople::findSpeaker(int speaker) {
+	int result = People::findSpeaker(speaker);
+	const char *portrait = _characters[speaker]._portrait;
+
+	// Fallback that Rose Tattoo uses if no speaker was found
+	if (result == -1) {
+		bool flag = _vm->readFlags(76);
+
+		if (_data[PLAYER]->_type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
+			return -1;
+
+		for (uint idx = 1; idx < _data.size(); ++idx) {
+			TattooPerson &p = (*this)[idx];
+
+			if (p._type == CHARACTER) {
+				Common::String name(p._name.c_str(), p._name.c_str() + 4);
+
+				if (name.equalsIgnoreCase(portrait) && p._npcName[4] >= '0' && p._npcName[4] <= '9')
+					return idx + 256;
+			}
+		}
+	}
+
+	return -1;
 }
 
 void TattooPeople::synchronize(Serializer &s) {

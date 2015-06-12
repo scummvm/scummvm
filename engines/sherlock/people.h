@@ -63,21 +63,6 @@ public:
 	bool _walkLoaded;
 	Common::String _portrait;
 
-	// NPC related fields
-	int _npcIndex;
-	int _npcStack;
-	bool _npcPause;
-	byte _npcPath[MAX_NPC_PATH];
-	Common::String _npcName;
-	bool _npcMoved;
-	int _npcFacing;
-	bool _resetNPCPath;
-	int _savedNpcSequence;
-	int _savedNpcFrame;
-	int _tempX;
-	int _tempScaleVal;
-	bool _updateNPCPath;
-
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using
 public:
@@ -90,16 +75,6 @@ public:
 	 * of steps to walk to get to that position.
 	 */
 	void goAllTheWay();
-
-	/**
-	 * Clear the NPC related data
-	 */
-	void clearNPC();
-
-	/**
-	 * Update the NPC
-	 */
-	void updateNPC();
 };
 
 class SherlockEngine;
@@ -158,14 +133,14 @@ public:
 	void walkToCoords(const Point32 &destPos, int destDir);
 
 	/**
-	 * Finds the scene background object corresponding to a specified speaker
-	 */
-	int findSpeaker(int speaker);
-
-	/**
 	 * Turn off any currently active portraits, and removes them from being drawn
 	 */
 	void clearTalking();
+
+	/**
+	* Finds the scene background object corresponding to a specified speaker
+	*/
+	virtual int findSpeaker(int speaker);
 
 	/**
 	 * Synchronize the data for a savegame

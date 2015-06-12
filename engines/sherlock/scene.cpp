@@ -1203,27 +1203,6 @@ void Scene::synchronize(Serializer &s) {
 	}
 }
 
-void Scene::setNPCPath(int npc) {
-	People &people = *_vm->_people;
-	Talk &talk = *_vm->_talk;
-	
-	people[npc].clearNPC();
-	people[npc]._name = Common::String::format("WATS%.2dA", _currentScene);
-
-	// If we're in the middle of a script that will continue once the scene is loaded,
-	// return without calling the path script
-	if (talk._scriptMoreFlag == 1 || talk._scriptMoreFlag == 3)
-		return;
-
-	// Turn off all the NPCs, since the talk script will turn them back on as needed
-	for (uint idx = 0; idx < MAX_NPC; ++idx)
-		people[idx + 1]._type = INVALID;
-
-	// Call the path script for the scene
-	Common::String pathFile = Common::String::format("PATH%.2dA", _currentScene);
-	talk.talkTo(pathFile);
-}
-
 void Scene::checkBgShapes() {
 	People &people = *_vm->_people;
 	Person &holmes = people[PLAYER];

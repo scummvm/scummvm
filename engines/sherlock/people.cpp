@@ -64,30 +64,10 @@ const char *const WALK_LIB_NAMES[NUM_IN_WALK_LIB] = {
 
 /*----------------------------------------------------------------*/
 
-Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _npcPause(false)  {
-	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
-	_tempX = _tempScaleVal = 0;
-	_npcIndex = 0;
-	_npcStack = 0;
-	_npcMoved = false;
-	_npcFacing = -1;
-	_resetNPCPath = true;
-	_savedNpcSequence = 0;
-	_savedNpcFrame = 0;
-	_updateNPCPath = false;
-	_npcPause = false;
+Person::Person() : Sprite() {
+	_walkLoaded = false;
 	_oldWalkSequence = -1;
 	_srcZone = _destZone = 0;
-}
-
-void Person::clearNPC() {
-	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
-	_npcIndex = _npcStack = 0;
-	_npcName = "";
-}
-
-void Person::updateNPC() {
-	// TODO
 }
 
 void Person::goAllTheWay() {
@@ -415,23 +395,6 @@ int People::findSpeaker(int speaker) {
 			if (name.equalsIgnoreCase(portrait)
 				&& obj._name[4] >= '0' && obj._name[4] <= '9')
 				return idx;
-		}
-	}
-
-	// Fallback in Rose Tattoo
-	if (IS_ROSE_TATTOO) {
-		bool flag = _vm->readFlags(76);
-		
-		if (_data[PLAYER]->_type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
-			return -1;
-
-		for (uint idx = 1; idx < _data.size(); ++idx) {
-			if (_data[idx]->_type == CHARACTER) {
-				Common::String name(_data[idx]->_name.c_str(), _data[idx]->_name.c_str() + 4);
-
-				if (name.equalsIgnoreCase(portrait) && _data[idx]->_npcName[4] >= '0' && _data[idx]->_npcName[4] <= '9')
-					return idx + 256;
-			}
 		}
 	}
 

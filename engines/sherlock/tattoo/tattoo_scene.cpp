@@ -21,8 +21,9 @@
  */
 
 #include "sherlock/tattoo/tattoo_scene.h"
-#include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/events.h"
 #include "sherlock/people.h"
 
@@ -32,11 +33,11 @@ namespace Tattoo {
 
 struct ShapeEntry {
 	Object *_shape;
-	Person *_person;
+	TattooPerson *_person;
 	bool _isAnimation;
 	int _yp;
 
-	ShapeEntry(Person *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false) {}
+	ShapeEntry(TattooPerson *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false) {}
 	ShapeEntry(Object *shape, int yp) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false) {}
 	ShapeEntry(int yp) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true) {}
 	int personNum;
@@ -105,7 +106,7 @@ bool TattooScene::loadScene(const Common::String &filename) {
 }
 
 void TattooScene::drawAllShapes() {
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	ShapeList shapeList;
@@ -182,7 +183,7 @@ void TattooScene::drawAllShapes() {
 				(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 		} else {
 			// Drawing person
-			Person &p = *se._person;
+			TattooPerson &p = *se._person;
 
 			p._tempX = p._position.x / FIXED_INT_MULTIPLIER;
 			p._tempScaleVal = getScaleVal(p._position);
@@ -418,7 +419,7 @@ void TattooScene::doBgAnimEraseBackground() {
 void TattooScene::doBgAnim() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *((TattooUserInterface *)_vm->_ui);
@@ -528,7 +529,7 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 }
 
 void TattooScene::updateBackground() {
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
@@ -573,7 +574,7 @@ void TattooScene::updateBackground() {
 	screen._flushScreen = true;
 
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-		Person &p = people[idx];
+		TattooPerson &p = people[idx];
 
 		if (p._type != INVALID) {
 			if (_goToScene == -1 || _cAnim.size() == 0) {
@@ -636,12 +637,12 @@ void TattooScene::updateBackground() {
 }
 
 void TattooScene::doBgAnimDrawSprites() {
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-		Person &person = people[idx];
+		TattooPerson &person = people[idx];
 
 		if (person._type != INVALID) {
 			if (_goToScene == -1 || _cAnim.size() == 0) {
@@ -804,6 +805,27 @@ void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 
 int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	error("TODO: startCAnim");
+}
+
+void TattooScene::setNPCPath(int npc) {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Talk &talk = *_vm->_talk;
+
+	people[npc].clearNPC();
+	people[npc]._name = Common::String::format("WATS%.2dA", _currentScene);
+
+	// If we're in the middle of a script that will continue once the scene is loaded,
+	// return without calling the path script
+	if (talk._scriptMoreFlag == 1 || talk._scriptMoreFlag == 3)
+		return;
+
+	// Turn off all the NPCs, since the talk script will turn them back on as needed
+	for (uint idx = 0; idx < MAX_NPC; ++idx)
+		people[idx + 1]._type = INVALID;
+
+	// Call the path script for the scene
+	Common::String pathFile = Common::String::format("PATH%.2dA", _currentScene);
+	talk.talkTo(pathFile);
 }
 
 } // End of namespace Tattoo

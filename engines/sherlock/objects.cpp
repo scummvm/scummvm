@@ -1187,21 +1187,6 @@ void Object::setObjTalkSequence(int seq) {
 
 	assert(_type != CHARACTER);
 
-	// If the object passed in is an NPC, set it's sequence through the sequence number rather
-	// than adjusting the frame number to a specific sub-sequence
-	/*	
-		s = (SpriteType *)bg;
-		if (s->seqto)
-		{
-			// reset to previous value
-			s->WalkSeqs[s->fs]->Seq[s->fn] = s->seqto;
-			s->seqto = 0;
-		}
-		s->fs = s->GotoSeq;
-		s->fn = 0;
-		CheckWalkGraphics(s);
-	*/
-	
 	talk.pushTalkSequence(this);
 	int talkSeqNum = seq;
 

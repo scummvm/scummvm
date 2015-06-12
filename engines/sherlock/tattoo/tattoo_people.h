@@ -75,8 +75,32 @@ class TattooPerson: public Person {
 private:
 	bool checkCollision() const;
 public:
-	TattooPerson() : Person() {}
+	int _npcIndex;
+	int _npcStack;
+	bool _npcPause;
+	byte _npcPath[MAX_NPC_PATH];
+	Common::String _npcName;
+	bool _npcMoved;
+	int _npcFacing;
+	bool _resetNPCPath;
+	int _savedNpcSequence;
+	int _savedNpcFrame;
+	int _tempX;
+	int _tempScaleVal;
+	bool _updateNPCPath;
+public:
+	TattooPerson();
 	virtual ~TattooPerson() {}
+
+	/**
+	 * Clear the NPC related data
+	 */
+	void clearNPC();
+
+	/**
+	 * Update the NPC
+	 */
+	void updateNPC();
 
 	/**
 	 * This adjusts the sprites position, as well as it's animation sequence:
@@ -100,6 +124,9 @@ public:
 	TattooPeople(SherlockEngine *vm);
 	virtual ~TattooPeople() {}
 
+	TattooPerson &operator[](PeopleId id) { return *(TattooPerson *)_data[id]; }
+	TattooPerson &operator[](int idx) { return *(TattooPerson *)_data[idx]; }
+
 	/**
 	 * If the specified speaker is a background object, it will set it so that it uses 
 	 * the Listen Sequence (specified by the sequence number). If the current sequence 
@@ -110,6 +137,12 @@ public:
 	 * @param sequenceNum	Which listen sequence to use
 	 */
 	void setListenSequence(int speaker, int sequenceNum);
+
+
+	/**
+	 * Finds the scene background object corresponding to a specified speaker
+	 */
+	virtual int findSpeaker(int speaker);
 
 	/**
 	 * Synchronize the data for a savegame

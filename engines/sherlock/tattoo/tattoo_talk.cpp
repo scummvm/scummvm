@@ -254,7 +254,7 @@ OpcodeReturn TattooTalk::cmdWalkHolmesToCoords(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdGotoScene(const byte *&str) {
 	Map &map = *_vm->_map;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Scene &scene = *_vm->_scene;
 	scene._goToScene = str[1] - 1;
 
@@ -307,8 +307,8 @@ OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -325,8 +325,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -345,8 +345,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -366,8 +366,8 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opc
 
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
 	int npcNum = *++str - 1;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	person._misc = 0;
 
 	if (person._seqTo) {
@@ -384,7 +384,7 @@ OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) {
 	int npcNum = *++str;
 	++str;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Person &person = people[npcNum];
 
 	// Copy over the NPC examine text until we reach a stop marker, which is
@@ -404,8 +404,8 @@ OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 
 	person._description = "";
 	int len = *++str;
@@ -417,7 +417,7 @@ OpcodeReturn TattooTalk::cmdSetNPCInfoLine(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdSetNPCOff(const byte *&str) {
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	int npcNum = *++str;
 	people[npcNum]._type = REMOVE;
 
@@ -425,7 +425,7 @@ OpcodeReturn TattooTalk::cmdSetNPCOff(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) { 
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	int npcNum = *++str;
 	people[npcNum]._type = CHARACTER;
 
@@ -434,8 +434,8 @@ OpcodeReturn TattooTalk::cmdSetNPCOn(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -455,8 +455,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -475,8 +475,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -495,8 +495,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -516,7 +516,7 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 	int npcNum = *++str - 1;
 	++str;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Person &person = people[npcNum];
 	int32 posX = (str[0] - 1) * 256 + str[1] - 1;
 	if (posX > 16384)
@@ -557,8 +557,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) {
 	int npcNum = *++str;
-	People &people = *_vm->_people;
-	Person &person = people[npcNum];
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
 		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
@@ -578,7 +578,7 @@ OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) {
 	int npcNum = *++str;
 	int verbNum = *++str - 1;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Common::String &verb = people[npcNum]._use[verbNum]._verb;
 
 	for (int x = 0; x < 12; x++) {
@@ -604,7 +604,7 @@ OpcodeReturn TattooTalk::cmdSetNPCVerb(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetNPCVerbCAnimation(const byte *&str) {
 	int npcNum = *++str;
 	int verbNum = *++str - 1;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	UseType &useType = people[npcNum]._use[verbNum];
 
 	useType._cAnimNum = (str[1] - 1) & 127;
@@ -617,7 +617,7 @@ OpcodeReturn TattooTalk::cmdSetNPCVerbCAnimation(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetNPCVerbScript(const byte *&str) {
 	int npcNum = *++str;
 	int verbNum = *++str - 1;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	UseType &useType = people[npcNum]._use[verbNum];
 	Common::String &name = useType._names[0];
 	name.setChar('*', 0);
@@ -641,7 +641,7 @@ OpcodeReturn TattooTalk::cmdSetNPCVerbScript(const byte *&str) {
 OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) {
 	int npcNum = *++str;
 	int verbNum = *++str - 1;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Common::String &target = people[npcNum]._use[verbNum]._target;
 
 	for (int x = 0; x < 12; x++) {
@@ -664,7 +664,7 @@ OpcodeReturn TattooTalk::cmdSetNPCVerbTarget(const byte *&str) {
 
 OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 	int npcNum = *++str - 1;
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Person &person = people[npcNum];
 
 	// Build up walk library name for the given NPC

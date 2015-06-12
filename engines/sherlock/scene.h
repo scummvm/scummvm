@@ -283,13 +283,6 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
-
-	/**
-	 * Resets the NPC path information when entering a new scene.
-	 * @remarks		The default talk file for the given NPC is set to WATS##A, where ## is
-	 *		the scene number being entered
-	 */
-	void setNPCPath(int npc);
 public:
 	/**
 	 * Draw all objects and characters.

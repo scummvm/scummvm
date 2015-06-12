@@ -74,6 +74,13 @@ private:
 	 * Makes a greyscale translation table for each palette entry in the table
 	 */
 	void setupBGArea(const byte cMap[PALETTE_SIZE]);
+
+	/**
+	 * Resets the NPC path information when entering a new scene.
+	 * @remarks		The default talk file for the given NPC is set to WATS##A, where ## is
+	 *		the scene number being entered
+	 */
+	void setNPCPath(int npc);
 protected:
 	/**
 	 * Loads the data associated for a given scene. The room resource file's format is:
