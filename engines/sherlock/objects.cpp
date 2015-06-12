@@ -764,8 +764,8 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	s.skip(2); // Filler
 
 	// 158 bytes
-	_aOpen.load(s); // 2 + 12*4 bytes = 50 bytes
 	s.skip(2); // Filler
+	_aOpen.load(s); // 2 + 12*4 bytes = 50 bytes
 	s.skip(2); // Boundary filler
 	_aClose.load(s);
 	s.skip(2); // Filler
