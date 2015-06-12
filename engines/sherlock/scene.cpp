@@ -1052,10 +1052,18 @@ void Scene::transitionToScene() {
 	updateBackground();
 
 	// Actually do the transition
-	if (screen._fadeStyle)
-		screen.randomTransition();
-	else
+	if (screen._fadeStyle) {
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			// do pixel-transition for PC
+			screen.randomTransition();
+		} else {
+			// fade in for 3DO
+			screen.clear();
+			screen.fadeIntoScreen3DO(2);
+		}
+	} else {
 		screen.blitFrom(screen._backBuffer1);
+	}
 	screen.update();
 
 	// Start any initial animation for the scene

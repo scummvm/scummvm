@@ -64,6 +64,9 @@ void Fonts::writeString(Surface *surface, const Common::String &str,
 		const Common::Point &pt, int overrideColor) {
 	Common::Point charPos = pt;
 
+	if (!_font)
+		return;
+
 	for (const char *c = str.c_str(); *c; ++c) {
 		if (*c == ' ')
 			charPos.x += 5;
@@ -79,6 +82,9 @@ void Fonts::writeString(Surface *surface, const Common::String &str,
 int Fonts::stringWidth(const Common::String &str) {
 	int width = 0;
 
+	if (!_font)
+		return 0;
+
 	for (const char *c = str.c_str(); *c; ++c)
 		width += charWidth(*c);
 
@@ -87,6 +93,9 @@ int Fonts::stringWidth(const Common::String &str) {
 
 int Fonts::stringHeight(const Common::String &str) {
 	int height = 0;
+
+	if (!_font)
+		return 0;
 
 	for (const char *c = str.c_str(); *c; ++c)
 		height = MAX(height, charHeight(*c));

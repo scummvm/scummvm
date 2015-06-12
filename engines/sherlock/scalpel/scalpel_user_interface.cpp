@@ -390,6 +390,9 @@ void ScalpelUserInterface::depressButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
 
+	if (_vm->getPlatform() == Common::kPlatform3DO)
+		return; // don't do anything for 3DO atm
+
 	ImageFrame &frame = (*_controls)[num];
 	screen._backBuffer1.transBlitFrom(frame, pt);
 	screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
