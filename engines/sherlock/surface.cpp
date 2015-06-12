@@ -270,8 +270,9 @@ void Surface::free() {
 
 void Surface::setPixels(byte *pixels, int width, int height, Graphics::PixelFormat pixelFormat) {
 	_surface.format = pixelFormat;
-	_surface.w = _surface.pitch = width;
+	_surface.w = width;
 	_surface.h = height;
+	_surface.pitch = width * pixelFormat.bytesPerPixel;
 	_surface.setPixels(pixels);
 }
 
