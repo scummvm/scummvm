@@ -686,10 +686,8 @@ bool Scene::loadScene(const Common::String &filename) {
 		// === CANIM === read cAnim list
 		_cAnim.clear();
 		if (header3DO_numAnimations) {
-			int animSize = 65;
-
 			roomStream->seek(header3DO_cAnim_offset);
-			Common::SeekableReadStream *canimStream = roomStream->readStream(animSize * header3DO_numAnimations);
+			Common::SeekableReadStream *canimStream = roomStream->readStream(header3DO_cAnim_size);
 
 			_cAnim.resize(header3DO_numAnimations);
 			for (uint idx = 0; idx < _cAnim.size(); ++idx)

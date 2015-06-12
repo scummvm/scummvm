@@ -1551,30 +1551,37 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 }
 
 void CAnim::load3DO(Common::SeekableReadStream &s) {
+	// this got reordered on 3DO
+	// maybe it was the 3DO compiler
+
+	_size = s.readUint32BE();
+
+	_position.x = s.readSint16BE();
+	_position.y = s.readSint16BE();
+
+	_type = (SpriteType)s.readUint16BE();
+
+	_goto.x = s.readSint16BE();
+	_goto.y = s.readSint16BE();
+	_gotoDir = s.readSint16BE();
+
+	_teleportPos.x = s.readSint16BE();
+	_teleportPos.y = s.readSint16BE();
+	_teleportDir = s.readSint16BE();
+
 	char buffer[12];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
 
 	s.read(_sequences, 30);
-
-	_position.x = s.readSint16BE();
-	_position.y = s.readSint16BE();
-	
-	_size = s.readUint32BE();
-	_type = (SpriteType)s.readUint16BE();
 	_flags = s.readByte();
 
-	_goto.x = s.readSint16BE();
-	_goto.y = s.readSint16BE();
-	_gotoDir = s.readSint16BE();
-	_teleportPos.x = s.readSint16BE();
-	_teleportPos.y = s.readSint16BE();
+	s.skip(3); // Filler
+
 	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
 	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
 	_teleportPos.x = _teleportPos.x * FIXED_INT_MULTIPLIER / 100;
 	_teleportPos.y = _teleportPos.y * FIXED_INT_MULTIPLIER / 100;
-
-	_teleportDir = s.readSint16BE();
 }
 
 /*----------------------------------------------------------------*/
