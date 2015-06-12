@@ -309,6 +309,12 @@ public:
 	 * Bring a moving character using the sprite to a standing position
 	 */
 	virtual void gotoStand() = 0;
+
+	/**
+	 * Set the variables for moving a character from one poisition to another
+	 * in a straight line
+	 */
+	virtual void setWalking() = 0;
 };
 
 enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURNOFF_OBJ = 0x40 };

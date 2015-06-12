@@ -59,6 +59,7 @@ struct PersonData {
 class Person : public Sprite {
 public:
 	Common::Queue<Common::Point> _walkTo;
+	int _srcZone, _destZone;
 	bool _walkLoaded;
 	Common::String _portrait;
 
@@ -83,6 +84,13 @@ public:
 	virtual ~Person() {}
 
 	/**
+	 * Called to set the character walking to the current cursor location.
+	 * It uses the zones and the inter-zone points to determine a series
+	 * of steps to walk to get to that position.
+	 */
+	void goAllTheWay();
+
+	/**
 	 * Clear the NPC related data
 	 */
 	void clearNPC();
@@ -99,8 +107,6 @@ class People {
 protected:
 	SherlockEngine *_vm;
 	Common::Array<Person *> _data;
-	int _oldWalkSequence;
-	int _srcZone, _destZone;
 
 	People(SherlockEngine *vm);
 public:
@@ -109,7 +115,6 @@ public:
 	Common::Point _walkDest;
 	Point32 _hSavedPos;
 	int _hSavedFacing;
-	Common::Queue<Common::Point> _walkTo;
 	bool _holmesOn;
 	bool _portraitLoaded;
 	bool _portraitsOn;
@@ -147,23 +152,9 @@ public:
 	bool freeWalk();
 
 	/**
-	 * Set the variables for moving a character from one poisition to another
-	 * in a straight line - goAllTheWay must have been previously called to
-	 * check for any obstacles in the path.
-	 */
-	void setWalking();
-
-	/**
 	 * Walk to the co-ordinates passed, and then face the given direction
 	 */
 	void walkToCoords(const Point32 &destPos, int destDir);
-
-	/**
-	 * Called to set the character walking to the current cursor location.
-	 * It uses the zones and the inter-zone points to determine a series
-	 * of steps to walk to get to that position.
-	 */
-	void goAllTheWay();
 
 	/**
 	 * Finds the scene background object corresponding to a specified speaker

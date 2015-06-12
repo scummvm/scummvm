@@ -28,6 +28,13 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+// Walk speeds
+#define MWALK_SPEED 2
+#define XWALK_SPEED 4
+#define YWALK_SPEED 1
+
+/*----------------------------------------------------------------*/
+
 void ScalpelPerson::adjustSprite() {
 	Map &map = *_vm->_map;
 	People &people = *_vm->_people;
@@ -45,9 +52,9 @@ void ScalpelPerson::adjustSprite() {
 		if (!_walkCount) {
 			// If there any points left for the character to walk to along the
 			// route to a destination, then move to the next point
-			if (!people._walkTo.empty()) {
-				people._walkDest = people._walkTo.pop();
-				people.setWalking();
+			if (!people[PLAYER]._walkTo.empty()) {
+				people._walkDest = people[PLAYER]._walkTo.pop();
+				setWalking();
 			} else {
 				gotoStand();
 			}
@@ -129,7 +136,6 @@ void ScalpelPerson::adjustSprite() {
 	}
 }
 
-
 void ScalpelPerson::gotoStand() {
 	ScalpelMap &map = *(ScalpelMap *)_vm->_map;
 	People &people = *_vm->_people;
@@ -179,6 +185,153 @@ void ScalpelPerson::gotoStand() {
 
 	_oldWalkSequence = -1;
 	people._allowWalkAbort = true;
+}
+
+void ScalpelPerson::setWalking() {
+	Map &map = *_vm->_map;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	int oldDirection, oldFrame;
+	Common::Point speed, delta;
+
+	// Flag that player has now walked in the scene
+	scene._walkedInScene = true;
+
+	// Stop any previous walking, since a new dest is being set
+	_walkCount = 0;
+	oldDirection = _sequenceNumber;
+	oldFrame = _frameNumber;
+
+	// Set speed to use horizontal and vertical movement
+	if (map._active) {
+		speed = Common::Point(MWALK_SPEED, MWALK_SPEED);
+	} else {
+		speed = Common::Point(XWALK_SPEED, YWALK_SPEED);
+	}
+
+	// If the player is already close to the given destination that no
+	// walking is needed, move to the next straight line segment in the
+	// overall walking route, if there is one
+	for (;;) {
+		// Since we want the player to be centered on the destination they
+		// clicked, but characters draw positions start at their left, move
+		// the destination half the character width to draw him centered
+		int temp;
+		if (people._walkDest.x >= (temp = _imageFrame->_frame.w / 2))
+			people._walkDest.x -= temp;
+
+		delta = Common::Point(
+			ABS(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x),
+			ABS(_position.y / FIXED_INT_MULTIPLIER - people._walkDest.y)
+		);
+
+		// If we're ready to move a sufficient distance, that's it. Otherwise,
+		// move onto the next portion of the walk path, if there is one
+		if ((delta.x > 3 || delta.y > 0) || _walkTo.empty())
+			break;
+
+		// Pop next walk segment off the walk route stack
+		people._walkDest = _walkTo.pop();
+	}
+
+	// If a sufficient move is being done, then start the move
+	if (delta.x > 3 || delta.y) {
+		// See whether the major movement is horizontal or vertical
+		if (delta.x >= delta.y) {
+			// Set the initial frame sequence for the left and right, as well
+			// as setting the delta x depending on direction
+			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
+				_sequenceNumber = (map._active ? (int)MAP_LEFT : (int)Scalpel::WALK_LEFT);
+				_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
+			} else {
+				_sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)Scalpel::WALK_RIGHT);
+				_delta.x = speed.x * FIXED_INT_MULTIPLIER;
+			}
+
+			// See if the x delta is too small to be divided by the speed, since
+			// this would cause a divide by zero error
+			if (delta.x >= speed.x) {
+				// Det the delta y
+				_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
+				if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
+					_delta.y = -_delta.y;
+
+				// Set how many times we should add the delta to the player's position
+				_walkCount = delta.x / speed.x;
+			} else {
+				// The delta x was less than the speed (ie. we're really close to
+				// the destination). So set delta to 0 so the player won't move
+				_delta = Point32(0, 0);
+				_position = Point32(people._walkDest.x * FIXED_INT_MULTIPLIER, people._walkDest.y * FIXED_INT_MULTIPLIER);
+
+				_walkCount = 1;
+			}
+
+			// See if the sequence needs to be changed for diagonal walking
+			if (_delta.y > 150) {
+				if (!map._active) {
+					switch (_sequenceNumber) {
+					case Scalpel::WALK_LEFT:
+						_sequenceNumber = Scalpel::WALK_DOWNLEFT;
+						break;
+					case Scalpel::WALK_RIGHT:
+						_sequenceNumber = Scalpel::WALK_DOWNRIGHT;
+						break;
+					}
+				}
+			} else if (_delta.y < -150) {
+				if (!map._active) {
+					switch (_sequenceNumber) {
+					case Scalpel::WALK_LEFT:
+						_sequenceNumber = Scalpel::WALK_UPLEFT;
+						break;
+					case Scalpel::WALK_RIGHT:
+						_sequenceNumber = Scalpel::WALK_UPRIGHT;
+						break;
+					}
+				}
+			}
+		} else {
+			// Major movement is vertical, so set the sequence for up and down,
+			// and set the delta Y depending on the direction
+			if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
+				_sequenceNumber = Scalpel::WALK_UP;
+				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
+			} else {
+				_sequenceNumber = Scalpel::WALK_DOWN;
+				_delta.y = speed.y * FIXED_INT_MULTIPLIER;
+			}
+
+			// If we're on the overhead map, set the sequence so we keep moving
+			// in the same direction
+			if (map._active)
+				_sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
+
+			// Set the delta x
+			_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
+			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
+				_delta.x = -_delta.x;
+
+			_walkCount = delta.y / speed.y;
+		}
+	}
+
+	// See if the new walk sequence is the same as the old. If it's a new one,
+	// we need to reset the frame number to zero so it's animation starts at
+	// it's beginning. Otherwise, if it's the same sequence, we can leave it
+	// as is, so it keeps the animation going at wherever it was up to
+	if (_sequenceNumber != _oldWalkSequence)
+		_frameNumber = 0;
+	_oldWalkSequence = _sequenceNumber;
+
+	if (!_walkCount)
+		gotoStand();
+
+	// If the sequence is the same as when we started, then Holmes was
+	// standing still and we're trying to re-stand him, so reset Holmes'
+	// rame to the old frame number from before it was reset to 0
+	if (_sequenceNumber == oldDirection)
+		_frameNumber = oldFrame;
 }
 
 /*----------------------------------------------------------------*/

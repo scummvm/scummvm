@@ -321,7 +321,7 @@ void Sprite::checkSprite() {
 						break;
 
 					case WALK_AROUND:
-						if (objBounds.contains(people._walkTo.front())) {
+						if (objBounds.contains(people[PLAYER]._walkTo.front())) {
 							// Reached zone
 							gotoStand();
 						} else {
@@ -369,8 +369,8 @@ void Sprite::checkSprite() {
 
 							walkPos.x += people[PLAYER]._imageFrame->_frame.w / 2;
 							people._walkDest = walkPos;
-							people._walkTo.push(walkPos);
-							people.setWalking();
+							people[PLAYER]._walkTo.push(walkPos);
+							people[PLAYER].setWalking();
 						}
 						break;
 
@@ -1433,7 +1433,7 @@ int Object::pickUpObject(const char *const messages[]) {
 		} else {
 			// Play generic pickup sequence
 			// Original moved cursor position here
-			people.goAllTheWay();
+			people[PLAYER].goAllTheWay();
 			ui._menuCounter = 25;
 			ui._temp1 = 1;
 		}

@@ -92,7 +92,7 @@ public:
 	 * Set the variables for moving a character from one poisition to another
 	 * in a straight line
 	 */
-	void setWalking();
+	virtual void setWalking();
 };
 
 class TattooPeople : public People {

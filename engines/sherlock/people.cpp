@@ -27,11 +27,6 @@
 
 namespace Sherlock {
 
-// Walk speeds
-#define MWALK_SPEED 2
-#define XWALK_SPEED 4
-#define YWALK_SPEED 1
-
 // Characer animation sequences
 static const uint8 CHARACTER_SEQUENCES[MAX_HOLMES_SEQUENCE][MAX_FRAME] = {
 	{ 29, 1, 2, 3, 4, 5, 6, 7, 0 },		// Walk Right
@@ -80,6 +75,8 @@ Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _np
 	_savedNpcFrame = 0;
 	_updateNPCPath = false;
 	_npcPause = false;
+	_oldWalkSequence = -1;
+	_srcZone = _destZone = 0;
 }
 
 void Person::clearNPC() {
@@ -90,6 +87,94 @@ void Person::clearNPC() {
 
 void Person::updateNPC() {
 	// TODO
+}
+
+void Person::goAllTheWay() {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Common::Point srcPt(_position.x / FIXED_INT_MULTIPLIER + frameWidth() / 2,
+		_position.y / FIXED_INT_MULTIPLIER);
+
+	// Get the zone the player is currently in
+	_srcZone = scene.whichZone(srcPt);
+	if (_srcZone == -1)
+		_srcZone = scene.closestZone(srcPt);
+
+	// Get the zone of the destination
+	_destZone = scene.whichZone(people._walkDest);
+	if (_destZone == -1) {
+		_destZone = scene.closestZone(people._walkDest);
+
+		// The destination isn't in a zone
+		if (people._walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
+			people._walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
+
+		// Trace a line between the centroid of the found closest zone to
+		// the destination, to find the point at which the zone will be left
+		const Common::Rect &destRect = scene._zones[_destZone];
+		const Common::Point destCenter((destRect.left + destRect.right) / 2,
+			(destRect.top + destRect.bottom) / 2);
+		const Common::Point delta = people._walkDest - destCenter;
+		Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
+
+		// Move along the line until the zone is left
+		do {
+			pt += delta;
+		} while (destRect.contains(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER));
+
+		// Set the new walk destination to the last point that was in the
+		// zone just before it was left
+		people._walkDest = Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
+			(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
+	}
+
+	// Only do a walk if both zones are acceptable
+	if (_srcZone == -2 || _destZone == -2)
+		return;
+
+	// If the start and dest zones are the same, walk directly to the dest point
+	if (_srcZone == _destZone) {
+		setWalking();
+	} else {
+		// Otherwise a path needs to be formed from the path information
+		int i = scene._walkDirectory[_srcZone][_destZone];
+
+		// See if we need to use a reverse path
+		if (i == -1)
+			i = scene._walkDirectory[_destZone][_srcZone];
+
+		int count = scene._walkData[i];
+		++i;
+
+		// See how many points there are between the src and dest zones
+		if (!count || count == -1) {
+			// There are none, so just walk to the new zone
+			setWalking();
+		} else {
+			// There are points, so set up a multi-step path between points
+			// to reach the given destination
+			_walkTo.clear();
+
+			if (scene._walkDirectory[_srcZone][_destZone] != -1) {
+				i += 3 * (count - 1);
+				for (int idx = 0; idx < count; ++idx, i -= 3) {
+					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]),
+						scene._walkData[i + 2]));
+				}
+			} else {
+				for (int idx = 0; idx < count; ++idx, i += 3) {
+					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]), scene._walkData[i + 2]));
+				}
+			}
+
+			// Final position
+			_walkTo.push(people._walkDest);
+
+			// Start walking
+			people._walkDest = _walkTo.pop();
+			setWalking();
+		}
+	}
 }
 
 /*----------------------------------------------------------------*/
@@ -103,12 +188,10 @@ People *People::init(SherlockEngine *vm) {
 
 People::People(SherlockEngine *vm) : _vm(vm) {
 	_holmesOn = true;
-	_oldWalkSequence = -1;
 	_allowWalkAbort = false;
 	_portraitLoaded = false;
 	_portraitsOn = true;
 	_clearingThePortrait = false;
-	_srcZone = _destZone = 0;
 	_talkPics = nullptr;
 	_portraitSide = 0;
 	_speakerFlip = false;
@@ -140,7 +223,7 @@ void People::reset() {
 	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
 	int count = IS_SERRATED_SCALPEL ? 1 : MAX_CHARACTERS;
 	for (int idx = 0; idx < count; ++idx) {
-		Sprite &p = *_data[idx];
+		Person &p = *_data[idx];
 
 		p._type = (idx == 0) ? CHARACTER : INVALID;
 		if (IS_SERRATED_SCALPEL)
@@ -173,6 +256,7 @@ void People::reset() {
 		p._adjust = Common::Point(0, 0);
 
 		// Load the default walk sequences
+		p._walkTo.clear();
 		p._oldWalkSequence = -1;
 		p._walkSequences.clear();
 		if (IS_SERRATED_SCALPEL) {
@@ -187,9 +271,6 @@ void People::reset() {
 			}
 		}
 	}
-
-	// Reset any walk path in progress when Sherlock leaves scenes
-	_walkTo.clear();
 }
 
 bool People::loadWalk() {
@@ -286,152 +367,6 @@ bool People::freeWalk() {
 	return result;
 }
 
-void People::setWalking() {
-	Map &map = *_vm->_map;
-	Scene &scene = *_vm->_scene;
-	int oldDirection, oldFrame;
-	Common::Point speed, delta;
-
-	// Flag that player has now walked in the scene
-	scene._walkedInScene = true;
-
-	// Stop any previous walking, since a new dest is being set
-	_data[PLAYER]->_walkCount = 0;
-	oldDirection = _data[PLAYER]->_sequenceNumber;
-	oldFrame = _data[PLAYER]->_frameNumber;
-
-	// Set speed to use horizontal and vertical movement
-	if (map._active) {
-		speed = Common::Point(MWALK_SPEED, MWALK_SPEED);
-	} else {
-		speed = Common::Point(XWALK_SPEED, YWALK_SPEED);
-	}
-
-	// If the player is already close to the given destination that no
-	// walking is needed, move to the next straight line segment in the
-	// overall walking route, if there is one
-	for (;;) {
-		// Since we want the player to be centered on the destination they
-		// clicked, but characters draw positions start at their left, move
-		// the destination half the character width to draw him centered
-		int temp;
-		if (_walkDest.x >= (temp = _data[PLAYER]->_imageFrame->_frame.w / 2))
-			_walkDest.x -= temp;
-
-		delta = Common::Point(
-			ABS(_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
-			ABS(_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
-		);
-
-		// If we're ready to move a sufficient distance, that's it. Otherwise,
-		// move onto the next portion of the walk path, if there is one
-		if ((delta.x > 3 || delta.y > 0) || _walkTo.empty())
-			break;
-
-		// Pop next walk segment off the walk route stack
-		_walkDest = _walkTo.pop();
-	}
-
-	// If a sufficient move is being done, then start the move
-	if (delta.x > 3 || delta.y) {
-		// See whether the major movement is horizontal or vertical
-		if (delta.x >= delta.y) {
-			// Set the initial frame sequence for the left and right, as well
-			// as setting the delta x depending on direction
-			if (_walkDest.x < (_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER)) {
-				_data[PLAYER]->_sequenceNumber = (map._active ? (int)MAP_LEFT : (int)Scalpel::WALK_LEFT);
-				_data[PLAYER]->_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
-			} else {
-				_data[PLAYER]->_sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)Scalpel::WALK_RIGHT);
-				_data[PLAYER]->_delta.x = speed.x * FIXED_INT_MULTIPLIER;
-			}
-
-			// See if the x delta is too small to be divided by the speed, since
-			// this would cause a divide by zero error
-			if (delta.x >= speed.x) {
-				// Det the delta y
-				_data[PLAYER]->_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
-				if (_walkDest.y < (_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER))
-					_data[PLAYER]->_delta.y = -_data[PLAYER]->_delta.y;
-
-				// Set how many times we should add the delta to the player's position
-				_data[PLAYER]->_walkCount = delta.x / speed.x;
-			} else {
-				// The delta x was less than the speed (ie. we're really close to
-				// the destination). So set delta to 0 so the player won't move
-				_data[PLAYER]->_delta = Point32(0, 0);
-				_data[PLAYER]->_position = Point32(_walkDest.x * FIXED_INT_MULTIPLIER, _walkDest.y * FIXED_INT_MULTIPLIER);
-assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
-				_data[PLAYER]->_walkCount = 1;
-			}
-
-			// See if the sequence needs to be changed for diagonal walking
-			if (_data[PLAYER]->_delta.y > 150) {
-				if (!map._active) {
-					switch (_data[PLAYER]->_sequenceNumber) {
-					case Scalpel::WALK_LEFT:
-						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_DOWNLEFT;
-						break;
-					case Scalpel::WALK_RIGHT:
-						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_DOWNRIGHT;
-						break;
-					}
-				}
-			} else if (_data[PLAYER]->_delta.y < -150) {
-				if (!map._active) {
-					switch (_data[PLAYER]->_sequenceNumber) {
-					case Scalpel::WALK_LEFT:
-						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_UPLEFT;
-						break;
-					case Scalpel::WALK_RIGHT:
-						_data[PLAYER]->_sequenceNumber = Scalpel::WALK_UPRIGHT;
-						break;
-					}
-				}
-			}
-		} else {
-			// Major movement is vertical, so set the sequence for up and down,
-			// and set the delta Y depending on the direction
-			if (_walkDest.y < (_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER)) {
-				_data[PLAYER]->_sequenceNumber = Scalpel::WALK_UP;
-				_data[PLAYER]->_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
-			} else {
-				_data[PLAYER]->_sequenceNumber = Scalpel::WALK_DOWN;
-				_data[PLAYER]->_delta.y = speed.y * FIXED_INT_MULTIPLIER;
-			}
-
-			// If we're on the overhead map, set the sequence so we keep moving
-			// in the same direction
-			if (map._active)
-				_data[PLAYER]->_sequenceNumber = (oldDirection == -1) ? MAP_RIGHT : oldDirection;
-
-			// Set the delta x
-			_data[PLAYER]->_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
-			if (_walkDest.x < (_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER))
-				_data[PLAYER]->_delta.x = -_data[PLAYER]->_delta.x;
-
-			_data[PLAYER]->_walkCount = delta.y / speed.y;
-		}
-	}
-
-	// See if the new walk sequence is the same as the old. If it's a new one,
-	// we need to reset the frame number to zero so it's animation starts at
-	// it's beginning. Otherwise, if it's the same sequence, we can leave it
-	// as is, so it keeps the animation going at wherever it was up to
-	if (_data[PLAYER]->_sequenceNumber != _oldWalkSequence)
-		_data[PLAYER]->_frameNumber = 0;
-	_oldWalkSequence = _data[PLAYER]->_sequenceNumber;
-
-	if (!_data[PLAYER]->_walkCount)
-		_data[PLAYER]->gotoStand();
-
-	// If the sequence is the same as when we started, then Holmes was
-	// standing still and we're trying to re-stand him, so reset Holmes'
-	// rame to the old frame number from before it was reset to 0
-	if (_data[PLAYER]->_sequenceNumber == oldDirection)
-		_data[PLAYER]->_frameNumber = oldFrame;
-}
-
 void People::walkToCoords(const Point32 &destPos, int destDir) {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
@@ -442,7 +377,7 @@ void People::walkToCoords(const Point32 &destPos, int destDir) {
 
 	_walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
 	_allowWalkAbort = true;
-	goAllTheWay();
+	_data[PLAYER]->goAllTheWay();
 
 	// Keep calling doBgAnim until the walk is done
 	do {
@@ -463,93 +398,6 @@ assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
 
 		if (!talk._talkToAbort)
 			events.setCursor(oldCursor);
-	}
-}
-
-void People::goAllTheWay() {
-	Scene &scene = *_vm->_scene;
-	Common::Point srcPt(_data[PLAYER]->_position.x / FIXED_INT_MULTIPLIER + _data[PLAYER]->frameWidth() / 2,
-		_data[PLAYER]->_position.y / FIXED_INT_MULTIPLIER);
-
-	// Get the zone the player is currently in
-	_srcZone = scene.whichZone(srcPt);
-	if (_srcZone == -1)
-		_srcZone = scene.closestZone(srcPt);
-
-	// Get the zone of the destination
-	_destZone = scene.whichZone(_walkDest);
-	if (_destZone == -1) {
-		_destZone = scene.closestZone(_walkDest);
-
-		// The destination isn't in a zone
-		if (_walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
-			_walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
-
-		// Trace a line between the centroid of the found closest zone to
-		// the destination, to find the point at which the zone will be left
-		const Common::Rect &destRect = scene._zones[_destZone];
-		const Common::Point destCenter((destRect.left + destRect.right) / 2,
-			(destRect.top + destRect.bottom) / 2);
-		const Common::Point delta = _walkDest - destCenter;
-		Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
-
-		// Move along the line until the zone is left
-		do {
-			pt += delta;
-		} while (destRect.contains(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER));
-
-		// Set the new walk destination to the last point that was in the
-		// zone just before it was left
-		_walkDest = Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
-			(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
-	}
-
-	// Only do a walk if both zones are acceptable
-	if (_srcZone == -2 || _destZone == -2)
-		return;
-
-	// If the start and dest zones are the same, walk directly to the dest point
-	if (_srcZone == _destZone) {
-		setWalking();
-	} else {
-		// Otherwise a path needs to be formed from the path information
-		int i = scene._walkDirectory[_srcZone][_destZone];
-
-		// See if we need to use a reverse path
-		if (i == -1)
-			i = scene._walkDirectory[_destZone][_srcZone];
-
-		int count = scene._walkData[i];
-		++i;
-
-		// See how many points there are between the src and dest zones
-		if (!count || count == -1) {
-			// There are none, so just walk to the new zone
-			setWalking();
-		} else {
-			// There are points, so set up a multi-step path between points
-			// to reach the given destination
-			_walkTo.clear();
-
-			if (scene._walkDirectory[_srcZone][_destZone] != -1) {
-				i += 3 * (count - 1);
-				for (int idx = 0; idx < count; ++idx, i -= 3) {
-					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]),
-						scene._walkData[i + 2]));
-				}
-			} else {
-				for (int idx = 0; idx < count; ++idx, i += 3) {
-					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]), scene._walkData[i + 2]));
-				}
-			}
-
-			// Final position
-			_walkTo.push(_walkDest);
-
-			// Start walking
-			_walkDest = _walkTo.pop();
-			setWalking();
-		}
 	}
 }
 

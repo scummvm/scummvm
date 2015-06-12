@@ -55,6 +55,12 @@ public:
 	 * Bring a moving character to a standing position
 	 */
 	virtual void gotoStand();
+
+	/**
+	 * Set the variables for moving a character from one poisition to another
+	 * in a straight line
+	 */
+	virtual void setWalking();
 };
 
 class ScalpelPeople : public People {

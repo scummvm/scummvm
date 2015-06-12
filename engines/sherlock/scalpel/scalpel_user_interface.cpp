@@ -319,7 +319,7 @@ void ScalpelUserInterface::handleInput() {
 			} else {
 				people._walkDest = pt;
 				people._allowWalkAbort = false;
-				people.goAllTheWay();
+				people[PLAYER].goAllTheWay();
 			}
 
 			if (_oldKey != -1) {

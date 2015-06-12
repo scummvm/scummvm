@@ -428,7 +428,7 @@ void ScalpelMap::walkTheStreets() {
 	const byte *path = _paths.getPath(start, dest);
 
 	// Add in destination position
-	people._walkTo.clear();
+	people[PLAYER]._walkTo.clear();
 	Common::Point destPos = people._walkDest;
 
 	// Check for any intermediate points between the two locations
@@ -436,7 +436,7 @@ void ScalpelMap::walkTheStreets() {
 		people[PLAYER]._sequenceNumber = -1;
 
 		if (_charPoint == 51 || _oldCharPoint == 51) {
-			people.setWalking();
+			people[PLAYER].setWalking();
 		} else {
 			bool reversePath = false;
 
@@ -453,25 +453,25 @@ void ScalpelMap::walkTheStreets() {
 			} while (*path != 254);
 
 			// Load up the path to use
-			people._walkTo.clear();
+			people[PLAYER]._walkTo.clear();
 
 			if (reversePath) {
 				for (int idx = (int)tempPath.size() - 1; idx >= 0; --idx)
-					people._walkTo.push(tempPath[idx]);
+					people[PLAYER]._walkTo.push(tempPath[idx]);
 			} else {
 				for (int idx = 0; idx < (int)tempPath.size(); ++idx)
-					people._walkTo.push(tempPath[idx]);
+					people[PLAYER]._walkTo.push(tempPath[idx]);
 			}
 
-			people._walkDest = people._walkTo.pop() + Common::Point(12, 6);
-			people.setWalking();
+			people._walkDest = people[PLAYER]._walkTo.pop() + Common::Point(12, 6);
+			people[PLAYER].setWalking();
 		}
 	} else {
 		people[PLAYER]._walkCount = 0;
 	}
 
 	// Store the final destination icon position
-	people._walkTo.push(destPos);
+	people[PLAYER]._walkTo.push(destPos);
 }
 
 void ScalpelMap::saveIcon(ImageFrame *src, const Common::Point &pt) {
