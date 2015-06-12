@@ -56,7 +56,7 @@ void Events::loadCursors(const Common::String &filename) {
 
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// PC
-		_cursorImages = new ImageFile3DO(filename);
+		_cursorImages = new ImageFile(filename);
 	} else {
 		// 3DO
 		_cursorImages = new ImageFile3DO(filename, true);
