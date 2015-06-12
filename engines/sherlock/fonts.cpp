@@ -104,6 +104,9 @@ int Fonts::stringHeight(const Common::String &str) {
 }
 
 int Fonts::charWidth(unsigned char c) {
+	if (!_font)
+		return 0;
+
 	if (c == ' ')
 		return 5;
 	else if (Common::isPrint(c))
@@ -114,6 +117,10 @@ int Fonts::charWidth(unsigned char c) {
 
 int Fonts::charHeight(unsigned char c) {
 	int idx = c - 33;
+
+	if (!_font)
+		return 0;
+
 	if (c == ' ')
 		idx = 0;
 	else if (c == 225)
