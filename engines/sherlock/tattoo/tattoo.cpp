@@ -45,7 +45,7 @@ void TattooEngine::initialize() {
 	// Initialize the base engine
 	SherlockEngine::initialize();
 
-	_flags.resize(100 * 8);
+	_flags.resize(3200);
 
 	// Add some more files to the cache
 	_res->addToCache("walk.lib");
