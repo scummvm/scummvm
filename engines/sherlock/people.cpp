@@ -70,6 +70,7 @@ Person::Person() : Sprite(), _walkLoaded(false), _npcIndex(0), _npcStack(0), _np
 	_npcIndex = 0;
 	_npcStack = 0;
 	_npcMoved = false;
+	_npcFacing = -1;
 	_resetNPCPath = true;
 	_savedNpcSequence = 0;
 	_savedNpcFrame = 0;

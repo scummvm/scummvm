@@ -70,6 +70,7 @@ public:
 	byte _npcPath[MAX_NPC_PATH];
 	Common::String _npcName;
 	bool _npcMoved;
+	int _npcFacing;
 	bool _resetNPCPath;
 	int _savedNpcSequence;
 	int _savedNpcFrame;

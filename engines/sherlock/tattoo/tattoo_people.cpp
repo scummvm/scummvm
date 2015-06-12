@@ -29,6 +29,8 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+#define FACING_PLAYER 16
+
 void TattooPerson::adjustSprite() {
 	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
@@ -102,7 +104,128 @@ void TattooPerson::adjustSprite() {
 }
 
 void TattooPerson::gotoStand() {
-	error("TODO: gotoStand");
+	People &people = *_vm->_people;
+
+	// If the misc field is set, then we're running a special talk sequence, so don't interrupt it.
+	if (_misc)
+		return;
+
+	_walkTo.clear();
+	_walkCount = 0;
+	int oldFacing = _sequenceNumber;
+
+	// If the person was talking or listening, just return it to the standing sequence 
+	// in the direction they were pointing
+	if (_sequenceNumber >= TALK_UPRIGHT && _sequenceNumber <= LISTEN_UPLEFT) {
+		switch (_sequenceNumber) {
+		case TALK_UPRIGHT:
+		case LISTEN_UPRIGHT:
+			_sequenceNumber = STOP_UPRIGHT;
+			break;
+		case TALK_RIGHT:
+		case LISTEN_RIGHT:
+			_sequenceNumber = STOP_RIGHT;
+			break;
+		case TALK_DOWNRIGHT:
+		case LISTEN_DOWNRIGHT:
+			_sequenceNumber = STOP_DOWNRIGHT;
+			break;
+		case TALK_DOWNLEFT:
+		case LISTEN_DOWNLEFT:
+			_sequenceNumber = STOP_DOWNLEFT;
+			break;
+		case TALK_LEFT:
+		case LISTEN_LEFT:
+			_sequenceNumber = STOP_LEFT;
+			break;
+		case TALK_UPLEFT:
+		case LISTEN_UPLEFT:
+			_sequenceNumber = STOP_UPLEFT;
+			break;
+		default:
+			break;
+		}
+
+		if (_seqTo) {
+			// Reset to previous value
+			_walkSequences[oldFacing]._sequences[_frameNumber] = _seqTo;
+			_seqTo = 0;
+		}
+
+		// Set the Frame number to the last frame so we don't move
+		_frameNumber = 0;
+
+		checkWalkGraphics();
+
+		_oldWalkSequence = -1;
+		people._allowWalkAbort = true;
+		return;
+	}
+
+	// If the sprite that is stopping is an NPC and he is supposed to face a certain direction 
+	// when he stops, set that direction here
+	int npc = -1;
+	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+		if (_imageFrame == people[idx]._imageFrame)
+			npc = idx;
+	}
+
+	if (npc != -1 && people[npc]._npcFacing != -1) {
+		if (people[npc]._npcFacing == FACING_PLAYER) {
+			// See where Holmes is with respect to the NPC (x coords)
+			if (people[PLAYER]._position.x < people[npc]._position.x)
+				people[npc]._npcFacing = STOP_LEFT;
+			else
+				people[npc]._npcFacing = STOP_RIGHT;
+
+			// See where Holmes is with respect to the NPC (y coords)
+			if (people[PLAYER]._position.y < people[npc]._position.y - (10 * FIXED_INT_MULTIPLIER)) {
+				// Holmes is above the NPC so reset the facing to the diagonal ups
+				if (people[npc]._npcFacing == STOP_RIGHT)
+					people[npc]._npcFacing = STOP_UPRIGHT;
+				else
+					people[npc]._npcFacing = STOP_UPLEFT;
+			} else {
+				if (people[PLAYER]._position.y > people[npc]._position.y + (10 * FIXED_INT_MULTIPLIER)) {
+					// Holmes is below the NPC so reset the facing to the diagonal downs
+					if (people[npc]._npcFacing == STOP_RIGHT)
+						people[npc]._npcFacing = STOP_DOWNRIGHT;
+					else
+						people[npc]._npcFacing = STOP_DOWNLEFT;
+				}
+			}
+		}
+
+		_sequenceNumber = people[npc]._npcFacing;
+	} else {
+		switch (_sequenceNumber) {
+		case WALK_UP: _sequenceNumber = STOP_UP;			break;
+		case WALK_UPRIGHT: _sequenceNumber = STOP_UPRIGHT;	break;
+		case WALK_RIGHT: _sequenceNumber = STOP_RIGHT;		break;
+		case WALK_DOWNRIGHT: _sequenceNumber = STOP_DOWNRIGHT; break;
+		case WALK_DOWN: _sequenceNumber = STOP_DOWN;		break;
+		case WALK_DOWNLEFT: _sequenceNumber = STOP_DOWNLEFT;break;
+		case WALK_LEFT: _sequenceNumber = STOP_LEFT;		break;
+		case WALK_UPLEFT: _sequenceNumber = STOP_UPLEFT;	break;
+		}
+	}
+
+	// Only restart the frame number at 0 if the new sequence is different from the last sequence 
+	// so we don't let Holmes repeat standing.
+	if (_oldWalkSequence != -1) {
+		if (_seqTo) {
+			// Reset to previous value
+			_walkSequences[oldFacing]._sequences[_frameNumber] = _seqTo;
+			_seqTo = 0;
+		}
+
+		_frameNumber = 0;
+	}
+
+	checkWalkGraphics();
+
+	_oldWalkSequence = -1;
+	people._allowWalkAbort = true;
 }
 
 void TattooPerson::setWalking() {
