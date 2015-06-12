@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/installshield_cab.h"
 
 #include "nancy/nancy.h"
 #include "nancy/resource.h"
@@ -42,14 +43,6 @@ NancyEngine *NancyEngine::s_Engine = 0;
 NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd)
 {
 	_system = syst;
-
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "hdsound");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
 
 	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
@@ -98,6 +91,18 @@ Common::Error NancyEngine::run() {
 	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	initGraphics(640, 480, true, &format);
 	_console = new NancyConsole(this);
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "hdsound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
+
+	Common::SeekableReadStream *cabStream = SearchMan.createReadStreamForMember("data1.hdr");
+	if (cabStream)
+		SearchMan.add("data1.hdr", Common::makeInstallShieldArchive(cabStream));
 
 //	_mouse = new MouseHandler(this);
 	_res = new ResourceManager(this);
