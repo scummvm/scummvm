@@ -546,7 +546,7 @@ void TattooMap::showCloseUp(int closeUpNum) {
 
 	for (int step = 0; step < CLOSEUP_STEPS; ++step) {
 		Common::Point picSize(pic[0].sDrawXSize(scaleVal), pic[0].sDrawYSize(scaleVal));
-		Common::Point pt(closeUp.x / 100 - picSize.x, closeUp.y / 100 - picSize.y);
+		Common::Point pt(closeUp.x / 100 - picSize.x / 2, closeUp.y / 100 - picSize.y / 2);
 
 		restoreArea(oldBounds);
 		screen._backBuffer1.transBlitFrom(pic[0], pt, false, 0, scaleVal);
@@ -564,13 +564,14 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	// Handle final drawing of closeup
 	// TODO: Handle scrolling
 	Common::Rect r(SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2, SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2,
-		SHERLOCK_SCREEN_WIDTH / 2 + pic[0]._width / 2 + pic[0]._width,
-		SHERLOCK_SCREEN_HEIGHT / 2 + pic[0]._height / 2 + pic[0]._height);
+		SHERLOCK_SCREEN_WIDTH / 2 - pic[0]._width / 2 + pic[0]._width,
+		SHERLOCK_SCREEN_HEIGHT / 2 - pic[0]._height / 2 + pic[0]._height);
 
 	restoreArea(oldBounds);
 	screen._backBuffer1.transBlitFrom(pic[0], Common::Point(r.left, r.top));
 	screen.slamRect(oldBounds);
 	screen.slamRect(r);
+	events.wait(2);
 }
 
 void TattooMap::slamRect(const Common::Rect &bounds) {
