@@ -52,6 +52,10 @@ void Surface::create(uint16 width, uint16 height, Common::Platform platform) {
 	_freePixels = true;
 }
 
+Graphics::PixelFormat Surface::getPixelFormat() {
+	return _surface.format;
+}
+
 void Surface::blitFrom(const Surface &src) {
 	blitFrom(src, Common::Point(0, 0));
 }
@@ -264,8 +268,8 @@ void Surface::free() {
 	}
 }
 
-void Surface::setPixels(byte *pixels, int width, int height) {
-	_surface.format = Graphics::PixelFormat::createFormatCLUT8();
+void Surface::setPixels(byte *pixels, int width, int height, Graphics::PixelFormat pixelFormat) {
+	_surface.format = pixelFormat;
 	_surface.w = _surface.pitch = width;
 	_surface.h = height;
 	_surface.setPixels(pixels);

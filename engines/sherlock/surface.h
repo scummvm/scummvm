@@ -80,6 +80,8 @@ public:
 	 */
 	void create(uint16 width, uint16 height, Common::Platform platform);
 
+	Graphics::PixelFormat getPixelFormat();
+
 	/**
 	 * Copy a surface into this one
 	 */
@@ -155,7 +157,7 @@ public:
 	/**
 	 * Set the pixels for the surface to an existing data block
 	 */
-	void setPixels(byte *pixels, int width, int height);
+	void setPixels(byte *pixels, int width, int height, Graphics::PixelFormat format);
 
 	/**
 	 * Draws the given string into the back buffer using the images stored in _font

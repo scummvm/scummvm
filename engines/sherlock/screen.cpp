@@ -546,7 +546,7 @@ void Screen::makeField(const Common::Rect &r) {
 
 void Screen::setDisplayBounds(const Common::Rect &r) {
 	assert(r.left == 0 && r.top == 0);
-	_sceneSurface.setPixels(_backBuffer1.getPixels(), r.width(), r.height());
+	_sceneSurface.setPixels(_backBuffer1.getPixels(), r.width(), r.height(), _backBuffer1.getPixelFormat());
 
 	_backBuffer = &_sceneSurface;
 }

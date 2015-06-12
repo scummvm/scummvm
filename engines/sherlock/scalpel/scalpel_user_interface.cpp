@@ -122,6 +122,9 @@ void ScalpelUserInterface::reset() {
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
+	if (_vm->getPlatform() == Common::kPlatform3DO)
+		return; // 3DO: don't do anything for now
+
 	if (bufferNum & 1)
 		screen._backBuffer1.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
 	if (bufferNum & 2)
