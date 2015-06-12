@@ -729,8 +729,6 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
 	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
 
-	s.skip(16); // Unknown
-
 #if 0
 	_pickup = s.readByte();
 	_defaultCommand = s.readByte();
@@ -759,11 +757,15 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 #endif
 	warning("pos %d", s.pos());
 
+	s.skip(13); // Unknown
+	_maxFrames = s.readByte();
+	s.skip(2); // Unknown
+
 	_descOffset = s.readUint16BE();
 	_seqCounter2 = 0; // ???
 	_seqSize = s.readUint16BE();
 
-	s.skip(446);
+	s.skip(446); // Unknown
 
 #if 0
 	s.skip(1);
