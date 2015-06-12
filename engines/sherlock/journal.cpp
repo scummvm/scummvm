@@ -720,12 +720,6 @@ bool Journal::drawJournal(int direction, int howFar) {
 		// Move backwards howFar number of lines unless either the start of the journal is reached,
 		// or a searched for keyword is found
 		do {
-			// Animate the glass mouse cursor
-			int cursorNum = (int)events.getCursor() + 1;
-			if (cursorNum > (WAIT + 2))
-				cursorNum = WAIT;
-			events.setCursor((CursorId)cursorNum);
-
 			// Move backwards through the journal file a line at a time
 			if (--_sub < 0) {
 				do {
