@@ -30,6 +30,8 @@
 #include "common/memstream.h"
 #include "common/installshield_cab.h"
 
+#include "graphics/surface.h"
+
 #include "nancy/nancy.h"
 #include "nancy/resource.h"
 #include "nancy/iff.h"
@@ -116,6 +118,13 @@ Common::Error NancyEngine::run() {
 		error("Failed to load boot script");
 	preloadCals(*boot);
 	delete boot;
+
+	// As we can't actually run anything yet, just show LOGO
+	Graphics::Surface surf;
+	if (_res->loadImage("ciftree", "LOGO", surf)) {
+		_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w, surf.h);
+		surf.free();
+	}
 
 	Common::EventManager *ev = g_system->getEventManager();
 	bool quit = false;
