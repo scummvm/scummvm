@@ -135,7 +135,7 @@ private:
 	void loadAnimationFile(Common::SeekableReadStream &stream);
 
 public:
-	ImageFile3DO(const Common::String &name);
+	ImageFile3DO(const Common::String &name, bool isRoomDataFormat = false);
 	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
 	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);
