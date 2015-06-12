@@ -555,6 +555,8 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	int    streamSize = stream.size();
 	uint16 roomDataHeader_size = 0;
+	byte   roomDataHeader_offsetX = 0;
+	byte   roomDataHeader_offsetY = 0;
 
 	// CCB chunk (cel control block)
 	uint32 ccbFlags = 0;
@@ -574,7 +576,8 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 		// 3DO sherlock holmes room data header
 		stream.skip(4); // Possibly UINT16 width, UINT16 height?!?!
 		roomDataHeader_size = stream.readUint16BE();
-		stream.skip(2); // seems to be filler
+		roomDataHeader_offsetX = stream.readByte();
+		roomDataHeader_offsetY = stream.readByte();
 
 		// 3DO raw cel control block
 		ccbFlags   = stream.readUint32BE();
@@ -617,8 +620,8 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			imageFrame._width = ccbWidth;
 			imageFrame._height = ccbHeight;
 			imageFrame._paletteBase = 0;
-			imageFrame._offset.x = 0;
-			imageFrame._offset.y = 0;
+			imageFrame._offset.x = roomDataHeader_offsetX;
+			imageFrame._offset.y = roomDataHeader_offsetY;
 			imageFrame._rleEncoded = ccbFlags_compressed;
 			imageFrame._size = 0;
 
