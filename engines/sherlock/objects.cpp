@@ -695,7 +695,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		for (int idx = 0; idx < 4; ++idx)
 			_use[idx].load(s, false);
 	}
-	//warning("object %s, aMove %d", _name.c_str(), _aClose._cAnimNum);
+	//warning("object %s, useAnim %d", _name.c_str(), _use[0]._cAnimNum);
 }
 
 void Object::load3DO(Common::SeekableReadStream &s) {
@@ -751,7 +751,18 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_descOffset = s.readUint16BE();
 	_seqSize = s.readUint16BE();
 
-	s.skip(288); // Unknown
+	s.skip(2); // boundary filler
+
+	// 288 bytes
+	_use[0].load3DO(s);
+	s.skip(2); // Filler
+	_use[1].load3DO(s);
+	s.skip(2); // Filler
+	_use[2].load3DO(s);
+	// no filler after 3rd entry
+	_use[3].load3DO(s);
+	s.skip(2); // Filler
+
 	// 158 bytes
 	_aOpen.load(s); // 2 + 12*4 bytes = 50 bytes
 	s.skip(2); // Filler
@@ -760,15 +771,6 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	s.skip(2); // Filler
 	_aMove.load(s);
 	s.skip(2); // Filler
-
-	// missing:
-	// for (int idx = 0; idx < 4; ++idx)
-	//  _use[idx].load(s, false);
-
-#if 0
-	for (int idx = 0; idx < 4; ++idx)
-		_use[idx].load(s, false);
-#endif
 
 	// offset 508
 	// 3DO: name is at the end
