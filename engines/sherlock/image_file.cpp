@@ -354,8 +354,6 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 	uint32 chunkSize = 0;
 	byte  *chunkDataPtr = NULL;
 
-	ImageFrame imageFrame;
-
 	// ANIM chunk (animation header for animation files)
 	bool   animFound = false;
 	uint32 animVersion = 0;
@@ -477,7 +475,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			// Unknown contents, occurs right before PDAT
 			break;
 
-		case MKTAG('P', 'D', 'A', 'T'):
+		case MKTAG('P', 'D', 'A', 'T'): {
 			// pixel data for one frame
 			// may be compressed or uncompressed pixels
 
@@ -496,6 +494,8 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			stream.read(chunkDataPtr, dataSize);
 
 			// Set up frame
+			ImageFrame imageFrame;
+
 			imageFrame._width = ccbWidth;
 			imageFrame._height = ccbHeight;
 			imageFrame._paletteBase = 0;
@@ -515,6 +515,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 
 			push_back(imageFrame);
 			break;
+		}
 
 		case MKTAG('O', 'F', 'S', 'T'): // 3DOSplash.cel
 			// unknown contents
@@ -534,8 +535,6 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	int    streamSize = stream.size();
 	uint16 roomDataHeader_size = 0;
 
-	ImageFrame imageFrame;
-
 	// CCB chunk (cel control block)
 	uint32 ccbFlags = 0;
 	bool   ccbFlags_compressed = false;
@@ -551,8 +550,6 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	byte  *celDataPtr = NULL;
 
 	while (stream.pos() < streamSize) {
-		ImageFrame frame;
-
 		// 3DO sherlock holmes room data header
 		stream.skip(4); // Possibly UINT16 width, UINT16 height?!?!
 		roomDataHeader_size = stream.readUint16BE();
@@ -593,20 +590,24 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 		stream.read(celDataPtr, celDataSize);
 		
 		// Set up frame
-		imageFrame._width = ccbWidth;
-		imageFrame._height = ccbHeight;
-		imageFrame._paletteBase = 0;
-		imageFrame._offset.x = 0;
-		imageFrame._offset.y = 0;
-		imageFrame._rleEncoded = ccbFlags_compressed;
-		imageFrame._size = 0;
+		{
+			ImageFrame imageFrame;
 
-		// Decompress/copy this frame
-		decompress3DOCelFrame(imageFrame, celDataPtr, celDataSize, ccbPRE0_bitsPerPixel, NULL);
+			imageFrame._width = ccbWidth;
+			imageFrame._height = ccbHeight;
+			imageFrame._paletteBase = 0;
+			imageFrame._offset.x = 0;
+			imageFrame._offset.y = 0;
+			imageFrame._rleEncoded = ccbFlags_compressed;
+			imageFrame._size = 0;
 
-		delete[] celDataPtr;
+			// Decompress/copy this frame
+			decompress3DOCelFrame(imageFrame, celDataPtr, celDataSize, ccbPRE0_bitsPerPixel, NULL);
 
-		push_back(imageFrame);
+			delete[] celDataPtr;
+
+			push_back(imageFrame);
+		}
 	}
 }
 

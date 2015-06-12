@@ -668,7 +668,6 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// === BGSHAPES === Set up the bgShapes
 		for (int idx = 0; idx < header3DO_numStructs; ++idx) {
-			warning("%d", _bgShapes[idx]._misc);
 			_bgShapes[idx]._images = _images[_bgShapes[idx]._misc]._images;
 			_bgShapes[idx]._imageFrame = !_bgShapes[idx]._images ? (ImageFrame *)nullptr :
 				&(*_bgShapes[idx]._images)[0];
