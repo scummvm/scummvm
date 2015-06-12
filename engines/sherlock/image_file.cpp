@@ -842,8 +842,16 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	uint32       curCharHeightLeft = 0;
 	uint32       curCharWidthLeft = 0;
 	byte         curBits = 0;
+	byte         curBitsReversed = 0;
+	byte         curPosX = 0;
 
-	for (curChar = 0; curChar < header_charCount; curChar++) {
+	assert(bitsTableSize >= (header_maxChar * header_fontHeight * header_bytesPerLine)); // Security
+
+	// first frame needs to be "!" (33 decimal)
+	// our font code is subtracting 33 from the actual character code
+	curBitsLinePtr += (33 * (header_fontHeight * header_bytesPerLine));
+
+	for (curChar = 33; curChar < header_charCount; curChar++) {
 		// create frame
 		{
 			ImageFrame imageFrame;
@@ -861,37 +869,40 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 			uint16 *dest = (uint16 *)imageFrame._frame.getPixels();
 			Common::fill(dest, dest + imageFrame._width * imageFrame._height, 0);
 
-#if 0
 			curCharHeightLeft = header_fontHeight;
 			while (curCharHeightLeft) {
 				curCharWidthLeft = widthTablePtr[curChar];
 				curBitsPtr  = curBitsLinePtr;
 				curBitsLeft = 8;
+				curPosX     = 0;
 
 				while (curCharWidthLeft) {
-					curBits = celGetBits(curBitsPtr, 2, curBitsLeft);
-					switch (curBits) {
-					case 0: // Transparent
-						break;
-					case 1:	// regular color
-						*dest = 0xFFFF;
-						break;
-					case 2: // front
-						//*dest = 0xFFFF; //0x333;
-						break;
-					case 3: // shadow
-						//*dest = 0x1111;
-						break;
+					if (!(curPosX & 1)) {
+						curBits = *curBitsPtr >> 4;
+					} else {
+						curBits = *curBitsPtr & 0x0F;
+						curBitsPtr++;
 					}
+					// doing this properly is complicated
+					// the 3DO has built-in anti-aliasing
+					// this here at least results in somewhat readable text
+					// TODO: make it better
+					if (curBits) {
+						curBitsReversed = (curBits >> 3) | ((curBits & 0x04) >> 1) | ((curBits & 0x02) << 1) | ((curBits & 0x01) << 3);
+						curBits = 20 - curBits;
+					}
+
+					byte curIntensity = curBits;
+					*dest = (curIntensity << 11) | (curIntensity << 6) | curIntensity;
 					dest++;
 
 					curCharWidthLeft--;
+					curPosX++;
 				}
 
 				curCharHeightLeft--;
 				curBitsLinePtr += header_bytesPerLine;
 			}
-#endif
 
 			push_back(imageFrame);
 		}
