@@ -508,14 +508,15 @@ void TattooMap::restoreArea(const Common::Rect &bounds) {
 }
 
 void TattooMap::showCloseUp(int closeUpNum) {
+	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 
 	// Get the closeup images
 	Common::String fname = Common::String::format("res%02d.vgs", closeUpNum + 1);
 	ImageFile pic(fname);
 
-	Common::Point closeUp(_data[closeUpNum].x * 100, _data[closeUpNum].y * 100);
-	Common::Point delta((SHERLOCK_SCREEN_WIDTH / 2 - closeUp.x / 100) * 100 / CLOSEUP_STEPS,
+	Point32 closeUp(_data[closeUpNum].x * 100, _data[closeUpNum].y * 100);
+	Point32 delta((SHERLOCK_SCREEN_WIDTH / 2 - closeUp.x / 100) * 100 / CLOSEUP_STEPS,
 		(SHERLOCK_SCREEN_HEIGHT / 2 - closeUp.y / 100) * 100 / CLOSEUP_STEPS);
 	Common::Rect oldBounds(closeUp.x / 100, closeUp.y / 100, closeUp.x / 100 + 1, closeUp.y / 100 + 1);
 	int size = 64;
@@ -550,13 +551,14 @@ void TattooMap::showCloseUp(int closeUpNum) {
 		restoreArea(oldBounds);
 		screen._backBuffer1.transBlitFrom(pic[0], pt, false, 0, scaleVal);
 
-		// TODO: handle scrolling
-		screen.slamRect(_oldTextBounds);
+		screen.slamRect(oldBounds);
 		screen.slamArea(pt.x, pt.y, picSize.x, picSize.y);
 
 		oldBounds = Common::Rect(pt.x, pt.y, pt.x + picSize.x + 1, pt.y + picSize.y + 1);
 		closeUp += delta;
 		scaleVal += deltaScale;
+
+		events.wait(1);
 	}
 
 	// Handle final drawing of closeup
