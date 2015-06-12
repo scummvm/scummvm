@@ -65,9 +65,6 @@ private:
 	void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped, 
 		int overrideColor);
 
-public:
-	void transBlitFromUnscaled3DO(const Graphics::Surface &src, const Common::Point &pt);
-
 protected:
 	Graphics::Surface _surface;
 

@@ -172,46 +172,42 @@ void Surface::transBlitFromUnscaled(const Graphics::Surface &src, const Common::
 	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
 		destPt.y + drawRect.height()));
 
-	// Draw loop
-	for (int yp = 0; yp < drawRect.height(); ++yp) {
-		const byte *srcP = (const byte *)src.getBasePtr(
-			flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
-		byte *destP = (byte *)getBasePtr(destPt.x, destPt.y + yp);
+	switch (src.format.bytesPerPixel) {
+	case 1:
+		// 8-bit palettized: Draw loop
+		assert(_surface.format.bytesPerPixel == 1); // Security check
+		for (int yp = 0; yp < drawRect.height(); ++yp) {
+			const byte *srcP = (const byte *)src.getBasePtr(
+				flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
+			byte *destP = (byte *)getBasePtr(destPt.x, destPt.y + yp);
 
-		for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
-			if (*srcP != TRANSPARENCY)
-				*destP = overrideColor ? overrideColor : *srcP;
+			for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
+				if (*srcP != TRANSPARENCY)
+					*destP = overrideColor ? overrideColor : *srcP;
 
-			srcP = flipped ? srcP - 1 : srcP + 1;
+				srcP = flipped ? srcP - 1 : srcP + 1;
+			}
 		}
-	}
-}
+		break;
+	case 2:
+		// 3DO 15-bit RGB565: Draw loop
+		assert(_surface.format.bytesPerPixel == 2); // Security check
+		for (int yp = 0; yp < drawRect.height(); ++yp) {
+			const uint16 *srcP = (const uint16 *)src.getBasePtr(
+				flipped ? drawRect.right - 1 : drawRect.left, drawRect.top + yp);
+			uint16 *destP = (uint16 *)getBasePtr(destPt.x, destPt.y + yp);
 
-// TODO: Needs to get implemented properly
-void Surface::transBlitFromUnscaled3DO(const Graphics::Surface &src, const Common::Point &pt) {
-	Common::Rect drawRect(0, 0, src.w, src.h);
-	Common::Rect destRect(pt.x, pt.y, pt.x + src.w, pt.y + src.h);
+			for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
+				if (*srcP) // RGB 0, 0, 0 -> transparent on 3DO
+					*destP = *srcP; // overrideColor ? overrideColor : *srcP;
 
-	// Clip the display area to on-screen
-	if (!clip(drawRect, destRect))
-		// It's completely off-screen
-		return;
-
-	Common::Point destPt(destRect.left, destRect.top);
-	addDirtyRect(Common::Rect(destPt.x, destPt.y, destPt.x + drawRect.width(),
-		destPt.y + drawRect.height()));
-
-	// Draw loop
-	for (int yp = 0; yp < drawRect.height(); ++yp) {
-		const uint16 *srcP = (const uint16 *)src.getBasePtr(drawRect.left, drawRect.top + yp);
-		uint16 *destP = (uint16 *)getBasePtr(destPt.x, destPt.y + yp);
-
-		for (int xp = 0; xp < drawRect.width(); ++xp, ++destP) {
-			if (*srcP) // 0 = transparent on 3DO
-				*destP = *srcP;
-
-			srcP = srcP + 1;
+				srcP = flipped ? srcP - 1 : srcP + 1;
+			}
 		}
+		break;
+	default:
+		error("Surface: unsupported bytesperpixel");
+		break;
 	}
 }
 

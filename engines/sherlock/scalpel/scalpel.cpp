@@ -533,7 +533,7 @@ bool ScalpelEngine::show3DOSplash() {
 	// 3DO EA Splash screen
 	ImageFile3DO titleImage_3DOSplash("3DOSplash.cel");
 
-	_screen->transBlitFromUnscaled3DO(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
+	_screen->transBlitFrom(titleImage_3DOSplash[0]._frame, Common::Point(0, -20));
 	bool finished = _events->delay(3000, true);
 
 	if (finished) {
@@ -577,7 +577,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		// "London, England"
 		ImageFile3DO titleImage_London("title2a.cel");
-		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_London[0]._frame, Common::Point(30, 50));
+		_screen->_backBuffer1.transBlitFrom(titleImage_London[0]._frame, Common::Point(30, 50));
 
 		_screen->fadeIntoScreen3DO(1);
 		finished = _events->delay(1500, true);
@@ -585,7 +585,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			// "November, 1888"
 			ImageFile3DO titleImage_November("title2b.cel");
-			_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_November[0]._frame, Common::Point(100, 100));
+			_screen->_backBuffer1.transBlitFrom(titleImage_November[0]._frame, Common::Point(100, 100));
 
 			_screen->fadeIntoScreen3DO(1);
 			finished = _music->waitUntilMSec(14700, 0, 0, 5000);
@@ -605,7 +605,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 
 		// "Sherlock Holmes" (title)
 		ImageFile3DO titleImage_SherlockHolmesTitle("title1ab.cel");
-		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
+		_screen->_backBuffer1.transBlitFrom(titleImage_SherlockHolmesTitle[0]._frame, Common::Point(34, 5));
 
 		// Blend in
 		_screen->fadeIntoScreen3DO(2);
@@ -615,7 +615,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			ImageFile3DO titleImage_Copyright("title1c.cel");
 
-			_screen->transBlitFromUnscaled3DO(titleImage_Copyright[0]._frame, Common::Point(20, 190));
+			_screen->transBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
 			finished = _events->delay(3500, true);
 		}
 	}
@@ -632,7 +632,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 	if (finished) {
 		// "In the alley behind the Regency Theatre..."
 		ImageFile3DO titleImage_InTheAlley("title1d.cel");
-		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
+		_screen->_backBuffer1.transBlitFrom(titleImage_InTheAlley[0]._frame, Common::Point(72, 51));
 
 		// Fade in
 		_screen->fadeIntoScreen3DO(4);
@@ -670,7 +670,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 		ImageFile3DO titleImage_ScreamingVictim("scream.cel");
 
 		_screen->clear();
-		_screen->transBlitFromUnscaled3DO(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
+		_screen->transBlitFrom(titleImage_ScreamingVictim[0]._frame, Common::Point(0, 0));
 
 		// Play "scream.aiff"
 		if (_sound->_voices)
@@ -699,7 +699,7 @@ bool ScalpelEngine::showAlleyCutscene3DO() {
 	if (finished) {
 		// "Early the following morning on Baker Street..."
 		ImageFile3DO titleImage_EarlyTheFollowingMorning("title3.cel");
-		_screen->_backBuffer1.transBlitFromUnscaled3DO(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
+		_screen->_backBuffer1.transBlitFrom(titleImage_EarlyTheFollowingMorning[0]._frame, Common::Point(35, 51));
 
 		// Fade in
 		_screen->fadeIntoScreen3DO(4);
@@ -754,7 +754,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		ImageFile3DO titleImage_CoffeeNote("note.cel");
 
 		_screen->clear();
-		_screen->transBlitFromUnscaled3DO(titleImage_CoffeeNote[0]._frame, Common::Point(0, 0));
+		_screen->transBlitFrom(titleImage_CoffeeNote[0]._frame, Common::Point(0, 0));
 
 		if (_sound->_voices) {
 			finished = _sound->playSound("prologue/sounds/note.aiff", WAIT_KBD_OR_FINISH);

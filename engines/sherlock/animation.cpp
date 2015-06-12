@@ -201,10 +201,10 @@ bool Animation::play3DO(const Common::String &filename, bool intro, int minDelay
 			// Draw the sprite. Note that we explicitly use the raw frame below, rather than the ImageFrame,
 			// since we don't want the offsets in the image file to be used, just the explicit position we specify
 			if (!fadeActive) {
-				screen.transBlitFromUnscaled3DO(images[imageFrame]._frame, pt);
+				screen.transBlitFrom(images[imageFrame]._frame, pt);
 			} else {
 				// Fade active, blit to backbuffer1
-				screen._backBuffer1.transBlitFromUnscaled3DO(images[imageFrame]._frame, pt);
+				screen._backBuffer1.transBlitFrom(images[imageFrame]._frame, pt);
 			}
 		} else {
 			// At this point, either the sprites for the frame has been complete, or there weren't any sprites
