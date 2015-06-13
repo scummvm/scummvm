@@ -153,6 +153,11 @@ public:
 	 * Change the sequence of the scene background object associated with the specified speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1);
+
+	/**
+	 * Load the walking images for Sherlock
+	 */
+	virtual bool loadWalk();
 };
 
 } // End of namespace Scalpel

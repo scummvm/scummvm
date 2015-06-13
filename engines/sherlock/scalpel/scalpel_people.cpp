@@ -442,6 +442,30 @@ void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
 	}
 }
 
+
+bool ScalpelPeople::loadWalk() {
+	Resources &res = *_vm->_res;
+	bool result = false;
+
+	if (_data[PLAYER]->_walkLoaded) {
+		return false;
+	} else {
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			_data[PLAYER]->_images = new ImageFile("walk.vgs");
+		} else {
+			// Load walk.anim on 3DO, which is a cel animation file
+			_data[PLAYER]->_images = new ImageFile3DO("walk.anim", kImageFile3DOType_CelAnimation);
+		}
+		_data[PLAYER]->setImageFrame();
+		_data[PLAYER]->_walkLoaded = true;
+
+		result = true;
+	}
+
+	_forceWalkReload = false;
+	return result;
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

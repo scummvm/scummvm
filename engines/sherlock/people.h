@@ -118,11 +118,6 @@ public:
 	void reset();
 
 	/**
-	 * Load the walking images for Sherlock
-	 */
-	bool loadWalk();
-
-	/**
 	 * If the walk data has been loaded, then it will be freed
 	 */
 	bool freeWalk();
@@ -151,6 +146,12 @@ public:
 	 * Change the sequence of the scene background object associated with the current speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1) = 0;
+
+	/**
+	 * Load the walking images for Sherlock
+	 */
+	virtual bool loadWalk() = 0;
+
 };
 
 } // End of namespace Sherlock

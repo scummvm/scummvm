@@ -486,6 +486,67 @@ void TattooPeople::synchronize(Serializer &s) {
 	}
 }
 
+bool TattooPeople::loadWalk() {
+	Resources &res = *_vm->_res;
+	bool result = false;
+
+	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+		if (!_data[idx]->_walkLoaded && (_data[idx]->_type == CHARACTER || _data[idx]->_type == HIDDEN_CHARACTER)) {
+			if (_data[idx]->_type == HIDDEN_CHARACTER)
+				_data[idx]->_type = INVALID;
+
+			// See if this is one of the more used Walk Graphics stored in WALK.LIB
+			for (int libNum = 0; libNum < NUM_IN_WALK_LIB; ++libNum) {
+				if (!_data[idx]->_walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
+					_useWalkLib = true;
+					break;
+				}
+			}
+
+			// Load the images for the character
+			_data[idx]->_images = new ImageFile(_data[idx]->_walkVGSName, false);
+			_data[idx]->_numFrames = _data[idx]->_images->size();
+
+			// Load walk sequence data
+			Common::String fname = Common::String(_data[idx]->_walkVGSName.c_str(), strchr(_data[idx]->_walkVGSName.c_str(), '.'));
+			fname += ".SEQ";
+
+			// Load the walk sequence data
+			Common::SeekableReadStream *stream = res.load(fname, _useWalkLib ? "walk.lib" : "vgs.lib");
+				
+			_data[idx]->_walkSequences.resize(stream->readByte());
+
+			for (uint seqNum = 0; seqNum < _data[idx]->_walkSequences.size(); ++seqNum)
+				_data[idx]->_walkSequences[seqNum].load(*stream);
+
+			// Close the sequences resource
+			delete stream;
+			_useWalkLib = false;
+
+			_data[idx]->_frameNumber = 0;
+			_data[idx]->setImageFrame();
+
+			// Set the stop Frames pointers
+			for (int dirNum = 0; dirNum < 8; ++dirNum) {
+				int count = 0;
+				while (_data[idx]->_walkSequences[dirNum + 8][count] != 0)
+					++count;
+				count += 2;
+				count = _data[idx]->_walkSequences[dirNum + 8][count] - 1;
+				_data[idx]->_stopFrames[dirNum] = &(*_data[idx]->_images)[count];
+			}
+
+			result = true;
+			_data[idx]->_walkLoaded = true;
+		} else if (_data[idx]->_type != CHARACTER) {
+			_data[idx]->_walkLoaded = false;
+		}
+	}
+
+	_forceWalkReload = false;
+	return result;
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
