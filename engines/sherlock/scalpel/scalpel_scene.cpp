@@ -590,7 +590,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		if (playRate < 0) {
 			// Reverse direction
 			// Count number of frames
-			while (cObj._sequences[frames] && frames < MAX_FRAME)
+			while (frames < MAX_FRAME && cObj._sequences[frames])
 				++frames;
 		} else {
 			// Forward direction
