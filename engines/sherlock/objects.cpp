@@ -414,7 +414,6 @@ void Sprite::setObjTalkSequence(int seq) {
 
 void Sprite::checkWalkGraphics() {
 	People &people = *_vm->_people;
-	int npcNum = -1;
 
 	if (_images == nullptr) {
 		freeAltGraphics();
@@ -450,6 +449,7 @@ void Sprite::checkWalkGraphics() {
 
 	// If there is no Alternate Sequence set, see if we need to load a new one
 	if (!_altSeq) {
+		int npcNum = -1;
 		// Find which NPC this is so we can check the name of the graphics loaded
 		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 			if (this == &people[idx]) {

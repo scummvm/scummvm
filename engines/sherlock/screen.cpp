@@ -213,8 +213,6 @@ void Screen::fadeIntoScreen3DO(int speed) {
 	Events &events = *_vm->_events;
 	uint16 *currentScreenBasePtr = (uint16 *)getPixels();
 	uint16 *targetScreenBasePtr = (uint16 *)_backBuffer->getPixels();
-	uint16 *currentScreenPtr = NULL;
-	uint16 *targetScreenPtr = NULL;
 	uint16  currentScreenPixel = 0;
 	uint16  targetScreenPixel = 0;
 
@@ -236,8 +234,8 @@ void Screen::fadeIntoScreen3DO(int speed) {
 
 	do {
 		pixelsChanged = 0;
-		currentScreenPtr = currentScreenBasePtr;
-		targetScreenPtr = targetScreenBasePtr;
+		uint16 *currentScreenPtr = currentScreenBasePtr;
+		uint16 *targetScreenPtr = targetScreenBasePtr;
 
 		for (screenY = 0; screenY < screenHeight; screenY++) {
 			for (screenX = 0; screenX < screenWidth; screenX++) {

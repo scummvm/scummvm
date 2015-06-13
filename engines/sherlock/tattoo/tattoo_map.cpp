@@ -318,7 +318,6 @@ void TattooMap::checkMapNames(bool slamIt) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Common::Point mousePos = events.mousePos() + _currentScroll;
-	int dif = 10000;
 
 	// See if the mouse is pointing at any of the map locations
 	_bgFound = -1;
@@ -353,6 +352,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			if (width > 150) {
 				const char *s = desc.c_str();
 
+				int dif = 10000;
 				for (;;) {
 					// Move to end of next word
 					s = strchr(s, ' ');
@@ -409,10 +409,9 @@ void TattooMap::checkMapNames(bool slamIt) {
 				// The text needs to be split up over two lines
 				Common::String line1(desc.c_str(), space);
 				Common::String line2(space + 1);
-				int xp, yp;
 
 				// Draw the first line
-				xp = (width - screen.stringWidth(desc)) / 2;
+				int xp = (width - screen.stringWidth(desc)) / 2;
 				_textBuffer->writeString(line1, Common::Point(xp + 0, 0), BLACK);
 				_textBuffer->writeString(line1, Common::Point(xp + 1, 0), BLACK);
 				_textBuffer->writeString(line1, Common::Point(xp + 2, 0), BLACK);
@@ -423,8 +422,9 @@ void TattooMap::checkMapNames(bool slamIt) {
 				_textBuffer->writeString(line1, Common::Point(xp + 2, 2), BLACK);
 				_textBuffer->writeString(line1, Common::Point(xp + 1, 1), MAP_NAME_COLOR);
 
-				yp = screen.stringHeight(line2);
+				int yp = screen.stringHeight(line2);
 				xp = (width - screen.stringWidth(line2)) / 2;
+				// CHECKME: Shouldn't we use yp for drawing line2?
 				_textBuffer->writeString(line2, Common::Point(xp + 0, 0), BLACK);
 				_textBuffer->writeString(line2, Common::Point(xp + 1, 0), BLACK);
 				_textBuffer->writeString(line2, Common::Point(xp + 2, 0), BLACK);

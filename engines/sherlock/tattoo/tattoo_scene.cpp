@@ -724,6 +724,7 @@ int TattooScene::getScaleVal(const Common::Point &pt) {
 		if (sz.contains(pos)) {
 			int n = (sz._bottomNumber - sz._topNumber) * 100 / sz.height() * (pos.y - sz.top) / 100 + sz._topNumber;
 			result = 25600L / n;
+			// CHECKME: Shouldn't we set 'found' at this place?
 		}
 	}
 
@@ -743,10 +744,6 @@ int TattooScene::getScaleVal(const Common::Point &pt) {
 }
 
 void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
-	int r, g, b;
-	byte c;
-	int cd, d;
-
 	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter 
 	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
 	byte *p = &_lookupTable[0];
@@ -758,6 +755,7 @@ void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 		p = &_lookupTable1[0];
 
 		for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
+			int r, g, b;
 			switch (_currentScene) {
 			case 8:
 				r = cMap[idx * 3] * 4 / 5;
@@ -784,11 +782,11 @@ void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 				break;
 			}
 
-			c = 0;
-			cd = (r - cMap[0]) * (r - cMap[0]) + (g - cMap[1]) * (g - cMap[1]) + (b - cMap[2]) * (b - cMap[2]);
+			byte c = 0;
+			int cd = (r - cMap[0]) * (r - cMap[0]) + (g - cMap[1]) * (g - cMap[1]) + (b - cMap[2]) * (b - cMap[2]);
 
 			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
-				d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) 
+				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) 
 					+ (b - cMap[pal * 3 + 2])*(b - cMap[pal * 3 + 2]);
 
 				if (d < cd) {

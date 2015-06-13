@@ -570,7 +570,6 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	uint32 ccbHeight = 0;
 	// cel data
 	uint32 celDataSize = 0;
-	byte  *celDataPtr = NULL;
 
 	while (stream.pos() < streamSize) {
 		// 3DO sherlock holmes room data header
@@ -609,7 +608,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 		celDataSize = roomDataHeader_size - 68;
 
 		// read data into memory
-		celDataPtr = new byte[celDataSize];
+		byte  *celDataPtr = new byte[celDataSize];
 
 		stream.read(celDataPtr, celDataSize);
 		
