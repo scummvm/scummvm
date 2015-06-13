@@ -533,6 +533,10 @@ WalkSequences &WalkSequences::operator=(const WalkSequences &src) {
 
 /*----------------------------------------------------------------*/
 
+ActionType::ActionType() {
+	_cAnimNum = _cAnimSpeed = 0;
+}
+
 void ActionType::load(Common::SeekableReadStream &s) {
 	char buffer[12];
 
@@ -549,8 +553,7 @@ void ActionType::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-UseType::UseType() {
-	_cAnimNum = _cAnimSpeed = 0;
+UseType::UseType(): ActionType() {
 	_useFlag = 0;
 }
 
@@ -562,15 +565,7 @@ void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_verb = Common::String(buffer);
 	}
 
-	_cAnimNum = s.readByte();
-	_cAnimSpeed = s.readByte();
-	if (_cAnimSpeed & 0x80)
-		_cAnimSpeed = -(_cAnimSpeed & 0x7f);
-
-	for (int idx = 0; idx < NAMES_COUNT; ++idx) {
-		s.read(buffer, 12);
-		_names[idx] = Common::String(buffer);
-	}
+	ActionType::load(s);
 
 	_useFlag = s.readSint16LE();
 

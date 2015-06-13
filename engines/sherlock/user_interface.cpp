@@ -54,7 +54,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 }
 
 
-void UserInterface::checkAction(ActionType &action, const char *const messages[], int objNum) {
+void UserInterface::checkAction(ActionType &action, int objNum, const char *const messages[]) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;

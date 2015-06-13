@@ -182,11 +182,6 @@ public:
 	 * Draw the user interface onto the screen's back buffers
 	 */	
 	virtual void drawInterface(int bufferNum = 3);
-
-
-	void checkAction(UseType &use, int objNum) {
-		// TODO: Get rid of this stub, and properly use the UserInterface method
-	}
 };
 
 } // End of namespace Tattoo

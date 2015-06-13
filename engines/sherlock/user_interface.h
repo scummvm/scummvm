@@ -64,7 +64,7 @@ protected:
 	/**
 	 * Called for OPEN, CLOSE, and MOVE actions are being done
 	 */
-	void checkAction(ActionType &action, const char *const messages[], int objNum);
+	void checkAction(ActionType &action, int objNum, const char *const messages[] = nullptr);
 public:
 	MenuMode _menuMode;
 	int _menuCounter;

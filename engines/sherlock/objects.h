@@ -144,16 +144,15 @@ struct ActionType {
 	int _cAnimSpeed;
 	Common::String _names[NAMES_COUNT];
 
+	ActionType();
+
 	/**
 	 * Load the data for the action
 	 */
 	void load(Common::SeekableReadStream &s);
 };
 
-struct UseType {
-	int _cAnimNum;
-	int _cAnimSpeed;
-	Common::String _names[NAMES_COUNT];
+struct UseType: public ActionType {
 	int _useFlag;					// Which flag USE will set (if any)
 	Common::String _target;
 	Common::String _verb;

@@ -1419,7 +1419,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 
 				switch (allowed) {
 				case ALLOW_OPEN:
-					checkAction(obj._aOpen, MOPEN, _temp);
+					checkAction(obj._aOpen, _temp, MOPEN);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(OPEN_MODE - 1);
@@ -1428,7 +1428,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 					break;
 
 				case ALLOW_CLOSE:
-					checkAction(obj._aClose, MCLOSE, _temp);
+					checkAction(obj._aClose, _temp, MCLOSE);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(CLOSE_MODE - 1);
@@ -1437,7 +1437,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 					break;
 
 				case ALLOW_MOVE:
-					checkAction(obj._aMove, MMOVE, _temp);
+					checkAction(obj._aMove, _temp, MMOVE);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(MOVE_MODE - 1);
