@@ -785,11 +785,12 @@ bool Scene::loadScene(const Common::String &filename) {
 		roomStream->read(&_walkData[0], header3DO_walkData_size);
 
 		// === EXITS === Read in the exits
+		roomStream->seek(header3DO_exits_offset);
+
 		int exitsCount = header3DO_exits_size / 20;
 
 		_exitZone = -1;
 		_exits.resize(exitsCount);
-
 		for (int idx = 0; idx < exitsCount; ++idx)
 			_exits[idx].load3DO(*roomStream);
 
