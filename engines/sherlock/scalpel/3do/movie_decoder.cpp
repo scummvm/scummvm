@@ -498,6 +498,9 @@ bool Scalpel3DOMoviePlay(const char *filename, Common::Point pos) {
 
 		g_system->delayMillis(10);
 	}
+	videoDecoder->close();
+	delete videoDecoder;
+
 	return !skipVideo;
 }
 
