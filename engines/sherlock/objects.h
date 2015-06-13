@@ -444,7 +444,8 @@ public:
 struct CAnim {
 	Common::String _name;			// Name
 	Common::Point _position;		// Position
-	int _size;						// Size of uncompressed animation
+	int _dataSize;					// Size of uncompressed animation data
+	uint32 _dataOffset;				// offset within room file of animation data
 	int _flags;						// Tells if can be walked behind
 	PositionFacing _goto[2];		// Position Holmes (and NPC in Rose Tattoo) should walk to before anim starts
 	PositionFacing _teleport[2];	// Location Holmes (and NPC) shoul teleport to after playing canim
@@ -459,8 +460,8 @@ struct CAnim {
 	/**
 	 * Load the data for the animation
 	 */
-	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
-	void load3DO(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOffset);
+	void load3DO(Common::SeekableReadStream &s, uint32 dataOffset);
 };
 
 class CAnimStream {

@@ -165,7 +165,7 @@ private:
 	void saveSceneStatus();
 protected:
 	SherlockEngine *_vm;
-	Common::String _rrmName;
+	Common::String _roomFilename;
 
 	/**
 	 * Loads the data associated for a given scene. The room resource file's format is:

@@ -310,7 +310,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// PC version
 		Common::String roomFilename = filename + ".rrm";
-		_rrmName = roomFilename;
+		_roomFilename = roomFilename;
 
 		flag = _vm->_res->exists(roomFilename);
 		if (flag) {
@@ -464,16 +464,41 @@ bool Scene::loadScene(const Common::String &filename) {
 			_cAnim.clear();
 			if (bgHeader._numcAnimations) {
 				int animSize = IS_SERRATED_SCALPEL ? 65 : 47;
-				Common::SeekableReadStream *canimStream = _lzwMode ?
+				Common::SeekableReadStream *cAnimStream = _lzwMode ?
 					res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
 					rrmStream->readStream(animSize * bgHeader._numcAnimations);
 
-				_cAnim.resize(bgHeader._numcAnimations);
-				for (uint idx = 0; idx < _cAnim.size(); ++idx)
-					_cAnim[idx].load(*canimStream, IS_ROSE_TATTOO);
+				// Load cAnim offset table as well
+				uint32 *cAnimOffsetTablePtr = new uint32[bgHeader._numcAnimations];
+				uint32 *cAnimOffsetPtr = cAnimOffsetTablePtr;
+				memset(cAnimOffsetTablePtr, 0, bgHeader._numcAnimations);
+ 				if (IS_SERRATED_SCALPEL) {
+					// Save current stream offset
+					int32 curOffset = rrmStream->pos();
+					rrmStream->seek(44); // Seek to cAnim-Offset-Table
+					for (uint16 curCAnim = 0; curCAnim < bgHeader._numcAnimations; curCAnim++) {
+						*cAnimOffsetPtr = rrmStream->readUint32LE();
+						cAnimOffsetPtr++;
+					}
+					// Seek back to original stream offset
+					rrmStream->seek(curOffset);
+				}
+				// TODO: load offset table for Rose Tattoo as well
 
-				delete canimStream;
+				// Go to the start of the cAnimOffsetTable
+				cAnimOffsetPtr = cAnimOffsetTablePtr;
+
+				_cAnim.resize(bgHeader._numcAnimations);
+				for (uint idx = 0; idx < _cAnim.size(); ++idx) {
+					_cAnim[idx].load(*cAnimStream, IS_ROSE_TATTOO, *cAnimOffsetPtr);
+					cAnimOffsetPtr++;
+				}
+
+				delete cAnimStream;
+				delete cAnimOffsetTablePtr;
 			}
+
+			
 
 			// Read in the room bounding areas
 			int size = rrmStream->readUint16LE();
@@ -579,12 +604,12 @@ bool Scene::loadScene(const Common::String &filename) {
 
 	} else {
 		// === 3DO version ===
-		Common::String roomFilename = "rooms/" + filename + ".rrm";
-		flag = _vm->_res->exists(roomFilename);
+		_roomFilename = "rooms/" + filename + ".rrm";
+		flag = _vm->_res->exists(_roomFilename);
 		if (!flag)
 			error("loadScene: 3DO room data file not found");
 
-		Common::SeekableReadStream *roomStream = _vm->_res->load(roomFilename);
+		Common::SeekableReadStream *roomStream = _vm->_res->load(_roomFilename);
 
 		// Read 3DO header
 		roomStream->skip(4); // UINT32: offset graphic data?
@@ -690,13 +715,30 @@ bool Scene::loadScene(const Common::String &filename) {
 		_cAnim.clear();
 		if (header3DO_numAnimations) {
 			roomStream->seek(header3DO_cAnim_offset);
-			Common::SeekableReadStream *canimStream = roomStream->readStream(header3DO_cAnim_size);
+			Common::SeekableReadStream *cAnimStream = roomStream->readStream(header3DO_cAnim_size);
+
+			uint32 *cAnimOffsetTablePtr = new uint32[header3DO_numAnimations];
+			uint32 *cAnimOffsetPtr = cAnimOffsetTablePtr;
+			memset(cAnimOffsetTablePtr, 0, header3DO_numAnimations);
+
+			// Seek to end of graphics data and load cAnim offset table from there
+			roomStream->seek(header3DO_bgGraphicData_offset + header3DO_bgGraphicData_size);
+			for (uint16 curCAnim = 0; curCAnim < header3DO_numAnimations; curCAnim++) {
+				*cAnimOffsetPtr = roomStream->readUint32BE();
+				cAnimOffsetPtr++;
+			}
+
+			// Go to the start of the cAnimOffsetTable
+			cAnimOffsetPtr = cAnimOffsetTablePtr;
 
 			_cAnim.resize(header3DO_numAnimations);
-			for (uint idx = 0; idx < _cAnim.size(); ++idx)
-				_cAnim[idx].load3DO(*canimStream);
+			for (uint idx = 0; idx < _cAnim.size(); ++idx) {
+				_cAnim[idx].load3DO(*cAnimStream, *cAnimOffsetPtr);
+				cAnimOffsetPtr++;
+			}
 
-			delete canimStream;
+			delete cAnimStream;
+			delete cAnimOffsetTablePtr;
 		}
 
 		// === BOUNDING AREAS === Read in the room bounding areas

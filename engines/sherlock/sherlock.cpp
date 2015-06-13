@@ -78,6 +78,7 @@ void SherlockEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
 
 	ImageFile::setVm(this);
+	ImageFile3DO::setVm(this);
 	Object::setVm(this);
 	Sprite::setVm(this);
 

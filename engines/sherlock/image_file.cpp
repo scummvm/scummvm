@@ -244,11 +244,14 @@ void ImageFile3DO::setVm(SherlockEngine *vm) {
 }
 
 ImageFile3DO::ImageFile3DO(const Common::String &name, ImageFile3DOType imageFile3DOType) {
+#if 0
 	Common::File *dataStream = new Common::File();
 
 	if (!dataStream->open(name)) {
 		error("unable to open %s\n", name.c_str());
 	}
+#endif
+	Common::SeekableReadStream *dataStream = _vm->_res->load(name);
 
 	switch(imageFile3DOType) {
 	case kImageFile3DOType_Animation:

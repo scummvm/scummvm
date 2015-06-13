@@ -1503,14 +1503,14 @@ const Common::Rect Object::getOldBounds() const {
 
 /*----------------------------------------------------------------*/
 
-void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
+void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOffset) {
 	char buffer[12];
 	s.read(buffer, 12);
 	_name = Common::String(buffer);
 
 	if (isRoseTattoo) {
 		Common::fill(&_sequences[0], &_sequences[30], 0);
-		_size = s.readUint32LE();
+		_dataSize = s.readUint32LE();
 	} else {
 		s.read(_sequences, 30);
 	}
@@ -1522,7 +1522,7 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_flags = s.readByte();
 		_scaleVal = s.readSint16LE();
 	} else {
-		_size = s.readUint32LE();
+		_dataSize = s.readUint32LE();
 		_type = (SpriteType)s.readUint16LE();
 		_flags = s.readByte();
 	}
@@ -1557,13 +1557,20 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_teleport[0].x = _teleport[0].x * FIXED_INT_MULTIPLIER / 100;
 		_teleport[0].y = _teleport[0].y * FIXED_INT_MULTIPLIER / 100;
 	}
+
+	// Save offset of data, which is actually inside another table inside the room data file
+	// This table is at offset 44 for Serrated Scalpel
+	// TODO: find it for the other game
+	_dataOffset = dataOffset;
 }
 
-void CAnim::load3DO(Common::SeekableReadStream &s) {
+void CAnim::load3DO(Common::SeekableReadStream &s, uint32 dataOffset) {
 	// this got reordered on 3DO
 	// maybe it was the 3DO compiler
 
-	_size = s.readUint32BE();
+	_dataSize = s.readUint32BE();
+	// Save offset of data, which is inside another table inside the room data file
+	_dataOffset = dataOffset;
 
 	_position.x = s.readSint16BE();
 	_position.y = s.readSint16BE();

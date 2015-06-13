@@ -568,21 +568,26 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		Common::String fname = cAnim._name + ".vgs";
 		if (!res.isInCache(fname)) {
 			// Set up RRM scene data
-			Common::SeekableReadStream *rrmStream = res.load(_rrmName);
-			rrmStream->seek(44 + cAnimNum * 4);
-			rrmStream->seek(rrmStream->readUint32LE());
+			Common::SeekableReadStream *roomStream = res.load(_roomFilename);
+			roomStream->seek(cAnim._dataOffset);
+			//rrmStream->seek(44 + cAnimNum * 4);
+			//rrmStream->seek(rrmStream->readUint32LE());
 
 			// Load the canimation into the cache
-			Common::SeekableReadStream *imgStream = !_lzwMode ? rrmStream->readStream(cAnim._size) :
-				Resources::decompressLZ(*rrmStream, cAnim._size);
+			Common::SeekableReadStream *imgStream = !_lzwMode ? roomStream->readStream(cAnim._dataSize) :
+				Resources::decompressLZ(*roomStream, cAnim._dataSize);
 			res.addToCache(fname, *imgStream);
 
 			delete imgStream;
-			delete rrmStream;
+			delete roomStream;
 		}
 
 		// Now load the resource as an image
-		cObj._images = new ImageFile(fname);
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			cObj._images = new ImageFile(fname);
+		} else {
+			cObj._images = new ImageFile3DO(fname, kImageFile3DOType_RoomFormat);
+		}
 		cObj._imageFrame = &(*cObj._images)[0];
 		cObj._maxFrames = cObj._images->size();
 
