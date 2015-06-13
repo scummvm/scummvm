@@ -250,7 +250,7 @@ void ScalpelEngine::showOpening() {
 		if (finished)
 			finished = showStreetCutscene3DO();
 		if (finished)
-			finished = showOfficeCutscene3DO();
+			showOfficeCutscene3DO();
 
 		_events->clearEvents();
 		_music->stopMusic();
@@ -264,7 +264,7 @@ void ScalpelEngine::showOpening() {
 	if (finished)
 		finished = showStreetCutscene();
 	if (finished)
-		finished = showOfficeCutscene();
+		showOfficeCutscene();
 
 	_events->clearEvents();
 	_music->stopMusic();
@@ -736,9 +736,7 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 }
 
 bool ScalpelEngine::showOfficeCutscene3DO() {
-	bool finished = true;
-
-	finished = _music->waitUntilMSec(151000, 0, 0, 1000);
+	bool finished = _music->waitUntilMSec(151000, 0, 0, 1000);
 
 	if (finished)
 		_animation->play3DO("COFF1", true, 1, false, 3);
