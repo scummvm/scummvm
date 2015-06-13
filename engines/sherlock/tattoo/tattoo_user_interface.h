@@ -45,11 +45,57 @@ private:
 	Surface *_tagBuffer;
 	Surface *_invGraphic;
 	Common::Array<Common::Rect> _grayAreas;
+	int _bgFound, _oldBgFound;
+	Object *_bgShape;
+	bool _personFound;
+	int _lockoutTimer;
+	Common::KeyState _keyState;
 private:
 	/**
 	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
 	 */
 	void drawGrayAreas();
+
+	/**
+	 * Handle any input when we're in standard mode (with no windows open)
+	 */
+	void doStandardControl();
+
+	/**
+	 * Handle input when in look mode
+	 */
+	void doLookControl();
+
+	/**
+	 * Handle input when the File window is open
+	 */
+	void doFileControl();
+
+	/**
+	 * Handle input if an inventory command (INVENT, LOOK, or USE) has an open window and is active
+	 */
+	void doInventoryControl();
+
+	/**
+	 * Handle input while the verb menu is open
+	 */
+	void doVerbControl();
+
+	/**
+	 * Handles input when in talk mode. It highlights the buttons and response statements,
+	 * and handles any actions for clicking on the buttons or statements.
+	 */
+	void doTalkControl();
+
+	/**
+	 * Handles input when a message window is open at the bottom of the screen
+	 */
+	void doMessageControl();
+	
+	/**
+	 * Handles input when the player is in the Lab Table scene
+	 */
+	void doLabControl();
 public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;

@@ -35,6 +35,10 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) 
 	_invGraphic = nullptr;
 	_scrollSize = _scrollSpeed = 0;
 	_drawMenu = false;
+	_bgFound = _oldBgFound = -1;
+	_bgShape = nullptr;
+	_personFound = false;
+	_lockoutTimer = 0;
 }
 
 void TattooUserInterface::initScrollVars() {
@@ -44,8 +48,69 @@ void TattooUserInterface::initScrollVars() {
 }
 
 void TattooUserInterface::handleInput() {
-	// TODO
-	_vm->_events->pollEventsAndWait();
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Common::Point mousePos = events.mousePos();
+
+	events.pollEventsAndWait();
+	_keyState.keycode = Common::KEYCODE_INVALID;
+
+	// Check the mouse positioning
+	if (events.isCursorVisible())
+		_bgFound = scene.findBgShape(mousePos);
+	_personFound = _bgFound >= 1000;
+	_bgShape = (_bgFound != -1 && _bgFound < 1000) ? &scene._bgShapes[_bgFound] : nullptr;
+
+	if (_lockoutTimer)
+		--_lockoutTimer;
+	
+	// Key handling
+	if (events.kbHit()) {
+		_keyState = events.getKey();
+
+		if (_keyState.keycode == Common::KEYCODE_s && vm._allowFastMode)
+			vm._fastMode = !vm._fastMode;
+
+		else if (_keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog && !_lockoutTimer) {
+			vm.setFlags(-76);
+			vm.setFlags(396);
+			scene._goToScene = STARTING_GAME_SCENE;
+		}
+	}
+
+	if (!events.isCursorVisible())
+		_keyState.keycode = Common::KEYCODE_INVALID;
+
+	// Handle input depending on what mode we're in
+	switch (_menuMode) {
+	case STD_MODE:
+		doStandardControl();
+		break;
+	case LOOK_MODE:
+		doLookControl();
+		break;
+	case FILES_MODE:
+		doFileControl();
+		break;
+	case INV_MODE:
+		doInventoryControl();
+		break;
+	case VERB_MODE:
+		doVerbControl();
+		break;
+	case TALK_MODE:
+		doTalkControl();
+		break;
+	case MESSAGE_MODE:
+		doMessageControl();
+		break;
+	case LAB_MODE:
+		doLabControl();
+		break;
+	default:
+		break;
+	}
 }
 
 void TattooUserInterface::drawInterface(int bufferNum) {
@@ -204,6 +269,38 @@ void TattooUserInterface::doScroll() {
 
 void TattooUserInterface::drawGrayAreas() {
 	// TODO
+}
+
+void TattooUserInterface::doStandardControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doLookControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doFileControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doInventoryControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doVerbControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doTalkControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doMessageControl() {
+	warning("TODO: ui control");
+}
+
+void TattooUserInterface::doLabControl() {
+	warning("TODO: ui control");
 }
 
 } // End of namespace Tattoo

@@ -890,7 +890,7 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 			if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
 				_vm->setFlags(-76);
 				_vm->setFlags(396);
-				_goToScene = 1;
+				_goToScene = STARTING_GAME_SCENE;
 				talk._talkToAbort = true;
 				_activeCAnim.close();
 			}

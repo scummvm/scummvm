@@ -50,6 +50,7 @@ protected:
 public:
 	bool _creditsActive;
 	bool _runningProlog;
+	bool _fastMode, _allowFastMode;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine() {}

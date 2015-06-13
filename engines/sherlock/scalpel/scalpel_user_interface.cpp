@@ -149,7 +149,7 @@ void ScalpelUserInterface::handleInput() {
 		whileMenuCounter();
 
 	Common::Point pt = events.mousePos();
-	_bgFound = scene.findBgShape(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1));
+	_bgFound = scene.findBgShape(pt);
 	_keyPress = '\0';
 
 	// Check kbd and set the mouse released flag if Enter or space is pressed.

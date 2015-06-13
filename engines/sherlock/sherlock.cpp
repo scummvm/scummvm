@@ -50,7 +50,6 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_canLoadSave = false;
 	_showOriginalSavesDialog = false;
 	_interactiveFl = true;
-	_fastMode = false;
 }
 
 SherlockEngine::~SherlockEngine() {

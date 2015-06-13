@@ -34,6 +34,8 @@ TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDes
 		SherlockEngine(syst, gameDesc) {
 	_creditsActive = false;
 	_runningProlog = false;
+	_fastMode = false;
+	_allowFastMode = true;
 }
 
 void TattooEngine::showOpening() {

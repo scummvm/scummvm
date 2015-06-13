@@ -1205,6 +1205,10 @@ int Scene::findBgShape(const Common::Rect &r) {
 	return -1;
 }
 
+int Scene::findBgShape(const Common::Point &pt) {
+	return findBgShape(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1));
+}
+
 int Scene::checkForZones(const Common::Point &pt, int zoneType) {
 	int matches = 0;
 
