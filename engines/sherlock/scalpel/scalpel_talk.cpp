@@ -558,6 +558,10 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 
 	movieFilename = _scriptName;
 	movieFilename.deleteChar(1); // remove 2nd character of scriptname
+	// cut scriptname to 6 characters
+	while (movieFilename.size() > 6) {
+		movieFilename.deleteChar(6);
+	}
 
 	movieFilename.insertChar(selector + 'a', movieFilename.size());
 	movieFilename.insertChar(subIndex + 'a', movieFilename.size());
