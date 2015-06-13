@@ -1035,6 +1035,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 	}
 
+	bool   trigger3DOMovie = true;
 	uint16 subIndex = 1;
 
 	do {
@@ -1055,6 +1056,9 @@ void Talk::doScript(const Common::String &script) {
 				return;
 			case RET_CONTINUE:
 				continue;
+			case OP_SWITCH_SPEAKER:
+				trigger3DOMovie = true;
+				break;
 			default:
 				break;
 			}
@@ -1077,10 +1081,11 @@ void Talk::doScript(const Common::String &script) {
 			_openTalkWindow = false;
 		}
 
-		if (_wait) {
+		if ((_wait) && (trigger3DOMovie)) {
 			// Trigger to play 3DO movie
 			talk3DOMovieTrigger(subIndex);
 
+			trigger3DOMovie = false; // wait for next switch speaker opcode
 			subIndex++;
 		}
 
