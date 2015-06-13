@@ -1035,6 +1035,8 @@ void Talk::doScript(const Common::String &script) {
 		}
 	}
 
+	uint16 subIndex = 1;
+
 	do {
 		Common::String tempString;
 		_wait = 0;
@@ -1073,6 +1075,14 @@ void Talk::doScript(const Common::String &script) {
 
 			ui._windowOpen = true;
 			_openTalkWindow = false;
+		}
+
+		if (_wait) {
+			// Trigger to play 3DO movie
+			int selector = _vm->_ui->_selector;
+			talk3DOMovieTrigger(selector, subIndex);
+
+			subIndex++;
 		}
 
 		if (_wait)

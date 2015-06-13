@@ -103,6 +103,11 @@ public:
 	void update();
 
 	/**
+	 * Makes the whole screen dirty, Hack for 3DO movie playing
+	 */
+	void makeAllDirty();
+
+	/**
 	 * Return the currently active palette
 	 */
 	void getPalette(byte palette[PALETTE_SIZE]);

@@ -27,6 +27,7 @@
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
+#include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
 
@@ -521,6 +522,34 @@ void ScalpelTalk::talkWait(const byte *&str) {
 		_yp = CONTROLS_Y + 12;
 		_charCount = _line = 0;
 	}
+}
+
+void ScalpelTalk::talk3DOMovieTrigger(int selector, int subIndex) {
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// No 3DO? No movie!
+		return;
+	}
+
+	// Find out a few things that we need
+	int roomNr = _vm->_scene->_currentScene;
+
+	// Make a quick update, so that current text is shown on screen
+	_vm->_screen->update();
+
+	// Figure out that movie filename
+	Common::String movieFilename;
+
+	movieFilename = _scriptName;
+	movieFilename.deleteChar(1); // remove 2nd character of scriptname
+
+	movieFilename.insertChar(selector + 'a', movieFilename.size());
+	movieFilename.insertChar(subIndex + 'a', movieFilename.size());
+	movieFilename = Common::String::format("movies/%02d/%s.stream", roomNr, movieFilename.c_str());
+
+	Scalpel3DOMoviePlay(movieFilename.c_str(), Common::Point(5, 5));
+
+	// Restore screen HACK
+	_vm->_screen->makeAllDirty();
 }
 
 } // End of namespace Scalpel

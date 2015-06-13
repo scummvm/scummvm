@@ -501,5 +501,4 @@ bool Scalpel3DOMoviePlay(const char *filename, Common::Point pos) {
 	return !skipVideo;
 }
 
-
 } // End of namespace Sherlock

@@ -71,6 +71,10 @@ void Screen::update() {
 	_dirtyRects.clear();
 }
 
+void Screen::makeAllDirty() {
+	addDirtyRect(Common::Rect(0, 0, this->w(), this->h()));
+}
+
 void Screen::getPalette(byte palette[PALETTE_SIZE]) {
 	g_system->getPaletteManager()->grabPalette(palette, 0, PALETTE_COUNT);
 }

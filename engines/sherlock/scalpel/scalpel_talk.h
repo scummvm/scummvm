@@ -62,6 +62,12 @@ protected:
 	 * Pause when displaying a talk dialog on-screen
 	 */
 	virtual void talkWait(const byte *&str);
+
+	/**
+	 * Trigger to play a 3DO talk dialog movie
+	 */
+	virtual void talk3DOMovieTrigger(int selector, int subIndex);
+
 public:
 	ScalpelTalk(SherlockEngine *vm);
 	virtual ~ScalpelTalk() {}
