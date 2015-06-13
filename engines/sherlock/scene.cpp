@@ -1070,13 +1070,13 @@ void Scene::transitionToScene() {
 	// Start any initial animation for the scene
 	if (cAnimNum != -1) {
 		CAnim &c = _cAnim[cAnimNum];
-		Common::Point pt = c._goto;
+		PositionFacing pt = c._goto[0];
 
-		c._goto = Common::Point(-1, -1);
+		c._goto[0].x = c._goto[0].y = -1;
 		people[PLAYER]._position = Common::Point(0, 0);
 
 		startCAnim(cAnimNum, 1);
-		c._goto = pt;
+		c._goto[0] = pt;
 	}
 }
 

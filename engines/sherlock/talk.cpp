@@ -1452,7 +1452,7 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 
 	++str;
 	CAnim &animation = scene._cAnim[str[0] - 1];
-	people.walkToCoords(animation._goto, animation._gotoDir);
+	people.walkToCoords(animation._goto[0], animation._goto[0]._facing);
 	
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }

@@ -2200,11 +2200,11 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 
 			if (action._cAnimNum != 99) {
 				if (action._cAnimSpeed & REVERSE_DIRECTION) {
-					pt = anim._teleportPos;
-					dir = anim._teleportDir;
+					pt = anim._teleport[0];
+					dir = anim._teleport[0]._facing;
 				} else {
-					pt = anim._goto;
-					dir = anim._gotoDir;
+					pt = anim._goto[0];
+					dir = anim._goto[0]._facing;
 				}
 			}
 		} else {

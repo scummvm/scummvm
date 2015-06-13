@@ -433,15 +433,21 @@ public:
 	void setObjTalkSequence(int seq);
 };
 
+
+class PositionFacing : public Point32 {
+public:
+	int _facing;
+
+	PositionFacing() : Point32(), _facing(0) {}
+};
+
 struct CAnim {
 	Common::String _name;			// Name
 	Common::Point _position;		// Position
 	int _size;						// Size of uncompressed animation
 	int _flags;						// Tells if can be walked behind
-	Point32 _goto;			// coords holmes should walk to before starting canim
-	int _gotoDir;
-	Point32 _teleportPos;		// Location Holmes shoul teleport to after
-	int _teleportDir;					// playing canim
+	PositionFacing _goto[2];		// Position Holmes (and NPC in Rose Tattoo) should walk to before anim starts
+	PositionFacing _teleport[2];	// Location Holmes (and NPC) shoul teleport to after playing canim
 
 	// Scalpel specific
 	byte _sequences[MAX_FRAME];		// Animation sequences

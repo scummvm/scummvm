@@ -508,16 +508,16 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 	CAnim &cAnim = _cAnim[cAnimNum];
 	if (playRate < 0) {
 		// Reverse direction
-		walkPos = cAnim._teleportPos;
-		walkDir = cAnim._teleportDir;
-		tpPos = cAnim._goto;
-		tpDir = cAnim._gotoDir;
+		walkPos = cAnim._teleport[0];
+		walkDir = cAnim._teleport[0]._facing;
+		tpPos = cAnim._goto[0];
+		tpDir = cAnim._goto[0]._facing;
 	} else {
 		// Forward direction
-		walkPos = cAnim._goto;
-		walkDir = cAnim._gotoDir;
-		tpPos = cAnim._teleportPos;
-		tpDir = cAnim._teleportDir;
+		walkPos = cAnim._goto[0];
+		walkDir = cAnim._goto[0]._facing;
+		tpPos = cAnim._teleport[0];
+		tpDir = cAnim._teleport[0]._facing;
 	}
 
 	CursorId oldCursor = events.getCursor();

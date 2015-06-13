@@ -1527,19 +1527,36 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_flags = s.readByte();
 	}
 
-	_goto.x = s.readSint16LE();
-	_goto.y = s.readSint16LE();
-	_gotoDir = s.readSint16LE();
-	_teleportPos.x = s.readSint16LE();
-	_teleportPos.y = s.readSint16LE();
-	if (!isRoseTattoo) {
-		_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
-		_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
-		_teleportPos.x = _teleportPos.x * FIXED_INT_MULTIPLIER / 100;
-		_teleportPos.y = _teleportPos.y * FIXED_INT_MULTIPLIER / 100;
+	_goto[0].x = s.readSint16LE();
+	_goto[0].y = s.readSint16LE();
+	_goto[0]._facing = s.readSint16LE();
+
+	if (isRoseTattoo) {
+		// Get Goto position and facing for second NPC
+		_goto[1].x = s.readSint16LE();
+		_goto[1].y = s.readSint16LE();
+		_goto[1]._facing = s.readSint16LE();
+	} else {
+		// For Serrated Scalpel, adjust the loaded co-ordinates
+		_goto[0].x = _goto[0].x * FIXED_INT_MULTIPLIER / 100;
+		_goto[0].y = _goto[0].y * FIXED_INT_MULTIPLIER / 100;
+
 	}
 
-	_teleportDir = s.readSint16LE();
+	_teleport[0].x = s.readSint16LE();
+	_teleport[0].y = s.readSint16LE();
+	_teleport[0]._facing = s.readSint16LE();
+
+	if (isRoseTattoo) {
+		// Get Teleport position and facing for second NPC
+		_teleport[1].x = s.readSint16LE();
+		_teleport[1].y = s.readSint16LE();
+		_teleport[1]._facing = s.readSint16LE();
+	} else {
+		// For Serrated Scalpel, adjust the loaded co-ordinates
+		_teleport[0].x = _teleport[0].x * FIXED_INT_MULTIPLIER / 100;
+		_teleport[0].y = _teleport[0].y * FIXED_INT_MULTIPLIER / 100;
+	}
 }
 
 void CAnim::load3DO(Common::SeekableReadStream &s) {
@@ -1553,13 +1570,13 @@ void CAnim::load3DO(Common::SeekableReadStream &s) {
 
 	_type = (SpriteType)s.readUint16BE();
 
-	_goto.x = s.readSint16BE();
-	_goto.y = s.readSint16BE();
-	_gotoDir = s.readSint16BE();
+	_goto[0].x = s.readSint16BE();
+	_goto[0].y = s.readSint16BE();
+	_goto[0]._facing = s.readSint16BE();
 
-	_teleportPos.x = s.readSint16BE();
-	_teleportPos.y = s.readSint16BE();
-	_teleportDir = s.readSint16BE();
+	_teleport[0].x = s.readSint16BE();
+	_teleport[0].y = s.readSint16BE();
+	_teleport[0]._facing = s.readSint16BE();
 
 	char buffer[12];
 	s.read(buffer, 12);
@@ -1570,10 +1587,10 @@ void CAnim::load3DO(Common::SeekableReadStream &s) {
 
 	s.skip(3); // Filler
 
-	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
-	_goto.y = _goto.y * FIXED_INT_MULTIPLIER / 100;
-	_teleportPos.x = _teleportPos.x * FIXED_INT_MULTIPLIER / 100;
-	_teleportPos.y = _teleportPos.y * FIXED_INT_MULTIPLIER / 100;
+	_goto[0].x = _goto[0].x * FIXED_INT_MULTIPLIER / 100;
+	_goto[0].y = _goto[0].y * FIXED_INT_MULTIPLIER / 100;
+	_teleport[0].x = _teleport[0].x * FIXED_INT_MULTIPLIER / 100;
+	_teleport[0].y = _teleport[0].y * FIXED_INT_MULTIPLIER / 100;
 }
 
 /*----------------------------------------------------------------*/
