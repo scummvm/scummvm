@@ -144,11 +144,12 @@ struct Statement {
 	int _quotient;
 	int _talkMap;
 	Common::Rect _talkPos;
+	int _journal;
 
 	/**
 	 * Load the data for a single statement within a talk file
 	 */
-	void synchronize(Common::SeekableReadStream &s);
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 };
 
 struct TalkHistoryEntry {

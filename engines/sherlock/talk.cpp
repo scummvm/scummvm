@@ -39,7 +39,7 @@ SequenceEntry::SequenceEntry() {
 
 /*----------------------------------------------------------------*/
 
-void Statement::synchronize(Common::SeekableReadStream &s) {
+void Statement::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	int length;
 
 	length = s.readUint16LE();
@@ -73,6 +73,7 @@ void Statement::synchronize(Common::SeekableReadStream &s) {
 
 	_portraitSide = s.readByte();
 	_quotient = s.readUint16LE();
+	_journal = isRoseTattoo ? s.readByte() : 0;
 }
 
 /*----------------------------------------------------------------*/
@@ -581,7 +582,7 @@ void Talk::loadTalkFile(const Common::String &filename) {
 
 	_statements.resize(talkStream->readByte());
 	for (uint idx = 0; idx < _statements.size(); ++idx)
-		_statements[idx].synchronize(*talkStream);
+		_statements[idx].load(*talkStream, IS_ROSE_TATTOO);
 
 	delete talkStream;
 
