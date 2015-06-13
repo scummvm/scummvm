@@ -83,10 +83,6 @@ public:
 		return 1000000 / _baseFreq;
 	}
 
-private:
-	Common::TimerManager::TimerProc _timerProc;
-	void *_timerParam;
-
 protected:
 	Common::Mutex _mutex;
 	MidiDriver *_driver;

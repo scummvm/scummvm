@@ -40,7 +40,6 @@ struct ShapeEntry {
 	ShapeEntry(TattooPerson *person, int yp) : _shape(nullptr), _person(person), _yp(yp), _isAnimation(false) {}
 	ShapeEntry(Object *shape, int yp) : _shape(shape), _person(nullptr), _yp(yp), _isAnimation(false) {}
 	ShapeEntry(int yp) : _shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true) {}
-	int personNum;
 };
 typedef Common::List<ShapeEntry> ShapeList;
 
