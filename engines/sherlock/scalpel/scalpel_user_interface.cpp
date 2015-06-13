@@ -1641,8 +1641,7 @@ void ScalpelUserInterface::doTalkControl() {
 			}
 
 			// Trigger to play 3DO movie
-			int selector = _vm->_ui->_selector;
-			talk.talk3DOMovieTrigger(selector, 0);
+			talk.talk3DOMovieTrigger(_selector, 0);
 
 			talk.waitForMore(talk._statements[_selector]._statement.size());
 			if (talk._talkToAbort)
