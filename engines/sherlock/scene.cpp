@@ -1031,8 +1031,13 @@ void Scene::transitionToScene() {
 			}
 		} else {
 			// setup entrance info
-			hSavedPos.x = _entrance._startPosition.x * FIXED_INT_MULTIPLIER / 100;
-			hSavedPos.y = _entrance._startPosition.y * FIXED_INT_MULTIPLIER / 100;
+			hSavedPos.x = _entrance._startPosition.x * FIXED_INT_MULTIPLIER;
+			hSavedPos.y = _entrance._startPosition.y * FIXED_INT_MULTIPLIER;
+			if (IS_SERRATED_SCALPEL) {
+				hSavedPos.x /= 100;
+				hSavedPos.y /= 100;
+			}
+
 			hSavedFacing = _entrance._startDir;
 		}
 	} else {
