@@ -526,7 +526,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 	if (walkPos.x != -1) {
 		// Holmes must walk to the walk point before the cAnimation is started
 		if (people[PLAYER]._position != walkPos)
-			people.walkToCoords(walkPos, walkDir);
+			people[PLAYER].walkToCoords(walkPos, walkDir);
 	}
 
 	if (talk._talkToAbort)

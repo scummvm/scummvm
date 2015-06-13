@@ -74,6 +74,11 @@ public:
 	 * of steps to walk to get to that position.
 	 */
 	void goAllTheWay();
+
+	/**
+	 * Walk to the co-ordinates passed, and then face the given direction
+	 */
+	void walkToCoords(const Point32 &destPos, int destDir);
 };
 
 class SherlockEngine;
@@ -120,11 +125,6 @@ public:
 	 * If the walk data has been loaded, then it will be freed
 	 */
 	bool freeWalk();
-
-	/**
-	 * Walk to the co-ordinates passed, and then face the given direction
-	 */
-	void walkToCoords(const Point32 &destPos, int destDir);
 
 	/**
 	 * Turn off any currently active portraits, and removes them from being drawn

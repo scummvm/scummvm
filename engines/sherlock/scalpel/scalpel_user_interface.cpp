@@ -511,7 +511,7 @@ void ScalpelUserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people.walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[PLAYER].walkToCoords(obj._lookPosition, obj._lookFacing);
 		}
 
 		if (!talk._talkToAbort) {
@@ -2236,7 +2236,7 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 					printed = true;
 					if (pt.x != -1)
 						// Holmes needs to walk to object before the action is done
-						people.walkToCoords(pt, dir);
+						people[PLAYER].walkToCoords(pt, dir);
 
 					if (!talk._talkToAbort) {
 						// Ensure Holmes is on the exact intended location
@@ -2255,7 +2255,7 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 		if (doCAnim && !talk._talkToAbort) {
 			if (pt.x != -1)
 				// Holmes needs to walk to object before the action is done
-				people.walkToCoords(pt, dir);
+				people[PLAYER].walkToCoords(pt, dir);
 		}
 
 		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {

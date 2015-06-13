@@ -158,6 +158,39 @@ void Person::goAllTheWay() {
 	}
 }
 
+void Person::walkToCoords(const Point32 &destPos, int destDir) {
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Talk &talk = *_vm->_talk;
+
+	CursorId oldCursor = events.getCursor();
+	events.setCursor(WAIT);
+
+	people._walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
+	people._allowWalkAbort = true;
+	goAllTheWay();
+
+	// Keep calling doBgAnim until the walk is done
+	do {
+		events.pollEventsAndWait();
+		scene.doBgAnim();
+	} while (!_vm->shouldQuit() && _walkCount);
+
+	if (!talk._talkToAbort) {
+		// Put character exactly on destination position, and set direction
+		_position = destPos;
+		_sequenceNumber = destDir;
+		gotoStand();
+
+		// Draw Holmes facing the new direction
+		scene.doBgAnim();
+
+		if (!talk._talkToAbort)
+			events.setCursor(oldCursor);
+	}
+}
+
 /*----------------------------------------------------------------*/
 
 People *People::init(SherlockEngine *vm) {
@@ -268,40 +301,6 @@ bool People::freeWalk() {
 	}
 
 	return result;
-}
-
-void People::walkToCoords(const Point32 &destPos, int destDir) {
-	Events &events = *_vm->_events;
-	Scene &scene = *_vm->_scene;
-	Talk &talk = *_vm->_talk;
-
-	CursorId oldCursor = events.getCursor();
-	events.setCursor(WAIT);
-
-	_walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
-	_allowWalkAbort = true;
-	_data[PLAYER]->goAllTheWay();
-
-	// Keep calling doBgAnim until the walk is done
-	do {
-		events.pollEventsAndWait();
-		scene.doBgAnim();
-	} while (!_vm->shouldQuit() && _data[PLAYER]->_walkCount);
-
-	if (!talk._talkToAbort) {
-		// Put player exactly on destination position, and set direction
-		_data[PLAYER]->_position = destPos;
-assert(_data[PLAYER]->_position.y >= 10000);/***DEBUG****/
-
-		_data[PLAYER]->_sequenceNumber = destDir;
-		_data[PLAYER]->gotoStand();
-
-		// Draw Holmes facing the new direction
-		scene.doBgAnim();
-
-		if (!talk._talkToAbort)
-			events.setCursor(oldCursor);
-	}
 }
 
 int People::findSpeaker(int speaker) {

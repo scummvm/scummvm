@@ -501,7 +501,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Need to walk to character first
-			people.walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[PLAYER].walkToCoords(obj._lookPosition, obj._lookFacing);
 		events.setCursor(ARROW);
 
 		if (!_talkToAbort)
@@ -516,7 +516,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Walk over to person to talk to
-			people.walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[PLAYER].walkToCoords(obj._lookPosition, obj._lookFacing);
 		events.setCursor(ARROW);
 
 		if (!_talkToAbort) {
@@ -1452,7 +1452,7 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 
 	++str;
 	CAnim &animation = scene._cAnim[str[0] - 1];
-	people.walkToCoords(animation._goto[0], animation._goto[0]._facing);
+	people[PLAYER].walkToCoords(animation._goto[0], animation._goto[0]._facing);
 	
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }
