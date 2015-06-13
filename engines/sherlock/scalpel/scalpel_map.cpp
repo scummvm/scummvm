@@ -141,16 +141,28 @@ int ScalpelMap::show() {
 	screen.clear();
 
 	// Load the entire map
-	ImageFile bigMap("bigmap.vgs");
-	screen.setPalette(bigMap._palette);
+	ImageFile *bigMap = NULL;
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// PC
+		bigMap = new ImageFile("bigmap.vgs");
+		screen.setPalette(bigMap->_palette);
+	} else {
+		// 3DO
+		bigMap = new ImageFile3DO("overland.cel", kImageFile3DOType_Cel);
+	}
 
 	// Load need sprites
 	setupSprites();
 
-	screen._backBuffer1.blitFrom(bigMap[0], Common::Point(-_bigPos.x, -_bigPos.y));
-	screen._backBuffer1.blitFrom(bigMap[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
-	screen._backBuffer1.blitFrom(bigMap[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
-	screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		screen._backBuffer1.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
+		screen._backBuffer1.blitFrom((*bigMap)[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+		screen._backBuffer1.blitFrom((*bigMap)[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
+		screen._backBuffer1.blitFrom((*bigMap)[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+	} else {
+		screen._backBuffer1.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
+		screen.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
+	}
 
 	_drawMap = true;
 	_charPoint = -1;
@@ -208,10 +220,14 @@ int ScalpelMap::show() {
 			// Map has scrolled, so redraw new map view
 			changed = false;
 
-			screen._backBuffer1.blitFrom(bigMap[0], Common::Point(-_bigPos.x, -_bigPos.y));
-			screen._backBuffer1.blitFrom(bigMap[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
-			screen._backBuffer1.blitFrom(bigMap[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
-			screen._backBuffer1.blitFrom(bigMap[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+			if (_vm->getPlatform() != Common::kPlatform3DO) {
+				screen._backBuffer1.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
+				screen._backBuffer1.blitFrom((*bigMap)[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+				screen._backBuffer1.blitFrom((*bigMap)[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
+				screen._backBuffer1.blitFrom((*bigMap)[3], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
+			} else {
+				screen._backBuffer1.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
+			}
 
 			showPlaces();
 			_placesShown = false;
@@ -281,12 +297,21 @@ void ScalpelMap::setupSprites() {
 	Scene &scene = *_vm->_scene;
 	_savedPos.x = -1;
 
-	_mapCursors = new ImageFile("omouse.vgs");
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		// PC
+		_mapCursors = new ImageFile("omouse.vgs");
+		_shapes = new ImageFile("mapicon.vgs");
+		_iconShapes = new ImageFile("overicon.vgs");
+	} else {
+		// 3DO
+		_mapCursors = new ImageFile3DO("omouse.vgs", kImageFile3DOType_RoomFormat);
+		_shapes = new ImageFile3DO("mapicon.vgs", kImageFile3DOType_RoomFormat);
+		_iconShapes = new ImageFile3DO("overicon.vgs", kImageFile3DOType_RoomFormat);
+	}
+
 	_cursorIndex = 0;
 	events.setCursor((*_mapCursors)[_cursorIndex]._frame);
 
-	_shapes = new ImageFile("mapicon.vgs");
-	_iconShapes = new ImageFile("overicon.vgs");
 	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height, _vm->getPlatform());
 	Person &p = people[HOLMES];
 	p._description = " ";

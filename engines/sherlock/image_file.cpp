@@ -490,8 +490,44 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			assert(dataSize >= 4 + (plutCount * 2)); // security check
 			assert(plutCount <= 256); // security check
 
-			for (uint32 plutColor = 0; plutColor < plutCount; plutColor++) {
-				plutRGBlookupTable.pixelColor[plutColor] = stream.readUint16BE();
+			assert(plutCount <= 32); // PLUT should never contain more than 32 entries
+
+			for (uint32 plutColorNr = 0; plutColorNr < plutCount; plutColorNr++) {
+				plutRGBlookupTable.pixelColor[plutColorNr] = stream.readUint16BE();
+			}
+
+			if (ccbPRE0_bitsPerPixel == 8) {
+				// In case we are getting 8-bits per pixel, we calculate the shades accordingly
+				// I'm not 100% sure if the calculation is correct. It's difficult to find information
+				// on this topic.
+				// The map uses this type of cel
+				assert(plutCount == 32); // And we expect 32 entries inside PLUT chunk
+
+				uint16 plutColorRGB = 0;
+				for (uint32 plutColorNr = 0; plutColorNr < plutCount; plutColorNr++) {
+					plutColorRGB = plutRGBlookupTable.pixelColor[plutColorNr];
+
+					// Extract RGB values
+					byte plutColorRed   = (plutColorRGB >> 10) & 0x1F;
+					byte plutColorGreen = (plutColorRGB >> 5) & 0x1F;
+					byte plutColorBlue  = plutColorRGB & 0x1F;
+
+					byte shadeMultiplier = 2;
+					for (uint32 plutShadeNr = 1; plutShadeNr < 8; plutShadeNr++) {
+						uint16 shadedColorRGB;
+						byte   shadedColorRed   = (plutColorRed * shadeMultiplier) >> 3;
+						byte   shadedColorGreen = (plutColorGreen * shadeMultiplier) >> 3;
+						byte   shadedColorBlue  = (plutColorBlue * shadeMultiplier) >> 3;
+
+						shadedColorRed = CLIP<byte>(shadedColorRed, 0, 0x1F);
+						shadedColorGreen = CLIP<byte>(shadedColorGreen, 0, 0x1F);
+						shadedColorBlue = CLIP<byte>(shadedColorBlue, 0, 0x1F);
+						shadedColorRGB = (shadedColorRed << 10) | (shadedColorGreen << 5) | shadedColorBlue;
+
+						plutRGBlookupTable.pixelColor[plutColorNr + (plutShadeNr << 5)] = shadedColorRGB;
+						shadeMultiplier++;
+					}
+				}
 			}
 			break;
 
