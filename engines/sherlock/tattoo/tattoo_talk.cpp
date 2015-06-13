@@ -241,10 +241,12 @@ OpcodeReturn TattooTalk::cmdWalkHolmesToCoords(const byte *&str) {
 	int x = (str[0] - 1) * 256 + str[1] - 1;
 	if (x > 16384)
 		x = -1 * (x - 16384);
-	// TODO: The RT walkToCoords call has an extra parameter, person, which is 0 (Holmes) here
 	warning("TODO: cmdWalkHolmesToCoords - call RT walkToCoords variant");
-	people[HOLMES].walkToCoords(Point32(x * FIXED_INT_MULTIPLIER,
-		((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER), DIRECTION_CONVERSION[str[4] - 1]);
+	people[HOLMES].walkToCoords(
+		Point32(x * FIXED_INT_MULTIPLIER, ((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER),
+		DIRECTION_CONVERSION[str[4] - 1]
+		//HOLMES
+	);
 	if (_talkToAbort)
 		return RET_EXIT;
 
@@ -698,10 +700,115 @@ OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dum
 OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsEnable called"); }
 
 OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode (cmdTurnSoundsOff)"); }
-OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) { error("TODO: script opcode (cmdWalkHolmesAndNPCToCAnimation)"); }
-OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) { error("TODO: script opcode (cmdWalkNPCToCAnimation)"); }
-OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) { error("TODO: script opcode (cmdWalkNPCToCoords)"); }
-OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) { error("TODO: script opcode (cmdWalkHomesAndNPCToCoords)"); }
+
+OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) {
+	int npcNum = *++str;
+	int cAnimNum = *++str;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
+	Scene &scene = *_vm->_scene;
+	CAnim &anim = scene._cAnim[cAnimNum];
+
+	if (person._npcStack == 0)
+		person.pushNPCPath();
+	person._npcMoved = true;
+
+	warning("TODO: cmdWalkNPCToCAnimation - walkBothToCoords call");
+	person.walkToCoords(
+		Point32(anim._goto[1].x * FIXED_INT_MULTIPLIER, anim._goto[1].y * FIXED_INT_MULTIPLIER),
+		anim._goto[1]._facing
+		//Point32(anim._goto[1].x * FIXED_INT_MULTIPLIER, anim._goto[1].y * FIXED_INT_MULTIPLIER),
+		//anim._goto[1]._facing,
+		//npcNum + 1
+	);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) {
+	int npcNum = *++str;
+	int cAnimNum = *++str;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
+	Scene &scene = *_vm->_scene;
+	CAnim &anim = scene._cAnim[cAnimNum];
+
+	if (person._npcStack == 0)
+		person.pushNPCPath();
+	person._npcMoved = true;
+
+	warning("TODO: cmdWalkNPCToCAnimation - call RT walkToCoords variant");
+	person.walkToCoords(
+		Point32(anim._goto[1].x * FIXED_INT_MULTIPLIER, anim._goto[1].y * FIXED_INT_MULTIPLIER),
+		anim._goto[1]._facing
+		// npcNum + 1
+	);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) {
+	int npcNum = *++str;
+	str++;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
+
+	if (person._npcStack == 0)
+		person.pushNPCPath();
+	person._npcMoved = true;
+
+	int x = (str[0] - 1) * 256 + str[1] - 1;
+	if (x > 16384)
+		x = -1 * (x - 16384);
+
+	warning("TODO: cmdWalkNPCToCoords - call RT walkToCoords variant");
+	person.walkToCoords(
+		Point32(x * FIXED_INT_MULTIPLIER, ((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER),
+		DIRECTION_CONVERSION[str[4] - 1]
+		// npcNum + 1
+	);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	str += 4;
+	return RET_SUCCESS;
+}
+
+OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) {
+	int npcNum = *++str;
+	str++;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooPerson &person = people[npcNum];
+
+	if (person._npcStack == 0)
+		person.pushNPCPath();
+	person._npcMoved = true;
+
+	int x = (str[0] - 1) * 256 + str[1] - 1;
+	if (x > 16384)
+		x = -1 * (x - 16384);
+	//int x1 = (str[5] - 1) * 256 + str[6] - 1;
+	//if (x1 > 16384)
+	//	x1 = -1 * (x1 - 16384);
+
+	warning("TODO: cmdWalkHomesAndNPCToCoords - walkBothToCoords call");
+	person.walkToCoords(
+		Point32(x * FIXED_INT_MULTIPLIER, ((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER),
+		DIRECTION_CONVERSION[str[4] - 1]
+		//Point32(x1 * FIXED_INT_MULTIPLIER, ((str[7] - 1) * 256 + str[8] - 1) * FIXED_INT_MULTIPLIER),
+		//DIRECTION_CONVERSION[str[9] - 1],
+		//npcNum + 1
+	);
+	if (_talkToAbort)
+		return RET_EXIT;
+
+	str += 9;
+	return RET_SUCCESS;
+}
 
 } // End of namespace Tattoo
 

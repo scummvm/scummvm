@@ -103,6 +103,11 @@ public:
 	void updateNPC();
 
 	/**
+	 * Push the NPC's path
+	 */
+	void pushNPCPath();
+
+	/**
 	 * This adjusts the sprites position, as well as it's animation sequence:
 	 */
 	virtual void adjustSprite();

@@ -243,7 +243,7 @@ void TattooPerson::gotoStand() {
 }
 
 void TattooPerson::setWalking() {
-	error("TODO: setWalking");
+	warning("TODO: setWalking");
 }
 
 void TattooPerson::clearNPC() {
@@ -253,7 +253,11 @@ void TattooPerson::clearNPC() {
 }
 
 void TattooPerson::updateNPC() {
-	// TODO
+	warning("TODO: updateNPC");
+}
+
+void TattooPerson::pushNPCPath() {
+	warning("TODO: pushNPCPath");
 }
 
 /*----------------------------------------------------------------*/
