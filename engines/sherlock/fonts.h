@@ -39,9 +39,12 @@ private:
 protected:
 	static int _fontNumber;
 	static int _fontHeight;
+	static uint16 _charCount;
 
 	static void writeString(Surface *surface, const Common::String &str, 
 		const Common::Point &pt, int overrideColor = 0);
+
+	static inline byte translateChar(byte c);
 public:
 	/**
 	 * Initialise the font manager

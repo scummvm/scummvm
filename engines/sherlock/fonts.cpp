@@ -32,10 +32,12 @@ Common::Platform Fonts::_platform;
 ImageFile *Fonts::_font;
 int Fonts::_fontNumber;
 int Fonts::_fontHeight;
+uint16 Fonts::_charCount;
 
 void Fonts::init(Common::Platform platform) {
 	_font = nullptr;
 	_platform = platform;
+	_charCount = 0;
 }
 
 void Fonts::free() {
@@ -73,11 +75,32 @@ void Fonts::setFont(int fontNum) {
 		// load font data
 		_font = new ImageFile3DO(fontFilename, kImageFile3DOType_Font);
 	}
+
+	_charCount = _font->size();
 		
 	// Iterate through the frames to find the tallest font character
 	_fontHeight = 0;
-	for (uint idx = 0; idx < _font->size(); ++idx)
+	for (uint idx = 0; idx < _charCount; ++idx)
 		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
+}
+
+inline byte Fonts::translateChar(byte c) {
+	switch (c) {
+	case ' ':
+		return 0; // translate to first actual character
+	case 225:
+		return 136; // special handling for 0xE1
+	default:
+		if (c >= 0x80) { // German SH1 version did this
+			c--;
+		}
+		// Spanish SH1 did this (reverse engineered code)
+		//if ((c >= 0xA0) && (c <= 0xAD) || (c == 0x82)) {
+		//	c--;
+		//}
+		assert(c > 32); // anything above space is allowed
+		return c - 33;
+	}
 }
 
 void Fonts::writeString(Surface *surface, const Common::String &str,
@@ -87,15 +110,19 @@ void Fonts::writeString(Surface *surface, const Common::String &str,
 	if (!_font)
 		return;
 
-	for (const char *c = str.c_str(); *c; ++c) {
-		if (*c == ' ')
-			charPos.x += 5;
-		else {
-			assert(Common::isPrint(*c));
-			ImageFrame &frame = (*_font)[*c - 33];
-			surface->transBlitFrom(frame, charPos, false, overrideColor);
-			charPos.x += frame._frame.w + 1;
+	for (const char *curCharPtr = str.c_str(); *curCharPtr; ++curCharPtr) {
+		byte curChar = *curCharPtr;
+
+		if (curChar == ' ') {
+			charPos.x += 5; // hardcoded space
+			continue;
 		}
+		curChar = translateChar(curChar);
+
+		assert(curChar < _charCount);
+		ImageFrame &frame = (*_font)[curChar];
+		surface->transBlitFrom(frame, charPos, false, overrideColor);
+		charPos.x += frame._frame.w + 1;
 	}
 }
 
@@ -124,29 +151,32 @@ int Fonts::stringHeight(const Common::String &str) {
 }
 
 int Fonts::charWidth(unsigned char c) {
+	byte curChar;
+
 	if (!_font)
 		return 0;
 
-	if (c == ' ')
-		return 5;
-	else if (Common::isPrint(c))
-		return (*_font)[c - 33]._frame.w + 1;
-	else
-		return 0;
+	if (c == ' ') {
+		return 5; // hardcoded space
+	}
+	curChar = translateChar(c);
+
+	if (curChar < _charCount)
+		return (*_font)[curChar]._frame.w + 1;
+	return 0;
 }
 
 int Fonts::charHeight(unsigned char c) {
-	int idx = c - 33;
+	byte curChar;
 
 	if (!_font)
 		return 0;
 
-	if (c == ' ')
-		idx = 0;
-	else if (c == 225)
-		idx = 136;
+	// Space is supposed to be handled like the first actual character (which is decimal 33)
+	curChar = translateChar(c);
 
-	const ImageFrame &img = (*_font)[idx];
+	assert(curChar < _charCount);
+	const ImageFrame &img = (*_font)[curChar];
 	return img._height + img._offset.y + 1;
 }
 
