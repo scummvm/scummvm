@@ -109,6 +109,11 @@ protected:
 	 * Called by loadScene when the palette is loaded for Rose Tattoo
 	 */
 	virtual void paletteLoaded();
+
+	/**
+	 * Synchronize the data for a savegame
+	 */
+	virtual void synchronize(Serializer &s);
 public:
 	ImageFile *_mask, *_mask1;
 	CAnimStream _activeCAnim;

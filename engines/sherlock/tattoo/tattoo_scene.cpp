@@ -59,11 +59,19 @@ TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
 }
 
 bool TattooScene::loadScene(const Common::String &filename) {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
-
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	// If we're going to the first game scene after the intro sequence, flag it as finished
+	if (vm._runningProlog && _currentScene == STARTING_GAME_SCENE) {
+		vm._runningProlog = false;
+		events.showCursor();
+		talk._talkToAbort = false;
+	}
 
 	// Check if it's a scene we need to keep trakc track of how many times we've visited
 	for (int idx = (int)_sceneTripCounters.size() - 1; idx >= 0; --idx) {
@@ -947,6 +955,14 @@ void TattooScene::setNPCPath(int npc) {
 	// Call the path script for the scene
 	Common::String pathFile = Common::String::format("PATH%.2dA", _currentScene);
 	talk.talkTo(pathFile);
+}
+
+void TattooScene::synchronize(Serializer &s) {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Scene::synchronize(s);
+
+	if (s.isLoading())
+		vm._runningProlog = false;
 }
 
 } // End of namespace Tattoo

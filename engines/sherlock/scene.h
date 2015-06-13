@@ -289,7 +289,7 @@ public:
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s);
 public:
 	/**
 	 * Draw all objects and characters.
