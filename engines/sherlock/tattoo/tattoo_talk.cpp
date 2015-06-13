@@ -361,8 +361,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode (cmdPassword)"); }
+OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode (cmdPlaySong)"); }
 
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
 	int npcNum = *++str - 1;
@@ -687,9 +687,9 @@ OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode (cmdSetSceneEntryFlag)"); }
+OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode (cmdSetTalkSequence)"); }
+OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode (cmdSetWalkControl)"); }
 
 // Dummy opcode
 OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsDisable called"); }
@@ -697,11 +697,11 @@ OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dum
 // Dummy opcode
 OpcodeReturn TattooTalk::cmdTalkInterruptsEnable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsEnable called"); }
 
-OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) { error("TODO: script opcode"); }
-OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) { error("TODO: script opcode"); }
+OpcodeReturn TattooTalk::cmdTurnSoundsOff(const byte *&str) { error("TODO: script opcode (cmdTurnSoundsOff)"); }
+OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) { error("TODO: script opcode (cmdWalkHolmesAndNPCToCAnimation)"); }
+OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) { error("TODO: script opcode (cmdWalkNPCToCAnimation)"); }
+OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) { error("TODO: script opcode (cmdWalkNPCToCoords)"); }
+OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) { error("TODO: script opcode (cmdWalkHomesAndNPCToCoords)"); }
 
 } // End of namespace Tattoo
 

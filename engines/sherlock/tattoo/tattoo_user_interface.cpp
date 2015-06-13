@@ -406,31 +406,31 @@ void TattooUserInterface::doStandardControl() {
 }
 
 void TattooUserInterface::doLookControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (look)");
 }
 
 void TattooUserInterface::doFileControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (file)");
 }
 
 void TattooUserInterface::doInventoryControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (inventory)");
 }
 
 void TattooUserInterface::doVerbControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (verb)");
 }
 
 void TattooUserInterface::doTalkControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (talk)");
 }
 
 void TattooUserInterface::doMessageControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (message)");
 }
 
 void TattooUserInterface::doLabControl() {
-	warning("TODO: ui control");
+	warning("TODO: ui control (lab)");
 }
 
 void TattooUserInterface::displayObjectNames() {
