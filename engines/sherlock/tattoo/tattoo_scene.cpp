@@ -820,8 +820,8 @@ void TattooScene::setNPCPath(int npc) {
 		return;
 
 	// Turn off all the NPCs, since the talk script will turn them back on as needed
-	for (uint idx = 0; idx < MAX_NPC; ++idx)
-		people[idx + 1]._type = INVALID;
+	for (uint idx = 1; idx < MAX_CHARACTERS; ++idx)
+		people[idx]._type = INVALID;
 
 	// Call the path script for the scene
 	Common::String pathFile = Common::String::format("PATH%.2dA", _currentScene);

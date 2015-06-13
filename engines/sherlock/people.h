@@ -32,7 +32,6 @@ namespace Sherlock {
 
 enum PeopleId {
 	PLAYER			= 0,
-	MAX_NPC			= 5,
 	MAX_NPC_PATH	= 200
 };
 
