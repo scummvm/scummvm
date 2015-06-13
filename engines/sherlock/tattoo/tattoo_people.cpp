@@ -684,7 +684,7 @@ bool TattooPeople::loadWalk() {
 
 			// Load the images for the character
 			_data[idx]->_images = new ImageFile(_data[idx]->_walkVGSName, false);
-			_data[idx]->_numFrames = _data[idx]->_images->size();
+			_data[idx]->_maxFrames = _data[idx]->_images->size();
 
 			// Load walk sequence data
 			Common::String fname = Common::String(_data[idx]->_walkVGSName.c_str(), strchr(_data[idx]->_walkVGSName.c_str(), '.'));

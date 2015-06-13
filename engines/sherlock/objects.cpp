@@ -180,7 +180,6 @@ void Sprite::clear() {
 	_noShapeSize.x = _noShapeSize.y = 0;
 	_status = 0;
 	_misc = 0;
-	_numFrames = 0;
 	_altImages = nullptr;
 	_altSeq = 0;
 	Common::fill(&_stopFrames[0], &_stopFrames[8], (ImageFrame *)nullptr);
@@ -192,7 +191,7 @@ void Sprite::setImageFrame() {
 	
 	if (IS_SERRATED_SCALPEL)
 		imageNumber = imageNumber + _walkSequences[_sequenceNumber][0] - 2;
-	else if (imageNumber > _numFrames)
+	else if (imageNumber > _maxFrames)
 		imageNumber = 1;
 
 	// Get the images to use
@@ -209,6 +208,8 @@ void Sprite::setImageFrame() {
 			// sort of HACK
 			imageNumber *= 2;
 		}
+	} else if (IS_ROSE_TATTOO) {
+		--imageNumber;
 	}
 
 	// Set the frame pointer

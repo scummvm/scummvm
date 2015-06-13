@@ -238,7 +238,6 @@ public:
 	Common::Point _noShapeSize;			// Size of a NO_SHAPE
 	int _status;						// Status: open/closed, moved/not moved
 	int8 _misc;							// Miscellaneous use
-	int _numFrames;						// How many frames the object has
 
 	// Rose Tattoo fields
 	int _startSeq;						// Frame sequence starts at
