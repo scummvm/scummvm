@@ -156,8 +156,18 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	};
 
-	_opcodes = SCALPEL_OPCODES;
 	_opcodeTable = OPCODE_METHODS;
+	_opcodes = SCALPEL_OPCODES;
+
+	if (vm->getLanguage() == Common::DE_DEU || vm->getLanguage() == Common::ES_ESP) {
+		// The German and Spanish versions use a different opcode range
+		static byte opcodes[sizeof(SCALPEL_OPCODES)];
+		for (int idx = 0; idx < sizeof(SCALPEL_OPCODES); ++idx)
+			opcodes[idx] = SCALPEL_OPCODES[idx] ? SCALPEL_OPCODES[idx] + 47 : 0;
+
+		_opcodes = opcodes;
+	}
+
 }
 
 void ScalpelTalk::talkInterface(const byte *&str) {
