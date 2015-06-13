@@ -495,7 +495,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				}
 
 				delete cAnimStream;
-				delete cAnimOffsetTablePtr;
+				delete[] cAnimOffsetTablePtr;
 			}
 
 			
@@ -738,7 +738,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			}
 
 			delete cAnimStream;
-			delete cAnimOffsetTablePtr;
+			delete[] cAnimOffsetTablePtr;
 		}
 
 		// === BOUNDING AREAS === Read in the room bounding areas
