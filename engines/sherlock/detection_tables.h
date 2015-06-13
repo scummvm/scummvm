@@ -40,6 +40,42 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Serrated Scalpel - German CD (from multilingual CD)
+		// Provided by m_kiewitz
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "40a5f9f37c0e0d2ad48d8f44d8e393c9", 284278},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - Spanish CD (from multilingual CD)
+		// Provided by m_kiewitz
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "27697804b637a7f3b77234bf16f15dce", 171419},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
 		// Case of the Serrated Scalpel - English 3DO
 		{
 			"scalpel",

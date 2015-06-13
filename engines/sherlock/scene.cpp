@@ -1127,7 +1127,7 @@ void Scene::transitionToScene() {
 		} else {
 			// fade in for 3DO
 			screen.clear();
-			screen.fadeIntoScreen3DO(2);
+			screen.fadeIntoScreen3DO(3);
 		}
 	} else {
 		screen.blitFrom(screen._backBuffer1);
