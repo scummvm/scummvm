@@ -865,10 +865,10 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	//_activeCAnim._filesize = cAnim._size;
 
 	// Open up the room resource file and get the data for the animation
-	Common::SeekableReadStream *stream = res.load(_rrmName);
+	Common::SeekableReadStream *stream = res.load(_roomFilename);
 	stream->seek(44 + cAnimNum * 4);
 	stream->seek(stream->readUint32LE());
-	Common::SeekableReadStream *animStream = stream->readStream(cAnim._size);
+	Common::SeekableReadStream *animStream = stream->readStream(cAnim._dataSize);
 	delete stream;
 
 	// Set up the active animation
