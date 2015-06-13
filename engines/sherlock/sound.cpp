@@ -136,6 +136,10 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 		} else {
 			// 3DO uses .aiff extension
 			filename += ".AIFF";
+			if (!filename.contains('/')) {
+				// if no directory was given, use the room sounds directory
+				filename = "rooms/sounds/" + filename;
+			}
 		}
 	}
 
