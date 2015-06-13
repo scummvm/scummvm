@@ -24,6 +24,7 @@
 #define SHERLOCK_TATTOO_UI_H
 
 #include "common/scummsys.h"
+#include "sherlock/saveload.h"
 #include "sherlock/user_interface.h"
 
 namespace Sherlock {
@@ -50,6 +51,11 @@ private:
 	bool _personFound;
 	int _lockoutTimer;
 	Common::KeyState _keyState;
+	SaveMode _fileMode;
+	int _exitZone;
+	int _scriptZone;
+	int _arrowZone, _oldArrowZone;
+	int _activeObj;
 private:
 	/**
 	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
@@ -96,6 +102,53 @@ private:
 	 * Handles input when the player is in the Lab Table scene
 	 */
 	void doLabControl();
+
+	/**
+	 * If the mouse cursor is point at the cursor, then display the name of the object on the screen.
+	 * If there is no object being pointed it, clear any previously displayed name
+	 */
+	void displayObjectNames();
+
+	/**
+	 * Set up to display the Files menu
+	 */
+	void initFileMenu();
+
+	/**
+	 * Turn off any active object description text
+	 */
+	void turnTextOff();
+
+	/**
+	 * Handles displaying the journal
+	 */
+	void doJournal();
+
+	/**
+	 * Put the game in inventory mode by opening the inventory dialog
+	 */
+	void doInventory(int mode);
+	
+	/**
+	 * Handle the display of the options/setup menu
+	 */
+	void doControls();
+
+	/**
+	 * Handle displaying the quit menu
+	 */
+	void doQuitMenu();
+
+	/**
+	 * Turn on the command menu showing available actions that can be done on a given item
+	 */
+	void activateVerbMenu(bool objectsOn);
+
+	/**
+	 * Display the long description for an object stored in it's _examine field, in a window that
+	 * will be shown at the bottom of the screen
+	 */
+	void lookAtObject();
 public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;
@@ -129,6 +182,11 @@ public:
 	 * Draw the user interface onto the screen's back buffers
 	 */	
 	virtual void drawInterface(int bufferNum = 3);
+
+
+	void checkAction(UseType &use, int objNum) {
+		// TODO: Get rid of this stub, and properly use the UserInterface method
+	}
 };
 
 } // End of namespace Tattoo

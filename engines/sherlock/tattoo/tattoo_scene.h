@@ -49,7 +49,6 @@ private:
 	int _arrowZone;
 	int _maskCounter;
 	Common::Point _maskOffset;
-	bool _labTableScene;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
 private:
@@ -118,6 +117,7 @@ public:
 	ImageFile *_mask, *_mask1;
 	CAnimStream _activeCAnim;
 	Common::Array<SceneTripEntry> _sceneTripCounters;
+	bool _labTableScene;
 public:
 	TattooScene(SherlockEngine *vm);
 

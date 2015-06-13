@@ -60,6 +60,11 @@ protected:
 	SherlockEngine *_vm;
 
 	UserInterface(SherlockEngine *vm);
+
+	/**
+	 * Called for OPEN, CLOSE, and MOVE actions are being done
+	 */
+	void checkAction(ActionType &action, const char *const messages[], int objNum);
 public:
 	MenuMode _menuMode;
 	int _menuCounter;

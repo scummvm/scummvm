@@ -39,6 +39,11 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) 
 	_bgShape = nullptr;
 	_personFound = false;
 	_lockoutTimer = 0;
+	_fileMode = SAVEMODE_NONE;
+	_exitZone = -1;
+	_scriptZone = -1;
+	_arrowZone = _oldArrowZone = -1;
+	_activeObj = -1;
 }
 
 void TattooUserInterface::initScrollVars() {
@@ -272,7 +277,132 @@ void TattooUserInterface::drawGrayAreas() {
 }
 
 void TattooUserInterface::doStandardControl() {
-	warning("TODO: ui control");
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Talk &talk = *_vm->_talk;
+	Common::Point mousePos = events.mousePos();
+	bool noDesc = false;
+
+	// Don't do any input processing whilst the prolog is running
+	if (vm._runningProlog)
+		return;
+
+	// Display the names of any Objects the cursor is pointing at
+	displayObjectNames();
+
+	switch (_keyState.keycode) {
+	case Common::KEYCODE_F5:
+		// Save game
+		turnTextOff();
+		_fileMode = SAVEMODE_SAVE;
+		_menuBounds = Common::Rect(0, 0, 0, 0);
+		initFileMenu();
+		return;
+
+	case Common::KEYCODE_F7:
+		// Load game
+		turnTextOff();
+		_fileMode = SAVEMODE_LOAD;
+		_menuBounds = Common::Rect(0, 0, 0, 0);
+		initFileMenu();
+		return;
+
+	case Common::KEYCODE_F1:
+		// Display journal
+		if (vm.readFlags(76)) {
+			turnTextOff();
+			doJournal();
+			
+			// See if we're in a Lab Table Room
+			_menuMode = (scene._labTableScene) ? LAB_MODE : STD_MODE;
+			return;
+		}
+		break;
+
+	case Common::KEYCODE_TAB:
+	case Common::KEYCODE_F3:
+		// Display inventory
+		turnTextOff();
+		doInventory(2);
+		return;
+
+	case Common::KEYCODE_F4:
+		// Display options
+		turnTextOff();
+		doControls();
+		return;
+
+	case Common::KEYCODE_F10:
+		// Quit menu
+		turnTextOff();
+		_menuBounds = Common::Rect(-1, -1, -1, -1);
+		doQuitMenu();
+		return;
+
+	default:
+		break;
+	}
+
+	// See if a mouse button was released
+	if (events._released || events._rightReleased) {
+		// See if the mouse was released in an exit (Arrow) zone. Unless it's also pointing at an object
+		// within the zone, in which case the object gets precedence
+		_exitZone = -1;
+		if (_arrowZone != -1 && events._released)
+			_exitZone = _arrowZone;
+
+		// Turn any Text display off
+		if (_arrowZone == -1 || events._rightReleased)
+			turnTextOff();
+
+		if (_personFound) {
+			if (people[_bgFound - 1000]._description.empty() || people[_bgFound - 1000]._description.hasPrefix(" "))
+				noDesc = true;
+		} else if (_bgFound != -1) {
+			if (people[_bgFound - 1000]._description.empty() || people[_bgFound - 1000]._description.hasPrefix(" "))
+				noDesc = true;
+		} else {
+			noDesc = true;
+		}
+
+		if (events._rightReleased) {
+			// Show the verbs menu for the highlighted object
+			activateVerbMenu(!noDesc);
+		} else if (_personFound || (_bgFound < 1000 && _bgShape->_aType == PERSON)) {
+			// The object found is a person (the default for people is TALK)
+			talk.talk(_bgFound);
+			_activeObj = -1;
+		} else if (!noDesc) {
+			// Either call the code to Look at it's Examine Field or call the Exit animation
+			// if the object is an exit, specified by the first four characters of the name being "EXIT"
+			Common::String name = _personFound ? people[_bgFound - 1000]._name : _bgShape->_name;
+			if (name.hasPrefix("EXIT")) {
+				lookAtObject();
+			} else {
+				// Run the Exit animation and set which scene to go to next
+				for (int idx = 0; idx < 6; ++idx) {
+					if (!_bgShape->_use[idx]._verb.compareToIgnoreCase("Open")) {
+						checkAction(_bgShape->_use[idx], _bgFound);
+						_activeObj = -1;
+					}
+				}
+			}
+		} else {
+			// See if there are any Script Zones where they clicked
+			if (scene.checkForZones(mousePos, _scriptZone) != 0) {
+				// Mouse click in a script zone
+				events._pressed = events._released = false;
+			} else if (scene.checkForZones(mousePos, NOWALK_ZONE) != 0) {
+				events._pressed = events._released = false;
+			} else {
+				// Walk to where the mouse was clicked
+				people._walkDest = Common::Point(mousePos.x + _currentScroll.x, mousePos.y);
+				people[HOLMES].goAllTheWay();
+			}
+		}
+	}
 }
 
 void TattooUserInterface::doLookControl() {
@@ -301,6 +431,42 @@ void TattooUserInterface::doMessageControl() {
 
 void TattooUserInterface::doLabControl() {
 	warning("TODO: ui control");
+}
+
+void TattooUserInterface::displayObjectNames() {
+	// TODO
+}
+
+void TattooUserInterface::initFileMenu() {
+	// TODO
+}
+
+void TattooUserInterface::turnTextOff() {
+	// TODO
+}
+
+void TattooUserInterface::doJournal() {
+	// TODO
+}
+
+void TattooUserInterface::doInventory(int mode) {
+	// TODO
+}
+
+void TattooUserInterface::doControls() {
+	// TODO
+}
+
+void TattooUserInterface::doQuitMenu() {
+	// TODO
+}
+
+void TattooUserInterface::activateVerbMenu(bool objectsOn) {
+	// TODO
+}
+
+void TattooUserInterface::lookAtObject() {
+	// TODO
 }
 
 } // End of namespace Tattoo

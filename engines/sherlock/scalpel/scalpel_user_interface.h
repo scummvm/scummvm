@@ -140,11 +140,6 @@ private:
 		int objNum, bool giveMode);
 	
 	/**
-	 * Called for OPEN, CLOSE, and MOVE actions are being done
-	 */
-	void checkAction(ActionType &action, const char *const messages[], int objNum);
-
-	/**
 	 * Print the previously selected object's decription
 	 */
 	void printObjectDesc(const Common::String &str, bool firstTime);
