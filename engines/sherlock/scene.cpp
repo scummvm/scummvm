@@ -240,8 +240,8 @@ void Scene::selectScene() {
 		_tempFadeStyle = 0;
 	}
 
-	people._walkDest = Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER,
-		people[PLAYER]._position.y / FIXED_INT_MULTIPLIER);
+	people._walkDest = Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
+		people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	_restoreFlag = true;
 	events.clearEvents();
@@ -964,8 +964,8 @@ void Scene::transitionToScene() {
 				hSavedPos = Point32(160 * FIXED_INT_MULTIPLIER, 100 * FIXED_INT_MULTIPLIER);
 				hSavedFacing = 4;
 			} else {
-				hSavedPos = people[PLAYER]._position;
-				hSavedFacing = people[PLAYER]._sequenceNumber;
+				hSavedPos = people[HOLMES]._position;
+				hSavedFacing = people[HOLMES]._sequenceNumber;
 			}
 		} else {
 			// setup entrance info
@@ -988,8 +988,8 @@ void Scene::transitionToScene() {
 
 	if (hSavedFacing < 101) {
 		// Standard info, so set it
-		people[PLAYER]._position = hSavedPos;
-		people[PLAYER]._sequenceNumber = hSavedFacing;
+		people[HOLMES]._position = hSavedPos;
+		people[HOLMES]._sequenceNumber = hSavedFacing;
 	} else {
 		// It's canimation information
 		cAnimNum = hSavedFacing - 101;
@@ -1001,7 +1001,7 @@ void Scene::transitionToScene() {
 
 	if (cAnimNum != -1) {
 		// Prevent Holmes from being drawn
-		people[PLAYER]._position = Common::Point(0, 0);
+		people[HOLMES]._position = Common::Point(0, 0);
 	}
 
 	for (uint objIdx = 0; objIdx < _bgShapes.size(); ++objIdx) {
@@ -1020,8 +1020,8 @@ void Scene::transitionToScene() {
 			}
 
 			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
-					Common::Point(people[PLAYER]._position.x / FIXED_INT_MULTIPLIER, 
-					people[PLAYER]._position.y / FIXED_INT_MULTIPLIER))) {
+					Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER, 
+					people[HOLMES]._position.y / FIXED_INT_MULTIPLIER))) {
 				// Current point is already inside box - impact occurred on
 				// a previous call. So simply do nothing except talk until the
 				// player is clear of the box
@@ -1073,7 +1073,7 @@ void Scene::transitionToScene() {
 		PositionFacing pt = c._goto[0];
 
 		c._goto[0].x = c._goto[0].y = -1;
-		people[PLAYER]._position = Common::Point(0, 0);
+		people[HOLMES]._position = Common::Point(0, 0);
 
 		startCAnim(cAnimNum, 1);
 		c._goto[0] = pt;
@@ -1205,7 +1205,7 @@ void Scene::synchronize(Serializer &s) {
 
 void Scene::checkBgShapes() {
 	People &people = *_vm->_people;
-	Person &holmes = people[PLAYER];
+	Person &holmes = people[HOLMES];
 	Common::Point pt(holmes._position.x / FIXED_INT_MULTIPLIER, holmes._position.y / FIXED_INT_MULTIPLIER);
 
 	// Iterate through the shapes

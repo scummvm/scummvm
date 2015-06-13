@@ -49,6 +49,7 @@ protected:
 	virtual void startScene();
 public:
 	bool _creditsActive;
+	bool _runningProlog;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine() {}

@@ -232,7 +232,7 @@ People::~People() {
 }
 
 void People::reset() {
-	_data[PLAYER]->_description = "Sherlock Holmes!";
+	_data[HOLMES]->_description = "Sherlock Holmes!";
 
 	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
 	int count = IS_SERRATED_SCALPEL ? 1 : MAX_CHARACTERS;
@@ -356,9 +356,9 @@ void People::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
 
 	if (IS_SERRATED_SCALPEL) {
-		s.syncAsSint16LE(_data[PLAYER]->_position.x);
-		s.syncAsSint16LE(_data[PLAYER]->_position.y);
-		s.syncAsSint16LE(_data[PLAYER]->_sequenceNumber);
+		s.syncAsSint16LE(_data[HOLMES]->_position.x);
+		s.syncAsSint16LE(_data[HOLMES]->_position.y);
+		s.syncAsSint16LE(_data[HOLMES]->_sequenceNumber);
 	} else {
 		for (uint idx = 0; idx < _data.size(); ++idx) {
 			Person &p = *_data[idx];
@@ -375,8 +375,8 @@ void People::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _data[PLAYER]->_position;
-		_hSavedFacing = _data[PLAYER]->_sequenceNumber;
+		_hSavedPos = _data[HOLMES]->_position;
+		_hSavedFacing = _data[HOLMES]->_sequenceNumber;
 	}
 }
 

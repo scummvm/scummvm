@@ -464,10 +464,8 @@ struct CAnim {
 };
 
 class CAnimStream {
-	Common::SeekableReadStream *_stream;	// Stream to read frames from
-	int _frameSize;					// Temporary used to store the frame size
-
-	void *_images;					// TOOD: FIgure out hwo to hook up ImageFile with streaming support
+	ImageFile *_images;					
+	int _frameNumber;
 public:
 	ImageFrame *_imageFrame;
 
@@ -480,8 +478,27 @@ public:
 	int _zPlacement;				// Used by doBgAnim for determining Z order
 public:
 	CAnimStream();
+	~CAnimStream();
 
+	/**
+	 * Load the animation's images
+	 */
+	void load(Common::SeekableReadStream *stream);
+
+	/**
+	 * Close any currently active animation
+	 */
+	void close();
+
+	/**
+	 * Get the next frame of the animation
+	 */
 	void getNextFrame();
+
+	/**
+	 * Returns whether the animation is active
+	 */
+	bool active() const { return _imageFrame != nullptr; }
 };
 
 struct SceneImage {

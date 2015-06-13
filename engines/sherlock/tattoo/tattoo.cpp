@@ -33,6 +33,7 @@ namespace Tattoo {
 TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		SherlockEngine(syst, gameDesc) {
 	_creditsActive = false;
+	_runningProlog = false;
 }
 
 void TattooEngine::showOpening() {
@@ -48,6 +49,7 @@ void TattooEngine::initialize() {
 	// Initialise the global flags
 	_flags.resize(3200);
 	_flags[1] = _flags[4] = _flags[76] = true;
+	_runningProlog = true;
 
 	// Add some more files to the cache
 	_res->addToCache("walk.lib");

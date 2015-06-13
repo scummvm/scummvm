@@ -52,8 +52,8 @@ void ScalpelPerson::adjustSprite() {
 		if (!_walkCount) {
 			// If there any points left for the character to walk to along the
 			// route to a destination, then move to the next point
-			if (!people[PLAYER]._walkTo.empty()) {
-				people._walkDest = people[PLAYER]._walkTo.pop();
+			if (!people[HOLMES]._walkTo.empty()) {
+				people._walkDest = people[HOLMES]._walkTo.pop();
 				setWalking();
 			} else {
 				gotoStand();
@@ -179,8 +179,8 @@ void ScalpelPerson::gotoStand() {
 
 	if (map._active) {
 		_sequenceNumber = 0;
-		people[PLAYER]._position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
-		people[PLAYER]._position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
+		people[HOLMES]._position.x = (map[map._charPoint].x - 6) * FIXED_INT_MULTIPLIER;
+		people[HOLMES]._position.y = (map[map._charPoint].y + 10) * FIXED_INT_MULTIPLIER;
 	}
 
 	_oldWalkSequence = -1;
@@ -401,14 +401,14 @@ void ScalpelPeople::setTalking(int speaker) {
 
 void ScalpelPeople::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
-	s.syncAsSint32LE(_data[PLAYER]->_position.x);
-	s.syncAsSint32LE(_data[PLAYER]->_position.y);
-	s.syncAsSint16LE(_data[PLAYER]->_sequenceNumber);
+	s.syncAsSint32LE(_data[HOLMES]->_position.x);
+	s.syncAsSint32LE(_data[HOLMES]->_position.y);
+	s.syncAsSint16LE(_data[HOLMES]->_sequenceNumber);
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _data[PLAYER]->_position;
-		_hSavedFacing = _data[PLAYER]->_sequenceNumber;
+		_hSavedPos = _data[HOLMES]->_position;
+		_hSavedFacing = _data[HOLMES]->_sequenceNumber;
 	}
 }
 
@@ -442,22 +442,20 @@ void ScalpelPeople::setTalkSequence(int speaker, int sequenceNum) {
 	}
 }
 
-
 bool ScalpelPeople::loadWalk() {
-	Resources &res = *_vm->_res;
 	bool result = false;
 
-	if (_data[PLAYER]->_walkLoaded) {
+	if (_data[HOLMES]->_walkLoaded) {
 		return false;
 	} else {
 		if (_vm->getPlatform() != Common::kPlatform3DO) {
-			_data[PLAYER]->_images = new ImageFile("walk.vgs");
+			_data[HOLMES]->_images = new ImageFile("walk.vgs");
 		} else {
 			// Load walk.anim on 3DO, which is a cel animation file
-			_data[PLAYER]->_images = new ImageFile3DO("walk.anim", kImageFile3DOType_CelAnimation);
+			_data[HOLMES]->_images = new ImageFile3DO("walk.anim", kImageFile3DOType_CelAnimation);
 		}
-		_data[PLAYER]->setImageFrame();
-		_data[PLAYER]->_walkLoaded = true;
+		_data[HOLMES]->setImageFrame();
+		_data[HOLMES]->_walkLoaded = true;
 
 		result = true;
 	}

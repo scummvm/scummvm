@@ -803,9 +803,133 @@ void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	}
 }
 
+#define ADJUST_COORD(COORD) if (COORD != -1) COORD *= FIXED_INT_MULTIPLIER
+
 int TattooScene::startCAnim(int cAnimNum, int playRate) {
-	error("TODO: startCAnim");
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Resources &res = *_vm->_res;
+	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
+
+	// Exit immediately if the anim number is out of range, or the anim doesn't have a position specified
+	if (cAnimNum < 0 || cAnimNum >= (int)_cAnim.size() || _cAnim[cAnimNum]._position.x == -1)
+		// Return out of range error
+		return -1;
+
+	// Get the co-ordinates that the Player & NPC #1 must walk to and end on
+	CAnim &cAnim = _cAnim[cAnimNum];
+	PositionFacing goto1 = cAnim._goto[0];
+	PositionFacing goto2 = cAnim._goto[1];
+	PositionFacing teleport1 = cAnim._teleport[0];
+	PositionFacing teleport2 = cAnim._teleport[1];
+
+	// If the co-ordinates are valid (not -1), adjust them by the fixed int multiplier
+	ADJUST_COORD(goto1.x);
+	ADJUST_COORD(goto1.y);
+	ADJUST_COORD(goto2.x);
+	ADJUST_COORD(goto2.y);
+	ADJUST_COORD(teleport1.x);
+	ADJUST_COORD(teleport1.y);
+	ADJUST_COORD(teleport2.x);
+	ADJUST_COORD(teleport2.y);
+
+	// See if the Player must walk to a position before the animation starts
+	SpriteType savedPlayerType = people[HOLMES]._type;
+	if (goto1.x != -1 && people[HOLMES]._type == CHARACTER) {
+		if (people[HOLMES]._position != goto1)
+			people[HOLMES].walkToCoords(goto1, goto1._facing);
+	}
+
+	if (talk._talkToAbort)
+		return 1;
+
+	// See if NPC #1 must walk to a position before the animation starts
+	SpriteType savedNPCType = people[WATSON]._type;
+	if (goto2.x != -1 && people[WATSON]._type == CHARACTER) {
+		if (people[WATSON]._position != goto2)
+			people[WATSON].walkToCoords(goto2, goto2._facing);
+	}
+
+	if (talk._talkToAbort)
+		return 1;
+
+	// Turn the player (and NPC #1 if neccessary) off before running the canimation
+	if (teleport1.x != -1 && savedPlayerType == CHARACTER)
+		people[HOLMES]._type = REMOVE;
+
+	if (teleport2.x != -1 && savedNPCType == CHARACTER)
+		people[WATSON]._type = REMOVE;
+
+	if (ui._windowOpen)
+		ui.banishWindow();
+	
+	//_activeCAnim._filesize = cAnim._size;
+
+	// Open up the room resource file and get the data for the animation
+	Common::SeekableReadStream *stream = res.load(_rrmName);
+	stream->seek(44 + cAnimNum * 4);
+	stream->seek(stream->readUint32LE());
+	Common::SeekableReadStream *animStream = stream->readStream(cAnim._size);
+	delete stream;
+
+	// Set up the active animation
+	_activeCAnim._position = cAnim._position;
+	_activeCAnim._oldBounds = Common::Rect(0, 0, 0, 0);
+	_activeCAnim._flags = cAnim._flags;
+	_activeCAnim._scaleVal = cAnim._scaleVal;
+	_activeCAnim._zPlacement = 0;
+
+	_activeCAnim.load(animStream);
+
+	while (_activeCAnim.active() && !_vm->shouldQuit()) {
+		doBgAnim();
+
+		events.pollEvents();
+		if (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+
+			if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+				_vm->setFlags(-76);
+				_vm->setFlags(396);
+				_goToScene = 1;
+				talk._talkToAbort = true;
+				_activeCAnim.close();
+			}
+		}
+	}
+
+	// Turn the people back on
+	people[HOLMES]._type = savedPlayerType;
+	if (teleport2.x != -1)
+		people[WATSON]._type = savedNPCType;
+
+	// Teleport the Player to the ending coordinates if necessary
+	if (teleport1.x != -1 && savedPlayerType == CHARACTER) {
+		people[HOLMES]._position = teleport1;
+		people[HOLMES]._sequenceNumber = teleport1._facing;
+		people[HOLMES].gotoStand();
+	}
+
+	// Teleport Watson to the ending coordinates if necessary
+	if (teleport2.x != -1 && savedNPCType == CHARACTER) {
+		people[WATSON]._position = teleport2;
+		people[WATSON]._sequenceNumber = teleport2._facing;
+		people[WATSON].gotoStand();
+	}
+
+	// Flag the Canimation to be cleared
+	_activeCAnim._zPlacement = REMOVE;
+	_activeCAnim._removeBounds = _activeCAnim._oldBounds;
+
+	// Free up the animation
+	_activeCAnim.close();
+
+	return 1;
 }
+
+#undef ADJUST_COORD
 
 void TattooScene::setNPCPath(int npc) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;

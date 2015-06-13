@@ -169,13 +169,13 @@ void Talk::talkTo(const Common::String &filename) {
 	// Turn on the Exit option
 	ui._endKeyActive = true;
 
-	if (people[PLAYER]._walkCount || people[PLAYER]._walkTo.size() > 0) {
+	if (people[HOLMES]._walkCount || people[HOLMES]._walkTo.size() > 0) {
 		// Only interrupt if an action if trying to do an action, and not just
 		// if the player is walking around the scene
 		if (people._allowWalkAbort)
 			abortFlag = true;
 
-		people[PLAYER].gotoStand();
+		people[HOLMES].gotoStand();
 	}
 
 	if (_talkToAbort)
@@ -501,7 +501,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Need to walk to character first
-			people[PLAYER].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
 		events.setCursor(ARROW);
 
 		if (!_talkToAbort)
@@ -516,7 +516,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Walk over to person to talk to
-			people[PLAYER].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
 		events.setCursor(ARROW);
 
 		if (!_talkToAbort) {
@@ -1318,14 +1318,14 @@ OpcodeReturn Talk::cmdEnableEndKey(const byte *&str) {
 
 OpcodeReturn Talk::cmdHolmesOff(const byte *&str) {
 	People &people = *_vm->_people;
-	people[PLAYER]._type = REMOVE;
+	people[HOLMES]._type = REMOVE;
 
 	return RET_SUCCESS;
 }
 
 OpcodeReturn Talk::cmdHolmesOn(const byte *&str) {
 	People &people = *_vm->_people;
-	people[PLAYER]._type = CHARACTER;
+	people[HOLMES]._type = CHARACTER;
 
 	return RET_SUCCESS;
 }
@@ -1452,7 +1452,7 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 
 	++str;
 	CAnim &animation = scene._cAnim[str[0] - 1];
-	people[PLAYER].walkToCoords(animation._goto[0], animation._goto[0]._facing);
+	people[HOLMES].walkToCoords(animation._goto[0], animation._goto[0]._facing);
 	
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }

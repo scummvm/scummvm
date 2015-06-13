@@ -326,7 +326,7 @@ void ScalpelUserInterface::handleInput() {
 			} else {
 				people._walkDest = pt;
 				people._allowWalkAbort = false;
-				people[PLAYER].goAllTheWay();
+				people[HOLMES].goAllTheWay();
 			}
 
 			if (_oldKey != -1) {
@@ -511,7 +511,7 @@ void ScalpelUserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people[PLAYER].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
 		}
 
 		if (!talk._talkToAbort) {
@@ -2236,13 +2236,13 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 					printed = true;
 					if (pt.x != -1)
 						// Holmes needs to walk to object before the action is done
-						people[PLAYER].walkToCoords(pt, dir);
+						people[HOLMES].walkToCoords(pt, dir);
 
 					if (!talk._talkToAbort) {
 						// Ensure Holmes is on the exact intended location
-						people[PLAYER]._position = pt;
-						people[PLAYER]._sequenceNumber = dir;
-						people[PLAYER].gotoStand();
+						people[HOLMES]._position = pt;
+						people[HOLMES]._sequenceNumber = dir;
+						people[HOLMES].gotoStand();
 
 						talk.talkTo(action._names[nameIdx].c_str() + 2);
 						if (ch == 'T')
@@ -2255,7 +2255,7 @@ void ScalpelUserInterface::checkAction(ActionType &action, const char *const mes
 		if (doCAnim && !talk._talkToAbort) {
 			if (pt.x != -1)
 				// Holmes needs to walk to object before the action is done
-				people[PLAYER].walkToCoords(pt, dir);
+				people[HOLMES].walkToCoords(pt, dir);
 		}
 
 		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {

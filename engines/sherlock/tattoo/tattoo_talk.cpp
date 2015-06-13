@@ -243,7 +243,7 @@ OpcodeReturn TattooTalk::cmdWalkHolmesToCoords(const byte *&str) {
 		x = -1 * (x - 16384);
 	// TODO: The RT walkToCoords call has an extra parameter, person, which is 0 (Holmes) here
 	warning("TODO: cmdWalkHolmesToCoords - call RT walkToCoords variant");
-	people[PLAYER].walkToCoords(Point32(x * FIXED_INT_MULTIPLIER,
+	people[HOLMES].walkToCoords(Point32(x * FIXED_INT_MULTIPLIER,
 		((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER), DIRECTION_CONVERSION[str[4] - 1]);
 	if (_talkToAbort)
 		return RET_EXIT;

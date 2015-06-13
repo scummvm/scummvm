@@ -328,7 +328,7 @@ void Sprite::checkSprite() {
 						break;
 
 					case WALK_AROUND:
-						if (objBounds.contains(people[PLAYER]._walkTo.front())) {
+						if (objBounds.contains(people[HOLMES]._walkTo.front())) {
 							// Reached zone
 							gotoStand();
 						} else {
@@ -374,10 +374,10 @@ void Sprite::checkSprite() {
 									objBounds.right + CLEAR_DIST_X;
 							}
 
-							walkPos.x += people[PLAYER]._imageFrame->_frame.w / 2;
+							walkPos.x += people[HOLMES]._imageFrame->_frame.w / 2;
 							people._walkDest = walkPos;
-							people[PLAYER]._walkTo.push(walkPos);
-							people[PLAYER].setWalking();
+							people[HOLMES]._walkTo.push(walkPos);
+							people[HOLMES].setWalking();
 						}
 						break;
 
@@ -1313,7 +1313,7 @@ int Object::checkNameForCodes(const Common::String &name, const char *const mess
 				scene._goToScene = 100;
 			}
 
-			people[PLAYER]._position = Point32(0, 0);
+			people[HOLMES]._position = Point32(0, 0);
 			break;
 		}
 	} else if (name.hasPrefix("!")) {
@@ -1451,7 +1451,7 @@ int Object::pickUpObject(const char *const messages[]) {
 		} else {
 			// Play generic pickup sequence
 			// Original moved cursor position here
-			people[PLAYER].goAllTheWay();
+			people[HOLMES].goAllTheWay();
 			ui._menuCounter = 25;
 			ui._temp1 = 1;
 		}
@@ -1596,17 +1596,37 @@ void CAnim::load3DO(Common::SeekableReadStream &s) {
 /*----------------------------------------------------------------*/
 
 CAnimStream::CAnimStream() {
-	_stream = nullptr;
-	_frameSize = 0;
 	_images = nullptr;
 	_imageFrame = nullptr;
+	_frameNumber = 0;
 	_flags = 0;
 	_scaleVal = 0;
 	_zPlacement = 0;
 }
 
+CAnimStream::~CAnimStream() {
+	delete _images;
+}
+
+void CAnimStream::load(Common::SeekableReadStream *stream) {
+	delete _images;
+	_images = new ImageFile(*stream, false);
+	_imageFrame = &(*_images)[0];
+	_frameNumber = 0;
+}
+
+void CAnimStream::close() {
+	delete _images;
+	_images = nullptr;
+	_imageFrame = nullptr;
+	_frameNumber = 0;
+}
+
 void CAnimStream::getNextFrame() {
-	// TODO
+	if (++_frameNumber < (int)_images->size())
+		_imageFrame = &(*_images)[_frameNumber];
+	else
+		_imageFrame = nullptr;
 }
 
 /*----------------------------------------------------------------*/

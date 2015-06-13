@@ -108,7 +108,7 @@ void TattooPerson::adjustSprite() {
 	// See if the player has come to a stop after clicking on an Arrow zone to leave the scene.
 	// If so, this will set up the exit information for the scene transition
 	if (!_walkCount && scene._exitZone != -1 && scene._walkedInScene && scene._goToScene != -1 &&
-			!_description.compareToIgnoreCase(people[PLAYER]._description)) { 
+			!_description.compareToIgnoreCase(people[HOLMES]._description)) { 
 		people._hSavedPos = scene._exits[scene._exitZone]._newPosition;
 		people._hSavedFacing = scene._exits[scene._exitZone]._newFacing;
 
@@ -187,20 +187,20 @@ void TattooPerson::gotoStand() {
 	if (npc != -1 && people[npc]._npcFacing != -1) {
 		if (people[npc]._npcFacing == FACING_PLAYER) {
 			// See where Holmes is with respect to the NPC (x coords)
-			if (people[PLAYER]._position.x < people[npc]._position.x)
+			if (people[HOLMES]._position.x < people[npc]._position.x)
 				people[npc]._npcFacing = STOP_LEFT;
 			else
 				people[npc]._npcFacing = STOP_RIGHT;
 
 			// See where Holmes is with respect to the NPC (y coords)
-			if (people[PLAYER]._position.y < people[npc]._position.y - (10 * FIXED_INT_MULTIPLIER)) {
+			if (people[HOLMES]._position.y < people[npc]._position.y - (10 * FIXED_INT_MULTIPLIER)) {
 				// Holmes is above the NPC so reset the facing to the diagonal ups
 				if (people[npc]._npcFacing == STOP_RIGHT)
 					people[npc]._npcFacing = STOP_UPRIGHT;
 				else
 					people[npc]._npcFacing = STOP_UPLEFT;
 			} else {
-				if (people[PLAYER]._position.y > people[npc]._position.y + (10 * FIXED_INT_MULTIPLIER)) {
+				if (people[HOLMES]._position.y > people[npc]._position.y + (10 * FIXED_INT_MULTIPLIER)) {
 					// Holmes is below the NPC so reset the facing to the diagonal downs
 					if (people[npc]._npcFacing == STOP_RIGHT)
 						people[npc]._npcFacing = STOP_DOWNRIGHT;
@@ -446,7 +446,7 @@ int TattooPeople::findSpeaker(int speaker) {
 	if (result == -1) {
 		bool flag = _vm->readFlags(76);
 
-		if (_data[PLAYER]->_type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
+		if (_data[HOLMES]->_type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
 			return -1;
 
 		for (uint idx = 1; idx < _data.size(); ++idx) {
@@ -481,8 +481,8 @@ void TattooPeople::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _data[PLAYER]->_position;
-		_hSavedFacing = _data[PLAYER]->_sequenceNumber;
+		_hSavedPos = _data[HOLMES]->_position;
+		_hSavedFacing = _data[HOLMES]->_sequenceNumber;
 	}
 }
 
