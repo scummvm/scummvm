@@ -199,6 +199,13 @@ void Sprite::setImageFrame() {
 	ImageFile *images = _altSeq ? _altImages : _images;
 	assert(images);
 
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
+		// 3DO has 110 animation frames inside walk.anim
+		// PC has 55
+		// this adjusts the framenumber accordingly
+		imageNumber *= 2;
+	}
+
 	// Set the frame pointer
 	_imageFrame = &(*images)[imageNumber];
 }
