@@ -200,10 +200,15 @@ void Sprite::setImageFrame() {
 	assert(images);
 
 	if (_vm->getPlatform() == Common::kPlatform3DO) {
-		// 3DO has 110 animation frames inside walk.anim
-		// PC has 55
-		// this adjusts the framenumber accordingly
-		imageNumber *= 2;
+		// only do this to the image-array with 110 entries
+		// map uses another image-array and this code
+		if (images->size() == 110) {
+			// 3DO has 110 animation frames inside walk.anim
+			// PC has 55
+			// this adjusts the framenumber accordingly
+			// sort of HACK
+			imageNumber *= 2;
+		}
 	}
 
 	// Set the frame pointer
