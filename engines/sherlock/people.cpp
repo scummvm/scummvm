@@ -245,7 +245,7 @@ void People::reset() {
 		else
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
 
-		p._sequenceNumber = Scalpel::STOP_DOWNRIGHT;
+		p._sequenceNumber = IS_SERRATED_SCALPEL ? Scalpel::STOP_DOWNRIGHT : Tattoo::STOP_DOWNRIGHT;
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
 		p._delta = Point32(0, 0);
