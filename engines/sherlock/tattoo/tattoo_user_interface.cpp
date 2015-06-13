@@ -370,7 +370,7 @@ void TattooUserInterface::doStandardControl() {
 		if (events._rightReleased) {
 			// Show the verbs menu for the highlighted object
 			activateVerbMenu(!noDesc);
-		} else if (_personFound || (_bgFound < 1000 && _bgShape->_aType == PERSON)) {
+		} else if (_personFound || (_bgFound != -1 && _bgFound < 1000 && _bgShape->_aType == PERSON)) {
 			// The object found is a person (the default for people is TALK)
 			talk.talk(_bgFound);
 			_activeObj = -1;

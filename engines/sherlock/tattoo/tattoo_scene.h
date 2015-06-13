@@ -64,12 +64,6 @@ private:
 	void doBgAnimDrawSprites();
 
 	/**
-	 * Returns the scale value for the passed co-ordinates. This is taken from the scene's
-	 * scale zones, interpolating inbetween the top and bottom values of the zones as needed
-	 */
-	int getScaleVal(const Common::Point &pt);
-
-	/**
 	 * Makes a greyscale translation table for each palette entry in the table
 	 */
 	void setupBGArea(const byte cMap[PALETTE_SIZE]);
@@ -120,6 +114,12 @@ public:
 	bool _labTableScene;
 public:
 	TattooScene(SherlockEngine *vm);
+
+	/**
+	 * Returns the scale value for the passed co-ordinates. This is taken from the scene's
+	 * scale zones, interpolating inbetween the top and bottom values of the zones as needed
+	 */
+	int getScaleVal(const Common::Point &pt);
 
 	/**
 	 * Draw all objects and characters.

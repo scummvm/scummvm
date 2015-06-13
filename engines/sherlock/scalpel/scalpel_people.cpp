@@ -241,10 +241,10 @@ void ScalpelPerson::setWalking() {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
 			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
-				_sequenceNumber = (map._active ? (int)MAP_LEFT : (int)Scalpel::WALK_LEFT);
+				_sequenceNumber = (map._active ? (int)MAP_LEFT : (int)WALK_LEFT);
 				_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
 			} else {
-				_sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)Scalpel::WALK_RIGHT);
+				_sequenceNumber = (map._active ? (int)MAP_RIGHT : (int)WALK_RIGHT);
 				_delta.x = speed.x * FIXED_INT_MULTIPLIER;
 			}
 
@@ -271,22 +271,22 @@ void ScalpelPerson::setWalking() {
 			if (_delta.y > 150) {
 				if (!map._active) {
 					switch (_sequenceNumber) {
-					case Scalpel::WALK_LEFT:
-						_sequenceNumber = Scalpel::WALK_DOWNLEFT;
+					case WALK_LEFT:
+						_sequenceNumber = WALK_DOWNLEFT;
 						break;
-					case Scalpel::WALK_RIGHT:
-						_sequenceNumber = Scalpel::WALK_DOWNRIGHT;
+					case WALK_RIGHT:
+						_sequenceNumber = WALK_DOWNRIGHT;
 						break;
 					}
 				}
 			} else if (_delta.y < -150) {
 				if (!map._active) {
 					switch (_sequenceNumber) {
-					case Scalpel::WALK_LEFT:
-						_sequenceNumber = Scalpel::WALK_UPLEFT;
+					case WALK_LEFT:
+						_sequenceNumber = WALK_UPLEFT;
 						break;
-					case Scalpel::WALK_RIGHT:
-						_sequenceNumber = Scalpel::WALK_UPRIGHT;
+					case WALK_RIGHT:
+						_sequenceNumber = WALK_UPRIGHT;
 						break;
 					}
 				}
@@ -295,10 +295,10 @@ void ScalpelPerson::setWalking() {
 			// Major movement is vertical, so set the sequence for up and down,
 			// and set the delta Y depending on the direction
 			if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
-				_sequenceNumber = Scalpel::WALK_UP;
+				_sequenceNumber = WALK_UP;
 				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
-				_sequenceNumber = Scalpel::WALK_DOWN;
+				_sequenceNumber = WALK_DOWN;
 				_delta.y = speed.y * FIXED_INT_MULTIPLIER;
 			}
 

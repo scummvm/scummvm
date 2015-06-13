@@ -31,6 +31,32 @@ namespace Tattoo {
 
 #define FACING_PLAYER 16
 
+static const int WALK_SPEED_X[99] = {
+	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 98, 90, 90, 90, 90, 90, 91, 90, 90,
+	90, 90,100, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,100, 90,
+	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,103, 90, 90, 90, 90, 90, 90, 90,
+	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
+	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90
+};
+
+static const int WALK_SPEED_Y[99] = {
+	28, 28, 28, 28, 28, 28, 28, 28, 28, 32, 32, 32, 28, 28, 28, 28, 28, 26, 28, 28,
+	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+	32, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 31, 28, 28, 28, 28, 28, 28, 28,
+	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28
+};
+
+static const int WALK_SPEED_DIAG_X[99] = {
+	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 90, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+	50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
+};
+
+/*----------------------------------------------------------------*/
+
 TattooPerson::TattooPerson() : Person() {
 	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
 	_tempX = _tempScaleVal = 0;
@@ -243,7 +269,156 @@ void TattooPerson::gotoStand() {
 }
 
 void TattooPerson::setWalking() {
-	warning("TODO: setWalking");
+	People &people = *_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	int oldDirection, oldFrame;
+	Common::Point delta;
+
+	// Flag that player has now walked in the scene
+	scene._walkedInScene = true;
+
+	// Stop any previous walking, since a new dest is being set
+	_walkCount = 0;
+	oldDirection = _sequenceNumber;
+	oldFrame = _frameNumber;
+
+	// Set speed to use horizontal and vertical movement
+	int scaleVal = scene.getScaleVal(_position);
+	Common::Point speed(MAX(WALK_SPEED_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2),
+		MAX(WALK_SPEED_Y[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2));
+	Common::Point diagSpeed(MAX((WALK_SPEED_Y[scene._currentScene - 1] - 2) * SCALE_THRESHOLD / scaleVal, 2),
+		MAX(WALK_SPEED_DIAG_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2));
+
+	// If the player is already close to the given destination that no walking is needed, 
+	// move to the next  straight line segment in the overall walking route, if there is one
+	for (;;) {
+		// Since we want the player to be centered on the destination they
+		// clicked, but characters draw positions start at their left, move
+		// the destination half the character width to draw him centered
+		int temp;
+		if (people._walkDest.x >= (temp = _imageFrame->_frame.w / 2))
+			people._walkDest.x -= temp;
+
+		delta = Common::Point(
+			ABS(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x),
+			ABS(_position.y / FIXED_INT_MULTIPLIER - people._walkDest.y)
+			);
+
+		// If we're ready to move a sufficient distance, that's it. Otherwise,
+		// move onto the next portion of the walk path, if there is one
+		if ((delta.x > 3 || delta.y > 0) || _walkTo.empty())
+			break;
+
+		// Pop next walk segment off the walk route stack
+		people._walkDest = _walkTo.pop();
+	}
+
+	// If a sufficient move is being done, then start the move
+	if (delta.x > 3 || delta.y) {
+		// See whether the major movement is horizontal or vertical
+		if (delta.x >= delta.y) {
+			// Set the initial frame sequence for the left and right, as well
+			// as setting the delta x depending on direction
+			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
+				_sequenceNumber = WALK_LEFT;
+				_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
+			} else {
+				_sequenceNumber = WALK_RIGHT;
+				_delta.x = speed.x * FIXED_INT_MULTIPLIER;
+			}
+
+			// See if the x delta is too small to be divided by the speed, since
+			// this would cause a divide by zero error
+			if (delta.x >= speed.x) {
+				// Det the delta y
+				_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
+				if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
+					_delta.y = -_delta.y;
+
+				// Set how many times we should add the delta to the player's position
+				_walkCount = delta.x / speed.x;
+			} else {
+				// The delta x was less than the speed (ie. we're really close to
+				// the destination). So set delta to 0 so the player won't move
+				_delta = Point32(0, 0);
+				_position = Point32(people._walkDest.x * FIXED_INT_MULTIPLIER, people._walkDest.y * FIXED_INT_MULTIPLIER);
+
+				_walkCount = 1;
+			}
+
+			// See if the sequence needs to be changed for diagonal walking
+			if (_delta.y > 1500) {
+				if (_sequenceNumber == WALK_LEFT || _sequenceNumber == WALK_RIGHT) {
+					_delta.x = _delta.x / speed.x * diagSpeed.x;
+					_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x * 10 / diagSpeed.x);
+				}
+
+				switch (_sequenceNumber) {
+				case WALK_LEFT:
+					_sequenceNumber = WALK_DOWNLEFT;
+					break;
+				case WALK_RIGHT:
+					_sequenceNumber = WALK_DOWNRIGHT;
+					break;
+				}
+			} else if (_delta.y < -1500) {
+				if (_sequenceNumber == WALK_LEFT || _sequenceNumber == WALK_RIGHT) {
+					_delta.x = _delta.x / speed.x * diagSpeed.x;
+					_delta.y = -1 * (delta.y * FIXED_INT_MULTIPLIER) / (delta.x * 10 / diagSpeed.x);
+				}
+
+				switch (_sequenceNumber) {
+				case WALK_LEFT:
+					_sequenceNumber = WALK_UPLEFT;
+					break;
+				case WALK_RIGHT:
+					_sequenceNumber = WALK_UPRIGHT;
+					break;
+				}
+			}
+		} else {
+			// Major movement is vertical, so set the sequence for up and down,
+			// and set the delta Y depending on the direction
+			if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
+				_sequenceNumber = WALK_UP;
+				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
+			} else {
+				_sequenceNumber = WALK_DOWN;
+				_delta.y = speed.y * FIXED_INT_MULTIPLIER;
+			}
+
+			// Set the delta x
+			_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
+			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
+				_delta.x = -_delta.x;
+
+			_walkCount = delta.y / speed.y;
+		}
+	}
+
+	// See if the new walk sequence is the same as the old. If it's a new one,
+	// we need to reset the frame number to zero so it's animation starts at
+	// it's beginning. Otherwise, if it's the same sequence, we can leave it
+	// as is, so it keeps the animation going at wherever it was up to
+	if (_sequenceNumber != _oldWalkSequence) {
+		if (_seqTo) {
+			// Reset to previous value
+			_walkSequences[oldDirection]._sequences[_frameNumber] = _seqTo;
+			_seqTo = 0;
+		}
+		_frameNumber = 0;
+	}
+
+	checkWalkGraphics();
+	_oldWalkSequence = _sequenceNumber;
+
+	if (!_walkCount && _walkTo.empty())
+		gotoStand();
+
+	// If the sequence is the same as when we started, then Holmes was standing still and we're trying 
+	// to re-stand him, so reset Holmes' rame to the old frame number from before it was reset to 0
+	if (_sequenceNumber == oldDirection)
+		_frameNumber = oldFrame;
 }
 
 void TattooPerson::clearNPC() {
