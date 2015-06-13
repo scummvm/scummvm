@@ -89,6 +89,7 @@ public:
 	 * Load the data for the object
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+	void load3DO(Common::SeekableReadStream &s);
 };
 
 struct SceneEntry {

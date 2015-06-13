@@ -122,6 +122,23 @@ void Exit::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_allow = s.readSint16LE();
 }
 
+void Exit::load3DO(Common::SeekableReadStream &s) {
+	left = s.readSint16BE();
+	top = s.readSint16BE();
+	setWidth(s.readUint16BE());
+	setHeight(s.readUint16BE());
+
+	_image = 0;
+	_scene = s.readSint16BE();
+
+	_allow = s.readSint16BE();
+
+	_newPosition.x = s.readSint16BE();
+	_newPosition.y = s.readSint16BE();
+	_newFacing = s.readUint16BE();
+	s.skip(2); // Filler
+}
+
 /*----------------------------------------------------------------*/
 
 void SceneEntry::load(Common::SeekableReadStream &s) {
@@ -768,11 +785,13 @@ bool Scene::loadScene(const Common::String &filename) {
 		roomStream->read(&_walkData[0], header3DO_walkData_size);
 
 		// === EXITS === Read in the exits
-		_exitZone = -1;
-		_exits.resize(header3DO_exits_size); // TODO!!!!
+		int exitsCount = header3DO_exits_size / 20;
 
-		//for (int idx = 0; idx < numExits; ++idx)
-		//	_exits[idx].load(*rrmStream, IS_ROSE_TATTOO);
+		_exitZone = -1;
+		_exits.resize(exitsCount);
+
+		for (int idx = 0; idx < exitsCount; ++idx)
+			_exits[idx].load3DO(*roomStream);
 
 		// === ENTRANCE === Read in the entrance
 		roomStream->seek(header3DO_entranceData_offset);
