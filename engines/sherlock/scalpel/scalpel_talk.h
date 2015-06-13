@@ -66,7 +66,7 @@ protected:
 	/**
 	 * Trigger to play a 3DO talk dialog movie
 	 */
-	virtual void talk3DOMovieTrigger(int selector, int subIndex);
+	virtual void talk3DOMovieTrigger(int subIndex);
 
 public:
 	ScalpelTalk(SherlockEngine *vm);

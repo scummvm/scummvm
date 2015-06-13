@@ -1079,8 +1079,7 @@ void Talk::doScript(const Common::String &script) {
 
 		if (_wait) {
 			// Trigger to play 3DO movie
-			int selector = _vm->_ui->_selector;
-			talk3DOMovieTrigger(selector, subIndex);
+			talk3DOMovieTrigger(subIndex);
 
 			subIndex++;
 		}

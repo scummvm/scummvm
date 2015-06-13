@@ -267,7 +267,7 @@ protected:
 	/**
 	 * Trigger to play a 3DO talk dialog movie
 	 */
-	virtual void talk3DOMovieTrigger(int selector, int subIndex) {};
+	virtual void talk3DOMovieTrigger(int subIndex) {};
 
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];

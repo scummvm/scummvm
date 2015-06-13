@@ -524,14 +524,31 @@ void ScalpelTalk::talkWait(const byte *&str) {
 	}
 }
 
-void ScalpelTalk::talk3DOMovieTrigger(int selector, int subIndex) {
+void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// No 3DO? No movie!
 		return;
 	}
 
 	// Find out a few things that we need
+	int userSelector = _vm->_ui->_selector;
+	int scriptSelector = _scriptSelect;
+	int selector = 0;
 	int roomNr = _vm->_scene->_currentScene;
+
+	if (userSelector >= 0) {
+		// User-selected dialog
+		selector = userSelector;
+	} else {
+		if (scriptSelector >= 0) {
+			// Script-selected dialog
+			selector = scriptSelector;
+			subIndex--; // for scripts we adjust subIndex, b/c we won't get called from doTalkControl()
+		} else {
+		warning("talk3DOMovieTrigger: unable to find selector");
+		return;
+		}
+	}
 
 	// Make a quick update, so that current text is shown on screen
 	_vm->_screen->update();
@@ -545,6 +562,12 @@ void ScalpelTalk::talk3DOMovieTrigger(int selector, int subIndex) {
 	movieFilename.insertChar(selector + 'a', movieFilename.size());
 	movieFilename.insertChar(subIndex + 'a', movieFilename.size());
 	movieFilename = Common::String::format("movies/%02d/%s.stream", roomNr, movieFilename.c_str());
+
+	warning("3DO movie player:");
+	warning("room: %d", roomNr);
+	warning("script: %s", _scriptName.c_str());
+	warning("selector: %d", selector);
+	warning("subindex: %d", subIndex);
 
 	Scalpel3DOMoviePlay(movieFilename.c_str(), Common::Point(5, 5));
 
