@@ -1079,7 +1079,7 @@ void ScalpelUserInterface::doInvControl() {
 		}
 
 		if (_selector != -1)
-			inv.highlight(_selector, 235);
+			inv.highlight(_selector, BUTTON_BACKGROUND);
 
 		_oldSelector = _selector;
 	}

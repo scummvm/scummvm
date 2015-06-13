@@ -152,7 +152,7 @@ void Inventory::putInv(InvSlamMode slamIt) {
 
 		// Draw the background
 		if (idx == ui._selector) {
-			bb.fillRect(r, 235);
+			bb.fillRect(r, BUTTON_BACKGROUND);
 		} else if (slamIt == SLAM_SECONDARY_BUFFER) {
 			bb.fillRect(r, BUTTON_MIDDLE);
 		}
