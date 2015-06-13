@@ -366,8 +366,8 @@ void Darts::drawDartThrow(const Common::Point &pt) {
 void Darts::erasePowerBars() {
 	Screen &screen = *_vm->_screen;
 
-	screen._backBuffer1.fillRect(Common::Rect(DARTBARHX, DARTHORIZY, DARTBARHX + DARTBARSIZE, DARTHORIZY + 10), 0);
-	screen._backBuffer1.fillRect(Common::Rect(DARTBARVX, DARTHEIGHTY, DARTBARVX + 10, DARTHEIGHTY + DARTBARSIZE), 0);
+	screen._backBuffer1.fillRect(Common::Rect(DARTBARHX, DARTHORIZY, DARTBARHX + DARTBARSIZE, DARTHORIZY + 10), BLACK);
+	screen._backBuffer1.fillRect(Common::Rect(DARTBARVX, DARTHEIGHTY, DARTBARVX + 10, DARTHEIGHTY + DARTBARSIZE), BLACK);
 	screen._backBuffer1.transBlitFrom((*_dartImages)[2], Common::Point(DARTBARHX - 1, DARTHORIZY - 1));
 	screen._backBuffer1.transBlitFrom((*_dartImages)[3], Common::Point(DARTBARVX - 1, DARTHEIGHTY - 1));
 	screen.slamArea(DARTBARHX - 1, DARTHORIZY - 1, DARTBARSIZE + 3, 11);

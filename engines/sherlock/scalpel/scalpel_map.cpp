@@ -362,8 +362,8 @@ void ScalpelMap::showPlaceName(int idx, bool highlighted) {
 
 	if (highlighted) {
 		int xp = (SHERLOCK_SCREEN_WIDTH - screen.stringWidth(name)) / 2;
-		screen.gPrint(Common::Point(xp + 2, 2), 0, "%s", name.c_str());
-		screen.gPrint(Common::Point(xp + 1, 1), 0, "%s", name.c_str());
+		screen.gPrint(Common::Point(xp + 2, 2), BLACK, "%s", name.c_str());
+		screen.gPrint(Common::Point(xp + 1, 1), BLACK, "%s", name.c_str());
 		screen.gPrint(Common::Point(xp, 0), 12, "%s", name.c_str());
 
 		screen.slamArea(xp, 0, width + 2, 15);
