@@ -389,15 +389,19 @@ OpcodeReturn TattooTalk::cmdSetNPCDescOnOff(const byte *&str) {
 
 	// Copy over the NPC examine text until we reach a stop marker, which is
 	// the same as a start marker, or we reach the end of the file
-	while (*str && *str != 208)
+	while (*str && *str != _opcodes[OP_NPC_DESC_ON_OFF])
 		person._examine += *str++;
 
 	// Move past any leftover text till we reach a stop marker
-	while (*str && *str != 208)
+	while (*str && *str != _opcodes[OP_NPC_DESC_ON_OFF])
 		str++;
 
 	if (!*str)
-		str--;
+		// Reached end of file, so decrement pointer so outer loop will terminate on NULL
+		--str;
+	else
+		// Move past the ending OP_NPC_DEST_ON_OFF opcode
+		++str;
 
 	return RET_SUCCESS;
 }
