@@ -391,8 +391,10 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 	uint16 ccbPPMP0 = 0;
 	uint16 ccbPPMP1 = 0;
 	uint32 ccbPRE0 = 0;
+	uint16 ccbPRE0_height = 0;
 	byte   ccbPRE0_bitsPerPixel = 0;
 	uint32 ccbPRE1 = 0;
+	uint16 ccbPRE1_width = 0;
 	uint32 ccbWidth = 0;
 	uint32 ccbHeight = 0;
 	// pixel lookup table
@@ -472,6 +474,11 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 			ccbPRE0_bitsPerPixel = imagefile3DO_cel_bitsPerPixelLookupTable[ccbPRE0 & 0x07];
 			if (!ccbPRE0_bitsPerPixel)
 				error("load3DOCelFile: Invalid CCB PRE0 bits per pixel");
+
+			ccbPRE0_height = ((ccbPRE0 >> 6) & 0x03FF) + 1;
+			ccbPRE1_width  = (ccbPRE1 & 0x03FF) + 1;
+			assert(ccbPRE0_height == ccbHeight);
+			assert(ccbPRE1_width == ccbWidth);
 			break;
 
 		case MKTAG('P', 'L', 'U', 'T'):
@@ -603,8 +610,10 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	uint16 ccbPPMP0 = 0;
 	uint16 ccbPPMP1 = 0;
 	uint32 ccbPRE0 = 0;
+	uint16 ccbPRE0_height = 0;
 	byte   ccbPRE0_bitsPerPixel = 0;
 	uint32 ccbPRE1 = 0;
+	uint16 ccbPRE1_width = 0;
 	uint32 ccbWidth = 0;
 	uint32 ccbHeight = 0;
 	// cel data
@@ -635,6 +644,11 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 		ccbPRE0_bitsPerPixel = imagefile3DO_cel_bitsPerPixelLookupTable[ccbPRE0 & 0x07];
 		if (!ccbPRE0_bitsPerPixel)
 			error("load3DOCelRoomData: Invalid CCB PRE0 bits per pixel");
+
+		ccbPRE0_height = ((ccbPRE0 >> 6) & 0x03FF) + 1;
+		ccbPRE1_width  = (ccbPRE1 & 0x03FF) + 1;
+		assert(ccbPRE0_height == ccbHeight);
+		assert(ccbPRE1_width == ccbWidth);
 
 		if (ccbPRE0_bitsPerPixel != 16) {
 			// We currently support 16-bits per pixel in here
