@@ -73,8 +73,7 @@ Person::Person() : Sprite() {
 void Person::goAllTheWay() {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	Common::Point srcPt(_position.x / FIXED_INT_MULTIPLIER + frameWidth() / 2,
-		_position.y / FIXED_INT_MULTIPLIER);
+	Common::Point srcPt = getSourcePoint();
 
 	// Get the zone the player is currently in
 	_srcZone = scene.whichZone(srcPt);

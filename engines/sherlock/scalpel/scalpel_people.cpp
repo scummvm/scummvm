@@ -334,6 +334,11 @@ void ScalpelPerson::setWalking() {
 		_frameNumber = oldFrame;
 }
 
+Common::Point ScalpelPerson::getSourcePoint() const {
+	return Common::Point(_position.x / FIXED_INT_MULTIPLIER + frameWidth() / 2,
+		_position.y / FIXED_INT_MULTIPLIER);
+}
+
 /*----------------------------------------------------------------*/
 
 ScalpelPeople::ScalpelPeople(SherlockEngine *vm) : People(vm) {

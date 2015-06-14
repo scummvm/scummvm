@@ -57,6 +57,11 @@ struct PersonData {
 };
 
 class Person : public Sprite {
+protected:
+	/**
+	 * Get the source position for a character potentially affected by scaling
+	 */
+	virtual Common::Point getSourcePoint() const = 0;
 public:
 	Common::Queue<Common::Point> _walkTo;
 	int _srcZone, _destZone;

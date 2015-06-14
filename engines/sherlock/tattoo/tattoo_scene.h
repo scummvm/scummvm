@@ -119,7 +119,7 @@ public:
 	 * Returns the scale value for the passed co-ordinates. This is taken from the scene's
 	 * scale zones, interpolating inbetween the top and bottom values of the zones as needed
 	 */
-	int getScaleVal(const Common::Point &pt);
+	int getScaleVal(const Point32 &pt);
 
 	/**
 	 * Draw all objects and characters.

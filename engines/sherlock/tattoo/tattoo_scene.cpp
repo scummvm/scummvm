@@ -720,7 +720,7 @@ void TattooScene::doBgAnimDrawSprites() {
 	}
 }
 
-int TattooScene::getScaleVal(const Common::Point &pt) {
+int TattooScene::getScaleVal(const Point32 &pt) {
 	bool found = false;
 	int result = SCALE_THRESHOLD;
 	Common::Point pos(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER);

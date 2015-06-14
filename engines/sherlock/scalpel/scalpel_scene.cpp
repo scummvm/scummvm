@@ -135,7 +135,6 @@ void ScalpelScene::drawAllShapes() {
 	screen.resetDisplayBounds();
 }
 
-
 void ScalpelScene::checkBgShapes() {
 	People &people = *_vm->_people;
 	Person &holmes = people[HOLMES];

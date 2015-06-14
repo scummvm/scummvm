@@ -286,18 +286,28 @@ void TattooPerson::setWalking() {
 	int scaleVal = scene.getScaleVal(_position);
 	Common::Point speed(MAX(WALK_SPEED_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2),
 		MAX(WALK_SPEED_Y[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2));
-	Common::Point diagSpeed(MAX((WALK_SPEED_Y[scene._currentScene - 1] - 2) * SCALE_THRESHOLD / scaleVal, 2),
-		MAX(WALK_SPEED_DIAG_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2));
+	Common::Point diagSpeed(MAX(WALK_SPEED_DIAG_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2),
+		MAX((WALK_SPEED_Y[scene._currentScene - 1] - 2) * SCALE_THRESHOLD / scaleVal, 2));
 
 	// If the player is already close to the given destination that no walking is needed, 
 	// move to the next  straight line segment in the overall walking route, if there is one
 	for (;;) {
-		// Since we want the player to be centered on the destination they
-		// clicked, but characters draw positions start at their left, move
-		// the destination half the character width to draw him centered
-		int temp;
-		if (people._walkDest.x >= (temp = _imageFrame->_frame.w / 2))
-			people._walkDest.x -= temp;
+		if (_centerWalk || !_walkTo.empty()) {
+			// Since we want the player to be centered on the ultimate destination, and the player
+			// is drawn from the left side, move the cursor half the width of the player to center it
+			delta = Common::Point(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x,
+				_position.y / FIXED_INT_MULTIPLIER - people._walkDest.y);
+
+			int dir;
+			if (ABS(delta.x) > ABS(delta.y))
+				dir = (delta.x < 0) ? WALK_LEFT : WALK_RIGHT;
+			else
+				dir = (delta.y < 0) ? WALK_UP : WALK_DOWN;
+
+			int scaleVal = scene.getScaleVal(Point32(people._walkDest.x * FIXED_INT_MULTIPLIER,
+				people._walkDest.y * FIXED_INT_MULTIPLIER));
+			people._walkDest.x -= _stopFrames[dir]->sDrawXSize(scaleVal) / 2;
+		}
 
 		delta = Common::Point(
 			ABS(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x),
@@ -321,22 +331,22 @@ void TattooPerson::setWalking() {
 			// as setting the delta x depending on direction
 			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
 				_sequenceNumber = WALK_LEFT;
-				_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
+				_delta.x = speed.x * -(FIXED_INT_MULTIPLIER / 10);
 			} else {
 				_sequenceNumber = WALK_RIGHT;
-				_delta.x = speed.x * FIXED_INT_MULTIPLIER;
+				_delta.x = speed.x * (FIXED_INT_MULTIPLIER / 10);
 			}
 
 			// See if the x delta is too small to be divided by the speed, since
 			// this would cause a divide by zero error
-			if (delta.x >= speed.x) {
+			if ((delta.x * 10) >= speed.x) {
 				// Det the delta y
-				_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
+				_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / ((delta.x * 10) / speed.x);
 				if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
 					_delta.y = -_delta.y;
 
 				// Set how many times we should add the delta to the player's position
-				_walkCount = delta.x / speed.x;
+				_walkCount = (delta.x * 10) / speed.x;
 			} else {
 				// The delta x was less than the speed (ie. we're really close to
 				// the destination). So set delta to 0 so the player won't move
@@ -365,6 +375,7 @@ void TattooPerson::setWalking() {
 				if (_sequenceNumber == WALK_LEFT || _sequenceNumber == WALK_RIGHT) {
 					_delta.x = _delta.x / speed.x * diagSpeed.x;
 					_delta.y = -1 * (delta.y * FIXED_INT_MULTIPLIER) / (delta.x * 10 / diagSpeed.x);
+					_walkCount = (delta.x * 10) / diagSpeed.x;
 				}
 
 				switch (_sequenceNumber) {
@@ -433,6 +444,14 @@ void TattooPerson::updateNPC() {
 
 void TattooPerson::pushNPCPath() {
 	warning("TODO: pushNPCPath");
+}
+
+Common::Point TattooPerson::getSourcePoint() const {
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	int scaleVal = scene.getScaleVal(_position);
+
+	return Common::Point(_position.x / FIXED_INT_MULTIPLIER + _imageFrame->sDrawXSize(scaleVal) / 2,
+		_position.y / FIXED_INT_MULTIPLIER);
 }
 
 /*----------------------------------------------------------------*/

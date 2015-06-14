@@ -42,6 +42,11 @@ enum ScalpelSequences {
 };
 
 class ScalpelPerson : public Person {
+protected:
+	/**
+	 * Get the source position for a character potentially affected by scaling
+	 */
+	virtual Common::Point getSourcePoint() const;
 public:
 	ScalpelPerson() : Person() {}
 	virtual ~ScalpelPerson() {}

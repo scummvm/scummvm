@@ -74,6 +74,11 @@ enum TattooSequences {
 class TattooPerson: public Person {
 private:
 	bool checkCollision() const;
+protected:
+	/**
+	 * Get the source position for a character potentially affected by scaling
+	 */
+	virtual Common::Point getSourcePoint() const;
 public:
 	int _npcIndex;
 	int _npcStack;
