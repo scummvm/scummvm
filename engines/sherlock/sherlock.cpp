@@ -33,6 +33,7 @@ SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gam
 	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
+	_fixedText = nullptr;
 	_inventory = nullptr;
 	_journal = nullptr;
 	_map = nullptr;
@@ -56,6 +57,7 @@ SherlockEngine::~SherlockEngine() {
 	delete _animation;
 	delete _debugger;
 	delete _events;
+	delete _fixedText;
 	delete _journal;
 	delete _map;
 	delete _people;
@@ -93,6 +95,7 @@ void SherlockEngine::initialize() {
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new Events(this);
+	_fixedText = new FixedText(this);
 	_inventory = new Inventory(this);
 	_map = Map::init(this);
 	_music = new Music(this, _mixer);

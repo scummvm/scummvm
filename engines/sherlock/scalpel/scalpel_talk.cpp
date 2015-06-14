@@ -171,6 +171,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 }
 
 void ScalpelTalk::talkInterface(const byte *&str) {
+	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
@@ -181,9 +182,12 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 		drawInterface();
 
 		if (_talkTo != -1) {
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, "Exit");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
+			Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+			Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+			Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, fixedText_Exit);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
 		}
 	}
 
@@ -498,8 +502,9 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 }
 
 OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
-	Events &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
+	Events       &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen       &screen = *_vm->_screen;
 
 	drawInterface();
 	events._pressed = events._released = false;
@@ -507,9 +512,12 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	_noTextYet = false;
 
 	if (_speaker != -1) {
-		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, "Exit");
-		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
-		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
+		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, false, fixedText_Exit);
+		screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
+		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
 	}
 
 	return RET_SUCCESS;

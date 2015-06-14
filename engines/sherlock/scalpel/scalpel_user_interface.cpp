@@ -1475,6 +1475,7 @@ void ScalpelUserInterface::doPickControl() {
 
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	Journal &journal = *_vm->_journal;
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -1485,24 +1486,28 @@ void ScalpelUserInterface::doTalkControl() {
 	_key = _oldKey = -1;
 	_keyboardInput = false;
 
+	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
 		// Handle button printing
 		if (mousePos.x > 99 && mousePos.x < 138 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && !_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Exit");
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Exit);
 		else if (_endKeyActive)
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
 
 		if (mousePos.x > 140 && mousePos.x < 170 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Up);
 		else if (talk._moreTalkUp)
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
 
 		if (mousePos.x > 181&& mousePos.x < 220 && mousePos.y > CONTROLS_Y && mousePos.y < (CONTROLS_Y + 10) && talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Down);
 		else if (talk._moreTalkDown)
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
 
 		bool found = false;
 		for (_selector = talk._talkIndex; _selector < (int)talk._statements.size() && !found; ++_selector) {
@@ -1587,9 +1592,9 @@ void ScalpelUserInterface::doTalkControl() {
 
 			screen.slamRect(Common::Rect(5, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH - 5, SHERLOCK_SCREEN_HEIGHT - 2));
 		} else if (_selector != -1) {
-			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, "Exit");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, "Up");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, "Down");
+			screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
 
 			// If the reply is new, add it to the journal
 			if (!talk._talkHistory[talk._converseNum][_selector]) {
@@ -1686,9 +1691,9 @@ void ScalpelUserInterface::doTalkControl() {
 								!talk._statements[select]._statement.hasPrefix("^")) {
 							// Not a reply first file, so display the new selections
 							if (_endKeyActive)
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, "Exit");
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Exit);
 							else
-								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, "Exit");
+								screen.buttonPrint(Common::Point(119, CONTROLS_Y), COMMAND_NULL, true, fixedText_Exit);
 
 							talk.displayTalk(true);
 							events.setCursor(ARROW);

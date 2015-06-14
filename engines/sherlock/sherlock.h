@@ -35,6 +35,7 @@
 #include "sherlock/animation.h"
 #include "sherlock/debugger.h"
 #include "sherlock/events.h"
+#include "sherlock/fixed_text.h"
 #include "sherlock/inventory.h"
 #include "sherlock/journal.h"
 #include "sherlock/map.h"
@@ -107,6 +108,7 @@ public:
 	Animation *_animation;
 	Debugger *_debugger;
 	Events *_events;
+	FixedText *_fixedText;
 	Inventory *_inventory;
 	Journal *_journal;
 	Map *_map;

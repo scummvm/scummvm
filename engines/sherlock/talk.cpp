@@ -133,6 +133,7 @@ Talk::Talk(SherlockEngine *vm) : _vm(vm) {
 
 void Talk::talkTo(const Common::String &filename) {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	Inventory &inv = *_vm->_inventory;
 	Journal &journal = *_vm->_journal;
 	People &people = *_vm->_people;
@@ -390,10 +391,11 @@ void Talk::talkTo(const Common::String &filename) {
 
 					// If the window is already open, simply draw. Otherwise, do it
 					// to the back buffer and then summon the window
+					Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
 					if (ui._windowOpen) {
-						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, "Exit");
+						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, fixedText_Exit);
 					} else {
-						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, "Exit");
+						screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, fixedText_Exit);
 
 						if (!ui._slideWindows) {
 							screen.slamRect(Common::Rect(0, CONTROLS_Y,
@@ -632,6 +634,7 @@ void Talk::setTalkMap() {
 }
 
 void Talk::drawInterface() {
+	FixedText &fixedText = *_vm->_fixedText;
 	Screen &screen = *_vm->_screen;
 	Surface &bb = *screen._backBuffer;
 
@@ -645,12 +648,16 @@ void Talk::drawInterface() {
 		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
 
 	if (_talkTo != -1) {
+		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+
 		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
-			119 - screen.stringWidth("Exit") / 2, "Exit");
+			119 - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
 		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
-			159 - screen.stringWidth("Up") / 2, "Up");
+			159 - screen.stringWidth(fixedText_Up) / 2, fixedText_Up);
 		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
-			200 - screen.stringWidth("Down") / 2, "Down");
+			200 - screen.stringWidth(fixedText_Down) / 2, fixedText_Down);
 	} else {
 		int strWidth = screen.stringWidth(Scalpel::PRESS_KEY_TO_CONTINUE);
 		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
@@ -660,6 +667,7 @@ void Talk::drawInterface() {
 }
 
 bool Talk::displayTalk(bool slamIt) {
+	FixedText &fixedText = *_vm->_fixedText;
 	Screen &screen = *_vm->_screen;
 	int yp = CONTROLS_Y + 14;
 	int lineY = -1;
@@ -677,20 +685,22 @@ bool Talk::displayTalk(bool slamIt) {
 	}
 
 	// Display the up arrow and enable Up button if the first option is scrolled off-screen
+	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
 	if (_moreTalkUp) {
 		if (slamIt) {
 			screen.print(Common::Point(5, CONTROLS_Y + 13), INV_FOREGROUND, "~");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
 		} else {
 			screen.gPrint(Common::Point(5, CONTROLS_Y + 12), INV_FOREGROUND, "~");
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Up);
 		}
 	} else {
 		if (slamIt) {
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
 			screen.vgaBar(Common::Rect(5, CONTROLS_Y + 11, 15, CONTROLS_Y + 22), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, "Up");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
 			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11,
 				15, CONTROLS_Y + 22), INV_BACKGROUND);
 		}
@@ -725,17 +735,17 @@ bool Talk::displayTalk(bool slamIt) {
 
 		if (slamIt) {
 			screen.print(Common::Point(5, 190), INV_FOREGROUND, "|");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
 		} else {
 			screen.gPrint(Common::Point(5, 189), INV_FOREGROUND, "|");
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Down);
 		}
 	} else {
 		if (slamIt) {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
 			screen.vgaBar(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		} else {
-			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, "Down");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
 			screen._backBuffer1.fillRect(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
 		}
 	}
