@@ -258,7 +258,7 @@ protected:
 	/**
 	 * Checks, if a character is an opcode
 	 */
-	virtual inline bool isOpcode(byte checkCharacter);
+	virtual bool isOpcode(byte checkCharacter);
 
 	/**
 	 * Display the talk interface window

@@ -1200,7 +1200,7 @@ int Talk::waitForMore(int delay) {
 	return key2;
 }
 
-inline bool Talk::isOpcode(byte checkCharacter) {
+bool Talk::isOpcode(byte checkCharacter) {
 	if ((checkCharacter < _opcodes[0]) || (checkCharacter >= (_opcodes[0] + 99)))
 		return false; // outside of range
 	if (_opcodeTable[checkCharacter - _opcodes[0]])
