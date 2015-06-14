@@ -649,8 +649,7 @@ void Sprite::checkSprite() {
 	pt.y /= FIXED_INT_MULTIPLIER;
 
 	if (IS_ROSE_TATTOO) {
-		// TODO: Needs to be called
-		//checkObject(1001);
+		checkObject();
 
 		// For Rose Tattoo, we only do the further processing for Sherlock
 		if (this != &people[HOLMES])

@@ -689,55 +689,59 @@ bool TattooPeople::loadWalk() {
 	bool result = false;
 
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
-		if (!_data[idx]->_walkLoaded && (_data[idx]->_type == CHARACTER || _data[idx]->_type == HIDDEN_CHARACTER)) {
-			if (_data[idx]->_type == HIDDEN_CHARACTER)
-				_data[idx]->_type = INVALID;
+		Person &person = *_data[idx];
+
+		if (!person._walkLoaded && (person._type == CHARACTER || person._type == HIDDEN_CHARACTER)) {
+			if (person._type == HIDDEN_CHARACTER)
+				person._type = INVALID;
 
 			// See if this is one of the more used Walk Graphics stored in WALK.LIB
 			for (int libNum = 0; libNum < NUM_IN_WALK_LIB; ++libNum) {
-				if (!_data[idx]->_walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
+				if (!person._walkVGSName.compareToIgnoreCase(WALK_LIB_NAMES[libNum])) {
 					_useWalkLib = true;
 					break;
 				}
 			}
 
 			// Load the images for the character
-			_data[idx]->_images = new ImageFile(_data[idx]->_walkVGSName, false);
-			_data[idx]->_maxFrames = _data[idx]->_images->size();
+			person._images = new ImageFile(person._walkVGSName, false);
+			person._maxFrames = person._images->size();
 
 			// Load walk sequence data
-			Common::String fname = Common::String(_data[idx]->_walkVGSName.c_str(), strchr(_data[idx]->_walkVGSName.c_str(), '.'));
+			Common::String fname = Common::String(person._walkVGSName.c_str(), strchr(person._walkVGSName.c_str(), '.'));
 			fname += ".SEQ";
 
 			// Load the walk sequence data
 			Common::SeekableReadStream *stream = res.load(fname, _useWalkLib ? "walk.lib" : "vgs.lib");
 				
-			_data[idx]->_walkSequences.resize(stream->readByte());
+			person._walkSequences.resize(stream->readByte());
 
-			for (uint seqNum = 0; seqNum < _data[idx]->_walkSequences.size(); ++seqNum)
-				_data[idx]->_walkSequences[seqNum].load(*stream);
+			for (uint seqNum = 0; seqNum < person._walkSequences.size(); ++seqNum)
+				person._walkSequences[seqNum].load(*stream);
 
 			// Close the sequences resource
 			delete stream;
 			_useWalkLib = false;
 
-			_data[idx]->_frameNumber = 0;
-			_data[idx]->setImageFrame();
+			person._sequences = &person._walkSequences[person._sequenceNumber]._sequences[0];
+			person._seqSize = person._walkSequences[person._sequenceNumber]._sequences.size();
+			person._frameNumber = 0;
+			person.setImageFrame();
 
 			// Set the stop Frames pointers
 			for (int dirNum = 0; dirNum < 8; ++dirNum) {
 				int count = 0;
-				while (_data[idx]->_walkSequences[dirNum + 8][count] != 0)
+				while (person._walkSequences[dirNum + 8][count] != 0)
 					++count;
 				count += 2;
-				count = _data[idx]->_walkSequences[dirNum + 8][count] - 1;
-				_data[idx]->_stopFrames[dirNum] = &(*_data[idx]->_images)[count];
+				count = person._walkSequences[dirNum + 8][count] - 1;
+				person._stopFrames[dirNum] = &(*person._images)[count];
 			}
 
 			result = true;
-			_data[idx]->_walkLoaded = true;
-		} else if (_data[idx]->_type != CHARACTER) {
-			_data[idx]->_walkLoaded = false;
+			person._walkLoaded = true;
+		} else if (person._type != CHARACTER) {
+			person._walkLoaded = false;
 		}
 	}
 
