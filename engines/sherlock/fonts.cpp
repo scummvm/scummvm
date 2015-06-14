@@ -89,7 +89,9 @@ inline byte Fonts::translateChar(byte c) {
 	case ' ':
 		return 0; // translate to first actual character
 	case 225:
-		return 136; // special handling for 0xE1
+		// This was done in the German interpreter
+		// happens when talking to the kid in the 2nd room
+		return 135; // special handling for 0xE1
 	default:
 		if (c >= 0x80) { // German SH1 version did this
 			c--;
