@@ -598,7 +598,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 				++frames;
 		} else {
 			// Forward direction
-			Object::_countCAnimFrames = true;
+			BaseObject::_countCAnimFrames = true;
 
 			while (cObj._type == ACTIVE_BG_SHAPE) {
 				cObj.checkObject();
@@ -611,7 +611,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 			if (frames > 1)
 				--frames;
 
-			Object::_countCAnimFrames = false;
+			BaseObject::_countCAnimFrames = false;
 
 			cObj._type = cAnim._type;
 			cObj._frameNumber = -1;

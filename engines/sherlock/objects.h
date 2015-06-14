@@ -167,6 +167,23 @@ struct UseType: public ActionType {
 };
 
 class BaseObject {
+protected:
+	static SherlockEngine *_vm;
+protected:
+	/**
+	* This will check to see if the object has reached the end of a sequence.
+	* If it has, it switch to whichever next sequence should be started.
+	* @returns		true if the end of a sequence was reached
+	*/
+	bool checkEndOfSequence();
+
+	/**
+	 * Scans through the sequences array and finds the designated sequence.
+	 * It then sets the frame number of the start of that sequence
+	 */
+	void setObjSequence(int seq, bool wait);
+public:
+	static bool _countCAnimFrames;
 public:
 	SpriteType _type;				// Type of object/sprite
 	Common::String _description;	// Description lines
@@ -210,6 +227,7 @@ public:
 public:
 	BaseObject();
 	virtual ~BaseObject() {}
+	static void setVm(SherlockEngine *vm);
 
 	/**
 	 * Returns true if the the object has an Allow Talk Code in the sequence that it's
@@ -218,12 +236,32 @@ public:
 	 * If it's above 128, then it's one of the Listen sequences.
 	 */
 	bool hasAborts() const;
+
+	/**
+	 * Check the state of the object
+	 */
+	void checkObject();
+
+	/**
+	 * Checks for codes
+	 * @param name		The name to check for codes
+	 * @param messages	Provides a lookup list of messages that can be printed
+	 * @returns		0 if no codes are found, 1 if codes were found
+	 */
+	int checkNameForCodes(const Common::String &name, const char *const messages[]);
+
+	/**
+	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
+	 * so that it points to the beginning of the sequence number's talk sequence in the object's
+	 * sequence buffer
+	 * @param seq	Which sequence to use (if there's more than 1)
+	 * @remarks		1: First talk seq, 2: second talk seq, etc.
+	 */
+	virtual void setObjTalkSequence(int seq) = 0;
 };
 
 class Sprite: public BaseObject {
 protected:
-	static SherlockEngine *_vm;
-
 	/**
 	 * Free the alternate graphics used by NPCs
 	 */
@@ -275,7 +313,7 @@ public:
 	 * @param seq	Which sequence to use (if there's more than 1)
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
-	void setObjTalkSequence(int seq);
+	virtual void setObjTalkSequence(int seq);
 
 	/**
 	* Return frame width
@@ -319,25 +357,6 @@ enum { OBJ_BEHIND = 1, OBJ_FLIPPED = 2, OBJ_FORWARD = 4, TURNON_OBJ = 0x20, TURN
 #define USE_COUNT 4
 
 class Object: public BaseObject {
-private:
-	static SherlockEngine *_vm;
-
-	/**
-	 * This will check to see if the object has reached the end of a sequence.
-	 * If it has, it switch to whichever next sequence should be started.
-	 * @returns		true if the end of a sequence was reached
-	 */
-	bool checkEndOfSequence();
-
-	/**
-	 * Scans through the sequences array and finds the designated sequence.
-	 * It then sets the frame number of the start of that sequence
-	 */
-	void setObjSequence(int seq, bool wait);
-public:
-	static bool _countCAnimFrames;
-
-	static void setVm(SherlockEngine *vm);
 public:
 	Common::String _name;			// Name
 	Common::String _examine;		// Examine in-depth description
@@ -365,19 +384,6 @@ public:
 	 * Toggle the type of an object between hidden and active
 	 */
 	void toggleHidden();
-
-	/**
-	 * Check the state of the object
-	 */
-	void checkObject();
-
-	/**
-	 * Checks for codes
-	 * @param name		The name to check for codes
-	 * @param messages	Provides a lookup list of messages that can be printed
-	 * @returns		0 if no codes are found, 1 if codes were found
-	 */
-	int checkNameForCodes(const Common::String &name, const char *const messages[]);
 
 	/**
 	 * Handle setting any flags associated with the object
@@ -428,7 +434,7 @@ public:
 	 * @param seq	Which sequence to use (if there's more than 1)
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
-	void setObjTalkSequence(int seq);
+	virtual void setObjTalkSequence(int seq);
 };
 
 

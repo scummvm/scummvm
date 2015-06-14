@@ -70,9 +70,14 @@ static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
 	{ "ITDOWNRG", 8, 0, 0 }
 };
 
-SherlockEngine *Sprite::_vm;
+SherlockEngine *BaseObject::_vm;
 
 /*----------------------------------------------------------------*/
+
+void BaseObject::setVm(SherlockEngine *vm) {
+	_vm = vm;
+	_countCAnimFrames = false;
+}
 
 BaseObject::BaseObject() {
 	_type = INVALID;
@@ -154,6 +159,416 @@ bool BaseObject::hasAborts() const {
 	} while (idx < _seqSize);
 
 	return true;
+}
+
+void BaseObject::checkObject() {
+	Scene &scene = *_vm->_scene;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
+	bool codeFound;
+
+	if (_seqTo) {
+		byte *ptr = &_sequences[_frameNumber];
+		if (*ptr == _seqTo) {
+			// The sequence is completed
+			*ptr = _seqTo + SEQ_TO_CODE + 128;	// Reset to normal
+			_seqTo = 0;
+		} else {
+			// Continue doing sequence
+			if (*ptr > _seqTo)
+				*ptr -= 1;
+			else
+				*ptr += 1;
+
+			return;
+		}
+	}
+
+	++_frameNumber;
+
+	do {
+		// Check for end of sequence
+		codeFound = checkEndOfSequence();
+
+		if (_sequences[_frameNumber] >= 128 && _frameNumber < checkFrame) {
+			codeFound = true;
+			int v = _sequences[_frameNumber];
+
+			// Check for a Talk or Listen Sequence
+			if (IS_ROSE_TATTOO && v == ALLOW_TALK_CODE) {
+				if (_gotoSeq) {
+					setObjTalkSequence(_gotoSeq);
+				} else {
+					++_frameNumber;
+				}
+			} else if (IS_ROSE_TATTOO && (v == TALK_SEQ_CODE || v == TALK_LISTEN_CODE)) {
+				if (_talkSeq)
+					setObjTalkSequence(_talkSeq);
+				else
+					setObjSequence(0, false);
+			} else  if (v >= GOTO_CODE) {
+				// Goto code found
+				v -= GOTO_CODE;
+				_seqCounter2 = _seqCounter;
+				_seqStack = _frameNumber + 1;
+				setObjSequence(v, false);
+			} else if (v >= SOUND_CODE && (v < (SOUND_CODE + 30))) {
+				codeFound = true;
+				++_frameNumber;
+				v -= SOUND_CODE + (IS_SERRATED_SCALPEL ? 1 : 0);
+
+				if (sound._soundOn && !_countCAnimFrames) {
+					if (!scene._sounds[v]._name.empty() && sound._digitized)
+						sound.playLoadedSound(v, WAIT_RETURN_IMMEDIATELY);
+				}
+			} else if (v >= FLIP_CODE && v < (FLIP_CODE + 3)) {
+				// Flip code
+				codeFound = true;
+				++_frameNumber;
+				v -= FLIP_CODE;
+
+				// Alter the flipped status
+				switch (v) {
+				case 0:
+					// Clear the flag
+					_flags &= ~OBJ_FLIPPED;
+					break;
+				case 1:
+					// Set the flag
+					_flags |= OBJ_FLIPPED;
+					break;
+				case 2:
+					// Toggle the flag
+					_flags ^= OBJ_FLIPPED;
+					break;
+				default:
+					break;
+				}
+			} else if (IS_ROSE_TATTOO && v == TELEPORT_CODE) {
+				_position.x = READ_LE_UINT16(&_sequences[_frameNumber + 1]);
+				_position.y = READ_LE_UINT16(&_sequences[_frameNumber + 3]);
+
+				_frameNumber += 5;
+			} else if (IS_ROSE_TATTOO && v == CALL_TALK_CODE) {
+				Common::String filename;
+				for (int idx = 0; idx < 8; ++idx) {
+					if (_sequences[_frameNumber + 1 + idx] != 1)
+						filename += (char)_sequences[_frameNumber + 1 + idx];
+					else
+						break;
+				}
+
+				_frameNumber += 8;
+				talk.talkTo(filename);
+
+			} else if (IS_ROSE_TATTOO && v == HIDE_CODE) {
+				switch (_sequences[_frameNumber + 2]) {
+				case 1:
+					// Hide Object
+					if (scene._bgShapes[_sequences[_frameNumber + 1] - 1]._type != HIDDEN)
+						scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
+					break;
+
+				case 2:
+					// Activate Object
+					if (scene._bgShapes[_sequences[_frameNumber + 1] - 1]._type == HIDDEN)
+						scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
+					break;
+
+				case 3:
+					// Toggle Object
+					scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
+					break;
+
+				default:
+					break;
+				}
+				_frameNumber += 3;
+			
+			} else {
+				v -= 128;
+
+				// 68-99 is a squence code
+				if (v > SEQ_TO_CODE) {
+					byte *p = &_sequences[_frameNumber];
+					v -= SEQ_TO_CODE;	// # from 1-32
+					_seqTo = v;
+					*p = *(p - 1);
+
+					if (*p > 128)
+						// If the high bit is set, convert to a real frame
+						*p -= (byte)(SEQ_TO_CODE - 128);
+
+					if (*p > _seqTo)
+						*p -= 1;
+					else
+						*p += 1;
+
+					// Will be incremented below to return back to original value
+					--_frameNumber;
+					v = 0;
+
+				} else if (IS_ROSE_TATTOO && v == 10) {
+					// Set delta for objects
+					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]), 
+						READ_LE_UINT16(&_sequences[_frameNumber + 3]));
+					_noShapeSize = Common::Point(0, 0);
+					_frameNumber += 4;
+
+				} else if (v == 10) {
+					// Set delta for objects
+					Common::Point pt(_sequences[_frameNumber + 1], _sequences[_frameNumber + 2]);
+					if (pt.x > 128)
+						pt.x = (pt.x - 128) *  -1;
+					else
+						pt.x--;
+
+					if (pt.y > 128)
+						pt.y = (pt.y - 128) * -1;
+					else
+						pt.y--;
+
+					_delta = pt;
+					_frameNumber += 2;
+
+				} else if (v < USE_COUNT) {
+					for (int idx = 0; idx < NAMES_COUNT; ++idx) {
+						checkNameForCodes(_use[v]._names[idx], nullptr);
+					}
+
+					if (_use[v]._useFlag)
+						_vm->setFlags(_use[v]._useFlag);
+				}
+
+				++_frameNumber;
+			}
+		}
+	} while (codeFound);
+}
+
+bool BaseObject::checkEndOfSequence() {
+	Screen &screen = *_vm->_screen;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
+	bool result = false;
+
+	if (_type == REMOVE || _type == INVALID)
+		return false;
+
+	if (_sequences[_frameNumber] == 0 || _frameNumber >= checkFrame) {
+		result = true;
+
+		if (_frameNumber >= (checkFrame - 1)) {
+			_frameNumber = START_FRAME;
+		}  else {
+			// Determine next sequence to use
+			int seq = _sequences[_frameNumber + 1];
+
+			if (seq == 99) {
+				--_frameNumber;
+				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
+				screen._backBuffer2.transBlitFrom(*_imageFrame, _position);
+				_type = INVALID;
+			} else if (IS_ROSE_TATTOO && _talkSeq && seq == 0) {
+				setObjTalkSequence(_talkSeq);
+			} else {
+				setObjSequence(seq, false);
+			}
+		}
+
+		if (_allow && _frameNumber == 0) {
+			// canimation just ended
+			if (_type != NO_SHAPE && _type != REMOVE) {
+				_type = REMOVE;
+
+				if (!_countCAnimFrames) {
+					// Save details before shape is removed
+					_delta.x = _imageFrame->_frame.w;
+					_delta.y = _imageFrame->_frame.h;
+					_position += _imageFrame->_offset;
+
+					// Free the images
+					delete _images;
+					_images = nullptr;
+					_imageFrame = nullptr;
+				}
+			} else {
+				_type = INVALID;
+			}
+		}
+	}
+
+	return result;
+}
+
+void BaseObject::setObjSequence(int seq, bool wait) {
+	Scene &scene = *_vm->_scene;
+	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
+
+	if (seq >= 128) {
+		// Loop the sequence until the count exceeded
+		seq -= 128;
+
+		++_seqCounter;
+		if (_seqCounter >= seq) {
+			// Go to next sequence
+			if (_seqStack) {
+				_frameNumber = _seqStack;
+				_seqStack = 0;
+				_seqCounter = _seqCounter2;
+				_seqCounter2 = 0;
+				if (_frameNumber >= checkFrame)
+					_frameNumber = START_FRAME;
+
+				return;
+			}
+
+			_frameNumber += 2;
+			if (_frameNumber >= checkFrame)
+				_frameNumber = 0;
+
+			_seqCounter = 0;
+			if (_sequences[_frameNumber] == 0)
+				seq = _sequences[_frameNumber + 1];
+			else
+				return;
+		} else {
+			// Find beginning of sequence
+			do {
+				--_frameNumber;
+			} while (_frameNumber > 0 && _sequences[_frameNumber] != 0);
+
+			if (_frameNumber != 0)
+				_frameNumber += 2;
+
+			return;
+		}
+	} else {
+		// Reset sequence counter
+		_seqCounter = 0;
+	}
+
+	int idx = 0;
+	int seqCc = 0;
+
+	while (seqCc < seq && idx < checkFrame) {
+		++idx;
+		if (_sequences[idx] == 0) {
+			++seqCc;
+			idx += 2;
+		}
+	}
+
+	if (idx >= checkFrame)
+		idx = 0;
+	_frameNumber = idx;
+
+	if (wait) {
+		seqCc = idx;
+		while (_sequences[idx] != 0)
+			++idx;
+
+		idx = idx - seqCc + 2;
+		for (; idx > 0; --idx)
+			scene.doBgAnim();
+	}
+}
+
+int BaseObject::checkNameForCodes(const Common::String &name, const char *const messages[]) {
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	UserInterface &ui = *_vm->_ui;
+	bool printed = false;
+
+	scene.toggleObject(name);
+
+	if (name.hasPrefix("*")) {
+		// A code was found
+		printed = true;
+		char ch = (name == "*") ? 0 : toupper(name[1]);
+
+		switch (ch) {
+		case 'C':
+			talk.talkTo(name.c_str() + 2);
+			break;
+
+		case 'T':
+		case 'B':
+		case 'F':
+		case 'W':
+			// Nothing: action was already done before canimation
+			break;
+
+		case 'G':
+		case 'A': {
+			// G: Have object go somewhere
+			// A: Add onto existing co-ordinates
+			Common::String sx(name.c_str() + 2, name.c_str() + 5);
+			Common::String sy(name.c_str() + 6, name.c_str() + 9);
+
+			if (ch == 'G')
+				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
+			else
+				_position += Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
+			break;
+		}
+
+		default:
+			if (ch >= '0' && ch <= '9') {
+				scene._goToScene = atoi(name.c_str() + 1);
+
+				if (IS_SERRATED_SCALPEL && scene._goToScene < 97) {
+					Scalpel::ScalpelMap &map = *(Scalpel::ScalpelMap *)_vm->_map;
+					if (map[scene._goToScene].x) {
+						map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;
+						map._overPos.y = (map[scene._goToScene].y + 9) * FIXED_INT_MULTIPLIER;
+					}
+				}
+
+				const char *p;
+				if ((p = strchr(name.c_str(), ',')) != nullptr) {
+					++p;
+
+					Common::String s(p, p + 3);
+					people._hSavedPos.x = atoi(s.c_str());
+
+					s = Common::String(p + 3, p + 6);
+					people._hSavedPos.y = atoi(s.c_str());
+
+					s = Common::String(p + 6, p + 9);
+					people._hSavedFacing = atoi(s.c_str());
+					if (people._hSavedFacing == 0)
+						people._hSavedFacing = 10;
+				} else if ((p = strchr(name.c_str(), '/')) != nullptr) {
+					people._hSavedPos = Common::Point(1, 0);
+					people._hSavedFacing = 100 + atoi(p + 1);
+				}
+			} else {
+				scene._goToScene = 100;
+			}
+
+			people[HOLMES]._position = Point32(0, 0);
+			break;
+		}
+	} else if (name.hasPrefix("!")) {
+		// Message attached to canimation
+		int messageNum = atoi(name.c_str() + 1);
+		ui._infoFlag = true;
+		ui.clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[messageNum]);
+		ui._menuCounter = 25;
+	} else if (name.hasPrefix("@")) {
+		// Message attached to canimation
+		ui._infoFlag = true;
+		ui.clearInfo();
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", name.c_str() + 1);
+		printed = true;
+		ui._menuCounter = 25;
+	}
+
+	return printed;
 }
 
 /*----------------------------------------------------------------*/
@@ -610,13 +1025,7 @@ void UseType::load3DO(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
-SherlockEngine *Object::_vm;
 bool Object::_countCAnimFrames;
-
-void Object::setVm(SherlockEngine *vm) {
-	_vm = vm;
-	_countCAnimFrames = false;
-}
 
 Object::Object(): BaseObject() {
 	_sequenceNumber = 0;
@@ -863,319 +1272,6 @@ void Object::toggleHidden() {
 	}
 }
 
-void Object::checkObject() {
-	Scene &scene = *_vm->_scene;
-	Sound &sound = *_vm->_sound;
-	Talk &talk = *_vm->_talk;
-	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
-	bool codeFound;
-
-	if (_seqTo) {
-		byte *ptr = &_sequences[_frameNumber];
-		if (*ptr == _seqTo) {
-			// The sequence is completed
-			*ptr = _seqTo + SEQ_TO_CODE + 128;	// Reset to normal
-			_seqTo = 0;
-		} else {
-			// Continue doing sequence
-			if (*ptr > _seqTo)
-				*ptr -= 1;
-			else
-				*ptr += 1;
-
-			return;
-		}
-	}
-
-	++_frameNumber;
-
-	do {
-		// Check for end of sequence
-		codeFound = checkEndOfSequence();
-
-		if (_sequences[_frameNumber] >= 128 && _frameNumber < checkFrame) {
-			codeFound = true;
-			int v = _sequences[_frameNumber];
-
-			// Check for a Talk or Listen Sequence
-			if (IS_ROSE_TATTOO && v == ALLOW_TALK_CODE) {
-				if (_gotoSeq) {
-					setObjTalkSequence(_gotoSeq);
-				} else {
-					++_frameNumber;
-				}
-			} else if (IS_ROSE_TATTOO && (v == TALK_SEQ_CODE || v == TALK_LISTEN_CODE)) {
-				if (_talkSeq)
-					setObjTalkSequence(_talkSeq);
-				else
-					setObjSequence(0, false);
-			} else  if (v >= GOTO_CODE) {
-				// Goto code found
-				v -= GOTO_CODE;
-				_seqCounter2 = _seqCounter;
-				_seqStack = _frameNumber + 1;
-				setObjSequence(v, false);
-			} else if (v >= SOUND_CODE && (v < (SOUND_CODE + 30))) {
-				codeFound = true;
-				++_frameNumber;
-				v -= SOUND_CODE + (IS_SERRATED_SCALPEL ? 1 : 0);
-
-				if (sound._soundOn && !_countCAnimFrames) {
-					if (!scene._sounds[v]._name.empty() && sound._digitized)
-						sound.playLoadedSound(v, WAIT_RETURN_IMMEDIATELY);
-				}
-			} else if (v >= FLIP_CODE && v < (FLIP_CODE + 3)) {
-				// Flip code
-				codeFound = true;
-				++_frameNumber;
-				v -= FLIP_CODE;
-
-				// Alter the flipped status
-				switch (v) {
-				case 0:
-					// Clear the flag
-					_flags &= ~OBJ_FLIPPED;
-					break;
-				case 1:
-					// Set the flag
-					_flags |= OBJ_FLIPPED;
-					break;
-				case 2:
-					// Toggle the flag
-					_flags ^= OBJ_FLIPPED;
-					break;
-				default:
-					break;
-				}
-			} else if (IS_ROSE_TATTOO && v == TELEPORT_CODE) {
-				_position.x = READ_LE_UINT16(&_sequences[_frameNumber + 1]);
-				_position.y = READ_LE_UINT16(&_sequences[_frameNumber + 3]);
-
-				_frameNumber += 5;
-			} else if (IS_ROSE_TATTOO && v == CALL_TALK_CODE) {
-				Common::String filename;
-				for (int idx = 0; idx < 8; ++idx) {
-					if (_sequences[_frameNumber + 1 + idx] != 1)
-						filename += (char)_sequences[_frameNumber + 1 + idx];
-					else
-						break;
-				}
-
-				_frameNumber += 8;
-				talk.talkTo(filename);
-
-			} else if (IS_ROSE_TATTOO && v == HIDE_CODE) {
-				switch (_sequences[_frameNumber + 2]) {
-				case 1:
-					// Hide Object
-					if (scene._bgShapes[_sequences[_frameNumber + 1] - 1]._type != HIDDEN)
-						scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
-					break;
-
-				case 2:
-					// Activate Object
-					if (scene._bgShapes[_sequences[_frameNumber + 1] - 1]._type == HIDDEN)
-						scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
-					break;
-
-				case 3:
-					// Toggle Object
-					scene._bgShapes[_sequences[_frameNumber + 1] - 1].toggleHidden();
-					break;
-
-				default:
-					break;
-				}
-				_frameNumber += 3;
-			
-			} else {
-				v -= 128;
-
-				// 68-99 is a squence code
-				if (v > SEQ_TO_CODE) {
-					byte *p = &_sequences[_frameNumber];
-					v -= SEQ_TO_CODE;	// # from 1-32
-					_seqTo = v;
-					*p = *(p - 1);
-
-					if (*p > 128)
-						// If the high bit is set, convert to a real frame
-						*p -= (byte)(SEQ_TO_CODE - 128);
-
-					if (*p > _seqTo)
-						*p -= 1;
-					else
-						*p += 1;
-
-					// Will be incremented below to return back to original value
-					--_frameNumber;
-					v = 0;
-
-				} else if (IS_ROSE_TATTOO && v == 10) {
-					// Set delta for objects
-					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]), 
-						READ_LE_UINT16(&_sequences[_frameNumber + 3]));
-					_noShapeSize = Common::Point(0, 0);
-					_frameNumber += 4;
-
-				} else if (v == 10) {
-					// Set delta for objects
-					Common::Point pt(_sequences[_frameNumber + 1], _sequences[_frameNumber + 2]);
-					if (pt.x > 128)
-						pt.x = (pt.x - 128) *  -1;
-					else
-						pt.x--;
-
-					if (pt.y > 128)
-						pt.y = (pt.y - 128) * -1;
-					else
-						pt.y--;
-
-					_delta = pt;
-					_frameNumber += 2;
-
-				} else if (v < USE_COUNT) {
-					for (int idx = 0; idx < NAMES_COUNT; ++idx) {
-						checkNameForCodes(_use[v]._names[idx], nullptr);
-					}
-
-					if (_use[v]._useFlag)
-						_vm->setFlags(_use[v]._useFlag);
-				}
-
-				++_frameNumber;
-			}
-		}
-	} while (codeFound);
-}
-
-bool Object::checkEndOfSequence() {
-	Screen &screen = *_vm->_screen;
-	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
-	bool result = false;
-
-	if (_type == REMOVE || _type == INVALID)
-		return false;
-
-	if (_sequences[_frameNumber] == 0 || _frameNumber >= checkFrame) {
-		result = true;
-
-		if (_frameNumber >= (checkFrame - 1)) {
-			_frameNumber = START_FRAME;
-		}  else {
-			// Determine next sequence to use
-			int seq = _sequences[_frameNumber + 1];
-
-			if (seq == 99) {
-				--_frameNumber;
-				screen._backBuffer1.transBlitFrom(*_imageFrame, _position);
-				screen._backBuffer2.transBlitFrom(*_imageFrame, _position);
-				_type = INVALID;
-			} else if (IS_ROSE_TATTOO && _talkSeq && seq == 0) {
-				setObjTalkSequence(_talkSeq);
-			} else {
-				setObjSequence(seq, false);
-			}
-		}
-
-		if (_allow && _frameNumber == 0) {
-			// canimation just ended
-			if (_type != NO_SHAPE && _type != REMOVE) {
-				_type = REMOVE;
-
-				if (!_countCAnimFrames) {
-					// Save details before shape is removed
-					_delta.x = _imageFrame->_frame.w;
-					_delta.y = _imageFrame->_frame.h;
-					_position += _imageFrame->_offset;
-
-					// Free the images
-					delete _images;
-					_images = nullptr;
-					_imageFrame = nullptr;
-				}
-			} else {
-				_type = INVALID;
-			}
-		}
-	}
-
-	return result;
-}
-
-void Object::setObjSequence(int seq, bool wait) {
-	Scene &scene = *_vm->_scene;
-	int checkFrame = _allow ? MAX_FRAME : FRAMES_END;
-
-	if (seq >= 128) {
-		// Loop the sequence until the count exceeded
-		seq -= 128;
-
-		++_seqCounter;
-		if (_seqCounter >= seq) {
-			// Go to next sequence
-			if (_seqStack) {
-				_frameNumber = _seqStack;
-				_seqStack = 0;
-				_seqCounter = _seqCounter2;
-				_seqCounter2 = 0;
-				if (_frameNumber >= checkFrame)
-					_frameNumber = START_FRAME;
-
-				return;
-			}
-
-			_frameNumber += 2;
-			if (_frameNumber >= checkFrame)
-				_frameNumber = 0;
-
-			_seqCounter = 0;
-			if (_sequences[_frameNumber] == 0)
-				seq = _sequences[_frameNumber + 1];
-			else
-				return;
-		} else {
-			// Find beginning of sequence
-			do {
-				--_frameNumber;
-			} while (_frameNumber > 0 && _sequences[_frameNumber] != 0);
-
-			if (_frameNumber != 0)
-				_frameNumber += 2;
-
-			return;
-		}
-	} else {
-		// Reset sequence counter
-		_seqCounter = 0;
-	}
-
-	int idx = 0;
-	int seqCc = 0;
-
-	while (seqCc < seq && idx < checkFrame) {
-		++idx;
-		if (_sequences[idx] == 0) {
-			++seqCc;
-			idx += 2;
-		}
-	}
-
-	if (idx >= checkFrame)
-		idx = 0;
-	_frameNumber = idx;
-
-	if (wait) {
-		seqCc = idx;
-		while (_sequences[idx] != 0)
-			++idx;
-
-		idx = idx - seqCc + 2;
-		for (; idx > 0; --idx)
-			scene.doBgAnim();
-	}
-}
-
 void Object::setObjTalkSequence(int seq) {
 	Talk &talk = *_vm->_talk;
 
@@ -1242,103 +1338,6 @@ void Object::setObjTalkSequence(int seq) {
 		if (idx >= (int)_seqSize)
 			break;
 	}
-}
-
-int Object::checkNameForCodes(const Common::String &name, const char *const messages[]) {
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
-	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
-	bool printed = false;
-
-	scene.toggleObject(name);
-
-	if (name.hasPrefix("*")) {
-		// A code was found
-		printed = true;
-		char ch = (name == "*") ? 0 : toupper(name[1]);
-
-		switch (ch) {
-		case 'C':
-			talk.talkTo(name.c_str() + 2);
-			break;
-
-		case 'T':
-		case 'B':
-		case 'F':
-		case 'W':
-			// Nothing: action was already done before canimation
-			break;
-
-		case 'G':
-		case 'A': {
-			// G: Have object go somewhere
-			// A: Add onto existing co-ordinates
-			Common::String sx(name.c_str() + 2, name.c_str() + 5);
-			Common::String sy(name.c_str() + 6, name.c_str() + 9);
-
-			if (ch == 'G')
-				_position = Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
-			else
-				_position += Common::Point(atoi(sx.c_str()), atoi(sy.c_str()));
-			break;
-		}
-
-		default:
-			if (ch >= '0' && ch <= '9') {
-				scene._goToScene = atoi(name.c_str() + 1);
-
-				if (IS_SERRATED_SCALPEL && scene._goToScene < 97) {
-					Scalpel::ScalpelMap &map = *(Scalpel::ScalpelMap *)_vm->_map;
-					if (map[scene._goToScene].x) {
-						map._overPos.x = (map[scene._goToScene].x - 6) * FIXED_INT_MULTIPLIER;
-						map._overPos.y = (map[scene._goToScene].y + 9) * FIXED_INT_MULTIPLIER;
-					}
-				}
-
-				const char *p;
-				if ((p = strchr(name.c_str(), ',')) != nullptr) {
-					++p;
-
-					Common::String s(p, p + 3);
-					people._hSavedPos.x = atoi(s.c_str());
-
-					s = Common::String(p + 3, p + 6);
-					people._hSavedPos.y = atoi(s.c_str());
-
-					s = Common::String(p + 6, p + 9);
-					people._hSavedFacing = atoi(s.c_str());
-					if (people._hSavedFacing == 0)
-						people._hSavedFacing = 10;
-				} else if ((p = strchr(name.c_str(), '/')) != nullptr) {
-					people._hSavedPos = Common::Point(1, 0);
-					people._hSavedFacing = 100 + atoi(p + 1);
-				}
-			} else {
-				scene._goToScene = 100;
-			}
-
-			people[HOLMES]._position = Point32(0, 0);
-			break;
-		}
-	} else if (name.hasPrefix("!")) {
-		// Message attached to canimation
-		int messageNum = atoi(name.c_str() + 1);
-		ui._infoFlag = true;
-		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[messageNum]);
-		ui._menuCounter = 25;
-	} else if (name.hasPrefix("@")) {
-		// Message attached to canimation
-		ui._infoFlag = true;
-		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", name.c_str() + 1);
-		printed = true;
-		ui._menuCounter = 25;
-	}
-
-	return printed;
 }
 
 void Object::setFlagsAndToggles() {
