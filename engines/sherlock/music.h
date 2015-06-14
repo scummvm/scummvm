@@ -30,6 +30,7 @@
 // for 3DO digital music
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
 
 namespace Sherlock {
 
@@ -41,6 +42,7 @@ public:
 	~MidiParser_SH();
 
 protected:
+	Common::Mutex _mutex;
 	virtual void parseNextEvent(EventInfo &info);
 
 	uint8 _beats;

@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/mutex.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
@@ -62,11 +63,14 @@ MidiParser_SH::MidiParser_SH() {
 }
 
 MidiParser_SH::~MidiParser_SH() {
+	Common::StackLock lock(_mutex);
 	unloadMusic();
 	_driver = NULL;
 }
 
 void MidiParser_SH::parseNextEvent(EventInfo &info) {
+	Common::StackLock lock(_mutex);
+
 //	warning("parseNextEvent");
 
 	// there is no delta right at the start of the music data
@@ -165,6 +169,8 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 }
 
 bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
+	Common::StackLock lock(_mutex);
+
 	debugC(kDebugLevelMusic, "Music: loadMusic()");
 	unloadMusic();
 
