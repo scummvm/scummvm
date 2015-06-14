@@ -97,10 +97,12 @@ void TattooPerson::adjustSprite() {
 
 		if (!_walkCount) {
 			// If there are remaining points to walk, move to the next one
-			people._walkDest = _walkTo.pop();
-			setWalking();
-		} else {
-			gotoStand();
+			if (!_walkTo.empty()) {
+				people._walkDest = _walkTo.pop();
+				setWalking();
+			} else {
+				gotoStand();
+			}
 		}
 	}
 
