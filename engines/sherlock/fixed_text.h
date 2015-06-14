@@ -28,9 +28,15 @@
 namespace Sherlock {
 
 enum FixedTextId {
+	// Window buttons
 	kFixedText_Window_Exit = 0,
 	kFixedText_Window_Up,
-	kFixedText_Window_Down
+	kFixedText_Window_Down,
+	// Inventory buttons
+	kFixedText_Inventory_Exit,
+	kFixedText_Inventory_Look,
+	kFixedText_Inventory_Use,
+	kFixedText_Inventory_Give
 };
 
 struct SherlockFixedTextLanguageEntry {

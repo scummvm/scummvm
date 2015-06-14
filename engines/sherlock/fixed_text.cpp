@@ -29,7 +29,12 @@ static const Common::String fixedTextEN[] = {
 	// Window buttons
 	"Exit",
 	"Up",
-	"Down"
+	"Down",
+	// Inventory buttons
+	"Exit",
+	"Look",
+	"Use",
+	"Give"
 };
 
 // sharp-s       : 0xE1 / octal 341
@@ -40,14 +45,24 @@ static const Common::String fixedTextDE[] = {
 	// Window buttons
 	"Zur\201ck",
 	"Hoch",
-	"Runter"
+	"Runter",
+	// Inventory buttons
+	"Zur\201ck",
+	"Schau",
+	"Benutze",
+	"Gib"
 };
 
 static const Common::String fixedTextES[] = {
 	// Window buttons
 	"Exit",
 	"Subir",
-	"Bajar"
+	"Bajar",
+	// Inventory buttons
+	"Exit",
+	"Mirar",
+	"Usar",
+	"Dar"
 };
 
 static const SherlockFixedTextLanguageEntry fixedTextLanguages[] = {

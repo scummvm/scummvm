@@ -981,6 +981,7 @@ void ScalpelUserInterface::doEnvControl() {
 
 void ScalpelUserInterface::doInvControl() {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	Inventory &inv = *_vm->_inventory;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -1006,15 +1007,20 @@ void ScalpelUserInterface::doInvControl() {
 	if (events._pressed || events._released) {
 		events.clearKeyboard();
 
+		Common::String fixedText_Exit = fixedText.getText(kFixedText_Inventory_Exit);
+		Common::String fixedText_Look = fixedText.getText(kFixedText_Inventory_Look);
+		Common::String fixedText_Use  = fixedText.getText(kFixedText_Inventory_Use);
+		Common::String fixedText_Give = fixedText.getText(kFixedText_Inventory_Give);
+
 		if (found != -1)
 			// If a slot highlighted, set its color
 			colors[found] = COMMAND_HIGHLIGHTED;
-		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, "Exit");
+		screen.buttonPrint(Common::Point(INVENTORY_POINTS[0][2], CONTROLS_Y1), colors[0], true, fixedText_Exit);
 
 		if (found >= 0 && found <= 3) {
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, "Look");
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, "Use");
-			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, "Give");
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[1][2], CONTROLS_Y1), colors[1], true, fixedText_Look);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[2][2], CONTROLS_Y1), colors[2], true, fixedText_Use);
+			screen.buttonPrint(Common::Point(INVENTORY_POINTS[3][2], CONTROLS_Y1), colors[3], true, fixedText_Give);
 			inv._invMode = (InvMode)found;
 			_selector = -1;
 		}
