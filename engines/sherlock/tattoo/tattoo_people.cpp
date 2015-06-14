@@ -346,7 +346,7 @@ void TattooPerson::setWalking() {
 			else
 				dir = (delta.y < 0) ? WALK_UP : WALK_DOWN;
 
-			int scaleVal = scene.getScaleVal(Point32(_walkDest.x * FIXED_INT_MULTIPLIER,
+			scaleVal = scene.getScaleVal(Point32(_walkDest.x * FIXED_INT_MULTIPLIER,
 				_walkDest.y * FIXED_INT_MULTIPLIER));
 			_walkDest.x -= _stopFrames[dir]->sDrawXSize(scaleVal) / 2;
 		}
