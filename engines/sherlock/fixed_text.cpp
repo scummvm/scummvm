@@ -206,9 +206,11 @@ static const Common::String fixedTextDE_ActionPick[] = {
 	"Nichts Interessantes da",
 	"Zu gut befestigt",
 	"Ist ja wohl ein bi\341chen zu gro\341, oder ?",
+	"Oha, VIEL zu schwer",
 	"Ich denke, Du stehst mehr auf M\204dchen ?",
 	"Diese Blumen geh\224ren Penny",
 	"Sie ist doch viel zu jung f\201r Dich!",
+	"Ich denke, Du stehst mehr auf M\204dchen ?",
 	"Staatseigentum - Nur für den Dienstgebrauch !"
 };
 
