@@ -52,7 +52,20 @@ static const Common::String fixedTextEN[] = {
 	"Exit",
 	"Backward",
 	"Forward",
-	"Text Not Found !"
+	"Text Not Found !",
+	// Initial Inventory
+	"A message requesting help",
+	"A number of business cards",
+	"Opera Tickets",
+	"Cuff Link",
+	"Wire Hook",
+	"Note",
+	"An open pocket watch",
+	"A piece of paper with numbers on it",
+	"A letter folded many times",
+	"Tarot Cards",
+	"An ornate key",
+	"A pawn ticket"
 };
 
 // sharp-s       : 0xE1 / octal 341
@@ -86,11 +99,25 @@ static const Common::String fixedTextDE[] = {
 	"Zur\201ck",
 	"R\201ckw\204rts", // original: "Backward"
 	"Vorw\204rts", // original: "Forward"
-	"Text nicht gefunden!"
+	"Text nicht gefunden!",
+	// Initial Inventory
+	"Ein Hilferuf von Lestrade",
+	"Holmes' Visitenkarten",
+	"Karten f\201rs Opernhaus",
+	"Manschettenkn\224pfe",
+	"Zum Haken verbogener Drahtkorb",
+	"Mitteilung am Epstein",
+	"Eine offene Taschenuhr",
+	"Ein Zettel mit Zahlen drauf",
+	"Ein mehrfach gefalteter Briefbogen",
+	"Ein Tarock-Kartenspiel", // [sic]
+	"Ein verzierter Schl\201ssel",
+	"Ein Pfandschein"
 };
 
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
+// n with a wave on top - 0xA4 / octal 244
 static const Common::String fixedTextES[] = {
 	// Window buttons
 	"Exit",
@@ -118,7 +145,20 @@ static const Common::String fixedTextES[] = {
 	"Exit",
 	"Retroceder",
 	"Avanzar",
-	"Texto no encontrado!"
+	"Texto no encontrado!",
+	// Initial Inventory
+	"Un mensaje solicitando ayuda",
+	"Unas cuantas tarjetas de visita",
+	"Entradas para la opera",
+	"Unos gemelos",
+	"Un gancho de alambre",
+	"Una nota",
+	"Un reloj de bolsillo abierto",
+	"Un trozo de papel con unos numeros",
+	"Un carta muy plegada",
+	"Unas cartas de Tarot",
+	"Una llave muy vistosa",
+	"Una papeleta de empe\244o"
 };
 
 // =========================================

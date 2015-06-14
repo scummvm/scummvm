@@ -779,24 +779,38 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 }
 
 void ScalpelEngine::loadInventory() {
+	FixedText &fixedText = *_fixedText;
 	Inventory &inv = *_inventory;
+
+	Common::String fixedText_Message    = fixedText.getText(kFixedText_InitInventory_Message);
+	Common::String fixedText_HolmesCard = fixedText.getText(kFixedText_InitInventory_HolmesCard);
+	Common::String fixedText_Tickets    = fixedText.getText(kFixedText_InitInventory_Tickets);
+	Common::String fixedText_CuffLink   = fixedText.getText(kFixedText_InitInventory_CuffLink);
+	Common::String fixedText_WireHook   = fixedText.getText(kFixedText_InitInventory_WireHook);
+	Common::String fixedText_Note       = fixedText.getText(kFixedText_InitInventory_Note);
+	Common::String fixedText_OpenWatch  = fixedText.getText(kFixedText_InitInventory_OpenWatch);
+	Common::String fixedText_Paper      = fixedText.getText(kFixedText_InitInventory_Paper);
+	Common::String fixedText_Letter     = fixedText.getText(kFixedText_InitInventory_Letter);
+	Common::String fixedText_Tarot      = fixedText.getText(kFixedText_InitInventory_Tarot);
+	Common::String fixedText_OrnateKey  = fixedText.getText(kFixedText_InitInventory_OrnateKey);
+	Common::String fixedText_PawnTicket = fixedText.getText(kFixedText_InitInventory_PawnTicket);
 
 	// Initial inventory
 	inv._holdings = 2;
-	inv.push_back(InventoryItem(0, "Message", "A message requesting help", "_ITEM03A"));
-	inv.push_back(InventoryItem(0, "Holmes Card", "A number of business cards", "_ITEM07A"));
+	inv.push_back(InventoryItem(0,     "Message", fixedText_Message,    "_ITEM03A"));
+	inv.push_back(InventoryItem(0, "Holmes Card", fixedText_HolmesCard, "_ITEM07A"));
 
 	// Hidden items
-	inv.push_back(InventoryItem(95, "Tickets", "Opera Tickets", "_ITEM10A"));
-	inv.push_back(InventoryItem(138, "Cuff Link", "Cuff Link", "_ITEM04A"));
-	inv.push_back(InventoryItem(138, "Wire Hook", "Wire Hook", "_ITEM06A"));
-	inv.push_back(InventoryItem(150, "Note", "Note", "_ITEM13A"));
-	inv.push_back(InventoryItem(481, "Open Watch", "An open pocket watch", "_ITEM62A"));
-	inv.push_back(InventoryItem(481, "Paper", "A piece of paper with numbers on it", "_ITEM44A"));
-	inv.push_back(InventoryItem(532, "Letter", "A letter folded many times", "_ITEM68A"));
-	inv.push_back(InventoryItem(544, "Tarot", "Tarot Cards", "_ITEM71A"));
-	inv.push_back(InventoryItem(544, "Ornate Key", "An ornate key", "_ITEM70A"));
-	inv.push_back(InventoryItem(586, "Pawn ticket", "A pawn ticket", "_ITEM16A"));
+	inv.push_back(InventoryItem(95,  "Tickets",     fixedText_Tickets,    "_ITEM10A"));
+	inv.push_back(InventoryItem(138, "Cuff Link",   fixedText_CuffLink,   "_ITEM04A"));
+	inv.push_back(InventoryItem(138, "Wire Hook",   fixedText_WireHook,   "_ITEM06A"));
+	inv.push_back(InventoryItem(150, "Note",        fixedText_Note,       "_ITEM13A"));
+	inv.push_back(InventoryItem(481, "Open Watch",  fixedText_OpenWatch,  "_ITEM62A"));
+	inv.push_back(InventoryItem(481, "Paper",       fixedText_Paper,      "_ITEM44A"));
+	inv.push_back(InventoryItem(532, "Letter",      fixedText_Letter,     "_ITEM68A"));
+	inv.push_back(InventoryItem(544, "Tarot",       fixedText_Tarot,      "_ITEM71A"));
+	inv.push_back(InventoryItem(544, "Ornate Key",  fixedText_OrnateKey,  "_ITEM70A"));
+	inv.push_back(InventoryItem(586, "Pawn ticket", fixedText_PawnTicket, "_ITEM16A"));
 }
 
 void ScalpelEngine::showLBV(const Common::String &filename) {

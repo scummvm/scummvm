@@ -55,7 +55,20 @@ enum FixedTextId {
 	kFixedText_JournalSearch_Exit,
 	kFixedText_JournalSearch_Backward,
 	kFixedText_JournalSearch_Forward,
-	kFixedText_JournalSearch_NotFound
+	kFixedText_JournalSearch_NotFound,
+	// Initial inventory
+	kFixedText_InitInventory_Message,
+	kFixedText_InitInventory_HolmesCard,
+	kFixedText_InitInventory_Tickets,
+	kFixedText_InitInventory_CuffLink,
+	kFixedText_InitInventory_WireHook,
+	kFixedText_InitInventory_Note,
+	kFixedText_InitInventory_OpenWatch,
+	kFixedText_InitInventory_Paper,
+	kFixedText_InitInventory_Letter,
+	kFixedText_InitInventory_Tarot,
+	kFixedText_InitInventory_OrnateKey,
+	kFixedText_InitInventory_PawnTicket
 };
 
 enum FixedTextActionId {
