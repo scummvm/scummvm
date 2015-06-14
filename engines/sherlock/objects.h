@@ -258,15 +258,10 @@ public:
 	 * @param seq	Which sequence to use (if there's more than 1)
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
-	virtual void setObjTalkSequence(int seq) = 0;
+	virtual void setObjTalkSequence(int seq) {}
 };
 
 class Sprite: public BaseObject {
-protected:
-	/**
-	 * Free the alternate graphics used by NPCs
-	 */
-	void freeAltGraphics();
 public:
 	Common::String _name;
 	Common::String _examine;			// Examine in-depth description
@@ -314,7 +309,7 @@ public:
 	 * @param seq	Which sequence to use (if there's more than 1)
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
-	virtual void setObjTalkSequence(int seq);
+	virtual void setObjTalkSequence(int seq) {}
 
 	/**
 	* Return frame width
@@ -330,12 +325,6 @@ public:
 	 * Returns the old bounsd for the sprite from the previous frame
 	 */
 	const Common::Rect getOldBounds() const;
-
-	/**
-	 * Checks a sprite associated with an NPC to see if the frame sequence specified
-	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
-	 */
-	void checkWalkGraphics();
 
 	/**
 	 * This adjusts the sprites position, as well as it's animation sequence:

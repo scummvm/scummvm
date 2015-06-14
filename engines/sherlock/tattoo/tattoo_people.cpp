@@ -30,6 +30,38 @@ namespace Sherlock {
 namespace Tattoo {
 
 #define FACING_PLAYER 16
+#define NUM_ADJUSTED_WALKS 21
+
+struct AdjustWalk {
+	char _vgsName[9];
+	int _xAdjust;
+	int _flipXAdjust;
+	int _yAdjust;
+} ;
+
+static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
+	{ "TUPRIGHT", -7, -19, 6 },
+	{ "TRIGHT", 8, -14, 0 },
+	{ "TDOWNRG", 14, -12, 0 },
+	{ "TWUPRIGH", 12, 4, 2 },
+	{ "TWRIGHT", 31, -14, 0 },
+	{ "TWDOWNRG", 6, -24, 0 },
+	{ "HTUPRIGH", 2, -20, 0 },
+	{ "HTRIGHT", 28, -20, 0 },
+	{ "HTDOWNRG", 8, -2, 0 },
+	{ "GTUPRIGH", 4, -12, 0 },
+	{ "GTRIGHT", 12, -16, 0 },
+	{ "GTDOWNRG", 10, -18, 0 },
+	{ "JTUPRIGH", 8, -10, 0 },
+	{ "JTRIGHT", 22, -6, 0 },
+	{ "JTDOWNRG", 4, -20, 0 },
+	{ "CTUPRIGH", 10, 0, 0 },
+	{ "CTRIGHT", 26, -22, 0 },
+	{ "CTDOWNRI", 16, 4, 0 },
+	{ "ITUPRIGH", 0, 0, 0 },
+	{ "ITRIGHT", 20, 0, 0 },
+	{ "ITDOWNRG", 8, 0, 0 }
+};
 
 static const int WALK_SPEED_X[99] = {
 	90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 98, 90, 90, 90, 90, 90, 91, 90, 90,
@@ -69,6 +101,15 @@ TattooPerson::TattooPerson() : Person() {
 	_savedNpcFrame = 0;
 	_updateNPCPath = false;
 	_npcPause = false;
+}
+
+void TattooPerson::freeAltGraphics() {
+	if (_altImages != nullptr) {
+		delete _altImages;
+		_altImages = nullptr;
+	}
+
+	_altSeq = 0;
 }
 
 void TattooPerson::adjustSprite() {
@@ -455,6 +496,95 @@ Common::Point TattooPerson::getSourcePoint() const {
 		_position.y / FIXED_INT_MULTIPLIER);
 }
 
+void TattooPerson::setObjTalkSequence(int seq) {
+	assert(seq != -1 && _type == CHARACTER);
+
+	if (_seqTo) {
+		// reset to previous value
+		_walkSequences[_sequenceNumber]._sequences[_frameNumber] = _seqTo;
+		_seqTo = 0;
+	}
+
+	_sequenceNumber = _gotoSeq;
+	_frameNumber = 0;
+	checkWalkGraphics();
+}
+
+void TattooPerson::checkWalkGraphics() {
+	People &people = *_vm->_people;
+
+	if (_images == nullptr) {
+		freeAltGraphics();
+		return;
+	}
+
+	Common::String filename = Common::String::format("%s.vgs", _walkSequences[_sequenceNumber]._vgsName.c_str());
+
+	// Set the adjust depending on if we have to fine tune the x position of this particular graphic
+	_adjust.x = _adjust.y = 0;
+
+	for (int idx = 0; idx < NUM_ADJUSTED_WALKS; ++idx) {
+		if (!scumm_strnicmp(_walkSequences[_sequenceNumber]._vgsName.c_str(), ADJUST_WALKS[idx]._vgsName,
+			strlen(ADJUST_WALKS[idx]._vgsName))) {
+			if (_walkSequences[_sequenceNumber]._horizFlip)
+				_adjust.x = ADJUST_WALKS[idx]._flipXAdjust;
+			else
+				_adjust.x = ADJUST_WALKS[idx]._xAdjust;
+
+			_adjust.y = ADJUST_WALKS[idx]._yAdjust;
+			break;
+		}
+	}
+
+	// See if we're already using Alternate Graphics
+	if (_altSeq) {
+		// See if the VGS file called for is different than the alternate graphics already loaded
+		if (!_walkSequences[_sequenceNumber]._vgsName.compareToIgnoreCase(_walkSequences[_altSeq - 1]._vgsName)) {
+			// Different AltGraphics, Free the old ones
+			freeAltGraphics();
+		}
+	}
+
+	// If there is no Alternate Sequence set, see if we need to load a new one
+	if (!_altSeq) {
+		int npcNum = -1;
+		// Find which NPC this is so we can check the name of the graphics loaded
+		for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
+			if (this == &people[idx]) {
+				npcNum = idx;
+				break;
+			}
+		}
+
+		if (npcNum != -1) {
+			// See if the VGS file called for is different than the main graphics which are already loaded
+			if (!filename.compareToIgnoreCase(people[npcNum]._walkVGSName)) {
+				// See if this is one of the more used Walk Graphics stored in WALK.LIB
+				for (int idx = 0; idx < NUM_IN_WALK_LIB; ++idx) {
+					if (!scumm_stricmp(filename.c_str(), WALK_LIB_NAMES[idx])) {
+						people._useWalkLib = true;
+						break;
+					}
+				}
+
+				_altImages = new ImageFile(filename);
+				people._useWalkLib = false;
+
+				_altSeq = _sequenceNumber + 1;
+			}
+		}
+	}
+
+	// If this is a different seqeunce from the current sequence, reset the appropriate variables
+	if (_sequences != &_walkSequences[_sequenceNumber]._sequences[0]) {
+		_seqTo = _seqCounter = _seqCounter2 = _seqStack = _startSeq = 0;
+		_sequences = &_walkSequences[_sequenceNumber]._sequences[0];
+		_seqSize = _walkSequences[_sequenceNumber]._sequences.size();
+	}
+
+	setImageFrame();
+}
+
 /*----------------------------------------------------------------*/
 
 TattooPeople::TattooPeople(SherlockEngine *vm) : People(vm) {
@@ -479,7 +609,7 @@ void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 			obj.setObjTalkSequence(sequenceNum);
 	} else if (objNum != -1) {
 		objNum -= 256;
-		Person &person = *_data[objNum];
+		TattooPerson &person = (*this)[objNum];
 
 		int newDir = person._sequenceNumber;
 		switch (person._sequenceNumber) {
@@ -546,7 +676,7 @@ void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 }
 
 void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
-	People &people = *_vm->_people;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Scene &scene = *_vm->_scene;
 	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
 
@@ -569,7 +699,7 @@ void TattooPeople::setTalkSequence(int speaker, int sequenceNum) {
 	}
 	else if (objNum != -1) {
 		objNum -= 256;
-		Person &person = people[objNum];
+		TattooPerson &person = people[objNum];
 		int newDir = person._sequenceNumber;
 
 		switch (newDir) {

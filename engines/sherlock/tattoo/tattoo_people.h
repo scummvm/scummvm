@@ -74,6 +74,11 @@ enum TattooSequences {
 class TattooPerson: public Person {
 private:
 	bool checkCollision() const;
+
+	/**
+	 * Free the alternate graphics used by NPCs
+	 */
+	void freeAltGraphics();
 protected:
 	/**
 	 * Get the source position for a character potentially affected by scaling
@@ -113,6 +118,12 @@ public:
 	void pushNPCPath();
 
 	/**
+	 * Checks a sprite associated with an NPC to see if the frame sequence specified
+	 * in the sequence number uses alternate graphics, and if so if they need to be loaded
+	 */
+	void checkWalkGraphics();
+
+	/**
 	 * This adjusts the sprites position, as well as it's animation sequence:
 	 */
 	virtual void adjustSprite();
@@ -127,6 +138,15 @@ public:
 	 * in a straight line
 	 */
 	virtual void setWalking();
+
+	/**
+	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
+	 * so that it points to the beginning of the sequence number's talk sequence in the object's
+	 * sequence buffer
+	 * @param seq	Which sequence to use (if there's more than 1)
+	 * @remarks		1: First talk seq, 2: second talk seq, etc.
+	 */
+	virtual void setObjTalkSequence(int seq);
 };
 
 class TattooPeople : public People {

@@ -518,7 +518,7 @@ OpcodeReturn TattooTalk::cmdSetNPCPosition(const byte *&str) {
 	int npcNum = *++str - 1;
 	++str;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
-	Person &person = people[npcNum];
+	TattooPerson &person = people[npcNum];
 	int32 posX = (str[0] - 1) * 256 + str[1] - 1;
 	if (posX > 16384)
 		posX = -1 * (posX - 16384);
