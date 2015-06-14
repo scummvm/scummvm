@@ -197,7 +197,7 @@ People *People::init(SherlockEngine *vm) {
 
 People::People(SherlockEngine *vm) : _vm(vm) {
 	_holmesOn = true;
-	_allowWalkAbort = false;
+	_allowWalkAbort = true;
 	_portraitLoaded = false;
 	_portraitsOn = true;
 	_clearingThePortrait = false;

@@ -290,26 +290,39 @@ void BaseObject::checkObject() {
 			} else {
 				v -= 128;
 
-				// 68-99 is a squence code
+				// 68-99 is a sequence code
 				if (v > SEQ_TO_CODE) {
-					byte *p = &_sequences[_frameNumber];
-					v -= SEQ_TO_CODE;	// # from 1-32
-					_seqTo = v;
-					*p = *(p - 1);
+					if (IS_ROSE_TATTOO) {
+						++_frameNumber;
+						byte *p = &_sequences[_frameNumber];
+						_seqTo = *p;
+						*p = *(p - 2);
 
-					if (*p > 128)
-						// If the high bit is set, convert to a real frame
-						*p -= (byte)(SEQ_TO_CODE - 128);
+						if (*p > _seqTo)
+							*p -= 1;
+						else
+							*p += 1;
 
-					if (*p > _seqTo)
-						*p -= 1;
-					else
-						*p += 1;
+						--_frameNumber;
+					} else {
+						byte *p = &_sequences[_frameNumber];
+						v -= SEQ_TO_CODE;	// # from 1-32
+						_seqTo = v;
+						*p = *(p - 1);
 
-					// Will be incremented below to return back to original value
-					--_frameNumber;
-					v = 0;
+						if (*p > 128)
+							// If the high bit is set, convert to a real frame
+							*p -= (byte)(SEQ_TO_CODE - 128);
 
+						if (*p > _seqTo)
+							*p -= 1;
+						else
+							*p += 1;
+
+						// Will be incremented below to return back to original value
+						--_frameNumber;
+						v = 0;
+					}
 				} else if (IS_ROSE_TATTOO && v == 10) {
 					// Set delta for objects
 					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]), 

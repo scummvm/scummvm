@@ -403,12 +403,6 @@ void TattooUserInterface::doStandardControl() {
 			}
 		}
 	}
-	static bool flag = false;
-	if (!flag) {
-		flag = true;
-		people._walkDest = Common::Point(235, 370);
-		people[HOLMES].goAllTheWay();
-	}
 }
 
 void TattooUserInterface::doLookControl() {

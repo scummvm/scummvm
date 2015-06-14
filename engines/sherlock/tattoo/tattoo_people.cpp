@@ -461,8 +461,6 @@ TattooPeople::TattooPeople(SherlockEngine *vm) : People(vm) {
 		_data.push_back(new TattooPerson());
 }
 
-
-
 void TattooPeople::setListenSequence(int speaker, int sequenceNum) {
 	Scene &scene = *_vm->_scene;
 
