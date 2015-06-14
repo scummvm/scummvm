@@ -192,7 +192,9 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 		audioStream = Audio::makeAIFFStream(stream, DisposeAfterUse::YES);
 	}
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
+	Audio::SoundHandle effectsHandle = (IS_SERRATED_SCALPEL) ? _scalpelEffectsHandle : getFreeSoundHandle();
+
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &effectsHandle, audioStream, -1,  Audio::Mixer::kMaxChannelVolume);
 	_soundPlaying = true;
 	_curPriority = priority;
 
@@ -209,22 +211,23 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 			retval = false;
 			break;
 		}
-	} while (!_vm->shouldQuit() && _mixer->isSoundHandleActive(_effectsHandle));
+	} while (!_vm->shouldQuit() && _mixer->isSoundHandleActive(effectsHandle));
 
 	_soundPlaying = false;
-	_mixer->stopHandle(_effectsHandle);
+	_mixer->stopHandle(effectsHandle);
 
 	return retval;
 }
 
 void Sound::playLoadedSound(int bufNum, WaitType waitType) {
-	if (_mixer->isSoundHandleActive(_effectsHandle) && (_curPriority > _vm->_scene->_sounds[bufNum]._priority))
-		return;
+	if (IS_SERRATED_SCALPEL) {
+		if (_mixer->isSoundHandleActive(_scalpelEffectsHandle) && (_curPriority > _vm->_scene->_sounds[bufNum]._priority))
+			return;
 
-	stopSound();
+		stopSound();
+	}
+
 	playSound(_vm->_scene->_sounds[bufNum]._name, waitType, _vm->_scene->_sounds[bufNum]._priority);
-
-	return;
 }
 
 void Sound::freeLoadedSounds() {
@@ -234,7 +237,12 @@ void Sound::freeLoadedSounds() {
 }
 
 void Sound::stopSound() {
-	_mixer->stopHandle(_effectsHandle);
+	if (IS_SERRATED_SCALPEL) {
+		_mixer->stopHandle(_scalpelEffectsHandle);
+	} else {
+		for (int i = 0; i < MAX_MIXER_CHANNELS; i++)
+			_mixer->stopHandle(_tattooEffectsHandle[i]);
+	}
 }
 
 void Sound::stopSndFuncPtr(int v1, int v2) {
@@ -247,6 +255,15 @@ void Sound::freeDigiSound() {
 	_digiBuf = nullptr;
 	_diskSoundPlaying = false;
 	_soundPlaying = false;
+}
+
+Audio::SoundHandle Sound::getFreeSoundHandle() {
+	for (int i = 0; i < MAX_MIXER_CHANNELS; i++) {
+		if (!_mixer->isSoundHandleActive(_tattooEffectsHandle[i]))
+			return _tattooEffectsHandle[i];
+	}
+
+	error("getFreeSoundHandle: No sound handle found");
 }
 
 } // End of namespace Sherlock

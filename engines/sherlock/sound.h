@@ -39,11 +39,14 @@ enum WaitType {
 	WAIT_RETURN_IMMEDIATELY = 0, WAIT_FINISH = 1, WAIT_KBD_OR_FINISH = 2
 };
 
+#define MAX_MIXER_CHANNELS 10
+
 class Sound {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _effectsHandle;
+	Audio::SoundHandle _scalpelEffectsHandle;
+	Audio::SoundHandle _tattooEffectsHandle[MAX_MIXER_CHANNELS];
 	int _curPriority;
 
 	byte decodeSample(byte sample, byte& reference, int16& scale);
@@ -93,6 +96,8 @@ public:
 
 	void stopSndFuncPtr(int v1, int v2);
 	void freeDigiSound();
+
+	Audio::SoundHandle getFreeSoundHandle();
 };
 
 } // End of namespace Sherlock
