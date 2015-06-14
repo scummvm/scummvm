@@ -34,7 +34,25 @@ static const Common::String fixedTextEN[] = {
 	"Exit",
 	"Look",
 	"Use",
-	"Give"
+	"Give",
+	// Journal text
+	"Watson's Journal",
+	"Page %d",
+	// Journal buttons
+	"Exit",
+	"Back 10",
+	"Up",
+	"Down",
+	"Ahead 10",
+	"Search",
+	"First Page",
+	"Last Page",
+	"Print Text",
+	// Journal search
+	"Exit",
+	"Backward",
+	"Forward",
+	"Text Not Found !"
 };
 
 // sharp-s       : 0xE1 / octal 341
@@ -50,9 +68,27 @@ static const Common::String fixedTextDE[] = {
 	"Zur\201ck",
 	"Schau",
 	"Benutze",
-	"Gib"
+	"Gib",
+	// Journal text
+	"Watsons Tagebuch",
+	"Seite %d",
+	// Journal buttons
+	"Zur\201ck",
+	"10 hoch",
+	"Hoch",
+	"Runter",
+	"10 runter",
+	"Suche",
+	"Erste Seite",
+	"Letzte Seite",
+	"Drucke Text",
+	// Journal search
+	"Zur\201ck",
+	"R\201ckw\204rts", // original: "Backward"
+	"V\224rw\204rts", // original: "Forward"
+	"Text nicht gefunden!"
 };
-
+	
 static const Common::String fixedTextES[] = {
 	// Window buttons
 	"Exit",
@@ -62,7 +98,25 @@ static const Common::String fixedTextES[] = {
 	"Exit",
 	"Mirar",
 	"Usar",
-	"Dar"
+	"Dar",
+	// Journal text
+	"Diario de Watson",
+	"Pagina %d",
+	// Journal buttons
+	"Exit",
+	"Retroceder",
+	"Subir",
+	"baJar",
+	"Adelante",
+	"Buscar",
+	"1a pagina",
+	"Ult pagina",
+	"Imprimir",
+	// Journal search
+	"Exit",
+	"Retroceder",
+	"Avanzar",
+	"Texto no encontrado!"
 };
 
 static const SherlockFixedTextLanguageEntry fixedTextLanguages[] = {

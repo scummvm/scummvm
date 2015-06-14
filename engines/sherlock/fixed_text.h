@@ -36,7 +36,25 @@ enum FixedTextId {
 	kFixedText_Inventory_Exit,
 	kFixedText_Inventory_Look,
 	kFixedText_Inventory_Use,
-	kFixedText_Inventory_Give
+	kFixedText_Inventory_Give,
+	// Journal text
+	kFixedText_Journal_WatsonsJournal,
+	kFixedText_Journal_Page,
+	// Journal buttons
+	kFixedText_Journal_Exit,
+	kFixedText_Journal_Back10,
+	kFixedText_Journal_Up,
+	kFixedText_Journal_Down,
+	kFixedText_Journal_Ahead10,
+	kFixedText_Journal_Search,
+	kFixedText_Journal_FirstPage,
+	kFixedText_Journal_LastPage,
+	kFixedText_Journal_PrintText,
+	// Journal search
+	kFixedText_JournalSearch_Exit,
+	kFixedText_JournalSearch_Backward,
+	kFixedText_JournalSearch_Forward,
+	kFixedText_JournalSearch_NotFound
 };
 
 struct SherlockFixedTextLanguageEntry {

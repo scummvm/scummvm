@@ -580,6 +580,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 }
 
 void Journal::drawJournalFrame() {
+	FixedText &fixedText = *_vm->_fixedText;
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
 	byte palette[PALETTE_SIZE];
@@ -594,43 +595,54 @@ void Journal::drawJournalFrame() {
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
 		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
 
+	Common::String fixedText_WatsonsJournal = fixedText.getText(kFixedText_Journal_WatsonsJournal);
+	Common::String fixedText_Exit           = fixedText.getText(kFixedText_Journal_Exit);
+	Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
+	Common::String fixedText_Up             = fixedText.getText(kFixedText_Journal_Up);
+	Common::String fixedText_Down           = fixedText.getText(kFixedText_Journal_Down);
+	Common::String fixedText_Ahead10        = fixedText.getText(kFixedText_Journal_Ahead10);
+	Common::String fixedText_Search         = fixedText.getText(kFixedText_Journal_Search);
+	Common::String fixedText_FirstPage      = fixedText.getText(kFixedText_Journal_FirstPage);
+	Common::String fixedText_LastPage       = fixedText.getText(kFixedText_Journal_LastPage);
+	Common::String fixedText_PrintText      = fixedText.getText(kFixedText_Journal_PrintText);
+
 	// Set the palette and print the title
 	screen.setPalette(palette);
-	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, "Watson's Journal");
-	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "Watson's Journal");
+	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, fixedText_WatsonsJournal.c_str());
+	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, fixedText_WatsonsJournal.c_str());
 
 	// Draw the buttons
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[0][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+		JOURNAL_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[1][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[1][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[1][2] - screen.stringWidth("Back 10") / 2, "Back 10");
+		JOURNAL_POINTS[1][2] - screen.stringWidth(fixedText_Back10) / 2, fixedText_Back10);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[2][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[2][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[2][2] - screen.stringWidth("Up") / 2, "Up");
+		JOURNAL_POINTS[2][2] - screen.stringWidth(fixedText_Up) / 2, fixedText_Up);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[3][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[3][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[3][2] - screen.stringWidth("Down") / 2, "Down");
+		JOURNAL_POINTS[3][2] - screen.stringWidth(fixedText_Down) / 2, fixedText_Down);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[4][0], JOURNAL_BUTTONS_Y,
 		JOURNAL_POINTS[4][1], JOURNAL_BUTTONS_Y + 10),
-		JOURNAL_POINTS[4][2] - screen.stringWidth("Ahead 10") / 2, "Ahead 10");
+		JOURNAL_POINTS[4][2] - screen.stringWidth(fixedText_Ahead10) / 2, fixedText_Ahead10);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[5][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[5][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[5][2] - screen.stringWidth("Search") / 2, "Search");
+		JOURNAL_POINTS[5][2] - screen.stringWidth(fixedText_Search) / 2, fixedText_Search);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[6][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[6][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[6][2] - screen.stringWidth("First Page") / 2, "First Page");
+		JOURNAL_POINTS[6][2] - screen.stringWidth(fixedText_FirstPage) / 2, fixedText_FirstPage);
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[7][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[7][2] - screen.stringWidth("Last Page") / 2, "Last Page");
+		JOURNAL_POINTS[7][2] - screen.stringWidth(fixedText_LastPage) / 2, fixedText_LastPage);
 
 	// WORKAROUND: Draw Print Text button as disabled, since we don't support it in ScummVM
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11,
 		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
-		JOURNAL_POINTS[8][2] - screen.stringWidth("Print Text") / 2, "Print Text");
+		JOURNAL_POINTS[8][2] - screen.stringWidth(fixedText_PrintText) / 2, fixedText_PrintText);
 	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11),
-		COMMAND_NULL, false, "Print Text");
+		COMMAND_NULL, false, fixedText_PrintText);
 }
 
 void Journal::drawInterface() {
@@ -651,28 +663,39 @@ void Journal::drawInterface() {
 }
 
 void Journal::doArrows() {
+	FixedText &fixedText = *_vm->_fixedText;
 	Screen &screen = *_vm->_screen;
 	byte color;
 
+	Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
+	Common::String fixedText_Up             = fixedText.getText(kFixedText_Journal_Up);
+	Common::String fixedText_Down           = fixedText.getText(kFixedText_Journal_Down);
+	Common::String fixedText_Ahead10        = fixedText.getText(kFixedText_Journal_Ahead10);
+	Common::String fixedText_Search         = fixedText.getText(kFixedText_Journal_Search);
+	Common::String fixedText_FirstPage      = fixedText.getText(kFixedText_Journal_FirstPage);
+	Common::String fixedText_LastPage       = fixedText.getText(kFixedText_Journal_LastPage);
+	Common::String fixedText_PrintText      = fixedText.getText(kFixedText_Journal_PrintText);
+
 	color = (_page > 1) ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, false, "Back 10");
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), color, false, "Up");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Back10);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Up);
 
 	color = _down ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), color, false, "Down");
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), color, false, "Ahead 10");
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, false, "Last Page");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Down);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Ahead10);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, false, fixedText_LastPage);
 
 	color = _journal.size() > 0 ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, "Search");
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, false, "Print Text");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, fixedText_Search);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, false, fixedText_PrintText);
 
 	color = _page > 1 ? COMMAND_FOREGROUND : COMMAND_NULL;
-	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, "First Page");
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, fixedText_FirstPage);
 }
 
 bool Journal::drawJournal(int direction, int howFar) {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int yp = 37;
@@ -829,7 +852,9 @@ bool Journal::drawJournal(int direction, int howFar) {
 		drawJournalFrame();
 	}
 
-	screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
+	Common::String fixedText_Page = fixedText.getText(kFixedText_Journal_Page);
+
+	screen.gPrint(Common::Point(235, 21), PEN_COLOR, fixedText_Page.c_str(), _page);
 
 	temp = _sub;
 	savedIndex = _index;
@@ -951,8 +976,9 @@ JournalButton Journal::getHighlightedButton(const Common::Point &pt) {
 }
 
 bool Journal::handleEvents(int key) {
-	Events &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
+	Events    &events    = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen    &screen    = *_vm->_screen;
 	bool doneFlag = false;
 
 	Common::Point pt = events.mousePos();
@@ -960,36 +986,46 @@ bool Journal::handleEvents(int key) {
 	byte color;
 
 	if (events._pressed || events._released) {
+		Common::String fixedText_Exit           = fixedText.getText(kFixedText_Journal_Exit);
+		Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
+		Common::String fixedText_Up             = fixedText.getText(kFixedText_Journal_Up);
+		Common::String fixedText_Down           = fixedText.getText(kFixedText_Journal_Down);
+		Common::String fixedText_Ahead10        = fixedText.getText(kFixedText_Journal_Ahead10);
+		Common::String fixedText_Search         = fixedText.getText(kFixedText_Journal_Search);
+		Common::String fixedText_FirstPage      = fixedText.getText(kFixedText_Journal_FirstPage);
+		Common::String fixedText_LastPage       = fixedText.getText(kFixedText_Journal_LastPage);
+		Common::String fixedText_PrintText      = fixedText.getText(kFixedText_Journal_PrintText);
+
 		// Exit button
 		color = (btn == BTN_EXIT) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, "Exit");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, fixedText_Exit);
 
 		// Back 10 button
 		if (btn == BTN_BACK10) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Back 10");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Back10);
 		} else if (_page > 1) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Back 10");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Back10);
 		}
 
 		// Up button
 		if (btn == BTN_UP) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Up");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Up);
 		} else if (_up) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Up");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
 		}
 
 		// Down button
 		if (btn == BTN_DOWN) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Down");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Down);
 		} else if (_down) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Down");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
 		}
 
 		// Ahead 10 button
 		if (btn == BTN_AHEAD110) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, "Ahead 10");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Ahead10);
 		} else if (_down) {
-			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, "Ahead 10");
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Ahead10);
 		}
 
 		// Search button
@@ -1000,7 +1036,7 @@ bool Journal::handleEvents(int key) {
 		} else {
 			color = COMMAND_FOREGROUND;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, "Search");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, fixedText_Search);
 
 		// First Page button
 		if (btn == BTN_FIRST_PAGE) {
@@ -1010,7 +1046,7 @@ bool Journal::handleEvents(int key) {
 		} else {
 			color = COMMAND_NULL;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, "First Page");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, fixedText_FirstPage);
 
 		// Last Page button
 		if (btn == BTN_LAST_PAGE) {
@@ -1020,10 +1056,10 @@ bool Journal::handleEvents(int key) {
 		} else {
 			color = COMMAND_NULL;
 		}
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, "Last Page");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, fixedText_LastPage);
 
 		// Print Text button
-		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, "Print Text");
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, fixedText_PrintText);
 	}
 
 	if (btn == BTN_EXIT && events._released) {
@@ -1123,8 +1159,9 @@ bool Journal::handleEvents(int key) {
 int Journal::getSearchString(bool printError) {
 	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
 
-	Events &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
+	Events    &events    = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen    &screen    = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int xp;
 	int yp = 174;
@@ -1133,20 +1170,26 @@ int Journal::getSearchString(bool printError) {
 	int done = 0;
 	byte color;
 
+	Common::String fixedText_Exit           = fixedText.getText(kFixedText_JournalSearch_Exit);
+	Common::String fixedText_Backward       = fixedText.getText(kFixedText_JournalSearch_Backward);
+	Common::String fixedText_Forward        = fixedText.getText(kFixedText_JournalSearch_Forward);
+	Common::String fixedText_NotFound       = fixedText.getText(kFixedText_JournalSearch_NotFound);
+
 	// Draw search panel
 	screen.makePanel(Common::Rect(6, 171, 313, 199));
 	screen.makeButton(Common::Rect(SEARCH_POINTS[0][0], yp, SEARCH_POINTS[0][1], yp + 10),
-		SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, "Exit");
+		SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
 	screen.makeButton(Common::Rect(SEARCH_POINTS[1][0], yp, SEARCH_POINTS[1][1], yp + 10),
-		SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, "Backward");
+		SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, fixedText_Backward);
 	screen.makeButton(Common::Rect(SEARCH_POINTS[2][0], yp, SEARCH_POINTS[2][1], yp + 10),
-		SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, "Forward");
-	screen.gPrint(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, yp),
-		COMMAND_FOREGROUND, "E");
-	screen.gPrint(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, yp),
-		COMMAND_FOREGROUND, "B");
-	screen.gPrint(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, yp),
-		COMMAND_FOREGROUND, "F");
+		SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, fixedText_Forward);
+
+	screen.gPrint(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, yp),
+		COMMAND_HIGHLIGHTED, "%c", fixedText_Exit[0]);
+	screen.gPrint(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, yp),
+		COMMAND_HIGHLIGHTED, "%c", fixedText_Backward[0]);
+	screen.gPrint(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, yp),
+		COMMAND_HIGHLIGHTED, "%c", fixedText_Forward[0]);
 
 	screen.makeField(Common::Rect(12, 185, 307, 196));
 
@@ -1156,8 +1199,8 @@ int Journal::getSearchString(bool printError) {
 	screen.hLine(306, 186, 195, BUTTON_TOP);
 
 	if (printError) {
-		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth("Text Not Found !")) / 2, 185),
-			INV_FOREGROUND, "Text Not Found !");
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth(fixedText_NotFound)) / 2, 185),
+			INV_FOREGROUND, fixedText_NotFound.c_str());
 	} else if (!_find.empty()) {
 		// There's already a search term, display it already
 		screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
@@ -1212,7 +1255,7 @@ int Journal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth("Exit") / 2, 175), color, "Exit");
+				screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, 175), color, fixedText_Exit.c_str());
 
 				if (pt.x > SEARCH_POINTS[1][0] && pt.x < SEARCH_POINTS[1][1] && pt.y > 174 && pt.y < 183) {
 					found = BTN_BACKWARD;
@@ -1220,7 +1263,7 @@ int Journal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth("Backward") / 2, 175), color, "Backward");
+				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, 175), color, fixedText_Backward.c_str());
 
 				if (pt.x > SEARCH_POINTS[2][0] && pt.x < SEARCH_POINTS[2][1] && pt.y > 174 && pt.y < 183) {
 					found = BTN_FORWARD;
@@ -1228,7 +1271,7 @@ int Journal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth("Forward") / 2, 175), color, "Forward");
+				screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, 175), color, fixedText_Forward.c_str());
 			}
 
 			events.wait(2);
