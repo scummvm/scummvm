@@ -425,15 +425,15 @@ void TattooMap::checkMapNames(bool slamIt) {
 				int yp = screen.stringHeight(line2);
 				xp = (width - screen.stringWidth(line2)) / 2;
 				// CHECKME: Shouldn't we use yp for drawing line2?
-				_textBuffer->writeString(line2, Common::Point(xp + 0, 0), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 1, 0), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 2, 0), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 0, 1), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 2, 1), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 0, 2), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 1, 2), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 2, 2), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 1, 1), MAP_NAME_COLOR);
+				_textBuffer->writeString(line2, Common::Point(xp + 0, yp), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 1, yp), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 2, yp), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 0, yp + 1), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 2, yp + 1), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 0, yp + 2), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 1, yp + 2), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 2, yp + 2), BLACK);
+				_textBuffer->writeString(line2, Common::Point(xp + 1, yp + 1), MAP_NAME_COLOR);
 			}
 
 			// Set the text display position

@@ -817,7 +817,7 @@ bool Scene::loadScene(const Common::String &filename) {
 		roomStream->seek(header3DO_walkData_offset);
 		
 		int startPos = roomStream->pos();
-		while ((roomStream->pos() - startPos) < header3DO_walkData_size) {
+		while ((roomStream->pos() - startPos) < (int)header3DO_walkData_size) {
 			_walkPoints.push_back(WalkArray());
 			_walkPoints[_walkPoints.size() - 1]._fileOffset = roomStream->pos() - startPos;
 			_walkPoints[_walkPoints.size() - 1].load(*roomStream, false);
