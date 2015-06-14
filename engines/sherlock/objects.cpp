@@ -71,6 +71,7 @@ static const AdjustWalk ADJUST_WALKS[NUM_ADJUSTED_WALKS] = {
 };
 
 SherlockEngine *BaseObject::_vm;
+bool BaseObject::_countCAnimFrames;
 
 /*----------------------------------------------------------------*/
 
@@ -1023,8 +1024,6 @@ void UseType::load3DO(Common::SeekableReadStream &s) {
 }
 
 /*----------------------------------------------------------------*/
-
-bool Object::_countCAnimFrames;
 
 Object::Object(): BaseObject() {
 	_sequenceNumber = 0;
