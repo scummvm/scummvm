@@ -1049,9 +1049,9 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (c >= 128 && c <= 227 && _opcodeTable[c - 128]) {
+		} else if (c >= _opcodes[0] && c < (_opcodes[0] + 99) && _opcodeTable[c - _opcodes[0]]) {
 			// Handle control code
-			switch ((this->*_opcodeTable[c - 128])(str)) {
+			switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
 			case RET_EXIT:
 				return;
 			case RET_CONTINUE:

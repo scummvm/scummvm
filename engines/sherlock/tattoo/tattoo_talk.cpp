@@ -111,11 +111,6 @@ const byte TATTOO_OPCODES[] = {
 
 TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 	static OpcodeMethod OPCODE_METHODS[] = {
-		nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
 
 		(OpcodeMethod)&TattooTalk::cmdRunCAnimation,
