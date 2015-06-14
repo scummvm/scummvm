@@ -104,9 +104,7 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 			// 3DO
 
 			// ITEM data from VGS.LIB is in ITEM.LIB
-			// resources themselves start with width and height as UINT16BE
-			// but after that they are different. Don't seem to be raw data
-			//addToCache("item.lib");
+			addToCache("item.lib");
 
 			// talk.lib - resources themselves seem to be the same, although a few texts were slightly changed
 			addToCache("talk.lib");

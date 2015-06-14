@@ -105,9 +105,14 @@ void Inventory::loadGraphics() {
 		// Get the name of the item to be displayed, figure out its accompanying
 		// .VGS file with its picture, and then load it
 		int invNum = findInv((*this)[idx]._name);
-		Common::String fName = Common::String::format("item%02d.vgs", invNum + 1);
+		Common::String filename = Common::String::format("item%02d.vgs", invNum + 1);
 
-		_invShapes[idx - _invIndex] = new ImageFile(fName);
+		if (_vm->getPlatform() != Common::kPlatform3DO) {
+			// PC
+			_invShapes[idx - _invIndex] = new ImageFile(filename);
+		} else {
+			_invShapes[idx - _invIndex] = new ImageFile3DO(filename, kImageFile3DOType_RoomFormat);
+		}
 	}
 
 	_invGraphicsLoaded = true;
