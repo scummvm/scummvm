@@ -54,8 +54,9 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 }
 
 
-void UserInterface::checkAction(ActionType &action, int objNum, const char *const messages[]) {
+void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId) {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -70,7 +71,8 @@ void UserInterface::checkAction(ActionType &action, int objNum, const char *cons
 		// Invalid action, to print error message
 		_infoFlag = true;
 		clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[action._cAnimNum]);
+		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, action._cAnimNum);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
 		_infoFlag = true;
 
 		// Set how long to show the message
@@ -111,7 +113,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, const char *cons
 		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
 					&& toupper(action._names[nameIdx][1]) == 'W') {
-				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), messages)) {
+				if (obj.checkNameForCodes(Common::String(action._names[nameIdx].c_str() + 2), fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
 				}
@@ -152,7 +154,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, const char *cons
 		for (int nameIdx = 0; nameIdx < NAMES_COUNT; ++nameIdx) {
 			if (action._names[nameIdx].hasPrefix("*") && action._names[nameIdx].size() >= 2
 					&& toupper(action._names[nameIdx][1]) == 'F') {
-				if (obj.checkNameForCodes(action._names[nameIdx].c_str() + 2, messages)) {
+				if (obj.checkNameForCodes(action._names[nameIdx].c_str() + 2, fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
 				}
@@ -164,7 +166,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, const char *cons
 
 		if (!talk._talkToAbort) {
 			for (int nameIdx = 0; nameIdx < NAMES_COUNT && !talk._talkToAbort; ++nameIdx) {
-				if (obj.checkNameForCodes(action._names[nameIdx], messages)) {
+				if (obj.checkNameForCodes(action._names[nameIdx], fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
 				}

@@ -28,6 +28,7 @@
 #include "sherlock/surface.h"
 #include "sherlock/objects.h"
 #include "sherlock/resources.h"
+#include "sherlock/fixed_text.h"
 
 namespace Sherlock {
 
@@ -64,7 +65,7 @@ protected:
 	/**
 	 * Called for OPEN, CLOSE, and MOVE actions are being done
 	 */
-	void checkAction(ActionType &action, int objNum, const char *const messages[] = nullptr);
+	void checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
 public:
 	MenuMode _menuMode;
 	int _menuCounter;

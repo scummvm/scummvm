@@ -136,7 +136,7 @@ private:
 	/**
 	 * Checks to see whether a USE action is valid on the given object
 	 */
-	void checkUseAction(const UseType *use, const Common::String &invName, const char *const messages[],
+	void checkUseAction(const UseType *use, const Common::String &invName, FixedTextActionId fixedTextActionId,
 		int objNum, bool giveMode);
 	
 	/**

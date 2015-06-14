@@ -24,6 +24,7 @@
 #define SHERLOCK_FIXED_TEXT_H
 
 #include "common/scummsys.h"
+#include "common/language.h"
 
 namespace Sherlock {
 
@@ -57,16 +58,30 @@ enum FixedTextId {
 	kFixedText_JournalSearch_NotFound
 };
 
-struct SherlockFixedTextLanguageEntry {
+enum FixedTextActionId {
+	kFixedTextAction_Invalid = -1,
+	kFixedTextAction_Open = 0,
+	kFixedTextAction_Close,
+	kFixedTextAction_Move,
+	kFixedTextAction_Pick,
+	kFixedTextAction_Use
+};
+
+struct FixedTextActionEntry {
+	const Common::String *fixedTextArray;
+};
+
+struct FixedTextLanguageEntry {
 	Common::Language language;
 	const Common::String *fixedTextArray;
+	const FixedTextActionEntry *actionArray;
 };
 
 class FixedText {
 private:
 	SherlockEngine *_vm;
 
-	const Common::String *_fixedText;
+	const FixedTextLanguageEntry *_curLanguageEntry;
 
 public:
 	FixedText(SherlockEngine *vm);
@@ -76,6 +91,8 @@ public:
 	 * Gets hardcoded text
 	 */
 	const Common::String getText(FixedTextId fixedTextId);
+
+	const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex);
 };
 
 } // End of namespace Sherlock

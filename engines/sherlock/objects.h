@@ -28,6 +28,7 @@
 #include "common/str-array.h"
 #include "common/str.h"
 #include "sherlock/image_file.h"
+#include "sherlock/fixed_text.h"
 
 namespace Sherlock {
 
@@ -248,7 +249,7 @@ public:
 	 * @param messages	Provides a lookup list of messages that can be printed
 	 * @returns		0 if no codes are found, 1 if codes were found
 	 */
-	int checkNameForCodes(const Common::String &name, const char *const messages[]);
+	int checkNameForCodes(const Common::String &name, FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
 
 	/**
 	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
@@ -400,13 +401,13 @@ public:
 	 * Handles trying to pick up an object. If allowed, plays an y necessary animation for picking
 	 * up the item, and then adds it to the player's inventory
 	 */
-	int pickUpObject(const char *const messages[]);
+	int pickUpObject(FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
 
 	/**
 	 * Return the frame width
 	 */
 	int frameWidth() const { return _imageFrame ? _imageFrame->_frame.w : 0; }
-	
+
 	/**
 	 * Return the frame height
 	 */

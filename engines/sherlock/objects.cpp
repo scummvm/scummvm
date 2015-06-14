@@ -348,7 +348,7 @@ void BaseObject::checkObject() {
 
 				} else if (v < USE_COUNT) {
 					for (int idx = 0; idx < NAMES_COUNT; ++idx) {
-						checkNameForCodes(_use[v]._names[idx], nullptr);
+						checkNameForCodes(_use[v]._names[idx]);
 					}
 
 					if (_use[v]._useFlag)
@@ -488,7 +488,8 @@ void BaseObject::setObjSequence(int seq, bool wait) {
 	}
 }
 
-int BaseObject::checkNameForCodes(const Common::String &name, const char *const messages[]) {
+int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId fixedTextActionId) {
+	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
@@ -571,7 +572,8 @@ int BaseObject::checkNameForCodes(const Common::String &name, const char *const 
 		int messageNum = atoi(name.c_str() + 1);
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[messageNum]);
+		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, messageNum);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
@@ -1413,7 +1415,8 @@ void Object::adjustObject() {
 	}
 }
 
-int Object::pickUpObject(const char *const messages[]) {
+int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
+	FixedText &fixedText = *_vm->_fixedText;
 	Inventory &inv = *_vm->_inventory;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -1426,7 +1429,7 @@ int Object::pickUpObject(const char *const messages[]) {
 
 	if (pickup == 99) {
 		for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
-			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
+			if (checkNameForCodes(_use[0]._names[idx], kFixedTextAction_Invalid)) {
 				if (!talk._talkToAbort)
 					printed = true;
 			}
@@ -1442,7 +1445,8 @@ int Object::pickUpObject(const char *const messages[]) {
 
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[message]);
+		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, message);
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up
@@ -1473,7 +1477,7 @@ int Object::pickUpObject(const char *const messages[]) {
 		}
 
 		for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
-			if (checkNameForCodes(_use[0]._names[idx], nullptr)) {
+			if (checkNameForCodes(_use[0]._names[idx], kFixedTextAction_Invalid)) {
 				if (!talk._talkToAbort)
 					printed = true;
 			}

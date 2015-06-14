@@ -62,25 +62,6 @@ const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
-const char *const MOPEN[] = {
-	"This cannot be opened", "It is already open", "It is locked", "Wait for Watson", " ", "."
-};
-const char *const MCLOSE[] = {
-	"This cannot be closed", "It is already closed", "The safe door is in the way"
-};
-const char *const MMOVE[] = {
-	"This cannot be moved", "It is bolted to the floor", "It is too heavy", "The other crate is in the way"
-};
-const char *const MPICK[] = {
-	"Nothing of interest here", "It is bolted down", "It is too big to carry", "It is too heavy",
-	"I think a girl would be more your type", "Those flowers belong to Penny", "She's far too young for you!",
-	"I think a girl would be more your type!", "Government property for official use only"
-};
-const char *const MUSE[] = {
-	"You can't do that", "It had no effect", "You can't reach it", "OK, the door looks bigger! Happy?",
-	"Doors don't smoke"
-};
-
 /*----------------------------------------------------------------*/
 
 
@@ -1196,10 +1177,10 @@ void ScalpelUserInterface::doInvControl() {
 					bool giveFl = (tempMode >= INVMODE_GIVE);
 					if (_selector >= 0)
 						// Use/Give inv object with scene object
-						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, MUSE, _find, giveFl);
+						checkUseAction(&scene._bgShapes[_find]._use[0], inv[_selector]._name, kFixedTextAction_Use, _find, giveFl);
 					else
 						// Now inv object has been highlighted
-						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", MUSE, _find, giveFl);
+						checkUseAction(&scene._bgShapes[_find]._use[0], "*SELF*", kFixedTextAction_Use, _find, giveFl);
 
 					_selector = _oldSelector = -1;
 				}
@@ -1422,7 +1403,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 
 				switch (allowed) {
 				case ALLOW_OPEN:
-					checkAction(obj._aOpen, _temp, MOPEN);
+					checkAction(obj._aOpen, _temp, kFixedTextAction_Open);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(OPEN_MODE - 1);
@@ -1431,7 +1412,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 					break;
 
 				case ALLOW_CLOSE:
-					checkAction(obj._aClose, _temp, MCLOSE);
+					checkAction(obj._aClose, _temp, kFixedTextAction_Close);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(CLOSE_MODE - 1);
@@ -1440,7 +1421,7 @@ void ScalpelUserInterface::doMiscControl(int allowed) {
 					break;
 
 				case ALLOW_MOVE:
-					checkAction(obj._aMove, _temp, MMOVE);
+					checkAction(obj._aMove, _temp, kFixedTextAction_Move);
 					if (_menuMode != TALK_MODE && !talk._talkToAbort) {
 						_menuMode = STD_MODE;
 						restoreButton(MOVE_MODE - 1);
@@ -1467,7 +1448,7 @@ void ScalpelUserInterface::doPickControl() {
 
 			// Don't allow characters to be picked up
 			if (_bgFound < 1000) {
-				scene._bgShapes[_bgFound].pickUpObject(MPICK);
+				scene._bgShapes[_bgFound].pickUpObject(kFixedTextAction_Pick);
 
 				if (!talk._talkToAbort && _menuMode != TALK_MODE) {
 					_key = _oldKey = -1;
@@ -2082,13 +2063,14 @@ void ScalpelUserInterface::banishWindow(bool slideUp) {
 }
 
 void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::String &invName,
-		const char *const messages[], int objNum, bool giveMode) {
+		FixedTextActionId fixedTextActionId, int objNum, bool giveMode) {
 	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
 	Inventory &inv = *_vm->_inventory;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
-	bool printed = messages == nullptr;
+	bool printed = fixedTextActionId == kFixedTextAction_Invalid;
 
 	if (objNum >= 1000) {
 		// Holmes was specified, so do nothing
@@ -2140,7 +2122,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 		if (!talk._talkToAbort) {
 			Object &obj = scene._bgShapes[objNum];
 			for (int idx = 0; idx < NAMES_COUNT && !talk._talkToAbort; ++idx) {
-				if (obj.checkNameForCodes(action._names[idx], messages)) {
+				if (obj.checkNameForCodes(action._names[idx], fixedTextActionId)) {
 					if (!talk._talkToAbort)
 						printed = true;
 				}
@@ -2161,10 +2143,11 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 
 		if (giveMode) {
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "No, thank you.");
-		} else if (messages == nullptr) {
+		} else if (fixedTextActionId == kFixedTextAction_Invalid) {
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
 		} else {
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", messages[0]);
+			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
 		}
 
 		_infoFlag = true;
