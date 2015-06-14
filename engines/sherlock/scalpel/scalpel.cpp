@@ -775,6 +775,29 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 	if (finished)
 		finished = _animation->play3DO("COFF4", true, 1, false, 3);
 
+	if (finished) {
+		finished = _music->waitUntilMSec(244500, 0, 0, 500);
+
+		// TODO: Brighten the image, possibly by doing a partial fade
+		// to white.
+
+		_screen->_backBuffer1.blitFrom(*_screen);
+
+		for (int nr = 1; finished && nr <= 4; nr++) {
+			char filename[15];
+			sprintf(filename, "credits%d.cel", nr);
+			ImageFile3DO *creditsImage = new ImageFile3DO(filename, kImageFile3DOType_Cel);
+			ImageFrame *creditsFrame = &(*creditsImage)[0];
+			for (int i = 0; finished && i < 200 + creditsFrame->_height; i++) {
+				_screen->blitFrom(_screen->_backBuffer1);
+				_screen->transBlitFrom(creditsFrame->_frame, Common::Point((320 - creditsFrame->_width) / 2, 200 - i));
+				if (!_events->delay(80, true))
+					finished = false;
+			}
+			delete creditsImage;
+		}
+	}
+
 	return finished;
 }
 
