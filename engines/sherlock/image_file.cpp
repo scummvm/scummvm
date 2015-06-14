@@ -104,20 +104,33 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 
 void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	// Check for palette
-	int v1 = stream.readUint16LE() + 1;
-	int v2 = stream.readUint16LE() + 1;
-	stream.skip(1);		// Skip paletteBase byte
-	bool rleEncoded = stream.readByte() == 1;
-	int palSize = v1 * v2;
+	uint16 width        = stream.readUint16LE() + 1;
+	uint16 height       = stream.readUint16LE() + 1;
+	byte   paletteBase  = stream.readByte();
+	byte   rleEncoded   = stream.readByte();
+	byte   offsetX      = stream.readByte();
+	byte   offsetY      = stream.readByte();
+	uint32 palSignature = 0;
 
-	if ((palSize - 12) == PALETTE_SIZE && !rleEncoded) {
+	if ((width == 390) && (height == 2) && (!paletteBase) && (!rleEncoded) && (!offsetX) && (!offsetY)) {
+		// We check for these specific values
+		// We can't do "width * height", because at least the first German+Spanish menu bar is 60 x 13
+		// which is 780, which is the size of the palette. We obviously don't want to detect it as palette.
+
+		// As another security measure, we also check for the signature text
+		palSignature = stream.readUint32BE();
+		if (palSignature != MKTAG('V', 'G', 'A', ' ')) {
+			// signature mismatch, rewind
+			stream.seek(-12, SEEK_CUR);
+			return;
+		}
 		// Found palette, so read it in
-		stream.seek(2 + 12, SEEK_CUR);
+		stream.seek(8, SEEK_CUR); // Skip over the rest of the signature text "VGA palette"
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx)
 			_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
 	} else {
 		// Not a palette, so rewind to start of frame data for normal frame processing
-		stream.seek(-6, SEEK_CUR);
+		stream.seek(-8, SEEK_CUR);
 	}
 }
 
