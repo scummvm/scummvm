@@ -250,7 +250,7 @@ int ScalpelMap::show() {
 
 		if ((events._released || events._rightReleased) && _point != -1) {
 			if (people[HOLMES]._walkCount == 0) {
-				people._walkDest = _points[_point] + Common::Point(4, 9);
+				people[HOLMES]._walkDest = _points[_point] + Common::Point(4, 9);
 				_charPoint = _point;
 
 				// Start walking to selected location
@@ -454,7 +454,7 @@ void ScalpelMap::walkTheStreets() {
 
 	// Add in destination position
 	people[HOLMES]._walkTo.clear();
-	Common::Point destPos = people._walkDest;
+	Common::Point destPos = people[HOLMES]._walkDest;
 
 	// Check for any intermediate points between the two locations
 	if (path[0] || _charPoint > 50 || _oldCharPoint > 50) {
@@ -488,7 +488,7 @@ void ScalpelMap::walkTheStreets() {
 					people[HOLMES]._walkTo.push(tempPath[idx]);
 			}
 
-			people._walkDest = people[HOLMES]._walkTo.pop() + Common::Point(12, 6);
+			people[HOLMES]._walkDest = people[HOLMES]._walkTo.pop() + Common::Point(12, 6);
 			people[HOLMES].setWalking();
 		}
 	} else {

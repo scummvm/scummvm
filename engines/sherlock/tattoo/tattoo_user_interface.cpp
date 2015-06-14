@@ -398,7 +398,7 @@ void TattooUserInterface::doStandardControl() {
 				events._pressed = events._released = false;
 			} else {
 				// Walk to where the mouse was clicked
-				people._walkDest = Common::Point(mousePos.x + _currentScroll.x, mousePos.y);
+				people[HOLMES]._walkDest = Common::Point(mousePos.x + _currentScroll.x, mousePos.y);
 				people[HOLMES].goAllTheWay();
 			}
 		}

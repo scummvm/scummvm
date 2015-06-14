@@ -269,7 +269,7 @@ void Scene::selectScene() {
 		_tempFadeStyle = 0;
 	}
 
-	people._walkDest = Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
+	people[HOLMES]._walkDest = Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
 		people[HOLMES]._position.y / FIXED_INT_MULTIPLIER);
 
 	_restoreFlag = true;

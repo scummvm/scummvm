@@ -83,11 +83,11 @@ void TattooPerson::adjustSprite() {
 		_walkCount = _status;
 		_status = 0;
 
-		people._walkDest = _walkTo.front();
+		_walkDest = _walkTo.front();
 		setWalking();
 	} else if (_type == CHARACTER && _walkCount) {
 		if (_walkCount > 10) {
-			people._walkDest = _walkTo.front();
+			_walkDest = _walkTo.front();
 			setWalking();
 		}
 
@@ -98,7 +98,7 @@ void TattooPerson::adjustSprite() {
 		if (!_walkCount) {
 			// If there are remaining points to walk, move to the next one
 			if (!_walkTo.empty()) {
-				people._walkDest = _walkTo.pop();
+				_walkDest = _walkTo.pop();
 				setWalking();
 			} else {
 				gotoStand();
@@ -271,7 +271,6 @@ void TattooPerson::gotoStand() {
 }
 
 void TattooPerson::setWalking() {
-	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	int oldDirection, oldFrame;
 	Common::Point delta;
@@ -297,8 +296,8 @@ void TattooPerson::setWalking() {
 		if (_centerWalk || !_walkTo.empty()) {
 			// Since we want the player to be centered on the ultimate destination, and the player
 			// is drawn from the left side, move the cursor half the width of the player to center it
-			delta = Common::Point(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x,
-				_position.y / FIXED_INT_MULTIPLIER - people._walkDest.y);
+			delta = Common::Point(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x,
+				_position.y / FIXED_INT_MULTIPLIER - _walkDest.y);
 
 			int dir;
 			if (ABS(delta.x) > ABS(delta.y))
@@ -306,14 +305,14 @@ void TattooPerson::setWalking() {
 			else
 				dir = (delta.y < 0) ? WALK_UP : WALK_DOWN;
 
-			int scaleVal = scene.getScaleVal(Point32(people._walkDest.x * FIXED_INT_MULTIPLIER,
-				people._walkDest.y * FIXED_INT_MULTIPLIER));
-			people._walkDest.x -= _stopFrames[dir]->sDrawXSize(scaleVal) / 2;
+			int scaleVal = scene.getScaleVal(Point32(_walkDest.x * FIXED_INT_MULTIPLIER,
+				_walkDest.y * FIXED_INT_MULTIPLIER));
+			_walkDest.x -= _stopFrames[dir]->sDrawXSize(scaleVal) / 2;
 		}
 
 		delta = Common::Point(
-			ABS(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x),
-			ABS(_position.y / FIXED_INT_MULTIPLIER - people._walkDest.y)
+			ABS(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
+			ABS(_position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
 			);
 
 		// If we're ready to move a sufficient distance, that's it. Otherwise,
@@ -322,7 +321,7 @@ void TattooPerson::setWalking() {
 			break;
 
 		// Pop next walk segment off the walk route stack
-		people._walkDest = _walkTo.pop();
+		_walkDest = _walkTo.pop();
 	}
 
 	// If a sufficient move is being done, then start the move
@@ -331,7 +330,7 @@ void TattooPerson::setWalking() {
 		if (delta.x >= delta.y) {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
-			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
+			if (_walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
 				_sequenceNumber = WALK_LEFT;
 				_delta.x = speed.x * -(FIXED_INT_MULTIPLIER / 10);
 			} else {
@@ -344,7 +343,7 @@ void TattooPerson::setWalking() {
 			if ((delta.x * 10) >= speed.x) {
 				// Det the delta y
 				_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / ((delta.x * 10) / speed.x);
-				if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
+				if (_walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
 					_delta.y = -_delta.y;
 
 				// Set how many times we should add the delta to the player's position
@@ -353,7 +352,7 @@ void TattooPerson::setWalking() {
 				// The delta x was less than the speed (ie. we're really close to
 				// the destination). So set delta to 0 so the player won't move
 				_delta = Point32(0, 0);
-				_position = Point32(people._walkDest.x * FIXED_INT_MULTIPLIER, people._walkDest.y * FIXED_INT_MULTIPLIER);
+				_position = Point32(_walkDest.x * FIXED_INT_MULTIPLIER, _walkDest.y * FIXED_INT_MULTIPLIER);
 
 				_walkCount = 1;
 			}
@@ -392,7 +391,7 @@ void TattooPerson::setWalking() {
 		} else {
 			// Major movement is vertical, so set the sequence for up and down,
 			// and set the delta Y depending on the direction
-			if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
+			if (_walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
 				_sequenceNumber = WALK_UP;
 				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
@@ -402,7 +401,7 @@ void TattooPerson::setWalking() {
 
 			// Set the delta x
 			_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
-			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
+			if (_walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
 				_delta.x = -_delta.x;
 
 			_walkCount = delta.y / speed.y;

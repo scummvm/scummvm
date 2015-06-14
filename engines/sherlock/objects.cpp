@@ -822,7 +822,7 @@ void Sprite::checkSprite() {
 						}
 
 						walkPos.x += people[HOLMES]._imageFrame->_frame.w / 2;
-						people._walkDest = walkPos;
+						people[HOLMES]._walkDest = walkPos;
 						people[HOLMES]._walkTo.push(walkPos);
 						people[HOLMES].setWalking();
 					}

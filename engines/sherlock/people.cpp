@@ -71,7 +71,6 @@ Person::Person() : Sprite() {
 }
 
 void Person::goAllTheWay() {
-	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Common::Point srcPt = getSourcePoint();
 
@@ -81,20 +80,20 @@ void Person::goAllTheWay() {
 		_srcZone = scene.closestZone(srcPt);
 
 	// Get the zone of the destination
-	_destZone = scene.whichZone(people._walkDest);
+	_destZone = scene.whichZone(_walkDest);
 	if (_destZone == -1) {
-		_destZone = scene.closestZone(people._walkDest);
+		_destZone = scene.closestZone(_walkDest);
 
 		// The destination isn't in a zone
-		if (people._walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
-			people._walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
+		if (_walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
+			_walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
 
 		// Trace a line between the centroid of the found closest zone to
 		// the destination, to find the point at which the zone will be left
 		const Common::Rect &destRect = scene._zones[_destZone];
 		const Common::Point destCenter((destRect.left + destRect.right) / 2,
 			(destRect.top + destRect.bottom) / 2);
-		const Common::Point delta = people._walkDest - destCenter;
+		const Common::Point delta = _walkDest - destCenter;
 		Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
 
 		// Move along the line until the zone is left
@@ -104,7 +103,7 @@ void Person::goAllTheWay() {
 
 		// Set the new walk destination to the last point that was in the
 		// zone just before it was left
-		people._walkDest = Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
+		_walkDest = Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
 			(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
 	}
 
@@ -144,10 +143,10 @@ void Person::goAllTheWay() {
 			}
 
 			// Final position
-			_walkTo.push(people._walkDest);
+			_walkTo.push(_walkDest);
 
 			// Start walking
-			people._walkDest = _walkTo.pop();
+			_walkDest = _walkTo.pop();
 			setWalking();
 		}
 	}
@@ -162,7 +161,7 @@ void Person::walkToCoords(const Point32 &destPos, int destDir) {
 	CursorId oldCursor = events.getCursor();
 	events.setCursor(WAIT);
 
-	people._walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
+	_walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
 	people._allowWalkAbort = true;
 	goAllTheWay();
 

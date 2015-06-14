@@ -53,7 +53,7 @@ void ScalpelPerson::adjustSprite() {
 			// If there any points left for the character to walk to along the
 			// route to a destination, then move to the next point
 			if (!people[HOLMES]._walkTo.empty()) {
-				people._walkDest = people[HOLMES]._walkTo.pop();
+				_walkDest = people[HOLMES]._walkTo.pop();
 				setWalking();
 			} else {
 				gotoStand();
@@ -189,7 +189,6 @@ void ScalpelPerson::gotoStand() {
 
 void ScalpelPerson::setWalking() {
 	Map &map = *_vm->_map;
-	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	int oldDirection, oldFrame;
 	Common::Point speed, delta;
@@ -217,12 +216,12 @@ void ScalpelPerson::setWalking() {
 		// clicked, but characters draw positions start at their left, move
 		// the destination half the character width to draw him centered
 		int temp;
-		if (people._walkDest.x >= (temp = _imageFrame->_frame.w / 2))
-			people._walkDest.x -= temp;
+		if (_walkDest.x >= (temp = _imageFrame->_frame.w / 2))
+			_walkDest.x -= temp;
 
 		delta = Common::Point(
-			ABS(_position.x / FIXED_INT_MULTIPLIER - people._walkDest.x),
-			ABS(_position.y / FIXED_INT_MULTIPLIER - people._walkDest.y)
+			ABS(_position.x / FIXED_INT_MULTIPLIER - _walkDest.x),
+			ABS(_position.y / FIXED_INT_MULTIPLIER - _walkDest.y)
 		);
 
 		// If we're ready to move a sufficient distance, that's it. Otherwise,
@@ -231,7 +230,7 @@ void ScalpelPerson::setWalking() {
 			break;
 
 		// Pop next walk segment off the walk route stack
-		people._walkDest = _walkTo.pop();
+		_walkDest = _walkTo.pop();
 	}
 
 	// If a sufficient move is being done, then start the move
@@ -240,7 +239,7 @@ void ScalpelPerson::setWalking() {
 		if (delta.x >= delta.y) {
 			// Set the initial frame sequence for the left and right, as well
 			// as setting the delta x depending on direction
-			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
+			if (_walkDest.x < (_position.x / FIXED_INT_MULTIPLIER)) {
 				_sequenceNumber = (map._active ? (int)MAP_LEFT : (int)WALK_LEFT);
 				_delta.x = speed.x * -FIXED_INT_MULTIPLIER;
 			} else {
@@ -253,7 +252,7 @@ void ScalpelPerson::setWalking() {
 			if (delta.x >= speed.x) {
 				// Det the delta y
 				_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x / speed.x);
-				if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
+				if (_walkDest.y < (_position.y / FIXED_INT_MULTIPLIER))
 					_delta.y = -_delta.y;
 
 				// Set how many times we should add the delta to the player's position
@@ -262,7 +261,7 @@ void ScalpelPerson::setWalking() {
 				// The delta x was less than the speed (ie. we're really close to
 				// the destination). So set delta to 0 so the player won't move
 				_delta = Point32(0, 0);
-				_position = Point32(people._walkDest.x * FIXED_INT_MULTIPLIER, people._walkDest.y * FIXED_INT_MULTIPLIER);
+				_position = Point32(_walkDest.x * FIXED_INT_MULTIPLIER, _walkDest.y * FIXED_INT_MULTIPLIER);
 
 				_walkCount = 1;
 			}
@@ -294,7 +293,7 @@ void ScalpelPerson::setWalking() {
 		} else {
 			// Major movement is vertical, so set the sequence for up and down,
 			// and set the delta Y depending on the direction
-			if (people._walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
+			if (_walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
 				_sequenceNumber = WALK_UP;
 				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
@@ -309,7 +308,7 @@ void ScalpelPerson::setWalking() {
 
 			// Set the delta x
 			_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
-			if (people._walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
+			if (_walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
 				_delta.x = -_delta.x;
 
 			_walkCount = delta.y / speed.y;

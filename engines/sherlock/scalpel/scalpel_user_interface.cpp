@@ -305,8 +305,8 @@ void ScalpelUserInterface::handleInput() {
 				// Mouse clicked in script zone
 				events._pressed = events._released = false;
 			} else {
-				people._walkDest = pt;
 				people._allowWalkAbort = false;
+				people[HOLMES]._walkDest = pt;
 				people[HOLMES].goAllTheWay();
 			}
 

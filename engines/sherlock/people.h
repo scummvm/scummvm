@@ -67,6 +67,7 @@ public:
 	int _srcZone, _destZone;
 	bool _walkLoaded;
 	Common::String _portrait;
+	Common::Point _walkDest;
 
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using
@@ -98,7 +99,6 @@ protected:
 public:
 	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
-	Common::Point _walkDest;
 	Point32 _hSavedPos;
 	int _hSavedFacing;
 	bool _holmesOn;
