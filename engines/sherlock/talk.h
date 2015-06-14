@@ -207,6 +207,7 @@ private:
 	 * the amount of text that's been displayed
 	 */
 	int waitForMore(int delay);
+
 protected:
 	SherlockEngine *_vm;
 	OpcodeMethod *_opcodeTable;
@@ -254,6 +255,11 @@ protected:
 	OpcodeReturn cmdToggleObject(const byte *&str);
 	OpcodeReturn cmdWalkToCAnimation(const byte *&str);
 protected:
+	/**
+	 * Checks, if a character is an opcode
+	 */
+	inline bool isOpcode(byte checkCharacter);
+
 	/**
 	 * Display the talk interface window
 	 */

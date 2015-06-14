@@ -214,10 +214,10 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 		width += screen.charWidth(str[idx]);
 		++idx;
 		++_charCount;
-	} while (width < 298 && str[idx] && str[idx] != '{' && str[idx] < _opcodes[0]);
+	} while (width < 298 && str[idx] && str[idx] != '{' && (!isOpcode(str[idx])));
 
 	if (str[idx] || width >= 298) {
-		if (str[idx] < _opcodes[0] && str[idx] != '{') {
+		if ((!isOpcode(str[idx])) && str[idx] != '{') {
 			--idx;
 			--_charCount;
 		}
@@ -261,7 +261,7 @@ void ScalpelTalk::talkInterface(const byte *&str) {
 	str += idx;
 
 	// If line wrap occurred, then move to after the separating space between the words
-	if (str[0] < _opcodes[0] && str[0] != '{')
+	if ((!isOpcode(str[0])) && str[0] != '{')
 		++str;
 
 	_yp += 9;

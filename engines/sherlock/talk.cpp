@@ -1059,7 +1059,7 @@ void Talk::doScript(const Common::String &script) {
 			// Start of comment, so skip over it
 			while (*str++ != '}')
 				;
-		} else if (c >= _opcodes[0] && c < (_opcodes[0] + 99) && _opcodeTable[c - _opcodes[0]]) {
+		} else if (isOpcode(c)) {
 			// Handle control code
 			switch ((this->*_opcodeTable[c - _opcodes[0]])(str)) {
 			case RET_EXIT:
@@ -1198,6 +1198,14 @@ int Talk::waitForMore(int delay) {
 	events._pressed = events._released = false;
 
 	return key2;
+}
+
+inline bool Talk::isOpcode(byte checkCharacter) {
+	if ((checkCharacter < _opcodes[0]) || (checkCharacter >= (_opcodes[0] + 99)))
+		return false; // outside of range
+	if (_opcodeTable[checkCharacter - _opcodes[0]])
+		return true;
+	return false;
 }
 
 void Talk::popStack() {
