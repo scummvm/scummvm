@@ -558,7 +558,7 @@ void TattooPerson::checkWalkGraphics() {
 
 		if (npcNum != -1) {
 			// See if the VGS file called for is different than the main graphics which are already loaded
-			if (!filename.compareToIgnoreCase(people[npcNum]._walkVGSName)) {
+			if (filename.compareToIgnoreCase(people[npcNum]._walkVGSName) != 0) {
 				// See if this is one of the more used Walk Graphics stored in WALK.LIB
 				for (int idx = 0; idx < NUM_IN_WALK_LIB; ++idx) {
 					if (!scumm_stricmp(filename.c_str(), WALK_LIB_NAMES[idx])) {
