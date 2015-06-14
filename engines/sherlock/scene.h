@@ -131,6 +131,19 @@ public:
 	void load(Common::SeekableReadStream &s);
 };
 
+class WalkArray : public Common::Array < Common::Point > {
+public:
+	int _pointsCount;
+	int _fileOffset;
+
+	WalkArray() : _pointsCount(0), _fileOffset(-1) {}
+
+	/**
+	 * Load data for the walk array entry
+	 */
+	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
+};
+
 class Scene {
 private:
 	bool _loadingSavedGame;
@@ -213,7 +226,7 @@ public:
 	Common::Array<byte> _sequenceBuffer;
 	Common::Array<SceneImage> _images;
 	int _walkDirectory[MAX_ZONES][MAX_ZONES];
-	Common::Array<byte> _walkData;
+	Common::Array<WalkArray> _walkPoints;
 	Common::Array<Exit> _exits;
 	int _exitZone;
 	SceneEntry _entrance;

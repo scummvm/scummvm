@@ -124,11 +124,10 @@ void Person::goAllTheWay() {
 		if (i == -1)
 			i = scene._walkDirectory[_destZone][_srcZone];
 
-		int count = scene._walkData[i];
-		++i;
+		const WalkArray &points = scene._walkPoints[i];
 
 		// See how many points there are between the src and dest zones
-		if (!count || count == -1) {
+		if (!points._pointsCount || points._pointsCount == -1) {
 			// There are none, so just walk to the new zone
 			setWalking();
 		} else {
@@ -137,14 +136,11 @@ void Person::goAllTheWay() {
 			_walkTo.clear();
 
 			if (scene._walkDirectory[_srcZone][_destZone] != -1) {
-				i += 3 * (count - 1);
-				for (int idx = 0; idx < count; ++idx, i -= 3) {
-					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]),
-						scene._walkData[i + 2]));
-				}
+				for (int idx = (int)points.size() - 1; idx >= 0; --idx)
+					_walkTo.push(points[idx]);
 			} else {
-				for (int idx = 0; idx < count; ++idx, i += 3) {
-					_walkTo.push(Common::Point(READ_LE_UINT16(&scene._walkData[i]), scene._walkData[i + 2]));
+				for (int idx = 0; idx < (int)points.size(); ++idx) {
+					_walkTo.push(points[idx]);
 				}
 			}
 

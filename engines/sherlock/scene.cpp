@@ -193,6 +193,18 @@ void ScaleZone::load(Common::SeekableReadStream &s) {
 
 /*----------------------------------------------------------------*/
 
+void WalkArray::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
+	_pointsCount = (int8)s.readByte();
+
+	for (int idx = 0; idx < _pointsCount; ++idx) {
+		int x = s.readSint16LE();
+		int y = isRoseTattoo ? s.readSint16LE() : s.readByte();
+		push_back(Common::Point(x, y));
+	}
+}
+
+/*----------------------------------------------------------------*/
+
 Scene *Scene::init(SherlockEngine *vm) {
 	if (vm->getGameID() == GType_SerratedScalpel)
 		return new Scalpel::ScalpelScene(vm);
@@ -285,7 +297,7 @@ void Scene::freeScene() {
 
 	_sequenceBuffer.clear();
 	_descText.clear();
-	_walkData.clear();
+	_walkPoints.clear();
 	_cAnim.clear();
 	_bgShapes.clear();
 	_zones.clear();
@@ -538,9 +550,12 @@ bool Scene::loadScene(const Common::String &filename) {
 			if (rrmStream->readByte() != (IS_SERRATED_SCALPEL ? 254 : 251))
 				error("Invalid scene path data");
 
-			// Load the walk directory
+			// Load the walk directory and walk data
 			assert(_zones.size() < MAX_ZONES);
+
+
 			for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
+				Common::fill(&_walkDirectory[idx1][0], &_walkDirectory[idx1][MAX_ZONES], 0);
 				for (uint idx2 = 0; idx2 < _zones.size(); ++idx2)
 					_walkDirectory[idx1][idx2] = rrmStream->readSint16LE();
 			}
@@ -550,11 +565,30 @@ bool Scene::loadScene(const Common::String &filename) {
 			Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
 				res.decompress(*rrmStream, size);
 
-			_walkData.resize(size);
-			walkStream->read(&_walkData[0], size);
+			int startPos = walkStream->pos();
+			while ((walkStream->pos() - startPos) < size) {
+				_walkPoints.push_back(WalkArray());
+				_walkPoints[_walkPoints.size() - 1]._fileOffset = walkStream->pos() - startPos;
+				_walkPoints[_walkPoints.size() - 1].load(*walkStream, IS_ROSE_TATTOO);
+			}
 
 			if (_lzwMode)
 				delete walkStream;
+
+			// Translate the file offsets of the walk directory to indexes in the loaded walk data
+			for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
+				for (uint idx2 = 0; idx2 < _zones.size(); ++idx2) {
+					int fileOffset = _walkDirectory[idx1][idx2];
+					if (fileOffset == -1)
+						continue;
+
+					uint dataIndex = 0;
+					while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != fileOffset)
+						++dataIndex;
+					assert(dataIndex < _walkPoints.size());
+					_walkDirectory[idx1][idx2] = dataIndex;
+				}
+			}
 
 			if (IS_ROSE_TATTOO) {
 				// Read in the entrance
@@ -781,8 +815,28 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// === WALK DATA === Read in the walk data
 		roomStream->seek(header3DO_walkData_offset);
-		_walkData.resize(header3DO_walkData_size);
-		roomStream->read(&_walkData[0], header3DO_walkData_size);
+		
+		int startPos = roomStream->pos();
+		while ((roomStream->pos() - startPos) < header3DO_walkData_size) {
+			_walkPoints.push_back(WalkArray());
+			_walkPoints[_walkPoints.size() - 1]._fileOffset = roomStream->pos() - startPos;
+			_walkPoints[_walkPoints.size() - 1].load(*roomStream, false);
+		}
+
+		// Translate the file offsets of the walk directory to indexes in the loaded walk data
+		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
+			for (uint idx2 = 0; idx2 < _zones.size(); ++idx2) {
+				int fileOffset = _walkDirectory[idx1][idx2];
+				if (fileOffset == -1)
+					continue;
+
+				uint dataIndex = 0;
+				while (dataIndex < _walkPoints.size() && _walkPoints[dataIndex]._fileOffset != fileOffset)
+					++dataIndex;
+				assert(dataIndex < _walkPoints.size());
+				_walkDirectory[idx1][idx2] = dataIndex;
+			}
+		}
 
 		// === EXITS === Read in the exits
 		roomStream->seek(header3DO_exits_offset);
