@@ -238,10 +238,15 @@ void SaveManager::createThumbnail() {
 		delete _saveThumb;
 	}
 
-	uint8 thumbPalette[PALETTE_SIZE];
-	_vm->_screen->getPalette(thumbPalette);
 	_saveThumb = new Graphics::Surface();
-	::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
+
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
+		uint8 thumbPalette[PALETTE_SIZE];
+		_vm->_screen->getPalette(thumbPalette);
+		::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);
+	} else {
+		::createThumbnailFromScreen(_saveThumb);
+	}
 }
 
 int SaveManager::getHighlightedButton() const {
