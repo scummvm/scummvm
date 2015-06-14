@@ -69,6 +69,7 @@ enum FixedTextActionId {
 
 struct FixedTextActionEntry {
 	const Common::String *fixedTextArray;
+	int   fixedTextArrayCount;
 };
 
 struct FixedTextLanguageEntry {

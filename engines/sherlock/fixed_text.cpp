@@ -250,28 +250,31 @@ static const Common::String fixedTextES_ActionUse[] = {
 	"Las puertas no fuman"
 };
 
+#define FIXEDTEXT_GETCOUNT(_name_) sizeof(_name_) / sizeof(Common::String)
+#define FIXEDTEXT_ENTRY(_name_)    _name_, FIXEDTEXT_GETCOUNT(_name_)
+
 static const FixedTextActionEntry fixedTextEN_Actions[] = {
-	{ fixedTextEN_ActionOpen },
-	{ fixedTextEN_ActionClose },
-	{ fixedTextEN_ActionMove },
-	{ fixedTextEN_ActionPick },
-	{ fixedTextEN_ActionUse }
+	{ FIXEDTEXT_ENTRY(fixedTextEN_ActionOpen) },
+	{ FIXEDTEXT_ENTRY(fixedTextEN_ActionClose) },
+	{ FIXEDTEXT_ENTRY(fixedTextEN_ActionMove) },
+	{ FIXEDTEXT_ENTRY(fixedTextEN_ActionPick) },
+	{ FIXEDTEXT_ENTRY(fixedTextEN_ActionUse) }
 };
 
 static const FixedTextActionEntry fixedTextDE_Actions[] = {
-	{ fixedTextDE_ActionOpen },
-	{ fixedTextDE_ActionClose },
-	{ fixedTextDE_ActionMove },
-	{ fixedTextDE_ActionPick },
-	{ fixedTextDE_ActionUse }
+	{ FIXEDTEXT_ENTRY(fixedTextDE_ActionOpen) },
+	{ FIXEDTEXT_ENTRY(fixedTextDE_ActionClose) },
+	{ FIXEDTEXT_ENTRY(fixedTextDE_ActionMove) },
+	{ FIXEDTEXT_ENTRY(fixedTextDE_ActionPick) },
+	{ FIXEDTEXT_ENTRY(fixedTextDE_ActionUse) }
 };
 
 static const FixedTextActionEntry fixedTextES_Actions[] = {
-	{ fixedTextES_ActionOpen },
-	{ fixedTextES_ActionClose },
-	{ fixedTextES_ActionMove },
-	{ fixedTextES_ActionPick },
-	{ fixedTextES_ActionUse }
+	{ FIXEDTEXT_ENTRY(fixedTextES_ActionOpen) },
+	{ FIXEDTEXT_ENTRY(fixedTextES_ActionClose) },
+	{ FIXEDTEXT_ENTRY(fixedTextES_ActionMove) },
+	{ FIXEDTEXT_ENTRY(fixedTextES_ActionPick) },
+	{ FIXEDTEXT_ENTRY(fixedTextES_ActionUse) }
 };
 
 // =========================================
@@ -307,7 +310,11 @@ const Common::String FixedText::getText(FixedTextId fixedTextId) {
 
 const Common::String FixedText::getActionMessage(FixedTextActionId actionId, int messageIndex) {
 	assert(actionId >= 0);
-	return _curLanguageEntry->actionArray[actionId].fixedTextArray[messageIndex];
+	assert(messageIndex >= 0);
+	const FixedTextActionEntry *curActionEntry = &_curLanguageEntry->actionArray[actionId];
+
+	assert(messageIndex < curActionEntry->fixedTextArrayCount);
+	return curActionEntry->fixedTextArray[messageIndex];
 }
 
 } // End of namespace Sherlock
