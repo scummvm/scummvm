@@ -454,6 +454,9 @@ void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadSt
 	if (audioStream) {
 		_totalAudioQueued += audioLengthMSecs;
 		_audioStream->queueAudioStream(audioStream, DisposeAfterUse::YES);
+	} else {
+		// in case there was an error
+		delete compressedAudioStream;
 	}
 }
 
