@@ -662,6 +662,10 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		Common::SeekableReadStream *roomStream = _vm->_res->load(_roomFilename);
 
+		// there should be at least all bytes of the header data
+		if (roomStream->size() < 128)
+			error("loadScene: 3DO room data file is too small");
+
 		// Read 3DO header
 		roomStream->skip(4); // UINT32: offset graphic data?
 		uint16 header3DO_numStructs = roomStream->readUint16BE();
@@ -691,11 +695,13 @@ bool Scene::loadScene(const Common::String &filename) {
 		uint32 header3DO_entranceData_size    = roomStream->readUint32BE();
 		uint32 header3DO_soundList_offset     = roomStream->readUint32BE() + 0x80;
 		uint32 header3DO_soundList_size       = roomStream->readUint32BE();
-		uint32 header3DO_unknown_offset       = roomStream->readUint32BE() + 0x80;
-		uint32 header3DO_unknown_size         = roomStream->readUint32BE();
+		//uint32 header3DO_unknown_offset       = roomStream->readUint32BE() + 0x80;
+		//uint32 header3DO_unknown_size         = roomStream->readUint32BE();
+		roomStream->skip(8); // Skip over unknown offset+size
 		uint32 header3DO_bgGraphicData_offset = roomStream->readUint32BE() + 0x80;
 		uint32 header3DO_bgGraphicData_size   = roomStream->readUint32BE();
 
+		// Calculate amount of entries
 		int32 header3DO_soundList_count       = header3DO_soundList_size / 9;
 
 		_invGraphicItems = header3DO_numImages + 1;
@@ -703,12 +709,20 @@ bool Scene::loadScene(const Common::String &filename) {
 		// === BGINFO === read in the shapes header info
 		Common::Array<BgFileHeaderInfo> bgInfo;
 
+		uint32 expected3DO_bgInfo_size = header3DO_numStructs * 16;
+		if (expected3DO_bgInfo_size != header3DO_bgInfo_size) // Security check
+			error("loadScene: 3DO bgInfo size mismatch");
+
 		roomStream->seek(header3DO_bgInfo_offset);
 		bgInfo.resize(header3DO_numStructs);
 		for (uint idx = 0; idx < bgInfo.size(); ++idx)
 			bgInfo[idx].load3DO(*roomStream);
 
 		// === BGSHAPES === read in the shapes info
+		uint32 expected3DO_bgShapes_size = header3DO_numStructs * 588;
+		if (expected3DO_bgShapes_size != header3DO_bgShapes_size) // Security check
+			error("loadScene: 3DO bgShapes size mismatch");
+
 		roomStream->seek(header3DO_bgShapes_offset);
 		_bgShapes.resize(header3DO_numStructs);
 		for (int idx = 0; idx < header3DO_numStructs; ++idx)
@@ -794,6 +808,9 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// === BOUNDING AREAS === Read in the room bounding areas
 		int roomBoundingCount = header3DO_roomBounding_size / 12;
+		uint32 expected3DO_roomBounding_size = roomBoundingCount * 12;
+		if (expected3DO_roomBounding_size != header3DO_roomBounding_size)
+			error("loadScene: 3DO roomBounding size mismatch");
 
 		roomStream->seek(header3DO_roomBounding_offset);
 		_zones.resize(roomBoundingCount);
@@ -806,6 +823,10 @@ bool Scene::loadScene(const Common::String &filename) {
 		}
 
 		// === WALK DIRECTORY === Load the walk directory
+		uint32 expected3DO_walkDirectory_size = _zones.size() * _zones.size() * 2;
+		if (expected3DO_walkDirectory_size != header3DO_walkDirectory_size)
+			error("loadScene: 3DO walkDirectory size mismatch");
+
 		roomStream->seek(header3DO_walkDirectory_offset);
 		assert(_zones.size() < MAX_ZONES);
 		for (uint idx1 = 0; idx1 < _zones.size(); ++idx1) {
@@ -815,7 +836,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		// === WALK DATA === Read in the walk data
 		roomStream->seek(header3DO_walkData_offset);
-		
+
 		int startPos = roomStream->pos();
 		while ((roomStream->pos() - startPos) < (int)header3DO_walkData_size) {
 			_walkPoints.push_back(WalkArray());
@@ -849,6 +870,9 @@ bool Scene::loadScene(const Common::String &filename) {
 			_exits[idx].load3DO(*roomStream);
 
 		// === ENTRANCE === Read in the entrance
+		if (header3DO_entranceData_size != 8)
+			error("loadScene: 3DO entranceData size mismatch");
+
 		roomStream->seek(header3DO_entranceData_offset);
 		_entrance.load3DO(*roomStream);
 
