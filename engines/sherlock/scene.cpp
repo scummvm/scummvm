@@ -500,7 +500,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				// Load cAnim offset table as well
 				uint32 *cAnimOffsetTablePtr = new uint32[bgHeader._numcAnimations];
 				uint32 *cAnimOffsetPtr = cAnimOffsetTablePtr;
-				memset(cAnimOffsetTablePtr, 0, bgHeader._numcAnimations);
+				memset(cAnimOffsetTablePtr, 0, bgHeader._numcAnimations * sizeof(uint32));
  				if (IS_SERRATED_SCALPEL) {
 					// Save current stream offset
 					int32 curOffset = rrmStream->pos();
@@ -770,7 +770,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			uint32 *cAnimOffsetTablePtr = new uint32[header3DO_numAnimations];
 			uint32 *cAnimOffsetPtr = cAnimOffsetTablePtr;
-			memset(cAnimOffsetTablePtr, 0, header3DO_numAnimations);
+			memset(cAnimOffsetTablePtr, 0, header3DO_numAnimations * sizeof(uint32));
 
 			// Seek to end of graphics data and load cAnim offset table from there
 			roomStream->seek(header3DO_bgGraphicData_offset + header3DO_bgGraphicData_size);
