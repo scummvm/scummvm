@@ -661,9 +661,10 @@ bool Scene::loadScene(const Common::String &filename) {
 			error("loadScene: 3DO room data file not found");
 
 		Common::SeekableReadStream *roomStream = _vm->_res->load(_roomFilename);
+		uint32 roomStreamSize = roomStream->size();
 
 		// there should be at least all bytes of the header data
-		if (roomStream->size() < 128)
+		if (roomStreamSize < 128)
 			error("loadScene: 3DO room data file is too small");
 
 		// Read 3DO header
@@ -705,6 +706,56 @@ bool Scene::loadScene(const Common::String &filename) {
 		int32 header3DO_soundList_count       = header3DO_soundList_size / 9;
 
 		_invGraphicItems = header3DO_numImages + 1;
+
+		// Verify all offsets
+		if (header3DO_bgInfo_offset >= roomStreamSize)
+			error("loadScene: 3DO bgInfo offset points outside of room file");
+		if (header3DO_bgInfo_size > (roomStreamSize - header3DO_bgInfo_offset))
+			error("loadScene: 3DO bgInfo size goes beyond room file");
+		if (header3DO_bgShapes_offset >= roomStreamSize)
+			error("loadScene: 3DO bgShapes offset points outside of room file");
+		if (header3DO_bgShapes_size > (roomStreamSize - header3DO_bgShapes_offset))
+			error("loadScene: 3DO bgShapes size goes beyond room file");
+		if (header3DO_descriptions_offset >= roomStreamSize)
+			error("loadScene: 3DO descriptions offset points outside of room file");
+		if (header3DO_descriptions_size > (roomStreamSize - header3DO_descriptions_offset))
+			error("loadScene: 3DO descriptions size goes beyond room file");
+		if (header3DO_sequence_offset >= roomStreamSize)
+			error("loadScene: 3DO sequence offset points outside of room file");
+		if (header3DO_sequence_size > (roomStreamSize - header3DO_sequence_offset))
+			error("loadScene: 3DO sequence size goes beyond room file");
+		if (header3DO_cAnim_offset >= roomStreamSize)
+			error("loadScene: 3DO cAnim offset points outside of room file");
+		if (header3DO_cAnim_size > (roomStreamSize - header3DO_cAnim_offset))
+			error("loadScene: 3DO cAnim size goes beyond room file");
+		if (header3DO_roomBounding_offset >= roomStreamSize)
+			error("loadScene: 3DO roomBounding offset points outside of room file");
+		if (header3DO_roomBounding_size > (roomStreamSize - header3DO_roomBounding_offset))
+			error("loadScene: 3DO roomBounding size goes beyond room file");
+		if (header3DO_walkDirectory_offset >= roomStreamSize)
+			error("loadScene: 3DO walkDirectory offset points outside of room file");
+		if (header3DO_walkDirectory_size > (roomStreamSize - header3DO_walkDirectory_offset))
+			error("loadScene: 3DO walkDirectory size goes beyond room file");
+		if (header3DO_walkData_offset >= roomStreamSize)
+			error("loadScene: 3DO walkData offset points outside of room file");
+		if (header3DO_walkData_size > (roomStreamSize - header3DO_walkData_offset))
+			error("loadScene: 3DO walkData size goes beyond room file");
+		if (header3DO_exits_offset >= roomStreamSize)
+			error("loadScene: 3DO exits offset points outside of room file");
+		if (header3DO_exits_size > (roomStreamSize - header3DO_exits_offset))
+			error("loadScene: 3DO exits size goes beyond room file");
+		if (header3DO_entranceData_offset >= roomStreamSize)
+			error("loadScene: 3DO entranceData offset points outside of room file");
+		if (header3DO_entranceData_size > (roomStreamSize - header3DO_entranceData_offset))
+			error("loadScene: 3DO entranceData size goes beyond room file");
+		if (header3DO_soundList_offset >= roomStreamSize)
+			error("loadScene: 3DO soundList offset points outside of room file");
+		if (header3DO_soundList_size > (roomStreamSize - header3DO_soundList_offset))
+			error("loadScene: 3DO soundList size goes beyond room file");
+		if (header3DO_bgGraphicData_offset >= roomStreamSize)
+			error("loadScene: 3DO bgGraphicData offset points outside of room file");
+		if (header3DO_bgGraphicData_size > (roomStreamSize - header3DO_bgGraphicData_offset))
+			error("loadScene: 3DO bgGraphicData size goes beyond room file");
 
 		// === BGINFO === read in the shapes header info
 		Common::Array<BgFileHeaderInfo> bgInfo;
@@ -784,12 +835,17 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			uint32 *cAnimOffsetTablePtr = new uint32[header3DO_numAnimations];
 			uint32 *cAnimOffsetPtr = cAnimOffsetTablePtr;
+			uint32 cAnimOffset = 0;
 			memset(cAnimOffsetTablePtr, 0, header3DO_numAnimations * sizeof(uint32));
 
 			// Seek to end of graphics data and load cAnim offset table from there
 			roomStream->seek(header3DO_bgGraphicData_offset + header3DO_bgGraphicData_size);
 			for (uint16 curCAnim = 0; curCAnim < header3DO_numAnimations; curCAnim++) {
-				*cAnimOffsetPtr = roomStream->readUint32BE();
+				cAnimOffset = roomStream->readUint32BE();
+				if (cAnimOffset >= roomStreamSize)
+					error("loadScene: 3DO cAnim entry offset points outside of room file");
+
+				*cAnimOffsetPtr = cAnimOffset;
 				cAnimOffsetPtr++;
 			}
 
