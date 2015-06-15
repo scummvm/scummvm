@@ -218,29 +218,40 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	if (_vm->_interactiveFl)
 		_vm->_res->addToCache("MUSIC.LIB");
 
-	_midiParser = (IS_SERRATED_SCALPEL) ? new MidiParser_SH() : MidiParser::createParser_XMIDI();
+	MidiDriver::DeviceHandle dev;
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-	_musicType = MidiDriver::getMusicType(dev);
+	if (IS_SERRATED_SCALPEL) {
+		_midiParser = new MidiParser_SH();
+		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		_musicType = MidiDriver::getMusicType(dev);
 
-	switch (_musicType) {
-	case MT_ADLIB:
-		_midiDriver = MidiDriver_AdLib_create();
-		break;
-	case MT_MT32:
-		_midiDriver = MidiDriver_MT32_create();
-		break;
-	case MT_GM:
-		if (ConfMan.getBool("native_mt32")) {
+		switch (_musicType) {
+		case MT_ADLIB:
+			_midiDriver = MidiDriver_AdLib_create();
+			break;
+		case MT_MT32:
 			_midiDriver = MidiDriver_MT32_create();
-			_musicType = MT_MT32;
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_midiDriver = MidiDriver_MT32_create();
+				_musicType = MT_MT32;
+			}
+			break;
+		default:
+			// Create default one
+			// I guess we shouldn't do this anymore
+			//_midiDriver = MidiDriver::createMidi(dev);
+			break;
 		}
-		break;
-	default:
-		// Create default one
-		// I guess we shouldn't do this anymore
-		//_driver = MidiDriver::createMidi(dev);
-		break;
+	} else {
+		// TODO: AdLib support uses ScummVM's builtin GM to AdLib
+		// conversion. This won't match the original.
+
+		_midiParser = MidiParser::createParser_XMIDI();
+		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		_musicType = MT_GM;
+		_midiDriver = MidiDriver::createMidi(dev);
 	}
 
 	if (_midiDriver) {
@@ -398,6 +409,9 @@ bool Music::playMusic(const Common::String &name) {
 
 		case MT_MT32:
 			MidiDriver_MT32_newMusicData(_midiDriver, dataPos, dataSize);
+			break;
+
+		case MT_GM:
 			break;
 
 		default:
