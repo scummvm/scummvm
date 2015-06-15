@@ -612,7 +612,7 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 
 // Reads 3DO .cel data (room file format)
 void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
-	int    streamSize = stream.size();
+	uint32 streamLeft = stream.size() - stream.pos();
 	uint16 roomDataHeader_size = 0;
 	byte   roomDataHeader_offsetX = 0;
 	byte   roomDataHeader_offsetY = 0;
@@ -632,12 +632,24 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 	// cel data
 	uint32 celDataSize = 0;
 
-	while (stream.pos() < streamSize) {
+	while (streamLeft > 0) {
+		// We expect at least 8 bytes basic header
+		if (streamLeft < 8)
+			error("load3DOCelRoomData: expected room data header, not enough bytes");
+
 		// 3DO sherlock holmes room data header
 		stream.skip(4); // Possibly UINT16 width, UINT16 height?!?!
 		roomDataHeader_size = stream.readUint16BE();
 		roomDataHeader_offsetX = stream.readByte();
 		roomDataHeader_offsetY = stream.readByte();
+		streamLeft -= 8;
+
+		// We expect the header size specified in the basic header to be at least a raw CCB
+		if (roomDataHeader_size < 68)
+			error("load3DOCelRoomData: header size is too small");
+		// Check, that enough bytes for CCB are available
+		if (streamLeft < 68)
+			error("load3DOCelRoomData: expected raw cel control block, not enough bytes");
 
 		// 3DO raw cel control block
 		ccbFlags   = stream.readUint32BE();
@@ -667,16 +679,21 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			// We currently support 16-bits per pixel in here
 			error("load3DOCelRoomData: bits per pixel < 16?!?!?");
 		}
+		// Got the raw CCB
+		streamLeft -= 68;
 
 		// cel data follows
-		assert(roomDataHeader_size > 68);
 		// size field does not include the 8 byte header
 		celDataSize = roomDataHeader_size - 68;
+
+		if (streamLeft < celDataSize)
+			error("load3DOCelRoomData: expected cel data, not enough bytes");
 
 		// read data into memory
 		byte  *celDataPtr = new byte[celDataSize];
 
 		stream.read(celDataPtr, celDataSize);
+		streamLeft -= celDataSize;
 		
 		// Set up frame
 		{
