@@ -721,8 +721,14 @@ bool ScalpelEngine::showStreetCutscene3DO() {
 		finished = _music->waitUntilMSec(100300, 0, 0, 1000);
 	}
 
-	finished = _animation->play3DO("14KICK", true, 1, false, 2);
+	if (finished)
+		finished = _animation->play3DO("14KICK", true, 1, false, 2);
 
+	// note: part of the constable is sticking to the door during the following
+	//       animation, when he walks away. This is a bug of course, but it actually happened on 3DO!
+	//       I'm not sure if it happens because the door is pure black (0, 0, 0) and it's because
+	//       of transparency - or if the animation itself is bad. We will definitely have to adjust
+	//       the animation data to fix it.
 	if (finished)
 		finished = _animation->play3DO("14NOTE", true, 1, false, 3);
 
@@ -739,7 +745,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 	bool finished = _music->waitUntilMSec(151000, 0, 0, 1000);
 
 	if (finished)
-		_animation->play3DO("COFF1", true, 1, false, 3);
+		finished = _animation->play3DO("COFF1", true, 1, false, 3);
 
 	if (finished)
 		finished = _animation->play3DO("COFF2", true, 1, false, 3);
