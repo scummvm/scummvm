@@ -87,7 +87,7 @@ bool TattooScene::loadScene(const Common::String &filename) {
 	setNPCPath(0);
 
 	// Handle loading music for the scene
-	if (sound._midiDrvLoaded) {
+	if (music._musicOn) {
 		if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
 			sound._nextSongName = Common::String::format("res%02d", _currentScene);
 

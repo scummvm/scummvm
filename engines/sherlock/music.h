@@ -58,7 +58,7 @@ class Music {
 private:
 	SherlockEngine *_vm;
 	Audio::Mixer *_mixer;
-	MidiParser_SH *_midiParser;
+	MidiParser *_midiParser;
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;

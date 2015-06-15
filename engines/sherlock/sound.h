@@ -59,7 +59,6 @@ public:
 	bool _soundPlaying;
 	bool *_soundIsOn;
 	byte *_digiBuf;
-	bool _midiDrvLoaded;
 	Common::String _currentSongName, _nextSongName;
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);

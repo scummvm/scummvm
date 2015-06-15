@@ -218,7 +218,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	if (_vm->_interactiveFl)
 		_vm->_res->addToCache("MUSIC.LIB");
 
-	_midiParser = new MidiParser_SH();
+	_midiParser = (IS_SERRATED_SCALPEL) ? new MidiParser_SH() : MidiParser::createParser_XMIDI();
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 	_musicType = MidiDriver::getMusicType(dev);
@@ -320,8 +320,14 @@ bool Music::loadSong(int songNumber) {
 }
 
 bool Music::loadSong(const Common::String &songName) {
-	warning("TODO: Music::loadSong");
-	return false;
+	freeSong();  // free any song that is currently loaded
+	
+	if (!playMusic(songName))
+		return false;
+
+	stopMusic();
+	startSong();
+	return true;
 }
 
 void Music::syncMusicSettings() {
@@ -339,7 +345,7 @@ bool Music::playMusic(const Common::String &name) {
 		if (!_midiDriver)
 			return false;
 
-		Common::String midiMusicName = name + ".MUS";
+		Common::String midiMusicName = (IS_SERRATED_SCALPEL) ? name + ".MUS" : name + ".XMI";
 		Common::SeekableReadStream *stream = _vm->_res->load(midiMusicName, "MUSIC.LIB");
 
 		_midiMusicData = new byte[stream->size()];
@@ -365,17 +371,24 @@ bool Music::playMusic(const Common::String &name) {
 		byte *dataPos = _midiMusicData;
 		int32 dataSize = _midiMusicDataSize;
 
-		if (memcmp("            ", dataPos, 12)) {
-			warning("Music: expected header not found in music file");
-			return false;
-		}
-		dataPos += 12;
-		dataSize -= 12;
+		if (IS_SERRATED_SCALPEL) {
+			if (memcmp("            ", dataPos, 12)) {
+				warning("Music: expected header not found in music file");
+				return false;
+			}
+			dataPos += 12;
+			dataSize -= 12;
 
-		uint16 headerSize = READ_LE_UINT16(dataPos);
-		if (headerSize != 0x7F) {
-			warning("Music: header is not as expected");
-			return false;
+			uint16 headerSize = READ_LE_UINT16(dataPos);
+			if (headerSize != 0x7F) {
+				warning("Music: header is not as expected");
+				return false;
+			}
+		} else {
+			if (memcmp("FORM", dataPos, 4)) {
+				warning("Music: expected header not found in music file");
+				return false;
+			}
 		}
 
 		switch (_musicType) {
