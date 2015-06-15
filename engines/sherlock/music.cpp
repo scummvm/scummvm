@@ -246,7 +246,8 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		}
 	} else {
 		// TODO: AdLib support uses ScummVM's builtin GM to AdLib
-		// conversion. This won't match the original.
+		// conversion. This won't match the original. I'm also
+		// uncertain about the MT-32 case, but it plays at least.
 
 		_midiParser = MidiParser::createParser_XMIDI();
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
