@@ -21,6 +21,8 @@ MODULE_OBJS = \
 	tattoo/tattoo_scene.o \
 	tattoo/tattoo_talk.o \
 	tattoo/tattoo_user_interface.o \
+	tattoo/widget_tooltip.o \
+	tattoo/widget_verbs.o \
 	animation.o \
 	debugger.o \
 	detection.o \

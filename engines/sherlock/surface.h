@@ -145,7 +145,7 @@ public:
 	void maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX);
 
 	/**
-	 * Clear the screen
+	 * Clear the surface
 	 */
 	void clear();
 
@@ -153,6 +153,11 @@ public:
 	 * Free the underlying surface
 	 */
 	void free();
+
+	/**
+	 * Returns true if the surface is empty
+	 */
+	bool empty() const { return _surface.getPixels() == nullptr; }
 
 	/**
 	 * Set the pixels for the surface to an existing data block

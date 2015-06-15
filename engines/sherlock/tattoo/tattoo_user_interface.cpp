@@ -28,10 +28,10 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm) {
+TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
+		_tooltipWidget(vm), _verbsWidget(vm) {
 	_menuBuffer = nullptr;
 	_invMenuBuffer = nullptr;
-	_tagBuffer = nullptr;
 	_invGraphic = nullptr;
 	_scrollSize = _scrollSpeed = 0;
 	_drawMenu = false;
@@ -145,9 +145,8 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 		screen._backBuffer1.transBlitFrom(*_menuBuffer, Common::Point(_invMenuBounds.left, _invMenuBounds.top));
 	}
 
-	// See if we need to draw a Text Tag floating with the cursor
-	if (_tagBuffer != nullptr)
-		screen._backBuffer1.transBlitFrom(*_tagBuffer, Common::Point(_tagBounds.left, _tagBounds.top));
+	// Handle drawing the text tooltip if necessary
+	_tooltipWidget.draw();
 
 	// See if we need to draw an Inventory Item Graphic floating with the cursor
 	if (_invGraphic != nullptr)
@@ -181,18 +180,8 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 		_oldInvMenuBounds.left = _oldInvMenuBounds.top = _oldInvMenuBounds.right = _oldInvMenuBounds.bottom = 0;
 	}
 
-	// See if  need to clear any tags
-	if (_oldTagBounds.right) {
-		screen.slamArea(_oldTagBounds.left - _currentScroll.x, _oldTagBounds.top, _oldTagBounds.width(), _oldTagBounds.height());
-
-		// If there's no tag actually being displayed, then reset bounds so we don't keep restoring the area
-		if (_tagBuffer == nullptr) {
-			_tagBounds.left = _tagBounds.top = _tagBounds.right = _tagBounds.bottom = 0;
-			_oldTagBounds.left = _oldTagBounds.top = _oldTagBounds.right = _oldTagBounds.bottom = 0;
-		}
-	}
-	if (_tagBuffer != nullptr)
-		screen.slamArea(_tagBounds.left - _currentScroll.x, _tagBounds.top, _tagBounds.width(), _tagBounds.height());
+	// Clear the tooltip if necessary
+	_tooltipWidget.erase();
 
 	// See if we need to flush areas assocaited with the inventory graphic
 	if (_oldInvGraphicBounds.right) {
@@ -229,9 +218,7 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_invMenuBounds.left, _invMenuBounds.top), _invMenuBounds);
 
 	// If there is a Text Tag being display, restore the area underneath it
-	if (_oldTagBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldTagBounds.left, _oldTagBounds.top), 
-			_oldTagBounds);
+	_tooltipWidget.erasePrevious();
 
 	// If there is an Inventory being shown, restore the graphics underneath it
 	if (_oldInvGraphicBounds.width() > 0)
@@ -344,7 +331,16 @@ void TattooUserInterface::doStandardControl() {
 	default:
 		break;
 	}
+static bool flag = false;	//***DEBUG**** - temporarily being used for testing walking */
+if (!flag && events._released) {
+	flag = true;
+	people._allowWalkAbort = true;
+	people[HOLMES]._walkDest = Common::Point(235, 370);
+	people[HOLMES].goAllTheWay();
 
+	events._released = false;
+	return;
+}
 	// See if a mouse button was released
 	if (events._released || events._rightReleased) {
 		// See if the mouse was released in an exit (Arrow) zone. Unless it's also pointing at an object
@@ -418,7 +414,7 @@ void TattooUserInterface::doInventoryControl() {
 }
 
 void TattooUserInterface::doVerbControl() {
-	warning("TODO: ui control (verb)");
+	_verbsWidget.execute();
 }
 
 void TattooUserInterface::doTalkControl() {
@@ -434,7 +430,21 @@ void TattooUserInterface::doLabControl() {
 }
 
 void TattooUserInterface::displayObjectNames() {
-	// TODO
+	Events &events = *_vm->_events;
+	Scene &scene = *_vm->_scene;
+	Common::Point mousePos = events.mousePos() + _currentScroll;
+	_arrowZone = -1;
+
+	if (_bgFound == -1 || scene._currentScene == 90) {
+		for (uint idx = 0; idx < scene._exits.size() && _arrowZone == -1; ++idx) {
+			Exit &exit = scene._exits[idx];
+			if (exit.contains(mousePos))
+				_arrowZone = idx;
+		}
+	}
+
+	_tooltipWidget.execute();
+	_oldArrowZone = _arrowZone;
 }
 
 void TattooUserInterface::initFileMenu() {

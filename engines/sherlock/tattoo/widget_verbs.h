@@ -20,61 +20,39 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_H
-#define SHERLOCK_TATTOO_H
+#ifndef SHERLOCK_TATTOO_WIDGET_VERBS_H
+#define SHERLOCK_TATTOO_WIDGET_VERBS_H
 
-#include "sherlock/sherlock.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
+#include "common/str-array.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
+class SherlockEngine;
+
 namespace Tattoo {
 
-enum {
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188
-};
-
-class TattooEngine : public SherlockEngine {
+class WidgetVerbs {
 private:
-	/**
-	 * Loads the initial palette for the game
-	 */
-	void loadInitialPalette();
-protected:
-	/**
-	 * Initialize the engine
-	 */
-	virtual void initialize();
-
-	virtual void showOpening();
+	SherlockEngine *_vm;
+	Common::Rect _bounds;
+	Surface _surface;
+	int _selector, _oldSelector;
 
 	/**
-	 * Starting a scene within the game
+	 * Highlights the controls for the verb list
 	 */
-	virtual void startScene();
+	void highlightVerbControls();
 public:
-	bool _creditsActive;
-	bool _runningProlog;
-	bool _fastMode, _allowFastMode;
+	Common::StringArray _verbCommands;
 public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine() {}
+	WidgetVerbs(SherlockEngine *vm);
 
-	/**
-	 * Draw credits on the screen
-	 */
-	void drawCredits();
+	void execute();
 
-	/**
-	 * Blit the drawn credits to the screen
-	 */
-	void blitCredits();
-
-	/**
-	 * Erase any area of the screen covered by credits
-	 */
-	void eraseCredits();
+	void checkTabbingKeys(int numOptions);
 };
 
 } // End of namespace Tattoo

@@ -20,61 +20,46 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_H
-#define SHERLOCK_TATTOO_H
+#ifndef SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
+#define SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
 
-#include "sherlock/sherlock.h"
+#include "common/scummsys.h"
+#include "common/rect.h"
+#include "sherlock/surface.h"
 
 namespace Sherlock {
 
+class SherlockEngine;
+
 namespace Tattoo {
 
-enum {
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188
-};
-
-class TattooEngine : public SherlockEngine {
+class WidgetTooltip {
 private:
-	/**
-	 * Loads the initial palette for the game
-	 */
-	void loadInitialPalette();
-protected:
-	/**
-	 * Initialize the engine
-	 */
-	virtual void initialize();
-
-	virtual void showOpening();
-
-	/**
-	 * Starting a scene within the game
-	 */
-	virtual void startScene();
+	SherlockEngine *_vm;
+	Common::Rect _bounds, _oldBounds;
+	Surface _surface;
 public:
-	bool _creditsActive;
-	bool _runningProlog;
-	bool _fastMode, _allowFastMode;
-public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine() {}
+	WidgetTooltip(SherlockEngine *vm);
 
 	/**
-	 * Draw credits on the screen
+	 * Handle updating the tooltip state
 	 */
-	void drawCredits();
+	void execute();
 
 	/**
-	 * Blit the drawn credits to the screen
+	 * Draw the tooltip if necessary
 	 */
-	void blitCredits();
+	void draw();
 
 	/**
-	 * Erase any area of the screen covered by credits
+	 * Erase the area covered by the tooltip if it's active
 	 */
-	void eraseCredits();
+	void erase();
+
+	/**
+	 * Erase any area of the screen drawn by the tooltip in the previous frame
+	 */
+	void erasePrevious();
 };
 
 } // End of namespace Tattoo

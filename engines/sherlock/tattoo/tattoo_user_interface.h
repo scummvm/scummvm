@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "sherlock/saveload.h"
 #include "sherlock/user_interface.h"
+#include "sherlock/tattoo/widget_tooltip.h"
+#include "sherlock/tattoo/widget_verbs.h"
 
 namespace Sherlock {
 
@@ -37,16 +39,12 @@ private:
 	Common::Rect _oldMenuBounds;
 	Common::Rect _invMenuBounds;
 	Common::Rect _oldInvMenuBounds;
-	Common::Rect _tagBounds;
-	Common::Rect _oldTagBounds;
 	Common::Rect _invGraphicBounds;
 	Common::Rect _oldInvGraphicBounds;
 	Surface *_menuBuffer;
 	Surface *_invMenuBuffer;
-	Surface *_tagBuffer;
 	Surface *_invGraphic;
 	Common::Array<Common::Rect> _grayAreas;
-	int _bgFound, _oldBgFound;
 	Object *_bgShape;
 	bool _personFound;
 	int _lockoutTimer;
@@ -54,8 +52,9 @@ private:
 	SaveMode _fileMode;
 	int _exitZone;
 	int _scriptZone;
-	int _arrowZone, _oldArrowZone;
 	int _activeObj;
+	WidgetTooltip _tooltipWidget;
+	WidgetVerbs _verbsWidget;
 private:
 	/**
 	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
@@ -153,6 +152,8 @@ public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;
 	bool _drawMenu;
+	int _bgFound, _oldBgFound;
+	int _arrowZone, _oldArrowZone;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 
