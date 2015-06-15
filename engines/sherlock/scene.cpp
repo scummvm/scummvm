@@ -951,16 +951,22 @@ bool Scene::loadScene(const Common::String &filename) {
 
 		Common::File roomBackgroundStream;
 		if (!roomBackgroundStream.open(roomBackgroundFilename))
-			error("Could not load file - %s", roomBackgroundFilename.c_str());
+			error("Could not open file - %s", roomBackgroundFilename.c_str());
 
 		int totalPixelCount = SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT;
 		uint16 *roomBackgroundDataPtr = NULL;
 		uint16 *pixelSourcePtr = NULL;
 		uint16 *pixelDestPtr = (uint16 *)screen._backBuffer1.getPixels();
 		uint16  curPixel = 0;
+		uint32  roomBackgroundStreamSize = roomBackgroundStream.size();
+		uint32  expectedBackgroundSize   = totalPixelCount * 2;
+
+		// Verify file size of background file
+		if (expectedBackgroundSize != roomBackgroundStreamSize)
+			error("loadScene: 3DO room background file not expected size");
 
 		roomBackgroundDataPtr = new uint16[totalPixelCount];
-		roomBackgroundStream.read(roomBackgroundDataPtr, totalPixelCount * 2);
+		roomBackgroundStream.read(roomBackgroundDataPtr, roomBackgroundStreamSize);
 		roomBackgroundStream.close();
 
 		// Convert data from RGB555 to RGB565
