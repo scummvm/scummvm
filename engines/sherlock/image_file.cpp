@@ -342,13 +342,17 @@ inline uint16 ImageFile3DO::convertPixel(uint16 pixel3DO) {
 }
 
 void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
-	int streamSize = stream.size();
-	uint32 compressedSize = 0;
+	uint32 streamLeft = stream.size() - stream.pos();
+	uint32 celDataSize = 0;
 
-	while (stream.pos() < streamSize) {
+	while (streamLeft > 0) {
 		ImageFrame frame;
 
-		compressedSize = stream.readUint16BE();
+		// We expect a basic header of 8 bytes
+		if (streamLeft < 8)
+			error("load3DOAnimationFile: expected animation header, not enough bytes");
+
+		celDataSize = stream.readUint16BE();
 
 		frame._width = stream.readUint16BE() + 1; // 2 bytes BE width
 		frame._height = stream.readByte() + 1; // 1 byte BE height
@@ -357,21 +361,27 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 		frame._rleEncoded = true; // always compressed
 		if (frame._width & 0x8000) {
 			frame._width &= 0x7FFF;
-			compressedSize += 0x10000;
+			celDataSize += 0x10000;
 		}
 
 		frame._offset.x = stream.readUint16BE();
 		frame._offset.y = stream.readByte();
 		frame._size = 0;
+		// Got header
+		streamLeft -= 8;
 
-		//warning("getting frame %d from offset %d", this->size(), stream.pos());
+		// cel data follows
+		if (streamLeft < celDataSize)
+			error("load3DOAnimationFile: expected cel data, not enough bytes");
 
+		// 
 		// Load data for frame and decompress it
-		byte *data = new byte[compressedSize];
-		stream.read(data, compressedSize);
+		byte *data = new byte[celDataSize];
+		stream.read(data, celDataSize);
+		streamLeft -= celDataSize;
 
 		// always 16 bits per pixel (RGB555)
-		decompress3DOCelFrame(frame, data, compressedSize, 16, NULL);
+		decompress3DOCelFrame(frame, data, celDataSize, 16, NULL);
 
 		delete[] data;
 
