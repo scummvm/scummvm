@@ -791,7 +791,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 			for (int i = 0; finished && i < 200 + creditsFrame->_height; i++) {
 				_screen->blitFrom(_screen->_backBuffer1);
 				_screen->transBlitFrom(creditsFrame->_frame, Common::Point((320 - creditsFrame->_width) / 2, 200 - i));
-				if (!_events->delay(80, true))
+				if (!_events->delay(70, true))
 					finished = false;
 			}
 			delete creditsImage;
