@@ -73,6 +73,8 @@ enum TattooSequences {
 
 class TattooPerson: public Person {
 private:
+	Point32 _nextDest;
+private:
 	bool checkCollision() const;
 
 	/**

@@ -128,7 +128,7 @@ void TattooPerson::adjustSprite() {
 		setWalking();
 	} else if (_type == CHARACTER && _walkCount) {
 		if (_walkCount > 10) {
-			_walkDest = _walkTo.front();
+			_walkDest = _nextDest;
 			setWalking();
 		}
 
@@ -315,6 +315,7 @@ void TattooPerson::setWalking() {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	int oldDirection, oldFrame;
 	Common::Point delta;
+	_nextDest = _walkDest;
 
 	// Flag that player has now walked in the scene
 	scene._walkedInScene = true;
