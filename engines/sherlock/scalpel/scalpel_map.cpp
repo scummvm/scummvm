@@ -287,6 +287,9 @@ int ScalpelMap::show() {
 	// Reset font
 	screen.setFont(oldFont);
 
+	// Free map graphic
+	delete bigMap;
+
 	_active = false;
 	return _charPoint;
 }
