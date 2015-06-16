@@ -209,7 +209,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_midiMusicData = NULL;
 	_midiMusicDataSize = 0;
 
-	if (_vm->getPlatform() == Common::kPlatform3DO) {
+	if (IS_3DO) {
 		// 3DO - uses digital samples for music
 		_musicOn = true;
 		return;

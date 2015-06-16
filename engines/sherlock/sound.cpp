@@ -64,7 +64,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_soundOn = true;
 	_speechOn = true;
 
-	if (_vm->getPlatform() == Common::kPlatform3DO) {
+	if (IS_3DO) {
 		// 3DO: we don't need to prepare anything for sound
 		return;
 	}

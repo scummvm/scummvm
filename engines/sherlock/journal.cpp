@@ -71,7 +71,7 @@ void Journal::record(int converseNum, int statementNum, bool replyOnly) {
 	int saveIndex = _index;
 	int saveSub = _sub;
 
-	if (_vm->getPlatform() == Common::kPlatform3DO) {
+	if (IS_3DO) {
 		// there seems to be no journal in the 3DO version
 		return;
 	}
@@ -123,7 +123,7 @@ void Journal::loadJournalLocations() {
 
 	_locations.clear();
 
-	if (_vm->getPlatform() == Common::kPlatform3DO) {
+	if (IS_3DO) {
 		// 3DO: storage of locations is currently unknown TODO
 		return;
 	}

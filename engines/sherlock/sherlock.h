@@ -219,6 +219,7 @@ public:
 
 #define IS_ROSE_TATTOO (_vm->getGameID() == GType_RoseTattoo)
 #define IS_SERRATED_SCALPEL (_vm->getGameID() == GType_SerratedScalpel)
+#define IS_3DO (_vm->getPlatform() == Common::kPlatform3DO)
 
 } // End of namespace Sherlock
 

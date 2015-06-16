@@ -597,7 +597,7 @@ void Sprite::setImageFrame() {
 	ImageFile *images = _altSeq ? _altImages : _images;
 	assert(images);
 
-	if (_vm->getPlatform() == Common::kPlatform3DO) {
+	if (IS_3DO) {
 		// only do this to the image-array with 110 entries
 		// map uses another image-array and this code
 		if (images->size() == 110) {
