@@ -541,7 +541,7 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 		ui._infoFlag = true;
 		ui.clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, messageNum);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
@@ -1316,7 +1316,7 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 		ui._infoFlag = true;
 		ui.clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, message);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up

@@ -72,7 +72,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 		_infoFlag = true;
 		clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, action._cAnimNum);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
 		_infoFlag = true;
 
 		// Set how long to show the message

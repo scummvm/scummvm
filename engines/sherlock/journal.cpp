@@ -608,8 +608,8 @@ void Journal::drawJournalFrame() {
 
 	// Set the palette and print the title
 	screen.setPalette(palette);
-	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, fixedText_WatsonsJournal.c_str());
-	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, fixedText_WatsonsJournal.c_str());
+	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, "%s", fixedText_WatsonsJournal.c_str());
+	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "%s", fixedText_WatsonsJournal.c_str());
 
 	// Draw the buttons
 	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y,
@@ -1200,7 +1200,7 @@ int Journal::getSearchString(bool printError) {
 
 	if (printError) {
 		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth(fixedText_NotFound)) / 2, 185),
-			INV_FOREGROUND, fixedText_NotFound.c_str());
+			INV_FOREGROUND, "%s", fixedText_NotFound.c_str());
 	} else if (!_find.empty()) {
 		// There's already a search term, display it already
 		screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
@@ -1255,7 +1255,7 @@ int Journal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, 175), color, fixedText_Exit.c_str());
+				screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, 175), color, "%s", fixedText_Exit.c_str());
 
 				if (pt.x > SEARCH_POINTS[1][0] && pt.x < SEARCH_POINTS[1][1] && pt.y > 174 && pt.y < 183) {
 					found = BTN_BACKWARD;
@@ -1263,7 +1263,7 @@ int Journal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, 175), color, fixedText_Backward.c_str());
+				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, 175), color, "%s", fixedText_Backward.c_str());
 
 				if (pt.x > SEARCH_POINTS[2][0] && pt.x < SEARCH_POINTS[2][1] && pt.y > 174 && pt.y < 183) {
 					found = BTN_FORWARD;
@@ -1271,7 +1271,7 @@ int Journal::getSearchString(bool printError) {
 				} else {
 					color = COMMAND_FOREGROUND;
 				}
-				screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, 175), color, fixedText_Forward.c_str());
+				screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, 175), color, "%s", fixedText_Forward.c_str());
 			}
 
 			events.wait(2);

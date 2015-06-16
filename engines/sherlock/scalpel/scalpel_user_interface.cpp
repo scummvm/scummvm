@@ -2147,7 +2147,7 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "You can't do that.");
 		} else {
 			Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, errorMessage.c_str());
+			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
 		}
 
 		_infoFlag = true;
