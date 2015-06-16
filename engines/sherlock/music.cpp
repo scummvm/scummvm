@@ -322,22 +322,22 @@ bool Music::loadSong(int songNumber) {
 	Common::String songName = Common::String(SONG_NAMES[songNumber - 1]);
 
 	freeSong();  // free any song that is currently loaded
-	
+	stopMusic();
+
 	if (!playMusic(songName))
 		return false;
 
-	stopMusic();
 	startSong();
 	return true;
 }
 
 bool Music::loadSong(const Common::String &songName) {
 	freeSong();  // free any song that is currently loaded
-	
+	stopMusic();
+
 	if (!playMusic(songName))
 		return false;
 
-	stopMusic();
 	startSong();
 	return true;
 }
@@ -449,16 +449,11 @@ bool Music::playMusic(const Common::String &name) {
 }
 
 void Music::stopMusic() {
-	// TODO
-	warning("TODO: Sound::stopMusic");
-
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
-		// TODO
-	} else {
-		// 3DO
-		if (isPlaying()) {
+	if (isPlaying()) {
+		if (_vm->getPlatform() != Common::kPlatform3DO)
+			_midiParser->stopPlaying();
+		else
 			_mixer->stopHandle(_digitalMusicHandle);
-		}
 	}
 
 	_musicPlaying = false;
@@ -474,10 +469,11 @@ void Music::startSong() {
 }
 
 void Music::freeSong() {
-	// TODO
-	warning("TODO: Sound::freeSong");
 	if (_midiMusicData) {
-		// free midi data buffer
+		if (_midiParser->isPlaying())
+			_midiParser->stopPlaying();
+
+		// Free the MIDI data buffer
 		delete[] _midiMusicData;
 		_midiMusicData = NULL;
 		_midiMusicDataSize = 0;
