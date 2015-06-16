@@ -60,7 +60,7 @@ void WidgetVerbs::highlightVerbControls() {
 	if (_selector != _oldSelector) {
 		// Redraw the verb list
 		for (int idx = 0; idx < (int)_verbCommands.size(); ++idx) {
-			byte color = (idx == _selector) ? COMMAND_HIGHLIGHTED : INFO_TOP;
+			byte color = (idx == _selector) ? (byte)COMMAND_HIGHLIGHTED : (byte)INFO_TOP;
 			_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - screen.stringWidth(_verbCommands[idx])) / 2,
 				(screen.fontHeight() + 7) * idx + 5), color);
 		}
