@@ -240,7 +240,7 @@ void SaveManager::createThumbnail() {
 
 	_saveThumb = new Graphics::Surface();
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		uint8 thumbPalette[PALETTE_SIZE];
 		_vm->_screen->getPalette(thumbPalette);
 		::createThumbnail(_saveThumb, (const byte *)_vm->_screen->getPixels(), SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, thumbPalette);

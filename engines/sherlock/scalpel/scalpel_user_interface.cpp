@@ -67,7 +67,7 @@ const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
 
 ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm) {
 	if (_vm->_interactiveFl) {
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			// PC
 			_controls = new ImageFile("menu.all");
 			_controlPanel = new ImageFile("controls.vgs");

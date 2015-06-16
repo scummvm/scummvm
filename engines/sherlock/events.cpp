@@ -54,7 +54,7 @@ void Events::loadCursors(const Common::String &filename) {
 	hideCursor();
 	delete _cursorImages;
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC
 		_cursorImages = new ImageFile(filename);
 	} else {
@@ -88,7 +88,7 @@ void Events::setCursor(CursorId cursorId) {
 
 void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY) {
 	_cursorId = INVALID_CURSOR;
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC 8-bit palettized
 		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
 	} else {

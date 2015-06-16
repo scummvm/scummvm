@@ -352,7 +352,7 @@ bool Music::playMusic(const Common::String &name) {
 
 	debugC(kDebugLevelMusic, "Music: playMusic('%s')", name.c_str());
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// MIDI based
 		if (!_midiDriver)
 			return false;
@@ -450,7 +450,7 @@ bool Music::playMusic(const Common::String &name) {
 
 void Music::stopMusic() {
 	if (isPlaying()) {
-		if (_vm->getPlatform() != Common::kPlatform3DO)
+		if (!IS_3DO)
 			_midiParser->stopPlaying();
 		else
 			_mixer->stopHandle(_digitalMusicHandle);
@@ -486,7 +486,7 @@ void Music::waitTimerRoland(uint time) {
 }
 
 bool Music::isPlaying() {
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// MIDI based
 		return _midiParser->isPlaying();
 	} else {
@@ -497,7 +497,7 @@ bool Music::isPlaying() {
 
 // Returns the current music position in milliseconds
 uint32 Music::getCurrentPosition() {
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// MIDI based
 		return (_midiParser->getTick() * 1000) / 60; // translate tick to millisecond
 	} else {

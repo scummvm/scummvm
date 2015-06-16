@@ -337,7 +337,7 @@ bool Scene::loadScene(const Common::String &filename) {
 	// Load the room resource file for the scene
 	//
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC version
 		Common::String roomFilename = filename + ".rrm";
 		_roomFilename = roomFilename;
@@ -1262,7 +1262,7 @@ void Scene::transitionToScene() {
 
 	// Actually do the transition
 	if (screen._fadeStyle) {
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			// do pixel-transition for PC
 			screen.randomTransition();
 		} else {

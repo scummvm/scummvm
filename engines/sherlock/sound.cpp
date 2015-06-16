@@ -126,7 +126,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 
 	Common::String filename = name;
 	if (!filename.contains('.')) {
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			if (IS_SERRATED_SCALPEL) {
 				filename += ".SND";
 			} else {
@@ -147,7 +147,7 @@ bool Sound::playSound(const Common::String &name, WaitType waitType, int priorit
 
 	Audio::AudioStream *audioStream;
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		if (IS_SERRATED_SCALPEL) {
 			stream->skip(2);
 			int size = stream->readUint32BE();

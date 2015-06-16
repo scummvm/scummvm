@@ -89,7 +89,7 @@ Resources::Resources(SherlockEngine *vm) : _vm(vm), _cache(vm) {
 	_resourceIndex = -1;
 
 	if (_vm->_interactiveFl) {
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			addToCache("vgs.lib");
 			addToCache("talk.lib");
 			addToCache("journal.txt");
@@ -226,7 +226,7 @@ void Resources::loadLibraryIndex(const Common::String &libFilename,
 	stream->seek(4);
 	int count = 0;
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC
 		count = stream->readUint16LE();
 

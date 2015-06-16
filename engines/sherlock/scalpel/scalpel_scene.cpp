@@ -582,7 +582,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 		}
 
 		// Now load the resource as an image
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			cObj._images = new ImageFile(fname);
 		} else {
 			cObj._images = new ImageFile3DO(fname, kImageFile3DOType_RoomFormat);

@@ -142,7 +142,7 @@ int ScalpelMap::show() {
 
 	// Load the entire map
 	ImageFile *bigMap = NULL;
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC
 		bigMap = new ImageFile("bigmap.vgs");
 		screen.setPalette(bigMap->_palette);
@@ -154,7 +154,7 @@ int ScalpelMap::show() {
 	// Load need sprites
 	setupSprites();
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		screen._backBuffer1.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
 		screen._backBuffer1.blitFrom((*bigMap)[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
 		screen._backBuffer1.blitFrom((*bigMap)[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
@@ -220,7 +220,7 @@ int ScalpelMap::show() {
 			// Map has scrolled, so redraw new map view
 			changed = false;
 
-			if (_vm->getPlatform() != Common::kPlatform3DO) {
+			if (!IS_3DO) {
 				screen._backBuffer1.blitFrom((*bigMap)[0], Common::Point(-_bigPos.x, -_bigPos.y));
 				screen._backBuffer1.blitFrom((*bigMap)[1], Common::Point(-_bigPos.x, SHERLOCK_SCREEN_HEIGHT - _bigPos.y));
 				screen._backBuffer1.blitFrom((*bigMap)[2], Common::Point(SHERLOCK_SCREEN_WIDTH - _bigPos.x, -_bigPos.y));
@@ -300,7 +300,7 @@ void ScalpelMap::setupSprites() {
 	Scene &scene = *_vm->_scene;
 	_savedPos.x = -1;
 
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// PC
 		_mapCursors = new ImageFile("omouse.vgs");
 		_shapes = new ImageFile("mapicon.vgs");

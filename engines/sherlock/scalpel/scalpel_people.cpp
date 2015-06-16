@@ -452,7 +452,7 @@ bool ScalpelPeople::loadWalk() {
 	if (_data[HOLMES]->_walkLoaded) {
 		return false;
 	} else {
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			_data[HOLMES]->_images = new ImageFile("walk.vgs");
 		} else {
 			// Load walk.anim on 3DO, which is a cel animation file

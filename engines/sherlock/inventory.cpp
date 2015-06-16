@@ -107,7 +107,7 @@ void Inventory::loadGraphics() {
 		int invNum = findInv((*this)[idx]._name);
 		Common::String filename = Common::String::format("item%02d.vgs", invNum + 1);
 
-		if (_vm->getPlatform() != Common::kPlatform3DO) {
+		if (!IS_3DO) {
 			// PC
 			_invShapes[idx - _invIndex] = new ImageFile(filename);
 		} else {

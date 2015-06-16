@@ -543,7 +543,7 @@ void ScalpelTalk::talkWait(const byte *&str) {
 }
 
 void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
-	if (_vm->getPlatform() != Common::kPlatform3DO) {
+	if (!IS_3DO) {
 		// No 3DO? No movie!
 		return;
 	}
