@@ -167,6 +167,8 @@ public:
 	 * of the highlighted object
 	 */
 	void examine();
+
+	void offsetButton3DO(Common::Point &pt, int num);
 public:
 	/**
 	 * Resets the user interface

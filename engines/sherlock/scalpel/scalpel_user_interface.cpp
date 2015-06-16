@@ -61,6 +61,7 @@ const char COMMANDS[13] = "LMTPOCIUGJFS";
 const char INVENTORY_COMMANDS[9] = { "ELUG-+,." };
 const char *const PRESS_KEY_FOR_MORE = "Press any Key for More.";
 const char *const PRESS_KEY_TO_CONTINUE = "Press any Key to Continue.";
+const int UI_OFFSET_3DO = 16;	// (320 - 288) / 2
 
 /*----------------------------------------------------------------*/
 
@@ -110,10 +111,13 @@ void ScalpelUserInterface::reset() {
 void ScalpelUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 
+	const ImageFrame &src = (*_controlPanel)[0];
+	int16 x = (!IS_3DO) ? 0 : UI_OFFSET_3DO;
+
 	if (bufferNum & 1)
-		screen._backBuffer1.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		screen._backBuffer1.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	if (bufferNum & 2)
-		screen._backBuffer2.transBlitFrom((*_controlPanel)[0], Common::Point(0, CONTROLS_Y));
+		screen._backBuffer2.transBlitFrom(src, Common::Point(x, CONTROLS_Y));
 	if (bufferNum == 3)
 		screen._backBuffer2.fillRect(0, INFO_LINE, SHERLOCK_SCREEN_WIDTH, INFO_LINE + 10, INFO_BLACK);
 }
@@ -374,6 +378,7 @@ void ScalpelUserInterface::handleInput() {
 void ScalpelUserInterface::depressButton(int num) {
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+	offsetButton3DO(pt, num);
 
 	ImageFrame &frame = (*_controls)[num];
 	screen._backBuffer1.transBlitFrom(frame, pt);
@@ -384,6 +389,8 @@ void ScalpelUserInterface::restoreButton(int num) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+	offsetButton3DO(pt, num);
+
 	Graphics::Surface &frame = (*_controls)[num]._frame;
 
 	// Reset the cursor
@@ -435,6 +442,7 @@ void ScalpelUserInterface::toggleButton(int num) {
 
 			ImageFrame &frame = (*_controls)[num];
 			Common::Point pt(MENU_POINTS[num][0], MENU_POINTS[num][1]);
+			offsetButton3DO(pt, num);
 			screen._backBuffer1.transBlitFrom(frame, pt);
 			screen.slamArea(pt.x, pt.y, pt.x + frame._width, pt.y + frame._height);
 		}
@@ -1206,6 +1214,7 @@ void ScalpelUserInterface::doLookControl() {
 			} else if (!_lookHelp) {
 				// Need to close the window and depress the Look button
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
+				offsetButton3DO(pt, 0);
 				screen._backBuffer2.blitFrom((*_controls)[0], pt);
 				banishWindow(true);
 
@@ -1264,6 +1273,10 @@ void ScalpelUserInterface::doMainControl() {
 		for (_temp = 0; (_temp < 12) && (_key == -1); ++_temp) {
 			Common::Rect r(MENU_POINTS[_temp][0], MENU_POINTS[_temp][1],
 				MENU_POINTS[_temp][2], MENU_POINTS[_temp][3]);
+			if (IS_3DO && _temp >= 0 && _temp <= 2) {
+				r.left += UI_OFFSET_3DO - 1;
+				r.right += UI_OFFSET_3DO - 1;
+			}
 			if (r.contains(pt))
 				_key = COMMANDS[_temp];
 		}
@@ -1795,6 +1808,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				// menu area, and draw the controls onto it
 				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h, _vm->getPlatform());
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
+				offsetButton3DO(pt, 0);
 
 				tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
 					Common::Rect(pt.x, pt.y, pt.x + tempSurface.w(), pt.y + tempSurface.h()));
@@ -2155,6 +2169,17 @@ void ScalpelUserInterface::checkUseAction(const UseType *use, const Common::Stri
 	}
 
 	events.setCursor(ARROW);
+}
+
+void ScalpelUserInterface::offsetButton3DO(Common::Point &pt, int num) {
+	if (IS_3DO) {
+		if (num >= 0 && num <= 2)
+			pt.x += 15;
+		else if (num >= 6 && num <= 8)
+			pt.x -= 4;
+		else if (num >= 9 && num <= 11)
+			pt.x -= 8;
+	}
 }
 
 } // End of namespace Scalpel
