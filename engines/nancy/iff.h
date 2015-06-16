@@ -28,6 +28,7 @@
 
 namespace Common {
 struct IFFChunk;
+class SeekableReadStream;
 }
 
 namespace Nancy {
@@ -44,12 +45,15 @@ public:
 
 	bool load();
 	const byte *getChunk(uint32 id, uint &size, uint index = 0) const;
+	Common::SeekableReadStream *getChunkStream(Common::String id, uint index = 0) const;
 
 	// Debugger functions
 	void list(Common::Array<Common::String> &nameList);
 
 private:
-	Common::String idToString(uint32 id);
+	static Common::String idToString(uint32 id);
+	static uint32 stringToId(const Common::String &s);
+
 	bool callback(Common::IFFChunk &chunk);
 
 	struct Chunk {

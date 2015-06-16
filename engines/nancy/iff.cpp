@@ -111,6 +111,19 @@ const byte *IFF::getChunk(uint32 id, uint &size, uint index) const {
 	return 0;
 }
 
+Common::SeekableReadStream *IFF::getChunkStream(Common::String id, uint index) const {
+	uint size;
+	const byte *chunk = getChunk(stringToId(id), size, index);
+
+	if (chunk) {
+		byte *dup = (byte *)malloc(size);
+		memcpy(dup, chunk, size);
+		return new Common::MemoryReadStream(dup, size, DisposeAfterUse::YES);
+	}
+
+	return nullptr;
+}
+
 Common::String IFF::idToString(uint32 id) {
 	Common::String s;
 	while (id) {
@@ -118,6 +131,15 @@ Common::String IFF::idToString(uint32 id) {
 		id <<= 8;
 	}
 	return s;
+}
+
+uint32 IFF::stringToId(const Common::String &s) {
+	uint32 id = 0;
+
+	for (uint i = 0; i < 4; ++i)
+		id |= (s.size() > i ? s[i] : ' ') << (3 - i) * 8;
+
+	return id;
 }
 
 void IFF::list(Common::Array<Common::String> &nameList) {

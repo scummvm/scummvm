@@ -45,9 +45,10 @@ namespace Nancy {
 static const int kSavegameVersion = 1;
 
 enum GameType {
-	kGameTypeNone  = 0,
+	kGameTypeNone = 0,
 	kGameTypeNancy1,
-	kGameTypeNancy2
+	kGameTypeNancy2,
+	kGameTypeNancy3
 };
 
 enum NancyDebugChannels {
@@ -96,10 +97,32 @@ public:
 	Common::String getSavegameFilename(int slot);
 	void syncSoundSettings();
 
-protected:
+	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
+protected:
 	// Engine APIs
 	Common::Error run();
+
+	enum {
+		kMaxFilenameLen = 32
+	};
+
+	struct Image {
+		Common::String name;
+		uint16 width;
+		uint16 height;
+	};
+
+	typedef Common::Array<Image> ImageList;
+
+	Common::SeekableReadStream *_bsum;
+	ImageList _logos, _frames;
+
+	void preloadCals(const IFF &boot);
+	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
+
+	virtual uint getFilenameLen() const = 0;
+	virtual void readBootSummary(const IFF &boot) = 0;
 
 private:
 	static NancyEngine *s_Engine;
@@ -109,7 +132,6 @@ private:
 	Common::Platform _platform;
 
 	void initialize();
-	void preloadCals(const IFF &boot);
 };
 
 } // End of namespace Nancy
