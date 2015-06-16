@@ -91,8 +91,6 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 	case 0xC: { // program change
 		int idx = *_position._playPos++;
 		info.basic.param1 = idx & 0x7f;
-		// don't do this here, it breaks adlib
-		//info.basic.param1 = mt32Map[idx & 0x7f]; // remap MT32 to GM
 		info.basic.param2 = 0;
 		}
 		break;
