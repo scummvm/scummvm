@@ -284,18 +284,30 @@ bool ScalpelEngine::showCityCutscene() {
 	bool finished = _animation->play("26open1", true, 1, 255, true, 2);
 
 	if (finished) {
-		ImageFile titleImages("title2.vgs", true);
+		ImageFile titleImages_LondonNovember("title2.vgs", true);
 		_screen->_backBuffer1.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 
+		Common::Point londonPosition;
+
+		warning("width %d, %d", titleImages_LondonNovember[0]._width, titleImages_LondonNovember[0]._height);
+		if ((titleImages_LondonNovember[0]._width == 302) && (titleImages_LondonNovember[0]._height == 39)) {
+			// Spanish
+			londonPosition = Common::Point(9, 8);
+		} else {
+			// English (German uses the same English graphics), width 272, height 37
+			// In the German version this is placed differently, check against German floppy version TODO
+			londonPosition = Common::Point(30, 50);
+		}
+
 		// London, England
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(30, 50));
+		_screen->_backBuffer1.transBlitFrom(titleImages_LondonNovember[0], londonPosition);
 		_screen->randomTransition();
 		finished = _events->delay(1000, true);
 
 		// November, 1888
 		if (finished) {
-			_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(100, 100));
+			_screen->_backBuffer1.transBlitFrom(titleImages_LondonNovember[1], Common::Point(100, 100));
 			_screen->randomTransition();
 			finished = _events->delay(5000, true);
 		}
@@ -309,16 +321,32 @@ bool ScalpelEngine::showCityCutscene() {
 		finished = _animation->play("26open2", true, 1, 0, false, 2);
 
 	if (finished) {
-		ImageFile titleImages("title.vgs", true);
+		ImageFile titleImages_SherlockHolmesTitle("title.vgs", true);
 		_screen->_backBuffer1.blitFrom(*_screen);
 		_screen->_backBuffer2.blitFrom(*_screen);
 
+		Common::Point lostFilesPosition;
+		Common::Point sherlockHolmesPosition;
+		Common::Point copyrightPosition;
+
+		if ((titleImages_SherlockHolmesTitle[0]._width == 306) && (titleImages_SherlockHolmesTitle[0]._height == 39)) {
+			// Spanish
+			lostFilesPosition = Common::Point(5, 5);
+			sherlockHolmesPosition = Common::Point(24, 40);
+			copyrightPosition = Common::Point(3, 190);
+		} else {
+			// English (German uses the same English graphics), width 208, height 39
+			lostFilesPosition = Common::Point(75, 6);
+			sherlockHolmesPosition = Common::Point(34, 21);
+			copyrightPosition = Common::Point(4, 190);
+		}
+
 		// The Lost Files of
-		_screen->_backBuffer1.transBlitFrom(titleImages[0], Common::Point(75, 6));
+		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[0], lostFilesPosition);
 		// Sherlock Holmes
-		_screen->_backBuffer1.transBlitFrom(titleImages[1], Common::Point(34, 21));
+		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[1], sherlockHolmesPosition);
 		// copyright
-		_screen->_backBuffer1.transBlitFrom(titleImages[2], Common::Point(4, 190));
+		_screen->_backBuffer1.transBlitFrom(titleImages_SherlockHolmesTitle[2], copyrightPosition);
 
 		_screen->verticalTransition();
 		finished = _events->delay(4000, true);
@@ -336,7 +364,19 @@ bool ScalpelEngine::showCityCutscene() {
 
 		if (finished) {
 			// In the alley...
-			_screen->transBlitFrom(titleImages[3], Common::Point(72, 51));
+			Common::Point alleyPosition;
+
+			if ((titleImages_SherlockHolmesTitle[3]._width == 105) && (titleImages_SherlockHolmesTitle[3]._height == 16)) {
+				// German
+				alleyPosition = Common::Point(72, 50);
+			} else if ((titleImages_SherlockHolmesTitle[3]._width == 166) && (titleImages_SherlockHolmesTitle[3]._height == 36)) {
+				// Spanish
+				alleyPosition = Common::Point(71, 50);
+			} else {
+				// English, width 175, height 38
+				alleyPosition = Common::Point(72, 51);
+			}
+			_screen->transBlitFrom(titleImages_SherlockHolmesTitle[3], alleyPosition);
 			_screen->fadeIn(palette, 3);
 
 			// Wait until the track got looped and the first few notes were played
@@ -397,9 +437,22 @@ bool ScalpelEngine::showAlleyCutscene() {
 	}
 
 	if (finished) {
-		ImageFile titleImages("title3.vgs", true);
+		ImageFile titleImages_EarlyTheFollowingMorning("title3.vgs", true);
 		// "Early the following morning on Baker Street..."
-		_screen->transBlitFrom(titleImages[0], Common::Point(35, 52));
+		Common::Point earlyTheFollowingMorningPosition;
+
+		if ((titleImages_EarlyTheFollowingMorning[0]._width == 164) && (titleImages_EarlyTheFollowingMorning[0]._height == 19)) {
+			// German
+			earlyTheFollowingMorningPosition = Common::Point(35, 50);
+		} else if ((titleImages_EarlyTheFollowingMorning[0]._width == 171) && (titleImages_EarlyTheFollowingMorning[0]._height == 32)) {
+			// Spanish
+			earlyTheFollowingMorningPosition = Common::Point(35, 50);
+		} else {
+			// English, width 218, height 31
+			earlyTheFollowingMorningPosition = Common::Point(35, 52);
+		}
+
+		_screen->transBlitFrom(titleImages_EarlyTheFollowingMorning[0], earlyTheFollowingMorningPosition);
 
 		// fast fade-in
 		_screen->fadeIn(palette, 1);
@@ -447,42 +500,6 @@ bool ScalpelEngine::showStreetCutscene() {
 	return finished;
 }
 
-
-bool ScalpelEngine::scrollCredits() {
-	// Load the images for displaying credit text
-	Common::SeekableReadStream *stream = _res->load("credits.vgs", "title.lib");
-	ImageFile creditsImages(*stream);
-
-	// Demo fades slowly from the scene into credits palette
-	_screen->fadeIn(creditsImages._palette, 3);
-
-	delete stream;
-
-	// Save a copy of the screen background for use in drawing each credit frame
-	_screen->_backBuffer1.blitFrom(*_screen);
-
-	// Loop for showing the credits
-	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
-		// Copy the entire screen background before writing text
-		_screen->blitFrom(_screen->_backBuffer1);
-
-		// Write the text appropriate for the next frame
-		if (idx < 400)
-			_screen->transBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
-		if (idx > 200)
-			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
-
-		// Don't show credit text on the top and bottom ten rows of the screen
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->w(), 10));
-		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, _screen->h() - 10),
-			Common::Rect(0, _screen->h() - 10, _screen->w(), _screen->h()));
-
-		_events->delay(100);
-	}
-
-	return true;
-}
-
 bool ScalpelEngine::showOfficeCutscene() {
 	_music->playMusic("prolog4");
 	_animation->_gfxLibraryFilename = "TITLE2.LIB";
@@ -526,6 +543,41 @@ bool ScalpelEngine::showOfficeCutscene() {
 	_animation->_gfxLibraryFilename = "";
 	_animation->_soundLibraryFilename = "";
 	return finished;
+}
+
+bool ScalpelEngine::scrollCredits() {
+	// Load the images for displaying credit text
+	Common::SeekableReadStream *stream = _res->load("credits.vgs", "title.lib");
+	ImageFile creditsImages(*stream);
+
+	// Demo fades slowly from the scene into credits palette
+	_screen->fadeIn(creditsImages._palette, 3);
+
+	delete stream;
+
+	// Save a copy of the screen background for use in drawing each credit frame
+	_screen->_backBuffer1.blitFrom(*_screen);
+
+	// Loop for showing the credits
+	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
+		// Copy the entire screen background before writing text
+		_screen->blitFrom(_screen->_backBuffer1);
+
+		// Write the text appropriate for the next frame
+		if (idx < 400)
+			_screen->transBlitFrom(creditsImages[0], Common::Point(10, 200 - idx), false, 0);
+		if (idx > 200)
+			_screen->transBlitFrom(creditsImages[1], Common::Point(10, 400 - idx), false, 0);
+
+		// Don't show credit text on the top and bottom ten rows of the screen
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, 0), Common::Rect(0, 0, _screen->w(), 10));
+		_screen->blitFrom(_screen->_backBuffer1, Common::Point(0, _screen->h() - 10),
+			Common::Rect(0, _screen->h() - 10, _screen->w(), _screen->h()));
+
+		_events->delay(100);
+	}
+
+	return true;
 }
 
 // 3DO variant
