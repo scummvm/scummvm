@@ -90,7 +90,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy2
 	},
 	{ // MD5 by waltervn
 		{
@@ -104,7 +104,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -120,7 +120,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -134,7 +134,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -150,7 +150,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -164,7 +164,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -180,7 +180,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by clone2727
 		{
@@ -196,7 +196,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{ // MD5 by Strangerke
 		{
@@ -210,7 +210,7 @@ static const NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		kGameTypeNancy1
+		kGameTypeNancy3
 	},
 	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
@@ -241,7 +241,7 @@ public:
 
 bool NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
-		*engine = new NancyEngine(syst, (const NancyGameDescription *)gd);
+		*engine = NancyEngine::create(((const NancyGameDescription *)gd)->gameType, syst, (const NancyGameDescription *)gd);
 		((NancyEngine *)*engine)->initGame((const NancyGameDescription *)gd);
 	}
 	return gd != 0;

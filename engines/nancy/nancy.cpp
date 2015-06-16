@@ -42,7 +42,10 @@ namespace Nancy {
 
 NancyEngine *NancyEngine::s_Engine = 0;
 
-NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd)
+NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
+	Engine(syst),
+	_gameDescription(gd),
+	_bsum(nullptr)
 {
 	_system = syst;
 
@@ -117,11 +120,15 @@ Common::Error NancyEngine::run() {
 	if (!boot->load())
 		error("Failed to load boot script");
 	preloadCals(*boot);
+	_bsum = boot->getChunkStream("BSUM");
+	if (!_bsum)
+		error("Failed to load BOOT BSUM");
+	readBootSummary(*boot);
 	delete boot;
 
-	// As we can't actually run anything yet, just show LOGO
+	// Show logo
 	Graphics::Surface surf;
-	if (_res->loadImage("ciftree", "LOGO", surf)) {
+	if (_res->loadImage("ciftree", _logos[0].name, surf)) {
 		_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w, surf.h);
 		surf.free();
 	}
@@ -198,6 +205,92 @@ Common::String NancyEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
 
+void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, ImageList &list) {
+	byte count = _bsum->readByte();
+	debugC(1, kDebugEngine, "Found %i %s images", count, prefix.c_str());
 
+	for (int i = 0; i < count; ++i) {
+		Common::String chunkName = Common::String::format("%s%d", prefix.c_str(), i);
+		Common::SeekableReadStream *chunkStream = boot.getChunkStream(chunkName);
+
+		if (!chunkStream)
+			error("Failed to read BOOT %s", chunkName.c_str());
+
+		Image image;
+		char buf[kMaxFilenameLen + 1];
+		int read = chunkStream->read(buf, getFilenameLen());
+		buf[read] = 0;
+
+		image.name = Common::String(buf);
+		chunkStream->skip(1);
+		image.width = chunkStream->readUint16LE();
+		image.height = chunkStream->readUint16LE();
+
+		if (chunkStream->err())
+			error("Error reading %s%d", prefix.c_str(), i);
+
+		debugC(1, kDebugEngine, "Adding %s (%dx%d)", image.name.c_str(), image.width, image.height);
+		list.push_back(image);
+
+		delete chunkStream;
+	}
+}
+
+class NancyEngine_v0 : public NancyEngine {
+public:
+	NancyEngine_v0(OSystem *syst, const NancyGameDescription *gd) : NancyEngine(syst, gd) { }
+
+private:
+	virtual uint getFilenameLen() const { return 9; }
+	virtual void readBootSummary(const IFF &boot);
+};
+
+void NancyEngine_v0::readBootSummary(const IFF &boot) {
+	_bsum->seek(0x151);
+	readImageList(boot, "FR", _frames);
+	readImageList(boot, "LG", _logos);
+}
+
+class NancyEngine_v1 : public NancyEngine_v0 {
+public:
+	NancyEngine_v1(OSystem *syst, const NancyGameDescription *gd) : NancyEngine_v0(syst, gd) { }
+
+private:
+	virtual void readBootSummary(const IFF &boot);
+};
+
+void NancyEngine_v1::readBootSummary(const IFF &boot) {
+	_bsum->seek(0x14b);
+	readImageList(boot, "FR", _frames);
+	readImageList(boot, "LG", _logos);
+}
+
+class NancyEngine_v2 : public NancyEngine_v1 {
+public:
+	NancyEngine_v2(OSystem *syst, const NancyGameDescription *gd) : NancyEngine_v1(syst, gd) { }
+
+private:
+	virtual uint getFilenameLen() const { return 32; }
+	virtual void readBootSummary(const IFF &boot);
+};
+
+void NancyEngine_v2::readBootSummary(const IFF &boot) {
+	_bsum->seek(0xa7);
+	readImageList(boot, "FR", _frames);
+	readImageList(boot, "LG", _logos);
+}
+
+NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
+	switch(type) {
+	case kGameTypeNancy1:
+		return new NancyEngine_v0(syst, gd);
+	case kGameTypeNancy2:
+		return new NancyEngine_v1(syst, gd);
+	case kGameTypeNancy3:
+		return new NancyEngine_v2(syst, gd);
+	default:
+		error("Unknown GameType");
+	}
+}
 
 } // End of namespace Nancy
