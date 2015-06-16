@@ -833,7 +833,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 		finished = _animation->play3DO("COFF4", true, 1, false, 3);
 
 	if (finished) {
-		finished = _music->waitUntilMSec(244500, 0, 0, 500);
+		finished = _music->waitUntilMSec(244500, 0, 0, 2000);
 
 		// TODO: Brighten the image, possibly by doing a partial fade
 		// to white.
