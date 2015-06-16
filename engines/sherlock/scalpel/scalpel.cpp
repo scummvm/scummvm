@@ -290,7 +290,6 @@ bool ScalpelEngine::showCityCutscene() {
 
 		Common::Point londonPosition;
 
-		warning("width %d, %d", titleImages_LondonNovember[0]._width, titleImages_LondonNovember[0]._height);
 		if ((titleImages_LondonNovember[0]._width == 302) && (titleImages_LondonNovember[0]._height == 39)) {
 			// Spanish
 			londonPosition = Common::Point(9, 8);
