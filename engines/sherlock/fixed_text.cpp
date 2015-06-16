@@ -25,7 +25,7 @@
 
 namespace Sherlock {
 
-static const char *fixedTextEN[] = {
+static const char *const fixedTextEN[] = {
 	// Window buttons
 	"Exit",
 	"Up",
@@ -72,7 +72,7 @@ static const char *fixedTextEN[] = {
 // small a-umlaut: 0x84 / octal 204
 // small o-umlaut: 0x94 / octal 224
 // small u-umlaut: 0x81 / octal 201
-static const char *fixedTextDE[] = {
+static const char *const fixedTextDE[] = {
 	// Window buttons
 	"Zur\201ck",
 	"Hoch",
@@ -118,7 +118,7 @@ static const char *fixedTextDE[] = {
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
-static const char *fixedTextES[] = {
+static const char *const fixedTextES[] = {
 	// Window buttons
 	"Exit",
 	"Subir",
@@ -163,7 +163,7 @@ static const char *fixedTextES[] = {
 
 // =========================================
 
-static const char *fixedTextEN_ActionOpen[] = {
+static const char *const fixedTextEN_ActionOpen[] = {
 	"This cannot be opened",
 	"It is already open",
 	"It is locked",
@@ -172,7 +172,7 @@ static const char *fixedTextEN_ActionOpen[] = {
 	"."
 };
 
-static const char *fixedTextDE_ActionOpen[] = {
+static const char *const fixedTextDE_ActionOpen[] = {
 	"Das kann man nicht \224ffnen",
 	"Ist doch schon offen!",
 	"Leider verschlossen",
@@ -181,7 +181,7 @@ static const char *fixedTextDE_ActionOpen[] = {
 	"."
 };
 
-static const char *fixedTextES_ActionOpen[] = {
+static const char *const fixedTextES_ActionOpen[] = {
 	"No puede ser abierto",
 	"Ya esta abierto",
 	"Esta cerrado",
@@ -190,25 +190,25 @@ static const char *fixedTextES_ActionOpen[] = {
 	"."
 };
 
-static const char *fixedTextEN_ActionClose[] = {
+static const char *const fixedTextEN_ActionClose[] = {
 	"This cannot be closed",
 	"It is already closed",
 	"The safe door is in the way"
 };
 
-static const char *fixedTextDE_ActionClose[] = {
+static const char *const fixedTextDE_ActionClose[] = {
 	"Das kann man nicht schlie\341en",
 	"Ist doch schon zu!",
 	"Die safet\201r ist Weg"
 };
 
-static const char *fixedTextES_ActionClose[] = {
+static const char *const fixedTextES_ActionClose[] = {
 	"No puede ser cerrado",
 	"Ya esta cerrado",
 	"La puerta de seguridad esta entre medias"
 };
 
-static const char *fixedTextEN_ActionMove[] = {
+static const char *const fixedTextEN_ActionMove[] = {
 	"This cannot be moved",
 	"It is bolted to the floor",
 	"It is too heavy",
@@ -216,21 +216,21 @@ static const char *fixedTextEN_ActionMove[] = {
 };
 
 
-static const char *fixedTextDE_ActionMove[] = {
+static const char *const fixedTextDE_ActionMove[] = {
 	"L\204\341t sich nicht bewegen",
 	"Festged\201belt in der Erde...",
 	"Oha, VIEL zu schwer",
 	"Der andere Kiste ist im Weg" // [sic]
 };
 
-static const char *fixedTextES_ActionMove[] = {
+static const char *const fixedTextES_ActionMove[] = {
 	"No puede moverse",
 	"Esta sujeto a la pared",
 	"Es demasiado pesado",
 	"El otro cajon esta en mitad"
 };
 
-static const char *fixedTextEN_ActionPick[] = {
+static const char *const fixedTextEN_ActionPick[] = {
 	"Nothing of interest here",
 	"It is bolted down",
 	"It is too big to carry",
@@ -242,7 +242,7 @@ static const char *fixedTextEN_ActionPick[] = {
 	"Government property for official use only"
 };
 
-static const char *fixedTextDE_ActionPick[] = {
+static const char *const fixedTextDE_ActionPick[] = {
 	"Nichts Interessantes da",
 	"Zu gut befestigt",
 	"Ist ja wohl ein bi\341chen zu gro\341, oder ?",
@@ -254,7 +254,7 @@ static const char *fixedTextDE_ActionPick[] = {
 	"Staatseigentum - Nur für den Dienstgebrauch !"
 };
 
-static const char *fixedTextES_ActionPick[] = {
+static const char *const fixedTextES_ActionPick[] = {
 	"No hay nada interesante",
 	"Esta anclado al suelo",
 	"Es muy grande para llevarlo",
@@ -266,7 +266,7 @@ static const char *fixedTextES_ActionPick[] = {
 	"Propiedad del gobierno para uso oficial"
 };
 
-static const char *fixedTextEN_ActionUse[] = {
+static const char *const fixedTextEN_ActionUse[] = {
 	"You can't do that",
 	"It had no effect",
 	"You can't reach it",
@@ -274,7 +274,7 @@ static const char *fixedTextEN_ActionUse[] = {
 	"Doors don't smoke"
 };
 
-static const char *fixedTextDE_ActionUse[] = {
+static const char *const fixedTextDE_ActionUse[] = {
 	"Nein, das geht wirklich nicht",
 	"Tja keinerlei Wirkung",
 	"Da kommst du nicht dran",
@@ -282,7 +282,7 @@ static const char *fixedTextDE_ActionUse[] = {
 	"Türen sind Nichtraucher!"
 };
 
-static const char *fixedTextES_ActionUse[] = {
+static const char *const fixedTextES_ActionUse[] = {
 	"No puedes hacerlo",
 	"No tuvo ningun efecto",
 	"No puedes alcanzarlo",
