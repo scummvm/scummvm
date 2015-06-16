@@ -605,17 +605,26 @@ bool ScalpelEngine::show3DOSplash() {
 bool ScalpelEngine::showCityCutscene3DO() {
 	_animation->_soundLibraryFilename = "TITLE.SND";
 
-	// Play intro music
-	_music->playMusic("prolog");
-
-	// Fade screen to grey
-	_screen->_backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
-	_screen->fadeIntoScreen3DO(2);
+	_screen->clear();
+	bool finished = _events->delay(2500, true);
 
 	// rain.aiff seems to be playing in an endless loop until
 	// sherlock logo fades away TODO
 
-	bool finished = _music->waitUntilMSec(3400, 0, 0, 3400);
+	if (finished) {
+		finished = _events->delay(2500, true);
+
+		// Play intro music
+		_music->playMusic("prolog");
+
+		// Fade screen to grey
+		_screen->_backBuffer1.fill(0xCE59); // RGB565: 25, 50, 25 (grey)
+		_screen->fadeIntoScreen3DO(2);
+	}
+
+	if (finished) {
+		finished = _music->waitUntilMSec(3400, 0, 0, 3400);
+	}
 
 	if (finished) {
 		_screen->_backBuffer1.fill(0); // fill backbuffer with black to avoid issues during fade from white
