@@ -113,8 +113,6 @@ public:
 	bool isPlaying();
 	uint32 getCurrentPosition();
 
-	bool waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay);
-
 	bool waitUntilMSec(uint32 msecTarget, uint32 maxMSec, uint32 additionalDelay, uint32 noMusicDelay);
 
 	/**

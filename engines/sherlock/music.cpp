@@ -507,41 +507,6 @@ uint32 Music::getCurrentPosition() {
 // This is used to wait for the music in certain situations like especially the intro
 // Note: the original game didn't do this, instead it just waited for certain amounts of time
 //       We do this, so that the intro graphics + music work together even on faster/slower hardware.
-bool Music::waitUntilTick(uint32 tick, uint32 maxTick, uint32 additionalDelay, uint32 noMusicDelay) {
-	uint32 currentTick = 0;
-
-	if (!_midiParser->isPlaying()) {
-		return _vm->_events->delay(noMusicDelay, true);
-	}
-	while (1) {
-		if (!_midiParser->isPlaying()) { // Music has stopped playing -> we are done
-			if (additionalDelay > 0) {
-				if (!_vm->_events->delay(additionalDelay, true))
-					return false;
-			}
-			return true;
-		}
-
-		currentTick = _midiParser->getTick();
-		//warning("waitUntilTick: %lx", currentTick);
-
-		if (currentTick <= maxTick) {
-			if (currentTick >= tick) {
-				if (additionalDelay > 0) {
-					if (!_vm->_events->delay(additionalDelay, true))
-						return false;
-				}
-				return true;
-			}
-		}
-		if (!_vm->_events->delay(10, true))
-			return false;
-	}
-}
-
-// This is used to wait for the music in certain situations like especially the intro
-// Note: the original game didn't do this, instead it just waited for certain amounts of time
-//       We do this, so that the intro graphics + music work together even on faster/slower hardware.
 bool Music::waitUntilMSec(uint32 msecTarget, uint32 msecMax, uint32 additionalDelay, uint32 noMusicDelay) {
 	uint32 msecCurrent = 0;
 

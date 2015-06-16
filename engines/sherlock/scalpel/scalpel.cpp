@@ -340,7 +340,7 @@ bool ScalpelEngine::showCityCutscene() {
 			_screen->fadeIn(palette, 3);
 
 			// Wait until the track got looped and the first few notes were played
-			finished = _music->waitUntilTick(0x104, 0x500, 0, 2500);
+			finished = _music->waitUntilMSec(4300, 21300, 0, 2500); // ticks 0x104 / ticks 0x500
 		}
 	}
 
@@ -365,7 +365,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 		_screen->fadeToBlack(2);
 
 		// wait until second lower main note
-		finished = _music->waitUntilTick(0x64a, 0xFFFF, 0, 1000); // 652
+		finished = _music->waitUntilMSec(26800, 0xFFFFFFFF, 0, 1000); // ticks 0x64A
 	}
 
 	if (finished) {
@@ -377,7 +377,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 		showLBV("scream.lbv");
 
 		// wait until first "scream" in music happened
-		finished = _music->waitUntilTick(0xabe, 0xFFFF, 0, 6000);
+		finished = _music->waitUntilMSec(45800, 0xFFFFFFFF, 0, 6000); // ticks 0xABE
 	}
 
 	if (finished) {
@@ -385,7 +385,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 		_screen->fadeToBlack(1);
 
 		// wait until after third "scream" in music happened
-		finished = _music->waitUntilTick(0xb80, 0xFFFF, 0, 2000);
+		finished = _music->waitUntilMSec(49000, 0xFFFFFFFF, 0, 2000); // ticks 0xB80
 	}
 
 	if (finished)
@@ -405,7 +405,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 		_screen->fadeIn(palette, 1);
 
 		// wait for music to end and wait an additional 2.5 seconds
-		finished = _music->waitUntilTick(0xFFFF, 0xFFFF, 2500, 3000);
+		finished = _music->waitUntilMSec(0xFFFFFFFF, 0xFFFFFFFF, 2500, 3000);
 	}
 
 	_animation->_gfxLibraryFilename = "";
@@ -427,7 +427,7 @@ bool ScalpelEngine::showStreetCutscene() {
 		_screen->fadeToBlack(2);
 
 		// wait for music a bit
-		finished = _music->waitUntilTick(0xE4, 0xFFFF, 0, 1000);
+		finished = _music->waitUntilMSec(3800, 0xFFFFFFFF, 0, 1000); // ticks 0xE4
 	}
 
 	if (finished)
