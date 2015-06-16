@@ -25,7 +25,7 @@
 
 namespace Sherlock {
 
-static const Common::String fixedTextEN[] = {
+static const char *fixedTextEN[] = {
 	// Window buttons
 	"Exit",
 	"Up",
@@ -72,7 +72,7 @@ static const Common::String fixedTextEN[] = {
 // small a-umlaut: 0x84 / octal 204
 // small o-umlaut: 0x94 / octal 224
 // small u-umlaut: 0x81 / octal 201
-static const Common::String fixedTextDE[] = {
+static const char *fixedTextDE[] = {
 	// Window buttons
 	"Zur\201ck",
 	"Hoch",
@@ -118,7 +118,7 @@ static const Common::String fixedTextDE[] = {
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
-static const Common::String fixedTextES[] = {
+static const char *fixedTextES[] = {
 	// Window buttons
 	"Exit",
 	"Subir",
@@ -163,7 +163,7 @@ static const Common::String fixedTextES[] = {
 
 // =========================================
 
-static const Common::String fixedTextEN_ActionOpen[] = {
+static const char *fixedTextEN_ActionOpen[] = {
 	"This cannot be opened",
 	"It is already open",
 	"It is locked",
@@ -172,7 +172,7 @@ static const Common::String fixedTextEN_ActionOpen[] = {
 	"."
 };
 
-static const Common::String fixedTextDE_ActionOpen[] = {
+static const char *fixedTextDE_ActionOpen[] = {
 	"Das kann man nicht \224ffnen",
 	"Ist doch schon offen!",
 	"Leider verschlossen",
@@ -181,7 +181,7 @@ static const Common::String fixedTextDE_ActionOpen[] = {
 	"."
 };
 
-static const Common::String fixedTextES_ActionOpen[] = {
+static const char *fixedTextES_ActionOpen[] = {
 	"No puede ser abierto",
 	"Ya esta abierto",
 	"Esta cerrado",
@@ -190,25 +190,25 @@ static const Common::String fixedTextES_ActionOpen[] = {
 	"."
 };
 
-static const Common::String fixedTextEN_ActionClose[] = {
+static const char *fixedTextEN_ActionClose[] = {
 	"This cannot be closed",
 	"It is already closed",
 	"The safe door is in the way"
 };
 
-static const Common::String fixedTextDE_ActionClose[] = {
+static const char *fixedTextDE_ActionClose[] = {
 	"Das kann man nicht schlie\341en",
 	"Ist doch schon zu!",
 	"Die safet\201r ist Weg"
 };
 
-static const Common::String fixedTextES_ActionClose[] = {
+static const char *fixedTextES_ActionClose[] = {
 	"No puede ser cerrado",
 	"Ya esta cerrado",
 	"La puerta de seguridad esta entre medias"
 };
 
-static const Common::String fixedTextEN_ActionMove[] = {
+static const char *fixedTextEN_ActionMove[] = {
 	"This cannot be moved",
 	"It is bolted to the floor",
 	"It is too heavy",
@@ -216,21 +216,21 @@ static const Common::String fixedTextEN_ActionMove[] = {
 };
 
 
-static const Common::String fixedTextDE_ActionMove[] = {
+static const char *fixedTextDE_ActionMove[] = {
 	"L\204\341t sich nicht bewegen",
 	"Festged\201belt in der Erde...",
 	"Oha, VIEL zu schwer",
 	"Der andere Kiste ist im Weg" // [sic]
 };
 
-static const Common::String fixedTextES_ActionMove[] = {
+static const char *fixedTextES_ActionMove[] = {
 	"No puede moverse",
 	"Esta sujeto a la pared",
 	"Es demasiado pesado",
 	"El otro cajon esta en mitad"
 };
 
-static const Common::String fixedTextEN_ActionPick[] = {
+static const char *fixedTextEN_ActionPick[] = {
 	"Nothing of interest here",
 	"It is bolted down",
 	"It is too big to carry",
@@ -242,7 +242,7 @@ static const Common::String fixedTextEN_ActionPick[] = {
 	"Government property for official use only"
 };
 
-static const Common::String fixedTextDE_ActionPick[] = {
+static const char *fixedTextDE_ActionPick[] = {
 	"Nichts Interessantes da",
 	"Zu gut befestigt",
 	"Ist ja wohl ein bi\341chen zu gro\341, oder ?",
@@ -254,7 +254,7 @@ static const Common::String fixedTextDE_ActionPick[] = {
 	"Staatseigentum - Nur für den Dienstgebrauch !"
 };
 
-static const Common::String fixedTextES_ActionPick[] = {
+static const char *fixedTextES_ActionPick[] = {
 	"No hay nada interesante",
 	"Esta anclado al suelo",
 	"Es muy grande para llevarlo",
@@ -266,7 +266,7 @@ static const Common::String fixedTextES_ActionPick[] = {
 	"Propiedad del gobierno para uso oficial"
 };
 
-static const Common::String fixedTextEN_ActionUse[] = {
+static const char *fixedTextEN_ActionUse[] = {
 	"You can't do that",
 	"It had no effect",
 	"You can't reach it",
@@ -274,7 +274,7 @@ static const Common::String fixedTextEN_ActionUse[] = {
 	"Doors don't smoke"
 };
 
-static const Common::String fixedTextDE_ActionUse[] = {
+static const char *fixedTextDE_ActionUse[] = {
 	"Nein, das geht wirklich nicht",
 	"Tja keinerlei Wirkung",
 	"Da kommst du nicht dran",
@@ -282,7 +282,7 @@ static const Common::String fixedTextDE_ActionUse[] = {
 	"Türen sind Nichtraucher!"
 };
 
-static const Common::String fixedTextES_ActionUse[] = {
+static const char *fixedTextES_ActionUse[] = {
 	"No puedes hacerlo",
 	"No tuvo ningun efecto",
 	"No puedes alcanzarlo",
@@ -290,7 +290,7 @@ static const Common::String fixedTextES_ActionUse[] = {
 	"Las puertas no fuman"
 };
 
-#define FIXEDTEXT_GETCOUNT(_name_) sizeof(_name_) / sizeof(Common::String)
+#define FIXEDTEXT_GETCOUNT(_name_) sizeof(_name_) / sizeof(byte *)
 #define FIXEDTEXT_ENTRY(_name_)    _name_, FIXEDTEXT_GETCOUNT(_name_)
 
 static const FixedTextActionEntry fixedTextEN_Actions[] = {
@@ -345,7 +345,7 @@ FixedText::FixedText(SherlockEngine *vm) : _vm(vm) {
 }
 
 const Common::String FixedText::getText(FixedTextId fixedTextId) {
-	return _curLanguageEntry->fixedTextArray[fixedTextId];
+	return Common::String(_curLanguageEntry->fixedTextArray[fixedTextId]);
 }
 
 const Common::String FixedText::getActionMessage(FixedTextActionId actionId, int messageIndex) {
@@ -354,7 +354,7 @@ const Common::String FixedText::getActionMessage(FixedTextActionId actionId, int
 	const FixedTextActionEntry *curActionEntry = &_curLanguageEntry->actionArray[actionId];
 
 	assert(messageIndex < curActionEntry->fixedTextArrayCount);
-	return curActionEntry->fixedTextArray[messageIndex];
+	return Common::String(curActionEntry->fixedTextArray[messageIndex]);
 }
 
 } // End of namespace Sherlock

@@ -81,13 +81,13 @@ enum FixedTextActionId {
 };
 
 struct FixedTextActionEntry {
-	const Common::String *fixedTextArray;
+	const char **fixedTextArray;
 	int   fixedTextArrayCount;
 };
 
 struct FixedTextLanguageEntry {
 	Common::Language language;
-	const Common::String *fixedTextArray;
+	const char **fixedTextArray;
 	const FixedTextActionEntry *actionArray;
 };
 
