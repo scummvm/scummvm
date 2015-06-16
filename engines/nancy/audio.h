@@ -27,9 +27,11 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace Nancy {
-
+namespace Audio {
 class SeekableAudioStream;
+}
+
+namespace Nancy {
 
 Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
