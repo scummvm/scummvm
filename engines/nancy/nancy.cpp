@@ -32,9 +32,13 @@
 
 #include "graphics/surface.h"
 
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
+
 #include "nancy/nancy.h"
 #include "nancy/resource.h"
 #include "nancy/iff.h"
+#include "nancy/audio.h"
 
 #include "engines/util.h"
 
@@ -116,15 +120,28 @@ Common::Error NancyEngine::run() {
 	// Setup mixer
 	syncSoundSettings();
 
+	// Some bits and pieces of the engine in order to make something happen
 	IFF *boot = new IFF(this, "boot");
 	if (!boot->load())
 		error("Failed to load boot script");
 	preloadCals(*boot);
+	readSound(*boot, "MSND", _menuSound);
 	_bsum = boot->getChunkStream("BSUM");
 	if (!_bsum)
 		error("Failed to load BOOT BSUM");
 	readBootSummary(*boot);
 	delete boot;
+
+	// Play music
+	Common::SeekableReadStream *mSnd = SearchMan.createReadStreamForMember(_menuSound.name + ".his");
+	if (mSnd) {
+		Audio::RewindableAudioStream *aStr = makeHISStream(mSnd, DisposeAfterUse::YES);
+		if (aStr) {
+			Audio::AudioStream *aStrLoop = Audio::makeLoopingAudioStream(aStr, 0);
+			Audio::SoundHandle handle;
+			_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &handle, aStrLoop);
+		}
+	}
 
 	// Show logo
 	Graphics::Surface surf;
@@ -205,6 +222,13 @@ Common::String NancyEngine::getSavegameFilename(int slot) {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
 
+Common::String NancyEngine::readFilename(Common::ReadStream *stream) const {
+	char buf[kMaxFilenameLen + 1];
+	int read = stream->read(buf, getFilenameLen());
+	buf[read] = 0;
+	return Common::String(buf);
+}
+
 void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, ImageList &list) {
 	byte count = _bsum->readByte();
 	debugC(1, kDebugEngine, "Found %i %s images", count, prefix.c_str());
@@ -217,11 +241,7 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 			error("Failed to read BOOT %s", chunkName.c_str());
 
 		Image image;
-		char buf[kMaxFilenameLen + 1];
-		int read = chunkStream->read(buf, getFilenameLen());
-		buf[read] = 0;
-
-		image.name = Common::String(buf);
+		image.name = readFilename(chunkStream);
 		chunkStream->skip(1);
 		image.width = chunkStream->readUint16LE();
 		image.height = chunkStream->readUint16LE();
@@ -234,6 +254,15 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 
 		delete chunkStream;
 	}
+}
+
+void NancyEngine::readSound(const IFF &boot, const Common::String &name, NancyEngine::Sound &sound) {
+	Common::SeekableReadStream *stream = boot.getChunkStream(name);
+
+	if (!stream)
+		error("Failed to read BOOT %s", name.c_str());
+
+	sound.name = readFilename(stream);
 }
 
 class NancyEngine_v0 : public NancyEngine {

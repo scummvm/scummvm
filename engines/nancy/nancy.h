@@ -113,13 +113,20 @@ protected:
 		uint16 height;
 	};
 
+	struct Sound {
+		Common::String name;
+	};
+
 	typedef Common::Array<Image> ImageList;
 
 	Common::SeekableReadStream *_bsum;
 	ImageList _logos, _frames;
+	Sound _menuSound;
 
 	void preloadCals(const IFF &boot);
 	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
+	void readSound(const IFF &boot, const Common::String &name, Sound &sound);
+	Common::String readFilename(Common::ReadStream *stream) const;
 
 	virtual uint getFilenameLen() const = 0;
 	virtual void readBootSummary(const IFF &boot) = 0;
