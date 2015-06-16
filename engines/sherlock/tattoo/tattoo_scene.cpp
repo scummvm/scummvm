@@ -465,7 +465,7 @@ void TattooScene::doBgAnim() {
 		events.wait(3);
 
 	screen._flushScreen = false;
-	_doBgAnimDone = false;
+	_doBgAnimDone = true;
 	ui._drawMenu = false;
 
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {

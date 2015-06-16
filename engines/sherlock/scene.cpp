@@ -232,6 +232,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_doBgAnimDone = true;
 	_tempFadeStyle = 0;
 	_exitZone = -1;
+	_doBgAnimDone = false;
 }
 
 Scene::~Scene() {
