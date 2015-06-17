@@ -283,4 +283,4 @@ void MidiDriver_MT32_uploadPatches(MidiDriver *driver, byte *driverData, int32 d
 	static_cast<MidiDriver_MT32 *>(driver)->uploadMT32Patches(driverData, driverSize);
 }
 
-} // End of namespace Sci
+} // End of namespace Sherlock

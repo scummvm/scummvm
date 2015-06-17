@@ -635,4 +635,4 @@ void MidiDriver_AdLib_newMusicData(MidiDriver *driver, byte *musicData, int32 mu
 	static_cast<MidiDriver_AdLib *>(driver)->newMusicData(musicData, musicDataSize);
 }
 
-} // End of namespace Sci
+} // End of namespace Sherlock

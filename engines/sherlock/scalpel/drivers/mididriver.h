@@ -36,6 +36,6 @@ extern MidiDriver *MidiDriver_MT32_create();
 extern void MidiDriver_MT32_uploadPatches(MidiDriver *driver, byte *driverData, int32 driverSize);
 extern void MidiDriver_MT32_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize);
 
-} // End of namespace Sci
+} // End of namespace Sherlock
 
 #endif // SHERLOCK_SOFTSEQ_MIDIDRIVER_H
