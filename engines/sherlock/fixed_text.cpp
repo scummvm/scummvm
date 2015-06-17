@@ -26,19 +26,19 @@
 namespace Sherlock {
 
 static const char *const fixedTextEN[] = {
-	// Window buttons
+	// SH1: Window buttons
 	"Exit",
 	"Up",
 	"Down",
-	// Inventory buttons
+	// SH1: Inventory buttons
 	"Exit",
 	"Look",
 	"Use",
 	"Give",
-	// Journal text
+	// SH1: Journal text
 	"Watson's Journal",
 	"Page %d",
-	// Journal buttons
+	// SH1: Journal buttons
 	"Exit",
 	"Back 10",
 	"Up",
@@ -48,12 +48,12 @@ static const char *const fixedTextEN[] = {
 	"First Page",
 	"Last Page",
 	"Print Text",
-	// Journal search
+	// SH1: Journal search
 	"Exit",
 	"Backward",
 	"Forward",
 	"Text Not Found !",
-	// Initial Inventory
+	// SH1: Initial Inventory
 	"A message requesting help",
 	"A number of business cards",
 	"Opera Tickets",
@@ -66,7 +66,7 @@ static const char *const fixedTextEN[] = {
 	"Tarot Cards",
 	"An ornate key",
 	"A pawn ticket",
-	// Verbs
+	// SH2: Verbs
 	"Open",
 	"Look",
 	"Talk",
@@ -78,19 +78,19 @@ static const char *const fixedTextEN[] = {
 // small o-umlaut: 0x94 / octal 224
 // small u-umlaut: 0x81 / octal 201
 static const char *const fixedTextDE[] = {
-	// Window buttons
+	// SH1: Window buttons
 	"Zur\201ck",
 	"Hoch",
 	"Runter",
-	// Inventory buttons
+	// SH1: Inventory buttons
 	"Zur\201ck",
 	"Schau",
 	"Benutze",
 	"Gib",
-	// Journal text
+	// SH1: Journal text
 	"Watsons Tagebuch",
 	"Seite %d",
-	// Journal buttons
+	// SH1: Journal buttons
 	"Zur\201ck",
 	"10 hoch",
 	"Hoch",
@@ -100,12 +100,12 @@ static const char *const fixedTextDE[] = {
 	"Erste Seite",
 	"Letzte Seite",
 	"Drucke Text",
-	// Journal search
+	// SH1: Journal search
 	"Zur\201ck",
 	"R\201ckw\204rts", // original: "Backward"
 	"Vorw\204rts", // original: "Forward"
 	"Text nicht gefunden!",
-	// Initial Inventory
+	// SH1: Initial Inventory
 	"Ein Hilferuf von Lestrade",
 	"Holmes' Visitenkarten",
 	"Karten f\201rs Opernhaus",
@@ -118,30 +118,30 @@ static const char *const fixedTextDE[] = {
 	"Ein Tarock-Kartenspiel", // [sic]
 	"Ein verzierter Schl\201ssel",
 	"Ein Pfandschein",
-	// Verbs
-	"Open",
-	"Look",
-	"Talk",
-	"Journal"
+	// SH2: Verbs
+	"\231ffne",
+	"Schau",
+	"Rede",
+	"Tagebuch"
 };
 
 // up-side down exclamation mark - 0xAD / octal 255
 // up-side down question mark - 0xA8 / octal 250
 // n with a wave on top - 0xA4 / octal 244
 static const char *const fixedTextES[] = {
-	// Window buttons
+	// SH1: Window buttons
 	"Exit",
 	"Subir",
 	"Bajar",
-	// Inventory buttons
+	// SH1: Inventory buttons
 	"Exit",
 	"Mirar",
 	"Usar",
 	"Dar",
-	// Journal text
+	// SH1: Journal text
 	"Diario de Watson",
 	"Pagina %d",
-	// Journal buttons
+	// SH1: Journal buttons
 	"Exit",
 	"Retroceder",
 	"Subir",
@@ -151,12 +151,12 @@ static const char *const fixedTextES[] = {
 	"1a pagina",
 	"Ult pagina",
 	"Imprimir",
-	// Journal search
+	// SH1: Journal search
 	"Exit",
 	"Retroceder",
 	"Avanzar",
 	"Texto no encontrado!",
-	// Initial Inventory
+	// SH1: Initial Inventory
 	"Un mensaje solicitando ayuda",
 	"Unas cuantas tarjetas de visita",
 	"Entradas para la opera",
@@ -169,7 +169,7 @@ static const char *const fixedTextES[] = {
 	"Unas cartas de Tarot",
 	"Una llave muy vistosa",
 	"Una papeleta de empe\244o",
-	// Verbs
+	// SH2: Verbs --- TODO: not known at the moment
 	"Open",
 	"Look",
 	"Talk",
@@ -178,6 +178,7 @@ static const char *const fixedTextES[] = {
 
 // =========================================
 
+// === Sherlock Holmes 1: Serrated Scalpel ===
 static const char *const fixedTextEN_ActionOpen[] = {
 	"This cannot be opened",
 	"It is already open",
@@ -334,6 +335,8 @@ static const FixedTextActionEntry fixedTextES_Actions[] = {
 
 // =========================================
 
+// TODO:
+// It seems there was a French version of Sherlock Holmes 2
 static const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE, fixedTextDE_Actions },
 	{ Common::ES_ESP,   fixedTextES, fixedTextES_Actions },
@@ -345,6 +348,8 @@ static const FixedTextLanguageEntry fixedTextLanguages[] = {
 
 // =========================================
 
+// TODO: split this class up into 2 classes. One for each Sherlock Holmes game
+// We definitely do not want to share fixed text between both, simply because translations may not be the same
 FixedText::FixedText(SherlockEngine *vm) : _vm(vm) {
 	// Figure out which fixed texts to use
 	Common::Language curLanguage = _vm->getLanguage();
