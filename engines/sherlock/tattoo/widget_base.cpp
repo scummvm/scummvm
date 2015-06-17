@@ -30,8 +30,13 @@ namespace Tattoo {
 WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
 }
 
+void WidgetBase::summonWindow() {
+	
+}
+
 void WidgetBase::banishWindow() {
 	// TODO
+	_surface.free();
 }
 
 } // End of namespace Tattoo

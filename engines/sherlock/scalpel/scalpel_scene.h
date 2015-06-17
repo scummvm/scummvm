@@ -81,7 +81,7 @@ public:
 	 * @param playRate		Play rate. 0 is invalid; 1=normal speed, 2=1/2 speed, etc.
 	 *		A negative playRate can also be specified to play the animation in reverse
 	 */
-	virtual int startCAnim(int cAnimNum, int playRate);
+	virtual int startCAnim(int cAnimNum, int playRate = 1);
 };
 
 } // End of namespace Scalpel

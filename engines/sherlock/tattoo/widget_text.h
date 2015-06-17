@@ -20,11 +20,10 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
-#define SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
+#ifndef SHERLOCK_TATTOO_WIDGET_TEXT_H
+#define SHERLOCK_TATTOO_WIDGET_TEXT_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
 #include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
@@ -33,30 +32,12 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetTooltip: public WidgetBase {
+class WidgetText: public WidgetBase {
 public:
-	WidgetTooltip(SherlockEngine *vm);
-	virtual ~WidgetTooltip() {}
+	WidgetText(SherlockEngine *vm);
+	virtual ~WidgetText() {}
 
-	/**
-	 * Handle updating the tooltip state
-	 */
-	void execute();
-
-	/**
-	 * Draw the tooltip if necessary
-	 */
-	void draw();
-
-	/**
-	 * Erase the area covered by the tooltip if it's active
-	 */
-	void erase();
-
-	/**
-	 * Erase any area of the screen drawn by the tooltip in the previous frame
-	 */
-	void erasePrevious();
+	void load(const Common::String &str);
 };
 
 } // End of namespace Tattoo

@@ -47,6 +47,7 @@ public:
 	Common::StringArray _verbCommands;
 public:
 	WidgetVerbs(SherlockEngine *vm);
+	virtual ~WidgetVerbs() {}
 
 	/**
 	 * Turns on the menu with all the verbs that are available for the given object

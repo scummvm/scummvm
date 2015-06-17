@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "sherlock/saveload.h"
 #include "sherlock/user_interface.h"
+#include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
 
@@ -49,8 +50,11 @@ private:
 	SaveMode _fileMode;
 	int _exitZone;
 	int _scriptZone;
+	int _cAnimFramePause;
 	WidgetTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
+	WidgetText _textWidget;
+	WidgetBase *_widget;
 private:
 	/**
 	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
@@ -118,6 +122,11 @@ private:
 	 * Handle displaying the quit menu
 	 */
 	void doQuitMenu();
+
+	/**
+	 * Free any active menu
+	 */
+	void freeMenu();
 public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;
@@ -130,6 +139,7 @@ public:
 	Common::KeyState _keyState;
 public:
 	TattooUserInterface(SherlockEngine *vm);
+	virtual ~TattooUserInterface() {}
 
 	/**
 	 * Handles restoring any areas of the back buffer that were/are covered by UI elements
@@ -147,10 +157,16 @@ public:
 	void initScrollVars();
 
 	/**
-	 * Display the long description for an object stored in it's _examine field, in a window that
-	 * will be shown at the bottom of the screen
+	 * Display the long description for an object in a window
 	 */
 	void lookAtObject();
+
+	/**
+	 * Display the passed long description for an object. If the flag firstTime is set,
+	 * the window will be opened to accomodate the text. Otherwise, the remaining text
+	 * will be printed in an already open window
+	 */
+	void printObjectDesc(const Common::String &str, bool firstTime);
 
 	/**
 	 * Handles displaying the journal
@@ -172,8 +188,6 @@ public:
 	 */
 	void pickUpObject(int objNum);
 public:
-	virtual ~TattooUserInterface() {}
-
 	/**
 	 * Main input handler for the user interface
 	 */

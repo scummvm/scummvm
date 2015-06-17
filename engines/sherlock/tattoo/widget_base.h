@@ -41,11 +41,17 @@ protected:
 	Surface _surface;
 public:
 	WidgetBase(SherlockEngine *vm);
+	virtual ~WidgetBase() {}
+
+	/**
+	 * Summon the window
+	 */
+	virtual void summonWindow();
 
 	/**
 	 * Close a currently active menu
 	 */
-	void banishWindow();
+	virtual void banishWindow();
 };
 
 } // End of namespace Tattoo

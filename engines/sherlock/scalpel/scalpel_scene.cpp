@@ -23,6 +23,7 @@
 #include "sherlock/scalpel/scalpel_scene.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/events.h"
 #include "sherlock/people.h"
@@ -490,7 +491,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 	People &people = *_vm->_people;
 	Resources &res = *_vm->_res;
 	Talk &talk = *_vm->_talk;
-	UserInterface &ui = *_vm->_ui;
+	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
 	Point32 tpPos, walkPos;
 	int tpDir, walkDir;
 	int tFrames = 0;

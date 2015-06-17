@@ -29,7 +29,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
-		_tooltipWidget(vm), _verbsWidget(vm) {
+		_tooltipWidget(vm), _verbsWidget(vm), _textWidget(vm) {
 	_menuBuffer = nullptr;
 	_invMenuBuffer = nullptr;
 	_invGraphic = nullptr;
@@ -44,6 +44,8 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 	_scriptZone = -1;
 	_arrowZone = _oldArrowZone = -1;
 	_activeObj = -1;
+	_cAnimFramePause = 0;
+	_widget = nullptr;
 }
 
 void TattooUserInterface::initScrollVars() {
@@ -53,7 +55,134 @@ void TattooUserInterface::initScrollVars() {
 }
 
 void TattooUserInterface::lookAtObject() {
-	// TODO
+	Events &events = *_vm->_events;
+	People &people = *_vm->_people;
+	Scene &scene = *_vm->_scene;
+	Sound &sound = *_vm->_sound;
+	Talk &talk = *_vm->_talk;
+	Common::Point mousePos = events.mousePos();
+	Common::String desc;
+	int cAnimSpeed = 0;
+
+	if (_personFound) {
+		desc = people[_bgFound - 1000]._examine;
+	} else {
+		// Check if there is a Look animation
+		if (_bgShape->_lookcAnim != 0) {
+			cAnimSpeed = _bgShape->_lookcAnim & 0xe0;
+			cAnimSpeed >>= 5;
+			++cAnimSpeed;
+
+			_cAnimFramePause = _bgShape->_lookFrames;
+			desc = _bgShape->_examine;
+
+			int cNum = (_bgShape->_lookcAnim & 0x1f) - 1;
+			scene.startCAnim(cNum);
+		} else if (_bgShape->_lookPosition.y != 0) {
+			// Need to walk to object before looking at it
+			people[HOLMES].walkToCoords(Common::Point(_bgShape->_lookPosition.x * FIXED_INT_MULTIPLIER,
+				_bgShape->_lookPosition.y * FIXED_INT_MULTIPLIER), _bgShape->_lookFacing);
+		}
+
+		if (!talk._talkToAbort) {
+			desc = _bgShape->_examine;
+
+			if (_bgShape->_lookFlag)
+				_vm->setFlags(_bgShape->_lookFlag);
+
+			// Find the Sound File to Play if there is one
+			if (!desc.hasPrefix("_")) {
+				for (uint idx = 0; idx < scene._objSoundList.size(); ++idx) {
+					// Get the object name up to the equals
+					const char *p = strchr(scene._objSoundList[idx].c_str(), '=');
+
+					// Form the name and remove any trailing spaces
+					Common::String name(scene._objSoundList[idx].c_str(), p);
+					while (name.hasSuffix(" "))
+						name.deleteLastChar();
+
+					// See if this Object Sound List entry matches the object's name
+					if (_bgShape->_name.compareToIgnoreCase(name)) {					
+						// Move forward to get the sound filename
+						while ((*p == ' ') || (*p == '='))
+							++p;
+
+						// If it's not "NONE", play the Sound File
+						Common::String soundName(p);
+						if (soundName.compareToIgnoreCase("NONE")) {
+							soundName.toLowercase();
+							if (!soundName.contains('.'))
+								soundName += ".wav";
+
+							sound.playSound(soundName, WAIT_RETURN_IMMEDIATELY);
+						}
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// Only show the desciption if the object has one, and if no talk file interrupted while walking to it
+	if (!talk._talkToAbort && !desc.empty()) {
+		if (_cAnimFramePause == 0)
+			printObjectDesc(desc, true);
+		else
+			// The description was already printed by an animation
+			_cAnimFramePause = 0;
+	} else if (desc.empty()) {
+		// There was no description to display, so reset back to STD_MODE
+		_menuMode = STD_MODE;
+	}
+}
+
+void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
+	Events &events = *_vm->_events;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Talk &talk = *_vm->_talk;
+
+	if (str.hasPrefix("_")) {
+		// The passed string specifies a talk file
+		_lookScriptFlag = true;
+		events.setCursor(MAGNIFY);
+		int savedSelector = _selector;
+
+		freeMenu();
+		if (!_invLookFlag)
+			_windowOpen = false;
+
+		talk.talkTo(str.c_str() + 1);
+		_lookScriptFlag = false;
+
+		if (talk._talkToAbort) {
+			events.setCursor(ARROW);
+			return;
+		}
+
+		// See if we're looking at an inventory item
+		if (_invLookFlag) {
+			_selector = _oldSelector = savedSelector;
+			doInventory(0);
+			_invLookFlag = false;
+
+		} else {
+			// Nope
+			events.setCursor(ARROW);
+			_key = -1;
+			_menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+			events._pressed = events._released = events._rightReleased = false;
+			events._oldButtons = 0;
+		}
+	} else {
+		// Show text dialog
+		_textWidget.load(str);
+
+		if (firstTime)
+			_selector = _oldSelector = -1;
+
+		_drawMenu = _windowOpen = true;
+	}
 }
 
 void TattooUserInterface::doJournal() {
@@ -477,6 +606,13 @@ void TattooUserInterface::pickUpObject(int objNum) {
 
 void TattooUserInterface::doQuitMenu() {
 	// TODO
+}
+
+void TattooUserInterface::freeMenu() {
+	if (_widget != nullptr) {
+		_widget->banishWindow();
+		_widget = nullptr;
+	}
 }
 
 } // End of namespace Tattoo

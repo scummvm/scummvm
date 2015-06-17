@@ -20,47 +20,21 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
-#define SHERLOCK_TATTOO_WIDGET_TOOLTIP_H
-
-#include "common/scummsys.h"
-#include "common/rect.h"
-#include "sherlock/tattoo/widget_base.h"
+#include "sherlock/tattoo/widget_text.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
-class SherlockEngine;
-
 namespace Tattoo {
 
-class WidgetTooltip: public WidgetBase {
-public:
-	WidgetTooltip(SherlockEngine *vm);
-	virtual ~WidgetTooltip() {}
+WidgetText::WidgetText(SherlockEngine *vm) : WidgetBase(vm) {
+}
 
-	/**
-	 * Handle updating the tooltip state
-	 */
-	void execute();
-
-	/**
-	 * Draw the tooltip if necessary
-	 */
-	void draw();
-
-	/**
-	 * Erase the area covered by the tooltip if it's active
-	 */
-	void erase();
-
-	/**
-	 * Erase any area of the screen drawn by the tooltip in the previous frame
-	 */
-	void erasePrevious();
-};
+void WidgetText::load(const Common::String &str) {
+	// TODO
+}
 
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
-
-#endif

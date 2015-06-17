@@ -129,11 +129,6 @@ public:
 	 * Clear any active text window
 	 */
 	virtual void clearWindow() {}
-
-	/**
-	 * Print the previously selected object's decription
-	 */
-	virtual void printObjectDesc() {}
 };
 
 } // End of namespace Sherlock
