@@ -60,6 +60,9 @@ MidiParser_SH::MidiParser_SH() {
 	_beats = 0;
 	_lastEvent = 0;
 	_trackEnd = nullptr;
+
+	_musData     = nullptr;
+	_musDataSize = 0;
 }
 
 MidiParser_SH::~MidiParser_SH() {
@@ -166,22 +169,26 @@ void MidiParser_SH::parseNextEvent(EventInfo &info) {
 	}// switch (info.command())
 }
 
-bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
+bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 	Common::StackLock lock(_mutex);
 
 	debugC(kDebugLevelMusic, "Music: loadMusic()");
 	unloadMusic();
 
-	byte  *headerPtr  = data;
-	byte  *pos        = data;
+	_musData     = musData;
+	_musDataSize = musDataSize;
+
+	byte  *headerPtr = _musData + 12; // skip over the already checked SPACE header
+	byte  *pos       = headerPtr;
+
 	uint16 headerSize = READ_LE_UINT16(headerPtr);
-	assert(headerSize == 0x7F);
+	assert(headerSize == 0x7F); // Security check
 
 	// Skip over header
 	pos += headerSize;
 
 	_lastEvent = 0;
-	_trackEnd = data + size;
+	_trackEnd = _musData + _musDataSize;
 
 	_numTracks = 1;
 	_tracks[0] = pos;
@@ -191,6 +198,16 @@ bool MidiParser_SH::loadMusic(byte *data, uint32 size) {
 	setTrack(0);
 
 	return true;
+}
+
+void MidiParser_SH::unloadMusic() {
+	Common::StackLock lock(_mutex);
+
+	if (_musData) {
+		delete[] _musData;
+		_musData = NULL;
+		_musDataSize = 0;
+	}
 }
 
 /*----------------------------------------------------------------*/
@@ -204,9 +221,6 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_midiOption = false;
 	_musicVolume = 0;
 
-	_midiMusicData = NULL;
-	_midiMusicDataSize = 0;
-
 	if (IS_3DO) {
 		// 3DO - uses digital samples for music
 		_musicOn = true;
@@ -219,6 +233,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	MidiDriver::DeviceHandle dev;
 
 	if (IS_SERRATED_SCALPEL) {
+		// Serrated Scalpel: used an internal Electronic Arts .MUS music engine
 		_midiParser = new MidiParser_SH();
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 		_musicType = MidiDriver::getMusicType(dev);
@@ -243,6 +258,8 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			break;
 		}
 	} else {
+		// Rose Tattooo: seems to use Miles Audio 3
+
 		// TODO: AdLib support uses ScummVM's builtin GM to AdLib
 		// conversion. This won't match the original. I'm also
 		// uncertain about the MT-32 case, but it plays at least.
@@ -287,15 +304,18 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 Music::~Music() {
 	stopMusic();
+	if (_midiDriver) {
+		_midiDriver->setTimerCallback(this, NULL);
+	}
 	if (_midiParser) {
 		_midiParser->stopPlaying();
 		delete _midiParser;
+		_midiParser = nullptr;
 	}
 	if (_midiDriver) {
 		_midiDriver->close();
 		delete _midiDriver;
 	}
-	freeSong();
 }
 
 bool Music::loadSong(int songNumber) {
@@ -358,10 +378,10 @@ bool Music::playMusic(const Common::String &name) {
 		Common::String midiMusicName = (IS_SERRATED_SCALPEL) ? name + ".MUS" : name + ".XMI";
 		Common::SeekableReadStream *stream = _vm->_res->load(midiMusicName, "MUSIC.LIB");
 
-		_midiMusicData = new byte[stream->size()];
-		_midiMusicDataSize = stream->size();
+		byte *midiMusicData     = new byte[stream->size()];
+		int32 midiMusicDataSize = stream->size();
 
-		stream->read(_midiMusicData, _midiMusicDataSize);
+		stream->read(midiMusicData, midiMusicDataSize);
 		delete stream;
 
 		// for dumping the music tracks
@@ -373,30 +393,46 @@ bool Music::playMusic(const Common::String &name) {
 		outFile.close();
 #endif
 
-		if (_midiMusicDataSize < 14) {
+		if (midiMusicDataSize < 14) {
 			warning("Music: not enough data in music file");
+			delete[] midiMusicData;
 			return false;
 		}
 
-		byte *dataPos = _midiMusicData;
-		int32 dataSize = _midiMusicDataSize;
+		byte  *dataPos  = midiMusicData;
+		uint32 dataSize = midiMusicDataSize;
 
 		if (IS_SERRATED_SCALPEL) {
 			if (memcmp("            ", dataPos, 12)) {
 				warning("Music: expected header not found in music file");
+				delete[] midiMusicData;
 				return false;
 			}
 			dataPos += 12;
 			dataSize -= 12;
 
+			if (dataSize < 0x7F) {
+				warning("Music: expected music header not found in music file");
+				delete[] midiMusicData;
+				return false;
+			}
+
 			uint16 headerSize = READ_LE_UINT16(dataPos);
 			if (headerSize != 0x7F) {
 				warning("Music: header is not as expected");
+				delete[] midiMusicData;
 				return false;
 			}
 		} else {
+			if (dataSize < 4) {
+				warning("Music: expected music header not found in music file");
+				delete[] midiMusicData;
+				return false;
+			}
+
 			if (memcmp("FORM", dataPos, 4)) {
 				warning("Music: expected header not found in music file");
+				delete[] midiMusicData;
 				return false;
 			}
 		}
@@ -418,7 +454,7 @@ bool Music::playMusic(const Common::String &name) {
 			break;
 		}
 
-		_midiParser->loadMusic(dataPos, dataSize);
+		_midiParser->loadMusic(midiMusicData, midiMusicDataSize);
 
 	} else {
 		// 3DO: sample based
@@ -467,14 +503,12 @@ void Music::startSong() {
 }
 
 void Music::freeSong() {
-	if (_midiMusicData) {
+	if (!IS_3DO) {
 		if (_midiParser->isPlaying())
 			_midiParser->stopPlaying();
 
-		// Free the MIDI data buffer
-		delete[] _midiMusicData;
-		_midiMusicData = NULL;
-		_midiMusicDataSize = 0;
+		// Free the MIDI MUS data buffer
+		_midiParser->unloadMusic();
 	}
 }
 

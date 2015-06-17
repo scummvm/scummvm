@@ -43,7 +43,7 @@ public:
 
 protected:
 	Common::Mutex _mutex;
-	virtual void parseNextEvent(EventInfo &info);
+	void parseNextEvent(EventInfo &info);
 
 	uint8 _beats;
 	uint8 _lastEvent;
@@ -51,7 +51,12 @@ protected:
 	byte *_trackEnd;
 
 public:
-	virtual bool loadMusic(byte *data, uint32 size);
+	bool loadMusic(byte *musData, uint32 musSize);
+	void unloadMusic();
+
+private:
+	byte  *_musData;
+	uint32 _musDataSize;
 };
 
 class Music {
@@ -62,8 +67,6 @@ private:
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;
-	byte *_midiMusicData;
-	int32 _midiMusicDataSize;
 public:
 	bool _musicPlaying;
 	bool _musicOn;
