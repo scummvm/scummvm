@@ -140,8 +140,8 @@ void BaseObject::checkObject() {
 	if (_seqTo) {
 		byte *ptr = &_sequences[_frameNumber];
 		if (*ptr == _seqTo) {
-			// The sequence is completed
-			*ptr = _seqTo + SEQ_TO_CODE + 128;	// Reset to normal
+			// The sequence is completed. Reset to normal
+			*ptr = _seqTo + (IS_ROSE_TATTOO ? 0 : SEQ_TO_CODE + 128);
 			_seqTo = 0;
 		} else {
 			// Continue doing sequence
