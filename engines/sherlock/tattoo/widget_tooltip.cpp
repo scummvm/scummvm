@@ -28,7 +28,7 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : _vm(vm) {
+WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetBase(vm) {
 }
 
 void WidgetTooltip::execute() {

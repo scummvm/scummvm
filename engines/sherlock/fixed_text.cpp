@@ -65,7 +65,12 @@ static const char *const fixedTextEN[] = {
 	"A letter folded many times",
 	"Tarot Cards",
 	"An ornate key",
-	"A pawn ticket"
+	"A pawn ticket",
+	// Verbs
+	"Open",
+	"Look",
+	"Talk",
+	"Journal"
 };
 
 // sharp-s       : 0xE1 / octal 341
@@ -112,7 +117,12 @@ static const char *const fixedTextDE[] = {
 	"Ein mehrfach gefalteter Briefbogen",
 	"Ein Tarock-Kartenspiel", // [sic]
 	"Ein verzierter Schl\201ssel",
-	"Ein Pfandschein"
+	"Ein Pfandschein",
+	// Verbs
+	"Open",
+	"Look",
+	"Talk",
+	"Journal"
 };
 
 // up-side down exclamation mark - 0xAD / octal 255
@@ -158,7 +168,12 @@ static const char *const fixedTextES[] = {
 	"Un carta muy plegada",
 	"Unas cartas de Tarot",
 	"Una llave muy vistosa",
-	"Una papeleta de empe\244o"
+	"Una papeleta de empe\244o",
+	// Verbs
+	"Open",
+	"Look",
+	"Talk",
+	"Journal"
 };
 
 // =========================================

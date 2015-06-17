@@ -52,6 +52,14 @@ void TattooUserInterface::initScrollVars() {
 	_targetScroll.x = _targetScroll.y = 0;
 }
 
+void TattooUserInterface::lookAtObject() {
+	// TODO
+}
+
+void TattooUserInterface::doJournal() {
+	// TODO
+}
+
 void TattooUserInterface::handleInput() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
@@ -365,7 +373,7 @@ if (!flag && events._released) {
 
 		if (events._rightReleased) {
 			// Show the verbs menu for the highlighted object
-			activateVerbMenu(!noDesc);
+			_verbsWidget.activateVerbMenu(!noDesc);
 		} else if (_personFound || (_bgFound != -1 && _bgFound < 1000 && _bgShape->_aType == PERSON)) {
 			// The object found is a person (the default for people is TALK)
 			talk.talk(_bgFound);
@@ -455,10 +463,6 @@ void TattooUserInterface::turnTextOff() {
 	// TODO
 }
 
-void TattooUserInterface::doJournal() {
-	// TODO
-}
-
 void TattooUserInterface::doInventory(int mode) {
 	// TODO
 }
@@ -467,15 +471,11 @@ void TattooUserInterface::doControls() {
 	// TODO
 }
 
+void TattooUserInterface::pickUpObject(int objNum) {
+	// TOOD
+}
+
 void TattooUserInterface::doQuitMenu() {
-	// TODO
-}
-
-void TattooUserInterface::activateVerbMenu(bool objectsOn) {
-	// TODO
-}
-
-void TattooUserInterface::lookAtObject() {
 	// TODO
 }
 

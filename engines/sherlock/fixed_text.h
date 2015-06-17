@@ -68,7 +68,12 @@ enum FixedTextId {
 	kFixedText_InitInventory_Letter,
 	kFixedText_InitInventory_Tarot,
 	kFixedText_InitInventory_OrnateKey,
-	kFixedText_InitInventory_PawnTicket
+	kFixedText_InitInventory_PawnTicket,
+	// Verbs
+	kFixedText_Verb_Open,
+	kFixedText_Verb_Look,
+	kFixedText_Verb_Talk,
+	kFixedText_Verb_Journal
 };
 
 enum FixedTextActionId {

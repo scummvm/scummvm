@@ -41,6 +41,7 @@ Events::Events(SherlockEngine *vm): _vm(vm) {
 	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
+	_firstPress = false;
 
 	if (_vm->_interactiveFl)
 		loadCursors("rmouse.vgs");
@@ -205,6 +206,7 @@ void Events::clearEvents() {
 	_pressed = _released = false;
 	_rightPressed = _rightReleased = false;
 	_oldButtons = _oldRightButton = false;
+	_firstPress = false;
 }
 
 void Events::clearKeyboard() {
@@ -246,6 +248,8 @@ bool Events::delay(uint32 time, bool interruptable) {
 }
 
 void Events::setButtonState() {
+	_firstPress = ((_mouseButtons & 1) && !_pressed) || ((_mouseButtons & 2) && !_rightPressed);
+
 	_released = _rightReleased = false;
 	if (_mouseButtons & LEFT_BUTTON)
 		_pressed = _oldButtons = true;

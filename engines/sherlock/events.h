@@ -57,6 +57,7 @@ public:
 	bool _rightReleased;
 	bool _oldButtons;
 	bool _oldRightButton;
+	bool _firstPress;
 	Common::Stack<Common::KeyState> _pendingKeys;
 public:
 	Events(SherlockEngine *vm);

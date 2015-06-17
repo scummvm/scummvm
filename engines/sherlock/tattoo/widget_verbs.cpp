@@ -21,27 +21,158 @@
  */
 
 #include "sherlock/tattoo/widget_verbs.h"
+#include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetVerbs::WidgetVerbs(SherlockEngine *vm) : _vm(vm) {
+WidgetVerbs::WidgetVerbs(SherlockEngine *vm) : WidgetBase(vm) {
 	_selector = _oldSelector = -1;
+	_outsideMenu = false;
+}
+
+void WidgetVerbs::activateVerbMenu(bool objectsOn) {
+	// TODO
 }
 
 void WidgetVerbs::execute() {
+	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	People &people = *_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Talk &talk = *_vm->_talk;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+	Common::Point scenePos = mousePos + ui._currentScroll;
+	bool noDesc = false;
+
+	Common::String strLook = fixedText.getText(kFixedText_Verb_Look);
+	Common::String strTalk = fixedText.getText(kFixedText_Verb_Talk);
+	Common::String strJournal = fixedText.getText(kFixedText_Verb_Journal);
+
 	checkTabbingKeys(_verbCommands.size());
 
 	// Highlight verb display as necessary
 	highlightVerbControls();
 
-	// TODO
+	// Flag if the user has started pressing the button with the cursor outsie the menu
+	if (events._firstPress && !_bounds.contains(mousePos))
+		_outsideMenu = true;
+
+	// See if they released the mouse button
+	if (events._released || events._released) {
+		// See if they want to close the menu (they clicked outside of the menu)
+		if (!_bounds.contains(mousePos)) {
+			if (_outsideMenu) {
+				// Free the current menu graphics & erase the menu
+				banishWindow();
+
+				if (events._rightReleased) {
+					// Reset the selected shape to what was clicked on
+					ui._bgFound = scene.findBgShape(scenePos);
+					ui._personFound = ui._bgFound >= 1000;
+					Object *_bgShape = ui._personFound ? nullptr : &scene._bgShapes[ui._bgFound];
+
+					if (ui._personFound) {
+						if (people[ui._bgFound - 1000]._description.empty() || people[ui._bgFound - 1000]._description.hasPrefix(" "))
+							noDesc = true;
+					} else if (ui._bgFound != -1) {
+						if (_bgShape->_description.empty() || _bgShape->_description.hasPrefix(" "))
+							noDesc = true;
+					} else {
+						noDesc = true;
+					}
+
+					// Call the Routine to turn on the Commands for this Object
+					activateVerbMenu(!noDesc);
+				} else {
+					// See if we're in a Lab Table Room
+					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+				}
+			}
+		} else if (_bounds.contains(mousePos)) {
+			// Mouse is within the menu
+			// Erase the menu
+			banishWindow();
+
+			// See if they are activating the Look Command
+			if (!_verbCommands[_selector].compareToIgnoreCase(strLook)) {
+				ui._bgFound = ui._activeObj;
+				if (ui._activeObj >= 1000) {
+					ui._personFound = true;
+				} else {
+					ui._personFound = false;
+					ui._bgShape = &scene._bgShapes[ui._activeObj];
+				}
+
+				ui.lookAtObject();
+
+			} else if (!_verbCommands[_selector].compareToIgnoreCase(strTalk)) {
+				// Talk command is being activated
+				talk.talk(ui._activeObj);
+				ui._activeObj = -1;
+			
+			} else if (!_verbCommands[_selector].compareToIgnoreCase(strJournal)) {
+				ui.doJournal();
+
+				// See if we're in a Lab Table scene
+				ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+			} else if (_selector >= ((int)_verbCommands.size() - 2)) {
+				switch (_selector - (int)_verbCommands.size() + 2) {
+				case 0:
+					// Inventory
+					ui.doInventory(2);
+					break;
+
+				case 1:
+					// Options
+					ui.doControls();
+					break;
+
+				default:
+					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+					break;
+				}
+			} else {
+				// If they have selected anything else, process it
+				people[HOLMES].gotoStand();
+
+				if (ui._activeObj < 1000) {
+					for (int idx = 0; idx < 6; ++idx) {
+						if (!_verbCommands[_selector].compareToIgnoreCase(scene._bgShapes[ui._activeObj]._use[idx]._verb)) {
+							// See if they are Picking this object up
+							if (!scene._bgShapes[ui._activeObj]._use[idx]._target.compareToIgnoreCase("*PICKUP"))
+								ui.pickUpObject(ui._activeObj);
+							else
+								ui.checkAction(scene._bgShapes[ui._activeObj]._use[idx], ui._activeObj);
+						}
+					}
+				} else {
+					for (int idx = 0; idx < 2; ++idx) {
+						if (!_verbCommands[_selector].compareToIgnoreCase(people[ui._activeObj - 1000]._use[idx]._verb))
+							ui.checkAction(people[ui._activeObj - 1000]._use[idx], ui._activeObj);
+					}
+				}
+
+				ui._activeObj = -1;
+				if (ui._menuMode != MESSAGE_MODE) {
+					// See if we're in a Lab Table Room
+					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+				}
+			}
+		}
+	} else if (ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+		// User closing the menu with the ESC key
+		banishWindow();
+		ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+	}
 }
 
 void WidgetVerbs::checkTabbingKeys(int numOptions) {
-
+	// TODO
 }
 
 void WidgetVerbs::highlightVerbControls() {

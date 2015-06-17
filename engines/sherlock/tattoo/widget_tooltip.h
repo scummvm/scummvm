@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "sherlock/surface.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
@@ -33,11 +33,7 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetTooltip {
-private:
-	SherlockEngine *_vm;
-	Common::Rect _bounds, _oldBounds;
-	Surface _surface;
+class WidgetTooltip: public WidgetBase {
 public:
 	WidgetTooltip(SherlockEngine *vm);
 

@@ -61,11 +61,6 @@ protected:
 	SherlockEngine *_vm;
 
 	UserInterface(SherlockEngine *vm);
-
-	/**
-	 * Called for OPEN, CLOSE, and MOVE actions are being done
-	 */
-	void checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
 public:
 	MenuMode _menuMode;
 	int _menuCounter;
@@ -89,6 +84,11 @@ public:
 	static UserInterface *init(SherlockEngine *vm);
 	virtual ~UserInterface() {}
 
+	/**
+	 * Called for OPEN, CLOSE, and MOVE actions are being done
+	 */
+	void checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId = kFixedTextAction_Invalid);
+public:
 	/**
 	 * Resets the user interface
 	 */

@@ -45,14 +45,10 @@ private:
 	Surface *_invMenuBuffer;
 	Surface *_invGraphic;
 	Common::Array<Common::Rect> _grayAreas;
-	Object *_bgShape;
-	bool _personFound;
 	int _lockoutTimer;
-	Common::KeyState _keyState;
 	SaveMode _fileMode;
 	int _exitZone;
 	int _scriptZone;
-	int _activeObj;
 	WidgetTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
 private:
@@ -119,41 +115,19 @@ private:
 	void turnTextOff();
 
 	/**
-	 * Handles displaying the journal
-	 */
-	void doJournal();
-
-	/**
-	 * Put the game in inventory mode by opening the inventory dialog
-	 */
-	void doInventory(int mode);
-	
-	/**
-	 * Handle the display of the options/setup menu
-	 */
-	void doControls();
-
-	/**
 	 * Handle displaying the quit menu
 	 */
 	void doQuitMenu();
-
-	/**
-	 * Turn on the command menu showing available actions that can be done on a given item
-	 */
-	void activateVerbMenu(bool objectsOn);
-
-	/**
-	 * Display the long description for an object stored in it's _examine field, in a window that
-	 * will be shown at the bottom of the screen
-	 */
-	void lookAtObject();
 public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;
 	bool _drawMenu;
 	int _bgFound, _oldBgFound;
 	int _arrowZone, _oldArrowZone;
+	Object *_bgShape;
+	bool _personFound;
+	int _activeObj;
+	Common::KeyState _keyState;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 
@@ -171,6 +145,32 @@ public:
 	 * Initializes scroll variables
 	 */
 	void initScrollVars();
+
+	/**
+	 * Display the long description for an object stored in it's _examine field, in a window that
+	 * will be shown at the bottom of the screen
+	 */
+	void lookAtObject();
+
+	/**
+	 * Handles displaying the journal
+	 */
+	void doJournal();
+
+	/**
+	 * Put the game in inventory mode by opening the inventory dialog
+	 */
+	void doInventory(int mode);
+
+	/**
+	 * Handle the display of the options/setup menu
+	 */
+	void doControls();
+
+	/**
+	 * Pick up the selected object
+	 */
+	void pickUpObject(int objNum);
 public:
 	virtual ~TattooUserInterface() {}
 
