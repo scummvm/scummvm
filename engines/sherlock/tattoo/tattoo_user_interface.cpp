@@ -467,16 +467,7 @@ void TattooUserInterface::doStandardControl() {
 	default:
 		break;
 	}
-static bool flag = false;	//***DEBUG**** - temporarily being used for testing walking */
-if (!flag && events._released) {
-	flag = true;
-	people._allowWalkAbort = true;
-	people[HOLMES]._walkDest = Common::Point(235, 370);
-	people[HOLMES].goAllTheWay();
 
-	events._released = false;
-	return;
-}
 	// See if a mouse button was released
 	if (events._released || events._rightReleased) {
 		// See if the mouse was released in an exit (Arrow) zone. Unless it's also pointing at an object
