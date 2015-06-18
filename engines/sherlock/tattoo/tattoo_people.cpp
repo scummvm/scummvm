@@ -1239,6 +1239,17 @@ bool TattooPeople::loadWalk() {
 	return result;
 }
 
+
+void TattooPeople::pullNPCPaths() {
+	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+		TattooPerson &p = (*this)[idx];
+		if (p._npcMoved) {
+			while (!p._pathStack.empty())
+				p.pullNPCPath();
+		}
+	}
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

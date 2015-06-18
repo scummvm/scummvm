@@ -202,7 +202,9 @@ void Talk::talkTo(const Common::String &filename) {
 	if (IS_SERRATED_SCALPEL) {
 		// Restore any pressed button
 		if (!ui._windowOpen && savedMode != STD_MODE)
-			((Scalpel::ScalpelUserInterface *)_vm->_ui)->restoreButton((int)(savedMode - 1));
+			static_cast<Scalpel::ScalpelUserInterface *>(_vm->_ui)->restoreButton((int)(savedMode - 1));
+	} else {
+		static_cast<Tattoo::TattooPeople *>(_vm->_people)->pullNPCPaths();
 	}
 
 	// Clear the ui counter so that anything displayed on the info line
@@ -1118,6 +1120,9 @@ void Talk::doScript(const Common::String &script) {
 		pullSequence();
 		if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
 			people.clearTalking();
+
+		if (IS_ROSE_TATTOO)
+			static_cast<Tattoo::TattooPeople *>(_vm->_people)->pullNPCPaths();
 	}
 }
 
