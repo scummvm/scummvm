@@ -100,7 +100,8 @@ TattooPerson::TattooPerson() : Person() {
 	_savedNpcSequence = 0;
 	_savedNpcFrame = 0;
 	_updateNPCPath = true;
-	_npcPause = false;
+	_npcPause = 0;
+	_lookHolmes = false;
 }
 
 void TattooPerson::freeAltGraphics() {
@@ -577,7 +578,221 @@ void TattooPerson::clearNPC() {
 }
 
 void TattooPerson::updateNPC() {
-	warning("TODO: updateNPC");
+	People &people = *_vm->_people;
+	Talk &talk = *_vm->_talk;
+
+	// If the NPC isn't on, or it's in Talk or Listen Mode, then return without doing anything
+	if (_type != CHARACTER || _sequenceNumber >= TALK_UPRIGHT)
+		return;
+
+	// If the NPC is paused, just decrement his pause counter and exit
+	if (_npcPause) {
+		// Decrement counter
+		--_npcPause;
+
+		// Now see if we need to update the NPC's frame sequence so that he faces Holmes
+		if (_lookHolmes) {
+			// See where Holmes is with respect to the NPC (x coordinate)			
+			_npcFacing =  (people[HOLMES]._position.x < _position.x) ? STOP_LEFT : STOP_RIGHT;
+
+			// See where Holmes is with respect to the NPC (y coordinate)
+			if (people[HOLMES]._position.y < (_position.y - 10 * FIXED_INT_MULTIPLIER)) {
+				// Holmes is above the NPC so reset the facing to a diagonal up
+				_npcFacing = (_npcFacing == STOP_RIGHT) ? STOP_UPRIGHT : STOP_UPLEFT;
+			} else  if (people[HOLMES]._position.y > (_position.y + 10 * FIXED_INT_MULTIPLIER)) {
+				// Holmes is below the NPC so reset the facing to a diagonal down
+				_npcFacing = (_npcFacing == STOP_RIGHT) ? STOP_DOWNRIGHT : STOP_DOWNLEFT;
+			}
+
+			// See if we need to set the old_walk_sequence so the NPC will put his arms 
+			// up if he turns another way
+			if (_sequenceNumber != _npcFacing)
+				_oldWalkSequence = _sequenceNumber;
+
+			gotoStand();
+		}
+	} else {
+		// Reset the look flag so the NPC won't face Holmes anymore
+		_lookHolmes = false;
+
+		// See if the NPC is stopped or not. Don't do anything if he's moving
+		if (!_walkCount) {
+			// If there is no new command, reset the path back to the beginning
+			if (!_npcPath[_npcIndex])
+				_npcIndex = 0;
+
+			// The NPC is stopped and any pause he was doing is done. We can now see what 
+			// the next command in the NPC path is.
+
+			// Scan Past any NPC Path Labels since they do nothing except mark places for If's and Goto's
+			while (_npcPath[_npcIndex] == NPCPATH_PATH_LABEL)
+				_npcIndex += 2;
+
+			if (_npcPath[_npcIndex]) {
+				_npcFacing = -1;
+
+				switch (_npcPath[_npcIndex]) {
+				case NPCPATH_SET_DEST: {
+					// Set the NPC's new destination
+					int xp = (_npcPath[_npcIndex + 1] - 1) * 256 + _npcPath[_npcIndex + 2] - 1;
+					if (xp > 16384)
+						xp = -1 * (xp - 16384);
+					_walkDest.x = xp;
+					_walkDest.y = (_npcPath[_npcIndex + 3] - 1) * 256 + _npcPath[_npcIndex + 4] - 1;
+					_npcFacing = _npcPath[_npcIndex + 5] - 1;
+
+					goAllTheWay();
+					_npcIndex += 6;
+					break;
+				}
+
+				case NPCPATH_PAUSE:
+					// Set the NPC to pause where he is
+					_npcPause = (_npcPath[_npcIndex + 1] - 1) * 256 + _npcPath[_npcIndex + 2] - 1;
+					_npcIndex += 3;
+					break;
+
+				case NPCPATH_SET_TALK_FILE: {
+					// Set the NPC's Talk File to use if Holmes talks to them
+					++_npcIndex;
+
+					_npcName = "";
+					for (int idx = 0; idx < 8; ++idx) {
+						if (_npcPath[_npcIndex + idx] != '~')
+							_npcName += _npcPath[_npcIndex + idx];
+						else
+							break;
+					}
+
+					_npcIndex += 8;
+					break;
+				}
+
+				case NPCPATH_CALL_TALK_FILE: {
+					// Call a Talk File
+					++_npcIndex;
+
+					Common::String name;
+					for (int idx = 0; idx < 8; ++idx) {
+						if (_npcPath[_npcIndex + idx] != '~')
+							name += _npcPath[_npcIndex + idx];
+						else
+							break;
+					}
+
+					_npcIndex += 8;
+					talk.talkTo(name);
+					break;
+				}
+
+				case NPCPATH_TAKE_NOTES:
+					// Set the NPC to Pause where he is and set his frame sequences 
+					// so he takes notes while he's paused
+					_npcPause = (_npcPath[_npcIndex + 1] - 1) * 256 + _npcPath[_npcIndex + 2] - 1;
+					_npcIndex += 3;
+					break;
+
+				case NPCPATH_FACE_HOLMES:
+					// Set the NPC to Pause where he is and set his look flag so he will always face Holmes
+					// while he is paused
+					_npcPause = (_npcPath[_npcIndex + 1] - 1) * 256 + _npcPath[_npcIndex + 2] - 1;
+					_lookHolmes = true;
+					_npcIndex += 3;
+					break;
+
+				//case NPCPATH_PATH_LABEL:		// No implementation needed here
+
+				case NPCPATH_GOTO_LABEL: {
+					// Goto NPC Path Label
+					int label = _npcPath[_npcIndex + 1];
+					_npcIndex = 0;
+
+					// Scan through NPC path data to find the label
+					bool found = false;
+					while (!found) {
+						switch (_npcPath[_npcIndex]) {
+						case NPCPATH_SET_DEST:
+							_npcIndex += 6;
+							break;
+						case NPCPATH_PAUSE:
+						case NPCPATH_TAKE_NOTES:
+						case NPCPATH_FACE_HOLMES:
+							_npcIndex += 3;
+							break;
+						case NPCPATH_SET_TALK_FILE:
+						case NPCPATH_CALL_TALK_FILE:
+							_npcIndex += 8;
+							break;
+						case NPCPATH_PATH_LABEL:
+							if (_npcPath[_npcIndex + 1] == label)
+								found = true;
+							_npcIndex += 2;
+							break;
+						case NPCPATH_GOTO_LABEL:
+							_npcIndex += 2;
+							break;
+						case NPCPATH_IFFLAG_GOTO_LABEL:
+							_npcIndex += 4;
+							break;
+						}
+					}
+					break;
+				}
+
+				case NPCPATH_IFFLAG_GOTO_LABEL: {
+					// If FLAG then Goto Label
+					int flag = (_npcPath[_npcIndex + 1] - 1) * 256 + _npcPath[_npcIndex + 2] - 1 - (_npcPath[_npcIndex + 2] == 1 ? 1 : 0);
+
+					// Set the value the flag should be for the if statement to succeed
+					bool flagVal = flag < 16384;
+
+					int label = _npcPath[_npcIndex + 3];
+					_npcIndex += 4;
+
+					// If the flag is set Correctly, move the NPC Index to the given label
+					if (_vm->readFlags(flag & 16383) == flagVal) {
+						_npcIndex = 0;
+						bool found = false;
+						while (!found)
+						{
+							switch (_npcPath[_npcIndex])
+							{
+							case NPCPATH_SET_DEST:
+								_npcIndex += 6;
+								break;
+							case NPCPATH_PAUSE:
+							case NPCPATH_TAKE_NOTES:
+							case NPCPATH_FACE_HOLMES:
+								_npcIndex += 3;
+								break;
+							case NPCPATH_SET_TALK_FILE:
+							case NPCPATH_CALL_TALK_FILE:
+								_npcIndex += 8;
+								break;
+							case NPCPATH_PATH_LABEL:
+								if (_npcPath[_npcIndex + 1] == label)
+									found = true;
+								_npcIndex += 2;
+								break;
+							case NPCPATH_GOTO_LABEL:
+								_npcIndex += 2;
+								break;
+							case NPCPATH_IFFLAG_GOTO_LABEL:
+								_npcIndex += 4;
+								break;
+							}
+						}
+					}
+
+					break;
+				}
+
+				default:
+					break;
+				}
+			}
+		}
+	}
 }
 
 void TattooPerson::pushNPCPath() {

@@ -71,6 +71,18 @@ enum TattooSequences {
 	LISTEN_UPLEFT	= 27
 };
 
+enum NpcPath {
+	NPCPATH_SET_DEST		= 1,
+	NPCPATH_PAUSE			= 2,
+	NPCPATH_SET_TALK_FILE	= 3,
+	NPCPATH_CALL_TALK_FILE	= 4,
+	NPCPATH_TAKE_NOTES		= 5,
+	NPCPATH_FACE_HOLMES		= 6,
+	NPCPATH_PATH_LABEL		= 7,
+	NPCPATH_GOTO_LABEL		= 8,
+	NPCPATH_IFFLAG_GOTO_LABEL = 9
+};
+
 class TattooPerson: public Person {
 private:
 	Point32 _nextDest;
@@ -89,7 +101,7 @@ protected:
 public:
 	int _npcIndex;
 	int _npcStack;
-	bool _npcPause;
+	int _npcPause;
 	byte _npcPath[MAX_NPC_PATH];
 	Common::String _npcName;
 	bool _npcMoved;
@@ -100,6 +112,7 @@ public:
 	int _tempX;
 	int _tempScaleVal;
 	bool _updateNPCPath;
+	bool _lookHolmes;
 public:
 	TattooPerson();
 	virtual ~TattooPerson() {}
@@ -110,12 +123,18 @@ public:
 	void clearNPC();
 
 	/**
-	 * Update the NPC
+	 * Called from doBgAnim to move NPCs along any set paths. If an NPC is paused in his path,
+	 * he will remain paused until his pause timer runs out. If he is walking somewhere,
+	 * he will continue walking there until he reaches the dest position. When an NPC stops moving,
+	 * the next element of his path is processed.
+	 *
+	 * The path is an array of bytes with control codes followed by their parameters as needed.
 	 */
 	void updateNPC();
 
 	/**
-	 * Push the NPC's path
+	 * Push the NPC's path data onto the path stack for when a talk file moves the NPC that
+	 * has some control codes.
 	 */
 	void pushNPCPath();
 
