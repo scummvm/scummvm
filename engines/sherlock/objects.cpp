@@ -157,6 +157,11 @@ void BaseObject::checkObject() {
 	++_frameNumber;
 
 	do {
+		if (!_sequences) {
+			warning("checkObject: _sequences is not set");
+			break;
+		}
+
 		// Check for end of sequence
 		codeFound = checkEndOfSequence();
 
