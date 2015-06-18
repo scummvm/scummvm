@@ -23,7 +23,7 @@
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -99,7 +99,7 @@ TattooPerson::TattooPerson() : Person() {
 	_resetNPCPath = true;
 	_savedNpcSequence = 0;
 	_savedNpcFrame = 0;
-	_updateNPCPath = false;
+	_updateNPCPath = true;
 	_npcPause = false;
 }
 
@@ -473,6 +473,101 @@ void TattooPerson::setWalking() {
 	// to re-stand him, so reset Holmes' rame to the old frame number from before it was reset to 0
 	if (_sequenceNumber == oldDirection)
 		_frameNumber = oldFrame;
+}
+
+void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Events &events = *_vm->_events;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Talk &talk = *_vm->_talk;
+
+	CursorId oldCursor = events.getCursor();
+	events.setCursor(WAIT);
+
+	_walkDest = Common::Point(_position.x / FIXED_INT_MULTIPLIER, _position.y / FIXED_INT_MULTIPLIER);
+
+	bool isHolmes = this == &people[HOLMES];
+	if (isHolmes) {
+		people._allowWalkAbort = true;
+	} else {
+		// Clear the path Variables
+		_npcIndex = _npcPause;
+		Common::fill(_npcPath, _npcPath + 100, 0);
+		_npcFacing = destDir;
+	}
+
+	_centerWalk = false;
+
+	// Only move the person if they're going an appreciable distance
+	if (ABS(_walkDest.x - (_position.x / FIXED_INT_MULTIPLIER)) > 8 || 
+			ABS(_walkDest.y - (_position.y / FIXED_INT_MULTIPLIER)) > 4) {
+		goAllTheWay();
+
+		do {
+			// Keep doing animations whilst walk is in progress
+			events.wait(1);
+			scene.doBgAnim();
+
+			if (events.kbHit()) {
+				Common::KeyState keyState = events.getKey();
+
+				if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+					vm.setFlags(-76);
+					vm.setFlags(396);
+					scene._goToScene = 1;
+					talk._talkToAbort = true;
+				}
+			}
+		} while (!_vm->shouldQuit() && _walkCount && !talk._talkToAbort);
+	}
+
+	_centerWalk = true;
+	if (!isHolmes)
+		_updateNPCPath = true;
+
+	if (!talk._talkToAbort) {
+		// put character exactly on right spot
+		_position = destPos;
+
+		if (_sequenceNumber != destDir) {
+			// Facing character to correct ending direction
+			_sequenceNumber = destDir;
+			gotoStand();
+		}
+
+		if (!isHolmes)
+			_updateNPCPath = false;
+
+		// Secondary walking wait loop
+		do {
+			events.wait(1);
+			scene.doBgAnim();
+
+			// See if we're past the initial goto stand sequence
+			for (int idx = 0; idx < _frameNumber; ++idx) {
+				if (_walkSequences[_sequenceNumber][idx] == 0)
+					break;
+			}
+
+			if (events.kbHit()) {
+				Common::KeyState keyState = events.getKey();
+
+				if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+					vm.setFlags(-76);
+					vm.setFlags(396);
+					scene._goToScene = 1;
+					talk._talkToAbort = true;
+				}
+			}
+		} while (!_vm->shouldQuit());
+
+		if (!isHolmes)
+			_updateNPCPath = true;
+
+		if (!talk._talkToAbort)
+			events.setCursor(oldCursor);
+	}
 }
 
 void TattooPerson::clearNPC() {

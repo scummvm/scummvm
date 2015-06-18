@@ -66,6 +66,12 @@ public:
 	 * in a straight line
 	 */
 	virtual void setWalking();
+
+	/**
+	 * Walk to the co-ordinates passed, and then face the given direction
+	 */
+	virtual void walkToCoords(const Point32 &destPos, int destDir);
+
 };
 
 class ScalpelPeople : public People {

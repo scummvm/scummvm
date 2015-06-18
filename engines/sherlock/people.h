@@ -85,7 +85,7 @@ public:
 	/**
 	 * Walk to the co-ordinates passed, and then face the given direction
 	 */
-	void walkToCoords(const Point32 &destPos, int destDir);
+	virtual void walkToCoords(const Point32 &destPos, int destDir) = 0;
 };
 
 class SherlockEngine;

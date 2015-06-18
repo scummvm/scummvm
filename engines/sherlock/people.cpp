@@ -152,39 +152,6 @@ void Person::goAllTheWay() {
 	}
 }
 
-void Person::walkToCoords(const Point32 &destPos, int destDir) {
-	Events &events = *_vm->_events;
-	People &people = *_vm->_people;
-	Scene &scene = *_vm->_scene;
-	Talk &talk = *_vm->_talk;
-
-	CursorId oldCursor = events.getCursor();
-	events.setCursor(WAIT);
-
-	_walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER + 10, destPos.y / FIXED_INT_MULTIPLIER);
-	people._allowWalkAbort = true;
-	goAllTheWay();
-
-	// Keep calling doBgAnim until the walk is done
-	do {
-		events.pollEventsAndWait();
-		scene.doBgAnim();
-	} while (!_vm->shouldQuit() && _walkCount);
-
-	if (!talk._talkToAbort) {
-		// Put character exactly on destination position, and set direction
-		_position = destPos;
-		_sequenceNumber = destDir;
-		gotoStand();
-
-		// Draw Holmes facing the new direction
-		scene.doBgAnim();
-
-		if (!talk._talkToAbort)
-			events.setCursor(oldCursor);
-	}
-}
-
 /*----------------------------------------------------------------*/
 
 People *People::init(SherlockEngine *vm) {

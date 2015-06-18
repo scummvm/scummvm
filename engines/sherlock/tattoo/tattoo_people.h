@@ -142,6 +142,11 @@ public:
 	virtual void setWalking();
 
 	/**
+	 * Walk to the co-ordinates passed, and then face the given direction
+	 */
+	virtual void walkToCoords(const Point32 &destPos, int destDir);
+
+	/**
 	 * Adjusts the frame and sequence variables of a sprite that corresponds to the current speaker
 	 * so that it points to the beginning of the sequence number's talk sequence in the object's
 	 * sequence buffer
