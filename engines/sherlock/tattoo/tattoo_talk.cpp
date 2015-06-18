@@ -704,7 +704,7 @@ OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) {
 	Scene &scene = *_vm->_scene;
 	CAnim &anim = scene._cAnim[cAnimNum];
 
-	if (person._npcStack == 0)
+	if (person._pathStack.empty())
 		person.pushNPCPath();
 	person._npcMoved = true;
 
@@ -730,7 +730,7 @@ OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) {
 	Scene &scene = *_vm->_scene;
 	CAnim &anim = scene._cAnim[cAnimNum];
 
-	if (person._npcStack == 0)
+	if (person._pathStack.empty())
 		person.pushNPCPath();
 	person._npcMoved = true;
 
@@ -752,7 +752,7 @@ OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooPerson &person = people[npcNum];
 
-	if (person._npcStack == 0)
+	if (person._pathStack.empty())
 		person.pushNPCPath();
 	person._npcMoved = true;
 
@@ -779,7 +779,7 @@ OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	TattooPerson &person = people[npcNum];
 
-	if (person._npcStack == 0)
+	if (person._pathStack.empty())
 		person.pushNPCPath();
 	person._npcMoved = true;
 

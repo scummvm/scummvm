@@ -89,11 +89,26 @@ static const int WALK_SPEED_DIAG_X[99] = {
 
 /*----------------------------------------------------------------*/
 
+SavedNPCPath::SavedNPCPath() {
+	Common::fill(&_path[0], &_path[MAX_NPC_PATH], 0);
+	_npcIndex = 0;
+	_npcPause = 0;
+	_npcFacing = 0;
+	_lookHolmes = false;
+}
+
+SavedNPCPath::SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Common::Point &walkDest,
+	int npcFacing, bool lookHolmes) : _npcIndex(npcIndex), _npcPause(npcPause), _walkDest(walkDest),
+		_npcFacing(npcFacing), _lookHolmes(lookHolmes) {
+	Common::copy(&path[0], &path[MAX_NPC_PATH], &_path[0]);
+}
+
+/*----------------------------------------------------------------*/
+
 TattooPerson::TattooPerson() : Person() {
 	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
 	_tempX = _tempScaleVal = 0;
 	_npcIndex = 0;
-	_npcStack = 0;
 	_npcMoved = false;
 	_npcFacing = -1;
 	_resetNPCPath = true;
@@ -573,7 +588,8 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 
 void TattooPerson::clearNPC() {
 	Common::fill(&_npcPath[0], &_npcPath[MAX_NPC_PATH], 0);
-	_npcIndex = _npcStack = 0;
+	_npcIndex = 0;
+	_pathStack.clear();
 	_npcName = "";
 }
 
@@ -796,7 +812,41 @@ void TattooPerson::updateNPC() {
 }
 
 void TattooPerson::pushNPCPath() {
-	warning("TODO: pushNPCPath");
+	assert(_pathStack.size() < 2);
+	SavedNPCPath savedPath(_npcPath, _npcIndex, _npcPause, _position, _sequenceNumber, _lookHolmes);
+	_pathStack.push(savedPath);
+}
+
+void TattooPerson::pullNPCPath() {
+	// Pop the stack entry and restore the fields
+	SavedNPCPath path = _pathStack.pop();
+	Common::copy(&path._path[0], &path._path[MAX_NPC_PATH], &_npcPath[0]);
+	_npcIndex = path._npcIndex;
+	_npcPause = path._npcPause;
+
+	// Handle the first case if the NPC was paused
+	if (_npcPause) {
+		_walkDest = Common::Point(path._walkDest.x / FIXED_INT_MULTIPLIER, path._walkDest.y / FIXED_INT_MULTIPLIER);
+		_npcFacing = path._npcFacing;
+		_lookHolmes = path._lookHolmes;
+
+		// See if the NPC was moved
+		if (_walkDest.x != (_position.x / FIXED_INT_MULTIPLIER) ||
+				_walkDest.y != (_position.y / FIXED_INT_MULTIPLIER)) {
+			goAllTheWay();
+			_npcPause = 0;
+			_npcIndex -= 3;
+		} else {
+			// See if we need to set the old walk sequence so the NPC will put his arms up if he turns another way
+			if (_npcFacing != _sequenceNumber)
+				_oldWalkSequence = _sequenceNumber;
+
+			gotoStand();
+		}
+	} else {
+		// Handle the second case if the NPC was in motion
+		_npcIndex -= 6;
+	}
 }
 
 Common::Point TattooPerson::getSourcePoint() const {

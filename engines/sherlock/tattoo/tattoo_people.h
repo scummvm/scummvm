@@ -24,6 +24,7 @@
 #define SHERLOCK_TATTOO_PEOPLE_H
 
 #include "common/scummsys.h"
+#include "common/stack.h"
 #include "sherlock/people.h"
 
 namespace Sherlock {
@@ -83,6 +84,19 @@ enum NpcPath {
 	NPCPATH_IFFLAG_GOTO_LABEL = 9
 };
 
+struct SavedNPCPath {
+	byte _path[MAX_NPC_PATH];
+	int _npcIndex;
+	int _npcPause;
+	Common::Point _walkDest;
+	int _npcFacing;
+	bool _lookHolmes;
+
+	SavedNPCPath();
+	SavedNPCPath(byte path[MAX_NPC_PATH], int npcIndex, int npcPause, const Common::Point &walkDest,
+		int npcFacing, bool lookHolmes);
+};
+
 class TattooPerson: public Person {
 private:
 	Point32 _nextDest;
@@ -99,8 +113,8 @@ protected:
 	 */
 	virtual Common::Point getSourcePoint() const;
 public:
+	Common::Stack<SavedNPCPath> _pathStack;
 	int _npcIndex;
-	int _npcStack;
 	int _npcPause;
 	byte _npcPath[MAX_NPC_PATH];
 	Common::String _npcName;
@@ -137,6 +151,20 @@ public:
 	 * has some control codes.
 	 */
 	void pushNPCPath();
+
+	/**
+	 * Pull an NPC's path data that has been previously saved on the path stack for that character.
+	 * There are two possibilities for when the NPC was interrupted, and both are handled differently:
+	 * 1) The NPC was paused at a position
+	 * If the NPC didn't move, we can just restore his pause counter and exit. But if he did move,
+	 * he must return to that position, and the path index must be reset to the pause he was executing.
+	 * This means that the index must be decremented by 3
+	 * 2) The NPC was in route to a position
+	 * He must be set to walk to that position again. This is done by moving the path index
+	 * so that it points to the code that set the NPC walking there in the first place. 
+	 * The regular calls to updateNPC will handle the rest
+	 */
+	void pullNPCPath();
 
 	/**
 	 * Checks a sprite associated with an NPC to see if the frame sequence specified
