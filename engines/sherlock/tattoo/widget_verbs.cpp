@@ -23,6 +23,7 @@
 #include "sherlock/tattoo/widget_verbs.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
+#include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
@@ -35,7 +36,65 @@ WidgetVerbs::WidgetVerbs(SherlockEngine *vm) : WidgetBase(vm) {
 }
 
 void WidgetVerbs::activateVerbMenu(bool objectsOn) {
+	Talk &talk = *_vm->_talk;
+	FixedText &fixedText = *_vm->_fixedText;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	bool isWatson = false;
+	Common::String strLook = fixedText.getText(kFixedText_Verb_Look);
+	Common::String strTalk = fixedText.getText(kFixedText_Verb_Talk);
+	Common::String strJournal = fixedText.getText(kFixedText_Verb_Journal);
+
+	if (talk._talkToAbort)
+		return;
+
+	_outsideMenu = false;
+
+	_verbCommands.clear();
+
+	// Check if we need to show options for the highlighted object
+	if (objectsOn) {
+		// Set the verb list accordingly, depending on the target being a
+		// person or an object
+		if (ui._personFound) {
+			TattooPerson &person = people[ui._activeObj - 1000];
+			TattooPerson &npc = people[ui._activeObj - 1001];
+
+			if (!scumm_strnicmp(npc._npcName.c_str(), "WATS", 4))
+				isWatson = true;
+
+			if (!scumm_strnicmp(person._examine.c_str(), "_EXIT", 5))
+				_verbCommands.push_back(strLook);
+			
+			_verbCommands.push_back(strTalk);
+
+			// Add any extra active verbs from the NPC's verb list
+			// TODO
+		} else {
+			if (!scumm_strnicmp(ui._bgShape->_name.c_str(), "WATS", 4))
+				isWatson = true;
+
+			if (!scumm_strnicmp(ui._bgShape->_examine.c_str(), "_EXIT", 5))
+				_verbCommands.push_back(strLook);
+
+			if (ui._bgShape->_aType == PERSON)
+				_verbCommands.push_back(strTalk);
+
+			// Add any extra active verbs from the NPC's verb list
+			// TODO
+		}
+	}
+
+	if (isWatson)
+		_verbCommands.push_back(strJournal);
+
+	// Add the system commands
 	// TODO
+
+	// Find the widest command
+	// TODO
+
+	// TODO: Finish this
 }
 
 void WidgetVerbs::execute() {
