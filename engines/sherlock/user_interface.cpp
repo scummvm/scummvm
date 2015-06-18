@@ -46,13 +46,13 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1, SHERLOCK_SCREEN_HEIGHT - 1);
 	_lookScriptFlag = false;
 
+	_bgFound = _oldBgFound = -1;
 	_key = _oldKey = '\0';
 	_selector = _oldSelector = -1;
 	_temp = _oldTemp = 0;
 	_temp1 = 0;
 	_lookHelp = 0;
 }
-
 
 void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionId fixedTextActionId) {
 	Events &events = *_vm->_events;
@@ -186,6 +186,12 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 
 	// Reset cursor back to arrow
 	events.setCursor(ARROW);
+}
+
+void UserInterface::reset() {
+	_bgFound = _oldBgFound = -1;
+	_oldKey = -1;
+	_oldTemp = _temp = -1;
 }
 
 

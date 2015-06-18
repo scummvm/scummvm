@@ -72,6 +72,7 @@ public:
 	bool _helpStyle;
 	Common::Rect _windowBounds;
 	bool _lookScriptFlag;
+	int _bgFound, _oldBgFound;
 
 	// TODO: Not so sure these should be in the base class. May want to refactor them to SherlockEngine, or refactor
 	// various Scalpel dialogs to keep their own private state of key/selections
@@ -92,7 +93,7 @@ public:
 	/**
 	 * Resets the user interface
 	 */
-	virtual void reset() {}
+	virtual void reset();
 
 	/**
 	 * Draw the user interface onto the screen's back buffers

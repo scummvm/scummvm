@@ -84,8 +84,6 @@ ScalpelUserInterface::ScalpelUserInterface(SherlockEngine *vm): UserInterface(vm
 
 	_keyPress = '\0';
 	_lookHelp = 0;
-	_bgFound = 0;
-	_oldBgFound = -1;
 	_help = _oldHelp = 0;
 	_key = _oldKey = '\0';
 	_temp = _oldTemp = 0;
@@ -103,9 +101,8 @@ ScalpelUserInterface::~ScalpelUserInterface() {
 }
 
 void ScalpelUserInterface::reset() {
-	_oldKey = -1;
+	UserInterface::reset();
 	_help = _oldHelp = -1;
-	_oldTemp = _temp = -1;
 }
 
 void ScalpelUserInterface::drawInterface(int bufferNum) {

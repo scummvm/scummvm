@@ -35,7 +35,6 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 	_invGraphic = nullptr;
 	_scrollSize = _scrollSpeed = 0;
 	_drawMenu = false;
-	_bgFound = _oldBgFound = -1;
 	_bgShape = nullptr;
 	_personFound = false;
 	_lockoutTimer = 0;

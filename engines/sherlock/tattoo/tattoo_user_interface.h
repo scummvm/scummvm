@@ -131,7 +131,6 @@ public:
 	Common::Point _currentScroll, _targetScroll;
 	int _scrollSize, _scrollSpeed;
 	bool _drawMenu;
-	int _bgFound, _oldBgFound;
 	int _arrowZone, _oldArrowZone;
 	Object *_bgShape;
 	bool _personFound;

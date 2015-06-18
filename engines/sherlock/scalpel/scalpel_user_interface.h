@@ -49,7 +49,6 @@ class ScalpelUserInterface: public UserInterface {
 private:
 	char _keyPress;
 	int _lookHelp;
-	int _bgFound, _oldBgFound;
 	int _help, _oldHelp;
 	int _key, _oldKey;
 	int _temp, _oldTemp;
