@@ -105,7 +105,7 @@ int TattooMap::show() {
 
 	// Load the map image and draw it to the back buffer
 	ImageFile *map = new ImageFile("map.vgs");
-	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2, _vm->getPlatform());
+	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
 	screen._backBuffer1.blitFrom((*map)[0], Common::Point(0, 0));
 	delete map;
 
@@ -114,7 +114,7 @@ int TattooMap::show() {
 	drawMapIcons();
 
 	// Copy the map drawn in the back buffer to the secondary back buffer
-	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2, _vm->getPlatform());
+	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH * 2, SHERLOCK_SCREEN_HEIGHT * 2);
 	screen._backBuffer2.blitFrom(screen._backBuffer1);
 
 	// Display the built map to the screen
@@ -231,8 +231,8 @@ int TattooMap::show() {
 	_textBuffer = nullptr;
 
 	// Reset the back buffers back to standard size
-	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, _vm->getPlatform());
-	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT, _vm->getPlatform());
+	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	screen._backBuffer2.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
 	return result;
 }
@@ -391,7 +391,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			delete _textBuffer;
 
 			// Allocate a new surface
-			_textBuffer = new Surface(width, height, _vm->getPlatform());
+			_textBuffer = new Surface(width, height);
 
 			_textBuffer->fillRect(Common::Rect(0, 0, width, height), TRANSPARENCY);
 			if (space == nullptr) {

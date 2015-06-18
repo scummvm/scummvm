@@ -28,9 +28,9 @@
 
 namespace Sherlock {
 
-Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()), _vm(vm),
-		_backBuffer1(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()),
-		_backBuffer2(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()),
+Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight()), _vm(vm),
+		_backBuffer1(g_system->getWidth(), g_system->getHeight()),
+		_backBuffer2(g_system->getWidth(), g_system->getHeight()),
 		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
@@ -39,8 +39,6 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
 	
 	// Set up the initial font
-	Fonts::init(_vm->getPlatform());
-
 	setFont(IS_SERRATED_SCALPEL ? 1 : 4);
 
 	// Rose Tattoo specific fields

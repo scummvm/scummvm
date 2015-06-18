@@ -111,7 +111,7 @@ void WidgetTooltip::execute() {
 				}
 
 				// Reallocate the text surface with the new size
-				_surface.create(width, height, _vm->getPlatform());
+				_surface.create(width, height);
 				_surface.fill(TRANSPARENCY);
 
 				if (line2.empty()) {

@@ -78,10 +78,10 @@ void SherlockEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
 	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
 
+	Fonts::setVm(this);
 	ImageFile::setVm(this);
 	ImageFile3DO::setVm(this);
-	Object::setVm(this);
-	Sprite::setVm(this);
+	BaseObject::setVm(this);
 
 	if (isDemo()) {
 		Common::File f;
