@@ -54,7 +54,6 @@ void TattooUserInterface::initScrollVars() {
 }
 
 void TattooUserInterface::lookAtObject() {
-	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;

@@ -308,7 +308,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -326,7 +327,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -346,7 +348,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -439,7 +442,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -460,7 +464,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -480,7 +485,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -500,7 +506,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -562,7 +569,8 @@ OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
