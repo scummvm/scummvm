@@ -59,7 +59,6 @@ void TattooUserInterface::lookAtObject() {
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
-	Common::Point mousePos = events.mousePos();
 	Common::String desc;
 	int cAnimSpeed = 0;
 
