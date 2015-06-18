@@ -396,15 +396,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			_textBuffer->fillRect(Common::Rect(0, 0, width, height), TRANSPARENCY);
 			if (space == nullptr) {
 				// The whole text can be drawn on a single line
-				_textBuffer->writeString(desc, Common::Point(0, 0), BLACK);
-				_textBuffer->writeString(desc, Common::Point(1, 0), BLACK);
-				_textBuffer->writeString(desc, Common::Point(2, 0), BLACK);
-				_textBuffer->writeString(desc, Common::Point(0, 1), BLACK);
-				_textBuffer->writeString(desc, Common::Point(2, 1), BLACK);
-				_textBuffer->writeString(desc, Common::Point(0, 2), BLACK);
-				_textBuffer->writeString(desc, Common::Point(1, 2), BLACK);
-				_textBuffer->writeString(desc, Common::Point(2, 2), BLACK);
-				_textBuffer->writeString(desc, Common::Point(1, 1), MAP_NAME_COLOR);
+				_textBuffer->writeFancyString(desc, Common::Point(0, 0), BLACK, MAP_NAME_COLOR);
 			} else {
 				// The text needs to be split up over two lines
 				Common::String line1(desc.c_str(), space);
@@ -412,28 +404,12 @@ void TattooMap::checkMapNames(bool slamIt) {
 
 				// Draw the first line
 				int xp = (width - screen.stringWidth(desc)) / 2;
-				_textBuffer->writeString(line1, Common::Point(xp + 0, 0), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 1, 0), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 2, 0), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 0, 1), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 2, 1), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 0, 2), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 1, 2), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 2, 2), BLACK);
-				_textBuffer->writeString(line1, Common::Point(xp + 1, 1), MAP_NAME_COLOR);
+				_textBuffer->writeFancyString(line1, Common::Point(xp, 0), BLACK, MAP_NAME_COLOR);
 
 				int yp = screen.stringHeight(line2);
 				xp = (width - screen.stringWidth(line2)) / 2;
 				// CHECKME: Shouldn't we use yp for drawing line2?
-				_textBuffer->writeString(line2, Common::Point(xp + 0, yp), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 1, yp), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 2, yp), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 0, yp + 1), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 2, yp + 1), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 0, yp + 2), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 1, yp + 2), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 2, yp + 2), BLACK);
-				_textBuffer->writeString(line2, Common::Point(xp + 1, yp + 1), MAP_NAME_COLOR);
+				_textBuffer->writeFancyString(line2, Common::Point(xp, yp), BLACK, MAP_NAME_COLOR);
 			}
 
 			// Set the text display position

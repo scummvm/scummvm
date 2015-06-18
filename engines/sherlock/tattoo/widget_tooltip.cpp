@@ -116,40 +116,16 @@ void WidgetTooltip::execute() {
 
 				if (line2.empty()) {
 					// Only a single line
-					_surface.writeString(str, Common::Point(0, 0), BLACK);
-					_surface.writeString(str, Common::Point(1, 0), BLACK);
-					_surface.writeString(str, Common::Point(2, 0), BLACK);
-					_surface.writeString(str, Common::Point(0, 1), BLACK);
-					_surface.writeString(str, Common::Point(2, 1), BLACK);
-					_surface.writeString(str, Common::Point(0, 2), BLACK);
-					_surface.writeString(str, Common::Point(1, 2), BLACK);
-					_surface.writeString(str, Common::Point(2, 2), BLACK);
-					_surface.writeString(str, Common::Point(1, 1), INFO_TOP);
+					_surface.writeFancyString(str, Common::Point(0, 0), BLACK, INFO_TOP);
 				} else {
 					// Two lines to display
 					int xp, yp;
 					xp = (width - screen.stringWidth(line1) - 2) / 2;
-					_surface.writeString(line1, Common::Point(xp, 0), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 1, 0), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 2, 0), BLACK);
-					_surface.writeString(line1, Common::Point(xp, 1), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 2, 1), BLACK);
-					_surface.writeString(line1, Common::Point(xp, 2), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 1, 2), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 2, 2), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 1, 1), INFO_TOP);
+					_surface.writeFancyString(line1, Common::Point(xp, 0), BLACK, INFO_TOP);
 					
 					xp = (width - screen.stringWidth(line2) - 2) / 2;
 					yp = screen.stringHeight(line1) + 2;
-					_surface.writeString(line2, Common::Point(xp, yp), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 1, yp), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 2, yp), BLACK);
-					_surface.writeString(line2, Common::Point(xp, yp + 1), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 2, yp + 1), BLACK);
-					_surface.writeString(line2, Common::Point(xp, yp + 2), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 1, yp + 2), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 2, yp + 2), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 1, yp + 1), INFO_TOP);
+					_surface.writeFancyString(line2, Common::Point(xp, yp), BLACK, INFO_TOP);
 				}
 
 				// Set the initial display position for the tooltip text

@@ -168,6 +168,7 @@ public:
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
 	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
+	void writeFancyString(const Common::String &str, const Common::Point &pt, byte overrideColor1, byte overrideColor2);
 
 	inline uint16 w() const { return _surface.w; }
 	inline uint16 h() const { return _surface.h; }
