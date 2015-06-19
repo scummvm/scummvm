@@ -31,6 +31,7 @@
 namespace Sherlock {
 
 class SherlockEngine;
+class ImageFile;
 
 namespace Tattoo {
 
@@ -39,6 +40,19 @@ protected:
 	SherlockEngine *_vm;
 	Common::Rect _bounds, _oldBounds;
 	Surface _surface;
+	ImageFile *_images;
+
+	/**
+	 * Used by descendent classes to split up long text for display across multiple lines
+	 */
+	Common::String splitLines(const Common::String &str, Common::StringArray &lines, int maxWidth, uint maxLines);
+
+	/**
+	 * Ensure that menu is drawn entirely on-screen
+	 */
+	void checkMenuPosition();
+
+	void makeInfoArea();
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}

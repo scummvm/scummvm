@@ -34,6 +34,8 @@ namespace Tattoo {
 
 class WidgetText: public WidgetBase {
 public:
+	Common::String _remainingText;
+public:
 	WidgetText(SherlockEngine *vm);
 	virtual ~WidgetText() {}
 

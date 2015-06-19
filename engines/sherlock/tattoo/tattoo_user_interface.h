@@ -136,6 +136,7 @@ public:
 	bool _personFound;
 	int _activeObj;
 	Common::KeyState _keyState;
+	Common::Point _lookPos;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface() {}
@@ -187,6 +188,11 @@ public:
 	 */
 	void pickUpObject(int objNum);
 public:
+	/**
+	 * Resets the user interface
+	 */
+	virtual void reset();
+
 	/**
 	 * Main input handler for the user interface
 	 */

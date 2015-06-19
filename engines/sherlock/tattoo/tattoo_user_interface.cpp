@@ -172,6 +172,8 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 			events._oldButtons = 0;
 		}
 	} else {
+		events._pressed = events._released = events._rightReleased = false;;
+
 		// Show text dialog
 		_textWidget.load(str);
 
@@ -184,6 +186,11 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 
 void TattooUserInterface::doJournal() {
 	// TODO
+}
+
+void TattooUserInterface::reset() {
+	UserInterface::reset();
+	_lookPos = Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
 }
 
 void TattooUserInterface::handleInput() {
@@ -527,7 +534,43 @@ void TattooUserInterface::doStandardControl() {
 }
 
 void TattooUserInterface::doLookControl() {
-	warning("TODO: ui control (look)");
+	Events &events = *_vm->_events;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Sound &sound = *_vm->_sound;
+
+	// See if a mouse button was released or a key pressed, and we want to initiate an action
+	// TODO: Not sure about _soundOn.. should be check for speaking voice for text being complete
+	if (events._released || events._rightReleased || _keyState.keycode || (sound._voices && !sound._soundOn)) {
+		// See if we were looking at an inventory object
+		if (!_invLookFlag) {
+			// See if there is any more text to display
+			if (!_textWidget._remainingText.empty()) {
+				printObjectDesc(_textWidget._remainingText, false);
+			} else {
+				// Otherwise restore the background and go back into STD_MODE
+				freeMenu();
+				_key = -1;
+				_menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+
+				events.setCursor(ARROW);
+				events._pressed = events._released = events._rightReleased = false;
+				events._oldButtons = 0;
+			}
+		} else {
+			// We were looking at a Inventory object
+			// Erase the text window, and then redraw the inventory window
+			_textWidget.banishWindow();
+
+			warning("TODO: re-show inventory");
+
+			_invLookFlag = false;
+			_key = -1;
+
+			events.setCursor(ARROW);
+			events._pressed = events._released = events._rightReleased = false;
+			events._oldButtons = 0;
+		}
+	}
 }
 
 void TattooUserInterface::doFileControl() {
