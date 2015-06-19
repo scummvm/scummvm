@@ -20,53 +20,33 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_WIDGET_BASE_H
-#define SHERLOCK_TATTOO_WIDGET_BASE_H
+#ifndef SHERLOCK_TATTOO_WIDGET_INVENTORY_H
+#define SHERLOCK_TATTOO_WIDGET_INVENTORY_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
-#include "common/str-array.h"
-#include "sherlock/surface.h"
+#include "sherlock/tattoo/widget_base.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
-class ImageFile;
 
 namespace Tattoo {
 
-class WidgetBase {
-protected:
-	SherlockEngine *_vm;
-	Common::Rect _bounds, _oldBounds;
-	Surface _surface;
-	ImageFile *_images;
-	bool _outsideMenu;
+class WidgetInventory: public WidgetBase {
+private:
+	int _invVerbMode;
+	int _invSelect, _oldInvSelect;
+	int _selector, _oldSelector;
+	int _dialogTimer;
 
-	/**
-	 * Used by descendent classes to split up long text for display across multiple lines
-	 */
-	Common::String splitLines(const Common::String &str, Common::StringArray &lines, int maxWidth, uint maxLines);
-
-	/**
-	 * Ensure that menu is drawn entirely on-screen
-	 */
-	void checkMenuPosition();
-
-	void makeInfoArea();
+	void loadInv();
 public:
-	WidgetBase(SherlockEngine *vm);
-	virtual ~WidgetBase() {}
+	int _invMode;
+public:
+	WidgetInventory(SherlockEngine *vm);
+	virtual ~WidgetInventory() {}
 
-	/**
-	 * Summon the window
-	 */
-	virtual void summonWindow();
-
-	/**
-	 * Close a currently active menu
-	 */
-	virtual void banishWindow();
+	void load(int mode);
 };
 
 } // End of namespace Tattoo

@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "sherlock/saveload.h"
 #include "sherlock/user_interface.h"
+#include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
@@ -34,7 +35,10 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+class WidgetBase;
+
 class TattooUserInterface : public UserInterface {
+	friend class WidgetBase;
 private:
 	Common::Rect _menuBounds;
 	Common::Rect _oldMenuBounds;
@@ -51,9 +55,10 @@ private:
 	int _exitZone;
 	int _scriptZone;
 	int _cAnimFramePause;
+	WidgetInventory _inventoryWidget;
+	WidgetText _textWidget;
 	WidgetTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
-	WidgetText _textWidget;
 	WidgetBase *_widget;
 private:
 	/**
@@ -112,11 +117,6 @@ private:
 	 * Set up to display the Files menu
 	 */
 	void initFileMenu();
-
-	/**
-	 * Turn off any active object description text
-	 */
-	void turnTextOff();
 
 	/**
 	 * Handle displaying the quit menu

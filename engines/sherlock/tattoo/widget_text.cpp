@@ -74,9 +74,9 @@ void WidgetText::load(const Common::String &str) {
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
+	_surface.fill(TRANSPARENCY);
 
 	// Form the background for the new window
-	_surface.fillRect(Common::Rect(0, 0, _surface.w(), _surface.h()), TRANSPARENCY);
 	makeInfoArea();
 
 	int yp = 5;

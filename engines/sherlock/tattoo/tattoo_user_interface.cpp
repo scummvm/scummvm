@@ -29,7 +29,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
-		_tooltipWidget(vm), _verbsWidget(vm), _textWidget(vm) {
+		_inventoryWidget(vm),  _tooltipWidget(vm), _verbsWidget(vm), _textWidget(vm) {
 	_menuBuffer = nullptr;
 	_invMenuBuffer = nullptr;
 	_invGraphic = nullptr;
@@ -423,7 +423,7 @@ void TattooUserInterface::doStandardControl() {
 	switch (_keyState.keycode) {
 	case Common::KEYCODE_F5:
 		// Save game
-		turnTextOff();
+		freeMenu();
 		_fileMode = SAVEMODE_SAVE;
 		_menuBounds = Common::Rect(0, 0, 0, 0);
 		initFileMenu();
@@ -431,7 +431,7 @@ void TattooUserInterface::doStandardControl() {
 
 	case Common::KEYCODE_F7:
 		// Load game
-		turnTextOff();
+		freeMenu();
 		_fileMode = SAVEMODE_LOAD;
 		_menuBounds = Common::Rect(0, 0, 0, 0);
 		initFileMenu();
@@ -440,7 +440,7 @@ void TattooUserInterface::doStandardControl() {
 	case Common::KEYCODE_F1:
 		// Display journal
 		if (vm.readFlags(76)) {
-			turnTextOff();
+			freeMenu();
 			doJournal();
 			
 			// See if we're in a Lab Table Room
@@ -452,19 +452,19 @@ void TattooUserInterface::doStandardControl() {
 	case Common::KEYCODE_TAB:
 	case Common::KEYCODE_F3:
 		// Display inventory
-		turnTextOff();
+		freeMenu();
 		doInventory(2);
 		return;
 
 	case Common::KEYCODE_F4:
 		// Display options
-		turnTextOff();
+		freeMenu();
 		doControls();
 		return;
 
 	case Common::KEYCODE_F10:
 		// Quit menu
-		turnTextOff();
+		freeMenu();
 		_menuBounds = Common::Rect(-1, -1, -1, -1);
 		doQuitMenu();
 		return;
@@ -483,7 +483,7 @@ void TattooUserInterface::doStandardControl() {
 
 		// Turn any Text display off
 		if (_arrowZone == -1 || events._rightReleased)
-			turnTextOff();
+			freeMenu();
 
 		if (_personFound) {
 			if (people[_bgFound - 1000]._description.empty() || people[_bgFound - 1000]._description.hasPrefix(" "))
@@ -560,8 +560,7 @@ void TattooUserInterface::doLookControl() {
 			// We were looking at a Inventory object
 			// Erase the text window, and then redraw the inventory window
 			_textWidget.banishWindow();
-
-			warning("TODO: re-show inventory");
+			doInventory(0);
 
 			_invLookFlag = false;
 			_key = -1;
@@ -619,12 +618,13 @@ void TattooUserInterface::initFileMenu() {
 	// TODO
 }
 
-void TattooUserInterface::turnTextOff() {
-	// TODO
-}
-
 void TattooUserInterface::doInventory(int mode) {
-	// TODO
+	People &people = *_vm->_people;
+	people[HOLMES].gotoStand();
+	
+	_inventoryWidget.load(mode);
+
+	_menuMode = INV_MODE;
 }
 
 void TattooUserInterface::doControls() {

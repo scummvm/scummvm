@@ -23,6 +23,7 @@
 #include "sherlock/tattoo/widget_base.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
 
@@ -33,7 +34,9 @@ WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
 }
 
 void WidgetBase::summonWindow() {
-	
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ui._widget = this;
+	_outsideMenu = false;
 }
 
 void WidgetBase::banishWindow() {
