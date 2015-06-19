@@ -313,6 +313,8 @@ void TattooScene::doBgAnimCheckCursor() {
 		}
 
 		events.setCursor(cursorId);
+	} else {
+		events.animateCursorIfNeeded();
 	}
 }
 
