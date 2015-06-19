@@ -58,7 +58,7 @@ void WidgetText::load(const Common::String &str) {
 			width = _surface.widestChar() * 2 + 6;
 			
 			const char *strP = str.c_str();
-			while (*strP && (*strP < talk._opcodes[OP_SWITCH_SPEAKER] || *strP == 225))
+			while (*strP && (*strP < talk._opcodes[OP_SWITCH_SPEAKER] || *strP == talk._opcodes[OP_NULL]))
 				width += _surface.charWidth(*strP++);
 		}
 
