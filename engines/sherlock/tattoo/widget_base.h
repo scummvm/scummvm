@@ -67,6 +67,11 @@ public:
 	 * Close a currently active menu
 	 */
 	virtual void banishWindow();
+
+	/**
+	 * Handle event processing
+	 */
+	virtual void handleEvents() {}
 };
 
 } // End of namespace Tattoo

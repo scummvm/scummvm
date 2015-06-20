@@ -117,7 +117,41 @@ void WidgetTooltip::setText(const Common::String &str) {
 	}
 }
 
-void WidgetTooltip::execute() {
+void WidgetTooltip::draw() {
+	Screen &screen = *_vm->_screen;
+
+	if (!_surface.empty())
+		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+}
+
+void WidgetTooltip::erase() {
+	Screen &screen = *_vm->_screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	if (_bounds.width() > 0) {
+		screen.slamArea(_oldBounds.left - ui._currentScroll.x, _oldBounds.top, _oldBounds.width(), _oldBounds.height());
+
+		// If there's no text actually being displayed, then reset bounds so we don't keep restoring the area
+		if (_surface.empty()) {
+			_bounds.left = _bounds.top = _bounds.right = _bounds.bottom = 0;
+			_oldBounds.left = _oldBounds.top = _oldBounds.right = _oldBounds.bottom = 0;
+		}
+	}
+
+	if (!_surface.empty())
+		screen.slamArea(_bounds.left - ui._currentScroll.x, _bounds.top, _bounds.width(), _bounds.height());
+}
+
+void WidgetTooltip::erasePrevious() {
+	Screen &screen = *_vm->_screen;
+	if (_oldBounds.width() > 0)
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top),
+		_oldBounds);
+}
+
+/*----------------------------------------------------------------*/
+
+void WidgetSceneTooltip::handleEvents() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -166,38 +200,6 @@ void WidgetTooltip::execute() {
 	}
 
 	ui._oldArrowZone = ui._arrowZone;
-}
-
-void WidgetTooltip::draw() {
-	Screen &screen = *_vm->_screen;
-
-	if (!_surface.empty())
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
-}
-
-void WidgetTooltip::erase() {
-	Screen &screen = *_vm->_screen;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-
-	if (_bounds.width() > 0) {
-		screen.slamArea(_oldBounds.left - ui._currentScroll.x, _oldBounds.top, _oldBounds.width(), _oldBounds.height());
-
-		// If there's no text actually being displayed, then reset bounds so we don't keep restoring the area
-		if (_surface.empty()) {
-			_bounds.left = _bounds.top = _bounds.right = _bounds.bottom = 0;
-			_oldBounds.left = _oldBounds.top = _oldBounds.right = _oldBounds.bottom = 0;
-		}
-	}
-
-	if (!_surface.empty())
-		screen.slamArea(_bounds.left - ui._currentScroll.x, _bounds.top, _bounds.width(), _bounds.height());
-}
-
-void WidgetTooltip::erasePrevious() {
-	Screen &screen = *_vm->_screen;
-	if (_oldBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top),
-		_oldBounds);
 }
 
 } // End of namespace Tattoo

@@ -57,7 +57,7 @@ private:
 	int _cAnimFramePause;
 	WidgetInventory _inventoryWidget;
 	WidgetText _textWidget;
-	WidgetTooltip _tooltipWidget;
+	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
 	WidgetBase *_widget;
 private:

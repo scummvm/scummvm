@@ -611,7 +611,7 @@ void TattooUserInterface::displayObjectNames() {
 		}
 	}
 
-	_tooltipWidget.execute();
+	_tooltipWidget.handleEvents();
 	_oldArrowZone = _arrowZone;
 }
 

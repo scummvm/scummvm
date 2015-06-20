@@ -44,11 +44,6 @@ public:
 	void setText(const Common::String &str);
 
 	/**
-	 * Handle updating the tooltip state
-	 */
-	void execute();
-
-	/**
 	 * Draw the tooltip if necessary
 	 */
 	void draw();
@@ -62,6 +57,16 @@ public:
 	 * Erase any area of the screen drawn by the tooltip in the previous frame
 	 */
 	void erasePrevious();
+};
+
+class WidgetSceneTooltip : public WidgetTooltip {
+public:
+	WidgetSceneTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
+
+	/**
+	 * Handle updating the tooltip state
+	 */
+	virtual void handleEvents();
 };
 
 } // End of namespace Tattoo
