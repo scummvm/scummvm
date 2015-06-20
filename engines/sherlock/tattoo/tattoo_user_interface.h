@@ -137,6 +137,7 @@ public:
 	int _activeObj;
 	Common::KeyState _keyState;
 	Common::Point _lookPos;
+	int _scrollHighlight;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface() {}

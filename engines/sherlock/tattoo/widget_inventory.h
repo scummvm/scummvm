@@ -39,7 +39,15 @@ private:
 	int _selector, _oldSelector;
 	int _dialogTimer;
 
-	void loadInv();
+	/**
+	 * Draw the scrollbar for the dialog
+	 */
+	void drawScrollBar();
+
+	/**
+	 * Draws all the dialog rectangles for any items that need them
+	 */
+	void drawDialogRect(const Common::Rect &r, bool raised);
 public:
 	int _invMode;
 public:
@@ -47,6 +55,11 @@ public:
 	virtual ~WidgetInventory() {}
 
 	void load(int mode);
+
+	/**
+	 * Draw the inventory on the surface
+	 */
+	void drawInventory();
 };
 
 } // End of namespace Tattoo

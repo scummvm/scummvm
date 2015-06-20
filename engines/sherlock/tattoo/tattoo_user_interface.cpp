@@ -45,6 +45,7 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 	_activeObj = -1;
 	_cAnimFramePause = 0;
 	_widget = nullptr;
+	_scrollHighlight = 0;
 }
 
 void TattooUserInterface::initScrollVars() {
