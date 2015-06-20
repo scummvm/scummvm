@@ -256,7 +256,6 @@ int MidiDriver_Accolade_AdLib::open() {
 	// noteOn(9, 0x26, 0);
 	// noteOff(9, 0x26, false);
 
-	warning("End of open()");
 	return 0;
 }
 
