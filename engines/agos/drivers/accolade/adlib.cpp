@@ -542,6 +542,7 @@ void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operat
 			}
 
 			// not sure, if we are supposed to implement these bugs, or not
+#if 0
 			if (!_musicDrvMode) {
 				// Table is 16 bytes instead of 18 bytes
 				if ((FMvoiceChannel == 7) || (FMvoiceChannel == 9)) {
@@ -558,6 +559,7 @@ void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operat
 					warning("volume set bug (original)");
 				}
 			}
+#endif
 		}
 	}
 

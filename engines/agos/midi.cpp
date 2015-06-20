@@ -86,9 +86,9 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 
 	switch (gameType) {
 	case GType_ELVIRA1:
-	case GType_ELVIRA2:
 		_accolade_mode = true;
 		break;
+	case GType_ELVIRA2:
 	case GType_WW:
 		_accolade_mode = true;
 		accolade_useMusicDrvFile = true;
