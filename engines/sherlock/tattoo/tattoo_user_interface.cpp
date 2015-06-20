@@ -322,9 +322,6 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 		_oldInvMenuBounds.left = _oldInvMenuBounds.top = _oldInvMenuBounds.right = _oldInvMenuBounds.bottom = 0;
 	}
 
-	// Clear the tooltip if necessary
-	_tooltipWidget.erase();
-
 	// See if we need to flush areas assocaited with the inventory graphic
 	if (_oldInvGraphicBounds.right) {
 		screen.slamArea(_oldInvGraphicBounds.left - _currentScroll.x, _oldInvGraphicBounds.top,
@@ -360,7 +357,7 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_invMenuBounds.left, _invMenuBounds.top), _invMenuBounds);
 
 	// If there is a Text Tag being display, restore the area underneath it
-	_tooltipWidget.erasePrevious();
+	_tooltipWidget.erase();
 
 	// If there is an Inventory being shown, restore the graphics underneath it
 	if (_oldInvGraphicBounds.width() > 0)

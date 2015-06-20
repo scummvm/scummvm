@@ -36,9 +36,11 @@ class ImageFile;
 namespace Tattoo {
 
 class WidgetBase {
+private:
+	Common::Rect _oldBounds;
 protected:
 	SherlockEngine *_vm;
-	Common::Rect _bounds, _oldBounds;
+	Common::Rect _bounds;
 	Surface _surface;
 	ImageFile *_images;
 	bool _outsideMenu;
@@ -57,6 +59,16 @@ protected:
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}
+
+	/**
+	 * Erase any previous display of the widget on the screen
+	 */
+	void erase();
+
+	/**
+	 * Update the display of the widget on the screen
+	 */
+	void draw();
 
 	/**
 	 * Summon the window

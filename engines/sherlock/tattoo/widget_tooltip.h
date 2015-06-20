@@ -44,19 +44,9 @@ public:
 	void setText(const Common::String &str);
 
 	/**
-	 * Draw the tooltip if necessary
+	 * Handle updating the tooltip state
 	 */
-	void draw();
-
-	/**
-	 * Erase the area covered by the tooltip if it's active
-	 */
-	void erase();
-
-	/**
-	 * Erase any area of the screen drawn by the tooltip in the previous frame
-	 */
-	void erasePrevious();
+	virtual void handleEvents();
 };
 
 class WidgetSceneTooltip : public WidgetTooltip {

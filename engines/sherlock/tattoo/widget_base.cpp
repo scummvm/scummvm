@@ -44,6 +44,35 @@ void WidgetBase::banishWindow() {
 	_surface.free();
 }
 
+void WidgetBase::erase() {
+	Screen &screen = *_vm->_screen;
+
+	if (_oldBounds.width() > 0) {
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+		screen.slamRect(_oldBounds);
+
+		_oldBounds = Common::Rect(0, 0, 0, 0);
+	}
+}
+
+void WidgetBase::draw() {
+	Screen &screen = *_vm->_screen;
+
+	// If there was a previously drawn frame in a different position that hasn't yet been erased, then erase it
+	if (_oldBounds.width() > 0 && _oldBounds != _bounds)
+		erase();
+
+	if (_bounds.width() > 0 && !_surface.empty()) {
+		// Copy any area to be drawn on from the secondary back buffer, and then draw surface on top
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_bounds.left, _bounds.top), _bounds);
+		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+		screen.slamRect(_bounds);
+
+		// Store a copy of the drawn area for later erasing
+		_oldBounds = _bounds;
+	}
+}
+
 Common::String WidgetBase::splitLines(const Common::String &str, Common::StringArray &lines, int maxWidth, uint maxLines) {
 	Talk &talk = *_vm->_talk;
 	const char *strP = str.c_str();

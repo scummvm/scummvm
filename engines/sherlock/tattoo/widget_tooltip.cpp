@@ -117,36 +117,15 @@ void WidgetTooltip::setText(const Common::String &str) {
 	}
 }
 
-void WidgetTooltip::draw() {
-	Screen &screen = *_vm->_screen;
+void WidgetTooltip::handleEvents() {
+	Events &events = *_vm->_events;
+	Common::Point mousePos = events.mousePos();
 
-	if (!_surface.empty())
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
-}
+	// Set the new position for the tooltip
+	int xp = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
+	int yp = MAX(mousePos.y - _bounds.height(), 0);
 
-void WidgetTooltip::erase() {
-	Screen &screen = *_vm->_screen;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-
-	if (_bounds.width() > 0) {
-		screen.slamArea(_oldBounds.left - ui._currentScroll.x, _oldBounds.top, _oldBounds.width(), _oldBounds.height());
-
-		// If there's no text actually being displayed, then reset bounds so we don't keep restoring the area
-		if (_surface.empty()) {
-			_bounds.left = _bounds.top = _bounds.right = _bounds.bottom = 0;
-			_oldBounds.left = _oldBounds.top = _oldBounds.right = _oldBounds.bottom = 0;
-		}
-	}
-
-	if (!_surface.empty())
-		screen.slamArea(_bounds.left - ui._currentScroll.x, _bounds.top, _bounds.width(), _bounds.height());
-}
-
-void WidgetTooltip::erasePrevious() {
-	Screen &screen = *_vm->_screen;
-	if (_oldBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top),
-		_oldBounds);
+	_bounds.moveTo(xp, yp);
 }
 
 /*----------------------------------------------------------------*/
@@ -155,17 +134,13 @@ void WidgetSceneTooltip::handleEvents() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 
 	// See if thay are pointing at a different object and we need to regenerate the tooltip text
 	if (ui._bgFound != ui._oldBgFound || (ui._bgFound != -1 && _surface.empty()) ||
 			ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())) {
-		// Keep track of the last place we drew the text
-		_oldBounds = _bounds;
-
-		// See if there is a new object to be displayed
+		// See if there is a new object to display text for
 		if ((ui._bgFound != -1 && (ui._bgFound != ui._oldBgFound || (ui._bgFound != -1 && _surface.empty()))) ||
 				(ui._arrowZone != -1 && (ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())))) {
 			Common::String str;
@@ -189,10 +164,8 @@ void WidgetSceneTooltip::handleEvents() {
 
 		ui._oldBgFound = ui._bgFound;
 	} else {
-		// Keep track of the last place we drew the Text
-		_oldBounds = _bounds;
 
-		// Set the New position of the Text Tag
+		// Set the new position for the tooltip
 		int tagX = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
 		int tagY = MAX(mousePos.y - _bounds.height(), 0);
 
