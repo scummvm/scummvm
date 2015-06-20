@@ -39,6 +39,11 @@ public:
 	virtual ~WidgetTooltip() {}
 
 	/**
+	 * Set the text for the tooltip
+	 */
+	void setText(const Common::String &str);
+
+	/**
 	 * Handle updating the tooltip state
 	 */
 	void execute();
