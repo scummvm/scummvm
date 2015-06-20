@@ -90,6 +90,8 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		break;
 	case GType_ELVIRA2:
 	case GType_WW:
+		// Attention: Elvira 2 shipped with INSTR.DAT and MUSIC.DRV
+		// MUSIC.DRV is the correct one. INSTR.DAT seems to be a left-over
 		_accolade_mode = true;
 		accolade_useMusicDrvFile = true;
 		break;
