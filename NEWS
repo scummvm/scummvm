@@ -19,6 +19,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
    - Fixed loading and saving progress in the PC version of Waxworks.
+   - Added Accolade AdLib & MT32 music drivers for the games:
+     Elvira 1, Elvira 2, Waxworks and Simon the sorcerer 1 demo
 
  Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
