@@ -113,12 +113,14 @@ public:
 	void setVolume(int musicVol, int sfxVol);
 
 public:
-	int open(int gameType);
+	int open(int gameType, bool isDemo);
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
 	virtual void metaEvent(byte type, byte *data, uint16 length);
 
+private:
+	bool _accolade_mode;
 };
 
 } // End of namespace AGOS

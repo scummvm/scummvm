@@ -181,10 +181,22 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 
 	// The original actually just ignores the first two bytes.
 	byte *pos = data;
-	if (*(pos++) != 0xFC)
-		debug(1, "Expected 0xFC header but found 0x%02X instead", (int) *pos);
-
-	pos += 1;
+	if (*pos == 0xFC) {
+		// SysEx found right at the start
+		// this seems to happen since Elvira 2, we currently ignore it
+		// the original Accolade code does see 0xFC as end of track, which means there must have been a change
+		if ((pos[1] == 0x29) && (pos[2] == 0x07) && (pos[3] == 0x01)) {
+			// Security check
+			// Last byte is either 0x00 or 0x01. Maybe some looping indicator?
+			pos += 5; // Waxworks / Simon 1 demo
+		} else {
+			if ((pos[1] == 0x04) && (pos[2] == 0x06) && (pos[3] == 06)) {
+				pos += 4; // Elvira 2
+			} else {
+				warning("0xFC startup without proper signature");
+			}
+		}
+	}
 
 	// And now we're at the actual data. Only one track.
 	_numTracks = 1;
