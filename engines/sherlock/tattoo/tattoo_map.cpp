@@ -41,10 +41,9 @@ void MapEntry::clear() {
 
 /*-------------------------------------------------------------------------*/
 
-TattooMap::TattooMap(SherlockEngine *vm) : Map(vm) {
+TattooMap::TattooMap(SherlockEngine *vm) : Map(vm), _mapTooltip(vm) {
 	_iconImages = nullptr;
 	_bgFound = _oldBgFound = 0;
-	_textBuffer = nullptr;
 
 	loadData();
 }
@@ -120,9 +119,7 @@ int TattooMap::show() {
 	// Display the built map to the screen
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	// Set text display positioning and scroll position
-	_oldTextBounds.left = _oldTextBounds.top = _oldTextBounds.right = _oldTextBounds.bottom = 0;
-	_textBounds.left = _textBounds.top = _textBounds.right = _textBounds.bottom = 0;
+	// Set initial scroll position
 	_targetScroll = _bigPos;
 	_currentScroll = Common::Point(-1, -1);
 
@@ -197,9 +194,7 @@ int TattooMap::show() {
 		// Handle any scrolling of the map
 		if (_currentScroll != _targetScroll) {
 			// If there is a Text description being displayed, restore the area under it
-			if (_oldTextBounds.width() > 0)
-				screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldTextBounds.left, 
-					_oldTextBounds.top), _oldTextBounds);
+			_mapTooltip.erase();
 
 			_currentScroll = _targetScroll;
 
@@ -211,11 +206,7 @@ int TattooMap::show() {
 		// Handling if a location has been clicked on
 		if (events._released && _bgFound != -1) {
 			// If there is a Text description being displayed, restore the area under it
-			if (_oldTextBounds.width() > 0) {
-				screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldTextBounds.left,
-					_oldTextBounds.top), _oldTextBounds);
-				screen.slamRect(_oldTextBounds);
-			}
+			_mapTooltip.erase();
 
 			// Save the current scroll position on the map
 			_bigPos = _currentScroll;
@@ -227,8 +218,7 @@ int TattooMap::show() {
 
 	music.stopMusic();
 	events.clearEvents();
-	delete _textBuffer;
-	_textBuffer = nullptr;
+	_mapTooltip.banishWindow();
 
 	// Reset the back buffers back to standard size
 	screen._backBuffer1.create(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -336,141 +326,21 @@ void TattooMap::checkMapNames(bool slamIt) {
 		}
 	}
 
-	// Store the previous bounds that were drawn
-	_oldTextBounds = _textBounds;
-
-	// See if thay are pointing at a different location and we need to change the display
-	if (_bgFound != _oldBgFound || (_bgFound != -1 && _textBuffer == nullptr)) {
-		// See if there is a new image to be displayed
-		if (_bgFound != -1 && (_bgFound != _oldBgFound || _textBuffer == nullptr)) {
+	// Handle updating the tooltip
+	if (_bgFound != _oldBgFound) {
+		if (_bgFound == -1) {
+			_mapTooltip.setText("");
+		} else {
 			const Common::String &desc = _data[_bgFound]._description;
-			const char *space = nullptr;
-			int width = screen.stringWidth(desc) + 2;
-			int height = 0;
-
-			// See if we need to split it into two lines
-			if (width > 150) {
-				const char *s = desc.c_str();
-
-				int dif = 10000;
-				for (;;) {
-					// Move to end of next word
-					s = strchr(s, ' ');
-
-					if (s == nullptr) {
-						// Reached end of description
-						if (space == nullptr) {
-							height = screen.stringHeight(desc) + 2;
-						} else {
-							Common::String line1(desc.c_str(), space);
-							Common::String line2(space + 1);
-
-							height = screen.stringHeight(line1) + screen.stringHeight(line2);
-						}
-						break;
-					} else {
-						// Reached space separating words within the description
-						// Get width before and after word
-						int width1 = screen.stringWidth(Common::String(desc.c_str(), s));
-						int width2 = screen.stringWidth(Common::String(s + 1));
-
-						if (ABS(width1 - width2) < dif) {
-							space = s;
-							dif = ABS(width1 - width2);
-							width = MAX(width1, width) + 2;
-						}
-
-						++s;
-					}
-				}
-			} else {
-				height = screen.stringHeight(desc) + 2;
-			}
-
-			// Delete any previous saved area
-			delete _textBuffer;
-
-			// Allocate a new surface
-			_textBuffer = new Surface(width, height);
-
-			_textBuffer->fillRect(Common::Rect(0, 0, width, height), TRANSPARENCY);
-			if (space == nullptr) {
-				// The whole text can be drawn on a single line
-				_textBuffer->writeFancyString(desc, Common::Point(0, 0), BLACK, MAP_NAME_COLOR);
-			} else {
-				// The text needs to be split up over two lines
-				Common::String line1(desc.c_str(), space);
-				Common::String line2(space + 1);
-
-				// Draw the first line
-				int xp = (width - screen.stringWidth(desc)) / 2;
-				_textBuffer->writeFancyString(line1, Common::Point(xp, 0), BLACK, MAP_NAME_COLOR);
-
-				int yp = screen.stringHeight(line2);
-				xp = (width - screen.stringWidth(line2)) / 2;
-				// CHECKME: Shouldn't we use yp for drawing line2?
-				_textBuffer->writeFancyString(line2, Common::Point(xp, yp), BLACK, MAP_NAME_COLOR);
-			}
-
-			// Set the text display position
-			setTextBounds();
-		} else if (_bgFound == -1 && _oldBgFound != -1) {
-			// We need to clear a currently displayed name
-			delete _textBuffer;
-			_textBuffer = nullptr;
+			_mapTooltip.setText(desc);
 		}
 	
 		_oldBgFound = _bgFound;
-	} else {
-		// Set the new text position
-		setTextBounds();
 	}
 
-	// If the location name was displayed, restore the graphics underneath where it previously was
-	if (_oldTextBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldTextBounds.left, _oldTextBounds.top), _oldTextBounds);
-
-	// See if we need to draw the currently highlighted location name
-	if (_textBuffer != nullptr)
-		screen._backBuffer1.transBlitFrom(*_textBuffer, Common::Point(_textBounds.left, _textBounds.top));
-
-	// See if we need to flush the areas associated with the text
-	if (_oldTextBounds.width() > 0) {
-		if (slamIt)
-			slamRect(_oldTextBounds);
-
-		// If there's no text to display, reset the display bounds
-		if (_textBuffer == nullptr) {
-			_textBounds.left = _textBounds.top = _textBounds.right = _textBounds.bottom = 0;
-			_oldTextBounds.left = _oldTextBounds.top = _oldTextBounds.right = _oldTextBounds.bottom = 0;
-		}
-	}
-
-	// If there's text to display, then copy the drawn area to the screen
-	if (_textBuffer != nullptr && slamIt)
-		slamRect(_textBounds);
-}
-
-void TattooMap::setTextBounds() {
-	Events &events = *_vm->_events;
-	Common::Point mousePos = events.mousePos();
-
-	if (_textBuffer == nullptr) {
-		_textBounds = Common::Rect(0, 0, 0, 0);
-	} else {
-		int xp = (mousePos.x - _textBounds.width() / 2) + _currentScroll.x;
-		int yp = (mousePos.y - _textBounds.height() / 2) + _currentScroll.y;
-		if (xp < _currentScroll.x)
-			xp = _currentScroll.x;
-		if ((xp + _textBounds.width()) >(_currentScroll.x + SHERLOCK_SCREEN_WIDTH))
-			xp = _currentScroll.x + SHERLOCK_SCREEN_WIDTH - _textBounds.width();
-		if (yp < _currentScroll.y)
-			yp = _currentScroll.y;
-		if ((yp + _textBounds.height()) >(_currentScroll.y + SHERLOCK_SCREEN_HEIGHT))
-			yp = _currentScroll.y + SHERLOCK_SCREEN_HEIGHT - _textBounds.height();
-
-		_textBounds = Common::Rect(xp, yp, xp + _textBuffer->w(), yp + _textBuffer->h());
-	}
+	_mapTooltip.handleEvents();
+	if (slamIt)
+		_mapTooltip.draw();
 }
 
 void TattooMap::restoreArea(const Common::Rect &bounds) {

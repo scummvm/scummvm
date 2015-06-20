@@ -46,27 +46,39 @@ void WidgetBase::banishWindow() {
 
 void WidgetBase::erase() {
 	Screen &screen = *_vm->_screen;
+	const Common::Point &currentScroll = getCurrentScroll();
 
 	if (_oldBounds.width() > 0) {
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
-		screen.slamRect(_oldBounds);
+		// Get the bounds to copy from the back buffers, adjusted for scroll position
+		Common::Rect oldBounds = _oldBounds;
+		oldBounds.translate(currentScroll.x, currentScroll.y);
 
+		// Restore the affected area from the secondary back buffer into the first one, and then copy to screen
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(oldBounds.left, oldBounds.top), oldBounds);
+		screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), oldBounds);
+
+		// Reset the old bounds so 
 		_oldBounds = Common::Rect(0, 0, 0, 0);
 	}
 }
 
 void WidgetBase::draw() {
 	Screen &screen = *_vm->_screen;
+	const Common::Point &currentScroll = getCurrentScroll();
 
 	// If there was a previously drawn frame in a different position that hasn't yet been erased, then erase it
 	if (_oldBounds.width() > 0 && _oldBounds != _bounds)
 		erase();
 
 	if (_bounds.width() > 0 && !_surface.empty()) {
+		// Get the area to draw, adjusted for scroll position
+		Common::Rect bounds = _bounds;
+		bounds.translate(currentScroll.x, currentScroll.y);
+
 		// Copy any area to be drawn on from the secondary back buffer, and then draw surface on top
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_bounds.left, _bounds.top), _bounds);
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
-		screen.slamRect(_bounds);
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(bounds.left, bounds.top), bounds);
+		screen._backBuffer1.transBlitFrom(_surface, Common::Point(bounds.left, bounds.top));
+		screen.blitFrom(screen._backBuffer1, Common::Point(_bounds.left, _bounds.top), bounds);
 
 		// Store a copy of the drawn area for later erasing
 		_oldBounds = _bounds;
@@ -149,6 +161,11 @@ void WidgetBase::makeInfoArea() {
 	_surface.vLine(_bounds.width() - 3, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_TOP);
 	_surface.vLine(_bounds.width() - 2, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_MIDDLE);
 	_surface.vLine(_bounds.width() - 1, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_BOTTOM);
+}
+
+const Common::Point &WidgetBase::getCurrentScroll() const {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	return ui._currentScroll;
 }
 
 } // End of namespace Tattoo

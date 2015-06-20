@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/widget_tooltip.h"
+#include "sherlock/tattoo/tattoo_map.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
@@ -173,6 +174,15 @@ void WidgetSceneTooltip::handleEvents() {
 	}
 
 	ui._oldArrowZone = ui._arrowZone;
+
+	WidgetTooltip::handleEvents();
+}
+
+/*----------------------------------------------------------------*/
+
+const Common::Point &WidgetMapTooltip::getCurrentScroll() const {
+	TattooMap &map = *(TattooMap *)_vm->_map;
+	return map._currentScroll;
 }
 
 } // End of namespace Tattoo

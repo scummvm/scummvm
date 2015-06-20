@@ -59,6 +59,16 @@ public:
 	virtual void handleEvents();
 };
 
+class WidgetMapTooltip : public WidgetTooltip {
+protected:
+	/**
+	 * Returns the current scroll position
+	 */
+	virtual const Common::Point &getCurrentScroll() const;
+public:
+	WidgetMapTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
+};
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

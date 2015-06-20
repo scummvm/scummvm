@@ -56,6 +56,11 @@ protected:
 	void checkMenuPosition();
 
 	void makeInfoArea();
+
+	/**
+	 * Returns the current scroll position
+	 */
+	virtual const Common::Point &getCurrentScroll() const;
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}
