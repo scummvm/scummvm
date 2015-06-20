@@ -56,7 +56,8 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		const char *lineStartP = strP;
 
 		// Find how many characters will fit on the next line
-		while (width < maxWidth && *strP && (*strP < 170 || *strP == talk._opcodes[OP_NULL])) {
+		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || 
+				(byte)*strP == talk._opcodes[OP_NULL])) {
 			width += _surface.charWidth(*strP);
 
 			// Keep track of the last space
@@ -76,7 +77,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		// Move the string ahead to the next line
 		if (*strP == ' ' || *strP == 13)
 			++strP;
-	} while (*strP && (*strP < talk._opcodes[OP_SWITCH_SPEAKER] || *strP == talk._opcodes[OP_NULL]));
+	} while (*strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || (byte)*strP == talk._opcodes[OP_NULL]));
 
 	// Return any remaining text left over
 	return *strP ? Common::String(strP) : Common::String();
