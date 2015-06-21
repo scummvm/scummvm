@@ -368,7 +368,6 @@ void TattooScene::doBgAnim() {
 
 void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {

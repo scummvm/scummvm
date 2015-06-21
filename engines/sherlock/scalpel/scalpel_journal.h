@@ -43,42 +43,12 @@ enum JournalButton {
 	BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT
 };
 
-
-struct JournalEntry {
-	int _converseNum;
-	bool _replyOnly;
-	int _statementNum;
-
-	JournalEntry() : _converseNum(0), _replyOnly(false), _statementNum(0) {}
-	JournalEntry(int converseNum, int statementNum, bool replyOnly = false) :
-		_converseNum(converseNum), _statementNum(statementNum), _replyOnly(replyOnly) {}
-};
-
 class ScalpelJournal: public Journal {
 private:
-	Common::Array<JournalEntry> _journal;
-	Common::StringArray _directory;
-	Common::StringArray _locations;
-	Common::StringArray _lines;
-	int _maxPage;
-	int _index;
-	int _sub;
-	bool _up, _down;
-	int _page;
-	Common::String _find;
-
 	/**
-	 * Load the list of location names that the journal will make reference to
+	 * Load the list of journal locations
 	 */
 	void loadJournalLocations();
-
-	/**
-	 * Loads the description for the current display index in the journal, and then
-	 * word wraps the result to prepare it for being displayed
-	 * @param alreadyLoaded		Indicates whether the journal file is being loaded for the
-	 *		first time, or being reloaded
-	 */
-	void loadJournalFile(bool alreadyLoaded);
 
 	/**
 	 * Display the arrows that can be used to scroll up and down pages
@@ -86,19 +56,9 @@ private:
 	void doArrows();
 
 	/**
-	 * Displays a page of the journal at the current index
-	 */
-	bool drawJournal(int direction, int howFar);
-
-	/**
 	 * Show the search submenu and allow the player to enter a search string
 	 */
 	int getSearchString(bool printError);
-
-	/**
-	 * Draw the journal background, frame, and interface buttons
-	 */
-	void drawJournalFrame();
 
 	/**
 	 * Returns the button, if any, that is under the specified position
@@ -117,6 +77,11 @@ public:
 	 * Handle events whilst the journal is being displayed
 	 */
 	bool handleEvents(int key);
+public:
+	/**
+	 * Draw the journal background, frame, and interface buttons
+	 */
+	virtual void drawJournalFrame();
 
 	/**
 	 * Records statements that are said, in the order which they are said. The player

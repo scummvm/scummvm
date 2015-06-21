@@ -33,6 +33,17 @@ namespace Tattoo {
 class TattooJournal : public Journal {
 private:
 	ImageFile *_journalImages;
+
+	/**
+	 * Load the list of journal locations
+	 */
+	void loadJournalLocations();
+
+	/**
+	 * Displays the controls used by the journal
+	 * @param mode	0: Normal journal buttons, 1: Search interface
+	 */
+	void drawJournalControls(int mode);
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}
@@ -41,6 +52,11 @@ public:
 	 * Show the journal
 	 */
 	void show();
+public:
+	/**
+	 * Draw the journal background, frame, and interface buttons
+	 */
+	virtual void drawJournalFrame();
 
 	/**
 	 * Synchronize the data for a savegame
