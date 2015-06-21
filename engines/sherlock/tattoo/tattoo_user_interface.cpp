@@ -863,6 +863,18 @@ void TattooUserInterface::drawMaskArea(bool mode) {
 	}
 }
 
+void TattooUserInterface::makeBGArea(const Common::Rect &r) {
+	Screen &screen = *_vm->_screen;
+
+	for (int yp = r.top; yp < r.bottom; ++yp) {
+		byte *ptr = screen._backBuffer1.getBasePtr(r.left, yp);
+
+		for (int xp = r.left; xp < r.right; ++xp, ++ptr)
+			*ptr = _lookupTable[*ptr];
+	}
+}
+
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

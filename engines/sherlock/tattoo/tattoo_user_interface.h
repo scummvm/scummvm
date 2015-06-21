@@ -208,6 +208,11 @@ public:
 	void doBgAnimEraseBackground();
 
 	void drawMaskArea(bool mode);
+
+	/**
+	 * Translate a given area of the back buffer to greyscale shading
+	 */
+	void makeBGArea(const Common::Rect &r);
 public:
 	/**
 	 * Resets the user interface
