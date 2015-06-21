@@ -216,6 +216,11 @@ public:
 	 * Translate a given area of the back buffer to greyscale shading
 	 */
 	void makeBGArea(const Common::Rect &r);
+
+	/**
+	 * Draws all the dialog rectangles for any items that need them
+	 */
+	void drawDialogRect(Surface &s, const Common::Rect &r, bool raised);
 public:
 	/**
 	 * Resets the user interface

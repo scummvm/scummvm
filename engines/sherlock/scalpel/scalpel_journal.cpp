@@ -66,7 +66,7 @@ ScalpelJournal::ScalpelJournal(SherlockEngine *vm) : Journal(vm) {
 
 	if (_vm->_interactiveFl) {
 		// Load the journal directory and location names
-		loadJournalLocations();
+		loadLocations();
 	}
 }
 
@@ -100,7 +100,7 @@ void ScalpelJournal::record(int converseNum, int statementNum, bool replyOnly) {
 	}
 }
 
-void ScalpelJournal::loadJournalLocations() {
+void ScalpelJournal::loadLocations() {
 	Resources &res = *_vm->_res;
 
 	_directory.clear();
@@ -144,7 +144,7 @@ void ScalpelJournal::loadJournalLocations() {
 	delete loc;
 }
 
-void ScalpelJournal::drawJournalFrame() {
+void ScalpelJournal::drawFrame() {
 	FixedText &fixedText = *_vm->_fixedText;
 	Resources &res = *_vm->_res;
 	Screen &screen = *_vm->_screen;
@@ -213,7 +213,7 @@ void ScalpelJournal::drawJournalFrame() {
 void ScalpelJournal::drawInterface() {
 	Screen &screen = *_vm->_screen;
 
-	drawJournalFrame();
+	drawFrame();
 
 	if (_journal.empty()) {
 		_up = _down = 0;
@@ -437,7 +437,7 @@ bool ScalpelJournal::handleEvents(int key) {
 					_sub = savedSub;
 					_page = savedPage;
 
-					drawJournalFrame();
+					drawFrame();
 					drawJournal(0, 0);
 					notFound = true;
 				} else {
@@ -458,7 +458,7 @@ bool ScalpelJournal::handleEvents(int key) {
 		_up = _down = false;
 		_page = 1;
 
-		drawJournalFrame();
+		drawFrame();
 		drawJournal(0, 0);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
@@ -647,7 +647,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 	}
 
 	// Redisplay the journal screen
-	drawJournalFrame();
+	drawFrame();
 	drawJournal(0, 0);
 	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 

@@ -47,8 +47,6 @@ struct JournalEntry {
 };
 
 class Journal {
-private:
-
 protected:
 	SherlockEngine *_vm;
 	Common::StringArray _directory;
@@ -61,7 +59,6 @@ protected:
 	int _maxPage;
 	int _sub;
 	Common::String _find;
-
 
 	Journal(SherlockEngine *vm);
 
@@ -84,7 +81,7 @@ public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	virtual void drawJournalFrame() = 0;
+	virtual void drawFrame() = 0;
 
 	/**
 	 * Records statements that are said, in the order which they are said. The player

@@ -38,13 +38,13 @@ private:
 	/**
 	 * Load the list of journal locations
 	 */
-	void loadJournalLocations();
+	void loadLocations();
 
 	/**
 	 * Displays the controls used by the journal
 	 * @param mode	0: Normal journal buttons, 1: Search interface
 	 */
-	void drawJournalControls(int mode);
+	void drawControls(int mode);
 
 	/**
 	 * Draw the journal controls used by the journal
@@ -55,6 +55,8 @@ private:
 	 * Draw the journal controls used in search mode
 	 */
 	void highlightSearchControls(bool slamIt);
+
+	void drawScrollBar();
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}
@@ -67,7 +69,7 @@ public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	virtual void drawJournalFrame();
+	virtual void drawFrame();
 
 	/**
 	 * Synchronize the data for a savegame

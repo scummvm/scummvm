@@ -58,11 +58,6 @@ private:
 	void drawScrollBar();
 
 	/**
-	 * Draws all the dialog rectangles for any items that need them
-	 */
-	void drawDialogRect(const Common::Rect &r, bool raised);
-
-	/**
 	 * Displays the description of any inventory item the moues cursor is over
 	 */
 	void updateDescription();

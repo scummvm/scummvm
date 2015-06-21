@@ -48,7 +48,7 @@ private:
 	/**
 	 * Load the list of journal locations
 	 */
-	void loadJournalLocations();
+	void loadLocations();
 
 	/**
 	 * Display the arrows that can be used to scroll up and down pages
@@ -81,7 +81,7 @@ public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	virtual void drawJournalFrame();
+	virtual void drawFrame();
 
 	/**
 	 * Records statements that are said, in the order which they are said. The player

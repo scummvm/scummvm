@@ -125,11 +125,11 @@ void WidgetInventory::drawScrollBar() {
 
 	raised = ui._scrollHighlight != 1;
 	_surface.fillRect(Common::Rect(r.left + 2, r.top + 2, r.right - 2, r.top + BUTTON_SIZE - 2), INFO_MIDDLE);
-	drawDialogRect(Common::Rect(r.left, r.top, r.left + BUTTON_SIZE, r.top + BUTTON_SIZE), raised);
+	ui.drawDialogRect(_surface, Common::Rect(r.left, r.top, r.left + BUTTON_SIZE, r.top + BUTTON_SIZE), raised);
 
 	raised = ui._scrollHighlight != 5;
 	_surface.fillRect(Common::Rect(r.left + 2, r.bottom - BUTTON_SIZE + 2, r.right - 2, r.bottom - 2), INFO_MIDDLE);
-	drawDialogRect(Common::Rect(r.left, r.bottom - BUTTON_SIZE, r.right, r.bottom), raised);
+	ui.drawDialogRect(_surface, Common::Rect(r.left, r.bottom - BUTTON_SIZE, r.right, r.bottom), raised);
 
 	// Draw the arrows on the scroll buttons
 	byte color = inv._invIndex? INFO_BOTTOM + 2 : INFO_BOTTOM;
@@ -162,41 +162,7 @@ void WidgetInventory::drawScrollBar() {
 		(r.height() - BUTTON_SIZE * 2 - barHeight) * FIXED_INT_MULTIPLIER / (idx- NUM_INVENTORY_SHOWN)
 			* inv._invIndex / FIXED_INT_MULTIPLIER + r.top + BUTTON_SIZE;
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
-	drawDialogRect(Common::Rect(r.left, barY, r.right, barY + barHeight), true);
-}
-
-void WidgetInventory::drawDialogRect(const Common::Rect &r, bool raised) {
-	switch (raised) {
-	case true:
-		// Draw Left
-		_surface.vLine(r.left, r.top, r.bottom - 1, INFO_TOP);
-		_surface.vLine(r.left + 1, r.top, r.bottom - 2, INFO_TOP);
-		// Draw Top
-		_surface.hLine(r.left + 2, r.top, r.right - 1, INFO_TOP);
-		_surface.hLine(r.left + 2, r.top + 1, r.right - 2, INFO_TOP);
-		// Draw Right
-		_surface.vLine(r.right - 1, r.top + 1,r.bottom - 1, INFO_BOTTOM);
-		_surface.vLine(r.right - 2, r.top + 2, r.bottom - 1, INFO_BOTTOM);
-		// Draw Bottom
-		_surface.hLine(r.left + 1, r.bottom - 1, r.right - 3, INFO_BOTTOM);
-		_surface.hLine(r.left + 2, r.bottom - 2, r.right - 3, INFO_BOTTOM);
-		break;
-
-	case false:
-		// Draw Left
-		_surface.vLine(r.left, r.top, r.bottom - 1, INFO_BOTTOM);
-		_surface.vLine(r.left + 1, r.top, r.bottom - 2, INFO_BOTTOM);
-		// Draw Top
-		_surface.hLine(r.left + 2, r.top, r.right - 1, INFO_BOTTOM);
-		_surface.hLine(r.left + 2, r.top + 1, r.right - 2, INFO_BOTTOM);
-		// Draw Right
-		_surface.vLine(r.right - 1, r.top + 1, r.bottom - 1, INFO_TOP);
-		_surface.vLine(r.right - 2, r.top + 2, r.bottom - 1, INFO_TOP);
-		// Draw Bottom
-		_surface.hLine(r.left + 1, r.bottom - 1, r.right - 3, INFO_TOP);
-		_surface.hLine(r.left + 2, r.bottom - 2, r.right - 3, INFO_TOP);
-		break;
-	}
+	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
 }
 
 void WidgetInventory::handleEvents() {

@@ -76,7 +76,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 	if (endJournal) {
 		// If moving forward or backwards, clear the page before printing
 		if (direction)
-			drawJournalFrame();
+			drawFrame();
 
 		screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
 		return false;
@@ -193,7 +193,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 
 	if (direction) {
 		events.setCursor(ARROW);
-		drawJournalFrame();
+		drawFrame();
 	}
 
 	Common::String fixedText_Page = fixedText.getText(kFixedText_Journal_Page);

@@ -297,5 +297,4 @@ void Surface::maskArea(const ImageFrame &src, const Common::Point &pt, int scrol
 	error("TODO: maskArea");
 }
 
-
 } // End of namespace Sherlock

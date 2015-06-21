@@ -880,6 +880,39 @@ void TattooUserInterface::makeBGArea(const Common::Rect &r) {
 	}
 }
 
+void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool raised) {
+	switch (raised) {
+	case true:
+		// Draw Left
+		s.vLine(r.left, r.top, r.bottom - 1, INFO_TOP);
+		s.vLine(r.left + 1, r.top, r.bottom - 2, INFO_TOP);
+		// Draw Top
+		s.hLine(r.left + 2, r.top, r.right - 1, INFO_TOP);
+		s.hLine(r.left + 2, r.top + 1, r.right - 2, INFO_TOP);
+		// Draw Right
+		s.vLine(r.right - 1, r.top + 1, r.bottom - 1, INFO_BOTTOM);
+		s.vLine(r.right - 2, r.top + 2, r.bottom - 1, INFO_BOTTOM);
+		// Draw Bottom
+		s.hLine(r.left + 1, r.bottom - 1, r.right - 3, INFO_BOTTOM);
+		s.hLine(r.left + 2, r.bottom - 2, r.right - 3, INFO_BOTTOM);
+		break;
+
+	case false:
+		// Draw Left
+		s.vLine(r.left, r.top, r.bottom - 1, INFO_BOTTOM);
+		s.vLine(r.left + 1, r.top, r.bottom - 2, INFO_BOTTOM);
+		// Draw Top
+		s.hLine(r.left + 2, r.top, r.right - 1, INFO_BOTTOM);
+		s.hLine(r.left + 2, r.top + 1, r.right - 2, INFO_BOTTOM);
+		// Draw Right
+		s.vLine(r.right - 1, r.top + 1, r.bottom - 1, INFO_TOP);
+		s.vLine(r.right - 2, r.top + 2, r.bottom - 1, INFO_TOP);
+		// Draw Bottom
+		s.hLine(r.left + 1, r.bottom - 1, r.right - 3, INFO_TOP);
+		s.hLine(r.left + 2, r.bottom - 2, r.right - 3, INFO_TOP);
+		break;
+	}
+}
 
 } // End of namespace Tattoo
 
