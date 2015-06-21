@@ -36,6 +36,8 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+#define BUTTON_SIZE 15				// Button width/height
+
 class WidgetBase;
 
 class TattooUserInterface : public UserInterface {
@@ -144,9 +146,10 @@ public:
 	ImageFile *_mask, *_mask1;
 	Common::Point _maskOffset;
 	int _maskCounter;
+	ImageFile *_interfaceImages;
 public:
 	TattooUserInterface(SherlockEngine *vm);
-	virtual ~TattooUserInterface() {}
+	virtual ~TattooUserInterface();
 
 	/**
 	 * Handles restoring any areas of the back buffer that were/are covered by UI elements

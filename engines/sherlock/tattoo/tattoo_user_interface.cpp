@@ -51,6 +51,12 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 	_scrollHighlight = 0;
 	_mask = _mask1 = nullptr;
 	_maskCounter = 0;
+
+	_interfaceImages = new ImageFile("intrface.vgs");
+}
+
+TattooUserInterface::~TattooUserInterface() {
+	delete _interfaceImages;
 }
 
 void TattooUserInterface::initScrollVars() {

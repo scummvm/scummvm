@@ -32,7 +32,8 @@ namespace Tattoo {
 enum {
 	INFO_TOP			= 185,
 	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188
+	INFO_BOTTOM			= 188,
+	MENU_BACKGROUND		= 225
 };
 
 class TattooEngine : public SherlockEngine {
@@ -57,6 +58,7 @@ public:
 	bool _creditsActive;
 	bool _runningProlog;
 	bool _fastMode, _allowFastMode;
+	bool _transparentMenus;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
 	virtual ~TattooEngine();

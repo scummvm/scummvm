@@ -37,10 +37,10 @@ TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDes
 	_runningProlog = false;
 	_fastMode = false;
 	_allowFastMode = true;
+	_transparentMenus = true;
 }
 
 TattooEngine::~TattooEngine() {
-	WidgetBase::freeInterfaceImages();
 }
 
 void TattooEngine::showOpening() {
@@ -52,9 +52,6 @@ void TattooEngine::initialize() {
 
 	// Initialize the base engine
 	SherlockEngine::initialize();
-
-	// Further initialization
-	WidgetBase::setInterfaceImages(new ImageFile("intrface.vgs"));
 
 	// Initialise the global flags
 	_flags.resize(3200);

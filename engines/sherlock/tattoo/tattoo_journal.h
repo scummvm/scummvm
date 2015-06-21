@@ -33,6 +33,7 @@ namespace Tattoo {
 class TattooJournal : public Journal {
 private:
 	ImageFile *_journalImages;
+	int _selector, _oldSelector;
 
 	/**
 	 * Load the list of journal locations
@@ -44,6 +45,16 @@ private:
 	 * @param mode	0: Normal journal buttons, 1: Search interface
 	 */
 	void drawJournalControls(int mode);
+
+	/**
+	 * Draw the journal controls used by the journal
+	 */
+	void highlightJournalControls(bool slamIt);
+
+	/**
+	 * Draw the journal controls used in search mode
+	 */
+	void highlightSearchControls(bool slamIt);
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}

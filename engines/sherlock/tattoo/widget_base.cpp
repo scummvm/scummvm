@@ -29,17 +29,6 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-ImageFile *WidgetBase::_interfaceImages;
-
-void WidgetBase::setInterfaceImages(ImageFile *images) {
-	_interfaceImages = images;
-}
-
-void WidgetBase::freeInterfaceImages() {
-	delete _interfaceImages;
-	_interfaceImages = nullptr;
-}
-
 WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
 }
 
@@ -146,7 +135,8 @@ void WidgetBase::checkMenuPosition() {
 }
 
 void WidgetBase::makeInfoArea(Surface &s) {
-	ImageFile &images = *_interfaceImages;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ImageFile &images = *ui._interfaceImages;
 
 	// Draw the four corners of the Info Box
 	s.transBlitFrom(images[0], Common::Point(0, 0));

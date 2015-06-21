@@ -39,8 +39,6 @@ class WidgetBase {
 private:
 	Common::Rect _oldBounds;
 protected:
-	static ImageFile *_interfaceImages;
-protected:
 	SherlockEngine *_vm;
 	Common::Rect _bounds;
 	Surface _surface;
@@ -70,16 +68,6 @@ protected:
 	 * Returns the current scroll position
 	 */
 	virtual const Common::Point &getCurrentScroll() const;
-public:
-	/**
-	 * Sets the interface images used for drawing the various types of window elements
-	 */
-	static void setInterfaceImages(ImageFile *images);
-
-	/**
-	 * Frees the interface images
-	 */
-	static void freeInterfaceImages();
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}

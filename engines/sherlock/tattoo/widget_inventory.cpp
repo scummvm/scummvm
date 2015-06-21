@@ -33,7 +33,6 @@ namespace Tattoo {
 #define INVENTORY_YSIZE 70			// Height of the box that surrounds inventory items
 #define NUM_INVENTORY_SHOWN 8		// Number of Inventory Items Shown
 #define MAX_INV_COMMANDS 10			// Maximum elements in dialog
-#define BUTTON_SIZE 15				// Button width/height
 
 // TODO: Refactor into FixedText
 #define S_INV6 "Foolscap"
@@ -482,7 +481,7 @@ void WidgetInventory::handleEvents() {
 						makeInfoArea(_menuSurface);
 
 						// Draw the Verb commands and the lines separating them
-						ImageFile &images = *_interfaceImages;
+						ImageFile &images = *ui._interfaceImages;
 						for (int idx = 0; idx < (int)_inventCommands.size(); ++idx) {
 							_menuSurface.writeString(_inventCommands[idx], Common::Point((_menuBounds.width() -
 								_menuSurface.stringWidth(_inventCommands[idx])) / 2, (_menuSurface.fontHeight() + 7) * idx + 5), INFO_TOP);
