@@ -684,7 +684,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	memcpy(buffer, soundData, size);
 
 	byte flags = 0;
-	if (_vm->getPlatform() == Common::kPlatformDOS)
+	if (_vm->getPlatform() == Common::kPlatformDOS &&  _vm->getGameId() != GID_ELVIRA2)
 		flags = Audio::FLAG_UNSIGNED;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(buffer, size, freq, flags);
