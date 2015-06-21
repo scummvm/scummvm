@@ -23,6 +23,8 @@
 #include "agos/agos.h"
 #include "agos/drivers/accolade/mididriver.h"
 
+#include "audio/mididrv.h"
+
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/mutex.h"
@@ -69,7 +71,7 @@ public:
 protected:
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
-	bool _MT32;
+	bool _nativeMT32; // native MT32, may also be our MUNT, or MUNT over MIDI
 
 	bool _isOpen;
 	int _baseFreq;
@@ -87,7 +89,7 @@ public:
 MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() {
 	_driver = NULL;
 	_isOpen = false;
-	_MT32 = false;
+	_nativeMT32 = false;
 	_baseFreq = 250;
 
 	memset(_channelMapping, 0, sizeof(_channelMapping));
@@ -113,13 +115,14 @@ int MidiDriver_Accolade_MT32::open() {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_MT32);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
+	// check, if we got a real MT32 (or MUNT, or MUNT over MIDI)
 	switch (musicType) {
 	case MT_MT32:
-		_MT32       = true;
+		_nativeMT32 = true;
 		break;
 	case MT_GM:
 		if (ConfMan.getBool("native_mt32")) {
-			_MT32       = true;
+			_nativeMT32 = true;
 		}
 		break;
 	default:
@@ -134,7 +137,7 @@ int MidiDriver_Accolade_MT32::open() {
 	if (ret)
 		return ret;
 
-	if (_MT32)
+	if (_nativeMT32)
 		_driver->sendMT32Reset();
 	else
 		_driver->sendGMReset();
@@ -170,6 +173,11 @@ void MidiDriver_Accolade_MT32::send(uint32 b) {
 			// Figure out the requested instrument
 			byte midiInstrument = (b >> 8) & 0xFF;
 			byte mappedInstrument = _instrumentMapping[midiInstrument];
+
+			// If there is no actual MT32 (or MUNT), we make a second mapping to General MIDI instruments
+			if (!_nativeMT32) {
+				mappedInstrument = (MidiDriver::_mt32ToGm[mappedInstrument]);
+			}
 			// And replace it
 			b = (b & 0xFFFF00FF) | (mappedInstrument << 8);
 		}

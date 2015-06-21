@@ -29,6 +29,8 @@
 
 #include "agos/drivers/accolade/mididriver.h"
 
+#include "gui/message.h"
+
 namespace AGOS {
 
 
@@ -114,12 +116,17 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		case MT_MT32:
 			break;
 		case MT_GM:
-			if (ConfMan.getBool("native_mt32")) {
-				// Real MT32
-				accoladeMusicType = MT_MT32;
-			} else {
-				_accoladeMode = false;
+			if (!ConfMan.getBool("native_mt32")) {
+				// Not a real MT32 / no MUNT
+				::GUI::MessageDialog dialog(("You appear to be using a General MIDI device,\n"
+											"but your game only supports Roland MT32 MIDI.\n"
+											"We try to map the Roland MT32 instruments to\n"
+											"General MIDI ones. It is still possible that\n"
+											"some tracks sound incorrect."));
+				dialog.runModal();
 			}
+			// Switch to MT32 driver in any case
+			accoladeMusicType = MT_MT32;
 			break;
 		default:
 			_accoladeMode = false;
