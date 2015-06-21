@@ -29,8 +29,18 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+ImageFile *WidgetBase::_interfaceImages;
+
+void WidgetBase::setInterfaceImages(ImageFile *images) {
+	_interfaceImages = images;
+}
+
+void WidgetBase::freeInterfaceImages() {
+	delete _interfaceImages;
+	_interfaceImages = nullptr;
+}
+
 WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
-	_images = nullptr;
 }
 
 void WidgetBase::summonWindow() {
@@ -135,37 +145,46 @@ void WidgetBase::checkMenuPosition() {
 		_bounds.moveTo(_bounds.left, SHERLOCK_SCREEN_HEIGHT - _bounds.height());
 }
 
-void WidgetBase::makeInfoArea() {
+void WidgetBase::makeInfoArea(Surface &s) {
+	ImageFile &images = *_interfaceImages;
+
 	// Draw the four corners of the Info Box
-	_surface.transBlitFrom((*_images)[0], Common::Point(0, 0));
-	_surface.transBlitFrom((*_images)[1], Common::Point(_bounds.width() - (*_images)[1]._width, 0));
-	_surface.transBlitFrom((*_images)[2], Common::Point(0, _bounds.height() - (*_images)[2]._height));
-	_surface.transBlitFrom((*_images)[3], Common::Point(_bounds.width() - (*_images)[3]._width, _bounds.height()));
+	s.transBlitFrom(images[0], Common::Point(0, 0));
+	s.transBlitFrom(images[1], Common::Point(s.w() - images[1]._width, 0));
+	s.transBlitFrom(images[2], Common::Point(0, s.h() - images[2]._height));
+	s.transBlitFrom(images[3], Common::Point(s.w() - images[3]._width, s.h()));
 
 	// Draw the top of the Info Box
-	_surface.hLine((*_images)[0]._width, 0, _bounds.width() - (*_images)[1]._width, INFO_TOP);
-	_surface.hLine((*_images)[0]._width, 1, _bounds.width() - (*_images)[1]._width, INFO_MIDDLE);
-	_surface.hLine((*_images)[0]._width, 2, _bounds.width() - (*_images)[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, 0, s.w() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, 1, s.w() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, 2, s.w() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the bottom of the Info Box
-	_surface.hLine((*_images)[0]._width, _bounds.height()- 3, _bounds.width() - (*_images)[1]._width, INFO_TOP);
-	_surface.hLine((*_images)[0]._width, _bounds.height()- 2, _bounds.width() - (*_images)[1]._width, INFO_MIDDLE);
-	_surface.hLine((*_images)[0]._width, _bounds.height()- 1, _bounds.width() - (*_images)[1]._width, INFO_BOTTOM);
+	s.hLine(images[0]._width, s.h()- 3, s.w() - images[1]._width, INFO_TOP);
+	s.hLine(images[0]._width, s.h()- 2, s.w() - images[1]._width, INFO_MIDDLE);
+	s.hLine(images[0]._width, s.h()- 1, s.w() - images[1]._width, INFO_BOTTOM);
 
 	// Draw the left Side of the Info Box
-	_surface.vLine(0, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_TOP);
-	_surface.vLine(1, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_MIDDLE);
-	_surface.vLine(2, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_BOTTOM);
+	s.vLine(0, images[0]._height, s.h()- images[2]._height, INFO_TOP);
+	s.vLine(1, images[0]._height, s.h()- images[2]._height, INFO_MIDDLE);
+	s.vLine(2, images[0]._height, s.h()- images[2]._height, INFO_BOTTOM);
 
 	// Draw the right Side of the Info Box
-	_surface.vLine(_bounds.width() - 3, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_TOP);
-	_surface.vLine(_bounds.width() - 2, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_MIDDLE);
-	_surface.vLine(_bounds.width() - 1, (*_images)[0]._height, _bounds.height()- (*_images)[2]._height, INFO_BOTTOM);
+	s.vLine(s.w() - 3, images[0]._height, s.h()- images[2]._height, INFO_TOP);
+	s.vLine(s.w() - 2, images[0]._height, s.h()- images[2]._height, INFO_MIDDLE);
+	s.vLine(s.w() - 1, images[0]._height, s.h()- images[2]._height, INFO_BOTTOM);
+}
+
+void WidgetBase::makeInfoArea() {
+	makeInfoArea(_surface);
 }
 
 const Common::Point &WidgetBase::getCurrentScroll() const {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	return ui._currentScroll;
+}
+
+void WidgetBase::checkTabbingKeys(int numOptions) {
 }
 
 } // End of namespace Tattoo

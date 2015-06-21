@@ -62,7 +62,11 @@ struct InventoryItem {
 	Common::String _examine;
 	int _lookFlag;
 
-	InventoryItem() : _requiredFlag(0), _lookFlag(0) {}
+	// Rose Tattoo fields
+	int _requiredFlag1;
+	UseType _verb;
+
+	InventoryItem() : _requiredFlag(0), _lookFlag(0), _requiredFlag1(0) {}
 	InventoryItem(int requiredFlag, const Common::String &name,
 		const Common::String &description, const Common::String &examine);
 

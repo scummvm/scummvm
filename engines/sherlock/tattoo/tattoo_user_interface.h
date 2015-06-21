@@ -188,6 +188,8 @@ public:
 	 * Pick up the selected object
 	 */
 	void pickUpObject(int objNum);
+
+	void putMessage(const Common::String &str);
 public:
 	/**
 	 * Resets the user interface

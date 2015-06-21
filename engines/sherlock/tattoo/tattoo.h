@@ -59,7 +59,7 @@ public:
 	bool _fastMode, _allowFastMode;
 public:
 	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine() {}
+	virtual ~TattooEngine();
 
 	/**
 	 * Draw credits on the screen
@@ -75,6 +75,8 @@ public:
 	 * Erase any area of the screen covered by credits
 	 */
 	void eraseCredits();
+
+	void doHangManPuzzle();
 };
 
 } // End of namespace Tattoo

@@ -24,6 +24,7 @@
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_resources.h"
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/people.h"
 
 namespace Sherlock {
@@ -38,6 +39,10 @@ TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDes
 	_allowFastMode = true;
 }
 
+TattooEngine::~TattooEngine() {
+	WidgetBase::freeInterfaceImages();
+}
+
 void TattooEngine::showOpening() {
 	// TODO
 }
@@ -47,6 +52,9 @@ void TattooEngine::initialize() {
 
 	// Initialize the base engine
 	SherlockEngine::initialize();
+
+	// Further initialization
+	WidgetBase::setInterfaceImages(new ImageFile("intrface.vgs"));
 
 	// Initialise the global flags
 	_flags.resize(3200);
@@ -102,6 +110,10 @@ void TattooEngine::blitCredits() {
 }
 
 void TattooEngine::eraseCredits() {
+	// TODO
+}
+
+void TattooEngine::doHangManPuzzle() {
 	// TODO
 }
 

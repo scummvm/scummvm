@@ -39,10 +39,11 @@ class WidgetBase {
 private:
 	Common::Rect _oldBounds;
 protected:
+	static ImageFile *_interfaceImages;
+protected:
 	SherlockEngine *_vm;
 	Common::Rect _bounds;
 	Surface _surface;
-	ImageFile *_images;
 	bool _outsideMenu;
 
 	/**
@@ -55,12 +56,30 @@ protected:
 	 */
 	void checkMenuPosition();
 
+	/**
+	 * Draw a window frame around the dges of the passed surface
+	 */
+	void makeInfoArea(Surface &s);
+
+	/**
+	 * Draw a window frame around the widget's surface
+	 */
 	void makeInfoArea();
 
 	/**
 	 * Returns the current scroll position
 	 */
 	virtual const Common::Point &getCurrentScroll() const;
+public:
+	/**
+	 * Sets the interface images used for drawing the various types of window elements
+	 */
+	static void setInterfaceImages(ImageFile *images);
+
+	/**
+	 * Frees the interface images
+	 */
+	static void freeInterfaceImages();
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}
@@ -74,6 +93,11 @@ public:
 	 * Update the display of the widget on the screen
 	 */
 	void draw();
+
+	/**
+	 * Used by some descendents to check for keys to mouse the mouse within the dialog
+	 */
+	void checkTabbingKeys(int numOptions);
 
 	/**
 	 * Summon the window

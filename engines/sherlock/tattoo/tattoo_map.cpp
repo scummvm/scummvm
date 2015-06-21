@@ -306,7 +306,6 @@ void TattooMap::drawMapIcons() {
 
 void TattooMap::checkMapNames(bool slamIt) {
 	Events &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
 	Common::Point mousePos = events.mousePos() + _currentScroll;
 
 	// See if the mouse is pointing at any of the map locations

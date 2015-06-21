@@ -575,7 +575,7 @@ void TattooUserInterface::doFileControl() {
 }
 
 void TattooUserInterface::doInventoryControl() {
-	warning("TODO: ui control (inventory)");
+	_inventoryWidget.handleEvents();
 }
 
 void TattooUserInterface::doVerbControl() {
@@ -642,6 +642,10 @@ void TattooUserInterface::freeMenu() {
 		_widget->banishWindow();
 		_widget = nullptr;
 	}
+}
+
+void TattooUserInterface::putMessage(const Common::String &str) {
+	// TODO
 }
 
 } // End of namespace Tattoo

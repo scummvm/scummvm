@@ -58,8 +58,6 @@ public:
 	 * Process input for the dialog
 	 */
 	void execute();
-
-	void checkTabbingKeys(int numOptions);
 };
 
 } // End of namespace Tattoo

@@ -230,10 +230,6 @@ void WidgetVerbs::execute() {
 	}
 }
 
-void WidgetVerbs::checkTabbingKeys(int numOptions) {
-	// TODO
-}
-
 void WidgetVerbs::highlightVerbControls() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
