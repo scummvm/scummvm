@@ -179,22 +179,41 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 
+	if (!size)
+		return false;
+
 	// The original actually just ignores the first two bytes.
 	byte *pos = data;
 	if (*pos == 0xFC) {
 		// SysEx found right at the start
-		// this seems to happen since Elvira 2, we currently ignore it
-		// the original Accolade code does see 0xFC as end of track, which means there must have been a change
-		if ((pos[1] == 0x29) && (pos[2] == 0x07) && (pos[3] == 0x01)) {
-			// Security check
-			// Last byte is either 0x00 or 0x01. Maybe some looping indicator?
-			pos += 5; // Waxworks / Simon 1 demo
+		// this seems to happen since Elvira 2, we ignore it
+		// 3rd byte after the SysEx seems to be saved into a global
+
+		// We expect at least 4 bytes in total
+		if (size < 4)
+			return false;
+
+		byte skipOffset = pos[2]; // get second byte after the SysEx
+		// pos[1] seems to have been ignored
+		// pos[3] is saved into a global inside the original interpreters
+
+		// Waxworks + Simon 1 demo typical header is:
+		//  0xFC 0x29 0x07 0x01 [0x00/0x01]
+		// Elvira 2 typical header is:
+		//  0xFC 0x04 0x06 0x06
+
+		if (skipOffset >= 6) {
+			// should be at least 6, so that we skip over the 2 size bytes and the
+			// smallest SysEx possible
+			skipOffset -= 2; // 2 size bytes were already read by previous code outside of this method
+
+			if (size <= skipOffset) // Skip to the end of file? -> something is not correct
+				return false;
+
+			// Do skip over the bytes
+			pos += skipOffset;
 		} else {
-			if ((pos[1] == 0x04) && (pos[2] == 0x06) && (pos[3] == 06)) {
-				pos += 4; // Elvira 2
-			} else {
-				warning("0xFC startup without proper signature");
-			}
+			warning("MidiParser_S1D: unexpected skip offset in music file");
 		}
 	}
 
