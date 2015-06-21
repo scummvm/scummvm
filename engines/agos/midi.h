@@ -120,7 +120,7 @@ public:
 	virtual void metaEvent(byte type, byte *data, uint16 length);
 
 private:
-	bool _accolade_mode;
+	bool _accoladeMode;
 };
 
 } // End of namespace AGOS

@@ -60,7 +60,7 @@ MidiPlayer::MidiPlayer() {
 	_queuedTrack = 255;
 	_loopQueuedTrack = 0;
 
-	_accolade_mode = false;
+	_accoladeMode = false;
 }
 
 MidiPlayer::~MidiPlayer() {
@@ -81,55 +81,55 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	// Don't call open() twice!
 	assert(!_driver);
 
-	bool accolade_useMusicDrvFile = false;
-	MusicType accolade_musicType = MT_INVALID;
+	bool accoladeUseMusicDrvFile = false;
+	MusicType accoladeMusicType = MT_INVALID;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
-		_accolade_mode = true;
+		_accoladeMode = true;
 		break;
 	case GType_ELVIRA2:
 	case GType_WW:
 		// Attention: Elvira 2 shipped with INSTR.DAT and MUSIC.DRV
 		// MUSIC.DRV is the correct one. INSTR.DAT seems to be a left-over
-		_accolade_mode = true;
-		accolade_useMusicDrvFile = true;
+		_accoladeMode = true;
+		accoladeUseMusicDrvFile = true;
 		break;
 	case GType_SIMON1:
 		if (isDemo) {
-			_accolade_mode = true;
-			accolade_useMusicDrvFile = true;
+			_accoladeMode = true;
+			accoladeUseMusicDrvFile = true;
 		}
 		break;
 	default:
 		break;
 	}
 
-	if (_accolade_mode) {
+	if (_accoladeMode) {
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-		accolade_musicType = MidiDriver::getMusicType(dev);
+		accoladeMusicType = MidiDriver::getMusicType(dev);
 
-		switch (accolade_musicType) {
+		switch (accoladeMusicType) {
 		case MT_ADLIB:
 		case MT_MT32:
 			break;
 		case MT_GM:
 			if (ConfMan.getBool("native_mt32")) {
 				// Real MT32
-				accolade_musicType = MT_MT32;
+				accoladeMusicType = MT_MT32;
 			} else {
-				_accolade_mode = false;
+				_accoladeMode = false;
 			}
 			break;
 		default:
-			_accolade_mode = false;
+			_accoladeMode = false;
 			break;
 		}
 	}
 
-	if (_accolade_mode) {
+	if (_accoladeMode) {
 		// Setup midi driver
-		switch (accolade_musicType) {
+		switch (accoladeMusicType) {
 		case MT_ADLIB:
 			_driver = MidiDriver_Accolade_AdLib_create();
 			break;
@@ -146,7 +146,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		byte  *instrumentData = NULL;
 		uint16 instrumentDataSize = 0;
 
-		if (!accolade_useMusicDrvFile) {
+		if (!accoladeUseMusicDrvFile) {
 			// Elvira 1 / Elvira 2: read INSTR.DAT
 			Common::File *instrDatStream = new Common::File();
 
@@ -159,7 +159,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 			uint16 skipChunks = 0; // 1 for MT32, 0 for AdLib
 			uint16 chunkSize  = 0;
 
-			switch (accolade_musicType) {
+			switch (accoladeMusicType) {
 			case MT_ADLIB:
 				skipChunks = 0;
 				break;
@@ -222,7 +222,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 			uint32 streamLeft = streamSize;
 			uint16 getChunk   = 0; // 4 for MT32, 2 for AdLib
 
-			switch (accolade_musicType) {
+			switch (accoladeMusicType) {
 			case MT_ADLIB:
 				getChunk = 2;
 				break;
@@ -286,12 +286,12 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		// Pass the instrument data to the driver
 		bool instrumentSuccess = false;
 
-		switch (accolade_musicType) {
+		switch (accoladeMusicType) {
 		case MT_ADLIB:
-			instrumentSuccess = MidiDriver_Accolade_AdLib_setupInstruments(_driver, instrumentData, instrumentDataSize, accolade_useMusicDrvFile);
+			instrumentSuccess = MidiDriver_Accolade_AdLib_setupInstruments(_driver, instrumentData, instrumentDataSize, accoladeUseMusicDrvFile);
 			break;
 		case MT_MT32:
-			instrumentSuccess = MidiDriver_Accolade_MT32_setupInstruments(_driver, instrumentData, instrumentDataSize, accolade_useMusicDrvFile);
+			instrumentSuccess = MidiDriver_Accolade_MT32_setupInstruments(_driver, instrumentData, instrumentDataSize, accoladeUseMusicDrvFile);
 			break;
 		default:
 			assert(0);
@@ -301,7 +301,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 
 		if (!instrumentSuccess) {
 			// driver did not like the contents
-			if (!accolade_useMusicDrvFile)
+			if (!accoladeUseMusicDrvFile)
 				error("INSTR.DAT: contents not acceptable");
 			else
 				error("MUSIC.DRV: contents not acceptable");
@@ -352,7 +352,7 @@ void MidiPlayer::send(uint32 b) {
 	if (!_current)
 		return;
 
-	if (_accolade_mode) {
+	if (_accoladeMode) {
 		// Send directly to Accolade driver
 		_driver->send(b);
 		return;

@@ -43,11 +43,11 @@ namespace AGOS {
 // used by the MUSIC.DRV variant for percussion instruments
 #define AGOS_ADLIB_EXTRA_INSTRUMENT_COUNT 5
 
-const byte adlib_Operator1Register[AGOS_ADLIB_VOICES_COUNT] = {
+const byte operator1Register[AGOS_ADLIB_VOICES_COUNT] = {
 	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x14, 0x12, 0x15, 0x11
 };
 
-const byte adlib_Operator2Register[AGOS_ADLIB_VOICES_COUNT] = {
+const byte operator2Register[AGOS_ADLIB_VOICES_COUNT] = {
 	0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0xFF, 0xFF, 0xFF, 0xFF
 };
 
@@ -57,20 +57,20 @@ const byte adlib_Operator2Register[AGOS_ADLIB_VOICES_COUNT] = {
 //  voice  8 - tom tom
 //  voice  9 - cymbal
 //  voice 10 - hi hat
-const byte adlib_percussionBits[AGOS_ADLIB_VOICES_PERCUSSION_COUNT] = {
+const byte percussionBits[AGOS_ADLIB_VOICES_PERCUSSION_COUNT] = {
 	0x10, 0x08, 0x04, 0x02, 0x01
 };
 
 // hardcoded, dumped from Accolade music system
 // same for INSTR.DAT + MUSIC.DRV, except that MUSIC.DRV does the lookup differently
-const byte adlib_percussionKeyNoteChannelTable[] = {
+const byte percussionKeyNoteChannelTable[] = {
 	0x06, 0x07, 0x07, 0x07, 0x07, 0x08, 0x0A, 0x08, 0x0A, 0x08,
 	0x0A, 0x08, 0x08, 0x09, 0x08, 0x09, 0x0F, 0x0F, 0x0A, 0x0F,
 	0x0A, 0x0F, 0x0F, 0x0F, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
 	0x08, 0x08, 0x08, 0x08, 0x0A, 0x0F, 0x0F, 0x08, 0x0F, 0x08
 };
 
-struct adlib_InstrumentEntry {
+struct InstrumentEntry {
 	byte reg20op1; // Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
 	byte reg40op1; // Level Key Scaling / Total Level
 	byte reg60op1; // Attack Rate / Decay Rate
@@ -83,13 +83,13 @@ struct adlib_InstrumentEntry {
 };
 
 // hardcoded, dumped from Accolade music system (INSTR.DAT variant)
-const uint16 adlib_FrequencyLookUpTable[12] = {
+const uint16 frequencyLookUpTable[12] = {
 	0x02B2, 0x02DB, 0x0306, 0x0334, 0x0365, 0x0399, 0x03CF,
 	0xFE05, 0xFE23, 0xFE44, 0xFE67, 0xFE8B
 };
 
 // hardcoded, dumped from Accolade music system (MUSIC.DRV variant)
-const uint16 adlib_FrequencyLookUpTableMusicDrv[12] = {
+const uint16 frequencyLookUpTableMusicDrv[12] = {
 	0x0205, 0x0223, 0x0244, 0x0267, 0x028B, 0x02B2, 0x02DB,
 	0x0306, 0x0334, 0x0365, 0x0399, 0x03CF
 };
@@ -142,27 +142,27 @@ private:
 	bool _musicDrvMode;
 
 	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI channel and MT32 channel
-	byte _MIDIchannelMapping[AGOS_MIDI_CHANNEL_COUNT];
+	byte _channelMapping[AGOS_MIDI_CHANNEL_COUNT];
 	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI instruments and MT32 instruments
-	byte _MIDIinstrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
+	byte _instrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
 	// from INSTR.DAT/MUSIC.DRV - volume adjustment per instrument
-	signed char _MIDIinstrumentVolumeAdjust[AGOS_MIDI_INSTRUMENT_COUNT];
+	signed char _instrumentVolumeAdjust[AGOS_MIDI_INSTRUMENT_COUNT];
 	// simple mapping between MIDI key notes and MT32 key notes
-	byte _MIDIpercussionKeyNoteMapping[AGOS_MIDI_KEYNOTE_COUNT];
+	byte _percussionKeyNoteMapping[AGOS_MIDI_KEYNOTE_COUNT];
 
 	// from INSTR.DAT/MUSIC.DRV - adlib instrument data
-	adlib_InstrumentEntry *_instrumentTable;
-	byte                   _instrumentCount;
+	InstrumentEntry *_instrumentTable;
+	byte            _instrumentCount;
 
-	struct adlib_ChannelEntry {
-		const  adlib_InstrumentEntry *currentInstrumentPtr;
+	struct ChannelEntry {
+		const  InstrumentEntry *currentInstrumentPtr;
 		byte   currentNote;
 		byte   currentA0hReg;
 		byte   currentB0hReg;
 		int16  volumeAdjust;
 
-		adlib_ChannelEntry() : currentInstrumentPtr(NULL), currentNote(0),
-								currentA0hReg(0), currentB0hReg(0), volumeAdjust(0) { }
+		ChannelEntry() : currentInstrumentPtr(NULL), currentNote(0),
+						currentA0hReg(0), currentB0hReg(0), volumeAdjust(0) { }
 	};
 
 	byte _percussionReg;
@@ -174,7 +174,7 @@ private:
 	byte _voiceChannelMapping[AGOS_ADLIB_VOICES_COUNT];
 
 	// stores information about all FM voice channels
-	adlib_ChannelEntry _channels[AGOS_ADLIB_VOICES_COUNT];
+	ChannelEntry _channels[AGOS_ADLIB_VOICES_COUNT];
 
 protected:
 	void onTimer();
@@ -194,10 +194,10 @@ private:
 
 MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib(Audio::Mixer *mixer)
 		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0) {
-	memset(_MIDIchannelMapping, 0, sizeof(_MIDIchannelMapping));
-	memset(_MIDIinstrumentMapping, 0, sizeof(_MIDIinstrumentMapping));
-	memset(_MIDIinstrumentVolumeAdjust, 0, sizeof(_MIDIinstrumentVolumeAdjust));
-	memset(_MIDIpercussionKeyNoteMapping, 0, sizeof(_MIDIpercussionKeyNoteMapping));
+	memset(_channelMapping, 0, sizeof(_channelMapping));
+	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
+	memset(_instrumentVolumeAdjust, 0, sizeof(_instrumentVolumeAdjust));
+	memset(_percussionKeyNoteMapping, 0, sizeof(_percussionKeyNoteMapping));
 
 	_instrumentTable = NULL;
 	_instrumentCount = 0;
@@ -328,7 +328,7 @@ void MidiDriver_Accolade_AdLib::send(uint32 b) {
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
 
-	byte mappedChannel    = _MIDIchannelMapping[channel];
+	byte mappedChannel    = _channelMapping[channel];
 	byte mappedInstrument = 0;
 
 	// Ignore everything that is outside of our channel range
@@ -350,7 +350,7 @@ void MidiDriver_Accolade_AdLib::send(uint32 b) {
 		// Doesn't seem to be implemented
 		break;
 	case 0xc0: // Program Change
-		mappedInstrument = _MIDIinstrumentMapping[op1];
+		mappedInstrument = _instrumentMapping[op1];
 		programChange(mappedChannel, mappedInstrument, op1);
 		break;
 	case 0xa0: // Polyphonic key pressure (aftertouch)
@@ -421,12 +421,12 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 			return;
 		}
 
-		byte percussionChannel = adlib_percussionKeyNoteChannelTable[adjustedNote];
+		byte percussionChannel = percussionKeyNoteChannelTable[adjustedNote];
 		if (percussionChannel >= AGOS_ADLIB_VOICES_COUNT)
 			return; // INSTR.DAT variant checked for ">" instead of ">=", which seems to have been a bug
 
 		// Map the keynote accordingly
-		adjustedNote = _MIDIpercussionKeyNoteMapping[adjustedNote];
+		adjustedNote = _percussionKeyNoteMapping[adjustedNote];
 		// Now overwrite the FM voice channel
 		FMvoiceChannel = percussionChannel;
 	}
@@ -460,7 +460,7 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 
 		// Enable bit of the requested percussion type
 		assert(percussionIdx < AGOS_ADLIB_VOICES_PERCUSSION_COUNT);
-		_percussionReg |= adlib_percussionBits[percussionIdx];
+		_percussionReg |= percussionBits[percussionIdx];
 		setRegister(0xBD, _percussionReg);
 	}
 
@@ -478,7 +478,7 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 
 			adlibOctave = (adlibNote / 12) - 1;
 			adlibFrequencyIdx = adlibNote % 12;
-			adlibFrequency = adlib_FrequencyLookUpTable[adlibFrequencyIdx];
+			adlibFrequency = frequencyLookUpTable[adlibFrequencyIdx];
 
 			if (adlibFrequency & 0x8000)
 				adlibOctave++;
@@ -496,7 +496,7 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 			adlibFrequencyIdx = adlibNote % 12;
 			// additional code, that will lookup octave and do a multiplication with it
 			// noteOn however calls the frequency calculation in a way that it multiplies with 0
-			adlibFrequency = adlib_FrequencyLookUpTableMusicDrv[adlibFrequencyIdx];
+			adlibFrequency = frequencyLookUpTableMusicDrv[adlibFrequencyIdx];
 		}
 
 		regValueA0h = adlibFrequency & 0xFF;
@@ -525,7 +525,7 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operatorNr, byte adjustedVelocity) {
 	byte operatorReg = 0;
 	byte regValue40h = 0;
-	const adlib_InstrumentEntry *curInstrument = NULL;
+	const InstrumentEntry *curInstrument = NULL;
 
 	regValue40h = (63 - adjustedVelocity) & 0x3F;
 
@@ -563,9 +563,9 @@ void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operat
 	}
 
 	if (operatorNr == 1) {
-		operatorReg = adlib_Operator1Register[FMvoiceChannel];
+		operatorReg = operator1Register[FMvoiceChannel];
 	} else {
-		operatorReg = adlib_Operator2Register[FMvoiceChannel];
+		operatorReg = operator2Register[FMvoiceChannel];
 	}
 	assert(operatorReg != 0xFF); // Security check
 	setRegister(0x40 + operatorReg, regValue40h);
@@ -602,7 +602,7 @@ void MidiDriver_Accolade_AdLib::noteOff(byte FMvoiceChannel, byte note, bool don
 			return;
 		}
 
-		byte percussionChannel = adlib_percussionKeyNoteChannelTable[adjustedNote];
+		byte percussionChannel = percussionKeyNoteChannelTable[adjustedNote];
 		if (percussionChannel > AGOS_ADLIB_VOICES_COUNT)
 			return;
 
@@ -610,14 +610,14 @@ void MidiDriver_Accolade_AdLib::noteOff(byte FMvoiceChannel, byte note, bool don
 
 		// Disable bit of the requested percussion type
 		assert(percussionIdx < AGOS_ADLIB_VOICES_PERCUSSION_COUNT);
-		_percussionReg &= ~adlib_percussionBits[percussionIdx];
+		_percussionReg &= ~percussionBits[percussionIdx];
 		setRegister(0xBD, _percussionReg);
 	}
 }
 
 void MidiDriver_Accolade_AdLib::programChange(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr) {
 	if (mappedInstrumentNr >= _instrumentCount) {
-		warning("ADLIB: tried to set non-existant instrument");
+		warning("ADLIB: tried to set non-existent instrument");
 		return; // out of range
 	}
 
@@ -632,7 +632,7 @@ void MidiDriver_Accolade_AdLib::programChange(byte FMvoiceChannel, byte mappedIn
 		// Percussion
 		// set default instrument (again)
 		byte percussionInstrumentNr = 0;
-		const adlib_InstrumentEntry *instrumentPtr;
+		const InstrumentEntry *instrumentPtr;
 
 		if (!_musicDrvMode) {
 			// INSTR.DAT: percussion default instruments start at instrument 1
@@ -642,22 +642,22 @@ void MidiDriver_Accolade_AdLib::programChange(byte FMvoiceChannel, byte mappedIn
 			percussionInstrumentNr = FMvoiceChannel - AGOS_ADLIB_VOICES_PERCUSSION_START + 0x80;
 		}
 		if (percussionInstrumentNr >= _instrumentCount) {
-			warning("ADLIB: tried to set non-existant instrument");
+			warning("ADLIB: tried to set non-existent instrument");
 			return;
 		}
 		instrumentPtr = &_instrumentTable[percussionInstrumentNr];
 		_channels[FMvoiceChannel].currentInstrumentPtr = instrumentPtr;
-		_channels[FMvoiceChannel].volumeAdjust         = _MIDIinstrumentVolumeAdjust[percussionInstrumentNr];
+		_channels[FMvoiceChannel].volumeAdjust         = _instrumentVolumeAdjust[percussionInstrumentNr];
 	}
 }
 
 void MidiDriver_Accolade_AdLib::programChangeSetInstrument(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr) {
-	const adlib_InstrumentEntry *instrumentPtr;
+	const InstrumentEntry *instrumentPtr;
 	byte op1Reg = 0;
 	byte op2Reg = 0;
 
 	if (mappedInstrumentNr >= _instrumentCount) {
-		warning("ADLIB: tried to set non-existant instrument");
+		warning("ADLIB: tried to set non-existent instrument");
 		return; // out of range
 	}
 
@@ -665,8 +665,8 @@ void MidiDriver_Accolade_AdLib::programChangeSetInstrument(byte FMvoiceChannel, 
 	instrumentPtr = &_instrumentTable[mappedInstrumentNr];
 	//warning("set instrument for FM voice channel %d, instrument id %d", FMvoiceChannel, mappedInstrumentNr);
 
-	op1Reg = adlib_Operator1Register[FMvoiceChannel];
-	op2Reg = adlib_Operator2Register[FMvoiceChannel];
+	op1Reg = operator1Register[FMvoiceChannel];
+	op2Reg = operator2Register[FMvoiceChannel];
 
 	setRegister(0x20 + op1Reg, instrumentPtr->reg20op1);
 	setRegister(0x40 + op1Reg, instrumentPtr->reg40op1);
@@ -693,12 +693,11 @@ void MidiDriver_Accolade_AdLib::programChangeSetInstrument(byte FMvoiceChannel, 
 
 	// Remember instrument
 	_channels[FMvoiceChannel].currentInstrumentPtr = instrumentPtr;
-	_channels[FMvoiceChannel].volumeAdjust         = _MIDIinstrumentVolumeAdjust[MIDIinstrumentNr];
+	_channels[FMvoiceChannel].volumeAdjust         = _instrumentVolumeAdjust[MIDIinstrumentNr];
 }
 
 void MidiDriver_Accolade_AdLib::setRegister(int reg, int value) {
-	_opl->write(0x220, reg);
-	_opl->write(0x221, value);
+	_opl->writeReg(reg, value);
 	//warning("OPL %x %x (%d)", reg, value, value);
 }
 
@@ -787,42 +786,42 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 	// Channel mapping
 	if (channelMappingSize) {
 		// Get these 16 bytes for MIDI channel mapping
-		if (channelMappingSize != sizeof(_MIDIchannelMapping))
+		if (channelMappingSize != sizeof(_channelMapping))
 			return false;
 
-		memcpy(_MIDIchannelMapping, driverData + channelMappingOffset, sizeof(_MIDIchannelMapping));
+		memcpy(_channelMapping, driverData + channelMappingOffset, sizeof(_channelMapping));
 	} else {
 		// Set up straight mapping
-		for (uint16 channelNr = 0; channelNr < sizeof(_MIDIchannelMapping); channelNr++) {
-			_MIDIchannelMapping[channelNr] = channelNr;
+		for (uint16 channelNr = 0; channelNr < sizeof(_channelMapping); channelNr++) {
+			_channelMapping[channelNr] = channelNr;
 		}
 	}
 
 	if (instrumentMappingSize) {
 		// And these for instrument mapping
-		if (instrumentMappingSize > sizeof(_MIDIinstrumentMapping))
+		if (instrumentMappingSize > sizeof(_instrumentMapping))
 			return false;
 
-		memcpy(_MIDIinstrumentMapping, driverData + instrumentMappingOffset, instrumentMappingSize);
+		memcpy(_instrumentMapping, driverData + instrumentMappingOffset, instrumentMappingSize);
 	}
 	// Set up straight mapping for the remaining data
-	for (uint16 instrumentNr = instrumentMappingSize; instrumentNr < sizeof(_MIDIinstrumentMapping); instrumentNr++) {
-		_MIDIinstrumentMapping[instrumentNr] = instrumentNr;
+	for (uint16 instrumentNr = instrumentMappingSize; instrumentNr < sizeof(_instrumentMapping); instrumentNr++) {
+		_instrumentMapping[instrumentNr] = instrumentNr;
 	}
 
 	if (instrumentVolumeAdjustSize) {
-		if (instrumentVolumeAdjustSize != sizeof(_MIDIinstrumentVolumeAdjust))
+		if (instrumentVolumeAdjustSize != sizeof(_instrumentVolumeAdjust))
 			return false;
 
-		memcpy(_MIDIinstrumentVolumeAdjust, driverData + instrumentVolumeAdjustOffset, instrumentVolumeAdjustSize);
+		memcpy(_instrumentVolumeAdjust, driverData + instrumentVolumeAdjustOffset, instrumentVolumeAdjustSize);
 	}
 
 	// Get key note mapping, if available
 	if (keyNoteMappingSize) {
-		if (keyNoteMappingSize != sizeof(_MIDIpercussionKeyNoteMapping))
+		if (keyNoteMappingSize != sizeof(_percussionKeyNoteMapping))
 			return false;
 
-		memcpy(_MIDIpercussionKeyNoteMapping, driverData + keyNoteMappingOffset, keyNoteMappingSize);
+		memcpy(_percussionKeyNoteMapping, driverData + keyNoteMappingOffset, keyNoteMappingSize);
 	}
 
 	// Check, if there are enough bytes left to hold all instrument data
@@ -833,14 +832,14 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 	if (_instrumentTable)
 		delete[] _instrumentTable;
 
-	_instrumentTable = new adlib_InstrumentEntry[instrumentCount];
+	_instrumentTable = new InstrumentEntry[instrumentCount];
 	_instrumentCount = instrumentCount;
 
-	byte                  *instrDATReadPtr    = driverData + instrumentDataOffset;
-	adlib_InstrumentEntry *instrumentWritePtr = _instrumentTable;
+	byte            *instrDATReadPtr    = driverData + instrumentDataOffset;
+	InstrumentEntry *instrumentWritePtr = _instrumentTable;
 
 	for (uint16 instrumentNr = 0; instrumentNr < _instrumentCount; instrumentNr++) {
-		memcpy(instrumentWritePtr, instrDATReadPtr, sizeof(adlib_InstrumentEntry));
+		memcpy(instrumentWritePtr, instrDATReadPtr, sizeof(InstrumentEntry));
 		instrDATReadPtr += instrumentEntrySize;
 		instrumentWritePtr++;
 	}

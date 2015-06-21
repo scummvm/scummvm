@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGOS_SOFTSEQ_MIDIDRIVER_H
-#define AGOS_SOFTSEQ_MIDIDRIVER_H
+#ifndef AGOS_DRIVERS_ACCOLADE_MIDIDRIVER_H
+#define AGOS_DRIVERS_ACCOLADE_MIDIDRIVER_H
 
 #include "agos/agos.h"
 #include "audio/mididrv.h"
@@ -42,4 +42,4 @@ extern bool MidiDriver_Accolade_MT32_setupInstruments(MidiDriver *driver, byte *
 
 } // End of namespace AGOS
 
-#endif // AGOS_SOFTSEQ_MIDIDRIVER_H
+#endif // AGOS_DRIVERS_ACCOLADE_MIDIDRIVER_H

@@ -70,33 +70,28 @@ protected:
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
 	bool _MT32;
-	bool _nativeMT32;
 
 	bool _isOpen;
 	int _baseFreq;
 
 private:
 	// simple mapping between MIDI channel and MT32 channel
-	byte _MIDIchannelMapping[AGOS_MIDI_CHANNEL_COUNT];
+	byte _channelMapping[AGOS_MIDI_CHANNEL_COUNT];
 	// simple mapping between MIDI instruments and MT32 instruments
-	byte _MIDIinstrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
+	byte _instrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
 
 public:
 	bool setupInstruments(byte *instrumentData, uint16 instrumentDataSize, bool useMusicDrvFile);
-
-	void MT32SysEx(const byte *&dataPtr, int32 &bytesLeft);
 };
 
 MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() {
 	_driver = NULL;
 	_isOpen = false;
 	_MT32 = false;
-	_nativeMT32 = false;
 	_baseFreq = 250;
 
-	memset(_MIDIchannelMapping, 0, sizeof(_MIDIchannelMapping));
-	memset(_MIDIinstrumentMapping, 0, sizeof(_MIDIinstrumentMapping));
-	//memset(_MIDIkeyNoteMapping, 0, sizeof(_MIDIkeyNoteMapping));
+	memset(_channelMapping, 0, sizeof(_channelMapping));
+	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
 }
 
 MidiDriver_Accolade_MT32::~MidiDriver_Accolade_MT32() {
@@ -121,12 +116,10 @@ int MidiDriver_Accolade_MT32::open() {
 	switch (musicType) {
 	case MT_MT32:
 		_MT32       = true;
-		_nativeMT32 = false;
 		break;
 	case MT_GM:
 		if (ConfMan.getBool("native_mt32")) {
 			_MT32       = true;
-			_nativeMT32 = true;
 		}
 		break;
 	default:
@@ -136,9 +129,6 @@ int MidiDriver_Accolade_MT32::open() {
 	_driver = MidiDriver::createMidi(dev);
 	if (!_driver)
 		return 255;
-
-	if (_nativeMT32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
 	int ret = _driver->open();
 	if (ret)
@@ -170,7 +160,7 @@ void MidiDriver_Accolade_MT32::send(uint32 b) {
 		return;
 	}
 
-	byte mappedChannel = _MIDIchannelMapping[channel];
+	byte mappedChannel = _channelMapping[channel];
 
 	if (mappedChannel < AGOS_MIDI_CHANNEL_COUNT) {
 		// channel mapped to an actual MIDI channel, so use that one
@@ -179,7 +169,7 @@ void MidiDriver_Accolade_MT32::send(uint32 b) {
 			// Program change
 			// Figure out the requested instrument
 			byte midiInstrument = (b >> 8) & 0xFF;
-			byte mappedInstrument = _MIDIinstrumentMapping[midiInstrument];
+			byte mappedInstrument = _instrumentMapping[midiInstrument];
 			// And replace it
 			b = (b & 0xFFFF00FF) | (mappedInstrument << 8);
 		}
@@ -231,27 +221,27 @@ bool MidiDriver_Accolade_MT32::setupInstruments(byte *driverData, uint16 driverD
 	// Channel mapping
 	if (channelMappingSize) {
 		// Get these 16 bytes for MIDI channel mapping
-		if (channelMappingSize != sizeof(_MIDIchannelMapping))
+		if (channelMappingSize != sizeof(_channelMapping))
 			return false;
 
-		memcpy(_MIDIchannelMapping, driverData + channelMappingOffset, sizeof(_MIDIchannelMapping));
+		memcpy(_channelMapping, driverData + channelMappingOffset, sizeof(_channelMapping));
 	} else {
 		// Set up straight mapping
-		for (uint16 channelNr = 0; channelNr < sizeof(_MIDIchannelMapping); channelNr++) {
-			_MIDIchannelMapping[channelNr] = channelNr;
+		for (uint16 channelNr = 0; channelNr < sizeof(_channelMapping); channelNr++) {
+			_channelMapping[channelNr] = channelNr;
 		}
 	}
 
 	if (instrumentMappingSize) {
 		// And these for instrument mapping
-		if (instrumentMappingSize > sizeof(_MIDIinstrumentMapping))
+		if (instrumentMappingSize > sizeof(_instrumentMapping))
 			return false;
 
-		memcpy(_MIDIinstrumentMapping, driverData + instrumentMappingOffset, instrumentMappingSize);
+		memcpy(_instrumentMapping, driverData + instrumentMappingOffset, instrumentMappingSize);
 	}
 	// Set up straight mapping for the remaining data
-	for (uint16 instrumentNr = instrumentMappingSize; instrumentNr < sizeof(_MIDIinstrumentMapping); instrumentNr++) {
-		_MIDIinstrumentMapping[instrumentNr] = instrumentNr;
+	for (uint16 instrumentNr = instrumentMappingSize; instrumentNr < sizeof(_instrumentMapping); instrumentNr++) {
+		_instrumentMapping[instrumentNr] = instrumentNr;
 	}
 	return true;
 }
