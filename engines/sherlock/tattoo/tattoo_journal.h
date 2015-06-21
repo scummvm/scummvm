@@ -24,15 +24,23 @@
 #define SHERLOCK_TATTOO_JOURNAL_H
 
 #include "sherlock/journal.h"
+#include "sherlock/image_file.h"
 
 namespace Sherlock {
 
 namespace Tattoo {
 
 class TattooJournal : public Journal {
+private:
+	ImageFile *_journalImages;
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}
+
+	/**
+	 * Show the journal
+	 */
+	void show();
 
 	/**
 	 * Synchronize the data for a savegame

@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo_user_interface.h"
+#include "sherlock/tattoo/tattoo_journal.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo.h"
 
@@ -30,6 +31,8 @@ namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm),  _tooltipWidget(vm), _verbsWidget(vm), _textWidget(vm) {
+	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
+	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_menuBuffer = nullptr;
 	_invMenuBuffer = nullptr;
 	_invGraphic = nullptr;
@@ -46,6 +49,8 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 	_cAnimFramePause = 0;
 	_widget = nullptr;
 	_scrollHighlight = 0;
+	_mask = _mask1 = nullptr;
+	_maskCounter = 0;
 }
 
 void TattooUserInterface::initScrollVars() {
@@ -186,7 +191,10 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 }
 
 void TattooUserInterface::doJournal() {
-	// TODO
+	TattooJournal &journal = *(TattooJournal *)_vm->_journal;
+	
+	_menuMode = JOURNAL_MODE;
+	journal.show();	
 }
 
 void TattooUserInterface::reset() {
@@ -261,7 +269,6 @@ void TattooUserInterface::handleInput() {
 }
 
 void TattooUserInterface::drawInterface(int bufferNum) {
-	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	
@@ -298,7 +305,7 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 		vm.drawCredits();
 
 	// Bring the widgets to the screen
-	if (scene._mask != nullptr)
+	if (_mask != nullptr)
 		screen._flushScreen = true;
 
 	if (screen._flushScreen)
@@ -646,6 +653,66 @@ void TattooUserInterface::freeMenu() {
 
 void TattooUserInterface::putMessage(const Common::String &str) {
 	// TODO
+}
+
+void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
+	Scene &scene = *_vm->_scene;
+
+	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter 
+	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
+	byte *p = &_lookupTable[0];
+	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+		*p++ = BG_GREYSCALE_RANGE_END - (cMap[idx * 3] * 30 + cMap[idx * 3 + 1] * 59 + cMap[idx * 3 + 2] * 11) / 480;
+
+	// If we're going to a scene with a haze special effect, initialize the translate table to lighten the colors
+	if (_mask != nullptr) {
+		p = &_lookupTable1[0];
+
+		for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
+			int r, g, b;
+			switch (scene._currentScene) {
+			case 8:
+				r = cMap[idx * 3] * 4 / 5;
+				g = cMap[idx * 3 + 1] * 3 / 4;
+				b = cMap[idx * 3 + 2] * 3 / 4;
+				break;
+
+			case 18:
+			case 68:
+				r = cMap[idx * 3] * 4 / 3;
+				g = cMap[idx * 3 + 1] * 4 / 3;
+				b = cMap[idx * 3 + 2] * 4 / 3;
+				break;
+
+			case 7:
+			case 53:
+				r = cMap[idx * 3] * 4 / 3;
+				g = cMap[idx * 3 + 1] * 4 / 3;
+				b = cMap[idx * 3 + 2] * 4 / 3;
+				break;
+			
+			default:
+				r = g = b = 0;
+				break;
+			}
+
+			byte c = 0;
+			int cd = (r - cMap[0]) * (r - cMap[0]) + (g - cMap[1]) * (g - cMap[1]) + (b - cMap[2]) * (b - cMap[2]);
+
+			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
+				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) 
+					+ (b - cMap[pal * 3 + 2])*(b - cMap[pal * 3 + 2]);
+
+				if (d < cd) {
+					c = pal;
+					cd = d;
+					if (!d)
+						break;
+				}
+			}
+			*p++ = c;
+		}
+	}
 }
 
 } // End of namespace Tattoo

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "sherlock/saveload.h"
+#include "sherlock/screen.h"
 #include "sherlock/user_interface.h"
 #include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_text.h"
@@ -60,6 +61,8 @@ private:
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
 	WidgetBase *_widget;
+	byte _lookupTable[PALETTE_COUNT];
+	byte _lookupTable1[PALETTE_COUNT];
 private:
 	/**
 	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
@@ -138,6 +141,9 @@ public:
 	Common::KeyState _keyState;
 	Common::Point _lookPos;
 	int _scrollHighlight;
+	ImageFile *_mask, *_mask1;
+	Common::Point _maskOffset;
+	int _maskCounter;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface() {}
@@ -190,6 +196,11 @@ public:
 	void pickUpObject(int objNum);
 
 	void putMessage(const Common::String &str);
+
+	/**
+	 * Makes a greyscale translation table for each palette entry in the table
+	 */
+	void setupBGArea(const byte cMap[PALETTE_SIZE]);
 public:
 	/**
 	 * Resets the user interface

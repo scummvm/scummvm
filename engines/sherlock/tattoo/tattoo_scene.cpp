@@ -50,11 +50,7 @@ static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
 /*----------------------------------------------------------------*/
 
 TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
-	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
-	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_arrowZone = -1;
-	_mask = _mask1 = nullptr;
-	_maskCounter = 0;
 	_labTableScene = false;
 }
 
@@ -263,7 +259,7 @@ void TattooScene::paletteLoaded() {
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
-	setupBGArea(screen._cMap);
+	ui.setupBGArea(screen._cMap);
 	ui.initScrollVars();
 }
 
@@ -326,7 +322,7 @@ void TattooScene::doBgAnimEraseBackground() {
 	
 	static const int16 OFFSETS[16] = { -1, -2, -3, -3, -2, -1, -1, 0, 1, 2, 3, 3, 2, 1, 0, 0 };
 
-	if (_mask != nullptr) {
+	if (ui._mask != nullptr) {
 		if (screen._backBuffer1.w() > screen.w())
 			screen.blitFrom(screen._backBuffer1, Common::Point(0, 0), Common::Rect(ui._currentScroll.x, 0,
 			ui._currentScroll.x + screen.w(), screen.h()));
@@ -335,33 +331,33 @@ void TattooScene::doBgAnimEraseBackground() {
 
 		switch (_currentScene) {
 		case 7:
-			if (++_maskCounter == 2) {
-				_maskCounter = 0;
-				if (--_maskOffset.x < 0)
-					_maskOffset.x = SHERLOCK_SCREEN_WIDTH - 1;
+			if (++ui._maskCounter == 2) {
+				ui._maskCounter = 0;
+				if (--ui._maskOffset.x < 0)
+					ui._maskOffset.x = SHERLOCK_SCREEN_WIDTH - 1;
 			}
 			break;
 
 		case 8:
-			_maskOffset.x += 2;
-			if (_maskOffset.x >= SHERLOCK_SCREEN_WIDTH)
-				_maskOffset.x = 0;
+			ui._maskOffset.x += 2;
+			if (ui._maskOffset.x >= SHERLOCK_SCREEN_WIDTH)
+				ui._maskOffset.x = 0;
 			break;
 
 		case 18:
 		case 68:
-			++_maskCounter;
-			if (_maskCounter / 4 >= 16)
-				_maskCounter = 0;
+			++ui._maskCounter;
+			if (ui._maskCounter / 4 >= 16)
+				ui._maskCounter = 0;
 
-			_maskOffset.x = OFFSETS[_maskCounter / 4];
+			ui._maskOffset.x = OFFSETS[ui._maskCounter / 4];
 			break;
 
 		case 53:
-			if (++_maskCounter == 2) {
-				_maskCounter = 0;
-				if (++_maskOffset.x == screen._backBuffer1.w())
-					_maskOffset.x = 0;
+			if (++ui._maskCounter == 2) {
+				ui._maskCounter = 0;
+				if (++ui._maskOffset.x == screen._backBuffer1.w())
+					ui._maskOffset.x = 0;
 			}
 			break;
 
@@ -501,36 +497,36 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 	drawAllShapes();
 
 
-	if (_mask != nullptr) {
+	if (ui._mask != nullptr) {
 		switch (_currentScene) {
 		case 7:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
 			break;
 
 		case 8:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 180), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
 			if (!_vm->readFlags(880))
-				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(940, 300), ui._currentScroll.x);
+				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(940, 300), ui._currentScroll.x);
 			break;
 
 		case 18:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 203), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 203), ui._currentScroll.x);
 			if (!_vm->readFlags(189))
-				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124 + _maskOffset.x, 239), ui._currentScroll.x);
+				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124 + ui._maskOffset.x, 239), ui._currentScroll.x);
 			break;
 
 		case 53:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
 			break;
 
 		case 68:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 203), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124 + _maskOffset.x, 239), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 203), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124 + ui._maskOffset.x, 239), ui._currentScroll.x);
 			break;
 		}
 	}
@@ -543,35 +539,35 @@ void TattooScene::updateBackground() {
 
 	Scene::updateBackground();
 
-	if (_mask != nullptr) {
+	if (ui._mask != nullptr) {
 		switch (_currentScene) {
 		case 7:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
 			break;
 
 		case 8:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 180), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
 			if (!_vm->readFlags(880))
-				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(940, 300), ui._currentScroll.x);
+				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(940, 300), ui._currentScroll.x);
 			break;
 
 		case 18:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(0, 203), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(0, 203), ui._currentScroll.x);
 			if (!_vm->readFlags(189))
-				screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124, 239), ui._currentScroll.x);
+				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124, 239), ui._currentScroll.x);
 			break;
 
 		case 53:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(_maskOffset.x, 110), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
 			break;
 
 		case 68:
-			screen._backBuffer1.maskArea((*_mask)[0], Common::Point(0, 203), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*_mask1)[0], Common::Point(124, 239), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(0, 203), ui._currentScroll.x);
+			screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124, 239), ui._currentScroll.x);
 			break;
 
 		default:
@@ -749,64 +745,6 @@ int TattooScene::getScaleVal(const Point32 &pt) {
 	}
 
 	return result;
-}
-
-void TattooScene::setupBGArea(const byte cMap[PALETTE_SIZE]) {
-	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter 
-	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
-	byte *p = &_lookupTable[0];
-	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
-		*p++ = BG_GREYSCALE_RANGE_END - (cMap[idx * 3] * 30 + cMap[idx * 3 + 1] * 59 + cMap[idx * 3 + 2] * 11) / 480;
-
-	// If we're going to a scene with a haze special effect, initialize the translate table to lighten the colors
-	if (_mask != nullptr) {
-		p = &_lookupTable1[0];
-
-		for (int idx = 0; idx < PALETTE_COUNT; ++idx) {
-			int r, g, b;
-			switch (_currentScene) {
-			case 8:
-				r = cMap[idx * 3] * 4 / 5;
-				g = cMap[idx * 3 + 1] * 3 / 4;
-				b = cMap[idx * 3 + 2] * 3 / 4;
-				break;
-
-			case 18:
-			case 68:
-				r = cMap[idx * 3] * 4 / 3;
-				g = cMap[idx * 3 + 1] * 4 / 3;
-				b = cMap[idx * 3 + 2] * 4 / 3;
-				break;
-
-			case 7:
-			case 53:
-				r = cMap[idx * 3] * 4 / 3;
-				g = cMap[idx * 3 + 1] * 4 / 3;
-				b = cMap[idx * 3 + 2] * 4 / 3;
-				break;
-			
-			default:
-				r = g = b = 0;
-				break;
-			}
-
-			byte c = 0;
-			int cd = (r - cMap[0]) * (r - cMap[0]) + (g - cMap[1]) * (g - cMap[1]) + (b - cMap[2]) * (b - cMap[2]);
-
-			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
-				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) 
-					+ (b - cMap[pal * 3 + 2])*(b - cMap[pal * 3 + 2]);
-
-				if (d < cd) {
-					c = pal;
-					cd = d;
-					if (!d)
-						break;
-				}
-			}
-			*p++ = c;
-		}
-	}
 }
 
 #define ADJUST_COORD(COORD) \
