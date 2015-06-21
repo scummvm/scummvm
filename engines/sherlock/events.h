@@ -120,6 +120,11 @@ public:
 	void pollEventsAndWait();
 
 	/**
+	 * Move the mouse cursor
+	 */
+	void warpMouse(const Common::Point &pt);
+
+	/**
 	 * Get the current mouse position
 	 */
 	Common::Point mousePos() const;

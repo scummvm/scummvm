@@ -198,9 +198,23 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 
 void TattooUserInterface::doJournal() {
 	TattooJournal &journal = *(TattooJournal *)_vm->_journal;
-	
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Screen &screen = *_vm->_screen;
+
 	_menuMode = JOURNAL_MODE;
-	journal.show();	
+	journal.show();
+
+	_menuMode = STD_MODE;
+	_windowOpen = false;
+	_key = -1;
+
+	setupBGArea(screen._cMap);
+	screen.clear();
+	screen.setPalette(screen._cMap);
+
+	screen._backBuffer1.blitFrom(screen._backBuffer2);
+	scene.updateBackground();
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 }
 
 void TattooUserInterface::reset() {

@@ -34,6 +34,10 @@ class TattooJournal : public Journal {
 private:
 	ImageFile *_journalImages;
 	int _selector, _oldSelector;
+	bool _wait;
+	bool _exitJournal;
+	uint32 _scrollingTimer;
+	int _savedIndex, _savedSub, _savedPage;
 
 	/**
 	 * Load the list of journal locations
@@ -57,6 +61,26 @@ private:
 	void highlightSearchControls(bool slamIt);
 
 	void drawScrollBar();
+
+	/**
+	 * Check for and handle any pending keyboard events
+	 */
+	void handleKeyboardEvents();
+
+	/**
+	 * Handle mouse presses on interface buttons
+	 */
+	void handleButtons();
+
+	/**
+	 * Disable the journal controls
+	 */
+	void disableControls();
+
+	/**
+	 * Get in a name to search through the journal for
+	 */
+	bool getFindName(bool printError);
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}
