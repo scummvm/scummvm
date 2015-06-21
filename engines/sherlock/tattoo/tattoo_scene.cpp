@@ -314,112 +314,6 @@ void TattooScene::doBgAnimCheckCursor() {
 	}
 }
 
-void TattooScene::doBgAnimEraseBackground() {
-	TattooEngine &vm = *((TattooEngine *)_vm);
-	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
-	TattooUserInterface &ui = *((TattooUserInterface *)_vm->_ui);
-	
-	static const int16 OFFSETS[16] = { -1, -2, -3, -3, -2, -1, -1, 0, 1, 2, 3, 3, 2, 1, 0, 0 };
-
-	if (ui._mask != nullptr) {
-		if (screen._backBuffer1.w() > screen.w())
-			screen.blitFrom(screen._backBuffer1, Common::Point(0, 0), Common::Rect(ui._currentScroll.x, 0,
-			ui._currentScroll.x + screen.w(), screen.h()));
-		else
-			screen.blitFrom(screen._backBuffer1);
-
-		switch (_currentScene) {
-		case 7:
-			if (++ui._maskCounter == 2) {
-				ui._maskCounter = 0;
-				if (--ui._maskOffset.x < 0)
-					ui._maskOffset.x = SHERLOCK_SCREEN_WIDTH - 1;
-			}
-			break;
-
-		case 8:
-			ui._maskOffset.x += 2;
-			if (ui._maskOffset.x >= SHERLOCK_SCREEN_WIDTH)
-				ui._maskOffset.x = 0;
-			break;
-
-		case 18:
-		case 68:
-			++ui._maskCounter;
-			if (ui._maskCounter / 4 >= 16)
-				ui._maskCounter = 0;
-
-			ui._maskOffset.x = OFFSETS[ui._maskCounter / 4];
-			break;
-
-		case 53:
-			if (++ui._maskCounter == 2) {
-				ui._maskCounter = 0;
-				if (++ui._maskOffset.x == screen._backBuffer1.w())
-					ui._maskOffset.x = 0;
-			}
-			break;
-
-		default:
-			break;
-		}
-	} else {
-		// Standard scene without mask, so call user interface to erase any UI elements as necessary
-		ui.doBgAnimRestoreUI();
-		
-		// Restore background for any areas covered by characters and shapes
-		for (int idx = 0; idx < MAX_CHARACTERS; ++idx)
-			screen.restoreBackground(Common::Rect(people[idx]._oldPosition.x, people[idx]._oldPosition.y,
-				people[idx]._oldPosition.x + people[idx]._oldSize.x, people[idx]._oldPosition.y + people[idx]._oldSize.y));
-
-		for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-			Object &obj = _bgShapes[idx];
-						
-			if ((obj._type == ACTIVE_BG_SHAPE && (obj._maxFrames > 1 || obj._delta.x != 0 || obj._delta.y != 0)) || 
-					obj._type == HIDE_SHAPE || obj._type == REMOVE)
-				screen._backBuffer1.blitFrom(screen._backBuffer2, obj._oldPosition, 
-					Common::Rect(obj._oldPosition.x, obj._oldPosition.y, obj._oldPosition.x + obj._oldSize.x,
-						obj._oldPosition.y + obj._oldSize.y));
-		}
-
-		// If credits are active, erase the area they cover
-		if (vm._creditsActive)
-			vm.eraseCredits();
-	}
-
-	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
-		Object &obj = _bgShapes[idx];
-
-		if (obj._type == NO_SHAPE && (obj._flags & 1) == 0) {
-			screen._backBuffer1.blitFrom(screen._backBuffer2, obj._position, obj.getNoShapeBounds());
-
-			obj._oldPosition = obj._position;
-			obj._oldSize = obj._noShapeSize;
-		}
-	}
-
-	// Adjust the Target Scroll if needed
-	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - ui._currentScroll.x) < 
-			(SHERLOCK_SCREEN_WIDTH / 8) && people[people._walkControl]._delta.x < 0) {
-		
-		ui._targetScroll.x = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - 
-				SHERLOCK_SCREEN_WIDTH / 8 - 250);
-		if (ui._targetScroll.x < 0)
-			ui._targetScroll.x = 0;
-	}
-
-	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - ui._currentScroll.x) > (SHERLOCK_SCREEN_WIDTH / 4 * 3) 
-			&& people[people._walkControl]._delta.x > 0)
-		ui._targetScroll.x = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - 
-			SHERLOCK_SCREEN_WIDTH / 4 * 3 + 250);
-
-	if (ui._targetScroll.x > ui._scrollSize)
-		ui._targetScroll.x = ui._scrollSize;
-
-	ui.doScroll();
-}
-
 void TattooScene::doBgAnim() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
@@ -448,7 +342,7 @@ void TattooScene::doBgAnim() {
 		return;
 
 	// Erase any affected background areas
-	doBgAnimEraseBackground();
+	ui.doBgAnimEraseBackground();
 
 	doBgAnimUpdateBgObjectsAndAnim();
 
@@ -496,40 +390,7 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 	checkBgShapes();
 	drawAllShapes();
 
-
-	if (ui._mask != nullptr) {
-		switch (_currentScene) {
-		case 7:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			break;
-
-		case 8:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
-			if (!_vm->readFlags(880))
-				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(940, 300), ui._currentScroll.x);
-			break;
-
-		case 18:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 203), ui._currentScroll.x);
-			if (!_vm->readFlags(189))
-				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124 + ui._maskOffset.x, 239), ui._currentScroll.x);
-			break;
-
-		case 53:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			break;
-
-		case 68:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 203), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124 + ui._maskOffset.x, 239), ui._currentScroll.x);
-			break;
-		}
-	}
+	ui.drawMaskArea(true);
 }
 
 void TattooScene::updateBackground() {
@@ -539,41 +400,7 @@ void TattooScene::updateBackground() {
 
 	Scene::updateBackground();
 
-	if (ui._mask != nullptr) {
-		switch (_currentScene) {
-		case 7:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 110), ui._currentScroll.x);
-			break;
-
-		case 8:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x - SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 180), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x + SHERLOCK_SCREEN_WIDTH, 180), ui._currentScroll.x);
-			if (!_vm->readFlags(880))
-				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(940, 300), ui._currentScroll.x);
-			break;
-
-		case 18:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(0, 203), ui._currentScroll.x);
-			if (!_vm->readFlags(189))
-				screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124, 239), ui._currentScroll.x);
-			break;
-
-		case 53:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(ui._maskOffset.x, 110), ui._currentScroll.x);
-			break;
-
-		case 68:
-			screen._backBuffer1.maskArea((*ui._mask)[0], Common::Point(0, 203), ui._currentScroll.x);
-			screen._backBuffer1.maskArea((*ui._mask1)[0], Common::Point(124, 239), ui._currentScroll.x);
-			break;
-
-		default:
-			break;
-		}
-	}
+	ui.drawMaskArea(false);
 
 	screen._flushScreen = true;
 

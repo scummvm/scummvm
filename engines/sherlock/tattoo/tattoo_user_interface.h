@@ -201,6 +201,13 @@ public:
 	 * Makes a greyscale translation table for each palette entry in the table
 	 */
 	void setupBGArea(const byte cMap[PALETTE_SIZE]);
+
+	/**
+	 * Erase any background as needed before drawing frame
+	 */
+	void doBgAnimEraseBackground();
+
+	void drawMaskArea(bool mode);
 public:
 	/**
 	 * Resets the user interface

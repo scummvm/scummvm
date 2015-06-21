@@ -50,8 +50,6 @@ private:
 private:
 	void doBgAnimCheckCursor();
 
-	void doBgAnimEraseBackground();
-
 	/**
 	 * Update the background objects and canimations as part of doBgAnim
 	 */
