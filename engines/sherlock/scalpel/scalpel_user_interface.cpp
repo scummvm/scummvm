@@ -21,9 +21,10 @@
  */
 
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_people.h"
-#include "sherlock/sherlock.h"
 #include "sherlock/scalpel/settings.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -1473,7 +1474,7 @@ void ScalpelUserInterface::doPickControl() {
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Journal &journal = *_vm->_journal;
+	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -1732,7 +1733,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 void ScalpelUserInterface::journalControl() {
 	Events &events = *_vm->_events;
-	Journal &journal = *_vm->_journal;
+	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	bool doneFlag = false;

@@ -487,7 +487,7 @@ void TattooUserInterface::doStandardControl() {
 			if (people[_bgFound - 1000]._description.empty() || people[_bgFound - 1000]._description.hasPrefix(" "))
 				noDesc = true;
 		} else if (_bgFound != -1) {
-			if (people[_bgFound - 1000]._description.empty() || people[_bgFound - 1000]._description.hasPrefix(" "))
+			if (_bgShape->_description.empty() || _bgShape->_description.hasPrefix(" "))
 				noDesc = true;
 		} else {
 			noDesc = true;

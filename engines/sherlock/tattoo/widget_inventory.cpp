@@ -532,7 +532,7 @@ void WidgetInventory::handleEvents() {
 }
 
 void WidgetInventory::updateDescription() {
-
+	// TODO
 }
 
 void WidgetInventory::checkInvTabbingKeys() {

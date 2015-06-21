@@ -1,0 +1,1365 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "sherlock/journal.h"
+#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_journal.h"
+#include "sherlock/tattoo/tattoo_journal.h"
+
+namespace Sherlock {
+
+namespace Scalpel {
+
+#define JOURNAL_BUTTONS_Y 178
+#define LINES_PER_PAGE 11
+#define JOURNAL_SEARCH_LEFT 15
+#define JOURNAL_SEARCH_TOP 186
+#define JOURNAL_SEARCH_RIGHT 296
+#define JOURNAL_SEACRH_MAX_CHARS 50
+
+// Positioning of buttons in the journal view
+static const int JOURNAL_POINTS[9][3] = {
+	{ 6, 68, 37 },
+	{ 69, 131, 100 },
+	{ 132, 192, 162 },
+	{ 193, 250, 221 },
+	{ 251, 313, 281 },
+	{ 6, 82, 44 },
+	{ 83, 159, 121 },
+	{ 160, 236, 198 },
+	{ 237, 313, 275 }
+};
+
+static const int SEARCH_POINTS[3][3] = {
+	{ 51, 123, 86 },
+	{ 124, 196, 159 },
+	{ 197, 269, 232 }
+};
+
+/*----------------------------------------------------------------*/
+
+ScalpelJournal::ScalpelJournal(SherlockEngine *vm) : Journal(vm) {
+	// Initialize fields
+	_maxPage = 0;
+	_index = 0;
+	_sub = 0;
+	_up = _down = false;
+	_page = 1;
+
+	if (_vm->_interactiveFl) {
+		// Load the journal directory and location names
+		loadJournalLocations();
+	}
+}
+
+void ScalpelJournal::record(int converseNum, int statementNum, bool replyOnly) {
+	int saveIndex = _index;
+	int saveSub = _sub;
+
+	if (IS_3DO) {
+		// there seems to be no journal in the 3DO version
+		return;
+	}
+
+	// Record the entry into the list
+	_journal.push_back(JournalEntry(converseNum, statementNum, replyOnly));
+	_index = _journal.size() - 1;
+
+	// Load the text for the new entry to get the number of lines it will have
+	loadJournalFile(true);
+
+	// Restore old state
+	_index = saveIndex;
+	_sub = saveSub;
+
+	// If new lines were added to the ournal, update the total number of lines
+	// the journal continues
+	if (!_lines.empty()) {
+		_maxPage += _lines.size();
+	} else {
+		// No lines in entry, so remove the new entry from the journal
+		_journal.remove_at(_journal.size() - 1);
+	}
+}
+
+void ScalpelJournal::loadJournalLocations() {
+	Resources &res = *_vm->_res;
+
+	_directory.clear();
+
+	Common::SeekableReadStream *dir = res.load("talk.lib");
+	dir->skip(4);		// Skip header
+
+	// Get the numer of entries
+	_directory.resize(dir->readUint16LE());
+	if (IS_ROSE_TATTOO)
+		dir->seek((_directory.size() + 1) * 8, SEEK_CUR);
+
+	// Read in each entry
+	char buffer[17];
+	for (uint idx = 0; idx < _directory.size(); ++idx) {
+		dir->read(buffer, 17);
+		buffer[16] = '\0';
+
+		_directory[idx] = Common::String(buffer);
+	}
+
+	delete dir;
+
+	_locations.clear();
+
+	if (IS_3DO) {
+		// 3DO: storage of locations is currently unknown TODO
+		return;
+	}
+
+	// Load in the locations stored in journal.txt
+	Common::SeekableReadStream *loc = res.load("journal.txt");
+
+	if (IS_SERRATED_SCALPEL) {
+		while (loc->pos() < loc->size()) {
+			Common::String line;
+			char c;
+			while ((c = loc->readByte()) != 0)
+				line += c;
+
+			_locations.push_back(line);
+		}
+	} else {
+		// Initialize locations
+		_locations.resize(100);
+		for (int i = 0; i < 100; i++)
+			_locations[i] = "No Description";
+
+		while (loc->pos() < loc->size()) {
+			// In Rose Tattoo, each location line starts with the location
+			// number, followed by a dot, some spaces and its description
+			// in quotes
+			Common::String line = loc->readLine();
+			Common::String locNumStr;
+			int locNum = 0;
+			int i = 0;
+			Common::String locDesc;
+
+			// Get the location
+			while (Common::isDigit(line[i])) {
+				locNumStr += line[i];
+				i++;
+			}
+			locNum = atoi(locNumStr.c_str());
+
+			// Skip the dot, spaces and initial quotation mark
+			while (line[i] == ' ' || line[i] == '.' || line[i] == '\"')
+				i++;
+
+			do {
+				locDesc += line[i];
+				i++;
+			} while (line[i] != '\"');
+
+			_locations[locNum] = locDesc;
+		}
+	}
+
+	delete loc;
+}
+
+void ScalpelJournal::loadJournalFile(bool alreadyLoaded) {
+	People &people = *_vm->_people;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	JournalEntry &journalEntry = _journal[_index];
+	const byte *opcodes = talk._opcodes;
+
+	Common::String dirFilename = _directory[journalEntry._converseNum];
+	bool replyOnly = journalEntry._replyOnly;
+
+	// Get the location number from within the filename
+	Common::String locStr(dirFilename.c_str() + 4, dirFilename.c_str() + 6);
+	int newLocation = atoi(locStr.c_str());
+
+	// If not flagged as already loaded, load the conversation into script variables
+	if (!alreadyLoaded) {
+		// See if the file to be used is already loaded
+		if (journalEntry._converseNum != talk._converseNum) {
+			// Nope. Free any previously loaded talk
+			talk.freeTalkVars();
+
+			// Find the person being referred to
+			talk._talkTo = -1;
+			for (int idx = 0; idx < (int)people._characters.size(); ++idx) {
+				Common::String portrait = people._characters[idx]._portrait;
+				Common::String numStr(portrait.c_str(), portrait.c_str() + 4);
+
+				if (locStr == numStr) {
+					talk._talkTo = idx;
+					break;
+				}
+			}
+
+			// Load their talk file
+			talk.loadTalkFile(dirFilename);
+		}
+	}
+
+	if (talk[0]._statement.hasPrefix("*") || talk[0]._statement.hasPrefix("^"))
+		replyOnly = true;
+
+	// If this isn't the first journal entry, see if the previous journal entry
+	// was in the same scene to see if we need to include the scene header
+	int oldLocation = -1;
+	if (_index != 0) {
+		// Get the scene number of the prior journal entry
+		Common::String priorEntry = _directory[_journal[_index - 1]._converseNum];
+		oldLocation = atoi(Common::String(priorEntry.c_str() + 4, priorEntry.c_str() + 6).c_str());
+	}
+
+	// Start building journal string
+	Statement &statement = talk[journalEntry._statementNum];
+	Common::String journalString;
+
+	if (newLocation != oldLocation) {
+		// Add in scene title
+		journalString = "@";
+		if (IS_SERRATED_SCALPEL || newLocation - 1 < 100)
+			journalString += _locations[newLocation - 1];
+		journalString += ":";
+
+		// See if title can fit into a single line, or requires splitting on 2 lines
+		int width = screen.stringWidth(journalString.c_str() + 1);
+		if (width > JOURNAL_MAX_WIDTH) {
+			// Scan backwards from end of title to find a space between a word
+			// where the width is less than the maximum allowed for the line
+			const char *lineP = journalString.c_str() + journalString.size() - 1;
+			while (width > JOURNAL_MAX_WIDTH || *lineP != ' ')
+				width -= screen.charWidth(*lineP--);
+
+			// Split the header into two lines, and add a '@' prefix
+			// to the second line as well
+			journalString = Common::String(journalString.c_str(), lineP) + "\n@" +
+				Common::String(lineP + 1);
+		}
+
+		// Add a newline at the end of the title
+		journalString += '\n';
+	}
+
+	// If Holmes has something to say first, then take care of it
+	if (!replyOnly) {
+		// Handle the grammar
+		journalString += "Holmes ";
+		if (talk[journalEntry._statementNum]._statement.hasSuffix("?"))
+			journalString += "asked ";
+		else
+			journalString += "said to ";
+
+		switch (talk._talkTo) {
+		case 1:
+			journalString += "me";
+			break;
+		case 2:
+			journalString += "the Inspector";
+			break;
+		default:
+			journalString += people._characters[talk._talkTo]._name;
+			break;
+		}
+		journalString += ", \"";
+
+		// Add the statement
+		journalString += statement._statement;
+	}
+
+	// Handle including the reply
+	bool startOfReply = true;
+	bool ctrlSpace = false;
+	bool commentFlag = false;
+	bool commentJustPrinted = false;
+	const byte *replyP = (const byte *)statement._reply.c_str();
+	const int inspectorId = (IS_SERRATED_SCALPEL) ? 2 : 18;
+
+	while (*replyP) {
+		byte c = *replyP++;
+
+		if (IS_ROSE_TATTOO) {
+			// Ignore commented out data
+			if (c == '/' && *(replyP + 1) == '*') {
+				replyP++;	// skip *
+				while (*replyP++ != '*') {}	// empty loop on purpose
+				replyP++;	// skip /
+				c = *replyP;
+			}
+		}
+
+		// Is it a control character?
+		if (c < opcodes[0]) {
+			// Nope. Set flag for allowing control codes to insert spaces
+			ctrlSpace = true;
+			assert(c >= ' ');
+
+			// Check for embedded comments
+			if (c == '{' || c == '}') {
+
+				// TODO: Rose Tattoo checks if no text was added for the last
+				// comment here. In such a case, the last "XXX said" string is
+				// removed here.
+
+				// Comment characters. If we're starting a comment and there's
+				// already text displayed, add a closing quote
+				if (c == '{' && !startOfReply && !commentJustPrinted)
+					journalString += '"';
+
+				// If a reply isn't just being started, and we didn't just end
+				// a comment (which would have added a line), add a carriage return
+				if (!startOfReply && ((!commentJustPrinted && c == '{') || c == '}'))
+					journalString += '\n';
+				startOfReply = false;
+
+				// Handle setting or clearing comment state
+				if (c == '{') {
+					commentFlag = true;
+					commentJustPrinted = false;
+				} else {
+					commentFlag = false;
+					commentJustPrinted = true;
+				}
+			} else {
+				if (startOfReply) {
+					if (!replyOnly) {
+						journalString += "\"\n";
+
+						if (talk._talkTo == 1)
+							journalString += "I replied, \"";
+						else
+							journalString += "The reply was, \"";
+					} else {
+						if (talk._talkTo == 1)
+							journalString += "I";
+						else if (talk._talkTo == inspectorId)
+							journalString += "The Inspector";
+						else
+							journalString += people._characters[talk._talkTo]._name;
+
+						const byte *strP = replyP + 1;
+						byte v;
+						do {
+							v = *strP++;
+						} while (v && (v < opcodes[0]) && (v != '.') && (v != '!') && (v != '?'));
+
+						if (v == '?')
+							journalString += " asked, \"";
+						else
+							journalString += " said, \"";
+					}
+
+					startOfReply = false;
+				}
+
+				// Copy text from the place until either the reply ends, a comment
+				// {} block is started, or a control character is encountered
+				journalString += c;
+				do {
+					journalString += *replyP++;
+				} while (*replyP && *replyP < opcodes[0] && *replyP != '{' && *replyP != '}');
+
+				commentJustPrinted = false;
+			}
+		} else if (c == opcodes[OP_SWITCH_SPEAKER]) {
+			if (!startOfReply) {
+				if (!commentFlag && !commentJustPrinted)
+					journalString += "\"\n";
+
+				journalString += "Then ";
+				commentFlag = false;
+			} else if (!replyOnly) {
+				journalString += "\"\n";
+			}
+
+			startOfReply = false;
+			c = *replyP++ - 1;
+			if (IS_ROSE_TATTOO)
+				replyP++;
+
+			if (c == 0)
+				journalString += "Holmes";
+			else if (c == 1)
+				journalString += "I";
+			else if (c == inspectorId)
+				journalString += "the Inspector";
+			else
+				journalString += people._characters[c]._name;
+
+			const byte *strP = replyP;
+			byte v;
+			do {
+				v = *strP++;
+			} while (v && v < opcodes[0] && v != '.' && v != '!' && v != '?');
+
+			if (v == '?')
+				journalString += " asked, \"";
+			else
+				journalString += " said, \"";
+		} else {
+			if (IS_SERRATED_SCALPEL) {
+				// Control code, so move past it and any parameters
+				if (c == opcodes[OP_RUN_CANIMATION] ||
+					c == opcodes[OP_ASSIGN_PORTRAIT_LOCATION] ||
+					c == opcodes[OP_PAUSE] ||
+					c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+					c == opcodes[OP_WALK_TO_CANIMATION]) {
+					// These commands have a single parameter
+					++replyP;
+				} else if (c == opcodes[OP_ADJUST_OBJ_SEQUENCE]) {
+					replyP += (replyP[0] & 127) + replyP[1] + 2;
+				} else if (c == opcodes[OP_WALK_TO_COORDS] || c == opcodes[OP_MOVE_MOUSE]) {
+					replyP += 4;
+				} else if (c == opcodes[OP_SET_FLAG] || c == opcodes[OP_IF_STATEMENT]) {
+					replyP += 2;
+				} else if (c == opcodes[OP_SFX_COMMAND] || c == opcodes[OP_PLAY_PROLOGUE] ||
+					c == opcodes[OP_CALL_TALK_FILE]) {
+					replyP += 8;
+					break;
+				} else if (
+					c == opcodes[OP_TOGGLE_OBJECT] ||
+					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+					c == opcodes[OP_SET_OBJECT] ||
+					c == opcodes[OP_DISPLAY_INFO_LINE] ||
+					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY]) {
+					replyP += (*replyP & 127) + 1;
+				} else if (c == opcodes[OP_GOTO_SCENE]) {
+					replyP += 5;
+				} else if (c == opcodes[OP_CARRIAGE_RETURN]) {
+					journalString += "\n";
+				}
+			} else {
+				if (c == opcodes[OP_RUN_CANIMATION] ||
+					c == opcodes[OP_PAUSE] ||
+					c == opcodes[OP_MOUSE_OFF_ON] ||
+					c == opcodes[OP_SET_WALK_CONTROL] ||
+					c == opcodes[OP_PAUSE_WITHOUT_CONTROL] ||
+					c == opcodes[OP_WALK_TO_CANIMATION] ||
+					c == opcodes[OP_TURN_NPC_OFF] ||
+					c == opcodes[OP_TURN_NPC_ON] ||
+					c == opcodes[OP_RESTORE_PEOPLE_SEQUENCE])
+					++replyP;
+				else if (
+					c == opcodes[OP_SET_TALK_SEQUENCE] ||
+					c == opcodes[OP_SET_FLAG] ||
+					c == opcodes[OP_WALK_NPC_TO_CANIM] ||
+					c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_CANIM] ||
+					c == opcodes[OP_NPC_PATH_LABEL] ||
+					c == opcodes[OP_PATH_GOTO_LABEL])
+					replyP += 2;
+				else if (
+					c == opcodes[OP_SET_NPC_PATH_PAUSE] ||
+					c == opcodes[OP_NPC_PATH_PAUSE_TAKING_NOTES] ||
+					c == opcodes[OP_NPC_PATH_PAUSE_LOOKING_HOLMES] ||
+					c == opcodes[OP_NPC_VERB_CANIM])
+					replyP += 3;
+				else if (
+					c == opcodes[OP_SET_SCENE_ENTRY_FLAG] ||
+					c == opcodes[OP_PATH_IF_FLAG_GOTO_LABEL])
+					replyP += 4;
+				else if (
+					c == opcodes[OP_WALK_TO_COORDS])
+					replyP += 5;
+				else if (
+					c == opcodes[OP_WALK_NPC_TO_COORDS] ||
+					c == opcodes[OP_GOTO_SCENE] ||
+					c == opcodes[OP_SET_NPC_PATH_DEST] ||
+					c == opcodes[OP_SET_NPC_POSITION])
+					replyP += 6;
+				else if (
+					c == opcodes[OP_PLAY_SONG] ||
+					c == opcodes[OP_NEXT_SONG])
+					replyP += 8;
+				else if (
+					c == opcodes[OP_CALL_TALK_FILE] ||
+					c == opcodes[OP_SET_NPC_TALK_FILE] ||
+					c == opcodes[OP_NPC_WALK_GRAPHICS])
+					replyP += 9;
+				else if (
+					c == opcodes[OP_NPC_VERB_SCRIPT])
+					replyP += 10;
+				else if (
+					c == opcodes[OP_WALK_HOLMES_AND_NPC_TO_COORDS])
+					replyP += 11;
+				else if (
+					c == opcodes[OP_NPC_VERB] ||
+					c == opcodes[OP_NPC_VERB_TARGET])
+					replyP += 14;
+				else if (
+					c == opcodes[OP_ADJUST_OBJ_SEQUENCE])
+					replyP += (replyP[0] & 127) + replyP[1] + 2;
+				else if (
+					c == opcodes[OP_TOGGLE_OBJECT] ||
+					c == opcodes[OP_ADD_ITEM_TO_INVENTORY] ||
+					c == opcodes[OP_SET_OBJECT] ||
+					c == opcodes[OP_REMOVE_ITEM_FROM_INVENTORY])
+					replyP += (*replyP & 127) + 1;
+				else if (
+					c == opcodes[OP_END_TEXT_WINDOW]) {
+					journalString += '\n';
+				} else if (
+					c == opcodes[OP_NPC_DESC_ON_OFF]) {
+					replyP++;
+					while (replyP[0] && replyP[0] != opcodes[OP_NPC_DESC_ON_OFF])
+						replyP++;
+					replyP++;
+				} else if (
+					c == opcodes[OP_SET_NPC_INFO_LINE])
+					replyP += replyP[1] + 2;
+			}
+
+			// Put a space in the output for a control character, unless it's
+			// immediately coming after another control character
+			if (ctrlSpace && c != opcodes[OP_ASSIGN_PORTRAIT_LOCATION] && c != opcodes[OP_CARRIAGE_RETURN] && 
+					!commentJustPrinted) {
+				journalString += " ";
+				ctrlSpace = false;
+			}
+		}
+	}
+
+	if (!startOfReply && !commentJustPrinted)
+		journalString += '"';
+
+	// Finally finished building the journal text. Need to process the text to
+	// word wrap it to fit on-screen. The resulting lines are stored in the
+	// _lines array
+	_lines.clear();
+
+	while (!journalString.empty()) {
+		const char *startP = journalString.c_str();
+
+		// If the first character is a '@' flagging a title line, then move
+		// past it, so the @ won't be included in the line width calculation
+		if (*startP == '@')
+			++startP;
+
+		// Build up chacters until a full line is found
+		int width = 0;
+		const char *endP = startP;
+		while (width < JOURNAL_MAX_WIDTH && *endP && *endP != '\n' && (endP - startP) < (JOURNAL_MAX_CHARS - 1))
+			width += screen.charWidth(*endP++);
+
+		// If word wrapping, move back to end of prior word
+		if (width >= JOURNAL_MAX_WIDTH || (endP - startP) >= (JOURNAL_MAX_CHARS - 1)) {
+			while (*--endP != ' ')
+				;
+		}
+
+		// Add in the line
+		_lines.push_back(Common::String(journalString.c_str(), endP));
+
+		// Strip line off from string being processed
+		journalString = *endP ? Common::String(endP + 1) : "";
+	}
+
+	// Add a blank line at the end of the text as long as text was present
+	if (!startOfReply) {
+		_lines.push_back("");
+	} else {
+		_lines.clear();
+	}
+}
+
+void ScalpelJournal::drawJournalFrame() {
+	FixedText &fixedText = *_vm->_fixedText;
+	Resources &res = *_vm->_res;
+	Screen &screen = *_vm->_screen;
+	byte palette[PALETTE_SIZE];
+
+	// Load in the journal background
+	Common::SeekableReadStream *bg = res.load("journal.lbv");
+	bg->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+	bg->read(palette, PALETTE_SIZE);
+	delete bg;
+
+	// Translate the palette for display
+	for (int idx = 0; idx < PALETTE_SIZE; ++idx)
+		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
+
+	Common::String fixedText_WatsonsJournal = fixedText.getText(kFixedText_Journal_WatsonsJournal);
+	Common::String fixedText_Exit           = fixedText.getText(kFixedText_Journal_Exit);
+	Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
+	Common::String fixedText_Up             = fixedText.getText(kFixedText_Journal_Up);
+	Common::String fixedText_Down           = fixedText.getText(kFixedText_Journal_Down);
+	Common::String fixedText_Ahead10        = fixedText.getText(kFixedText_Journal_Ahead10);
+	Common::String fixedText_Search         = fixedText.getText(kFixedText_Journal_Search);
+	Common::String fixedText_FirstPage      = fixedText.getText(kFixedText_Journal_FirstPage);
+	Common::String fixedText_LastPage       = fixedText.getText(kFixedText_Journal_LastPage);
+	Common::String fixedText_PrintText      = fixedText.getText(kFixedText_Journal_PrintText);
+
+	// Set the palette and print the title
+	screen.setPalette(palette);
+	screen.gPrint(Common::Point(111, 18), BUTTON_BOTTOM, "%s", fixedText_WatsonsJournal.c_str());
+	screen.gPrint(Common::Point(110, 17), INV_FOREGROUND, "%s", fixedText_WatsonsJournal.c_str());
+
+	// Draw the buttons
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[0][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[0][1], JOURNAL_BUTTONS_Y + 10),
+		JOURNAL_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[1][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[1][1], JOURNAL_BUTTONS_Y + 10),
+		JOURNAL_POINTS[1][2] - screen.stringWidth(fixedText_Back10) / 2, fixedText_Back10);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[2][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[2][1], JOURNAL_BUTTONS_Y + 10),
+		JOURNAL_POINTS[2][2] - screen.stringWidth(fixedText_Up) / 2, fixedText_Up);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[3][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[3][1], JOURNAL_BUTTONS_Y + 10),
+		JOURNAL_POINTS[3][2] - screen.stringWidth(fixedText_Down) / 2, fixedText_Down);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[4][0], JOURNAL_BUTTONS_Y,
+		JOURNAL_POINTS[4][1], JOURNAL_BUTTONS_Y + 10),
+		JOURNAL_POINTS[4][2] - screen.stringWidth(fixedText_Ahead10) / 2, fixedText_Ahead10);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[5][0], JOURNAL_BUTTONS_Y + 11,
+		JOURNAL_POINTS[5][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[5][2] - screen.stringWidth(fixedText_Search) / 2, fixedText_Search);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[6][0], JOURNAL_BUTTONS_Y + 11,
+		JOURNAL_POINTS[6][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[6][2] - screen.stringWidth(fixedText_FirstPage) / 2, fixedText_FirstPage);
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[7][0], JOURNAL_BUTTONS_Y + 11,
+		JOURNAL_POINTS[7][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[7][2] - screen.stringWidth(fixedText_LastPage) / 2, fixedText_LastPage);
+
+	// WORKAROUND: Draw Print Text button as disabled, since we don't support it in ScummVM
+	screen.makeButton(Common::Rect(JOURNAL_POINTS[8][0], JOURNAL_BUTTONS_Y + 11,
+		JOURNAL_POINTS[8][1], JOURNAL_BUTTONS_Y + 21),
+		JOURNAL_POINTS[8][2] - screen.stringWidth(fixedText_PrintText) / 2, fixedText_PrintText);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11),
+		COMMAND_NULL, false, fixedText_PrintText);
+}
+
+void ScalpelJournal::drawInterface() {
+	Screen &screen = *_vm->_screen;
+
+	drawJournalFrame();
+
+	if (_journal.empty()) {
+		_up = _down = 0;
+	} else {
+		drawJournal(0, 0);
+	}
+
+	doArrows();
+
+	// Show the entire screen
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+}
+
+void ScalpelJournal::doArrows() {
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen &screen = *_vm->_screen;
+	byte color;
+
+	Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
+	Common::String fixedText_Up             = fixedText.getText(kFixedText_Journal_Up);
+	Common::String fixedText_Down           = fixedText.getText(kFixedText_Journal_Down);
+	Common::String fixedText_Ahead10        = fixedText.getText(kFixedText_Journal_Ahead10);
+	Common::String fixedText_Search         = fixedText.getText(kFixedText_Journal_Search);
+	Common::String fixedText_FirstPage      = fixedText.getText(kFixedText_Journal_FirstPage);
+	Common::String fixedText_LastPage       = fixedText.getText(kFixedText_Journal_LastPage);
+	Common::String fixedText_PrintText      = fixedText.getText(kFixedText_Journal_PrintText);
+
+	color = (_page > 1) ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Back10);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Up);
+
+	color = _down ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Down);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), color, false, fixedText_Ahead10);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, false, fixedText_LastPage);
+
+	color = _journal.size() > 0 ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, false, fixedText_Search);
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, false, fixedText_PrintText);
+
+	color = _page > 1 ? COMMAND_FOREGROUND : COMMAND_NULL;
+	screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, false, fixedText_FirstPage);
+}
+
+bool ScalpelJournal::drawJournal(int direction, int howFar) {
+	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	int yp = 37;
+	int startPage = _page;
+	bool endJournal = false;
+	bool firstOccurance = true;
+	bool searchSuccessful = false;
+	bool endFlag = false;
+	int lineNum = 0;
+	int savedIndex;
+	int temp;
+	const char *matchP;
+	int width;
+
+	talk._converseNum = -1;
+	_down = true;
+
+	do {
+		// Get the number of lines for the current journal entry
+		loadJournalFile(false);
+		if (_lines.empty()) {
+			// Entry has no text, so it must be a stealth eny. Move onto further journal entries
+			// until an entry with text is found
+			if (++_index == (int)_journal.size()) {
+				endJournal = true;
+			} else {
+				_sub = 0;
+				loadJournalFile(false);
+			}
+		}
+	} while (!endJournal && _lines.empty());
+
+	// Check if there no further pages with text until the end of the journal
+	if (endJournal) {
+		// If moving forward or backwards, clear the page before printing
+		if (direction)
+			drawJournalFrame();
+
+		screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
+		return false;
+	}
+
+	// If the journal page is being changed, set the wait cursor
+	if (direction)
+		events.setCursor(WAIT);
+
+	switch (direction) {
+	case 1:
+	case 4:
+		// Move backwards howFar number of lines unless either the start of the journal is reached,
+		// or a searched for keyword is found
+		do {
+			// Move backwards through the journal file a line at a time
+			if (--_sub < 0) {
+				do {
+					if (--_index < 0) {
+						_index = 0;
+						_sub = 0;
+						endJournal = true;
+					}
+					else {
+						loadJournalFile(false);
+						_sub = _lines.size() - 1;
+					}
+				} while (!endJournal && _lines.empty());
+			}
+
+			// If it's search mode, check each line for the given keyword
+			if (direction >= 3 && !_lines.empty() && !endJournal && !searchSuccessful) {
+				Common::String line = _lines[_sub];
+				line.toUppercase();
+				if (strstr(line.c_str(), _find.c_str()) != nullptr) {
+					// Found a match. Reset howFar so that the start of page that the match
+					// was found on will be displayed
+					searchSuccessful = true;
+					howFar = ((lineNum / LINES_PER_PAGE) + 1) * LINES_PER_PAGE;
+				}
+			}
+
+			++lineNum;
+		} while (lineNum < howFar && !endJournal);
+
+		if (!_index && !_sub)
+			_page = 1;
+		else
+			_page -= howFar / LINES_PER_PAGE;
+		break;
+
+	case 2:
+	case 3:
+		// Move howFar lines ahead unless the end of the journal is reached,
+		// or a searched for keyword is found
+		for (temp = 0; (temp < (howFar / LINES_PER_PAGE)) && !endJournal && !searchSuccessful; ++temp) {
+			// Handle animating mouse cursor
+			int cursorNum = (int)events.getCursor() + 1;
+			if (cursorNum >(WAIT + 2))
+				cursorNum = WAIT;
+			events.setCursor((CursorId)cursorNum);
+
+			lineNum = 0;
+			savedIndex = _index;
+			int savedSub = _sub;
+
+			// Move a single page ahead
+			do {
+				// If in search mode, check for keyword
+				if (direction >= 3 && _page != startPage) {
+					Common::String line = _lines[_sub];
+					line.toUppercase();
+					if (strstr(line.c_str(), _find.c_str()) != nullptr)
+						searchSuccessful = true;
+				}
+
+				// Move forwards a line at a time, unless search word was found
+				if (!searchSuccessful) {
+					if (++_sub == (int)_lines.size()) {
+						// Reached end of page
+						do {
+							if (++_index == (int)_journal.size()) {
+								_index = savedIndex;
+								_sub = savedSub;
+								loadJournalFile(false);
+								endJournal = true;
+							} else {
+								_sub = 0;
+								loadJournalFile(false);
+							}
+						} while (!endJournal && _lines.empty());
+					}
+
+					++lineNum;
+				}
+			} while ((lineNum < LINES_PER_PAGE) && !endJournal && !searchSuccessful);
+
+			if (!endJournal && !searchSuccessful)
+				// Move to next page
+				++_page;
+
+			if (searchSuccessful) {
+				// Search found, so show top of the page it was found on
+				_index = savedIndex;
+				_sub = savedSub;
+				loadJournalFile(false);
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (direction) {
+		events.setCursor(ARROW);
+		drawJournalFrame();
+	}
+
+	Common::String fixedText_Page = fixedText.getText(kFixedText_Journal_Page);
+
+	screen.gPrint(Common::Point(235, 21), PEN_COLOR, fixedText_Page.c_str(), _page);
+
+	temp = _sub;
+	savedIndex = _index;
+	lineNum = 0;
+
+	do {
+		bool inc = true;
+
+		// If there wasn't any line to print at the top of the page, we won't need to
+		// increment the y position
+		if (_lines[temp].empty() && yp == 37)
+			inc = false;
+
+		// If there's a searched for keyword in the line, it will need to be highlighted
+		if (searchSuccessful && firstOccurance) {
+			// Check if line has the keyword
+			Common::String line = _lines[temp];
+			line.toUppercase();
+			if ((matchP = strstr(line.c_str(), _find.c_str())) != nullptr) {
+				matchP = _lines[temp].c_str() + (matchP - line.c_str());
+				firstOccurance = false;
+
+				// Print out the start of the line before the matching keyword
+				Common::String lineStart(_lines[temp].c_str(), matchP);
+				if (lineStart.hasPrefix("@")) {
+					width = screen.stringWidth(lineStart.c_str() + 1);
+					screen.gPrint(Common::Point(53, yp), 15, "%s", lineStart.c_str() + 1);
+				} else {
+					width = screen.stringWidth(lineStart.c_str());
+					screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", lineStart.c_str());
+				 }
+
+				// Print out the found keyword
+				Common::String lineMatch(matchP, matchP + _find.size());
+				screen.gPrint(Common::Point(53 + width, yp), INV_FOREGROUND, "%s", lineMatch.c_str());
+				width += screen.stringWidth(lineMatch.c_str());
+
+				// Print remainder of line
+				screen.gPrint(Common::Point(53 + width, yp), PEN_COLOR, "%s", matchP + _find.size());
+			} else if (_lines[temp].hasPrefix("@")) {
+				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
+			} else {
+				screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", _lines[temp].c_str());
+			}
+		} else {
+			if (_lines[temp].hasPrefix("@")) {
+				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
+			} else {
+				screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", _lines[temp].c_str());
+			}
+		}
+
+		if (++temp == (int)_lines.size()) {
+			// Move to next page
+			do {
+				if (_index < ((int)_journal.size() - 1) && lineNum < (LINES_PER_PAGE - 1)) {
+					++_index;
+					loadJournalFile(false);
+					temp = 0;
+				} else {
+					if (_index == ((int)_journal.size() - 1))
+						_down = false;
+					endFlag = true;
+				}
+			} while (!endFlag && _lines.empty());
+		}
+
+		if (inc) {
+			// Move to next line
+			++lineNum;
+			yp += 13;
+		}
+	} while (lineNum < LINES_PER_PAGE && !endFlag);
+
+	_index = savedIndex;
+	_up = _index || _sub;
+
+	return direction >= 3 && searchSuccessful;
+}
+
+JournalButton ScalpelJournal::getHighlightedButton(const Common::Point &pt) {
+	if (pt.x > JOURNAL_POINTS[0][0] && pt.x < JOURNAL_POINTS[0][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10))
+		return BTN_EXIT;
+
+	if (pt.x > JOURNAL_POINTS[1][0] && pt.x < JOURNAL_POINTS[1][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _page > 1)
+		return BTN_BACK10;
+
+	if (pt.x > JOURNAL_POINTS[2][0] && pt.x < JOURNAL_POINTS[2][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _up)
+		return BTN_UP;
+
+	if (pt.x > JOURNAL_POINTS[3][0] && pt.x < JOURNAL_POINTS[3][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _down)
+		return BTN_DOWN;
+
+	if (pt.x > JOURNAL_POINTS[4][0] && pt.x < JOURNAL_POINTS[4][1] && pt.y >= JOURNAL_BUTTONS_Y &&
+			pt.y < (JOURNAL_BUTTONS_Y + 10) && _down)
+		return BTN_AHEAD110;
+
+	if (pt.x > JOURNAL_POINTS[5][0] && pt.x < JOURNAL_POINTS[5][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty())
+		return BTN_SEARCH;
+
+	if (pt.x > JOURNAL_POINTS[6][0] && pt.x < JOURNAL_POINTS[6][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && _up)
+		return BTN_FIRST_PAGE;
+
+	if (pt.x > JOURNAL_POINTS[7][0] && pt.x < JOURNAL_POINTS[7][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && _down)
+		return BTN_LAST_PAGE;
+
+	if (pt.x > JOURNAL_POINTS[8][0] && pt.x < JOURNAL_POINTS[8][1] && pt.y >= (JOURNAL_BUTTONS_Y + 11) &&
+			pt.y < (JOURNAL_BUTTONS_Y + 20) && !_journal.empty())
+		return BTN_PRINT_TEXT;
+
+	return BTN_NONE;
+}
+
+bool ScalpelJournal::handleEvents(int key) {
+	Events    &events    = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen    &screen    = *_vm->_screen;
+	bool doneFlag = false;
+
+	Common::Point pt = events.mousePos();
+	JournalButton btn = getHighlightedButton(pt);
+	byte color;
+
+	if (events._pressed || events._released) {
+		Common::String fixedText_Exit           = fixedText.getText(kFixedText_Journal_Exit);
+		Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
+		Common::String fixedText_Up             = fixedText.getText(kFixedText_Journal_Up);
+		Common::String fixedText_Down           = fixedText.getText(kFixedText_Journal_Down);
+		Common::String fixedText_Ahead10        = fixedText.getText(kFixedText_Journal_Ahead10);
+		Common::String fixedText_Search         = fixedText.getText(kFixedText_Journal_Search);
+		Common::String fixedText_FirstPage      = fixedText.getText(kFixedText_Journal_FirstPage);
+		Common::String fixedText_LastPage       = fixedText.getText(kFixedText_Journal_LastPage);
+		Common::String fixedText_PrintText      = fixedText.getText(kFixedText_Journal_PrintText);
+
+		// Exit button
+		color = (btn == BTN_EXIT) ? COMMAND_HIGHLIGHTED : COMMAND_FOREGROUND;
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[0][2], JOURNAL_BUTTONS_Y), color, true, fixedText_Exit);
+
+		// Back 10 button
+		if (btn == BTN_BACK10) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Back10);
+		} else if (_page > 1) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[1][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Back10);
+		}
+
+		// Up button
+		if (btn == BTN_UP) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Up);
+		} else if (_up) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[2][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
+		}
+
+		// Down button
+		if (btn == BTN_DOWN) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Down);
+		} else if (_down) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[3][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
+		}
+
+		// Ahead 10 button
+		if (btn == BTN_AHEAD110) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_HIGHLIGHTED, true, fixedText_Ahead10);
+		} else if (_down) {
+			screen.buttonPrint(Common::Point(JOURNAL_POINTS[4][2], JOURNAL_BUTTONS_Y), COMMAND_FOREGROUND, true, fixedText_Ahead10);
+		}
+
+		// Search button
+		if (btn == BTN_SEARCH) {
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_journal.empty()) {
+			color = COMMAND_NULL;
+		} else {
+			color = COMMAND_FOREGROUND;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), color, true, fixedText_Search);
+
+		// First Page button
+		if (btn == BTN_FIRST_PAGE) {
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_up) {
+			color = COMMAND_FOREGROUND;
+		} else {
+			color = COMMAND_NULL;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[6][2], JOURNAL_BUTTONS_Y + 11), color, true, fixedText_FirstPage);
+
+		// Last Page button
+		if (btn == BTN_LAST_PAGE) {
+			color = COMMAND_HIGHLIGHTED;
+		} else if (_down) {
+			color = COMMAND_FOREGROUND;
+		} else {
+			color = COMMAND_NULL;
+		}
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[7][2], JOURNAL_BUTTONS_Y + 11), color, true, fixedText_LastPage);
+
+		// Print Text button
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[8][2], JOURNAL_BUTTONS_Y + 11), COMMAND_NULL, true, fixedText_PrintText);
+	}
+
+	if (btn == BTN_EXIT && events._released) {
+		// Exit button pressed
+		doneFlag = true;
+
+	} else if (((btn == BTN_BACK10 && events._released) || key == 'B') && (_page > 1)) {
+		// Scrolll up 10 pages
+		if (_page < 11)
+			drawJournal(1, (_page - 1) * LINES_PER_PAGE);
+		else
+			drawJournal(1, 10 * LINES_PER_PAGE);
+
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	} else if (((btn == BTN_UP && events._released) || key == 'U') && _up) {
+		// Scroll up
+		drawJournal(1, LINES_PER_PAGE);
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	} else if (((btn == BTN_DOWN && events._released) || key == 'D') && _down) {
+		// Scroll down
+		drawJournal(2, LINES_PER_PAGE);
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	} else if (((btn == BTN_AHEAD110 && events._released) || key == 'A') && _down) {
+		// Scroll down 10 pages
+		if ((_page + 10) > _maxPage)
+			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+		else
+			drawJournal(2, 10 * LINES_PER_PAGE);
+
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	} else if (((btn == BTN_SEARCH && events._released) || key == 'S') && !_journal.empty()) {
+		screen.buttonPrint(Common::Point(JOURNAL_POINTS[5][2], JOURNAL_BUTTONS_Y + 11), COMMAND_FOREGROUND, true, "Search");
+		bool notFound = false;
+
+		do {
+			int dir;
+			if ((dir = getSearchString(notFound)) != 0) {
+				int savedIndex = _index;
+				int savedSub = _sub;
+				int savedPage = _page;
+
+				if (drawJournal(dir + 2, 1000 * LINES_PER_PAGE) == 0) {
+					_index = savedIndex;
+					_sub = savedSub;
+					_page = savedPage;
+
+					drawJournalFrame();
+					drawJournal(0, 0);
+					notFound = true;
+				} else {
+					doneFlag = true;
+				}
+
+				doArrows();
+				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			} else {
+				doneFlag = true;
+			}
+		} while (!doneFlag);
+		doneFlag = false;
+
+	} else if (((btn == BTN_FIRST_PAGE && events._released) || key == 'F') && _up) {
+		// First page
+		_index = _sub = 0;
+		_up = _down = false;
+		_page = 1;
+
+		drawJournalFrame();
+		drawJournal(0, 0);
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	} else if (((btn == BTN_LAST_PAGE && events._released) || key == 'L') && _down) {
+		// Last page
+		if ((_page + 10) > _maxPage)
+			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+		else
+			drawJournal(2, 1000 * LINES_PER_PAGE);
+
+		doArrows();
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	events.wait(2);
+
+	return doneFlag;
+}
+
+int ScalpelJournal::getSearchString(bool printError) {
+	enum Button { BTN_NONE, BTN_EXIT, BTN_BACKWARD, BTN_FORWARD };
+
+	Events    &events    = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Screen    &screen    = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	int xp;
+	int yp = 174;
+	bool flag = false;
+	Common::String name;
+	int done = 0;
+	byte color;
+
+	Common::String fixedText_Exit           = fixedText.getText(kFixedText_JournalSearch_Exit);
+	Common::String fixedText_Backward       = fixedText.getText(kFixedText_JournalSearch_Backward);
+	Common::String fixedText_Forward        = fixedText.getText(kFixedText_JournalSearch_Forward);
+	Common::String fixedText_NotFound       = fixedText.getText(kFixedText_JournalSearch_NotFound);
+
+	// Draw search panel
+	screen.makePanel(Common::Rect(6, 171, 313, 199));
+	screen.makeButton(Common::Rect(SEARCH_POINTS[0][0], yp, SEARCH_POINTS[0][1], yp + 10),
+		SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
+	screen.makeButton(Common::Rect(SEARCH_POINTS[1][0], yp, SEARCH_POINTS[1][1], yp + 10),
+		SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, fixedText_Backward);
+	screen.makeButton(Common::Rect(SEARCH_POINTS[2][0], yp, SEARCH_POINTS[2][1], yp + 10),
+		SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, fixedText_Forward);
+
+	screen.gPrint(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, yp),
+		COMMAND_HIGHLIGHTED, "%c", fixedText_Exit[0]);
+	screen.gPrint(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, yp),
+		COMMAND_HIGHLIGHTED, "%c", fixedText_Backward[0]);
+	screen.gPrint(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, yp),
+		COMMAND_HIGHLIGHTED, "%c", fixedText_Forward[0]);
+
+	screen.makeField(Common::Rect(12, 185, 307, 196));
+
+	screen.fillRect(Common::Rect(12, 185, 307, 186), BUTTON_BOTTOM);
+	screen.vLine(12, 185, 195, BUTTON_BOTTOM);
+	screen.hLine(13, 195, 306, BUTTON_TOP);
+	screen.hLine(306, 186, 195, BUTTON_TOP);
+
+	if (printError) {
+		screen.gPrint(Common::Point((SHERLOCK_SCREEN_WIDTH - screen.stringWidth(fixedText_NotFound)) / 2, 185),
+			INV_FOREGROUND, "%s", fixedText_NotFound.c_str());
+	} else if (!_find.empty()) {
+		// There's already a search term, display it already
+		screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
+		name = _find;
+	}
+
+	screen.slamArea(6, 171, 307, 28);
+
+	if (printError) {
+		// Give time for user to see the message
+		events.setButtonState();
+		for (int idx = 0; idx < 40 && !_vm->shouldQuit() && !events.kbHit() && !events._released; ++idx) {
+			events.pollEvents();
+			events.setButtonState();
+			events.wait(2);
+		}
+
+		events.clearKeyboard();
+		screen._backBuffer1.fillRect(Common::Rect(13, 186, 306, 195), BUTTON_MIDDLE);
+
+		if (!_find.empty()) {
+			screen.gPrint(Common::Point(15, 185), TALK_FOREGROUND, "%s", _find.c_str());
+			name = _find;
+		}
+
+		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+	}
+
+	xp = JOURNAL_SEARCH_LEFT + screen.stringWidth(name);
+	yp = JOURNAL_SEARCH_TOP;
+
+	do {
+		events._released = false;
+		Button found = BTN_NONE;
+
+		while (!_vm->shouldQuit() && !events.kbHit() && !events._released) {
+			found = BTN_NONE;
+			if (talk._talkToAbort)
+				return 0;
+
+			// Check if key or mouse button press has occurred
+			events.setButtonState();
+			Common::Point pt = events.mousePos();
+
+			flag = !flag;
+			screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), flag ? INV_FOREGROUND : BUTTON_MIDDLE);
+
+			if (events._pressed || events._released) {
+				if (pt.x > SEARCH_POINTS[0][0] && pt.x < SEARCH_POINTS[0][1] && pt.y > 174 && pt.y < 183) {
+					found = BTN_EXIT;
+					color = COMMAND_HIGHLIGHTED;
+				} else {
+					color = COMMAND_FOREGROUND;
+				}
+				screen.print(Common::Point(SEARCH_POINTS[0][2] - screen.stringWidth(fixedText_Exit) / 2, 175), color, "%s", fixedText_Exit.c_str());
+
+				if (pt.x > SEARCH_POINTS[1][0] && pt.x < SEARCH_POINTS[1][1] && pt.y > 174 && pt.y < 183) {
+					found = BTN_BACKWARD;
+					color = COMMAND_HIGHLIGHTED;
+				} else {
+					color = COMMAND_FOREGROUND;
+				}
+				screen.print(Common::Point(SEARCH_POINTS[1][2] - screen.stringWidth(fixedText_Backward) / 2, 175), color, "%s", fixedText_Backward.c_str());
+
+				if (pt.x > SEARCH_POINTS[2][0] && pt.x < SEARCH_POINTS[2][1] && pt.y > 174 && pt.y < 183) {
+					found = BTN_FORWARD;
+					color = COMMAND_HIGHLIGHTED;
+				} else {
+					color = COMMAND_FOREGROUND;
+				}
+				screen.print(Common::Point(SEARCH_POINTS[2][2] - screen.stringWidth(fixedText_Forward) / 2, 175), color, "%s", fixedText_Forward.c_str());
+			}
+
+			events.wait(2);
+		}
+
+		if (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+
+			if ((keyState.keycode == Common::KEYCODE_BACKSPACE) && (name.size() > 0)) {
+				screen.vgaBar(Common::Rect(xp - screen.charWidth(name.lastChar()), yp, xp + 8, yp + 9), BUTTON_MIDDLE);
+				xp -= screen.charWidth(name.lastChar());
+				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), INV_FOREGROUND);
+				name.deleteLastChar();
+
+			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
+				done = 1;
+
+			}  else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
+				done = -1;
+
+			} else if (keyState.ascii >= ' ' && keyState.ascii <= 'z' && keyState.keycode != Common::KEYCODE_AT &&
+				name.size() < JOURNAL_SEACRH_MAX_CHARS && (xp + screen.charWidth(keyState.ascii)) < JOURNAL_SEARCH_RIGHT) {
+				char ch = toupper(keyState.ascii);
+				screen.vgaBar(Common::Rect(xp, yp, xp + 8, yp + 9), BUTTON_MIDDLE);
+				screen.print(Common::Point(xp, yp), TALK_FOREGROUND, "%c", ch);
+				xp += screen.charWidth(ch);
+				name += ch;
+			}
+		}
+
+		if (events._released) {
+			switch (found) {
+			case BTN_EXIT:
+				done = -1; break;
+			case BTN_BACKWARD:
+				done = 2; break;
+			case BTN_FORWARD:
+				done = 1; break;
+			default:
+				break;
+			}
+		}
+	} while (!done && !_vm->shouldQuit());
+
+	if (done != -1) {
+		_find = name;
+	} else {
+		done = 0;
+	}
+
+	// Redisplay the journal screen
+	drawJournalFrame();
+	drawJournal(0, 0);
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	return done;
+}
+
+void ScalpelJournal::resetPosition() {
+	_index = _sub = _up = _down = 0;
+	_page = 1;
+}
+
+void ScalpelJournal::synchronize(Serializer &s) {
+	s.syncAsSint16LE(_index);
+	s.syncAsSint16LE(_sub);
+	s.syncAsSint16LE(_page);
+	s.syncAsSint16LE(_maxPage);
+
+	int journalCount = _journal.size();
+	s.syncAsUint16LE(journalCount);
+	if (s.isLoading())
+		_journal.resize(journalCount);
+
+	for (uint idx = 0; idx < _journal.size(); ++idx) {
+		JournalEntry &je = _journal[idx];
+
+		s.syncAsSint16LE(je._converseNum);
+		s.syncAsByte(je._replyOnly);
+		s.syncAsSint16LE(je._statementNum);
+	}
+}
+
+} // End of namespace Scalpel
+
+} // End of namespace Sherlock

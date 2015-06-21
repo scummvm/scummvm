@@ -20,21 +20,20 @@
  *
  */
 
-#include "sherlock/journal.h"
-#include "sherlock/sherlock.h"
-#include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/tattoo/tattoo_journal.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
-Journal *Journal::init(SherlockEngine *vm) {
-	if (vm->getGameID() == GType_SerratedScalpel)
-		return new Scalpel::ScalpelJournal(vm);
-	else
-		return new Tattoo::TattooJournal(vm);
+namespace Tattoo {
+
+TattooJournal::TattooJournal(SherlockEngine *vm) : Journal(vm) {
 }
 
-Journal::Journal(SherlockEngine *vm) : _vm(vm) {
+void TattooJournal::synchronize(Serializer &s) {
+	// TODO
 }
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
