@@ -125,6 +125,7 @@ public:
 	MidiChannel *getPercussionChannel() { return NULL; }
 
 	// AudioStream
+	int readBuffer(int16 *data, const int numSamples);
 	bool isStereo() const { return false; }
 	int getRate() const { return _mixer->getOutputRate(); }
 	int getPolyphony() const { return AGOS_ADLIB_VOICES_COUNT; }
@@ -137,6 +138,8 @@ public:
 	virtual uint32 property(int prop, uint32 param);
 
 	bool setupInstruments(byte *instrumentData, uint16 instrumentDataSize, bool useMusicDrvFile);
+
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 private:
 	bool _musicDrvMode;
@@ -170,16 +173,17 @@ private:
 	OPL::OPL *_opl;
 	int _masterVolume;
 
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
+
 	// points to a MIDI channel for each of the new voice channels
 	byte _voiceChannelMapping[AGOS_ADLIB_VOICES_COUNT];
 
 	// stores information about all FM voice channels
 	ChannelEntry _channels[AGOS_ADLIB_VOICES_COUNT];
 
-protected:
 	void onTimer();
 
-private:
 	void resetAdLib();
 	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
 	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
@@ -193,7 +197,8 @@ private:
 };
 
 MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib(Audio::Mixer *mixer)
-		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0) {
+		: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0),
+		  _adlibTimerProc(0), _adlibTimerParam(0) {
 	memset(_channelMapping, 0, sizeof(_channelMapping));
 	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
 	memset(_instrumentVolumeAdjust, 0, sizeof(_instrumentVolumeAdjust));
@@ -224,6 +229,7 @@ int MidiDriver_Accolade_AdLib::open() {
 
 	MidiDriver_Emulated::open();
 
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_Accolade_AdLib>(this, &MidiDriver_Accolade_AdLib::onTimer));
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	resetAdLib();
@@ -269,6 +275,8 @@ void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
 }
 
 void MidiDriver_Accolade_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 }
 
 void MidiDriver_Accolade_AdLib::resetAdLib() {
@@ -367,7 +375,16 @@ void MidiDriver_Accolade_AdLib::send(uint32 b) {
 }
 
 void MidiDriver_Accolade_AdLib::generateSamples(int16 *data, int len) {
-	_opl->readBuffer(data, len);
+	// Dummy implementation until we no longer inherit from MidiDriver_Emulated
+}
+
+int MidiDriver_Accolade_AdLib::readBuffer(int16 *data, const int numSamples) {
+	return _opl->readBuffer(data, numSamples);
+}
+
+void MidiDriver_Accolade_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
 }
 
 void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velocity) {
