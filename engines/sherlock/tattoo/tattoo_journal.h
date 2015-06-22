@@ -80,7 +80,7 @@ private:
 	/**
 	 * Get in a name to search through the journal for
 	 */
-	bool getFindName(bool printError);
+	int getFindName(bool printError);
 public:
 	TattooJournal(SherlockEngine *vm);
 	virtual ~TattooJournal() {}

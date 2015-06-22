@@ -30,6 +30,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 #define JOURNAL_BAR_WIDTH	450
+#define S_NO_TEXT "Text Not Found !"
 
 static const char *const JOURNAL_COMMANDS[2] = { "Close Journal", "Search Journal" };
 
@@ -713,8 +714,187 @@ void TattooJournal::disableControls() {
 	screen.slamRect(r);
 }
 
-bool TattooJournal::getFindName(bool printError) {
-	return false;
+int TattooJournal::getFindName(bool printError) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	int result = 0;
+	int done = 0;
+	Common::String name;
+	int cursorX, cursorY;
+	bool flag = false;
+
+	Common::Rect r(JOURNAL_BAR_WIDTH, (screen.fontHeight() + 4) * 2 + 9);
+	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
+
+	// Set the cursors Y position
+	cursorY = r.top + screen.fontHeight() + 12;
+
+	drawControls(1);
+	
+	// Backup the area under the text entry
+	Surface bgSurface(r.width() - 6, screen.fontHeight());
+	bgSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), Common::Rect(r.left + 3, cursorY, 
+		r.right - 3, cursorY + screen.fontHeight()));
+
+	if (printError) {
+		screen.gPrint(Common::Point(0, cursorY), INFO_TOP, "%s", S_NO_TEXT);
+	} else {
+		// If there was a name already entered, copy it to name and display it
+		if (!_find.empty()) {
+			screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED, "%s", _find.c_str());
+			name = _find;
+		}
+	}
+
+	screen.slamRect(r);
+
+	if (printError) {
+		// Pause to allow error to be shown
+		int timer = 0;
+
+		do {
+			events.pollEvents();
+			events.setButtonState();
+
+			++timer;
+			events.wait(2);
+		} while (!_vm->shouldQuit() && !events.kbHit() && !events._released && !events._rightReleased && timer < 40);
+
+		events.clearEvents();
+
+		// Restore the text background
+		screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left, cursorY));
+
+		// If there was a name already entered, copy it to name and display it
+		if (!_find.empty()) {
+			screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED, "%s", _find.c_str());
+			name = _find;
+		}
+
+		screen.slamArea(r.left + 3, cursorY, r.width() - 6, screen.fontHeight());
+	}
+
+	// Set the cursors X position
+	cursorX = r.left + screen.widestChar() + 3 + screen.stringWidth(name);
+
+	do {
+		events._released = events._rightReleased = false;
+
+		while (!events.kbHit() && !events._released && !events._rightReleased) {
+			if (talk._talkToAbort)
+				return 0;
+
+			// See if a key or a mouse button is pressed
+			events.pollEventsAndWait();
+			events.setButtonState();
+
+			// Handle blinking cursor
+			flag = !flag;
+			if (flag) {
+				// Draw cursor
+				screen._backBuffer1.fillRect(Common::Rect(cursorX, cursorY, cursorX + 7, cursorY + 8), COMMAND_HIGHLIGHTED);
+				screen.slamArea(cursorX, cursorY, 8, 9);
+			} else {
+				// Erase cursor by restoring background and writing current text
+				screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
+				screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED, "%s", name.c_str());
+				screen.slamArea(r.left + 3, r.top, r.width() - 3, screen.fontHeight());
+			}
+
+			highlightSearchControls(true);
+
+			events.wait(2);
+		}
+
+		if (events.kbHit()) {
+			Common::KeyState keyState = events.getKey();
+			Common::Point mousePos = events.mousePos();
+
+			if (keyState.keycode == Common::KEYCODE_BACKSPACE && !name.empty()) {
+				cursorX -= screen.charWidth(name.lastChar());
+				name.deleteLastChar();
+			}
+
+			if (keyState.keycode == Common::KEYCODE_RETURN)
+				done = 1;
+
+			else if (keyState.keycode == Common::KEYCODE_ESCAPE)
+				done = -1;
+
+			if (keyState.keycode == Common::KEYCODE_TAB) {
+				r = Common::Rect(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
+				r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
+
+				// See if the mouse is over any of the journal controls
+				_selector = -1;
+				if (Common::Rect(r.left + 3, r.top + 3, r.right - 3, r.top + screen.fontHeight() + 4).contains(mousePos))
+					_selector = (mousePos.x - r.left) / (r.width() / 3);
+
+				// If the mouse is not over any of the options, move the mouse so that it points to the first option
+				if (_selector == -1) {
+					events.warpMouse(Common::Point(r.left + r.width() / 3, r.top + screen.fontHeight() + 2));
+				} else {
+					if (keyState.keycode & Common::KBD_SHIFT) {
+						if (_selector == 0)
+							_selector = 2;
+						else
+							--_selector;
+					} else {
+						if (_selector == 2)
+							_selector = 0;
+						else
+							++_selector;
+					}
+
+					events.warpMouse(Common::Point(r.left + (r.width() / 3) * (_selector + 1) - 10, mousePos.y));
+				}
+			}
+
+			if (keyState.ascii && keyState.ascii != '@' && name.size() < 50) {
+				if ((cursorX + screen.charWidth(keyState.ascii)) < (r.right - screen.widestChar() * 3)) {
+					cursorX += screen.charWidth(keyState.ascii);
+					name += keyState.ascii;
+				}
+			}
+
+			// Redraw the text
+			screen._backBuffer1.blitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
+			screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED,
+				"%s", name.c_str());
+			screen.slamArea(r.left + 3, cursorY, r.right - 3, screen.fontHeight());
+		}
+
+		if (events._released || events._rightReleased) {
+			switch (_selector)
+			{
+			case 0:
+				done = -1;
+				break;
+			case 1:
+				done = 2;
+				break;
+			case 2:
+				done = 1;
+				break;
+			default:
+				break;
+			}
+		}
+	} while (!done);
+
+	if (done != -1) {
+		_find = name;
+		result = done;
+	} else {
+		result = 0;
+	}
+
+	drawFrame();
+	drawJournal(0, 0);
+	screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+	return result;
 }
 
 } // End of namespace Tattoo
