@@ -618,7 +618,22 @@ void TattooUserInterface::doTalkControl() {
 }
 
 void TattooUserInterface::doMessageControl() {
-	warning("TODO: ui control (message)");
+	Events &events = *_vm->_events;
+	--_menuCounter;
+
+	// Check if a mouse or keypress has occurred, or the display counter has expired
+	if (events._pressed || events._released || events._rightPressed || events._rightReleased ||
+			_keyState.keycode || !_menuCounter) {
+		// Close the window
+		banishWindow();
+
+		// Reset cursor and switch back to standard mode
+		events.setCursor(ARROW);
+		events.clearEvents();
+		_key = -1;
+		_oldBgFound = -1;
+		_menuMode = STD_MODE;
+	}
 }
 
 void TattooUserInterface::doLabControl() {
@@ -675,8 +690,26 @@ void TattooUserInterface::freeMenu() {
 	}
 }
 
-void TattooUserInterface::putMessage(const Common::String &str) {
-	// TODO
+void TattooUserInterface::putMessage(const char *formatStr, ...) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Common::Point mousePos = events.mousePos();
+
+	// Create the string to display
+	va_list args;
+	va_start(args, formatStr);
+	Common::String str = Common::String::vformat(formatStr, args);
+	va_end(args);
+
+	// Calculate display bounds and load a text window
+	Common::Rect r(screen.stringWidth(str) + screen.widestChar() * 2 + 6, screen.fontHeight() + 10);
+	r.moveTo(mousePos.x - r.width() / 2, mousePos.y - r.height() / 2);
+	_textWidget.load(str, r);
+	_textWidget.summonWindow();
+
+	_menuMode = MESSAGE_MODE;
+	events._pressed = events._released = events._rightReleased = false;
+	_menuCounter = 25;
 }
 
 void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {

@@ -198,7 +198,10 @@ public:
 	 */
 	void pickUpObject(int objNum);
 
-	void putMessage(const Common::String &str);
+	/**
+	 * This will display a text message in a dialog at the bottom of the screen
+	 */
+	void putMessage(const char *formatStr, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * Makes a greyscale translation table for each palette entry in the table

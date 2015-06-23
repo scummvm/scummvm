@@ -71,6 +71,12 @@ void WidgetText::load(const Common::String &str) {
 		_remainingText = splitLines(str, lines, _bounds.width() - _surface.widestChar() * 2, 
 			(_bounds.height() - _surface.fontHeight() / 2) / (_surface.fontHeight() + 1));
 	}
+}
+
+void WidgetText::load(const Common::String &str, const Common::Rect &bounds) {
+	Common::StringArray lines;
+	_remainingText = splitLines(str, lines, bounds.width() - _surface.widestChar() * 2,
+		bounds.height() / (_surface.fontHeight() + 1));
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());

@@ -40,6 +40,8 @@ public:
 	virtual ~WidgetText() {}
 
 	void load(const Common::String &str);
+
+	void load(const Common::String &str, const Common::Rect &bounds);
 };
 
 } // End of namespace Tattoo
