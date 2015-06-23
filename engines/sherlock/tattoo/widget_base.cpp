@@ -36,11 +36,16 @@ void WidgetBase::summonWindow() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	ui._widget = this;
 	_outsideMenu = false;
+
+	draw();
 }
 
 void WidgetBase::banishWindow() {
-	// TODO
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	erase();
 	_surface.free();
+	ui._widget = nullptr;
 }
 
 void WidgetBase::erase() {
@@ -90,7 +95,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 
 	// Loop counting up lines
 	lines.clear();
-	while (lines.size() < maxLines) {
+	do {
 		int width = 0;
 		const char *spaceP = nullptr;
 		const char *lineStartP = strP;
@@ -117,7 +122,8 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		// Move the string ahead to the next line
 		if (*strP == ' ' || *strP == 13)
 			++strP;
-	} while (*strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || (byte)*strP == talk._opcodes[OP_NULL]));
+	} while (*strP && ((int)lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] 
+			|| (byte)*strP == talk._opcodes[OP_NULL]));
 
 	// Return any remaining text left over
 	return *strP ? Common::String(strP) : Common::String();

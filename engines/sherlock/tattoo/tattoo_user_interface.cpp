@@ -247,7 +247,11 @@ void TattooUserInterface::handleInput() {
 		if (_keyState.keycode == Common::KEYCODE_s && vm._allowFastMode)
 			vm._fastMode = !vm._fastMode;
 
-		else if (_keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog && !_lockoutTimer) {
+		else if (_keyState.keycode == Common::KEYCODE_l && _bgFound != -1) {
+			// Beging used for testing that Look dialogs work
+			lookAtObject();
+
+		} else if (_keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog && !_lockoutTimer) {
 			vm.setFlags(-76);
 			vm.setFlags(396);
 			scene._goToScene = STARTING_GAME_SCENE;
@@ -926,6 +930,12 @@ void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool
 		s.hLine(r.left + 2, r.bottom - 2, r.right - 3, INFO_TOP);
 		break;
 	}
+}
+
+void TattooUserInterface::banishWindow() {
+	if (_widget != nullptr)
+		_widget->banishWindow();
+	_widget = nullptr;
 }
 
 } // End of namespace Tattoo

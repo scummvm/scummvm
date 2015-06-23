@@ -59,7 +59,6 @@ private:
 	int _scriptZone;
 	int _cAnimFramePause;
 	WidgetInventory _inventoryWidget;
-	WidgetText _textWidget;
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
 	WidgetBase *_widget;
@@ -147,6 +146,7 @@ public:
 	Common::Point _maskOffset;
 	int _maskCounter;
 	ImageFile *_interfaceImages;
+	WidgetText _textWidget;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();
@@ -221,6 +221,11 @@ public:
 	 * Draws all the dialog rectangles for any items that need them
 	 */
 	void drawDialogRect(Surface &s, const Common::Rect &r, bool raised);
+
+	/**
+	 * Banish any active window
+	 */
+	void banishWindow();
 public:
 	/**
 	 * Resets the user interface

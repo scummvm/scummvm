@@ -74,7 +74,7 @@ private:
 	OpcodeReturn cmdWalkNPCToCoords(const byte *&str);
 	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
 private:
-	void drawTalk(const byte *str);
+	void drawTalk(const char *str);
 protected:
 	/**
 	 * Display the talk interface window

@@ -22,6 +22,7 @@
 
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
 
@@ -182,7 +183,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 }
 
 void TattooTalk::talkInterface(const byte *&str) {
-	drawTalk(str);
+	drawTalk((const char *)str);
 
 	_charCount = 0;
 	while ((*str < TATTOO_OPCODES[0] || *str == TATTOO_OPCODES[OP_NULL]) && *str) {
@@ -193,8 +194,12 @@ void TattooTalk::talkInterface(const byte *&str) {
 	_wait = true;
 }
 
-void TattooTalk::drawTalk(const byte *str) {
-	// TODO
+void TattooTalk::drawTalk(const char *str) {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	ui.banishWindow();
+	ui._textWidget.load(str);
+	ui._textWidget.summonWindow();
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {

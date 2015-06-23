@@ -854,7 +854,7 @@ int TattooJournal::getFindName(bool printError) {
 			if (keyState.ascii && keyState.ascii != '@' && name.size() < 50) {
 				if ((cursorX + screen.charWidth(keyState.ascii)) < (r.right - screen.widestChar() * 3)) {
 					cursorX += screen.charWidth(keyState.ascii);
-					name += keyState.ascii;
+					name += toupper(keyState.ascii);
 				}
 			}
 
