@@ -33,15 +33,39 @@ class SherlockEngine;
 namespace Tattoo {
 
 class WidgetText: public WidgetBase {
+private:
+	/**
+	 * Display the passed text in a window of the given bounds
+	 */
+	void load(const Common::String &str, const Common::Rect &bounds);
 public:
 	Common::String _remainingText;
 public:
 	WidgetText(SherlockEngine *vm);
 	virtual ~WidgetText() {}
 
+	/**
+	 * Load the data for the text window
+	 */
 	void load(const Common::String &str);
+};
 
-	void load(const Common::String &str, const Common::Rect &bounds);
+class WidgetMessage : public WidgetBase {
+private:
+	int _menuCounter;
+public:
+	WidgetMessage(SherlockEngine *vm);
+	virtual ~WidgetMessage() {}
+
+	/**
+	 * Load the data for the text window
+	 */
+	void load(const Common::String &str, int time);
+
+	/**
+	 * Handle event processing
+	 */
+	virtual void handleEvents();
 };
 
 } // End of namespace Tattoo

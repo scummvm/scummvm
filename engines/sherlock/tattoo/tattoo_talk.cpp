@@ -183,23 +183,25 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 }
 
 void TattooTalk::talkInterface(const byte *&str) {
-	drawTalk((const char *)str);
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	const char *s = (const char *)str;
 
+	// Move to past the end of the text string
 	_charCount = 0;
 	while ((*str < TATTOO_OPCODES[0] || *str == TATTOO_OPCODES[OP_NULL]) && *str) {
 		++_charCount;
 		++str;
 	}
 
+	// Display the text window
+	ui.banishWindow();
+	ui._textWidget.load(s);
+	ui._textWidget.summonWindow();
 	_wait = true;
 }
 
-void TattooTalk::drawTalk(const char *str) {
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-
-	ui.banishWindow();
-	ui._textWidget.load(str);
-	ui._textWidget.summonWindow();
+void TattooTalk::openTalkWindow() {
+	// TODO
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {

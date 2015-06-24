@@ -92,6 +92,52 @@ void WidgetText::load(const Common::String &str, const Common::Rect &bounds) {
 	}
 }
 
+/*----------------------------------------------------------------*/
+
+WidgetMessage::WidgetMessage(SherlockEngine *vm) : WidgetBase(vm) {
+	_menuCounter = 0;
+}
+
+void WidgetMessage::load(const Common::String &str, int time) {
+	Events &events = *_vm->_events;
+	Common::Point mousePos = events.mousePos();
+	_menuCounter = time;
+
+	// Set up the bounds for the dialog to be a single line
+	_bounds = Common::Rect(_surface.stringWidth(str) + _surface.widestChar() * 2 + 6, _surface.fontHeight() + 10);
+	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
+
+	// Allocate a surface for the window
+	_surface.create(_bounds.width(), _bounds.height());
+	_surface.fill(TRANSPARENCY);
+
+	// Form the background for the new window and write the line of text
+	makeInfoArea();
+	_surface.writeString(str, Common::Point(_surface.widestChar() + 3, 5), INFO_TOP);
+}
+
+void WidgetMessage::handleEvents() {
+	Events &events = *_vm->_events;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	WidgetBase::handleEvents();
+
+	--_menuCounter;
+
+	// Check if a mouse or keypress has occurred, or the display counter has expired
+	if (events._pressed || events._released || events._rightPressed || events._rightReleased ||
+			ui._keyState.keycode || !_menuCounter) {
+		// Close the window
+		banishWindow();
+
+		// Reset cursor and switch back to standard mode
+		events.setCursor(ARROW);
+		events.clearEvents();
+		ui._key = -1;
+		ui._oldBgFound = -1;
+		ui._menuMode = STD_MODE;
+	}
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

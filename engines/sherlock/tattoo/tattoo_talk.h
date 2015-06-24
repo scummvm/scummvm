@@ -75,6 +75,12 @@ private:
 	OpcodeReturn cmdWalkHomesAndNPCToCoords(const byte *&str);
 private:
 	void drawTalk(const char *str);
+
+	/**
+	 * Figures out how many lines the available talk lines will take up, and opens a text window
+	 * of appropriate size
+	 */
+	void openTalkWindow();
 protected:
 	/**
 	 * Display the talk interface window

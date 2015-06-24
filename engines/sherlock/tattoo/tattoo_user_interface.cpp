@@ -30,7 +30,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
-		_inventoryWidget(vm),  _tooltipWidget(vm), _verbsWidget(vm), _textWidget(vm) {
+		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
 	_menuBuffer = nullptr;
@@ -261,6 +261,10 @@ void TattooUserInterface::handleInput() {
 	if (!events.isCursorVisible())
 		_keyState.keycode = Common::KEYCODE_INVALID;
 
+	// If there's an active widget/window, let it do event processing
+	if (_widget)
+		_widget->handleEvents();
+
 	// Handle input depending on what mode we're in
 	switch (_menuMode) {
 	case STD_MODE:
@@ -280,9 +284,6 @@ void TattooUserInterface::handleInput() {
 		break;
 	case TALK_MODE:
 		doTalkControl();
-		break;
-	case MESSAGE_MODE:
-		doMessageControl();
 		break;
 	case LAB_MODE:
 		doLabControl();
@@ -617,25 +618,6 @@ void TattooUserInterface::doTalkControl() {
 	warning("TODO: ui control (talk)");
 }
 
-void TattooUserInterface::doMessageControl() {
-	Events &events = *_vm->_events;
-	--_menuCounter;
-
-	// Check if a mouse or keypress has occurred, or the display counter has expired
-	if (events._pressed || events._released || events._rightPressed || events._rightReleased ||
-			_keyState.keycode || !_menuCounter) {
-		// Close the window
-		banishWindow();
-
-		// Reset cursor and switch back to standard mode
-		events.setCursor(ARROW);
-		events.clearEvents();
-		_key = -1;
-		_oldBgFound = -1;
-		_menuMode = STD_MODE;
-	}
-}
-
 void TattooUserInterface::doLabControl() {
 	warning("TODO: ui control (lab)");
 }
@@ -701,15 +683,9 @@ void TattooUserInterface::putMessage(const char *formatStr, ...) {
 	Common::String str = Common::String::vformat(formatStr, args);
 	va_end(args);
 
-	// Calculate display bounds and load a text window
-	Common::Rect r(screen.stringWidth(str) + screen.widestChar() * 2 + 6, screen.fontHeight() + 10);
-	r.moveTo(mousePos.x - r.width() / 2, mousePos.y - r.height() / 2);
-	_textWidget.load(str, r);
-	_textWidget.summonWindow();
-
-	_menuMode = MESSAGE_MODE;
-	events._pressed = events._released = events._rightReleased = false;
-	_menuCounter = 25;
+	// Open the message widget
+	_messageWidget.load(str, 25);
+	_messageWidget.summonWindow();
 }
 
 void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {

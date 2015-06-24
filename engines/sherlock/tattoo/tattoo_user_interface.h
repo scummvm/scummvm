@@ -61,6 +61,7 @@ private:
 	WidgetInventory _inventoryWidget;
 	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
+	WidgetMessage _messageWidget;
 	WidgetBase *_widget;
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
@@ -100,11 +101,6 @@ private:
 	 * and handles any actions for clicking on the buttons or statements.
 	 */
 	void doTalkControl();
-
-	/**
-	 * Handles input when a message window is open at the bottom of the screen
-	 */
-	void doMessageControl();
 	
 	/**
 	 * Handles input when the player is in the Lab Table scene
