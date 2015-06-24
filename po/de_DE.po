@@ -1,21 +1,23 @@
 # German translation for ScummVM.
 # Copyright (C) 2010-2015 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari, 2014.
+# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <mail@rootfather.de>, 2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.5.0git\n"
+"Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2014-10-04 00:58+0100\n"
-"PO-Revision-Date: 2014-06-14 19:34+0100\n"
-"Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
-"Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari (retired)\n"
-"Language: Deutsch\n"
+"PO-Revision-Date: 2015-06-24 11:36+0100\n"
+"Last-Translator: Lothar Serra Mari <mail@rootfather.de>\n"
+"Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
+"<mail@rootfather.de>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 1.8.1\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -927,7 +929,7 @@ msgstr "Sie müssen ScummVM neu starten, damit die Änderungen wirksam werden."
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "In das gewählte Verzeichnis kann nicht geschrieben werden. Bitte ein anderes "
-"auswählen."
+"auswÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤hlen."
 
 #: gui/options.cpp:1395
 msgid "Select directory for GUI themes"
@@ -1827,7 +1829,7 @@ msgstr "Server:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
-msgstr "Öffentliches Verzeichnis:"
+msgstr "ÃƒÆ’Ã†â€™Ãƒâ€šÃ¢â‚¬â€œffentliches Verzeichnis:"
 
 #: backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -2164,13 +2166,12 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Zwischensequenz \"%s\" nicht gefunden!"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:81
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Klickmodus"
+msgstr "Modus für Farbenblinde"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:82
 msgid "Enable Color Blind Mode by default"
-msgstr ""
+msgstr "Modus für Farbenblind standardmäßig einschalten"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -2185,7 +2186,7 @@ msgstr ""
 "ScummVM hat erkannt, dass Sie alte Spielstände von Drascula haben, die "
 "umgewandelt werden sollten.\n"
 "Das alte Speicherformat wird nicht mehr unterstützt, also können Sie diese "
-"Spielstände unkonvertiert nicht laden.\n"
+"SpielstÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤nde unkonvertiert nicht laden.\n"
 "\n"
 "Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
 "gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
@@ -2226,11 +2227,11 @@ msgstr "Konnte Spielstand nicht speichern."
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr ""
+msgstr "\"Blutmodus\""
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr ""
+msgstr "\"Blutmodus\" aktivieren, wenn verfügbar"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -2364,6 +2365,13 @@ msgid ""
 "Do you wish to use this save game file with ScummVM?\n"
 "\n"
 msgstr ""
+"Die folgende originale Spielstand-Datei wurde in Ihrem Spiele-Pfad "
+"gefunden:\n"
+"\n"
+"%s %s\n"
+"\n"
+"Möchten Sie diese Spielstand-Datei in ScummVM verwenden?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
@@ -2371,6 +2379,8 @@ msgid ""
 "A save game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
+"Eine Spielstand-Datei wurde im gewählten Slot %d gefunden. Überschreiben?\n"
+"\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
@@ -2382,6 +2392,12 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
+"%d originale Spielstand-Dateien wurden erfolgreich nach ScummVM\n"
+"importiert. Wenn Sie weitere Spielstand-Dateien später manuell importieren "
+"wollen,\n"
+"müssen Sie die ScummVM-Entwicklerkonsole öffnen und das Kommando "
+"'import_savefile' verwenden.\n"
+"\n"
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:92 engines/mohawk/dialogs.cpp:167
@@ -2457,7 +2473,7 @@ msgstr ""
 "ScummVM hat erkannt, dass Sie alte Spielstände von Nippon Safes haben, die "
 "umbenannt werden sollten.\n"
 "Die alten Dateinamen werden nicht mehr unterstützt, also können Sie diese "
-"Spielstände unkonvertiert nicht laden.\n"
+"SpielstÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤nde unkonvertiert nicht laden.\n"
 "\n"
 "Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
 "gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
@@ -2474,7 +2490,7 @@ msgid ""
 "Please report to the team."
 msgstr ""
 "ScummVM hat ein paar Warnungen im Konsolenfenster ausgegeben und kann nicht "
-"gewährleisten, dass alle Speicherstände umgewandelt wurden.\n"
+"gewÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤hrleisten, dass alle Speicherstände umgewandelt wurden.\n"
 "\n"
 "Bitte berichten Sie dies dem Team auf Englisch."
 
@@ -2854,7 +2870,7 @@ msgstr "Gib"
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:190
 #: engines/scumm/help.cpp:208
 msgid "Open"
-msgstr "Öffne"
+msgstr "ÃƒÆ’Ã†â€™Ãƒâ€šÃ¢â‚¬â€œffne"
 
 #: engines/scumm/help.cpp:126
 msgid "Go to"
@@ -3231,12 +3247,16 @@ msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Macintosh-Programmdatei für Instrumente in 'Loom' nicht\n"
+"gefunden. Musik wird abgeschaltet."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"Macintosh-Programmdatei für Instrumente in 'Monkey Island' nicht\n"
+"gefunden. Musik wird abgeschaltet."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -3258,7 +3278,7 @@ msgstr ""
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr "Disketten-Vorspann"
+msgstr "Vorspann der Diskettenversion"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
@@ -3286,7 +3306,7 @@ msgstr ""
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Zwischensequenz \"%s\" gefunden"
+msgstr "Zwischensequenz '%s' nicht gefunden"
 
 #: engines/sword1/control.cpp:863
 msgid ""
@@ -3301,7 +3321,7 @@ msgstr ""
 "ScummVM hat erkannt, dass Sie alte Spielstände von Baphomets Fluch 1 haben, "
 "die umgewandelt werden sollten.\n"
 "Das alte Speicherformat wird nicht mehr unterstützt, also können Sie diese "
-"Spielstände unkonvertiert nicht laden.\n"
+"SpielstÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤nde unkonvertiert nicht laden.\n"
 "\n"
 "Klicken Sie auf OK, um diese jetzt umzuwandeln, sonst werden Sie erneut "
 "gefragt, wenn Sie nächstes Mal dieses Spiel starten.\n"
@@ -3359,11 +3379,12 @@ msgstr ""
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "Zähler für Bilder pro Sekunde anzeigen"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
+"Zeige die aktuelle Anzahl von Bildern pro Sekunde in der oberen linken Ecke"
 
 #~ msgid "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2"
 #~ msgstr ""
