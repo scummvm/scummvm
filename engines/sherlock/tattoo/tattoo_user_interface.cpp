@@ -33,9 +33,6 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
-	_menuBuffer = nullptr;
-	_invMenuBuffer = nullptr;
-	_invGraphic = nullptr;
 	_scrollSize = _scrollSpeed = 0;
 	_drawMenu = false;
 	_bgShape = nullptr;
@@ -296,35 +293,12 @@ void TattooUserInterface::handleInput() {
 void TattooUserInterface::drawInterface(int bufferNum) {
 	Screen &screen = *_vm->_screen;
 	TattooEngine &vm = *(TattooEngine *)_vm;
-	
-	if (_invMenuBuffer != nullptr) {
-		Common::Rect r = _invMenuBounds;
-		r.grow(-3);
-		r.translate(-_currentScroll.x, 0);
-		_grayAreas.clear();
-		_grayAreas.push_back(r);
 
-		drawGrayAreas();
-		screen._backBuffer1.transBlitFrom(*_invMenuBuffer, Common::Point(_invMenuBounds.left, _invMenuBounds.top));
-	}
-
-	if (_menuBuffer != nullptr) {
-		Common::Rect r = _menuBounds;
-		r.grow(-3);
-		r.translate(-_currentScroll.x, 0);
-		_grayAreas.clear();
-		_grayAreas.push_back(r);
-
-		drawGrayAreas();
-		screen._backBuffer1.transBlitFrom(*_menuBuffer, Common::Point(_invMenuBounds.left, _invMenuBounds.top));
-	}
+	if (_widget)
+		_widget->draw();
 
 	// Handle drawing the text tooltip if necessary
 	_tooltipWidget.draw();
-
-	// See if we need to draw an Inventory Item Graphic floating with the cursor
-	if (_invGraphic != nullptr)
-		screen._backBuffer1.transBlitFrom(*_invGraphic, Common::Point(_invGraphicBounds.left, _invGraphicBounds.top));
 
 	if (vm._creditsActive)
 		vm.drawCredits();
@@ -335,66 +309,18 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 
 	if (screen._flushScreen)
 		screen.blockMove(_currentScroll);
-
-	// If there are UI widgets open, slam the areas they were drawn on to the physical screen
-	if (_menuBuffer != nullptr)
-		screen.slamArea(_menuBounds.left - _currentScroll.x, _menuBounds.top, _menuBounds.width(), _menuBounds.height());
-	
-	if (_invMenuBuffer != nullptr)
-		screen.slamArea(_invMenuBounds.left - _currentScroll.x, _invMenuBounds.top, _invMenuBounds.width(), _invMenuBounds.height());
-
-	// If therea re widgets being cleared, then restore that area of the screen
-	if (_oldMenuBounds.right) {
-		screen.slamArea(_oldMenuBounds.left - _currentScroll.x, _oldMenuBounds.top, _oldMenuBounds.width(), _oldMenuBounds.height());
-		_oldMenuBounds.left = _oldMenuBounds.top = _oldMenuBounds.right = _oldMenuBounds.bottom = 0;
-	}
-	
-	if (_oldInvMenuBounds.left) {
-		screen.slamArea(_oldInvMenuBounds.left - _currentScroll.x, _oldInvMenuBounds.top, _oldInvMenuBounds.width(), _oldInvMenuBounds.height());
-		_oldInvMenuBounds.left = _oldInvMenuBounds.top = _oldInvMenuBounds.right = _oldInvMenuBounds.bottom = 0;
-	}
-
-	// See if we need to flush areas assocaited with the inventory graphic
-	if (_oldInvGraphicBounds.right) {
-		screen.slamArea(_oldInvGraphicBounds.left - _currentScroll.x, _oldInvGraphicBounds.top,
-			_oldInvGraphicBounds.width(), _oldInvGraphicBounds.height());
-
-		// If there's no graphic actually being displayed, then reset bounds so we don't keep restoring the area
-		if (_invGraphic == nullptr) {
-			_invGraphicBounds.left = _invGraphicBounds.top = _invGraphicBounds.right = _invGraphicBounds.bottom = 0;
-			_oldInvGraphicBounds.left = _oldInvGraphicBounds.top = _oldInvGraphicBounds.right = _oldInvGraphicBounds.bottom = 0;
-		}
-	}
-	if (_invGraphic != nullptr)
-		screen.slamArea(_invGraphicBounds.left - _currentScroll.x, _invGraphicBounds.top, _invGraphicBounds.width(), _invGraphicBounds.height());
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {
 	TattooScene &scene = *((TattooScene *)_vm->_scene);
 	Screen &screen = *_vm->_screen;
 
-	// If _oldMenuBounds was set, then either a new menu has been opened or the current menu has been closed.
-	// Either way, we need to restore the area where the menu was displayed
-	if (_oldMenuBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldMenuBounds.left, _oldMenuBounds.top),
-			_oldMenuBounds);
-
-	if (_oldInvMenuBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldInvMenuBounds.left, _oldInvMenuBounds.top),
-			_oldInvMenuBounds);
-
-	if (_menuBuffer != nullptr)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_menuBounds.left, _menuBounds.top), _menuBounds);
-	if (_invMenuBuffer != nullptr)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_invMenuBounds.left, _invMenuBounds.top), _invMenuBounds);
+	// If there is any on-screen widget, then erase it
+	if (_widget)
+		_widget->erase();
 
 	// If there is a Text Tag being display, restore the area underneath it
 	_tooltipWidget.erase();
-
-	// If there is an Inventory being shown, restore the graphics underneath it
-	if (_oldInvGraphicBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldInvGraphicBounds.left, _oldInvGraphicBounds.top), 
-			_oldInvGraphicBounds);
 
 	// If a canimation is active, restore the graphics underneath it
 	if (scene._activeCAnim._imageFrame != nullptr)
@@ -407,7 +333,6 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 
 void TattooUserInterface::doScroll() {
 	Screen &screen = *_vm->_screen;
-	int oldScroll = _currentScroll.x;
 
 	// If we're already at the target scroll position, nothing needs to be done
 	if (_targetScroll.x == _currentScroll.x)
@@ -423,11 +348,6 @@ void TattooUserInterface::doScroll() {
 		if (_currentScroll.x < _targetScroll.x)
 			_currentScroll.x = _targetScroll.x;
 	}
-
-	if (_menuBuffer != nullptr)
-		_menuBounds.translate(_currentScroll.x - oldScroll, 0);
-	if (_invMenuBuffer != nullptr)
-		_invMenuBounds.translate(_currentScroll.x - oldScroll, 0);
 }
 
 void TattooUserInterface::drawGrayAreas() {
@@ -455,7 +375,6 @@ void TattooUserInterface::doStandardControl() {
 		// Save game
 		freeMenu();
 		_fileMode = SAVEMODE_SAVE;
-		_menuBounds = Common::Rect(0, 0, 0, 0);
 		initFileMenu();
 		return;
 
@@ -463,7 +382,6 @@ void TattooUserInterface::doStandardControl() {
 		// Load game
 		freeMenu();
 		_fileMode = SAVEMODE_LOAD;
-		_menuBounds = Common::Rect(0, 0, 0, 0);
 		initFileMenu();
 		return;
 
@@ -495,7 +413,6 @@ void TattooUserInterface::doStandardControl() {
 	case Common::KEYCODE_F10:
 		// Quit menu
 		freeMenu();
-		_menuBounds = Common::Rect(-1, -1, -1, -1);
 		doQuitMenu();
 		return;
 

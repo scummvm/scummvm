@@ -43,15 +43,6 @@ class WidgetBase;
 class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
 private:
-	Common::Rect _menuBounds;
-	Common::Rect _oldMenuBounds;
-	Common::Rect _invMenuBounds;
-	Common::Rect _oldInvMenuBounds;
-	Common::Rect _invGraphicBounds;
-	Common::Rect _oldInvGraphicBounds;
-	Surface *_menuBuffer;
-	Surface *_invMenuBuffer;
-	Surface *_invGraphic;
 	Common::Array<Common::Rect> _grayAreas;
 	int _lockoutTimer;
 	SaveMode _fileMode;
