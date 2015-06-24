@@ -214,7 +214,6 @@ protected:
 	Common::Stack<SequenceEntry> _savedSequences;
 	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
-	Common::Array<Statement> _statements;
 	Common::Array<TalkHistoryEntry> _talkHistory;
 	int _speaker;
 	int _talkIndex;
@@ -277,6 +276,7 @@ protected:
 
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
+	Common::Array<Statement> _statements;
 	bool _talkToAbort;
 	int _talkCounter;
 	int _talkTo;

@@ -30,6 +30,7 @@
 #include "common/stream.h"
 #include "common/stack.h"
 #include "sherlock/talk.h"
+#include "sherlock/tattoo/widget_talk.h"
 
 namespace Sherlock {
 
@@ -37,6 +38,8 @@ namespace Tattoo {
 
 class TattooTalk : public Talk {
 private:
+	WidgetTalk _talkWidget;
+
 	OpcodeReturn cmdSwitchSpeaker(const byte *&str);
 	OpcodeReturn cmdMouseOnOff(const byte *&str);
 	OpcodeReturn cmdGotoScene(const byte *&str);
@@ -77,8 +80,7 @@ private:
 	void drawTalk(const char *str);
 
 	/**
-	 * Figures out how many lines the available talk lines will take up, and opens a text window
-	 * of appropriate size
+	 * Open the talk window
 	 */
 	void openTalkWindow();
 protected:

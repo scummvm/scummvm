@@ -110,7 +110,7 @@ const byte TATTOO_OPCODES[] = {
 
 /*----------------------------------------------------------------*/
 
-TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
+TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
 	static OpcodeMethod OPCODE_METHODS[] = {
 		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
 
@@ -201,7 +201,8 @@ void TattooTalk::talkInterface(const byte *&str) {
 }
 
 void TattooTalk::openTalkWindow() {
-	// TODO
+	_talkWidget.load();
+	_talkWidget.summonWindow();
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {

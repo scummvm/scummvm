@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	tattoo/tattoo_user_interface.o \
 	tattoo/widget_base.o \
 	tattoo/widget_inventory.o \
+	tattoo/widget_talk.o \
 	tattoo/widget_text.o \
 	tattoo/widget_tooltip.o \
 	tattoo/widget_verbs.o \
