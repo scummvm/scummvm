@@ -34,6 +34,11 @@ class SherlockEngine;
 namespace Tattoo {
 
 class WidgetTooltip: public WidgetBase {
+protected:
+	/**
+	* Overriden from base class, since tooltips have a completely transparent background
+	*/
+	virtual void drawBackground() {}
 public:
 	WidgetTooltip(SherlockEngine *vm);
 	virtual ~WidgetTooltip() {}

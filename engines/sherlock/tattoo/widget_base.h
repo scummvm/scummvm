@@ -68,6 +68,11 @@ protected:
 	 * Returns the current scroll position
 	 */
 	virtual const Common::Point &getCurrentScroll() const;
+
+	/**
+	 * Handle drawing the background on the area the widget is going to cover
+	 */
+	virtual void drawBackground();
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}

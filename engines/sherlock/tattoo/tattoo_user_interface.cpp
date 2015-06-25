@@ -350,10 +350,6 @@ void TattooUserInterface::doScroll() {
 	}
 }
 
-void TattooUserInterface::drawGrayAreas() {
-	// TODO
-}
-
 void TattooUserInterface::doStandardControl() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
@@ -612,7 +608,8 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
 	byte *p = &_lookupTable[0];
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
-		*p++ = BG_GREYSCALE_RANGE_END - (cMap[idx * 3] * 30 + cMap[idx * 3 + 1] * 59 + cMap[idx * 3 + 2] * 11) / 480;
+		*p++ = BG_GREYSCALE_RANGE_END - ((cMap[idx * 3] / 4) * 30 + (cMap[idx * 3 + 1] / 4) * 59 + 
+			(cMap[idx * 3 + 2] / 4) * 11) / 480;
 
 	// If we're going to a scene with a haze special effect, initialize the translate table to lighten the colors
 	if (_mask != nullptr) {
@@ -822,6 +819,8 @@ void TattooUserInterface::makeBGArea(const Common::Rect &r) {
 		for (int xp = r.left; xp < r.right; ++xp, ++ptr)
 			*ptr = _lookupTable[*ptr];
 	}
+
+	screen.slamRect(r);
 }
 
 void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool raised) {

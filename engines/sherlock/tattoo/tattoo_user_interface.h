@@ -43,7 +43,6 @@ class WidgetBase;
 class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
 private:
-	Common::Array<Common::Rect> _grayAreas;
 	int _lockoutTimer;
 	SaveMode _fileMode;
 	int _exitZone;
@@ -57,11 +56,6 @@ private:
 	byte _lookupTable[PALETTE_COUNT];
 	byte _lookupTable1[PALETTE_COUNT];
 private:
-	/**
-	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
-	 */
-	void drawGrayAreas();
-
 	/**
 	 * Handle any input when we're in standard mode (with no windows open)
 	 */

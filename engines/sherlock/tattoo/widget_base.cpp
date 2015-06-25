@@ -79,13 +79,33 @@ void WidgetBase::draw() {
 		Common::Rect bounds = _bounds;
 		bounds.translate(currentScroll.x, currentScroll.y);
 
-		// Copy any area to be drawn on from the secondary back buffer, and then draw surface on top
+		// Draw the background for the widget
 		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(bounds.left, bounds.top), bounds);
+		drawBackground();
+
+		// Draw the widget onto the back buffer and then slam it to the screen
 		screen._backBuffer1.transBlitFrom(_surface, Common::Point(bounds.left, bounds.top));
 		screen.blitFrom(screen._backBuffer1, Common::Point(_bounds.left, _bounds.top), bounds);
 
 		// Store a copy of the drawn area for later erasing
 		_oldBounds = _bounds;
+	}
+}
+
+void WidgetBase::drawBackground() {
+	TattooEngine &vm = *(TattooEngine *)_vm;
+	Screen &screen = *_vm->_screen;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+
+	Common::Rect bounds = _bounds;
+	const Common::Point &currentScroll = getCurrentScroll();
+	bounds.translate(currentScroll.x, currentScroll.y);
+
+	if (vm._transparentMenus) {
+		ui.makeBGArea(bounds);
+	} else {
+		bounds.grow(-3);
+		screen._backBuffer1.fillRect(bounds, MENU_BACKGROUND);
 	}
 }
 
