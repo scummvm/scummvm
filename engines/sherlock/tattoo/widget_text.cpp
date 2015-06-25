@@ -43,7 +43,7 @@ void WidgetText::load(const Common::String &str) {
 		int height;
 
 		for (;;) {
-			_remainingText = splitLines(str, lines, width - _surface.widestChar() * 2, 100);
+			splitLines(str, lines, width - _surface.widestChar() * 2, 100);
 			height = (screen.fontHeight() + 1) * lines.size() + 9;
 
 			if ((width - _surface.widestChar() * 2 > height * 3 / 2) || (width - _surface.widestChar() * 2
@@ -62,14 +62,11 @@ void WidgetText::load(const Common::String &str) {
 				width += _surface.charWidth(*strP++);
 		}
 
-		_bounds.setWidth(width);
-		_bounds.setHeight(height);
-		_bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
-		checkMenuPosition();
+		Common::Rect bounds(width, height);
+		bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
+		load(str, bounds);
 	} else {
-		// Split up the string into lines in preparation for drawing
-		_remainingText = splitLines(str, lines, _bounds.width() - _surface.widestChar() * 2, 
-			(_bounds.height() - _surface.fontHeight() / 2) / (_surface.fontHeight() + 1));
+		load(str, _bounds);
 	}
 }
 
@@ -77,6 +74,7 @@ void WidgetText::load(const Common::String &str, const Common::Rect &bounds) {
 	Common::StringArray lines;
 	_remainingText = splitLines(str, lines, bounds.width() - _surface.widestChar() * 2,
 		bounds.height() / (_surface.fontHeight() + 1));
+	_bounds = bounds;
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());
