@@ -81,7 +81,6 @@ void TattooJournal::show() {
 
 	do {
 		events.pollEventsAndWait();
-		Common::Point mousePos = events.mousePos();
 		_wait = true;
 
 		handleKeyboardEvents();
@@ -631,10 +630,8 @@ void TattooJournal::highlightSearchControls(bool slamIt) {
 }
 
 void TattooJournal::drawScrollBar() {
-	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.mousePos();
 	bool raised;
 	byte color;
 

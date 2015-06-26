@@ -586,9 +586,6 @@ void TattooUserInterface::freeMenu() {
 }
 
 void TattooUserInterface::putMessage(const char *formatStr, ...) {
-	Events &events = *_vm->_events;
-	Common::Point mousePos = events.mousePos();
-
 	// Create the string to display
 	va_list args;
 	va_start(args, formatStr);

@@ -31,6 +31,7 @@ namespace Sherlock {
 namespace Scalpel {
 
 enum {
+	COMMAND_FOREGROUND	= 15,
 	COMMAND_HIGHLIGHTED = 10,
 	COMMAND_NULL		= 248
 };

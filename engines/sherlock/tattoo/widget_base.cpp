@@ -142,7 +142,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		// Move the string ahead to the next line
 		if (*strP == ' ' || *strP == 13)
 			++strP;
-	} while (*strP && ((int)lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] 
+	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] 
 			|| (byte)*strP == talk._opcodes[OP_NULL]));
 
 	// Return any remaining text left over
