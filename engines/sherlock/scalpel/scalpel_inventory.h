@@ -20,71 +20,48 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_H
-#define SHERLOCK_TATTOO_H
+#ifndef SHERLOCK_SCALPEL_INVENTORY_H
+#define SHERLOCK_SCALPEL_INVENTORY_H
 
-#include "sherlock/sherlock.h"
+#include "sherlock/inventory.h"
 
 namespace Sherlock {
 
-namespace Tattoo {
+namespace Scalpel {
 
-enum {
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188,
-	MENU_BACKGROUND		= 225,
-	COMMAND_HIGHLIGHTED	= 254,
-	COMMAND_NULL		= 193
+class ScalpelInventory : public Inventory {
+public:
+	ScalpelInventory(SherlockEngine *vm);
+	~ScalpelInventory();
 
+	/**
+	 * Put the game into inventory mode and open the interface window.
+	 */
+	void drawInventory(InvNewMode flag);
+
+	/**
+	 * Prints the line of inventory commands at the top of an inventory window with
+	 * the correct highlighting
+	 */
+	void invCommands(bool slamIt);
+
+	/**
+	 * Set the highlighting color of a given inventory item
+	 */
+	void highlight(int index, byte color);
+
+	/**
+	 * Support method for refreshing the display of the inventory
+	 */
+	void refreshInv();
+
+	/**
+	 * Display the character's inventory. The slamIt parameter specifies:
+	 */
+	void putInv(InvSlamMode slamIt);
 };
 
-class TattooEngine : public SherlockEngine {
-private:
-	/**
-	 * Loads the initial palette for the game
-	 */
-	void loadInitialPalette();
-protected:
-	/**
-	 * Initialize the engine
-	 */
-	virtual void initialize();
-
-	virtual void showOpening();
-
-	/**
-	 * Starting a scene within the game
-	 */
-	virtual void startScene();
-public:
-	bool _creditsActive;
-	bool _runningProlog;
-	bool _fastMode, _allowFastMode;
-	bool _transparentMenus;
-public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine();
-
-	/**
-	 * Draw credits on the screen
-	 */
-	void drawCredits();
-
-	/**
-	 * Blit the drawn credits to the screen
-	 */
-	void blitCredits();
-
-	/**
-	 * Erase any area of the screen covered by credits
-	 */
-	void eraseCredits();
-
-	void doHangManPuzzle();
-};
-
-} // End of namespace Tattoo
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
 

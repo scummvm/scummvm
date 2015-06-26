@@ -587,7 +587,6 @@ void TattooUserInterface::freeMenu() {
 
 void TattooUserInterface::putMessage(const char *formatStr, ...) {
 	Events &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
 	Common::Point mousePos = events.mousePos();
 
 	// Create the string to display

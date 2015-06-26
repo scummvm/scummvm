@@ -21,9 +21,13 @@
  */
 
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/scalpel/scalpel_inventory.h"
 #include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/scalpel/scalpel_saveload.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
 
 namespace Sherlock {
@@ -666,9 +670,9 @@ void ScalpelUserInterface::lookInv() {
 
 void ScalpelUserInterface::doEnvControl() {
 	Events &events = *_vm->_events;
-	SaveManager &saves = *_vm->_saves;
+	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	static const char ENV_COMMANDS[7] = "ELSUDQ";
@@ -969,9 +973,9 @@ void ScalpelUserInterface::doEnvControl() {
 void ScalpelUserInterface::doInvControl() {
 	Events &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Inventory &inv = *_vm->_inventory;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int colors[8];
 	Common::Point mousePos = events.mousePos();
@@ -1197,7 +1201,7 @@ void ScalpelUserInterface::doInvControl() {
 
 void ScalpelUserInterface::doLookControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Screen &screen = *_vm->_screen;
 
 	_key = _oldKey = -1;
@@ -1259,8 +1263,8 @@ void ScalpelUserInterface::doLookControl() {
 
 void ScalpelUserInterface::doMainControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	SaveManager &saves = *_vm->_saves;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
+	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Common::Point pt = events.mousePos();
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
@@ -1476,7 +1480,7 @@ void ScalpelUserInterface::doTalkControl() {
 	FixedText &fixedText = *_vm->_fixedText;
 	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
@@ -1781,8 +1785,8 @@ void ScalpelUserInterface::journalControl() {
 
 void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	Screen &screen = *_vm->_screen;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 
 	if (str.hasPrefix("_")) {

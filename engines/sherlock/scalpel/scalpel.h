@@ -30,6 +30,11 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+enum {
+	COMMAND_HIGHLIGHTED = 10,
+	COMMAND_NULL		= 248
+};
+
 class ScalpelEngine : public SherlockEngine {
 private:
 	Darts *_darts;

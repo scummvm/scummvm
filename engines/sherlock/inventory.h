@@ -77,7 +77,7 @@ struct InventoryItem {
 };
 
 class Inventory : public Common::Array<InventoryItem> {
-private:
+protected:
 	SherlockEngine *_vm;
 	Common::StringArray _names;
 
@@ -97,6 +97,7 @@ public:
 	 */
 	void freeGraphics();
 public:
+	static Inventory *init(SherlockEngine *vm);
 	Inventory(SherlockEngine *vm);
 	~Inventory();
 
@@ -121,32 +122,6 @@ public:
 	 * and returns the number that matches the passed name
 	 */
 	int findInv(const Common::String &name);
-
-	/**
-	 * Display the character's inventory. The slamIt parameter specifies:
-	 */
-	void putInv(InvSlamMode slamIt);
-
-	/**
-	 * Put the game into inventory mode and open the interface window.
-	 */
-	void drawInventory(InvNewMode flag);
-
-	/**
-	 * Prints the line of inventory commands at the top of an inventory window with
-	 * the correct highlighting
-	 */
-	void invCommands(bool slamIt);
-
-	/**
-	 * Set the highlighting color of a given inventory item
-	 */
-	void highlight(int index, byte color);
-
-	/**
-	 * Support method for refreshing the display of the inventory
-	 */
-	void refreshInv();
 
 	/**
 	 * Adds a shape from the scene to the player's inventory

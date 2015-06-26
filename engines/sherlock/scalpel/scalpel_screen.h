@@ -20,71 +20,46 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_H
-#define SHERLOCK_TATTOO_H
+#ifndef SHERLOCK_SCALPEL_SCREEN_H
+#define SHERLOCK_SCALPEL_SCREEN_H
 
-#include "sherlock/sherlock.h"
+#include "sherlock/screen.h"
 
 namespace Sherlock {
 
-namespace Tattoo {
+class SherlockEngine;
 
-enum {
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188,
-	MENU_BACKGROUND		= 225,
-	COMMAND_HIGHLIGHTED	= 254,
-	COMMAND_NULL		= 193
+namespace Scalpel {
 
+class ScalpelScreen : public Screen {
+public:
+	ScalpelScreen(SherlockEngine *vm);
+	virtual ~ScalpelScreen() {}
+
+	/**
+	 * Draws a button for use in the inventory, talk, and examine dialogs.
+	 */
+	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
+
+	/**
+	 * Prints an interface command with the first letter highlighted to indicate
+	 * what keyboard shortcut is associated with it
+	 */
+	void buttonPrint(const Common::Point &pt, byte color, bool slamIt, const Common::String &str);
+
+	/**
+	 * Draw a panel in the back buffer with a raised area effect around the edges
+	 */
+	void makePanel(const Common::Rect &r);
+
+	/**
+	 * Draw a field in the back buffer with a raised area effect around the edges,
+	 * suitable for text input.
+	 */
+	void makeField(const Common::Rect &r);
 };
 
-class TattooEngine : public SherlockEngine {
-private:
-	/**
-	 * Loads the initial palette for the game
-	 */
-	void loadInitialPalette();
-protected:
-	/**
-	 * Initialize the engine
-	 */
-	virtual void initialize();
-
-	virtual void showOpening();
-
-	/**
-	 * Starting a scene within the game
-	 */
-	virtual void startScene();
-public:
-	bool _creditsActive;
-	bool _runningProlog;
-	bool _fastMode, _allowFastMode;
-	bool _transparentMenus;
-public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine();
-
-	/**
-	 * Draw credits on the screen
-	 */
-	void drawCredits();
-
-	/**
-	 * Blit the drawn credits to the screen
-	 */
-	void blitCredits();
-
-	/**
-	 * Erase any area of the screen covered by credits
-	 */
-	void eraseCredits();
-
-	void doHangManPuzzle();
-};
-
-} // End of namespace Tattoo
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
 

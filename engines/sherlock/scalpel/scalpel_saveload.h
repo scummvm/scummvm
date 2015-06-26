@@ -20,71 +20,49 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_H
-#define SHERLOCK_TATTOO_H
+#ifndef SHERLOCK_SCALPEL_SAVELOAD_H
+#define SHERLOCK_SCALPEL_SAVELOAD_H
 
-#include "sherlock/sherlock.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
-namespace Tattoo {
+namespace Scalpel {
 
-enum {
-	INFO_TOP			= 185,
-	INFO_MIDDLE			= 186,
-	INFO_BOTTOM			= 188,
-	MENU_BACKGROUND		= 225,
-	COMMAND_HIGHLIGHTED	= 254,
-	COMMAND_NULL		= 193
+extern const int ENV_POINTS[6][3];
 
+class ScalpelSaveManager: public SaveManager {
+public:
+	ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
+	virtual ~ScalpelSaveManager() {}
+
+	/**
+	 * Shows the in-game dialog interface for loading and saving games
+	 */
+	void drawInterface();
+
+	/**
+	 * Return the index of the button the mouse is over, if any
+	 */
+	int getHighlightedButton() const;
+
+	/**
+	 * Handle highlighting buttons
+	 */
+	void highlightButtons(int btnIndex);
+
+	/**
+	 * Make sure that the selected savegame is on-screen
+	 */
+	bool checkGameOnScreen(int slot);
+
+	/**
+	 * Prompts the user to enter a description in a given slot
+	 */
+	bool promptForDescription(int slot);
 };
 
-class TattooEngine : public SherlockEngine {
-private:
-	/**
-	 * Loads the initial palette for the game
-	 */
-	void loadInitialPalette();
-protected:
-	/**
-	 * Initialize the engine
-	 */
-	virtual void initialize();
-
-	virtual void showOpening();
-
-	/**
-	 * Starting a scene within the game
-	 */
-	virtual void startScene();
-public:
-	bool _creditsActive;
-	bool _runningProlog;
-	bool _fastMode, _allowFastMode;
-	bool _transparentMenus;
-public:
-	TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc);
-	virtual ~TattooEngine();
-
-	/**
-	 * Draw credits on the screen
-	 */
-	void drawCredits();
-
-	/**
-	 * Blit the drawn credits to the screen
-	 */
-	void blitCredits();
-
-	/**
-	 * Erase any area of the screen covered by credits
-	 */
-	void eraseCredits();
-
-	void doHangManPuzzle();
-};
-
-} // End of namespace Tattoo
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
 

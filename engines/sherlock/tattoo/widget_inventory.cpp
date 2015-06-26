@@ -31,7 +31,6 @@ namespace Tattoo {
 
 #define INVENTORY_XSIZE 70			// Width of the box that surrounds inventory items
 #define INVENTORY_YSIZE 70			// Height of the box that surrounds inventory items
-#define NUM_INVENTORY_SHOWN 8		// Number of Inventory Items Shown
 #define MAX_INV_COMMANDS 10			// Maximum elements in dialog
 
 // TODO: Refactor into FixedText

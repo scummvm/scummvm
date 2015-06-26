@@ -22,7 +22,9 @@
 
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/scalpel/scalpel.h"
 
 namespace Sherlock {
 
@@ -56,7 +58,7 @@ static const char *const SETUP_NAMES[12] = {
 
 void Settings::drawInteface(bool flag) {
 	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Music &music = *_vm->_music;
 	UserInterface &ui = *_vm->_ui;
@@ -138,7 +140,7 @@ void Settings::drawInteface(bool flag) {
 int Settings::drawButtons(const Common::Point &pt, int _key) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Music &music = *_vm->_music;
 	Sound &sound = *_vm->_sound;
 	UserInterface &ui = *_vm->_ui;

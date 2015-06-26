@@ -23,6 +23,8 @@
 #include "sherlock/journal.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel_journal.h"
+#include "sherlock/scalpel/scalpel_screen.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 
 namespace Sherlock {
@@ -147,7 +149,7 @@ void ScalpelJournal::loadLocations() {
 void ScalpelJournal::drawFrame() {
 	FixedText &fixedText = *_vm->_fixedText;
 	Resources &res = *_vm->_res;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	byte palette[PALETTE_SIZE];
 
 	// Load in the journal background
@@ -211,7 +213,7 @@ void ScalpelJournal::drawFrame() {
 }
 
 void ScalpelJournal::drawInterface() {
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 
 	drawFrame();
 
@@ -229,7 +231,7 @@ void ScalpelJournal::drawInterface() {
 
 void ScalpelJournal::doArrows() {
 	FixedText &fixedText = *_vm->_fixedText;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	byte color;
 
 	Common::String fixedText_Back10         = fixedText.getText(kFixedText_Journal_Back10);
@@ -301,7 +303,7 @@ JournalButton ScalpelJournal::getHighlightedButton(const Common::Point &pt) {
 bool ScalpelJournal::handleEvents(int key) {
 	Events    &events    = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Screen    &screen    = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	bool doneFlag = false;
 
 	Common::Point pt = events.mousePos();
@@ -484,7 +486,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 
 	Events    &events    = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Screen    &screen    = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int xp;
 	int yp = 174;

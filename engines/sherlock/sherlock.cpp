@@ -96,14 +96,14 @@ void SherlockEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new Events(this);
 	_fixedText = new FixedText(this);
-	_inventory = new Inventory(this);
+	_inventory = Inventory::init(this);
 	_map = Map::init(this);
 	_music = new Music(this, _mixer);
 	_journal = Journal::init(this);
 	_people = People::init(this);
-	_saves = new SaveManager(this, _targetName);
+	_saves = SaveManager::init(this, _targetName);
 	_scene = Scene::init(this);
-	_screen = new Screen(this);
+	_screen = Screen::init(this);
 	_sound = new Sound(this, _mixer);
 	_talk = Talk::init(this);
 	_ui = UserInterface::init(this);

@@ -33,6 +33,8 @@ class SherlockEngine;
 
 namespace Tattoo {
 
+#define NUM_INVENTORY_SHOWN 8		// Number of Inventory Items Shown
+
 class WidgetInventory: public WidgetBase {
 private:
 	int _invVerbMode;
