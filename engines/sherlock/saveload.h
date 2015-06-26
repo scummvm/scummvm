@@ -92,7 +92,7 @@ public:
 public:
 	static SaveManager *init(SherlockEngine *vm, const Common::String &target);
 	SaveManager(SherlockEngine *vm, const Common::String &target);
-	~SaveManager();
+	virtual ~SaveManager();
 
 	/**
 	 * Creates a thumbnail for the current on-screen contents
