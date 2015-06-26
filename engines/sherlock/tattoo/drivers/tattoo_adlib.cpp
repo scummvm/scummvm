@@ -165,6 +165,7 @@ private:
 
 		uint16 currentPriority;
 
+		byte   currentOriginalMidiNote;
 		byte   currentNote;
 		int16  currentTransposition;
 		byte   currentVelocity;
@@ -176,6 +177,7 @@ private:
 								currentInstrumentPtr(NULL),
 								isPhysical(false), physicalFmVoice(0),
 								currentPriority(0),
+								currentOriginalMidiNote(0),
 								currentNote(0),
 								currentTransposition(0),
 								currentVelocity(0),
@@ -187,12 +189,11 @@ private:
 		bool   inUse;
 		byte   virtualFmVoice;
 
-		byte   currentA0hReg;
 		byte   currentB0hReg;
 
 		PhysicalFmVoiceEntry(): inUse(false),
 								virtualFmVoice(0),
-								currentA0hReg(0), currentB0hReg(0) { }
+								currentB0hReg(0) { }
 	};
 
 	OPL::OPL *_opl;
@@ -429,7 +430,6 @@ int16 MidiDriver_Miles_AdLib::searchFreePhysicalFmVoiceChannel() {
 void MidiDriver_Miles_AdLib::noteOn(byte midiChannel, byte note, byte velocity) {
 	const InstrumentEntry *instrumentPtr = NULL;
 
-	//warning("Note On: channel %d, note %d, velocity %d", midiChannel, note, velocity);
 	if (velocity == 0) {
 		noteOff(midiChannel, note);
 		return;
@@ -447,6 +447,8 @@ void MidiDriver_Miles_AdLib::noteOn(byte midiChannel, byte note, byte velocity) 
 		warning("MILES-ADLIB: noteOn: invalid instrument");
 		return;
 	}
+
+	//warning("Note On: channel %d, note %d, velocity %d, instrument %d/%d", midiChannel, note, velocity, instrumentPtr->bankId, instrumentPtr->patchId);
 
 	// look for free virtual FM voice
 	int16 virtualFmVoice = searchFreeVirtualFmVoiceChannel();
@@ -471,6 +473,7 @@ void MidiDriver_Miles_AdLib::noteOn(byte midiChannel, byte note, byte velocity) 
 
 	_virtualFmVoices[virtualFmVoice].inUse = true;
 	_virtualFmVoices[virtualFmVoice].actualMidiChannel = midiChannel;
+	_virtualFmVoices[virtualFmVoice].currentOriginalMidiNote = note;
 	_virtualFmVoices[virtualFmVoice].currentInstrumentPtr = instrumentPtr;
 	_virtualFmVoices[virtualFmVoice].currentVelocity = velocity;
 	_virtualFmVoices[virtualFmVoice].isPhysical = false;
@@ -506,7 +509,7 @@ void MidiDriver_Miles_AdLib::noteOff(byte midiChannel, byte note) {
 	// Search through all virtual FM-Voices for current midiChannel + note
 	for (byte virtualFmVoice = 0; virtualFmVoice < SHERLOCK_MILES_ADLIB_VIRTUAL_FMVOICES_COUNT; virtualFmVoice++) {
 		if (_virtualFmVoices[virtualFmVoice].inUse) {
-			if ((_virtualFmVoices[virtualFmVoice].actualMidiChannel == midiChannel) && (_virtualFmVoices[virtualFmVoice].currentNote == note)) {
+			if ((_virtualFmVoices[virtualFmVoice].actualMidiChannel == midiChannel) && (_virtualFmVoices[virtualFmVoice].currentOriginalMidiNote == note)) {
 				// found one
 				if (_midiChannels[midiChannel].currentSustain >= 64) {
 					_virtualFmVoices[virtualFmVoice].sustained = true;
@@ -514,7 +517,6 @@ void MidiDriver_Miles_AdLib::noteOff(byte midiChannel, byte note) {
 				}
 				// 
 				releaseFmVoice(virtualFmVoice);
-				_virtualFmVoices[virtualFmVoice].inUse = false;
 			}
 		}
 	}
@@ -596,7 +598,6 @@ void MidiDriver_Miles_AdLib::prioritySort() {
 		//warning("priority old %d, priority new %d", unvoicedHighestPriority, voicedLowestPriority);
 
 		releaseFmVoice(voicedLowestFmVoice);
-		_virtualFmVoices[voicedLowestFmVoice].inUse = false;
 
 		// Get some data of the unvoiced highest priority virtual FM Voice
 		midiChannel = _virtualFmVoices[unvoicedHighestFmVoice].actualMidiChannel;
@@ -622,6 +623,7 @@ void MidiDriver_Miles_AdLib::prioritySort() {
 void MidiDriver_Miles_AdLib::releaseFmVoice(byte virtualFmVoice) {
 	// virtual Voice not actually played? -> exit
 	if (!_virtualFmVoices[virtualFmVoice].isPhysical) {
+		_virtualFmVoices[virtualFmVoice].inUse = false;
 		return;
 	}
 
@@ -633,6 +635,7 @@ void MidiDriver_Miles_AdLib::releaseFmVoice(byte virtualFmVoice) {
 
 	// this virtual FM voice isn't physical anymore
 	_virtualFmVoices[virtualFmVoice].isPhysical = false;
+	_virtualFmVoices[virtualFmVoice].inUse = false;
 
 	// Remove physical FM-Voice from being active
 	_physicalFmVoices[physicalFmVoice].inUse = false;
