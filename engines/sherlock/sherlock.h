@@ -66,8 +66,10 @@ enum GameType {
 #define SHERLOCK_SCREEN_WIDTH _vm->_screen->w()
 #define SHERLOCK_SCREEN_HEIGHT _vm->_screen->h()
 #define SHERLOCK_SCENE_HEIGHT (IS_SERRATED_SCALPEL ? 138 : 480)
-// TODO: Is this the correct scene count for The Case of the Rose Tattoo?
 #define SCENES_COUNT (IS_SERRATED_SCALPEL ? 63 : 101)
+
+#define COL_INFO_FOREGROUND (IS_SERRATED_SCALPEL ? Scalpel::INFO_FOREGROUND : Tattoo::INFO_FOREGROUND)
+#define COL_PEN_COLOR (IS_SERRATED_SCALPEL ? Scalpel::PEN_COLOR : Tattoo::PEN_COLOR)
 
 struct SherlockGameDescription;
 

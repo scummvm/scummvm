@@ -21,8 +21,9 @@
  */
 
 #include "sherlock/user_interface.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
 namespace Sherlock {
@@ -72,7 +73,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 		_infoFlag = true;
 		clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, action._cAnimNum);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", errorMessage.c_str());
 		_infoFlag = true;
 
 		// Set how long to show the message
@@ -176,7 +177,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 			if (scene._goToScene != 1 && !printed && !talk._talkToAbort) {
 				_infoFlag = true;
 				clearInfo();
-				screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Done...");
+				screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Done...");
 
 				// Set how long to show the message
 				_menuCounter = 30;

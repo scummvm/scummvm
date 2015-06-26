@@ -21,8 +21,9 @@
  */
 
 #include "sherlock/journal.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_journal.h"
+#include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 
 namespace Sherlock {
@@ -78,7 +79,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 		if (direction)
 			drawFrame();
 
-		screen.gPrint(Common::Point(235, 21), PEN_COLOR, "Page %d", _page);
+		screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, "Page %d", _page);
 		return false;
 	}
 
@@ -198,7 +199,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 
 	Common::String fixedText_Page = fixedText.getText(kFixedText_Journal_Page);
 
-	screen.gPrint(Common::Point(235, 21), PEN_COLOR, fixedText_Page.c_str(), _page);
+	screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, fixedText_Page.c_str(), _page);
 
 	temp = _sub;
 	savedIndex = _index;
@@ -228,26 +229,27 @@ bool Journal::drawJournal(int direction, int howFar) {
 					screen.gPrint(Common::Point(53, yp), 15, "%s", lineStart.c_str() + 1);
 				} else {
 					width = screen.stringWidth(lineStart.c_str());
-					screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", lineStart.c_str());
+					screen.gPrint(Common::Point(53, yp), COL_PEN_COLOR, "%s", lineStart.c_str());
 				 }
 
 				// Print out the found keyword
 				Common::String lineMatch(matchP, matchP + _find.size());
-				screen.gPrint(Common::Point(53 + width, yp), INV_FOREGROUND, "%s", lineMatch.c_str());
+				byte fgColor = IS_SERRATED_SCALPEL ? Scalpel::INV_FOREGROUND : Tattoo::INV_FOREGROUND;
+				screen.gPrint(Common::Point(53 + width, yp), fgColor, "%s", lineMatch.c_str());
 				width += screen.stringWidth(lineMatch.c_str());
 
 				// Print remainder of line
-				screen.gPrint(Common::Point(53 + width, yp), PEN_COLOR, "%s", matchP + _find.size());
+				screen.gPrint(Common::Point(53 + width, yp), COL_PEN_COLOR, "%s", matchP + _find.size());
 			} else if (_lines[temp].hasPrefix("@")) {
 				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", _lines[temp].c_str());
+				screen.gPrint(Common::Point(53, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		} else {
 			if (_lines[temp].hasPrefix("@")) {
 				screen.gPrint(Common::Point(53, yp), 15, "%s", _lines[temp].c_str() + 1);
 			} else {
-				screen.gPrint(Common::Point(53, yp), PEN_COLOR, "%s", _lines[temp].c_str());
+				screen.gPrint(Common::Point(53, yp), COL_PEN_COLOR, "%s", _lines[temp].c_str());
 			}
 		}
 

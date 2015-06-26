@@ -21,12 +21,13 @@
  */
 
 #include "common/util.h"
-#include "sherlock/sherlock.h"
 #include "sherlock/objects.h"
 #include "sherlock/people.h"
 #include "sherlock/scene.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -546,13 +547,13 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 		ui._infoFlag = true;
 		ui.clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, messageNum);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", errorMessage.c_str());
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", name.c_str() + 1);
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", name.c_str() + 1);
 		printed = true;
 		ui._menuCounter = 25;
 	}
@@ -1321,7 +1322,7 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 		ui._infoFlag = true;
 		ui.clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, message);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", errorMessage.c_str());
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up
@@ -1370,7 +1371,7 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 
 			Common::String itemName = _description;
 			itemName.setChar(tolower(itemName[0]), 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Picked up %s", itemName.c_str());
 			ui._menuCounter = 25;
 		}
 	}

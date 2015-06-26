@@ -30,14 +30,19 @@ namespace Sherlock {
 namespace Tattoo {
 
 enum {
+	INV_FOREGROUND		= 167,
+	INV_BACKGROUND		= 1,
+	INFO_FOREGROUND		= 233,
+	INFO_BACKGROUND		= 239,
 	INFO_TOP			= 185,
 	INFO_MIDDLE			= 186,
 	INFO_BOTTOM			= 188,
 	MENU_BACKGROUND		= 225,
 	COMMAND_FOREGROUND	= 15,
 	COMMAND_HIGHLIGHTED	= 254,
-	COMMAND_NULL		= 193
-
+	COMMAND_NULL		= 193,
+	PEN_COLOR			= 248,
+	PEN_HIGHLIGHT_COLOR	= 129
 };
 
 class TattooEngine : public SherlockEngine {
