@@ -211,6 +211,9 @@ private:
 	InstrumentEntry *_instrumentTablePtr;
 	uint16           _instrumentTableCount;
 
+	bool circularPhysicalAssignment;
+	byte circularPhysicalAssignmentFmVoice;
+
 protected:
 	void onTimer();
 
@@ -248,6 +251,11 @@ MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(Audio::Mixer *mixer, InstrumentEn
 
 	_instrumentTablePtr = instrumentTablePtr;
 	_instrumentTableCount = instrumentTableCount;
+
+	// Older Miles Audio drivers did not do a circular assign for physical FM-voices
+	// Sherlock Holmes 2 used the circular assign
+	circularPhysicalAssignment = true;
+	circularPhysicalAssignmentFmVoice = 255;
 
 	resetData();
 }
@@ -394,9 +402,25 @@ int16 MidiDriver_Miles_AdLib::searchFreeVirtualFmVoiceChannel() {
 }
 
 int16 MidiDriver_Miles_AdLib::searchFreePhysicalFmVoiceChannel() {
-	for (byte physicalFmVoice = 0; physicalFmVoice < SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT; physicalFmVoice++) {
-		if (!_physicalFmVoices[physicalFmVoice].inUse)
-			return physicalFmVoice;
+	if (!circularPhysicalAssignment) {
+		// Older assign logic
+		for (byte physicalFmVoice = 0; physicalFmVoice < SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT; physicalFmVoice++) {
+			if (!_physicalFmVoices[physicalFmVoice].inUse)
+				return physicalFmVoice;
+		}
+	} else {
+		// Newer one
+		// Remembers last physical FM-voice and searches from that spot
+		byte physicalFmVoice = circularPhysicalAssignmentFmVoice;
+		for (byte physicalFmVoiceCount = 0; physicalFmVoiceCount < SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT; physicalFmVoiceCount++) {
+			physicalFmVoice++;
+			if (physicalFmVoice >= SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT)
+				physicalFmVoice = 0;
+			if (!_physicalFmVoices[physicalFmVoice].inUse) {
+				circularPhysicalAssignmentFmVoice = physicalFmVoice;
+				return physicalFmVoice;
+			}
+		}
 	}
 	return -1;
 }
