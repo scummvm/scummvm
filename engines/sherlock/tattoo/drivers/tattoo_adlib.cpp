@@ -255,7 +255,8 @@ MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(Audio::Mixer *mixer, InstrumentEn
 	// Older Miles Audio drivers did not do a circular assign for physical FM-voices
 	// Sherlock Holmes 2 used the circular assign
 	circularPhysicalAssignment = true;
-	circularPhysicalAssignmentFmVoice = 255;
+	// this way the first circular physical FM-voice search will start at FM-voice 0
+	circularPhysicalAssignmentFmVoice = SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT;
 
 	resetData();
 }
