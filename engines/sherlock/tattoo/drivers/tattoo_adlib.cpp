@@ -986,7 +986,7 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 	uint16           instrumentDataSize = 0;
 
 	if (!fileStream->open(instrumentDataFilename))
-		error("MILES-ADLIB: coult not open instrument file");
+		error("MILES-ADLIB: could not open instrument file");
 
 	fileSize = fileStream->size();
 
