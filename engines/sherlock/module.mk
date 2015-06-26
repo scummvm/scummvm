@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	scalpel/scalpel_talk.o \
 	scalpel/scalpel_user_interface.o \
 	scalpel/settings.o \
+	tattoo/drivers/tattoo_adlib.o \
 	tattoo/tattoo.o \
 	tattoo/tattoo_journal.o \
 	tattoo/tattoo_map.o \

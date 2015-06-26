@@ -25,6 +25,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+#include "sherlock/tattoo/drivers/tattoo_mididriver.h"
 // for 3DO digital music
 #include "audio/decoders/aiff.h"
 
@@ -240,7 +241,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 		switch (_musicType) {
 		case MT_ADLIB:
-			_midiDriver = MidiDriver_AdLib_create();
+			_midiDriver = MidiDriver_SH_AdLib_create();
 			break;
 		case MT_MT32:
 			_midiDriver = MidiDriver_MT32_create();
@@ -266,8 +267,21 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 		_midiParser = MidiParser::createParser_XMIDI();
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-		_musicType = MT_GM;
-		_midiDriver = MidiDriver::createMidi(dev);
+		_musicType = MidiDriver::getMusicType(dev);
+
+		switch (_musicType) {
+		case MT_ADLIB:
+			// SAMPLE.AD  -> regular AdLib instrument data
+			// SAMPLE.OPL -> OPL-3 instrument data
+			// although in case of Rose Tattoo both files are exactly the same
+			_midiDriver = MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+			break;
+		default:
+			// HACK
+			_musicType = MT_GM;
+			_midiDriver = MidiDriver::createMidi(dev);
+			break;
+		}
 	}
 
 	if (_midiDriver) {
@@ -437,21 +451,22 @@ bool Music::playMusic(const Common::String &name) {
 			}
 		}
 
-		switch (_musicType) {
-		case MT_ADLIB:
-			MidiDriver_AdLib_newMusicData(_midiDriver, dataPos, dataSize);
-			break;
+		if (IS_SERRATED_SCALPEL) {
+			// Pass the music data to the driver as well
+			// because channel mapping and a few other things inside the header
+			switch (_musicType) {
+			case MT_ADLIB:
+				MidiDriver_SH_AdLib_newMusicData(_midiDriver, dataPos, dataSize);
+				break;
 
-		case MT_MT32:
-			MidiDriver_MT32_newMusicData(_midiDriver, dataPos, dataSize);
-			break;
+			case MT_MT32:
+				MidiDriver_MT32_newMusicData(_midiDriver, dataPos, dataSize);
+				break;
 
-		case MT_GM:
-			break;
-
-		default:
-			// should never happen
-			break;
+			default:
+				// should never happen
+				break;
+			}
 		}
 
 		_midiParser->loadMusic(midiMusicData, midiMusicDataSize);

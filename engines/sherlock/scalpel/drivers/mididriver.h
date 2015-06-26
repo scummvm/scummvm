@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SHERLOCK_SOFTSEQ_MIDIDRIVER_H
-#define SHERLOCK_SOFTSEQ_MIDIDRIVER_H
+#ifndef SHERLOCK_SCALPEL_DRIVERS_MIDIDRIVER_H
+#define SHERLOCK_SCALPEL_DRIVERS_MIDIDRIVER_H
 
 #include "sherlock/sherlock.h"
 #include "audio/mididrv.h"
@@ -29,8 +29,8 @@
 
 namespace Sherlock {
 
-extern MidiDriver *MidiDriver_AdLib_create();
-extern void MidiDriver_AdLib_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize);
+extern MidiDriver *MidiDriver_SH_AdLib_create();
+extern void MidiDriver_SH_AdLib_newMusicData(MidiDriver *driver, byte *musicData, int32 musicDataSize);
 
 extern MidiDriver *MidiDriver_MT32_create();
 extern void MidiDriver_MT32_uploadPatches(MidiDriver *driver, byte *driverData, int32 driverSize);
@@ -38,4 +38,4 @@ extern void MidiDriver_MT32_newMusicData(MidiDriver *driver, byte *musicData, in
 
 } // End of namespace Sherlock
 
-#endif // SHERLOCK_SOFTSEQ_MIDIDRIVER_H
+#endif // SHERLOCK_SCALPEL_DRIVERS_MIDIDRIVER_H
