@@ -35,9 +35,14 @@ namespace Tattoo {
 class WidgetText: public WidgetBase {
 private:
 	/**
-	 * Display the passed text in a window of the given bounds
+	 * Center the area the dialog will be drawn on above a given speaker
 	 */
-	void load(const Common::String &str, const Common::Rect &bounds);
+	void centerWindowOnSpeaker(int speaker);
+
+	/**
+	 * Build up the text dialog based on the previously set bounds
+	 */
+	void render(const Common::String &str);
 public:
 	Common::String _remainingText;
 public:
@@ -47,7 +52,7 @@ public:
 	/**
 	 * Load the data for the text window
 	 */
-	void load(const Common::String &str);
+	void load(const Common::String &str, int speaker = -1);
 };
 
 class WidgetMessage : public WidgetBase {

@@ -21,6 +21,8 @@
  */
 
 #include "sherlock/tattoo/widget_text.h"
+#include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
@@ -31,7 +33,7 @@ namespace Tattoo {
 WidgetText::WidgetText(SherlockEngine *vm) : WidgetBase(vm) {
 }
 
-void WidgetText::load(const Common::String &str) {
+void WidgetText::load(const Common::String &str, int speaker) {
 	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
@@ -62,19 +64,100 @@ void WidgetText::load(const Common::String &str) {
 				width += _surface.charWidth(*strP++);
 		}
 
-		Common::Rect bounds(width, height);
-		bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
-		load(str, bounds);
+		_bounds = Common::Rect(width, height);
+		
+		if (speaker == -1) {
+			// No speaker specified, so center window on look position
+			_bounds.translate(ui._lookPos.x - width / 2, ui._lookPos.y - height / 2);
+		} else {
+			// Speaker specified, so center the window above them
+			centerWindowOnSpeaker(speaker);
+		}
+	}
+
+	render(str);
+}
+
+void WidgetText::centerWindowOnSpeaker(int speaker) {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Common::Point pt;
+
+	bool flag = _vm->readFlags(76);
+	if (people[HOLMES]._type == CHARACTER && ((speaker == HOLMES && flag) || (speaker == WATSON && !flag))) {
+		// Place the window centered above the player
+		pt.x = people[HOLMES]._position.x / FIXED_INT_MULTIPLIER - _bounds.width() / 2;
+
+		int scaleVal = scene.getScaleVal(people[HOLMES]._position);
+		if (scaleVal == SCALE_THRESHOLD) {
+			pt.x += people[HOLMES].frameWidth() / 2;
+			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES].frameHeight() 
+				- _bounds.height() - _surface.fontHeight();
+		} else {
+			pt.x += people[HOLMES]._imageFrame->sDrawXSize(scaleVal) / 2;
+			pt.y = people[HOLMES]._position.y / FIXED_INT_MULTIPLIER - people[HOLMES]._imageFrame->sDrawYSize(scaleVal) 
+				- _bounds.height() - _surface.fontHeight();
+		}
 	} else {
-		load(str, _bounds);
+		pt.y = -1;
+
+		// Check each NPC to see if they are the one that is talking
+		for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+			if (people[idx]._type == CHARACTER) {
+				if (!scumm_strnicmp(people[idx]._npcName.c_str(), people._characters[speaker]._portrait, 4)) {
+					// Place the window above the player
+					pt.x = people[idx]._position.x / FIXED_INT_MULTIPLIER - _bounds.width() / 2;
+
+					int scaleVal = scene.getScaleVal(people[idx]._position);
+					if (scaleVal == SCALE_THRESHOLD) {
+						pt.x += people[idx].frameWidth() / 2;
+						pt.y = people[idx]._position.y / FIXED_INT_MULTIPLIER - people[idx].frameHeight()
+							- _bounds.height() - _surface.fontHeight();
+					}
+					else {
+						pt.x += people[idx]._imageFrame->sDrawXSize(scaleVal) / 2;
+						pt.y = people[idx]._position.y / FIXED_INT_MULTIPLIER - people[idx]._imageFrame->sDrawYSize(scaleVal)
+							- _bounds.height() - _surface.fontHeight();
+					}
+
+					if (pt.y < 0)
+						pt.y = 0;
+					break;
+				}
+			}
+		}
+
+		if (pt.y == -1) {
+			for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
+				Object &obj = scene._bgShapes[idx];
+
+				if (obj._type == ACTIVE_BG_SHAPE && !scumm_strnicmp(obj._name.c_str(), people._characters[speaker]._portrait, 4)) {
+					// Place the window centered above the character
+					pt.x = obj._position.x - _bounds.width() / 2;
+					pt.y = obj._position.y - _bounds.height() - _surface.fontHeight();
+					if (pt.y < 0)
+						pt.y = 0;
+					if (obj._scaleVal == SCALE_THRESHOLD)
+						pt.x += obj.frameWidth() / 2;
+					else
+						pt.x += obj._imageFrame->sDrawXSize(obj._scaleVal) / 2;
+
+					break;
+				}
+			}
+		}
+
+		if (pt.y == -1) {
+			pt.x = SHERLOCK_SCREEN_WIDTH / 2 - _bounds.width() / 2;
+			pt.y = SHERLOCK_SCREEN_HEIGHT / 2 - _bounds.height() / 2;
+		}
 	}
 }
 
-void WidgetText::load(const Common::String &str, const Common::Rect &bounds) {
+void WidgetText::render(const Common::String &str) {
 	Common::StringArray lines;
-	_remainingText = splitLines(str, lines, bounds.width() - _surface.widestChar() * 2,
-		bounds.height() / (_surface.fontHeight() + 1));
-	_bounds = bounds;
+	_remainingText = splitLines(str, lines, _bounds.width() - _surface.widestChar() * 2,
+		_bounds.height() / (_surface.fontHeight() + 1));
 
 	// Allocate a surface for the window
 	_surface.create(_bounds.width(), _bounds.height());

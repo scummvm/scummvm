@@ -195,7 +195,7 @@ void TattooTalk::talkInterface(const byte *&str) {
 
 	// Display the text window
 	ui.banishWindow();
-	ui._textWidget.load(s);
+	ui._textWidget.load(s, _speaker);
 	ui._textWidget.summonWindow();
 	_wait = true;
 }
