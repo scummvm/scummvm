@@ -31,7 +31,9 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"Open",
 	"Look",
 	"Talk",
-	"Journal"
+	"Journal",
+	"Inventory",
+	"Options"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {

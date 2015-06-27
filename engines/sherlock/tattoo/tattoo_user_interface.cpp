@@ -440,7 +440,13 @@ void TattooUserInterface::doStandardControl() {
 
 		if (events._rightReleased) {
 			// Show the verbs menu for the highlighted object
-			_verbsWidget.activateVerbMenu(!noDesc);
+			_tooltipWidget.banishWindow();
+			_verbsWidget.load(!noDesc);
+			_verbsWidget.summonWindow();
+
+			_selector = _oldSelector = -1;
+			_activeObj = _bgFound;
+			_menuMode = VERB_MODE;
 		} else if (_personFound || (_bgFound != -1 && _bgFound < 1000 && _bgShape->_aType == PERSON)) {
 			// The object found is a person (the default for people is TALK)
 			talk.talk(_bgFound);
@@ -524,7 +530,7 @@ void TattooUserInterface::doInventoryControl() {
 }
 
 void TattooUserInterface::doVerbControl() {
-	_verbsWidget.execute();
+	_verbsWidget.handleEvents();
 }
 
 void TattooUserInterface::doTalkControl() {

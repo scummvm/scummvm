@@ -36,15 +36,13 @@ WidgetVerbs::WidgetVerbs(SherlockEngine *vm) : WidgetBase(vm) {
 	_outsideMenu = false;
 }
 
-void WidgetVerbs::activateVerbMenu(bool objectsOn) {
+void WidgetVerbs::load(bool objectsOn) {
+	Events &events = *_vm->_events;
 	Talk &talk = *_vm->_talk;
-	FixedText &fixedText = *_vm->_fixedText;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Common::Point mousePos = events.mousePos();
 	bool isWatson = false;
-	Common::String strLook = fixedText.getText(kFixedText_Look);
-	Common::String strTalk = fixedText.getText(kFixedText_Talk);
-	Common::String strJournal = fixedText.getText(kFixedText_Journal);
 
 	if (talk._talkToAbort)
 		return;
@@ -64,41 +62,93 @@ void WidgetVerbs::activateVerbMenu(bool objectsOn) {
 			if (!scumm_strnicmp(npc._npcName.c_str(), "WATS", 4))
 				isWatson = true;
 
-			if (!scumm_strnicmp(person._examine.c_str(), "_EXIT", 5))
-				_verbCommands.push_back(strLook);
+
+			if (scumm_strnicmp(person._examine.c_str(), "_EXIT", 5))
+				_verbCommands.push_back(FIXED(Look));
 			
-			_verbCommands.push_back(strTalk);
+			_verbCommands.push_back(FIXED(Talk));
 
 			// Add any extra active verbs from the NPC's verb list
-			// TODO
+			for (int idx = 0; idx < 2; ++idx) {
+				if (!person._use[idx]._verb.empty() && !person._use[idx]._verb.hasPrefix(" ") &&
+						(person._use[idx]._target.empty() || person._use[idx]._target.hasPrefix(" "))) {
+					_verbCommands.push_back(person._use[idx]._verb);
+				}
+			}
 		} else {
 			if (!scumm_strnicmp(ui._bgShape->_name.c_str(), "WATS", 4))
+				// Looking at Watson
 				isWatson = true;
 
-			if (!scumm_strnicmp(ui._bgShape->_examine.c_str(), "_EXIT", 5))
-				_verbCommands.push_back(strLook);
+			if (scumm_strnicmp(ui._bgShape->_examine.c_str(), "_EXIT", 5))
+				// It's not an exit, so include Look as an option
+				_verbCommands.push_back(FIXED(Look));
 
 			if (ui._bgShape->_aType == PERSON)
-				_verbCommands.push_back(strTalk);
+				_verbCommands.push_back(FIXED(Talk));
 
-			// Add any extra active verbs from the NPC's verb list
-			// TODO
+			// Add any extra active verbs from the object's verb list
+			for (int idx = 0; idx < 6; ++idx) {
+				if (!ui._bgShape->_use[idx]._verb.empty() && !ui._bgShape->_use[idx]._verb.hasPrefix(" ") &&
+					(ui._bgShape->_use[idx]._target.empty() || ui._bgShape->_use[idx]._target.hasPrefix(" "))) {
+					_verbCommands.push_back(ui._bgShape->_use[idx]._verb);
+				}
+			}
 		}
 	}
 
+	// If clicked on Watson, have Journal as an option
 	if (isWatson)
-		_verbCommands.push_back(strJournal);
+		_verbCommands.push_back(FIXED(Journal));
 
 	// Add the system commands
-	// TODO
+	_verbCommands.push_back(FIXED(Inventory));
+	_verbCommands.push_back(FIXED(Options));
 
-	// Find the widest command
-	// TODO
+	// Figure out the needed width to show the commands
+	int width = 0;
+	for (uint idx = 0; idx < _verbCommands.size(); ++idx)
+		width = MAX(width, _surface.stringWidth(_verbCommands[idx]));
+	width += _surface.widestChar() * 2 + 6;
+	int height = (_surface.fontHeight() + 7) * _verbCommands.size() + 3;
 
-	// TODO: Finish this
+	// Set the bounds
+	_bounds = Common::Rect(width, height);
+	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
+	
+	// Render the window on the internal surface
+	render();
 }
 
-void WidgetVerbs::execute() {
+void WidgetVerbs::render() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ImageFile &images = *ui._interfaceImages;
+
+	// Create the drawing surface
+	_surface.create(_bounds.width(), _bounds.height());
+	_surface.fill(TRANSPARENCY);
+
+	// Draw basic background
+	makeInfoArea();
+
+	// Draw the verb commands and the lines separating them
+	for (uint idx = 0; idx < _verbCommands.size(); ++idx) {
+		_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_verbCommands[idx])) / 2, 
+			(_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
+
+		if (idx < ((int)_verbCommands.size() - 1)) {
+			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1), _bounds.width() - 4, INFO_TOP);
+			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 1, _bounds.width() - 4, INFO_MIDDLE);
+			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 2, _bounds.width() - 4, INFO_BOTTOM);
+
+			_surface.transBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1) - 1));
+			_surface.transBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, 
+				(_surface.fontHeight() + 7) * (idx + 1) - 1));
+		}
+	}
+}
+
+void WidgetVerbs::handleEvents() {
 	Events &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
@@ -147,7 +197,7 @@ void WidgetVerbs::execute() {
 					}
 
 					// Call the Routine to turn on the Commands for this Object
-					activateVerbMenu(!noDesc);
+					load(!noDesc);
 				} else {
 					// See if we're in a Lab Table Room
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
