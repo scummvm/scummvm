@@ -36,6 +36,7 @@
 #include "common/textconsole.h"
 #include "audio/audiostream.h"
 #include "audio/midiparser.h"
+#include "audio/miles.h"
 
 namespace Groovie {
 
@@ -384,7 +385,42 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-	_driver = MidiDriver::createMidi(dev);
+	MusicType musicType = MidiDriver::getMusicType(dev);
+	_driver = NULL;
+
+	// new Miles Audio support, to enable set milesAudioEnabled to true
+	// Attention: MT32 timbre file currently not supported, work in progress
+	_milesAudioMode = false;
+	bool milesAudioEnabled = false;
+
+	if (milesAudioEnabled) {
+		// 7th Guest uses FAT.AD/FAT.OPL/FAT.MT
+		// 11th Hour uses SAMPLE.AD/SAMPLE.OPL/SAMPLE.MT
+		switch (musicType) {
+		case MT_ADLIB:
+			_driver = Audio::MidiDriver_Miles_AdLib_create(gtlName + ".AD", gtlName + ".OPL");
+			break;
+		case MT_MT32:
+			_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + ".MT");
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + "FAT.MT");
+				musicType = MT_MT32;
+			}
+			break;
+		}
+	}
+
+	if (_driver) {
+		_milesAudioMode = true;
+	}
+
+	if (!_driver) {
+		// No driver yet? create a generic one
+		_driver = MidiDriver::createMidi(dev);
+	}
+
 	assert(_driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
@@ -399,6 +435,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	for (int i = 0; i < 0x10; i++) {
 		_chanBanks[i] = 0;
 	}
+
+	if (_milesAudioMode)
+		return;
 
 	// Load the Global Timbre Library
 	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
@@ -433,6 +472,11 @@ MusicPlayerXMI::~MusicPlayerXMI() {
 }
 
 void MusicPlayerXMI::send(uint32 b) {
+	if (_milesAudioMode) {
+		MusicPlayerMidi::send(b);
+		return;
+	}
+
 	if ((b & 0xFFF0) == 0x72B0) { // XMIDI Patch Bank Select 114
 		// From AIL2's documentation: XMIDI Patch Bank Select controller (114)
 		// selects a bank to be used when searching the next patches
