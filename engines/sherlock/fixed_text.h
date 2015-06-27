@@ -28,7 +28,7 @@
 
 namespace Sherlock {
 
-#define FIXED(MSG) _vm->_fixedText->getText(kFixedText_##MSG##)
+#define FIXED(MSG) _vm->_fixedText->getText(kFixedText_##MSG)
 
 enum FixedTextActionId {
 	kFixedTextAction_Invalid = -1,
