@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel_talk.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"

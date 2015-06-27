@@ -22,6 +22,7 @@
 
 #include "sherlock/journal.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel.h"

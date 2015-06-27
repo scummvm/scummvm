@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/widget_verbs.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo_people.h"
@@ -41,9 +42,9 @@ void WidgetVerbs::activateVerbMenu(bool objectsOn) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	bool isWatson = false;
-	Common::String strLook = fixedText.getText(kFixedText_Verb_Look);
-	Common::String strTalk = fixedText.getText(kFixedText_Verb_Talk);
-	Common::String strJournal = fixedText.getText(kFixedText_Verb_Journal);
+	Common::String strLook = fixedText.getText(kFixedText_Look);
+	Common::String strTalk = fixedText.getText(kFixedText_Talk);
+	Common::String strJournal = fixedText.getText(kFixedText_Journal);
 
 	if (talk._talkToAbort)
 		return;
@@ -108,9 +109,9 @@ void WidgetVerbs::execute() {
 	Common::Point scenePos = mousePos + ui._currentScroll;
 	bool noDesc = false;
 
-	Common::String strLook = fixedText.getText(kFixedText_Verb_Look);
-	Common::String strTalk = fixedText.getText(kFixedText_Verb_Talk);
-	Common::String strJournal = fixedText.getText(kFixedText_Verb_Journal);
+	Common::String strLook = fixedText.getText(kFixedText_Look);
+	Common::String strTalk = fixedText.getText(kFixedText_Talk);
+	Common::String strJournal = fixedText.getText(kFixedText_Journal);
 
 	checkTabbingKeys(_verbCommands.size());
 

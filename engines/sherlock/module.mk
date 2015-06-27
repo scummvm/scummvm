@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	scalpel/drivers/mt32.o \
 	scalpel/tsage/logo.o \
 	scalpel/tsage/resources.o \
+	scalpel/scalpel_fixed_text.o \
 	scalpel/scalpel_inventory.o \
 	scalpel/scalpel_journal.o \
 	scalpel/scalpel_map.o \
@@ -20,6 +21,7 @@ MODULE_OBJS = \
 	scalpel/settings.o \
 	tattoo/drivers/tattoo_adlib.o \
 	tattoo/tattoo.o \
+	tattoo/tattoo_fixed_text.o \
 	tattoo/tattoo_journal.o \
 	tattoo/tattoo_map.o \
 	tattoo/tattoo_people.o \

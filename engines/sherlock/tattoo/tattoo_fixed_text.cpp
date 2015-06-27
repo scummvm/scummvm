@@ -20,19 +20,32 @@
  *
  */
 
-#include "sherlock/sherlock.h"
-#include "sherlock/fixed_text.h"
-#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/tattoo/tattoo_fixed_text.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
-FixedText *FixedText::init(SherlockEngine *vm) {
-	if (vm->getGameID() == GType_SerratedScalpel)
-		return new Scalpel::ScalpelFixedText(vm);
-	else
-		return new Tattoo::TattooFixedText(vm);
+namespace Tattoo {
+
+static const char *const FIXED_TEXT_ENGLISH[] = {
+	"Open",
+	"Look",
+	"Talk",
+	"Journal"
+};
+
+TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {
 }
 
+const Common::String TattooFixedText::getText(int fixedTextId) {
+	return Common::String(FIXED_TEXT_ENGLISH[fixedTextId]);
+}
+
+const Common::String TattooFixedText::getActionMessage(FixedTextActionId actionId, int messageIndex) {
+	return Common::String();
+}
+
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock

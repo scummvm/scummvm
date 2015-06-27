@@ -22,6 +22,7 @@
 
 #include "sherlock/journal.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_journal.h"
@@ -197,7 +198,7 @@ bool Journal::drawJournal(int direction, int howFar) {
 		drawFrame();
 	}
 
-	Common::String fixedText_Page = fixedText.getText(kFixedText_Journal_Page);
+	Common::String fixedText_Page = IS_SERRATED_SCALPEL ? fixedText.getText(Scalpel::kFixedText_Journal_Page) : "TODO";
 
 	screen.gPrint(Common::Point(235, 21), COL_PEN_COLOR, fixedText_Page.c_str(), _page);
 

@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/scalpel/scalpel_inventory.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/scalpel/scalpel.h"
