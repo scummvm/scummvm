@@ -9,6 +9,8 @@ MODULE_OBJS := \
 	midiparser_xmidi.o \
 	midiparser.o \
 	midiplayer.o \
+	miles_adlib.o \
+	miles_mt32.o \
 	mixer.o \
 	mpu401.o \
 	musicplugin.o \

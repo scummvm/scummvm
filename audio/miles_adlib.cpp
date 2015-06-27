@@ -20,8 +20,7 @@
  *
  */
 
-#include "sherlock/sherlock.h"
-#include "sherlock/tattoo/drivers/tattoo_mididriver.h"
+#include "audio/miles.h"
 
 #include "common/file.h"
 #include "common/system.h"
@@ -30,12 +29,11 @@
 #include "audio/fmopl.h"
 #include "audio/softsynth/emumidi.h"
 
-namespace Sherlock {
+namespace Audio {
 
-// Miles Audio supported the following things:
-// regular AdLib OPL card
-// Dual-OPL2 <-- we don't do this atm
-// OPL3 <-- we do support this, but there is no support for 4-op voices atm
+// Miles Audio AdLib/OPL3 driver
+//
+// TODO: currently missing: OPL3 4-op voices
 
 #define MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX 20
 #define MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX 18
@@ -1134,4 +1132,4 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 	return new MidiDriver_Miles_AdLib(g_system->getMixer(), instrumentTablePtr, instrumentTableCount);
 }
 
-} // End of namespace Sherlock
+} // End of namespace Audio

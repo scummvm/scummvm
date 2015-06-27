@@ -20,15 +20,19 @@
  *
  */
 
-#include "sherlock/sherlock.h"
-#include "sherlock/tattoo/drivers/tattoo_mididriver.h"
+#include "audio/miles.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/mutex.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
-namespace Sherlock {
+namespace Audio {
+
+// Miles Audio MT32 driver
+//
+// TODO: currently missing: timbre file support (used in 7th Guest)
 
 #define MILES_MT32_PATCH_COUNT 128
 
@@ -434,4 +438,4 @@ MidiDriver *MidiDriver_Miles_MT32_create(const Common::String instrumentDataFile
 	return new MidiDriver_Miles_MT32();
 }
 
-} // End of namespace Sherlock
+} // End of namespace Audio

@@ -20,14 +20,13 @@
  *
  */
 
-#ifndef SHERLOCK_TATTOO_DRIVERS_MIDIDRIVER_H
-#define SHERLOCK_TATTOO_DRIVERS_MIDIDRIVER_H
+#ifndef AUDIO_MILES_MIDIDRIVER_H
+#define AUDIO_MILES_MIDIDRIVER_H
 
-#include "sherlock/sherlock.h"
 #include "audio/mididrv.h"
 #include "common/error.h"
 
-namespace Sherlock {
+namespace Audio {
 
 #define MILES_MIDI_CHANNEL_COUNT 16
 
@@ -64,6 +63,6 @@ extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrument
 
 extern MidiDriver *MidiDriver_Miles_MT32_create(const Common::String instrumentDataFilename);
 
-} // End of namespace Sherlock
+} // End of namespace Audio
 
-#endif // SHERLOCK_TATTOO_DRIVERS_MIDIDRIVER_H
+#endif // AUDIO_MILES_MIDIDRIVER_H

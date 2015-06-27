@@ -25,7 +25,8 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
-#include "sherlock/tattoo/drivers/tattoo_mididriver.h"
+// for Miles Audio (Sherlock Holmes 2)
+#include "audio/miles.h"
 // for 3DO digital music
 #include "audio/decoders/aiff.h"
 
@@ -269,14 +270,14 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			// SAMPLE.AD  -> regular AdLib instrument data
 			// SAMPLE.OPL -> OPL-3 instrument data
 			// although in case of Rose Tattoo both files are exactly the same
-			_midiDriver = MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+			_midiDriver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
 			break;
 		case MT_MT32:
-			_midiDriver = MidiDriver_Miles_MT32_create("SAMPLE.MT");
+			_midiDriver = Audio::MidiDriver_Miles_MT32_create("SAMPLE.MT");
 			break;
 		case MT_GM:
 			if (ConfMan.getBool("native_mt32")) {
-				_midiDriver = MidiDriver_Miles_MT32_create("SAMPLE.MT");
+				_midiDriver = Audio::MidiDriver_Miles_MT32_create("SAMPLE.MT");
 				_musicType = MT_MT32;
 			}
 			break;
