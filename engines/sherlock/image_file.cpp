@@ -93,9 +93,10 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		}
 
 		// Load data for frame and decompress it
-		byte *data = new byte[frame._size];
+		byte *data = new byte[frame._size + 4];
 		stream.read(data, frame._size);
-		decompressFrame(frame, data);
+		Common::fill(data + frame._size, data + frame._size + 4, 0);
+		frame.decompressFrame(data, _vm->getGameID() == GType_RoseTattoo);
 		delete[] data;
 
 		push_back(frame);
@@ -134,21 +135,21 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 	}
 }
 
-void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
-	frame._frame.create(frame._width, frame._height, Graphics::PixelFormat::createFormatCLUT8());
-	byte *dest = (byte *)frame._frame.getPixels();
-	Common::fill(dest, dest + frame._width * frame._height, 0xff);
+void ImageFrame::decompressFrame(const byte *src, bool isRoseTattoo) {
+	_frame.create(_width, _height, Graphics::PixelFormat::createFormatCLUT8());
+	byte *dest = (byte *)_frame.getPixels();
+	Common::fill(dest, dest + _width * _height, 0xff);
 
-	if (frame._paletteBase) {
+	if (_paletteBase) {
 		// Nibble-packed
-		for (uint idx = 0; idx < frame._size; ++idx, ++src) {
+		for (uint idx = 0; idx < _size; ++idx, ++src) {
 			*dest++ = *src & 0xF;
 			*dest++ = (*src >> 4);
 		}
-	} else if (frame._rleEncoded && _vm->getGameID() == GType_RoseTattoo) {
+	} else if (_rleEncoded && isRoseTattoo) {
 		// Rose Tattoo run length encoding doesn't use the RLE marker byte
-		for (int yp = 0; yp < frame._height; ++yp) {
-			int xSize = frame._width;
+		for (int yp = 0; yp < _height; ++yp) {
+			int xSize = _width;
 			while (xSize > 0) {
 				// Skip a given number of pixels
 				byte skip = *src++;
@@ -165,11 +166,11 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 			}
 			assert(xSize == 0);
 		}
-	} else if (frame._rleEncoded) {
+	} else if (_rleEncoded) {
 		// RLE encoded
-		int frameSize = frame._width * frame._height;
+		int frameSize = _width * _height;
 		while (frameSize > 0) {
-			if (*src == frame._rleMarker) {
+			if (*src == _rleMarker) {
 				byte rleColor = src[1];
 				byte rleCount = src[2];
 				src += 3;
@@ -184,7 +185,7 @@ void ImageFile::decompressFrame(ImageFrame &frame, const byte *src) {
 		assert(frameSize == 0);
 	} else {
 		// Uncompressed frame
-		Common::copy(src, src + frame._width * frame._height, dest);
+		Common::copy(src, src + _width * _height, dest);
 	}
 }
 
@@ -1005,6 +1006,70 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 
 	delete[] bitsTablePtr;
 	delete[] widthTablePtr;
+}
+
+/*----------------------------------------------------------------*/
+
+StreamingImageFile::StreamingImageFile() {
+	_frameNumber = 0;
+	_stream = nullptr;
+	_flags = 0;
+	_scaleVal = 0;
+	_zPlacement = 0;
+}
+
+StreamingImageFile::~StreamingImageFile() {
+	close();
+}
+
+void StreamingImageFile::load(Common::SeekableReadStream *stream, bool compressed) {
+	_stream = stream;
+	_compressed = compressed;
+	_frameNumber = -1;
+}
+
+void StreamingImageFile::close() {
+	delete _stream;
+	_stream = nullptr;
+	_frameNumber = -1;
+}
+
+void StreamingImageFile::getNextFrame() {
+	// Don't proceed if we're already at the end of the stream
+	if (_stream->pos() >= _stream->size())
+		return;
+
+	// Increment frame number
+	++_frameNumber;
+
+	// If necessary, decompress the next frame
+	Common::SeekableReadStream *frameStream = _stream;
+	if (_compressed) {
+		uint32 inSize = _stream->readUint32LE();
+		Resources::decompressLZ(*_stream, _buffer, STREAMING_BUFFER_SIZE, inSize);
+		frameStream = new Common::MemoryReadStream(_buffer, 11, DisposeAfterUse::NO);
+	}
+
+	// Load the data for the frame
+	_imageFrame._width = frameStream->readUint16LE() + 1;
+	_imageFrame._height = frameStream->readUint16LE() + 1;
+	_imageFrame._paletteBase = frameStream->readByte();
+	_imageFrame._rleEncoded = frameStream->readByte() == 1;
+	_imageFrame._offset.x = frameStream->readByte();
+	_imageFrame._offset.y = frameStream->readByte();
+	_imageFrame._size = frameStream->readUint16LE() - 11;
+	_imageFrame._rleMarker = frameStream->readByte();
+
+	// Decode the frame
+	if (_compressed) {
+		delete frameStream;
+		_imageFrame.decompressFrame(_buffer + 11, true);
+	} else {
+		byte *data = new byte[_imageFrame._size];
+		_stream->read(data, _imageFrame._size);
+		_imageFrame.decompressFrame(_buffer + 11, true);
+		delete[] data;
+	}
 }
 
 } // End of namespace Sherlock

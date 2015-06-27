@@ -458,44 +458,6 @@ struct CAnim {
 	void load3DO(Common::SeekableReadStream &s, uint32 dataOffset);
 };
 
-class CAnimStream {
-	ImageFile *_images;					
-	int _frameNumber;
-public:
-	ImageFrame *_imageFrame;
-
-	Common::Point _position;		// Animation position
-	Common::Rect _oldBounds;		// Bounds of previous frame
-	Common::Rect _removeBounds;		// Remove area for just drawn frame
-
-	int _flags;						// Flags
-	int _scaleVal;					// Specifies the scale amount
-	int _zPlacement;				// Used by doBgAnim for determining Z order
-public:
-	CAnimStream();
-	~CAnimStream();
-
-	/**
-	 * Load the animation's images
-	 */
-	void load(Common::SeekableReadStream *stream);
-
-	/**
-	 * Close any currently active animation
-	 */
-	void close();
-
-	/**
-	 * Get the next frame of the animation
-	 */
-	void getNextFrame();
-
-	/**
-	 * Returns whether the animation is active
-	 */
-	bool active() const { return _imageFrame != nullptr; }
-};
-
 struct SceneImage {
 	ImageFile *_images;				// Object images
 	int _maxFrames;					// How many frames in object

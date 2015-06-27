@@ -1498,42 +1498,6 @@ void CAnim::load3DO(Common::SeekableReadStream &s, uint32 dataOffset) {
 
 /*----------------------------------------------------------------*/
 
-CAnimStream::CAnimStream() {
-	_images = nullptr;
-	_imageFrame = nullptr;
-	_frameNumber = 0;
-	_flags = 0;
-	_scaleVal = 0;
-	_zPlacement = 0;
-}
-
-CAnimStream::~CAnimStream() {
-	delete _images;
-}
-
-void CAnimStream::load(Common::SeekableReadStream *stream) {
-	delete _images;
-	_images = new ImageFile(*stream, false);
-	_imageFrame = &(*_images)[0];
-	_frameNumber = 0;
-}
-
-void CAnimStream::close() {
-	delete _images;
-	_images = nullptr;
-	_imageFrame = nullptr;
-	_frameNumber = 0;
-}
-
-void CAnimStream::getNextFrame() {
-	if (++_frameNumber < (int)_images->size())
-		_imageFrame = &(*_images)[_frameNumber];
-	else
-		_imageFrame = nullptr;
-}
-
-/*----------------------------------------------------------------*/
-
 SceneImage::SceneImage() {
 	_images = nullptr;
 	_maxFrames = 0;

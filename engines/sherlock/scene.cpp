@@ -224,7 +224,7 @@ Scene::Scene(SherlockEngine *vm): _vm(vm) {
 	_loadingSavedGame = false;
 	_walkedInScene = false;
 	_version = 0;
-	_lzwMode = false;
+	_compressed = false;
 	_invGraphicItems = 0;
 	_cAnimFramePause = 0;
 	_restoreFlag = false;
@@ -350,9 +350,9 @@ bool Scene::loadScene(const Common::String &filename) {
 			rrmStream->seek(39);
 			if (IS_SERRATED_SCALPEL) {
 				_version = rrmStream->readByte();
-				_lzwMode = _version == 10;
+				_compressed = _version == 10;
 			} else {
-				_lzwMode = rrmStream->readByte() > 0;
+				_compressed = rrmStream->readByte() > 0;
 			}
 
 			// Go to header and read it in
@@ -370,7 +370,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				paletteLoaded();
 
 				// Read in background
-				if (_lzwMode) {
+				if (_compressed) {
 					res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
 				} else {
 					rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
@@ -387,29 +387,29 @@ bool Scene::loadScene(const Common::String &filename) {
 			// Read information
 			if (IS_ROSE_TATTOO) {
 				// Load shapes
-				Common::SeekableReadStream *infoStream = !_lzwMode ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
+				Common::SeekableReadStream *infoStream = !_compressed ? rrmStream : res.decompress(*rrmStream, bgHeader._numStructs * 625);
 
 				_bgShapes.resize(bgHeader._numStructs);
 				for (int idx = 0; idx < bgHeader._numStructs; ++idx)
 					_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
 
-				if (_lzwMode)
+				if (_compressed)
 					delete infoStream;
 
 				// Load description text
 				_descText.resize(bgHeader._descSize);
-				if (_lzwMode)
+				if (_compressed)
 					res.decompress(*rrmStream, (byte *)&_descText[0], bgHeader._descSize);
 				else
 					rrmStream->read(&_descText[0], bgHeader._descSize);
 
 				// Load sequences
 				_sequenceBuffer.resize(bgHeader._seqSize);
-				if (_lzwMode)
+				if (_compressed)
 					res.decompress(*rrmStream, &_sequenceBuffer[0], bgHeader._seqSize);
 				else
 					rrmStream->read(&_sequenceBuffer[0], bgHeader._seqSize);
-			} else if (!_lzwMode) {
+			} else if (!_compressed) {
 				// Serrated Scalpel uncompressed info
 				_bgShapes.resize(bgHeader._numStructs);
 				for (int idx = 0; idx < bgHeader._numStructs; ++idx)
@@ -465,7 +465,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				_images[idx + 1]._maxFrames = bgInfo[idx]._maxFrames;
 
 				// Read in the image data
-				Common::SeekableReadStream *imageStream = _lzwMode ?
+				Common::SeekableReadStream *imageStream = _compressed ?
 					res.decompress(*rrmStream, bgInfo[idx]._filesize) :
 					rrmStream->readStream(bgInfo[idx]._filesize);
 
@@ -495,7 +495,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			_cAnim.clear();
 			if (bgHeader._numcAnimations) {
 				int animSize = IS_SERRATED_SCALPEL ? 65 : 47;
-				Common::SeekableReadStream *cAnimStream = _lzwMode ?
+				Common::SeekableReadStream *cAnimStream = _compressed ?
 					res.decompress(*rrmStream, animSize * bgHeader._numcAnimations) :
 					rrmStream->readStream(animSize * bgHeader._numcAnimations);
 
@@ -533,7 +533,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the room bounding areas
 			int size = rrmStream->readUint16LE();
-			Common::SeekableReadStream *boundsStream = !_lzwMode ? rrmStream :
+			Common::SeekableReadStream *boundsStream = !_compressed ? rrmStream :
 				res.decompress(*rrmStream, size);
 
 			_zones.resize(size / 10);
@@ -545,7 +545,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				boundsStream->skip(2);	// Skip unused scene number field
 			}
 
-			if (_lzwMode)
+			if (_compressed)
 				delete boundsStream;
 
 			// Ensure we've reached the path version byte
@@ -564,7 +564,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 			// Read in the walk data
 			size = rrmStream->readUint16LE();
-			Common::SeekableReadStream *walkStream = !_lzwMode ? rrmStream :
+			Common::SeekableReadStream *walkStream = !_compressed ? rrmStream :
 				res.decompress(*rrmStream, size);
 
 			int startPos = walkStream->pos();
@@ -574,7 +574,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				_walkPoints[_walkPoints.size() - 1].load(*walkStream, IS_ROSE_TATTOO);
 			}
 
-			if (_lzwMode)
+			if (_compressed)
 				delete walkStream;
 
 			// Translate the file offsets of the walk directory to indexes in the loaded walk data
@@ -639,12 +639,12 @@ bool Scene::loadScene(const Common::String &filename) {
 				Common::copy(screen._cMap, screen._cMap + PALETTE_SIZE, screen._sMap);
 
 				// Read in the background
-				Common::SeekableReadStream *bgStream = !_lzwMode ? rrmStream :
+				Common::SeekableReadStream *bgStream = !_compressed ? rrmStream :
 					res.decompress(*rrmStream, SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
 				bgStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCENE_HEIGHT);
 
-				if (_lzwMode)
+				if (_compressed)
 					delete bgStream;
 			}
 

@@ -97,7 +97,7 @@ protected:
 	 */
 	virtual void synchronize(Serializer &s);
 public:
-	CAnimStream _activeCAnim;
+	StreamingImageFile _activeCAnim;
 	Common::Array<SceneTripEntry> _sceneTripCounters;
 	bool _labTableScene;
 public:

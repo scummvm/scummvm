@@ -130,8 +130,8 @@ void TattooScene::drawAllShapes() {
 	}
 
 	// Draw the animation if it is behind the person
-	if (_activeCAnim._imageFrame != nullptr && _activeCAnim._zPlacement == BEHIND)
-		screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position,
+	if (_activeCAnim.active() && _activeCAnim._zPlacement == BEHIND)
+		screen._backBuffer1.transBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
 			(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 
 	screen.resetDisplayBounds();
@@ -151,13 +151,13 @@ void TattooScene::drawAllShapes() {
 	}
 
 	// Queue drawing the animation if it is NORMAL and can fall in front of, or behind the people
-	if (_activeCAnim._imageFrame != nullptr && (_activeCAnim._zPlacement == NORMAL_BEHIND || _activeCAnim._zPlacement == NORMAL_FORWARD)) {
+	if (_activeCAnim.active() && (_activeCAnim._zPlacement == NORMAL_BEHIND || _activeCAnim._zPlacement == NORMAL_FORWARD)) {
 		if (_activeCAnim._scaleVal == SCALE_THRESHOLD)
-			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->_offset.y +
-				_activeCAnim._imageFrame->_height));
+			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame._offset.y +
+				_activeCAnim._imageFrame._height));
 		else
-			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame->sDrawYOffset(_activeCAnim._scaleVal) +
-				_activeCAnim._imageFrame->sDrawYSize(_activeCAnim._scaleVal)));
+			shapeList.push_back(ShapeEntry(_activeCAnim._position.y + _activeCAnim._imageFrame.sDrawYOffset(_activeCAnim._scaleVal) +
+				_activeCAnim._imageFrame.sDrawYSize(_activeCAnim._scaleVal)));
 	}
 
 	// Queue all active characters for drawing
@@ -182,7 +182,7 @@ void TattooScene::drawAllShapes() {
 					se._shape->_flags & OBJ_FLIPPED, 0, se._shape->_scaleVal);
 		} else if (se._isAnimation) {
 			// It's an active animation
-			screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position,
+			screen._backBuffer1.transBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position,
 				(_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 		} else {
 			// Drawing person
@@ -244,8 +244,8 @@ void TattooScene::drawAllShapes() {
 	}
 
 	// Draw the canimation if it is set as FORWARD
-	if (_activeCAnim._imageFrame != nullptr && _activeCAnim._zPlacement == FORWARD)
-		screen._backBuffer1.transBlitFrom(*_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
+	if (_activeCAnim.active() && _activeCAnim._zPlacement == FORWARD)
+		screen._backBuffer1.transBlitFrom(_activeCAnim._imageFrame, _activeCAnim._position, (_activeCAnim._flags & 4) >> 1, 0, _activeCAnim._scaleVal);
 
 	// Draw all NO_SHAPE shapes which have their flag bits clear
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -268,13 +268,13 @@ void TattooScene::checkBgShapes() {
 	Scene::checkBgShapes();
 
 	// Check for any active playing animation
-	if (_activeCAnim._imageFrame && _activeCAnim._zPlacement != REMOVE) {
+	if (_activeCAnim.active() && _activeCAnim._zPlacement != REMOVE) {
 		switch (_activeCAnim._flags & 3) {
 		case 0:
 			_activeCAnim._zPlacement = BEHIND;
 			break;
 		case 1:
-			_activeCAnim._zPlacement = ((_activeCAnim._position.y + _activeCAnim._imageFrame->_frame.h - 1)) ?
+			_activeCAnim._zPlacement = ((_activeCAnim._position.y + _activeCAnim._imageFrame._frame.h - 1)) ?
 				NORMAL_FORWARD : NORMAL_BEHIND;
 			break;
 		case 2:
@@ -379,10 +379,6 @@ void TattooScene::doBgAnimUpdateBgObjectsAndAnim() {
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		if (people[idx]._type == CHARACTER)
 			people[idx].adjustSprite();
-	}
-
-	if (_activeCAnim._imageFrame != nullptr && _activeCAnim._zPlacement != REMOVE) {
-		_activeCAnim.getNextFrame();
 	}
 
 	// Flag the bg shapes which need to be redrawn
@@ -531,9 +527,9 @@ void TattooScene::doBgAnimDrawSprites() {
 		}
 	}
 
-	if (_activeCAnim._imageFrame != nullptr || _activeCAnim._zPlacement == REMOVE) {
+	if (_activeCAnim.active() || _activeCAnim._zPlacement == REMOVE) {
 		if (_activeCAnim._zPlacement != REMOVE) {
-			screen.flushImage(_activeCAnim._imageFrame, _activeCAnim._position, _activeCAnim._oldBounds, _activeCAnim._scaleVal);
+			screen.flushImage(&_activeCAnim._imageFrame, _activeCAnim._position, _activeCAnim._oldBounds, _activeCAnim._scaleVal);
 		} else {
 			screen.slamArea(_activeCAnim._removeBounds.left - ui._currentScroll.x, _activeCAnim._removeBounds.top, 
 				_activeCAnim._removeBounds.width(), _activeCAnim._removeBounds.height());
@@ -651,11 +647,16 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	_activeCAnim._scaleVal = cAnim._scaleVal;
 	_activeCAnim._zPlacement = 0;
 
-	_activeCAnim.load(animStream);
+	_activeCAnim.load(animStream, _compressed);
 
 	while (_activeCAnim.active() && !_vm->shouldQuit()) {
+		// Get the next frame
+		_activeCAnim.getNextFrame();
+
+		// Draw the frame
 		doBgAnim();
 
+		// Check for Escape key being pressed to abort animation
 		events.pollEvents();
 		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();

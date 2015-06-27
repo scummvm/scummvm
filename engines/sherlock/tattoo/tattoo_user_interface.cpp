@@ -323,7 +323,7 @@ void TattooUserInterface::doBgAnimRestoreUI() {
 	_tooltipWidget.erase();
 
 	// If a canimation is active, restore the graphics underneath it
-	if (scene._activeCAnim._imageFrame != nullptr)
+	if (scene._activeCAnim.active())
 		screen.restoreBackground(scene._activeCAnim._oldBounds);
 
 	// If a canimation just ended, remove it's graphics from the backbuffer
