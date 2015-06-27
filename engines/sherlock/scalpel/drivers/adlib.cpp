@@ -272,8 +272,8 @@ protected:
 
 private:
 	void resetAdLib();
-	void resetAdLib_OperatorRegisters(byte baseRegister, byte value);
-	void resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value);
+	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
+	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
 
 	void programChange(byte MIDIchannel, byte parameter);
 	void setRegister(int reg, int value);
@@ -347,17 +347,17 @@ void MidiDriver_SH_AdLib::resetAdLib() {
 	setRegister(0xBD, 0); // disable Rhythm
 
 	// reset FM voice instrument data
-	resetAdLib_OperatorRegisters(0x20, 0);
-	resetAdLib_OperatorRegisters(0x60, 0);
-	resetAdLib_OperatorRegisters(0x80, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xA0, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xB0, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xC0, 0);
-	resetAdLib_OperatorRegisters(0xE0, 0);
-	resetAdLib_OperatorRegisters(0x40, 0x3F);
+	resetAdLibOperatorRegisters(0x20, 0);
+	resetAdLibOperatorRegisters(0x60, 0);
+	resetAdLibOperatorRegisters(0x80, 0);
+	resetAdLibFMVoiceChannelRegisters(0xA0, 0);
+	resetAdLibFMVoiceChannelRegisters(0xB0, 0);
+	resetAdLibFMVoiceChannelRegisters(0xC0, 0);
+	resetAdLibOperatorRegisters(0xE0, 0);
+	resetAdLibOperatorRegisters(0x40, 0x3F);
 }
 
-void MidiDriver_SH_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byte value) {
+void MidiDriver_SH_AdLib::resetAdLibOperatorRegisters(byte baseRegister, byte value) {
 	byte operatorIndex;
 
 	for (operatorIndex = 0; operatorIndex < 0x16; operatorIndex++) {
@@ -373,7 +373,7 @@ void MidiDriver_SH_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byte v
 	}
 }
 
-void MidiDriver_SH_AdLib::resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value) {
+void MidiDriver_SH_AdLib::resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value) {
 	byte FMvoiceChannel;
 
 	for (FMvoiceChannel = 0; FMvoiceChannel < SHERLOCK_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
