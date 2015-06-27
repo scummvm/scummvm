@@ -37,15 +37,13 @@ namespace Sherlock {
 // Dual-OPL2 <-- we don't do this atm
 // OPL3 <-- we do support this, but there is no support for 4-op voices atm
 
-#define SHERLOCK_MILES_MIDI_CHANNEL_COUNT 16
+#define MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX 20
+#define MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX 18
 
-#define SHERLOCK_MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX 20
-#define SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX 18
+#define MILES_ADLIB_PERCUSSION_BANK 127
 
-#define SHERLOCK_MILES_ADLIB_PERCUSSION_BANK 127
-
-#define SHERLOCK_MILES_ADLIB_STEREO_PANNING_THRESHOLD_LEFT 27
-#define SHERLOCK_MILES_ADLIB_STEREO_PANNING_THRESHOLD_RIGHT 100
+#define MILES_ADLIB_STEREO_PANNING_THRESHOLD_LEFT 27
+#define MILES_ADLIB_STEREO_PANNING_THRESHOLD_RIGHT 100
 
 enum kMilesAdLibUpdateFlags {
 	kMilesAdLibUpdateFlags_None    = 0,
@@ -58,17 +56,17 @@ enum kMilesAdLibUpdateFlags {
 	kMilesAdLibUpdateFlags_Reg_All = 0x3F
 };
 
-uint16 milesOperator1Register[SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
+uint16 milesAdLibOperator1Register[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
 	0x0000, 0x0001, 0x0002, 0x0008, 0x0009, 0x000A, 0x0010, 0x0011, 0x0012,
 	0x0100, 0x0101, 0x0102, 0x0108, 0x0109, 0x010A, 0x0110, 0x0111, 0x0112
 };
 
-uint16 milesOperator2Register[SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
+uint16 milesAdLibOperator2Register[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
 	0x0003, 0x0004, 0x0005, 0x000B, 0x000C, 0x000D, 0x0013, 0x0014, 0x0015,
 	0x0103, 0x0104, 0x0105, 0x010B, 0x010C, 0x010D, 0x0113, 0x0114, 0x0115
 };
 
-uint16 milesChannelRegister[SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
+uint16 milesAdLibChannelRegister[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX] = {
 	0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
 	0x0100, 0x0101, 0x0102, 0x0103, 0x0104, 0x0105, 0x0106, 0x0107, 0x0108
 };
@@ -91,7 +89,7 @@ struct InstrumentEntry {
 };
 
 // hardcoded, dumped from ADLIB.MDI
-uint16 milesFrequencyLookUpTable[] = {
+uint16 milesAdLibFrequencyLookUpTable[] = {
 	0x02B2, 0x02B4, 0x02B7, 0x02B9, 0x02BC, 0x02BE, 0x02C1, 0x02C3, 0x02C6, 0x02C9, 0x02CB, 0x02CE,
 	0x02D0, 0x02D3, 0x02D6, 0x02D8, 0x02DB, 0x02DD, 0x02E0, 0x02E3, 0x02E5, 0x02E8, 0x02EB, 0x02ED,
 	0x02F0, 0x02F3, 0x02F6, 0x02F8, 0x02FB, 0x02FE, 0x0301, 0x0303, 0x0306, 0x0309, 0x030C, 0x030F,
@@ -111,7 +109,7 @@ uint16 milesFrequencyLookUpTable[] = {
 };
 
 // hardcoded, dumped from ADLIB.MDI
-uint16 milesVolumeSensitivityTable[] = {
+uint16 milesAdLibVolumeSensitivityTable[] = {
 	82, 85, 88, 91, 94, 97, 100, 103, 106, 109, 112, 115, 118, 121, 124, 127
 };
 
@@ -166,7 +164,7 @@ private:
 
 		MidiChannelEntry() : currentPatchBank(0),
 							currentInstrumentPtr(NULL),
-							currentPitchBender(SHERLOCK_MILES_PITCHBENDER_DEFAULT),
+							currentPitchBender(MILES_PITCHBENDER_DEFAULT),
 							currentVoiceProtection(0),
 							currentVolume(0), currentVolumeExpression(0),
 							currentPanning(0),
@@ -222,13 +220,13 @@ private:
 	int _masterVolume;
 
 	// stores information about all MIDI channels (not the actual OPL FM voice channels!)
-	MidiChannelEntry _midiChannels[SHERLOCK_MILES_MIDI_CHANNEL_COUNT];
+	MidiChannelEntry _midiChannels[MILES_MIDI_CHANNEL_COUNT];
 
 	// stores information about all virtual OPL FM voices
-	VirtualFmVoiceEntry _virtualFmVoices[SHERLOCK_MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX];
+	VirtualFmVoiceEntry _virtualFmVoices[MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX];
 
 	// stores information about all physical OPL FM voices
-	PhysicalFmVoiceEntry _physicalFmVoices[SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX];
+	PhysicalFmVoiceEntry _physicalFmVoices[MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX];
 
 	// holds all instruments
 	InstrumentEntry *_instrumentTablePtr;
@@ -285,7 +283,7 @@ MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(Audio::Mixer *mixer, InstrumentEn
 	// Sherlock Holmes 2 used the circular assign
 	circularPhysicalAssignment = true;
 	// this way the first circular physical FM-voice search will start at FM-voice 0
-	circularPhysicalAssignmentFmVoice = SHERLOCK_MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX;
+	circularPhysicalAssignmentFmVoice = MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX;
 
 	resetData();
 }
@@ -346,8 +344,8 @@ void MidiDriver_Miles_AdLib::resetData() {
 	memset(_virtualFmVoices, 0, sizeof(_virtualFmVoices));
 	memset(_physicalFmVoices, 0, sizeof(_physicalFmVoices));
 
-	for (byte midiChannel = 0; midiChannel < SHERLOCK_MILES_MIDI_CHANNEL_COUNT; midiChannel++) {
-		_midiChannels[midiChannel].currentPitchBender = SHERLOCK_MILES_PITCHBENDER_DEFAULT;
+	for (byte midiChannel = 0; midiChannel < MILES_MIDI_CHANNEL_COUNT; midiChannel++) {
+		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
 		_midiChannels[midiChannel].currentPitchRange = 12;
 		// Miles Audio 2: hardcoded pitch range as a global (not channel specific), set to 12
 		// Miles Audio 3: pitch range per MIDI channel
@@ -383,8 +381,8 @@ void MidiDriver_Miles_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byt
 	byte physicalFmVoice = 0;
 
 	for (physicalFmVoice = 0; physicalFmVoice < _modePhysicalFmVoicesCount; physicalFmVoice++) {
-		setRegister(baseRegister + milesOperator1Register[physicalFmVoice], value);
-		setRegister(baseRegister + milesOperator2Register[physicalFmVoice], value);
+		setRegister(baseRegister + milesAdLibOperator1Register[physicalFmVoice], value);
+		setRegister(baseRegister + milesAdLibOperator2Register[physicalFmVoice], value);
 	}
 }
 
@@ -392,7 +390,7 @@ void MidiDriver_Miles_AdLib::resetAdLib_FMVoiceChannelRegisters(byte baseRegiste
 	byte physicalFmVoice = 0;
 
 	for (physicalFmVoice = 0; physicalFmVoice < _modePhysicalFmVoicesCount; physicalFmVoice++) {
-		setRegister(baseRegister + milesChannelRegister[physicalFmVoice], value);
+		setRegister(baseRegister + milesAdLibChannelRegister[physicalFmVoice], value);
 	}
 }
 
@@ -481,7 +479,7 @@ void MidiDriver_Miles_AdLib::noteOn(byte midiChannel, byte note, byte velocity) 
 	if (midiChannel == 9) {
 		// percussion channel
 		// search for instrument according to given note
-		instrumentPtr = searchInstrument(SHERLOCK_MILES_ADLIB_PERCUSSION_BANK, note);
+		instrumentPtr = searchInstrument(MILES_ADLIB_PERCUSSION_BANK, note);
 	} else {
 		// directly get instrument of channel
 		instrumentPtr = _midiChannels[midiChannel].currentInstrumentPtr;
@@ -503,7 +501,7 @@ void MidiDriver_Miles_AdLib::noteOn(byte midiChannel, byte note, byte velocity) 
 
 	// Scale back velocity
 	velocity = (velocity & 0x7F) >> 3;
-	velocity = milesVolumeSensitivityTable[velocity];
+	velocity = milesAdLibVolumeSensitivityTable[velocity];
 
 	if (midiChannel != 9) {
 		_virtualFmVoices[virtualFmVoice].currentNote = note;
@@ -568,7 +566,7 @@ void MidiDriver_Miles_AdLib::noteOff(byte midiChannel, byte note) {
 void MidiDriver_Miles_AdLib::prioritySort() {
 	byte   virtualFmVoice = 0;
 	uint16 virtualPriority = 0;
-	uint16 virtualPriorities[SHERLOCK_MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX];
+	uint16 virtualPriorities[MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX];
 	uint16 virtualFmVoicesCount = 0;
 	byte   midiChannel = 0;
 
@@ -699,9 +697,9 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 	byte                   physicalFmVoice = _virtualFmVoices[virtualFmVoice].physicalFmVoice;
 	const InstrumentEntry *instrumentPtr = _virtualFmVoices[virtualFmVoice].currentInstrumentPtr;
 
-	uint16 op1Reg = milesOperator1Register[physicalFmVoice];
-	uint16 op2Reg = milesOperator2Register[physicalFmVoice];
-	uint16 channelReg = milesChannelRegister[physicalFmVoice];
+	uint16 op1Reg = milesAdLibOperator1Register[physicalFmVoice];
+	uint16 op2Reg = milesAdLibOperator2Register[physicalFmVoice];
+	uint16 channelReg = milesAdLibChannelRegister[physicalFmVoice];
 
 	uint16 compositeVolume = 0;
 
@@ -792,9 +790,9 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 			// Panning for OPL3
 			byte panning = _midiChannels[midiChannel].currentPanning;
 
-			if (panning <= SHERLOCK_MILES_ADLIB_STEREO_PANNING_THRESHOLD_LEFT) {
+			if (panning <= MILES_ADLIB_STEREO_PANNING_THRESHOLD_LEFT) {
 				regC0 |= 0x10; // left speaker only
-			} else if (panning >= SHERLOCK_MILES_ADLIB_STEREO_PANNING_THRESHOLD_RIGHT) {
+			} else if (panning >= MILES_ADLIB_STEREO_PANNING_THRESHOLD_RIGHT) {
 				regC0 |= 0x20; // right speaker only
 			} else {
 				regC0 |= 0x30; // center
@@ -864,8 +862,8 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 			halfTone = physicalNote % 12; // remainder of physicalNote / 12
 
 			frequencyIdx = (halfTone << 4) + (currentNote & 0x0F);
-			assert(frequencyIdx < sizeof(milesFrequencyLookUpTable));
-			frequency = milesFrequencyLookUpTable[frequencyIdx];
+			assert(frequencyIdx < sizeof(milesAdLibFrequencyLookUpTable));
+			frequency = milesAdLibFrequencyLookUpTable[frequencyIdx];
 
 			octave = (physicalNote / 12) - 1;
 
@@ -894,34 +892,34 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 	uint16 registerUpdateFlags = kMilesAdLibUpdateFlags_None;
 
 	switch (controllerNumber) {
-	case SHERLOCK_MILES_CONTROLLER_SELECT_PATCH_BANK:
+	case MILES_CONTROLLER_SELECT_PATCH_BANK:
 		_midiChannels[midiChannel].currentPatchBank = controllerValue;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_PROTECT_VOICE:
+	case MILES_CONTROLLER_PROTECT_VOICE:
 		_midiChannels[midiChannel].currentVoiceProtection = controllerValue;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_PROTECT_TIMBRE:
+	case MILES_CONTROLLER_PROTECT_TIMBRE:
 		// It seems that this can get ignored, because we don't cache timbres at all
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_MODULATION:
+	case MILES_CONTROLLER_MODULATION:
 		_midiChannels[midiChannel].currentModulation = controllerValue;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_20;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_VOLUME:
+	case MILES_CONTROLLER_VOLUME:
 		_midiChannels[midiChannel].currentVolume = controllerValue;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_40;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_EXPRESSION:
+	case MILES_CONTROLLER_EXPRESSION:
 		_midiChannels[midiChannel].currentVolumeExpression = controllerValue;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_40;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_PANNING:
+	case MILES_CONTROLLER_PANNING:
 		_midiChannels[midiChannel].currentPanning = controllerValue;
 		if (_modeStereo) {
 			// Update register only in case we are in stereo mode
@@ -929,28 +927,28 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 		}
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_SUSTAIN:
+	case MILES_CONTROLLER_SUSTAIN:
 		_midiChannels[midiChannel].currentSustain = controllerValue;
 		if (controllerValue < 64) {
 			// release sustain TODO
 		}
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_PITCH_RANGE:
+	case MILES_CONTROLLER_PITCH_RANGE:
 		// Miles Audio 3 feature
 		_midiChannels[midiChannel].currentPitchRange = controllerValue;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_RESET_ALL:
+	case MILES_CONTROLLER_RESET_ALL:
 		_midiChannels[midiChannel].currentSustain = 0;
 		// release sustain TODO
 		_midiChannels[midiChannel].currentModulation = 0;
 		_midiChannels[midiChannel].currentVolumeExpression = 127;
-		_midiChannels[midiChannel].currentPitchBender = SHERLOCK_MILES_PITCHBENDER_DEFAULT;
+		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
 		registerUpdateFlags = kMilesAdLibUpdateFlags_Reg_20 | kMilesAdLibUpdateFlags_Reg_40 | kMilesAdLibUpdateFlags_Reg_A0;
 		break;
 
-	case SHERLOCK_MILES_CONTROLLER_ALL_NOTES_OFF:
+	case MILES_CONTROLLER_ALL_NOTES_OFF:
 		for (byte virtualFmVoice = 0; virtualFmVoice < _modeVirtualFmVoicesCount; virtualFmVoice++) {
 			if (_virtualFmVoices[virtualFmVoice].inUse) {
 				// used
