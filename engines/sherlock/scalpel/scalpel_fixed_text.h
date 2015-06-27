@@ -69,7 +69,7 @@ enum FixedTextId {
 	kFixedText_InitInventory_Letter,
 	kFixedText_InitInventory_Tarot,
 	kFixedText_InitInventory_OrnateKey,
-	kFixedText_InitInventory_PawnTicket,
+	kFixedText_InitInventory_PawnTicket
 };
 
 struct FixedTextActionEntry {
