@@ -34,7 +34,7 @@ namespace Sherlock {
 
 #define SHERLOCK_MT32_CHANNEL_COUNT 16
 
-const byte mt32_reverbDataSysEx[] = {
+const byte mt32ReverbDataSysEx[] = {
 	0x10, 0x00, 0x01, 0x01, 0x05, 0x05, 0xFF
 };
 
@@ -43,7 +43,6 @@ public:
 	MidiDriver_MT32() {
 		_driver = NULL;
 		_isOpen = false;
-		_MT32 = false;
 		_nativeMT32 = false;
 		_baseFreq = 250;
 
@@ -86,7 +85,6 @@ public:
 protected:
 	Common::Mutex _mutex;
 	MidiDriver *_driver;
-	bool _MT32;
 	bool _nativeMT32;
 
 	bool _isOpen;
@@ -99,7 +97,7 @@ private:
 public:
 	void uploadMT32Patches(byte *driverData, int32 driverSize);
 
-	void MT32SysEx(const byte *&dataPtr, int32 &bytesLeft);
+	void mt32SysEx(const byte *&dataPtr, int32 &bytesLeft);
 };
 
 MidiDriver_MT32::~MidiDriver_MT32() {
@@ -123,12 +121,10 @@ int MidiDriver_MT32::open() {
 
 	switch (musicType) {
 	case MT_MT32:
-		_MT32       = true;
-		_nativeMT32 = false;
+		_nativeMT32 = true;
 		break;
 	case MT_GM:
 		if (ConfMan.getBool("native_mt32")) {
-			_MT32       = true;
 			_nativeMT32 = true;
 		}
 		break;
@@ -147,7 +143,7 @@ int MidiDriver_MT32::open() {
 	if (ret)
 		return ret;
 
-	if (_MT32)
+	if (_nativeMT32)
 		_driver->sendMT32Reset();
 	else
 		_driver->sendGMReset();
@@ -174,10 +170,10 @@ void MidiDriver_MT32::newMusicData(byte *musicData, int32 musicDataSize) {
 	// that's why we don't implement this
 
 	// Also send these bytes to MT32 (SysEx) - seems to be reverb configuration
-	if (_MT32) {
-		const byte *reverbData = mt32_reverbDataSysEx;
-		int32       reverbDataSize = sizeof(mt32_reverbDataSysEx);
-		MT32SysEx(reverbData, reverbDataSize);
+	if (_nativeMT32) {
+		const byte *reverbData = mt32ReverbDataSysEx;
+		int32       reverbDataSize = sizeof(mt32ReverbDataSysEx);
+		mt32SysEx(reverbData, reverbDataSize);
 	}
 }
 
@@ -185,7 +181,7 @@ void MidiDriver_MT32::uploadMT32Patches(byte *driverData, int32 driverSize) {
 	if (!_driver)
 		return;
 
-	if (!_MT32)
+	if (!_nativeMT32)
 		return;
 
 	// patch data starts at offset 0x863
@@ -196,7 +192,7 @@ void MidiDriver_MT32::uploadMT32Patches(byte *driverData, int32 driverSize) {
 	int32       bytesLeft = driverSize - 0x863;
 
 	while(1) {
-		MT32SysEx(patchPtr, bytesLeft);
+		mt32SysEx(patchPtr, bytesLeft);
 
 		assert(bytesLeft);
 		if (*patchPtr == 0x80) // List terminator
@@ -204,7 +200,7 @@ void MidiDriver_MT32::uploadMT32Patches(byte *driverData, int32 driverSize) {
 	}
 }
 
-void MidiDriver_MT32::MT32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
+void MidiDriver_MT32::mt32SysEx(const byte *&dataPtr, int32 &bytesLeft) {
 	byte   sysExMessage[270];
 	uint16 sysExPos      = 0;
 	byte   sysExByte     = 0;
