@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	scalpel/scalpel_user_interface.o \
 	scalpel/settings.o \
 	tattoo/drivers/tattoo_adlib.o \
+	tattoo/drivers/tattoo_mt32.o \
 	tattoo/tattoo.o \
 	tattoo/tattoo_fixed_text.o \
 	tattoo/tattoo_journal.o \

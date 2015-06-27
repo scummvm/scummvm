@@ -276,10 +276,17 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			// although in case of Rose Tattoo both files are exactly the same
 			_midiDriver = MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
 			break;
+		case MT_MT32:
+			_midiDriver = MidiDriver_Miles_MT32_create("SAMPLE.MT");
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_midiDriver = MidiDriver_Miles_MT32_create("SAMPLE.MT");
+				_musicType = MT_MT32;
+			}
+			break;
 		default:
-			// HACK
-			_musicType = MT_GM;
-			_midiDriver = MidiDriver::createMidi(dev);
+			// Do not create anything
 			break;
 		}
 	}
@@ -293,23 +300,28 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_midiParser->setMidiDriver(_midiDriver);
 		_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 
-		if (_musicType == MT_MT32) {
-			// Upload patches
-			Common::SeekableReadStream *MT32driverStream = _vm->_res->load("MTHOM.DRV", "MUSIC.LIB");
+		if (IS_SERRATED_SCALPEL) {
+			if (_musicType == MT_MT32) {
+				// Upload patches
+				Common::SeekableReadStream *MT32driverStream = _vm->_res->load("MTHOM.DRV", "MUSIC.LIB");
 
-			byte *MT32driverData = new byte[MT32driverStream->size()];
-			int32 MT32driverDataSize = MT32driverStream->size();
-			assert(MT32driverData);
+				if (!MT32driverStream)
+					error("Music: could not load MTHOM.DRV, critical");
 
-			MT32driverStream->read(MT32driverData, MT32driverDataSize);
-			delete MT32driverStream;
+				byte *MT32driverData = new byte[MT32driverStream->size()];
+				int32 MT32driverDataSize = MT32driverStream->size();
+				assert(MT32driverData);
 
-			assert(MT32driverDataSize > 12);
-			byte *MT32driverDataPtr = MT32driverData + 12;
-			MT32driverDataSize -= 12;
+				MT32driverStream->read(MT32driverData, MT32driverDataSize);
+				delete MT32driverStream;
 
-			MidiDriver_MT32_uploadPatches(_midiDriver, MT32driverDataPtr, MT32driverDataSize);
-			delete[] MT32driverData;
+				assert(MT32driverDataSize > 12);
+				byte *MT32driverDataPtr = MT32driverData + 12;
+				MT32driverDataSize -= 12;
+
+				MidiDriver_MT32_uploadPatches(_midiDriver, MT32driverDataPtr, MT32driverDataSize);
+				delete[] MT32driverData;
+			}
 		}
 
 		_musicOn = true;
