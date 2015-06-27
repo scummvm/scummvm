@@ -181,8 +181,8 @@ protected:
 
 private:
 	void resetAdLib();
-	void resetAdLib_OperatorRegisters(byte baseRegister, byte value);
-	void resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value);
+	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
+	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
 
 	void programChange(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
 	void programChangeSetInstrument(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
@@ -278,14 +278,14 @@ void MidiDriver_Accolade_AdLib::resetAdLib() {
 	setRegister(0xBD, 0x00); // Disable rhythm
 
 	// reset FM voice instrument data
-	resetAdLib_OperatorRegisters(0x20, 0);
-	resetAdLib_OperatorRegisters(0x60, 0);
-	resetAdLib_OperatorRegisters(0x80, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xA0, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xB0, 0);
-	resetAdLib_FMVoiceChannelRegisters(0xC0, 0);
-	resetAdLib_OperatorRegisters(0xE0, 0);
-	resetAdLib_OperatorRegisters(0x40, 0x3F); // original driver sent 0x00
+	resetAdLibOperatorRegisters(0x20, 0);
+	resetAdLibOperatorRegisters(0x60, 0);
+	resetAdLibOperatorRegisters(0x80, 0);
+	resetAdLibFMVoiceChannelRegisters(0xA0, 0);
+	resetAdLibFMVoiceChannelRegisters(0xB0, 0);
+	resetAdLibFMVoiceChannelRegisters(0xC0, 0);
+	resetAdLibOperatorRegisters(0xE0, 0);
+	resetAdLibOperatorRegisters(0x40, 0x3F); // original driver sent 0x00
 
 	setRegister(0x01, 0x20); // enable waveform control on both operators
 	setRegister(0x04, 0x60); // Timer control
@@ -297,7 +297,7 @@ void MidiDriver_Accolade_AdLib::resetAdLib() {
 	_percussionReg = 0x20;
 }
 
-void MidiDriver_Accolade_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, byte value) {
+void MidiDriver_Accolade_AdLib::resetAdLibOperatorRegisters(byte baseRegister, byte value) {
 	byte operatorIndex;
 
 	for (operatorIndex = 0; operatorIndex < 0x16; operatorIndex++) {
@@ -313,7 +313,7 @@ void MidiDriver_Accolade_AdLib::resetAdLib_OperatorRegisters(byte baseRegister, 
 	}
 }
 
-void MidiDriver_Accolade_AdLib::resetAdLib_FMVoiceChannelRegisters(byte baseRegister, byte value) {
+void MidiDriver_Accolade_AdLib::resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value) {
 	byte FMvoiceChannel;
 
 	for (FMvoiceChannel = 0; FMvoiceChannel < AGOS_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
