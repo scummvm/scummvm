@@ -152,6 +152,8 @@ void WidgetText::centerWindowOnSpeaker(int speaker) {
 			pt.y = SHERLOCK_SCREEN_HEIGHT / 2 - _bounds.height() / 2;
 		}
 	}
+
+	_bounds.moveTo(pt);
 }
 
 void WidgetText::render(const Common::String &str) {

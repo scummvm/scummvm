@@ -865,6 +865,10 @@ void TattooUserInterface::banishWindow() {
 	_widget = nullptr;
 }
 
+void TattooUserInterface::clearWindow() {
+	banishWindow();
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

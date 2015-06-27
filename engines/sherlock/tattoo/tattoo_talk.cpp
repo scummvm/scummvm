@@ -184,7 +184,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
 
 void TattooTalk::talkInterface(const byte *&str) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	const char *s = (const char *)str;
+	const byte *s = str;
 
 	// Move to past the end of the text string
 	_charCount = 0;
@@ -195,7 +195,7 @@ void TattooTalk::talkInterface(const byte *&str) {
 
 	// Display the text window
 	ui.banishWindow();
-	ui._textWidget.load(s, _speaker);
+	ui._textWidget.load(Common::String((const char *)s, (const char *)str), _speaker);
 	ui._textWidget.summonWindow();
 	_wait = true;
 }

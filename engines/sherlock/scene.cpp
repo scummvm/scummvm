@@ -286,6 +286,7 @@ void Scene::freeScene() {
 	if (_currentScene == -1)
 		return;
 
+	_vm->_ui->clearWindow();
 	_vm->_talk->freeTalkVars();
 	_vm->_inventory->freeInv();
 	_vm->_music->freeSong();
