@@ -538,6 +538,7 @@ const MilesMT32InstrumentEntry *MidiDriver_Miles_MT32::searchCustomInstrument(by
 	for (uint16 instrumentNr = 0; instrumentNr < _instrumentTableCount; instrumentNr++) {
 		if ((instrumentPtr->bankId == patchBank) && (instrumentPtr->patchId == patchId))
 			return instrumentPtr;
+		instrumentPtr++;
 	}
 	return NULL;
 }
@@ -589,7 +590,7 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	const MilesMT32InstrumentEntry *instrumentPtr = NULL;
 
 	// Check, if requested instrument is actually available
-	instrumentPtr = this->searchCustomInstrument(patchBank, patchId);
+	instrumentPtr = searchCustomInstrument(patchBank, patchId);
 	if (!instrumentPtr) {
 		return -1; // not found -> bail out
 	}
