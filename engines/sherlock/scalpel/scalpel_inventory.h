@@ -31,6 +31,8 @@ namespace Scalpel {
 
 class ScalpelInventory : public Inventory {
 public:
+	int _invIndex;
+public:
 	ScalpelInventory(SherlockEngine *vm);
 	~ScalpelInventory();
 

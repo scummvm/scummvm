@@ -30,12 +30,29 @@ namespace Sherlock {
 namespace Tattoo {
 
 enum FixedTextId {
+	kFixedText_Inv1,
+	kFixedText_Inv2,
+	kFixedText_Inv3,
+	kFixedText_Inv4,
+	kFixedText_Inv5,
+	kFixedText_Inv6,
+	kFixedText_Inv7,
+	kFixedText_Inv8,
+	kFixedText_InvDesc1,
+	kFixedText_InvDesc2,
+	kFixedText_InvDesc3,
+	kFixedText_InvDesc4,
+	kFixedText_InvDesc5,
+	kFixedText_InvDesc6,
+	kFixedText_InvDesc7,
+	kFixedText_InvDesc8,
 	kFixedText_Open,
 	kFixedText_Look,
 	kFixedText_Talk,
 	kFixedText_Journal,
 	kFixedText_Inventory,
-	kFixedText_Options
+	kFixedText_Options,
+	kFixedText_Solve
 };
 
 class TattooFixedText: public FixedText {

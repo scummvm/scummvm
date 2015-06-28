@@ -136,7 +136,7 @@ void WidgetVerbs::render() {
 		_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_verbCommands[idx])) / 2, 
 			(_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
 
-		if (idx < ((int)_verbCommands.size() - 1)) {
+		if (idx < (_verbCommands.size() - 1)) {
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1), _bounds.width() - 4, INFO_TOP);
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 1, _bounds.width() - 4, INFO_MIDDLE);
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 2, _bounds.width() - 4, INFO_BOTTOM);

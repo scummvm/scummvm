@@ -51,6 +51,11 @@ private:
 	 * Loads the initial palette for the game
 	 */
 	void loadInitialPalette();
+
+	/**
+	 * Load the initial inventory
+	 */
+	void loadInventory();
 protected:
 	/**
 	 * Initialize the engine

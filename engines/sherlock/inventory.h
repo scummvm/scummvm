@@ -69,6 +69,8 @@ struct InventoryItem {
 	InventoryItem() : _requiredFlag(0), _lookFlag(0), _requiredFlag1(0) {}
 	InventoryItem(int requiredFlag, const Common::String &name,
 		const Common::String &description, const Common::String &examine);
+	InventoryItem(int requiredFlag, const Common::String &name,
+		const Common::String &description, const Common::String &examine, const Common::String &verbName);
 
 	/**
 	 * Synchronize the data for an inventory item

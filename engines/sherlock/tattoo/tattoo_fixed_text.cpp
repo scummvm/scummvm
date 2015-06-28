@@ -28,12 +28,31 @@ namespace Sherlock {
 namespace Tattoo {
 
 static const char *const FIXED_TEXT_ENGLISH[] = {
+	"Money",
+	"Card",
+	"Tobacco",
+	"Timetable",
+	"Summons",
+	"Foolscap",
+	"Damp Paper",
+	"Bull's Eye",
+
+	"Money",
+	"Card",
+	"Tobacco",
+	"Timetable",
+	"Summons",
+	"Foolscap",
+	"Foolscap",
+	"Bull's Eye Lantern",
+
 	"Open",
 	"Look",
 	"Talk",
 	"Journal",
 	"Inventory",
-	"Options"
+	"Options",
+	"Solve"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {

@@ -90,7 +90,7 @@ void WidgetInventory::load(int mode) {
 void WidgetInventory::drawInventory() {
 	Inventory &inv = *_vm->_inventory;
 
-	// TODO: Refactor _invIndexinto this widget class
+	// TODO: Refactor _invIndex into this widget class
 	for (int idx= 0, itemId = inv._invIndex; idx < NUM_INVENTORY_SHOWN; ++idx) {
 		// Figure out the drawing position
 		Common::Point pt(3 + (INVENTORY_XSIZE + 3) * (idx % (NUM_INVENTORY_SHOWN / 2)),
@@ -151,9 +151,9 @@ void WidgetInventory::drawScrollBar() {
 		r.right / 2, r.bottom - 1 - BUTTON_SIZE + 3 + BUTTON_SIZE / 2), color);
 
 	// Draw the scroll position bar
-	int idx= inv._holdings;
-	if (idx% (NUM_INVENTORY_SHOWN / 2))
-		idx= (idx + (NUM_INVENTORY_SHOWN / 2)) / (NUM_INVENTORY_SHOWN / 2)*(NUM_INVENTORY_SHOWN / 2);
+	int idx = inv._holdings;
+	if (idx % (NUM_INVENTORY_SHOWN / 2))
+		idx = (idx + (NUM_INVENTORY_SHOWN / 2)) / (NUM_INVENTORY_SHOWN / 2) * (NUM_INVENTORY_SHOWN / 2);
 	int barHeight = NUM_INVENTORY_SHOWN * (_bounds.height() - BUTTON_SIZE * 2) / idx;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, _bounds.height() - BUTTON_SIZE * 2);
 

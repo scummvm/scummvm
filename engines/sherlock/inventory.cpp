@@ -33,6 +33,13 @@ InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
 		_examine(examine), _lookFlag(0) {
 }
 
+InventoryItem::InventoryItem(int requiredFlag, const Common::String &name,
+		const Common::String &description, const Common::String &examine, const Common::String &verbName) :
+		_requiredFlag(requiredFlag), _name(name), _description(description),
+		_examine(examine), _lookFlag(0) {
+	_verb._verb = verbName;
+}
+
 void InventoryItem::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_requiredFlag);
 	s.syncAsSint16LE(_lookFlag);
