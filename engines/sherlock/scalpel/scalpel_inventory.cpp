@@ -30,7 +30,7 @@ namespace Sherlock {
 
 namespace Scalpel {
 
-ScalpelInventory::ScalpelInventory(SherlockEngine *vm) : Inventory(vm) {
+ScalpelInventory::ScalpelInventory(SherlockEngine *vm) : Inventory(vm), _invIndex(0) {
 }
 
 ScalpelInventory::~ScalpelInventory() {
