@@ -273,11 +273,12 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			_midiDriver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
 			break;
 		case MT_MT32:
-			_midiDriver = Audio::MidiDriver_Miles_MT32_create("SAMPLE.MT");
+			// Sherlock Holmes 2 does not have a MT32 timbre file
+			_midiDriver = Audio::MidiDriver_Miles_MT32_create("");
 			break;
 		case MT_GM:
 			if (ConfMan.getBool("native_mt32")) {
-				_midiDriver = Audio::MidiDriver_Miles_MT32_create("SAMPLE.MT");
+				_midiDriver = Audio::MidiDriver_Miles_MT32_create("");
 				_musicType = MT_MT32;
 			}
 			break;
