@@ -41,6 +41,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
 
+ Tinsel:
+   - improved AdLib music support in Discworld 1
+
 1.7.0 (2014-07-21)
  New Games:
    - Added support for Chivalry is Not Dead.
