@@ -31,6 +31,7 @@
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
 #include "audio/midiparser_qt.h"
+#include "audio/miles.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -42,24 +43,43 @@ namespace Saga {
 #define MUSIC_SUNSPOT 26
 
 MusicDriver::MusicDriver() : _isGM(false) {
-
-	MidiPlayer::createDriver();
-
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driverType = MidiDriver::getMusicType(dev);
 
+	switch (_driverType) {
+	case MT_ADLIB:
+		_milesAudioMode = true;
+		_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+		break;
+	case MT_MT32:
+		_milesAudioMode = true;
+		_driver = Audio::MidiDriver_Miles_MT32_create("");
+		break;
+	default:
+		_milesAudioMode = false;
+		MidiPlayer::createDriver();
+		break;
+	}
+
 	int retValue = _driver->open();
 	if (retValue == 0) {
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
+		if (_driverType != MT_ADLIB) {
+			if (_driverType == MT_MT32 || _nativeMT32)
+				_driver->sendMT32Reset();
+			else
+				_driver->sendGMReset();
+		}
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
 
 void MusicDriver::send(uint32 b) {
+	if (_milesAudioMode) {
+		_driver->send(b);
+		return;
+	}
+
 	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		// Remap MT32 instruments to General Midi
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;

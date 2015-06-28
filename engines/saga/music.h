@@ -61,6 +61,7 @@ public:
 protected:
 	MusicType _driverType;
 	bool _isGM;
+	bool _milesAudioMode;
 };
 
 class Music {
