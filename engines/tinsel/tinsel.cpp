@@ -890,7 +890,7 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 }
 
 Common::Error TinselEngine::run() {
-	_midiMusic = new MidiMusicPlayer();
+	_midiMusic = new MidiMusicPlayer(this);
 	_pcmMusic = new PCMMusicPlayer();
 	_sound = new SoundManager(this);
 	_bmv = new BMVPlayer();
