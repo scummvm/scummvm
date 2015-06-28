@@ -304,7 +304,7 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 	sysExPos      = 7;
 	while (1) {
 		sysExByte = *dataPtr++;
-		if (sysExByte == 0xff)
+		if (sysExByte == MILES_MT32_SYSEX_TERMINATOR)
 			break; // Message done
 
 		assert(sysExPos < sizeof(sysExMessage));
