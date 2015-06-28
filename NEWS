@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
+ 3 Skulls of the Toltecs:
+   - Improved AdLib music support.
+
  AGI:
    - It is now possible to disable mouse support (except for Amiga versions
      and fanmade games, that require a mouse).
@@ -42,7 +45,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Tentacle, with a few caveats. See README for details.
 
  Tinsel:
-   - improved AdLib music support in Discworld 1
+   - Improved AdLib music support in Discworld 1
 
 1.7.0 (2014-07-21)
  New Games:
