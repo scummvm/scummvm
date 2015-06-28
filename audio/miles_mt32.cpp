@@ -34,7 +34,20 @@ namespace Audio {
 //
 // TODO: currently missing: timbre file support (used in 7th Guest)
 
-#define MILES_MT32_PATCH_COUNT 128
+#define MILES_MT32_PATCHES_COUNT 128
+#define MILES_MT32_CUSTOMTIMBRE_COUNT 64
+
+#define MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE 14
+#define MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE 58
+#define MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT 4
+#define MILES_MT32_PATCHDATA_TOTAL_SIZE (MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE + (MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE * MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT))
+
+struct MilesMT32InstrumentEntry {
+	byte bankId;
+	byte patchId;
+	byte commonParameter[MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE + 1];
+	byte partialParameters[MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT][MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE + 1];
+};
 
 const byte milesMT32SysExResetParameters[] = {
 	0x01, 0xFF
@@ -54,7 +67,7 @@ const byte milesMT32SysExInitReverb[] = {
 
 class MidiDriver_Miles_MT32 : public MidiDriver {
 public:
-	MidiDriver_Miles_MT32();
+	MidiDriver_Miles_MT32(MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	virtual ~MidiDriver_Miles_MT32();
 
 	// MidiDriver
@@ -103,6 +116,7 @@ private:
 
 	void MT32SysEx(const uint32 targetAddress, const byte *dataPtr);
 
+	void writeRhythmSetup(byte note, byte customTimbreId);
 	void writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId);
 	void writePatchByte(byte patchId, byte index, byte patchValue);
 	void writeToSystemArea(byte index, byte value);
@@ -110,31 +124,67 @@ private:
 	void controlChange(byte midiChannel, byte controllerNumber, byte controllerValue);
 	void programChange(byte midiChannel, byte patchId);
 
-	void setupPatch(byte patchId, byte patchBank);
+	const MilesMT32InstrumentEntry *searchCustomInstrument(byte patchBank, byte patchId);
+	int16 searchCustomTimbre(byte patchBank, byte patchId);
+
+	void setupPatch(byte patchBank, byte patchId);
+	int16 installCustomTimbre(byte patchBank, byte patchId);
 
 private:
 	struct MidiChannelEntry {
 		byte   currentPatchBank;
 		byte   currentPatchId;
-		bool   patchIdSet;
+
+		bool   usingCustomTimbre;
+		byte   currentCustomTimbreId;
 
 		MidiChannelEntry() : currentPatchBank(0),
 							currentPatchId(0),
-							patchIdSet(false) { }
+							usingCustomTimbre(false),
+							currentCustomTimbreId(0) { }
+	};
+
+	struct MidiCustomTimbreEntry {
+		bool   used;
+		bool   protectionEnabled;
+		byte   currentPatchBank;
+		byte   currentPatchId;
+
+		uint32 lastUsedNoteCounter;
+
+		MidiCustomTimbreEntry() : used(false),
+								protectionEnabled(false),
+								currentPatchBank(0),
+								currentPatchId(0),
+								lastUsedNoteCounter(0) {}
 	};
 
 	// stores information about all MIDI channels
 	MidiChannelEntry _midiChannels[MILES_MIDI_CHANNEL_COUNT];
 
-	byte _patchesBank[MILES_MT32_PATCH_COUNT];
+	// stores information about all custom timbres
+	MidiCustomTimbreEntry _customTimbres[MILES_MT32_CUSTOMTIMBRE_COUNT];
+
+	byte _patchesBank[MILES_MT32_PATCHES_COUNT];
+
+	// holds all instruments
+	MilesMT32InstrumentEntry *_instrumentTablePtr;
+	uint16                   _instrumentTableCount;
+
+	uint32           _noteCounter; // used to figure out, which timbres are outdated
 };
 
-MidiDriver_Miles_MT32::MidiDriver_Miles_MT32() {
+MidiDriver_Miles_MT32::MidiDriver_Miles_MT32(MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount) {
+	_instrumentTablePtr = instrumentTablePtr;
+	_instrumentTableCount = instrumentTableCount;
+
 	_driver = NULL;
 	_isOpen = false;
 	_MT32 = false;
 	_nativeMT32 = false;
 	_baseFreq = 250;
+
+	_noteCounter = 0;
 
 	memset(_patchesBank, 0, sizeof(_patchesBank));
 }
@@ -267,25 +317,28 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
 void MidiDriver_Miles_MT32::send(uint32 b) {
 	byte command = b & 0xf0;
-	byte channel = b & 0xf;
+	byte midiChannel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
 
 	switch (command) {
 	case 0x80: // note off
 	case 0x90: // note on
+	case 0xa0: // Polyphonic key pressure (aftertouch)
+	case 0xd0: // Channel pressure (aftertouch)
 	case 0xe0: // pitch bend change
+		_noteCounter++;
+		if (_midiChannels[midiChannel].usingCustomTimbre) {
+			// Remember that this timbre got used now
+			_customTimbres[_midiChannels[midiChannel].currentCustomTimbreId].lastUsedNoteCounter = _noteCounter;
+		}
 		_driver->send(b);
 		break;
 	case 0xb0: // Control change
-		controlChange(channel, op1, op2);
+		controlChange(midiChannel, op1, op2);
 		break;
 	case 0xc0: // Program Change
-		programChange(channel, op1);
-		break;
-	case 0xa0: // Polyphonic key pressure (aftertouch)
-	case 0xd0: // Channel pressure (aftertouch)
-		// Aftertouch doesn't seem to be implemented in the Sherlock Holmes adlib driver
+		programChange(midiChannel, op1);
 		break;
 	case 0xf0: // SysEx
 		warning("MILES-MT32: SysEx: %x", b);
@@ -297,6 +350,7 @@ void MidiDriver_Miles_MT32::send(uint32 b) {
 
 void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumber, byte controllerValue) {
 	byte channelPatchId = 0;
+	byte channelCustomTimbreId = 0;
 
 	switch (controllerNumber) {
 	case MILES_CONTROLLER_SELECT_PATCH_BANK:
@@ -330,11 +384,24 @@ void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumbe
 		return;
 
 	case MILES_CONTROLLER_RHYTHM_KEY_TIMBRE:
-		// uses .MT data, cannot implement atm
+		if (_midiChannels[midiChannel].usingCustomTimbre) {
+			// custom timbre is set on current channel
+			writeRhythmSetup(controllerValue, _midiChannels[midiChannel].currentCustomTimbreId);
+		}
 		return;
 
 	case MILES_CONTROLLER_PROTECT_TIMBRE:
-		// timbre .MT data, cannot implement atm
+		if (_midiChannels[midiChannel].usingCustomTimbre) {
+			// custom timbre set on current channel
+			channelCustomTimbreId = _midiChannels[midiChannel].currentCustomTimbreId;
+			if (controllerValue >= 64) {
+				// enable protection
+				_customTimbres[channelCustomTimbreId].protectionEnabled = true;
+			} else {
+				// disable protection
+				_customTimbres[channelCustomTimbreId].protectionEnabled = false;
+			}
+		}
 		return;
 
 	default:
@@ -364,34 +431,161 @@ void MidiDriver_Miles_MT32::programChange(byte midiChannel, byte patchId) {
 
 	if (channelPatchBank != activePatchBank) {
 		// associate patch with timbre
-		setupPatch(patchId, channelPatchBank);
-		warning("setup patch");
+		setupPatch(channelPatchBank, patchId);
 	}
 
-	// Search timbre and remember it (only used when timbre file is available)
-	// TODO
+	// If this is a custom patch, remember customTimbreId
+	int16 customTimbre = searchCustomTimbre(channelPatchBank, patchId);
+	if (customTimbre >= 0) {
+		_midiChannels[midiChannel].usingCustomTimbre = true;
+		_midiChannels[midiChannel].currentCustomTimbreId = customTimbre;
+	} else {
+		_midiChannels[midiChannel].usingCustomTimbre = false;
+	}
 
-	// Finally send to MT32
+	// Finally send program change to MT32
 	_driver->send(0xC0 | midiChannel | (patchId << 8));
 }
 
-void MidiDriver_Miles_MT32::setupPatch(byte patchId, byte patchBank) {
-	byte timbreId = 0;
+int16 MidiDriver_Miles_MT32::searchCustomTimbre(byte patchBank, byte patchId) {
+	byte customTimbreId = 0;
 
+	for (customTimbreId = 0; customTimbreId < MILES_MT32_CUSTOMTIMBRE_COUNT; customTimbreId++) {
+		if (_customTimbres[customTimbreId].used) {
+			if ((_customTimbres[customTimbreId].currentPatchBank == patchBank) && (_customTimbres[customTimbreId].currentPatchId == patchId)) {
+				return customTimbreId;
+			}
+		}
+	}
+	return -1;
+}
+
+const MilesMT32InstrumentEntry *MidiDriver_Miles_MT32::searchCustomInstrument(byte patchBank, byte patchId) {
+	const MilesMT32InstrumentEntry *instrumentPtr = _instrumentTablePtr;
+
+	for (uint16 instrumentNr = 0; instrumentNr < _instrumentTableCount; instrumentNr++) {
+		if ((instrumentPtr->bankId == patchBank) && (instrumentPtr->patchId == patchId))
+			return instrumentPtr;
+	}
+	return NULL;
+}
+
+void MidiDriver_Miles_MT32::setupPatch(byte patchBank, byte patchId) {
 	_patchesBank[patchId] = patchBank;
 
 	if (patchBank) {
 		// non-built-in bank
-		// TODO: search timbre
+		int16 customTimbreId = searchCustomTimbre(patchBank, patchId);
+		if (customTimbreId < 0) {
+			// currently not loaded, try to install it
+			// Miles Audio didn't do this here, I'm not exactly sure when it called the install code
+			customTimbreId = installCustomTimbre(patchBank, patchId);
+		}
+		if (customTimbreId >= 0) {
+			// now available? -> use this timbre
+			writePatchTimbre(patchId, 2, customTimbreId); // Group MEMORY
+			return;
+		}
 	}
 
 	// for built-in bank (or timbres, that are not available) use default MT32 timbres
-	timbreId = patchId & 0x3F;
+	byte timbreId = patchId & 0x3F;
 	if (!(patchId & 0x40)) {
 		writePatchTimbre(patchId, 0, timbreId); // Group A
 	} else {
 		writePatchTimbre(patchId, 1, timbreId); // Group B
 	}
+}
+
+//
+int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
+	switch(patchBank) {
+	case 0:   // Standard Roland MT32 bank
+	case 127: // Reserved for melodic mode
+		return -1;
+	default:
+		break;
+	}
+
+	// Original driver did a search for custom timbre here
+	// and in case it was found, it would call setup_patch()
+	// we are called from within setup_patch(), so this isn't needed
+
+	int16 customTimbreId = -1;
+	int16 leastUsedTimbreId = -1;
+	uint32 leastUsedTimbreNoteCounter = _noteCounter;
+	const MilesMT32InstrumentEntry *instrumentPtr = NULL;
+
+	// Check, if requested instrument is actually available
+	instrumentPtr = this->searchCustomInstrument(patchBank, patchId);
+	if (!instrumentPtr) {
+		return -1; // not found -> bail out
+	}
+
+	// Look for an empty timbre slot
+	// or get the least used non-protected slot
+	for (byte customTimbreNr = 0; customTimbreNr < MILES_MT32_CUSTOMTIMBRE_COUNT; customTimbreNr++) {
+		if (!_customTimbres[customTimbreNr].used) {
+			// found an empty slot -> use this one
+			customTimbreId = customTimbreNr;
+			break;
+		} else {
+			// used slot
+			if (!_customTimbres[customTimbreNr].protectionEnabled) {
+				// not protected
+				uint32 customTimbreNoteCounter = _customTimbres[customTimbreNr].lastUsedNoteCounter;
+				if (customTimbreNoteCounter < leastUsedTimbreNoteCounter) {
+					leastUsedTimbreId          = customTimbreNr;
+					leastUsedTimbreNoteCounter = customTimbreNoteCounter;
+				}
+			}
+		}
+	}
+
+	if (customTimbreId < 0) {
+		// no empty slot found, check if we got a least used non-protected slot
+		if (leastUsedTimbreId < 0) {
+			// everything is protected, bail out
+			return -1;
+		}
+		customTimbreId = leastUsedTimbreId;
+	}
+
+	// setup timbre slot
+	_customTimbres[customTimbreId].used                = true;
+	_customTimbres[customTimbreId].currentPatchBank    = patchBank;
+	_customTimbres[customTimbreId].currentPatchId      = patchId;
+	_customTimbres[customTimbreId].lastUsedNoteCounter = _noteCounter;
+	_customTimbres[customTimbreId].protectionEnabled   = false;
+
+	uint32 targetAddress = 0x080000 | (customTimbreId << 9);
+	uint32 targetAddressCommon   = targetAddress + 0x000000;
+	uint32 targetAddressPartial1 = targetAddress + 0x00000E;
+	uint32 targetAddressPartial2 = targetAddress + 0x000048;
+	uint32 targetAddressPartial3 = targetAddress + 0x000102;
+	uint32 targetAddressPartial4 = targetAddress + 0x00013C;
+
+	// upload common parameter data
+	MT32SysEx(targetAddressCommon, instrumentPtr->commonParameter);
+	// upload partial parameter data
+	MT32SysEx(targetAddressPartial1, instrumentPtr->partialParameters[0]);
+	MT32SysEx(targetAddressPartial2, instrumentPtr->partialParameters[1]);
+	MT32SysEx(targetAddressPartial3, instrumentPtr->partialParameters[2]);
+	MT32SysEx(targetAddressPartial4, instrumentPtr->partialParameters[3]);
+
+	return customTimbreId;
+}
+
+void MidiDriver_Miles_MT32::writeRhythmSetup(byte note, byte customTimbreId) {
+	byte   sysExData[2];
+	uint32 targetAddress = 0;
+
+	targetAddress = 0x030110 + ((note - 24) << 2);
+
+	sysExData[0] = customTimbreId;
+	sysExData[1] = 0xFF; // terminator
+
+	MT32SysEx(targetAddress, sysExData);
 }
 
 void MidiDriver_Miles_MT32::writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId) {
@@ -432,10 +626,108 @@ void MidiDriver_Miles_MT32::writeToSystemArea(byte index, byte value) {
 }
 
 MidiDriver *MidiDriver_Miles_MT32_create(const Common::String instrumentDataFilename) {
-	// For some games there are timbre files called [something].MT
-	// Sherlock Holmes 2 doesn't have one of those
-	// so I can't implement them
-	return new MidiDriver_Miles_MT32();
+	MilesMT32InstrumentEntry *instrumentTablePtr = NULL;
+	uint16                    instrumentTableCount = 0;
+
+	if (!instrumentDataFilename.empty()) {
+		// Load MT32 instrument data from file SAMPLE.MT
+		Common::File *fileStream = new Common::File();
+		uint32        fileSize = 0;
+		byte         *fileDataPtr = NULL;
+		uint32        fileDataOffset = 0;
+		uint32        fileDataLeft = 0;
+
+		byte curBankId = 0;
+		byte curPatchId = 0;
+
+		MilesMT32InstrumentEntry *instrumentPtr = NULL;
+		uint32                    instrumentOffset = 0;
+		uint16                    instrumentDataSize = 0;
+
+		if (!fileStream->open(instrumentDataFilename))
+			error("MILES-MT32: could not open instrument file '%s'", instrumentDataFilename.c_str());
+
+		fileSize = fileStream->size();
+
+		fileDataPtr = new byte[fileSize];
+
+		if (fileStream->read(fileDataPtr, fileSize) != fileSize)
+			error("MILES-MT32: error while reading instrument file");
+		fileStream->close();
+		delete fileStream;
+
+		// File is like this:
+		// [patch:BYTE] [bank:BYTE] [patchoffset:UINT32]
+		// ...
+		// until patch + bank are both 0xFF, which signals end of header
+
+		// First we check how many entries there are
+		fileDataOffset = 0;
+		fileDataLeft = fileSize;
+		while (1) {
+			if (fileDataLeft < 6)
+				error("MILES-MT32: unexpected EOF in instrument file");
+
+			curPatchId = fileDataPtr[fileDataOffset++];
+			curBankId  = fileDataPtr[fileDataOffset++];
+
+			if ((curBankId == 0xFF) && (curPatchId == 0xFF))
+				break;
+
+			fileDataOffset += 4; // skip over offset
+			instrumentTableCount++;
+		}
+
+		if (instrumentTableCount == 0)
+			error("MILES-MT32: no instruments in instrument file");
+
+		// Allocate space for instruments
+		instrumentTablePtr = new MilesMT32InstrumentEntry[instrumentTableCount];
+
+		// Now actually read all entries
+		instrumentPtr = instrumentTablePtr;
+
+		fileDataOffset = 0;
+		fileDataLeft = fileSize;
+		while (1) {
+			curPatchId = fileDataPtr[fileDataOffset++];
+			curBankId  = fileDataPtr[fileDataOffset++];
+
+			if ((curBankId == 0xFF) && (curPatchId == 0xFF))
+				break;
+
+			instrumentOffset = READ_LE_UINT32(fileDataPtr + fileDataOffset);
+			fileDataOffset += 4;
+
+			instrumentPtr->bankId = curBankId;
+			instrumentPtr->patchId = curPatchId;
+
+			instrumentDataSize = READ_LE_UINT16(fileDataPtr + instrumentOffset);
+			if (instrumentDataSize != (MILES_MT32_PATCHDATA_TOTAL_SIZE + 2))
+				error("MILES-MT32: unsupported instrument size");
+
+			instrumentOffset += 2;
+			// Copy common parameter data
+			memcpy(instrumentPtr->commonParameter, fileDataPtr + instrumentOffset, MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE);
+			instrumentPtr->commonParameter[MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE] = 0xFF; // Terminator
+			instrumentOffset += MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE;
+
+			// Copy partial parameter data
+			for (byte partialNr = 0; partialNr < MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT; partialNr++) {
+				memcpy(&instrumentPtr->partialParameters[partialNr], fileDataPtr + instrumentOffset, MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE);
+				instrumentPtr->partialParameters[partialNr][MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE] = 0xFF; // Terminator
+				instrumentOffset += MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE;
+			}
+
+			// Instrument read, next instrument please
+			instrumentPtr++;
+		}
+
+		// Free instrument file data
+		delete[] fileDataPtr;
+	}
+
+	return new MidiDriver_Miles_MT32(instrumentTablePtr, instrumentTableCount);
 }
 
 } // End of namespace Audio
