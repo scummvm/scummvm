@@ -41,6 +41,8 @@ namespace Audio {
 #define MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT 4
 #define MILES_MT32_PATCHDATA_TOTAL_SIZE (MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE + (MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE * MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT))
 
+#define MILES_MT32_SYSEX_TERMINATOR 0xFF
+
 struct MilesMT32InstrumentEntry {
 	byte bankId;
 	byte patchId;
@@ -49,19 +51,19 @@ struct MilesMT32InstrumentEntry {
 };
 
 const byte milesMT32SysExResetParameters[] = {
-	0x01, 0xFF
+	0x01, MILES_MT32_SYSEX_TERMINATOR
 };
 
 const byte milesMT32SysExChansSetup[] = {
-	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0xFF
+	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, MILES_MT32_SYSEX_TERMINATOR
 };
 
 const byte milesMT32SysExPartialReserveTable[] = {
-	0x03, 0x04, 0x03, 0x04, 0x03, 0x04, 0x03, 0x04, 0x04, 0xFF
+	0x03, 0x04, 0x03, 0x04, 0x03, 0x04, 0x03, 0x04, 0x04, MILES_MT32_SYSEX_TERMINATOR
 };
 
 const byte milesMT32SysExInitReverb[] = {
-	0x00, 0x03, 0x02, 0xFF // Reverb mode 0, reverb time 3, reverb level 2
+	0x00, 0x03, 0x02, MILES_MT32_SYSEX_TERMINATOR // Reverb mode 0, reverb time 3, reverb level 2
 };
 
 class MidiDriver_Miles_MT32 : public MidiDriver {
@@ -470,7 +472,7 @@ void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumbe
 		if (sysExSend) {
 			if (sysExPos > 0) {
 				// data actually available? -> send it
-				_sysExQueues[sysExQueueNr].data[sysExPos] = 0xFF; // put terminator
+				_sysExQueues[sysExQueueNr].data[sysExPos] = MILES_MT32_SYSEX_TERMINATOR; // put terminator
 
 				// Execute SysEx
 				MT32SysEx(_sysExQueues[sysExQueueNr].targetAddress, _sysExQueues[sysExQueueNr].data);
@@ -653,7 +655,7 @@ void MidiDriver_Miles_MT32::writeRhythmSetup(byte note, byte customTimbreId) {
 	targetAddress = 0x030110 + ((note - 24) << 2);
 
 	sysExData[0] = customTimbreId;
-	sysExData[1] = 0xFF; // terminator
+	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
 	MT32SysEx(targetAddress, sysExData);
 }
@@ -666,7 +668,7 @@ void MidiDriver_Miles_MT32::writePatchTimbre(byte patchId, byte timbreGroup, byt
 
 	sysExData[0] = timbreGroup;
 	sysExData[1] = timbreId;
-	sysExData[2] = 0xFF; // terminator
+	sysExData[2] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
 	MT32SysEx(targetAddress, sysExData);
 }
@@ -678,7 +680,7 @@ void MidiDriver_Miles_MT32::writePatchByte(byte patchId, byte index, byte patchV
 	targetAddress = (((patchId << 3) + index ) << 16) | 0x000500;
 
 	sysExData[0] = patchValue;
-	sysExData[1] = 0xFF; // terminator
+	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
 	MT32SysEx(targetAddress, sysExData);
 }
@@ -690,7 +692,7 @@ void MidiDriver_Miles_MT32::writeToSystemArea(byte index, byte value) {
 	targetAddress = 0x100000 | index;
 
 	sysExData[0] = value;
-	sysExData[1] = 0xFF; // terminator
+	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
 	MT32SysEx(targetAddress, sysExData);
 }
@@ -779,13 +781,13 @@ MidiDriver *MidiDriver_Miles_MT32_create(const Common::String instrumentDataFile
 			instrumentOffset += 2;
 			// Copy common parameter data
 			memcpy(instrumentPtr->commonParameter, fileDataPtr + instrumentOffset, MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE);
-			instrumentPtr->commonParameter[MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE] = 0xFF; // Terminator
+			instrumentPtr->commonParameter[MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE] = MILES_MT32_SYSEX_TERMINATOR; // Terminator
 			instrumentOffset += MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE;
 
 			// Copy partial parameter data
 			for (byte partialNr = 0; partialNr < MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT; partialNr++) {
 				memcpy(&instrumentPtr->partialParameters[partialNr], fileDataPtr + instrumentOffset, MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE);
-				instrumentPtr->partialParameters[partialNr][MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE] = 0xFF; // Terminator
+				instrumentPtr->partialParameters[partialNr][MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE] = MILES_MT32_SYSEX_TERMINATOR; // Terminator
 				instrumentOffset += MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE;
 			}
 
