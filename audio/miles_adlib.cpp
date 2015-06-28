@@ -789,9 +789,9 @@ void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool key
 			byte panning = _midiChannels[midiChannel].currentPanning;
 
 			if (panning <= MILES_ADLIB_STEREO_PANNING_THRESHOLD_LEFT) {
-				regC0 |= 0x10; // left speaker only
+				regC0 |= 0x20; // left speaker only
 			} else if (panning >= MILES_ADLIB_STEREO_PANNING_THRESHOLD_RIGHT) {
-				regC0 |= 0x20; // right speaker only
+				regC0 |= 0x10; // right speaker only
 			} else {
 				regC0 |= 0x30; // center
 			}
