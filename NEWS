@@ -32,6 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      head scene (bug #6728). It may have been happening in other scenes as
      well.
 
+ SAGA:
+   - Improved AdLib music support.
+
  SCI:
    - Handling of music priority has been greatly improved.
    - A lot of fixes for original game script bugs that also occurred when
