@@ -32,7 +32,6 @@ namespace Audio {
 
 // Miles Audio MT32 driver
 //
-// TODO: currently missing: timbre file support (used in 7th Guest)
 
 #define MILES_MT32_PATCHES_COUNT 128
 #define MILES_MT32_CUSTOMTIMBRE_COUNT 64
@@ -159,6 +158,17 @@ private:
 								lastUsedNoteCounter(0) {}
 	};
 
+	struct MilesMT32SysExQueueEntry {
+		uint32 targetAddress;
+		byte   dataPos;
+		byte   data[MILES_CONTROLLER_SYSEX_QUEUE_SIZE + 1]; // 1 extra byte for terminator
+
+		MilesMT32SysExQueueEntry() : targetAddress(0),
+									dataPos(0) {
+			memset(data, 0, sizeof(data));
+		}
+	};
+
 	// stores information about all MIDI channels
 	MidiChannelEntry _midiChannels[MILES_MIDI_CHANNEL_COUNT];
 
@@ -171,7 +181,10 @@ private:
 	MilesMT32InstrumentEntry *_instrumentTablePtr;
 	uint16                   _instrumentTableCount;
 
-	uint32           _noteCounter; // used to figure out, which timbres are outdated
+	uint32 _noteCounter; // used to figure out, which timbres are outdated
+
+	// SysEx Queues
+	MilesMT32SysExQueueEntry _sysExQueues[MILES_CONTROLLER_SYSEX_QUEUE_COUNT];
 };
 
 MidiDriver_Miles_MT32::MidiDriver_Miles_MT32(MilesMT32InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount) {
@@ -410,7 +423,64 @@ void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumbe
 
 	if ((controllerNumber >= MILES_CONTROLLER_SYSEX_RANGE_BEGIN) && (controllerNumber <= MILES_CONTROLLER_SYSEX_RANGE_END)) {
 		// send SysEx
-		warning("MILES-MT32: embedded SysEx controller %2x, value %2x", controllerNumber, controllerValue);
+		byte sysExQueueNr = 0;
+
+		// figure out which queue is accessed
+		controllerNumber -= MILES_CONTROLLER_SYSEX_RANGE_BEGIN;
+		while (controllerNumber > MILES_CONTROLLER_SYSEX_COMMAND_SEND) {
+			sysExQueueNr++;
+			controllerNumber -= (MILES_CONTROLLER_SYSEX_COMMAND_SEND + 1);
+		}
+		assert(sysExQueueNr < MILES_CONTROLLER_SYSEX_QUEUE_COUNT);
+
+		byte sysExPos = _sysExQueues[sysExQueueNr].dataPos;
+		bool sysExSend = false;
+
+		switch(controllerNumber) {
+		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS1:
+			_sysExQueues[sysExQueueNr].targetAddress &= 0x00FFFF;
+			_sysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 16);
+			break;
+		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS2:
+			_sysExQueues[sysExQueueNr].targetAddress &= 0xFF00FF;
+			_sysExQueues[sysExQueueNr].targetAddress |= (controllerValue << 8);
+			break;
+		case MILES_CONTROLLER_SYSEX_COMMAND_ADDRESS3:
+			_sysExQueues[sysExQueueNr].targetAddress &= 0xFFFF00;
+			_sysExQueues[sysExQueueNr].targetAddress |= controllerValue;
+			break;
+		case MILES_CONTROLLER_SYSEX_COMMAND_DATA:
+			if (sysExPos < MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
+				// Space left? put current byte into queue
+				_sysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
+				_sysExQueues[sysExQueueNr].dataPos++;
+				if (sysExPos >= MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
+					// overflow? -> send it now
+					sysExSend = true;
+				}
+			}
+			break;
+		case MILES_CONTROLLER_SYSEX_COMMAND_SEND:
+			sysExSend = true;
+			break;
+		default:
+			assert(0);
+		}
+
+		if (sysExSend) {
+			if (sysExPos > 0) {
+				// data actually available? -> send it
+				_sysExQueues[sysExQueueNr].data[sysExPos] = 0xFF; // put terminator
+
+				// Execute SysEx
+				MT32SysEx(_sysExQueues[sysExQueueNr].targetAddress, _sysExQueues[sysExQueueNr].data);
+
+				// adjust target address to point at the end of the current data
+				_sysExQueues[sysExQueueNr].targetAddress += sysExPos;
+				// reset queue data buffer
+				_sysExQueues[sysExQueueNr].dataPos = 0;
+			}
+		}
 		return;
 	}
 
