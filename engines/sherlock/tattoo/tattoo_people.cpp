@@ -556,14 +556,17 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 			_updateNPCPath = false;
 
 		// Secondary walking wait loop
-		do {
+		bool done = false;
+		while (!done && !_vm->shouldQuit()) {
 			events.wait(1);
 			scene.doBgAnim();
 
 			// See if we're past the initial goto stand sequence
 			for (int idx = 0; idx < _frameNumber; ++idx) {
-				if (_walkSequences[_sequenceNumber][idx] == 0)
+				if (_walkSequences[_sequenceNumber][idx] == 0) {
+					done = true;
 					break;
+				}
 			}
 
 			if (events.kbHit()) {
@@ -576,7 +579,7 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 					talk._talkToAbort = true;
 				}
 			}
-		} while (!_vm->shouldQuit());
+		}
 
 		if (!isHolmes)
 			_updateNPCPath = true;
