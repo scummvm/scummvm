@@ -99,7 +99,7 @@ public:
 public:
 	static Inventory *init(SherlockEngine *vm);
 	Inventory(SherlockEngine *vm);
-	~Inventory();
+	virtual ~Inventory();
 
 	/**
 	 * Free inventory data
