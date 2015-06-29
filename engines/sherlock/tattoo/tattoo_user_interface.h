@@ -72,11 +72,6 @@ private:
 	void doFileControl();
 
 	/**
-	 * Handle input if an inventory command (INVENT, LOOK, or USE) has an open window and is active
-	 */
-	void doInventoryControl();
-
-	/**
 	 * Handle input while the verb menu is open
 	 */
 	void doVerbControl();
@@ -128,6 +123,7 @@ public:
 	int _maskCounter;
 	ImageFile *_interfaceImages;
 	WidgetText _textWidget;
+	Common::String _action;
 public:
 	TattooUserInterface(SherlockEngine *vm);
 	virtual ~TattooUserInterface();

@@ -21,6 +21,8 @@
  */
 
 #include "sherlock/tattoo/widget_inventory.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
+#include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
@@ -33,19 +35,142 @@ namespace Tattoo {
 #define INVENTORY_YSIZE 70			// Height of the box that surrounds inventory items
 #define MAX_INV_COMMANDS 10			// Maximum elements in dialog
 
-// TODO: Refactor into FixedText
-#define S_INV6 "Foolscap"
-#define S_INV7 "Damp Paper"
-#define S_SOLVE "Solve"
-#define S_LOOK "Look"
-#define S_NO_EFFECT "No effect..."
-#define S_WITH "with"
+WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) : 
+		WidgetBase(vm), _owner(owner) {
+}
 
-WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm), _tooltipWidget(vm) {
+void WidgetInventoryTooltip::setText(const Common::String &str) {
+
+}
+
+void WidgetInventoryTooltip::handleEvents() {	
+	Events &events = *_vm->_events;
+	FixedText &fixedText = *_vm->_fixedText;
+	Inventory &inv = *_vm->_inventory;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Scene &scene = *_vm->_scene;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+	Common::String str;
+	int select = -1, oldSelect = -1;
+	Common::String strWith = fixedText.getText(kFixedText_With);
+	Common::String strUse = fixedText.getText(kFixedText_Use);
+
+	// If there's a floating graphic for a selected inventory item, update it's bounds
+	if (_owner->_invVerbMode == 2 || _owner->_invVerbMode == 3) {
+		_oldInvGraphicBounds = _invGraphicBounds;
+
+		// Set the New position of the graphic
+		int xp = CLIP(mousePos.x - _invGraphicBounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _invGraphicBounds.width());
+		int yp = CLIP(mousePos.y - _invGraphicBounds.height() / 2, 0, SHERLOCK_SCREEN_HEIGHT - _invGraphicBounds.height());
+
+		_invGraphicBounds.moveTo(xp, yp);
+	}
+
+	// If we are using an inventory item on an object in the room, display the appropriate text above the mouse cursor
+	if (_owner->_invVerbMode == 3) {
+		select = ui._bgFound;
+		oldSelect = ui._oldBgFound;
+	
+		if (select != -1 && (select != oldSelect || (select != -1 && _surface.empty()))) {
+			// See if we're pointing at a shape or a sprite
+			if (select < 1000) {
+				Object &obj = scene._bgShapes[select];
+
+				if (!obj._description.empty() && !obj._description.hasPrefix(" ")) {
+					if (_vm->getLanguage() == Common::GR_GRE) {
+
+						if (!_owner->_swapItems)
+							str = Common::String::format("%s %s %s %s", ui._action, obj._description, 
+								inv[_owner->_invSelect]._name, _owner->_invVerb);
+						else
+							str = Common::String::format("%s %s %s %s", ui._action, inv[_owner->_invSelect]._name, 
+								obj._description, _owner->_invVerb);
+					} else {
+						if (_owner->_swapItems)
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb, obj._description, ui._action, 
+								inv[_owner->_invSelect]._name);
+						else
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb, inv[_owner->_invSelect]._name, 
+								ui._action, obj._description);
+					}
+				}
+			} else {
+				Person &person = people[ui._bgFound - 1000];
+
+				if (!person._description.empty() && !person._description.hasPrefix(" ")) {
+					if (_vm->getLanguage() == Common::GR_GRE) {
+						if (!_owner->_swapItems)
+							str = Common::String::format("%s %s %s %s", ui._action, person._description, inv[_owner->_invSelect]._name, _owner->_invVerb);
+						else
+							str = Common::String::format("%s %s %s %s", ui._action, inv[_owner->_invSelect]._name, person._description, _owner->_invVerb);
+					} else {
+
+						if (_owner->_swapItems)
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb, person._description, ui._action, inv[_owner->_invSelect]._name);
+						else
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb, inv[_owner->_invSelect]._name, ui._action, person._description);
+					}
+				}
+			}
+		}
+	} else {
+		Common::Rect r = _owner->_bounds;
+		r.grow(-3);
+
+		if (r.contains(mousePos)) {
+			select = (mousePos.x - r.left) / (INVENTORY_XSIZE + 3) + NUM_INVENTORY_SHOWN / 2 *
+				((mousePos.y - r.top) / (INVENTORY_YSIZE + 3)) + inv._invIndex;
+
+			if (select >= inv._holdings) {
+				select = -1;
+			} else {
+				oldSelect = _owner->_invSelect;
+				
+				if (select != _owner->_invSelect || _surface.empty()) {
+
+					if (_owner->_invMode == 1) {
+						// See if we were pointing at a shapre or sprite
+						if (ui._activeObj < 1000) {
+							Object &obj = scene._bgShapes[ui._activeObj];
+
+							if (!obj._description.empty() && !obj._description.hasPrefix(" "))
+								str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[select]._name.c_str(),
+									strWith.c_str(), obj._description.c_str());
+						} else {
+							Person &person = people[ui._activeObj - 1000];
+
+							if (!person._description.empty() && !person._description.hasPrefix(" "))
+								str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[select]._name.c_str(),
+									strWith.c_str(), person._description.c_str());
+						}
+					} else {
+						if (_owner->_invVerbMode == 2)
+							str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[_owner->_invSelect]._name.c_str(),
+								strWith.c_str(), inv[select]._name.c_str());
+						else
+							str = inv[select]._description;
+					}
+				}
+			}
+		}
+	}
+
+	// See if they are pointing at a different inventory object and we need to
+	// change the graphics of the Text Tag
+	if (select != oldSelect || (select != -1 && _surface.empty())) {
+		setText(str);
+	}
+}
+
+/*----------------------------------------------------------------*/
+
+
+WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm), _tooltipWidget(vm, this) {
 	_invMode = 0;
 	_invVerbMode = 0;
-	_invSelect = _oldInvSelect = 0;
-	_selector = _oldSelector = 0;
+	_invSelect = _oldInvSelect = -1;
+	_selector = _oldSelector = -1;
 	_invVerbSelect = _oldInvVerbSelect = -1;
 	_dialogTimer = -1;
 	_scrollHighlight = 0;
@@ -184,7 +309,7 @@ void WidgetInventory::handleEvents() {
 		checkInvTabbingKeys();
 
 	if (_invVerbMode != 1)
-		updateDescription();
+		_tooltipWidget.handleEvents();
 
 	// Flag is they started pressing outside of the menu
 	if (events._firstPress && !_bounds.contains(mousePos))
@@ -213,10 +338,10 @@ void WidgetInventory::handleEvents() {
 				_outsideMenu = false;
 
 				// Check if they are trying to solve the Foolscap puzzle, or looking at the completed puzzle
-				bool doHangman = !inv[_invSelect]._name.compareToIgnoreCase(S_INV6) &&
-					!_inventCommands[_invVerbSelect].compareToIgnoreCase(S_SOLVE);
-				doHangman |= (!inv[_invSelect]._name.compareToIgnoreCase(S_INV6) || !inv[_invSelect]._name.compareToIgnoreCase(S_INV7))
-					&& _inventCommands[_invVerbSelect].compareToIgnoreCase(S_LOOK) && vm.readFlags(299);
+				bool doHangman = !inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) &&
+					!_inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Solve));
+				doHangman |= (!inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
+					&& _inventCommands[_invVerbSelect].compareToIgnoreCase(FIXED(Look)) && vm.readFlags(299);
 
 				if (doHangman) {
 					// Close the entire Inventory and return to Standard Mode
@@ -314,7 +439,7 @@ void WidgetInventory::handleEvents() {
 				}
 
 				if (!found)
-					ui.putMessage(S_NO_EFFECT);
+					ui.putMessage("%s", FIXED(NoEffect).c_str());
 			}
 		} else if ((_outsideMenu && !_bounds.contains(mousePos)) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 			// Want to close the window (clicked outside of it). So close the window and return to Standard 
@@ -357,7 +482,7 @@ void WidgetInventory::handleEvents() {
 						}
 					}
 					if (!found)
-						ui.putMessage(S_NO_EFFECT);
+						ui.putMessage("%s",FIXED(NoEffect).c_str());
 
 				} else {
 					// See if they right clicked on an item
@@ -372,10 +497,10 @@ void WidgetInventory::handleEvents() {
 
 						// Make the Verb List for this Inventory Item
 						_inventCommands.clear();
-						_inventCommands.push_back(S_LOOK);
+						_inventCommands.push_back(FIXED(Look));
 
 						// Default the Action word to "with"
-						_action = _vm->getLanguage() == Common::GR_GRE ? "" : S_WITH;
+						_action = _vm->getLanguage() == Common::GR_GRE ? "" : FIXED(With);
 						_swapItems = false;
 
 						// Search all the bgshapes for any matching Target Fields
@@ -431,7 +556,7 @@ void WidgetInventory::handleEvents() {
 						// Finally see if the item itself has a verb
 						if (!inv[_invSelect]._verb._verb.empty()) {
 							// Don't add "Solve" to the Foolscap if it's already been "Solved"
-							if (inv[_invSelect]._verb._verb.compareToIgnoreCase(S_SOLVE) || !vm.readFlags(299))
+							if (inv[_invSelect]._verb._verb.compareToIgnoreCase(FIXED(Solve)) || !vm.readFlags(299))
 								_inventCommands.push_back(inv[_invSelect]._verb._verb);
 						}
 
@@ -470,7 +595,7 @@ void WidgetInventory::handleEvents() {
 						// They left clicked on an inventory item, so Look at it
 
 						// Check if they are looking at the solved Foolscap
-						if ((!inv[_invSelect]._name.compareToIgnoreCase(S_INV6) || !inv[_invSelect]._name.compareToIgnoreCase(S_INV7))
+						if ((!inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv6)) || !inv[_invSelect]._name.compareToIgnoreCase(FIXED(Inv7)))
 								&& vm.readFlags(299)) {
 							banishWindow();
 							_tooltipWidget.erase();
@@ -498,10 +623,6 @@ void WidgetInventory::handleEvents() {
 			}
 		}
 	}
-}
-
-void WidgetInventory::updateDescription() {
-	// TODO
 }
 
 void WidgetInventory::checkInvTabbingKeys() {

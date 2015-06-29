@@ -49,10 +49,13 @@ enum FixedTextId {
 	kFixedText_Open,
 	kFixedText_Look,
 	kFixedText_Talk,
+	kFixedText_Use,
 	kFixedText_Journal,
 	kFixedText_Inventory,
 	kFixedText_Options,
-	kFixedText_Solve
+	kFixedText_Solve,
+	kFixedText_With,
+	kFixedText_NoEffect
 };
 
 class TattooFixedText: public FixedText {

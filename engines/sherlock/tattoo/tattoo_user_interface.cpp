@@ -273,9 +273,6 @@ void TattooUserInterface::handleInput() {
 	case FILES_MODE:
 		doFileControl();
 		break;
-	case INV_MODE:
-		doInventoryControl();
-		break;
 	case VERB_MODE:
 		doVerbControl();
 		break;
@@ -523,10 +520,6 @@ void TattooUserInterface::doLookControl() {
 
 void TattooUserInterface::doFileControl() {
 	warning("TODO: ui control (file)");
-}
-
-void TattooUserInterface::doInventoryControl() {
-	_inventoryWidget.handleEvents();
 }
 
 void TattooUserInterface::doVerbControl() {

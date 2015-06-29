@@ -35,7 +35,34 @@ namespace Tattoo {
 
 #define NUM_INVENTORY_SHOWN 8		// Number of Inventory Items Shown
 
+class WidgetInventory;
+
+class WidgetInventoryTooltip: public WidgetBase {
+private:
+	WidgetInventory *_owner;
+	Common::Rect _oldInvGraphicBounds, _invGraphicBounds;
+protected:
+	/**
+	* Overriden from base class, since tooltips have a completely transparent background
+	*/
+	virtual void drawBackground() {}
+public:
+	WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner);
+	virtual ~WidgetInventoryTooltip() {}
+
+	/**
+	 * Set the text for the tooltip
+	 */
+	void setText(const Common::String &str);
+
+	/**
+	 * Handle updating the tooltip state
+	 */
+	virtual void handleEvents();
+};
+
 class WidgetInventory: public WidgetBase {
+	friend class WidgetInventoryTooltip;
 private:
 	int _invVerbMode;
 	int _invSelect, _oldInvSelect;
@@ -44,7 +71,7 @@ private:
 	int _dialogTimer;
 	int _scrollHighlight;
 	Common::StringArray _inventCommands;
-	WidgetTooltip _tooltipWidget;
+	WidgetInventoryTooltip _tooltipWidget;
 	Common::String _invVerb;
 	Common::String _invTarget;
 	Common::String _action;
@@ -58,11 +85,6 @@ private:
 	 * Draw the scrollbar for the dialog
 	 */
 	void drawScrollBar();
-
-	/**
-	 * Displays the description of any inventory item the moues cursor is over
-	 */
-	void updateDescription();
 
 	/**
 	 * Check for keys to mouse the mouse within the inventory dialog
