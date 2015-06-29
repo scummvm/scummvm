@@ -397,7 +397,7 @@ void TattooUserInterface::doStandardControl() {
 	case Common::KEYCODE_F3:
 		// Display inventory
 		freeMenu();
-		doInventory(2);
+		doInventory(3);
 		return;
 
 	case Common::KEYCODE_F4:

@@ -57,6 +57,11 @@ void WidgetInventory::load(int mode) {
 	Inventory &inv = *_vm->_inventory;
 	Common::Point mousePos = events.mousePos();
 
+	if (mode == 3) {
+		mode = 2;
+		mousePos = Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
+	}
+
 	if (mode != 0)
 		_invMode = mode;
 	_invVerbMode = 0;
@@ -94,7 +99,7 @@ void WidgetInventory::drawInventory() {
 	for (int idx = 0, itemId = inv._invIndex; idx < NUM_INVENTORY_SHOWN; ++idx, ++itemId) {
 		// Figure out the drawing position
 		Common::Point pt(3 + (INVENTORY_XSIZE + 3) * (idx % (NUM_INVENTORY_SHOWN / 2)),
-			3 + (INVENTORY_YSIZE + 3) * idx / (NUM_INVENTORY_SHOWN / 2));
+			3 + (INVENTORY_YSIZE + 3) * (idx / (NUM_INVENTORY_SHOWN / 2)));
 
 		// Draw the box to serve as the background for the item
 		_surface.hLine(pt.x + 1, pt.y, pt.x + INVENTORY_XSIZE - 2, TRANSPARENCY);
