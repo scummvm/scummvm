@@ -81,18 +81,18 @@ void WidgetInventoryTooltip::handleEvents() {
 					if (_vm->getLanguage() == Common::GR_GRE) {
 
 						if (!_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", ui._action, obj._description, 
-								inv[_owner->_invSelect]._name, _owner->_invVerb);
+							str = Common::String::format("%s %s %s %s", ui._action.c_str(), obj._description.c_str(), 
+								inv[_owner->_invSelect]._name.c_str(), _owner->_invVerb.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", ui._action, inv[_owner->_invSelect]._name, 
-								obj._description, _owner->_invVerb);
+							str = Common::String::format("%s %s %s %s", ui._action.c_str(), inv[_owner->_invSelect]._name.c_str(), 
+								obj._description.c_str(), _owner->_invVerb.c_str());
 					} else {
 						if (_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", _owner->_invVerb, obj._description, ui._action, 
-								inv[_owner->_invSelect]._name);
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb.c_str(), obj._description.c_str(), ui._action.c_str(), 
+								inv[_owner->_invSelect]._name.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", _owner->_invVerb, inv[_owner->_invSelect]._name, 
-								ui._action, obj._description);
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb.c_str(), inv[_owner->_invSelect]._name.c_str(), 
+								ui._action.c_str(), obj._description.c_str());
 					}
 				}
 			} else {
@@ -101,15 +101,19 @@ void WidgetInventoryTooltip::handleEvents() {
 				if (!person._description.empty() && !person._description.hasPrefix(" ")) {
 					if (_vm->getLanguage() == Common::GR_GRE) {
 						if (!_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", ui._action, person._description, inv[_owner->_invSelect]._name, _owner->_invVerb);
+							str = Common::String::format("%s %s %s %s", ui._action.c_str(), person._description.c_str(),
+								inv[_owner->_invSelect]._name.c_str(), _owner->_invVerb.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", ui._action, inv[_owner->_invSelect]._name, person._description, _owner->_invVerb);
+							str = Common::String::format("%s %s %s %s", ui._action.c_str(), inv[_owner->_invSelect]._name.c_str(),
+								person._description.c_str(), _owner->_invVerb.c_str());
 					} else {
 
 						if (_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", _owner->_invVerb, person._description, ui._action, inv[_owner->_invSelect]._name);
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb.c_str(), person._description.c_str(),
+								ui._action.c_str(), inv[_owner->_invSelect]._name.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", _owner->_invVerb, inv[_owner->_invSelect]._name, ui._action, person._description);
+							str = Common::String::format("%s %s %s %s", _owner->_invVerb.c_str(),
+								inv[_owner->_invSelect]._name.c_str(), ui._action.c_str(), person._description.c_str());
 					}
 				}
 			}
@@ -149,7 +153,7 @@ void WidgetInventoryTooltip::handleEvents() {
 							str = Common::String::format("%s %s %s %s", strUse.c_str(), inv[_owner->_invSelect]._name.c_str(),
 								strWith.c_str(), inv[select]._name.c_str());
 						else
-							str = inv[select]._description;
+							str = inv[select]._description.c_str();
 					}
 				}
 			}
