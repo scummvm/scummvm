@@ -409,6 +409,8 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 				musicType = MT_MT32;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
