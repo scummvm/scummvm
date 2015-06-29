@@ -701,7 +701,22 @@ OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode (cmdSetSceneEntryFlag)"); }
-OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode (cmdSetTalkSequence)"); }
+
+OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	int speaker = str[1] - 1;
+	int sequenceNumber = str[2];
+
+	if (sequenceNumber < 128)
+		people.setTalkSequence(speaker, sequenceNumber);
+	else
+		people.setListenSequence(speaker, sequenceNumber);
+	
+	str += 2;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode (cmdSetWalkControl)"); }
 
 // Dummy opcode
