@@ -455,7 +455,8 @@ void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumbe
 			if (sysExPos < MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
 				// Space left? put current byte into queue
 				_sysExQueues[sysExQueueNr].data[sysExPos] = controllerValue;
-				_sysExQueues[sysExQueueNr].dataPos++;
+				sysExPos++;
+				_sysExQueues[sysExQueueNr].dataPos = sysExPos;
 				if (sysExPos >= MILES_CONTROLLER_SYSEX_QUEUE_SIZE) {
 					// overflow? -> send it now
 					sysExSend = true;
