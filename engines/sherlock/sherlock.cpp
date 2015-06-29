@@ -224,7 +224,7 @@ void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
 
-	ConfMan.registerDefault("font", 1);
+	ConfMan.registerDefault("font", getGameID() == GType_SerratedScalpel ? 1 : 4);
 
 	_screen->setFont(ConfMan.getInt("font"));
 	if (getGameID() == GType_SerratedScalpel)
