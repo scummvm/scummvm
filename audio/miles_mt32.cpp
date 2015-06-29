@@ -592,6 +592,7 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	// Check, if requested instrument is actually available
 	instrumentPtr = searchCustomInstrument(patchBank, patchId);
 	if (!instrumentPtr) {
+		warning("MILES-MT32: instrument not found during installCustomTimbre()");
 		return -1; // not found -> bail out
 	}
 
@@ -619,6 +620,7 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 		// no empty slot found, check if we got a least used non-protected slot
 		if (leastUsedTimbreId < 0) {
 			// everything is protected, bail out
+			warning("MILES-MT32: no non-protected timbre slots available during installCustomTimbre()");
 			return -1;
 		}
 		customTimbreId = leastUsedTimbreId;
@@ -665,7 +667,7 @@ void MidiDriver_Miles_MT32::writePatchTimbre(byte patchId, byte timbreGroup, byt
 	byte   sysExData[3];
 	uint32 targetAddress = 0;
 
-	targetAddress = ((patchId << 3) << 16) | 0x000500;
+	targetAddress = 0x050000 + (patchId << 3);
 
 	sysExData[0] = timbreGroup;
 	sysExData[1] = timbreId;
@@ -678,7 +680,7 @@ void MidiDriver_Miles_MT32::writePatchByte(byte patchId, byte index, byte patchV
 	byte   sysExData[2];
 	uint32 targetAddress = 0;
 
-	targetAddress = (((patchId << 3) + index ) << 16) | 0x000500;
+	targetAddress = 0x050000 + ((patchId << 3) + index );
 
 	sysExData[0] = patchValue;
 	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
