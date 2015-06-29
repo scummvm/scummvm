@@ -173,7 +173,7 @@ void WidgetVerbs::handleEvents() {
 		_outsideMenu = true;
 
 	// See if they released the mouse button
-	if (events._released || events._released) {
+	if (events._released || events._rightReleased) {
 		// See if they want to close the menu (they clicked outside of the menu)
 		if (!_bounds.contains(mousePos)) {
 			if (_outsideMenu) {

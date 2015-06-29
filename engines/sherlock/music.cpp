@@ -450,12 +450,6 @@ bool Music::playMusic(const Common::String &name) {
 				return false;
 			}
 		} else {
-			if (dataSize < 4) {
-				warning("Music: expected music header not found in music file");
-				delete[] midiMusicData;
-				return false;
-			}
-
 			if (memcmp("FORM", dataPos, 4)) {
 				warning("Music: expected header not found in music file");
 				delete[] midiMusicData;

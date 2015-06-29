@@ -85,7 +85,7 @@ void ScalpelInventory::drawInventory(InvNewMode mode) {
 
 	if (tempMode == INVENTORY_DONT_DISPLAY)
 		mode = LOOK_INVENTORY_MODE;
-	_invMode = (InvMode)mode;
+	_invMode = (InvMode)((int)mode);
 
 	if (mode != PLAIN_INVENTORY) {
 		ui._oldKey = INVENTORY_COMMANDS[(int)mode];

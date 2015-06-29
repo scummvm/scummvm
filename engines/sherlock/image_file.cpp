@@ -1016,6 +1016,7 @@ StreamingImageFile::StreamingImageFile() {
 	_flags = 0;
 	_scaleVal = 0;
 	_zPlacement = 0;
+	_compressed = false;
 }
 
 StreamingImageFile::~StreamingImageFile() {

@@ -37,6 +37,11 @@ Journal *Journal::init(SherlockEngine *vm) {
 }
 
 Journal::Journal(SherlockEngine *vm) : _vm(vm) {
+	_up = _down = false;
+	_index = 0;
+	_page = 0;
+	_maxPage = 0;
+	_sub = 0;
 }
 
 bool Journal::drawJournal(int direction, int howFar) {
