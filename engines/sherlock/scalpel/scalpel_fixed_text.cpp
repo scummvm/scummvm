@@ -274,7 +274,7 @@ static const char *const fixedTextES_ActionPick[] = {
 	"Pesa demasiado",
 	"Creo que una chica sera mas tu tipo",
 	"Esas flores pertenecen a Penny",
-	"\255Es demasiado joven para ti!"
+	"\255Es demasiado joven para ti!",
 	"\255Creo que una chica sera mas tu tipo!",
 	"Propiedad del gobierno para uso oficial"
 };
@@ -283,7 +283,7 @@ static const char *const fixedTextEN_ActionUse[] = {
 	"You can't do that",
 	"It had no effect",
 	"You can't reach it",
-	"OK, the door looks bigger! Happy?"
+	"OK, the door looks bigger! Happy?",
 	"Doors don't smoke"
 };
 
@@ -291,7 +291,7 @@ static const char *const fixedTextDE_ActionUse[] = {
 	"Nein, das geht wirklich nicht",
 	"Tja keinerlei Wirkung",
 	"Da kommst du nicht dran",
-	"Na gut, die Tür sieht jetzt gr\224\341er aus. Zufrieden?"
+	"Na gut, die Tür sieht jetzt gr\224\341er aus. Zufrieden?",
 	"Türen sind Nichtraucher!"
 };
 
@@ -299,7 +299,7 @@ static const char *const fixedTextES_ActionUse[] = {
 	"No puedes hacerlo",
 	"No tuvo ningun efecto",
 	"No puedes alcanzarlo",
-	"Bien, \255es enorme! \250Feliz?"
+	"Bien, \255es enorme! \250Feliz?",
 	"Las puertas no fuman"
 };
 
