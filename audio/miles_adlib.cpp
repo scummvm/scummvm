@@ -163,6 +163,7 @@ private:
 		MidiChannelEntry() : currentPatchBank(0),
 							currentInstrumentPtr(NULL),
 							currentPitchBender(MILES_PITCHBENDER_DEFAULT),
+							currentPitchRange(0),
 							currentVoiceProtection(0),
 							currentVolume(0), currentVolumeExpression(0),
 							currentPanning(0),
