@@ -401,6 +401,8 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 				musicType = MT_MT32;
 			}
 			break;
+		default:
+			break;
 		}
 		if (!_driver) {
 			// nothing got created yet? -> create default driver
