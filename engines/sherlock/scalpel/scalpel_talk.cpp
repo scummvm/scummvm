@@ -679,7 +679,7 @@ bool ScalpelTalk::displayTalk(bool slamIt) {
 
 		if (statement._talkMap != -1) {
 			bool flag = _talkHistory[_converseNum][idx];
-			lineY = talkLine(idx, statement._talkMap, flag ? TALK_NULL : INV_FOREGROUND,
+			lineY = talkLine(idx, statement._talkMap, flag ? (byte)TALK_NULL : (byte)INV_FOREGROUND,
 				yp, slamIt);
 
 			if (lineY != -1) {
