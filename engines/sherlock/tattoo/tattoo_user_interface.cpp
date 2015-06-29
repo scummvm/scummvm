@@ -181,7 +181,7 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 			events._oldButtons = 0;
 		}
 	} else {
-		events._pressed = events._released = events._rightReleased = false;;
+		events._pressed = events._released = events._rightReleased = false;
 
 		// Show text dialog
 		_textWidget.load(str);
