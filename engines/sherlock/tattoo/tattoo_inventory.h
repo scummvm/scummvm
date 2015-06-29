@@ -20,54 +20,28 @@
  *
  */
 
-#ifndef SHERLOCK_SCALPEL_INVENTORY_H
-#define SHERLOCK_SCALPEL_INVENTORY_H
+#ifndef SHERLOCK_TATTOO_INVENTORY_H
+#define SHERLOCK_TATTOO_INVENTORY_H
 
 #include "sherlock/inventory.h"
 
 namespace Sherlock {
 
-namespace Scalpel {
+namespace Tattoo {
 
-class ScalpelInventory : public Inventory {
+class TattooInventory : public Inventory {
 public:
-	ScalpelInventory(SherlockEngine *vm);
-	~ScalpelInventory();
-
-	/**
-	 * Put the game into inventory mode and open the interface window.
-	 */
-	void drawInventory(InvNewMode flag);
-
-	/**
-	 * Prints the line of inventory commands at the top of an inventory window with
-	 * the correct highlighting
-	 */
-	void invCommands(bool slamIt);
-
-	/**
-	 * Set the highlighting color of a given inventory item
-	 */
-	void highlight(int index, byte color);
-
-	/**
-	 * Support method for refreshing the display of the inventory
-	 */
-	void refreshInv();
-
-	/**
-	 * Display the character's inventory. The slamIt parameter specifies:
-	 */
-	void putInv(InvSlamMode slamIt);
+	TattooInventory(SherlockEngine *vm);
+	~TattooInventory();
 
 	/**
 	 * Load the list of names the inventory items correspond to, if not already loaded,
 	 * and then calls loadGraphics to load the associated graphics
 	 */
-	virtual void loadInv();
+	virtual void loadInv();	
 };
 
-} // End of namespace Scalpel
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 

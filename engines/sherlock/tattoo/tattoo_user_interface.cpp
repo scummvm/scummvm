@@ -568,6 +568,7 @@ void TattooUserInterface::doInventory(int mode) {
 	people[HOLMES].gotoStand();
 	
 	_inventoryWidget.load(mode);
+	_inventoryWidget.summonWindow();
 
 	_menuMode = INV_MODE;
 }

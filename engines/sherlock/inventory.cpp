@@ -24,6 +24,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/scalpel/scalpel_inventory.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/tattoo/tattoo_inventory.h"
 
 namespace Sherlock {
 
@@ -54,17 +55,14 @@ Inventory *Inventory::init(SherlockEngine *vm) {
 	if (vm->getGameID() == GType_SerratedScalpel)
 		return new Scalpel::ScalpelInventory(vm);
 	else
-		return new Inventory(vm);
+		return new Tattoo::TattooInventory(vm);
 }
 
 Inventory::Inventory(SherlockEngine *vm) : Common::Array<InventoryItem>(), _vm(vm) {
-	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
 	_invGraphicsLoaded = false;
 	_invIndex = 0;
 	_holdings = 0;
 	_invMode = INVMODE_EXIT;
-	for (int i = 0; i < 6; ++i)
-		_invShapes[i] = nullptr;
 }
 
 Inventory::~Inventory() {
@@ -79,44 +77,20 @@ void Inventory::freeInv() {
 }
 
 void Inventory::freeGraphics() {
-	for (uint idx = 0; idx < MAX_VISIBLE_INVENTORY; ++idx)
+	int count = _invShapes.size();
+	for (int idx = 0; idx < count; ++idx)
 		delete _invShapes[idx];
+	_invShapes.clear();
+	_invShapes.resize(count);
 
-	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
 	_invGraphicsLoaded = false;
-}
-
-void Inventory::loadInv() {
-	// Exit if the inventory names are already loaded
-	if (_names.size() > 0)
-		return;
-
-	// Load the inventory names
-	Common::SeekableReadStream *stream = _vm->_res->load("invent.txt");
-
-	int streamSize = stream->size();
-	while (stream->pos() < streamSize) {
-		Common::String name;
-		char c;
-		while ((c = stream->readByte()) != 0)
-			name += c;
-
-		_names.push_back(name);
-	}
-
-	delete stream;
-
-	loadGraphics();
 }
 
 void Inventory::loadGraphics() {
 	if (_invGraphicsLoaded)
 		return;
 
-	// Default all inventory slots to empty
-	Common::fill(&_invShapes[0], &_invShapes[MAX_VISIBLE_INVENTORY], (ImageFile *)nullptr);
-
-	for (int idx = _invIndex; (idx < _holdings) && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
+	for (int idx = _invIndex; (idx < _holdings) && (idx - _invIndex) < (int)_invShapes.size(); ++idx) {
 		// Get the name of the item to be displayed, figure out its accompanying
 		// .VGS file with its picture, and then load it
 		int invNum = findInv((*this)[idx]._name);

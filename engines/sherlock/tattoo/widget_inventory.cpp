@@ -91,7 +91,7 @@ void WidgetInventory::drawInventory() {
 	Inventory &inv = *_vm->_inventory;
 
 	// TODO: Refactor _invIndex into this widget class
-	for (int idx= 0, itemId = inv._invIndex; idx < NUM_INVENTORY_SHOWN; ++idx) {
+	for (int idx = 0, itemId = inv._invIndex; idx < NUM_INVENTORY_SHOWN; ++idx, ++itemId) {
 		// Figure out the drawing position
 		Common::Point pt(3 + (INVENTORY_XSIZE + 3) * (idx % (NUM_INVENTORY_SHOWN / 2)),
 			3 + (INVENTORY_YSIZE + 3) * idx / (NUM_INVENTORY_SHOWN / 2));

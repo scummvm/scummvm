@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	scalpel/settings.o \
 	tattoo/tattoo.o \
 	tattoo/tattoo_fixed_text.o \
+	tattoo/tattoo_inventory.o \
 	tattoo/tattoo_journal.o \
 	tattoo/tattoo_map.o \
 	tattoo/tattoo_people.o \

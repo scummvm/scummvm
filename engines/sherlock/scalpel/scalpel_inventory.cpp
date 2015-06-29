@@ -30,7 +30,8 @@ namespace Sherlock {
 
 namespace Scalpel {
 
-ScalpelInventory::ScalpelInventory(SherlockEngine *vm) : Inventory(vm), _invIndex(0) {
+ScalpelInventory::ScalpelInventory(SherlockEngine *vm) : Inventory(vm) {
+	_invShapes.resize(6);
 }
 
 ScalpelInventory::~ScalpelInventory() {
@@ -216,7 +217,7 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 
 	// If an inventory item has disappeared (due to using it or giving it),
 	// a blank space slot may have appeared. If so, adjust the inventory
-	if (_invIndex > 0 && _invIndex > (_holdings - 6)) {
+	if (_invIndex > 0 && _invIndex > (_holdings - (int)_invShapes.size())) {
 		--_invIndex;
 		freeGraphics();
 		loadGraphics();
@@ -232,7 +233,7 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 	}
 
 	// Iterate through displaying up to 6 objects at a time
-	for (int idx = _invIndex; idx < _holdings && (idx - _invIndex) < MAX_VISIBLE_INVENTORY; ++idx) {
+	for (int idx = _invIndex; idx < _holdings && (idx - _invIndex) < (int)_invShapes.size(); ++idx) {
 		int itemNum = idx - _invIndex;
 		Surface &bb = slamIt == SLAM_SECONDARY_BUFFER ? screen._backBuffer2 : screen._backBuffer1;
 		Common::Rect r(8 + itemNum * 52, 165, 51 + itemNum * 52, 194);
@@ -265,6 +266,29 @@ void ScalpelInventory::putInv(InvSlamMode slamIt) {
 		invCommands(0);
 		screen._backBuffer = &screen._backBuffer1;
 	}
+}
+
+void ScalpelInventory::loadInv() {
+	// Exit if the inventory names are already loaded
+	if (_names.size() > 0)
+		return;
+
+	// Load the inventory names
+	Common::SeekableReadStream *stream = _vm->_res->load("invent.txt");
+
+	int streamSize = stream->size();
+	while (stream->pos() < streamSize) {
+		Common::String name;
+		char c;
+		while ((c = stream->readByte()) != 0)
+			name += c;
+
+		_names.push_back(name);
+	}
+
+	delete stream;
+
+	loadGraphics();
 }
 
 } // End of namespace Scalpel

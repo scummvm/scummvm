@@ -32,8 +32,6 @@
 
 namespace Sherlock {
 
-#define MAX_VISIBLE_INVENTORY 6
-
 enum InvMode {
 	INVMODE_EXIT = 0,
 	INVMODE_LOOK = 1,
@@ -88,7 +86,7 @@ protected:
 	 */
 	void copyToInventory(Object &obj);
 public:
-	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
+	Common::Array<ImageFile *> _invShapes;
 	bool _invGraphicsLoaded;
 	InvMode _invMode;
 	int _invIndex;
@@ -107,12 +105,6 @@ public:
 	 * Free inventory data
 	 */
 	void freeInv();
-
-	/**
-	 * Load the list of names the inventory items correspond to, if not already loaded,
-	 * and then calls loadGraphics to load the associated graphics
-	 */
-	void loadInv();
 
 	/**
 	 * Load the list of names of graphics for the inventory
@@ -145,6 +137,12 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
+
+	/**
+	 * Load the list of names the inventory items correspond to, if not already loaded,
+	 * and then calls loadGraphics to load the associated graphics
+	 */
+	virtual void loadInv() = 0;
 };
 
 } // End of namespace Sherlock
