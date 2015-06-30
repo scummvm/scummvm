@@ -380,18 +380,16 @@ bool MusicPlayerMidi::loadParser(Common::SeekableReadStream *stream, bool loop) 
 
 MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName) :
 	MusicPlayerMidi(vm) {
-	// Create the parser
-	_midiParser = MidiParser::createParser_XMIDI();
 
 	// Create the driver
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	MusicType musicType = MidiDriver::getMusicType(dev);
 	_driver = NULL;
 
-	// new Miles Audio support, to enable set milesAudioEnabled to true
-	// Attention: MT32 timbre file currently not supported, work in progress
+	// new Miles Audio support, to disable set milesAudioEnabled to false
 	_milesAudioMode = false;
-	bool milesAudioEnabled = false;
+	bool milesAudioEnabled = true;
+	MidiParser::XMidiNewTimbreListProc newTimbreListProc = NULL;
 
 	if (milesAudioEnabled) {
 		// 7th Guest uses FAT.AD/FAT.OPL/FAT.MT
@@ -405,12 +403,16 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 			break;
 		case MT_GM:
 			if (ConfMan.getBool("native_mt32")) {
-				_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + "FAT.MT");
+				_driver = Audio::MidiDriver_Miles_MT32_create(gtlName + ".MT");
 				musicType = MT_MT32;
 			}
 			break;
 		default:
 			break;
+		}
+
+		if (musicType == MT_MT32) {
+			newTimbreListProc = Audio::MidiDriver_Miles_MT32_processXMIDITimbreChunk;
 		}
 	}
 
@@ -424,6 +426,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	}
 
 	assert(_driver);
+
+	// Create the parser
+	_midiParser = MidiParser::createParser_XMIDI(NULL, NULL, newTimbreListProc, _driver);
 
 	_driver->open();	// TODO: Handle return value != 0 (indicating an error)
 
