@@ -301,6 +301,17 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 	sysExMessage[5] = (targetAddress >> 8) & 0xFF;
 	sysExMessage[6] = targetAddress & 0xFF;
 
+	// Adjust address in case it's needed
+	if (sysExMessage[6] >= 0x80) {
+		sysExMessage[5]++;
+		sysExMessage[6] -= 0x80;
+	}
+	if (sysExMessage[5] >= 0x80) {
+		sysExMessage[4]++;
+		sysExMessage[5] -= 0x80;
+	}
+	assert(sysExMessage[4] < 0x80); // security check
+
 	sysExChecksum -= sysExMessage[4];
 	sysExChecksum -= sysExMessage[5];
 	sysExChecksum -= sysExMessage[6];
@@ -312,6 +323,7 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 			break; // Message done
 
 		assert(sysExPos < sizeof(sysExMessage));
+		assert(sysExByte < 0x80); // security check
 		sysExMessage[sysExPos++] = sysExByte;
 		sysExChecksum -= sysExByte;
 	}
