@@ -40,7 +40,72 @@ WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInvento
 }
 
 void WidgetInventoryTooltip::setText(const Common::String &str) {
+	// If no text specified, erase any previously displayed tooltip and free it's surface
+	if (str.empty()) {
+		erase();
+		_surface.free();
+		return;
+	}
 
+	int width = _surface.stringWidth(str) + 2;
+	int height;
+	Common::String line1 = str, line2;
+
+	// See if we need to split it into two lines
+	if (width > 150) {
+		// Yes, we do
+		const char *s = str.c_str();
+		const char *space = nullptr;
+		int dif = 10000;
+
+		while (*s) {
+			s = strchr(s, ' ');
+
+			if (!s) {
+				if (!space) {
+					height = _surface.stringHeight(str) + 2;
+				} else {
+					line1 = Common::String(str.c_str(), space);
+					line2 = Common::String(space + 1);
+					int height = _surface.stringHeight(line1) + _surface.stringHeight(line2) + 4;
+				}
+				break;
+			} else {
+				line1 = Common::String(str.c_str(), s);
+				line2 = Common::String(s + 1);
+				int width1 = _surface.stringWidth(line1);
+				int width2 = _surface.stringWidth(line2);
+
+				if (ABS(width1 - width2) < dif) {
+					// Found a split point that results in less overall width
+					space = s;
+					dif = ABS(width1 - width2);
+					width = MAX(width1, width2);
+				}
+
+				s++;
+			}
+		}
+	} else {
+		height = _surface.stringHeight(str) + 2;
+	}
+
+	// Allocate a fresh surface for the new string
+	_surface.create(width, height);
+	_surface.fill(TRANSPARENCY);
+
+	if (line2.empty()) {
+		_surface.writeFancyString(str, Common::Point(0, 0), BLACK, INFO_TOP);
+	} else {
+		int xp, yp;
+		
+		xp = (_bounds.width() - _surface.stringWidth(line1) - 2) / 2;
+		_surface.writeFancyString(line1, Common::Point(xp, 0), BLACK, INFO_TOP);
+
+		xp = (_bounds.width() - _surface.stringWidth(line2) - 2) / 2;
+		yp = _surface.stringHeight(line2) + 2;
+		_surface.writeFancyString(line2, Common::Point(xp, yp), BLACK, INFO_TOP);
+	}
 }
 
 void WidgetInventoryTooltip::handleEvents() {	
@@ -163,8 +228,17 @@ void WidgetInventoryTooltip::handleEvents() {
 	// See if they are pointing at a different inventory object and we need to
 	// change the graphics of the Text Tag
 	if (select != oldSelect || (select != -1 && _surface.empty())) {
+		// Set the text
 		setText(str);
+	} else if (select == -1 && oldSelect != -1) {
+		setText(Common::String());
+		return;
 	}
+
+	// Update the position of the tooltip
+	int xs = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
+	int ys = CLIP(mousePos.y - _bounds.height(), 0, SHERLOCK_SCREEN_HEIGHT - _bounds.height());
+	_bounds.moveTo(xs, ys);
 }
 
 /*----------------------------------------------------------------*/
@@ -641,6 +715,16 @@ void WidgetInventory::banishWindow() {
 
 	_menuSurface.free();
 	_menuBounds = _oldMenuBounds = Common::Rect(0, 0, 0, 0);
+}
+
+void WidgetInventory::draw() {
+	WidgetBase::draw();
+	_tooltipWidget.draw();
+}
+
+void WidgetInventory::erase() {
+	WidgetBase::erase();
+	_tooltipWidget.erase();
 }
 
 } // End of namespace Tattoo

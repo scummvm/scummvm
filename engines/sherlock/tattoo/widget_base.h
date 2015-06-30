@@ -80,12 +80,12 @@ public:
 	/**
 	 * Erase any previous display of the widget on the screen
 	 */
-	void erase();
+	virtual void erase();
 
 	/**
 	 * Update the display of the widget on the screen
 	 */
-	void draw();
+	virtual void draw();
 
 	/**
 	 * Used by some descendents to check for keys to mouse the mouse within the dialog

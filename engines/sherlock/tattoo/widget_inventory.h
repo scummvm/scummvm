@@ -117,6 +117,16 @@ public:
 	 * Close a currently active menu
 	 */
 	virtual void banishWindow();
+
+	/**
+	 * Erase any previous display of the widget on the screen
+	 */
+	virtual void erase();
+
+	/**
+	 * Update the display of the widget on the screen
+	 */
+	virtual void draw();
 };
 
 } // End of namespace Tattoo
