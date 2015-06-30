@@ -91,6 +91,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 	}
 
 	// Allocate a fresh surface for the new string
+	_bounds = Common::Rect(width, height);
 	_surface.create(width, height);
 	_surface.fill(TRANSPARENCY);
 
@@ -230,6 +231,11 @@ void WidgetInventoryTooltip::handleEvents() {
 	if (select != oldSelect || (select != -1 && _surface.empty())) {
 		// Set the text
 		setText(str);
+
+		if (_owner->_invVerbMode != 3)
+			_owner->_invSelect = select;
+		else
+			ui._oldBgFound = select;
 	} else if (select == -1 && oldSelect != -1) {
 		setText(Common::String());
 		return;
