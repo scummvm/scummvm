@@ -233,14 +233,16 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 #endif
 
-	int retValue = _driver->open();
-	if (retValue == 0) {
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
+	if (_driver) {
+		int retValue = _driver->open();
+		if (retValue == 0) {
+			if (_nativeMT32)
+				_driver->sendMT32Reset();
+			else
+				_driver->sendGMReset();
 
-		_driver->setTimerCallback(this, &timerCallback);
+			_driver->setTimerCallback(this, &timerCallback);
+		}
 	}
 }
 
@@ -263,6 +265,9 @@ void MusicManager::send(uint32 b) {
 
 void MusicManager::midiPlay() {
 	debugC(1, kDebugSound, "midiPlay");
+
+	if (!_driver)
+		return;
 
 	if (_music->_size < 4) {
 		error("midiPlay() wrong music resource size");
@@ -301,6 +306,8 @@ bool MusicManager::checkMidiDone() {
 void MusicManager::midiRepeat() {
 	debugC(1, kDebugSound, "midiRepeat");
 
+	if (!_driver)
+		return;
 	if (!_parser)
 		return;
 
@@ -312,6 +319,9 @@ void MusicManager::midiRepeat() {
 
 void MusicManager::stopSong() {
 	debugC(1, kDebugSound, "stopSong");
+
+	if (!_driver)
+		return;
 
 	stop();
 }
@@ -330,6 +340,9 @@ void MusicManager::loadMusic(FileIdent file) {
 
 void MusicManager::newMusic(int musicId, int mode) {
 	debugC(1, kDebugSound, "newMusic(%d, %d)", musicId, mode);
+
+	if (!_driver)
+		return;
 
 	if (mode == 1) {
 		stopSong();
