@@ -1031,11 +1031,12 @@ uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
 	return 0;
 }
 
-MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFilename, const Common::String instrumentDataFilenameOPL3) {
+MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFilename, const Common::String instrumentDataFilenameOPL3, const byte *instrumentRawDataPtr, uint32 instrumentRawDataSize) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
-	Common::File *fileStream = new Common::File();
+	Common::File *fileStream = NULL;
 	uint32        fileSize = 0;
-	byte         *fileDataPtr = NULL;
+	const byte   *fileDataPtr = NULL;
+	bool          fileDataAllocatedByUs = false;
 	uint32        fileDataOffset = 0;
 	uint32        fileDataLeft = 0;
 
@@ -1048,17 +1049,28 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 	uint32           instrumentOffset = 0;
 	uint16           instrumentDataSize = 0;
 
-	if (!fileStream->open(instrumentDataFilename))
-		error("MILES-ADLIB: could not open instrument file");
+	if (!instrumentDataFilename.empty()) {
+		// Filename was passed to us (this is the common case for most games)
+		fileStream = new Common::File();
 
-	fileSize = fileStream->size();
+		if (!fileStream->open(instrumentDataFilename))
+			error("MILES-ADLIB: could not open instrument file");
 
-	fileDataPtr = new byte[fileSize];
+		fileSize = fileStream->size();
 
-	if (fileStream->read(fileDataPtr, fileSize) != fileSize)
-		error("MILES-ADLIB: error while reading instrument file");
-	fileStream->close();
-	delete fileStream;
+		fileDataPtr = new byte[fileSize];
+		fileDataAllocatedByUs = true;
+
+		if (fileStream->read((byte *)fileDataPtr, fileSize) != fileSize)
+			error("MILES-ADLIB: error while reading instrument file");
+		fileStream->close();
+		delete fileStream;
+
+	} else if (instrumentRawDataPtr) {
+		// instrument data was passed directly (currently used by Amazon Guardians of Eden
+		fileDataPtr = instrumentRawDataPtr;
+		fileSize = instrumentRawDataSize;
+	}
 
 	// File is like this:
 	// [patch:BYTE] [bank:BYTE] [patchoffset:UINT32]
@@ -1127,8 +1139,10 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 		instrumentPtr++;
 	}
 
-	// Free instrument file data
-	delete[] fileDataPtr;
+	if (fileDataAllocatedByUs) {
+		// Free instrument file data
+		delete[] fileDataPtr;
+	}
 
 	return new MidiDriver_Miles_AdLib(g_system->getMixer(), instrumentTablePtr, instrumentTableCount);
 }
