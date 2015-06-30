@@ -36,7 +36,7 @@ namespace Tattoo {
 #define MAX_INV_COMMANDS 10			// Maximum elements in dialog
 
 WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) : 
-		WidgetBase(vm), _owner(owner) {
+		WidgetTooltipBase(vm), _owner(owner) {
 }
 
 void WidgetInventoryTooltip::setText(const Common::String &str) {
@@ -48,7 +48,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 	}
 
 	int width = _surface.stringWidth(str) + 2;
-	int height;
+	int height = 0;
 	Common::String line1 = str, line2;
 
 	// See if we need to split it into two lines

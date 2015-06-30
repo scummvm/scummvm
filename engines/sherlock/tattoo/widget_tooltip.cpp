@@ -31,7 +31,43 @@ namespace Tattoo {
 
 #define MAX_TOOLTIP_WIDTH 150
 
-WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetBase(vm) {
+void WidgetTooltipBase::draw() {
+	Screen &screen = *_vm->_screen;
+	const Common::Point &currentScroll = getCurrentScroll();
+
+	// If there was a previously drawn frame in a different position that hasn't yet been erased, then erase it
+	if (_oldBounds.width() > 0 && _oldBounds != _bounds)
+		erase();
+
+	if (_bounds.width() > 0 && !_surface.empty()) {
+		// Blit the affected area to the screen
+		screen.slamRect(_bounds, currentScroll);
+		
+		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
+		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
+		screen.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+
+		// Store a copy of the drawn area for later erasing
+		_oldBounds = _bounds;
+	}
+}
+
+void WidgetTooltipBase::erase() {
+	Screen &screen = *_vm->_screen;
+	const Common::Point &currentScroll = getCurrentScroll();
+
+	if (_oldBounds.width() > 0) {
+		// Restore the affected area from the back buffer to the screen
+		screen.slamRect(_oldBounds, currentScroll);
+
+		// Reset the old bounds so it won't be erased again
+		_oldBounds = Common::Rect(0, 0, 0, 0);
+	}
+}
+
+/*----------------------------------------------------------------*/
+
+WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase (vm) {
 }
 
 void WidgetTooltip::setText(const Common::String &str) {

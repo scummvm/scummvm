@@ -367,6 +367,34 @@ void Screen::slamRect(const Common::Rect &r) {
 	}
 }
 
+void Screen::slamRect(const Common::Rect &r, const Common::Point &currentScroll) {
+	if (r.width() && r.height() > 0) {
+		Common::Rect srcRect = r, destRect = r;
+		srcRect.translate(currentScroll.x, currentScroll.y);
+
+		if (destRect.left < 0) {
+			srcRect.left += -destRect.left;
+			destRect.left = 0;
+		}
+		if (destRect.top < 0) {
+			srcRect.top += -destRect.top;
+			destRect.top = 0;
+		}
+		if (destRect.right > SHERLOCK_SCREEN_WIDTH) {
+			srcRect.right -= (destRect.left - SHERLOCK_SCREEN_WIDTH);
+			destRect.right = SHERLOCK_SCREEN_WIDTH;
+		}
+		if (destRect.bottom > SHERLOCK_SCREEN_HEIGHT) {
+			srcRect.bottom -= (destRect.bottom - SHERLOCK_SCREEN_HEIGHT);
+			destRect.bottom = SHERLOCK_SCREEN_HEIGHT;
+		}
+
+		if (srcRect.isValidRect())
+			blitFrom(*_backBuffer, Common::Point(destRect.left, destRect.top), srcRect);
+	}
+}
+
+
 void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
 		int16 *width, int16 *height) {
 	Common::Point imgPos = pt + frame->_offset;

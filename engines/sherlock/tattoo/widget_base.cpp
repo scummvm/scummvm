@@ -61,7 +61,7 @@ void WidgetBase::erase() {
 		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(oldBounds.left, oldBounds.top), oldBounds);
 		screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), oldBounds);
 
-		// Reset the old bounds so 
+		// Reset the old bounds so it won't be erased again
 		_oldBounds = Common::Rect(0, 0, 0, 0);
 	}
 }

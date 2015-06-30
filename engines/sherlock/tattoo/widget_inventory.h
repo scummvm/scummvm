@@ -37,7 +37,7 @@ namespace Tattoo {
 
 class WidgetInventory;
 
-class WidgetInventoryTooltip: public WidgetBase {
+class WidgetInventoryTooltip: public WidgetTooltipBase {
 private:
 	WidgetInventory *_owner;
 	Common::Rect _oldInvGraphicBounds, _invGraphicBounds;

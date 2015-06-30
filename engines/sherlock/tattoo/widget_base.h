@@ -36,11 +36,10 @@ class ImageFile;
 namespace Tattoo {
 
 class WidgetBase {
-private:
-	Common::Rect _oldBounds;
 protected:
 	SherlockEngine *_vm;
 	Common::Rect _bounds;
+	Common::Rect _oldBounds;
 	Surface _surface;
 	bool _outsideMenu;
 

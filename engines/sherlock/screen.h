@@ -166,6 +166,11 @@ public:
 	void slamRect(const Common::Rect &r);
 
 	/**
+	 * Copies a given area to the screen
+	 */
+	void slamRect(const Common::Rect &r, const Common::Point &currentScroll);
+
+	/**
 	 * Copy an image from the back buffer to the screen, taking care of both the
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
