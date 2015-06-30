@@ -346,9 +346,9 @@ void TattooScene::doBgAnim() {
 
 	doBgAnimUpdateBgObjectsAndAnim();
 
-	ui.drawInterface();
-
 	doBgAnimDrawSprites();
+
+	ui.drawInterface();
 
 	if (vm._creditsActive)
 		vm.blitCredits();

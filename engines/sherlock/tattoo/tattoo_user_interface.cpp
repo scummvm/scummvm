@@ -294,9 +294,6 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 	if (_widget)
 		_widget->draw();
 
-	// Handle drawing the text tooltip if necessary
-	_tooltipWidget.draw();
-
 	if (vm._creditsActive)
 		vm.drawCredits();
 
@@ -306,6 +303,9 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 
 	if (screen._flushScreen)
 		screen.blockMove(_currentScroll);
+
+	// Handle drawing the text tooltip if necessary
+	_tooltipWidget.draw();
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {

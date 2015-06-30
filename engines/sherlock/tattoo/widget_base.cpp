@@ -80,7 +80,6 @@ void WidgetBase::draw() {
 		bounds.translate(currentScroll.x, currentScroll.y);
 
 		// Draw the background for the widget
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(bounds.left, bounds.top), bounds);
 		drawBackground();
 
 		// Draw the widget onto the back buffer and then slam it to the screen
