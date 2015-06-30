@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-06-25 21:32+0100\n"
+"POT-Creation-Date: 2015-06-30 20:57+0100\n"
 "PO-Revision-Date: 2014-07-02 16:30+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -55,6 +55,7 @@ msgstr "Uppåt"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:351 gui/massadd.cpp:95 gui/options.cpp:1239
+#: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
 #: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
@@ -949,6 +950,43 @@ msgstr ""
 "Temat du valde stöder inte ditt språk. Om du vill använda det här temat "
 "måste först byta till ett annat språk."
 
+#: gui/recorderdialog.cpp:64
+msgid "Recorder or Playback Gameplay"
+msgstr ""
+
+#: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
+#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
+msgid "Delete"
+msgstr "Radera"
+
+#: gui/recorderdialog.cpp:71
+msgid "Record"
+msgstr ""
+
+#: gui/recorderdialog.cpp:72
+#, fuzzy
+msgid "Playback"
+msgstr "Spela"
+
+#: gui/recorderdialog.cpp:74
+msgid "Edit"
+msgstr ""
+
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
+#: gui/recorderdialog.cpp:253
+msgid "Author: "
+msgstr ""
+
+#: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
+#: gui/recorderdialog.cpp:254
+msgid "Notes: "
+msgstr ""
+
+#: gui/recorderdialog.cpp:155
+#, fuzzy
+msgid "Do you really want to delete this record?"
+msgstr "Vill du verkligen radera den här spardatan?"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr "Visa som lista"
@@ -968,10 +1006,6 @@ msgstr "Ingen tid sparad"
 #: gui/saveload-dialog.cpp:213 gui/saveload-dialog.cpp:362
 msgid "No playtime saved"
 msgstr "Ingen speltid sparad"
-
-#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
-msgid "Delete"
-msgstr "Radera"
 
 #: gui/saveload-dialog.cpp:275
 msgid "Do you really want to delete this saved game?"
