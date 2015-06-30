@@ -21,9 +21,12 @@
  */
 
 #include "common/algorithm.h"
+#include "common/config-manager.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+// Miles Audio
+#include "audio/miles.h"
 #include "access/access.h"
 #include "access/sound.h"
 
@@ -194,9 +197,41 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	_music = nullptr;
 	_tempMusic = nullptr;
 	_isLooping = false;
+	_driver = nullptr;
 
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	MusicType musicType = MidiDriver::getMusicType(dev);
+
+	// Amazon Guardians of Eden uses MIDPAK inside MIDIDRV.AP
+	// Amazon Guardians of Eden possibly used MIDPAK as well
+	// AdLib patches are inside MIDIDRV.AP too, 2nd resource file
+	switch (musicType) {
+	case MT_ADLIB: {
+		Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
+		const byte *adLibInstrumentData = midiDrvResource->data();
+		uint32      adLibInstrumentDataSize = midiDrvResource->_size;
+
+		_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentData, adLibInstrumentDataSize);
+
+		delete midiDrvResource;
+		break;
+	}
+	case MT_MT32:
+		_driver = Audio::MidiDriver_Miles_MT32_create("");
+		_nativeMT32 = true;
+		break;
+	case MT_GM:
+		if (ConfMan.getBool("native_mt32")) {
+			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			_nativeMT32 = true;
+		}
+		break;
+	}
+
+#if 0
 	MidiPlayer::createDriver();
 	MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+#endif
 
 	int retValue = _driver->open();
 	if (retValue == 0) {
@@ -215,11 +250,15 @@ MusicManager::~MusicManager() {
 }
 
 void MusicManager::send(uint32 b) {
+	// Pass data directly to driver
+	_driver->send(b);
+#if 0
 	if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}
 
 	Audio::MidiPlayer::send(b);
+#endif
 }
 
 void MusicManager::midiPlay() {
