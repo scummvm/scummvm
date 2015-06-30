@@ -701,7 +701,7 @@ void TattooJournal::disableControls() {
 
 	// Print the Journal commands
 	int xp = r.left + r.width() / 6;
-	for (int idx = 0; idx < 3; ++idx) {
+	for (int idx = 0; idx < 2; ++idx) {
 		screen.gPrint(Common::Point(xp - screen.stringWidth(JOURNAL_COMMANDS[idx]) / 2, r.top + 5),
 			INFO_BOTTOM, "%s", JOURNAL_COMMANDS[idx]);
 
