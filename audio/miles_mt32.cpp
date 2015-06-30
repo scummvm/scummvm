@@ -121,6 +121,8 @@ private:
 
 	void MT32SysEx(const uint32 targetAddress, const byte *dataPtr);
 
+	uint32 calculateSysExTargetAddress(uint32 baseAddress, uint32 index);
+
 	void writeRhythmSetup(byte note, byte customTimbreId);
 	void writePatchTimbre(byte patchId, byte timbreGroup, byte timbreId);
 	void writePatchByte(byte patchId, byte index, byte patchValue);
@@ -301,22 +303,12 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 	sysExMessage[5] = (targetAddress >> 8) & 0xFF;
 	sysExMessage[6] = targetAddress & 0xFF;
 
-	// Adjust address in case it's needed
-	if (sysExMessage[6] >= 0x80) {
-		sysExMessage[5]++;
-		sysExMessage[6] -= 0x80;
+	for (byte targetAddressByte = 4; targetAddressByte < 7; targetAddressByte++) {
+		assert(sysExMessage[targetAddressByte] < 0x80); // security check
+		sysExChecksum -= sysExMessage[targetAddressByte];
 	}
-	if (sysExMessage[5] >= 0x80) {
-		sysExMessage[4]++;
-		sysExMessage[5] -= 0x80;
-	}
-	assert(sysExMessage[4] < 0x80); // security check
 
-	sysExChecksum -= sysExMessage[4];
-	sysExChecksum -= sysExMessage[5];
-	sysExChecksum -= sysExMessage[6];
-
-	sysExPos      = 7;
+	sysExPos = 7;
 	while (1) {
 		sysExByte = *dataPtr++;
 		if (sysExByte == MILES_MT32_SYSEX_TERMINATOR)
@@ -728,11 +720,36 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	return customTimbreId;
 }
 
+uint32 MidiDriver_Miles_MT32::calculateSysExTargetAddress(uint32 baseAddress, uint32 index) {
+	uint16 targetAddressLSB = baseAddress & 0xFF;
+	uint16 targetAddressKSB = (baseAddress >> 8) & 0xFF;
+	uint16 targetAddressMSB = (baseAddress >> 16) & 0xFF;
+
+	// add index to it, but use 7-bit of the index for each byte
+	targetAddressLSB += (index & 0x7F);
+	targetAddressKSB += ((index >> 7) & 0x7F);
+	targetAddressMSB += ((index >> 14) & 0x7F);
+
+	// adjust bytes, so that none of them is above or equal 0x80
+	while (targetAddressLSB >= 0x80) {
+		targetAddressLSB -= 0x80;
+		targetAddressKSB++;
+	}
+	while (targetAddressKSB >= 0x80) {
+		targetAddressKSB -= 0x80;
+		targetAddressMSB++;
+	}
+	assert(targetAddressMSB < 0x80);
+
+	// put everything together
+	return targetAddressLSB | (targetAddressKSB << 8) | (targetAddressMSB << 16);
+}
+
 void MidiDriver_Miles_MT32::writeRhythmSetup(byte note, byte customTimbreId) {
 	byte   sysExData[2];
 	uint32 targetAddress = 0;
 
-	targetAddress = 0x030110 + ((note - 24) << 2);
+	targetAddress = calculateSysExTargetAddress(0x030110, ((note - 24) << 2));
 
 	sysExData[0] = customTimbreId;
 	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
@@ -744,10 +761,11 @@ void MidiDriver_Miles_MT32::writePatchTimbre(byte patchId, byte timbreGroup, byt
 	byte   sysExData[3];
 	uint32 targetAddress = 0;
 
-	targetAddress = 0x050000 + (patchId << 3);
+	// write to patch memory (starts at 0x050000, each entry is 8 bytes)
+	targetAddress = calculateSysExTargetAddress(0x050000, patchId << 3);
 
-	sysExData[0] = timbreGroup;
-	sysExData[1] = timbreId;
+	sysExData[0] = timbreGroup; // 0 - group A, 1 - group B, 2 - memory, 3 - rhythm
+	sysExData[1] = timbreId;    // timbre number (0-63)
 	sysExData[2] = MILES_MT32_SYSEX_TERMINATOR; // terminator
 
 	MT32SysEx(targetAddress, sysExData);
@@ -757,7 +775,7 @@ void MidiDriver_Miles_MT32::writePatchByte(byte patchId, byte index, byte patchV
 	byte   sysExData[2];
 	uint32 targetAddress = 0;
 
-	targetAddress = 0x050000 + ((patchId << 3) + index );
+	targetAddress = calculateSysExTargetAddress(0x050000, (patchId << 3) + index);
 
 	sysExData[0] = patchValue;
 	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
@@ -769,7 +787,7 @@ void MidiDriver_Miles_MT32::writeToSystemArea(byte index, byte value) {
 	byte   sysExData[2];
 	uint32 targetAddress = 0;
 
-	targetAddress = 0x100000 | index;
+	targetAddress = calculateSysExTargetAddress(0x100000, index);
 
 	sysExData[0] = value;
 	sysExData[1] = MILES_MT32_SYSEX_TERMINATOR; // terminator
