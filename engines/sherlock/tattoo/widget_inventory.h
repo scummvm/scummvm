@@ -82,6 +82,11 @@ private:
 	Surface _menuSurface;
 
 	/**
+	 * Draw the bars within the dialog
+	 */
+	void drawBars();
+
+	/**
 	 * Draw the scrollbar for the dialog
 	 */
 	void drawScrollBar();

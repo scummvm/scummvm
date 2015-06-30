@@ -67,7 +67,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 				} else {
 					line1 = Common::String(str.c_str(), space);
 					line2 = Common::String(space + 1);
-					int height = _surface.stringHeight(line1) + _surface.stringHeight(line2) + 4;
+					height = _surface.stringHeight(line1) + _surface.stringHeight(line2) + 4;
 				}
 				break;
 			} else {
@@ -292,7 +292,34 @@ void WidgetInventory::load(int mode) {
 
 	// Draw the window background and then the inventory on top of it
 	makeInfoArea(_surface);
+	drawBars();
 	drawInventory();
+}
+
+void WidgetInventory::drawBars() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	ImageFile &images = *ui._interfaceImages;
+	int x;
+
+	_surface.hLine(3, INVENTORY_YSIZE + 3, _bounds.width() - 4, INFO_TOP);
+	_surface.hLine(3, INVENTORY_YSIZE + 4, _bounds.width() - 4, INFO_MIDDLE);
+	_surface.hLine(3, INVENTORY_YSIZE + 5, _bounds.width() - 4, INFO_BOTTOM);
+	_surface.transBlitFrom(images[4], Common::Point(0, INVENTORY_YSIZE + 2));
+
+	for (int idx = 1; idx <= NUM_INVENTORY_SHOWN / 2; ++idx) {
+		x = idx * (INVENTORY_XSIZE + 3);
+
+		_surface.vLine(x, 3, _bounds.height() - 4, INFO_TOP);
+		_surface.vLine(x + 1, 3, _bounds.height() - 4, INFO_MIDDLE);
+		_surface.vLine(x + 2, 3, _bounds.height() - 4, INFO_BOTTOM);
+
+		_surface.transBlitFrom(images[6], Common::Point(x - 1, 1));
+		_surface.transBlitFrom(images[7], Common::Point(x - 1, _bounds.height() - 4));
+		_surface.transBlitFrom(images[6], Common::Point(x - 1, INVENTORY_YSIZE + 5));
+		_surface.transBlitFrom(images[7], Common::Point(x - 1, INVENTORY_YSIZE + 2));
+	}
+
+	_surface.hLine(x + 2, INVENTORY_YSIZE + 2, INVENTORY_YSIZE + 8, INFO_BOTTOM);
 }
 
 void WidgetInventory::drawInventory() {
