@@ -1308,7 +1308,7 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && vgaSpriteId == 1) {
 		_copyScnFlag = 5;
 		while (_copyScnFlag && !shouldQuit())
-				delay(1);
+			delay(1);
 	}
 }
 
