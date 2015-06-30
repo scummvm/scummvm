@@ -36,6 +36,9 @@ namespace Audio {
 #define MILES_MT32_PATCHES_COUNT 128
 #define MILES_MT32_CUSTOMTIMBRE_COUNT 64
 
+#define MILES_MT32_TIMBREBANK_STANDARD_ROLAND 0
+#define MILES_MT32_TIMBREBANK_MELODIC_MODULE 127
+
 #define MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE 14
 #define MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE 58
 #define MILES_MT32_PATCHDATA_PARTIALPARAMETERS_COUNT 4
@@ -111,6 +114,7 @@ protected:
 	int _baseFreq;
 
 public:
+	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize);
 
 private:
 	void resetMT32();
@@ -327,6 +331,7 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 		delay += 40;
 
 	g_system->delayMillis(delay);
+	g_system->updateScreen();
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
@@ -550,11 +555,6 @@ void MidiDriver_Miles_MT32::setupPatch(byte patchBank, byte patchId) {
 	if (patchBank) {
 		// non-built-in bank
 		int16 customTimbreId = searchCustomTimbre(patchBank, patchId);
-		if (customTimbreId < 0) {
-			// currently not loaded, try to install it
-			// Miles Audio didn't do this here, I'm not exactly sure when it called the install code
-			customTimbreId = installCustomTimbre(patchBank, patchId);
-		}
 		if (customTimbreId >= 0) {
 			// now available? -> use this timbre
 			writePatchTimbre(patchId, 2, customTimbreId); // Group MEMORY
@@ -571,11 +571,54 @@ void MidiDriver_Miles_MT32::setupPatch(byte patchBank, byte patchId) {
 	}
 }
 
+void MidiDriver_Miles_MT32::processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) {
+	uint16 timbreCount = 0;
+	uint32 expectedSize = 0;
+	const byte *timbreListSeeker = timbreListPtr;
+
+	if (timbreListSize < 2) {
+		warning("MILES-MT32: XMIDI-TIMB chunk - not enough bytes in chunk");
+		return;
+	}
+
+	timbreCount = READ_LE_UINT16(timbreListPtr);
+	expectedSize = timbreCount * 2;
+	if (expectedSize > timbreListSize) {
+		warning("MILES-MT32: XMIDI-TIMB chunk - size mismatch");
+		return;
+	}
+
+	timbreListSeeker += 2;
+
+	while (timbreCount) {
+		const byte  patchId   = *timbreListSeeker++;
+		const byte  patchBank = *timbreListSeeker++;
+		int16       customTimbreId = 0;
+
+		switch (patchBank) {
+		case MILES_MT32_TIMBREBANK_STANDARD_ROLAND:
+		case MILES_MT32_TIMBREBANK_MELODIC_MODULE:
+			// ignore those 2 banks
+			break;
+
+		default:
+			// Check, if this timbre was already loaded
+			customTimbreId = searchCustomTimbre(patchBank, patchId);
+
+			if (customTimbreId < 0) {
+				// currently not loaded, try to install it
+				installCustomTimbre(patchBank, patchId);
+			}
+		}
+		timbreCount--;
+	}
+}
+
 //
 int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	switch(patchBank) {
-	case 0:   // Standard Roland MT32 bank
-	case 127: // Reserved for melodic mode
+	case MILES_MT32_TIMBREBANK_STANDARD_ROLAND: // Standard Roland MT32 bank
+	case MILES_MT32_TIMBREBANK_MELODIC_MODULE:  // Reserved for melodic mode
 		return -1;
 	default:
 		break;
@@ -641,6 +684,25 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	uint32 targetAddressPartial3 = targetAddress + 0x000102;
 	uint32 targetAddressPartial4 = targetAddress + 0x00013C;
 
+#if 0
+	byte parameterData[MILES_MT32_PATCHDATA_TOTAL_SIZE + 1];
+	uint16 parameterDataPos = 0;
+
+	memcpy(parameterData, instrumentPtr->commonParameter, MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE);
+	parameterDataPos += MILES_MT32_PATCHDATA_COMMONPARAMETER_SIZE;
+	memcpy(parameterData + parameterDataPos, instrumentPtr->partialParameters[0], MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE);
+	parameterDataPos += MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE;
+	memcpy(parameterData + parameterDataPos, instrumentPtr->partialParameters[1], MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE);
+	parameterDataPos += MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE;
+	memcpy(parameterData + parameterDataPos, instrumentPtr->partialParameters[2], MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE);
+	parameterDataPos += MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE;
+	memcpy(parameterData + parameterDataPos, instrumentPtr->partialParameters[3], MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE);
+	parameterDataPos += MILES_MT32_PATCHDATA_PARTIALPARAMETER_SIZE;
+	parameterData[parameterDataPos] = MILES_MT32_SYSEX_TERMINATOR;
+
+	MT32SysEx(targetAddressCommon, parameterData);
+#endif
+
 	// upload common parameter data
 	MT32SysEx(targetAddressCommon, instrumentPtr->commonParameter);
 	// upload partial parameter data
@@ -648,6 +710,8 @@ int16 MidiDriver_Miles_MT32::installCustomTimbre(byte patchBank, byte patchId) {
 	MT32SysEx(targetAddressPartial2, instrumentPtr->partialParameters[1]);
 	MT32SysEx(targetAddressPartial3, instrumentPtr->partialParameters[2]);
 	MT32SysEx(targetAddressPartial4, instrumentPtr->partialParameters[3]);
+
+	setupPatch(patchBank, patchId);
 
 	return customTimbreId;
 }
@@ -804,6 +868,14 @@ MidiDriver *MidiDriver_Miles_MT32_create(const Common::String instrumentDataFile
 	}
 
 	return new MidiDriver_Miles_MT32(instrumentTablePtr, instrumentTableCount);
+}
+
+void MidiDriver_Miles_MT32_processXMIDITimbreChunk(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize) {
+	MidiDriver_Miles_MT32 *driverMT32 = dynamic_cast<MidiDriver_Miles_MT32 *>(driver);
+
+	if (driverMT32) {
+		driverMT32->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
+	}
 }
 
 } // End of namespace Audio
