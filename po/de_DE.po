@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2015-06-25 21:32+0100\n"
-"PO-Revision-Date: 2015-06-29 12:39+0100\n"
+"POT-Creation-Date: 2015-07-01 18:38+0200\n"
+"PO-Revision-Date: 2015-07-01 18:39+0200\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8.1\n"
+"X-Generator: Poedit 1.8.2\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -56,6 +56,7 @@ msgstr "Pfad hoch"
 
 #: gui/browser.cpp:75 gui/chooser.cpp:46 gui/KeysDialog.cpp:43
 #: gui/launcher.cpp:351 gui/massadd.cpp:95 gui/options.cpp:1239
+#: gui/recorderdialog.cpp:70 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:216 gui/saveload-dialog.cpp:276
 #: gui/saveload-dialog.cpp:547 gui/saveload-dialog.cpp:931
 #: gui/themebrowser.cpp:55 gui/fluidsynth-dialog.cpp:152
@@ -962,6 +963,41 @@ msgstr ""
 "dieses Thema benutzen wollen, müssen Sie erst zu einer anderen Sprache "
 "wechseln."
 
+#: gui/recorderdialog.cpp:64
+msgid "Recorder or Playback Gameplay"
+msgstr "Spiel aufzeichnen oder wiedergeben"
+
+#: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
+#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
+msgid "Delete"
+msgstr "Löschen"
+
+#: gui/recorderdialog.cpp:71
+msgid "Record"
+msgstr "Aufnahme"
+
+#: gui/recorderdialog.cpp:72
+msgid "Playback"
+msgstr "Wiedergabe"
+
+#: gui/recorderdialog.cpp:74
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
+#: gui/recorderdialog.cpp:253
+msgid "Author: "
+msgstr "Autor:"
+
+#: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
+#: gui/recorderdialog.cpp:254
+msgid "Notes: "
+msgstr "Notizen:"
+
+#: gui/recorderdialog.cpp:155
+msgid "Do you really want to delete this record?"
+msgstr "Möchten Sie diese Aufnahme wirklich löschen?"
+
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
 msgstr "Listenansicht"
@@ -981,10 +1017,6 @@ msgstr "Keine Zeit gespeichert"
 #: gui/saveload-dialog.cpp:213 gui/saveload-dialog.cpp:362
 msgid "No playtime saved"
 msgstr "Keine Spielzeit gespeichert"
-
-#: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
-msgid "Delete"
-msgstr "Löschen"
 
 #: gui/saveload-dialog.cpp:275
 msgid "Do you really want to delete this saved game?"
@@ -2573,11 +2605,13 @@ msgstr "Verwendet einen alternativen Vorspann (nur bei CD-Version)."
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Überspringe EGA-Fehlerdiffusion (Vollfarbige Hintergründe)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Überspringe Fehlerdiffusion in EGA-Spielen, Grafik wird mit allen Farben "
+"gezeigt"
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
