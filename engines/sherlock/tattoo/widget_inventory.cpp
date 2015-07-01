@@ -118,7 +118,7 @@ void WidgetInventoryTooltip::handleEvents() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	Common::String str;
-	int select = -1, oldSelect = -1;
+	int select = -1, oldSelect = 999;
 	Common::String strWith = fixedText.getText(kFixedText_With);
 	Common::String strUse = fixedText.getText(kFixedText_Use);
 
