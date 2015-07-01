@@ -39,6 +39,12 @@ namespace Sherlock {
 #define CLEAR_DIST_X 5
 #define CLEAR_DIST_Y 0
 
+#define ADJUST_COORD(COORD) \
+	if (COORD.x != -1) \
+		COORD.x *= FIXED_INT_MULTIPLIER; \
+	if (COORD.y != -1) \
+		COORD.y *= FIXED_INT_MULTIPLIER
+
 SherlockEngine *BaseObject::_vm;
 bool BaseObject::_countCAnimFrames;
 
@@ -1430,28 +1436,31 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 	_goto[0].x = s.readSint16LE();
 	_goto[0].y = s.readSint16LE();
 	_goto[0]._facing = s.readSint16LE();
+	ADJUST_COORD(_goto[0]);
 
 	if (isRoseTattoo) {
 		// Get Goto position and facing for second NPC
 		_goto[1].x = s.readSint16LE();
 		_goto[1].y = s.readSint16LE();
 		_goto[1]._facing = s.readSint16LE();
+		ADJUST_COORD(_goto[1]);
 	} else {
 		// For Serrated Scalpel, adjust the loaded co-ordinates
 		_goto[0].x = _goto[0].x * FIXED_INT_MULTIPLIER / 100;
 		_goto[0].y = _goto[0].y * FIXED_INT_MULTIPLIER / 100;
-
 	}
 
 	_teleport[0].x = s.readSint16LE();
 	_teleport[0].y = s.readSint16LE();
 	_teleport[0]._facing = s.readSint16LE();
+	ADJUST_COORD(_teleport[0]);
 
 	if (isRoseTattoo) {
 		// Get Teleport position and facing for second NPC
 		_teleport[1].x = s.readSint16LE();
 		_teleport[1].y = s.readSint16LE();
 		_teleport[1]._facing = s.readSint16LE();
+		ADJUST_COORD(_teleport[1]);
 	} else {
 		// For Serrated Scalpel, adjust the loaded co-ordinates
 		_teleport[0].x = _teleport[0].x * FIXED_INT_MULTIPLIER / 100;

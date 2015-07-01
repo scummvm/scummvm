@@ -569,12 +569,6 @@ int TattooScene::getScaleVal(const Point32 &pt) {
 	return result;
 }
 
-#define ADJUST_COORD(COORD) \
-	if (COORD.x != -1) \
-		COORD.x *= FIXED_INT_MULTIPLIER; \
-	if (COORD.y != -1) \
-		COORD.y *= FIXED_INT_MULTIPLIER
-
 int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
@@ -594,12 +588,6 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 	PositionFacing goto2 = cAnim._goto[1];
 	PositionFacing teleport1 = cAnim._teleport[0];
 	PositionFacing teleport2 = cAnim._teleport[1];
-
-	// If the co-ordinates are valid (not -1), adjust them by the fixed int multiplier
-	ADJUST_COORD(goto1);
-	ADJUST_COORD(goto2);
-	ADJUST_COORD(teleport1);
-	ADJUST_COORD(teleport2);
 
 	// See if the Player must walk to a position before the animation starts
 	SpriteType savedPlayerType = people[HOLMES]._type;
@@ -699,8 +687,6 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 
 	return 1;
 }
-
-#undef ADJUST_COORD
 
 void TattooScene::setNPCPath(int npc) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
