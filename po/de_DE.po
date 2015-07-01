@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2015-06-30 20:57+0100\n"
-"PO-Revision-Date: 2015-06-29 12:39+0100\n"
+"PO-Revision-Date: 2015-07-01 18:39+0200\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8.1\n"
+"X-Generator: Poedit 1.8.2\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -965,7 +965,7 @@ msgstr ""
 
 #: gui/recorderdialog.cpp:64
 msgid "Recorder or Playback Gameplay"
-msgstr ""
+msgstr "Spiel aufzeichnen oder wiedergeben"
 
 #: gui/recorderdialog.cpp:69 gui/recorderdialog.cpp:156
 #: gui/saveload-dialog.cpp:220 gui/saveload-dialog.cpp:276
@@ -974,31 +974,29 @@ msgstr "Löschen"
 
 #: gui/recorderdialog.cpp:71
 msgid "Record"
-msgstr ""
+msgstr "Aufnahme"
 
 #: gui/recorderdialog.cpp:72
-#, fuzzy
 msgid "Playback"
-msgstr "Spielen"
+msgstr "Wiedergabe"
 
 #: gui/recorderdialog.cpp:74
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
 #: gui/recorderdialog.cpp:253
 msgid "Author: "
-msgstr ""
+msgstr "Autor:"
 
 #: gui/recorderdialog.cpp:87 gui/recorderdialog.cpp:244
 #: gui/recorderdialog.cpp:254
 msgid "Notes: "
-msgstr ""
+msgstr "Notizen:"
 
 #: gui/recorderdialog.cpp:155
-#, fuzzy
 msgid "Do you really want to delete this record?"
-msgstr "Diesen Spielstand wirklich löschen?"
+msgstr "Möchten Sie diese Aufnahme wirklich löschen?"
 
 #: gui/saveload-dialog.cpp:167
 msgid "List view"
@@ -2607,11 +2605,13 @@ msgstr "Verwendet einen alternativen Vorspann (nur bei CD-Version)."
 
 #: engines/sci/detection.cpp:374
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Überspringe EGA-Fehlerdiffusion (Vollfarbige Hintergründe)"
 
 #: engines/sci/detection.cpp:375
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Überspringe Fehlerdiffusion in EGA-Spielen, Grafik wird mit allen Farben "
+"gezeigt"
 
 #: engines/sci/detection.cpp:384
 msgid "Prefer digital sound effects"
