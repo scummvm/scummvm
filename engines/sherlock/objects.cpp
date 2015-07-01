@@ -979,8 +979,13 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
 	_seqCounter = s.readByte();
-	_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER / 100;
-	_lookPosition.y = (isRoseTattoo ? s.readSint16LE() : s.readByte()) * FIXED_INT_MULTIPLIER;
+	if (isRoseTattoo) {
+		_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER;
+		_lookPosition.y = s.readSint16LE() * FIXED_INT_MULTIPLIER;
+	} else {
+		_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER / 100;
+		_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
+	}
 	_lookFacing = s.readByte();
 	_lookcAnim = s.readByte();
 

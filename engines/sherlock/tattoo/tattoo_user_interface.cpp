@@ -108,7 +108,7 @@ void TattooUserInterface::lookAtObject() {
 						name.deleteLastChar();
 
 					// See if this Object Sound List entry matches the object's name
-					if (_bgShape->_name.compareToIgnoreCase(name)) {					
+					if (!_bgShape->_name.compareToIgnoreCase(name)) {					
 						// Move forward to get the sound filename
 						while ((*p == ' ') || (*p == '='))
 							++p;
