@@ -109,6 +109,10 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	case GType_SIMON2:
 		//_musicMode = kMusicModeMilesAudio;
 		// currently disabled, because there are a few issues
+		// MT32 seems to work fine now, AdLib seems to use bad instruments and is also outputting music on
+		// the right speaker only. The original driver did initialize the panning to 0 and the Simon2 XMIDI
+		// tracks don't set panning at all. We can reset panning to be centered, which would solve this
+		// issue, but we still don't know who's setting it in the original interpreter.
 		break;
 	default:
 		break;
@@ -370,15 +374,19 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		switch (milesAudioMusicType) {
 		case MT_ADLIB: {
 			_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
+			// TODO: not sure what's going wrong with AdLib
+			// it doesn't seem to matter if we use the regular XMIDI tracks or the 2nd set meant for MT32
 			break;
 		}
 		case MT_MT32:
 			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			_nativeMT32 = true; // use 2nd set of XMIDI tracks
 			break;
 		case MT_GM:
 			if (ConfMan.getBool("native_mt32")) {
 				_driver = Audio::MidiDriver_Miles_MT32_create("");
 				milesAudioMusicType = MT_MT32;
+				_nativeMT32 = true; // use 2nd set of XMIDI tracks
 			}
 			break;
 
