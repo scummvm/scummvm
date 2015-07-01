@@ -420,6 +420,8 @@ void TattooPerson::setWalking() {
 				if (_sequenceNumber == WALK_LEFT || _sequenceNumber == WALK_RIGHT) {
 					_delta.x = _delta.x / speed.x * diagSpeed.x;
 					_delta.y = (delta.y * FIXED_INT_MULTIPLIER) / (delta.x * 10 / diagSpeed.x);
+
+					_walkCount = delta.x * 10 / diagSpeed.x;
 				}
 
 				switch (_sequenceNumber) {
@@ -434,6 +436,7 @@ void TattooPerson::setWalking() {
 				if (_sequenceNumber == WALK_LEFT || _sequenceNumber == WALK_RIGHT) {
 					_delta.x = _delta.x / speed.x * diagSpeed.x;
 					_delta.y = -1 * (delta.y * FIXED_INT_MULTIPLIER) / (delta.x * 10 / diagSpeed.x);
+
 					_walkCount = (delta.x * 10) / diagSpeed.x;
 				}
 
@@ -453,16 +456,25 @@ void TattooPerson::setWalking() {
 				_sequenceNumber = WALK_UP;
 				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
 			} else {
+				speed.y = diagSpeed.y;
 				_sequenceNumber = WALK_DOWN;
 				_delta.y = speed.y * FIXED_INT_MULTIPLIER;
 			}
 
 			// Set the delta x
-			_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y / speed.y);
-			if (_walkDest.x < (_position.x / FIXED_INT_MULTIPLIER))
+			if (delta.y * 10 / speed.y)
+				_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / (delta.y * 10 / speed.y);
+			else
+				_delta.x = (delta.x * FIXED_INT_MULTIPLIER) / delta.y;
+
+			if (_walkDest.x < _position.y / FIXED_INT_MULTIPLIER)
 				_delta.x = -_delta.x;
 
-			_walkCount = delta.y / speed.y;
+			// Set how many times we should add the delta's to the players position
+			if (delta.y * 10 / speed.y)
+				_walkCount = delta.y * 10 / speed.y;
+			else
+				_walkCount = delta.y;
 		}
 	}
 
@@ -501,7 +513,7 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 	CursorId oldCursor = events.getCursor();
 	events.setCursor(WAIT);
 
-	_walkDest = Common::Point(_position.x / FIXED_INT_MULTIPLIER, _position.y / FIXED_INT_MULTIPLIER);
+	_walkDest = Common::Point(destPos.x / FIXED_INT_MULTIPLIER, destPos.y / FIXED_INT_MULTIPLIER);
 
 	bool isHolmes = this == &people[HOLMES];
 	if (isHolmes) {
