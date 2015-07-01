@@ -33,11 +33,44 @@ class SherlockEngine;
 namespace Tattoo {
 
 class WidgetText: public WidgetBase {
+private:
+	/**
+	 * Center the area the dialog will be drawn on above a given speaker
+	 */
+	void centerWindowOnSpeaker(int speaker);
+
+	/**
+	 * Build up the text dialog based on the previously set bounds
+	 */
+	void render(const Common::String &str);
+public:
+	Common::String _remainingText;
 public:
 	WidgetText(SherlockEngine *vm);
 	virtual ~WidgetText() {}
 
-	void load(const Common::String &str);
+	/**
+	 * Load the data for the text window
+	 */
+	void load(const Common::String &str, int speaker = -1);
+};
+
+class WidgetMessage : public WidgetBase {
+private:
+	int _menuCounter;
+public:
+	WidgetMessage(SherlockEngine *vm);
+	virtual ~WidgetMessage() {}
+
+	/**
+	 * Load the data for the text window
+	 */
+	void load(const Common::String &str, int time);
+
+	/**
+	 * Handle event processing
+	 */
+	virtual void handleEvents();
 };
 
 } // End of namespace Tattoo

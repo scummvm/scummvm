@@ -21,9 +21,15 @@
  */
 
 #include "sherlock/scalpel/scalpel_user_interface.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
+#include "sherlock/scalpel/scalpel_inventory.h"
+#include "sherlock/scalpel/scalpel_journal.h"
 #include "sherlock/scalpel/scalpel_people.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_saveload.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/settings.h"
+#include "sherlock/scalpel/scalpel.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
@@ -494,7 +500,7 @@ void ScalpelUserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
 		}
 
 		if (!talk._talkToAbort) {
@@ -665,9 +671,9 @@ void ScalpelUserInterface::lookInv() {
 
 void ScalpelUserInterface::doEnvControl() {
 	Events &events = *_vm->_events;
-	SaveManager &saves = *_vm->_saves;
+	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
 	static const char ENV_COMMANDS[7] = "ELSUDQ";
@@ -968,9 +974,9 @@ void ScalpelUserInterface::doEnvControl() {
 void ScalpelUserInterface::doInvControl() {
 	Events &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Inventory &inv = *_vm->_inventory;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	int colors[8];
 	Common::Point mousePos = events.mousePos();
@@ -1196,7 +1202,7 @@ void ScalpelUserInterface::doInvControl() {
 
 void ScalpelUserInterface::doLookControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
 	Screen &screen = *_vm->_screen;
 
 	_key = _oldKey = -1;
@@ -1235,7 +1241,7 @@ void ScalpelUserInterface::doLookControl() {
 		} else {
 			// Looking at an inventory object
 			// Backup the user interface
-			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1, _vm->getPlatform());
+			Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - CONTROLS_Y1);
 			tempSurface.blitFrom(screen._backBuffer2, Common::Point(0, 0),
 				Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
@@ -1258,8 +1264,8 @@ void ScalpelUserInterface::doLookControl() {
 
 void ScalpelUserInterface::doMainControl() {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	SaveManager &saves = *_vm->_saves;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
+	ScalpelSaveManager &saves = *(ScalpelSaveManager *)_vm->_saves;
 	Common::Point pt = events.mousePos();
 
 	if ((events._pressed || events._released) && pt.y > CONTROLS_Y) {
@@ -1473,9 +1479,9 @@ void ScalpelUserInterface::doPickControl() {
 void ScalpelUserInterface::doTalkControl() {
 	Events &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Journal &journal = *_vm->_journal;
+	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	ScalpelPeople &people = *(ScalpelPeople *)_vm->_people;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	Common::Point mousePos = events.mousePos();
@@ -1732,7 +1738,7 @@ void ScalpelUserInterface::doTalkControl() {
 
 void ScalpelUserInterface::journalControl() {
 	Events &events = *_vm->_events;
-	Journal &journal = *_vm->_journal;
+	ScalpelJournal &journal = *(ScalpelJournal *)_vm->_journal;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	bool doneFlag = false;
@@ -1780,8 +1786,8 @@ void ScalpelUserInterface::journalControl() {
 
 void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool firstTime) {
 	Events &events = *_vm->_events;
-	Inventory &inv = *_vm->_inventory;
-	Screen &screen = *_vm->_screen;
+	ScalpelInventory &inv = *(ScalpelInventory *)_vm->_inventory;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	Talk &talk = *_vm->_talk;
 
 	if (str.hasPrefix("_")) {
@@ -1803,7 +1809,7 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 				// If it wasn't a right button click, then we need depress
 				// the look button before we close the window. So save a copy of the
 				// menu area, and draw the controls onto it
-				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h, _vm->getPlatform());
+				Surface tempSurface((*_controls)[0]._frame.w, (*_controls)[0]._frame.h);
 				Common::Point pt(MENU_POINTS[0][0], MENU_POINTS[0][1]);
 				offsetButton3DO(pt, 0);
 
@@ -1994,8 +2000,7 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 	Screen &screen = *_vm->_screen;
 
 	// Extract the window that's been drawn on the back buffer
-	Surface tempSurface(SHERLOCK_SCREEN_WIDTH,
-		(SHERLOCK_SCREEN_HEIGHT - height), _vm->getPlatform());
+	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height);
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	tempSurface.blitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 

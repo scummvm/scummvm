@@ -22,6 +22,7 @@
 
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
 
@@ -109,7 +110,7 @@ const byte TATTOO_OPCODES[] = {
 
 /*----------------------------------------------------------------*/
 
-TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
+TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
 	static OpcodeMethod OPCODE_METHODS[] = {
 		(OpcodeMethod)&TattooTalk::cmdSwitchSpeaker,
 
@@ -182,19 +183,26 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm) {
 }
 
 void TattooTalk::talkInterface(const byte *&str) {
-	drawTalk(str);
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	const byte *s = str;
 
+	// Move to past the end of the text string
 	_charCount = 0;
 	while ((*str < TATTOO_OPCODES[0] || *str == TATTOO_OPCODES[OP_NULL]) && *str) {
 		++_charCount;
 		++str;
 	}
 
+	// Display the text window
+	ui.banishWindow();
+	ui._textWidget.load(Common::String((const char *)s, (const char *)str), _speaker);
+	ui._textWidget.summonWindow();
 	_wait = true;
 }
 
-void TattooTalk::drawTalk(const byte *str) {
-	// TODO
+void TattooTalk::openTalkWindow() {
+	_talkWidget.load();
+	_talkWidget.summonWindow();
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {
@@ -308,7 +316,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelGoto(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -326,7 +335,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelIfFlagGoto(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -346,7 +356,8 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -439,7 +450,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathDest(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -460,7 +472,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPause(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -480,7 +493,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseTakingNotes(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -500,7 +514,8 @@ OpcodeReturn TattooTalk::cmdSetNPCPathPauseLookingHolmes(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -562,7 +577,8 @@ OpcodeReturn TattooTalk::cmdSetNPCTalkFile(const byte *&str) {
 	TattooPerson &person = people[npcNum];
 	
 	if (person._resetNPCPath) {
-		person._npcIndex = person._resetNPCPath = person._npcPause = 0;
+		person._npcIndex = person._npcPause = 0;
+		person._resetNPCPath = false;
 		memset(person._npcPath, 0, 100);
 	}
 
@@ -685,7 +701,22 @@ OpcodeReturn TattooTalk::cmdSetNPCWalkGraphics(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdSetSceneEntryFlag(const byte *&str) { error("TODO: script opcode (cmdSetSceneEntryFlag)"); }
-OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) { error("TODO: script opcode (cmdSetTalkSequence)"); }
+
+OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	int speaker = str[1] - 1;
+	int sequenceNumber = str[2];
+
+	if (sequenceNumber < 128)
+		people.setTalkSequence(speaker, sequenceNumber);
+	else
+		people.setListenSequence(speaker, sequenceNumber);
+	
+	str += 2;
+
+	return RET_SUCCESS;
+}
+
 OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode (cmdSetWalkControl)"); }
 
 // Dummy opcode

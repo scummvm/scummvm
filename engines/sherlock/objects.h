@@ -117,6 +117,12 @@ public:
 	void operator-=(const Point32 &delta) { x -= delta.x; y -= delta.y; }
 };
 
+class PositionFacing : public Point32 {
+public:
+	int _facing;
+
+	PositionFacing() : Point32(), _facing(0) {}
+};
 
 struct WalkSequence {
 	Common::String _vgsName;
@@ -210,8 +216,7 @@ public:
 	AType _aType;					// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
 	int _seqCounter;				// How many times this sequence has been executed
-	Point32 _lookPosition;			// Where to walk when examining object
-	int _lookFacing;				// Direction to face when examining object
+	PositionFacing _lookPosition;	// Where to walk when examining object
 	int _lookcAnim;
 	int _seqStack;					// Allows gosubs to return to calling frame
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
@@ -427,14 +432,6 @@ public:
 	virtual void setObjTalkSequence(int seq);
 };
 
-
-class PositionFacing : public Point32 {
-public:
-	int _facing;
-
-	PositionFacing() : Point32(), _facing(0) {}
-};
-
 struct CAnim {
 	Common::String _name;			// Name
 	Common::Point _position;		// Position
@@ -456,44 +453,6 @@ struct CAnim {
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOffset);
 	void load3DO(Common::SeekableReadStream &s, uint32 dataOffset);
-};
-
-class CAnimStream {
-	ImageFile *_images;					
-	int _frameNumber;
-public:
-	ImageFrame *_imageFrame;
-
-	Common::Point _position;		// Animation position
-	Common::Rect _oldBounds;		// Bounds of previous frame
-	Common::Rect _removeBounds;		// Remove area for just drawn frame
-
-	int _flags;						// Flags
-	int _scaleVal;					// Specifies the scale amount
-	int _zPlacement;				// Used by doBgAnim for determining Z order
-public:
-	CAnimStream();
-	~CAnimStream();
-
-	/**
-	 * Load the animation's images
-	 */
-	void load(Common::SeekableReadStream *stream);
-
-	/**
-	 * Close any currently active animation
-	 */
-	void close();
-
-	/**
-	 * Get the next frame of the animation
-	 */
-	void getNextFrame();
-
-	/**
-	 * Returns whether the animation is active
-	 */
-	bool active() const { return _imageFrame != nullptr; }
 };
 
 struct SceneImage {

@@ -68,9 +68,29 @@ protected:
 	 */
 	virtual void talk3DOMovieTrigger(int subIndex);
 
+	/**
+	 * Show the talk display
+	 */
+	virtual void showTalk();
 public:
 	ScalpelTalk(SherlockEngine *vm);
 	virtual ~ScalpelTalk() {}
+
+	/**
+	 * Draws the interface for conversation display
+	 */
+	void drawInterface();
+
+	/**
+	 * Display a list of statements in a window at the bottom of the screen that the
+	 * player can select from.
+	 */
+	bool displayTalk(bool slamIt);
+
+	/**
+	 * Prints a single conversation option in the interface window
+	 */
+	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
 };
 
 } // End of namespace Scalpel

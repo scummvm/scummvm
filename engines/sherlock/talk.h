@@ -186,17 +186,6 @@ private:
 	void setTalkMap();
 
 	/**
-	 * Display a list of statements in a window at the bottom of the screen that the
-	 * player can select from.
-	 */
-	bool displayTalk(bool slamIt);
-
-	/**
-	 * Prints a single conversation option in the interface window
-	 */
-	int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt);
-
-	/**
 	 * Parses a reply for control codes and display text. The found text is printed within
 	 * the text window, handles delays, animations, and animating portraits.
 	 */
@@ -207,14 +196,12 @@ private:
 	 * the amount of text that's been displayed
 	 */
 	int waitForMore(int delay);
-
 protected:
 	SherlockEngine *_vm;
 	OpcodeMethod *_opcodeTable;
 	Common::Stack<SequenceEntry> _savedSequences;
 	Common::Stack<SequenceEntry> _sequenceStack;
 	Common::Stack<ScriptStackEntry> _scriptStack;
-	Common::Array<Statement> _statements;
 	Common::Array<TalkHistoryEntry> _talkHistory;
 	int _speaker;
 	int _talkIndex;
@@ -274,9 +261,14 @@ protected:
 	 * Trigger to play a 3DO talk dialog movie
 	 */
 	virtual void talk3DOMovieTrigger(int subIndex) {};
-
+	
+	/**
+	 * Show the talk display
+	 */
+	virtual void showTalk() {}
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
+	Common::Array<Statement> _statements;
 	bool _talkToAbort;
 	int _talkCounter;
 	int _talkTo;
@@ -286,7 +278,6 @@ public:
 	bool _moreTalkUp, _moreTalkDown;
 	int _converseNum;
 	const byte *_opcodes;
-
 public:
 	static Talk *init(SherlockEngine *vm);
 	virtual ~Talk() {}
@@ -318,11 +309,6 @@ public:
 	 * Clear loaded talk data
 	 */
 	void freeTalkVars();
-
-	/**
-	 * Draws the interface for conversation display
-	 */
-	void drawInterface();
 
 	/**
 	 * Opens the talk file 'talk.tlk' and searches the index for the specified
@@ -372,6 +358,22 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
+
+	/**
+	 * Draws the interface for conversation display
+	 */
+	virtual void drawInterface() {}
+
+	/**
+	 * Display a list of statements in a window at the bottom of the screen that the
+	 * player can select from.
+	 */
+	virtual bool displayTalk(bool slamIt) { return false; }
+
+	/**
+	 * Prints a single conversation option in the interface window
+	 */
+	virtual int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) { return 0; }
 };
 
 } // End of namespace Sherlock

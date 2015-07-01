@@ -39,22 +39,11 @@ namespace Sherlock {
 enum {
 	BLACK				= 0,
 	INFO_BLACK			= 1,
-	INFO_FOREGROUND		= 11,
-	INFO_BACKGROUND		= 1,
 	BORDER_COLOR		= 237,
-	INV_FOREGROUND		= 14,
-	INV_BACKGROUND		= 1,
-	COMMAND_HIGHLIGHTED	= 10,
-	COMMAND_FOREGROUND	= 15,
 	COMMAND_BACKGROUND	= 4,
-	COMMAND_NULL		= 248,
-	BUTTON_TOP			= 233,
-	BUTTON_MIDDLE		= 244,
-	BUTTON_BOTTOM		= 248,
 	BUTTON_BACKGROUND	= 235,
 	TALK_FOREGROUND		= 12,
-	TALK_NULL			= 16,
-	PEN_COLOR			= 250
+	TALK_NULL			= 16
 };
 
 class SherlockEngine;
@@ -94,6 +83,7 @@ public:
 	byte _tMap[PALETTE_SIZE];
 	bool _flushScreen;
 public:
+	static Screen *init(SherlockEngine *vm);
 	Screen(SherlockEngine *vm);
 	virtual ~Screen();
 
@@ -176,6 +166,11 @@ public:
 	void slamRect(const Common::Rect &r);
 
 	/**
+	 * Copies a given area to the screen
+	 */
+	void slamRect(const Common::Rect &r, const Common::Point &currentScroll);
+
+	/**
 	 * Copy an image from the back buffer to the screen, taking care of both the
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
@@ -208,28 +203,6 @@ public:
 	 * Fills an area on the back buffer, and then copies it to the screen
 	 */
 	void vgaBar(const Common::Rect &r, int color);
-
-	/**
-	 * Draws a button for use in the inventory, talk, and examine dialogs.
-	 */
-	void makeButton(const Common::Rect &bounds, int textX, const Common::String &str);
-
-	/**
-	 * Prints an interface command with the first letter highlighted to indicate
-	 * what keyboard shortcut is associated with it
-	 */
-	void buttonPrint(const Common::Point &pt, byte color, bool slamIt, const Common::String &str);
-
-	/**
-	 * Draw a panel in the back buffer with a raised area effect around the edges
-	 */
-	void makePanel(const Common::Rect &r);
-
-	/**
-	 * Draw a field in the back buffer with a raised area effect around the edges,
-	 * suitable for text input.
-	 */
-	void makeField(const Common::Rect &r);
 
 	/**
 	 * Sets the active back buffer pointer to a restricted sub-area of the first back buffer

@@ -30,6 +30,20 @@ namespace Sherlock {
 
 namespace Scalpel {
 
+enum {
+	BUTTON_TOP			= 233,
+	BUTTON_MIDDLE		= 244,
+	BUTTON_BOTTOM		= 248,
+	COMMAND_FOREGROUND	= 15,
+	COMMAND_HIGHLIGHTED = 10,
+	COMMAND_NULL		= 248,
+	INFO_FOREGROUND		= 11,
+	INFO_BACKGROUND		= 1,
+	INV_FOREGROUND		= 14,
+	INV_BACKGROUND		= 1,
+	PEN_COLOR			= 250
+};
+
 class ScalpelEngine : public SherlockEngine {
 private:
 	Darts *_darts;

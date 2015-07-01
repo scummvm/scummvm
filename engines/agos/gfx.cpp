@@ -1303,6 +1303,13 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 	} else {
 		setWindowImage(mode, vgaSpriteId);
 	}
+
+	// Amiga versions wait for verb area to be displayed.
+	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && vgaSpriteId == 1) {
+		_copyScnFlag = 5;
+		while (_copyScnFlag && !shouldQuit())
+			delay(1);
+	}
 }
 
 void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCase) {

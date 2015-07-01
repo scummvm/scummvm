@@ -22,15 +22,23 @@
 
 #include "sherlock/screen.h"
 #include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/palette.h"
 
 namespace Sherlock {
 
-Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()), _vm(vm),
-		_backBuffer1(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()),
-		_backBuffer2(g_system->getWidth(), g_system->getHeight(), vm->getPlatform()),
+Screen *Screen::init(SherlockEngine *vm) {
+	if (vm->getGameID() == GType_SerratedScalpel)
+		return new Scalpel::ScalpelScreen(vm);
+	else
+		return new Screen(vm);
+}
+
+Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->getHeight()), _vm(vm),
+		_backBuffer1(g_system->getWidth(), g_system->getHeight()),
+		_backBuffer2(g_system->getWidth(), g_system->getHeight()),
 		_backBuffer(&_backBuffer1) {
 	_transitionSeed = 1;
 	_fadeStyle = false;
@@ -39,8 +47,6 @@ Screen::Screen(SherlockEngine *vm) : Surface(g_system->getWidth(), g_system->get
 	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
 	
 	// Set up the initial font
-	Fonts::init(_vm->getPlatform());
-
 	setFont(IS_SERRATED_SCALPEL ? 1 : 4);
 
 	// Rose Tattoo specific fields
@@ -361,6 +367,34 @@ void Screen::slamRect(const Common::Rect &r) {
 	}
 }
 
+void Screen::slamRect(const Common::Rect &r, const Common::Point &currentScroll) {
+	if (r.width() && r.height() > 0) {
+		Common::Rect srcRect = r, destRect = r;
+		srcRect.translate(currentScroll.x, currentScroll.y);
+
+		if (destRect.left < 0) {
+			srcRect.left += -destRect.left;
+			destRect.left = 0;
+		}
+		if (destRect.top < 0) {
+			srcRect.top += -destRect.top;
+			destRect.top = 0;
+		}
+		if (destRect.right > SHERLOCK_SCREEN_WIDTH) {
+			srcRect.right -= (destRect.left - SHERLOCK_SCREEN_WIDTH);
+			destRect.right = SHERLOCK_SCREEN_WIDTH;
+		}
+		if (destRect.bottom > SHERLOCK_SCREEN_HEIGHT) {
+			srcRect.bottom -= (destRect.bottom - SHERLOCK_SCREEN_HEIGHT);
+			destRect.bottom = SHERLOCK_SCREEN_HEIGHT;
+		}
+
+		if (srcRect.isValidRect())
+			blitFrom(*_backBuffer, Common::Point(destRect.left, destRect.top), srcRect);
+	}
+}
+
+
 void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
 		int16 *width, int16 *height) {
 	Common::Point imgPos = pt + frame->_offset;
@@ -486,64 +520,6 @@ void Screen::writeString(const Common::String &str, const Common::Point &pt, byt
 void Screen::vgaBar(const Common::Rect &r, int color) {
 	_backBuffer->fillRect(r, color);
 	slamRect(r);
-}
-
-void Screen::makeButton(const Common::Rect &bounds, int textX,
-		const Common::String &str) {
-
-	Surface &bb = *_backBuffer;
-	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.right, bounds.top + 1), BUTTON_TOP);
-	bb.fillRect(Common::Rect(bounds.left, bounds.top, bounds.left + 1, bounds.bottom), BUTTON_TOP);
-	bb.fillRect(Common::Rect(bounds.right - 1, bounds.top, bounds.right, bounds.bottom), BUTTON_BOTTOM);
-	bb.fillRect(Common::Rect(bounds.left + 1, bounds.bottom - 1, bounds.right, bounds.bottom), BUTTON_BOTTOM);
-	bb.fillRect(Common::Rect(bounds.left + 1, bounds.top + 1, bounds.right - 1, bounds.bottom - 1), BUTTON_MIDDLE);
-
-	gPrint(Common::Point(textX, bounds.top), COMMAND_HIGHLIGHTED, "%c", str[0]);
-	gPrint(Common::Point(textX + charWidth(str[0]), bounds.top),
-		COMMAND_FOREGROUND, "%s", str.c_str() + 1);
-}
-
-void Screen::buttonPrint(const Common::Point &pt, byte color, bool slamIt,
-		const Common::String &str) {
-	int xStart = pt.x - stringWidth(str) / 2;
-
-	if (color == COMMAND_FOREGROUND) {
-		// First character needs to be highlighted
-		if (slamIt) {
-			print(Common::Point(xStart, pt.y + 1), COMMAND_HIGHLIGHTED, "%c", str[0]);
-			print(Common::Point(xStart + charWidth(str[0]), pt.y + 1),
-				COMMAND_FOREGROUND, "%s", str.c_str() + 1);
-		} else {
-			gPrint(Common::Point(xStart, pt.y), COMMAND_HIGHLIGHTED, "%c", str[0]);
-			gPrint(Common::Point(xStart + charWidth(str[0]), pt.y),
-				COMMAND_FOREGROUND, "%s", str.c_str() + 1);
-		}
-	} else if (slamIt) {
-		print(Common::Point(xStart, pt.y + 1), color, "%s", str.c_str());
-	} else {
-		gPrint(Common::Point(xStart, pt.y), color, "%s", str.c_str());
-	}
-}
-
-void Screen::makePanel(const Common::Rect &r) {
-	_backBuffer->fillRect(r, BUTTON_MIDDLE);
-	_backBuffer->hLine(r.left, r.top, r.right - 2, BUTTON_TOP);
-	_backBuffer->hLine(r.left + 1, r.top + 1, r.right - 3, BUTTON_TOP);
-	_backBuffer->vLine(r.left, r.top, r.bottom - 1, BUTTON_TOP);
-	_backBuffer->vLine(r.left + 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
-
-	_backBuffer->vLine(r.right - 1, r.top, r.bottom - 1, BUTTON_BOTTOM);
-	_backBuffer->vLine(r.right - 2, r.top + 1, r.bottom - 2, BUTTON_BOTTOM);
-	_backBuffer->hLine(r.left, r.bottom - 1, r.right - 1, BUTTON_BOTTOM);
-	_backBuffer->hLine(r.left + 1, r.bottom - 2, r.right - 1, BUTTON_BOTTOM);
-}
-
-void Screen::makeField(const Common::Rect &r) {
-	_backBuffer->fillRect(r, BUTTON_MIDDLE);
-	_backBuffer->hLine(r.left, r.top, r.right - 1, BUTTON_BOTTOM);
-	_backBuffer->hLine(r.left + 1, r.bottom - 1, r.right - 1, BUTTON_TOP);
-	_backBuffer->vLine(r.left, r.top + 1, r.bottom - 1, BUTTON_BOTTOM);
-	_backBuffer->vLine(r.right - 1, r.top + 1, r.bottom - 2, BUTTON_TOP);
 }
 
 void Screen::setDisplayBounds(const Common::Rect &r) {

@@ -43,6 +43,11 @@ private:
 	 * Highlights the controls for the verb list
 	 */
 	void highlightVerbControls();
+
+	/**
+	 * Renders the window on an internal surface for later drawing on-screen
+	 */
+	void render();
 public:
 	Common::StringArray _verbCommands;
 public:
@@ -52,14 +57,12 @@ public:
 	/**
 	 * Turns on the menu with all the verbs that are available for the given object
 	 */
-	void activateVerbMenu(bool objectsOn);
+	void load(bool objectsOn);
 
 	/**
 	 * Process input for the dialog
 	 */
-	void execute();
-
-	void checkTabbingKeys(int numOptions);
+	virtual void handleEvents();
 };
 
 } // End of namespace Tattoo

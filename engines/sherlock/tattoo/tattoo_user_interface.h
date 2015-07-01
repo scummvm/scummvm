@@ -25,7 +25,9 @@
 
 #include "common/scummsys.h"
 #include "sherlock/saveload.h"
+#include "sherlock/screen.h"
 #include "sherlock/user_interface.h"
+#include "sherlock/tattoo/widget_inventory.h"
 #include "sherlock/tattoo/widget_text.h"
 #include "sherlock/tattoo/widget_tooltip.h"
 #include "sherlock/tattoo/widget_verbs.h"
@@ -34,33 +36,26 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+#define BUTTON_SIZE 15				// Button width/height
+
+class WidgetBase;
+
 class TattooUserInterface : public UserInterface {
+	friend class WidgetBase;
 private:
-	Common::Rect _menuBounds;
-	Common::Rect _oldMenuBounds;
-	Common::Rect _invMenuBounds;
-	Common::Rect _oldInvMenuBounds;
-	Common::Rect _invGraphicBounds;
-	Common::Rect _oldInvGraphicBounds;
-	Surface *_menuBuffer;
-	Surface *_invMenuBuffer;
-	Surface *_invGraphic;
-	Common::Array<Common::Rect> _grayAreas;
 	int _lockoutTimer;
 	SaveMode _fileMode;
 	int _exitZone;
 	int _scriptZone;
 	int _cAnimFramePause;
-	WidgetTooltip _tooltipWidget;
+	WidgetInventory _inventoryWidget;
+	WidgetSceneTooltip _tooltipWidget;
 	WidgetVerbs _verbsWidget;
-	WidgetText _textWidget;
+	WidgetMessage _messageWidget;
 	WidgetBase *_widget;
+	byte _lookupTable[PALETTE_COUNT];
+	byte _lookupTable1[PALETTE_COUNT];
 private:
-	/**
-	 * Draws designated areas of the screen that are meant to be grayed out using grayscale colors
-	 */
-	void drawGrayAreas();
-
 	/**
 	 * Handle any input when we're in standard mode (with no windows open)
 	 */
@@ -77,11 +72,6 @@ private:
 	void doFileControl();
 
 	/**
-	 * Handle input if an inventory command (INVENT, LOOK, or USE) has an open window and is active
-	 */
-	void doInventoryControl();
-
-	/**
 	 * Handle input while the verb menu is open
 	 */
 	void doVerbControl();
@@ -91,11 +81,6 @@ private:
 	 * and handles any actions for clicking on the buttons or statements.
 	 */
 	void doTalkControl();
-
-	/**
-	 * Handles input when a message window is open at the bottom of the screen
-	 */
-	void doMessageControl();
 	
 	/**
 	 * Handles input when the player is in the Lab Table scene
@@ -112,11 +97,6 @@ private:
 	 * Set up to display the Files menu
 	 */
 	void initFileMenu();
-
-	/**
-	 * Turn off any active object description text
-	 */
-	void turnTextOff();
 
 	/**
 	 * Handle displaying the quit menu
@@ -136,9 +116,17 @@ public:
 	bool _personFound;
 	int _activeObj;
 	Common::KeyState _keyState;
+	Common::Point _lookPos;
+	int _scrollHighlight;
+	ImageFile *_mask, *_mask1;
+	Common::Point _maskOffset;
+	int _maskCounter;
+	ImageFile *_interfaceImages;
+	WidgetText _textWidget;
+	Common::String _action;
 public:
 	TattooUserInterface(SherlockEngine *vm);
-	virtual ~TattooUserInterface() {}
+	virtual ~TattooUserInterface();
 
 	/**
 	 * Handles restoring any areas of the back buffer that were/are covered by UI elements
@@ -186,7 +174,39 @@ public:
 	 * Pick up the selected object
 	 */
 	void pickUpObject(int objNum);
+
+	/**
+	 * This will display a text message in a dialog at the bottom of the screen
+	 */
+	void putMessage(const char *formatStr, ...) GCC_PRINTF(2, 3);
+
+	/**
+	 * Makes a greyscale translation table for each palette entry in the table
+	 */
+	void setupBGArea(const byte cMap[PALETTE_SIZE]);
+
+	/**
+	 * Erase any background as needed before drawing frame
+	 */
+	void doBgAnimEraseBackground();
+
+	void drawMaskArea(bool mode);
+
+	/**
+	 * Translate a given area of the back buffer to greyscale shading
+	 */
+	void makeBGArea(const Common::Rect &r);
+
+	/**
+	 * Draws all the dialog rectangles for any items that need them
+	 */
+	void drawDialogRect(Surface &s, const Common::Rect &r, bool raised);
 public:
+	/**
+	 * Resets the user interface
+	 */
+	virtual void reset();
+
 	/**
 	 * Main input handler for the user interface
 	 */
@@ -196,6 +216,16 @@ public:
 	 * Draw the user interface onto the screen's back buffers
 	 */	
 	virtual void drawInterface(int bufferNum = 3);
+
+	/**
+	 * Clear any active text window
+	 */
+	virtual void clearWindow();
+
+	/**
+	 * Banish any active window
+	 */
+	virtual void banishWindow();
 };
 
 } // End of namespace Tattoo

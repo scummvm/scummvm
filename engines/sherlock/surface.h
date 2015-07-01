@@ -70,7 +70,7 @@ protected:
 
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
-	Surface(uint16 width, uint16 height, Common::Platform platform);
+	Surface(uint16 width, uint16 height);
 	Surface();
 	virtual ~Surface();
 
@@ -78,7 +78,7 @@ public:
 	 * Sets up an internal surface with the specified dimensions that will be automatically freed
 	 * when the surface object is destroyed
 	 */
-	void create(uint16 width, uint16 height, Common::Platform platform);
+	void create(uint16 width, uint16 height);
 
 	Graphics::PixelFormat getPixelFormat();
 
@@ -168,6 +168,7 @@ public:
 	 * Draws the given string into the back buffer using the images stored in _font
 	 */
 	virtual void writeString(const Common::String &str, const Common::Point &pt, byte overrideColor);
+	void writeFancyString(const Common::String &str, const Common::Point &pt, byte overrideColor1, byte overrideColor2);
 
 	inline uint16 w() const { return _surface.w; }
 	inline uint16 h() const { return _surface.h; }

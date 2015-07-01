@@ -32,8 +32,6 @@
 
 namespace Sherlock {
 
-#define MAX_VISIBLE_INVENTORY 6
-
 enum InvMode {
 	INVMODE_EXIT = 0,
 	INVMODE_LOOK = 1,
@@ -62,9 +60,15 @@ struct InventoryItem {
 	Common::String _examine;
 	int _lookFlag;
 
-	InventoryItem() : _requiredFlag(0), _lookFlag(0) {}
+	// Rose Tattoo fields
+	int _requiredFlag1;
+	UseType _verb;
+
+	InventoryItem() : _requiredFlag(0), _lookFlag(0), _requiredFlag1(0) {}
 	InventoryItem(int requiredFlag, const Common::String &name,
 		const Common::String &description, const Common::String &examine);
+	InventoryItem(int requiredFlag, const Common::String &name,
+		const Common::String &description, const Common::String &examine, const Common::String &verbName);
 
 	/**
 	 * Synchronize the data for an inventory item
@@ -73,7 +77,7 @@ struct InventoryItem {
 };
 
 class Inventory : public Common::Array<InventoryItem> {
-private:
+protected:
 	SherlockEngine *_vm;
 	Common::StringArray _names;
 
@@ -82,7 +86,7 @@ private:
 	 */
 	void copyToInventory(Object &obj);
 public:
-	ImageFile *_invShapes[MAX_VISIBLE_INVENTORY];
+	Common::Array<ImageFile *> _invShapes;
 	bool _invGraphicsLoaded;
 	InvMode _invMode;
 	int _invIndex;
@@ -93,19 +97,14 @@ public:
 	 */
 	void freeGraphics();
 public:
+	static Inventory *init(SherlockEngine *vm);
 	Inventory(SherlockEngine *vm);
-	~Inventory();
+	virtual ~Inventory();
 
 	/**
 	 * Free inventory data
 	 */
 	void freeInv();
-
-	/**
-	 * Load the list of names the inventory items correspond to, if not already loaded,
-	 * and then calls loadGraphics to load the associated graphics
-	 */
-	void loadInv();
 
 	/**
 	 * Load the list of names of graphics for the inventory
@@ -117,32 +116,6 @@ public:
 	 * and returns the number that matches the passed name
 	 */
 	int findInv(const Common::String &name);
-
-	/**
-	 * Display the character's inventory. The slamIt parameter specifies:
-	 */
-	void putInv(InvSlamMode slamIt);
-
-	/**
-	 * Put the game into inventory mode and open the interface window.
-	 */
-	void drawInventory(InvNewMode flag);
-
-	/**
-	 * Prints the line of inventory commands at the top of an inventory window with
-	 * the correct highlighting
-	 */
-	void invCommands(bool slamIt);
-
-	/**
-	 * Set the highlighting color of a given inventory item
-	 */
-	void highlight(int index, byte color);
-
-	/**
-	 * Support method for refreshing the display of the inventory
-	 */
-	void refreshInv();
 
 	/**
 	 * Adds a shape from the scene to the player's inventory
@@ -164,6 +137,12 @@ public:
 	 * Synchronize the data for a savegame
 	 */
 	void synchronize(Serializer &s);
+
+	/**
+	 * Load the list of names the inventory items correspond to, if not already loaded,
+	 * and then calls loadGraphics to load the associated graphics
+	 */
+	virtual void loadInv() = 0;
 };
 
 } // End of namespace Sherlock

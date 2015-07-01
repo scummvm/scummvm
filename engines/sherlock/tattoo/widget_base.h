@@ -31,17 +31,65 @@
 namespace Sherlock {
 
 class SherlockEngine;
+class ImageFile;
 
 namespace Tattoo {
 
 class WidgetBase {
 protected:
 	SherlockEngine *_vm;
-	Common::Rect _bounds, _oldBounds;
+	Common::Rect _bounds;
+	Common::Rect _oldBounds;
 	Surface _surface;
+	bool _outsideMenu;
+
+	/**
+	 * Used by descendent classes to split up long text for display across multiple lines
+	 */
+	Common::String splitLines(const Common::String &str, Common::StringArray &lines, int maxWidth, uint maxLines);
+
+	/**
+	 * Ensure that menu is drawn entirely on-screen
+	 */
+	void checkMenuPosition();
+
+	/**
+	 * Draw a window frame around the dges of the passed surface
+	 */
+	void makeInfoArea(Surface &s);
+
+	/**
+	 * Draw a window frame around the widget's surface
+	 */
+	void makeInfoArea();
+
+	/**
+	 * Returns the current scroll position
+	 */
+	virtual const Common::Point &getCurrentScroll() const;
+
+	/**
+	 * Handle drawing the background on the area the widget is going to cover
+	 */
+	virtual void drawBackground();
 public:
 	WidgetBase(SherlockEngine *vm);
 	virtual ~WidgetBase() {}
+
+	/**
+	 * Erase any previous display of the widget on the screen
+	 */
+	virtual void erase();
+
+	/**
+	 * Update the display of the widget on the screen
+	 */
+	virtual void draw();
+
+	/**
+	 * Used by some descendents to check for keys to mouse the mouse within the dialog
+	 */
+	void checkTabbingKeys(int numOptions);
 
 	/**
 	 * Summon the window
@@ -52,6 +100,11 @@ public:
 	 * Close a currently active menu
 	 */
 	virtual void banishWindow();
+
+	/**
+	 * Handle event processing
+	 */
+	virtual void handleEvents() {}
 };
 
 } // End of namespace Tattoo

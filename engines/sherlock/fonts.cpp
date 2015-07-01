@@ -25,18 +25,21 @@
 #include "sherlock/fonts.h"
 #include "sherlock/image_file.h"
 #include "sherlock/surface.h"
+#include "sherlock/sherlock.h"
 
 namespace Sherlock {
 
-Common::Platform Fonts::_platform;
+SherlockEngine *Fonts::_vm;
 ImageFile *Fonts::_font;
 int Fonts::_fontNumber;
 int Fonts::_fontHeight;
+int Fonts::_widestChar;
 uint16 Fonts::_charCount;
+byte Fonts::_yOffsets[255];
 
-void Fonts::init(Common::Platform platform) {
+void Fonts::setVm(SherlockEngine *vm) {
+	_vm = vm;
 	_font = nullptr;
-	_platform = platform;
 	_charCount = 0;
 }
 
@@ -52,7 +55,7 @@ void Fonts::setFont(int fontNum) {
 
 	Common::String fontFilename;
 
-	if (_platform != Common::kPlatform3DO) {
+	if (_vm->getPlatform() != Common::kPlatform3DO) {
 		// PC
 		// use FONT[number].VGS, which is a regular sherlock graphic file
 		fontFilename = Common::String::format("FONT%d.VGS", fontNum + 1);
@@ -72,16 +75,32 @@ void Fonts::setFont(int fontNum) {
 		default:
 			error("setFont(): unsupported 3DO font number");
 		}
+
 		// load font data
 		_font = new ImageFile3DO(fontFilename, kImageFile3DOType_Font);
 	}
 
 	_charCount = _font->size();
 		
-	// Iterate through the frames to find the tallest font character
-	_fontHeight = 0;
-	for (uint idx = 0; idx < _charCount; ++idx)
+	// Iterate through the frames to find the widest and tallest font characters
+	_fontHeight = _widestChar = 0;
+	for (uint idx = 0; idx < _charCount; ++idx) {
 		_fontHeight = MAX((uint16)_fontHeight, (*_font)[idx]._frame.h);
+		_widestChar = MAX((uint16)_widestChar, (*_font)[idx]._frame.w);
+	}
+
+	// Initialize the Y offset table for the extended character set
+	for (int idx = 0; idx < 255; ++idx) {
+		_yOffsets[idx] = 0;
+
+		if (IS_ROSE_TATTOO) {
+			if ((idx >= 129 && idx < 135) || (idx >= 136 && idx < 143) || (idx >= 147 && idx < 155) || 
+					(idx >= 156 && idx < 165))
+				_yOffsets[idx] = 1;
+			else if ((idx >= 143 && idx < 146) || idx == 165)
+				_yOffsets[idx] = 2;
+		}
+	}
 }
 
 inline byte Fonts::translateChar(byte c) {
@@ -123,7 +142,7 @@ void Fonts::writeString(Surface *surface, const Common::String &str,
 
 		assert(curChar < _charCount);
 		ImageFrame &frame = (*_font)[curChar];
-		surface->transBlitFrom(frame, charPos, false, overrideColor);
+		surface->transBlitFrom(frame, Common::Point(charPos.x, charPos.y + _yOffsets[curChar]), false, overrideColor);
 		charPos.x += frame._frame.w + 1;
 	}
 }

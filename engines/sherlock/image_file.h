@@ -46,6 +46,11 @@ struct ImageFrame {
 	Graphics::Surface _frame;
 
 	/**
+	 * Decompress a single frame for the sprite
+	 */
+	void decompressFrame(const byte *src, bool isRoseTattoo);
+
+	/**
 	 * Return the frame width adjusted by a specified scale amount
 	 */
 	int sDrawXSize(int scaleVal) const;
@@ -79,11 +84,6 @@ private:
 	 * Gets the palette at the start of the sprite file
 	 */
 	void loadPalette(Common::SeekableReadStream &stream);
-
-	/**
-	 * Decompress a single frame for the sprite
-	 */
-	void decompressFrame(ImageFrame  &frame, const byte *src);
 public:
 	byte _palette[256 * 3];
 public:
@@ -152,6 +152,54 @@ public:
 	ImageFile3DO(Common::SeekableReadStream &stream, bool isRoomData = false);
 	~ImageFile3DO();
 	static void setVm(SherlockEngine *vm);
+};
+
+#define STREAMING_BUFFER_SIZE 65536
+
+class StreamingImageFile {
+private:
+	int _frameNumber;
+	Common::SeekableReadStream *_stream;
+	bool _compressed;
+	byte _buffer[STREAMING_BUFFER_SIZE];
+public:
+	ImageFrame _imageFrame;
+
+	Common::Point _position;		// Animation position
+	Common::Rect _oldBounds;		// Bounds of previous frame
+	Common::Rect _removeBounds;		// Remove area for just drawn frame
+
+	int _flags;						// Flags
+	int _scaleVal;					// Specifies the scale amount
+	int _zPlacement;				// Used by doBgAnim for determining Z order
+public:
+	StreamingImageFile();
+	~StreamingImageFile();
+
+	/**
+	 * Initialize reading of the specified stream
+	 */
+	void load(Common::SeekableReadStream *stream, bool compressed);
+
+	/**
+	 * Close the streamining image file
+	 */
+	void close();
+
+	/**
+	 * Get the next frame of the file
+	 */
+	void getNextFrame();
+
+	/**
+	 * Returns whether there are any remaining frames or not
+	 */
+	bool active() const { return _stream != nullptr && _stream->pos() < _stream->size(); }
+
+	/**
+	 * Return the current frame number
+	 */
+	int frameNumber() const { return _frameNumber; }
 };
 
 } // End of namespace Sherlock

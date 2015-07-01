@@ -27,6 +27,7 @@
 #include "sherlock/map.h"
 #include "sherlock/resources.h"
 #include "sherlock/surface.h"
+#include "sherlock/tattoo/widget_tooltip.h"
 
 namespace Sherlock {
 
@@ -48,9 +49,8 @@ private:
 	Common::Array<MapEntry> _data;
 	ImageFile *_iconImages;
 	int _bgFound, _oldBgFound;
-	Surface *_textBuffer;
-	Common::Rect _textBounds, _oldTextBounds;
-	Common::Point _currentScroll, _targetScroll;
+	WidgetMapTooltip _mapTooltip;
+	Common::Point _targetScroll;
 	
 	/**
 	 * Load data  needed for the map
@@ -78,14 +78,11 @@ private:
 	void showCloseUp(int closeUpNum);
 
 	/**
-	 * Set the display bounds for the textual description of a location
-	 */
-	void setTextBounds();
-
-	/**
 	 * Copies an area of the map to the screen, taking into account scrolling
 	 */
 	void slamRect(const Common::Rect &bounds);
+public:
+	Common::Point _currentScroll;
 public:
 	TattooMap(SherlockEngine *vm);
 	virtual ~TattooMap() {}

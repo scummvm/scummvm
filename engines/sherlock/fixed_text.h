@@ -28,53 +28,7 @@
 
 namespace Sherlock {
 
-enum FixedTextId {
-	// Window buttons
-	kFixedText_Window_Exit = 0,
-	kFixedText_Window_Up,
-	kFixedText_Window_Down,
-	// Inventory buttons
-	kFixedText_Inventory_Exit,
-	kFixedText_Inventory_Look,
-	kFixedText_Inventory_Use,
-	kFixedText_Inventory_Give,
-	// Journal text
-	kFixedText_Journal_WatsonsJournal,
-	kFixedText_Journal_Page,
-	// Journal buttons
-	kFixedText_Journal_Exit,
-	kFixedText_Journal_Back10,
-	kFixedText_Journal_Up,
-	kFixedText_Journal_Down,
-	kFixedText_Journal_Ahead10,
-	kFixedText_Journal_Search,
-	kFixedText_Journal_FirstPage,
-	kFixedText_Journal_LastPage,
-	kFixedText_Journal_PrintText,
-	// Journal search
-	kFixedText_JournalSearch_Exit,
-	kFixedText_JournalSearch_Backward,
-	kFixedText_JournalSearch_Forward,
-	kFixedText_JournalSearch_NotFound,
-	// Initial inventory
-	kFixedText_InitInventory_Message,
-	kFixedText_InitInventory_HolmesCard,
-	kFixedText_InitInventory_Tickets,
-	kFixedText_InitInventory_CuffLink,
-	kFixedText_InitInventory_WireHook,
-	kFixedText_InitInventory_Note,
-	kFixedText_InitInventory_OpenWatch,
-	kFixedText_InitInventory_Paper,
-	kFixedText_InitInventory_Letter,
-	kFixedText_InitInventory_Tarot,
-	kFixedText_InitInventory_OrnateKey,
-	kFixedText_InitInventory_PawnTicket,
-	// Verbs
-	kFixedText_Verb_Open,
-	kFixedText_Verb_Look,
-	kFixedText_Verb_Talk,
-	kFixedText_Verb_Journal
-};
+#define FIXED(MSG) _vm->_fixedText->getText(kFixedText_##MSG)
 
 enum FixedTextActionId {
 	kFixedTextAction_Invalid = -1,
@@ -85,33 +39,26 @@ enum FixedTextActionId {
 	kFixedTextAction_Use
 };
 
-struct FixedTextActionEntry {
-	const char *const *fixedTextArray;
-	int   fixedTextArrayCount;
-};
-
-struct FixedTextLanguageEntry {
-	Common::Language language;
-	const char *const *fixedTextArray;
-	const FixedTextActionEntry *actionArray;
-};
+class SherlockEngine;
 
 class FixedText {
-private:
+protected:
 	SherlockEngine *_vm;
 
-	const FixedTextLanguageEntry *_curLanguageEntry;
-
+	FixedText(SherlockEngine *vm) : _vm(vm) {}
 public:
-	FixedText(SherlockEngine *vm);
-	~FixedText() {}
+	static FixedText *init(SherlockEngine *vm);
+	virtual ~FixedText() {}
 
 	/**
-	 * Gets hardcoded text
+	 * Gets text
 	 */
-	const Common::String getText(FixedTextId fixedTextId);
+	virtual const Common::String getText(int fixedTextId) = 0;
 
-	const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex);
+	/**
+	 * Get action message
+	 */
+	virtual const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex) = 0;
 };
 
 } // End of namespace Sherlock

@@ -1385,7 +1385,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"simon1",
-			"Floppy",
+			"Infocom Floppy",
 
 			{
 	{ "gamepc",		GAME_BASEFILE,	"9f93d27432ce44a787eef10adb640870", 37070},
@@ -1409,7 +1409,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"simon1",
-			"Floppy",
+			"Infocom Floppy",
 
 			{
 	{ "gamepc",		GAME_BASEFILE,	"62de24fc579b94fac7d3d23201b65b14", -1},
@@ -1599,11 +1599,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
-	// Simon the Sorcerer 1 - English DOS CD alternate?
+	// Simon the Sorcerer 1 - English DOS CD  (Infocom)
 	{
 		{
 			"simon1",
-			"CD",
+			"Infocom CD",
 
 			{
 	{ "gamepc",		GAME_BASEFILE,	"c0b948b6821d2140f8b977144f21027a", -1},

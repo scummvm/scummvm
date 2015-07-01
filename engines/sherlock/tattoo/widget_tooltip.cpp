@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/widget_tooltip.h"
+#include "sherlock/tattoo/tattoo_map.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
@@ -28,25 +29,155 @@ namespace Sherlock {
 
 namespace Tattoo {
 
-WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetBase(vm) {
+#define MAX_TOOLTIP_WIDTH 150
+
+void WidgetTooltipBase::draw() {
+	Screen &screen = *_vm->_screen;
+	const Common::Point &currentScroll = getCurrentScroll();
+
+	// If there was a previously drawn frame in a different position that hasn't yet been erased, then erase it
+	if (_oldBounds.width() > 0 && _oldBounds != _bounds)
+		erase();
+
+	if (_bounds.width() > 0 && !_surface.empty()) {
+		// Blit the affected area to the screen
+		screen.slamRect(_bounds, currentScroll);
+		
+		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
+		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
+		screen.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+
+		// Store a copy of the drawn area for later erasing
+		_oldBounds = _bounds;
+	}
 }
 
-void WidgetTooltip::execute() {
+void WidgetTooltipBase::erase() {
+	Screen &screen = *_vm->_screen;
+	const Common::Point &currentScroll = getCurrentScroll();
+
+	if (_oldBounds.width() > 0) {
+		// Restore the affected area from the back buffer to the screen
+		screen.slamRect(_oldBounds, currentScroll);
+
+		// Reset the old bounds so it won't be erased again
+		_oldBounds = Common::Rect(0, 0, 0, 0);
+	}
+}
+
+/*----------------------------------------------------------------*/
+
+WidgetTooltip::WidgetTooltip(SherlockEngine *vm) : WidgetTooltipBase (vm) {
+}
+
+void WidgetTooltip::setText(const Common::String &str) {
+	Events &events = *_vm->_events;
+	Common::Point mousePos = events.mousePos();
+	bool reset = false;
+	
+	// Make sure that the description is present
+	if (!str.empty()) {
+		int width = _surface.stringWidth(str) + 2;
+		int height = _surface.stringHeight(str) + 2;
+		Common::String line1 = str, line2 = "";
+
+		// See if we need to split it into two lines
+		if (width > MAX_TOOLTIP_WIDTH) {
+			// Go forward word by word to find out where to split the line
+			const char *s = str.c_str();
+			const char *space = nullptr;
+			int dif = 10000;
+
+			for (;;) {
+				// Find end of next word
+				s = strchr(s + 1, ' ');
+
+				if (s == nullptr) {
+					// Reached end of string
+					if (space != nullptr) {
+						line1 = Common::String(str.c_str(), space);
+						line2 = Common::String(space + 1);
+						height = _surface.stringHeight(line1) + _surface.stringHeight(line2) + 4;
+					}
+					break;
+				}
+
+				// Found space separating words, so see what width the string up to now is
+				Common::String tempLine1 = Common::String(str.c_str(), s);
+				Common::String tempLine2 = Common::String(s + 1);
+				int width1 = _surface.stringWidth(tempLine1);
+				int width2 = _surface.stringWidth(tempLine2);
+
+				// See if we've found a split point that results in a less overall width
+				if (ABS(width1 - width2) < dif) {
+					// Found a better split point
+					dif = ABS(width1 - width2);
+					space = s;
+					line1 = tempLine1;
+					line2 = tempLine2;
+				}
+			}
+		} else {
+			// No line split needed
+			height = _surface.stringHeight(str) + 2;
+		}
+
+		// Reallocate the text surface with the new size
+		_surface.create(width, height);
+		_surface.fill(TRANSPARENCY);
+
+		if (line2.empty()) {
+			// Only a single line
+			_surface.writeFancyString(str, Common::Point(0, 0), BLACK, INFO_TOP);
+		} else {
+			// Two lines to display
+			int xp, yp;
+			xp = (width - _surface.stringWidth(line1) - 2) / 2;
+			_surface.writeFancyString(line1, Common::Point(xp, 0), BLACK, INFO_TOP);
+
+			xp = (width - _surface.stringWidth(line2) - 2) / 2;
+			yp = _surface.stringHeight(line1) + 2;
+			_surface.writeFancyString(line2, Common::Point(xp, yp), BLACK, INFO_TOP);
+		}
+
+		// Set the initial display position for the tooltip text
+		int tagX = CLIP(mousePos.x - width / 2, 0, SHERLOCK_SCREEN_WIDTH - width);
+		int tagY = MAX(mousePos.y - height, 0);
+
+		_bounds = Common::Rect(tagX, tagY, tagX + width, tagY + height);
+	} else {
+		reset = true;
+	}
+
+	if (reset && !_surface.empty()) {
+		_surface.free();
+	}
+}
+
+void WidgetTooltip::handleEvents() {
+	Events &events = *_vm->_events;
+	Common::Point mousePos = events.mousePos();
+
+	// Set the new position for the tooltip
+	int xp = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
+	int yp = MAX(mousePos.y - _bounds.height(), 0);
+
+	_bounds.moveTo(xp, yp);
+}
+
+/*----------------------------------------------------------------*/
+
+void WidgetSceneTooltip::handleEvents() {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
-	bool reset = false;
 
 	// See if thay are pointing at a different object and we need to regenerate the tooltip text
 	if (ui._bgFound != ui._oldBgFound || (ui._bgFound != -1 && _surface.empty()) ||
 			ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())) {
-		// Keep track of the last place we drew the text
-		_oldBounds = _bounds;
-
-		// See if there is a new object to be displayed
+		// See if there is a new object to display text for
 		if ((ui._bgFound != -1 && (ui._bgFound != ui._oldBgFound || (ui._bgFound != -1 && _surface.empty()))) ||
 				(ui._arrowZone != -1 && (ui._arrowZone != ui._oldArrowZone || (ui._arrowZone != -1 && _surface.empty())))) {
 			Common::String str;
@@ -63,117 +194,15 @@ void WidgetTooltip::execute() {
 				str = scene._exits[ui._arrowZone]._dest;
 			}
 
-			// Make sure that the description is present
-			if (!str.empty() && !str.hasPrefix(" ")) {
-				int width = screen.stringWidth(str) + 2;
-				int height = screen.stringHeight(str) + 2;
-				Common::String line1 = str, line2 = "";
-
-				// See if we need to split it into two lines
-				if (width > 150) {
-					// Go forward word by word to find out where to split the line
-					const char *s = str.c_str();
-					const char *space = nullptr;
-					int dif = 10000;
-
-					for (;;) {
-						// Find end of next word
-						s = strchr(s + 1, ' ');
-
-						if (s == nullptr) {
-							// Reached end of string
-							if (space != nullptr) {
-								line1 = Common::String(str.c_str(), space);
-								line2 = Common::String(space + 1);
-								height = screen.stringHeight(line1) + screen.stringHeight(line2) + 4;
-							}
-							break;
-						}
-
-						// Found space separating words, so see what width the string up to now is
-						Common::String tempLine1 = Common::String(str.c_str(), s);
-						Common::String tempLine2 = Common::String(s + 1);
-						int width1 = screen.stringWidth(tempLine1);
-						int width2 = screen.stringWidth(tempLine2);
-
-						// See if we've found a split point that results in a less overall width
-						if (ABS(width1 - width2) < dif) {
-							// Found a better split point
-							dif = ABS(width1 - width2);
-							space = s;
-							line1 = tempLine1;
-							line2 = tempLine2;
-						}
-					}
-				} else {
-					// No line split needed
-					height = screen.stringHeight(str) + 2;
-				}
-
-				// Reallocate the text surface with the new size
-				_surface.create(width, height, _vm->getPlatform());
-				_surface.fill(TRANSPARENCY);
-
-				if (line2.empty()) {
-					// Only a single line
-					_surface.writeString(str, Common::Point(0, 0), BLACK);
-					_surface.writeString(str, Common::Point(1, 0), BLACK);
-					_surface.writeString(str, Common::Point(2, 0), BLACK);
-					_surface.writeString(str, Common::Point(0, 1), BLACK);
-					_surface.writeString(str, Common::Point(2, 1), BLACK);
-					_surface.writeString(str, Common::Point(0, 2), BLACK);
-					_surface.writeString(str, Common::Point(1, 2), BLACK);
-					_surface.writeString(str, Common::Point(2, 2), BLACK);
-					_surface.writeString(str, Common::Point(1, 1), INFO_TOP);
-				} else {
-					// Two lines to display
-					int xp, yp;
-					xp = (width - screen.stringWidth(line1) - 2) / 2;
-					_surface.writeString(line1, Common::Point(xp, 0), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 1, 0), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 2, 0), BLACK);
-					_surface.writeString(line1, Common::Point(xp, 1), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 2, 1), BLACK);
-					_surface.writeString(line1, Common::Point(xp, 2), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 1, 2), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 2, 2), BLACK);
-					_surface.writeString(line1, Common::Point(xp + 1, 1), INFO_TOP);
-					
-					xp = (width - screen.stringWidth(line2) - 2) / 2;
-					yp = screen.stringHeight(line1) + 2;
-					_surface.writeString(line2, Common::Point(xp, yp), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 1, yp), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 2, yp), BLACK);
-					_surface.writeString(line2, Common::Point(xp, yp + 1), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 2, yp + 1), BLACK);
-					_surface.writeString(line2, Common::Point(xp, yp + 2), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 1, yp + 2), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 2, yp + 2), BLACK);
-					_surface.writeString(line2, Common::Point(xp + 1, yp + 1), INFO_TOP);
-				}
-
-				// Set the initial display position for the tooltip text
-				int tagX = CLIP(mousePos.x - width / 2, 0, SHERLOCK_SCREEN_WIDTH - width);
-				int tagY = MAX(mousePos.y - height, 0);
-
-				_bounds = Common::Rect(tagX, tagY, tagX + width, tagY + height);
-			} else {
-				reset = true;
-			}
+			setText(str.hasPrefix(" ") ? Common::String() : str);			
 		} else if ((ui._bgFound == -1 && ui._oldBgFound != -1) || (ui._arrowZone == -1 && ui._oldArrowZone != -1)) {
-			reset = true;
-		}
-
-		if (reset && !_surface.empty()) {
-			_surface.free();
+			setText("");
 		}
 
 		ui._oldBgFound = ui._bgFound;
 	} else {
-		// Keep track of the last place we drew the Text
-		_oldBounds = _bounds;
 
-		// Set the New position of the Text Tag
+		// Set the new position for the tooltip
 		int tagX = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
 		int tagY = MAX(mousePos.y - _bounds.height(), 0);
 
@@ -181,38 +210,15 @@ void WidgetTooltip::execute() {
 	}
 
 	ui._oldArrowZone = ui._arrowZone;
+
+	WidgetTooltip::handleEvents();
 }
 
-void WidgetTooltip::draw() {
-	Screen &screen = *_vm->_screen;
+/*----------------------------------------------------------------*/
 
-	if (!_surface.empty())
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
-}
-
-void WidgetTooltip::erase() {
-	Screen &screen = *_vm->_screen;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-
-	if (_bounds.width() > 0) {
-		screen.slamArea(_oldBounds.left - ui._currentScroll.x, _oldBounds.top, _oldBounds.width(), _oldBounds.height());
-
-		// If there's no text actually being displayed, then reset bounds so we don't keep restoring the area
-		if (_surface.empty()) {
-			_bounds.left = _bounds.top = _bounds.right = _bounds.bottom = 0;
-			_oldBounds.left = _oldBounds.top = _oldBounds.right = _oldBounds.bottom = 0;
-		}
-	}
-
-	if (!_surface.empty())
-		screen.slamArea(_bounds.left - ui._currentScroll.x, _bounds.top, _bounds.width(), _bounds.height());
-}
-
-void WidgetTooltip::erasePrevious() {
-	Screen &screen = *_vm->_screen;
-	if (_oldBounds.width() > 0)
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top),
-		_oldBounds);
+const Common::Point &WidgetMapTooltip::getCurrentScroll() const {
+	TattooMap &map = *(TattooMap *)_vm->_map;
+	return map._currentScroll;
 }
 
 } // End of namespace Tattoo

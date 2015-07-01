@@ -22,8 +22,10 @@
 
 #include "engines/util.h"
 #include "sherlock/tattoo/tattoo.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_resources.h"
 #include "sherlock/tattoo/tattoo_scene.h"
+#include "sherlock/tattoo/widget_base.h"
 #include "sherlock/people.h"
 
 namespace Sherlock {
@@ -36,6 +38,10 @@ TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDes
 	_runningProlog = false;
 	_fastMode = false;
 	_allowFastMode = true;
+	_transparentMenus = true;
+}
+
+TattooEngine::~TattooEngine() {
 }
 
 void TattooEngine::showOpening() {
@@ -62,6 +68,9 @@ void TattooEngine::initialize() {
 			getLanguage() == Common::FR_FRA ? FRENCH_NAMES[idx] : ENGLISH_NAMES[idx],
 			PORTRAITS[idx], nullptr, nullptr));
 	}
+
+	// Load the inventory
+	loadInventory();
 
 	// Starting scene
 	_scene->_goToScene = STARTING_INTRO_SCENE;
@@ -93,6 +102,41 @@ void TattooEngine::loadInitialPalette() {
 	delete stream;
 }
 
+void TattooEngine::loadInventory() {
+	Inventory &inv = *_inventory;
+
+	Common::String inv1 = _fixedText->getText(kFixedText_Inv1);
+	Common::String inv2 = _fixedText->getText(kFixedText_Inv2);
+	Common::String inv3 = _fixedText->getText(kFixedText_Inv3);
+	Common::String inv4 = _fixedText->getText(kFixedText_Inv4);
+	Common::String inv5 = _fixedText->getText(kFixedText_Inv5);
+	Common::String inv6 = _fixedText->getText(kFixedText_Inv6);
+	Common::String inv7 = _fixedText->getText(kFixedText_Inv7);
+	Common::String inv8 = _fixedText->getText(kFixedText_Inv8);
+	Common::String invDesc1 = _fixedText->getText(kFixedText_InvDesc1);
+	Common::String invDesc2 = _fixedText->getText(kFixedText_InvDesc2);
+	Common::String invDesc3 = _fixedText->getText(kFixedText_InvDesc3);
+	Common::String invDesc4 = _fixedText->getText(kFixedText_InvDesc4);
+	Common::String invDesc5 = _fixedText->getText(kFixedText_InvDesc5);
+	Common::String invDesc6 = _fixedText->getText(kFixedText_InvDesc6);
+	Common::String invDesc7 = _fixedText->getText(kFixedText_InvDesc7);
+	Common::String invDesc8 = _fixedText->getText(kFixedText_InvDesc8);
+	Common::String solve = _fixedText->getText(kFixedText_Solve);
+
+	// Initial inventory
+	inv._holdings = 5;
+	inv.push_back(InventoryItem(0, inv1, invDesc1, "_ITEM01A"));
+	inv.push_back(InventoryItem(0, inv2, invDesc2, "_ITEM02A"));
+	inv.push_back(InventoryItem(0, inv3, invDesc3, "_ITEM03A"));
+	inv.push_back(InventoryItem(0, inv4, invDesc4, "_ITEM04A"));
+	inv.push_back(InventoryItem(0, inv5, invDesc5, "_ITEM05A"));
+
+	// Hidden items
+	inv.push_back(InventoryItem(0, inv6, invDesc6, "_PAP212D", solve));
+	inv.push_back(InventoryItem(0, inv7, invDesc7, "_PAP212I"));
+	inv.push_back(InventoryItem(0, inv8, invDesc8, "_LANT02I"));
+}
+
 void TattooEngine::drawCredits() {
 	// TODO
 }
@@ -102,6 +146,10 @@ void TattooEngine::blitCredits() {
 }
 
 void TattooEngine::eraseCredits() {
+	// TODO
+}
+
+void TattooEngine::doHangManPuzzle() {
 	// TODO
 }
 

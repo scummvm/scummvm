@@ -11,6 +11,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Updated Munt MT-32 emulation code to version 1.5.0.
 
+ 3 Skulls of the Toltecs:
+   - Improved AdLib music support.
+
  AGI:
    - It is now possible to disable mouse support (except for Amiga versions
      and fanmade games, that require a mouse).
@@ -19,6 +22,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Fixed arpeggio effect used in music of Amiga version of Elvira 1.
    - Fixed loading and saving progress in the PC version of Waxworks.
+   - Added Accolade AdLib & MT32 music drivers for the games:
+     Elvira 1, Elvira 2, Waxworks and Simon the sorcerer 1 demo
 
  Broken Sword 1:
    - Fix speech endianness detection on big endian systems for the mac
@@ -26,6 +31,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix crash when reloading a game from the Main Menu while in the bull's
      head scene (bug #6728). It may have been happening in other scenes as
      well.
+
+ SAGA:
+   - Improved AdLib music support.
 
  SCI:
    - Handling of music priority has been greatly improved.
@@ -38,6 +46,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - It is now possible to play Maniac Mansion from within Day of the
      Tentacle, with a few caveats. See README for details.
+
+ Tinsel:
+   - Improved AdLib music support in Discworld 1
 
 1.7.0 (2014-07-21)
  New Games:

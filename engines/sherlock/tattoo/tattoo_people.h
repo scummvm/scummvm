@@ -222,6 +222,10 @@ public:
 	 */
 	void setListenSequence(int speaker, int sequenceNum);
 
+	/**
+	 * Restore any saved NPC walk path data from any of the NPCs
+	 */
+	void pullNPCPaths();
 
 	/**
 	 * Finds the scene background object corresponding to a specified speaker

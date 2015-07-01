@@ -32,14 +32,9 @@
 
 namespace Sherlock {
 
-#define JOURNAL_MAX_WIDTH 230
-#define JOURNAL_MAX_CHARS 80
+#define LINES_PER_PAGE (IS_SERRATED_SCALPEL ? 11 : 17)
 
-enum JournalButton {
-	BTN_NONE, BTN_EXIT, BTN_BACK10, BTN_UP, BTN_DOWN, BTN_AHEAD110, BTN_SEARCH,
-	BTN_FIRST_PAGE, BTN_LAST_PAGE, BTN_PRINT_TEXT
-};
-
+class SherlockEngine;
 
 struct JournalEntry {
 	int _converseNum;
@@ -51,26 +46,21 @@ struct JournalEntry {
 		_converseNum(converseNum), _statementNum(statementNum), _replyOnly(replyOnly) {}
 };
 
-class SherlockEngine;
-
 class Journal {
-private:
+protected:
 	SherlockEngine *_vm;
-	Common::Array<JournalEntry> _journal;
 	Common::StringArray _directory;
 	Common::StringArray _locations;
+	Common::Array<JournalEntry> _journal;
 	Common::StringArray _lines;
-	int _maxPage;
-	int _index;
-	int _sub;
 	bool _up, _down;
+	int _index;
 	int _page;
+	int _maxPage;
+	int _sub;
 	Common::String _find;
 
-	/**
-	 * Load the list of location names that the journal will make reference to
-	 */
-	void loadJournalLocations();
+	Journal(SherlockEngine *vm);
 
 	/**
 	 * Loads the description for the current display index in the journal, and then
@@ -79,59 +69,35 @@ private:
 	 *		first time, or being reloaded
 	 */
 	void loadJournalFile(bool alreadyLoaded);
+public:
+	static Journal *init(SherlockEngine *vm);
+	virtual ~Journal() {}
 
 	/**
-	 * Display the arrows that can be used to scroll up and down pages
-	 */
-	void doArrows();
-
-	/**
-	 * Displays a page of the journal at the current index
-	 */
+	* Displays a page of the journal at the current index
+	*/
 	bool drawJournal(int direction, int howFar);
-
-	/**
-	 * Show the search submenu and allow the player to enter a search string
-	 */
-	int getSearchString(bool printError);
-
+public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
 	 */
-	void drawJournalFrame();
-
-	/**
-	 * Returns the button, if any, that is under the specified position
-	 */
-	JournalButton getHighlightedButton(const Common::Point &pt);
-public:
-	Journal(SherlockEngine *vm);
+	virtual void drawFrame() = 0;
 
 	/**
 	 * Records statements that are said, in the order which they are said. The player
 	 * can then read the journal to review them
 	 */
-	void record(int converseNum, int statementNum, bool replyOnly = false);
-
-	/**
-	 * Display the journal
-	 */
-	void drawInterface();
-
-	/**
-	 * Handle events whilst the journal is being displayed
-	 */
-	bool handleEvents(int key);
+	virtual void record(int converseNum, int statementNum, bool replyOnly = false) {}
 
 	/**
 	 * Reset viewing position to the start of the journal
 	 */
-	void resetPosition();
+	virtual void resetPosition() {}
 
 	/**
 	 * Synchronize the data for a savegame
 	 */
-	void synchronize(Serializer &s);
+	virtual void synchronize(Serializer &s) = 0;
 };
 
 } // End of namespace Sherlock

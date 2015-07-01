@@ -21,12 +21,13 @@
  */
 
 #include "common/util.h"
-#include "sherlock/sherlock.h"
 #include "sherlock/objects.h"
 #include "sherlock/people.h"
 #include "sherlock/scene.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
+#include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
 
@@ -65,7 +66,6 @@ BaseObject::BaseObject() {
 	_aType = OBJECT;
 	_lookFrames = 0;
 	_seqCounter = 0;
-	_lookFacing = 0;
 	_lookcAnim = 0;
 	_seqStack = 0;
 	_seqTo = 0;
@@ -157,6 +157,11 @@ void BaseObject::checkObject() {
 	++_frameNumber;
 
 	do {
+		if (!_sequences) {
+			warning("checkObject: _sequences is not set");
+			break;
+		}
+
 		// Check for end of sequence
 		codeFound = checkEndOfSequence();
 
@@ -541,13 +546,13 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 		ui._infoFlag = true;
 		ui.clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, messageNum);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", errorMessage.c_str());
 		ui._menuCounter = 25;
 	} else if (name.hasPrefix("@")) {
 		// Message attached to canimation
 		ui._infoFlag = true;
 		ui.clearInfo();
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", name.c_str() + 1);
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", name.c_str() + 1);
 		printed = true;
 		ui._menuCounter = 25;
 	}
@@ -973,9 +978,14 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_aType = (AType)s.readByte();
 	_lookFrames = s.readByte();
 	_seqCounter = s.readByte();
-	_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER / 100;
-	_lookPosition.y = (isRoseTattoo ? s.readSint16LE() : s.readByte()) * FIXED_INT_MULTIPLIER;
-	_lookFacing = s.readByte();
+	if (isRoseTattoo) {
+		_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER;
+		_lookPosition.y = s.readSint16LE() * FIXED_INT_MULTIPLIER;
+	} else {
+		_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER / 100;
+		_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
+	}
+	_lookPosition._facing = s.readByte();
 	_lookcAnim = s.readByte();
 
 	if (!isRoseTattoo)
@@ -1102,7 +1112,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	// Unverified END
 
 	_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
-	_lookFacing = s.readByte();
+	_lookPosition._facing = s.readByte();
 
 	// Unverified
 	_lookcAnim = s.readByte();
@@ -1316,7 +1326,7 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 		ui._infoFlag = true;
 		ui.clearInfo();
 		Common::String errorMessage = fixedText.getActionMessage(fixedTextActionId, message);
-		screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "%s", errorMessage.c_str());
+		screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "%s", errorMessage.c_str());
 		ui._menuCounter = 30;
 	} else {
 		// Pick it up
@@ -1365,7 +1375,7 @@ int Object::pickUpObject(FixedTextActionId fixedTextActionId) {
 
 			Common::String itemName = _description;
 			itemName.setChar(tolower(itemName[0]), 0);
-			screen.print(Common::Point(0, INFO_LINE + 1), INFO_FOREGROUND, "Picked up %s", itemName.c_str());
+			screen.print(Common::Point(0, INFO_LINE + 1), COL_INFO_FOREGROUND, "Picked up %s", itemName.c_str());
 			ui._menuCounter = 25;
 		}
 	}
@@ -1488,42 +1498,6 @@ void CAnim::load3DO(Common::SeekableReadStream &s, uint32 dataOffset) {
 	_goto[0].y = _goto[0].y * FIXED_INT_MULTIPLIER / 100;
 	_teleport[0].x = _teleport[0].x * FIXED_INT_MULTIPLIER / 100;
 	_teleport[0].y = _teleport[0].y * FIXED_INT_MULTIPLIER / 100;
-}
-
-/*----------------------------------------------------------------*/
-
-CAnimStream::CAnimStream() {
-	_images = nullptr;
-	_imageFrame = nullptr;
-	_frameNumber = 0;
-	_flags = 0;
-	_scaleVal = 0;
-	_zPlacement = 0;
-}
-
-CAnimStream::~CAnimStream() {
-	delete _images;
-}
-
-void CAnimStream::load(Common::SeekableReadStream *stream) {
-	delete _images;
-	_images = new ImageFile(*stream, false);
-	_imageFrame = &(*_images)[0];
-	_frameNumber = 0;
-}
-
-void CAnimStream::close() {
-	delete _images;
-	_images = nullptr;
-	_imageFrame = nullptr;
-	_frameNumber = 0;
-}
-
-void CAnimStream::getNextFrame() {
-	if (++_frameNumber < (int)_images->size())
-		_imageFrame = &(*_images)[_frameNumber];
-	else
-		_imageFrame = nullptr;
 }
 
 /*----------------------------------------------------------------*/

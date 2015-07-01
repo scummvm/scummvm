@@ -21,11 +21,13 @@
  */
 
 #include "sherlock/scalpel/scalpel_talk.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
+#include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel_user_interface.h"
-#include "sherlock/sherlock.h"
+#include "sherlock/scalpel/scalpel.h"
 #include "sherlock/screen.h"
 #include "sherlock/scalpel/3do/movie_decoder.h"
 
@@ -173,7 +175,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 void ScalpelTalk::talkInterface(const byte *&str) {
 	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
-	Screen &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
 
 	// If the window isn't yet open, draw the window before printing starts
@@ -504,7 +506,7 @@ OpcodeReturn ScalpelTalk::cmdSfxCommand(const byte *&str) {
 OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 	Events       &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
-	Screen       &screen = *_vm->_screen;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 
 	drawInterface();
 	events._pressed = events._released = false;
@@ -595,6 +597,240 @@ void ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 
 	// Restore screen HACK
 	_vm->_screen->makeAllDirty();
+}
+
+void ScalpelTalk::drawInterface() {
+	FixedText &fixedText = *_vm->_fixedText;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
+	Surface &bb = *screen._backBuffer;
+
+	bb.fillRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, CONTROLS_Y1 + 10), BORDER_COLOR);
+	bb.fillRect(Common::Rect(0, CONTROLS_Y + 10, 2, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(SHERLOCK_SCREEN_WIDTH - 2, CONTROLS_Y + 10,
+		SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(0, SHERLOCK_SCREEN_HEIGHT - 1, SHERLOCK_SCREEN_WIDTH - 2,
+		SHERLOCK_SCREEN_HEIGHT), BORDER_COLOR);
+	bb.fillRect(Common::Rect(2, CONTROLS_Y + 10, SHERLOCK_SCREEN_WIDTH - 2,
+		SHERLOCK_SCREEN_HEIGHT - 2), INV_BACKGROUND);
+
+	if (_talkTo != -1) {
+		Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+		Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+		Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+
+		screen.makeButton(Common::Rect(99, CONTROLS_Y, 139, CONTROLS_Y + 10),
+			119 - screen.stringWidth(fixedText_Exit) / 2, fixedText_Exit);
+		screen.makeButton(Common::Rect(140, CONTROLS_Y, 180, CONTROLS_Y + 10),
+			159 - screen.stringWidth(fixedText_Up) / 2, fixedText_Up);
+		screen.makeButton(Common::Rect(181, CONTROLS_Y, 221, CONTROLS_Y + 10),
+			200 - screen.stringWidth(fixedText_Down) / 2, fixedText_Down);
+	} else {
+		int strWidth = screen.stringWidth(Scalpel::PRESS_KEY_TO_CONTINUE);
+		screen.makeButton(Common::Rect(46, CONTROLS_Y, 273, CONTROLS_Y + 10),
+			160 - strWidth / 2, Scalpel::PRESS_KEY_TO_CONTINUE);
+		screen.gPrint(Common::Point(160 - strWidth / 2, CONTROLS_Y), COMMAND_FOREGROUND, "P");
+	}
+}
+
+bool ScalpelTalk::displayTalk(bool slamIt) {
+	FixedText &fixedText = *_vm->_fixedText;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
+	int yp = CONTROLS_Y + 14;
+	int lineY = -1;
+	_moreTalkDown = _moreTalkUp = false;
+
+	for (uint idx = 0; idx < _statements.size(); ++idx) {
+		_statements[idx]._talkPos.top = _statements[idx]._talkPos.bottom = -1;
+	}
+
+	if (_talkIndex) {
+		for (int idx = 0; idx < _talkIndex && !_moreTalkUp; ++idx) {
+			if (_statements[idx]._talkMap != -1)
+				_moreTalkUp = true;
+		}
+	}
+
+	// Display the up arrow and enable Up button if the first option is scrolled off-screen
+	Common::String fixedText_Up   = fixedText.getText(kFixedText_Window_Up);
+	Common::String fixedText_Down = fixedText.getText(kFixedText_Window_Down);
+	if (_moreTalkUp) {
+		if (slamIt) {
+			screen.print(Common::Point(5, CONTROLS_Y + 13), INV_FOREGROUND, "~");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Up);
+		} else {
+			screen.gPrint(Common::Point(5, CONTROLS_Y + 12), INV_FOREGROUND, "~");
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Up);
+		}
+	} else {
+		if (slamIt) {
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, true, fixedText_Up);
+			screen.vgaBar(Common::Rect(5, CONTROLS_Y + 11, 15, CONTROLS_Y + 22), INV_BACKGROUND);
+		} else {
+			screen.buttonPrint(Common::Point(159, CONTROLS_Y), COMMAND_NULL, false, fixedText_Up);
+			screen._backBuffer1.fillRect(Common::Rect(5, CONTROLS_Y + 11,
+				15, CONTROLS_Y + 22), INV_BACKGROUND);
+		}
+	}
+
+	// Loop through the statements
+	bool done = false;
+	for (uint idx = _talkIndex; idx < _statements.size() && !done; ++idx) {
+		Statement &statement = _statements[idx];
+
+		if (statement._talkMap != -1) {
+			bool flag = _talkHistory[_converseNum][idx];
+			lineY = talkLine(idx, statement._talkMap, flag ? (byte)TALK_NULL : (byte)INV_FOREGROUND,
+				yp, slamIt);
+
+			if (lineY != -1) {
+				statement._talkPos.top = yp;
+				yp = lineY;
+				statement._talkPos.bottom = yp;
+
+				if (yp == SHERLOCK_SCREEN_HEIGHT)
+					done = true;
+			} else {
+				done = true;
+			}
+		}
+	}
+
+	// Display the down arrow and enable down button if there are more statements available down off-screen
+	if (lineY == -1 || lineY == SHERLOCK_SCREEN_HEIGHT) {
+		_moreTalkDown = true;
+
+		if (slamIt) {
+			screen.print(Common::Point(5, 190), INV_FOREGROUND, "|");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, true, fixedText_Down);
+		} else {
+			screen.gPrint(Common::Point(5, 189), INV_FOREGROUND, "|");
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_FOREGROUND, false, fixedText_Down);
+		}
+	} else {
+		if (slamIt) {
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, true, fixedText_Down);
+			screen.vgaBar(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
+		} else {
+			screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
+			screen._backBuffer1.fillRect(Common::Rect(5, 189, 16, 199), INV_BACKGROUND);
+		}
+	}
+
+	return done;
+}
+
+int ScalpelTalk::talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) {
+	Screen &screen = *_vm->_screen;
+	int idx = lineNum;
+	Common::String msg, number;
+	bool numberFlag = false;
+
+	// Get the statement to display as well as optional number prefix
+	if (idx < SPEAKER_REMOVE) {
+		number = Common::String::format("%d.", stateNum + 1);
+		numberFlag = true;
+	} else {
+		idx -= SPEAKER_REMOVE;
+	}
+	msg = _statements[idx]._statement;
+
+	// Handle potentially multiple lines needed to display entire statement
+	const char *lineStartP = msg.c_str();
+	int maxWidth = 298 - (numberFlag ? 18 : 0);
+	for (;;) {
+		// Get as much of the statement as possible will fit on the
+		Common::String sLine;
+		const char *lineEndP = lineStartP;
+		int width = 0;
+		do {
+			width += screen.charWidth(*lineEndP);
+		} while (*++lineEndP && width < maxWidth);
+
+		// Check if we need to wrap the line
+		if (width >= maxWidth) {
+			// Work backwards to the prior word's end
+			while (*--lineEndP != ' ')
+				;
+
+			sLine = Common::String(lineStartP, lineEndP++);
+		} else {
+			// Can display remainder of the statement on the current line
+			sLine = Common::String(lineStartP);
+		}
+
+
+		if (lineY <= (SHERLOCK_SCREEN_HEIGHT - 10)) {
+			// Need to directly display on-screen?
+			if (slamIt) {
+				// See if a numer prefix is needed or not
+				if (numberFlag) {
+					// Are we drawing the first line?
+					if (lineStartP == msg.c_str()) {
+						// We are, so print the number and then the text
+						screen.print(Common::Point(16, lineY), color, "%s", number.c_str());
+					}
+
+					// Draw the line with an indent
+					screen.print(Common::Point(30, lineY), color, "%s", sLine.c_str());
+				} else {
+					screen.print(Common::Point(16, lineY), color, "%s", sLine.c_str());
+				}
+			} else {
+				if (numberFlag) {
+					if (lineStartP == msg.c_str()) {
+						screen.gPrint(Common::Point(16, lineY - 1), color, "%s", number.c_str());
+					}
+
+					screen.gPrint(Common::Point(30, lineY - 1), color, "%s", sLine.c_str());
+				} else {
+					screen.gPrint(Common::Point(16, lineY - 1), color, "%s", sLine.c_str());
+				}
+			}
+
+			// Move to next line, if any
+			lineY += 9;
+			lineStartP = lineEndP;
+
+			if (!*lineEndP)
+				break;
+		} else {
+			// We're close to the bottom of the screen, so stop display
+			lineY = -1;
+			break;
+		}
+	}
+
+	if (lineY == -1 && lineStartP != msg.c_str())
+		lineY = SHERLOCK_SCREEN_HEIGHT;
+
+	// Return the Y position of the next line to follow this one
+	return lineY;
+}
+
+void ScalpelTalk::showTalk() {
+	FixedText &fixedText = *_vm->_fixedText;
+	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
+	ScalpelUserInterface &ui = *(ScalpelUserInterface *)_vm->_ui;
+	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
+	byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
+
+	// If the window is already open, simply draw. Otherwise, do it
+	// to the back buffer and then summon the window
+	if (ui._windowOpen) {
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, true, fixedText_Exit);
+	} else {
+		screen.buttonPrint(Common::Point(119, CONTROLS_Y), color, false, fixedText_Exit);
+
+		if (!ui._slideWindows) {
+			screen.slamRect(Common::Rect(0, CONTROLS_Y,
+				SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		} else {
+			ui.summonWindow();
+		}
+
+		ui._windowOpen = true;
+	}
+
 }
 
 } // End of namespace Scalpel

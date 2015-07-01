@@ -216,7 +216,7 @@ public:
 	bool **_sceneStats;
 	bool _walkedInScene;
 	int _version;
-	bool _lzwMode;
+	bool _compressed;
 	int _invGraphicItems;
 	Common::String _comments;
 	Common::Array<char> _descText;

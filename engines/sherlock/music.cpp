@@ -25,6 +25,8 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/scalpel/drivers/mididriver.h"
+// for Miles Audio (Sherlock Holmes 2)
+#include "audio/miles.h"
 // for 3DO digital music
 #include "audio/decoders/aiff.h"
 
@@ -240,7 +242,7 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 
 		switch (_musicType) {
 		case MT_ADLIB:
-			_midiDriver = MidiDriver_AdLib_create();
+			_midiDriver = MidiDriver_SH_AdLib_create();
 			break;
 		case MT_MT32:
 			_midiDriver = MidiDriver_MT32_create();
@@ -259,15 +261,34 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		}
 	} else {
 		// Rose Tattooo: seems to use Miles Audio 3
-
-		// TODO: AdLib support uses ScummVM's builtin GM to AdLib
-		// conversion. This won't match the original. I'm also
-		// uncertain about the MT-32 case, but it plays at least.
-
 		_midiParser = MidiParser::createParser_XMIDI();
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
-		_musicType = MT_GM;
-		_midiDriver = MidiDriver::createMidi(dev);
+		_musicType = MidiDriver::getMusicType(dev);
+
+		switch (_musicType) {
+		case MT_ADLIB:
+			// SAMPLE.AD  -> regular AdLib instrument data
+			// SAMPLE.OPL -> OPL-3 instrument data
+			// although in case of Rose Tattoo both files are exactly the same
+			_midiDriver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+			break;
+		case MT_MT32:
+			// Sherlock Holmes 2 does not have a MT32 timbre file
+			_midiDriver = Audio::MidiDriver_Miles_MT32_create("");
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_midiDriver = Audio::MidiDriver_Miles_MT32_create("");
+				_musicType = MT_MT32;
+			} else {
+				_midiDriver = MidiDriver::createMidi(dev);
+				_musicType = MT_GM;
+			}
+			break;
+		default:
+			// Do not create anything
+			break;
+		}
 	}
 
 	if (_midiDriver) {
@@ -279,23 +300,28 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_midiParser->setMidiDriver(_midiDriver);
 		_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 
-		if (_musicType == MT_MT32) {
-			// Upload patches
-			Common::SeekableReadStream *MT32driverStream = _vm->_res->load("MTHOM.DRV", "MUSIC.LIB");
+		if (IS_SERRATED_SCALPEL) {
+			if (_musicType == MT_MT32) {
+				// Upload patches
+				Common::SeekableReadStream *MT32driverStream = _vm->_res->load("MTHOM.DRV", "MUSIC.LIB");
 
-			byte *MT32driverData = new byte[MT32driverStream->size()];
-			int32 MT32driverDataSize = MT32driverStream->size();
-			assert(MT32driverData);
+				if (!MT32driverStream)
+					error("Music: could not load MTHOM.DRV, critical");
 
-			MT32driverStream->read(MT32driverData, MT32driverDataSize);
-			delete MT32driverStream;
+				byte *MT32driverData = new byte[MT32driverStream->size()];
+				int32 MT32driverDataSize = MT32driverStream->size();
+				assert(MT32driverData);
 
-			assert(MT32driverDataSize > 12);
-			byte *MT32driverDataPtr = MT32driverData + 12;
-			MT32driverDataSize -= 12;
+				MT32driverStream->read(MT32driverData, MT32driverDataSize);
+				delete MT32driverStream;
 
-			MidiDriver_MT32_uploadPatches(_midiDriver, MT32driverDataPtr, MT32driverDataSize);
-			delete[] MT32driverData;
+				assert(MT32driverDataSize > 12);
+				byte *MT32driverDataPtr = MT32driverData + 12;
+				MT32driverDataSize -= 12;
+
+				MidiDriver_MT32_uploadPatches(_midiDriver, MT32driverDataPtr, MT32driverDataSize);
+				delete[] MT32driverData;
+			}
 		}
 
 		_musicOn = true;
@@ -424,12 +450,6 @@ bool Music::playMusic(const Common::String &name) {
 				return false;
 			}
 		} else {
-			if (dataSize < 4) {
-				warning("Music: expected music header not found in music file");
-				delete[] midiMusicData;
-				return false;
-			}
-
 			if (memcmp("FORM", dataPos, 4)) {
 				warning("Music: expected header not found in music file");
 				delete[] midiMusicData;
@@ -437,21 +457,22 @@ bool Music::playMusic(const Common::String &name) {
 			}
 		}
 
-		switch (_musicType) {
-		case MT_ADLIB:
-			MidiDriver_AdLib_newMusicData(_midiDriver, dataPos, dataSize);
-			break;
+		if (IS_SERRATED_SCALPEL) {
+			// Pass the music data to the driver as well
+			// because channel mapping and a few other things inside the header
+			switch (_musicType) {
+			case MT_ADLIB:
+				MidiDriver_SH_AdLib_newMusicData(_midiDriver, dataPos, dataSize);
+				break;
 
-		case MT_MT32:
-			MidiDriver_MT32_newMusicData(_midiDriver, dataPos, dataSize);
-			break;
+			case MT_MT32:
+				MidiDriver_MT32_newMusicData(_midiDriver, dataPos, dataSize);
+				break;
 
-		case MT_GM:
-			break;
-
-		default:
-			// should never happen
-			break;
+			default:
+				// should never happen
+				break;
+			}
 		}
 
 		_midiParser->loadMusic(midiMusicData, midiMusicDataSize);

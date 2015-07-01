@@ -78,10 +78,10 @@ void SherlockEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
 	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
 
+	Fonts::setVm(this);
 	ImageFile::setVm(this);
 	ImageFile3DO::setVm(this);
-	Object::setVm(this);
-	Sprite::setVm(this);
+	BaseObject::setVm(this);
 
 	if (isDemo()) {
 		Common::File f;
@@ -95,15 +95,15 @@ void SherlockEngine::initialize() {
 	_animation = new Animation(this);
 	_debugger = new Debugger(this);
 	_events = new Events(this);
-	_fixedText = new FixedText(this);
-	_inventory = new Inventory(this);
+	_fixedText = FixedText::init(this);
+	_inventory = Inventory::init(this);
 	_map = Map::init(this);
 	_music = new Music(this, _mixer);
-	_journal = new Journal(this);
+	_journal = Journal::init(this);
 	_people = People::init(this);
-	_saves = new SaveManager(this, _targetName);
+	_saves = SaveManager::init(this, _targetName);
 	_scene = Scene::init(this);
-	_screen = new Screen(this);
+	_screen = Screen::init(this);
 	_sound = new Sound(this, _mixer);
 	_talk = Talk::init(this);
 	_ui = UserInterface::init(this);
@@ -224,7 +224,7 @@ void SherlockEngine::loadConfig() {
 	// Load sound settings
 	syncSoundSettings();
 
-	ConfMan.registerDefault("font", 1);
+	ConfMan.registerDefault("font", getGameID() == GType_SerratedScalpel ? 1 : 4);
 
 	_screen->setFont(ConfMan.getInt("font"));
 	if (getGameID() == GType_SerratedScalpel)

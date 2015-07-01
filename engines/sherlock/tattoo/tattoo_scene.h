@@ -47,14 +47,8 @@ struct SceneTripEntry {
 class TattooScene : public Scene {
 private:
 	int _arrowZone;
-	int _maskCounter;
-	Common::Point _maskOffset;
-	byte _lookupTable[PALETTE_COUNT];
-	byte _lookupTable1[PALETTE_COUNT];
 private:
 	void doBgAnimCheckCursor();
-
-	void doBgAnimEraseBackground();
 
 	/**
 	 * Update the background objects and canimations as part of doBgAnim
@@ -62,11 +56,6 @@ private:
 	void doBgAnimUpdateBgObjectsAndAnim();
 
 	void doBgAnimDrawSprites();
-
-	/**
-	 * Makes a greyscale translation table for each palette entry in the table
-	 */
-	void setupBGArea(const byte cMap[PALETTE_SIZE]);
 
 	/**
 	 * Resets the NPC path information when entering a new scene.
@@ -108,8 +97,7 @@ protected:
 	 */
 	virtual void synchronize(Serializer &s);
 public:
-	ImageFile *_mask, *_mask1;
-	CAnimStream _activeCAnim;
+	StreamingImageFile _activeCAnim;
 	Common::Array<SceneTripEntry> _sceneTripCounters;
 	bool _labTableScene;
 public:

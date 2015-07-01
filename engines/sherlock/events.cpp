@@ -173,6 +173,10 @@ void Events::pollEventsAndWait() {
 	g_system->delayMillis(10);
 }
 
+void Events::warpMouse(const Common::Point &pt) {
+	g_system->warpMouse(pt.x, pt.y);
+}
+
 bool Events::checkForNextFrameCounter() {
 	// Check for next game frame
 	uint32 milli = g_system->getMillis();

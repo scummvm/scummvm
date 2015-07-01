@@ -28,8 +28,8 @@
 
 namespace Sherlock {
 
-Surface::Surface(uint16 width, uint16 height, Common::Platform platform) : Fonts(), _freePixels(true) {
-	create(width, height, platform);
+Surface::Surface(uint16 width, uint16 height) : Fonts(), _freePixels(true) {
+	create(width, height);
 }
 
 Surface::Surface() : Fonts(), _freePixels(false) {
@@ -40,11 +40,11 @@ Surface::~Surface() {
 		_surface.free();
 }
 
-void Surface::create(uint16 width, uint16 height, Common::Platform platform) {
+void Surface::create(uint16 width, uint16 height) {
 	if (_freePixels)
 		_surface.free();
 
-	if (platform == Common::kPlatform3DO) {
+	if (_vm->getPlatform() == Common::kPlatform3DO) {
 		_surface.create(width, height, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	} else {
 		_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
@@ -280,10 +280,21 @@ void Surface::writeString(const Common::String &str, const Common::Point &pt, by
 	Fonts::writeString(this, str, pt, overrideColor);
 }
 
+void Surface::writeFancyString(const Common::String &str, const Common::Point &pt, byte overrideColor1, byte overrideColor2) {
+	writeString(str, Common::Point(pt.x, pt.y), overrideColor1);
+	writeString(str, Common::Point(pt.x + 1, pt.y), overrideColor1);
+	writeString(str, Common::Point(pt.x + 2, pt.y), overrideColor1);
+	writeString(str, Common::Point(pt.x, pt.y + 1), overrideColor1);
+	writeString(str, Common::Point(pt.x + 2, pt.y + 1), overrideColor1);
+	writeString(str, Common::Point(pt.x, pt.y + 2), overrideColor1);
+	writeString(str, Common::Point(pt.x + 1, pt.y + 2), overrideColor1);
+	writeString(str, Common::Point(pt.x + 2, pt.y + 2), overrideColor1);
+	writeString(str, Common::Point(pt.x + 1, pt.y + 1), overrideColor2);
+}
+
 void Surface::maskArea(const ImageFrame &src, const Common::Point &pt, int scrollX) {
 	// TODO
 	error("TODO: maskArea");
 }
-
 
 } // End of namespace Sherlock

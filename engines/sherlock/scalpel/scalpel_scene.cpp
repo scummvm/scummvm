@@ -574,7 +574,7 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 			//rrmStream->seek(rrmStream->readUint32LE());
 
 			// Load the canimation into the cache
-			Common::SeekableReadStream *imgStream = !_lzwMode ? roomStream->readStream(cAnim._dataSize) :
+			Common::SeekableReadStream *imgStream = !_compressed ? roomStream->readStream(cAnim._dataSize) :
 				Resources::decompressLZ(*roomStream, cAnim._dataSize);
 			res.addToCache(fname, *imgStream);
 

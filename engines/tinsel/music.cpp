@@ -27,6 +27,8 @@
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
+// Miles Audio for Discworld 1
+#include "audio/miles.h"
 #include "audio/decoders/adpcm.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -373,8 +375,45 @@ void DeleteMidiBuffer() {
 	g_midiBuffer.pDat = NULL;
 }
 
-MidiMusicPlayer::MidiMusicPlayer() {
-	MidiPlayer::createDriver();
+MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
+	_driver = NULL;
+	_milesAudioMode = false;
+	bool milesAudioEnabled = true;
+
+	if ((vm->getGameId() == GID_DW1) && (milesAudioEnabled)) {
+		// Discworld 1 uses Miles Audio 3
+		// use our own Miles Audio drivers
+		// DW1 has SAMPLE.AD + SAMPLE.OPL, but no SAMPLE.MT
+		::MidiDriver::DeviceHandle dev = ::MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		::MusicType musicType = ::MidiDriver::getMusicType(dev);
+
+		switch (musicType) {
+		case MT_ADLIB:
+			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+			break;
+		case MT_MT32:
+			// Discworld 1 doesn't have a MT32 timbre file
+			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_driver = Audio::MidiDriver_Miles_MT32_create("");
+				musicType = MT_MT32;
+			}
+			break;
+		default:
+			break;
+		}
+		if (!_driver) {
+			// nothing got created yet? -> create default driver
+			MidiPlayer::createDriver();
+		} else {
+			_milesAudioMode = true;
+		}
+
+	} else {
+		MidiPlayer::createDriver();
+	}
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -394,6 +433,11 @@ void MidiMusicPlayer::setVolume(int volume) {
 }
 
 void MidiMusicPlayer::send(uint32 b) {
+	if (_milesAudioMode) {
+		_driver->send(b);
+		return;
+	}
+
 	Audio::MidiPlayer::send(b);
 
 	byte channel = (byte)(b & 0x0F);

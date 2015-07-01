@@ -117,6 +117,9 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
+	// Location of Miles audio files (sample.ad and sample.opl) in IHNM
+	SearchMan.addSubDirectoryMatching(gameDataDir, "drivers");
+
 	// The Multi-OS version puts the voices file in the root directory of
 	// the CD. The rest of the data files are in game/itedata
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game/itedata");

@@ -33,30 +33,56 @@ class SherlockEngine;
 
 namespace Tattoo {
 
-class WidgetTooltip: public WidgetBase {
+class WidgetTooltipBase : public WidgetBase {
+public:
+	WidgetTooltipBase(SherlockEngine *vm) : WidgetBase(vm) {}
+	virtual ~WidgetTooltipBase() {}
+
+	/**
+	 * Erase any previous display of the widget on the screen
+	 */
+	virtual void erase();
+
+	/**
+	 * Update the display of the widget on the screen
+	 */
+	virtual void draw();
+};
+
+class WidgetTooltip: public WidgetTooltipBase {
 public:
 	WidgetTooltip(SherlockEngine *vm);
 	virtual ~WidgetTooltip() {}
 
 	/**
+	 * Set the text for the tooltip
+	 */
+	void setText(const Common::String &str);
+
+	/**
 	 * Handle updating the tooltip state
 	 */
-	void execute();
+	virtual void handleEvents();
+};
+
+class WidgetSceneTooltip : public WidgetTooltip {
+public:
+	WidgetSceneTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
 
 	/**
-	 * Draw the tooltip if necessary
+	 * Handle updating the tooltip state
 	 */
-	void draw();
+	virtual void handleEvents();
+};
 
+class WidgetMapTooltip : public WidgetTooltip {
+protected:
 	/**
-	 * Erase the area covered by the tooltip if it's active
+	 * Returns the current scroll position
 	 */
-	void erase();
-
-	/**
-	 * Erase any area of the screen drawn by the tooltip in the previous frame
-	 */
-	void erasePrevious();
+	virtual const Common::Point &getCurrentScroll() const;
+public:
+	WidgetMapTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
 };
 
 } // End of namespace Tattoo

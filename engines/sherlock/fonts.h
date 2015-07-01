@@ -29,16 +29,19 @@
 
 namespace Sherlock {
 
+class SherlockEngine;
 class ImageFile;
 class Surface;
 
 class Fonts {
 private:
-	static Common::Platform _platform;
 	static ImageFile *_font;
+	static byte _yOffsets[255];
 protected:
+	static SherlockEngine *_vm;
 	static int _fontNumber;
 	static int _fontHeight;
+	static int _widestChar;
 	static uint16 _charCount;
 
 	static void writeString(Surface *surface, const Common::String &str, 
@@ -49,7 +52,7 @@ public:
 	/**
 	 * Initialise the font manager
 	 */
-	static void init(Common::Platform platform);
+	static void setVm(SherlockEngine *vm);
 
 	/**
 	 * Frees the font manager
@@ -86,6 +89,14 @@ public:
 	 */
 	int fontHeight() const { return _fontHeight; }
 
+	/**
+	 * Return the width of the widest character in the font
+	 */
+	int widestChar() const { return _widestChar; }
+
+	/**
+	 * Return the currently active font number
+	 */
 	int fontNumber() const { return _fontNumber; }
 };
 

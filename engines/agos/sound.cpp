@@ -515,7 +515,7 @@ void Sound::readSfxFile(const Common::String &filename) {
 
 // This method is only used by Simon2
 void Sound::loadSfxTable(const char *gameFilename, uint32 base) {
-	stopAll();
+	stopAllSfx();
 
 	delete _effects;
 	const bool dataIsUnsigned = true;
@@ -684,7 +684,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	memcpy(buffer, soundData, size);
 
 	byte flags = 0;
-	if (_vm->getPlatform() == Common::kPlatformDOS)
+	if (_vm->getPlatform() == Common::kPlatformDOS &&  _vm->getGameId() != GID_ELVIRA2)
 		flags = Audio::FLAG_UNSIGNED;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(buffer, size, freq, flags);

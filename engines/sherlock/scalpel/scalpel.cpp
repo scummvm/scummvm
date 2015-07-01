@@ -22,6 +22,7 @@
 
 #include "engines/util.h"
 #include "sherlock/scalpel/scalpel.h"
+#include "sherlock/scalpel/scalpel_fixed_text.h"
 #include "sherlock/scalpel/scalpel_map.h"
 #include "sherlock/scalpel/scalpel_people.h"
 #include "sherlock/scalpel/scalpel_scene.h"
@@ -868,7 +869,7 @@ bool ScalpelEngine::showOfficeCutscene3DO() {
 }
 
 void ScalpelEngine::loadInventory() {
-	FixedText &fixedText = *_fixedText;
+	ScalpelFixedText &fixedText = *(ScalpelFixedText *)_fixedText;
 	Inventory &inv = *_inventory;
 
 	Common::String fixedText_Message    = fixedText.getText(kFixedText_InitInventory_Message);
