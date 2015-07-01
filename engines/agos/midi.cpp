@@ -28,6 +28,8 @@
 #include "agos/midi.h"
 
 #include "agos/drivers/accolade/mididriver.h"
+// Miles Audio for Simon 2
+#include "audio/miles.h"
 
 #include "gui/message.h"
 
@@ -62,7 +64,7 @@ MidiPlayer::MidiPlayer() {
 	_queuedTrack = 255;
 	_loopQueuedTrack = 0;
 
-	_accoladeMode = false;
+	_musicMode = kMusicModeDisabled;
 }
 
 MidiPlayer::~MidiPlayer() {
@@ -85,30 +87,39 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 
 	bool accoladeUseMusicDrvFile = false;
 	MusicType accoladeMusicType = MT_INVALID;
+	MusicType milesAudioMusicType = MT_INVALID;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
-		_accoladeMode = true;
+		_musicMode = kMusicModeAccolade;
 		break;
 	case GType_ELVIRA2:
 	case GType_WW:
 		// Attention: Elvira 2 shipped with INSTR.DAT and MUSIC.DRV
 		// MUSIC.DRV is the correct one. INSTR.DAT seems to be a left-over
-		_accoladeMode = true;
+		_musicMode = kMusicModeAccolade;
 		accoladeUseMusicDrvFile = true;
 		break;
 	case GType_SIMON1:
 		if (isDemo) {
-			_accoladeMode = true;
+			_musicMode = kMusicModeAccolade;
 			accoladeUseMusicDrvFile = true;
 		}
+		break;
+	case GType_SIMON2:
+		//_musicMode = kMusicModeMilesAudio;
+		// currently disabled, because there are a few issues
 		break;
 	default:
 		break;
 	}
 
-	if (_accoladeMode) {
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	MidiDriver::DeviceHandle dev;
+	int ret = 0;
+
+	switch (_musicMode) {
+	case kMusicModeAccolade:
+		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 		accoladeMusicType = MidiDriver::getMusicType(dev);
 
 		switch (accoladeMusicType) {
@@ -129,12 +140,43 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 			accoladeMusicType = MT_MT32;
 			break;
 		default:
-			_accoladeMode = false;
+			_musicMode = kMusicModeDisabled;
 			break;
 		}
+		break;
+
+	case kMusicModeMilesAudio:
+		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		milesAudioMusicType = MidiDriver::getMusicType(dev);
+
+		switch (milesAudioMusicType) {
+		case MT_ADLIB:
+		case MT_MT32:
+			break;
+		case MT_GM:
+			if (!ConfMan.getBool("native_mt32")) {
+				// Not a real MT32 / no MUNT
+				::GUI::MessageDialog dialog(("You appear to be using a General MIDI device,\n"
+											"but your game only supports Roland MT32 MIDI.\n"
+											"Music got disabled because of this.\n"
+											"You may choose AdLib instead.\n"));
+				dialog.runModal();
+			}
+			// Switch to MT32 driver in any case
+			milesAudioMusicType = MT_MT32;
+			break;
+		default:
+			_musicMode = kMusicModeDisabled;
+			break;
+		}
+		break;
+
+	default:
+		break;
 	}
 
-	if (_accoladeMode) {
+	switch (_musicMode) {
+	case kMusicModeAccolade: {
 		// Setup midi driver
 		switch (accoladeMusicType) {
 		case MT_ADLIB:
@@ -314,7 +356,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 				error("MUSIC.DRV: contents not acceptable");
 		}
 
-		int ret = _driver->open();
+		ret = _driver->open();
 		if (ret == 0) {
 			// Reset is done inside our MIDI driver
 			_driver->setTimerCallback(this, &onTimer);
@@ -323,8 +365,42 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		//setTimerRate(_driver->getBaseTempo());
 		return 0;
 	}
+	
+	case kMusicModeMilesAudio: {
+		switch (milesAudioMusicType) {
+		case MT_ADLIB: {
+			_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
+			break;
+		}
+		case MT_MT32:
+			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			break;
+		case MT_GM:
+			if (ConfMan.getBool("native_mt32")) {
+				_driver = Audio::MidiDriver_Miles_MT32_create("");
+				milesAudioMusicType = MT_MT32;
+			}
+			break;
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+		default:
+			break;
+		}
+		if (!_driver)
+			return 255;
+
+		ret = _driver->open();
+		if (ret == 0) {
+			// Reset is done inside our MIDI driver
+			_driver->setTimerCallback(this, &onTimer);
+		}
+		return 0;
+	}
+
+	default:
+		break;
+	}
+
+	dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	_driver = MidiDriver::createMidi(dev);
@@ -342,7 +418,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 
 	_map_mt32_to_gm = (gameType != GType_SIMON2 && !_nativeMT32);
 
-	int ret = _driver->open();
+	ret = _driver->open();
 	if (ret)
 		return ret;
 	_driver->setTimerCallback(this, &onTimer);
@@ -359,8 +435,8 @@ void MidiPlayer::send(uint32 b) {
 	if (!_current)
 		return;
 
-	if (_accoladeMode) {
-		// Send directly to Accolade driver
+	if (_musicMode != kMusicModeDisabled) {
+		// Send directly to Accolade/Miles Audio driver
 		_driver->send(b);
 		return;
 	}

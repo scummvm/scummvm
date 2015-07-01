@@ -515,7 +515,7 @@ void Sound::readSfxFile(const Common::String &filename) {
 
 // This method is only used by Simon2
 void Sound::loadSfxTable(const char *gameFilename, uint32 base) {
-	stopAll();
+	stopAllSfx();
 
 	delete _effects;
 	const bool dataIsUnsigned = true;
