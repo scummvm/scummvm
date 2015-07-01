@@ -201,11 +201,6 @@ public:
 	 * Draws all the dialog rectangles for any items that need them
 	 */
 	void drawDialogRect(Surface &s, const Common::Rect &r, bool raised);
-
-	/**
-	 * Banish any active window
-	 */
-	void banishWindow();
 public:
 	/**
 	 * Resets the user interface
@@ -226,6 +221,11 @@ public:
 	 * Clear any active text window
 	 */
 	virtual void clearWindow();
+
+	/**
+	 * Banish any active window
+	 */
+	virtual void banishWindow();
 };
 
 } // End of namespace Tattoo

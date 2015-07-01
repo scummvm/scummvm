@@ -619,6 +619,9 @@ void ImageFile3DO::load3DOCelFile(Common::SeekableReadStream &stream) {
 		// Seek to end of chunk
 		stream.seek(chunkStartPos + chunkSize);
 	}
+
+	// Warning below being used to silence unused variable warnings for now
+	warning("TODO: Remove %d %d %d", animFrameCount, ccbPPMP0, ccbPPMP1);
 }
 
 // Reads 3DO .cel data (room file format)
@@ -1003,6 +1006,9 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 			push_back(imageFrame);
 		}
 	}
+
+	// Warning below being used to silence unused variable warnings for now
+	warning("TODO: Remove %d %d", curBitsLeft, curBitsReversed);
 
 	delete[] bitsTablePtr;
 	delete[] widthTablePtr;
