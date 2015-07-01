@@ -488,7 +488,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Need to walk to character first
-			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
 		events.setCursor(ARROW);
 
 		if (!_talkToAbort)
@@ -503,7 +503,7 @@ void Talk::talk(int objNum) {
 		events.setCursor(WAIT);
 		if (obj._lookPosition.y != 0)
 			// Walk over to person to talk to
-			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
 		events.setCursor(ARROW);
 
 		if (!_talkToAbort) {

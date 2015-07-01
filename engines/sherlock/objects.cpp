@@ -66,7 +66,6 @@ BaseObject::BaseObject() {
 	_aType = OBJECT;
 	_lookFrames = 0;
 	_seqCounter = 0;
-	_lookFacing = 0;
 	_lookcAnim = 0;
 	_seqStack = 0;
 	_seqTo = 0;
@@ -986,7 +985,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 		_lookPosition.x = s.readUint16LE() * FIXED_INT_MULTIPLIER / 100;
 		_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
 	}
-	_lookFacing = s.readByte();
+	_lookPosition._facing = s.readByte();
 	_lookcAnim = s.readByte();
 
 	if (!isRoseTattoo)
@@ -1113,7 +1112,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	// Unverified END
 
 	_lookPosition.y = s.readByte() * FIXED_INT_MULTIPLIER;
-	_lookFacing = s.readByte();
+	_lookPosition._facing = s.readByte();
 
 	// Unverified
 	_lookcAnim = s.readByte();

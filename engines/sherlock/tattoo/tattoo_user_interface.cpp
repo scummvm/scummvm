@@ -87,7 +87,7 @@ void TattooUserInterface::lookAtObject() {
 		} else if (_bgShape->_lookPosition.y != 0) {
 			// Need to walk to object before looking at it
 			people[HOLMES].walkToCoords(Common::Point(_bgShape->_lookPosition.x * FIXED_INT_MULTIPLIER,
-				_bgShape->_lookPosition.y * FIXED_INT_MULTIPLIER), _bgShape->_lookFacing);
+				_bgShape->_lookPosition.y * FIXED_INT_MULTIPLIER), _bgShape->_lookPosition._facing);
 		}
 
 		if (!talk._talkToAbort) {

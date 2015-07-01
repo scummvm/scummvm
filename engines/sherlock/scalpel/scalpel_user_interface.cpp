@@ -500,7 +500,7 @@ void ScalpelUserInterface::examine() {
 			scene.startCAnim(_cNum, canimSpeed);
 		} else if (obj._lookPosition.y != 0) {
 			// Need to walk to the object to be examined
-			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookFacing);
+			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
 		}
 
 		if (!talk._talkToAbort) {

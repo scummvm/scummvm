@@ -117,6 +117,12 @@ public:
 	void operator-=(const Point32 &delta) { x -= delta.x; y -= delta.y; }
 };
 
+class PositionFacing : public Point32 {
+public:
+	int _facing;
+
+	PositionFacing() : Point32(), _facing(0) {}
+};
 
 struct WalkSequence {
 	Common::String _vgsName;
@@ -210,8 +216,7 @@ public:
 	AType _aType;					// Tells if this is an object, person, talk, etc.
 	int _lookFrames;				// How many frames to play of the look anim before pausing
 	int _seqCounter;				// How many times this sequence has been executed
-	Point32 _lookPosition;			// Where to walk when examining object
-	int _lookFacing;				// Direction to face when examining object
+	PositionFacing _lookPosition;	// Where to walk when examining object
 	int _lookcAnim;
 	int _seqStack;					// Allows gosubs to return to calling frame
 	int _seqTo;						// Allows 1-5, 8-3 type sequences encoded in 2 bytes
@@ -425,14 +430,6 @@ public:
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
 	virtual void setObjTalkSequence(int seq);
-};
-
-
-class PositionFacing : public Point32 {
-public:
-	int _facing;
-
-	PositionFacing() : Point32(), _facing(0) {}
 };
 
 struct CAnim {
