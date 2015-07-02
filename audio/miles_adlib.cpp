@@ -349,6 +349,13 @@ void MidiDriver_Miles_AdLib::resetData() {
 		// Miles Audio 2: hardcoded pitch range as a global (not channel specific), set to 12
 		// Miles Audio 3: pitch range per MIDI channel
 		_midiChannels[midiChannel].currentVolumeExpression = 127;
+
+		// TODO: Miles Audio had currentPanning initialized to 0 inside the driver
+		// Simon the sorcerer 2 as well as Return To Zork don't change this control at all
+		// inside their XMIDI files, so currentPanning set to 0 will create output output on
+		// one speaker only. Maybe there were some default MIDI commands sent to the driver before
+		// playing the music. Needs to get investigated further.
+		_midiChannels[midiChannel].currentPanning = 63; // center
 	}
 
 }
@@ -892,6 +899,7 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 
 	switch (controllerNumber) {
 	case MILES_CONTROLLER_SELECT_PATCH_BANK:
+		//warning("patch bank channel %d, bank %x", midiChannel, controllerValue);
 		_midiChannels[midiChannel].currentPatchBank = controllerValue;
 		break;
 
@@ -980,6 +988,8 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 void MidiDriver_Miles_AdLib::programChange(byte midiChannel, byte patchId) {
 	const InstrumentEntry *instrumentPtr = NULL;
 	byte patchBank = _midiChannels[midiChannel].currentPatchBank;
+
+	//warning("patch channel %d, patch %x, bank %x", midiChannel, patchId, patchBank);
 
 	// we check, if we actually have data for the requested instrument...
 	instrumentPtr = searchInstrument(patchBank, patchId);
