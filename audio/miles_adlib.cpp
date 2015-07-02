@@ -34,6 +34,10 @@ namespace Audio {
 // Miles Audio AdLib/OPL3 driver
 //
 // TODO: currently missing: OPL3 4-op voices
+//
+// Special cases (great for testing):
+// - sustain feature is used by Return To Zork (demo) right at the start
+// - sherlock holmes 2 does lots of priority sorts right at the start of the intro
 
 #define MILES_ADLIB_VIRTUAL_FMVOICES_COUNT_MAX 20
 #define MILES_ADLIB_PHYSICAL_FMVOICES_COUNT_MAX 18
@@ -254,6 +258,8 @@ private:
 	void prioritySort();
 
 	void releaseFmVoice(byte virtualFmVoice);
+
+	void releaseSustain(byte midiChannel);
 
 	void updatePhysicalFmVoice(byte virtualFmVoice, bool keyOn, uint16 registerUpdateFlags);
 
@@ -692,6 +698,19 @@ void MidiDriver_Miles_AdLib::releaseFmVoice(byte virtualFmVoice) {
 	_midiChannels[midiChannel].currentActiveVoicesCount--;	
 }
 
+void MidiDriver_Miles_AdLib::releaseSustain(byte midiChannel) {
+	// Search through all virtual FM-Voices for currently sustained notes and call noteOff on them
+	for (byte virtualFmVoice = 0; virtualFmVoice < _modeVirtualFmVoicesCount; virtualFmVoice++) {
+		if (_virtualFmVoices[virtualFmVoice].inUse) {
+			if ((_virtualFmVoices[virtualFmVoice].actualMidiChannel == midiChannel) && (_virtualFmVoices[virtualFmVoice].sustained)) {
+				// is currently sustained
+				// so do a noteOff (which will check current sustain controller)
+				noteOff(midiChannel, _virtualFmVoices[virtualFmVoice].currentOriginalMidiNote);
+			}
+		}
+	}
+}
+
 void MidiDriver_Miles_AdLib::updatePhysicalFmVoice(byte virtualFmVoice, bool keyOn, uint16 registerUpdateFlags) {
 	byte midiChannel = _virtualFmVoices[virtualFmVoice].actualMidiChannel;
 
@@ -937,7 +956,7 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 	case MILES_CONTROLLER_SUSTAIN:
 		_midiChannels[midiChannel].currentSustain = controllerValue;
 		if (controllerValue < 64) {
-			// release sustain TODO
+			releaseSustain(midiChannel);
 		}
 		break;
 
@@ -948,7 +967,7 @@ void MidiDriver_Miles_AdLib::controlChange(byte midiChannel, byte controllerNumb
 
 	case MILES_CONTROLLER_RESET_ALL:
 		_midiChannels[midiChannel].currentSustain = 0;
-		// release sustain TODO
+		releaseSustain(midiChannel);
 		_midiChannels[midiChannel].currentModulation = 0;
 		_midiChannels[midiChannel].currentVolumeExpression = 127;
 		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
