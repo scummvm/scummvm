@@ -32,25 +32,26 @@
 
 namespace Made {
 
-MusicPlayer::MusicPlayer() : _isGM(false),_milesAudioMode(false) {
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-	MusicType musicType  = MidiDriver::getMusicType(dev);
-
-	switch (musicType) {
-	case MT_ADLIB:
-		// Adlib disabled due to known issues
-		//_milesAudioMode = true;
-		//_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.AD");
-		MidiPlayer::createDriver();
-		break;
-	case MT_MT32:
-		_milesAudioMode = true;
-		_driver = Audio::MidiDriver_Miles_MT32_create("");
-		break;
-	default:
-		_milesAudioMode = false;
-		MidiPlayer::createDriver();
-		break;
+MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) {
+	if (milesAudio) {
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		MusicType musicType  = MidiDriver::getMusicType(dev);
+		switch (musicType) {
+		case MT_ADLIB:
+			_milesAudioMode = true;
+			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.AD");
+			break;
+		case MT_MT32:
+			_milesAudioMode = true;
+			_driver = Audio::MidiDriver_Miles_MT32_create("");
+			break;
+		default:
+			_milesAudioMode = false;
+			MidiPlayer::createDriver();
+			break;
+		}
+	} else {
+			MidiPlayer::createDriver();
 	}
 
 	int ret = _driver->open();
