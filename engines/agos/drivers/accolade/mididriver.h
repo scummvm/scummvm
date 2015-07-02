@@ -34,11 +34,10 @@ namespace AGOS {
 
 #define AGOS_MIDI_KEYNOTE_COUNT 64
 
-extern MidiDriver *MidiDriver_Accolade_AdLib_create();
-extern bool MidiDriver_Accolade_AdLib_setupInstruments(MidiDriver *driver, byte *instrDATData, uint16 instrDATDataSize, bool useMusicDrvFile);
+extern void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requestedDriverType, byte *&driverData, uint16 &driverDataSize, bool &isMusicDrvFile);
 
-extern MidiDriver *MidiDriver_Accolade_MT32_create();
-extern bool MidiDriver_Accolade_MT32_setupInstruments(MidiDriver *driver, byte *instrDATData, uint16 instrDATDataSize, bool useMusicDrvFile);
+extern MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename);
+extern MidiDriver *MidiDriver_Accolade_MT32_create(Common::String driverFilename);
 
 } // End of namespace AGOS
 

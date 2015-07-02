@@ -85,29 +85,30 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	// Don't call open() twice!
 	assert(!_driver);
 
-	bool accoladeUseMusicDrvFile = false;
+	Common::String accoladeDriverFilename;
 	MusicType accoladeMusicType = MT_INVALID;
 	MusicType milesAudioMusicType = MT_INVALID;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
 		_musicMode = kMusicModeAccolade;
+		accoladeDriverFilename = "INSTR.DAT";
 		break;
 	case GType_ELVIRA2:
 	case GType_WW:
 		// Attention: Elvira 2 shipped with INSTR.DAT and MUSIC.DRV
 		// MUSIC.DRV is the correct one. INSTR.DAT seems to be a left-over
 		_musicMode = kMusicModeAccolade;
-		accoladeUseMusicDrvFile = true;
+		accoladeDriverFilename = "MUSIC.DRV";
 		break;
 	case GType_SIMON1:
 		if (isDemo) {
 			_musicMode = kMusicModeAccolade;
-			accoladeUseMusicDrvFile = true;
+			accoladeDriverFilename = "MUSIC.DRV";
 		}
 		break;
 	case GType_SIMON2:
-		//_musicMode = kMusicModeMilesAudio;
+		_musicMode = kMusicModeMilesAudio;
 		// currently disabled, because there are a few issues
 		// MT32 seems to work fine now, AdLib seems to use bad instruments and is also outputting music on
 		// the right speaker only. The original driver did initialize the panning to 0 and the Simon2 XMIDI
@@ -184,10 +185,10 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		// Setup midi driver
 		switch (accoladeMusicType) {
 		case MT_ADLIB:
-			_driver = MidiDriver_Accolade_AdLib_create();
+			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
 			break;
 		case MT_MT32:
-			_driver = MidiDriver_Accolade_MT32_create();
+			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
 			break;
 		default:
 			assert(0);
@@ -195,170 +196,6 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		}
 		if (!_driver)
 			return 255;
-
-		byte  *instrumentData = NULL;
-		uint16 instrumentDataSize = 0;
-
-		if (!accoladeUseMusicDrvFile) {
-			// Elvira 1 / Elvira 2: read INSTR.DAT
-			Common::File *instrDatStream = new Common::File();
-
-			if (!instrDatStream->open("INSTR.DAT")) {
-				error("INSTR.DAT: unable to open file");
-			}
-
-			uint32 streamSize = instrDatStream->size();
-			uint32 streamLeft = streamSize;
-			uint16 skipChunks = 0; // 1 for MT32, 0 for AdLib
-			uint16 chunkSize  = 0;
-
-			switch (accoladeMusicType) {
-			case MT_ADLIB:
-				skipChunks = 0;
-				break;
-			case MT_MT32:
-				skipChunks = 1; // Skip one entry for MT32
-				break;
-			default:
-				assert(0);
-				break;
-			}
-
-			do {
-				if (streamLeft < 2)
-					error("INSTR.DAT: unexpected EOF");
-
-				chunkSize = instrDatStream->readUint16LE();
-				streamLeft -= 2;
-
-				if (streamLeft < chunkSize)
-					error("INSTR.DAT: unexpected EOF");
-
-				if (skipChunks) {
-					// Skip the chunk
-					instrDatStream->skip(chunkSize);
-					streamLeft -= chunkSize;
-
-					skipChunks--;
-				}
-			} while (skipChunks);
-
-			// Seek over the ASCII string until there is a NUL terminator
-			byte curByte = 0;
-
-			do {
-				if (chunkSize == 0)
-					error("INSTR.DAT: no actual instrument data found");
-
-				curByte = instrDatStream->readByte();
-				chunkSize--;
-			} while (curByte);
-
-			instrumentDataSize = chunkSize;
-
-			// Read the requested instrument data entry
-			instrumentData = new byte[instrumentDataSize];
-			instrDatStream->read(instrumentData, instrumentDataSize);
-
-			instrDatStream->close();
-			delete instrDatStream;
-
-		} else {
-			// Waxworks / Simon 1 demo: Read MUSIC.DRV
-			Common::File *musicDrvStream = new Common::File();
-
-			if (!musicDrvStream->open("MUSIC.DRV")) {
-				error("MUSIC.DRV: unable to open file");
-			}
-
-			uint32 streamSize = musicDrvStream->size();
-			uint32 streamLeft = streamSize;
-			uint16 getChunk   = 0; // 4 for MT32, 2 for AdLib
-
-			switch (accoladeMusicType) {
-			case MT_ADLIB:
-				getChunk = 2;
-				break;
-			case MT_MT32:
-				getChunk = 4;
-				break;
-			default:
-				assert(0);
-				break;
-			}
-
-			if (streamLeft < 2)
-				error("MUSIC.DRV: unexpected EOF");
-
-			uint16 chunkCount = musicDrvStream->readUint16LE();
-			streamLeft -= 2;
-
-			if (getChunk >= chunkCount)
-				error("MUSIC.DRV: required chunk not available");
-
-			uint16 headerOffset = 2 + (28 * getChunk);
-			streamLeft -= (28 * getChunk);
-
-			if (streamLeft < 28)
-				error("MUSIC.DRV: unexpected EOF");
-
-			// Seek to required chunk
-			musicDrvStream->seek(headerOffset);
-			musicDrvStream->skip(20); // skip over name
-			streamLeft -= 20;
-
-			uint16 musicDrvSignature = musicDrvStream->readUint16LE();
-			uint16 musicDrvType = musicDrvStream->readUint16LE();
-			uint16 chunkOffset = musicDrvStream->readUint16LE();
-			uint16 chunkSize   = musicDrvStream->readUint16LE();
-
-			// Security checks
-			if (musicDrvSignature != 0xFEDC)
-				error("MUSIC.DRV: chunk signature mismatch");
-			if (musicDrvType != 1)
-				error("MUSIC.DRV: not a music driver");
-			if (chunkOffset >= streamSize)
-				error("MUSIC.DRV: driver chunk points outside of file");
-
-			streamLeft = streamSize - chunkOffset;
-			if (streamLeft < chunkSize)
-				error("MUSIC.DRV: driver chunk is larger than file");
-
-			instrumentDataSize = chunkSize;
-
-			// Read the requested instrument data entry
-			instrumentData = new byte[instrumentDataSize];
-
-			musicDrvStream->seek(chunkOffset);
-			musicDrvStream->read(instrumentData, instrumentDataSize);
-
-			musicDrvStream->close();
-			delete musicDrvStream;
-		}
-
-		// Pass the instrument data to the driver
-		bool instrumentSuccess = false;
-
-		switch (accoladeMusicType) {
-		case MT_ADLIB:
-			instrumentSuccess = MidiDriver_Accolade_AdLib_setupInstruments(_driver, instrumentData, instrumentDataSize, accoladeUseMusicDrvFile);
-			break;
-		case MT_MT32:
-			instrumentSuccess = MidiDriver_Accolade_MT32_setupInstruments(_driver, instrumentData, instrumentDataSize, accoladeUseMusicDrvFile);
-			break;
-		default:
-			assert(0);
-			break;
-		}
-		delete[] instrumentData;
-
-		if (!instrumentSuccess) {
-			// driver did not like the contents
-			if (!accoladeUseMusicDrvFile)
-				error("INSTR.DAT: contents not acceptable");
-			else
-				error("MUSIC.DRV: contents not acceptable");
-		}
 
 		ret = _driver->open();
 		if (ret == 0) {

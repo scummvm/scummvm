@@ -862,12 +862,24 @@ bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driver
 	return true;
 }
 
-MidiDriver *MidiDriver_Accolade_AdLib_create() {
-	return new MidiDriver_Accolade_AdLib(g_system->getMixer());
-}
+MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename) {
+	byte  *driverData = NULL;
+	uint16 driverDataSize = 0;
+	bool   isMusicDrvFile = false;
 
-bool MidiDriver_Accolade_AdLib_setupInstruments(MidiDriver *driver, byte *driverData, uint16 driverDataSize, bool useMusicDrvFile) {
-	return static_cast<MidiDriver_Accolade_AdLib *>(driver)->setupInstruments(driverData, driverDataSize, useMusicDrvFile);
+	MidiDriver_Accolade_readDriver(driverFilename, MT_ADLIB, driverData, driverDataSize, isMusicDrvFile);
+	if (!driverData)
+		error("ACCOLADE-ADLIB: error during readDriver()");
+
+	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib(g_system->getMixer());
+	if (!driver)
+		return nullptr;
+
+	if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
+		delete driver;
+		return nullptr;
+	}
+	return driver;
 }
 
 } // End of namespace AGOS
