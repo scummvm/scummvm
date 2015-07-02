@@ -28,11 +28,30 @@
 #include "made/resource.h"
 
 #include "audio/midiparser.h"
+#include "audio/miles.h"
 
 namespace Made {
 
-MusicPlayer::MusicPlayer() : _isGM(false) {
-	MidiPlayer::createDriver();
+MusicPlayer::MusicPlayer() : _isGM(false),_milesAudioMode(false) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+	MusicType musicType  = MidiDriver::getMusicType(dev);
+
+	switch (musicType) {
+	case MT_ADLIB:
+		// Adlib disabled due to known issues
+		//_milesAudioMode = true;
+		//_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.AD");
+		MidiPlayer::createDriver();
+		break;
+	case MT_MT32:
+		_milesAudioMode = true;
+		_driver = Audio::MidiDriver_Miles_MT32_create("");
+		break;
+	default:
+		_milesAudioMode = false;
+		MidiPlayer::createDriver();
+		break;
+	}
 
 	int ret = _driver->open();
 	if (ret == 0) {
@@ -46,6 +65,11 @@ MusicPlayer::MusicPlayer() : _isGM(false) {
 }
 
 void MusicPlayer::send(uint32 b) {
+	if (_milesAudioMode) {
+		_driver->send(b);
+		return;
+	}
+
 	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	}

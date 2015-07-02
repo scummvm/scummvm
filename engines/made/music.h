@@ -51,6 +51,7 @@ public:
 
 protected:
 	bool _isGM;
+	bool _milesAudioMode;
 };
 
 } // End of namespace Made
