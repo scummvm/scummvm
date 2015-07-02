@@ -297,7 +297,7 @@ public:
 	/**
 	 * Returns the index of the closest zone to a given point.
 	 */
-	int closestZone(const Common::Point &pt);
+	virtual int closestZone(const Common::Point &pt) = 0;
 
 	/**
 	 * Synchronize the data for a savegame

@@ -96,6 +96,11 @@ protected:
 	 * Synchronize the data for a savegame
 	 */
 	virtual void synchronize(Serializer &s);
+
+	/**
+	 * Returns the index of the closest zone to a given point.
+	 */
+	virtual int closestZone(const Common::Point &pt);
 public:
 	StreamingImageFile _activeCAnim;
 	Common::Array<SceneTripEntry> _sceneTripCounters;

@@ -717,6 +717,54 @@ void TattooScene::synchronize(Serializer &s) {
 		vm._runningProlog = false;
 }
 
+int TattooScene::closestZone(const Common::Point &pt) {
+	int zone = -1;
+	int dist = 9999;
+	int d;
+
+	for (uint idx = 0; idx < _zones.size(); ++idx) {
+		Common::Rect &r = _zones[idx];
+
+		// Check the distance from the point to the center of the zone
+		d = ABS(r.left + (r.width() / 2) - pt.x) + ABS(r.top + (r.height() / 2) - pt.y);
+		if (d < dist) {
+			dist = d;
+			zone = idx;
+		}
+
+		// Check the distance from the point to the upper left of the zone
+		d = ABS((int)(r.left - pt.x)) + ABS((int)(r.top - pt.y));
+		if (d < dist)
+		{
+			dist = d;
+			zone = idx;
+		}
+
+		// Check the distance from the point to the upper right of the zone
+		d = ABS(r.left + r.width() - pt.x) + ABS(r.top - pt.y);
+		if (d < dist) {
+			dist = d;
+			zone = idx;
+		}
+
+		// Check the distance from the point to the lower left of the zone
+		d = ABS(r.left - pt.x) + ABS(r.top + r.height() - pt.y);
+		if (d < dist) {
+			dist = d;
+			zone = idx;
+		}
+
+		// Check the distance from the point to the lower right of the zone
+		d = ABS(r.left + r.width() - pt.x) + ABS(r.top + r.height() - pt.y);
+		if (d < dist) {
+			dist = d;
+			zone = idx;
+		}
+	}
+
+	return zone;
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock

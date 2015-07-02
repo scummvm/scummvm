@@ -702,6 +702,25 @@ int ScalpelScene::startCAnim(int cAnimNum, int playRate) {
 	return 1;
 }
 
+int ScalpelScene::closestZone(const Common::Point &pt) {
+	int dist = 1000;
+	int zone = -1;
+
+	for (uint idx = 0; idx < _zones.size(); ++idx) {
+		Common::Point zc((_zones[idx].left + _zones[idx].right) / 2,
+			(_zones[idx].top + _zones[idx].bottom) / 2);
+		int d = ABS(zc.x - pt.x) + ABS(zc.y - pt.y);
+
+		if (d < dist) {
+			// Found a closer zone
+			dist = d;
+			zone = idx;
+		}
+	}
+
+	return zone;
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

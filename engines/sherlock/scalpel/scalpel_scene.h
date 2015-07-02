@@ -65,6 +65,11 @@ protected:
 	 * Draw all the shapes, people and NPCs in the correct order
 	 */
 	virtual void drawAllShapes();
+
+	/**
+	 * Returns the index of the closest zone to a given point.
+	 */
+	virtual int closestZone(const Common::Point &pt);
 public:
 	ScalpelScene(SherlockEngine *vm) : Scene(vm) {}
 
