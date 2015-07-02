@@ -108,7 +108,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		}
 		break;
 	case GType_SIMON2:
-		_musicMode = kMusicModeMilesAudio;
+		//_musicMode = kMusicModeMilesAudio;
 		// currently disabled, because there are a few issues
 		// MT32 seems to work fine now, AdLib seems to use bad instruments and is also outputting music on
 		// the right speaker only. The original driver did initialize the panning to 0 and the Simon2 XMIDI
