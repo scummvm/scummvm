@@ -71,7 +71,7 @@ enum {
 	OP_REMOVE_ITEM_FROM_INVENTORY = 30,
 	OP_ENABLE_END_KEY			= 31,
 	OP_DISABLE_END_KEY			= 32,
-	OP_CARRIAGE_RETURN			= 33,
+	OP_END_TEXT_WINDOW			= 33,
 	
 	OP_MOUSE_OFF_ON				= 34,
 	OP_SET_WALK_CONTROL			= 35,
@@ -106,8 +106,7 @@ enum {
 	OP_RESTORE_PEOPLE_SEQUENCE	= 64,
 	OP_NPC_VERB_TARGET			= 65,
 	OP_TURN_SOUNDS_OFF			= 66,
-	OP_NULL						= 67,
-	OP_END_TEXT_WINDOW			= 68
+	OP_NULL						= 67
 };
 
 enum OpcodeReturn { RET_EXIT = -1, RET_SUCCESS = 0, RET_CONTINUE = 1 };
@@ -229,6 +228,7 @@ protected:
 	OpcodeReturn cmdCallTalkFile(const byte *&str);
 	OpcodeReturn cmdDisableEndKey(const byte *&str);
 	OpcodeReturn cmdEnableEndKey(const byte *&str);
+	OpcodeReturn cmdEndTextWindow(const byte *&str);
 	OpcodeReturn cmdHolmesOff(const byte *&str);
 	OpcodeReturn cmdHolmesOn(const byte *&str);
 	OpcodeReturn cmdPause(const byte *&str);

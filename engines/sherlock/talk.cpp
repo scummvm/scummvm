@@ -857,7 +857,7 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		// Open window if it wasn't already open, and text has already been printed
-		if ((_openTalkWindow && _wait) || (_openTalkWindow && str[0] >= _opcodes[0] && str[0] != _opcodes[OP_CARRIAGE_RETURN])) {
+		if ((_openTalkWindow && _wait) || (_openTalkWindow && str[0] >= _opcodes[0] && str[0] != _opcodes[OP_END_TEXT_WINDOW])) {
 			if (!ui._slideWindows) {
 				screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 			} else {
@@ -1125,6 +1125,10 @@ OpcodeReturn Talk::cmdDisableEndKey(const byte *&str) {
 
 OpcodeReturn Talk::cmdEnableEndKey(const byte *&str) {
 	_vm->_ui->_endKeyActive = true;
+	return RET_SUCCESS;
+}
+
+OpcodeReturn Talk::cmdEndTextWindow(const byte *&str) {
 	return RET_SUCCESS;
 }
 

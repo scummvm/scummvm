@@ -70,7 +70,7 @@ const byte TATTOO_OPCODES[] = {
 	200,	// OP_REMOVE_ITEM_FROM_INVENTORY
 	201,	// OP_ENABLE_END_KEY
 	202,	// OP_DISABLE_END_KEY
-	0,		// OP_CARRIAGE_RETURN
+	203,	// OP_END_TEXT_WINDOW
 	174,	// OP_MOUSE_ON_OFF
 	175,	// OP_SET_WALK_CONTROL
 	180,	// OP_SET_TALK_SEQUENCE
@@ -104,8 +104,7 @@ const byte TATTOO_OPCODES[] = {
 	224,	// OP_RESTORE_PEOPLE_SEQUENCE
 	226,	// OP_NPC_VERB_TARGET
 	227,	// OP_TURN_SOUNDS_OFF
-	225,	// OP_NULL
-	203		// OP_END_TEXT_WINDOW
+	225		// OP_NULL
 };
 
 /*----------------------------------------------------------------*/
@@ -149,7 +148,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
 
 		(OpcodeMethod)&TattooTalk::cmdEnableEndKey,
 		(OpcodeMethod)&TattooTalk::cmdDisableEndKey,
-		nullptr,
+		(OpcodeMethod)&TattooTalk::cmdEndTextWindow,
 		(OpcodeMethod)&TattooTalk::cmdWalkHomesAndNPCToCoords,
 		(OpcodeMethod)&TattooTalk::cmdSetNPCTalkFile,
 		(OpcodeMethod)&TattooTalk::cmdSetNPCOff,
@@ -174,8 +173,7 @@ TattooTalk::TattooTalk(SherlockEngine *vm) : Talk(vm), _talkWidget(vm) {
 		nullptr,
 		(OpcodeMethod)&TattooTalk::cmdRestorePeopleSequence,
 		(OpcodeMethod)&TattooTalk::cmdSetNPCVerbTarget,
-		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff,
-		nullptr
+		(OpcodeMethod)&TattooTalk::cmdTurnSoundsOff
 	};
 
 	_opcodes = TATTOO_OPCODES;

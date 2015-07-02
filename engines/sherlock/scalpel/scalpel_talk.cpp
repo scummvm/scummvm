@@ -69,7 +69,7 @@ const byte SCALPEL_OPCODES[] = {
 	158,	// OP_REMOVE_ITEM_FROM_INVENTORY
 	159,	// OP_ENABLE_END_KEY
 	160,	// OP_DISABLE_END_KEY
-	161,	// OP_CARRIAGE_RETURN
+	161,	// OP_END_TEXT_WINDOW
 	0,		// OP_MOUSE_ON_OFF
 	0,		// OP_SET_WALK_CONTROL
 	0,		// OP_SET_TALK_SEQUENCE
@@ -103,8 +103,7 @@ const byte SCALPEL_OPCODES[] = {
 	0,		// OP_RESTORE_PEOPLE_SEQUENCE
 	0,		// OP_NPC_VERB_TARGET
 	0,		// OP_TURN_SOUNDS_OFF
-	0,		// OP_NULL
-	0		// OP_END_TEXT_WINDOW
+	0		// OP_NULL
 };
 
 /*----------------------------------------------------------------*/
@@ -148,14 +147,14 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
 		(OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
 		
-		(OpcodeMethod)&ScalpelTalk::cmdCarriageReturn,
+		(OpcodeMethod)&ScalpelTalk::cmdEndTextWindow,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	};
 
 	_opcodeTable = OPCODE_METHODS;
@@ -522,10 +521,6 @@ OpcodeReturn ScalpelTalk::cmdSummonWindow(const byte *&str) {
 		screen.buttonPrint(Common::Point(200, CONTROLS_Y), COMMAND_NULL, false, fixedText_Down);
 	}
 
-	return RET_SUCCESS;
-}
-
-OpcodeReturn ScalpelTalk::cmdCarriageReturn(const byte *&str) {
 	return RET_SUCCESS;
 }
 

@@ -50,7 +50,6 @@ private:
 	OpcodeReturn cmdRemovePortrait(const byte *&str);
 	OpcodeReturn cmdSfxCommand(const byte *&str);
 	OpcodeReturn cmdSummonWindow(const byte *&str);
-	OpcodeReturn cmdCarriageReturn(const byte *&str);
 	OpcodeReturn cmdWalkToCoords(const byte *&str);
 protected:
 	/**

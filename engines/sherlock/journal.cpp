@@ -547,7 +547,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 					replyP += (*replyP & 127) + 1;
 				} else if (c == opcodes[OP_GOTO_SCENE]) {
 					replyP += 5;
-				} else if (c == opcodes[OP_CARRIAGE_RETURN]) {
+				} else if (c == opcodes[OP_END_TEXT_WINDOW]) {
 					journalString += "\n";
 				}
 			} else {
@@ -632,7 +632,7 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 
 			// Put a space in the output for a control character, unless it's
 			// immediately coming after another control character
-			if (ctrlSpace && c != opcodes[OP_ASSIGN_PORTRAIT_LOCATION] && c != opcodes[OP_CARRIAGE_RETURN] && 
+			if (ctrlSpace && c != opcodes[OP_ASSIGN_PORTRAIT_LOCATION] && c != opcodes[OP_END_TEXT_WINDOW] &&
 					!commentJustPrinted) {
 				journalString += " ";
 				ctrlSpace = false;
