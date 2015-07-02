@@ -738,7 +738,13 @@ OpcodeReturn TattooTalk::cmdSetTalkSequence(const byte *&str) {
 	return RET_SUCCESS;
 }
 
-OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) { error("TODO: script opcode (cmdSetWalkControl)"); }
+OpcodeReturn TattooTalk::cmdSetWalkControl(const byte *&str) {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	++str;
+	people._walkControl = str[0] - 1;
+	
+	return RET_SUCCESS;
+}
 
 // Dummy opcode
 OpcodeReturn TattooTalk::cmdTalkInterruptsDisable(const byte *&str) { error("Dummy opcode cmdTalkInterruptsDisable called"); }
