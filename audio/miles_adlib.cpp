@@ -428,7 +428,7 @@ void MidiDriver_Miles_AdLib::send(uint32 b) {
 		break;
 	case 0xa0: // Polyphonic key pressure (aftertouch)
 	case 0xd0: // Channel pressure (aftertouch)
-		// Aftertouch doesn't seem to be implemented in the Sherlock Holmes adlib driver
+		// Aftertouch doesn't seem to be implemented in the Miles Audio AdLib driver
 		break;
 	case 0xe0:
 		pitchBendChange(channel, op1, op2);
