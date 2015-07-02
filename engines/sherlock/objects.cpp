@@ -1446,8 +1446,8 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 		ADJUST_COORD(_goto[1]);
 	} else {
 		// For Serrated Scalpel, adjust the loaded co-ordinates
-		_goto[0].x = _goto[0].x * FIXED_INT_MULTIPLIER / 100;
-		_goto[0].y = _goto[0].y * FIXED_INT_MULTIPLIER / 100;
+		_goto[0].x = _goto[0].x / 100;
+		_goto[0].y = _goto[0].y / 100;
 	}
 
 	_teleport[0].x = s.readSint16LE();
@@ -1463,8 +1463,8 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 		ADJUST_COORD(_teleport[1]);
 	} else {
 		// For Serrated Scalpel, adjust the loaded co-ordinates
-		_teleport[0].x = _teleport[0].x * FIXED_INT_MULTIPLIER / 100;
-		_teleport[0].y = _teleport[0].y * FIXED_INT_MULTIPLIER / 100;
+		_teleport[0].x = _teleport[0].x / 100;
+		_teleport[0].y = _teleport[0].y / 100;
 	}
 
 	// Save offset of data, which is actually inside another table inside the room data file
