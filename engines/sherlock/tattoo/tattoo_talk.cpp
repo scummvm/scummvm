@@ -292,14 +292,14 @@ OpcodeReturn TattooTalk::cmdGotoScene(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdNextSong(const byte *&str) {
-	Sound &sound = *_vm->_sound;
+	Music &music = *_vm->_music;
 
 	// Get the name of the next song to play
 	++str;
-	sound._nextSongName = "";
+	music._nextSongName = "";
 	for (int idx = 0; idx < 8; ++idx) {
 		if (str[idx] != '~')
-			sound._nextSongName += str[idx];
+			music._nextSongName += str[idx];
 		else
 			break;
 	}
@@ -368,7 +368,30 @@ OpcodeReturn TattooTalk::cmdNPCLabelSet(const byte *&str) {
 }
 
 OpcodeReturn TattooTalk::cmdPassword(const byte *&str) { error("TODO: script opcode (cmdPassword)"); }
-OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { error("TODO: script opcode (cmdPlaySong)"); }
+
+OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) { 
+	Music &music = *_vm->_music;
+	Common::String currentSong = music._currentSongName;
+
+	// Get the name of the song to play
+	music._currentSongName = "";
+	str++;
+	for (int idx = 0; idx < 8; ++idx) {
+		if (str[idx] != '~')
+			music._currentSongName += str[idx];
+		else
+			break;
+	}
+	str += 7;
+
+	// Play the song
+	music.playMusic(music._currentSongName);
+
+	// Copy the old song name to _nextSongName so that when the new song is finished, the old song will restart
+	music._nextSongName = currentSong;
+
+	return RET_SUCCESS;
+}
 
 OpcodeReturn TattooTalk::cmdRestorePeopleSequence(const byte *&str) {
 	int npcNum = *++str - 1;

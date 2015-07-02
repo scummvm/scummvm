@@ -85,11 +85,11 @@ bool TattooScene::loadScene(const Common::String &filename) {
 	// Handle loading music for the scene
 	if (music._musicOn) {
 		if (talk._scriptMoreFlag != 1 && talk._scriptMoreFlag != 3)
-			sound._nextSongName = Common::String::format("res%02d", _currentScene);
+			music._nextSongName = Common::String::format("res%02d", _currentScene);
 
 		// If it's a new song, then start it up
-		if (sound._currentSongName.compareToIgnoreCase(sound._nextSongName)) {
-			if (music.loadSong(sound._nextSongName)) {
+		if (music._currentSongName.compareToIgnoreCase(music._nextSongName)) {
+			if (music.loadSong(music._nextSongName)) {
 				music.setMIDIVolume(music._musicVolume);
 				if (music._musicOn)
 					music.startSong();

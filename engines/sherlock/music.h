@@ -72,6 +72,7 @@ public:
 	bool _musicOn;
 	int _musicVolume;
 	bool _midiOption;
+	Common::String _currentSongName, _nextSongName;
 public:
 	Music(SherlockEngine *vm, Audio::Mixer *mixer);
 	~Music();
