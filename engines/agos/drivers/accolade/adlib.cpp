@@ -872,13 +872,14 @@ MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename) {
 		error("ACCOLADE-ADLIB: error during readDriver()");
 
 	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib(g_system->getMixer());
-	if (!driver)
-		return nullptr;
-
-	if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
-		delete driver;
-		return nullptr;
+	if (driver) {
+		if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
+			delete driver;
+			driver = nullptr;
+		}
 	}
+
+	delete[] driverData;
 	return driver;
 }
 

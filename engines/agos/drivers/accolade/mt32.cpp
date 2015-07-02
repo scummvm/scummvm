@@ -264,13 +264,14 @@ MidiDriver *MidiDriver_Accolade_MT32_create(Common::String driverFilename) {
 		error("ACCOLADE-ADLIB: error during readDriver()");
 
 	MidiDriver_Accolade_MT32 *driver = new MidiDriver_Accolade_MT32();
-	if (!driver)
-		return nullptr;
-
-	if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
-		delete driver;
-		return nullptr;
+	if (driver) {
+		if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
+			delete driver;
+			driver = nullptr;
+		}
 	}
+
+	delete[] driverData;
 	return driver;
 }
 
