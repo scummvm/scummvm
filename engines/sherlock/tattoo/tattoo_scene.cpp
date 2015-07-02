@@ -50,7 +50,6 @@ static bool sortImagesY(const ShapeEntry &s1, const ShapeEntry &s2) {
 /*----------------------------------------------------------------*/
 
 TattooScene::TattooScene(SherlockEngine *vm) : Scene(vm) {
-	_arrowZone = -1;
 	_labTableScene = false;
 }
 
@@ -58,7 +57,6 @@ bool TattooScene::loadScene(const Common::String &filename) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
-	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
@@ -288,7 +286,7 @@ void TattooScene::checkBgShapes() {
 
 void TattooScene::doBgAnimCheckCursor() {
 	Events &events = *_vm->_events;
-	UserInterface &ui = *_vm->_ui;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 
 	// If we're in Look Mode, make sure the cursor is the magnifying glass
@@ -300,7 +298,7 @@ void TattooScene::doBgAnimCheckCursor() {
 	if (events.getCursor() == ARROW || events.getCursor() >= EXIT_ZONES_START) {
 		CursorId cursorId = ARROW;
 
-		if (ui._menuMode == STD_MODE && _arrowZone != -1 && _currentScene != 90) {
+		if (ui._menuMode == STD_MODE && ui._arrowZone != -1 && _currentScene != 90) {
 			for (uint idx = 0; idx < _exits.size(); ++idx) {
 				Exit &exit = _exits[idx];
 				if (exit.contains(mousePos))

@@ -46,8 +46,6 @@ struct SceneTripEntry {
 
 class TattooScene : public Scene {
 private:
-	int _arrowZone;
-private:
 	void doBgAnimCheckCursor();
 
 	/**
