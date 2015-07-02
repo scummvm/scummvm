@@ -86,8 +86,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	assert(!_driver);
 
 	Common::String accoladeDriverFilename;
-	MusicType accoladeMusicType = MT_INVALID;
-	MusicType milesAudioMusicType = MT_INVALID;
+	MusicType musicType = MT_INVALID;
 
 	switch (gameType) {
 	case GType_ELVIRA1:
@@ -122,12 +121,11 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	MidiDriver::DeviceHandle dev;
 	int ret = 0;
 
-	switch (_musicMode) {
-	case kMusicModeAccolade:
+	if (_musicMode != kMusicModeDisabled) {
 		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-		accoladeMusicType = MidiDriver::getMusicType(dev);
+		musicType = MidiDriver::getMusicType(dev);
 
-		switch (accoladeMusicType) {
+		switch (musicType) {
 		case MT_ADLIB:
 		case MT_MT32:
 			break;
@@ -142,48 +140,18 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 				dialog.runModal();
 			}
 			// Switch to MT32 driver in any case
-			accoladeMusicType = MT_MT32;
+			musicType = MT_MT32;
 			break;
 		default:
 			_musicMode = kMusicModeDisabled;
 			break;
 		}
-		break;
-
-	case kMusicModeMilesAudio:
-		dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-		milesAudioMusicType = MidiDriver::getMusicType(dev);
-
-		switch (milesAudioMusicType) {
-		case MT_ADLIB:
-		case MT_MT32:
-			break;
-		case MT_GM:
-			if (!ConfMan.getBool("native_mt32")) {
-				// Not a real MT32 / no MUNT
-				::GUI::MessageDialog dialog(("You appear to be using a General MIDI device,\n"
-											"but your game only supports Roland MT32 MIDI.\n"
-											"Music got disabled because of this.\n"
-											"You may choose AdLib instead.\n"));
-				dialog.runModal();
-			}
-			// Switch to MT32 driver in any case
-			milesAudioMusicType = MT_MT32;
-			break;
-		default:
-			_musicMode = kMusicModeDisabled;
-			break;
-		}
-		break;
-
-	default:
-		break;
 	}
 
 	switch (_musicMode) {
 	case kMusicModeAccolade: {
 		// Setup midi driver
-		switch (accoladeMusicType) {
+		switch (musicType) {
 		case MT_ADLIB:
 			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
 			break;
@@ -208,7 +176,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	}
 	
 	case kMusicModeMilesAudio: {
-		switch (milesAudioMusicType) {
+		switch (musicType) {
 		case MT_ADLIB: {
 			_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
 			// TODO: not sure what's going wrong with AdLib
@@ -222,7 +190,6 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		case MT_GM:
 			if (ConfMan.getBool("native_mt32")) {
 				_driver = Audio::MidiDriver_Miles_MT32_create("");
-				milesAudioMusicType = MT_MT32;
 				_nativeMT32 = true; // use 2nd set of XMIDI tracks
 			}
 			break;
