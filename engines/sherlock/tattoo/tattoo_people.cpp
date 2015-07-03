@@ -454,11 +454,11 @@ void TattooPerson::setWalking() {
 			// and set the delta Y depending on the direction
 			if (_walkDest.y < (_position.y / FIXED_INT_MULTIPLIER)) {
 				_sequenceNumber = WALK_UP;
-				_delta.y = speed.y * -FIXED_INT_MULTIPLIER;
+				_delta.y = speed.y * -(FIXED_INT_MULTIPLIER / 10);
 			} else {
 				speed.y = diagSpeed.y;
 				_sequenceNumber = WALK_DOWN;
-				_delta.y = speed.y * FIXED_INT_MULTIPLIER;
+				_delta.y = speed.y * (FIXED_INT_MULTIPLIER / 10);
 			}
 
 			// Set the delta x
