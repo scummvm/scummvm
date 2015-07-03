@@ -852,8 +852,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "resetDragParams", 0 },
 	{ "enableRollover", &LBCode::cmdUnimplemented /* FIXME */ },
 	{ "setCursor", 0 },
-	{ "width", 0 },
-	{ "height", 0 },
+	{ "width", &LBCode::cmdWidth },
+	{ "height", &LBCode::cmdHeight },
 	{ "getFrameBounds", 0 }, // also "getFrameRect"
 	{ "traceRect", 0 },
 	{ "sqrt", 0 },
@@ -1129,6 +1129,22 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 
 	Common::Rect rect = getRectFromParams(params);
 	_stack.push(rect.right);
+}
+
+void LBCode::cmdWidth(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to width", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.width());
+}
+
+void LBCode::cmdHeight(const Common::Array<LBValue> &params) {
+	if (params.size() > 1)
+		error("too many parameters (%d) to height", params.size());
+
+	Common::Rect rect = getRectFromParams(params);
+	_stack.push(rect.height());
 }
 
 void LBCode::cmdMove(const Common::Array<LBValue> &params) {
