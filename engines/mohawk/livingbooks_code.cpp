@@ -858,7 +858,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "traceRect", 0 },
 	{ "sqrt", 0 },
 	// 0x20
-	{ "deleteVar", 0 },
+	{ "deleteVar", &LBCode::cmdDeleteVar },
 	{ "saveVars", 0 },
 	{ "scriptLink", 0 },
 	{ "setViewOrigin", &LBCode::cmdUnimplemented },
@@ -1277,6 +1277,14 @@ void LBCode::cmdGetProperty(const Common::Array<LBValue> &params) {
 	}
 
 	_stack.push(target->_variables[name]);
+}
+
+void LBCode::cmdDeleteVar(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to deleteVar", params.size());
+
+	const Common::String &string = params[0].toString();
+	_vm->_variables.erase(string);
 }
 
 void LBCode::cmdExec(const Common::Array<LBValue> &params) {

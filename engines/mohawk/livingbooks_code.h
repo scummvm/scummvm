@@ -275,6 +275,7 @@ public:
 	void cmdDeleteAt(const Common::Array<LBValue> &params);
 	void cmdSetProperty(const Common::Array<LBValue> &params);
 	void cmdGetProperty(const Common::Array<LBValue> &params);
+	void cmdDeleteVar(const Common::Array<LBValue> &params);
 	void cmdExec(const Common::Array<LBValue> &params);
 	void cmdReturn(const Common::Array<LBValue> &params);
 	void cmdSetPlayParams(const Common::Array<LBValue> &params);
