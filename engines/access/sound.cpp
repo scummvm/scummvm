@@ -203,8 +203,11 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	MusicType musicType = MidiDriver::getMusicType(dev);
 
 	// Amazon Guardians of Eden uses MIDPAK inside MIDIDRV.AP
-	// Amazon Guardians of Eden possibly used MIDPAK as well
 	// AdLib patches are inside MIDIDRV.AP too, 2nd resource file
+	//
+	// Amazon Guardians of Eden (demo) seems to use another type of driver, possibly written by Access themselves
+	// Martian Memorandum uses this other type of driver as well, which means it makes sense to reverse engineer it.
+	//
 	switch (musicType) {
 	case MT_ADLIB: {
 		Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
