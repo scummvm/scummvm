@@ -62,7 +62,7 @@ enum Verb {
 	VERB_WALK_UP = 0x9C,
 	VERB_CLIMB_UP = 0xA5,
 	VERB_WALK_ONTO = 0xA6,
-	VERB_WALK = 0xA7,
+	VERB_WALK = 0xA7
 };
 
 enum Noun {
