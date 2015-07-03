@@ -178,7 +178,26 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	case kMusicModeMilesAudio: {
 		switch (musicType) {
 		case MT_ADLIB: {
-			_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
+			Common::File instrumentDataFile;
+			if (instrumentDataFile.exists("MIDPAK.AD")) {
+				// if there is a file called MIDPAK.AD, use it directly
+				warning("SIMON 2: using MIDPAK.AD");
+				_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
+			} else {
+				// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
+				// if we didn't do this, the user would be forced to "install" the game instead of simply
+				// copying all files from CD-ROM.
+				const byte *instrumentRawData = NULL;
+				uint32      instrumentRawDataSize = 0;
+				instrumentRawData = simon2SetupExtractFile("MIDPAK.AD", instrumentRawDataSize);
+				if (!instrumentRawData)
+					error("MidiPlayer: could not extract MIDPAK.AD from SETUP.SHR");
+
+				// Pass this extracted data to the driver
+				warning("SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
+				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", instrumentRawData, instrumentRawDataSize);
+				delete[] instrumentRawData;
+			}
 			// TODO: not sure what's going wrong with AdLib
 			// it doesn't seem to matter if we use the regular XMIDI tracks or the 2nd set meant for MT32
 			break;
@@ -781,6 +800,423 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 	}
 	p->loopTrack = _loopTrackDefault;
 	p->parser = parser; // That plugs the power cord into the wall
+}
+
+#define MIDI_SETUP_BUNDLE_HEADER_SIZE 56
+#define MIDI_SETUP_BUNDLE_FILEHEADER_SIZE 48
+#define MIDI_SETUP_BUNDLE_FILENAME_MAX_SIZE 12
+
+// PKWARE data compression is used for storing files within SETUP.SHR
+// we need it to be able to get the file MIDPAK.AD, otherwise we would have to require the user
+// to "install" the game before being able to actually play it, when using AdLib.
+//
+// SETUP.SHR file format:
+//  [bundle file header]
+//    [compressed file header] [compressed file data]
+//     * compressed file count
+const byte *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFileName, uint32 &extractedDataSize) {
+	Common::File *setupBundleStream = new Common::File();
+	uint32        bundleSize = 0;
+	uint32        bundleBytesLeft = 0;
+	byte          bundleHeader[MIDI_SETUP_BUNDLE_HEADER_SIZE];
+	byte          bundleFileHeader[MIDI_SETUP_BUNDLE_FILEHEADER_SIZE];
+	uint16        bundleFileCount = 0;
+	uint16        bundleFileNr = 0;
+
+	Common::String fileName;
+	uint32         fileCompressedSize = 0;
+	byte          *fileCompressedDataPtr = nullptr;
+	const byte    *extractedDataPtr = nullptr;
+
+	extractedDataSize = 0;
+
+	if (!setupBundleStream->open("setup.shr"))
+		error("MidiPlayer: could not open setup.shr");
+
+	bundleSize = setupBundleStream->size();
+	bundleBytesLeft = bundleSize;
+
+	if (bundleSize < MIDI_SETUP_BUNDLE_HEADER_SIZE)
+		error("MidiPlayer: unexpected EOF in setup.shr");
+
+	if (setupBundleStream->read(bundleHeader, MIDI_SETUP_BUNDLE_HEADER_SIZE) != MIDI_SETUP_BUNDLE_HEADER_SIZE)
+		error("MidiPlayer: setup.shr read error");
+	bundleBytesLeft -= MIDI_SETUP_BUNDLE_HEADER_SIZE;
+
+	// Verify header byte
+	if (bundleHeader[13] != 't')
+		error("MidiPlayer: setup.shr bundle header data mismatch");
+
+	bundleFileCount = READ_LE_UINT16(&bundleHeader[14]);
+
+	// Search for requested file
+	while (bundleFileNr < bundleFileCount) {
+		if (bundleBytesLeft < sizeof(bundleFileHeader))
+			error("MidiPlayer: unexpected EOF in setup.shr");
+
+		if (setupBundleStream->read(bundleFileHeader, sizeof(bundleFileHeader)) != sizeof(bundleFileHeader))
+			error("MidiPlayer: setup.shr read error");
+		bundleBytesLeft -= MIDI_SETUP_BUNDLE_FILEHEADER_SIZE;
+
+		// Extract filename from file-header
+		fileName.clear();
+		for (byte curPos = 0; curPos < MIDI_SETUP_BUNDLE_FILENAME_MAX_SIZE; curPos++) {
+			if (!bundleFileHeader[curPos]) // terminating NUL
+				break;
+			fileName.insertChar(bundleFileHeader[curPos], curPos);
+		}
+
+		// Get compressed
+		fileCompressedSize = READ_LE_UINT32(&bundleFileHeader[20]);
+		if (!fileCompressedSize)
+			error("MidiPlayer: compressed file is 0 bytes, data corruption?");
+		if (bundleBytesLeft < fileCompressedSize)
+			error("MidiPlayer: unexpected EOF in setup.shr");
+
+		if (fileName == requestedFileName) {
+			// requested file found
+			fileCompressedDataPtr = new byte[fileCompressedSize];
+			if (setupBundleStream->read(fileCompressedDataPtr, fileCompressedSize) != fileCompressedSize)
+				error("MidiPlayer: setup.shr read error");
+
+			// now extract the data
+			
+			extractedDataPtr = simon2SetupDecompressFile(fileCompressedDataPtr, fileCompressedSize, extractedDataSize);
+			break;
+		}
+
+		// skip compressed size
+		setupBundleStream->skip(fileCompressedSize);
+		bundleBytesLeft -= fileCompressedSize;
+
+		bundleFileNr++;
+	}
+	setupBundleStream->close();
+	delete setupBundleStream;
+
+	return extractedDataPtr;
+}
+
+static byte simon2SetupBitsMask[9] = {
+	0,
+	0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF
+};
+
+// gets [bitCount] bits from dataPtr, going from LSB to MSB
+inline uint16 MidiPlayer::simon2SetupGetBits(byte bitCount, const byte *&dataPtr, const byte *dataEndPtr, byte &dataBitsLeft) {
+	byte   resultBitsLeft = bitCount;
+	byte   resultBitsPos = 0;
+	uint16 result = 0;
+	byte   currentByte = *dataPtr;
+	byte   currentBits = 0;
+
+	// Get bits of current byte
+	while (resultBitsLeft) {
+		if (resultBitsLeft < dataBitsLeft) {
+			// we need less than we have left
+			currentBits = (currentByte >> (8 - dataBitsLeft)) & simon2SetupBitsMask[resultBitsLeft];
+			result |= (currentBits << resultBitsPos);
+			dataBitsLeft -= resultBitsLeft;
+			resultBitsLeft = 0;
+
+		} else {
+			// we need as much as we have left or more
+			resultBitsLeft -= dataBitsLeft;
+			currentBits = currentByte >> (8 - dataBitsLeft);
+			result |= (currentBits << resultBitsPos);
+			resultBitsPos += dataBitsLeft;
+
+			// Go to next byte
+			dataPtr++;
+			if (dataPtr >= dataEndPtr)
+				error("MidiPlayer: setup.shr: unexpected end of compressed data stream");
+
+			dataBitsLeft = 8;
+			if (resultBitsLeft) {
+				currentByte = *dataPtr;
+			}
+		}
+	}
+	return result;
+}
+
+// Decode length from bitstream
+inline uint16 MidiPlayer::simon2SetupGetLength(const byte *&dataPtr, const byte *dataEndPtr, byte &dataBitsLeft) {
+	uint16 bits;
+
+	bits = simon2SetupGetBits(2, dataPtr, dataEndPtr, dataBitsLeft);
+
+	switch (bits) {
+	case 3:
+		return 3; // 11b
+	case 2:
+		bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits)
+			return 5; // 011b
+		bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits)
+			return 6; // 0101b
+		return 7;
+	case 1:
+		bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits)
+			return 2; // 101b
+		return 4; // 100b
+	case 0:
+		bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits) {
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			if (bits)
+				return 8; // 0011b
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			if (bits)
+				return 9; // 00101b
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			if (bits)
+				return 11; // 001001b
+			return 10; // 001000b
+
+		} else {
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			if (bits) {
+				bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+				if (bits) {
+					bits = simon2SetupGetBits(2, dataPtr, dataEndPtr, dataBitsLeft);
+					return 12 + bits; // 00011XXb
+				} else {
+					bits = simon2SetupGetBits(3, dataPtr, dataEndPtr, dataBitsLeft);
+					return 16 + bits; // 00010XXXb
+				}
+			} else {
+				bits = simon2SetupGetBits(2, dataPtr, dataEndPtr, dataBitsLeft);
+				switch (bits) {
+				case 3:
+					bits = simon2SetupGetBits(4, dataPtr, dataEndPtr, dataBitsLeft);
+					return 24 + bits; // 000011XXXXb
+				case 2:
+					bits = simon2SetupGetBits(6, dataPtr, dataEndPtr, dataBitsLeft);
+					return 72 + bits; // 000001XXXXXXb
+				case 1:
+					bits = simon2SetupGetBits(5, dataPtr, dataEndPtr, dataBitsLeft);
+					return 40 + bits; // 000010XXXXXb
+				case 0:
+					bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+					if (bits) {
+						bits = simon2SetupGetBits(7, dataPtr, dataEndPtr, dataBitsLeft);
+						return 136 + bits; // 0000001XXXXXXXXb
+					} else {
+						bits = simon2SetupGetBits(8, dataPtr, dataEndPtr, dataBitsLeft);
+						return 264 + bits; // 0000000XXXXXXXXb
+					}
+				default:
+					break;
+				}
+			}
+		}
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
+
+// Decode offset from bitstream
+inline uint16 MidiPlayer::simon2SetupGetOffset(byte lowOrderBits, const byte *&dataPtr, const byte *dataEndPtr, byte &dataBitsLeft) {
+	uint16 baseOffset = 0;
+	uint16 bits = 0;
+
+	bits = simon2SetupGetBits(2, dataPtr, dataEndPtr, dataBitsLeft);
+	switch (bits) {
+	case 3:
+		baseOffset = 0; // 11b
+		break;
+	case 2:
+		bits = simon2SetupGetBits(4, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits) {
+			baseOffset = 0x16 - simon2SetupReverseBits(bits, 4);
+		} else {
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			baseOffset = 0x17 - bits;
+		}
+		break;
+	case 1:
+		bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits) {
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			if (bits) {
+				baseOffset = 0x01;
+			} else {
+				baseOffset = 0x02;
+			}
+		} else {
+			bits = simon2SetupGetBits(2, dataPtr, dataEndPtr, dataBitsLeft);
+			baseOffset = 0x06 - simon2SetupReverseBits(bits, 2);
+		}
+		break;
+	case 0:
+		bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+		if (bits) {
+			bits = simon2SetupGetBits(4, dataPtr, dataEndPtr, dataBitsLeft);
+			baseOffset = 0x27 - simon2SetupReverseBits(bits, 4);
+		} else {
+			bits = simon2SetupGetBits(1, dataPtr, dataEndPtr, dataBitsLeft);
+			if (bits) {
+				bits = simon2SetupGetBits(3, dataPtr, dataEndPtr, dataBitsLeft);
+				baseOffset = 0x2F - simon2SetupReverseBits(bits, 3);
+			} else {
+				bits = simon2SetupGetBits(4, dataPtr, dataEndPtr, dataBitsLeft);
+				baseOffset = 0x3F - simon2SetupReverseBits(bits, 4);
+			}
+		}
+		break;
+	default:
+		break;
+	}
+	bits = simon2SetupGetBits(lowOrderBits, dataPtr, dataEndPtr, dataBitsLeft);
+	return (baseOffset << lowOrderBits) + bits;
+}
+
+inline uint16 MidiPlayer::simon2SetupReverseBits(uint16 bits, byte bitCount) {
+	uint16 result = 0;
+
+	for (byte bitNr = 0; bitNr < bitCount; bitNr++) {
+		result = (result << 1) | (bits & 0x01);
+		bits = bits >> 1;
+	}
+	return result;
+}
+
+#define MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE 4096
+
+// Implementation of "PKWARE data compression library" decompression
+// Based on information released by Ben Rudiak-Gould in comp.compression on 13.8.2001
+const byte *MidiPlayer::simon2SetupDecompressFile(const byte *compressedDataPtr, uint32 compressedDataSize, uint32 &extractedDataSize) {
+	byte        compressedLiteralType = 0;
+	byte        compressedDictionaryType = 0;
+	uint16      compressedDictionarySize = 0;
+	const byte *readDataPtr = compressedDataPtr;
+	const byte *readDataEndPtr = compressedDataPtr + compressedDataSize;
+	uint32      readBytesLeft = compressedDataSize;
+
+	// check if there are at least 3 bytes of compressed data
+	if (readBytesLeft < 3)
+		error("MidiPlayer: setup.shr compressed file data not enough bytes");
+
+	compressedLiteralType = readDataPtr[0];
+	compressedDictionaryType = readDataPtr[1];
+	readDataPtr += 2;
+	readBytesLeft -= 2;
+
+	if (compressedLiteralType != 0)
+		error("MidiPlayer: setup.shr: unsupported variable length literals");
+
+	switch(compressedDictionaryType) {
+	case 4:
+		compressedDictionarySize = 1024;
+		break;
+	case 5:
+		compressedDictionarySize = 2048;
+		break;
+	case 6:
+		compressedDictionarySize = 4096;
+		break;
+	default:
+		error("MidiPlayer: setup.shr: invalid dictionary size");
+		break;
+	}
+
+	byte   dataBitsLeft = 8;
+
+	byte   tokenType = 0;
+	byte   tokenLiteral = 0;
+	byte   tokenLowOrderBits = 0;
+	uint16 tokenLength = 0;
+	uint16 tokenOffset = 0;
+	byte   dictionary[MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE];
+	uint16 dictionaryPos = 0;
+
+	byte  *outputDataPtr = nullptr;
+	byte  *outputPtr = nullptr;
+	uint32 outputSize = 0;
+
+	// First calculate the size of the uncompressed data
+	do {
+		tokenType = simon2SetupGetBits(1, readDataPtr, readDataEndPtr, dataBitsLeft);
+		if (!tokenType) {
+			// literal
+			tokenLiteral = simon2SetupGetBits(8, readDataPtr, readDataEndPtr, dataBitsLeft);
+			outputSize++;
+		} else {
+			// length+offset
+			tokenLength = simon2SetupGetLength(readDataPtr, readDataEndPtr, dataBitsLeft);
+			if (tokenLength == 519)
+				break; // end of data
+
+			tokenLowOrderBits = (tokenLength == 2) ? 2 : compressedDictionaryType;
+			tokenOffset = simon2SetupGetOffset(tokenLowOrderBits, readDataPtr, readDataEndPtr, dataBitsLeft);
+			outputSize += tokenLength;
+		}
+	} while (1);
+
+	// allocate output buffer
+	outputDataPtr = new byte[outputSize];
+	outputPtr = outputDataPtr;
+
+	// reset everything
+	dataBitsLeft = 8;
+	readDataPtr = compressedDataPtr + 2;
+	dictionaryPos = 0;
+
+	do {
+		tokenType = simon2SetupGetBits(1, readDataPtr, readDataEndPtr, dataBitsLeft);
+		if (!tokenType) {
+			// literal
+			tokenLiteral = simon2SetupGetBits(8, readDataPtr, readDataEndPtr, dataBitsLeft);
+
+			// write literal to output buffer
+			*outputPtr = tokenLiteral;
+			outputPtr++;
+
+			dictionary[dictionaryPos] = tokenLiteral;
+			dictionaryPos++;
+			if (dictionaryPos >= compressedDictionarySize)
+				dictionaryPos = 0;
+
+		} else {
+			// length+offset
+			tokenLength = simon2SetupGetLength(readDataPtr, readDataEndPtr, dataBitsLeft);
+			if (tokenLength == 519)
+				break; // end of data
+
+			tokenLowOrderBits = (tokenLength == 2) ? 2 : compressedDictionaryType;
+			tokenOffset = simon2SetupGetOffset(tokenLowOrderBits, readDataPtr, readDataEndPtr, dataBitsLeft);
+
+			uint16 dictionaryBaseIndex = (dictionaryPos - 1 - tokenOffset) & (compressedDictionarySize - 1);
+			uint16 dictionaryIndex = dictionaryBaseIndex;
+			uint16 dictionaryNextIndex = dictionaryPos;
+			uint16 copyBytesLeft = tokenLength;
+
+			while (copyBytesLeft) {
+				// write byte from dictionary
+				*outputPtr = dictionary[dictionaryIndex];
+				outputPtr++;
+
+				dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
+				dictionaryNextIndex++; dictionaryIndex++;
+
+				if (dictionaryIndex >= dictionaryPos)
+					dictionaryIndex = dictionaryBaseIndex;
+				if (dictionaryNextIndex >= compressedDictionarySize)
+					dictionaryNextIndex = 0;
+
+				copyBytesLeft--;
+			}
+			dictionaryPos = dictionaryNextIndex;
+		}
+	} while (1);
+
+	extractedDataSize = outputSize;
+	return outputDataPtr;
 }
 
 } // End of namespace AGOS
