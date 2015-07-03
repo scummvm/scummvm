@@ -193,9 +193,8 @@ Hotspot::Hotspot(Common::SeekableReadStream &f, bool isV2) {
 	_active = f.readByte() != 0;
 	_cursor = (CursorType)f.readByte();
 	if (isV2) {
-		// This looks to be some sort of bitmask. Perhaps it signifies
-		// the valid verbs for this hotspot
-		f.skip(2);		// unknown
+		f.skip(1);		// cursor
+		f.skip(1);		// syntax
 	}
 	_vocabId = f.readUint16LE();
 	_verbId = f.readUint16LE();
