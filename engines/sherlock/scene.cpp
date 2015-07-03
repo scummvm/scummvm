@@ -390,7 +390,7 @@ bool Scene::loadScene(const Common::String &filename) {
 
 				_bgShapes.resize(bgHeader._numStructs);
 				for (int idx = 0; idx < bgHeader._numStructs; ++idx)
-					_bgShapes[idx].load(*infoStream, _vm->getGameID() == GType_RoseTattoo);
+					_bgShapes[idx].load(*infoStream, true);
 
 				if (_compressed)
 					delete infoStream;

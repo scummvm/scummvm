@@ -96,7 +96,7 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		byte *data = new byte[frame._size + 4];
 		stream.read(data, frame._size);
 		Common::fill(data + frame._size, data + frame._size + 4, 0);
-		frame.decompressFrame(data, _vm->getGameID() == GType_RoseTattoo);
+		frame.decompressFrame(data, IS_ROSE_TATTOO);
 		delete[] data;
 
 		push_back(frame);

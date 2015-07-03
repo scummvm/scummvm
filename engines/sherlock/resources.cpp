@@ -298,7 +298,7 @@ int Resources::resourceIndex() const {
 Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source) {
 	// This variation can't be used by Rose Tattoo, since compressed resources include the input size,
 	// not the output size. Which means their decompression has to be done via passed buffers
-	assert(_vm->getGameID() == GType_SerratedScalpel);
+	assert(IS_SERRATED_SCALPEL);
 
 	uint32 id = source.readUint32BE();
 	assert(id == MKTAG('L', 'Z', 'V', 0x1A));
@@ -308,7 +308,7 @@ Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &so
 }
 
 Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &source, uint32 outSize) {
-	int inSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readSint32LE() : -1;
+	int inSize = IS_ROSE_TATTOO ? source.readSint32LE() : -1;
 	byte *outBuffer = (byte *)malloc(outSize);
 	Common::MemoryReadStream *outStream = new Common::MemoryReadStream(outBuffer, outSize, DisposeAfterUse::YES);
 
@@ -318,7 +318,7 @@ Common::SeekableReadStream *Resources::decompress(Common::SeekableReadStream &so
 }
 
 void Resources::decompress(Common::SeekableReadStream &source, byte *buffer, uint32 outSize) {
-	int inputSize = (_vm->getGameID() == GType_RoseTattoo) ? source.readSint32LE() : -1;
+	int inputSize = IS_ROSE_TATTOO ? source.readSint32LE() : -1;
 
 	decompressLZ(source, buffer, outSize, inputSize);
 }

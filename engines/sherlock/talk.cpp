@@ -424,7 +424,7 @@ void Talk::talkTo(const Common::String &filename) {
 	// previous script can continue
 	popStack();
 
-	if (_vm->getGameID() == GType_SerratedScalpel && filename == "Tube59c") {
+	if (IS_SERRATED_SCALPEL && filename == "Tube59c") {
 		// WORKAROUND: Original game bug causes the results of testing the powdery substance
 		// to disappear too quickly. Introduce a delay to allow it to be properly displayed
 		ui._menuCounter = 30;
