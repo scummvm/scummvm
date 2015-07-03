@@ -376,20 +376,7 @@ void Talk::talkTo(const Common::String &filename) {
 				// to display any choices, since the reply needs to be shown
 				if (!newStatement._statement.hasPrefix("*") &&
 						!newStatement._statement.hasPrefix("^")) {
-					clearSequences();
-					pushSequence(_talkTo);
-					setStillSeq(_talkTo);
 					_talkIndex = select;
-					ui._selector = ui._oldSelector = -1;
-
-					if (!ui._windowOpen) {
-						// Draw the talk interface on the back buffer
-						drawInterface();
-						displayTalk(false);
-					} else {
-						displayTalk(true);
-					}
-
 					showTalk();
 
 					// Break out of loop now that we're waiting for player input

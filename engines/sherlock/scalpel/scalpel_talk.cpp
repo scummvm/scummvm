@@ -807,6 +807,20 @@ void ScalpelTalk::showTalk() {
 	Common::String fixedText_Exit = fixedText.getText(kFixedText_Window_Exit);
 	byte color = ui._endKeyActive ? COMMAND_FOREGROUND : COMMAND_NULL;
 
+	clearSequences();
+	pushSequence(_talkTo);
+	setStillSeq(_talkTo);
+
+	ui._selector = ui._oldSelector = -1;
+
+	if (!ui._windowOpen) {
+		// Draw the talk interface on the back buffer
+		drawInterface();
+		displayTalk(false);
+	} else {
+		displayTalk(true);
+	}
+
 	// If the window is already open, simply draw. Otherwise, do it
 	// to the back buffer and then summon the window
 	if (ui._windowOpen) {

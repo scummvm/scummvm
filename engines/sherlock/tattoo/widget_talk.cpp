@@ -576,6 +576,9 @@ void WidgetTalk::setStatementLines() {
 }
 
 void WidgetTalk::refresh() {
+	_talkScrollIndex = 0;
+	_selector = _oldSelector = -1;
+
 	setStatementLines();
 	render(HL_NO_HIGHLIGHTING);
 }

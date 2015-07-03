@@ -91,6 +91,11 @@ protected:
 	 * Display the talk interface window
 	 */
 	virtual void talkInterface(const byte *&str);
+
+	/**
+	 * Show the talk display
+	 */
+	virtual void showTalk();
 public:
 	TattooTalk(SherlockEngine *vm);
 	virtual ~TattooTalk() {}

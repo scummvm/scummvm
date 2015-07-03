@@ -265,7 +265,7 @@ protected:
 	/**
 	 * Show the talk display
 	 */
-	virtual void showTalk() {}
+	virtual void showTalk() = 0;
 public:
 	TalkSequence _talkSequenceStack[TALK_SEQUENCE_STACK_SIZE];
 	Common::Array<Statement> _statements;

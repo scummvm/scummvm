@@ -861,6 +861,14 @@ OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) {
 	return RET_SUCCESS;
 }
 
+void TattooTalk::showTalk() {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	
+	_sequenceStack.clear();
+	people.setListenSequence(_talkTo, 129);
+	_talkWidget.refresh();
+}
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
