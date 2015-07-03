@@ -229,6 +229,9 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 			_nativeMT32 = true;
 		}
 		break;
+
+	default:
+		break;
 	}
 
 #if 0
