@@ -278,12 +278,6 @@ void TattooUserInterface::handleInput() {
 	case FILES_MODE:
 		doFileControl();
 		break;
-	case VERB_MODE:
-		doVerbControl();
-		break;
-	case TALK_MODE:
-		doTalkControl();
-		break;
 	case LAB_MODE:
 		doLabControl();
 		break;
@@ -525,14 +519,6 @@ void TattooUserInterface::doLookControl() {
 
 void TattooUserInterface::doFileControl() {
 	warning("TODO: ui control (file)");
-}
-
-void TattooUserInterface::doVerbControl() {
-	_verbsWidget.handleEvents();
-}
-
-void TattooUserInterface::doTalkControl() {
-	warning("TODO: ui control (talk)");
 }
 
 void TattooUserInterface::doLabControl() {

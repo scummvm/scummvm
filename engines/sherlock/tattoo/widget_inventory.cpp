@@ -257,7 +257,6 @@ WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm), _tooltipW
 	_selector = _oldSelector = -1;
 	_invVerbSelect = _oldInvVerbSelect = -1;
 	_dialogTimer = -1;
-	_scrollHighlight = 0;
 	_swapItems = false;
 }
 
@@ -350,59 +349,7 @@ void WidgetInventory::drawInventory() {
 		}
 	}
 
-	drawScrollBar();
-}
-
-void WidgetInventory::drawScrollBar() {
-	Inventory &inv = *_vm->_inventory;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	bool raised;
-
-	// Fill the area with transparency
-	Common::Rect r(BUTTON_SIZE, _bounds.height() - 6);
-	r.moveTo(_bounds.width() - BUTTON_SIZE - 3, 3);
-	_surface.fillRect(r, TRANSPARENCY);
-
-	raised = ui._scrollHighlight != 1;
-	_surface.fillRect(Common::Rect(r.left + 2, r.top + 2, r.right - 2, r.top + BUTTON_SIZE - 2), INFO_MIDDLE);
-	ui.drawDialogRect(_surface, Common::Rect(r.left, r.top, r.left + BUTTON_SIZE, r.top + BUTTON_SIZE), raised);
-
-	raised = ui._scrollHighlight != 5;
-	_surface.fillRect(Common::Rect(r.left + 2, r.bottom - BUTTON_SIZE + 2, r.right - 2, r.bottom - 2), INFO_MIDDLE);
-	ui.drawDialogRect(_surface, Common::Rect(r.left, r.bottom - BUTTON_SIZE, r.right, r.bottom), raised);
-
-	// Draw the arrows on the scroll buttons
-	byte color = inv._invIndex? INFO_BOTTOM + 2 : INFO_BOTTOM;
-	_surface.hLine(r.right / 2, r.top - 2 + BUTTON_SIZE / 2, r.right / 2, color);
-	_surface.fillRect(Common::Rect(r.right / 2 - 1, r.top - 1 + BUTTON_SIZE / 2,
-		r.right / 2 + 1, r.top - 1 + BUTTON_SIZE / 2), color);
-	_surface.fillRect(Common::Rect(r.right / 2 - 2, r.top + BUTTON_SIZE / 2,
-		r.right / 2 + 2, r.top + BUTTON_SIZE / 2), color);
-	_surface.fillRect(Common::Rect(r.right / 2 - 3, r.top + 1 + BUTTON_SIZE / 2,
-		r.right / 2 + 3, r.top + 1 + BUTTON_SIZE / 2), color);
-
-	color = (inv._invIndex + NUM_INVENTORY_SHOWN) < inv._holdings ? INFO_BOTTOM + 2 : INFO_BOTTOM;
-	_surface.fillRect(Common::Rect(r.right / 2 - 3, r.bottom - 1 - BUTTON_SIZE + BUTTON_SIZE / 2,
-		r.right / 2 + 3, r.bottom - 1 - BUTTON_SIZE + BUTTON_SIZE / 2), color);
-	_surface.fillRect(Common::Rect(r.right / 2 - 2, r.bottom - 1 - BUTTON_SIZE + 1 + BUTTON_SIZE / 2,
-		r.right / 2 + 2, r.bottom - 1 - BUTTON_SIZE + 1 + BUTTON_SIZE / 2), color);
-	_surface.fillRect(Common::Rect(r.right / 2 - 1, r.bottom - 1 - BUTTON_SIZE + 2 + BUTTON_SIZE / 2,
-		r.right / 2 + 1, r.bottom - 1 - BUTTON_SIZE + 2 + BUTTON_SIZE / 2), color);
-	_surface.fillRect(Common::Rect(r.right / 2, r.bottom - 1 - BUTTON_SIZE + 3 + BUTTON_SIZE / 2,
-		r.right / 2, r.bottom - 1 - BUTTON_SIZE + 3 + BUTTON_SIZE / 2), color);
-
-	// Draw the scroll position bar
-	int idx = inv._holdings;
-	if (idx % (NUM_INVENTORY_SHOWN / 2))
-		idx = (idx + (NUM_INVENTORY_SHOWN / 2)) / (NUM_INVENTORY_SHOWN / 2) * (NUM_INVENTORY_SHOWN / 2);
-	int barHeight = NUM_INVENTORY_SHOWN * (_bounds.height() - BUTTON_SIZE * 2) / idx;
-	barHeight = CLIP(barHeight, BUTTON_SIZE, _bounds.height() - BUTTON_SIZE * 2);
-
-	int barY = (idx<= NUM_INVENTORY_SHOWN) ? r.top + BUTTON_SIZE :
-		(r.height() - BUTTON_SIZE * 2 - barHeight) * FIXED_INT_MULTIPLIER / (idx- NUM_INVENTORY_SHOWN)
-			* inv._invIndex / FIXED_INT_MULTIPLIER + r.top + BUTTON_SIZE;
-	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
-	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
+	drawScrollBar(inv._invIndex, NUM_INVENTORY_SHOWN, inv._holdings);
 }
 
 void WidgetInventory::handleEvents() {
@@ -432,7 +379,7 @@ void WidgetInventory::handleEvents() {
 	// See if they released a mouse button button
 	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 		_dialogTimer = -1;
-		_scrollHighlight = 0;
+		ui._scrollHighlight = 0;
 
 		// See if they have a Verb List open for an Inventry Item
 		if (_invVerbMode == 1) {

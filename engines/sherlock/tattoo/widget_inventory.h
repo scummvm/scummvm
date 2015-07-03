@@ -69,7 +69,6 @@ private:
 	int _selector, _oldSelector;
 	int _invVerbSelect, _oldInvVerbSelect;
 	int _dialogTimer;
-	int _scrollHighlight;
 	Common::StringArray _inventCommands;
 	WidgetInventoryTooltip _tooltipWidget;
 	Common::String _invVerb;
@@ -85,11 +84,6 @@ private:
 	 * Draw the bars within the dialog
 	 */
 	void drawBars();
-
-	/**
-	 * Draw the scrollbar for the dialog
-	 */
-	void drawScrollBar();
 
 	/**
 	 * Check for keys to mouse the mouse within the inventory dialog

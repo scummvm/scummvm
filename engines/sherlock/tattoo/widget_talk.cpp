@@ -31,8 +31,14 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+#define STATEMENT_NUM_X 6
+#define VISIBLE_TALK_LINES 6
+
 WidgetTalk::WidgetTalk(SherlockEngine *vm) : WidgetBase(vm) {
 	_talkScroll = false;
+	_talkScrollIndex = 0;
+	_selector = _oldSelector = -1;
+	_talkTextX = 0;
 }
 
 void WidgetTalk::getTalkWindowSize() {
@@ -131,6 +137,60 @@ void WidgetTalk::load() {
 		_surface.transBlitFrom(images[6], Common::Point(xp - 1, 1));
 		_surface.transBlitFrom(images[7], Common::Point(xp - 1, _surface.h() - 4));
 	}
+}
+
+void WidgetTalk::handleEvents() {
+	// TODO
+}
+
+void WidgetTalk::render(Highlight highlightMode) {
+	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
+	int yp = 5;
+	int statementNum = 1;
+	byte color;
+
+	if (highlightMode != HL_SCROLLBAR_ONLY) {
+		// Draw all the statements
+		// Check whether scrolling has occurred, and if so, figure out what the starting
+		// number for the first visible statement will be
+		if (_talkScrollIndex) {
+			for (int idx = 1; idx <= _talkScrollIndex; ++idx) {
+				if (_statementLines[idx - 1]._num != _statementLines[idx]._num)
+					++statementNum;
+			}
+		}
+
+		// Main drawing loop
+		for (uint idx = _talkScrollIndex; idx < _statementLines.size() && yp < (_bounds.height() - _surface.fontHeight()); ++idx) {
+			if (highlightMode == HL_NO_HIGHLIGHTING || _statementLines[idx]._num == _selector ||
+					_statementLines[idx]._num == _oldSelector) {
+				// Different coloring based on whether the option has been previously chosen or not
+				color = (!talk._talkHistory[talk._converseNum][_statementLines[idx]._num]) ?
+					INFO_TOP : INFO_BOTTOM;
+
+				if (_statementLines[idx]._num == _selector && highlightMode == HL_CHANGED_HIGHLIGHTS)
+					color = COMMAND_HIGHLIGHTED;
+
+				// See if it's the start of a new statement, so needs the statement number to be displayed
+				if (!idx || _statementLines[idx]._num != _statementLines[idx - 1]._num) {
+					Common::String numStr = Common::String::format("%d.", statementNum);
+					_surface.writeString(numStr, Common::Point(STATEMENT_NUM_X, yp), color);
+				}
+
+				// Display the statement line
+				_surface.writeString(_statementLines[idx]._line, Common::Point(_talkTextX, yp), color);
+			}
+			yp += _surface.fontHeight() + 1;
+
+			// If the next line starts a new statement, then increment the statement number
+			if (idx == (_statementLines.size() - 1) || _statementLines[idx]._num != _statementLines[idx + 1]._num)
+				++statementNum;
+		}
+	}
+
+	// See if the scroll bar needs to be drawn
+	if (_talkScroll && highlightMode != HL_CHANGED_HIGHLIGHTS)
+		drawScrollBar(_talkScrollIndex, VISIBLE_TALK_LINES, _statementLines.size());
 }
 
 } // End of namespace Tattoo

@@ -36,7 +36,10 @@ namespace Sherlock {
 
 namespace Tattoo {
 
+class WidgetTalk;
+
 class TattooTalk : public Talk {
+	friend class WidgetTalk;
 private:
 	WidgetTalk _talkWidget;
 

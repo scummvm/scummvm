@@ -32,14 +32,29 @@ class SherlockEngine;
 
 namespace Tattoo {
 
+enum Highlight { HL_NO_HIGHLIGHTING, HL_CHANGED_HIGHLIGHTS, HL_SCROLLBAR_ONLY };
+
 /**
  * Handles displaying a dialog with conversation options the player can select from
  */
 class WidgetTalk: public WidgetBase {
+	struct StatementLine {
+		Common::String _line;
+		int _num;
+	};
 private:
 	bool _talkScroll;
+	int _talkScrollIndex;
+	Common::Array<StatementLine> _statementLines;
+	int _selector, _oldSelector;
+	int _talkTextX;
 
 	void getTalkWindowSize();
+
+	/**
+	 * Re-renders the contenst of the window to the widget's surface
+	 */
+	void render(Highlight highlightMode);
 public:
 	WidgetTalk(SherlockEngine *vm);
 	virtual ~WidgetTalk() {}
@@ -49,6 +64,11 @@ public:
 	 * of appropriate size
 	 */
 	void load();
+
+	/**
+	 * Handle event processing
+	 */
+	virtual void handleEvents();
 };
 
 } // End of namespace Tattoo

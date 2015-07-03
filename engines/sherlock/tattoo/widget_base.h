@@ -64,6 +64,11 @@ protected:
 	void makeInfoArea();
 
 	/**
+	 * Draw the scrollbar for the dialog
+	 */
+	void drawScrollBar(int index, int pageSize, int count);
+
+	/**
 	 * Returns the current scroll position
 	 */
 	virtual const Common::Point &getCurrentScroll() const;

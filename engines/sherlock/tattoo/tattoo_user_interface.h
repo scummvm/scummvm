@@ -74,12 +74,6 @@ private:
 	 * Handle input while the verb menu is open
 	 */
 	void doVerbControl();
-
-	/**
-	 * Handles input when in talk mode. It highlights the buttons and response statements,
-	 * and handles any actions for clicking on the buttons or statements.
-	 */
-	void doTalkControl();
 	
 	/**
 	 * Handles input when the player is in the Lab Table scene
