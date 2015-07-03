@@ -842,8 +842,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "bottom", &LBCode::cmdBottom },
 	// 0x10
 	{ "right", &LBCode::cmdRight },
-	{ "xpos", 0 },
-	{ "ypos", 0 },
+	{ "xpos", &LBCode::cmdXPos },
+	{ "ypos", &LBCode::cmdYPos },
 	{ "playFrom", 0 },
 	{ "move", &LBCode::cmdMove },
 	{ 0, 0 },
@@ -1129,6 +1129,22 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 
 	Common::Rect rect = getRectFromParams(params);
 	_stack.push(rect.right);
+}
+
+void LBCode::cmdXPos(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("too many parameters (%d) to xpos", params.size());
+
+	Common::Point point = params[0].toPoint();
+	_stack.push(point.x);
+}
+
+void LBCode::cmdYPos(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("too many parameters (%d) to ypos", params.size());
+
+	Common::Point point = params[0].toPoint();
+	_stack.push(point.y);
 }
 
 void LBCode::cmdWidth(const Common::Array<LBValue> &params) {
