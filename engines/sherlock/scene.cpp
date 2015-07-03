@@ -368,11 +368,18 @@ bool Scene::loadScene(const Common::String &filename) {
 
 				paletteLoaded();
 
+				// Resize the screen if necessary
+				int fullWidth = SHERLOCK_SCREEN_WIDTH + bgHeader._scrollSize;
+				if (screen._backBuffer1.w() != fullWidth) {
+					screen._backBuffer1.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
+					screen._backBuffer2.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
+				}
+
 				// Read in background
 				if (_compressed) {
-					res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+					res.decompress(*rrmStream, (byte *)screen._backBuffer1.getPixels(), fullWidth * SHERLOCK_SCREEN_HEIGHT);
 				} else {
-					rrmStream->read(screen._backBuffer1.getPixels(), SHERLOCK_SCREEN_WIDTH * SHERLOCK_SCREEN_HEIGHT);
+					rrmStream->read(screen._backBuffer1.getPixels(), fullWidth * SHERLOCK_SCREEN_HEIGHT);
 				}
 			} 
 
