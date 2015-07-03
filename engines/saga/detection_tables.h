@@ -192,9 +192,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO1(GUIO_NOSPEECH)
 		},
-		GID_ITE, // Game id
-		GF_OLD_ITE_DOS, // features
-		ITE_DEFAULT_SCENE, // Starting scene number
+		GID_ITE,
+		GF_ITE_DOS_DEMO,
+		ITE_DEFAULT_SCENE,
 		&ITEDemo_Resources,
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,

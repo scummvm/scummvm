@@ -273,7 +273,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
 
-	if (isPlaying() && _trackNumber == resourceId) {
+	if (isPlaying() && _trackNumber == resourceId)
+		return;
+
+	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
+		warning("TODO: Music::play %d, %d for ITE DOS demo", resourceId, flags);
 		return;
 	}
 
