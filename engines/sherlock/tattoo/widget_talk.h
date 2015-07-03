@@ -41,6 +41,9 @@ class WidgetTalk: public WidgetBase {
 	struct StatementLine {
 		Common::String _line;
 		int _num;
+
+		StatementLine() : _num(0) {}
+		StatementLine(const Common::String &line, int num) : _line(line), _num(num) {}
 	};
 private:
 	int _talkScrollIndex;
@@ -56,6 +59,10 @@ private:
 	 */
 	void render(Highlight highlightMode);
 
+	/**
+	 * This initializes the _statementLines array, which contains the talk options split up line
+	 * by line, as well as which statement a particular line is part of.
+	 */
 	void setStatementLines();
 public:
 	WidgetTalk(SherlockEngine *vm);
@@ -66,6 +73,11 @@ public:
 	 * of appropriate size
 	 */
 	void load();
+
+	/**
+	 * Refresh the talk display
+	 */
+	void refresh();
 
 	/**
 	 * Handle event processing

@@ -508,9 +508,77 @@ void WidgetTalk::render(Highlight highlightMode) {
 }
 
 void WidgetTalk::setStatementLines() {
-	// TODO
+	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
+	const char *numStr = "19.";
+
+	// See how many statements are going to be available
+	int numStatements = 0;
+	for (uint idx = 0; idx < talk._statements.size(); ++idx) {
+		if (talk._statements[idx]._talkMap != -1)
+			++numStatements;
+	}
+
+	// If there are more lines than can be displayed in the interface window at one time, adjust the allowed 
+	// width to take into account needing a scrollbar
+	int xSize = _scroll ? _bounds.width() - BUTTON_SIZE - 3 : _bounds.width();
+
+	// Also adjust the width to allow room for the statement numbers at the left edge of the display
+	int n = (numStatements < 10) ? 1 : 0;
+	xSize -= _surface.stringWidth(numStr + n) + _surface.widestChar() / 2 + 9;
+	_talkTextX = _surface.stringWidth(numStr + n) + _surface.widestChar() / 4 + 6;
+	_statementLines.clear();
+
+	for (uint statementNum = 0; statementNum < talk._statements.size(); ++statementNum) {
+		// See if this statment meets all of it's flag requirements
+		if (talk._statements[statementNum]._talkMap != -1) {
+			// Get the next statement text to process
+			Common::String str = talk._statements[statementNum]._statement;
+
+			// Process the statement
+			Common::String line;
+			do {
+				line = "";
+
+				// Find out how much of the statement will fit on the line
+				int width = 0;
+				const char *ch = line.c_str();
+				const char *space = nullptr;
+
+				while (width < xSize && *ch) {
+					width += _surface.charWidth(*ch);
+
+					// Keep track of where spaces are
+					if (*ch == ' ')
+						space = ch;
+					++ch;
+				}
+
+				// If the line was too wide to fit on a single line, go back to the last space and split it there.
+				// But if there isn't (and this shouldn't ever happen), just split the line right at that point
+				if (width > xSize) {
+					if (space) {
+						line = Common::String(str.c_str(), space - 1);
+						str = Common::String(space + 1);
+					} else {
+						line = Common::String(str.c_str(), ch);
+						str = Common::String(ch);
+					}
+				} else {
+					line = str;
+					str = "";
+				}
+
+				// Add the line in
+				_statementLines.push_back(StatementLine(line, statementNum));
+			} while (!line.empty());
+		}
+	}
 }
 
+void WidgetTalk::refresh() {
+	setStatementLines();
+	render(HL_NO_HIGHLIGHTING);
+}
 
 } // End of namespace Tattoo
 
