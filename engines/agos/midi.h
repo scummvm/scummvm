@@ -130,12 +130,6 @@ private:
 
 private:
 	const byte *simon2SetupExtractFile(const Common::String &requestedFileName, uint32 &extractedDataSize);
-
-	inline uint16 simon2SetupGetBits(byte bitCount, const byte *&dataPtr, const byte *dataEndPtr, byte &dataBitsLeft);
-	inline uint16 simon2SetupGetLength(const byte *&dataPtr, const byte *dataEndPtr, byte &dataBitsLeft);
-	inline uint16 simon2SetupGetOffset(byte lowOrderBits, const byte *&dataPtr, const byte *dataEndPtr, byte &dataBitsLeft);
-	inline uint16 simon2SetupReverseBits(uint16 bits, byte bitCount);
-	const byte *simon2SetupDecompressFile(const byte *compressedDataPtr, uint32 compressedDataSize, uint32 &extractedDataSize);
 };
 
 } // End of namespace AGOS
