@@ -220,7 +220,7 @@ public:
 	 * @param speaker		Who is speaking
 	 * @param sequenceNum	Which listen sequence to use
 	 */
-	void setListenSequence(int speaker, int sequenceNum);
+	void setListenSequence(int speaker, int sequenceNum = 1);
 
 	/**
 	 * Restore any saved NPC walk path data from any of the NPCs

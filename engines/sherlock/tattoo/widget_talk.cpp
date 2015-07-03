@@ -21,6 +21,8 @@
  */
 
 #include "sherlock/tattoo/widget_talk.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
+#include "sherlock/tattoo/tattoo_journal.h"
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_scene.h"
@@ -32,12 +34,13 @@ namespace Sherlock {
 namespace Tattoo {
 
 #define STATEMENT_NUM_X 6
-#define VISIBLE_TALK_LINES 6
+#define NUM_VISIBLE_TALK_LINES 6
 
 WidgetTalk::WidgetTalk(SherlockEngine *vm) : WidgetBase(vm) {
 	_talkScrollIndex = 0;
 	_selector = _oldSelector = -1;
 	_talkTextX = 0;
+	_dialogTimer = 0;
 }
 
 void WidgetTalk::getTalkWindowSize() {
@@ -139,9 +142,319 @@ void WidgetTalk::load() {
 }
 
 void WidgetTalk::handleEvents() {
-	handleScrollbarEvents(_talkScrollIndex, VISIBLE_TALK_LINES, _statementLines.size());
+	Events &events = *_vm->_events;
+	TattooJournal &journal = *(TattooJournal *)_vm->_journal;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Sound &sound = *_vm->_sound;
+	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+	Common::KeyCode keycode = ui._keyState.keycode;
+	bool hotkey = false;
+	bool callParrotFile = false;
 
-	// TODO
+	// Handle scrollbar events
+	ScrollHighlight oldHighlight = ui._scrollHighlight;
+	handleScrollbarEvents(_talkScrollIndex, NUM_VISIBLE_TALK_LINES, _statementLines.size());
+
+	// If the highlight has changed, redraw the scrollbar
+	if (ui._scrollHighlight != oldHighlight)
+		render(HL_SCROLLBAR_ONLY);
+
+	if (ui._scrollHighlight != SH_NONE || keycode == Common::KEYCODE_HOME || keycode == Common::KEYCODE_END
+			|| keycode == Common::KEYCODE_PAGEUP || keycode == Common::KEYCODE_PAGEDOWN) {
+		int scrollIndex = _talkScrollIndex;
+
+		// Check for the scrollbar
+		if (ui._scrollHighlight == SH_THUMBNAIL) {
+			int yp = mousePos.y;
+			yp = CLIP(yp, _bounds.top + BUTTON_SIZE + 3, _bounds.bottom - BUTTON_SIZE - 3);
+
+			// Calculate the line number that corresponds to the position that the mouse is on the scrollbar
+			int lineNum = (yp - _bounds.top - BUTTON_SIZE - 3) * 100 / (_bounds.height() - BUTTON_SIZE * 2 - 6)
+				* _statementLines.size() / 100 - 3;
+
+			// If the new position would place part of the text outsidethe text window, adjust it so it doesn't
+			if (lineNum < 0)
+				lineNum = 0;
+			else if (lineNum + NUM_VISIBLE_TALK_LINES > (int)_statementLines.size()) {
+				lineNum = (int)_statementLines.size() - NUM_VISIBLE_TALK_LINES;
+
+				// Make sure it's not below zero now
+				if (lineNum < 0)
+					lineNum = 0;
+			}
+
+			_talkScrollIndex = lineNum;
+		}
+
+		// Get the current frame so we can check the scroll timer against it
+		uint32 frameNum = events.getFrameCounter();
+
+		if (frameNum > _dialogTimer) {
+			// Set the timeout for the next scroll if the mouse button remains held down
+			_dialogTimer = (_dialogTimer == 0) ? frameNum + NUM_VISIBLE_TALK_LINES : frameNum + 1;
+
+			// Check for Scroll Up
+			if (ui._scrollHighlight == SH_SCROLL_UP && _talkScrollIndex)
+				--_talkScrollIndex;
+
+			// Check for Page Up
+			if ((ui._scrollHighlight == SH_PAGE_UP || keycode == Common::KEYCODE_PAGEUP) && _talkScrollIndex)
+				_talkScrollIndex -= NUM_VISIBLE_TALK_LINES;
+
+			// Check for Page Down
+			if ((ui._scrollHighlight == SH_PAGE_DOWN || keycode == Common::KEYCODE_PAGEDOWN) 
+					&& (_talkScrollIndex + NUM_VISIBLE_TALK_LINES < (int)_statementLines.size())) {
+				_talkScrollIndex += 6;
+				if (_talkScrollIndex + NUM_VISIBLE_TALK_LINES >(int)_statementLines.size())
+					_talkScrollIndex = _statementLines.size() - NUM_VISIBLE_TALK_LINES;
+			}
+
+			// Check for Scroll Down
+			if (ui._scrollHighlight == SH_SCROLL_DOWN && (_talkScrollIndex + NUM_VISIBLE_TALK_LINES < (int)_statementLines.size()))
+				_talkScrollIndex++;
+		}
+
+		if (keycode == Common::KEYCODE_END)
+			_talkScrollIndex = _statementLines.size() - NUM_VISIBLE_TALK_LINES;
+
+		if (_talkScrollIndex < 0 || keycode == Common::KEYCODE_HOME)
+			_talkScrollIndex = 0;
+
+		// Only redraw the window if the the scrollbar position has changed
+		if (scrollIndex != _talkScrollIndex) {
+			_surface.fillRect(Common::Rect(4, 5, _surface.w() - BUTTON_SIZE - 8, _surface.h() - 4), TRANSPARENCY);
+			render(HL_NO_HIGHLIGHTING);
+		}
+	}
+
+	// Flag if they started pressing outside of the window
+	if (events._firstPress && !_bounds.contains(mousePos))
+		_outsideMenu = true;
+		
+	// Check for which statement they are pointing at
+	_selector = -1;
+	if (ui._scrollHighlight == SH_NONE) {
+		if (Common::Rect(_bounds.left, _bounds.top + 5, _bounds.right - 3, _bounds.bottom - 5).contains(mousePos)) {
+			if (_scroll) {
+				// Disregard the scrollbar when setting the statement number
+				if (Common::Rect(_bounds.right - BUTTON_SIZE - 6, _bounds.top + 3, _bounds.right - 3, _bounds.bottom - 3).contains(mousePos))
+					_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1) + _talkScrollIndex;
+			} else {
+				_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1);
+			}
+
+			// Now translate the line number of the displayed line into the appropriate
+			// Statement number or set it to 255 to indicate no Statement selected
+			if (_selector < (int)_statementLines.size())
+				_selector = _statementLines[_selector]._num;
+			else
+				_selector = -1;
+		}
+	}
+
+	// Check for the tab keys
+	if (keycode == Common::KEYCODE_TAB && ui._scrollHighlight == SH_NONE) {
+		if (_selector == -1) {
+			_selector = _statementLines[_scroll ? _talkScrollIndex : 0]._num;
+			
+			events.warpMouse(Common::Point(_bounds.right - BUTTON_SIZE - 10, _bounds.top + _surface.fontHeight() + 2));
+		} else {
+			if (ui._keyState.flags & Common::KBD_SHIFT) {
+				_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1) + _talkScrollIndex;
+				if (_statementLines[_selector]._num == _statementLines[_talkScrollIndex]._num) {
+					_selector = (_bounds.height() - 10) / (_surface.fontHeight() + 1) + _talkScrollIndex;
+				} else {
+					int idx = _selector;
+					do {
+						--_selector;
+					} while (_selector > 0 && _statementLines[idx]._num == _statementLines[_selector]._num);
+				}
+
+				int idx = _selector;
+				while ((_statementLines[idx]._num == _statementLines[_selector - 1]._num) && (_selector > _talkScrollIndex))
+					--_selector;
+			} else {
+				_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1) + _talkScrollIndex;
+				if (_statementLines[_selector]._num == _statementLines[(_bounds.height() - 10) / (_surface.fontHeight() + 1) + _talkScrollIndex]._num) {
+					_selector = _talkScrollIndex;
+				} else {
+					int idx = _selector;
+					do {
+						++_selector;
+					} while (_selector < (int)_statementLines.size() && _statementLines[idx]._num == _statementLines[_selector]._num);
+				}
+			}
+
+			events.warpMouse(Common::Point(mousePos.x, _bounds.top + _surface.fontHeight() + 2 + (_surface.fontHeight() + 1)
+				* (_selector - _talkScrollIndex)));
+			_selector = _statementLines[_selector]._num;
+		}
+	}
+
+	// Handle selecting a talk entry if a numeric key has been pressed
+	if (keycode >= Common::KEYCODE_1 && keycode <= Common::KEYCODE_9) {
+		int x = 0, t = 0, y = 0;
+
+		do {
+			if (y == (keycode - Common::KEYCODE_1)) {
+				_selector = _statementLines[t]._num;
+				_outsideMenu = false;
+				hotkey = true;
+				break;
+			}
+
+			++t;
+			if (_statementLines[x]._num != _statementLines[t]._num) {
+				x = t;
+				++y;
+			}
+		} while (t < (int)_statementLines.size());
+	}
+
+	// Display the selected statement highlighted and reset the last statement.
+	if (_selector != _oldSelector) {
+		render(HL_CHANGED_HIGHLIGHTS);
+		_oldSelector = _selector;
+	}
+
+	if (events._released || events._rightReleased || keycode == Common::KEYCODE_ESCAPE || hotkey) {
+		_dialogTimer = 0;
+		ui._scrollHighlight = SH_NONE;
+
+		// See if they want to close the menu (click outside the window or Escape pressed)
+		if ((_outsideMenu && _bounds.contains(mousePos)) || keycode == Common::KEYCODE_ESCAPE) {
+			if (keycode == Common::KEYCODE_ESCAPE)
+				_selector = -1;
+
+			talk.freeTalkVars();
+			talk.pullSequence();
+
+			for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+				if (people[idx]._type == CHARACTER) {
+					while (people[idx]._pathStack.empty())
+						people[idx].pullNPCPath();
+				}
+			}
+
+			banishWindow();
+			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+
+			if (scene._currentScene == 52)
+				callParrotFile = true;
+		}
+
+		_outsideMenu = false;
+
+		// See if they have selected a statement to say
+		if (_selector != -1) {
+			if (!talk._talkHistory[talk._converseNum][_selector] && talk._statements[_selector]._journal)
+				journal.record(talk._converseNum, _selector);
+			talk._talkHistory[talk._converseNum][_selector] = true;
+
+			talk._speaker = _vm->readFlags(76) ? HOLMES : WATSON;
+			_scroll = false;
+			const byte *msg = (const byte *)talk._statements[_selector]._statement.c_str();
+			talk.talkInterface(msg);
+
+			if (sound._speechOn)
+				sound._talkSoundFile += Common::String::format("%02dA", _selector + 1);
+
+			int msgLen = MAX((int)talk._statements[_selector]._statement.size(), 160);
+			people.setTalkSequence(talk._speaker);
+
+			talk.waitForMore(msgLen);
+			if (talk._talkToAbort)
+				return;
+
+			people.setListenSequence(talk._speaker);
+
+			do {
+				talk._scriptSelect = _selector;
+				talk._speaker = talk._talkTo;
+				talk.talkTo(talk._statements[_selector]._reply);
+
+				// Reset the misc field in case any people changed their sequences
+				for (int idx = 0; idx < MAX_CHARACTERS; ++idx)
+					people[idx]._misc = 0;
+
+				if (!talk._talkToAbort) {
+					if (!talk._statements[_selector]._modified.empty()) {
+						for (uint idx = 0; idx < talk._statements[_selector]._modified.size(); ++idx)
+							_vm->setFlags(talk._statements[_selector]._modified[idx]);
+
+						talk.setTalkMap();
+					}
+
+					// See if there is another talk file linked to this.
+					if (!talk._statements[_selector]._linkFile.empty() && !talk._scriptMoreFlag) {
+						Common::String linkFile = talk._statements[_selector]._linkFile;
+						talk.freeTalkVars();
+						talk.loadTalkFile(linkFile);
+
+						_talkScrollIndex = 0;
+						int select = -1;
+						_selector = _oldSelector = -1;
+
+						// Find the first statement that has all it's flags set correctly
+						for (uint idx = 0; idx < talk._statements.size() && select == -1; ++select) {
+							if (!talk._statements[idx]._talkMap)
+								select = idx;
+						}
+
+						if (select == -1) {
+							talk.freeTalkVars();
+							ui.putMessage("%s", FIXED(NothingToSay));
+							return;
+						}
+
+						// See is the new statement is in stealth mode
+						talk._talkStealth = (talk._statements[select]._statement.hasPrefix("^")) ? 2 : 0;
+
+						// See if the new file is a standard file, a reply first file, or a Stealth Mode file
+						if (!talk._statements[select]._statement.hasPrefix("*") && !talk._statements[select]._statement.hasPrefix("^")) {
+							talk.openTalkWindow();
+							setStatementLines();
+							render(HL_NO_HIGHLIGHTING);
+							break;
+						} else {
+							_selector = select;
+
+							if (!talk._talkHistory[talk._converseNum][_selector] && talk._statements[_selector]._journal)
+								journal.record(talk._converseNum, _selector);
+
+							talk._talkHistory[talk._converseNum][_selector] = true;
+						}
+					} else {
+						talk.freeTalkVars();
+						talk.pullSequence();
+
+						for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
+							if (people[idx]._type == CHARACTER)
+								while (!people[idx]._pathStack.empty())
+									people[idx].pullNPCPath();
+						}
+
+						banishWindow();
+						ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
+						break;
+					}
+				} else {
+					break;
+				}
+			} while (!_vm->shouldQuit());
+
+			events.clearEvents();
+
+			// Now, if a script was pushed onto the script stack, restore them to allow the previous script to continue.
+			talk.popStack();
+		}
+	}
+
+	if (callParrotFile)
+		talk.talkTo("POUT52A");
 }
 
 void WidgetTalk::render(Highlight highlightMode) {
@@ -191,8 +504,13 @@ void WidgetTalk::render(Highlight highlightMode) {
 
 	// See if the scroll bar needs to be drawn
 	if (_scroll && highlightMode != HL_CHANGED_HIGHLIGHTS)
-		drawScrollBar(_talkScrollIndex, VISIBLE_TALK_LINES, _statementLines.size());
+		drawScrollBar(_talkScrollIndex, NUM_VISIBLE_TALK_LINES, _statementLines.size());
 }
+
+void WidgetTalk::setStatementLines() {
+	// TODO
+}
+
 
 } // End of namespace Tattoo
 

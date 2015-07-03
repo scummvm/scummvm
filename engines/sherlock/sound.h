@@ -59,6 +59,8 @@ public:
 	bool _soundPlaying;
 	bool *_soundIsOn;
 	byte *_digiBuf;
+
+	Common::String _talkSoundFile;
 public:
 	Sound(SherlockEngine *vm, Audio::Mixer *mixer);
 

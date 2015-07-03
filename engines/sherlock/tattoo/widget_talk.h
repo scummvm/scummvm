@@ -47,6 +47,7 @@ private:
 	Common::Array<StatementLine> _statementLines;
 	int _selector, _oldSelector;
 	int _talkTextX;
+	uint32 _dialogTimer;
 
 	void getTalkWindowSize();
 
@@ -54,6 +55,8 @@ private:
 	 * Re-renders the contenst of the window to the widget's surface
 	 */
 	void render(Highlight highlightMode);
+
+	void setStatementLines();
 public:
 	WidgetTalk(SherlockEngine *vm);
 	virtual ~WidgetTalk() {}

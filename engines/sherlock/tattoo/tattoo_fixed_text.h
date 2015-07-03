@@ -55,7 +55,8 @@ enum FixedTextId {
 	kFixedText_Options,
 	kFixedText_Solve,
 	kFixedText_With,
-	kFixedText_NoEffect
+	kFixedText_NoEffect,
+	kFixedText_NothingToSay
 };
 
 class TattooFixedText: public FixedText {

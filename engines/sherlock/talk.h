@@ -178,23 +178,12 @@ private:
 	 * Remove any voice commands from a loaded statement list
 	 */
 	void stripVoiceCommands();
-	
-	/**
-	 * Form a table of the display indexes for statements
-	 */
-	void setTalkMap();
 
 	/**
 	 * Parses a reply for control codes and display text. The found text is printed within
 	 * the text window, handles delays, animations, and animating portraits.
 	 */
 	void doScript(const Common::String &script);
-
-	/**
-	 * When the talk window has been displayed, waits a period of time proportional to
-	 * the amount of text that's been displayed
-	 */
-	int waitForMore(int delay);
 protected:
 	SherlockEngine *_vm;
 	OpcodeMethod *_opcodeTable;
@@ -246,6 +235,17 @@ protected:
 	 * Checks, if a character is an opcode
 	 */
 	bool isOpcode(byte checkCharacter);
+	
+	/**
+	 * Form a table of the display indexes for statements
+	 */
+	void setTalkMap();
+
+	/**
+	 * When the talk window has been displayed, waits a period of time proportional to
+	 * the amount of text that's been displayed
+	 */
+	int waitForMore(int delay);
 
 	/**
 	 * Display the talk interface window
