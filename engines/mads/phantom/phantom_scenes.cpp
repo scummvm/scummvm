@@ -28,6 +28,7 @@
 #include "mads/scene.h"
 #include "mads/phantom/game_phantom.h"
 #include "mads/phantom/phantom_scenes.h"
+#include "mads/phantom/phantom_scenes1.h"
 
 namespace MADS {
 
@@ -42,9 +43,9 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	switch (scene._nextSceneId) {
 	// Scene group #1 (theater, stage and dressing rooms)
 	case 101:	// seats
-		return new DummyScene(vm);	// TODO
+		return new Scene101(vm);
 	case 102:	// music stands
-		return new DummyScene(vm);	// TODO
+		return new Scene102(vm);
 	case 103:	// below stage
 		return new DummyScene(vm);	// TODO
 	case 104:	// stage

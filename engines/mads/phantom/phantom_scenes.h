@@ -49,6 +49,7 @@ enum Verb {
 	VERB_CLIMB_DOWN = 0x21,
 	VERB_CLIMB_INTO = 0x22,
 	VERB_CLIMB_THROUGH = 0x23,
+	VERB_EXIT_TO = 0x37,
 	VERB_JUMP_INTO = 0x53,
 	VERB_LOOK_AT = 0x60,
 	VERB_LOOK_THROUGH = 0x61,
@@ -105,7 +106,6 @@ enum Noun {
 	NOUN_EXIT = 0x34,
 	NOUN_EXIT_DOWN = 0x35,
 	NOUN_EXIT_SIGN = 0x36,
-	NOUN_EXIT_TO = 0x37,
 	NOUN_EXIT_TO_BACKSTAGE = 0x38,
 	NOUN_EXIT_TO_CELLAR = 0x39,
 	NOUN_EXIT_TO_CORRIDOR = 0x3A,
@@ -482,27 +482,6 @@ protected:
 	* Constructor
 	*/
 	SceneInfoPhantom(MADSEngine *vm) : SceneInfo(vm) {}
-};
-
-// TODO: Temporary, remove once implemented properly
-class Scene1xx : public PhantomScene {
-protected:
-	/**
-	 * Plays an appropriate sound when entering a scene
-	 */
-	void sceneEntrySound() {}
-
-	/**
-	 *Sets the AA file to use for the scene
-	 */
-	void setAAName() {}
-
-	/**
-	 * Updates the prefix used for getting player sprites for the scene
-	 */
-	void setPlayerSpritesPrefix() {}
-public:
-	Scene1xx(MADSEngine *vm) : PhantomScene(vm) {}
 };
 
 // TODO: Temporary, remove once implemented properly
