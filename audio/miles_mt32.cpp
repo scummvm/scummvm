@@ -335,7 +335,6 @@ void MidiDriver_Miles_MT32::MT32SysEx(const uint32 targetAddress, const byte *da
 		delay += 40;
 
 	g_system->delayMillis(delay);
-	g_system->updateScreen();
 }
 
 // MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
@@ -507,6 +506,8 @@ void MidiDriver_Miles_MT32::controlChange(byte midiChannel, byte controllerNumbe
 void MidiDriver_Miles_MT32::programChange(byte midiChannel, byte patchId) {
 	byte channelPatchBank = _midiChannels[midiChannel].currentPatchBank;
 	byte activePatchBank = _patchesBank[patchId];
+
+	//warning("patch channel %d, patch %x, bank %x", midiChannel, patchId, channelPatchBank);
 
 	// remember patch id for the current MIDI-channel
 	_midiChannels[midiChannel].currentPatchId = patchId;
