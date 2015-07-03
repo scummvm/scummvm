@@ -23,6 +23,7 @@
 #include "sherlock/tattoo/tattoo_people.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
+#include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
 namespace Sherlock {
@@ -131,6 +132,7 @@ void TattooPerson::freeAltGraphics() {
 void TattooPerson::adjustSprite() {
 	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	if (_type == INVALID)
 		return;
@@ -192,13 +194,17 @@ void TattooPerson::adjustSprite() {
 
 	// See if the player has come to a stop after clicking on an Arrow zone to leave the scene.
 	// If so, this will set up the exit information for the scene transition
-	if (!_walkCount && scene._exitZone != -1 && scene._walkedInScene && scene._goToScene != -1 &&
+	if (!_walkCount && ui._exitZone != -1 && scene._walkedInScene && scene._goToScene == -1 &&
 			!_description.compareToIgnoreCase(people[HOLMES]._description)) { 
-		people._hSavedPos = scene._exits[scene._exitZone]._newPosition;
-		people._hSavedFacing = scene._exits[scene._exitZone]._newFacing;
+		Exit &exit = scene._exits[ui._exitZone];
+		scene._goToScene = exit._scene;
 
-		if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
-			people._hSavedPos.x = 100;
+		if (exit._newPosition.x != 0) {
+			people._savedPos = exit._newPosition;
+
+			if (people._savedPos._facing > 100 && people._savedPos.x < 1)
+				people._savedPos.x = 100;
+		}
 	}
 }
 
@@ -1184,8 +1190,9 @@ void TattooPeople::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _data[HOLMES]->_position;
-		_hSavedFacing = _data[HOLMES]->_sequenceNumber;
+		_savedPos.x = _data[HOLMES]->_position.x;
+		_savedPos.y = _data[HOLMES]->_position.y;
+		_savedPos._facing = _data[HOLMES]->_sequenceNumber;
 	}
 }
 

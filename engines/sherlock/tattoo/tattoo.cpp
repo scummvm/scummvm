@@ -85,8 +85,8 @@ void TattooEngine::startScene() {
 		_scene->_currentScene = OVERHEAD_MAP;
 		_scene->_goToScene = _map->show();
 
-		_people->_hSavedPos = Common::Point(-1, -1);
-		_people->_hSavedFacing = -1;
+		_people->_savedPos = Common::Point(-1, -1);
+		_people->_savedPos._facing = -1;
 	}
 
 	// TODO

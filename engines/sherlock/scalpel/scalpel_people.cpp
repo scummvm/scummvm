@@ -126,11 +126,10 @@ void ScalpelPerson::adjustSprite() {
 			scene._goToScene = exit->_scene;
 
 			if (exit->_newPosition.x != 0) {
-				people._hSavedPos = exit->_newPosition;
-				people._hSavedFacing = exit->_newFacing;
+				people._savedPos = exit->_newPosition;
 
-				if (people._hSavedFacing > 100 && people._hSavedPos.x < 1)
-					people._hSavedPos.x = 100;
+				if (people._savedPos._facing > 100 && people._savedPos.x < 1)
+					people._savedPos.x = 100;
 			}
 		}
 	}
@@ -444,8 +443,8 @@ void ScalpelPeople::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _data[HOLMES]->_position;
-		_hSavedFacing = _data[HOLMES]->_sequenceNumber;
+		_savedPos = _data[HOLMES]->_position;
+		_savedPos._facing = _data[HOLMES]->_sequenceNumber;
 	}
 }
 

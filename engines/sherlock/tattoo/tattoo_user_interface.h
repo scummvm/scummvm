@@ -45,7 +45,6 @@ class TattooUserInterface : public UserInterface {
 private:
 	int _lockoutTimer;
 	SaveMode _fileMode;
-	int _exitZone;
 	int _scriptZone;
 	int _cAnimFramePause;
 	WidgetInventory _inventoryWidget;

@@ -122,6 +122,11 @@ public:
 	int _facing;
 
 	PositionFacing() : Point32(), _facing(0) {}
+	PositionFacing(int xp, int yp, int theFacing) : Point32(xp, yp), _facing(theFacing) {}
+	PositionFacing &operator=(const Point32 &pt) { 
+		x = pt.x; y = pt.y;
+		return *this;
+	}
 };
 
 struct WalkSequence {

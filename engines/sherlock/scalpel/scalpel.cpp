@@ -922,8 +922,8 @@ void ScalpelEngine::startScene() {
 		_scene->_goToScene = _map->show();
 
 		_music->freeSong();
-		_people->_hSavedPos = Common::Point(-1, -1);
-		_people->_hSavedFacing = -1;
+		_people->_savedPos = Common::Point(-1, -1);
+		_people->_savedPos._facing = -1;
 	}
 
 	// Some rooms are prologue cutscenes, rather than normal game scenes. These are:

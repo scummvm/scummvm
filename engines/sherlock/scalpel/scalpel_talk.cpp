@@ -320,15 +320,13 @@ OpcodeReturn ScalpelTalk::cmdGotoScene(const byte *&str) {
 
 		// Run a canimation?
 		if (str[2] > 100) {
-			people._hSavedFacing = str[2];
-			people._hSavedPos = Point32(160, 100);
+			people._savedPos = PositionFacing(160, 100, str[2]);
 		} else {
-			people._hSavedFacing = str[2] - 1;
 			int32 posX = (str[3] - 1) * 256 + str[4] - 1;
 			int32 posY = str[5] - 1;
-			people._hSavedPos = Point32(posX, posY);
+			people._savedPos = PositionFacing(posX, posY, str[2] - 1);
 		}
-	}	// if (scene._goToScene != 100)
+	}
 
 	str += 6;
 

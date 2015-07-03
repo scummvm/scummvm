@@ -99,8 +99,7 @@ protected:
 public:
 	Common::Array<PersonData> _characters;
 	ImageFile *_talkPics;
-	Point32 _hSavedPos;
-	int _hSavedFacing;
+	PositionFacing _savedPos;
 	bool _holmesOn;
 	bool _portraitLoaded;
 	bool _portraitsOn;

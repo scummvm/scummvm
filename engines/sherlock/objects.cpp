@@ -526,18 +526,17 @@ int BaseObject::checkNameForCodes(const Common::String &name, FixedTextActionId 
 					++p;
 
 					Common::String s(p, p + 3);
-					people._hSavedPos.x = atoi(s.c_str());
+					people._savedPos.x = atoi(s.c_str());
 
 					s = Common::String(p + 3, p + 6);
-					people._hSavedPos.y = atoi(s.c_str());
+					people._savedPos.y = atoi(s.c_str());
 
 					s = Common::String(p + 6, p + 9);
-					people._hSavedFacing = atoi(s.c_str());
-					if (people._hSavedFacing == 0)
-						people._hSavedFacing = 10;
+					people._savedPos._facing = atoi(s.c_str());
+					if (people._savedPos._facing == 0)
+						people._savedPos._facing = 10;
 				} else if ((p = strchr(name.c_str(), '/')) != nullptr) {
-					people._hSavedPos = Common::Point(1, 0);
-					people._hSavedFacing = 100 + atoi(p + 1);
+					people._savedPos = PositionFacing(1, 0, 100 + atoi(p + 1));
 				}
 			} else {
 				scene._goToScene = 100;

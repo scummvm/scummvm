@@ -79,8 +79,7 @@ class Exit: public Common::Rect {
 public:
 	int _scene;
 	int _allow;
-	Common::Point _newPosition;
-	int _newFacing;
+	PositionFacing _newPosition;
 
 	Common::String _dest;
 	int _image;					// Arrow image to use
@@ -228,7 +227,6 @@ public:
 	int _walkDirectory[MAX_ZONES][MAX_ZONES];
 	Common::Array<WalkArray> _walkPoints;
 	Common::Array<Exit> _exits;
-	int _exitZone;
 	SceneEntry _entrance;
 	Common::Array<SceneSound> _sounds;
 	ObjectArray _canimShapes;

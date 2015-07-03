@@ -46,6 +46,7 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_helpStyle = false;
 	_windowBounds = Common::Rect(0, CONTROLS_Y1, SHERLOCK_SCREEN_WIDTH - 1, SHERLOCK_SCREEN_HEIGHT - 1);
 	_lookScriptFlag = false;
+	_exitZone = -1;
 
 	_bgFound = _oldBgFound = -1;
 	_key = _oldKey = '\0';
@@ -193,6 +194,7 @@ void UserInterface::reset() {
 	_bgFound = _oldBgFound = -1;
 	_oldKey = -1;
 	_oldTemp = _temp = -1;
+	_exitZone = -1;
 }
 
 

@@ -73,6 +73,7 @@ public:
 	Common::Rect _windowBounds;
 	bool _lookScriptFlag;
 	int _bgFound, _oldBgFound;
+	int _exitZone;
 
 	// TODO: Not so sure these should be in the base class. May want to refactor them to SherlockEngine, or refactor
 	// various Scalpel dialogs to keep their own private state of key/selections

@@ -172,8 +172,8 @@ People::People(SherlockEngine *vm) : _vm(vm) {
 	_speakerFlip = false;
 	_holmesFlip = false;
 	_holmesQuotient = 0;
-	_hSavedPos = Point32(-1, -1);
-	_hSavedFacing = -1;
+	_savedPos = Point32(-1, -1);
+	_savedPos._facing = -1;
 	_forceWalkReload = false;
 	_useWalkLib = false;
 	_walkControl = 0;
@@ -336,8 +336,8 @@ void People::synchronize(Serializer &s) {
 	s.syncAsSint16LE(_holmesQuotient);
 
 	if (s.isLoading()) {
-		_hSavedPos = _data[HOLMES]->_position;
-		_hSavedFacing = _data[HOLMES]->_sequenceNumber;
+		_savedPos = _data[HOLMES]->_position;
+		_savedPos._facing = _data[HOLMES]->_sequenceNumber;
 	}
 }
 
