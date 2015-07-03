@@ -32,7 +32,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      head scene (bug #6728). It may have been happening in other scenes as
      well.
 
- SAGA:
+ MADE:
+   - Improved AdLib music support in Return to Zork
+
+   SAGA:
    - Improved AdLib music support.
 
  SCI:
