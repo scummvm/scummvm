@@ -35,7 +35,6 @@ namespace Tattoo {
 #define VISIBLE_TALK_LINES 6
 
 WidgetTalk::WidgetTalk(SherlockEngine *vm) : WidgetBase(vm) {
-	_talkScroll = false;
 	_talkScrollIndex = 0;
 	_selector = _oldSelector = -1;
 	_talkTextX = 0;
@@ -71,12 +70,12 @@ void WidgetTalk::getTalkWindowSize() {
 	// Make sure that the window does not get too big
 	if (numLines < 7) {
 		height = (_surface.fontHeight() + 1) * numLines + 9;
-		_talkScroll = false;
+		_scroll = false;
 	} else {
 		// Set up the height to a constrained amount, and add extra width for the scrollbar
 		width += BUTTON_SIZE + 3;
 		height = (_surface.fontHeight() + 1) * 6 + 9;
-		_talkScroll = false;
+		_scroll = false;
 	}
 
 	_bounds = Common::Rect(width, height);
@@ -129,7 +128,7 @@ void WidgetTalk::load() {
 	makeInfoArea();
 
 	// If a scrollbar is needed, draw it in
-	if (_talkScroll) {
+	if (_scroll) {
 		int xp = _surface.w() - BUTTON_SIZE - 6;
 		_surface.vLine(xp, 3, _surface.h() - 4, INFO_TOP);
 		_surface.vLine(xp + 1, 3, _surface.h() - 4, INFO_MIDDLE);
@@ -140,6 +139,8 @@ void WidgetTalk::load() {
 }
 
 void WidgetTalk::handleEvents() {
+	handleScrollbarEvents(_talkScrollIndex, VISIBLE_TALK_LINES, _statementLines.size());
+
 	// TODO
 }
 
@@ -189,7 +190,7 @@ void WidgetTalk::render(Highlight highlightMode) {
 	}
 
 	// See if the scroll bar needs to be drawn
-	if (_talkScroll && highlightMode != HL_CHANGED_HIGHLIGHTS)
+	if (_scroll && highlightMode != HL_CHANGED_HIGHLIGHTS)
 		drawScrollBar(_talkScrollIndex, VISIBLE_TALK_LINES, _statementLines.size());
 }
 

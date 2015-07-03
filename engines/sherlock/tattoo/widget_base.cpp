@@ -30,6 +30,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 WidgetBase::WidgetBase(SherlockEngine *vm) : _vm(vm) {
+	_scroll = false;
 }
 
 void WidgetBase::summonWindow() {
@@ -204,7 +205,6 @@ const Common::Point &WidgetBase::getCurrentScroll() const {
 void WidgetBase::checkTabbingKeys(int numOptions) {
 }
 
-
 void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	bool raised;
@@ -254,6 +254,46 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 			* index / FIXED_INT_MULTIPLIER + r.top + BUTTON_SIZE;
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
 	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
+}
+
+void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
+	Events &events = *_vm->_events;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
+	Common::Point mousePos = events.mousePos();
+
+	// If they have selected the sollbar, return with the Scroll Bar Still selected
+	if (ui._scrollHighlight == 3)
+		return;
+
+	ui._scrollHighlight = SH_NONE;
+
+	if ((!events._pressed && !events._rightReleased) || !_scroll)
+		return;
+
+	Common::Rect r(_bounds.right - BUTTON_SIZE - 3, _bounds.top, _bounds.right - 3, _bounds.bottom - 6);
+
+	// Calculate the Scroll Position bar
+	int barHeight = pageSize * (r.height() - BUTTON_SIZE * 2) / count;
+	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
+
+	int barY = (count <= pageSize) ? 3 + BUTTON_SIZE : (r.height() - BUTTON_SIZE * 2 - barHeight) * FIXED_INT_MULTIPLIER 
+		/ (count - pageSize) * index / FIXED_INT_MULTIPLIER + 3 + BUTTON_SIZE;
+
+	if (Common::Rect(r.left, r.top + 3, r.left + BUTTON_SIZE, r.top + BUTTON_SIZE + 3).contains(mousePos))
+		// Mouse on scroll up button
+		ui._scrollHighlight = SH_SCROLL_UP;
+	else if (Common::Rect(r.left, r.top + BUTTON_SIZE + 3, r.left + BUTTON_SIZE, barY - BUTTON_SIZE - 3).contains(mousePos))
+		// Mouse on paging up area (the area of the vertical bar above the thumbnail)
+		ui._scrollHighlight = SH_PAGE_UP;
+	else if (Common::Rect(r.left, r.top + barY, r.left + BUTTON_SIZE, r.top + barY + barHeight).contains(mousePos))
+		// Mouse on scrollbar thumb
+		ui._scrollHighlight = SH_THUMBNAIL;
+	else if (Common::Rect(r.left, r.top + barY + barHeight, r.left + BUTTON_SIZE, r.bottom - BUTTON_SIZE + 3).contains(mousePos))
+		// Mouse on paging down area (the area of the vertical bar below the thumbnail)
+		ui._scrollHighlight = SH_PAGE_DOWN;
+	else if (Common::Rect(r.left, r.bottom - BUTTON_SIZE + 3, r.left + BUTTON_SIZE, r.bottom).contains(mousePos))
+		// Mouse on scroll down button
+		ui._scrollHighlight = SH_SCROLL_DOWN;
 }
 
 } // End of namespace Tattoo

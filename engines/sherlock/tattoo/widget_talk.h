@@ -43,7 +43,6 @@ class WidgetTalk: public WidgetBase {
 		int _num;
 	};
 private:
-	bool _talkScroll;
 	int _talkScrollIndex;
 	Common::Array<StatementLine> _statementLines;
 	int _selector, _oldSelector;

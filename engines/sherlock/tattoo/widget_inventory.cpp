@@ -379,7 +379,7 @@ void WidgetInventory::handleEvents() {
 	// See if they released a mouse button button
 	if (events._released || events._rightReleased || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 		_dialogTimer = -1;
-		ui._scrollHighlight = 0;
+		ui._scrollHighlight = SH_NONE;
 
 		// See if they have a Verb List open for an Inventry Item
 		if (_invVerbMode == 1) {

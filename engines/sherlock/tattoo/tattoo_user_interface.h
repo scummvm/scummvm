@@ -40,6 +40,8 @@ namespace Tattoo {
 
 class WidgetBase;
 
+enum ScrollHighlight { SH_NONE = 0, SH_SCROLL_UP = 1, SH_PAGE_UP = 2, SH_THUMBNAIL = 3, SH_PAGE_DOWN = 4, SH_SCROLL_DOWN = 5 };
+
 class TattooUserInterface : public UserInterface {
 	friend class WidgetBase;
 private:
@@ -110,7 +112,7 @@ public:
 	int _activeObj;
 	Common::KeyState _keyState;
 	Common::Point _lookPos;
-	int _scrollHighlight;
+	ScrollHighlight _scrollHighlight;
 	ImageFile *_mask, *_mask1;
 	Common::Point _maskOffset;
 	int _maskCounter;
