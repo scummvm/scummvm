@@ -500,14 +500,12 @@ void  Scene::drawElements(ScreenTransition transitionType, bool surfaceFlag) {
 	_dirtyAreas.copy(&_backgroundSurface, &_vm->_screen, _posAdjust);
 
 	// Handle dirty areas for foreground objects
-	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
-		_spriteSlots.setDirtyAreas();
+	_spriteSlots.setDirtyAreas();
 	_textDisplay.setDirtyAreas2();
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Draw sprites that have changed
-	if (_vm->getGameID() == GType_RexNebular)	// TODO: Implement for V2 games
-		_spriteSlots.drawSprites(&_sceneSurface);
+	_spriteSlots.drawSprites(&_sceneSurface);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(&_vm->_screen);
