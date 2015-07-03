@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2015-06-30 20:57+0100\n"
-"PO-Revision-Date: 2015-07-02 09:42+0200\n"
+"PO-Revision-Date: 2015-07-03 23:36+0200\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
@@ -789,7 +789,7 @@ msgstr "Keine Roland-MT-32-Musik"
 
 #: gui/options.cpp:927
 msgid "Text and Speech:"
-msgstr "Sprachausgabe:"
+msgstr "Sprache und Text:"
 
 #: gui/options.cpp:931 gui/options.cpp:941
 msgid "Speech"
@@ -810,7 +810,7 @@ msgstr "Untertitel-Tempo:"
 #: gui/options.cpp:937
 msgctxt "lowres"
 msgid "Text and Speech:"
-msgstr "Sprachausgabe:"
+msgstr "Text u. Sprache:"
 
 #: gui/options.cpp:941
 msgid "Spch"
