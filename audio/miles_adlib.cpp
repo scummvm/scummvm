@@ -1060,7 +1060,7 @@ uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
 	return 0;
 }
 
-MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFilename, const Common::String instrumentDataFilenameOPL3, const byte *instrumentRawDataPtr, uint32 instrumentRawDataSize) {
+MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFilename, const Common::String &instrumentDataFilenameOPL3, const byte *instrumentRawDataPtr, uint32 instrumentRawDataSize) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
 	Common::File *fileStream = NULL;
 	uint32        fileSize = 0;

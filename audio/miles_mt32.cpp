@@ -796,7 +796,7 @@ void MidiDriver_Miles_MT32::writeToSystemArea(byte index, byte value) {
 	MT32SysEx(targetAddress, sysExData);
 }
 
-MidiDriver *MidiDriver_Miles_MT32_create(const Common::String instrumentDataFilename) {
+MidiDriver *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename) {
 	MilesMT32InstrumentEntry *instrumentTablePtr = NULL;
 	uint16                    instrumentTableCount = 0;
 
