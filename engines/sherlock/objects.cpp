@@ -1443,7 +1443,7 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 		_goto[1].y = s.readSint16LE();
 		_goto[1]._facing = s.readSint16LE();
 		ADJUST_COORD(_goto[1]);
-	} else {
+	} else if (_goto[0].x != -1) {
 		// For Serrated Scalpel, adjust the loaded co-ordinates
 		_goto[0].x = _goto[0].x / 100;
 		_goto[0].y = _goto[0].y / 100;
@@ -1460,7 +1460,7 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 		_teleport[1].y = s.readSint16LE();
 		_teleport[1]._facing = s.readSint16LE();
 		ADJUST_COORD(_teleport[1]);
-	} else {
+	} else if (_teleport[0].x != -1) {
 		// For Serrated Scalpel, adjust the loaded co-ordinates
 		_teleport[0].x = _teleport[0].x / 100;
 		_teleport[0].y = _teleport[0].y / 100;
