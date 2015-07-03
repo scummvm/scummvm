@@ -1064,17 +1064,17 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
 	Common::File *fileStream = NULL;
 	uint32        fileSize = 0;
-	const byte   *fileDataPtr = NULL;
-	bool          fileDataAllocatedByUs = false;
+	byte         *fileDataReadPtr = nullptr;
+	const byte   *fileDataPtr = nullptr;
 	uint32        fileDataOffset = 0;
 	uint32        fileDataLeft = 0;
 
 	byte curBankId = 0;
 	byte curPatchId = 0;
 
-	InstrumentEntry *instrumentTablePtr = NULL;
+	InstrumentEntry *instrumentTablePtr = nullptr;
 	uint16           instrumentTableCount = 0;
-	InstrumentEntry *instrumentPtr = NULL;
+	InstrumentEntry *instrumentPtr = nullptr;
 	uint32           instrumentOffset = 0;
 	uint16           instrumentDataSize = 0;
 
@@ -1087,13 +1087,14 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 
 		fileSize = fileStream->size();
 
-		fileDataPtr = new byte[fileSize];
-		fileDataAllocatedByUs = true;
+		fileDataReadPtr = new byte[fileSize];
 
-		if (fileStream->read((byte *)fileDataPtr, fileSize) != fileSize)
+		if (fileStream->read(fileDataReadPtr, fileSize) != fileSize)
 			error("MILES-ADLIB: error while reading instrument file");
 		fileStream->close();
 		delete fileStream;
+
+		fileDataPtr = fileDataReadPtr;
 
 	} else if (instrumentRawDataPtr) {
 		// instrument data was passed directly (currently used by Amazon Guardians of Eden
@@ -1168,9 +1169,9 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String instrumentDataFil
 		instrumentPtr++;
 	}
 
-	if (fileDataAllocatedByUs) {
-		// Free instrument file data
-		delete[] fileDataPtr;
+	if (fileDataReadPtr) {
+		// Free instrument file data in case it was read by us
+		delete[] fileDataReadPtr;
 	}
 
 	return new MidiDriver_Miles_AdLib(g_system->getMixer(), instrumentTablePtr, instrumentTableCount);
