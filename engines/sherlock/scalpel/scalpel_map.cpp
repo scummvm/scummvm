@@ -90,10 +90,6 @@ void ScalpelMap::loadSequences(int count, const byte *seq) {
 }
 
 void ScalpelMap::loadData() {
-	// TODO: Remove this
-	if (_vm->getGameID() == GType_RoseTattoo)
-		return;
-
 	// Load the list of location names
 	Common::SeekableReadStream *txtStream = _vm->_res->load("chess.txt");
 
