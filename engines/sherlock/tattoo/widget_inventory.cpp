@@ -497,7 +497,7 @@ void WidgetInventory::handleEvents() {
 				}
 
 				if (!found)
-					ui.putMessage("%s", FIXED(NoEffect).c_str());
+					ui.putMessage("%s", FIXED(NoEffect));
 			}
 		} else if ((_outsideMenu && !_bounds.contains(mousePos)) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
 			// Want to close the window (clicked outside of it). So close the window and return to Standard 
@@ -540,7 +540,7 @@ void WidgetInventory::handleEvents() {
 						}
 					}
 					if (!found)
-						ui.putMessage("%s",FIXED(NoEffect).c_str());
+						ui.putMessage("%s", FIXED(NoEffect));
 
 				} else {
 					// See if they right clicked on an item

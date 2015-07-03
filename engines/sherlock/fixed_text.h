@@ -53,7 +53,7 @@ public:
 	/**
 	 * Gets text
 	 */
-	virtual const Common::String getText(int fixedTextId) = 0;
+	virtual const char *getText(int fixedTextId) = 0;
 
 	/**
 	 * Get action message

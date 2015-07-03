@@ -68,7 +68,7 @@ public:
 	/**
 	 * Gets text
 	 */
-	virtual const Common::String getText(int fixedTextId);
+	virtual const char *getText(int fixedTextId);
 
 	/**
 	 * Get action message

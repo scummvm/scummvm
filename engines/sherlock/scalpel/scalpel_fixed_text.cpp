@@ -359,8 +359,8 @@ ScalpelFixedText::ScalpelFixedText(SherlockEngine *vm) : FixedText(vm) {
 	_curLanguageEntry = curLanguageEntry;
 }
 
-const Common::String ScalpelFixedText::getText(int fixedTextId) {
-	return Common::String(_curLanguageEntry->fixedTextArray[fixedTextId]);
+const char *ScalpelFixedText::getText(int fixedTextId) {
+	return _curLanguageEntry->fixedTextArray[fixedTextId];
 }
 
 const Common::String ScalpelFixedText::getActionMessage(FixedTextActionId actionId, int messageIndex) {

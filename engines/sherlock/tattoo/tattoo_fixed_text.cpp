@@ -62,8 +62,8 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {
 }
 
-const Common::String TattooFixedText::getText(int fixedTextId) {
-	return Common::String(FIXED_TEXT_ENGLISH[fixedTextId]);
+const char *TattooFixedText::getText(int fixedTextId) {
+	return FIXED_TEXT_ENGLISH[fixedTextId];
 }
 
 const Common::String TattooFixedText::getActionMessage(FixedTextActionId actionId, int messageIndex) {
