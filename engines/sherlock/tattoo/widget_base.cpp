@@ -76,7 +76,9 @@ void WidgetBase::draw() {
 
 	if (_bounds.width() > 0 && !_surface.empty()) {
 		// Get the area to draw, adjusted for scroll position
+		restrictToScreen();
 		Common::Rect bounds = _bounds;
+		
 		bounds.translate(currentScroll.x, currentScroll.y);
 
 		// Draw the background for the widget
@@ -148,7 +150,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 	return *strP ? Common::String(strP) : Common::String();
 }
 
-void WidgetBase::checkMenuPosition() {
+void WidgetBase::restrictToScreen() {
 	if (_bounds.left < 0)
 		_bounds.moveTo(0, _bounds.top);
 	if (_bounds.top < 0)

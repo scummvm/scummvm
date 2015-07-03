@@ -63,12 +63,17 @@ void TattooUserInterface::initScrollVars() {
 }
 
 void TattooUserInterface::lookAtObject() {
+	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Sound &sound = *_vm->_sound;
 	Talk &talk = *_vm->_talk;
+	Common::Point mousePos = events.mousePos();
 	Common::String desc;
 	int cAnimSpeed = 0;
+
+	_lookPos = mousePos;
+	_menuMode = LOOK_MODE;
 
 	if (_personFound) {
 		desc = people[_bgFound - 1000]._examine;
@@ -184,6 +189,7 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 
 		// Show text dialog
 		_textWidget.load(str);
+		_textWidget.summonWindow();
 
 		if (firstTime)
 			_selector = _oldSelector = -1;

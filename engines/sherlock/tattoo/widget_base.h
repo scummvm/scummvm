@@ -51,7 +51,7 @@ protected:
 	/**
 	 * Ensure that menu is drawn entirely on-screen
 	 */
-	void checkMenuPosition();
+	void restrictToScreen();
 
 	/**
 	 * Draw a window frame around the dges of the passed surface

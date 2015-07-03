@@ -287,7 +287,7 @@ void WidgetInventory::load(int mode) {
 	}
 
 	// Ensure menu will be on-screen
-	checkMenuPosition();
+	restrictToScreen();
 
 	// Load the inventory data
 	inv.loadInv();
