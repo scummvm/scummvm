@@ -33,7 +33,6 @@ namespace Tattoo {
 
 void WidgetTooltipBase::draw() {
 	Screen &screen = *_vm->_screen;
-	const Common::Point &currentScroll = getCurrentScroll();
 
 	// If there was a previously drawn frame in a different position that hasn't yet been erased, then erase it
 	if (_oldBounds.width() > 0 && _oldBounds != _bounds)
@@ -41,7 +40,7 @@ void WidgetTooltipBase::draw() {
 
 	if (_bounds.width() > 0 && !_surface.empty()) {
 		// Blit the affected area to the screen
-		screen.slamRect(_bounds, currentScroll);
+		screen.slamRect(_bounds);
 		
 		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
 		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
@@ -54,11 +53,10 @@ void WidgetTooltipBase::draw() {
 
 void WidgetTooltipBase::erase() {
 	Screen &screen = *_vm->_screen;
-	const Common::Point &currentScroll = getCurrentScroll();
 
 	if (_oldBounds.width() > 0) {
 		// Restore the affected area from the back buffer to the screen
-		screen.slamRect(_oldBounds, currentScroll);
+		screen.slamRect(_oldBounds);
 
 		// Reset the old bounds so it won't be erased again
 		_oldBounds = Common::Rect(0, 0, 0, 0);
@@ -212,13 +210,6 @@ void WidgetSceneTooltip::handleEvents() {
 	ui._oldArrowZone = ui._arrowZone;
 
 	WidgetTooltip::handleEvents();
-}
-
-/*----------------------------------------------------------------*/
-
-const Common::Point &WidgetMapTooltip::getCurrentScroll() const {
-	TattooMap &map = *(TattooMap *)_vm->_map;
-	return map._currentScroll;
 }
 
 } // End of namespace Tattoo

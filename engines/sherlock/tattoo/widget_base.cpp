@@ -51,16 +51,11 @@ void WidgetBase::banishWindow() {
 
 void WidgetBase::erase() {
 	Screen &screen = *_vm->_screen;
-	const Common::Point &currentScroll = getCurrentScroll();
 
 	if (_oldBounds.width() > 0) {
-		// Get the bounds to copy from the back buffers, adjusted for scroll position
-		Common::Rect oldBounds = _oldBounds;
-		oldBounds.translate(currentScroll.x, currentScroll.y);
-
 		// Restore the affected area from the secondary back buffer into the first one, and then copy to screen
-		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(oldBounds.left, oldBounds.top), oldBounds);
-		screen.blitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), oldBounds);
+		screen._backBuffer1.blitFrom(screen._backBuffer2, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
+		screen.slamRect(_oldBounds);
 
 		// Reset the old bounds so it won't be erased again
 		_oldBounds = Common::Rect(0, 0, 0, 0);
@@ -69,7 +64,6 @@ void WidgetBase::erase() {
 
 void WidgetBase::draw() {
 	Screen &screen = *_vm->_screen;
-	const Common::Point &currentScroll = getCurrentScroll();
 
 	// If there was a previously drawn frame in a different position that hasn't yet been erased, then erase it
 	if (_oldBounds.width() > 0 && _oldBounds != _bounds)
@@ -78,16 +72,13 @@ void WidgetBase::draw() {
 	if (_bounds.width() > 0 && !_surface.empty()) {
 		// Get the area to draw, adjusted for scroll position
 		restrictToScreen();
-		Common::Rect bounds = _bounds;
 		
-		bounds.translate(currentScroll.x, currentScroll.y);
-
 		// Draw the background for the widget
 		drawBackground();
 
 		// Draw the widget onto the back buffer and then slam it to the screen
-		screen._backBuffer1.transBlitFrom(_surface, Common::Point(bounds.left, bounds.top));
-		screen.blitFrom(screen._backBuffer1, Common::Point(_bounds.left, _bounds.top), bounds);
+		screen._backBuffer1.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+		screen.slamRect(_bounds);
 
 		// Store a copy of the drawn area for later erasing
 		_oldBounds = _bounds;
@@ -100,8 +91,6 @@ void WidgetBase::drawBackground() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	Common::Rect bounds = _bounds;
-	const Common::Point &currentScroll = getCurrentScroll();
-	bounds.translate(currentScroll.x, currentScroll.y);
 
 	if (vm._transparentMenus) {
 		ui.makeBGArea(bounds);
@@ -195,11 +184,6 @@ void WidgetBase::makeInfoArea(Surface &s) {
 
 void WidgetBase::makeInfoArea() {
 	makeInfoArea(_surface);
-}
-
-const Common::Point &WidgetBase::getCurrentScroll() const {
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	return ui._currentScroll;
 }
 
 void WidgetBase::checkTabbingKeys(int numOptions) {

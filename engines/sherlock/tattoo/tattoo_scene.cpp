@@ -109,11 +109,10 @@ bool TattooScene::loadScene(const Common::String &filename) {
 void TattooScene::drawAllShapes() {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	ShapeList shapeList;
 
 	// Draw all objects and animations that are set to behind
-	screen.setDisplayBounds(Common::Rect(ui._currentScroll.x, 0, ui._currentScroll.x + SHERLOCK_SCREEN_WIDTH,  SHERLOCK_SCREEN_HEIGHT));
+	screen.setDisplayBounds(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 	// Draw all active shapes which are behind the person
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
@@ -355,7 +354,7 @@ void TattooScene::doBgAnim() {
 		events.wait(3);
 
 	if (screen._flushScreen) {
-		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT), ui._currentScroll);
+		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 		screen._flushScreen = false;
 	}
 
@@ -468,7 +467,6 @@ void TattooScene::updateBackground() {
 void TattooScene::doBgAnimDrawSprites() {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Screen &screen = *_vm->_screen;
-	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 
 	for (int idx = 0; idx < MAX_CHARACTERS; ++idx) {
 		TattooPerson &person = people[idx];
@@ -534,10 +532,8 @@ void TattooScene::doBgAnimDrawSprites() {
 		if (_activeCAnim._zPlacement != REMOVE) {
 			screen.flushImage(&_activeCAnim._imageFrame, _activeCAnim._position, _activeCAnim._oldBounds, _activeCAnim._scaleVal);
 		} else {
-			screen.slamArea(_activeCAnim._removeBounds.left - ui._currentScroll.x, _activeCAnim._removeBounds.top, 
-				_activeCAnim._removeBounds.width(), _activeCAnim._removeBounds.height());
-			_activeCAnim._removeBounds.left = _activeCAnim._removeBounds.top = 0;
-			_activeCAnim._removeBounds.right = _activeCAnim._removeBounds.bottom = 0;
+			screen.slamRect(_activeCAnim._removeBounds);
+			_activeCAnim._removeBounds = Common::Rect(0, 0, 0, 0);
 			_activeCAnim._zPlacement = -1;		// Reset _zPlacement so we don't REMOVE again
 		}
 	}

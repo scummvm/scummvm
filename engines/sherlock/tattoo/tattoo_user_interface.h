@@ -103,7 +103,7 @@ private:
 	 */
 	void freeMenu();
 public:
-	Common::Point _currentScroll, _targetScroll;
+	Common::Point _targetScroll;
 	int _scrollSize, _scrollSpeed;
 	bool _drawMenu;
 	int _arrowZone, _oldArrowZone;

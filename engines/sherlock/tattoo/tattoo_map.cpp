@@ -121,7 +121,7 @@ int TattooMap::show() {
 
 	// Set initial scroll position
 	_targetScroll = _bigPos;
-	_currentScroll = Common::Point(-1, -1);
+	screen._currentScroll = Common::Point(-1, -1);
 
 	do {
 		// Allow for event processing and get the current mouse position
@@ -192,15 +192,14 @@ int TattooMap::show() {
 		}
 
 		// Handle any scrolling of the map
-		if (_currentScroll != _targetScroll) {
+		if (screen._currentScroll != _targetScroll) {
 			// If there is a Text description being displayed, restore the area under it
 			_mapTooltip.erase();
 
-			_currentScroll = _targetScroll;
+			screen._currentScroll = _targetScroll;
 
 			checkMapNames(false);
-			slamRect(Common::Rect(_currentScroll.x, _currentScroll.y, _currentScroll.x + SHERLOCK_SCREEN_WIDTH, 
-				_currentScroll.y + SHERLOCK_SCREEN_HEIGHT));
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		}
 
 		// Handling if a location has been clicked on
@@ -209,7 +208,7 @@ int TattooMap::show() {
 			_mapTooltip.erase();
 
 			// Save the current scroll position on the map
-			_bigPos = _currentScroll;
+			_bigPos = screen._currentScroll;
 
 			showCloseUp(_bgFound);
 			result = _bgFound + 1;
@@ -306,7 +305,8 @@ void TattooMap::drawMapIcons() {
 
 void TattooMap::checkMapNames(bool slamIt) {
 	Events &events = *_vm->_events;
-	Common::Point mousePos = events.mousePos() + _currentScroll;
+	Screen &screen = *_vm->_screen;
+	Common::Point mapPos = events.mousePos() + screen._currentScroll;
 
 	// See if the mouse is pointing at any of the map locations
 	_bgFound = -1;
@@ -318,7 +318,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			Common::Rect r(mapEntry.x - img._width / 2, mapEntry.y - img._height / 2,
 				mapEntry.x + img._width / 2, mapEntry.y + img._height / 2);
 
-			if (r.contains(mousePos)) {
+			if (r.contains(mapPos)) {
 				_bgFound = idx;
 				break;
 			}
@@ -417,14 +417,6 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	screen.slamRect(oldBounds);
 	screen.slamRect(r);
 	events.wait(2);
-}
-
-void TattooMap::slamRect(const Common::Rect &bounds) {
-	Screen &screen = *_vm->_screen;
-	Common::Rect r = bounds;
-	r.translate(-_currentScroll.x, -_currentScroll.y);
-
-	screen.blitFrom(screen._backBuffer1, Common::Point(r.left, r.top), bounds);
 }
 
 } // End of namespace Tattoo

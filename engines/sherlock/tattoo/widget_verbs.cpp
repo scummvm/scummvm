@@ -153,10 +153,11 @@ void WidgetVerbs::handleEvents() {
 	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
-	Common::Point scenePos = mousePos + ui._currentScroll;
+	Common::Point scenePos = mousePos + screen._currentScroll;
 	bool noDesc = false;
 
 	Common::String strLook = fixedText.getText(kFixedText_Look);

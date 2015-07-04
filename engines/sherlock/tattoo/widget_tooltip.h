@@ -76,11 +76,6 @@ public:
 };
 
 class WidgetMapTooltip : public WidgetTooltip {
-protected:
-	/**
-	 * Returns the current scroll position
-	 */
-	virtual const Common::Point &getCurrentScroll() const;
 public:
 	WidgetMapTooltip(SherlockEngine *vm) : WidgetTooltip(vm) {}
 };

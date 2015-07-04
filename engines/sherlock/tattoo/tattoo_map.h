@@ -76,13 +76,6 @@ private:
 	 * This will load a specified close up and zoom it up to the middle of the screen
 	 */
 	void showCloseUp(int closeUpNum);
-
-	/**
-	 * Copies an area of the map to the screen, taking into account scrolling
-	 */
-	void slamRect(const Common::Rect &bounds);
-public:
-	Common::Point _currentScroll;
 public:
 	TattooMap(SherlockEngine *vm);
 	virtual ~TattooMap() {}

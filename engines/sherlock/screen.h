@@ -82,6 +82,7 @@ public:
 	byte _sMap[PALETTE_SIZE];
 	byte _tMap[PALETTE_SIZE];
 	bool _flushScreen;
+	Common::Point _currentScroll;
 public:
 	static Screen *init(SherlockEngine *vm);
 	Screen(SherlockEngine *vm);
@@ -166,11 +167,6 @@ public:
 	void slamRect(const Common::Rect &r);
 
 	/**
-	 * Copies a given area to the screen
-	 */
-	void slamRect(const Common::Rect &r, const Common::Point &currentScroll);
-
-	/**
 	 * Copy an image from the back buffer to the screen, taking care of both the
 	 * new area covered by the shape as well as the old area, which must be restored
 	 */
@@ -190,14 +186,14 @@ public:
 	void flushImage(ImageFrame *frame, const Common::Point &pt, Common::Rect &newBounds, int scaleVal);
 
 	/**
-	 * Copies data from the back buffer to the screen, taking into account scrolling position
+	 * Copies data from the back buffer to the screen
 	 */
-	void blockMove(const Common::Rect &r, const Common::Point &scrollPos);
+	void blockMove(const Common::Rect &r);
 
 	/**
-	 * Copies the entire screen from the back buffer, taking into account scrolling position
+	 * Copies the entire screen from the back buffer
 	 */
-	void blockMove(const Common::Point &scorllPos);
+	void blockMove();
 
 	/**
 	 * Fills an area on the back buffer, and then copies it to the screen
