@@ -378,10 +378,15 @@ void DeleteMidiBuffer() {
 MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 	_driver = NULL;
 	_milesAudioMode = false;
-	bool milesAudioEnabled = true;
+	bool milesAudioEnabled = false;
+
+	if (vm->getPlatform() == Common::kPlatformDOS) {
+		// Enable Miles Audio for DOS only
+		milesAudioEnabled = true;
+	}
 
 	if ((vm->getGameId() == GID_DW1) && (milesAudioEnabled)) {
-		// Discworld 1 uses Miles Audio 3
+		// Discworld 1 (DOS) uses Miles Audio 3
 		// use our own Miles Audio drivers
 		// 
 		// It seems that there are multiple versions of Discworld 1
