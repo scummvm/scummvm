@@ -420,9 +420,9 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 				dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
 				dictionaryNextIndex++; dictionaryIndex++;
 
-				if (dictionaryIndex >= dictionaryPos)
+				if (dictionaryIndex == dictionaryPos)
 					dictionaryIndex = dictionaryBaseIndex;
-				if (dictionaryNextIndex >= dictionarySize)
+				if (dictionaryNextIndex == dictionarySize)
 					dictionaryNextIndex = 0;
 
 				tokenLength--;
