@@ -338,6 +338,7 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 	byte   dictionary[MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE];
 	uint16 dictionaryPos = 0;
 	uint16 dictionarySize = 0;
+	uint16 dictionaryMask = 0;
 	int value;
 	uint16 tokenOffset = 0;
 	uint16 tokenLength = 0;
@@ -369,6 +370,7 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 		warning("DCL-INFLATE: Error: unsupported dictionary type %02x", dictionaryType);
 		return false;
 	}
+	dictionaryMask = dictionarySize - 1;
 
 	while ((!targetFixedSize) || (_bytesWritten < _targetSize)) {
 		if (getBitsLSB(1)) { // (length,distance) pair
@@ -408,47 +410,29 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 				return false;
 			}
 
-			if (!targetPtr) {
-				// FIXME: there is some issue in this code that causes some graphics glitches in SCI
-				// will figure this out tomorrow. For now the old code is called for those cases and
-				// that makes it work.
-				uint16 dictionaryBaseIndex = (dictionaryPos - tokenOffset) & (dictionarySize - 1);
-				uint16 dictionaryIndex = dictionaryBaseIndex;
-				uint16 dictionaryNextIndex = dictionaryPos;
+			uint16 dictionaryBaseIndex = (dictionaryPos - tokenOffset) & dictionaryMask;
+			uint16 dictionaryIndex = dictionaryBaseIndex;
+			uint16 dictionaryNextIndex = dictionaryPos;
 
-				while (tokenLength) {
-					// Write byte from dictionary
-					putByte(dictionary[dictionaryIndex]);
-					debug(9, "\33[32;31m%02x\33[37;37m ", dictionary[dictionaryIndex]);
+			while (tokenLength) {
+				// Write byte from dictionary
+				putByte(dictionary[dictionaryIndex]);
+				debug(9, "\33[32;31m%02x\33[37;37m ", dictionary[dictionaryIndex]);
 
-					dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
-					dictionaryNextIndex++; dictionaryIndex++;
+				dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
 
-					if (dictionaryIndex == dictionaryPos)
-						dictionaryIndex = dictionaryBaseIndex;
-					if (dictionaryNextIndex == dictionarySize)
-						dictionaryNextIndex = 0;
+				dictionaryNextIndex = (dictionaryNextIndex + 1) & dictionaryMask;
+				dictionaryIndex = (dictionaryIndex + 1) & dictionaryMask;
 
-					tokenLength--;
-				}
-				dictionaryPos = dictionaryNextIndex;
-				debug(9, "\n");
-			} else {
-				while (tokenLength) {
-					uint32 copy_length = (tokenLength > tokenOffset) ? tokenOffset : tokenLength;
-					assert(tokenLength >= copy_length);
-					uint32 pos = _bytesWritten - tokenOffset;
-					for (uint32 i = 0; i < copy_length; i++)
-						putByte(targetPtr[pos + i]);
+				if (dictionaryIndex == dictionaryPos)
+					dictionaryIndex = dictionaryBaseIndex;
+				if (dictionaryNextIndex == dictionarySize)
+					dictionaryNextIndex = 0;
 
-					for (uint32 i = 0; i < copy_length; i++)
-						debug(9, "\33[32;31m%02x\33[37;37m ", targetPtr[pos + i]);
-					debug(9, "\n");
-
-					tokenLength -= copy_length;
-					tokenOffset += copy_length;
-				}
+				tokenLength--;
 			}
+			dictionaryPos = dictionaryNextIndex;
+			debug(9, "\n");
 
 		} else { // Copy byte verbatim
 			value = (mode == DCL_ASCII_MODE) ? huffman_lookup(ascii_tree) : getByteLSB();
