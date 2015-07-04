@@ -38,7 +38,7 @@ enum MusicFlags {
 
 class MusicPlayer : public Audio::MidiPlayer {
 public:
-	MusicPlayer(bool milesAudio, bool compressedCD);
+	MusicPlayer(bool milesAudio);
 
 	void playXMIDI(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);
 	void playSMF(GenericResource *midiResource, MusicFlags flags = MUSIC_NORMAL);

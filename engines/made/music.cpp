@@ -31,24 +31,27 @@
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 
+#include "common/file.h"
 #include "common/stream.h"
 
 namespace Made {
 
-MusicPlayer::MusicPlayer(bool milesAudio, bool compressedCD) : _isGM(false),_milesAudioMode(false) {
+MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) {
 	MusicType musicType;
 	if (milesAudio) {
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 		musicType = MidiDriver::getMusicType(dev);
+		Common::SeekableReadStream *adLibInstrumentStream = nullptr;
 		switch (musicType) {
 		case MT_ADLIB:
 			_milesAudioMode = true;
-			if (compressedCD) {
-				Common::SeekableReadStream *adLibInstrumentStream = RedReader::loadFromRed("rtzcd.red", "sample.ad");
-				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);
-			} else {
-				_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.AD");
+			if (Common::File::exists("rtzcd.red")) {
+				// Installing Return to Zork produces both a SAMPLE.AD and
+				// a SAMPLE.OPL file, but they are identical. The resource
+				// file appears to only contain SAMPLE.AD.
+				adLibInstrumentStream = RedReader::loadFromRed("rtzcd.red", "SAMPLE.AD");
 			}
+			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL", adLibInstrumentStream);
 			break;
 		case MT_MT32:
 			_milesAudioMode = true;
