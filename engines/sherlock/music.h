@@ -67,6 +67,11 @@ private:
 	MidiDriver *_midiDriver;
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;
+	
+	/**
+	 * Play the specified music resource
+	 */
+	bool playMusic(const Common::String &name);
 public:
 	bool _musicPlaying;
 	bool _musicOn;
@@ -101,11 +106,6 @@ public:
 	 * Free any currently loaded song
 	 */
 	void freeSong();
-	
-	/**
-	 * Play the specified music resource
-	 */
-	bool playMusic(const Common::String &name);
 
 	/**
 	 * Stop playing the music

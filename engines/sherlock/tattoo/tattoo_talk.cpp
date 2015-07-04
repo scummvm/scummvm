@@ -383,7 +383,7 @@ OpcodeReturn TattooTalk::cmdPlaySong(const byte *&str) {
 	str += 7;
 
 	// Play the song
-	music.playMusic(music._currentSongName);
+	music.loadSong(music._currentSongName);
 
 	// Copy the old song name to _nextSongName so that when the new song is finished, the old song will restart
 	music._nextSongName = currentSong;
