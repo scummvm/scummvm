@@ -1746,6 +1746,10 @@ uint LBCode::parseCode(const Common::String &source) {
 		if (token != ' ' && token != '(' && wasFunction)
 			error("while parsing script '%s', encountered incomplete function call", source.c_str());
 
+		// Skip C++-style comments
+		if (token == '/' && lookahead == '/')
+			break;
+
 		// First, we check for simple operators.
 		for (uint i = 0; i < NUM_LB_OPERATORS; i++) {
 			if (token != operators[i].token)
@@ -1776,6 +1780,7 @@ uint LBCode::parseCode(const Common::String &source) {
 		switch (token) {
 		// whitespace
 		case ' ':
+		case '\t':
 			// ignore
 			break;
 		// literal string
