@@ -71,10 +71,10 @@ int TattooMap::show() {
 	if (music._midiOption) {
 		// See if Holmes or Watson is the active character	
 		Common::String song;
-		if (_vm->readFlags(76))
+		if (_vm->readFlags(FLAG_PLAYER_IS_HOLMES))
 			// Player is Holmes
 			song = "Cue9";
-		else if (_vm->readFlags(525))
+		else if (_vm->readFlags(FLAG_ALT_MAP_MUSIC))
 			song = "Cue8";
 		else
 			song = "Cue7";

@@ -380,7 +380,7 @@ void TattooUserInterface::doStandardControl() {
 
 	case Common::KEYCODE_F1:
 		// Display journal
-		if (vm.readFlags(76)) {
+		if (vm.readFlags(FLAG_PLAYER_IS_HOLMES)) {
 			freeMenu();
 			doJournal();
 			

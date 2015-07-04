@@ -45,6 +45,11 @@ enum {
 	PEN_HIGHLIGHT_COLOR	= 129
 };
 
+enum {
+	FLAG_PLAYER_IS_HOLMES	= 76,
+	FLAG_ALT_MAP_MUSIC		= 525
+};
+
 class TattooEngine : public SherlockEngine {
 private:
 	/**

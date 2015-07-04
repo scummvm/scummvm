@@ -1153,9 +1153,9 @@ int TattooPeople::findSpeaker(int speaker) {
 
 	// Fallback that Rose Tattoo uses if no speaker was found
 	if (result == -1) {
-		bool flag = _vm->readFlags(76);
+		bool flag = _vm->readFlags(FLAG_PLAYER_IS_HOLMES);
 
-		if (_data[HOLMES]->_type == CHARACTER && ((speaker == 0 && flag) || (speaker == 1 && !flag)))
+		if (_data[HOLMES]->_type == CHARACTER && ((speaker == HOLMES && flag) || (speaker == WATSON && !flag)))
 			return -1;
 
 		for (uint idx = 1; idx < _data.size(); ++idx) {
