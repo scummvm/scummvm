@@ -52,7 +52,7 @@ protected:
 
 public:
 	bool loadMusic(byte *musData, uint32 musSize);
-	void unloadMusic();
+	virtual void unloadMusic();
 
 private:
 	byte  *_musData;

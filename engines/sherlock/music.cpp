@@ -210,6 +210,8 @@ void MidiParser_SH::unloadMusic() {
 		_musData = NULL;
 		_musDataSize = 0;
 	}
+
+	MidiParser::unloadMusic();
 }
 
 /*----------------------------------------------------------------*/
@@ -504,14 +506,7 @@ bool Music::playMusic(const Common::String &name) {
 }
 
 void Music::stopMusic() {
-	if (isPlaying()) {
-		if (!IS_3DO)
-			_midiParser->stopPlaying();
-		else
-			_mixer->stopHandle(_digitalMusicHandle);
-	}
-
-	_musicPlaying = false;
+	freeSong();
 }
 
 void Music::startSong() {
@@ -531,6 +526,8 @@ void Music::freeSong() {
 		// Free the MIDI MUS data buffer
 		_midiParser->unloadMusic();
 	}
+
+	_musicPlaying = false;
 }
 
 void Music::waitTimerRoland(uint time) {
