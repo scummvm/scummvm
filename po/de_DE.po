@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2015-07-01 18:38+0200\n"
-"PO-Revision-Date: 2015-07-03 23:36+0200\n"
+"PO-Revision-Date: 2015-07-04 12:06+0200\n"
 "Last-Translator: Lothar Serra Mari <scummvm@rootfather.de>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
 "<scummvm@rootfather.de>\n"
@@ -532,11 +532,11 @@ msgstr "ScummVM konnte keine Engine finden, um das Spiel zu starten!"
 
 #: gui/launcher.cpp:1159
 msgid "Mass Add..."
-msgstr "Durchsuchen..."
+msgstr "Durchsuchen"
 
 #: gui/launcher.cpp:1161
 msgid "Record..."
-msgstr "Aufzeichnen..."
+msgstr "Aufzeichnen"
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
