@@ -148,7 +148,6 @@ Common::Error BuriedEngine::run() {
 	}
 
 	while (!shouldQuit()) {
-		updateTimers();
 		updateVideos();
 
 		pollForEvents();
@@ -261,15 +260,6 @@ bool BuriedEngine::killTimer(uint timer) {
 	return true;
 }
 
-void BuriedEngine::updateTimers() {
-	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++) {
-		if (g_system->getMillis() >= it->_value.nextTrigger) {
-			it->_value.nextTrigger += it->_value.period;
-			it->_value.owner->postMessage(new TimerMessage(it->_key));
-		}
-	}
-}
-
 void BuriedEngine::removeAllTimers(Window *window) {
 	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++)
 		if (it->_value.owner == window)
@@ -304,6 +294,22 @@ void BuriedEngine::sendAllMessages() {
 		msg.dest->sendMessage(msg.message);
 		// Control of the pointer is passed to the destination
 	}
+
+	// Generate a timer messages while they exist and there are no messages
+	// in the queue.
+	while (!shouldQuit() && _messageQueue.empty()) {
+		// Generate a timer message
+		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++) {
+			if (g_system->getMillis() >= it->_value.nextTrigger) {
+				it->_value.nextTrigger += it->_value.period;
+				it->_value.owner->sendMessage(new TimerMessage(it->_key));
+				continue;
+			}
+		}
+
+		// No timer messages to post
+		break;
+	}
 }
 
 void BuriedEngine::removeMessages(Window *window, int messageBegin, int messageEnd) {
@@ -337,6 +343,9 @@ void BuriedEngine::removeAllMessages(Window *window) {
 }
 
 bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) const {
+	// Implementation note: This doesn't currently handle timers, but would on real Windows.
+	// Buried doesn't check for timer messages being present, so it's skipped.
+
 	for (MessageQueue::const_iterator it = _messageQueue.begin(); it != _messageQueue.end(); it++)
 		if ((!window || it->dest == window) && it->message->getMessageType() >= messageBegin && it->message->getMessageType() <= messageEnd)
 			return true;
@@ -351,7 +360,6 @@ void BuriedEngine::yield() {
 	// Mark us that we're yielding so we can't save or load in a synchronous sequence
 	_yielding = true;
 
-	updateTimers();
 	updateVideos();
 
 	pollForEvents();
