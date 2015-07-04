@@ -77,6 +77,7 @@ void TattooJournal::show() {
 
 	do {
 		events.pollEventsAndWait();
+		events.setButtonState();
 		_wait = true;
 
 		handleKeyboardEvents();
