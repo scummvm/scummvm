@@ -1090,7 +1090,7 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 				filename = filenameAdLib;
 			}
 		}
-		if (!filename.empty()) {
+		if (filename.empty()) {
 			if (!filenameOPL3.empty()) {
 				if (fileStream->exists(filenameOPL3)) {
 					// if OPL3 file exists, use it
