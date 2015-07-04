@@ -191,16 +191,15 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 				// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
 				// if we didn't do this, the user would be forced to "install" the game instead of simply
 				// copying all files from CD-ROM.
-				const byte *instrumentRawData = NULL;
-				uint32      instrumentRawDataSize = 0;
-				instrumentRawData = simon2SetupExtractFile("MIDPAK.AD", instrumentRawDataSize);
-				if (!instrumentRawData)
+				Common::SeekableReadStream *midpakAdLibStream;
+				midpakAdLibStream = simon2SetupExtractFile("MIDPAK.AD");
+				if (!midpakAdLibStream)
 					error("MidiPlayer: could not extract MIDPAK.AD from SETUP.SHR");
 
 				// Pass this extracted data to the driver
 				warning("SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
-				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", instrumentRawData, instrumentRawDataSize);
-				delete[] instrumentRawData;
+				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", midpakAdLibStream);
+				delete midpakAdLibStream;
 			}
 			// TODO: not sure what's going wrong with AdLib
 			// it doesn't seem to matter if we use the regular XMIDI tracks or the 2nd set meant for MT32
@@ -818,7 +817,7 @@ void MidiPlayer::loadS1D(Common::File *in, bool sfx) {
 //  [bundle file header]
 //    [compressed file header] [compressed file data]
 //     * compressed file count
-const byte *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFileName, uint32 &extractedDataSize) {
+Common::SeekableReadStream *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFileName) {
 	Common::File *setupBundleStream = new Common::File();
 	uint32        bundleSize = 0;
 	uint32        bundleBytesLeft = 0;
@@ -830,9 +829,8 @@ const byte *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFi
 	Common::String fileName;
 	uint32         fileCompressedSize = 0;
 	byte          *fileCompressedDataPtr = nullptr;
-	byte          *extractedDataPtr = nullptr;
 
-	extractedDataSize = 0;
+	Common::SeekableReadStream *extractedStream = nullptr;
 
 	if (!setupBundleStream->open("setup.shr"))
 		error("MidiPlayer: could not open setup.shr");
@@ -885,22 +883,11 @@ const byte *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFi
 				error("MidiPlayer: setup.shr read error");
 
 			Common::MemoryReadStream *compressedStream = nullptr;
-			Common::SeekableReadStream *extractedStream = nullptr;
 
 			compressedStream = new Common::MemoryReadStream(fileCompressedDataPtr, fileCompressedSize);
 			// we don't know the unpacked size, let decompressor figure it out
 			extractedStream = Common::decompressDCL(compressedStream);
 			delete compressedStream;
-
-			if (extractedStream) {
-				// Successfully extracted the data
-				// TODO: clean up required, but this also requires Miles Audio drivers to use streams
-				extractedDataPtr = new byte[extractedStream->size()];
-				extractedStream->seek(0);
-				extractedStream->read(extractedDataPtr, extractedStream->size());
-				extractedDataSize = extractedStream->size();
-				delete extractedStream;
-			}
 			break;
 		}
 
@@ -913,7 +900,7 @@ const byte *MidiPlayer::simon2SetupExtractFile(const Common::String &requestedFi
 	setupBundleStream->close();
 	delete setupBundleStream;
 
-	return extractedDataPtr;
+	return extractedStream;
 }
 
 } // End of namespace AGOS

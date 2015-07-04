@@ -25,6 +25,7 @@
 
 #include "audio/mididrv.h"
 #include "common/error.h"
+#include "common/stream.h"
 
 namespace Audio {
 
@@ -71,7 +72,7 @@ namespace Audio {
 // Miles Audio actually used 0x4000, because they didn't shift the 2 bytes properly
 #define MILES_PITCHBENDER_DEFAULT 0x2000
 
-extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFilename, const Common::String &instrumentDataFilenameOPL3, const byte *instrumentDataPtr = NULL, uint32 instrumentDataSize = 0);
+extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFilename, const Common::String &instrumentDataFilenameOPL3, Common::SeekableReadStream *instrumentStream = nullptr);
 
 extern MidiDriver *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename);
 

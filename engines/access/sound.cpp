@@ -211,12 +211,12 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	switch (musicType) {
 	case MT_ADLIB: {
 		Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
-		const byte *adLibInstrumentData = midiDrvResource->data();
-		uint32      adLibInstrumentDataSize = midiDrvResource->_size;
+		Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 
-		_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentData, adLibInstrumentDataSize);
+		_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);
 
 		delete midiDrvResource;
+		delete adLibInstrumentStream;
 		break;
 	}
 	case MT_MT32:

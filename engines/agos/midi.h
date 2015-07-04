@@ -129,7 +129,7 @@ private:
 	kMusicMode _musicMode;
 
 private:
-	const byte *simon2SetupExtractFile(const Common::String &requestedFileName, uint32 &extractedDataSize);
+	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
 };
 
 } // End of namespace AGOS

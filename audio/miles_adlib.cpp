@@ -1060,14 +1060,15 @@ uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
 	return 0;
 }
 
-MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFilename, const Common::String &instrumentDataFilenameOPL3, const byte *instrumentRawDataPtr, uint32 instrumentRawDataSize) {
+MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFilename, const Common::String &instrumentDataFilenameOPL3, Common::SeekableReadStream *instrumentStream) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
 	Common::File *fileStream = NULL;
 	uint32        fileSize = 0;
-	byte         *fileDataReadPtr = nullptr;
-	const byte   *fileDataPtr = nullptr;
 	uint32        fileDataOffset = 0;
 	uint32        fileDataLeft = 0;
+
+	uint32        streamSize = 0;
+	byte         *streamDataPtr = nullptr;
 
 	byte curBankId = 0;
 	byte curPatchId = 0;
@@ -1085,21 +1086,22 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFi
 		if (!fileStream->open(instrumentDataFilename))
 			error("MILES-ADLIB: could not open instrument file");
 
-		fileSize = fileStream->size();
+		streamSize = fileStream->size();
 
-		fileDataReadPtr = new byte[fileSize];
+		streamDataPtr = new byte[streamSize];
 
-		if (fileStream->read(fileDataReadPtr, fileSize) != fileSize)
+		if (fileStream->read(streamDataPtr, streamSize) != streamSize)
 			error("MILES-ADLIB: error while reading instrument file");
 		fileStream->close();
 		delete fileStream;
 
-		fileDataPtr = fileDataReadPtr;
+	} else if (instrumentStream) {
+		// instrument data was passed directly (currently used by Amazon Guardians of Eden + Simon 2)
+		streamSize = instrumentStream->size();
+		streamDataPtr = new byte[streamSize];
 
-	} else if (instrumentRawDataPtr) {
-		// instrument data was passed directly (currently used by Amazon Guardians of Eden
-		fileDataPtr = instrumentRawDataPtr;
-		fileSize = instrumentRawDataSize;
+		if (instrumentStream->read(streamDataPtr, streamSize) != streamSize)
+			error("MILES-ADLIB: error while reading instrument stream");
 	}
 
 	// File is like this:
@@ -1109,13 +1111,13 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFi
 
 	// First we check how many entries there are
 	fileDataOffset = 0;
-	fileDataLeft = fileSize;
+	fileDataLeft = streamSize;
 	while (1) {
 		if (fileDataLeft < 6)
 			error("MILES-ADLIB: unexpected EOF in instrument file");
 
-		curPatchId = fileDataPtr[fileDataOffset++];
-		curBankId  = fileDataPtr[fileDataOffset++];
+		curPatchId = streamDataPtr[fileDataOffset++];
+		curBankId  = streamDataPtr[fileDataOffset++];
 
 		if ((curBankId == 0xFF) && (curPatchId == 0xFF))
 			break;
@@ -1136,43 +1138,41 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFi
 	fileDataOffset = 0;
 	fileDataLeft = fileSize;
 	while (1) {
-		curPatchId = fileDataPtr[fileDataOffset++];
-		curBankId  = fileDataPtr[fileDataOffset++];
+		curPatchId = streamDataPtr[fileDataOffset++];
+		curBankId  = streamDataPtr[fileDataOffset++];
 
 		if ((curBankId == 0xFF) && (curPatchId == 0xFF))
 			break;
 
-		instrumentOffset = READ_LE_UINT32(fileDataPtr + fileDataOffset);
+		instrumentOffset = READ_LE_UINT32(streamDataPtr + fileDataOffset);
 		fileDataOffset += 4;
 
 		instrumentPtr->bankId = curBankId;
 		instrumentPtr->patchId = curPatchId;
 
-		instrumentDataSize = READ_LE_UINT16(fileDataPtr + instrumentOffset);
+		instrumentDataSize = READ_LE_UINT16(streamDataPtr + instrumentOffset);
 		if (instrumentDataSize != 14)
 			error("MILES-ADLIB: unsupported instrument size");
 
-		instrumentPtr->transposition = (signed char)fileDataPtr[instrumentOffset + 2];
-		instrumentPtr->reg20op1 = fileDataPtr[instrumentOffset + 3];
-		instrumentPtr->reg40op1 = fileDataPtr[instrumentOffset + 4];
-		instrumentPtr->reg60op1 = fileDataPtr[instrumentOffset + 5];
-		instrumentPtr->reg80op1 = fileDataPtr[instrumentOffset + 6];
-		instrumentPtr->regE0op1 = fileDataPtr[instrumentOffset + 7];
-		instrumentPtr->regC0    = fileDataPtr[instrumentOffset + 8];
-		instrumentPtr->reg20op2 = fileDataPtr[instrumentOffset + 9];
-		instrumentPtr->reg40op2 = fileDataPtr[instrumentOffset + 10];
-		instrumentPtr->reg60op2 = fileDataPtr[instrumentOffset + 11];
-		instrumentPtr->reg80op2 = fileDataPtr[instrumentOffset + 12];
-		instrumentPtr->regE0op2 = fileDataPtr[instrumentOffset + 13];
+		instrumentPtr->transposition = (signed char)streamDataPtr[instrumentOffset + 2];
+		instrumentPtr->reg20op1 = streamDataPtr[instrumentOffset + 3];
+		instrumentPtr->reg40op1 = streamDataPtr[instrumentOffset + 4];
+		instrumentPtr->reg60op1 = streamDataPtr[instrumentOffset + 5];
+		instrumentPtr->reg80op1 = streamDataPtr[instrumentOffset + 6];
+		instrumentPtr->regE0op1 = streamDataPtr[instrumentOffset + 7];
+		instrumentPtr->regC0    = streamDataPtr[instrumentOffset + 8];
+		instrumentPtr->reg20op2 = streamDataPtr[instrumentOffset + 9];
+		instrumentPtr->reg40op2 = streamDataPtr[instrumentOffset + 10];
+		instrumentPtr->reg60op2 = streamDataPtr[instrumentOffset + 11];
+		instrumentPtr->reg80op2 = streamDataPtr[instrumentOffset + 12];
+		instrumentPtr->regE0op2 = streamDataPtr[instrumentOffset + 13];
 
 		// Instrument read, next instrument please
 		instrumentPtr++;
 	}
 
-	if (fileDataReadPtr) {
-		// Free instrument file data in case it was read by us
-		delete[] fileDataReadPtr;
-	}
+	// Free instrument file/stream data
+	delete[] streamDataPtr;
 
 	return new MidiDriver_Miles_AdLib(g_system->getMixer(), instrumentTablePtr, instrumentTableCount);
 }
