@@ -383,13 +383,22 @@ MidiMusicPlayer::MidiMusicPlayer(TinselEngine *vm) {
 	if ((vm->getGameId() == GID_DW1) && (milesAudioEnabled)) {
 		// Discworld 1 uses Miles Audio 3
 		// use our own Miles Audio drivers
-		// DW1 has SAMPLE.AD + SAMPLE.OPL, but no SAMPLE.MT
+		// 
+		// DW1 has either drivers/sample.ad and drivers/sample.opl, but no sample.mt
+		//             or fat.opl (although this version has it outside of the main game directory inside /drivers)
 		::MidiDriver::DeviceHandle dev = ::MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 		::MusicType musicType = ::MidiDriver::getMusicType(dev);
+		Common::File fileClass;
 
 		switch (musicType) {
 		case MT_ADLIB:
-			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+			if ((fileClass.exists("SAMPLE.AD")) || (fileClass.exists("SAMPLE.OPL"))) {
+				// Variant 1: drivers/sample.ad or drivers/sample.opl exists
+				_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+			} else {
+				// Try variant 2: fat.opl should at least exist
+				_driver = Audio::MidiDriver_Miles_AdLib_create("", "FAT.OPL");
+			}
 			break;
 		case MT_MT32:
 			// Discworld 1 doesn't have a MT32 timbre file
