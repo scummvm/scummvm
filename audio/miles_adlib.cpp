@@ -1060,9 +1060,10 @@ uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
 	return 0;
 }
 
-MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFilename, const Common::String &instrumentDataFilenameOPL3, Common::SeekableReadStream *instrumentStream) {
+MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *instrumentStream) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
-	Common::File *fileStream = NULL;
+	Common::String filename;
+	Common::File *fileStream = new Common::File();
 	uint32        fileSize = 0;
 	uint32        fileDataOffset = 0;
 	uint32        fileDataLeft = 0;
@@ -1079,11 +1080,42 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFi
 	uint32           instrumentOffset = 0;
 	uint16           instrumentDataSize = 0;
 
-	if (!instrumentDataFilename.empty()) {
-		// Filename was passed to us (this is the common case for most games)
-		fileStream = new Common::File();
+	// First check if any filename was passed to us
+	if ((!filenameAdLib.empty()) || (!filenameOPL3.empty())) {
+		// If that's the case, check if one of those exists
+		// Prefer the AdLib one for now
+		if (!filenameAdLib.empty()) {
+			if (fileStream->exists(filenameAdLib)) {
+				// if AdLib file exists, use it
+				filename = filenameAdLib;
+			}
+		}
+		if (!filename.empty()) {
+			if (!filenameOPL3.empty()) {
+				if (fileStream->exists(filenameOPL3)) {
+					// if OPL3 file exists, use it
+					filename = filenameOPL3;
+				}
+			}
+		}
+		if (filename.empty()) {
+			// If none of them exists, we can't do anything about it
+			if (!filenameAdLib.empty()) {
+				if (!filenameOPL3.empty()) {
+					error("MILES-ADLIB: could not open instrument file (%s or %s)", filenameAdLib.c_str(), filenameOPL3.c_str());
+				} else {
+					error("MILES-ADLIB: could not open instrument file (%s)", filenameAdLib.c_str());
+				}
+			} else {
+				error("MILES-ADLIB: could not open instrument file (%s)", filenameOPL3.c_str());
+			}
+		}
+	}
 
-		if (!fileStream->open(instrumentDataFilename))
+	if (!filename.empty()) {
+		// Filename was passed to us and file exists (this is the common case for most games)
+
+		if (!fileStream->open(filename))
 			error("MILES-ADLIB: could not open instrument file");
 
 		streamSize = fileStream->size();
@@ -1093,7 +1125,6 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFi
 		if (fileStream->read(streamDataPtr, streamSize) != streamSize)
 			error("MILES-ADLIB: error while reading instrument file");
 		fileStream->close();
-		delete fileStream;
 
 	} else if (instrumentStream) {
 		// instrument data was passed directly (currently used by Amazon Guardians of Eden + Simon 2)
@@ -1103,6 +1134,8 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &instrumentDataFi
 		if (instrumentStream->read(streamDataPtr, streamSize) != streamSize)
 			error("MILES-ADLIB: error while reading instrument stream");
 	}
+
+	delete fileStream;
 
 	// File is like this:
 	// [patch:BYTE] [bank:BYTE] [patchoffset:UINT32]
