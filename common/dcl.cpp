@@ -30,7 +30,7 @@ namespace Common {
 
 class DecompressorDCL {
 public:
-	bool unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize, byte *targetPtr);
+	bool unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize);
 
 protected:
 	/**
@@ -334,7 +334,7 @@ int DecompressorDCL::huffman_lookup(const int *tree) {
 
 #define MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE 4096
 
-bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize, byte *targetPtr) {
+bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize) {
 	byte   dictionary[MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE];
 	uint16 dictionaryPos = 0;
 	uint16 dictionarySize = 0;
@@ -471,7 +471,7 @@ bool decompressDCL(ReadStream *src, byte *dest, uint32 packedSize, uint32 unpack
 	Common::MemoryReadStream  *sourceStream = new MemoryReadStream(sourceBufferPtr, packedSize, DisposeAfterUse::NO);
 	Common::MemoryWriteStream *targetStream = new MemoryWriteStream(dest, unpackedSize);
 
-	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true, dest);
+	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);
 	delete sourceStream;
 	delete targetStream;
 	return success;
@@ -489,7 +489,7 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream, uint32 packe
 
 	targetStream = new MemoryWriteStream(targetPtr, unpackedSize);
 
-	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true, targetPtr);
+	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);
 	delete targetStream;
 
 	if (!success) {
@@ -507,7 +507,7 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream) {
 
 	targetStream = new MemoryWriteStreamDynamic(DisposeAfterUse::NO);
 
-	if (dcl.unpack(sourceStream, targetStream, 0, false, nullptr)) {
+	if (dcl.unpack(sourceStream, targetStream, 0, false)) {
 		byte *targetPtr = targetStream->getData();
 		uint32 unpackedSize = targetStream->size();
 		delete targetStream;
