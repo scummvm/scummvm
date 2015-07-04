@@ -52,6 +52,7 @@ MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) 
 				adLibInstrumentStream = RedReader::loadFromRed("rtzcd.red", "SAMPLE.AD");
 			}
 			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL", adLibInstrumentStream);
+			delete adLibInstrumentStream;
 			break;
 		case MT_MT32:
 			_milesAudioMode = true;
