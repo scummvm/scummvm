@@ -30,7 +30,7 @@ namespace Common {
 
 class DecompressorDCL {
 public:
-	bool unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize);
+	bool unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize, byte *targetPtr);
 
 protected:
 	/**
@@ -334,7 +334,7 @@ int DecompressorDCL::huffman_lookup(const int *tree) {
 
 #define MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE 4096
 
-bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize) {
+bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize, byte *targetPtr) {
 	byte   dictionary[MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE];
 	uint16 dictionaryPos = 0;
 	uint16 dictionarySize = 0;
@@ -408,27 +408,47 @@ bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targ
 				return false;
 			}
 
-			uint16 dictionaryBaseIndex = (dictionaryPos - tokenOffset) & (dictionarySize - 1);
-			uint16 dictionaryIndex = dictionaryBaseIndex;
-			uint16 dictionaryNextIndex = dictionaryPos;
+			if (!targetPtr) {
+				// FIXME: there is some issue in this code that causes some graphics glitches in SCI
+				// will figure this out tomorrow. For now the old code is called for those cases and
+				// that makes it work.
+				uint16 dictionaryBaseIndex = (dictionaryPos - tokenOffset) & (dictionarySize - 1);
+				uint16 dictionaryIndex = dictionaryBaseIndex;
+				uint16 dictionaryNextIndex = dictionaryPos;
 
-			while (tokenLength) {
-				// Write byte from dictionary
-				putByte(dictionary[dictionaryIndex]);
-				debug(9, "\33[32;31m%02x\33[37;37m ", dictionary[dictionaryIndex]);
+				while (tokenLength) {
+					// Write byte from dictionary
+					putByte(dictionary[dictionaryIndex]);
+					debug(9, "\33[32;31m%02x\33[37;37m ", dictionary[dictionaryIndex]);
 
-				dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
-				dictionaryNextIndex++; dictionaryIndex++;
+					dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
+					dictionaryNextIndex++; dictionaryIndex++;
 
-				if (dictionaryIndex == dictionaryPos)
-					dictionaryIndex = dictionaryBaseIndex;
-				if (dictionaryNextIndex == dictionarySize)
-					dictionaryNextIndex = 0;
+					if (dictionaryIndex == dictionaryPos)
+						dictionaryIndex = dictionaryBaseIndex;
+					if (dictionaryNextIndex == dictionarySize)
+						dictionaryNextIndex = 0;
 
-				tokenLength--;
+					tokenLength--;
+				}
+				dictionaryPos = dictionaryNextIndex;
+				debug(9, "\n");
+			} else {
+				while (tokenLength) {
+					uint32 copy_length = (tokenLength > tokenOffset) ? tokenOffset : tokenLength;
+					assert(tokenLength >= copy_length);
+					uint32 pos = _bytesWritten - tokenOffset;
+					for (uint32 i = 0; i < copy_length; i++)
+						putByte(targetPtr[pos + i]);
+
+					for (uint32 i = 0; i < copy_length; i++)
+						debug(9, "\33[32;31m%02x\33[37;37m ", targetPtr[pos + i]);
+					debug(9, "\n");
+
+					tokenLength -= copy_length;
+					tokenOffset += copy_length;
+				}
 			}
-			dictionaryPos = dictionaryNextIndex;
-			debug(9, "\n");
 
 		} else { // Copy byte verbatim
 			value = (mode == DCL_ASCII_MODE) ? huffman_lookup(ascii_tree) : getByteLSB();
@@ -467,7 +487,7 @@ bool decompressDCL(ReadStream *src, byte *dest, uint32 packedSize, uint32 unpack
 	Common::MemoryReadStream  *sourceStream = new MemoryReadStream(sourceBufferPtr, packedSize, DisposeAfterUse::NO);
 	Common::MemoryWriteStream *targetStream = new MemoryWriteStream(dest, unpackedSize);
 
-	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);
+	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true, dest);
 	delete sourceStream;
 	delete targetStream;
 	return success;
@@ -485,7 +505,7 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream, uint32 packe
 
 	targetStream = new MemoryWriteStream(targetPtr, unpackedSize);
 
-	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);
+	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true, targetPtr);
 	delete targetStream;
 
 	if (!success) {
@@ -503,7 +523,7 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream) {
 
 	targetStream = new MemoryWriteStreamDynamic(DisposeAfterUse::NO);
 
-	if (dcl.unpack(sourceStream, targetStream, 0, false)) {
+	if (dcl.unpack(sourceStream, targetStream, 0, false, nullptr)) {
 		byte *targetPtr = targetStream->getData();
 		uint32 unpackedSize = targetStream->size();
 		delete targetStream;
