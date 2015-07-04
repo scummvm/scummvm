@@ -31,7 +31,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 enum {
-	STARTING_GAME_SCENE = 1,  STARTING_INTRO_SCENE = 91, OVERHEAD_MAP2 = 99, OVERHEAD_MAP = 100
+	STARTING_GAME_SCENE = 1,  STARTING_INTRO_SCENE = 91, OVERHEAD_MAP2 = 90, OVERHEAD_MAP = 100
 };
 
 struct SceneTripEntry {
