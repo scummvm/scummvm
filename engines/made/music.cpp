@@ -25,21 +25,30 @@
 // MIDI and digital music class
 
 #include "made/music.h"
+#include "made/redreader.h"
 #include "made/resource.h"
 
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 
+#include "common/stream.h"
+
 namespace Made {
 
-MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) {
+MusicPlayer::MusicPlayer(bool milesAudio, bool compressedCD) : _isGM(false),_milesAudioMode(false) {
+	MusicType musicType;
 	if (milesAudio) {
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
-		MusicType musicType  = MidiDriver::getMusicType(dev);
+		musicType = MidiDriver::getMusicType(dev);
 		switch (musicType) {
 		case MT_ADLIB:
 			_milesAudioMode = true;
-			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.AD");
+			if (compressedCD) {
+				Common::SeekableReadStream *adLibInstrumentStream = RedReader::loadFromRed("rtzcd.red", "sample.ad");
+				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", adLibInstrumentStream);
+			} else {
+				_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.AD");
+			}
 			break;
 		case MT_MT32:
 			_milesAudioMode = true;
@@ -56,10 +65,12 @@ MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) 
 
 	int ret = _driver->open();
 	if (ret == 0) {
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
+		if (musicType != MT_ADLIB) {
+			if (_nativeMT32)
+				_driver->sendMT32Reset();
+			else
+				_driver->sendGMReset();
+		}
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}
