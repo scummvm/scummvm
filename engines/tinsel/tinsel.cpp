@@ -885,6 +885,9 @@ void TinselEngine::initializePath(const Common::FSNode &gamePath) {
 	} else {
 		// Add DW2 subfolder to search path in case user is running directly from the CDs
 		SearchMan.addSubDirectoryMatching(gamePath, "dw2");
+
+		// Location of Miles audio files (sample.ad and sample.opl) in Discworld 1
+		SearchMan.addSubDirectoryMatching(gamePath, "drivers");
 		Engine::initializePath(gamePath);
 	}
 }
