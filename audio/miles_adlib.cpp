@@ -323,7 +323,7 @@ int MidiDriver_Miles_AdLib::open() {
 
 	MidiDriver_Emulated::open();
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	resetAdLib();
 
