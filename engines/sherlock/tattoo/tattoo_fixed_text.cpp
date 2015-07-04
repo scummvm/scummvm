@@ -56,7 +56,15 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"Solve",
 	"with",
 	"No effect...",
-	"This person has nothing to say at the moment"
+	"This person has nothing to say at the moment",
+
+	"Close Journal", 
+	"Search Journal",
+	"Save Journal",
+	"Abort Search",
+	"Search Backwards",
+	"Search Forwards",
+	"Text Not Found !"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {

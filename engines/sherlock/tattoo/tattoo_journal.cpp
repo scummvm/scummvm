@@ -21,6 +21,7 @@
  */
 
 #include "sherlock/tattoo/tattoo_journal.h"
+#include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
@@ -30,11 +31,6 @@ namespace Sherlock {
 namespace Tattoo {
 
 #define JOURNAL_BAR_WIDTH	450
-#define S_NO_TEXT "Text Not Found !"
-
-static const char *const JOURNAL_COMMANDS[2] = { "Close Journal", "Search Journal" };
-
-static const char *const JOURNAL_SEARCH_COMMANDS[3] = { "Abort Search", "Search Backwards", "Search Forwards" };
 
 TattooJournal::TattooJournal(SherlockEngine *vm) : Journal(vm) {
 	_journalImages = nullptr;
@@ -578,17 +574,23 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 		int xp = r.left + r.width() / 6;
 		byte color = (_selector == 0) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 
-		screen.gPrint(Common::Point(xp - screen.stringWidth(JOURNAL_COMMANDS[0]) / 2, r.top),
-			color, "%s", JOURNAL_COMMANDS[0]);
+		screen.gPrint(Common::Point(xp - screen.stringWidth(FIXED(CloseJournal)) / 2, r.top + 5),
+			color, "%s", FIXED(CloseJournal));
 		xp += r.width() / 3;
 
 		if (!_journal.empty())
 			color = (_selector == 1) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		else
 			color = INFO_BOTTOM;
-		screen.gPrint(Common::Point(xp - screen.stringWidth(JOURNAL_COMMANDS[0]) / 2, r.top + 5),
-			color, "%s", JOURNAL_COMMANDS[1]);
+		screen.gPrint(Common::Point(xp - screen.stringWidth(FIXED(SearchJournal)) / 2, r.top + 5),
+			color, "%s", FIXED(SearchJournal));
+		xp += r.width() / 3;
 
+		color = INFO_BOTTOM;
+		screen.gPrint(Common::Point(xp - screen.stringWidth(FIXED(SaveJournal)) / 2, r.top + 5), 
+			color, "%s", FIXED(SaveJournal));
+
+		// Draw the horizontal scrollbar
 		drawScrollBar();
 
 		if (slamIt)
@@ -604,6 +606,7 @@ void TattooJournal::highlightSearchControls(bool slamIt) {
 	Common::Point mousePos = events.mousePos();
 	Common::Rect r(JOURNAL_BAR_WIDTH, (screen.fontHeight() + 4) * 2 + 9);
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
+	const char *SEARCH_COMMANDS[3] = { FIXED(AbortSearch), FIXED(SearchBackwards), FIXED(SearchForwards) };
 
 	// See if the mouse is over any of the Journal Controls
 	_selector = -1;
@@ -617,8 +620,8 @@ void TattooJournal::highlightSearchControls(bool slamIt) {
 
 		for (int idx = 0; idx < 3; ++idx) {
 			byte color = (_selector == idx) ? COMMAND_HIGHLIGHTED : INFO_TOP;
-			screen.gPrint(Common::Point(xp - screen.stringWidth(JOURNAL_SEARCH_COMMANDS[idx]) / 2,
-				r.top + 5), color, "%s", JOURNAL_SEARCH_COMMANDS[idx]);
+			screen.gPrint(Common::Point(xp - screen.stringWidth(SEARCH_COMMANDS[idx]) / 2,
+				r.top + 5), color, "%s", SEARCH_COMMANDS[idx]);
 			xp += r.width() / 3;
 		}
 
@@ -698,6 +701,7 @@ void TattooJournal::disableControls() {
 	Screen &screen = *_vm->_screen;
 	Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
 	r.moveTo((SHERLOCK_SCREEN_HEIGHT - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
+	const char *JOURNAL_COMMANDS[3] = { FIXED(CloseJournal), FIXED(SearchJournal), FIXED(SaveJournal) };
 
 	// Print the Journal commands
 	int xp = r.left + r.width() / 6;
@@ -735,7 +739,7 @@ int TattooJournal::getFindName(bool printError) {
 		r.right - 3, cursorY + screen.fontHeight()));
 
 	if (printError) {
-		screen.gPrint(Common::Point(0, cursorY), INFO_TOP, "%s", S_NO_TEXT);
+		screen.gPrint(Common::Point(0, cursorY), INFO_TOP, "%s", FIXED(TextNotFound));
 	} else {
 		// If there was a name already entered, copy it to name and display it
 		if (!_find.empty()) {
