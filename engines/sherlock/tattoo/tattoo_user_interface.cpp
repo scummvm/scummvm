@@ -33,7 +33,8 @@ TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
 		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), _verbsWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
-	_scrollSize = _scrollSpeed = 0;
+	_scrollSize = 0;
+	_scrollSpeed = 16;
 	_drawMenu = false;
 	_bgShape = nullptr;
 	_personFound = false;
@@ -57,7 +58,7 @@ TattooUserInterface::~TattooUserInterface() {
 }
 
 void TattooUserInterface::initScrollVars() {
-	_scrollSize = 0;
+	_scrollSize = _vm->_screen->_backBuffer1.w() - SHERLOCK_SCREEN_WIDTH;
 	_currentScroll.x = _currentScroll.y = 0;
 	_targetScroll.x = _targetScroll.y = 0;
 }

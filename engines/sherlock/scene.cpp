@@ -362,18 +362,19 @@ bool Scene::loadScene(const Common::String &filename) {
 			_invGraphicItems = bgHeader._numImages + 1;
 
 			if (IS_ROSE_TATTOO) {
-				screen.initPaletteFade(bgHeader._bytesWritten);
-				rrmStream->read(screen._cMap, PALETTE_SIZE);
-				screen.translatePalette(screen._cMap);
-
-				paletteLoaded();
-
 				// Resize the screen if necessary
 				int fullWidth = SHERLOCK_SCREEN_WIDTH + bgHeader._scrollSize;
 				if (screen._backBuffer1.w() != fullWidth) {
 					screen._backBuffer1.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
 					screen._backBuffer2.create(fullWidth, SHERLOCK_SCREEN_HEIGHT);
 				}
+
+				// Handle initializing the palette
+				screen.initPaletteFade(bgHeader._bytesWritten);
+				rrmStream->read(screen._cMap, PALETTE_SIZE);
+				screen.translatePalette(screen._cMap);
+
+				paletteLoaded();
 
 				// Read in background
 				if (_compressed) {
