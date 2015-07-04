@@ -1060,13 +1060,16 @@ uint32 MidiDriver_Miles_AdLib::property(int prop, uint32 param) {
 	return 0;
 }
 
-MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *instrumentStream) {
+MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, const Common::String &filenameOPL3, Common::SeekableReadStream *streamAdLib, Common::SeekableReadStream *streamOPL3) {
 	// Load adlib instrument data from file SAMPLE.AD (OPL3: SAMPLE.OPL)
-	Common::String filename;
+	Common::String              timbreFilename;
+	Common::SeekableReadStream *timbreStream = nullptr;
+
 	Common::File *fileStream = new Common::File();
 	uint32        fileSize = 0;
 	uint32        fileDataOffset = 0;
 	uint32        fileDataLeft = 0;
+
 
 	uint32        streamSize = 0;
 	byte         *streamDataPtr = nullptr;
@@ -1080,59 +1083,79 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 	uint32           instrumentOffset = 0;
 	uint16           instrumentDataSize = 0;
 
-	// First check if any filename was passed to us
+	// Check if streams were passed to us and select one of them
+	if ((streamAdLib) || (streamOPL3)) {
+		// At least one stream was passed by caller
+		// Prefer AdLib for now
+		if (streamAdLib) {
+			timbreStream = streamAdLib;
+		} else {
+			// If not available, use OPL3
+			if (streamOPL3) {
+				timbreStream = streamOPL3;
+			}
+		}
+	}
+
+	// Now check if any filename was passed to us
 	if ((!filenameAdLib.empty()) || (!filenameOPL3.empty())) {
 		// If that's the case, check if one of those exists
 		// Prefer the AdLib one for now
 		if (!filenameAdLib.empty()) {
 			if (fileStream->exists(filenameAdLib)) {
 				// if AdLib file exists, use it
-				filename = filenameAdLib;
+				timbreFilename = filenameAdLib;
 			}
 		}
-		if (filename.empty()) {
+		if (timbreFilename.empty()) {
 			if (!filenameOPL3.empty()) {
 				if (fileStream->exists(filenameOPL3)) {
 					// if OPL3 file exists, use it
-					filename = filenameOPL3;
+					timbreFilename = filenameOPL3;
 				}
 			}
 		}
-		if (filename.empty()) {
-			// If none of them exists, we can't do anything about it
+		if (timbreFilename.empty() && (!timbreStream)) {
+			// If none of them exists and also no stream was passed, we can't do anything about it
 			if (!filenameAdLib.empty()) {
 				if (!filenameOPL3.empty()) {
-					error("MILES-ADLIB: could not open instrument file (%s or %s)", filenameAdLib.c_str(), filenameOPL3.c_str());
+					error("MILES-ADLIB: could not open timbre file (%s or %s)", filenameAdLib.c_str(), filenameOPL3.c_str());
 				} else {
-					error("MILES-ADLIB: could not open instrument file (%s)", filenameAdLib.c_str());
+					error("MILES-ADLIB: could not open timbre file (%s)", filenameAdLib.c_str());
 				}
 			} else {
-				error("MILES-ADLIB: could not open instrument file (%s)", filenameOPL3.c_str());
+				error("MILES-ADLIB: could not open timbre file (%s)", filenameOPL3.c_str());
 			}
 		}
 	}
 
-	if (!filename.empty()) {
+	if (!timbreFilename.empty()) {
 		// Filename was passed to us and file exists (this is the common case for most games)
+		// We prefer this situation
 
-		if (!fileStream->open(filename))
-			error("MILES-ADLIB: could not open instrument file");
+		if (!fileStream->open(timbreFilename))
+			error("MILES-ADLIB: could not open timbre file (%s)", timbreFilename.c_str());
 
 		streamSize = fileStream->size();
 
 		streamDataPtr = new byte[streamSize];
 
 		if (fileStream->read(streamDataPtr, streamSize) != streamSize)
-			error("MILES-ADLIB: error while reading instrument file");
+			error("MILES-ADLIB: error while reading timbre file (%s)", timbreFilename.c_str());
 		fileStream->close();
 
-	} else if (instrumentStream) {
-		// instrument data was passed directly (currently used by Amazon Guardians of Eden + Simon 2)
-		streamSize = instrumentStream->size();
+	} else if (timbreStream) {
+		// Timbre data was passed directly (possibly read from resource file by caller)
+		// Currently used by "Amazon Guardians of Eden", "Simon 2" and "Return To Zork"
+		streamSize = timbreStream->size();
+
 		streamDataPtr = new byte[streamSize];
 
-		if (instrumentStream->read(streamDataPtr, streamSize) != streamSize)
-			error("MILES-ADLIB: error while reading instrument stream");
+		if (timbreStream->read(streamDataPtr, streamSize) != streamSize)
+			error("MILES-ADLIB: error while reading timbre stream");
+
+	} else {
+		error("MILES-ADLIB: timbre filenames nor timbre stream were passed");
 	}
 
 	delete fileStream;
