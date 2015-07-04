@@ -299,16 +299,25 @@ void BuriedEngine::sendAllMessages() {
 	// in the queue.
 	while (!shouldQuit() && _messageQueue.empty()) {
 		// Generate a timer message
+		bool ranTimer = false;
+
 		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++) {
-			if (g_system->getMillis() >= it->_value.nextTrigger) {
-				it->_value.nextTrigger += it->_value.period;
+			uint32 time = g_system->getMillis();
+
+			if (time >= it->_value.nextTrigger) {
+				// Adjust the trigger to be what the next one would be, after
+				// all the current triggers would be called.
+				uint32 triggerCount = (time - it->_value.nextTrigger + it->_value.period) / it->_value.period;
+				it->_value.nextTrigger += triggerCount * it->_value.period;
 				it->_value.owner->sendMessage(new TimerMessage(it->_key));
-				continue;
+				ranTimer = true;
+				break;
 			}
 		}
 
-		// No timer messages to post
-		break;
+		// If no timers were run, there's nothing to keep looking for
+		if (!ranTimer)
+			break;
 	}
 }
 
