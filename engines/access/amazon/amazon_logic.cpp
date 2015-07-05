@@ -386,7 +386,7 @@ void Opening::doTitle() {
 		_vm->_buffer1.blitFrom(*_vm->_screen);
 		screen.forceFadeIn();
 		_vm->_midi->newMusic(1, 0);
-		_vm->_events->_vbCount = 700;
+		_vm->_events->_vbCount = 950;
 		while (!_vm->shouldQuit() && (_vm->_events->_vbCount > 0) && !_vm->_events->isKeyMousePressed()) {
 			_vm->_events->pollEventsAndWait();
 		}
