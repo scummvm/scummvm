@@ -3808,9 +3808,9 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	// just skip to the most logical page. For optional minigames, this
 	// will return the player to the previous page. For mandatory minigames,
 	// this will send the player to the next page.
-	// TODO: Document mini games from Arthur's Reading Race
 
-	uint16 destPage;
+	uint16 destPage = 0;
+	bool returnToMenu = false;
 
 	// Figure out what minigame we have and bring us back to a page where
 	// the player can continue
@@ -3820,13 +3820,31 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 		destPage = 5;
 	else if (_desc == "Fall") // Green Eggs and Ham: Fall minigame
 		destPage = 13;
+	else if (_desc == "MagicWrite3") // Arthur's Reading Race: "Let Me Write" minigame (Page 3)
+		destPage = 3;
+	else if (_desc == "MagicWrite4") // Arthur's Reading Race: "Let Me Write" minigame (Page 4)
+		destPage = 4;
+	else if (_desc == "MagicSpy5") // Arthur's Reading Race: "I Spy" minigame (Page 5)
+		destPage = 5;
+	else if (_desc == "MagicSpy6") // Arthur's Reading Race: "I Spy" minigame (Page 6)
+		destPage = 6;
+	else if (_desc == "MagicWrite7") // Arthur's Reading Race: "Let Me Write" minigame (Page 7)
+		destPage = 7;
+	else if (_desc == "MagicSpy8") // Arthur's Reading Race: "I Spy" minigame (Page 8)
+		destPage = 8;
+	else if (_desc == "MagicRace") // Arthur's Reading Race: Race minigame
+		returnToMenu = true;
 	else
 		error("Unknown minigame '%s'", _desc.c_str());
 
 	GUI::MessageDialog dialog(Common::String::format("The '%s' minigame is not supported yet.", _desc.c_str()));
 	dialog.runModal();
 
-	_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
+	// Go back to the menu if requested, otherwise go to the requested page
+	if (returnToMenu)
+		_vm->addNotifyEvent(NotifyEvent(kLBNotifyGoToControls, 1));
+	else 
+		_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
 
 	return false;
 }
