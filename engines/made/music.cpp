@@ -37,7 +37,7 @@
 namespace Made {
 
 MusicPlayer::MusicPlayer(bool milesAudio) : _isGM(false),_milesAudioMode(false) {
-	MusicType musicType;
+	MusicType musicType = MT_INVALID;
 	if (milesAudio) {
 		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
 		musicType = MidiDriver::getMusicType(dev);
