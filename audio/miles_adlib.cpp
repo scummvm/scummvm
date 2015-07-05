@@ -1065,6 +1065,8 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 	Common::String              timbreFilename;
 	Common::SeekableReadStream *timbreStream = nullptr;
 
+	bool          preferOPL3 = false;
+
 	Common::File *fileStream = new Common::File();
 	uint32        fileSize = 0;
 	uint32        fileDataOffset = 0;
@@ -1083,16 +1085,39 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 	uint32           instrumentOffset = 0;
 	uint16           instrumentDataSize = 0;
 
+	// Logic:
+	// We prefer OPL3 timbre data in case OPL3 is available in ScummVM
+	// If it's not or OPL3 timbre data is not available, we go for AdLib timbre data
+	// And if OPL3 is not available in ScummVM and also AdLib timbre data is not available,
+	// we then still go for OPL3 timbre data.
+	//
+	// Note: for most games OPL3 timbre data + AdLib timbre data is the same.
+	//       And at least in theory we should still be able to use OPL3 timbre data even for AdLib.
+	//       However there is a special OPL3-specific timbre format, which is currently not supported.
+	//       In this case the error message "unsupported instrument size" should appear. I haven't found
+	//       a game that uses it, which is why I haven't implemented it yet.
+
+	if (OPL::Config::detect(OPL::Config::kOpl3) >= 0) {
+		// OPL3 available, prefer OPL3 timbre data because of this
+		preferOPL3 = true;
+	}
+
 	// Check if streams were passed to us and select one of them
 	if ((streamAdLib) || (streamOPL3)) {
 		// At least one stream was passed by caller
-		// Prefer AdLib for now
-		if (streamAdLib) {
-			timbreStream = streamAdLib;
-		} else {
-			// If not available, use OPL3
-			if (streamOPL3) {
-				timbreStream = streamOPL3;
+		if (preferOPL3) {
+			// Prefer OPL3 timbre stream in case OPL3 is available
+			timbreStream = streamOPL3;
+		}
+		if (!timbreStream) {
+			// Otherwise prefer AdLib timbre stream first
+			if (streamAdLib) {
+				timbreStream = streamAdLib;
+			} else {
+				// If not available, use OPL3 timbre stream
+				if (streamOPL3) {
+					timbreStream = streamOPL3;
+				}
 			}
 		}
 	}
@@ -1100,18 +1125,37 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 	// Now check if any filename was passed to us
 	if ((!filenameAdLib.empty()) || (!filenameOPL3.empty())) {
 		// If that's the case, check if one of those exists
-		// Prefer the AdLib one for now
-		if (!filenameAdLib.empty()) {
-			if (fileStream->exists(filenameAdLib)) {
-				// if AdLib file exists, use it
-				timbreFilename = filenameAdLib;
-			}
-		}
-		if (timbreFilename.empty()) {
+		if (preferOPL3) {
+			// OPL3 available
 			if (!filenameOPL3.empty()) {
 				if (fileStream->exists(filenameOPL3)) {
-					// if OPL3 file exists, use it
+					// If OPL3 available, prefer OPL3 timbre file in case file exists
 					timbreFilename = filenameOPL3;
+				}
+			}
+			if (timbreFilename.empty()) {
+				if (!filenameAdLib.empty()) {
+					if (fileStream->exists(filenameAdLib)) {
+						// otherwise use AdLib timbre file, if it exists
+						timbreFilename = filenameAdLib;
+					}
+				}
+			}
+		} else {
+			// OPL3 not available
+			// Prefer the AdLib one for now
+			if (!filenameAdLib.empty()) {
+				if (fileStream->exists(filenameAdLib)) {
+					// if AdLib file exists, use it
+					timbreFilename = filenameAdLib;
+				}
+			}
+			if (timbreFilename.empty()) {
+				if (!filenameOPL3.empty()) {
+					if (fileStream->exists(filenameOPL3)) {
+						// if OPL3 file exists, use it
+						timbreFilename = filenameOPL3;
+					}
 				}
 			}
 		}
