@@ -541,7 +541,7 @@ void WidgetTalk::setStatementLines() {
 
 				// Find out how much of the statement will fit on the line
 				int width = 0;
-				const char *ch = line.c_str();
+				const char *ch = str.c_str();
 				const char *space = nullptr;
 
 				while (width < xSize && *ch) {
