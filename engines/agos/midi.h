@@ -53,7 +53,6 @@ struct MusicInfo {
 	MusicInfo() { clear(); }
 	void clear() {
 		parser = 0; data = 0; num_songs = 0;
-		loopTrack = false;
 		memset(songs, 0, sizeof(songs));
 		memset(song_sizes, 0, sizeof(song_sizes));
 		memset(channel, 0, sizeof(channel));
@@ -79,7 +78,7 @@ protected:
 
 	// These are only used for music.
 	byte _currentTrack;
-	bool _loopTrackDefault;
+	bool _loopTrack;
 	byte _queuedTrack;
 	bool _loopQueuedTrack;
 
