@@ -46,7 +46,7 @@ void LzwDecompressor::decompress(byte *source, byte *dest) {
 	maxCodeValue = 512;
 
 	copyLength = 0;
-	_bitPos = 0;
+	_sourceBitsLeft = 8;
 
 	while (1) {
 
@@ -97,17 +97,39 @@ uint16 LzwDecompressor::getCode() {
 	const byte bitMasks[9] = {
 		0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0x0FF
 	};
-	uint16 bits, loCode, hiCode;
-	loCode = (READ_LE_UINT16(_source) >> _bitPos) & 0xFF;
-	_source++;
-	bits = _codeLength - 8;
-	hiCode = (READ_LE_UINT16(_source) >> _bitPos) & bitMasks[bits];
-	_bitPos += bits;
-	if (_bitPos > 8) {
-		_source++;
-		_bitPos -= 8;
+
+	byte   resultBitsLeft = _codeLength;
+	byte   resultBitsPos = 0;
+	uint16 result = 0;
+	byte   currentByte = *_source;
+	byte   currentBits = 0;
+
+	// Get bits of current byte
+	while (resultBitsLeft) {
+		if (resultBitsLeft < _sourceBitsLeft) {
+			// we need less than we have left
+			currentBits = (currentByte >> (8 - _sourceBitsLeft)) & bitMasks[resultBitsLeft];
+			result |= (currentBits << resultBitsPos);
+			_sourceBitsLeft -= resultBitsLeft;
+			resultBitsLeft = 0;
+
+		} else {
+			// we need as much as we have left or more
+			resultBitsLeft -= _sourceBitsLeft;
+			currentBits = currentByte >> (8 - _sourceBitsLeft);
+			result |= (currentBits << resultBitsPos);
+			resultBitsPos += _sourceBitsLeft;
+
+			// Go to next byte
+			_source++;
+
+			_sourceBitsLeft = 8;
+			if (resultBitsLeft) {
+				currentByte = *_source;
+			}
+		}
 	}
-	return (hiCode << 8) | loCode;
+	return result;
 }
 
 uint32 decompressDBE(byte *source, byte **dest) {
