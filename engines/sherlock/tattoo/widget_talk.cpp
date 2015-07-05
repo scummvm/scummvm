@@ -415,7 +415,9 @@ void WidgetTalk::handleEvents() {
 
 						// See if the new file is a standard file, a reply first file, or a Stealth Mode file
 						if (!talk._statements[select]._statement.hasPrefix("*") && !talk._statements[select]._statement.hasPrefix("^")) {
-							talk.openTalkWindow();
+							load();
+							summonWindow();
+
 							setStatementLines();
 							render(HL_NO_HIGHLIGHTING);
 							break;
@@ -557,7 +559,7 @@ void WidgetTalk::setStatementLines() {
 				// But if there isn't (and this shouldn't ever happen), just split the line right at that point
 				if (width > xSize) {
 					if (space) {
-						line = Common::String(str.c_str(), space - 1);
+						line = Common::String(str.c_str(), space);
 						str = Common::String(space + 1);
 					} else {
 						line = Common::String(str.c_str(), ch);

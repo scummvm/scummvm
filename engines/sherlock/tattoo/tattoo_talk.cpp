@@ -198,9 +198,15 @@ void TattooTalk::talkInterface(const byte *&str) {
 	_wait = true;
 }
 
-void TattooTalk::openTalkWindow() {
+void TattooTalk::showTalk() {
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+
+	_sequenceStack.clear();
+	people.setListenSequence(_talkTo, 129);
+
 	_talkWidget.load();
 	_talkWidget.summonWindow();
+	_talkWidget.refresh();
 }
 
 OpcodeReturn TattooTalk::cmdSwitchSpeaker(const byte *&str) {
@@ -859,14 +865,6 @@ OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) {
 
 	str += 9;
 	return RET_SUCCESS;
-}
-
-void TattooTalk::showTalk() {
-	TattooPeople &people = *(TattooPeople *)_vm->_people;
-	
-	_sequenceStack.clear();
-	people.setListenSequence(_talkTo, 129);
-	_talkWidget.refresh();
 }
 
 } // End of namespace Tattoo

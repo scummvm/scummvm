@@ -374,8 +374,7 @@ void Talk::talkTo(const Common::String &filename) {
 
 				// If the new conversion is a reply first, then we don't need
 				// to display any choices, since the reply needs to be shown
-				if (!newStatement._statement.hasPrefix("*") &&
-						!newStatement._statement.hasPrefix("^")) {
+				if (!newStatement._statement.hasPrefix("*") && !newStatement._statement.hasPrefix("^")) {
 					_talkIndex = select;
 					showTalk();
 
