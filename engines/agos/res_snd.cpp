@@ -309,7 +309,9 @@ void AGOSEngine::stopMusic() {
 }
 
 void AGOSEngine::playSting(uint16 soundId) {
-	if (!_midi->_enable_sfx)
+	// The sound effects in floppy disk version of
+	// Simon the Sorcerer 1 are only meant for AdLib
+	if (!_midi->_adLibMusic || !_midi->_enable_sfx)
 		return;
 
 	char filename[15];

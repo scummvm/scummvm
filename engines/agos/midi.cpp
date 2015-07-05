@@ -54,6 +54,7 @@ MidiPlayer::MidiPlayer() {
 
 	_adlibPatches = NULL;
 
+	_adLibMusic = false;
 	_enable_sfx = true;
 	_current = 0;
 
@@ -235,6 +236,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 	}
 
 	dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+	_adLibMusic = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	_driver = MidiDriver::createMidi(dev);

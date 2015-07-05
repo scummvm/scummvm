@@ -93,6 +93,7 @@ protected:
 	void unloadAdlibPatches();
 
 public:
+	bool _adLibMusic;
 	bool _enable_sfx;
 
 public:
