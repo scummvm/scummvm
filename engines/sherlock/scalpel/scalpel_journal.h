@@ -93,11 +93,6 @@ public:
 	 * Reset viewing position to the start of the journal
 	 */
 	virtual void resetPosition();
-
-	/**
-	 * Synchronize the data for a savegame
-	 */
-	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Scalpel

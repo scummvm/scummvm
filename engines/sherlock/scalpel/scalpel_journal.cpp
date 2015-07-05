@@ -662,26 +662,6 @@ void ScalpelJournal::resetPosition() {
 	_page = 1;
 }
 
-void ScalpelJournal::synchronize(Serializer &s) {
-	s.syncAsSint16LE(_index);
-	s.syncAsSint16LE(_sub);
-	s.syncAsSint16LE(_page);
-	s.syncAsSint16LE(_maxPage);
-
-	int journalCount = _journal.size();
-	s.syncAsUint16LE(journalCount);
-	if (s.isLoading())
-		_journal.resize(journalCount);
-
-	for (uint idx = 0; idx < _journal.size(); ++idx) {
-		JournalEntry &je = _journal[idx];
-
-		s.syncAsSint16LE(je._converseNum);
-		s.syncAsByte(je._replyOnly);
-		s.syncAsSint16LE(je._statementNum);
-	}
-}
-
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

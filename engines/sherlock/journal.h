@@ -77,6 +77,11 @@ public:
 	* Displays a page of the journal at the current index
 	*/
 	bool drawJournal(int direction, int howFar);
+
+	/**
+	 * Synchronize the data for a savegame
+	 */
+	void synchronize(Serializer &s);
 public:
 	/**
 	 * Draw the journal background, frame, and interface buttons
@@ -93,11 +98,6 @@ public:
 	 * Reset viewing position to the start of the journal
 	 */
 	virtual void resetPosition() {}
-
-	/**
-	 * Synchronize the data for a savegame
-	 */
-	virtual void synchronize(Serializer &s) = 0;
 };
 
 } // End of namespace Sherlock

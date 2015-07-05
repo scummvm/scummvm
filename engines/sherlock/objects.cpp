@@ -918,6 +918,17 @@ void UseType::load3DO(Common::SeekableReadStream &s) {
 	_target = Common::String(buffer);
 }
 
+void UseType::synchronize(Serializer &s) {
+	s.syncString(_verb);
+	s.syncAsSint16LE(_cAnimNum);
+	s.syncAsSint16LE(_cAnimSpeed);
+	s.syncAsSint16LE(_useFlag);
+
+	for (int idx = 0; idx < 4; ++idx)
+		s.syncString(_names[idx]);
+	s.syncString(_target);
+}
+
 /*----------------------------------------------------------------*/
 
 Object::Object(): BaseObject() {

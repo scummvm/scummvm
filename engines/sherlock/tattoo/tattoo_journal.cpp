@@ -428,10 +428,6 @@ void TattooJournal::drawFrame() {
 
 }
 
-void TattooJournal::synchronize(Serializer &s) {
-	// TODO
-}
-
 void TattooJournal::drawControls(int mode) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Screen &screen = *_vm->_screen;

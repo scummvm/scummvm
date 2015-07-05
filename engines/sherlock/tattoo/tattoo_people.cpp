@@ -967,6 +967,55 @@ void TattooPerson::checkWalkGraphics() {
 	setImageFrame();
 }
 
+void TattooPerson::synchronize(Serializer &s) {
+	s.syncAsSint32LE(_position.x);
+	s.syncAsSint32LE(_position.y);
+	s.syncAsSint16LE(_sequenceNumber);
+	s.syncAsSint16LE(_type);
+	s.syncString(_walkVGSName);
+	s.syncString(_description);
+	s.syncString(_examine);
+
+	// NPC specific properties
+	s.syncBytes(&_npcPath[0], MAX_NPC_PATH);
+	s.syncString(_npcName);
+	s.syncAsSint32LE(_npcPause);
+	s.syncAsByte(_lookHolmes);
+	s.syncAsByte(_updateNPCPath);
+	
+	// Walk to list
+	uint count = _walkTo.size();
+	s.syncAsUint16LE(count);
+	if (s.isLoading()) {
+		// Load path
+		for (uint idx = 0; idx < count; ++count) {
+			int xp = 0, yp = 0;
+			s.syncAsSint16LE(xp);
+			s.syncAsSint16LE(yp);
+			_walkTo.push(Common::Point(xp, yp));
+		}
+	} else {
+		// Save path
+		Common::Array<Common::Point> path;
+
+		// Save the points of the path
+		for (uint idx = 0; idx < count; ++idx) {
+			Common::Point pt = _walkTo.pop();
+			s.syncAsSint16LE(pt.x);
+			s.syncAsSint16LE(pt.y);
+			path.push_back(pt);
+		}
+
+		// Re-add the pending points back to the _walkTo queue
+		for (uint idx = 0; idx < count; ++idx)
+			_walkTo.push(path[idx]);
+	}
+
+	// Verbs
+	for (int idx = 0; idx < 2; ++idx)
+		_use[idx].synchronize(s);
+}
+
 /*----------------------------------------------------------------*/
 
 TattooPeople::TattooPeople(SherlockEngine *vm) : People(vm) {
@@ -1176,16 +1225,8 @@ int TattooPeople::findSpeaker(int speaker) {
 void TattooPeople::synchronize(Serializer &s) {
 	s.syncAsByte(_holmesOn);
 
-	for (uint idx = 0; idx < _data.size(); ++idx) {
-		Person &p = *_data[idx];
-		s.syncAsSint32LE(p._position.x);
-		s.syncAsSint32LE(p._position.y);
-		s.syncAsSint16LE(p._sequenceNumber);
-		s.syncAsSint16LE(p._type);
-		s.syncString(p._walkVGSName);
-		s.syncString(p._description);
-		s.syncString(p._examine);
-	}
+	for (uint idx = 0; idx < _data.size(); ++idx)
+		(*this)[idx].synchronize(s);
 
 	s.syncAsSint16LE(_holmesQuotient);
 

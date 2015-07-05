@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "sherlock/image_file.h"
 #include "sherlock/fixed_text.h"
+#include "sherlock/saveload.h"
 
 namespace Sherlock {
 
@@ -176,6 +177,11 @@ struct UseType: public ActionType {
 	 */
 	void load(Common::SeekableReadStream &s, bool isRoseTattoo);
 	void load3DO(Common::SeekableReadStream &s);
+
+	/**
+	 * Synchronize the data for a savegame
+	 */
+	void synchronize(Serializer &s);
 };
 
 class BaseObject {

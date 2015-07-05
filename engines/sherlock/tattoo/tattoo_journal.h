@@ -94,11 +94,6 @@ public:
 	 * Draw the journal background, frame, and interface buttons
 	 */
 	virtual void drawFrame();
-
-	/**
-	 * Synchronize the data for a savegame
-	 */
-	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Tattoo
