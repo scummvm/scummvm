@@ -350,18 +350,15 @@ void MidiDriver_Miles_AdLib::resetData() {
 	memset(_physicalFmVoices, 0, sizeof(_physicalFmVoices));
 
 	for (byte midiChannel = 0; midiChannel < MILES_MIDI_CHANNEL_COUNT; midiChannel++) {
-		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
-		_midiChannels[midiChannel].currentPitchRange = 12;
-		// Miles Audio 2: hardcoded pitch range as a global (not channel specific), set to 12
-		// Miles Audio 3: pitch range per MIDI channel
+		// defaults, were sent to driver during driver initialization
+		_midiChannels[midiChannel].currentVolume = 0x7F;
+		_midiChannels[midiChannel].currentPanning = 0x40; // center
 		_midiChannels[midiChannel].currentVolumeExpression = 127;
 
-		// TODO: Miles Audio had currentPanning initialized to 0 inside the driver
-		// Simon the sorcerer 2 as well as Return To Zork don't change this control at all
-		// inside their XMIDI files, so currentPanning set to 0 will create output output on
-		// one speaker only. Maybe there were some default MIDI commands sent to the driver before
-		// playing the music. Needs to get investigated further.
-		_midiChannels[midiChannel].currentPanning = 63; // center
+		// Miles Audio 2: hardcoded pitch range as a global (not channel specific), set to 12
+		// Miles Audio 3: pitch range per MIDI channel
+		_midiChannels[midiChannel].currentPitchBender = MILES_PITCHBENDER_DEFAULT;
+		_midiChannels[midiChannel].currentPitchRange = 12;
 	}
 
 }
