@@ -220,6 +220,7 @@ void AGOSEngine::playModule(uint16 music) {
 	}
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
+	_mixer->pauseHandle(_modHandle, _musicPaused);
 }
 
 void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
