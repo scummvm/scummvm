@@ -771,14 +771,8 @@ OpcodeReturn TattooTalk::cmdWalkHolmesAndNPCToCAnimation(const byte *&str) {
 		person.pushNPCPath();
 	person._npcMoved = true;
 
-	warning("TODO: cmdWalkNPCToCAnimation - walkBothToCoords call");
-	person.walkToCoords(
-		Point32(anim._goto[1].x * FIXED_INT_MULTIPLIER, anim._goto[1].y * FIXED_INT_MULTIPLIER),
-		anim._goto[1]._facing
-		//Point32(anim._goto[1].x * FIXED_INT_MULTIPLIER, anim._goto[1].y * FIXED_INT_MULTIPLIER),
-		//anim._goto[1]._facing,
-		//npcNum + 1
-	);
+	person.walkToCoords(anim._goto[1], anim._goto[1]._facing);
+
 	if (_talkToAbort)
 		return RET_EXIT;
 
@@ -797,12 +791,8 @@ OpcodeReturn TattooTalk::cmdWalkNPCToCAnimation(const byte *&str) {
 		person.pushNPCPath();
 	person._npcMoved = true;
 
-	warning("TODO: cmdWalkNPCToCAnimation - call RT walkToCoords variant");
-	person.walkToCoords(
-		Point32(anim._goto[1].x * FIXED_INT_MULTIPLIER, anim._goto[1].y * FIXED_INT_MULTIPLIER),
-		anim._goto[1]._facing
-		// npcNum + 1
-	);
+	person.walkToCoords(anim._goto[1], anim._goto[1]._facing);
+
 	if (_talkToAbort)
 		return RET_EXIT;
 
@@ -819,16 +809,13 @@ OpcodeReturn TattooTalk::cmdWalkNPCToCoords(const byte *&str) {
 		person.pushNPCPath();
 	person._npcMoved = true;
 
-	int x = (str[0] - 1) * 256 + str[1] - 1;
-	if (x > 16384)
-		x = -1 * (x - 16384);
+	int xp = (str[0] - 1) * 256 + str[1] - 1;
+	if (xp > 16384)
+		xp = -1 * (xp - 16384);
+	int yp = (str[2] - 1) * 256 + str[3] - 1;
 
-	warning("TODO: cmdWalkNPCToCoords - call RT walkToCoords variant");
-	person.walkToCoords(
-		Point32(x * FIXED_INT_MULTIPLIER, ((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER),
-		DIRECTION_CONVERSION[str[4] - 1]
-		// npcNum + 1
-	);
+	person.walkToCoords(Point32(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER),
+		DIRECTION_CONVERSION[str[4] - 1]);
 	if (_talkToAbort)
 		return RET_EXIT;
 
@@ -846,21 +833,14 @@ OpcodeReturn TattooTalk::cmdWalkHomesAndNPCToCoords(const byte *&str) {
 		person.pushNPCPath();
 	person._npcMoved = true;
 
-	int x = (str[0] - 1) * 256 + str[1] - 1;
-	if (x > 16384)
-		x = -1 * (x - 16384);
-	//int x1 = (str[5] - 1) * 256 + str[6] - 1;
-	//if (x1 > 16384)
-	//	x1 = -1 * (x1 - 16384);
+	int xp = (str[0] - 1) * 256 + str[1] - 1;
+	if (xp > 16384)
+		xp = -1 * (xp - 16384);
+	int yp = (str[2] - 1) * 256 + str[3] - 1;
 
-	warning("TODO: cmdWalkHomesAndNPCToCoords - walkBothToCoords call");
-	person.walkToCoords(
-		Point32(x * FIXED_INT_MULTIPLIER, ((str[2] - 1) * 256 + str[3] - 1) * FIXED_INT_MULTIPLIER),
-		DIRECTION_CONVERSION[str[4] - 1]
-		//Point32(x1 * FIXED_INT_MULTIPLIER, ((str[7] - 1) * 256 + str[8] - 1) * FIXED_INT_MULTIPLIER),
-		//DIRECTION_CONVERSION[str[9] - 1],
-		//npcNum + 1
-	);
+	person.walkToCoords(Point32(xp * FIXED_INT_MULTIPLIER, yp * FIXED_INT_MULTIPLIER),
+		DIRECTION_CONVERSION[str[4] - 1]);
+
 	if (_talkToAbort)
 		return RET_EXIT;
 
