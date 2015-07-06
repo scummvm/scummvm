@@ -879,11 +879,13 @@ void Talk::doScript(const Common::String &script) {
 		}
 
 		pullSequence();
-		if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
-			people.clearTalking();
 
-		if (IS_ROSE_TATTOO)
+		if (IS_SERRATED_SCALPEL) {
+			if (_speaker >= 0 && _speaker < SPEAKER_REMOVE)
+				people.clearTalking();
+		} else {
 			static_cast<Tattoo::TattooPeople *>(_vm->_people)->pullNPCPaths();
+		}
 	}
 }
 

@@ -188,7 +188,6 @@ void SherlockEngine::sceneLoop() {
 
 	_scene->freeScene();
 	_people->freeWalk();
-
 }
 
 void SherlockEngine::handleInput() {
