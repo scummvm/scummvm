@@ -344,13 +344,8 @@ void Screen::blitFrom3DOcolorLimit(uint16 limitColor) {
 }
 
 void Screen::restoreBackground(const Common::Rect &r) {
-	if (r.width() > 0 && r.height() > 0) {
-		Common::Rect tempRect = r;
-		tempRect.clip(Common::Rect(0, 0, this->w(), SHERLOCK_SCENE_HEIGHT));
-
-		if (tempRect.isValidRect())
-			_backBuffer1.blitFrom(_backBuffer2, Common::Point(tempRect.left, tempRect.top), tempRect);
-	}
+	if (r.width() > 0 && r.height() > 0)
+		_backBuffer1.blitFrom(_backBuffer2, Common::Point(r.left, r.top), r);
 }
 
 void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
