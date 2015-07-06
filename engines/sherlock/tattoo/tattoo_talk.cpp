@@ -22,6 +22,7 @@
 
 #include "sherlock/tattoo/tattoo_talk.h"
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/sherlock.h"
 #include "sherlock/screen.h"
@@ -267,7 +268,7 @@ OpcodeReturn TattooTalk::cmdGotoScene(const byte *&str) {
 	Scene &scene = *_vm->_scene;
 	scene._goToScene = str[1] - 1;
 
-	if (scene._goToScene != 100) {
+	if (scene._goToScene != OVERHEAD_MAP) {
 		// Not going to the map overview
 		map._oldCharPoint = scene._goToScene;
 
@@ -283,10 +284,10 @@ OpcodeReturn TattooTalk::cmdGotoScene(const byte *&str) {
 		}
 
 		_scriptMoreFlag = 1;
-	}	// if (scene._goToScene != 100)
+	}
 
 	str += 7;
-	if (scene._goToScene != 100)
+	if (scene._goToScene != OVERHEAD_MAP)
 		_scriptSaveIndex = str - _scriptStart;
 
 	_endStr = true;

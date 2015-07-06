@@ -193,6 +193,8 @@ People::~People() {
 }
 
 void People::reset() {
+	SaveManager &saves = *_vm->_saves;
+	Talk &talk = *_vm->_talk;
 	_data[HOLMES]->_description = "Sherlock Holmes!";
 
 	// Note: Serrated Scalpel only uses a single Person slot for Sherlock.. Watson is handled by scene sprites
@@ -200,13 +202,18 @@ void People::reset() {
 	for (int idx = 0; idx < count; ++idx) {
 		Person &p = *_data[idx];
 
-		p._type = (idx == 0) ? CHARACTER : INVALID;
-		if (IS_SERRATED_SCALPEL)
+		if (IS_SERRATED_SCALPEL) {
+			p._type = CHARACTER;
+			p._sequenceNumber = Tattoo::STOP_DOWNRIGHT;
 			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
-		else
+		} else if (!talk._scriptMoreFlag && !saves._justLoaded) {
+			p._type = (idx == 0) ? CHARACTER : INVALID;
+			p._sequenceNumber = Scalpel::STOP_DOWNRIGHT;
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
-
-		p._sequenceNumber = IS_SERRATED_SCALPEL ? (int)Scalpel::STOP_DOWNRIGHT : (int)Tattoo::STOP_DOWNRIGHT;
+			p._use[0]._verb = "";
+			p._use[1]._verb = "";
+		}
+		
 		p._imageFrame = nullptr;
 		p._frameNumber = 1;
 		p._delta = Point32(0, 0);
