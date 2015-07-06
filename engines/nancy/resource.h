@@ -66,6 +66,7 @@ public:
 	void initialize();
 	bool loadCifTree(const Common::String &name, const Common::String &ext);
 	bool loadImage(const Common::String &treeName, const Common::String &name, Graphics::Surface &surf);
+	void freeImage(Graphics::Surface &surf);
 	byte *loadData(const Common::String &treeName, const Common::String &name, uint &size);
 
 	// Debugger functions

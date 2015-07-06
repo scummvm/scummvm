@@ -41,7 +41,7 @@ uint32 NancyEngine::getFeatures() const {
 }
 
 const char *NancyEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 
@@ -327,8 +327,10 @@ SaveStateDescriptor NancyMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
-		desc.setThumbnail(thumbnail);
+		Graphics::Surface *thumbnail = nullptr;
+
+		if (Graphics::loadThumbnail(*file, thumbnail))
+			desc.setThumbnail(thumbnail);
 
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
