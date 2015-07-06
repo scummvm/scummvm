@@ -42,7 +42,6 @@ enum kMusicMode {
 struct MusicInfo {
 	MidiParser *parser;
 	byte *data;
-	bool loopTrack;
 	byte num_songs;           // For Type 1 SMF resources
 	byte *songs[16];          // For Type 1 SMF resources
 	uint32 song_sizes[16];    // For Type 1 SMF resources
