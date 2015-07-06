@@ -29,6 +29,7 @@
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 #include "sherlock/tattoo/tattoo_people.h"
+#include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_talk.h"
 
 namespace Sherlock {
@@ -150,7 +151,11 @@ void Talk::talkTo(const Common::String &filename) {
 
 	// If there any canimations currently running, or a portrait is being cleared,
 	// save the filename for later executing when the canimation is done
-	if (scene._canimShapes.size() > 0 || people._clearingThePortrait) {
+	bool ongoingAnim = scene._canimShapes.size() > 0;
+	if (IS_ROSE_TATTOO) {
+		ongoingAnim = static_cast<Tattoo::TattooScene *>(_vm->_scene)->_activeCAnim.active();
+	}
+	if (ongoingAnim || people._clearingThePortrait) {
 		// Make sure we're not in the middle of a script
 		if (!_scriptMoreFlag) {
 			_scriptName = filename;
