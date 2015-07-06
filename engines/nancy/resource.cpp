@@ -722,6 +722,10 @@ bool ResourceManager::loadImage(const Common::String &treeName, const Common::St
 	return true;
 }
 
+void ResourceManager::freeImage(Graphics::Surface &surf) {
+	delete[] (byte *)surf.getPixels();
+}
+
 void ResourceManager::list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) {
 	const CifTree *cifTree = findCifTree(treeName);
 

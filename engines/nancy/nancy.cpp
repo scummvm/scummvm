@@ -39,6 +39,7 @@
 #include "nancy/resource.h"
 #include "nancy/iff.h"
 #include "nancy/audio.h"
+#include "nancy/logo.h"
 
 #include "engines/util.h"
 
@@ -65,6 +66,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) :
 	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
 
 	_console = new NancyConsole(this);
+	_logoSequence = new LogoSequence(this);
 	_rnd = 0;
 }
 
@@ -97,8 +99,9 @@ Common::Platform NancyEngine::getPlatform() const {
 
 Common::Error NancyEngine::run() {
 	s_Engine = this;
+
 	Graphics::PixelFormat format(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	initGraphics(640, 480, true, &format);
+	initGraphics(640, 480, &format);
 	_console = new NancyConsole(this);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -132,6 +135,40 @@ Common::Error NancyEngine::run() {
 	readBootSummary(*boot);
 	delete boot;
 
+	Common::EventManager *ev = g_system->getEventManager();
+	bool quit = false;
+
+	_gameFlow.minGameState = kLogo;
+
+	while (!shouldQuit() && !quit) {
+		switch(_gameFlow.minGameState) {
+		case kLogo:
+			_logoSequence->doIt();
+			break;
+		case kIdle:
+		default:
+			break;
+		}
+
+		Common::Event event;
+		if (ev->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
+				switch(event.kbd.keycode) {
+				case Common::KEYCODE_q:
+					quit = true;
+					break;
+				case Common::KEYCODE_d:
+					_console->attach();
+				default:
+					break;
+				}
+			}
+		}
+
+		_system->updateScreen();
+		_system->delayMillis(16);
+	}
+#if 0
 	// Play music
 	Common::SeekableReadStream *mSnd = SearchMan.createReadStreamForMember(_menuSound.name + ".his");
 	if (mSnd) {
@@ -149,29 +186,7 @@ Common::Error NancyEngine::run() {
 		_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w, surf.h);
 		surf.free();
 	}
-
-	Common::EventManager *ev = g_system->getEventManager();
-	bool quit = false;
-
-	while (!shouldQuit() && !quit) {
-		Common::Event event;
-		if (ev->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN && (event.kbd.flags & Common::KBD_CTRL)) {
-				switch(event.kbd.keycode) {
-				case Common::KEYCODE_q:
-					quit = true;
-					break;
-				case Common::KEYCODE_d:
-					_console->attach();
-				default:
-					break;
-				}
-			}
-		}
-		_console->onFrame();
-		_system->updateScreen();
-		_system->delayMillis(16);
-	}
+#endif
 
 	return Common::kNoError;
 }

@@ -25,7 +25,9 @@
 
 #include "engines/engine.h"
 #include "common/file.h"
+
 #include "nancy/console.h"
+#include "nancy/logo.h"
 
 namespace Common {
 class RandomSource;
@@ -68,9 +70,12 @@ struct NancyGameDescription;
 
 class ResourceManager;
 class IFF;
+class LogoSequence;
 
 class NancyEngine : public Engine {
 public:
+	friend class LogoSequence;
+
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
 
@@ -117,11 +122,22 @@ protected:
 		Common::String name;
 	};
 
+	enum GameState {
+		kBoot,
+		kLogo,
+		kIdle
+	};
+
+	struct GameFlow {
+		GameState minGameState;
+	};
+
 	typedef Common::Array<Image> ImageList;
 
 	Common::SeekableReadStream *_bsum;
 	ImageList _logos, _frames;
 	Sound _menuSound;
+	GameFlow _gameFlow;
 
 	void preloadCals(const IFF &boot);
 	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
@@ -137,6 +153,8 @@ private:
 	NancyConsole *_console;
 	GameType _gameType;
 	Common::Platform _platform;
+
+	LogoSequence *_logoSequence;
 
 	void initialize();
 };
