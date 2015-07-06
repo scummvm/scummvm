@@ -531,6 +531,24 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_MONKEY4
 	},
+
+	{
+		// Escape from Monkey Island demo (Spanish)
+		{
+			"monkey4",
+			"Demo",
+			{
+				{"magdemo.lab", 0, "9e7eaa1b9317ff47d5deeda0b2c42ce3", 19826116},
+				{"i9n.lab", 0, "53b20d930f6e8c2e0880ed7e336eeebc", 1740761},
+				AD_LISTEND
+			},
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+		},
+		GType_MONKEY4
+	},
 #endif // ENABLE_MONKEY4
 
 	{ AD_TABLE_END_MARKER, GType_GRIM }

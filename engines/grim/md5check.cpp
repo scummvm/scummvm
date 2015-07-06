@@ -341,6 +341,7 @@ const char *emid_i9n[] = {
 	"d913504ec3a2fe52ee02a20a154a2b17", // english patched
 	"1cd0547b7cb26082274624b146dab3f1", // french
 	"0e011c72372acc4baeac259b46ae30f4", // german
+	"25523ee7687096382cbd3f3b6d30b84c", // spanish
 };
 const char *emid_lip[] = {
 	"0a145aa7acc1a68a738c7a6f27d23283", // english patched
