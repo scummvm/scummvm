@@ -1,6 +1,7 @@
 MODULE := audio
 
 MODULE_OBJS := \
+	adlib.o \
 	audiostream.o \
 	fmopl.o \
 	mididrv.o \
@@ -39,7 +40,6 @@ MODULE_OBJS := \
 	mods/rjp1.o \
 	mods/soundfx.o \
 	mods/tfmx.o \
-	softsynth/adlib.o \
 	softsynth/cms.o \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
