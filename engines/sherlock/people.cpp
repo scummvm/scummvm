@@ -185,11 +185,11 @@ void People::reset() {
 
 		if (IS_SERRATED_SCALPEL) {
 			p._type = CHARACTER;
-			p._sequenceNumber = Tattoo::STOP_DOWNRIGHT;
+			p._sequenceNumber = (int)Tattoo::STOP_DOWNRIGHT;
 			p._position = Point32(100 * FIXED_INT_MULTIPLIER, 110 * FIXED_INT_MULTIPLIER);
 		} else if (!talk._scriptMoreFlag && !saves._justLoaded) {
 			p._type = (idx == 0) ? CHARACTER : INVALID;
-			p._sequenceNumber = Scalpel::STOP_DOWNRIGHT;
+			p._sequenceNumber = (int)Scalpel::STOP_DOWNRIGHT;
 			p._position = Point32(36 * FIXED_INT_MULTIPLIER, 29 * FIXED_INT_MULTIPLIER);
 			p._use[0]._verb = "";
 			p._use[1]._verb = "";

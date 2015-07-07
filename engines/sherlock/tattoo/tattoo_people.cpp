@@ -988,7 +988,7 @@ void TattooPerson::synchronize(Serializer &s) {
 	s.syncAsUint16LE(count);
 	if (s.isLoading()) {
 		// Load path
-		for (uint idx = 0; idx < count; ++count) {
+		for (uint idx = 0; idx < count; ++idx) {
 			int xp = 0, yp = 0;
 			s.syncAsSint16LE(xp);
 			s.syncAsSint16LE(yp);
