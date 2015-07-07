@@ -150,9 +150,9 @@ public:
 	Common::Error run();
 	void pauseEngineIntern(bool pause);
 
-	ZVisionGameId ZVision::getGameId() const;
-	Common::Language ZVision::getLanguage() const;
-	uint32 ZVision::getFeatures() const;
+	ZVisionGameId getGameId() const;
+	Common::Language getLanguage() const;
+	uint32 getFeatures() const;
 
 	ScriptManager *getScriptManager() const {
 		return _scriptManager;
