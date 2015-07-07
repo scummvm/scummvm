@@ -84,27 +84,8 @@ void Person::goAllTheWay() {
 	if (_destZone == -1) {
 		_destZone = scene.closestZone(_walkDest);
 
-		// The destination isn't in a zone
-		if (_walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
-			_walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
-
-		// Trace a line between the centroid of the found closest zone to
-		// the destination, to find the point at which the zone will be left
-		const Common::Rect &destRect = scene._zones[_destZone];
-		const Common::Point destCenter((destRect.left + destRect.right) / 2,
-			(destRect.top + destRect.bottom) / 2);
-		const Common::Point delta = _walkDest - destCenter;
-		Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
-
-		// Move along the line until the zone is left
-		do {
-			pt += delta;
-		} while (destRect.contains(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER));
-
-		// Set the new walk destination to the last point that was in the
-		// zone just before it was left
-		_walkDest = Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
-			(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
+		// Check for any restriction of final destination position
+		_walkDest = _vm->_people->restrictToZone(_destZone, _walkDest);
 	}
 
 	// Only do a walk if both zones are acceptable

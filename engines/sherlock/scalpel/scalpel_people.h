@@ -42,11 +42,6 @@ enum ScalpelSequences {
 };
 
 class ScalpelPerson : public Person {
-protected:
-	/**
-	 * Get the source position for a character potentially affected by scaling
-	 */
-	virtual Common::Point getSourcePoint() const;
 public:
 	ScalpelPerson() : Person() {}
 	virtual ~ScalpelPerson() {}
@@ -72,6 +67,10 @@ public:
 	 */
 	virtual void walkToCoords(const Point32 &destPos, int destDir);
 
+	/**
+	 * Get the source position for a character potentially affected by scaling
+	 */
+	virtual Common::Point getSourcePoint() const;
 };
 
 class ScalpelPeople : public People {
@@ -96,6 +95,11 @@ public:
 	 * Change the sequence of the scene background object associated with the specified speaker.
 	 */
 	virtual void setTalkSequence(int speaker, int sequenceNum = 1);
+
+	/**
+	 * Restrict passed point to zone using Sherlock's positioning rules
+	 */
+	virtual const Common::Point restrictToZone(int zoneId, const Common::Point &destPos);
 
 	/**
 	 * Load the walking images for Sherlock

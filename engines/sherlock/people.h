@@ -156,6 +156,10 @@ public:
 	 */
 	virtual bool loadWalk() = 0;
 
+	/**
+	 * Restrict passed point to zone using Sherlock's positioning rules
+	 */
+	virtual const Common::Point restrictToZone(int zoneId, const Common::Point &destPos) = 0;
 };
 
 } // End of namespace Sherlock

@@ -500,6 +500,33 @@ bool ScalpelPeople::loadWalk() {
 	return result;
 }
 
+const Common::Point ScalpelPeople::restrictToZone(int zoneId, const Common::Point &destPos) {
+	Scene &scene = *_vm->_scene;
+	Common::Point walkDest = destPos;
+
+	// The destination isn't in a zone
+	if (walkDest.x >= (SHERLOCK_SCREEN_WIDTH - 1))
+		walkDest.x = SHERLOCK_SCREEN_WIDTH - 2;
+
+	// Trace a line between the centroid of the found closest zone to
+	// the destination, to find the point at which the zone will be left
+	const Common::Rect &destRect = scene._zones[zoneId];
+	const Common::Point destCenter((destRect.left + destRect.right) / 2,
+		(destRect.top + destRect.bottom) / 2);
+	const Common::Point delta = walkDest - destCenter;
+	Point32 pt(destCenter.x * FIXED_INT_MULTIPLIER, destCenter.y * FIXED_INT_MULTIPLIER);
+
+	// Move along the line until the zone is left
+	do {
+		pt += delta;
+	} while (destRect.contains(pt.x / FIXED_INT_MULTIPLIER, pt.y / FIXED_INT_MULTIPLIER));
+
+	// Set the new walk destination to the last point that was in the
+	// zone just before it was left
+	return Common::Point((pt.x - delta.x * 2) / FIXED_INT_MULTIPLIER,
+		(pt.y - delta.y * 2) / FIXED_INT_MULTIPLIER);
+}
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock

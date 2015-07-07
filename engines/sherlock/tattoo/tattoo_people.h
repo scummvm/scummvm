@@ -251,6 +251,11 @@ public:
 	 * Load the walking images for Sherlock
 	 */
 	virtual bool loadWalk();
+
+	/**
+	 * Restrict passed point to zone using Sherlock's positioning rules
+	 */
+	virtual const Common::Point restrictToZone(int zoneId, const Common::Point &destPos);
 };
 
 } // End of namespace Scalpel

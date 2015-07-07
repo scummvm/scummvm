@@ -1313,6 +1313,31 @@ void TattooPeople::pullNPCPaths() {
 	}
 }
 
+const Common::Point TattooPeople::restrictToZone(int zoneId, const Common::Point &destPos) {
+	Scene &scene = *_vm->_scene;
+	Screen &screen = *_vm->_screen;
+	Common::Rect &r = scene._zones[zoneId];
+
+	if (destPos.x < 0 || destPos.x > screen._backBuffer1.w())
+		return destPos;
+	else if (destPos.y < r.top && r.left < destPos.x && destPos.x < r.right)
+		return Common::Point(destPos.x, r.top);
+	else if (destPos.y > r.bottom && r.left < destPos.x && destPos.x < r.right)
+		return Common::Point(destPos.x, r.bottom);
+	else if (destPos.x < r.left && r.top < destPos.y && destPos.y < r.bottom)
+		return Common::Point(r.left, destPos.y);
+	else if (destPos.x > r.right && r.top < destPos.y && destPos.y < r.bottom)
+		return Common::Point(r.bottom, destPos.y);
+
+	// Find which corner of the zone the point is closet to
+	if (destPos.x <= r.left) {
+		return Common::Point(r.left, (destPos.y <= r.top) ? r.top : r.bottom);
+	} else {
+		return Common::Point(r.right, (destPos.y <= r.top) ? r.top : r.bottom);
+	}
+}
+
+
 } // End of namespace Tattoo
 
 } // End of namespace Sherlock
