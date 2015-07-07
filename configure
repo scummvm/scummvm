@@ -124,6 +124,7 @@ _faad=auto
 _fluidsynth=auto
 _opengl=auto
 _opengles=auto
+_dispmanx=no
 _readline=auto
 _freetype2=auto
 _taskbar=auto
@@ -824,7 +825,7 @@ Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (android, tizen, dc, dingux, ds, gcw0,
                           gph, iphone, linuxmoto, maemo, n64, null, openpandora,
-                          ps2, psp, raspberrypi, samsungtv, sdl, webos, wii, wince) [sdl]
+                          ps2, psp, samsungtv, sdl, webos, wii, wince) [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -945,6 +946,8 @@ Optional Libraries:
   --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
 
+  --with-dispmanx          enable dispmanx (Raspberry Pi native 2D API) rendering 
+
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
@@ -1049,6 +1052,8 @@ for ac_option in $@; do
 	--disable-libunity)       _libunity=no    ;;
 	--enable-opengl)          _opengl=yes     ;;
 	--disable-opengl)         _opengl=no      ;;
+	--enable-dispmanx)	  _dispmanx=yes   ;;
+	--disable-dispmanx)	  _dispmanx=no    ;;
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
@@ -1299,6 +1304,7 @@ raspberrypi)
 	_host_os=linux
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabihf
+	_backend=raspberrypi
 	;;
 caanoo)
 	_host_os=gph-linux
@@ -2987,30 +2993,6 @@ case $_backend in
 		LIBS="$LIBS -Wl,-Map,mapfile.txt"
 		;;
 	raspberrypi)
-		echocheck "DispmanX graphics "
-		_use_dispmanx=no
-		DISPMANX_CXXFLAGS="-I$RPI_ROOTDIR/opt/vc/include -I$RPI_ROOTDIR/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOTDIR/opt/vc/include/interface/vcos/pthreads -mfpu=vfp -mfloat-abi=hard -I$RPI_ROOTDIR/opt/rpi_root/usr/include/SDL"
-		DISPMANX_LIBS="--sysroot=$RPI_ROOTDIR -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
-		cat > $TMPC << EOF
-#include <bcm_host.h>
-
-		int main(int argc, char *argv[]) {
-	bcm_host_init();
-}
-EOF
-		cc_check $DISPMANX_CXXFLAGS $DISPMANX_LIBS && _use_dispmanx=yes
-		if test "$_use_dispmanx" = "yes"; then
-			CXXFLAGS="$CXXFLAGS $DISPMANX_CXXFLAGS"
-			LIBS="$LIBS $DISPMANX_LIBS"
-			MODULES="$MODULES backends/platform/sdl"
-			DEFINES="$DEFINES -DRASPBERRYPI"
-			add_line_to_config_mk 'RASPBERRYPI = 1'
-			_build_scalers=no
-			_build_hq_scalers=no	
-			_opengl=no
-			_default_optimization_level=-O3
-			echo $_use_dispmanx
-		fi
 		;;
 	samsungtv)
 		DEFINES="$DEFINES -DSAMSUNGTV"
@@ -3148,7 +3130,7 @@ case $_backend in
 esac
 
 #
-# In raspberry Pi, we don't use find_sdlconfig since we could be crosscompiling, but still we use SDL 
+# In raspberry Pi, we don't use find_sdlconfig since we could be crosscompiling, but still we use SDL
 #
 case $_backend in
 	raspberrypi)
@@ -3159,8 +3141,11 @@ case $_backend in
 		_16bit=yes
 		_savegame_timestamp=no
 		_eventrec=no
+		_build_scalers=no
+		_build_hq_scalers=no	
+	;;
 esac
-		
+
 #
 # Determine whether host is POSIX compliant, or at least POSIX
 # compatible enough to support our POSIX code (including dlsym(),
@@ -4094,6 +4079,31 @@ fi
 define_in_config_if_yes "$_opengl" "USE_OPENGL"
 define_in_config_if_yes "$_opengles" "USE_GLES"
 
+# Check if Raspberry Pi dispmanx has been activated. 
+if test "$_dispmanx" = "yes" ; then
+		echocheck "DispmanX graphics"
+		_use_dispmanx=no
+		DISPMANX_CXXFLAGS="-I$RPI_ROOTDIR/opt/vc/include -I$RPI_ROOTDIR/opt/vc/include/interface/vmcs_host/linux/ -I$RPI_ROOTDIR/opt/vc/include/interface/vcos/pthreads -mfpu=vfp -mfloat-abi=hard -I$RPI_ROOTDIR/opt/rpi_root/usr/include/SDL"
+		DISPMANX_LIBS="--sysroot=$RPI_ROOTDIR -L$RPI_ROOTDIR/usr/lib -L$RPI_ROOTDIR/opt/vc/lib -lbcm_host -lvcos -lvchiq_arm"
+		cat > $TMPC << EOF
+#include <bcm_host.h>
+
+		int main(int argc, char *argv[]) {
+	bcm_host_init();
+}
+EOF
+		cc_check $DISPMANX_CXXFLAGS $DISPMANX_LIBS && _use_dispmanx=yes
+		if test "$_use_dispmanx" = "yes"; then
+			CXXFLAGS="$CXXFLAGS $DISPMANX_CXXFLAGS"
+			LIBS="$LIBS $DISPMANX_LIBS"
+			MODULES="$MODULES backends/platform/sdl"
+			DEFINES="$DEFINES -DRASPBERRYPI"
+			add_line_to_config_mk 'RASPBERRYPI = 1'
+			_opengl=no
+			_opengles=no
+			echo $_use_dispmanx
+		fi
+fi
 
 #
 # Check for nasm

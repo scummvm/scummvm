@@ -37,11 +37,13 @@ public:
 	bool handleScalerHotkeys(Common::KeyCode key);
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
+	void clearOverlay();
 protected:	
 	// Raspberry Pi Dispmanx API
-	void DispmanXSetup(int dwidth, int dheight, int dbpp);
+	void DispmanXSetup(int width, int height);
 	void DispmanXInit();
 	void DispmanXUpdate();
+	struct dispmanxPage *DispmanXGetFreePage();
 	void DispmanXFreeResources();
 	void DispmanXVideoQuit();
 	struct dispvarsStruct *_dispvars;
