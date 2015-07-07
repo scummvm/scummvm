@@ -275,7 +275,7 @@ bool Console::cmdDumpFiles(int argc, const char **argv) {
 
 bool Console::cmdDumpImage(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Use %s <TGA/TGZ name> to dump a ZVision TGA/TGZ image into a regular BMP image\n", argv[0]);
+		debugPrintf("Use %s <TGA/TGZ name> to dump a Z-Vision TGA/TGZ image into a regular BMP image\n", argv[0]);
 		return true;
 	}
 

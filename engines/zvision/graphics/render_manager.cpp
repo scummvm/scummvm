@@ -196,7 +196,7 @@ void RenderManager::readImageToSurface(const Common::String &fileName, Graphics:
 	uint32 imageHeight;
 	Image::TGADecoder tga;
 	uint16 *buffer;
-	// All ZVision images are in RGB 555
+	// All Z-Vision images are in RGB 555
 	destination.format = _engine->_resourcePixelFormat;
 
 	bool isTGZ;

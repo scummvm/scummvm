@@ -205,7 +205,7 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		return true;
 	}
 	if (tag != SAVEGAME_ID) {
-		warning("File is not a ZVision save file. Aborting load");
+		warning("File is not a Z-Vision save file. Aborting load");
 		return false;
 	}
 
