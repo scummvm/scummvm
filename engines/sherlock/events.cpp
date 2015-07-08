@@ -196,12 +196,12 @@ bool Events::checkForNextFrameCounter() {
 	return false;
 }
 
-Common::Point Events::mousePos() const {
+Common::Point Events::screenMousePos() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
-Common::Point Events::sceneMousePos() const {
-	return mousePos() + _vm->_screen->_currentScroll;
+Common::Point Events::mousePos() const {
+	return screenMousePos() + _vm->_screen->_currentScroll;
 }
 
 Common::KeyState Events::getKey() {

@@ -305,7 +305,7 @@ void TattooMap::drawMapIcons() {
 
 void TattooMap::checkMapNames(bool slamIt) {
 	Events &events = *_vm->_events;
-	Common::Point mapPos = events.sceneMousePos();
+	Common::Point mapPos = events.mousePos();
 
 	// See if the mouse is pointing at any of the map locations
 	_bgFound = -1;

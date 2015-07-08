@@ -127,7 +127,7 @@ void WidgetInventoryTooltip::handleEvents() {
 		_oldInvGraphicBounds = _invGraphicBounds;
 
 		// Set the New position of the graphic
-		int xp = CLIP(mousePos.x - _invGraphicBounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _invGraphicBounds.width());
+		int xp = CLIP(mousePos.x - _invGraphicBounds.width() / 2, 0, SHERLOCK_SCENE_WIDTH - _invGraphicBounds.width());
 		int yp = CLIP(mousePos.y - _invGraphicBounds.height() / 2, 0, SHERLOCK_SCREEN_HEIGHT - _invGraphicBounds.height());
 
 		_invGraphicBounds.moveTo(xp, yp);
@@ -242,7 +242,7 @@ void WidgetInventoryTooltip::handleEvents() {
 	}
 
 	// Update the position of the tooltip
-	int xs = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
+	int xs = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCENE_WIDTH - _bounds.width());
 	int ys = CLIP(mousePos.y - _bounds.height(), 0, SHERLOCK_SCREEN_HEIGHT - _bounds.height());
 	_bounds.moveTo(xs, ys);
 }
@@ -263,11 +263,12 @@ WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm), _tooltipW
 void WidgetInventory::load(int mode) {
 	Events &events = *_vm->_events;
 	Inventory &inv = *_vm->_inventory;
+	Screen &screen = *_vm->_screen;
 	Common::Point mousePos = events.mousePos();
 
 	if (mode == 3) {
 		mode = 2;
-		mousePos = Common::Point(SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
+		mousePos = Common::Point(screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH / 2, SHERLOCK_SCREEN_HEIGHT / 2);
 	}
 
 	if (mode != 0)

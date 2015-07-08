@@ -245,7 +245,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.sceneMousePos();
+	Common::Point mousePos = events.mousePos();
 
 	// If they have selected the sollbar, return with the Scroll Bar Still selected
 	if (ui._scrollHighlight == 3)

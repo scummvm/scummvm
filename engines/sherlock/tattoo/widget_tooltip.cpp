@@ -44,7 +44,8 @@ void WidgetTooltipBase::draw() {
 		
 		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
 		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
-		screen.transBlitFrom(_surface, Common::Point(_bounds.left, _bounds.top));
+		screen.transBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x, 
+			_bounds.top - screen._currentScroll.y));
 
 		// Store a copy of the drawn area for later erasing
 		_oldBounds = _bounds;

@@ -127,12 +127,12 @@ public:
 	/**
 	 * Get the current mouse position
 	 */
-	Common::Point mousePos() const;
+	Common::Point screenMousePos() const;
 
 	/**
 	 * Get the current mouse position within the scene, adjusted by the scroll position
 	 */
-	Common::Point sceneMousePos() const;
+	Common::Point mousePos() const;
 
 	/**
 	 * Return the current game frame number

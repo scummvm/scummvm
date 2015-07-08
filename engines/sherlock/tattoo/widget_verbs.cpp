@@ -41,7 +41,7 @@ void WidgetVerbs::load(bool objectsOn) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.sceneMousePos();
+	Common::Point mousePos = events.mousePos();
 	bool isWatson = false;
 
 	if (talk._talkToAbort)
@@ -155,7 +155,7 @@ void WidgetVerbs::handleEvents() {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.sceneMousePos();
+	Common::Point mousePos = events.mousePos();
 	bool noDesc = false;
 
 	Common::String strLook = fixedText.getText(kFixedText_Look);
@@ -283,7 +283,7 @@ void WidgetVerbs::handleEvents() {
 void WidgetVerbs::highlightVerbControls() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Common::Point mousePos = events.sceneMousePos();
+	Common::Point mousePos = events.mousePos();
 
 	// Get highlighted verb
 	_selector = -1;
