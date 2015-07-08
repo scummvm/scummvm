@@ -363,6 +363,20 @@ void MohawkEngine_LivingBooks::destroyPage() {
 	_focus = NULL;
 }
 
+// Replace any colons (originally a slash) with an underscore.
+static Common::String replaceColons(const Common::String &in) {
+	Common::String out;
+
+	for (uint32 i = 0; i < in.size(); i++) {
+		if (in[i] == ':')
+			out += '_';
+		else
+			out += in[i];
+	}
+
+	return out;
+}
+
 bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 	destroyPage();
 
@@ -409,8 +423,11 @@ bool MohawkEngine_LivingBooks::loadPage(LBMode mode, uint page, uint subpage) {
 		warning("ignoring 'killgag' for filename '%s'", filename.c_str());
 	}
 
+	// Try opening the file first, then fallback on replacing colons with underscore
+	// after. This means that it will work out of the box for ie. Mac OS X where
+	// the colon stands for a forward slash, and fallback on underscore everywhere.
 	Archive *pageArchive = createArchive();
-	if (!filename.empty() && pageArchive->openFile(filename)) {
+	if (!filename.empty() && (pageArchive->openFile(filename) || (filename.contains(':') && pageArchive->openFile(replaceColons(filename))))) {
 		_page = new LBPage(this);
 		_page->open(pageArchive, 1000);
 	} else {
@@ -824,18 +841,18 @@ int MohawkEngine_LivingBooks::getIntFromConfig(const Common::String &section, co
 
 Common::String MohawkEngine_LivingBooks::getFileNameFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover) {
 	Common::String string = getStringFromConfig(section, key, leftover);
-	Common::String x;
 
-	uint32 i = 0;
 	if (string.hasPrefix("//")) {
 		// skip "//CD-ROM Title/" prefixes which we don't care about
-		i = 3;
+		uint i = 3;
 		while (i < string.size() && string[i - 1] != '/')
 			i++;
-	}
-	x = string.c_str() + i;
 
-	return (getPlatform() == Common::kPlatformMacintosh) ? convertMacFileName(x) : convertWinFileName(x);
+		// Already uses slashes, no need to convert further
+		return string.c_str() + i;
+	}
+
+	return (getPlatform() == Common::kPlatformMacintosh) ? convertMacFileName(string) : convertWinFileName(string);
 }
 
 Common::String MohawkEngine_LivingBooks::removeQuotesFromString(const Common::String &string, Common::String &leftover) {
@@ -866,8 +883,10 @@ Common::String MohawkEngine_LivingBooks::convertMacFileName(const Common::String
 	for (uint32 i = 0; i < string.size(); i++) {
 		if (i == 0 && string[i] == ':') // First character should be ignored (another colon)
 			continue;
-		if (string[i] == ':')
+		if (string[i] == ':') // Directory separator
 			filename += '/';
+		else if (string[i] == '/') // Literal slash
+			filename += ':'; // Replace by colon, as used by Mac OS X for slash
 		else
 			filename += string[i];
 	}
