@@ -60,7 +60,7 @@ MODULE_OBJS := \
 
 ifdef USE_ALSA
 MODULE_OBJS += \
-	softsynth/opl/alsa.o
+	alsa_opl.o
 endif
 
 ifndef USE_ARM_SOUND_ASM
