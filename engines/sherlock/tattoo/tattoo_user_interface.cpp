@@ -454,7 +454,7 @@ void TattooUserInterface::doStandardControl() {
 			// Either call the code to Look at it's Examine Field or call the Exit animation
 			// if the object is an exit, specified by the first four characters of the name being "EXIT"
 			Common::String name = _personFound ? people[_bgFound - 1000]._name : _bgShape->_name;
-			if (name.hasPrefix("EXIT")) {
+			if (!name.hasPrefix("EXIT")) {
 				lookAtObject();
 			} else {
 				// Run the Exit animation and set which scene to go to next
