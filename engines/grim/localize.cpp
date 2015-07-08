@@ -38,8 +38,9 @@ Localizer::Localizer() {
 	bool isGrimDemo = g_grim->getGameType() == GType_GRIM && isAnyDemo;
 	bool isGerman = g_grim->getGameLanguage() == Common::DE_DEU;
 	bool isFrench = g_grim->getGameLanguage() == Common::FR_FRA;
+	bool isItalian = g_grim->getGameLanguage() == Common::IT_ITA;
 	bool isSpanish = g_grim->getGameLanguage() == Common::ES_ESP;
-	bool isTranslatedGrimDemo = (isGerman || isFrench || isSpanish) && isGrimDemo;
+	bool isTranslatedGrimDemo = (isGerman || isFrench || isItalian || isSpanish) && isGrimDemo;
 	bool isPS2 = g_grim->getGamePlatform() == Common::kPlatformPS2;
 
 	if (isGrimDemo && !isTranslatedGrimDemo)

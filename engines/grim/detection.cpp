@@ -290,6 +290,23 @@ static const GrimGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Grim Fandango Italian demo version
+		{
+			"grim",
+			"Demo",
+			{
+				{"gfdemo01.lab", 0, "7df813f3809f2c0234213cfa4f6da062", 29533695},
+				{"voice001.lab", 0, "3b8ace62584380c66b73981e014ea40e", 14907410},
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GAMEOPTION_LOAD_DATAUSR)
+		},
+		GType_GRIM
+	},
+
+	{
 		// Grim Fandango Spanish demo version
 		{
 			"grim",

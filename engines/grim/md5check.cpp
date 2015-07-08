@@ -164,6 +164,9 @@ const char *gfdemo01ger[] = {
 const char *gfdemo01fra[] = {
 	"fd728f040557118b7ca436f8205029e5" // Same as german
 };
+const char *gfdemo01ita[] = {
+	"fd728f040557118b7ca436f8205029e5" // Same as german
+};
 const char *gfdemo01spa[] = {
 	"fd728f040557118b7ca436f8205029e5" // Same as german
 };
@@ -181,6 +184,9 @@ const char *voice001ger[] = {
 };
 const char *voice001fra[] = {
 	"43f56fca727e117b724051c740202c26"
+};
+const char *voice001ita[] = {
+	"412bd831ec42d226fa173e0f55cb47cd"
 };
 const char *voice001spa[] = {
 	"00cb825deca33b96719bc157a5427c40"
@@ -384,6 +390,9 @@ void MD5Check::init() {
 			} else if (g_grim->getGameLanguage() == Common::FR_FRA) {
 				MD5SUM("gfdemo01.lab", gfdemo01fra)
 				MD5SUM("voice001.lab", voice001fra)
+			} else if (g_grim->getGameLanguage() == Common::IT_ITA) {
+				MD5SUM("gfdemo01.lab", gfdemo01ita)
+				MD5SUM("voice001.lab", voice001ita)
 			} else if (g_grim->getGameLanguage() == Common::ES_ESP) {
 				MD5SUM("gfdemo01.lab", gfdemo01spa)
 				MD5SUM("voice001.lab", voice001spa)
