@@ -143,12 +143,12 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 void WidgetBase::restrictToScreen() {
 	Screen &screen = *_vm->_screen;
 
-	if (_bounds.left < 0)
-		_bounds.moveTo(0, _bounds.top);
+	if (_bounds.left < screen._currentScroll.x)
+		_bounds.moveTo(screen._currentScroll.x, _bounds.top);
 	if (_bounds.top < 0)
 		_bounds.moveTo(_bounds.left, 0);
-	if (_bounds.right > screen._backBuffer1.w())
-		_bounds.moveTo(screen._backBuffer1.w() - _bounds.width(), _bounds.top);
+	if (_bounds.right > SHERLOCK_SCENE_WIDTH)
+		_bounds.moveTo(SHERLOCK_SCENE_WIDTH - _bounds.width(), _bounds.top);
 	if (_bounds.bottom > SHERLOCK_SCREEN_HEIGHT)
 		_bounds.moveTo(_bounds.left, SHERLOCK_SCREEN_HEIGHT - _bounds.height());
 }

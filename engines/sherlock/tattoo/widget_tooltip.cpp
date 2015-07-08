@@ -39,6 +39,8 @@ void WidgetTooltipBase::draw() {
 		erase();
 
 	if (_bounds.width() > 0 && !_surface.empty()) {
+		restrictToScreen();
+
 		// Blit the affected area to the screen
 		screen.slamRect(_bounds);
 		
@@ -140,8 +142,8 @@ void WidgetTooltip::setText(const Common::String &str) {
 		}
 
 		// Set the initial display position for the tooltip text
-		int tagX = CLIP(mousePos.x - width / 2, 0, SHERLOCK_SCREEN_WIDTH - width);
-		int tagY = MAX(mousePos.y - height, 0);
+		int tagX = mousePos.x - width / 2;
+		int tagY = mousePos.y - height;
 
 		_bounds = Common::Rect(tagX, tagY, tagX + width, tagY + height);
 	} else {
@@ -158,8 +160,8 @@ void WidgetTooltip::handleEvents() {
 	Common::Point mousePos = events.mousePos();
 
 	// Set the new position for the tooltip
-	int xp = CLIP(mousePos.x - _bounds.width() / 2, 0, SHERLOCK_SCREEN_WIDTH - _bounds.width());
-	int yp = MAX(mousePos.y - _bounds.height(), 0);
+	int xp = mousePos.x - _bounds.width() / 2;
+	int yp = mousePos.y - _bounds.height();
 
 	_bounds.moveTo(xp, yp);
 }
