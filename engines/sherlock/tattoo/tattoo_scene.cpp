@@ -354,7 +354,7 @@ void TattooScene::doBgAnim() {
 		events.wait(3);
 
 	if (screen._flushScreen) {
-		screen.slamRect(Common::Rect(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+		screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		screen._flushScreen = false;
 	}
 
