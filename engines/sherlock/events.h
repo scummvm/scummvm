@@ -129,8 +129,19 @@ public:
 	 */
 	Common::Point mousePos() const;
 
+	/**
+	 * Get the current mouse position within the scene, adjusted by the scroll position
+	 */
+	Common::Point sceneMousePos() const;
+
+	/**
+	 * Return the current game frame number
+	 */
 	uint32 getFrameCounter() const { return _frameCounter; }
 
+	/**
+	 * Returns true if there's a pending keyboard key
+	 */
 	bool kbHit() const { return !_pendingKeys.empty(); }
 
 	/**

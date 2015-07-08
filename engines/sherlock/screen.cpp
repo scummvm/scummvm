@@ -355,7 +355,8 @@ void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
 void Screen::slamRect(const Common::Rect &r) {
 	if (r.width() && r.height() > 0) {
 		Common::Rect srcRect = r, destRect = r;
-		srcRect.translate(_currentScroll.x, _currentScroll.y);
+
+		destRect.translate(-_currentScroll.x, -_currentScroll.y);
 
 		if (destRect.left < 0) {
 			srcRect.left += -destRect.left;

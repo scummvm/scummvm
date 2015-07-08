@@ -230,8 +230,7 @@ void TattooUserInterface::handleInput() {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Events &events = *_vm->_events;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	Screen &screen = *_vm->_screen;
-	Common::Point mousePos = events.mousePos() + screen._currentScroll;
+	Common::Point mousePos = events.sceneMousePos();
 
 	events.pollEventsAndWait();
 	_keyState.keycode = Common::KEYCODE_INVALID;
@@ -532,14 +531,13 @@ void TattooUserInterface::doLabControl() {
 void TattooUserInterface::displayObjectNames() {
 	Events &events = *_vm->_events;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
-	Common::Point scenePos = events.mousePos() + screen._currentScroll;
+	Common::Point mousePos = events.sceneMousePos();
 	_arrowZone = -1;
 
 	if (_bgFound == -1 || scene._currentScene == 90) {
 		for (uint idx = 0; idx < scene._exits.size() && _arrowZone == -1; ++idx) {
 			Exit &exit = scene._exits[idx];
-			if (exit.contains(scenePos))
+			if (exit.contains(mousePos))
 				_arrowZone = idx;
 		}
 	}

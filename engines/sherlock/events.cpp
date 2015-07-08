@@ -200,6 +200,10 @@ Common::Point Events::mousePos() const {
 	return g_system->getEventManager()->getMousePos();
 }
 
+Common::Point Events::sceneMousePos() const {
+	return mousePos() + _vm->_screen->_currentScroll;
+}
+
 Common::KeyState Events::getKey() {
 	return _pendingKeys.pop();
 }

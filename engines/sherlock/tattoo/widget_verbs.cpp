@@ -38,10 +38,10 @@ WidgetVerbs::WidgetVerbs(SherlockEngine *vm) : WidgetBase(vm) {
 
 void WidgetVerbs::load(bool objectsOn) {
 	Events &events = *_vm->_events;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	TattooPeople &people = *(TattooPeople *)_vm->_people;
-	Common::Point mousePos = events.mousePos();
+	Common::Point mousePos = events.sceneMousePos();
 	bool isWatson = false;
 
 	if (talk._talkToAbort)
@@ -153,11 +153,9 @@ void WidgetVerbs::handleEvents() {
 	FixedText &fixedText = *_vm->_fixedText;
 	People &people = *_vm->_people;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
-	Screen &screen = *_vm->_screen;
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.mousePos();
-	Common::Point scenePos = mousePos + screen._currentScroll;
+	Common::Point mousePos = events.sceneMousePos();
 	bool noDesc = false;
 
 	Common::String strLook = fixedText.getText(kFixedText_Look);
@@ -183,7 +181,7 @@ void WidgetVerbs::handleEvents() {
 
 				if (events._rightReleased) {
 					// Reset the selected shape to what was clicked on
-					ui._bgFound = scene.findBgShape(scenePos);
+					ui._bgFound = scene.findBgShape(mousePos);
 					ui._personFound = ui._bgFound >= 1000;
 					Object *_bgShape = ui._personFound ? nullptr : &scene._bgShapes[ui._bgFound];
 
@@ -285,7 +283,7 @@ void WidgetVerbs::handleEvents() {
 void WidgetVerbs::highlightVerbControls() {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Common::Point mousePos = events.mousePos();
+	Common::Point mousePos = events.sceneMousePos();
 
 	// Get highlighted verb
 	_selector = -1;

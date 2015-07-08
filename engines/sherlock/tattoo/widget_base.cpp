@@ -141,12 +141,14 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 }
 
 void WidgetBase::restrictToScreen() {
+	Screen &screen = *_vm->_screen;
+
 	if (_bounds.left < 0)
 		_bounds.moveTo(0, _bounds.top);
 	if (_bounds.top < 0)
 		_bounds.moveTo(_bounds.left, 0);
-	if (_bounds.right > SHERLOCK_SCREEN_WIDTH)
-		_bounds.moveTo(SHERLOCK_SCREEN_WIDTH - _bounds.width(), _bounds.top);
+	if (_bounds.right > screen._backBuffer1.w())
+		_bounds.moveTo(screen._backBuffer1.w() - _bounds.width(), _bounds.top);
 	if (_bounds.bottom > SHERLOCK_SCREEN_HEIGHT)
 		_bounds.moveTo(_bounds.left, SHERLOCK_SCREEN_HEIGHT - _bounds.height());
 }
@@ -243,7 +245,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::Point mousePos = events.mousePos();
+	Common::Point mousePos = events.sceneMousePos();
 
 	// If they have selected the sollbar, return with the Scroll Bar Still selected
 	if (ui._scrollHighlight == 3)
