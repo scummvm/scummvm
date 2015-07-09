@@ -156,6 +156,7 @@ struct ActionType {
 	int _cAnimNum;
 	int _cAnimSpeed;
 	Common::String _names[NAMES_COUNT];
+	int _useFlag;					// Which flag USE will set (if any)
 
 	ActionType();
 
@@ -166,7 +167,6 @@ struct ActionType {
 };
 
 struct UseType: public ActionType {
-	int _useFlag;					// Which flag USE will set (if any)
 	Common::String _target;
 	Common::String _verb;
 

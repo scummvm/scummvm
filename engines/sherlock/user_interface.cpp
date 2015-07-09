@@ -65,6 +65,10 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 	Talk &talk = *_vm->_talk;
 	Point32 pt(-1, -1);
 
+	if (action._useFlag)
+		// Automatically set the given flag
+		_vm->setFlags(action._useFlag);
+
 	if (objNum >= 1000)
 		// Ignore actions done on characters
 		return;

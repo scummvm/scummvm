@@ -855,6 +855,7 @@ WalkSequences &WalkSequences::operator=(const WalkSequences &src) {
 
 ActionType::ActionType() {
 	_cAnimNum = _cAnimSpeed = 0;
+	_useFlag = 0;
 }
 
 void ActionType::load(Common::SeekableReadStream &s) {
@@ -874,7 +875,6 @@ void ActionType::load(Common::SeekableReadStream &s) {
 /*----------------------------------------------------------------*/
 
 UseType::UseType(): ActionType() {
-	_useFlag = 0;
 }
 
 void UseType::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
