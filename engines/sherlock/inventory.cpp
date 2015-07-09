@@ -199,7 +199,7 @@ void Inventory::copyToInventory(Object &obj) {
 	invItem._description = obj._description;
 	invItem._examine = obj._examine;
 	invItem._lookFlag = obj._lookFlag;
-	invItem._requiredFlag = obj._requiredFlag;
+	invItem._requiredFlag = obj._requiredFlag[0];
 
 	insert_at(_holdings, invItem);
 	++_holdings;

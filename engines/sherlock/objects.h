@@ -218,7 +218,7 @@ public:
 	Point32 _goto;					// Walk destination
 
 	int _lookFlag;					// Which flag LOOK   will set (if any)
-	int _requiredFlag;				// Object will be hidden if not set
+	int _requiredFlag[2];			// Object will be hidden if not set
 	Common::Point _noShapeSize;		// Size of a NO_SHAPE
 	int _status;					// Status (open/closed, moved/not)
 	int8 _misc;						// Misc field -- use varies with type
@@ -237,7 +237,6 @@ public:
 	UseType _use[6];				// Serrated Scalpel uses 4, Rose Tattoo 6
 	int _quickDraw;					// Flag telling whether to use quick draw routine or not
 	int _scaleVal;					// Tells how to scale the sprite
-	int _requiredFlags1;			// This flag must also be set, or the sprite is hidden
 	int _gotoSeq;					// Used by Talk to tell which sequence to goto when able
 	int _talkSeq;					// Tells which talk sequence currently in use (Talk or Listen)
 	int _restoreSlot;				// Used when talk returns to the previous sequence

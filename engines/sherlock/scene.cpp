@@ -1099,9 +1099,15 @@ void Scene::checkSceneFlags(bool flag) {
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
+		bool flag = true;
 
-		if (o._requiredFlag) {
-			if (!_vm->readFlags(_bgShapes[idx]._requiredFlag)) {
+		if (o._requiredFlag[0] || o._requiredFlag[1]) {
+			if (o._requiredFlag[0] != 0)
+				flag = _vm->readFlags(o._requiredFlag[0]);
+			if (o._requiredFlag[1] != 0)
+				flag &= _vm->readFlags(o._requiredFlag[1]);
+
+			if (!flag) {
 				// Kill object
 				if (o._type != HIDDEN && o._type != INVALID) {
 					if (o._images == nullptr || o._images->size() == 0)
@@ -1111,7 +1117,7 @@ void Scene::checkSceneFlags(bool flag) {
 						// Flag it as needing to be hidden after first erasing it
 						o._type = mode;
 				}
-			} else if (_bgShapes[idx]._requiredFlag > 0) {
+			} else if (IS_ROSE_TATTOO || o._requiredFlag > 0) {
 				// Restore object
 				if (o._images == nullptr || o._images->size() == 0)
 					o._type = NO_SHAPE;

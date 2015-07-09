@@ -64,7 +64,7 @@ BaseObject::BaseObject() {
 	_allow = 0;
 	_frameNumber = 0;
 	_lookFlag = 0;
-	_requiredFlag = 0;
+	_requiredFlag[0] = _requiredFlag[1] = 0;
 	_status = 0;
 	_misc = 0;
 	_maxFrames = 0;
@@ -80,7 +80,6 @@ BaseObject::BaseObject() {
 	_seqSize = 0;
 	_quickDraw = 0;
 	_scaleVal = 0;
-	_requiredFlags1 = 0;
 	_gotoSeq = 0;
 	_talkSeq = 0;
 	_restoreSlot = 0;
@@ -980,7 +979,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_defaultCommand = isRoseTattoo ? 0 : s.readByte();
 	_lookFlag = s.readSint16LE();
 	_pickupFlag = isRoseTattoo ? 0 : s.readSint16LE();
-	_requiredFlag = s.readSint16LE();
+	_requiredFlag[0] = s.readSint16LE();
 	_noShapeSize.x = s.readUint16LE();
 	_noShapeSize.y = s.readUint16LE();
 	_status = s.readUint16LE();
@@ -1019,7 +1018,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 
 		_quickDraw = s.readByte();
 		_scaleVal = s.readUint16LE();
-		_requiredFlags1 = s.readSint16LE();
+		_requiredFlag[1] = s.readSint16LE();
 		_gotoSeq = s.readByte();
 		_talkSeq = s.readByte();
 		_restoreSlot = s.readByte();
@@ -1074,7 +1073,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	// Unverified
 	_lookFlag = s.readSint16BE();
 	_pickupFlag = s.readSint16BE();
-	_requiredFlag = s.readSint16BE();
+	_requiredFlag[0] = s.readSint16BE();
 	_noShapeSize.x = s.readUint16BE();
 	_noShapeSize.y = s.readUint16BE();
 	_status = s.readUint16BE();
