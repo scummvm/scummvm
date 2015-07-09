@@ -50,9 +50,6 @@ void SoundManager::clearSounds() {
 	if (_mixer->isSoundHandleActive(_effectsHandle))
 		_mixer->stopHandle(_effectsHandle);
 
-	if (_queue.size())
-		_queue.remove_at(0);
-
 	while (_queue.size()) {
 		delete _queue[0];
 		_queue.remove_at(0);
@@ -146,7 +143,7 @@ void SoundManager::playSound(Resource *res, int priority) {
 	if (!_mixer->isSoundHandleActive(_effectsHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
 						_queue[0], -1, _mixer->kMaxChannelVolume, 0,
-						DisposeAfterUse::YES);
+						DisposeAfterUse::NO);
 }
 
 void SoundManager::checkSoundQueue() {
@@ -155,12 +152,13 @@ void SoundManager::checkSoundQueue() {
 	if (_queue.empty() || _mixer->isSoundHandleActive(_effectsHandle))
 		return;
 
+	delete _queue[0];
 	_queue.remove_at(0);
 
-	if (_queue.size())
+	if (_queue.size() && _queue[0])
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
 		   _queue[0], -1, _mixer->kMaxChannelVolume, 0,
-		   DisposeAfterUse::YES);
+		   DisposeAfterUse::NO);
 }
 
 bool SoundManager::isSFXPlaying() {
@@ -181,7 +179,7 @@ void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
 void SoundManager::stopSound() {
 	debugC(3, kDebugSound, "stopSound");
 
-	_mixer->stopHandle(Audio::SoundHandle());
+	_mixer->stopHandle(_effectsHandle);
 }
 
 void SoundManager::freeSounds() {
