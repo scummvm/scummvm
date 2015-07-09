@@ -28,8 +28,11 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "audio/audiostream.h"
-#include "audio/fmopl.h"
 #include "audio/mixer.h"
+
+namespace OPL {
+class OPL;
+}
 
 namespace MADS {
 
@@ -142,7 +145,7 @@ struct CachedDataEntry {
 /**
  * Base class for the sound player resource files
  */
-class ASound : public Audio::AudioStream {
+class ASound {
 private:
 	Common::List<CachedDataEntry> _dataCache;
 	uint16 _randomSeed;
@@ -192,6 +195,11 @@ private:
 	void processSample();
 
 	void updateFNumber();
+
+	/**
+	 * Timer function for OPL
+	 */
+	void onTimer();
 protected:
 	int _commandParam;
 
@@ -273,8 +281,7 @@ protected:
 	int nullCommand() { return 0; }
 public:
 	Audio::Mixer *_mixer;
-	FM_OPL *_opl;
-	Audio::SoundHandle _soundHandle;
+	OPL::OPL *_opl;
 	AdlibChannel _channels[ADLIB_CHANNEL_COUNT];
 	AdlibChannel *_activeChannelPtr;
 	AdlibChannelData _channelData[11];
@@ -306,10 +313,6 @@ public:
 	int _activeChannelReg;
 	int _v11;
 	bool _amDep, _vibDep, _splitPoint;
-	int _samplesPerCallback;
-	int _samplesPerCallbackRemainder;
-	int _samplesTillCallback;
-	int _samplesTillCallbackRemainder;
 public:
 	/**
 	 * Constructor
@@ -318,7 +321,7 @@ public:
 	 * @param filename		Specifies the adlib sound player file to use
 	 * @param dataOffset	Offset in the file of the data segment
 	 */
-	ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename, int dataOffset);
+	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filename, int dataOffset);
 
 	/**
 	 * Destructor
@@ -362,27 +365,6 @@ public:
 	 * Return the cached data block record for previously loaded sound data
 	 */
 	CachedDataEntry &getCachedData(byte *pData);
-
-	// AudioStream interface
-	/**
-	 * Main buffer read
-	 */
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-
-	/**
-	 * Mono sound only
-	 */
-	virtual bool isStereo() const { return false; }
-
-	/**
-	 * Data is continuously pushed, so definitive end
-	 */
-	virtual bool endOfData() const { return false; }
-
-	/**
-	 * Return sample rate
-	 */
-	virtual int getRate() const { return 11025; }
 
 	/**
 	 * Set the volume
@@ -433,7 +415,7 @@ private:
 	void command111213();
 	int command2627293032();
 public:
-	ASound1(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound1(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -485,7 +467,7 @@ private:
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
 public:
-	ASound2(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound2(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -545,7 +527,7 @@ private:
 	void command9Randomize();
 	void command9Apply(byte *data, int val, int incr);
 public:
-	ASound3(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound3(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -583,7 +565,7 @@ private:
 
 	void method1();
 public:
-	ASound4(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound4(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -629,7 +611,7 @@ private:
 	int command42();
 	int command43();
 public:
-	ASound5(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound5(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -658,7 +640,7 @@ private:
 	int command25();
 	int command29();
 public:
-	ASound6(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound6(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -690,7 +672,7 @@ private:
 	int command36();
 	int command37();
 public:
-	ASound7(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound7(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -733,7 +715,7 @@ private:
 	void method1(byte *pData);
 	void adjustRange(byte *pData, byte v, int incr);
 public:
-	ASound8(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound8(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };
@@ -792,7 +774,7 @@ private:
 	int command59();
 	int command60();
 public:
-	ASound9(Audio::Mixer *mixer, FM_OPL *opl);
+	ASound9(Audio::Mixer *mixer, OPL::OPL *opl);
 
 	virtual int command(int commandId, int param);
 };

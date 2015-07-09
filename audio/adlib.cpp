@@ -927,18 +927,20 @@ static void createLookupTable() {
 //
 ////////////////////////////////////////
 
-class MidiDriver_ADLIB : public MidiDriver_Emulated {
+class MidiDriver_ADLIB : public MidiDriver {
 	friend class AdLibPart;
 	friend class AdLibPercussionChannel;
 
 public:
-	MidiDriver_ADLIB(Audio::Mixer *mixer);
+	MidiDriver_ADLIB();
 
 	int open();
 	void close();
 	void send(uint32 b);
 	void send(byte channel, uint32 b); // Supports higher than channel 15
 	uint32 property(int prop, uint32 param);
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setPitchBendRange(byte channel, uint range);
 	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr);
@@ -946,10 +948,7 @@ public:
 	MidiChannel *allocateChannel();
 	MidiChannel *getPercussionChannel() { return &_percussion; } // Percussion partially supported
 
-
-	// AudioStream API
-	bool isStereo() const { return _opl->isStereo(); }
-	int getRate() const { return _mixer->getOutputRate(); }
+	virtual void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 private:
 	bool _scummSmallHeader; // FIXME: This flag controls a special mode for SCUMM V3 games
@@ -963,6 +962,9 @@ private:
 	byte *_regCacheSecondary;
 #endif
 
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
+
 	int _timerCounter;
 
 	uint16 _channelTable2[9];
@@ -974,7 +976,8 @@ private:
 	AdLibPart _parts[32];
 	AdLibPercussionChannel _percussion;
 
-	void generateSamples(int16 *buf, int len);
+	bool _isOpen;
+
 	void onTimer();
 	void partKeyOn(AdLibPart *part, const AdLibInstrument *instr, byte note, byte velocity, const AdLibInstrument *second, byte pan);
 	void partKeyOff(AdLibPart *part, byte note);
@@ -1376,8 +1379,7 @@ void AdLibPercussionChannel::sysEx_customInstrument(uint32 type, const byte *ins
 
 // MidiDriver method implementations
 
-MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer) {
+MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	uint i;
 
 	_scummSmallHeader = false;
@@ -1403,13 +1405,16 @@ MidiDriver_ADLIB::MidiDriver_ADLIB(Audio::Mixer *mixer)
 	_timerIncrease = 0xD69;
 	_timerThreshold = 0x411B;
 	_opl = 0;
+	_adlibTimerProc = 0;
+        _adlibTimerParam = 0;
+	_isOpen = false;
 }
 
 int MidiDriver_ADLIB::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
 	int i;
 	AdLibVoice *voice;
@@ -1434,7 +1439,7 @@ int MidiDriver_ADLIB::open() {
 		_opl3Mode = false;
 	}
 #endif
-	_opl->init(getRate());
+	_opl->init();
 
 	_regCache = (byte *)calloc(256, 1);
 
@@ -1452,8 +1457,7 @@ int MidiDriver_ADLIB::open() {
 	}
 #endif
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_ADLIB>(this, &MidiDriver_ADLIB::onTimer));
 	return 0;
 }
 
@@ -1462,7 +1466,8 @@ void MidiDriver_ADLIB::close() {
 		return;
 	_isOpen = false;
 
-	_mixer->stopHandle(_mixerSoundHandle);
+	// Stop the OPL timer
+	_opl->stop();
 
 	uint i;
 	for (i = 0; i < ARRAYSIZE(_voices); ++i) {
@@ -1616,14 +1621,10 @@ void MidiDriver_ADLIB::adlibWriteSecondary(byte reg, byte value) {
 }
 #endif
 
-void MidiDriver_ADLIB::generateSamples(int16 *data, int len) {
-	if (_opl->isStereo()) {
-		len *= 2;
-	}
-	_opl->readBuffer(data, len);
-}
-
 void MidiDriver_ADLIB::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
+
 	_timerCounter += _timerIncrease;
 	while (_timerCounter >= _timerThreshold) {
 		_timerCounter -= _timerThreshold;
@@ -1653,6 +1654,11 @@ void MidiDriver_ADLIB::onTimer() {
 		}
 #endif
 	}
+}
+
+void MidiDriver_ADLIB::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
 }
 
 void MidiDriver_ADLIB::mcOff(AdLibVoice *voice) {
@@ -2300,7 +2306,7 @@ MusicDevices AdLibEmuMusicPlugin::getDevices() const {
 }
 
 Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_ADLIB(g_system->getMixer());
+	*mididriver = new MidiDriver_ADLIB();
 
 	return Common::kNoError;
 }

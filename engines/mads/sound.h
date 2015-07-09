@@ -37,7 +37,7 @@ class SoundManager {
 private:
 	MADSEngine *_vm;
 	Audio::Mixer *_mixer;
-	FM_OPL *_opl;
+	OPL::OPL *_opl;
 	Nebular::ASound *_driver;
 	bool _pollSoundEnabled;
 	bool _soundPollFlag;

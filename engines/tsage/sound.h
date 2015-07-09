@@ -27,11 +27,14 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "audio/audiostream.h"
-#include "audio/fmopl.h"
 #include "audio/mixer.h"
 #include "common/list.h"
 #include "tsage/saveload.h"
 #include "tsage/core.h"
+
+namespace OPL {
+class OPL;
+}
 
 namespace TsAGE {
 
@@ -446,21 +449,15 @@ public:
 
 #define ADLIB_CHANNEL_COUNT 9
 
-class AdlibSoundDriver: public SoundDriver, Audio::AudioStream {
+class AdlibSoundDriver: public SoundDriver {
 private:
 	GroupData _groupData;
 	Audio::Mixer *_mixer;
-	FM_OPL *_opl;
-	Audio::SoundHandle _soundHandle;
-	int _sampleRate;
+	OPL::OPL *_opl;
 	byte _portContents[256];
 	const byte *_patchData;
 	int _masterVolume;
 	Common::Queue<RegisterValue> _queue;
-	int _samplesTillCallback;
-	int _samplesTillCallbackRemainder;
-	int _samplesPerCallback;
-	int _samplesPerCallbackRemainder;
 
 	bool _channelVoiced[ADLIB_CHANNEL_COUNT];
 	int _channelVolume[ADLIB_CHANNEL_COUNT];
@@ -495,13 +492,8 @@ public:
 	virtual void proc38(int channel, int cmd, int value);
 	virtual void setPitch(int channel, int pitchBlend);
 
-	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
-
-	void update(int16 *buf, int len);
+private:
+	void onTimer();
 };
 
 class SoundBlasterDriver: public SoundDriver {

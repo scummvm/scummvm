@@ -1,6 +1,7 @@
 MODULE := audio
 
 MODULE_OBJS := \
+	adlib.o \
 	audiostream.o \
 	fmopl.o \
 	mididrv.o \
@@ -39,7 +40,6 @@ MODULE_OBJS := \
 	mods/rjp1.o \
 	mods/soundfx.o \
 	mods/tfmx.o \
-	softsynth/adlib.o \
 	softsynth/cms.o \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
@@ -57,6 +57,11 @@ MODULE_OBJS := \
 	softsynth/pcspk.o \
 	softsynth/sid.o \
 	softsynth/wave6581.o
+
+ifdef USE_ALSA
+MODULE_OBJS += \
+	alsa_opl.o
+endif
 
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \

@@ -116,9 +116,9 @@ uint16 milesAdLibVolumeSensitivityTable[] = {
 };
 
 
-class MidiDriver_Miles_AdLib : public MidiDriver_Emulated {
+class MidiDriver_Miles_AdLib : public MidiDriver {
 public:
-	MidiDriver_Miles_AdLib(Audio::Mixer *mixer, InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
+	MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount);
 	virtual ~MidiDriver_Miles_AdLib();
 
 	// MidiDriver
@@ -128,17 +128,13 @@ public:
 	MidiChannel *allocateChannel() { return NULL; }
 	MidiChannel *getPercussionChannel() { return NULL; }
 
-	// AudioStream
-	bool isStereo() const { return _modeStereo; }
-	int getRate() const { return _mixer->getOutputRate(); }
-	int getPolyphony() const { return _modePhysicalFmVoicesCount; }
-	bool hasRhythmChannel() const { return false; }
-
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setVolume(byte volume);
 	virtual uint32 property(int prop, uint32 param);
+
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
 private:
 	bool _modeOPL3;
@@ -222,6 +218,11 @@ private:
 	OPL::OPL *_opl;
 	int _masterVolume;
 
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
+
+	bool _isOpen;
+
 	// stores information about all MIDI channels (not the actual OPL FM voice channels!)
 	MidiChannelEntry _midiChannels[MILES_MIDI_CHANNEL_COUNT];
 
@@ -238,10 +239,8 @@ private:
 	bool circularPhysicalAssignment;
 	byte circularPhysicalAssignmentFmVoice;
 
-protected:
 	void onTimer();
 
-private:
 	void resetData();
 	void resetAdLib();
 	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
@@ -271,8 +270,9 @@ private:
 	void pitchBendChange(byte MIDIchannel, byte parameter1, byte parameter2);
 };
 
-MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(Audio::Mixer *mixer, InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount)
-	: MidiDriver_Emulated(mixer), _masterVolume(15), _opl(0) {
+MidiDriver_Miles_AdLib::MidiDriver_Miles_AdLib(InstrumentEntry *instrumentTablePtr, uint16 instrumentTableCount)
+	: _masterVolume(15), _opl(0),
+	  _adlibTimerProc(0), _adlibTimerParam(0), _isOpen(false) {
 
 	_instrumentTablePtr = instrumentTablePtr;
 	_instrumentTableCount = instrumentTableCount;
@@ -298,8 +298,6 @@ MidiDriver_Miles_AdLib::~MidiDriver_Miles_AdLib() {
 }
 
 int MidiDriver_Miles_AdLib::open() {
-	int rate = _mixer->getOutputRate();
-
 	if (_modeOPL3) {
 		// Try to create OPL3 first
 		_opl = OPL::Config::create(OPL::Config::kOpl3);
@@ -319,11 +317,11 @@ int MidiDriver_Miles_AdLib::open() {
 		return -1;
 	}
 
-	_opl->init(rate);
+	_opl->init();
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_Miles_AdLib>(this, &MidiDriver_Miles_AdLib::onTimer));
 
 	resetAdLib();
 
@@ -331,9 +329,8 @@ int MidiDriver_Miles_AdLib::open() {
 }
 
 void MidiDriver_Miles_AdLib::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
-
 	delete _opl;
+	_isOpen = false;
 }
 
 void MidiDriver_Miles_AdLib::setVolume(byte volume) {
@@ -342,6 +339,8 @@ void MidiDriver_Miles_AdLib::setVolume(byte volume) {
 }
 
 void MidiDriver_Miles_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 }
 
 void MidiDriver_Miles_AdLib::resetData() {
@@ -438,11 +437,9 @@ void MidiDriver_Miles_AdLib::send(uint32 b) {
 	}
 }
 
-void MidiDriver_Miles_AdLib::generateSamples(int16 *data, int len) {
-	if (_modeStereo)
-		len *= 2;
-
-	_opl->readBuffer(data, len);
+void MidiDriver_Miles_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
 }
 
 int16 MidiDriver_Miles_AdLib::searchFreeVirtualFmVoiceChannel() {
@@ -1271,7 +1268,7 @@ MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameAdLib, c
 	// Free instrument file/stream data
 	delete[] streamDataPtr;
 
-	return new MidiDriver_Miles_AdLib(g_system->getMixer(), instrumentTablePtr, instrumentTableCount);
+	return new MidiDriver_Miles_AdLib(instrumentTablePtr, instrumentTableCount);
 }
 
 } // End of namespace Audio
