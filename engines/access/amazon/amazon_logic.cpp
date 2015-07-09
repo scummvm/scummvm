@@ -327,15 +327,6 @@ void Opening::doTitle() {
 		_vm->_buffer1.copyFrom(*_vm->_screen);
 		screen.forceFadeIn();
 
-		// WORKAROUND: This delay has been added to replace original game delay that
-		// came from loading resources, since nowadays it would be too fast to be visible
-		// nowadays to be visible.
-		_vm->_events->_vbCount = 70;
-		while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
-			_vm->_events->pollEventsAndWait();
-		if (_vm->shouldQuit())
-			return;
-
 		_vm->_sound->playSound(1, true);
 
 		Resource *spriteData = _vm->_files->loadFile(0, 2);
