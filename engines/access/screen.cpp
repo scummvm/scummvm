@@ -189,7 +189,7 @@ void Screen::forceFadeIn() {
 		for (int idx = 0; idx < PALETTE_SIZE; ++idx, ++srcP, ++destP) {
 			if (*destP != *srcP) {
 				repeatFlag = true;
-				*destP = MAX((int)*destP + FADE_AMOUNT, (int)*srcP);
+				*destP = MIN((int)*destP + FADE_AMOUNT, (int)*srcP);
 			}
 		}
 
