@@ -49,11 +49,11 @@ private:
 	AccessEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _effectsHandle;
-	Common::Array<Audio::RewindableAudioStream *> _queue;
+	Common::Array<Audio::AudioStream *> _queue;
 
 	void clearSounds();
 
-	void playSound(Resource *res, int priority);
+	void playSound(Resource *res, int priority, bool loop);
 public:
 	Common::Array<SoundEntry> _soundTable;
 public:
@@ -62,7 +62,7 @@ public:
 
 	void loadSoundTable(int idx, int fileNum, int subfile, int priority = 1);
 
-	void playSound(int soundIndex);
+	void playSound(int soundIndex, bool loop = false);
 	void checkSoundQueue();
 	bool isSFXPlaying();
 

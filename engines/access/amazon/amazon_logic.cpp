@@ -326,7 +326,6 @@ void Opening::doTitle() {
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
 		screen.forceFadeIn();
-		_vm->_sound->playSound(1);
 
 		// WORKAROUND: This delay has been added to replace original game delay that
 		// came from loading resources, since nowadays it would be too fast to be visible
@@ -337,13 +336,14 @@ void Opening::doTitle() {
 		if (_vm->shouldQuit())
 			return;
 
+		_vm->_sound->playSound(1, true);
+
 		Resource *spriteData = _vm->_files->loadFile(0, 2);
 		_vm->_objectsTable[0] = new SpriteResource(_vm, spriteData);
 		delete spriteData;
 
 		_vm->_files->_setPaletteFlag = false;
 		_vm->_files->loadScreen(0, 4);
-		_vm->_sound->playSound(1);
 
 		_vm->_buffer2.copyFrom(*_vm->_screen);
 		_vm->_buffer1.copyFrom(*_vm->_screen);
@@ -356,7 +356,6 @@ void Opening::doTitle() {
 			_vm->_buffer2.plotImage(_vm->_objectsTable[0], id, Common::Point(xp, 71));
 			_vm->_buffer2.copyTo(_vm->_screen);
 
-			_vm->_sound->playSound(1);
 			_vm->_events->_vbCount = 70;
 			while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0 && !_skipStart) {
 				_vm->_events->pollEventsAndWait();
@@ -368,6 +367,7 @@ void Opening::doTitle() {
 			return;
 
 		_vm->_sound->stopSound();
+		_vm->_sound->checkSoundQueue(); // HACK: Clear sound 1 from the queue
 		_vm->_sound->playSound(0);
 		screen.forceFadeOut();
 		_vm->_events->_vbCount = 100;

@@ -75,26 +75,26 @@ Resource *SoundManager::loadSound(int fileNum, int subfile) {
 	return _vm->_files->loadFile(fileNum, subfile);
 }
 
-void SoundManager::playSound(int soundIndex) {
-	debugC(1, kDebugSound, "playSound(%d)", soundIndex);
+void SoundManager::playSound(int soundIndex, bool loop) {
+	debugC(1, kDebugSound, "playSound(%d, %d)", soundIndex, loop);
 
 	int priority = _soundTable[soundIndex]._priority;
-	playSound(_soundTable[soundIndex]._res, priority);
+	playSound(_soundTable[soundIndex]._res, priority, loop);
 }
 
-void SoundManager::playSound(Resource *res, int priority) {
+void SoundManager::playSound(Resource *res, int priority, bool loop) {
 	debugC(1, kDebugSound, "playSound");
 
 	byte *resourceData = res->data();
 
 	assert(res->_size >= 32);
 
+	Audio::RewindableAudioStream *audioStream;
+
 	if (READ_BE_UINT32(resourceData) == MKTAG('R','I','F','F')) {
 		// CD version uses WAVE-files
 		Common::SeekableReadStream *waveStream = new Common::MemoryReadStream(resourceData, res->_size, DisposeAfterUse::NO);
-		Audio::RewindableAudioStream *audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
-		_queue.push_back(audioStream);
-
+		audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
 	} else if (READ_BE_UINT32(resourceData) == MKTAG('S', 'T', 'E', 'V')) {
 		// sound files have a fixed header of 32 bytes in total
 		//  header content:
@@ -134,11 +134,15 @@ void SoundManager::playSound(Resource *res, int priority) {
 			return;
 		}
 
-		Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(resourceData + 32, sampleSize, sampleRate, 0, DisposeAfterUse::NO);
-		_queue.push_back(audioStream);
-
+		audioStream = Audio::makeRawStream(resourceData + 32, sampleSize, sampleRate, 0, DisposeAfterUse::NO);
 	} else
 		error("Unknown format");
+
+	if (loop) {
+		_queue.push_back(new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::NO));
+	} else {
+		_queue.push_back(audioStream);
+	}
 
 	if (!_mixer->isSoundHandleActive(_effectsHandle))
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle,
