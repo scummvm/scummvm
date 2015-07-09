@@ -1099,15 +1099,15 @@ void Scene::checkSceneFlags(bool flag) {
 
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		Object &o = _bgShapes[idx];
-		bool flag = true;
+		bool objectFlag = true;
 
 		if (o._requiredFlag[0] || o._requiredFlag[1]) {
 			if (o._requiredFlag[0] != 0)
-				flag = _vm->readFlags(o._requiredFlag[0]);
+				objectFlag = _vm->readFlags(o._requiredFlag[0]);
 			if (o._requiredFlag[1] != 0)
-				flag &= _vm->readFlags(o._requiredFlag[1]);
+				objectFlag &= _vm->readFlags(o._requiredFlag[1]);
 
-			if (!flag) {
+			if (!objectFlag) {
 				// Kill object
 				if (o._type != HIDDEN && o._type != INVALID) {
 					if (o._images == nullptr || o._images->size() == 0)
