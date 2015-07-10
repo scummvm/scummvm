@@ -708,6 +708,39 @@ void TattooScene::setNPCPath(int npc) {
 	talk.talkTo(pathFile);
 }
 
+int TattooScene::findBgShape(const Common::Point &pt) {
+	People &people = *_vm->_people;
+
+	if (!_doBgAnimDone)
+		// New frame hasn't been drawn yet
+		return -1;
+
+	int result = Scene::findBgShape(pt);
+	if (result == -1) {
+		// No shape found, so check whether a character is highlighted
+		for (int idx = 1; idx < MAX_CHARACTERS && result == -1; ++idx) {
+			Person &person = people[idx];
+
+			if (person._type == CHARACTER) {
+				int scaleVal = getScaleVal(person._position);
+				Common::Rect charRect;
+
+				if (scaleVal == SCALE_THRESHOLD)
+					charRect = Common::Rect(person.frameWidth(), person.frameHeight());
+				else
+					charRect = Common::Rect(person._imageFrame->sDrawXSize(scaleVal), person._imageFrame->sDrawYSize(scaleVal));
+				charRect.moveTo(person._position.x / FIXED_INT_MULTIPLIER, person._position.y / FIXED_INT_MULTIPLIER
+					- charRect.height());
+
+				if (charRect.contains(pt))
+					result = 1000 + idx;
+			}
+		}
+	}
+
+	return result;
+}
+
 void TattooScene::synchronize(Serializer &s) {
 	TattooEngine &vm = *(TattooEngine *)_vm;
 	Scene::synchronize(s);

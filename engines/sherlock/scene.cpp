@@ -1338,7 +1338,7 @@ Exit *Scene::checkForExit(const Common::Rect &r) {
 	return nullptr;
 }
 
-int Scene::findBgShape(const Common::Rect &r) {
+int Scene::findBgShape(const Common::Point &pt) {
 	if (!_doBgAnimDone)
 		// New frame hasn't been drawn yet
 		return -1;
@@ -1347,19 +1347,15 @@ int Scene::findBgShape(const Common::Rect &r) {
 		Object &o = _bgShapes[idx];
 		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN
 			&& o._aType <= PERSON) {
-			if (r.intersects(o.getNewBounds()))
+			if (o.getNewBounds().contains(pt))
 				return idx;
 		} else if (o._type == NO_SHAPE) {
-			if (r.intersects(o.getNoShapeBounds()))
+			if (o.getNoShapeBounds().contains(pt))
 				return idx;
 		}
 	}
 
 	return -1;
-}
-
-int Scene::findBgShape(const Common::Point &pt) {
-	return findBgShape(Common::Rect(pt.x, pt.y, pt.x + 1, pt.y + 1));
 }
 
 int Scene::checkForZones(const Common::Point &pt, int zoneType) {

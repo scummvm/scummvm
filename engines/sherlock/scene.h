@@ -270,18 +270,6 @@ public:
 	int toggleObject(const Common::String &name);
 
 	/**
-	 * Attempts to find a background shape within the passed bounds. If found,
-	 * it will return the shape number, or -1 on failure.
-	 */
-	int findBgShape(const Common::Rect &r);
-
-	/**
-	 * Attempts to find a background shape within the passed bounds. If found,
-	 * it will return the shape number, or -1 on failure.
-	 */
-	int findBgShape(const Common::Point &pt);
-
-	/**
 	 * Checks to see if the given position in the scene belongs to a given zone type.
 	 * If it is, the zone is activated and used just like a TAKL zone or aFLAG_SET zone.
 	 */
@@ -296,6 +284,12 @@ public:
 	 * Returns the index of the closest zone to a given point.
 	 */
 	virtual int closestZone(const Common::Point &pt) = 0;
+
+	/**
+	 * Attempts to find a background shape within the passed bounds. If found,
+	 * it will return the shape number, or -1 on failure.
+	 */
+	virtual int findBgShape(const Common::Point &pt);
 
 	/**
 	 * Synchronize the data for a savegame
