@@ -90,6 +90,8 @@ void TattooEngine::startScene() {
 	}
 
 	// TODO
+
+	_events->setCursor(ARROW);
 }
 
 void TattooEngine::loadInitialPalette() {
