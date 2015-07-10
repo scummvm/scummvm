@@ -306,7 +306,8 @@ void TattooUserInterface::drawInterface(int bufferNum) {
 		screen.blockMove();
 
 	// Handle drawing the text tooltip if necessary
-	_tooltipWidget.draw();
+	if (_menuMode == STD_MODE)
+		_tooltipWidget.draw();
 }
 
 void TattooUserInterface::doBgAnimRestoreUI() {
