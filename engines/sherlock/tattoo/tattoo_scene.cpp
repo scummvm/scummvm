@@ -689,7 +689,12 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 
 void TattooScene::setNPCPath(int npc) {
 	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	SaveManager &saves = *_vm->_saves;
 	Talk &talk = *_vm->_talk;
+
+	// Don't do initial scene setup if a savegame has just been loaded
+	if (saves._justLoaded)
+		return;
 
 	people[npc].clearNPC();
 	people[npc]._name = Common::String::format("WATS%.2dA", _currentScene);
