@@ -47,8 +47,8 @@ void WidgetVerbs::load(bool objectsOn) {
 	if (talk._talkToAbort)
 		return;
 
+	ui._activeObj = ui._bgFound;
 	_outsideMenu = false;
-
 	_verbCommands.clear();
 
 	// Check if we need to show options for the highlighted object
@@ -176,20 +176,17 @@ void WidgetVerbs::handleEvents() {
 		// See if they want to close the menu (they clicked outside of the menu)
 		if (!_bounds.contains(mousePos)) {
 			if (_outsideMenu) {
-				// Free the current menu graphics & erase the menu
-				banishWindow();
-
 				if (events._rightReleased) {
-					// Reset the selected shape to what was clicked on
+					// Change to the item (if any) that was right-clicked on, and re-draw the verb menu
 					ui._bgFound = scene.findBgShape(mousePos);
 					ui._personFound = ui._bgFound >= 1000;
-					Object *_bgShape = ui._personFound ? nullptr : &scene._bgShapes[ui._bgFound];
+					ui._bgShape = ui._personFound || ui._bgFound == -1 ? nullptr : &scene._bgShapes[ui._bgFound];
 
 					if (ui._personFound) {
 						if (people[ui._bgFound - 1000]._description.empty() || people[ui._bgFound - 1000]._description.hasPrefix(" "))
 							noDesc = true;
 					} else if (ui._bgFound != -1) {
-						if (_bgShape->_description.empty() || _bgShape->_description.hasPrefix(" "))
+						if (ui._bgShape->_description.empty() || ui._bgShape->_description.hasPrefix(" "))
 							noDesc = true;
 					} else {
 						noDesc = true;
@@ -198,6 +195,9 @@ void WidgetVerbs::handleEvents() {
 					// Call the Routine to turn on the Commands for this Object
 					load(!noDesc);
 				} else {
+					// Free the current menu graphics & erase the menu
+					banishWindow();
+
 					// See if we're in a Lab Table Room
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 				}
