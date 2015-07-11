@@ -33,7 +33,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 TattooEngine::TattooEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
-		SherlockEngine(syst, gameDesc) {
+		SherlockEngine(syst, gameDesc), _darts(this) {
 	_creditsActive = false;
 	_runningProlog = false;
 	_fastMode = false;
@@ -80,16 +80,35 @@ void TattooEngine::initialize() {
 }
 
 void TattooEngine::startScene() {
-	if (_scene->_goToScene == OVERHEAD_MAP || _scene->_goToScene == OVERHEAD_MAP2) {
+	switch (_scene->_goToScene) {
+	case OVERHEAD_MAP:
+	case OVERHEAD_MAP2:
 		// Show the map
 		_scene->_currentScene = OVERHEAD_MAP;
 		_scene->_goToScene = _map->show();
 
 		_people->_savedPos = Common::Point(-1, -1);
 		_people->_savedPos._facing = -1;
-	}
+		break;
 
-	// TODO
+	case 101:
+		// Darts Board minigame
+		_darts.playDarts(GAME_CRICKET);
+		break;
+	
+	case 102:
+		// Darts Board minigame
+		_darts.playDarts(GAME_301);
+		break;
+
+	case 103:
+		// Darts Board minigame
+		_darts.playDarts(GAME_501);
+		break;
+
+	default:
+		break;
+	}
 
 	_events->setCursor(ARROW);
 }

@@ -24,6 +24,7 @@
 #define SHERLOCK_TATTOO_H
 
 #include "sherlock/sherlock.h"
+#include "sherlock/tattoo/tattoo_darts.h"
 
 namespace Sherlock {
 
@@ -52,6 +53,8 @@ enum {
 
 class TattooEngine : public SherlockEngine {
 private:
+	Darts _darts;
+
 	/**
 	 * Loads the initial palette for the game
 	 */
