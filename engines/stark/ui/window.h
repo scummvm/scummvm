@@ -71,15 +71,6 @@ protected:
 	Common::Rect _position;
 	bool _unscaled;
 	bool _visible;
-
-
-	// Item handling
-	void updateItems();
-	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
-
-	Gfx::RenderEntryArray _renderEntries;
-	Resources::ItemVisual *_objectUnderCursor;
-	Common::Point _objectRelativePosition;
 };
 
 } // End of namespace Stark

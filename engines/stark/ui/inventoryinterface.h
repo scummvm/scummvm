@@ -65,6 +65,7 @@ private:
 	VisualImageXMG *_backgroundTexture;
 	Common::Rect _backgroundRect;
 
+	Gfx::RenderEntryArray _renderEntries;
 	int16 _selectedInventoryItem;
 };
 

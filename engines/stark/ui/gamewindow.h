@@ -46,6 +46,14 @@ protected:
 	void onRender() override;
 
 	ActionMenu *_actionMenu;
+
+	// Item handling
+	void updateItems();
+	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
+
+	Gfx::RenderEntryArray _renderEntries;
+	Resources::ItemVisual *_objectUnderCursor;
+	Common::Point _objectRelativePosition;
 };
 
 } // End of namespace Stark

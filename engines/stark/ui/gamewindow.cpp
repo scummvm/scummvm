@@ -42,7 +42,8 @@ namespace Stark {
 
 GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
 	Window(gfx, cursor),
-	_actionMenu(actionMenu) {
+	_actionMenu(actionMenu),
+	_objectUnderCursor(nullptr) {
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
@@ -109,6 +110,77 @@ void GameWindow::onClick(const Common::Point &pos) {
 		}
 	} else {
 		ui->walkTo(getScreenMousePosition());
+	}
+}
+
+void GameWindow::updateItems() {
+	// Check for game world mouse overs
+	UserInterface *ui = StarkServices::instance().userInterface;
+	Common::Point pos = getMousePosition();
+
+
+	_objectUnderCursor = nullptr;
+
+	// Render entries are sorted from the farthest to the camera to the nearest
+	// Loop in reverse order
+	for (int i = _renderEntries.size() - 1; i >= 0; i--) {
+		if (_renderEntries[i]->containsPoint(pos, _objectRelativePosition)) {
+			_objectUnderCursor = _renderEntries[i]->getOwner();
+			break;
+		}
+	}
+
+	Resources::ActionArray actionsPossible;
+	if (_objectUnderCursor) {
+		actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+	}
+
+	if (actionsPossible.empty()) {
+		// Only consider items with runnable scripts
+		_objectUnderCursor = nullptr;
+	}
+
+	Common::String mouseHint;
+	if (_objectUnderCursor) {
+		setCursorDependingOnActionsAvailable(actionsPossible);
+
+		mouseHint = ui->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
+	} else {
+		// Not an object
+		_cursor->setCursorType(Cursor::kPassive);
+	}
+	_cursor->setMouseHint(mouseHint);
+}
+
+void GameWindow::setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable) {
+	if (actionsAvailable.empty()) {
+		_cursor->setCursorType(Cursor::kPassive);
+		return;
+	}
+
+	uint32 count = 0;
+	Cursor::CursorType cursorType;
+	for (uint i = 0; i < actionsAvailable.size(); i++) {
+		switch (actionsAvailable[i]) {
+			case Resources::PATTable::kActionLook:
+				cursorType = Cursor::kEye;
+		        count++;
+		        break;
+			case Resources::PATTable::kActionTalk:
+				cursorType = Cursor::kMouth;
+		        count++;
+		        break;
+			case Resources::PATTable::kActionUse:
+				cursorType = Cursor::kHand;
+		        count++;
+		        break;
+		}
+	}
+
+	if (count == 1) {
+		_cursor->setCursorType(cursorType);
+	} else {
+		_cursor->setCursorType(Cursor::kActive);
 	}
 }
 
