@@ -30,7 +30,7 @@ namespace Tattoo {
 
 enum {
 	DART_COLOR_FORE	= 5,
-	PLAYER_COLOR	= 11,
+	PLAYER_COLOR	= 11
 };
 
 const int STATUS_INFO_X = 430;
@@ -185,17 +185,13 @@ void Darts::showNames(int playerNum) {
 
 void Darts::showStatus(int playerNum) {
 	Screen &screen = *_vm->_screen;
-	byte color;
 	const char *const CRICKET_SCORE_NAME[7] = { "20", "19", "18", "17", "16", "15", FIXED(Bull) };
 
 	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 10),
 		Common::Rect(STATUS_INFO_X, STATUS_INFO_Y + 10, STATUS_INFO_X + STATUS_INFO_WIDTH,
 		STATUS_INFO_Y + STATUS_INFO_HEIGHT - 10));
-
-	color = (playerNum == 0) ? PLAYER_COLOR : DART_COLOR_FORE;
 	screen.print(Common::Point(STATUS_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score1);
 
-	color = (playerNum == 1) ? PLAYER_COLOR : DART_COLOR_FORE;
 	screen.print(Common::Point(STATUS2_INFO_X + 30, STATUS_INFO_Y + _spacing + 4), 0, "%d", _score2);
 
 	int temp = (_gameType == GAME_CRICKET) ? STATUS_INFO_Y + 10 * _spacing + 5 : STATUS_INFO_Y + 55;
@@ -209,8 +205,6 @@ void Darts::showStatus(int playerNum) {
 			screen.print(Common::Point(STATUS_INFO_X, STATUS_INFO_Y + 40 + x * _spacing), 0, "%s:", CRICKET_SCORE_NAME[x]);
 
 			for (int y = 0; y < 2; ++y) {
-				color = (playerNum == y) ? PLAYER_COLOR : DART_COLOR_FORE;
-				
 				switch (CRICKET_SCORE_NAME[y][x]) {
 				case 1:
 					screen.print(Common::Point(STATUS_INFO_X + 38 + y*STATUS2_X_ADD, STATUS_INFO_Y + 40 + x * _spacing), 0, "/");

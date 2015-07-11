@@ -1117,7 +1117,7 @@ void Scene::checkSceneFlags(bool flag) {
 						// Flag it as needing to be hidden after first erasing it
 						o._type = mode;
 				}
-			} else if (IS_ROSE_TATTOO || o._requiredFlag > 0) {
+			} else if (IS_ROSE_TATTOO || o._requiredFlag[0] > 0) {
 				// Restore object
 				if (o._images == nullptr || o._images->size() == 0)
 					o._type = NO_SHAPE;
