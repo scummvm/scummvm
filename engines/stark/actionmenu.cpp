@@ -144,10 +144,20 @@ void ActionMenu::onClick(const Common::Point &pos) {
 
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
-			ui->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
+
+			if (_fromInventory && i == kActionHand) {
+				_inventory->setSelectedInventoryItem(_item->getIndex());
+			} else {
+				ui->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
+			}
+
 			close();
 		}
 	}
+}
+
+void ActionMenu::setInventory(InventoryInterface *inventory) {
+	_inventory = inventory;
 }
 
 } // End of namespace Stark

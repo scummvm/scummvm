@@ -189,6 +189,15 @@ int ItemVisual::getHotspotIndexForPoint(Common::Point point) {
 	return -1;
 }
 
+bool ItemVisual::canPerformAction(uint32 action, uint32 hotspotIndex) {
+	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	if (table && table->canPerformAction(action)) {
+		return table->runScriptForAction(action);
+	}
+
+	return false;
+}
+
 bool ItemVisual::doAction(uint32 action, uint32 hotspotIndex) {
 	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
 	if (table && table->canPerformAction(action)) {
@@ -333,13 +342,18 @@ Gfx::RenderEntry *ItemSub2::getRenderEntry(const Common::Point &positionOffset) 
 	return _renderEntry;
 }
 
-Visual *ItemSub2::getActionVisual(bool active) {
+Visual *ItemSub2::getActionVisual(bool active) const {
 	if (active) {
 		return _animHierarchy->getVisualForUsage(Anim::kActionUsageActive);
 	} else {
 		return _animHierarchy->getVisualForUsage(Anim::kActionUsagePassive);
 	}
 }
+
+Visual *ItemSub2::getCursorVisual() const {
+	return _animHierarchy->getVisualForUsage(Anim::kUIUsageUseCursor);
+}
+
 
 ItemSub3::~ItemSub3() {
 }

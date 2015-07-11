@@ -65,12 +65,17 @@ public:
 	void walkTo(const Common::Point &mouse);
 
 	VisualImageXMG *getActionImage(uint32 itemIndex, bool active);
+	VisualImageXMG *getCursorImage(uint32 itemIndex);
 
+	bool itemHasAction(Resources::ItemVisual *item, uint32 action);
 	bool itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position);
 
 	Common::String getItemTitle(Resources::ItemVisual *object, bool local, const Common::Point &pos);
 
+	Resources::ActionArray getActionsPossibleForObject(Resources::ItemVisual *item);
 	Resources::ActionArray getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
+
+	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item);
 	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
 
 	bool isInventoryObject(Resources::ItemVisual *item);

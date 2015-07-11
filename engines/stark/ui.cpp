@@ -52,7 +52,6 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_topMenu(nullptr),
 	_dialogInterface(nullptr),
 	_inventoryInterface(nullptr),
-	_selectedInventoryItem(-1),
 	_exitGame(false),
 	_fmvPlayer(nullptr),
 	_actionMenu(nullptr),
@@ -75,6 +74,7 @@ void UI::init() {
 	_fmvPlayer = new FMVPlayer();
 	_actionMenu = new ActionMenu(_gfx, _cursor);
 	_inventoryInterface = new InventoryInterface(_gfx, _cursor, _actionMenu);
+	_actionMenu->setInventory(_inventoryInterface);
 	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu);
 }
 
@@ -159,11 +159,6 @@ void UI::notifyShouldOpenInventory() {
 
 void UI::notifyFMVRequest(const Common::String &name) {
 	_fmvPlayer->play(name);
-}
-
-void UI::notifySelectedInventoryItem(Resources::Item *selectedItem) {
-	_selectedInventoryItem = selectedItem->getIndex();
-	_selectedInventoryItemText = selectedItem->getName() + " -> ";
 }
 
 bool UI::isPlayingFMV() const {

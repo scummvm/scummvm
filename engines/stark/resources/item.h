@@ -122,6 +122,9 @@ public:
 	/** Obtain the title for one of the item's hotspots */
 	Common::String getHotspotTitle(uint32 hotspotIndex);
 
+	/** Check whether the item has runnable scripts for the specified action */
+	bool canPerformAction(uint32 action, uint32 hotspotIndex);
+
 	/** Perform an action on one of the item's hotspots */
 	bool doAction(uint32 action, uint32 hotspotIndex);
 
@@ -216,7 +219,10 @@ public:
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
 
 	/** Obtain an action menu icon */
-	Visual *getActionVisual(bool active);
+	Visual *getActionVisual(bool active) const;
+
+	/** Obtain an inventory item cursor */
+	Visual *getCursorVisual() const;
 
 protected:
 };

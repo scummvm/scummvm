@@ -92,7 +92,7 @@ bool PATTable::runScriptForAction(uint32 action) {
 		}
 	}
 
-	return nullptr;
+	return false;
 }
 
 } // End of namespace Resources

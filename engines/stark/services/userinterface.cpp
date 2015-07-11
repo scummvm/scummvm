@@ -121,6 +121,27 @@ VisualImageXMG *UserInterface::getActionImage(uint32 itemIndex, bool active) {
 	return visual->get<VisualImageXMG>();
 }
 
+VisualImageXMG *UserInterface::getCursorImage(uint32 itemIndex) {
+	// Lookup the item's item in the inventory
+	Global *global = StarkServices::instance().global;
+	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
+
+	// Get the visual for the item
+	Resources::ItemSub2 *item = inventory->findChildWithIndex<Resources::ItemSub2>(itemIndex);
+	Visual *visual = item->getCursorVisual();
+
+	return visual->get<VisualImageXMG>();
+}
+
+bool UserInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
+	if (action != -1) {
+		return item->canPerformAction(action, 0);
+	} else {
+		warning("itemHasAction called with action = -1");
+		return false;
+	}
+}
+
 bool UserInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	return item->doAction(action, hotspotIndex);
@@ -133,6 +154,15 @@ Common::String UserInterface::getItemTitle(Resources::ItemVisual *item, bool loc
 	}
 
 	return item->getHotspotTitle(hotspotIndex);
+}
+
+Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::ItemVisual *item) {
+	if (item == nullptr) {
+		return Resources::ActionArray();
+	}
+
+	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(0);
+	return table->listPossibleActions();
 }
 
 Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
@@ -148,6 +178,19 @@ Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Ite
 
 	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(index);
 	return table->listPossibleActions();
+}
+
+Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item) {
+	Resources::ActionArray actions = getActionsPossibleForObject(item);
+
+	Resources::ActionArray stockActions;
+	for (uint i = 0; i < actions.size(); i++) {
+		if (actions[i] < 4) {
+			stockActions.push_back(actions[i]);
+		}
+	}
+
+	return stockActions;
 }
 
 Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {

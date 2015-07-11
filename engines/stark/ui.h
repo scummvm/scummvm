@@ -57,8 +57,6 @@ class UI {
 	GameWindow *_gameWindow;
 
 
-	int _selectedInventoryItem;
-	Common::String _selectedInventoryItemText; // Just a temp HACK untill we get cursors sorted.
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;
 	bool _hasClicked;
@@ -73,7 +71,6 @@ public:
 	void notifyClick();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
-	void notifySelectedInventoryItem(Resources::Item *selectedItem);
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
 	void notifyFMVRequest(const Common::String &name);

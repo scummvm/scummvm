@@ -65,6 +65,12 @@ void Cursor::setCursorType(CursorType type) {
 	_cursorImage = staticProvider->getCursorImage(_currentCursorType);
 }
 
+void Cursor::setCursorImage(VisualImageXMG *image) {
+	_currentCursorType = kNone;
+	_cursorImage = image;
+}
+
+
 void Cursor::setMousePosition(Common::Point pos) {
 	_mousePos = _gfx->getScreenPosBounded(pos);
 }

@@ -47,14 +47,20 @@ public:
 	void open();
 	void close();
 
+	void setSelectedInventoryItem(uint16 selectedItem);
+
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
 	void onRender() override;
 
+	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedTool, int16 &possibleTool);
+
 private:
 	Resources::Anim *_backgroundTexture;
 	ActionMenu *_actionMenu;
+
+	int16 _selectedInventoryItem;
 };
 
 } // End of namespace Stark

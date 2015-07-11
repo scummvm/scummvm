@@ -67,6 +67,7 @@ public:
 	};
 
 	void setCursorType(CursorType type);
+	void setCursorImage(VisualImageXMG *image);
 	void setMouseHint(const Common::String &hint);
 private:
 	

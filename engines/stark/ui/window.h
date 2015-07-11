@@ -64,6 +64,7 @@ protected:
 	Common::Point getScreenMousePosition() const;
 
 	Gfx::Driver *_gfx;
+	Cursor *_cursor;
 
 	Common::Rect _position;
 	bool _unscaled;
@@ -77,9 +78,6 @@ protected:
 	Gfx::RenderEntryArray _renderEntries;
 	Resources::ItemVisual *_objectUnderCursor;
 	Common::Point _objectRelativePosition;
-
-private:
-	Cursor *_cursor;
 };
 
 } // End of namespace Stark

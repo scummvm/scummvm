@@ -42,7 +42,8 @@ namespace Stark {
 
 InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
 	Window(gfx, cursor),
-	_actionMenu(actionMenu) {
+	_actionMenu(actionMenu),
+	_selectedInventoryItem(-1) {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	_backgroundTexture = staticProvider->getUIItem(StaticProvider::kInventoryBg);
 
@@ -59,6 +60,10 @@ void InventoryInterface::open() {
 
 void InventoryInterface::close() {
 	_visible = false;
+}
+
+void InventoryInterface::setSelectedInventoryItem(uint16 selectedToolId) {
+	_selectedInventoryItem = selectedToolId;
 }
 
 void InventoryInterface::onRender() {
@@ -81,26 +86,78 @@ void InventoryInterface::onRender() {
 	}
 }
 
+void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedTool, int16 &possibleTool) {
+	UserInterface *ui = StarkServices::instance().userInterface;
+
+	*item = nullptr;
+	possibleTool = -1;
+
+	// Check for inventory mouse overs
+	// Render entries are sorted from the farthest to the camera to the nearest
+	// Loop in reverse order
+	for (int i = _renderEntries.size() - 1; i >= 0; i--) {
+		Common::Point relativePosition;
+		if (_renderEntries[i]->containsPoint(pos, relativePosition)) {
+			*item = _renderEntries[i]->getOwner();
+			break;
+		}
+	}
+
+	if (!*item) {
+		// No item at specified position
+		return;
+	}
+
+	if (selectedTool == -1) {
+		Resources::ActionArray actionsPossible;
+		actionsPossible = ui->getStockActionsPossibleForObject(*item);
+
+		if (actionsPossible.empty()) {
+			possibleTool = 1;
+		}
+	} else {
+		if (ui->itemHasAction(*item, selectedTool)) {
+			possibleTool = selectedTool;
+		}
+	}
+}
+
 void InventoryInterface::onMouseMove(const Common::Point &pos) {
-	updateItems();
+	Resources::ItemVisual *hoveredItem = nullptr;
+	int16 hoveredItemAction = -1;
+
+	checkObjectAtPos(pos, &hoveredItem, _selectedInventoryItem, hoveredItemAction);
+
+	switch (_selectedInventoryItem) {
+		case -1:
+			_cursor->setCursorType(Cursor::CursorType::kDefault);
+			break;
+		case 0:
+			_cursor->setCursorType(Cursor::CursorType::kHand);
+	        break;
+		case 1:
+			_cursor->setCursorType(Cursor::CursorType::kEye);
+	        break;
+		case 2:
+			_cursor->setCursorType(Cursor::CursorType::kMouth);
+	        break;
+		default:
+			UserInterface *ui = StarkServices::instance().userInterface;
+	        VisualImageXMG *cursorImage = ui->getCursorImage(_selectedInventoryItem);
+			_cursor->setCursorImage(cursorImage);
+			break;
+	}
 }
 
 void InventoryInterface::onClick(const Common::Point &pos) {
-	if (_objectUnderCursor) {
-		// Possibilites:
-		// * Click on something that doesn't take an action
-		// * Click on something that takes exactly 1 action.
-		// * Click on something that takes more than 1 action (open action menu)
-		// * Click in the action menu, which has 0 available actions (TODO)
-//			if (_selectedInventoryItem != -1) {
-//				if (!ui->itemDoActionAt(_objectUnderCursor, _selectedInventoryItem, pos)) {
-//					warning("Could not perform action %d on %s", _selectedInventoryItem, _objectUnderCursor->getName().c_str());
-//				}
-//			} else
-		{
-			// TODO: Is it safe to always open the action menu?
-			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
-		}
+	Resources::ItemVisual *hoveredItem = nullptr;
+	int16 hoveredItemAction = -1;
+
+	checkObjectAtPos(pos, &hoveredItem, _selectedInventoryItem, hoveredItemAction);
+
+	if (hoveredItem) {
+		// TODO: Should only open the action menu when there are several actions possible
+		_actionMenu->open(hoveredItem, Common::Point());
 	}
 }
 
