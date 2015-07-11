@@ -46,6 +46,7 @@ public:
 
 	void handleMouseMove();
 	void handleClick();
+	void handleRightClick();
 
 	void render();
 
@@ -55,6 +56,7 @@ public:
 protected:
 	virtual void onMouseMove(const Common::Point &pos) = 0;
 	virtual void onClick(const Common::Point &pos) = 0;
+	virtual void onRightClick(const Common::Point &pos) {};
 	virtual void onRender() = 0;
 
 	void setCursor(Cursor::CursorType type);

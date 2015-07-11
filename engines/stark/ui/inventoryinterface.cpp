@@ -155,10 +155,6 @@ void InventoryInterface::onMouseMove(const Common::Point &pos) {
 void InventoryInterface::onClick(const Common::Point &pos) {
 	_actionMenu->close();
 
-	if (!_backgroundRect.contains(pos)) {
-		close();
-	}
-
 	Resources::ItemVisual *hoveredItem = nullptr;
 	int16 hoveredItemAction = -1;
 
@@ -167,6 +163,16 @@ void InventoryInterface::onClick(const Common::Point &pos) {
 	if (hoveredItem) {
 		// TODO: Should only open the action menu when there are several actions possible
 		_actionMenu->open(hoveredItem, Common::Point());
+	} else {
+		close();
+	}
+}
+
+void InventoryInterface::onRightClick(const Common::Point &pos) {
+	if (_selectedInventoryItem == -1) {
+		close();
+	} else {
+		setSelectedInventoryItem(-1);
 	}
 }
 

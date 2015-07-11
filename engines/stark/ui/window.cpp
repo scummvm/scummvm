@@ -104,6 +104,16 @@ void Window::handleClick() {
 	}
 }
 
+void Window::handleRightClick() {
+	if (!_visible) {
+		return;
+	}
+
+	if (isMouseInside()) {
+		onRightClick(getMousePosition());
+	}
+}
+
 void Window::updateItems() {
 	// Check for game world mouse overs
 	UserInterface *ui = StarkServices::instance().userInterface;

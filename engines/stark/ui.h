@@ -57,6 +57,7 @@ public:
 	void update();
 	void render();
 	void handleClick();
+	void handleRightClick();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
 	void notifyShouldExit() { _exitGame = true; }

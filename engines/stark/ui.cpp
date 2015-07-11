@@ -116,9 +116,19 @@ void UI::handleClick() {
 		}
 	}
 
+	// TODO: Unify with the other windows
 	if (_dialogInterface->containsPoint(_cursor->getMousePosition())) {
 		_dialogInterface->handleClick(_cursor->getMousePosition());
 		return;
+	}
+}
+
+void UI::handleRightClick() {
+	for (uint i = 0; i < _windows.size(); i++) {
+		if (_windows[i]->isMouseInside()) {
+			_windows[i]->handleRightClick();
+			return;
+		}
 	}
 }
 

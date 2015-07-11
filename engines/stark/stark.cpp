@@ -181,6 +181,8 @@ void StarkEngine::mainLoop() {
 				_cursor->setMousePosition(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
 				_ui->handleClick();
+			} else if (e.type == Common::EVENT_RBUTTONDOWN) {
+				_ui->handleRightClick();
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
