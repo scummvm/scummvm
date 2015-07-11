@@ -48,7 +48,6 @@ namespace Stark {
 UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_gfx(gfx),
 	_cursor(cursor),
-	_hasClicked(false),
 	_topMenu(nullptr),
 	_dialogInterface(nullptr),
 	_inventoryInterface(nullptr),
@@ -76,6 +75,11 @@ void UI::init() {
 	_inventoryInterface = new InventoryInterface(_gfx, _cursor, _actionMenu);
 	_actionMenu->setInventory(_inventoryInterface);
 	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu);
+
+	_windows.push_back(_actionMenu);
+	_windows.push_back(_inventoryInterface);
+	_windows.push_back(_gameWindow);
+	_windows.push_back(_topMenu);
 }
 
 void UI::update() {
@@ -105,43 +109,17 @@ void UI::update() {
 }
 
 void UI::handleClick() {
-	_hasClicked = false;
-
-	if (_actionMenu->isVisible()) {
-		if (_actionMenu->isMouseInside()) {
-			_actionMenu->handleClick();
-		} else {
-			_actionMenu->close();
+	for (uint i = 0; i < _windows.size(); i++) {
+		if (_windows[i]->isMouseInside()) {
+			_windows[i]->handleClick();
+			return;
 		}
-		return;
 	}
 
-	if (_inventoryInterface->isVisible()) {
-		if (_inventoryInterface->isMouseInside()) {
-			_inventoryInterface->handleClick();
-		} else {
-			_inventoryInterface->close();
-		}
-		return;
-	}
-
-	if (_gameWindow->isMouseInside()) {
-		_gameWindow->handleClick();
-		return;
-	}
-
-	if (_topMenu->isMouseInside()) {
-		_topMenu->handleClick();
-		return;
-	}
 	if (_dialogInterface->containsPoint(_cursor->getMousePosition())) {
 		_dialogInterface->handleClick(_cursor->getMousePosition());
 		return;
 	}
-}
-
-void UI::notifyClick() {
-	_hasClicked = true;
 }
 
 void UI::notifySubtitle(const Common::String &subtitle) {
@@ -173,11 +151,6 @@ void UI::render() {
 	if (_fmvPlayer->isPlaying()) {
 		_fmvPlayer->render();
 		return;
-	}
-
-	// Can't handle clicks before this point, since we need to have updated the mouse-over state to include the UI.
-	if (_hasClicked) {
-		handleClick();
 	}
 
 	// TODO: Unhardcode

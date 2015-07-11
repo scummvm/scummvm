@@ -75,6 +75,8 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 void GameWindow::onClick(const Common::Point &pos) {
 	UserInterface *ui = StarkServices::instance().userInterface;
 
+	_actionMenu->close();
+
 	if (_objectUnderCursor) {
 		// Possibilites:
 		// * Click on something that doesn't take an action

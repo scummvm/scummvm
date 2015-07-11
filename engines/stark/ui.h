@@ -47,28 +47,16 @@ class TopMenu;
 class Cursor;
 class FMVPlayer;
 class GameWindow;
+class Window;
 
 class UI {
-	ActionMenu *_actionMenu;
-	FMVPlayer *_fmvPlayer;
-	DialogInterface *_dialogInterface;
-	InventoryInterface *_inventoryInterface;
-	TopMenu *_topMenu;
-	GameWindow *_gameWindow;
-
-
-	Gfx::Driver *_gfx;
-	Cursor *_cursor;
-	bool _hasClicked;
-	bool _exitGame;
-	void handleClick();
 public:
 	UI(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~UI();
 	void init();
 	void update();
 	void render();
-	void notifyClick();
+	void handleClick();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
 	void notifyShouldExit() { _exitGame = true; }
@@ -77,6 +65,20 @@ public:
 	bool isPlayingFMV() const;
 	void stopPlayingFMV();
 	bool shouldExit() { return _exitGame; }
+
+private:
+	ActionMenu *_actionMenu;
+	FMVPlayer *_fmvPlayer;
+	DialogInterface *_dialogInterface;
+	InventoryInterface *_inventoryInterface;
+	TopMenu *_topMenu;
+	GameWindow *_gameWindow;
+
+	Common::Array<Window *> _windows;
+
+	Gfx::Driver *_gfx;
+	Cursor *_cursor;
+	bool _exitGame;
 };
 
 } // End of namespace Stark

@@ -55,10 +55,13 @@ protected:
 	void onRender() override;
 
 	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedTool, int16 &possibleTool);
+	Common::Point getIndexPosition(uint32 position) const;
 
 private:
-	Resources::Anim *_backgroundTexture;
 	ActionMenu *_actionMenu;
+
+	VisualImageXMG *_backgroundTexture;
+	Common::Rect _backgroundRect;
 
 	int16 _selectedInventoryItem;
 };

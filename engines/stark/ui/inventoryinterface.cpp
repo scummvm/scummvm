@@ -44,11 +44,18 @@ InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionM
 	Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_selectedInventoryItem(-1) {
-	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
-	_backgroundTexture = staticProvider->getUIItem(StaticProvider::kInventoryBg);
+	// The window has the same size as the game window
+	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
+	_position.translate(0, Gfx::Driver::kTopBorderHeight);
 
-	_position = Common::Rect(526, 315);
-	_position.translate(40, 50);
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+	Resources::Anim *backgroundAnim = staticProvider->getUIItem(StaticProvider::kInventoryBg);
+	_backgroundTexture = backgroundAnim->getVisual()->get<VisualImageXMG>();
+
+	// Center the background in the window
+	_backgroundRect = Common::Rect(_backgroundTexture->getWidth(), _backgroundTexture->getHeight());
+	_backgroundRect.translate((_position.width() - _backgroundRect.width()) / 2,
+			(_position.height() - _backgroundRect.height()) / 2);
 }
 
 void InventoryInterface::open() {
@@ -66,23 +73,19 @@ void InventoryInterface::setSelectedInventoryItem(uint16 selectedToolId) {
 	_selectedInventoryItem = selectedToolId;
 }
 
-void InventoryInterface::onRender() {
-	_backgroundTexture->getVisual()->get<VisualImageXMG>()->render(Common::Point(0, 0));
-	
-	Gfx::RenderEntryArray::iterator it = _renderEntries.begin();
-	// TODO: Unhardcode positions
-	Common::Point pos;
-	int width =_backgroundTexture->getVisual()->get<VisualImageXMG>()->getWidth();
-	pos.x += 40;
-	for (;it != _renderEntries.end(); ++it) {
-		(*it)->setPosition(pos);
-		(*it)->render(_gfx);
+Common::Point InventoryInterface::getIndexPosition(uint32 position) const {
+	return Common::Point(
+			96 * (position % 5) + _backgroundRect.left + 24,
+			96 * (position / 5) + _backgroundRect.left + 8);
+}
 
-		pos.x += 36;
-		if (pos.x > width - 40) {
-			pos.x = 20;
-			pos.y+= 36;
-		}
+void InventoryInterface::onRender() {
+	_backgroundTexture->render(Common::Point(_backgroundRect.left, _backgroundRect.top));
+	
+	for (uint i = 0; i < _renderEntries.size(); i++) {
+		Common::Point pos = getIndexPosition(i);
+		_renderEntries[i]->setPosition(pos);
+		_renderEntries[i]->render(_gfx);
 	}
 }
 
@@ -150,6 +153,12 @@ void InventoryInterface::onMouseMove(const Common::Point &pos) {
 }
 
 void InventoryInterface::onClick(const Common::Point &pos) {
+	_actionMenu->close();
+
+	if (!_backgroundRect.contains(pos)) {
+		close();
+	}
+
 	Resources::ItemVisual *hoveredItem = nullptr;
 	int16 hoveredItemAction = -1;
 
