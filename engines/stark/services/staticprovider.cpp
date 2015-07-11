@@ -49,6 +49,14 @@ void StaticProvider::init() {
 
 	Resources::Item *staticItem = _level->findChild<Resources::Item>();
 	_stockAnims = staticItem->listChildren<Resources::Anim>();
+
+	for (uint i = 0; i< _stockAnims.size(); i++) {
+		_stockAnims[i]->applyToItem(0);
+	}
+}
+
+void StaticProvider::onGameLoop() {
+	_level->onGameLoop();
 }
 
 void StaticProvider::shutdown() {

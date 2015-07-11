@@ -50,6 +50,9 @@ public:
 	/** Load the static level archive */
 	void init();
 
+	/** State update loop */
+	void onGameLoop();
+
 	/** Release the static resources */
 	void shutdown();
 

@@ -25,13 +25,13 @@
 
 #include "engines/stark/gfx/renderentry.h"
 
-#include "engines/stark/ui/inventoryinterface.h"
 #include "engines/stark/ui/window.h"
 
 namespace Stark {
 
 class Cursor;
 class VisualImageXMG;
+class InventoryInterface;
 
 namespace Resources {
 class ItemVisual;

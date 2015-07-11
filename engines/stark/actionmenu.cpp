@@ -24,6 +24,8 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/ui/inventoryinterface.h"
+
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledgeset.h"

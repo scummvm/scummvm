@@ -26,16 +26,12 @@
 #include "engines/stark/ui.h"
 
 #include "engines/stark/actionmenu.h"
-#include "engines/stark/cursor.h"
 
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/renderentry.h"
-
-#include "engines/stark/resources/object.h"
-#include "engines/stark/resources/item.h"
 
 #include "engines/stark/services/fmvplayer.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/ui/dialoginterface.h"
@@ -83,6 +79,9 @@ void UI::init() {
 }
 
 void UI::update() {
+	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
+	staticProvider->onGameLoop();
+
 	// Check for UI mouse overs
 	_topMenu->handleMouseMove();
 
