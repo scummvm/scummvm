@@ -77,7 +77,12 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	clearActions();
 
-	Resources::ActionArray possible = ui->getActionsPossibleForObject(_item, _itemRelativePos);
+	Resources::ActionArray possible;
+	if (_fromInventory) {
+		possible = ui->getActionsPossibleForObject(_item);
+	} else {
+		possible = ui->getActionsPossibleForObject(_item, _itemRelativePos);
+	}
 
 	for (uint i = 0; i < possible.size(); i++) {
 		enableAction(possible[i]);
@@ -98,13 +103,13 @@ void ActionMenu::onRender() {
 	UserInterface *ui = StarkServices::instance().userInterface;
 	Common::Point mousePos = getMousePosition();
 
-	_background->render(Common::Point(0, 0));
+	_background->render(Common::Point(0, 0), false);
 
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled) {
 			bool active = _buttons[i].rect.contains(mousePos);
 			VisualImageXMG *visual = ui->getActionImage(_buttons[i].action, active);
-			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top));
+			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top), false);
 		}
 	}
 }
@@ -148,7 +153,11 @@ void ActionMenu::onClick(const Common::Point &pos) {
 			if (_fromInventory && i == kActionHand) {
 				_inventory->setSelectedInventoryItem(_item->getIndex());
 			} else {
-				ui->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
+				if (_fromInventory) {
+					ui->itemDoAction(_item, _buttons[i].action);
+				} else {
+					ui->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
+				}
 			}
 
 			close();

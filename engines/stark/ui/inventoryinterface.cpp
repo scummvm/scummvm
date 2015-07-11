@@ -60,9 +60,6 @@ InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionM
 
 void InventoryInterface::open() {
 	_visible = true;
-
-	Global *global = StarkServices::instance().global;
-	_renderEntries = global->getInventory()->getInventoryRenderEntries();
 }
 
 void InventoryInterface::close() {
@@ -73,19 +70,37 @@ void InventoryInterface::setSelectedInventoryItem(uint16 selectedToolId) {
 	_selectedInventoryItem = selectedToolId;
 }
 
-Common::Point InventoryInterface::getIndexPosition(uint32 position) const {
-	return Common::Point(
-			96 * (position % 5) + _backgroundRect.left + 24,
-			96 * (position / 5) + _backgroundRect.left + 8);
+Common::Rect InventoryInterface::getSlotRect(uint32 slot) const {
+	Common::Rect rect = Common::Rect(64, 64);
+	rect.translate(
+			96 * (slot % 5) + _backgroundRect.left + 24,
+			96 * (slot / 5) + _backgroundRect.left + 8); // The original uses left here as well
+	return rect;
+}
+
+Common::Rect InventoryInterface::getItemRect(uint32 slot, VisualImageXMG *image) const {
+	Common::Rect rect = getSlotRect(slot);
+
+	// Center the image in the inventory slot
+	rect.translate((rect.width() - image->getWidth()) / 2,
+	              (rect.height() - image->getHeight()) / 2);
+
+	return rect;
 }
 
 void InventoryInterface::onRender() {
-	_backgroundTexture->render(Common::Point(_backgroundRect.left, _backgroundRect.top));
+	Global *global = StarkServices::instance().global;
+	_renderEntries = global->getInventory()->getInventoryRenderEntries();
+
+	_backgroundTexture->render(Common::Point(_backgroundRect.left, _backgroundRect.top), false);
 	
 	for (uint i = 0; i < _renderEntries.size(); i++) {
-		Common::Point pos = getIndexPosition(i);
-		_renderEntries[i]->setPosition(pos);
-		_renderEntries[i]->render(_gfx);
+		VisualImageXMG *image = _renderEntries[i]->getImage();
+
+		// Get the item rect
+		Common::Rect pos = getItemRect(i, image);
+
+		image->render(Common::Point(pos.left, pos.top), false);
 	}
 }
 
@@ -96,11 +111,11 @@ void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisu
 	possibleTool = -1;
 
 	// Check for inventory mouse overs
-	// Render entries are sorted from the farthest to the camera to the nearest
-	// Loop in reverse order
-	for (int i = _renderEntries.size() - 1; i >= 0; i--) {
-		Common::Point relativePosition;
-		if (_renderEntries[i]->containsPoint(pos, relativePosition)) {
+	for (uint i = 0; i < _renderEntries.size(); i++) {
+		VisualImageXMG *image = _renderEntries[i]->getImage();
+		Common::Rect itemRect = getItemRect(i, image);
+
+		if (itemRect.contains(pos)) {
 			*item = _renderEntries[i]->getOwner();
 			break;
 		}
@@ -116,7 +131,8 @@ void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisu
 		actionsPossible = ui->getStockActionsPossibleForObject(*item);
 
 		if (actionsPossible.empty()) {
-			possibleTool = 1;
+			// The item can still be taken
+			possibleTool = Resources::PATTable::kActionUse;
 		}
 	} else {
 		if (ui->itemHasAction(*item, selectedTool)) {
@@ -131,39 +147,45 @@ void InventoryInterface::onMouseMove(const Common::Point &pos) {
 
 	checkObjectAtPos(pos, &hoveredItem, _selectedInventoryItem, hoveredItemAction);
 
-	switch (_selectedInventoryItem) {
-		case -1:
+	if (_selectedInventoryItem == -1) {
+		if (hoveredItem) {
+			_cursor->setCursorType(Cursor::CursorType::kActive);
+		} else {
 			_cursor->setCursorType(Cursor::CursorType::kDefault);
-			break;
-		case 0:
-			_cursor->setCursorType(Cursor::CursorType::kHand);
-	        break;
-		case 1:
-			_cursor->setCursorType(Cursor::CursorType::kEye);
-	        break;
-		case 2:
-			_cursor->setCursorType(Cursor::CursorType::kMouth);
-	        break;
-		default:
-			UserInterface *ui = StarkServices::instance().userInterface;
-	        VisualImageXMG *cursorImage = ui->getCursorImage(_selectedInventoryItem);
-			_cursor->setCursorImage(cursorImage);
-			break;
+		}
+	} else {
+		UserInterface *ui = StarkServices::instance().userInterface;
+        VisualImageXMG *cursorImage = ui->getCursorImage(_selectedInventoryItem);
+		_cursor->setCursorImage(cursorImage);
 	}
 }
 
 void InventoryInterface::onClick(const Common::Point &pos) {
+	UserInterface *ui = StarkServices::instance().userInterface;
+
 	_actionMenu->close();
 
-	Resources::ItemVisual *hoveredItem = nullptr;
-	int16 hoveredItemAction = -1;
+	Resources::ItemVisual *clickedItem = nullptr;
+	int16 clickedItemAction = -1;
+	checkObjectAtPos(pos, &clickedItem, _selectedInventoryItem, clickedItemAction);
 
-	checkObjectAtPos(pos, &hoveredItem, _selectedInventoryItem, hoveredItemAction);
-
-	if (hoveredItem) {
-		// TODO: Should only open the action menu when there are several actions possible
-		_actionMenu->open(hoveredItem, Common::Point());
+	if (clickedItem) {
+		// An item was clicked
+		if (clickedItemAction != -1) {
+			// A single action is possible
+			if (clickedItemAction == Resources::PATTable::kActionUse) {
+				setSelectedInventoryItem(clickedItem->getIndex());
+			} else {
+				ui->itemDoAction(clickedItem, clickedItemAction);
+			}
+		} else {
+			// Multiple actions are possible
+			if (_selectedInventoryItem == -1) {
+				_actionMenu->open(clickedItem, Common::Point());
+			}
+		}
 	} else {
+		// Nothing was under the mouse cursor, close the inventory
 		close();
 	}
 }

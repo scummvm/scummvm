@@ -64,10 +64,10 @@ void DialogInterface::render() {
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
 	gfx->setScreenViewport(false);
 	if (_hasOptions) {
-		_activeBackGroundTexture->render(Common::Point(0, 401));
+		_activeBackGroundTexture->render(Common::Point(0, 401), false);
 		renderOptions();
 	} else {
-		_passiveBackGroundTexture->render(Common::Point(0, 401));
+		_passiveBackGroundTexture->render(Common::Point(0, 401), false);
 	}
 	// TODO: Unhardcode
 	if (_texture) {

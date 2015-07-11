@@ -39,7 +39,7 @@ public:
 	virtual ~VisualImageXMG();
 
 	void load(Common::ReadStream *stream);
-	void render(const Common::Point &position);
+	void render(const Common::Point &position, bool useOffset);
 
 	/** Set an offset used when rendering */
 	void setHotSpot(const Common::Point &hotspot);

@@ -65,8 +65,9 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 	delete surface;
 }
 
-void VisualImageXMG::render(const Common::Point &position) {
-	_gfx->drawSurface(_texture, position - _hotspot);
+void VisualImageXMG::render(const Common::Point &position, bool useOffset) {
+	Common::Point drawPos = useOffset ? position - _hotspot : position;
+	_gfx->drawSurface(_texture, drawPos);
 }
 
 } // End of namespace Stark

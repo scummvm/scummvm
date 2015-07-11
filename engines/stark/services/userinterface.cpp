@@ -142,6 +142,10 @@ bool UserInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
 	}
 }
 
+bool UserInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
+	return item->doAction(action, 0);
+}
+
 bool UserInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	return item->doAction(action, hotspotIndex);

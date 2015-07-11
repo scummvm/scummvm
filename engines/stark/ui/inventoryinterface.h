@@ -56,7 +56,8 @@ protected:
 	void onRender() override;
 
 	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedTool, int16 &possibleTool);
-	Common::Point getIndexPosition(uint32 position) const;
+	Common::Rect getSlotRect(uint32 slot) const;
+	Common::Rect getItemRect(uint32 slot, VisualImageXMG *image) const;
 
 private:
 	ActionMenu *_actionMenu;

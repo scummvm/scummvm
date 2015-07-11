@@ -23,6 +23,7 @@
 #ifndef STARK_GFX_RENDER_ENTRY_H
 #define STARK_GFX_RENDER_ENTRY_H
 
+#include <engines/stark/visual/image.h>
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -56,6 +57,9 @@ public:
 
 	/** Gets the owner-object */
 	Resources::ItemVisual *getOwner() const { return _owner; }
+
+	/** Gets the underlying image, if the render entry references an image */
+	VisualImageXMG *getImage() const { return _visual->get<VisualImageXMG>(); }
 
 	bool containsPoint(const Common::Point &position, Common::Point &relativePosition) const;
 

@@ -40,7 +40,7 @@ Button::Button(const Common::String &text, Resources::Anim *image, Common::Point
 }
 
 void Button::render() {
-	_image->getVisual()->get<VisualImageXMG>()->render(_position);
+	_image->getVisual()->get<VisualImageXMG>()->render(_position, false);
 }
 
 bool Button::containsPoint(Common::Point point) {

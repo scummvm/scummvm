@@ -48,7 +48,7 @@ void RenderEntry::render(Driver *gfx) {
 
 	VisualImageXMG *imageXMG = _visual->get<VisualImageXMG>();
 	if (imageXMG) {
-		imageXMG->render(_position);
+		imageXMG->render(_position, true);
 	}
 
 	VisualActor *actor = _visual->get<VisualActor>();

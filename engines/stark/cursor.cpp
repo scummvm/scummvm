@@ -78,7 +78,7 @@ void Cursor::setMousePosition(Common::Point pos) {
 void Cursor::render() {
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 	if (_cursorImage) {
-		_cursorImage->render(_mousePos);
+		_cursorImage->render(_mousePos, false);
 	}
 	if (_mouseText) {
 		// TODO: Should probably query the image for the width of the cursor
