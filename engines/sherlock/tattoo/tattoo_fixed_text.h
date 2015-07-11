@@ -64,7 +64,13 @@ enum FixedTextId {
 	kFixedText_AbortSearch,
 	kFixedText_SearchBackwards,
 	kFixedText_SearchForwards,
-	kFixedText_TextNotFound
+	kFixedText_TextNotFound,
+
+	kFixedText_Holmes,
+	kFixedText_Jock,
+	kFixedText_Bull,
+	kFixedText_Round,
+	kFixedText_TurnTotal
 };
 
 class TattooFixedText: public FixedText {

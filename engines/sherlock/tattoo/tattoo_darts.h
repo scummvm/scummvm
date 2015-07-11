@@ -47,9 +47,14 @@ private:
 	int _cricketScore[2][7];
 	int _score1, _score2;
 	int _roundNum;
+	int _roundScore;
 	int _level;
 	int _compPlay;
 	Common::String _opponent;
+	int _spacing;
+	bool _oldDartButtons;
+	int _handX;
+	Common::Point _handSize;
 
 	/**
 	 * Initialize game variables
@@ -65,6 +70,47 @@ private:
 	 * Free loaded dart images
 	 */
 	void closeDarts();
+
+	/**
+	 * Show the player names
+	 */
+	void showNames(int playerNum);
+
+	/**
+	 * Show the current scores
+	 */
+	void showStatus(int playerNum);
+
+	/**
+	 * Erases the power bars
+	 */
+	void erasePowerBars();
+
+	/**
+	 * Returns true if a mouse button or key is pressed
+	 */
+	bool dartHit();
+
+	/**
+	 * Shows a power bar and increments it until a key or mouse button is pressed. If the bar
+	 * reaches the end, it will also end. The reached power bar number is returned.
+	 * @param pt			Bar position
+	 * @param color			draw color
+	 * @param goToPower		If provided, input is ignored, and the bar is increased up to the specified level
+	 * @param orientation	0=Horizontal, 1=Vertical
+	 */
+	int doPowerBar(const Common::Point &pt, byte color, int goToPower, int orientation);
+
+	/**
+	 * This is similar to doPowerBar, except it draws the player's hand moving across the 
+	 * bottom of the screen to indicate the positioning of the darts
+	 */
+	int drawHand(int goToPower, int computer);
+
+	/**
+	 * Converts a passed co-ordinates from screen co-ordinates to an offset within the dartboard
+	 */
+	Common::Point convertFromScreenToScoreCoords(const Common::Point &pt) const;
 public:
 	Darts(SherlockEngine *vm);
 

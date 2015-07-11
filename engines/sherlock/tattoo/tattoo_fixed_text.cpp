@@ -64,7 +64,13 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"Abort Search",
 	"Search Backwards",
 	"Search Forwards",
-	"Text Not Found !"
+	"Text Not Found !",
+
+	"Holmes",
+	"Jock",
+	"Bull",
+	"Round",
+	"Turn Total"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {
