@@ -374,7 +374,10 @@ void WidgetTalk::handleEvents() {
 			do {
 				talk._scriptSelect = _selector;
 				talk._speaker = talk._talkTo;
-				talk.talkTo(talk._statements[_selector]._reply);
+				
+				// Make a copy of the reply (since talkTo can reload the statements list), and call talkTo
+				Common::String reply = talk._statements[_selector]._reply;
+				talk.doScript(reply);
 
 				// Reset the misc field in case any people changed their sequences
 				for (int idx = 0; idx < MAX_CHARACTERS; ++idx)

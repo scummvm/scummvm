@@ -178,12 +178,6 @@ private:
 	 * Remove any voice commands from a loaded statement list
 	 */
 	void stripVoiceCommands();
-
-	/**
-	 * Parses a reply for control codes and display text. The found text is printed within
-	 * the text window, handles delays, animations, and animating portraits.
-	 */
-	void doScript(const Common::String &script);
 protected:
 	SherlockEngine *_vm;
 	OpcodeMethod *_opcodeTable;
@@ -296,6 +290,12 @@ public:
 	 *	doScript to implement whatever action is required.
 	 */
 	void talkTo(const Common::String &filename);
+
+	/**
+	 * Parses a reply for control codes and display text. The found text is printed within
+	 * the text window, handles delays, animations, and animating portraits.
+	 */
+	void doScript(const Common::String &script);
 
 	/**
 	 * Main method for handling conversations when a character to talk to has been
