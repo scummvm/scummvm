@@ -33,18 +33,24 @@ enum {
 	PLAYER_COLOR	= 11
 };
 
-const int STATUS_INFO_X = 430;
-const int STATUS_INFO_Y = 50;
-const int STATUS_INFO_WIDTH = 205;
-const int STATUS_INFO_HEIGHT = 330;
-const int STATUS2_INFO_X = 510;
-const int STATUS2_X_ADD = STATUS2_INFO_X - STATUS_INFO_X;
-const int DART_BAR_VX = 10;
-const int DART_HEIGHT_Y = 121;
-const int DART_BAR_SIZE = 150;
-const int DARTBOARD_LEFT = 73;
-const int DARTBOARD_WIDTH = 257;
-const int DARTBOARD_HEIGHT = 256;
+static const int STATUS_INFO_X = 430;
+static const int STATUS_INFO_Y = 50;
+static const int STATUS_INFO_WIDTH = 205;
+static const int STATUS_INFO_HEIGHT = 330;
+static const int STATUS2_INFO_X = 510;
+static const int STATUS2_X_ADD = STATUS2_INFO_X - STATUS_INFO_X;
+static const int DART_BAR_VX = 10;
+static const int DART_HEIGHT_Y = 121;
+static const int DART_BAR_SIZE = 150;
+static const int DARTBOARD_LEFT = 73;
+static const int DARTBOARD_TOP = 68;
+static const int DARTBOARD_WIDTH = 257;
+static const int DARTBOARD_HEIGHT = 256;
+static const int DARTBOARD_TOTALX = DARTBOARD_WIDTH * 120 / 100;
+static const int DARTBOARD_TOTALY = DARTBOARD_HEIGHT * 120 / 100;
+static const int DARTBOARD_TOTALTOP = DARTBOARD_TOP - DARTBOARD_WIDTH / 10;
+static const int DARTBOARD_TOTALLEFT = DARTBOARD_LEFT - DARTBOARD_HEIGHT / 10;
+static const int CRICKET_VALUE[7] = { 20, 19, 18, 17, 16, 15, 25 };
 
 Darts::Darts(SherlockEngine *vm) : _vm(vm) {
 	_gameType = GAME_301;
@@ -78,6 +84,8 @@ void Darts::playDarts(GameType gameType) {
 		showNames(playerNum);
 		showStatus(playerNum);
 		_roundScore = 0;
+
+		// TODO: Remainder of game
 	}
 }
 
@@ -341,6 +349,471 @@ int Darts::drawHand(int goToPower, int computer) {
 
 Common::Point Darts::convertFromScreenToScoreCoords(const Common::Point &pt) const {
 	return Common::Point(CLIP((int)pt.x, 0, DARTBOARD_WIDTH), CLIP((int)pt.y, 0, DARTBOARD_HEIGHT));
+}
+
+int Darts::dartScore(const Common::Point &pt) {
+	Common::Point pos(pt.x - DARTBOARD_LEFT, pt.y - DARTBOARD_TOP);
+	if (pos.x < 0 || pos.y < 0)
+		return 0;
+	int score;
+
+	if (pos.x < DARTBOARD_WIDTH && pos.y < DARTBOARD_HEIGHT) {
+		pos = convertFromScreenToScoreCoords(pos);
+		score = *(const byte *)(*_dartMap)[0]._frame.getBasePtr(pos.x, pos.y);
+
+		if (_gameType == GAME_301) {
+			if (score >= 100) {
+				if (score <= 120)
+					// Hit a double
+					score = (score - 100) * 2;
+				else
+					// Hit a triple
+					score = (score - 120) * 3;
+			}
+		} else if (score >= 100) {
+			if (score >= 120)
+				// Hit a double
+				score = (2 << 16) + (score - 100);
+			else
+				// Hit a triple
+				score = (3 << 16) + (score - 120);
+		}
+	} else {
+		score = 0;
+	}
+
+	return score;
+}
+
+void Darts::drawDartThrow(const Common::Point &dartPos, int computer) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	int cx, cy;
+	int handCy;
+	int drawX = 0, drawY = 0, oldDrawX = 0, oldDrawY = 0;
+	int xSize = 0, ySize = 0, oldxSize = 0, oldySize = 0;
+	int handOCx, handOCy;
+	int ocx, ocy;
+	int handOldxSize, handOldySize;
+	int delta = 9;
+	int dartNum;
+	int hddy;
+
+	// Draw the animation of the hand throwing the dart first
+	// See which hand animation to use
+	ImageFile &hands = !computer ? *_hand1 : *_hand2;
+	int numFrames = !computer ? 14 : 13;
+
+	ocx = ocy = handOCx = handOCy = 0;
+	oldxSize = oldySize = handOldxSize = handOldySize = 1;
+	cx = dartPos.x;
+	cy = SHERLOCK_SCREEN_HEIGHT - _handSize.y - 20;
+
+	hddy = (cy - dartPos.y) / (numFrames - 7);
+	hddy += 2;
+	hddy = hddy * 10 / 8;
+	if (dartPos.y > 275)
+		hddy += 3;
+
+	for (int idx = 0; idx < numFrames; ++idx) {
+		_handSize.x = hands[idx]._offset.x + hands[idx]._width;
+		_handSize.y = hands[idx]._offset.y + hands[idx]._height;
+		handCy = SHERLOCK_SCREEN_HEIGHT - _handSize.y;
+
+		screen._backBuffer1.transBlitFrom(hands[idx], Common::Point(_handX, handCy));
+		screen.slamArea(_handX, handCy, _handSize.x + 1, _handSize.y);
+		screen.slamArea(handOCx, handOCy, handOldxSize, handOldySize);
+		screen.restoreBackground(Common::Rect(_handX, handCy, _handX + _handSize.x, handCy + _handSize.y));
+
+		handOCx = _handX;
+		handOCy = handCy;
+		handOldxSize = _handSize.x;
+		handOldySize = _handSize.y;
+
+		if (idx > 6) {
+			dartNum = idx - 6;
+			if (computer)
+				dartNum += 19;
+
+			xSize = (*_dartGraphics)[dartNum]._width;
+			ySize = (*_dartGraphics)[dartNum]._height;
+
+			ocx = drawX = cx - (*_dartGraphics)[dartNum]._width / 2;
+			ocy = drawY = cy - (*_dartGraphics)[dartNum]._height;
+
+			// Draw dart
+			screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], dartPos);
+
+			if (drawX < 0) {
+				xSize += drawX;
+				if (xSize < 0)
+					xSize = 1;
+				drawX = 0;
+			}
+
+			if (drawY < 0) {
+				ySize += drawY;
+				if (ySize < 0)
+					ySize = 1;
+				drawY = 0;
+			}
+
+			// Flush the drawn dart to the screen
+			screen.slamArea(drawX, drawY, xSize, ySize);
+			if (oldDrawX != -1)
+				// Flush the erased dart area
+				screen.slamArea(oldDrawX, oldDrawY, oldxSize, oldySize); 
+
+			screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(drawX, drawY), 
+				Common::Rect(drawX, drawY, drawX + xSize, drawY + ySize));
+
+			oldDrawX = drawX;
+			oldDrawY = drawY;
+			oldxSize = xSize;
+			oldySize = ySize;
+
+			cy -= hddy;
+		}
+
+		events.wait(1);
+	}
+
+	// Clear the last little bit of the hand from the screen
+	screen.slamArea(handOCx, handOCy, handOldxSize, handOldySize);
+
+	// Erase the old dart
+	if (oldDrawX != -1)
+		screen.slamArea(oldDrawX, oldDrawY, oldxSize, oldySize);
+
+	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(drawX, drawY),
+		Common::Rect(drawX, drawY, drawX + xSize, drawY + ySize));
+
+	cx = dartPos.x;
+	cy = dartPos.y + 2;
+	oldDrawX = oldDrawY = -1;
+
+	for (int idx = 5; idx <= 23; ++idx) {
+		dartNum = idx - 4;
+		if (computer)
+			dartNum += 19;
+
+		if (idx < 14)
+			cy -= delta--;
+		else
+			if (idx == 14)
+				delta = 1;
+		if (idx > 14)
+			cy += delta++;
+
+		xSize = (*_dartGraphics)[dartNum]._width;
+		ySize = (*_dartGraphics)[dartNum]._height;
+
+		ocx = drawX = cx - (*_dartGraphics)[dartNum]._width / 2;
+		ocy = drawY = cy - (*_dartGraphics)[dartNum]._height;
+
+		screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], Common::Point(drawX, drawY));
+
+		if (drawX < 0) {
+			xSize += drawX;
+			if (xSize < 0)
+				xSize = 1;
+			drawX = 0;
+		}
+
+		if (drawY < 0) {
+			ySize += drawY;
+			if (ySize < 0)
+				ySize = 1;
+			drawY = 0;
+		}
+
+		// flush the dart
+		screen.slamArea(drawX, drawY, xSize, ySize);
+		if (oldDrawX != -1)
+			screen.slamArea(oldDrawX, oldDrawY, oldxSize, oldySize);
+
+		if (idx != 23)
+			screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(drawX, drawY), 
+				Common::Rect(drawX, drawY, drawX + xSize, drawY + ySize)); // erase dart
+
+		events.wait(1);
+
+		oldDrawX = drawX;
+		oldDrawY = drawY;
+		oldxSize = xSize;
+		oldySize = ySize;
+	}
+
+	dartNum = 19;
+	if (computer)
+		dartNum += 19;
+	xSize = (*_dartGraphics)[dartNum]._width;
+	ySize = (*_dartGraphics)[dartNum]._height;
+
+	// Draw final dart on the board
+	screen._backBuffer1.transBlitFrom((*_dartGraphics)[dartNum], Common::Point(ocx, ocy));
+	screen._backBuffer2.transBlitFrom((*_dartGraphics)[dartNum], Common::Point(ocx, ocy));
+	screen.slamArea(ocx, ocy, xSize, ySize);
+}
+
+int Darts::findNumberOnBoard(int aim, Common::Point &pt) {
+	ImageFrame &img = (*_dartMap)[0];
+
+	if ((aim > 20) && ((aim != 25) && (aim != 50))) {
+		if ((aim <= 40) && ((aim & 1) == 0)) {
+			aim /= 2;
+			aim += 100;
+		} else {
+			aim /= 3;
+			aim += 120;
+		}
+	}
+
+	bool done = false;
+	for (int y = 0; y < img._width && !done; ++y) {
+		for (int x = 0; x < img._height && !done; ++x) {
+			byte score = *(const byte *)img._frame.getBasePtr(x, y);
+
+			if (score == aim) {
+				// Found a match. Aim at non-double/triple numbers whenever possible.
+				// ie. Aim at 18 instead of triple 6 or double 9
+				done = true;
+
+				if (aim < 21) {
+					pt.x = x + 10;
+					pt.y = y + 10;
+
+					score = *(const byte *)img._frame.getBasePtr(x, y);
+					if (score != aim)
+						done = false;
+				} else {
+					// Aiming at double or triple
+					pt.x = x + 3;
+					pt.y = y + 3;
+				}
+			}
+		}
+	}
+	
+	pt = convertFromScreenToScoreCoords(pt);
+
+	if (aim == 3)
+		pt.y += 30;
+	if (aim == 17)
+		pt.y += 10;
+
+	if (aim == 15) {
+		pt.y += 5;
+		pt.x += 5;
+	}
+
+	pt.y = DARTBOARD_HEIGHT - pt.y;
+	return done;
+}
+
+void Darts::getComputerNumber(int playerNum, Common::Point &targetPos) {
+	int score;
+	int aim = 0;
+	Common::Point pt;
+	bool done = false;
+	int cricketaimset = false;
+	bool shootBull = false;
+
+	score = (playerNum == 0) ? _score1 : _score2;
+
+	if (_gameType == GAME_301) {
+		// Try to hit number
+		aim = score; 
+		if(score > 60)
+			shootBull = true;
+	} else {
+		if (_cricketScore[playerNum][6] < 3) {
+			// shoot at bull first
+			aim = CRICKET_VALUE[6];
+			cricketaimset = true;
+		} else {
+			// Now check and shoot in this order: 20,19,18,17,16,15
+			for (int idx = 0; idx < 7; ++idx) {
+				if (_cricketScore[playerNum][idx] < 3) {
+					aim = CRICKET_VALUE[idx];
+					cricketaimset = true;
+					break;
+				}
+			}
+		}
+
+		if (!cricketaimset) {
+			// Everything is closed
+			// just in case we don't get set in loop below, which should never happen
+			aim = 14;  
+			for (int idx = 0; idx < 7; ++idx) {
+				if (_cricketScore[playerNum^1][idx] < 3) {
+					// Opponent has this open
+					aim = CRICKET_VALUE[idx];
+
+					if (idx == 6)
+						shootBull = true;
+				}
+			}
+		}
+	}
+
+	if (shootBull) {
+		// Aim at bulls eye
+		targetPos.x = targetPos.y = 75;
+
+		if (_level <= 1) {
+			if (_vm->getRandomNumber(1) == 1) {
+				targetPos.x += (_vm->getRandomNumber(20)-10);
+				targetPos.y += (_vm->getRandomNumber(20)-10);
+			}
+		}
+	} else {
+		// Loop in case number does not exist on board
+		do {
+			done = findNumberOnBoard(aim, pt);
+			--aim;
+		} while (!done);
+
+		pt.x += DARTBOARD_TOTALLEFT * 70 / 100;
+		pt.y += DARTBOARD_TOTALTOP * 70 / 100;
+
+		// old * 3/2
+		targetPos.x = pt.x * 100 / DARTBOARD_TOTALX * 3 / 2;
+		targetPos.y = pt.y * 100 / DARTBOARD_TOTALY * 3 / 2;
+	}
+
+	// the higher the level, the more accurate the throw
+	int v = _vm->getRandomNumber(9);
+	v += _level * 2; 
+
+	if (v <= 2) {
+		targetPos.x += _vm->getRandomNumber(70) - 35;
+		targetPos.y += _vm->getRandomNumber(70) - 35;
+	} else if (v <= 4) {
+		targetPos.x += _vm->getRandomNumber(50) - 25;
+		targetPos.y += _vm->getRandomNumber(50) - 25;
+	} else if (v <= 6) {
+		targetPos.x += _vm->getRandomNumber(30) - 15;
+		targetPos.y += _vm->getRandomNumber(30) - 15;
+	} else if (v <= 8) {
+		targetPos.x += _vm->getRandomNumber(20) -10;
+		targetPos.y += _vm->getRandomNumber(20) -10;
+	} else if (v <= 10) {
+		targetPos.x += _vm->getRandomNumber(11) - 5;
+		targetPos.y += _vm->getRandomNumber(11) - 5;
+	}
+
+	if (targetPos.x < 1)
+		targetPos.x = 1;
+	if (targetPos.y < 1)
+		targetPos.y = 1;
+}
+
+int Darts::throwDart(int dartNum, int computer) {
+	Events &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	int height;
+	int horiz;
+	Common::Point targetPos;
+	Common::String temp;
+
+	/* clear keyboard buffer */
+	events.clearEvents();
+
+	erasePowerBars();
+	screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, "%s # %d", FIXED(Dart), dartNum);
+
+	drawDartsLeft(dartNum, computer);
+
+	if (!computer) {
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, 0, FIXED(HitAKey));
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0, FIXED(ToStart));
+	}
+
+	if (!computer) {
+		// Wait for a hit
+		while (!dartHit())
+			;
+	} else {
+		events.wait(1);
+	}
+
+	drawDartsLeft(dartNum + 1, computer);
+	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
+		Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+	screen.blitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
+		Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+
+	if (computer) {
+		getComputerNumber(computer - 1, targetPos);
+	} else {
+		// Keyboard control
+		targetPos = Common::Point(0, 0);
+	}
+
+	horiz = drawHand(targetPos.x, computer);
+	height = doPowerBar(Common::Point(DART_BAR_VX, DART_HEIGHT_Y), DART_COLOR_FORE, targetPos.y, 1);
+
+	// Invert height
+	height = 101 - height;
+
+	// Copy power bars to the secondary back buffer
+	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(DART_BAR_VX - 1, DART_HEIGHT_Y - 1),
+		Common::Rect(DART_BAR_VX - 1, DART_HEIGHT_Y - 1, DART_BAR_VX - 1 + 10, 
+		DART_HEIGHT_Y - 1 + DART_BAR_SIZE + 2));
+
+	Common::Point dartPos(DARTBOARD_TOTALLEFT + horiz*DARTBOARD_TOTALX / 100,
+		DARTBOARD_TOTALTOP + height * DARTBOARD_TOTALY / 100);
+	
+	dartPos.x += 2 - _vm->getRandomNumber(4);
+	dartPos.y += 2 - _vm->getRandomNumber(4);
+
+	drawDartThrow(dartPos, computer);
+	return dartScore(dartPos);
+}
+
+void Darts::doCricketScoreHits(int player, int scoreIndex, int numHits) {
+	while (numHits--) {
+		if (_cricketScore[player][scoreIndex] < 3)
+			_cricketScore[player][scoreIndex]++;
+		else if (_cricketScore[player ^ 1][scoreIndex] < 3) {
+			if (player == 0)
+				_score1 += CRICKET_VALUE[scoreIndex];
+			else
+				_score2 += CRICKET_VALUE[scoreIndex];
+		}
+	}
+}
+
+void Darts::updateCricketScore(int player, int dartHit, int multiplier) {
+	if (dartHit < 15)
+		return;
+
+	if (dartHit <= 20)
+		doCricketScoreHits(player, 20 - dartHit, multiplier);
+	else if (dartHit == 25)
+		doCricketScoreHits(player, 6, multiplier);
+}
+
+void Darts::drawDartsLeft(int dartNum, int computer) {
+	Screen &screen = *_vm->_screen;
+	const int DART_X1[3] = { 391, 451, 507 };
+	const int DART_Y1[3] = { 373, 373, 373 };
+	const int DART_X2[3] = { 393, 441, 502 };
+	const int DART_Y2[3] = { 373, 373, 373 };
+
+	screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(DART_X1[0], DART_Y1[0]),
+		Common::Rect(DART_X1[0], DART_Y1[0], SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
+
+	for (int idx = 2; idx >= dartNum - 1; --idx) {
+		if (computer)
+			screen._backBuffer1.transBlitFrom((*_dartsLeft)[idx + 3], Common::Point(DART_X2[idx], DART_Y2[idx]));
+		else
+			screen._backBuffer1.transBlitFrom((*_dartsLeft)[idx], Common::Point(DART_X1[idx], DART_Y1[idx]));
+	}
+
+	screen.slamArea(DART_X1[0], DART_Y1[0], SHERLOCK_SCREEN_WIDTH - DART_X1[0], SHERLOCK_SCREEN_HEIGHT - DART_Y1[0]);
 }
 
 } // End of namespace Tattoo

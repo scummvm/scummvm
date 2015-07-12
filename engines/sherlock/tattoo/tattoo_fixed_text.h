@@ -70,7 +70,10 @@ enum FixedTextId {
 	kFixedText_Jock,
 	kFixedText_Bull,
 	kFixedText_Round,
-	kFixedText_TurnTotal
+	kFixedText_TurnTotal,
+	kFixedText_Dart,
+	kFixedText_HitAKey,
+	kFixedText_ToStart
 };
 
 class TattooFixedText: public FixedText {

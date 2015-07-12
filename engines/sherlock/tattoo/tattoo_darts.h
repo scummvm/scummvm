@@ -111,6 +111,51 @@ private:
 	 * Converts a passed co-ordinates from screen co-ordinates to an offset within the dartboard
 	 */
 	Common::Point convertFromScreenToScoreCoords(const Common::Point &pt) const;
+
+	/**
+	 * Return the score a dart at the given position will get
+	 */
+	int dartScore(const Common::Point &pt);
+
+	/**
+	 * Draw a dart travelling to the board
+	 */
+	void drawDartThrow(const Common::Point &dartPos, int computer);
+
+	/**
+	 * Looks for the passed number on the dartboard. If it finds it, it will return
+	 * the co-ordinates of the center of the number
+	 */
+	int findNumberOnBoard(int aim, Common::Point &pt);
+
+	/**
+	 * Calculates a position for the comptuer wants to throw, and then calculates where they
+	 * actually did throw. The computer will not always hit what it's aiming it.
+	 */
+	void getComputerNumber(int playerNum, Common::Point &targetPos);
+
+	/**
+	 * Throw one dart. If computer is 1 or 2, the computer will throw the dart, and user input
+	 * will be ignored.
+	 * @param computer		1=1st computer player, 2=2nd computer player
+	 */
+	int throwDart(int dartNum, int computer);
+
+	/**
+	 * This will update the number of hits for the target score, as well as updating the
+	 * score if it's closed
+	 */
+	void doCricketScoreHits(int player, int scoreIndex, int numHits);
+
+	/**
+	 * Updates the score based upon what the dart hit
+	 */
+	void updateCricketScore(int player, int dartHit, int multiplier);
+
+	/**
+	 * Draw the darts left
+	 */
+	void drawDartsLeft(int dartNum, int computer);
 public:
 	Darts(SherlockEngine *vm);
 
