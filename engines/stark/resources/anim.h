@@ -67,7 +67,8 @@ public:
 
 	enum UIUsage {
 		kUIUsageInventory = 1,
-		kUIUsageUseCursor = 4
+		kUIUsageUseCursorPassive = 4,
+		kUIUsageUseCursorActive = 5
 	};
 
 	enum ActorUsage {

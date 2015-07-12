@@ -133,12 +133,16 @@ Anim *AnimHierarchy::getAnimForUsage(uint32 usage) {
 		}
 	}
 
-	error("No anim found for use '%d' in '%s'", usage, getName().c_str());
+	return nullptr;
 }
 
 Visual *AnimHierarchy::getVisualForUsage(uint32 usage) {
 	Anim *anim = getAnimForUsage(usage);
-	return anim->getVisual();
+	if (anim) {
+		return anim->getVisual();
+	}
+
+	return nullptr;
 }
 
 void AnimHierarchy::printData() {

@@ -347,7 +347,17 @@ Visual *ItemSub2::getActionVisual(bool active) const {
 }
 
 Visual *ItemSub2::getCursorVisual() const {
-	return _animHierarchy->getVisualForUsage(Anim::kUIUsageUseCursor);
+	Visual *visual = _animHierarchy->getVisualForUsage(Anim::kUIUsageUseCursorPassive);
+
+	if (!visual) {
+		visual = _animHierarchy->getVisualForUsage(Anim::kUIUsageUseCursorActive);
+	}
+
+	if (!visual) {
+		visual = _animHierarchy->getVisualForUsage(Anim::kUIUsageInventory);
+	}
+
+	return visual;
 }
 
 

@@ -67,10 +67,47 @@ void GameWindow::onRender() {
 }
 
 void GameWindow::onMouseMove(const Common::Point &pos) {
+	UserInterface *ui = StarkServices::instance().userInterface;
 	Global *global = StarkServices::instance().global;
+
 	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
 
-	updateItems();
+	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
+	int16 singlePossibleAction = -1;
+
+	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction);
+
+	Common::String mouseHint;
+
+	if (selectedInventoryItem != -1) {
+		VisualImageXMG *cursorImage = ui->getCursorImage(selectedInventoryItem);
+		_cursor->setCursorImage(cursorImage);
+	} else if (_objectUnderCursor) {
+		switch (singlePossibleAction) {
+			case -1:
+				_cursor->setCursorType(Cursor::kActive);
+				break;
+			case Resources::PATTable::kActionLook:
+				_cursor->setCursorType(Cursor::kEye);
+				break;
+			case Resources::PATTable::kActionTalk:
+				_cursor->setCursorType(Cursor::kMouth);
+				break;
+			case Resources::PATTable::kActionUse:
+				_cursor->setCursorType(Cursor::kHand);
+				break;
+			default:
+				VisualImageXMG *cursorImage = ui->getCursorImage(singlePossibleAction);
+				_cursor->setCursorImage(cursorImage);
+				break;
+		}
+
+		mouseHint = ui->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
+	} else {
+		// Not an object
+		_cursor->setCursorType(Cursor::kDefault);
+	}
+	_cursor->setMouseHint(mouseHint);
 }
 
 void GameWindow::onClick(const Common::Point &pos) {
@@ -78,42 +115,27 @@ void GameWindow::onClick(const Common::Point &pos) {
 
 	_actionMenu->close();
 
+	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
+	int16 singlePossibleAction = -1;
+
+	checkObjectAtPos(pos, selectedInventoryItem, singlePossibleAction);
+
 	if (_objectUnderCursor) {
-		// Possibilities:
-		// * Click on something that doesn't take an action
-		// * Click on something that takes exactly 1 action.
-		// * Click on something that takes more than 1 action (open action menu)
-		// * Click in the action menu, which has 0 available actions (TODO)
-
-		int32 defaultAction = ui->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
-		int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
-
-		if (defaultAction != -1) {
-			ui->itemDoActionAt(_objectUnderCursor, defaultAction, _objectRelativePosition);
-		} else if (selectedInventoryItem != -1) {
-			if (!ui->itemDoActionAt(_objectUnderCursor, selectedInventoryItem, _objectRelativePosition)) {
-				warning("Could not perform action %d on %s", selectedInventoryItem, _objectUnderCursor->getName().c_str());
-			}
-		} else {
-			Resources::ActionArray actions = ui->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
-			if (actions.size() == 1) {
-				ui->itemDoActionAt(_objectUnderCursor, actions[0], _objectRelativePosition);
-			} else if (actions.size() > 1) {
-				_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
-			}
+		if (singlePossibleAction != -1) {
+			ui->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
+		} else if (selectedInventoryItem == -1) {
+			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 		}
 	} else {
 		ui->walkTo(getScreenMousePosition());
 	}
 }
 
-void GameWindow::updateItems() {
-	// Check for game world mouse overs
+void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &possibleTool) {
 	UserInterface *ui = StarkServices::instance().userInterface;
-	Common::Point pos = getMousePosition();
-
 
 	_objectUnderCursor = nullptr;
+	possibleTool = -1;
 
 	// Render entries are sorted from the farthest to the camera to the nearest
 	// Loop in reverse order
@@ -124,57 +146,28 @@ void GameWindow::updateItems() {
 		}
 	}
 
-	Resources::ActionArray actionsPossible;
-	if (_objectUnderCursor) {
-		actionsPossible = ui->getActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
-	}
-
-	if (actionsPossible.empty()) {
+	if (!_objectUnderCursor || !ui->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, -1)) {
 		// Only consider items with runnable scripts
 		_objectUnderCursor = nullptr;
-	}
-
-	Common::String mouseHint;
-	if (_objectUnderCursor) {
-		setCursorDependingOnActionsAvailable(actionsPossible);
-
-		mouseHint = ui->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
-	} else {
-		// Not an object
-		_cursor->setCursorType(Cursor::kPassive);
-	}
-	_cursor->setMouseHint(mouseHint);
-}
-
-void GameWindow::setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable) {
-	if (actionsAvailable.empty()) {
-		_cursor->setCursorType(Cursor::kPassive);
 		return;
 	}
 
-	uint32 count = 0;
-	Cursor::CursorType cursorType;
-	for (uint i = 0; i < actionsAvailable.size(); i++) {
-		switch (actionsAvailable[i]) {
-			case Resources::PATTable::kActionLook:
-				cursorType = Cursor::kEye;
-		        count++;
-		        break;
-			case Resources::PATTable::kActionTalk:
-				cursorType = Cursor::kMouth;
-		        count++;
-		        break;
-			case Resources::PATTable::kActionUse:
-				cursorType = Cursor::kHand;
-		        count++;
-		        break;
+	int32 defaultAction = ui->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
+	if (defaultAction != -1) {
+		// Use the default action if there is one
+		possibleTool = defaultAction;
+	} else if (selectedTool != -1) {
+		// Use the selected inventory item if there is one
+		if (ui->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedTool)) {
+			possibleTool = selectedTool;
 		}
-	}
-
-	if (count == 1) {
-		_cursor->setCursorType(cursorType);
 	} else {
-		_cursor->setCursorType(Cursor::kActive);
+		// Otherwise, use stock actions
+		Resources::ActionArray actionsPossible = ui->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+
+		if (actionsPossible.size() == 1) {
+			possibleTool = actionsPossible[0];
+		}
 	}
 }
 

@@ -46,9 +46,7 @@ protected:
 	void onClick(const Common::Point &pos) override;
 	void onRender() override;
 
-	// Item handling
-	void updateItems();
-	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
+	void checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &possibleTool);
 
 	ActionMenu *_actionMenu;
 	InventoryInterface *_inventory;

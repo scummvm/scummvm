@@ -137,8 +137,18 @@ bool UserInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
 	if (action != -1) {
 		return item->canPerformAction(action, 0);
 	} else {
-		warning("itemHasAction called with action = -1");
-		return false;
+		Resources::ActionArray actions = getActionsPossibleForObject(item);
+		return !actions.empty();
+	}
+}
+
+bool UserInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, uint32 action) {
+	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
+	if (action != -1) {
+		return item->canPerformAction(action, hotspotIndex);
+	} else {
+		Resources::ActionArray actions = getActionsPossibleForObject(item, position);
+		return !actions.empty();
 	}
 }
 
