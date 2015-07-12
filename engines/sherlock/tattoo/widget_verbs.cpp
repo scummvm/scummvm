@@ -50,6 +50,7 @@ void WidgetVerbs::load(bool objectsOn) {
 	ui._activeObj = ui._bgFound;
 	_outsideMenu = false;
 	_verbCommands.clear();
+	_selector = _oldSelector = -1;
 
 	// Check if we need to show options for the highlighted object
 	if (objectsOn) {
