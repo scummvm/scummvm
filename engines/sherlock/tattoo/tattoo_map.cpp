@@ -355,6 +355,9 @@ void TattooMap::showCloseUp(int closeUpNum) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 
+	// Reset scroll position
+	screen._currentScroll = Common::Point(0, 0);
+
 	// Get the closeup images
 	Common::String fname = Common::String::format("res%02d.vgs", closeUpNum + 1);
 	ImageFile pic(fname);
