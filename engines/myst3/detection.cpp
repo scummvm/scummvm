@@ -70,8 +70,8 @@ static const ExecutableVersion v127win = { "1.27 Windows",   kFlagDVD,       "M3
 static const ExecutableVersion v127mac = { "1.27 Macintosh", kFlagDVD,       "Myst III Exile for Mac OS 8-9", 0,        0x11378,  0x112A8,  0x11454,  0x168D8, 0         };
 static const ExecutableVersion v127xcd = { "1.27 Mac OS X",  kFlagNone,      "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10,  0x16E94, 0         };
 static const ExecutableVersion v127osx = { "1.27 Mac OS X",  kFlagDVD,       "Myst III Exile for Mac OS X",   0,        0x11934,  0x11864,  0x11A10,  0x16E94, 0         };
-static const ExecutableVersion ps2ntsc = { "PS2 NTSC-U/C",   kFlagNone,      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0, 0,       0         };
-static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0, 0,       0         };
+//static const ExecutableVersion ps2ntsc = { "PS2 NTSC-U/C",   kFlagNone,      "SLUS_204.34",                   0xFFF00,  0x14EB10, 0x14EA10, 0x14ECA0, 0,       0         };
+//static const ExecutableVersion ps2pal =  { "PS2 PAL",        kFlagNone,      "SLES_507.26",                   0xFFF00,  0x14ED10, 0x14EC10, 0x14EEA0, 0,       0         };
 static const ExecutableVersion xboxpal = { "Xbox PAL",       kFlagDVD,       "Default.xbe",                   0x2D20,   0xDF148,  0xDF070,  0xDF228,  0xE4740, 0         };
 
 #define MYST3ENTRY(platform, lang, extra, exe, md5exe, version) 				\
@@ -163,33 +163,33 @@ static const Myst3GameDescription gameDescriptions[] = {
 	// Myst 3 Xbox (RUS)
 	MYST3ENTRY_XBOX(Common::RU_RUS, "ENGLISHX.m3t", "18cb50f5c5317586a128ca9eb3e03279")
 
-	{
-		// Myst 3 PS2 (NTSC-U/C)
-		{
-			"myst3",
-			0,
-			AD_ENTRY1s("RSRC.m3r", "c60d37bfd3bb8b0bee143018447bb460", 346618151),
-			Common::UNK_LANG,
-			Common::kPlatformPS2,
-			ADGF_UNSTABLE,
-			GUIO_NONE
-		},
-		&ps2ntsc
-	},
-	
-	{
-		// Myst 3 PS2 (PAL)
-		{
-			"myst3",
-			0,
-			AD_ENTRY1s("RSRC.m3r", "f0e0c502f77157e6b5272686c661ea75", 91371793),
-			Common::UNK_LANG,
-			Common::kPlatformPS2,
-			ADGF_UNSTABLE,
-			GUIO_NONE
-		},
-		&ps2pal
-	},
+//	{
+//		// Myst 3 PS2 (NTSC-U/C)
+//		{
+//			"myst3",
+//			0,
+//			AD_ENTRY1s("RSRC.m3r", "c60d37bfd3bb8b0bee143018447bb460", 346618151),
+//			Common::UNK_LANG,
+//			Common::kPlatformPS2,
+//			ADGF_UNSTABLE,
+//			GUIO_NONE
+//		},
+//		&ps2ntsc
+//	},
+//
+//	{
+//		// Myst 3 PS2 (PAL)
+//		{
+//			"myst3",
+//			0,
+//			AD_ENTRY1s("RSRC.m3r", "f0e0c502f77157e6b5272686c661ea75", 91371793),
+//			Common::UNK_LANG,
+//			Common::kPlatformPS2,
+//			ADGF_UNSTABLE,
+//			GUIO_NONE
+//		},
+//		&ps2pal
+//	},
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
