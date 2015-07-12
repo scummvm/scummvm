@@ -879,7 +879,7 @@ int Darts::throwDart(int dartNum, int computer) {
 	drawDartsLeft(dartNum, computer);
 
 	if (!computer) {
-		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, 0, FIXED(HitAKey));
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, FIXED(HitAKey));
 		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0, FIXED(ToStart));
 	}
 
