@@ -199,7 +199,7 @@ int TattooMap::show() {
 			screen._currentScroll = _targetScroll;
 
 			checkMapNames(false);
-			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			screen.slamArea(_targetScroll.x, _targetScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 		}
 
 		// Handling if a location has been clicked on
