@@ -64,9 +64,13 @@ void WidgetTalk::getTalkWindowSize() {
 	// Now that we have a width, split up the text into individual lines
 	int numLines = 0;
 	for (uint idx = 0; idx < talk._statements.size(); ++idx) {
+		Common::StringArray statementLines;
 		if (talk._statements[idx]._talkMap != -1) {
-			splitLines(talk._statements[idx]._statement, lines, width, 999);
-			numLines += lines.size();
+			splitLines(talk._statements[idx]._statement, statementLines, width, 999);
+			numLines += statementLines.size();
+
+			for (uint sIdx = 0; sIdx < statementLines.size(); ++sIdx)
+				lines.push_back(statementLines[sIdx]);
 		}
 	}
 
