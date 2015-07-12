@@ -67,13 +67,20 @@ Darts::Darts(SherlockEngine *vm) : _vm(vm) {
 	_level = 0;
 	_oldDartButtons = false;
 	_handX = 0;
+	_compPlay = 1;
 }
 
 void Darts::playDarts(GameType gameType) {
+	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	int oldFontType = screen.fontNumber();
 	int playerNum = 0;
 	int roundStart, score;
+	int lastDart;
+	int numHits = 0;
+	bool gameOver = false;
+	bool done = false;
+	const char *const NUM_HITS_STR[3] = { "a", FIXED(Double), FIXED(Triple) };
 
 	screen.setFont(7);
 	_spacing = screen.fontHeight() + 2;
@@ -85,8 +92,153 @@ void Darts::playDarts(GameType gameType) {
 		showStatus(playerNum);
 		_roundScore = 0;
 
-		// TODO: Remainder of game
+		for (int idx = 0; idx < 3; ++idx) {
+			if (_compPlay == 1)
+				lastDart = throwDart(idx + 1, playerNum * 2);  /* Throw one dart */
+			else
+				if (_compPlay == 2)
+					lastDart = throwDart(idx + 1, playerNum + 1);  /* Throw one dart */
+				else
+					lastDart = throwDart(idx + 1, 0);    /* Throw one dart */
+
+			if (_gameType == GAME_301) {
+				score -= lastDart;
+				_roundScore += lastDart;
+			} else {
+				numHits = lastDart >> 16;
+				if (numHits == 0)
+					numHits = 1;
+				if (numHits > 3)
+					numHits = 3;
+				
+				lastDart = lastDart & 0xffff;
+				updateCricketScore(playerNum, lastDart, numHits);
+				score = (playerNum == 0) ? _score1 : _score2;
+			}
+
+			if (_gameType == GAME_301) {
+				if (playerNum == 0)
+					_score1 = score;
+				else
+					_score2 = score;
+
+				if (score == 0)
+					// Someone won
+					gameOver = true;
+			} else {
+				// check for cricket game over
+				bool allClosed = true;
+				bool otherAllClosed = true;
+				int nOtherScore;
+
+				for (int y = 0; y < 7; y++) {
+					if (_cricketScore[playerNum][y] < 3)
+						allClosed = false;
+				}
+
+				for (int y = 0; y < 7; ++y) {
+					if (_cricketScore[playerNum ^ 1][y] < 3)
+						otherAllClosed = false;
+				}
+
+				if (allClosed) {
+					nOtherScore = (playerNum == 0) ? _score2 : _score1;
+					if (score >= nOtherScore)
+						gameOver = true;
+				}
+			}
+
+			// Show scores
+			showStatus(playerNum);
+			screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
+				Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+			screen.print(Common::Point(_dartInfo.left, _dartInfo.top), 0, "%s # %d", FIXED(Dart), idx + 1);
+
+			if (_gameType == GAME_301) {
+				if (_vm->getLanguage() == Common::FR_FRA)
+					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0,
+						"%s %s: %d", FIXED(Scored), FIXED(Points), lastDart);
+				else
+					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0,
+						"%s %d %s", FIXED(Scored), lastDart, FIXED(Points));
+			} else {
+				if (lastDart != 25)
+					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, 
+						"%s %s %d", FIXED(Hit), NUM_HITS_STR[numHits - 1], lastDart);
+				else
+					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0,
+						"%s %s %s", FIXED(Hit), NUM_HITS_STR[numHits - 1], FIXED(Bullseye));
+			}
+
+			if (score != 0 && playerNum == 0 && !gameOver)
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 3), 0, 
+					"%s", FIXED(PressAKey));
+
+			if (gameOver) {
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 3),
+					0, "%s", FIXED(GameOver));
+				if (playerNum == 0) {
+					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 4), 0,
+						"%s %s", FIXED(Holmes), FIXED(Wins));
+					_vm->setFlagsDirect(531);
+				} else {
+					screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 4), 0,
+						"%s %s!", _opponent.c_str(), FIXED(Wins));
+					_vm->setFlagsDirect(530);
+				}
+
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 5), 0,
+					"%s", FIXED(PressAKey));
+
+				done = true;
+				idx = 10;
+			} else if (_gameType == GAME_301 && score < 0) {
+				screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0,
+					"%s!", FIXED(Busted));
+
+				// End turn
+				idx = 10;
+				score = roundStart;
+				if (playerNum == 0)
+					_score1 = score;
+				else
+					_score2 = score;
+			}
+
+			// Clear keyboard events
+			events.clearEvents();
+
+			if ((playerNum == 0 && _compPlay == 1) || _compPlay == 0 || done) {
+				if (events.kbHit()) {
+					Common::KeyState keyState = events.getKey();
+					if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+						done = true;
+						idx = 10;
+					}
+				}
+			} else {
+				events.wait(20);
+			}
+
+			screen._backBuffer2.blitFrom(screen._backBuffer1, Common::Point(_dartInfo.left, _dartInfo.top - 1),
+				Common::Rect(_dartInfo.left, _dartInfo.top - 1, _dartInfo.right, _dartInfo.bottom - 1));
+			screen.blitFrom(screen._backBuffer1);
+		}
+
+		playerNum ^= 1;
+		if (!playerNum)
+			++_roundNum;
+
+		if (!done) {
+			screen._backBuffer2.blitFrom((*_dartBoard)[0], Common::Point(0, 0));
+			screen._backBuffer1.blitFrom(screen._backBuffer2);
+			screen.blitFrom(screen._backBuffer2);
+		}
 	}
+
+	closeDarts();
+	screen.fadeToBlack();
+	screen.setFont(oldFontType);
 }
 
 void Darts::initDarts() {

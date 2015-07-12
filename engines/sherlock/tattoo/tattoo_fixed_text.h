@@ -72,8 +72,18 @@ enum FixedTextId {
 	kFixedText_Round,
 	kFixedText_TurnTotal,
 	kFixedText_Dart,
+	kFixedText_ToStart,
 	kFixedText_HitAKey,
-	kFixedText_ToStart
+	kFixedText_PressAKey,
+	kFixedText_Bullseye,
+	kFixedText_GameOver,
+	kFixedText_Busted,
+	kFixedText_Wins,
+	kFixedText_Scored,
+	kFixedText_Points,
+	kFixedText_Hit,
+	kFixedText_Double,
+	kFixedText_Triple
 };
 
 class TattooFixedText: public FixedText {

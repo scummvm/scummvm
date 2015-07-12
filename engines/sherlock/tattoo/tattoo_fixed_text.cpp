@@ -73,7 +73,17 @@ static const char *const FIXED_TEXT_ENGLISH[] = {
 	"Turn Total",
 	"Dart",
 	"to start",
-	"Hit a key"
+	"Hit a key",
+	"Press a key",
+	"bullseye",
+	"GAME OVER",
+	"BUSTED",
+	"Wins",
+	"Scored",
+	"points",
+	"Hit",
+	"Double",
+	"Triple"
 };
 
 TattooFixedText::TattooFixedText(SherlockEngine *vm) : FixedText(vm) {
