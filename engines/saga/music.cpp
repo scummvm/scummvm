@@ -48,11 +48,15 @@ MusicDriver::MusicDriver() : _isGM(false) {
 
 	switch (_driverType) {
 	case MT_ADLIB:
-		_milesAudioMode = true;
 		if (Common::File::exists("INSTR.AD") && Common::File::exists("INSTR.OPL")) {
+			_milesAudioMode = true;
 			_driver = Audio::MidiDriver_Miles_AdLib_create("INSTR.AD", "INSTR.OPL");
+		} else if (Common::File::exists("INSTR.AD") && Common::File::exists("INSTR.OPL")) {
+			_milesAudioMode = true;
+			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
 		} else {
-			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");		
+			_milesAudioMode = false;
+			MidiPlayer::createDriver();
 		}
 		break;
 	case MT_MT32:
