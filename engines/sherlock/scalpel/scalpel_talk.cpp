@@ -837,7 +837,6 @@ void ScalpelTalk::showTalk() {
 
 		ui._windowOpen = true;
 	}
-
 }
 
 } // End of namespace Scalpel

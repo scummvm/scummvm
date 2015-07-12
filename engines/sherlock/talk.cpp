@@ -441,9 +441,7 @@ void Talk::talk(int objNum) {
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
-	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
-	//Object &obj = scene._bgShapes[objNum];
 
 	ui._windowBounds.top = CONTROLS_Y;
 	ui._infoFlag = true;
@@ -519,21 +517,11 @@ void Talk::talk(int objNum) {
 					pullSequence();
 				}
 			} else {
-				drawInterface();
-
-				events._pressed = events._released = false;
 				_talkIndex = select;
-				displayTalk(false);
-				ui._selector = ui._oldSelector = -1;
+				showTalk();
 
-				if (!ui._slideWindows) {
-					screen.slamRect(Common::Rect(0, CONTROLS_Y, SHERLOCK_SCREEN_WIDTH,
-						SHERLOCK_SCREEN_HEIGHT));
-				} else {
-					ui.summonWindow();
-				}
-
-				ui._windowOpen = true;
+				// Break out of loop now that we're waiting for player input
+				events.setCursor(ARROW);
 			}
 
 			_talkToFlag = -1;
