@@ -51,7 +51,7 @@ MusicDriver::MusicDriver() : _isGM(false) {
 		if (Common::File::exists("INSTR.AD") && Common::File::exists("INSTR.OPL")) {
 			_milesAudioMode = true;
 			_driver = Audio::MidiDriver_Miles_AdLib_create("INSTR.AD", "INSTR.OPL");
-		} else if (Common::File::exists("INSTR.AD") && Common::File::exists("INSTR.OPL")) {
+		} else if (Common::File::exists("SAMPLE.AD") && Common::File::exists("SAMPLE.OPL")) {
 			_milesAudioMode = true;
 			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
 		} else {
