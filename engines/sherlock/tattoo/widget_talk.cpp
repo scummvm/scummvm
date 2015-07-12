@@ -442,7 +442,7 @@ void WidgetTalk::handleEvents() {
 									people[idx].pullNPCPath();
 						}
 
-						banishWindow();
+						ui.banishWindow();
 						ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 						break;
 					}
