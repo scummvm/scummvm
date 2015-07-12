@@ -127,7 +127,7 @@ int TattooMap::show() {
 		// Allow for event processing and get the current mouse position
 		events.pollEventsAndWait();
 		events.setButtonState();
-		Common::Point mousePos = events.mousePos();
+		Common::Point mousePos = events.screenMousePos();
 
 		checkMapNames(true);
 
