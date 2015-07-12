@@ -1053,7 +1053,7 @@ begin_credits("Credits");
 				end_section();
 				begin_section("German");
 					add_person("Simon Sawatzki", "SimSaw", "");
-					add_person("Lothar Serra Mari", "Lothar93", "(retired)");
+					add_person("Lothar Serra Mari", "rootfather", "");
 				end_section();
 				begin_section("Hungarian");
 					add_person("Alex Bevilacqua", "", "");
