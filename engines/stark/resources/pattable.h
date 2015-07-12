@@ -58,6 +58,10 @@ public:
 	bool runScriptForAction(uint32 action);
 
 	bool canPerformAction(uint32 action) const;
+
+	/** If a default action is available, only it can be executed */
+	int32 getDefaultAction() const;
+
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 

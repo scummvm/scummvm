@@ -142,6 +142,12 @@ bool UserInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
 	}
 }
 
+int32 UserInterface::itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position) {
+	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
+	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(hotspotIndex);
+	return table->getDefaultAction();
+}
+
 bool UserInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
 	return item->doAction(action, 0);
 }
@@ -210,12 +216,5 @@ Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources
 	return stockActions;
 }
 
-bool UserInterface::isInventoryObject(Resources::ItemVisual *item) {
-	if (item->getIndex() < 4 || item->getSubType() != Resources::Item::kItemSub2) {
-		// Do not explicitly add use on action-menu buttons.
-		item = nullptr;
-	}
-	return item != nullptr;
-}
 
 } // End of namespace Stark

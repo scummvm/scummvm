@@ -85,13 +85,17 @@ void GameWindow::onClick(const Common::Point &pos) {
 		// * Click on something that takes more than 1 action (open action menu)
 		// * Click in the action menu, which has 0 available actions (TODO)
 
+		int32 defaultAction = ui->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
 		int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
-		if (selectedInventoryItem != -1) {
-			if (!ui->itemDoActionAt(_objectUnderCursor, selectedInventoryItem, pos)) {
+
+		if (defaultAction != -1) {
+			ui->itemDoActionAt(_objectUnderCursor, defaultAction, _objectRelativePosition);
+		} else if (selectedInventoryItem != -1) {
+			if (!ui->itemDoActionAt(_objectUnderCursor, selectedInventoryItem, _objectRelativePosition)) {
 				warning("Could not perform action %d on %s", selectedInventoryItem, _objectUnderCursor->getName().c_str());
 			}
 		} else {
-			Resources::ActionArray actions = ui->getActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+			Resources::ActionArray actions = ui->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
 			if (actions.size() == 1) {
 				ui->itemDoActionAt(_objectUnderCursor, actions[0], _objectRelativePosition);
 			} else if (actions.size() > 1) {

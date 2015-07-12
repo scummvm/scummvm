@@ -78,10 +78,19 @@ ActionArray PATTable::listPossibleActions() const {
 bool PATTable::canPerformAction(uint32 action) const {
 	for (uint i = 0; i < _entries.size(); i++) {
 		if (_entries[i]._actionType == action && _entries[i]._scriptIndex != -1) {
-			return true;
+			Script *script = findChildWithIndex<Script>(_entries[i]._scriptIndex);
+			return script->shouldExecute(Script::kCallModePlayerAction);
 		}
 	}
 	return false;
+}
+
+int32 PATTable::getDefaultAction() const {
+	if (_defaultAction != -1 && canPerformAction(_defaultAction)) {
+		return _defaultAction;
+	} else {
+		return -1;
+	}
 }
 
 bool PATTable::runScriptForAction(uint32 action) {

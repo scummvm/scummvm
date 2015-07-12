@@ -69,6 +69,8 @@ public:
 
 	bool itemHasAction(Resources::ItemVisual *item, uint32 action);
 
+	int32 itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position);
+
 	bool itemDoAction(Resources::ItemVisual *item, uint32 action);
 	bool itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position);
 
@@ -79,8 +81,6 @@ public:
 
 	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item);
 	Resources::ActionArray getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos);
-
-	bool isInventoryObject(Resources::ItemVisual *item);
 };
 
 } // End of namespace Stark
