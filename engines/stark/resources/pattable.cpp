@@ -33,7 +33,7 @@ PATTable::~PATTable() {
 
 PATTable::PATTable(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
-				_field_2C(-1) {
+				_defaultAction(-1) {
 	_type = TYPE;
 }
 
@@ -48,7 +48,7 @@ void PATTable::readData(Formats::XRCReadStream *stream) {
 		_entries.push_back(entry);
 	}
 
-	_field_2C = stream->readSint32LE();
+	_defaultAction = stream->readSint32LE();
 }
 
 void PATTable::printData() {
@@ -56,7 +56,7 @@ void PATTable::printData() {
 		debug("entry[%d].actionType: %d", i, _entries[i]._actionType);
 		debug("entry[%d].scriptIndex: %d", i, _entries[i]._scriptIndex);
 	}
-	debug("field_2C: %d", _field_2C);
+	debug("defaultAction: %d", _defaultAction);
 }
 
 ActionArray PATTable::listPossibleActions() const {

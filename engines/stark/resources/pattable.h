@@ -70,7 +70,7 @@ protected:
 	void printData() override;
 
 	Common::Array<Entry> _entries;
-	int32 _field_2C;
+	int32 _defaultAction;
 };
 
 } // End of namespace Resources
