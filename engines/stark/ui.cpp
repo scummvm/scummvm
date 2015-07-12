@@ -70,7 +70,7 @@ void UI::init() {
 	_actionMenu = new ActionMenu(_gfx, _cursor);
 	_inventoryInterface = new InventoryInterface(_gfx, _cursor, _actionMenu);
 	_actionMenu->setInventory(_inventoryInterface);
-	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu);
+	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu, _inventoryInterface);
 
 	_windows.push_back(_actionMenu);
 	_windows.push_back(_inventoryInterface);

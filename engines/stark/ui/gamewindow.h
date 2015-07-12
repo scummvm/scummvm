@@ -34,10 +34,11 @@
 namespace Stark {
 
 class ActionMenu;
+class InventoryInterface;
 
 class GameWindow : public Window {
 public:
-	GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu);
+	GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryInterface *inventory);
 	virtual ~GameWindow() {}
 
 protected:
@@ -45,11 +46,12 @@ protected:
 	void onClick(const Common::Point &pos) override;
 	void onRender() override;
 
-	ActionMenu *_actionMenu;
-
 	// Item handling
 	void updateItems();
 	void setCursorDependingOnActionsAvailable(Resources::ActionArray actionsAvailable);
+
+	ActionMenu *_actionMenu;
+	InventoryInterface *_inventory;
 
 	Gfx::RenderEntryArray _renderEntries;
 	Resources::ItemVisual *_objectUnderCursor;

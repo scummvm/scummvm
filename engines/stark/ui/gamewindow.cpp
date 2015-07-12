@@ -35,14 +35,14 @@
 #include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/actionmenu.h"
-
-#include "engines/stark/visual/image.h"
+#include "engines/stark/ui/inventoryinterface.h"
 
 namespace Stark {
 
-GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
+GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryInterface *inventory) :
 	Window(gfx, cursor),
 	_actionMenu(actionMenu),
+	_inventory(inventory),
 	_objectUnderCursor(nullptr) {
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
@@ -79,31 +79,21 @@ void GameWindow::onClick(const Common::Point &pos) {
 	_actionMenu->close();
 
 	if (_objectUnderCursor) {
-		// Possibilites:
+		// Possibilities:
 		// * Click on something that doesn't take an action
 		// * Click on something that takes exactly 1 action.
 		// * Click on something that takes more than 1 action (open action menu)
 		// * Click in the action menu, which has 0 available actions (TODO)
-//			if (_selectedInventoryItem != -1) {
-//				if (!ui->itemDoActionAt(_objectUnderCursor, _selectedInventoryItem, pos)) {
-//					warning("Could not perform action %d on %s", _selectedInventoryItem, _objectUnderCursor->getName().c_str());
-//				}
-//			} else
-		{
-			Resources::ActionArray actions = ui->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+
+		int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
+		if (selectedInventoryItem != -1) {
+			if (!ui->itemDoActionAt(_objectUnderCursor, selectedInventoryItem, pos)) {
+				warning("Could not perform action %d on %s", selectedInventoryItem, _objectUnderCursor->getName().c_str());
+			}
+		} else {
+			Resources::ActionArray actions = ui->getActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
 			if (actions.size() == 1) {
-				for (uint i = 0; i < actions.size(); i++) {
-					if (actions[i] == Resources::PATTable::kActionLook) {
-						ui->itemDoActionAt(_objectUnderCursor, Resources::PATTable::kActionLook, _objectRelativePosition);
-						break;
-					} else if (actions[i] == Resources::PATTable::kActionTalk) {
-						ui->itemDoActionAt(_objectUnderCursor, Resources::PATTable::kActionTalk, _objectRelativePosition);
-						break;
-					} else if (actions[i] == Resources::PATTable::kActionUse) {
-						ui->itemDoActionAt(_objectUnderCursor, Resources::PATTable::kActionUse, _objectRelativePosition);
-						break;
-					}
-				}
+				ui->itemDoActionAt(_objectUnderCursor, actions[0], _objectRelativePosition);
 			} else if (actions.size() > 1) {
 				_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 			}

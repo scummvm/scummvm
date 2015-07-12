@@ -48,6 +48,7 @@ public:
 	void close();
 
 	void setSelectedInventoryItem(uint16 selectedItem);
+	int16 getSelectedInventoryItem() const;
 
 protected:
 	void onMouseMove(const Common::Point &pos) override;

@@ -70,6 +70,10 @@ void InventoryInterface::setSelectedInventoryItem(uint16 selectedToolId) {
 	_selectedInventoryItem = selectedToolId;
 }
 
+int16 InventoryInterface::getSelectedInventoryItem() const {
+	return _selectedInventoryItem;
+}
+
 Common::Rect InventoryInterface::getSlotRect(uint32 slot) const {
 	Common::Rect rect = Common::Rect(64, 64);
 	rect.translate(
