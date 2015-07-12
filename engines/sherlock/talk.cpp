@@ -443,12 +443,14 @@ void Talk::talk(int objNum) {
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
 	UserInterface &ui = *_vm->_ui;
-	Object &obj = scene._bgShapes[objNum];
+	//Object &obj = scene._bgShapes[objNum];
 
 	ui._windowBounds.top = CONTROLS_Y;
 	ui._infoFlag = true;
 	_speaker = SPEAKER_REMOVE;
-	loadTalkFile(scene._bgShapes[objNum]._name);
+
+	Common::String talkFilename = (objNum >= 1000) ? people[objNum - 1000]._npcName : scene._bgShapes[objNum]._name;
+	loadTalkFile(talkFilename);
 
 	// Find the first statement with the correct flags
 	int select = -1;
@@ -469,33 +471,44 @@ void Talk::talk(int objNum) {
 		// Start talk in stealth mode
 		_talkStealth = 2;
 
-		talkTo(obj._name);
+		talkTo(talkFilename);
 	} else if (statement._statement.hasPrefix("*")) {
 		// Character being spoken to will speak first
-		clearSequences();
-		pushSequence(_talkTo);
-		setStillSeq(_talkTo);
+		if (objNum > 1000) {
+			(*static_cast<Tattoo::TattooPeople *>(_vm->_people))[objNum - 1000].walkHolmesToNPC();
+		} else {
+			Object &obj = scene._bgShapes[objNum];
+			clearSequences();
+			pushSequence(_talkTo);
+			setStillSeq(_talkTo);
 
-		events.setCursor(WAIT);
-		if (obj._lookPosition.y != 0)
-			// Need to walk to character first
-			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
-		events.setCursor(ARROW);
+			events.setCursor(WAIT);
+			if (obj._lookPosition.y != 0)
+				// Need to walk to character first
+				people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
+			events.setCursor(ARROW);
+		}
 
 		if (!_talkToAbort)
-			talkTo(obj._name);
+			talkTo(talkFilename);
 	} else {
 		// Holmes will be speaking first
-		clearSequences();
-		pushSequence(_talkTo);
-		setStillSeq(_talkTo);
-
 		_talkToFlag = false;
-		events.setCursor(WAIT);
-		if (obj._lookPosition.y != 0)
-			// Walk over to person to talk to
-			people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
-		events.setCursor(ARROW);
+
+		if (objNum > 1000) {
+			(*static_cast<Tattoo::TattooPeople *>(_vm->_people))[objNum - 1000].walkHolmesToNPC();
+		} else {
+			Object &obj = scene._bgShapes[objNum];
+			clearSequences();
+			pushSequence(_talkTo);
+			setStillSeq(_talkTo);
+
+			events.setCursor(WAIT);
+			if (obj._lookPosition.y != 0)
+				// Walk over to person to talk to
+				people[HOLMES].walkToCoords(obj._lookPosition, obj._lookPosition._facing);
+			events.setCursor(ARROW);
+		}
 
 		if (!_talkToAbort) {
 			// See if walking over triggered a conversation
