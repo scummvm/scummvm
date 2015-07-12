@@ -68,6 +68,7 @@ public:
 	bool _walkLoaded;
 	Common::String _portrait;
 	Common::Point _walkDest;
+	Common::String _npcName;
 
 	// Rose Tattoo fields
 	Common::String _walkVGSName;		// Name of walk library person is using

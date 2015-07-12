@@ -117,7 +117,6 @@ public:
 	int _npcIndex;
 	int _npcPause;
 	byte _npcPath[MAX_NPC_PATH];
-	Common::String _npcName;
 	bool _npcMoved;
 	int _npcFacing;
 	bool _resetNPCPath;
@@ -206,6 +205,11 @@ public:
 	 * @remarks		1: First talk seq, 2: second talk seq, etc.
 	 */
 	virtual void setObjTalkSequence(int seq);
+
+	/**
+	 * Walk Holmes to the NPC
+	 */
+	void walkHolmesToNPC();
 };
 
 class TattooPeople : public People {

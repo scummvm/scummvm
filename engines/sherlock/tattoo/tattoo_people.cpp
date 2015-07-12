@@ -1016,6 +1016,95 @@ void TattooPerson::synchronize(Serializer &s) {
 		_use[idx].synchronize(s);
 }
 
+void TattooPerson::walkHolmesToNPC() {
+	Events &events = *_vm->_events;
+	TattooScene &scene = *(TattooScene *)_vm->_scene;
+	TattooPeople &people = *(TattooPeople *)_vm->_people;
+	Screen &screen = *_vm->_screen;
+	Talk &talk = *_vm->_talk;
+	TattooPerson &holmes = people[HOLMES];
+	int facing;
+
+	// If the NPC is moving, stop him at his current position
+	if (_walkCount) {
+		// Reset the facing so the NPC will stop facing the direction he was going,
+		// rather than the direction he was supposed to when he finished wlaking
+		_npcFacing = -1;
+		gotoStand();
+	}
+
+	int scaleVal = scene.getScaleVal(_position);
+	ImageFrame &imgFrame = (*holmes._images)[0];
+
+	// Clear the path variables
+	memset(_npcPath, 0, 100);
+	
+	// Set the NPC path so he pauses for 250 while looking at Holmes
+	_npcPath[0] = 6;
+	_npcPath[1] = 1;
+	_npcPath[2] = 251;
+	_npcIndex = 0;
+	_npcPause = 250;
+	_lookHolmes = true;
+
+	// See where Holmes is with respect to the NPC (x coords)
+	if (holmes._position.x < _position.x) {
+		_walkDest.x = MAX(_position.x / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal), 0);
+	} else {
+		_walkDest.x = MIN(_position.x / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) * 2,
+			screen._backBuffer1.w() - 1);
+	}
+
+	// See where Holmes is with respect to the NPC (y coords)
+	if (holmes._position.y < (_position.y - imgFrame.sDrawXSize(scaleVal) * 500)) {
+		_walkDest.y = MAX(_position.y / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal) / 2, 0);
+	} else {
+		if (holmes._position.y > (_position.y + imgFrame.sDrawXSize(scaleVal) * 500)) {
+			// Holmes is below the NPC
+			_walkDest.y = MIN(_position.y / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) / 2,
+				SHERLOCK_SCREEN_HEIGHT - 1);
+		} else {
+			// Holmes is roughly on the same Y as the NPC
+			_walkDest.y = _position.y / FIXED_INT_MULTIPLIER;
+		}
+	}
+
+	events.setCursor(WAIT);
+
+	_walkDest.x += 10;
+	people._allowWalkAbort = true;
+	holmes.goAllTheWay();
+
+	// Do doBgAnim should be called over and over until walk is done
+	do {
+		events.wait(1);
+		scene.doBgAnim();
+	} while (holmes._walkCount);
+
+	if (!talk._talkToAbort) {
+		// Setup correct direction for Holmes to face
+
+		// See where Holmes is with respect to the NPC (x coords)
+		facing = (holmes._position.x < _position.x) ? STOP_RIGHT : STOP_LEFT;
+
+		// See where Holmes is with respect to the NPC (y coords)
+		if (holmes._position.y < (_position.y - (10 * FIXED_INT_MULTIPLIER))) {
+			// Holmes is above the NPC. Reset the facing to the diagonal downs
+			facing = (facing == STOP_RIGHT) ? STOP_DOWNRIGHT : STOP_DOWNLEFT;
+		} else {
+			if (holmes._position.y > (_position.y + 10 * FIXED_INT_MULTIPLIER)) {
+				// Holmes is below the NPC. Reset the facing to the diagonal ups
+				facing = (facing == STOP_RIGHT) ? STOP_UPRIGHT : STOP_UPLEFT;
+			}
+		}
+
+		holmes._sequenceNumber = facing;
+		holmes.gotoStand();
+
+		events.setCursor(ARROW);
+	}
+}
+
 /*----------------------------------------------------------------*/
 
 TattooPeople::TattooPeople(SherlockEngine *vm) : People(vm) {
