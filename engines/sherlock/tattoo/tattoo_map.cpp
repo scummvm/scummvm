@@ -293,7 +293,8 @@ void TattooMap::drawMapIcons() {
 	Screen &screen = *_vm->_screen;
 	
 	for (uint idx = 0; idx < _data.size(); ++idx) {
-		_vm->setFlagsDirect(idx + 1); //***DEBUG***
+		_vm->setFlagsDirect(idx + 1);
+
 		if (_data[idx]._iconNum != -1 && _vm->readFlags(idx + 1)) {
 			MapEntry &mapEntry = _data[idx];
 			ImageFrame &img = (*_iconImages)[mapEntry._iconNum];

@@ -93,7 +93,7 @@ void SherlockEngine::initialize() {
 
 	_res = new Resources(this);
 	_animation = new Animation(this);
-	_debugger = new Debugger(this);
+	_debugger = Debugger::init(this);
 	_events = new Events(this);
 	_fixedText = FixedText::init(this);
 	_inventory = Inventory::init(this);

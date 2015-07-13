@@ -20,48 +20,25 @@
  *
  */
 
-#ifndef SHERLOCK_DEBUGGER_H
-#define SHERLOCK_DEBUGGER_H
+#ifndef SHERLOCK_TATTOO_DEBUGGER_H
+#define SHERLOCK_TATTOO_DEBUGGER_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "sherlock/debugger.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
-class Debugger : public GUI::Debugger {
-private:
-	/**
-	 * Converts a decimal or hexadecimal string into a number
-	 */
-	int strToInt(const char *s);
+namespace Tattoo {
 
-	/**
-	 * Switch to another scene
-	 */
-	bool cmdScene(int argc, const char **argv);
-
-	/**
-	 * Plays a song
-	 */
-	bool cmdSong(int argc, const char **argv);
-
-	/**
-	 * Dumps a file to disk
-	 */
-	bool cmdDumpFile(int argc, const char **argv);
-protected:
-	SherlockEngine *_vm;
-	Common::String _3doPlayMovieFile;
+class TattooDebugger : public Debugger {
 public:
-	Debugger(SherlockEngine *vm);
-	virtual ~Debugger() {}
-	static Debugger *init(SherlockEngine *vm);
-
-	void postEnter();
+	TattooDebugger(SherlockEngine *vm);
+	virtual ~TattooDebugger() {}
 };
+
+} // End of namespace Tattoo
 
 } // End of namespace Sherlock
 
-#endif	/* SHERLOCK_DEBUGGER_H */
+#endif	/* SHERLOCK_TATTOO_DEBUGGER_H */

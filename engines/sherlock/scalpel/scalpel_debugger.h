@@ -20,47 +20,34 @@
  *
  */
 
-#ifndef SHERLOCK_DEBUGGER_H
-#define SHERLOCK_DEBUGGER_H
+#ifndef SHERLOCK_SCALPEL_DEBUGGER_H
+#define SHERLOCK_SCALPEL_DEBUGGER_H
 
-#include "common/scummsys.h"
-#include "gui/debugger.h"
+#include "sherlock/debugger.h"
 
 namespace Sherlock {
 
 class SherlockEngine;
 
-class Debugger : public GUI::Debugger {
+namespace Scalpel {
+
+class ScalpelDebugger : public Debugger {
 private:
 	/**
-	 * Converts a decimal or hexadecimal string into a number
+	 * Plays a 3DO movie
 	 */
-	int strToInt(const char *s);
+	bool cmd3DO_PlayMovie(int argc, const char **argv);
 
 	/**
-	 * Switch to another scene
+	 * Plays a 3DO audio
 	 */
-	bool cmdScene(int argc, const char **argv);
-
-	/**
-	 * Plays a song
-	 */
-	bool cmdSong(int argc, const char **argv);
-
-	/**
-	 * Dumps a file to disk
-	 */
-	bool cmdDumpFile(int argc, const char **argv);
-protected:
-	SherlockEngine *_vm;
-	Common::String _3doPlayMovieFile;
+	bool cmd3DO_PlayAudio(int argc, const char **argv);
 public:
-	Debugger(SherlockEngine *vm);
-	virtual ~Debugger() {}
-	static Debugger *init(SherlockEngine *vm);
-
-	void postEnter();
+	ScalpelDebugger(SherlockEngine *vm);
+	virtual ~ScalpelDebugger() {}
 };
+
+} // End of namespace Scalpel
 
 } // End of namespace Sherlock
 
