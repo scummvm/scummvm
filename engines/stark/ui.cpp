@@ -65,7 +65,7 @@ UI::~UI() {
 
 void UI::init() {
 	_topMenu = new TopMenu(_gfx, _cursor);
-	_dialogPanel = new DialogPanel();
+	_dialogPanel = new DialogPanel(_gfx, _cursor);
 	_fmvPlayer = new FMVPlayer();
 	_actionMenu = new ActionMenu(_gfx, _cursor);
 	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
@@ -76,6 +76,7 @@ void UI::init() {
 	_windows.push_back(_inventoryWindow);
 	_windows.push_back(_gameWindow);
 	_windows.push_back(_topMenu);
+	_windows.push_back(_dialogPanel);
 }
 
 void UI::update() {
@@ -90,7 +91,7 @@ void UI::update() {
 		return;
 	}
 
-	if (_inventoryWindow->isVisible()) {
+	if (_inventoryWindow->isVisible() && _gameWindow->isMouseInside()) {
 		_inventoryWindow->handleMouseMove();
 		return;
 	}
@@ -100,9 +101,8 @@ void UI::update() {
 		return;
 	}
 
-	Common::Point pos = _cursor->getMousePosition();
-	if (_dialogPanel->containsPoint(pos)) {
-		_dialogPanel->handleMouseOver(pos);
+	if (_dialogPanel->isVisible() && _dialogPanel->isMouseInside()) {
+		_dialogPanel->handleMouseMove();
 		return;
 	}
 }
@@ -113,12 +113,6 @@ void UI::handleClick() {
 			_windows[i]->handleClick();
 			return;
 		}
-	}
-
-	// TODO: Unify with the other windows
-	if (_dialogPanel->containsPoint(_cursor->getMousePosition())) {
-		_dialogPanel->handleClick(_cursor->getMousePosition());
-		return;
 	}
 }
 

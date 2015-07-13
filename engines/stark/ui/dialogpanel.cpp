@@ -34,7 +34,15 @@
 
 namespace Stark {
 
-DialogPanel::DialogPanel() : _texture(nullptr), _hasOptions(false) {
+DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
+		Window(gfx, cursor),
+		_texture(nullptr),
+		_hasOptions(false) {
+	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
+	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
+
+	_visible = true;
+
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: Un-hardcode
 	_activeBackGroundTexture = staticProvider->getCursorImage(20);
@@ -60,18 +68,16 @@ void DialogPanel::renderOptions() {
 	}
 }
 
-void DialogPanel::render() {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->setScreenViewport(false);
+void DialogPanel::onRender() {
 	if (_hasOptions) {
-		_activeBackGroundTexture->render(Common::Point(0, 401), false);
+		_activeBackGroundTexture->render(Common::Point(0, 0), false);
 		renderOptions();
 	} else {
-		_passiveBackGroundTexture->render(Common::Point(0, 401), false);
+		_passiveBackGroundTexture->render(Common::Point(0, 0), false);
 	}
 	// TODO: Unhardcode
 	if (_texture) {
-		gfx->drawSurface(_texture, Common::Point(10, 400));
+		_gfx->drawSurface(_texture, Common::Point(10, 10));
 	}
 }
 
@@ -81,8 +87,7 @@ void DialogPanel::update() {
 void DialogPanel::notifySubtitle(const Common::String &subtitle) {
 	clearOptions();
 	delete _texture;
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_texture = gfx->createTextureFromString(subtitle, 0xFFFF0000);
+	_texture = _gfx->createTextureFromString(subtitle, 0xFFFF0000);
 }
 
 void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {
@@ -90,34 +95,23 @@ void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {
 	delete _texture;
 	_texture = nullptr;
 
-	int pos = 401;
+	int pos = 0;
 	for (uint i = 0; i < options.size(); i++) {
 		ClickText *text = new ClickText(options[i], Common::Point(0, pos));
 		_options.push_back(text);
 		pos += text->getHeight();
 		// TODO: Add buttons?
-		if (pos > 480) {
+		if (pos > Gfx::Driver::kBottomBorderHeight) {
 			break;
 		}
 	}
 	_hasOptions = true;
 }
 
-bool DialogPanel::containsPoint(Common::Point point) {
+void DialogPanel::onMouseMove(const Common::Point &pos) {
 	if (_hasOptions && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
-			if (_options[i]->containsPoint(point)) {
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-void DialogPanel::handleMouseOver(Common::Point point) {
-	if (_hasOptions && _options.size() > 0) {
-		for (uint i = 0; i < _options.size(); i++) {
-			if (_options[i]->containsPoint(point)) {
+			if (_options[i]->containsPoint(pos)) {
 				_options[i]->handleMouseOver();
 			} else {
 				_options[i]->setPassive();
@@ -126,10 +120,10 @@ void DialogPanel::handleMouseOver(Common::Point point) {
 	}
 }
 
-void DialogPanel::handleClick(Common::Point point) {
+void DialogPanel::onClick(const Common::Point &pos) {
 	if (_hasOptions && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
-			if (_options[i]->containsPoint(point)) {
+			if (_options[i]->containsPoint(pos)) {
 				DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 				dialogPlayer->selectOption(i);
 				return;

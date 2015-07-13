@@ -23,6 +23,8 @@
 #ifndef STARK_UI_DIALOG_PANEL_H
 #define STARK_UI_DIALOG_PANEL_H
 
+#include "engines/stark/ui/window.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/str-array.h"
@@ -38,17 +40,18 @@ namespace Gfx {
 class Texture;
 }
 
-class DialogPanel {
+class DialogPanel : public Window {
 public:
-	DialogPanel();
+	DialogPanel(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~DialogPanel();
-	void render();
 	void update();
 	void notifySubtitle(const Common::String &subtitle);
 	void notifyDialogOptions(const Common::StringArray &options);
-	bool containsPoint(Common::Point point);
-	void handleMouseOver(Common::Point point);
-	void handleClick(Common::Point point);
+
+protected:
+	void onMouseMove(const Common::Point &pos) override;
+	void onClick(const Common::Point &pos) override;
+	void onRender() override;
 
 private:
 	VisualImageXMG *_passiveBackGroundTexture;
