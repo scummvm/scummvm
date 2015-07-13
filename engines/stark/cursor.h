@@ -30,10 +30,10 @@
 namespace Stark {
 
 class VisualImageXMG;
+class VisualText;
 
 namespace Gfx {
 class Driver;
-class Texture;
 }
 
 /** 
@@ -76,7 +76,7 @@ private:
 	Common::String _currentHint;
 	Common::Point _mousePos;
 	VisualImageXMG *_cursorImage;
-	Gfx::Texture *_mouseText;
+	VisualText *_mouseText;
 	CursorType _currentCursorType;
 };
 

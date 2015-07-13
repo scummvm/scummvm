@@ -23,7 +23,6 @@
 #include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/level.h"
@@ -31,8 +30,6 @@
 #include "engines/stark/resources/speech.h"
 
 #include "engines/stark/resources/floor.h"
-#include "engines/stark/resources/object.h"
-#include "engines/stark/resources/pattable.h"
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/item.h"
 

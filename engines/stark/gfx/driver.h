@@ -82,9 +82,6 @@ public:
 	 */
 	virtual void drawSurface(const Texture *texture, const Common::Point &dest) = 0;
 
-	virtual Texture *createTextureFromString(const Common::String &str, uint32 color);
-	virtual Common::Rect getBoundingBoxForString(const Common::String &str);
-
 	virtual Graphics::PixelFormat getScreenFormat();
 
 	virtual void set3DMode() = 0;

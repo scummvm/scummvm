@@ -29,27 +29,27 @@
 
 namespace Stark {
 
-class VisualImageXMG;
-
-namespace Gfx {
-class Texture;
-}
+class VisualText;
 
 class ClickText {
-	Gfx::Texture *_texturePassive;
-	Gfx::Texture *_textureActive;
-	Gfx::Texture *_curTexture;
-	Common::Point _position;
-	Common::String _text;
-	Common::Rect _bbox;
 public:
 	ClickText(const Common::String &text, Common::Point pos);
+	~ClickText();
+
 	void setPosition(Common::Point pos) { _position = pos; }
 	void render();
 	bool containsPoint(Common::Point point);
 	void handleMouseOver();
-	void setPassive() { _curTexture = _texturePassive; }
+	void setPassive() { _curVisual = _visualPassive; }
 	int getHeight() const { return _bbox.height(); }
+
+private:
+	VisualText *_visualPassive;
+	VisualText *_visualActive;
+	VisualText *_curVisual;
+	Common::Point _position;
+	Common::String _text;
+	Common::Rect _bbox;
 };
 
 } // End of namespace Stark

@@ -34,11 +34,8 @@
 namespace Stark {
 
 class VisualImageXMG;
+class VisualText;
 class ClickText;
-
-namespace Gfx {
-class Texture;
-}
 
 class DialogPanel : public Window {
 public:
@@ -56,7 +53,7 @@ protected:
 private:
 	VisualImageXMG *_passiveBackGroundTexture;
 	VisualImageXMG *_activeBackGroundTexture;
-	Gfx::Texture *_texture;
+	VisualText *_subtitleVisual;
 	Common::Array<ClickText*> _options;
 	bool _hasOptions;
 	void clearOptions();

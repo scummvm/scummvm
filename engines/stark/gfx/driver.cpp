@@ -20,14 +20,8 @@
  *
  */
 
-#include "graphics/surface.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/opengls.h"
-
-#include "common/textconsole.h"
 
 namespace Stark {
 namespace Gfx {
@@ -47,45 +41,6 @@ Driver *Driver::create() {
 
 Graphics::PixelFormat Driver::getScreenFormat() {
 	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-}
-
-Texture *Driver::createTextureFromString(const Common::String &str, uint32 color) {
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-
-	// TODO: The hardcoded widths here are not exactly perfect.
-	Common::Array<Common::String> lines;
-	font->wordWrapText(str, 580, lines);
-
-	int height = font->getFontHeight();
-	int width = 0;
-	for (int i = 0; i < lines.size(); i++) {
-		width = MAX(width, font->getStringWidth(lines[i]));
-	}
-
-	Graphics::Surface surface;
-	surface.create(width, height*lines.size(), getScreenFormat());
-
-	for (int i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, height*i, 580, color);
-	}
-	Texture *texture = createTexture(&surface);
-	surface.free();
-	return texture;
-}
-
-Common::Rect Driver::getBoundingBoxForString(const Common::String &str) {
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	// TODO: The hardcoded widths here are not exactly perfect.
-	Common::Array<Common::String> lines;
-	font->wordWrapText(str, 580, lines);
-	Common::Rect result;
-	
-	int height = font->getFontHeight();
-	for (int i = 0; i < lines.size(); i++) {
-		Common::Rect thisLine = font->getBoundingBox(lines[i], 0, height * i, 580);
-		result.extend(thisLine);
-	}
-	return result;
 }
 
 void Driver::computeScreenViewport() {

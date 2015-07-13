@@ -24,19 +24,19 @@
 #include "engines/stark/ui/clicktext.h"
 
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"
 
 #include "engines/stark/visual/image.h"
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
 DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
-		_texture(nullptr),
+		_subtitleVisual(nullptr),
 		_hasOptions(false) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
@@ -51,7 +51,7 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 
 DialogPanel::~DialogPanel() {
 	clearOptions();
-	delete _texture;
+	delete _subtitleVisual;
 }
 
 void DialogPanel::clearOptions() {
@@ -76,8 +76,8 @@ void DialogPanel::onRender() {
 		_passiveBackGroundTexture->render(Common::Point(0, 0), false);
 	}
 	// TODO: Unhardcode
-	if (_texture) {
-		_gfx->drawSurface(_texture, Common::Point(10, 10));
+	if (_subtitleVisual) {
+		_subtitleVisual->render(Common::Point(10, 10));
 	}
 }
 
@@ -86,14 +86,17 @@ void DialogPanel::update() {
 
 void DialogPanel::notifySubtitle(const Common::String &subtitle) {
 	clearOptions();
-	delete _texture;
-	_texture = _gfx->createTextureFromString(subtitle, 0xFFFF0000);
+	delete _subtitleVisual;
+
+	_subtitleVisual = new VisualText(_gfx);
+	_subtitleVisual->setText(subtitle);
+	_subtitleVisual->setColor(0xFFFF0000);
 }
 
 void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {
 	clearOptions();
-	delete _texture;
-	_texture = nullptr;
+	delete _subtitleVisual;
+	_subtitleVisual = nullptr;
 
 	int pos = 0;
 	for (uint i = 0; i < options.size(); i++) {

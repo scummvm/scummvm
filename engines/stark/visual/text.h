@@ -20,49 +20,42 @@
  *
  */
 
-#include "engines/stark/ui/clicktext.h"
+#ifndef STARK_VISUAL_TEXT_H
+#define STARK_VISUAL_TEXT_H
 
-#include "engines/stark/gfx/driver.h"
-
-#include "engines/stark/services/services.h"
-
-#include "engines/stark/visual/text.h"
+#include "common/stream.h"
+#include "engines/stark/visual/visual.h"
 
 namespace Stark {
 
-ClickText::ClickText(const Common::String &text, Common::Point pos)
-	: _position(pos),
-	  _text(text) {
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_visualPassive = new VisualText(gfx);
-	_visualPassive->setText(_text);
-	_visualPassive->setColor(0xFFFF0000);
+/**
+ * Text renderer
+ */
+class VisualText : public Visual {
+public:
+	static const VisualType TYPE = Visual::kImageText;
 
-	_visualActive = new VisualText(gfx);
-	_visualActive->setText(_text);
-	_visualActive->setColor(0xFF00FF00);
+	VisualText(Gfx::Driver *gfx);
+	virtual ~VisualText();
 
-	_curVisual = _visualPassive;
-	_bbox = _curVisual->getRect();
-}
+	Common::Rect getRect();
 
-ClickText::~ClickText() {
-	delete _visualActive;
-	delete _visualPassive;
-}
+	void setText(const Common::String &text);
+	void setColor(uint32 color);
 
-void ClickText::render() {
-	_curVisual->render(_position);
-}
+	void render(const Common::Point &position);
 
-bool ClickText::containsPoint(Common::Point point) {
-	Common::Rect r = _bbox;
-	r.translate(_position.x, _position.y);
-	return r.contains(point);
-}
+private:
+	void createTexture();
+	void freeTexture();
 
-void ClickText::handleMouseOver() {
-	_curVisual = _visualActive;
-}
+	Gfx::Driver *_gfx;
+
+	Common::String _text;
+	uint32 _color;
+	Gfx::Texture *_texture;
+};
 
 } // End of namespace Stark
+
+#endif // STARK_VISUAL_TEXT_H

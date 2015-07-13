@@ -23,12 +23,16 @@
 #include "engines/stark/cursor.h"
 
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/texture.h"
+
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
-#include "engines/stark/visual/image.h"
+
 #include "engines/stark/resources/item.h"
+
+#include "engines/stark/visual/image.h"
+#include "engines/stark/visual/text.h"
+
 namespace Stark {
 
 Cursor::Cursor(Gfx::Driver *gfx) :
@@ -79,7 +83,7 @@ void Cursor::render() {
 	}
 	if (_mouseText) {
 		// TODO: Should probably query the image for the width of the cursor
-		_gfx->drawSurface(_mouseText, Common::Point(_mousePos.x + 20, _mousePos.y));
+		_mouseText->render(Common::Point(_mousePos.x + 20, _mousePos.y));
 	}
 }
 
@@ -96,7 +100,9 @@ void Cursor::setMouseHint(const Common::String &hint) {
 	if (hint != _currentHint) {
 		delete _mouseText;
 		if (hint != "") {
-			_mouseText = _gfx->createTextureFromString(hint, 0xFFFF0000);
+			_mouseText = new VisualText(_gfx);
+			_mouseText->setText(hint);
+			_mouseText->setColor(0xFFFF0000);
 		} else {
 			_mouseText = nullptr;
 		}

@@ -70,7 +70,8 @@ MODULE_OBJS := \
 	ui/window.o \
 	visual/actor.o \
 	visual/image.o \
-	visual/smacker.o
+	visual/smacker.o \
+	visual/text.o
 
 # Include common rules
 include $(srcdir)/rules.mk
