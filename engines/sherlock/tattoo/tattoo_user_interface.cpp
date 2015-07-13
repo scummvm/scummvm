@@ -841,7 +841,7 @@ void TattooUserInterface::drawDialogRect(Surface &s, const Common::Rect &r, bool
 	}
 }
 
-void TattooUserInterface::banishWindow() {
+void TattooUserInterface::banishWindow(bool slideUp) {
 	if (_widget != nullptr)
 		_widget->banishWindow();
 	_widget = nullptr;

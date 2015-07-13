@@ -219,8 +219,10 @@ public:
 
 	/**
 	 * Banish any active window
+	 * @remarks		Tattoo doesn't use sliding windows, but the parameter is in the base
+	 * UserInterface class as a convenience for Scalpel UI code
 	 */
-	virtual void banishWindow();
+	virtual void banishWindow(bool slideUp = true);
 };
 
 } // End of namespace Tattoo
