@@ -40,7 +40,9 @@ Math::Vector3d Bookmark::getPosition() const {
 }
 
 void Bookmark::readData(Formats::XRCReadStream *stream) {
-	_position = stream->readVector3();
+	_position.x() = stream->readFloat();
+	_position.y() = stream->readFloat();
+	_position.z() = 0;
 }
 
 void Bookmark::printData() {
