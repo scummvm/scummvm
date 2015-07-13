@@ -23,6 +23,8 @@
 #ifndef STARK_UI_FMV_PLAYER_H
 #define STARK_UI_FMV_PLAYER_H
 
+#include "engines/stark/ui/window.h"
+
 #include "video/bink_decoder.h"
 
 namespace Video {
@@ -40,14 +42,18 @@ class Texture;
  *
  * Handles the state of the currently running FMV.
  */
-class FMVPlayer {
+class FMVPlayer : public Window {
 public:
-	FMVPlayer();
+	FMVPlayer(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~FMVPlayer();
 	void play(const Common::String &name);
-	void render();
 	bool isPlaying();
 	void stop();
+
+protected:
+	void onRender() override;
+	void onMouseMove(const Common::Point &pos) override {};
+	void onClick(const Common::Point &pos) override {};
 
 private:
 	Video::BinkDecoder *_decoder;

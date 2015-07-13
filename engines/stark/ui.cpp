@@ -66,7 +66,7 @@ UI::~UI() {
 void UI::init() {
 	_topMenu = new TopMenu(_gfx, _cursor);
 	_dialogPanel = new DialogPanel(_gfx, _cursor);
-	_fmvPlayer = new FMVPlayer();
+	_fmvPlayer = new FMVPlayer(_gfx, _cursor);
 	_actionMenu = new ActionMenu(_gfx, _cursor);
 	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
 	_actionMenu->setInventory(_inventoryWindow);

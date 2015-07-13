@@ -32,11 +32,14 @@
 
 namespace Stark {
 
-FMVPlayer::FMVPlayer() {
+FMVPlayer::FMVPlayer(Gfx::Driver *gfx, Cursor *cursor) :
+	Window(gfx, cursor) {
+	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kOriginalHeight);
+	_visible = true;
+
 	_decoder = new Video::BinkDecoder();
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	_texture = gfx->createTexture();
-	_decoder->setDefaultHighColorFormat(gfx->getScreenFormat());
+	_texture = _gfx->createTexture();
+	_decoder->setDefaultHighColorFormat(_gfx->getScreenFormat());
 }
 
 FMVPlayer::~FMVPlayer() {
@@ -60,7 +63,7 @@ void FMVPlayer::play(const Common::String &name) {
 	_decoder->start();
 }
 
-void FMVPlayer::render() {
+void FMVPlayer::onRender() {
 	// TODO: Refactor this.
 	if (_decoder->isPlaying()) {
 		if (_decoder->needsUpdate()) {
@@ -68,8 +71,7 @@ void FMVPlayer::render() {
 			_texture->update(decodedSurface);
 		}
 	}
-	Gfx::Driver *gfx = StarkServices::instance().gfx;
-	gfx->drawSurface(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
+	_gfx->drawSurface(_texture, Common::Point(0, Gfx::Driver::kTopBorderHeight));
 }
 
 bool FMVPlayer::isPlaying() {
