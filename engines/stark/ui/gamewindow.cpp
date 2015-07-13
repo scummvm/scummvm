@@ -35,11 +35,11 @@
 #include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/ui/actionmenu.h"
-#include "engines/stark/ui/inventoryinterface.h"
+#include "engines/stark/ui/inventorywindow.h"
 
 namespace Stark {
 
-GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryInterface *inventory) :
+GameWindow::GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryWindow *inventory) :
 	Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_inventory(inventory),

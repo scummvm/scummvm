@@ -34,11 +34,11 @@
 namespace Stark {
 
 class ActionMenu;
-class InventoryInterface;
+class InventoryWindow;
 
 class GameWindow : public Window {
 public:
-	GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryInterface *inventory);
+	GameWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu, InventoryWindow *inventory);
 	virtual ~GameWindow() {}
 
 protected:
@@ -50,7 +50,7 @@ protected:
 	void checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction);
 
 	ActionMenu *_actionMenu;
-	InventoryInterface *_inventory;
+	InventoryWindow *_inventory;
 
 	Gfx::RenderEntryArray _renderEntries;
 	Resources::ItemVisual *_objectUnderCursor;

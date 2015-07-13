@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/ui/inventoryinterface.h"
+#include "engines/stark/ui/inventorywindow.h"
 
 #include "engines/stark/ui/actionmenu.h"
 
@@ -40,7 +40,7 @@
 
 namespace Stark {
 
-InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
+InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
 	Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_selectedInventoryItem(-1) {
@@ -58,23 +58,23 @@ InventoryInterface::InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionM
 			(_position.height() - _backgroundRect.height()) / 2);
 }
 
-void InventoryInterface::open() {
+void InventoryWindow::open() {
 	_visible = true;
 }
 
-void InventoryInterface::close() {
+void InventoryWindow::close() {
 	_visible = false;
 }
 
-void InventoryInterface::setSelectedInventoryItem(uint16 selectedInventoryItem) {
+void InventoryWindow::setSelectedInventoryItem(uint16 selectedInventoryItem) {
 	_selectedInventoryItem = selectedInventoryItem;
 }
 
-int16 InventoryInterface::getSelectedInventoryItem() const {
+int16 InventoryWindow::getSelectedInventoryItem() const {
 	return _selectedInventoryItem;
 }
 
-Common::Rect InventoryInterface::getSlotRect(uint32 slot) const {
+Common::Rect InventoryWindow::getSlotRect(uint32 slot) const {
 	Common::Rect rect = Common::Rect(64, 64);
 	rect.translate(
 			96 * (slot % 5) + _backgroundRect.left + 24,
@@ -82,7 +82,7 @@ Common::Rect InventoryInterface::getSlotRect(uint32 slot) const {
 	return rect;
 }
 
-Common::Rect InventoryInterface::getItemRect(uint32 slot, VisualImageXMG *image) const {
+Common::Rect InventoryWindow::getItemRect(uint32 slot, VisualImageXMG *image) const {
 	Common::Rect rect = getSlotRect(slot);
 
 	// Center the image in the inventory slot
@@ -92,7 +92,7 @@ Common::Rect InventoryInterface::getItemRect(uint32 slot, VisualImageXMG *image)
 	return rect;
 }
 
-void InventoryInterface::onRender() {
+void InventoryWindow::onRender() {
 	Global *global = StarkServices::instance().global;
 	_renderEntries = global->getInventory()->getInventoryRenderEntries();
 
@@ -108,7 +108,7 @@ void InventoryInterface::onRender() {
 	}
 }
 
-void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction) {
+void InventoryWindow::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction) {
 	GameInterface *game = StarkServices::instance().gameInterface;
 
 	*item = nullptr;
@@ -145,7 +145,7 @@ void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisu
 	}
 }
 
-void InventoryInterface::onMouseMove(const Common::Point &pos) {
+void InventoryWindow::onMouseMove(const Common::Point &pos) {
 	Resources::ItemVisual *hoveredItem = nullptr;
 	int16 hoveredItemAction = -1;
 
@@ -164,7 +164,7 @@ void InventoryInterface::onMouseMove(const Common::Point &pos) {
 	}
 }
 
-void InventoryInterface::onClick(const Common::Point &pos) {
+void InventoryWindow::onClick(const Common::Point &pos) {
 	GameInterface *game = StarkServices::instance().gameInterface;
 
 	_actionMenu->close();
@@ -194,7 +194,7 @@ void InventoryInterface::onClick(const Common::Point &pos) {
 	}
 }
 
-void InventoryInterface::onRightClick(const Common::Point &pos) {
+void InventoryWindow::onRightClick(const Common::Point &pos) {
 	if (_selectedInventoryItem == -1) {
 		close();
 	} else {

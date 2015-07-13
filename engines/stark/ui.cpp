@@ -36,7 +36,7 @@
 
 #include "engines/stark/ui/dialoginterface.h"
 #include "engines/stark/ui/gamewindow.h"
-#include "engines/stark/ui/inventoryinterface.h"
+#include "engines/stark/ui/inventorywindow.h"
 #include "engines/stark/ui/topmenu.h"
 
 namespace Stark {
@@ -46,7 +46,7 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_cursor(cursor),
 	_topMenu(nullptr),
 	_dialogInterface(nullptr),
-	_inventoryInterface(nullptr),
+	_inventoryWindow(nullptr),
 	_exitGame(false),
 	_fmvPlayer(nullptr),
 	_actionMenu(nullptr),
@@ -59,7 +59,7 @@ UI::~UI() {
 	delete _actionMenu;
 	delete _topMenu;
 	delete _dialogInterface;
-	delete _inventoryInterface;
+	delete _inventoryWindow;
 	delete _fmvPlayer;
 }
 
@@ -68,12 +68,12 @@ void UI::init() {
 	_dialogInterface = new DialogInterface();
 	_fmvPlayer = new FMVPlayer();
 	_actionMenu = new ActionMenu(_gfx, _cursor);
-	_inventoryInterface = new InventoryInterface(_gfx, _cursor, _actionMenu);
-	_actionMenu->setInventory(_inventoryInterface);
-	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu, _inventoryInterface);
+	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
+	_actionMenu->setInventory(_inventoryWindow);
+	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu, _inventoryWindow);
 
 	_windows.push_back(_actionMenu);
-	_windows.push_back(_inventoryInterface);
+	_windows.push_back(_inventoryWindow);
 	_windows.push_back(_gameWindow);
 	_windows.push_back(_topMenu);
 }
@@ -90,8 +90,8 @@ void UI::update() {
 		return;
 	}
 
-	if (_inventoryInterface->isVisible()) {
-		_inventoryInterface->handleMouseMove();
+	if (_inventoryWindow->isVisible()) {
+		_inventoryWindow->handleMouseMove();
 		return;
 	}
 
@@ -141,7 +141,7 @@ void UI::notifyDialogOptions(const Common::StringArray &options) {
 
 void UI::notifyShouldOpenInventory() {
 	// Make the inventory update it's contents.
-	_inventoryInterface->open();
+	_inventoryWindow->open();
 }
 
 void UI::notifyFMVRequest(const Common::String &name) {
@@ -168,7 +168,7 @@ void UI::render() {
 	}
 
 	_gameWindow->render();
-	_inventoryInterface->render();
+	_inventoryWindow->render();
 
 	_dialogInterface->render();
 	_actionMenu->render();

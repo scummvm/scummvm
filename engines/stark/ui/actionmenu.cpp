@@ -24,7 +24,7 @@
 
 #include "engines/stark/gfx/driver.h"
 
-#include "engines/stark/ui/inventoryinterface.h"
+#include "engines/stark/ui/inventorywindow.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
@@ -167,7 +167,7 @@ void ActionMenu::onClick(const Common::Point &pos) {
 	}
 }
 
-void ActionMenu::setInventory(InventoryInterface *inventory) {
+void ActionMenu::setInventory(InventoryWindow *inventory) {
 	_inventory = inventory;
 }
 

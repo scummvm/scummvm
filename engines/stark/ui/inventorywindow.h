@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_INVENTORYINTERFACE_H
-#define STARK_INVENTORYINTERFACE_H
+#ifndef STARK_UI_INVENTORY_WINDOW_H
+#define STARK_UI_INVENTORY_WINDOW_H
 
 #include "engines/stark/gfx/renderentry.h"
 
@@ -39,10 +39,10 @@ namespace Resources {
 class Anim;
 }
 
-class InventoryInterface : public Window {
+class InventoryWindow : public Window {
 public:
-	InventoryInterface(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu);
-	virtual ~InventoryInterface() {}
+	InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu);
+	virtual ~InventoryWindow() {}
 
 	void open();
 	void close();
@@ -72,4 +72,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_INVENTORYINTERFACE_H
+#endif // STARK_UI_INVENTORY_WINDOW_H

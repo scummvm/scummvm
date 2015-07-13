@@ -31,7 +31,7 @@ namespace Stark {
 
 class Cursor;
 class VisualImageXMG;
-class InventoryInterface;
+class InventoryWindow;
 
 namespace Resources {
 class ItemVisual;
@@ -42,7 +42,7 @@ public:
 	ActionMenu(Gfx::Driver *gfx, Cursor *cursor);
 	~ActionMenu();
 
-	void setInventory(InventoryInterface *inventory);
+	void setInventory(InventoryWindow *inventory);
 
 	void open(Resources::ItemVisual *item, const Common::Point &itemRelativePos);
 	void close();
@@ -73,7 +73,7 @@ private:
 	Common::Point _itemRelativePos;
 	Resources::ItemVisual *_item;
 
-	InventoryInterface *_inventory;
+	InventoryWindow *_inventory;
 
 	void clearActions();
 	void enableAction(uint32 action);
