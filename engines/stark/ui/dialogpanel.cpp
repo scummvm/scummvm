@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/ui/dialoginterface.h"
+#include "engines/stark/ui/dialogpanel.h"
 #include "engines/stark/ui/clicktext.h"
 
 #include "engines/stark/gfx/driver.h"
@@ -34,19 +34,19 @@
 
 namespace Stark {
 
-DialogInterface::DialogInterface() : _texture(nullptr), _hasOptions(false) {
+DialogPanel::DialogPanel() : _texture(nullptr), _hasOptions(false) {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	// TODO: Un-hardcode
 	_activeBackGroundTexture = staticProvider->getCursorImage(20);
 	_passiveBackGroundTexture = staticProvider->getCursorImage(21);
 }
 
-DialogInterface::~DialogInterface() {
+DialogPanel::~DialogPanel() {
 	clearOptions();
 	delete _texture;
 }
 
-void DialogInterface::clearOptions() {
+void DialogPanel::clearOptions() {
 	for (uint i = 0; i < _options.size(); i++) {
 		delete _options[i];
 	}
@@ -54,13 +54,13 @@ void DialogInterface::clearOptions() {
 	_hasOptions = false;
 }
 
-void DialogInterface::renderOptions() {
+void DialogPanel::renderOptions() {
 	for (uint i = 0; i < _options.size(); i++) {
 		_options[i]->render();
 	}
 }
 
-void DialogInterface::render() {
+void DialogPanel::render() {
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
 	gfx->setScreenViewport(false);
 	if (_hasOptions) {
@@ -75,17 +75,17 @@ void DialogInterface::render() {
 	}
 }
 
-void DialogInterface::update() {
+void DialogPanel::update() {
 }
 
-void DialogInterface::notifySubtitle(const Common::String &subtitle) {
+void DialogPanel::notifySubtitle(const Common::String &subtitle) {
 	clearOptions();
 	delete _texture;
 	Gfx::Driver *gfx = StarkServices::instance().gfx;
 	_texture = gfx->createTextureFromString(subtitle, 0xFFFF0000);
 }
 
-void DialogInterface::notifyDialogOptions(const Common::StringArray &options) {
+void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {
 	clearOptions();
 	delete _texture;
 	_texture = nullptr;
@@ -103,7 +103,7 @@ void DialogInterface::notifyDialogOptions(const Common::StringArray &options) {
 	_hasOptions = true;
 }
 
-bool DialogInterface::containsPoint(Common::Point point) {
+bool DialogPanel::containsPoint(Common::Point point) {
 	if (_hasOptions && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(point)) {
@@ -114,7 +114,7 @@ bool DialogInterface::containsPoint(Common::Point point) {
 	return false;
 }
 
-void DialogInterface::handleMouseOver(Common::Point point) {
+void DialogPanel::handleMouseOver(Common::Point point) {
 	if (_hasOptions && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(point)) {
@@ -126,7 +126,7 @@ void DialogInterface::handleMouseOver(Common::Point point) {
 	}
 }
 
-void DialogInterface::handleClick(Common::Point point) {
+void DialogPanel::handleClick(Common::Point point) {
 	if (_hasOptions && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(point)) {

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_TOPMENU_H
-#define STARK_TOPMENU_H
+#ifndef STARK_UI_TOPMENU_H
+#define STARK_UI_TOPMENU_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
@@ -55,4 +55,4 @@ private:
 
 } // End of namespace Stark
 
-#endif // STARK_TOPMENU_H
+#endif // STARK_UI_TOPMENU_H

@@ -41,7 +41,7 @@ class Driver;
 }
 
 class ActionMenu;
-class DialogInterface;
+class DialogPanel;
 class InventoryWindow;
 class TopMenu;
 class Cursor;
@@ -70,7 +70,7 @@ public:
 private:
 	ActionMenu *_actionMenu;
 	FMVPlayer *_fmvPlayer;
-	DialogInterface *_dialogInterface;
+	DialogPanel *_dialogPanel;
 	InventoryWindow *_inventoryWindow;
 	TopMenu *_topMenu;
 	GameWindow *_gameWindow;

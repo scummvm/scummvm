@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_BUTTON_H
-#define STARK_BUTTON_H
+#ifndef STARK_UI_BUTTON_H
+#define STARK_UI_BUTTON_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
@@ -49,4 +49,4 @@ public:
 
 } // End of namespace Stark
 
-#endif // STARK_BUTTON_H
+#endif // STARK_UI_BUTTON_H

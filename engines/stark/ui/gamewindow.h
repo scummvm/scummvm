@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_GAME_WINDOW_H
-#define STARK_GAME_WINDOW_H
+#ifndef STARK_UI_GAME_WINDOW_H
+#define STARK_UI_GAME_WINDOW_H
 
 #include "engines/stark/gfx/renderentry.h"
 
@@ -59,4 +59,4 @@ protected:
 
 } // End of namespace Stark
 
-#endif // STARK_GAME_WINDOW_H
+#endif // STARK_UI_GAME_WINDOW_H

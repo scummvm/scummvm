@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_CLICKTEXT_H
-#define STARK_CLICKTEXT_H
+#ifndef STARK_UI_CLICK_TEXT_H
+#define STARK_UI_CLICK_TEXT_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
@@ -54,4 +54,4 @@ public:
 
 } // End of namespace Stark
 
-#endif // STARK_BUTTON_H
+#endif // STARK_UI_CLICK_TEXT_H

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_DIALOGINTERFACE_H
-#define STARK_DIALOGINTERFACE_H
+#ifndef STARK_UI_DIALOG_PANEL_H
+#define STARK_UI_DIALOG_PANEL_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -38,17 +38,10 @@ namespace Gfx {
 class Texture;
 }
 
-class DialogInterface {
-	VisualImageXMG *_passiveBackGroundTexture;
-	VisualImageXMG *_activeBackGroundTexture;
-	Gfx::Texture *_texture;
-	Common::Array<ClickText*> _options;
-	bool _hasOptions;
-	void clearOptions();
-	void renderOptions();
+class DialogPanel {
 public:
-	DialogInterface();
-	virtual ~DialogInterface();
+	DialogPanel();
+	virtual ~DialogPanel();
 	void render();
 	void update();
 	void notifySubtitle(const Common::String &subtitle);
@@ -56,8 +49,17 @@ public:
 	bool containsPoint(Common::Point point);
 	void handleMouseOver(Common::Point point);
 	void handleClick(Common::Point point);
+
+private:
+	VisualImageXMG *_passiveBackGroundTexture;
+	VisualImageXMG *_activeBackGroundTexture;
+	Gfx::Texture *_texture;
+	Common::Array<ClickText*> _options;
+	bool _hasOptions;
+	void clearOptions();
+	void renderOptions();
 };
 
 } // End of namespace Stark
 
-#endif // STARK_DIALOG_INTERFACE_H
+#endif // STARK_UI_DIALOG_PANEL_H

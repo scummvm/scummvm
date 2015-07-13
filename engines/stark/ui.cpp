@@ -34,7 +34,7 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
 
-#include "engines/stark/ui/dialoginterface.h"
+#include "engines/stark/ui/dialogpanel.h"
 #include "engines/stark/ui/gamewindow.h"
 #include "engines/stark/ui/inventorywindow.h"
 #include "engines/stark/ui/topmenu.h"
@@ -45,7 +45,7 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	_gfx(gfx),
 	_cursor(cursor),
 	_topMenu(nullptr),
-	_dialogInterface(nullptr),
+	_dialogPanel(nullptr),
 	_inventoryWindow(nullptr),
 	_exitGame(false),
 	_fmvPlayer(nullptr),
@@ -58,14 +58,14 @@ UI::~UI() {
 	delete _gameWindow;
 	delete _actionMenu;
 	delete _topMenu;
-	delete _dialogInterface;
+	delete _dialogPanel;
 	delete _inventoryWindow;
 	delete _fmvPlayer;
 }
 
 void UI::init() {
 	_topMenu = new TopMenu(_gfx, _cursor);
-	_dialogInterface = new DialogInterface();
+	_dialogPanel = new DialogPanel();
 	_fmvPlayer = new FMVPlayer();
 	_actionMenu = new ActionMenu(_gfx, _cursor);
 	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
@@ -101,8 +101,8 @@ void UI::update() {
 	}
 
 	Common::Point pos = _cursor->getMousePosition();
-	if (_dialogInterface->containsPoint(pos)) {
-		_dialogInterface->handleMouseOver(pos);
+	if (_dialogPanel->containsPoint(pos)) {
+		_dialogPanel->handleMouseOver(pos);
 		return;
 	}
 }
@@ -116,8 +116,8 @@ void UI::handleClick() {
 	}
 
 	// TODO: Unify with the other windows
-	if (_dialogInterface->containsPoint(_cursor->getMousePosition())) {
-		_dialogInterface->handleClick(_cursor->getMousePosition());
+	if (_dialogPanel->containsPoint(_cursor->getMousePosition())) {
+		_dialogPanel->handleClick(_cursor->getMousePosition());
 		return;
 	}
 }
@@ -132,11 +132,11 @@ void UI::handleRightClick() {
 }
 
 void UI::notifySubtitle(const Common::String &subtitle) {
-	_dialogInterface->notifySubtitle(subtitle);
+	_dialogPanel->notifySubtitle(subtitle);
 }
 
 void UI::notifyDialogOptions(const Common::StringArray &options) {
-	_dialogInterface->notifyDialogOptions(options);
+	_dialogPanel->notifyDialogOptions(options);
 }
 
 void UI::notifyShouldOpenInventory() {
@@ -170,7 +170,7 @@ void UI::render() {
 	_gameWindow->render();
 	_inventoryWindow->render();
 
-	_dialogInterface->render();
+	_dialogPanel->render();
 	_actionMenu->render();
 }
 
