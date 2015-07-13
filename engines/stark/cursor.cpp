@@ -26,11 +26,8 @@
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 #include "engines/stark/visual/image.h"
-#include "engines/stark/resources/object.h"
-#include "engines/stark/resources/pattable.h"
-#include "engines/stark/resources/script.h"
 #include "engines/stark/resources/item.h"
 namespace Stark {
 

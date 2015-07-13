@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_SERVICES_USER_INTERFACE_H
-#define STARK_SERVICES_USER_INTERFACE_H
+#ifndef STARK_SERVICES_GAME_INTERFACE_H
+#define STARK_SERVICES_GAME_INTERFACE_H
 
 #include "engines/stark/gfx/renderentry.h"
 
@@ -48,12 +48,12 @@ class RenderEntry;
 }
 
 /**
- * Facade object for interacting with the game world
+ * Facade object for the user interface to interact with the game world
  */
-class UserInterface {
+class GameInterface {
 public:
-	UserInterface();
-	~UserInterface();
+	GameInterface();
+	~GameInterface();
 
 	/** Skip currently playing speeches */
 	void skipCurrentSpeeches();
@@ -86,4 +86,4 @@ public:
 
 } // End of namespace Stark
 
-#endif // STARK_SERVICES_USER_INTERFACE_H
+#endif // STARK_SERVICES_GAME_INTERFACE_H

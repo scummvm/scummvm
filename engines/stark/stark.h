@@ -45,7 +45,7 @@ class Console;
 class Cursor;
 class DialogPlayer;
 class Global;
-class UserInterface;
+class GameInterface;
 class Scene;
 class StateProvider;
 class StaticProvider;
@@ -79,7 +79,7 @@ private:
 	ArchiveLoader *_archiveLoader;
 	DialogPlayer *_dialogPlayer;
 	Global *_global;
-	UserInterface *_userInterface;
+	GameInterface *_gameInterface;
 	StateProvider *_stateProvider;
 	StaticProvider *_staticProvider;
 	ResourceProvider *_resourceProvider;

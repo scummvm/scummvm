@@ -32,7 +32,7 @@
 #include "engines/stark/services/fmvplayer.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/ui/dialoginterface.h"
 #include "engines/stark/ui/gamewindow.h"

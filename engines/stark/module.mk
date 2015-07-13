@@ -50,12 +50,12 @@ MODULE_OBJS := \
 	services/archiveloader.o \
 	services/dialogplayer.o \
 	services/fmvplayer.o \
+	services/gameinterface.o \
 	services/global.o \
 	services/resourceprovider.o \
 	services/services.o \
 	services/stateprovider.o \
 	services/staticprovider.o \
-	services/userinterface.o \
 	skeleton.o \
 	skeleton_anim.o \
 	stark.o \

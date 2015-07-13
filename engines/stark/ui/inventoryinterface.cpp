@@ -34,7 +34,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/visual/image.h"
 
@@ -109,7 +109,7 @@ void InventoryInterface::onRender() {
 }
 
 void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 
 	*item = nullptr;
 	singlePossibleAction = -1;
@@ -132,14 +132,14 @@ void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisu
 
 	if (selectedInventoryItem == -1) {
 		Resources::ActionArray actionsPossible;
-		actionsPossible = ui->getStockActionsPossibleForObject(*item);
+		actionsPossible = game->getStockActionsPossibleForObject(*item);
 
 		if (actionsPossible.empty()) {
 			// The item can still be taken
 			singlePossibleAction = Resources::PATTable::kActionUse;
 		}
 	} else {
-		if (ui->itemHasAction(*item, selectedInventoryItem)) {
+		if (game->itemHasAction(*item, selectedInventoryItem)) {
 			singlePossibleAction = selectedInventoryItem;
 		}
 	}
@@ -158,14 +158,14 @@ void InventoryInterface::onMouseMove(const Common::Point &pos) {
 			_cursor->setCursorType(Cursor::CursorType::kDefault);
 		}
 	} else {
-		UserInterface *ui = StarkServices::instance().userInterface;
-        VisualImageXMG *cursorImage = ui->getCursorImage(_selectedInventoryItem);
+		GameInterface *game = StarkServices::instance().gameInterface;
+        VisualImageXMG *cursorImage = game->getCursorImage(_selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
 	}
 }
 
 void InventoryInterface::onClick(const Common::Point &pos) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 
 	_actionMenu->close();
 
@@ -180,7 +180,7 @@ void InventoryInterface::onClick(const Common::Point &pos) {
 			if (clickedItemAction == Resources::PATTable::kActionUse) {
 				setSelectedInventoryItem(clickedItem->getIndex());
 			} else {
-				ui->itemDoAction(clickedItem, clickedItemAction);
+				game->itemDoAction(clickedItem, clickedItemAction);
 			}
 		} else {
 			// Multiple actions are possible

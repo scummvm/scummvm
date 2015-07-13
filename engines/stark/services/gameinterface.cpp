@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -47,13 +47,13 @@
 
 namespace Stark {
 
-UserInterface::UserInterface() {
+GameInterface::GameInterface() {
 }
 
-UserInterface::~UserInterface() {
+GameInterface::~GameInterface() {
 }
 
-void UserInterface::skipCurrentSpeeches() {
+void GameInterface::skipCurrentSpeeches() {
 	Global *global = StarkServices::instance().global;
 	Current *current = global->getCurrent();
 
@@ -76,7 +76,7 @@ void UserInterface::skipCurrentSpeeches() {
 	}
 }
 
-void UserInterface::scrollLocation(int32 dX, int32 dY) {
+void GameInterface::scrollLocation(int32 dX, int32 dY) {
 	Global *global = StarkServices::instance().global;
 	Current *current = global->getCurrent();
 
@@ -92,7 +92,7 @@ void UserInterface::scrollLocation(int32 dX, int32 dY) {
 	location->setScrollPosition(scroll);
 }
 
-void UserInterface::walkTo(const Common::Point &mouse) {
+void GameInterface::walkTo(const Common::Point &mouse) {
 	Global *global = StarkServices::instance().global;
 	Scene *scene = StarkServices::instance().scene;
 
@@ -109,7 +109,7 @@ void UserInterface::walkTo(const Common::Point &mouse) {
 	}
 }
 
-VisualImageXMG *UserInterface::getActionImage(uint32 itemIndex, bool active) {
+VisualImageXMG *GameInterface::getActionImage(uint32 itemIndex, bool active) {
 	// Lookup the action's item in the inventory
 	Global *global = StarkServices::instance().global;
 	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
@@ -121,7 +121,7 @@ VisualImageXMG *UserInterface::getActionImage(uint32 itemIndex, bool active) {
 	return visual->get<VisualImageXMG>();
 }
 
-VisualImageXMG *UserInterface::getCursorImage(uint32 itemIndex) {
+VisualImageXMG *GameInterface::getCursorImage(uint32 itemIndex) {
 	// Lookup the item's item in the inventory
 	Global *global = StarkServices::instance().global;
 	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
@@ -133,7 +133,7 @@ VisualImageXMG *UserInterface::getCursorImage(uint32 itemIndex) {
 	return visual->get<VisualImageXMG>();
 }
 
-bool UserInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
+bool GameInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
 	if (action != -1) {
 		return item->canPerformAction(action, 0);
 	} else {
@@ -142,7 +142,7 @@ bool UserInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
 	}
 }
 
-bool UserInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, uint32 action) {
+bool GameInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, uint32 action) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	if (action != -1) {
 		return item->canPerformAction(action, hotspotIndex);
@@ -152,22 +152,22 @@ bool UserInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::P
 	}
 }
 
-int32 UserInterface::itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position) {
+int32 GameInterface::itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	Resources::PATTable *table = item->findChildWithIndex<Resources::PATTable>(hotspotIndex);
 	return table->getDefaultAction();
 }
 
-bool UserInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
+bool GameInterface::itemDoAction(Resources::ItemVisual *item, uint32 action) {
 	return item->doAction(action, 0);
 }
 
-bool UserInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
+bool GameInterface::itemDoActionAt(Resources::ItemVisual *item, uint32 action, const Common::Point &position) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	return item->doAction(action, hotspotIndex);
 }
 
-Common::String UserInterface::getItemTitle(Resources::ItemVisual *item, bool local, const Common::Point &pos) {
+Common::String GameInterface::getItemTitle(Resources::ItemVisual *item, bool local, const Common::Point &pos) {
 	int32 hotspotIndex = 0;
 	if (local) {
 		hotspotIndex = item->getHotspotIndexForPoint(pos);
@@ -176,7 +176,7 @@ Common::String UserInterface::getItemTitle(Resources::ItemVisual *item, bool loc
 	return item->getHotspotTitle(hotspotIndex);
 }
 
-Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::ItemVisual *item) {
+Resources::ActionArray GameInterface::getActionsPossibleForObject(Resources::ItemVisual *item) {
 	if (item == nullptr) {
 		return Resources::ActionArray();
 	}
@@ -185,7 +185,7 @@ Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Ite
 	return table->listPossibleActions();
 }
 
-Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
+Resources::ActionArray GameInterface::getActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
 	if (item == nullptr) {
 		return Resources::ActionArray();
 	}
@@ -200,7 +200,7 @@ Resources::ActionArray UserInterface::getActionsPossibleForObject(Resources::Ite
 	return table->listPossibleActions();
 }
 
-Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item) {
+Resources::ActionArray GameInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item) {
 	Resources::ActionArray actions = getActionsPossibleForObject(item);
 
 	Resources::ActionArray stockActions;
@@ -213,7 +213,7 @@ Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources
 	return stockActions;
 }
 
-Resources::ActionArray UserInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
+Resources::ActionArray GameInterface::getStockActionsPossibleForObject(Resources::ItemVisual *item, const Common::Point &pos) {
 	Resources::ActionArray actions = getActionsPossibleForObject(item, pos);
 
 	Resources::ActionArray stockActions;

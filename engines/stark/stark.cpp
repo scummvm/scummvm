@@ -36,7 +36,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/renderentry.h"
 
@@ -57,7 +57,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_console(nullptr),
 		_cursor(nullptr),
 		_global(nullptr),
-		_userInterface(nullptr),
+		_gameInterface(nullptr),
 		_archiveLoader(nullptr),
 		_stateProvider(nullptr),
 		_staticProvider(nullptr),
@@ -77,7 +77,7 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 StarkEngine::~StarkEngine() {
-	delete _userInterface;
+	delete _gameInterface;
 	delete _cursor;
 	delete _dialogPlayer;
 	delete _randomSource;
@@ -110,7 +110,7 @@ Common::Error StarkEngine::run() {
 	_scene = new Scene(_gfx);
 	_dialogPlayer = new DialogPlayer();
 	_cursor = new Cursor(_gfx);
-	_userInterface = new UserInterface();
+	_gameInterface = new GameInterface();
 	_ui = new UI(_gfx, _cursor);
 
 	// Setup the public services
@@ -123,7 +123,7 @@ Common::Error StarkEngine::run() {
 	services.randomSource = _randomSource;
 	services.scene = _scene;
 	services.staticProvider = _staticProvider;
-	services.userInterface = _userInterface;
+	services.gameInterface = _gameInterface;
 	services.ui = _ui;
 
 	// Load global resources
@@ -167,7 +167,7 @@ void StarkEngine::mainLoop() {
 						_console->onFrame();
 					}
 				} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_userInterface->skipCurrentSpeeches();
+					_gameInterface->skipCurrentSpeeches();
 					// Quick-hack for now.
 					_ui->stopPlayingFMV();
 				} else {
@@ -177,7 +177,7 @@ void StarkEngine::mainLoop() {
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				// Do nothing for now
 			} else if (e.type == Common::EVENT_MOUSEMOVE) {
-				_userInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
+				_gameInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
 				_ui->handleClick();

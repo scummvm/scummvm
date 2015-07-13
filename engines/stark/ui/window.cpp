@@ -29,7 +29,7 @@
 #include "engines/stark/resources/pattable.h"
 
 #include "engines/stark/services/services.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 
 namespace Stark {
  

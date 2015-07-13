@@ -32,7 +32,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/inventoryinterface.h"
@@ -67,7 +67,7 @@ void GameWindow::onRender() {
 }
 
 void GameWindow::onMouseMove(const Common::Point &pos) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 	Global *global = StarkServices::instance().global;
 
 	_renderEntries = global->getCurrent()->getLocation()->listRenderEntries();
@@ -80,7 +80,7 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 	Common::String mouseHint;
 
 	if (selectedInventoryItem != -1) {
-		VisualImageXMG *cursorImage = ui->getCursorImage(selectedInventoryItem);
+		VisualImageXMG *cursorImage = game->getCursorImage(selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
 	} else if (_objectUnderCursor) {
 		switch (singlePossibleAction) {
@@ -97,12 +97,12 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 				_cursor->setCursorType(Cursor::kHand);
 				break;
 			default:
-				VisualImageXMG *cursorImage = ui->getCursorImage(singlePossibleAction);
+				VisualImageXMG *cursorImage = game->getCursorImage(singlePossibleAction);
 				_cursor->setCursorImage(cursorImage);
 				break;
 		}
 
-		mouseHint = ui->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
+		mouseHint = game->getItemTitle(_objectUnderCursor, true, _objectRelativePosition);
 	} else {
 		// Not an object
 		_cursor->setCursorType(Cursor::kDefault);
@@ -111,7 +111,7 @@ void GameWindow::onMouseMove(const Common::Point &pos) {
 }
 
 void GameWindow::onClick(const Common::Point &pos) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 
 	_actionMenu->close();
 
@@ -122,12 +122,12 @@ void GameWindow::onClick(const Common::Point &pos) {
 
 	if (_objectUnderCursor) {
 		if (singlePossibleAction != -1) {
-			ui->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
+			game->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
 		} else if (selectedInventoryItem == -1) {
 			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 		}
 	} else {
-		ui->walkTo(getScreenMousePosition());
+		game->walkTo(getScreenMousePosition());
 	}
 }
 
@@ -142,7 +142,7 @@ void GameWindow::onRightClick(const Common::Point &pos) {
 }
 
 void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 
 	_objectUnderCursor = nullptr;
 	singlePossibleAction = -1;
@@ -156,24 +156,24 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem
 		}
 	}
 
-	if (!_objectUnderCursor || !ui->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, -1)) {
+	if (!_objectUnderCursor || !game->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, -1)) {
 		// Only consider items with runnable scripts
 		_objectUnderCursor = nullptr;
 		return;
 	}
 
-	int32 defaultAction = ui->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
+	int32 defaultAction = game->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
 	if (defaultAction != -1) {
 		// Use the default action if there is one
 		singlePossibleAction = defaultAction;
 	} else if (selectedInventoryItem != -1) {
 		// Use the selected inventory item if there is one
-		if (ui->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedInventoryItem)) {
+		if (game->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedInventoryItem)) {
 			singlePossibleAction = selectedInventoryItem;
 		}
 	} else {
 		// Otherwise, use stock actions
-		Resources::ActionArray actionsPossible = ui->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
+		Resources::ActionArray actionsPossible = game->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
 
 		if (actionsPossible.size() == 1) {
 			singlePossibleAction = actionsPossible[0];

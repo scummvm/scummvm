@@ -42,7 +42,7 @@ class Global;
 class ResourceProvider;
 class StaticProvider;
 class Scene;
-class UserInterface;
+class GameInterface;
 class UI;
 
 /**
@@ -59,7 +59,7 @@ public:
 		randomSource = nullptr;
 		scene = nullptr;
 		staticProvider = nullptr;
-		userInterface = nullptr;
+		gameInterface = nullptr;
 		ui = nullptr;
 	}
 
@@ -71,7 +71,7 @@ public:
 	Common::RandomSource *randomSource;
 	Scene *scene;
 	StaticProvider *staticProvider;
-	UserInterface *userInterface;
+	GameInterface *gameInterface;
 	UI *ui;
 };
 

@@ -33,7 +33,7 @@
 #include "engines/stark/resources/pattable.h"
 
 #include "engines/stark/services/services.h"
-#include "engines/stark/services/userinterface.h"
+#include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/global.h"
 
@@ -66,7 +66,7 @@ ActionMenu::~ActionMenu() {
 }
 
 void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRelativePos) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 
 	_visible = true;
 
@@ -81,9 +81,9 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	Resources::ActionArray possible;
 	if (_fromInventory) {
-		possible = ui->getActionsPossibleForObject(_item);
+		possible = game->getActionsPossibleForObject(_item);
 	} else {
-		possible = ui->getActionsPossibleForObject(_item, _itemRelativePos);
+		possible = game->getActionsPossibleForObject(_item, _itemRelativePos);
 	}
 
 	for (uint i = 0; i < possible.size(); i++) {
@@ -102,7 +102,7 @@ void ActionMenu::close() {
 }
 
 void ActionMenu::onRender() {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 	Common::Point mousePos = getMousePosition();
 
 	_background->render(Common::Point(0, 0), false);
@@ -110,7 +110,7 @@ void ActionMenu::onRender() {
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled) {
 			bool active = _buttons[i].rect.contains(mousePos);
-			VisualImageXMG *visual = ui->getActionImage(_buttons[i].action, active);
+			VisualImageXMG *visual = game->getActionImage(_buttons[i].action, active);
 			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top), false);
 		}
 	}
@@ -147,7 +147,7 @@ void ActionMenu::onMouseMove(const Common::Point &pos) {
 }
 
 void ActionMenu::onClick(const Common::Point &pos) {
-	UserInterface *ui = StarkServices::instance().userInterface;
+	GameInterface *game = StarkServices::instance().gameInterface;
 
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
@@ -156,9 +156,9 @@ void ActionMenu::onClick(const Common::Point &pos) {
 				_inventory->setSelectedInventoryItem(_item->getIndex());
 			} else {
 				if (_fromInventory) {
-					ui->itemDoAction(_item, _buttons[i].action);
+					game->itemDoAction(_item, _buttons[i].action);
 				} else {
-					ui->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
+					game->itemDoActionAt(_item, _buttons[i].action, _itemRelativePos);
 				}
 			}
 
