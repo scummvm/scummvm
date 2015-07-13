@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/stark/actionmenu.h"
+#include "engines/stark/ui/actionmenu.h"
 
 #include "engines/stark/gfx/driver.h"
 

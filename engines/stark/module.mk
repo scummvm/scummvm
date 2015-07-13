@@ -1,7 +1,6 @@
 MODULE := engines/stark
 
 MODULE_OBJS := \
-	actionmenu.o \
 	actor.o \
 	console.o \
 	cursor.o \
@@ -61,6 +60,7 @@ MODULE_OBJS := \
 	skeleton_anim.o \
 	stark.o \
 	ui.o \
+	ui/actionmenu.o \
 	ui/button.o \
 	ui/clicktext.o \
 	ui/dialoginterface.o \

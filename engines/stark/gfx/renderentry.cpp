@@ -120,5 +120,9 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 	return false;
 }
 
+VisualImageXMG *RenderEntry::getImage() const {
+	return _visual->get<VisualImageXMG>();
+}
+
 } // End of namespace Gfx
 } // End of namespace Stark

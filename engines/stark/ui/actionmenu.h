@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ACTIONMENU_H_
-#define ACTIONMENU_H_
+#ifndef STARK_UI_ACTIONMENU_H
+#define STARK_UI_ACTIONMENU_H
 
 #include "engines/stark/gfx/renderentry.h"
 
@@ -82,4 +82,4 @@ private:
 
 } // End of namespace Stark
 
- #endif
+#endif

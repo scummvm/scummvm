@@ -34,7 +34,7 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/userinterface.h"
 
-#include "engines/stark/actionmenu.h"
+#include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/inventoryinterface.h"
 
 namespace Stark {
