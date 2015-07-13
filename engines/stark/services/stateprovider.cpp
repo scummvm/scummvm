@@ -159,7 +159,7 @@ void StateProvider::saveGlobalState(Resources::Level *level) {
 
 void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Object *root, bool current) {
 	// Delete any previous data
-	if (!_stateStore.contains(storeKey)) {
+	if (_stateStore.contains(storeKey)) {
 		delete _stateStore[storeKey];
 		_stateStore.erase(storeKey);
 	}
