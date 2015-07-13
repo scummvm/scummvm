@@ -61,14 +61,14 @@ public:
 	static const Type::ResourceType TYPE = Type::kItem;
 
 	enum SubType {
-		kItemSub1 = 1,
-		kItemSub2 = 2,
-		kItemSub3 = 3,
-		kItemSub5 = 5,
-		kItemSub6 = 6,
-		kItemSub7 = 7,
-		kItemSub8 = 8,
-		kItemSub10 = 10
+		kItemGlobalTemplate = 1,
+		kItemInventory = 2,
+		kItemLevelTemplate = 3,
+		kItemStaticProp = 5,
+		kItemAnimatedProp = 6,
+		kItemBackgroundElement = 7,
+		kItemBackground = 8,
+		kItemMesh = 10
 	};
 
 	/** Item factory */
@@ -150,10 +150,10 @@ protected:
  *
  * Item templates need to be instanciated into renderable items to be displayed
  */
-class ItemSub13 : public Item {
+class ItemTemplate : public Item {
 public:
-	ItemSub13(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub13();
+	ItemTemplate(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ItemTemplate();
 
 	// Resource API
 	void onAllLoaded() override;
@@ -186,7 +186,7 @@ protected:
 	int32 _animHierarchyIndex;
 
 	Item *_instanciatedItem;
-	ItemSub13 *_referencedItem;
+	ItemTemplate *_referencedItem;
 };
 
 /**
@@ -194,12 +194,12 @@ protected:
  *
  * Global item templates are found in the global level
  */
-class ItemSub1 : public ItemSub13 {
+class GlobalItemTemplate : public ItemTemplate {
 public:
-	ItemSub1(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub1();
+	GlobalItemTemplate(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~GlobalItemTemplate();
 
-	// ItemSub13 API
+	// ItemTemplate API
 	BonesMesh *findBonesMesh() override;
 	TextureSet *findTextureSet(uint32 textureType) override;
 	AnimHierarchy *findStockAnimHierarchy() override;
@@ -210,10 +210,10 @@ protected:
 /**
  * An inventory item
  */
-class ItemSub2: public ItemVisual {
+class InventoryItem : public ItemVisual {
 public:
-	ItemSub2(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub2();
+	InventoryItem(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~InventoryItem();
 
 	// Item API
 	Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset) override;
@@ -233,16 +233,16 @@ protected:
  * Level item templates are found in levels so that they can be shared between
  * locations.
  */
-class ItemSub3 : public ItemSub13 {
+class LevelItemTemplate : public ItemTemplate {
 public:
-	ItemSub3(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub3();
+	LevelItemTemplate(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~LevelItemTemplate();
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 
-	// ItemSub13 API
+	// ItemTemplate API
 	BonesMesh *findBonesMesh() override;
 	TextureSet *findTextureSet(uint32 textureType) override;
 	AnimHierarchy *findStockAnimHierarchy() override;
@@ -259,10 +259,10 @@ protected:
  * Items with a 3D position, used in 3D layers. The sort key determines the order
  * in which such items are drawn in.
  */
-class ItemSub5610 : public ItemVisual {
+class FloorPositionedItem : public ItemVisual {
 public:
-	ItemSub5610(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub5610();
+	FloorPositionedItem(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~FloorPositionedItem();
 
 	/** Move the item to a bookmarked position */
 	void placeOnBookmark(Bookmark *target);
@@ -292,10 +292,10 @@ protected:
  *
  * Used to display still images or animated images in 3D layers
  */
-class ItemSub56 : public ItemSub5610 {
+class FloorPositionedImageItem : public FloorPositionedItem {
 public:
-	ItemSub56(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub56();
+	FloorPositionedImageItem(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~FloorPositionedImageItem();
 
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;
@@ -314,10 +314,10 @@ protected:
  *
  * Used to draw characters
  */
-class ItemSub10 : public ItemSub5610 {
+class MeshItem : public FloorPositionedItem {
 public:
-	ItemSub10(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub10();
+	MeshItem(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~MeshItem();
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
@@ -350,7 +350,7 @@ protected:
 	int32 _textureFaceIndex;
 
 	ResourceReference _reference;
-	ItemSub13 *_referencedItem;
+	ItemTemplate *_referencedItem;
 };
 
 /**
@@ -358,10 +358,10 @@ protected:
  *
  * Used to display background elements in 2D layers
  */
-class ItemSub78 : public ItemVisual {
+class ImageItem : public ItemVisual {
 public:
-	ItemSub78(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~ItemSub78();
+	ImageItem(Object *parent, byte subType, uint16 index, const Common::String &name);
+	virtual ~ImageItem();
 
 	// Resource API
 	virtual void readData(Formats::XRCReadStream *stream) override;

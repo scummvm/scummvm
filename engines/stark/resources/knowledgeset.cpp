@@ -41,7 +41,7 @@ void KnowledgeSet::printData() {
 
 Gfx::RenderEntryArray KnowledgeSet::getInventoryRenderEntries() {
 	// TODO: Keep and persist inventory items order
-	Common::Array<Resources::Item *> inventoryItems = listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item *> inventoryItems = listChildren<Resources::Item>(Resources::Item::kItemInventory);
 	Common::Array<Resources::Item *>::iterator it = inventoryItems.begin();
 	Gfx::RenderEntryArray result;
 

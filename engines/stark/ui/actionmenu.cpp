@@ -75,7 +75,7 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	_itemRelativePos = itemRelativePos;
 	_item = item;
-	_fromInventory = item->getSubType() == Resources::Item::kItemSub2;
+	_fromInventory = item->getSubType() == Resources::Item::kItemInventory;
 
 	clearActions();
 

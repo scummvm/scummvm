@@ -74,7 +74,7 @@ void ResourceProvider::initGlobal() {
 	global->onAllLoaded();
 
 	_global->setInventory(global->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory));
-	_global->setApril(global->findChildWithSubtype<Resources::ItemSub1>(Resources::Item::kItemSub1));
+	_global->setApril(global->findChildWithSubtype<Resources::GlobalItemTemplate>(Resources::Item::kItemGlobalTemplate));
 }
 
 Current *ResourceProvider::findLevel(uint16 level) {
@@ -224,7 +224,7 @@ void ResourceProvider::performLocationChange() {
 
 	if (current->getLocation()->has3DLayer()) {
 		// Fetch the scene item for April
-		current->setInteractive(Resources::Object::cast<Resources::ItemSub10>(_global->getApril()->getSceneInstance()));
+		current->setInteractive(Resources::Object::cast<Resources::MeshItem>(_global->getApril()->getSceneInstance()));
 	}
 
 	setAprilInitialPosition();
@@ -263,7 +263,7 @@ void ResourceProvider::setAprilInitialPosition() {
 	}
 
 	Current *current = _global->getCurrent();
-	Resources::ItemSub10 *april = current->getInteractive();
+	Resources::MeshItem *april = current->getInteractive();
 	if (!april) {
 		return; // No character
 	}

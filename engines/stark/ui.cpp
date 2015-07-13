@@ -119,7 +119,7 @@ void UI::notifyDialogOptions(const Common::StringArray &options) {
 }
 
 void UI::notifyShouldOpenInventory() {
-	// Make the inventory update it's contents.
+	// Make the inventory update its contents.
 	_inventoryWindow->open();
 }
 

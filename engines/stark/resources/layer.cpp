@@ -165,7 +165,7 @@ void Layer3D::onAllLoaded() {
 	Layer::onAllLoaded();
 
 	_items = listChildren<Item>();
-	_backgroundItem = findChildWithSubtype<Item>(Item::kItemSub8);
+	_backgroundItem = findChildWithSubtype<Item>(Item::kItemBackground);
 
 	Camera *camera = findChild<Camera>();
 	camera->setClipPlanes(_nearClipPlane, _farClipPlane);
@@ -185,7 +185,7 @@ Gfx::RenderEntryArray Layer3D::listRenderEntries() {
 	for (uint i = 0; i < _items.size(); i++) {
 		Item *item = _items[i];
 
-		if (item->getSubType() != Item::kItemSub8) {
+		if (item->getSubType() != Item::kItemBackground) {
 			Gfx::RenderEntry *renderEntry = item->getRenderEntry(_scroll);
 
 			if (!renderEntry) {

@@ -31,9 +31,8 @@ namespace Stark {
 namespace Resources {
 class Camera;
 class Floor;
-class Item; // TODO: Should be ItemSub2
-class ItemSub1;
-class ItemSub10;
+class GlobalItemTemplate;
+class MeshItem;
 class KnowledgeSet;
 class Level;
 class Location;
@@ -57,18 +56,18 @@ public:
 	Resources::Location *getLocation() const { return _location; }
 	Resources::Floor *getFloor() const { return _floor; }
 	Resources::Camera *getCamera() const { return _camera; }
-	Resources::ItemSub10 *getInteractive() const { return _interactive; }
+	Resources::MeshItem *getInteractive() const { return _interactive; }
 
 	void setLevel(Resources::Level *level) { _level = level; }
 	void setLocation(Resources::Location *location) { _location = location; }
 	void setFloor(Resources::Floor *floor) { _floor = floor; }
 	void setCamera(Resources::Camera *camera) { _camera = camera; }
-	void setInteractive(Resources::ItemSub10 *interactive) { _interactive = interactive; }
+	void setInteractive(Resources::MeshItem *interactive) { _interactive = interactive; }
 
 private:
 	Resources::Level *_level;
 	Resources::Location *_location;
-	Resources::ItemSub10 *_interactive;
+	Resources::MeshItem *_interactive;
 	Resources::Floor *_floor;
 	Resources::Camera *_camera;
 };
@@ -86,7 +85,7 @@ public:
 	bool isDebug() const { return _debug; }
 	bool isFastForward() const { return _fastForward; }
 	uint getMillisecondsPerGameloop() const { return _millisecondsPerGameloop; }
-	Resources::ItemSub1 *getApril() const { return _april; }
+	Resources::GlobalItemTemplate *getApril() const { return _april; }
 	Resources::KnowledgeSet *getInventory() const { return _inventory; }
 
 	void setRoot(Resources::Root *root) { _root = root; }
@@ -95,7 +94,7 @@ public:
 	void setDebug(bool debug) { _debug = debug; }
 	void setFastForward(bool fastForward) { _fastForward = fastForward; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
-	void setApril(Resources::ItemSub1 *april) { _april = april; }
+	void setApril(Resources::GlobalItemTemplate *april) { _april = april; }
 	void setInventory(Resources::KnowledgeSet * inventory) { _inventory = inventory; }
 
 	/** Retrieve the current chapter number from the global resource tree */
@@ -112,7 +111,7 @@ private:
     Resources::Root *_root;
     Resources::Level *_level;
     Resources::KnowledgeSet *_inventory;
-    Resources::ItemSub1 *_april;
+    Resources::GlobalItemTemplate *_april;
     Current *_current;
     bool _debug;
     bool _fastForward;

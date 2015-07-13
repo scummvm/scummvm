@@ -44,20 +44,20 @@ namespace Resources {
 
 Object *Item::construct(Object *parent, byte subType, uint16 index, const Common::String &name) {
 	switch (subType) {
-	case kItemSub1:
-		return new ItemSub1(parent, subType, index, name);
-	case kItemSub2:
-		return new ItemSub2(parent, subType, index, name);
-	case kItemSub3:
-		return new ItemSub3(parent, subType, index, name);
-	case kItemSub5:
-	case kItemSub6:
-		return new ItemSub56(parent, subType, index, name);
-	case kItemSub7:
-	case kItemSub8:
-		return new ItemSub78(parent, subType, index, name);
-	case kItemSub10:
-		return new ItemSub10(parent, subType, index, name);
+	case kItemGlobalTemplate:
+		return new GlobalItemTemplate(parent, subType, index, name);
+	case kItemInventory:
+		return new InventoryItem(parent, subType, index, name);
+	case kItemLevelTemplate:
+		return new LevelItemTemplate(parent, subType, index, name);
+	case kItemStaticProp:
+	case kItemAnimatedProp:
+		return new FloorPositionedImageItem(parent, subType, index, name);
+	case kItemBackgroundElement:
+	case kItemBackground:
+		return new ImageItem(parent, subType, index, name);
+	case kItemMesh:
+		return new MeshItem(parent, subType, index, name);
 	default:
 		error("Unknown item subtype %d", subType);
 	}
@@ -132,7 +132,7 @@ void ItemVisual::onAllLoaded() {
 
 	_renderEntry->setClickable(_clickable);
 
-	if (_subType != kItemSub10) {
+	if (_subType != kItemMesh) {
 		setAnimKind(Anim::kActionUsagePassive);
 	}
 
@@ -212,10 +212,10 @@ Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
 	}
 }
 
-ItemSub13::~ItemSub13() {
+ItemTemplate::~ItemTemplate() {
 }
 
-ItemSub13::ItemSub13(Object *parent, byte subType, uint16 index, const Common::String &name) :
+ItemTemplate::ItemTemplate(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Item(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
@@ -225,7 +225,7 @@ ItemSub13::ItemSub13(Object *parent, byte subType, uint16 index, const Common::S
 		_instanciatedItem(nullptr) {
 }
 
-void ItemSub13::onAllLoaded() {
+void ItemTemplate::onAllLoaded() {
 	Item::onAllLoaded();
 
 	BonesMesh *bonesMesh = findChild<BonesMesh>(false);
@@ -244,11 +244,11 @@ void ItemSub13::onAllLoaded() {
 	}
 }
 
-void ItemSub13::setInstanciatedItem(Item *instance) {
+void ItemTemplate::setInstanciatedItem(Item *instance) {
 	_instanciatedItem = instance;
 }
 
-Item *ItemSub13::getSceneInstance() {
+Item *ItemTemplate::getSceneInstance() {
 	if (_instanciatedItem) {
 		return _instanciatedItem->getSceneInstance();
 	}
@@ -256,11 +256,11 @@ Item *ItemSub13::getSceneInstance() {
 	return nullptr;
 }
 
-void ItemSub13::setBonesMesh(int32 index) {
+void ItemTemplate::setBonesMesh(int32 index) {
 	_meshIndex = index;
 }
 
-void ItemSub13::setTexture(int32 index, uint32 textureType) {
+void ItemTemplate::setTexture(int32 index, uint32 textureType) {
 	if (textureType == TextureSet::kTextureNormal) {
 		_textureNormalIndex = index;
 	} else if (textureType == TextureSet::kTextureFace) {
@@ -270,19 +270,19 @@ void ItemSub13::setTexture(int32 index, uint32 textureType) {
 	}
 
 	// Reset the animation to apply the changes
-	ItemSub10 *sceneInstance = Resources::Object::cast<Resources::ItemSub10>(getSceneInstance());
+	MeshItem *sceneInstance = Resources::Object::cast<Resources::MeshItem>(getSceneInstance());
 	sceneInstance->updateAnim();
 }
 
-ItemSub1::~ItemSub1() {
+GlobalItemTemplate::~GlobalItemTemplate() {
 }
 
-ItemSub1::ItemSub1(Object *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemSub13(parent, subType, index, name) {
+GlobalItemTemplate::GlobalItemTemplate(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		ItemTemplate(parent, subType, index, name) {
 	_animHierarchyIndex = 0;
 }
 
-BonesMesh *ItemSub1::findBonesMesh() {
+BonesMesh *GlobalItemTemplate::findBonesMesh() {
 	if (_meshIndex == -1) {
 		return nullptr;
 	} else {
@@ -290,7 +290,7 @@ BonesMesh *ItemSub1::findBonesMesh() {
 	}
 }
 
-TextureSet *ItemSub1::findTextureSet(uint32 textureType) {
+TextureSet *GlobalItemTemplate::findTextureSet(uint32 textureType) {
 	if (textureType == TextureSet::kTextureNormal) {
 		if (_textureNormalIndex == -1) {
 			return nullptr;
@@ -308,7 +308,7 @@ TextureSet *ItemSub1::findTextureSet(uint32 textureType) {
 	}
 }
 
-AnimHierarchy *ItemSub1::findStockAnimHierarchy() {
+AnimHierarchy *GlobalItemTemplate::findStockAnimHierarchy() {
 	if (_animHierarchyIndex == -1) {
 		return nullptr;
 	} else {
@@ -316,14 +316,14 @@ AnimHierarchy *ItemSub1::findStockAnimHierarchy() {
 	}
 }
 
-ItemSub2::~ItemSub2() {
+InventoryItem::~InventoryItem() {
 }
 
-ItemSub2::ItemSub2(Object *parent, byte subType, uint16 index, const Common::String &name) :
+InventoryItem::InventoryItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name) {
 }
 
-Gfx::RenderEntry *ItemSub2::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *InventoryItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		setAnimKind(Anim::kUIUsageInventory);
 
@@ -338,7 +338,7 @@ Gfx::RenderEntry *ItemSub2::getRenderEntry(const Common::Point &positionOffset) 
 	return _renderEntry;
 }
 
-Visual *ItemSub2::getActionVisual(bool active) const {
+Visual *InventoryItem::getActionVisual(bool active) const {
 	if (active) {
 		return _animHierarchy->getVisualForUsage(Anim::kActionUsageActive);
 	} else {
@@ -346,7 +346,7 @@ Visual *ItemSub2::getActionVisual(bool active) const {
 	}
 }
 
-Visual *ItemSub2::getCursorVisual() const {
+Visual *InventoryItem::getCursorVisual() const {
 	Visual *visual = _animHierarchy->getVisualForUsage(Anim::kUIUsageUseCursorPassive);
 
 	if (!visual) {
@@ -361,29 +361,29 @@ Visual *ItemSub2::getCursorVisual() const {
 }
 
 
-ItemSub3::~ItemSub3() {
+LevelItemTemplate::~LevelItemTemplate() {
 }
 
-ItemSub3::ItemSub3(Object *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemSub13(parent, subType, index, name) {
+LevelItemTemplate::LevelItemTemplate(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		ItemTemplate(parent, subType, index, name) {
 }
 
-void ItemSub3::readData(Formats::XRCReadStream *stream) {
-	ItemSub13::readData(stream);
+void LevelItemTemplate::readData(Formats::XRCReadStream *stream) {
+	ItemTemplate::readData(stream);
 
 	_reference = stream->readResourceReference();
 }
 
-void ItemSub3::onAllLoaded() {
-	ItemSub13::onAllLoaded();
+void LevelItemTemplate::onAllLoaded() {
+	ItemTemplate::onAllLoaded();
 
-	_referencedItem = _reference.resolve<ItemSub13>();
+	_referencedItem = _reference.resolve<ItemTemplate>();
 	if (_referencedItem) {
 		_referencedItem->setInstanciatedItem(this);
 	}
 }
 
-BonesMesh *ItemSub3::findBonesMesh() {
+BonesMesh *LevelItemTemplate::findBonesMesh() {
 	if (_meshIndex == -1) {
 		return _referencedItem->findBonesMesh();
 	} else {
@@ -391,7 +391,7 @@ BonesMesh *ItemSub3::findBonesMesh() {
 	}
 }
 
-TextureSet *ItemSub3::findTextureSet(uint32 textureType) {
+TextureSet *LevelItemTemplate::findTextureSet(uint32 textureType) {
 	if (textureType == TextureSet::kTextureNormal) {
 		if (_textureNormalIndex == -1) {
 			return _referencedItem->findTextureSet(textureType);
@@ -409,7 +409,7 @@ TextureSet *ItemSub3::findTextureSet(uint32 textureType) {
 	}
 }
 
-AnimHierarchy *ItemSub3::findStockAnimHierarchy() {
+AnimHierarchy *LevelItemTemplate::findStockAnimHierarchy() {
 	if (_animHierarchyIndex == -1 && !_referencedItem) {
 		_animHierarchyIndex = 0; // Prefer referenced anim to local
 	}
@@ -421,34 +421,34 @@ AnimHierarchy *ItemSub3::findStockAnimHierarchy() {
 	}
 }
 
-void ItemSub3::printData() {
-	ItemSub13::printData();
+void LevelItemTemplate::printData() {
+	ItemTemplate::printData();
 
 	debug("reference: %s", _reference.describe().c_str());
 }
 
-ItemSub5610::~ItemSub5610() {
+FloorPositionedItem::~FloorPositionedItem() {
 }
 
-ItemSub5610::ItemSub5610(Object *parent, byte subType, uint16 index, const Common::String &name) :
+FloorPositionedItem::FloorPositionedItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name),
 		_direction3D(0.0),
 		_floorFaceIndex(-1) {
 }
 
-void ItemSub5610::setPosition3D(const Math::Vector3d &position) {
+void FloorPositionedItem::setPosition3D(const Math::Vector3d &position) {
 	_position3D = position;
 }
 
-int32 ItemSub5610::getFloorFaceIndex() const {
+int32 FloorPositionedItem::getFloorFaceIndex() const {
 	return _floorFaceIndex;
 }
 
-void ItemSub5610::setFloorFaceIndex(int32 faceIndex) {
+void FloorPositionedItem::setFloorFaceIndex(int32 faceIndex) {
 	_floorFaceIndex = faceIndex;
 }
 
-void ItemSub5610::placeOnBookmark(Bookmark *target) {
+void FloorPositionedItem::placeOnBookmark(Bookmark *target) {
 	Global *global = StarkServices::instance().global;
 	Floor *floor = global->getCurrent()->getFloor();
 
@@ -465,11 +465,11 @@ void ItemSub5610::placeOnBookmark(Bookmark *target) {
 	}
 }
 
-void ItemSub5610::setDirection(uint direction) {
+void FloorPositionedItem::setDirection(uint direction) {
 	_direction3D = direction;
 }
 
-float ItemSub5610::getSortKey() const {
+float FloorPositionedItem::getSortKey() const {
 	Global *global = StarkServices::instance().global;
 	Floor *floor = global->getCurrent()->getFloor();
 
@@ -481,21 +481,21 @@ float ItemSub5610::getSortKey() const {
 	return floor->getDistanceFromCamera(_floorFaceIndex);
 }
 
-ItemSub56::~ItemSub56() {
+FloorPositionedImageItem::~FloorPositionedImageItem() {
 }
 
-ItemSub56::ItemSub56(Object *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemSub5610(parent, subType, index, name) {
+FloorPositionedImageItem::FloorPositionedImageItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		FloorPositionedItem(parent, subType, index, name) {
 }
 
-void ItemSub56::readData(Formats::XRCReadStream *stream) {
-	ItemSub5610::readData(stream);
+void FloorPositionedImageItem::readData(Formats::XRCReadStream *stream) {
+	FloorPositionedItem::readData(stream);
 
 	setFloorFaceIndex(stream->readSint32LE());
 	_position = stream->readPoint();
 }
 
-Gfx::RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *FloorPositionedImageItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
@@ -509,28 +509,28 @@ Gfx::RenderEntry *ItemSub56::getRenderEntry(const Common::Point &positionOffset)
 	return _renderEntry;
 }
 
-void ItemSub56::printData() {
-	ItemSub5610::printData();
+void FloorPositionedImageItem::printData() {
+	FloorPositionedItem::printData();
 
 	debug("floorFaceIndex: %d", _floorFaceIndex);
 	debug("position: x %d, y %d", _position.x, _position.y);
 }
 
-ItemSub78::~ItemSub78() {
+ImageItem::~ImageItem() {
 }
 
-ItemSub78::ItemSub78(Object *parent, byte subType, uint16 index, const Common::String &name) :
+ImageItem::ImageItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		ItemVisual(parent, subType, index, name) {
 }
 
-void ItemSub78::readData(Formats::XRCReadStream *stream) {
+void ImageItem::readData(Formats::XRCReadStream *stream) {
 	ItemVisual::readData(stream);
 
 	_position = stream->readPoint();
 	_reference = stream->readResourceReference();
 }
 
-Gfx::RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *ImageItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
@@ -543,32 +543,32 @@ Gfx::RenderEntry *ItemSub78::getRenderEntry(const Common::Point &positionOffset)
 	return _renderEntry;
 }
 
-void ItemSub78::printData() {
+void ImageItem::printData() {
 	ItemVisual::printData();
 
 	debug("reference: %s", _reference.describe().c_str());
 	debug("position: x %d, y %d", _position.x, _position.y);
 }
 
-ItemSub10::~ItemSub10() {
+MeshItem::~MeshItem() {
 }
 
-ItemSub10::ItemSub10(Object *parent, byte subType, uint16 index, const Common::String &name) :
-		ItemSub5610(parent, subType, index, name),
+MeshItem::MeshItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
+		FloorPositionedItem(parent, subType, index, name),
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
 		_textureFaceIndex(-1),
 		_referencedItem(nullptr) {
 }
 
-void ItemSub10::readData(Formats::XRCReadStream *stream) {
-	ItemSub5610::readData(stream);
+void MeshItem::readData(Formats::XRCReadStream *stream) {
+	FloorPositionedItem::readData(stream);
 
 	_reference = stream->readResourceReference();
 }
 
-void ItemSub10::onAllLoaded() {
-	ItemSub5610::onAllLoaded();
+void MeshItem::onAllLoaded() {
+	FloorPositionedItem::onAllLoaded();
 
 	BonesMesh *bonesMesh = findChild<BonesMesh>();
 	if (bonesMesh) {
@@ -585,14 +585,14 @@ void ItemSub10::onAllLoaded() {
 		_textureFaceIndex = textureFace->getIndex();
 	}
 
-	_referencedItem = _reference.resolve<ItemSub13>();
+	_referencedItem = _reference.resolve<ItemTemplate>();
 	if (_referencedItem) {
 		_referencedItem->setInstanciatedItem(this);
 	}
 }
 
-void ItemSub10::onEnterLocation() {
-	ItemSub5610::onEnterLocation();
+void MeshItem::onEnterLocation() {
+	FloorPositionedItem::onEnterLocation();
 
 	if (_referencedItem) {
 		_animHierarchy = _referencedItem->findStockAnimHierarchy();
@@ -601,7 +601,7 @@ void ItemSub10::onEnterLocation() {
 	setAnimKind(Anim::kActorUsageIdle);
 }
 
-void ItemSub10::setBonesMesh(int32 index) {
+void MeshItem::setBonesMesh(int32 index) {
 	_meshIndex = index;
 
 	if (_meshIndex != -1) {
@@ -609,7 +609,7 @@ void ItemSub10::setBonesMesh(int32 index) {
 	}
 }
 
-BonesMesh *ItemSub10::findBonesMesh() {
+BonesMesh *MeshItem::findBonesMesh() {
 	// Prefer retrieving the mesh from the anim hierarchy
 	BonesMesh *bonesMesh = _animHierarchy->findBonesMesh();
 
@@ -625,7 +625,7 @@ BonesMesh *ItemSub10::findBonesMesh() {
 	return bonesMesh;
 }
 
-void ItemSub10::setTexture(int32 index, uint32 textureType) {
+void MeshItem::setTexture(int32 index, uint32 textureType) {
 	if (textureType == TextureSet::kTextureNormal) {
 		_textureNormalIndex = index;
 	} else if (textureType == TextureSet::kTextureFace) {
@@ -635,7 +635,7 @@ void ItemSub10::setTexture(int32 index, uint32 textureType) {
 	}
 }
 
-TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
+TextureSet *MeshItem::findTextureSet(uint32 textureType) {
 	// Prefer retrieving the mesh from the anim hierarchy
 	TextureSet *textureSet = _animHierarchy->findTextureSet(textureType);
 
@@ -661,7 +661,7 @@ TextureSet *ItemSub10::findTextureSet(uint32 textureType) {
 	return textureSet;
 }
 
-void ItemSub10::updateAnim() {
+void MeshItem::updateAnim() {
 	Anim *anim = getAnim();
 	if (anim && anim->getSubType() == Anim::kAnimSkeleton) {
 		anim->removeFromItem(this);
@@ -669,7 +669,7 @@ void ItemSub10::updateAnim() {
 	}
 }
 
-Gfx::RenderEntry *ItemSub10::getRenderEntry(const Common::Point &positionOffset) {
+Gfx::RenderEntry *MeshItem::getRenderEntry(const Common::Point &positionOffset) {
 	if (_enabled) {
 		Visual *visual = getVisual();
 
@@ -688,8 +688,8 @@ Gfx::RenderEntry *ItemSub10::getRenderEntry(const Common::Point &positionOffset)
 	return _renderEntry;
 }
 
-void ItemSub10::printData() {
-	ItemSub5610::printData();
+void MeshItem::printData() {
+	FloorPositionedItem::printData();
 
 	debug("reference: %s", _reference.describe().c_str());
 }

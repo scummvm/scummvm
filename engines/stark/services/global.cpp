@@ -53,7 +53,7 @@ void Global::setCurrentChapter(int32 value) {
 }
 
 void Global::printInventory(bool printAll) {
-	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
 	Common::Array<Resources::Item*>::iterator it = inventoryItems.begin();
 	for (int i = 0; it != inventoryItems.end(); ++it, i++) {
 		if (printAll || (*it)->isEnabled()) {
@@ -63,7 +63,7 @@ void Global::printInventory(bool printAll) {
 }
 
 void Global::enableInventoryItem(int32 num) {
-	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemSub2);
+	Common::Array<Resources::Item*> inventoryItems = _inventory->listChildren<Resources::Item>(Resources::Item::kItemInventory);
 	inventoryItems[num]->setEnabled(true);
 }
 

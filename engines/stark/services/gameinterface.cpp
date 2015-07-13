@@ -94,7 +94,7 @@ void GameInterface::walkTo(const Common::Point &mouse) {
 	Scene *scene = StarkServices::instance().scene;
 
 	Resources::Floor *floor = global->getCurrent()->getFloor();
-	Resources::ItemSub10 *april = global->getCurrent()->getInteractive();
+	Resources::MeshItem *april = global->getCurrent()->getInteractive();
 
 	Math::Vector3d origin, direction, intersection;
 	scene->makeRayFromMouse(mouse, origin, direction);
@@ -112,7 +112,7 @@ VisualImageXMG *GameInterface::getActionImage(uint32 itemIndex, bool active) {
 	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
 
 	// Get the visual for the action
-	Resources::ItemSub2 *action = inventory->findChildWithIndex<Resources::ItemSub2>(itemIndex);
+	Resources::InventoryItem *action = inventory->findChildWithIndex<Resources::InventoryItem>(itemIndex);
 	Visual *visual = action->getActionVisual(active);
 
 	return visual->get<VisualImageXMG>();
@@ -124,7 +124,7 @@ VisualImageXMG *GameInterface::getCursorImage(uint32 itemIndex) {
 	Resources::KnowledgeSet *inventory = global->getLevel()->findChildWithSubtype<Resources::KnowledgeSet>(Resources::KnowledgeSet::kInventory, true);
 
 	// Get the visual for the item
-	Resources::ItemSub2 *item = inventory->findChildWithIndex<Resources::ItemSub2>(itemIndex);
+	Resources::InventoryItem *item = inventory->findChildWithIndex<Resources::InventoryItem>(itemIndex);
 	Visual *visual = item->getCursorVisual();
 
 	return visual->get<VisualImageXMG>();

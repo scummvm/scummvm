@@ -278,7 +278,7 @@ Command *Command::opFadeScene(int32 unknown1, int32 unknown2, int32 unknown3) {
 }
 
 Command *Command::opItem3DPlaceOn(const ResourceReference &itemRef, const ResourceReference &targetRef) {
-	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 	Object *target = targetRef.resolve<Object>();
 
 	switch (target->getType().get()) {
@@ -503,7 +503,7 @@ Command *Command::opItem3DRunTo(const ResourceReference &itemRef, const Resource
 }
 
 Command *Command::opItemPlaceDirection(const ResourceReference &itemRef, int32 direction) {
-	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 
 	item->setDirection(abs(direction) % 360);
 
@@ -514,15 +514,15 @@ Command *Command::opActivateTexture(const ResourceReference &textureRef) {
 	TextureSet *texture = textureRef.resolve<TextureSet>();
 	Item *item = texture->findParent<Item>();
 
-	if (!item || (item->getSubType() != Item::kItemSub1 && item->getSubType() != Item::kItemSub3 && item->getSubType() != Item::kItemSub10)) {
+	if (!item || (item->getSubType() != Item::kItemGlobalTemplate && item->getSubType() != Item::kItemLevelTemplate && item->getSubType() != Item::kItemMesh)) {
 		return nextCommand();
 	}
 
-	if (item->getSubType() == Item::kItemSub10) {
-		ItemSub10 *item10 = Object::cast<ItemSub10>(item);
+	if (item->getSubType() == Item::kItemMesh) {
+		MeshItem *item10 = Object::cast<MeshItem>(item);
 		item10->setTexture(texture->getIndex(), texture->getSubType());
 	} else {
-		ItemSub13 *item13 = Object::cast<ItemSub13>(item);
+		ItemTemplate *item13 = Object::cast<ItemTemplate>(item);
 		item13->setTexture(texture->getIndex(), texture->getSubType());
 	}
 
@@ -533,15 +533,15 @@ Command *Command::opActivateMesh(const ResourceReference &meshRef) {
 	BonesMesh *mesh = meshRef.resolve<BonesMesh>();
 	Item *item = mesh->findParent<Item>();
 
-	if (!item || (item->getSubType() != Item::kItemSub1 && item->getSubType() != Item::kItemSub3 && item->getSubType() != Item::kItemSub10)) {
+	if (!item || (item->getSubType() != Item::kItemGlobalTemplate && item->getSubType() != Item::kItemLevelTemplate && item->getSubType() != Item::kItemMesh)) {
 		return nextCommand();
 	}
 
-	if (item->getSubType() == Item::kItemSub10) {
-		ItemSub10 *item10 = Object::cast<ItemSub10>(item);
+	if (item->getSubType() == Item::kItemMesh) {
+		MeshItem *item10 = Object::cast<MeshItem>(item);
 		item10->setBonesMesh(mesh->getIndex());
 	} else {
-		ItemSub13 *item13 = Object::cast<ItemSub13>(item);
+		ItemTemplate *item13 = Object::cast<ItemTemplate>(item);
 		item13->setBonesMesh(mesh->getIndex());
 	}
 
@@ -574,7 +574,7 @@ Command *Command::opSpeakWithoutTalking(Script *script, const ResourceReference 
 }
 
 Command *Command::opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef) {
-	ItemSub5610 *item = itemRef.resolve<ItemSub5610>();
+	FloorPositionedItem *item = itemRef.resolve<FloorPositionedItem>();
 	FloorField *floorField = floorFieldRef.resolve<FloorField>();
 
 	int32 itemFaceIndex = item->getFloorFaceIndex();

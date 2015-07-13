@@ -275,7 +275,7 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 void AnimSkeleton::applyToItem(Item *item) {
 	Anim::applyToItem(item);
 
-	ItemSub10 *actor = Object::cast<ItemSub10>(item);
+	MeshItem *actor = Object::cast<MeshItem>(item);
 
 	BonesMesh *mesh = actor->findBonesMesh();
 	TextureSet *texture = actor->findTextureSet(TextureSet::kTextureNormal);
