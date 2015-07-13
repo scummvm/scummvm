@@ -130,7 +130,7 @@ VisualImageXMG *GameInterface::getCursorImage(uint32 itemIndex) {
 	return visual->get<VisualImageXMG>();
 }
 
-bool GameInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
+bool GameInterface::itemHasAction(Resources::ItemVisual *item, int32 action) {
 	if (action != -1) {
 		return item->canPerformAction(action, 0);
 	} else {
@@ -139,7 +139,7 @@ bool GameInterface::itemHasAction(Resources::ItemVisual *item, uint32 action) {
 	}
 }
 
-bool GameInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, uint32 action) {
+bool GameInterface::itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, int32 action) {
 	int32 hotspotIndex = item->getHotspotIndexForPoint(position);
 	if (action != -1) {
 		return item->canPerformAction(action, hotspotIndex);

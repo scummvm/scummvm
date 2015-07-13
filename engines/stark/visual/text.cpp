@@ -73,14 +73,14 @@ void VisualText::createTexture() {
 
 	int height = font->getFontHeight();
 	int width = 0;
-	for (int i = 0; i < lines.size(); i++) {
+	for (uint i = 0; i < lines.size(); i++) {
 		width = MAX(width, font->getStringWidth(lines[i]));
 	}
 
 	Graphics::Surface surface;
 	surface.create(width, height*lines.size(), _gfx->getScreenFormat());
 
-	for (int i = 0; i < lines.size(); i++) {
+	for (uint i = 0; i < lines.size(); i++) {
 		font->drawString(&surface, lines[i], 0, height*i, 580, _color);
 	}
 	_texture = _gfx->createTexture(&surface);

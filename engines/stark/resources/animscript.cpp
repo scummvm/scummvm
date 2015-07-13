@@ -110,7 +110,7 @@ void AnimScript::onGameLoop() {
 	_msecsToNextUpdate -= global->getMillisecondsPerGameloop();
 }
 
-void AnimScript::setCurrentIndex(int32 index) {
+void AnimScript::setCurrentIndex(uint32 index) {
 	assert(index < _items.size());
 	_nextItemIndex = index;
 }

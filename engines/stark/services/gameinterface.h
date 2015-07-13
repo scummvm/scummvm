@@ -67,8 +67,8 @@ public:
 	VisualImageXMG *getActionImage(uint32 itemIndex, bool active);
 	VisualImageXMG *getCursorImage(uint32 itemIndex);
 
-	bool itemHasAction(Resources::ItemVisual *item, uint32 action);
-	bool itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, uint32 action);
+	bool itemHasAction(Resources::ItemVisual *item, int32 action);
+	bool itemHasActionAt(Resources::ItemVisual *item, const Common::Point &position, int32 action);
 
 	int32 itemGetDefaultActionAt(Resources::ItemVisual *item, const Common::Point &position);
 
