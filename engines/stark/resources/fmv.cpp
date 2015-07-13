@@ -31,17 +31,22 @@ FMV::~FMV() {
 }
 
 FMV::FMV(Object *parent, byte subType, uint16 index, const Common::String &name) :
-				Object(parent, subType, index, name) {
+		Object(parent, subType, index, name),
+		_diaryAddEntryOnPlay(true),
+		_gameDisc(1) {
 	_type = TYPE;
 }
 
 void FMV::readData(Formats::XRCReadStream *stream) {
-	_filename = stream->readString(); // TODO more
+	_filename = stream->readString();
+	_diaryAddEntryOnPlay = stream->readBool();
+	_gameDisc = stream->readUint32LE();
 }
 
 void FMV::printData() {
 	debug("filename: %s", _filename.c_str());
-	// TODO rest
+	debug("diaryAddEntryOnPlay: %d", _diaryAddEntryOnPlay);
+	debug("gameDisc: %d", _gameDisc);
 }
 
 } // End of namespace Resources

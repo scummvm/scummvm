@@ -47,7 +47,10 @@ public:
 	Common::String getFilename() const { return _filename; }
 protected:
 	void printData() override;
+
 	Common::String _filename;
+	uint32 _diaryAddEntryOnPlay;
+	uint32 _gameDisc;
 };
 
 } // End of namespace Resources
