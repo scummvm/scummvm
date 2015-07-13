@@ -1049,23 +1049,23 @@ void TattooPerson::walkHolmesToNPC() {
 
 	// See where Holmes is with respect to the NPC (x coords)
 	if (holmes._position.x < _position.x) {
-		_walkDest.x = MAX(_position.x / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal), 0);
+		holmes._walkDest.x = MAX(_position.x / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal), 0);
 	} else {
-		_walkDest.x = MIN(_position.x / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) * 2,
+		holmes._walkDest.x = MIN(_position.x / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) * 2,
 			screen._backBuffer1.w() - 1);
 	}
 
 	// See where Holmes is with respect to the NPC (y coords)
 	if (holmes._position.y < (_position.y - imgFrame.sDrawXSize(scaleVal) * 500)) {
-		_walkDest.y = MAX(_position.y / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal) / 2, 0);
+		holmes._walkDest.y = MAX(_position.y / FIXED_INT_MULTIPLIER - imgFrame.sDrawXSize(scaleVal) / 2, 0);
 	} else {
 		if (holmes._position.y > (_position.y + imgFrame.sDrawXSize(scaleVal) * 500)) {
 			// Holmes is below the NPC
-			_walkDest.y = MIN(_position.y / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) / 2,
+			holmes._walkDest.y = MIN(_position.y / FIXED_INT_MULTIPLIER + imgFrame.sDrawXSize(scaleVal) / 2,
 				SHERLOCK_SCREEN_HEIGHT - 1);
 		} else {
 			// Holmes is roughly on the same Y as the NPC
-			_walkDest.y = _position.y / FIXED_INT_MULTIPLIER;
+			holmes._walkDest.y = _position.y / FIXED_INT_MULTIPLIER;
 		}
 	}
 
