@@ -128,17 +128,11 @@ void Darts::playDarts(GameType gameType) {
 			} else {
 				// check for cricket game over
 				bool allClosed = true;
-				bool otherAllClosed = true;
 				int nOtherScore;
 
 				for (int y = 0; y < 7; y++) {
 					if (_cricketScore[playerNum][y] < 3)
 						allClosed = false;
-				}
-
-				for (int y = 0; y < 7; ++y) {
-					if (_cricketScore[playerNum ^ 1][y] < 3)
-						otherAllClosed = false;
 				}
 
 				if (allClosed) {
@@ -879,8 +873,8 @@ int Darts::throwDart(int dartNum, int computer) {
 	drawDartsLeft(dartNum, computer);
 
 	if (!computer) {
-		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, FIXED(HitAKey));
-		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0, FIXED(ToStart));
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing), 0, "%s", FIXED(HitAKey));
+		screen.print(Common::Point(_dartInfo.left, _dartInfo.top + _spacing * 2), 0, "%s", FIXED(ToStart));
 	}
 
 	if (!computer) {
@@ -938,13 +932,13 @@ void Darts::doCricketScoreHits(int player, int scoreIndex, int numHits) {
 	}
 }
 
-void Darts::updateCricketScore(int player, int dartHit, int multiplier) {
-	if (dartHit < 15)
+void Darts::updateCricketScore(int player, int dartVal, int multiplier) {
+	if (dartVal < 15)
 		return;
 
-	if (dartHit <= 20)
-		doCricketScoreHits(player, 20 - dartHit, multiplier);
-	else if (dartHit == 25)
+	if (dartVal <= 20)
+		doCricketScoreHits(player, 20 - dartVal, multiplier);
+	else if (dartVal == 25)
 		doCricketScoreHits(player, 6, multiplier);
 }
 

@@ -150,7 +150,7 @@ private:
 	/**
 	 * Updates the score based upon what the dart hit
 	 */
-	void updateCricketScore(int player, int dartHit, int multiplier);
+	void updateCricketScore(int player, int dartVal, int multiplier);
 
 	/**
 	 * Draw the darts left

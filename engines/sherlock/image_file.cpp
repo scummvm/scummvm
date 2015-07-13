@@ -729,6 +729,9 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			push_back(imageFrame);
 		}
 	}
+
+	// Suppress compiler warning
+	warning("ccbPPMP0 = %d, ccbPPMP1 = %d", ccbPPMP0, ccbPPMP1);
 }
 
 static uint16 imagefile3DO_cel_bitsMask[17] = {
