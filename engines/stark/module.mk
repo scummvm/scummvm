@@ -49,7 +49,6 @@ MODULE_OBJS := \
 	scene.o \
 	services/archiveloader.o \
 	services/dialogplayer.o \
-	services/fmvplayer.o \
 	services/gameinterface.o \
 	services/global.o \
 	services/resourceprovider.o \
@@ -64,6 +63,7 @@ MODULE_OBJS := \
 	ui/button.o \
 	ui/clicktext.o \
 	ui/dialogpanel.o \
+	ui/fmvplayer.o \
 	ui/gamewindow.o \
 	ui/inventorywindow.o \
 	ui/topmenu.o \

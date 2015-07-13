@@ -29,12 +29,12 @@
 
 #include "engines/stark/gfx/driver.h"
 
-#include "engines/stark/services/fmvplayer.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
 
 #include "engines/stark/ui/dialogpanel.h"
+#include "engines/stark/ui/fmvplayer.h"
 #include "engines/stark/ui/gamewindow.h"
 #include "engines/stark/ui/inventorywindow.h"
 #include "engines/stark/ui/topmenu.h"

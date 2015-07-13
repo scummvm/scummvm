@@ -22,7 +22,7 @@
 
 #include "common/rect.h"
 
-#include "engines/stark/services/fmvplayer.h"
+#include "engines/stark/ui/fmvplayer.h"
 
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
@@ -73,10 +73,7 @@ void FMVPlayer::render() {
 }
 
 bool FMVPlayer::isPlaying() {
-	if (_decoder->isPlaying() && !_decoder->endOfVideo()) {
-		return true;
-	}
-	return false;
+	return _decoder->isPlaying() && !_decoder->endOfVideo();
 }
 
 void FMVPlayer::stop() {
