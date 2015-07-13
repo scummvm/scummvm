@@ -56,6 +56,8 @@ TopMenu::~TopMenu() {
 }
 
 void TopMenu::onRender() {
+	_widgetsVisible = isMouseInside();
+
 	if (!_widgetsVisible) {
 		return;
 	}
@@ -66,8 +68,6 @@ void TopMenu::onRender() {
 }
 
 void TopMenu::onMouseMove(const Common::Point &pos) {
-	_widgetsVisible = isMouseInside();
-
 	if (_widgetsVisible) {
 		setCursor(Cursor::kActive);
 		setCursorHint(getMouseHintAtPosition(pos));

@@ -84,26 +84,11 @@ void UI::update() {
 	staticProvider->onGameLoop();
 
 	// Check for UI mouse overs
-	_topMenu->handleMouseMove();
-
-	if (_actionMenu->isVisible() && _actionMenu->isMouseInside()) {
-		_actionMenu->handleMouseMove();
-		return;
-	}
-
-	if (_inventoryWindow->isVisible() && _gameWindow->isMouseInside()) {
-		_inventoryWindow->handleMouseMove();
-		return;
-	}
-
-	if (_gameWindow->isVisible() && _gameWindow->isMouseInside()) {
-		_gameWindow->handleMouseMove();
-		return;
-	}
-
-	if (_dialogPanel->isVisible() && _dialogPanel->isMouseInside()) {
-		_dialogPanel->handleMouseMove();
-		return;
+	for (uint i = 0; i < _windows.size(); i++) {
+		if (_windows[i]->isVisible() && _windows[i]->isMouseInside()) {
+			_windows[i]->handleMouseMove();
+			return;
+		}
 	}
 }
 
@@ -151,21 +136,15 @@ void UI::stopPlayingFMV() {
 }
 
 void UI::render() {
+	// TODO: Unify with the other windows
 	if (_fmvPlayer->isPlaying()) {
 		_fmvPlayer->render();
 		return;
 	}
 
-	// TODO: Unhardcode
-	if (_cursor->getMousePosition().y < 40) {
-		_topMenu->render();
+	for (int i = _windows.size() - 1; i >= 0; i--) {
+		_windows[i]->render();
 	}
-
-	_gameWindow->render();
-	_inventoryWindow->render();
-
-	_dialogPanel->render();
-	_actionMenu->render();
 }
 
 } // End of namespace Stark
