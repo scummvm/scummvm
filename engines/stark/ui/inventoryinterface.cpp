@@ -66,8 +66,8 @@ void InventoryInterface::close() {
 	_visible = false;
 }
 
-void InventoryInterface::setSelectedInventoryItem(uint16 selectedToolId) {
-	_selectedInventoryItem = selectedToolId;
+void InventoryInterface::setSelectedInventoryItem(uint16 selectedInventoryItem) {
+	_selectedInventoryItem = selectedInventoryItem;
 }
 
 int16 InventoryInterface::getSelectedInventoryItem() const {
@@ -108,11 +108,11 @@ void InventoryInterface::onRender() {
 	}
 }
 
-void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedTool, int16 &possibleTool) {
+void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction) {
 	UserInterface *ui = StarkServices::instance().userInterface;
 
 	*item = nullptr;
-	possibleTool = -1;
+	singlePossibleAction = -1;
 
 	// Check for inventory mouse overs
 	for (uint i = 0; i < _renderEntries.size(); i++) {
@@ -130,17 +130,17 @@ void InventoryInterface::checkObjectAtPos(Common::Point pos, Resources::ItemVisu
 		return;
 	}
 
-	if (selectedTool == -1) {
+	if (selectedInventoryItem == -1) {
 		Resources::ActionArray actionsPossible;
 		actionsPossible = ui->getStockActionsPossibleForObject(*item);
 
 		if (actionsPossible.empty()) {
 			// The item can still be taken
-			possibleTool = Resources::PATTable::kActionUse;
+			singlePossibleAction = Resources::PATTable::kActionUse;
 		}
 	} else {
-		if (ui->itemHasAction(*item, selectedTool)) {
-			possibleTool = selectedTool;
+		if (ui->itemHasAction(*item, selectedInventoryItem)) {
+			singlePossibleAction = selectedInventoryItem;
 		}
 	}
 }

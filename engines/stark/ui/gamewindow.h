@@ -47,7 +47,7 @@ protected:
 	void onRightClick(const Common::Point &pos) override;
 	void onRender() override;
 
-	void checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &possibleTool);
+	void checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction);
 
 	ActionMenu *_actionMenu;
 	InventoryInterface *_inventory;

@@ -47,7 +47,7 @@ public:
 	void open();
 	void close();
 
-	void setSelectedInventoryItem(uint16 selectedItem);
+	void setSelectedInventoryItem(uint16 selectedInventoryItem);
 	int16 getSelectedInventoryItem() const;
 
 protected:
@@ -56,7 +56,7 @@ protected:
 	void onRightClick(const Common::Point &pos) override;
 	void onRender() override;
 
-	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedTool, int16 &possibleTool);
+	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction);
 	Common::Rect getSlotRect(uint32 slot) const;
 	Common::Rect getItemRect(uint32 slot, VisualImageXMG *image) const;
 

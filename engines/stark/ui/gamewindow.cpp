@@ -141,11 +141,11 @@ void GameWindow::onRightClick(const Common::Point &pos) {
 	}
 }
 
-void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &possibleTool) {
+void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedInventoryItem, int16 &singlePossibleAction) {
 	UserInterface *ui = StarkServices::instance().userInterface;
 
 	_objectUnderCursor = nullptr;
-	possibleTool = -1;
+	singlePossibleAction = -1;
 
 	// Render entries are sorted from the farthest to the camera to the nearest
 	// Loop in reverse order
@@ -165,18 +165,18 @@ void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &
 	int32 defaultAction = ui->itemGetDefaultActionAt(_objectUnderCursor, _objectRelativePosition);
 	if (defaultAction != -1) {
 		// Use the default action if there is one
-		possibleTool = defaultAction;
-	} else if (selectedTool != -1) {
+		singlePossibleAction = defaultAction;
+	} else if (selectedInventoryItem != -1) {
 		// Use the selected inventory item if there is one
-		if (ui->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedTool)) {
-			possibleTool = selectedTool;
+		if (ui->itemHasActionAt(_objectUnderCursor, _objectRelativePosition, selectedInventoryItem)) {
+			singlePossibleAction = selectedInventoryItem;
 		}
 	} else {
 		// Otherwise, use stock actions
 		Resources::ActionArray actionsPossible = ui->getStockActionsPossibleForObject(_objectUnderCursor, _objectRelativePosition);
 
 		if (actionsPossible.size() == 1) {
-			possibleTool = actionsPossible[0];
+			singlePossibleAction = actionsPossible[0];
 		}
 	}
 }
