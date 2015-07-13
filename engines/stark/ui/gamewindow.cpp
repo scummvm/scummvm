@@ -131,6 +131,16 @@ void GameWindow::onClick(const Common::Point &pos) {
 	}
 }
 
+void GameWindow::onRightClick(const Common::Point &pos) {
+	int16 selectedInventoryItem = _inventory->getSelectedInventoryItem();
+
+	if (selectedInventoryItem == -1) {
+		_inventory->open();
+	} else {
+		_inventory->setSelectedInventoryItem(-1);
+	}
+}
+
 void GameWindow::checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &possibleTool) {
 	UserInterface *ui = StarkServices::instance().userInterface;
 

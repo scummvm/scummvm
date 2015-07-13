@@ -44,6 +44,7 @@ public:
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
+	void onRightClick(const Common::Point &pos) override;
 	void onRender() override;
 
 	void checkObjectAtPos(Common::Point pos, int16 selectedTool, int16 &possibleTool);
