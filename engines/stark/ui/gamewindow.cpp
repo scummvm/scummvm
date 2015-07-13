@@ -127,7 +127,8 @@ void GameWindow::onClick(const Common::Point &pos) {
 			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 		}
 	} else {
-		game->walkTo(getScreenMousePosition());
+		// The walk code expects unscaled absolute mouse coordinates
+		game->walkTo(_cursor->getMousePosition(true));
 	}
 }
 
