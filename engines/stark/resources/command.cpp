@@ -151,7 +151,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsIntegerLower:
 		return opIsIntegerLower(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsScriptActive:
-		return opIsScriptActive(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+		return opIsScriptActive(_arguments[2].referenceValue);
 	case kIsRandom:
 		return opIsRandom(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].intValue);
 	case kIsOnPlace:
@@ -623,13 +623,10 @@ Command *Command::opIsIntegerLower(const ResourceReference &knowledgeRef, int32 
 	return nextCommandIf(knowledgeValue->getIntegerValue() < value);
 }
 
-Command *Command::opIsScriptActive(int branch1, int branch2, const ResourceReference &scriptRef) {
-	assert(_arguments.size() == 3);
-	Object *scriptObj = scriptRef.resolve<Object>();
-	assert(scriptObj->getType() == Resources::Type::kScript);
-	warning("(TODO: Implement) opIsScriptActive(%d, %d, %s) : %s", branch1, branch2, scriptObj->getName().c_str(), scriptRef.describe().c_str());
+Command *Command::opIsScriptActive(const ResourceReference &scriptRef) {
+	Script *script = scriptRef.resolve<Script>();
 
-	return nextCommandIf(false);
+	return nextCommandIf(!script->isOnBegin());
 }
 
 Command *Command::opIsRandom(int branch1, int branch2, int32 unknown) {

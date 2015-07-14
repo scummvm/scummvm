@@ -212,7 +212,7 @@ protected:
 	Command *opIsIntegerAbove(const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsIntegerEqual(const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsIntegerLower(const ResourceReference &knowledgeRef, int32 value);
-	Command *opIsScriptActive(int branch1, int branch2, const ResourceReference &scriptRef);
+	Command *opIsScriptActive(const ResourceReference &scriptRef);
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);
 	Command *opIsOnNearPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position, int32 unknown);
 	Command *opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position);
