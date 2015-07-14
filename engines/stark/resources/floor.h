@@ -41,10 +41,10 @@ namespace Resources {
 class FloorFace;
 
 /**
- * This resource represents the floor field of a 3D layer.
- * Characters can only walk on the floor field.
+ * This resource represents the floor of a 3D layer.
+ * Characters can only walk on the floor.
  *
- * The floor field is made of a list of faces building a mesh.
+ * The floor is made of a list of faces building a mesh.
  */
 class Floor : public Object {
 public:

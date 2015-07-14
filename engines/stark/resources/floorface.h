@@ -39,7 +39,7 @@ class XRCReadStream;
 namespace Resources {
 
 /**
- * A floor face is a 3D triangle used to build the floor field
+ * A floor face is a 3D triangle used to build the floor
  */
 class FloorFace : public Object {
 public:

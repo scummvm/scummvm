@@ -35,6 +35,11 @@ class XRCReadStream;
 
 namespace Resources {
 
+/**
+ * A floor field represents a portion of the floor in a 3D layer
+ *
+ * A floor field is bounded by the faces it contains
+ */
 class FloorField : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kFloorField;
@@ -49,6 +54,7 @@ protected:
 	void readData(Formats::XRCReadStream *stream) override;
 	void printData() override;
 
+private:
 	Common::Array<byte> _facesInFloorField;
 };
 

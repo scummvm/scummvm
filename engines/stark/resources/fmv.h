@@ -35,6 +35,9 @@ class XRCReadStream;
 
 namespace Resources {
 
+/**
+ * A full motion video
+ */
 class FMV : public Object {
 public:
 	static const Type::ResourceType TYPE = Type::kFMV;
