@@ -23,6 +23,7 @@
 #ifndef STARK_UI_DIALOG_PANEL_H
 #define STARK_UI_DIALOG_PANEL_H
 
+#include <engines/stark/resources/speech.h>
 #include "engines/stark/ui/window.h"
 
 #include "common/scummsys.h"
@@ -41,9 +42,6 @@ class DialogPanel : public Window {
 public:
 	DialogPanel(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~DialogPanel();
-	void update();
-	void notifySubtitle(const Common::String &subtitle);
-	void notifyDialogOptions(const Common::StringArray &options);
 
 protected:
 	void onMouseMove(const Common::Point &pos) override;
@@ -51,13 +49,18 @@ protected:
 	void onRender() override;
 
 private:
+	void updateSubtitleVisual();
+	void updateDialogOptions();
+	void clearOptions();
+	void renderOptions();
+
 	VisualImageXMG *_passiveBackGroundTexture;
 	VisualImageXMG *_activeBackGroundTexture;
 	VisualText *_subtitleVisual;
+
+	Resources::Speech *_currentSpeech;
+
 	Common::Array<ClickText*> _options;
-	bool _hasOptions;
-	void clearOptions();
-	void renderOptions();
 
 	static const uint32 _aprilColor = 0xFF00C0FF;
 	static const uint32 _otherColor = 0xFF4040FF;

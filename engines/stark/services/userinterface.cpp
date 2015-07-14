@@ -109,14 +109,6 @@ void UserInterface::handleRightClick() {
 	}
 }
 
-void UserInterface::notifySubtitle(const Common::String &subtitle) {
-	_dialogPanel->notifySubtitle(subtitle);
-}
-
-void UserInterface::notifyDialogOptions(const Common::StringArray &options) {
-	_dialogPanel->notifyDialogOptions(options);
-}
-
 void UserInterface::notifyShouldOpenInventory() {
 	// Make the inventory update its contents.
 	_inventoryWindow->open();

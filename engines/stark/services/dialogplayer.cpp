@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
@@ -33,13 +32,11 @@ DialogPlayer::DialogPlayer() :
 		_currentDialog(nullptr),
 		_currentReply(nullptr),
 		_speechReady(false),
-		_singleSpeech(nullptr) {
+		_singleSpeech(nullptr),
+		_optionsAvailable(false) {
 }
 
 DialogPlayer::~DialogPlayer() {}
-
-void DialogPlayer::init() {
-}
 
 void DialogPlayer::run(Resources::Dialog *dialog) {
 	reset();
@@ -49,19 +46,37 @@ void DialogPlayer::run(Resources::Dialog *dialog) {
 }
 
 void DialogPlayer::playSingle(Resources::Speech *speech) {
-	if (_singleSpeech && _singleSpeech->isPlaying()) {
-		_singleSpeech->stop();
-	}
-	if (speech) {
-		_singleSpeech = speech;
-		speech->playSound();
-		setSubtitles(speech->getPhrase());
-		_speechReady = false;
-	}
+	reset();
+
+	_singleSpeech = speech;
+	_speechReady = true;
 }
 
 bool DialogPlayer::isRunning() {
-	return _singleSpeech != nullptr || _currentDialog != nullptr;
+	return _currentDialog != nullptr;
+}
+
+bool DialogPlayer::isSpeechReady() const {
+	return _speechReady;
+}
+
+Resources::Speech *DialogPlayer::acquireReadySpeech() {
+	assert(_speechReady);
+	_speechReady = false;
+
+	if (_singleSpeech) {
+		return _singleSpeech;
+	} else {
+		return _currentReply->getCurrentSpeech();
+	}
+}
+
+bool DialogPlayer::areOptionsAvailable() const {
+	return _optionsAvailable;
+}
+
+Common::Array<DialogPlayer::Option> DialogPlayer::listOptions() const {
+	return _options;
 }
 
 void DialogPlayer::buildOptions() {
@@ -84,15 +99,13 @@ void DialogPlayer::buildOptions() {
 		// Only one option, just run it
 		selectOption(0);
 	} else {
-		Common::StringArray options;
-		for (uint i = 0; i < availableTopics.size(); i++) {
-			options.push_back(_options[i]._caption);
-		}
-		StarkServices::instance().userInterface->notifyDialogOptions(options);
+		_optionsAvailable = true;
 	}
 }
 
 void DialogPlayer::selectOption(uint32 index) {
+	_optionsAvailable = false;
+
 	Option &option = _options[index];
 
 	//TODO: Complete
@@ -133,35 +146,26 @@ void DialogPlayer::onReplyEnd() {
 void DialogPlayer::reset() {
 	_currentDialog = nullptr;
 	_currentReply = nullptr;
+	_singleSpeech = nullptr;
 	_speechReady = false;
+	_optionsAvailable = false;
 	_options.clear();
 }
 
 void DialogPlayer::update() {
-	// Check this first.
-	if (_singleSpeech && !_singleSpeech->isPlaying()) {
-		_singleSpeech = nullptr;
-		_speechReady = true;
-		setSubtitles("");
-	}
-	if (!_currentDialog || !_currentReply) {
+	if (_singleSpeech || !_currentDialog || !_currentReply) {
 		return; // Nothing to do
 	}
 
-	//TODO: Complete / Refactor
+	//TODO: Complete
 
 	Resources::Speech *speech = _currentReply->getCurrentSpeech();
 	if (speech && _speechReady) {
-		setSubtitles(speech->getPhrase());
-		// A new line can be played
-		speech->playSound();
-		_speechReady = false;
+		// A new line is already ready, no need to prepare another one
 		return;
 	}
 
 	if (!speech || !speech->isPlaying()) {
-		// A line has ended, clear the subtitle
-		setSubtitles("");
 		// A line has ended, play the next one
 		_currentReply->goToNextLine();
 		speech = _currentReply->getCurrentSpeech();
@@ -171,10 +175,6 @@ void DialogPlayer::update() {
 			onReplyEnd();
 		}
 	}
-}
-
-void DialogPlayer::setSubtitles(const Common::String &str) {
-	StarkServices::instance().userInterface->notifySubtitle(str);
 }
 
 } // End of namespace Stark

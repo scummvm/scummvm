@@ -130,7 +130,6 @@ Common::Error StarkEngine::run() {
 	_resourceProvider->initGlobal();
 	_staticProvider->init();
 	_cursor->init();
-	_dialogPlayer->init();
 	// Initialize the UI
 	_userInterface->init();
 
@@ -193,8 +192,6 @@ void StarkEngine::mainLoop() {
 			/*if (event.type == Common::EVENT_SCREEN_CHANGED)
 				_refreshDrawNeeded = true;*/
 		}
-
-		_dialogPlayer->update();
 
 		if (_resourceProvider->hasLocationChangeRequest()) {
 			_resourceProvider->performLocationChange();

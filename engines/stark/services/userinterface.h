@@ -50,8 +50,6 @@ public:
 	void render();
 	void handleClick();
 	void handleRightClick();
-	void notifySubtitle(const Common::String &subtitle);
-	void notifyDialogOptions(const Common::StringArray &options);
 	void notifyShouldExit() { _exitGame = true; }
 	void notifyShouldOpenInventory();
 	void notifyFMVRequest(const Common::String &name);

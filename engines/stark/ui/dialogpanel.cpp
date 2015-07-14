@@ -37,7 +37,7 @@ namespace Stark {
 DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
 		_subtitleVisual(nullptr),
-		_hasOptions(false) {
+		_currentSpeech(nullptr) {
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kBottomBorderHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight + Gfx::Driver::kGameViewportHeight);
 
@@ -59,7 +59,6 @@ void DialogPanel::clearOptions() {
 		delete _options[i];
 	}
 	_options.clear();
-	_hasOptions = false;
 }
 
 void DialogPanel::renderOptions() {
@@ -69,38 +68,61 @@ void DialogPanel::renderOptions() {
 }
 
 void DialogPanel::onRender() {
-	if (_hasOptions) {
+	// Clear completed speeches
+	if (!_currentSpeech || !_currentSpeech->isPlaying()) {
+		_currentSpeech = nullptr;
+
+		delete _subtitleVisual;
+		_subtitleVisual = nullptr;
+	}
+
+	// Update the dialog engine
+	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+	dialogPlayer->update();
+
+	// Check if a new speech can be played
+	if (dialogPlayer->isSpeechReady()) {
+		_currentSpeech = dialogPlayer->acquireReadySpeech();
+		_currentSpeech->playSound();
+		updateSubtitleVisual();
+	}
+
+	if (_options.empty() && dialogPlayer->areOptionsAvailable()) {
+		updateDialogOptions();
+	}
+
+	// Draw options if available
+	if (!_options.empty()) {
 		_activeBackGroundTexture->render(Common::Point(0, 0), false);
 		renderOptions();
 	} else {
 		_passiveBackGroundTexture->render(Common::Point(0, 0), false);
 	}
-	// TODO: Unhardcode
+
+	// Draw subtitle if available
 	if (_subtitleVisual) {
+		// TODO: Unhardcode
 		_subtitleVisual->render(Common::Point(10, 10));
 	}
 }
 
-void DialogPanel::update() {
-}
-
-void DialogPanel::notifySubtitle(const Common::String &subtitle) {
-	clearOptions();
+void DialogPanel::updateSubtitleVisual() {
 	delete _subtitleVisual;
 
 	_subtitleVisual = new VisualText(_gfx);
-	_subtitleVisual->setText(subtitle);
-	_subtitleVisual->setColor(_aprilColor);
+	_subtitleVisual->setText(_currentSpeech->getPhrase());
+	_subtitleVisual->setColor(_currentSpeech->characterIsApril() ? _aprilColor : _otherColor);
 }
 
-void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {
+void DialogPanel::updateDialogOptions() {
 	clearOptions();
-	delete _subtitleVisual;
-	_subtitleVisual = nullptr;
+
+	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
+	Common::Array<DialogPlayer::Option> options = dialogPlayer->listOptions();
 
 	int pos = 0;
 	for (uint i = 0; i < options.size(); i++) {
-		ClickText *text = new ClickText(options[i], Common::Point(0, pos));
+		ClickText *text = new ClickText(options[i]._caption, Common::Point(0, pos));
 		_options.push_back(text);
 		pos += text->getHeight();
 		// TODO: Add buttons?
@@ -108,11 +130,10 @@ void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {
 			break;
 		}
 	}
-	_hasOptions = true;
 }
 
 void DialogPanel::onMouseMove(const Common::Point &pos) {
-	if (_hasOptions && _options.size() > 0) {
+	if (!_options.empty() && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(pos)) {
 				_options[i]->handleMouseOver();
@@ -124,11 +145,13 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 }
 
 void DialogPanel::onClick(const Common::Point &pos) {
-	if (_hasOptions && _options.size() > 0) {
+	if (!_options.empty() && _options.size() > 0) {
 		for (uint i = 0; i < _options.size(); i++) {
 			if (_options[i]->containsPoint(pos)) {
 				DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 				dialogPlayer->selectOption(i);
+
+				clearOptions();
 				return;
 			}
 		}

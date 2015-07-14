@@ -29,6 +29,10 @@
 
 namespace Stark {
 
+namespace Resources {
+class Speech;
+}
+
 /**
  * Dialog player
  *
@@ -40,8 +44,16 @@ public:
 	DialogPlayer();
 	virtual ~DialogPlayer();
 
-	/** Initialise textures etc, that can't be created at constructor-time */
-	void init();
+	enum OptionType {
+		kOptionTypeAsk = 0
+	};
+
+	struct Option {
+		uint32 _type;
+		Common::String _caption;
+		Resources::Dialog::Topic *_topic;
+		int32 _replyIndex;
+	};
 
 	/** Enter a dialog */
 	void run(Resources::Dialog *dialog);
@@ -58,18 +70,19 @@ public:
 	/** Select a dialog option */
 	void selectOption(uint32 index);
 
+	/** Can a speech be played? */
+	bool isSpeechReady() const;
+
+	/** Return the speech to be played */
+	Resources::Speech *acquireReadySpeech();
+
+	/** Does the player need to choose between options? */
+	bool areOptionsAvailable() const;
+
+	/** List the currently available dialog options */
+	Common::Array<DialogPlayer::Option> listOptions() const;
+
 protected:
-	enum OptionType {
-		kOptionTypeAsk = 0
-	};
-
-	struct Option {
-		uint32 _type;
-		Common::String _caption;
-		Resources::Dialog::Topic *_topic;
-		int32 _replyIndex;
-	};
-
 	/** Build a list of available dialog options */
 	void buildOptions();
 
@@ -79,15 +92,13 @@ protected:
 	/** Clear the currently running dialog */
 	void reset();
 
-	/** Update the on screen text */
-	void setSubtitles(const Common::String &str);
-
 	Resources::Dialog *_currentDialog;
 	Resources::Dialog::Reply *_currentReply;
 
 	Resources::Speech *_singleSpeech;
 
 	bool _speechReady;
+	bool _optionsAvailable;
 	Common::Array<Option> _options;
 };
 
