@@ -153,9 +153,9 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 
 	if (_selectedInventoryItem == -1) {
 		if (hoveredItem) {
-			_cursor->setCursorType(Cursor::CursorType::kActive);
+			_cursor->setCursorType(Cursor::kActive);
 		} else {
-			_cursor->setCursorType(Cursor::CursorType::kDefault);
+			_cursor->setCursorType(Cursor::kDefault);
 		}
 	} else {
 		GameInterface *game = StarkServices::instance().gameInterface;

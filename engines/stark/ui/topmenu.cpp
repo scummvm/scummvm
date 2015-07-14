@@ -69,8 +69,8 @@ void TopMenu::onRender() {
 
 void TopMenu::onMouseMove(const Common::Point &pos) {
 	if (_widgetsVisible) {
-		setCursor(Cursor::kActive);
-		setCursorHint(getMouseHintAtPosition(pos));
+		_cursor->setCursorType(Cursor::kActive);
+		_cursor->setMouseHint(getMouseHintAtPosition(pos));
 	}
 }
 

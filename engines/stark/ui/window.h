@@ -39,18 +39,37 @@ namespace Resources {
 	typedef Common::Array<uint32> ActionArray;
 }
 
+/**
+ * A window is a portion of the game screen.
+ *
+ * A window can handle events happening in its screen portion,
+ * as well as render graphics to that same screen portion.
+ *
+ * Coordinates inside a window are relative to its top left corner.
+ * Rendering happens in a viewport matching the window's screen portion.
+ *
+ */
 class Window {
 public:
 	Window(Gfx::Driver *gfx, Cursor *cursor);
 	virtual ~Window();
 
+	/** Called by the user interface when the mouse moves inside the window */
 	void handleMouseMove();
+
+	/** Called by the user interface when the mouse is clicked inside the window */
 	void handleClick();
+
+	/** Called by the user interface when the mouse is right clicked inside the window */
 	void handleRightClick();
 
+	/** Called by the user interface in the render phase of the game loop */
 	void render();
 
+	/** Is the mouse inside the window? */
 	bool isMouseInside() const;
+
+	/** Is the window visible */
 	bool isVisible() const;
 
 protected:
@@ -59,11 +78,7 @@ protected:
 	virtual void onRightClick(const Common::Point &pos) {};
 	virtual void onRender() = 0;
 
-	void setCursor(Cursor::CursorType type);
-	void setCursorHint(const Common::String &hint);
-
-	Common::Point getMousePosition() const;
-	Common::Point getScreenMousePosition() const;
+	Common::Point getRelativeMousePosition() const;
 
 	Gfx::Driver *_gfx;
 	Cursor *_cursor;

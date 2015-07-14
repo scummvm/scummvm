@@ -70,7 +70,7 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	_visible = true;
 
-	Common::Point screenMousePos = getScreenMousePosition();
+	Common::Point screenMousePos = _cursor->getMousePosition(true);
 	_position = Common::Rect::center(screenMousePos.x, screenMousePos.y, 160, 111);
 
 	_itemRelativePos = itemRelativePos;
@@ -103,7 +103,7 @@ void ActionMenu::close() {
 
 void ActionMenu::onRender() {
 	GameInterface *game = StarkServices::instance().gameInterface;
-	Common::Point mousePos = getMousePosition();
+	Common::Point mousePos = getRelativeMousePosition();
 
 	_background->render(Common::Point(0, 0), false);
 
@@ -140,9 +140,9 @@ void ActionMenu::onMouseMove(const Common::Point &pos) {
 	}
 
 	if (hoveringAction) {
-		setCursor(Cursor::kActive);
+		_cursor->setCursorType(Cursor::kActive);
 	} else {
-		setCursor(Cursor::kDefault);
+		_cursor->setCursorType(Cursor::kDefault);
 	}
 }
 

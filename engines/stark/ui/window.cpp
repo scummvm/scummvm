@@ -66,21 +66,9 @@ bool Window::isVisible() const {
 	return _visible;
 }
 
-Common::Point Window::getMousePosition() const {
+Common::Point Window::getRelativeMousePosition() const {
 	Common::Point mousePos = _cursor->getMousePosition(_unscaled);
 	return mousePos - Common::Point(_position.left, _position.top);
-}
-
-Common::Point Window::getScreenMousePosition() const {
-	return _cursor->getMousePosition(_unscaled);
-}
-
-void Window::setCursor(Cursor::CursorType type) {
-	_cursor->setCursorType(type);
-}
-
-void Window::setCursorHint(const Common::String &hint) {
-	_cursor->setMouseHint(hint);
 }
 
 void Window::handleMouseMove() {
@@ -89,7 +77,7 @@ void Window::handleMouseMove() {
 	}
 
 	if (isMouseInside()) {
-		onMouseMove(getMousePosition());
+		onMouseMove(getRelativeMousePosition());
 	}
 }
 
@@ -99,7 +87,7 @@ void Window::handleClick() {
 	}
 
 	if (isMouseInside()) {
-		onClick(getMousePosition());
+		onClick(getRelativeMousePosition());
 	}
 }
 
@@ -109,7 +97,7 @@ void Window::handleRightClick() {
 	}
 
 	if (isMouseInside()) {
-		onRightClick(getMousePosition());
+		onRightClick(getRelativeMousePosition());
 	}
 }
 
