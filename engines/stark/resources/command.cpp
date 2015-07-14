@@ -141,15 +141,15 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsItemEnabled:
 		return opIsItemEnabled(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsSet:
-		return opIsSet(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+		return opIsSet(_arguments[2].referenceValue);
 	case kIsIntegerInRange:
-		return opIsIntegerInRange(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
+		return opIsIntegerInRange(_arguments[2].referenceValue, _arguments[3].intValue, _arguments[4].intValue);
 	case kIsIntegerAbove:
-		return opIsIntegerAbove(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opIsIntegerAbove(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsIntegerEqual:
-		return opIsIntegerEqual(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opIsIntegerEqual(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsIntegerLower:
-		return opIsIntegerLower(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].intValue);
+		return opIsIntegerLower(_arguments[2].referenceValue, _arguments[3].intValue);
 	case kIsScriptActive:
 		return opIsScriptActive(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
 	case kIsRandom:
@@ -327,6 +327,9 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	case 2:
 		item->setEnabled(!previousState);
 		break;
+	default:
+		warning("Unhandled item enable comamnd %d", enable);
+		break;
 	}
 
 	return nextCommand();
@@ -366,19 +369,18 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 	return nextCommand();
 }
 
-Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32 unknown) {
+Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32 suspend) {
 	assert(_arguments.size() == 3);
 	Speech *speechObj = ref.resolve<Speech>();
 	assert(speechObj->getType().get() == Type::kSpeech);
 	DialogPlayer *dialogPlayer = StarkServices::instance().dialogPlayer;
 	dialogPlayer->playSingle(speechObj);
-	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speechObj->getName().c_str(), unknown, speechObj->getPhrase().c_str(), ref.describe().c_str());
-	// TODO guesswork:
-	if (unknown) {
+	warning("(TODO: Implement) opShowPlay(%s %d) %s : %s", speechObj->getName().c_str(), suspend, speechObj->getPhrase().c_str(), ref.describe().c_str());
+
+	if (suspend) {
 		script->suspend(speechObj);
-		return this;
+		return this; // Stay on the same command while suspended
 	} else {
-		// TODO: Presumably there is a show-part to this too, so we might want to look out for non-Speech objects.
 		return nextCommand();
 	}
 }
@@ -590,43 +592,33 @@ Command *Command::opIsItemEnabled(int branch1, int branch2, const ResourceRefere
 	return nextCommandIf(itemObj->isEnabled());
 }
 
-Command *Command::opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef) {
-	assert(_arguments.size() == 3);
+Command *Command::opIsSet(const ResourceReference &knowledgeRef) {
 	Knowledge *value = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opIsSet(%d, %d, %s) %d : %s", branch1, branch2, value->getName().c_str(), value->getBooleanValue(), knowledgeRef.describe().c_str());
-	// TODO: Verify how this logic actually should be handled
+
 	return nextCommandIf(value->getBooleanValue());
 }
 
-Command *Command::opIsIntegerInRange(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 min, int32 max) {
-	assert(_arguments.size() == 5);
+Command *Command::opIsIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
 	int value = knowledgeValue->getIntegerValue();
-	warning("opIsIntegerInRange(%s, %d, [%d, %d]) %d %d : %s", knowledgeValue->getName().c_str(), value, min, max, branch1, branch2, knowledgeRef.describe().c_str());
-	// TODO: Inclusive?
+
 	return nextCommandIf(value >= min && value <= max);
 }
 
-Command *Command::opIsIntegerAbove(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
-	assert(_arguments.size() == 4);
+Command *Command::opIsIntegerAbove(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
-	warning("opIsIntegerAbove(%s, %d > %d) %d %d : %s", knowledgeValue->getName().c_str(), knowledgeValue->getIntegerValue(), value, branch1, branch2, knowledgeRef.describe().c_str());
 
 	return nextCommandIf(knowledgeValue->getIntegerValue() > value);
 }
 
-Command *Command::opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
-	assert(_arguments.size() == 4);
+Command *Command::opIsIntegerEqual(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opIsIntegerEqual(%d, %d, %s) %d %d : %s", branch1, branch2, knowledgeValue->getName().c_str(), knowledgeValue->getIntegerValue(), value, knowledgeRef.describe().c_str());
 
 	return nextCommandIf(knowledgeValue->getIntegerValue() == value);
 }
 
-Command *Command::opIsIntegerLower(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value) {
-	assert(_arguments.size() == 4);
+Command *Command::opIsIntegerLower(const ResourceReference &knowledgeRef, int32 value) {
 	Knowledge *knowledgeValue = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opIsIntegerLower(%d, %d, %s) %d %d : %s", branch1, branch2, knowledgeValue->getName().c_str(), knowledgeValue->getIntegerValue(), value, knowledgeRef.describe().c_str());
 
 	return nextCommandIf(knowledgeValue->getIntegerValue() < value);
 }

@@ -186,7 +186,7 @@ protected:
 	Command *opUseAnimHierachy(const ResourceReference &animHierRef);
 	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
-	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 unknown);
+	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 suspend);
 	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
 	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
@@ -207,11 +207,11 @@ protected:
 	Command *opSpeakWithoutTalking(Script *script, const ResourceReference &speechRef, int32 unknown);
 	Command *opIsOnFloorField(const ResourceReference &itemRef, const ResourceReference &floorFieldRef);
 	Command *opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef);
-	Command *opIsSet(int branch1, int branch2, const ResourceReference &knowledgeRef);
-	Command *opIsIntegerInRange(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 min, int32 max);
-	Command *opIsIntegerAbove(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
-	Command *opIsIntegerEqual(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
-	Command *opIsIntegerLower(int branch1, int branch2, const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsSet(const ResourceReference &knowledgeRef);
+	Command *opIsIntegerInRange(const ResourceReference &knowledgeRef, int32 min, int32 max);
+	Command *opIsIntegerAbove(const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsIntegerEqual(const ResourceReference &knowledgeRef, int32 value);
+	Command *opIsIntegerLower(const ResourceReference &knowledgeRef, int32 value);
 	Command *opIsScriptActive(int branch1, int branch2, const ResourceReference &scriptRef);
 	Command *opIsRandom(int branch1, int branch2, int32 unknown);
 	Command *opIsOnNearPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position, int32 unknown);
