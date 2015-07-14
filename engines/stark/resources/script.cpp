@@ -89,7 +89,7 @@ void Script::onGameLoop() {
 }
 
 void Script::reset() {
-	_nextCommand = findChildWithSubtype<Command>(Command::kCommandBegin);
+	_nextCommand = getBeginCommand();
 }
 
 bool Script::isOnBegin() {
@@ -98,6 +98,10 @@ bool Script::isOnBegin() {
 
 bool Script::isOnEnd() {
 	return _nextCommand && _nextCommand->getSubType() == Command::kCommandEnd;
+}
+
+Command *Script::getBeginCommand() {
+	return findChildWithSubtype<Command>(Command::kCommandBegin);
 }
 
 bool Script::isEnabled() {
@@ -124,10 +128,6 @@ bool Script::shouldExecute(uint32 callMode) {
 
 	if ((!isEnabled() && isOnBegin()) || !_nextCommand) {
 		return false; // Don't execute disabled scripts
-	}
-
-	if (callMode == kCallModeCalledByScript) {
-		return true;
 	}
 
 	if (callMode == kCallModeGameLoop && !isOnBegin()) {
@@ -224,7 +224,7 @@ void Script::updateSuspended() {
 
 	if (!isSuspended()) {
 		// Resume to the next command
-		_nextCommand = _nextCommand->nextCommand();
+		goToNextCommand();
 	}
 }
 
@@ -234,6 +234,10 @@ void Script::pause(int32 msecs) {
 
 void Script::suspend(Object *cause) {
 	_suspendingResource = cause;
+}
+
+void Script::goToNextCommand() {
+	_nextCommand = _nextCommand->nextCommand();
 }
 
 void Script::execute(uint32 callMode) {
@@ -272,7 +276,32 @@ void Script::execute(uint32 callMode) {
 	if (isOnEnd()) {
 		// Reset ended scripts so they can be started again
 		reset();
+
+		// Check if we should return to some caller script
+		if (!_returnObjects.empty()) {
+			Object *callerObject = _returnObjects.back();
+			_returnObjects.pop_back();
+
+			// Resume execution of the caller object
+			resumeCallerExecution(callerObject);
+		}
 	}
+}
+
+void Script::resumeCallerExecution(Object *callerObject) {
+	switch (callerObject->getType().get()) {
+		case Type::kCommand: {
+			Command *callerCommand = Object::cast<Command>(callerObject);
+			_nextCommand = callerCommand->nextCommand();
+			break;
+		}
+		default:
+			error("Unhandled caller object type %s", callerObject->getType().getName());
+	}
+}
+
+void Script::addReturnObject(Object *object) {
+	_returnObjects.push_back(object);
 }
 
 void Script::printData() {

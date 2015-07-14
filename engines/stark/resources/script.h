@@ -26,6 +26,7 @@
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
+#include "command.h"
 
 namespace Stark {
 
@@ -80,8 +81,7 @@ public:
 		kCallModeEnterLocation = 3,
 		kCallModePlayerAction = 4,
 		kCallModeDialogCreateSelections = 5,
-		kCallModeDialogAnswer = 6,
-		kCallModeCalledByScript = 7 // NOT an actual number, just a way to override the call mode from scripts.
+		kCallModeDialogAnswer = 6
 	};
 
 	Script(Object *parent, byte subType, uint16 index, const Common::String &name);
@@ -108,6 +108,9 @@ public:
 	/** Has the script ended? */
 	bool isOnEnd();
 
+	/** Get the script's startup command */
+	Command *getBeginCommand();
+
 	/** Attempt to run the script using the specified call mode */
 	void execute(uint32 callMode);
 
@@ -119,11 +122,24 @@ public:
 
 	/** Returns true if the script is enabled and valid for this call mode */
 	bool shouldExecute(uint32 callMode);
+
+	/** Step the script to the next command, overriding all checks */
+	void goToNextCommand();
+
+	/**
+	 * Add an object to the return list.
+	 *
+	 * The script will resume execution of this object once it reaches an End opcode
+	 */
+	void addReturnObject(Object *object);
+
 protected:
 	void printData() override;
 
 	bool isSuspended();
 	void updateSuspended();
+
+	void resumeCallerExecution(Object *callerObject);
 
 	uint32 _scriptType;
 	uint32 _runEvent;
@@ -136,6 +152,8 @@ protected:
 
 	int32 _pauseTimeLeft;
 	Object *_suspendingResource;
+
+	Common::Array<Object *> _returnObjects;
 };
 
 } // End of namespace Resources

@@ -166,7 +166,7 @@ protected:
 	Command *resolveArgumentSiblingReference(const Argument &argument);
 
 	Command *opScriptBegin();
-	Command *opScriptCall(Script *script, const ResourceReference &scriptRef, int32 unknown);
+	Command *opScriptCall(Script *script, const ResourceReference &scriptRef, int32 synchronous);
 	Command *opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend);
 	Command *opSetInteractiveMode(bool enabled);
 	Command *opLocationGoTo(const Common::String &level, const Common::String &location, const ResourceReference &bookmarkRef, int32 direction);

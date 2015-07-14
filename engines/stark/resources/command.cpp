@@ -176,14 +176,21 @@ Command *Command::opScriptBegin() {
 	return nextCommand();
 }
 
-Command *Command::opScriptCall(Script *script, const ResourceReference &scriptRef, int32 unknown) {
-	Script *scriptObj = scriptRef.resolve<Script>();
-	warning("(TODO: Implement) opScriptCall(%s, %d) : %s", scriptObj->getName().c_str(), unknown, scriptRef.describe().c_str());
+Command *Command::opScriptCall(Script *script, const ResourceReference &scriptRef, int32 synchronous) {
+	Script *calleeScript = scriptRef.resolve<Script>();
 
-	// TODO: Presumably not right.
-	scriptObj->execute(Script::kCallModeCalledByScript);
-	
-	return nextCommand();
+	if (synchronous) {
+		// Store the current command for use when the callee's execution ends
+		script->addReturnObject(this);
+
+		// Run the callee with the current script's execution context
+		return calleeScript->getBeginCommand();
+	} else {
+		// Kickstart the callee script by skipping its Begin command, overriding all checks
+		// Both scripts will continue in parallel
+		calleeScript->goToNextCommand();
+		return nextCommand();
+	}
 }
 
 Command *Command::opDialogCall(Script *script, const ResourceReference &dialogRef, int32 suspend) {

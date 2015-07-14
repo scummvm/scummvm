@@ -260,8 +260,8 @@ bool Console::Cmd_ForceScript(int argc, const char **argv) {
 		if (index < scriptArr.size() ) {
 			Resources::Script *script = scriptArr[index];
 			script->enable(value);
-			// Use this mode to avoid being stopped
-			script->execute(Resources::Script::kCallModeCalledByScript);
+			script->goToNextCommand(); // Skip the begin command to avoid checks
+			script->execute(Resources::Script::kCallModePlayerAction);
 			return true;
 		} else {
 			debugPrintf("Invalid index %d, only %d indices available\n", index, scriptArr.size());
