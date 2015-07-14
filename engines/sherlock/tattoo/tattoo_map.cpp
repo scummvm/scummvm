@@ -49,6 +49,7 @@ TattooMap::TattooMap(SherlockEngine *vm) : Map(vm), _mapTooltip(vm) {
 }
 
 int TattooMap::show() {
+	Debugger &debugger = *_vm->_debugger;
 	Events &events = *_vm->_events;
 	Music &music = *_vm->_music;
 	Resources &res = *_vm->_res;
@@ -128,6 +129,11 @@ int TattooMap::show() {
 		events.pollEventsAndWait();
 		events.setButtonState();
 		Common::Point mousePos = events.screenMousePos();
+
+		if (debugger._showAllLocations == LOC_REFRESH) {
+			drawMapIcons();
+			screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_WIDTH);
+		}
 
 		checkMapNames(true);
 
@@ -290,10 +296,12 @@ void TattooMap::loadData() {
 }
 
 void TattooMap::drawMapIcons() {
+	Debugger &debugger = *_vm->_debugger;
 	Screen &screen = *_vm->_screen;
 	
 	for (uint idx = 0; idx < _data.size(); ++idx) {
-		_vm->setFlagsDirect(idx + 1);
+		if (debugger._showAllLocations != LOC_DISABLED)
+			_vm->setFlagsDirect(idx + 1);
 
 		if (_data[idx]._iconNum != -1 && _vm->readFlags(idx + 1)) {
 			MapEntry &mapEntry = _data[idx];
@@ -302,6 +310,9 @@ void TattooMap::drawMapIcons() {
 				mapEntry.y - img._height / 2));
 		}
 	}
+
+	if (debugger._showAllLocations == LOC_REFRESH)
+		debugger._showAllLocations = LOC_ALL;
 }
 
 void TattooMap::checkMapNames(bool slamIt) {

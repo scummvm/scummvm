@@ -30,6 +30,8 @@ namespace Sherlock {
 
 class SherlockEngine;
 
+enum AllLocations { LOC_REFRESH = -1, LOC_DISABLED = 0, LOC_ALL = 1 };
+
 class Debugger : public GUI::Debugger {
 private:
 	/**
@@ -51,9 +53,16 @@ private:
 	 * Dumps a file to disk
 	 */
 	bool cmdDumpFile(int argc, const char **argv);
+
+	/**
+	 * Show all locations on the map
+	 */
+	bool cmdLocations(int argc, const char **argv);
 protected:
 	SherlockEngine *_vm;
 	Common::String _3doPlayMovieFile;
+public:
+	AllLocations _showAllLocations;
 public:
 	Debugger(SherlockEngine *vm);
 	virtual ~Debugger() {}

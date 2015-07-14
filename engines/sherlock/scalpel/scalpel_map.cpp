@@ -122,6 +122,7 @@ void ScalpelMap::loadData() {
 }
 
 int ScalpelMap::show() {
+	Debugger &debugger = *_vm->_debugger;
 	Events &events = *_vm->_events;
 	People &people = *_vm->_people;
 	Screen &screen = *_vm->_screen;
@@ -174,6 +175,11 @@ int ScalpelMap::show() {
 	while (!_vm->shouldQuit() && !exitFlag) {
 		events.pollEventsAndWait();
 		events.setButtonState();
+
+		if (debugger._showAllLocations == LOC_REFRESH) {
+			showPlaces();
+			screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_WIDTH);
+		}
 
 		// Keyboard handling
 		if (events.kbHit()) {
@@ -342,12 +348,16 @@ void ScalpelMap::freeSprites() {
 }
 
 void ScalpelMap::showPlaces() {
+	Debugger &debugger = *_vm->_debugger;
 	Screen &screen = *_vm->_screen;
 
 	for (uint idx = 0; idx < _points.size(); ++idx) {
 		const MapEntry &pt = _points[idx];
 
 		if (pt.x != 0 && pt.y != 0) {
+			if (debugger._showAllLocations != LOC_DISABLED)
+				_vm->setFlagsDirect(idx);
+
 			if (pt.x >= _bigPos.x && (pt.x - _bigPos.x) < SHERLOCK_SCREEN_WIDTH
 					&& pt.y >= _bigPos.y && (pt.y - _bigPos.y) < SHERLOCK_SCREEN_HEIGHT) {
 				if (_vm->readFlags(idx)) {
@@ -357,6 +367,9 @@ void ScalpelMap::showPlaces() {
 			}
 		}
 	}
+
+	if (debugger._showAllLocations == LOC_REFRESH)
+		debugger._showAllLocations = LOC_ALL;
 }
 
 void ScalpelMap::saveTopLine() {

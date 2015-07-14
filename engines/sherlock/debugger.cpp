@@ -40,10 +40,13 @@ Debugger *Debugger::init(SherlockEngine *vm) {
 }
 
 Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
+	_showAllLocations = LOC_DISABLED;
+
 	registerCmd("continue",	     WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("scene",         WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("song",          WRAP_METHOD(Debugger, cmdSong));
 	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
+	registerCmd("locations",	 WRAP_METHOD(Debugger, cmdLocations));
 }
 
 void Debugger::postEnter() {
@@ -123,5 +126,13 @@ bool Debugger::cmdDumpFile(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Debugger::cmdLocations(int argc, const char **argv) {
+	_showAllLocations = LOC_REFRESH;
+
+	debugPrintf("Now showing all map locations\n");
+	return false;
+}
+
 
 } // End of namespace Sherlock
