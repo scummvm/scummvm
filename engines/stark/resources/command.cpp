@@ -370,11 +370,26 @@ Command *Command::opPlayAnimation(const ResourceReference &animRef, int32 unknow
 }
 
 Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enable) {
-	assert(_arguments.size() == 3);
 	Script *script = scriptRef.resolve<Script>();
-	warning("(TODO: Implement) opScriptEnable(%s, %d) : %s", script->getName().c_str(), enable, scriptRef.describe().c_str());
 
-	script->enable(enable);
+	bool previousState = script->isEnabled();
+
+	switch (enable) {
+		case 0:
+			script->enable(false);
+	        break;
+		case 1:
+			if (!previousState) {
+				script->enable(true);
+			}
+	        break;
+		case 2:
+			script->enable(!previousState);
+	        break;
+		default:
+			warning("Unhandled script enable comamnd %d", enable);
+	        break;
+	}
 
 	return nextCommand();
 }

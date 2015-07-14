@@ -120,7 +120,9 @@ bool Script::isEnabled() {
 }
 
 void Script::enable(bool value) {
-	_enabled = value;
+	if (_scriptType == kScriptTypeOnGameEvent || _scriptType == kScriptTypeOnPlayerAction) {
+		_enabled = value;
+	}
 }
 
 bool Script::shouldExecute(uint32 callMode) {
