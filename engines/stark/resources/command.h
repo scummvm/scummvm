@@ -187,7 +187,7 @@ protected:
 	Command *opPlayAnimation(const ResourceReference &animRef, int32 unknown);
 	Command *opScriptEnable(const ResourceReference &scriptRef, int32 enable);
 	Command *opShowPlay(Script *script, const ResourceReference &ref, int32 suspend);
-	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 value);
+	Command *opSetBoolean(const ResourceReference &knowledgeRef, int32 enable);
 	Command *opSetInteger(const ResourceReference &knowledgeRef, int32 value);
 	Command *opEnableFloorField(const ResourceReference &floorFieldRef, int32 value);
 	Command *opPlayAnimScriptItem(const ResourceReference &animScriptItemRef, int32 value);

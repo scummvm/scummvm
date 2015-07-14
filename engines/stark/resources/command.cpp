@@ -338,7 +338,7 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 		item->setEnabled(!previousState);
 		break;
 	default:
-		warning("Unhandled item enable comamnd %d", enable);
+		warning("Unhandled item enable command %d", enable);
 		break;
 	}
 
@@ -379,15 +379,13 @@ Command *Command::opScriptEnable(const ResourceReference &scriptRef, int32 enabl
 			script->enable(false);
 	        break;
 		case 1:
-			if (!previousState) {
-				script->enable(true);
-			}
+			script->enable(true);
 	        break;
 		case 2:
 			script->enable(!previousState);
 	        break;
 		default:
-			warning("Unhandled script enable comamnd %d", enable);
+			warning("Unhandled script enable command %d", enable);
 	        break;
 	}
 
@@ -410,13 +408,25 @@ Command *Command::opShowPlay(Script *script, const ResourceReference &ref, int32
 	}
 }
 
-Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 value) {
-	assert(_arguments.size() == 3);
+Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 enable) {
 	Knowledge *boolean = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opSetBoolean(%s, %d) : %s", boolean->getName().c_str(), value, knowledgeRef.describe().c_str());
 
-	// This seems to have no effect currently, perhaps because the location is reloaded
-	boolean->setBooleanValue(value);
+	bool previousState = boolean->getBooleanValue();
+
+	switch (enable) {
+		case 0:
+			boolean->setBooleanValue(false);
+	        break;
+		case 1:
+			boolean->setBooleanValue(true);
+	        break;
+		case 2:
+			boolean->setBooleanValue(!previousState);
+	        break;
+		default:
+			warning("Unhandled set boolean value command %d", enable);
+	        break;
+	}
 
 	return nextCommand();
 }
