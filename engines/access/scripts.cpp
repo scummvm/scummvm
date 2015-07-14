@@ -1064,10 +1064,10 @@ void Scripts::cmdCheckTravel() {
 
 void Scripts::cmdBlock() {
 	error("TODO: cmdBlock");
-	int val1 = _data->readSint16LE();
-	int val2 = _data->readUint16LE();
-	int val3 = _data->readSint16LE();
-	int val4 = _data->readUint16LE();
+	/*int val1 = */_data->readSint16LE();
+	/*int val2 = */_data->readUint16LE();
+	/*int val3 = */_data->readSint16LE();
+	/*int val4 = */_data->readUint16LE();
 }
 
 void Scripts::cmdPlayerOff() {
