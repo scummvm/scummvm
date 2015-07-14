@@ -36,12 +36,13 @@
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/speech.h"
 #include "engines/stark/resources/textureset.h"
-#include "engines/stark/resourcereference.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/resourceprovider.h"
 
 #include "engines/stark/ui.h"
+
+#include "common/random.h"
 
 namespace Stark {
 namespace Resources {
@@ -139,7 +140,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsOnFloorField:
 		return opIsOnFloorField(_arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsItemEnabled:
-		return opIsItemEnabled(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue);
+		return opIsItemEnabled(_arguments[2].referenceValue);
 	case kIsSet:
 		return opIsSet(_arguments[2].referenceValue);
 	case kIsIntegerInRange:
@@ -153,7 +154,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kIsScriptActive:
 		return opIsScriptActive(_arguments[2].referenceValue);
 	case kIsRandom:
-		return opIsRandom(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].intValue);
+		return opIsRandom(_arguments[2].intValue);
 	case kIsOnPlace:
 		return opIsOnPlace(_arguments[0].intValue, _arguments[1].intValue, _arguments[2].referenceValue, _arguments[3].referenceValue);
 	case kIsOnNearPlace:
@@ -585,9 +586,8 @@ Command *Command::opIsOnFloorField(const ResourceReference &itemRef, const Resou
 	return nextCommandIf(itemOnFloorField);
 }
 
-Command *Command::opIsItemEnabled(int branch1, int branch2, const ResourceReference &itemRef) {
+Command *Command::opIsItemEnabled(const ResourceReference &itemRef) {
 	Item *itemObj = itemRef.resolve<Item>();
-	warning("opIsItemEnabled(%d, %d, %s) -> %d : %s", branch1, branch2, itemObj->getName().c_str(), itemObj->isEnabled(), itemRef.describe().c_str());
 
 	return nextCommandIf(itemObj->isEnabled());
 }
@@ -629,11 +629,11 @@ Command *Command::opIsScriptActive(const ResourceReference &scriptRef) {
 	return nextCommandIf(!script->isOnBegin());
 }
 
-Command *Command::opIsRandom(int branch1, int branch2, int32 unknown) {
-	assert(_arguments.size() == 3);
-	warning("(TODO: Implement) opIsRandom(%d, %d, %d)", branch1, branch2, unknown);
-	// TODO: Verify how this logic actually should be handled
-	return nextCommandIf(true);
+Command *Command::opIsRandom(int32 chance) {
+	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
+	int32 value = randomSource->getRandomNumber(100);
+
+	return nextCommandIf(value < chance);
 }
 
 Command *Command::opIsOnPlace(int branch1, int branch2, const ResourceReference &itemRef, const ResourceReference &position) {
