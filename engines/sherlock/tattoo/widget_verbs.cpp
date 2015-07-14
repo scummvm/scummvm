@@ -203,7 +203,7 @@ void WidgetVerbs::handleEvents() {
 					ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 				}
 			}
-		} else if (_bounds.contains(mousePos)) {
+		} else if (_bounds.contains(mousePos) && _selector != -1) {
 			// Mouse is within the menu
 			// Erase the menu
 			banishWindow();
