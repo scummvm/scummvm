@@ -69,13 +69,13 @@ Item::~Item() {
 Item::Item(Object *parent, byte subType, uint16 index, const Common::String &name) :
 				Object(parent, subType, index, name),
 				_enabled(true),
-				_field_38(0) {
+				_characterIndex(0) {
 	_type = TYPE;
 }
 
 void Item::readData(Formats::XRCReadStream *stream) {
 	_enabled = stream->readBool();
-	_field_38 = stream->readSint32LE();
+	_characterIndex = stream->readSint32LE();
 }
 
 bool Item::isEnabled() const {
@@ -84,6 +84,10 @@ bool Item::isEnabled() const {
 
 void Item::setEnabled(bool enabled) {
 	_enabled = enabled;
+}
+
+int32 Item::getCharacterIndex() const {
+	return _characterIndex;
 }
 
 Gfx::RenderEntry *Item::getRenderEntry(const Common::Point &positionOffset) {
@@ -96,7 +100,7 @@ Item *Item::getSceneInstance() {
 
 void Item::printData() {
 	debug("enabled: %d", _enabled);
-	debug("field_38: %d", _field_38);
+	debug("character: %d", _characterIndex);
 }
 
 void Item::saveLoad(ResourceSerializer *serializer) {

@@ -23,10 +23,8 @@
 
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/services.h"
-
 #include "engines/stark/services/userinterface.h"
 
-#include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/speech.h"
 
 namespace Stark {

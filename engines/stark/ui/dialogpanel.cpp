@@ -90,7 +90,7 @@ void DialogPanel::notifySubtitle(const Common::String &subtitle) {
 
 	_subtitleVisual = new VisualText(_gfx);
 	_subtitleVisual->setText(subtitle);
-	_subtitleVisual->setColor(0xFFFF0000);
+	_subtitleVisual->setColor(_aprilColor);
 }
 
 void DialogPanel::notifyDialogOptions(const Common::StringArray &options) {

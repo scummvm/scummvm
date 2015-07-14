@@ -87,6 +87,9 @@ public:
 	/** Enable or disable the item */
 	virtual void setEnabled(bool enabled);
 
+	/** Get the item's character index */
+	int32 getCharacterIndex() const;
+
 	/** Obtain the render entry to use to display the item */
 	virtual Gfx::RenderEntry *getRenderEntry(const Common::Point &positionOffset);
 
@@ -96,7 +99,7 @@ protected:
 	void printData() override;
 
 	bool _enabled;
-	int32 _field_38;
+	int32 _characterIndex;
 };
 
 /**

@@ -58,6 +58,9 @@ private:
 	bool _hasOptions;
 	void clearOptions();
 	void renderOptions();
+
+	static const uint32 _aprilColor = 0xFF00C0FF;
+	static const uint32 _otherColor = 0xFF4040FF;
 };
 
 } // End of namespace Stark

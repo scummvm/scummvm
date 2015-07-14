@@ -69,6 +69,9 @@ public:
 	/** Stop the speech if it is playing */
 	void stop();
 
+	/** Is the character saying the line April ? */
+	bool characterIsApril() const;
+
 protected:
 	void printData() override;
 

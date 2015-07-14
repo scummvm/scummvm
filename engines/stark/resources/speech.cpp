@@ -23,6 +23,11 @@
 #include "engines/stark/resources/speech.h"
 
 #include "engines/stark/formats/xrc.h"
+
+#include "engines/stark/services/services.h"
+#include <engines/stark/services/global.h>
+
+#include "engines/stark/resources/item.h"
 #include "engines/stark/resources/sound.h"
 
 namespace Stark {
@@ -56,6 +61,12 @@ void Speech::stop() {
 		_soundResource->stop();
 		_soundResource = nullptr;
 	}
+}
+
+bool Speech::characterIsApril() const {
+	Global *global = StarkServices::instance().global;
+	int32 aprilCharacterIndex = global->getApril()->getCharacterIndex();
+	return _character == aprilCharacterIndex;
 }
 
 void Speech::readData(Formats::XRCReadStream *stream) {
