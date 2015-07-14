@@ -249,10 +249,12 @@ Command *Command::opGameLoop(int32 unknown) {
 }
 
 Command *Command::opPauseRandom(Script *script, const ResourceReference &ref) {
+	Common::RandomSource *randomSource = StarkServices::instance().randomSource;
+	float randomFactor = randomSource->getRandomNumber(10000) / 10000.0;
+
 	Knowledge *duration = ref.resolve<Knowledge>();
-	warning("(TODO: Implement) Pause random: %d, %s", duration->getIntegerValue(), ref.describe().c_str());
-	// TODO: Actually get a random value here.
-	script->pause(1000);
+	script->pause(randomFactor * duration->getIntegerValue());
+
 	return this; // Stay on this command while the script is suspended
 }
 
