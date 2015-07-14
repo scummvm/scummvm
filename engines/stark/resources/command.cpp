@@ -108,7 +108,7 @@ Command *Command::execute(uint32 callMode, Script *script) {
 	case kEnableFloorField:
 		return opEnableFloorField(_arguments[1].referenceValue, _arguments[2].intValue);
 	case kPlayAnimScriptItem:
-		return opPlayAnimScriptItem(_arguments[1].referenceValue, _arguments[2].intValue);
+		return opPlayAnimScriptItem(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kSoundPlay:
 		return opSoundPlay(script, _arguments[1].referenceValue, _arguments[2].intValue);
 	case kLookDirection:
@@ -432,11 +432,8 @@ Command *Command::opSetBoolean(const ResourceReference &knowledgeRef, int32 enab
 }
 
 Command *Command::opSetInteger(const ResourceReference &knowledgeRef, int32 value) {
-	assert(_arguments.size() == 3);
 	Knowledge *integer = knowledgeRef.resolve<Knowledge>();
-	warning("(TODO: Implement) opSetInteger(%s, %d) : %s", integer->getName().c_str(), value, knowledgeRef.describe().c_str());
 
-	// This seems to have no effect currently, perhaps because the location is reloaded
 	integer->setIntegerValue(value);
 
 	return nextCommand();
@@ -450,15 +447,15 @@ Command *Command::opEnableFloorField(const ResourceReference &floorFieldRef, int
 	return nextCommand();
 }
 
-Command *Command::opPlayAnimScriptItem(const ResourceReference &animScriptItemRef, int32 value) {
+Command *Command::opPlayAnimScriptItem(Script *script, const ResourceReference &animScriptItemRef, int32 pause) {
 	assert(_arguments.size() == 3);
 	Object *animScriptItemObj = animScriptItemRef.resolve<Object>();
 
 	AnimScript *animScript = animScriptItemObj->findParent<AnimScript>();
 	assert(animScript);
 	animScript->setCurrentIndex(animScriptItemObj->getIndex());
-	// TODO: What is the value good for?
-	warning("(TODO: Implement) opPlayAnimScriptItem(%s, %d) : %s", animScriptItemObj->getName().c_str(), value, animScriptItemRef.describe().c_str());
+	// TODO: If pause is true, pause the script for the duration of the anim
+	warning("(TODO: Implement) opPlayAnimScriptItem(%s, %d) : %s", animScriptItemObj->getName().c_str(), pause, animScriptItemRef.describe().c_str());
 	return nextCommand();
 }
 
@@ -483,9 +480,9 @@ Command *Command::opLookDirection(const ResourceReference &itemRef, int32 unknow
 }
 
 Command *Command::opStopPlayingSound(const ResourceReference &soundRef) {
-	assert(_arguments.size() == 2);
-	Object *soundObj = soundRef.resolve<Object>();
-	warning("(TODO: Implement) opStopPlayingSound(%s) : %s", soundObj->getName().c_str(), soundRef.describe().c_str());
+	Sound *soundObj = soundRef.resolve<Sound>();
+
+	soundObj->stop();
 
 	return nextCommand();
 }
