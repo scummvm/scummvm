@@ -55,10 +55,10 @@ MODULE_OBJS := \
 	services/services.o \
 	services/stateprovider.o \
 	services/staticprovider.o \
+	services/userinterface.o \
 	skeleton.o \
 	skeleton_anim.o \
 	stark.o \
-	ui.o \
 	ui/actionmenu.o \
 	ui/button.o \
 	ui/clicktext.o \

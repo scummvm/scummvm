@@ -26,15 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-array.h"
 
-#include "engines/stark/gfx/renderentry.h"
-
-#include "engines/stark/resources/pattable.h"
-
 namespace Stark {
-
-namespace Resources {
-class Item;
-}
 
 namespace Gfx {
 class Driver;
@@ -49,10 +41,10 @@ class FMVPlayer;
 class GameWindow;
 class Window;
 
-class UI {
+class UserInterface {
 public:
-	UI(Gfx::Driver *gfx, Cursor *cursor);
-	virtual ~UI();
+	UserInterface(Gfx::Driver *gfx, Cursor *cursor);
+	virtual ~UserInterface();
 	void init();
 	void update();
 	void render();

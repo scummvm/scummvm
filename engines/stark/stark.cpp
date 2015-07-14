@@ -28,7 +28,7 @@
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/scene.h"
-#include "engines/stark/ui.h"
+#include "engines/stark/services/userinterface.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
@@ -38,7 +38,6 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/gfx/driver.h"
-#include "engines/stark/gfx/renderentry.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -63,7 +62,8 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_staticProvider(nullptr),
 		_resourceProvider(nullptr),
 		_randomSource(nullptr),
-		_dialogPlayer(nullptr) {
+		_dialogPlayer(nullptr),
+		_userInterface(nullptr) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
@@ -89,7 +89,7 @@ StarkEngine::~StarkEngine() {
 	delete _global;
 	delete _stateProvider;
 	delete _archiveLoader;
-	delete _ui;
+	delete _userInterface;
 
 	StarkServices::destroy();
 }
@@ -111,7 +111,7 @@ Common::Error StarkEngine::run() {
 	_dialogPlayer = new DialogPlayer();
 	_cursor = new Cursor(_gfx);
 	_gameInterface = new GameInterface();
-	_ui = new UI(_gfx, _cursor);
+	_userInterface = new UserInterface(_gfx, _cursor);
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
@@ -124,7 +124,7 @@ Common::Error StarkEngine::run() {
 	services.scene = _scene;
 	services.staticProvider = _staticProvider;
 	services.gameInterface = _gameInterface;
-	services.ui = _ui;
+	services.userInterface = _userInterface;
 
 	// Load global resources
 	_resourceProvider->initGlobal();
@@ -132,7 +132,7 @@ Common::Error StarkEngine::run() {
 	_cursor->init();
 	_dialogPlayer->init();
 	// Initialize the UI
-	_ui->init();
+	_userInterface->init();
 
 	// Start us up at the house of all worlds
 	_global->setCurrentChapter(0);
@@ -169,7 +169,7 @@ void StarkEngine::mainLoop() {
 				} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_gameInterface->skipCurrentSpeeches();
 					// Quick-hack for now.
-					_ui->stopPlayingFMV();
+					_userInterface->stopPlayingFMV();
 				} else {
 					//handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
@@ -180,9 +180,9 @@ void StarkEngine::mainLoop() {
 				_gameInterface->scrollLocation(e.relMouse.x, e.relMouse.y);
 				_cursor->setMousePosition(e.mouse);
 			} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-				_ui->handleClick();
+				_userInterface->handleClick();
 			} else if (e.type == Common::EVENT_RBUTTONDOWN) {
-				_ui->handleRightClick();
+				_userInterface->handleRightClick();
 			}
 			/*if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP) {
 				handleControls(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
@@ -203,7 +203,7 @@ void StarkEngine::mainLoop() {
 		updateDisplayScene();
 		g_system->delayMillis(50);
 
-		if (_ui->shouldExit()) {
+		if (_userInterface->shouldExit()) {
 			quitGame();
 			break;
 		}
@@ -221,7 +221,7 @@ void StarkEngine::updateDisplayScene() {
 
 	// Avoid drawing the game engine, as well as updating while FMVs play,
 	// TODO: this can probably be refactored to stalling the script that triggered the FMV.
-	if (!_ui->isPlayingFMV()) {
+	if (!_userInterface->isPlayingFMV()) {
 		// Update the game resources
 		_global->getLevel()->onGameLoop();
 		_global->getCurrent()->getLevel()->onGameLoop();
@@ -229,10 +229,10 @@ void StarkEngine::updateDisplayScene() {
 
 		// Render the current scene
 		// Update the UI state before displaying the scene
-		_ui->update();
+		_userInterface->update();
 	}
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
-	_ui->render();
+	_userInterface->render();
 
 	// The cursor depends on the UI being done.
 	_cursor->render();

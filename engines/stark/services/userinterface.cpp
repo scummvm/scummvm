@@ -23,9 +23,7 @@
 #include "common/system.h"
 #include "common/events.h"
 
-#include "engines/stark/ui.h"
-
-#include "engines/stark/ui/actionmenu.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/gfx/driver.h"
 
@@ -33,6 +31,7 @@
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/gameinterface.h"
 
+#include "engines/stark/ui/actionmenu.h"
 #include "engines/stark/ui/dialogpanel.h"
 #include "engines/stark/ui/fmvplayer.h"
 #include "engines/stark/ui/gamewindow.h"
@@ -41,7 +40,7 @@
 
 namespace Stark {
 
-UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
+UserInterface::UserInterface(Gfx::Driver *gfx, Cursor *cursor) :
 	_gfx(gfx),
 	_cursor(cursor),
 	_topMenu(nullptr),
@@ -54,7 +53,7 @@ UI::UI(Gfx::Driver *gfx, Cursor *cursor) :
 	{
 }
 
-UI::~UI() {
+UserInterface::~UserInterface() {
 	delete _gameWindow;
 	delete _actionMenu;
 	delete _topMenu;
@@ -63,7 +62,7 @@ UI::~UI() {
 	delete _fmvPlayer;
 }
 
-void UI::init() {
+void UserInterface::init() {
 	_topMenu = new TopMenu(_gfx, _cursor);
 	_dialogPanel = new DialogPanel(_gfx, _cursor);
 	_fmvPlayer = new FMVPlayer(_gfx, _cursor);
@@ -79,7 +78,7 @@ void UI::init() {
 	_windows.push_back(_dialogPanel);
 }
 
-void UI::update() {
+void UserInterface::update() {
 	StaticProvider *staticProvider = StarkServices::instance().staticProvider;
 	staticProvider->onGameLoop();
 
@@ -92,7 +91,7 @@ void UI::update() {
 	}
 }
 
-void UI::handleClick() {
+void UserInterface::handleClick() {
 	for (uint i = 0; i < _windows.size(); i++) {
 		if (_windows[i]->isMouseInside()) {
 			_windows[i]->handleClick();
@@ -101,7 +100,7 @@ void UI::handleClick() {
 	}
 }
 
-void UI::handleRightClick() {
+void UserInterface::handleRightClick() {
 	for (uint i = 0; i < _windows.size(); i++) {
 		if (_windows[i]->isMouseInside()) {
 			_windows[i]->handleRightClick();
@@ -110,32 +109,32 @@ void UI::handleRightClick() {
 	}
 }
 
-void UI::notifySubtitle(const Common::String &subtitle) {
+void UserInterface::notifySubtitle(const Common::String &subtitle) {
 	_dialogPanel->notifySubtitle(subtitle);
 }
 
-void UI::notifyDialogOptions(const Common::StringArray &options) {
+void UserInterface::notifyDialogOptions(const Common::StringArray &options) {
 	_dialogPanel->notifyDialogOptions(options);
 }
 
-void UI::notifyShouldOpenInventory() {
+void UserInterface::notifyShouldOpenInventory() {
 	// Make the inventory update its contents.
 	_inventoryWindow->open();
 }
 
-void UI::notifyFMVRequest(const Common::String &name) {
+void UserInterface::notifyFMVRequest(const Common::String &name) {
 	_fmvPlayer->play(name);
 }
 
-bool UI::isPlayingFMV() const {
+bool UserInterface::isPlayingFMV() const {
 	return _fmvPlayer->isPlaying();
 }
 
-void UI::stopPlayingFMV() {
+void UserInterface::stopPlayingFMV() {
 	_fmvPlayer->stop();
 }
 
-void UI::render() {
+void UserInterface::render() {
 	// TODO: Unify with the other windows
 	if (_fmvPlayer->isPlaying()) {
 		_fmvPlayer->render();

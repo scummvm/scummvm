@@ -43,7 +43,7 @@ class ResourceProvider;
 class StaticProvider;
 class Scene;
 class GameInterface;
-class UI;
+class UserInterface;
 
 /**
  * Public services available as a singleton
@@ -60,7 +60,7 @@ public:
 		scene = nullptr;
 		staticProvider = nullptr;
 		gameInterface = nullptr;
-		ui = nullptr;
+		userInterface = nullptr;
 	}
 
 	ArchiveLoader *archiveLoader;
@@ -72,7 +72,7 @@ public:
 	Scene *scene;
 	StaticProvider *staticProvider;
 	GameInterface *gameInterface;
-	UI *ui;
+	UserInterface *userInterface;
 };
 
 } // End of namespace Stark

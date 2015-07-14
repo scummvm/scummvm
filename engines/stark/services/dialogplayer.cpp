@@ -24,7 +24,7 @@
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/services.h"
 
-#include "engines/stark/ui.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/resources/dialog.h"
 #include "engines/stark/resources/speech.h"
@@ -90,7 +90,7 @@ void DialogPlayer::buildOptions() {
 		for (uint i = 0; i < availableTopics.size(); i++) {
 			options.push_back(_options[i]._caption);
 		}
-		StarkServices::instance().ui->notifyDialogOptions(options);
+		StarkServices::instance().userInterface->notifyDialogOptions(options);
 	}
 }
 
@@ -176,7 +176,7 @@ void DialogPlayer::update() {
 }
 
 void DialogPlayer::setSubtitles(const Common::String &str) {
-	StarkServices::instance().ui->notifySubtitle(str);
+	StarkServices::instance().userInterface->notifySubtitle(str);
 }
 
 } // End of namespace Stark

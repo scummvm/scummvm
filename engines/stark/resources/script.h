@@ -26,7 +26,6 @@
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
-#include "command.h"
 
 namespace Stark {
 

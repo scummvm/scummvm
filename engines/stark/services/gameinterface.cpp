@@ -40,7 +40,7 @@
 
 #include "engines/stark/cursor.h"
 #include "engines/stark/scene.h"
-#include "engines/stark/ui.h"
+#include "engines/stark/services/userinterface.h"
 
 namespace Stark {
 

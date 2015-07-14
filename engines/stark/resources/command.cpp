@@ -23,7 +23,9 @@
 #include "engines/stark/resources/command.h"
 
 #include "engines/stark/debug.h"
+
 #include "engines/stark/formats/xrc.h"
+
 #include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/bookmark.h"
 #include "engines/stark/resources/bonesmesh.h"
@@ -36,11 +38,11 @@
 #include "engines/stark/resources/sound.h"
 #include "engines/stark/resources/speech.h"
 #include "engines/stark/resources/textureset.h"
+
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/resourceprovider.h"
-
-#include "engines/stark/ui.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "common/random.h"
 
@@ -505,7 +507,7 @@ Command *Command::opScrollSet(const ResourceReference &scrollRef) {
 Command *Command::opPlayFullMotionVideo(Script *script, const ResourceReference &movieRef, int32 unknown) {
 	FMV *movie =  movieRef.resolve<FMV>();
 	warning("(TODO: Implement) opPlayFullMotionVideo(%s) : %s - %d", movie->getName().c_str(), movieRef.describe().c_str(), unknown);
-	StarkServices::instance().ui->notifyFMVRequest(movie->getFilename());
+	StarkServices::instance().userInterface->notifyFMVRequest(movie->getFilename());
 	// TODO: Is this unconditional suspension?
 	script->suspend(movie);
 	return this; // Stay on the same command while suspended

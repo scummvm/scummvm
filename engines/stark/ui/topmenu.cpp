@@ -22,12 +22,12 @@
 
 #include "engines/stark/ui/topmenu.h"
 #include "engines/stark/ui/button.h"
-#include "engines/stark/ui.h"
 
 #include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/visual/image.h"
 
@@ -81,11 +81,11 @@ void TopMenu::onClick(const Common::Point &pos) {
 
 	if (_exitButton->containsPoint(pos)) {
 		// TODO: Ask
-		StarkServices::instance().ui->notifyShouldExit();
+		StarkServices::instance().userInterface->notifyShouldExit();
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {
-		StarkServices::instance().ui->notifyShouldOpenInventory();
+		StarkServices::instance().userInterface->notifyShouldOpenInventory();
 	}
 }
 

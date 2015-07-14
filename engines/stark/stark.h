@@ -50,7 +50,7 @@ class Scene;
 class StateProvider;
 class StaticProvider;
 class ResourceProvider;
-class UI;
+class UserInterface;
 
 class StarkEngine : public Engine {
 public:
@@ -87,7 +87,7 @@ private:
 
 	const ADGameDescription *_gameDescription;
 
-	UI *_ui;
+	UserInterface *_userInterface;
 	Cursor *_cursor;
 	Scene *_scene;
 };
