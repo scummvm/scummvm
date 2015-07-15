@@ -45,7 +45,6 @@ WidgetTalk::WidgetTalk(SherlockEngine *vm) : WidgetBase(vm) {
 
 void WidgetTalk::getTalkWindowSize() {
 	TattooTalk &talk = *(TattooTalk *)_vm->_talk;
-	Common::StringArray lines;
 	const char *const NUM_STR = "19.";
 	int width, height;
 
@@ -68,9 +67,6 @@ void WidgetTalk::getTalkWindowSize() {
 		if (talk._statements[idx]._talkMap != -1) {
 			splitLines(talk._statements[idx]._statement, statementLines, width, 999);
 			numLines += statementLines.size();
-
-			for (uint sIdx = 0; sIdx < statementLines.size(); ++sIdx)
-				lines.push_back(statementLines[sIdx]);
 		}
 	}
 
@@ -93,12 +89,7 @@ void WidgetTalk::getTalkWindowSize() {
 
 	// Form the background for the new window
 	makeInfoArea();
-
-	int yp = 5;
-	for (int lineNum = 0; yp < (_bounds.height() - _surface.fontHeight() / 2); ++lineNum) {
-		_surface.writeString(lines[lineNum], Common::Point(_surface.widestChar(), yp), INFO_TOP);
-		yp += _surface.fontHeight() + 1;
-	}
+	render(HL_CHANGED_HIGHLIGHTS);
 }
 
 void WidgetTalk::load() {
@@ -543,43 +534,12 @@ void WidgetTalk::setStatementLines() {
 			// Get the next statement text to process
 			Common::String str = talk._statements[statementNum]._statement;
 
-			// Process the statement
-			Common::String line;
-			do {
-				line = "";
+			Common::StringArray statementLines;
+			splitLines(str, statementLines, xSize, 999);
 
-				// Find out how much of the statement will fit on the line
-				int width = 0;
-				const char *ch = str.c_str();
-				const char *space = nullptr;
-
-				while (width < xSize && *ch) {
-					width += _surface.charWidth(*ch);
-
-					// Keep track of where spaces are
-					if (*ch == ' ')
-						space = ch;
-					++ch;
-				}
-
-				// If the line was too wide to fit on a single line, go back to the last space and split it there.
-				// But if there isn't (and this shouldn't ever happen), just split the line right at that point
-				if (width > xSize) {
-					if (space) {
-						line = Common::String(str.c_str(), space);
-						str = Common::String(space + 1);
-					} else {
-						line = Common::String(str.c_str(), ch);
-						str = Common::String(ch);
-					}
-				} else {
-					line = str;
-					str = "";
-				}
-
-				// Add the line in
-				_statementLines.push_back(StatementLine(line, statementNum));
-			} while (!line.empty());
+			// Add the lines in
+			for (uint idx = 0; idx < statementLines.size(); ++idx)
+				_statementLines.push_back(StatementLine(statementLines[idx], statementNum));
 		}
 	}
 }
