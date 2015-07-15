@@ -232,7 +232,9 @@ void TattooUserInterface::handleInput() {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	Common::Point mousePos = events.mousePos();
 
+	_vm->_canLoadSave = _menuMode == STD_MODE;
 	events.pollEventsAndWait();
+	_vm->_canLoadSave = false;
 	_keyState.keycode = Common::KEYCODE_INVALID;
 
 	// Check the mouse positioning
