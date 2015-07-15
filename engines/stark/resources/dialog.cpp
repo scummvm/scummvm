@@ -176,10 +176,10 @@ int32 Dialog::Topic::getNextReplyIndex() const {
 Dialog::Reply *Dialog::Topic::startReply(uint32 index) {
 	_currentReplyIndex = index;
 
-	Reply &reply = _replies[_currentReplyIndex];
-	reply.start();
+	Reply *reply = &_replies[_currentReplyIndex];
+	reply->start();
 
-	return &reply;
+	return reply;
 }
 
 Dialog::Reply *Dialog::Topic::getCurrentReply() {

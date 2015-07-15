@@ -115,7 +115,7 @@ void DialogPlayer::selectOption(uint32 index) {
 		Resources::Dialog::Topic *topic = option._topic;
 
 		// Set the current reply
-		_currentReply = topic->startReply(index);
+		_currentReply = topic->startReply(option._replyIndex);
 
 		Resources::Speech *speech = _currentReply->getCurrentSpeech();
 		if (speech) {
