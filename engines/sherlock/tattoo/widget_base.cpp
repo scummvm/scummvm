@@ -218,7 +218,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	_surface.fillRect(Common::Rect(r.right / 2 - 3, r.top + 1 + BUTTON_SIZE / 2,
 		r.right / 2 + 3, r.top + 1 + BUTTON_SIZE / 2), color);
 
-	color = (index + NUM_INVENTORY_SHOWN) < count ? INFO_BOTTOM + 2 : INFO_BOTTOM;
+	color = (index + pageSize) < count ? INFO_BOTTOM + 2 : INFO_BOTTOM;
 	_surface.fillRect(Common::Rect(r.right / 2 - 3, r.bottom - 1 - BUTTON_SIZE + BUTTON_SIZE / 2,
 		r.right / 2 + 3, r.bottom - 1 - BUTTON_SIZE + BUTTON_SIZE / 2), color);
 	_surface.fillRect(Common::Rect(r.right / 2 - 2, r.bottom - 1 - BUTTON_SIZE + 1 + BUTTON_SIZE / 2,
@@ -229,15 +229,10 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 		r.right / 2, r.bottom - 1 - BUTTON_SIZE + 3 + BUTTON_SIZE / 2), color);
 
 	// Draw the scroll position bar
-	int idx = count;
-	if (idx % (NUM_INVENTORY_SHOWN / 2))
-		idx = (idx + (NUM_INVENTORY_SHOWN / 2)) / (NUM_INVENTORY_SHOWN / 2) * (NUM_INVENTORY_SHOWN / 2);
-	int barHeight = NUM_INVENTORY_SHOWN * (_bounds.height() - BUTTON_SIZE * 2) / idx;
+	int barHeight = (_bounds.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, _bounds.height() - BUTTON_SIZE * 2);
+	int barY = (r.height() - BUTTON_SIZE * 2 - barHeight) * index / pageSize + r.top + BUTTON_SIZE;
 
-	int barY = (idx<= NUM_INVENTORY_SHOWN) ? r.top + BUTTON_SIZE :
-		(r.height() - BUTTON_SIZE * 2 - barHeight) * FIXED_INT_MULTIPLIER / (idx- NUM_INVENTORY_SHOWN)
-			* index / FIXED_INT_MULTIPLIER + r.top + BUTTON_SIZE;
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);
 	ui.drawDialogRect(_surface, Common::Rect(r.left, barY, r.right, barY + barHeight), true);
 }

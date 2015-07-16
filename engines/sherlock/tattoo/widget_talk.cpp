@@ -78,18 +78,10 @@ void WidgetTalk::getTalkWindowSize() {
 		// Set up the height to a constrained amount, and add extra width for the scrollbar
 		width += BUTTON_SIZE + 3;
 		height = (_surface.fontHeight() + 1) * 6 + 9;
-		_scroll = false;
+		_scroll = true;
 	}
 
 	_bounds = Common::Rect(width, height);
-
-	// Allocate a surface for the window
-	_surface.create(_bounds.width(), _bounds.height());
-	_surface.fill(TRANSPARENCY);
-
-	// Form the background for the new window
-	makeInfoArea();
-	render(HL_CHANGED_HIGHLIGHTS);
 }
 
 void WidgetTalk::load() {
@@ -124,16 +116,6 @@ void WidgetTalk::load() {
 
 	// Form the background for the new window
 	makeInfoArea();
-
-	// If a scrollbar is needed, draw it in
-	if (_scroll) {
-		int xp = _surface.w() - BUTTON_SIZE - 6;
-		_surface.vLine(xp, 3, _surface.h() - 4, INFO_TOP);
-		_surface.vLine(xp + 1, 3, _surface.h() - 4, INFO_MIDDLE);
-		_surface.vLine(xp + 2, 3, _surface.h() - 4, INFO_BOTTOM);
-		_surface.transBlitFrom(images[6], Common::Point(xp - 1, 1));
-		_surface.transBlitFrom(images[7], Common::Point(xp - 1, _surface.h() - 4));
-	}
 }
 
 void WidgetTalk::handleEvents() {
